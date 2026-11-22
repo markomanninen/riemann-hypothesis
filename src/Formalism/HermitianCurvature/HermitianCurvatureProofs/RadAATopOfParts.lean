@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevTransportHer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevTransportHer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate ContDiff

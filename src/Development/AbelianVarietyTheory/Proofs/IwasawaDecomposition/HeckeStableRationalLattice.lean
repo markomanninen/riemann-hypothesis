@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCentralGroupAlgebraIdempotentUniversal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistedLatticeFinitelyGeneratedSpanning
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTwistSideFormsLeSpanGoodLiftForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeInIsotypicSup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCentralGroupAlgebraIdempotentUniversal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistedLatticeFinitelyGeneratedSpanning
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodTwistSideFormsLeSpanGoodLiftForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatticeInIsotypicSup
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.HeightCounting.FormsStep NumberField IsDedekindDomain Polynomial
 open scoped TensorProduct
 
@@ -36,7 +41,8 @@ theorem exists_integral_functional {O K V : Type} [CommRing O] [IsDomain O] [IsP
     obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun K).mp h
     have h0 : ∑ i, a i • ((e i : N') : V ⧸ (K ∙ v)) = 0 := by
       have h1 := congrArg q ha
-      rw [map_sum, hqv] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, hqv] at h1
       simpa only [map_smul, hq'] using h1
     have := Fintype.linearIndependent_iff.mp hli a h0
     apply hv
@@ -51,7 +57,8 @@ theorem exists_integral_functional {O K V : Type} [CommRing O] [IsDomain O] [IsP
       have h3 := congrArg Subtype.val (e.sum_repr n')
       rw [Submodule.coe_sum] at h3
       exact h3.symm
-    rw [map_sub, map_sum, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, sub_eq_zero]
     refine h2.trans (Finset.sum_congr rfl fun i _ => ?_)
     rw [q.map_smul_of_tower, hq']
   obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp ((Submodule.Quotient.mk_eq_zero _).mp h1)
@@ -60,7 +67,8 @@ theorem exists_integral_functional {O K V : Type} [CommRing O] [IsDomain O] [IsP
     exact N.sub_mem hn (N.sum_mem fun i _ => N.smul_mem _ (hm i)))
   refine ⟨o, ?_⟩
   have h3 := congrArg f hc
-  rw [map_sub, map_sum, map_smul] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, map_smul] at h3
   simp only [f.map_smul_of_tower, hfm, smul_zero, Finset.sum_const_zero, sub_zero, smul_eq_mul] at h3
   rw [ho, LinearMap.smul_apply, ← h3, smul_eq_mul]
   field_simp
@@ -71,7 +79,11 @@ theorem exists_integral_reading {LL : Type} [Field LL] [NumberField LL] (L0 : In
       ∀ a : 𝓞 LL, ∃ o : O, algebraMap O K o = lam a := by
   letI : Algebra L0 (AlgebraicClosure K) := ((algebraMap K (AlgebraicClosure K)).comp rd).toAlgebra
   haveI : Module.IsTorsionFree L0 (AlgebraicClosure K) := DivisionSemiring.to_moduleIsTorsionFree
-  let ι : LL →ₐ[L0] AlgebraicClosure K := IsAlgClosed.lift
+  let ι : LL →ₐ[L0] AlgebraicClosure K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let B := RingOfIntegers.basis LL
   let N : Submodule O (AlgebraicClosure K) := Submodule.span O (Set.range fun i => ι (B i : LL))
   have hint : ∀ a : 𝓞 LL, IsIntegral O (ι (a : LL)) := fun a =>
@@ -86,14 +98,15 @@ theorem exists_integral_reading {LL : Type} [Field LL] [NumberField LL] (L0 : In
     intro a
     rw [← B.sum_repr a]
     push_cast
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine N.sum_mem fun i _ => ?_
     rw [map_zsmul]
     exact zsmul_mem (Submodule.subset_span (Set.mem_range_self (f := fun i => ι (B i : LL)) i)) _
   obtain ⟨r, hr1, hr⟩ := exists_integral_functional (K := K) N (Submodule.fg_span (Set.finite_range _)) 1 one_ne_zero (by
     intro c hc
     have h := hN _ hc
-    rw [← Algebra.algebraMap_eq_smul_one, isIntegral_algebraMap_iff (algebraMap K (AlgebraicClosure K)).injective] at h
+    rw [← Algebra.algebraMap_eq_smul_one, isIntegral_algebraMap_iff ] at h
     exact IsIntegrallyClosed.isIntegral_iff.mp h)
   refine ⟨r.toAddMonoidHom.comp ι.toRingHom.toAddMonoidHom, ?_, fun c y => ?_, fun a => hr _ (hmem a)⟩
   · change r (ι 1) = 1
@@ -115,10 +128,11 @@ theorem mem_span_solutions {R O : Type} [CommRing R] [CommRing O] [Algebra R O] 
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a c =>
-      simp only [LinearMap.lTensor_tmul, TensorProduct.piScalarRight_apply, TensorProduct.piScalarRightHom_tmul, hg,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.lTensor_tmul, TensorProduct.piScalarRight_apply, TensorProduct.piScalarRightHom_tmul, hg,
         Algebra.smul_def, map_sum, map_mul, Finset.sum_mul]
       exact Finset.sum_congr rfl fun t _ => by ring
-    | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy, add_mul, Finset.sum_add_distrib]
+    | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy, add_mul, Finset.sum_add_distrib]
   obtain ⟨z, rfl⟩ := (TensorProduct.piScalarRight R O O ι).surjective o
   have hz : g.lTensor O z = 0 := by
     apply (TensorProduct.piScalarRight R O O κ).injective
@@ -135,7 +149,9 @@ theorem mem_span_solutions {R O : Type} [CommRing R] [CommRing O] [Algebra R O] 
       simp [Algebra.smul_def, mul_comm]
     rw [this]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨c.1, fun k => congrFun c.2 k, rfl⟩)
-  | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy =>
+    simp only [map_add] at *
+    exact Submodule.add_mem _ hx hy
 
 theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : IntermediateField ℚ LL) {Ks : Type} [Field Ks]
     [Algebra Ks LL] (kKs : Ks →+* L0) (hk : ∀ x, ((kKs x : L0) : LL) = algebraMap Ks LL x)
@@ -164,7 +180,7 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
       ∀ x, Φ x = ∑ k, lam (B.repr x k) • ((1 : K) ⊗ₜ[Ks] (⟨bs k, hb k⟩ : WK)) :=
     ⟨{ toFun := fun x => ∑ k, lam (B.repr x k) • ((1 : K) ⊗ₜ[Ks] (⟨bs k, hb k⟩ : WK))
        map_zero' := by simp
-       map_add' := by intro x y; simp [map_add, add_smul, Finset.sum_add_distrib] },
+       map_add' := by intro x y; simp [map_add (f := _), add_smul, Finset.sum_add_distrib] },
      fun _ => rfl⟩
   have hco : ∀ w : WK, ∃ s : Fin n → Ks, w = ∑ k, s k • (⟨bs k, hb k⟩ : WK) ∧
       ∀ (l : LL) k, B.repr (l • (w : WL)) k = l * algebraMap Ks LL (s k) := by
@@ -193,7 +209,8 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
     rw [map_smul, Finsupp.smul_apply, smul_eq_mul, hlx, mul_smul]
   · intro f fr hf x
     conv_lhs => rw [← B.sum_repr x]
-    rw [map_sum, map_sum, hΦ x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, hΦ x, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hB, ← hf ⟨bs k, hb k⟩, key, map_smul, LinearMap.baseChange_tmul]
   · intro w
@@ -204,7 +221,7 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
     obtain ⟨o, ho⟩ := hlint a
     exact ⟨o, by rw [key, ho]⟩
   refine ⟨{ carrier := {x | ∀ k, B.repr x k ∈ L0}
-            add_mem' := fun hx hy k => by rw [map_add, Finsupp.add_apply]; exact add_mem (hx k) (hy k)
+            add_mem' := fun hx hy k => by rw [map_add (f := _), Finsupp.add_apply]; exact add_mem (hx k) (hy k)
             zero_mem' := fun k => by rw [map_zero, Finsupp.zero_apply]; exact zero_mem _
             neg_mem' := fun hx k => by rw [map_neg, Finsupp.neg_apply]; exact neg_mem (hx k) }, ?_, ?_, ?_⟩
   · intro w k
@@ -243,7 +260,7 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
       map_one' := hinj (by rw [hs0]; simp)
       map_mul' := fun x y => hinj (by rw [map_mul, hs0, hs0, hs0]; simp)
       map_zero' := hinj (by rw [hs0]; simp)
-      map_add' := fun x y => hinj (by rw [map_add, hs0, hs0, hs0]; simp) }
+      map_add' := fun x y => hinj (by rw [map_add (f := _), hs0, hs0, hs0]; simp) }
   letI : Algebra (𝓞 L0) O := s.toAlgebra
   have hs : ∀ c : 𝓞 L0, algebraMap O K (algebraMap (𝓞 L0) O c) = rd c := hs0
   have hsinj : Function.Injective (algebraMap (𝓞 L0) O) := by
@@ -261,7 +278,8 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
   have hsol := mem_span_solutions (fun t (q : κ × Fin n) => A (t, q)) o (by
     rintro ⟨a, k⟩
     apply hinj
-    simp only [map_sum, map_mul, hs, hA', map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hs, hA', map_zero]
     have := congrArg (rd ((d : 𝓞 L0) : L0) * ·) (hrel a k)
     simp only [Finset.mul_sum, mul_zero] at this
     rw [← this]
@@ -270,14 +288,16 @@ theorem exists_integral_descent {LL : Type} [Field LL] [NumberField LL] (L0 : In
   rintro _ ⟨c, hc, rfl⟩
   refine ⟨c, fun a => B.repr.injective (Finsupp.ext fun k => ?_), fun t => hs _⟩
   have h1 := congrArg (fun z : 𝓞 L0 => (z : L0)) (hc (a, k))
-  simp only [RingOfIntegers.coe_eq_algebraMap, map_sum, map_mul, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingOfIntegers.coe_eq_algebraMap, map_sum, map_mul, map_zero] at h1
   simp only [← RingOfIntegers.coe_eq_algebraMap, hA'] at h1
   have h2 : ∑ t, (c t : L0) * α (t, a, k) = 0 := by
     apply mul_left_cancel₀ hd0
     rw [mul_zero, ← h1, Finset.mul_sum]
     exact Finset.sum_congr rfl fun t _ => by ring
   have h3 := congrArg (fun z : L0 => (z : LL)) h2
-  simp only [map_sum, map_smul, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul, hα, map_zero, Finsupp.zero_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul, hα, map_zero, Finsupp.zero_apply]
   simpa using h3
 
 theorem normV_isUnit (D : D7) (T : TwR D.LL0 D.nd) (i : T.Tw) (w : PlE D.host) (hw : w ∉ T.S0 i) :
@@ -387,101 +407,3 @@ theorem descend_integral (D : D7) (T : TwR D.LL0 D.nd) (S : RatDat D.ntw) (In : 
 
 end GlobalTheory.HeightCounting.HeckeLat
 
-open GlobalTheory.HeightCounting.HeckeLat in
-
-theorem GlobalTheory.HeightCounting.FormsStep.hkStab_all : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →+* Qb) (A : SideA D cf jE) (S : RatDat D.ntw)
-    (In : RatIn D S) (b0 b1 : Big D) (Sx : Finset (PlE D.host)) (T : TwR D.LL0 D.nd) (Sp : RingSpec D cf b0 b1 Sx T),
-    In.Sb ⊆ Sx → (∀ x : D.LL0, star (x : D.what₂.LL) ∈ D.LL0) → HkStab D T S In := by
-  intro D cf jE A S In b0 b1 Sx T Sp hSb _ i j b k P ⟨h1, h2, hk1, hk2, hsp, hP⟩ x hx
-  obtain ⟨Φ, hc, hf, hw, hint, W0, hW0, hW0c, hrel⟩ := descend_integral D T S In i j b h1 h2
-  have ha := descend_actL D T S In i j b h1 h2 Φ hc hf
-  have he := descend_eSum D T S In i j b Φ hc ha
-  have hPb : P ∉ In.Sb := fun h => hP (by
-    rw [← Finset.mem_coe, Sp.ringSpec_excludedPlaces_eq i]
-    exact Or.inr (Finset.mem_coe.mpr (hSb h)))
-  have hMW : ∀ y ∈ (S.A j).MK, y ∈ WKr D S j := fun y hy => by
-    rw [WKr_of D S h1 h2]; exact hy.1
-
-  have hML : ∀ y ∈ Submodule.span (𝓞 D.what₂.LL) ((S.A j).MK : Set (S.WL j)), Φ y ∈ BsupT D T S i j b := by
-    have key : ∀ y ∈ Submodule.span (𝓞 D.what₂.LL) ((S.A j).MK : Set (S.WL j)), ∀ a : 𝓞 D.what₂.LL,
-        Φ (a • y) ∈ BsupT D T S i j b := by
-      intro y hy
-      induction hy using Submodule.span_induction with
-      | mem y hy =>
-        intro a
-        obtain ⟨o, ho⟩ := hint a ⟨y, hMW y hy⟩
-        rw [← algebraMap_smul D.what₂.LL a y]
-        refine ho ▸ Submodule.smul_mem _ o ?_
-        exact Submodule.subset_span ⟨⟨y, hMW y hy⟩, hy, hw _⟩
-      | zero => intro a; rw [smul_zero, map_zero]; exact zero_mem _
-      | add y z _ _ hy hz => intro a; rw [smul_add, map_add]; exact add_mem (hy a) (hz a)
-      | smul a' y _ hy => intro a; rw [smul_smul]; exact hy _
-    intro y hy
-    simpa using key y hy 1
-  have hhr : ∀ w : ↥(WKr D S j), (hLr D S In j k P w : S.WL j) = In.hL j k P w := by
-    intro w
-    unfold hLr
-    rw [dif_pos ⟨h1, h2⟩]
-    rfl
-  have hkΦ : ∀ y, hkT D T S In i j b k P (Φ y) = ((cHkT D T i b P : T.O i) ^ k) • Φ (In.hL j k P y) := by
-    intro y
-    rw [← algebraMap_smul (FractionRing (T.O i)), map_pow, hf _ _ hhr]
-    rfl
-  obtain ⟨n, hn⟩ := In.hL_int j k P h1 h2 hsp hPb hk2
-  obtain ⟨u, hu⟩ := (normV_isUnit D T i P hP).pow n
-  have hstep : ∀ y ∈ Submodule.span (𝓞 D.what₂.LL) ((S.A j).MK : Set (S.WL j)), y ∈ goodL D S In.θ j →
-      hkT D T S In i j b k P (Φ y) ∈ BI D T S In i j b := by
-    intro y hy hg
-    rw [hkΦ]
-    refine Submodule.smul_mem _ _ ⟨?_, ?_⟩
-    · have h3 := hML _ (hn y hy hg)
-      rw [map_nsmul, ← Nat.cast_smul_eq_nsmul (T.O i), Nat.cast_pow, ← hu] at h3
-      have h4 := Submodule.smul_mem _ (↑u⁻¹ : T.O i) h3
-      rwa [smul_smul, Units.inv_mul, one_smul] at h4
-    · exact descend_mem_V0T D T S In i j b Φ hc ha he _ (hL_goodL D S In j k P h1 h2 ⟨hk1, hk2, hsp, hPb⟩ y hg)
-  have hET : ∀ a y, Φ (eqL D S In.θ j a y) = eqT D T S In i j b a (Φ y) := by
-    intro a y
-    cases a with
-    | none => simp only [eqL, eqT, LinearMap.sub_apply, Module.End.one_apply, map_sub, he]
-    | some u =>
-      simp only [eqL, eqT, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, map_sub, ha, hc,
-        LinearEquiv.coe_coe]
-  have hx0 : ∀ a, eqT D T S In i j b a x = 0 := by
-    intro a
-    have h3 := goodTwistSideForms_le_span_goodLiftForms D S In T i j b h1 h2 (eIdem_all D) Φ hc ha he hw hx.2
-    refine (Submodule.span_le (p := LinearMap.ker (eqT D T S In i j b a))).mpr ?_ h3
-    rintro _ ⟨y, hy, rfl⟩
-    rw [SetLike.mem_coe, LinearMap.mem_ker, ← hET, (mem_goodL_iff D S In.θ j y).mp hy a, map_zero]
-  obtain ⟨m, o, g, rfl⟩ := Submodule.mem_span_set'.mp hx.1
-  choose w hwM hwg using fun t => (g t).2
-  have hg : ∀ t, (g t : FmT D T S i j b) = Φ (w t) := fun t => (hwg t).trans (hw _).symm
-  simp only [hg] at hx0 ⊢
-  haveI : Fintype ↥(Formalism.IndefR.NX.U D.nd) := Fintype.ofFinite _
-  have hsol := hrel (fun t a => eqL D S In.θ j a (w t)) (fun t a => eqL_rational D S In j h1 h2 W0 hW0 hW0c a (w t)) o (by
-    intro a
-    rw [← hx0 a, map_sum]
-    refine Finset.sum_congr rfl fun t _ => ?_
-    rw [hET, LinearMap.map_smul_of_tower])
-  clear hx0 hx
-  induction hsol using Submodule.span_induction with
-  | mem o ho =>
-    obtain ⟨c, hc0, hco⟩ := ho
-    have h3 : ∑ t, o t • Φ (w t) = Φ (∑ t, ((c t : ↥D.LL0) : D.what₂.LL) • (w t : S.WL j)) := by
-      rw [map_sum]
-      refine Finset.sum_congr rfl fun t _ => ?_
-      rw [hc, ← hco, algebraMap_smul]
-    rw [h3]
-    refine hstep _ (Submodule.sum_mem _ fun t _ => ?_) ((mem_goodL_iff D S In.θ j _).mpr fun a => ?_)
-    · let a : 𝓞 D.what₂.LL := ⟨((c t : ↥D.LL0) : D.what₂.LL),
-        (RingOfIntegers.isIntegral_coe (c t)).map (algebraMap ↥D.LL0 D.what₂.LL).toIntAlgHom⟩
-      have h4 := Submodule.smul_mem _ a (Submodule.subset_span (R := 𝓞 D.what₂.LL) (s := ((S.A j).MK : Set (S.WL j))) (hwM t))
-      rwa [← algebraMap_smul D.what₂.LL a] at h4
-    · rw [map_sum]
-      simpa only [map_smul] using hc0 a
-  | zero => simp
-  | add o o' _ _ ho ho' =>
-    simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add]
-    exact add_mem ho ho'
-  | smul r o _ ho =>
-    simp only [Pi.smul_apply, smul_eq_mul, mul_smul, ← Finset.smul_sum, LinearMap.map_smul_of_tower]
-    exact Submodule.smul_mem _ _ ho

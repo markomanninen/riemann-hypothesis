@@ -1,4 +1,10 @@
-import Formalism.LatticeTheta.Statement
+module
+
+public import Formalism.LatticeTheta.Statement
+
+@[expose] public section
+
+@[expose] section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PostOnGaLMemGoodPart
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelGroupActionEqZeroOfNoLift
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PostOnGaLMemGoodPart
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelGroupActionEqZeroOfNoLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem postOn_actL_mem (g0 : G0 L.Pg L.r) {X : MMap M}
   · have hκ := hex.choose_spec
     have e : postOn M (actL V β L g0) X = (levChi V β (flagL L) hex.choose)⁻¹ • heckeOn M {hex.choose} X := by
       ext v g
-      rw [hU, actG0, dif_pos hex]
+      rw [hU, actG0, dite_eq_left hex]
       simp [heckeOn, postOn_apply, heckeLin_apply]
     rw [e]
     refine Submodule.smul_mem _ _ ?_
@@ -65,7 +69,7 @@ theorem postOn_actL_mem (g0 : G0 L.Pg L.r) {X : MMap M}
       group
   · have e : postOn M (actL V β L g0) X = 0 := by
       ext v g
-      rw [hU, actG0, dif_neg hex]
+      rw [hU, actG0, dite_eq_right hex]
       rfl
     rw [e]
     exact zero_mem _

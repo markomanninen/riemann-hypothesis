@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.GKModules.Garding
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableConv
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableConv
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -65,7 +69,7 @@ theorem rightUAction_orbitL (u : UniversalEnvelopingAlgebra ℝ h.lieSubalgebra)
   | mul a b ha hb =>
     rw [map_mul, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hb, ha]
   | add a b ha hb =>
-    rw [map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, ha, hb, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, ha, hb, map_add (f := _)]
 
 def dualComp (l : StrongDual ℂ E) : h.smoothFuns (F := E) →ₗ[ℂ] h.smoothFuns (F := ℂ) where
   toFun f := ⟨fun g => l ((f : G → E) g), by
@@ -103,7 +107,8 @@ theorem dualComp_rightDerivEnd (l : StrongDual ℂ E) (X : 𝔤) (f : h.smoothFu
 theorem dualComp_laplacian (l : StrongDual ℂ E) {ι : Type*} [Fintype ι]
     (b : Module.Basis ι ℝ h.lieSubalgebra) (f : h.smoothFuns (F := E)) :
     h.dualComp l (h.laplacian (F := E) b f) = h.laplacian (F := ℂ) b (h.dualComp l f) := by
-  simp only [laplacian, LinearMap.sum_apply, map_sum, Module.End.mul_apply, dualComp_rightDerivEnd]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [laplacian, LinearMap.sum_apply, map_sum, Module.End.mul_apply, dualComp_rightDerivEnd]
 
 variable [MeasurableSpace G] [BorelSpace G]
 

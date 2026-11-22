@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem restrModel_isPlaceModel : ∀ (D : D7) {m n m' n' m'' n'' : ℕ} (ψ : A
     have hfun : (fun t => (fun t => Φ (t + x)) (r t).1 * h (r t).2) =
         fun t => (fun t => Φ (r t).1 * h (r t).2) (t + r.symm (x, 0)) := by
       funext t
-      simp only [map_add, AddEquiv.apply_symm_apply, Prod.fst_add, Prod.snd_add, add_zero]
+      simp only [map_add (f := _), AddEquiv.apply_symm_apply, Prod.fst_add, Prod.snd_add, add_zero]
     rw [hfun, hT.trans _ (hSB Φ hΦ) _ (hhalf x hx), hcomp]
     rfl
   · intro Φ hΦ y' hy'

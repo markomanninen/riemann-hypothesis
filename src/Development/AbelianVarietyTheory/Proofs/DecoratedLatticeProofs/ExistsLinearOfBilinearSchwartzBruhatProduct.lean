@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdFnMemSB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdFnMemSB
+
+@[expose] public section
+
 open GlobalTheory.SplitWeil GlobalTheory.LocFlat.CFac
 open scoped TensorProduct
 
@@ -32,7 +37,8 @@ theorem tensorToProd_injective (X Y : Type) [TopologicalSpace X] [TopologicalSpa
   have hm : ∀ x y, ∑ i ∈ c.support, (b i).1 x * (c i).1 y = 0 := by
     intro x y
     have := congrArg (fun F : SB (X × Y) => F.1 (x, y)) ht
-    simp only [ht', Finsupp.sum, map_sum, tensorToProd_tmul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ht', Finsupp.sum, map_sum, tensorToProd_tmul] at this
     simpa [Submodule.coe_sum, Finset.sum_apply] using this
   have hzero : c = 0 := by
     ext i y

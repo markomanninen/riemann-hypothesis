@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.Hk3
@@ -74,7 +79,8 @@ theorem locVac_mem_span_vac : ∀ (L : Type) [Field L] [CharZero L] [Valued L (W
       exact hint
     have hsum : (f.support.sum fun d => (χ d u - 1) • f d) = 0 := by
       have e1 : ρ u w = f.support.sum fun d => χ d u • f d := by
-        rw [← hfw, Finsupp.sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hfw, Finsupp.sum, map_sum]
         exact Finset.sum_congr rfl fun d _ => heigV d u hu _ (hf d)
       have e2 : w = f.support.sum fun d => f d := by rw [← hfw, Finsupp.sum]
       simp only [sub_smul, one_smul, Finset.sum_sub_distrib, ← e1, ← e2, hw u hu, sub_self]

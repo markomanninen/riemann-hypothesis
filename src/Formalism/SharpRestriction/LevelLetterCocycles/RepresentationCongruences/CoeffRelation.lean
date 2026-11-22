@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.FrobeniusPowerSeries.ArcLengthTwo
 
@@ -15,7 +19,8 @@ theorem coeff_relation {O : Type*} [CommRing O] [IsDomain O] {d₁ d : ℕ} (p :
   have h1 : coeff k (C p ^ K * (∑ m, F m * C (μ m j) -
       (if j = k₀ then C p ^ s * X ^ S * Q else 0))) = 0 := by
     rw [hR, coeff_X_pow_mul', if_neg (by omega)]
-  simp only [← map_pow, coeff_C_mul, map_sub, map_sum, coeff_mul_C] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_pow, coeff_C_mul, map_sub, map_sum, coeff_mul_C] at h1
   have h2 := sub_eq_zero.mp ((mul_eq_zero.mp h1).resolve_left (pow_ne_zero _ hp))
   rw [h2]
   split_ifs with hj

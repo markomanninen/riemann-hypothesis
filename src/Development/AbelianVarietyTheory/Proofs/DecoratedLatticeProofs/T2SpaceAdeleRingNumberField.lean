@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+
+@[expose] public section
 
 open IsDedekindDomain NumberField Matrix Topology
 open scoped TensorProduct Pointwise
@@ -243,7 +247,7 @@ theorem exists_compact_mat {Λ : Set (n → S)} (hΛ : IsCompact Λ) {e : S}
   · exact continuous_const.add (Continuous.matrix_transpose continuous_id)
   · conv_rhs => rw [← hM]
     ext i j
-    simp [cut, mulVec_smul, mul_sub, sub_mul]
+    simp [cut, mulVec_smul, mul_sub, sub_mul, Function.swap, Matrix.col]
     ring
 
 theorem stab_compact_open [T2Space S] {φ : G →* GL n S} (hφ : IsClosedEmbedding φ) {e : S}
@@ -359,7 +363,7 @@ end Main
 section Tens
 variable {F E R : Type} [Field F] [Field E] [NumberField E] [Algebra F E] [CommRing R] [Algebra F R]
 
-theorem span_lattice {n : ℕ} {N : Submodule (𝓞 E) (Fin n → E)} (hN : Submodule.IsLattice E N) :
+theorem span_lattice {n : ℕ} {N : Submodule (𝓞 E) (Fin n → E)} (hN : Submodule.IsFullLattice E N) :
     ∃ (m : ℕ) (x : Fin m → Fin n → E), (∀ k, x k ∈ N) ∧ (∀ y ∈ N, y ∈ Submodule.span ℤ (Set.range x)) ∧
       Submodule.span F (Set.range x) = ⊤ := by
   have h1 : Module.Finite (𝓞 E) N := Module.Finite.iff_fg.2 hN.fg
@@ -392,10 +396,10 @@ theorem span_lattice {n : ℕ} {N : Submodule (𝓞 E) (Fin n → E)} (hN : Subm
       | zero => intro a; simp
       | add y z _ _ hy hz => intro a; rw [smul_add]; exact Submodule.add_mem _ (hy a) (hz a)
       | smul c y _ hy => intro a; rw [smul_smul]; exact hy _
-    rw [eq_top_iff]
+    apply eq_top_iff.mpr
     intro y _
-    simpa using key y (by rw [hN.span_eq_top]; trivial) 1
-
+    have hy : y ∈ Submodule.span E (N : Set (Fin n → E)) := by rw [hN.span_eq_top]; trivial
+    simpa using key y hy 1
 omit [NumberField E] in
 theorem comb_surjective {n m : ℕ} {x : Fin m → Fin n → E} (hx : Submodule.span F (Set.range x) = ⊤) :
     Function.Surjective (Fintype.linearCombination R fun k i => ((1 : R) ⊗ₜ[F] x k i : R ⊗[F] E)) := by
@@ -431,7 +435,7 @@ theorem t2_tensor_product [T2Space R] : T2Space (R ⊗[F] E) := by
     (fun a c h => b.repr.injective (Finsupp.ext (congrFun h))) (continuous_pi fun i => ?_)
   exact IsModuleTopology.continuous_of_linearMap (b.coord i)
 
-theorem lattice {n : ℕ} {N : Submodule (𝓞 E) (Fin n → E)} (hN : Submodule.IsLattice E N) (O : AddSubgroup R)
+theorem lattice {n : ℕ} {N : Submodule (𝓞 E) (Fin n → E)} (hN : Submodule.IsFullLattice E N) (O : AddSubgroup R)
     (hO : IsCompact (O : Set R)) {e : R} (heO : e ∈ O) (he : ∀ a ∈ O, e * a = a) {U : Set R} (hU : U ∈ nhds 0)
     (hUe : ∀ a ∈ U, e * a ∈ O) (Λ : AddSubgroup (Fin n → R ⊗[F] E))
     (hΛ : Λ = AddSubgroup.closure {y | ∃ a ∈ O, ∃ x ∈ N, y = fun i => a ⊗ₜ[F] x i}) :
@@ -552,8 +556,8 @@ theorem map_eq_zero_iff_repr {F E R R' ι : Type} [Field F] [Field E] [Algebra F
 
 variable {F : Type} [Field F] [NumberField F]
 
-open Classical in
 
+open Classical in
 def idemF (P : HeightOneSpectrum (𝓞 F) → Prop) : Af F :=
   ⟨fun v => if P v then 1 else 0, Filter.Eventually.of_forall fun v => by
     by_cases h : P v
@@ -596,8 +600,8 @@ theorem idem_orth {P Q : HeightOneSpectrum (𝓞 F) → Prop} (h : ∀ v, P v �
 
 theorem idem_sum {P Q : HeightOneSpectrum (𝓞 F) → Prop} (h : ∀ v, P v → ¬ Q v) :
     idem (fun v => ¬ P v ∧ ¬ Q v) + idem P + idem Q = idem fun _ => True := by
-  refine adele_ext (by simp only [map_add, fst_idem, add_zero]) fun v => ?_
-  simp only [map_add, snd_idem]
+  refine adele_ext (by simp only [map_add (f := _), fst_idem, add_zero]) fun v => ?_
+  simp only [map_add (f := _), snd_idem]
   rw [idemF_pos (P := fun _ => True) trivial]
   by_cases hv : P v
   · rw [idemF_neg (h v hv), idemF_pos hv, idemF_neg (by simp [hv]), add_zero, zero_add]
@@ -608,9 +612,9 @@ theorem idem_sum {P Q : HeightOneSpectrum (𝓞 F) → Prop} (h : ∀ v, P v →
 def intOn (P : HeightOneSpectrum (𝓞 F) → Prop) : AddSubgroup (AF F) where
   carrier := {a | fstA F a = 0 ∧ sndA F a ∈ intAf F ∧ ∀ v, ¬ P v → evalV F v (sndA F a) = 0}
   zero_mem' := ⟨map_zero _, fun v => by rw [map_zero, map_zero]; exact zero_mem _, fun v _ => by rw [map_zero, map_zero]⟩
-  add_mem' := fun {a b} ha hb => ⟨by rw [map_add, ha.1, hb.1, add_zero],
-    fun v => by rw [map_add, map_add]; exact add_mem (ha.2.1 v) (hb.2.1 v),
-    fun v hv => by rw [map_add, map_add, ha.2.2 v hv, hb.2.2 v hv, add_zero]⟩
+  add_mem' := fun {a b} ha hb => ⟨by rw [map_add (f := _), ha.1, hb.1, add_zero],
+    fun v => by rw [map_add (f := _), map_add (f := _)]; exact add_mem (ha.2.1 v) (hb.2.1 v),
+    fun v hv => by rw [map_add (f := _), map_add (f := _), ha.2.2 v hv, hb.2.2 v hv, add_zero]⟩
   neg_mem' := fun {a} ha => ⟨by rw [map_neg, ha.1, neg_zero],
     fun v => by rw [map_neg, map_neg]; exact neg_mem (ha.2.1 v),
     fun v hv => by rw [map_neg, map_neg, ha.2.2 v hv, neg_zero]⟩
@@ -683,6 +687,67 @@ theorem eps_stable (V : HSp D) (P : Pl D → Prop) (x : GA D V) :
     ∃ x', matHom V x' = Units.map (cutHom (eps_sq P)) (matHom V x) :=
   ⟨⟨_, cut_mem (eps_sq P) (by simp [sigR, eps]) x.2⟩, rfl⟩
 
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+private lemma selfDual_isFullLattice (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E))
+    (hΛ : Formalism.IndefR.Datum.IsSelfDualC V Λ) : Submodule.IsFullLattice D.host.E Λ := by
+  haveI : Submodule.IsLattice D.host.E Λ := hΛ.1
+  refine ⟨?_⟩
+  obtain ⟨s, hs⟩ := hΛ.1.fg
+  apply eq_top_iff.mpr
+  intro y _
+  let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+    ∑ i, ∑ j, star (x i) * V.gram i j * y j
+  obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+  have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+    exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+  let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+    carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+    zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+    add_mem' := by
+      rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+      refine ⟨b + c, ?_⟩
+      change (b : D.host.E) + c = _
+      rw [hb, hc]
+      simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+    smul_mem' := by
+      rintro c x ⟨b, hb⟩
+      refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+      simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+      simp only [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      change star (c : D.host.E) * _ = _
+      ring }
+  have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+    intro x hx
+    obtain ⟨b, hb⟩ := ha x hx
+    exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+  have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+    apply (hΛ.2 _).2
+    intro x hx
+    have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+    obtain ⟨b, hb⟩ := hxP
+    refine ⟨b, ?_⟩
+    rw [hb]
+    dsimp only [f, Pi.smul_apply]
+    simp only [smul_eq_mul, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+    Submodule.subset_span hy
+  have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+    (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+  change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+    ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+  rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+  exact this
+
 theorem exists_level (D : D7) (V : HSp D) (N : Lat V) (A B : Finset (Pl D)) (JA JB : Subgroup (GA D V)) (b : GA D V)
     (hAB : Disjoint B A) (hN : Formalism.IndefR.Datum.IsSelfDualC V N) (_ : b ∈ GfC V)
     (lA : JA ≤ grpAt V fun x => x ∈ A) (cA : IsCompact (JA : Set (GA D V)))
@@ -702,7 +767,7 @@ theorem exists_level (D : D7) (V : HSp D) (N : Lat V) (A B : Finset (Pl D)) (JA 
   have hd : ∀ v, v ∈ A → ¬ v ∈ B := fun v hv h => Finset.disjoint_left.1 hAB h hv
   have hU : {a : AF D.host.F | sndA _ a ∈ intAf _} ∈ nhds 0 :=
     ((open_compact_hat D.host.F).1.preimage continuous_snd).mem_nhds fun v => zero_mem _
-  obtain ⟨l1, l2, l3, l4⟩ := lattice hN.1 (intOn fun p => p ∉ A ∧ p ∉ B) (compact_intOn _)
+  obtain ⟨l1, l2, l3, l4⟩ := lattice (selfDual_isFullLattice V N hN) (intOn fun p => p ∉ A ∧ p ∉ B) (compact_intOn _)
     (e := idem fun p => p ∉ A ∧ p ∉ B) ⟨rfl, idemF_int _, fun _ hv => idemF_neg hv⟩
     (fun a ha => (idem_mul_eq_iff _ a).2 ⟨ha.1, ha.2.2⟩) hU
     (fun a ha => ⟨by rw [map_mul, fst_idem, zero_mul],

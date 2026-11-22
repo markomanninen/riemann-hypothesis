@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Bl.FirstBlockLemmaH
 
@@ -37,7 +41,7 @@ theorem goal1 :
     exact zero_mem _
   | add x y _ _ hx hy =>
     intro i
-    rw [map_add, Finsupp.add_apply, mul_add]
+    rw [map_add (f := _), Finsupp.add_apply, mul_add]
     exact add_mem (hx i) (hy i)
   | smul a x _ hx =>
     intro i

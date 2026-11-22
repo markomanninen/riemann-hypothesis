@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut
 open scoped TensorProduct ContDiff Topology
 
@@ -19,8 +24,8 @@ theorem prod_ofFn_append {G : Type} [Monoid G] {d k : ℕ} (δ : Fin d → ℝ �
 theorem contDiff_append {d k : ℕ} : ContDiff ℝ ∞ fun q : (Fin d → ℝ) × (Fin k → ℝ) => Fin.append q.1 q.2 := by
   refine contDiff_pi.2 fun i => ?_
   refine Fin.addCases (fun a => ?_) (fun j => ?_) i
-  · simp only [Fin.append_left]; exact (contDiff_apply ℝ ℝ a).comp contDiff_fst
-  · simp only [Fin.append_right]; exact (contDiff_apply ℝ ℝ j).comp contDiff_snd
+  · simp only [Fin.append_left]; exact (contDiff_apply ℝ (fun _ => ℝ) a).comp contDiff_fst
+  · simp only [Fin.append_right]; exact (contDiff_apply ℝ (fun _ => ℝ) j).comp contDiff_snd
 
 theorem iteratedFDeriv_slice {A B : Type} [NormedAddCommGroup A] [NormedSpace ℝ A] [NormedAddCommGroup B]
     [NormedSpace ℝ B] {H : A × B → ℂ} (hH : ContDiff ℝ ∞ H) (m : ℕ) (a : A) (t : B) :
@@ -48,8 +53,8 @@ theorem commute_prod_realLine {k : ℕ} {γ : Fin k → ℝ → GAd σ J} (hγ :
 
 end GlobalTheory.UAut.JointDer
 
-open GlobalTheory.UAut.JointDer in
 
+open GlobalTheory.UAut.JointDer in
 theorem GlobalTheory.UAut.continuous_iteratedFDeriv_prod_realLine : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (d : ℕ) (δ : Fin d → ℝ → GAd σ J), (∀ a, IsRealLine σ J (δ a)) → (∀ U ∈ 𝓝 (1 : GAd σ J), ∃ W ∈ 𝓝 (1 : GAd σ J), ∃ s : GAd σ J → (Fin d → ℝ), ContinuousAt s 1 ∧ ∀ y ∈ W, ∃ u ∈ U, u ∈ finPts σ J ∧ y = (List.ofFn fun a => δ a (s y a)).prod * u) → ∀ φ : GAd σ J → ℂ, (∃ U : Subgroup (GAd σ J), IsOpen (U : Set (GAd σ J)) ∧ ∀ k ∈ U, k ∈ finPts σ J → ∀ g, φ (g * k) = φ g) → IsSm σ J φ → ∀ (k : ℕ) (γ : Fin k → ℝ → GAd σ J), (∀ i, IsRealLine σ J (γ i)) → ∀ m : ℕ, Continuous fun p : GAd σ J × (Fin k → ℝ) => iteratedFDeriv ℝ m (fun t : Fin k → ℝ => φ (p.1 * (List.ofFn fun i => γ i (t i)).prod)) p.2 := by
   intro F E _ _ _ _ _ σ _ n J _ d δ hδ hchart φ hlev hsm k γ hγ m
   obtain ⟨U, hUo, hU⟩ := hlev
@@ -66,7 +71,7 @@ theorem GlobalTheory.UAut.continuous_iteratedFDeriv_prod_realLine : ∀ (F E : T
     have h2 := h1.comp contDiff_append
     convert h2 using 1
     funext q
-    simp only [Function.comp_apply, H, prod_ofFn_append, hP, hQ]
+    simp [H, hP, hQ, prod_ofFn_append]
   have key : ∀ x, x₀⁻¹ * x ∈ W → ∀ t, φ (x * P t) = H (s (x₀⁻¹ * x), t) := by
     intro x hx t
     obtain ⟨u, huU, huf, e⟩ := hWs _ hx

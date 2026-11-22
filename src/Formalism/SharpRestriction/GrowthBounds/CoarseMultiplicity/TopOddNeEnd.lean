@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,32 +12,32 @@ namespace Formalism.MainNotions.ColumnSystems.Pf
 open Formalism.MainNotions.G MvPolynomial
 
 theorem eig_one {R : Type} [CommSemiring R] {σ : Type} (ν μ : σ →₀ ℕ) (u : MvPolynomial σ R) :
-    coeff μ (monomial ν (1 : R) * divDer ν u) = coeff μ u * ((ν.prod fun k i => (μ k).choose i : ℕ) : R) := by
+    AddMonoidAlgebra.coeff (monomial ν (1 : R) * divDer ν u) μ = AddMonoidAlgebra.coeff u μ * ((ν.prod fun k i => (μ k).choose i : ℕ) : R) := by
   classical
   unfold divDer
   rw [Finset.mul_sum, coeff_sum]
-  have key : ∀ m ∈ u.support, coeff μ (monomial ν (1 : R) * (if ν ≤ m then
-      monomial (m - ν) (coeff m u * ((ν.prod fun k i => (m k).choose i : ℕ) : R)) else 0)) =
-      if m = μ then coeff μ u * ((ν.prod fun k i => (μ k).choose i : ℕ) : R) else 0 := by
+  have key : ∀ m ∈ u.support, AddMonoidAlgebra.coeff (monomial ν (1 : R) * (if ν ≤ m then
+      monomial (m - ν) (AddMonoidAlgebra.coeff u m * ((ν.prod fun k i => (m k).choose i : ℕ) : R)) else 0)) μ =
+      if m = μ then AddMonoidAlgebra.coeff u μ * ((ν.prod fun k i => (μ k).choose i : ℕ) : R) else 0 := by
     intro m _
     by_cases h1 : ν ≤ m
-    · rw [if_pos h1, monomial_mul, one_mul, add_tsub_cancel_of_le h1, coeff_monomial]
+    · rw [ite_eq_left h1, monomial_mul_monomial, one_mul, add_tsub_cancel_of_le h1, coeff_monomial]
       by_cases h2 : m = μ
       · subst h2; simp
-      · rw [if_neg h2, if_neg h2]
-    · rw [if_neg h1, mul_zero, coeff_zero]
+      · rw [ite_eq_right h2, ite_eq_right h2]
+    · rw [ite_eq_right h1, mul_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       by_cases h2 : m = μ
       · subst h2
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         obtain ⟨k, hk⟩ : ∃ k, ¬ ν k ≤ m k := by
           by_contra hcon
-          push_neg at hcon
+          push Not at hcon
           exact h1 hcon
         have hk' : m k < ν k := not_le.1 hk
         have h0 : (ν.prod fun k i => (m k).choose i) = 0 :=
           Finset.prod_eq_zero (i := k) (Finsupp.mem_support_iff.2 (by omega)) (Nat.choose_eq_zero_of_lt hk')
         rw [h0]; simp
-      · rw [if_neg h2]
+      · rw [ite_eq_right h2]
   rw [Finset.sum_congr rfl key, Finset.sum_ite_eq']
   split_ifs with h
   · rfl
@@ -42,7 +46,8 @@ theorem eig_one {R : Type} [CommSemiring R] {σ : Type} (ν μ : σ →₀ ℕ) 
 theorem eigAt : EigAt := by
   intro O _ _ σ T q u μ
   unfold gOp gEv
-  rw [coeff_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun ν _ => ?_
   rw [coeff_smul, eig_one, Algebra.smul_def, map_mul, map_natCast]
   ring
@@ -55,17 +60,18 @@ theorem fock_monoMap {K : Type} [Field K] {σ τ : Type} (f : MvPolynomial σ K 
   have hexp : ∀ v : MvPolynomial σ K, f v = ∑ μ ∈ v.support, monomial (ε μ) (v.coeff μ) := by
     intro v
     conv_lhs => rw [← v.support_sum_monomial_coeff]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun μ _ => hf μ _
-  have hco : ∀ (v : MvPolynomial σ K) (μ : σ →₀ ℕ), coeff (ε μ) (f v) = coeff μ v := by
+  have hco : ∀ (v : MvPolynomial σ K) (μ : σ →₀ ℕ), AddMonoidAlgebra.coeff (f v) (ε μ) = AddMonoidAlgebra.coeff v μ := by
     intro v μ
     rw [hexp, coeff_sum]
-    have : ∀ μ' ∈ v.support, coeff (ε μ) (monomial (ε μ') (v.coeff μ')) = if μ' = μ then v.coeff μ else 0 := by
+    have : ∀ μ' ∈ v.support, AddMonoidAlgebra.coeff (monomial (ε μ') (v.coeff μ')) (ε μ) = if μ' = μ then v.coeff μ else 0 := by
       intro μ' _
       rw [coeff_monomial]
       by_cases h : μ' = μ
       · subst h; simp
-      · rw [if_neg h, if_neg fun h' => h (hε h')]
+      · rw [ite_eq_right h, ite_eq_right fun h' => h (hε h')]
     rw [Finset.sum_congr rfl this, Finset.sum_ite_eq']
     split_ifs with h
     · rfl

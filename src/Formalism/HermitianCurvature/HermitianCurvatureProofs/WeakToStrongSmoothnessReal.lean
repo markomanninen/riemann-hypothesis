@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+module
+
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+
+@[expose] public section
 
 open Filter Topology Set
 
@@ -56,7 +60,7 @@ lemma taylor2 {f : X → E} {x₀ : X} {r M : ℝ}
       (show x₀ + h ∈ Metric.closedBall x₀ ‖h‖ by
         rw [Metric.mem_closedBall, dist_eq_norm, add_sub_cancel_left])
   have e : (f (x₀ + h) - fderiv ℝ f x₀ (x₀ + h)) - (f x₀ - fderiv ℝ f x₀ x₀) =
-      f (x₀ + h) - f x₀ - fderiv ℝ f x₀ h := by rw [map_add]; abel
+      f (x₀ + h) - f x₀ - fderiv ℝ f x₀ h := by rw [map_add (f := _)]; abel
   rw [e, add_sub_cancel_left] at key
   calc _ ≤ M * ‖h‖ * ‖h‖ := key
     _ = M * ‖h‖ ^ 2 := by ring
@@ -157,7 +161,7 @@ lemma hasFDeriv_of {V I : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [Comp
   choose ℓ hℓ using exists_vec hN hr D hT
   let ℓ' : X →ₗ[ℝ] V :=
     { toFun := ℓ
-      map_add' := fun a b => hN.eq (fun i => by rw [map_add, hℓ, hℓ, hℓ, map_add])
+      map_add' := fun a b => hN.eq (fun i => by rw [map_add (f := _), hℓ, hℓ, hℓ, map_add (f := _)])
       map_smul' := fun c a => hN.eq (fun i => by rw [map_smul, hℓ, hℓ, map_smul]; rfl) }
   have hL : ∀ h, (LinearMap.toContinuousLinearMap ℓ') h = ℓ h := fun h => rfl
   refine ⟨LinearMap.toContinuousLinearMap ℓ', ?_, fun i => ?_⟩
@@ -293,7 +297,7 @@ lemma gNa_nonneg (γ : B.Mat k ρ) (a : ℝ) : 0 ≤ B.gN γ ^ a := Real.rpow_no
 
 lemma ev_add (M : U.CCModel k ρ E a mm S V) (w₁ w₂ : V) :
     M.ev (w₁ + w₂) = fun g => M.ev w₁ g + M.ev w₂ g := by
-  rw [map_add]; rfl
+  rw [map_add (f := _)]; rfl
 
 lemma ev_smul (M : U.CCModel k ρ E a mm S V) (c : ℂ) (w : V) : M.ev (c • w) = fun g => c • M.ev w g := by
   rw [map_smul]; rfl

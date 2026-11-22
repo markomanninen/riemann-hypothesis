@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -27,7 +31,8 @@ theorem mvPolynomial_map_maximalIdeal_isPrime (O : Type) [CommRing O] [IsLocalRi
       = RingHom.ker (MvPolynomial.map (σ := Fin g) (IsLocalRing.residue O)) := by
     ext F
     rw [MvPolynomial.mem_map_C_iff, RingHom.mem_ker, MvPolynomial.ext_iff]
-    simp only [MvPolynomial.coeff_map, MvPolynomial.coeff_zero, IsLocalRing.residue_eq_zero_iff]
+    simp only [MvPolynomial.coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
+      IsLocalRing.residue_eq_zero_iff]
   rw [h]
   exact RingHom.ker_isPrime _
 

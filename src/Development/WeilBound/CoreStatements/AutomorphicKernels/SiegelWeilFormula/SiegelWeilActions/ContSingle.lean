@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CtSplitOfParts
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CBDM
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.WMUnitary
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.Imports
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ExistsSigmaNe
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PtEx
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.MainLe
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CtSplitOfParts
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.CBDM
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.WMUnitary
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.Imports
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ExistsSigmaNe
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PtEx
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.MatrixOfUnipotentFrame
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FockVacuumBounds.MainLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem cLawEx : CLawEx := by
   have hWu : (incM F M₀)ᵀ * kunf.jw d.n e * (incM F M₀).map (cA σ) = kunf.jw d.n e := by
     rw [hW]
     refine CL.wM_unitary L.i₀ (cA σ).toRingHom 1 e e ?_ ?_
-    · simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_one, mul_one, hee]
+    · simp only [AlgHom.toRingHom_eq_coe, map_one, mul_one, hee]
     · simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, he_def, map_intCast, one_mul]
   obtain ⟨w₁, hw₁⟩ := kunf.exists_of_frame hε (incM F M₀) (incM F M₀') hWW hWu
   have hw₁' : inFrame d.b w₁ = CL.wM L.i₀ (1 : AE F E) e := hw₁.trans hW
@@ -82,12 +86,23 @@ theorem cLawEx : CLawEx := by
     convert this using 2 with c
     simp only [Mc', neg_smul, Pi.neg_apply, map_neg]
     rfl
+  have cA_inclR (x : E) : cA σ (inclR (F := F) (AF F) x) = inclR (F := F) (AF F) (σ x) := by
+    show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] x) = (1 : AF F) ⊗ₜ[F] σ x
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
+  have cA_invol (z : AE F E) : cA σ (cA σ z) = z := by
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul a x =>
+      show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
+        (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ (a ⊗ₜ[F] x)) = a ⊗ₜ[F] x
+      rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply, CL.sigma_sigma_cm d.cm]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hcA_z : ∀ a : AF F, cA σ (a • δ') = -(e * (a • δ')) := by
     intro a
-    rw [map_smul, hδ', GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR σ δ, hδ, map_neg, map_mul, map_intCast, smul_neg, mul_smul_comm]
+    rw [map_smul, hδ', cA_inclR δ, hδ, map_neg, map_mul, map_intCast, smul_neg, mul_smul_comm]
   obtain ⟨cM, hcMc, hcM⟩ := CL.ptEx' d hε Mc Mc' hMc hMc'
     (fun c => CL.cB_mul hem c.1 _ _) (fun c => CL.cB_unitary hem (cA σ).toRingHom
-      (fun a => GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ (CL.sigma_sigma_cm d.cm) a) e hee c.1 (c.2 • δ') (hcA_z c.2))
+      cA_invol e hee c.1 (c.2 • δ') (hcA_z c.2))
   have hfr := fun x y => GlobalTheory.EisBL.DoubledParabolic.inFrame_mul (σ := σ) (Y := d.Y) d.b x y
   refine ⟨w₁, cM, κ, ⟨?_, ?_, ?_⟩, kunf.rat_of_inFrame hw₁, ⟨1, (R.ε : ℤ), one_ne_zero, ?_, ?_⟩, hcMc, hκ,
     ⟨δ, hδ0, fun c => ⟨_, hcM c⟩⟩⟩

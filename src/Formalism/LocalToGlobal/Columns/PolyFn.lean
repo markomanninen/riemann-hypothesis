@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,23 +31,6 @@ def evFr (G : ι → Matrix (Fin n) (Fin n) ℂ) (sh : ι → ℤ) (s : K →+* 
 def deFr {G : ι → Matrix (Fin n) (Fin n) ℂ} (y : Frames G) (τ : ι) : ℂ := (y.1 τ).det
 
 def stdFr : Frames (fun _ : ι => (1 : Matrix (Fin n) (Fin n) ℂ)) := ⟨fun _ => 1, fun _ => by simp⟩
-
-theorem stdFr_isON : (stdFr (ι := ι) (n := n)).IsON := fun τ => Or.inl (by simp [stdFr])
-
-def mulU {G : ι → Matrix (Fin n) (Fin n) ℂ} (o : Frames G) (u : ι → Matrix (Fin n) (Fin n) ℂ)
-    (hu : ∀ τ, (u τ)ᴴ * u τ = 1) : Frames G :=
-  ⟨fun τ => o.1 τ * u τ, fun τ => by
-    rw [det_mul]; exact (o.2 τ).mul (Matrix.isUnit_det_of_left_inverse (hu τ))⟩
-
-theorem mulU_isON {G : ι → Matrix (Fin n) (Fin n) ℂ} (o : Frames G) (ho : o.IsON) (u : ι → Matrix (Fin n) (Fin n) ℂ)
-    (hu : ∀ τ, (u τ)ᴴ * u τ = 1) : (mulU o u hu).IsON := by
-  intro τ
-  have e : (o.1 τ * u τ)ᴴ * G τ * (o.1 τ * u τ) = (u τ)ᴴ * ((o.1 τ)ᴴ * G τ * o.1 τ) * u τ := by
-    simp only [conjTranspose_mul, Matrix.mul_assoc]
-  show (o.1 τ * u τ)ᴴ * G τ * (o.1 τ * u τ) = 1 ∨ (o.1 τ * u τ)ᴴ * G τ * (o.1 τ * u τ) = -1
-  rcases ho τ with h | h
-  · left; rw [e, h, Matrix.mul_one, hu τ]
-  · right; rw [e, h, Matrix.mul_neg, Matrix.mul_one, Matrix.neg_mul, hu τ]
 
 theorem mapS_apply {σ : Type} (s : K →+* ℂ) (P : MvPolynomial σ K) : mapS s P = MvPolynomial.map s P := rfl
 
@@ -140,7 +127,7 @@ theorem eval_aeval_poly {σ ρ : Type} (f : σ → MvPolynomial ρ ℂ) (d : ρ 
     eval d (aeval f P) = eval (fun x => eval d (f x)) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, hp, MvPolynomial.aeval_X, MvPolynomial.eval_X]
 
 theorem circle_infinite : {z : ℂ | star z * z = 1}.Infinite := by
@@ -286,9 +273,6 @@ theorem evFr_injective (G : ι → Matrix (Fin n) (Fin n) ℂ) (sh : ι → ℤ)
   intro P Q h
   exact mapS_injective s (fnOf_injective G sh 1 (fun τ => by simp) o h)
 
-theorem evFr_injective_std (sh : ι → ℤ) (s : K →+* ℂ) :
-    Function.Injective (evFr (K := K) (fun _ : ι => (1 : Matrix (Fin n) (Fin n) ℂ)) sh s) := evFr_injective _ sh s stdFr
-
 end Inj
 
 section ESide
@@ -310,8 +294,6 @@ theorem evV_injective (emb : ι → E →+* K) (J : Matrix (Fin n) (Fin n) E) (l
 
 def stdFrC (emb : ι → E →+* ℂ) : Frames (gramC (1 : Matrix (Fin n) (Fin n) E) emb) :=
   ⟨fun _ => 1, fun τ => by simp⟩
-
-theorem stdFrC_isON (emb : ι → E →+* ℂ) : (stdFrC (n := n) emb).IsON := fun τ => Or.inl (by simp [stdFrC, gramC])
 
 theorem natW_anti (lam : DomWeight n) : Antitone lam.natW := by
   intro i j hij

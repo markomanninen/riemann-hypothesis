@@ -1,18 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthCond
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocLenEqZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LidxFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HformSingleApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsTerFurther
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformScalar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsTerExtra
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RationalZeroIffRationalSubspace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LMLatOfLIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EOpEqAsAlgebraHom
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GoodLiftPhase
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaTranslateRangeGap
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TranslateRepresentations
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthCond
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RationalZeroIffRationalSubspace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LMLatOfLIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EOpEqAsAlgebraHom
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GoodLiftPhase
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaTranslateRangeGap
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TranslateRepresentations
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +34,7 @@ variable {K X E W : Type} [Field K] [AddCommGroup X] [Module K X] [NormedAddComm
 theorem lin_injective (hj : IsForm j) {n : ℕ} (f : (Fin n → K) →ₗ[K] X) (hf : Function.Injective f)
     (hZ : ∀ y, j (f y) ∈ LinearMap.range (LinearMap.adjoint θ)) :
     Function.Injective (Formalism.IndefR.Cx.lin fun k => θ (j (f (Pi.single k 1)))) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   have h1 : LinearIndependent K fun k : Fin n => f (Pi.single k 1) := by
     have := (Pi.basisFun K (Fin n)).linearIndependent.map' f (LinearMap.ker_eq_bot.2 hf)
@@ -41,7 +43,8 @@ theorem lin_injective (hj : IsForm j) {n : ℕ} (f : (Fin n → K) →ₗ[K] X) 
   set u : E := ∑ k, c k • j (f (Pi.single k 1)) with hu
   have h3 : u ∈ LinearMap.ker θ := by
     rw [Formalism.IndefR.Cx.lin_apply] at hc
-    rw [LinearMap.mem_ker, hu, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.mem_ker, hu, map_sum]
     simpa only [map_smul] using hc
   have h4 : u ∈ (LinearMap.ker θ)ᗮ := by
     rw [LinearMap.orthogonal_ker]
@@ -71,7 +74,7 @@ end Block
 
 section Content
 
-open Formalism.BasicNotions Formalism.DivisionValues Formalism.EigenvalueLevelCeiling Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Indef.Tree.DepthCond GlobalTheory.IndefiniteRowSideFullHecke.TwistChoiceExample
+open Formalism.BasicNotions Formalism.DivisionValues Formalism.EigenvalueLevelCeiling Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Indef.Tree.DepthCond
 
 end Content
 
@@ -93,27 +96,6 @@ theorem isForm_tw {K X E : Type} [Field K] [AddCommGroup X] [Module K X] [Normed
     rfl
   · obtain ⟨a, ha⟩ := h3 x y
     exact ⟨a, (congrArg (cj s) ha).trans (h a).symm⟩
-
-variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
-  {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A)
-
-def EquivAt (i : Fin D.R.m) (t : T) : Prop :=
-  ∃ ρ, GlobalTheory.IndefiniteRowSideFullHecke.TranslateRepresentations.IsActV R i t ρ ∧ GlobalTheory.IndefiniteRowSideFullHecke.TranslateRepresentations.Commutes ρ (R.gW i (sg0 D A)) (R.thG i t)
-
-def TestAt (i : Fin D.R.m) (t : T) : Prop :=
-  ∃ (n : ℕ) (l : Fin n → ((R.toCx F).W i →ₗ[ℂ] ℂ)), (∀ w : (R.toCx F).W i, (∀ k, l k w = 0) → w = 0) ∧
-    ∀ (x : A.fam.amb.FL i t) (k : Fin n), ∃ a : D.what₂.LL, l k ((R.toCx F).θ' i t ((R.toCx F).jL i t x)) = A.v0.embedding a
-
-def BaseRatAt (i : Fin D.R.m) (t : T) : Prop :=
-  ∀ x ∈ GlobalTheory.IndefiniteRowSideFullHecke.GoodLiftPhase.goodLift F false i t, ∃ y : Fin ((R.toCx F).dW false i) → D.what₂.LL,
-    (R.toCx F).θ' i t ((R.toCx F).jL i t x) = (R.toCx F).w0C false i (cpt A.v0.embedding y)
-
-variable {R F}
-
-open GlobalTheory.IndefiniteRowSideFullHecke.TwistChoiceExample
-
-def withTuples (R : RealDat D A Ks) (μ : HeightOneSpectrum (𝓞 D.what₂.LL) → T)
-    (S : Finset (HeightOneSpectrum (𝓞 D.what₂.LL))) : RealDat D A Ks := { R with mu := μ, twPl := S }
 
 end Real
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl
@@ -12,7 +17,7 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.GodementH
 
-theorem absEv_mul_locFin_le : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (J : Type) [Fintype J] (v : Pl F) (u : J → E) (δ : (Fv F v ⊗[F] E)ˣ) (z : J → Fv F v ⊗[F] E) (c : ℝ≥0),
+theorem absEv_mul_locFin_le : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (J : Type) [Fintype J] (v : Pl (F := F)) (u : J → E) (δ : (Fv F v ⊗[F] E)ˣ) (z : J → Fv F v ⊗[F] E) (c : ℝ≥0),
     (∀ f, z f = ((1 : Fv F v) ⊗ₜ[F] u f) * δ.1) → (∀ f, absFin F v (z f) ≤ c) →
     GlobalTheory.Doubling.absEv F E v δ * locFin σ v u ≤ c ^ 2 := by
   intro F E _ _ _ _ _ σ hσ J _ v u δ z c hz hc
@@ -22,7 +27,7 @@ theorem absEv_mul_locFin_le : ∀ (F E : Type) [Field F] [NumberField F] [Field 
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [sigR]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   have hN := congrArg (fun y => absBar F v (finEmb F v (embBar F E v) y))
     (GlobalTheory.Doubling.algebraMap_norm_eq hσ (R := Fv F v) δ.1)
   simp only [map_mul, absBar_mul, e2, AlgHom.commutes, absBar_algebraMap] at hN

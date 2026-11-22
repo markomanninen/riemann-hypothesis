@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.ElementaryDivisorBasis
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -62,7 +66,6 @@ theorem pos_basisO (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O
     rw [← hD, Submodule.map_span, ← Set.range_comp]
     congr 2
     funext i
-    simp only [Function.comp]
     have hprod : (∏ a, (if a.val < r then c⁻¹ else 1) ^ rowWt i.1 a)⁻¹ = c ^ (∑ a ∈ S, rowWt i.1 a) := by
       simp_rw [ite_pow, one_pow]
       rw [Finset.prod_ite, Finset.prod_const_one, mul_one, Finset.prod_pow_eq_pow_sum, inv_pow, inv_inv]
@@ -73,6 +76,7 @@ theorem pos_basisO (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O
     have hpw : (c⁻¹ ^ S.card) ^ (-ll) = c ^ ((S.card : ℤ) * ll) := by
       rw [inv_pow, inv_zpow', ← zpow_natCast, ← zpow_mul]
       ring_nf
+    simp only [Function.comp_apply]
     rw [hdet, ← hll, hprod]
     simp only [LinearMap.restrictScalars_apply, LinearMap.lsmul_apply, smul_smul]
     congr 1
@@ -145,9 +149,8 @@ theorem ten_basisO (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O
       rw [Hten, e1, ← hT]
       congr 2
       funext i
-      simp only [hP, MvPolynomial.smul_eq_C_mul, map_mul, blockEmb, MvPolynomial.rename_C,
-        Finset.prod_mul_distrib]
-      rw [← map_prod, lb_zpow_sum c hc]
+      simp only [map_smul]
+      rw [Finset.prod_smul, lb_zpow_sum c hc]
     rw [toV, hH, ← comap_span_coe (O := O) (Kf := Kf) (Vsp Kf lam0)
       (fun i => c ^ (∑ s, π s (i s)) • (Module.Basis.mk hyi hys.symm.le) i)]
     congr 3

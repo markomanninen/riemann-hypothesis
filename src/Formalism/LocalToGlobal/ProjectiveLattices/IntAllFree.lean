@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PtFree
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PtFree
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsSigma
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.ConjCls
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.WeierstrassUniqueness.ExistsPeriodPairOfIsLat
-import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.LamConjTheta0
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CmAll
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinRecursion
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FourthTensorThetaEqKernel
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsSigma
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.ConjCls
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.WeierstrassUniqueness.ExistsPeriodPairOfIsLat
+public import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.LamConjTheta0
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.CmAll
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EisensteinRecursion
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FourthTensorThetaEqKernel
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,8 +133,8 @@ theorem inQ_mvExp {f : PowerSeries ℂ} (hf : InQ f) (h0 : constantCoeff f = 0) 
   refine sum_mem fun j _ => mul_mem (inv_mem (natCast_mem _ _)) ?_
   exact inQ_pow hf j k
 
-open Polynomial in
 
+open Polynomial in
 theorem tri_alg (n : ℕ) (b : ℕ → ℕ → ℂ) (hb : ∀ i k, b i k ∈ Formalism.MainNotions.TaylorLogMetric.Qbar) (hb0 : ∀ i, b i 0 = 1) (q : ℕ → ℂ) (t : ℂ)
     (h : ∀ k ≤ n + 1, t ^ k / (k.factorial : ℂ) =
       ∑ i ∈ Finset.range (n + 1), q i * (if i ≤ k then b i (k - i) else 0)) :
@@ -280,7 +284,7 @@ theorem mul_s2_mem_Qbar_of_isogenyFormula (e : PowerSeries ℂ) (he : InQ e) (s 
     rw [coeff_mk]; simp
   have hlmD : lm = D + C (s / 2) * X ^ 2 := by rw [hlm, hD]; rfl
   have hlm0 : constantCoeff lm = 0 := by
-    rw [hlmD, map_add, hD0, map_mul, map_pow, constantCoeff_X]; simp
+    rw [hlmD, map_add (f := _), hD0, map_mul, map_pow, constantCoeff_X]; simp
   have hnl0 : constantCoeff (-lm) = 0 := by rw [map_neg, hlm0, neg_zero]
 
   have h1 : (rescale α Φ) ^ 2 = Φ ^ (2 * (n + 1)) * Pi := by
@@ -314,7 +318,7 @@ theorem mul_s2_mem_Qbar_of_isogenyFormula (e : PowerSeries ℂ) (he : InQ e) (s 
   set F0 : PowerSeries ℂ := (2 * (n + 1)) • D - 2 • rescale α D with hF0
   have h3 : -((2 * (n + 1)) • (-lm)) + 2 • rescale α (-lm) = F0 + C t * X ^ 2 := by
     rw [hF0, ht, hlmD]
-    simp only [map_neg, map_add, map_mul, map_pow, rescale_X, rescale_C', nsmul_eq_mul, map_sub, map_natCast]
+    simp only [map_neg, map_add (f := _), map_mul, map_pow, rescale_X, rescale_C', nsmul_eq_mul, map_sub, map_natCast]
     push_cast
     rw [show (C (2 : ℂ) : PowerSeries ℂ) = 2 from map_ofNat C 2]
     ring
@@ -346,13 +350,14 @@ theorem mul_s2_mem_Qbar_of_isogenyFormula (e : PowerSeries ℂ) (he : InQ e) (s 
   have hB0 : ∀ i, coeff (2 * 0) (B i) = 1 := by
     intro i
     rw [mul_zero, coeff_zero_eq_constantCoeff_apply, hB]
-    simp only [map_mul, map_pow, map_add, map_one, constantCoeff_X]
+    simp only [map_mul, map_pow, map_add (f := _), map_one, constantCoeff_X]
     have : constantCoeff (mvExp (-F0) : PowerSeries ℂ) = 1 := constantCoeff_mvExp hnF0
     rw [this]; simp
   have htri : t ∈ Formalism.MainNotions.TaylorLogMetric.Qbar := by
     refine tri_alg n (fun i k => coeff (2 * k) (B i)) (fun i k => hBq i _) hB0 q t ?_
     intro k _
-    rw [← coeff_mvExp_gauss t k, h5, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← coeff_mvExp_gauss t k, h5, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [coeff_C_mul, coeff_X_pow_mul']
     congr 1

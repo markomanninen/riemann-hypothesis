@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PartialDerivativeMinors.PMinorAff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PartialDerivativeMinors.PMinorAff
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem minorAff_derProd {ι : Type} [DecidableEq ι] (D : Derivation R A A) (f 
 theorem minorAff_derDet (D : Derivation R A A) {k : ℕ} (M : Matrix (Fin k) (Fin k) A) :
     D M.det = ∑ i, (M.updateCol i (fun r => D (M r i))).det := by
   classical
-  simp only [Matrix.det_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.det_apply, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Units.smul_def, map_zsmul, minorAff_derProd, Finset.smul_sum]
@@ -70,14 +75,18 @@ theorem pMinorAff : PMinorAff := by
     rw [hD]
     by_cases hc : c = bb
     · subst hc
-      simp [y, map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply]
-    · simp [map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, hc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [y, map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, hc]
   have hy : ∀ (bb : Fin N1) (i : Fin k), dRow (N0 := N0) t 0 bb (y i) = 0 := by
     intro bb i
     rw [hD]
-    simp [y, map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [y, map_sum, Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply]
   simp only [minorXZ]
-  rw [minorAff_derDet, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [minorAff_derDet, map_sum]
   refine Finset.sum_eq_zero fun c _ => ?_
   by_cases hc : I c = b'
   · have hcol : (fun r => dRow (N0 := N0) t 0 b' (Matrix.of (fun i k' : Fin k => ∑ a : Fin N0,

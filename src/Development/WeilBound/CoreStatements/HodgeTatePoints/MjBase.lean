@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.BT TensorProduct
 
@@ -22,8 +26,6 @@ variable {X Y Z : Type}
 
 def pspan (A : Subalgebra R (X → R)) (B : Subalgebra R (Y → R)) : Submodule R (X × Y → R) :=
   Submodule.span R {g | ∃ a ∈ A, ∃ b ∈ B, g = fun z => a z.1 * b z.2}
-
-theorem prodSpan_eq (A : Subalgebra R (X → R)) : prodSpan A = pspan A A := rfl
 
 theorem mul_mem_pspan {A : Subalgebra R (X → R)} {B : Subalgebra R (Y → R)} {a : X → R} {b : Y → R}
     (ha : a ∈ A) (hb : b ∈ B) : (fun z : X × Y => a z.1 * b z.2) ∈ pspan A B :=
@@ -72,14 +74,13 @@ theorem exists_tensor_equiv (A : Subalgebra R (X → R)) (B : Subalgebra R (Y �
     simp [m, p, q]
   have hmem : ∀ w, m w ∈ C := fun w => by
     induction w with
-    | zero => simp
     | tmul a b =>
       rw [hC]
       simp only [hm]
       exact mul_mem_pspan a.2 b.2
-    | add a b ha hb => rw [map_add]; exact C.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact C.add_mem ha hb
   have hinj : Function.Injective m := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     obtain ⟨n, l, b, h⟩ := exists_dual_family (R := R) A
     let c : (A →ₗ[R] R) → A ⊗[R] B →ₗ[R] B := fun l => (TensorProduct.lid R B).toLinearMap ∘ₗ l.rTensor B
@@ -87,22 +88,19 @@ theorem exists_tensor_equiv (A : Subalgebra R (X → R)) (B : Subalgebra R (Y �
       (TensorProduct.rid R A).toLinearMap ∘ₗ ((LinearMap.proj y).comp B.val.toLinearMap).lTensor A
     have h1 : ∀ y x w, (s y w).1 x = m w (E (x, y)) := fun y x w => by
       induction w with
-      | zero => simp
       | tmul a b => rw [hm]; simp [s, mul_comm]
-      | add a b ha hb => simp only [map_add, AddMemClass.coe_add, Pi.add_apply, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), AddMemClass.coe_add, Pi.add_apply, ha, hb]
     have h2 : ∀ l y w, (c l w).1 y = l (s y w) := fun l y w => by
       induction w with
-      | zero => simp
       | tmul a b => simp [s, c, mul_comm]
-      | add a b ha hb => simp only [map_add, AddMemClass.coe_add, Pi.add_apply, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), AddMemClass.coe_add, Pi.add_apply, ha, hb]
     have h3 : ∀ w, ∑ i, b i ⊗ₜ c (l i) w = w := fun w => by
       induction w with
-      | zero => simp
       | tmul a b' =>
         conv_rhs => rw [← h a, TensorProduct.sum_tmul]
         refine Finset.sum_congr rfl fun i _ => ?_
         simp [c, TensorProduct.smul_tmul]
-      | add a b ha hb => simp only [map_add, tmul_add, Finset.sum_add_distrib, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), tmul_add, Finset.sum_add_distrib, ha, hb]
     have h4 : ∀ y, s y w = 0 := fun y => Subtype.ext (funext fun x => by rw [h1, hw]; rfl)
     have h5 : ∀ l, c l w = 0 := fun l => Subtype.ext (funext fun y => by rw [h2, h4, map_zero]; rfl)
     rw [← h3 w]
@@ -120,9 +118,6 @@ theorem exists_tensor_equiv (A : Subalgebra R (X → R)) (B : Subalgebra R (Y �
   exact hw
 
 variable {T H : Type} [CommGroup T] [CommGroup H]
-
-theorem mem_resOrder {ι : H →* T} {A : Subalgebra R (T → R)} {g : H → R} :
-    g ∈ resOrder ι A ↔ ∃ f ∈ A, (fun h => f (ι h)) = g := Iff.rfl
 
 theorem res_mem (ι : H →* T) {A : Subalgebra R (T → R)} {f : T → R} (hf : f ∈ A) :
     (fun h => f (ι h)) ∈ resOrder ι A := ⟨f, hf, rfl⟩

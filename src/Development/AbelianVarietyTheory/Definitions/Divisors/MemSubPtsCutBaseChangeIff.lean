@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsResMEqSecHomSecToPow
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsResMEqSecHomSecToPow
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -117,8 +121,8 @@ def baseHom : k →+* K := (Spec.preimage (x ≫ S.str)).hom
 
 theorem comp_str : x ≫ S.str = spMap (S.baseHom x) := (Spec.map_preimage _).symm
 
-variable {S} in
 
+variable {S} in
 theorem baseHom_ptOver {φ : k →+* K} (x : S.PtOver φ) : S.baseHom x.1 = φ := by
   rw [baseHom, x.2, Spec.preimage_map]; rfl
 
@@ -165,15 +169,11 @@ theorem val_comb (u : Fin S.N → k) : S.val x (S.comb u) = ∑ j, S.baseHom x (
 theorem val_spMap_comp (τ : K →+* K') (s : S.L.Sec) : S.val (spMap τ ≫ x) s = τ (S.val x s) := by
   rw [val, ptOf_spMap_comp, valR_spMap_comp τ x _ (S.le_chartAt x), val]
 
-theorem powVal_spMap_comp (τ : K →+* K') {m : ℤ} (s : (lbZPow S.L m).Sec) :
-    S.powVal (spMap τ ≫ x) s = τ (S.powVal x s) := by
-  rw [powVal, ptOf_spMap_comp, valR_spMap_comp τ x _ (S.le_chartAt x), powVal]
-
 theorem coords_spMap_comp (τ : K →+* K') : S.coords (spMap τ ≫ x) = fun j => τ (S.coords x j) :=
   funext fun _ => S.val_spMap_comp x τ _
 
-variable {S} in
 
+variable {S} in
 theorem BasePointFree.coords_ne_zero (h : S.BasePointFree) (x : Sp K ⟶ S.Y) : S.coords x ≠ 0 := by
   obtain ⟨j, hj⟩ := Opens.mem_iSup.1 (h.ge (Set.mem_univ (ptOf x)))
   exact fun e => (S.val_ne_zero_iff x _).2 hj (congrFun e j)
@@ -217,8 +217,8 @@ theorem mem_imageIdeal_iff {d : ℕ} {g : MvPolynomial (Fin S.N) k} (hg : g.IsHo
   rw [RingHom.mem_ker, key hg, (Polynomial.monic_X_pow d).mul_right_eq_zero_iff, Polynomial.C_eq_zero] at h1
   exact h1.trans (zfun_zero i).symm
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem isHomogeneous_imageIdeal : S.imageIdeal.IsHomogeneous (homogeneousSubmodule (Fin S.N) k) :=
   Ideal.homogeneous_span _ _ fun _ ⟨d, hg, _⟩ => ⟨d, hg⟩
 
@@ -247,12 +247,6 @@ def Birational : Prop := ∃ η : S.Y, IsGenericPoint η Set.univ ∧ S.ratioFie
 def InjOnPts {K : Type} [Field K] [Algebra k K] (P : Set (S.Pt K)) : Prop :=
   ∀ x ∈ P, ∀ x' ∈ P, ∀ c : K, c ≠ 0 → S.coords x'.1 = c • S.coords x.1 → x = x'
 
-theorem sameImage_of_coords {K : Type} [Field K] {φ : k →+* K} (x x' : S.PtOver φ) {c : K} (hc : c ≠ 0)
-    (h : S.coords x'.1 = c • S.coords x.1) : S.SameImage (ptOf x.1) (ptOf x'.1) := fun d g hg => by
-  have e := eval₂Hom_unit_mul φ (Units.mk0 c hc) (S.coords x.1) (mem_polyGrading_natCast.2 hg)
-  rw [← S.powVal_ne_zero_iff, ← S.powVal_ne_zero_iff, powVal_form, powVal_form, baseHom_ptOver, baseHom_ptOver, h]
-  exact not_congr ((Units.mul_right_eq_zero (Units.mk0 c hc ^ (d : ℤ))).symm.trans (Eq.congr_left e.symm))
-
 section BaseChange
 
 variable (E : Type) [Field E] [Algebra k E]
@@ -271,8 +265,8 @@ def bcFst : (S.baseChange E).Y ⟶ S.Y := pullback.fst _ _
 theorem isPullback_baseChange :
     IsPullback (S.bcFst E) (S.baseChange E).str S.str (spMap (algebraMap k E)) := IsPullback.of_hasPullback _ _
 
-variable {S E} in
 
+variable {S E} in
 def toBase {Ω : Type} [Field Ω] [Algebra E Ω] [Algebra k Ω] [IsScalarTower k E Ω] (x : (S.baseChange E).Pt Ω) :
     S.Pt Ω :=
   ⟨x.1 ≫ S.bcFst E, by
@@ -294,8 +288,8 @@ theorem exists_coords_baseChange {K : Type} [Field K] (x : Sp K ⟶ (S.baseChang
     (LB.pull_U_le _ _ hm)
   exact ⟨c, hc, funext fun j => (valR_appLE x _ _ ((S.baseChange E).le_chartAt x) _).trans (h _)⟩
 
-variable {S} in
 
+variable {S} in
 theorem IsVariety.baseChange (h : S.IsVariety) : (S.baseChange E).IsVariety := by
   have := smoothOfRelativeDimension_isStableUnderBaseChange.{0} S.D
   have := h.conn
@@ -303,8 +297,8 @@ theorem IsVariety.baseChange (h : S.IsVariety) : (S.baseChange E).IsVariety := b
     ProjSpace.isProjOver_pullback_snd _ h.proj,
     inferInstanceAs (GeometricallyConnected (pullback.snd _ _)), h.one_le⟩
 
-variable {S} in
 
+variable {S} in
 theorem BasePointFree.baseChange (h : S.BasePointFree) : (S.baseChange E).BasePointFree :=
   top_le_iff.1 fun y _ => by
     obtain ⟨j, hj⟩ := Opens.mem_iSup.1 (h.ge (Set.mem_univ (S.bcFst E y)))

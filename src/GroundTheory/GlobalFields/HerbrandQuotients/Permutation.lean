@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.HerbrandAbstract
-import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.HerbrandAbstract
+public import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -115,8 +119,8 @@ section Cohomology
 
 variable {G X : Type*} [Group G] [Fintype G] [MulAction G X] [Finite X] {σ : G}
 
-omit [Fintype G] [Finite X] in
 
+omit [Fintype G] [Finite X] in
 theorem coeff_smul_of_mem_ker (hσ : ∀ g, g ∈ Subgroup.zpowers σ) {f : MonoidAlgebra ℤ X}
     (hf : f ∈ (cycSub (Representation.ofMulAction ℤ G X) σ).ker) (g : G) (x : X) :
     f.coeff (g • x) = f.coeff x := by
@@ -124,8 +128,8 @@ theorem coeff_smul_of_mem_ker (hσ : ∀ g, g ∈ Subgroup.zpowers σ) {f : Mono
   have h2 := congrArg (fun f : MonoidAlgebra ℤ X => f.coeff x) h1
   simpa only [Representation.coeff_ofMulAction, inv_inv] using h2
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem permOfFun_mem_ker {F : X → ℤ} (hF : ∀ (g : G) x, F (g • x) = F x) :
     permOfFun F ∈ (cycSub (Representation.ofMulAction ℤ G X) σ).ker := by
   rw [AddMonoidHom.mem_ker, cycSub_apply]

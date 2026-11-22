@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.MatDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.MatDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ theorem tp_sum {K : Type} [Fintype K] [DecidableEq K] (M : K → Matrix ι ι �
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [Finset.prod_mul_distrib]
 
-open MvPolynomial in
 
+open MvPolynomial in
 def polyOf {K : Type} [Fintype K] (φ : Matrix (Fin q → ι) (Fin q → ι) ℂ →ₗ[ℂ] ℂ)
     (M : K → Matrix ι ι ℂ) : MvPolynomial K ℂ :=
   ∑ f : Fin q → K, C (φ (mt fun j => M (f j))) * ∏ j, X (f j)
@@ -33,7 +37,8 @@ open MvPolynomial in
 theorem eval_polyOf {K : Type} [Fintype K] [DecidableEq K]
     (φ : Matrix (Fin q → ι) (Fin q → ι) ℂ →ₗ[ℂ] ℂ) (M : K → Matrix ι ι ℂ) (c : K → ℂ) :
     eval c (polyOf φ M) = φ (tp q (∑ k, c k • M k)) := by
-  rw [tp_sum, map_sum, polyOf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tp_sum, map_sum, polyOf, map_sum]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [map_smul, smul_eq_mul, map_mul, eval_C, map_prod]
   simp only [eval_X]
@@ -124,7 +129,7 @@ theorem herm_of_unit (φ : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ →�
       ← diagonal_one]
     congr 1
     funext a
-    simp only [Pi.star_apply]
+    simp only [Pi.star_apply, Pi.one_apply]
     rw [Complex.star_def, Complex.mul_conj', hc (w, a)]
     simp
   have hq : 0 < q + 1 := Nat.succ_pos q
@@ -191,7 +196,7 @@ theorem mul_perm' (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) (σ : E
     (Z * perm' σ w : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) A B =
       if (∀ i, ((B ∘ σ.symm) i).1 = w i) then Z A (B ∘ σ.symm) else 0 := by
   have hB : (B ∘ σ.symm) ∘ σ = B := by funext i; simp
-  rw [mul_apply, Finset.sum_eq_single (B ∘ σ.symm)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (B ∘ σ.symm)]
   · rw [perm'_apply]
     split_ifs with h1 h2 h2
     · rw [mul_one]
@@ -208,7 +213,7 @@ theorem perm'_mul (Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) (σ : E
     (w : Fin q → W) (A B : Fin q → Ix W m) :
     (perm' σ w * Z : Matrix (Fin q → Ix W m) (Fin q → Ix W m) ℂ) A B =
       if (∀ i, (A i).1 = w i) then Z (A ∘ σ) B else 0 := by
-  rw [mul_apply, Finset.sum_eq_single (A ∘ σ)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (A ∘ σ)]
   · rw [perm'_apply]
     split_ifs with h1 h2 h2
     · rw [one_mul]
@@ -292,8 +297,8 @@ theorem nu_iff (f : Fin q → Fin q) :
       by_contra hk
       push_neg at hk
       have := congrArg (fun g : Fin q →₀ ℕ => g k) h
-      simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.single_apply] at this
-      simp [hk] at this
+      simp only [Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.single_apply] at this
+      simpa [hk] using this
     exact ⟨Finite.injective_iff_surjective.2 hs, hs⟩
   · intro h
     exact Fintype.sum_bijective f h _ _ fun _ => rfl
@@ -314,14 +319,14 @@ theorem sum_perm_mt (x : Fin q → Matrix ι ι ℂ) (I J : Fin q → ι)
   · rintro ⟨h1, h2⟩ i
     exact ⟨congrFun h1 i, congrFun h2 i⟩
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem sym_zero (φ : Matrix (Fin q → ι) (Fin q → ι) ℂ →ₗ[ℂ] ℂ) (x : Fin q → Matrix ι ι ℂ)
     (h0 : ∀ t : Fin q → ℂ, φ (tp q (∑ j, t j • x j)) = 0) :
     φ (∑ σ : Equiv.Perm (Fin q), mt (fun j => x (σ j))) = 0 := by
   have hP : polyOf φ x = 0 := MvPolynomial.funext fun t => by rw [eval_polyOf, h0, map_zero]
-  have hc := congrArg (coeff (∑ j : Fin q, Finsupp.single j 1)) hP
-  rw [coeff_zero, polyOf, coeff_sum] at hc
+  have hc := congrArg (fun p => AddMonoidAlgebra.coeff p (∑ j : Fin q, Finsupp.single j 1)) hP
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, polyOf, coeff_sum] at hc
   have hX : ∀ f : Fin q → Fin q, (∏ j, X (f j) : MvPolynomial (Fin q) ℂ) =
       monomial (∑ j, Finsupp.single (f j) 1) 1 := fun f => by
     rw [monomial_sum_one]; rfl
@@ -335,8 +340,8 @@ theorem sym_zero (φ : Matrix (Fin q → ι) (Fin q → ι) ℂ →ₗ[ℂ] ℂ)
       nu_iff]
     exact ⟨fun h => ⟨Equiv.ofBijective f h, rfl⟩, fun ⟨σ, hσ⟩ => hσ ▸ σ.bijective⟩
   rw [hfil, Finset.sum_map] at hc
-  rw [map_sum]
-  exact hc
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, Function.Embedding.coeFn_mk] using hc
 
 end Sym
 
@@ -359,7 +364,8 @@ theorem sw2 : PlacePermOperatorCommutantSpan := by
   apply hφZ
   have hfac : ((Nat.factorial q : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (Nat.factorial_ne_zero q)
   have hdec := congrArg φ (decomp Z (sym_of_comm Z hZ))
-  rw [map_smul, smul_eq_mul, map_sum] at hdec
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, smul_eq_mul, map_sum] at hdec
   have hterm : ∀ I J, φ (Z I J • symU I J) = 0 := by
     intro I J
     rw [map_smul, smul_eq_mul]
@@ -379,7 +385,8 @@ theorem sw2 : PlacePermOperatorCommutantSpan := by
       have hs := sym_zero φ (fun j => Matrix.single (I j) (J j) (1 : ℂ)) h0
       rw [sum_perm_mt _ I J fun _ => rfl] at hs
       rw [hs, mul_zero]
-  simp only [map_sum, hterm, Finset.sum_const_zero] at hdec
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hterm, Finset.sum_const_zero] at hdec
   exact (mul_eq_zero.1 hdec).resolve_left hfac
 
 end PositivityTheory.KB.BlockInvariants

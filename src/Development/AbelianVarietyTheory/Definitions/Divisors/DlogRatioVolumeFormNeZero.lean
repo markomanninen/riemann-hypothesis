@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneFormMapEqKaehlerDifferentialMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneFormMapEqKaehlerDifferentialMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,13 +41,7 @@ structure IsBundle (L : Finset (Fin (d + 1)) → Submodule k W) : Prop where
   proj : ∀ i, Module.Projective (rA k x {i}) (Submodule.span (rA k x {i}) (L {i} : Set W))
   loc : ∀ I, ∀ i ∈ I, L I = (Submodule.span (rA k x I) (L {i} : Set W)).restrictScalars k
 
-def dualFam (β : W →ₗ[F] W' →ₗ[F] F) (L : Finset (Fin (d + 1)) → Submodule k W) (I : Finset (Fin (d + 1))) : Submodule k W' :=
-  ⨅ w ∈ L I, (omA k x I).comap ((β w).restrictScalars k)
-
 def kpair (ρ : F →ₗ[k] k) (β : W →ₗ[F] W' →ₗ[F] F) : W →ₗ[k] W' →ₗ[k] k := (β.restrictScalars₁₂ k k).compr₂ ρ
-
-def SD (ρ : F →ₗ[k] k) (β : W →ₗ[F] W' →ₗ[F] F) (L : Finset (Fin (d + 1)) → Submodule k W) : Prop :=
-  Perf (cech L) (cech (dualFam k x β L)) (cupPair (kpair k ρ β)) d
 
 end Proj
 
@@ -64,11 +62,6 @@ variable {K} {ι : Type} [LinearOrder ι]
 def tot (B : Finset ι → Subalgebra k K) (a b : ℕ) : Cx k (Finset ι → DR k K) :=
   ⟨totC (fun q s => omB k K (B s) q) a b, totD (trunc k K b ∘ₗ dDR k K)⟩
 
-def formPair [Fintype ι] (t : DR k K →ₗ[k] k) : (Finset ι → DR k K) →ₗ[k] (Finset ι → DR k K) →ₗ[k] k :=
-  ∑ j : ι, ((LinearMap.mul k (DR k K)).compr₂ t).compl₁₂
-    ((sg k K ^ ((Finset.univ.filter (j ≤ ·)).card - 1)).toLinearMap ∘ₗ LinearMap.proj (Finset.univ.filter (· ≤ j)))
-    (LinearMap.proj (Finset.univ.filter (j ≤ ·)))
-
 variable (K) {F : Type} [Field F] [Algebra k F] [Algebra F K] [IsScalarTower k F K] {d : ℕ} (x : Fin (d + 1) → F)
 
 def rB (I : Finset (Fin (d + 1))) : Subalgebra k K := (integralClosure (rA k x I) K).restrictScalars k
@@ -85,8 +78,8 @@ def vol0 : DR k K :=
 
 def IsTop (τ : DR k K →ₗ[K] K) : Prop := τ (vol0 k K x) = 1 ∧ ∀ q, q ≠ d → ∀ y ∈ ⋀[K]^q Ω[K⁄k], τ y = 0
 
-variable {K} in
 
+variable {K} in
 def trF (τ : DR k K →ₗ[K] K) (ρ : F →ₗ[k] k) : DR k K →ₗ[k] k :=
   ρ ∘ₗ (Algebra.trace F K).restrictScalars k ∘ₗ τ.restrictScalars k
 
@@ -106,8 +99,8 @@ theorem IsFinCover.of_charZero [CharZero F] (pd : IsPd k x) (fin : FiniteDimensi
   have : Algebra.IsSeparable F K := inferInstance
   exact ⟨pd, fin, smooth⟩
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem IsFinCover.exists_basis (h : IsFinCover k K x) :
     ∃ b : Module.Basis (Fin d) K Ω[K⁄k], ∀ j, b j = D k K (algebraMap F K (x j.succ / x 0)) := by
   have := h.fin
@@ -183,8 +176,6 @@ theorem IsFinCover.dlogRatioVolumeForm_ne_zero (h : IsFinCover k K x) : vol0 k K
   have h1 := hτ.1
   rw [h0, map_zero] at h1
   exact zero_ne_one h1
-
-example (h : IsFinCover k K x) : Algebra.IsSeparable F K ∧ vol0 k K x ≠ 0 := ⟨h.sep, h.dlogRatioVolumeForm_ne_zero⟩
 
 end API
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsQuadraticSqrtExtensionBasicFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsQuadraticSqrtExtensionBasicFacts
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.QNorm
 open scoped WithZero
 
@@ -21,7 +26,7 @@ theorem exists_centre_over {F E : Type} [Field F] [NumberField F] [Field E] [Num
     { carrier := {x | u (algebraMap (𝓞 E) E x) < 1}
       add_mem' := by
         intro a b ha hb
-        simp only [Set.mem_setOf_eq, map_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at *
         exact u.map_add_lt ha hb
       zero_mem' := by simp
       smul_mem' := by
@@ -71,15 +76,15 @@ theorem IsQuad.exists_embedding_root {F E L : Type} [Field F] [Field E] [Algebra
   · rw [key 1 1 0 (by simp)]; simp
   · intro x y
     rw [key (x * y) (A x * A y + δ * B x * B y) (A x * B y + B x * A y) (by
-      simp only [map_add, map_mul, ← h.sq]
+      simp only [map_add (f := _), map_mul, ← h.sq]
       linear_combination y * hAB x + (algebraMap F E (A x) + algebraMap F E (B x) * θ) * hAB y)]
-    simp only [map_add, map_mul, hr]; ring
+    simp only [map_add (f := _), map_mul, hr]; ring
   · rw [key 0 0 0 (by simp)]; simp
   · intro x y
     rw [key (x + y) (A x + A y) (B x + B y) (by
-      simp only [map_add]
+      simp only [map_add (f := _)]
       linear_combination hAB x + hAB y)]
-    simp only [map_add]; ring
+    simp only [map_add (f := _)]; ring
   · intro a
     change φ (A _) + φ (B _) * r = _
     rw [key _ a 0 (by simp)]; simp
@@ -90,8 +95,7 @@ theorem exists_val_sub_mul_lt_one {F L Γ : Type} [Field L] [LinearOrderedCommGr
     [Valued L Γ] (φ : F → L) (hφ : DenseRange φ) (r c : L) :
     ∃ ρ : F, Valued.v ((r - φ ρ) * c) < (1 : Γ) := by
   have hopen : IsOpen {x : L | Valued.v x < (1 : Γ)} := by
-    simpa using Valued.isOpen_ball L (1 : (MonoidWithZeroHom.ofClass
-      (Valued.v : Valuation L Γ)).ValueGroup₀)
+    simpa only [Valuation.restrict_lt_one_iff] using (Valued.isOpen_ball L 1)
   have hcont : Continuous fun x : L => (r - x) * c := by fun_prop
   exact hφ.exists_mem_open (hopen.preimage hcont) ⟨r, by simp⟩
 

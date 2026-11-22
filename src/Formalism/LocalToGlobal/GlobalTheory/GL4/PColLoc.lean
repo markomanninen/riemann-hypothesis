@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.SlopeMaxOpenOfHookTwoLeV
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PTenFrames
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.SlopeMaxOpenOfHookTwoLeV
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PTenFrames
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -99,11 +103,6 @@ theorem map_ten {n : ℕ} (f : D.what₂.Tau → MvPolynomial (Fin n × Fin n) �
       MvPolynomial.map (Int.castRingHom D.what₂.LL) (Formalism.MainNotions.flipTwoThree.ten f) := by
   simp only [Formalism.MainNotions.flipTwoThree.ten, map_prod, MvPolynomial.map_rename]
 
-theorem intCast_mem_intW (w : D.what₂.places.Pl) (z : ℤ) : (z : D.what₂.LL) ∈ intW D.what₂.places w := by
-  first
-    | exact Subring.intCast_mem _ z
-    | exact intCast_mem _ z
-
 theorem mem_intSpanAt_iff {n : ℕ} (w : D.what₂.places.Pl) (lam : D.what₂.Tau → DomWeight n) (Z : ZBasis lam)
     (y : MvPolynomial (D.what₂.Tau × Fin n × Fin n) D.what₂.LL) :
     y ∈ IntSpanAt D w lam ↔ y ∈ Submodule.span (intW D.what₂.places w)
@@ -123,7 +122,7 @@ theorem mem_intSpanAt_iff {n : ℕ} (w : D.what₂.places.Pl) (lam : D.what₂.T
         induction h1 using Submodule.span_induction with
         | mem q hq => obtain ⟨i, rfl⟩ := hq; exact Submodule.subset_span ⟨i, rfl⟩
         | zero => rw [map_zero]; exact Submodule.zero_mem _
-        | add p q _ _ hp hq => rw [map_add]; exact Submodule.add_mem _ hp hq
+        | add p q _ _ hp hq => rw [map_add (f := _)]; exact Submodule.add_mem _ hp hq
         | smul z q _ hq =>
           rw [zsmul_eq_mul, map_mul, map_intCast, ← zsmul_eq_mul]
           exact zsmul_mem hq z
@@ -158,7 +157,7 @@ theorem mem_intSpanAt_iff {n : ℕ} (w : D.what₂.places.Pl) (lam : D.what₂.T
         refine AddSubgroup.subset_closure ⟨1, f, one_mem _, hf, ?_⟩
         rw [one_smul, map_ten]
       | zero => rw [map_zero]; exact zero_mem _
-      | add p q _ _ hp hq => rw [map_add]; exact add_mem hp hq
+      | add p q _ _ hp hq => rw [map_add (f := _)]; exact add_mem hp hq
       | smul z q _ hq =>
         rw [zsmul_eq_mul, map_mul, map_intCast, ← zsmul_eq_mul]
         exact zsmul_mem hq z

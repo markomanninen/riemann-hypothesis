@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.Imports
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.Imports
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,14 +22,14 @@ section Glob
 
 variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 
-variable (E) in
 
+variable (E) in
 def psiR (x : Cinf E) : ℂ := (𝐞 (-TG.tr E x) : ℂ)
 
-def conv [IsTotallyComplex E] (f : GA E n → ℂ) (α : Lie E n → ℂ) (g : GA E n) : ℂ := ∫ x, chart f g x * α x
+def conv [_root_.NumberField.IsTotallyComplex E] (f : GA E n → ℂ) (α : Lie E n → ℂ) (g : GA E n) : ℂ := ∫ x, chart f g x * α x
 
 def Sat (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ) (U : Submodule ℂ (cuspForms E n)) : Prop :=
-  ∀ φ ∈ U, (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w n, φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
+  ∀ φ ∈ U, (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
 
 def SameSat (U U' : Submodule ℂ (cuspForms E n)) : Prop :=
   ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ∃ B, Sat w B U ∧ Sat w B U'
@@ -56,10 +60,10 @@ def ArchKir : Prop :=
       ∀ p : GL (Fin n) (Cinf E), IsY m p.val → ∫ x, w (lmul (toL p.val) x) * β x = H p * ∫ x, w x * α x
 
 def PsiInf : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (x : Cinf E), psiA E (sInf E x) = psiR E x
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (x : Cinf E), psiA E (sInf E x) = psiR E x
 
 def EmbY : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n m : ℕ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n m : ℕ),
     (∀ w (y : GL (Fin n) (HeightOneSpectrum.adicCompletion E w)), IsY m y.val →
       IsY m (locGL E n w y).val ∧ supN (locGL E n w y).val = sLoc E w (supN y.val)) ∧
     (∀ y : GL (Fin n) (Af E), IsY m y.val → IsY m (finGL E n y).val ∧ supN (finGL E n y).val = sFin E (supN y.val)) ∧
@@ -67,7 +71,7 @@ def EmbY : Prop :=
     ∀ w, Continuous (locGL E n w)
 
 def FinKir : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
     (U : OpenSubgroup (GL (Fin n) (Af E))), ∃ (c : GL (Fin n) (Af E) →₀ ℂ) (H : GL (Fin n) (Af E) → ℂ), H 1 = 1 ∧
       (∀ x ∈ c.support, SuppIn S x) ∧ ∀ W : GL (Fin n) (Af E) → ℂ,
         (∀ ν, SuppIn S ν → IsY 0 ν.val → ∀ g, SuppIn S g → W (ν * g) = psiF E (supN ν.val) * W g) →
@@ -75,64 +79,64 @@ def FinKir : Prop :=
         ∀ p, SuppIn S p → IsY (n - 1) p.val → comb c W p = H p * W 1
 
 def ChartCont : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
     ContinuousOn (fun z : GA E n × Lie E n => chart f z.1 z.2) (Set.univ ×ˢ invSet E n) ∧ ∀ g, Measurable (chart f g)
 
 def ConvCont : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
     (∃ C : ℝ, ∀ g, ‖f g‖ ≤ C) → ∀ α : 𝓢(Lie E n, ℂ), Continuous (conv f α) ∧ ∃ C : ℝ, ∀ g, ‖conv f α g‖ ≤ C
 
 def ConvFub : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Continuous f →
     (∃ C : ℝ, ∀ g, ‖f g‖ ≤ C) → ∀ (α : 𝓢(Lie E n, ℂ)) (X : Type) [TopologicalSpace X] [SecondCountableTopology X]
     [MeasurableSpace X] [BorelSpace X] (ν : Measure X) [IsFiniteMeasure ν] (u : X → GA E n) (a : X → ℂ),
     Continuous u → Continuous a → (∃ C : ℝ, ∀ x, ‖a x‖ ≤ C) → ∀ g,
       ∫ x, conv f α (u x * g) * a x ∂ν = conv (fun g' => ∫ x, f (u x * g') * a x ∂ν) α g
 
 def ConvNice : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Nice f → ∀ α : 𝓢(Lie E n, ℂ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (f : GA E n → ℂ), Nice f → ∀ α : 𝓢(Lie E n, ℂ),
     Nice (conv f α) ∧ whittaker (conv f α) = conv (whittaker f) α
 
 def SeedConv : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (W : GA E n → ℂ), Continuous W →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (W : GA E n → ℂ), Continuous W →
     ∀ y, W (infGL E n y) ≠ 0 → ∃ α : 𝓢(Lie E n, ℂ), conv W α 1 = 1
 
 def EigMap : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ)
     (f : GA E n → ℂ), EigAt w B f →
     (Nice f → EigAt w B (whittaker f)) ∧ (Nice f → ∀ α : 𝓢(Lie E n, ℂ), EigAt w B (conv f α)) ∧
     ∀ f', EigAt w B f' → EigAt w B (f - f')
 
 def KillP : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
     (U : OpenSubgroup (GL (Fin n) (Af E))), ∃ (c : GL (Fin n) (Af E) →₀ ℂ) (H : GA E n → ℂ), H 1 = 1 ∧
       (∀ x ∈ c.support, SuppIn S x) ∧ ∀ α : 𝓢(Lie E n, ℂ), ∃ β : 𝓢(Lie E n, ℂ), ∀ W : GA E n → ℂ, Continuous W →
         (∃ C : ℝ, ∀ g, ‖W g‖ ≤ C) → IsWh (psiA E) W → (∀ g, ∀ u ∈ U, W (g * finGL E n u) = W g) →
         ∀ p, InPS S p → conv (fop c W) β p = H p * conv W α 1
 
 def SphAll : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (B : HeightOneSpectrum (𝓞 E) → Multiset ℂˣ) (W : GA E n → ℂ), IsWh (psiA E) W →
     (∀ w ∉ S, GoodAt w (psiL w) ∧ EigAt w (B w) W) → (∀ g k, InKS S k → W (g * finGL E n k) = W g) →
     ∀ p : GA E n, SuppIn S (GeneralLinearGroup.map (pFin E) p) → W p = 0 → ∀ k, Away S k → W (p * finGL E n k) = 0
 
 def Vanish : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ (S : Finset (HeightOneSpectrum (𝓞 E)))
     (B : HeightOneSpectrum (𝓞 E) → Multiset ℂˣ) (f : GA E n → ℂ), Nice f →
     (∀ w ∉ S, GoodAt w (psiL w) ∧ EigAt w (B w) f) → (∀ g k, InKS S k → f (g * finGL E n k) = f g) →
     (∀ p, InPS S p → whittaker f p = 0) → f = 0
 
 def OrthStep : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (f : GA E n → ℂ), Continuous f → (∃ C : ℝ, ∀ g, ‖f g‖ ≤ C) → IsLeftInvariant f →
-    ∀ a : RightCosetSpace (Reduction.rationalGLOne E n) → ℂ, Continuous a → (∃ C : ℝ, ∀ q, ‖a q‖ ≤ C) →
+    ∀ a : RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) → ℂ, Continuous a → (∃ C : ℝ, ∀ q, ‖a q‖ ≤ C) →
     (∀ g (h : IsLeftInvariant fun x => f (x * g)), ∫ q, a q * CuspidalSpectrum.cuspQuot h q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0) →
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0) →
     ∀ (β : 𝓢(Lie E n, ℂ)) (h : IsLeftInvariant (conv f β)), ∫ q, a q * CuspidalSpectrum.cuspQuot h q
-      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ) = 0
+      ∂(RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ) = 0
 
 def OrthConv : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (φ φ' : cuspForms E n), φ ∈ centralCuspForms E n → φ' ∈ centralCuspForms E n → Orth μ φ φ' →
     ∀ β β' : 𝓢(Lie E n, ℂ), conv φ.1 β = conv φ'.1 β' → conv φ.1 β = 0
 
@@ -142,7 +146,7 @@ def NiceOf : Prop :=
       (φ ∈ centralCuspForms E n → Nice φ.1)
 
 def Seed : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (U : Submodule ℂ (cuspForms E n)), U ≠ ⊥ → U ≤ centralCuspForms E n →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (U : Submodule ℂ (cuspForms E n)), U ≠ ⊥ → U ≤ centralCuspForms E n →
     Fb.Stab U → ∃ φ ∈ U, ∃ α : 𝓢(Lie E n, ℂ), conv (whittaker φ.1) α 1 = 1
 
 def SetUp : Prop :=
@@ -152,7 +156,7 @@ def SetUp : Prop :=
       (∀ g k, InKS S k → φ.1 (g * finGL E n k) = φ.1 g) ∧ ∀ g k, InKS S k → φ'.1 (g * finGL E n k) = φ'.1 g
 
 def Pair : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ U U' : Submodule ℂ (cuspForms E n), U ≠ ⊥ → U' ≠ ⊥ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ U U' : Submodule ℂ (cuspForms E n), U ≠ ⊥ → U' ≠ ⊥ →
     U ≤ centralCuspForms E n → U' ≤ centralCuspForms E n → Fb.Stab U → Fb.Stab U' → SameSat U U' →
     ∃ φ ∈ U, ∃ φ' ∈ U', ∃ β β' : 𝓢(Lie E n, ℂ), conv φ.1 β = conv φ'.1 β' ∧ conv φ.1 β ≠ 0
 
@@ -161,18 +165,18 @@ def CenSame : Prop :=
     U ≤ centralCuspForms E n → U' ≤ centralCuspForms E n
 
 def Compl : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (μ : Measure (Reduction.normOneGL E n)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (μ : Measure (Reduction.normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (U : Submodule ℂ (cuspForms E n)), U ≤ centralCuspForms E n → Fb.Stab U →
     ∃ C : Submodule ℂ (cuspForms E n), Fb.Stab C ∧ U ⊔ C = centralCuspForms E n ∧
       ∀ φ ∈ U, ∀ φ' ∈ C, inner ℂ (CuspidalSpectrum.cuspToL2 μ φ) (CuspidalSpectrum.cuspToL2 μ φ') = 0
 
 def Proj : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (U U' C : Submodule ℂ (cuspForms E n)), Fb.Stab U → Fb.Stab U' →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (U U' C : Submodule ℂ (cuspForms E n)), Fb.Stab U → Fb.Stab U' →
     Fb.Stab C → U ⊓ U' = ⊥ → U' ≠ ⊥ → U' ≤ U ⊔ C → SameSat U U' →
     ∃ D ≤ C, D ≠ ⊥ ∧ Fb.Stab D ∧ SameSat U D
 
 def SmoCentral : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ U U' : Submodule ℂ (cuspForms E n), Fb.Stab U → Fb.Stab U' →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ U U' : Submodule ℂ (cuspForms E n), Fb.Stab U → Fb.Stab U' →
     Irr U → Irr U' → U ≤ centralCuspForms E n → SameSat U U' → U = U'
 
 theorem smoCentral_of (h2 : CenSame) (h3 : Pair) (h4 : Compl) (h4' : Proj) (h5 : OrthTr) (h6 : OrthConv) : SmoCentral := by
@@ -183,7 +187,7 @@ theorem smoCentral_of (h2 : CenSame) (h3 : Pair) (h4 : Compl) (h4' : Proj) (h5 :
       fun X φ h => ⟨sU.τ X φ h.1, sU'.τ X φ h.2⟩⟩
   rcases iU'.2 _ inf_le_right si with h0 | h0
   · exfalso
-    let μ : Measure (Reduction.normOneGL E n) := Measure.haar
+    let μ : Measure (Reduction.normOneGL (K := E) (n := n)) := Measure.haar
     obtain ⟨C, sC, hsup, ho⟩ := h4 E n μ U l sU
     obtain ⟨D, hD, hD0, sD, hs'⟩ := h4' E n U U' C sU sU' sC h0 iU'.1 (l'.trans hsup.ge) hs
     have lD : D ≤ centralCuspForms E n := hD.trans (le_sup_right.trans hsup.le)
@@ -193,21 +197,21 @@ theorem smoCentral_of (h2 : CenSame) (h3 : Pair) (h4 : Compl) (h4' : Proj) (h5 :
   · exact ((iU.2 U' (inf_eq_right.1 h0) sU').resolve_left iU'.1).symm
 
 def Carrier : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (π : GlobalTheory.CuspRep.CuspSub E n),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (π : GlobalTheory.CuspRep.CuspSub E n),
     ∃ U : Submodule ℂ (cuspForms E n), Fb.Stab U ∧ Irr U ∧ ∀ f : GA E n → ℂ, (∃ ψ ∈ U, ψ.1 = f) ↔ ∃ φ ∈ π.V, φ.1 = f
 
 def EigOfSat : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (π : GlobalTheory.CuspRep.CuspSub E n)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (π : GlobalTheory.CuspRep.CuspSub E n)
     (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ), GlobalTheory.LFun.HasSatGL w (π.locRep w) B → ∀ φ ∈ π.V,
-    (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w n, φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
+    (∀ g, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), φ.1 (g * finGL E n (locGL E n w k)) = φ.1 g) → EigAt w B φ.1
 
 def NormTwist : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ π : GlobalTheory.CuspRep.CuspSub E n,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ), 1 ≤ n → ∀ π : GlobalTheory.CuspRep.CuspSub E n,
     ∃ χ : Formalism.L2.Host.HChar E, ∀ φ ∈ (π.twist χ).V, ∀ (s : {r : ℝ // 0 < r}) (g : GA E n),
       φ.1 (Reduction.centralSection E n s * g) = φ.1 g
 
 def StrongMultOneC : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (π π' : GlobalTheory.CuspRep.CuspSub E n),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (π π' : GlobalTheory.CuspRep.CuspSub E n),
     (∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite,
       ∃ B, GlobalTheory.LFun.HasSatGL w (π.locRep w) B ∧ GlobalTheory.LFun.HasSatGL w (π'.locRep w) B) → π.V = π'.V
 

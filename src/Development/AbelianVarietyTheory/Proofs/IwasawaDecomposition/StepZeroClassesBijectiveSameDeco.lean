@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem.Chr
@@ -9,17 +13,17 @@ namespace GlobalTheory.Mem.Col2.ClsZero
 section Canon
 variable {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 X.E))} (Λ : LevFam X.E X.K n SG)
 
-def canon (d : DecoSet X.E n ST SG) : DecoSet X.E n ST SG :=
+def canon (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) :=
   Classical.epsilon (p := fun d' => ∃ (γ : UF X.E n) (k : Λ.grp),
-    d' = ((γ, (k.1 : GLG X.E n SG)) : UF X.E n × GLG X.E n SG) • d) (h := ⟨d⟩)
+    d' = ((γ, (k.1 : GLG (E := X.E) (n := n) (SG := SG))) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • d) (h := ⟨d⟩)
 
-theorem canon_spec (d : DecoSet X.E n ST SG) : ∃ (γ : UF X.E n) (k : Λ.grp),
-    canon Λ d = ((γ, (k.1 : GLG X.E n SG)) : UF X.E n × GLG X.E n SG) • d :=
-  Classical.epsilon_spec (p := fun d' => ∃ (γ : UF X.E n) (k : Λ.grp), d' = ((γ, (k.1 : GLG X.E n SG)) : UF X.E n × GLG X.E n SG) • d)
+theorem canon_spec (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : ∃ (γ : UF X.E n) (k : Λ.grp),
+    canon Λ d = ((γ, (k.1 : GLG (E := X.E) (n := n) (SG := SG))) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • d :=
+  Classical.epsilon_spec (p := fun d' => ∃ (γ : UF X.E n) (k : Λ.grp), d' = ((γ, (k.1 : GLG (E := X.E) (n := n) (SG := SG))) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • d)
     ⟨d, 1, 1, (one_smul _ d).symm⟩
 
-theorem canon_smul (γ : UF X.E n) (k : Λ.grp) (d : DecoSet X.E n ST SG) :
-    canon Λ (((γ, (k.1 : GLG X.E n SG)) : UF X.E n × GLG X.E n SG) • d) = canon Λ d := by
+theorem canon_smul (γ : UF X.E n) (k : Λ.grp) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
+    canon Λ (((γ, (k.1 : GLG (E := X.E) (n := n) (SG := SG))) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • d) = canon Λ d := by
   unfold canon
   congr 1
   funext d'
@@ -33,7 +37,7 @@ theorem canon_smul (γ : UF X.E n) (k : Λ.grp) (d : DecoSet X.E n ST SG) :
     congr 1
     ext1 <;> simp
 
-theorem canon_idem (d : DecoSet X.E n ST SG) : canon Λ (canon Λ d) = canon Λ d := by
+theorem canon_idem (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) : canon Λ (canon Λ d) = canon Λ d := by
   obtain ⟨γ, k, h⟩ := canon_spec Λ d
   conv_lhs => rw [h]
   exact canon_smul Λ γ k d
@@ -48,13 +52,13 @@ theorem orb_iff (y : Ys X n) (Λ' : LevFam X.E X.K n SG) (hΛ : Λ' = Λ) (Θ : 
   · intro h
     obtain ⟨γ₁, k₁, h₁⟩ := canon_spec Λ' p.1.1.deco
     obtain ⟨γ₂, k₂, h₂⟩ := canon_spec Λ' p'.1.1.deco
-    have e : p'.1.1.deco = (((γ₂⁻¹ * γ₁ : UF X.E n), ((k₂⁻¹ * k₁ : Λ'.grp).1 : GLG X.E n SG)) : UF X.E n × GLG X.E n SG) • p.1.1.deco := by
+    have e : p'.1.1.deco = (((γ₂⁻¹ * γ₁ : UF X.E n), ((k₂⁻¹ * k₁ : Λ'.grp).1 : GLG (E := X.E) (n := n) (SG := SG))) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • p.1.1.deco := by
       have := h₂.symm.trans (h.trans h₁)
       rw [← eq_inv_smul_iff, ← mul_smul] at this
       exact this
     generalize γ₂⁻¹ * γ₁ = γ at e
     generalize k₂⁻¹ * k₁ = k at e
-    let q : DecoF X.E n ST SG Q := ((γ, k.1, 1) : UF X.E n × GLG X.E n SG × GLQ X.E n Q) • p.1.1
+    let q : DecoF X.E n ST SG Q := ((γ, k.1, 1) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG) × GLQ X.E n Q) • p.1.1
     have hq : q.deco = p'.1.1.deco := e.symm
     have hc : ∀ P : Q, (p'.1.1.fr P)⁻¹ * q.fr P ∈ GLint X.E n P.1 := by
       intro P x
@@ -171,7 +175,7 @@ theorem stepZero_representative_deco_eq_canonical (h : I.Ok) (u : B.Word) (a : I
   obtain ⟨b, q⟩ := c
   let p := (I.stp u a 0).rep ⟨b, q⟩
   obtain ⟨γ, k, e⟩ := canon_spec (colLev I.Ch 0) p.1.1.deco
-  let p' : PtAt B.R I.sel (I.tup a) (I.cst a) u 0 := ⟨(((γ, k.1, 1) : UF B.fields.E (B.R.N 0) × GLG B.fields.E (B.R.N 0) (B.primes X).vGs × GLQ B.fields.E (B.R.N 0) (I.Q a)) • p.1.1, ∅), empty_mem_couplingIndexAtStep_zero a _⟩
+  let p' : PtAt B.R I.sel (I.tup a) (I.cst a) u 0 := ⟨(((γ, k.1, 1) : UF B.fields.E (B.R.N 0) × GLG (E := B.fields.E) (n := B.R.N 0) (SG := (B.primes X).vGs) × GLQ B.fields.E (B.R.N 0) (I.Q a)) • p.1.1, ∅), empty_mem_couplingIndexAtStep_zero a _⟩
   have e' : p'.1.1.deco = canon (colLev I.Ch 0) p.1.1.deco := e.symm
   have hc : (I.stp u a 0).cl b p' = ⟨b, q⟩ := by
     refine Eq.trans ?_ (cl_rep _ ⟨b, q⟩)

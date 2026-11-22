@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTensQIsoPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTensQIsoPf
+
+@[expose] public section
 
 open TensorProduct
 
@@ -30,7 +34,7 @@ theorem flat_of_injective_of_ann {R : Type v} [CommRing R] [IsPrincipalIdealRing
       obtain ⟨m1, rfl⟩ := hx
       obtain ⟨m2, rfl⟩ := hy
       exact ⟨m1 + m2, (tmul_add _ _ _).symm⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨m, rfl⟩ := key x
   simp at hx
@@ -92,9 +96,9 @@ theorem ulift_ann (q : ℕ) [NeZero q] :
     ∀ a : ULift.{1} (ZMod q), ∃ b, b * a = 0 ∧ ∀ r, r * b = 0 → ∃ s, r = s * a := by
   intro a
   obtain ⟨b, hba, hb⟩ := zmod_ann q a.down
-  refine ⟨ULift.up b, ULift.ext _ _ hba, fun r hr => ?_⟩
+  refine ⟨ULift.up b, ULift.ext hba, fun r hr => ?_⟩
   obtain ⟨s, hs⟩ := hb r.down (congrArg ULift.down hr)
-  exact ⟨ULift.up s, ULift.ext _ _ hs⟩
+  exact ⟨ULift.up s, ULift.ext hs⟩
 
 theorem LeafZModInjFlat_of : LateralTheory.E.LeafTensQIsoPf.LeafZModInjFlat := by
   intro q _ M _ _ hM

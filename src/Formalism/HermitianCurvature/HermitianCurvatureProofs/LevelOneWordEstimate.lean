@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramProductIdentities
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramProductIdentities
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBD
 
@@ -103,5 +107,3 @@ theorem level_one_word_estimate : LevelOneWordEstimate := by
       _ ≤ Real.exp 2 := Real.exp_le_exp.2 (by linarith)
 
 end Formalism.FourierDecayAlt.P.PBD
-
-theorem Formalism.FourierDecayAlt.P.level_one_word_estimate' : Formalism.FourierDecayAlt.P.PBD.LevelOneWordEstimate := Formalism.FourierDecayAlt.P.PBD.level_one_word_estimate

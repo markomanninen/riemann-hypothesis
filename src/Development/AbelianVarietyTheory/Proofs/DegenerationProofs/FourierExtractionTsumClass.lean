@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -23,9 +27,9 @@ def torsionChars (K X : Type) [Field K] [AddCommGroup X] (N : ℕ) :
     simp only [Set.mem_setOf_eq] at *
     rw [inv_pow, ha, inv_one]
 
+
 open Module in
 variable {K X : Type} [Field K] [AddCommGroup X] in
-
 theorem _root_.GlobalTheory.TorsionFourier.char_apply_eq_prod {ι : Type} [Fintype ι] (b : Basis ι ℤ X)
     (t : Multiplicative X →* Kˣ) (x : X) :
     t (Multiplicative.ofAdd x) = ∏ i, t (Multiplicative.ofAdd (b i)) ^ (b.repr x i) := by
@@ -39,9 +43,6 @@ noncomputable def charOfValues {ι : Type} [Fintype ι] (b : Basis ι ℤ X) (u 
   toFun x := ∏ i, u i ^ (b.repr x.toAdd i)
   map_one' := by simp
   map_mul' x y := by simp [zpow_add, Finset.prod_mul_distrib]
-
-theorem charOfValues_apply {ι : Type} [Fintype ι] (b : Basis ι ℤ X) (u : ι → Kˣ) (x : X) :
-    charOfValues b u (Multiplicative.ofAdd x) = ∏ i, u i ^ (b.repr x i) := rfl
 
 open Module in
 variable {K X : Type} [Field K] [AddCommGroup X] in
@@ -172,8 +173,8 @@ private theorem sum_torsionCharacters_apply_eq_zero {ι : Type} [Fintype ι] (b 
     rw [sub_mul, hS, one_mul, sub_self]
   exact (mul_eq_zero.1 hzero).resolve_left hne
 
-open Module in
 
+open Module in
 theorem _root_.GlobalTheory.fourier_extraction_tsum_class :
     ∀ (K X : Type) [NontriviallyNormedField K] [IsUltrametricDist K] [CompleteSpace K] [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] (N : ℕ) (ζ : K), 0 < N → ‖(N : K)‖ = 1 → IsPrimitiveRoot ζ N → ∀ (σ : X → K), Filter.Tendsto σ Filter.cofinite (nhds 0) → ∀ α : X, Finite {t : Multiplicative X →* Kˣ // t ^ N = 1} ∧ (∑ᶠ t : {t : Multiplicative X →* Kˣ // t ^ N = 1}, (((t.1 (Multiplicative.ofAdd α))⁻¹ : Kˣ) : K) * ∑' β, σ β * (t.1 (Multiplicative.ofAdd β) : K)) = (N : K) ^ finrank ℤ X * ∑' μ, σ (α + N • μ) ∧ ((∀ μ, μ ≠ 0 → ‖σ (α + N • μ)‖ < ‖σ α‖) → ‖∑' μ, σ (α + N • μ)‖ = ‖σ α‖) := by
   intro K X _ _ _ _ _ _ N ζ hN hNK hζ σ hσ α

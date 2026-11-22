@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IndCount
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IndCount
+
+@[expose] public section
 
 open Filter Topology Set
 open scoped ContDiff
@@ -127,13 +131,5 @@ theorem zd_iteratedFDeriv_comp_perm {f : E → F} {U : Set E} (hU : IsOpen U) (h
       simp [Equiv.swap_apply_right]
     rw [← Equiv.swap_mul_self_mul (0 : Fin (k + 2)) (σ 0) σ]
     exact hmul _ _ (hswap _) (hstab _ hfix) v
-
-def zdCnt {d n : ℕ} (t : Fin d → Fin n) : Fin n → ℕ :=
-  fun k => (Finset.univ.filter fun i => t i = k).card
-
-def zdRep {n : ℕ} (α : Fin n → ℕ) : Fin (∑ k, α k) → Fin n :=
-  fun i => (finSigmaFinEquiv.symm i).1
-
-def zdBasis (n : ℕ) : Module.Basis (Fin n) ℂ (V n) := (EuclideanSpace.basisFun (Fin n) ℂ).toBasis
 
 end ReciprocityTheory.L2DbarEstimates.Y

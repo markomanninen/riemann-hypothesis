@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.ExplicitConstants.SplitCharY
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.ExistsSqEqNegOfDiscr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.LayerLe
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.ExplicitConstants.SplitCharY
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.ExistsSqEqNegOfDiscr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.Top UpperTheory.V.HV
 
@@ -13,7 +17,7 @@ private theorem splitting_field_iso_quadratic (p : ℕ) (hp : 0 < p) (K : Type) 
   have hsK : (f.map (algebraMap ℚ K)).Splits := by
     have hfac : f.map (algebraMap ℚ K) = (X + C δ) * (X + C (-δ)) := by
       have hpK : (p : K) = -(δ ^ 2) := by rw [hδ]; ring
-      rw [hf, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C,
+      rw [hf, Polynomial.map_add (f := _), Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C,
         map_natCast, hpK]
       simp only [map_neg, map_pow]
       ring
@@ -57,7 +61,6 @@ theorem UpperTheory.V.HV.kstar :
     have h' : Polynomial.IsSplittingField ℚ (Polynomial.SplittingField (Polynomial.X ^ 2 + Polynomial.C (p : ℚ)))
         (Polynomial.X ^ 2 + Polynomial.C (p : ℚ)) := by
       convert h
-      exact Subsingleton.elim _ _
     exact h'
   obtain ⟨e⟩ := splitting_field_iso_quadratic p hp.pos K hK2 δ hδ (Kstar p)
   have hfr : Module.finrank ℚ (Kstar p) = 2 := e.toLinearEquiv.finrank_eq.trans hK2

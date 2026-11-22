@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeckeInert
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def atPl (w : Pl K) (p : MvPolynomial (Fin n) ℂ) : MvPolynomial (Pl K × Fin n
 
 variable {F : Type} [Field F] [NumberField F] [Algebra F K]
 
-def Sup {q : Pl F} (w₀ : PlacesOver K q) (ν : Fin n → ℤ) (j : ℕ) (Y : ℝ) (f : normOneGL K n → ℂ) : Prop :=
-  ∀ g : normOneGL K n, f g ≠ 0 → heightOff q (g : AdelicGLn.AdelicGL K n) ≤ Y ∧
+def Sup {q : Pl F} (w₀ : PlacesOver K q) (ν : Fin n → ℤ) (j : ℕ) (Y : ℝ) (f : normOneGL (K := K) (n := n) → ℂ) : Prop :=
+  ∀ g : normOneGL (K := K) (n := n), f g ≠ 0 → heightOff q (g : AdelicGLn.AdelicGL K n) ≤ Y ∧
     finAt w₀.1 (g : AdelicGLn.AdelicGL K n) ∈ iwCoset w₀.1 (fun i => (j : ℤ) * ν i) ∧
     ∀ w : PlacesOver K q, w ≠ w₀ → finAt w.1 (g : AdelicGLn.AdelicGL K n) ∈ GLnLocal.iwahori (w.1.adicCompletion K) n
 
@@ -33,7 +37,7 @@ end Defs
 def ConvSpec : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (β γ : TI K n),
     (∀ g, conv ν β γ g = ∫ x, β x * γ (x⁻¹ * g) ∂ν) ∧
-      ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure], Oinf μ ν (conv ν β γ) = Oinf μ ν β ∘L Oinf μ ν γ
+      ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure], Oinf μ ν (conv ν β γ) = Oinf μ ν β ∘L Oinf μ ν γ
 
 def WordHt : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (a₀ : TI K n), SmoothT a₀ →
@@ -47,12 +51,12 @@ def SphEx : Prop :=
       ∀ k ∈ GLnLocal.integralGL (w.adicCompletion K) n, ∀ x, h (k * x) = h x ∧ h (x * k) = h x
 
 def SphAct : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (𝔞 : Amp μ) (ev), 𝔞.IsEv ev → ∀ w ∉ 𝔞.S,
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (𝔞 : Amp μ) (ev), 𝔞.IsEv ev → ∀ w ∉ 𝔞.S,
     ∀ (p : MvPolynomial (Fin n) ℂ) h, IsSph w p h → ∀ u ∈ fixL μ w (GLnLocal.integralGL (w.adicCompletion K) n),
       sphOp μ w h u = ev (map C (atPl w p)) u
 
 def StepFin : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
     (w : Pl K) (J : Subgroup (GL (Fin n) (w.adicCompletion K))), IsOpen (J : Set (GL (Fin n) (w.adicCompletion K))) →
     ∀ (h : GL (Fin n) (w.adicCompletion K) → ℂ), HasCompactSupport h → (∀ k ∈ J, ∀ x, h (x * k) = h x) →
     ∀ (r : AdelicGLn.FiniteAdelicGL K n → ℂ), Free w r → ∀ e₀ e₁ : TF K n,
@@ -61,26 +65,22 @@ def StepFin : Prop :=
         Ofin μ m e₁ = (∑ᶠ c : GL (Fin n) (w.adicCompletion K) ⧸ J, h c.out • rhoL μ w c.out) ∘L Ofin μ m e₀
 
 def HeckeFin : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
     (𝔞 : Amp μ) (ev), 𝔞.IsEv ev → ∀ T : Finset (Pl K), (∀ w ∈ T, w ∉ 𝔞.S) →
     ∀ (p : Pl K → MvPolynomial (Fin n) ℂ) (h : ∀ w : Pl K, GL (Fin n) (w.adicCompletion K) → ℂ), (∀ w ∈ T, IsSph w (p w) (h w)) →
     ∀ (r : AdelicGLn.FiniteAdelicGL K n → ℂ), (∀ w ∈ T, Free w r) → ∀ e₀ e₁ : TF K n,
       (∀ x, e₀ x = r x * ∏ w ∈ T, (GLnLocal.integralGL (w.adicCompletion K) n : Set _).indicator 1 (cf w x)) →
       (∀ x, e₁ x = r x * ∏ w ∈ T, h w (cf w x)) → Ofin μ m e₁ = ev (map C (∏ w ∈ T, atPl w (p w))) ∘L Ofin μ m e₀
 
-def UiwMul : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (w : Pl K) (ν ν' : Fin n → ℤ), Antitone ν → Antitone ν' →
-    Uiw μ w (ν + ν') = Uiw μ w ν ∘L Uiw μ w ν'
-
 def UiwFin : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (m : Measure (AdelicGLn.FiniteAdelicGL K n)) [m.IsHaarMeasure]
     (w : Pl K) (ν : Fin n → ℤ), Antitone ν → ∀ (j : ℕ) (r : AdelicGLn.FiniteAdelicGL K n → ℂ), Free w r → ∀ e₀ e₁ : TF K n,
       (∀ x, e₀ x = r x * (iwCoset w 0).indicator 1 (cf w x)) →
       (∀ x, e₁ x = r x * (iwCoset w fun i => (j : ℤ) * ν i).indicator 1 (cf w x)) → Ofin μ m e₁ = (Uiw μ w ν ^ j) ∘L Ofin μ m e₀
 
 def RepOne : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), 0 < n →
-    ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (𝔞 : Amp μ) (ev), 𝔞.IsEv ev → ∀ w₀ ∈ 𝔞.S, ∀ ν : Fin n → ℤ, Antitone ν →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ), 0 < n →
+    ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (𝔞 : Amp μ) (ev), 𝔞.IsEv ev → ∀ w₀ ∈ 𝔞.S, ∀ ν : Fin n → ℤ, Antitone ν →
     ∀ T : Finset (Pl K), (∀ w ∈ T, w ∉ 𝔞.S) →
     ∀ (p : Pl K → MvPolynomial (Fin n) ℂ) (h : ∀ w : Pl K, GL (Fin n) (w.adicCompletion K) → ℂ), (∀ w ∈ T, IsSph w (p w) (h w)) →
     ∀ (r : AdelicGLn.FiniteAdelicGL K n → ℂ), Free w₀ r → (∀ w ∈ T, Free w r) →
@@ -110,37 +110,37 @@ def TensHt : Prop :=
     (∀ g, β g ≠ 0 → AutomorphicForm.height (infEmb E n g) ≤ Y) →
     (∀ x, e x ≠ 0 → heightOff q (finEmb E n x) ≤ Yf ∧
       ∀ w : PlacesOver E q, Valued.v (cf w.1 x : Matrix (Fin n) (Fin n) (w.1.adicCompletion E)).det = 1) →
-    ∀ g : normOneGL E n, tens β e g ≠ 0 → heightOff q (g : AdelicGLn.AdelicGL E n) ≤ C₁ * Y ^ c ∧ e (finPart E n g) ≠ 0
+    ∀ g : normOneGL (K := E) (n := n), tens β e g ≠ 0 → heightOff q (g : AdelicGLn.AdelicGL E n) ≤ C₁ * Y ^ c ∧ e (finPart E n g) ≠ 0
 
 def HtTot : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ) (q : Pl F) (w₀ : PlacesOver E q) (ν : Fin n → ℤ), ∃ Q : ℝ, 1 ≤ Q ∧
-    ∀ (j : ℕ) (Y : ℝ) (f : normOneGL E n → ℂ), Sup w₀ ν j Y f → ∀ g, f g ≠ 0 →
+    ∀ (j : ℕ) (Y : ℝ) (f : normOneGL (K := E) (n := n) → ℂ), Sup w₀ ν j Y f → ∀ g, f g ≠ 0 →
       AutomorphicForm.height (g : AdelicGLn.AdelicGL E n) ≤ Y * Q ^ j
 
 def TwLin : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (θ : Twist μ) (ι : Type) (s : Finset ι) (c : ι → ℂ) (f : ι → TG K n) (Z : ℝ),
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ), 0 < n → ∀ (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ) (ι : Type) (s : Finset ι) (c : ι → ℂ) (f : ι → TG K n) (Z : ℝ),
     (∀ i ∈ s, ∀ x, Z < qht x → twK θ (f i) x = 0) →
     Rop μ (∑ i ∈ s, c i • f i) = ∑ i ∈ s, c i • Rop μ (f i) ∧ (∀ x, Z < qht x → twK θ (∑ i ∈ s, c i • f i) x = 0) ∧
       twInt θ (∑ i ∈ s, c i • f i) = ∑ i ∈ s, c i * twInt θ (f i)
 
 def SideE : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F] [IsTotallyComplex E] (σ : E ≃ₐ[F] E),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ (q : Pl F) (w₀ : PlacesOver E q), Split E q →
+    ∀ (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ → ∀ (q : Pl F) (w₀ : PlacesOver E q), Split E q →
     ∀ (νE : Measure (archGroup E n)) [νE.IsHaarMeasure] (aE : TI E n), AmpFn μ νE aE → ∀ (L : Loc σ n q w₀) (ν : Fin n → ℤ),
       ∃ 𝔢 : Side θ (Module.finrank F E), IsSideE L νE aE ν 𝔢
 
 def SideF : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F] [IsTotallyComplex E] (σ : E ≃ₐ[F] E),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μ : Measure (normOneGL F n)) [μ.IsHaarMeasure] (q : Pl F) (w₀ : PlacesOver E q)
+    ∀ (μ : Measure (normOneGL (K := F) (n := n))) [μ.IsHaarMeasure] (q : Pl F) (w₀ : PlacesOver E q)
       (νF : Measure (archGroup F n)) [νF.IsHaarMeasure] (aF : TI F n), AmpFn μ νF aF → ∀ (L : Loc σ n q w₀) (ν : Fin n → ℤ),
       ∃ 𝔣 : Side (Twist.id μ) (Module.finrank F E), IsSideF L νF aF ν 𝔣
 
-open Classical in
 
+open Classical in
 def LocAll : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F] [IsTotallyComplex E] (σ : E ≃ₐ[F] E),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
     ∀ (κ : Finset (Pl E)), (∀ w ∈ κ, Unr E (w.under (𝓞 F))) → ∀ t₀ : Pl E → Multiset ℂ, (∀ w ∈ κ, (t₀ w).card = n ∧ 0 ∉ t₀ w) → ∀ D : ℕ,
     ∃ γ : Pl E → MvPolynomial (Fin n) ℂ, (∀ w ∈ κ, eval (fun i : Fin n => (t₀ w).esymm (i + 1)) (γ w) ≠ 0) ∧
@@ -152,9 +152,9 @@ def LocAll : Prop :=
           MatchAt σ v 1 (prodFn fun w : PlacesOver E v => h w.1) f
 
 def TermEx : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F] [IsTotallyComplex E] (σ : E ≃ₐ[F] E),
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
-    ∀ (μE : Measure (normOneGL E n)) [μE.IsHaarMeasure] (μF : Measure (normOneGL F n)) [μF.IsHaarMeasure] (θ : Twist μE)
+    ∀ (μE : Measure (normOneGL (K := E) (n := n))) [μE.IsHaarMeasure] (μF : Measure (normOneGL (K := F) (n := n))) [μF.IsHaarMeasure] (θ : Twist μE)
       (q : Pl F) (w₀ : PlacesOver E q) (q₀ : PlacesOver F q), Split E q →
     ∀ (νE : Measure (archGroup E n)) [νE.IsHaarMeasure] (νF : Measure (archGroup F n)) [νF.IsHaarMeasure] (aE : TI E n) (aF : TI F n)
       (ci : ℝ), 0 < ci → ArchPair σ νE νF aE aF ci →

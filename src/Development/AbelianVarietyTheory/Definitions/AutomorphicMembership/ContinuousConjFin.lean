@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.Imports
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfValuedEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsOpenKerFinIdele
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.Imports
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfValuedEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsOpenKerFinIdele
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,10 @@ open scoped ContDiff
 
 namespace GlobalTheory.CuspRep
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [NumberField E] [IsTotallyComplex E] in
+
 open Classical in
-
 def coord (τ : E →+* ℂ) : Cinf E →+* ℂ :=
   if (InfinitePlace.mk τ).embedding = τ then Pi.evalRingHom (fun _ => ℂ) (InfinitePlace.mk τ)
   else (starRingEnd ℂ).comp (Pi.evalRingHom (fun _ => ℂ) (InfinitePlace.mk τ))
@@ -33,28 +36,27 @@ theorem coord_algebraMap (τ : E →+* ℂ) (x : E) : coord τ (pInf E (algebraM
     rw [pInf_algebraMap, h']
     simp
 
-omit [NumberField E] [IsTotallyComplex E] in
-open Classical in
 
+open Classical in
 def atEmb (τ : E →+* ℂ) (z : ℂ) : Cinf E :=
   Pi.single (InfinitePlace.mk τ) (if (InfinitePlace.mk τ).embedding = τ then z else starRingEnd ℂ z)
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem coord_atEmb (τ : E →+* ℂ) (z : ℂ) : coord τ (atEmb τ z) = z := by
   unfold coord atEmb
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_mul (τ : E →+* ℂ) (z z' : ℂ) : atEmb τ z * atEmb τ z' = atEmb τ (z * z') := by
   classical
   unfold atEmb
   rw [← Pi.single_mul]
   split_ifs <;> simp
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_eq (τ : E →+* ℂ) (z : ℂ) : atEmb τ z = z.re • atEmb τ 1 + z.im • atEmb τ Complex.I := by
   classical
   unfold atEmb
@@ -62,8 +64,8 @@ theorem atEmb_eq (τ : E →+* ℂ) (z : ℂ) : atEmb τ z = z.re • atEmb τ 1
   congr 1
   split_ifs <;> apply Complex.ext <;> simp
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem atEmb_conj (τ : E →+* ℂ) (z : ℂ) :
     atEmb (ComplexEmbedding.conjugate τ) z = atEmb τ (starRingEnd ℂ z) := by
   have hne : ComplexEmbedding.conjugate τ ≠ τ := fun h =>
@@ -75,8 +77,8 @@ theorem atEmb_conj (τ : E →+* ℂ) (z : ℂ) :
   · rw [if_pos h, if_neg (by rw [InfinitePlace.mk_conjugate_eq, h]; exact hne.symm)]
   · rw [if_pos (by rw [InfinitePlace.mk_conjugate_eq, h]), if_neg (by rw [h]; exact hne)]; simp
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem atEmb_mul_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ ≠ InfinitePlace.mk τ') (z z' : ℂ) :
     atEmb τ z * atEmb τ' z' = 0 := by
   classical
@@ -86,8 +88,8 @@ theorem atEmb_mul_of_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ ≠ Infi
   · subst hw; simp [Pi.single_eq_of_ne h]
   · simp [Pi.single_eq_of_ne hw]
 
-variable (E a) in
 
+variable (E a) in
 def lieS (i j : Fin a) : Cinf E →ₗ[ℝ] Module.End ℂ (Sm E a) :=
   (lie E a).comp (Matrix.singleLinearMap ℝ i j : Cinf E →ₗ[ℝ] Matrix (Fin a) (Fin a) (Cinf E))
 
@@ -155,13 +157,14 @@ theorem cap_highest (τ : E →+* ℂ) (ν : Fin a → ℂ) (φ : Sm E a) (h : F
   congr 1
   exact Finset.prod_congr rfl fun k _ => by ring
 
-variable (E a) in
 
+variable (E a) in
 def Zalg : Subalgebra ℂ (Module.End ℂ (Sm E a)) := Algebra.adjoin ℂ {z | ∃ τ u, z = cap τ u}
 
 theorem map_qdet {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (f : A →ₐ[ℂ] B) (X : Fin a → Fin a → A)
     (u : ℂ) : f (Formalism.REAL.qdet X u) = Formalism.REAL.qdet (fun i j => f (X i j)) u := by
-  simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
@@ -173,9 +176,9 @@ theorem qdet_shift {A : Type} [Ring A] [Algebra ℂ A] (X : Fin a → Fin a → 
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
-  simp only [Formalism.REAL.Tm]
+  simp only [Formalism.REAL.Tm, id_eq]
   split_ifs
-  · simp only [map_sub, map_add]; abel
+  · simp only [map_sub, map_add (f := _)]; abel
   · simp
 
 theorem Zalg_stable {V : Submodule ℂ (Sm E a)} (hV : ∀ X, ∀ φ ∈ V, lie E a X φ ∈ V) {z : Module.End ℂ (Sm E a)}
@@ -196,8 +199,8 @@ theorem Zalg_stable {V : Submodule ℂ (Sm E a)} (hV : ∀ X, ∀ φ ∈ V, lie 
   · exact S.algebraMap_mem _
   · exact S.zero_mem
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def chiDet (a : ℕ) (χ : HChar E) : GA E a →* ℂˣ := χ.1.comp GeneralLinearGroup.det
 
 def chiInf (χ : HChar E) : (Cinf E)ˣ →* ℂˣ := χ.1.comp (infId E)
@@ -217,11 +220,11 @@ theorem chiInf_expU_atEmb (χ : HChar E) (τ : E →+* ℂ) (z : ℂ) :
       Complex.exp (expo χ τ * z + expo χ (ComplexEmbedding.conjugate τ) * starRingEnd ℂ z) := by
   have e : atEmb τ (-Complex.I) = -atEmb τ Complex.I := by
     rw [atEmb_eq]; simp
-  rw [chiInf_expU, atEmb_eq, map_add, map_smul, map_smul]
+  rw [chiInf_expU, atEmb_eq, map_add (f := _), map_smul, map_smul]
   simp only [expo, atEmb_conj, map_one, Complex.conj_I, e, map_neg, Complex.real_smul]
   congr 1
   conv_rhs => rw [← Complex.re_add_im z]
-  simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+  simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
   linear_combination (z.im * dchi χ (atEmb τ Complex.I)) * Complex.I_mul_I
 
 theorem expo_eq_of_exp (χ : HChar E) (τ : E →+* ℂ) (p q : ℂ)
@@ -268,8 +271,8 @@ theorem mul_chi_mem_Sm (χ : HChar E) {φ : GA E a → ℂ} (hφ : φ ∈ Sm E a
   rw [chart_mul_chi]
   exact (hφ g).mul (contDiffOn_const.mul fun x hx => (contDiffAt_chi_det χ hx).contDiffWithinAt)
 
-variable (a) in
 
+variable (a) in
 def mulChi (χ : HChar E) : Sm E a ≃ₗ[ℂ] Sm E a where
   toFun φ := ⟨fun x => φ.1 x * (chiDet a χ x : ℂˣ), mul_chi_mem_Sm χ φ.2⟩
   invFun φ := ⟨fun x => φ.1 x * (chiDet a χ⁻¹ x : ℂˣ), mul_chi_mem_Sm χ⁻¹ φ.2⟩
@@ -291,8 +294,8 @@ theorem rt_mulChi (χ : HChar E) (h : GA E a) (φ : Sm E a) :
   Subtype.ext <| funext fun g => by
     simp only [rt_apply, mulChi_apply, map_mul, Units.val_mul, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul]; ring
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem fderiv_det_one (X : Lie E a) :
     fderiv ℝ (fun x : Lie E a => (Matrix.of x).det) (oneL E a) X = (Matrix.of X).trace := by
   have hd : HasFDerivAt (fun x : Lie E a => (Matrix.of x).det)
@@ -414,7 +417,7 @@ section Conj
 
 open GlobalTheory.Mem.Chr
 
-omit [IsTotallyComplex E]
+omit [_root_.NumberField.IsTotallyComplex E]
 
 def conjSrc (c : E ≃+* E) (v : HeightOneSpectrum (𝓞 E)) : HeightOneSpectrum (𝓞 E) :=
   (existsUnique_conjPl c.symm v).exists.choose

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.ExistsCharacterEigenvectorOfCommutingRepresentat
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem exists_eigenform {G V : Type} [Group G] [TopologicalSpace G] [IsTopologi
       have e2 := Submodule.projectionOnto_apply_right hc ⟨b, hb⟩
       have e3 := Submodule.projectionOnto_apply_left hc (σ g ⟨a, ha⟩)
       have e4 := Submodule.projectionOnto_apply_right hc ⟨ρ g b, T.apply_mem_toSubmodule g hb⟩
-      simp only [LinearMap.comp_apply, map_add]
+      simp only [LinearMap.comp_apply, map_add (f := _)]
       rw [e1, e2, e4, map_zero]
       exact congrArg (· + 0) e3⟩
   have hp : ∀ x : fixed ρ H, p x.1 = x := fun x => Submodule.projectionOnto_apply_left hc x
@@ -76,7 +80,7 @@ theorem exists_eq_torusChar {n : ℕ} (μ : (Fin n → kˣ) →* ℂˣ) (hμ : �
     · simp [Pi.mulSingle_eq_of_ne h]
   refine ⟨fun i => c i ϖ, MonoidHom.ext fun t => ?_⟩
   rw [torusChar_apply]
-  simp only [← eq_unrChar (hc _) hϖ]
+  simp only [← GlobalTheory.SmGL.eq_unrChar (hc _) hϖ]
   conv_rhs => rw [← Finset.univ_prod_mulSingle t, map_prod]
   rfl
 
@@ -94,7 +98,7 @@ theorem isSubquotient_of_eigenform {n : ℕ} {V : Type} [AddCommGroup V] [Module
         show ofChar μ ((leviTorus k (Fin n)).symm (leviTorus k (Fin n) t)) _ = _
         rw [MulEquiv.symm_apply_apply, ofChar_apply]
       exact (hl t x).trans e.symm⟩
-  obtain ⟨f, hf⟩ := (Model.evalOne_bijective (points (Fin n)) hπ ρ).2 φ
+  obtain ⟨f, hf⟩ := (GlobalTheory.SmGL.Model.evalOne_bijective (points (Fin n)) hπ ρ).2 φ
   have hne : ∃ v, f v ≠ 0 := by
     by_contra h
     push_neg at h

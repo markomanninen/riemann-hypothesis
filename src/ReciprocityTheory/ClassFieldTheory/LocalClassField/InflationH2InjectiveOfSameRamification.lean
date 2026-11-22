@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.HSubsingletonOfUniquelyDivisible
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsCT
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.BrUnrA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.HSubsingletonOfUniquelyDivisible
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsCT
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.BrUnrA
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -15,16 +19,14 @@ variable (p : ℕ) [Fact p.Prime] (K L : IntermediateField ℚ_[p] (PadicAlgCl p
 variable {p K}
 
 theorem admissible_valuation_layer {L : IntermediateField ℚ_[p] (PadicAlgCl p)} (he : 0 < eK p L) (h : K ≤ L)
-    [(subG p K L).Normal] : admitted (layerUIncl p K L) (vLayer p K L) where
-  i_id := rfl
-  p_id := rfl
-  emb := (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology
-    (layerUIncl_injective p) fun _ _ => isOpen_discrete _).isEmbedding
-  exact := fun y => by
-    have h0 := ker_vLayer p he h
-    rw [← LinearMap.mem_ker, h0]
+    [(subG p K L).Normal] : admitted (layerUIncl p K L) (vLayer p K L) := by
+  refine ⟨rfl, rfl, ?_, ?_, ?_⟩
+  · exact (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology
+      (layerUIncl_injective p) fun _ _ => isOpen_discrete _).isEmbedding
+  · intro y
+    rw [← LinearMap.mem_ker, ker_vLayer p he h]
     rfl
-  sec := ⟨Function.surjInv (vLayer_surjective p he h), continuous_of_discreteTopology, Function.surjInv_eq _⟩
+  · exact ⟨Function.surjInv (vLayer_surjective p he h), continuous_of_discreteTopology, Function.surjInv_eq _⟩
 
 theorem eK_Kn_pos (hK : FiniteDimensional ℚ_[p] K) {n : ℕ} (hn : 0 < n) : 0 < eK p (Kn p K n) := by
   rw [eK_Kn p hK hn]; exact eK_pos p K hK
@@ -81,7 +83,21 @@ theorem exists_invariant_of_connecting_map (hK : FiniteDimensional ℚ_[p] K) :
   refine ⟨(AddEquiv.ofBijective ((vLayer p K (MaximalUnramifiedExtension p K)).hom.H 2).toAddMonoidHom
     (valuation_unramified_closure_h2_bijective hK)).trans e, ?_, ?_⟩
   · intro π t m z hz _ hπ ht hm hzm
-    have s := admissibility_holds ℤ _ _ _ _ _ _ (admissible_int_rat_sequence (GalLK p K (MaximalUnramifiedExtension p K)))
+    have hadm : admitted
+        (trivMap (GalLK p K (MaximalUnramifiedExtension p K)) (Int.castAddHom ℚ))
+        (trivMap _ (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)) := by
+      refine ⟨rfl, rfl, ?_, ?_, ?_⟩
+      · have hi : Injective (trivMap (GalLK p K (MaximalUnramifiedExtension p K)) (Int.castAddHom ℚ)).u :=
+          Int.cast_injective (α := ℚ)
+        exact (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology
+          hi fun _ _ => isOpen_discrete _).isEmbedding
+      · intro (y : ℚ)
+        show (QuotientAddGroup.mk y : QZ) = 0 ↔ y ∈ Set.range (Int.castAddHom ℚ)
+        rw [QuotientAddGroup.eq_zero_iff]
+        rfl
+      · exact ⟨Function.surjInv (QuotientAddGroup.mk'_surjective (Int.castAddHom ℚ).range),
+          continuous_of_discreteTopology, Function.surjInv_eq _⟩
+    have s := admissibility_holds ℤ _ _ _ _ _ _ hadm
     obtain ⟨⟨δ, h1, -⟩, -⟩ := lES_holds ℤ _ _ _ _ _ s
     obtain ⟨x, hx, y, hy, e1, e2, e3⟩ := conn_cls_of_lift δ h1 t ht m hm
     show e ((vLayer p K (MaximalUnramifiedExtension p K)).hom.H 2 ((urT p K).coch.cls 2 z hz)) = _
@@ -144,7 +160,7 @@ theorem isInv_invUr (hK : FiniteDimensional ℚ_[p] K) : IsInv p K (invUr p K) :
   obtain ⟨f, hf⟩ := exists_isInv hK
   have h : ∃ f, IsInv p K f := ⟨_, hf⟩
   unfold invUr
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem invUr_bijective (hK : FiniteDimensional ℚ_[p] K) : Bijective (invUr p K) := by

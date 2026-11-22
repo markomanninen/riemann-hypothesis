@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EqZeroOfDatumEmbeddingEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,6 @@ theorem dinj_continuousOn_of_smoothOnGV {E : Type*} [NormedAddCommGroup E] [Norm
   exact hfF g hg.2 hg.1
 
 end
-
-theorem dinj_one_mem_UJset : (1 : Matrix (Fin n) (Fin n) ℂ) ∈ UJset ε := by
-  show inUJ ε 1
-  simp [inUJ]
 
 theorem uniformisationL2_injective (hP : IsPsiFor ε lam T Ψ) {v₀ : T.V} (hv₀ : v₀ ≠ 0) :
     Function.Injective (uniformisationL2 ε Ψ v₀) := by

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,13 @@ theorem fin_adjoin {A : Type*} [Ring A] [Algebra ℂ A] {ι : Type*} [Finite ι]
     (hc : ∀ i j, Commute (x i) (x j)) (hL : ∀ i, ∃ L : List ℂ, (L.map fun c => x i - algebraMap ℂ A c).prod = 0) :
     FiniteDimensional ℂ (Subalgebra.toSubmodule (Algebra.adjoin ℂ (Set.range x))) := by
   classical
-  have hcomm : ∀ a ∈ Set.range x, ∀ b ∈ Set.range x, a * b = b * a := by
-    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
+  have hcomm : (Set.range x).Pairwise Commute := by
+    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
     exact hc i j
-  letI : CommRing (Algebra.adjoin ℂ (Set.range x)) := Algebra.adjoinCommRingOfComm ℂ hcomm
+  letI : IsMulCommutative (Algebra.adjoin ℂ (Set.range x)) := Algebra.isMulCommutative_adjoin ℂ hcomm
+  letI : CommRing (Algebra.adjoin ℂ (Set.range x)) := by
+    open scoped IsMulCommutative in
+      exact inferInstance
   have hint : ∀ i, IsIntegral ℂ (x i) := by
     intro i
     obtain ⟨L, hL⟩ := hL i
@@ -36,7 +43,7 @@ theorem fin_adjoin {A : Type*} [Ring A] [Algebra ℂ A] {ι : Type*} [Finite ι]
   have hyint : ∀ z ∈ Set.range y, IsIntegral ℂ z := by
     rintro _ ⟨i, rfl⟩
     exact (isIntegral_algHom_iff (Algebra.adjoin ℂ (Set.range x)).val Subtype.val_injective).1 (hint i)
-  have hfin := Algebra.finite_adjoin_of_finite_of_isIntegral (Set.finite_range y) hyint
+  have hfin := Algebra.finite_adjoin_of_finite_of_isIntegral (R := ℂ) (Set.finite_range y) hyint
   have hset : Set.range y = Subtype.val ⁻¹' (Set.range x) := by
     ext z
     constructor

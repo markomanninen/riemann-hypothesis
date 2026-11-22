@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.ExistsPsi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LatticeFrames.ExistsPsi
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem mem_S0_of_sum_eq {s : K} {β y₁ y₂ : Etau K τ} {Λ : Set (Etau K τ
     obtain ⟨p1, q1, e1⟩ := (h _).1 h1
     obtain ⟨p2, q2, e2⟩ := (h _).1 h2
     refine (h _).2 ⟨p * p1 + q * p2, p * q1 + q * q2, ?_⟩
-    rw [map_add, map_smul, map_smul, e1, e2]
-    simp only [map_add, map_mul, smul_add, smul_smul, add_smul]
+    rw [map_add (f := _), map_smul, map_smul, e1, e2]
+    simp only [map_add (f := _), map_mul, smul_add, smul_smul, add_smul]
     abel
 
 variable {c t s : K} {ε : Oˣ} {β : Etau K τ}
@@ -59,7 +63,7 @@ theorem Bf_int (L2 : IsUnit (2 : O)) (hc : c = (τ ^ 2 - 4) * algebraMap O K ε 
     obtain ⟨p, q, rfl⟩ := (h _).1 ha
     obtain ⟨p', q', rfl⟩ := (h _).1 hb
     refine (h _).2 ⟨p + p', q + q', ?_⟩
-    simp only [map_add, add_smul]
+    simp only [map_add (f := _), add_smul]
     abel
   have hsm : ∀ (r : O) a, a ∈ Λ → algebraMap O K r • a ∈ Λ := by
     intro r a ha
@@ -90,11 +94,11 @@ theorem isUnimodular_cliffordLatticeStabilizer (L : IsLoc O Δ) (hD : τ ^ 2 - 4
   obtain ⟨e, f, k, he1, he2, hf1, hf2, hk1, hk2⟩ := exists_efh hD h2K hs hu hg
   have ev1 : ∀ a b d : K, psi s β (a • e + b • f + d • k) y₁ = (-d) • y₁ + b • y₂ := by
     intro a b d
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, he1, hf1, hk1]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, he1, hf1, hk1]
     module
   have ev2 : ∀ a b d : K, psi s β (a • e + b • f + d • k) y₂ = a • y₁ + d • y₂ := by
     intro a b d
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, he2, hf2, hk2]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, he2, hf2, hk2]
     module
   have dec : ∀ v : K × Etau K τ, ∃ a b d : K, v = a • e + b • f + d • k := by
     intro v
@@ -102,7 +106,7 @@ theorem isUnimodular_cliffordLatticeStabilizer (L : IsLoc O Δ) (hD : τ ^ 2 - 4
     obtain ⟨a, δ, h2⟩ : ∃ a δ : K, psi s β v y₂ = a • y₁ + δ • y₂ := ⟨_, _, coord hg _⟩
     have A1 := psi_anti hc hβ v k y₁
     have A2 := psi_anti hc hβ v k y₂
-    simp only [hk1, hk2, map_neg, h1, h2, map_add, map_smul] at A1 A2
+    simp only [hk1, hk2, map_neg, h1, h2, map_add (f := _), map_smul] at A1 A2
     have E1 : (algebraMap O K ε * (-2 * α)) • y₁ + (0 : K) • y₂ = (2 * Bf τ c t v k) • y₁ + (0 : K) • y₂ := by
       rw [← A1]
       module
@@ -118,7 +122,7 @@ theorem isUnimodular_cliffordLatticeStabilizer (L : IsLoc O Δ) (hD : τ ^ 2 - 4
     rw [← sub_eq_zero]
     refine psi_inj hD hs hu (fun y => ?_)
     rw [coord hg y]
-    simp only [map_sub, LinearMap.sub_apply, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [map_sub, LinearMap.sub_apply, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
       h1, h2, he1, he2, hf1, hf2, hk1, hk2, hδ]
     module
   have pair : ∀ x z : K, (∃ p q : O, x • y₁ + z • y₂ = algebraMap O K p • y₁ + algebraMap O K q • y₂) ↔
@@ -152,9 +156,9 @@ theorem isUnimodular_cliffordLatticeStabilizer (L : IsLoc O Δ) (hD : τ ^ 2 - 4
     have Ae := psi_anti hc hβ e (a • e + b • f + d • k) y₂
     have Af := psi_anti hc hβ f (a • e + b • f + d • k) y₁
     have Ak := psi_anti hc hβ k (a • e + b • f + d • k) y₁
-    rw [ev2, he2, ev1, map_add, map_smul, map_smul, he1, he2] at Ae
-    rw [ev1, hf1, ev2, map_add, map_smul, map_smul, hf1, hf2] at Af
-    rw [ev1, hk1, map_neg, ev1, map_add, map_smul, map_smul, hk1, hk2] at Ak
+    rw [ev2, he2, ev1, map_add (f := _), map_smul, map_smul, he1, he2] at Ae
+    rw [ev1, hf1, ev2, map_add (f := _), map_smul, map_smul, hf1, hf2] at Af
+    rw [ev1, hk1, map_neg, ev1, map_add (f := _), map_smul, map_smul, hk1, hk2] at Ak
     have Ee : (0 : K) • y₁ + (algebraMap O K ε * b) • y₂ = (0 : K) • y₁ + (2 * Bf τ c t e (a • e + b • f + d • k)) • y₂ := by
       rw [← Ae]
       module

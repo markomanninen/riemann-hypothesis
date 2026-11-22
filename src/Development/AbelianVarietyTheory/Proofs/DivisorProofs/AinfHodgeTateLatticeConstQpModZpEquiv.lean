@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToSpanSingletonConstGenSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSandwichOfPrismaticDieudonne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicRingHomEqCanonical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToSpanSingletonConstGenSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSandwichOfPrismaticDieudonne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicRingHomEqCanonical
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ theorem ghost_ofPadic (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] [Fact ¬I
       map_one' := by simp only [map_one, ghost, iterate_map_one]
       map_mul' := fun a b => by simp only [map_mul, ghost_mul]
       map_zero' := by simp only [map_zero, ghost_zero]
-      map_add' := fun a b => by simp only [map_add, ghost_add] }
+      map_add' := fun a b => by simp only [map_add (f := _), ghost_add] }
   exact congrArg (fun f : ℤ_[p] →+* O => f s) (padicToO_unique p O g)
 
 theorem hodgeTate_constGen (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] :
@@ -55,7 +59,7 @@ theorem latt_const_equiv : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [Is
     exact congrArg _ h
   · let y : TDual (const p O) :=
       { toFun := fun t => ofPadic p O (φ.symm t) * a
-        map_add' := fun t t' => by rw [map_add, map_add, add_mul]
+        map_add' := fun t t' => by rw [map_add (f := _), map_add (f := _), add_mul]
         map_smul' := fun c t => by
           rw [map_smul, smul_eq_mul, map_mul, smul_eq_mul, mul_assoc] }
     have hy : y ∈ latt (const p O) := fun n => by

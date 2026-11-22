@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -22,7 +26,7 @@ private theorem psLin_span {A κ : Type} [CommRing A] (d : ℕ) (s : Finset κ) 
     let r : MvPowerSeries κ A := fun e => if e a < d then MvPowerSeries.coeff e f else 0
     have hfr : f = (MvPowerSeries.X a) ^ d * g + r := by
       ext e
-      rw [map_add, MvPowerSeries.X_pow_eq, MvPowerSeries.coeff_monomial_mul]
+      rw [map_add (f := _), MvPowerSeries.X_pow_eq, MvPowerSeries.coeff_monomial_mul]
       by_cases h : e a < d
       · have h' : ¬ (Finsupp.single a d ≤ e) := by
           rw [Finsupp.single_le_iff]
@@ -63,7 +67,7 @@ private theorem psLin_small {Λ A M κ : Type} [CommRing Λ] [CommRing A] [AddCo
     exact h i
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [smul_eq_mul, map_mul, Module.End.mul_apply]
@@ -83,7 +87,7 @@ theorem UpperTheory.V.Pa.Lev.psLin :
       rw [MvPolynomial.coe_C]
       exact hC a y
     · intro p q hp hq y
-      rw [MvPolynomial.coe_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, map_add,
+      rw [MvPolynomial.coe_add, map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, map_add (f := _),
         hp, hq]
     · intro p i hp y
       rw [MvPolynomial.coe_mul, MvPolynomial.coe_X, map_mul, map_mul, Module.End.mul_apply,

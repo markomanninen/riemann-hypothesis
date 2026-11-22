@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFundIpow
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSmulMemOfMemSpanFraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFundIpow
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsSmulMemOfMemSpanFraction
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.DegVol
 open scoped Pointwise ENNReal Classical nonZeroDivisors
 
@@ -28,11 +33,11 @@ theorem det_Hb (k : ℕ) : (Hb k).det = -1 := by
 
 theorem exists_pseudo (K W : Type) [Field K] [NumberField K] [AddCommGroup W] [Module K W] [FiniteDimensional K W]
     [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W] (m : ℕ) (hm : Module.finrank K W = m) (L : Submodule (𝓞 K) W)
-    (hL : Submodule.IsLattice K L) :
+    (hL : L.FG ∧ Submodule.span K (L : Set W) = ⊤) :
     ∃ (e : Module.Basis (Fin m) K W) (c : Fin m → FractionalIdeal (𝓞 K)⁰ K), (∀ i, c i ≠ 0) ∧
       ∀ x, x ∈ L ↔ ∀ i, e.repr x i ∈ c i := by
   obtain ⟨-, f, c, hf, hc, hΛ, -⟩ :=
-    GlobalTheory.exists_pseudoCoords (R := 𝓞 K) (K := K) m W hm L ⊥ hL.fg hL.span_eq_top
+    GlobalTheory.exists_pseudoCoords (R := 𝓞 K) (K := K) m W hm L ⊥ hL.1 hL.2
   have hinj : Function.Injective (LinearMap.pi f) := by
     rw [injective_iff_map_eq_zero]
     intro v hv
@@ -58,7 +63,7 @@ theorem mem_smul_iff {K W : Type} [Field K] [NumberField K] [AddCommGroup W] [Mo
       rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact FractionalIdeal.mul_mem_mul hr ((hL y).1 hy i)
     · intro i
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact Submodule.add_mem _ (hx i) (hy i)
   · intro hx
     rw [← e.sum_repr x]
@@ -138,7 +143,8 @@ theorem unimod_coords {K W : Type} [Field K] [NumberField K] [StarRing K] [AddCo
     show e.equivFun (e.equivFun.symm y) i = y i
     rw [LinearEquiv.apply_symm_apply]
   have hB2 : ∀ i, HW.B (e i) x = ((Matrix.of fun i j => HW.B (e i) (e j)) *ᵥ fun j => star (y j)) i := fun i => by
-    rw [hxdef, e.equivFun_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxdef, e.equivFun_symm_apply, map_sum]
     simp only [LinearMap.map_smulₛₗ, starRingEnd_apply, smul_eq_mul, mulVec, dotProduct, Matrix.of_apply]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hyL : (∀ i, y i ∈ c i) ↔ x ∈ L := by rw [hL]; simp only [hrx]
@@ -155,7 +161,8 @@ theorem unimod_coords {K W : Type} [Field K] [NumberField K] [StarRing K] [AddCo
     rw [← HW.herm x' x]
     refine star_mem_one ?_
     conv => arg 2; rw [← e.sum_repr x']
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smul, LinearMap.smul_apply, smul_eq_mul, mul_comm, ← mem_one_iff']
     exact (FractionalIdeal.mem_inv_iff (hc i)).1 (hx i) _ ((hL x').1 hx' i)
@@ -169,7 +176,8 @@ theorem det_gram_ne_zero {K W : Type} [Field K] [StarRing K] [AddCommGroup W] [M
   have hx : ∀ j, HW.B x (e j) = 0 := fun j => by
     have h1 := congrFun hw0 j
     simp only [vecMul, dotProduct, Matrix.of_apply, Pi.zero_apply] at h1
-    rw [hxdef, e.equivFun_symm_apply, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxdef, e.equivFun_symm_apply, map_sum, LinearMap.sum_apply]
     simpa only [map_smul, LinearMap.smul_apply, smul_eq_mul] using h1
   have hB : HW.B x = 0 := e.ext fun j => by rw [hx j, LinearMap.zero_apply]
   have hx0 : x = 0 := HW.nondeg x fun y => by rw [hB, LinearMap.zero_apply]
@@ -276,7 +284,8 @@ theorem unimod_fund : ∀ (K W : Type) [Field K] [NumberField K] [StarRing K] [A
     have h0 : Ψ v x = ∑ i, σ v (e.repr x i) • Ψ v (e i) := by
       conv_lhs => rw [← e.sum_repr x]
       change φ v _ = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => hsmul v _ _
     rw [Matrix.smul_mulVec, h0]
     congr 1

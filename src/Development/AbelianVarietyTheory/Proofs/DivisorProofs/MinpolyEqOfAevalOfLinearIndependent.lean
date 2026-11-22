@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsUnitMemOfSpanBaseChange
-import GroundTheory.Brauer.BaseChangeCSA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorRatAlgebraDecompFactorwiseStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsUnitMemOfSpanBaseChange
+public import GroundTheory.Brauer.BaseChangeCSA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorRatAlgebraDecompFactorwiseStatement
+
+@[expose] public section
 
 open scoped TensorProduct
 open Polynomial
@@ -72,7 +76,8 @@ theorem exists_unit_conj_baseChange : ∀ (S F B : Type) [Field S] [CharZero S] 
         ← Algebra.TensorProduct.one_def]
     have hy : aeval (Φ x i) ((minpoly F x₀).map (algebraMap F (L i))) = 0 := by
       have := congrArg (fun w => Φ w i) hP
-      simp only [map_sum, map_mul, map_pow, map_zero, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_pow, map_zero, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply,
         Pi.zero_apply, hcoef] at this
       rw [aeval_eq_sum_range' (n := n + 1) (by rw [hdegm]; omega), ← this]
       refine Finset.sum_congr rfl fun k _ => ?_
@@ -85,7 +90,8 @@ theorem exists_unit_conj_baseChange : ∀ (S F B : Type) [Field S] [CharZero S] 
         apply Φ.injective
         rw [map_zero]
         funext k
-        simp only [map_sum, map_mul, map_pow, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, hΦ2,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, map_pow, Finset.sum_apply, Pi.mul_apply, Pi.pow_apply, hΦ2,
           RingEquiv.apply_symm_apply, Pi.zero_apply]
         by_cases hk : k = i
         · subst hk

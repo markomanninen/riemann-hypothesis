@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem isUnit_teich_pow_add {e : ℕ} (ϖ : PiSys l e) :
   have hp : ((l.factorial : ℕ) : Per.Acris l) = l * ((l - 1).factorial : ℕ) := by
     rw [← Nat.mul_factorial_pred hl.out.ne_zero]; push_cast; ring
   have h1 : ainfToAcris l (ϖ.teich ^ (e * l) + l) = l * (1 + ((l - 1).factorial : Per.Acris l) * d) := by
-    rw [map_add, map_pow, map_natCast, ← hd, hp]; ring
+    rw [map_add (f := _), map_pow, map_natCast, ← hd, hp]; ring
   have hy : (((l - 1).factorial : Per.Acris l) * d) ^ l =
       l * (((l - 1).factorial : Per.Acris l) ^ l * (m * d₂)) := by
     rw [mul_pow, hdl]; ring
@@ -70,7 +74,7 @@ theorem isUnit_toB_frob_eis : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a
     IsUnit (toB l O (frobOA l O (1 ⊗ₜ ϖ.ev a (eis l a e)))) := by
   intro l _ a e _ _ O _ _ _ _ ϖ
   have hE : WittVector.frobenius (ϖ.ev a (eis l a e)) = ϖ.teich ^ (e * l) + l := by
-    rw [← ϖ.ev_frobS a, eis, map_add, map_pow, frobS_X, map_natCast, map_add, map_pow, map_pow, PiSys.ev_X,
+    rw [← ϖ.ev_frobS a, eis, map_add (f := _), map_pow, frobS_X, map_natCast, map_add (f := _), map_pow, map_pow, PiSys.ev_X,
       map_natCast, ← pow_mul, mul_comm l e]
   have h : toB l O (frobOA l O (1 ⊗ₜ ϖ.ev a (eis l a e))) =
       (Algebra.TensorProduct.includeRight : Per.Bcris l →ₐ[ℤ_[l]] OB l O)

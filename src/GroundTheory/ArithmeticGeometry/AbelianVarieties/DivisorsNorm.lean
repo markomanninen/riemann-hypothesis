@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.Divisors
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.Divisors
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -30,6 +34,12 @@ theorem span_X_sub_C_le_comap_XYIdeal (x : F) (y : F[X]) :
   exact Ideal.subset_span (Set.mem_insert _ _)
 
 variable [IsAlgClosed F] [W.IsElliptic]
+
+local instance : IsDedekindDomain W.toAffine.CoordinateRing := by
+  refine isDedekindDomain_iff_isDiscreteValuationRing_atPrime.mpr ⟨inferInstance, ?_⟩
+  intro P hP0 hP
+  obtain ⟨x, y, h, rfl⟩ := exists_eq_XYIdeal W hP0
+  exact isDiscreteValuationRing_localization_XYIdeal W h
 
 theorem relNorm_XYIdeal {x y : F} (h : W.toAffine.Nonsingular x y) :
     Ideal.relNorm F[X] (XYIdeal W.toAffine x (C y)) = Ideal.span {X - C x} := by
@@ -79,7 +89,7 @@ theorem finsum_count_XYIdeal {x y : F} (h : W.toAffine.Nonsingular x y) :
     (heightOneOfNonsingular h)
   simp only [heightOneOfNonsingular_asIdeal] at hc
   rw [finsum_eq_single _ (heightOneOfNonsingular h) (fun v hv => by
-    rw [hc v, if_neg (fun e => hv e.symm)]), hc, if_pos rfl]
+    rw [hc v, ite_eq_right (fun e => hv e.symm)]), hc, ite_eq_left rfl]
 
 theorem natDegree_eq_finsum_count_of_relNorm_eq {I : Ideal W.toAffine.CoordinateRing} (hI : I ≠ 0)
     {p : F[X]} (hp : Ideal.relNorm F[X] I = Ideal.span {p}) :

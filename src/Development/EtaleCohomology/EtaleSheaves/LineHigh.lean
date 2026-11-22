@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleChapterETwo
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleChapterETwo
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -31,8 +35,8 @@ def PB (q : ℕ) (i : ℤ) {A : Type} [CommRing A] [IsLocalRing A] {X : Scheme.{
 
 def AICSch (Z : Scheme.{0}) : Prop := IsIntegral Z ∧ ∀ U : Z.Opens, IsAffineOpen U → (U : Set Z).Nonempty → AIC Γ(Z, U)
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 def P1 : Scheme.{0} := Proj (MvPolynomial.homogeneousSubmodule (Fin 2) ℤ)
 
 def IsLine {L S : Scheme.{0}} (l : L ⟶ S) : Prop :=

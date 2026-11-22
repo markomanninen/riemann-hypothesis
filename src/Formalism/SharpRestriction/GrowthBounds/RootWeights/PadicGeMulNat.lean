@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
-import Formalism.GrowthSums.LemmaATwoFactList
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+public import Formalism.GrowthSums.LemmaATwoFactList
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1
 open Polynomial NumberField
@@ -42,8 +46,8 @@ theorem eig_line {n : ℕ} (G : Matrix (Fin n) (Fin n) ℂ) (hs : G.charpoly.Sep
   obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' v' hv').1 h2 u'
   exact ⟨c, (congrArg Subtype.val hc).symm⟩
 
-open ComplexOrder in
 
+open ComplexOrder in
 theorem iso_bot_C {n : ℕ} (G B Bi : Matrix (Fin n) (Fin n) ℂ) (hB : B * Bi = 1) (hinv : Gᴴ * B * G = B)
     (hs : G.charpoly.Separable) (hz : ∀ z, G.charpoly.IsRoot z → ‖z‖ = 1) (S : Submodule ℂ (Fin n → ℂ))
     (hst : ∀ x ∈ S, G *ᵥ x ∈ S) (hiso : ∀ x ∈ S, ∀ y ∈ S, star x ⬝ᵥ (B *ᵥ y) = 0) : S = ⊥ := by
@@ -78,7 +82,7 @@ theorem iso_bot_C {n : ℕ} (G B Bi : Matrix (Fin n) (Fin n) ℂ) (hB : B * Bi =
     induction f using Polynomial.induction_on' with
     | add p q hp hq =>
       intro y
-      rw [map_add, Matrix.add_mulVec, hladd, hp, hq, Polynomial.eval_add, add_mul]
+      rw [map_add (f := _), Matrix.add_mulVec, hladd, hp, hq, Polynomial.eval_add, add_mul]
     | monomial k a =>
       induction k with
       | zero =>
@@ -116,9 +120,12 @@ theorem iso_bot_C {n : ℕ} (G B Bi : Matrix (Fin n) (Fin n) ℂ) (hB : B * Bi =
       rw [this, mul_zero]
     exact (mul_eq_zero.1 h3).resolve_left hqz
   apply hv0
-  have h5 := hl0 (Bi *ᵥ v)
-  simp only [l, Matrix.mulVec_mulVec, hB, Matrix.one_mulVec] at h5
-  exact dotProduct_star_self_eq_zero.1 h5
+  have h5 : star v = 0 := by
+    apply dotProduct_eq_zero
+    intro w
+    have h := hl0 (Bi *ᵥ w)
+    simpa only [l, Matrix.mulVec_mulVec, hB, Matrix.one_mulVec] using h
+  simpa using congrArg star h5
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
@@ -185,7 +192,8 @@ theorem iso_bot (d : GL (Fin n) E) (hd : IsRegEll d) (W : Submodule E (Fin n →
       exact (RingHom.map_mulVec τ _ _ i).symm
     rw [h1]
     have h2 := congrArg τ h0
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     rw [← h2]
     simp only [dotProduct, Pi.star_apply, Function.comp_apply, map_mul]
     refine Finset.sum_congr rfl fun i _ => ?_

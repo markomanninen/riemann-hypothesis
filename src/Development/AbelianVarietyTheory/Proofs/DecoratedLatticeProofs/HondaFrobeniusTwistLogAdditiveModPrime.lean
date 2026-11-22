@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SubstCongrModPrimeOfIntegralDerivativeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PowPrimePowSubFrobeniusTwistNormLeStatement
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SubstCongrModPrimeOfIntegralDerivativeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PowPrimePowSubFrobeniusTwistNormLeStatement
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.Honda
 
@@ -48,12 +52,12 @@ theorem twistLog_additive_mod : ∀ (K : Type) [NormedField K] [IsUltrametricDis
     · have := congrArg (MvPowerSeries.map (σ ^ i)) hef
       rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero' h0'), hXm] at this
       exact this
-  have hd' : CoefLe 1 (d⁄dX K g) := by
+  have hd' : CoefLe 1 (d⁄dX g) := by
     intro k
     rw [PowerSeries.coeff_derivative, hg, PowerSeries.coeff_map]
     have hk : (σ ^ i) ((PowerSeries.coeff (k + 1)) f) * ((k : K) + 1)
         = (σ ^ i) ((PowerSeries.coeff (k + 1)) f * ((k : K) + 1)) := by
-      rw [map_mul, map_add, map_one, map_natCast]
+      rw [map_mul, map_add (f := _), map_one, map_natCast]
     rw [hk, hτ, ← PowerSeries.coeff_derivative]
     exact hd k
   set X0 : MvPowerSeries (Fin 2) K := MvPowerSeries.X 0 with hX0
@@ -90,16 +94,16 @@ theorem twistLog_additive_mod : ∀ (K : Type) [NormedField K] [IsUltrametricDis
     rw [PowerSeries.subst_comp_subst_apply (PowerSeries.HasSubst.X_pow hn) has,
       PowerSeries.subst_pow has, PowerSeries.subst_X has]
   have hs0 : MvPowerSeries.constantCoeff (PowerSeries.subst X0 g + PowerSeries.subst X1 g) = 0 := by
-    rw [map_add, PowerSeries.constantCoeff_subst_eq_zero hX00 _ hg0,
+    rw [map_add (f := _), PowerSeries.constantCoeff_subst_eq_zero hX00 _ hg0,
       PowerSeries.constantCoeff_subst_eq_zero hX10 _ hg0, add_zero]
   have hs0f : MvPowerSeries.constantCoeff (PowerSeries.subst X0 f + PowerSeries.subst X1 f) = 0 := by
-    rw [map_add, PowerSeries.constantCoeff_subst_eq_zero hX00 _ h0,
+    rw [map_add (f := _), PowerSeries.constantCoeff_subst_eq_zero hX00 _ h0,
       PowerSeries.constantCoeff_subst_eq_zero hX10 _ h0, add_zero]
   have hmapF : MvPowerSeries.map (σ ^ i) F
       = PowerSeries.subst (PowerSeries.subst X0 g + PowerSeries.subst X1 g) e' := by
     rw [hF]
     unfold fadd
-    rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero hs0f), map_add,
+    rw [PowerSeries.map_subst (PowerSeries.HasSubst.of_constantCoeff_zero hs0f), map_add (f := _),
       PowerSeries.map_subst (PowerSeries.HasSubst.X 0), PowerSeries.map_subst (PowerSeries.HasSubst.X 1),
       hX0, hX1, MvPowerSeries.map_X, MvPowerSeries.map_X]
   have hBf : B = fadd g e' (X0 ^ l ^ i) (X1 ^ l ^ i) := by

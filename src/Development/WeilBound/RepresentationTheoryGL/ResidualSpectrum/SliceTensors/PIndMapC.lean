@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapB
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IwasawaDecompositionSmoothNearOne
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapB
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IwasawaDecompositionSmoothNearOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,16 +42,18 @@ theorem decomp (p : parab (Cinf E) (eC r s)) :
 
 theorem contDiff_cc : ContDiff ℝ ∞ fun M : Lie E (r + s) => (fun i j => M (Fin.castAdd s i) (Fin.castAdd s j) : Lie E r) :=
   contDiff_pi.2 fun i => contDiff_pi.2 fun j =>
-    (contDiff_apply ℝ (Cinf E) (Fin.castAdd s j)).comp (contDiff_apply ℝ (Fin (r + s) → Cinf E) (Fin.castAdd s i))
+    (contDiff_apply ℝ (fun _ : Fin (r + s) => Cinf E) (Fin.castAdd s j)).comp
+      (contDiff_apply ℝ (fun _ : Fin (r + s) => Fin (r + s) → Cinf E) (Fin.castAdd s i))
 
 theorem contDiff_nn : ContDiff ℝ ∞ fun M : Lie E (r + s) => (fun i j => M (Fin.natAdd r i) (Fin.natAdd r j) : Lie E s) :=
   contDiff_pi.2 fun i => contDiff_pi.2 fun j =>
-    (contDiff_apply ℝ (Cinf E) (Fin.natAdd r j)).comp (contDiff_apply ℝ (Fin (r + s) → Cinf E) (Fin.natAdd r i))
+    (contDiff_apply ℝ (fun _ : Fin (r + s) => Cinf E) (Fin.natAdd r j)).comp
+      (contDiff_apply ℝ (fun _ : Fin (r + s) => Fin (r + s) → Cinf E) (Fin.natAdd r i))
 
 end C
 
 open C in
-theorem exists_local (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) :
+theorem exists_local (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) :
     ∃ (b₁ : Lie E (r + s) → GL (Fin r) (Cinf E)) (b₂ : Lie E (r + s) → GL (Fin s) (Cinf E))
       (κ : Lie E (r + s) → Kinf E (r + s)) (u : Lie E (r + s) → BlockIx (r + s) r → Cinf E),
       ContDiffAt ℝ ∞ (fun y => toL (b₁ y).val) (oneL E (r + s)) ∧

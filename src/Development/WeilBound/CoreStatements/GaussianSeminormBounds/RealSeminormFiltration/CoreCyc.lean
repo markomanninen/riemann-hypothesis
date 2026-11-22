@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -315,7 +319,7 @@ theorem cyc_irred {A : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A] [F
     have h2 : ρ a b y ∈ Nᗮ := by
       have e : ρ a b y = - ρ a b z := by
         have := hf.2 a b hab
-        rw [← hyz, map_add] at this
+        rw [← hyz, map_add (f := _)] at this
         exact eq_neg_of_add_eq_zero_left this
       rw [e]
       exact Nᗮ.neg_mem (hKo a b (sb_of_pos hab) z hz')
@@ -370,7 +374,8 @@ theorem glK_of_lie {M : Type} [AddCommGroup M] [Module ℂ M] {act : Mat r s →
 theorem act_eq_sum {M : Type} [AddCommGroup M] [Module ℂ M] (act : Mat r s →ₗ[ℂ] Module.End ℂ M) (W : Mat r s) :
     act W = ∑ a, ∑ b, W a b • act (Eab a b) := by
   conv_lhs => rw [Matrix.matrix_eq_sum_single W]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [← map_smul, Eab, Matrix.smul_single, smul_eq_mul, mul_one]
 

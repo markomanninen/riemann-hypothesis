@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TofSpanCondition
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TofSpanCondition
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -50,7 +54,7 @@ theorem t_assemble [IsCMField E] {X : PT E} {DF : ℕ} (P : Par X DF) {I : Submo
   have hkp : 0 ≤ P.ka0 * P.ph := mul_nonneg (Par_ka0_nonneg P) hph.le
   have h1 : ∏ j, Real.sqrt (X.ptN2 1 s fun _ => a j) / Real.sqrt (X.l2 1 s) ≤
       ∏ j, (C * Real.exp (-(Real.pi / 2) * D j)) :=
-    Finset.prod_le_prod (fun j _ => by positivity) (fun j _ => hb j)
+    Finset.prod_le_prod₀ (fun j _ => by positivity) (fun j _ => hb j)
   have h2 : ∏ j, (C * Real.exp (-(Real.pi / 2) * D j)) =
       C ^ X.r * Real.exp (-(Real.pi / 2) * ∑ j, D j) := by
     rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,

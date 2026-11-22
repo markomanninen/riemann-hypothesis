@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,18 +18,13 @@ def of (γ : Γ) : ConjSelf Γ := γ
 
 def val (γ : ConjSelf Γ) : Γ := γ
 
-@[simp] theorem val_of (γ : Γ) : val (of γ) = γ := rfl
-@[simp] theorem of_val (γ : ConjSelf Γ) : of (val γ) = γ := rfl
-
 instance : MulAction Γ (ConjSelf Γ) where
   smul η γ := of (η * val γ * η⁻¹)
   one_smul γ := by
-    show of ((1 : Γ) * val γ * 1⁻¹) = γ
+    change (1 : Γ) * val γ * 1⁻¹ = val γ
     simp
   mul_smul a b γ := by
-    show of (a * b * val γ * (a * b)⁻¹) = of (a * val (of (b * val γ * b⁻¹)) * a⁻¹)
-    simp only [val_of]
-    congr 1
+    change a * b * val γ * (a * b)⁻¹ = a * (b * val γ * b⁻¹) * a⁻¹
     group
 
 theorem val_smul (η : Γ) (γ : ConjSelf Γ) : val (η • γ) = η * val γ * η⁻¹ := rfl
@@ -41,9 +40,8 @@ theorem stabilizer_eq_centralizer (γ : ConjSelf Γ) :
     calc η * val γ = η * val γ * η⁻¹ * η := by group
       _ = val γ * η := by rw [h']
   · intro h
-    show of (η * val γ * η⁻¹) = γ
-    rw [h]
-    show val γ * η * η⁻¹ = val γ
+    change η * val γ * η⁻¹ = val γ
+    rw [h.eq]
     group
 
 end ConjSelf

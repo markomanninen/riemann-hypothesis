@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.SignedActionTensor
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBasic
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.SignedActionTensor
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.IsKUnitaryOfIsInfUnitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -171,7 +175,7 @@ theorem tensorFock_diagAction_stable (ε : Fin n → Bool) {E : Fin n → Fin n 
     · simp only [TensorProduct.map_tmul, LinearMap.id_apply, Submodule.subtype_apply, LinearMap.lTensor_tmul]
       exact tmul_mem_tensorFock v.2 _
   | add x x' hx hx' =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact add_mem hx hx'
 
 end Alg

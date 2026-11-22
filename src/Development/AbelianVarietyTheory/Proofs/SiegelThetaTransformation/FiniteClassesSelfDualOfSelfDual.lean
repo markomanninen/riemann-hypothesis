@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD Module Submodule
 
@@ -87,7 +91,8 @@ theorem finite_integral_of_basis {n : ℕ} {ι : Type} [Fintype ι] (b : Basis �
 theorem norm_herm_le {n : ℕ} (τ : E →+* ℂ) (x y : Fin n → E) (C : ℝ)
     (hx : ∑ k, ‖τ (x k)‖ ^ 2 ≤ C) (hy : ∑ k, ‖τ (y k)‖ ^ 2 ≤ C) : ‖τ (herm 1 x y)‖ ≤ C := by
   have h : ‖τ (herm 1 x y)‖ ≤ ∑ k, (‖τ (x k)‖ ^ 2 + ‖τ (y k)‖ ^ 2) / 2 := by
-    rw [DualFamily.herm_one_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [DualFamily.herm_one_eq, map_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)
     have : ‖τ (cc (y k))‖ = ‖τ (y k)‖ := by
       simp [cc, IsCMField.complexEmbedding_complexConj]
@@ -106,8 +111,8 @@ theorem finite_linearMap {R M T : Type} [CommRing R] [AddCommGroup M] [Module R 
 
 end SelfDualClasses
 
-open SelfDualClasses in
 
+open SelfDualClasses in
 theorem finite_classes_selfDual_of_selfDual (n : ℕ) :
     ∃ S : Finset (Submodule (𝓞 E) (Fin n → E)),
     (∀ Λ ∈ S, Λ.FG ∧ (∀ x ∈ Λ, ∀ y ∈ Λ, IsIntegral ℤ (herm 1 x y)) ∧

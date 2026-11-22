@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsPlaceWeightConjInvariant
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsPlaceWeightConjInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ def colMap (p : (k : K) → ι k) (m : (Σ k, ι k × ι k) → ℂ) : (Σ k, ι
   fun q => m ⟨q.1, (q.2, p q.1)⟩
 
 theorem colMap_contDiff (p : (k : K) → ι k) {n : WithTop ℕ∞} : ContDiff ℝ n (colMap p) :=
-  contDiff_pi.2 fun q => contDiff_apply ℝ ℂ (⟨q.1, (q.2, p q.1)⟩ : Σ k, ι k × ι k)
+  contDiff_pi.2 fun q => contDiff_apply ℝ (fun _ => ℂ) (⟨q.1, (q.2, p q.1)⟩ : Σ k, ι k × ι k)
 
 theorem sameOrbit_colMap {p : (k : K) → ι k} {z : (Σ k, ι k) → ℂ} (hz : z ∈ nzBlocks K ι)
     (hp : ∀ k, z ⟨k, p k⟩ ≠ 0) : SameOrbit (colMap p (prMap z)) z := by
@@ -92,8 +96,8 @@ theorem exists_smooth_on_matrices {P : Ideal (MRing ι)} {u : ((Σ k, ι k) → 
       exact absurd ⟨z, hz, hzy⟩ hy)
   exact ⟨g, contMDiff_iff_contDiff.1 g.contMDiff, fun z hz => hg _ z hz rfl⟩
 
-variable (ι) in
 
+variable (ι) in
 def expLine (g : ((Σ k, ι k × ι k) → ℂ) → ℝ) : HermLine ι where
   a := 0
   h z := by

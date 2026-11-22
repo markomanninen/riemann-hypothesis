@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry DividedPowers GroundTheory.PAdicHodge GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.PAlg CrystallineSemistableComparison.B
 
@@ -163,7 +168,7 @@ theorem val_quot (A : PAlg l) {e : A.A} (he : IsIdempotentElem e) (h : A.VAL) : 
   have hpi : (obj A he).pi = Ideal.Quotient.mk (Ideal.span {1 - e}) A.pi := rfl
   rw [hpi] at hab
   have hab' : Ideal.Quotient.mk (Ideal.span {1 - e}) (a * f + b * g) = Ideal.Quotient.mk (Ideal.span {1 - e}) (A.pi ^ N) := by
-    rw [map_add, map_mul, map_mul, map_pow]; exact hab
+    rw [map_add (f := _), map_mul, map_mul, map_pow]; exact hab
   rw [mk_eq_iff he] at hab'
   have hmem : A.pi ^ N ∈ Ideal.span {e * f + (1 - e), e * g} := by
     refine Ideal.mem_span_pair.2 ⟨e * a + (1 - e) * A.pi ^ N, b, ?_⟩
@@ -176,11 +181,11 @@ theorem val_quot (A : PAlg l) {e : A.A} (he : IsIdempotentElem e) (h : A.VAL) : 
   · obtain ⟨c, hc⟩ := Ideal.mem_span_singleton.1 h1
     refine Ideal.mem_span_singleton.2 ⟨Ideal.Quotient.mk _ c, ?_⟩
     have := congrArg (Ideal.Quotient.mk (Ideal.span {1 - e})) hc
-    simpa only [map_mul, map_add, map_sub, map_one, mk_e, sub_self, add_zero, one_mul] using this
+    simpa only [map_mul, map_add (f := _), map_sub, map_one, mk_e, sub_self, add_zero, one_mul] using this
   · obtain ⟨c, hc⟩ := Ideal.mem_span_singleton.1 h2
     refine Ideal.mem_span_singleton.2 ⟨Ideal.Quotient.mk _ c, ?_⟩
     have := congrArg (Ideal.Quotient.mk (Ideal.span {1 - e})) hc
-    simpa only [map_mul, map_add, map_sub, map_one, mk_e, sub_self, add_zero, one_mul] using this
+    simpa only [map_mul, map_add (f := _), map_sub, map_one, mk_e, sub_self, add_zero, one_mul] using this
 
 variable {A B : PAlg l}
 
@@ -222,7 +227,8 @@ theorem mul_mapAcr_eq_zero (f : A ⟶ B) (hs : Function.Surjective (Hom.f f)) (E
   obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq_zero_iff_mem.1 h0)
   obtain ⟨y₁, rfl⟩ := acrisZero_surjective_of_surjective f hs c
   have hz : (pdOk_hom f).acr0 (y - y₁ * (l : A.Acr0) ^ n) = 0 := by
-    rw [map_sub, map_mul, map_pow, map_natCast, hc, sub_self]
+    rw [(pdOk_hom f).acr0.map_sub, (pdOk_hom f).acr0.map_mul,
+      (pdOk_hom f).acr0.map_pow, map_natCast, hc, sub_self]
   have hz' : awayW (Hom.f f) (y - y₁ * (l : A.Acr0) ^ n).1 = 0 := congrArg Subtype.val hz
   obtain ⟨⟨w, s⟩, hw⟩ := IsLocalization.surj (Submonoid.powers (l : A.W)) (y - y₁ * (l : A.Acr0) ^ n).1
   have hw0 : WittVector.map (Hom.f f) w = 0 := by

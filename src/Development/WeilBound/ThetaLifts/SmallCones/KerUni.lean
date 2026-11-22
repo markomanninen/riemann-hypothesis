@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.KerGeo
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.KerGeo
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -110,8 +114,8 @@ theorem mean_zero (Γ : Subgroup G) [Countable Γ] (μ : Measure G) [μ.IsMulLef
   have : (c - 1) * ∫ x in 𝓕, f x ∂μ = 0 := by rw [sub_mul, e1, one_mul, sub_self]
   exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hc)
 
-omit [Group G] [IsTopologicalGroup G] in
 
+omit [Group G] [IsTopologicalGroup G] in
 theorem mean_hasSum {ι : Type} [Countable ι] (μ : Measure G) {𝓕 : Set G} (h1 : μ 𝓕 = 1) {f : ι → G → ℂ} (hf : ∀ i, Continuous (f i))
     {b : ι → ℝ} (hb : Summable b) (hfb : ∀ i x, ‖f i x‖ ≤ b i) {s : G → ℂ} (hs : ∀ x, HasSum (fun i => f i x) (s x)) :
     HasSum (fun i => ∫ x in 𝓕, f i x ∂μ) (∫ x in 𝓕, s x ∂μ) := by

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafCurveVCut
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafCurveVCut
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+
+@[expose] public section
 
 namespace LateralTheory.E.LeafTrdegDimPf
 

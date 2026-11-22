@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 
@@ -46,6 +50,7 @@ theorem sum_prime_pow_le_of_dvd (s : Finset ℕ) (e : ℕ → ℕ) (M : ℕ) (hM
 private theorem padicValNat_pow_sub_one_eq_add (g d l : ℕ) (hg : 2 ≤ g) (h4 : 4 ∣ g - 1) (hd : d ≠ 0)
     (hl : l.Prime) (hlg : l ∣ g - 1) :
     padicValNat l (g ^ d - 1) = padicValNat l (g - 1) + padicValNat l d := by
+  rw [Nat.padicValNat_def, Nat.padicValNat_def, Nat.padicValNat_def]
   have := Fact.mk hl
   have hlg' : ¬ l ∣ g := by
     intro h
@@ -80,7 +85,7 @@ private theorem padicValNat_pow_sub_one_eq_add (g d l : ℕ) (hg : 2 ≤ g) (h4 
 theorem pow_padicValNat_pow_sub_one_dvd (g d l : ℕ) (hg : 2 ≤ g) (h4 : 4 ∣ g - 1) (hd : d ≠ 0)
     (hl : l.Prime) (hlg : l ∣ g - 1) : l ^ padicValNat l (g ^ d - 1) ∣ d * (g - 1) := by
   rw [padicValNat_pow_sub_one_eq_add g d l hg h4 hd hl hlg, pow_add, mul_comm d]
-  exact mul_dvd_mul pow_padicValNat_dvd pow_padicValNat_dvd
+  exact mul_dvd_mul (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
 
 theorem sum_primePowerPart_pow_sub_one_le :
     ∀ g d : ℕ, 2 ≤ g → 4 ∣ g - 1 → 2 ≤ d → (∑ l ∈ (g ^ d - 1).primeFactors, ((l ^ padicValNat l (g ^ d - 1) : ℕ) : ℝ)) ≤ d * ((g : ℝ) - 1) + ((g : ℝ) ^ d - 1) / ((g : ℝ) - 1) := by
@@ -93,7 +98,8 @@ theorem sum_primePowerPart_pow_sub_one_le :
     intro l hl
     obtain ⟨hlp, hlN, hN0⟩ := Nat.mem_primeFactors.mp hl
     have := Fact.mk hlp
-    exact Nat.one_le_iff_ne_zero.mp (one_le_padicValNat_of_dvd hN0 hlN)
+    rw [Nat.padicValNat_def]
+    exact Nat.one_le_iff_ne_zero.mp (one_le_multiplicity_of_dvd hN0 hlN)
   have hnat : ∑ l ∈ N.primeFactors, l ^ padicValNat l N ≤ d * (g - 1) + N / (g - 1) := by
     rw [← Finset.sum_filter_add_sum_filter_not N.primeFactors (fun l => l ∣ g - 1)]
     refine add_le_add ?_ ?_
@@ -117,7 +123,7 @@ theorem sum_primePowerPart_pow_sub_one_le :
         Nat.Coprime.pow_left _ ((Nat.Prime.coprime_iff_not_dvd hlp).mpr hlg)
       refine hcop.dvd_of_dvd_mul_right ?_
       rw [Nat.div_mul_cancel hdiv]
-      exact pow_padicValNat_dvd
+      exact (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have hgR : (2 : ℝ) ≤ g := by exact_mod_cast hg
   have hcast_g1 : ((g - 1 : ℕ) : ℝ) = (g : ℝ) - 1 := by
     rw [Nat.cast_sub (by omega : 1 ≤ g)]

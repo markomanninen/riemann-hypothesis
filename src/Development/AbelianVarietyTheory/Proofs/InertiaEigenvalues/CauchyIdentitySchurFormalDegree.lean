@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurMulDetEqDet
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacobiTrudiAlternantExpansionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurPolynomialPadZerosEqJacobiTrudiDeterminantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurMulDetEqDet
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacobiTrudiAlternantExpansionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurPolynomialPadZerosEqJacobiTrudiDeterminantStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,8 @@ theorem cauchy_formal : ∀ {m n : ℕ} (hmn : m ≤ n) (α : Fin n → ℂ) (β
   rw [hR] at hA
   have hP := mul_left_cancel₀ (alternant_staircase_ne_zero m) hA
   have hE := congrArg (MvPolynomial.eval β) hP
-  simp only [map_sum, map_prod, map_mul, eval_C, eval_X, map_pow, MvPolynomial.eval_map] at hE
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_prod, map_mul, eval_C, eval_X, map_pow, MvPolynomial.eval_map] at hE
   refine (Finset.sum_congr rfl fun l _ => ?_).trans hE.symm
   rw [hpad]
   rfl

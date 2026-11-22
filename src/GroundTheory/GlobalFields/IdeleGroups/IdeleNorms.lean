@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -22,8 +26,6 @@ variable {K}
 
 @[simp] theorem adele_fst_one_apply (w : InfinitePlace K) : (1 : 𝔸[K]).1 w = 1 := rfl
 
-@[simp] theorem adele_snd_one_apply (v : HeightOneSpectrum (𝓞 K)) : (1 : 𝔸[K]).2 v = 1 := rfl
-
 theorem norm_eq_one_of_mul_eq_one {v : HeightOneSpectrum (𝓞 K)} {a b : v.adicCompletion K}
     (hab : a * b = 1) (ha : a ∈ v.adicCompletionIntegers K)
     (hb : b ∈ v.adicCompletionIntegers K) : ‖a‖ = 1 := by
@@ -36,8 +38,8 @@ theorem norm_eq_one_of_mul_eq_one {v : HeightOneSpectrum (𝓞 K)} {a b : v.adic
 
 theorem finite_mul_inv (x : IdeleGroup K) (v : HeightOneSpectrum (𝓞 K)) :
     (x : 𝔸[K]).2 v * ((x⁻¹ : IdeleGroup K) : 𝔸[K]).2 v = 1 := by
-  have h : ((x : 𝔸[K]) * ((x⁻¹ : IdeleGroup K) : 𝔸[K])).2 v = 1 := by simp
-  rwa [adele_snd_mul_apply] at h
+  rw [← adele_snd_mul_apply, Units.mul_inv]
+  rfl
 
 theorem infinite_mul_inv (x : IdeleGroup K) (w : InfinitePlace K) :
     (x : 𝔸[K]).1 w * ((x⁻¹ : IdeleGroup K) : 𝔸[K]).1 w = 1 := by
@@ -84,12 +86,13 @@ theorem finiteModule_pos (x : IdeleGroup K) : 0 < finiteModule x := by
   exact Finset.prod_pos fun v _ ↦ norm_pos_iff.2 (finite_ne_zero x v)
 
 variable (K) in
-
 def ideleModule : IdeleGroup K →* {r : ℝ // 0 < r} where
   toFun x := ⟨infiniteModule x * finiteModule x, mul_pos (infiniteModule_pos x) (finiteModule_pos x)⟩
   map_one' := by
     ext
-    simp [infiniteModule, finiteModule]
+    simp only [infiniteModule, Units.val_one, adele_fst_one_apply, norm_one, one_pow,
+      Finset.prod_const_one, one_mul]
+    exact finprod_eq_one_of_forall_eq_one fun _ ↦ norm_one
   map_mul' x y := by
     ext
     simp only [Positive.val_mul, infiniteModule_mul, finiteModule_mul]
@@ -121,7 +124,9 @@ theorem continuous_finiteModule : Continuous (finiteModule (K := K)) := by
       (by simp [(standardOpenSubgroup K).one_mem])
   refine (continuousAt_const (y := finiteModule x)).congr ?_
   filter_upwards [hU] with y hy
-  rw [← mul_inv_cancel_left x y, finiteModule_mul, finiteModule_eq_one_of_mem hy, mul_one]
+  have hy' : x⁻¹ * y ∈ standardOpenSubgroup K := hy
+  simpa only [mul_inv_cancel_left, finiteModule_eq_one_of_mem hy', mul_one]
+    using (finiteModule_mul x (x⁻¹ * y)).symm
 
 theorem continuous_ideleModule : Continuous (ideleModule K) :=
   (continuous_infiniteModule.mul continuous_finiteModule).subtype_mk _
@@ -181,7 +186,8 @@ theorem infiniteModule_diagonal (k : Kˣ) :
     infiniteModule (diagonal K k) = ∏ w : InfinitePlace K, w (k : K) ^ w.mult := by
   refine Finset.prod_congr rfl fun w _ ↦ ?_
   congr 1
-  exact InfinitePlace.Completion.norm_coe (K := K) (v := w) _
+  rw [coe_diagonal, AdeleRing.algebraMap_fst_apply]
+  exact AbsoluteValue.Completion.norm_coe (WithAbs.toAbs w.1 (k : K))
 
 theorem finiteModule_diagonal (k : Kˣ) :
     finiteModule (diagonal K k) = ∏ᶠ w : FinitePlace K, w (k : K) := by
@@ -195,7 +201,6 @@ theorem ideleModule_diagonal (k : Kˣ) : ideleModule K (diagonal K k) = 1 := by
   exact prod_abs_eq_one k.ne_zero
 
 variable (K) in
-
 def normOneSubgroup : Subgroup (IdeleGroup K) := (ideleModule K).ker
 
 theorem mem_normOneSubgroup {x : IdeleGroup K} :
@@ -204,7 +209,6 @@ theorem mem_normOneSubgroup {x : IdeleGroup K} :
   exact ⟨fun h ↦ by rw [h, Positive.val_one], fun h ↦ Subtype.ext (h.trans Positive.val_one.symm)⟩
 
 variable (K) in
-
 theorem isClosed_normOneSubgroup : IsClosed (normOneSubgroup K : Set (IdeleGroup K)) := by
   have h : (normOneSubgroup K : Set (IdeleGroup K)) =
       (fun x ↦ (ideleModule K x : ℝ)) ⁻¹' {1} := by
@@ -214,7 +218,6 @@ theorem isClosed_normOneSubgroup : IsClosed (normOneSubgroup K : Set (IdeleGroup
   exact isClosed_singleton.preimage (continuous_subtype_val.comp continuous_ideleModule)
 
 variable (K) in
-
 theorem range_diagonal_le_normOneSubgroup : (diagonal K).range ≤ normOneSubgroup K := by
   rintro _ ⟨k, rfl⟩
   exact ideleModule_diagonal k

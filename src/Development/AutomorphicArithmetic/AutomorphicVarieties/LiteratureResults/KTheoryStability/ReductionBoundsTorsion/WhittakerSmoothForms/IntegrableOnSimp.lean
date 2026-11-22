@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.SimplexMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.SimplexMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem intS'_sum {U : Set V} (hU : Convex ℝ U) {q : ℕ} {ι : Type} (s : Fin
     intro t
     simp [Finset.sum_apply, ContinuousAlternatingMap.sum_apply]
   simp_rw [e]
-  have hs := integral_finset_sum (μ := volume.restrict (simp' q)) s
+  have hs := integral_finsetSum (μ := volume.restrict (simp' q)) s
     fun i hi => (integrableOn_simp hU (hω i hi) hy).const_mul (a i)
   unfold simp' at hs
   rw [hs]

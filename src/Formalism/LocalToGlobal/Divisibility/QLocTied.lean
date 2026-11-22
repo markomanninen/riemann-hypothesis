@@ -1,7 +1,18 @@
-import Formalism.LocalToGlobal.UnitaryNorms.CharDiv
-import Formalism.LocalToGlobal.UnitaryNorms.DefsDatum
-import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowD
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.CharDiv
+public import Formalism.LocalToGlobal.UnitaryNorms.DefsDatum
+public import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+public import Formalism.LocalRingCardinality.DataIdx
+public import Formalism.LocalRingCardinality.SpanPowerMembership.DivXExample
+public import Formalism.LocalRingCardinality.DataAmbForm
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.LocalRingCardinality.DataForms
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZRowC
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +85,7 @@ def typeSp (δ : Fˣ →* ℂˣ) (r c : ℕ) {V : Type} [NormedAddCommGroup V] [
   add_mem' := by
     rintro f f' ⟨h1, h2⟩ ⟨h3, h4⟩
     refine ⟨fun p m₁ m₂ a b c g => ?_, fun k hk g => ?_⟩
-    · simp only [Pi.add_apply, h1 p m₁ m₂ a b c g, h3 p m₁ m₂ a b c g, map_add, smul_add]
+    · simp only [Pi.add_apply, h1 p m₁ m₂ a b c g, h3 p m₁ m₂ a b c g, map_add (f := _), smul_add]
     · simp only [Pi.add_apply, h2 k hk g, h4 k hk g, smul_add]
   smul_mem' := by
     rintro z f ⟨h1, h2⟩
@@ -177,19 +188,11 @@ theorem nuP_succ (C : CharFrame D) (P : HeightOneSpectrum (𝓞 D.host.E)) (j : 
     nuP C P (j.1 + 1) = ((C.mu0 j)⁻¹).loc P := by
   have hj := j.2
   unfold nuP
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   first
     | rfl
     | (congr 3; ext; simp)
     | (congr 2; ext; simp)
-
-theorem nuP_mul_delQ (Tp : TupTied D C nch) (μ : D.what₂.Tup) (P : HeightOneSpectrum (𝓞 D.host.E)) (j : Fin D.R.m) :
-    nuP C P (j.1 + 1) * delQ Tp μ P = ((Tp.tup μ j)⁻¹).loc P := by
-  rw [nuP_succ]
-  refine MonoidHom.ext fun x => ?_
-  show ((C.mu0 j).loc P x)⁻¹ * ((Tp.xi μ).loc P x)⁻¹ = ((C.mu0 j * Tp.xi μ).loc P x)⁻¹
-  rw [← mul_inv]
-  rfl
 
 structure QLocTied (Tp : TupTied D C nch) (Z : DivX D)
     (PQ : ∀ μ, Z.QPl μ → HeightOneSpectrum (𝓞 D.host.E)) : Prop where
@@ -218,32 +221,15 @@ def QLocTiedC {Tp : TupTied D C nch} {Z : DivX D} (T : DivisorCharacterCompatibi
   (∀ μ v, Pv (T.eQPl μ v).1 ∈ aboveF (L := D.host.E) D.host.F (T.eQPl μ v).1) ∧
     QLocTied Tp Z fun μ v => Pv (T.eQPl μ v).1
 
-def PlacesOverPrimesOfHecke (B : PlacesOverCommonPrime D.host) (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E)) : Prop :=
-  (∀ v hv, Pv v = B.P v hv) ∧ ∀ v hv, Pv v = B.P' v hv
-
-def QLocJoint (Tp : TupTied D C nch) (Z : DivX D) : Prop :=
-  ∃ (T : DivisorCharacterCompatibility D C nch Tp Z) (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E)), QLocTiedC T Pv
-
-theorem QLocJoint.div {Tp : TupTied D C nch} {Z : DivX D} (h : QLocJoint Tp Z) : Nonempty (DivisorCharacterCompatibility D C nch Tp Z) := by
-  obtain ⟨T, _, _⟩ := h
-  exact ⟨T⟩
-
-def QLocJointD (B : PlacesOverCommonPrime D.host) (Tp : TupTied D C nch) (Z : DivX D) : Prop :=
-  ∃ (T : DivisorCharacterCompatibility D C nch Tp Z) (Pv : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E)),
-    QLocTiedC T Pv ∧ PlacesOverPrimesOfHecke B Pv
-
-theorem QLocJointD.joint {B : PlacesOverCommonPrime D.host} {Tp : TupTied D C nch} {Z : DivX D} (h : QLocJointD B Tp Z) : QLocJoint Tp Z := by
-  obtain ⟨T, Pv, hC, _⟩ := h
-  exact ⟨T, Pv, hC⟩
-
 structure QLocVal (Z : DivX D) : Prop where
   typeDim : ∀ μ v j, j ≤ D.R.m → Z.typeDim μ v j = 1
   ZQ : ∀ μ v j, 1 ≤ j → j ≤ D.R.m → Z.ZQ μ v j = zVal (Z.qv μ v) D.R.r D.R.t j (Z.nu μ v)
   quotientLocalValueFirst : ∀ μ v, Z.quotientLocalValueFirst μ v = (zVal1 (Z.qv μ v) D.R.r D.R.t : ℂ)
 
 theorem isDel_delQ (Tp : TupTied D C nch) (μ : D.what₂.Tup) {P : HeightOneSpectrum (𝓞 D.host.E)}
-    (h : ¬ (Tp.xi μ).UnrAt P) : IsDel P (delQ Tp μ P) where
-  unitary x := by
+    (h : ¬ (Tp.xi μ).UnrAt P) : IsDel P (delQ Tp μ P) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x
     obtain ⟨n, hn, he⟩ := Tp.xi_fin μ
     have h1 : ((Tp.xi μ).loc P x) ^ n = 1 := by
       have : ((Tp.xi μ) ^ n).loc P x = 1 := by rw [show (Tp.xi μ) ^ n = 1 from he]; rfl
@@ -253,11 +239,13 @@ theorem isDel_delQ (Tp : TupTied D C nch) (μ : D.what₂.Tup) {P : HeightOneSpe
       rw [← norm_pow, ← Units.val_pow_eq_pow_val, h1]; simp
     have h3 : ‖(((Tp.xi μ).loc P x : ℂˣ) : ℂ)‖ = 1 :=
       (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn.ne').mp h2
-    simp [delQ, h3]
-  tame x hx hx1 := by
-    have := Tp.xi_tame μ P x hx (by simpa using hx1)
-    simp [delQ, this]
-  ram h' := h fun x hx => by simpa [delQ] using h' x hx
+    change ‖((((Tp.xi μ).loc P x)⁻¹ : ℂˣ) : ℂ)‖ = 1
+    rw [Units.val_inv_eq_inv_val, norm_inv, h3, inv_one]
+  · intro x hx hx1
+    change ((Tp.xi μ).loc P x)⁻¹ = 1
+    exact inv_eq_one.mpr (Tp.xi_tame μ P x hx (by simpa using hx1))
+  · intro h'
+    exact h fun x hx => inv_eq_one.mp (h' x hx)
 
 theorem isNu_nuP (C : CharFrame D) {P : HeightOneSpectrum (𝓞 D.host.E)} (h : ∀ k, ¬ OverP D.host (D.host.g k) P) (i : ℕ) :
     IsNu P (nuP C P i) := by
@@ -298,86 +286,5 @@ theorem QLocTied.val (hQ : ThmQ) {Tp : TupTied D C nch} {Z : DivX D} {PQ} (h : Q
       (isDel_delQ Tp μ (h.ram μ v)) (fun _ => isNu_nuP C (h.off_g μ v) 1) D.R.r D.R.t 0 ht).2 _
       (h.quotientLocalValueFirst_eq μ v 1 le_rfl (by omega))
     rw [hz, zero_add, zVal_one, h.qv_eq μ v]
-
-theorem qE_ne_zero {q : ℝ} (hq : 1 < q) (a c : ℕ) (ha : 1 ≤ a) : MainNotions.ZetaProductPairs.qE q a c ≠ 0 := by
-  unfold MainNotions.ZetaProductPairs.qE
-  rw [Finset.prod_ne_zero_iff]
-  intro i hi
-  rw [Finset.mem_Icc] at hi
-  have hi1 : (0 : ℤ) < i := by exact_mod_cast (show 0 < i by omega)
-  have hlt : q ^ (-(i : ℤ)) < 1 := by
-    rw [_root_.zpow_neg, zpow_natCast]
-    exact inv_lt_one_of_one_lt₀ (one_lt_pow₀ hq (by omega))
-  exact sub_ne_zero.mpr (ne_of_gt hlt)
-
-theorem qE_split (q : ℝ) {t c : ℕ} (h : t ≤ c) : MainNotions.ZetaProductPairs.qE q 1 c = MainNotions.ZetaProductPairs.qE q 1 t * MainNotions.ZetaProductPairs.qE q (t + 1) c := by
-  unfold MainNotions.ZetaProductPairs.qE
-  rw [← Finset.prod_union]
-  · congr 1
-    ext i
-    simp only [Finset.mem_union, Finset.mem_Icc]
-    constructor <;> intro hh <;> omega
-  · rw [Finset.disjoint_left]
-    intro i h1 h2
-    simp only [Finset.mem_Icc] at h1 h2
-    omega
-
-theorem ell_num {q : ℝ} (hq : 1 < q) (r t c : ℕ) (h : t ≤ c) :
-    MainNotions.ZetaProductPairs.idxPar q r c * MainNotions.ZetaProductPairs.zetaProd q (r + c) *
-               (q ^ (-((c * r : ℕ) : ℤ)) * MainNotions.ZetaProductPairs.qE q 1 r * MainNotions.ZetaProductPairs.qE q (t + 1) c) = MainNotions.ZetaProductPairs.zetaProd q t := by
-  have hq0 : q ≠ 0 := by linarith
-  have h1 := qE_ne_zero hq 1 (r + c) le_rfl
-  have h2 := qE_ne_zero hq 1 r le_rfl
-  have h3 := qE_ne_zero hq 1 t le_rfl
-  have h4 := qE_ne_zero hq (t + 1) c (by omega)
-  have hs := qE_split q h
-  show q ^ (r * c) * MainNotions.ZetaProductPairs.qE q 1 (r + c) / (MainNotions.ZetaProductPairs.qE q 1 r * MainNotions.ZetaProductPairs.qE q 1 c) *
-      (MainNotions.ZetaProductPairs.qE q 1 (r + c))⁻¹ * (q ^ (-((c * r : ℕ) : ℤ)) * MainNotions.ZetaProductPairs.qE q 1 r * MainNotions.ZetaProductPairs.qE q (t + 1) c) =
-      (MainNotions.ZetaProductPairs.qE q 1 t)⁻¹
-  rw [hs, _root_.zpow_neg, zpow_natCast, Nat.mul_comm c r]
-  have hQ0 : q ^ (r * c) ≠ 0 := pow_ne_zero _ hq0
-  field_simp
-
-theorem QLocVal.l2 {Z : DivX D} (h : QLocVal Z) : MainNotions.ZetaProductPairs.L2 Z := by
-  intro μ v
-  have hq : (1 : ℝ) < Z.qv μ v := by exact_mod_cast Z.qv_gt μ v
-  refine ⟨fun j hj => h.typeDim μ v j hj, fun j h1 hj => ?_, ?_⟩
-  · unfold MainNotions.ZetaProductPairs.ellQ
-    rw [h.ZQ μ v j h1 hj]
-    unfold zVal
-    have key := ell_num hq D.R.r D.R.t (j * D.R.t) (Nat.le_mul_of_pos_left _ h1)
-    rw [← mul_assoc, ← Complex.ofReal_mul, key]
-  · unfold MainNotions.ZetaProductPairs.singleBlockLocalFactor
-    rw [h.quotientLocalValueFirst μ v]
-    unfold zVal1
-    have key := ell_num hq D.R.r D.R.t D.R.t le_rfl
-    have he : MainNotions.ZetaProductPairs.qE (Z.qv μ v) (D.R.t + 1) D.R.t = 1 := by
-      unfold MainNotions.ZetaProductPairs.qE
-      rw [Finset.Icc_eq_empty (by omega), Finset.prod_empty]
-    rw [he, mul_one] at key
-    rw [← Complex.ofReal_mul]
-    congr 1
-    rw [← key]
-    ring
-
-theorem QLocTied.l2 (hQ : ThmQ) {Tp : TupTied D C nch} {Z : DivX D} {PQ} (h : QLocTied Tp Z PQ) : MainNotions.ZetaProductPairs.L2 Z :=
-  (h.val hQ).l2
-
-theorem QLocJoint.l2 (hQ : ThmQ) {Tp : TupTied D C nch} {Z : DivX D} (h : QLocJoint Tp Z) : MainNotions.ZetaProductPairs.L2 Z := by
-  obtain ⟨T, Pv, hC⟩ := h
-  unfold QLocTiedC at hC
-  exact hC.2.l2 hQ
-
-theorem qLocTied_of_empty (Tp : TupTied D C nch) (Z : DivX D) (hE : ∀ μ, IsEmpty (Z.QPl μ)) (PQ) : QLocTied Tp Z PQ := by
-  constructor <;> intro μ v <;> exact (hE μ).elim v
-
-theorem qLocVal_of_empty (Z : DivX D) (hE : ∀ μ, IsEmpty (Z.QPl μ)) : QLocVal Z := by
-  constructor <;> intro μ v <;> exact (hE μ).elim v
-
-theorem qLocTied_divXToy (Tp : TupTied D C nch) (h0 hM PQ) : QLocTied Tp (Examples₂.divXExample D h0 hM) PQ :=
-  qLocTied_of_empty Tp _ (fun _ => ⟨fun e => Empty.elim e⟩) PQ
-
-theorem qLocTied_divXStd (Tp : TupTied D C nch) (n bM hg kap hk PQ) : QLocTied Tp (Examples₂.NZ.divXStd D n bM hg kap hk) PQ :=
-  qLocTied_of_empty Tp _ (fun _ => ⟨fun e => Empty.elim e⟩) PQ
 
 end Formalism.L2.DIV

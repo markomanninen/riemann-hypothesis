@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -33,7 +38,7 @@ theorem isHomogeneous_specRest {R S : Type*} [CommRing R] [CommRing S] (φ : R �
     rw [← h0]
     refine Finset.sum_congr rfl fun ij _ => ?_
     rw [Pi.smul_apply, smul_eq_mul, mul_comm]
-  have h := (isHomogeneous_C (σ := Fin n) (φ (coeff m g))).mul
+  have h := (isHomogeneous_C (σ := Fin n) (φ (AddMonoidAlgebra.coeff g m))).mul
     (IsHomogeneous.prod m.support _ _ fun ij _ => (hdeg ij).pow (m ij))
   rw [zero_add, hsum] at h
   exact h
@@ -70,7 +75,8 @@ theorem ChowSecDegree.proof (h1 : ChowNormForm.Statement) (h2 : ChowFormHomog.St
     have h := Ideal.Quotient.eq.mpr hmem
     rw [map_one] at h
     rw [← h]
-    simp [chartForm, linForm, secCoord, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [chartForm, linForm, secCoord, map_sum, map_mul]
     rfl
   have hN0 : normForm (R := E) (SecAlg QE y) (secCoord QE y) ≠ 0 := by
     intro h0

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open scoped Classical
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-variable (F κ) in
 
+variable (F κ) in
 def intPts : Set (κ → Af F) :=
   Set.univ.pi fun _ => {a : Af F | ∀ v, a v ∈ v.adicCompletionIntegers F}
 
@@ -45,7 +49,12 @@ def ptAt (a : κ → mixedEmbedding.mixedSpace F) (y : κ → Af F) : κ → AF 
 
 theorem pureA_ptAt (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → Af F) → ℂ) (a : κ → mixedEmbedding.mixedSpace F)
     (y : κ → Af F) : pureA F f g (ptAt a y) = f a * g y := by
-  simp [pureA, ptAt]
+  change f (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F
+    ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (a i))) * g y = f a * g y
+  congr 1
+  congr 1
+  funext i
+  exact (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply (a i)
 
 theorem fin_eq_zero_of_at {z : κ → AF F} (hz : At (evI F) z) (i : κ) : (z i).2 = 0 := by
   have h := congrFun (hz ((0, 1) : AF F) (map_zero (InfiniteAdeleRing.ringEquiv_mixedSpace F))) i

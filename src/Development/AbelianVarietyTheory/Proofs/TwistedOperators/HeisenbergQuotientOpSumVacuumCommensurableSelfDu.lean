@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergIntertwiningSumsCompEqIndex
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergVacuumUniqueOfSelfDualStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeisenbergIntertwiningSumsCompEqIndex
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergVacuumUniqueOfSelfDualStatement
+
+@[expose] public section
+
 open Matrix Formalism.UG GlobalTheory.Hk3 GlobalTheory.FinWeil GlobalTheory.SphTheta ValuativeRel Classical
 open GlobalTheory.LFun (HasSatU IsSatVecU heckeVec)
 open GlobalTheory.LGrp (bcParam extProd)
@@ -54,7 +59,8 @@ theorem sumOp_vacuum_lift : ∀ {R X M : Type} [CommRing R] [AddCommGroup X] [Mo
     rw [← hsum, hback, smul_smul, inv_mul_cancel₀ hidxC, one_smul]
   have hmem : ∀ x, W x s ∈ Submodule.span ℂ (Set.range fun y => W y (sumOp W Λ Λ' s)) := by
     intro x
-    rw [congrArg (W x) hsE, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [congrArg (W x) hsE, map_smul, map_sum]
     refine Submodule.smul_mem _ _ (Submodule.sum_mem _ fun i _ => ?_)
     rw [h.comp]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
@@ -65,7 +71,8 @@ theorem sumOp_vacuum_lift : ∀ {R X M : Type} [CommRing R] [AddCommGroup X] [Mo
   refine ⟨⟨hne, hs'fix, hspan'⟩, fun e he1 he v hv => ?_⟩
   obtain ⟨c, rfl⟩ := GlobalTheory.T.heisenbergVacuum_unique_of_selfDual h Λ' hΛ' _ hne hs'fix hspan' v hv
   have hes' : e (sumOp W Λ Λ' s) = 1 := by
-    rw [((sumOp_transversal h Λ Λ' hΛ').1 s hs (Fin n) f hf ht).1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [((sumOp_transversal h Λ Λ' hΛ').1 s hs (Fin n) f hf ht).1, map_sum]
     simp only [form_translate_vacuum h hΛ hs e he, he1]
     obtain ⟨i0, hi0, huniq⟩ := ht 0 Λ'.zero_mem
     rw [Finset.sum_eq_single i0]

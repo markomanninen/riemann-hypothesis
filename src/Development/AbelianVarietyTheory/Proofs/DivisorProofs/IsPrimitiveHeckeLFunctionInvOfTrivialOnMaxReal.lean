@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeakApproxUnitFinitePlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeakApproxUnitFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal
 
@@ -111,7 +115,16 @@ theorem prod_locK_conj (χ : HChar E) (hχ : TrivOnF χ) (v : HeightOneSpectrum 
     mul_ne_zero k.ne_zero ((map_ne_zero _).2 k.ne_zero) (congrArg Subtype.val h0)
   have h3 := hχ.1 v (Units.mk0 _ hN0)
   unfold HChar.resFin at h3
-  rw [MonoidHom.finset_prod_apply] at h3
+  have hp : ∀ (s : Finset (HeightOneSpectrum (𝓞 E)))
+      (f : HeightOneSpectrum (𝓞 E) → (maximalRealSubfield E)ˣ →* ℂˣ)
+      (x : (maximalRealSubfield E)ˣ), (∏ P ∈ s, f P) x = ∏ P ∈ s, f P x := by
+    intro s f x
+    classical
+    induction s using Finset.induction_on with
+    | empty => rfl
+    | insert a s ha ih => simp only [Finset.prod_insert ha, MonoidHom.mul_apply, ih]
+  rw [hp] at h3
+  simp only [MonoidHom.comp_apply] at h3
   rw [← h3]
   refine Finset.prod_congr rfl fun P _ => ?_
   rw [← map_mul]
@@ -121,14 +134,15 @@ theorem loc_transport (χ : HChar E) (hχ : TrivOnF χ) (P : HeightOneSpectrum (
     (transport conjE χ).loc P x = (χ.loc P x)⁻¹ := by
   have h := loc_eq_one_of_prod (χ * transport conjE χ) _ (prod_locK_conj χ hχ (P.under (OF E)))
     (w := P) ((mem_aboveF _ P).2 rfl) x
-  rw [HChar.loc_mul] at h
+  change χ.loc P x * (transport conjE χ).loc P x = 1 at h
   exact eq_inv_of_mul_eq_one_right h
 
 theorem unrAt_inv_iff (χ : HChar E) (hχ : TrivOnF χ) (P : HeightOneSpectrum (𝓞 E)) :
     χ⁻¹.UnrAt P ↔ χ.UnrAt (plMap conjE P) := by
   rw [← transport_unrAt_iff]
   unfold HChar.UnrAt
-  simp only [HChar.loc_inv, loc_transport χ hχ]
+  change (∀ x, IsUnitAt P x → (χ.loc P x)⁻¹ = 1) ↔ _
+  simp only [loc_transport χ hχ]
 
 theorem val_inv_eq (χ : HChar E) (hχ : TrivOnF χ) (P : HeightOneSpectrum (𝓞 E)) (h : χ.UnrAt (plMap conjE P)) :
     χ⁻¹.val P = χ.val (plMap conjE P) := by
@@ -145,8 +159,8 @@ theorem eulerFactor_inv (χ : HChar E) (hχ : TrivOnF χ) (s : ℂ) (P : HeightO
 
 end GlobalTheory.CMVal.InvConj
 
-open Formalism.L2.Host.CT GlobalTheory.CMVal.InvConj in
 
+open Formalism.L2.Host.CT GlobalTheory.CMVal.InvConj in
 theorem GlobalTheory.CMVal.isHeckeL_inv_of_trivOnF : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (χ : HChar E)
     (Λ : ℂ → ℂ), TrivOnF χ → IsHeckeL χ Λ → IsHeckeL χ⁻¹ Λ := by
   intro E _ _ _ χ Λ hχ hL

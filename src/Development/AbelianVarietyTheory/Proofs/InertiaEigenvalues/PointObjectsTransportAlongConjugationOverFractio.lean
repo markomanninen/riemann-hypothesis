@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDeterminant
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDeterminant
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain GlobalTheory.IndefiniteRowSideFullHecke.CongruenceModuleMatrices
 
 noncomputable section
@@ -76,7 +81,7 @@ theorem Cj.det (hf : Function.Injective f) (h : Cj f P a a') : a'.det = a.det :=
 
 theorem Cj.add (h : Cj f P a a') (h' : Cj f P b b') : Cj f P (a + b) (a' + b') := by
   unfold Cj at *
-  rw [Matrix.map_add _ f.map_add, Matrix.map_add _ f.map_add, mul_add, add_mul, h, h']
+  rw [Matrix.map_add f f.map_add, Matrix.map_add f f.map_add, mul_add, add_mul, h, h']
 
 theorem Cj.toPoly (h : Cj f P a a') :
     Cj (Polynomial.mapRingHom f) (Matrix.GeneralLinearGroup.map (Polynomial.C (R := K)) P)
@@ -123,7 +128,8 @@ theorem exists_cj_of_forall (h : ∀ b, ∃ b', Cj f P b b') (a' : Matrix (Fin n
   have : (Matrix.map (Matrix.of fun y x => ∑ j, ∑ i, c i x y j * a' j i) f : Matrix (Fin n) (Fin n) K) =
       ((P⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) * (a'.map f * (P : Matrix (Fin n) (Fin n) K)) := by
     ext y x
-    simp only [Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, hc, Matrix.mul_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, hc, Matrix.mul_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by ring
   unfold Cj
   rw [this, ← mul_assoc, Units.mul_inv, one_mul]
@@ -175,11 +181,11 @@ theorem Act.sum {ι : Type} (s : Finset ι) (c : ι → A) (M : ι → Matrix (F
   | empty => ext <;> simp
   | insert k s hk ih =>
     simp only [Finset.sum_insert hk]
-    rw [Matrix.map_add _ f.map_add, Matrix.map_add _ f.map_add, Matrix.add_mulVec, Matrix.add_mulVec, map_add, ih,
+    rw [Matrix.map_add f f.map_add, Matrix.map_add f f.map_add, Matrix.add_mulVec, Matrix.add_mulVec, map_add (f := _), ih,
       map_smul_eq, map_smul_eq, Matrix.smul_mulVec, Matrix.smul_mulVec, map_smul, h k u]
     refine Prod.ext rfl ?_
     funext j
-    simp only [Prod.snd_add, Prod.smul_snd, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul]
+    simp only [Prod.snd_add, Prod.smul_snd, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
     ring
 
 theorem act_zero_iff {d : Fin t → A} : Act f e a 0 d ↔

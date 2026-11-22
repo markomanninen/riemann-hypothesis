@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MaximalCompactUniqueArchFiniteDecomposition
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnipotentMemMaximalCompactFiniteIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsLevelIndicatorUnipotentInvariant
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HaarDecompositionNormOneGl2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.CoLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MaximalCompactUniqueArchFiniteDecomposition
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnipotentMemMaximalCompactFiniteIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsLevelIndicatorUnipotentInvariant
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HaarDecompositionNormOneGl2
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -142,7 +146,7 @@ private theorem κInv {ι : Type} [Fintype ι] (C : Co K ι) : MeasurePreserving
   rfl
 
 private theorem pCont {ι : Type} [Fintype ι] (C : Co K ι) (n : ι → ℕ) (q : ι → ℤ) : Continuous (C.p n q) :=
-  continuous_finset_prod _ fun i _ =>
+  continuous_finsetProd _ fun i _ =>
     (continuous_const.mul (KT.continuous_conj_psi (n i) (q i) (n i))).comp ((continuous_apply i).comp (C.Φ 2).continuous)
 
 private theorem pStar {ι : Type} [Fintype ι] (C : Co K ι) (n : ι → ℕ) (q : ι → ℤ) (k : archCompact K 2) :
@@ -163,14 +167,14 @@ private theorem psi_at {m : ℕ} {α : KG K m → archCompact K m} {β : KG K m 
     psi α β f χ (arc1 a * fin1 (h : FA K m)) = f a * χ h := by
   have hm : arc1 a * fin1 (h : FA K m) ∈ KG K m := mul_mem (ha a) (hf h)
   obtain ⟨h1, h2⟩ := hu a h ⟨_, hm⟩ rfl
-  rw [psi, dif_pos hm, h1, h2]
+  rw [psi, dite_eq_left hm, h1, h2]
 
 private theorem psi_cont {m : ℕ} {α : KG K m → archCompact K m} {β : KG K m → AdelicGLn.integralFiniteGL K m}
     {f : archCompact K m → ℂ} {χ : AdelicGLn.integralFiniteGL K m → ℂ} (hα : Continuous α) (hβ : Continuous β)
     (hf : Continuous f) (hχ : Continuous χ) : Continuous fun k : KG K m => psi α β f χ k := by
   have e : (fun k : KG K m => psi α β f χ k) = fun k => f (α k) * χ (β k) := by
     funext k
-    rw [psi, dif_pos k.2]
+    rw [psi, dite_eq_left k.2]
   rw [e]
   exact (hf.comp hα).mul (hχ.comp hβ)
 
@@ -239,7 +243,7 @@ private theorem closing (κ : Measure (archCompact K 2)) (ν : Measure (AdelicGL
   calc _ = ∫ v₁ : KG K 2, psi α₂ β₂ (fun a => g₁ a * G) X (v₁ : G1 K 2) ∂ρ := by
         refine integral_congr_ae (Eventually.of_forall fun v₁ => ?_)
         change J v₁ = psi α₂ β₂ (fun a => g₁ a * G) X (v₁ : G1 K 2)
-        rw [hJ, psi, dif_pos v₁.2]
+        rw [hJ, psi, dite_eq_left v₁.2]
     _ = ∫ a, ∫ d, g₁ a * G * X d ∂ν ∂κ := by
         rw [hρF _ hFc]
         simp only [psi_at _ _ huniq₂ harc₂ hfin₂]
@@ -354,7 +358,7 @@ private theorem cEx (ν : Measure (AdelicGLn.integralFiniteGL K 2)) [IsProbabili
 end PrimeReciprocalSums
 
 theorem UpperTheory.exists_level_and_KTypeVector_for_leviInduction :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure U4) (e : ι → U4 → ℂ) n q n' q' (x : ι → U4), Haar4 μ → ExtP μ e n q n' q' x → ∀ (S : Finset (Pl K)) (U₁ U₂ : ∀ w : Pl K, Subgroup (Gw 2 w)), Lev U₁ → Lev U₂ → ∃ (U : ∀ w : Pl K, Subgroup (Gw (2 + 2) w)) (ρ : Measure (KG K 2)) (Ψ : G1 K (2 + 2) → ℂ) (c : ℝ), Lev U ∧ IsProbabilityMeasure ρ ∧ (∀ u : KG K 2, MeasurePreserving (· * u) ρ ρ) ∧ (Continuous fun k : KG K (2 + 2) => Ψ k) ∧ (∀ X, nn X ∈ KG K (2 + 2) → ∀ k ∈ KG K (2 + 2), Ψ (nn X * k) = Ψ k) ∧ (∀ k ∈ KG K (2 + 2), ∫ a, C.e e a * Ψ (k * arc1 a) ∂C.κ₄ μ = Ψ k) ∧ (∀ k ∈ KG K (2 + 2), ∀ u ∈ levOn S U, Ψ (k * fin1 u) = Ψ k) ∧ 0 < c ∧ ∀ φ₁ φ₂ : G1 K 2 → ℂ, Continuous φ₁ → Continuous φ₂ → FixA C.κ₂ (C.p n q) φ₁ → FixA C.κ₂ (C.p n' q') φ₂ → FixF (levOn S U₁) φ₁ → FixF (levOn S U₂) φ₂ → ∀ m₁ m₂, (∫ v₁ : KG K 2, ∫ v₂ : KG K 2, Ψ (lv (v₁ : G1 K 2) (v₂ : G1 K 2) 0 * arc1 ((C.Φ (2 + 2)).symm x)) * φ₁ (m₁ * (v₁ : G1 K 2)⁻¹) * φ₂ (m₂ * (v₂ : G1 K 2)⁻¹) ∂ρ ∂ρ) = c * φ₁ m₁ * φ₂ m₂ := by
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure U4) (e : ι → U4 → ℂ) n q n' q' (x : ι → U4), Haar4 μ → ExtP μ e n q n' q' x → ∀ (S : Finset (Pl K)) (U₁ U₂ : ∀ w : Pl K, Subgroup (Gw 2 w)), Lev U₁ → Lev U₂ → ∃ (U : ∀ w : Pl K, Subgroup (Gw (2 + 2) w)) (ρ : Measure (KG K 2)) (Ψ : G1 K (2 + 2) → ℂ) (c : ℝ), Lev U ∧ IsProbabilityMeasure ρ ∧ (∀ u : KG K 2, MeasurePreserving (· * u) ρ ρ) ∧ (Continuous fun k : KG K (2 + 2) => Ψ k) ∧ (∀ X, nn X ∈ KG K (2 + 2) → ∀ k ∈ KG K (2 + 2), Ψ (nn X * k) = Ψ k) ∧ (∀ k ∈ KG K (2 + 2), ∫ a, C.e e a * Ψ (k * arc1 a) ∂C.κ₄ μ = Ψ k) ∧ (∀ k ∈ KG K (2 + 2), ∀ u ∈ levOn S U, Ψ (k * fin1 u) = Ψ k) ∧ 0 < c ∧ ∀ φ₁ φ₂ : G1 K 2 → ℂ, Continuous φ₁ → Continuous φ₂ → FixA C.κ₂ (C.p n q) φ₁ → FixA C.κ₂ (C.p n' q') φ₂ → FixF (levOn S U₁) φ₁ → FixF (levOn S U₂) φ₂ → ∀ m₁ m₂, (∫ v₁ : KG K 2, ∫ v₂ : KG K 2, Ψ (lv (v₁ : G1 K 2) (v₂ : G1 K 2) 0 * arc1 ((C.Φ (2 + 2)).symm x)) * φ₁ (m₁ * (v₁ : G1 K 2)⁻¹) * φ₂ (m₂ * (v₂ : G1 K 2)⁻¹) ∂ρ ∂ρ) = c * φ₁ m₁ * φ₂ m₂ := by
   intro K _ _ _ ι _ C μ e n q n' q' x hμ hE S U₁ U₂ hU₁ hU₂
   obtain ⟨α, β, hα, hβ, hdec, huniq, harc, hfin⟩ := UpperTheory.maximalCompact_unique_arch_finite_decomposition (K := K) (2 + 2)
   obtain ⟨U, χ, hU, hχc, hχ01, hχ1, hχN, hχR, hχL⟩ := UpperTheory.exists_level_indicator_unipotent_invariant S U₁ U₂ hU₁ hU₂

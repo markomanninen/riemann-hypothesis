@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.IntermediateField
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.LowerIndex
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.IntermediateField
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.LowerIndex
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.RamificationLowerIndex
 
@@ -53,7 +57,7 @@ private lemma exists_generator {R S : Type*} [CommRing R] [CommRing S] [Algebra 
   have hϖ0 : ϖ ≠ 0 := hϖ.ne_zero
   have hex : ∃ x : S, residue S x = g ∧ ¬ ϖ ^ 2 ∣ x ^ q - x := by
     by_cases h : ϖ ^ 2 ∣ x₀ ^ q - x₀
-    · refine ⟨x₀ + ϖ, by rw [map_add, hx₀, (hres ϖ).2 dvd_rfl, add_zero], fun h' => ?_⟩
+    · refine ⟨x₀ + ϖ, by rw [map_add (f := _), hx₀, (hres ϖ).2 dvd_rfl, add_zero], fun h' => ?_⟩
       obtain ⟨k, hk⟩ := (X ^ q : S[X]).binomExpansion x₀ ϖ
       simp only [eval_pow, eval_X, derivative_X_pow, eval_mul, eval_C] at hk
       obtain ⟨c, hc⟩ := hqd
@@ -158,7 +162,7 @@ theorem UpperTheory.Reformulated.B.RamificationLowerIndex.ramificationIndex_mul_
       [inst_3 : IsNonarchimedeanLocalField K] [inst_4 : Field L] [inst_5 : ValuativeRel L] [inst_6 : TopologicalSpace L]
       [inst_7 : IsNonarchimedeanLocalField L] [inst_8 : Algebra K L] [inst_9 : ValuativeExtension K L]
       [inst_10 : FiniteDimensional K L] (M : IntermediateField K L) [IsGalois K L] [inst_12 : Normal K ↥M] (σ : Gal(L/K)),
-      (↑(GroundTheory.LocalField.ramificationIndex (↥M) L) : ℕ∞) *
+      (↑((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation (↥M))))) : ℕ∞) *
           GroundTheory.LocalField.lowerIndex K (↥M) ((AlgEquiv.restrictNormalHom ↥M : Gal(L/K) → Gal(↥M/K)) σ) =
         ∑ τ : Gal(L/↥M), GroundTheory.LocalField.lowerIndex K L (σ * AlgEquiv.restrictScalars K τ) := by
   intro K L _ _ _ _ _ _ _ _ _ _ _ M _ _ σ
@@ -215,7 +219,8 @@ theorem UpperTheory.Reformulated.B.RamificationLowerIndex.ramificationIndex_mul_
       have h1 : valuation L (algebraMap M L m) ≤ 1 := by rw [hm]; exact (f.coeff i).2
       exact (Valuation.HasExtension.val_map_le_one_iff (valuation M) (valuation L) m).1 h1
     have hy : f.coeff i = algebraMap 𝒪[M] 𝒪[L] ⟨m, hm1⟩ := Subtype.ext hm.symm
-    rw [hy, RingHom.coe_coe, hcomm, ← map_sub]
+    set_option synthInstance.maxHeartbeats 200000 in
+      rw [hy, RingHom.coe_coe, hcomm, ← map_sub (algebraMap 𝒪[M] 𝒪[L])]
     apply _root_.map_dvd
     rw [← addVal_le_iff_dvd, ← hy₁]
     exact lowerIndex_le _ _

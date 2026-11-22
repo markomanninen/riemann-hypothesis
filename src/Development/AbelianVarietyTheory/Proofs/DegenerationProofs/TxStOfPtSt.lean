@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TwistTerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TwistTerms
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped BigOperators
@@ -133,8 +137,8 @@ theorem IsPrim.tx_sign {w₀ : O} (h : IsPrim B w₀) (la : B.La) :
   have hy : la.y = w₀ • la.y + star w₀ • la.y := by rw [← add_smul, h1, one_smul]
   have hT : B.T la.y la.y = 2 * B.T la.y (w₀ • la.y) := by
     have : B.T la.y la.y = B.T la.y (w₀ • la.y + star w₀ • la.y) := by rw [← hy]
-    rw [this, map_add, ← B.T_adj, B.T_symm (w₀ • la.y), two_mul]
-  have hn : la.n la.y = la.n (w₀ • la.y) + la.n (star w₀ • la.y) := by rw [← map_add, ← hy]
+    rw [this, map_add (f := _), ← B.T_adj, B.T_symm (w₀ • la.y), two_mul]
+  have hn : la.n la.y = la.n (w₀ • la.y) + la.n (star w₀ • la.y) := by rw [← map_add (f := _), ← hy]
   have hm : ∀ z : ℤ, (-1 : ℂ) ^ z = Complex.exp (z * (Real.pi * Complex.I)) := fun z => by
     rw [Complex.exp_int_mul, Complex.exp_pi_mul_I]
   rw [h3, AnArc.ah, h2, hm, hm, eTwoPi, ← Complex.exp_add, ← Complex.exp_add, ← Complex.exp_add,
@@ -180,8 +184,8 @@ theorem txSt_of_ptSt (h : PtSt) : TxSt := by
   obtain ⟨c, hc⟩ : (2 * (m : ℤ) ^ 2) ∣ β.be (d.eX la.y + m • d.eX x) (d.eX la.y + m • d.eX x) :=
     (mul_dvd_mul_left 2 (by exact_mod_cast hm)).trans (β.dvd _ _)
   have hc' : 2 * (m : ℤ) ^ 2 * c = B.be la.y la.y + 2 * m * B.be la.y x + m ^ 2 * (2 * B.q x) := by
-    rw [← hc, ← map_nsmul, ← map_add, ← hβ, B.two_mul_q]
-    simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, B.be_symm x la.y]
+    rw [← hc, ← map_nsmul, ← map_add (f := _), ← hβ, B.two_mul_q]
+    simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, B.be_symm x la.y]
     ring
   replace hc' : (c : ℂ) = (B.be la.y la.y + 2 * m * B.be la.y x + m ^ 2 * (2 * B.q x)) / (2 * m ^ 2) := by
     rw [eq_div_iff (mul_ne_zero two_ne_zero (pow_ne_zero _ m0)), mul_comm]

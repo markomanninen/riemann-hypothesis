@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HRedFst
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValueAtOrigin
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleBaseOfCompleteNormalLocalCharZero
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionValueAtTorsionPointEqSumTerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HRedFst
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValueAtOrigin
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleBaseOfCompleteNormalLocalCharZero
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SectionValueAtTorsionPointEqSumTerms
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -54,7 +59,8 @@ theorem coef_comb_pull : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R)
   refine ((IsUnit.mk0 _ hlk).map (cstH (R := R) z)).mul_left_cancel ?_
   rw [secLin_val (hs α) _ z hJ, e₂, v, hr]
   simp only [bi]
-  rw [← _root_.mul_assoc, ← map_mul, ← _root_.mul_assoc, mul_inv_cancel₀ hlk, _root_.one_mul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← _root_.mul_assoc, ← map_mul, ← _root_.mul_assoc, mul_inv_cancel₀ hlk, _root_.one_mul, map_sum,
     Finset.sum_mul, Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have h1 := hai i

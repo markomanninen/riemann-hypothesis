@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,11 +24,13 @@ theorem charIdem_apply (σ : Representation ℂ G V) (τ : Representation ℂ G 
 
 theorem map_charIdem {σ : Representation ℂ G V} {σ' : Representation ℂ G X} (φ : σ.IntertwiningMap σ')
     (τ : Representation ℂ G W) (v : V) : φ (charIdem σ τ v) = charIdem σ' τ (φ v) := by
-  simp only [charIdem_apply, map_smul, map_sum, φ.isIntertwining]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [charIdem_apply, map_smul, map_sum, φ.isIntertwining]
 
 theorem charIdem_apply_rep (σ : Representation ℂ G V) (τ : Representation ℂ G W) (h : G) (v : V) :
     charIdem σ τ (σ h v) = σ h (charIdem σ τ v) := by
-  simp only [charIdem_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [charIdem_apply, map_smul, map_sum]
   congr 1
   refine (Fintype.sum_equiv (MulAut.conj h).toEquiv _ _ fun g => ?_).symm
   have e : LinearMap.trace ℂ W (τ (h * g * h⁻¹)⁻¹) = LinearMap.trace ℂ W (τ g⁻¹) := by
@@ -40,7 +46,8 @@ def coeffMap (σ : Representation ℂ G V) (τ : Representation ℂ G W) (ℓ : 
     τ.IntertwiningMap σ where
   toLinearMap := ∑ g : G, (ℓ ∘ₗ τ g⁻¹).smulRight (σ g v)
   isIntertwining' h := LinearMap.ext fun w => by
-    simp only [LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smulRight_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smulRight_apply, map_sum, map_smul]
     refine (Fintype.sum_equiv (Equiv.mulLeft h) _ _ fun g => ?_).symm
     simp only [Equiv.coe_mulLeft, ← Module.End.mul_apply, ← map_mul, _root_.mul_inv_rev, inv_mul_cancel_right]
 
@@ -71,7 +78,8 @@ theorem charIdem_self {τ : Representation ℂ G W} (hτ : τ.IsIrreducible) : c
   rw [if_pos ⟨.refl _⟩, Nat.card_eq_fintype_card] at ho
   have hd : (Module.finrank ℂ W : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Module.finrank_pos.ne'
   have h2 : LinearMap.trace ℂ W (charIdem τ τ) = Module.finrank ℂ W := by
-    simp only [charIdem, map_smul, map_sum, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [charIdem, map_smul, map_sum, smul_eq_mul]
     rw [div_eq_mul_inv, mul_assoc]
     refine (congrArg _ (Eq.trans ?_ ho)).trans (mul_one _)
     exact congrArg _ (Finset.sum_congr rfl fun g _ => mul_comm _ _)
@@ -83,7 +91,7 @@ theorem charIdem_of_mem {σ : Representation ℂ G V} {τ : Representation ℂ G
   refine Submodule.iSup_induction _ (motive := fun v => charIdem σ τ v = v) hv ?_ (map_zero _) fun x y hx hy => ?_
   · rintro f _ ⟨w, rfl⟩
     exact (map_charIdem f τ w).symm.trans (by rw [charIdem_self hτ]; rfl)
-  · rw [map_add, hx, hy]
+  · rw [map_add (f := _), hx, hy]
 
 end FiniteGroup
 
@@ -97,7 +105,8 @@ theorem map_idem (hπ : IsSmooth π) (hσ : IsSmooth σ) (hH : IsCompact (H : Se
   obtain ⟨U, -, _, hU⟩ := exists_normal_fix hπ hH v
   letI := Fintype.ofFinite (H ⧸ U)
   rw [idem_eq_cosetSum hπ hH U hU, idem_eq_cosetSum hσ hH U fun u hu => by rw [← f.isIntertwining, hU u hu]]
-  simp only [map_smul, map_sum, f.isIntertwining]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, f.isIntertwining]
 
 theorem map_idem_of_mem (hπ : IsSmooth π) (hH : IsCompact (H : Set G)) (f : π.IntertwiningMap σ) {v : V}
     (hv : f v ∈ fixed σ H) : f (idem hπ hH v) = f v := by
@@ -105,7 +114,8 @@ theorem map_idem_of_mem (hπ : IsSmooth π) (hH : IsCompact (H : Set G)) (f : π
   letI := Fintype.ofFinite (H ⧸ U)
   have hc : (Fintype.card (H ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   rw [idem_eq_cosetSum hπ hH U hU]
-  simp only [map_smul, map_sum, f.isIntertwining]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, f.isIntertwining]
   rw [Finset.sum_congr rfl fun q _ => mem_fixed.1 hv _ (q.out : H).2, Finset.sum_const, Finset.card_univ,
     ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
 
@@ -129,9 +139,6 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
   {n : Type} [Fintype n] [DecidableEq n] {V W X : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
   [AddCommGroup X] [Module ℂ X] {π : Representation ℂ (GL n k) V} {σ : Representation ℂ (GL n k) W}
   {ρ : Representation ℂ (GL n k) X}
-
-@[simp] theorem levelZeroMap_apply (f : π.IntertwiningMap σ) (v : fixed π (KOne k n)) :
-    (levelZeroMap f v : W) = f v := rfl
 
 theorem levelZeroMap_injective {f : π.IntertwiningMap σ} (hf : Function.Injective f) :
     Function.Injective (levelZeroMap f) :=

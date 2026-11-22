@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSemicharacterCompletedSelfDualLattice
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OmVacuumEqSplitFacSmulSum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIntegralSplitIdempotentOverTwo
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSemicharacterCompletedSelfDualLattice
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def finSub (S T : HSp D) : Submodule (AE D) (WO S T) where
     have h1 : infPart D (x i j) = 0 := congrFun (congrFun hx i) j
     have h2 : infPart D (y i j) = 0 := congrFun (congrFun hy i) j
     show infPart D (x i j + y i j) = 0
-    rw [RingHom.map_add, h1, h2, add_zero]
+    rw [RingHom.map_add (f := _), h1, h2, add_zero]
   zero_mem' := by
     funext i j
     exact (infPart D).map_zero
@@ -44,7 +48,8 @@ instance (S T : HSp D) : Module (AE D) (XF S T) := inferInstanceAs (Module (AE D
 
 @[coe] def XF.val {S T : HSp D} (x : XF S T) : WO S T := Subtype.val x
 
-instance (S T : HSp D) : CoeOut (XF S T) (WO S T) := ⟨XF.val⟩
+instance (S T : HSp D) : Coe (XF S T) (WO S T) where
+  coe := XF.val
 
 def XF.mk {S T : HSp D} (u : WO S T) (hu : u.map (infPart D) = 0) : XF S T := (⟨u, hu⟩ : finSub S T)
 
@@ -55,8 +60,6 @@ theorem XF.ext {S T : HSp D} {x y : XF S T} (h : (x : WO S T) = y) : x = y := Su
 theorem XF.coe_mk {S T : HSp D} (u : WO S T) (hu : u.map (infPart D) = 0) : (XF.mk u hu : WO S T) = u := rfl
 
 theorem XF.coe_add {S T : HSp D} (x y : XF S T) : ((x + y : XF S T) : WO S T) = x + y := rfl
-
-theorem XF.coe_sub {S T : HSp D} (x y : XF S T) : ((x - y : XF S T) : WO S T) = x - y := rfl
 
 theorem XF.coe_nsmul {S T : HSp D} (n : ℕ) (x : XF S T) : ((n • x : XF S T) : WO S T) = n • (x : WO S T) := rfl
 
@@ -162,9 +165,42 @@ theorem mem_latF {LS : Set (Fin S.rank → D.host.E)} {LT : Set (Fin T.rank → 
 
 def thetaSub (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Submodule ℂ (WO S T → ℂ) where
   carrier := {f | IsThetaFunO ψ S T f}
-  add_mem' := GlobalTheory.WeilVacMove.isTheta_add
-  zero_mem' := GlobalTheory.WeilVacMove.isTheta_zero
-  smul_mem' c _ hf := GlobalTheory.WeilVacMove.isTheta_smul c hf
+  add_mem' {f g} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) := by
+    have h : IsThetaFunO ψ S T (f + g) := {
+      quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+      level := by
+        obtain ⟨U, hU, hfix⟩ := hf.level
+        obtain ⟨V, hV, hfix'⟩ := hg.level
+        refine ⟨U ⊓ V, hU.inter hV, fun u hu hfin => ?_⟩
+        funext w
+        have ef := congrFun (hfix u hu.1 hfin) w
+        have eg := congrFun (hfix' u hu.2 hfin) w
+        unfold heisO at ef eg ⊢
+        rw [Pi.add_apply, Pi.add_apply, mul_add, ef, eg]
+      cont := hf.cont.add hg.cont
+      smooth k L hL hreal w := (hf.smooth k L hL hreal w).add (hg.smooth k L hL hreal w) }
+    exact h
+  zero_mem' := by
+    have h : IsThetaFunO ψ S T 0 := {
+      quasi γ w := by simp only [Pi.zero_apply, mul_zero]
+      level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
+      cont := continuous_const
+      smooth k L _ _ w := contDiff_const }
+    exact h
+  smul_mem' c f (hf : IsThetaFunO ψ S T f) := by
+    have h : IsThetaFunO ψ S T (c • f) := {
+      quasi γ w := by
+        rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+      level := by
+        obtain ⟨U, hU, hfix⟩ := hf.level
+        refine ⟨U, hU, fun u hu hfin => ?_⟩
+        funext w
+        have ef := congrFun (hfix u hu hfin) w
+        unfold heisO at ef ⊢
+        rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, ef]
+      cont := hf.cont.const_smul c
+      smooth k L hL hreal w := contDiff_const.mul (hf.smooth k L hL hreal w) }
+    exact h
 
 variable {ψ : AddChar (AF D.host.F) ℂ}
 
@@ -181,8 +217,37 @@ theorem phase_ne_zero (w : 𝓞 D.host.E) (x : XF S T) : phase ψ w x ≠ 0 := b
   exact one_ne_zero this
 
 def opF (hψ : IsCharAF D.host.F ψ) (S T : HSp D) (w : 𝓞 D.host.E) (x : XF S T) :
-    thetaSub ψ S T →ₗ[ℂ] thetaSub ψ S T :=
-  phase ψ w x • (heisL ψ S T x).restrict fun _ hf => GlobalTheory.FinTranslate.isTheta_heisO_fin hψ x.fin hf
+    thetaSub ψ S T →ₗ[ℂ] thetaSub ψ S T := by
+  refine phase ψ w x • (heisL ψ S T x).restrict ?_
+  intro f hf
+  change IsThetaFunO ψ S T f at hf
+  let a : WO S T := x
+  have ha : a.map (infPart D) = 0 := x.fin
+  have h : IsThetaFunO ψ S T (heisO ψ S T a f) := {
+    quasi := GlobalTheory.WeilVacMove.heisO_quasi ψ S T a f hf.quasi
+    level := by
+      obtain ⟨U, hU, hfix⟩ := hf.level
+      refine ⟨U ⊓ GlobalTheory.FinTranslate.annSub ψ S T a,
+        hU.inter (GlobalTheory.FinTranslate.isOpen_annSub hψ ha), fun u hu hfin => ?_⟩
+      have hpair : ψ (symplOH S T u a) = 1 ∧ ψ (symplOH S T a u) = 1 := hu.2
+      conv_rhs => rw [← hfix u hu.1 hfin]
+      rw [GlobalTheory.WeilVacMove.heisO_heisO, GlobalTheory.WeilVacMove.heisO_heisO,
+        hpair.1, hpair.2, add_comm]
+    cont := by
+      have : IsTopologicalAddGroup (AE D) := IsTopologicalRing.isTopologicalAddGroup
+      have : IsTopologicalAddGroup (WO S T) := Pi.isTopologicalAddGroup
+      exact (hψ.1.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T continuous_id continuous_const)).mul
+        (hf.cont.comp (continuous_id.add continuous_const))
+    smooth k L hL hreal u := by
+      have e : (fun t => heisO ψ S T a f (u + L t)) =
+          fun t => ψ (symplOH S T u a) * f (u + a + L t) := by
+        funext t
+        rw [heisO, symplOH_add_left,
+          (GlobalTheory.WeilVacMove.symplOH_fin_real S T a (L t) ha (hreal t)).2,
+          add_zero, add_right_comm]
+      rw [e]
+      exact contDiff_const.mul (hf.smooth k L hL hreal (u + a)) }
+  exact h
 
 theorem coe_opF (hψ : IsCharAF D.host.F ψ) (w : 𝓞 D.host.E) (x : XF S T) (f : thetaSub ψ S T) :
     (opF hψ S T w x f : WO S T → ℂ) = phase ψ w x • heisO ψ S T x f := rfl
@@ -197,7 +262,7 @@ theorem symplO_self (x : WO S T) : symplO S T x x = 0 := by
   exact h.symm
 
 theorem isHeis_opF (hψ : IsCharAF D.host.F ψ) (S T : HSp D) {w : 𝓞 D.host.E} (hw : w + sgO D w = 1) :
-    IsHeis (sgO D) w (gamF ψ S T) (opF hψ S T w) where
+    IsHeis (sgO D) w (gamF ψ S T) (opF hψ S T w) := {
   sg_sg r := by
     apply Subtype.ext
     show ((sgO D (sgO D r) : 𝓞 D.host.E) : D.host.E) = (r : D.host.E)
@@ -220,13 +285,13 @@ theorem isHeis_opF (hψ : IsCharAF D.host.F ψ) (S T : HSp D) {w : 𝓞 D.host.E
       ← AddChar.map_add_eq_mul, coe_smul, XF.coe_add]
     congr 2
     have h1 : intA D w • (x : WO S T) + cA D (intA D w) • (x : WO S T) = x := by
-      rw [← add_smul, cA_intA, ← RingHom.map_add, hw, RingHom.map_one, one_smul]
+      rw [← add_smul, cA_intA, ← RingHom.map_add (f := _), hw, RingHom.map_one, one_smul]
     have h2 := congrArg (fun z => symplOH S T z y) h1
     simp only [symplOH_add_left] at h2
     have h3 := symplOH_smul (intA D w) (y : WO S T) x
     rw [symplOH_skew S T (cA D (intA D w) • (x : WO S T)) y] at h3
     rw [smul_add, symplOH_add_left, symplOH_add_right, symplOH_add_right, ← symplOH_add_self]
-    linear_combination h3 - h2
+    linear_combination h3 - h2 }
 
 theorem selfDual_latF {LS : Set (Fin S.rank → D.host.E)} {LT : Set (Fin T.rank → D.host.E)}
     (hd : ∀ u : WO S T, u.map (infPart D) = 0 → (u ∈ (latO S T LS LT fun _ => True) ↔

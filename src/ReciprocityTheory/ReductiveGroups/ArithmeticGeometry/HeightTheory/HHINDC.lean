@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HPlaces
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HPlaces
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -109,7 +113,7 @@ theorem shift {c : ι} {v : AddValuation (Ω c) (WithTop ℤ)} (hv : d.admitted 
 
 theorem goodP_finite' (hd : d.AxH 𝒜) (h : d.S1) (c : ι) {p : Ideal (KTp K d.D d.N)} (hp : p ∈ d.HtOne) :
     (d.GoodP c p).Finite :=
-  ((d.norm_by_places hd h c).1 p hp).subset fun _ hw => hw.1
+  d.goodP_finite hd h c hp
 
 theorem usage₆ (hd : d.AxH 𝒜) (h : d.S1) (O : ∀ c, AddValuation (Ω c) (WithTop ℤ) → A c → ℤ)
     (c : ι) (f : A c) (a : Ω c) (ha : a ≠ 0)
@@ -181,14 +185,38 @@ theorem nsg_smul (hd : d.AxH 𝒜) (h : d.S1) (Nr : ∀ c, A c → (Ω c →+* �
         ∂(blockSphereProb d.D (d.N + 1)) =
       ∫ z, (∑ᶠ (P : Ω c →+* ℂ) (_ : P ∈ d.ST c sg (d.tOf z)), -Real.log (Nr c f P))
         ∂(blockSphereProb d.D (d.N + 1)) - ∫ z, d.lsum c sg a z ∂(blockSphereProb d.D (d.N + 1)) := by
+  have hfin : ∀ᵐ z ∂(blockSphereProb d.D (d.N + 1)), (d.ST c sg (d.tOf z)).Finite := by
+    letI : Countable K := countable_numberField K
+    letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
+    letI := d.KT_finiteDimensional hd c
+    let e : KTf K d.D d.N ≃+* d.KT c :=
+      ((d.KTtoS h c).rangeRestrictFieldEquiv).trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+    have hmap : (algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp e.symm.toRingHom =
+        algebraMap (d.KT c) (OmS (Ω c) d.D d.N) := by
+      ext x
+      change d.KTtoS h c (e.symm x) = (x : OmS (Ω c) d.D d.N)
+      exact congrArg Subtype.val (e.apply_symm_apply x)
+    letI : Module.Finite (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+      Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl _) hmap
+    filter_upwards [NPB.ae_gen (K := K) (D := d.D) (N := d.N) sg] with z hz
+    obtain ⟨y, -, hpt⟩ := NPB.exists_gen sg (fun q => d.tOf z q.1 q.2) hz 1 one_ne_zero
+    let pt := NPB.gpt (fun q => d.tOf z q.1 q.2) y
+    have hy : ∀ i, y (Fin.natAdd (d.N + 1) i) ≠ 0 := by
+      intro i h0
+      exact hpt (MvPolynomial.X (i.succ, 0)) (MvPolynomial.X_ne_zero _) (by simp [NPB.gpt, h0])
+    letI : Algebra (KTf K d.D d.N) ℂ := (tauPev sg pt hpt).toAlgebra
+    rw [← d.ST_scale c sg (d.tOf z) y hy]
+    refine (Set.finite_range (fun σ : OmS (Ω c) d.D d.N →ₐ[KTf K d.D d.N] ℂ =>
+      (σ : OmS (Ω c) d.D d.N →+* ℂ).comp (algebraMap (Ω c) (OmS (Ω c) d.D d.N)))).subset ?_
+    intro P hP
+    obtain ⟨σ, hσ, rfl⟩ := d.exists_emb hd h c sg pt hpt P hP
+    exact ⟨{ σ with commutes' := fun x => RingHom.congr_fun hσ x }, rfl⟩
   have hae : d.aI Nr c (a • f) sg =ᵐ[blockSphereProb d.D (d.N + 1)]
       fun z => d.lsum c sg a z + d.aI Nr c f sg z := by
-    filter_upwards [d.norm_at_sg hd h c sg] with z hz
+    filter_upwards [hfin] with z hz
     unfold aI lsum
-    rw [finsum_mem_eq_finite_toFinset_sum _ hz.1, finsum_mem_eq_finite_toFinset_sum _ hz.1,
-      finsum_mem_eq_finite_toFinset_sum _ hz.1, ← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
-    intro P _
+    rw [← finsum_mem_add_distrib hz]
+    refine finsum_mem_congr rfl fun P _ => ?_
     rw [hNs, Real.log_mul (norm_ne_zero_iff.2 ((map_ne_zero P).2 ha)) (hN0 P)]
   have hL : Integrable (d.lsum c sg a) (blockSphereProb d.D (d.N + 1)) := by
     refine (hI'.sub hI).congr ?_

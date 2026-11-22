@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RelationExtension
 
@@ -31,9 +35,9 @@ theorem rel_add (ι : A →+* E) (f : A →+* F) (π P : A) {e e' : E} {x x' : F
   obtain ⟨a, m, y, h1, h2⟩ := h
   obtain ⟨a', m', y', h1', h2'⟩ := h'
   refine ⟨a * π ^ m' + a' * π ^ m, m + m', y * ι π ^ m' + y' * ι π ^ m, ?_, ?_⟩
-  · rw [pow_add, map_add, map_mul, map_mul, map_pow, map_pow]
+  · rw [pow_add, map_add (f := _), map_mul, map_mul, map_pow, map_pow]
     linear_combination (ι π ^ m') * h1 + (ι π ^ m) * h1'
-  · rw [pow_add, map_add, map_mul, map_mul, map_pow, map_pow]
+  · rw [pow_add, map_add (f := _), map_mul, map_mul, map_pow, map_pow]
     linear_combination (f π ^ m') * h2 + (f π ^ m) * h2'
 
 theorem rel_mul (ι : A →+* E) (f : A →+* F) (π P : A) {e e' : E} {x x' : F}

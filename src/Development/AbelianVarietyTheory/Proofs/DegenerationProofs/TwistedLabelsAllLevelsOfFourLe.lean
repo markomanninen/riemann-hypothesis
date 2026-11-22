@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RatTors
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RatTors
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevel
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -52,7 +56,7 @@ theorem qEq_twist {j k m : ℕ} (β : N.Form j) {u r r' : Oˣ} (h₁ : r' ^ m = 
       have A5 := ts' χ
       have A6 := N.twist_τ β u z χ
       have hy' : β.be q.1.1.toAdd χ = β.be q'.1.1.toAdd χ + k * β.be z χ := by
-        rw [show q.1.1.toAdd = q'.1.1.toAdd + k • z from hy, map_add, map_nsmul, LinearMap.add_apply,
+        rw [show q.1.1.toAdd = q'.1.1.toAdd + k • z from hy, map_add (f := _), map_nsmul, LinearMap.add_apply,
           LinearMap.smul_apply, nsmul_eq_mul]
       rw [hy'] at A1
       rw [NumD.Gt.mul_s (p'.1.2 ^ m) ((N.twist β u).io z) χ, NumD.io_s (N.twist β u) z χ,
@@ -69,21 +73,38 @@ theorem qEq_twist {j k m : ℕ} (β : N.Form j) {u r r' : Oˣ} (h₁ : r' ^ m = 
       clear hy hg hg' hy' ty ty' tb tb' ts ts' A6 A1 A2 A3 A4 A5
       module
 
-theorem rel_pow (J : NumD.Iso N N') {g : N.Gt} {g' : N'.Gt} (h : J.Rel g g') (n : ℕ) : J.Rel (g ^ n) (g' ^ n) :=
-  (NumD.Hom.ofIso_rel J _ _).1 (((NumD.Hom.ofIso_rel J _ _).2 h).pow n)
-
 theorem exists_image (J : NumD.Iso N N') {k : ℕ} (p : N.QT k) :
     ∃ q : N'.QT k, q.1.1.toAdd = J.e p.1.1.toAdd ∧ J.Rel p.1.2 q.1.2 := by
   let I := NumD.Hom.ofIso J
-  have hp : p.1.2 ^ k = N.io p.1.1.toAdd := N.mem_QT.1 p.2
-  have h1 : I.Rel (p.1.2 ^ k) (I.img p.1.2 ^ k) := (I.rel_img p.1.2).pow k
-  have h2 : I.Rel (p.1.2 ^ k) (N'.io (I.e p.1.1.toAdd)) := by
-    rw [hp]
-    exact I.rel_io _
-  have h3 : I.img p.1.2 ^ k = N'.io (J.e p.1.1.toAdd) :=
-    ((I.rel_iff _ _).1 h1).trans ((I.rel_iff _ _).1 h2).symm
-  exact ⟨⟨(Multiplicative.ofAdd (J.e p.1.1.toAdd), I.img p.1.2), N'.mem_QT.2 h3⟩, rfl,
-    (NumD.Hom.ofIso_rel J _ _).1 (I.rel_img _)⟩
+  have hid (u : Oˣ) : (Units.map (RingHom.id O).toMonoidHom) u = u := by
+    ext
+    rfl
+  let g : N'.Gt :=
+    ⟨I.φ p.1.2.b, fun χ => p.1.2.s (I.e.symm χ) * I.h (N.c (I.e.symm χ)) * I.h p.1.2.b / I.h (N.c (I.e.symm χ) * p.1.2.b),
+      fun χ χ' => by
+        obtain ⟨χ, rfl⟩ := I.e.surjective χ
+        obtain ⟨χ', rfl⟩ := I.e.surjective χ'
+        rw [← map_add (f := _)]
+        simp only [AddEquiv.symm_apply_apply]
+        rw [I.c_eq, I.c_eq, N.c_add]
+        have a := I.θ_eq (N.c χ) (N.c χ') p.1.2.b
+        simp only [hid] at a
+        have b := p.1.2.mult χ χ'
+        apply Additive.ofMul.injective
+        replace a := congrArg Additive.ofMul a
+        replace b := congrArg Additive.ofMul b
+        simp only [ofMul_mul, ofMul_div] at a b ⊢
+        linear_combination (norm := abel) a + b⟩
+  have hg : I.Rel p.1.2 g := ⟨rfl, fun χ => by simp only [g, AddEquiv.symm_apply_apply, div_mul_cancel, hid]⟩
+  have h1 : I.Rel (p.1.2 ^ k) (g ^ k) := hg.pow k
+  rw [N.mem_QT.1 p.2] at h1
+  have h2 := I.rel_io p.1.1.toAdd
+  have h3 : g ^ k = N'.io (J.e p.1.1.toAdd) :=
+    NumD.Gt.ext (h1.1.trans h2.1.symm) (funext fun χ => by
+      obtain ⟨χ, rfl⟩ := I.e.surjective χ
+      exact mul_right_cancel ((h1.2 χ).trans (h2.2 χ).symm))
+  exact ⟨⟨(Multiplicative.ofAdd (J.e p.1.1.toAdd), g), N'.mem_QT.2 h3⟩, rfl,
+    (NumD.Hom.ofIso_rel J _ _).1 hg⟩
 
 theorem qEq_image (J : NumD.Iso N N') {k m : ℕ} {p' : N.QT (k * m)} {p : N.QT k} {q' : N'.QT (k * m)} {q : N'.QT k}
     (a' : q'.1.1.toAdd = J.e p'.1.1.toAdd) (b' : J.Rel p'.1.2 q'.1.2) (a : q.1.1.toAdd = J.e p.1.1.toAdd)
@@ -93,14 +114,18 @@ theorem qEq_image (J : NumD.Iso N N') {k m : ℕ} {p' : N.QT (k * m)} {p : N.QT 
   refine ⟨J.e z, ?_, ?_⟩
   · show q.1.1.toAdd = q'.1.1.toAdd + k • J.e z
     have hy' : p.1.1.toAdd = p'.1.1.toAdd + k • z := hy
-    rw [a, a', hy', map_add, map_nsmul]
+    rw [a, a', hy', map_add (f := _), map_nsmul]
   · show q.1.2 = q'.1.2 ^ m * N'.io (J.e z)
     have hg' : p.1.2 = p'.1.2 ^ m * N.io z := hg
     have r1 : I.Rel p.1.2 q.1.2 := (NumD.Hom.ofIso_rel J _ _).2 b
     have r2 : I.Rel p.1.2 (q'.1.2 ^ m * N'.io (J.e z)) := by
       rw [hg']
-      exact (((NumD.Hom.ofIso_rel J _ _).2 b').pow m).mul (I.rel_io z)
-    exact ((I.rel_iff _ _).1 r1).trans ((I.rel_iff _ _).1 r2).symm
+      have rb : I.Rel p'.1.2 q'.1.2 := (NumD.Hom.ofIso_rel J _ _).2 b'
+      exact (rb.pow m).mul (I.rel_io z)
+    apply NumD.Gt.ext (r1.1.trans r2.1.symm)
+    refine funext fun χ => ?_
+    obtain ⟨χ, rfl⟩ := I.e.surjective χ
+    exact mul_right_cancel ((r1.2 χ).trans (r2.2 χ).symm)
 
 private theorem pow_left_of_isGrpPullback' {S S' : Scheme.{0}} {G : Over S} {G' : Over S'} [GrpObj G] [GrpObj G']
     {f : S' ⟶ S} {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G f φ) {T : Over S'} (x : T ⟶ G')

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepABorder
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepABorder
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 
@@ -22,8 +26,8 @@ section Level
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {z z' : Fin (2 * r + k + 1) → ℂ} {l : Fin r}
   {D : Set (Mx k r)}
 
-variable (E l) in
 
+variable (E l) in
 def borderedMinorImage (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) {m : ℕ} (f b : Fin m → Fin (mdim k r l.succ)) (u : ℂ) :
     Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   bTee E l hD u * mB E l.succ (ho1 l hD) f b (u - 1) -
@@ -48,8 +52,8 @@ theorem evaluation_bordered_minor_first {m : ℕ} (f b : Fin m → Fin (mdim k r
     (int_minor R.w R.ep R.q hD (f ∘ skip1 w) (b ∘ skip1 x) (u - 2))).mulJ
     (intJ_eig hJ0 (eig_ex R.rr hz' hD.1 hJ hr (b x)))
 
-include hz hz' hl hr in
 
+include hz hz' hl hr in
 theorem quantum_minor_point_evaluation {m : ℕ} (f b : Fin m → Fin (mdim k r l.succ)) (u : ℂ) {c : Fin r → ℂ} (hc : c ∈ OmX r) {g : Mx k r}
     (hg : g ∈ Glev k r l.succ) (hgD : g ∈ Dc1 l D c) :
     qminorOp (EH k r) (posL k r l.castSucc ∘ bE (e0 k l) (v0 k l ∘ f)) (posL k r l.castSucc ∘ bE (e0 k l) (v0 k l ∘ b))

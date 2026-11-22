@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeMapFApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExactAtOfProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConeMapFApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExactAtOfProd
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.CartanOne
@@ -116,13 +121,13 @@ theorem cartan_one : ∀ (T : Type 1) [Category.{0} T] (Cov : MorphismProperty T
       ⟨-z, by rw [map_neg]; exact eq_neg_of_add_eq_zero_left ((add_comm _ _).trans h2)⟩
     obtain ⟨w, hw⟩ : ∃ w : (D.obj V₁).X (j + 1), (D.map g₁).f (j + 1) z + (φ.app V₁).f (j + 1) b = w := ⟨_, rfl⟩
     have hw0 : (D.obj V₁).d (j + 1) (j + 1 + 1) w = 0 := by
-      rw [← hw, map_add, ← comm_el (D.map g₁), ← comm_el (φ.app V₁), hb, nat_el, ← map_add, h2, map_zero]
+      rw [← hw, map_add (f := _), ← comm_el (D.map g₁), ← comm_el (φ.app V₁), hb, nat_el, ← map_add (f := _), h2, map_zero]
     obtain ⟨V₂, g₂, hg₂, c', y', hc', hy'⟩ := locSurj' hS j (j + 1) rfl V₁ w hw0
     obtain ⟨y, hyp, hyq⟩ := mk j V₂ (c' - (C.map g₂).f (j + 1) b) (-y')
     refine ⟨V₂, g₁ ≫ g₂, Cov.comp_mem _ _ hg₁ hg₂, y, ?_⟩
     apply ext
     · rw [dp, hyp, natP, hc, map_sub, hc', ← comm_el (C.map g₂), hb, map_comp_el, zero_sub, neg_neg]
-    · rw [dq, hyp, hyq, natQ, hz, map_sub, map_neg, hy', ← hw, map_add, nat_el, map_comp_el]
+    · rw [dq, hyp, hyq, natQ, hz, map_sub, map_neg, hy', ← hw, map_add (f := _), nat_el, map_comp_el]
       abel
   have hLK : LocExact Cov K := by
     have gen' : ∀ k n : ℤ, k + 1 = n → ∀ (U : T) (x : (K.obj U).X n), (K.obj U).d n (n + 1) x = 0 →

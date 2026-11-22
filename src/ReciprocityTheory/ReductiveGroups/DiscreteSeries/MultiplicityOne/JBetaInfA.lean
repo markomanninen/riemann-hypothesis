@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem inCC_five_four {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {A
 theorem continuous_lam (z : Fin (2 * r + k + 1) → ℂ) :
     Continuous fun n : Mt k r => lam k r z (Matrix.of n) := by
   unfold Formalism.FourierDecayAlt.B.lam Formalism.QuantumDeterminants.ell
-  refine Complex.continuous_re.comp (continuous_const.mul (continuous_finset_sum _ fun a _ => ?_))
+  refine Complex.continuous_re.comp (continuous_const.mul (continuous_finsetSum _ fun a _ => ?_))
   split_ifs
   · exact (continuous_apply _).comp (continuous_apply _)
   · simp only [Matrix.mulVec, dotProduct, Matrix.of_apply]

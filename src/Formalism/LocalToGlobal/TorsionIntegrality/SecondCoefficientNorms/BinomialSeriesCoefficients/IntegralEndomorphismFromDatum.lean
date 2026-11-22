@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversal
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversal
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -51,7 +55,7 @@ theorem coeff_of_sq {n : ℕ} {g : PowerSeries K} (h2 : (2 : K)⁻¹ ∈ R) (h20
   have hid : coeff n (g - 1) = (2 : K)⁻¹ * (coeff n (g * g) - coeff n (1 : PowerSeries K)
       - coeff n ((g - 1) * (g - 1))) := by
     have : g * g - 1 - (g - 1) * (g - 1) = (g - 1) + (g - 1) := by ring
-    rw [← map_sub, ← map_sub, this, map_add]
+    rw [← map_sub, ← map_sub, this, map_add (f := _)]
     field_simp
     ring
   have hk : coeff n (g - 1) ∈ R := by
@@ -64,7 +68,7 @@ theorem coeff_of_sq {n : ℕ} {g : PowerSeries K} (h2 : (2 : K)⁻¹ ∈ R) (h20
     · rw [hp2, hh0, mul_zero]; exact R.zero_mem
     exact R.mul_mem (hh _ (by omega)) (hh _ (by omega))
   have : g = (g - 1) + 1 := by ring
-  rw [this, map_add]
+  rw [this, map_add (f := _)]
   exact R.add_mem hk (h1 n)
 
 theorem int_of_eq {A V g : PowerSeries K} {al : K} (h2 : (2 : K)⁻¹ ∈ R) (h20 : (2 : K) ≠ 0)

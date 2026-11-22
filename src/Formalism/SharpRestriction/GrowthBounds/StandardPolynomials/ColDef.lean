@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColNumDef
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.CanonicalTranslateJetIdentity
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.EqEmptyIffSplit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColNumDef
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.CanonicalTranslateJetIdentity
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.EqEmptyIffSplit
+
+@[expose] public section
 
 noncomputable section
 

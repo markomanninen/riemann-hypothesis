@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing in
 private lemma finite_of_isFiniteLength {S : Type} [CommRing S] [IsLocalRing S]
@@ -49,13 +53,14 @@ theorem UpperTheory.monic_ideal_completion :
     exact Ideal.Quotient.eq_zero_iff_mem.mpr (hJI hx)⟩
   have hm : (Ideal.span {ϖ}).IsMaximal := PrincipalIdealRing.isMaximal_of_irreducible hϖ
   haveI : Ring.KrullDimLE 0 (R ⧸ I) := Ring.krullDimLE_zero_iff.mpr fun Q hQ =>
-    Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := O) Q (by
+    Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) Q (by
       have hle : Ideal.span {ϖ} ≤ Q.comap (algebraMap O (R ⧸ I)) := by
         rw [Ideal.span_singleton_le_iff_mem, Ideal.mem_comap]
         have : algebraMap O (R ⧸ I) ϖ = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr hϖI
         rw [this]
         exact Q.zero_mem
       have hne : Q.comap (algebraMap O (R ⧸ I)) ≠ ⊤ := (Ideal.comap_isPrime _ Q).ne_top
+      change (Q.comap (algebraMap O (R ⧸ I))).IsMaximal
       rw [← hm.eq_of_le hne hle]
       exact hm)
   haveI : IsArtinianRing (R ⧸ I) :=

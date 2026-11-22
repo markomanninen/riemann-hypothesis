@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Formalism.LocalToGlobal.ProjectiveLattices.ConjNeSelfOfCM
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.ConjNeSelfOfCM
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem satDir_of (hS : ChartSaturated Xo c) {T : CDVR} {io : c.F →+* T.Fr} {y
     intro j
     rw [huv, map_mul, hw]
   refine (Finset.sum_congr rfl (fun j _ => e1 j)).trans ?_
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   have h3 := congrFun (congrFun hwA (emb i')) (emb i)
   simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply] at h3
   rw [h3]
@@ -101,12 +106,11 @@ def depRun (T : Core D) (EX : ErrX D) (Tn : ℕ+) (vd : ℕ → ℝ) (wL wF ka :
     (fun j => ∑ τ, ∑ i, (ka j).aP τ i) fun j => ∑ τ, ∑ i, (ka j).aM τ i
 
 theorem lawsPi_depRun [StarRing (𝓞 D.host.E)] {T : Core D} (h : LawsM T) (EX : ErrX D) (Tn : ℕ+) (vd : ℕ → ℝ) (wL wF ka : ∀ j, WeightFamilies.Wt D j)
-    (hn : ∀ j, InR D j → 2 * D.R.f * D.R.r ≤ (wL j).n) : LawsPi T (depRun T EX Tn vd wL wF ka) where
-  page := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-  tPos := tPos_depDataOf ..
-  sm := rfl
-  wts j hj := ⟨(dom_wtA (wL j)).1, hn j hj⟩
-  piSplit := piSplit_depDataOf ..
-  piHalf := piHalf_depDataOf _ _ _ _ _ _ _ _ _ h
+    (hn : ∀ j, InR D j → 2 * D.R.f * D.R.r ≤ (wL j).n) : LawsPi T (depRun T EX Tn vd wL wF ka) := by
+  refine ⟨⟨rfl, rfl, rfl, rfl, rfl, rfl⟩, ?_, rfl, ?_, ?_, ?_⟩
+  · exact tPos_depDataOf ..
+  · exact fun j hj => ⟨(dom_wtA (wL j)).1, hn j hj⟩
+  · exact piSplit_depDataOf ..
+  · exact piHalf_depDataOf _ _ _ _ _ _ _ _ _ h
 
 end Formalism.L2.Pj

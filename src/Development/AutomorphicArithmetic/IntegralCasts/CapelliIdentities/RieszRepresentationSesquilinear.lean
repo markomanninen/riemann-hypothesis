@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh51.riesz_representation_sesquilinear :
     ∀ {V : Type} [inst : AddCommGroup V] [inst_1 : _root_.Module ℂ V] [FiniteDimensional ℂ V]
@@ -13,7 +17,7 @@ theorem UpperTheory.Reformulated.B.Qh51.riesz_representation_sesquilinear :
       map_add' := fun u v => by funext i; simp
       map_smul' := fun c u => by funext i; simp }
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro u hu
     have h0 : B u = 0 := e.ext fun i => congrFun hu i
     by_contra hne

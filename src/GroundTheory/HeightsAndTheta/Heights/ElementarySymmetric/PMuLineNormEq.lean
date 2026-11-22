@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuLineNormEq
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuFrameNormIndep
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GramMatrices.PGramAtPosDef
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuLineNormEq
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.MuFrameNormIndep
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.EventuallyInFrameDomain
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.GramMatrices.PGramAtPosDef
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -18,8 +23,8 @@ variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {K : Type} [Fintype 
 
 namespace MuLineNormEq
 
-omit [Algebra ℚ Ω] in
 
+omit [Algebra ℚ Ω] in
 theorem valAt_torusSmul {y : (Σ k, ι k) → Ω} {w : (Σ k, ι k) → ℂ} (hw : w ∈ mcPts (mCoordIdeal y))
     {s : K → ℂ} (hs : ∀ k, s k ≠ 0) (hsw : torusSmul s w ∈ mcPts (mCoordIdeal y)) {a : Ω} {v : ℂ}
     (hv : IsValueAt y a w v) : valAt y a (torusSmul s w) = valAt y a w := by
@@ -27,8 +32,8 @@ theorem valAt_torusSmul {y : (Σ k, ι k) → Ω} {w : (Σ k, ι k) → ℂ} (hw
   exact LowerBoundFree.valAt_eq hsw
     (HermMetricEq.isValueAt_iff.2 ((HermMetricEq.isValueAt_iff.1 hv).smul s hs))
 
-omit [Algebra ℚ Ω] in
 
+omit [Algebra ℚ Ω] in
 theorem exists_unit_value {y : (Σ k, ι k) → Ω} {w : (Σ k, ι k) → ℂ} (hw : w ∈ mcPts (mCoordIdeal y))
     {c : (k : K) → ι k} {f u : Ω} (hdom : InFrameDomain y c f w) (hu : IsUnitOn y c f u) :
     ∃ v, IndefiniteRowSideFullHecke.LowerBoundFree.IsValueAt y u w v ∧ v ≠ 0 := by
@@ -81,7 +86,7 @@ theorem gramAt_eq (D : ComponentData II Ψ K ι Ω E) (τ : Ψ) {z : (Σ k, ι k
     exact LowerBoundFree.valAt_eq hzP (HermMetricEq.isValueAt_iff.2 (hTSz p q))
   have hcomp := (D.h τ).compat hex.choose l z hzX hd0 hd T hTe (HermMetricEq.valM D.y T z)
     (fun p q => HermMetricEq.isValueAt_iff.2 (hTz p q))
-  rw [LowerBoundFree.gramAt, dif_pos hex, dif_pos hS', hvals, hcomp, Matrix.conjTranspose_mul]
+  rw [LowerBoundFree.gramAt, dite_eq_left hex, dite_eq_left hS', hvals, hcomp, Matrix.conjTranspose_mul]
   simp only [Matrix.mul_assoc]
 
 theorem gramAt_torusSmul (D : ComponentData II Ψ K ι Ω E) (τ : Ψ) {w : (Σ k, ι k) → ℂ} (hw : w ∈ D.Xo)
@@ -163,7 +168,7 @@ theorem proof (D : ComponentData II Ψ K ι Ω E) (H : HodgeData D) (hI : MuFram
   obtain ⟨d', hdd'⟩ := exists_datum_smul D H hw hs hzs hz d
   have hpos := datum_norm_pos D H hw d'
   have hM : muMetric H w = d'.norm := by
-    rw [muMetric, dif_pos ⟨d'⟩]
+    rw [muMetric, dite_eq_left ⟨d'⟩]
     exact hI w hw _ d'
   have hR := refNorm_pos H.aMu hwP.1
   have hRz : refNorm H.aMu z = (∏ k, ‖s k‖ ^ H.aMu k) * refNorm H.aMu w := by

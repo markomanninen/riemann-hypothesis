@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostNumberU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.NumberU3US
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.HostNumberS
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.ThmS6CoreS
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.EHostUnl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostNumberU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.NumberU3US
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.HostNumberS
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.ThmS6CoreS
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.EHostUnl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AutomorphyDescent.AutNewformW
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -135,7 +139,7 @@ private theorem algClosure (K Ω : Type) [Field K] [NumberField K] [Field Ω] [C
   haveI : Algebra.IsAlgebraic ℚ Ω := IsAlgClosure.isAlgebraic
   ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) K⟩
 private theorem cont_pt (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {g₁ : Gam Ω S} (hg : F.Marked g₁)
-    {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) : Continuous (mats r) := by
+    {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) : Continuous (mats r) := by
   haveI : IsGalois ℚ Ω := IsAlgClosure.isGalois ℚ Ω
   haveI hcl := isClosed_NS Ω (S : Set Pl)
   haveI : CompactSpace (Gam Ω S) := inferInstance
@@ -160,7 +164,7 @@ private theorem trace_rz (hF : IsHostFrame Ω c e ψ S A F) (ι : Qbar l ≃+* �
   refine (h3 (F.Ψ (toGS Ω _ σ⁻¹))).trans ?_
   rw [h1, map_mul, map_inv, map_pow, Units.val_mul, Units.val_inv_eq_inv_val, Units.val_pow_eq_pow_val, h2,
     UpperTheory.V.Af.eis3]
-  simp only [map_add, map_mul, map_inv₀, map_pow, map_natCast, map_one, RingEquiv.symm_apply_apply, _root_.mul_inv_rev, inv_inv]
+  simp only [map_add (f := _), map_mul, map_inv₀, map_pow, map_natCast, map_one, RingEquiv.symm_apply_apply, _root_.mul_inv_rev, inv_inv]
   rw [mul_comm (_ ⁻¹) ((q : PadicAlgCl l) ^ e)]
   rfl
 variable {K : Type} [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] [IsScalarTower ℚ K Ω]
@@ -175,7 +179,7 @@ private theorem ker_lift (hK : IsQi K) (hF : IsHostFrame Ω c e ψ S A F) {g : G
   obtain ⟨s, rfl⟩ := h
   exact ⟨s, rfl⟩
 private theorem adm3 (hK : IsQi K) (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {ι : Qbar l ≃+* ℂ}
-    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
+    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
     {ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l)}
     (hρ : ∀ s : Formalism.ConjugateSelfDual.G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat)
     (ha : _root_.UpperTheory.V.Z.Win.IsAutCsdA ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ)))) : _root_.UpperTheory.V.Af.Adm3Alt ι e N ρ := by
@@ -194,13 +198,109 @@ private theorem adm3 (hK : IsQi K) (hd : HostData l e ψ o₁) (hF : IsHostFrame
     refine Units.continuous_iff.2 ⟨h1, ?_⟩
     simp only [← map_inv]
     exact h1.comp continuous_inv
+open UpperTheory.V in
 private theorem admissible_unitary_three_point (hP : _root_.UpperTheory.V.Af.HypothesesH') (hU : UpperTheory.V.Z.J.UnlEndLogNorm) [IsAlgClosure K Ω] (hK : IsQi K)
     (hd : HostData l e ψ o₁) (hF : IsHostFrame Ω c e ψ S A F) {ι : Qbar l ≃+* ℂ}
-    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG 3 (PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
+    {g₁ : Gam Ω S} (hg : F.Marked g₁) {r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)} (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r)
     {ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l)}
     (hρ : ∀ s : Formalism.ConjugateSelfDual.G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat)
-    (ha : _root_.UpperTheory.V.Z.Win.IsAutCsdA ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ)))) : _root_.UpperTheory.V.Z.J.Adm3U_s ι e N ρ :=
-  ⟨adm3 hK hd hF hg hr hI hρ ha, _root_.UpperTheory.V.Z.J.hostUnlE_alt hP hU K hK Ω l c N e ψ o₁ hd S A F hF g₁ hg r hr hI ρ hρ⟩
+    (ha : _root_.UpperTheory.V.Z.Win.IsAutCsdA ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ)))) : _root_.UpperTheory.V.Z.J.Adm3U_s ι e N ρ := by
+  have hunl : Th.Unl l N ![(e : ℤ), 0, -(e : ℤ)] ρ := by
+    have conj_left {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (h : GL (Fin 3) R) (g : G)
+        (hg : (r g).right = 1) : (conjBy h r g).left = h * (r g).left * h⁻¹ := by
+      have e : conjBy h r g = GG.ofGL h * r g * GG.ofGL h⁻¹ := by
+        rw [map_inv]; rfl
+      rw [e, SemidirectProduct.mul_left, SemidirectProduct.mul_left, SemidirectProduct.left_inl,
+        SemidirectProduct.left_inl, SemidirectProduct.right_inl, sgnAct_one, SemidirectProduct.mul_right,
+        SemidirectProduct.right_inl, hg, mul_one, sgnAct_one]
+    have val_of_even {Ω : Type} [Field Ω] (B : ValuationSubring Ω) {M : ℕ} (hM : Even M)
+        (h : B.valuation ((4 : ℕ) : Ω) < 1) : B.valuation (M : Ω) < 1 := by
+      obtain ⟨m, rfl⟩ := hM.two_dvd
+      have h2 : B.valuation ((2 : ℕ) : Ω) < 1 := by
+        by_contra h2
+        rw [not_lt] at h2
+        rw [show (4 : ℕ) = 2 * 2 from rfl, Nat.cast_mul, map_mul] at h
+        exact absurd h (not_lt.2 (one_le_mul h2 h2))
+      have hm : B.valuation (m : Ω) ≤ 1 := (B.valuation_le_one_iff _).2 (natCast_mem B m)
+      rw [Nat.cast_mul, map_mul]
+      exact lt_of_le_of_lt (mul_le_of_le_one_right' hm) h2
+    have hl : Fact l.Prime := inferInstance
+    have hN := hP.litN
+    have : IsGalois ℚ Ω := IsAlgClosure.isGalois ℚ Ω
+    have hcl := isClosed_NS Ω (S : Set Pl)
+    have : TotallyDisconnectedSpace (Gam Ω S) := totDisc_quot _ hcl
+    have ok := hostFrame_ok Ω c e ψ o₁ hd S A F hF
+    obtain ⟨hmu, -, -, -⟩ := isCharZeroPt_basic F ok g₁ hg r hr
+    have : IsLocalHom (algebraMap ℤ_[l] c.O) := by
+      open Formalism.GaloisCohomology UpperTheory.V.Base in
+      exact (dvrFacts l c.O).2.2.1
+    have : CharP (ResidueField c.O) l := by
+      rw [CharP.charP_iff_prime_eq_zero hl.out, ← map_natCast (residue c.O), residue_eq_zero_iff,
+        mem_maximalIdeal, mem_nonunits_iff, ← map_natCast (algebraMap ℤ_[l] c.O)]
+      intro hu
+      exact PadicInt.prime_p.not_isUnit (isUnit_of_map_unit _ _ hu)
+    obtain ⟨σ, hσ, hσc⟩ := hF.cc
+    have hv : (A F.vl).valuation (l : Ω) < 1 := by simpa using (hF.isOver F.vl (l : 𝓞 ℚ)).2 hF.vl
+    have hfr := Fr.host_ex ⟨⟨hN.coh.lf, hN.coh.lt, hN.coh.le, hN.coh.gf, hN.coh.ge, hN.coh.pt⟩, hN.coh.uo, hN.coh.gw⟩
+      Ω l c N e ψ o₁ hd σ hσ _ hv
+    have hσ' : IsConjOm σ.toRingEquiv := hσ
+    have hΨ : Chr.Psi l e (Chr.dirG ℚ Ω ψ) σ = 1 := by
+      have h1 : cycZ ℚ Ω l σ = -1 := hσ'.cyc (E := ℚ)
+      have h2 : Base.chiO ℚ Ω l c.O σ = -1 := by
+        show Units.map (algebraMap ℤ_[l] c.O).toMonoidHom (cycZ ℚ Ω l σ) = -1
+        rw [h1]
+        apply Units.ext
+        simp
+      have h3 : (Chr.dirG ℚ Ω ψ σ : c.O) = (-1) ^ e := by
+        rw [Chr.dirG, MonoidHom.comp_apply, (Chr.clsFacts ℚ Ω N).2.2.2.1 σ hσ', MulChar.coe_toUnitHom]
+        exact hd.par
+      apply Units.ext
+      show ((Base.chiO ℚ Ω l c.O σ ^ (e : ℤ) * Chr.dirG ℚ Ω ψ σ : c.Oˣ) : c.O) = 1
+      rw [h2, _root_.zpow_natCast, Units.val_mul, h3, Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, ← mul_pow]
+      simp
+    have hram : ∀ B' : ValuationSubring Ω, ¬ Ine (F := ℚ) B' ≤ (UnitaryThreeInertia.eta4 Ω).ker →
+        B'.valuation ((l * N : ℕ) : Ω) < 1 := by
+      intro B' h
+      refine val_of_even B' (hd.N_even.mul_left l) ?_
+      by_contra h4
+      refine h fun s hs => ?_
+      have h5 : Chr.cls ℚ Ω 4 s = 1 := (Chr.clsFacts ℚ Ω 4).2.2.2.2 B' h4 hs
+      rw [MonoidHom.mem_ker, UnitaryThreeInertia.eta4, Chr.dirG, MonoidHom.comp_apply, h5, map_one]
+    have hk : Pr.LinkHyp c N e (UnitaryThreeInertia.eta4 Ω) σ (A F.vl) (l * N) :=
+      ⟨hd.e_pos, dvd_rfl, mul_ne_zero hl.out.ne_zero (NeZero.ne N), hram, hv, hσ⟩
+    have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+    have hlev := UnitaryThreeInertia.levelAt_of_pt Ω c e ψ o₁ hd S A F hF K hK g₁ hg r hr ρ hρ
+    have hopen := UnitaryThreeInertia.matIrr_open Ω c e ψ o₁ hd S A F hF g₁ hg r hr hI
+    obtain ⟨B, _, _, t, r', hr', ht⟩ := hr
+    obtain ⟨g, rfl⟩ : ∃ g, toGS Ω _ g = g₁ := QuotientGroup.mk_surjective g₁
+    rw [hF.π] at hσc
+    have ho := Pr.ordPt_of_isPt Ω c e ψ o₁ hd S A F hF σ g hσc r' hr'
+    have hη : ∀ g, F.η (toGS Ω _ g) = UnitaryThreeInertia.eta4 Ω g := fun g => by rw [← hF.η, hF.π]; rfl
+    have hm : ∀ s, (r (toGS Ω _ s)).right = UnitaryThreeInertia.eta4 Ω s := fun s => (hmu _).trans (hη s)
+    have hle : ∀ s ∈ (UnitaryThreeInertia.eta4 Ω).ker, (UnitaryThreeInertia.push B.val (r'.comp (toGS Ω _)) s).left =
+        tor _ t * (r (toGS Ω _ s)).left * (tor _ t)⁻¹ := fun s hs => by
+      rw [← conj_left r _ _ ((hm s).trans hs), ← ht]
+      rfl
+    have hrg := (UnitaryThreeInertia.gaussian_field_range_eq_ker_quartic_char.2 Ω K hK).1
+    have hker : ∀ s : G K Ω, Base.galEmb ℚ K Ω s ∈ (UnitaryThreeInertia.eta4 Ω).ker := fun s => by
+      rw [← hrg]
+      exact ⟨s, rfl⟩
+    let j : G K Ω →* (UnitaryThreeInertia.eta4 Ω).ker := (Base.galEmb ℚ K Ω).codRestrict _ hker
+    let ρ' : G K Ω →* GL (Fin 3) (Qbar l) :=
+      (glPart (UnitaryThreeInertia.eta4 Ω) (UnitaryThreeInertia.push B.val (r'.comp (toGS Ω _))) ho.red.mult).comp j
+    have hiso : Af.RepIso ρ ρ' := ⟨tor _ t, fun s => by
+      rw [show ρ s = (r (toGS Ω _ (Base.galEmb ℚ K Ω s))).left from Units.ext (hρ s)]
+      exact hle _ (hker s)⟩
+    have hunl' := hU Ω l c N e ψ (UnitaryThreeInertia.eta4 Ω) σ g (A F.vl) _ hk hd.N_even hΨ hfr B _ ho
+      (fun V hV hVη => _root_.UpperTheory.Reformulated.B.Ua5.matIrr_conj (tor _ t) (fun s hs => by
+        rw [mats, GG.mat, GG.mat, hle s (hVη hs), ← Units.val_mul, ← Units.val_mul]
+        congr 1
+        group) (hopen V hV hVη)) K hK.1 (by rw [← Base.range_galEmb]; exact hrg.symm) ρ' (fun s => rfl)
+      N NeZero.one_le (hlev.of_iso hiso)
+    intro w hw
+    obtain ⟨B', hB', κ, ⟨χ, h1, h2, h3⟩, h4⟩ := hunl' w hw
+    exact ⟨B', hB', κ, ⟨χ, h1, h2.of_iso (Af.RepIso.symm' hiso), h3⟩, h4⟩
+  exact ⟨adm3 hK hd hF hg hr hI hρ ha, hunl⟩
 omit [IsCMField K] in
 private theorem exists_w {p : ℕ} (hp : p.Prime) {B : ValuationSubring Ω} (hB : B.valuation (p : Ω) < 1) :
     ∃ w : HeightOneSpectrum (𝓞 K), IsPlaceOver B w ∧ (p : 𝓞 K) ∈ w.asIdeal := by
@@ -213,7 +313,7 @@ private theorem key (hP : _root_.UpperTheory.V.Af.HypothesesH') (hU : UpperTheor
     (ι : Qbar l ≃+* ℂ) {g₁ : Gam Ω S} (hg : F.Marked g₁) {p : ℕ} (hp : p.Prime) (h4 : p % 4 = 3) (h7 : 7 ≤ p)
     (hpl : ¬ p ∣ l * N) {B : ValuationSubring Ω} (hB : B.valuation (p : Ω) < 1) {σ : Formalism.ConjugateSelfDual.G ℚ Ω}
     (hσ : σ ∈ (eta4 Ω).ker) (hfr : IsFrob B (p ^ 2) σ) {I : Type} (s : Finset I)
-    (r : I → (Gam Ω S →* GG 3 (PadicAlgCl l))) (hr : ∀ i ∈ s, F.IsCharZeroPt g₁ (r i) ∧ TypeI F.η (r i))
+    (r : I → (Gam Ω S →* GG (m := 3) (R := PadicAlgCl l))) (hr : ∀ i ∈ s, F.IsCharZeroPt g₁ (r i) ∧ TypeI F.η (r i))
     (ha : ∀ i ∈ s, ∃ ρ : Formalism.ConjugateSelfDual.G K Ω →* GL (Fin 3) (Qbar l),
       (∀ t : Formalism.ConjugateSelfDual.G K Ω, (ρ t : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r i (toGS Ω _ (t.restrictScalars ℚ))).mat) ∧
       _root_.UpperTheory.V.Z.Win.IsAutCsdA ι (UpperTheory.V.Af.tw ρ (cycBar K Ω l ^ (-1 : ℤ))))

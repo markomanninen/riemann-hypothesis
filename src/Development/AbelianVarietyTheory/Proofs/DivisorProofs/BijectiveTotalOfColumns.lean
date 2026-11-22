@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits CochainComplex CochainComplex.HomComplex
@@ -48,8 +52,8 @@ theorem exists_graded (hA : IsFilt dA gA FA rA) (hB : IsFilt dB gB FB rB) (Φ : 
   choose s hs hs' using fun m => hA.surj p (m - p) m (by omega)
   let Ψ : ∀ m, GA p m →+ GB p m := fun m => AddMonoidHom.mk' (fun y => rB p (m - p) m (by omega) (Φ _ (s m y)))
     (fun y y' => by
-      rw [← map_add, ← map_add]
-      exact key _ _ _ _ (hs _ _) _ (add_mem (hs _ _) (hs _ _)) (by rw [map_add, hs', hs', hs']))
+      rw [← map_add (f := _), ← map_add (f := _)]
+      exact key _ _ _ _ (hs _ _) _ (add_mem (hs _ _) (hs _ _)) (by rw [map_add (f := _), hs', hs', hs']))
   have h1 : ∀ n m (h : n + p = m), ∀ x ∈ FA p n, Ψ m (rA p n m h x) = rB p n m h (Φ n x) := by
     intro n m h x hx
     obtain rfl : n = m - p := by omega
@@ -70,7 +74,7 @@ theorem coneAcyclic_of_graded (hA : IsFilt dA gA FA rA) (hB : IsFilt dB gB FB rB
   have main : ∀ p, min (min N N') 0 ≤ p → p ≤ 0 → ∀ x ∈ FA p n₂, ∀ y ∈ FB p n₁,
       dA n₂ n₃ x = 0 → Φ n₂ x = dB n₁ n₂ y → ∃ (v : A n₁) (w : B n₀), x = dA n₁ n₂ v ∧ y = Φ n₁ v + dB n₀ n₁ w := by
     intro p hp
-    induction p, hp using Int.le_induction with
+    induction p, hp using Int.leInduction with
     | base =>
       intro _ x hx y hy _ _
       refine ⟨0, 0, ?_, ?_⟩
@@ -90,14 +94,14 @@ theorem coneAcyclic_of_graded (hA : IsFilt dA gA FA rA) (hB : IsFilt dB gB FB rB
         rwa [add_sub_cancel_right] at this
       have hy' : y - (Φ n₁ v + dB n₀ n₁ w) ∈ FB p n₁ := by
         have := (hB.ker _ _ _ rfl _ (sub_mem hy (add_mem (hF _ _ _ hvF) (hB.dF _ _ _ h₀ _ hwF)))).1
-          (by rw [map_sub, map_add, hB.rd _ _ _ _ _ rfl rfl h₀ w hwF, ← hΨ _ _ _ _ _ hvF, ← hw, sub_self])
+          (by rw [map_sub, map_add (f := _), hB.rd _ _ _ _ _ rfl rfl h₀ w hwF, ← hΨ _ _ _ _ _ hvF, ← hw, sub_self])
         rwa [add_sub_cancel_right] at this
       obtain ⟨v₂, w₂, e₁, e₂⟩ := ih (by omega) _ hx' _ hy'
         (by rw [map_sub, hdx, hA.dd, sub_self])
-        (by rw [map_sub, map_sub, map_add, hB.dd, add_zero, hxy, hd _ _ h₁])
+        (by rw [map_sub, map_sub, map_add (f := _), hB.dd, add_zero, hxy, hd _ _ h₁])
       refine ⟨v + v₂, w + w₂, ?_, ?_⟩
-      · rw [map_add, ← e₁]; abel
-      · rw [map_add, map_add, add_add_add_comm, ← e₂]; abel
+      · rw [map_add (f := _), ← e₁]; abel
+      · rw [map_add (f := _), map_add (f := _), add_add_add_comm, ← e₂]; abel
   intro x y
   exact main 0 (min_le_right _ _) le_rfl x (hA.top _ _) y (hB.top _ _)
 
@@ -185,11 +189,11 @@ theorem coneAcyclic_of_bijective
     mk_eq_mk_iff _ _ n₀ h₀] at hc
   obtain ⟨w, hw⟩ := hc
   refine ⟨v + fun j => (a' j).1, w, ?_, ?_⟩
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact (by rw [← hv']; exact ((congrArg₂ (· + ·) rfl h0).trans (add_zero _)).symm)
   · have hw' : δ n₀ n₁ w = y - Φ n₁ v - Φ n₁ fun j => (a' j).1 := hw
     change y = _ + δ n₀ n₁ w
-    rw [hw', map_add]; abel
+    rw [hw', map_add (f := _)]; abel
 
 end Classes
 
@@ -249,7 +253,7 @@ theorem mem_van_iff {p n : ℤ} (α : Cochain K I n) :
     rw [← restr_v ι I c n (n + c) rfl α k t q h (by omega) hq, hα c hc, Cochain.zero_v]
 
 theorem IsColumns.isFilt (hK : IsColumns K Col ι) [I.IsStrictlyGE 0] :
-    IsFilt (dC K I) (fun p => dC (Col p) I) (van ι I) (restr ι I) where
+    IsFilt (dC K I) (fun p => dC (Col p) I) (van ι I) (restr ι I) := {
   dd n m k x := δ_δ _ _ _ _
   dF p n m h α hα := by
     rw [mem_van_iff]
@@ -282,6 +286,7 @@ theorem IsColumns.isFilt (hK : IsColumns K Col ι) [I.IsStrictlyGE 0] :
     · by_cases hk : 0 < k
       · exact (hK.isZero p k (Or.inr hk)).eq_of_src _ _
       · exact (I.isZero_of_isStrictlyGE 0 q (by omega)).eq_of_tgt _ _
+  }
 
 variable (ι) {J : Type*} (Ij : J → CochainComplex C ℤ) (e : J → ℤ)
 
@@ -296,7 +301,7 @@ def restrPi (p n m : ℤ) (h : n + p = m) :
 variable {ι}
 
 theorem IsColumns.isFilt_pi (hK : IsColumns K Col ι) [Finite J] [∀ j, (Ij j).IsStrictlyGE 0] :
-    IsFilt (dPi K Ij e) (fun p => dPi (Col p) Ij e) (vanPi ι Ij e) (restrPi ι Ij e) where
+    IsFilt (dPi K Ij e) (fun p => dPi (Col p) Ij e) (vanPi ι Ij e) (restrPi ι Ij e) := {
   dd n m k x := funext fun _ => δ_δ _ _ _ _
   dF p n m h α hα j hj := (hK.isFilt (Ij j)).dF p _ _ (by omega) _ (hα j hj)
   rd p n m n' m' hn hm h α hα := funext fun j =>
@@ -314,6 +319,7 @@ theorem IsColumns.isFilt_pi (hK : IsColumns K Col ι) [Finite J] [∀ j, (Ij j).
     obtain ⟨M, hM⟩ := (Set.finite_range N).bddBelow
     exact ⟨M, fun α hα => funext fun j =>
       hN j _ ((hK.isFilt (Ij j)).mono _ _ _ (hM ⟨j, rfl⟩) (hα j trivial))⟩
+  }
 
 theorem bijective_of_columns {L T : CochainComplex C ℤ} {CL CT : ℤ → CochainComplex C ℤ}
     {ιL : ∀ p k t, p + k = t → ((CL p).X k ⟶ L.X t)} {ιT : ∀ p k t, p + k = t → ((CT p).X k ⟶ T.X t)}
@@ -344,7 +350,7 @@ theorem bijective_of_columns {L T : CochainComplex C ℤ} {CL CT : ℤ → Cocha
 
 theorem isColumns_total (D : HomologicalComplex₂ C (ComplexShape.up ℤ) (ComplexShape.up ℤ))
     [D.HasTotal (ComplexShape.up ℤ)] (hD : ∀ p k, 0 < p ∨ 0 < k → IsZero ((D.X p).X k)) :
-    IsColumns (D.total (ComplexShape.up ℤ)) D.X (fun p k t h => D.ιTotal (ComplexShape.up ℤ) p k t h) where
+    IsColumns (D.total (ComplexShape.up ℤ)) D.X (fun p k t h => D.ιTotal (ComplexShape.up ℤ) p k t h) := {
   ext t Y f hf := HomologicalComplex₂.total.hom_ext _ fun p k h => by rw [comp_zero]; exact hf p k h
   desc p k t h Y g := by
     refine ⟨D.totalDesc fun c l h' => if hc : c = p then
@@ -354,7 +360,7 @@ theorem isColumns_total (D : HomologicalComplex₂ C (ComplexShape.up ℤ) (Comp
           omega
         rw [hc]) ≫ g else 0, ?_, fun c l h' hc => ?_⟩
     · rw [HomologicalComplex₂.ι_totalDesc]; simp
-    · rw [HomologicalComplex₂.ι_totalDesc, dif_neg hc]
+    · rw [HomologicalComplex₂.ι_totalDesc, dite_eq_right hc]
   diff p k t k' t' h h' hk Y f hf := by
     rw [HomologicalComplex₂.total_d, Preadditive.add_comp, Preadditive.comp_add, HomologicalComplex₂.ι_D₁_assoc,
       HomologicalComplex₂.ι_D₂_assoc,
@@ -363,6 +369,7 @@ theorem isColumns_total (D : HomologicalComplex₂ C (ComplexShape.up ℤ) (Comp
       Category.assoc, Category.assoc, hf (p + 1) k _ (by omega), comp_zero, smul_zero, zero_add]
     rfl
   isZero := hD
+  }
 
 variable [HasZeroObject C]
 
@@ -373,7 +380,7 @@ def ιTerm (L : CochainComplex C ℤ) (p k t : ℤ) (h : p + k = t) :
 
 theorem ιTerm_zero (L : CochainComplex C ℤ) (p : ℤ) (h : p + 0 = p) :
     ιTerm L p 0 p h = (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 (L.X p)).hom := by
-  rw [ιTerm, dif_pos rfl]
+  rw [ιTerm, dite_eq_left rfl]
   exact Category.comp_id _
 
 theorem eq_zero_of_ιTerm {L : CochainComplex C ℤ} {p : ℤ} {h : p + 0 = p} {Y : C} {f : L.X p ⟶ Y}
@@ -383,10 +390,10 @@ theorem eq_zero_of_ιTerm {L : CochainComplex C ℤ} {p : ℤ} {h : p + 0 = p} {
     (congrArg (fun g => (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 (L.X p)).inv ≫ g) hf)).trans comp_zero
 
 theorem ιTerm_ne (L : CochainComplex C ℤ) (p k t : ℤ) (h : p + k = t) (hk : k ≠ 0) : ιTerm L p k t h = 0 :=
-  dif_neg hk
+  dite_eq_right hk
 
 theorem isColumns_terms (L : CochainComplex C ℤ) [L.IsStrictlyLE 0] :
-    IsColumns L (fun p => (CochainComplex.singleFunctor C 0).obj (L.X p)) (ιTerm L) where
+    IsColumns L (fun p => (CochainComplex.singleFunctor C 0).obj (L.X p)) (ιTerm L) := {
   ext t Y f hf := by
     have := hf t 0 (add_zero t)
     exact eq_zero_of_ιTerm this
@@ -411,6 +418,7 @@ theorem isColumns_terms (L : CochainComplex C ℤ) [L.IsStrictlyLE 0] :
     · exact (L.isZero_of_isStrictlyLE 0 p (by omega)).of_iso
         (HomologicalComplex.singleObjXIsoOfEq (ComplexShape.up ℤ) 0 (L.X p) k hk)
     · exact HomologicalComplex.isZero_single_obj_X (ComplexShape.up ℤ) 0 (L.X p) k hk
+  }
 
 end Columns
 

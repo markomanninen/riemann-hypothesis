@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PtTransRec
-import Formalism.SharpRestriction.LevelLetterCocycles.TruncationClauseOfLatticeHypotheses
-import Formalism.SharpRestriction.LevelLetterCocycles.DlOfQp
-import Formalism.SharpRestriction.LevelLetterCocycles.RingHypothesesOfCrystalline
-import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.IsFracOL
-import Formalism.SharpRestriction.LevelLetterCocycles.JumpsInLetterOfEvenIndex
-import Formalism.SharpRestriction.LevelLetterCocycles.At0HomApply
-import Formalism.SharpRestriction.LevelLetterCocycles.CompleteMax
-import Formalism.SharpRestriction.LevelLetterCocycles.RingClausesAtUniformizer
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowerCongruenceOfAdmitted
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IsAdicCompleteOfLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSDivMem
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PtTransRec
+public import Formalism.SharpRestriction.LevelLetterCocycles.TruncationClauseOfLatticeHypotheses
+public import Formalism.SharpRestriction.LevelLetterCocycles.DlOfQp
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingHypothesesOfCrystalline
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsFracOL
+public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsInLetterOfEvenIndex
+public import Formalism.SharpRestriction.LevelLetterCocycles.At0HomApply
+public import Formalism.SharpRestriction.LevelLetterCocycles.CompleteMax
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingClausesAtUniformizer
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowerCongruenceOfAdmitted
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IsAdicCompleteOfLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ theorem level_tools_of_admitted' (hA : admitted D HW F Cm CR CA CB CK) : Formali
   Formalism.MainNotions.UnusedSlot80.tools_unramified_statement D HW F Cm ⟨fun l _ K s LL h => (hA.1 l K s LL h).2.2.1, laurent_clause_of_admitted' D HW F Cm hA,
     uniformizer_clause_of_admitted D HW F Cm hA⟩
 
-set_option maxHeartbeats 0 in
 
+set_option maxHeartbeats 0 in
 theorem dual_lemma_of_admitted (hA : admitted D HW F Cm CR CA CB CK) (l : ℕ) [Fact l.Prime] (K LL : Loc.FinExt l)
     (hg : Loc.Good K 1 LL) [NeZero (Module.finrank ℚ_[l] ↥(Loc.K0 K))] : LemmaDN ((HW l).W K 1 LL hg) := by
   intro d T₁ T₂ F' b S η m hset

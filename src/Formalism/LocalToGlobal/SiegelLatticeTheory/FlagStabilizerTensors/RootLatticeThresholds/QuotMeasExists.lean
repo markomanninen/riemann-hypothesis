@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
-import Formalism.PeriodIntegrals.QuotInv
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
+public import Formalism.PeriodIntegrals.QuotInv
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ENNReal
@@ -36,10 +40,12 @@ def mat (a : Gt G) : Matrix (Fin m) (Fin m) ℂ := Matrix.of a.1
 theorem mat_mem (a : Gt G) : mat G a ∈ G := by
   exact a.2
 
-def mk (M : Matrix (Fin m) (Fin m) ℂ) (h : M ∈ G) : Gt G := ⟨Matrix.of.symm M, by simpa using h⟩
+def mk (M : Matrix (Fin m) (Fin m) ℂ) (h : M ∈ G) : Gt G := ⟨Matrix.of.symm M, by
+  have heq : Matrix.of (Matrix.of.symm M) = M := by ext i j; rfl
+  rw [heq]; exact h⟩
 
 @[simp] theorem mat_mk (M : Matrix (Fin m) (Fin m) ℂ) (h : M ∈ G) : mat G (mk G M h) = M := by
-  rfl
+  ext i j; rfl
 
 theorem ext_mat {a b : Gt G} (h : mat G a = mat G b) : a = b := by
   exact Subtype.ext (Matrix.of.injective h)
@@ -49,11 +55,11 @@ instance : One (Gt G) := ⟨mk G 1 hG.out.2.1⟩
 instance : Inv (Gt G) := ⟨fun a => mk G (mat G a)⁻¹ (hG.out.2.2.2 _ (mat_mem G a)).1⟩
 
 @[simp] theorem mat_mul (a b : Gt G) : mat G (a * b) = mat G a * mat G b := by
-  rfl
+  exact mat_mk G _ _
 @[simp] theorem mat_one : mat G (1 : Gt G) = 1 := by
-  rfl
+  exact mat_mk G _ _
 @[simp] theorem mat_inv (a : Gt G) : mat G a⁻¹ = (mat G a)⁻¹ := by
-  rfl
+  exact mat_mk G _ _
 
 instance : Group (Gt G) :=
   Group.ofLeftAxioms (fun a b c => ext_mat G (by simp [Matrix.mul_assoc]))
@@ -166,8 +172,9 @@ theorem quotM_existsSF (hG : PI.IsMatGroup G) (hS : PI.IsMatGroup S) (hSG : S �
   have hκinv : ∀ g : H, κ.map (g * ·) = κ := by
     intro g
     have hcomm : e ∘ (g * ·) = PI.lmulQ (mat G g.1) ∘ e := by
-      funext h
-      rfl
+      funext h i j
+      change (mat G (g.1 * h.1)) i j = (mat G g.1 * mat G h.1) i j
+      rw [mat_mul]
     rw [← he.comap_map (κ.map (g * ·)), Measure.map_map he.measurable (measurable_const_mul g), hcomm,
       ← Measure.map_map (continuous_lmulQ _).measurable he.measurable, hκmap, hSinv _ g.2, hκ]
   have : κ.IsMulLeftInvariant := ⟨fun g => hκinv g⟩

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.LocalRingCardinality.DataRows
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.LocalRingCardinality.DataRows
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem inj_of_li {K V M ι : Type} [Field K] [AddCommGroup V] [Module K V] [Add
   have key : ∀ z : V, e z = ∑ j, σ (b.repr z j) • e (b j) := by
     intro z
     conv_lhs => rw [← b.sum_repr z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [LinearMap.map_smulₛₗ]
   have hsum : ∑ j, (σ (b.repr x j) - σ (b.repr y j)) • e (b j) = 0 := by
     simp only [sub_smul, Finset.sum_sub_distrib, ← key, hxy, sub_self]
@@ -58,7 +63,7 @@ def descend {K V W M N : Type} [Field K] [AddCommGroup V] [Module K V] [AddCommG
     have h1 := Classical.choose_spec (h (x + y))
     have h2 := Classical.choose_spec (h x)
     have h3 := Classical.choose_spec (h y)
-    rw [map_add e₂, h1, h2, h3, map_add, map_add]
+    rw [map_add e₂, h1, h2, h3, map_add (f := _), map_add (f := _)]
   map_smul' c x := by
     apply hinj
     show e₂ (Classical.choose (h (c • x))) = e₂ (c • Classical.choose (h x))
@@ -80,7 +85,7 @@ def Klin (i : ℕ) : (C.cls i → C.Y i → ℂ) →ₗ[ℂ] (C.cls (i + 1) → 
   toFun := C.K i
   map_add' φ ψ := by
     funext L' y
-    simp [ColumnChain.K, Formalism.ThetaLiftIndependence.kerOpM, map_add, smul_add, Finset.sum_add_distrib]
+    simp [ColumnChain.K, Formalism.ThetaLiftIndependence.kerOpM, map_add (f := _), smul_add, Finset.sum_add_distrib]
   map_smul' a φ := by
     funext L' y
     simp [ColumnChain.K, Formalism.ThetaLiftIndependence.kerOpM, Finset.mul_sum, smul_eq_mul]
@@ -251,16 +256,6 @@ def deg (τ : Tau) : ℤ :=
 
 def KRat (i : ℕ) : Prop := ∀ x, ∃ y, M.emb (i + 1) y = C.K i (M.emb i x)
 
-def KL (i : ℕ) (h : M.KRat i) : (M.lat i).V →ₗ[LL] (M.lat (i + 1)).V :=
-  descend (M.emb i) (M.emb (i + 1)) (M.emb_inj (i + 1)) (C.Klin i) h
-
-theorem KL_spec (i : ℕ) (h : M.KRat i) (x : (M.lat i).V) :
-    M.emb (i + 1) (M.KL i h x) = C.K i (M.emb i x) :=
-  descend_spec (M.emb i) (M.emb (i + 1)) (M.emb_inj (i + 1)) (C.Klin i) h x
-
-def KIntAt (i : ℕ) (h : M.KRat i) (w : Pl.Pl) : Prop :=
-  ∀ x ∈ (M.lat i).L, M.KL i h x ∈ M.S (i + 1) w
-
 def PRat : Prop := ∀ x, ∃ y, M.ptEmb y = P.lowerMap (P.evz (M.emb R.m x))
 
 def PtL (h : M.PRat) : (M.lat R.m).V →ₗ[LL] M.ptLat.V :=
@@ -275,16 +270,6 @@ def PtilIntegral (h : M.PRat) : Prop := ∀ x ∈ (M.lat R.m).L, M.PtL h x ∈ M
 def SgInterlace : Prop := ∀ τ (i : Fin (R.N R.m - 1)),
   (M.sg τ).w i ≤ (M.lam R.m τ).w ⟨i.1, by omega⟩ ∧
   (M.lam R.m τ).w ⟨i.1 + 1, by omega⟩ ≤ (M.sg τ).w i
-
-def DnUp : Prop := ∀ i, i ≤ R.m → ∀ v c (x : M.lv i v c), M.fv i v c x = 1 →
-  ∃ e : M.lk i v (M.up i v c x) ≃ₗ[A.Fv v] M.lv i v c,
-    e (M.te i v (M.up i v c x)) = x ∧
-      M.dn i v (M.up i v c x) ((M.fv i v c).comp e.toLinearMap) = c
-
-def DnFv : Prop := ∀ i, i ≤ R.m → ∀ v c (g : Module.Dual (A.Fv v) (M.lk i v c)), g ≠ 0 →
-  ∃ e : M.lv i v (M.dn i v c g) ≃ₗ[A.Fv v] M.lk i v c,
-    M.fv i v (M.dn i v c g) = g.comp e.toLinearMap ∧
-      (g (M.te i v c) = 1 → M.up i v (M.dn i v c g) (e.symm (M.te i v c)) = c)
 
 end MemberForms
 
@@ -307,9 +292,6 @@ variable {LL : Type} [Field LL] [NumberField LL] {Tau : Type} (G : GlobalExtra L
 
 def logOmMean (τ : Tau) : ℝ :=
   (∑ s : LL →+* ℂ, Real.log (G.Om τ s)) / (Fintype.card (LL →+* ℂ) : ℝ)
-
-def OmValue (v logDerivativeAtOne : ℝ) : Prop :=
-  ∀ τ, G.logOmMean τ = Real.eulerMascheroniConstant + Real.log (Real.pi / v) - logDerivativeAtOne
 
 end GlobalExtra
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppSmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanDecayOperatorApplyMemAdelicSchwartz
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanTracePairingBilinearNondegenerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanDecayOperatorApplyMemAdelicSchwartz
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanTracePairingBilinearNondegenerate
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 open scoped TensorProduct NNReal Matrix
@@ -63,7 +68,7 @@ theorem exists_strictHenselian_absolutely_closed_local_ring (κ : Type) [Fintype
       (GlobalTheory.VacLn.trPair F κ).flip
   have hL : ∀ b y, L b y = Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (∑ i, y i * b i) := fun b y => rfl
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     apply GlobalTheory.VacLn.trPair_nondeg b
     intro y
@@ -84,7 +89,7 @@ noncomputable section
 namespace GlobalTheory.ArchDecay.HeisArch
 
 theorem infAd_zero {F : Type} [Field F] [NumberField F] : infAd F (0 : mixedEmbedding.mixedSpace F) = 0 := by
-  unfold infAd; rw [map_zero, map_zero]; rfl
+  unfold infAd; rw [map_zero, map_zero]
 
 theorem heisD_liftI : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (ψ : AddChar (AF F) ℂ), IsStd ψ → ∃ T : (Fin n × Fin d → mixedEmbedding.mixedSpace F) ≃L[ℝ] ((Fin n × Fin d → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ), ∀ (ζ : (Fin n × Fin d → mixedEmbedding.mixedSpace F) × (Fin n × Fin d → mixedEmbedding.mixedSpace F)), ∀ f ∈ schA F (Fin n × Fin d), heisD M ψ (liftI M ζ) f = dR F (T : (Fin n × Fin d → mixedEmbedding.mixedSpace F) →L[ℝ] ((Fin n × Fin d → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ)) (-(2 * Real.pi * Complex.I)) ζ f := by
   intro F E _ _ _ _ _ σ n d X W M ψ hψ
@@ -110,11 +115,11 @@ theorem heisD_liftI : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
       ⅟(2 : AF F) * ((fun i => infAd F (t • ζ.1 i)) ⬝ᵥ (fun i => infAd F (t • ζ.2 i))) with hP
     have hAt : At (evI F) P := by
       apply at_of_snd
-      rw [← sndr_apply, hP, map_add, map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct]
+      rw [← sndr_apply, hP, map_add (f := _), map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct]
       simp [dotProduct, Function.comp_def, sndr_infAd]
     rw [hψ.2.2 P hAt, ← evIr_apply]
     congr 3
-    rw [hP, map_add, map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct]
+    rw [hP, map_add (f := _), map_mul, RingHom.map_dotProduct, RingHom.map_dotProduct]
     simp only [Function.comp_def, evIr_infAd, dotProduct]
     have e1 : (∑ i, evIr (x i) * (t • ζ.2 i)) = t • ∑ i, arch F x i * ζ.2 i := by
       rw [Finset.smul_sum]
@@ -126,7 +131,7 @@ theorem heisD_liftI : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
         rw [Finset.smul_sum]
         exact Finset.sum_congr rfl fun i _ => by rw [smul_mul_smul_comm, sq]]
       exact mul_smul_comm _ _ _
-    rw [e1, e2, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [e1, e2, map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have hg : HasDerivAt (fun t : ℝ => Complex.exp (-(2 * Real.pi * Complex.I) * ((t * L + t ^ 2 * c0 : ℝ) : ℂ)))
       (-(2 * Real.pi * Complex.I) * (L : ℂ)) 0 := by
     have h1 : HasDerivAt (fun t : ℝ => t * L + t ^ 2 * c0) L 0 := by

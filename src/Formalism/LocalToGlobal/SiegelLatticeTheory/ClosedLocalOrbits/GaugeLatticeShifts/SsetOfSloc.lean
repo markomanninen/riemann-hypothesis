@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MeasurableSetNotUH
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MulVecMapMem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MeasurableSetNotUH
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.MulVecMapMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem uw_fix {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hw']
-  rw [show h *ᵥ (∑ i, w i • Pi.single i (1:ℂ)) = ∑ i, w i • (h *ᵥ Pi.single i (1:ℂ)) by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show h *ᵥ (∑ i, w i • Pi.single i (1:ℂ)) = ∑ i, w i • (h *ᵥ Pi.single i (1:ℂ)) by
       simp only [← Matrix.mulVecLin_apply, map_sum, map_smul]]
   rw [Finset.sum_congr rfl (fun i _ => key i), ← hw']
 
@@ -132,7 +137,8 @@ theorem sum_low {n : ℕ} (Q : Matrix (Fin n) (Fin (2 * r + k + 1)) ℂ) (a : �
         simp [bvec, Pi.single_apply, hne]
       · simp
   conv_lhs => rw [hw']
-  simp only [← Matrix.mulVecLin_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Matrix.mulVecLin_apply, map_sum, map_smul]
 
 end Model
 

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtDataPf
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.EqTopOfForallEmbAllMem
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.SumCMulImHermCEqSignMulTrace
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ExistsTorusCoordinates
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.TorusAtExistsOfParts
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtDataPf
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.EqTopOfForallEmbAllMem
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.SumCMulImHermCEqSignMulTrace
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ExistsTorusCoordinates
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.TorusAtExistsOfParts
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped ComplexConjugate
@@ -21,8 +25,8 @@ open ThFr TorusCoord TorusAtAssembly
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r)
 
-open Classical in
 
+open Classical in
 def dimPer (σ : E →+* ℂ) : ℕ := if σ ∈ X.Ψ then r - X.p0 else X.p0
 
 theorem dimPer_mem {σ : E →+* ℂ} (h : σ ∈ X.Ψ) : dimPer X σ = r - X.p0 := by simp [dimPer, h]
@@ -40,8 +44,8 @@ theorem card_idx_dimPer : Fintype.card (Idx (dimPer X)) = X.Ψ.card * r := by
   rw [Fintype.card_sigma, sum_emb_split X]
   simp [dimPer_add]
 
-open Classical in
 
+open Classical in
 def rowFn (i : Idx (dimPer X)) : X.Ψ × Fin r :=
   if h : i.1 ∈ X.Ψ then (⟨i.1, h⟩, ⟨X.p0 + i.2.1, by
       have := lt_of_lt_of_eq i.2.2 (dimPer_mem X h); omega⟩)
@@ -51,13 +55,13 @@ def rowFn (i : Idx (dimPer X)) : X.Ψ × Fin r :=
 theorem rowFn_mem (τ : X.Ψ) (i : Fin (dimPer X τ.1)) (a : Fin r) (ha : (a : ℕ) = X.p0 + i) :
     rowFn X ⟨τ.1, i⟩ = (τ, a) := by
   unfold rowFn
-  rw [dif_pos τ.2]
+  rw [dite_eq_left τ.2]
   exact Prod.ext rfl (Fin.ext ha.symm)
 
 theorem rowFn_conj (τ : X.Ψ) (i : Fin (dimPer X (ComplexEmbedding.conjugate τ.1))) (a : Fin r)
     (ha : (a : ℕ) = X.p0 - 1 - i) : rowFn X ⟨ComplexEmbedding.conjugate τ.1, i⟩ = (τ, a) := by
   unfold rowFn
-  rw [dif_neg ((X.cmType _).mp τ.2)]
+  rw [dite_eq_right ((X.cmType _).mp τ.2)]
   exact Prod.ext (Subtype.ext (conj_conj_X _)) (Fin.ext ha.symm)
 
 theorem rowFn_bijective : Function.Bijective (rowFn X) := by
@@ -190,7 +194,7 @@ theorem norm_sq_scaledR (y : X.Ψ → Fin r → ℂ) :
     Real.sq_sqrt (c_pos X _).le]
 
 theorem scaledR_injective : Function.Injective (scaledR X x) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro y hy
   funext τ
   by_contra h
@@ -266,16 +270,6 @@ theorem stable (α : 𝓞 E) (y : Vsp (dimPer Y.toData)) (hy : y ∈ lat (basis 
   obtain ⟨v, hv, rfl⟩ := (mem_lat_basis hx y).1 hy
   exact (mem_lat_basis hx _).2 ⟨(α : E) • v, Y.Λ.smul_mem α hv, scaled_smul _ x α v⟩
 
-theorem integral (y z : Vsp (dimPer Y.toData)) (hy : y ∈ lat (basis hx))
-    (hz : z ∈ lat (basis hx)) : ∃ k : ℤ, (Hf y z).im = k := by
-  obtain ⟨u, hu, rfl⟩ := (mem_lat_basis hx y).1 hy
-  obtain ⟨v, hv, rfl⟩ := (mem_lat_basis hx z).1 hz
-  obtain ⟨k, hk⟩ := Y.EF_int u hu v hv
-  rw [im_Hf_scaled hx]
-  rcases EF_eq_or Y.toData with h | h
-  · exact ⟨k, by rw [h, hk, Rat.cast_intCast]⟩
-  · exact ⟨-k, by rw [h, hk]; simp⟩
-
 theorem perfect (ψ : lat (basis hx) →+ ℤ) : ∃ y ∈ lat (basis hx), ∀ z : lat (basis hx),
     (ψ z : ℝ) = (Hf y (z : Vsp (dimPer Y.toData))).im := by
   let j : Y.Λ →+ lat (basis hx) :=
@@ -298,27 +292,6 @@ theorem perfect (ψ : lat (basis hx) →+ ℤ) : ∃ y ∈ lat (basis hx), ∀ z
 
 variable {w₀ : 𝓞 E} (hw : (w₀ : E) + cc (w₀ : E) = 1)
 
-include hw in
-theorem coe_one_sub : ((1 - w₀ : 𝓞 E) : E) = cc (w₀ : E) := by
-  rw [← sub_eq_iff_eq_add'.2 hw.symm]
-  simp
-
-theorem even_im_hermitian_sub : ∀ y ∈ lat (basis hx), ∀ z ∈ lat (basis hx), ∃ k : ℤ,
-    (Hf y (act w₀ z)).im - (Hf y (act (1 - w₀) z)).im - (Hf y z).im = 2 * k := by
-  intro y hy z hz
-  obtain ⟨k, hk⟩ := integral hx y _ hy (stable hx (1 - w₀) z hz)
-  have h : z = act w₀ z + act (1 - w₀) z := by
-    ext i
-    simp [act]
-    ring
-  refine ⟨-k, ?_⟩
-  have h2 := im_Hf_add_right y (act w₀ z) (act (1 - w₀) z)
-  rw [← h] at h2
-  push_cast
-  linarith
-
-def perTorus : PT E :=
-  torus r (dimPer_add Y.toData) (coe_one_sub hw) (stable hx) (even_im_hermitian_sub hx) (perfect hx)
 
 end Torus
 

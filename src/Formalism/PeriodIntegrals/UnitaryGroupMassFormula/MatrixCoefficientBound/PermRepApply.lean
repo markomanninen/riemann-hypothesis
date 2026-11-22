@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolic
+
+@[expose] public section
 
 open Finset Matrix
 
@@ -31,10 +35,6 @@ def permRep (G : Type) [Monoid G] (X : Type) [MulAction Gᵐᵒᵖ X] : Represen
   toFun g := LinearMap.funLeft ℂ ℂ (fun i => MulOpposite.op g • i)
   map_one' := by ext f i; simp [LinearMap.funLeft]
   map_mul' g h := by ext f i; simp [LinearMap.funLeft, mul_smul]
-
-def GamInv : Prop :=
-  ∀ (F : Type) [Field F] [Fintype F] (k : ℕ) (ψ₀ : AddChar F ℂ) (x : GL (Fin k) F),
-    gam ψ₀ x⁻¹ = conj (gam ψ₀ x)
 
 def MatrixEq : Prop :=
   ∀ (ι : Type) [Fintype ι] (Fq : ι → Type) [∀ v, Field (Fq v)] [∀ v, Fintype (Fq v)] (k : ℕ)

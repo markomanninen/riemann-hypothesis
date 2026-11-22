@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.Columns.LastRowColLevSym
-import Formalism.LocalToGlobal.Columns.ReductionExistsInLatticeStabilizerHolds
-import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
-import Formalism.LocalToGlobal.Columns.ColumnsProofs.SymLevEnt
-import Formalism.LocalToGlobal.Columns.RecLevelSymF
-import Formalism.LocalToGlobal.Columns.TiedGlMat
+module
+
+public import Formalism.LocalToGlobal.Columns.LastRowColLevSym
+public import Formalism.LocalToGlobal.Columns.ReductionExistsInLatticeStabilizerHolds
+public import Formalism.LocalToGlobal.Columns.StdBasisFlagSubmoduleOfBlockTriangular
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.SymLevEnt
+public import Formalism.LocalToGlobal.Columns.RecLevelSymF
+public import Formalism.LocalToGlobal.Columns.TiedGlMat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -34,7 +38,7 @@ private theorem intAt_add_columns {a b : E} (ha : IntAt P a) (hb : IntAt P b) : 
   · rcases P.isPrime.mem_or_mem hm with h1 | h1
     · exact hs h1
     · exact hs' h1
-  · simp only [map_add, map_mul]
+  · simp only [map_add (f := _), map_mul]
     linear_combination (algebraMap (𝓞 E) E s') * h + (algebraMap (𝓞 E) E s) * h'
 
 private theorem intAt_zero_columns : IntAt P (0 : E) :=
@@ -100,7 +104,8 @@ theorem ctl_col {N M : ℕ} (g : Sp E N →ₗ[E] Sp E M) (v : Sp E N) {p : ℕ}
     simp [Loc.eN, Finset.sum_apply, ← Fin.ext_iff]
   rw [Finset.sum_range]
   conv_lhs => rw [hv]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
   unfold Loc.atN
   simp [hp, Finset.sum_apply]
@@ -128,11 +133,11 @@ theorem ctl_atN_prXp {N p : ℕ} (v : Sp E N) (hp : p < N - 1) : Loc.atN (prXpG 
   have h1 : p < N - 1 + 0 := by omega
   have h2 : p < N := by omega
   unfold Loc.atN
-  rw [dif_pos h1, dif_pos h2]
+  rw [dite_eq_left h1, dite_eq_left h2]
   rfl
 
-open Classical in
 
+open Classical in
 theorem ctl_congr (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K)
     (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ rS r t j n' N : ℕ} (hk : k₀ ≤ r) (hN1 : 1 ≤ N) (hn' : r + (j - 1) * t = n')
     (han : n' ≤ N - 1) (g : Sp E N →ₗ[E] Sp E N) (A : Sp E (N - 1) →ₗ[E] Sp E (N - 1)) (y : HomE E n' N) (κ : Sp E n' →ₗ[E] Sp E n')
@@ -487,7 +492,7 @@ theorem ctl_tgt (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : �
     have hl1 : l < N' + 1 := by omega
     rw [eN_eq_pi_single hl1, eN_eq_pi_single hl]
     unfold Loc.atN
-    rw [dif_pos hp1, dif_pos hp]
+    rw [dite_eq_left hp1, dite_eq_left hp]
     obtain ⟨ia, ra⟩ := hEκ ⟨p, hp1⟩ ⟨l, hl1⟩
     obtain ⟨ib, rb⟩ := hEγ ⟨p, hp⟩ ⟨l, hl⟩
     have hsub := intAt_add_columns ia (intAt_neg_columns ib)
@@ -506,7 +511,7 @@ theorem ctl_tgt (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : �
     have hp1 : p < N' + 1 := by omega
     rw [eN_eq_pi_single (by omega : N' < N' + 1)]
     unfold Loc.atN
-    rw [dif_pos hp1]
+    rw [dite_eq_left hp1]
     obtain ⟨ia, ra⟩ := hEκ ⟨p, hp1⟩ ⟨N', by omega⟩
     have h0 : redP P (κ'.symm.toLinearMap (Pi.single ⟨N', by omega⟩ 1) ⟨p, hp1⟩) = 0 := by
       rw [ra]
@@ -525,7 +530,7 @@ theorem ctl_unitV_glm {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.asId
     (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) : σ₀ (LocE.unitV χ a) = glmChi e σ₀ χ (e (redP P a)) := by
   unfold LocE.unitV
   by_cases hu : IsUnit (redP P a)
-  · rw [dif_pos hu]
+  · rw [dite_eq_left hu]
     have hx : e (redP P a) = ((Units.map e.toRingHom.toMonoidHom hu.unit : k'ˣ) : k') := by simp
     have hu2 : Units.map e.symm.toRingHom.toMonoidHom (Units.map e.toRingHom.toMonoidHom hu.unit) = hu.unit := by
       ext
@@ -536,7 +541,7 @@ theorem ctl_unitV_glm {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.asId
     simp only [MonoidHom.comp_apply, Units.coe_map]
     rw [hu2]
     rfl
-  · rw [dif_neg hu, map_zero, MulChar.map_nonunit]
+  · rw [dite_eq_right hu, map_zero, MulChar.map_nonunit]
     exact fun h => hu (by simpa using h.map e.symm)
 
 theorem ctl_lamGBS_lamJ {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.asIdeal) ≃+* k') (σ₀ : K →+* ℂ)
@@ -552,7 +557,7 @@ theorem ctl_lamGBS_lamJ {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.as
     intro p p' hp hp'
     rw [entB_zero_eq_atN (z := κ.toLinearMap) hp hp', ocbS_eN_single (show p' < n + 0 from hp'), ocbS_atN_of_lt _ (show p < n + 0 from hp)]
     have h1 := ctl_ent (g := κ.toLinearMap) (fun x hx => (hκ x).2 hx) hred ⟨p, hp⟩ ⟨p', hp'⟩
-    exact ⟨h1.1, h1.2.trans (by unfold ctlE; rw [dif_pos ⟨hp, hp'⟩])⟩
+    exact ⟨h1.1, h1.2.trans (by unfold ctlE; rw [dite_eq_left ⟨hp, hp'⟩])⟩
   have hS : ∀ x, x + 1 < r → (x ∈ SPsymF r k₀ ↔ x + 1 ≠ k₀) := by
     intro x hx
     unfold SPsymF
@@ -582,9 +587,9 @@ theorem ctl_lamGBS_lamJ {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.as
     · refine Finset.sum_congr rfl fun i hi => ?_
       rw [Finset.mem_range] at hi
       by_cases hc : i + 1 < r ∧ i + 1 ≠ k₀
-      · rw [if_pos ⟨hc.1, (hS i hc.1).2 hc.2⟩, if_pos hc, dif_pos (show i + 1 < n by omega)]
+      · rw [if_pos ⟨hc.1, (hS i hc.1).2 hc.2⟩, if_pos hc, dite_eq_left (show i + 1 < n by omega)]
         unfold ctlE
-        rw [dif_pos ⟨by omega, by omega⟩]
+        rw [dite_eq_left ⟨by omega, by omega⟩]
       · rw [if_neg hc, if_neg (fun h => hc ⟨h.1, (hS i h.1).1 h.2⟩)]
     · intro i _ hi
       rw [Finset.mem_range] at hi
@@ -606,7 +611,7 @@ theorem ctl_lamGBS_lamJ {K k' : Type} [Field K] [Field k'] (e : (𝓞 E ⧸ P.as
     ext s s'
     rw [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.map_apply, Matrix.of_apply, (hM _ _ (hbd s) (hbd s')).2]
     unfold Formalism.L2.Forms.blkMat Formalism.L2.Forms.entN ctlE
-    rw [dif_pos ⟨hbd s, hbd s'⟩, dif_pos ⟨hbd s, hbd s'⟩]
+    rw [dite_eq_left ⟨hbd s, hbd s'⟩, dite_eq_left ⟨hbd s, hbd s'⟩]
     rfl
 
 end abelian₂
@@ -648,7 +653,7 @@ theorem ctl_lamJ_TL {k' : Type} [Field k'] (ψ : AddChar k' ℂ) (χ : ℕ → M
       have h1 : a + i * t + (s : ℕ) < N' := by omega
       have h2 : a + i * t + (s' : ℕ) < N' := by omega
       simp only [Formalism.L2.Forms.blkMat, Formalism.L2.Forms.entN]
-      rw [dif_pos ⟨by omega, by omega⟩, dif_pos ⟨h1, h2⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩, dite_eq_left ⟨h1, h2⟩]
       rfl
     rw [hB]
 

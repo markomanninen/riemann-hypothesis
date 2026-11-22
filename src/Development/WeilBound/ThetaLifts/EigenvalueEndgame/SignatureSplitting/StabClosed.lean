@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.IsFrPlane
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StageSub
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.IsFrPlane
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StageSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ theorem conj_unipU {U : Submodule E (Fin d → E)} {γ m : UA σ W.J} (hγ : γ 
     obtain ⟨u', a, b⟩ := h2 u hu
     exact Submodule.subset_span ⟨u', a, b.symm⟩
 
-variable (σ W) in
 
+variable (σ W) in
 def stab (x : Fin d → E) : Subgroup (UA σ W.J) where
   carrier := {u | mat u *ᵥ incV F x = incV F x}
   one_mem' := Matrix.one_mulVec _

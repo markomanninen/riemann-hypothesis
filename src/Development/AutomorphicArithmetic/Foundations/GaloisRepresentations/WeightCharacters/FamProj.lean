@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,10 @@ theorem famProj_of : EvLem → SumRep → FamProj := by
       (∀ φ ∈ U, p φ = φ) ∧ ∀ V ∈ t, V ≠ U → ∀ φ ∈ V, p φ = 0 := fun U => by
     by_cases hU : U ∈ t
     · obtain ⟨C, hC, hc⟩ := (hind (Finset.mem_coe.2 hU)).symm.exists_isCompl
-      refine ⟨U.subtype ∘ₗ Submodule.linearProjOfIsCompl U C hc.symm, fun _ => ⟨fun φ => Subtype.property _, fun φ hφ =>
-        congrArg Subtype.val (Submodule.linearProjOfIsCompl_apply_left hc.symm ⟨φ, hφ⟩), fun V hV hne φ hφ => ?_⟩⟩
-      have h0 : Submodule.linearProjOfIsCompl U C hc.symm φ = 0 :=
-        Submodule.linearProjOfIsCompl_apply_right' hc.symm
+      refine ⟨U.subtype ∘ₗ Submodule.projectionOnto U C hc.symm, fun _ => ⟨fun φ => Subtype.property _, fun φ hφ =>
+        congrArg Subtype.val (Submodule.projectionOnto_apply_left hc.symm ⟨φ, hφ⟩), fun V hV hne φ hφ => ?_⟩⟩
+      have h0 : Submodule.projectionOnto U C hc.symm φ = 0 :=
+        Submodule.projectionOnto_apply_of_mem_right hc.symm
           (hC (le_sSup (show V ∈ (t : Set (Submodule ℂ (UA E a → ℂ))) \ {U} from ⟨hV, hne⟩) hφ))
       simp [h0]
     · exact ⟨0, fun h => absurd h hU⟩
@@ -31,8 +35,8 @@ theorem famProj_of : EvLem → SumRep → FamProj := by
   have key : ∀ φ ∈ S, ∑ U ∈ t, p U φ = φ ∧ ∀ U ∈ t, ∀ x, p U (RU E a x φ) = RU E a x (p U φ) := by
     let P : Submodule ℂ (UA E a → ℂ) :=
       { carrier := {φ | ∑ U ∈ t, p U φ = φ ∧ ∀ U ∈ t, ∀ x, p U (RU E a x φ) = RU E a x (p U φ)}
-        add_mem' := fun h1 h2 => ⟨by simp only [map_add, Finset.sum_add_distrib, h1.1, h2.1], fun U hU x => by
-          simp only [map_add, h1.2 U hU x, h2.2 U hU x]⟩
+        add_mem' := fun h1 h2 => ⟨by simp only [map_add (f := _), Finset.sum_add_distrib, h1.1, h2.1], fun U hU x => by
+          simp only [map_add (f := _), h1.2 U hU x, h2.2 U hU x]⟩
         zero_mem' := ⟨by simp, fun U _ x => by simp⟩
         smul_mem' := fun c φ h => ⟨by simp only [map_smul, ← Finset.smul_sum, h.1], fun U hU x => by
           simp only [map_smul, h.2 U hU x]⟩ }

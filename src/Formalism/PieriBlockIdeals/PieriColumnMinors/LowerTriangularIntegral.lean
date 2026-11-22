@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -44,7 +48,7 @@ theorem lre_lowerTri {r n K : ℕ} (sz : Fin K → ℕ) (hsz : ∀ k, sz k ≤ n
 theorem lower_triangular_integral : LowerTriIntegral := by
   intro r n ν
   suffices key : ∀ d : (colLex r n).syn, ∀ Q ∈ dualWeyl ℚ r n ν,
-      (∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, coeff e Q = z) →
+      (∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → ∃ z : ℤ, AddMonoidAlgebra.coeff Q e = z) →
       (colLex r n).toSyn ((colLex r n).degree Q) = d →
       ∃ Q' : MvPolynomial (Fin r × Fin n) ℤ, Q = intQ r n Q' by
     intro Q hQ hint
@@ -75,10 +79,10 @@ theorem lower_triangular_integral : LowerTriIntegral := by
     have hf'mem : f - (colLex r n).leadingCoeff f • bideterminant ℚ sz hsz I ∈ dualWeyl ℚ r n ν :=
       Submodule.sub_mem _ hf (Submodule.smul_mem _ _ hbmem)
     have hf'z : ∀ e : Fin r × Fin n →₀ ℕ, LowerTri e →
-        ∃ z : ℤ, coeff e (f - (colLex r n).leadingCoeff f • bideterminant ℚ sz hsz I) = z := by
+        ∃ z : ℤ, AddMonoidAlgebra.coeff (f - (colLex r n).leadingCoeff f • bideterminant ℚ sz hsz I) e = z := by
       intro e he
       obtain ⟨z, hz'⟩ := hz e he
-      refine ⟨z - c * coeff e (bideterminant ℤ sz hsz I), ?_⟩
+      refine ⟨z - c * AddMonoidAlgebra.coeff (bideterminant ℤ sz hsz I) e, ?_⟩
       rw [coeff_sub, coeff_smul, hz', hlc, hbmap, lre_intQ_apply, coeff_map]
       simp
     have hfin : ∃ Q'' : MvPolynomial (Fin r × Fin n) ℤ,
@@ -89,7 +93,7 @@ theorem lower_triangular_integral : LowerTriIntegral := by
         exact ih _ (hd ▸ hlt) _ hf'mem hf'z rfl
     obtain ⟨Q'', hQ''⟩ := hfin
     refine ⟨Q'' + c • bideterminant ℤ sz hsz I, ?_⟩
-    rw [map_add, map_smul, ← hQ'', ← hbmap, hlc, Int.cast_smul_eq_zsmul]
+    rw [map_add (f := _), map_smul, ← hQ'', ← hbmap, hlc, Int.cast_smul_eq_zsmul]
     abel
 
 end Formalism.CohomologicalDescent.LR

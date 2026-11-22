@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -53,10 +57,9 @@ private theorem central_of_top (z : Fin n → ℂˣ) {f : GL (Fin n) F → ℂ}
     intro g
     have h := hT g
     haveI : IsEmpty (Pairs (Finset.univ : Finset (Fin n))) := ⟨fun p => p.2.2.1 (Finset.mem_univ _)⟩
-    have hc : ∀ I : Fintype (Pairs (Finset.univ : Finset (Fin n)) → 𝓀[F]), (@Finset.univ _ I).card = 1 := by
-      intro I
-      rw [Subsingleton.elim I Unique.fintype]
-      rfl
+    have hc (I : Fintype (Pairs (Finset.univ : Finset (Fin n)) → 𝓀[F])) :
+        (@Finset.univ _ I).card = 1 :=
+      @Fintype.card_unique _ inferInstance I
     rw [integral_minusculeHecke_mul hf, evalAt_satakeTransform_minusculeHecke z le_rfl, evalAt_esymmL, hp,
       Finset.sum_singleton, Finset.sum_singleton, Finset.sum_congr rfl (fun c _ => by rw [gMat_univ c]),
       Finset.sum_const, hc, one_smul, lamS_univ, Nat.sub_self, mul_zero,

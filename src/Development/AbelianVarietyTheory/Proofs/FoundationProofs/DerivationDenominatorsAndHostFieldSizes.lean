@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -21,8 +25,10 @@ theorem norm_natCast (p : ℕ) [Fact p.Prime] {N : ℕ} (hN : N ≠ 0) :
   have h2 : (((N : ℚ_[p]) : PadicAlgCl p) : ℂ_[p]) = (N : ℂ_[p]) := by simp
   have h3 : ‖(N : ℚ_[p])‖ = (p : ℝ) ^ (-(padicValNat p N : ℤ)) := by
     rw [Padic.norm_eq_zpow_neg_valuation (by exact_mod_cast hN), Padic.valuation_natCast]
+    simp only [Nat.padicValNat_def]
   rw [← h2, h1, h3, Nat.factorization_def _ Fact.out, ← Real.rpow_intCast, Int.cast_neg,
     Int.cast_natCast]
+  simp only [Nat.padicValNat_def]
 
 variable {E : Type} [Field E] [NumberField E]
 
@@ -63,7 +69,7 @@ theorem InCodiff.mul_different_pow {x : E} (hx : InCodiff x) (h : ℕ) :
       rw [RingOfIntegers.coe_eq_algebraMap, map_mul, pow_succ, mul_mul_mul_comm]
       exact this
     · have := hu.add hv
-      rw [RingOfIntegers.coe_eq_algebraMap, map_add, add_mul]
+      rw [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), add_mul]
       exact this
 
 theorem exists_discr_pow_mul_isIntegral [IsGalois ℚ E] :
@@ -129,7 +135,8 @@ theorem exists_dual_pair : ∃ (m : ℕ) (w : Fin m → 𝓞 E) (w' : Fin m → 
     have : (y : E) = ∑ j, (RingOfIntegers.basis E).repr y j • b j := by
       conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr y]
       simp [b, integralBasis_apply]
-    rw [this, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, Finset.mul_sum, map_sum]
     simp only [mul_smul_comm, map_zsmul, hb]
     simp
   · let A : Matrix ι (E →ₐ[ℚ] ℂ) ℂ := Matrix.of fun i φ => φ (b' i)

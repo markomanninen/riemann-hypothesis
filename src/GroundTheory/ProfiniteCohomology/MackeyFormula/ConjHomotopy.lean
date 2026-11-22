@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -197,7 +202,8 @@ theorem conjHomotopyFun_spec (n : ℕ) (φ : (Fin (n + 1) → Γ) → A) :
       A.ρ g (ψ fun l => g⁻¹ * F l * g) -
         A.ρ (F 0) (∑ i ∈ range (n + 1), (-1 : k) ^ i •
           ψ (prismSeq g i fun l => F (l + 1))) := by
-    rw [sum_range_succ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sum_range_succ', map_sum]
     simp only [prismSeq_zero_zero, prismSeq_succ_zero, prismSeq_succ_succ, pow_zero, one_smul,
       map_smul]
     have e0 : (fun l => prismSeq g 0 F (l + 1)) = fun l => g⁻¹ * F l * g :=
@@ -257,8 +263,8 @@ theorem continuous_prismTuple (i n : ℕ) : Continuous fun γ : Fin n → Γ => 
   · exact continuous_const
   · exact (continuous_const.mul (continuous_tupleSeq_apply _)).mul continuous_const
 
-omit [IsDiscreteRep A] in
 
+omit [IsDiscreteRep A] in
 theorem isLocallyConstant_conjHomotopyFun {n : ℕ} {φ : (Fin (n + 1) → Γ) → A}
     (hφ : IsLocallyConstant φ) : IsLocallyConstant (conjHomotopyFun A g n φ) := by
   have e : conjHomotopyFun A g n φ =

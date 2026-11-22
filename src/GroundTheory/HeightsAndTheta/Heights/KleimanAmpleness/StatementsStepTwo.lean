@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -70,8 +75,6 @@ def StepTwo.Reduce.Statement : Prop :=
 section Hypotheses
 
 variable (k : Type u) [Field k]
-
-def pt01 : Fin (1 + 1) → k := fun i => if i = 0 then 0 else 1
 
 end Hypotheses
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+
+@[expose] public section
 
 section
 open Formalism Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.MemLoc
@@ -36,9 +40,11 @@ theorem ev_sub {L A : Type*} [Field L] [CommRing A] (t : A) (ι : L →+* A)
       f - ∑ k ∈ Finset.range M, PowerSeries.C (PowerSeries.coeff k f) * PowerSeries.X ^ k := by
     rw [PowerSeries.X_pow_dvd_iff]
     intro m hm
-    simp [map_sum, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow, hm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow, hm]
   have := map_dvd ev h
-  simpa [map_sum, hC, hX] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, hC, hX] using this
 
 theorem ev_dvd_iff {L A : Type*} [Field L] [CommRing A] [IsDomain A] (t : A) (ht0 : t ≠ 0)
     (htu : ¬ IsUnit t) (ι : L →+* A)
@@ -61,9 +67,9 @@ theorem ev_dvd_iff {L A : Type*} [Field L] [CommRing A] [IsDomain A] (t : A) (ht
   · intro h
     simpa [hX] using map_dvd ev h
 
+
 open Reformulated.AutPerF Formalism in
 open scoped Formalism.Per in
-
 theorem main (l : ℕ) [Fact l.Prime] {B L : Type*} [CommRing B] [Field L]
     (e : B ≃+* BdR l (Per.OC l)) (Fil : ℤ → B → Prop)
     (hF : ∀ a x, Fil a x ↔ e x ∈ BdR.fil l (Per.OC l) a) (t : B) (π : BdRPlus l (Per.OC l))
@@ -83,7 +89,7 @@ theorem main (l : ℕ) [Fact l.Prime] {B L : Type*} [CommRing B] [Field L]
       map_one' := hinj (by rw [hj]; simp)
       map_mul' := fun x y => hinj (by rw [map_mul, hj, hj, hj, map_mul, map_mul])
       map_zero' := hinj (by rw [hj]; simp)
-      map_add' := fun x y => hinj (by rw [map_add, hj, hj, hj, map_add, map_add]) }
+      map_add' := fun x y => hinj (by rw [map_add (f := _), hj, hj, hj, map_add (f := _), map_add (f := _)]) }
   have hj' : ∀ x, algebraMap _ (BdR l (Per.OC l)) (ι₀ x) = e (ι x) := hj
   haveI : IsAdicComplete (Ideal.span {π}) (BdRPlus l (Per.OC l)) := by
     rw [← hπ]; infer_instance
@@ -97,7 +103,8 @@ theorem main (l : ℕ) [Fact l.Prime] {B L : Type*} [CommRing B] [Field L]
   · have := (key M _).2 (ev_sub π ι₀ ev hC hX f M)
     rw [hF]
     convert this using 1
-    simp [map_sum, hj', ht]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hj', ht]
   · rw [hF, ← ev_dvd_iff π hirr.ne_zero hirr.not_isUnit ι₀ ev hC hX, ← key]
     simp
   · have := (h0.isUnit).map e.symm
@@ -108,9 +115,9 @@ theorem main (l : ℕ) [Fact l.Prime] {B L : Type*} [CommRing B] [Field L]
   · exact e.injective (by
       rw [map_zero]; exact BdR.eq_zero_of_forall_mem_fil fun a => (hF _ _).1 (hb a))
 
+
 open Reformulated.AutPerF Formalism in
 open scoped Formalism.Per in
-
 theorem exists_gen (l : ℕ) [Fact l.Prime] (x : BdR l (Per.OC l))
     (h1 : x ∈ BdR.fil l (Per.OC l) 1) (h2 : x ∉ BdR.fil l (Per.OC l) 2) :
     ∃ π : BdRPlus l (Per.OC l), RingHom.ker (BdRPlus.theta l (Per.OC l)) = Ideal.span {π} ∧
@@ -138,8 +145,8 @@ theorem main' (l : ℕ) [Fact l.Prime] {B L : Type*} [CommRing B] [Field L]
   obtain ⟨π, hπ, ht⟩ := exists_gen l (e t) ((hF _ _).1 h1) (fun h => h2 ((hF _ _).2 h))
   exact main l e Fil hF t π hπ ht ι hι
 
-open Reformulated.AutPerF in
 
+open Reformulated.AutPerF in
 theorem mem_zero_of_isIntegral (l : ℕ) [Fact l.Prime] {F B : Type*} [Field F] [CommRing B]
     [Algebra F B] (e : B ≃+* BdR l (Per.OC l))
     (h : ∀ c : F, ∃ y : BdRPlus l (Per.OC l), algebraMap _ _ y = e (algebraMap F B c))
@@ -289,7 +296,7 @@ theorem exists_ev : ∃ ev : PowerSeries L →+* A, ∀ f M, t ^ M ∣ ev f - pa
   · simp [part]
   · have h' := dvd_add (he f M) (he g M)
     convert h' using 1
-    simp only [part, map_add]
+    simp only [part, map_add (f := _)]
     ring
 
 end General

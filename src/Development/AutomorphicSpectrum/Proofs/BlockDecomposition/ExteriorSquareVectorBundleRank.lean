@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IotaQInjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,7 +32,7 @@ theorem vb_exteriorPower_two : ∀ (R V : Type) [CommRing R] [AddCommGroup V] [M
   let M := LocalizedModule p.asIdeal.primeCompl V
   let q : PrimeSpectrum S := IsLocalRing.closedPoint S
   have hq : PrimeSpectrum.comap (algebraMap R S) q = p :=
-    PrimeSpectrum.ext (Localization.AtPrime.comap_maximalIdeal (I := p.asIdeal))
+    PrimeSpectrum.ext (Localization.AtPrime.under_maximalIdeal (I := p.asIdeal))
   have h1 := Module.rankAtStalk_isBaseChange hb q
   have h2 := Module.rankAtStalk_isBaseChange hb2 q
   rw [hq] at h1 h2

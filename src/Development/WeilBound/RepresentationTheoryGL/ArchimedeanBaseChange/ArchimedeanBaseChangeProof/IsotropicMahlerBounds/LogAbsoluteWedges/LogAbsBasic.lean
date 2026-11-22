@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,27 +13,27 @@ open scoped Pointwise
 
 namespace PositivityTheory.Rg.BcB.D1
 
-def LogAbsBasic : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E],
+def LogAbsBasic : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E],
   (∀ u : Ad E, IsUnit u → (Function.support fun w => Real.log ‖cW w u‖).Finite) ∧
   (∀ u u' : Ad E, IsUnit u → IsUnit u' → logAbs (u * u') = logAbs u + logAbs u') ∧
   ∀ c : E, c ≠ 0 → logAbs (algebraMap E (Ad E) c) = 0
 
-def FinSupp : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (ι κ : Type) [Fintype ι] [DecidableEq ι]
+def FinSupp : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (ι κ : Type) [Fintype ι] [DecidableEq ι]
   [Fintype κ] [DecidableEq κ] (A : Matrix ι κ (Ad E)) (Y : Matrix κ ι (Ad E)), Y * A = 1 →
     (∀ v, nI (A.map (cV v)) ≠ 0) ∧ (∀ w, nF (A.map (cW w)) ≠ 0) ∧ {w | nF (A.map (cW w)) ≠ 1}.Finite
 
-def SzFin : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (ι κ : Type) [Fintype ι] [Fintype κ]
+def SzFin : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (ι κ : Type) [Fintype ι] [Fintype κ]
   (A : Matrix ι κ (Ad E)), {w | 1 < sz (A.map (cW w))}.Finite
 
-def degG {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} {κ : Type} [Fintype κ] [DecidableEq κ]
+def degG {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} {κ : Type} [Fintype κ] [DecidableEq κ]
     (x : GA E n) (M : Matrix (Fin n) κ E) : ℝ :=
   -(∑ v, Real.log (nI (((x⁻¹ : GA E n).val * M.map (algebraMap E (Ad E))).map (cV v))) +
     ∑ᶠ w, Real.log (nF (((x⁻¹ : GA E n).val * M.map (algebraMap E (Ad E))).map (cW w))))
 
-theorem degG_eq {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n k : ℕ} (x : GA E n)
+theorem degG_eq {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n k : ℕ} (x : GA E n)
     (M : Matrix (Fin n) (Fin k) E) : degG x M = degM x M := rfl
 
-def DegBasisG : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (κ : Type) [Fintype κ]
+def DegBasisG : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (κ : Type) [Fintype κ]
   [DecidableEq κ] (x : GA E n) (M : Matrix (Fin n) κ E), LinearIndependent E Mᵀ →
     degG x M = deg x (Submodule.span E (Set.range Mᵀ))
 
@@ -52,7 +56,7 @@ def ConjPlaces : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
   ∃ (π : Equiv.Perm (HeightOneSpectrum (𝓞 E))) (ψ : ∀ w, (π w).adicCompletion E ≃+* w.adicCompletion E),
     (∀ w y, ‖ψ w y‖ = ‖y‖) ∧ ∀ w (u : Ad E), cW w (conjAd E u) = ψ w (cW (π w) u)
 
-def MahlerC : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) (c : ℝ),
+def MahlerC : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) (c : ℝ),
   ∃ C : Set (GA E n), IsCompact C ∧ ∀ x : GA E n,
     (∀ W : Submodule E (Fin n → E), Module.finrank E W = 1 → deg x W ≤ c) → |deg x ⊤| ≤ c →
       x ∈ ((ratGL E n).range : Set (GA E n)) * C

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
-import ReciprocityTheory.SemistableReduction.ExistsDualDerivations
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
+public import ReciprocityTheory.SemistableReduction.ExistsDualDerivations
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -35,7 +39,8 @@ theorem algebraicIndependent_scaledForms {K Ω : Type} [Field K] [CharZero K] [F
       (X none * ∑ j, X (some (ρ o, j)) * C (y j)) =
         X none * ∑ j, X (some (ρ o, j)) * C (δ a (y j)) := by
     intro a o
-    simp [Derivation.leibniz, coeffDer_X, coeffDer_C, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Derivation.leibniz, coeffDer_X, coeffDer_C, map_sum]
   let M : Matrix (Option (Fin D)) (Option (Fin D))
       (MvPolynomial (Option (Fin (D + 2) × Fin (N + 1))) Ω) := fun r o =>
     match r with
@@ -130,34 +135,6 @@ theorem scalarRatio_self {Ω V : Type*} [Field Ω] [AddCommGroup V] [Module Ω V
     · exact sub_eq_zero.mp h1
     · exact absurd h1 hf
   · exact absurd ⟨1, (one_smul Ω f).symm⟩ h
-
-def hupa1Row (D : ℕ) (o : Option (Fin D)) : Fin (D + 2) := Fin.castSucc ((finSuccEquiv D).symm o)
-
-def hupa1Eqv (D N : ℕ) :
-    Option ((Fin (D + 2) × Fin (N + 1)) ⊕ Option (Fin D)) ≃ ((Fin (D + 2) × Fin (N + 1)) ⊕ Fin (D + 2)) where
-  toFun v := match v with
-    | none => Sum.inr (Fin.last (D + 1))
-    | some (Sum.inl p) => Sum.inl p
-    | some (Sum.inr o) => Sum.inr (hupa1Row D o)
-  invFun v := match v with
-    | Sum.inl p => some (Sum.inl p)
-    | Sum.inr i => match finSuccEquivLast i with
-      | none => none
-      | some t => some (Sum.inr (finSuccEquiv D t))
-  left_inv v := by
-    rcases v with _ | p | o
-    · simp
-    · rfl
-    · simp [hupa1Row]
-  right_inv v := by
-    rcases v with p | i
-    · rfl
-    · dsimp only
-      rcases h : finSuccEquivLast i with _ | t
-      · have : i = finSuccEquivLast.symm none := (Equiv.eq_symm_apply _).2 h
-        simp [this]
-      · have : i = finSuccEquivLast.symm (some t) := (Equiv.eq_symm_apply _).2 h
-        simp [this, hupa1Row]
 
 theorem optionEquivLeft_rename_some' {R S : Type*} [CommRing R] (a : MvPolynomial S R) :
     MvPolynomial.optionEquivLeft R S (MvPolynomial.rename some a) = Polynomial.C a := by

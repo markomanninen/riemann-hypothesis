@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -22,9 +27,6 @@ theorem mem_normInteger {x : K} : x ∈ normInteger K ↔ ‖x‖ ≤ 1 := by
 theorem normInteger_integers : (NormedField.valuation (K := K)).Integers (normInteger K) :=
   Valuation.integer.integers _
 
-open scoped NormedField in
-
-theorem normInteger_eq_valued_integer : normInteger K = Valued.integer K := rfl
 
 theorem mem_span_singleton_pow_iff {a x : normInteger K} (n : ℕ) :
     x ∈ Ideal.span {a} ^ n ↔ ‖(x : K)‖ ≤ ‖(a : K)‖ ^ n := by
@@ -145,19 +147,14 @@ theorem surjective_fontaineTheta : Function.Surjective (WittVector.fontaineTheta
 theorem isDomain_preTilt : IsDomain (PreTilt (normInteger K) p) :=
   PreTilt.isDomain K NormedField.valuation (normInteger K) normInteger_integers p
 
-example : Field (Tilt K NormedField.valuation (normInteger K) normInteger_integers p) :=
-  inferInstance
-
-example : PreTilt (normInteger K) p →* normInteger K := PreTilt.untilt
-
 end IsPerfectoidField
 
 namespace IsPerfectoidField
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 
-omit [IsUltrametricDist K] in
 
+omit [IsUltrametricDist K] in
 theorem exists_norm_mem_Ioo_of_exists_pow_eq
     (h : ∀ (x : K) (n : ℕ), 0 < n → ∃ y : K, y ^ n = x) :
     ∀ r : ℝ, r < 1 → ∃ x : K, r < ‖x‖ ∧ ‖x‖ < 1 := by
@@ -180,13 +177,11 @@ theorem exists_norm_mem_Ioo_of_exists_pow_eq
     exact hc1
 
 theorem of_isAlgClosed (p : ℕ) [Fact p.Prime] [CompleteSpace K] [IsAlgClosed K]
-    (hp : ‖(p : K)‖ < 1) : IsPerfectoidField K p where
-  complete := inferInstance
-  norm_natCast_lt_one := hp
-  exists_norm_mem_Ioo :=
-    exists_norm_mem_Ioo_of_exists_pow_eq fun x _ hn => IsAlgClosed.exists_pow_nat_eq x hn
-  surjective_pow := surjective_pow_modP_of_exists_pow_eq (Fact.out : p.Prime).ne_zero
-    fun x _ => IsAlgClosed.exists_pow_nat_eq x (Fact.out : p.Prime).pos
+    (hp : ‖(p : K)‖ < 1) : IsPerfectoidField K p := by
+  refine ⟨inferInstance, hp, ?_, ?_⟩
+  · exact exists_norm_mem_Ioo_of_exists_pow_eq fun x _ hn => IsAlgClosed.exists_pow_nat_eq x hn
+  · exact surjective_pow_modP_of_exists_pow_eq (Fact.out : p.Prime).ne_zero
+      fun x _ => IsAlgClosed.exists_pow_nat_eq x (Fact.out : p.Prime).pos
 
 instance padicComplex (p : ℕ) [Fact p.Prime] : IsPerfectoidField ℂ_[p] p :=
   of_isAlgClosed p (by
@@ -195,52 +190,6 @@ instance padicComplex (p : ℕ) [Fact p.Prime] : IsPerfectoidField ℂ_[p] p :=
       rw [map_natCast, PadicComplex.coe_natCast]
     rw [← hc, h]
     exact Padic.norm_p_lt_one)
-
-theorem coe_normInteger_padicComplex (p : ℕ) [Fact p.Prime] :
-    (normInteger ℂ_[p] : Set ℂ_[p]) = (𝓞_ℂ_[p] : Set ℂ_[p]) := by
-  ext x
-  rw [SetLike.mem_coe, mem_normInteger, PadicComplex.norm_eq_norm, SetLike.mem_coe,
-    PadicComplexInt, Valuation.mem_valuationSubring_iff]
-  exact Valued.toNormedField.norm_le_one_iff (L := ℂ_[p]) (Γ₀ := ℝ≥0)
-
-theorem of_perfectRing (p : ℕ) [Fact p.Prime] [CharP K p] [PerfectRing K p] [CompleteSpace K]
-    (h : ∀ r : ℝ, r < 1 → ∃ x : K, r < ‖x‖ ∧ ‖x‖ < 1) : IsPerfectoidField K p where
-  complete := inferInstance
-  norm_natCast_lt_one := by simp [CharP.cast_eq_zero]
-  exists_norm_mem_Ioo := h
-  surjective_pow := surjective_pow_modP_of_exists_pow_eq (Fact.out : p.Prime).ne_zero
-    fun x _ => (frobeniusEquiv K p).surjective x
-
-theorem perfectRing (p : ℕ) [Fact p.Prime] [CharP K p] [IsPerfectoidField K p] :
-    PerfectRing K p := by
-  have hp0 : p ≠ 0 := (Fact.out : p.Prime).ne_zero
-
-  have h1 : ∀ x : K, ‖x‖ ≤ 1 → ∃ y : K, y ^ p = x := by
-    intro x hx
-    obtain ⟨z, hz⟩ := IsPerfectoidField.surjective_pow (K := K) (p := p)
-      (Ideal.Quotient.mk _ ⟨x, mem_normInteger.2 hx⟩)
-    obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective z
-    refine ⟨y, ?_⟩
-    have hz' : Ideal.Quotient.mk (Ideal.span {(p : normInteger K)}) (y ^ p) =
-        Ideal.Quotient.mk _ ⟨x, mem_normInteger.2 hx⟩ := by
-      rw [map_pow]; exact hz
-    rw [Ideal.Quotient.eq] at hz'
-    have hp : (p : normInteger K) = 0 := by
-      ext; simp [CharP.cast_eq_zero]
-    rw [hp, Ideal.span_singleton_eq_bot.2 rfl, Ideal.mem_bot, sub_eq_zero] at hz'
-    have := congrArg Subtype.val hz'
-    simpa using this
-  refine PerfectRing.ofSurjective K p fun x => ?_
-  rcases le_or_gt ‖x‖ 1 with hx | hx
-  · exact h1 x hx
-  · have hx0 : x ≠ 0 := by rintro rfl; norm_num at hx
-    obtain ⟨y, hy⟩ := h1 x⁻¹ (by rw [norm_inv]; exact inv_le_one_of_one_le₀ hx.le)
-    exact ⟨y⁻¹, by rw [frobenius_def, inv_pow, hy, inv_inv]⟩
-
-theorem iff_perfectRing (p : ℕ) [Fact p.Prime] [CharP K p] [CompleteSpace K]
-    (h : ∀ r : ℝ, r < 1 → ∃ x : K, r < ‖x‖ ∧ ‖x‖ < 1) :
-    IsPerfectoidField K p ↔ PerfectRing K p :=
-  ⟨fun _ => perfectRing p, fun _ => of_perfectRing p h⟩
 
 end IsPerfectoidField
 

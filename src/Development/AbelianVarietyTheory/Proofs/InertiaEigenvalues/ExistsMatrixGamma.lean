@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MapCSmulMulVec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXMulDerivativeBin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoordApply
+
+@[expose] public section
+
 open PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.NB GlobalTheory.CycFr GlobalTheory.WachTie
 
 noncomputable section
@@ -37,7 +42,8 @@ theorem exists_matrix_gamma : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp 
       apply Subtype.ext
       rw [← h1]
       conv_lhs => rw [hexp (z k)]
-      simp only [map_sum, hsm, Submodule.coe_sum, Submodule.coe_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, hsm, Submodule.coe_sum, Submodule.coe_smul]
       exact Finset.sum_congr rfl fun m _ => by rw [(hb m).2 δ hδ]
     have h3 : b.repr (z k) m = letγ (W.γ₀ δ) (b.repr (z k) m) := by
       conv_lhs => rw [h2]

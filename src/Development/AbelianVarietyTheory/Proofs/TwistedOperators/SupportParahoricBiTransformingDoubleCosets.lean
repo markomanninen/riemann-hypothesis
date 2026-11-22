@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SupportParahoricBiTransformingLeviDoubleCoset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SupportParahoricBiTransformingLeviDoubleCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,16 +15,16 @@ namespace GlobalTheory.ChainStepSupp
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
+
 open MeasureTheory ValuativeRel Matrix in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem _root_.GlobalTheory.ChainStepSupp.det_lower_ne_zero {A D : Type} [Fintype A] [DecidableEq A]
     [Fintype D] [DecidableEq D]
     {j : GL (A ⊕ D) k} (hj : j ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection.parahoric k A D) : j.1.toBlocks₂₂.det ≠ 0 :=
   (_root_.GlobalTheory.ParahoricLowerBlock.lower_block_tame k A D 1 (fun _ _ => rfl) j hj).1
 
-variable (k) in
 
+variable (k) in
 def reGL {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n] (e : m ≃ n) : GL m k ≃* GL n k :=
   Units.mapEquiv (Matrix.reindexAlgEquiv k k e).toMulEquiv
 
@@ -58,46 +62,67 @@ theorem _root_.GlobalTheory.ChainStepSupp.reGL_reGL_symm {m n : Type} [Fintype m
   ext i j
   simp [_root_.GlobalTheory.ChainStepSupp.val_reGL, Matrix.reindex_apply]
 
+
 open MeasureTheory ValuativeRel Matrix in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem _root_.GlobalTheory.ChainStepSupp.emb₂_mem_parahoric {A D : Type} [Fintype A] [DecidableEq A]
     [Fintype D] [DecidableEq D]
     {x : GL A k} {y : GL D k} (hx : x ∈ _root_.GlobalTheory.SplitWeil.KO k A)
     (hy : y ∈ _root_.GlobalTheory.SplitWeil.KO k D) :
     _root_.GlobalTheory.SmGL.emb₂ k (Equiv.refl (A ⊕ D)) (x, y) ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection.parahoric k A D := by
+  have hb (g : GL A k × GL D k) :
+      (SmGL.emb₂ k (Equiv.refl (A ⊕ D)) g : Matrix (A ⊕ D) (A ⊕ D) k) =
+        Matrix.fromBlocks g.1.val 0 0 g.2.val := by
+    ext i j
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [SmGL.emb₂, SmGL.leviEmb, SmGL.leviTwo, SmGL.two,
+        Matrix.blockDiagonal'_apply_eq, Matrix.blockDiagonal'_apply_ne]
   rw [_root_.GlobalTheory.SplitFlip.mem_KO_iff] at hx hy
   rw [_root_.GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection.mem_parahoric, _root_.GlobalTheory.SplitFlip.mem_KO_iff]
   refine ⟨⟨fun i j => ?_, fun i j => ?_⟩, fun i j => ?_⟩
-  · rcases i with i | i <;> rcases j with j | j <;>
-      simp [_root_.GlobalTheory.SmGL.val_emb₂, hx.1, hy.1]
+  · change ((_: GL (A ⊕ D) k) : Matrix (A ⊕ D) (A ⊕ D) k) i j ∈ _
+    rw [hb]
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [Matrix.reindex_apply, hx.1, hy.1]
   · have hx₂ := hx.2
     have hy₂ := hy.2
     simp only [Matrix.coe_units_inv] at hx₂ hy₂
     rw [← map_inv, Prod.inv_mk]
+    change ((_: GL (A ⊕ D) k) : Matrix (A ⊕ D) (A ⊕ D) k) i j ∈ _
+    rw [hb]
     rcases i with i | i <;> rcases j with j | j <;>
-      simp [_root_.GlobalTheory.SmGL.val_emb₂, hx₂, hy₂]
-  · simp [_root_.GlobalTheory.SmGL.val_emb₂]
+      simp [Matrix.reindex_apply, hx₂, hy₂]
+  · rw [hb]
+    simp [Matrix.reindex_apply]
+
 
 open MeasureTheory ValuativeRel Matrix in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem _root_.GlobalTheory.ChainStepSupp.emb₂_one_torusElt {A D : Type} [Fintype A] [DecidableEq A]
     [Fintype D] [DecidableEq D] (ϖ : kˣ)
     (f : D → ℤ) :
     _root_.GlobalTheory.SmGL.emb₂ k (Equiv.refl (A ⊕ D)) (1, _root_.GlobalTheory.GLDoubling.torusElt k D ϖ f) =
       (_root_.GlobalTheory.ZonalCellDecomposition.mtor ϖ f : GL (A ⊕ D) k) := by
+  have hb (g : GL A k × GL D k) :
+      (SmGL.emb₂ k (Equiv.refl (A ⊕ D)) g : Matrix (A ⊕ D) (A ⊕ D) k) =
+        Matrix.fromBlocks g.1.val 0 0 g.2.val := by
+    ext i j
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [SmGL.emb₂, SmGL.leviEmb, SmGL.leviTwo, SmGL.two,
+        Matrix.blockDiagonal'_apply_eq, Matrix.blockDiagonal'_apply_ne]
   have h : (_root_.GlobalTheory.ZonalCellDecomposition.mtor ϖ f : GL (A ⊕ D) k) =
       _root_.GlobalTheory.GLDoubling.torusElt k (A ⊕ D) ϖ (0 ⊕ᵥ f) := rfl
   rw [h]
   ext i j
+  change ((_: GL (A ⊕ D) k) : Matrix (A ⊕ D) (A ⊕ D) k) i j = _
+  rw [hb]
   rcases i with i | i <;> rcases j with j | j <;>
-    simp [_root_.GlobalTheory.SmGL.val_emb₂, _root_.GlobalTheory.GLDoubling.val_torusElt, Matrix.diagonal_apply,
+    simp [Matrix.reindex_apply, _root_.GlobalTheory.GLDoubling.val_torusElt, Matrix.diagonal_apply,
       Matrix.one_apply]
+
 
 open MeasureTheory ValuativeRel Matrix in
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem _root_.GlobalTheory.ChainStepSupp.support_dcell : ∀ (k : Type) [Field k] [ValuativeRel k]
     [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ϖ : kˣ),
     valuation k (ϖ : k) = uniformizer k →

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeriesUnitOfReadInjScaleRootConjRootCoordRange
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StarMulSelfOfPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFormsRescale
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
-import Formalism.LocalToGlobal.Columns.CoefModAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefficientSpaceEndomorphismScalarSchurStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutesAllOfCommutesRationalUnitaryPointsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvOfRoot
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StarMulSelfOfPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjFormsRescale
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
+public import Formalism.LocalToGlobal.Columns.CoefModAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefficientSpaceEndomorphismScalarSchurStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutesAllOfCommutesRationalUnitaryPointsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -70,9 +74,35 @@ theorem coef_root : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type}
   have hi : IsIntegral ℤ a := by
     obtain ⟨cl, -⟩ := ((B.L i A.μ0).pres.reps 1).exists
     have hL := nabAtr_isLattice tauL (lamL i) _
-      (GlobalTheory.RepsCompare.isLattice_hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl))
+      (GlobalTheory.CoefUniq.isFullLattice_hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl))
     refine GlobalTheory.CoefUniq.isIntegral_of_keeps _ (fun h0 => ?_) hL.fg a (fun n hn => ?_)
-    · have h1 := hL.span_eq_top
+    · let M := fun τ => dualFr (tauLat tauL τ (Bridge.hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl)))
+      have hM : ∀ τ, Submodule.IsFullLattice D.what₂.LL (M τ) := fun τ =>
+        dualFr_tauLat_isLattice tauL τ _
+          (GlobalTheory.CoefUniq.isFullLattice_hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl))
+      obtain ⟨d, hd, -, hd2⟩ := nb_global (nb_comm_nab (lamL i)) M hM
+      have hd' : algebraMap (𝓞 D.what₂.LL) D.what₂.LL d ≠ 0 := by
+        rwa [Ne, FaithfulSMul.algebraMap_eq_zero_iff]
+      have h1 : Submodule.span D.what₂.LL (nabAtr tauL (lamL i) (Bridge.hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl)) : Set (VV D.what₂.LL (lamL i))) = ⊤ := by
+        apply Submodule.map_injective_of_injective (f := (VV D.what₂.LL (lamL i)).subtype) (VV D.what₂.LL (lamL i)).injective_subtype
+        rw [Submodule.map_top, Submodule.range_subtype, Submodule.map_span]
+        apply le_antisymm
+        · rw [Submodule.span_le]
+          rintro _ ⟨x, -, rfl⟩
+          exact x.2
+        · refine le_trans (le_of_eq (nb_VV_eq_bid (lamL i))) ?_
+          rw [Submodule.span_le]
+          intro P hP
+          have hP1 : P ∈ nabStd D.what₂.LL (lamL i) := by
+            rw [nb_nabStd_eq]
+            exact Submodule.subset_span hP
+          have hP2 := hd2 P hP1
+          have hP3 : d • P ∈ VV D.what₂.LL (lamL i) := nb_le_VV (nb_comm_nab (lamL i)) M hM _ hP2
+          have hP4 : d • P ∈ Submodule.span D.what₂.LL ((VV D.what₂.LL (lamL i)).subtype ''
+              (nabAtr tauL (lamL i) (Bridge.hLat (D.sp.V ((i : ℕ) + 1)) ((B.L i A.μ0).pres.y cl)) : Set (VV D.what₂.LL (lamL i)))) :=
+            Submodule.subset_span ⟨⟨d • P, hP3⟩, hP2, rfl⟩
+          have := Submodule.smul_mem _ (algebraMap (𝓞 D.what₂.LL) D.what₂.LL d)⁻¹ hP4
+          rwa [nb_osmul, smul_smul, inv_mul_cancel₀ hd', one_smul] at this
       rw [h0, Submodule.bot_coe, Submodule.span_zero_singleton] at h1
       exact bot_ne_top h1
     · rw [← hnab₂ cl] at hn

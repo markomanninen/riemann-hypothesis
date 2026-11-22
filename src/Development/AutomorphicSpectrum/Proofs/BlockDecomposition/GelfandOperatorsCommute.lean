@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAtOfSmooth
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DifferentiableAtOfSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,11 +33,11 @@ theorem pow_bracket (e : Matrix (Fin n) (Fin n) A)
   | zero =>
     intro a b c d
     have hcb : (c = b) ↔ (b = c) := eq_comm
-    simp only [pow_zero, one_apply, hcb]
+    simp only [pow_zero, Matrix.one_apply, hcb]
     by_cases h1 : c = d <;> by_cases h2 : b = c <;> by_cases h3 : a = d <;> simp_all
   | succ m ih =>
     intro a b c d
-    have hp : ∀ i j, (e ^ (m + 1)) i j = ∑ x, e i x * (e ^ m) x j := fun i j => by rw [pow_succ', mul_apply]
+    have hp : ∀ i j, (e ^ (m + 1)) i j = ∑ x, e i x * (e ^ m) x j := fun i j => by rw [pow_succ', Matrix.mul_apply]
     have key : ∀ x, e a b * (e c x * (e ^ m) x d) - (e c x * (e ^ m) x d) * e a b =
         (if b = c then e a x * (e ^ m) x d else 0) - (if a = x then e c b * (e ^ m) x d else 0) +
           (if b = x then e c x * (e ^ m) a d else 0) - (if a = d then e c x * (e ^ m) x b else 0) := by
@@ -57,7 +61,7 @@ theorem pow_central (e : Matrix (Fin n) (Fin n) A)
 
 theorem trace_cent (N : Matrix (Fin n) (Fin n) ℂ) (Y : Matrix (Fin n) (Fin n) A) :
     (N.map (algebraMap ℂ A) * Y).trace = (Y * N.map (algebraMap ℂ A)).trace := by
-  simp only [Matrix.trace, Matrix.diag, mul_apply, map_apply]
+  simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, map_apply]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun c _ => Algebra.commutes _ _
 
@@ -133,17 +137,19 @@ theorem pow_intertw (e : Matrix (Fin n) (Fin n) (Module.End ℂ M)) (e' : Matrix
   induction m with
   | zero =>
     intro a b x
-    simp only [pow_zero, one_apply]
+    simp only [pow_zero, Matrix.one_apply]
     split_ifs <;> simp
   | succ m ih =>
     intro a b x
-    simp only [pow_succ', mul_apply, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [pow_succ', Matrix.mul_apply, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
     exact Finset.sum_congr rfl fun c _ => by rw [h, ih]
 
 theorem trace_intertw (e : Matrix (Fin n) (Fin n) (Module.End ℂ M)) (e' : Matrix (Fin n) (Fin n) (Module.End ℂ M'))
     (α : M →ₗ[ℂ] M') (h : ∀ a b x, α (e a b x) = e' a b (α x)) (m : ℕ) (x : M) :
     α ((e ^ m).trace x) = (e' ^ m).trace (α x) := by
-  simp only [Matrix.trace, Matrix.diag, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, LinearMap.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun a _ => pow_intertw e e' α h m a a x
 
 end End
@@ -153,7 +159,6 @@ section Sm
 variable {V V' : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] [NormedAddCommGroup V'] [NormedSpace ℂ V']
 
 variable (n V) in
-
 def Sm : Submodule ℂ (Mat n → V) where
   carrier := {f | ContDiffOn ℝ ∞ f (GLs n) ∧ ∀ g, g ∉ GLs n → f g = 0}
   add_mem' := fun {f h} hf hh => ⟨hf.1.add hh.1, fun g hg => by simp [hf.2 g hg, hh.2 g hg]⟩
@@ -357,14 +362,14 @@ theorem Epow_val (s : Bool) {F : Mat n → V} (x : Sm n V) (hx : Set.EqOn F x.1 
   induction m with
   | zero =>
     intro a b g hg
-    simp only [pow_zero, one_apply, Epow]
+    simp only [pow_zero, Matrix.one_apply, Epow]
     by_cases h : a = b
     · simpa [h] using hx hg
     · simp [h]
   | succ m ih =>
     intro a b g hg
-    simp only [Epow, pow_succ', mul_apply, LinearMap.sum_apply, Module.End.mul_apply, Finset.sum_apply,
-      AddSubmonoidClass.coe_finset_sum]
+    simp only [Epow, pow_succ', Matrix.mul_apply, LinearMap.sum_apply, Module.End.mul_apply, Finset.sum_apply,
+      AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Eu_congr' s a c (ih c b) hg, Eu_val s a c _ hg]
 
@@ -374,7 +379,7 @@ def tr (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (n : ℕ) (s : Bool
 theorem gel_val (s : Bool) {F : Mat n → V} (x : Sm n V) (hx : Set.EqOn F x.1 (GLs n)) (m : ℕ) :
     Set.EqOn (gel s m F) (tr V n s m x).1 (GLs n) := by
   intro g hg
-  simp only [gel, tr, Matrix.trace, Matrix.diag, LinearMap.sum_apply, Finset.sum_apply, AddSubmonoidClass.coe_finset_sum]
+  simp only [gel, tr, Matrix.trace, Matrix.diag, LinearMap.sum_apply, Finset.sum_apply, AddSubmonoidClass.coe_finsetSum]
   exact Finset.sum_congr rfl fun a _ => Epow_val s x hx m a a hg
 
 end Sm
@@ -469,7 +474,7 @@ theorem rd_cmap (X : Mat n) (A : V →L[ℂ] V') (x : Sm n V) : cmap A (rd X x) 
 
 theorem T_intertw (α : Sm n V →ₗ[ℂ] Sm n V') (h : ∀ X x, α (rd X x) = rd X (α x)) (s : Bool) (Z : Mat n) (x : Sm n V) :
     α (T s Z x) = T s Z (α x) := by
-  simp only [T, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add, h]
+  simp only [T, LinearMap.smul_apply, LinearMap.add_apply, map_smul, map_add (f := _), h]
 
 theorem T_expand (s : Bool) (Z : Mat n) : (T s Z : Module.End ℂ (Sm n V)) =
     ∑ a, ∑ b, kap s (Z a b) • eM V n s a b := by
@@ -497,7 +502,7 @@ theorem tr_T_other (s : Bool) (m : ℕ) (Z : Mat n) (x : Sm n V) :
   exact (LinearMap.congr_fun this y).symm
 
 theorem tr_rd (s : Bool) (m : ℕ) (X : Mat n) (x : Sm n V) : rd X (tr V n s m x) = tr V n s m (rd X x) := by
-  rw [rd_split s X, LinearMap.add_apply, LinearMap.add_apply, map_add, tr_T_other]
+  rw [rd_split s X, LinearMap.add_apply, LinearMap.add_apply, map_add (f := _), tr_T_other]
   congr 1
   exact LinearMap.congr_fun (tr_T_same s m X) x
 

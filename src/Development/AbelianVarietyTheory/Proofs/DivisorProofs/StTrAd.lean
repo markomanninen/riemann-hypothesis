@@ -1,16 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTraceSmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PseudoCoeffShapeSmoothCompactSupport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CutoffPolynomialConjugationDerivMemShapeSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyCoeffVectorsLieInFiniteDimensionalSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ShapeIntegratedOperatorRangesPolynomial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTraceSumInnerOfRangeLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumInnerMulInnerProj
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTraceSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PseudoCoeffShapeSmoothCompactSupport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CutoffPolynomialConjugationDerivMemShapeSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyCoeffVectorsLieInFiniteDimensionalSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ShapeIntegratedOperatorRangesPolynomial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTraceSumInnerOfRangeLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumInnerMulInnerProj
+
+@[expose] public section
 
 namespace GlobalTheory.PsCo.Pc3
 
 theorem stTrAd : GlobalTheory.PsCo.Pc1.StTrAd :=
-  @GlobalTheory.PsCo.Pc3.stTrAd_of @GlobalTheory.ShapeSmoothFinite.stShape @GlobalTheory.PsCo.Pc1.B.cutoffPolynomial_conjugation_deriv_mem_shapeSpan @GlobalTheory.PsCo.Pc3.uFin @GlobalTheory.PsCo.Pc3.rangeShape @GlobalTheory.OpTrace.hasTrace_sum_inner_of_range_le @GlobalTheory.Pc3.conjDeriv
+  stTrAd_of
+    GlobalTheory.ShapeSmoothFinite.stShape
+    GlobalTheory.PsCo.Pc1.B.cutoffPolynomial_conjugation_deriv_mem_shapeSpan
+    uFin rangeShape
+    GlobalTheory.OpTrace.hasTrace_sum_inner_of_range_le
+    GlobalTheory.Pc3.conjDeriv
 
 end GlobalTheory.PsCo.Pc3

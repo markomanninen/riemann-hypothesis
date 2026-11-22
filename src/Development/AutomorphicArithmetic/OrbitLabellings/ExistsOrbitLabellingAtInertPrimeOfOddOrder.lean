@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq
-import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
-import Development.AutomorphicArithmetic.OrbitLabellings.RowLab
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq
+public import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowLab
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical

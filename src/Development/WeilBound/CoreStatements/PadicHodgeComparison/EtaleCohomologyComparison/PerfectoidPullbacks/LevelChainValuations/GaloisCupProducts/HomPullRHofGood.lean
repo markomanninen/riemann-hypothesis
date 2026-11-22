@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.GaloisCupProducts.NmHONmPullBBMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.GaloisCupProducts.NmHONmPullBBMap
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
@@ -24,16 +28,16 @@ variable {m : ℕ} {L : Lev (per l K) m} (hL : L.Good) {M N : Model l K} (u : M.
 theorem homPull_good_of_nmHM_pull
     (hr : ∀ n j x, nmHM (nmPullA L u hu) l s none n j (rHN n j x) =
       rHM n j (B.pullHc (okToOC l K) (B.schMap u hu) false n j x)) :
-    (homPull hL u hu s hQN hQM rHN rHM).Good where
-  ℓ := rfl
-  lam _ := rfl
-  ι _ := rfl
-  o _ := rfl
-  tS n j x := ((Model.pullH u hu false j).comm n x).symm
-  r n j x := hr n j x
-  red n j z := nmHM_redM _ l s none n j z
-  b j z := nmHO_nmPullB_bMap hL u hu s hQN hQM j z
-  μ j v := nm_muB (nmPullB L u hu) (Model.genMap_q u hu) 1 s (fun _ => rfl) j v
+    (homPull hL u hu s hQN hQM rHN rHM).Good :=
+  { ℓ := rfl
+    lam := fun _ => rfl
+    ι := fun _ => rfl
+    o := fun _ => rfl
+    tS := fun n j x => ((Model.pullH u hu false j).comm n x).symm
+    r := hr
+    red := fun n j z => nmHM_redM _ l s none n j z
+    b := nmHO_nmPullB_bMap hL u hu s hQN hQM
+    μ := nm_muB (nmPullB L u hu) (Model.genMap_q u hu) 1 s (fun _ => rfl) }
 
 end
 

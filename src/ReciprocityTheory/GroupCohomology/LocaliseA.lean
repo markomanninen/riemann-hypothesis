@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.TransgressionStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+module
+
+public import ReciprocityTheory.GroupCohomology.TransgressionStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -44,13 +48,14 @@ theorem bij_H_of_bij (t : R) (ht : ∀ n, Bijective fun x : B.X n => t • x) (n
 theorem isLocalized_of_cx (j : Hom A B) (t : R) (hj : ∀ n, Injective (j.f n))
     (ht : ∀ n, Bijective fun x : B.X n => t • x)
     (hc : ∀ n (x : B.X n), ∃ (m : ℕ) (y : A.X n), j.f n y = t ^ m • x) (n : ℕ) :
-    IsLocalizedModule (Submonoid.powers t) (j.H n) where
-  map_units := by
+    IsLocalizedModule (Submonoid.powers t) (j.H n) := by
+  constructor
+  case map_units =>
     rintro ⟨_, k, rfl⟩
     show IsUnit (algebraMap R (Module.End R (B.H n)) (t ^ k))
     rw [map_pow]
     exact ((Module.End.isUnit_iff _).2 (bij_H_of_bij t ht n)).pow k
-  surj := by
+  case surj =>
     intro y
     induction y using H_ind with
     | h x hx =>
@@ -61,7 +66,7 @@ theorem isLocalized_of_cx (j : Hom A B) (t : R) (hj : ∀ n, Injective (j.f n))
       show (t ^ m) • B.cls n x hx = j.H n (A.cls n a ha0)
       rw [cls_smul, Hom.H_cls]
       exact cls_congr _ _ ha.symm
-  exists_of_eq := by
+  case exists_of_eq =>
     have key : ∀ z : A.H n, j.H n z = 0 → ∃ c : Submonoid.powers t, c • z = 0 := by
       intro z hz
       induction z using H_ind with
@@ -90,43 +95,6 @@ end Alg
 section Trunc
 
 variable {R : Type u} [CommRing R] (A : Cx R) (L : Submodule R (A.H 1))
-
-def truncW : (n : ℕ) → Submodule R (A.X n)
-  | 0 => ⊤
-  | 1 => (L.comap ((A.B 1).comap (A.Z 1).subtype).mkQ).map (A.Z 1).subtype
-  | _ + 2 => ⊥
-
-theorem mem_truncW_one {x : A.X 1} :
-    x ∈ truncW A L 1 ↔ ∃ hx : A.d 1 x = 0, A.cls 1 x hx ∈ L := by
-  constructor
-  · rintro ⟨z, hz, rfl⟩
-    exact ⟨z.2, hz⟩
-  · rintro ⟨hx, h⟩
-    exact ⟨⟨x, hx⟩, h, rfl⟩
-
-theorem truncW_d (n : ℕ) (x : A.X n) (hx : x ∈ truncW A L n) : A.d n x ∈ truncW A L (n + 1) := by
-  match n, x, hx with
-  | 0, x, _ =>
-    rw [mem_truncW_one]
-    refine ⟨A.dd 0 x, ?_⟩
-    rw [cls_d]; exact L.zero_mem
-  | 1, x, hx =>
-    obtain ⟨hx0, _⟩ := (mem_truncW_one A L).1 hx
-    show A.d 1 x ∈ (⊥ : Submodule R _)
-    rw [hx0]; exact Submodule.zero_mem _
-  | n + 2, x, hx =>
-    have : x = 0 := (Submodule.mem_bot R).1 hx
-    subst this
-    rw [map_zero]; exact Submodule.zero_mem _
-
-def truncCx : Cx R where
-  X n := truncW A L n
-  d n := (A.d n).restrict fun x hx => truncW_d A L n x hx
-  dd n x := Subtype.ext (A.dd n x.1)
-
-def truncHom : Hom (truncCx A L) A where
-  f n := (truncW A L n).subtype
-  comm _ _ := rfl
 
 end Trunc
 

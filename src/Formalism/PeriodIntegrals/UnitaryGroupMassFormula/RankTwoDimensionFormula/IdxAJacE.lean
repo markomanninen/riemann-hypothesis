@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,71 +64,73 @@ theorem ja_integral (m : IntAf F E) : IsIntegral (jaT F E) m := by
   subst hxm'
   exact hx
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem ja_key (G : ℕ) (m : IntAf F E) :
     ∃ t : IntAf F E, ∃ c ∈ jaT F E, (1 + (G : IntAf F E) * m) * t = 1 + (G : IntAf F E) * c := by
-  obtain ⟨p, hpm, hp⟩ := ja_integral F E m
-  rw [Polynomial.eval₂_eq_sum_range] at hp
-  obtain ⟨n, hn⟩ : ∃ n, p.natDegree = n := ⟨_, rfl⟩
-  rw [hn] at hp
-  have hpn : p.coeff n = 1 := hn ▸ hpm.coeff_natDegree
-  obtain ⟨y, hy⟩ : ∃ y : IntAf F E, 1 + (G : IntAf F E) * m = y := ⟨_, rfl⟩
-  rw [hy]
+  set_option synthInstance.maxHeartbeats 400000 in
+    obtain ⟨p, hpm, hp⟩ := ja_integral F E m
+    rw [Polynomial.eval₂_eq_sum_range] at hp
+    obtain ⟨n, hn⟩ : ∃ n, p.natDegree = n := ⟨_, rfl⟩
+    rw [hn] at hp
+    have hpn : p.coeff n = 1 := hn ▸ hpm.coeff_natDegree
+    obtain ⟨y, hy⟩ : ∃ y : IntAf F E, 1 + (G : IntAf F E) * m = y := ⟨_, rfl⟩
+    rw [hy]
 
-  have hw : ∀ i : ℕ, ∃ w : IntAf F E, (y - 1) ^ i = (-1) ^ i + y * w := by
-    intro i
-    obtain ⟨w, hw⟩ := sub_dvd_pow_sub_pow (y - 1) (-1) i
-    refine ⟨w, ?_⟩
-    have h1 : y - 1 - -1 = y := by ring
-    rw [h1] at hw
-    linear_combination hw
-  choose w hw using hw
-  have hym : y - 1 = (G : IntAf F E) * m := by rw [← hy]; ring
+    have hw : ∀ i : ℕ, ∃ w : IntAf F E, (y - 1) ^ i = (-1) ^ i + y * w := by
+      intro i
+      obtain ⟨w, hw⟩ := sub_dvd_pow_sub_pow (y - 1) (-1) i
+      refine ⟨w, ?_⟩
+      have h1 : y - 1 - -1 = y := by ring
+      rw [h1] at hw
+      linear_combination hw
+    choose w hw using hw
+    have hym : y - 1 = (G : IntAf F E) * m := by rw [← hy]; ring
 
-  have hE0 : ∑ i ∈ Finset.range (n + 1),
-      algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i = 0 := by
-    have h2 : ∑ i ∈ Finset.range (n + 1),
-        algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i =
-        (G : IntAf F E) ^ n * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * m ^ i := by
-      rw [Finset.mul_sum]
+    have hE0 : ∑ i ∈ Finset.range (n + 1),
+        algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i = 0 := by
+      have h2 : ∑ i ∈ Finset.range (n + 1),
+          algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i =
+          (G : IntAf F E) ^ n * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * m ^ i := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun i hi => ?_
+        have hin : i ≤ n := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
+        rw [hym, mul_pow]
+        calc algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * ((G : IntAf F E) ^ i * m ^ i)
+            = algebraMap (jaT F E) (IntAf F E) (p.coeff i) * ((G : IntAf F E) ^ (n - i) * (G : IntAf F E) ^ i) * m ^ i := by ring
+          _ = (G : IntAf F E) ^ n * (algebraMap (jaT F E) (IntAf F E) (p.coeff i) * m ^ i) := by
+            rw [← pow_add, Nat.sub_add_cancel hin]; ring
+      rw [h2, hp, mul_zero]
+    have hE : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i +
+        y * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i = 0 := by
+      have h3 : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i +
+          y * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i =
+          ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i := by
+        rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        rw [hw i]; ring
+      rw [h3, hE0]
+
+    obtain ⟨c0, hc0⟩ : ∃ c0 : jaT F E,
+        c0 = ∑ i ∈ Finset.range n, p.coeff i * (G : jaT F E) ^ (n - 1 - i) * (-1) ^ i := ⟨_, rfl⟩
+    have hS : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i =
+        (G : IntAf F E) * algebraMap (jaT F E) (IntAf F E) c0 + (-1) ^ n := by
+      simp only [Finset.sum_range_succ, hpn, map_one, Nat.sub_self, pow_zero, one_mul]
+      congr 1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc0, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i hi => ?_
-      have hin : i ≤ n := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
-      rw [hym, mul_pow]
-      calc algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * ((G : IntAf F E) ^ i * m ^ i)
-          = algebraMap (jaT F E) (IntAf F E) (p.coeff i) * ((G : IntAf F E) ^ (n - i) * (G : IntAf F E) ^ i) * m ^ i := by ring
-        _ = (G : IntAf F E) ^ n * (algebraMap (jaT F E) (IntAf F E) (p.coeff i) * m ^ i) := by
-          rw [← pow_add, Nat.sub_add_cancel hin]; ring
-    rw [h2, hp, mul_zero]
-  have hE : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i +
-      y * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i = 0 := by
-    have h3 : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i +
-        y * ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i =
-        ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (y - 1) ^ i := by
-      rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hw i]; ring
-    rw [h3, hE0]
-
-  obtain ⟨c0, hc0⟩ : ∃ c0 : jaT F E,
-      c0 = ∑ i ∈ Finset.range n, p.coeff i * (G : jaT F E) ^ (n - 1 - i) * (-1) ^ i := ⟨_, rfl⟩
-  have hS : ∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * (-1) ^ i =
-      (G : IntAf F E) * algebraMap (jaT F E) (IntAf F E) c0 + (-1) ^ n := by
-    simp only [Finset.sum_range_succ, hpn, map_one, Nat.sub_self, pow_zero, one_mul]
-    congr 1
-    rw [hc0, map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i hi => ?_
-    have hin : i < n := Finset.mem_range.1 hi
-    have h4 : n - i = (n - 1 - i) + 1 := by omega
-    simp only [map_mul, map_pow, map_natCast, map_neg, map_one]
-    rw [h4, pow_succ]
-    ring
-  have hsq : ((-1 : IntAf F E) ^ n) ^ 2 = 1 := by
-    rw [← pow_mul, mul_comm, pow_mul, neg_one_sq, one_pow]
-  refine ⟨(-1) ^ n * -(∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i),
-    algebraMap (jaT F E) (IntAf F E) ((-1) ^ n * c0), ((-1) ^ n * c0).2, ?_⟩
-  rw [map_mul, map_pow, map_neg, map_one]
-  linear_combination (-(-1 : IntAf F E) ^ n) * hE + (-1 : IntAf F E) ^ n * hS + hsq
+      have hin : i < n := Finset.mem_range.1 hi
+      have h4 : n - i = (n - 1 - i) + 1 := by omega
+      simp only [map_mul, map_pow, map_natCast, map_neg, map_one]
+      rw [h4, pow_succ]
+      ring
+    have hsq : ((-1 : IntAf F E) ^ n) ^ 2 = 1 := by
+      rw [← pow_mul, mul_comm, pow_mul, neg_one_sq, one_pow]
+    refine ⟨(-1) ^ n * -(∑ i ∈ Finset.range (n + 1), algebraMap (jaT F E) (IntAf F E) (p.coeff i) * (G : IntAf F E) ^ (n - i) * w i),
+      algebraMap (jaT F E) (IntAf F E) ((-1) ^ n * c0), ((-1) ^ n * c0).2, ?_⟩
+    rw [map_mul, map_pow, map_neg, map_one]
+    linear_combination (-(-1 : IntAf F E) ^ n) * hE + (-1 : IntAf F E) ^ n * hS + hsq
 
 end JacE
 
@@ -144,7 +150,7 @@ theorem idxDJacE : IdxDJacE := by
       = jaR F E e * ((1 + (g : E ⊗[F] Af F) * m) * (t : E ⊗[F] Af F)) * jaR F E y' := by
         simp only [jaR_apply]; ring
     _ = jaR F E (e * (1 + (g : Af F) * c') * y') := by
-        rw [h1]; simp only [map_mul, map_add, map_one, map_natCast]
+        rw [h1]; simp only [map_mul, map_add (f := _), map_one, map_natCast]
     _ = (1 : E) ⊗ₜ[F] e := by rw [hey, jaR_apply]
 
 end PI.UnitaryDimensionFormula

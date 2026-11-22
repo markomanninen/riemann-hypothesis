@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -67,8 +72,8 @@ theorem dualLattice_fg (F : HermLattice K i) : (dualLattice F).FG := by
 
 end DualLatticeBasisExistsAlt
 
-open DualLatticeBasisExistsAlt in
 
+open DualLatticeBasisExistsAlt in
 theorem DualLatticeBasisExists.proof : DualLatticeBasisExists.Statement := by
   intro K _ _ i F
   classical

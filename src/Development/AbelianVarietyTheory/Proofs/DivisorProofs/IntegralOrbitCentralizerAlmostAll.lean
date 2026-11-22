@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIsIntegralInCompletedTensorBasisMulExpStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarPreservesIntegrality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelMeanValueNonnegative
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHomStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrderCentralizerStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIsIntegralInCompletedTensorBasisMulExpStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarPreservesIntegrality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelMeanValueNonnegative
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHomStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeCentralizerComm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralOrderCentralizerStable
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -155,6 +160,6 @@ theorem starT_starT {p : ℕ} [Fact p.Prime] (G : HTGroup p) (R : Type) [CommRin
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul r y => rw [starT_tmul, starT_tmul, G.star_star]
-  | add a b ha hb => rw [map_add, MulOpposite.unop_add, map_add, MulOpposite.unop_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), MulOpposite.unop_add, map_add (f := _), MulOpposite.unop_add, ha, hb]
 
 end GlobalTheory.OrbFinAf.KottAlmost

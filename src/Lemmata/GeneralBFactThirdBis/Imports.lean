@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1
 
@@ -50,7 +54,8 @@ theorem goal1 :
     rw [Polynomial.aeval_def]
     convert h2 using 2 <;> first | exact RingHom.ext_int _ _ | rfl
   have htr : (M.map φ).trace = φ M.trace := by
-    simp [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, map_sum]
   have hint : IsIntegral ℤ (φ M.trace) := by
     rw [← htr, Matrix.trace_eq_sum_roots_charpoly]
     refine IsIntegral.multiset_sum fun r hr => ?_

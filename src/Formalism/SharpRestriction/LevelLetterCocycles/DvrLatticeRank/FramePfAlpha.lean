@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfL
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfL
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,19 +82,17 @@ theorem framepf_Ψα_smulLA (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (
     (x : W.EE ⊗[O] LcQ W T π' c) :
     framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H (smulLA W T π' c a x) =
       a • framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul e ℓ =>
     rw [framepf_smulLA_tmul, framepf_Ψα_tmul, framepf_Ψα_tmul, mul_smul, algebraMap_smul]
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
+
 
 include hπ0 hΔπ γ0 in
-
 theorem framepf_Ψα_toLA (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     (t : ↥W.AΔ ⊗[O] ↥(⊤ : Submodule O (LcQ W T π' c))) :
     framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H (toLA W T π' c ⊤ t) ∈ PcS W T c := by
-  induction t using TensorProduct.induction_on with
-  | zero => simp
+  induction t using TensorProduct.inductionOn with
   | tmul a s =>
     rw [framepf_toLA_tmul, framepf_Ψα_tmul, algebraMap_smul]
     have hh := framepf_hh_mem Bs π' c hπ0 hΔπ hR2 γ0 hu H (s : LcQ W T π' c)
@@ -110,13 +112,15 @@ theorem framepf_Ψα_toLA (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O))
     · rw [mem_letS, smul_smul, ← mul_assoc]
       unfold letE
       rw [← Pi.single_mul, mul_one]
-  | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy =>
+    rw [map_add, map_add]
+    exact Submodule.add_mem _ hx hy
 
 variable (Eπ : LetA O n) (hEu : IsUnit (algebraMap (LetA O n) W.EE Eπ))
     (hEΔ : ∀ δ ∈ W.DelF, W.γA δ Eπ = Eπ) (h' M : ℕ)
 
-include hEu hEΔ in
 
+include hEu hEΔ in
 theorem framepf_Lam_cancel {y : W.DD T} (hΔ : ∀ δ ∈ W.DelF, W.γD T δ (Eπ ^ h' • y) = Eπ ^ h' • y)
     (hl : (letE c : LetA O n) • (Eπ ^ h' • y) = Eπ ^ h' • y) :
     (∀ δ ∈ W.DelF, W.γD T δ y = y) ∧ (letE c : LetA O n) • y = y := by
@@ -131,8 +135,8 @@ theorem framepf_Lam_cancel {y : W.DD T} (hΔ : ∀ δ ∈ W.DelF, W.γD T δ (E�
     apply gradNPf_tf W T _ hu'
     rw [smul_sub, smul_smul, mul_comm, ← smul_smul, hl, sub_self]
 
-include hπ0 hΔπ γ0 hEu hEΔ in
 
+include hπ0 hΔπ γ0 hEu hEΔ in
 theorem framepf_Ψα_Lam (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x : W.EE ⊗[O] LcQ W T π' c)
     (hx : x ∈ LamLA W T π' Eπ h' c ⊤) :
     framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H x ∈ LamPS W T Eπ h' c := by
@@ -149,20 +153,8 @@ theorem framepf_Ψα_Lam (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x :
   rw [mem_LamPS]
   exact ⟨hP1, hΔ, hl⟩
 
-def framepf_α (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) :
-    ↥(LamLA W T π' Eπ h' c ⊤) →ₗ[O] QLamP W T π' Eπ h' M c :=
-  (Submodule.mkQ _).comp (LinearMap.codRestrict (LamPS W T Eπ h' c)
-    (((framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H).restrictScalars O).comp (LamLA W T π' Eπ h' c ⊤).subtype)
-    (fun x => framepf_Ψα_Lam Bs π' c hπ0 hΔπ hR2 γ0 hu Eπ hEu hEΔ h' H x x.2))
-
-theorem framepf_α_apply (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x : W.EE ⊗[O] LcQ W T π' c)
-    (hx : x ∈ LamLA W T π' Eπ h' c ⊤) :
-    framepf_α Bs π' c hπ0 hΔπ hR2 γ0 hu Eπ hEu hEΔ h' M H ⟨x, hx⟩ =
-      mkP W T π' Eπ h' M c (framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H x)
-        (framepf_Ψα_Lam Bs π' c hπ0 hΔπ hR2 γ0 hu Eπ hEu hEΔ h' H x hx) := rfl
 
 include hπ0 hΔπ γ0 in
-
 theorem framepf_Ψα_J (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x : W.EE ⊗[O] LcQ W T π' c)
     (hx : x ∈ JLA W T π' Eπ h' M c) :
     framepf_Ψα Bs π' c hπ0 hΔπ hR2 γ0 hu H x ∈ JP W T π' Eπ h' M c := by
@@ -170,15 +162,6 @@ theorem framepf_Ψα_J (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x : W
   rw [framepf_Ψα_smulLA]
   exact Submodule.mem_map.2 ⟨_, framepf_Ψα_toLA Bs π' c hπ0 hΔπ hR2 γ0 hu H t, rfl⟩
 
-include hπ0 hΔπ γ0 in
-
-theorem framepf_α_J (H : Matrix (Fin Bs.r) (Fin Bs.r) (PowerSeries O)) (x : W.EE ⊗[O] LcQ W T π' c)
-    (hx : x ∈ LamLA W T π' Eπ h' c ⊤) (hJ : x ∈ JLA W T π' Eπ h' M c) :
-    framepf_α Bs π' c hπ0 hΔπ hR2 γ0 hu Eπ hEu hEΔ h' M H ⟨x, hx⟩ = 0 := by
-  rw [framepf_α_apply]
-  unfold mkP
-  rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, Submodule.coe_subtype]
-  exact framepf_Ψα_J Bs π' c hπ0 hΔπ hR2 γ0 hu Eπ h' M H x hJ
 
 end Local
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupGenTies
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SupGenTies
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ lemma sum_extendByZero_le_sum {p : ℕ} (g : Fin p → ℕ) (m : ℕ) : ∑ i : 
         apply Finset.sum_subset (Finset.range_mono (le_max_right m p))
         intro k _ hk
         rw [Finset.mem_range] at hk
-        rw [dif_neg hk]
+        rw [dite_eq_right hk]
 
 open Classical in
 lemma sum_single_embedding_extend_le {E : Type} [Field E] [NumberField E] (e : E →+* ℂ) (mult : (E →+* ℂ) → ℕ) {p : ℕ}
@@ -58,22 +62,6 @@ lemma DF_wtA_le {D : D7} {j : ℕ} {H : ReciprocityTheory.ChartRestriction.G.Geo
   simp only [Finset.sum_add_distrib]
   exact add_le_add (by convert sum_single_embedding_extend_le (DV.tauEmb D t) Dw.mult (w.aP t))
     (by convert sum_single_embedding_extend_le (conjEmb (DV.tauEmb D t)) Dw.mult (w.aM t))
-
-theorem deg : DegSt := by
-  intro D T h j hj w P hP
-  have hrow := hP.1.2.2
-  have h1 : P.totalDegree ≤ DF (T.Q.Dw j) (wtA w) := by
-    refine Finset.sup_le (fun m hm => ?_)
-    rw [Finsupp.sum_fintype _ _ (by simp)]
-    rw [Fintype.sum_sigma]
-    refine le_of_eq (Finset.sum_congr rfl (fun σ _ => ?_))
-    rw [Fintype.sum_prod_type]
-    exact Finset.sum_congr rfl (fun i _ => hrow m hm σ i)
-  have h2 := DF_wtA_le (T.Q.Dw j) w
-  have h3 : (((∑ t, ((∑ i, w.aP t i) + ∑ i, w.aM t i) : ℕ)) : ℝ) = absA w := by
-    simp [absA]
-  rw [← h3]
-  exact_mod_cast h1.trans h2
 
 theorem dimPos_fr (D : D7) : 1 ≤ D.R.f ∧ 1 ≤ D.R.r := by
   refine ⟨?_, ?_⟩

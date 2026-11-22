@@ -1,23 +1,28 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.PSerFrobStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.PSerFrobStatement
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2
 
 namespace GlobalTheory
 
 private lemma pSerOf_trunc {R₀ : Type} [CommRing R₀] {g : ℕ} (N : ℕ) (G₁ : MvPolynomial (Fin g) R₀) :
     ∃ G : MvPolynomial (Fin g) R₀,
-      (∀ m, MvPolynomial.coeff m G = if ∀ i, m i < N then MvPolynomial.coeff m G₁ else 0) ∧
+      (∀ m, AddMonoidAlgebra.coeff G m = if ∀ i, m i < N then AddMonoidAlgebra.coeff G₁ m else 0) ∧
       ∀ (S : Type) [CommRing S] [Algebra R₀ S] (a : Fin g → S), (∀ i, a i ^ N = 0) →
         MvPolynomial.aeval a G = MvPolynomial.aeval a G₁ := by
   classical
   refine ⟨∑ m ∈ G₁.support.filter (fun m => ∀ i, m i < N),
-    MvPolynomial.monomial m (MvPolynomial.coeff m G₁), ?_, ?_⟩
+    MvPolynomial.monomial m (AddMonoidAlgebra.coeff G₁ m), ?_, ?_⟩
   · intro m
     rw [MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial]
     rw [Finset.sum_ite_eq']
     by_cases h : ∀ i, m i < N
-    · by_cases h0 : MvPolynomial.coeff m G₁ = 0
+    · by_cases h0 : AddMonoidAlgebra.coeff G₁ m = 0
       · simp [h0]
       · simp [h, h0]
     · rw [if_neg h, if_neg]
@@ -25,7 +30,8 @@ private lemma pSerOf_trunc {R₀ : Type} [CommRing R₀] {g : ℕ} (N : ℕ) (G�
       exact h (Finset.mem_filter.1 hm).2
   · intro S _ _ a ha
     conv_rhs => rw [G₁.as_sum]
-    rw [map_sum, map_sum, Finset.sum_filter]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.sum_filter]
     refine Finset.sum_congr rfl fun m _ => ?_
     split_ifs with h
     · rfl
@@ -46,7 +52,7 @@ theorem pSerFrob_of_invariance :
   (∀ {R₀ : Type} [CommRing R₀] (p : ℕ) [Fact p.Prime] (g N : ℕ) (G : MvPolynomial (Fin g) R₀),
     (∀ (S : Type) [CommRing S] [Algebra R₀ S], (p : S) = 0 → ∀ a e : Fin g → S, (∀ i, a i ^ N = 0) → (∀ i j, e i * e j = 0) →
       MvPolynomial.aeval (a + e) G = MvPolynomial.aeval a G) →
-    ∀ m : Fin g →₀ ℕ, (∀ i, m i < N) → (∃ i, ¬ p ∣ m i) → ∃ r : R₀, MvPolynomial.coeff m G = p * r) →
+    ∀ m : Fin g →₀ ℕ, (∀ i, m i < N) → (∃ i, ¬ p ∣ m i) → ∃ r : R₀, AddMonoidAlgebra.coeff G m = p * r) →
   (∀ {R₀ : Type} [CommRing R₀] (p : ℕ) [Fact p.Prime] {g : ℕ} {B : BX R₀} (K : LAlg R₀) (ch : FormalChartAtZero B K g), PSerFrobStatement p K ch) := by
   intro hev hinv hcoef R₀ _ p _ g B K ch N
   classical

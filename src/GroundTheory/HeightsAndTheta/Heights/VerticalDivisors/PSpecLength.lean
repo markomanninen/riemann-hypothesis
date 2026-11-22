@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChart
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsOrd
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChart
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsOrd
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -52,7 +57,8 @@ theorem length_quot_map_of_flat {A L : Type*} [CommRing A] [IsLocalRing A] [Comm
 
 theorem map_linForm {R S : Type*} [CommRing R] [CommRing S] {n : ℕ} (φ : R →+* S) (u : Fin n → R) :
     (linForm u).map φ = linForm (fun j => φ (u j)) := by
-  simp only [linForm, map_sum, map_mul, MvPolynomial.map_C, MvPolynomial.map_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [linForm, map_sum, map_mul, MvPolynomial.map_C, MvPolynomial.map_X]
 
 theorem secLin_eq_mk_map {K : Type*} [Field K] [NumberField K] {n e : ℕ}
     (I : Ideal (MvPolynomial (Fin n) K)) (v : HeightOneSpectrum (𝓞 K)) (u : Fin n → 𝓞 K) :
@@ -85,7 +91,7 @@ theorem SpecLength.proof (h1 : SpecChart.Statement) (h2 : FiniteOrd.Statement)
       (Module.length (Localization.AtPrime W) (Localization.AtPrime W ⧸
         ((integralModel I).map (algebraMap _ (Localization.AtPrime W)) ⊔
           Ideal.span {algebraMap _ (Localization.AtPrime W) (linForm u)}))).toNat := by
-    rw [localMult, dif_pos hWp, Ideal.map_sup, Ideal.map_span, Set.image_singleton]
+    rw [localMult, dite_eq_left hWp, Ideal.map_sup, Ideal.map_span, Set.image_singleton]
   unfold Ring.ord at hfin ⊢
   rw [hlen] at hfin ⊢
   split_ifs with hlW

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,9 @@ def ShaDictFS : Prop :=
       (_ : ∀ v : HeightOneSpectrum (𝓞 K'.1), ((N : ℕ) : 𝓞 K'.1) ∈ v.asIdeal → v ∈ S')
       (_ : Odd N ∨ IsTotallyComplex K'.1)
       (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K'.1 (AlgebraicClosure ℚ) S'))
-      (_ : IsDiscreteRep A) (_ : Finite A) (_ : ∀ m : A, N • m = 0),
+      (hAd : IsDiscreteRep A) (hAf : Finite A) (_ : ∀ m : A, N • m = 0),
+      letI : IsDiscreteRep (dualRep (gsRoots S' N) A) :=
+        @isDiscreteRep_dualRep _ _ _ _ _ _ (gsRoots S' N) A (isDiscreteRep_gsRoots S' N) hAd hAf
       Nonempty (Sha1 (twDual μ ρ) (locFam S Av) (continuous_locFam S Av) ≃+ ptSha (gsFinFamily S' ιs) A 1) ∧
       Nonempty (Sha2 ρ (locFam S Av) (continuous_locFam S Av) ≃+ ptSha (gsFinFamily S' ιs) (dualRep (gsRoots S' N) A) 2)) ∧
     (∃ (K' : FiniteSubfield) (S' : Set (HeightOneSpectrum (𝓞 K'.1))) (_ : Fintype S')
@@ -106,7 +112,9 @@ def ShaDictFS : Prop :=
       (_ : ∀ v : HeightOneSpectrum (𝓞 K'.1), ((N : ℕ) : 𝓞 K'.1) ∈ v.asIdeal → v ∈ S')
       (_ : Odd N ∨ IsTotallyComplex K'.1)
       (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K'.1 (AlgebraicClosure ℚ) S'))
-      (_ : IsDiscreteRep A) (_ : Finite A) (_ : ∀ m : A, N • m = 0),
+      (hAd : IsDiscreteRep A) (hAf : Finite A) (_ : ∀ m : A, N • m = 0),
+      letI : IsDiscreteRep (dualRep (gsRoots S' N) A) :=
+        @isDiscreteRep_dualRep _ _ _ _ _ _ (gsRoots S' N) A (isDiscreteRep_gsRoots S' N) hAd hAf
       Nonempty (Sha1 ρ (locFam S Av) (continuous_locFam S Av) ≃+ ptSha (gsFinFamily S' ιs) A 1) ∧
       Nonempty (Sha2 (twDual μ ρ) (locFam S Av) (continuous_locFam S Av) ≃+ ptSha (gsFinFamily S' ιs) (dualRep (gsRoots S' N) A) 2))
 
@@ -122,11 +130,13 @@ theorem perfectQZ_of_found {X Y : Type} [AddCommGroup X] [AddCommGroup Y]
       (_ : ∀ v : HeightOneSpectrum (𝓞 K'.1), ((N : ℕ) : 𝓞 K'.1) ∈ v.asIdeal → v ∈ S')
       (_ : Odd N ∨ IsTotallyComplex K'.1)
       (A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K'.1 (AlgebraicClosure ℚ) S'))
-      (_ : IsDiscreteRep A) (_ : Finite A) (_ : ∀ m : A, N • m = 0),
+      (hAd : IsDiscreteRep A) (hAf : Finite A) (_ : ∀ m : A, N • m = 0),
+      letI : IsDiscreteRep (dualRep (gsRoots S' N) A) :=
+        @isDiscreteRep_dualRep _ _ _ _ _ _ (gsRoots S' N) A (isDiscreteRep_gsRoots S' N) hAd hAf
       Nonempty (Y ≃+ ptSha (gsFinFamily S' ιs) A 1) ∧
       Nonempty (X ≃+ ptSha (gsFinFamily S' ιs) (dualRep (gsRoots S' N) A) 2)) : PerfectQZ X Y := by
   obtain ⟨K', S', _, ιs, N, _, hS, hK, A, _, _, hA, ⟨eY⟩, ⟨eX⟩⟩ := h
-  obtain ⟨h1, h2, h3, h4⟩ := poitouTate_sha_gs S' ιs hS hK A hA
+  obtain ⟨h1, h2, h3, h4⟩ := poitouTate_sha_gs (K := K') (N := N) S' ιs hS hK A hA
   exact perfectQZ_of_addEquiv eX eY (perfectQZ_symm ⟨h1, h2, _, h3, h4⟩)
 
 end FoundSide

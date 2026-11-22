@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IsometryCarriesCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryGroupIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairGluing.ExistsDenLe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IsometryCarriesCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryGroupIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParahoricLevelLiftsExist
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairGluing.ExistsDenLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -206,9 +210,9 @@ end Generic
 
 variable {D : D7}
 
+
 set_option maxHeartbeats 800000 in
 open GlobalTheory.IdemSupport GlobalTheory.LevSplit in
-
 theorem exists_idem_set {T : Set (Pl D.host.E)} (hT : OnePlaceOver T) :
     ∃ p : Formalism.L2.Herm.intAf D.host.F D.host.E, p * p = p ∧
       (p : EAf D) * Formalism.UG.sigR D.sp.cm.sig (Formalism.L2.Herm.Af D.host.F) p = 0 ∧ ∀ P ∈ T, resS D.host.F P p = 1 := by
@@ -263,7 +267,7 @@ theorem exists_idem_set {T : Set (Pl D.host.E)} (hT : OnePlaceOver T) :
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul a x => simp [Formalism.UG.sigR, Formalism.IndefR.Lev.swapAE, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     rw [hsw, ← map_mul, hzc, map_zero]
   · intro P hP
     obtain ⟨e, he⟩ := GlobalTheory.ParahoricLift.exists_isIdemAt (hT P hP P hP)
@@ -285,7 +289,7 @@ theorem sigR_sigR (z : EAf D) : Formalism.UG.sigR D.sp.cm.sig (Formalism.L2.Herm
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [Formalism.UG.sigR, CMData.sig]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 set_option maxHeartbeats 800000 in
 theorem exists_latIsom (V V' : HSp D) (h : V.rank = V'.rank)
@@ -338,14 +342,69 @@ theorem exists_baseFrame (V : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank
     (h : Formalism.IndefR.Datum.IsSelfDualC V Λ) : ∃ β N, IsBaseFrame V β Λ N := by
   unfold Formalism.IndefR.Datum.IsSelfDualC at h
   obtain ⟨hlat, hsd⟩ := h
-  obtain ⟨β, hβ⟩ := Formalism.L2.DIV.frame_exists_alt D.host.F D.host.E V.rank Λ hlat
+  have hfull : Submodule.IsFullLattice D.host.E Λ := by
+    haveI : Submodule.IsLattice D.host.E Λ := hlat
+    refine ⟨?_⟩
+    obtain ⟨s, hs⟩ := hlat.fg
+    apply eq_top_iff.mpr
+    intro y _
+    let f : (Fin V.rank → D.host.E) → D.host.E := fun x =>
+      ∑ i, ∑ j, star (x i) * V.gram i j * y j
+    obtain ⟨a, ha⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) s f
+    have ha0 : (algebraMap (𝓞 D.host.E) D.host.E a) ≠ 0 := by
+      exact (FaithfulSMul.algebraMap_injective _ _).ne (mem_nonZeroDivisors_iff_ne_zero.mp a.2)
+    let P : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := {
+      carrier := {x | ∃ b : 𝓞 D.host.E, (b : D.host.E) = (algebraMap (𝓞 D.host.E) D.host.E a) * f x}
+      zero_mem' := by refine ⟨0, ?_⟩; simp [f]
+      add_mem' := by
+        rintro x z ⟨b, hb⟩ ⟨c, hc⟩
+        refine ⟨b + c, ?_⟩
+        change (b : D.host.E) + c = _
+        rw [hb, hc]
+        simp [f, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+      smul_mem' := by
+        rintro c x ⟨b, hb⟩
+        refine ⟨RingOfIntegers.mapRingHom (starRingEnd D.host.E) c * b, ?_⟩
+        simp only [map_mul, hb, f, Pi.smul_apply, Algebra.smul_def, map_mul, RingOfIntegers.mapRingHom_apply, star_mul]
+        simp only [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        change star (c : D.host.E) * _ = _
+        ring }
+    have hsP : (s : Set (Fin V.rank → D.host.E)) ⊆ P := by
+      intro x hx
+      obtain ⟨b, hb⟩ := ha x hx
+      exact ⟨b, by simpa [Algebra.smul_def] using hb⟩
+    have hy : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Λ := by
+      apply (hsd _).2
+      intro x hx
+      have hxP : x ∈ P := (hs ▸ Submodule.span_le.mpr hsP) hx
+      obtain ⟨b, hb⟩ := hxP
+      refine ⟨b, ?_⟩
+      rw [hb]
+      dsimp only [f, Pi.smul_apply]
+      simp only [smul_eq_mul, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hy' : (algebraMap (𝓞 D.host.E) D.host.E a) • y ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have := (Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E))).smul_mem
+      (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ hy' 
+    change (algebraMap (𝓞 D.host.E) D.host.E a)⁻¹ •
+      ((algebraMap (𝓞 D.host.E) D.host.E a) • y) ∈ _ at this
+    rw [← smul_assoc, smul_eq_mul, inv_mul_cancel₀ ha0, one_smul] at this
+    exact this
+  obtain ⟨β, hβ⟩ := Formalism.L2.DIV.frame_exists_alt D.host.F D.host.E V.rank Λ hfull
 
   have hCfg : (GlobalTheory.Member.latC V).FG := V.standardTuple_isLattice.fg.map _
-  have hCspan : Submodule.span D.host.E (GlobalTheory.Member.latC V : Set (Fin V.rank → D.host.E)) = ⊤ := by
-    rw [GlobalTheory.Member.latC, Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image,
-      V.standardTuple_isLattice.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-    exact V.frame.equivFun.surjective
-  obtain ⟨N1, hN1, h1⟩ := PI.SqPairW.exists_den_le hCfg hlat.span_eq_top
+  have hCspan : Submodule.span D.host.E (GlobalTheory.Member.latC V : Set (Fin V.rank → D.host.E)) = ⊤ :=
+    (GlobalTheory.Member.latHat_eq_hat_and_gram D V).2.2.2.1
+  obtain ⟨N1, hN1, h1⟩ := PI.SqPairW.exists_den_le hCfg (Submodule.IsFullLattice.span_eq_top (self := hfull))
   obtain ⟨N2, hN2, h2⟩ := PI.SqPairW.exists_den_le hlat.fg hCspan
   have hcast : ∀ (k : ℕ) (x : Fin V.rank → D.host.E), ((k : D.host.E)) • x = (k : ℤ) • x := fun k x => by
     rw [← Int.cast_smul_eq_zsmul D.host.E]; simp

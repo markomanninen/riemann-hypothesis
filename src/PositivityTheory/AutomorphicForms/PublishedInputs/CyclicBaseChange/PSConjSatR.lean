@@ -1,9 +1,13 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalComponentsThetaPull
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedFactorEqProductAbove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalComponentsThetaPull
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedFactorEqProductAbove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivOfIsSubquotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ theorem hasSatGL_comp {w1 w2 : HeightOneSpectrum (𝓞 E)} (κ : w1.adicCompleti
   have hO : ∀ x, x ∈ Formalism.UG.Ov E w1 ↔ κ x ∈ Formalism.UG.Ov E w2 := fun x => by
     change x ∈ w1.adicCompletionIntegers E ↔ κ x ∈ w2.adicCompletionIntegers E
     rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers, hv]
-  have hK : ∀ g, g ∈ GlobalTheory.LFun.KGL w1 n ↔ glEquiv (n := n) κ hκ g ∈ GlobalTheory.LFun.KGL w2 n := fun g =>
+  have hK : ∀ g, g ∈ GlobalTheory.LFun.KGL w1 (n := n) ↔ glEquiv (n := n) κ hκ g ∈ GlobalTheory.LFun.KGL w2 (n := n) := fun g =>
     ⟨fun hg => mem_GLint_map κ (fun x hx => (hO x).1 hx) hg, fun hg => by
       have := mem_GLint_map (RingEquiv.ofBijective κ hκ).symm.toRingHom (fun x hx => (hO _).2 (by
         rwa [show κ ((RingEquiv.ofBijective κ hκ).symm.toRingHom x) = x from
@@ -98,8 +102,8 @@ theorem hasSatGL_comp {w1 w2 : HeightOneSpectrum (𝓞 E)} (κ : w1.adicCompleti
     MonoidHom.ext fun g => show ρ (glEquiv (n := n) κ hκ ((glEquiv (n := n) κ hκ).symm g)) = ρ g by
       rw [MulEquiv.apply_symm_apply]
   rw [hcomp]
-  have hfix : ∀ x, x ∈ GlobalTheory.PRep.fixed (ρ.comp (glEquiv (n := n) κ hκ).toMonoidHom) (GlobalTheory.LFun.KGL w1 n) ↔
-      x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w2 n) := fun x => by
+  have hfix : ∀ x, x ∈ GlobalTheory.PRep.fixed (ρ.comp (glEquiv (n := n) κ hκ).toMonoidHom) (GlobalTheory.LFun.KGL w1 (n := n)) ↔
+      x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w2 (n := n)) := fun x => by
     have := GlobalTheory.LFun.mem_fixed_comp_symm (ρ := ρ.comp (glEquiv (n := n) κ hκ).toMonoidHom) (x := x)
       (glEquiv (n := n) κ hκ) hK
     rw [hρ] at this
@@ -167,7 +171,7 @@ theorem map_s_finGL (c : M ≃+* M) (s : Ad M ≃+* Ad M) (hs : ∀ x, (s x).2 =
       sFin M ((k : Matrix (Fin a) (Fin a) (Af M)) i j)) =
     (1 : Matrix (Fin a) (Fin a) (Ad M)) i j - sFin M ((1 : Matrix (Fin a) (Fin a) (Af M)) i j) +
       sFin M (conjFin c ((k : Matrix (Fin a) (Fin a) (Af M)) i j))
-  rw [map_add, map_sub, s_sFin c s hs, s_sFin c s hs]
+  rw [map_add (f := _), map_sub, s_sFin c s hs, s_sFin c s hs]
   by_cases h : i = j
   · subst h
     simp

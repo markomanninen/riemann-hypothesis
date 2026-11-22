@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -74,19 +79,6 @@ theorem frob_surj : Function.Surjective (frobenius (ModP (Per.OC l) l) l) := by
 
 theorem θ_surj : Function.Surjective (Per.θ l) := surjective_fontaineTheta (frob_surj l)
 
-theorem toC_alg (x : Per.OC l) : Per.toC l (algebraMap _ _ x) = (x : ℂ_[l]) :=
-  GlobalTheory.RingIface.toC_alg l x
-
-theorem toC_injective : Function.Injective (Per.toC l) := by
-  rw [injective_iff_map_eq_zero]
-  intro x hx
-  obtain ⟨n, a, ha⟩ := IsLocalization.Away.surj ((l : ℕ) : Per.OC l) x
-  have h := congrArg (Per.toC l) ha
-  rw [map_mul, hx, zero_mul, toC_alg] at h
-  have h0 : a = 0 := Subtype.ext h.symm
-  rw [h0, map_zero] at ha
-  exact ((IsLocalization.Away.algebraMap_isUnit ((l : ℕ) : Per.OC l)).pow n).mul_left_eq_zero.1 ha
-
 theorem fontaineTheta_algebraMap₂ (a : Per.Ainf l) : Per.θP l (algebraMap _ _ a) = (Per.θ l a : ℂ_[l]) :=
   GlobalTheory.RingIface.fontaineTheta_algebraMap l a
 
@@ -138,8 +130,8 @@ theorem θD_alg (a : Per.AinfP l) : Per.θD l (algebraMap _ _ a) = Per.θP l a :
 
 end GlobalTheory.MemLoc.ThetaD
 
-open GlobalTheory.MemLoc.ThetaD in
 
+open GlobalTheory.MemLoc.ThetaD in
 theorem GlobalTheory.MemLoc.thetaD_props : ∀ (l : ℕ) [Fact l.Prime], Function.Surjective (Per.θD l) ∧ (∀ y : Per.BdRp l, Per.θD l y = 0 ↔ y ∈ Per.FilP l 1) ∧ (∀ y : Per.BdRp l, Per.θD l y ≠ 0 → IsUnit y) ∧ (∀ a : Per.Ainf l, Per.θD l (aDp l a) = (Per.θ l a : ℂ_[l])) ∧ ∀ (g : Per.Gq l) (y : Per.BdRp l), Per.θD l (Per.σDp g y) = Per.σC g (Per.θD l y) := by
   intro l _
   refine ⟨fun c => ?_, fun y => ?_, fun y hy => ?_, fun a => ?_, fun g y => ?_⟩

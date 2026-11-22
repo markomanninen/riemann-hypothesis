@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AxSenTateComplexPadicFixedClosure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AxSenTateComplexPadicFixedClosure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSubOnePowTotient
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -81,7 +86,7 @@ theorem decomp (z : Om l) (N : ℕ) (y : Om l) (hy : y ∈ Fz z) :
     obtain ⟨a, ha, w, hw, h⟩ := hp
     obtain ⟨b, hb, v, hv, h'⟩ := hq
     refine ⟨a + b, add_mem ha hb, w + v, add_mem hw hv, ?_⟩
-    rw [map_add, h, h']
+    rw [map_add (f := _), h, h']
     ring
   | monomial k c =>
     have e : (Polynomial.aeval z : Polynomial ℚ_[l] →ₐ[ℚ_[l]] Om l).toRingHom (Polynomial.monomial k c)
@@ -136,8 +141,8 @@ theorem Fz_mono (C : Core l) : Monotone fun n => Fz (C.ζ n) := by
   exact pow_mem_Fz _ _
 
 theorem chi_eq_one (C : Core l) (g : GQ l) (hg : g ∈ (⨆ n, Fz (C.ζ n)).fixingSubgroup) : C.χ g = 1 := by
-  ext
-  rw [← PadicInt.ext_of_toZModPow]
+  apply Units.ext
+  apply PadicInt.ext_of_toZModPow.mp
   intro n
   have : NeZero (l ^ n) := ⟨(pow_pos (Fact.out : l.Prime).pos _).ne'⟩
   have h1 := C.χ_cyc g n _ (zeta_prim C n).pow_eq_one
@@ -216,7 +221,7 @@ theorem estimate (C : Core l) (n : ℕ) (hn : 1 ≤ n) (g : GQ l) (hg : g ∈ (F
       (mul_mem (hc _) hb) (sub_mem ((Vz _ _).smul_mem ⟨_, hc c⟩ (Vz_stable n m _ hz g hg w hw)) hw)
     rw [norm_mul, norm_algebraMap'] at this
     convert this using 2
-    rw [map_add, (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg b hb, map_sub, map_one]
+    rw [map_add (f := _), (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg b hb, map_sub, map_one]
     ring
 
 theorem full (C : Core l) (i : ℤ) (x : ℂ_[l]) (hi : i ≠ 0)
@@ -297,8 +302,8 @@ theorem σC_algebraMap (g : GQ l) (c : ℚ_[l]) :
 end GlobalTheory.MemLoc.TateTwist
 
 namespace GlobalTheory.MemLoc
-open TateTwist in
 
+open TateTwist in
 theorem tate_twist_invariants : ∀ (l : ℕ) [Fact l.Prime], ∀ (C : Core l) (K : FinExt l) (i : ℤ) (x : ℂ_[l]), i ≠ 0 → (∀ g ∈ GK K, Per.σC g x * (algebraMap ℚ_[l] ℂ_[l] ((C.χ g : ℤ_[l]) : ℚ_[l])) ^ i = x) → x = 0 := by
   intro l _ C K i x hi hx
   have hK := K.2

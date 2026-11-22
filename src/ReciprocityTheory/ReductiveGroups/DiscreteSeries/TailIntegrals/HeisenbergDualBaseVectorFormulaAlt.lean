@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianFormBaseVectorRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermitianFormBaseVectorRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem exists_perm (y : Fin (2 * r' + k + 1) → ℂ) (i : Fin (2 * r' + k + 1)
   by_cases hA : i.val + 1 < 1 + r' ∨ 1 + r' + k < i.val + 1
   · refine ⟨⟨2 * (1 + r') + k - (i.val + 1) - 1, by omega⟩, ?_⟩
     rw [herm_bvec, norm_star, hpk_mulVec', if_pos (by rw [levPos_val]; simp only; omega), liftVec_apply,
-      dif_pos (by simp only [levPos_val]; omega)]
+      dite_eq_left (by simp only [levPos_val]; omega)]
     exact congrArg (fun t => ‖y t‖) (Fin.ext (by simp only [levPos_val]; omega))
   · refine ⟨i, ?_⟩
     rw [herm_bvec, norm_star, hpk_mulVec', if_neg (by rw [levPos_val]; omega)]

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetLL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetLL
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Forms GlobalTheory.KerJ NumberField Classical
 
 noncomputable section
@@ -114,7 +119,7 @@ theorem trueWt_step : ∀ (D : D7) (u : D.what₂.Word) (C : ColumnChain D.R D.w
       have p := hpos τ
       dsimp only
       omega
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       have e : (lamTG M (i + 1) τ).w r - (lamTG M (i + 1) τ).detShift = 0 := by
         have : (((lamTG M (i + 1) τ).w r - (lamTG M (i + 1) τ).detShift : ℤ) : ℚ) = ((0 : ℤ) : ℚ) := by
           push_cast

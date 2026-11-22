@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IntegralClosureFiniteLocalOfIsAdicComplete
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.VVNonnegIffLeOne
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IntegralClosureFiniteLocalOfIsAdicComplete
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.VVNonnegIffLeOne
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -44,7 +48,7 @@ theorem isIntegral_of_scale (S : CDVR) {W L : Type} [CommRing W] [IsDomain W] [I
   have : CharZero S.Fr := IsFractionRing.charZero_of_isFractionRing S.V
   have hded : IsDedekindDomain (integralClosure S.V L) := integralClosure.isDedekindDomain S.V S.Fr L
   have hval : ValuationRing (integralClosure S.V L) := by
-    have := ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain (integralClosure S.V L)).out 2 1).1 hded
+    have := ((tfae_of_isNoetherianRing_of_isLocalRing_of_isDomain (integralClosure S.V L)).out 3 2).1 hded
     exact this
   have hBW : ∀ b : integralClosure S.V L, ∃ v : W, algebraMap W L v = b := fun b =>
     IsIntegrallyClosed.isIntegral_iff.1 (IsIntegral.tower_top (A := W) b.2)
@@ -57,7 +61,8 @@ theorem isIntegral_of_scale (S : CDVR) {W L : Type} [CommRing W] [IsDomain W] [I
       map_add' := fun a b => hinj (by simp [hk0]) }
   have hk : ∀ b, algebraMap W L (k b) = b := hk0
   have hmax : ((maximalIdeal W).comap k).IsMaximal := by
-    refine Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := S.V) _ ?_
+    refine Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap S.V (integralClosure S.V L))
+      (fun x => Algebra.IsIntegral.isIntegral x) ((maximalIdeal W).comap k) ?_
     have hle : maximalIdeal S.V ≤ ((maximalIdeal W).comap k).comap (algebraMap S.V (integralClosure S.V L)) := by
       intro a ha
       by_cases h0 : a = 0
@@ -178,13 +183,5 @@ theorem baseChange_of_finite_extension {E : Type} [Field E] [NumberField E] [IsC
   refine ⟨h0, f', hf, h1', h2', ?_, fun τ i => (hu τ i).imp fun u' h => ⟨h.1, h.2.trans (dual_comp φ f' (mu τ i))⟩⟩
   exact hx.trans ((congrArg (· ≫ _) e1).trans ((Category.assoc _ _ _).trans
     (congrArg (ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap f' ≫ ·) mx.symm)))
-
-theorem lies_of_finite_extension : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j), ∀ (la : HeightOneSpectrum (𝓞 T.Q.c.F)) (S S' : CDVR) (io : T.Q.c.F →+* S.Fr) (φ : S.Fr →+* S'.Fr) (y : IntFr (T.Q.Xo j) T.Q.c S io) (y' : IntFr (T.Q.Xo j) T.Q.c S' (φ.comp io)) (e e' : ℕ), φ.Finite → OverLa la S.V io e → OverLa la S'.V (φ.comp io) e' → (∀ a : S.V, ∃ b : S'.V, algebraMap S'.V S'.Fr b = φ (algebraMap S.V S.Fr a)) → (letI := io.toAlgebra; letI := (φ.comp io).toAlgebra; FrMap ({ φ with commutes' := fun _ => rfl } : S.Fr →ₐ[T.Q.c.F] S'.Fr) y.1 y'.1) → ∀ eta, T.G.lies j la S io y eta → T.G.lies j la S' (φ.comp io) y' eta := by
-  intro D T _ j _ la S S' io φ y y' e e' hφ ho ho' hj hm eta hl hjm
-  obtain ⟨z, hz, hl'⟩ := hl hjm
-  obtain ⟨r, hr⟩ := IntegralFrameAllCompare.exists_scale (V := S.V) (W := S'.V) φ fun a => hj a
-  have hee := IntegralFrameAllCompare.index_eq ho ho' hr
-  have hr0 : 0 < r := Nat.pos_of_mul_pos_right (hee ▸ ho'.1)
-  exact ⟨z, hz, baseChange_of_finite_extension la _ S S' io φ y y' hφ hr0 hr hm.1 hm.2.1 z hl'⟩
 
 end GlobalTheory.LiesBaseChange

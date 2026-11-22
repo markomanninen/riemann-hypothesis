@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordBundleIsoAdditiveCubicalStructureStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordBundleIsoAdditiveCubicalStructureStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.TChart GlobalTheory.UT GlobalTheory.Mum.Two
@@ -59,7 +64,7 @@ theorem tautPt_isAdd : ∀ {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W
   have hkk : k'' = k * k' := by
     refine Units.ext ?_
     rw [Units.val_mul, hk'', hk, hk']
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact prod_zpow_add _ _ _ (hk ▸ k.ne_zero) (hk' ▸ k'.ne_zero)
   have hG : gm (𝟙 (TF (R := V) F).left) y ⊤ (unitOn k'') =
       gm (𝟙 (TF (R := V) F).left) y ⊤ (unitOn k) * gm (𝟙 (TF (R := V) F).left) y ⊤ (unitOn k') := by
@@ -71,9 +76,22 @@ theorem tautPt_isAdd : ∀ {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W
     (ρ ≫ T.c₀ a) (ρ ≫ T.c₀ a') (ρ ≫ T.c₀ ((n : ℤ) • e χ)) (hpt _ _ hg.1) (hpt _ _ hg'.1) hyc y J₀ J hJ₀ hJ).2
   simp only [id] at wa
 
-  have C := isCub_cubV T.cub hJ₀ (T := Over.mk ((TF (R := V) F).hom ≫ spMap ω))
-  have hC := (C.s01 (ρ ≫ T.c₀ ((n : ℤ) • e χ)) (ρ ≫ T.c₀ a) (ρ ≫ T.c₀ a')).trans
-    (C.s12 (ρ ≫ T.c₀ a) (ρ ≫ T.c₀ ((n : ℤ) • e χ)) (ρ ≫ T.c₀ a'))
+  have hs01 : ∀ x y' z : Over.mk ((TF (R := V) F).hom ≫ spMap ω) ⟶ T.B,
+      cubV T.cub y J₀ x y' z = cubV T.cub y J₀ y' x z := by
+    intro x y' z
+    have h := (val_corr hJ₀ T.cub.cubeSymmetric_swap_first (lift x (lift y' z)).left).trans
+      (val_cub T.cub (lift x (lift y' z)) hJ₀ _ _ _)
+    refine h.trans ?_
+    congr 1 <;> simp [x3]
+  have hs12 : ∀ x y' z : Over.mk ((TF (R := V) F).hom ≫ spMap ω) ⟶ T.B,
+      cubV T.cub y J₀ x y' z = cubV T.cub y J₀ x z y' := by
+    intro x y' z
+    have h := (val_corr hJ₀ T.cub.cubeSymmetric_swap_last (lift x (lift y' z)).left).trans
+      (val_cub T.cub (lift x (lift y' z)) hJ₀ _ _ _)
+    refine h.trans ?_
+    congr 1 <;> simp [x3]
+  have hC := (hs01 (ρ ≫ T.c₀ ((n : ℤ) • e χ)) (ρ ≫ T.c₀ a) (ρ ≫ T.c₀ a')).trans
+    (hs12 (ρ ≫ T.c₀ a) (ρ ≫ T.c₀ ((n : ℤ) • e χ)) (ρ ≫ T.c₀ a'))
   have corr := corr_of_val T.M.isLB
     (t := LB.mulGen T.M.L _ _ _ _ (T.τ₀ (a + a') ((n : ℤ) • e χ))
       (LB.pullGen T.M.L (thφ T.B (x3 T.B)) thε T.cub.t

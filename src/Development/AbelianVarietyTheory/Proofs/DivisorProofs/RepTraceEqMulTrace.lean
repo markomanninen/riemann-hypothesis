@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -38,9 +43,11 @@ theorem repTrace_eq_mul_trace {E : Type} [Field E] [NumberField E] {r : ℕ} (ρ
     (Matrix.toLinAlgEquiv' : Matrix (Fin r) (Fin r) ℚ ≃ₐ[ℚ] _).toRingEquiv.toRingHom.comp
       ((Int.castRingHom ℚ).mapMatrix.comp ρ)
   let A := Algebra.adjoin ℚ (Set.range g)
-  letI : CommRing A := Algebra.adjoinCommRingOfComm ℚ (by
-    rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩
+  haveI : IsMulCommutative A := Algebra.isMulCommutative_adjoin ℚ (s := Set.range g) (by
+    rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩ _
+    change g x * g y = g y * g x
     rw [← map_mul, ← map_mul, mul_comm])
+  letI : CommRing A := open scoped IsMulCommutative in inferInstance
   let g' : 𝓞 E →+* A := g.codRestrict A (fun x => Algebra.subset_adjoin ⟨x, rfl⟩)
   let φ : E →+* Module.End ℚ (Fin r → ℚ) :=
     (A.val : A →ₐ[ℚ] Module.End ℚ (Fin r → ℚ)).toRingHom.comp

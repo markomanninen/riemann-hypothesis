@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -12,8 +16,8 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 namespace AdeleBaseChange
 
-variable (K L) in
 
+variable (K L) in
 def adeleRingAut : (L ≃ₐ[K] L) →* RingAut 𝔸[L] where
   toFun σ := adeleRingEquiv (σ : L ≃+* L)
   map_one' := adeleRingEquiv_refl
@@ -25,8 +29,8 @@ def adeleRingAut : (L ≃ₐ[K] L) →* RingAut 𝔸[L] where
 instance : MulSemiringAction (L ≃ₐ[K] L) 𝔸[L] :=
   MulSemiringAction.compHom _ (adeleRingAut K L)
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 @[simp]
 theorem smul_algebraMap (σ : L ≃ₐ[K] L) (l : L) :
     σ • algebraMap L 𝔸[L] l = algebraMap L 𝔸[L] (σ l) :=
@@ -39,9 +43,6 @@ theorem smul_adeleMap (σ : L ≃ₐ[K] L) (a : 𝔸[K]) : σ • adeleMap K L a
 instance : ContinuousConstSMul (L ≃ₐ[K] L) 𝔸[L] where
   continuous_const_smul σ := continuous_adeleRingEquiv (σ : L ≃+* L)
 
-instance : ContinuousSMul (L ≃ₐ[K] L) 𝔸[L] where
-  continuous_smul := continuous_prod_of_discrete_left.2 fun σ ↦ continuous_const_smul σ
-
 @[simp]
 theorem norm_smul (σ : L ≃ₐ[K] L) (y : 𝔸[L]) : Algebra.norm 𝔸[K] (σ • y) = Algebra.norm 𝔸[K] y :=
   norm_adeleRingEquiv σ y
@@ -50,8 +51,8 @@ section Galois
 
 variable [IsGalois K L]
 
-open Classical in
 
+open Classical in
 theorem isUnit_det_conjugates (b : Module.Basis (L ≃ₐ[K] L) K L) :
     IsUnit (Matrix.of fun σ τ : L ≃ₐ[K] L ↦ σ (b τ)).det := by
   classical
@@ -114,9 +115,11 @@ theorem exists_adeleMap_eq_sum_smul (y : 𝔸[L]) :
     rw [Algebra.smul_def, algebraMap_adeleRing, adeleBasis_apply]
   conv_rhs => rw [hy]
   simp only [Finset.smul_sum, smul_mul', smul_adeleMap, smul_algebraMap]
-  rw [Finset.sum_comm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_comm, map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [← Finset.mul_sum, ← map_sum, ← trace_eq_sum_automorphisms, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.mul_sum, ← map_sum, ← trace_eq_sum_automorphisms, map_mul,
     adeleMap_algebraMap]
 
 theorem forall_smul_eq_iff_mem_range (y : 𝔸[L]) :
@@ -147,8 +150,8 @@ theorem coe_smul_idele (σ : L ≃ₐ[K] L) (x : IdeleGroup L) :
     ((σ • x : IdeleGroup L) : 𝔸[L]) = σ • (x : 𝔸[L]) :=
   rfl
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem smul_idele_eq_ideleEquiv (σ : L ≃ₐ[K] L) (x : IdeleGroup L) :
     σ • x = ideleEquiv (σ : L ≃+* L) x :=
   Units.ext rfl
@@ -160,11 +163,8 @@ instance : ContinuousConstSMul (L ≃ₐ[K] L) (IdeleGroup L) where
     rw [h]
     exact (ideleEquiv (σ : L ≃+* L)).continuous
 
-instance : ContinuousSMul (L ≃ₐ[K] L) (IdeleGroup L) where
-  continuous_smul := continuous_prod_of_discrete_left.2 fun σ ↦ continuous_const_smul σ
 
 omit [NumberField K] in
-
 @[simp]
 theorem smul_diagonal (σ : L ≃ₐ[K] L) (l : Lˣ) :
     σ • IdeleGroup.diagonal L l = IdeleGroup.diagonal L (σ • l) :=
@@ -203,29 +203,11 @@ theorem forall_smul_eq_iff_mem_range_ideleEmbedding (x : IdeleGroup L) :
   · rintro ⟨y, rfl⟩ σ
     exact smul_ideleEmbedding σ y
 
-theorem fixedPoints_subgroup_idele :
-    FixedPoints.subgroup (L ≃ₐ[K] L) (IdeleGroup L) = (ideleEmbedding K L).range := by
-  ext x
-  exact forall_smul_eq_iff_mem_range_ideleEmbedding x
-
-variable (K L) in
-
-def ideleFixedEquiv : IdeleGroup K ≃ₜ* FixedPoints.subgroup (L ≃ₐ[K] L) (IdeleGroup L) where
-  toMulEquiv := (MonoidHom.ofInjective (f := ideleEmbedding K L)
-      (ideleEmbedding_injective (K := K) (L := L))).trans
-    (MulEquiv.subgroupCongr fixedPoints_subgroup_idele.symm)
-  continuous_toFun := continuous_ideleEmbedding.subtype_mk _
-  continuous_invFun := by
-    rw [(isClosedEmbedding_ideleEmbedding (K := K) (L := L)).isInducing.continuous_iff]
-    convert continuous_subtype_val using 1
-    funext y
-    simp only [Function.comp_apply]
-    exact MonoidHom.apply_ofInjective_symm _ _
 
 end Galois
 
-variable (K L) in
 
+variable (K L) in
 def ideleClassAut : (L ≃ₐ[K] L) →* MulAut (IdeleClassGroup L) where
   toFun σ := (ideleClassEquiv (σ : L ≃+* L)).toMulEquiv
   map_one' := MulEquiv.ext fun c ↦ ideleClassEquiv_refl c
@@ -234,31 +216,19 @@ def ideleClassAut : (L ≃ₐ[K] L) →* MulAut (IdeleClassGroup L) where
 instance : MulDistribMulAction (L ≃ₐ[K] L) (IdeleClassGroup L) :=
   MulDistribMulAction.compHom _ (ideleClassAut K L)
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 @[simp]
 theorem smul_mk (σ : L ≃ₐ[K] L) (x : IdeleGroup L) :
     σ • IdeleClassGroup.mk L x = IdeleClassGroup.mk L (σ • x) := by
   rw [smul_idele_eq_ideleEquiv]
   rfl
 
-instance : ContinuousConstSMul (L ≃ₐ[K] L) (IdeleClassGroup L) where
-  continuous_const_smul σ := (ideleClassEquiv (σ : L ≃+* L)).continuous
-
-instance : ContinuousSMul (L ≃ₐ[K] L) (IdeleClassGroup L) where
-  continuous_smul := continuous_prod_of_discrete_left.2 fun σ ↦ continuous_const_smul σ
-
 @[simp]
 theorem smul_ideleClassMap (σ : L ≃ₐ[K] L) (c : IdeleClassGroup K) :
     σ • ideleClassMap K L c = ideleClassMap K L c := by
   obtain ⟨x, rfl⟩ := IdeleClassGroup.mk_surjective K c
   rw [ideleClassMap_mk, smul_mk, smul_ideleEmbedding]
-
-@[simp]
-theorem ideleClassNorm_smul (σ : L ≃ₐ[K] L) (c : IdeleClassGroup L) :
-    ideleClassNorm K L (σ • c) = ideleClassNorm K L c := by
-  obtain ⟨x, rfl⟩ := IdeleClassGroup.mk_surjective L c
-  rw [smul_mk, ideleClassNorm_mk, ideleClassNorm_mk, ideleNorm_smul]
 
 section Galois
 

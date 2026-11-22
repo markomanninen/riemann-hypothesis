@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDerivationMinorOfDetection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDerivationMinorOfDetection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -21,7 +26,8 @@ theorem DerivationMinorOfDetection.proof : DerivationMinorOfDetection.Statement 
     obtain ⟨φ, hφ0, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.2 hne)
     have hφv : ∀ w : Fin h → K, φ w = ∑ i, w i * φ (Pi.single i 1) := fun w => by
       conv_lhs => rw [pi_eq_sum_univ w]
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       congr 2
       funext j
@@ -35,13 +41,15 @@ theorem DerivationMinorOfDetection.proof : DerivationMinorOfDetection.Statement 
       have h1 : ∑ i, b i * D (f i) ∈ P := by
         have hD : φ (v D) = 0 := hφ (Submodule.subset_span ⟨D, rfl⟩)
         rw [hφv] at hD
-        rw [← hπ, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hπ, map_sum]
         simp only [map_mul, hπb]
         rw [show ∑ i, π s * φ (Pi.single i 1) * π (D (f i)) = π s * ∑ i, v D i * φ (Pi.single i 1) by
           rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun i _ => by simp only [v]; ring, hD, mul_zero]
       have hl : ∀ i, D (b i * f i) = b i * D (f i) + f i * D (b i) := fun i => by
         rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hl, Finset.sum_add_distrib]
       exact P.add_mem h1 (Ideal.sum_mem _ fun i _ => P.mul_mem_right _ (hfP i))
     have hbP : ∀ i, b i ∈ P := fun i => (IsLocalization.AtPrime.to_map_mem_maximal_iff A P _).1

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ConjReal
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.RealCyclotomicSubfield
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Galois
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ConjReal
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.RealCyclotomicSubfield
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.FrobMulInertia
+
+@[expose] public section
 
 open NumberField IntermediateField
 
@@ -193,7 +197,7 @@ theorem galE_of_lift (h : IsLayer (e + 2) q d ζ a b) {σ : hostE ζ a b ≃ₐ[
         ζ⁻¹ ^ ((h.1.autToPow ℚ τ : (ZMod (2 ^ (e + 2)))ˣ) : ZMod (2 ^ (e + 2))).val := by
     rw [hστ]
     show τ (ζ + ζ⁻¹) = _
-    rw [map_add, map_inv₀, ← h.1.autToPow_spec ℚ τ, inv_pow]
+    rw [map_add (f := _), map_inv₀, ← h.1.autToPow_spec ℚ τ, inv_pow]
   unfold galE galMap
   dsimp only
   rw [hs (aE ζ a b) a rfl, hs (bE ζ a b) b rfl]
@@ -201,7 +205,7 @@ theorem galE_of_lift (h : IsLayer (e + 2) q d ζ a b) {σ : hostE ζ a b ≃ₐ[
   unfold hPart
   have hex : ∃ u : (ZMod (2 ^ (e + 2)))ˣ, ((σ (thE ζ a b) : hostE ζ a b) : L) =
       ζ ^ (u : ZMod (2 ^ (e + 2))).val + ζ⁻¹ ^ (u : ZMod (2 ^ (e + 2))).val := ⟨_, hθ⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hcl_eq_of_pow_add_inv_pow_eq h.1 _ _ ((Classical.choose_spec hex).symm.trans hθ)
 
 theorem galE_aE (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b)
@@ -259,7 +263,7 @@ theorem galE_snd_eq_hcl_iff (hqd : HypOdd q d) (h : IsLayer (e + 2) q d ζ a b)
         ζ⁻¹ ^ ((h.1.autToPow ℚ τ : (ZMod (2 ^ (e + 2)))ˣ) : ZMod (2 ^ (e + 2))).val := by
     rw [hτ]
     show τ (ζ + ζ⁻¹) = _
-    rw [map_add, map_inv₀, ← h.1.autToPow_spec ℚ τ, inv_pow]
+    rw [map_add (f := _), map_inv₀, ← h.1.autToPow_spec ℚ τ, inv_pow]
   rw [galE_of_lift h hτ]
   unfold galMap
   dsimp only

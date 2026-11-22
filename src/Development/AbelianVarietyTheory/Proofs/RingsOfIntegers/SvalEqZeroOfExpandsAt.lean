@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPivot
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntegralBasis
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsDivOfExpandsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPivot
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntegralBasis
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsDivOfExpandsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsExtensionPullOver
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -57,8 +61,10 @@ theorem sum_eq_zero (w : Fin n → Ix → V) (x : Fin n → MF)
     have h1 := h0 b fun i => by
       apply IsFractionRing.injective V (FractionRing V)
       have h2 := congrArg (fun y => B.repr y β) (hd i)
-      simp only [map_sum, map_zero, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
-      rw [map_sum, map_zero, ← mul_zero (algebraMap V (FractionRing V) r), ← h2, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zero, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.coe_zero, Pi.zero_apply] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, ← mul_zero (algebraMap V (FractionRing V) r), ← h2, Finset.mul_sum]
       refine Finset.sum_congr rfl fun p _ => ?_
       rw [map_mul, hb, mul_comm (d p), RingHom.comp_apply, ← Algebra.smul_def (A := F), map_smul,
         Finsupp.smul_apply, smul_eq_mul]
@@ -86,11 +92,13 @@ theorem exists_integral_comb [IsDiscreteValuationRing V] {ϖ : V} (hϖ : Irreduc
     obtain ⟨r, b, hr, hb⟩ := exists_denom (a l)
     obtain ⟨τ, hτ⟩ := hd b r (u l) hr fun i => by
       apply IsFractionRing.injective V (FractionRing V)
-      rw [map_sum, map_mul, h2, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_mul, h2, Finset.mul_sum]
       exact Finset.sum_congr rfl fun p _ => by rw [map_mul, hb, _root_.mul_assoc]
     refine ⟨τ, smul_right_injective MF (toF_ne_zero (F := F) hr) ?_⟩
     have h4 := congrArg π hτ
-    rw [map_smulₛₗ, map_sum] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smulₛₗ, map_sum] at h4
     show toF V F r • π τ = toF V F r • _
     rw [← h4, Finset.smul_sum]
     exact Finset.sum_congr rfl fun p _ => by
@@ -98,10 +106,12 @@ theorem exists_integral_comb [IsDiscreteValuationRing V] {ϖ : V} (hϖ : Irreduc
   choose τ hτ using key
   refine ⟨m, c', τ, h1, ?_⟩
   have h5 := sum_eq_zero w (fun p => π (σ p)) (fun b hb => by
-      rw [← h0 b hb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0 b hb, map_sum]
       exact Finset.sum_congr rfl fun p _ => (map_smulₛₗ π _ _).symm)
     (fun p => c p - ∑ l, c' l * algebraMap (FractionRing V) F (a l p)) fun i => by
-      simp only [sub_mul, Finset.sum_sub_distrib, RingHom.comp_apply, h3, h2, map_sum, map_mul, Finset.sum_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [sub_mul, Finset.sum_sub_distrib, RingHom.comp_apply, h3, h2, map_sum, map_mul, Finset.sum_mul,
         Finset.mul_sum, _root_.mul_assoc]
       rw [Finset.sum_comm, sub_self]
   simp only [sub_smul, Finset.sum_sub_distrib, sub_eq_zero] at h5
@@ -227,7 +237,8 @@ variable {D F} in
 theorem comb_pull {k : ℕ} {α : D.X} {m n : ℕ} {b : Fin m → SecAb D k α} {f : Fin n → SecAb D k α}
     {w : Fin n → Fin m → V} (hw : ∀ p, f p = ∑ i, w p i • b i) (c : Fin n → F) :
     ∑ p, c p • pullAb D F k α (f p) = ∑ i, (∑ p, c p * toF V F (w p i)) • pullAb D F k α (b i) := by
-  simp only [hw, map_sum, map_smulₛₗ, Finset.smul_sum, Finset.sum_smul, mul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hw, map_sum, map_smulₛₗ, Finset.smul_sum, Finset.sum_smul, mul_smul]
   exact Finset.sum_comm
 
 end Basis

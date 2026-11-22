@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KeyPBIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKeyRuleScaleSectionPowEight
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CombSnd
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KeyPBIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKeyRuleScaleSectionPowEight
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CombSnd
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -53,7 +58,7 @@ def germAt (z : Sp B) : B →+* (Sp B).presheaf.stalk z :=
 
 theorem germAt_valR (x : Sp B ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) (z : Sp B) :
     germAt z (valR x U f) = gs x z U f := by
-  rw [valR, dif_pos h, gs_eq x z U (h trivial), germAt, RingHom.comp_apply, Iso.hom_inv_id_apply]
+  rw [valR, dite_eq_left h, gs_eq x z U (h trivial), germAt, RingHom.comp_apply, Iso.hom_inv_id_apply]
   exact TopCat.Presheaf.germ_res_apply (Sp B).presheaf (homOfLE h) z trivial _
 
 theorem germAt_ext {a b : B} (h : ∀ z : Sp B, germAt z a = germAt z b) : a = b := by
@@ -62,7 +67,7 @@ theorem germAt_ext {a b : B} (h : ∀ z : Sp B, germAt z a = germAt z b) : a = b
   exact (ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (CommRingCat.of B)).inv).1 e
 
 theorem isUnit_valR (x : Sp B ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (u : Γ(X, U)ˣ) : IsUnit (valR x U u.val) := by
-  rw [valR, dif_pos h]
+  rw [valR, dite_eq_left h]
   exact (u.isUnit.map _).map _
 
 theorem valR_sec_chart {Y : Scheme.{0}} {L : LB X} (φ : Y ⟶ X) (n : ℕ)
@@ -150,8 +155,6 @@ theorem le_toProd {L : LB A.left} {i : L.ι} (h : ⊤ ≤ eSec A ⁻¹ᵁ L.U i)
 
 end Tangent
 
-local notation "cF" => ReciprocityTheory.ChartRestriction.G.Geo.Tor.constFn
-
 theorem thJet_change : ∀ (K : Type) [Field K] (P : PolAV (Sp K)) (hp rig hr th hth v hv th' hth' v' hv') (a : K) (M : Matrix (Fin P.g) (Fin P.g) K), (∀ i, LB.Sec.f th' i = constFn P.A.hom _ a * LB.Sec.f th i) → (∀ i, IsLieComb (M i) v (v' i)) → ∀ (m : ℕ), Odd m → (m : K) ≠ 0 → ∀ (I : Type) (pt : I → (baseOver (Sp K) ⟶ P.A)) (ϑ ϑ' : I → K) (J J' : I → Fin P.g → K), ThJet ⟨P, hp, rig, hr, th, hth, v, hv⟩ rfl m pt ϑ J → ThJet ⟨P, hp, rig, hr, th', hth', v', hv'⟩ rfl m pt ϑ' J' → (∀ i, ϑ' i = a * ϑ i) ∧ ∃ c : Fin P.g → K, ∀ i j, J' i j = a * ∑ l, M j l * J i l + c j * ϑ i := by
   intro K _ P hp rig hr th hth v hv th' hth' v' hv' a M hs hM m hm _ I pt ϑ ϑ' J J'
   rintro ⟨θ, hθ, U, t, i₀, c, hU, hi, H⟩ ⟨θ', hθ', U', t', i₁, c', hU', hi', H'⟩
@@ -163,7 +166,7 @@ theorem thJet_change : ∀ (K : Type) [Field K] (P : PolAV (Sp K)) (hp rig hr th
     obtain ⟨i, rfl⟩ : ∃ i : P.L.ι, j = fun _ => i := ⟨j 0, funext fun k => congrArg j (Subsingleton.elim _ _)⟩
     have h := LB.wchart_le P.L (fun _ : Fin 1 => (snd (baseOver (Sp K)) P.A).left) (fun _ => i) 0
     exact (hθ' i h).trans ((congrArg _ (hs i)).trans (polAVSectionInverseImage_mulConstant P _ th θ a hθ i h).symm)
-  have ht : ∀ i j, (t' i).f j = cF (baseOver (Sp K) ⊗ P.A).hom _ a * (t i).f j := fun i j => by
+  have ht : ∀ i j, (t' i).f j = constFn (baseOver (Sp K) ⊗ P.A).hom _ a * (t i).f j := fun i j => by
     obtain ⟨α, s₁, h1, h2, h3, h4⟩ := (hU i).2
     exact tr_unique P rig hm hθ₁ (hU' i).1 (hU i).1 (hU' i).2 (t' := cMul _ a (t i))
       ⟨α, cMul _ a s₁, h1, h2, twist_cMul _ _ _ _ _ _ _ _ _ _ h3, twist_cMul _ _ _ _ _ _ _ _ _ _ h4⟩ j

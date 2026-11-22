@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceFinal
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitLem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceFinal
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 100000
 set_option maxHeartbeats 1600000
@@ -68,8 +72,8 @@ theorem facts_at_e₁ (hPD : PlaceLatDual D) {ψ : AddChar (AF D.host.F) ℂ} (h
   · rw [symplO_right_ce₁ S T hxe]
     exact H _ (hi (cA D e₁) hc₁ y hy) (hmapH (cA D e₁) hc₁.1 y)
 
-open Classical in
 
+open Classical in
 theorem splitLin_of (hPD : PlaceLatDual D) (hlev : LatLevel D) : SplitLin D := by
   intro ψ S T χS χT om hω ΛS ΛT hS hT P e he f₀ hf₀ hvac Tm hTm e₁ he₁ h1 g h hg hh x y hx hy
   have hψ := hω.std

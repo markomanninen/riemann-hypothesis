@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsTranslSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsTranslSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,8 +44,8 @@ section General
 
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] {L : RigLB A}
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem isPullback_whisk {T T' : Over S} (σ : T' ⟶ T) :
     IsPullback (σ ▷ A).left (fst T' A).left (fst T A).left σ.left := by
   refine IsPullback.of_right (h₁₂ := (snd T A).left) (v₁₃ := A.hom) (h₂₂ := T.hom) ?_ ?_

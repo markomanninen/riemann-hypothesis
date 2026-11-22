@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KchMul
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankFixedSubmoduleComplexification
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KchMul
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankFixedSubmoduleComplexification
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -48,9 +52,8 @@ theorem exists_eq_smul_pow_of_pow_eq_tmul :
     have hS : ∀ t, σ.toLinearMap.rTensor A t = S t := by
       intro t
       induction t with
-      | zero => simp
       | tmul b v => simp [S]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     obtain ⟨μ, hμ⟩ := IsAlgClosed.exists_pow_nat_eq (σ C / C) hn
     have h1 : (S w) ^ n = (μ • w) ^ n := by
       rw [← map_pow, smul_pow, hw, hμ, TensorProduct.smul_tmul', smul_eq_mul,

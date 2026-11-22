@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EqOneOfMemPrincOne
-import GroundTheory.GlobalFields.CyclotomicCharacters.PadicUnitsLog
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.EqOneOfMemPrincOne
+public import GroundTheory.GlobalFields.CyclotomicCharacters.PadicUnitsLog
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base
 
@@ -79,7 +83,7 @@ theorem UpperTheory.V.Base.princZl :
       zero_mem' := ⟨1, hf1⟩
       smul_mem' := by
         rintro c _ ⟨a, rfl⟩
-        have hm : Continuous (fun t : ℤ_[l] => t * f a) := continuous_mul_right (f a)
+        have hm : Continuous (fun t : ℤ_[l] => t * f a) := continuous_mul_const (f a)
         have hsub := hm.range_subset_closure_image_dense (PadicInt.denseRange_intCast (p := l))
         have himg : (fun t : ℤ_[l] => t * f a) '' Set.range (Int.cast : ℤ → ℤ_[l]) ⊆ Set.range f := by
           rintro _ ⟨_, ⟨n, rfl⟩, rfl⟩
@@ -101,7 +105,7 @@ theorem UpperTheory.V.Base.princZl :
   let e : H → ℤ_[l] := fun h => Classical.choose ((hI (f h)).1 ⟨h, rfl⟩)
   have he : ∀ h, e h * g = f h := fun h => Classical.choose_spec ((hI (f h)).1 ⟨h, rfl⟩)
   have hminj : Function.Injective (fun t : ℤ_[l] => t * g) := mul_left_injective₀ hg0
-  have hmemb := ((continuous_mul_right g).isClosedEmbedding hminj).isEmbedding
+  have hmemb := ((continuous_mul_const g).isClosedEmbedding hminj).isEmbedding
   have hec : Continuous e := by
     rw [hmemb.continuous_iff]
     have : ((fun t : ℤ_[l] => t * g) ∘ e) = f := funext he

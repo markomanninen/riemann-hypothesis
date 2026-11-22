@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliWordSumExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 open Formalism.REAL Formalism.QuantumDeterminants
@@ -12,16 +16,21 @@ namespace Formalism.FourierDecayAlt.P.CutMP.En
 theorem inCC_wordSum {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {A : ℝ} {m n : ℕ}
     {F : B.Mat k r → E} (hF : B.InCC A (m + n) F) :
     ∀ L : List (ℂ × List (B.Mat k r)), (∀ cw ∈ L, (∀ X ∈ cw.2, B.unitLie k r X) ∧ cw.2.length ≤ n) →
-      B.InCC A m (fun g => (L.map fun cw => cw.1 • B.Rw cw.2 F g).sum)
-  | [], _ => ⟨0, by simpa using (Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_zero (k := k) (r := r) (E := E) (A := A) (m := m))⟩
-  | cw :: L, hL => by
+      B.InCC A m (fun g => (L.map fun cw => cw.1 • B.Rw cw.2 F g).sum) := by
+  intro L
+  induction L with
+  | nil =>
+    intro _
+    exact ⟨0, by simpa using (Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_zero (k := k) (r := r) (E := E) (A := A) (m := m))⟩
+  | cons cw L ih =>
+    intro hL
     have h1 : B.InCC A m (fun g => cw.1 • B.Rw cw.2 F g) := by
       have hw := hL cw (by simp)
       have h0 : B.InCC A (m + cw.2.length) F :=
         Formalism.FourierDecayAlt.P.BetaSesquilinearity.sInCC_mono le_rfl (by omega) hF
       obtain ⟨c, hc⟩ := Formalism.FourierDecayAlt.P.BetaSesquilinearity.InCC_Rw (fun X hX => (hw.1 X hX).1) h0
       exact ⟨_, Formalism.FourierDecayAlt.P.BetaSesquilinearity.CCle_smul cw.1 hc⟩
-    have h2 := inCC_wordSum hF L (fun cw' hcw' => hL cw' (by simp [hcw']))
+    have h2 := ih (fun cw' hcw' => hL cw' (List.mem_cons_of_mem cw hcw'))
     obtain ⟨c₁, hc₁⟩ := h1
     obtain ⟨c₂, hc₂⟩ := h2
     refine ⟨c₁ + c₂, ?_⟩

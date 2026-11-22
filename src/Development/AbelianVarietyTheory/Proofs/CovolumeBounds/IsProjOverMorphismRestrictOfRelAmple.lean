@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,12 +28,6 @@ theorem isUnit_resG_sec (a : L.Sec) (k : L.ι) {W : Y.Opens} (ha : W ≤ nonzero
   have h : W ≤ Y.basicOpen (a.f k) := (le_inf ha hk).trans (nonzeroLocus_inf_chart a k).le
   have := (Y.toRingedSpace.isUnit_res_basicOpen (a.f k)).map (resG Y h)
   exact (congrArg IsUnit (resG_resG (Y.basicOpen_le (a.f k)) h (a.f k))).mp this
-
-theorem le_nonzeroLocus_of_isUnit (a : L.Sec) (k : L.ι) {W : Y.Opens} (hk : W ≤ L.U k)
-    (h : IsUnit (resG Y hk (a.f k))) : W ≤ nonzeroLocus a := by
-  have := Y.basicOpen_of_isUnit h
-  rw [Scheme.basicOpen_res] at this
-  exact (this.ge.trans inf_le_right).trans (basicOpen_le_nonzeroLocus a k)
 
 theorem ext_charts (a : L.Sec) {W : Y.Opens} (ha : W ≤ nonzeroLocus a) {r r' : Γ(Y, W)}
     (h : ∀ k, resG Y (inf_le_left : W ⊓ L.U k ≤ W) r = resG Y inf_le_left r') : r = r' :=
@@ -113,11 +111,11 @@ theorem basicOpen_secRatio (a b : L.Sec) :
   exact ⟨fun h => ⟨Y.basicOpen_le _ h, (key y (Y.basicOpen_le _ h)).1 h⟩, fun h => (key y h.1).2 h.2⟩
 
 theorem isCoordFamily_secRatio {s : Fin (M + 1) → L.Sec} (hs : ⨆ i, nonzeroLocus (s i) = ⊤) :
-    IsCoordFamily (fun i => nonzeroLocus (s i)) (fun i j => secRatio (s i) (s j)) where
-  cover := hs
-  self _ := secRatio_self _
-  mul _ _ _ := secRatio_mul_secRatio _ _ _ _ _
-  basicOpen_le _ _ := (basicOpen_secRatio _ _).le.trans inf_le_right
+    IsCoordFamily (fun i => nonzeroLocus (s i)) (fun i j => secRatio (s i) (s j)) :=
+  { cover := hs
+    self := fun i => secRatio_self (s i)
+    mul := fun i j k => secRatio_mul_secRatio (s i) (s j) (s k) inf_le_left inf_le_right
+    basicOpen_le := fun i j => (basicOpen_secRatio (s i) (s j)).le.trans inf_le_right }
 
 def toProj (f : Y ⟶ Sp R) (s : Fin (M + 1) → L.Sec) (hs : ⨆ i, nonzeroLocus (s i) = ⊤) : Y ⟶ PSpace R M :=
   (isCoordFamily_secRatio hs).toHom f
@@ -216,10 +214,6 @@ def toProjIso : LB.Iso ((O1 R M).pull (toProj f s hs)) L where
   s p := (isUnit_resG_sec (s (p.2 ⟨⟩)) p.1
     (inf_le_right.trans (pullback_O1_toProj_chart f s hs p.2).le) inf_le_left).unit
 
-theorem val_toProjIso (k : L.ι) (i : PUnit → Fin (M + 1)) :
-    (@id (Γ(Y, L.U k ⊓ ((O1 R M).pull (toProj f s hs)).U i)ˣ) ((toProjIso f s hs).s (k, i))).val =
-      resG Y inf_le_left ((s (i ⟨⟩)).f k) := rfl
-
 theorem secMaps_toProjIso (j : Fin (M + 1)) :
     SecMaps (toProjIso f s hs) (secPull (coord R M j) (toProj f s hs)) (s j) := by
   rintro ⟨k, i⟩
@@ -250,32 +244,12 @@ theorem toProjIso_isGen : (toProjIso f s hs).IsGen := by
 theorem lbIso_pullback_O1_toProj : LBIso ((O1 R M).pull (toProj f s hs)) L :=
   ⟨toProjIso f s hs, toProjIso_isGen f s hs⟩
 
-theorem eq_toProjIso {w : LB.Iso ((O1 R M).pull (toProj f s hs)) L}
-    (hw : ∀ j, SecMaps w (secPull (coord R M j) (toProj f s hs)) (s j)) : w = toProjIso f s hs := by
-  obtain ⟨w⟩ := w
-  refine congrArg LB.Gen.mk (funext ?_)
-  rintro ⟨k, i⟩
-  have e := hw (i ⟨⟩) (k, i)
-  have e' := (resG_secPull_coord (toProj f s hs) (i ⟨⟩) i
-    (inf_le_right : L.U k ⊓ _ ≤ _)).trans pullRatio_self
-  exact Units.ext (e.trans ((congrArg (_ * ·) e').trans (mul_one _))).symm
-
 variable {f s}
 
-include hs in
 
+include hs in
 theorem exists_chart_of_iSup_nonzeroLocus (y : Y) : ∃ k, y ∈ L.U k :=
   (Opens.mem_iSup.1 (hs.ge (Set.mem_univ y))).elim fun _ h => exists_chart_of_mem_nonzeroLocus h
-
-theorem eq_toProj_of_secMaps {φ : Y ⟶ PSpace R M} (hφ : φ ≫ PSpace.str R M = f)
-    {w : LB.Iso ((O1 R M).pull φ) L} (hw : ∀ j, SecMaps w (secPull (coord R M j) φ) (s j)) :
-    φ = toProj f s hs := by
-  refine eq_toProj_of_locally hs hφ fun y => ?_
-  obtain ⟨k, hk⟩ := exists_chart_of_iSup_nonzeroLocus hs y
-  obtain ⟨i, hi⟩ := exists_mem_chart R M (φ y)
-  have hi' : y ∈ ((O1 R M).pull φ).U fun _ => i := (pull_U (O1 R M) φ fun _ => i).ge hi
-  exact ⟨L.U k ⊓ ((O1 R M).pull φ).U fun _ => i, ⟨hk, hi'⟩, k, inf_le_left, i, _, _, fun j =>
-    (hw j (k, fun _ => i)).trans (congrArg (_ * ·) (resG_secPull_coord φ j (fun _ => i) inf_le_right))⟩
 
 end
 
@@ -310,16 +284,6 @@ theorem toProj_eq_of_locally {t : Fin (M + 1) → L'.Sec} (ht : ⨆ i, nonzeroLo
     toProj f t ht = toProj f s hs :=
   toProj_eq_comp_of_locally (f := f) hs (𝟙 Y) ht H
 
-include hs in
-
-theorem iSup_nonzeroLocus_secScale (u : Γ(Y, ⊤)ˣ) : ⨆ i, nonzeroLocus (secScale u.val (s i)) = ⊤ := by
-  simp only [nonzeroLocus_secScale, Y.basicOpen_of_isUnit u.isUnit, top_inf_eq, hs]
-
-theorem toProj_secScale (u : Γ(Y, ⊤)ˣ) :
-    toProj f (fun i => secScale u.val (s i)) (iSup_nonzeroLocus_secScale hs u) = toProj f s hs :=
-  toProj_eq_of_locally hs _ fun y => (exists_chart_of_iSup_nonzeroLocus hs y).elim fun k hk =>
-    ⟨L.U k, hk, k, le_rfl, k, le_rfl, resG Y le_top u.val, fun _ =>
-      (resG_self _ _).trans (congrArg (_ * ·) (resG_self _ _).symm)⟩
 
 theorem toProj_eq_of_secMaps {t : Fin (M + 1) → L'.Sec} (ht : ⨆ i, nonzeroLocus (t i) = ⊤)
     {w : LB.Iso L L'} (hw : ∀ j, SecMaps w (s j) (t j)) : toProj f t ht = toProj f s hs := by
@@ -328,8 +292,8 @@ theorem toProj_eq_of_secMaps {t : Fin (M + 1) → L'.Sec} (ht : ⨆ i, nonzeroLo
   obtain ⟨l, hl⟩ := exists_chart_of_iSup_nonzeroLocus ht y
   exact ⟨L'.U l ⊓ L.U k, ⟨hl, hk⟩, k, inf_le_right, l, inf_le_left, _, fun j => hw j (l, k)⟩
 
-include hs in
 
+include hs in
 theorem iSup_nonzeroLocus_of_secMaps (hL : L.IsLB) (hL' : L'.IsLB) {t : Fin (M + 1) → L'.Sec}
     {w : LB.Iso L L'} (hw : ∀ j, SecMaps w (s j) (t j)) : ⨆ i, nonzeroLocus (t i) = ⊤ :=
   (iSup_congr fun i => ((hw i).nonzeroLocus_eq hL hL').symm).trans hs
@@ -340,15 +304,10 @@ theorem toProj_secPull (g : Z ⟶ Y) :
     ⟨g ⁻¹ᵁ L.U k, hk, k, le_rfl, fun _ => k, (pull_U L g fun _ => k).ge, 1, fun _ =>
       (resG_resG _ _ _).trans (one_mul _).symm⟩
 
-theorem toProj_eq_comp_of_secMaps (g : Z ⟶ Y) {B : LB Z} {t : Fin (M + 1) → B.Sec}
-    (ht : ⨆ i, nonzeroLocus (t i) = ⊤) {w : LB.Iso (L.pull g) B}
-    (hw : ∀ j, SecMaps w (secPull (s j) g) (t j)) : toProj (g ≫ f) t ht = g ≫ toProj f s hs :=
-  (toProj_eq_of_secMaps (iSup_nonzeroLocus_secPull hs g) ht hw).trans (toProj_secPull hs g)
-
 end
 
-variable (R M) in
 
+variable (R M) in
 theorem toProj_coord :
     toProj (PSpace.str R M) (coord R M) (iSup_nonzeroLocus_coord R M) = 𝟙 (PSpace R M) :=
   (eq_toProj_of_locally _ (Category.id_comp _) fun y => (exists_mem_chart R M y).elim fun i hi =>
@@ -453,20 +412,6 @@ theorem isProjOver_morphismRestrict_of_relAmple {S : Scheme.{0}} {A : Over S} [G
   obtain ⟨N, -, M, s, H⟩ := h U hU
   exact isProjOver_of_veryAmpleBy ((veryAmpleBy_comp_iff (R := Γ(S, U)) (A.hom ∣_ U) hU.isoSpec.hom s).2 H)
 
-theorem veryAmpleAt_iff {S : Scheme.{0}} (A : Over S) [GrpObj A] (B : LB A.left) (N : ℕ) :
-    VeryAmpleAt A B N ↔ ∀ (U : S.Opens) (hU : IsAffineOpen U), ∃ (M : ℕ)
-      (s : Fin (M + 1) → (powOver A B U N).Sec) (hs : ⨆ i, nonzeroLocus (s i) = ⊤),
-      IsClosedImmersion (toProj (R := Γ(S, U)) (A.hom ∣_ U ≫ hU.isoSpec.hom) s hs) :=
-  forall₂_congr fun U hU => exists₂_congr fun _ s =>
-    (veryAmpleBy_comp_iff (R := Γ(S, U)) (A.hom ∣_ U) hU.isoSpec.hom s).symm.trans (veryAmpleBy_iff _ s)
-
-theorem relAmple_iff {S : Scheme.{0}} (A : Over S) [GrpObj A] (B : LB A.left) :
-    RelAmple A B ↔ ∀ (U : S.Opens) (hU : IsAffineOpen U), ∃ N : ℕ, 1 ≤ N ∧ ∃ (M : ℕ)
-      (s : Fin (M + 1) → (powOver A B U N).Sec) (hs : ⨆ i, nonzeroLocus (s i) = ⊤),
-      IsClosedImmersion (toProj (R := Γ(S, U)) (A.hom ∣_ U ≫ hU.isoSpec.hom) s hs) :=
-  forall₂_congr fun U hU => exists_congr fun _ => and_congr_right fun _ => exists₂_congr fun _ s =>
-    (veryAmpleBy_comp_iff (R := Γ(S, U)) (A.hom ∣_ U) hU.isoSpec.hom s).symm.trans (veryAmpleBy_iff _ s)
-
 theorem isProjOver_of_relAmple {A : Over (Sp R)} [GrpObj A] {B : LB A.left} (h : RelAmple A B) :
     IsProjOver A.hom := by
   obtain ⟨N, -, M, s, H⟩ := h ⊤ (isAffineOpen_top _)
@@ -480,38 +425,5 @@ theorem isProjOver_polAV (P : PolAV (Sp R)) : IsProjOver P.A.hom :=
   isProjOver_of_relAmple P.ample
 
 end Group
-
-theorem toProj_spec (f : Y ⟶ Sp R) (s : Fin (M + 1) → L.Sec) (hs : ⨆ i, nonzeroLocus (s i) = ⊤) :
-    toProj f s hs ≫ PSpace.str R M = f ∧
-    (∃ h : ∀ i, toProj f s hs ⁻¹ᵁ Proj.basicOpen (grading R M) (X i) = nonzeroLocus (s i),
-      ∀ i j k, resG Y (inf_le_right : nonzeroLocus (s i) ⊓ L.U k ≤ L.U k) ((s j).f k) =
-        resG Y inf_le_left (((toProj f s hs).appLE (chart R M i) _ (h i).ge).hom (ratio R M i j)) *
-          resG Y inf_le_right ((s i).f k)) ∧
-    (∃! w : LB.Iso ((O1 R M).pull (toProj f s hs)) L,
-      w.IsGen ∧ ∀ j, SecMaps w (secPull (coord R M j) (toProj f s hs)) (s j)) ∧
-    (∀ (φ : Y ⟶ PSpace R M) (w : LB.Iso ((O1 R M).pull φ) L), φ ≫ PSpace.str R M = f →
-      (∀ j, SecMaps w (secPull (coord R M j) φ) (s j)) → φ = toProj f s hs) ∧
-    (∀ u : Γ(Y, ⊤)ˣ, ∃ hu : ⨆ i, nonzeroLocus (secScale u.val (s i)) = ⊤,
-      toProj f (fun i => secScale u.val (s i)) hu = toProj f s hs) ∧
-    (∀ (B : LB Y) (t : Fin (M + 1) → B.Sec) (w : LB.Iso L B), L.IsLB → B.IsLB →
-      (∀ j, SecMaps w (s j) (t j)) → ∃ ht : ⨆ i, nonzeroLocus (t i) = ⊤, toProj f t ht = toProj f s hs) ∧
-    (∀ (T : Scheme.{0}) (g : T ⟶ Y), ∃ hg : ⨆ i, nonzeroLocus (secPull (s i) g) = ⊤,
-      toProj (g ≫ f) (fun i => secPull (s i) g) hg = g ≫ toProj f s hs) ∧
-    (IsClosedImmersion (toProj f s hs) ↔ VeryAmpleBy f L s) ∧
-    ∀ P : PolAV (Sp R), IsProjOver P.A.hom :=
-  ⟨toProj_str f s hs,
-    ⟨toProj_preimage_chart f s hs, fun i j k => (secRatio_spec (s i) (s j) k).trans
-      (congrArg (resG Y inf_le_left · * _) (pullRatio_toProj f s hs i j).symm)⟩,
-    ⟨toProjIso f s hs, ⟨toProjIso_isGen f s hs, secMaps_toProjIso f s hs⟩,
-      fun _ hw => eq_toProjIso f s hs hw.2⟩,
-    fun _ _ hφ hw => eq_toProj_of_secMaps hs hφ hw,
-    fun u => ⟨_, toProj_secScale hs u⟩,
-    fun _ _ _ hL hB hw => ⟨iSup_nonzeroLocus_of_secMaps hs hL hB hw, toProj_eq_of_secMaps hs _ hw⟩,
-    fun _ g => ⟨_, toProj_secPull hs g⟩,
-    ⟨fun h => (veryAmpleBy_iff f s).2 ⟨hs, h⟩, fun h => ((veryAmpleBy_iff f s).1 h).2⟩,
-    isProjOver_polAV⟩
-
-example : VeryAmpleBy (PSpace.str R M) (O1 R M) (coord R M) :=
-  (veryAmpleBy_iff _ _).2 ⟨iSup_nonzeroLocus_coord R M, by rw [toProj_coord]; infer_instance⟩
 
 end GlobalTheory.ProjSpace

@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwrowLemmas
+
+@[expose] public section
 
 namespace Formalism.GradedWeylDivisibility
 
@@ -12,11 +16,11 @@ theorem extNu_anti {n : ℕ} {ν : Fin n → ℕ} (hν : Antitone ν) {i j : ℕ
   unfold hwrowExtNu
   by_cases hj : j < n
   · have hi : i < n := lt_of_le_of_lt hij hj
-    rw [dif_pos hj, dif_pos hi]
+    rw [dite_eq_left hj, dite_eq_left hi]
     first
     | exact hν (Fin.mk_le_mk.2 hij)
     | exact hν (show (⟨i, hi⟩ : Fin n) ≤ ⟨j, hj⟩ from hij)
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     exact Nat.zero_le _
 
 theorem sum_range_tsub_from (g : ℕ → ℕ) (hg : ∀ i j, i ≤ j → g j ≤ g i) (a : ℕ) :
@@ -65,7 +69,7 @@ theorem highestWeightVectorRowWeight : HWRowWeight := by
       have hs : hwrowExtNu ν s.val = ν s := by
         first
         | simp [hwrowExtNu, s.isLt]
-        | (unfold hwrowExtNu; rw [dif_pos s.isLt])
+        | (unfold hwrowExtNu; rw [dite_eq_left s.isLt])
       have hs' : nuNext ν s = hwrowExtNu ν (s.val + 1) := rfl
       rw [hs', ← hs]
       by_cases h : a.val ≤ s.val
@@ -90,7 +94,7 @@ theorem highestWeightVectorRowWeight : HWRowWeight := by
     · have h0 : hwrowExtNu ν n = 0 := by
         first
         | simp [hwrowExtNu]
-        | (unfold hwrowExtNu; rw [dif_neg (lt_irrefl n)])
+        | (unfold hwrowExtNu; rw [dite_eq_right (lt_irrefl n)])
       rw [if_pos ha, h0, Nat.sub_zero]
       all_goals first | rfl | simp [rowNu, hwrowExtNu, ha]
     · rw [if_neg ha]

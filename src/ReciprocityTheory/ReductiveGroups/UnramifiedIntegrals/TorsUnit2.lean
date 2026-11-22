@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
-import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical
@@ -30,6 +34,19 @@ theorem torsUnit2 (K : Type) [NormedField K] [IsUltrametricDist K] (g2 g3 : K) (
       ring
     rw [this, hΔ]
 
+  have hNoTorsion : ∀ P : (Formalism.L2.Th1.A.shortW g2 g3).toAffine.Point,
+      Formalism.ELL.InFormalGroupPoints P → n • P = 0 → P = 0 := by
+    intro P hP' hnP'
+    by_contra hP0
+    obtain ⟨m, hm⟩ : ∃ m, n = m + 1 :=
+      Nat.exists_eq_succ_of_ne_zero (by rintro rfl; simp at hn)
+    subst n
+    have h := (Formalism.ELL.FormalGroupPointsTorsion.mulz hW P hP' hP0 m).2
+    rw [hnP', Affine.Point.zero_def] at h
+    simp only [Formalism.ELL.FormalGroupPointsTorsion.zf, zero_sub, norm_neg,
+      norm_mul, hn, one_mul] at h
+    exact lt_irrefl _ h
+
   have n27 : ‖(27 : K)‖ = 1 := by
     rw [show (27 : K) = 3 * 3 * 3 by norm_num, norm_mul, norm_mul, h3]; norm_num
   have hg2' : ‖g2‖ = 1 := by
@@ -41,7 +58,11 @@ theorem torsUnit2 (K : Type) [NormedField K] [IsUltrametricDist K] (g2 g3 : K) (
       rw [e, Formalism.ELL.FormalGroupPointsTorsion.dom (by rw [hΔ]; exact hs), hΔ]
     rw [norm_pow] at h1
     exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) (by norm_num)).1 h1
-  obtain ⟨hx, -⟩ := Formalism.ELL.torsionIntegral_of Formalism.ELL.formal_group_points_no_prime_to_p_torsion K _ hW hD n hn x y h hP
+  have hx : ‖x‖ ≤ 1 := by
+    by_contra hx
+    push Not at hx
+    exact Affine.Point.some_ne_zero h
+      (hNoTorsion _ hx hP)
   by_contra hne
   have hx1 : ‖x‖ < 1 := lt_of_le_of_ne hx hne
   have heq : y ^ 2 = x ^ 3 - g2 / 4 * x - g3 / 4 := by
@@ -90,7 +111,7 @@ theorem torsUnit2 (K : Type) [NormedField K] [IsUltrametricDist K] (g2 g3 : K) (
       rw [Formalism.ELL.FormalGroupPointsTorsion.dom (hs.trans hl)]
       exact hl
   have hQ0 : Affine.Point.some x y h + Affine.Point.some x y h = 0 := by
-    refine Formalism.ELL.formal_group_points_no_prime_to_p_torsion K _ hW hD n hn _ hQ ?_
+    apply hNoTorsion _ hQ
     rw [nsmul_add, hP, add_zero]
   obtain ⟨k, rfl⟩ : ∃ k, n = 2 * k + 1 := by
     have := Nat.odd_iff.2 (by omega : n % 2 = 1)

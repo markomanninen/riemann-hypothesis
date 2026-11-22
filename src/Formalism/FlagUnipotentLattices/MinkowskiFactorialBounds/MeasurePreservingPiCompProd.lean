@@ -1,4 +1,8 @@
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+module
+
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+
+@[expose] public section
 
 namespace Formalism.HermitianLatticeCounting.P
 
@@ -230,7 +234,8 @@ theorem s5b7_ideal (p : Ideal O) [hp : p.IsMaximal] (hp0 : p ≠ ⊥) [Finite (O
         ext c
         have h1 : (c : O) = ∑ i, s c i * ((g (fun j => if i = j then 1 else 0) : p) : O) := by
           conv_lhs => rw [← hgs c, pi_eq_sum_univ (s c)]
-          simp [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum]
         simp only [LinearMap.lcomp_apply, Submodule.subtype_apply, LinearMap.sum_apply,
           LinearMap.smul_apply, LinearMap.comp_apply, LinearMap.proj_apply,
           LinearMap.toSpanSingleton_apply]
@@ -251,7 +256,7 @@ theorem s5b7_ideal (p : Ideal O) [hp : p.IsMaximal] (hp0 : p ≠ ⊥) [Finite (O
   apply le_antisymm
   · let ev : (p →ₗ[O] X) →ₗ[O] X := LinearMap.applyₗ (⟨t, htp⟩ : p)
     have hev : Function.Injective ev := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro ψ hψ
       ext c
       have h1 := hcomm ψ ⟨t, htp⟩ c
@@ -263,7 +268,7 @@ theorem s5b7_ideal (p : Ideal O) [hp : p.IsMaximal] (hp0 : p ≠ ⊥) [Finite (O
       (LinearMap.lcomp O X (Submodule.subtype p)) ∘ₗ
         (LinearMap.ringLmapEquivSelf O O X).symm.toLinearMap
     have hj : Function.Injective j := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       have h1 : j x ⟨t, htp⟩ = 0 := by rw [hx]; rfl
       have h2 : t • x = 0 := by simpa [j] using h1
@@ -326,7 +331,7 @@ theorem s5b7_step (hO : ¬ IsField O) (M X : Type) [AddCommGroup M] [Module O M]
         exact sub_add_cancel _ _
       simp only [LinearMap.lcomp_apply, Submodule.subtype_apply, LinearMap.add_apply,
         LinearMap.comp_apply]
-      rw [h1, ← map_add, h2]
+      rw [h1, ← map_add (f := _), h2]
     · rintro ⟨Φ, rfl⟩
       refine ⟨LinearMap.toSpanSingleton O X (Φ x), ?_⟩
       ext a
@@ -348,7 +353,7 @@ theorem s5b7_step (hO : ¬ IsField O) (M X : Type) [AddCommGroup M] [Module O M]
       ring
     simp only [LinearMap.lcomp_apply, Submodule.subtype_apply, LinearMap.toSpanSingleton_apply,
       LinearMap.sub_apply, LinearMap.comp_apply]
-    rw [h3, map_add, map_smul]
+    rw [h3, map_add (f := _), map_smul]
     abel
   rw [← hker, Nat.card_congr (LinearMap.quotKerEquivOfSurjective Θ hsurj).toEquiv,
     s5b7_ideal p hp0 X, Nat.card_congr e.toEquiv]
@@ -400,7 +405,7 @@ theorem s5b7_main (hO : ¬ IsField O) (X : Type) [AddCommGroup X] [Module O X] [
     have h1 := ih _ hlt P N ι1 hι1 hA rfl
     have h2 := s5b7_step hO M X N hN
     have hinj : Function.Injective (LinearMap.lcomp O X ι1) := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro φ hφ
       ext y
       obtain ⟨a, b, hab, hEq⟩ := Finite.exists_ne_map_eq_of_infinite
@@ -435,92 +440,7 @@ section herm
 
 variable {F K : Type} [Field F] [CommRing K] [StarRing K] [Algebra F K]
 
-lemma s5b7_conj_mem {n : Type} [Fintype n] [DecidableEq n]
-    (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c) (g : Matrix n n K) :
-    ∀ A ∈ hermSub F K n hF, conjMap F g A ∈ hermSub F K n hF := by
-  intro A hA
-  have hA' : Aᴴ = A := hA
-  change (g * (A * gᴴ))ᴴ = g * (A * gᴴ)
-  simp [Matrix.conjTranspose_mul, hA', Matrix.mul_assoc]
-
-noncomputable def congruenceRestrict {n : Type} [Fintype n] [DecidableEq n]
-    (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c) (g : Matrix n n K) :
-    hermSub F K n hF →ₗ[F] hermSub F K n hF :=
-  (conjMap F g).restrict (s5b7_conj_mem hF g)
-
-def s5b7_Q {n : Type} [Fintype n] [DecidableEq n]
-    (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c) (g : Matrix n n K) : Prop :=
-  algebraMap F K (LinearMap.det (congruenceRestrict hF g)) = (g.det * star g.det) ^ Fintype.card n
-
 variable {n : Type} [Fintype n] [DecidableEq n]
-
-noncomputable def borderedHermitian (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c) :
-    (hermSub F K n hF × (n → K) × F) →ₗ[F] Matrix (n ⊕ Unit) (n ⊕ Unit) K where
-  toFun x := fromBlocks (x.1 : Matrix n n K) (replicateCol Unit x.2.1)
-    (replicateRow Unit (star x.2.1)) (Matrix.of fun _ _ => algebraMap F K x.2.2)
-  map_add' x y := by
-    ext (i | i) (j | j) <;> simp
-  map_smul' c x := by
-    ext (i | i) (j | j)
-    · simp
-    · simp
-    · simp [Algebra.smul_def, hF]
-    · simp [Algebra.smul_def]
-
-lemma borderedHermitian_apply (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c)
-    (x : hermSub F K n hF × (n → K) × F) :
-    borderedHermitian hF x = fromBlocks (x.1 : Matrix n n K) (replicateCol Unit x.2.1)
-    (replicateRow Unit (star x.2.1)) (Matrix.of fun _ _ => algebraMap F K x.2.2) := rfl
-
-lemma borderedHermitian_mem (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c)
-    (x : hermSub F K n hF × (n → K) × F) : borderedHermitian hF x ∈ hermSub F K (n ⊕ Unit) hF := by
-  have h1 : (x.1 : Matrix n n K)ᴴ = x.1 := x.1.2
-  change (borderedHermitian hF x)ᴴ = borderedHermitian hF x
-  rw [borderedHermitian_apply, fromBlocks_conjTranspose, h1]
-  rw [fromBlocks_inj]
-  refine ⟨rfl, ?_, ?_, ?_⟩
-  · simp [conjTranspose_replicateRow]
-  · simp [conjTranspose_replicateCol]
-  · ext i j
-    simp [hF]
-
-noncomputable def s5b7_Psi (hF : ∀ c : F, star (algebraMap F K c) = algebraMap F K c)
-    (hfix : ∀ x : K, star x = x → x ∈ Set.range (algebraMap F K)) [Nontrivial K] :
-    (hermSub F K n hF × (n → K) × F) ≃ₗ[F] hermSub F K (n ⊕ Unit) hF :=
-  LinearEquiv.ofBijective ((borderedHermitian hF).codRestrict _ (borderedHermitian_mem hF)) (by
-    constructor
-    · intro x y hxy
-      have h := congrArg Subtype.val hxy
-      change borderedHermitian hF x = borderedHermitian hF y at h
-      rw [borderedHermitian_apply, borderedHermitian_apply, fromBlocks_inj] at h
-      obtain ⟨h1, h2, -, h4⟩ := h
-      have h2' : x.2.1 = y.2.1 := by
-        funext i
-        simpa using congrFun (congrFun h2 i) ()
-      have h4' : x.2.2 = y.2.2 := by
-        have := congrFun (congrFun h4 ()) ()
-        exact (algebraMap F K).injective this
-      exact Prod.ext (Subtype.ext h1) (Prod.ext h2' h4')
-    · rintro ⟨X, hX⟩
-      have hX' : Xᴴ = X := hX
-      rw [← fromBlocks_toBlocks X, fromBlocks_conjTranspose, fromBlocks_inj] at hX'
-      obtain ⟨h1, h2, h3, h4⟩ := hX'
-      obtain ⟨f, hf⟩ := hfix (X.toBlocks₂₂ () ()) (by
-        simpa using congrFun (congrFun h4 ()) ())
-      refine ⟨(⟨X.toBlocks₁₁, h1⟩, fun i => X.toBlocks₁₂ i (), f), ?_⟩
-      apply Subtype.ext
-      change borderedHermitian hF _ = X
-      rw [borderedHermitian_apply]
-      conv_rhs => rw [← fromBlocks_toBlocks X]
-      rw [fromBlocks_inj]
-      refine ⟨rfl, ?_, ?_, ?_⟩
-      · ext i j
-        rfl
-      · rw [← h3]
-        ext i j
-        rfl
-      · ext i j
-        exact hf)
 
 end herm
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPowOfCommutatorEqSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPowOfCommutatorEqSmul
+
+@[expose] public section
 
 open GlobalTheory.LeviCut
 
@@ -256,8 +260,8 @@ lemma fill (hD : GlRel N D) (x : W) (hZ : ∀ c < N, D c c x = 0) (hup : ∀ k, 
 
 end GlobalTheory.LeviCut.GridProof
 
-open GlobalTheory.LeviCut.GridProof in
 
+open GlobalTheory.LeviCut.GridProof in
 theorem GlobalTheory.LeviCut.gridInv_of_rankOne_rankTwo (h1 : RankOne) (h2 : RankTwo) : GridInv := by
   intro W _ _ a b K D hD hB T hT
   have hcommG : ∀ c < a + b, Commute (D c c) (gridP D K a b a) := by

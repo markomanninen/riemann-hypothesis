@@ -1,10 +1,14 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactCasimirHighestWeight
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantCompactSpan
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.HighestWeightDifferencesNat
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InnerEqZeroOfWeight
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactCasimirHighestWeight
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantCompactSpan
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.HighestWeightDifferencesNat
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InnerEqZeroOfWeight
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Formalism.REAL (KHighest IsWeight CasK kSpan)
@@ -447,7 +451,7 @@ theorem wtMajor_of (hlow : CompanionTheory.D.DSIC.LowSpan) : CompanionTheory.D.L
       intro A c hAL hAp hAx
       have h1 : A xL - c • xL ∈ L := L.sub_mem (hAL _ hxL) (L.smul_mem _ hxL)
       have h0 : A xL + A xp = c • xL + c • xp := by
-        rw [← map_add, ← smul_add, ← hxsplit, hAx]
+        rw [← map_add (f := _), ← smul_add, ← hxsplit, hAx]
       have h2 : A xL - c • xL = -(A xp - c • xp) := by
         rw [neg_sub, sub_eq_sub_iff_add_eq_add, add_comm (c • xp)]
         exact h0

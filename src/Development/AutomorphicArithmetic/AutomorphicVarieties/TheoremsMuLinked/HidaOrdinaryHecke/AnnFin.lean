@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Th.AnnihilatorQuotientFinite.annFin :
         have hb' : ∀ y : M, μ b y ∈ N := hb
         show ∀ y : M, μ (a + b) y ∈ N
         intro y
-        rw [map_add, LinearMap.add_apply]
+        rw [map_add (f := _), LinearMap.add_apply]
         exact N.add_mem (ha' y) (hb' y)
       zero_mem' := by
         show ∀ y : M, μ 0 y ∈ N
@@ -54,7 +58,7 @@ theorem UpperTheory.V.Th.AnnihilatorQuotientFinite.annFin :
     · rw [map_zero]
       exact Submodule.zero_mem _
     · intro a b _ _ ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
     · intro a z _ hz
       have hd : a - algebraMap O A (x a) ∈ RingHom.ker x := by
@@ -72,7 +76,7 @@ theorem UpperTheory.V.Th.AnnihilatorQuotientFinite.annFin :
       map_add' := by
         intro a b
         funext i
-        simp [map_add]
+        simp [map_add (f := _)]
       map_smul' := by
         intro o t
         funext i
@@ -96,7 +100,7 @@ theorem UpperTheory.V.Th.AnnihilatorQuotientFinite.annFin :
       · rw [map_zero]
         exact N.zero_mem
       · intro a b _ _ ha hb
-        rw [map_add]
+        rw [map_add (f := _)]
         exact N.add_mem ha hb
       · intro a z _ hz
         rw [LinearMap.map_smul]

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,14 +14,14 @@ namespace UpperTheory.Esk.ImaginaryUnitActionLemmas
 
 open UpperTheory.Esk
 
-open Classical in
 
+open Classical in
 def Fx {I : Type} (f : X I → ℂ) (w : I → ℂ) : ℂ :=
   if h : ∀ v, (w v).im ≠ 0 then f (fun v => ⟨w v, h v⟩) else 0
 
 theorem Fx_eq {I : Type} (f : X I → ℂ) {w : I → ℂ} (h : ∀ v, (w v).im ≠ 0) :
     Fx f w = f (fun v => ⟨w v, h v⟩) := by
-  rw [Fx, dif_pos h]
+  rw [Fx, dite_eq_left h]
 
 theorem Fx_val {I : Type} (f : X I → ℂ) (z : X I) : Fx f (fun v => (z v).1) = f z :=
   Fx_eq f (fun v => (z v).2)
@@ -56,7 +60,7 @@ theorem analytic_Fx (hO : Osg) {I : Type} [Fintype I] (f : X I → ℂ) (hf : Se
       · simpa [Function.update_of_ne huv] using hw' u
     rw [Fx_eq f hu]
     unfold ext1
-    rw [dif_pos ht']
+    rw [dite_eq_left ht']
     congr 1
     funext u
     apply Subtype.ext
@@ -145,7 +149,7 @@ theorem chart_smooth (hO : Osg) (hB : B1b) (F : Type) [Field F] [NumberField F] 
     have hE : ∀ v i j, ContDiffAt ℝ ∞ (fun m : TR.Lie F 2 => M v m i j) (TR.toL y.val) := by
       intro v i j
       have hc : ∀ l, ContDiff ℝ ∞ (fun m : TR.Lie F 2 => m l j v) := fun l =>
-        (contDiff_apply ℝ ℝ v).comp ((contDiff_apply ℝ _ j).comp (contDiff_apply ℝ _ l))
+        (contDiff_apply ℝ (fun _ => ℝ) v).comp ((contDiff_apply ℝ _ j).comp (contDiff_apply ℝ _ l))
       exact (ContDiff.sum fun l _ => contDiff_const.mul (hc l)).contDiffAt
     have hdt : ∀ v, dt (M v (TR.toL y.val)) ≠ 0 := by
       intro v

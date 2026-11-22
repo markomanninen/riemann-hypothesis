@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.MemOfProjTwoEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PropASt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.MemOfProjTwoEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.PropASt
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -13,15 +17,14 @@ namespace Col
 theorem extend_hom {M : Type} [AddCommGroup M] [Module.Free ℤ M] [Module.Finite ℤ M]
     (N : Submodule ℤ M) (hsat : ∀ (k : ℤ) (x : M), k ≠ 0 → k • x ∈ N → x ∈ N) (ψ : N →ₗ[ℤ] ℤ) :
     ∃ Ψ : M →ₗ[ℤ] ℤ, ∀ x : N, Ψ x = ψ x := by
-  have : IsAddTorsionFree (M ⧸ N) := by
-    refine ⟨fun n hn a b hab => ?_⟩
+  have : Module.IsTorsionFree ℤ (M ⧸ N) := by
+    refine ⟨fun k hk a b hab => ?_⟩
     induction a using Submodule.Quotient.induction_on with | H x => ?_
     induction b using Submodule.Quotient.induction_on with | H y => ?_
     simp only at hab
     rw [← Submodule.Quotient.mk_smul, ← Submodule.Quotient.mk_smul, Submodule.Quotient.eq] at hab
     rw [Submodule.Quotient.eq]
-    refine hsat n (x - y) (by exact_mod_cast hn) ?_
-    rw [natCast_zsmul, smul_sub]; exact hab
+    exact hsat k (x - y) hk.ne_zero (by simpa only [smul_sub] using hab)
   have : Module.Free ℤ (M ⧸ N) := Module.free_of_finite_type_torsion_free'
   obtain ⟨σ, hσ⟩ := Module.projective_lifting_property N.mkQ (LinearMap.id) (Submodule.mkQ_surjective N)
   have hmem : ∀ x : M, x - σ (N.mkQ x) ∈ N := by
@@ -106,7 +109,7 @@ theorem GB_span (hP : Ext.PackingCount) :
     refine ⟨wmap (IR I) (γ - y'), wmap_mem_GB hIp, ?_⟩
     have ht : t = wmap (IR I) v := (wmap_jj _ t).symm
     have : t - wmap (IR I) (γ - y') = wmap (IR I) (v - γ) + wmap (IR I) y' := by
-      rw [ht, ← map_sub, ← map_add]; congr 1; abel
+      rw [ht, ← map_sub, ← map_add (f := _)]; congr 1; abel
     rw [this]
     refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
     · rw [norm_wmap hK]; exact (norm_proj_two_le hK _).trans hvγ
@@ -210,8 +213,8 @@ theorem exp_sign (q : ℕ) (k : ℤ) :
   congr 1
   rw [← zpow_natCast, ← zpow_mul, mul_comm]
 
+open scoped Classical in
 open Classical in
-
 def kaB (X : PT E) (I : Submodule ℤ (Vsp X.dim)) (q : ℕ) (t : EuclideanSpace ℂ (Fin (gB (IR I)))) : ℂ :=
   if h : ∃ x ∈ Ip X I, wmap (IR I) x = t then (X.eps h.choose : ℂ) ^ q else 1
 
@@ -222,7 +225,7 @@ include hI
 
 theorem kaB_wmap (q : ℕ) {x : Vsp X.dim} (hx : x ∈ Ip X I) : kaB X I q (wmap (IR I) x) = (X.eps x : ℂ) ^ q := by
   have h : ∃ x' ∈ Ip X I, wmap (IR I) x' = wmap (IR I) x := ⟨x, hx, rfl⟩
-  rw [kaB, dif_pos h]
+  rw [kaB, dite_eq_left h]
   have hs := h.choose_spec
   have hp : p2 (IR I) h.choose = p2 (IR I) x := by
     rw [← jj_wmap' (hK_of hI), ← jj_wmap' (hK_of hI) x, hs.2]
@@ -273,7 +276,7 @@ theorem YB_coc (q : ℕ) : (YB hI hP q).Coc q := by
   obtain ⟨y, hy, rfl⟩ := mem_GB.1 hγ'
   have hxy : x + y ∈ Ip X I := (Ip X I).add_mem hx hy
   obtain ⟨k, hk⟩ := X.integral x y hx.1 hy.1
-  rw [← map_add, YB_ka hI hP q hxy, YB_ka hI hP q hx, YB_ka hI hP q hy, Hf_wmap (hK_of hI),
+  rw [← map_add (f := _), YB_ka hI hP q hxy, YB_ka hI hP q hx, YB_ka hI hP q hy, Hf_wmap (hK_of hI),
     herm_im_proj_two hI hx hy, hk, exp_sign]
   have he := X.eps_add x hx.1 y hy.1
   rw [hk, show Real.pi * (k : ℝ) = (k : ℝ) * Real.pi by ring, Real.cos_int_mul_pi] at he

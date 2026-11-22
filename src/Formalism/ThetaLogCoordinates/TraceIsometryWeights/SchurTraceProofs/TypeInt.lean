@@ -1,6 +1,10 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.HomRelationHolds
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInt
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementB
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.HomRelationHolds
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.InvInt
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -28,7 +32,8 @@ theorem weightZeroProj_weight (G₁ : GlW K U n) (G₂ : GlW K V n) (S : Finset 
   ext x
   have hd : dl c c = 0 := sub_self _
   change G₂.E c c (pr0 G₁ G₂ S φ x) - pr0 G₁ G₂ S φ (G₁.E c c x) = 0
-  rw [scalar_projection_apply, scalar_projection_apply, map_sum, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [scalar_projection_apply, scalar_projection_apply, map_sum, sub_eq_zero]
   refine Finset.sum_congr rfl fun ν _ => ?_
   rw [G₂.diag, G₁.shift, hd, sub_zero, G₁.diag, map_smul, map_smul]
 
@@ -55,7 +60,8 @@ theorem comp_comm2 (G₁ : GlW K U n) (G₂ : GlW K V n) (θ : U →ₗ[K] V)
   have hx : ∑ ν ∈ insert μ S, G₁.comp ν x = x :=
     G₁.sum_comp x _ (fun ν hν => hS ν (fun h => hν (Finset.mem_insert_of_mem h)))
   conv_rhs => rw [← hx]
-  rw [map_sum, map_sum, Finset.sum_eq_single μ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_eq_single μ]
   · exact (hw μ).symm
   · intro ν _ hne
     rw [← hw ν, G₂.idem, if_neg (Ne.symm hne)]
@@ -66,7 +72,8 @@ theorem weightZeroProj_comp (G₁ : GlW K U n) (G₂ : GlW K V n) (S : Finset (F
     (hθ : ∀ μ x, θ (G₁.comp μ x) = G₂.comp μ (θ x)) (φ : U →ₗ[K] U) :
     pr0 G₁ G₂ S (θ ∘ₗ φ) = θ ∘ₗ pr0 G₁ G₁ S φ := by
   ext x
-  simp only [LinearMap.comp_apply, scalar_projection_apply, map_sum, hθ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, scalar_projection_apply, map_sum, hθ]
 
 theorem weightZeroProj_trace (G₁ : GlW K U n) (S : Finset (Fin n → ℤ)) (hS : ∀ x, ∀ μ ∉ S, G₁.comp μ x = 0) (φ : U →ₗ[K] U) :
     LinearMap.trace K U (pr0 G₁ G₁ S φ) = LinearMap.trace K U φ := by
@@ -81,13 +88,15 @@ theorem weightZeroProj_trace (G₁ : GlW K U n) (S : Finset (Fin n → ℤ)) (hS
   have hp : pr0 G₁ G₁ S φ = ∑ ν ∈ S, G₁.comp ν * (φ * G₁.comp ν) := by
     ext x
     simp [scalar_projection_apply]
-  rw [hp, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hp, map_sum]
   calc ∑ ν ∈ S, LinearMap.trace K U (G₁.comp ν * (φ * G₁.comp ν))
       = ∑ ν ∈ S, LinearMap.trace K U (φ * G₁.comp ν) := by
         refine Finset.sum_congr rfl fun ν _ => ?_
         rw [LinearMap.trace_mul_comm, mul_assoc, hidem ν]
     _ = LinearMap.trace K U φ := by
-        rw [← map_sum, ← Finset.mul_sum, hsum, mul_one]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← Finset.mul_sum, hsum, mul_one]
 
 def Psi (G₁ : GlW K U n) (G₂ : GlW K V n) (S : Finset (Fin n → ℤ)) (l : ℕ) : Module.End K (U →ₗ[K] V) :=
   InvOp (homAct G₁.E G₂.E) l (List.finRange n) * pr0 G₁ G₂ S
@@ -160,7 +169,8 @@ theorem QQ_id (hNat : InvNat) (G₁ : GlW K U n) (G₂ : GlW K V n) (S : Finset 
     rw [smul_smul, hc, map_smul]
   rw [QQ_apply, Finset.smul_sum]
   simp_rw [key, hsc]
-  rw [← map_sum, b.sum_repr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, b.sum_repr]
 
 end gen
 
@@ -303,7 +313,7 @@ theorem exists_transport (G : GlW K V n) {W : Submodule K V} (hW : G.Stable W) (
       obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
       have hy' : G.E c d y ∈ G.gS {h} := G.gS_stable _ c d y hy
       have hz' : G.E c d z ∈ G.gS {h'} := G.gS_stable _ c d z hz
-      simp only [map_add]
+      simp only [map_add (f := _)]
       cases i
       · rw [hπ2 false _ hy', hπ2 false _ hy, hπ3 false true (by decide) _ hz', hπ3 false true (by decide) _ hz,
           map_zero]
@@ -312,7 +322,7 @@ theorem exists_transport (G : GlW K V n) {W : Submodule K V} (hW : G.Stable W) (
     have hW' : G.Stable (G.gS {h} ⊔ G.gS {h'}) := by
       intro a b x hx
       obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ (Submodule.mem_sup_left (G.gS_stable _ a b y hy))
         (Submodule.mem_sup_right (G.gS_stable _ a b z hz))
     have hWf' : G.FinW (G.gS {h} ⊔ G.gS {h'}) := ⟨S, fun x hx => hS x (sup_le hUW hU'W hx)⟩

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntermediateFieldOfForallComplexAutFixedStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumOfIsIntegersLattice
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemIntermediateFieldOfForallComplexAutFixedStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumOfIsIntegersLattice
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDiscreteValuationRingValuationSubringAtPrime
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
+
+@[expose] public section
+
 open NumberField IsDedekindDomain WeierstrassCurve GlobalTheory GlobalTheory.Published GlobalTheory.CMModel Formalism.L2.Th1.F
 open scoped IntermediateField BigOperators Topology
 
@@ -33,13 +38,16 @@ theorem stable_sym_mem (F : IntermediateField ℚ ℂ) (L : PeriodPair) (ι : Ty
   refine ⟨GlobalTheory.T.mem_intermediateField_of_forall_complexAut_fixed F _ fun σ hσ ↦ ?_, GlobalTheory.T.mem_intermediateField_of_forall_complexAut_fixed F _ fun σ hσ ↦ ?_,
     GlobalTheory.T.mem_intermediateField_of_forall_complexAut_fixed F _ fun σ hσ ↦ ?_, fun h2 ↦ GlobalTheory.T.mem_intermediateField_of_forall_complexAut_fixed F _ fun σ hσ ↦ ?_⟩
   · obtain ⟨e, a, -, -, -⟩ := key σ hσ
-    rw [map_sum]; simp only [a]; exact Equiv.sum_comp e (fun i ↦ L.weierstrassP (T i))
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; simp only [a]; exact Equiv.sum_comp e (fun i ↦ L.weierstrassP (T i))
   · obtain ⟨e, -, b, -, -⟩ := key σ hσ
-    rw [map_sum]; simp only [map_div₀, map_ofNat, b]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; simp only [map_div₀, map_ofNat, b]
     exact Equiv.sum_comp e (fun i ↦ L.derivWeierstrassP (T i) / 2)
   · obtain ⟨e, a, b, -, g⟩ := key σ hσ
-    rw [map_sum]
-    simp only [map_div₀, map_add, map_mul, map_pow, map_neg, map_ofNat, a, b, g]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+    simp only [map_div₀, map_add (f := _), map_mul, map_pow, map_neg, map_ofNat, a, b, g]
     exact Equiv.sum_comp e (fun i ↦ (3 * L.weierstrassP (T i) ^ 2 + -L.g₂ / 4) / (2 * (L.derivWeierstrassP (T i) / 2)))
   · obtain ⟨e, a, -, c, -⟩ := key σ hσ
     rw [map_prod]; simp only [map_sub, a, c h2]

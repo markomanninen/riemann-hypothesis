@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemCmComplexOfPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefActionReprMemSubfield
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemCmComplexOfPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefActionReprMemSubfield
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.IndefR.Links NumberField
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -35,9 +39,11 @@ theorem repr_map_mem {K V κ : Type} [Field K] [AddCommGroup V] [Module K V] [Fi
     (v : V) (hv : ∀ j, b.repr v j ∈ F) (i : κ) : b.repr (g v) i ∈ F := by
   have h1 : g v = ∑ j, b.repr v j • g (b j) := by
     conv_lhs => rw [← b.sum_repr v]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [h1]
-  simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul]
   exact F.sum_mem fun j _ => F.mul_mem (hv j) (hg i j)
 
 theorem levFn_isOfFinOrder {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
@@ -87,7 +93,8 @@ theorem action_rational (V : TH.HSp D) (C : CoefDat D V) {S : CSD D.what₂.LL} 
       (repr_map_mem _ _ _ (hrho γE) _ (hr j)) i
   · rw [he, ← hM.1 γ γE hγ]
     conv_lhs => rw [← (S.bV.map e).sum_repr (rho γE (e (S.bV j)))]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [he, LinearMap.map_smulₛₗ, Module.Basis.map_apply]
 
@@ -129,28 +136,6 @@ theorem lifts_dcOp_mem_cmMax (R : RealDat D A Ks) (h : R.fam_tie) (j : Fin D.R.m
   obtain ⟨gramR, c0R, c0L, hT⟩ := h
   exact (dcOp_matrix_mem_cmMax (Vc D j) (R.cV j).coef (R.βV j) (R.datVt j t) (R.B.L j t).pres (hT.coefL j t) (hT.mapL j)
     (fun g i k => (coefAction_repr_mem_subfield (labLL D) _ _ labLL_mem_cmMax g i k).2) B U hU).2 a b
-
-theorem hecke_opMat_mem_cmMax : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), R.Char F → (∀ t i a b, (A.fam.R t).opMat i a b ∈ Formalism.DivisionValues.cmMax D.what₂.LL) ∧ ∀ j t i a b, (A.fam.L j t).opMat i a b ∈ Formalism.DivisionValues.cmMax D.what₂.LL := by
-  intro D G _ _ Pl0 T A Ks _ _ _ R F hC
-  refine ⟨fun t i a b => ?_, fun j t i a b => ?_⟩
-  · obtain ⟨P, k⟩ := i
-    show LinearMap.toMatrix (A.MtildeCSD t).basis (A.MtildeCSD t).basis (A.heckeR t (P, k)) a b ∈ _
-    rcases Nat.eq_zero_or_pos k with rfl | hk
-    · rw [(hC.fam.degR t P).1]
-      exact toMatrix_one_mem _ _ _ _
-    rcases le_or_gt k D.sp.X'.rank with hk' | hk'
-    · exact rows_dcOp_mem_cmMax R hC.fam.tie t _ _ ((R.B.R t).hecke.op_eq (P, k) ⟨hk, hk'⟩) a b
-    · rw [(hC.fam.degR t P).2 k hk', map_zero]
-      exact Subfield.zero_mem _
-  · obtain ⟨P, k⟩ := i
-    show LinearMap.toMatrix (A.MtCSD j t).basis (A.MtCSD j t).basis (A.heckeL j t (P, k)) a b ∈ _
-    rcases Nat.eq_zero_or_pos k with rfl | hk
-    · rw [(hC.fam.degL j t P).1]
-      exact toMatrix_one_mem _ _ _ _
-    rcases le_or_gt k (Vc D j).rank with hk' | hk'
-    · exact lifts_dcOp_mem_cmMax R hC.fam.tie j t _ _ ((R.B.L j t).hecke.op_eq (P, k) ⟨hk, hk'⟩) a b
-    · rw [(hC.fam.degL j t P).2 k hk', map_zero]
-      exact Subfield.zero_mem _
 
 end GlobalTheory.HeckeRational
 

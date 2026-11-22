@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
-import Formalism.IncomingBounds.FlowDegreeBounds.PadicValFactorialRatioProd
+module
+
+public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
+public import Formalism.IncomingBounds.FlowDegreeBounds.PadicValFactorialRatioProd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -62,27 +66,6 @@ theorem coeff_genLog {l : ℕ} (hl : 2 ≤ l) (p : τ → τ) (x : τ) (n : τ �
   have := lt_sq_pow hl e
   omega
 
-def genLogTrunc (l : ℕ) (p : τ → τ) (x : τ) (M : ℕ) : MvPowerSeries τ K :=
-  ∑ e ∈ Finset.range M, ((l : K) ^ e)⁻¹ • (X (p^[e] x)) ^ ((l ^ 2) ^ e)
-
-theorem coeff_genLogTrunc (l : ℕ) (p : τ → τ) (x : τ) (M : ℕ) (n : τ →₀ ℕ) :
-    coeff n (genLogTrunc (K := K) l p x M) = ∑ e ∈ Finset.range M,
-      if n = Finsupp.single (p^[e] x) ((l ^ 2) ^ e) then ((l : K) ^ e)⁻¹ else 0 := by
-  simp only [genLogTrunc, map_sum, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_X_pow, mul_ite, mul_one,
-    mul_zero]
-
-theorem low_genLog_sub {l : ℕ} (hl : 2 ≤ l) (p : τ → τ) (x : τ) (M : ℕ) :
-    Low M (genLog (K := K) l p x - genLogTrunc l p x M) := by
-  intro d hd
-  rw [map_sub, coeff_genLog hl p x d hd, coeff_genLogTrunc, sub_self]
-
-theorem subst_genLogTrunc [Finite τ] {g : τ → MvPowerSeries τ K} (hs : HasSubst g) (l : ℕ)
-    (p : τ → τ) (x : τ) (M : ℕ) :
-    subst g (genLogTrunc (K := K) l p x M) =
-      ∑ e ∈ Finset.range M, ((l : K) ^ e)⁻¹ • (g (p^[e] x)) ^ ((l ^ 2) ^ e) := by
-  rw [← MvPowerSeries.coe_substAlgHom hs]
-  simp only [genLogTrunc, map_sum, map_smul, map_pow, MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_X hs]
-
 private theorem coeff_pow_eq_zero_of_degree_lt' {h : MvPowerSeries τ K} (h0 : constantCoeff h = 0) :
     ∀ (m : ℕ) (n : τ →₀ ℕ), n.degree < m → coeff n (h ^ m) = 0 := by
   intro m
@@ -95,7 +78,7 @@ private theorem coeff_pow_eq_zero_of_degree_lt' {h : MvPowerSeries τ K} (h0 : c
     replace hab : ab.1 + ab.2 = n := Finset.HasAntidiagonal.mem_antidiagonal.1 hab
     by_cases ha : ab.1 = 0
     · rw [ha, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, h0, zero_mul]
-    · have hdeg : ab.1.degree + ab.2.degree = n.degree := by rw [← hab, map_add]
+    · have hdeg : ab.1.degree + ab.2.degree = n.degree := by rw [← hab, map_add (f := _)]
       have hpos : 0 < ab.1.degree := by
         rcases Nat.eq_zero_or_pos ab.1.degree with h' | h'
         · exact absurd ((Finsupp.degree_eq_zero_iff _).1 h') ha

@@ -1,5 +1,9 @@
-import ReciprocityTheory.GeometryOfNumbers.AsymptoticSequences.DefectSt
-import Mathlib
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.AsymptoticSequences.DefectSt
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 

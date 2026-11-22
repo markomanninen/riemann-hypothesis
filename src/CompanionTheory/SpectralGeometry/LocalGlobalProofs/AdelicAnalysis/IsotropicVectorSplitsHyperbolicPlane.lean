@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ variable {σ J}
 
 theorem hE_conj (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J j i) = J i j) (u v : Fin M → E) :
     σ (hE σ J u v) = hE σ J v u := by
-  simp only [hE, hform, map_sum, map_mul, RingHom.coe_coe, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, hform, map_sum, map_mul, RingHom.coe_coe, hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ]; ring
@@ -76,9 +81,9 @@ theorem finrank_perp (hσ : ∀ a, σ (σ a) = a) (hJ : ∀ i j, σ (J j i) = J 
     rintro ⟨a, b⟩
     refine ⟨a • y + b • x, Prod.ext ?_ ?_⟩
     · change hLin σ J x (a • y + b • x) = a
-      simp only [map_add, map_smul, hLin_apply, smul_eq_mul, hxy, hxx, mul_one, mul_zero, add_zero]
+      simp only [map_add (f := _), map_smul, hLin_apply, smul_eq_mul, hxy, hxx, mul_one, mul_zero, add_zero]
     · change hLin σ J y (a • y + b • x) = b
-      simp only [map_add, map_smul, hLin_apply, smul_eq_mul, hyy, hyx, mul_one, mul_zero, zero_add]
+      simp only [map_add (f := _), map_smul, hLin_apply, smul_eq_mul, hyy, hyx, mul_one, mul_zero, zero_add]
   have h := LinearMap.finrank_range_add_finrank_ker ((hLin σ J x).prod (hLin σ J y))
   rw [LinearMap.range_eq_top.mpr hs, finrank_top, Module.finrank_prod, Module.finrank_self,
     Module.finrank_fin_fun] at h
@@ -142,7 +147,8 @@ theorem selfDualLattice_projection_mem_of_unit_length (hσ : ∀ a, σ (σ a) = 
     simp only [c, Fin.cons_zero, Fin.cons_succ] at ha
     have e1 := congrArg (hLin σ J x) ha
     have e2 := congrArg (hLin σ J y) ha
-    simp only [map_add, map_smul, map_sum, hLin_apply, smul_eq_mul, hxx, hyy, hxy, hyx, hbx, hby,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_smul, map_sum, hLin_apply, smul_eq_mul, hxx, hyy, hxy, hyx, hbx, hby,
       map_zero, mul_zero, zero_add, add_zero, mul_one, Finset.sum_const_zero] at e1 e2
     rw [e1, e2] at ha
     simp only [zero_smul, zero_add] at ha

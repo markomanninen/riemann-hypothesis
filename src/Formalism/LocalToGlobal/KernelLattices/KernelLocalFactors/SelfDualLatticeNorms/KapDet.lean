@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.RelIndexNeZeroOfNsmulMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NormLeOneOfRoot
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NsmulRelIdxMem
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.CayleyGaussianIntegrals.RelIndexNeZeroOfNsmulMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NormLeOneOfRoot
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NsmulRelIdxMem
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -36,7 +40,7 @@ theorem good_add {p : ℕ} (hp : p.Prime) (Lt : AddSubgroup V) (T : V →ₗ[ℂ
   obtain ⟨k, hk, h1⟩ := hx
   obtain ⟨l, hl, h2⟩ := hy
   refine ⟨l * k, fun h => (hp.dvd_mul.1 h).elim hl hk, ?_⟩
-  rw [map_add, smul_add]
+  rw [map_add (f := _), smul_add]
   refine Lt.add_mem (mul_smul_mem Lt h1 l) ?_
   rw [mul_comm]
   exact mul_smul_mem Lt h2 k
@@ -67,7 +71,7 @@ theorem good_unif {p : ℕ} (hp : p.Prime) (Lt : AddSubgroup V) [hfin : Module.F
         exact mul_smul_mem Lt (hk2 y) r
       | zero => simp only [ZeroMemClass.coe_zero, map_zero, smul_zero]; exact Lt.zero_mem
       | add y z _ _ h1 h2 =>
-        simp only [AddSubgroup.coe_add, map_add, smul_add]
+        simp only [AddSubgroup.coe_add, map_add (f := _), smul_add]
         exact Lt.add_mem h1 h2
       | smul n y _ h1 =>
         have e : ((n • y : Lt) : V) = n • (y : V) := rfl
@@ -135,8 +139,6 @@ variable (D : D7)
 abbrev Ix : Type := Fin 4 × D.what₂.Tau
 
 def fK : D.host.K →+* ℂ := D.host.φ₀.comp (algebraMap D.host.K D.host.E)
-
-theorem fK_apply (x : D.host.K) : fK D x = D.host.φ₀ (x : D.host.E) := rfl
 
 def vec (v : Ix D → D.host.K) : Ix D → ℂ := fun w => fK D (v w)
 

@@ -1,5 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EmbeddingMemCoefficientField
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.FrobeniusOrbits Formalism.L2.Host Formalism.L2.NT Formalism.L2.TwC Formalism.L2.NC NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting
 
 noncomputable section
@@ -10,7 +16,7 @@ theorem valuation_sub_lt_of_redThrough_eq {Ω : Type} [Field Ω] (A : ValuationS
     (κ : IsLocalRing.ResidueField A ≃+* Formalism.CyclotomicNorms.Fbar g) {x y : Ω} (hx : x ∈ A) (hy : y ∈ A)
     (h : redThrough A κ x = redThrough A κ y) : A.valuation (x - y) < 1 := by
   unfold redThrough at h
-  rw [dif_pos hx, dif_pos hy] at h
+  rw [dite_eq_left hx, dite_eq_left hy] at h
   have h1 := κ.injective h
   have h2 : (⟨x, hx⟩ : A) - ⟨y, hy⟩ ∈ IsLocalRing.maximalIdeal A := by
     rw [← IsLocalRing.residue_eq_zero_iff, map_sub, h1, sub_self]

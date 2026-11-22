@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -126,8 +131,8 @@ theorem HasVal.add {s t : Φ} {v w : L} (hv : HasVal y z s v) (hw : HasVal y z t
     ?_, ?_, ?_⟩
   · rw [add_comm]; exact isMultiHomog_mul hg' hh
   · rw [map_mul]; exact mul_ne_zero h0 h0'
-  · rw [map_add, map_mul, map_mul, map_mul, e, e']; ring
-  · rw [map_add, map_mul, map_mul, map_mul, ev, ev']; ring
+  · rw [map_add (f := _), map_mul, map_mul, map_mul, e, e']; ring
+  · rw [map_add (f := _), map_mul, map_mul, map_mul, ev, ev']; ring
 
 theorem hasVal_intCast (n : ℤ) : HasVal y z (n : Φ) (n : L) :=
   ⟨0, C n, 1, isMultiHomog_C_zero n, isMultiHomog_one, by simp, by simp, by simp⟩
@@ -139,9 +144,6 @@ theorem hasVal_one : HasVal y z 1 1 := by simpa using hasVal_intCast (y := y) (z
 theorem HasVal.neg {s : Φ} {v : L} (hv : HasVal y z s v) : HasVal y z (-s) (-v) := by
   simpa using (hasVal_intCast (y := y) (z := z) (-1)).mul hv
 
-theorem HasVal.sub {s t : Φ} {v w : L} (hv : HasVal y z s v) (hw : HasVal y z t w) : HasVal y z (s - t) (v - w) := by
-  simpa [sub_eq_add_neg] using hv.add hw.neg
-
 theorem HasVal.ne_zero (hz : IsPt y z) {s : Φ} {v : L} (hv : HasVal y z s v) (h0 : v ≠ 0) : s ≠ 0 := by
   rintro rfl
   exact h0 (hv.unique hz hasVal_zero)
@@ -152,10 +154,6 @@ theorem HasVal.inv (hz : IsPt y z) {s : Φ} {v : L} (hv : HasVal y z s v) (hv0 :
   refine ⟨d, h, g, hh, hg, by rw [ev]; exact mul_ne_zero hv0 h0, ?_, ?_⟩
   · rw [e, inv_mul_cancel_left₀ hs]
   · rw [ev, inv_mul_cancel_left₀ hv0]
-
-theorem HasVal.div (hz : IsPt y z) {s t : Φ} {v w : L} (hv : HasVal y z s v) (hw : HasVal y z t w) (hw0 : w ≠ 0) :
-    HasVal y z (s / t) (v / w) := by
-  simpa [div_eq_mul_inv] using hv.mul (hw.inv hz hw0)
 
 theorem HasVal.sum {σ : Type} (S : Finset σ) {s : σ → Φ} {v : σ → L} (h : ∀ a ∈ S, HasVal y z (s a) (v a)) :
     HasVal y z (∑ a ∈ S, s a) (∑ a ∈ S, v a) := by
@@ -207,8 +205,6 @@ def regO (y : (Σ k, ι k) → Φ) (z : (Σ k, ι k) → L) : Subring Φ where
   zero_mem' := ⟨_, hasVal_zero⟩
   neg_mem' := fun ⟨_, h⟩ => ⟨_, h.neg⟩
 
-theorem mem_regO {s : Φ} : s ∈ regO y z ↔ ∃ v, HasVal y z s v := Iff.rfl
-
 def valO (hz : IsPt y z) : regO y z →+* L where
   toFun s := s.2.choose
   map_one' := (Exists.choose_spec (1 : regO y z).2).unique hz hasVal_one
@@ -255,17 +251,6 @@ theorem IsPt.comp {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (
 
 theorem eval_map_eq_aeval (z : (Σ k, ι k) → ℂ) (f : MRing ι) : eval z (map (Int.castRingHom ℂ) f) = aeval z f := by
   rw [eval_map, aeval_def]; rfl
-
-theorem isPt_iff_mem_mcPts {z : (Σ k, ι k) → ℂ} : IsPt y z ↔ z ∈ mcPts (mCoordIdeal y) := by
-  simp only [IsPt, mcPts, Set.mem_setOf_eq, eval_map_eq_aeval]
-
-theorem hasVal_valAt {z : (Σ k, ι k) → ℂ} (hz : IsPt y z) {s : Φ} (hs : RegAt y (mCoordIdeal z) s) :
-    HasVal y z s (valAt y s z) := by
-  obtain ⟨v, d, g, h, hg, hh, h0, e, ev⟩ := exists_hasVal_of_regAt hs
-  have : IsValueAt y s z v := ⟨d, g, h, hg, hh, hz.aeval_ne hh h0, e, by rwa [eval_map_eq_aeval], by
-    rw [eval_map_eq_aeval, eval_map_eq_aeval, ev, mul_div_cancel_right₀ _ h0]⟩
-  rw [valAt_eq (isPt_iff_mem_mcPts.1 hz) this]
-  exact ⟨d, g, h, hg, hh, h0, e, ev⟩
 
 section Flag
 

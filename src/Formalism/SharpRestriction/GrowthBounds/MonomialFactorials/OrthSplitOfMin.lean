@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthBasisLatOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.OrthBasisLatOf
+
+@[expose] public section
 
 noncomputable section
 

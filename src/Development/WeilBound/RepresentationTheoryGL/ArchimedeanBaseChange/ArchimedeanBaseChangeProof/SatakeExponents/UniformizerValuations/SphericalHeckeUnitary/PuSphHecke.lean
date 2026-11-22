@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SphStarU
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SphStarU
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,11 +55,11 @@ theorem pu_sph_inr (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) (w : 
 
 theorem pu_sph_self (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) :
     UGen.sph (Sum.inr ⟨w0, h⟩ :: l) w0 = lconv h (UGen.sph l w0) := by
-  rw [pu_sph_inr, dif_pos rfl]
+  rw [pu_sph_inr, dite_eq_left rfl]
 
 theorem pu_sph_ne (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) (w : Pl E) (hw : w0 ≠ w) :
     UGen.sph (Sum.inr ⟨w0, h⟩ :: l) w = UGen.sph l w := by
-  rw [pu_sph_inr, dif_neg hw]
+  rw [pu_sph_inr, dite_eq_right hw]
 
 def pu_pls (l : List (UGen E n)) : Finset (Pl E) :=
   (l.filterMap fun x => Sum.elim (fun _ => none) (fun y : Σ w : Pl E, UL n w → ℂ => some y.1) x).toFinset
@@ -146,7 +150,7 @@ theorem pu_prod (hL : LocAlg) (h1 : SphOne) (hC : CompUnit) (hS : SphStarU) (hE 
   induction l with
   | nil =>
     have h : ∏ᶠ w ∈ S \ ↑B, twTr (F.σ i w).ρ (KL n w) (KL n w) (UGen.sph ([] : List (UGen E n)) w) LinearMap.id = 1 :=
-      (finprod_mem_congr (g := fun _ => (1 : ℂ)) rfl fun w hw =>
+      (finprod_mem_congr (g := fun _ => (1 : ℂ)) rfl fun w (hw : w ∈ S \ (↑B : Set (Pl E))) =>
         (pu_tw h1 hC hS hE hB i w hw.1 hw.2 0 0 (pu_hz _) (pu_hz _)).2).trans (finprod_mem_one _)
     rw [h, mul_one]
     rfl

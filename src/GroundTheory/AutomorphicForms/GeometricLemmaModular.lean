@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdmissibleInduction
-import GroundTheory.AutomorphicForms.CuspidalAdmissible
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdmissibleInduction
+public import GroundTheory.AutomorphicForms.CuspidalAdmissible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -33,10 +38,6 @@ abbrev leviPar : Subgroup (GL (Fin n) F) := levi F n γ ⊓ blockUpper F n δ
 
 variable {F n γ δ}
 
-theorem mem_lieLeviPar {A : Matrix (Fin n) (Fin n) F} :
-    A ∈ lieLeviPar F n γ δ ↔ ∀ i j, ¬ (γ i = γ j ∧ ¬ δ j < δ i) → A i j = 0 :=
-  Iff.rfl
-
 theorem mem_leviPar_iff {g : GL (Fin n) F} :
     g ∈ leviPar F n γ δ ↔ (g : Matrix (Fin n) (Fin n) F) ∈ lieLeviPar F n γ δ := by
   rw [Subgroup.mem_inf, mem_levi, mem_blockUpper]
@@ -51,7 +52,7 @@ theorem mem_leviPar_iff {g : GL (Fin n) F} :
 theorem mul_mem_lieLeviPar {A B : Matrix (Fin n) (Fin n) F} (hA : A ∈ lieLeviPar F n γ δ)
     (hB : B ∈ lieLeviPar F n γ δ) : A * B ∈ lieLeviPar F n γ δ := by
   intro i j h
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   refine Finset.sum_eq_zero fun k _ => ?_
   by_cases hik : γ i = γ k ∧ ¬ δ k < δ i
   · by_cases hkj : γ k = γ j ∧ ¬ δ j < δ k
@@ -66,7 +67,7 @@ noncomputable def leviParCoord : lieLeviPar F n γ δ ≃ₗ[F] (LeviParIndex n 
   invFun x := ⟨Matrix.of fun i j => if h : γ i = γ j ∧ ¬ δ j < δ i then x ⟨(i, j), h⟩ else 0,
     fun i j hij => by
       simp only [Matrix.of_apply]
-      rw [dif_neg hij]⟩
+      rw [dite_eq_right hij]⟩
   map_add' A B := rfl
   map_smul' c A := rfl
   left_inv A := by
@@ -137,16 +138,6 @@ noncomputable def mulRightLeviPar (l : leviPar F n γ δ) :
     · refine ⟨A * ((l⁻¹ : leviPar F n γ δ) : GL (Fin n) F),
         mul_mem_lieLeviPar hA (mem_leviPar_iff.1 (l⁻¹).2), ?_⟩
       simp [mul_assoc])
-
-@[simp] theorem coe_mulLeftLeviPar (l : leviPar F n γ δ) (A : lieLeviPar F n γ δ) :
-    ((mulLeftLeviPar F n γ δ l A : lieLeviPar F n γ δ) : Matrix (Fin n) (Fin n) F) =
-      ((l : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) * A :=
-  rfl
-
-@[simp] theorem coe_mulRightLeviPar (l : leviPar F n γ δ) (A : lieLeviPar F n γ δ) :
-    ((mulRightLeviPar F n γ δ l A : lieLeviPar F n γ δ) : Matrix (Fin n) (Fin n) F) =
-      A * ((l : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) :=
-  rfl
 
 noncomputable def adLeviPar (l : leviPar F n γ δ) :
     lieLeviPar F n γ δ ≃ₗ[F] lieLeviPar F n γ δ :=
@@ -235,7 +226,7 @@ theorem coe_leviParCoord_symm_single (t : LeviParIndex n γ δ) :
   · obtain ⟨h1, h2⟩ := hij
     have ht : (⟨(i, j), h1 ▸ h2 ▸ t.2⟩ : LeviParIndex n γ δ) = t := by
       ext <;> simp [← h1, ← h2]
-    rw [dif_pos (h1 ▸ h2 ▸ t.2), if_pos ⟨h1, h2⟩, ht, Pi.single_eq_same]
+    rw [dite_eq_left (h1 ▸ h2 ▸ t.2), if_pos ⟨h1, h2⟩, ht, Pi.single_eq_same]
   · rw [if_neg hij]
     split_ifs with h
     · rw [Pi.single_apply, if_neg]
@@ -250,7 +241,7 @@ theorem mul_inv_apply_of_diagonal {g : GL (Fin n) F}
   have h1 : ((g : Matrix (Fin n) (Fin n) F) * ((g⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F)) i j =
       (1 : Matrix (Fin n) (Fin n) F) i j := by
     rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
-  rw [mul_apply, Finset.sum_eq_single i (fun k _ hk => by rw [hg i k (Ne.symm hk), zero_mul])
+  rw [Matrix.mul_apply, Finset.sum_eq_single i (fun k _ hk => by rw [hg i k (Ne.symm hk), zero_mul])
     (by simp)] at h1
   exact h1
 
@@ -270,7 +261,7 @@ theorem inv_apply_of_diagonal {g : GL (Fin n) F}
   have : ((g⁻¹ : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) i j =
       ((g : Matrix (Fin n) (Fin n) F) i i)⁻¹ * (1 : Matrix (Fin n) (Fin n) F) i j := by
     rw [← h, ← mul_assoc, inv_mul_cancel₀ h0, one_mul]
-  rw [this, one_apply]
+  rw [this, Matrix.one_apply]
   split_ifs <;> simp
 
 theorem det_adLeviPar_of_diagonal (l : leviPar F n γ δ)

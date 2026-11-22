@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsC
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsClosedImmersionBlowupGeneratingSections
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsC
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsClosedImmersionBlowupGeneratingSections
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,12 +28,6 @@ inductive IsBlowupSeq {X : Scheme.{0}} : ∀ {X' : Scheme.{0}}, (X' ⟶ X) → P
 theorem IsBlowupSeq.single {X X' : Scheme.{0}} (J : X.IdealSheafData) (π : X' ⟶ X) (h : FinalTheorems.Blowup π J) :
     IsBlowupSeq π := by
   simpa using IsBlowupSeq.step J π .id h
-
-theorem IsBlowupSeq.comp {X X' X'' : Scheme.{0}} {s : X' ⟶ X} {t : X'' ⟶ X'} (hs : IsBlowupSeq s)
-    (ht : IsBlowupSeq t) : IsBlowupSeq (t ≫ s) := by
-  induction ht with
-  | id => simpa using hs
-  | step J π _ h ih => rw [Category.assoc]; exact .step J π ih h
 
 theorem IsBlowupSeq.of_smooth {S Y Y' : Scheme.{0}} {f : Y ⟶ S} {B : Set Y} {s : Y' ⟶ Y}
     (h : IsSmoothBlowupSeq f B s) : IsBlowupSeq s := by
@@ -56,12 +54,6 @@ def ResolutionCharZero : Prop :=
     ∃ (X' : Scheme.{0}) (s : X' ⟶ X),
       IsBlowupSeq s ∧ Smooth (s ≫ g) ∧ IsIso (s ∣_ g.smoothLocus) ∧
         FinalTheorems.Snc (preRed s (g.smoothLocus : Set X)ᶜ g.smoothLocus.isOpen.isClosed_compl)
-
-theorem Resolution.conclusion_of_smooth {k : Type} [Field k] {X : Scheme.{0}} (g : X ⟶ Sp k) [Smooth g] :
-    IsBlowupSeq (𝟙 X) ∧ Smooth (𝟙 X ≫ g) ∧ IsIso (𝟙 X ∣_ g.smoothLocus) ∧
-      FinalTheorems.Snc (preRed (𝟙 X) (g.smoothLocus : Set X)ᶜ g.smoothLocus.isOpen.isClosed_compl) :=
-  ⟨.id, inferInstance, inferInstance, fun y => sncAt_of_not_mem _ y
-    (fun h => h (g.smoothLocus_eq_top.ge (Set.mem_univ y))) (GroundTheory.Arith.SchemeCoh.isRegularLocalRing_stalk_of_smooth_field g y)⟩
 
 theorem ResolutionCharZero.projective (h : ResolutionCharZero) {k : Type} [Field k] [CharZero k] {X : Scheme.{0}}
     (g : X ⟶ Sp k) [LocallyOfFiniteType g] [IsReduced X] (hg : IsProjOver g) :

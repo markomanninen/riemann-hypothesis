@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.TBIdemDen
 
@@ -9,7 +13,8 @@ theorem idemEval : IdemEvalSt := by
   intro E _ _ C _ _ _ ι _ _ b τ σ
   classical
   have hev : evAt σ (idemOf b τ) = ∑ i, σ (trDual b i) * τ (b i) := by
-    simp only [evAt, idemOf, map_sum, Algebra.TensorProduct.productMap_apply_tmul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [evAt, idemOf, map_sum, Algebra.TensorProduct.productMap_apply_tmul,
       AlgHom.id_apply, RingHom.toRatAlgHom_apply]
   rw [hev]
   have hexp : ∀ y : E, y = ∑ i, Algebra.trace ℚ E (y * b i) • trDual b i := by

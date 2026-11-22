@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -72,7 +76,7 @@ theorem ker_psi [IsNoetherianRing A] :
         rw [AdicCompletion.algebraMap_apply]; rfl
       rw [hm]
       exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ m.2)
-    | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   · rw [Ideal.map_le_iff_le_comap]
     intro a ha
     rw [Ideal.mem_comap, RingHom.mem_ker]

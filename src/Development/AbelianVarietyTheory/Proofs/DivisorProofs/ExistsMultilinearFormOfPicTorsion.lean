@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapEqMk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapEqMk
+
+@[expose] public section
+
 open scoped TensorProduct
 
 set_option autoImplicit false
@@ -44,7 +49,7 @@ theorem tensorPow_equiv (c : Pic B) (n : ℕ) :
       PiTensorProduct.tmulEquiv B (Pic.AsModule c) ≪≫ₗ PiTensorProduct.reindex B _ finSumFinEquiv⟩
 
 theorem exists_form : ∀ (B : Type) [CommRing B] (q : ℕ) (c : CommRing.Pic B), c ^ q = 1 →
-    ∃ φ : MultilinearMap B (fun _ : Fin q => CommRing.Pic.AsModule c) B,
+    ∃ φ : (Π _ : Fin q, CommRing.Pic.AsModule c) →ₘₗ[B] B,
       ∀ p : Ideal B, p.IsPrime → ∃ e : CommRing.Pic.AsModule c, φ (fun _ => e) ∉ p := by
   intro B _ q c hc
   obtain ⟨T⟩ := tensorPow_equiv c q
@@ -57,7 +62,7 @@ theorem exists_form : ∀ (B : Type) [CommRing B] (q : ℕ) (c : CommRing.Pic B)
     have hall : ∀ t, ψ t ∈ p := fun t => by
       induction t using PiTensorProduct.induction_on with
       | smul_tprod r x => rw [map_smul, smul_eq_mul]; exact p.mul_mem_left r (h x)
-      | add a b ha hb => rw [map_add]; exact p.add_mem ha hb
+      | add a b ha hb => rw [map_add (f := _)]; exact p.add_mem ha hb
     exact hp.ne_top ((Ideal.eq_top_iff_one p).mpr (by simpa using hall (ψ.symm 1)))
   obtain ⟨e, he⟩ := exists_local_generator (Pic.AsModule c) p
   choose w a hw hwa using fun i => he (x i)
@@ -65,10 +70,11 @@ theorem exists_form : ∀ (B : Type) [CommRing B] (q : ℕ) (c : CommRing.Pic B)
   have hmem' : ψ (PiTensorProduct.tprod B fun _ => e) ∈ p := hmem
   have h1 : ψ (PiTensorProduct.tprod B (fun i => w i • x i)) =
       (∏ i, w i) * ψ (PiTensorProduct.tprod B x) := by
-    rw [MultilinearMap.map_smul_univ, map_smul, smul_eq_mul]
+    simp only [MultilinearMap.map_smul_univ, RingHom.id_apply, map_smul, smul_eq_mul]
   have h2 : ψ (PiTensorProduct.tprod B (fun i => w i • x i)) =
       (∏ i, a i) * ψ (PiTensorProduct.tprod B (fun _ => e)) := by
-    simp_rw [hwa]; rw [MultilinearMap.map_smul_univ, map_smul, smul_eq_mul]
+    simp_rw [hwa]
+    simp only [MultilinearMap.map_smul_univ, RingHom.id_apply, map_smul, smul_eq_mul]
   have hin : (∏ i, w i) * ψ (PiTensorProduct.tprod B x) ∈ p := by
     rw [← h1, h2]; exact p.mul_mem_left _ hmem'
   rcases hp.mem_or_mem hin with h | h

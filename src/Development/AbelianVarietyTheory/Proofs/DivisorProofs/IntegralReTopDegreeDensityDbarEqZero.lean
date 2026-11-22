@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,8 @@ theorem integrable_dbar_integral_eq_zero {n : ℕ} {G : V n → ℂ} (hG : ContD
 
 theorem dens_dbarAt_eq_sum {n : ℕ} (F : V n → Alt n) (v : V n) :
     dens (dbarAt F v) = ∑ a, ∑ S, dbar (fun x => (bas n).repr (F x) S) v (coordVec a) * dens (dzb a * bas n S) := by
-  simp only [dens, dbarAt, coefwise, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.finset_sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dens, dbarAt, coefwise, Finset.mul_sum, mul_smul_comm, map_sum, map_smul, Finsupp.finsetSum_apply,
     Finsupp.smul_apply, smul_eq_mul, Finset.sum_div, mul_div_assoc]
 
 theorem integral_re_dens_dbarAt_eq_zero {n : ℕ} (F : V n → Alt n)
@@ -44,12 +49,12 @@ theorem integral_re_dens_dbarAt_eq_zero {n : ℕ} (F : V n → Alt n)
     (h a S).1.mul_const _
   have hD : Integrable fun v => dens (dbarAt F v) := by
     simp only [dens_dbarAt_eq_sum]
-    exact integrable_finset_sum _ fun a _ => integrable_finset_sum _ fun S _ => hi a S
+    exact integrable_finsetSum _ fun a _ => integrable_finsetSum _ fun S _ => hi a S
   have h0 : ∫ v, dens (dbarAt F v) = 0 := by
     simp only [dens_dbarAt_eq_sum]
-    rw [integral_finset_sum _ fun a _ => integrable_finset_sum _ fun S _ => hi a S]
+    rw [integral_finsetSum _ fun a _ => integrable_finsetSum _ fun S _ => hi a S]
     refine Finset.sum_eq_zero fun a _ => ?_
-    rw [integral_finset_sum _ fun S _ => hi a S]
+    rw [integral_finsetSum _ fun S _ => hi a S]
     refine Finset.sum_eq_zero fun S _ => ?_
     rw [integral_mul_const, (h a S).2, zero_mul]
   have := Complex.reCLM.integral_comp_comm hD

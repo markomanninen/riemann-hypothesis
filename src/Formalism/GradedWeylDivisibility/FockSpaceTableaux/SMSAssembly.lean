@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementC
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
+
+@[expose] public section
 
 open MvPolynomial
 

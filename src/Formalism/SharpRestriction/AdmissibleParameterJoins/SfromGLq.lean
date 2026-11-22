@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLp
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLp
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,8 +86,10 @@ theorem idxRowLoc_eq (g k m : ℕ) [Fact g.Prime] (hm : Even m) (h2 : 2 ≤ m) :
 theorem finprod_typed (D : D7) (h : ∀ i, StandardLattice.SplitsF D (D.host.g i)) (φ : ℕ → ℝ) :
     ∏ᶠ p ∈ S.typedPl D, φ (Ideal.absNorm p.asIdeal) = φ (D.host.g 0) ^ D.R.f * φ (D.host.g 1) ^ D.R.f := by
   have hf : D.R.f ≠ 0 := by
+    have := D.R.two_le_m
+    have := D.R.m_le_f
     unfold Ranks.f Ranks.n
-    positivity
+    omega
   have hfin : ∀ i, ({p : HeightOneSpectrum (𝓞 D.host.F) | ((D.host.g i : ℕ) : 𝓞 D.host.F) ∈ p.asIdeal}).Finite := by
     intro i
     have hc := (h i).1
@@ -128,19 +134,6 @@ theorem idxRowTie_of (D : D7) (h : ∀ i, StandardLattice.SplitsF D (D.host.g i)
     ((N : ℝ) ^ LocalBesselAndTopKernel.dimNS D * (N : ℝ) ^ (D.R.k * (D.R.k - 1) / 2))),
     idxRowLoc_eq _ _ _ D.R.m_even D.R.two_le_m, idxRowLoc_eq _ _ _ D.R.m_even D.R.two_le_m]
   rfl
-
-theorem column_row_ranks_of_columns (D : D7) (Lv : LevelData D) (h4 : StandardLattice.Conclusion4f D Lv) (h2 : StandardLattice.VolumeEqMass₂ D)
-    (hD : StandardLattice.FactDstar D) (hc : ColHyp D) : LocalBesselAndTopKernel.FamilyMidVolume D :=
-  column_row_ranks D Lv h4 h2 hD hc (idxColTie_of D hc.2.1) (idxRowTie_of D hc.2.1)
-
-theorem family_column_row_ranks_of_columns {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (C0 Cg cb Cu cT CT : ℝ)
-    (h : S.OwnEv Fm fun C' Cl x i => LocalBesselAndTopKernel.hyp (Fm.D x i) (Fm.L x i) C0 C' Cl Cg cb Cu cT CT →
-      (∃ Lv : LevelData (Fm.D x i), StandardLattice.Conclusion4f (Fm.D x i) Lv) ∧ StandardLattice.VolumeEqMass₂ (Fm.D x i) ∧ StandardLattice.FactDstar (Fm.D x i) ∧
-        ColHyp (Fm.D x i)) :
-    LocalBesselAndTopKernel.FamilyRanksHypothesis Fm C0 Cg cb Cu cT CT := by
-  refine family_column_row_ranks Fm C0 Cg cb Cu cT CT (S.OwnEv.mono (fun C' Cl x i hxi hh => ?_) h)
-  obtain ⟨h4, h2, hD, hc⟩ := hxi hh
-  exact ⟨h4, h2, hD, hc, idxColTie_of _ hc.2.1, idxRowTie_of _ hc.2.1⟩
 
 end Formalism.MainNotions.J
 

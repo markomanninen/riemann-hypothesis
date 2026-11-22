@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.StepDownStatement
-import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.StepDownStatement
+public import Formalism.RealPlaceAnalysis.SmoothVectorGrowthBound
+
+@[expose] public section
 
 noncomputable section
 

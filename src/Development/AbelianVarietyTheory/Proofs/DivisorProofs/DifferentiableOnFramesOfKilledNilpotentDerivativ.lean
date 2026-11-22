@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramSchmidtFlagDomainOrthonormalFramesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramSchmidtFlagDomainOrthonormalFramesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem differentiableAt_of_chart (Φ : V → V) (G F : V → ℂ) (M : V →L[�
         have h : c • v = c.re • v + c.im • (Complex.I • v) := by
           conv_lhs => rw [← Complex.re_add_im c]
           rw [add_smul, mul_smul]; simp
-        rw [h, map_add, map_smul, map_smul, hM]
+        rw [h, map_add (f := _), map_smul, map_smul, hM]
         simp only [Complex.real_smul, RingHom.id_apply, smul_eq_mul]
         conv_rhs => rw [← Complex.re_add_im c]
         ring
@@ -108,7 +112,7 @@ def projU (Ψ : Finset (E →+* ℂ)) (r p : ℕ) : Frame Ψ r →L[ℝ] Frame �
         if a < b then -((sgn p a : ℝ) : ℂ) * ((sgn p b : ℝ) : ℂ) * (starRingEnd ℂ) (W τ b a) else 0
       map_add' := fun W W' => by
         funext τ a b
-        simp only [Pi.add_apply, map_add]
+        simp only [Pi.add_apply, map_add (f := _)]
         split_ifs <;> ring
       map_smul' := fun t W => by
         funext τ a b
@@ -215,19 +219,20 @@ theorem ell_projU_I [NumberField E] [IsCMField E] (X : Data E r) (ℓ : Frame X.
       conv_lhs => rw [← Complex.re_add_im z]
       rw [add_smul, mul_smul]; simp
     rw [h]
-    simp only [map_add, map_smul, key, Complex.real_smul]
+    simp only [map_add (f := _), map_smul, key, Complex.real_smul]
     conv_rhs => rw [← Complex.re_add_im z]
     ring
   conv_lhs => rw [frame_eq_sum W]
   conv_rhs => rw [frame_eq_sum W]
-  simp only [Finset.smul_sum, smul_smul, map_sum, key2, Finset.mul_sum, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.smul_sum, smul_smul, map_sum, key2, Finset.mul_sum, mul_assoc]
 
 theorem differentiableAt_bchar (la : Wt Ψ r) :
     DifferentiableAt ℂ (fun W : Frame Ψ r => bchar la (oneFr Ψ r + W)) 0 := by
   unfold bchar
   have hp : ∀ {ι : Type} (u : Finset ι) (f : ι → Frame Ψ r → ℂ), (∀ i ∈ u, DifferentiableAt ℂ (f i) 0) →
       DifferentiableAt ℂ (fun W => ∏ i ∈ u, f i W) 0 := fun u f hf =>
-    (HasFDerivAt.finset_prod fun i hi => (hf i hi).hasFDerivAt).differentiableAt
+    (HasFDerivAt.finsetProd fun i hi => (hf i hi).hasFDerivAt).differentiableAt
   refine hp _ _ fun τ _ => hp _ _ fun i _ => ?_
   refine DifferentiableAt.zpow ?_ (Or.inl ?_)
   · simp only [Pi.add_apply]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardAbsNormLePowPred
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardAbsNormLePowPred
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPositiveAdd
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -35,7 +39,7 @@ theorem eq_map_comap {E : Type} [Field E] [NumberField E] [StarRing E]
   exact ht
 
 private theorem isCMField_of_star_compat {E : Type} [Field E] [NumberField E] [StarRing E]
-    [hTC : IsTotallyComplex E]
+    [hTC : _root_.NumberField.IsTotallyComplex E]
     (hs : ∀ (φ : E →+* ℂ) (a : E), φ (star a) = starRingEnd ℂ (φ a)) : IsCMField E := by
   refine GlobalTheory.LeastExponentCompare.isCMField_of_conj E (fun z => star z)
     (fun φ z => by rw [hs, starRingEnd_apply]) ?_
@@ -53,7 +57,7 @@ private theorem isCMField_of_star_compat {E : Type} [Field E] [NumberField E] [S
 
 private theorem finrank_maximalRealSubfield_eq_fDeg (E : Type) [Field E] [NumberField E] [IsCMField E] :
     Module.finrank ℚ (maximalRealSubfield E) = Formalism.HermitianLatticesTheory.fDeg E := by
-  have h1 := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
+  have h1 := (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E)
   rw [Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield E) E,
     IsTotallyComplex.finrank (K := E)] at h1
   have h2 := InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces (K := E)

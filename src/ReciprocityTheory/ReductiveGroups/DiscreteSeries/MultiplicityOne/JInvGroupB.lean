@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem map_invol_eq (HU : HaarUnique) {U : Set (Mat k r)} (hU : IsClosedSubgrou
     rw [Measure.map_map hfm hfm, hff', Measure.map_id]
   have hcc : (c * c) • μ = μ := by
     conv_rhs => rw [← hback]
-    rw [hc, Measure.map_smul, hc, smul_smul]
+    rw [hc, Measure.map_smul c hfm.aemeasurable, hc, smul_smul]
 
   obtain ⟨K, hK, hK0⟩ : ∃ K : Set (Mt k r), IsCompact K ∧ μ K ≠ 0 := by
     by_contra hcon

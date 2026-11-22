@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem sum_eq_ite {d : ℕ} [NeZero d] (σ : K →+* K) (om oms : Fin (d / 2) �
     exact if_congr hij rfl rfl
   · have e1 : s.val = 2 * i.val + 1 := by simp only [i]; omega
     have e2 : t.val = 2 * j.val + 1 := by simp only [j]; omega
-    simp_rw [e1, e2, Function.iterate_succ_apply', ← map_mul, ← map_sum, E]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [e1, e2, Function.iterate_succ_apply', ← map_mul, ← map_sum, E]
     split_ifs with h3 h4 h4
     · exact map_one σ
     · exact absurd (hij.1 h3) h4

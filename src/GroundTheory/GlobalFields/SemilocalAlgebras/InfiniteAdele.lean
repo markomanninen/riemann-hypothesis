@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.SemilocalAlgebras.Infinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Infinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,19 +34,16 @@ def piPlacesOverEquiv :
   map_add' x y := rfl
   commutes' l := rfl
 
-@[simp]
-theorem piPlacesOverEquiv_apply (x : (v : InfinitePlace K) → PiPlacesOver (L := L) v)
-    (w : InfinitePlace L) :
-    piPlacesOverEquiv x w = x (w.comap (algebraMap K L)) ⟨w, liesOver_comap w⟩ := rfl
-
 variable [NumberField K] [NumberField L]
 
-open scoped Classical in
 
+open scoped Classical in
 def tensorInfiniteAdeleRingEquiv :
     L ⊗[K] InfiniteAdeleRing K ≃ₐ[L] InfiniteAdeleRing L :=
-  (Algebra.TensorProduct.piRight K L L (fun v : InfinitePlace K => v.Completion)).trans <|
-    (AlgEquiv.piCongrRight fun v => tensorPiEquivLeft (L := L) v).trans piPlacesOverEquiv
+  by
+    classical
+    exact (Algebra.TensorProduct.piRight K L L (fun v : InfinitePlace K => v.Completion)).trans <|
+      (AlgEquiv.piCongrRight fun v => tensorPiEquivLeft (L := L) v).trans piPlacesOverEquiv
 
 theorem tensorInfiniteAdeleRingEquiv_tmul (l : L) (x : InfiniteAdeleRing K)
     (w : InfinitePlace L) :
@@ -53,10 +54,11 @@ theorem tensorInfiniteAdeleRingEquiv_tmul (l : L) (x : InfiniteAdeleRing K)
     (l ⊗ₜ x (w.comap (algebraMap K L))) ⟨w, liesOver_comap w⟩ = _
   rw [tensorPiEquivLeft_tmul]
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 def infiniteAdeleRingMap : InfiniteAdeleRing K →+* InfiniteAdeleRing L :=
-  RingHom.pi fun w : InfinitePlace L =>
+  by classical
+  exact RingHom.pi fun w : InfinitePlace L =>
     (algebraMap (w.comap (algebraMap K L)).Completion w.Completion).comp
       (Pi.evalRingHom (fun v : InfinitePlace K => v.Completion) (w.comap (algebraMap K L)))
 
@@ -67,31 +69,39 @@ theorem infiniteAdeleRingMap_apply (x : InfiniteAdeleRing K) (w : InfinitePlace 
       algebraMap (w.comap (algebraMap K L)).Completion w.Completion
         (x (w.comap (algebraMap K L))) := rfl
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem continuous_infiniteAdeleRingMap :
     Continuous (infiniteAdeleRingMap (K := K) (L := L)) :=
   continuous_pi fun w =>
-    (NumberField.LiesOver.continuous_completionMap (v := w.comap (algebraMap K L)) (w := w)).comp
+    (continuous_algebraMap (w.comap (algebraMap K L)).Completion w.Completion).comp
       (continuous_apply (w.comap (algebraMap K L)))
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem infiniteAdeleRingMap_algebraMap (k : K) :
     infiniteAdeleRingMap (algebraMap K (InfiniteAdeleRing K) k) =
       algebraMap L (InfiniteAdeleRing L) (algebraMap K L k) := by
   funext w
   rw [infiniteAdeleRingMap_apply, InfiniteAdeleRing.algebraMap_apply,
-    InfiniteAdeleRing.algebraMap_apply, ← Completion.algebraMap_apply,
-    ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply K L]
-  rfl
+    InfiniteAdeleRing.algebraMap_apply]
+  have h₁ : algebraMap K (w.comap (algebraMap K L)).Completion k =
+      (WithAbs.toAbs (w.comap (algebraMap K L)).1 k : (w.comap (algebraMap K L)).Completion) := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+  have h₂ : algebraMap L w.Completion (algebraMap K L k) =
+      (WithAbs.toAbs w.1 (algebraMap K L k) : w.Completion) := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+  rw [← h₁, ← h₂]
+  rw [← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply K L]
 
 theorem tensorInfiniteAdeleRingEquiv_tmul' (l : L) (x : InfiniteAdeleRing K) :
     tensorInfiniteAdeleRingEquiv (l ⊗ₜ x) =
       algebraMap L (InfiniteAdeleRing L) l * infiniteAdeleRingMap x := by
   funext w
   rw [tensorInfiniteAdeleRingEquiv_tmul]
-  rfl
+  rw [Pi.mul_apply, InfiniteAdeleRing.algebraMap_apply, infiniteAdeleRingMap_apply]
 
 end InfinitePlace
 

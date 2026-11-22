@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.Fv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.Fv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LatCls
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,25 +13,25 @@ open QuadraticAlgebra
 
 variable {O : Type} [CommRing O] {K : Type} [Field K] [Algebra O K] {τ : K}
 
-variable (τ) in
 
+variable (τ) in
 def sc : Kˣ →* (Etau K τ)ˣ := Units.map (algebraMap K (Etau K τ) : K →* Etau K τ)
 
 def nU : (Etau K τ)ˣ →* Kˣ := Units.map (QuadraticAlgebra.norm : Etau K τ →* K)
 
 def ml (z : (Etau K τ)ˣ) (S : Set (Etau K τ)) : Set (Etau K τ) := ((z : Etau K τ) * ·) '' S
 
-theorem sc_val (s : Kˣ) : (sc τ s : Etau K τ) = algebraMap K (Etau K τ) s := rfl
+theorem sc_val (s : Kˣ) : ((((sc (τ := τ)) s) : (Etau K τ)ˣ) : Etau K τ) = algebraMap K (Etau K τ) s := rfl
 
 theorem nU_val (z : (Etau K τ)ˣ) : (nU z : K) = QuadraticAlgebra.norm (z : Etau K τ) := rfl
 
-theorem nU_sc (s : Kˣ) : nU (sc τ s) = s ^ 2 := by
+theorem nU_sc (s : Kˣ) : nU (((sc (τ := τ)) s)) = s ^ 2 := by
   ext; simp [nU_val, sc_val]
 
 theorem quo_mul (a b : (Etau K τ)ˣ) : quo (a * b) = quo a * quo b := by
   simp only [quo, _root_.mul_inv_rev, Units.val_mul, star_mul]; ring
 
-def qU (z : (Etau K τ)ˣ) : (Etau K τ)ˣ := z ^ 2 * sc τ (nU z⁻¹)
+def qU (z : (Etau K τ)ˣ) : (Etau K τ)ˣ := z ^ 2 * sc (τ := τ) (nU z⁻¹)
 
 theorem qU_val (z : (Etau K τ)ˣ) : (qU z : Etau K τ) = quo z := by
   have h : (z : Etau K τ) * ((z⁻¹ : (Etau K τ)ˣ) : Etau K τ) = 1 := Units.mul_inv z
@@ -37,14 +41,14 @@ theorem qU_val (z : (Etau K τ)ˣ) : (qU z : Etau K τ) = quo z := by
 theorem nU_qU (z : (Etau K τ)ˣ) : nU (qU z) = 1 := by
   rw [qU, map_mul, map_pow, nU_sc, map_inv, ← mul_pow, mul_inv_cancel, one_pow]
 
-theorem quo_sc (s : Kˣ) : quo (sc τ s) = 1 := by
+theorem quo_sc (s : Kˣ) : quo (((sc (τ := τ)) s)) = 1 := by
   have hs : ∀ r : K, star (algebraMap K (Etau K τ) r) = algebraMap K (Etau K τ) r := fun r => by
     ext <;> simp
   rw [quo, ← map_inv, sc_val, sc_val, hs, ← map_mul]
   simp
 
-theorem sc_mem (s : Kˣ) : sc τ s ∈ Cint O τ := by
-  show IsIntegral O (quo (sc τ s)) ∧ IsIntegral O (quo (sc τ s)⁻¹)
+theorem sc_mem (s : Kˣ) : ((sc (τ := τ)) s) ∈ Cint O τ := by
+  show IsIntegral O (quo (((sc (τ := τ)) s))) ∧ IsIntegral O (quo (((sc (τ := τ)) s))⁻¹)
   refine ⟨?_, ?_⟩
   · rw [quo_sc]
     exact isIntegral_one
@@ -164,22 +168,22 @@ theorem fix_unit {S : Set (Etau K τ)} {t : K} (ε : Oˣ) (h : IsFixP O τ t S) 
     linear_combination (t * (x * star y).im) * e
 
 theorem ml_unit {S : Set (Etau K τ)} (h : ∃ s : Finset (Etau K τ), S = Submodule.span O (s : Set (Etau K τ)))
-    (ε : Oˣ) (s : Kˣ) (hs : algebraMap O K ε = s) : ml (sc τ s) S = S := by
+    (ε : Oˣ) (s : Kˣ) (hs : algebraMap O K ε = s) : ml (((sc (τ := τ)) s)) S = S := by
   obtain ⟨f, rfl⟩ := h
   ext w
-  have e : (((sc τ s)⁻¹ : (Etau K τ)ˣ) : Etau K τ) * w = (ε⁻¹ : Oˣ) • w := by
+  have e : (((((sc (τ := τ)) s))⁻¹ : (Etau K τ)ˣ) : Etau K τ) * w = (ε⁻¹ : Oˣ) • w := by
     rw [Units.smul_def, Algebra.smul_def, IsScalarTower.algebraMap_apply O K (Etau K τ), map_units_inv, hs,
       ← map_inv, sc_val, Units.val_inv_eq_inv_val]
   rw [mem_ml, e]
   exact Submodule.smul_mem_iff' _ _
 
-theorem mem_cls {S S' : Set (Etau K τ)} : S' ∈ cls τ S ↔ ∃ s : Kˣ, S' = ml (sc τ s) S := by
-  have e : ∀ s : Kˣ, ml (sc τ s) S = (fun x => (s : K) • x) '' S := fun s => by
+theorem mem_cls {S S' : Set (Etau K τ)} : S' ∈ cls τ S ↔ ∃ s : Kˣ, S' = ml (((sc (τ := τ)) s)) S := by
+  have e : ∀ s : Kˣ, ml (((sc (τ := τ)) s)) S = (fun x => (s : K) • x) '' S := fun s => by
     simp only [ml, sc_val, Algebra.smul_def]
   show (∃ s : Kˣ, S' = _) ↔ _
   exact exists_congr fun s => by rw [e]
 
-theorem cls_sc (s : Kˣ) (S : Set (Etau K τ)) : cls τ (ml (sc τ s) S) = cls τ S := by
+theorem cls_sc (s : Kˣ) (S : Set (Etau K τ)) : cls τ (ml (((sc (τ := τ)) s)) S) = cls τ S := by
   ext S'
   rw [mem_cls, mem_cls]
   constructor
@@ -188,7 +192,7 @@ theorem cls_sc (s : Kˣ) (S : Set (Etau K τ)) : cls τ (ml (sc τ s) S) = cls �
   · rintro ⟨u, hu⟩
     exact ⟨u * s⁻¹, by rw [hu, ← ml_mul, ← map_mul, inv_mul_cancel_right]⟩
 
-theorem cls_eq {S S' : Set (Etau K τ)} (h : cls τ S = cls τ S') : ∃ s : Kˣ, S = ml (sc τ s) S' := by
+theorem cls_eq {S S' : Set (Etau K τ)} (h : cls τ S = cls τ S') : ∃ s : Kˣ, S = ml (((sc (τ := τ)) s)) S' := by
   have hS : S ∈ cls τ S := mem_cls.2 ⟨1, by rw [map_one, ml_one]⟩
   rw [h] at hS
   exact mem_cls.1 hS
@@ -201,7 +205,7 @@ theorem cls_ml (z : (Etau K τ)ˣ) (S : Set (Etau K τ)) : ml z '' cls τ S = cl
     exact mem_cls.2 ⟨s, by rw [← ml_mul, ← ml_mul, mul_comm]⟩
   · intro hS'
     obtain ⟨s, rfl⟩ := mem_cls.1 hS'
-    exact ⟨ml (sc τ s) S, mem_cls.2 ⟨s, rfl⟩, by rw [← ml_mul, ← ml_mul, mul_comm]⟩
+    exact ⟨ml (((sc (τ := τ)) s)) S, mem_cls.2 ⟨s, rfl⟩, by rw [← ml_mul, ← ml_mul, mul_comm]⟩
 
 variable [IsDomain O] [IsDiscreteValuationRing O]
 
@@ -289,7 +293,7 @@ private theorem exists_denominator_norm_span_finset [IsFractionRing O K] (f : Fi
   obtain ⟨⟨p, hp⟩, ⟨q, hq⟩⟩ := hint w hw
   obtain ⟨u, hu⟩ := hb τ (Finset.mem_insert_self _ _)
   refine ⟨(b : O) * p * p + u * p * q + (b : O) * q * q, ?_⟩
-  simp only [map_add, map_mul, map_pow, hp, hq, hu, Algebra.smul_def, norm_def]
+  simp only [map_add (f := _), map_mul, map_pow, hp, hq, hu, Algebra.smul_def, norm_def]
   ring
 
 private theorem exists_norm_ne_zero_norm_div_integral_of_isLat {Δ : K} (L : IsLoc O Δ) (hτ : τ ^ 2 - 4 ≠ 0) {S : Set (Etau K τ)}

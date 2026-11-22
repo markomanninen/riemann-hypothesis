@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PosSemidefOfIntQuadNonneg
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -77,7 +82,7 @@ theorem exists_eventually_int_eq_zero {X V J : Type*} [TopologicalSpace X] [Norm
 variable {n a g : ℕ} {Λ : Type} [AddCommGroup Λ] (L : Flat.LogPeriods n a g Λ)
 
 theorem P_injective {w : Fin n → ℂ} (hw : w ∈ logCover L.a_le) : Function.Injective (L.P w) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   apply L.unimod.1
   rw [map_zero]
@@ -102,7 +107,8 @@ theorem real_indep {J : Type*} [Fintype J] (b : Module.Basis J ℤ Λ) {w : Fin 
     rw [h2, hu]
     simp [Module.Basis.coord_apply, Finsupp.single_apply]
   have h2 := congrArg ψ h
-  simp only [map_sum, map_smul, h1, map_zero, smul_eq_mul, mul_ite, mul_one, mul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, h1, map_zero, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, if_true] at h2
   simpa using h2
 
@@ -126,7 +132,7 @@ theorem continuousAt_apply (A : (Fin n → ℂ) → Module.End ℂ (Fin g → �
     funext w
     exact LinearMap.pi_apply_eq_sum_univ _ _
   rw [h1]
-  exact tendsto_finset_sum _ fun i _ =>
+  exact tendsto_finsetSum _ fun i _ =>
     (((continuous_apply i).continuousAt.comp hP).smul (hAe _))
 
 theorem eventually_eq (A : (Fin n → ℂ) → Module.End ℂ (Fin g → ℂ))
@@ -150,7 +156,8 @@ theorem eventually_eq (A : (Fin n → ℂ) → Module.End ℂ (Fin g → ℂ))
   obtain ⟨y', hy'⟩ := hex w hwC x
   have hk : L.P w (y' - y) = ∑ i, ((b.repr (y' - y) i : ℤ) : ℝ) • L.P w (b i) := by
     conv_lhs => rw [← b.sum_repr (y' - y)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul]
     exact (Int.cast_smul_eq_zsmul ℝ _ _).symm
@@ -193,9 +200,9 @@ theorem exists_module_of_period_action : ∀ (E : Type) [Field E] [NumberField E
     rw [hf, hf, hf, map_mul, Module.End.mul_apply])
   have e3 : ∀ c, f c 0 = 0 := fun c => inj (by rw [hf]; simp)
   have e4 : ∀ c x y, f c (x + y) = f c x + f c y := fun c x y => inj (by
-    rw [map_add, hf, hf, hf, map_add, map_add])
+    rw [map_add (f := _), hf, hf, hf, map_add (f := _), map_add (f := _)])
   have e5 : ∀ c d x, f (c + d) x = f c x + f d x := fun c d x => inj (by
-    rw [map_add, hf, hf, hf, map_add, LinearMap.add_apply])
+    rw [map_add (f := _), hf, hf, hf, map_add (f := _), LinearMap.add_apply])
   have e6 : ∀ x, f 0 x = 0 := fun x => inj (by rw [hf]; simp)
   exact ⟨{ smul := f, one_smul := e1, mul_smul := e2, smul_zero := e3, smul_add := e4,
            add_smul := e5, zero_smul := e6 }, key⟩

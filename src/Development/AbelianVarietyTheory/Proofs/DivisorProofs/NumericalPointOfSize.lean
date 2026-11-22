@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ESmall
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaExponentIdentities
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ESmall
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaExponentIdentities
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -195,17 +199,6 @@ theorem numAt {P : ParameterChoice' D L} (T : ParamsT D L P) (hll : 1 ≤ Real.l
     have e : (|L.Ct| + 20) * L.sc.L ≤ (|L.Ct| + 20) * D.R.m * L.sc.L :=
       mul_le_mul_of_nonneg_right (le_mul_of_one_le_right (by linarith) hm) (by linarith)
     linarith
-
-theorem numPt : NumPt := by
-  refine ⟨1, one_pos, fun eps _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun Fm _ _ _ => ⟨|Fm.Ct| + 20, by positivity,
-    Real.exp (Real.exp 1), fun x hx hle ι p _ i _ => ?_⟩⟩⟩
-  rw [← Fm.Ct_eq x ι]
-  refine numAt p i (Fm.parT x hx ι) ?_
-  rw [Fm.L_x x ι hx, Real.le_log_iff_exp_le, Real.le_log_iff_exp_le ((Real.exp_pos _).trans_le hle)]
-  · exact hle
-  · exact Real.log_pos ((Real.one_lt_exp_iff.2 (Real.exp_pos 1)).trans_le hle)
-
-theorem numPt_of_size : Size → NumPt := fun _ => numPt
 
 end GlobalTheory.RefSum.NumSizes
 

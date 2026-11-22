@@ -1,11 +1,15 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.SplitPlaceScaledBound
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.LinearSubstitutionDiagonal
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KernelIndexForm
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.CardTwoSidedQuotient
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerHalf
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerJet
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormInter
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormPow
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.SplitPlaceScaledBound
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.LinearSubstitutionDiagonal
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KernelIndexForm
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.CardTwoSidedQuotient
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerHalf
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.KerJet
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormInter
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormPow
+
+@[expose] public section
 
 namespace Formalism.L2.AlgTh
 

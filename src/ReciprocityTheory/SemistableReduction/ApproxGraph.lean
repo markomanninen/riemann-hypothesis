@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ApproxGraphC
+module
+
+public import ReciprocityTheory.SemistableReduction.ApproxGraphC
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

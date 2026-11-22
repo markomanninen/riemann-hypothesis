@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LFunctionConj
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauZeroFreeCriterion
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.LFunctionConj
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter Topology
 
@@ -10,7 +14,8 @@ namespace Deduction
 theorem Gchi_conj_ramp {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ) :
     (starRingEnd ℂ) (ramp (fun n => χ n) y) = ramp (fun n => χ⁻¹ n) y := by
   unfold ramp
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [map_mul, map_mul, Complex.conj_ofReal, Complex.conj_ofReal]
   congr 2
@@ -40,12 +45,12 @@ theorem Gchi_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ)
   by_cases h1 : χ = 1
   · subst h1
     simp only [Gchi, inv_one, if_true]
-    rw [map_add, map_sub, Gchi_conj_ramp, inv_one, Complex.conj_ofReal, Complex.conj_ofReal]
+    rw [map_add (f := _), map_sub, Gchi_conj_ramp, inv_one, Complex.conj_ofReal, Complex.conj_ofReal]
   · have h2 : χ⁻¹ ≠ 1 := fun h => h1 (inv_eq_one.mp h)
     simp only [Gchi, h1, h2, if_false]
     have hL := Gchi_conj_LFunction χ
     have h1c : (starRingEnd ℂ) (1 : ℂ) = 1 := map_one _
-    rw [map_add, map_mul, map_div₀, Gchi_conj_ramp, Complex.conj_ofReal, hL]
+    rw [map_add (f := _), map_mul, map_div₀, Gchi_conj_ramp, Complex.conj_ofReal, hL]
     congr 2
     rw [← h1c, deriv_conj_comp_conj, h1c]
     simp only [Function.comp_apply, h1c]

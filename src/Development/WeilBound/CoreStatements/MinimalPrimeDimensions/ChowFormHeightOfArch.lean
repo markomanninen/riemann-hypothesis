@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IsClosedOfCoheight
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DescEval
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.SumNormSqUnitary
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.FormHeightOneEq
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.StCharts
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ChowDegreeSection
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IsClosedOfCoheight
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.DescEval
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.SumNormSqUnitary
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.FormHeightOneEq
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.StCharts
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.ChowDegreeSection
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
+
+@[expose] public section
 
 namespace ChowFormHeightComparison₂.CF
 

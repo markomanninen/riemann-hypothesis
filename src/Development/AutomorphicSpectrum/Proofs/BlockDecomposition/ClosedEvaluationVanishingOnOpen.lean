@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ theorem dEmb_mul_sEmb_mem_Cl (i t : ℕ) (d : Fin (t + 1) → k) (m : Mir k ((i 
 
 end GlobalTheory.CompanionTheory.BZPhiPG.Off
 
-open GlobalTheory.CompanionTheory.BZPhiPG.Off in
 
+open GlobalTheory.CompanionTheory.BZPhiPG.Off in
 theorem GlobalTheory.CompanionTheory.BZPhiPG.eC_eq_zero_of_vanish : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (i t : ℕ) (ψ : AddChar k Circle) (τ : MRep k (i + 1)) (σ : GRep k (t + 1)) (hτ : IsSmooth τ.ρ) (hσ : IsSmooth σ.ρ) (f : XS τ σ) (hf : ∀ x ∈ Cl k i t, evX f x = 0),
     eC ψ f = 0 := by
   intro k _ _ _ _ i t ψ τ σ hτ hσ f hf

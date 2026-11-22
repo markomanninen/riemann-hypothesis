@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMulAlt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUpUniMulAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,8 @@ theorem gram_first {N : ℕ} (f g w : Fin N → S.V)
   · ext a b
     have hg : g a = f a + ∑ d, c a d • f d := by rw [hcs a]; abel
     have key : S.hT (g a) (w b) = S.hT (f a) (w b) + ∑ d, star (c a d) * S.hT (f d) (w b) := by
-      rw [hg, map_add, LinearMap.add_apply, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hg, map_add (f := _), LinearMap.add_apply, map_sum, LinearMap.sum_apply]
       congr 1
       refine Finset.sum_congr rfl fun d _ => ?_
       rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
@@ -156,7 +161,8 @@ theorem gram_second {N : ℕ} (f w w' : Fin N → S.V)
   · ext a b
     have hw : w' b = w b + ∑ d, c b d • w d := by rw [hcs b]; abel
     have key : S.hT (f a) (w' b) = S.hT (f a) (w b) + ∑ d, S.hT (f a) (w d) * c b d := by
-      rw [hw, map_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hw, map_add (f := _), map_sum]
       congr 1
       refine Finset.sum_congr rfl fun d _ => ?_
       rw [map_smul, smul_eq_mul, mul_comm]
@@ -182,7 +188,7 @@ theorem z_mem_orth (F : LFlag S r T) : F.fl.z ∈ orth S (Xsp F) := by
     obtain ⟨i, rfl⟩ := hy
     exact F.fl.z_orth i
   | zero => simp
-  | add y y' _ _ h1 h2 => rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+  | add y y' _ _ h1 h2 => rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
   | smul c y _ h => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, h, smul_zero]
 
 theorem nlam_frame (Λ : Submodule (𝓞 E) S.V) {F : LFlag S r T} {n : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F)

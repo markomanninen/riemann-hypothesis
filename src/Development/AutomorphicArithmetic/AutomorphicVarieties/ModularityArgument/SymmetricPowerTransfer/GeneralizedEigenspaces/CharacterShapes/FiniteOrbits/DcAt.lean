@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.FinFacts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem UpperTheory.V.Z.Sym.So.dcAt :
   obtain ⟨hloc, hcl, -, hsecx⟩ := hsec w hsp
   obtain ⟨-, -, -, -, -, hfin⟩ := UpperTheory.V.Z.Sym.Sig.finFacts (Kw w) (VL w)
   obtain ⟨hH, -, -, hJK⟩ := hfin n
-  have hKO : GlobalTheory.SplitWeil.KO (Kw w) (Fin n) = GlobalTheory.LFun.KGL w n := GlobalTheory.SmGL.SphCompletion.KO_completion w n
+  have hKO : GlobalTheory.SplitWeil.KO (Kw w) (Fin n) = GlobalTheory.LFun.KGL w (n := n) := GlobalTheory.SmGL.SphCompletion.KO_completion w n
   have hoff : ∀ (h : GL (Fin n) (Kw w)) (u : Plc L), un u ≠ un w → cLoc u (secW n w h) = 1 := fun h u e =>
     Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 (hloc h).2 u) e
   have h2 : ∀ u ∈ lev U₀ S VL, cLoc w u ∈ (VL w).J n ∧ ∀ h, u * (secW n w (cLoc w u))⁻¹ * secW n w h =

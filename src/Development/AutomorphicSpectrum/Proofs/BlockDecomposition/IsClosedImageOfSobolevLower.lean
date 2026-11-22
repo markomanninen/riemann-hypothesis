@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CasselmanWallachAdm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchurLemmaEquivariantPairBoundedFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasselmanWallachOfHyp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothVecCompleteOfUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CasselmanWallachAdm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchurLemmaEquivariantPairBoundedFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasselmanWallachOfHyp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothVecCompleteOfUnitary
+
+@[expose] public section
 
 noncomputable section
 

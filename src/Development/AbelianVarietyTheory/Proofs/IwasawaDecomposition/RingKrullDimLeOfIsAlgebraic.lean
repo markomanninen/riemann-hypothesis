@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNonzeroLocusFormMap
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsIsoMorphismRestrictOfLocalDominantSections
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNonzeroLocusFormMap
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsIsoMorphismRestrictOfLocalDominantSections
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -60,7 +64,7 @@ theorem ringKrullDim_le_of_isAlgebraic (A B : Type) [CommRing A] [IsDomain A] [I
         | add y z _ _ hy hz =>
           obtain ⟨p, hp⟩ := hy
           obtain ⟨q, hq⟩ := hz
-          exact ⟨p + q, by rw [map_add, hp, hq]; rfl⟩
+          exact ⟨p + q, by rw [map_add (f := _), hp, hq]; rfl⟩
         | mul y z _ _ hy hz =>
           obtain ⟨p, hp⟩ := hy
           obtain ⟨q, hq⟩ := hz
@@ -185,7 +189,7 @@ theorem exists_normal_dominating (F : Type) [Field F] [NumberField F] (Y : Var F
   have : IsAffineHom (pullback.fst (r ≫ M.p) (spMap (algebraMap (𝓞 F) F))) :=
     MorphismProperty.of_isPullback hb.flip (isAffineHom_of_isAffine _)
   have : IsAffineHom h := by rw [hh]; infer_instance
-  have hpb := GlobalTheory.isPullback_toNormalization_of_isLocalization (nonZeroDivisors (𝓞 F)) hb f' (𝟙 _) h hh
+  have hpb := GlobalTheory.isPullback_toNormalization_of_isLocalization (M := nonZeroDivisors (𝓞 F)) hb f' (𝟙 _) h hh
   rw [Category.id_comp] at hpb
   have hfin : IsFinite h.fromNormalization :=
     GlobalTheory.isFinite_fromNormalization_of_over_fractionRing (o := .of (𝓞 F)) h (r ≫ M.p) F Y.str w

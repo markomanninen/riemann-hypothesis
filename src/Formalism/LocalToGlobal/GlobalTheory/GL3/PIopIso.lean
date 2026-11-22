@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SquareEqDiagOfQuadraticEven
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.SquareEqDiagOfQuadraticEven
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ theorem Hf_add_left (T : Tor D) (x x' y : VC D N N') :
 
 theorem Hf_herm (T : Tor D) (x y : VC D N N') :
     Hf D T y x = starRingEnd ℂ (Hf D T x y) := by
-  simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
   congr 1
   refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ =>
     Finset.sum_congr rfl fun j _ => ?_
@@ -81,13 +86,6 @@ theorem term_indep (T : Tor D) {La₁ La₂ : AddSubgroup (VC D N N')} (hS : Sem
     simp
   rw [hb]
   exact rep_shift T hS hG a.2 hab (-a + b).2 z
-
-theorem term_out (T : Tor D) {La₁ La₂ : AddSubgroup (VC D N N')} (hS : SemiChar T La₂)
-    {G : VC D N N' → ℂ} (hG : G ∈ ThSp D T La₁) (a : La₂) (z : VC D N N') :
-    al D T ((Quotient.out (a : La₂ ⧸ La₁.addSubgroupOf La₂) : La₂) : VC D N N') *
-        U D T ((Quotient.out (a : La₂ ⧸ La₁.addSubgroupOf La₂) : La₂) : VC D N N') G z =
-      al D T (a : VC D N N') * U D T (a : VC D N N') G z :=
-  term_indep T hS hG a _ (QuotientAddGroup.out_eq' _).symm z
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.IO
 
@@ -195,7 +193,7 @@ theorem sqrt_d_pos (D : D7) : 0 < Real.sqrt D.host.d :=
 
 theorem Hf_add_right (T : Tor D) (x y y' : VC D N N') :
     Hf D T x (y + y') = Hf D T x y + Hf D T x y' := by
-  rw [Hf_herm T (y + y') x, Hf_add_left, map_add, ← Hf_herm, ← Hf_herm]
+  rw [Hf_herm T (y + y') x, Hf_add_left, map_add (f := _), ← Hf_herm, ← Hf_herm]
 
 theorem Hf_self_im (T : Tor D) (x : VC D N N') : (Hf D T x x).im = 0 := by
   have h := congrArg Complex.im (Hf_herm T x x)

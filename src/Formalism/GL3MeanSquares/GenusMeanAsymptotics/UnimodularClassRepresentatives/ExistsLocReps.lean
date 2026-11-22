@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralLatOfForall
-import Formalism.HermitianLattices.HermitianLatticesProofs.FinIntermediate
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralLatOfForall
+public import Formalism.HermitianLattices.HermitianLatticesProofs.FinIntermediate
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+
+@[expose] public section
 
 open NumberField Module
 
@@ -13,7 +17,7 @@ section One
 variable {K V : Type} [Field K] [NumberField K] [StarRing K]
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-theorem finite_between {N D : Submodule (𝓞 K) V} (hN : Submodule.IsLattice K N)
+theorem finite_between {N D : Submodule (𝓞 K) V} (hN : Submodule.IsFullLattice K N)
     (hD : Submodule.IsLattice K D) (hND : N ≤ D) :
     {Λ : Submodule (𝓞 K) V | N ≤ Λ ∧ Λ ≤ D}.Finite := by
   have h1 := Formalism.HermitianLatticesTheory.finIntermediate V N.toAddSubgroup D.toAddSubgroup hND ?_
@@ -46,31 +50,50 @@ variable {h : V →ₗ⋆[K] V →ₗ[K] K} {h' : V' →ₗ⋆[K] V' →ₗ[K] K
 theorem finite_fibG (hs : h.IsSymm) (hd : IsTotPosDef h) (S : VecSplit h h')
     {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L)
     {Λ' : Submodule (𝓞 K) V'} (hΛ' : Submodule.IsLattice K Λ') : (fibG S L Λ').Finite := by
-  have hN := (S.isLattice_adjoin_iff Λ').2 hΛ'
-  have hD := (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K V h hs (UnimodularLocalization.nondegenerate hd)
-    Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range _ hN).1
   by_cases hne : (fibG S L Λ').Nonempty
-  · have key : ∀ Λ ∈ fibG S L Λ', S.adjoin Λ' ≤ Λ ∧ Λ ≤ Formalism.HermitianLatticesTheory.dual h (S.adjoin Λ') := by
+  · obtain ⟨Λ, hΛ⟩ := hne
+    have hCut := StabilizerLattices.isFullLattice_cut S hΛ.1.1
+    rw [hΛ.2.2] at hCut
+    have hN : Submodule.IsFullLattice K (S.adjoin Λ') := by
+      refine { toIsLattice := (S.isLattice_adjoin_iff Λ').2 hΛ', span_eq_top := ?_ }
+      rw [eq_top_iff]
+      intro v _
+      obtain ⟨c, a, rfl⟩ := S.cover v
+      refine add_mem (Submodule.smul_mem _ c (Submodule.subset_span (S.x₀_mem_adjoin Λ'))) ?_
+      have hle : Submodule.map S.ι (Submodule.span K (Λ' : Set V')) ≤
+          Submodule.span K (S.adjoin Λ' : Set V) := by
+        rw [Submodule.map_span]
+        apply Submodule.span_mono
+        rintro _ ⟨b, hb, rfl⟩
+        exact Submodule.mem_sup_right (Submodule.mem_map_of_mem hb)
+      have ha : a ∈ Submodule.span K (Λ' : Set V') := by
+        rw [hCut.span_eq_top]
+        exact Submodule.mem_top
+      exact hle (Submodule.mem_map_of_mem ha)
+    have hD := (Formalism.HermitianLatticesTheory.dualLattice (𝓞 K) K V h hs
+      (UnimodularLocalization.nondegenerate hd)
+      Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range _ hN).1
+    have key : ∀ Λ ∈ fibG S L Λ', S.adjoin Λ' ≤ Λ ∧ Λ ≤ Formalism.HermitianLatticesTheory.dual h (S.adjoin Λ') := by
       rintro Λ ⟨hg, hx, hc⟩
       have hΛi : Formalism.HermitianLatticesTheory.IsIntegralLat h Λ :=
         ((Formalism.HermitianLatticesTheory.genusBasic (𝓞 K) K V h hs Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range).2.2 L Λ hL.fg hg.1.fg
           hg.2).2.mp hLi
       have := S.le_dual_of_mem hs hΛi hx
       rwa [hc] at this
-    obtain ⟨Λ, hΛ⟩ := hne
-    exact (finite_between hN hD ((key Λ hΛ).1.trans (key Λ hΛ).2)).subset key
+    exact (finite_between hN hD.toIsLattice ((key Λ hΛ).1.trans (key Λ hΛ).2)).subset key
   · rw [Set.not_nonempty_iff_eq_empty.mp hne]
     exact Set.finite_empty
 
 theorem good_cut (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (hs : h.IsSymm)
     (hd : IsTotPosDef h) (S : VecSplit h h') {B : Submodule (𝓞 K) V}
-    (hB : Submodule.IsLattice K B) (hBi : Formalism.HermitianLatticesTheory.IsIntegralLat h B) (hx : S.x₀ ∈ B) :
+    (hB : Submodule.IsFullLattice K B) (hBi : Formalism.HermitianLatticesTheory.IsIntegralLat h B) (hx : S.x₀ ∈ B) :
     GoodGenusOrbits.Good F S B (S.cut B) := by
-  have hc := StabilizerLattices.isLattice_cut S hB
-  refine ⟨hc, fun 𝔮 h0 => ?_⟩
-  have h1 := card_fibG_eq_prod (F := F) hK hF hs hd S hB hBi hc
+  let hc := StabilizerLattices.isFullLattice_cut S hB
+  refine ⟨inferInstance, fun 𝔮 h0 => ?_⟩
+  have h1 := card_fibG_eq_prod (F := F) (L := B) (Λ' := S.cut B)
+    hK hF hs hd S inferInstance hBi inferInstance
   rw [tprod_of_exists_eq_zero ⟨𝔮, by rw [h0]; simp⟩] at h1
-  have hfin := finite_fibG hs hd S hB hBi hc
+  have hfin := finite_fibG hs hd S hB.toIsLattice hBi hc.toIsLattice
   have hmem : B ∈ fibG S B (S.cut B) :=
     ⟨⟨hB, (Formalism.HermitianLatticesTheory.genusBasic (𝓞 K) K V h hs Formalism.HermitianLatticesTheory.star_algebraMap_ringOfIntegers_mem_range).1.refl B⟩, hx, rfl⟩
   have : Nat.card (fibG S B (S.cut B)) ≠ 0 := by
@@ -117,7 +140,7 @@ theorem fibLoc_scale (S : VecSplit h h') (L : Submodule (𝓞 K) V) {𝔭 : Idea
 
 theorem exists_locReps' (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (hs : h.IsSymm)
     (hd : IsTotPosDef h) (S : VecSplit h h') {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) : ∃ s, IsLocReps S L 𝔭 s := by
   by_cases H : ∀ T, fibLoc S L 𝔭 T = 0
   · exact ⟨∅, fun T hT => absurd hT (Finset.notMem_empty T), fun T _ _ h3 => absurd (H T) h3⟩
@@ -130,12 +153,17 @@ theorem exists_locReps' (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF
       have e1 : algebraMap (𝓞 F) (𝓞 K) t = 0 := Formalism.HermitianLatticesTheory.genusCovol_hinj (by rw [e, map_zero])
       have e2 : t = 0 := FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K) (by rw [e1, map_zero])
       exact ht (e2 ▸ 𝔭.zero_mem)
-    have hB := LocalizedFibreSets.isLattice_gmap g hL
+    let hB : Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.gmap g L) := by
+      refine { toIsLattice := LocalizedFibreSets.isLattice_gmap g hL, span_eq_top := ?_ }
+      change Submodule.span K ((g : V →ₗ[K] V) '' (L : Set V)) = ⊤
+      rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+      exact g.surjective
     have hBi := UnimodularLocalization.isIntegralLat_gmap hg hLi
     have hgood := good_cut (F := F) hK hF hs hd (scaleSplit S _ hc) hB hBi
       (by change algebraMap (𝓞 K) K (algebraMap (𝓞 F) (𝓞 K) t) • S.x₀ ∈ _
           rw [algebraMap_smul]; exact hx)
-    obtain ⟨s, hs1⟩ := GoodGenusOrbits.exists_locReps hK hF hs hd (scaleSplit S _ hc) hB hBi hgood ⟨𝔭, h𝔭⟩
+    obtain ⟨s, hs1⟩ := GoodGenusOrbits.exists_locReps (L := Formalism.HermitianLatticesTheory.gmap g L)
+      hK hF hs hd (scaleSplit S _ hc) inferInstance hBi hgood ⟨𝔭, h𝔭⟩
     refine ⟨s, ?_⟩
     unfold IsLocReps at hs1 ⊢
     simpa only [fibLoc_scale S L h𝔭.isPrime hg ht hc] using hs1

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FrobeniusCongruenceWitt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FrobeniusCongruenceWitt
+
+@[expose] public section
 
 noncomputable section
 

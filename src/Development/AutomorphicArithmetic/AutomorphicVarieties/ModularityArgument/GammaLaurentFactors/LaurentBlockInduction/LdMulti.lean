@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
   [∀ n : ℕ, MeasurableSpace (GL (Fin n) F)] [∀ n : ℕ, BorelSpace (GL (Fin n) F)]
   {W : Type} [AddCommGroup W] [Module ℂ W]
 
-variable (F W) in
 
+variable (F W) in
 def LdMulti (ψ : AddChar F Circle) (r : ℕ) : Prop :=
   ∀ (ι : Type) [Fintype ι] [DecidableEq ι], Fintype.card ι = r →
   ∀ (d : ι → ℕ) [∀ i, NeZero (d i)] (μ : ∀ i, Measure (GL (Fin (d i)) F))
@@ -270,7 +274,7 @@ theorem ldMulti_succ (hB : LdBlock) {ψ : AddChar F Circle} (hψ : Continuous ψ
               ∂Measure.pi (fun j : {i // i ≠ a} => μ j) := by
             simp_rw [hinner]
         _ = _ := by
-            rw [integral_finset_sum]
+            rw [integral_finsetSum]
             · simp_rw [integral_const_mul]
             · intro i _
               exact ((hint' (fun j => Ψ j) (fun j => hΨ j) (b i : W) ℓ ((hρ'sm ℓ).2 hℓ)).1 s hs₃).const_mul _
@@ -327,7 +331,7 @@ theorem ldMulti_succ (hB : LdBlock) {ψ : AddChar F Circle} (hψ : Continuous ψ
               ∂Measure.pi (fun j : {i // i ≠ a} => μ j) := by
             simp_rw [hinner]
         _ = _ := by
-            rw [integral_finset_sum]
+            rw [integral_finsetSum]
             · simp_rw [integral_const_mul]
             · intro i _
               exact ((hint' (fun j => GJMatrix.localMatrixFourier ψ (Ψ j))

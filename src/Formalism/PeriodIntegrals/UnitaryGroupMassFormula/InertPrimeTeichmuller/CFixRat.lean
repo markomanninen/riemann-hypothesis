@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertPrimeTeichmuller.NormLeOneOfIntegralInt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InertPrimeTeichmuller.NormLeOneOfIntegralInt
+
+@[expose] public section
 
 open NumberField
 
@@ -48,13 +52,13 @@ theorem c_fix_rat (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c
 
 theorem add_c_int (hK : Module.finrank ℚ K = 2) (c : K →+* K) (hc : ∃ x, c x ≠ x) (a : 𝓞 K) :
     ∃ n : ℤ, a + RingOfIntegers.mapRingHom c a = (n : 𝓞 K) := by
-  have hfix : c ((a : K) + c a) = (a : K) + c a := by rw [map_add, c_invol hK c, add_comm]
+  have hfix : c ((a : K) + c a) = (a : K) + c a := by rw [map_add (f := _), c_invol hK c, add_comm]
   obtain ⟨r, hr⟩ := c_fix_rat hK c hc hfix
   have hint : IsIntegral ℤ (algebraMap ℚ K r) := by
     rw [eq_ratCast, hr]
     have := (a + RingOfIntegers.mapRingHom c a).isIntegral_coe
     simpa [RingOfIntegers.mapRingHom_apply] using this
-  rw [isIntegral_algebraMap_iff (algebraMap ℚ K).injective,
+  rw [isIntegral_algebraMap_iff ,
     IsIntegrallyClosed.isIntegral_iff] at hint
   obtain ⟨n, hn⟩ := hint
   refine ⟨n, RingOfIntegers.ext ?_⟩

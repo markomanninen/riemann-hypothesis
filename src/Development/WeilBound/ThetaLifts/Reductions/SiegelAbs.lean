@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -17,8 +21,8 @@ namespace PositivityTheory.ThKR
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {n r : ℕ} {J : Matrix (Fin n) (Fin n) E} {X Y : Matrix (Fin n) (Fin r) E}
 
-variable (F E) in
 
+variable (F E) in
 def rIdU [IsTotallyReal F] (c : ℝ) : (AF F ⊗[F] E)ˣ where
   val := algebraMap (AF F) (AF F ⊗[F] E) (rId F c)
   inv := algebraMap (AF F) (AF F ⊗[F] E) (rId F (-c))
@@ -27,9 +31,6 @@ def rIdU [IsTotallyReal F] (c : ℝ) : (AF F ⊗[F] E)ˣ where
 
 theorem val_rIdU [IsTotallyReal F] (c : ℝ) :
     (rIdU F E c : AF F ⊗[F] E) = algebraMap (AF F) (AF F ⊗[F] E) (rId F c) := rfl
-
-theorem inv_rIdU [IsTotallyReal F] (c : ℝ) :
-    (↑(rIdU F E c)⁻¹ : AF F ⊗[F] E) = algebraMap (AF F) (AF F ⊗[F] E) (rId F (-c)) := rfl
 
 theorem card_infinitePlace [IsTotallyReal F] : Fintype.card (InfinitePlace F) = Module.finrank ℚ F := by
   have h1 := InfinitePlace.card_add_two_mul_card_eq_rank F
@@ -77,7 +78,7 @@ theorem sigRA_sigRA (h : IsCMExt F E σ) (x : AF F ⊗[F] E) : Formalism.MainNot
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, sigma_sigma h]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sigRA_inclR (e : E) : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ (inclR (F := F) (AF F) e) = inclR (F := F) (AF F) (σ e) := by
   simp [sigR, inclR]
@@ -141,8 +142,8 @@ theorem unitaryA_matHom (p : GAd σ J) :
     Formalism.UG.cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ) (matHom _ σ J p).1 * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (AF F) J * (matHom _ σ J p).1 = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (AF F) J :=
   (show ↥(HR (AF F) σ J) from p).2
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 def Bm (p : GAd σ J) : Matrix (Fin r) (Fin r) (AF F ⊗[F] E) :=
   coefM (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (AF F) J) (GlobalTheory.SiegelSet.adMat F X) (GlobalTheory.SiegelSet.adMat F Y)
     (matHom _ σ J p).1
@@ -239,8 +240,8 @@ theorem isClosed_minimal_parabolic (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW
     isClosed_eq (hBc.matrix_elem i j) continuous_const) ?_
   exact isClosed_eq ((continuous_matHom_val (σ := σ) (J := J)).matrix_mul continuous_const) (continuous_const.matrix_mul hBc)
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 def uU (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittFrame σ J X Y) {p : GAd σ J} (hp : p ∈ minPar σ J X)
     (hp' : p⁻¹ ∈ minPar σ J X) (i : Fin r) : (AF F ⊗[F] E)ˣ where
   val := Bm σ J X Y p i i
@@ -262,8 +263,8 @@ theorem minParOne_sub {p : GAd σ J} (hp : p ∈ minParOne σ J X) : p ∈ minPa
   let ⟨B, hB, e, _⟩ := hp
   ⟨B, hB, e⟩
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 def uP (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittFrame σ J X Y) (P : Subgroup (GAd σ J))
     (hP : ∀ p, p ∈ P ↔ p ∈ minPar σ J X) (p : P) (i : Fin r) : (AF F ⊗[F] E)ˣ :=
   uU σ J X Y h hJ hW ((hP _).1 p.2) ((hP _).1 (P.inv_mem p.2)) i

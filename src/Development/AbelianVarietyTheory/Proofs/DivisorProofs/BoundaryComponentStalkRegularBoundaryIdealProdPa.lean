@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheaf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheaf
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -49,7 +54,7 @@ theorem GlobalTheory.LogKSDiv.boundary_germ_snc : ∀ (E : Type) [Field E] [Numb
     first | exact h2.trans hz | (refine Eq.trans ?_ hz; exact h2) | (rw [Scheme.Hom.comp_apply] at h2; exact h2.trans hz)
   · have e1 : Ideal.map (GlobalTheory.LogKSDiv.stalkHom TF Z x U hx)
         ((Scheme.IdealSheafData.vanishingIdeal (LogKS.interior TF.Y).compl).ideal U) =
-        Ideal.map (φ : _ →+* _) (Ideal.map (TF.Y.X.presheaf.germ U.1 _ hx).hom
+        Ideal.map φ.toRingHom (Ideal.map (TF.Y.X.presheaf.germ U.1 _ hx).hom
           ((Scheme.IdealSheafData.vanishingIdeal (LogKS.interior TF.Y).compl).ideal U)) := by
       rw [Ideal.map_map]
       congr 1

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
-import Development.WeilBound.CoreStatements.VolumeEquality.HolNull
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsForm
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionBoundaryClosedAndCodenseStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+public import Development.WeilBound.CoreStatements.VolumeEquality.HolNull
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsForm
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionBoundaryClosedAndCodenseStatement
+
+@[expose] public section
 
 noncomputable section
 

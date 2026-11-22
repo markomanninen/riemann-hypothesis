@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
-import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
-import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementK
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.FormalGroupPointsNoPrimeToPTorsion
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.TorInt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical
@@ -83,7 +87,19 @@ theorem torsUnit3 (K : Type) [NormedField K] [IsUltrametricDist K] (g2 g3 : K) (
       field_simp
       ring
     rw [this, hΔ]
-  have hx1 := (Formalism.ELL.torsionIntegral_of Formalism.ELL.formal_group_points_no_prime_to_p_torsion K _ hW hD n hn x y h hP).1
+  have formalGroupTorsionFree : ∀ P : (Formalism.L2.Th1.A.shortW g2 g3).toAffine.Point,
+      Formalism.ELL.InFormalGroupPoints P → n • P = 0 → P = 0 := by
+    intro P hFormal hTorsion
+    by_contra hNonzero
+    obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 :=
+      Nat.exists_eq_succ_of_ne_zero (by rintro rfl; simp at hn)
+    have hz := (Formalism.ELL.FormalGroupPointsTorsion.mulz hW P hFormal hNonzero m).2
+    rw [hTorsion, Affine.Point.zero_def] at hz
+    simp only [Formalism.ELL.FormalGroupPointsTorsion.zf, zero_sub, norm_neg, norm_mul, hn, one_mul] at hz
+    exact lt_irrefl _ hz
+  have hx1 : ‖x‖ ≤ 1 := by
+    by_contra hx
+    exact Affine.Point.some_ne_zero h (formalGroupTorsionFree _ (not_le.mp hx) hP)
   by_contra hne
   have hx : ‖x‖ < 1 := lt_of_le_of_ne hx1 hne
   have heq : y ^ 2 = -g3 / 4 + (x ^ 3 + -g2 / 4 * x) := by
@@ -143,7 +159,7 @@ theorem torsUnit3 (K : Type) [NormedField K] [IsUltrametricDist K] (g2 g3 : K) (
       convert hb using 2
       ring
   have h3P : 3 • Affine.Point.some x y h = 0 := by
-    refine Formalism.ELL.formal_group_points_no_prime_to_p_torsion K _ hW hD n hn _ hE ?_
+    refine formalGroupTorsionFree _ hE ?_
     rw [smul_comm, hP, smul_zero]
   have hd1 : addOrderOf (Affine.Point.some x y h) ∣ 3 := addOrderOf_dvd_of_nsmul_eq_zero h3P
   have hd2 : addOrderOf (Affine.Point.some x y h) ∣ n := addOrderOf_dvd_of_nsmul_eq_zero hP

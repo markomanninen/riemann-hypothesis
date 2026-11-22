@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.NormIndexQuadratic.Pl :
     (F : Type) → [Field F] → Type :=
@@ -34,7 +38,7 @@ private lemma index_two {M : Type*} [AddCommGroup M] [Module.Finite ℤ M] :
     · rintro ⟨_, ⟨y, rfl⟩, z, hz, rfl⟩
       refine ⟨T.mkQ y, ?_⟩
       have : T.mkQ z = 0 := (Submodule.Quotient.mk_eq_zero T).2 hz
-      simp only [nsmulAddMonoidHom_apply, LinearMap.toAddMonoidHom_coe, map_add, map_nsmul, this,
+      simp only [nsmulAddMonoidHom_apply, LinearMap.toAddMonoidHom_coe, map_add (f := _), map_nsmul, this,
         add_zero]
     · rintro ⟨y, hy⟩
       obtain ⟨y, rfl⟩ := T.mkQ_surjective y
@@ -543,7 +547,7 @@ private lemma exists_irr : ∃ ρ, Irr (v.valuation K) ρ := by
   rw [h1]
   have : X ^ 2 + X - algebraMap _ K ρ - algebraMap _ K (a ^ 2 + a - ρ)
       = (X - algebraMap _ K a) * (X + algebraMap _ K a + 1) := by
-    simp only [map_sub, map_add, map_pow]; ring
+    simp only [map_sub, map_add (f := _), map_pow]; ring
   rw [this, map_mul]
   refine lt_of_le_of_lt (mul_le_of_le_one_right' ?_) ha
   exact Valuation.map_add_le _ (Valuation.map_add_le _ hX (val_le_one v a)) (by simp)
@@ -630,6 +634,7 @@ private lemma relIndex_Qv : (Qv (v.valuation K)).relIndex (Wv v) ≠ 0 ∧
         v.valuation K (((q.1 : ℤ) : K) * ((x : Kˣ) : K) - 1 - 2 * π * algebraMap _ K a)
           < v.valuation K 4) ?_ ?_
   · rw [← h1, Nat.card_prod, Nat.card_eq_fintype_card, Fintype.card_units_int] at h2
+    rw [← Ideal.absNorm_eq_natCard] at h2
     have hle : N ⊔ (powMonoidHom 2).range ≤ (Qv (v.valuation K)).subgroupOf (Wv v) := by
       refine sup_le (Subgroup.subgroupOf_mono _ le_sup_left) ?_
       rintro _ ⟨y, rfl⟩
@@ -911,7 +916,7 @@ private lemma US_rank (S : Finset (HeightOneSpectrum (𝓞 K))) :
   simp only [finrank_fintype_fun_eq_card, Fintype.card_coe] at h2
   omega
 
-private lemma index_sq_US [IsTotallyComplex K] (S : Finset (HeightOneSpectrum (𝓞 K))) :
+private lemma index_sq_US [_root_.NumberField.IsTotallyComplex K] (S : Finset (HeightOneSpectrum (𝓞 K))) :
     (powMonoidHom (α := US S) 2).range.index = 2 ^ (InfinitePlace.nrComplexPlaces K + S.card) := by
   obtain ⟨h1, h2⟩ := US_rank S
   rw [index_sq _ (neg_one_mem_US S), h2, Units.rank, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces,
@@ -998,7 +1003,7 @@ private lemma Good.gen {S : Finset (HeightOneSpectrum (𝓞 K))} (hS : Good S) {
   refine le_antisymm ?_ (max_le (h5 v hv _ (Ideal.subset_span (by simp)))
     (h5 v hv _ (Ideal.subset_span (by simp))))
   obtain ⟨x, y, rfl⟩ := Ideal.mem_span_pair.1 hc
-  rw [map_add, map_mul _ x, map_mul _ y]
+  rw [map_add (f := _), map_mul _ x, map_mul _ y]
   refine (Valuation.map_add _ _ _).trans (max_le_max ?_ ?_) <;>
   · rw [map_mul]
     exact mul_le_of_le_one_left' (val_le_one _ _)
@@ -1132,7 +1137,7 @@ private lemma split {θ : Kˣ} {r : L} (hr : r ^ 2 = algebraMap K L θ) (σ : L 
   rw [map_ofNat] at h3
   set s := r / algebraMap K L y with hs
   have h4 : w.valuation L (1 + s) = w.valuation L (1 - s) := by
-    rw [h2, hs, map_add, map_one, map_div₀, hσ, σ.commutes, neg_div, sub_eq_add_neg]
+    rw [h2, hs, map_add (f := _), map_one, map_div₀, hσ, σ.commutes, neg_div, sub_eq_add_neg]
   have h5 : algebraMap K L (z - 1) = - ((1 + s) * (1 - s)) := by
     have : s ^ 2 = algebraMap K L z := by
       rw [hs, div_pow, hr]; simp
@@ -1187,10 +1192,10 @@ private lemma exists_unit {θ : Kˣ} {r : L} (hr : r ^ 2 = algebraMap K L θ) (�
   obtain ⟨x, hx0, hx⟩ : ∃ x : L, x ≠ 0 ∧ u * σ x = x := by
     by_cases h : 1 + (u : L) = 0
     · exact ⟨r, hr0, by rw [hσ]; linear_combination (-r) * h⟩
-    · exact ⟨1 + u, h, by rw [map_add, map_one]; linear_combination hu1⟩
+    · exact ⟨1 + u, h, by rw [map_add (f := _), map_one]; linear_combination hu1⟩
   obtain ⟨a, b, hab⟩ := hb x
   have hσx : σ x = algebraMap K L a - algebraMap K L b * r := by
-    rw [hab, map_add, map_mul, hσ, σ.commutes, σ.commutes]; ring
+    rw [hab, map_add (f := _), map_mul, hσ, σ.commutes, σ.commutes]; ring
   obtain ⟨c, hc⟩ := hS.gen (a := a) (b := b) (by
     by_contra h
     push Not at h
@@ -1224,7 +1229,7 @@ private lemma exists_unit {θ : Kˣ} {r : L} (hr : r ^ 2 = algebraMap K L θ) (�
       rwa [h5, map_mul, map_mul, h2, h3, one_mul, mul_one] at this
   · rw [Units.val_mk0, map_div₀, σ.commutes, ← mul_div_assoc, hx]
 
-private lemma norm_index_count_bound [IsTotallyComplex K] {θ : Kˣ} {r : L} (hr : r ^ 2 = algebraMap K L θ)
+private lemma norm_index_count_bound [_root_.NumberField.IsTotallyComplex K] {θ : Kˣ} {r : L} (hr : r ^ 2 = algebraMap K L θ)
     (σ : L ≃ₐ[K] L) (hσ : σ r = -r)
     (hb : ∀ x : L, ∃ a b : K, x = algebraMap K L a + algebraMap K L b * r) (h2 : finrank K L = 2)
     {S P : Finset (HeightOneSpectrum (𝓞 K))} (hS : Good S) (hθ : θ ∈ US S) (hP : P ⊆ S)
@@ -1236,7 +1241,7 @@ private lemma norm_index_count_bound [IsTotallyComplex K] {θ : Kˣ} {r : L} (hr
   have hn0 : ∀ a b : K, (algebraMap K L a + algebraMap K L b * r) *
       σ (algebraMap K L a + algebraMap K L b * r) = algebraMap K L (a ^ 2 - θ * b ^ 2) := by
     intro a b
-    rw [map_add, map_mul, hσ, σ.commutes, σ.commutes, map_sub, map_mul, map_pow, map_pow, ← hr]
+    rw [map_add (f := _), map_mul, hσ, σ.commutes, σ.commutes, map_sub, map_mul, map_pow, map_pow, ← hr]
     ring
   have hσσ : ∀ x, σ (σ x) = x := by
     intro x
@@ -1367,7 +1372,7 @@ private lemma exists_quad {K : Type} [Field K] [NumberField K] {θ : K} (h : ¬ 
     exact ⟨x.re, x.im, by ext <;> simp⟩
 
 section glob
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K]
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
 
 private lemma count {θ : Kˣ} (hsq : ¬ IsSquare (θ : K))
     {S P : Finset (HeightOneSpectrum (𝓞 K))} (hS : Good S) (hθ : θ ∈ US S) (hP : P ⊆ S)
@@ -1396,13 +1401,13 @@ private lemma count_contra {θ : Kˣ} (hsq : ¬ IsSquare (θ : K))
   have := Finset.card_filter_add_card_filter_not (s := S) (fun v => θ ∈ Qv (v.valuation K))
   omega
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private lemma not_LN {v : HeightOneSpectrum (𝓞 K)} {θ : K} {α x : Kˣ}
     (hα : α ∉ LN (v.valuation K) θ) (h : α⁻¹ * x ∈ Qv (v.valuation K)) :
     x ∉ LN (v.valuation K) θ := fun hx => hα (by
   simpa using mul_mem hx (inv_mem (Qv_le_LN _ θ h)))
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private lemma exists_dual {θ : Kˣ} (S : Finset (HeightOneSpectrum (𝓞 K)))
     (v : HeightOneSpectrum (𝓞 K)) : ∃ x : Kˣ, (θ ∉ Qv (v.valuation K) → x ∉ LN (v.valuation K) θ) ∧
       ∀ w ∈ S, w ≠ v → x ∈ LN (w.valuation K) θ := by
@@ -1443,7 +1448,7 @@ private lemma exists_prime {θ u : Kˣ} (hsq : ¬ IsSquare (θ : K)) (hu : ¬ Is
     obtain ⟨a, b, rfl⟩ := h3 x
     have hx : algebraMap K L u = _ := hx
     have h5 := congrArg σ hx
-    simp only [map_mul, map_add, h2, σ.commutes] at h5
+    simp only [map_mul, map_add (f := _), h2, σ.commutes] at h5
     have h6 : 4 * algebraMap K L a * algebraMap K L b * r = 0 := by linear_combination h5 - hx
     simp only [mul_eq_zero, map_eq_zero, hr0, or_false] at h6
     rcases h6 with (h6 | rfl) | rfl
@@ -1460,7 +1465,7 @@ private lemma exists_prime {θ u : Kˣ} (hsq : ¬ IsSquare (θ : K)) (hu : ¬ Is
   rw [map_mul, h8] at h7
   exact (Subgroup.mul_mem_cancel_right _ (sq_mem_Qv _ _)).1 h7
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private lemma mem_sq {S : Finset (HeightOneSpectrum (𝓞 K))} (u : US S)
     (h : IsSquare ((u : Kˣ) : K)) : u ∈ (powMonoidHom (α := US S) 2).range := by
   obtain ⟨y, hy⟩ := h
@@ -1468,7 +1473,7 @@ private lemma mem_sq {S : Finset (HeightOneSpectrum (𝓞 K))} (u : US S)
   have : Units.mk0 y hy0 ^ 2 = u := Units.ext (by simp [hy, sq])
   exact ⟨⟨Units.mk0 y hy0, root_mem_US (this ▸ u.2)⟩, Subtype.ext this⟩
 
-omit [IsTotallyComplex K] in
+omit [_root_.NumberField.IsTotallyComplex K] in
 private lemma mul_mem_Qv' {v : HeightOneSpectrum (𝓞 K)} (h2 : v.valuation K 2 = 1) {x y : Kˣ}
     (hx : v.valuation K x = 1) (hy : v.valuation K y = 1)
     (h : x ∈ Qv (v.valuation K) ↔ y ∈ Qv (v.valuation K)) : x * y ∈ Qv (v.valuation K) := by
@@ -1704,7 +1709,7 @@ private lemma main {F : Type} [Field F] [NumberField F] {Δ d : F} (hΔ : Δ ≠
     (ε := -1) fun w => by
       obtain ⟨a, b, hab⟩ := h (w.under (𝓞 F))
       have h4 := (val_lt w).2 hab
-      rw [map_ofNat, map_add, map_one] at h4
+      rw [map_ofNat, map_add (f := _), map_one] at h4
       set n := algebraMap F E (a ^ 2 - Δ * b ^ 2) with hn
       have h5 : w.valuation E (-n - 1) < w.valuation E 4 := by
         rwa [← Valuation.map_neg, neg_sub, sub_neg_eq_add, add_comm]
@@ -1720,9 +1725,9 @@ private lemma main {F : Type} [Field F] [NumberField F] {Δ d : F} (hΔ : Δ ≠
   obtain ⟨q₀, q₁, rfl⟩ := h3 q
   simp only [Units.val_neg, Units.val_one, Units.val_mk0] at hpq
   have h7 := congrArg σ hpq
-  simp only [map_neg, map_one, map_sub, map_mul, map_add, map_pow, h2, σ.commutes] at h7
+  simp only [map_neg, map_one, map_sub, map_mul, map_add (f := _), map_pow, h2, σ.commutes] at h7
   refine ⟨p₀, p₁, q₀, q₁, (algebraMap F E).injective ?_, (algebraMap F E).injective ?_⟩
-  · simp only [map_neg, map_one, map_sub, map_mul, map_add, map_pow, ← h1]
+  · simp only [map_neg, map_one, map_sub, map_mul, map_add (f := _), map_pow, ← h1]
     linear_combination (-1 / 2) * hpq + (-1 / 2) * h7
   · simp only [map_mul]
     refine mul_right_cancel₀ hr0 ?_

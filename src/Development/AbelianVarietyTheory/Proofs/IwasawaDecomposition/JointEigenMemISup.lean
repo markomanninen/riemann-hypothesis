@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.JointEigenSupremum
 
@@ -33,7 +37,7 @@ theorem joint_eigen_mem_iSup {ι κ M : Type} [AddCommGroup M] [Module ℂ M]
       have hw : (op i : M → M) z - χ k0 i • z ∈ ⨆ k ∈ s, E k :=
         Submodule.sub_mem _ (hstab s i z hz) (Submodule.smul_mem _ _ hz)
       have h1 := hx i
-      rw [map_add, hE k0 y hy i, smul_add] at h1
+      rw [map_add (f := _), hE k0 y hy i, smul_add] at h1
       have h2 : (op i : M → M) z = ψ i • y + ψ i • z - χ k0 i • y := by
         rw [← h1]; abel
       have hw' : (op i : M → M) z - χ k0 i • z = (ψ i - χ k0 i) • (y + z) := by

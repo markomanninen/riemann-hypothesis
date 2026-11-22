@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSumPolAV
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSumPolAV
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -67,7 +71,7 @@ theorem tensorHom_prop : ∀ (S : Scheme.{0}) (P : MorphismProperty Scheme.{0}) 
   have e : (f ⊗ₘ g).left = pullback.map A.hom C.hom B.hom D.hom f.left g.left (𝟙 S) (by simp) (by simp) := by
     first | rfl | simp
   rw [e]
-  exact P.pullback_map hf hg (Over.w f).symm (Over.w g).symm
+  exact P.pullbackMap hf hg (Over.w f).symm (Over.w g).symm
 
 theorem kernel_tensor : ∀ (S : Scheme.{0}) (T₁ T₂ G₁ G₂ B₁ B₂ : Over S) [GrpObj B₁] [GrpObj B₂] (i₁ : T₁ ⟶ G₁) (i₂ : T₂ ⟶ G₂) (q₁ : G₁ ⟶ B₁) (q₂ : G₂ ⟶ B₂), IsPullback i₁ (toUnit T₁) q₁ (η : 𝟙_ (Over S) ⟶ B₁) → IsPullback i₂ (toUnit T₂) q₂ (η : 𝟙_ (Over S) ⟶ B₂) → IsPullback (i₁ ⊗ₘ i₂) (toUnit (T₁ ⊗ T₂)) (q₁ ⊗ₘ q₂) (η : 𝟙_ (Over S) ⟶ B₁ ⊗ B₂) := by
   intro S T₁ T₂ G₁ G₂ B₁ B₂ _ _ i₁ i₂ q₁ q₂ h₁ h₂
@@ -126,8 +130,24 @@ theorem torusExtension_of_prod {K : Type} [Field K] {G G₁ G₂ : Over (Spec (.
   letI := E₂.addCommGroup; haveI := E₂.free; haveI := E₂.finite; letI := E₂.grpB
   haveI := E₁.q_hom; haveI := E₂.q_hom; haveI := E₁.i_hom; haveI := E₂.i_hom
   haveI := torus_prod_iso (Spec (.of K)) E₁.X E₂.X
-  haveI := SplitTorusPow.isMonHom_torusMap (S := Spec (.of K)) (AddMonoidHom.inl E₁.X E₂.X)
-  haveI := SplitTorusPow.isMonHom_torusMap (S := Spec (.of K)) (AddMonoidHom.inr E₁.X E₂.X)
+  have hmon : ∀ {X X' : Type} [AddCommGroup X] [AddCommGroup X'] (φ : X →+ X'),
+      IsMonHom (SplitTorusPow.torusMap (Spec (.of K)) φ) := by
+    intro X X' _ _ φ
+    constructor
+    · have h : (1 : 𝟙_ (Over (Spec (.of K))) ⟶ splitTorus _ X') ≫ SplitTorusPow.torusMap _ φ = 1 := by
+        apply (splitTorusPointsEquiv _ X _).injective
+        rw [SplitTorusPow.points_comp_torusMap, map_one, map_one, MonoidHom.one_comp]
+      simpa [Hom.one_def] using h
+    · have h : ∀ {Z : Over (Spec (.of K))} (a b : Z ⟶ splitTorus _ X'),
+          (a * b) ≫ SplitTorusPow.torusMap _ φ = (a ≫ SplitTorusPow.torusMap _ φ) * (b ≫ SplitTorusPow.torusMap _ φ) := by
+        intro Z a b
+        apply (splitTorusPointsEquiv _ X Z).injective
+        rw [map_mul, SplitTorusPow.points_comp_torusMap, SplitTorusPow.points_comp_torusMap,
+          SplitTorusPow.points_comp_torusMap, map_mul, MonoidHom.mul_comp]
+      simpa only [Hom.mul_def, lift_fst_snd, Category.id_comp, lift_fst_comp_snd_comp] using
+        h (fst (splitTorus _ X') (splitTorus _ X')) (snd _ _)
+  haveI := hmon (AddMonoidHom.inl E₁.X E₂.X)
+  haveI := hmon (AddMonoidHom.inr E₁.X E₂.X)
   have key := kernel_tensor _ _ _ _ _ _ _ E₁.i E₂.i E₁.q E₂.q E₁.isKernel E₂.isKernel
   haveI : IsIso (lift a₁ a₂).left := inferInstanceAs (IsIso ((Over.forget _).map (lift a₁ a₂)))
   haveI : IsMonHom (inv (lift a₁ a₂)) := inferInstanceAs (IsMonHom (asIso (lift a₁ a₂)).inv)

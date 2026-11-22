@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastMCastM
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurePreservingSndEmptyBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastMCastM
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurePreservingSndEmptyBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowVLift
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

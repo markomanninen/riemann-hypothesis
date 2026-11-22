@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivPowerCompatRelFiltrationTwoSidedRelEqBotOfBasStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivPowerCompatRelFiltrationTwoSidedRelEqBotOfBasStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -184,7 +188,7 @@ theorem smoothLift_degreeTwoRes_totalDifferentialOne {k : (KL Λ).T1} {w : Tot1 
   refine ⟨fun U V W a b ↦ ?_, fun U V a ↦ ?_, fun U ↦ ?_⟩
   · change (KL Λ).M0.map b (k.1 U V a) - k.1 U W (a ≫ b) + k.1 V W b =
       Λ.e W (mp (OAff D.s) b (w.1 U V a) - w.1 U W (a ≫ b) + w.1 V W b)
-    rw [h.1, h.1, h.1, map0, map_add, map_sub]
+    rw [h.1, h.1, h.1, map0, map_add (f := _), map_sub]
   · change k.2 V - (KL Λ).M1.map a (k.2 U) - (KL Λ).d0 V (k.1 U V a) =
       f1 Λ V (w.2 V - p1 (OAff D.s) a (w.2 U) - KaehlerDifferential.D D.R _ (w.1 U V a))
     rw [smoothLift_degreeOneRes_component_eq Λ h, smoothLift_degreeOneRes_component_eq Λ h, h.1, map1, d0e, map_sub, map_sub]
@@ -233,19 +237,19 @@ theorem part2 : (∀ k, ∃! w, Λ.Res2 k w) ∧ (∀ w, ∃! k, Λ.Res2 k w) �
         (mp (OAff D.s) χ (w.1 T T' T'' φ ψ) + w.1 T T'' T''' (φ ≫ ψ) χ =
           w.1 T T' T''' φ (ψ ≫ χ) + w.1 T' T'' T''' ψ χ) := by
       intro T T' T'' T''' φ ψ χ
-      rw [h.1, h.1, h.1, h.1, map0, ← map_add, ← map_add, (Λ.e T''').injective.eq_iff]
+      rw [h.1, h.1, h.1, h.1, map0, ← map_add (f := _), ← map_add (f := _), (Λ.e T''').injective.eq_iff]
     have c2 : ∀ (T T' T'' : AffOp D.X) (φ : T ⟶ T') (ψ : T' ⟶ T''),
         (k.2.1 T T'' (φ ≫ ψ) = (KL Λ).M1.map ψ (k.2.1 T T' φ) + k.2.1 T' T'' ψ + (KL Λ).d0 T'' (k.1 T T' T'' φ ψ)) ↔
         (w.2.1 T T'' (φ ≫ ψ) = p1 (OAff D.s) ψ (w.2.1 T T' φ) + w.2.1 T' T'' ψ +
           KaehlerDifferential.D D.R _ (w.1 T T' T'' φ ψ)) := by
       intro T T' T'' φ ψ
-      rw [smoothLift_degreeTwoRes_oneForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, h.1, map1, d0e, ← map_add, ← map_add,
+      rw [smoothLift_degreeTwoRes_oneForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, h.1, map1, d0e, ← map_add (f := _), ← map_add (f := _),
         (liftOneFormsToCompatible_bijective Λ T'').1.eq_iff]
     have c3 : ∀ (T T' : AffOp D.X) (φ : T ⟶ T'),
         (k.2.2 T' = (KL Λ).M2.map φ (k.2.2 T) + (KL Λ).d1 T' (k.2.1 T T' φ)) ↔
         (w.2.2 T' = pOm (OAff D.s) 2 φ (w.2.2 T) + dOne _ _ (w.2.1 T T' φ)) := by
       intro T T' φ
-      rw [smoothLift_degreeTwoRes_twoForm_component_eq Λ h, smoothLift_degreeTwoRes_twoForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, map2, d1e, ← map_add, (fm_bij Λ T' 2).1.eq_iff]
+      rw [smoothLift_degreeTwoRes_twoForm_component_eq Λ h, smoothLift_degreeTwoRes_twoForm_component_eq Λ h, smoothLift_degreeTwoRes_oneForm_component_eq Λ h, map2, d1e, ← map_add (f := _), (fm_bij Λ T' 2).1.eq_iff]
     have c4 : ∀ T : AffOp D.X, (KL Λ).d2 T (k.2.2 T) = 0 ↔ dTwo _ _ (w.2.2 T) = 0 := by
       intro T
       rw [smoothLift_degreeTwoRes_twoForm_component_eq Λ h, d2e, ← map_zero (fm Λ T 3), (fm_bij Λ T 3).1.eq_iff]

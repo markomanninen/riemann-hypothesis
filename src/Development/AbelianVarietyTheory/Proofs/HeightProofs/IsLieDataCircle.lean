@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementA
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,10 @@ def Sm (e : L → G) (φ : G → ℂ) : Prop := ∀ g, ContDiff ℝ ∞ fun X : 
 
 def Der (e : L → G) (X : L) (φ : G → ℂ) : G → ℂ := fun g => deriv (fun t : ℝ => φ (g * e (t • X))) 0
 
+
 open scoped ContDiff Topology in
 open NumberField Matrix in
 variable {𝔸 L G : Type} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [NormedAddCommGroup L] [NormedSpace ℝ L] [Group G] in
-
 theorem _root_.GlobalTheory.SmoothForms.contDiff_family [FiniteDimensional ℝ 𝔸] {σ : 𝔸 →ₗ[ℝ] 𝔸} {j : L →ₗ[ℝ] 𝔸}
     {s : 𝔸 → G} (H : _root_.GlobalTheory.SmoothForms.IsLieData σ j s)
     (hl : _root_.GlobalTheory.SmoothForms.HasLog σ j) {φ : G → ℂ}

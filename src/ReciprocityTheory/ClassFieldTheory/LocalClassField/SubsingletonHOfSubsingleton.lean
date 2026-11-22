@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.HomFInjective
-import ReciprocityTheory.GroupCohomology.ResNormalHolds
-import ReciprocityTheory.GroupCohomology.Shapiro
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.HomFInjective
+public import ReciprocityTheory.GroupCohomology.ResNormalHolds
+public import ReciprocityTheory.GroupCohomology.Shapiro
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.Deg2
 
@@ -42,8 +46,6 @@ theorem exists_normal_index {H : Type*} [Group H] [Finite H] [Nontrivial H] (l :
     exact Nat.eq_of_mul_eq_mul_left (pow_pos hl.1.pos j) this
   refine ⟨K, Subgroup.normal_of_index_eq_minFac_card ?_, hidx⟩
   rw [hidx, hk, Nat.Prime.pow_minFac hl.1 (Nat.succ_ne_zero j)]
-
-def tau (R : Type u) [CommRing R] (n : ℕ) : R := 1 + ∑ j : Fin (n + 1), (-1 : R) ^ ((j : ℕ) + 1)
 
 end
 

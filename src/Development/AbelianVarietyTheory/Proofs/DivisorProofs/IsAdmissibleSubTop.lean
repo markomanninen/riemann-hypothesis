@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HarishChandraModulesIndefiniteUnitaryGroup
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeHW
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HarishChandraModulesIndefiniteUnitaryGroup
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeHW
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LanglandsClassification
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace
@@ -23,7 +27,7 @@ def kfSub (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ
     rintro a b ⟨S, hS, ha, hSK⟩ ⟨T, hT, hb, hTK⟩
     refine ⟨S ⊔ T, inferInstance, Submodule.add_mem_sup ha hb, fun g hg v hv => ?_⟩
     obtain ⟨x, hx, y, hy, hxy⟩ := Submodule.mem_sup.1 hv
-    rw [← hxy, map_add]
+    rw [← hxy, map_add (f := _)]
     exact Submodule.add_mem_sup (hSK g hg x hx) (hTK g hg y hy)
   zero_mem' := ⟨⊥, inferInstance, Submodule.zero_mem _, fun g _ v hv => by
     rw [(Submodule.mem_bot ℂ).1 hv, map_zero]; exact Submodule.zero_mem _⟩
@@ -35,7 +39,7 @@ theorem kStableSub_iSup {ι : Type} {E : Fin n → Fin n → Module.End ℂ (smD
   refine Submodule.iSup_induction S (motive := fun x => E a b x ∈ ⨆ i, S i) hx (fun i y hy => ?_) ?_ ?_
   · exact Submodule.mem_iSup_of_mem i (h i a b hab y hy)
   · simp
-  · intro y z hy hz; rw [map_add]; exact Submodule.add_mem _ hy hz
+  · intro y z hy hz; rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 end
 

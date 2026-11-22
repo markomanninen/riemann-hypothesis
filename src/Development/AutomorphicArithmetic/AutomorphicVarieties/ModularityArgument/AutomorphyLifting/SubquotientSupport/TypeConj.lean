@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeConj
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodToralOfIsSubquotientProdIrr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.ExistsRec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeConj
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodToralOfIsSubquotientProdIrr
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -29,7 +34,8 @@ private def Cj.pull {γ : ℂ ≃+* ℂ} {π : Representation ℂ G V} {π' : Re
   ⟨{ carrier := {v | f v ∈ S.toSubmodule}
      add_mem' := fun {a b} ha hb => by
        show f (a + b) ∈ S.toSubmodule
-       rw [map_add]; exact add_mem ha hb
+       rw [map_add f]
+       exact add_mem ha hb
      zero_mem' := by
        show f 0 ∈ S.toSubmodule
        rw [map_zero]; exact zero_mem _
@@ -59,7 +65,7 @@ private theorem cosocle_conj {γ : ℂ ≃+* ℂ} {π : Representation ℂ G V} 
   obtain ⟨-, p, hp, hS⟩ := h
   let q : π'.IntertwiningMap σ' :=
     { toFun := fun v => f (p (F.symm v))
-      map_add' := fun a b => by simp only [map_add]
+      map_add' := fun a b => by simp only [map_add (f := _)]
       map_smul' := fun c a => by rw [hF.symm.1, map_smul, hf.1]; simp
       isIntertwining' := fun g => LinearMap.ext fun v => by
         show f (p (F.symm (π' g v))) = σ' g (f (p (F.symm v)))
@@ -311,7 +317,7 @@ private theorem sumList_chars : ∀ (n : ℕ) (ξ : Fin n → Weil h →* ℂˣ)
     · refine Fin.cases ?_ (fun j => ?_) i <;> simp [SatakeLaw.consEquiv]
 
 private theorem rc_cosocle {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A}
-    {rc : IrrGL (w.adicCompletion E) → WD h} (hrc : IsRec h rc) (H : UpperTheory.V.Z.Win.LawsV a ha ε rc)
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} (hrc : IsRec h rc) (H : UpperTheory.V.Z.Win.LawsV a ha ε rc)
     (ω : Fin n → (w.adicCompletion E)ˣ →* ℂˣ) (hω : ∀ i, IsSmoothChar (ω i))
     (ho : ∀ i j, i < j → ω j ≠ ω i * absPow _ 1) (π : IrrRep (GL (Fin n) (w.adicCompletion E)))
     (hπ : IsCosocle π.ρ (prodIrr _ (sum_deg ω hω))) :
@@ -331,7 +337,7 @@ private theorem type_conj (γ : ℂ ≃+* ℂ) (b : WDRep h (Fin n → ℂ)) (B 
       map_add' := fun u v => funext fun i => by
         have : (fun j => γ.symm ((u + v) j)) = (fun j => γ.symm (u j)) + fun j => γ.symm (v j) :=
           funext fun j => map_add _ _ _
-        rw [this, LinearEquiv.map_add]
+        rw [this, B.equivFun.symm.map_add]
         exact map_add γ _ _
       map_smul' := fun c v => funext fun i => by
         have : (fun j => γ.symm ((c • v) j)) = γ.symm c • fun j => γ.symm (v j) := funext fun j => map_mul _ _ _
@@ -364,33 +370,3 @@ end Gal
 
 end UpperTheory.V.Z.Win.T2.TypeConj
 
-open UpperTheory.V.Z.Win.T2.TypeConj in
-theorem UpperTheory.V.Z.Win.T2.typeConj :
-    type_of% @UpperTheory.V.Hi.typeConj := by
-  intro P L Ω _ _ _ _ _ n w A h rc hrc γ σ σ' f hf1 hf2 χ _ ⟨b, hb, hN, hρ⟩
-  obtain ⟨a, ha, ε, H⟩ := UpperTheory.V.Z.Win.toV hrc
-  haveI : CharZero (w.adicCompletion L) := algebraRat.charZero _
-  obtain ⟨B₀, ξ, hξ, hB₀⟩ := exists_chars b χ hρ
-  choose ω₀ hω₀ e using fun j => ha.factor (ξ j) (hξ j)
-  obtain ⟨p, ho⟩ := exists_order ω₀
-  let ω := fun j => ω₀ (p j)
-  have hω : ∀ j, IsSmoothChar (ω j) := fun j => hω₀ _
-  let B := B₀.reindex p.symm
-  have hB : ∀ j g, b.ρ g (B j) = ((ω j).comp a g : ℂ) • B j := fun j g => by
-    simp only [B, ω, Module.Basis.reindex_apply, Equiv.symm_symm, hB₀, e]
-  have e0 : ((n : ℂ) - 1) / 2 + (((1 - (n : ℝ)) / 2 : ℝ) : ℂ) = 0 := by push_cast; ring
-  let tw : SmIrr (GLw n w) → IrrRep (GL (Fin n) (w.adicCompletion L)) := fun τ =>
-    ⟨_, twist τ.ρ (detChar (Fin n) (absPow _ (((1 - (n : ℝ)) / 2 : ℝ) : ℂ))),
-      isSmooth_twist τ.smooth (isSmoothChar_absPow _).detChar, isIrreducible_twist τ.irred _⟩
-  have htw : ∀ τ, algNorm τ = cls (tw τ) := fun τ => IrrGL.tw_of _ _ _ _ (isSmoothChar_absPow _)
-  obtain ⟨𝔪, h𝔪⟩ := lfactors ω hω ho
-  obtain ⟨π, hπ⟩ := P.loc.cos _ 𝔪 n n _ (sum_deg ω hω) h𝔪
-  have h1 : rc (cls π) = rc (cls (tw σ)) := by
-    rw [rc_cosocle hrc H ω hω ho π hπ, ← htw, ← hb]
-    exact (WD.sound ⟨B.equivFun, equivFun_ρ b B _ hB, fun v => by simp [hN]⟩).symm
-  have hG : UpperTheory.Zero.LLC.Good (cls π) := good_cosocle ω hω π hπ
-  obtain ⟨φ⟩ := (IrrGL.of_eq_of (π := π.ρ) (σ := (tw σ).ρ) (hs := π.smooth) (hi := π.irr) (hs' := (tw σ).smooth)
-    (hi' := (tw σ).irr)).1 (H.inj _ _ hG h1.symm).symm
-  have h2 := cosocle_main γ ⟨hf1, hf2⟩ σ'.irred ω hω e0 (hπ.of_equiv φ (.refl _))
-  rw [htw, rc_cosocle hrc H _ _ (fun i j hij e => ho i j hij (order_cj γ e)) (tw σ') h2]
-  exact type_conj γ b B _ hB _ hρ _

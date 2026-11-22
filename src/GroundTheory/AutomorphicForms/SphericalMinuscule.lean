@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalTriangular
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalTriangular
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem mem_integralGL_of_forall_mem {g : GL (Fin n) F} (h₁ : ∀ i j, g i j �
       · exact (𝒪[F]).zero_mem
     · exact h₁ _ _
 
-variable (F) in
 
+variable (F) in
 def MBdd (t : ℤ) (A : Matrix (Fin n) (Fin n) F) : Prop := ∀ i j, Bdd F t (A i j)
 
 theorem MBdd.mul {s t : ℤ} {A B : Matrix (Fin n) (Fin n) F} (hA : MBdd F s A) (hB : MBdd F t B) :
@@ -59,8 +63,8 @@ theorem bdd_neg_one_iff {x : F} : Bdd F (-1) x ↔ π * x ∈ 𝒪[F] := by
     rwa [← mul_assoc, _root_.zpow_neg_one, inv_mul_cancel₀ (Cartan.uniformizer_ne_zero F), one_mul,
       add_zero] at this
 
-variable (F n) in
 
+variable (F n) in
 def minusculeSet (k : ℕ) : Set (GL (Fin n) F) :=
   {g | (∀ i j, g i j ∈ 𝒪[F]) ∧ (∀ i j, π * (g⁻¹ : GL (Fin n) F) i j ∈ 𝒪[F]) ∧
     valuation F (g : Matrix (Fin n) (Fin n) F).det = valuation F π ^ k}
@@ -102,8 +106,8 @@ instance (S : Finset (Fin n)) : DecidableEq (Pairs S) := by
   unfold Pairs
   infer_instance
 
-variable (F) in
 
+variable (F) in
 def residueLift : 𝓀[F] → 𝒪[F] :=
   Function.surjInv (IsLocalRing.residue_surjective (R := 𝒪[F]))
 

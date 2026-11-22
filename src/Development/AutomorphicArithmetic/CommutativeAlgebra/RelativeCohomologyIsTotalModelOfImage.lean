@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SupportDoubleComplexTotalRepresentsVanishingCoch
-import Development.AutomorphicArithmetic.CommutativeAlgebra.DoubleMappingCylinderCochainExtension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SupportDoubleComplexTotalRepresentsVanishingCoch
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.DoubleMappingCylinderCochainExtension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC LateralTheory.CohomologicalPurity LateralTheory.CohomologicalPurity.TubeCut UpperTheory.Et.Prd
 
 namespace UpperTheory.VanishingEvaluation
@@ -19,15 +24,15 @@ private theorem pb_sub {E E' : Spc} (f : E ⟶ E') {K : Cx R} {n : ℤ} (α β :
 
 private theorem ev_pb {E E' : Spc} (f : E ⟶ E') {K : Cx R} {n : ℤ} (α : Cochain ((chains R).obj E') K n)
     (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (pb f α) p s h U x = ev α p s h U (x.map f) :=
+    ev (R := R) (pb f α) p s h U x = ev (R := R) α p s h U (x.map f) :=
   (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).2.2.2.1 f α p s h U x
 
 private theorem ev_zero {E : Spc} {K : Cx R} {n : ℤ} (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0})
-    (x : Sx E p U) : ev (0 : Cochain ((chains R).obj E) K n) p s h U x = 0 :=
+    (x : Sx E p U) : ev (R := R) (0 : Cochain ((chains R).obj E) K n) p s h U x = 0 :=
   ((GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).1 0 0 p s h U x).2.2.1
 
 private theorem pb_eq_zero {E E' : Spc} (f : E ⟶ E') {K : Cx R} {n : ℤ} (α : Cochain ((chains R).obj E') K n)
-    (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U), ev α p s h U (x.map f) = 0) :
+    (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U), ev (R := R) α p s h U (x.map f) = 0) :
     pb f α = 0 :=
   (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).2.2.1 _ _ fun p s h' U x => by rw [ev_pb, h, ev_zero]
 
@@ -38,16 +43,16 @@ private theorem δ_pb {E E' : Spc} (f : E ⟶ E') {K : Cx R} {n : ℤ} (α : Coc
   · simp [δ_shape _ _ h]
 
 private theorem δ_van {E E' : Spc} (f : E ⟶ E') {K : Cx R} {n : ℤ} (α : Cochain ((chains R).obj E') K n) (n' : ℤ)
-    (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U), ev α p s h U (x.map f) = 0)
+    (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U), ev (R := R) α p s h U (x.map f) = 0)
     (p : ℕ) (s : ℤ) (h' : -(p : ℤ) + n' = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (δ n n' α) p s h' U (x.map f) = 0 := by
+    ev (R := R) (δ n n' α) p s h' U (x.map f) = 0 := by
   rw [← ev_pb, ← δ_pb, pb_eq_zero f α h, δ_zero, ev_zero]
 
 private theorem dbl_ext (P : Arrow Spc) {K : Cx R} {N : ℤ} (α β : Cochain ((chains R).obj (dbl P)) K N)
     (hl : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + N = s) (U : Scheme.{0}) (z : Sx P.right p U),
-      ev α p s h U (z.map (dbl.inl P)) = ev β p s h U (z.map (dbl.inl P)))
+      ev (R := R) α p s h U (z.map (dbl.inl P)) = ev (R := R) β p s h U (z.map (dbl.inl P)))
     (hr : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + N = s) (U : Scheme.{0}) (z : Sx P.right p U),
-      ev α p s h U (z.map (dbl.inr P)) = ev β p s h U (z.map (dbl.inr P))) : α = β :=
+      ev (R := R) α p s h U (z.map (dbl.inr P)) = ev (R := R) β p s h U (z.map (dbl.inr P))) : α = β :=
   (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).2.2.1 α β fun p s h U w => by
     rcases (UpperTheory.doubleMappingCylinder_cochain_extension R P).1 p U w with ⟨z, rfl⟩ | ⟨z, rfl⟩
     · exact hl p s h U z
@@ -60,9 +65,9 @@ private theorem map_id {E : Spc} {p : ℕ} {U : Scheme.{0}} (x : Sx E p U) : x.m
 
 private theorem van_img (P : Arrow Spc) {K : Cx R} {n : ℤ} (α : Cochain ((chains R).obj (dbl P)) K n)
     (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (z : Sx P.right p U),
-      ev α p s h U (z.map (dbl.inr P)) = 0)
+      ev (R := R) α p s h U (z.map (dbl.inr P)) = 0)
     (p : ℕ) (s : ℤ) (h' : -(p : ℤ) + n = s) (U : Scheme.{0}) (z : Sx P.right p U)
-    (hz : (Sub.img P.hom).mem p U z) : ev α p s h' U (z.map (dbl.inl P)) = 0 := by
+    (hz : (Sub.img P.hom).mem p U z) : ev (R := R) α p s h' U (z.map (dbl.inl P)) = 0 := by
   obtain ⟨y, rfl⟩ := hz
   have e : (y.map P.hom).map (dbl.inl P) = (y.map P.hom).map (dbl.inr P) := by
     rw [map_map, map_map]
@@ -78,7 +83,7 @@ private theorem pb_fold (P : Arrow Spc) {K : Cx R} {n : ℤ} (α : Cochain ((cha
 private theorem comp_eq {E E' : Spc} {j : E ⟶ E'} {Z : Sub E} {K : Cx R} {m N : ℤ}
     {γ γ' : Cochain ((chains R).obj E') K N} {x : (famDC Z K m).Tot} (h : Comp j γ x) (h' : Comp j γ' x)
     (p : ℕ) (s : ℤ) (hs : -(p : ℤ) + N = s) (U : Scheme.{0}) (z : Sx E p U) :
-    ev γ p s hs U (z.map j) = ev γ' p s hs U (z.map j) := by
+    ev (R := R) γ p s hs U (z.map j) = ev (R := R) γ' p s hs U (z.map j) := by
   obtain ⟨t, rfl⟩ : ∃ t, s = t + m := ⟨s - m, by omega⟩
   exact (h p t hs U z).symm.trans (h' p t hs U z)
 
@@ -89,7 +94,7 @@ private theorem comp_zero {E E' : Spc} (j : E ⟶ E') (Z : Sub E) (K : Cx R) (m 
 
 private theorem pull_inr (q : ℕ) (P : Arrow Spc) (i N : ℤ) (g : Cocycle ((chains (ZMod q)).obj (dbl P)) (res _ (tw q i)) N)
     (h : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + N = s) (U : Scheme.{0}) (z : Sx P.right p U),
-      ev g.1 p s h U (z.map (dbl.inr P)) = 0) :
+      ev (R := ZMod q) g.1 p s h U (z.map (dbl.inr P)) = 0) :
     pull _ (dbl.inr P) (tw q i) N (CohomologyClass.mk g) = 0 := by
   change CohomologyClass.mk (zcomp (Cocycle.ofHom ((chains (ZMod q)).map (dbl.inr P))) g (zero_add N)) = 0
   have e : zcomp (Cocycle.ofHom ((chains (ZMod q)).map (dbl.inr P))) g (zero_add N) = 0 :=
@@ -130,7 +135,7 @@ theorem UpperTheory.relativeCohomology_isTotalModel_of_image :
       change pb (dbl.inr P) (g₀.1 - δ N' N (pb (dbl.fold P) β)) = 0
       rw [pb_sub, ← δ_pb, pb_fold, hβ', sub_self]
     have hv : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + N = s) (U : Scheme.{0}) (z : Sx P.right p U),
-        ev (g₀ - e).1 p s h U (z.map (dbl.inr P)) = 0 := fun p s h U z => by
+        ev (R := ZMod q) (g₀ - e).1 p s h U (z.map (dbl.inr P)) = 0 := fun p s h U z => by
       rw [← ev_pb, hp, ev_zero]
     obtain ⟨x, hd, hx⟩ := (C n N hN).1 (g₀ - e).1 (van_img P _ hv)
     refine ⟨x, hd, ?_, g₀ - e, hm, hx, hv⟩
@@ -163,7 +168,7 @@ theorem UpperTheory.relativeCohomology_isTotalModel_of_image :
       have hp' : pb (dbl.inr P) (β - pb (dbl.fold P) (pb (dbl.inr P) β)) = 0 := by
         rw [pb_sub, pb_fold, sub_self]
       have hv' : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + M = s) (U : Scheme.{0}) (z : Sx P.right p U),
-          ev (β - pb (dbl.fold P) (pb (dbl.inr P) β)) p s h U (z.map (dbl.inr P)) = 0 := fun p s h U z => by
+          ev (R := ZMod q) (β - pb (dbl.fold P) (pb (dbl.inr P) β)) p s h U (z.map (dbl.inr P)) = 0 := fun p s h U z => by
         rw [← ev_pb, hp', ev_zero]
       obtain ⟨y, hy, hcy⟩ := (C n' M hN').1 _ (van_img P _ hv')
       refine ⟨y, hy, ?_⟩

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartQuot
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartQuot
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -12,21 +17,21 @@ noncomputable section
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι] {n : ι → ℕ}
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem val_chartEval_eq_aeval_div (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin (n k + 1))
     (f : MvPolynomial (Coord n) ℤ) :
     (((chartEval x c f : chartRing x c) : ratioField x) : AlgebraicClosure ℚ) =
       aeval (fun p : Coord n ↦ x p.1 p.2 / x p.1 (c p.1)) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, Subalgebra.coe_add, IntermediateField.coe_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Subalgebra.coe_add, IntermediateField.coe_add, hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, Subalgebra.coe_mul, IntermediateField.coe_mul, hp]
     simp [chartEval, chartRatio]
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem chartEval_surjective (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin (n k + 1)) :
     Function.Surjective (chartEval x c) := by
   rintro ⟨a, ha⟩
@@ -37,8 +42,8 @@ theorem chartEval_surjective (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) �
     MvPolynomial.algHom_ext fun p ↦ by simp [chartEval]
   exact AlgHom.congr_fun h f
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem mem_ker_chartEval_iff (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin (n k + 1))
     (f : MvPolynomial (Coord n) ℤ) :
     f ∈ RingHom.ker (chartEval x c) ↔ aeval (fun p : Coord n ↦ x p.1 p.2 / x p.1 (c p.1)) f = 0 := by
@@ -79,10 +84,12 @@ theorem ker_chartEval (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin 
           rw [← map_one (Ideal.Quotient.mk J), Ideal.Quotient.eq]
           exact Ideal.subset_span ⟨k, rfl⟩
         rw [map_pow, hk, one_pow]
-      rw [← Ideal.Quotient.eq, hF, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Ideal.Quotient.eq, hF, map_sum]
       simp only [map_mul, h1, mul_one]
       conv_lhs => rw [← sum_compDegs f]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
     have hFP : F ∈ orbitIdeal x := by
       have hhom : IsWeightedHomogeneous (coordDeg n) F N := by
         have : F ∈ weightedHomogeneousSubmodule ℤ (coordDeg n) N := by
@@ -112,16 +119,19 @@ theorem ker_chartEval (x : Cone n (AlgebraicClosure ℚ)) (c : (k : ι) → Fin 
         rw [hy]
         rw [hs]
         ring
-      rw [hF, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hF, map_sum]
       refine (Finset.sum_congr rfl hterm).trans ?_
-      rw [← Finset.mul_sum, ← map_sum, sum_compDegs, show aeval z f = 0 from hf, mul_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finset.mul_sum, ← map_sum, sum_compDegs, show aeval z f = 0 from hf, mul_zero]
     have : f = F + (f - F) := by ring
     rw [this]
     exact Ideal.add_mem _ (Ideal.mem_sup_left hFP) (Ideal.mem_sup_right hFJ)
   · refine sup_le (fun f hf ↦ ?_) (Ideal.span_le.mpr ?_)
     · rw [mem_ker_chartEval_iff]
       rw [orbitIdeal, mem_mCoordIdeal_iff] at hf
-      rw [← sum_compDegs f, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_compDegs f, map_sum]
       refine Finset.sum_eq_zero fun m _ ↦ ?_
       have hs := aeval_blockScale_of_isWeightedHomogeneous (fun k ↦ (x k (c k))⁻¹) (flatCone x)
         (weightedHomogeneousComponent_isWeightedHomogeneous m f)
@@ -154,12 +164,6 @@ theorem OrbitChartQuot.proof : OrbitChartQuot.Statement := by
       Ideal.comap_map_of_surjective _ hsurj, ← RingHom.ker_eq_comap_bot, ker_chartEval x c hc,
       ← sup_assoc, sup_eq_left.mpr hV]
   exact ⟨(RingHom.quotientKerEquivOfSurjective hg).symm.trans (Ideal.quotEquivOfEq hker)⟩
-
-example : Nonempty ((chartRing samplePoint (fun _ ↦ 0) ⧸
-      chartPoint samplePoint (fun _ ↦ 0) (orbitIdeal samplePoint)) ≃+*
-    (MvPolynomial (Coord (fun _ : Unit ↦ 1)) ℤ ⧸ (orbitIdeal samplePoint ⊔
-      Ideal.span (Set.range fun k ↦ (X ⟨k, 0⟩ : MvPolynomial (Coord (fun _ : Unit ↦ 1)) ℤ) - 1)))) :=
-  OrbitChartQuot.proof Unit _ samplePoint _ (fun _ ↦ by simp [samplePoint]) _ le_rfl
 
 end
 

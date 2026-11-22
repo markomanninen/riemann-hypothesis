@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.LocAbs
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.LocAbs
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -151,7 +155,7 @@ theorem exists_unit_vec {Γ : Matrix ι ι K} (hΓ : S.IntM Γ) (hH : S.Herm Γ)
       ring
     · rw [S.hf_smul_left, S.hf_smul_right, ← mul_assoc, hw, inv_mul_cancel₀ hu0]
   have hσ2 : S.σ 2 = 2 := by
-    rw [← one_add_one_eq_two, map_add, map_one]
+    rw [← one_add_one_eq_two, map_add (f := _), map_one]
   have h2O : (2 : K) ∈ S.O := by
     have h11 := S.O.add_mem S.O.one_mem S.O.one_mem
     rwa [one_add_one_eq_two] at h11
@@ -196,7 +200,7 @@ theorem exists_unit_vec {Γ : Matrix ι ι K} (hΓ : S.IntM Γ) (hH : S.Herm Γ)
   · rw [hval]
     exact S.O.add_mem (S.O.add_mem (hΓ i i) h2O) (S.O.mul_mem (S.O.mul_mem (S.hσO _ hcO) (hΓ j j)) hcO)
   · rw [hval]
-    simp only [map_add, map_mul, hH i i, hH j j, S.hσσ (Γ i j)⁻¹ hcO, hσ2]
+    simp only [map_add (f := _), map_mul, hH i i, hH j j, S.hσσ (Γ i j)⁻¹ hcO, hσ2]
     ring
   · rw [hval]
     intro hn

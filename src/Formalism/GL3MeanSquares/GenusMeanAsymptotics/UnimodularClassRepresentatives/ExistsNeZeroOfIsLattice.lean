@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsClassRepsMap
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsClassRepsMap
+
+@[expose] public section
 
 open NumberField Module nonZeroDivisors
 
@@ -10,10 +14,10 @@ open Formalism.HermitianLatticesTheory Formalism.ThetaLiftIndependence
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-theorem exists_ne_zero_of_isLattice {A : Submodule (𝓞 K) K} (hA : Submodule.IsLattice K A) :
+theorem exists_ne_zero_of_isLattice {A : Submodule (𝓞 K) K} (hA : Submodule.IsFullLattice K A) :
     ∃ a ∈ A, a ≠ 0 := by
   by_contra hne
-  push_neg at hne
+  push Not at hne
   have h2 : Submodule.span K (A : Set K) = ⊥ := by
     rw [Submodule.span_eq_bot]; exact hne
   have h3 : (1 : K) ∈ Submodule.span K (A : Set K) := by
@@ -28,28 +32,30 @@ theorem span_eq_top_of_ne_zero {A : Submodule (𝓞 K) K} {a : K} (ha : a ∈ A)
   rw [hx]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ha)
 
-theorem isLattice_mul {A B : Submodule (𝓞 K) K} (hA : Submodule.IsLattice K A)
-    (hB : Submodule.IsLattice K B) : Submodule.IsLattice K (A * B) := by
+theorem isLattice_mul {A B : Submodule (𝓞 K) K} (hA : Submodule.IsFullLattice K A)
+    (hB : Submodule.IsFullLattice K B) : Submodule.IsFullLattice K (A * B) := by
   obtain ⟨a, ha, ha0⟩ := exists_ne_zero_of_isLattice hA
   obtain ⟨b, hb, hb0⟩ := exists_ne_zero_of_isLattice hB
-  exact ⟨hA.fg.mul hB.fg, span_eq_top_of_ne_zero (Submodule.mul_mem_mul ha hb) (mul_ne_zero ha0 hb0)⟩
+  have := Submodule.IsLattice.of_fg K (hA.toIsLattice.fg.mul hB.toIsLattice.fg)
+  exact ⟨span_eq_top_of_ne_zero (Submodule.mul_mem_mul ha hb) (mul_ne_zero ha0 hb0)⟩
 
-theorem exists_inv {A : Submodule (𝓞 K) K} (hA : Submodule.IsLattice K A) :
-    ∃ A' : Submodule (𝓞 K) K, Submodule.IsLattice K A' ∧ A' * A = 1 := by
+theorem exists_inv {A : Submodule (𝓞 K) K} (hA : Submodule.IsFullLattice K A) :
+    ∃ A' : Submodule (𝓞 K) K, Submodule.IsFullLattice K A' ∧ A' * A = 1 := by
   obtain ⟨a, ha, ha0⟩ := exists_ne_zero_of_isLattice hA
-  let I : FractionalIdeal (𝓞 K)⁰ K := ⟨A, FractionalIdeal.isFractional_of_fg hA.fg⟩
+  let I : FractionalIdeal (𝓞 K)⁰ K := ⟨A, FractionalIdeal.isFractional_of_fg hA.toIsLattice.fg⟩
   have hI : I ≠ 0 := by
     intro h
     have h' : a ∈ (I : Submodule (𝓞 K) K) := ha
-    rw [h, FractionalIdeal.coe_zero, Submodule.mem_bot] at h'
+    rw [h, FractionalIdeal.coeToSubmodule_zero, Submodule.mem_bot] at h'
     exact ha0 h'
   have hmul : ((I⁻¹ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) * A = 1 := by
     have e := congrArg (fun J : FractionalIdeal (𝓞 K)⁰ K => (J : Submodule (𝓞 K) K))
       (inv_mul_cancel₀ hI)
     have e2 : ((I⁻¹ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) * (I : Submodule (𝓞 K) K) = 1 := by
-      simpa only [FractionalIdeal.coe_mul, FractionalIdeal.coe_one] using e
+      simpa only [FractionalIdeal.coeToSubmodule_mul, FractionalIdeal.coeToSubmodule_one] using e
     exact e2
-  refine ⟨_, ⟨FractionalIdeal.fg_of_isNoetherianRing le_rfl _, ?_⟩, hmul⟩
+  have := Submodule.IsLattice.of_fg K (FractionalIdeal.fg_of_isNoetherianRing le_rfl I⁻¹)
+  refine ⟨_, ⟨?_⟩, hmul⟩
   have hne : ((I⁻¹ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) ≠ ⊥ := by
     intro hb
     rw [hb, Submodule.bot_mul] at hmul
@@ -142,12 +148,10 @@ theorem mem_isom_iff {h : K →ₗ⋆[K] K →ₗ[K] K} (h1 : h 1 1 ≠ 0) (g : 
       _ = star x * y * h 1 1 := by rw [he, mul_one]
 
 theorem mass_eq_of_lattices {h₁ h₂ : K →ₗ⋆[K] K →ₗ[K] K} (hn₁ : h₁ 1 1 ≠ 0) (hn₂ : h₂ 1 1 ≠ 0)
-    {A B : Submodule (𝓞 K) K} (hA : Submodule.IsLattice K A) (hB : Submodule.IsLattice K B)
+    {A B : Submodule (𝓞 K) K} (hA : Submodule.IsFullLattice K A) (hB : Submodule.IsFullLattice K B)
     (hex : ∃ s, IsClassReps h₁ A s) : mass h₂ B = mass h₁ A := by
   obtain ⟨A', hA', hA'A⟩ := exists_inv hA
   obtain ⟨B', hB', hB'B⟩ := exists_inv hB
-  have hC : Submodule.IsLattice K (B * A') := isLattice_mul hB hA'
-  have hJ : Submodule.IsLattice K (A * B') := isLattice_mul hA hB'
   have hJC : (A * B') * (B * A') = 1 := by
     calc (A * B') * (B * A') = (A' * A) * (B' * B) := by ring
       _ = 1 := by rw [hA'A, hB'B, one_mul]
@@ -161,15 +165,15 @@ theorem mass_eq_of_lattices {h₁ h₂ : K →ₗ⋆[K] K →ₗ[K] K} (hn₁ : 
       mulE (B * A') (A * B') hJC (loc p M) = loc p (mulE (B * A') (A * B') hJC M) :=
     fun p hp M => loc_mul hp (B * A') M
   have t4 : ∀ (M : Submodule (𝓞 K) K),
-      Submodule.IsLattice K (mulE (B * A') (A * B') hJC M) ↔ Submodule.IsLattice K M := by
+      Submodule.IsFullLattice K (mulE (B * A') (A * B') hJC M) ↔ Submodule.IsFullLattice K M := by
     intro M
-    show Submodule.IsLattice K (B * A' * M) ↔ Submodule.IsLattice K M
+    change Submodule.IsFullLattice K (B * A' * M) ↔ Submodule.IsFullLattice K M
     constructor
     · intro hM
-      have e := isLattice_mul hJ hM
+      have e := isLattice_mul (isLattice_mul hA hB') hM
       rwa [← mul_assoc, hJC, one_mul] at e
     · intro hM
-      exact isLattice_mul hC hM
+      exact isLattice_mul (isLattice_mul hB hA') hM
   have hΦA : mulE (B * A') (A * B') hJC A = B := by
     show B * A' * A = B
     rw [mul_assoc, hA'A, mul_one]

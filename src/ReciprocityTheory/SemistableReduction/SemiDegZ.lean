@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegW
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegW
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem half_not_integral {K : Type} [Field K] [NumberField K] : ¬ IsIntegralEl
     rw [← hz]
     exact NumberField.RingOfIntegers.isIntegral_coe z
   have e : ((2 : K)⁻¹) = algebraMap ℚ K ((2 : ℚ)⁻¹) := by simp
-  rw [e, isIntegral_algebraMap_iff (algebraMap ℚ K).injective] at hint
+  rw [e, isIntegral_algebraMap_iff ] at hint
   obtain ⟨m, hm⟩ := IsIntegrallyClosed.isIntegral_iff.mp hint
   have hm' : (m : ℚ) = 2⁻¹ := by simpa using hm
   have h2 : ((m * 2 : ℤ) : ℚ) = 1 := by

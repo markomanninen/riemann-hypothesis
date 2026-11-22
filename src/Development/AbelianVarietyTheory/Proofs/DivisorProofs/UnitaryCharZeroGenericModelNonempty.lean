@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorIntegralModelNonemptyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTateModuleIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionOfGeneratingSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorIntegralModelNonemptyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTateModuleIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionOfGeneratingSection
+
+@[expose] public section
 
 noncomputable section
 

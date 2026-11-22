@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvUAbsU
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SatakeBound GlobalTheory.WeylCell Formalism.UG
 
@@ -71,7 +75,7 @@ theorem transvection_apply' {n : ℕ} (a a' : Fin n) (d : L) (i j : Fin n) :
 
 theorem ordL_one [Valued L (WithZero (Multiplicative ℤ))] : ordL (1 : L) = 0 := by
   unfold ordL
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
   simp
   rfl
 

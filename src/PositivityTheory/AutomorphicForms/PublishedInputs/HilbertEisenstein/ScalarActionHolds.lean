@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,6 @@ theorem scalar_action_holds : SPois → SInt → SSmooth → SSmul := by
       unfold coefAt
       split_ifs <;> simp
     convert (h x y hy yf).mul_left a using 1
-    · rfl
     · funext ξ
       rw [e, mul_assoc]
     · rw [e2]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -72,7 +76,7 @@ private theorem norm_log_le {E : Type} [Field E] [NumberField E] (s : (Cinf E)ˣ
   exact (Complex.norm_le_abs_re_add_abs_im _).trans (add_le_add hre him)
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.omGrowth :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (_D : Dat F E), OmGrowth F E := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (_D : Dat F E), OmGrowth F E := by
   intro F E _ _ _ _ _ _ _ _D
   have hN : Continuous (fun s : (Cinf E)ˣ => ideleNorm F E (infId E s)) :=
     continuous_ideleNorm.comp (continuous_infId E)

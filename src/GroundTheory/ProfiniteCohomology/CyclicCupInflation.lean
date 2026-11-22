@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CyclicCup
-import GroundTheory.TateCohomology.InfRes
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CyclicCup
+public import GroundTheory.TateCohomology.InfRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -116,11 +121,6 @@ def invariantsToQuotient (a : A.ρ.invariants) : (A.quotientToInvariants S).ρ.i
   ⟨⟨a, fun s => a.2 s⟩, fun q => by
     induction q using QuotientGroup.induction_on with
     | H g => exact Subtype.ext (a.2 g)⟩
-
-@[simp]
-theorem coe_coe_invariantsToQuotient (a : A.ρ.invariants) :
-    (invariantsToQuotient S a).1.1 = (a : A) :=
-  rfl
 
 end Inflation
 

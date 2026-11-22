@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem row_of_blk {m : ℕ} {γ : GL (Fin k) E} (h : GlobalTheory m γ) (r j : 
 theorem isMir_blkU_mul {m : ℕ} (c : UnipotentBlockColumnIndex k m m → E) {γ : GL (Fin k) E} (h : GlobalTheory m γ) :
     IsMir m (blkU c * γ) := by
   intro i j hij
-  rw [blkU_mul_val m c γ (row_of_blk h), Matrix.add_apply, posM_blk_apply, dif_neg (by omega), add_zero]
+  rw [blkU_mul_val m c γ (row_of_blk h), Matrix.add_apply, posM_blk_apply, dite_eq_right (by omega), add_zero]
   exact h i j (by omega)
 
 def colEquiv (m : ℕ) :
@@ -97,7 +101,7 @@ def colEquiv (m : ℕ) :
         have h2 := congrFun (congrFun hv t.1.1) t.1.2
         simp only [Matrix.add_apply] at h2
         rw [hγ t.1.1 t.1.2 (Or.inr h1.2.1), hγ' t.1.1 t.1.2 (Or.inr h1.2.1), posM_blk_apply, posM_blk_apply,
-          dif_pos ⟨h1.1, by omega⟩, dif_pos ⟨h1.1, by omega⟩] at h2
+          dite_eq_left ⟨h1.1, by omega⟩, dite_eq_left ⟨h1.1, by omega⟩] at h2
         exact add_left_cancel h2
       subst hc
       have : γ = γ' := mul_left_cancel h0
@@ -135,7 +139,9 @@ theorem lintegral_nuG (Γ : Set (GL (Fin k) E)) (d : ℕ) {Φ : GA E k → ℝ�
 
 theorem measurable_blkU_mul (m : ℕ) :
     Measurable fun p : (UnipotentBlockColumnIndex k m m → Ad E) × GA E k => (blkU p.1 * p.2 : GA E k) :=
-  (((continuous_posU (isNil_blk k m m)).comp continuous_fst).mul continuous_snd).measurable
+  by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact (((continuous_posU (isNil_blk k m m)).comp continuous_fst).mul continuous_snd).measurable
 
 theorem lintegral_nuD_succ (m d : ℕ) (hm : m = k - (d + 1)) [SFinite (nuD E k d)] {Φ : GA E k → ℝ≥0∞}
     (hΦ : Measurable Φ) :
@@ -175,8 +181,10 @@ def innerI (d : ℕ) (F : GA E k → ℝ≥0∞) (g u : GA E k) : ℝ≥0∞ := 
 
 theorem measurable_innerI (d : ℕ) [SFinite (nuD E k d)] {F : GA E k → ℝ≥0∞} (hF : Measurable F) (g : GA E k) :
     Measurable (innerI d F g) :=
-  Measurable.lintegral_prod_right' (f := fun p : GA E k × GA E k => F (p.1 * (g * p.2)))
-    (hF.comp (measurable_fst.mul (measurable_snd.const_mul g)))
+  by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact Measurable.lintegral_prod_right' (f := fun p : GA E k × GA E k => F (p.1 * (g * p.2)))
+        (hF.comp (measurable_fst.mul (measurable_snd.const_mul g)))
 
 theorem measurable_innerI_blkU (m d : ℕ) [SFinite (nuD E k d)] {F : GA E k → ℝ≥0∞} (hF : Measurable F)
     (g : GA E k) : Measurable fun y : UnipotentBlockColumnIndex k m m → Ad E => innerI d F g (blkU y) :=
@@ -228,7 +236,7 @@ theorem main (m d : ℕ) (hm : m = k - (d + 1)) (hd : d + 1 ≤ k) (sf : SFinite
         innerI d F (ratGL E k γ.1) (blkU (-x + fun t => algebraMap E (Ad E) (c t))) := fun γ c =>
     (measurable_innerI_blkU m d hF _).comp (measurable_neg.add_const _)
   rw [left_side m d hm hd sf dt1 mod hF, lintegral_congr (right_inner m d hm hd hF),
-    lintegral_tsum fun γ => (Measurable.ennreal_tsum fun c => hmeas γ c).aemeasurable]
+    lintegral_tsum fun γ => (Measurable.tsum fun c => hmeas γ c).aemeasurable]
   refine tsum_congr fun γ => ?_
   rw [lintegral_tsum fun c => (hmeas γ c).aemeasurable]
   exact unfold_vec _ _

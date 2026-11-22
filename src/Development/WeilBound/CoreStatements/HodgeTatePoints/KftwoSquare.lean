@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDefs
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ThetaCubIsPullCubical
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsGrpPullbackPow
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieCombIffProd
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusProdSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFibrePowerAndExternalTensorSectionNonzeroClo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDefs
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ThetaCubIsPullCubical
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsGrpPullbackPow
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieCombIffProd
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MemNonzeroLocusProdSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatFibrePowerAndExternalTensorSectionNonzeroClo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,7 +176,7 @@ def matAct {O' : Type} [CommRing O'] (ψ : O' →+* Matrix (Fin 2) (Fin 2) O) : 
   hom _ := isMonHom_matEnd a p _
   one := by rw [map_one, matEnd_one]
   mul c d := by rw [_root_.mul_comm, map_mul, matEnd_mul]
-  add c d := by rw [map_add, matEnd_add]
+  add c d := by rw [map_add (f := _), matEnd_add]
 
 end Act
 

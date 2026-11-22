@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LiftBlockSections
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundCount
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallPacking
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AevalMulMemChartRingZ
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LiftBlockSections
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundCount
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallPacking
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AevalMulMemChartRingZ
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionLatticeFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

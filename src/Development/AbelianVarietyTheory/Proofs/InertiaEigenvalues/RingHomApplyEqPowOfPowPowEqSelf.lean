@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomApplyEqPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomApplyEqPow
+
+@[expose] public section
 
 namespace GlobalTheory
 

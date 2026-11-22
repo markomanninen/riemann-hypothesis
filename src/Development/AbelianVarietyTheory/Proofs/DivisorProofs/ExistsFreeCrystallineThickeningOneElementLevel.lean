@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftAndAugmentationMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPdPoly
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDPMorphismOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilIsSubDPIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientSubDPIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsStdStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltrationIdealLeMapOfIsDPMorphismStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PoincareLemmaTruncatedDivPowerPolyOneVariableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftAndAugmentationMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPdPoly
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDPMorphismOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilIsSubDPIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientSubDPIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsStdStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltrationIdealLeMapOfIsDPMorphismStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PoincareLemmaTruncatedDivPowerPolyOneVariableStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,15 +30,15 @@ theorem ringHom_eq_of_basis {B C : Type} [CommRing B] [CommRing C] (Q : PDPoly B
   induction hp using Submodule.span_induction with
   | mem x hx => obtain ⟨k, rfl⟩ := hx; exact h2 k
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | smul b x _ hx => rw [Algebra.smul_def, map_mul, map_mul, hx, h1]
 
 end GlobalTheory.PDForm.FreeThick
 
 namespace GlobalTheory.PDForm
 
-open GlobalTheory.PDForm.FreeThick in
 
+open GlobalTheory.PDForm.FreeThick in
 theorem exists_isFree_one_qAt : ∀ (R : Type) [CommRing R] (I : Ideal R) (κ : DividedPowers I) (X : Scheme.{0})
     (t : X ⟶ Sp R) (n : ℕ) (T : Thick κ t), IsLev T.δ (n + 1) → ∃ (F : Thick κ t) (u : T ⟶ F) (τ : Unit → F.B),
       IsFree (n + 1) u τ ∧ (KK κ t).QAt u := by
@@ -137,11 +141,11 @@ theorem exists_isFree_one_qAt : ∀ (R : Type) [CommRing R] (I : Ideal R) (κ : 
         rw [← S.ker, map_sub, map_sub, sub_eq_zero] at h2
         exact h2.symm,
        hgdp, a.pt⟩
-    refine ⟨g, ⟨Thick.hom_ext fun b ↦ hG1 b, fun _ ↦ ?_⟩, ?_⟩
+    refine ⟨g, ⟨Thick.Hom.ext' (AlgHom.ext fun b ↦ hG1 b), fun _ ↦ ?_⟩, ?_⟩
     · change G (Q.e 1) = c ()
       rw [hG2 1, S.δ.dpow_one (hc ())]
     · rintro g' ⟨h1, h2⟩
-      refine Thick.hom_ext fun b' ↦ ?_
+      refine Thick.Hom.ext' (AlgHom.ext fun b' ↦ ?_)
       obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective b'
       change ((g'.φ : F.B →+* S.B).comp (Ideal.Quotient.mk K)) p = G p
       have hHdp : IsDPMorphism η S.δ ((g'.φ : F.B →+* S.B).comp (Ideal.Quotient.mk K)) :=

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ApplyWordMemDualWeyl
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ApplyWordMemDualWeyl
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions
 
@@ -121,7 +125,7 @@ theorem weylDualWeylLatticesAgree_of_lowest_alcove (h : InducedSimpleLowestAlcov
   obtain ⟨c, hc, hcf⟩ := exists_smul_mem_delSq_of_simple h p hp N lam (by
     intro i j hij
     have hN : 0 < N := Nat.lt_of_le_of_lt (Nat.zero_le _) i.2
-    rw [DomWeight.spread, dif_pos hN] at hs
+    rw [DomWeight.spread, dite_eq_left hN] at hs
     have h1 : lam.w i ≤ lam.w ⟨0, hN⟩ := lam.anti (Fin.le_def.mpr (Nat.zero_le _))
     have h2 : lam.w ⟨N - 1, by omega⟩ ≤ lam.w j := lam.anti (Fin.le_def.mpr (by have := j.2; simp only; omega))
     have := j.2

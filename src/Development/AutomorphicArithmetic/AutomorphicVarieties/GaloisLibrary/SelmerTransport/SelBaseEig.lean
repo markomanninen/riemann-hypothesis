@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -21,7 +25,8 @@ variable {b} {J : N →+ N'} {C : ι → N' →+ N}
 private theorem Coords.comm (h : Coords b J C) (f : N → N) (f' : N' →ₗ[O] N') (hf : ∀ x, J (f x) = f' (J x))
     (i : ι) (y : N') : C i (f' y) = f (C i y) := by
   conv_lhs => rw [← h.sum y]
-  simp only [map_sum, LinearMap.map_smul, ← hf, h.coord, Module.Basis.repr_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smul, ← hf, h.coord, Module.Basis.repr_self]
   rw [Finset.sum_eq_single i]
   · simp
   · intro k _ hk
@@ -57,23 +62,24 @@ private theorem Coords.length [IsLocalRing R] [IsLocalRing O] [IsLocalHom (algeb
       simp only [ψ, hφ, h.coord]
       simp only [← TensorProduct.smul_tmul, ← TensorProduct.sum_tmul, b.sum_repr]
     | add s t hs ht =>
-      simp only [ψ, map_add, TensorProduct.tmul_add, Finset.sum_add_distrib] at hs ht ⊢
+      simp only [ψ, map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib] at hs ht ⊢
       rw [hs, ht]
   have hφψ : ∀ y, φ (ψ y) = y := by
     intro y
-    simp only [ψ, map_sum, hφ, h.sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ψ, map_sum, hφ, h.sum]
   have hφs : ∀ (o : O) t, φ (o • t) = o • φ t := by
     intro o t
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul o' x => rw [TensorProduct.smul_tmul', hφ, hφ, smul_eq_mul, mul_smul]
-    | add s t hs ht => rw [smul_add, map_add, map_add, hs, ht, smul_add]
+    | add s t hs ht => rw [smul_add, map_add (f := _), map_add (f := _), hs, ht, smul_add]
   let e : N' ≃ₗ[O] O ⊗[R] N :=
     { toFun := ψ
       invFun := φ
       left_inv := hφψ
       right_inv := hψφ
-      map_add' := fun y y' => by simp [ψ, map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+      map_add' := fun y y' => by simp [ψ, map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
       map_smul' := fun o y => by
         show ψ (o • y) = o • ψ y
         conv_lhs => rw [← hφψ y, ← hφs, hψφ] }
@@ -93,7 +99,7 @@ variable {G : Type} [Group G] [TopologicalSpace G]
 
 private def zMap : Z1U ρ U →+ Z1U ρ' U where
   toFun f := ⟨u ∘ f.1, continuous_of_discreteTopology.comp f.2.1, fun g h => by
-    simp only [Function.comp_apply, f.2.2 g h, map_add]
+    simp only [Function.comp_apply, f.2.2 g h, map_add (f := _)]
     exact congrArg _ (hu _ _)⟩
   map_zero' := Subtype.ext (funext fun _ => map_zero u)
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
@@ -147,7 +153,7 @@ private theorem UpperTheory.V.Base.exists_coords_of_isBaseChange {R O ι M M' : 
       simp only [smul_comm (b _) (b.repr o _)]
       simp only [← smul_assoc, ← Finset.sum_smul, b.sum_repr]
     | add s t hs ht =>
-      simp only [map_add, smul_add, Finset.sum_add_distrib, hs, ht]
+      simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, hs, ht]
   · intro i o x
     simp only [AddMonoidHom.comp_apply, LinearMap.toAddMonoidHom_coe, LinearEquiv.coe_coe]
     rw [← IsBaseChange.equiv_tmul hj, LinearEquiv.symm_apply_apply, hFt]
@@ -191,7 +197,7 @@ private theorem UpperTheory.V.Base.selBaseEig_lemma_3 {G : Type} [Group G] [Topo
     { toFun := fun f => ⟨fun g => C i (f.1 g), (continuous_of_discreteTopology (f := C i)).comp f.2.1,
         fun g g' => by
           show C i (f.1 (g * g')) = C i (f.1 g) + ρ g (C i (f.1 g'))
-          rw [f.2.2 g g', map_add]
+          rw [f.2.2 g g', map_add (f := _)]
           exact congrArg _ (hcomm i _ _)⟩
       map_zero' := Subtype.ext (funext fun _ => map_zero (C i))
       map_add' := fun f f' => Subtype.ext (funext fun g => map_add (C i) _ _) }

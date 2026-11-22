@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
 noncomputable section
@@ -94,7 +99,8 @@ theorem exists_highest (M : GKMod p q) [Nontrivial M.V] : ∃ μ v, IsHW M.act �
     exact hcd hab
   have hH : ∀ x ∈ U, M.act H x ∈ U := by
     intro x hx
-    simp only [H, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [H, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
     exact U.sum_mem fun a _ => U.smul_mem _ (hK _ (hKE a a (by cases a <;> trivial)) x hx)
   let S : Set (Ix p q → ℚ) := {μ | ∃ v ∈ U, v ∈ wtSub M.act μ ∧ v ≠ 0}
   have hfin : (h '' S).Finite := by
@@ -105,7 +111,8 @@ theorem exists_highest (M : GKMod p q) [Nontrivial M.V] : ∃ μ v, IsHW M.act �
     rw [Module.End.mem_eigenspace_iff]
     apply Subtype.ext
     show M.act H v = ((h μ : ℚ) : ℂ) • v
-    simp only [H, h, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [H, h, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
       mem_wtSub.1 hv, smul_smul, ← Finset.sum_smul]
     push_cast
     rfl

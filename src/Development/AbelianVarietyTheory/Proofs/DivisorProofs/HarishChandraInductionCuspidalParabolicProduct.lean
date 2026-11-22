@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalProductMultiplicity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChiIdemMulLvlIdemBaseNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspProdCharTransport
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentsSimpleFDRepFiniteFinsumEqOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IrreducibleCharacterSeries.FrobeniusSumFormula
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalProductMultiplicity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChiIdemMulLvlIdemBaseNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspProdCharTransport
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentsSimpleFDRepFiniteFinsumEqOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IrreducibleCharacterSeries.FrobeniusSumFormula
+
+@[expose] public section
 
 open CategoryTheory Polynomial Formalism.IrreducibleCountingLemmas.TYPES
 
@@ -25,8 +29,8 @@ theorem parab_eq_blockTri (b : Fin r → Fin s) :
   · intro hg
     exact ⟨hg, (blockTri (κ := K) (fun i => (b i : ℕ))).inv_mem hg⟩
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 def blockGL (b : Fin r → Fin s) (c : Fin s) :
     GL (Fin (Fintype.card {i // b i = c})) K ≃* GL {i // b i = c} K :=
   glEquiv K (Fintype.equivFin {i // b i = c}).symm

@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsGaloisConjugatesHeckeCharTrivialOnRealIdel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCoordField
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValEqExpNegOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMatrixOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarySupportedEquiv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AntitoneZeroOneEqOfSumEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFinsetReps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsGaloisConjugatesHeckeCharTrivialOnRealIdel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCoordField
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValEqExpNegOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMatrixOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarySupportedEquiv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AntitoneZeroOneEqOfSumEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFinsetReps
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.NTheta Formalism.IndefR.Mult
 open scoped TensorProduct Matrix
@@ -101,13 +105,7 @@ variable {G : Type} [Group G]
 theorem exists_reps {K : Subgroup G} (hK : Formalism.UG.IsCommensurated K) (g : G) :
     ∃ R : Finset G, (∀ γ ∈ R, ∃ k₁ ∈ K, ∃ k₂ ∈ K, γ = k₁ * g * k₂) ∧
       ∀ x : G, (∃ k₁ ∈ K, ∃ k₂ ∈ K, x = k₁ * g * k₂) → ∃! γ, γ ∈ R ∧ γ⁻¹ * x ∈ K := by
-  first
-  | exact @_root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps
-  | exact _root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps
-  | (apply _root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps <;> assumption)
-  | (intros; apply _root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps ..)
+  exact _root_.GlobalTheory.FinsetConjugateRepresentatives.exists_finset_reps hK g
 
 variable {H : Type} [Group H] {ρ : G →* H} {S : G → Prop} {K : Set G} {K' : Subgroup H}
 
@@ -234,13 +232,7 @@ theorem fin_cA (x : Formalism.L2.Theta.AE D) : finPart D (cA D x) = cf D (finPar
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => rfl
-  | add a b ha hb => simp only [map_add, ha, hb]
-
-theorem cf_cf (x : RF D) : cf D (cf D x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul r e => simp [sigR, CMData.sig]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem cA_incA (x : D.host.E) : cA D (incA D x) = incA D (star x) := rfl
 
@@ -272,7 +264,8 @@ theorem hh_fm (V : HSp D) (g : GA D V) (x y : Fin V.rank → RF D) :
   simp only [Matrix.map_mul] at h
   have h1 : (fun i => cf D ((fm V g *ᵥ x) i)) = ((mt V g).map (cA D)).map (finPart D) *ᵥ fun i => cf D (x i) := by
     funext i
-    simp only [fm_eq, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, fin_cA]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [fm_eq, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, fin_cA]
   rw [hh_eq, hh_eq, h1]
   exact form_inv h _ _
 
@@ -331,7 +324,7 @@ theorem stab_of_parts {e : Formalism.L2.Theta.AE D} (he : IsSplitIdem D e) {V : 
   rw [inv_inv] at h3
   have hi := idem_mem he.1
   have h6 := mulVec_parts (finPart D) ((suppAt_iff e V g).1 hg) y
-  rw [RingHom.map_add, fin_cA, ← fm_eq, add_smul] at h6
+  rw [RingHom.map_add (f := _), fin_cA, ← fm_eq, add_smul] at h6
   rw [h6]
   exact sub_mem (add_mem (add_mem (h1 y hy) h3) hy) (smul_mem V (add_mem hi (cf_mem hi)) hy)
 
@@ -391,7 +384,8 @@ theorem map_mulVec (M : Matrix (Fin V.rank) (Fin V.rank) (RF D)) (c : RF D) (y :
     (fun j => π ((c • M *ᵥ y) j)) = π c • M.map π *ᵥ fun j => π (y j) := by
   funext j
   simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, RingHom.map_mul, Matrix.map_apply]
-  rw [map_sum π]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum π]
   simp only [RingHom.map_mul]
 
 theorem keeps_iff (he : e * e = e) (h2 : ∀ a, π (finPart D (s a)) = a)

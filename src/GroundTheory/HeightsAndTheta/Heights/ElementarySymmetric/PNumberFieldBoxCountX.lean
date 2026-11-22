@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PNumberFieldBoxCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLatticeImageZLattice
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCovolumeRelIndex
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PEmbeddingSumPlaces
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PMixedBoxCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLatticeCountVolume
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PNumberFieldBoxCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLatticeImageZLattice
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCovolumeRelIndex
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PEmbeddingSumPlaces
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PMixedBoxCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLatticeCountVolume
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

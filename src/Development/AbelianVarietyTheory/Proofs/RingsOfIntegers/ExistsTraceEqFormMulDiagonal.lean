@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitDetOfProductMapNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitDetOfProductMapNeZero
+
+@[expose] public section
 
 namespace GlobalTheory.TraceDiagonal
 
@@ -87,7 +91,8 @@ theorem exists_trace_eq_form_mul_diagonal : ∀ (A R : Type) [CommRing A] [IsLoc
     have e : w - algebraMap A R (∑ i, b.repr w i * lift (ε (b i)))
         = ∑ i, algebraMap A R (b.repr w i) * (b i - algebraMap A R (lift (ε (b i)))) := by
       conv_lhs => lhs; rw [← b.sum_repr w]
-      simp only [map_sum, map_mul, mul_sub, Finset.sum_sub_distrib, Algebra.smul_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, mul_sub, Finset.sum_sub_distrib, Algebra.smul_def]
     rw [e]
     exact n.sum_mem fun j _ => n.mul_mem_left _ (Ideal.subset_span ⟨j, rfl⟩)
   · rw [hM, Finset.sum_comm]
@@ -99,7 +104,8 @@ theorem exists_trace_eq_form_mul_diagonal : ∀ (A R : Type) [CommRing A] [IsLoc
     linear_combination -this
   · intro h0
     refine hne s hs lift hlift (Ideal.Quotient.eq_zero_iff_mem.1 ?_)
-    rw [← h0, hs, map_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h0, hs, map_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     have e : algebraMap k (R ⧸ I) (ε p.1) = Ideal.Quotient.mk I (algebraMap A R (lift (ε p.1))) := by
       conv_lhs => rw [← hlift (ε p.1)]

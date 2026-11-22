@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpSum
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Hi
 
 private theorem UpperTheory.V.Hi.uOpMul_mem {G : Type} [Group G] (I : Iwa G) (a x : G) :
@@ -53,7 +58,8 @@ theorem UpperTheory.V.Hi.uOpMul :
       have := hu (n⁻¹ * x) (mul_mem (inv_mem hn) hx)
       simpa only [_root_.mul_inv_rev, mul_assoc] using this) hv
     conv_lhs => rw [e1]
-    rw [e2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, map_sum]
     simp only [mul, id, mul_assoc]
   have unit : ∀ c ∈ I.P, c⁻¹ ∈ I.P → I.uOp π c v = π c v := by
     intro c hc hc'
@@ -67,7 +73,8 @@ theorem UpperTheory.V.Hi.uOpMul :
     rw [uOpMul_sum I π ha s id hs hu (fix b hb), uOpMul_sum I π hb r id hr hw hv,
       uOpMul_sum I π (mul_mem ha hb) (s ×ˢ r) (fun p => p.1 * (a * p.2 * a⁻¹)) ?_ ?_ hv, Finset.sum_product]
     · refine Finset.sum_congr rfl fun u _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun w _ => ?_
       rw [mul]
       congr 2
@@ -102,7 +109,8 @@ theorem UpperTheory.V.Hi.uOpMul :
       intro n hn
       have : n * t = t * (t⁻¹ * n * t) := by group
       rw [mul, this, ← mul, hv _ (hN n hn)]
-    rw [uOpMul_sum I π ha s id hs hu hv,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [uOpMul_sum I π ha s id hs hu hv,
       uOpMul_sum I π ha s (fun u => t * u * t⁻¹) (fun u h => I.T_N t ht u (hs u h)) ?_ htv, map_sum]
     · refine Finset.sum_congr rfl fun u _ => ?_
       rw [mul, mul, mul_assoc _ a t, ← hc]

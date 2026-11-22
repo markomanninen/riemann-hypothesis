@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -261,6 +265,6 @@ theorem haarUniq : HaarUniq := by
   · calc ν₁ = (pull ν₁).map inc := (map_pull ν₁ hc1).symm
       _ = ((pull ν₁ (inc ⁻¹' bBall k r (ε / 2)) / pull ν₂ (inc ⁻¹' bBall k r (ε / 2))) • pull ν₂).map inc := by
           rw [← key]
-      _ = _ := by rw [Measure.map_smul, map_pull ν₂ hc2]
+      _ = _ := by rw [Measure.map_smul _ inc_memb.measurable.aemeasurable, map_pull ν₂ hc2]
 
 end PI.RhsWLim.W

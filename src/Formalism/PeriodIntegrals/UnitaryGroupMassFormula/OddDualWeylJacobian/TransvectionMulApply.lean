@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -105,7 +109,7 @@ theorem key (a b : Fin k) (hab : a ≠ b) (f' : MvPolynomial (Fin k × Fin k) R)
   · intro r
     simp [PI.OddDualWeyl.dualSub, PI.OddDualWeyl.rowGen]
   · intro p q hp hq
-    rw [map_add, map_add, hp, hq, map_add, Polynomial.map_add, Polynomial.add_comp]
+    rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), Polynomial.map_add (f := _), Polynomial.add_comp]
   · intro p v hp
     have hv : PI.OddDualWeyl.rowGen R a b (PI.OddDualWeyl.dualSub R k (X v)) =
         (Polynomial.map (PI.OddDualWeyl.dualSub R k : MvPolynomial (Fin k × Fin k) R →+* _)
@@ -126,7 +130,7 @@ theorem key (a b : Fin k) (hab : a ≠ b) (f' : MvPolynomial (Fin k × Fin k) R)
           PI.OddDualWeyl.dualM R k i j := e1
       rw [e4, rowGen_dualM a b hab, e3]
       split_ifs with h
-      · rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, Polynomial.map_X,
+      · rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, Polynomial.map_C, Polynomial.map_X,
           Polynomial.add_comp, Polynomial.mul_comp, Polynomial.C_comp, Polynomial.C_comp,
           Polynomial.X_comp, e1, e2]
         ring
@@ -141,7 +145,7 @@ theorem rowOpIntertwining : W1 := by
   intro R _ k M a b j f f' hab hrel
   unfold Rel at hrel ⊢
   unfold rowDiv
-  have h := congrArg (fun p => Polynomial.coeff p j) (PI.OddDualWeyl.Intw.key a b hab f')
+  have h := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p j) (PI.OddDualWeyl.Intw.key a b hab f')
   rw [coeff_comp_neg_X, Polynomial.coeff_map, hrel, map_mul, map_pow,
     PI.OddDualWeyl.Intw.rowGen_det a b hab, ← Polynomial.C_pow, Polynomial.coeff_C_mul] at h
   rw [map_mul, map_pow, map_neg, map_one]

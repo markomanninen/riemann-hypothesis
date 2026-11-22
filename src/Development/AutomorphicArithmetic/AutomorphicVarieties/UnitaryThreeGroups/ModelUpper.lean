@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelSigns
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelSpansCotOfRigidWeights
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelIdealFinitenessOfWeightZeroFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelPointConditionOfPtHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelDerivationConditionOfPtHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelSigns
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelSpansCotOfRigidWeights
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ModelIdealFinitenessOfWeightZeroFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelPointConditionOfPtHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GradedModelDerivationConditionOfPtHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjTor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.NormO
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -42,7 +46,7 @@ private theorem graded_ext {ξ ξ' : A →ₐ[O] K} (h : ∀ j, ∀ f ∈ 𝒜 j
   induction f using DirectSum.Decomposition.inductionOn 𝒜 with
   | zero => simp
   | homogeneous m => exact h _ _ m.2
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 private theorem act_act (s t : Kˣ) (ξ : A →ₐ[O] K) :
     act 𝒜 (tz s) (act 𝒜 (tz t) ξ) = act 𝒜 (tz (s * t)) ξ :=
@@ -93,19 +97,20 @@ private theorem isNVal (l : ℕ) [Fact l.Prime] (c : Coef l) :
     show _ * -Real.logb l ‖(a : PadicAlgCl l)‖ = _
     linarith
 
-private theorem conj_conj {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (s t : Rˣ) :
+private theorem conj_conj {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (s t : Rˣ) :
     conjBy (tor R s) (conjBy (tor R t) r) = conjBy (tor R (s * t)) r := by
   apply MonoidHom.ext
   intro g
   simp [conjBy, map_mul, mul_assoc]
 
 set_option maxHeartbeats 1000000 in
+set_option synthInstance.maxHeartbeats 200000 in
 theorem UpperTheory.V.U3.model_upper :
     ∀ {l : ℕ} [Fact l.Prime] {c : Coef l} {Γ H : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
       {η : Γ →* ℤˣ} {Ψ : Γ →* (c.O)ˣ} {N : Set Γ} {ι : H →* Γ} {hι : Continuous ι}
       {U : Univ (GCond.noCondition c.O (η.comp ι) (Ψ.comp ι))} {I : Ideal U.R} {cc g₁ : Γ} (S : SRing N hι U I cc g₁) (M : Model S (PadicAlgCl l)), l ≠ 2 → Marks η Ψ cc g₁ →
       LemmaM → Module.Finite c.O (weightZeroSubalgebra c.O S.r.hom) → PtHyp η S.r.hom M.x₀ → ∀ σ : Γ, η σ = 1 →
-      (∀ f : S.R →ₐ[c.O] PadicAlgCl l, TwoPt η S.r.hom f → trDiff η Ψ S.r.hom σ f ≠ 0) →
+      (∀ f : S.R →ₐ[c.O] PadicAlgCl l, TwoPt (η := η) S.r.hom f → trDiff η Ψ S.r.hom σ f ≠ 0) →
       M.len ≠ ⊤ ∧ ∃ T : Finset (S.R →ₐ[c.O] PadicAlgCl l), CoversPt η S.r.hom T ∧
         (∀ f ∈ T, ∀ f' ∈ T, ∀ t : (PadicAlgCl l)ˣ, push f' S.r.hom = conjBy (tor _ t) (push f S.r.hom) → f = f') ∧
         UpperTheory.V.Chr.nrm l c.O M.len ≤ 2 * ∑ f ∈ T, vl l (trDiff η Ψ S.r.hom σ f) := by
@@ -123,7 +128,7 @@ theorem UpperTheory.V.U3.model_upper :
   obtain ⟨-, -, -, hcomp, -, he0, hefin, -, -⟩ := UpperTheory.V.Base.dvrFacts l c.O
   haveI := hcomp
   have htp : ∀ f : S.R →ₐ[c.O] PadicAlgCl l, IsLocPt f →
-      (TwoPt η S.r.hom f ↔ TwoSigned M.𝒜 (f.comp M.q)) := fun f hf =>
+      (TwoPt (η := η) S.r.hom f ↔ TwoSigned M.𝒜 (f.comp M.q)) := fun f hf =>
     ⟨fun h => ⟨fun hn => h.2.1 ((hsg f hf).1.1 hn), fun hp => h.2.2 ((hsg f hf).2.1.1 hp)⟩,
      fun h => ⟨hf, fun hu => h.1 ((hsg f hf).1.2 hu), fun hw => h.2 ((hsg f hf).2.1.2 hw)⟩⟩
   have hon : ∀ f : S.R →ₐ[c.O] PadicAlgCl l, OnS M.Q.ideal (f.comp M.q) := by
@@ -165,7 +170,7 @@ theorem UpperTheory.V.U3.model_upper :
     rfl
   have hpr : ∀ (f : S.R →ₐ[c.O] PadicAlgCl l) g, ((push f S.r.hom) g).right = (S.r.hom g).right :=
     fun f g => GG.map_right _ _
-  have hext : ∀ r₁ r₂ : Γ →* GG 3 (PadicAlgCl l), (∀ g i j, (r₁ g).mat i j = (r₂ g).mat i j) →
+  have hext : ∀ r₁ r₂ : Γ →* GG (m := 3) (R := PadicAlgCl l), (∀ g i j, (r₁ g).mat i j = (r₂ g).mat i j) →
       (∀ g, (r₁ g).right = (r₂ g).right) → r₁ = r₂ := by
     intro r₁ r₂ hm hr
     apply MonoidHom.ext
@@ -198,7 +203,8 @@ theorem UpperTheory.V.U3.model_upper :
     rintro f₁ f₂ f₃ ⟨t₁, h₁⟩ ⟨t₂, h₂⟩
     exact ⟨t₂ * t₁, by rw [h₂, h₁, conj_conj]⟩
   let T₁ := T₀.attach.image (fun ξ => F ξ.1 ξ.2)
-  have hT₁ : (∀ f ∈ T₁, TwoPt η S.r.hom f) ∧ ∀ f, TwoPt η S.r.hom f → ∃ f' ∈ T₁, Rel f' f := by
+  have hT₁ : (∀ f ∈ T₁, TwoPt (η := η) S.r.hom f) ∧
+      ∀ f, TwoPt (η := η) S.r.hom f → ∃ f' ∈ T₁, Rel f' f := by
     constructor
     · intro f hf
       obtain ⟨⟨ξ, hξ⟩, -, rfl⟩ := Finset.mem_image.1 hf
@@ -223,7 +229,7 @@ theorem UpperTheory.V.U3.model_upper :
       exact ⟨hon f, (htp f (hTP.1 f hf).1).1 (hTP.1 f hf)⟩
     · intro ξ hξ hts
       obtain ⟨t, f, hfl, hact⟩ := M.pts hM2 ξ hξ
-      have hf2 : TwoPt η S.r.hom f := by
+      have hf2 : TwoPt (η := η) S.r.hom f := by
         rw [htp f hfl, ← hact]
         exact twoSigned_act M.𝒜 t hts
       obtain ⟨f', hf', t', hpush⟩ := hTP.2 f hf2

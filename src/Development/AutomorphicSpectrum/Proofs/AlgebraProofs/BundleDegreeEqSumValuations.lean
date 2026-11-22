@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Crv
 
@@ -13,7 +17,7 @@ theorem finite_det {K : Type} [Field K] (C : ACurve K) {V : Type} [AddCommGroup 
   obtain ⟨c, hc⟩ := hL.2
   refine (hc.union (C.fin _ (b₀.isUnit_det c).ne_zero)).subset fun i hi => ?_
   by_contra hn
-  simp only [Set.mem_union, Set.mem_setOf_eq, not_or, not_not] at hn
+  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_not] at hn
   refine hi ?_
   rw [← Module.Basis.det_mul_det _ c, map_mul, Inhab.v_det C hn.1 (h i), hn.2, mul_one]
 

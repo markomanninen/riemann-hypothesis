@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BoxTuple
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDirAlg
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BoxTuple
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrTanDirAlg
+
+@[expose] public section
 
 set_option autoImplicit false
 

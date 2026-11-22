@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GmHomAt
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GmHomAt
+
+@[expose] public section
 
 set_option autoImplicit false
 

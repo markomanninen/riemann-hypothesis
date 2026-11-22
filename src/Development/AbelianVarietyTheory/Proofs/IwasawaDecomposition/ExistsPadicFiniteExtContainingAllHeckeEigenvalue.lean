@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSSplit
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSSplit
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 open Formalism.L2.Fam.NPC Formalism.L2.Fam.NPC.BaseC GlobalTheory.HeckeLocN
 
@@ -14,7 +19,7 @@ theorem aeval_baseChange {L K M : Type} [Field L] [Field K] [Algebra L K] [AddCo
     (f : Module.End L M) (p : L[X]) :
     aeval (f.baseChange K) (p.map (algebraMap L K)) = (aeval f p).baseChange K := by
   induction p using Polynomial.induction_on' with
-  | add p r hp hr => rw [Polynomial.map_add, map_add, hp, hr, map_add, LinearMap.baseChange_add]
+  | add p r hp hr => rw [Polynomial.map_add (f := _), map_add (f := _), hp, hr, map_add (f := _), LinearMap.baseChange_add]
   | monomial k c =>
     rw [Polynomial.map_monomial, aeval_monomial, aeval_monomial, ← LinearMap.baseChange_pow]
     apply TensorProduct.AlgebraTensorModule.curry_injective
@@ -31,7 +36,8 @@ theorem iSup_maxGen_baseChange {L K M I : Type} [Field L] [Field K] [Algebra L K
   have e : (op x).baseChange K = ∑ y ∈ s, algebraMap L K (c y) • (op y).baseChange K := by
     rw [hcx]
     change LinearMap.baseChangeHom L K M M (∑ y ∈ s, c y • op y) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun y _ => ?_
     change (c y • op y).baseChange K = _
     rw [LinearMap.baseChange_smul, algebraMap_smul]

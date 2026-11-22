@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatCountG
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatCountG
+
+@[expose] public section
 
 noncomputable section
 

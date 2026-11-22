@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltGraded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltGraded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

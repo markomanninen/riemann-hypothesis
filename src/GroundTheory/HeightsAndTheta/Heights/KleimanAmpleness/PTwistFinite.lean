@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.CoeffPsiMulSingle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.CoeffPsiMulSingle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -26,7 +31,7 @@ theorem TwistFinite.proof (hE : Extension.Statement.{u, w, w}) (hSF : SerreFinit
   have hΓ : Γ ⊆ LinearMap.range (readChartH0 x η S n0 d0 g0 i0 hi0) := by
     rintro _ ⟨b, s, hs, rfl⟩
     refine mem_range_readChartH0 x η S n0 d0 g0 i0 hi0 _ fun I hI => ?_
-    refine chart_pre x η S M0 G B hgen hG hspan I hI b ?_
+    refine chart_pre x η S (n0 := n0) (d0 := d0) (g0 := g0) M0 G B hgen hG hspan I hI b ?_
     rw [SubSystem.secs, Submodule.mem_iInf] at hs
     exact hs (toChart x I hI)
   have hfg : (Submodule.span (Sy S r) Γ).FG := by
@@ -50,7 +55,8 @@ theorem TwistFinite.proof (hE : Extension.Statement.{u, w, w}) (hSF : SerreFinit
     hle (Submodule.subset_span ⟨b, s, hs, rfl⟩)
   obtain ⟨c, -, hc⟩ := Submodule.mem_span_finset.mp hmem
   have hcoef := congrArg (fun a => (toA x η a).coeff ((0 : ℤ), (b : ℤ))) hc
-  simp only [AddEquiv.apply_symm_apply, map_sum, toA_smulSy, AddMonoidAlgebra.coeff_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AddEquiv.apply_symm_apply, map_sum, toA_smulSy, AddMonoidAlgebra.coeff_sum,
     Finsupp.finsetSum_apply, coeff_single, Finsupp.single_eq_same] at hcoef
   rw [← hcoef]
   refine Submodule.sum_mem _ fun γ hγ => ?_

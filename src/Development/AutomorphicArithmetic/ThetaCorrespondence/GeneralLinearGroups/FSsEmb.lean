@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasis
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleUnitarySemisimple
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantModulus
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasis
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleUnitarySemisimple
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -128,7 +132,7 @@ private theorem isIrreducible_parInd_emb (hBZ : GlobalTheory.Published.Bernstein
       (GlobalTheory.JacInj.jacMap_injective k _ _ _ e' _ _ _ _ _ hsw hf)).trans hjm
 
 theorem UpperTheory.Lit.Full.ssEmb :
-    GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x y : IrrGL k) (N h : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (w : Fin h → IrrGL k) (hw : ∑ a, (w a).1 = N), IsUnitarisable x.rep → IsUnitarisable y.rep → (∃ f : (prodIrr ![x, y] hd).IntertwiningMap (prodIrr w hw), Function.Injective f) → jm w hw (prodIrr w hw) ≤ 1 → (prodIrr ![x, y] hd).IsIrreducible := by
+    GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x y : IrrGL (k := k)) (N h : ℕ) (hd : ∑ a, (![x, y] a).1 = N) (w : Fin h → IrrGL (k := k)) (hw : ∑ a, (w a).1 = N), IsUnitarisable x.rep → IsUnitarisable y.rep → (∃ f : (prodIrr ![x, y] hd).IntertwiningMap (prodIrr w hw), Function.Injective f) → jm w hw (prodIrr w hw) ≤ 1 → (prodIrr ![x, y] hd).IsIrreducible := by
   intro hBZ k _ _ _ _ x y N h hd w hw hx hy hf hjm
   obtain ⟨f, hf⟩ := hf
   have hρ : (piTensor fun a => (![x, y] a).rep).IsIrreducible :=

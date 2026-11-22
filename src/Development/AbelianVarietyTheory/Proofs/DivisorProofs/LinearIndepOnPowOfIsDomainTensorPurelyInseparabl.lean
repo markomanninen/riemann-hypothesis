@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -28,7 +33,8 @@ theorem linearIndepOn_pow_of_isDomain_tensor_purelyInseparable (k B : Type) [Fie
     intro g hg i
     refine Fintype.linearIndependent_iff.1 hs g ?_ i
     have h2 : φ (∑ j, g j • b j) = 0 := by rw [hg, map_zero]
-    simp only [map_sum, map_smul, hb'] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hb'] at h2
     rw [Finset.sum_congr rfl fun j _ => (mul_smul_comm (g j) _ _).symm, ← Finset.mul_sum] at h2
     exact (mul_eq_zero.1 h2).resolve_left hd0
   unfold LinearIndepOn
@@ -37,7 +43,8 @@ theorem linearIndepOn_pow_of_isDomain_tensor_purelyInseparable (k B : Type) [Fie
   have hcB : ∑ j, c j • b j ^ p = 0 := by
     apply hinj
     rw [map_zero, ← hφ]
-    simp only [map_sum, map_smul, map_pow, hb', mul_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_pow, hb', mul_pow]
     rw [Finset.sum_congr rfl fun j _ => (mul_smul_comm (c j) _ _).symm, ← Finset.mul_sum]
     simp only [] at hc
     rw [hc, mul_zero]

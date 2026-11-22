@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSAddLeft
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.CmpOfMemX
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.SmulSAddLeft
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.CmpOfMemX
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -50,7 +54,7 @@ section Zero
 variable {LL : Type} [Field LL]
 
 theorem exp_pow_sub_one (E : PowerSeries LL) (h0 : constantCoeff E = 1)
-    (hd : PowerSeries.derivative LL E = E) (p : ℕ) :
+    (hd : PowerSeries.derivative (R := LL) E = E) (p : ℕ) :
     ∃ w : PowerSeries LL, E ^ p - 1 = X * w ∧ constantCoeff w = (p : LL) := by
   obtain ⟨E₁, hE₁⟩ : ∃ E₁, E = 1 + X * E₁ := by
     refine ⟨PowerSeries.mk fun j => coeff (j + 1) E, ?_⟩
@@ -70,8 +74,9 @@ theorem exp_pow_sub_one (E : PowerSeries LL) (h0 : constantCoeff E = 1)
     have g := geom_sum_mul (1 + X * E₁) p
     rw [add_sub_cancel_left] at g
     rw [← g, mul_comm]
-  · rw [map_mul, map_sum, hc1, one_mul]
-    simp [map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_mul, map_sum, hc1, one_mul]
+      simp [map_pow]
 
 end Zero
 
@@ -97,13 +102,13 @@ theorem lev_q_simple (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) :
     simp only [letπ, LocWach.q, Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, Pi.add_apply, Pi.one_apply]
     exact W.q₀_def
   have hl := congrArg (W.lev c ζ) hπq
-  rw [map_mul, map_sub, map_pow, map_add, map_one] at hl
+  rw [map_mul, map_sub, map_pow, map_add (f := _), map_one] at hl
   rw [hE, mul_pow, ← map_pow, hζ.pow_eq_one, map_one, one_mul] at hl
   obtain ⟨w, hw, hw0⟩ := exp_pow_sub_one E hE0 hEd PD.p
   rw [hw] at hl
   have hπc : constantCoeff (W.lev c ζ letπ) ≠ 0 := by
     have := congrArg constantCoeff hE
-    rw [map_add, map_one, map_mul, constantCoeff_C, hE0, mul_one] at this
+    rw [map_add (f := _), map_one, map_mul, constantCoeff_C, hE0, mul_one] at this
     intro h0
     rw [h0, add_zero] at this
     exact hζ1 this.symm

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ImportsAlt
-import Formalism.HermitianCurvature.HerGenC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BigCellVectorAestronglyMeasurable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LiftedWordContinuousOnGPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ImportsAlt
+public import Formalism.HermitianCurvature.HerGenC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BigCellVectorAestronglyMeasurable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LiftedWordContinuousOnGPos
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.TopVec Filter Topology MeasureTheory
 

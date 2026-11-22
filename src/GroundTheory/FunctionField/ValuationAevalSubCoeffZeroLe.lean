@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceDefs
-import GroundTheory.FunctionField.PlaceBasic
-import GroundTheory.FunctionField.Approximation
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceDefs
+public import GroundTheory.FunctionField.PlaceBasic
+public import GroundTheory.FunctionField.Approximation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.FunctionField
@@ -144,7 +149,8 @@ theorem exists_lift_basis (v : Place k K) :
   have hmem : (∑ α, algebraMap k K (d α) * (s' α : K)) =
       ((∑ α, algebraMap k v.ring (d α) * s' α : v.ring) : K) := by
     simp
-  rw [hmem, v.valuation_lt_one_iff, ← ValuationSubring.valuation_lt_one_iff,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hmem, v.valuation_lt_one_iff, ← ValuationSubring.valuation_lt_one_iff,
     ← IsLocalRing.residue_eq_zero_iff, map_sum] at hd
   have h : ∑ α, d α • b α = 0 := by
     rw [← hd]
@@ -310,13 +316,17 @@ theorem sum_ord_mul_deg_le {x : K} (hx : Transcendental k x) (S : Finset (Place 
 theorem finite_ord_pos (x : K) : {v : Place k K | 0 < v.ord x}.Finite := by
   classical
   by_cases hx0 : x = 0
-  · convert Set.finite_empty
-    ext v
-    simp [hx0]
+  · have h : {v : Place k K | 0 < v.ord x} = ∅ := by
+      ext v
+      simp [hx0]
+    rw [h]
+    exact Set.finite_empty
   by_cases halg : IsAlgebraic k x
-  · convert Set.finite_empty
-    ext v
-    simp [v.ord_eq_zero_of_isAlgebraic halg hx0]
+  · have h : {v : Place k K | 0 < v.ord x} = ∅ := by
+      ext v
+      simp [v.ord_eq_zero_of_isAlgebraic halg hx0]
+    rw [h]
+    exact Set.finite_empty
   by_contra hinf
   obtain ⟨S, hSsub, hcard⟩ := Set.Infinite.exists_subset_card_eq hinf
     (Module.finrank (IntermediateField.adjoin k {x}) K + 1)

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecDesc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecDesc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FrMapComp
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FrameBorelGroupoidProperties
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+
+@[expose] public section
+
 open NumberField
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -54,7 +59,7 @@ theorem test_mem {K Ω : Type} [Field K] [CommRing Ω] [Algebra K Ω] (q : TRing
   | C a =>
     have : Ideal.Quotient.mk q.I (MvPolynomial.C a) = algebraMap K q.R a := rfl
     rw [this, φ.commutes]; exact hc a
-  | add p p' hp hp' => rw [map_add, map_add]; exact A.add_mem hp hp'
+  | add p p' hp hp' => rw [map_add (f := _), map_add (f := _)]; exact A.add_mem hp hp'
   | mul_X p i hp => rw [map_mul, map_mul]; exact A.mul_mem hp (hx i)
 
 def evAlg {K S Ω L : Type} [Field K] [CommRing S] [Algebra K S] [CommRing Ω] [Algebra K Ω] [CommRing L] [Algebra K L]

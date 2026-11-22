@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SubIdBijOfContracting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SubIdBijOfContracting
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PhiGam.TrivCocycle
@@ -26,7 +30,7 @@ theorem frob_sub_one_bij {k : Type} [Field k] {l : ℕ} [hl : Fact l.Prime] (R :
         intro a b
         funext i
         apply inj
-        simp only [Pi.add_apply, map_add, map_mul, ← hf, mul_add] }
+        simp only [Pi.add_apply, map_add (f := _), map_mul, ← hf, mul_add] }
   have hT : ∀ m i, T m i = (u : k⟦X⟧) * PowerSeries.X ^ (l' + 1) * f (m (i - 1)) := fun _ _ => rfl
   have hT' : ∀ m i, vv k * (T m i : k⸨X⸩) = R.φ (vv k * (m (i - 1) : k⸨X⸩)) := by
     intro m i
@@ -69,7 +73,7 @@ theorem main : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime] [CharP k l] (R 
   have hb : ∀ i, (b i : k⸨X⸩) =
       vv k * (s i : k⸨X⸩) + algebraMap k k⸨X⸩ (PowerSeries.constantCoeff (b i)) := by
     intro i
-    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const (b i), map_add, map_mul, ← vv_eq_coe_X]
+    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const (b i), map_add (f := _), map_mul, ← vv_eq_coe_X]
     rfl
   obtain ⟨m, hm⟩ := h1 s
   obtain ⟨κ, -, hκ⟩ := R.γ_v

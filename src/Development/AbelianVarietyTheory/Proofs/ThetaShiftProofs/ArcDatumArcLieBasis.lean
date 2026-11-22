@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralElemOfIsAlgebraicInt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CommonEigenvectorsFlatBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArc
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieComb
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNormalFormArcDatumFramedPointRootOfUnityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsIntegralElemOfIsAlgebraicInt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.CommonEigenvectorsFlatBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArc
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieComb
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNormalFormArcDatumFramedPointRootOfUnityStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,20 +37,21 @@ theorem comb_iff_symm (z : Fin g → R) (w : epsR R ⟶ G) :
   have e : B = fun i => (Lie.basis a hB i).hom := funext fun i => (Lie.hom_basis hB i).symm
   rw [Module.Basis.equivFun_symm_apply, ← Lie.isLieComb_iff, ← e]
 
-include a in
 
+include a in
 theorem exists_comb (z : Fin g → R) : ∃ w, IsTangent w ∧ IsLieComb z B w :=
   ⟨_, Lie.isTangent _, (comb_iff_symm a hB z _).2 rfl⟩
 
-include a in
 
+include a in
 theorem comb_coord {m : ℕ} {U : Fin m → Fin g → R} {u : Fin m → (epsR R ⟶ G)} (hU : ∀ k, IsLieComb (U k) B (u k))
     {z : Fin g → R} {w : epsR R ⟶ G} (hz : IsLieComb z B w) (cf : Fin m → R) :
     IsLieComb cf u w ↔ z = ∑ k, cf k • U k := by
   obtain rfl : u = fun k => ((Lie.basis a hB).equivFun.symm (U k)).hom :=
     funext fun k => (comb_iff_symm a hB _ _).1 (hU k)
   obtain rfl := (comb_iff_symm a hB _ _).1 hz
-  rw [Lie.isLieComb_iff, ← (Lie.basis a hB).equivFun.symm.injective.eq_iff, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Lie.isLieComb_iff, ← (Lie.basis a hB).equivFun.symm.injective.eq_iff, map_sum]
   simp only [map_smul]
   exact ⟨fun h => Lie.ext h, fun h => congrArg Lie.hom h⟩
 
@@ -57,7 +62,8 @@ theorem eig_coord {x : O} {M : Matrix (Fin g) (Fin g) R} (hM : ∀ i, IsLieComb 
   have h1 : ∀ i, x • Lie.basis a hB i = (Lie.basis a hB).equivFun.symm (M i) := fun i => Lie.ext (by
     rw [Lie.hom_act_smul, Lie.hom_basis]; exact (comb_iff_symm a hB _ _).1 (hM i))
   have h2 : x • (Lie.basis a hB).equivFun.symm z = (Lie.basis a hB).equivFun.symm (z ᵥ* M) := by
-    rw [Matrix.vecMul_eq_sum, map_sum, Module.Basis.equivFun_symm_apply, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.vecMul_eq_sum, map_sum, Module.Basis.equivFun_symm_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_comm x, h1, map_smul]
   rw [← Lie.hom_act_smul, ← Lie.hom_smul_left, h2, ← map_smul,
@@ -202,11 +208,13 @@ end Push
 
 end GlobalTheory.ArcQ.DatumBasis
 
-open GlobalTheory.ArcQ.DatumBasis in
 
+open GlobalTheory.ArcQ.DatumBasis in
 theorem GlobalTheory.ArcQ.arcDatum_arcLieBasis : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (K₁ : Type) [Field K₁] [Algebra c.F K₁] (d : ArcDatum Xo c K₁), (∀ τ k, GtTanR (d.e τ k)) → ArcLieBasis d.W d.e := by
   intro hL hL2 E _ _ _ H Dw l Xo c K₁ _ _ d htan
-  obtain ⟨ζ, -, -, -, hN, -⟩ := GlobalTheory.T.exists_normalForm_arcDatum_framedPoint_rootOfUnity hL hL2 E H Dw l Xo c K₁ d
+  have hNormal := @GlobalTheory.T.exists_normalForm_arcDatum_framedPoint_rootOfUnity
+    hL hL2 E _ _ _ H Dw l Xo c K₁ _ _ _ d
+  obtain ⟨ζ, -, -, -, hN, -⟩ := hNormal
   obtain ⟨y, hy, -⟩ := hN htan
   obtain ⟨-, G, m1, m2, -, -, -, -, -, -, h, -⟩ := hy
   choose v p hv hp1 hp2 hp3 using h

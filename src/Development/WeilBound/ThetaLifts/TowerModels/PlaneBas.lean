@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,6 @@ theorem splitLat_le {n : ℕ} {L : Submodule (𝓞 E) (Fin n → E)}
     (fun y hy => ?_) hy
   · have := N.smul_mem ⟨a, ha⟩ (hN x hx)
     convert this using 1
-    funext i
-    simp only [splitVec, splitProj_tmul]
     rfl
   · have : splitVec τ (0 : Fin n → Fv F v ⊗[F] E) = 0 := funext fun _ => map_zero _
     rw [this]; exact zero_mem _
@@ -48,7 +50,7 @@ theorem map_mem_of_unit {n : ℕ} {L : Submodule (𝓞 E) (Fin n → E)} {x : Fi
   field_simp
 
 theorem exists_basis (n n₁ : ℕ) (L : Submodule (𝓞 E) (Fin n → E)) (x y : Fin n → E) (ι : Matrix (Fin n) (Fin n₁) E)
-    (β₁ : GL (Fin n₁) (Fv F v)) (i₀ i₁ : ℕ) (hn : n = n₁ + 2) (h01 : i₀ < i₁) (h1n : i₁ < n) (hlat : L.IsLattice E)
+    (β₁ : GL (Fin n₁) (Fv F v)) (i₀ i₁ : ℕ) (hn : n = n₁ + 2) (h01 : i₀ < i₁) (h1n : i₁ < n) (hlat : L.IsFullLattice E)
     (hsplit : ∀ z ∈ L, ∃ (s t : E) (u : Fin n₁ → E), s • x ∈ L ∧ t • y ∈ L ∧ ι *ᵥ u ∈ L ∧ z = s • x + ι *ᵥ u + t • y)
     (hx : (∀ c : E, c • x ∈ L → Valued.v (τ c) ≤ 1) ∧ ∃ c : E, c • x ∈ L ∧ Valued.v (τ c) = 1)
     (hy : (∀ c : E, c • y ∈ L → Valued.v (τ c) ≤ 1) ∧ ∃ c : E, c • y ∈ L ∧ Valued.v (τ c) = 1)
@@ -113,7 +115,7 @@ theorem exists_basis (n n₁ : ℕ) (L : Submodule (𝓞 E) (Fin n → E)) (x y 
       induction hz using Submodule.span_induction with
       | mem z hz => obtain ⟨u, -, hu⟩ := hsurj _ (map_mem_splitLat τ hz); exact ⟨u, hu⟩
       | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-      | add a a' _ _ ha ha' => simp only [Pi.add_apply, map_add]; exact add_mem ha ha'
+      | add a a' _ _ ha ha' => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha ha'
       | smul a z _ hz => simp only [Pi.smul_apply, smul_eq_mul, map_mul]; exact Submodule.smul_mem _ (τ a) hz
     intro w
     have : w = ∑ i, w i • fun k => τ ((Pi.single i 1 : Fin n → E) k) := by

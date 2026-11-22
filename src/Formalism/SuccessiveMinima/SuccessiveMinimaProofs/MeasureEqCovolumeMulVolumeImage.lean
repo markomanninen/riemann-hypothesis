@@ -1,4 +1,8 @@
-import Formalism.SuccessiveMinima.DefsMink
+module
+
+public import Formalism.SuccessiveMinima.DefsMink
+
+@[expose] public section
 
 open MeasureTheory Module Metric Set
 open scoped Pointwise ENNReal
@@ -68,7 +72,7 @@ theorem minkowskiIIUpper_of (hc : MinkCore) (hs : SuccMinFacts) (ha : AdaptedBas
     obtain ⟨a, ha', rfl⟩ := hw
     exact ⟨(1 / 2 : ℝ) • -a, Set.smul_mem_smul_set (hneg a ha'), by rw [smul_neg, map_neg]⟩
   have hCb : Bornology.IsBounded (B.equivFun '' ((1 / 2 : ℝ) • interior K)) :=
-    B.equivFunL.lipschitz.isBounded_image ((hKc.isBounded.subset interior_subset).smul₀ _)
+    B.equivFunL.lipschitzWith.isBounded_image ((hKc.isBounded.subset interior_subset).smul₀ _)
   have key := hc (finrank ℝ E) (B.equivFun '' ((1 / 2 : ℝ) • interior K)) lam hCo hCc hCs hCb
     hpos hmono (by
       intro j x hx y hy hint i hji

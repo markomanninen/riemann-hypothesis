@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.DedekindZetaEqSumRealEisenstein
+
+@[expose] public section
 
 open NumberField Module
 
@@ -44,7 +48,7 @@ private theorem norm_sq_add_norm_sq_sub_eq_complete_square {K : Type*} [Field K]
     intro a b
     have e : ((a : K) + b * r) = a • B 0 + b • B 1 := by
       rw [hB0, hB1, Rat.smul_def, Rat.smul_def, mul_one]
-    rw [e, map_add, map_smul, map_smul, Basis.constr_basis, Basis.constr_basis]
+    rw [e, map_add (f := _), map_smul, map_smul, Basis.constr_basis, Basis.constr_basis]
     simp [Rat.smul_def, sub_eq_add_neg]
   have hone : (B.constr ℚ ![(1 : K), -r]) 1 = 1 := by simpa using hf 1 0
   have hmul : ∀ x y : K, (B.constr ℚ ![(1 : K), -r]) (x * y) =
@@ -110,7 +114,7 @@ theorem exists_integer_generator_of_sq_eq_neg {K : Type*} [Field K] [NumberField
     have hc : IsIntegral ℤ (c : K) := c.2
     have hc' : IsIntegral ℤ (τ c) := map_isIntegral_int τ hc
     have hτc : τ (c : K) = a - b * r := by
-      rw [hab, map_add, map_mul, map_ratCast, map_ratCast, hτ]
+      rw [hab, map_add (f := _), map_mul, map_ratCast, map_ratCast, hτ]
       ring
     have hsum : IsIntegral ℤ (((2 * a : ℚ)) : K) := by
       have h := hc.add hc'
@@ -181,12 +185,12 @@ theorem ringOfIntegers_sqrt_neg_three_mod_four (d : ℕ) (hsq : Squarefree d) (h
   have hcomp : ∀ σ : K →+* ℂ, ∀ x : K, σ (τ x) = starRingEnd ℂ (σ x) := by
     intro σ x
     obtain ⟨a, b, rfl⟩ := hdec x
-    simp only [map_add, map_mul, map_ratCast, hτ, map_neg, hconj]
+    simp only [map_add (f := _), map_mul, map_ratCast, hτ, map_neg, hconj]
   refine ⟨w, RingOfIntegers.mapRingHom τ, hw2, ?_, hgen, ?_, ?_⟩
   · apply RingOfIntegers.ext
     have hw' : (w : K) = (1 + r) / 2 := by linear_combination hw2 / 2
     show (w : K) + τ (w : K) = 1
-    rw [hw', map_div₀, map_add, map_one, hτ, map_ofNat]
+    rw [hw', map_div₀, map_add (f := _), map_one, hτ, map_ofNat]
     ring
   · intro σ
     refine ⟨?_, ?_⟩

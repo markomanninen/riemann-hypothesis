@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMParameterQuotient
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMRegularElement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMParameterQuotient
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCMRegularElement
+
+@[expose] public section
 
 set_option linter.overlappingInstances false
 
@@ -18,8 +22,8 @@ private theorem cm_of_regular_local (A : Type) [CommRing A] [IsRegularLocalRing 
   rw [← hmax]
   exact Ideal.subset_span hr
 
-open GroundTheory.Heights₂.Heights in
 
+open GroundTheory.Heights₂.Heights in
 private theorem ass_min_of_surj {A B : Type} [CommRing A] [IsCohenMacaulayLocalRing A] [CommRing B]
     [Nontrivial B] (φ : A →+* B) (hφ : Function.Surjective φ) {k : ℕ} (x : Fin k → A)
     (hx : ∀ i, x i ∈ maximalIdeal A) (hk : RingHom.ker φ = Ideal.span (Set.range x))
@@ -59,7 +63,7 @@ private theorem min_of_localized {R : Type} [CommRing R] (Q : Ideal R) [Q.IsPrim
     exact ha (hPQ haP)
   set P' : Ideal (Localization.AtPrime Q) := P.map (algebraMap R (Localization.AtPrime Q)) with hP'
   have hcomap : Ideal.comap (algebraMap R (Localization.AtPrime Q)) P' = P :=
-    IsLocalization.comap_map_of_isPrime_disjoint Q.primeCompl (Localization.AtPrime Q) hPprime hdis
+    IsLocalization.under_map_of_isPrime_disjoint Q.primeCompl (Localization.AtPrime Q) hPprime hdis
   have hass : P' ∈ associatedPrimes (Localization.AtPrime Q) (Localization.AtPrime Q) := by
     refine Module.associatedPrimes.mem_associatedPrimes_of_comap_mem_associatedPrimes_of_isLocalizedModule
       Q.primeCompl (Algebra.linearMap R (Localization.AtPrime Q)) P' ?_

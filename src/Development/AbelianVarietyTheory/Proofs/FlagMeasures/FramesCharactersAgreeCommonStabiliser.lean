@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -153,7 +158,8 @@ theorem hf_sum_l {ι : Type} [Fintype ι] (c : ι → E) (v : ι → S.V) (y : S
 
 theorem hf_sum_r {ι : Type} [Fintype ι] (c : ι → E) (v : ι → S.V) (y : S.V) :
     hf L S.Hm y (∑ i, c i • v i) = ∑ i, L.cj (c i) * hf L S.Hm y (v i) := by
-  rw [← hf_cj L S.herm.1, hf_sum_l, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hf_cj L S.herm.1, hf_sum_l, map_sum]
   simp only [map_mul, hf_cj L S.herm.1]
 
 theorem coef_eq (g : Fin (r + 1) → S.V) (gs : Fin r → S.V)
@@ -175,7 +181,8 @@ theorem psi_eq_psi' : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpac
     intro j
     have e : hf L S.Hm (h (h⁻¹ (S.f' j.succ))) (S.es' j) = 0 := by
       rw [hcan, S.dual', if_neg (Fin.castSucc_lt_succ (i := j)).ne']
-    rw [hC, map_sum] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hC, map_sum] at e
     simp only [map_smul, hf_sum_l] at e
     simp only [hs', hf_sum_l, S.dual', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true] at e
@@ -198,7 +205,8 @@ theorem psi_eq_psi' : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpac
       rw [hcan, hs, hC, hf_sum_l, hf_sum_r] at e
       simpa [cT, Frames.Zh, Frames.h, mul_comm] using e)
   have e : ∑ j, S.coef S.f' S.es' h j = L.cj (∑ j, S.coef S.f S.es h j) := by
-    simp only [coef_eq S _ _ S.dual h s hs, coef_eq S _ _ S.dual' h s' hs', hneg, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coef_eq S _ _ S.dual h s hs, coef_eq S _ _ S.dual' h s' hs', hneg, map_sum,
       Finset.sum_neg_distrib]
     exact main.symm
   simp only [Frames.psi, Frames.psi', Frames.psiOf]

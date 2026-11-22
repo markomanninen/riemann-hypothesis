@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set Real
 open scoped Nat ComplexConjugate
@@ -97,16 +101,6 @@ theorem volume_preserving_ofLp_complex (ι : Type*) [Fintype ι] :
 end Monomials
 
 section Fin
-
-noncomputable abbrev fockMeasure (g : ℕ) : Measure (EuclideanSpace ℂ (Fin g)) :=
-  complexGaussian (EuclideanSpace ℂ (Fin g)) g
-
-theorem finrank_real_euclideanSpace_complex_fin (g : ℕ) :
-    Module.finrank ℝ (EuclideanSpace ℂ (Fin g)) = 2 * g := by
-  rw [finrank_real_euclideanSpace_complex, Fintype.card_fin]
-
-instance (g : ℕ) : IsProbabilityMeasure (fockMeasure g) :=
-  isProbabilityMeasure_complexGaussian (finrank_real_euclideanSpace_complex_fin g)
 
 end Fin
 

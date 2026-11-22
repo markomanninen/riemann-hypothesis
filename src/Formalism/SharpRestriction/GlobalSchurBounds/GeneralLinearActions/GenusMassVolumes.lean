@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ def HermR (σ : E →ₐ[F] E) (n : ℕ) : AddSubgroup (Matrix (Fin n) (Fin n) (
   add_mem' := by
     intro S T hS hT a b
     simp only [Set.mem_setOf_eq] at *
-    simp [map_add, hS a b, hT a b]
+    simp [map_add (f := _), hS a b, hT a b]
   neg_mem' := by
     intro S hS a b
     simp only [Set.mem_setOf_eq] at *
@@ -227,13 +231,17 @@ def fstA : AF F →ₐ[F] Ainf F := AlgHom.fst F (Ainf F) (Af F)
 def sndA : AF F →ₐ[F] Af F := AlgHom.snd F (Ainf F) (Af F)
 
 def evalV (v : HeightOneSpectrum (𝓞 F)) : Af F →ₐ[F] Fv F v :=
-  { RestrictedProduct.evalRingHom (fun w : HeightOneSpectrum (𝓞 F) => w.adicCompletion F) v with
-    commutes' := fun _ => rfl }
+  by
+    classical
+    exact { RestrictedProduct.evalRingHom (fun w : HeightOneSpectrum (𝓞 F) => w.adicCompletion F) v with
+      commutes' := fun _ => rfl }
+
 
 open Classical in
-
 def singleV (v : HeightOneSpectrum (𝓞 F)) (y : Fv F v) : Af F :=
-  RestrictedProduct.single (fun w : HeightOneSpectrum (𝓞 F) => w.adicCompletionIntegers F) v y
+  by
+    classical
+    exact RestrictedProduct.single (fun w : HeightOneSpectrum (𝓞 F) => w.adicCompletionIntegers F) v y
 
 def IsCharAF (ψ : AddChar (AF F) ℂ) : Prop :=
   Continuous ψ ∧ (∀ x, ‖ψ x‖ = 1) ∧ (∀ a : F, ψ (algebraMap F (AF F) a) = 1) ∧ ∃ x, ψ x ≠ 1

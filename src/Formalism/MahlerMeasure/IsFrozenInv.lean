@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.GoodCount
+module
+
+public import Formalism.MahlerMeasure.GoodCount
+
+@[expose] public section
 
 namespace Formalism.GM.M
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh
 
 set_option autoImplicit false
@@ -26,7 +31,7 @@ theorem core {L L' : Cx C'} (a0 : ∀ T, L.M0.obj T →+ L'.M0.obj T) (a1 : ∀ 
     intro T T' φ
     have h := hη T T' φ
     rw [hηw T', hηw T] at h
-    simp only [map_sub, map_add, a2m, ← L'.diffOne_natural] at h ⊢
+    simp only [map_sub, map_add (f := _), a2m, ← L'.diffOne_natural] at h ⊢
     linear_combination (norm := abel1) h
   have cl2 : ∀ (T T' : C') (φ : T ⟶ T'), L.d2 T' (η T' - L.M2.map φ (η T)) = 0 := by
     intro T T' φ
@@ -41,9 +46,9 @@ theorem core {L L' : Cx C'} (a0 : ∀ T, L.M0.obj T →+ L'.M0.obj T) (a1 : ∀ 
   obtain ⟨α, hA, hB⟩ : ∃ α : L.M1.c1, (∀ (T T' : C') (φ : T ⟶ T'), L.d1 T' (α T T' φ) = η T' - L.M2.map φ (η T)) ∧
       ∀ (T T' : C') (φ : T ⟶ T'), α' T T' φ + L'.M1.map φ (w T) - w T' = a1 T' (α T T' φ) + L'.d0 T' (f T T' φ) := by
     refine ⟨fun T T' φ ↦ α₁ T T' φ + α₂ T T' φ, fun T T' φ ↦ ?_, fun T T' φ ↦ ?_⟩
-    · simp only [map_add, hα₁, hα₂0, add_zero]
+    · simp only [map_add (f := _), hα₁, hα₂0, add_zero]
     · have h := hα₂ T T' φ
-      simp only [map_add]
+      simp only [map_add (f := _)]
       linear_combination (norm := abel1) h
   have clβ : ∀ (T T' T'' : C') (φ : T ⟶ T') (ψ : T' ⟶ T''),
       L.d1 T'' (α T T'' (φ ≫ ψ) - L.M1.map ψ (α T T' φ) - α T' T'' ψ) = 0 := by
@@ -58,8 +63,8 @@ theorem core {L L' : Cx C'} (a0 : ∀ T, L.M0.obj T →+ L'.M0.obj T) (a1 : ∀ 
     have e2 := congrArg (L'.M1.map ψ) (hB T T' φ)
     have e3 := hB T' T'' ψ
     have h := hα T T' T'' φ ψ
-    simp only [map_add, map_sub, ← L'.M1.map_comp, ← L'.diffZero_natural] at e2
-    simp only [map_add, map_sub, a1m]
+    simp only [map_add (f := _), map_sub, ← L'.M1.map_comp, ← L'.diffZero_natural] at e2
+    simp only [map_add (f := _), map_sub, a1m]
     linear_combination (norm := abel1) e2 + e3 + h - e1
   choose z₁ hz₁ using fun T T' T'' φ ψ ↦ (hq T'').inj1 _ _ (clβ T T' T'' φ ψ) (keyβ T T' T'' φ ψ)
   have cl0 : ∀ (T T' T'' : C') (φ : T ⟶ T') (ψ : T' ⟶ T''),
@@ -73,17 +78,17 @@ theorem core {L L' : Cx C'} (a0 : ∀ T, L.M0.obj T →+ L'.M0.obj T) (a1 : ∀ 
       ∀ (T T' T'' : C') (φ : T ⟶ T') (ψ : T' ⟶ T''),
       a0 T'' (z T T' T'' φ ψ) = z' T T' T'' φ ψ + (L'.M0.map ψ (f T T' φ) - f T T'' (φ ≫ ψ) + f T' T'' ψ) := by
     refine ⟨fun T T' T'' φ ψ ↦ z₁ T T' T'' φ ψ + z₂ T T' T'' φ ψ, fun T T' T'' φ ψ ↦ ?_, fun T T' T'' φ ψ ↦ ?_⟩
-    · simp only [map_add, hz₁, hz₂0, add_zero]
-    · simp only [map_add, hz₂]
+    · simp only [map_add (f := _), hz₁, hz₂0, add_zero]
+    · simp only [map_add (f := _), hz₂]
       abel
   have hzc : ∀ (T T' T'' T''' : C') (φ : T ⟶ T') (ψ : T' ⟶ T'') (χ : T'' ⟶ T'''),
       L.M0.map χ (z T T' T'' φ ψ) + z T T'' T''' (φ ≫ ψ) χ = z T T' T''' φ (ψ ≫ χ) + z T' T'' T''' ψ χ := by
     intro T T' T'' T''' φ ψ χ
     refine sub_eq_zero.mp ((hq T''').inj0 _ ?_ ?_)
-    · simp only [map_sub, map_add, L.diffZero_natural, hzd, L.M1.map_comp, Category.assoc]
+    · simp only [map_sub, map_add (f := _), L.diffZero_natural, hzd, L.M1.map_comp, Category.assoc]
       abel
     · have h := hz T T' T'' T''' φ ψ χ
-      simp only [map_sub, map_add, a0m, hza, ← L'.M0.map_comp, Category.assoc]
+      simp only [map_sub, map_add (f := _), a0m, hza, ← L'.M0.map_comp, Category.assoc]
       linear_combination (norm := abel1) h
   refine ⟨(z, α, η), ⟨hzc, fun T T' T'' φ ψ ↦ ?_, fun T T' φ ↦ ?_, hη0⟩, (-f, w), ?_⟩
   · show α T T'' (φ ≫ ψ) = L.M1.map ψ (α T T' φ) + α T' T'' ψ + L.d0 T'' (z T T' T'' φ ψ)

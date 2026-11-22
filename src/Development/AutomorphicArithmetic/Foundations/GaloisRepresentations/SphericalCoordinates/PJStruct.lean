@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermitianForm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermitianForm
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -51,32 +56,12 @@ private theorem hv_smul_r (M : Matrix (Fin n) (Fin n) ℂ) (t : ℂ) (a b : Fin 
 private noncomputable def hBil {X : Type} [AddCommGroup X] [Module ℝ X] (R : X ≃ₗ[ℝ] (Fin g → ℂ))
     (Hm : Matrix (Fin g) (Fin g) ℂ) : X →ₗ[ℝ] X →ₗ[ℝ] ℝ :=
   LinearMap.mk₂ ℝ (fun x y => (hermForm Hm (R x) (R y)).im)
-    (fun a b c => by simp only [map_add, hf_add_l, Complex.add_im])
+    (fun a b c => by simp only [map_add (f := _), hf_add_l, Complex.add_im])
     (fun c a b => by
       simp only [map_smul, smulR, hf_smul_l, Complex.im_ofReal_mul, smul_eq_mul])
-    (fun a b c => by simp only [map_add, hf_add_r, Complex.add_im])
+    (fun a b c => by simp only [map_add (f := _), hf_add_r, Complex.add_im])
     (fun c a b => by
       simp only [map_smul, smulR, hf_smul_r, Complex.conj_ofReal, Complex.im_ofReal_mul, smul_eq_mul])
-
-private noncomputable def eBil (M : P → Matrix (Fin n) (Fin n) ℂ) (s : P → ℂ) (r : P → ℝ) :
-    (P → Fin n → ℂ) →ₗ[ℝ] (P → Fin n → ℂ) →ₗ[ℝ] ℝ :=
-  LinearMap.mk₂ ℝ (fun x y => ∑ v, r v * (-(s v) * Complex.I * hv (M v) (x v) (y v)).re)
-    (fun a b c => by
-      simp only [Pi.add_apply, hv_add_l, mul_add, Complex.add_re, Finset.sum_add_distrib])
-    (fun c a b => by
-      simp only [Pi.smul_apply, smulR, hv_smul_l, smul_eq_mul, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun v _ => ?_
-      rw [show -(s v) * Complex.I * ((c : ℂ) * hv (M v) (a v) (b v)) =
-        (c : ℂ) * (-(s v) * Complex.I * hv (M v) (a v) (b v)) by ring, Complex.re_ofReal_mul]
-      ring)
-    (fun a b c => by
-      simp only [Pi.add_apply, hv_add_r, mul_add, Complex.add_re, Finset.sum_add_distrib])
-    (fun c a b => by
-      simp only [Pi.smul_apply, smulR, hv_smul_r, Complex.conj_ofReal, smul_eq_mul, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun v _ => ?_
-      rw [show -(s v) * Complex.I * ((c : ℂ) * hv (M v) (a v) (b v)) =
-        (c : ℂ) * (-(s v) * Complex.I * hv (M v) (a v) (b v)) by ring, Complex.re_ofReal_mul]
-      ring)
 
 private theorem bil_eq (R : (P → Fin n → ℂ) ≃ₗ[ℝ] (Fin g → ℂ)) (Hm : Matrix (Fin g) (Fin g) ℂ)
     (M : P → Matrix (Fin n) (Fin n) ℂ) (s : P → ℂ) (r : P → ℝ) (S : Set (P → Fin n → ℂ))
@@ -94,7 +79,7 @@ private theorem R_jz {X : Type} [AddCommGroup X] [Module ℝ X] (R : X ≃ₗ[�
 
 private theorem jz_add {X : Type} [AddCommGroup X] [Module ℝ X] (R : X ≃ₗ[ℝ] (Fin g → ℂ)) (x y : X) :
     jz R (x + y) = jz R x + jz R y := by
-  apply R.injective; simp only [map_add, R_jz, smul_add]
+  apply R.injective; simp only [map_add (f := _), R_jz, smul_add]
 
 private theorem jz_zero {X : Type} [AddCommGroup X] [Module ℝ X] (R : X ≃ₗ[ℝ] (Fin g → ℂ)) :
     jz R (0 : X) = 0 := by
@@ -244,7 +229,7 @@ theorem UpperTheory.Gal.W2.jStruct_of :
       have e : (fun v => v.embedding (L.e (c : D.F)) • (a + b) v) =
           (fun v => v.embedding (L.e (c : D.F)) • a v) + (fun v => v.embedding (L.e (c : D.F)) • b v) := by
         funext v; simp [smul_add]
-      rw [e, map_add, map_add, ha, hb, Matrix.mulVec_add]
+      rw [e, map_add (f := _), map_add (f := _), ha, hb, Matrix.mulVec_add]
     | smul t a _ ha =>
       have e : (fun v => v.embedding (L.e (c : D.F)) • (t • a) v) =
           t • (fun v => v.embedding (L.e (c : D.F)) • a v) := by

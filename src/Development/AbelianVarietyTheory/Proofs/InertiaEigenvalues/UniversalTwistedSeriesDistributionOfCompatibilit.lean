@@ -1,27 +1,32 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumHeckeIndicatorIntegralEqPrimitiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceChartFiniteAdeleTensorLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumUniversalDeterminantDatumCoeffEqPrimitiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ArtinMapSplitPlaceUniformiserEqFrobeniusInvStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModulusUnramifiedCharDetHeckeDoubleCosetSplitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvNatPowRpowNegHalfEvenEqPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDetRootOfDetAt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffHeckePolyOfComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlNeOfSplit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChosenPlacesAdmissibleGoodSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleConjugatePairPlacesEqSelfOfGoodCharsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UniversalCharSpreadCommutesWithRestrictionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnivCharWithUnivChar
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumHeckeIndicatorIntegralEqPrimitiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceChartFiniteAdeleTensorLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumUniversalDeterminantDatumCoeffEqPrimitiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ArtinMapSplitPlaceUniformiserEqFrobeniusInvStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModulusUnramifiedCharDetHeckeDoubleCosetSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvNatPowRpowNegHalfEvenEqPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsDetRootOfDetAt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffHeckePolyOfComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlNeOfSplit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChosenPlacesAdmissibleGoodSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleConjugatePairPlacesEqSelfOfGoodCharsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UniversalCharSpreadCommutesWithRestrictionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnivCharWithUnivChar
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.L2.NTheta (IsIdemAt IsHeckeElt)
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.SeriesTie
@@ -40,7 +45,8 @@ theorem specU_grpSum (Y : NExp D.R D.host D.what₂ D.LL0 N X) (i : X.Tw) {j : �
     Formalism.MainNotions.IntegralHeckeForms.specU Y i j b Q M k χ (grpSum Y ch Q M x) =
       ∑ c, ((χ (Multiplicative.ofAdd (spread Y i Q M ch c)) : (X.Ok i k)ˣ) : X.Ok i k) ⊗ₜ[X.O i] x c := by
   unfold grpSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   simp [Formalism.MainNotions.IntegralHeckeForms.specU, AddMonoidAlgebra.lift_single]
 
@@ -80,7 +86,7 @@ theorem isOpen_coord (Y : NExp D.R D.host D.what₂ D.LL0 N X) (i : X.Tw) (Q : F
     refine MonoidHom.mem_ker.2 (Multiplicative.toAdd.injective ?_)
     rw [coord_apply Y i Q M hv, MonoidHom.mem_ker.1 hg]
     rfl
-  · have : coord Y i Q M v = 1 := by unfold coord; rw [dif_neg hv]
+  · have : coord Y i Q M v = 1 := by unfold coord; rw [dite_eq_right hv]
     rw [this, MonoidHom.ker_one]
     exact isOpen_univ
 
@@ -147,8 +153,8 @@ open Classical
 open Formalism.IndefR.Links (PolF)
 variable {D : D7} {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem thURel_of_tie {ρ : Setup X} (hρ : ρ.Good) {Y : NExp D.R D.host D.what₂ D.LL0 N X} (rd : Rds Y ρ) (T : Comparison₂ hρ rd)
     (hU : GlobalTheory.UnivChar.IsUnivChar Y) (hH : ∀ i j b, HeckeRead (rd i j b))
     (hR : ∀ i, X.NonzeroIndexPlace i → ∀ j b, RatUniv (rd i j b)) :
@@ -233,7 +239,8 @@ theorem thURel_of_tie {ρ : Setup X} (hρ : ρ.Good) {Y : NExp D.R D.host D.what
   obtain ⟨x2, hx2, hT2⟩ := (T i J b).thU_of_rat (hR i hi J b) M hIR' (Finset.disjoint_of_subset_left hQ'Q hlev)
   change Formalism.MainNotions.IntegralHeckeForms.specU Y i ((J : ℕ) + 1) b Q M k χ (Y.thU i ((J : ℕ) + 1) b Q M a) = GlobalTheory.TwSys.PqF Y i ((J : ℕ) + 1) b k P _
     (Formalism.MainNotions.IntegralHeckeForms.specU Y i ((J : ℕ) + 1) b ((Q.erase P).erase Pb) M k χ' (Y.thU i ((J : ℕ) + 1) b ((Q.erase P).erase Pb) M a))
-  rw [hT1, hT2, specU_grpSum, specU_grpSum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hT1, hT2, specU_grpSum, specU_grpSum, map_sum]
   apply (T i J b).injective_rdK k
   funext g
 
@@ -299,7 +306,8 @@ theorem thURel_of_tie {ρ : Setup X} (hρ : ρ.Good) {Y : NExp D.R D.host D.what
 
   have eL : (rdK (rd i J b) hρ k (∑ c, ((χ (Multiplicative.ofAdd (spread Y i Q M (ρ.ch i) c)) : (X.Ok i k)ˣ) : X.Ok i k) ⊗ₜ[X.O i]
       x1 c)) g = ∑ c, E c * Ξ c g := by
-    simp only [map_sum, rdK_tmul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hx1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, rdK_tmul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, hx1]
     rfl
   have eR : (rdK (rd i J b) hρ k (∑ c, GlobalTheory.TwSys.PqF Y i ((J : ℕ) + 1) b k P
       ((Formalism.MainNotions.BlochKatoReduction.Gen.psiAt true χ' (Y.delU i ((Q.erase P).erase Pb) M σ) : (X.Ok i k)ˣ) : X.Ok i k)
@@ -308,7 +316,8 @@ theorem thURel_of_tie {ρ : Setup X} (hρ : ρ.Good) {Y : NExp D.R D.host D.what
       ∑ c, (E' c * Ξ' c g + ∑ n ∈ Finset.Icc 1 D.R.r, ((-1) ^ n * q ^ (n * (n - 1) / 2) * yv ^ n) *
         (E' c * (((((ρ.B i J b).mu x : Circle) : ℂ) ^ n)⁻¹ * (q ^ (n * ((Links.Vc D J).rank / 2)))⁻¹ *
           ∑ γ ∈ R n, Ξ' c (g * γ)))) := by
-    simp only [map_sum, PqF_tmul, map_add, map_smulₛₗ, rdK_tmul, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, PqF_tmul, map_add (f := _), map_smulₛₗ, rdK_tmul, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hx2]
     congr 1
@@ -366,13 +375,6 @@ end GlobalTheory.DistRel
 
 namespace GlobalTheory.DistRel
 open Classical
-
-theorem thURel_of_exportTie {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 I0 T : Type}
-    {A3 : FamIn3 D.what₂.LL Γ Pl0 I0 (List ℕ) T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
-    {Rl : Links.RealDat3 D A3 Ks} {cG : G0 Rl.Pg D.R.r ≃* G0g D.nd} {S : NX.RatDat D.ntw} {YS : NX.NExpRealS Rl cG S}
-    {v₀ : (j : Fin D.R.m) → (σ : D.what₂.LL →+* ℂ) → (Rl.MW j σ).Vec} (Z : ExportTie YS v₀)
-    (hRat : ∀ i, D.ntw.NonzeroIndexPlace i → ∀ j b, RatUniv (Z.rd i j b)) (hRH : ∀ i j b, RatHecke (Z.rd i j b)) : GlobalTheory.TwSys.ThURel D.nexp :=
-  thURel_of_tie Z.good Z.rd Z.tie Z.univ (fun _ _ _ => Z.heckeRead (hRH _ _ _)) hRat
 
 end GlobalTheory.DistRel
 

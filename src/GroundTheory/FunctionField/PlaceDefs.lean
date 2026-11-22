@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.FunctionField
 
@@ -16,8 +20,8 @@ class IsFunctionField : Prop where
 
 variable {k K}
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem isTranscendenceBasis_singleton {y : K} (hy : Transcendental k y)
     (hfin : FiniteDimensional (IntermediateField.adjoin k {y}) K) :
     IsTranscendenceBasis k ((↑) : ({y} : Set K) → K) := by
@@ -107,7 +111,7 @@ theorem exists_aeval_div_pow {x : K} (hx0 : x ≠ 0) (hx : v.ring.valuation x < 
     intro _
     refine ⟨0, a, ha, ?_⟩
     obtain ⟨q, rfl⟩ : X ∣ p := Polynomial.X_dvd_iff.2 hp0
-    rw [pow_zero, div_one, map_add, aeval_C, add_sub_cancel_right, map_mul, aeval_X, map_mul]
+    rw [pow_zero, div_one, map_add (f := _), aeval_C, add_sub_cancel_right, map_mul, aeval_X, map_mul]
     calc v.ring.valuation x * v.ring.valuation (aeval x q) ≤ v.ring.valuation x * 1 :=
           mul_le_mul' le_rfl (v.valuation_aeval_le_one hxO q)
       _ < 1 := by rwa [mul_one]
@@ -284,7 +288,8 @@ theorem linearIndependent_of_residue {x : K} (hx0 : x ≠ 0) (hx : v.ring.valuat
     simpa [y, hg] using this
   have hcomb : ∑ i, b i • IsLocalRing.residue v.ring (z i) = 0 := by
     have := congrArg (IsLocalRing.residue v.ring) hsum0
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     rw [← this]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, hres, Algebra.smul_def]
@@ -294,7 +299,7 @@ theorem linearIndependent_of_residue {x : K} (hx0 : x ≠ 0) (hx : v.ring.valuat
   exact lt_irrefl _ this
 
 theorem isNoetherianRing [IsFunctionField k K] : IsNoetherianRing v.ring := by
-  rw [isNoetherianRing_iff, isNoetherian_iff', WellFoundedGT, isWellFounded_iff,
+  rw [isNoetherianRing_iff, isNoetherian_iff', WellFoundedGT,
     RelEmbedding.wellFounded_iff_isEmpty]
   refine ⟨fun f => ?_⟩
   have hf : ∀ n, f n < f (n + 1) := fun n => f.map_rel_iff.2 (Nat.lt_succ_self n)
@@ -338,7 +343,7 @@ theorem isNoetherianRing [IsFunctionField k K] : IsNoetherianRing v.ring := by
 
 instance [IsFunctionField k K] : IsDiscreteValuationRing v.ring := by
   have hN := v.isNoetherianRing
-  have : IsPrincipalIdealRing v.ring := ((IsBezout.TFAE (R := v.ring)).out 0 1).1 hN
+  have : IsPrincipalIdealRing v.ring := ((IsBezout.TFAE (R := v.ring)).out 1 2).1 hN
   refine { (inferInstance : IsPrincipalIdealRing v.ring), (inferInstance : IsLocalRing v.ring) with
     not_a_field' := ?_ }
   obtain ⟨x, hx0, hx⟩ := v.exists_valuation_lt_one_ne_zero
@@ -372,11 +377,6 @@ def heightOneSpectrum : IsDedekindDomain.HeightOneSpectrum v.ring where
   asIdeal := IsLocalRing.maximalIdeal v.ring
   isPrime := (IsLocalRing.maximalIdeal.isMaximal v.ring).isPrime
   ne_bot := IsDiscreteValuationRing.not_a_field v.ring
-
-@[simp]
-theorem heightOneSpectrum_asIdeal :
-    v.heightOneSpectrum.asIdeal = IsLocalRing.maximalIdeal v.ring :=
-  rfl
 
 noncomputable def valuation : Valuation K ℤᵐ⁰ := v.heightOneSpectrum.valuation K
 
@@ -450,14 +450,6 @@ theorem ord_nonneg_iff {x : K} (hx : x ≠ 0) : 0 ≤ v.ord x ↔ x ∈ v.ring :
     WithZero.exp_le_exp]
   omega
 
-theorem ord_pos_iff {x : K} (hx : x ≠ 0) : 0 < v.ord x ↔ v.ring.valuation x < 1 := by
-  rw [← v.valuation_lt_one_iff, v.valuation_eq_exp_neg_ord hx, ← WithZero.exp_zero,
-    WithZero.exp_lt_exp]
-  omega
-
-theorem ord_algebraMap {c : k} (hc : c ≠ 0) : v.ord (algebraMap k K c) = 0 := by
-  rw [ord, v.valuation_algebraMap' hc, WithZero.log_one, neg_zero]
-
 theorem min_le_ord_add {x y : K} (hx : x ≠ 0) (hy : y ≠ 0) (hxy : x + y ≠ 0) :
     min (v.ord x) (v.ord y) ≤ v.ord (x + y) := by
   have h := Valuation.map_add v.valuation x y
@@ -470,16 +462,6 @@ theorem exists_ord_eq_one : ∃ π : K, v.ord π = 1 := by
   refine ⟨π, ?_⟩
   change -WithZero.log (v.heightOneSpectrum.valuation K π) = 1
   rw [hπ, WithZero.log_exp, neg_neg]
-
-noncomputable def ordHom : Kˣ →* Multiplicative ℤ where
-  toFun x := Multiplicative.ofAdd (v.ord x)
-  map_one' := by simp
-  map_mul' x y := by
-    simp only [Units.val_mul, v.ord_mul x.ne_zero y.ne_zero, ofAdd_add]
-
-@[simp]
-theorem ordHom_apply (x : Kˣ) : v.ordHom x = Multiplicative.ofAdd (v.ord x) :=
-  rfl
 
 end Valuation
 

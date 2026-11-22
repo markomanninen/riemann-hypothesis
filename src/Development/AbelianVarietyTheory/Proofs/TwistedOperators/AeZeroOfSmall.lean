@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtAndIsTheta
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierCoeffMulCharConvAndHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanPeriodicIndepOfCovolumeOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SetIntegralPosOfPeriodicNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtAndIsTheta
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierCoeffMulCharConvAndHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanPeriodicIndepOfCovolumeOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SetIntegralPosOfPeriodicNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,9 +77,6 @@ theorem isTheta_sum {ι : Type} (s : Finset ι) (F : ι → WO S T → ℂ) (h :
   | @insert i s hi ih =>
     rw [Finset.sum_insert hi]
     exact isTheta_add (h i (Finset.mem_insert_self i s)) (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
-
-def trig (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (s : Finset (ratL T S)) (c : ratL T S → ℂ) : WO S T → ℂ :=
-  ∑ γ ∈ s, c γ • chi ψ S T γ
 
 theorem lintegral_sq_le {G : Type} [MeasurableSpace G] (ν : Measure G) {u : G → ℂ} {ε B : ℝ}
     (h : ∀ w, ‖u w‖ ≤ ε * B) : ∫⁻ w, ‖u w‖ₑ ^ 2 ∂ν ≤ ENNReal.ofReal (ε ^ 2) * (ENNReal.ofReal (B ^ 2) * ν Set.univ) := by
@@ -156,7 +157,8 @@ theorem schur (hψ : IsCharAF D.host.F ψ) (S T : HSp D) : Schur ψ S T := by
   have htp : ∀ (s : Finset (ratL T S)) (c : ratL T S → ℂ) g, IsThetaFunO ψ S T g →
       A ((∑ a ∈ s, c a • chiR ψ S T a) * g) = (∑ a ∈ s, c a • chiR ψ S T a) * A g := by
     intro s c g hg
-    rw [Finset.sum_mul, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [smul_mul_assoc, smul_mul_assoc, map_smul]
     congr 1
@@ -318,10 +320,6 @@ theorem isThetaCont_mul (hψ : IsExpChar ψ) {ℓ : (WO S T → ℂ) →ₗ[ℂ]
   have := hC (Φ * g) (isTheta_one_mul hΦ hg) hlev (C' * B) (mul_nonneg hC' hB) (hb Φ hΦ B hB hΦB)
   simpa [LinearMap.comp_apply, LinearMap.mulRight_apply, mul_assoc] using this
 
-def coef (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (μ : Measure (WO S T)) (𝓕 : Set (WO S T)) (Φ : WO S T → ℂ)
-    (γ : WO S T) : ℂ :=
-  ∫ y in 𝓕, Φ y * starRingEnd ℂ (chi ψ S T γ y) ∂μ
-
 theorem eq_mul_of_chi (hψ : IsCharAF D.host.F ψ) {m : (WO S T → ℂ) →ₗ[ℂ] ℂ} (hm : IsThetaCont 1 S T m) {κ : ℂ}
     (hκ : ∀ γ ∈ ratL T S, m (chi ψ S T γ) = κ) {Φ : WO S T → ℂ} (hΦ : IsThetaFunO 1 S T Φ) : m Φ = κ * Φ 0 := by
   obtain ⟨h1, h2, h3, h4, h5, K, hK, hcov⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T S
@@ -438,7 +436,8 @@ theorem eq_mul_of_chi (hψ : IsCharAF D.host.F ψ) {m : (WO S T → ℂ) →ₗ[
       exact happ Φ List.mem_cons_self 0
     have hmT : m (tr s c Φ) = κ * tr s c Φ 0 := by
       rw [tr_apply]
-      simp only [tr, map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [tr, map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [show chiR ψ S T a = chi ψ S T a from rfl, hκ _ a.2, chi_zero]
       ring

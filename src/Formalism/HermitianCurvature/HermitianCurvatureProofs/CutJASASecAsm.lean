@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASectionCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASectionCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff

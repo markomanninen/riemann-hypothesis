@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnitsInvHaar
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsUnitsInvHaar
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -46,7 +50,7 @@ theorem measurable_invSqWeight : Measurable (invSqWeight : (I → ℂ) → ℝ�
 
 omit [Fintype I] in
 theorem measurable_invUnits : Measurable (invUnits : (I → ℂ) → I → ℂˣ) := by
-  refine measurable_pi_lambda _ fun i => measurable_to_units ?_
+  refine Measurable.of_eval fun i => measurable_to_units ?_
   have : (fun b : I → ℂ => ((invUnits b i : ℂˣ) : ℂ)) = fun b => if b i = 0 then 1 else (b i)⁻¹ := by
     funext b
     by_cases h : b i = 0 <;> simp [invUnits, h]

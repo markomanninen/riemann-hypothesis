@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsGridFr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeesawOneSourceOrthogonalSumTargets
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPolynomialFockThetaVectorOrthogonalBoxProduct
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsConjAdjointPullbackBijection
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjFockPureTensorMapNegFormSpaceEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompactSubgroupsActOnFockVectorsAllSignatures
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsGridFr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeesawOneSourceOrthogonalSumTargets
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPolynomialFockThetaVectorOrthogonalBoxProduct
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsConjAdjointPullbackBijection
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConjFockPureTensorMapNegFormSpaceEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompactSubgroupsActOnFockVectorsAllSignatures
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLowestKTypeFockMapThetaVectors
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -53,7 +57,8 @@ theorem exists_aPlus_ptF (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {S T : 
   conv_lhs => rw [eq_sum_unitMap A B τ z]
   rw [GlobalTheory.FockSubst.aPlus_dir_sum hψ hθ τ _ _ hg]
   conv_rhs => unfold ptF
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [GlobalTheory.FockSubst.aPlus_dir_smul hψ hθ τ _ _ hg _ _ (GlobalTheory.CompactFockAction.Jm_single A B τ p.1 p.2), map_smul]
   congr 1
@@ -160,8 +165,8 @@ theorem exists_boxT_ptF (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
 
 end Box
 
-open GlobalTheory.Doubling in
 
+open GlobalTheory.Doubling in
 theorem cart_frSum {V H : HSp D} (A : Fr V) (B : Fr H) (τ : D.what₂.Tau) :
     (GlobalTheory.SquareComm.frSum A B).cart τ = blkMat finSumFinEquiv (A.cart τ) (B.cart τ) := by
   have ha : IsUnit (A.fr τ).det := (Matrix.isUnit_iff_isUnit_det _).1 (A.fr_unit τ)
@@ -233,7 +238,7 @@ theorem isVacF_cj (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {S T : HSp D} 
     dRho_neg' hψ hθ ht]
   funext x
   have h2 := congrArg (starRingEnd ℂ) (congrFun h0 x)
-  simp only [GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj, id_eq, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul, Pi.zero_apply, map_add, map_mul,
+  simp only [GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj, id_eq, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul, Pi.zero_apply, map_add (f := _), map_mul,
     Complex.conj_I, Complex.conj_conj, map_zero] at h2 ⊢
   linear_combination h2
 

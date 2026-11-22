@@ -1,29 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 universe u v
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
 
 namespace FunctorialResolution.Blowup
-
-private theorem small_directedAffineCover_I₀ (X : Scheme.{u}) :
-    Small.{u} X.directedAffineCover.I₀ :=
-  small_self _
-
-instance instSmallDirectedAffineCoverI₀ (X : Scheme.{u}) :
-    Small.{u} X.directedAffineCover.I₀ :=
-  small_directedAffineCover_I₀ X
-
-private theorem isThin_directedAffineCover_I₀ (X : Scheme.{u}) :
-    Quiver.IsThin X.directedAffineCover.I₀ := by
-  intro a b
-  refine ⟨fun f g => ?_⟩
-  obtain ⟨⟨hf⟩⟩ := f
-  obtain ⟨⟨hg⟩⟩ := g
-  rfl
-
-instance instIsThinDirectedAffineCoverI₀ (X : Scheme.{u}) :
-    Quiver.IsThin X.directedAffineCover.I₀ :=
-  isThin_directedAffineCover_I₀ X
 
 theorem noetherianSpace_toScheme (X : Scheme.{u}) [NoetherianSpace ↥X] (U : X.Opens) :
     NoetherianSpace ↥(U.toScheme) := by

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalToGlobal.UnitaryNorms.RealCyclotomicTwoPower
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.PrimeDiscriminants.CycImage
-import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalToGlobal.UnitaryNorms.RealCyclotomicTwoPower
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.CycImage
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+
+@[expose] public section
 
 open NumberField
 
@@ -43,7 +47,7 @@ private theorem exists_aut_fix (N M : ℕ) (hN : 0 < N) (hM : 0 < M) (u : ℕ) (
       rw [hs z (by show z ^ (N * M) = 1; rw [mul_comm, pow_mul, hz', one_pow]),
         pow_eq_pow_of_modEq hu1 hz', pow_one]
     | algebraMap r => exact s.commutes r
-    | add a b _ _ ha hb => rw [map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
     | inv a _ ha => rw [map_inv₀, ha]
     | mul a b _ _ ha hb => rw [map_mul, ha, hb]
 
@@ -54,7 +58,11 @@ private theorem aut_art {φ : Frame} (H : HostRaw φ) (j : H.E →ₐ[ℚ] Qb) (
   have : IsScalarTower ℚ H.E (Cond.Cyc H.condN) := IsScalarTower.of_algebraMap_eq fun x => ((emb H).commutes x).symm
   have : Algebra.IsAlgebraic H.E (Cond.Cyc H.condN) := Algebra.IsAlgebraic.tower_top (K := ℚ) H.E
   let _ : Algebra H.E Qb := j.toRingHom.toAlgebra
-  let Ψ0 : Cond.Cyc H.condN →ₐ[H.E] Qb := IsAlgClosed.lift
+  let Ψ0 : Cond.Cyc H.condN →ₐ[H.E] Qb := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let Ψ : Cond.Cyc H.condN →+* Qb := Ψ0.toRingHom
   have h1 : ∀ y, Ψ (emb H y) = j y := fun y => Ψ0.commutes y
   have key : (Ψ.comp (tauN H.condN u : Cond.Cyc H.condN →+* Cond.Cyc H.condN)).toRatAlgHom =

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.SepDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.GramLowOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.SepDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatSizeContOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ theorem ap_hP' (v : InfinitePlace I.F) : (I.P v)⁻¹ * I.P v = 1 := by
 theorem ap_phv_mulVec (v : InfinitePlace I.F) (δ : Matrix (Fin I.n) (Fin I.n) I.E) (w : Fin I.n → I.E) :
     phv I v (δ *ᵥ w) = δ.map (I.φ v) *ᵥ phv I v w := by
   funext i
-  simp [phv, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [phv, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem ap_AQ (x y : I.GA) (v : InfinitePlace I.F) (δ : Matrix (Fin I.n) (Fin I.n) I.E) :
     amat I x y v δ * qM I y v = qM I x v * δ.map (I.φ v) := by
@@ -156,7 +161,8 @@ theorem ap_star (v : InfinitePlace I.F) (a : I.E) : I.φ v (star a) = star (I.φ
 
 theorem ap_form (v : InfinitePlace I.F) (w z : Fin I.n → I.E) :
     I.φ v (hf I w z) = star (phv I v w) ⬝ᵥ (I.J.map (I.φ v) *ᵥ phv I v z) := by
-  simp only [hf, Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, phv, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, phv, Pi.star_apply,
     Matrix.map_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [starRingEnd_apply, ap_star]

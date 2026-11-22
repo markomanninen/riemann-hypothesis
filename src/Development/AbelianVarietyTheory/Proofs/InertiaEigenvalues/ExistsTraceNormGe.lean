@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.LocalToGlobal.ProjectiveLattices.AvMono
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCycCycChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersEqSumZetaPowStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.LocalToGlobal.ProjectiveLattices.AvMono
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCycCycChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersEqSumZetaPowStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc Polynomial
 
@@ -166,7 +170,8 @@ theorem norm_move_le (K : FinExt l) {τ : GQ l} (hτ : τ ∈ Gj K 1) (i : ℕ) 
     have hτ1 : ‖τ ζ‖ ≤ 1 := by rwa [norm_gal]
     have hζ' : IsPrimitiveRoot (ζ ^ l) (l ^ i) :=
       hζ.pow (pow_pos hl.pos _) (by ring)
-    rw [map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.sum_sub_distrib]
     refine norm_sum_le_of_le _ _ (norm_nonneg _) fun a _ => ?_
     have : τ (ζ ^ (a : ℕ) * y a) - ζ ^ (a : ℕ) * y a =
         τ ζ ^ (a : ℕ) * (τ (y a) - y a) + y a * (τ ζ ^ (a : ℕ) - ζ ^ (a : ℕ)) := by
@@ -232,7 +237,7 @@ theorem norm_l_le (j : ℕ) : ∀ η : Om l, η ^ l ^ j = 1 → η ≠ 1 → ‖
       obtain ⟨m, hm⟩ : ∃ m, l - 1 = m + 1 := ⟨l - 2, by have := hl.two_le; omega⟩
       rw [hm, Finset.prod_range_succ]
       refine (mul_le_of_le_one_left (norm_nonneg _) ?_).trans (hb _)
-      exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun k _ =>
+      exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun k _ =>
         (hb _).trans (norm_sub_le_one (by simp) hη)
     · exact (ih (η ^ l) (by rw [← pow_mul, ← h]; ring) h2).trans (hb _)
 
@@ -383,7 +388,7 @@ theorem exists_moved (K : FinExt l) {y : Om l} (hy : ‖y‖ ≤ 1) (n : ℕ) {�
       refine (pow_le_pow_of_le_one (norm_nonneg _) hle1 (show S.card ≤ N by omega)).trans ?_
       refine le_trans ?_ hprod
       rw [← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) hmin
+      exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) hmin
     by_cases hm : τ (s y) = y
     · refine ⟨σ * τ * s, fun _ => ⟨?_, ?_, ?_⟩⟩
       · simpa [hm] using hσy
@@ -422,7 +427,7 @@ theorem exists_moved (K : FinExt l) {y : Om l} (hy : ‖y‖ ≤ 1) (n : ℕ) {�
   have h2 : c ^ N ≤ ‖(l : Om l)‖ ^ j := by
     refine (pow_le_pow_left₀ hc0.le h1 N).trans ?_
     rw [← Finset.prod_pow, ← norm_pow, ← Nat.cast_pow, ← prod_norm_one_sub (pow_pos hl.pos j) hω]
-    exact Finset.prod_le_prod (fun _ _ => by positivity) fun k hk => (hg k hk).2.2
+    exact Finset.prod_le_prod₀ (fun _ _ => by positivity) fun k hk => (hg k hk).2.2
   have h3 : ‖(l : Om l)‖ ^ j ≤ ‖(l : Om l)‖ ^ j₀ :=
     pow_le_pow_of_le_one (norm_nonneg _) norm_l_lt_one.le (by omega)
   linarith
@@ -457,8 +462,8 @@ theorem exists_primitive (L : FinExt l) : ∃ y ∈ L.1, ‖y‖ ≤ 1 ∧
 
 end DiffSmall
 
-open DiffSmall in
 
+open DiffSmall in
 theorem exists_trace_norm_ge : ∀ (l : ℕ) [Fact l.Prime] (K L' : FinExt l) (ε : ℝ), 0 < ε → ∃ i₀ : ℕ, ∀ i ≥ i₀, ∀ S : Finset (GQ l), (∀ s ∈ S, s ∈ Gj K i) → (∀ h ∈ Gj K i, ∃! s, s ∈ S ∧ s⁻¹ * h ∈ (L'.1 ⊔ Ks K i).fixingSubgroup) → ∃ b : Om l, b ∈ L'.1 ⊔ Ks K i ∧ ‖b‖ ≤ 1 ∧ 1 - ε ≤ ‖∑ s ∈ S, s b‖ := by
   classical
   intro l _ K L' ε hε
@@ -499,7 +504,7 @@ theorem exists_trace_norm_ge : ∀ (l : ℕ) [Fact l.Prime] (K L' : FinExt l) (�
   refine (pow_le_pow_of_le_one (by linarith) (by linarith)
     ((Finset.card_erase_le (a := s₀)).trans hcard)).trans ?_
   rw [← Finset.prod_const]
-  refine Finset.prod_le_prod (fun _ _ => by linarith) fun t ht => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => by linarith) fun t ht => ?_
   have ht' := Finset.mem_of_mem_erase ht
   have := hmove (s₀⁻¹ * t) (mul_mem (inv_mem (hS s₀ h₀)) (hS t ht'))
     fun h => Finset.ne_of_mem_erase ht (hsep s₀ h₀ t ht' h).symm

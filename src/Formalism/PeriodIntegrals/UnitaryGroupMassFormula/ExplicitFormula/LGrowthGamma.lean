@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -236,7 +240,7 @@ theorem Gamma_decay {w : ℂ} (h1 : 1 / 2 ≤ w.re) (h2 : w.re ≤ 11 / 2) :
     have h := key ((starRingEnd ℂ) w) (by simpa using h1) (by simpa using h2)
     rw [Complex.Gamma_conj, Complex.norm_conj, Complex.conj_im] at h
     have e : ‖(starRingEnd ℂ) w + 1‖ = ‖w + 1‖ := by
-      rw [← Complex.norm_conj (w + 1), map_add, map_one]
+      rw [← Complex.norm_conj (w + 1), map_add (f := _), map_one]
     rw [e] at h
     exact h
 

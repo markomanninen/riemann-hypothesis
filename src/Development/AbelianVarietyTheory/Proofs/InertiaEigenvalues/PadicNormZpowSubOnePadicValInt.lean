@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 
@@ -100,7 +104,8 @@ theorem norm_pow_nat (j : ℕ) (hj : Lev l j) (u : ℚ_[l])
     ‖u ^ n - 1‖ = (l : ℝ) ^ (-((j : ℤ) + (padicValNat l n : ℤ))) := by
   obtain ⟨a, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hn l hl.out.ne_one
   have hm0 : m ≠ 0 := by rintro rfl; simp at hm
-  rw [padicValNat.mul (pow_ne_zero _ hl.out.ne_zero) hm0, padicValNat.prime_pow,
+  rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hl.out.ne_zero) hm0,
+    Nat.multiplicity_prime_pow,
     padicValNat.eq_zero_of_not_dvd hm, pow_mul,
     norm_pow_coprime (j + a) (by have := hj.1; omega) _ (norm_pow_prime_pow a j hj u hu) m hm]
   push_cast
@@ -119,7 +124,7 @@ theorem norm_zpow_sub_one : ∀ (l : ℕ) [Fact l.Prime] (j : ℕ), Lev l j → 
   have hu0 : u ≠ 0 := by rintro rfl; simp at hu1
   have key := norm_pow_nat j hj u hu k.natAbs (Int.natAbs_ne_zero.2 hk)
   unfold padicValInt
-  rw [← key]
+  rw [← Nat.padicValNat_def, ← key]
   obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg k
   · simp
   · rw [Int.natAbs_neg, Int.natAbs_natCast, zpow_neg, zpow_natCast]

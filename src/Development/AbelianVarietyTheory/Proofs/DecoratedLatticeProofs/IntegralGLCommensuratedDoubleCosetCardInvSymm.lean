@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -59,8 +64,8 @@ end GlobalTheory.ChainOnto.CosetSymGL
 
 namespace GlobalTheory.ChainOnto.CosetSymGL
 
-open GlobalTheory.LFun.ConjPlace in
 
+open GlobalTheory.LFun.ConjPlace in
 theorem invT_of_symm {L : Type} [Field L] {n : ℕ} (d : GL (Fin n) L)
     (hd : (d : Matrix (Fin n) (Fin n) L)ᵀ = (d : Matrix (Fin n) (Fin n) L)) : invT (RingEquiv.refl L) n d = d⁻¹ := by
   refine Units.ext (Matrix.ext fun i j => ?_)
@@ -73,10 +78,10 @@ theorem invT_mem_iff {L : Type} [Field L] {n : ℕ} (O : Subring L) (g : GL (Fin
     invT (RingEquiv.refl L) n g ∈ Formalism.UG.GLint (Fin n) O ↔ g ∈ Formalism.UG.GLint (Fin n) O :=
   (mem_iff_invT (RingEquiv.refl L) (O := O) (O' := O) (fun _ => Iff.rfl) g).symm
 
-open GlobalTheory.LFun.ConjPlace in
 
+open GlobalTheory.LFun.ConjPlace in
 theorem invT_mem_doset (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ)
-    (g : GL (Fin n) (w.adicCompletion E)) : ∃ a ∈ KGL w n, ∃ b ∈ KGL w n,
+    (g : GL (Fin n) (w.adicCompletion E)) : ∃ a ∈ KGL w (n := n), ∃ b ∈ KGL w (n := n),
       invT (RingEquiv.refl _) n g = a * g⁻¹ * b := by
   obtain ⟨ϖ, hϖ⟩ := GlobalTheory.LFun.exists_isUnifV (E := E) w
   have hϖO : ϖ ∈ Formalism.UG.Ov E w := by
@@ -93,16 +98,16 @@ theorem invT_mem_doset (E : Type) [Field E] [NumberField E] (w : HeightOneSpectr
     rw [hdv, Formalism.UG.diagPow, Matrix.diagonal_transpose]
   have hgd : g = k₁ * d * k₂ := by rw [hd]; group
   set θ := invT (RingEquiv.refl (w.adicCompletion E)) n
-  refine ⟨θ k₁ * k₂, (KGL w n).mul_mem ((invT_mem_iff _ _).2 hk₁) hk₂,
-    k₁ * θ k₂, (KGL w n).mul_mem hk₁ ((invT_mem_iff _ _).2 hk₂), ?_⟩
+  refine ⟨θ k₁ * k₂, (KGL w (n := n)).mul_mem ((invT_mem_iff _ _).2 hk₁) hk₂,
+    k₁ * θ k₂, (KGL w (n := n)).mul_mem hk₁ ((invT_mem_iff _ _).2 hk₂), ?_⟩
   have hθd : θ d = d⁻¹ := invT_of_symm d hsym
   rw [hgd, map_mul, map_mul, hθd, hd]
   group
 
 end GlobalTheory.ChainOnto.CosetSymGL
 
-open GlobalTheory.ChainOnto.CosetSymGL GlobalTheory.LFun.ConjPlace in
 
-theorem GlobalTheory.ChainOnto.kGL_commensurated_cosetSym : ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ), IsCommensurated (KGL w n) ∧ CosetSym (KGL w n) := fun E _ _ w n =>
+open GlobalTheory.ChainOnto.CosetSymGL GlobalTheory.LFun.ConjPlace in
+theorem GlobalTheory.ChainOnto.kGL_commensurated_cosetSym : ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ), IsCommensurated (KGL w (n := n)) ∧ CosetSym (KGL w (n := n)) := fun E _ _ w n =>
   ⟨Formalism.UG.Final.GLintComm E w n, cosetSym_of_aut _ (invT (RingEquiv.refl _) n) (fun x => invT_mem_iff _ x)
     (invT_mem_doset E w n)⟩

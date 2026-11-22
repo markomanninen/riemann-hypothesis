@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdelicUnitaryGroups.Lattice
-import GroundTheory.GlobalFields.LocalAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdelicUnitaryGroups.Lattice
+public import GroundTheory.GlobalFields.LocalAtPlace
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

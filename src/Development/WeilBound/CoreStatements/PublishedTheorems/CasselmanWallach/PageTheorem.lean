@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,7 @@ theorem d2 : D2 := by
       rw [e]
       exact sob_add hU (S i) (hS i) (hsub _ _ ha (hsm _ hva)) (hsub _ _ hb (hsm _ hvb))
     have e5 : F (a + b) - (F a + F b) = (F (a + b) - T₀ (va + vb)) - (F a - T₀ va) - (F b - T₀ vb) := by
-      rw [map_add]; abel
+      rw [map_add (f := _)]; abel
     have h6 : p i (F (a + b) - (F a + F b)) ≤
         p i (F (a + b) - T₀ (va + vb)) + p i (F a - T₀ va) + p i (F b - T₀ vb) := by
       rw [e5]

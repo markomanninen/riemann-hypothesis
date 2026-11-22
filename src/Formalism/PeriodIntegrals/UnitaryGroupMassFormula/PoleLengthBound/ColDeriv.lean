@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.Vanish
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.Vanish
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem colDeriv_of (hTH : PoleLengthBounds.TaylorHasse) (G : GlobalFamilyData X
     rw [this, sub_self]
     exact Submodule.zero_mem _
   have key := hTH G la k _ cf' hrem col α'.1 α'.2 h
-  rw [rD, dif_pos h]
+  rw [rD, dite_eq_left h]
   refine Eq.trans key ?_
   rw [uC_eq_pow G la col α', u_eq_wfr G la hu col]
   by_cases hαα : α = α'

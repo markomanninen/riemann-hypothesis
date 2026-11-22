@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.Descend
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.Descend
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ lemma secSp_twist (h : IsCh Γ ⊤ c₀) (ρ : K →* (W →L[ℂ] W)) (P : Subg
     secSp K P (c * c₀) ρ = secSp K P c (twRep h K ρ) := by
   ext w
   have key : ∀ r : K, (c * c₀) (r : G) • ρ r w = c (r : G) • twRep h K ρ r w := fun r => by
-    rw [twRep_apply, ContinuousLinearMap.smul_apply, smul_smul, Pi.mul_apply]
+    rw [twRep_apply, smul_apply, smul_smul, Pi.mul_apply]
   change (∀ r : K, (r : G) ∈ P → (c * c₀) (r : G) • ρ r w = w) ↔
     ∀ r : K, (r : G) ∈ P → c (r : G) • twRep h K ρ r w = w
   simp only [key]
@@ -54,10 +58,10 @@ lemma sec_twist (h : IsCh Γ ⊤ c₀) (ρ : K →* (W →L[ℂ] W)) (P : Subgro
     sec K P (c * c₀) ρ g = c₀ g • sec K P c (twRep h K ρ) g := by
   unfold sec
   by_cases hk : ∃ k : K, g * (k : G)⁻¹ ∈ P
-  · rw [dif_pos hk, dif_pos hk, twRep_apply, Pi.mul_apply, Subgroup.coe_inv, ch_mul h g, smul_smul, smul_smul]
+  · rw [dite_eq_left hk, dite_eq_left hk, twRep_apply, Pi.mul_apply, Subgroup.coe_inv, ch_mul h g, smul_smul, smul_smul]
     congr 1
     ring
-  · rw [dif_neg hk, dif_neg hk, smul_zero]
+  · rw [dite_eq_right hk, dite_eq_right hk, smul_zero]
 
 lemma eis_twist (h : IsCh Γ ⊤ c₀) (ρ : K →* (W →L[ℂ] W)) (P : Subgroup G) (c : G → ℂ) (Λ : G → ℂ)
     (g : G) (w : W) :
@@ -66,7 +70,7 @@ lemma eis_twist (h : IsCh Γ ⊤ c₀) (ρ : K →* (W →L[ℂ] W)) (P : Subgro
   rw [← tsum_const_smul'']
   refine tsum_congr fun q => ?_
   have hq : rep q ∈ Γ := (Quotient.out q).2
-  rw [sec_twist h, ContinuousLinearMap.smul_apply, ch_rat_mul h hq, smul_comm]
+  rw [sec_twist h, smul_apply, ch_rat_mul h hq, smul_comm]
 
 def castL {A B : Submodule ℂ W} (e : A = B) : A →L[ℂ] B :=
   (ContinuousLinearEquiv.ofEq A B e).toContinuousLinearMap
@@ -86,27 +90,31 @@ lemma wall_twist (h : IsCh Γ ⊤ c₀) {P P' : Subgroup G} {c : G → ℂ} {η 
     {Op : ℂ → (L →L[ℂ] secSp K P' c (twRep h K ρ))} {H : ℂ → G → (L →L[ℂ] W)}
     (hw : Wall Γ K P P' c η η' β (twRep h K ρ) L R D Op H) :
     Wall Γ K P P' (c * c₀) η η' β ρ L R D
-      (fun z => (castL (secSp_twist h ρ P' c).symm).comp (Op z)) (fun z g => c₀ g • H z g) where
-  le := by
-    rw [secSp_twist h ρ P c]
+      (fun z => (castL (secSp_twist h ρ P' c).symm).comp (Op z)) (fun z g => c₀ g • H z g) := by
+  refine
+    { le := ?_
+      pos := hw.pos
+      convR := hw.convR
+      convL := hw.convL
+      dEnt := hw.dEnt
+      dNe := hw.dNe
+      op := leftGood_cast _ hw.op
+      hol := fun g => (hw.hol g).const_smul (c₀ g)
+      cont := ((ch_cont h).comp continuous_snd).smul hw.cont
+      bdd := ?_
+      eqR := ?_
+      eqL := ?_ }
+  · rw [secSp_twist h ρ P c]
     exact hw.le
-  pos := hw.pos
-  convR := hw.convR
-  convL := hw.convL
-  dEnt := hw.dEnt
-  dNe := hw.dNe
-  op := leftGood_cast _ hw.op
-  hol g := (hw.hol g).const_smul (c₀ g)
-  cont := ((ch_cont h).comp continuous_snd).smul hw.cont
-  bdd b a g := by
+  · intro b a g
     obtain ⟨U, hU, M, hM⟩ := hw.bdd b a g
     refine ⟨U, hU, M, fun z h1 h2 g' hg' => ?_⟩
     rw [norm_smul, ch_norm h, one_mul]
     exact hM z h1 h2 g' hg'
-  eqR z hz g w := by
-    rw [ContinuousLinearMap.smul_apply, hw.eqR z hz g w, eis_twist h, smul_comm]
-  eqL z hz g w := by
-    rw [ContinuousLinearMap.smul_apply, hw.eqL z hz g w, eis_twist h]
+  · intro z hz g w
+    rw [smul_apply, hw.eqR z hz g w, eis_twist h, smul_comm]
+  · intro z hz g w
+    rw [smul_apply, hw.eqL z hz g w, eis_twist h]
     rfl
 
 theorem twist : SecLaw → Twist := by
@@ -121,15 +129,14 @@ theorem twist : SecLaw → Twist := by
     rw [secSp_twist h ρ S c]
     refine ⟨R, D, _, _, wall_twist h hw, ⟨a, ha0, fun g w => ?_⟩,
       fun z => (castL (secSp_twist h ρ P' c).symm).comp (O z), leftGood_cast _ hO, fun z hz => ?_⟩
-    · rw [ContinuousLinearMap.smul_apply, ha g w, sec_twist h, ContinuousLinearMap.smul_apply, smul_comm]
-    · change (castL (secSp_twist h ρ P' c).symm).comp (Op z) = _
-      rw [hOp z hz, ContinuousLinearMap.comp_smul]
+    · rw [smul_apply, ha g w, sec_twist h, smul_apply, smul_comm]
+    · rw [hOp z hz, ContinuousLinearMap.comp_smul]
   · obtain ⟨R, D, Op, H, hw, hd, T, hT⟩ := hA W (twRep h K ρ) (twRep_cont h hρ)
     unfold HasLast
     rw [secSp_twist h ρ P c]
     refine ⟨R, D, _, _, wall_twist h hw, hd,
       (castL (secSp_twist h ρ S c).symm).comp T, fun g w => ?_⟩
-    rw [ContinuousLinearMap.smul_apply, hT g w, sec_twist h, ContinuousLinearMap.smul_apply, smul_comm]
+    rw [smul_apply, hT g w, sec_twist h, smul_apply, smul_comm]
     rfl
 
 end GlobalTheory.CompanionTheory.RgEisTwist

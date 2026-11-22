@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,17 +20,15 @@ theorem assoc_sigR (P : Type) [CommRing P] [Algebra F P] (σ : E →ₐ[F] E) (R
     Algebra.TensorProduct.assoc F F F P E R (sigR (tConj P σ) R x) =
       tConj3 P σ R (Algebra.TensorProduct.assoc F F F P E R x) := by
   induction x with
-  | zero => simp
   | tmul a r =>
     induction a with
-    | zero => simp
     | tmul p e => simp [sigR, tConj, tConj3]
-    | add a b ha hb => rw [TensorProduct.add_tmul, map_add, map_add, map_add, map_add, ha, hb]
-  | add a b ha hb => rw [map_add, map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [TensorProduct.add_tmul, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
 
 def entry (σ : E →ₐ[F] E) (J γ : Matrix n n E) (i j : n) : plusAlg σ J γ ⊗[F] E →ₗ[F] E where
   toFun x := (plusTensor σ J γ x : Matrix n n E) i j
-  map_add' a b := by rw [map_add]; rfl
+  map_add' a b := by rw [map_add (f := _)]; rfl
   map_smul' c a := by rw [map_smul]; rfl
 
 theorem toMat_assoc_apply (σ : E →ₐ[F] E) (J γ : Matrix n n E) (R : Type) [CommRing R]
@@ -34,10 +36,8 @@ theorem toMat_assoc_apply (σ : E →ₐ[F] E) (J γ : Matrix n n E) (R : Type) 
     toMat σ J γ R (Algebra.TensorProduct.assoc F F F (plusAlg σ J γ) E R x) i j =
       LinearMap.rTensor R (entry σ J γ i j) x := by
   induction x with
-  | zero => simp
   | tmul a r =>
     induction a with
-    | zero => simp
     | tmul p e =>
       have h : (plusTensor σ J γ (p ⊗ₜ e) : Matrix n n E) =
           e • ((p : genAlg γ) : Matrix n n E) := by
@@ -50,8 +50,8 @@ theorem toMat_assoc_apply (σ : E →ₐ[F] E) (J γ : Matrix n n E) (R : Type) 
       rw [h, ← Algebra.commutes, ← Algebra.smul_def]
       simp [inclE]
     | add a b ha hb =>
-      rw [TensorProduct.add_tmul, map_add, map_add, map_add, Matrix.add_apply, ha, hb]
-  | add a b ha hb => rw [map_add, map_add, map_add, Matrix.add_apply, ha, hb]
+      rw [TensorProduct.add_tmul, map_add (f := _), map_add (f := _), map_add (f := _), Matrix.add_apply, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), Matrix.add_apply, ha, hb]
 
 theorem toMat_assoc_inclE (σ : E →ₐ[F] E) (J γ : Matrix n n E) (R : Type) [CommRing R]
     [Algebra F R] (β : plusAlg σ J γ ⊗[F] E) :

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralFintypeProd
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Set Topology
 open scoped ENNReal
@@ -66,7 +70,7 @@ theorem lintegral_fibre_prod : ∀ (T V : Type) [Fintype T] [NormedAddCommGroup 
   classical
   haveI : ProperSpace V := FiniteDimensional.proper_real V
   have hΦc : Continuous fun x : T → V => ∏ ρ, φ ρ (x ρ) :=
-    continuous_finset_prod _ fun ρ _ => (hφ ρ).1.comp (continuous_apply ρ)
+    continuous_finsetProd _ fun ρ _ => (hφ ρ).1.comp (continuous_apply ρ)
   have hΦs : HasCompactSupport fun x : T → V => ∏ ρ, φ ρ (x ρ) := by
     refine HasCompactSupport.intro (isCompact_univ_pi fun ρ => (hφ ρ).2.1) fun x hx => ?_
     rw [mem_univ_pi, not_forall] at hx
@@ -101,7 +105,7 @@ theorem lintegral_fibre_prod : ∀ (T V : Type) [Fintype T] [NormedAddCommGroup 
       simp only [hg]
     rw [this]
     exact ENNReal.continuous_ofReal.comp
-      (continuous_finset_prod _ fun ρ _ => (hgc ρ).comp (continuous_apply ρ))
+      (continuous_finsetProd _ fun ρ _ => (hgc ρ).comp (continuous_apply ρ))
   have key : ∀ r > 0, ∫⁻ c in Metric.ball b r, ∫⁻ x, ∏ ρ, ENNReal.ofReal (φ ρ (x ρ)) ∂(Fib c) =
       ∫⁻ c in Metric.ball b r, ∏ ρ, ∫⁻ y, ENNReal.ofReal (φ ρ y) ∂(fib (c ρ)) := by
     intro r hr

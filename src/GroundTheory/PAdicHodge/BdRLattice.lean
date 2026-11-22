@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ThetaPlus
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ThetaPlus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -42,21 +47,20 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
 
 local notation "𝒪" => normInteger K
-local notation "𝕎𝒪♭" => WittVector p (PreTilt (normInteger K) p)
-local notation "θ" => fontaineTheta (normInteger K) p
-local notation "𝔹" => BDeRhamPlus (normInteger K) p
-local notation "𝔸" => Localization.Away (p : WittVector p (PreTilt (normInteger K) p))
+local notation "𝕎𝒪♭" => WittVector p (PreTilt 𝒪 p)
+local notation "θ" => fontaineTheta 𝒪 p
+local notation "𝔸" => Localization.Away (p : 𝕎𝒪♭)
+local notation "𝔹" => BDeRhamPlus 𝒪 p
 
 omit [CharZero K] in
-
 theorem eq_zero_of_forall_mem_span_p_pow {b : 𝒪} (h : ∀ M : ℕ, b ∈ span {(p : 𝒪) ^ M}) : b = 0 := by
   have := isAdicComplete (K := K) p
   refine IsHausdorff.haus (I := span {(p : 𝒪)}) inferInstance _ fun n => ?_
   rw [SModEq.zero, smul_eq_mul, mul_top, span_singleton_pow]
   exact h n
 
-omit [IsPerfectoidField K p] in
 
+omit [IsPerfectoidField K p] in
 theorem natCast_p_ne_zero : (p : 𝒪) ≠ 0 := by
   intro h
   have h2 : ((p : 𝒪) : K) = 0 := by rw [h]; rfl
@@ -103,7 +107,7 @@ theorem mem_span_xi_pow_of_forall_mem_sup (hξ : RingHom.ker θ = span {ξ}) {x 
       obtain ⟨b', rfl⟩ := mem_span_singleton.1 hb
       have hξ0 : θ ξ = 0 := by
         rw [← RingHom.mem_ker, hξ]; exact mem_span_singleton_self ξ
-      rw [← hab, map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, hξ0,
+      rw [← hab, map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, hξ0,
         zero_pow (Nat.succ_ne_zero k), zero_mul, add_zero]
       exact mem_span_singleton.2 ⟨_, rfl⟩
     have hx2 : x ∈ span {ξ} := by rw [← hξ]; exact hθ
@@ -143,13 +147,21 @@ theorem exists_p_pow_mul_mem_of_dvd {z : 𝕎𝒪♭} {k : ℕ}
   rw [pow_add]
   linear_combination hr
 
-theorem mem_maximalIdeal_pow_of_forall_sub_mem {y : 𝔹} {k : ℕ}
-    (h : ∀ M : ℕ, ∃ a : 𝕎𝒪♭, y - (p : 𝔹) ^ M * wittToBDeRhamPlus 𝒪 p a ∈ maximalIdeal 𝔹 ^ k) :
-    y ∈ maximalIdeal 𝔹 ^ k := by
+theorem mem_maximalIdeal_pow_of_forall_sub_mem {y : 𝔹} {k : ℕ} :
+    haveI := isLocalRing_bDeRhamPlus (ker_fontaineTheta_eq_span_kerThetaGenerator K p)
+      (surjective_frobenius p) (isField_away p)
+    (h : ∀ M : ℕ, ∃ a : 𝕎𝒪♭, y - (p : 𝔹) ^ M * wittToBDeRhamPlus 𝒪 p a ∈ maximalIdeal 𝔹 ^ k) →
+      y ∈ maximalIdeal 𝔹 ^ k := by
+  intro h
   set ξ₀ := kerThetaGenerator K p
   have hξ := ker_fontaineTheta_eq_span_kerThetaGenerator K p
+  have := isLocalRing_bDeRhamPlus hξ (surjective_frobenius p) (isField_away p)
+  have hmax : maximalIdeal 𝔹 = span {wittToBDeRhamPlus 𝒪 p ξ₀} :=
+    (IsLocalRing.eq_maximalIdeal
+      (isMaximal_ker_thetaBDeRhamPlus (surjective_frobenius p) (isField_away p))).symm.trans
+      (ker_thetaBDeRhamPlus hξ)
   have hm : maximalIdeal 𝔹 ^ k = span {wittToBDeRhamPlus 𝒪 p (ξ₀ ^ k)} := by
-    rw [maximalIdeal_bDeRhamPlus_eq_span hξ, span_singleton_pow, map_pow]
+    rw [hmax, span_singleton_pow, map_pow]
   obtain ⟨a₀, ha₀⟩ := h 0
   rw [pow_zero, one_mul] at ha₀
   suffices hs : a₀ ∈ span {ξ₀ ^ k} by

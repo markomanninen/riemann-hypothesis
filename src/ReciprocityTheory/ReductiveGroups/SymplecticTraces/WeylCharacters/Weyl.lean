@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SqChar
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.UCharOf
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SpBlkSurj
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockP
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SqChar
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.UCharOf
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SpBlkSurj
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockP
+
+@[expose] public section
 
 noncomputable section
 

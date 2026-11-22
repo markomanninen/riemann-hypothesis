@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FrameLetterGLActionRepresentationKeepsHarmonic
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InPsiOrConjugateUnit
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemOfForallLocP
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FrameReadingLeadingMinorProductExtremalStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LeadingMinorProductHarmonicGenerates
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HodgeWeightDominanceConditionStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemNabStdOfDetMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FrameLetterGLActionRepresentationKeepsHarmonic
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InPsiOrConjugateUnit
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemOfForallLocP
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FrameReadingLeadingMinorProductExtremalStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LeadingMinorProductHarmonicGenerates
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HodgeWeightDominanceConditionStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.MemNabStdOfDetMulIntegral
+
+@[expose] public section
 
 open NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.FrameRead
 open scoped Classical
@@ -20,7 +24,7 @@ def harmSub {T : Type} (r : T → ℕ) (n : ℕ) (k : Type) [Field k] (cc : T �
   carrier := HHa r n k cc isX a
   add_mem' := by
     rintro P Q ⟨h1, h2, h3⟩ ⟨h1', h2', h3'⟩
-    refine ⟨add_mem h1 h1', fun σ i i' h t => by rw [map_add, h2 σ i i' h t, h2' σ i i' h t], fun m hm => ?_⟩
+    refine ⟨add_mem h1 h1', fun σ i i' h t => by rw [map_add (f := _), h2 σ i i' h t, h2' σ i i' h t], fun m hm => ?_⟩
     rcases Finset.mem_union.1 (support_add hm) with h | h
     · exact h3 m h
     · exact h3' m h
@@ -56,7 +60,7 @@ theorem map_cof {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (Q : MvPo
     MvPolynomial.map f (cof Dw pl R n Q) = cof Dw pl S n (MvPolynomial.map f Q) := by
   induction Q using MvPolynomial.induction_on with
   | C x => simp [algHom_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p ℓ hp =>
     simp only [map_mul, hp, map_X]
     congr 1
@@ -72,13 +76,14 @@ theorem isIntegral_coeff_cof {K : Type} [Field K] (P : MvPolynomial (LtN Dw n) K
     (hP : ∀ m, P.coeff m ∈ (integralClosure ℤ K).toSubring) (m) : IsIntegral ℤ ((cof Dw pl K n P).coeff m) := by
   obtain ⟨Q, rfl⟩ : ∃ Q, MvPolynomial.map (integralClosure ℤ K).toSubring.subtype Q = P := by
     refine ⟨∑ m ∈ P.support, monomial m ⟨P.coeff m, hP m⟩, ?_⟩
-    simp only [map_sum, map_monomial, Subring.subtype_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_monomial, Subring.subtype_apply]
     exact P.as_sum.symm
   rw [← map_cof, coeff_map]
   exact ((cof Dw pl _ n Q).coeff m).2
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_ioLFRec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (n : ℕ) (Ix : Type) [Fintype Ix] (pl : Ix → (E →+* ℂ)), IsEnum H pl → Dw.p + Dw.q ≤ n → ∀ (l : Level H) (c : Coeff l) (a : (E →+* ℂ) × ℕ → ℕ) (s : Ix → ℤ) (lam : Ix → DomWeight n), (∀ τ, Antitone fun i => a (τ, i)) → WtIs Dw pl a s lam → ∃ (io : VVc c lam →ₗ[c.F] MvPolynomial (LtN Dw n) c.F) (hw : VVc c lam), IoLFRec c (fun t => embF c (pl t)) lam a io hw := by
   intro E _ _ _ H Dw n Ix _ pl he hn l c a s lam ha hwt
   obtain ⟨ε, hε⟩ := GlobalTheory.T.frameReading_leadingMinorProduct_extremal E H Dw n Ix pl he hn l c a s lam ha hwt
@@ -104,7 +109,7 @@ theorem exists_ioLFRec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
   let io : VVc c lam →ₗ[c.F] MvPolynomial (LtN Dw n) c.F :=
     { toFun := φ
       map_add' := fun F G => hu _ _ (add_mem (hφ F).1 (hφ G).1) (by
-        rw [map_add, (hφ F).2, (hφ G).2, Submodule.coe_add, mul_add, smul_add])
+        rw [map_add (f := _), (hφ F).2, (hφ G).2, Submodule.coe_add, mul_add, smul_add])
       map_smul' := fun x F => hu _ _ (Submodule.smul_mem _ _ (hφ F).1) (by
         rw [map_smul, (hφ F).2, Submodule.coe_smul, mul_smul_comm, smul_comm]; rfl) }
   have hio : ∀ F, io F = φ F := fun _ => rfl

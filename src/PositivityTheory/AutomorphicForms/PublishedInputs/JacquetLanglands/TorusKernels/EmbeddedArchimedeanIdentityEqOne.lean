@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ theorem key (k : ℕ) (F : ℂ → ℂ) (F' : ℂ) (hF : HasDerivAt F F' Complex
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-open Classical in
 
+open Classical in
 def iv (v : InfinitePlace F) (y : Fin 2 → Fin 2 → ℝ) : TR.Lie F 2 := fun a b w => if w = v then y a b else 0
 
 def ivL (v : InfinitePlace F) : (Fin 2 → Fin 2 → ℝ) →L[ℝ] TR.Lie F 2 :=
@@ -62,8 +66,8 @@ def ivL (v : InfinitePlace F) : (Fin 2 → Fin 2 → ℝ) →L[ℝ] TR.Lie F 2 :
 
 theorem ivL_apply (v : InfinitePlace F) (y : Fin 2 → Fin 2 → ℝ) : ivL v y = iv v y := rfl
 
-open Classical in
 
+open Classical in
 def i0 (v : InfinitePlace F) : TR.Lie F 2 := fun a b w => if w = v then 0 else (1 : Matrix (Fin 2) (Fin 2) ℝ) a b
 
 theorem embedded_archimedean_identity_eq_one (v : InfinitePlace F) : i0 v + ivL v (Matrix.of.symm 1) = TR.oneL F 2 := by

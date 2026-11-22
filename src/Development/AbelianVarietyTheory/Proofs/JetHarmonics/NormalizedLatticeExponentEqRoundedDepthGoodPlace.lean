@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.DepthNumbersThresholdEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,7 @@ theorem vwUnit_mul {x y : K} (hx : x ≠ 0 ∧ Formalism.DivisionValues.vw v x =
 theorem vwUnit_nat {N : ℕ} (hN : ¬ plc v ∣ N) : (N : K) ≠ 0 ∧ Formalism.DivisionValues.vw v (N : K) = 0 := by
   have h0 : N ≠ 0 := by rintro rfl; exact hN (dvd_zero _)
   refine ⟨by exact_mod_cast h0, ?_⟩
-  rw [DepthTie.vw_N v N h0, padicValNat.eq_zero_of_not_dvd hN]
+  rw [DepthTie.vw_N v N h0, Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd hN]
   simp
 
 theorem vwUnit_pow {x : K} (hx : x ≠ 0 ∧ Formalism.DivisionValues.vw v x = 0) (n : ℕ) :
@@ -58,7 +62,7 @@ theorem vw_sigAt_good {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Re
   have ud := vwUnit_prime v hprime.2.2.2 hd
   have ut : ∀ a : ℕ → ℕ, ((∏ p ∈ Dd.Q.sm.filter Nat.Prime, p ^ a p : ℕ) : K) ≠ 0 ∧
       Formalism.DivisionValues.vw v ((∏ p ∈ Dd.Q.sm.filter Nat.Prime, p ^ a p : ℕ) : K) = 0 := fun a => vwUnit_nat v fun hdv => by
-    obtain ⟨p, hp, h⟩ := (Prime.dvd_finset_prod_iff (plc_prime v).prime _).1 hdv
+    obtain ⟨p, hp, h⟩ := (Prime.dvd_finsetProd_iff (plc_prime v).prime _).1 hdv
     obtain ⟨hp1, hp2⟩ := Finset.mem_filter.1 hp
     exact h2 ((Nat.prime_dvd_prime_iff_eq (plc_prime v) hp2).1 ((plc_prime v).dvd_of_dvd_pow h) ▸ hp1)
   obtain ⟨a0, b0⟩ := vwUnit_factor v (DepthTie.isIntegral_alg _) (DepthTie.isIntegral_alg _) (e0 ▸ u1)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
+
 open Matrix Complex Filter Topology
 open scoped ComplexOrder ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.HodgePeriodGram GlobalTheory.HermFrame
@@ -42,9 +47,9 @@ theorem uniform_posDef {X : Type} [TopologicalSpace X] {ι : Type} [Fintype ι] 
   have hS : IsCompact S := hK.prod (isCompact_sphere 0 1)
   have hq : ContinuousOn (fun p : X × (ι → ℝ) => p.2 ⬝ᵥ F p.1 *ᵥ p.2) S := by
     simp only [dotProduct, mulVec]
-    refine continuousOn_finset_sum _ fun j _ => ?_
+    refine continuousOn_finsetSum _ fun j _ => ?_
     refine ContinuousOn.mul (continuous_apply j |>.comp continuous_snd).continuousOn ?_
-    refine continuousOn_finset_sum _ fun k _ => ?_
+    refine continuousOn_finsetSum _ fun k _ => ?_
     refine ContinuousOn.mul ?_ (continuous_apply k |>.comp continuous_snd).continuousOn
     exact (hF j k).comp continuous_fst.continuousOn (fun p hp => hp.1)
   have hyy : ∀ y : ι → ℝ, y ⬝ᵥ y ≤ Fintype.card ι * ‖y‖ ^ 2 := by
@@ -215,7 +220,7 @@ theorem uniform_consts : ∀ (n a g rk : ℕ) (τ₀ : (Fin n → ℂ) → Matri
     refine (le_abs_self _).trans ((quad_abs_le _ (Fintype.card {j : Fin g // j.val < rk} * E ^ 2)
       ?_ y).trans ?_)
     · intro j k
-      rw [mul_apply]
+      rw [Matrix.mul_apply]
       refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
       calc ∑ i, |bMᵀ j i * bM i k| ≤ ∑ _i : Fin (Fintype.card {j : Fin g // j.val < rk}), E ^ 2 :=
             Finset.sum_le_sum fun i _ => by

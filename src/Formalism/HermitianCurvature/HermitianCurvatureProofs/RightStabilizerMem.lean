@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCharacterOneOfProduct
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCharacterOneOfProduct
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.OD
 
@@ -69,7 +73,7 @@ theorem rhoX_spec (x : C2.Lstidx w → ℂ) :
   have e1 : rhoX S γ w x = h.choose := by
     show Formalism.FourierDecayAlt.D.rhoOfU S γ (Dx2.Rad.low w x)ᴴ = _
     unfold Formalism.FourierDecayAlt.D.rhoOfU
-    rw [dif_pos h]
+    rw [dite_eq_left h]
   rw [e1, UC.lowS_eq_low]
   exact h.choose_spec
 
@@ -145,8 +149,8 @@ theorem right_stabilizer_mem (x : C2.Lstidx w → ℂ) (u : G.UT (r + 1) → ℂ
     (Formalism.FourierDecayAlt.P.c2_tau_mem k r S.z' hz' _ (UC.upper_mem u)).2.2, Matrix.mul_assoc,
     Matrix.adjugate_mul, A.det_UT (uP_UT S hγ hd hZw hpos x u), one_smul]
 
-include hγ hd hZw hpos he in
 
+include hγ hd hZw hpos he in
 theorem Xi_eq (x : C2.Lstidx w → ℂ) (q : RR k r w) :
     Xi S w e x q = C6.actR γ (rhoX S γ w x) (Xi0 S w (Tx S γ w e x q)) := by
   have hz : C2.StdZ k r S.z := ⟨S.z_mem, S.T_pos⟩

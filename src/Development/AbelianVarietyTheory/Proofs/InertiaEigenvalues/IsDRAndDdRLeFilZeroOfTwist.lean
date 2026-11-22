@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
 namespace GlobalTheory
@@ -97,7 +102,7 @@ theorem drTwist_range (e : ℕ)
   · rintro _ ⟨x, rfl⟩
     induction x using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | tmul v k =>
       simp only [DdR, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
         LinearMap.id_apply, AlgebraTensorModule.map_tmul, sub_eq_zero]
@@ -113,7 +118,7 @@ theorem drTwist_range (e : ℕ)
       intro g x i
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => simp only [map_add, Finsupp.add_apply, ha, hb, smul_add]
+      | add a b ha hb => simp only [map_add (f := _), Finsupp.add_apply, ha, hb, smul_add]
       | tmul v y =>
         rw [drTwist_act_tmul PD ρ e h]
         simp only [E, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
@@ -140,7 +145,7 @@ theorem isDR_and_DdR_le_Fil_zero_of_twist : ∀ {G : Type} [Group G] [Topologica
     rintro _ ⟨x, rfl⟩
     induction x using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | tmul v k => exact ⟨v ⊗ₜ ⟨drTwistMap PD e k, drTwistMap_mem PD e k⟩, rfl⟩
 
 end GlobalTheory

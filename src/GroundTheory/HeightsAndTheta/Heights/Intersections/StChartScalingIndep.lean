@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

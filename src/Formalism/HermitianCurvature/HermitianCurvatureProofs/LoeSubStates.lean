@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeZeroOfPsd
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeZeroOfPsd
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

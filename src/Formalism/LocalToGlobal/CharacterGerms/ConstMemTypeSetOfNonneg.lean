@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieAxes
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieAxes
+
+@[expose] public section
 
 noncomputable section
 
@@ -156,10 +160,12 @@ theorem TySet_repar {V : VF C} {g : Fin 2} (τ : PowerSeries C) (hτ : PowerSeri
     exact ⟨constantCoeff_subst_zero (a := fun _ : Unit => τ) (fun _ => hτ) (hlam q).1, hint _ (hlam q).2⟩
   · intro i
     rw [alongCv_repar hγ0 hτ, h1 i]
-    simp only [hxx, hs, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hxx, hs, map_sum, map_smul]
   · intro q
     rw [hxx, h2 q, alongCv_repar hγ0 hτ]
-    simp only [hxx, hs, map_add, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hxx, hs, map_add (f := _), map_sub, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun c _ => ?_
     split_ifs <;> simp

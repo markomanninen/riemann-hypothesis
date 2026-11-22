@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.VermaConeB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CasimirTensVd
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.VermaConeB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CasimirTensVd
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem vc_commV (E : Fin n → Fin n → Module.End ℂ M) (hE : IsGlRep E) (a 
       (fun c => casimir E (tensV E a b g c)) = tensV E a b (fun c => casimir E (g c)) := by
     intro g
     funext c
-    rw [vc_tensV_apply, vc_tensV_apply, map_add]
+    rw [vc_tensV_apply, vc_tensV_apply, map_add (f := _)]
     congr 1
     · rw [← Module.End.mul_apply, casimir_comm hE, Module.End.mul_apply]
     · split_ifs <;> simp

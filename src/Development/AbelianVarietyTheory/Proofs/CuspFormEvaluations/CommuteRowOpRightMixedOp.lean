@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,7 +17,7 @@ theorem pderiv_swap (u v : σ) (P : MvPolynomial σ K) :
   | C a => simp
   | add p q hp hq => simp [hp, hq]
   | mul_X p i hp =>
-    simp only [Derivation.leibniz, map_add, smul_eq_mul, pderiv_X, Pi.single_apply, hp]
+    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, pderiv_X, Pi.single_apply, hp]
     split_ifs <;> simp <;> ring
 
 theorem pderiv_X_mul' [DecidableEq σ] (v w : σ) (Q : MvPolynomial σ K) :
@@ -177,7 +181,8 @@ theorem cross_term {K σ : Type*} [CommRing K] {p q n : ℕ} (z : Fin p × Fin n
       ∑ a, ∑ b, (∑ k, X (z (a, k)) * X (y (b, k))) *
         ∑ l, pderiv (z (a, l)) (pderiv (y (b, l)) P) := by
   classical
-  simp only [map_sum, pderiv_X_mul', if_neg (hzy _ _), add_zero, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, pderiv_X_mul', if_neg (hzy _ _), add_zero, Finset.mul_sum, Finset.sum_mul]
   calc _ = ∑ k, ∑ a, ∑ b, ∑ l, X (z (a, k)) * (X (y (b, k)) *
             pderiv (z (a, l)) (pderiv (y (b, l)) P)) := by
         refine Finset.sum_congr rfl fun k _ => ?_
@@ -215,7 +220,8 @@ theorem capelli_casimir {K σ : Type*} [CommRing K] [DecidableEq σ] {p n : ℕ}
     pderiv (z (a, l)) (pderiv (z (b, k)) P)) with hS
   have h₁ : (∑ k, ∑ l, ∑ a, X (z (a, k)) * pderiv (z (a, l))
       (∑ b, X (z (b, l)) * pderiv (z (b, k)) P)) = S + (n : K) • E := by
-    simp only [map_sum, pderiv_X_mul', hz.eq_iff, Prod.mk.injEq, and_true,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, pderiv_X_mul', hz.eq_iff, Prod.mk.injEq, and_true,
       Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true, mul_add,
       Finset.mul_sum]
     refine congrArg₂ (· + ·) ?_ ?_
@@ -231,7 +237,8 @@ theorem capelli_casimir {K σ : Type*} [CommRing K] [DecidableEq σ] {p n : ℕ}
       simp [Nat.cast_smul_eq_nsmul]
   have h₂ : (∑ a, ∑ b, ∑ k, X (z (a, k)) * pderiv (z (b, k))
       (∑ l, X (z (b, l)) * pderiv (z (a, l)) P)) = S + (p : K) • E := by
-    simp only [map_sum, pderiv_X_mul', hz.eq_iff, Prod.mk.injEq, true_and,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, pderiv_X_mul', hz.eq_iff, Prod.mk.injEq, true_and,
       Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true, mul_add,
       Finset.mul_sum]
     refine congrArg₂ (· + ·) ?_ ?_

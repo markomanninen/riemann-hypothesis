@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallNormLe
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallNormLe
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 

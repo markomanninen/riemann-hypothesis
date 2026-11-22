@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 namespace Formalism.GradedWeylDivisibility
 

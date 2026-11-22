@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsReading
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsReading
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,10 +46,10 @@ theorem nonempty_algHom_of_idem_map {F E K R : Type} [Field F] [Field E] [Algebr
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul a b => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   refine nonempty_algHom_of_idem hE σ (z := Φ e) (by rw [← map_mul, he]) ?_
   have := congrArg Φ hs
-  rw [map_add, hcomm] at this
+  rw [map_add (f := _), hcomm] at this
   rw [this, Algebra.TensorProduct.algebraMap_apply]
   change ψ ε ⊗ₜ[F] (1 : E) = 1
   rw [hψ]

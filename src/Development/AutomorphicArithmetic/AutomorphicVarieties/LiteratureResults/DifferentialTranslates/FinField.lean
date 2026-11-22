@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

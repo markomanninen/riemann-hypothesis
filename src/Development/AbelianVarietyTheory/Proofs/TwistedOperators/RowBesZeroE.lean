@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDatOfTower
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsDatOfTower
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,12 +42,16 @@ def jacDec {σ : ℕ} (d : HermitianOrthogonalExtensionData A B c ε) (h : c = 2
   e'e' := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
+    have hi : (i : ℕ) + 1 ≤ c := by omega
+    have hj : (j : ℕ) + 1 ≤ c := by omega
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.zero_apply]
     rw [if_neg (by omega)]
   e'e := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
-    simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, one_apply, Fin.ext_iff]
+    have hi : (i : ℕ) + 1 ≤ c := by omega
+    have hsub : c - ((i : ℕ) + 1) + (i : ℕ) + 1 = c := by omega
+    simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.one_apply, Fin.ext_iff]
     split_ifs <;> first | rfl | omega
   iso := frameMat_isom d
   i₀e := perp_sub d _
@@ -108,16 +116,24 @@ def besDec {σ : ℕ} (d : HermitianOrthogonalExtensionData A B c (-1)) (h : c =
   e'e' := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
+    have hi : (i : ℕ) + 1 ≤ c := by omega
+    have hj : (j : ℕ) + 1 ≤ c := by omega
     simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.zero_apply]
     rw [if_neg (by omega)]
   e'e := by
     refine (gram_sub' d _ _).trans (Matrix.ext fun i j => ?_)
     have := i.2; have := j.2
-    simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, one_apply, Fin.ext_iff]
+    have hi : (i : ℕ) + 1 ≤ c := by omega
+    have hsub : c - ((i : ℕ) + 1) + (i : ℕ) + 1 = c := by omega
+    simp only [submatrix_apply, antiDiagonalSignGramMatrix, Fin.val_rev, Fin.val_castLE, Matrix.one_apply, Fin.ext_iff]
     split_ifs <;> first | rfl | omega
   iso := coreMat_gram d h
   i₀e := coreMat_perp d h _ fun i => by have := i.2; simp only [Fin.val_castLE]; omega
-  i₀e' := coreMat_perp d h _ fun i => by have := i.2; simp only [Fin.val_rev, Fin.val_castLE]; omega
+  i₀e' := coreMat_perp d h (fun i : Fin σ => (Fin.castLE (by omega : σ ≤ c) i).rev) fun i => by
+    have := i.2
+    have hi : (i : ℕ) + 1 ≤ c := by omega
+    simp only [Fin.val_rev, Fin.val_castLE]
+    omega
   rank_add := by have := d.rank; show A.rank + 1 + 2 * σ = B.rank; omega
 
 section Grid
@@ -142,15 +158,6 @@ def rowJac (j : ℕ) (hj : j < D.R.m) (σ : ℕ) (h : D.R.m - 1 - j = 2 * σ) : 
 def topVolN (M : Vol G) (hM : M.IsRow) (hj : 0 < D.R.m) (h : D.R.m - 1 - 0 = 2 * ((D.R.m - 2) / 2) + 1) :
     VolN (rowBes G 0 hj ((D.R.m - 2) / 2) h) :=
   ⟨M.νN, M.fdN, hM.unip⟩
-
-def rowBesAt (j : ℕ) (hj : j < D.R.m) (σ : ℕ) (h : D.R.m - 1 - j = 2 * σ + 1) (ζ₀ : D.host.E) (hζ : ζ₀ ≠ 0)
-    (vN : VolN (rowBes G j hj σ h)) : GlobalTheory.SeeSaw.BesAt (G.V (.grid D.R.m j)) (G.V (.top j)) σ :=
-  ⟨_, GlobalTheory.SeeSaw.Model.nLine D, rowBes G j hj σ h, GlobalTheory.OrthSumExists.orthDecHsum D _ _, fun _ => ζ₀,
-    GlobalTheory.SeeSaw.Model.isLineVec_nLine hζ, cocpt_top G hj.le, vN⟩
-
-def rowJacAt (j : ℕ) (hj : j < D.R.m) (σ : ℕ) (h : D.R.m - 1 - j = 2 * σ) (vN : VolN (rowJac G j hj σ h)) :
-    GlobalTheory.SeeSaw.JacAt (G.V (.grid D.R.m j)) (G.V (.top j)) σ :=
-  ⟨rowJac G j hj σ h, cocpt_top G hj.le, vN⟩
 
 end Grid
 

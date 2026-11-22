@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SegmentBlockOfMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.SegmentBlockOfMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem nb_oEff (i : Fin (segS X.TT j)) :
   split_ifs with h
   · have h0 : jE (X.seg C0 CE1 CE2 j) ju i.val = 0 := by
       unfold jE
-      rw [dif_neg (by omega)]
+      rw [dite_eq_right (by omega)]
     rw [h0]
     ring
   · rfl

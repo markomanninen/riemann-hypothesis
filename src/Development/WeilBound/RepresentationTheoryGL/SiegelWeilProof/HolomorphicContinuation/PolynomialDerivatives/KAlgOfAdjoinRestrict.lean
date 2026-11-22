@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.MonomialMemSupported
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.MonomialMemSupported
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,10 +93,12 @@ theorem coreLC_of' (hBi : Bicomm) (hEL : EquivLift) (hRep : RepB) (hFF : FormFac
     congr 2
     exact (hwB ⟨_, h1V⟩).symm
   have eL : Λ p = ∑ s ∈ p.support, Λ (monomial s (p.coeff s)) := by
-    rw [← map_sum]; congr 1; exact p.as_sum
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]; congr 1; exact p.as_sum
   have eR : contr c (w p) = ∑ s ∈ p.support, contr c (w (monomial s (p.coeff s))) := by
     show contrL c (w p) = ∑ s ∈ p.support, contrL c (w (monomial s (p.coeff s)))
-    rw [← map_sum (contrL c), ← map_sum w]; congr 2; exact p.as_sum
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum (contrL c), ← map_sum w]; congr 2; exact p.as_sum
   rw [eL, eR]
   exact Finset.sum_congr rfl hterm
 

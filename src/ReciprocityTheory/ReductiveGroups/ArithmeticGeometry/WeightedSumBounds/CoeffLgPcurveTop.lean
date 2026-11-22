@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.LgCurvePcurve
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.LgCurvePcurve
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh.PTb
 
@@ -15,10 +19,30 @@ theorem coeff_lg_pcurve (G : LogFGL v d) {p : ℕ} (hp : p ≠ 0)
     PowerSeries.coeff m (G.lgCurve (pcurve G p γ x n) a) = ∑ s ∈ Finset.range n, ∑ b,
       if p ^ s ∣ m then x s b ^ (m / p ^ s) * PowerSeries.coeff (m / p ^ s) (G.lgCurve (γ b) a)
       else 0 := by
-  rw [lgCurve_pcurve G hp hγ x n hx a, map_sum]
+  have hlog : G.lgCurve (pcurve G p γ x n) a =
+      ∑ s ∈ Finset.range n, ∑ b, PowerSeries.expand (p ^ s) (pow_ne_zero s hp)
+        (PowerSeries.rescale (x s b) (G.lgCurve (γ b) a)) := by
+    induction n with
+    | zero => simp [pcurve, lgCurve_zero]
+    | succ n ih =>
+      have hx' : ∀ s < n, ∀ b, IsIntV v (x s b) := fun s hs b => hx s (by omega) b
+      have hrescale : ∀ b, IsCurve v (rescaleCurve (x n b) (γ b)) := fun b =>
+        isCurve_rescale (hx n (Nat.lt_succ_self n) b) (hγ b)
+      have hexpand : ∀ b, IsCurve v (expC (p ^ n) (rescaleCurve (x n b) (γ b))) := fun b =>
+        isCurve_expC (pow_ne_zero n hp) (hrescale b)
+      rw [pcurve, lgCurve_add G (fun b => (isCurve_pcurve G hp hγ x n hx' b).1)
+        (fun b => (isCurve_sumF G _ hexpand b).1), ih hx', lgCurve_sumF G _ hexpand,
+        Finset.sum_range_succ]
+      congr 1
+      refine Finset.sum_congr rfl fun b _ => ?_
+      rw [lgCurve_expC G (pow_ne_zero n hp) (fun c => (hrescale b c).1),
+        lgCurve_rescale G _ (fun c => (hγ b c).1)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hlog, map_sum]
   apply Finset.sum_congr rfl
   intro s _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply Finset.sum_congr rfl
   intro b _
   rw [coeff_expand_rescale]

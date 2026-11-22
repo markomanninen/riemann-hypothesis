@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentValuationFibre
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelDescentValuationFibre
+
+@[expose] public section
+
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg mcIdeal chartMon joinCoord bcCoord pullDeg liftVar fnField ck rootNum SameGeneric LatLE IsPull IsPullBC IsSubQuot QuotIso IsFrobPres FlagModel modelDeg)
@@ -77,7 +82,7 @@ theorem map_mem_chartRing_bc (x : (Σ k, ι k) → Ω) (z : (Σ k, ι' k) → Ω
   | algebraMap r =>
     rw [← IsScalarTower.algebraMap_apply O Ω Ω₁]
     exact Subalgebra.algebraMap_mem _ r
-  | add s t _ _ hs ht => rw [map_add]; exact Subalgebra.add_mem _ hs ht
+  | add s t _ _ hs ht => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hs ht
   | mul s t _ _ hs ht => rw [map_mul]; exact Subalgebra.mul_mem _ hs ht
 
 variable {N : ℕ} {V : Type} [AddCommGroup V] [Module Ω V]
@@ -88,10 +93,12 @@ theorem repr_bc (bc : V →ₗ[Ω] V₁) (w : Module.Basis (Fin N) Ω V) (w₁ :
     w₁.repr (bc e) j = algebraMap Ω Ω₁ (w.repr e j) := by
   have h1 : bc e = ∑ i, algebraMap Ω Ω₁ (w.repr e i) • w₁ i := by
     conv_lhs => rw [← w.sum_repr e]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hw, algebraMap_smul]
-  rw [h1, map_sum, Finsupp.finset_sum_apply, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum, Finsupp.finsetSum_apply, Finset.sum_eq_single j]
   · rw [map_smul, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_eq_same, smul_eq_mul,
       mul_one]
   · intro i _ hij
@@ -136,7 +143,8 @@ theorem isFlagFrame_bc (x : (Σ k, ι k) → Ω) (E : ChartBundle O (mseg x) N V
       obtain ⟨t, ht, rfl⟩ := hgen e he
       refine ⟨fun j => a * algebraMap Ω Ω₁ (t j), fun j =>
         Subalgebra.mul_mem _ ha (map_mem_chartRing_bc x z s hs (ht j)), ?_⟩
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, ← algebraMap_smul Ω₁ (t j), smul_smul]
     | zero => exact ⟨0, fun _ => Subalgebra.zero_mem _, by simp⟩
@@ -156,7 +164,8 @@ theorem isFlagFrame_bc (x : (Σ k, ι k) → Ω) (E : ChartBundle O (mseg x) N V
     have hrepr : ∀ l, w₁.repr v l = ∑ j, a j * T j l := by
       intro l
       rw [hav]
-      simp [T, map_sum, repr_bc bc w w₁ hw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [T, map_sum, repr_bc bc w w₁ hw]
     have hT : ∀ j l, j < l → T j l = 0 := fun j l hjl => by simp [T, hup j l hjl]
     have hd : ∀ j, T j j ≠ 0 := fun j => by
       simp only [T, hdiag j]

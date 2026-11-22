@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
-import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
-import GroundTheory.GlobalFields.TateThesis.TraceFourier
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
-import GroundTheory.GlobalFields.Adele.IntegersLattice
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
+public import GroundTheory.GlobalFields.TateThesis.GaussianSchwartz
+public import GroundTheory.GlobalFields.TateThesis.TraceFourier
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+
+@[expose] public section
 
 open NumberField InfinitePlace InfinitePlace.Completion MeasureTheory Complex ComplexConjugate
   NumberField.mixedEmbedding Function
@@ -74,12 +78,12 @@ theorem hasTemperateGrowth_infinitePoly : χ.infinitePoly.HasTemperateGrowth := 
         (χ.infiniteWeight w).natAbs).HasTemperateGrowth := by
     intro w
     by_cases hw : 0 < χ.infiniteWeight w
-    · simp only [if_pos hw]
+    · simp only [ite_eq_left hw]
       have h := (((Complex.conjCLE.toContinuousLinearMap.comp ((ContinuousLinearMap.proj w :
         ({w // IsComplex w} → ℂ) →L[ℝ] ℂ).comp (ContinuousLinearMap.snd ℝ ({w // IsReal w} → ℝ)
           ({w // IsComplex w} → ℂ))) : mixedSpace K →L[ℝ] ℂ)).hasTemperateGrowth).pow (χ.infiniteWeight w).natAbs
       exact h
-    · simp only [if_neg hw]
+    · simp only [ite_eq_right hw]
       have h := ((((ContinuousLinearMap.proj w : ({w // IsComplex w} → ℂ) →L[ℝ] ℂ).comp
         (ContinuousLinearMap.snd ℝ ({w // IsReal w} → ℝ)
           ({w // IsComplex w} → ℂ)) : mixedSpace K →L[ℝ] ℂ)).hasTemperateGrowth).pow (χ.infiniteWeight w).natAbs

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.IsSemisimpleRing
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.ContinuousQZ
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.IsSemisimpleRing
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.ContinuousQZ
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem trace_eq_zero_of_qZ (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) {d : M
     (h : qZ Z d = 0) {b : Matrix (Fin n) (Fin n) k} (hb : b ∈ Z) : trace (b * d) = 0 := by
   have e : (∑ i, (Module.finBasis k Z).repr ⟨b, hb⟩ i • ((Module.finBasis k Z i : Z) : Matrix (Fin n) (Fin n) k)) = b := by
     have h1 := congrArg Subtype.val ((Module.finBasis k Z).sum_repr ⟨b, hb⟩)
-    rw [AddSubmonoidClass.coe_finset_sum] at h1
+    rw [AddSubmonoidClass.coe_finsetSum] at h1
     simp only [SetLike.val_smul] at h1
     exact h1
   rw [← e, Finset.sum_mul, trace_sum]
@@ -63,7 +67,7 @@ theorem piZ_spec {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} (hZ : CR Z) (x : 
     piZ Z x ∈ Z ∧ qZ Z (piZ Z x) = qZ Z x := by
   have h := qZ_surj hZ (qZ Z x)
   unfold piZ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem piZ_mem {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} (hZ : CR Z) (x : Matrix (Fin n) (Fin n) k) :
@@ -108,7 +112,7 @@ theorem continuous_piZ {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} (hZ : CR Z)
   obtain ⟨cb, hcb⟩ := piZ_eq_sum hZ
   have : piZ Z = fun x => ∑ i, qZ Z x i • cb i := funext hcb
   rw [this]
-  exact continuous_finset_sum _ fun i _ => ((continuous_apply i).comp (continuous_qZ Z)).smul continuous_const
+  exact continuous_finsetSum _ fun i _ => ((continuous_apply i).comp (continuous_qZ Z)).smul continuous_const
 
 theorem sig_sig {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} (hZ : CR Z) (s t : kˣ) (hst : (s : k) * t = 1)
     (p : Sp k n) : sig Z s (sig Z t p) = p := by
@@ -140,8 +144,8 @@ omit [CharZero k] in
 theorem act_act (g h : GL (Fin n) k) (p : Sp k n) : act g (act h p) = act (g * h) p := by
   simp only [act, _root_.mul_inv_rev, Units.val_mul, Matrix.mulVec_mulVec, mul_assoc]
 
-omit [CharZero k] in
 
+omit [CharZero k] in
 def actH (g : GL (Fin n) k) : Sp k n ≃ₜ Sp k n where
   toFun := act g
   invFun := act g⁻¹

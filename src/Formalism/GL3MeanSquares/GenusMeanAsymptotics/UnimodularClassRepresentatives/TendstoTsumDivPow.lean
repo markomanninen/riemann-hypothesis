@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module MeasureTheory Filter Topology Bornology Pointwise ZLattice
 
@@ -105,7 +109,7 @@ theorem tendsto_tsum_div_pow (μ : Measure E) [μ.IsAddHaarMeasure] {s : Set E} 
     rw [h3, hs₃, hmap, Measure.smul_apply, smul_eq_mul] at h2
     exact (mul_eq_zero.1 h2).resolve_left hne
   have hlim := tendsto_tsum_div_pow_atTop_integral (e '' s) (fun y => G (e.symm y))
-    (hG.comp e.symm.continuous) (e.lipschitz.isBounded_image hs₁)
+    (hG.comp e.symm.continuous) (e.lipschitzWith.isBounded_image hs₁)
     (eM.measurableSet_image.2 hs₂) hfr
   rw [hint] at hlim
   refine hlim.congr fun n => ?_

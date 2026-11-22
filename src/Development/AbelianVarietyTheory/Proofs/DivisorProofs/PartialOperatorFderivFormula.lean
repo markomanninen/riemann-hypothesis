@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeminormSliceRLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivPdLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeminormSliceRLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivPdLe
+
+@[expose] public section
 
 open GlobalTheory.SliceSchwartz GlobalTheory.SliceOp
 open scoped ContDiff
@@ -19,7 +23,7 @@ theorem pd_padL_add (f : SchwartzMap (κ ⊕ κ' → V) ℂ) (h h' : κ → V) :
   have e : (padL (κ' := κ') (h + h') : κ ⊕ κ' → V) = padL h + padL h' := by
     funext i; cases i <;> simp [padL]
   ext z
-  rw [SchwartzMap.add_apply, pd_apply, pd_apply, pd_apply, e, map_add]
+  rw [SchwartzMap.add_apply, pd_apply, pd_apply, pd_apply, e, map_add (f := _)]
 
 theorem pd_padL_smul (f : SchwartzMap (κ ⊕ κ' → V) ℂ) (c : ℝ) (h : κ → V) :
     pd (padL (κ' := κ') (c • h)) f = (c : ℂ) • pd (padL h) f := by
@@ -32,7 +36,7 @@ def xPartL (P : SchwartzMap (κ' → V) ℂ →L[ℂ] SchwartzMap (κ₁' → V)
     (x : κ → V) (y : κ₁' → V) : (κ → V) →ₗ[ℝ] ℂ where
   toFun h := P (sliceR (pd (padL (κ' := κ') h) f) x) y
   map_add' h h' := by
-    simp only [pd_padL_add, ← sliceRL_apply, map_add, SchwartzMap.add_apply]
+    simp only [pd_padL_add, ← sliceRL_apply, map_add (f := _), SchwartzMap.add_apply]
   map_smul' c h := by
     simp only [pd_padL_smul, ← sliceRL_apply, map_smul, SchwartzMap.smul_apply, RingHom.id_apply,
       Complex.real_smul, smul_eq_mul]

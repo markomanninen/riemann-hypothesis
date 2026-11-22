@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHLocPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHLocPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.SHLocPf

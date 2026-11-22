@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+
+@[expose] public section
 
 noncomputable section
 open Polynomial LateralTheory.E.PartDiagCut GlobalTheory.EtC
@@ -55,7 +59,8 @@ theorem idem_of (hIP : LateralTheory.E.HensCut.IdemPart) (hA : LateralTheory.E.P
   refine ⟨f, fun l => ?_, fun l m hlm => ?_, ?_, fun l => ?_⟩
   · unfold IsIdempotentElem; rw [hf, ← map_mul, (hei l).eq]
   · rw [hf, hf, ← map_mul, heo l m hlm, map_zero]
-  · simp_rw [hf]; rw [← map_sum, hes, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp_rw [hf]; rw [← map_sum, hes, map_one]
   · rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul]
     have h1 : φ (Ideal.Quotient.mk I (f l)) = e l := by rw [hf]; exact φ.apply_symm_apply _
     have h2 : Ideal.Quotient.mk (I.map (βP I P)) (βP I P (f l)) = e l := by

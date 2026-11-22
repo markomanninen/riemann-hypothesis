@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -27,12 +32,12 @@ theorem quadConj_eq_complexConj (x : E) :
     intro a ha
     obtain ⟨b, rfl⟩ := conj_eq_self_iff.1 ha
     exact (IsCMField.complexConj_eq_self_iff E _).2 b.2
-  have ha : t (x + y) = x + y := fix _ (by rw [map_add, hyy, ← hy, add_comm])
+  have ha : t (x + y) = x + y := fix _ (by rw [map_add (f := _), hyy, ← hy, add_comm])
   have hb : t (x * y) = x * y := fix _ (by rw [map_mul, hyy, ← hy, mul_comm])
   have hz : (t x - x) * (t x - y) = 0 := by
     have h0 : x * x - (x + y) * x + x * y = 0 := by ring
     have h1 := congrArg t h0
-    rw [map_add, map_sub, map_mul, map_mul, ha, hb, map_zero] at h1
+    rw [map_add (f := _), map_sub, map_mul, map_mul, ha, hb, map_zero] at h1
     linear_combination h1
   rcases mul_eq_zero.1 hz with h | h
   · have hx : t x = x := sub_eq_zero.1 h
@@ -82,8 +87,8 @@ theorem sesq_skew {V : Type} [AddCommGroup V] [Module E V] [Module ℚ V]
     ring
   linear_combination this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_nat_integral {Λ : Type} [AddCommGroup Λ] [Module.Finite ℤ Λ] (F : Λ → Λ → E)
     (h1 : ∀ x x' y, F (x + x') y = F x y + F x' y) (h2 : ∀ x y y', F x (y + y') = F x y + F x y') :
     ∃ m : ℕ, m ≠ 0 ∧ ∀ x y, (m : E) * F x y ∈ integralClosure ℤ E := by
@@ -103,7 +108,7 @@ theorem exists_nat_integral {Λ : Type} [AddCommGroup Λ] [Module.Finite ℤ Λ]
       rw [map_zero]
       exact zero_mem _
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     | smul a x _ hx =>
       rw [map_zsmul]
@@ -134,7 +139,7 @@ theorem exists_hermitian_of_trace : ∀ (E : Type) [Field E] [NumberField E] [Is
     GlobalTheory.CompanionTheory.Ar.Flat.existsUnique_sesq_of_trace E (Fin N → E) B hadj
   have hsk := sesq_skew B hadj hskew h₁ htr
   obtain ⟨m, hm0, hint⟩ := exists_nat_integral (fun x y : Λ => h₁ (e y) (e x))
-    (fun x x' y => by rw [map_add, hadd2]) (fun x y y' => by rw [map_add, hadd1])
+    (fun x x' y => by rw [map_add (f := _), hadd2]) (fun x y y' => by rw [map_add (f := _), hadd1])
   have hrt0 : (H.rt : E) ≠ 0 := by
     intro h0
     have hsq : (H.rt : E) ^ 2 = -(H.d : E) := by
@@ -187,7 +192,7 @@ theorem exists_hermitian_of_trace : ∀ (E : Type) [Field E] [NumberField E] [Is
     let g : (Fin N → E) →ₗ[ℚ] (Fin N → E) := g0.toRatLinearMap
     have gapp : ∀ u i, g u i = S u (Pi.single i 1) := fun _ _ => rfl
     have ginj : Function.Injective g := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro u hu
       have : S u = S 0 := by
         apply (Pi.basisFun E (Fin N)).ext

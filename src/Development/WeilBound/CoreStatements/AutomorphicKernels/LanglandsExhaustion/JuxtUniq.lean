@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDefs
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.JuxtDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ namespace PositivityTheory.Exh
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem eq_of_isLSeg (Δ : Segment k) (x y : IrrGL k) (hx : IsLSeg Δ x.rep) (hy : IsLSeg Δ y.rep) : x = y := by
+theorem eq_of_isLSeg (Δ : Segment k) (x y : IrrGL (k := k)) (hx : IsLSeg Δ x.rep) (hy : IsLSeg Δ y.rep) : x = y := by
   obtain ⟨n, cx⟩ := x
   obtain ⟨m, cy⟩ := y
   obtain ⟨hx1, hxc⟩ := hx

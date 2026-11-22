@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallySmall
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallySmall
+
+@[expose] public section
 
 noncomputable section
 

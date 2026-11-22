@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -105,7 +110,7 @@ theorem exists_unique_of_compatible : ∀ (p : ℕ) (O σ : Type) [CommRing O] [
       intro α hα
       rw [map_sub, coeff_smul]
       show coeff α (f - h M) - (p : O) ^ m * (if hα : α.degree < N₀ then _ else 0) = 0
-      rw [dif_pos hα, ← Classical.choose_spec (hdiv α hα), sub_self]
+      rw [dite_eq_left hα, ← Classical.choose_spec (hdiv α hα), sub_self]
     have hsplit : E n f - a n = (p : A n) ^ m * E n Q + E n (f - h M - (p : O) ^ m • Q) := by
       rw [map_sub, map_sub, map_smul, hEM, Algebra.smul_def, map_pow, map_natCast]
       ring

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+
+@[expose] public section
 
 open MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar.PB.Flat
 open scoped ContDiff
@@ -16,7 +20,7 @@ theorem contDiffOn_pker {ρ : ℝ} (hρ : 0 < ρ) :
       (fun q : ℂ × ℝ => ‖circleMap 0 ρ q.2 - 0‖ ^ 2 - ‖q.1 - 0‖ ^ 2) /
         (fun q : ℂ × ℝ => ‖circleMap 0 ρ q.2 - 0 - (q.1 - 0)‖ ^ 2) := by
     funext q
-    rfl
+    simp only [pker, poissonKernel_def, Pi.div_apply]
   rw [e]
   refine ContDiffOn.div ?_ ?_ ?_
   · exact (((contDiff_norm_sq ℝ).comp (hc.sub contDiff_const)).sub
@@ -42,7 +46,7 @@ theorem contDiffOn_prod_pker {n : ℕ} {ρ : ℝ} (hρ : 0 < ρ) :
     rw [mem_ball_zero_iff] at hz ⊢
     exact lt_of_le_of_lt (norm_le_pi_norm z i) hz
   have hlin : ∀ i : Fin n, ContDiff ℝ ∞ (fun q : (Fin n → ℂ) × (Fin n → ℝ) => (q.1 i, q.2 i)) := fun i =>
-    ((contDiff_apply ℝ ℂ i).comp contDiff_fst).prodMk ((contDiff_apply ℝ ℝ i).comp contDiff_snd)
+    ((contDiff_apply ℝ (fun _ => ℂ) i).comp contDiff_fst).prodMk ((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_snd)
   have hcomp : ∀ i : Fin n, ContDiffOn ℝ ∞
       ((fun q : ℂ × ℝ => pker ρ q.1 q.2) ∘ (fun q : (Fin n → ℂ) × (Fin n → ℝ) => (q.1 i, q.2 i))) (Metric.ball (0 : Fin n → ℂ) ρ ×ˢ (Set.univ : Set (Fin n → ℝ))) :=
     fun i => (contDiffOn_pker hρ).comp (hlin i).contDiffOn (hmaps i)

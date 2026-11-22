@@ -1,9 +1,13 @@
-import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarScaling.MapEqSelfOfIterate
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MinfLev
-import Formalism.LocalToGlobal.IndefiniteReal.HaarTransfer.MinfUniqueP
+module
+
+public import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarScaling.MapEqSelfOfIterate
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MinfLev
+public import Formalism.LocalToGlobal.IndefiniteReal.HaarTransfer.MinfUniqueP
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,11 @@ theorem omegaLeb_unique {p q : ℕ} {lam lam' : Measure (lieU p q)} (h : IsOmega
   set a := Measure.addHaarScalarFactor lam' lam
   have hs : lam' = (a : ENNReal) • lam := by
     rw [← ENNReal.smul_def]; exact Measure.isAddLeftInvariant_eq_smul lam' lam
+  have hmeas := (Examples₂.CD.psiE p q).continuous.measurable
+  rw [Examples₂.CD.psiE_coe] at hmeas
   have e2 := h'.2
-  rw [hs, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, Measure.map_smul, h.2] at e2
+  rw [hs, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul,
+    Measure.map_smul _ hmeas.aemeasurable, h.2] at e2
   have hpos : 0 < (volume : Measure ((Fin p ⊕ Fin q) × (Fin p ⊕ Fin q) → ℂ)) (Metric.ball 0 1) :=
     Metric.isOpen_ball.measure_pos _ ⟨0, Metric.mem_ball_self one_pos⟩
   have hfin : (volume : Measure ((Fin p ⊕ Fin q) × (Fin p ⊕ Fin q) → ℂ)) (Metric.ball 0 1) ≠ ⊤ :=

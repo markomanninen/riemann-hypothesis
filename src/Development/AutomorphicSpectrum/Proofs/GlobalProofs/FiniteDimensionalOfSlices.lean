@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MemFormsOnOfMemSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MemFormsOnOfMemSpan
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
@@ -46,8 +50,8 @@ end Groups
 def sliceSet {G : Type} [Group G] (𝓒 : Set (G → ℂ)) (H L : Subgroup G) (b : G) : Set (H → ℂ) :=
   {f | ∃ φ ∈ 𝓒, ∃ y ∈ L, (∀ t ∈ H, t * y = y * t) ∧ f = fun t : H => φ ((t : G) * y * b)}
 
-open GlobalTheory.Published GlobalTheory.Published.AutFin GlobalTheory.ThK.SmoothLev GlobalTheory.CompanionTheory.Hypotheses₂.ConstFin in
 
+open GlobalTheory.Published GlobalTheory.Published.AutFin GlobalTheory.ThK.SmoothLev GlobalTheory.CompanionTheory.Hypotheses₂.ConstFin in
 def cuspOn {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D) {m : ℕ}
     (X Y : Matrix (Fin V.rank) (Fin m) D.host.E) (T : Finset (Fin m)) (U : Subgroup (GA D V))
     (ε : D.what₂.Tau → Fin V.rank → Bool) (fr : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ)

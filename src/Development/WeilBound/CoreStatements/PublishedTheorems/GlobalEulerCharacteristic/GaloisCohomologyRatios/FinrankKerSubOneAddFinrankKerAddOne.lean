@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
-namespace PositivityTheory.Lit1.GEN.X.RealC
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
+
+namespace PositivityTheory.Lit1.GEN.X.RealC
 
 theorem finrank_ker_sub_one_add_finrank_ker_add_one {k V : Type*} [Field k] [AddCommGroup V] [Module k V]
     [FiniteDimensional k V] (h2 : (2 : k) ≠ 0) (σ : V →ₗ[k] V) (hσ : ∀ x, σ (σ x) = x) :
@@ -14,7 +18,7 @@ theorem finrank_ker_sub_one_add_finrank_ker_add_one {k V : Type*} [Field k] [Add
   have hr : LinearMap.range (σ + 1) = LinearMap.ker (σ - 1) := by
     apply le_antisymm
     · rintro _ ⟨y, rfl⟩
-      simp only [LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.add_apply, Module.End.one_apply, map_add, hσ]
+      simp only [LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.add_apply, Module.End.one_apply, map_add (f := _), hσ]
       abel
     · intro x hx
       rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero] at hx
@@ -25,34 +29,6 @@ theorem finrank_ker_sub_one_add_finrank_ker_add_one {k V : Type*} [Field k] [Add
   exact LinearMap.finrank_range_add_finrank_ker (σ + 1)
 
 variable {K : FiniteSubfield} {S : Set (HeightOneSpectrum (𝓞 K.1))} {ℓ : ℕ}
-
-theorem gsRoots_realConj (hℓ : 0 < ℓ)
-    (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
-    (v : {v : InfinitePlace K.1 // v.IsReal}) (t : gsRoots S ℓ) :
-    (gsRoots S ℓ).ρ (gsRealFamily S ιr v (realConj v.1 v.2)) t = -t := by
-  obtain ⟨ζ, rfl⟩ : ∃ ζ : rootsOfUnity ℓ (maxUnramifiedOutside K.1 ℚ̄ S), Additive.ofMul ζ = t :=
-    ⟨Additive.toMul t, rfl⟩
-  change Additive.ofMul (galRootsOfUnityHom K.1 _ ℓ (gsRealFamily S ιr v (realConj v.1 v.2)) ζ) =
-    Additive.ofMul ζ⁻¹
-  congr 1
-  apply Subtype.ext
-  apply Units.ext
-  rw [coe_galRootsOfUnityHom_apply]
-  set f : maxUnramifiedOutside K.1 ℚ̄ S →ₐ[K.1] AlgebraicClosure v.1.Completion :=
-    (ιr v).comp (maxUnramifiedOutside K.1 ℚ̄ S).val
-  have hf : Function.Injective f := f.injective
-  apply hf
-  set u : (AlgebraicClosure v.1.Completion)ˣ := Units.map (f : maxUnramifiedOutside K.1 ℚ̄ S →* AlgebraicClosure v.1.Completion) (ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ)
-  have hu : u ^ ℓ = 1 := by
-    rw [← map_pow]
-    have : (ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) ^ ℓ = 1 := (mem_rootsOfUnity _ _).1 ζ.2
-    rw [this, map_one]
-  have key := realConj_apply_of_pow_eq_one v.1 v.2 u hℓ hu
-  have h1 : f ((gsRealFamily S ιr v (realConj v.1 v.2)) ((ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) : maxUnramifiedOutside K.1 ℚ̄ S)) =
-      realConj v.1 v.2 (f ((ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) : maxUnramifiedOutside K.1 ℚ̄ S)) :=
-    gsRealFamily_apply S ιr v _ _
-  rw [h1]
-  exact key
 
 section TConj
 variable [Fact ℓ.Prime]
@@ -174,16 +150,16 @@ theorem symm_gsRestrictGal (σ : galUnramifiedOutside K.1 ℚ̄ S) :
     (gsQuotientGalEquiv hL).symm (gsRestrictGal hL σ) = QuotientGroup.mk σ :=
   (gsQuotientGalEquiv hL).symm_apply_eq.2 (gsQuotientGalEquiv_mk hL σ).symm
 
-omit [Module.Finite (ZMod ℓ) M] in
 
+omit [Module.Finite (ZMod ℓ) M] in
 theorem nRep_gsRestrictGal (σ : galUnramifiedOutside K.1 ℚ̄ S) :
     nRep hL hζ M hM (gsRestrictGal hL σ) = (homRep (gsRootsZMod S ℓ) M).ρ σ :=
   (congrArg (quotientRep (PP hL) (homRep (gsRootsZMod S ℓ) M)
     (homRep_ρ_of_mem (gsOpenSubgroup S hL) (gsRootsZMod S ℓ) M (roots_trivial hL hζ) hM))
     (symm_gsRestrictGal hL σ)).trans (QuotientGroup.lift_mk _ _ _)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem real_place_H0_finrank_b (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
     (hcop : Nat.Coprime (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).index ℓ)
@@ -271,8 +247,6 @@ end PositivityTheory.Lit1.GEN.X.RealC
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.X
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K L : FiniteSubfield} [Fact (K ≤ L)] {S : Set (HeightOneSpectrum (𝓞 K.1))} {ℓ : ℕ} [Fact ℓ.Prime]
   (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S) [Normal K.1 L.1]

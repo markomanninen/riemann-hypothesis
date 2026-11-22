@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RepresentationBounds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VPowLatticeLeImageAddLPowOfFiniteCokernelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MonodromyReductionModuloHighDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicMonodromyPolynomialsRaiseDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LagrangePrimePowMemIsotypicDegreePolySpanStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxFrobeniusOrbitLengthDiffBoundsZmodStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumericalConditionsTheoremTLargePrimeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimePowKillsFiniteLengthIntegralPowerSeriStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicProjectorMemIsotypicPartExplicitStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumIsotypicProjectorsEqIdStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicProjectorMemBreuilKisinLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemPrimePowLatticeOfXPowSmulMemStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EulerDerivationPreservesBreuilKisinSumSubmoduleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImageStableDegreeBounds
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RepresentationBounds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiagScaleApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VPowLatticeLeImageAddLPowOfFiniteCokernelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MonodromyReductionModuloHighDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicMonodromyPolynomialsRaiseDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LagrangePrimePowMemIsotypicDegreePolySpanStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxFrobeniusOrbitLengthDiffBoundsZmodStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NumericalConditionsTheoremTLargePrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimePowKillsFiniteLengthIntegralPowerSeriStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicProjectorMemIsotypicPartExplicitStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumIsotypicProjectorsEqIdStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsotypicProjectorMemBreuilKisinLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemPrimePowLatticeOfXPowSmulMemStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EulerDerivationPreservesBreuilKisinSumSubmoduleStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem app_aeval {P : PhiMod O K l e a ι} {Q : PhiMod O K l e a κ} (F : BK.Ho
       intro v
       simp only [pow_succ', Module.End.mul_apply]
       rw [F.app_conn, ih]
-  rw [Polynomial.aeval_eq_sum_range, Polynomial.aeval_eq_sum_range, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.aeval_eq_sum_range, Polynomial.aeval_eq_sum_range, LinearMap.sum_apply,
     LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.map_smul_of_tower, hpow]
@@ -63,7 +68,7 @@ theorem app_mem_MMHigh [NormedAlgebra ℚ_[l] K] [NeZero e] {P : PhiMod O K l e 
   refine Submodule.smul_induction_on hh (fun s hs m hm => ?_) (fun x y hx hy => ?_)
   · rw [LinearMap.map_smul_of_tower]
     exact Submodule.smul_mem_smul hs (F.app_mem_ext (A_le_S l e) hm)
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact add_mem hx hy
 
 end GlobalTheory.CokerL
@@ -112,7 +117,7 @@ theorem isotypic_step : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrame
   obtain ⟨y₀, hy₀, z₀, hz₀, h3⟩ := a3 x hx
   have hyd : isoProj D₂.desc c (((X : K⟦X⟧) ^ e) ^ A' • x) =
       F.app (isoProj D₁.desc c y₀) + (l : K) ^ b • isoProj D₂.desc c z₀ := by
-    rw [h3, map_add, map_smul, app_isoProj]
+    rw [h3, map_add (f := _), map_smul, app_isoProj]
   have hy_iso := GlobalTheory.T.isotypicProjector_mem_isotypicPart_explicit O K l e a κ D₂.toPhiMod D₂.desc c (((X : K⟦X⟧) ^ e) ^ A' • x)
   have hy_v : isoProj D₂.desc c (((X : K⟦X⟧) ^ e) ^ A' • x) ∈ GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.vL D₂.toPhiMod A' := by
     rw [isoProj_vpow]
@@ -145,18 +150,18 @@ theorem isotypic_step : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrame
         Polynomial.aeval D₂.conn (β.map φ)
           (Polynomial.aeval D₂.conn (GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.P₂ Sig c A') y) := by
     have h1 := congrArg (Polynomial.map φ) hαβ
-    rw [Polynomial.map_C, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, hPZ, hPZ] at h1
+    rw [Polynomial.map_C, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, hPZ, hPZ] at h1
     have h2 := congrArg (fun p => Polynomial.aeval D₂.conn p y) h1
     rw [Polynomial.aeval_C, Module.algebraMap_end_apply, map_pow, map_natCast] at h2
-    simp only [map_add, map_mul, LinearMap.add_apply, Module.End.mul_apply] at h2
+    simp only [map_add (f := _), map_mul, LinearMap.add_apply, Module.End.mul_apply] at h2
     rw [h2, haeZ, haeZ]
 
   have hA : Polynomial.aeval D₂.conn (GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.P₁ Sig c A') y ∈ T := by
-    rw [haeZ, hyd, map_add, map_smul, ← app_aeval, ← haeZ]
+    rw [haeZ, hyd, map_add (f := _), map_smul, ← app_aeval, ← haeZ]
     refine add_mem ?_ ?_
     · have hr := ((hdeg Sig c A' (by omega)).2 ι η H D₁ h₁).aeval₁ _ ⟨hy₁L, hy₁iso⟩
       obtain ⟨u, hu, h, hh, hsum⟩ := Submodule.mem_sup.1 hr
-      rw [← hsum, map_add]
+      rw [← hsum, map_add (f := _)]
       obtain ⟨w, hw, rfl⟩ := GlobalTheory.IndefiniteRowSideFullHecke.ImageStableDegreeBounds.mem_mulL.1 hu
       rw [map_smul]
       exact add_mem (memT1 w hw) (memT3 _ (app_mem_MMHigh F.toHom hh))
@@ -277,7 +282,7 @@ theorem kills_cokerL : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltramet
     refine ⟨y' + y₂, add_mem hy' hy₂, z'' + z₂, add_mem hz'' hz₂, ?_⟩
     have key : (l : K) ^ ρ • x = ((l : K) ^ ρ • x - F.app y' - ((X : K⟦X⟧) ^ e) ^ (l - A') • h₀) +
         F.app y' + ((X : K⟦X⟧) ^ e) ^ (l - A') • h₀ := by abel
-    rw [key, hw', e1, h2, map_add, smul_add]
+    rw [key, hw', e1, h2, map_add (f := _), smul_add]
     abel
 
   obtain ⟨m, hm⟩ := GlobalTheory.T.exists_prime_pow_kills_finiteLength_integralPowerSeries O K l F.coker hfl
@@ -297,7 +302,7 @@ theorem kills_cokerL : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltramet
     | add x y _ _ hx hy =>
       obtain ⟨a1, ha1, e1⟩ := hx
       obtain ⟨a2, ha2, e2⟩ := hy
-      exact ⟨a1 + a2, add_mem ha1 ha2, by rw [map_add, e1, e2, smul_add]⟩
+      exact ⟨a1 + a2, add_mem ha1 ha2, by rw [map_add (f := _), e1, e2, smul_add]⟩
     | smul r x _ hx =>
       obtain ⟨a1, ha1, e1⟩ := hx
       exact ⟨r • a1, D₁.L.smul_mem r ha1, by rw [LinearMap.map_smul_of_tower, e1, smul_comm]⟩
@@ -313,12 +318,12 @@ theorem kills_cokerL : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltramet
       refine ⟨y + (l : K) ^ k • y₂, add_mem hy (lmemL₁ _ _ hy₂), z₂, hz₂, ?_⟩
       have hp : (l : K) ^ (ρ + (k + 1)) = (l : K) ^ k * (l : K) ^ b := by
         rw [← pow_add]; congr 1; omega
-      rw [e1, pow_add, mul_comm, mul_smul, e2, smul_add, smul_smul, ← hp, map_add,
+      rw [e1, pow_add, mul_comm, mul_smul, e2, smul_add, smul_smul, ← hp, map_add (f := _),
         LinearMap.map_smul_of_tower, add_assoc]
   intro x hx
   obtain ⟨y, hy, z, hz, e1⟩ := Q m x hx
   obtain ⟨y₃, hy₃, e3⟩ := killL z hz
   refine ⟨y + (l : K) ^ ρ • y₃, add_mem hy (lmemL₁ _ _ hy₃), ?_⟩
-  rw [← hlpow ρ x, e1, pow_add, mul_smul, hlpow m z, map_add, LinearMap.map_smul_of_tower, e3]
+  rw [← hlpow ρ x, e1, pow_add, mul_smul, hlpow m z, map_add (f := _), LinearMap.map_smul_of_tower, e3]
 
 end GlobalTheory.CokerL

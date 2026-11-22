@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,5 @@ theorem cm_norm_eq_one (D : D7) (μ : D.host.E) (h : star μ * μ = 1) (φ : D.h
   have h2 : ‖φ μ‖ ^ 2 = 1 := by exact_mod_cast h1
   have h3 : 0 ≤ ‖φ μ‖ := norm_nonneg _
   nlinarith [sq_nonneg (‖φ μ‖ - 1), sq_nonneg (‖φ μ‖ + 1)]
-
-theorem cm_norm_eq_one' (D : D7) (μ : D.host.E) (h : μ * star μ = 1) (φ : D.host.E →+* ℂ) :
-    ‖φ μ‖ = 1 := cm_norm_eq_one D μ (by rw [mul_comm]; exact h) φ
 
 end PI.UnitaryGroupMassFormula.BetaLUniq

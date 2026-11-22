@@ -1,8 +1,11 @@
-import Mathlib
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.AdjoinLow
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ColFlags
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenUIsGenFam
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.AdjoinLow
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor

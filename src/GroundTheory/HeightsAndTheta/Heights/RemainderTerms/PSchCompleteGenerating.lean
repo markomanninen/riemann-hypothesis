@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsSchur
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -15,7 +20,8 @@ namespace SchCompleteGenerating
 theorem coeff_prod_geomSeries_eval {N : ℕ} (y : Fin N → ℂ) (n : ℕ) :
     PowerSeries.coeff n (∏ i : Fin N, Schur.geomSeries (y i)) =
       aeval y (hsymm (Fin N) ℚ n) := by
-  rw [PowerSeries.coeff_prod, Schur.hsymm_eq_sum_finsuppAntidiag, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_prod, Schur.hsymm_eq_sum_finsuppAntidiag, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   simp [Schur.geomSeries, PowerSeries.coeff_mk, map_prod]
 

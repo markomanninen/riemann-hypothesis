@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,12 +85,12 @@ theorem P_add {φ φ' : XB E a} (h : P ψ φ) (h' : P ψ φ') : P ψ (φ + φ') 
 
 theorem P_smul (c : ℂ) {φ : XB E a} (h : P ψ φ) : P ψ (c • φ) := by
   refine ⟨⟨(c • φ).continuous, fun γ hγ g => ?_, fun k hk y g => ?_, fun r hr hr' g => ?_⟩, fun γ g => ?_⟩
-  · simp only [BoundedContinuousFunction.coe_smul, h.1.left γ hγ g]
-  · simp only [BoundedContinuousFunction.coe_smul, smul_eq_mul, h.1.law k hk y g]
+  · simp only [BoundedContinuousFunction.coe_smul, Pi.smul_apply, h.1.left γ hγ g]
+  · simp only [BoundedContinuousFunction.coe_smul, Pi.smul_apply, smul_eq_mul, h.1.law k hk y g]
     ring
-  · simp only [BoundedContinuousFunction.coe_smul, smul_eq_mul]
+  · simp only [BoundedContinuousFunction.coe_smul, Pi.smul_apply, smul_eq_mul]
     rw [avg_const_mul, h.1.van r hr hr' g, mul_zero]
-  · simp only [BoundedContinuousFunction.coe_smul, h.2 γ g]
+  · simp only [BoundedContinuousFunction.coe_smul, Pi.smul_apply, h.2 γ g]
 
 theorem P_rt (k : GA E a) {φ : XB E a} (h : P ψ φ) : P ψ (Rt E a k φ) := by
   refine ⟨⟨(Rt E a k φ).continuous, fun γ hγ g => ?_, fun j hj y g => ?_, fun r hr hr' g => ?_⟩, fun γ g => ?_⟩

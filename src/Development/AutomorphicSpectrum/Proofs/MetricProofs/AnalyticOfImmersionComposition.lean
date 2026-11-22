@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SameOrbitRefl
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Metric.Rigid
 

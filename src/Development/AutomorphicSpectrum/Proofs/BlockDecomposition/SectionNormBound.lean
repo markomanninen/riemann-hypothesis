@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RdSkewEqConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirOperatorFormula
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByPartsStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RdSkewEqConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CasimirOperatorFormula
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevIntegrationByPartsStatement
+
+@[expose] public section
 
 noncomputable section
 

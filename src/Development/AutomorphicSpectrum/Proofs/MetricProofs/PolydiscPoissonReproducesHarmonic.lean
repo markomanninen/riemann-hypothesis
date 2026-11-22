@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PoissonIntegralPuncturedDisc
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PoissonIntegralPuncturedDisc
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+
+@[expose] public section
 
 open MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar.PB.Flat
 open scoped ContDiff
@@ -143,7 +147,7 @@ theorem polyPoisson_eq_self : ∀ (n : ℕ) (f : (Fin n → ℂ) → ℝ) (ρ R 
       have hK0 : 0 ≤ ∏ i, K i :=
         Finset.prod_nonneg fun i _ => (abs_nonneg _).trans (hK i 0)
       exact mul_le_mul
-        (Finset.prod_le_prod (fun i _ => abs_nonneg _) (fun i _ => hK i _))
+        (Finset.prod_le_prod₀ (fun i _ => abs_nonneg _) (fun i _ => hK i _))
         (hb _ (torusPt_mem_punct hρ hρR θ)) (abs_nonneg _) hK0
     obtain ⟨K, hK⟩ := hFb
     have hint : Integrable (fun p : ℝ × (Fin n → ℝ) => F (Fin.cons p.1 p.2))

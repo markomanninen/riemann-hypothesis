@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainX1
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainX1
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -19,7 +23,8 @@ theorem mirror_chain_expansion_holds : MirrorChainExpansion := by
     intro l; have := l.isLt; simp [a, colsVm]; omega
   have hcs : a ∘ Fin.castSucc = colsVm k r (m + 1) := colsVm_castSucc hm
   have hexp := Formalism.FourierDecayAlt.P.expansion_last_column A _ (m + 1) E a a u
-  rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
   have ha2 : a (Fin.last (m + 1)) = esI k r ⟨r - m - 2, by omega⟩ := by
     ext; rw [hav]; simp [esI]; omega
 
@@ -67,7 +72,8 @@ theorem mirror_chain_expansion_holds : MirrorChainExpansion := by
   have hQm : La (qminor E (a ∘ (Fin.castSucc (Fin.last m) : Fin (m + 2)).succAbove) (a ∘ Fin.castSucc) u) =
       ρ • La (qminor E (colsVm k r m) (colsVm k r m) u) := by
     rw [hrows, Formalism.REAL.quantumMinorRowSkew_holds A _ (m + 1) E rowsP _ (finRotate (m + 1)) u, la_intmul, sign_finRotate]
-    rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum]
     rw [Fin.sum_univ_castSucc, Finset.sum_eq_zero, zero_add]
     · rw [la_intmul]
       have hr0 : rowsP 0 = esI k r ⟨r - m - 2, by omega⟩ := by simp [rowsP]

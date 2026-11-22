@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem fit_step {U : Type*} [AddCommGroup U] [Module ℂ U] (T : Module.End ℂ
       exact he _ (pow_mem' T Z hZ N _ w.2)
     intro h0
     apply hez
-    rw [h1, map_add, h0, h2, add_zero]
+    rw [h1, map_add (f := _), h0, h2, add_zero]
 
 theorem common_ker {U : Type*} [AddCommGroup U] [Module ℂ U] (T : ℕ → Module.End ℂ U)
     (hT : ∀ i j, Commute (T i) (T j)) (e : U →ₗ[ℂ] ℂ) (s : Finset ℕ) :

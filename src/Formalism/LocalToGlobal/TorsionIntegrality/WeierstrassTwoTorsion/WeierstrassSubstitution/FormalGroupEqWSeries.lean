@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
-import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
+public import Formalism.EllipticTorsion.FormalGroupPointsNoTorsion
+
+@[expose] public section
 
 open PowerSeries
 
@@ -157,8 +161,8 @@ theorem sub_cancel {f : MvPowerSeries (Fin 2) R}
   rw [he, hall]
   simp
 
-open Formalism.ELL.WeierstrassChordSeries in
 
+open Formalism.ELL.WeierstrassChordSeries in
 theorem vieta' {A : Type*} [CommRing A] {a1 a2 a3 a4 a6 l n z1 z2 z3 : A}
     (hz : ∀ f : A, f * (z1 - z2) = 0 → f = 0)
     (h1 : G a1 a2 a3 a4 a6 z1 (l * z1 + n) = 0) (h2 : G a1 a2 a3 a4 a6 z2 (l * z2 + n) = 0)
@@ -223,7 +227,7 @@ theorem wSer_map (φ : R →+* S) : PowerSeries.map φ (wSer W) = wSer (W.map φ
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_map,
       PowerSeries.coeff_zero_eq_constantCoeff_apply, h0, map_zero]
   · have h := congrArg (PowerSeries.map φ) (wSer_fixed W).2
-    simpa [map_add, map_mul, map_pow] using h
+    simpa [map_add (f := _), map_mul, map_pow] using h
 
 end W
 
@@ -243,10 +247,10 @@ theorem nu_map : MvPowerSeries.map φ (nu W) = nu (W.map φ) := by
   rw [PowerSeries.map_subst (PowerSeries.HasSubst.X 0), MvPowerSeries.map_X, wSer_map]
 
 theorem cThree_map : MvPowerSeries.map φ (cThree W) = cThree (W.map φ) := by
-  simp [cThree, map_add, map_mul, map_pow, lam_map]
+  simp [cThree, map_add (f := _), map_mul, map_pow, lam_map]
 
 theorem cTwo_map : MvPowerSeries.map φ (cTwo W) = cTwo (W.map φ) := by
-  simp [cTwo, map_add, map_mul, map_pow, lam_map, nu_map, map_ofNat]
+  simp [cTwo, map_add (f := _), map_mul, map_pow, lam_map, nu_map, map_ofNat]
 
 end Map
 
@@ -366,15 +370,12 @@ theorem uThird_map : MvPowerSeries.map φ (uThird W) = uThird (W.map φ) := by
   rw [mv_map_invOfUnit φ (cThree W) 1 1 (by simp [cThree_cc]) (by simp), cThree_map]
 
 theorem wThird_map : MvPowerSeries.map φ (wThird W) = wThird (W.map φ) := by
-  simp [wThird, map_add, map_mul, lam_map, uThird_map, nu_map]
+  simp [wThird, map_add (f := _), map_mul, lam_map, uThird_map, nu_map]
 
 theorem fgl_map : MvPowerSeries.map φ (fgl W) = fgl (W.map φ) := by
   simp only [fgl]
   rw [map_mul, mv_map_invOfUnit φ _ (-1) (-1) (by simpa using dd_cc W) (by simp)]
-  simp [map_add, map_mul, uThird_map, wThird_map]
-
-theorem wSer_univ : wSer W = PowerSeries.map (Univ.φ_of W) (wSer Univ.W₀) := by
-  rw [wSer_map, Univ.map_eq]
+  simp [map_add (f := _), map_mul, uThird_map, wThird_map]
 
 theorem fgl_univ : fgl W = MvPowerSeries.map (Univ.φ_of W) (fgl Univ.W₀) := by
   rw [fgl_map, Univ.map_eq]
@@ -421,7 +422,7 @@ theorem fgl_eq : fgl W = (iSer W).subst (uThird W) := by
   have hs : (iDen W).subst (uThird W) = dd W := by
     unfold iDen
     rw [← PowerSeries.coe_substAlgHom ha]
-    simp only [map_add, map_neg, map_one, map_mul]
+    simp only [map_add (f := _), map_neg, map_one, map_mul]
     rw [PowerSeries.coe_substAlgHom ha, PowerSeries.subst_C, PowerSeries.subst_C,
       PowerSeries.subst_X ha, ← wThird_eq]
   have h1 : (1 : PowerSeries R).subst (uThird W) = 1 := by

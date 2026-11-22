@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglChordFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.SubstBivariateSeriesDifferencePair
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglChordFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupChords.SubstBivariateSeriesDifferencePair
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem main_mv (p : ℕ) [Fact p.Prime] (W : WeierstrassCurve ℂ_[p]) (wq ex :
     rcases mul_eq_zero.1 h5 with h | h
     · exact hX0ne h
     · have h7 := congrArg MvPowerSeries.constantCoeff h
-      rw [map_add, map_one, hDa, map_zero] at h7
+      rw [map_add (f := _), map_one, hDa, map_zero] at h7
       norm_num at h7
   have hP1z : MvPowerSeries.subst ![MvPowerSeries.X 0,
       PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) ℂ_[p]) (iW W wq)] P1 = 0 := by
@@ -123,7 +127,7 @@ theorem main_mv (p : ℕ) [Fact p.Prime] (W : WeierstrassCurve ℂ_[p]) (wq ex :
         PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[p]) (Dser W wq) + 1) = 0 := by
       linear_combination hiD1 - PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[p]) (Dser W wq) * e
     have h7 := congrArg MvPowerSeries.constantCoeff ((mul_eq_zero.1 h5).resolve_left hX1ne)
-    rw [map_add, map_mul, hDb, map_one, map_zero, mul_one, cc_msubst hs0 hφ0 U'] at h7
+    rw [map_add (f := _), map_mul, hDb, map_one, map_zero, mul_one, cc_msubst hs0 hφ0 U'] at h7
     linear_combination h7
   have hP2c : MvPowerSeries.constantCoeff P2 = -1 := by
     have hPP : Pser wq = (MvPowerSeries.X 1 - MvPowerSeries.X 0) *
@@ -137,7 +141,7 @@ theorem main_mv (p : ℕ) [Fact p.Prime] (W : WeierstrassCurve ℂ_[p]) (wq ex :
         PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[p]) wq) = 0 := by
       linear_combination -e
     have h7 := congrArg MvPowerSeries.constantCoeff ((mul_eq_zero.1 h5).resolve_left (pow_ne_zero 2 hX1ne))
-    rw [map_add, cc_psubst hb0, hwq0, map_zero, cc_msubst hs0 hφ0 P2] at h7
+    rw [map_add (f := _), cc_psubst hb0, hwq0, map_zero, cc_msubst hs0 hφ0 P2] at h7
     linear_combination h7
 
   have hwa0 : MvPowerSeries.constantCoeff (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) ℂ_[p]) wq) = 1 := by

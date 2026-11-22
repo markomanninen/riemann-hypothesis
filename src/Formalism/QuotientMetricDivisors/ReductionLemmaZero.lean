@@ -1,22 +1,26 @@
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjTransposeEqOfPosDef
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaSecond
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SpecDet
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionSecondStep
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.VwEqZeroOfNotMem
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionThirdStepMean
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsSum
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.SumInterlacedBoundFails
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TheoremFSharp
+module
+
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjTransposeEqOfPosDef
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaSecond
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SpecDet
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionSecondStep
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.VwEqZeroOfNotMem
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.StatementACE
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsSum
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.SumInterlacedBoundFails
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TheoremFSharp
+
+@[expose] public section
 
 namespace Formalism.DivisionValues
 
 theorem reduction_lemma_zero : GramDeterminantQuotientMetric := gram_determinant_quotient_metric
 theorem lemmaRb : LemmaRb := reduction_lemma_second
 theorem specDet : SpecDet := spectral_determinant_formula
-theorem stepB : StepB := reduction_second_step
 theorem stepA : StepA := reduction_first_step
-theorem stepC : StepC := reduction_third_step
 
 theorem interlace : Formalism.LatticeIndexTer.Interlace := Formalism.LatticeIndexTer.sumInterlacedBound
 

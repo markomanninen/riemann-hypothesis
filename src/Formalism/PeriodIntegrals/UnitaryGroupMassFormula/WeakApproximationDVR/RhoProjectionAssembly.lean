@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeakApproxDVR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.SmOneOfNotIsUnit
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeakApproxDVR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.SmOneOfNotIsUnit
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem rho_projection_assembly : Assembly := by
   let e : ι → E := fun i => z i ^ r * (1 + z i ^ r)⁻¹
   refine ⟨∑ i, e i * y i, fun j => ?_⟩
   have he : ∀ i, iw j (e i) = iw j (z i) ^ r * (1 + iw j (z i) ^ r)⁻¹ := by
-    intro i; simp [e, map_mul, map_pow, map_inv₀, map_add, map_one]
+    intro i; simp [e, map_mul, map_pow, map_inv₀, map_add (f := _), map_one]
 
   have hT : ∀ i, PI.WADVR.Sm (Q j) (ϖ j) K
       ((iw j (e i) - if i = j then 1 else 0) * iw j (y i)) := by
@@ -79,7 +83,8 @@ theorem rho_projection_assembly : Assembly := by
       exact (hsm.mul (hϖ j) (hk i j)).mono (hϖ j) (hrk i j)
   have hsum : iw j (∑ i, e i * y i) - x j =
       (∑ i, (iw j (e i) - if i = j then 1 else 0) * iw j (y i)) + (iw j (y j) - x j) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul, zero_mul,
       Finset.sum_ite_eq', Finset.mem_univ, if_true]
     ring

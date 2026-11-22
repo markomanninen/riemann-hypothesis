@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 
 namespace GlobalTheory.CompanionTheory.Ggeo.LocalLift
@@ -30,7 +35,7 @@ theorem exists_mul_eq_of_isPushout {A B C D : CommRingCat.{0}} {f : A ⟶ B} {g 
     obtain ⟨m₁, hm₁, b₁, e₁⟩ := hx
     obtain ⟨m₂, hm₂, b₂, e₂⟩ := hy
     refine ⟨m₁ * m₂, M.mul_mem hm₁ hm₂, b₁ * f.hom m₂ + b₂ * f.hom m₁, ?_⟩
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     linear_combination h.hom (f.hom m₂) * e₁ + h.hom (f.hom m₁) * e₂
   · intro x _ hx
     obtain ⟨m, hm, b, e⟩ := hx

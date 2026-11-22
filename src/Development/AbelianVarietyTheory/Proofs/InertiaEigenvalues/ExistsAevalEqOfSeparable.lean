@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 namespace GlobalTheory.UnitLemma.PairClass
@@ -70,13 +75,15 @@ theorem trace_σ (K : UQ) (B : InvAlg K) (a : B.A) :
   have hσsum : ∀ y : B.A, B.σ y = ∑ i, K.c (b.repr y i) • B.σ (b i) := by
     intro y
     conv_lhs => rw [← b.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [σsm]
   have hli : LinearIndependent K.E (fun i => B.σ (b i)) := by
     rw [Fintype.linearIndependent_iff]
     intro r hr i
     have h1 := congrArg B.σ hr
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [σsm, B.σ_σ] at h1
     have h2 := (Fintype.linearIndependent_iff.1 b.linearIndependent) _ h1 i
     have := congrArg K.c h2
@@ -92,7 +99,8 @@ theorem trace_σ (K : UQ) (B : InvAlg K) (a : B.A) :
     have : B.σ y = ∑ j, K.c (b.repr y j) • b' j := by
       rw [hσsum y]; simp only [hb']
     rw [this, b'.repr_sum_self]
-  rw [Algebra.trace_eq_matrix_trace b', Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace b', Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace,
     map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, hb', ← map_mul, hrepr]
@@ -146,7 +154,7 @@ theorem exists_herm_model : ∀ (K : UQ) (V : Type) [AddCommGroup V] [Module K.E
   have he' : ∀ y, e (B.g * y) = g (e y) := fun y => he y
   have hadd2 : ∀ x y z, h x (y + z) = h x y + h x z := by
     intro x y z
-    rw [hherm (y + z) x, hadd, map_add, ← hherm y x, ← hherm z x]
+    rw [hherm (y + z) x, hadd, map_add (f := _), ← hherm y x, ← hherm z x]
   have hsm2 : ∀ (c : K.E) x z, h x (c • z) = K.c c * h x z := by
     intro c x z
     rw [hherm (c • z) x, hsm, map_mul, ← hherm z x]
@@ -163,7 +171,7 @@ theorem exists_herm_model : ∀ (K : UQ) (V : Type) [AddCommGroup V] [Module K.E
     · rw [h1, he', he', h2]
   have Sadd : ∀ a b, S a → S b → S (a + b) := by
     intro a b ha hb y z
-    rw [add_mul, map_add, hadd, ha, hb, map_add, add_mul, map_add, hadd2]
+    rw [add_mul, map_add (f := _), hadd, ha, hb, map_add (f := _), add_mul, map_add (f := _), hadd2]
   have Smul : ∀ a b, S a → S b → S (a * b) := by
     intro a b ha hb y z
     rw [mul_assoc, ha, hb, show B.σ b * (B.σ a * z) = B.σ (a * b) * z by rw [map_mul B.σ]; ring]
@@ -171,7 +179,7 @@ theorem exists_herm_model : ∀ (K : UQ) (V : Type) [AddCommGroup V] [Module K.E
     intro q
     induction q using Polynomial.induction_on with
     | C c => rw [aeval_C]; exact Salg c
-    | add p q hp hq => rw [map_add]; exact Sadd _ _ hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact Sadd _ _ hp hq
     | monomial n c ih =>
       rw [pow_succ, ← mul_assoc, map_mul, aeval_X]; exact Smul _ _ ih Sg
   have Sall : ∀ a, S a := by
@@ -181,7 +189,7 @@ theorem exists_herm_model : ∀ (K : UQ) (V : Type) [AddCommGroup V] [Module K.E
 
   let φ : Module.Dual K.E B.A :=
     { toFun := fun y => h (e y) (e 1)
-      map_add' := fun y z => by rw [map_add, hadd]
+      map_add' := fun y z => by rw [map_add (f := _), hadd]
       map_smul' := fun c y => by rw [map_smul, hsm]; rfl }
   have hinj : Function.Injective (Algebra.traceForm K.E B.A) := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']

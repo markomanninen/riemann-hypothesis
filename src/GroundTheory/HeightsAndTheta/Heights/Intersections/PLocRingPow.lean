@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingPow
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StLocRingPow
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -14,8 +19,8 @@ namespace LocRingPow
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 def multiDegWeight (ι : K → Type*) : (Σ k, ι k) → (K → ℕ) := fun p k => if p.1 = k then 1 else 0
 
 theorem weight_multiDegWeight (m : (Σ k, ι k) →₀ ℕ) :
@@ -48,8 +53,8 @@ theorem component_mem [DecidableEq K] {J : Ideal (MRing ι)} (hJ : IsMultiHomogI
   · simp [h]
   · simp [h, funext_iff]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem exists_component_not_mem {J : Ideal (MRing ι)} {f : MRing ι} (hf : f ∉ J) :
     ∃ D : K → ℕ, weightedHomogeneousComponent (multiDegWeight ι) D f ∉ J := by
   by_contra h
@@ -61,8 +66,8 @@ theorem exists_component_not_mem {J : Ideal (MRing ι)} {f : MRing ι} (hf : f �
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem component_mul_right [DecidableEq K] {f g : MRing ι} {i j : K → ℕ}
     (hg : IsWeightedHomogeneous (multiDegWeight ι) g j) :
     weightedHomogeneousComponent (multiDegWeight ι) (i + j) (f * g) =
@@ -71,8 +76,8 @@ theorem component_mul_right [DecidableEq K] {f g : MRing ι} {i j : K → ℕ}
   exact DirectSum.coe_decompose_mul_add_of_right_mem (weightedHomogeneousSubmodule ℤ (multiDegWeight ι))
     ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hg)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem component_mul_of_not_le [DecidableEq K] {f g : MRing ι} {j n : K → ℕ}
     (hg : IsWeightedHomogeneous (multiDegWeight ι) g j) (h : ¬ j ≤ n) :
     weightedHomogeneousComponent (multiDegWeight ι) n (f * g) = 0 := by
@@ -82,8 +87,8 @@ theorem component_mul_of_not_le [DecidableEq K] {f g : MRing ι} {j n : K → �
 
 end LocRingPow
 
-open LocRingPow in
 
+open LocRingPow in
 theorem LocRingPow.proof : LocRingPow.Statement := by
   classical
   intro K _ ι _ P s t a W x u v b y hPp hPh hs hsP hW ht htW hx hu hv huW hvW hy

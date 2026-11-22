@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 
@@ -114,8 +118,7 @@ theorem det_of_mem_KOne {g : GL n k} (h : g ∈ KOne k n) :
     have : (IsLocalRing.residue 𝒪[k]).mapMatrix u.val = 1 := congrArg Units.val hu
     rw [this, det_one]
   convert (residue_eq_iff_lt _ _).1 h1 using 3
-  · exact ((algebraMap 𝒪[k] k).map_det u.val).symm
-  · rfl
+  exact ((algebraMap 𝒪[k] k).map_det u.val).symm
 
 theorem tame_det_of_mem_KOne {μ : kˣ →* ℂˣ} (hμ : IsTame μ) {g : GL n k} (h : g ∈ KOne k n) :
     μ (Matrix.GeneralLinearGroup.det g) = 1 := hμ _ (det_of_mem_KOne h)

@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ComponentFormProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
-import ReciprocityTheory.SemistableReduction.AevalIsWeightedHomogeneous
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HintIntOfBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ComponentFormProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+public import ReciprocityTheory.SemistableReduction.AevalIsWeightedHomogeneous
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HintIntOfBounds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -178,7 +182,8 @@ theorem hint_intNorm (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (sg : K →+* ℂ) (g
   have hIa := hint_logInt_tail hn hmapa hβa hβa0 0
   have hIb := hint_logInt_tail hn hmapb hβb hβb0 0
   refine (hIa.sub hIb).congr ?_
-  filter_upwards [d.norm_at_sg hd h c sg, hint_ae_tail hn hmapb hβb hβb0 0] with z hz hbz
+  filter_upwards [d.norm_at_sg_B hd h c sg, hint_ae_tail hn hmapb hβb hβb0 0] with z hz hbz
+  beta_reduce at hz
   obtain ⟨hfin, -, hcl1, -⟩ := hz
   have hbz' : d.evT sg 0 (d.tOf z) b ≠ 0 := by rw [hint_evT_eq]; exact hbz
   have hprod := hcl1 g a' b 0 hg hb0 hkey hbz'
@@ -201,7 +206,7 @@ theorem hint_line (hd : d.AxH 𝒜) {c : ι} {G : WT} {f g : A c} (hg : g ∈ �
     ⟨f, hf⟩
   have hex : ∃ a : Ω c, f = a • g := ⟨a, by simpa using (congrArg Subtype.val ha).symm⟩
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 variable {d} in
@@ -209,7 +214,7 @@ theorem hint_ratio_self (hd : d.AxH 𝒜) {c : ι} {G : WT} {g : A c} (hg : g �
     (hg0 : g ≠ 0) : ratio (Ω := Ω c) g g = 1 := by
   have hex : ∃ a : Ω c, g = a • g := ⟨1, (one_smul _ _).symm⟩
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have h := hex.choose_spec
   have h2 : (hex.choose - 1) • g = 0 := by rw [sub_smul, one_smul, ← h, sub_self]
   rcases smul_eq_zero.mp h2 with h3 | h3
@@ -300,8 +305,9 @@ theorem hint_intU (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (sg : K →+* ℂ) :
   have I3 := hint_logInt_tail hn hbc0 hαb hαb0 0
   refine (((I1.sub I2).add I3).add
     (integrable_const ((d.delc c : ℝ) * (harmonic d.N : ℝ) / 2))).congr ?_
-  filter_upwards [d.norm_at_sg hd h c sg, hint_ae_tail hn hac0 hαa hαa0 0,
+  filter_upwards [d.norm_at_sg_B hd h c sg, hint_ae_tail hn hac0 hαa hαa0 0,
     hint_ae_tail hn hbc0 hαb hαb0 0] with z hz haz hbz
+  beta_reduce at hz
   obtain ⟨hfin, hcard, -, hcl2⟩ := hz
   set S := d.ST c sg (d.tOf z) with hS
   have hind : ∀ (q : MvPolynomial (Fin (d.D + 1) × Fin (d.N + 1)) ℂ) (α : Fin (d.D + 1) → ℕ),
@@ -357,8 +363,8 @@ theorem hint_intU (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (sg : K →+* ℂ) :
     fun P _ => (ReciprocityTheory.MultiplicativeHeights.Closed.sphereLinLog (d.N + 1) (d.hintU c P)
       (fun h0 => d.hint_U_coord_ne hd c P (by rw [h0]; rfl))).1
   simp only [Pi.add_apply, Pi.sub_apply]
-  rw [integral_congr_ae hpt, integral_add (integrable_const _) (integrable_finset_sum _ hInt),
-    integral_const, integral_finset_sum _ hInt, finsum_mem_eq_finite_toFinset_sum _ hfin]
+  rw [integral_congr_ae hpt, integral_add (integrable_const _) (MeasureTheory.integrable_finsetSum _ hInt),
+    integral_const, MeasureTheory.integral_finsetSum _ hInt, finsum_mem_eq_finite_toFinset_sum _ hfin]
   have hval : ∀ P ∈ hfin.toFinset, ∫ s, Real.log ‖∑ j, (WithLp.ofLp (d.hintU c P)) j *
       spherePoint s j‖ ∂(sphereProb (d.N + 1)) = Real.log ‖d.hintU c P‖ - (harmonic d.N : ℝ) / 2 := by
     intro P _

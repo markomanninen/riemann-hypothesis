@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,9 +26,6 @@ abbrev WK (K : FinExt l) : Type := ↥(OL (unr K))
 
 def embW {K LL : FinExt l} (e : ↥(K0 K) →ₐ[ℚ_[l]] ↥LL.1) : WK K →ₐ[ℤ_[l]] ↥(OL LL) :=
   (e.restrictScalars ℤ_[l]).mapIntegralClosure
-
-theorem coe_embW {K LL : FinExt l} (e : ↥(K0 K) →ₐ[ℚ_[l]] ↥LL.1) (w : WK K) :
-    ((embW e w : ↥(OL LL)) : ↥LL.1) = e (w : ↥(K0 K)) := rfl
 
 theorem embW_injective {K LL : FinExt l} (e : ↥(K0 K) →ₐ[ℚ_[l]] ↥LL.1) : Function.Injective (embW e) :=
   fun _ _ h => Subtype.ext (e.toRingHom.injective (congrArg Subtype.val h))

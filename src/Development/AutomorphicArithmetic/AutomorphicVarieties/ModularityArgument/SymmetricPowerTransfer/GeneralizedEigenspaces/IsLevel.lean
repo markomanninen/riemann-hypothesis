@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryDoubleCosetIndicator
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.RepGApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.UnitaryDoubleCosetIndicator
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.RepGApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,22 +31,22 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
 abbrev Kw (w : Plc L) : Type := w.adicCompletion L
 
-open Classical in
 
+open Classical in
 def secW (n : ℕ) (w : Plc L) : GL (Fin n) (Kw w) →* UA L n :=
   if h : ∃ j : GL (Fin n) (Kw w) →* UA L n, (∀ g, j g ∈ locU n w) ∧ ∀ g, cLoc w (j g) = g then h.choose else 1
 
-variable (L) in
 
+variable (L) in
 def infC (n : ℕ) : UA L n →* (InfinitePlace L → GL (Fin n) ℂ) := Pi.monoidHom fun v => cEmb v.embedding
 
-variable (L) in
 
-def Kall (n : ℕ) : Subgroup (UA L n) := finU L n ⊓ ⨅ w : Plc L, (GlobalTheory.LFun.KGL w n).comap (cLoc w)
+variable (L) in
+def Kall (n : ℕ) : Subgroup (UA L n) := finU (E := L) (n := n) ⊓ ⨅ w : Plc L, (GlobalTheory.LFun.KGL w (n := n)).comap (cLoc w)
 
 variable {n : ℕ}
 
-def IsLevel (U : Subgroup (UA L n)) : Prop := U ≤ Kall L n ∧ IsOpen {x : finU L n | (x : UA L n) ∈ U}
+def IsLevel (U : Subgroup (UA L n)) : Prop := U ≤ Kall L n ∧ IsOpen {x : finU (E := L) (n := n) | (x : UA L n) ∈ U}
 
 def lev (U : Subgroup (UA L n)) (S : Finset (Plc L)) (V : ∀ w : Plc L, Sig.Lev (Kw w)) : Subgroup (UA L n) :=
   U ⊓ ⨅ w ∈ S, ((V w).J n).comap (cLoc w)
@@ -92,43 +96,15 @@ def CompSub (π : Submodule ℂ (UA L n → ℂ)) (w : Plc L) (ψ : Fin n → (K
 def CompEq (π : Submodule ℂ (UA L n → ℂ)) (w : Plc L) (ψ : Fin n → (Kw w)ˣ →* ℂˣ) : Prop :=
   (∀ i, IsSmoothChar (ψ i)) ∧ ∃ τ, Comp π w τ ∧ Nonempty (τ.ρ.Equiv (prinSeries ψ))
 
+
 variable (L) in
-
 abbrev Unr : Prop := ∀ w : Plc L, Algebra.IsUnramifiedAt (𝓞 (Lp L)) w.asIdeal
-
-example (R : Representation ℂ (InfinitePlace L → GL (Fin n) ℂ) V) (U : Subgroup (UA L n)) : IsAF R U 0 :=
-  ⟨fun _ _ _ => rfl, fun _ _ _ => by simp, fun _ _ _ => rfl⟩
 
 end UpperTheory.V.Z.Sym.Dict
 
 namespace UpperTheory.V.Z.Sym
 
 open Dict
-
-def SpecOut : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L], Unr L → ∀ S₀ : Finset (Plc L), Places (S₀ : Set (Plc L)) → HasTwo S₀ →
-    ∀ j : ℕ, 1 ≤ j → ∃ c₀ : ℕ, ∀ c ≥ c₀, ∃ U₂ : Subgroup (UA L 2), IsLevel U₂ ∧
-    ∀ S₁ : Finset (Plc L), Disjoint S₀ S₁ → Places ((S₀ : Set (Plc L)) ∪ S₁) → (∀ w ∈ S₁, locU 2 w ⊓ Kall L 2 ≤ U₂) →
-    ∀ (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (e : InfinitePlace L → ℤ) (φ : UA L 2 → Wt.VD (InfinitePlace L) j), φ ≠ 0 →
-      IsAF (repE j e) (lev (lev (Kall L 2) S₀ (deep c)) S₁ iw) φ →
-      (∀ w ∈ S₀, EigS φ w (deep c w) (a w)) → (∀ w ∈ S₁, EigS φ w (iw w) (a w)) →
-      (∃ φ' : UA L 3 → Wt.VG (InfinitePlace L) j, φ' ≠ 0 ∧ IsAF (Wt.repG _ j) (lev (lev (Kall L 3) S₀ (deep c)) S₁ iw) φ' ∧
-        ∀ w ∈ S₁, EigT φ' w (iw w) ![a w, 1, (a w)⁻¹]) ∨
-      ∃ φ' : UA L 2 → Wt.VD (InfinitePlace L) (2 * j + 1), φ' ≠ 0 ∧ IsAF (repE (2 * j + 1) 0) (lev U₂ S₁ iw) φ' ∧
-        ∀ w ∈ S₁, EigS φ' w (iw w) (a w ^ 2)
-
-def AdLift : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L], Unr L → ∀ (S₀ : Finset (Plc L)) (P : Set (Plc L)),
-    Disjoint (S₀ : Set (Plc L)) P → Places ((S₀ : Set (Plc L)) ∪ P) → HasTwo S₀ →
-    ∀ π : Submodule ℂ (UA L 2 → ℂ), IsAutRepU π → ∀ j : ℕ, 1 ≤ j →
-    (∀ v : InfinitePlace L, ∃ lam, HasWeightAt π v.embedding lam ∧ lam.w 0 - lam.w 1 = j) →
-    (∀ w : Plc L, (∀ w' ∈ S₀, w'.under (𝓞 (Lp L)) ≠ w.under (𝓞 (Lp L))) → IsUnramU π w) →
-    ∀ ψ : ∀ w : Plc L, Fin 2 → (Kw w)ˣ →* ℂˣ, (∀ w ∈ (S₀ : Set (Plc L)) ∪ P, CompEq π w (ψ w)) →
-    (∀ w ∈ P, (∀ i, ∀ u ∈ Hi.Uo (Kw w), ψ w i u = 1) ∧ Reg (ψ w 0 / ψ w 1)) →
-    (∃ σ : Submodule ℂ (UA L 3 → ℂ), IsAutRepU σ ∧
-      ∀ᶠ w in Filter.cofinite, w ∈ P → CompSub σ w ![ψ w 0 / ψ w 1, 1, (ψ w 0 / ψ w 1)⁻¹]) ∨
-    ∃ σ : Submodule ℂ (UA L 2 → ℂ), IsAutRepU σ ∧
-      ∀ᶠ w in Filter.cofinite, w ∈ P → ∃ ψ', CompSub σ w ψ' ∧ ψ' 0 / ψ' 1 = (ψ w 0 / ψ w 1) ^ 2
 
 end UpperTheory.V.Z.Sym
 

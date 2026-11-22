@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ResGContDiffAt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ResGContDiffAt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
+
+@[expose] public section
 
 open Matrix
 
@@ -194,7 +198,34 @@ theorem claim (hRR : RightRuleE) (hLR : LeftRuleCell) (hTC : TorusCell) (hGP : G
       have hts := torus_step hD v₀ g₀ y hTC hGP hg₀ hcell hdiff ⟨m + 1, by omega⟩ P c' hc'
       rw [hT, hts, Pi.add_apply, Pi.smul_apply, hGG' c' hc',
         pOp_locO ⟨m + 1, by omega⟩ (fun c'' hc'' => hGG' c'' hc'') hc', add_comm]
-    rw [(vAB_loc y (m + 1) _ _ hTS c hc).1, (vAB_loc y m _ _ hGG' c hc).1, (vAB_loc y (m + 2) _ _ hGG' c hc).1]
+    have vAB_loc : ∀ (i : ℕ) (f₁ f₂ : (Fin r → ℂ) → E), (∀ c ∈ OmX r, f₁ c = f₂ c) →
+        ∀ c ∈ OmX r, (Q.vAB r y i).1 f₁ c = (Q.vAB r y i).1 f₂ c ∧
+          (Q.vAB r y i).2 f₁ c = (Q.vAB r y i).2 f₂ c := by
+      intro i
+      induction i with
+      | zero =>
+        intro f₁ f₂ h c hc
+        exact ⟨h c hc, rfl⟩
+      | succ i ih =>
+        intro f₁ f₂ h c hc
+        by_cases hi : i < r
+        · simp only [Q.vAB, dif_pos hi]
+          refine ⟨?_, ?_⟩
+          · simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, cOp]
+            rw [(ih f₁ f₂ h c hc).1, (ih f₁ f₂ h c hc).2,
+              pOp_locO _ (fun c' hc' => (ih f₁ f₂ h c' hc').1) hc]
+          · simp only [ciOp]
+            rw [(ih f₁ f₂ h c hc).1]
+        · simp only [Q.vAB, dif_neg hi]
+          exact ih f₁ f₂ h c hc
+    have hl1 := vAB_loc (m + 1)
+      (fun c' => Q.resG k r (Fin.last r) (((T * P : SA E hD) : Module.End ℂ (VS k r 0 D E)) v₀ : Mx k r → E) c' g₀)
+      (pOp ⟨m + 1, by omega⟩ G' + y • G') hTS c hc
+    have hl0 := vAB_loc m
+      (fun c' => Q.resG k r (Fin.last r) ((P : Module.End ℂ (VS k r 0 D E)) v₀ : Mx k r → E) c' g₀) G' hGG' c hc
+    have hl2 := vAB_loc (m + 2)
+      (fun c' => Q.resG k r (Fin.last r) ((P : Module.End ℂ (VS k r 0 D E)) v₀ : Mx k r → E) c' g₀) G' hGG' c hc
+    rw [hl1.1, hl0.1, hl2.1]
     have hpG : pOp ⟨m + 1, by omega⟩ G' ∈ WSm r E := opL_mem ⟨m + 1, by omega⟩ 0 hG'
     rw [(vAB_lin y (m + 1) hpG hG' y).1, (vAB_comm y ⟨m + 1, by omega⟩ (m + 1) le_rfl hG').2.2.1]
     rw [(vAB_succ y (m + 1) (by omega) G').1, (vAB_succ y m (by omega) G').2]

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameHeckeCharacterSplitPlaceLocalComponent
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsLevel
-import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameHeckeCharacterSplitPlaceLocalComponent
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsLevel
+public import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2
 
 set_option maxHeartbeats 1000000 in

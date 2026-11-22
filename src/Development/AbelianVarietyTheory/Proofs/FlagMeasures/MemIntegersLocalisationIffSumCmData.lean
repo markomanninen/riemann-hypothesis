@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.S.Loc ValuativeRel
 open scoped nonZeroDivisors
@@ -94,12 +98,12 @@ theorem mem_O_iff : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Number
       | mem _ hx =>
         obtain ⟨x, rfl⟩ := hx
         obtain ⟨a, b, rfl⟩ := exists_coord hc θ hne x
-        exact ⟨A.ιF a, A.ιF b, by rw [map_add, map_mul, A.compat, A.compat]⟩
+        exact ⟨A.ιF a, A.ιF b, by rw [map_add (f := _), map_mul, A.compat, A.compat]⟩
       | zero => exact ⟨0, 0, by simp⟩
       | add _ _ _ _ h1 h2 =>
         obtain ⟨a, b, rfl⟩ := h1
         obtain ⟨a', b', rfl⟩ := h2
-        exact ⟨a + a', b + b', by rw [map_add, map_add]; ring⟩
+        exact ⟨a + a', b + b', by rw [map_add (f := _), map_add (f := _)]; ring⟩
       | smul c _ _ h1 =>
         obtain ⟨a, b, rfl⟩ := h1
         exact ⟨c * a, c * b, by rw [map_mul, map_mul, Algebra.smul_def]; ring⟩
@@ -109,7 +113,7 @@ theorem mem_O_iff : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Number
         (algebraMap A.Fp A.Ep a + algebraMap A.Fp A.Ep b * A.ιE (t : E)) := by
       have e : A.cj (algebraMap A.Fp A.Ep a + algebraMap A.Fp A.Ep b * A.ιE (θ : E)) =
           algebraMap A.Fp A.Ep a + algebraMap A.Fp A.Ep b * A.ιE (t : E) := by
-        rw [map_add, map_mul, A.cj.commutes, A.cj.commutes, A.cj_ιE, hsig, ht]
+        rw [map_add (f := _), map_mul, A.cj.commutes, A.cj.commutes, A.cj_ιE, hsig, ht]
       rw [← e]; exact hcj
     have hbd : b * A.ιF (d : F) ∈ 𝒪[A.Fp] := by
       apply mem_integer_of_isIntegral A

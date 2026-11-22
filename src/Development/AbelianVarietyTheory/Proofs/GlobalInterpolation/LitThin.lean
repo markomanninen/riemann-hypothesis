@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.MainSup
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsFurther
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitFormulaAndWindowCount
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainSup
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImportsFurther
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitFormulaAndWindowCount
+
+@[expose] public section
 
 namespace GlobalTheory.ThinScaleLiterature
 

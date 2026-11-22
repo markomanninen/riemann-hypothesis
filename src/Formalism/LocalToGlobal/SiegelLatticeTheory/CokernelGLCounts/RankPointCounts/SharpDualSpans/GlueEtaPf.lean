@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAGlueCut
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocGlue
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumAGlueCut
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocGlue
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V]
 
 theorem h_add_right' (H : HermSp M V) (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 theorem h_expand (H : HermSp M V) (x a y b : V) :
     H.h (x + a) (y + b) = H.h x y + H.h x b + H.h a y + H.h a b := by
@@ -80,12 +84,6 @@ theorem hermitian_W0_orthogonal_span (H : HermSp M V) {r : ℕ} (t : Term V M r)
     rw [← hermSp_W0_eq_perp_span_range_MMfam H t]
     exact hn
   exact hn' m hm
-
-theorem ddMk_eq_iff (H : HermSp M V) {r : ℕ} (t : Term V M r) (a b : ↥(MMsharp H t)) :
-    ddMk H t a = ddMk H t b ↔ (a : V) - b ∈ MMo H t := by
-  unfold ddMk
-  rw [Submodule.Quotient.eq, Submodule.mem_comap, map_sub]
-  rfl
 
 theorem dwMk_eq_iff (H : HermSp M V) {r : ℕ} (t : Term V M r) (N : Submodule M.L.O V)
     (a b : ↥(ThSharp H t N)) : dwMk H t N a = dwMk H t N b ↔ (a : V) - b ∈ N := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigCongr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem heckeIdem_mem (hm : ∀ x ∈ U, ∀ y ∈ U, χ (x * y) = χ x * χ y)
   refine Submodule.smul_mem _ _ ?_
   rw [mem_eig]
   intro g hg
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Fintype.sum_equiv (Equiv.mulLeft (⟨g, hg⟩ : U)) _ _ ?_
   intro u
   have h1 : χ (u : H)⁻¹ = χ g * χ (g * u)⁻¹ := by
@@ -119,7 +124,7 @@ theorem heckeIdem_comm [Finite H] (hm : ∀ x ∈ U, ∀ y ∈ U, χ (x * y) = �
       congrArg Subrepresentation.toSubmodule hW'.sup_eq_top
     have hv : v ∈ W.toSubmodule ⊔ W'.toSubmodule := hsup ▸ Submodule.mem_top
     obtain ⟨a, ha, b, hb', rfl⟩ := Submodule.mem_sup.mp hv
-    simp only [map_add, sub W ht a ha, sub W' ht' b hb']
+    simp only [map_add (f := _), sub W ht a ha, sub W' ht' b hb']
 
 end
 

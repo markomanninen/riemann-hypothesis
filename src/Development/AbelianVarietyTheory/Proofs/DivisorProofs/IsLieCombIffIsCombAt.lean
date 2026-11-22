@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -104,8 +108,8 @@ theorem smul_sum_smul_sum {N α β γ : Type} [AddCommGroup N] [Module K N] [Fin
   simp only [Finset.smul_sum, smul_smul, Finset.sum_smul, mul_assoc]
   exact (Finset.sum_congr rfl fun _ _ => Finset.sum_comm).trans Finset.sum_comm
 
-open DeRham Cris in
 
+open DeRham Cris in
 theorem IsKS.of_frChg {Φ : Finset (E →+* ℂ)} {g : ∀ τ : E →+* ℂ, Matrix (Fin (Dw.mult τ)) (Fin (Dw.mult τ)) K}
     {a : K} {y y' : FrPt Xo c K} (h : FrChg g a y y') {x' : Sp (DualNumber K) ⟶ Xo.X} {M' : HIx Dw Φ → K}
     (hM : IsKS Φ y' x' M') : IsKS Φ y x' (ksChg Φ g M') := by
@@ -138,12 +142,13 @@ theorem IsKS.of_frChg {Φ : Finset (E →+* ℂ)} {g : ∀ τ : E →+* ℂ, Mat
   · rw [(key _ _ _ _ fun a' => (key _ _ _ _ (hub' τ.1)).1 (hw a')).1 (isLieComb_lieComb _ _)]
     congr 1
     exact smul_sum_smul_sum _ (fun a' b' => M' ⟨τ, a', b'⟩) _ _
-  · simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hd, smul_eq_mul]
-    by_cases hσ : σ = conjEmb τ.1
-    · subst hσ
-      have := congrFun (congrFun (e (conjEmb τ.1)) k) a
-      simpa [Matrix.mul_apply, Matrix.one_apply] using this
-    · simp [hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hd, smul_eq_mul]
+      by_cases hσ : σ = conjEmb τ.1
+      · subst hσ
+        have := congrFun (congrFun (e (conjEmb τ.1)) k) a
+        simpa [Matrix.mul_apply, Matrix.one_apply] using this
+      · simp [hσ]
 
 theorem isKS_frChg_iff (Φ : Finset (E →+* ℂ)) (g : ∀ τ : E →+* ℂ, Matrix (Fin (Dw.mult τ)) (Fin (Dw.mult τ)) K)
     (a : K) (y y' : FrPt Xo c K) (h : FrChg g a y y') (x' : Sp (DualNumber K) ⟶ Xo.X) (M' : HIx Dw Φ → K) :

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison
+
+@[expose] public section
 
 noncomputable section
 

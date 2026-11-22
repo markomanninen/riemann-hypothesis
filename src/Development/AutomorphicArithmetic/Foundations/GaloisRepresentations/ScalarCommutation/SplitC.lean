@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.T2SpaceAfP
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.ExistsIdempotentHeckeOperatorWithRegularSupportAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.T2SpaceAfP
+
+@[expose] public section
 
 set_option autoImplicit false
 

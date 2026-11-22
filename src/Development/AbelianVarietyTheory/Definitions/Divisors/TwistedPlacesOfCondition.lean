@@ -1,46 +1,50 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
-import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartW
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodGeneric
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LowerLiftsZeroOfWittIdxEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SchurOrthogonalitySquareIntegrable
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TupPrimeEmpty
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelEisensteinContinuationOfDoublingMethod
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RegularisedSiegelWeilFirstTerm
-import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
-import Formalism.LocalToGlobal.IndefiniteReal.RealTB
-import Formalism.LocalToGlobal.IndefiniteReal.RealPins
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+public import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoeffZeroNeOfMonicIrr
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.PartW
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodGeneric
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LowerLiftsZeroOfWittIdxEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SiegelWeilAnisotropicUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.EisRegularAtOfEisPoleLE
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SchurOrthogonalitySquareIntegrable
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.WeilSiegelFormulaUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TupPrimeEmpty
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelEisensteinContinuationOfDoublingMethod
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RegularisedSiegelWeilFirstTerm
+public import Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent
+public import Formalism.LocalToGlobal.IndefiniteReal.RealTB
+public import Formalism.LocalToGlobal.IndefiniteReal.RealPins
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,37 +53,6 @@ open scoped TensorProduct InnerProductSpace Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.PrimIn
-
-structure Hypotheses₂ : Prop where
-  p1 : GlobalTheory.Hk3.HoweUnram
-  p2 : GlobalTheory.Published.CuspRapidDecay
-  p3 : GlobalTheory.Published.HarishChandraFinite
-  p4 : GlobalTheory.Published.WeilRepresentationUnitaryPair
-  p5 : GlobalTheory.Published.GreenCuspidal
-  p6 : GlobalTheory.Published.BernsteinUnitaryProductIrreducible
-  p7 : GlobalTheory.Published.BernsteinZelevinskyFiniteness
-  p8 : GlobalTheory.Published.FlathFactorisation
-  p9 : GlobalTheory.Published.CuspTraceClass
-  p10 : GlobalTheory.Published.RallisInnerProductConvergent
-  p11 : GlobalTheory.Published.SiegelWeilAnisotropicUnitary
-  p12 : GlobalTheory.Published.HeckeLPartialContinuation
-  p13 : GlobalTheory.Published.HermitianLocalGlobal
-  p14 : GlobalTheory.Published.DoublingMethod
-  p15 : GlobalTheory.Published.SchurOrthogonalitySquareIntegrable
-  p16 : GlobalTheory.Published.UnramifiedDoublingGL
-  p17 : GlobalTheory.Published.WeilSiegelFormulaUnitary
-  p18 : GlobalTheory.Published.ZelevinskyPolynomialRing
-  p19 : GlobalTheory.Published.DiscreteSeriesCover
-  p20 : GlobalTheory.Published.CuspidalMirabolic
-  p21 : GlobalTheory.Published.HarishChandraModules
-  p22 : GlobalTheory.Published.SiegelWeilUnitaryConvergent
-  p23 : GlobalTheory.Published.GeometricLemma
-  p24 : GlobalTheory.Published.CasselmanWallach
-  p25 : GlobalTheory.Published.RegularisedSiegelWeilFirstTerm
-  p26 : HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent
-
-theorem Hypotheses₂.eisenstein (h : Hypotheses₂) : GlobalTheory.Published.SiegelEisensteinContinuation :=
-  GlobalTheory.Published.siegelEisensteinContinuation_of_doublingMethod h.p14
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T0 : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T0 D.R.m}
 
@@ -116,12 +89,6 @@ structure TiesG (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat3 D A3 
   oneMap : ∀ i, OneMapRowR T R.toRealDat κ v₀ O (fun i => cj (twAt D.what₂.embLL A3.A.v0) (R.phs i)) i
   cover : GlobalTheory.TwistField.CoverField T R.toRealDat
 
-structure Inputs {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat3 D A3 Ks) (F : Face3 D A3) : Prop where
-  mult : GlobalTheory.CuspMult.MultEq R.toRealDat
-  rallis : GlobalTheory.RawLift.RallisConv D
-  nonVan : ∀ i t, GlobalTheory.DownLift.NonVan R.toRealDat i t
-  rowTest : Formalism.IndefR.Rat.RowTest (R.toCx3 F)
-
 section Real
 
 open Formalism.L2 Formalism.L2.Rows
@@ -132,39 +99,11 @@ variable {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst
   {Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs)} {Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3}
   {S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc}
 
-theorem serClause_of_rec (Rc : Formalism.L2.RecT ex) : SerClause D :=
-  fun k => ⟨_, Rc.T.n.types.O k, Rc.T.n.types.eSer_def k⟩
-
-theorem TiesA.of_real {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (Q : RealT Rc P Dcf Spf Zscf S Ks)
-    (hP : RealPins Q) (ok : P.A3.fam3.Ok3 1) (hex : Q.Rl.toRealDat.ExAt) (par : Nonempty (ParameterChoice' D L))
-    (cc : D.host.ccK = ⊤) (ty : GlobalTheory.IndefiniteRowSideFullHecke.CommutingLevelOperators.GoodTypes Q.Rl.toRealDat) (junk : GlobalTheory.Hk3.InertJunk P.A3)
-    (w1 : ∀ w, (Q.Rl.toCx3 Q.F).W1 Q.F.cr (Q.Rl.num Q.F 0 0) w → w ∈ Q.Rl.twPl)
-    (nV : 8 * D.R.f * D.R.r + 4 ≤ D.R.nV) : TiesA Q.Rl Q.F :=
-  ⟨ok, Q.charW, hex, Q.host, ⟨L, par⟩, cc, hP.qGuard, ty, serClause_of_rec Rc, junk, Q.trSem, Q.stdChar, hP.phsOne, w1, nV⟩
-
-theorem TiesG.of_real (B : RealTB Rc P Dcf Spf Zscf S) (hB : RowsB B) (hU : B.Q.Rl.toRealDat.LUnif)
-    (hC : GlobalTheory.TwistField.CoverField B.T B.Q.Rl.toRealDat) : TiesG B.T B.Q.Rl B.κ B.v₀ B.O :=
-  ⟨⟨B.fw, B.bar⟩, B.pins, B.phase, hU, hB.ioExt, hB.oneMap, hC⟩
-
 end Real
 
 section Api
 
 variable {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat3 D A3 Ks} {F : Face3 D A3}
-
-theorem TiesA.twistedPlaces_of_condition (h : TiesA R F) (C CH : ℝ) : ∀ w, (R.toCx3 F).W1 F.cr (R.num F C CH) w → w ∈ R.twPl := h.w1
-
-theorem TiesA.char3 (h : TiesA R F) : R.Char3 F := RealDat3.characterisation_of_weak h.char h.ex
-
-example (h : TiesA R F) : 4 ≤ D.R.nV := le_trans (Nat.le_add_left _ _) h.nV
-
-example (i : Fin D.R.m) (hi : R.phs i ≠ 1) : ¬ TiesA R F := fun h => hi (h.phs i)
-
-theorem TiesG.phaseTie {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {R : RealDat3 D A3 T.Q.c.F}
-    {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)} {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.toRealDat.MW i σ).Vec}
-    {O : ∀ i, OMDat T.toCore R.toRealDat i Unit (fun _ => A3.A.μ0)} (h : TiesG T R κ v₀ O) (i : Fin D.R.m) :
-    PhaseTie T R.toRealDat κ v₀ O (fun i => cj (twAt D.what₂.embLL A3.A.v0) (R.phs i)) i :=
-  h.phase i h.unif
 
 end Api
 

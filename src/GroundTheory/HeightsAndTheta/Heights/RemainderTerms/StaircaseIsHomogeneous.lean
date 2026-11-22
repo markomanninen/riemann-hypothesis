@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.IsFlagIntegralOne
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagIntegralRealEqMulDdConst
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAtTop
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvPolynomialReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvMonomialReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStepReduction
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealComponent
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealRepresentation
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseComponent
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.IsFlagIntegralOne
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.FlagIntegralRealEqMulDdConst
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvAtTop
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvPolynomialReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvMonomialReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStepReduction
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealComponent
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvIdealRepresentation
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseComponent
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PCoinvStaircaseDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -56,9 +61,11 @@ theorem eval_top (f j k : ℕ) (L : IndefiniteRowSideFullHecke.RestTerms.Roots f
       (∑ m ∈ Finset.Icc 1 (j + k), ∑ b : Fin f, Coinv.bps ℝ f (j + k) m b * Q m b) := by
     rw [← e1, hcomp]
   have hzero : L (G - C c * s) = 0 := by
-    rw [e2, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, map_sum, map_sum]
     refine Finset.sum_eq_zero fun m hm => ?_
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_eq_zero fun b _ => ?_
     have hm1 : 1 ≤ m := (Finset.mem_Icc.mp hm).1
     have hp : (Coinv.bps ℝ f (j + k) m b).IsHomogeneous m :=
@@ -67,13 +74,13 @@ theorem eval_top (f j k : ℕ) (L : IndefiniteRowSideFullHecke.RestTerms.Roots f
     split_ifs with h
     · exact hL m b (Q m b) hm1 (by omega) (hQ m b)
     · exact map_zero L
-  calc L G = L (G - C c * s) + L (C c * s) := by rw [← map_add, sub_add_cancel]
+  calc L G = L (G - C c * s) + L (C c * s) := by rw [← map_add (f := _), sub_add_cancel]
     _ = c * L s := by rw [hzero, zero_add, C_mul', map_smul, smul_eq_mul]
 
 end FlagProportional
 
-open FlagProportional in
 
+open FlagProportional in
 theorem FlagIntegralProportional.intersectionNumber_baseChange : IndefiniteRowSideFullHecke.RestTerms.FlagIntegralProportional.Statement := by
   intro f j k _ _ _ I hI
   set s : IndefiniteRowSideFullHecke.RestTerms.Roots f j k := monomial (Coinv.staircase f (j + k)) 1

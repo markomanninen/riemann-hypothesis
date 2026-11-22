@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+
+@[expose] public section
 
 noncomputable section
 

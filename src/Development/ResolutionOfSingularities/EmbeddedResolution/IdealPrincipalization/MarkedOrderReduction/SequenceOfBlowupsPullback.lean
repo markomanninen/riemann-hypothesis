@@ -1,14 +1,19 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BlowupSequenceFlatBaseChange
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry CategoryTheory.Limits Opposite
@@ -40,7 +45,6 @@ theorem transitionMap_succ (d : BlowupSequenceData X) (i : ℕ) : d.transitionMa
     d.toSequenceOfBlowups.blowupMorphism_eq_transitionMap i
   exact h2.symm.trans h1
 
-@[reassoc]
 theorem transitionMap_zero_comp_isoObjZero_hom (d : BlowupSequenceData X) (n : ℕ) :
     d.transitionMap (Nat.zero_le n) ≫ d.isoZero.hom = d.projectionToBase n := by
   have h := d.toSequenceOfBlowups.projectionToBase_def n
@@ -60,8 +64,8 @@ private theorem append_schemeAt_length_add_succ (s : BlowupSequenceData X) (t : 
 
 def concatObjAddIso (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length)) :
     ∀ i : ℕ, (s.append t).obj (s.length + i) ≅ t.obj i
-  | 0 => eqToIso (append_schemeAt_length_add_zero s t) ≪≫ t.isoZero.symm
-  | (i + 1) => eqToIso (append_schemeAt_length_add_succ s t i)
+  | 0 => eqToIso (by exact append_schemeAt_length_add_zero s t) ≪≫ t.isoZero.symm
+  | (i + 1) => eqToIso (by exact append_schemeAt_length_add_succ s t i)
 
 private theorem eqToHom_comp_blowupMorphism_zero_isoObjZero_cancel {Y : Scheme.{u}} (d : BlowupSequenceData Y) {U V : Scheme.{u}}
     (h1 : U = d.obj 1) (h2 : Y = V) (h3 : V = Y) (h4 : U = d.obj 1) :
@@ -104,7 +108,6 @@ theorem append_blowupMorphism_comp_concatObjAddIso (s : BlowupSequenceData X) (t
   | zero => exact append_blowupMorphism_zero_comp_concatObjAddIso s t
   | succ k => exact append_blowupMorphism_succ_comp_concatObjAddIso s t k
 
-@[reassoc]
 theorem append_transitionMap_comp_concatObjAddIso (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length)) {i i' : ℕ}
     (h : i ≤ i') :
     (s.append t).transitionMap (Nat.add_le_add_left h s.length) ≫ (concatObjAddIso s t i).hom =
@@ -281,7 +284,6 @@ theorem index_length_eq_length {d' : BlowupSequenceData X'} {d : BlowupSequenceD
     (c : SequenceOfBlowupsPullback φ d'.toSequenceOfBlowups d.toSequenceOfBlowups) : c.idx d'.length = d.length := by
   simpa only [BlowupSequenceData.toSequenceOfBlowups_length] using c.idx_length
 
-@[reassoc]
 theorem blowupSequenceData_blowupMorphism_comp_map {d' : BlowupSequenceData X'} {d : BlowupSequenceData X}
     (c : SequenceOfBlowupsPullback φ d'.toSequenceOfBlowups d.toSequenceOfBlowups) (j : ℕ) (hj : j < d'.length) :
     d'.map j ≫ c.map j (le_of_lt hj) =
@@ -345,7 +347,7 @@ def concatMapOfLtLength (s : BlowupSequenceData X) (t : BlowupSequenceData (s.ob
     (e : SequenceOfBlowupsPullback c.lastMap t'.toSequenceOfBlowups t.toSequenceOfBlowups) (j : ℕ) (h : j < s'.length) :
     (s'.append t').obj j ⟶ (s.append t).obj (concatIndex s t s' t' c e j) :=
   eqToHom (BlowupSequenceData.append_schemeAt_of_le_length s' t' (le_of_lt h)) ≫ c.map j (le_of_lt h) ≫
-    eqToHom (append_schemeAt_concatIndex_of_lt s t s' t' c e j h)
+    eqToHom (by exact append_schemeAt_concatIndex_of_lt s t s' t' c e j h)
 
 def concatMapAddLength (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
@@ -362,9 +364,9 @@ def concatMap (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length
     (s'.append t').obj j ⟶ (s.append t).obj (concatIndex s t s' t' c e j) :=
   if h : j < s'.length then concatMapOfLtLength s t s' t' c e j h
   else
-    eqToHom (append_schemeAt_eq_length_add_sub s' t' j (not_lt.1 h)) ≫
-      concatMapAddLength s t s' t' c e (j - s'.length) (sub_length_le_of_le_length_add s' t' j hj) ≫
-      eqToHom (append_schemeAt_concatIndex_of_le s t s' t' c e j (not_lt.1 h))
+    eqToHom (by exact append_schemeAt_eq_length_add_sub s' t' j (not_lt.1 h)) ≫
+      concatMapAddLength s t s' t' c e (j - s'.length) (by exact sub_length_le_of_le_length_add s' t' j hj) ≫
+      eqToHom (by exact append_schemeAt_concatIndex_of_le s t s' t' c e j (not_lt.1 h))
 
 private theorem concatIndex_length_add_length (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     (s' : BlowupSequenceData X') (t' : BlowupSequenceData (s'.obj s'.length))
@@ -1152,14 +1154,14 @@ def concat (s : BlowupSequenceData X) (t : BlowupSequenceData (s.obj s.length))
     SequenceOfBlowupsPullback φ (s'.append t').toSequenceOfBlowups (s.append t).toSequenceOfBlowups where
   idx := concatIndex s t s' t' c e
   map := concatMap s t s' t' c e
-  idx_length := concatIndex_length_add_length s t s' t' c e
-  idx_lt := concatIndex_lt_length_add_length s t s' t' c e
-  idx_strictMono := concatIndex_lt_concatIndex_succ s t s' t' c e
-  isPullback := isPullback_concatMap s t s' t' c e
-  step := toSequenceOfBlowups_blowupMorphism_comp_concatMap s t s' t' c e
-  center_comap := append_center_eq_comap_concatMap s t s' t' c e
-  center_ne_top := append_center_ne_top s t s' t' c e
-  omitted := append_projectionToBase_ne_of_forall_concatIndex_ne s t s' t' c e
+  idx_length := by exact concatIndex_length_add_length s t s' t' c e
+  idx_lt := by exact concatIndex_lt_length_add_length s t s' t' c e
+  idx_strictMono := by exact concatIndex_lt_concatIndex_succ s t s' t' c e
+  isPullback := by exact isPullback_concatMap s t s' t' c e
+  step := by exact toSequenceOfBlowups_blowupMorphism_comp_concatMap s t s' t' c e
+  center_comap := by exact append_center_eq_comap_concatMap s t s' t' c e
+  center_ne_top := by exact append_center_ne_top s t s' t' c e
+  omitted := by exact append_projectionToBase_ne_of_forall_concatIndex_ne s t s' t' c e
 
 end
 

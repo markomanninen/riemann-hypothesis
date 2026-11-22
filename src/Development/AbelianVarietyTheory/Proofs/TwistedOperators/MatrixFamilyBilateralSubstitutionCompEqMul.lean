@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ theorem substF_mul {ι : Type} {N n : ℕ} (h h' : ι → Matrix (Fin N) (Fin N)
   have key : (substF h g).comp (substF h' g') = substF (h * h') (g * g') := by
     refine algHom_ext fun p => ?_
     rw [AlgHom.comp_apply, substF_X, substF_X]
-    simp only [map_sum, map_mul, substF_X, algHom_C, algebraMap_eq, Pi.mul_apply, Matrix.mul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, substF_X, algHom_C, algebraMap_eq, Pi.mul_apply, Matrix.mul_apply,
       Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm' (s := Finset.univ) (t := fun _ => Finset.univ) (t' := Finset.univ) (s' := fun _ => Finset.univ) (by simp)]
     simp only [← Finset.sum_product', Finset.univ_product_univ]

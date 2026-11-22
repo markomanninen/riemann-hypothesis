@@ -1,12 +1,16 @@
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
 
 open NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 
 namespace PositivityTheory.Xgf
 
 theorem isScalarTower_rat_of_ringHom {k k' : Type} [Field k] [NumberField k] [Field k'] [NumberField k'] (f : k →+* k') :
-    letI : Algebra k k' := f.toAlgebra
+    letI : Algebra k k' := f.toAlgebra;
     IsScalarTower ℚ k k' := by
   letI : Algebra k k' := f.toAlgebra
   exact IsScalarTower.of_algebraMap_eq' (Subsingleton.elim _ _)
@@ -25,7 +29,7 @@ theorem exists_extension_embedding_alg_closed : ∀ (k k' A : Type) [Field k] [N
 open Classical in
 theorem card_embeddings_extending {k k' A : Type} [Field k] [NumberField k] [Field k'] [NumberField k'] [Field A] [CharZero A]
     [IsAlgClosed A] (f : k →+* k') (j : k →+* A) :
-    letI : Algebra k k' := f.toAlgebra
+    letI : Algebra k k' := f.toAlgebra;
     (Finset.univ.filter fun j' : k' →+* A => j'.comp f = j).card = Module.finrank k k' := by
   letI : Algebra k k' := f.toAlgebra
   letI : Algebra k A := j.toAlgebra

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdxAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEigenSysOfHeckeLin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdxAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEigenSysOfHeckeLin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -38,7 +43,7 @@ theorem relIndex_map_of_proj_left {X Y : Type} [AddCommGroup X] [AddCommGroup Y]
     rwa [map_sub, sub_eq_zero] at this
   have hy' : (x - P x) + P y ∈ A := add_mem (sub_mem hx (hPA x hx)) (hPA y hy)
   have hMy : M ((x - P x) + P y - y) = 0 := by
-    rw [map_sub, map_add, map_sub, hMP, hMP]; abel
+    rw [map_sub, map_add (f := _), map_sub, hMP, hMP]; abel
   have h2 : P ((x - P x) + P y) = P y := by
     have := hK _ hMy
     rwa [map_sub, sub_eq_zero] at this
@@ -52,9 +57,9 @@ theorem relIndex_map_of_proj_left {X Y : Type} [AddCommGroup X] [AddCommGroup Y]
 
 end GlobalTheory.LocKerMod
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.LFun in
-
 theorem GlobalTheory.LocKerMod.latIndex_embV_inert : ∀ (D : D7) (T : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F))
     (w : HeightOneSpectrum (𝓞 D.host.E)) (h : w.under (𝓞 D.host.F) = v), IsInertAt D.host.F D.host.E v w →
     ∀ g : GlobalTheory.FinZeta.Gv T v, latIndex T (GlobalTheory.FinZeta.embV T v g) = GlobalTheory.LocKerMod.idxAt T w h g := by

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditive
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionOfSmoothVector
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerivedActionAdditive
+
+@[expose] public section
+
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.LinRed GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.CompanionTheory.Hypotheses₂ GlobalTheory.CompanionTheory.Hypotheses₂.HCA
 open scoped InnerProductSpace ContDiff
 
@@ -16,7 +21,7 @@ theorem isSmoothVec_add {u v : H} (hu : IsSmoothVec G π u) (hv : IsSmoothVec G 
     IsSmoothVec G π (u + v) := by
   obtain ⟨F, hF, hF'⟩ := hu
   obtain ⟨K, hK, hK'⟩ := hv
-  exact ⟨fun z => F z + K z, hF.add hK, fun z hz => by rw [map_add, hF' z hz, hK' z hz]⟩
+  exact ⟨fun z => F z + K z, hF.add hK, fun z hz => by rw [map_add (f := _), hF' z hz, hK' z hz]⟩
 
 theorem isSmoothVec_smul (c : ℂ) {v : H} (hv : IsSmoothVec G π v) :
     IsSmoothVec G π (c • v) := by

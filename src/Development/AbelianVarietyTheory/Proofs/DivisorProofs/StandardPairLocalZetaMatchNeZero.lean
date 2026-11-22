@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocPart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocPart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes ValuativeRel
@@ -58,8 +62,8 @@ open GlobalTheory.SplitFlip GlobalTheory.SplitWeil Matrix MeasureTheory
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-open Classical in
 
+open Classical in
 theorem stdA_mul {ν : kˣ →* ℂˣ} {ϖ : kˣ} {c a a' : ℕ} {X : Matrix (Fin a) (Fin (a + a')) k} {g₀ : GL (Fin a) k}
     (hg₀ : g₀.val = blk₁ X) (g : GL (Fin a) k) :
     stdA ν ϖ c a a' (g.val * X) * (ν (gdet g) : ℂ) * apow (gdet g) ((Fintype.card (Fin (a + a')) : ℂ) / 2) =
@@ -92,14 +96,14 @@ theorem stdA_mul {ν : kˣ →* ℂˣ} {ϖ : kˣ} {c a a' : ℕ} {X : Matrix (Fi
       have : gdet g = gdet (g * g₀) * (gdet g₀)⁻¹ := by rw [gdet_mul]; group
       rw [this, apow_mul, apow_of_valuation_eq_one hv, one_mul, apow_inv, neg_div]
     by_cases hc : ∀ i j, ((g₀⁻¹).val * blk₂ X) i j ∈ cball (ϖ ^ c)
-    · rw [if_pos hc, stdA, dif_pos ⟨hdet, hG, hcond.2 hc⟩, hu, hap, map_mul]
+    · rw [if_pos hc, stdA, dite_eq_left ⟨hdet, hG, hcond.2 hc⟩, hu, hap, map_mul]
       simp only [_root_.mul_inv_rev, Units.val_mul, mul_one]
       have h1 : ((ν (gdet g) : ℂˣ) : ℂ) * (((ν (gdet g))⁻¹ : ℂˣ) : ℂ) = 1 := by
         rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
       linear_combination ((((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) * apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2)) * h1
-    · rw [if_neg hc, stdA, dif_neg (fun H => hc (hcond.1 H.2.2))]
+    · rw [if_neg hc, stdA, dite_eq_right (fun H => hc (hcond.1 H.2.2))]
       simp
-  · rw [Set.indicator_of_notMem (by simpa using hS), stdA, dif_neg (fun H => hS ((mem_KO_iff_isGLO _).2 (hb1 ▸ H.2.1)))]
+  · rw [Set.indicator_of_notMem (by simpa using hS), stdA, dite_eq_right (fun H => hS ((mem_KO_iff_isGLO _).2 (hb1 ▸ H.2.1)))]
     simp
 
 end GlobalTheory.StdPairMatch
@@ -109,8 +113,8 @@ open GlobalTheory.SplitFlip GlobalTheory.SplitWeil Matrix MeasureTheory
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-open Classical in
 
+open Classical in
 theorem stdB_mul {ν : kˣ →* ℂˣ} {ϖ : kˣ} {c a a' : ℕ} {Y : Matrix (Fin a') (Fin (a + a')) k} {g₀ : GL (Fin a') k}
     (hg₀ : g₀.val = blk₂ Y) (g : GL (Fin a') k) :
     stdB ν ϖ c a a' (g.val * Y) * (ν (gdet g) : ℂ) * apow (gdet g) ((Fintype.card (Fin (a + a')) : ℂ) / 2) =
@@ -143,14 +147,14 @@ theorem stdB_mul {ν : kˣ →* ℂˣ} {ϖ : kˣ} {c a a' : ℕ} {Y : Matrix (Fi
       have : gdet g = gdet (g * g₀) * (gdet g₀)⁻¹ := by rw [gdet_mul]; group
       rw [this, apow_mul, apow_of_valuation_eq_one hv, one_mul, apow_inv, neg_div]
     by_cases hc : ∀ i j, ((g₀⁻¹).val * blk₁ Y) i j ∈ cball (ϖ ^ c)
-    · rw [if_pos hc, stdB, dif_pos ⟨hdet, hG, hcond.2 hc⟩, hu, hap, map_mul]
+    · rw [if_pos hc, stdB, dite_eq_left ⟨hdet, hG, hcond.2 hc⟩, hu, hap, map_mul]
       simp only [_root_.mul_inv_rev, Units.val_mul, mul_one]
       have h1 : ((ν (gdet g) : ℂˣ) : ℂ) * (((ν (gdet g))⁻¹ : ℂˣ) : ℂ) = 1 := by
         rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
       linear_combination ((((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) * apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2)) * h1
-    · rw [if_neg hc, stdB, dif_neg (fun H => hc (hcond.1 H.2.2))]
+    · rw [if_neg hc, stdB, dite_eq_right (fun H => hc (hcond.1 H.2.2))]
       simp
-  · rw [Set.indicator_of_notMem (by simpa using hS), stdB, dif_neg (fun H => hS ((mem_KO_iff_isGLO _).2 (hb1 ▸ H.2.1)))]
+  · rw [Set.indicator_of_notMem (by simpa using hS), stdB, dite_eq_right (fun H => hS ((mem_KO_iff_isGLO _).2 (hb1 ▸ H.2.1)))]
     simp
 
 end GlobalTheory.StdPairMatch
@@ -161,8 +165,8 @@ open GlobalTheory.SplitFlip GlobalTheory.SplitWeil Matrix MeasureTheory
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable [MeasurableSpace k] [BorelSpace k]
 
-open Classical in
 
+open Classical in
 theorem bigF_stdA {ν : kˣ →* ℂˣ} {ϖ : kˣ} (hϖ : IsUnif ϖ) (c : ℕ) {a a' : ℕ} {X : Matrix (Fin a) (Fin (a + a')) k}
     {g₀ : GL (Fin a) k} (hg₀ : g₀.val = blk₁ X) :
     bigF (haarVol (KO k (Fin a))) ϖ ν (stdA ν ϖ c a a') X =
@@ -175,7 +179,7 @@ theorem bigF_stdA {ν : kˣ →* ℂˣ} {ϖ : kˣ} (hϖ : IsUnif ϖ) (c : ℕ) {
   have hSm : @MeasurableSet (GL (Fin a) k) Units.instMeasurableSpace S := by
     letI : MeasurableSpace (GL (Fin a) k) := Units.instMeasurableSpace
     haveI : BorelSpace (GL (Fin a) k) := borel_GL
-    exact (isOpen_KO.preimage (continuous_mul_right _)).measurableSet
+    exact (isOpen_KO.preimage (continuous_mul_const _)).measurableSet
   have hS1 : (haarVol (KO k (Fin a))).real S = 1 := by
     simp [hSdef, Measure.real, measure_preimage_mul_right, haarVol_self isOpen_KO le_rfl]
   have hint : ∀ g : GL (Fin a) k, stdA ν ϖ c a a' (g.val * X) * (ν (gdet g) : ℂ) *
@@ -210,13 +214,13 @@ theorem bigF_stdA {ν : kˣ →* ℂˣ} {ϖ : kˣ} (hϖ : IsUnif ϖ) (c : ℕ) {
 theorem bigF_stdA_of_det_eq_zero (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) {a a' : ℕ} {X : Matrix (Fin a) (Fin (a + a')) k}
     (hX : (blk₁ X).det = 0) : bigF (haarVol (KO k (Fin a))) ϖ ν (stdA ν ϖ c a a') X = 0 := by
   have h0 : ∀ g : Matrix (Fin a) (Fin a) k, stdA ν ϖ c a a' (g * X) = 0 := fun g => by
-    rw [stdA, dif_neg]
+    rw [stdA, dite_eq_right]
     rintro ⟨hd, -⟩
     exact hd (by rw [blk₁_mul, det_mul, hX, mul_zero])
   simp [bigF, shellSum, shell, h0]
 
-open Classical in
 
+open Classical in
 theorem smallF_stdB {ν : kˣ →* ℂˣ} {ϖ : kˣ} (c : ℕ) {a a' : ℕ} {Y : Matrix (Fin a') (Fin (a + a')) k}
     {g₀ : GL (Fin a') k} (hg₀ : g₀.val = blk₂ Y) :
     smallF (haarVol (KO k (Fin a'))) ν (stdB ν ϖ c a a') Y =
@@ -226,7 +230,7 @@ theorem smallF_stdB {ν : kˣ →* ℂˣ} {ϖ : kˣ} (c : ℕ) {a a' : ℕ} {Y :
   have hSm : @MeasurableSet (GL (Fin a') k) Units.instMeasurableSpace S := by
     letI : MeasurableSpace (GL (Fin a') k) := Units.instMeasurableSpace
     haveI : BorelSpace (GL (Fin a') k) := borel_GL
-    exact (isOpen_KO.preimage (continuous_mul_right _)).measurableSet
+    exact (isOpen_KO.preimage (continuous_mul_const _)).measurableSet
   have hS1 : (haarVol (KO k (Fin a'))).real S = 1 := by
     simp [hSdef, Measure.real, measure_preimage_mul_right, haarVol_self isOpen_KO le_rfl]
   unfold smallF
@@ -238,7 +242,7 @@ theorem smallF_stdB {ν : kˣ →* ℂˣ} {ϖ : kˣ} (c : ℕ) {a a' : ℕ} {Y :
 theorem smallF_stdB_of_det_eq_zero (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) {a a' : ℕ} {Y : Matrix (Fin a') (Fin (a + a')) k}
     (hY : (blk₂ Y).det = 0) : smallF (haarVol (KO k (Fin a'))) ν (stdB ν ϖ c a a') Y = 0 := by
   have h0 : ∀ g : Matrix (Fin a') (Fin a') k, stdB ν ϖ c a a' (g * Y) = 0 := fun g => by
-    rw [stdB, dif_neg]
+    rw [stdB, dite_eq_right]
     rintro ⟨hd, -⟩
     exact hd (by rw [blk₂_mul, det_mul, hY, mul_zero])
   simp [smallF, h0]
@@ -316,69 +320,69 @@ theorem matrixLastColumnBlock_standardFrame_eq_zero {a a' : ℕ} : blk₂ (X0 k 
 
 end GlobalTheory.StdPairMatch
 
-open GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdPairMatch in
-open Classical in
 
+open Classical in
 theorem GlobalTheory.StdPairMatch.bigZetaIntegral_stdA_eq_smallZetaIntegral_stdB : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k]
     (α β ν : kˣ →* ℂˣ) (ϖ : kˣ) (c m a a' : ℕ), GlobalTheory.SplitFlip.IsUnif ϖ → ν = α / β → 1 ≤ c → GlobalTheory.SplitFlip.CondLE ϖ c ν →
     GlobalTheory.SplitFlip.CondLE ϖ m α → GlobalTheory.SplitFlip.CondLE ϖ m β → (∀ x, ‖(α x : ℂ)‖ = 1) → (∀ x, ‖(β x : ℂ)‖ = 1) →
       GlobalTheory.SplitFlip.bigP (GlobalTheory.SplitFlip.haarVol (GlobalTheory.SplitWeil.KO k (Fin a))) ϖ finSumFinEquiv ν β (stdA ν ϖ c a a') =
         GlobalTheory.SplitFlip.smallP (GlobalTheory.SplitFlip.haarVol (GlobalTheory.SplitWeil.KO k (Fin a'))) finSumFinEquiv ν α (stdB ν ϖ c a a') ∧
       GlobalTheory.SplitFlip.bigP (GlobalTheory.SplitFlip.haarVol (GlobalTheory.SplitWeil.KO k (Fin a))) ϖ finSumFinEquiv ν β (stdA ν ϖ c a a') ≠ 0 := by
-  intro k _ _ _ _ _ _ α β ν ϖ c m a a' hϖ hν _ _ _ _ _ _
-  have key : ∀ h : GL (Fin (a + a')) k,
-      bigP (haarVol (KO k (Fin a))) ϖ finSumFinEquiv ν β (stdA ν ϖ c a a') h =
-        smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α (stdB ν ϖ c a a') h := by
-    intro h
-    rw [bigZetaIntegral_eq, smallP]
-    have hJ := det_mul_det_blk (k := k) (a := a) (a' := a') h
-    have hO := blk_orth (k := k) (a := a) (a' := a') h
-    set X := X0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ _) * (invT h).val with hX
-    set Y := Y0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ _) * h.val with hY
-    by_cases hD : (blk₂ Y).det = 0
-    · have hP : (blk₁ X).det = 0 := by
-        rw [hD] at hJ; exact (mul_eq_zero.1 hJ).resolve_left (Units.ne_zero _)
-      rw [bigF_stdA_of_det_eq_zero _ _ _ hP, smallF_stdB_of_det_eq_zero _ _ _ hD]
-      simp
-    · have hP : (blk₁ X).det ≠ 0 := fun h0 => hD (by rw [← hJ, h0, mul_zero])
-      set g₀ := Matrix.GeneralLinearGroup.mkOfDetNeZero (blk₁ X) hP with hg₀
-      set g₁ := Matrix.GeneralLinearGroup.mkOfDetNeZero (blk₂ Y) hD with hg₁
-      rw [bigF_stdA hϖ c (g₀ := g₀) rfl, smallF_stdB c (g₀ := g₁) rfl]
-      have hrel := inv_mul_blk hO (g₀ := g₀) (g₁ := g₁) rfl rfl
-      have hcond : (∀ i j, ((g₀⁻¹).val * blk₂ X) i j ∈ cball (ϖ ^ c)) ↔
-          (∀ i j, ((g₁⁻¹).val * blk₁ Y) i j ∈ cball (ϖ ^ c)) := by
-        rw [hrel]
-        constructor
-        · intro H i j
-          rw [Matrix.neg_apply, Matrix.transpose_apply]
-          exact neg_mem_cball (H j i)
-        · intro H i j
-          have := neg_mem_cball (H j i)
-          rwa [Matrix.neg_apply, Matrix.transpose_apply, neg_neg] at this
-      rw [if_congr hcond rfl rfl]
-      have hdet : gdet g₁ = gdet h * gdet g₀ := Units.ext (by
-        simp only [Units.val_mul, Matrix.GeneralLinearGroup.val_det_apply, hg₀, hg₁,
-          Matrix.GeneralLinearGroup.val_mkOfDetNeZero]
-        exact hJ.symm)
-      rw [hdet, map_mul, apow_mul]
-      set I : ℂ := if ∀ (i : Fin a') (j : Fin a), ((g₁⁻¹).val * blk₁ Y) i j ∈ cball (ϖ ^ c) then 1 else 0 with hI
-      have eA : apow (gdet h) ((Fintype.card (Fin a') : ℂ) / 2) *
-          apow (gdet h) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) = apow (gdet h) (-(a : ℂ) / 2) := by
-        rw [← apow_add]; congr 1; simp only [Fintype.card_fin]; push_cast; ring
-      have eN : (α (gdet h) : ℂ) = (ν (gdet h) : ℂ) * (β (gdet h) : ℂ) := by
-        rw [hν, ← Units.val_mul, MonoidHom.div_apply, div_mul_cancel]
-      have hx : (ν (gdet h) : ℂ) * (((ν (gdet h))⁻¹ : ℂˣ) : ℂ) = 1 := by
-        rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
-      rw [eN]
-      simp only [_root_.mul_inv_rev, Units.val_mul]
-      linear_combination (-(β (gdet h) : ℂ) * (((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) *
-          apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) * I * (ν (gdet h) : ℂ) *
-          (((ν (gdet h))⁻¹ : ℂˣ) : ℂ)) * eA +
-        (-(β (gdet h) : ℂ) * (((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) *
-          apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) * I * apow (gdet h) (-(a : ℂ) / 2)) * hx
-  refine ⟨funext key, fun H => ?_⟩
-  have h1 := congrFun H 1
-  rw [bigZetaIntegral_eq, map_one, Units.val_one, Matrix.mul_one,
-    bigF_stdA hϖ c (g₀ := 1) (by rw [Units.val_one, matrixFirstColumnBlock_standardFrame_eq_one]), matrixLastColumnBlock_standardFrame_eq_zero] at h1
-  have h0 : (0 : k) ∈ cball (ϖ ^ c) := by simp [cball]
-  simp [h0] at h1
+  open GlobalTheory.SplitFlip GlobalTheory.SplitWeil Matrix GlobalTheory.StdPairMatch in
+    intro k _ _ _ _ _ _ α β ν ϖ c m a a' hϖ hν _ _ _ _ _ _
+    have key : ∀ h : GL (Fin (a + a')) k,
+        bigP (haarVol (KO k (Fin a))) ϖ finSumFinEquiv ν β (stdA ν ϖ c a a') h =
+          smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α (stdB ν ϖ c a a') h := by
+      intro h
+      rw [bigZetaIntegral_eq, smallP]
+      have hJ := det_mul_det_blk (k := k) (a := a) (a' := a') h
+      have hO := blk_orth (k := k) (a := a) (a' := a') h
+      set X := X0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ _) * (invT h).val with hX
+      set Y := Y0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ _) * h.val with hY
+      by_cases hD : (blk₂ Y).det = 0
+      · have hP : (blk₁ X).det = 0 := by
+          rw [hD] at hJ; exact (mul_eq_zero.1 hJ).resolve_left (Units.ne_zero _)
+        rw [bigF_stdA_of_det_eq_zero _ _ _ hP, smallF_stdB_of_det_eq_zero _ _ _ hD]
+        simp
+      · have hP : (blk₁ X).det ≠ 0 := fun h0 => hD (by rw [← hJ, h0, mul_zero])
+        set g₀ := Matrix.GeneralLinearGroup.mkOfDetNeZero (blk₁ X) hP with hg₀
+        set g₁ := Matrix.GeneralLinearGroup.mkOfDetNeZero (blk₂ Y) hD with hg₁
+        rw [bigF_stdA hϖ c (g₀ := g₀) rfl, smallF_stdB c (g₀ := g₁) rfl]
+        have hrel := inv_mul_blk hO (g₀ := g₀) (g₁ := g₁) rfl rfl
+        have hcond : (∀ i j, ((g₀⁻¹).val * blk₂ X) i j ∈ cball (ϖ ^ c)) ↔
+            (∀ i j, ((g₁⁻¹).val * blk₁ Y) i j ∈ cball (ϖ ^ c)) := by
+          rw [hrel]
+          constructor
+          · intro H i j
+            rw [Matrix.neg_apply, Matrix.transpose_apply]
+            exact neg_mem_cball (H j i)
+          · intro H i j
+            have := neg_mem_cball (H j i)
+            rwa [Matrix.neg_apply, Matrix.transpose_apply, neg_neg] at this
+        rw [if_congr hcond rfl rfl]
+        have hdet : gdet g₁ = gdet h * gdet g₀ := Units.ext (by
+          simp only [Units.val_mul, Matrix.GeneralLinearGroup.val_det_apply, hg₀, hg₁,
+            Matrix.GeneralLinearGroup.val_mkOfDetNeZero]
+          exact hJ.symm)
+        rw [hdet, map_mul, apow_mul]
+        set I : ℂ := if ∀ (i : Fin a') (j : Fin a), ((g₁⁻¹).val * blk₁ Y) i j ∈ cball (ϖ ^ c) then 1 else 0 with hI
+        have eA : apow (gdet h) ((Fintype.card (Fin a') : ℂ) / 2) *
+            apow (gdet h) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) = apow (gdet h) (-(a : ℂ) / 2) := by
+          rw [← apow_add]; congr 1; simp only [Fintype.card_fin]; push_cast; ring
+        have eN : (α (gdet h) : ℂ) = (ν (gdet h) : ℂ) * (β (gdet h) : ℂ) := by
+          rw [hν, ← Units.val_mul, MonoidHom.div_apply, div_mul_cancel]
+        have hx : (ν (gdet h) : ℂ) * (((ν (gdet h))⁻¹ : ℂˣ) : ℂ) = 1 := by
+          rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
+        rw [eN]
+        simp only [_root_.mul_inv_rev, Units.val_mul]
+        linear_combination (-(β (gdet h) : ℂ) * (((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) *
+            apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) * I * (ν (gdet h) : ℂ) *
+            (((ν (gdet h))⁻¹ : ℂˣ) : ℂ)) * eA +
+          (-(β (gdet h) : ℂ) * (((ν (gdet g₀))⁻¹ : ℂˣ) : ℂ) *
+            apow (gdet g₀) (-(Fintype.card (Fin (a + a')) : ℂ) / 2) * I * apow (gdet h) (-(a : ℂ) / 2)) * hx
+    refine ⟨funext key, fun H => ?_⟩
+    have h1 := congrFun H 1
+    rw [bigZetaIntegral_eq, map_one, Units.val_one, Matrix.mul_one,
+      bigF_stdA hϖ c (g₀ := 1) (by rw [Units.val_one, matrixFirstColumnBlock_standardFrame_eq_one]), matrixLastColumnBlock_standardFrame_eq_zero] at h1
+    have h0 : (0 : k) ∈ cball (ϖ ^ c) := by simp [cball]
+    simp [h0] at h1

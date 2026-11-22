@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+
+@[expose] public section
+
 open scoped Matrix NNReal ComplexConjugate TensorProduct ContDiff
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.Core.Rk.SWLaw GlobalTheory.Core.Rk.SW GlobalTheory.StdUnn
@@ -60,9 +65,9 @@ private theorem scal_gen (σ : E →ₐ[F] E) (μ : E) (hμ : μ ≠ 0)
   let U : (AF F ⊗[F] E)ˣ := ⟨x, x', hxx, by rw [mul_comm]; exact hxx⟩
 
   have hshape : ∀ y, c (e * a + (1 - e) * y) = e * a + (1 - e) * c y := by
-    intro y; rw [map_add, map_mul, map_mul, map_sub, map_one, hce, hca]
+    intro y; rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, hce, hca]
   have hread : ∀ w y, compInf F E w (e * a + (1 - e) * y) = r w ⊗ₜ[F] (1 : E) := by
-    intro w y; rw [map_add, map_mul, map_mul, map_sub, map_one, hie, hia]; ring
+    intro w y; rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, hie, hia]; ring
   let M : (AF F ⊗[F] E)ˣ := Units.map (inclR (AF F) : E →+* AF F ⊗[F] E).toMonoidHom (Units.mk0 μ hμ)
   let P : (AF F ⊗[F] E)ˣ := U * Units.map c.toMonoidHom U
   refine ⟨U, M * P⁻¹, ?_, ?_, ?_⟩
@@ -75,7 +80,7 @@ private theorem scal_gen (σ : E →ₐ[F] E) (μ : E) (hμ : μ ≠ 0)
       _ = inclR (AF F) μ := by rw [h1, mul_one]; rfl
   · intro v
     change compFin F E v x = _
-    rw [hx, map_add, map_mul, map_mul, map_sub, map_one, hfe]; ring
+    rw [hx, map_add (f := _), map_mul, map_mul, map_sub, map_one, hfe]; ring
   · intro w
     set φ := compInf F E w with hφ
     set ρ : w.Completion ⊗[F] E := r w ⊗ₜ[F] (1 : E) with hρdef
@@ -129,7 +134,7 @@ private theorem scal_pos (D : D7) (μ : D.host.E) (hμ : μ ≠ 0) (w : Infinite
     IsCMField.complexEmbedding_complexConj D.host.E (φ : D.host.E →+* ℂ) μ
   rw [h2, map_mul, h3, Complex.mul_conj] at h1
   have h4 : ((InfinitePlace.Completion.ringEquivRealOfIsReal hw (algebraMap D.host.F w.Completion n) : ℝ) : ℂ) = w.embedding n := by
-    simp
+    simp [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
   have h5 : 0 < Complex.normSq (φ μ) := Complex.normSq_pos.2 (by simpa using hμ)
   have h6 := h4.trans h1.symm
   have h7 : (InfinitePlace.Completion.ringEquivRealOfIsReal hw (algebraMap D.host.F w.Completion n) : ℝ) = Complex.normSq (φ μ) := by

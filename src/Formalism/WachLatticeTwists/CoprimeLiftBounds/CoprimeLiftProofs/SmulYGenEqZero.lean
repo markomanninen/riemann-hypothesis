@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.ImportsAlt
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.ImportsAlt
+
+@[expose] public section
 
 open Finset
 

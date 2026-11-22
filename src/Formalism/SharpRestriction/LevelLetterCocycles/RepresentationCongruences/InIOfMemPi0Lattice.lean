@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.IsRhoZeroOfPi0
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.IsRhoZeroOfPi0
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem InFr_add {a : ZMod n} {num den : LetA O n} {f f' : W.EE} (h : InFr W a n
     (h' : InFr W a num den f') : InFr W a num den (f + f') := by
   obtain ⟨u, hu, he⟩ := h
   obtain ⟨u', hu', he'⟩ := h'
-  exact ⟨u + u', add_mem hu hu', by rw [mul_add, he, he', ← map_add, mul_add]⟩
+  exact ⟨u + u', add_mem hu hu', by rw [mul_add, he, he', ← map_add (f := _), mul_add]⟩
 
 theorem InFr_zero {a : ZMod n} {num den : LetA O n} : InFr W a num den 0 :=
   ⟨0, zero_mem _, by simp⟩

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FactorLeProductSeven
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FactorLeProductSeven
+
+@[expose] public section
 
 noncomputable section
 

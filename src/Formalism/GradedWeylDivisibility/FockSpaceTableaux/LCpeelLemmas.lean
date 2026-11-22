@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,7 +17,7 @@ theorem lcpeel_weight_apply {r n : ℕ} (l j : Fin n) (hlj : l ≠ j) (d : Fin r
   induction d using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    simp only [map_add, Finsupp.add_apply, hf, hg]
+    simp only [map_add (f := _), Finsupp.add_apply, hf, hg]
     split_ifs <;> omega
   | single v k =>
     obtain ⟨a, s⟩ := v

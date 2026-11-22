@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.FieldGen
 
@@ -36,7 +40,7 @@ theorem isAlgebraic_adjoin_range_self {k E σ : Type} [Field k] [Field E] [Algeb
     exact hq0 (by rw [← hqq]; rfl)
   refine ⟨Polynomial.C (⟨q', hq'⟩ : A) * Polynomial.X - Polynomial.C ⟨p', hp'⟩, ?_, ?_⟩
   · intro h
-    have h2 := congrArg (fun f => Polynomial.coeff f 1) h
+    have h2 := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f 1) h
     simp at h2
     exact hq'0 (congrArg Subtype.val h2 :)
   · rw [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_C, Polynomial.aeval_X, sub_eq_zero]

@@ -1,7 +1,11 @@
-import ReciprocityTheory.DualLattices.EmbeddingSeparatingGroupStatement
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthOfLengthEigenLengthProduct
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
-import ReciprocityTheory.DualLattices.RankMapLeRank
+module
+
+public import ReciprocityTheory.DualLattices.EmbeddingSeparatingGroupStatement
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthOfLengthEigenLengthProduct
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+public import ReciprocityTheory.DualLattices.RankMapLeRank
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,7 @@ private lemma frob_fix [CharP (IsLocalRing.ResidueField R) p] (z : ℤ_[p]) :
   have key : IsLocalRing.residue R (algebraMap ℤ_[p] R z) =
       ((z.appr 1 : ℕ) : IsLocalRing.ResidueField R) := by
     have e := congrArg (fun w => IsLocalRing.residue R (algebraMap ℤ_[p] R w)) hz
-    simp only [map_add, map_mul, map_pow, map_natCast, hp0, pow_one, mul_zero, add_zero] at e
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, hp0, pow_one, mul_zero, add_zero] at e
     exact e
   rw [key, map_natCast]
 
@@ -177,7 +181,8 @@ private lemma frob_block (hS : HodgeTateSetting p v R O σ cp) [CharP (IsLocalRi
         (frobenius (IsLocalRing.ResidueField R) p) =
         (frobenius (IsLocalRing.ResidueField R) p).mapMatrix
           ((IsLocalRing.residue R).mapMatrix (∑ j, U.εT j)) := by
-      simp only [map_sum, RingHom.mapMatrix_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, RingHom.mapMatrix_apply]
     rw [e, U.εT_sum, map_one, map_one]
   have hF : ∀ j, j ≠ i → (U.εT (U.φ i)).map (IsLocalRing.residue R) *
       ((U.εT j).map (IsLocalRing.residue R)).map (frobenius (IsLocalRing.ResidueField R) p) = 0 := by
@@ -242,7 +247,8 @@ theorem rank_eq_rank_of_perm_and_zero : EigenRankStatement := by
     have hs1 : ∑ i, (U.εT i).map (IsLocalRing.residue R) = 1 := by
       have e : ∑ i, (U.εT i).map (IsLocalRing.residue R) =
           (IsLocalRing.residue R).mapMatrix (∑ i, U.εT i) := by
-        simp only [map_sum, RingHom.mapMatrix_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, RingHom.mapMatrix_apply]
       rw [e, U.εT_sum, map_one]
     exact RankA.sum_finrank (fun i => (U.εT i).map (IsLocalRing.residue R)) horth hs1
   have hseq : ∀ i, ((U.εT i).map (IsLocalRing.residue R)).rank =

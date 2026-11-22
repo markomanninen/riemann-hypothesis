@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
-import GroundTheory.HeightsAndTheta.Heights.ArithDegreeDetIdeal
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherFurther
+module
+
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsAdapted
+public import GroundTheory.HeightsAndTheta.Heights.ArithDegreeDetIdeal
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherFurther
+
+@[expose] public section
 
 noncomputable section
 

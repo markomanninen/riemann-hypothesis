@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementC
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementC
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,12 +106,12 @@ lemma minorF_eq {d : ℕ} (m : Matrix (Fin n) (Fin n) R) {I J : Finset (Fin n)} 
     minorF m I J = (m.submatrix (I.orderEmbOfFin hI) (J.orderEmbOfFin hJ)).det := by
   subst hI
   unfold minorF
-  rw [dif_pos hJ]
+  rw [dite_eq_left hJ]
 
 lemma minorF_ne (m : Matrix (Fin n) (Fin n) R) {I J : Finset (Fin n)} (h : J.card ≠ I.card) :
     minorF m I J = 0 := by
   unfold minorF
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 lemma emb_succAbove {d : ℕ} {J J' : Finset (Fin n)} (h : J.card = d + 1) (j : Fin (d + 1))
     (hJ' : J' = J.erase (J.orderEmbOfFin h j)) (h' : J'.card = d) :
@@ -226,19 +230,6 @@ lemma actF_sub (K K' : Form R n) (m : Matrix (Fin n) (Fin n) R) :
   funext J
   simp only [actF, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
 
-lemma wedgeF_add (K K' : Form R n) (X : Fin n → R) :
-    wedgeF (K + K') X = wedgeF K X + wedgeF K' X := by
-  funext I
-  simp only [wedgeF, Pi.add_apply, mul_add, add_mul, Finset.sum_add_distrib]
-
-lemma wedgeF_smul (c : R) (K : Form R n) (X : Fin n → R) :
-    wedgeF (c • K) X = c • wedgeF K X := by
-  funext I
-  simp only [wedgeF, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro m _
-  ring
-
 lemma contrF_add (K K' : Form R n) (X : Fin n → R) :
     contrF (K + K') X = contrF K X + contrF K' X := by
   funext I
@@ -356,9 +347,9 @@ lemma actF_oneF (m : Matrix (Fin n) (Fin n) R) : actF (oneF : Form R n) m = oneF
   unfold minorF
   by_cases hJ : J = ∅
   · subst hJ
-    rw [dif_pos rfl, if_pos rfl]
+    rw [dite_eq_left rfl, if_pos rfl]
     exact Matrix.det_eq_one_of_card_eq_zero (by first | exact Fintype.card_fin 0 | rfl | decide)
-  · rw [dif_neg, if_neg hJ]
+  · rw [dite_eq_right, if_neg hJ]
     simpa [Finset.card_eq_zero] using hJ
 
 lemma contrF_oneF (Y : Fin n → R) : contrF (oneF : Form R n) Y = 0 := by
@@ -368,34 +359,6 @@ lemma contrF_oneF (Y : Fin n → R) : contrF (oneF : Form R n) Y = 0 := by
 lemma actF_zero (m : Matrix (Fin n) (Fin n) R) : actF (0 : Form R n) m = 0 := by
   funext J
   simp [actF]
-
-theorem actFormMul : FactX2mul := by
-  intro R _ n K m m'
-  constructor
-  · refine form_induction (P := fun K => actF K 1 = K) ?_ ?_ ?_ ?_ K
-    · exact actF_oneF 1
-    · intro K K' h h'
-      try dsimp only at h h' ⊢
-      rw [actF_add, h, h']
-    · intro c K h
-      try dsimp only at h ⊢
-      rw [actF_smul, h]
-    · intro K X h
-      try dsimp only at h ⊢
-      rw [actFormWedge R n K X 1, h, Matrix.vecMul_one]
-  · refine form_induction (P := fun K => actF (actF K m) m' = actF K (m * m')) ?_ ?_ ?_ ?_ K
-    · try dsimp only
-      rw [actF_oneF, actF_oneF, actF_oneF]
-    · intro K K' h h'
-      try dsimp only at h h' ⊢
-      rw [actF_add, actF_add, actF_add, h, h']
-    · intro c K h
-      try dsimp only at h ⊢
-      rw [actF_smul, actF_smul, actF_smul, h]
-    · intro K X h
-      try dsimp only at h ⊢
-      rw [actFormWedge R n K X m, actFormWedge R n (actF K m) (Matrix.vecMul X m) m', h,
-        actFormWedge R n K X (m * m'), Matrix.vecMul_vecMul]
 
 theorem actFormContract : FactX2contr := by
   intro R _ n K Y g

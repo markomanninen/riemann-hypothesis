@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Detlow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hadam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Detlow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hadam
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -22,7 +26,7 @@ private theorem det_pull {L : Type} [Field L] [NumberField L] {N : ℕ} (h : HS 
     rw [mul_right_comm, Complex.star_def, Complex.conj_mul']; push_cast; rfl
   rw [this, Complex.re_ofReal_mul]
 
-private theorem prod_sq {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] (x : 𝓞 L) :
+private theorem prod_sq {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (x : 𝓞 L) :
     ∏ w : InfinitePlace L, (w (x : L)) ^ 2 = ((Algebra.norm ℤ x).natAbs : ℝ) := by
   have h1 := InfinitePlace.prod_eq_abs_norm (x : L)
   have h2 : ∀ w : InfinitePlace L, w.mult = 2 := fun w =>
@@ -33,7 +37,7 @@ private theorem prod_sq {L : Type} [Field L] [NumberField L] [IsTotallyComplex L
   rfl
 
 theorem UpperTheory.V.KT.nrmle :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (h : HS L N) (A : Matrix (Fin N) (Fin N) (𝓞 L)),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (h : HS L N) (A : Matrix (Fin N) (Fin N) (𝓞 L)),
     h ∈ Ry L N → ColsMin A h → A.det ≠ 0 →
     nrmDet A ≤ I0 L N ∧ ∀ w, (mat (pull A h) w).PosSemidef ∧ (∀ a, (mat (pull A h) w a a).re ≤ 1) ∧
       1 ≤ (I0 L N : ℝ) * ‖(mat (pull A h) w).det‖ := by
@@ -70,10 +74,10 @@ theorem UpperTheory.V.KT.nrmle :
   have hle : ∀ w, (nrmDet A : ℝ) * P ≤ (mat (pull A h) w).det.re := fun w => by
     rw [← hprod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]
     exact mul_le_of_le_one_right (hH w).1
-      (Finset.prod_le_one (fun v _ => (hH v).1) (fun v _ => (hH v).2.1))
+      (Finset.prod_le_one₀ (fun v _ => (hH v).1) (fun v _ => (hH v).2.1))
   have hle1 : (nrmDet A : ℝ) * P ≤ 1 := by
     rw [← hprod]
-    exact Finset.prod_le_one (fun v _ => (hH v).1) (fun v _ => (hH v).2.1)
+    exact Finset.prod_le_one₀ (fun v _ => (hH v).1) (fun v _ => (hH v).2.1)
   refine ⟨?_, fun w => ⟨hpsd w, hdiag w, ?_⟩⟩
   · have : (nrmDet A : ℝ) ≤ I0 L N := by
       calc (nrmDet A : ℝ) ≤ nrmDet A * (I0 L N * P) := le_mul_of_one_le_right (by linarith) hlow

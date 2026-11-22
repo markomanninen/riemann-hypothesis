@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -12,7 +16,7 @@ def affineComb {A R : Type} [CommRing A] [CommRing R] (a b c : A →+* R)
   toFun s := a s + b s - c s
   map_one' := by simp
   map_zero' := by simp
-  map_add' s t := by simp only [map_add]; ring
+  map_add' s t := by simp only [map_add (f := _)]; ring
   map_mul' s t := by
     simp only [map_mul]
     linear_combination - h s t - h t s
@@ -202,8 +206,8 @@ end GlobalTheory.MulUnramified
 
 namespace GlobalTheory
 
-open MulUnramified in
 
+open MulUnramified in
 theorem formallyUnramified_mulN (S : Scheme.{0}) (G : Over S) [GrpObj G] [IsCommMonObj G] (n : ℕ)
     (hn : IsUnit (n : Γ(S, ⊤))) : FormallyUnramified (mulN G n).left := by
   refine FormallyUnramified.of_hom_ext _ fun R R₀ φ hφ hsq g₁ g₂ hi hg ↦ ?_

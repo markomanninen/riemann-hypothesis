@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.ExistsInjectionIntoL2Cusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.OpenStab
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.ExistsInjectionIntoL2Cusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.OpenStab
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.PiHomExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.IwahoriCentralBorel.LevLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -44,7 +48,7 @@ private lemma existsNe (π : UnitaryRep G H) (τ : Submodule ℂ H) (hcl : IsClo
   push_neg at hc
   let ρ : Submodule ℂ H :=
     { carrier := {v | v ∈ τ ∧ ∀ y, ⟪v₀, π y v⟫_ℂ = 0}
-      add_mem' := fun ha hb => ⟨τ.add_mem ha.1 hb.1, fun y => by rw [map_add, inner_add_right, ha.2, hb.2, add_zero]⟩
+      add_mem' := fun ha hb => ⟨τ.add_mem ha.1 hb.1, fun y => by rw [map_add (f := _), inner_add_right, ha.2, hb.2, add_zero]⟩
       zero_mem' := ⟨τ.zero_mem, fun y => by simp⟩
       smul_mem' := fun c _ ha => ⟨τ.smul_mem c ha.1, fun y => by rw [map_smul, inner_smul_right, ha.2, mul_zero]⟩ }
   have hρc : IsClosed (ρ : Set H) := by
@@ -75,7 +79,7 @@ private lemma occAbs {Gl V : Type*} [Group Gl] [AddCommGroup V] [Module ℂ V] (
     ∃ F : V →ₗ[ℂ] H, F ≠ 0 ∧ (∀ s, F s ∈ τ ∧ ∀ t ∈ T, t (F s) = F s) ∧ ∀ g s, F (σ g s) = π (L g) (F s) := by
   let Z : Submodule ℂ H :=
     { carrier := {v | v ∈ τ ∧ ∀ t ∈ T, t v = v}
-      add_mem' := fun ha hb => ⟨τ.add_mem ha.1 hb.1, fun t ht => by rw [map_add, ha.2 t ht, hb.2 t ht]⟩
+      add_mem' := fun ha hb => ⟨τ.add_mem ha.1 hb.1, fun t ht => by rw [map_add (f := _), ha.2 t ht, hb.2 t ht]⟩
       zero_mem' := ⟨τ.zero_mem, fun t _ => by simp⟩
       smul_mem' := fun c _ ha => ⟨τ.smul_mem c ha.1, fun t ht => by rw [map_smul, ha.2 t ht]⟩ }
   have hZc : IsClosed (Z : Set H) := by
@@ -138,7 +142,7 @@ private lemma pClm (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] {κ : Measure (arc
   let P : L2 μ →ₗ[ℂ] L2 μ :=
     { toFun := pOp μ κ p
       map_add' := fun a b => by
-        simp only [pOp, map_add, smul_add]
+        simp only [pOp, map_add (f := _), smul_add]
         exact integral_add (pInt μ hp a) (pInt μ hp b)
       map_smul' := fun c a => by
         simp only [pOp, map_smul, RingHom.id_apply]
@@ -186,10 +190,13 @@ end Conc
 
 set_option maxHeartbeats 1000000 in
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.xOcc :
-    ∀ {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (L2 μ)) (κ : Measure (archCompact K 2)) (p : archCompact K 2 → ℂ), CuspIrr μ τ → IdemA κ p → ∀ {r : ℕ} (w : Fin r → Pl K) (ι : GS 2 w →* FA K 2), Function.Injective w → IsEmb w ι → Xs μ τ κ p (im w) ≠ ⊥ → ∀ i,
+    ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (L2 μ)) (κ : Measure (archCompact K 2)) (p : archCompact K 2 → ℂ), CuspIrr μ τ → IdemA κ p → ∀ {r : ℕ} (w : Fin r → Pl K) (ι : GS 2 w →* FA K 2), Function.Injective w → IsEmb w ι → Xs μ τ κ p (im w) ≠ ⊥ → ∀ i,
       ∃ (σ : SmIrr (Gw 2 (w i))) (f : σ.V →ₗ[ℂ] (G1 K 2 → ℂ)), Occurs μ τ (w i) σ ∧ f ≠ 0 ∧ (∀ v, f v ∈ Xs μ τ κ p (im w)) ∧
         ∀ g v, f (σ.ρ g v) = rS ι (Pi.mulSingle i g) (f v) := by
   intro K _ _ _ μ _ τ κ p hτ hp r w ι hw hι hX i
+  haveI : T2Space (G1 K 2) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      infer_instance
   obtain ⟨hmem, hmem2⟩ := xMem μ τ κ p hp
   have hstab := hmem2 hτ w ι hw hι
   obtain ⟨J, hJi, hJ1, hJ2, hJ3⟩ := exists_injection_into_l2_cusp μ τ κ p hτ hp (im w)

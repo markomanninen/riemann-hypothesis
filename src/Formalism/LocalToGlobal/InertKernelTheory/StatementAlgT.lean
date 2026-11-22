@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfLoZero
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfWtPQCast
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfLoZero
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfWtPQCast
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.Counti
 
 theorem midOf_zero (r : ℕ) : midOf (0 : Fin (r + 1 + 1)) = none := by
   unfold midOf
-  rw [dif_neg]
+  rw [dite_eq_right]
   simp
 
 theorem subY_X_zero (A : Type) [CommRing A] (r : ℕ) (a : Fin (r + 1 + 1)) : subY A r (X (a, 0)) = X (a, 0) := by
@@ -108,7 +112,8 @@ theorem subMuP_of (h2 : ExplicitMapOntoTwoLetters) (h5 : TwoLetterLatticeGaussIn
   rw [← tie3 h2 h5 hCO R (r + 1) (by omega) P Q] at hF
   obtain ⟨f, hf, rfl⟩ := hF
   rw [dPsi_apply, f.as_sum]
-  simp only [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun v hv => ?_
   rw [subY_dPsi_monomial, (hf v hv).2]
 

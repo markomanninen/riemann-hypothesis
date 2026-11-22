@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.DataParamsT
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
-import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.DataParamsT
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,18 +69,6 @@ def rowForm (w : SmT (R.MY 0)) (t : Mult.MMap (R.MY 0)) : GA D (Yc D 0) → ℂ 
 def Separates (w : SmT (R.MY 0)) (ρ : G.RealVec) (ξ : Module.Dual ℂ (coefPlus G W.θ).W) : Prop :=
   ∀ t ∈ R.EEat R.triv, t ≠ 0 → ∃ Ψ ∈ Cols G W.θ, ∃ Φ : G.Datum,
     FConv W M ρ ξ Ψ Φ (rowForm R w t) ∧ fPsiPhi W M ρ ξ Ψ Φ (rowForm R w t) ≠ 0
-
-def SeparatesSpan (w : SmT (R.MY 0)) (ρ : G.RealVec) (ξ : Module.Dual ℂ (coefPlus G W.θ).W) : Prop :=
-  ∀ t ∈ R.EEat R.triv, t ≠ 0 → ∃ Ψ ∈ Cols G W.θ, ∃ c : G.Datum →₀ ℂ,
-    (∀ Φ ∈ c.support, FConv W M ρ ξ Ψ Φ (rowForm R w t)) ∧ (c.sum fun Φ a => a * fPsiPhi W M ρ ξ Ψ Φ (rowForm R w t)) ≠ 0
-
-example (w : SmT (R.MY 0)) (ρ : G.RealVec) (h : Separates R W M w ρ 0) : R.EEat R.triv = ⊥ := by
-  refine (Submodule.eq_bot_iff _).2 fun t ht => by_contra fun h0 => ?_
-  obtain ⟨Ψ, -, Φ, -, h2⟩ := h t ht h0
-  refine h2 ?_
-  have e : pairVec (coefPlus G W.θ) 0 Ψ = (0 : ℂ) • pairVec (coefPlus G W.θ) 0 Ψ := by
-    funext x; simp [pairVec_apply]
-  rw [fPsiPhi, e, ← one_smul ℂ (thetaChi W M ρ Φ _), Bplus_smul, zero_mul, zero_mul]
 
 end Main
 

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeTwist
-import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeTwist
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.NsmulEqZeroOfNonemptyAddEquiv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -97,12 +102,14 @@ theorem range_averageMap [Invertible (Fintype.card G : k)] :
 
 theorem averageMap_apply [Invertible (Fintype.card G : k)] (v : V) :
     ρ.averageMap v = ⅟(Fintype.card G : k) • ∑ g : G, ρ g v := by
-  simp [averageMap, GroupAlgebra.average, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [averageMap, GroupAlgebra.average, map_sum, LinearMap.sum_apply]
 
 theorem averageMap_dual [Invertible (Fintype.card G : k)] :
     ρ.dual.averageMap = Module.Dual.transpose (R := k) ρ.averageMap := by
   ext f v
-  rw [averageMap_apply, Module.Dual.transpose_apply, LinearMap.comp_apply, averageMap_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [averageMap_apply, Module.Dual.transpose_apply, LinearMap.comp_apply, averageMap_apply,
     LinearMap.smul_apply, LinearMap.sum_apply, map_smul, map_sum]
   congr 1
   exact Fintype.sum_equiv (Equiv.inv G) _ _ fun g => by simp [Module.Dual.transpose_apply]
@@ -215,7 +222,7 @@ theorem funTensorEquiv_tprod (g : Γ) (t : (X → k) ⊗[k] N) (x : X) :
     rw [Representation.tprod_apply, TensorProduct.map_tmul, funTensorEquiv_tmul, funTensorEquiv_tmul,
       GroundTheory.Global.funPermRep_apply, map_smul]
   | add s t hs ht =>
-    rw [map_add, map_add, Pi.add_apply, hs, ht, map_add, Pi.add_apply, map_add]
+    rw [map_add (f := _), map_add (f := _), Pi.add_apply, hs, ht, map_add (f := _), Pi.add_apply, map_add (f := _)]
 
 theorem map_invariants_funTensorEquiv :
     ((GroundTheory.Global.funPermRep k Γ X).tprod σ).invariants.map
@@ -305,8 +312,8 @@ theorem dualLineEquiv_comm [Module.Finite k M] (g : G) (f : M →ₗ[k] T) :
     dualLineEquiv T M hT ((dualRep T M).ρ g f) = (homRep T M).ρ.dual g (dualLineEquiv T M hT f) :=
   dualLineMap_comm T M hT g f
 
-include hT in
 
+include hT in
 theorem finrank_invariants_dualRep_comp [Module.Finite k M] (P : Subgroup G) [P.Normal]
     (hN : ∀ (g : P) (n : homRep T M), (homRep T M).ρ g n = n)
     {H : Type*} [Group H] (ψ : H →* G) [Fintype ((QuotientGroup.mk' P).comp ψ).range]

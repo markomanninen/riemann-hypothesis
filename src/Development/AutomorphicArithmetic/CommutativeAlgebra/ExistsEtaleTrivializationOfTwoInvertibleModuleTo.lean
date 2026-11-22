@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.PicData
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.PicData
+
+@[expose] public section
+
 open CategoryTheory TensorProduct UpperTheory.PicD
 
 private theorem UpperTheory.PicD.Data.Triv.mapAlg (P : Data) {A : Type} [CommRing A]

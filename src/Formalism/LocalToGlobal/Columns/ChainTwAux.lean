@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwNormLat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwChrOne
-import Formalism.LocalToGlobal.Columns.ChainTwAll
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwNormLat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TwChrOne
+public import Formalism.LocalToGlobal.Columns.ChainTwAll
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 

@@ -1,14 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaOfOfIsCharLab
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRowsRest
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedDataCharacter
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsExponentThetaData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTypesIdempotentCoefficients
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonnegShaOK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ZOfCoeffMem
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaOfOfIsCharLab
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.Lemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerProductPositiveDefinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedDataCharacter
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsExponentThetaData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTypesIdempotentCoefficients
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonnegShaOK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ZOfCoeffMem
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,29 +142,14 @@ variable {R : Ranks} {H : Host R} {what₂ rows' : Rows.Data R} {N : NData R H w
 
 attribute [local instance] factType
 
-theorem TypesTrue.transport {T : NTypes A} {T' : NTypes A'} {P : PiBar H} {W : Omg H} (h : TypesTrue T P W)
-    (h' : TypesTrue T' P W) {Γ Pg : Type} [Group Γ] {κ Y : Pg → Type} [∀ p, CommRing (κ p)] (c : Γ → ℂ)
-    (Q : Fin 2 → Pg → Prop) (eG : Γ → ∀ p, Y p)
-    (act : ∀ (k : Fin 2) (p : Pg), (ZMod (H.g k) ≃+* κ p) → GL (Fin R.r) (ZMod (H.g k)) → Y p)
-    (hr : ∃ (eR : Γ ≃* G0g N) (plg : (Σ k : Fin 2, N.PlG k) ≃ Pg) (iso : ∀ kv, ZMod (H.g kv.1) ≃+* κ (plg kv)),
-      (∀ g, c g = T.e0.coeff (eR g)) ∧ (∀ kv, Q kv.1 (plg kv)) ∧
-        ∀ g kv, eG g (plg kv) = act kv.1 (plg kv) (iso kv) (eR g kv)) :
-    ∃ (eR : Γ ≃* G0g N') (plg : (Σ k : Fin 2, N'.PlG k) ≃ Pg) (iso : ∀ kv, ZMod (H.g kv.1) ≃+* κ (plg kv)),
-      (∀ g, c g = T'.e0.coeff (eR g)) ∧ (∀ kv, Q kv.1 (plg kv)) ∧
-        ∀ g kv, eG g (plg kv) = act kv.1 (plg kv) (iso kv) (eR g kv) := by
-  obtain ⟨eR, plg, iso, h1, h2, h3⟩ := hr
-  exact ⟨eR.trans (grpEquiv A A'), (Equiv.sigmaCongrRight fun k => (plEquiv A A' k).symm).trans plg,
-    fun kv => iso ⟨kv.1, (plEquiv A A' kv.1).symm kv.2⟩, fun g => (h1 g).trans (h.typeIdempotent_coeff_across_layers h' (eR g)).symm,
-    fun kv => h2 ⟨kv.1, (plEquiv A A' kv.1).symm kv.2⟩, fun g kv => h3 g ⟨kv.1, (plEquiv A A' kv.1).symm kv.2⟩⟩
-
 theorem five_le_type (H : Host R) {k : Fin 2} (hc : H.g k % (H.QS * H.q * H.d) = 1) : 5 ≤ H.g k := by
   have h2 := (H.g_prime k).two_le
   have h4 : H.g k % 4 = 1 := by
     rw [← Nat.mod_mod_of_dvd (H.g k) (show 4 ∣ H.QS * H.q * H.d from ((((pow_dvd_pow 2 (Nat.le_add_left 2 _)).trans H.tower_dvd).mul_right _).mul_right _)), hc]
   omega
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def retype [IsEmpty N.Loc] (T : NTypes A) (hl : ∀ k w (p : A.LP w), A.items₂ k w p = (X - 1) ^ A.lpDim p)
     (hi : ∀ w (p : A.LP w) σ, A.inePol p σ = (X - 1) ^ A.lpDim p) (L : ∀ k, LabelDatum (H.g k))
     (ω : Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g N)) →ₐ[ℂ] ℂ) : NTypes A :=
@@ -242,10 +235,10 @@ theorem exists_nStage_grpTrue (hG : GlobalTheory.Published.GreenCuspidal) (B : B
   have hTe : T.e0 = T₀.e0 := rfl
   have htie : T.IdempotentMatchesAction := by
     refine ⟨fun μ => ?_, fun μ j => ?_⟩
-    · rw [hTe, NTypes.onAmb, dif_pos hc]
+    · rw [hTe, NTypes.onAmb, dite_eq_left hc]
       change W.eOp μ = algebraMap ℂ _ (ω _)
       rw [h0, map_zero, hOp]
-    · rw [hTe, NTypes.onMt, dif_pos hc]
+    · rw [hTe, NTypes.onMt, dite_eq_left hc]
       change W.eMt μ j = algebraMap ℂ _ (ω _)
       rw [h0, map_zero, hMt]
   have hy : ∀ x, ∃ y : ↥B.LL0, B.embLL (y : B.LL) = T.e0.coeff x := fun x => by
@@ -281,19 +274,6 @@ theorem exists_nStage_grpTrue (hG : GlobalTheory.Published.GreenCuspidal) (B : B
     etaJ_tie := fun j w h1 h2 => (heta j w h1 h2).trans (Finset.sum_eq_zero fun i _ => hE.elim i).symm },
     hE, hT, ⟨fun k v => above_div f.P (nd.g_split k) v, fun _ => rfl, fun _ _ _ => rfl,
       fun k p => congrFun (congrFun hT₀ k) p⟩, rfl, ω, fun _ _ => rfl, fun _ _ _ => rfl⟩
-
-structure ProvRec {B : Base} {C : Cols B} (W : RowsRest B C) (N : NStage B C W) (f : Fr B.toPre) : Prop where
-  untwisted : ∀ w, W.muAt w = C.mu0
-  eOp : ∀ μ, W.eOp μ = 0
-  eMt : ∀ μ j, W.eMt μ j = 0
-  etaJ : ∀ j w, W.etaJ j w = 0
-  sha : ShaOK B.toPre W.shaLen
-  loc : IsEmpty N.nd.Loc
-  tw : IsEmpty N.ntw.Tw
-  grp : GrpTrue N f
-  plG : N.nd.PlG = fun k => ↥(placesOver B.host.F (B.host.g k))
-  cen : ∃ ω : Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g N.nd)) →ₐ[ℂ] ℂ,
-    (∀ μ z, N.ntypes.cenAmb μ z = algebraMap ℂ _ (ω z)) ∧ ∀ μ j z, N.ntypes.cenMt μ j z = algebraMap ℂ _ (ω z)
 
 end PiLocalization₂
 

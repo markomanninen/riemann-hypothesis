@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtLeafSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtLeafSt
+
+@[expose] public section
 
 namespace GaussValuationUniqueness
 
@@ -7,13 +11,6 @@ open ReciprocityTheory.ChartRestriction.G.T0
 theorem mem_vRing_iff {Ω : Type*} [Field Ω] (v : AddValuation Ω (WithTop ℤ)) (x : Ω) :
     x ∈ vRing v ↔ 0 ≤ v x := by
   rfl
-
-theorem one_le_of_pos {x : WithTop ℤ} (h : 0 < x) : 1 ≤ x := by
-  induction x using WithTop.recTopCoe with
-  | top => exact le_top
-  | coe n =>
-    have h0 : (0 : ℤ) < n := by exact_mod_cast h
-    exact_mod_cast (show (1 : ℤ) ≤ n by omega)
 
 theorem pos_of_not_isUnit {Ω : Type*} [Field Ω] (v : AddValuation Ω (WithTop ℤ))
     (x : vRing v) (hx : ¬ IsUnit x) : 0 < v (x : Ω) := by
@@ -35,7 +32,7 @@ theorem ratio_eq_of {Ω V : Type*} [Field Ω] [AddCommGroup V] [Module Ω V] {f 
     (hg : g ≠ 0) (h : f = a • g) : ratio f g = a := by
   unfold ratio
   have hex : ∃ a : Ω, f = a • g := ⟨a, h⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have h2 := hex.choose_spec
   exact smul_left_injective Ω hg (h.symm.trans h2).symm
 
@@ -55,7 +52,7 @@ theorem eq_of_le_ht {R : Type*} [CommRing R] [IsDomain R] {Q P : Ideal R} [Q.IsP
   have h1 : Q.height < ((1 : ℕ) : ℕ∞) := (Ideal.height_le_iff.mp hP1) Q inferInstance hlt
   have h2 : Q.height = 0 := ENat.lt_one_iff_eq_zero.mp (by exact_mod_cast h1)
   have hmin := Ideal.height_eq_zero_iff.mp h2
-  have hbot : Q ≤ ⊥ := hmin.2 ⟨Ideal.bot_prime, le_refl _⟩ bot_le
+  have hbot : Q ≤ ⊥ := hmin.2 ⟨Ideal.isPrime_bot, le_refl _⟩ bot_le
   exact hQ (le_bot_iff.mp hbot)
 
 theorem sac_same {α : Type*} {n : ℕ} (i : Fin (n + 1)) (x : α) (f : Fin n → α) :

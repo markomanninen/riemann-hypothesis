@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Iwasawa
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Iwasawa
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+
+@[expose] public section
 
 noncomputable section
 

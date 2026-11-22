@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgHomog
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgHomog
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -10,12 +14,53 @@ theorem UpperTheory.V.Fr.alg_sep :
   rw [eq_bot_iff]
   intro p hp
   rw [Submodule.mem_iInf] at hp
+  let comp : lauSub P → ℤ → lauSub P := fun x j =>
+    ⟨AddMonoidAlgebra.single j (x.1.coeff j), single_mem_lauSub P (x.2 j)⟩
+  have coeff_comp (x : lauSub P) (j : ℤ) :
+      (comp x j).1 = AddMonoidAlgebra.single j (x.1.coeff j) := rfl
+  have comp_mem_vertex : ∀ x : lauSub P, x ∈ vertex h → ∀ j, comp x j ∈ vertex h := by
+    intro x hx j
+    change ∃ c ∈ maximalIdeal C, algebraMap C K c = (comp x j).1.coeff 0
+    rw [coeff_comp, AddMonoidAlgebra.coeff_single]
+    by_cases hj : j = 0
+    · subst j
+      rw [Finsupp.single_eq_same]
+      exact hx
+    · exact ⟨0, Ideal.zero_mem _, by rw [Finsupp.single_eq_of_ne' hj, map_zero]⟩
+  have comp_mem_pow : ∀ (N : ℕ) (x : lauSub P), x ∈ vertex h ^ N →
+      ∀ j, comp x j ∈ vertex h ^ N := by
+    intro N
+    induction N with
+    | zero =>
+      intro x hx j
+      rw [pow_zero, Ideal.one_eq_top]
+      exact Submodule.mem_top
+    | succ n ih =>
+      intro x hx
+      rw [pow_succ] at hx
+      refine Submodule.mul_induction_on (C := fun z => ∀ j, comp z j ∈ vertex h ^ (n + 1)) hx ?_ ?_
+      · intro y hy z hz j
+        have e : comp (y * z) j =
+            ∑ i ∈ y.1.coeff.support, comp y i * comp z (-i + j) := by
+          apply Subtype.ext
+          simp only [AddSubmonoidClass.coe_finsetSum, coeff_comp, Subalgebra.coe_mul,
+            AddMonoidAlgebra.single_mul_single, add_neg_cancel_left]
+          rw [AddMonoidAlgebra.coeff_mul_apply_left, Finsupp.sum]
+          exact map_sum (AddMonoidAlgebra.singleAddHom j) _ _
+        rw [e, pow_succ]
+        exact Ideal.sum_mem _ fun i _ => Ideal.mul_mem_mul (ih y hy i) (comp_mem_vertex z hz _)
+      · intro y z hy hz j
+        have e : comp (y + z) j = comp y j + comp z j := by
+          apply Subtype.ext
+          simp only [coeff_comp, Subalgebra.coe_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply,
+            AddMonoidAlgebra.single_add]
+        rw [e]
+        exact add_mem (hy j) (hz j)
   have hcomp : ∀ j : ℤ, (p : AddMonoidAlgebra K ℤ).coeff j = 0 := by
     intro j
-    set a := (p : AddMonoidAlgebra K ℤ).coeff j with ha
-    have hpj : a ∈ P j := (show ∀ i, (p : AddMonoidAlgebra K ℤ).coeff i ∈ P i from p.2) j
-    let q : lauSub P := ⟨AddMonoidAlgebra.single j a, single_mem_lauSub P hpj⟩
-    have hq : ∀ N : ℕ, q ∈ vertex h ^ N := fun N => alg_homog h N p (hp N) j
+    let a := (p : AddMonoidAlgebra K ℤ).coeff j
+    let q := comp p j
+    have hq : ∀ N : ℕ, q ∈ vertex h ^ N := fun N => comp_mem_pow N p (hp N) j
     have hq' : q ∈ ⨅ i : ℕ, (vertex h) ^ i • (⊤ : Submodule (lauSub P) (lauSub P)) := by
       rw [Submodule.mem_iInf]
       intro i

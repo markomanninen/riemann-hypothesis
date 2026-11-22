@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+
+@[expose] public section
+
 open GlobalTheory.BCT PositivityTheory.Rg.BcB.G8.Fin
 open scoped Classical
 
@@ -213,19 +218,19 @@ theorem out_invariant {α : Type} (hΔ : ∀ g, g ∈ Δ ↔ g.1 = g.2 ∧ g.1 �
     G (Quotient.out (DoubleCoset.mk Δ M y)) = G y := by
   obtain ⟨t, ht, l, hl, l', hl', e1, e2⟩ :=
     (mk_eq_iff hΔ hM y (Quotient.out (DoubleCoset.mk Δ M y))).1
-      (DoubleCoset.out_eq' Δ M (DoubleCoset.mk Δ M y)).symm
+      (DoubleCoset.out_eq' (DoubleCoset.mk Δ M y)).symm
   have e : Quotient.out (DoubleCoset.mk Δ M y) = (t * y.1 * l, t * y.2 * l') := Prod.ext e1 e2
   rw [e]
   exact hG t ht l hl l' hl' y.1 y.2
 
-variable (Z L Δ M) in
 
+variable (Z L Δ M) in
 noncomputable def proj (Q : DoubleCoset.Quotient (Δ : Set (H × H)) (M : Set (H × H))) :
     DoubleCoset.Quotient (Z : Set H) (L : Set H) :=
   DoubleCoset.mk Z L (Quotient.out Q).1
 
-variable (Z L Δ M) in
 
+variable (Z L Δ M) in
 noncomputable def lift (q : DoubleCoset.Quotient (Z : Set H) (L : Set H)) (p : H ⧸ L) :
     DoubleCoset.Quotient (Δ : Set (H × H)) (M : Set (H × H)) :=
   DoubleCoset.mk Δ M (Quotient.out q, p.out)
@@ -234,7 +239,7 @@ theorem proj_mk (hΔ : ∀ g, g ∈ Δ ↔ g.1 = g.2 ∧ g.1 ∈ Z) (hM : ∀ g,
     (y : H × H) : proj Z L Δ M (DoubleCoset.mk Δ M y) = DoubleCoset.mk Z L y.1 := by
   obtain ⟨t, ht, l, hl, l', hl', e1, -⟩ :=
     (mk_eq_iff hΔ hM (Quotient.out (DoubleCoset.mk Δ M y)) y).1
-      (DoubleCoset.out_eq' Δ M (DoubleCoset.mk Δ M y))
+      (DoubleCoset.out_eq' (DoubleCoset.mk Δ M y))
   rw [proj, DoubleCoset.eq]
   exact ⟨t, ht, l, hl, e1⟩
 
@@ -242,14 +247,13 @@ theorem proj_lift (hΔ : ∀ g, g ∈ Δ ↔ g.1 = g.2 ∧ g.1 ∈ Z) (hM : ∀ 
     (q : DoubleCoset.Quotient (Z : Set H) (L : Set H)) (p : H ⧸ L) :
     proj Z L Δ M (lift Z L Δ M q p) = q := by
   rw [lift, proj_mk hΔ hM]
-  exact DoubleCoset.out_eq' Z L q
+  exact DoubleCoset.out_eq' q
 
 theorem exists_rep (hΔ : ∀ g, g ∈ Δ ↔ g.1 = g.2 ∧ g.1 ∈ Z) (hM : ∀ g, g ∈ M ↔ g.1 ∈ L ∧ g.2 ∈ L)
     (Q : DoubleCoset.Quotient (Δ : Set (H × H)) (M : Set (H × H))) :
     ∃ h : H, DoubleCoset.mk Δ M (Quotient.out (proj Z L Δ M Q), h) = Q := by
-  obtain ⟨t, ht, l, hl, e⟩ := (DoubleCoset.eq Z L (Quotient.out (proj Z L Δ M Q))
-    (Quotient.out Q).1).1 (DoubleCoset.out_eq' Z L (proj Z L Δ M Q))
-  refine ⟨t⁻¹ * (Quotient.out Q).2, Eq.trans ?_ (DoubleCoset.out_eq' Δ M Q)⟩
+  obtain ⟨t, ht, l, hl, e⟩ := (DoubleCoset.eq).1 (DoubleCoset.out_eq' (proj Z L Δ M Q))
+  refine ⟨t⁻¹ * (Quotient.out Q).2, Eq.trans ?_ (DoubleCoset.out_eq' Q)⟩
   rw [mk_eq_iff hΔ hM]
   exact ⟨t, ht, l, hl, 1, L.one_mem, e, by simp⟩
 

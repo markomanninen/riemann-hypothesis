@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOneLocPf
-import Mathlib.AlgebraicGeometry.PullbackCarrier
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOneLocPf
+public import Mathlib.AlgebraicGeometry.PullbackCarrier
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Polynomial GlobalTheory.EtC

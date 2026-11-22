@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.FibreDualStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,12 +76,12 @@ theorem map_H2_sum {ι : Type*} (s : Finset ι) (u : ι → M →ₗ[R] M') (hu 
     exact map_H2_zero rho rho' _ _
   | insert a s ha ih =>
     have hc : Continuous ((∑ j ∈ s, u j : M →ₗ[R] M') : M → M') := by
-      have := continuous_finset_sum s (fun j _ => hu j)
+      have := continuous_finsetSum s (fun j _ => hu j)
       convert this using 1; ext x; simp
     have he : ∀ g m, (∑ j ∈ s, u j) (rho g m) = rho' g ((∑ j ∈ s, u j) m) := by
       intro g m; simp only [LinearMap.sum_apply, map_sum, hue]
     rw [map_H2_congr rho rho' (Finset.sum_insert ha) hs hse
-        ((hu a).add hc) (fun g m => by simp only [LinearMap.add_apply, hue, he, map_add]),
+        ((hu a).add hc) (fun g m => by simp only [LinearMap.add_apply, hue, he, map_add (f := _)]),
       map_H2_add rho rho' _ _ (hu a) (hue a) hc he, ih hc he, Finset.sum_insert ha]
 
 end Functor
@@ -108,7 +112,7 @@ def phi (M : Type) [AddCommGroup M] [Module O M] [TopologicalSpace M] [IsTopolog
         LinearMap.toSpanSingleton O M (m + m') =
           LinearMap.toSpanSingleton O M m + LinearMap.toSpanSingleton O M m')
       (cont_span M _) (span_twist ε M _) ((cont_span M m).add (cont_span M m'))
-      (fun g a => by simp only [LinearMap.add_apply, span_twist, map_add]),
+      (fun g a => by simp only [LinearMap.add_apply, span_twist, map_add (f := _)]),
       map_H2_add _ _ _ _ (cont_span M m) (span_twist ε M m) (cont_span M m') (span_twist ε M m')]
     rfl
   map_smul' c m := by
@@ -161,8 +165,8 @@ theorem cont_sum {ι M M' : Type} [AddCommGroup M] [Module O M] [TopologicalSpac
     [AddCommGroup M'] [Module O M'] [TopologicalSpace M'] [IsTopologicalAddGroup M']
     (s : Finset ι) (u : ι → M →ₗ[O] M') (hu : ∀ j, Continuous (u j)) :
     Continuous ((∑ j ∈ s, u j : M →ₗ[O] M') : M → M') := by
-  have := continuous_finset_sum s (fun j _ => hu j)
-  convert this using 1; ext x; simp
+  have h := continuous_finsetSum s (fun j _ => hu j)
+  convert h using 1 <;> ext x <;> simp only [LinearMap.sum_apply, Finset.sum_apply]
 
 theorem bijective_of_retract (M : Type) [AddCommGroup M] [Module O M] [TopologicalSpace M]
     [IsTopologicalAddGroup M] [ContinuousConstSMul O M] [ContinuousSMul O M]
@@ -209,7 +213,8 @@ theorem bijective_of_retract (M : Type) [AddCommGroup M] [Module O M] [Topologic
         map_H2_comp (twist ε M) (twist ε (N' i)) (twist ε M) (p' i) (hp' i) (twist_equiv ε _) (s' i)
           (hs' i) (twist_equiv ε _)]
       rfl
-    rw [map_add, map_sum, map_sum, Finset.sum_congr rfl (fun j _ => k1 j),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, map_sum, Finset.sum_congr rfl (fun j _ => k1 j),
       Finset.sum_congr rfl (fun i _ => k2 i), ← LinearMap.sum_apply, ← LinearMap.sum_apply,
       ← map_H2_sum (twist ε M) (twist ε M) _ _ _ _ (cont_sum _ _ fun j => (hs j).comp (hp j))
         (twist_equiv ε _),

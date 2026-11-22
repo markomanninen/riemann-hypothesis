@@ -1,23 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceLocalComponentExistsUniqueClassStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteUnitaryAutFormEqZeroOfFinitePointsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLocUniqueOfIsSplitAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHomTrivOutsideLoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfSupportedAtSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceLocalComponentExistsUniqueClassStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteUnitaryAutFormEqZeroOfFinitePointsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLocUniqueOfIsSplitAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHomTrivOutsideLoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfSupportedAtSplit
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host GlobalTheory.HeightCounting NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.FormDict GlobalTheory.DefiniteBC
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 noncomputable section
 namespace GlobalTheory.SplitDict
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
-
-local notation3 "L⁺" => maximalRealSubfield L
+local notation3 "L⁺" => NumberField.maximalRealSubfield L
 
 theorem under_w (s : SplitPlace L) : s.w.under (𝓞 L⁺) = s.v := by
   ext1
@@ -32,7 +36,7 @@ theorem exists_basis : ∃ b : Module.Basis (Fin 2) L⁺ L, b 0 = 1 := by
     rw [LinearIndependent.pair_iff]
     intro a t h
     have h' := congrArg (IsCMField.complexConj L) h
-    simp only [Algebra.smul_def, map_add, map_mul, AlgEquiv.commutes, map_one, map_zero] at h h'
+    simp only [Algebra.smul_def, map_add (f := _), map_mul, AlgEquiv.commutes, map_one, map_zero] at h h'
     have hd : algebraMap L⁺ L t * (e - IsCMField.complexConj L e) = 0 := by
       linear_combination h - h'
     have ht : t = 0 := by
@@ -59,7 +63,7 @@ theorem kappa_eq_zero (F : FinIso L n) (u : HeightOneSpectrum (𝓞 L)) (z : AL 
     exact hz
   have h2 : b 1 ⊗ₜ[L⁺] B = (b 1 ⊗ₜ[L⁺] (1 : AFplus L)) * ((1 : L) ⊗ₜ[L⁺] B) := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-  rw [hAB, h2, map_add, map_mul]
+  rw [hAB, h2, map_add (f := _), map_mul]
   change F.κ (1 ⊗ₜ A) u + F.κ (b 1 ⊗ₜ 1) u * F.κ (1 ⊗ₜ B) u = 0
   rw [hi', hi', hAB0.1, hAB0.2, map_zero, mul_zero, add_zero]
 
@@ -87,13 +91,12 @@ theorem j_mem_locU (F : FinIso L n) (s : SplitPlace L) (y : GAf L n) (hy : TrivO
   rw [sub_eq_zero] at h3
   rw [h3]
   simp only [Units.val_one, Matrix.one_apply]
-  split_ifs <;> simp
+  split_ifs <;> simp <;> rfl
 end GlobalTheory.SplitDict
 
 namespace GlobalTheory.SplitDict
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
-
-local notation3 "L⁺" => maximalRealSubfield L
+local notation3 "L⁺" => NumberField.maximalRealSubfield L
 
 theorem kappa_split (F : FinIso L n) (s : SplitPlace L) (i : s.v.adicCompletion L⁺ ≃+* s.w.adicCompletion L)
     (hic : Continuous i) (hi : ∀ x : L, i (s.i x) = algebraMap L (s.w.adicCompletion L) x) (z : AL L) :
@@ -113,9 +116,9 @@ theorem kappa_split (F : FinIso L n) (s : SplitPlace L) (i : s.v.adicCompletion 
     (HeightOneSpectrum.denseRange_algebraMap L⁺ s.v).induction_on (p := fun a => i' a = i a) a
       (isClosed_eq hic' hic) fun k => by rw [hL, hR]
   induction z using TensorProduct.induction_on with
-  | zero => simp
+  | zero => simp <;> rfl
   | add x y hx hy =>
-    rw [map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]
     change F.κ x s.w + F.κ y s.w = _
     rw [hx, hy]
   | tmul l a =>
@@ -186,7 +189,7 @@ theorem locComp_agree : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (
   let R : U →ₗ[ℂ] (GAf L n → ℂ) := (LinearMap.funLeft ℂ ℂ F.j).comp U.subtype
   have hRinj : Function.Injective R := by
     refine (injective_iff_map_eq_zero R).2 fun φ hφ => ?_
-    have h0 : ∀ y ∈ finU L n, (φ : UA L n → ℂ) y = 0 := fun y hy => by
+    have h0 : ∀ y ∈ finU (E := L) (n := n), (φ : UA L n → ℂ) y = 0 := fun y hy => by
       obtain ⟨x, rfl⟩ := F.onto y hy
       exact congrFun hφ x
     exact Subtype.ext (GlobalTheory.T.definiteUnitaryAutForm_eq_zero_of_finitePoints L n φ (hD.1.aut φ φ.2) h0)

@@ -1,4 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RelevantMonotoneOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerFourthCondition
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 

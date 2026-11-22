@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementA
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpTwA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.TwistedSlicesSquareIntegrable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementA
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpTwA
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.Rs.ParabolicProjection
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem mulChi_absC_neg (n : ℕ) (z : ℂ) (φ : Sm E n) :
     mulChi n (Model.absC E (-z)) (mulChi n (Model.absC E z) φ) = φ := by
@@ -23,7 +27,7 @@ theorem mulChi_absC_neg' (n : ℕ) (z : ℂ) (φ : Sm E n) :
   have h := mulChi_absC_neg n (-z) φ
   rwa [neg_neg] at h
 
-theorem isStable_tw {n : ℕ} {U : Submodule ℂ (Sm E n)} (hU : IsStable U) (z : ℂ) : IsStable (tw U z) := by
+theorem isStable_tw {n : ℕ} {U : Submodule ℂ (Sm E n)} (hU : _root_.GlobalTheory.CuspRep.IsStable U) (z : ℂ) : _root_.GlobalTheory.CuspRep.IsStable (tw U z) := by
   rintro o _ ⟨φ, hφ, rfl⟩
   exact ⟨_, add_mem (U.smul_mem _ (hU o φ hφ)) (U.smul_mem _ hφ), (act_mulChi _ o φ).symm⟩
 
@@ -33,11 +37,11 @@ def twMap (n : ℕ) (z : ℂ) (f : Sm E n →ₗ[ℂ] Sm E n) : Sm E n →ₗ[�
 theorem twMap_apply (n : ℕ) (z : ℂ) (f : Sm E n →ₗ[ℂ] Sm E n) (φ : Sm E n) :
     twMap n z f φ = mulChi n (Model.absC E z) (f (mulChi n (Model.absC E (-z)) φ)) := rfl
 
-theorem twMap_equiv {n : ℕ} {z : ℂ} {U : Submodule ℂ (Sm E n)} (_hU : IsStable U) {f : Sm E n →ₗ[ℂ] Sm E n}
+theorem twMap_equiv {n : ℕ} {z : ℂ} {U : Submodule ℂ (Sm E n)} (_hU : _root_.GlobalTheory.CuspRep.IsStable U) {f : Sm E n →ₗ[ℂ] Sm E n}
     (hf : ∀ o, ∀ ψ ∈ U, f (act o ψ) = act o (f ψ)) : ∀ o, ∀ ψ ∈ tw U z, twMap n z f (act o ψ) = act o (twMap n z f ψ) := by
   rintro o _ ⟨φ, hφ, rfl⟩
   change twMap n z f (act o (mulChi n (Model.absC E z) φ)) = act o (twMap n z f (mulChi n (Model.absC E z) φ))
-  rw [twMap_apply, twMap_apply, mulChi_absC_neg, act_mulChi, mulChi_absC_neg, map_add, map_smul, map_smul, hf o φ hφ,
+  rw [twMap_apply, twMap_apply, mulChi_absC_neg, act_mulChi, mulChi_absC_neg, map_add (f := _), map_smul, map_smul, hf o φ hφ,
     act_mulChi]
 
 theorem twMap_mem {n : ℕ} {z : ℂ} {U W : Submodule ℂ (Sm E n)} {f : Sm E n →ₗ[ℂ] Sm E n} (hf : ∀ ψ ∈ U, f ψ ∈ W) :
@@ -133,7 +137,8 @@ theorem step_left {n : ℕ} {ψ₁ : Fin n → Sm E r} {ψ₂ : Fin n → Sm E s
   apply Subtype.ext
   funext b
   have := hc b
-  simpa [map_sum, Submodule.coe_sum, Finset.sum_apply, mul_comm] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, Submodule.coe_sum, Finset.sum_apply, mul_comm] using this
 
 theorem step_right {n : ℕ} {ψ₁ : Fin n → Sm E r} {ψ₂ : Fin n → Sm E s} {m₁ : GA E r} (f : Sm E s →ₗ[ℂ] Sm E s)
     (h : f (∑ i, (ψ₁ i).1 m₁ • ψ₂ i) ≠ 0) : ∃ b₂, ∑ i, (ψ₁ i).1 m₁ * (f (ψ₂ i)).1 b₂ ≠ 0 := by
@@ -143,12 +148,13 @@ theorem step_right {n : ℕ} {ψ₁ : Fin n → Sm E r} {ψ₂ : Fin n → Sm E 
   apply Subtype.ext
   funext b
   have := hc b
-  simpa [map_sum, Submodule.coe_sum, Finset.sum_apply] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, Submodule.coe_sum, Finset.sum_apply] using this
 
 theorem inj_of_irred {N : ℕ} {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) {T : Sm E N →ₗ[ℂ] Sm E N}
     (hT : ∀ o, ∀ φ ∈ V, T (act o φ) = act o (T φ)) (hne : ∃ φ ∈ V, T φ ≠ 0) : ∀ φ ∈ V, T φ = 0 → φ = 0 := by
   intro φ hφ h0
-  have hW : IsStable (V ⊓ LinearMap.ker T) := fun o ψ hψ => by
+  have hW : _root_.GlobalTheory.CuspRep.IsStable (V ⊓ LinearMap.ker T) := fun o ψ hψ => by
     rw [Submodule.mem_inf, LinearMap.mem_ker] at hψ ⊢
     exact ⟨hV.stable o ψ hψ.1, by rw [hT o ψ hψ.1, hψ.2, map_zero]⟩
   rcases hV.irred _ inf_le_left hW with h | h

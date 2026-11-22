@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemFormsIffExistsEquivariantExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeIncidenceFiniteFibresStableStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UopIsExtStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainTransitionIsExtKernelSumStatement
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.DoubleCosetDecompositionAll
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemFormsIffExistsEquivariantExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeIncidenceFiniteFibresStableStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UopIsExtStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainTransitionIsExtKernelSumStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Classical NumberField GlobalTheory.LvT
 open Formalism.MainNotions.product_first_zeroth_parts (Ow tops wsum ten blk nfAll CSpan IntSpan Nm_succ wSh cTw)
 
@@ -87,7 +92,8 @@ theorem levelChainUOperatorCommutation_of_pointPairLaw : ∀ (D : D7) (u : D.wha
   have hL : ∀ c, K.k (M.rep c) (M'.rep c') (∑ᶠ p₁ ∈ {p₁ | M.Inc v (M.rep c) p₁}, Φ p₁) =
       ∑ᶠ p₁ ∈ {p₁ | M.Inc v (M.rep c) p₁}, K.k (M.rep c) (M'.rep c') (Φ p₁) := by
     intro c
-    rw [finsum_mem_eq_finite_toFinset_sum _ (hfinI _).1, finsum_mem_eq_finite_toFinset_sum _ (hfinI _).1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [finsum_mem_eq_finite_toFinset_sum _ (hfinI _).1, finsum_mem_eq_finite_toFinset_sum _ (hfinI _).1, map_sum]
   simp only [hL, hwt]
   rw [key, finsum_mem_eq_finite_toFinset_sum _ (hfinI' _).1, Finset.sum_comm, Finset.smul_sum]
   refine Finset.sum_congr rfl fun c _ => ?_

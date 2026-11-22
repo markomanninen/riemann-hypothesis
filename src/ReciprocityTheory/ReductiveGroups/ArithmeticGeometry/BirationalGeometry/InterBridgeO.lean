@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeJ
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeJ
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem eval_smul_of_isHomogeneous {n : ℕ} {c : MvPolynomial (Fin n) ℂ} {m :
     eval (fun i => t * v i) c = t ^ m * eval v c := by
   conv_lhs => rw [c.as_sum]
   conv_rhs => rw [c.as_sum]
-  simp only [map_sum, Finset.mul_sum, eval_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum, eval_monomial]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdeg : ∑ i ∈ d.support, d i = m := by
     have h1 := hc (mem_support_iff.mp hd)
@@ -32,7 +37,7 @@ theorem eval_smul_of_isHomogeneous {n : ℕ} {c : MvPolynomial (Fin n) ℂ} {m :
 theorem exists_eval_cons_ne_zero {n : ℕ} {c : MvPolynomial (Fin (n + 1)) ℂ} {m : ℕ}
     (hc0 : c ≠ 0) (hc : c.IsHomogeneous m) : ∃ y : Fin n → ℂ, eval (Fin.cons 1 y) c ≠ 0 := by
   by_contra h
-  push_neg at h
+  push Not at h
   apply hc0
   have hX : (X 0 : MvPolynomial (Fin (n + 1)) ℂ) * c = 0 := by
     apply MvPolynomial.funext
@@ -103,15 +108,15 @@ private theorem volume_eval_eq_zero_lemma :
     have hmap : (finSuccEquiv ℂ n p).map (eval s) ≠ 0 := by
       intro h0
       apply hs
-      have h1 := congrArg (fun r => Polynomial.coeff r (finSuccEquiv ℂ n p).natDegree) h0
+      have h1 := congrArg (fun (r : Polynomial ℂ) => r.coeff (finSuccEquiv ℂ n p).natDegree) h0
       simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h1
       exact h1
     refine Set.Finite.measure_zero
       ((((finSuccEquiv ℂ n p).map (eval s)).roots.toFinset.finite_toSet).subset ?_) _
     intro y hy
-    simp only [Set.mem_preimage, Set.mem_setOf_eq] at hy
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq] at hy
     have hcons : E.symm (y, s) = Fin.cons y s := by
-      (simp [E, Fin.insertNth_zero']) <;> rfl
+      simp [E]
     rw [hcons, eval_eq_eval_mv_eval'] at hy
     simpa [Polynomial.mem_roots hmap] using hy
 
@@ -122,7 +127,7 @@ theorem projB_null_of (hN : NormPolyStatement)
   obtain ⟨S, hS, rfl⟩ := hJ
   obtain ⟨f, hfS, hfP⟩ : ∃ f ∈ S, f ∉ P := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hJP (Ideal.span_le.2 h)
   obtain ⟨a, ha⟩ := hS f hfS
   obtain ⟨c, m, hc0, hc, hz⟩ := hN K ι P e Ψ f a hP hΨ ha hfP

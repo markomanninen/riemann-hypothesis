@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerOfNormEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerOfNormEq
+
+@[expose] public section
+
 open Filter
 open scoped InnerProductSpace Topology
 
@@ -14,7 +19,7 @@ theorem inner_eq_of_diag {H E : Type} [NormedAddCommGroup H] [InnerProductSpace 
   have h2 := h (w + Complex.I • w') (D.add_mem hw (D.smul_mem _ hw'))
   have h3 := h w hw
   have h4 := h w' hw'
-  simp only [map_add, map_smul, inner_add_left, inner_add_right, inner_smul_left,
+  simp only [map_add (f := _), map_smul, inner_add_left, inner_add_right, inner_smul_left,
     inner_smul_right, Complex.conj_I] at h1 h2
   have hI : Complex.I * Complex.I = -1 := Complex.I_mul_I
   linear_combination (1 / 2 : ℂ) * h1 - (Complex.I / 2) * h2 - (1 / 2 - Complex.I / 2) * h3

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainBSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainBSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem eq_sum_E (H : Mc n) : H = ∑ p : Fin n × Fin n, H p.1 p.2 • E p := b
 theorem dd_expand (H : Mc n) (f : Mc n → ℂ) (x : Mc n) :
     dd H f x = ∑ p : Fin n × Fin n, H p.1 p.2 * dd (E p) f x := by
   conv_lhs => rw [eq_sum_E H]
-  simp [dd, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dd, map_sum, map_smul]
 
 theorem two_le_top' : (2 : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞) := by
   rw [show (2 : WithTop ℕ∞) = ((2 : ℕ∞) : WithTop ℕ∞) from rfl]
@@ -71,14 +76,18 @@ theorem two_le_top' : (2 : WithTop ℕ∞) ≤ ((⊤ : ℕ∞) : WithTop ℕ∞)
 
 theorem dd_swap {g : Mc n → ℂ} {U : Set (Mc n)} (hU : IsOpen U) (hg : ContDiffOn ℂ (⊤ : ℕ∞) g U)
     (a b : Mc n) {x : Mc n} (hx : x ∈ U) : dd b (dd a g) x = dd a (dd b g) x := by
+  letI : IsNormableSpace ℂ (Mc n) := ⟨⟨normSeminorm ℂ (Mc n), norm_withSeminorms ℂ (Mc n)⟩⟩
   have hc : ContDiffAt ℂ (⊤ : ℕ∞) g x := hg.contDiffAt (hU.mem_nhds hx)
   have hsymm : IsSymmSndFDerivAt ℂ g x :=
     hc.isSymmSndFDerivAt (by rw [minSmoothness_of_isRCLikeNormedField]; exact two_le_top')
   have hd : DifferentiableAt ℂ (fderiv ℂ g) x := (hc.fderiv_right top_succ_le).differentiableAt (by simp)
   have key : ∀ v w : Mc n, fderiv ℂ (fun y => fderiv ℂ g y v) x w = fderiv ℂ (fderiv ℂ g) x w v := by
     intro v w
-    have h := (ContinuousLinearMap.apply ℂ ℂ v).hasFDerivAt.comp x hd.hasFDerivAt
-    exact congrArg (fun L => L w) h.fderiv
+    have h := hd.hasFDerivAt.clm_apply (hasFDerivAt_const v x)
+    have hh := congrArg (fun L => L w) h.fderiv
+    change fderiv ℂ (fun y => fderiv ℂ g y v) x w =
+      fderiv ℂ g x 0 + fderiv ℂ (fderiv ℂ g) x w v at hh
+    simpa using hh
   unfold dd
   rw [key, key]
   exact hsymm b a

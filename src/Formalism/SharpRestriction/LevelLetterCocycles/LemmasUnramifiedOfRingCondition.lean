@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
-import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralOfRingCondition
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationSaturationKiller
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.AnnihilatorGeneralOfRingCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem weierP {A : Type} [CommRing A] (p : A) [IsAdicComplete (Ideal.span {p}) 
     rw [hord]
     have hc : coeff N F = constantCoeff g * (p * (coeff N h * ↑hg.unit⁻¹) + 1) := by
       have e : constantCoeff g * ↑hg.unit⁻¹ = 1 := hg.mul_val_inv
-      rw [hF, map_add, coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, coeff_C_mul,
+      rw [hF, map_add (f := _), coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, coeff_C_mul,
         coeff_zero_eq_constantCoeff]
       linear_combination (-(p * coeff N h)) * e
     rw [hc]
@@ -61,7 +65,7 @@ theorem weierP {A : Type} [CommRing A] (p : A) [IsAdicComplete (Ideal.span {p}) 
 
   have hq : IsUnit q := by
     have h1 := congrArg (fun x => coeff N (x.map (Ideal.Quotient.mk I))) heq
-    simp only [map_add, map_mul, map_pow, map_X, coeff_X_pow_self] at h1
+    simp only [map_add (f := _), map_mul, map_pow, map_X, coeff_X_pow_self] at h1
     rw [hmap, ← Polynomial.polynomial_map_coe, Polynomial.coeff_coe,
       Polynomial.coeff_map, Polynomial.coeff_eq_zero_of_degree_lt hdeg, map_zero, add_zero,
       mul_assoc, mul_comm (X ^ N), ← mul_assoc, coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self,
@@ -113,7 +117,7 @@ theorem two_le : 2 ≤ PD.p := PD.hp.two_le
 
 theorem pS_sub (s : ℕ) : pS W s - ((PD.p : ℕ) : LetA O n) = (W.φA ^ s) W.π₀ := by
   unfold pS qP
-  rw [map_add, map_natCast]
+  rw [map_add (f := _), map_natCast]
   ring
 
 theorem tools1 (hR : RingP W) :
@@ -121,10 +125,12 @@ theorem tools1 (hR : RingP W) :
   obtain ⟨w, hw⟩ := hR.2.2.2.2.2.1
   exact ⟨w, w.isUnit, by rw [hw, eat_qP]⟩
 
-theorem φpow_π₀ (hR : RingP W) : ∀ s : ℕ, ∃ a, (W.φA ^ s) W.π₀ = W.π₀ * a
-  | 0 => ⟨1, by simp⟩
-  | s + 1 => by
-    obtain ⟨a, ha⟩ := φpow_π₀ hR s
+theorem φpow_π₀ (hR : RingP W) : ∀ s : ℕ, ∃ a, (W.φA ^ s) W.π₀ = W.π₀ * a := by
+  intro s
+  induction s with
+  | zero => exact ⟨1, by simp⟩
+  | succ s ih =>
+    obtain ⟨a, ha⟩ := ih
     obtain ⟨w, hw⟩ := hR.2.2.2.2.2.1
     rw [eat_qP] at hw
     exact ⟨(w : LetA O n) * qP W ^ (PD.p - 1) * W.φA a, by
@@ -175,7 +181,7 @@ theorem π₀₁_ne (hR : RingP W) : W.π₀₁ ≠ 0 := by
 theorem q_component_ne_zero' (hR : RingP W) (hp0 : ((PD.p : ℕ) : O) ≠ 0) (i : ZMod n) : qP W i ≠ 0 := by
   intro h
   have := congrArg constantCoeff h
-  simp only [qP, Pi.add_apply, LocWach.π₀, Pi.natCast_apply, map_add, π₀₁_cc hR, map_natCast,
+  simp only [qP, Pi.add_apply, LocWach.π₀, Pi.natCast_apply, map_add (f := _), π₀₁_cc hR, map_natCast,
     zero_add, map_zero] at this
   exact hp0 this
 
@@ -217,16 +223,18 @@ theorem w_AΔ (hR : RingP W) (hp0 : ((PD.p : ℕ) : O) ≠ 0) {w : (LetA O n)ˣ}
     exact φ_AΔ hR.1
 
 theorem modp (hR : RingP W) (hp0 : ((PD.p : ℕ) : O) ≠ 0) : ∀ s : ℕ, ∃ v ∈ W.AΔ, IsUnit v ∧
-    ∃ r : LetA O n, (W.φA ^ s) W.π₀ = v * W.π₀ ^ (PD.p ^ s) + ((PD.p : ℕ) : LetA O n) * r
-  | 0 => ⟨1, W.AΔ.one_mem, isUnit_one, 0, by simp⟩
-  | s + 1 => by
-    obtain ⟨v, hvΔ, hvu, r, hr⟩ := modp hR hp0 s
+    ∃ r : LetA O n, (W.φA ^ s) W.π₀ = v * W.π₀ ^ (PD.p ^ s) + ((PD.p : ℕ) : LetA O n) * r := by
+  intro s
+  induction s with
+  | zero => exact ⟨1, W.AΔ.one_mem, isUnit_one, 0, by simp⟩
+  | succ s ih =>
+    obtain ⟨v, hvΔ, hvu, r, hr⟩ := ih
     obtain ⟨w, hw⟩ := hR.2.2.2.2.2.1
     rw [eat_qP] at hw
     have hwΔ := w_AΔ hR hp0 hw
     set a := (W.φA ^ s) W.π₀ with ha
     have hq : (W.φA ^ s) (qP W) = a + ((PD.p : ℕ) : LetA O n) := by
-      unfold qP; rw [map_add, map_natCast]
+      unfold qP; rw [map_add (f := _), map_natCast]
     have e : (W.φA ^ (s + 1)) W.π₀ = (W.φA ^ s) w * a * (a + ((PD.p : ℕ) : LetA O n)) ^ (PD.p - 1) := by
       rw [pow_succ, AlgHom.mul_apply, hw, map_mul, map_mul, map_pow, hq]
     have d1 : ((PD.p : ℕ) : LetA O n) ∣ a * (a + ((PD.p : ℕ) : LetA O n)) ^ (PD.p - 1) - a ^ PD.p := by
@@ -320,7 +328,7 @@ theorem tools2 (hR : RingP W) (hp0 : ((PD.p : ℕ) : O) ≠ 0)
       have e : pS W s 0 = v 0 * W.π₀ 0 ^ (PD.p ^ s) + ((PD.p : ℕ) : PowerSeries O) * (r + 1) 0 := by
         rw [hpS]; rfl
       rw [e, hg 0, hh 0, ← coe_substAlgHom hs0]
-      simp [map_add, map_mul, map_pow, substAlgHom_X, map_natCast]
+      simp [map_add (f := _), map_mul, map_pow, substAlgHom_X, map_natCast]
     funext i
     have e1 : pS W s i = pS W s 0 := by rw [hc]
     have e2 : (Polynomial.aeval W.π₀ P) i = Polynomial.aeval (W.π₀ 0) P := by

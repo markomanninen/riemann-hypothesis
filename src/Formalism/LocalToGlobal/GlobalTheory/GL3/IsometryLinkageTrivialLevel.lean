@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PFourSq
-import Formalism.LocalToGlobal.GlobalTheory.GL3.ProvisionExtensionLink
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PFourSq
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.ProvisionExtensionLink
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem conj_b : D.host.conj (D.host.sqd) = -D.host.sqd := by
 
 theorem conj_mem (k : D.host.K) : D.host.conj (k : D.host.E) ∈ D.host.K := by
   obtain ⟨p, q, e⟩ := CS.K_repr D _ k.2
-  rw [e, map_add, map_mul, map_ratCast, map_ratCast, conj_b]
+  rw [e, map_add (f := _), map_mul, map_ratCast, map_ratCast, conj_b]
   exact add_mem (rat_mem D p) (mul_mem (rat_mem D q) (neg_mem (FL.bE_mem D)))
 
 def cK : D.host.K →+* D.host.K where
@@ -32,25 +36,30 @@ def cK : D.host.K →+* D.host.K where
   map_zero' := Subtype.ext (by show D.host.conj ((0 : D.host.K) : D.host.E) = _; simp)
   map_add' x y := Subtype.ext (by
     show D.host.conj ((x + y : D.host.K) : D.host.E) = D.host.conj x + D.host.conj y
-    rw [IntermediateField.coe_add, map_add])
+    rw [IntermediateField.coe_add, map_add (f := _)])
 
 def hK (x y : D.host.E) : D.host.K := Algebra.trace D.host.K D.host.E (x * D.host.conj y)
 
 theorem tau_nonempty : Nonempty D.what₂.Tau := by
-  rw [← Fintype.card_pos_iff, FL.card_tau]; positivity
+  rw [← Fintype.card_pos_iff, FL.card_tau]
+  exact Nat.mul_pos (by decide) D.R.ord_pos
 
-theorem herm : FS.Herm4 (cK D) (hK D) where
-  add_left x x' y := by simp only [hK, add_mul, map_add]
-  smul_left k x y := by simp only [hK, smul_mul_assoc, map_smul, smul_eq_mul]
-  symm x y := by
+theorem herm : FS.Herm4 (cK D) (hK D) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro x x' y
+    simp only [hK, add_mul, map_add (f := _)]
+  · intro k x y
+    simp only [hK, smul_mul_assoc, map_smul, smul_eq_mul]
+  · intro x y
     apply Subtype.ext
     apply D.host.φ₀.injective
     show D.host.φ₀ ((Algebra.trace D.host.K D.host.E (y * D.host.conj x) : D.host.K) : D.host.E)
       = D.host.φ₀ (D.host.conj ((Algebra.trace D.host.K D.host.E (x * D.host.conj y) : D.host.K) : D.host.E))
-    rw [CU.emb_conj, ← FL.sum_tau_trace, ← FL.sum_tau_trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [CU.emb_conj, ← FL.sum_tau_trace, ← FL.sum_tau_trace, map_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_
     rw [map_mul, map_mul, map_mul, CU.emb_conj, CU.emb_conj, Complex.conj_conj, mul_comm]
-  pos x hx := by
+  · intro x hx
     have hφ : D.host.φ₀ ((hK D x x : D.host.K) : D.host.E)
         = ((∑ τ : D.what₂.Tau, Complex.normSq (embT D τ x) : ℝ) : ℂ) := by
       show D.host.φ₀ ((Algebra.trace D.host.K D.host.E (x * D.host.conj x) : D.host.K) : D.host.E) = _
@@ -63,7 +72,7 @@ theorem herm : FS.Herm4 (cK D) (hK D) where
       exact Finset.sum_pos (fun τ _ => Complex.normSq_pos.2 ((map_ne_zero _).2 hx)) Finset.univ_nonempty
     obtain ⟨p, q, e⟩ := CS.K_repr D _ (hK D x x).2
     have hs := IO.sqrt_d_pos D
-    rw [e, map_add, map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d] at hφ
+    rw [e, map_add (f := _), map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d] at hφ
     have him := congrArg Complex.im hφ
     have hre := congrArg Complex.re hφ
     simp only [Complex.add_im, Complex.mul_im, Complex.ratCast_im, Complex.ratCast_re, Complex.I_re, Complex.I_im,
@@ -91,41 +100,11 @@ theorem card_eq : Fintype.card D.what₂.Tau = Module.finrank D.host.K D.host.E 
   rw [← AlgHom.card D.host.K D.host.E ℂ]
   exact Fintype.card_of_bijective (FL.embA_bij D)
 
-theorem iso0 : Nonempty (IsoK D) := by
-  obtain ⟨g, hg⟩ := (herm D).iso (n := D.what₂.Tau) (card_eq D)
-  refine ⟨⟨g, fun x y => ?_⟩⟩
-  have h := hg x y
-  have h2 : (∑ a, Algebra.trace D.host.K D.host.E (x a * D.host.conj (y a))) = ∑ w, g x w * cK D (g y w) := h.symm
-  rw [h2, map_sum]
-  refine Finset.sum_congr rfl fun w _ => ?_
-  rw [map_mul]
-  rfl
-
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.G0
 
 namespace Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Formalism.L2.Ker
-
-def LinkIso0 : Prop := ∀ D : D7, Nonempty (IsoK D)
-
-def LinkBaseP : Prop := ∀ D : D7, IsoPExists D → BaseExists D
-
-def LinkTrivialLevelIsometry : Prop :=
-  ∀ (D : D7) (C : ℝ), AdmittedStatements D →
-    (∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ → per22 D (tor0 D cc δ)) →
-    DiscrNe D → IsoPExists D →
-    (∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      ∀ B : Base D cc δ, ∀ χ, IsChi D χ → EigenvectorPacketProperties B C χ) →
-    aux₃ D C
-
-theorem isometry_linkage_trivial_level : LinkIso0 := G0.iso0
-
-theorem base_linkage_at_prime : LinkBaseP :=
-  fun D hp => base_exists_link D (isometry_extension_link D (isometry_linkage_trivial_level D)) hp
-
-theorem eigen_linkage_at_prime : LinkTrivialLevelIsometry :=
-  fun D C hA hper hΔ hp h => provision_extension_link D C hA hper hΔ (isometry_linkage_trivial_level D) hp h
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 

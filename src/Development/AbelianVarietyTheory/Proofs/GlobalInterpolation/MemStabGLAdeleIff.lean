@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.LocalRingCardinality.DataLevelD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.LocalRingCardinality.DataLevelD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions Formalism.MainNotions.StandardLattice
 open scoped TensorProduct
 
@@ -101,10 +106,9 @@ section Adelic
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : Type}
   (N : Submodule (𝓞 E) (n → E))
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-
-theorem mem_latS_adele_iff [Module.Finite (𝓞 E) N] (u : n → E ⊗[F] 𝔸) :
-    u ∈ latS 𝔸 (tensInt (F := F) 𝔸 (intOE E) (intAd F)) N ↔
+theorem mem_latS_adele_iff [Module.Finite (𝓞 E) N] (u : n → E ⊗[F] FiniteAdeleRing (𝓞 F) F) :
+    u ∈ latS (FiniteAdeleRing (𝓞 F) F)
+        (tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)) N ↔
       ∀ v : HeightOneSpectrum (𝓞 F), (fun i => prV (E := E) v (u i)) ∈
         latS (v.adicCompletion F) (tensInt (F := F) (v.adicCompletion F) (intOE E)
           (v.adicCompletionIntegers F).toSubring) N := by
@@ -114,27 +118,32 @@ theorem mem_latS_adele_iff [Module.Finite (𝓞 E) N] (u : n → E ⊗[F] 𝔸) 
   constructor
   · rintro ⟨a, ha, ea⟩ v
     refine ⟨fun j => a j v, fun j => ha j v, fun i => ?_⟩
-    simp only [ea, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ea, map_sum]
     rfl
   · intro h
     choose a ha ea using h
-    let A : Fin k → 𝔸 := fun j => ⟨fun v => a v j, Filter.Eventually.of_forall fun v => ha v j⟩
+    let A : Fin k → FiniteAdeleRing (𝓞 F) F :=
+      fun j => ⟨fun v => a v j, Filter.Eventually.of_forall fun v => ha v j⟩
     refine ⟨A, fun j v => ha v j, fun i => ?_⟩
     rw [← sub_eq_zero]
     refine Formalism.UG.P.afsplit_inj _ fun v => ?_
-    rw [map_sub, sub_eq_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, sub_eq_zero, map_sum]
     exact ea v i
 
-theorem prV_mulVec [Fintype n] (v : HeightOneSpectrum (𝓞 F)) (M : Matrix n n (E ⊗[F] 𝔸))
-    (u : n → E ⊗[F] 𝔸) :
+theorem prV_mulVec [Fintype n] (v : HeightOneSpectrum (𝓞 F))
+    (M : Matrix n n (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
+    (u : n → E ⊗[F] FiniteAdeleRing (𝓞 F) F) :
     (fun i => prV (E := E) v ((M *ᵥ u) i)) =
       M.map (prV (E := E) v) *ᵥ fun i => prV (E := E) v (u i) := by
   funext i
   exact RingHom.map_mulVec _ M u i
 
 theorem mem_stabGL_adele_iff [Fintype n] [DecidableEq n] [Module.Finite (𝓞 E) N]
-    (g : GL n (E ⊗[F] 𝔸)) :
-    g ∈ stabGL (latS 𝔸 (tensInt (F := F) 𝔸 (intOE E) (intAd F)) N) ↔
+    (g : GL n (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) :
+    g ∈ stabGL (latS (FiniteAdeleRing (𝓞 F) F)
+        (tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)) N) ↔
       ∀ v : HeightOneSpectrum (𝓞 F), bc (prV (E := E) v) g ∈
         stabGL (latS (v.adicCompletion F) (tensInt (F := F) (v.adicCompletion F) (intOE E)
           (v.adicCompletionIntegers F).toSubring) N) := by

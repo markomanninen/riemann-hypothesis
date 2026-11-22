@@ -1,28 +1,12 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qf27.Ainf :
     (F : Type) → [Field F] → Type :=
     fun (F : Type) [Field F] ↦ NumberField.InfiniteAdeleRing F
-
-theorem UpperTheory.Reformulated.B.Qf27.aux2 :
-    ∀ {F : Type} [inst : Field F], SMulCommClass F (UpperTheory.Reformulated.B.Qf27.Ainf F) (UpperTheory.Reformulated.B.Qf27.Ainf F) := by
-  intro F _
-  infer_instance
-
-theorem UpperTheory.Reformulated.B.Qf27.aux3 :
-    ∀ {F : Type} [inst : Field F], IsScalarTower F (UpperTheory.Reformulated.B.Qf27.Ainf F) (UpperTheory.Reformulated.B.Qf27.Ainf F) := by
-  intro F _
-  infer_instance
-
-theorem UpperTheory.Reformulated.B.Qf27.aux4 :
-    ∀ {F E : Type} [inst : Field F] [inst_1 : Field E] [inst_2 : Algebra F E], SMulCommClass F E E := by
-  intro F E _ _ _
-  infer_instance
-
-theorem UpperTheory.Reformulated.B.Qf27.aux5 :
-    ∀ {F E : Type} [inst : Field F] [inst_1 : Field E] [inst_2 : Algebra F E], IsScalarTower F E E := by
-  intro F E _ _ _
-  infer_instance
 
 noncomputable def UpperTheory.Reformulated.B.Qf27.IsInfEmb :
     {F E : Type} →
@@ -57,7 +41,7 @@ theorem UpperTheory.Reformulated.B.Qf27.infEmb_unique :
   refine RingHom.ext fun z ↦ ?_
   induction z using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul a x =>
     have e : a ⊗ₜ[F] x = (a ⊗ₜ[F] (1 : E)) * ((1 : UpperTheory.Reformulated.B.Qf27.Ainf F) ⊗ₜ[F] x) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]

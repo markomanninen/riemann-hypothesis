@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAddInjective
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFramesOnUniformisedModelFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsAddInjective
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProductOfSectionsExpandsToConvolution
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFramesOnUniformisedModelFibre
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -41,8 +45,8 @@ private theorem sumF_mul_left {R : Type} [CommRing R] [IsDomain R] {I : Ideal R}
   rw [e] at hm
   exact hm
 
-attribute [local instance] gtGroup in
 
+attribute [local instance] gtGroup in
 theorem exhaust_of_labels : LL → AllU fun {R} _ _ {I} {D} {A} {G} _ _ U => ∀ N : ℕ, 1 ≤ N → ∀ (C : Type) (g : C → GtPtF D.toPre (FractionRing R)) (x : C → (TFK (R := R) (FractionRing R) ⟶ A.A)), (∀ c, ∃ o, GtPtF.IsNsmul N (g c) o ∧ o.IsZero) → (∀ c c', g c = g c' → x c = x c') → (∀ (p : QkPt D.toPre (AlgebraicClosure (FractionRing R)) N) (y : TFK (R := R) (AlgebraicClosure (FractionRing R)) ⟶ A.A), p.y = 0 → QkToAkU U.toUnifPre (AlgebraicClosure (FractionRing R)) N p y → ∃ c, y.left = spMap (algebraMap (FractionRing R) (AlgebraicClosure (FractionRing R))) ≫ (x c).left) → ∀ b : TF (R := R) (AlgebraicClosure (FractionRing R)) ⟶ D.toPre.P.A, b ^ N = 1 → ∃ c, b.left = spMap (algebraMap (FractionRing R) (AlgebraicClosure (FractionRing R))) ≫ (g c).b.left := by
   intro hLL R _ _ _ I hI D A G _ _ hSA U N hN C g x htor hfun hcov b hb
   have hB : D.toPre.TauBimult := D.tau_bimult
@@ -51,20 +55,32 @@ theorem exhaust_of_labels : LL → AllU fun {R} _ _ {I} {D} {A} {G} _ _ U => ∀
     RingHom.ext fun _ => rfl
   obtain ⟨fT, hT⟩ := GlobalTheory.TorsionIso.torsion_eq hLL R I hI D A G hSA U (AlgebraicClosure (FractionRing R)) N hN
   obtain ⟨hT1, -, hT3, -⟩ := hT
+  have hi : GtPtF.IsIota 0 (0 : GtPtF D.toPre (AlgebraicClosure (FractionRing R))) := by
+    have hz : (0 : GtPtF D.toPre (AlgebraicClosure (FractionRing R))).IsZero := (isZero_iff_eq _).2 rfl
+    obtain ⟨hb, hv⟩ := (isZero_iff_val _).1 hz
+    refine (isIota_iff_val _ _).2 ⟨hb.trans (cPoint_zero _).symm, fun χ y J hJ => ?_⟩
+    have C : IsCub (th D.toPre (T := TF (R := R) (AlgebraicClosure (FractionRing R))) y J) := isCub_cubV D.toPre.cub hJ
+    have t := tau_mul (𝟙 (TF (R := R) (AlgebraicClosure (FractionRing R)))) hJ hB 0 0 χ
+    rw [add_zero, cPoint_zero, C.face, _root_.mul_one] at t
+    exact (hv χ y J hJ).trans (mul_eq_left.1 t.symm).symm
   let P : {h : GtPtF D.toPre (AlgebraicClosure (FractionRing R)) // N • h = 0} → QkPt D.toPre (AlgebraicClosure (FractionRing R)) N :=
-    fun h => qkMk hB 0 h.1 (by rw [map_zero]; exact h.2)
-  have hPy : ∀ h, (P h).y = 0 := fun h => qkMk_y hB _ _ _
-  have hPg : ∀ h, (P h).g = h.1 := fun h => qkMk_g hB _ _ _
+    fun h => ⟨0, h.1, N • h.1, (isNsmul_iff_eq _ _ _).2 rfl,
+      h.2.symm ▸ hi⟩
+  have hPy : ∀ h, (P h).y = 0 := fun _ => rfl
+  have hPg : ∀ h, (P h).g = h.1 := fun _ => rfl
   have hEq : ∀ h h', QkPt.Equiv D.toPre (AlgebraicClosure (FractionRing R)) (P h) (P h') → h = h' := by
     intro h h' e
-    obtain ⟨z, hy, hg⟩ := (equiv_iff hB _ _).1 e
-    rw [hPy, hPy, zero_add] at hy
+    obtain ⟨z, hy, t, ht, hg⟩ := e
+    change 0 = 0 + N • z at hy
+    simp only [zero_add] at hy
     have hz : z = 0 := by
       have h2 : (N : ℤ) • z = 0 := by rw [natCast_zsmul]; exact hy.symm
       rcases smul_eq_zero.1 h2 with h3 | h3
       · exact absurd (by exact_mod_cast h3 : N = 0) hN0
       · exact h3
-    rw [hPg, hPg, hz, map_zero, add_zero] at hg
+    have ht0 : t = 0 := isIota_unique (hz ▸ ht) hi
+    have hg := (isAdd_iff_eq _ _ _).1 hg
+    rw [hPg, hPg, ht0, add_zero] at hg
     exact Subtype.ext hg.symm
   haveI : Finite {h : GtPtF D.toPre (AlgebraicClosure (FractionRing R)) // N • h = 0} := by
     have hc := GlobalTheory.UT.card_qk hLL R I hI D (AlgebraicClosure (FractionRing R)) N hN
@@ -91,7 +107,7 @@ theorem exhaust_of_labels : LL → AllU fun {R} _ _ {I} {D} {A} {G} _ _ U => ∀
     apply hEq
     apply (hT3 _ _).1
     apply Over.OverMorphism.ext
-    rw [hc, hc, e2]
+    rw [hc h, hc h', e2]
   obtain ⟨g', hg'b, hg'N⟩ :=
     exists_nsmul_eq_of_pow_eq (D := D.toPre) (F := (AlgebraicClosure (FractionRing R))) hN0 0 (hb.trans zero_b.symm)
   obtain ⟨h, hh⟩ := (Finite.injective_iff_surjective.1 hΦ) ⟨g', hg'N⟩

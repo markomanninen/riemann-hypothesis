@@ -1,5 +1,9 @@
-import Formalism.GaloisCohomology.Statement
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+module
+
+public import Formalism.GaloisCohomology.Statement
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+
+@[expose] public section
 
 noncomputable section
 

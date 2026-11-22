@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtXCastAdd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtXCastAdd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.VolBridge
 
 noncomputable section
@@ -114,7 +119,7 @@ theorem exists_N1_local_hom_mem_open : ∀ {E k : Type} [Field E] [Field k] [Val
     show _ = ((Model.mkNel 1 _ : N k A c 1) : GL (A ⊕ Fin c) k).val
     rw [VolN.val_mkNel, VolN.val_mkNel]
     ext r s
-    simp only [Matrix.map_apply, Matrix.add_apply, map_add, VolN.ext0, Matrix.of_apply, Matrix.one_apply]
+    simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), VolN.ext0, Matrix.of_apply, Matrix.one_apply]
     split_ifs <;> simp
   rw [this]; exact hb
 

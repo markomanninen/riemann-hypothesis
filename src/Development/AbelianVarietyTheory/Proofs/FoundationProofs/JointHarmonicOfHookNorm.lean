@@ -1,12 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LowerUnipotentMinors
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.BottomMinor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.BottomMinor
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.JointHarm
 
-open MvPolynomial Matrix GlobalTheory.IndefiniteRowSideFullHecke.SubstitutionPolynomials
+open MvPolynomial Matrix
 
 section Minors
 
@@ -37,7 +40,7 @@ theorem fock_add_left {σ : Type} (P P' Q : MvPolynomial σ ℂ) :
   rw [key _ _ support_add, key P _ Finset.subset_union_left, key P' _ Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]; ring
+  rw [MvPolynomial.coeff_add]; ring
 
 theorem fock_monomial_left {σ : Type} (α : σ →₀ ℕ) (c : ℂ) (Q : MvPolynomial σ ℂ) :
     fock (monomial α c) Q = c * star (Q.coeff α) * (Formalism.A.mfact α : ℂ) := by
@@ -57,22 +60,22 @@ theorem mapDomain_add_inj (hf : Function.Injective f) (hg : Function.Injective g
   · ext x
     have := DFunLike.congr_fun h (f x)
     have hx : f x ∉ Set.range g := fun ⟨y, hy⟩ => hfg x y hy.symm
-    simpa [Finsupp.mapDomain_apply hf, Finsupp.mapDomain_notin_range _ _ hx] using this
+    simpa [Finsupp.mapDomain_apply_of_injective hf, Finsupp.mapDomain_notin_range _ _ hx] using this
   · ext y
     have := DFunLike.congr_fun h (g y)
     have hy : g y ∉ Set.range f := fun ⟨x, hx⟩ => hfg x y hx
-    simpa [Finsupp.mapDomain_apply hg, Finsupp.mapDomain_notin_range _ _ hy] using this
+    simpa [Finsupp.mapDomain_apply_of_injective hg, Finsupp.mapDomain_notin_range _ _ hy] using this
 
 theorem coeff_rename_mul (hf : Function.Injective f) (hg : Function.Injective g)
     (hfg : ∀ x y, f x ≠ g y) (α : σ₁ →₀ ℕ) (β : σ₂ →₀ ℕ) (P : MvPolynomial σ₁ ℂ)
     (Q : MvPolynomial σ₂ ℂ) :
-    coeff (α.mapDomain f + β.mapDomain g) (rename f P * rename g Q) = coeff α P * coeff β Q := by
+    AddMonoidAlgebra.coeff (rename f P * rename g Q) (α.mapDomain f + β.mapDomain g) = AddMonoidAlgebra.coeff P α * AddMonoidAlgebra.coeff Q β := by
   classical
   induction P using MvPolynomial.induction_on' with
-  | add P P' h h' => simp only [map_add, add_mul, coeff_add, h, h']
+  | add P P' h h' => simp only [map_add (f := _), add_mul, MvPolynomial.coeff_add, h, h']
   | monomial α' x =>
     induction Q using MvPolynomial.induction_on' with
-    | add Q Q' h h' => simp only [map_add, mul_add, coeff_add, h, h']
+    | add Q Q' h h' => simp only [map_add (f := _), mul_add, MvPolynomial.coeff_add, h, h']
     | monomial β' y =>
       rw [rename_monomial, rename_monomial, monomial_mul, coeff_monomial, coeff_monomial,
         coeff_monomial]
@@ -102,10 +105,10 @@ theorem fock_rename_mul (hf : Function.Injective f) (hg : Function.Injective g)
     (hfg : ∀ x y, f x ≠ g y) (P P' : MvPolynomial σ₁ ℂ) (Q Q' : MvPolynomial σ₂ ℂ) :
     fock (rename f P * rename g Q) (rename f P' * rename g Q') = fock P P' * fock Q Q' := by
   induction P using MvPolynomial.induction_on' with
-  | add P₁ P₂ h h' => simp only [map_add, add_mul, fock_add_left, h, h']
+  | add P₁ P₂ h h' => simp only [map_add (f := _), add_mul, fock_add_left, h, h']
   | monomial α x =>
     induction Q using MvPolynomial.induction_on' with
-    | add Q₁ Q₂ h h' => simp only [map_add, mul_add, fock_add_left, h, h']
+    | add Q₁ Q₂ h h' => simp only [map_add (f := _), mul_add, fock_add_left, h, h']
     | monomial β y =>
       rw [rename_monomial, rename_monomial, monomial_mul, fock_monomial_left, fock_monomial_left,
         fock_monomial_left, coeff_rename_mul hf hg hfg, mfact_mapDomain_add hf hg hfg, star_mul']

@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.GsBasisPhys
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
+
+@[expose] public section
 
 section
-open GlobalTheory.PsCo.PcEG
 
 open Finset
 
@@ -73,10 +77,13 @@ end GlobalTheory.PsCo.PcEF.VandermondeCompactNoncompactSplit
 
 namespace GlobalTheory.PsCo.PcEF
 
-open VandermondeCompactNoncompactSplit in
 
-theorem vandermonde_splits_compactNoncompact : VdmSplit := by
-  intro n ε t
+open VandermondeCompactNoncompactSplit in
+theorem vandermonde_splits_compactNoncompact (n : ℕ) (ε : Fin n → Bool) (t : Fin n → ℂ) :
+    (∏ a, ∏ b ∈ Finset.Ioi a, (t a - t b)) =
+      ReciprocityTheory.ChartRestriction.TR.Weyl.wdenK ε t *
+        ((-1) ^ ReciprocityTheory.ChartRestriction.DS.TRGap.sDeg ε *
+          ∏ x : GlobalTheory.PsCo.Pc1.Mode ε, (t x.1.1 - t x.1.2)) := by
   rw [lhs_eq, wden_eq, mode_eq, mode_split, sign_eq, swap_eq, lhs_split]
   have hs : ((-1 : ℂ) ^ ReciprocityTheory.ChartRestriction.DS.TRGap.sDeg ε) * (-1) ^ ReciprocityTheory.ChartRestriction.DS.TRGap.sDeg ε = 1 := by
     rw [← mul_pow]; norm_num

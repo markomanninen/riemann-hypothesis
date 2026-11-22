@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.FinKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.AdSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.MemDxIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.FinKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.AdSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.MemDxIff
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil Formalism.BasicNotions Matrix
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
@@ -28,14 +32,14 @@ private theorem det_mL (x : UA L 2) (w : Plc L) :
   rw [h, ← RingHom.map_det]
   rfl
 
-private theorem det_inf (x : UA L 2) (hx : x ∈ finU L 2) :
+private theorem det_inf (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2)) :
     pInf L ((x : GL (Fin 2) (Ad L)) : Matrix (Fin 2) (Fin 2) (Ad L)).det = 1 := by
   have h : (pInf L).mapMatrix ((x : GL (Fin 2) (Ad L)) : Matrix (Fin 2) (Fin 2) (Ad L)) = 1 := by
     have h1 : cInf x = 1 := hx
     exact congrArg (fun y : GL (Fin 2) (Cinf L) => (y : Matrix (Fin 2) (Fin 2) (Cinf L))) h1
   rw [RingHom.map_det, h, Matrix.det_one]
 
-private theorem mem_SUA_iff (x : UA L 2) (hx : x ∈ finU L 2) :
+private theorem mem_SUA_iff (x : UA L 2) (hx : x ∈ finU (E := L) (n := 2)) :
     x ∈ SUA L ↔ ∀ w : Plc L, (mL w x).det = 1 := by
   have key : x ∈ SUA L ↔ ((x : GL (Fin 2) (Ad L)) : Matrix (Fin 2) (Fin 2) (Ad L)).det = 1 := by
     show GeneralLinearGroup.det (x : GL (Fin 2) (Ad L)) = 1 ↔ _
@@ -69,7 +73,7 @@ private theorem SA_det {Δ : Lp L} (g : SA Δ) (v : Pl (Lp L)) : (mt ((g : DA Δ
   have h2 : GeneralLinearGroup.det (((g : DA Δ).1 v : DX (cv v Δ)) : GL (Fin 2) (Lsq (Kv v) (cv v Δ))) = 1 := h
   exact congrArg Units.val h2
 
-private theorem ex_of (R : RingBr L) (g : SA R.Δ) : ∃ b : ↥(finU L 2 ⊓ SUA L), ∀ w,
+private theorem ex_of (R : RingBr L) (g : SA R.Δ) : ∃ b : ↥(finU (E := L) (n := 2) ⊓ SUA L), ∀ w,
     mL w (b : UA L 2) = (mt ((g : DA R.Δ).1 (un w))).map (R.ρ _ w rfl) := by
   have hun : ∀ v, star (mt ((g : DA R.Δ).1 v)) * mt ((g : DA R.Δ).1 v) = 1 := by
     intro v
@@ -91,7 +95,7 @@ private theorem ex_of (R : RingBr L) (g : SA R.Δ) : ∃ b : ↥(finU L 2 ⊓ SU
   rw [SA_det, map_one] at h
   exact h.symm
 
-private theorem sep_of (x y : ↥(finU L 2 ⊓ SUA L)) (h : ∀ w, mL w (x : UA L 2) = mL w (y : UA L 2)) : x = y := by
+private theorem sep_of (x y : ↥(finU (E := L) (n := 2) ⊓ SUA L)) (h : ∀ w, mL w (x : UA L 2) = mL w (y : UA L 2)) : x = y := by
   obtain ⟨-, -, -, -, hsep, hfin, -, -⟩ := uaFacts L 2
   exact Subtype.ext (hsep _ _ (fun w => Units.ext (h w))
     fun τ => (((hfin _).1.1 x.2.1) τ).trans (((hfin _).1.1 y.2.1) τ).symm)
@@ -99,13 +103,13 @@ private theorem sep_of (x y : ↥(finU L 2 ⊓ SUA L)) (h : ∀ w, mL w (x : UA 
 end UpperTheory.V.Z.Sym.Dict.Br
 
 theorem UpperTheory.V.Z.Sym.Dict.Br.bSEx :
-    ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (R : RingBr L), ∃ b : SA R.Δ ≃* ↥(finU L 2 ⊓ SUA L), ∀ g w, mL w (b g : UA L 2) = (mt ((g : DA R.Δ).1 (un w))).map (R.ρ _ w rfl) := by
+    ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (R : RingBr L), ∃ b : SA R.Δ ≃* ↥(finU (E := L) (n := 2) ⊓ SUA L), ∀ g w, mL w (b g : UA L 2) = (mt ((g : DA R.Δ).1 (un w))).map (R.ρ _ w rfl) := by
   intro L _ _ _ R
   choose f hf using ex_of R
   have hmul : ∀ g h, f (g * h) = f g * f h := by
     intro g h
     refine sep_of _ _ fun w => ?_
-    have h1 : mL w ((f g * f h : ↥(finU L 2 ⊓ SUA L)) : UA L 2) = mL w (f g : UA L 2) * mL w (f h : UA L 2) := by
+    have h1 : mL w ((f g * f h : ↥(finU (E := L) (n := 2) ⊓ SUA L)) : UA L 2) = mL w (f g : UA L 2) * mL w (f h : UA L 2) := by
       simp only [mL, Subgroup.coe_mul, map_mul, Units.val_mul]
     rw [h1, hf, hf, hf, ← Matrix.map_mul]
     rfl
@@ -115,7 +119,7 @@ theorem UpperTheory.V.Z.Sym.Dict.Br.bSEx :
       intro v
       refine Matrix.ext fun i j => sub_eq_zero.1 (R.ρ_inj v _ fun w hw => ?_)
       subst hw
-      have h1 := (hf g w).symm.trans ((congrArg (fun b : ↥(finU L 2 ⊓ SUA L) => mL w (b : UA L 2)) e).trans (hf h w))
+      have h1 := (hf g w).symm.trans ((congrArg (fun b : ↥(finU (E := L) (n := 2) ⊓ SUA L) => mL w (b : UA L 2)) e).trans (hf h w))
       have h2 := congrFun (congrFun h1 i) j
       rw [map_sub, sub_eq_zero]
       exact h2

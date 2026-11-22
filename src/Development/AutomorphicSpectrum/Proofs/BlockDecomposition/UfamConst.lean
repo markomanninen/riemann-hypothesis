@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
+
+@[expose] public section
 
 noncomputable section
 

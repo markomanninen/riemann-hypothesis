@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Scalar
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CharacterIdempotents.Scalar
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 noncomputable section
 open Polynomial Classical GlobalTheory.BadShare
@@ -28,7 +32,8 @@ theorem conv_zc_of_scalar (χ : G → ℂ) (W : FDRep ℂ G) (c : ℂ) (h : op W
   have h1 : ∑ y, zc χ y * W.character (y * x⁻¹) = c * W.character x⁻¹ := by
     have h2 : LinearMap.trace ℂ W (op W.ρ (zc χ) * W.ρ x⁻¹) = c * W.character x⁻¹ := by
       rw [h, smul_mul_assoc, one_mul, map_smul, smul_eq_mul]; rfl
-    rw [← h2, op, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, op, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun y _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul, ← map_mul]; rfl
   have h3 : ∀ y, zc χ y * zc W.character (y⁻¹ * x) =
@@ -55,7 +60,8 @@ theorem rk_eq_trace {M : Type} [AddCommGroup M] [Module ℂ M] [FiniteDimensiona
   have hi : IsIdempotentElem (op ρ e) := by
     rw [IsIdempotentElem, ← op_conv_eq, he]
   have hp := (LinearMap.IsIdempotentElem.isProj_range _ hi).trace
-  rw [rk, ← hp, op, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rk, ← hp, op, map_sum]
   simp only [map_smul, smul_eq_mul]
 
 theorem zc_calc : ∀ (G : Type) [Group G] [Fintype G], ∀ (V : FDRep ℂ G) [CategoryTheory.Simple V], IsProj (zc V.character) ∧ (∀ a : G → ℂ, conv (zc V.character) a = conv a (zc V.character)) ∧ (∀ (W : FDRep ℂ G) [CategoryTheory.Simple W], V.character ≠ W.character → conv (zc V.character) (zc W.character) = 0) ∧ ∀ e : G → ℂ, conv e e = e → conv (zc V.character) e 1 = (Module.finrank ℂ V : ℂ) * (rk V.ρ e : ℂ) / (Fintype.card G : ℂ) := by

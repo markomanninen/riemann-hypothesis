@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -10,7 +14,7 @@ private theorem nz_coeff_mul {τ E : Type} [CommRing E] (i : τ) (f g : MvPowerS
   refine Finset.sum_eq_zero fun p hp => ?_
   have h := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
   have hd := congrArg Finsupp.degree h
-  rw [map_add, Finsupp.degree_single] at hd
+  rw [map_add (f := _), Finsupp.degree_single] at hd
   by_cases h1 : Finsupp.degree p.1 = 0
   · rw [(Finsupp.degree_eq_zero_iff _).1 h1, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf, zero_mul]
   · have h2 : Finsupp.degree p.2 = 0 := by omega
@@ -22,7 +26,8 @@ private theorem nz_comp {O A τ : Type} [CommRing O] [IsDomain O] [CommRing A] [
     ∃ f ∈ 𝒜 (wt i), MvPowerSeries.coeff (Finsupp.single i 1) (φ f) ≠ 0 := by
   classical
   obtain ⟨f, hf, -⟩ := h.onto i
-  rw [← DirectSum.sum_support_decompose 𝒜 f, map_sum, map_sum] at hf
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 f, map_sum, map_sum] at hf
   obtain ⟨j, -, hj⟩ := Finset.exists_ne_zero_of_sum_ne_zero hf
   have hm := (DirectSum.decompose 𝒜 f j).2
   have hw : wt i = j := by
@@ -60,7 +65,7 @@ theorem UpperTheory.V.Alg.M.nz_holds :
     have hsq : ∀ y ∈ RingHom.ker x ^ 2, L y = 0 := by
       intro y hy
       rw [sq] at hy
-      refine Submodule.mul_induction_on hy (fun u hu v hv => ?_) (fun u v hu hv => by rw [map_add, hu, hv, add_zero])
+      refine Submodule.mul_induction_on hy (fun u hu v hv => ?_) (fun u v hu hv => by rw [map_add (f := _), hu, hv, add_zero])
       have hu' : x u = 0 := hu
       have hv' : x v = 0 := hv
       rw [hL, map_mul]
@@ -84,6 +89,6 @@ theorem UpperTheory.V.Alg.M.nz_holds :
   refine ⟨a + g * Q.F k, add_mem ha hm, ?_, ?_, ?_⟩
   · rw [add_sub_cancel_left]
     exact Ideal.mul_mem_left _ _ (Ideal.subset_span (by simp))
-  · rw [map_add, map_mul, hW.fixed 1 one_ne_zero g hg, zero_mul, add_zero]
-  · rw [map_add, h0, zero_add, map_mul]
+  · rw [map_add (f := _), map_mul, hW.fixed 1 one_ne_zero g hg, zero_mul, add_zero]
+  · rw [map_add (f := _), h0, zero_add, map_mul]
     exact mul_ne_zero hg1 hk

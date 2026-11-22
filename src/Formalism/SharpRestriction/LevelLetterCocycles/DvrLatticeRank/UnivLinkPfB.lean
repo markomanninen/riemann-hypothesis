@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfA
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.UnivLinkPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem univLinkPf_cong {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L
     fun i => ((PD.p : ℕ) : O) ^ y₁ * u * o i, ?_⟩
   have htr' := (Submodule.Quotient.mk_eq_zero (PiNS W T₂ π' 1)).2 htr
   rw [← Submodule.mkQ_apply] at htr'
-  simp only [map_sub, map_sum, map_smul] at htr'
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul] at htr'
   rw [sub_sub, sub_eq_zero] at htr'
   have hq2 : ∀ j, (PiNS W T₂ π' 1).mkQ (W.map F (w₁ j)) =
       ((PD.p : ℕ) : O) ^ y₁ • (PiNS W T₂ π' 1).mkQ (Yj j : W.DD T₂) := by
@@ -100,7 +105,8 @@ theorem univLinkPf_cong {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L
       (((PD.p : ℕ) : O) ^ y₁ * u) * (((PD.p : ℕ) : O) ^ (2 * σ) * piOm1 W c S h' up b) := by
     rw [pow_add, pow_add, ← hu]; ring
   rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply]
-  simp only [map_sub, map_sum, map_smul, univLinkPf_map_osmul, hq2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, univLinkPf_map_osmul, hq2]
   rw [hc, mul_smul (((PD.p : ℕ) : O) ^ y₁ * u),
     mul_smul (((PD.p : ℕ) : O) ^ (2 * σ)) (piOm1 W c S h' up b), htr', smul_add,
     Finset.smul_sum, Finset.smul_sum]
@@ -149,11 +155,13 @@ theorem univLinkPf_class {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.
         rw [← Submodule.mkQ_apply, map_sub, map_smul, sub_eq_zero] at h
         exact h.symm
       rw [← Submodule.mkQ_apply] at e1 e2
-      simp only [map_sub, map_sum, map_smul] at e1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_smul] at e1
       rw [sub_sub, sub_eq_zero] at e1
       rw [map_sub, map_sub, univLinkPf_map_osmul, map_smul, sub_eq_zero] at e2
       rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply]
-      simp only [map_sub, map_add, map_sum, map_smul, e3]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_add (f := _), map_sum, map_smul, e3]
       rw [pow_add, mul_smul, e1, ← e2, smul_add, Finset.smul_sum]
       simp only [smul_smul, mul_comm (((PD.p : ℕ) : O) ^ σ)]
       abel
@@ -250,7 +258,8 @@ theorem univLinkPf_local [StrongRankCondition O] {T₁ T₂ : LocLat G Qp LL O} 
             (⟨F.post κ₁, F.post_Z1T κ₁ hκ₁Z⟩ : ↥(latticeCocycles T₂.L)) = LatHom.H1map F (W.clK T₁ pr₁) := by
           rw [← hκ₁cl]; rfl
         rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply]
-        simp only [map_sub, map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sub, map_sum, map_smul]
         rw [h1, h2, sub_sub, sub_eq_zero]
         exact heq.trans (congrArg (LatHom.H1map F (W.clK T₁ pr₁) + ·)
           (Finset.sum_congr rfl fun i _ => congrArg (o i • ·) (hκbcl i).symm))

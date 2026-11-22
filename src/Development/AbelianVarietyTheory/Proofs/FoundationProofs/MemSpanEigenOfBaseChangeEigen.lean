@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -44,7 +48,7 @@ theorem mem_span_eigen_of_baseChange_eigen (l : ℕ) [Fact l.Prime] (M S : Type)
       rw [LinearMap.lTensor_tmul, hΦt, hΦt, LinearMap.baseChange_tmul, ← TensorProduct.tmul_smul,
         ← TensorProduct.tmul_sub]
       rfl
-    | add u v hu hv => simp only [map_add, hu, hv, smul_add]; abel
+    | add u v hu hv => simp only [map_add (f := _), hu, hv, smul_add]; abel
   have hz : ∀ s, (h s).lTensor P z = 0 := by
     intro s
     apply hΦ

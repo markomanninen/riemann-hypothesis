@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisFurther
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsBisFurther
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -26,8 +31,8 @@ theorem sigma_rem (I : ∀ k, Finset (ι k)) (p : Σ k, ι k) :
   · rw [Function.update_of_ne hk]
     simp [hk]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem rem_rem_comm (I : ∀ k, Finset (ι k)) (p q : Σ k, ι k) :
     rem (rem I p) q = rem (rem I q) p := by
   obtain ⟨k, i⟩ := p
@@ -39,8 +44,8 @@ theorem rem_rem_comm (I : ∀ k, Finset (ι k)) (p q : Σ k, ι k) :
     rw [Function.update_of_ne hk, Function.update_of_ne (Ne.symm hk),
       Function.update_comm (Ne.symm hk)]
 
-omit [∀ k, LinearOrder (ι k)] in
 
+omit [∀ k, LinearOrder (ι k)] in
 theorem offset_update (I : ∀ k, Finset (ι k)) (k : K) (X : Finset (ι k)) :
     ∑ l ∈ Finset.univ.filter (· < k), ((Function.update I k X l).card - 1) =
       ∑ l ∈ Finset.univ.filter (· < k), ((I l).card - 1) :=
@@ -158,8 +163,8 @@ theorem double_sum_eq_zero {Ω : Type} [AddCommGroup Ω] (I : ∀ k, Finset (ι 
 
 variable (S : Type) [CommRing S] [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [Algebra S Ω]
 
-open Classical in
 
+open Classical in
 def ext (m : ℕ) (t : Cell K ι m → Ω) (J : ∀ k, Finset (ι k)) : Ω :=
   if h : (∀ l, (J l).Nonempty) ∧ ∑ l, ((J l).card - 1) = m then t ⟨J, h⟩ else 0
 
@@ -180,16 +185,16 @@ theorem cellD_apply (y : (Σ k, ι k) → Ω) (m : ℕ) (t : Cell K ι m → Ω)
   unfold ext rem
   by_cases h : (∀ l, (Function.update J.1 k ((J.1 k).erase i) l).Nonempty) ∧
       ∑ l, ((Function.update J.1 k ((J.1 k).erase i) l).card - 1) = m
-  · rw [dif_pos h, dif_pos h]; rfl
-  · rw [dif_neg h, dif_neg h, smul_zero]; rfl
+  · rw [dite_eq_left h, dite_eq_left h]; rfl
+  · rw [dite_eq_right h, dite_eq_right h, smul_zero]; rfl
 
 omit [∀ k, Fintype (ι k)] in
 theorem cellD_apply_not (y : (Σ k, ι k) → Ω) (m : ℕ) (t : Cell K ι m → Ω) (J : Cell K ι (m + 1))
     (hJ : ¬ CellMeets y J.1) : cellD S y m t J = 0 := by
   simp only [cellD, LinearMap.pi_apply, if_neg hJ, LinearMap.zero_apply]
 
-omit [∀ k, Fintype (ι k)] [Fintype K] [Algebra S Ω] in
 
+omit [∀ k, Fintype (ι k)] [Fintype K] [Algebra S Ω] in
 theorem meets_rem {y : (Σ k, ι k) → Ω} {I : ∀ k, Finset (ι k)} (hI : CellMeets y I) (p : Σ k, ι k) :
     CellMeets y (rem I p) := by
   obtain ⟨k, i⟩ := p
@@ -201,8 +206,8 @@ theorem meets_rem {y : (Σ k, ι k) → Ω} {I : ∀ k, Finset (ι k)} (hI : Cel
   · rw [rem_apply_of_ne _ hl] at hj
     exact hI l j hj
 
-omit [∀ k, Fintype (ι k)] [Algebra S Ω] in
 
+omit [∀ k, Fintype (ι k)] [Algebra S Ω] in
 theorem rem_isCell {m : ℕ} (J : Cell K ι (m + 1)) {k : K} {i : ι k} (hi : i ∈ J.1 k)
     (hne : ((J.1 k).erase i).Nonempty) :
     (∀ l, (rem J.1 ⟨k, i⟩ l).Nonempty) ∧ ∑ l, ((rem J.1 ⟨k, i⟩ l).card - 1) = m := by
@@ -221,14 +226,14 @@ omit [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] [LinearOrder K] [Algebr
 theorem ext_of_empty {m : ℕ} (t : Cell K ι m → Ω) {J : ∀ k, Finset (ι k)} {k : K} (h : J k = ∅) :
     ext m t J = 0 := by
   unfold ext
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨hc, -⟩
   simpa [h] using hc k
 
 end CellDSq
 
-open CellDSq in
 
+open CellDSq in
 theorem CellDSq.proof : CellDSq.Statement := by
   intro S _ K _ _ ι _ _ Ω _ _ y n s
   funext I
@@ -241,7 +246,7 @@ theorem CellDSq.proof : CellDSq.Statement := by
       intro k i hi
       by_cases hne : ((I.1 k).erase i).Nonempty
       · have hc := rem_isCell I hi hne
-        rw [ext, dif_pos hc, cellD_apply S y n s ⟨_, hc⟩ (meets_rem hI _)]
+        rw [ext, dite_eq_left hc, cellD_apply S y n s ⟨_, hc⟩ (meets_rem hI _)]
       · have h0 : rem I.1 ⟨k, i⟩ k = ∅ := by
           rw [rem_apply_self]; exact Finset.not_nonempty_iff_eq_empty.1 hne
         rw [ext_of_empty _ h0]

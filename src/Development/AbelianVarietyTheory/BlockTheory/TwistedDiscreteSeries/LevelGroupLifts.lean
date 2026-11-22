@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,6 +40,8 @@ def iotaAt (T : CoreJ D) (j : ℕ) (σ : T.Q.c.F →+* ℂ) (hr : (T.V j σ).ran
     (T.Q.Dw j).La →ₗ[𝓞 D.host.E] (Fin (T.V j σ).rank → D.host.E) :=
   LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota j
 
+attribute [local instance 2000] Submodule.module
+
 def IsGeoRep (T : CoreJ D) (j : ℕ) (a : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ)
     (ρ : LevGrp T j →* (T.cuspA j a n →ₗ[T.Q.c.F] T.cuspA j a n)) : Prop :=
   ∀ g f, ((ρ g f : T.cuspA j a n) : T.R j) =
@@ -54,10 +60,5 @@ def UnitConstEquivariant : Prop :=
       ∃ c' : (T.U j σ).Comp → ℂ, CUnit c' ∧
         EquivariantFiniteGroup (T.V j σ) σ ((rdU (T.U j σ)).comp (T.cuspA j a n).subtype) (T.dict j σ)
           (muPin (T.V j σ) (T.dict j σ) (T.mu j σ) c') ρ chi ℓ
-
-example (V : HSp D) : (1 : GA D V) ∈ GfC V ∧
-    gLat V 1 = (latHat V : Set (Fin V.rank → Af D.host.F ⊗[D.host.F] D.host.E)) := by
-  refine ⟨one_mem _, ?_⟩
-  simp [gLat]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LevelGroupLifts

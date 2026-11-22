@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCycAlgOfPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VanishOrdOfKatoUseN
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaFixedValuationEqZpowPrimeRatAlgClosure
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowFixedOfAlgebraic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCycAlgOfPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VanishOrdOfKatoUseN
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaFixedValuationEqZpowPrimeRatAlgClosure
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowFixedOfAlgebraic
+
+@[expose] public section
 
 noncomputable section
 

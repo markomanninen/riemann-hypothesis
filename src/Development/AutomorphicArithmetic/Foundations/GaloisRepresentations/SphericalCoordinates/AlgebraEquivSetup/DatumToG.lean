@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Definitions.Divisors.CompactBIffCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CompactBIffCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ def trd : 𝓞 E →ₗ[ℤ] ℤ :=
         have h1 := (A.δ_int x).choose_spec
         have h2 := (A.δ_int y).choose_spec
         have : (((A.δ_int (x + y)).choose : ℤ) : ℚ) = ((A.δ_int x).choose : ℤ) + ((A.δ_int y).choose : ℤ) := by
-          rw [← h, ← h1, ← h2, ← map_add, ← mul_add]; simp
+          rw [← h, ← h1, ← h2, ← map_add (f := _), ← mul_add]; simp
         exact_mod_cast this }
 
 theorem trd_spec (x : 𝓞 E) : ((A.trd x : ℤ) : ℚ) = Algebra.trace ℚ E (A.δ * x) := (A.δ_int x).choose_spec.symm
@@ -177,9 +181,6 @@ def datum {n : ℕ} (h : A.Facts n) (q : ℕ) [Fact q.Prime] (hs : A.SplitK q) (
     have := h5 c M hM
     have ht : A.tau 0 = A.τ₀ := rfl
     simpa [ht] using this
-
-theorem datum_toG {n : ℕ} (h : A.Facts n) (q q' : ℕ) [Fact q.Prime] [Fact q'.Prime] (hs hp hs' hp') :
-    (A.datum h q hs hp).toG = (A.datum h q' hs' hp').toG := rfl
 
 theorem herm (n : ℕ) : ((A.H n).map (cj E))ᵀ = A.H n := by
   rw [H, Matrix.diagonal_map (map_zero _), Matrix.diagonal_transpose]

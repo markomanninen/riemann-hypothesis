@@ -1,4 +1,9 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TendstoPrimeIdealZetaSumUniv
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TendstoPrimeIdealZetaSumUniv
+import all Mathlib.NumberTheory.NumberField.DirichletDensity
+
+@[expose] public section
 
 noncomputable section
 
@@ -169,7 +174,7 @@ theorem exists_bound_primeIdealZetaSum_not_prime :
     ∃ C : ℝ, ∀ s : ℝ, 1 < s →
       NumberField.Set.primeIdealZetaSum {𝔭 : HeightOneSpectrum (𝓞 K) | ¬ (Ideal.absNorm 𝔭.asIdeal).Prime} s ≤ C := by
   refine ⟨(Module.finrank ℚ K : ℝ) * ∑' m : ℕ, 1 / (m : ℝ) ^ 2, fun s hs => ?_⟩
-  unfold NumberField.Set.primeIdealZetaSum
+  rw [NumberField.Set.primeIdealZetaSum_def]
   refine tsum_le_of_sum_le' (mul_nonneg (Nat.cast_nonneg _) (tsum_nonneg fun m => by positivity))
     fun U => ?_
   exact sum_absNorm_rpow_neg_le_of_not_prime Subtype.val Subtype.val_injective U (fun x _ => x.2) hs
@@ -185,7 +190,7 @@ theorem exists_prime_absNorm_of_hasDirichletDensity {S : Set (HeightOneSpectrum 
     refine ⟨(hT.toFinset.card : ℝ) + (Module.finrank ℚ K : ℝ) * ∑' m : ℕ, 1 / (m : ℝ) ^ 2,
       add_nonneg (Nat.cast_nonneg _) (mul_nonneg (Nat.cast_nonneg _)
         (tsum_nonneg fun m => by positivity)), fun s hs => ?_⟩
-    unfold NumberField.Set.primeIdealZetaSum
+    rw [NumberField.Set.primeIdealZetaSum_def]
     refine tsum_le_of_sum_le' (add_nonneg (Nat.cast_nonneg _) (mul_nonneg (Nat.cast_nonneg _)
         (tsum_nonneg fun m => by positivity))) fun U => ?_
     rw [← Finset.sum_filter_add_sum_filter_not U
@@ -207,12 +212,11 @@ theorem exists_prime_absNorm_of_hasDirichletDensity {S : Set (HeightOneSpectrum 
     · refine sum_absNorm_rpow_neg_le_of_not_prime (ι := S) Subtype.val Subtype.val_injective _ ?_ hs
       intro x hx
       exact hcon x.1 x.2 (Finset.mem_filter.1 hx).2
-  have h' : Tendsto (fun s => NumberField.Set.primeIdealZetaSum S s /
-      NumberField.Set.primeIdealZetaSum Set.univ s) (𝓝[>] 1) (𝓝 δ) := h
+  unfold NumberField.Set.HasDirichletDensity at h
   have hU := tendsto_primeIdealZetaSum_univ (K := K)
   have h1 : ∀ᶠ s in 𝓝[>] (1 : ℝ), δ / 2 < NumberField.Set.primeIdealZetaSum S s /
-      NumberField.Set.primeIdealZetaSum Set.univ s :=
-    h'.eventually (lt_mem_nhds (show δ / 2 < δ by linarith))
+      NumberField.Set.primeIdealZetaSum (K := K) Set.univ s :=
+    h.eventually (lt_mem_nhds (show δ / 2 < δ by linarith))
   have h2 : ∀ᶠ s in 𝓝[>] (1 : ℝ), 2 * (B + 1) / δ <
       NumberField.Set.primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s :=
     hU.eventually (eventually_gt_atTop (2 * (B + 1) / δ))

@@ -1,44 +1,47 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Actions
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActionLevelMemHolds
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Adelstab
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AutomorphicFormsDecompositionHolds
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeAssoc
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.ClassSet
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeConvolutionMemHolds
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LevelSubgroupFiniteAdelicStandard
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Ecompose
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Fcompose
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LocalAlgebraInertPrime
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckebasic
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Ipindep
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelv
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelvsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LinSubstIsHomogeneous
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Nabladual
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SplitUnitaryGroupIso
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabfin
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabstd
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Transport
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.DualWeylModuleStable
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
-import Formalism.SatakeDualWeyl.NablaRepApply
-import Formalism.SatakeDualWeyl.DualWeylRepApply
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeActMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Actions
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Heckebasic
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Adelstab
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AdelstabL
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AutomorphicFormsDecompositionHolds
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeAssoc
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.ClassSet
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.HeckeConvolutionMemHolds
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LevelSubgroupFiniteAdelicStandard
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Ecompose
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawa
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Fcompose
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LocalAlgebraInertPrime
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Ipindep
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelv
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelvsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.LinSubstIsHomogeneous
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureExists
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SplitUnitaryGroupIso
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabfin
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stabstd
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Stdform
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Transport
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Upqcpt
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.DualWeylModuleStable
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+public import Formalism.SatakeDualWeyl.NablaRepApply
+public import Formalism.SatakeDualWeyl.DualWeylRepApply
+
+@[expose] public section
 
 namespace Formalism.UG.Final
 
@@ -99,7 +102,8 @@ theorem HformGram : Formalism.UG.HformGram := by
     ext j
     simp [Pi.single_apply]
   conv_lhs => rw [hx, hy]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     RingHom.id_apply, Finset.mul_sum, hform, gram]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -158,7 +162,6 @@ theorem SatakeInert : Formalism.UG.SatakeInert := Formalism.UG.P.satake_inert
 theorem SatMul : Formalism.UG.SatMul := Formalism.UG.P.satake_mul
 theorem SphericalExistsU : Formalism.UG.SphericalExistsU := Formalism.UG.P.exists_spherical_function_unitary
 theorem GLintComm : Formalism.UG.GLintComm := Formalism.UG.P.GL_integral_hecke_commute
-theorem LocInert : Formalism.UG.LocInert := Formalism.UG.P.local_algebra_inert_prime
 theorem DosetIndMem : Formalism.UG.DosetIndMem := by
   intro G _ K k _ g
   show (∀ a b : K, ∀ x : G, dosetInd k K g ((a : G) * x * b) = dosetInd k K g x) ∧
@@ -255,7 +258,7 @@ theorem HeckeBasis : Formalism.UG.HeckeBasis := by
     intro f hf g
     obtain ⟨hbi, -⟩ := hf
     obtain ⟨h, hh, c, hc, he⟩ :=
-      (DoubleCoset.eq K K g (Quotient.out (DoubleCoset.mk K K g))).mp (Quotient.out_eq _).symm
+      (@DoubleCoset.eq _ _ K K g (Quotient.out (DoubleCoset.mk K K g))).mp (Quotient.out_eq _).symm
     rw [he]
     exact hbi ⟨h, hh⟩ ⟨c, hc⟩ g
   have hfin : ∀ f : Hecke k K, (Function.support fun c : ClassSet K K => (f : G → k) (Quotient.out c)).Finite := by
@@ -266,7 +269,7 @@ theorem HeckeBasis : Formalism.UG.HeckeBasis := by
     obtain ⟨s, hs, a, b, he⟩ := hS _ hc
     refine ⟨s, hs, ?_⟩
     have h1 : DoubleCoset.mk K K s = DoubleCoset.mk K K (Quotient.out c) :=
-      (DoubleCoset.eq K K s _).mpr ⟨a, a.2, b, b.2, he⟩
+      (@DoubleCoset.eq _ _ K K s _).mpr ⟨a, a.2, b, b.2, he⟩
     rw [h1]
     exact Quotient.out_eq c
   have hinv : ∀ φ : ClassSet K K →₀ k, (fun g => φ (DoubleCoset.mk K K g)) ∈ Hecke k K := by
@@ -275,11 +278,11 @@ theorem HeckeBasis : Formalism.UG.HeckeBasis := by
       ∃ S : Finset G, ∀ g : G, φ (DoubleCoset.mk K K g) ≠ 0 → ∃ s ∈ S, ∃ a b : K, g = (a : G) * s * b
     refine ⟨fun a b g => ?_, ⟨φ.support.image Quotient.out, fun g hg => ?_⟩⟩
     · congr 1
-      exact ((DoubleCoset.eq K K g _).mpr ⟨a, a.2, b, b.2, rfl⟩).symm
+      exact ((@DoubleCoset.eq _ _ K K g _).mpr ⟨a, a.2, b, b.2, rfl⟩).symm
     · refine ⟨Quotient.out (DoubleCoset.mk K K g),
         Finset.mem_image_of_mem _ (Finsupp.mem_support_iff.mpr hg), ?_⟩
       obtain ⟨h, hh, c, hc, he⟩ :=
-        (DoubleCoset.eq K K g (Quotient.out (DoubleCoset.mk K K g))).mp (Quotient.out_eq _).symm
+        (@DoubleCoset.eq _ _ K K g (Quotient.out (DoubleCoset.mk K K g))).mp (Quotient.out_eq _).symm
       refine ⟨⟨h⁻¹, K.inv_mem hh⟩, ⟨c⁻¹, K.inv_mem hc⟩, ?_⟩
       rw [he]
       group
@@ -339,36 +342,6 @@ theorem InclInj : Formalism.UG.InclInj := by
   apply hinj
   exact congrArg (fun u : GL n (TensorProduct F E R) => (u : Matrix n n (TensorProduct F E R)) i j) hgh
 theorem SigExists : Formalism.UG.SigExists := Formalism.UG.P.signature_exists
-theorem SigConj : Formalism.UG.SigConj := by
-  intro n _ _ J p q e P hP g
-  have hmul : ∀ A B : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ,
-      cT (starRingEnd ℂ) (A * B) = cT (starRingEnd ℂ) B * cT (starRingEnd ℂ) A := by
-    intro A B
-    ext i j
-    simp [cT, Matrix.mul_apply, mul_comm]
-  have hone : cT (starRingEnd ℂ) (1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = 1 := by
-    simp only [cT]
-    rw [Matrix.map_one _ (map_zero _) (map_one _), Matrix.transpose_one]
-  have hPPi : (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = 1 := Units.mul_inv P
-  have hCiC : cT (starRingEnd ℂ) ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * cT (starRingEnd ℂ) (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = 1 := by
-    rw [← hmul, hPPi, hone]
-  show cT (starRingEnd ℂ) (g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * J.reindex e e * (g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = J.reindex e e ↔
-    cT (starRingEnd ℂ) ((P⁻¹ * g * P : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * Jpq p q *
-      ((P⁻¹ * g * P : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) = Jpq p q
-  rw [← hP]
-  simp only [Units.val_mul, hmul, Matrix.mul_assoc]
-  rw [← Matrix.mul_assoc (cT (starRingEnd ℂ) ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)) (cT (starRingEnd ℂ) (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)),
-    hCiC, Matrix.one_mul, ← Matrix.mul_assoc (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ), hPPi, Matrix.one_mul]
-  constructor
-  · intro h
-    have h2 := congrArg (fun Z => cT (starRingEnd ℂ) (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * (Z * (P : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ))) h
-    simpa only [Matrix.mul_assoc] using h2
-  · intro h
-    have h2 := congrArg (fun Z => cT (starRingEnd ℂ) ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) * Z *
-      ((P⁻¹ : GL (Fin p ⊕ Fin q) ℂ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)) h
-    simp only [← Matrix.mul_assoc, hCiC, Matrix.one_mul] at h2
-    simp only [Matrix.mul_assoc, hPPi, Matrix.mul_one] at h2
-    exact h2
 theorem SphericalExists : Formalism.UG.SphericalExists := Formalism.UG.P.exists_spherical_function
 theorem SplitIso : Formalism.UG.SplitIso := Formalism.UG.P.split_unitary_group_iso
 theorem StabFinite : Formalism.UG.StabFinite := Formalism.UG.P.UG_stabilizer_finite
@@ -512,14 +485,13 @@ theorem UJTransport : Formalism.UG.UJTransport := by
     simp [bc]
   · apply Subtype.ext
     simp
-theorem SplitPts : Formalism.UG.SplitPts := Formalism.UG.P.split_group_points
-theorem KpqSubgroupCompact : Formalism.UG.KpqSubgroupCompact := Formalism.UG.P.maximal_compact_subgroup_compact
 theorem DwActMul : Formalism.UG.DwActMul := by
   intro R _ r n g h
   refine ⟨?_, ?_⟩
   · apply MvPolynomial.algHom_ext
     intro i
-    simp only [dwAct, Formalism.GradedWeylDivisibility.rowAct, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dwAct, Formalism.GradedWeylDivisibility.rowAct, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_mul,
       MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, mul_inv_rev, Units.val_mul, Matrix.mul_apply,
       Finset.sum_mul, Finset.mul_sum, mul_assoc]
     rw [Finset.sum_comm]

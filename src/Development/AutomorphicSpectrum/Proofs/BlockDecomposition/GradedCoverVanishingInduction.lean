@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegOneSmulCancel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Mk2EqZeroIffMemS
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegOneSmulCancel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Mk2EqZeroIffMemS
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -198,7 +202,8 @@ theorem cech_top_cup_power : ∀ {R : Type} [CommRing R] {C : Type 1} [Category.
     have h := congrFun hP tp
     rw [h]
     change (rM Φ.A hU).pullC (n + 1) ((KK Φ.A W).dh n (n + 1) ω tp + (-1 : ℤ) ^ (n + 1) • CH.d _ n (f tp)) = _
-    rw [dh_apply, map_add, map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dh_apply, map_add (f := _), map_sum, map_zsmul]
     refine congrArg₂ (· + ·) (Finset.sum_congr rfl fun k _ => ?_) ?_
     · rw [map_zsmul]; rfl
     · rw [d_resB]; rfl

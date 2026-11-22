@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedSubgroup
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Gr29.Plc :
     (F : Type) → [Field F] → Type :=

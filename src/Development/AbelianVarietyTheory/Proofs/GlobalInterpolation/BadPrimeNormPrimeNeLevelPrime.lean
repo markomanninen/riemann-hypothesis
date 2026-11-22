@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeUnit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationFinOrderApply
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingIsGoodCyclotomicInvariantReferenceLatti
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.VolqExistsPow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntOfHomAt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsNormEqOfSplitFactor
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeUnit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationFinOrderApply
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingIsGoodCyclotomicInvariantReferenceLatti
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.VolqExistsPow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntOfHomAt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ section Generic
 
 variable {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K] [NumberField K] {a b : ℕ} {P : HeightOneSpectrum (𝓞 E)}
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem awayAt_of_fnModAt {N : Submodule (𝓞 E) (Sp E a)} {N' : Submodule (𝓞 E) (Sp E b)} {Φ : HomE E a b → K}
     (hq : (qOf P).Prime) (h : FnModAt P N N' Φ) (w : HeightOneSpectrum (𝓞 K)) {B : ℕ} (hB : 1 ≤ B) : AwayAt P w B N N' Φ := by
   refine ⟨fun x => valuation_le_one_of_mem_Zmu w hq (h.2.2 x), fun x z hz => ?_⟩

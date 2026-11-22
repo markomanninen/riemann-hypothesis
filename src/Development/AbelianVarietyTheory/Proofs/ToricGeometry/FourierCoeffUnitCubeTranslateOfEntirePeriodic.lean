@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyIteratedFDerivEqZeroOfRealSubspace
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ShiftSingleInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyIteratedFDerivEqZeroOfRealSubspace
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ShiftSingleInt
+
+@[expose] public section
 
 open Complex Matrix Filter Topology MeasureTheory
 open scoped BigOperators Real
@@ -97,9 +101,9 @@ theorem setIntegral_unitCube_add_of_entire_periodic {g : ℕ} {f : (Fin g → �
       congr 1
       funext x
       congr 1
-      funext j
-      simp
-      ring) (Set.mem_univ w) (Set.mem_univ 0)
+      funext i
+      simp only [Pi.add_apply, Complex.ofReal_add]
+      ac_rfl) (Set.mem_univ w) (Set.mem_univ 0)
   simpa using h
 
 theorem fourierCoeff_unitCube_translate_of_entire_periodic (g : ℕ) (f : (Fin g → ℂ) → ℂ)

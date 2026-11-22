@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValues
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValues
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeDominantCompat
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.CompanionTheory.Ar.Cusp.PtHt
@@ -29,9 +34,6 @@ def sat (𝔭 : Ideal A) [h𝔭 : 𝔭.IsPrime] (N : Submodule A M) : Submodule 
   smul_mem' := by
     rintro c x ⟨t, ht, hx⟩
     exact ⟨t, ht, by rw [smul_comm]; exact N.smul_mem _ hx⟩
-
-theorem mem_sat {𝔭 : Ideal A} [𝔭.IsPrime] {N : Submodule A M} {x : M} :
-    x ∈ sat 𝔭 N ↔ ∃ t ∉ 𝔭, t • x ∈ N := Iff.rfl
 
 theorem span_sat_iff (𝔭 : Ideal A) [h𝔭 : 𝔭.IsPrime] {N G : Submodule A M} (h1 : N ≤ G) (h2 : G ≤ sat 𝔭 N) (x : M) :
     x ∈ Submodule.span A {x | ∃ s ∉ 𝔭, s • x ∈ G} ↔ ∃ t ∉ 𝔭, t • x ∈ N := by
@@ -80,7 +82,8 @@ theorem frame_compare (hξ : IsCptGen ξ) {F : Type} [Field F] (w : Sp F ⟶ X) 
   let Ds : Matrix (Fin m) (Fin m) (X.presheaf.stalk (centre w)) := Matrix.of fun i j => B j i
   have e : ∀ k, ∑ j, g ((Ts * Ds) j k) • s j = s k := fun k => by
     conv_rhs => rw [hB k]
-    simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [hA l, Finset.smul_sum]
@@ -150,7 +153,7 @@ theorem reg_value (z : Sp (𝓞 L) ⟶ X) (hξ : IsCptGen ξ) (𝔭 : PrimeSpect
     have e : (spMap (algebraMap (𝓞 L) A)) (IsLocalRing.closedPoint A) = 𝔭 := by
       apply PrimeSpectrum.ext
       show (IsLocalRing.maximalIdeal A).comap (algebraMap (𝓞 L) A) = 𝔭.asIdeal
-      exact Localization.AtPrime.comap_maximalIdeal
+      exact Localization.AtPrime.under_maximalIdeal
     show z 𝔭 = z ((spMap (algebraMap (𝓞 L) A)) (IsLocalRing.closedPoint A))
     rw [e]
   have key : ∀ (q : X) (hq : q = centre zA) (h' : genPt ξ ⤳ q), a ∈ regAt ξ ⟨q, h'⟩ →
@@ -178,11 +181,11 @@ theorem prime_cases (𝔭 : PrimeSpectrum (𝓞 L)) : 𝔭.asIdeal = ⊥ ∨ ∃
 theorem bad_finite {m : ℕ} (T : Matrix (Fin m) (Fin m) L) (hT : T.det ≠ 0) :
     {v : FinitePlace L | ¬ ((∀ i j, v (T i j) ≤ 1) ∧ v T.det = 1)}.Finite := by
   classical
-  have h1 : (Function.mulSupport fun v : FinitePlace L => v T.det).Finite := FinitePlace.mulSupport_finite hT
+  have h1 : (Function.mulSupport fun v : FinitePlace L => v T.det).Finite := FinitePlace.hasFiniteMulSupport hT
   have h2 : ∀ i j, {v : FinitePlace L | ¬ v (T i j) ≤ 1}.Finite := fun i j => by
     by_cases h0 : T i j = 0
     · simp [h0]
-    · refine Set.Finite.subset (FinitePlace.mulSupport_finite h0) fun v hv e => hv ?_
+    · refine Set.Finite.subset (FinitePlace.hasFiniteMulSupport h0) fun v hv e => hv ?_
       exact (show v (T i j) = 1 from e).le
   refine (h1.union (Set.finite_iUnion fun i => Set.finite_iUnion fun j => h2 i j)).subset fun v hv => ?_
   by_cases hd : v T.det = 1

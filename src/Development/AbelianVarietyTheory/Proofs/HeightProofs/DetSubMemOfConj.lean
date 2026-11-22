@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionFractionalIdealProperties
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionFractionalIdealProperties
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem exists_det_hom {R Q : Type} [CommRing R] [AddCommGroup Q] [Module R Q] (
     ext i j
     rw [LinearMap.toMatrix'_apply]
     change e (k (e.symm (Pi.single j 1))) i = Ideal.Quotient.mk I (a i j)
-    rw [ha, map_sum, Finset.sum_apply, Finset.sum_eq_single i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ha, map_sum, Finset.sum_apply, Finset.sum_eq_single i]
     · rw [map_smul, e.apply_symm_apply, Pi.smul_apply, Pi.single_eq_same, Algebra.smul_def, mul_one]
       rfl
     · intro b _ hb
@@ -134,7 +139,8 @@ theorem det_sub_mem_hat {n : ℕ} {La : Type} [AddCommGroup La] [Module (𝓞 E)
   let P₀ : Matrix (Fin n) (Fin n) E := Matrix.of fun i j => ι (v j) i
   have hP₀ : ∀ l, P₀ *ᵥ (fun j => (co l j : E)) = (t : E) • ι l := fun l => by
     have := congrArg ι (hco l)
-    rw [map_sum, map_smul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul] at this
     funext i
     have := congrFun this i
     simp only [Finset.sum_apply, map_smul, Pi.smul_apply, Algebra.smul_def] at this

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.PderivSubGOff
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.PderivSubGOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,8 @@ theorem lap_plane (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2
     intro col
     have e2 := pderiv_subG_lam (gm := gm) plc inj ((ρ, ⟨o, ⟨t + 1, a2⟩⟩) : AA r tau N) col Q
     have e2' : pderiv (⟨tau o (t + 1), a2, plc (ρ, col)⟩ : Letter T r n) (subG r tau gm plc Q) = _ := e2
-    rw [e2', map_sum, Finset.sum_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2', map_sum, Finset.sum_comm]
     refine Finset.sum_congr rfl fun g2 _ => ?_
     rw [Derivation.leibniz, pderiv_C, smul_zero, add_zero, smul_eq_mul]
     have e1 := pderiv_subG_lam (gm := gm) plc inj ((ρ, ⟨o, ⟨t, a1⟩⟩) : AA r tau N) col
@@ -63,7 +68,8 @@ theorem lap_plane (inj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x.2
   refine Finset.sum_eq_zero fun g1 _ => ?_
   rw [Finset.sum_comm]
   refine Finset.sum_eq_zero fun g2 _ => ?_
-  rw [← Finset.sum_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_mul, ← map_sum]
   by_cases hg : g1 = g2
   · have hK : ∑ col, gm o t col g1 * gm o (t + 1) col g2 = 0 := by
       have h := gm_hyp o t g2 g1

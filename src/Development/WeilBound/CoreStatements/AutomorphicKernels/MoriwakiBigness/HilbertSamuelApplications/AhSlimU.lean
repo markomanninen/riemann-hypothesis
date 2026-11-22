@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.DeepStROfUse
-import Development.WeilBound.CoreStatements.HodgeTatePoints.AhSlim
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.DeepStROfUse
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.AhSlim
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Ah
 

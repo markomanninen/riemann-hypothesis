@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef NumberField IsDedekindDomain GlobalTheory.EtaJoin
 
 namespace GlobalTheory.EtaJoin
@@ -15,7 +20,7 @@ theorem eigSum_good_sup_compl_eq_top : ∀ (D : D7) (i : D.nd.Loc), ZRat D (D.nd
     unfold ZRat at hZ
     rw [hZ]; exact Submodule.mem_top
   obtain ⟨u, hu, u', hu', rfl⟩ := Submodule.mem_sup.1 hy
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hS.1 u hu) (hS.2 u' hu')
 
 end GlobalTheory.EtaJoin

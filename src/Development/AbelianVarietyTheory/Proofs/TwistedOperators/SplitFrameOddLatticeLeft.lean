@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeRowMulVecMemModulusScaledCompletion
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualModulusShiftHalfMemCompletedModulusHom
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceHermitianFrameProperties
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqUniformizerAndUnitAtPrime
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeRowMulVecMemModulusScaledCompletion
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SelfDualModulusShiftHalfMemCompletedModulusHom
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -80,7 +85,7 @@ theorem val_le_of_mem_pow (p : SplitPt D k) {w : HeightOneSpectrum (𝓞 D.host.
       rw [e1, map_mul, map_mul, map_mul, pow_succ]
       exact mul_le_mul' (ih x hx) (SplitPt.val_le_unif ⟨ϖ, hϖ⟩ h1)
     · have e1 : ((x + y : 𝓞 D.host.E) : D.host.E) = x + y := rfl
-      rw [e1, map_add, map_add]
+      rw [e1, map_add (f := _), map_add (f := _)]
       exact Valuation.map_add_le _ hx hy
 
 variable {T : Type} {L : LevCh D T} {sc : Consts}
@@ -223,9 +228,9 @@ theorem ideal_smul_auxiliary_vector_mem_lattice {A B : HSp D} {c : ℕ} {ε : D.
 
 end GlobalTheory.AscFin.DepthColumn
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.AscFin.DepthColumn GlobalTheory.FinPl.FrameLat in
-
 theorem GlobalTheory.AscFin.DepthColumn.scaled_column_mem : OnStd fun {D} _ _ {sc} {G} W F => ∀ σ (h : 2 * (σ + 1) + 2 ≤ D.R.m), ∀ v ∈ G.pl.S0, ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (p : GlobalTheory.FinPl.SplitPt D k) (β : GlobalTheory.FinPl.Frame p (G.V (.grid (2 * (σ + 1) + 1) 0)) (Fin (G.V (.grid (2 * (σ + 1) + 1) 0)).rank)) (ϖ : 𝒪[k])
     (κ : Fin (2 * (σ + 1) + 1 - 1) → Fin (G.V (.grid (2 * (σ + 1) + 1) 0)).rank),
@@ -287,7 +292,7 @@ theorem GlobalTheory.AscFin.DepthColumn.scaled_column_mem : OnStd fun {D} _ _ {s
   have hy := int_mul_mem (sec_mem_intAt p _ hc) hx
   have hZ := GlobalTheory.DepthRowLem.latRow_mulVec D hO T L μ0 hL sc G W M hM (2 * (σ + 1) + 1) (by omega) e₀ he₀ _ ha _ _ hy
   have hval := val_coord_le β hβ (γ := valuation k (ϖ : k) ^ G.pl.depth sc v) (fun b hb => by
-    obtain ⟨m, hm, rfl⟩ := (FractionalIdeal.mem_coeIdeal _).1 hb
+    obtain ⟨m, hm, rfl⟩ := (FractionalIdeal.mem_coeIdeal (𝓞 D.host.E)⁰ (x := b) (I := G.modul)).1 hb
     exact val_le_of_mem_modul G.pl sc hv p hw hϖ hm) hZ i
   refine exists_mem_pow hϖ _ (le_of_eq_of_le ?_ hval)
   congr 1
@@ -297,9 +302,11 @@ theorem GlobalTheory.AscFin.DepthColumn.scaled_column_mem : OnStd fun {D} _ _ {s
   have ha1 : a j q = ∑ l, (F.dB (σ + 1) h).extX _ a j l * (F.dB (σ + 1) h).jX l q := by
     change _ = (a * (F.dB (σ + 1) h).pX * (F.dB (σ + 1) h).jX) j q
     rw [Matrix.mul_assoc, HypDec.pX_jX, Matrix.mul_one]
-  rw [Pi.smul_apply, smul_eq_mul, ha1, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pi.smul_apply, smul_eq_mul, ha1, map_sum, Finset.mul_sum]
   change _ = p.pr (∑ l, e₀ * (F.dB (σ + 1) h).extX _ a j l * _)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   have e4 : p.pr ((F.dB (σ + 1) h).jX l q) = ξ * p.pr (incA D ((G.colDec (2 * (σ + 1) + 2) (by omega) h).a l q')) := by
     change p.pr (incA D ((F.dB (σ + 1) h).e l q)) = _

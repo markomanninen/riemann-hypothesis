@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormCoeffSubstLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocAinfUntiltEpsOneEqZeta
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormCoeffSubstLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocAinfUntiltEpsOneEqZeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem norm_sub_one_lt {ζ : ↥LL.1} (h : ∃ j : ℕ, IsPrimitiveRoot ζ (l ^
     exact ⟨_, by rw [hr, mul_assoc, mul_assoc]⟩
   have h1 := congrArg (algebraMap ↥(OL LL) ↥LL.1) hr
   have hzz : algebraMap ↥(OL LL) ↥LL.1 z = ζ := rfl
-  simp only [sub_add_cancel, map_pow, map_add, map_mul, map_sub, map_one, map_natCast, hzz, hj.pow_eq_one,
+  simp only [sub_add_cancel, map_pow, map_add (f := _), map_mul, map_sub, map_one, map_natCast, hzz, hj.pow_eq_one,
     one_pow] at h1
   have h2 : (ζ - 1) ^ l ^ j = -((l : ↥LL.1) * algebraMap ↥(OL LL) ↥LL.1 r) := by linear_combination -h1
   have h3 : ‖(l : ↥LL.1)‖ < 1 := by
@@ -48,8 +52,8 @@ theorem prim_pow {ζ : ↥LL.1} (h : ∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) (a
 
 theorem prim_one : ∃ k : ℕ, IsPrimitiveRoot (1 : ↥LL.1) (l ^ k) := prim_of_pow (j := 0) (one_pow _)
 
-open Classical in
 
+open Classical in
 def pt (ζ : ↥LL.1) : ↥LL.1 := if ∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j) then ζ else 1
 
 theorem pt_of {ζ : ↥LL.1} (h : ∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) : pt ζ = ζ := if_pos h
@@ -99,6 +103,8 @@ def convAlg (LL : FinExt l) (n : ℕ) : Subalgebra ↥LL.1 (LetA ↥LL.1 n) wher
 
 variable {n : ℕ}
 
+attribute [local instance 1100] Subalgebra.algebra
+
 def exFun (i : ZMod n) (ζ : ↥LL.1) (f : ↥(convAlg LL n)) : PowerSeries ↥LL.1 :=
   ((conv_expansion l LL (pt ζ) (norm_sub_one_lt (prim_pt ζ))).1 (f.1 i) (f.2 i)).exists.choose
 
@@ -129,11 +135,17 @@ def evalAlg {S : Type} [CommRing S] [Algebra ↥LL.1 S] (J : LetA ↥LL.1 n → 
     (hadd : ∀ a b, (∀ i, Conv (a i)) → (∀ i, Conv (b i)) → J (a + b) = J a + J b)
     (hmul : ∀ a b, (∀ i, Conv (a i)) → (∀ i, Conv (b i)) → J (a * b) = J a * J b)
     (hsmul : ∀ (c : ↥LL.1) a, (∀ i, Conv (a i)) → J (c • a) = c • J a) (hone : J 1 = 1) :
-    ↥(convAlg LL n) →ₐ[↥LL.1] S :=
-  AlgHom.ofLinearMap
-    { toFun := fun a => J a.1
-      map_add' := fun a b => hadd _ _ a.2 b.2
-      map_smul' := fun c a => hsmul c _ a.2 } hone fun a b => hmul _ _ a.2 b.2
+    ↥(convAlg LL n) →ₐ[↥LL.1] S where
+  toFun a := J a.1
+  map_one' := hone
+  map_zero' := by
+    simpa using hsmul 0 1 (1 : ↥(convAlg LL n)).2
+  map_add' a b := hadd _ _ a.2 b.2
+  map_mul' a b := hmul _ _ a.2 b.2
+  commutes' c := by
+    change J (algebraMap ↥LL.1 (LetA ↥LL.1 n) c) = algebraMap ↥LL.1 S c
+    rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one,
+      hsmul c 1 (1 : ↥(convAlg LL n)).2, hone]
 
 variable {P : LocPrime l} {K : FinExt l} {s : ℕ} {Γ : GamS P K s LL}
 
@@ -210,6 +222,7 @@ theorem ζQ_pow (P : LocPrime l) (s : ℕ) : P.ζQ s ^ l ^ s = 1 := by
   | zero => simp [P.ζQ_zero]
   | succ s ih => rw [pow_succ', pow_mul, P.ζQ_succ, ih]
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem unit_pi {AI : LocAinf l P} (T : LocTied l P AI) {R : WSer Γ} (I : IoS AI R)
     (β : RA LL →+* ↥LL.1 ⊗[ℚ_[l]] P.R.B) (hβ : IsBeta AI β) : IsUnit (β (I.io letπ)) := by
   rw [I.io_π, hβ]
@@ -219,8 +232,8 @@ theorem unit_pi {AI : LocAinf l P} (T : LocTied l P AI) {R : WSer Γ} (I : IoS A
 theorem l_pow_inv_ne (s : ℕ) : (((l : ℚ_[l]) ^ s)⁻¹) ≠ 0 :=
   inv_ne_zero (pow_ne_zero _ (by exact_mod_cast (Fact.out : l.Prime).ne_zero))
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_disc (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P AI)
     (K : FinExt l) (s : ℕ) (LL : FinExt l) (_ : Good K s LL) (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R)
     (_ : IoW I) (β : RA LL →+* ↥LL.1 ⊗[ℚ_[l]] P.R.B) (hβ : IsBeta AI β)

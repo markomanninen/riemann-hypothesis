@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfApprox
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfApprox
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,8 @@ theorem ratSolApprox_holds : RatSolApprox := by
     simp only [mulVec, dotProduct, Matrix.map_apply] at hfz
     have key : ((matOf Yv).map (X.B.I.φ v) - P v) i j =
         ∑ r, X.B.I.φ v (P0 (i, j) r) * ((Nc : ℂ) * X.B.I.φ v (y r : X.B.I.E) - P v r.1 r.2) := by
-      simp only [Matrix.sub_apply, Matrix.map_apply, matOf, Matrix.of_apply, hYvd, Pi.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.sub_apply, Matrix.map_apply, matOf, Matrix.of_apply, hYvd, Pi.smul_apply, smul_eq_mul,
         mulVec, dotProduct, map_mul, map_sum, map_natCast]
       conv_lhs => rw [← hfz]
       rw [Finset.mul_sum, ← Finset.sum_sub_distrib]

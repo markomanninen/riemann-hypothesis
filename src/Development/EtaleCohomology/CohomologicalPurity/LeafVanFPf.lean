@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

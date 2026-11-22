@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,10 +154,6 @@ def theta (Q : Ideal (MvPolynomial (Σ k, ι k) ℂ)) [Q.IsPrime] (p : (k : K) �
 
 theorem theta_X (Q : Ideal (MvPolynomial (Σ k, ι k) ℂ)) [Q.IsPrime] (p : (k : K) → ι k)
     (q : Σ k, ι k) : theta Q p (X q) = phi Q (X q) / phi Q (X ⟨q.1, p q.1⟩) := by
-  simp [theta]
-
-theorem theta_C (Q : Ideal (MvPolynomial (Σ k, ι k) ℂ)) [Q.IsPrime] (p : (k : K) → ι k)
-    (c : ℂ) : theta Q p (C c) = phi Q (C c) := by
   simp [theta]
 
 theorem phi_eq_prod_mul_theta (Q : Ideal (MvPolynomial (Σ k, ι k) ℂ)) [Q.IsPrime]

@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.EndoscopyRank2Ordinary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PartLinkAltAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TJRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TWtBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreH
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutAway
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TDenseU
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.EndoscopyRank2Ordinary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PartLinkAltAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TJRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TWtBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreH
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutAway
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TDenseU
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -24,8 +28,6 @@ open scoped TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 set_option synthInstance.maxHeartbeats 200000
 open UpperTheory.V.Z UpperTheory.V.Z.Ord UpperTheory.Gal.projectedFormsSystemPart UpperTheory.GalN.V
-open private au_isTeich au_open from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
-open private absPt ss_comp iso_of_det ss_of_irr irr_of_comp irr_iso from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IrrOfComp
 private theorem coreA (H : _root_.UpperTheory.V.Af.HypothesesH') (hL : _root_.UpperTheory.Gal.projectedFormsSystemPart.PartLinkAlt) (hC : ConjTor) {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L]
     [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] {s : HidaSetting l L Ω} {n : ℕ} (hn : 1 ≤ n) {V : s.Lev} {Q : QData V}
     {c : Coef l} {r : Resid V.frame c.O n} {ι : Qbar l ≃+* ℂ} {B : UniversalOrdinaryDeterminantRing r} {Λ : LamObj r} {R : _root_.UpperTheory.V.Hi.CaseU.UnitaryHeckeData Q ι Λ} {K : (hset Q R.τ₀).Lev}
@@ -39,9 +41,18 @@ private theorem coreA (H : _root_.UpperTheory.V.Af.HypothesesH') (hL : _root_.Up
   have out := _root_.UpperTheory.V.Z.Ord.core_hecke_of_automorphic_hecke_dense_weight H.litN L Ω l n c (hset Q R.τ₀) (_root_.UpperTheory.V.Hi.axU_s H.litN l L Ω s n hn V Q c R.m R.τ₀) Λ.Λ R.θ R.isWt ι _
     (_root_.UpperTheory.Gal.projectedFormsSystemPart.autAway_alt H hL hC s hn V Q c r ι R.m R.τ₀ R.type hS) lam (Set.mem_univ _)
     ((_root_.UpperTheory.V.Hi.isDomain_and_denseWt_of_isTheta H.litN l L Ω s n hn V Q c R.m R.τ₀ r Λ R.θ R.theta).2 lam) R.a K _ _ hmap
-  obtain ⟨ρ, hc, hs, hP, e3⟩ := absPt (hset Q R.τ₀) R.θ R.a K B.u.D (Λ.toPair B.u) f hsurj hlam out x hx lam (Set.mem_univ _) har
+  let y := AlgHom.liftOfSurjective f hsurj x hx
+  have hy (b : B.B) : y (f b) = x b := AlgHom.liftOfSurjective_apply f hsurj x hx b
+  have hΛ : y.toRingHom.comp (algebraMap Λ.Λ _) = (x.comp (Λ.toPair B.u)).toRingHom :=
+    RingHom.ext fun b => (congrArg y (hlam b)).symm.trans (hy _)
+  obtain ⟨ρ, hc, hs, hP, hD, -⟩ := out.pt lam (Set.mem_univ _) y (hΛ ▸ har)
   refine ⟨ρ, hc, hs, hP, ?_⟩
-  replace e3 : x.D = W.GDet.ofRep (W.mat ρ) := e3
+  have hxy : (x : B.B →+* Qbar l) = y.toRingHom.comp f.toRingHom :=
+    RingHom.ext fun b => (hy b).symm
+  have e3 : x.D = W.GDet.ofRep (W.mat ρ) := by
+    change B.u.D.map (x : B.B →+* Qbar l) = _
+    rw [hxy]
+    exact hD
   change x.D.comap V.pr = _
   rw [e3]
   exact (AlgebraTools.Det.repApi (W.mat ρ)).2.2.2.2.2.2.1 V.pr
@@ -54,11 +65,52 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.irrArithPointsAutomorphicAway_o
     obtain ⟨σ, rfl⟩ := (V.hη τ).1 (by rw [hτ]; exact g.2)
     exact ⟨σ, Subtype.ext hτ⟩
   obtain ⟨ρ₀, -, hs, hP, hr⟩ := coreA H hL hC hn hS hJ x h hx ha
-  have e : Af.RepIso (ρ₀.comp V.pr) ρ := iso_of_det (ss_of_irr hi) (ss_comp hpr hs) (hρ.symm.trans hr)
-  obtain ⟨π, h1, h2, h3, h4⟩ := hP (irr_iso e.symm' hi)
-  have h5 : Af.AttC ι ρ π := ⟨ss_of_irr hi, h3.2.mono fun w ⟨b, hb, hf⟩ => ⟨b, hb, hf.of_iso e⟩⟩
+  have hss : IsSSRep ρ := by
+    intro M hM
+    rcases hi.2.2 M le_top hM with rfl | rfl
+    · exact ⟨⊤, hi.2.1, isCompl_bot_top⟩
+    · refine ⟨⊥, fun g v hv => ?_, isCompl_top_bot⟩
+      rw [(Submodule.mem_bot (Qbar l)).1 hv]
+      simp
+  have hss₀ : IsSSRep (ρ₀.comp V.pr) := by
+    intro M hM
+    have hInv : IsInv ρ₀ M := fun g => by
+      obtain ⟨g, rfl⟩ := hpr g
+      exact hM g
+    obtain ⟨M', hM', hcompl⟩ := hs M hInv
+    exact ⟨M', fun g => hM' (V.pr g), hcompl⟩
+  have e : Af.RepIso (ρ₀.comp V.pr) ρ := by
+    have hD := hρ.symm.trans hr
+    obtain ⟨P, hP⟩ := AlgebraTools.Det.bnRep (W.mat ρ) (W.mat (ρ₀.comp V.pr)) hss hss₀ fun g => by
+      rw [← (AlgebraTools.Det.repApi (W.mat ρ)).2.1 g,
+        ← (AlgebraTools.Det.repApi (W.mat (ρ₀.comp V.pr))).2.1 g, hD]
+    refine ⟨P, fun g => ?_⟩
+    rw [eq_mul_inv_iff_mul_eq]
+    exact Units.ext (hP g).symm
+  have hi₀ : Af.IsIrr (ρ₀.comp V.pr) := by
+    obtain ⟨P, hconj⟩ := e.symm'
+    refine ⟨hi.1, fun _ _ _ => Submodule.mem_top, fun M _ hM => ?_⟩
+    let E := (Matrix.GeneralLinearGroup.toLin P).toLinearEquiv
+    have hInv : IsInv ρ (M.comap E.toLinearMap) := fun g v hv => by
+      have hmem := hM g _ hv
+      change ((ρ₀.comp V.pr) g : Matrix (Fin n) (Fin n) (Qbar l)).mulVec
+        ((P : Matrix (Fin n) (Fin n) (Qbar l)).mulVec v) ∈ M at hmem
+      change (P : Matrix (Fin n) (Fin n) (Qbar l)).mulVec _ ∈ M
+      rwa [Matrix.mulVec_mulVec, ← Units.val_mul, hconj g, inv_mul_cancel_right,
+        Units.val_mul, ← Matrix.mulVec_mulVec] at hmem
+    have hmap : M = (M.comap E.toLinearMap).map E.toLinearMap :=
+      (Submodule.map_comap_eq_of_surjective E.surjective M).symm
+    rcases hi.2.2 _ le_top hInv with hbot | htop
+    · left
+      rw [hmap, hbot, Submodule.map_bot]
+    · right
+      rw [hmap, htop, Submodule.map_top, LinearEquiv.range]
+  obtain ⟨π, h1, h2, h3, h4⟩ := hP hi₀
+  have h5 : Af.AttC ι ρ π := ⟨hss, h3.2.mono fun w ⟨b, hb, hf⟩ => ⟨b, hb, hf.of_iso e⟩⟩
   refine ⟨⟨π, h1, h2, h5⟩, fun hc => ?_⟩
-  have born := hB l L Ω s n hn V c r ι B Λ J (_root_.UpperTheory.V.Hi.ring_props_of_is_j_unitary_hecke_data H l L Ω s n hn V Q c r ι B Λ R K hS J hJ)
+  have hRing : B.RingProps Λ J := _root_.UpperTheory.V.Hi.ring_props_of_is_j_unitary_hecke_data
+    H l L Ω s n hn V Q c r ι B Λ R K hS J hJ
+  have born := hB l L Ω s n hn V c r ι B Λ J hRing
     (hE l L Ω s n hn V Q c r ι B Λ R K J hJ) x h ρ hx ha hρ hi hc
   refine ⟨fun v hv hu => (born v hv hu).1, fun π' _ p => ?_⟩
   obtain ⟨t, ht⟩ := ImaginaryQuadraticEtaCharacter.winOf L n hn π'

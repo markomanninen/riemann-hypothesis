@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -12,14 +17,15 @@ variable {A : Type} [CommRing A] {G : ℕ → Type} [∀ n, CommRing (G n)] [∀
   (f : ∀ n, G n →ₐ[A] G (n + 1))
 
 def trA (i j : ℕ) (h : i ≤ j) : G i →ₐ[A] G j :=
-  Nat.leRecOn (C := fun k => G i →ₐ[A] G k) h (fun {k} g => (f k).comp g) (AlgHom.id A (G i))
+  Nat.leRecOn (motive := fun k => G i →ₐ[A] G k) h (fun {k} g => (f k).comp g)
+    (AlgHom.id A (G i))
 
 theorem trA_self (i : ℕ) (h : i ≤ i) : trA f i i h = AlgHom.id A (G i) :=
-  Nat.leRecOn_self (C := fun k => G i →ₐ[A] G k) _
+  Nat.leRecOn_self (motive := fun k => G i →ₐ[A] G k) _
 
 theorem trA_succ (i k : ℕ) (h : i ≤ k) (h2 : i ≤ k + 1) :
     trA f i (k + 1) h2 = (f k).comp (trA f i k h) :=
-  Nat.leRecOn_succ (C := fun k => G i →ₐ[A] G k) h _
+  Nat.leRecOn_succ (motive := fun k => G i →ₐ[A] G k) h _
 
 theorem trA_trans (i j k : ℕ) (hij : i ≤ j) (hjk : j ≤ k) (x : G i) :
     trA f j k hjk (trA f i j hij x) = trA f i k (hij.trans hjk) x := by
@@ -69,16 +75,17 @@ theorem ι_trA (i j : ℕ) (h : i ≤ j) (x : G i) : ι f j (trA f i j h x) = ι
 theorem ι_tr (n k : ℕ) (x : G n) : ι f (n + k) (tr f n k x) = ι f n x := by
   rw [tr_eq_trA, ι_trA]
 
-theorem isColim : IsColim f (ι f) where
-  comm n x := by
+theorem isColim : IsColim f (ι f) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro n x
     have := ι_tr f n 1 x
     simpa [tr] using this
-  surj m x := by
+  · intro m x
     choose n y hy using fun i => Ring.DirectLimit.exists_of (x i)
     refine ⟨Finset.univ.sup n, fun i => trA f (n i) _ (Finset.le_sup (Finset.mem_univ i)) (y i),
       fun i => ?_⟩
     rw [ι_trA, ι_apply, hy]
-  ker n m y hy := by
+  · intro n m y hy
     have h0 : ∀ i, ∃ j, ∃ hij : n ≤ j, trR f n j hij (y i) = 0 := fun i =>
       Ring.DirectLimit.of.zero_exact (f' := fun i j h => trR f i j h) (hy i)
     choose j hj hz using h0

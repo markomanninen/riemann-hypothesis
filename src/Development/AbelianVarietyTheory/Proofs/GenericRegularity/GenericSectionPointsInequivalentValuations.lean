@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
-import Formalism.LocalToGlobal.ProjectiveLattices.PtOfSPf
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountQAtStGenericSectionPrimes
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.AlgebraMapMemMax
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.PtOfSPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FinrankHostDivTwo
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CountQAtStGenericSectionPrimes
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.AlgebraMapMemMax
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 4000000
@@ -61,7 +65,8 @@ theorem range_aeval {k : ℕ} (Pw : MvPolynomial (Fin N) B.KO) (hPw : Pw.IsHomog
     (hy : y ∈ LinearMap.range (X.inc (addL (wt0 D j) wL m))) :
     y * MvPolynomial.aeval (fun i => X.inc wL (w i)) Pw ∈ LinearMap.range (X.inc (addL (wt0 D j) wL (m + k))) := by
   classical
-  rw [Pw.as_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pw.as_sum, map_sum, Finset.mul_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   rw [MvPolynomial.aeval_monomial, mul_left_comm, ← Algebra.smul_def]
   refine Submodule.smul_mem _ _ ?_
@@ -193,10 +198,11 @@ variable {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω)
 theorem ev_sec {F : Type} [Field F] (ev : Rp X la N →+* F) (τ : Ω →+* F) (σ : F)
     (hc : ∀ (k : ℕ) (G : X.Forms), emb X la N G ∈ Vw X la N (addL (wt0 D j) wL k) →
       ev (emb X la N G) = τ (gF G) * σ ^ k) (i : Fin (WeightFamilies.dimY D j + 1)) :
-    ev (sec X la w i) = (∑ k, evK X la N ev (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i, k))) *
+    ev (sec X la w i) = (∑ k, evK X la N ev (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i, k))) *
       τ (gF (X.inc wL (w k)))) * σ := by
   unfold Formalism.MainNotions.Gaps.EtaleWeightGaps.sec
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [ev_smul, hc 1 _ (by rw [add_zero_weight_one_eq]; exact emb_mem_Vw X la N wL (w k)), pow_one, mul_assoc]
 
@@ -321,8 +327,13 @@ variable {ζ : PtsG G la} {y : E.Pt' la} (h : FromW ζ y)
 theorem evK_op (o : Op (xplus X E hM) la G.N) :
     evK (xplus X E hM) la G.N h.ev (algebraMap _ (Kp (xplus X E hM) la G.N) o) =
       algebraMap h.T.V h.T.Fr (h.ι (algebraMap _ (Loc ζ) o)) := by
-  rw [← lift_algKp (xplus X E hM) la G.N G.w h.ev h.s0,
-    h.evW _ (algebraMap _ _ o) ((toOsK (xplus X E hM) la G.w).commutes _), ← IsScalarTower.algebraMap_apply]
+  calc
+    _ = IsLocalization.Away.lift (sec (xplus X E hM) la G.w 0) h.s0
+        ((algebraMap (Kp (xplus X E hM) la G.N) ↥(Frac0 (xplus X E hM) la G.w)
+          (algebraMap _ (Kp (xplus X E hM) la G.N) o) : ↥(Frac0 (xplus X E hM) la G.w)) : Lw (xplus X E hM) la G.w) :=
+      (lift_algKp (xplus X E hM) la G.N G.w h.ev h.s0 _).symm
+    _ = _ := by
+      rw [h.evW _ (algebraMap _ _ o) ((toOsK (xplus X E hM) la G.w).commutes _), ← IsScalarTower.algebraMap_apply]
 
 theorem pos_iff_mem (x : ↥(Frac0 (xplus X E hM) la G.w))
     (a : ↥(As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)))
@@ -354,7 +365,7 @@ theorem overGauss {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : (xplus X E hM).
     (hc : ∀ (k : ℕ) (F : (xplus X E hM).Forms),
       emb (xplus X E hM) la G.N F ∈ Vw (xplus X E hM) la G.N (addL (wt0 D j) wL k) →
       h.ev (emb (xplus X E hM) la G.N F) = τ (gF F) * σ ^ k) :
-    OverGauss la ((algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N)).comp
+    OverGauss la ((@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _).comp
         (algebraMap (Pol (xplus X E hM) la G.N) (Op (xplus X E hM) la G.N)))
       (algebraMap ((xplus X E hM).Kl la) (Kp (xplus X E hM) la G.N))
       (fun k => gF ((xplus X E hM).inc wL (G.w k))) (valT h.T) τ (evK (xplus X E hM) la G.N h.ev) := by
@@ -371,7 +382,7 @@ theorem overGauss {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : (xplus X E hM).
     exact (mul_eq_zero.1 e.symm).resolve_right hσ
 
 theorem kl_eq (Xr : PJ D B P j) (N : ℕ) (o : Xr.Ol la) :
-    algebraMap (Xr.Kl la) (Kp Xr la N) o = ((algebraMap (Op Xr la N) (Kp Xr la N)).comp
+    algebraMap (Xr.Kl la) (Kp Xr la N) o = ((@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _).comp
       (algebraMap (Pol Xr la N) (Op Xr la N))) (MvPolynomial.C o) := by
   rw [RingHom.comp_apply, ← MvPolynomial.algebraMap_eq,
     ← IsScalarTower.algebraMap_apply (Xr.Ol la) (Pol Xr la N) (Op Xr la N),
@@ -379,15 +390,15 @@ theorem kl_eq (Xr : PJ D B P j) (N : ℕ) (o : Xr.Ol la) :
   exact (IsScalarTower.algebraMap_apply (Xr.Ol la) (Xr.Kl la) (Kp Xr la N) o).symm
 
 theorem kp_frac (Xr : PJ D B P j) (N : ℕ) (c : Kp Xr la N) : ∃ a b,
-    ((algebraMap (Op Xr la N) (Kp Xr la N)).comp (algebraMap (Pol Xr la N) (Op Xr la N))) b ≠ 0 ∧
-    ((algebraMap (Op Xr la N) (Kp Xr la N)).comp (algebraMap (Pol Xr la N) (Op Xr la N))) b * c =
-      ((algebraMap (Op Xr la N) (Kp Xr la N)).comp (algebraMap (Pol Xr la N) (Op Xr la N))) a := by
+    ((@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _).comp (algebraMap (Pol Xr la N) (Op Xr la N))) b ≠ 0 ∧
+    ((@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _).comp (algebraMap (Pol Xr la N) (Op Xr la N))) b * c =
+      ((@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _).comp (algebraMap (Pol Xr la N) (Op Xr la N))) a := by
   obtain ⟨o, o', ho', rfl⟩ := IsFractionRing.div_surjective (A := Op Xr la N) c
   obtain ⟨⟨a, s⟩, hs⟩ := IsLocalization.surj (gI Xr la N).primeCompl o
   obtain ⟨⟨a', s'⟩, hs'⟩ := IsLocalization.surj (gI Xr la N).primeCompl o'
-  have h0 : algebraMap (Op Xr la N) (Kp Xr la N) o' ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors ho'
-  have h1 := ((IsLocalization.map_units (Op Xr la N) s).map (algebraMap (Op Xr la N) (Kp Xr la N))).ne_zero
-  have h2 := ((IsLocalization.map_units (Op Xr la N) s').map (algebraMap (Op Xr la N) (Kp Xr la N))).ne_zero
+  have h0 : @algebraMap (Op Xr la N) (Kp Xr la N) _ _ _ o' ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors ho'
+  have h1 := ((IsLocalization.map_units (Op Xr la N) s).map (@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _)).ne_zero
+  have h2 := ((IsLocalization.map_units (Op Xr la N) s').map (@algebraMap (Op Xr la N) (Kp Xr la N) _ _ _)).ne_zero
   simp only at hs hs'
   refine ⟨a * s', s * a', ?_, ?_⟩
   · simp only [RingHom.comp_apply, map_mul, ← hs']
@@ -485,8 +496,8 @@ theorem sep {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : (xplus X E hM).Forms 
     rw [e]
     exact nval_lt_of_pos h'.T n2 ha'
 
-omit h in
 
+omit h in
 theorem valSep_fam {ι : Type} [Finite ι] (Ω : ι → Type) [∀ Z, Field (Ω Z)] [∀ Z, Algebra B.KO (Ω Z)]
     (gF : ∀ Z, (xplus X E hM).Forms →ₐ[B.KO] Ω Z) (val : ∀ Z (u : WeightFamilies.Wt D j), B.Cusp j u → Ω Z)
     (hval : ∀ Z u F, gF Z ((xplus X E hM).inc u F) = val Z u F)

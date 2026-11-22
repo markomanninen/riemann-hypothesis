@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverVal
+module
+
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem jMt_injective (μ : D.what₂.Tup) (j : ℕ) : Function.Injective (D.wha
   haveI := Fintype.ofFinite (Module.Free.ChooseBasisIndex D.what₂.LL (D.what₂.MtL μ j))
   refine (injective_iff_map_eq_zero (D.what₂.jMt μ j)).2 fun y hy => ?_
   have hsum := b.sum_repr y
-  rw [← hsum, map_sum] at hy
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hsum, map_sum] at hy
   simp only [LinearMap.map_smulₛₗ] at hy
   have hz := Fintype.linearIndependent_iff.1 hb _ hy
   rw [← hsum]
@@ -185,7 +190,7 @@ theorem heckeStd_of_plain (T : NormalizedLocalCompatibility D M) (hP : HeckeStdP
         map_add' := fun y y' => by
           have := Plin (Mw.real y) (hTS y) (Mw.real y') (hTS y') 1
           rw [one_smul, one_smul] at this
-          simp only [map_add]
+          simp only [map_add (f := _)]
           exact this
         map_smul' := fun c y => by
           have := Plin (Mw.real y) (hTS y) 0 (Submodule.zero_mem _) c

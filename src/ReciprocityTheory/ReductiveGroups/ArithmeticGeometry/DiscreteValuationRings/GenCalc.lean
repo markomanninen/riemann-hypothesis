@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadTie
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadTie
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -134,8 +138,8 @@ theorem evalTop_of_eq {A B : Type} [CommRing A] [CommRing B] (f : A →+* B)
 
 variable {V : Type} [CommRing V] [IsDomain V] (F : Type) [Field F] [Algebra (FractionRing V) F]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem evalTop_comp {Y : Scheme.{0}} (g : Spec (CommRingCat.of F) ⟶ Y) (e : Spec (CommRingCat.of V) ⟶ Y)
     (hg : g = DegPre.jFR (R := V) F ≫ e) (U : Y.Opens) (hU : e ⁻¹ᵁ U = ⊤) (hU' : g ⁻¹ᵁ U = ⊤)
     (a : Γ(Y, U)) :
@@ -368,7 +372,8 @@ theorem valuation_ge_at_zero (hϖ : Irreducible ϖ) (hv : ValOver ϖ F v) {k : �
     rw [hT, hT2, AddValuation.map_pow, v_alg_unit hv w, smul_zero]
   have hE := congrArg (evalTop _ hW) (hxj j)
   erw [map_mul, evalTop_const, evalTop_res _ hZ hW] at hE
-  rw [hsum j, map_sum] at hE
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum j, map_sum] at hE
   have hE2 : ∑ i, a i * evalTop _ hZ (((DegPre.zF D.toPre F).left.app _).hom ((σF i).f j)) =
       x * evalTop _ hW (τ.s j).val := by
     refine Eq.trans ?_ hE

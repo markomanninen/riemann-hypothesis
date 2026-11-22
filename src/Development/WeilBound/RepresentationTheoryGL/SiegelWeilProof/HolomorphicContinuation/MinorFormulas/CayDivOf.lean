@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainSt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsGainSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ def opD (s : ℂ) (m : ℕ) (k l : Fin n) : Fm n →ₗ[ℂ] Fm n := opH s m fal
 def cayF (s : ℂ) (m : ℕ) : Fm n →ₗ[ℂ] Fm n :=
   ∑ σ : Equiv.Perm (Fin n), ((Equiv.Perm.sign σ : ℤ) : ℂ) • (List.finRange n).foldr (fun k g => opD s m k (σ k) ∘ₗ g) LinearMap.id
 
-def DivZ (i : ℕ) (Q : Fm n) : Prop := ∀ e, Polynomial.X ^ i ∣ MvPolynomial.coeff e Q
+def DivZ (i : ℕ) (Q : Fm n) : Prop := ∀ e, Polynomial.X ^ i ∣ AddMonoidAlgebra.coeff Q e
 
 def Comm : Prop :=
   ∀ (n : ℕ) (s : ℂ) (m : ℕ) (b b' : Bool) (k l k' l' : Fin n),

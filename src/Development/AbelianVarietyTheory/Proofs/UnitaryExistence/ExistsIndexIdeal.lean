@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -250,7 +254,8 @@ theorem bdd_of_unimod [IsCMField E] (Λ : GenLat E n) (h : Λ.Unimod) : Bdd Λ.L
     rw [hk u huL] at h0
     obtain ⟨φ⟩ : Nonempty (E →+* ℂ) := inferInstance
     have h1 := congrArg φ h0
-    simp only [map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_zero,
       ← Complex.normSq_eq_conj_mul_self] at h1
     have h2 : ∑ j, Complex.normSq (φ (u j)) = 0 := by exact_mod_cast h1
     have h3 : ∀ j, u j = 0 := fun j => by
@@ -296,7 +301,7 @@ theorem span_image_span (S : Set E) :
   induction hx using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul b x _ hx => rw [map_smul_int]; exact Submodule.smul_mem _ _ hx
 
 theorem span_image_smul (𝔞 : Ideal (𝓞 E)) (N : Submodule (𝓞 E) E) :
@@ -311,7 +316,7 @@ theorem span_image_smul (𝔞 : Ideal (𝓞 E)) (N : Submodule (𝓞 E) E) :
       rw [Algebra.smul_def, map_mul]
       exact Submodule.mul_mem_mul (Submodule.subset_span ⟨a, ha, rfl⟩) (Submodule.subset_span ⟨y, hy, rfl⟩)
     · intro x y hx hy
-      rw [map_add]; exact Submodule.add_mem _ hx hy
+      rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   · rw [Submodule.span_mul_span]
     apply Submodule.span_mono
     rintro _ ⟨_, ⟨a, ha, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.EqUniformizerSmulOfLevelOne
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.EqUniformizerSmulOfLevelOne
+
+@[expose] public section
 
 noncomputable section
 

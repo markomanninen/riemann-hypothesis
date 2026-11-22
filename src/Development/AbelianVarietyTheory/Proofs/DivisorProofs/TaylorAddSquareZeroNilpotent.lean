@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedFDerivWordEqCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ConstantCoeffDpolyOfAdditiveTaylorPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedFDerivWordEqCoeff
+
+@[expose] public section
 
 open Filter Topology
 
@@ -12,8 +16,8 @@ section Alg
 
 variable {I R D : Type*} [Fintype I] [DecidableEq I] [CommRing R] [CommRing D] [Algebra R D]
 
-omit [DecidableEq I] in
 
+omit [DecidableEq I] in
 theorem mvAeval_add_of_mul_eq_zero (t n : I → D) (hn : ∀ i j, n i * n j = 0)
     (P : MvPolynomial I R) :
     MvPolynomial.aeval (fun i ↦ t i + n i) P =
@@ -21,7 +25,7 @@ theorem mvAeval_add_of_mul_eq_zero (t n : I → D) (hn : ∀ i j, n i * n j = 0)
   classical
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq, add_mul, Finset.sum_add_distrib]; ring
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]; ring
   | mul_X p j hp =>
     have h1 : (∑ i, MvPolynomial.aeval t (MvPolynomial.pderiv i p) * n i) * n j = 0 := by
       rw [Finset.sum_mul]
@@ -33,7 +37,7 @@ theorem mvAeval_add_of_mul_eq_zero (t n : I → D) (hn : ∀ i j, n i * n j = 0)
           MvPolynomial.aeval t (MvPolynomial.pderiv i p) * n i * t j +
             if j = i then MvPolynomial.aeval t p * n i else 0 := by
         intro i
-        rw [MvPolynomial.pderiv_mul, map_add, map_mul, map_mul, MvPolynomial.aeval_X,
+        rw [MvPolynomial.pderiv_mul, map_add (f := _), map_mul, map_mul, MvPolynomial.aeval_X,
           MvPolynomial.pderiv_X, Pi.single_apply]
         split_ifs <;> simp <;> ring
       simp only [h3, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true,
@@ -53,14 +57,16 @@ theorem aeval_truncTotal_succ (N : ℕ) (t : I → D) (F : MvPowerSeries I R) :
     simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, Finset.sum_ite_eq',
       Finset.mem_finsuppAntidiag, Finset.subset_univ, and_true, Finset.sum_ite_eq,
       Finset.mem_range, Finsupp.degree_eq_sum]
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (by simp), Algebra.smul_def]
 
-omit [Fintype I] [DecidableEq I] in
 
+omit [Fintype I] [DecidableEq I] in
 theorem ideal_pow_eq_bot_of_prod {J : Ideal D} {k : ℕ}
     (h : ∀ s : Fin k → D, (∀ a, s a ∈ J) → ∏ a, s a = 0) : J ^ k = ⊥ := by
   rw [Submodule.pow_eq_span_pow_set, Submodule.span_eq_bot]
@@ -69,12 +75,12 @@ theorem ideal_pow_eq_bot_of_prod {J : Ideal D} {k : ℕ}
   rw [List.prod_ofFn]
   exact h _ fun a => (f a).2
 
-omit [DecidableEq I] in
 
+omit [DecidableEq I] in
 theorem aeval_pderiv_truncTotal_mul {J : Ideal D} {N : ℕ} (hJ : J ^ (N + 1) = ⊥) {t : I → D}
     (ht : ∀ i, t i ∈ J) {x : D} (hx : x ∈ J) (F : MvPowerSeries I R) (i : I) :
     MvPolynomial.aeval t (MvPolynomial.pderiv i (MvPowerSeries.truncTotal (N + 1) F)) * x =
-      MvPolynomial.aeval t (MvPowerSeries.truncTotal (N + 1) (MvPowerSeries.pderiv R i F)) * x := by
+      MvPolynomial.aeval t (MvPowerSeries.truncTotal (N + 1) (MvPowerSeries.pderiv (R := R) i F)) * x := by
   classical
   rw [← sub_eq_zero, ← sub_mul, ← map_sub, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq',
     Finset.sum_mul]
@@ -83,7 +89,7 @@ theorem aeval_pderiv_truncTotal_mul {J : Ideal D} {N : ℕ} (hJ : J ^ (N + 1) = 
     by_contra hlt
     refine MvPolynomial.mem_support_iff.1 hm ?_
     rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_pderiv, MvPowerSeries.coeff_truncTotal _
-      (by rw [map_add, Finsupp.degree_single]; omega), MvPowerSeries.coeff_truncTotal _ (by omega),
+      (by rw [map_add (f := _), Finsupp.degree_single]; omega), MvPowerSeries.coeff_truncTotal _ (by omega),
       MvPowerSeries.coeff_pderiv, sub_self]
   have h1 : ∏ j, t j ^ m j ∈ J ^ N := by
     refine Ideal.pow_le_pow_right hdeg ?_

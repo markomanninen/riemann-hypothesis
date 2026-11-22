@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsInertTop
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -34,11 +39,5 @@ def fockVarEquiv (Dw : Datum H) {m n : ℕ} (hΨ : ∀ τ : D.host.E →+* ℂ, 
 def letterEquiv (Dw : Datum H) {m n : ℕ} (hΨ : ∀ τ : D.host.E →+* ℂ, InPsi H τ ↔ ∃ ρ, τ = tauE D ρ)
     (hm : m = Dw.p + Dw.q) : LtN Dw n ≃ FVar D m n :=
   (GlobalTheory.Harm.thetaLetterEquiv Dw n).trans (fockVarEquiv Dw hΨ hm).symm
-
-def stepsX (Dw : Datum H) (a : (D.host.E →+* ℂ) × ℕ → ℕ) : {τ : D.host.E →+* ℂ // InPsi H τ} → Fin Dw.p → ℕ :=
-  fun t => GlobalTheory.Harm.diffOf fun i : Fin Dw.p => a (t.1, i)
-
-def stepsY (Dw : Datum H) (a : (D.host.E →+* ℂ) × ℕ → ℕ) : {τ : D.host.E →+* ℂ // InPsi H τ} → Fin Dw.q → ℕ :=
-  fun t => GlobalTheory.Harm.diffOf fun i : Fin Dw.q => a (ComplexEmbedding.conjugate t.1, i)
 
 end GlobalTheory.FockLetters

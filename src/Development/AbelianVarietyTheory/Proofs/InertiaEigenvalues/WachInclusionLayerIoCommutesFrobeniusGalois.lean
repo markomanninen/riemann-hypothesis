@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem transfer {Z O A W S : Type} [CommRing Z] [CommRing O] [CommRing A] [Comm
     | zero => simp only [map_zero]
     | tmul o w =>
       simp only [Φ, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, h]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have h2 : ∀ z : O ⊗[Z] A, f (Φ z) = f' z := by
     intro z
     induction z using TensorProduct.induction_on with
@@ -37,7 +41,7 @@ theorem transfer {Z O A W S : Type} [CommRing Z] [CommRing O] [CommRing A] [Comm
     | tmul o w =>
       rw [hf]
       simp only [Φ, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have h3 : y = Φ x := hj (hxy.trans (h1 x).symm)
   rw [h3, h2]
 

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.GANormSqStar
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -78,18 +82,6 @@ theorem gb_wb_smul {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) (c : ℂ)
 theorem gb_wb_sub {v w : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) (hw : inWb k r w) : inWb k r (v - w) := by
   intro i hi
   simp [hv i hi, hw i hi]
-
-theorem gb_sq {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) (hl : v (wI k r (Fin.last k)) = 0) :
-    (herm (Hpk k r) v v).re = ∑ i, Complex.normSq (v i) := by
-  rw [gb_herm hv, Complex.re_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  split_ifs with h
-  · have e : i = wI k r (Fin.last k) := Fin.ext (by simp [wI, h])
-    have h0 : v i = 0 := by rw [e]; exact hl
-    simp [h0]
-  · simp only [one_mul, Complex.star_def, Complex.mul_re, Complex.conj_re, Complex.conj_im,
-      Complex.normSq_apply]
-    ring
 
 theorem gb_pos {z v : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z) (hv : inWb k r v)
     (hvz : herm (Hpk k r) v z = 0) (hv0 : v ≠ 0) : 0 < (herm (Hpk k r) v v).re := by
@@ -192,7 +184,7 @@ theorem gb_perp {m : ℕ} (hm : m + 2 < k + 1) (cs : Fin m → Fin (2 * r + k + 
     ⟨Fin.cons a (Fin.cons b cs), by simp, by simp, fun j => by simp⟩
   obtain ⟨emb, hemb⟩ : ∃ emb : (Fin (k + 1) → ℂ) →ₗ[ℂ] (Fin (2 * r + k + 1) → ℂ),
       ∀ x, emb x = Function.extend (wI k r) x 0 :=
-    ⟨Function.ExtendByZero.linearMap ℂ (wI k r), fun x => rfl⟩
+    ⟨Function.ExtendByZero.linearMap ℂ ℂ (wI k r), fun x => rfl⟩
   obtain ⟨L, hL⟩ : ∃ L : (Fin (k + 1) → ℂ) →ₗ[ℂ] (Fin (m + 2) → ℂ),
       ∀ x j, L x j = herm (Hpk k r) (emb x) (c j) :=
     ⟨(LinearMap.pi fun j => gbL (c j)) ∘ₗ emb, fun x j => rfl⟩

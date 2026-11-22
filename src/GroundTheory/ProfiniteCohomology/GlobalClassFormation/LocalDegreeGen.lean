@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.SplittingFromInequality.Decomposition
-import GroundTheory.GlobalFields.FirstInequality
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
-import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
-import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SplittingFromInequality.Decomposition
+public import GroundTheory.GlobalFields.FirstInequality
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+public import GroundTheory.GlobalFields.IdeleClassGroup.InvariantsGalois
+public import GroundTheory.GlobalFields.Adele.BaseChange.FiniteMap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -12,14 +17,12 @@ open NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekind
 
 open scoped GroundTheory.Global.SemiLocal Pointwise
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable {K E : FiniteSubfield} [Fact (K ≤ E)] [IsGalois K.1 E.1]
 
-variable (E) in
 
+variable (E) in
 def localDegree (v : HeightOneSpectrum (𝓞 K.1)) : ℕ :=
   v.asIdeal.ramificationIdxIn (𝓞 E.1) * v.asIdeal.inertiaDegIn (𝓞 E.1)
 
@@ -38,8 +41,8 @@ theorem nonempty_heightOneSpectrum (F : Type) [Field F] [NumberField F] :
   obtain ⟨M, hM⟩ := Ideal.exists_maximal (𝓞 F)
   exact ⟨⟨M, hM.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hM (RingOfIntegers.not_isField F)⟩⟩
 
-variable (E) in
 
+variable (E) in
 theorem exists_sum_mul_div_localDegree_eq_one [IsCyclic Gal(E.1/K.1)] :
     ∃ (s : Finset (HeightOneSpectrum (𝓞 K.1))) (c : HeightOneSpectrum (𝓞 K.1) → ℤ),
       (∀ v ∈ s, localDegree E v ∣ finrank K.1 E.1) ∧

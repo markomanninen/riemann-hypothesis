@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSerrePoly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSerrePoly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -41,11 +46,6 @@ theorem toL_monomial (f : Fin (N + 1) →₀ ℕ) (r : S) :
     toL S N (monomial f r) = AddMonoidAlgebra.single (expToInt N f) r :=
   AddMonoidAlgebra.mapDomain_single
 
-theorem single_neg_mul (b : Fin (N + 1) → ℤ) (x : LRing S N) :
-    AddMonoidAlgebra.single (-b) (1 : S) * (AddMonoidAlgebra.single b 1 * x) = x := by
-  rw [← mul_assoc, AddMonoidAlgebra.single_mul_single, neg_add_cancel, mul_one]
-  exact one_mul x
-
 theorem mem_monos_iff {I : Finset (Fin (N + 1))} {s : Poly S N} :
     s ∈ monos I → ∃ f : Fin (N + 1) →₀ ℕ, (∀ j ∉ I, f j = 0) ∧ s = monomial f 1 := by
   intro hs
@@ -80,8 +80,6 @@ abbrev algP : Algebra (Poly S N) (LRing S N) := (toL S N).toAlgebra
 
 attribute [local instance] algP
 
-theorem smul_def' (p : Poly S N) (x : LRing S N) : p • x = toL S N p * x := rfl
-
 instance : IsScalarTower S (Poly S N) (LRing S N) :=
   IsScalarTower.of_algebraMap_eq fun r => by
     change algebraMap S (LRing S N) r = toL S N (monomial 0 r)
@@ -111,7 +109,7 @@ theorem toL_mul_iotaP (I : Finset (Fin (N + 1))) (p : Poly S N) (s : monos (S :=
   (localizationToLaurent_mk_eq_iff I p s _).mp rfl
 
 theorem localizationToLaurent_injective (I : Finset (Fin (N + 1))) : Function.Injective (iotaP (S := S) (N := N) I) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   induction z using LocalizedModule.induction_on with
   | h p s =>
@@ -155,7 +153,7 @@ theorem image_exps (c : ℤ) :
     change _ = c
     rw [← sum_expToInt, ha, hs]
 
-theorem map_piece (c : ℤ) : ((polyGraded S N).piece c).map (polyToLaurent S N) =
+theorem map_piece (c : ℤ) : ((polyGraded (S := S) (N := N)).piece c).map (polyToLaurent S N) =
     Finsupp.supported S S (laurentExps N c ∅) := by
   change (weightedHomogeneousSubmodule S (fun _ => (1 : ℤ)) c).map _ = _
   rw [weightedHomogeneousSubmodule_eq_finsupp_supported, AddMonoidAlgebra.supported_eq_map,
@@ -172,7 +170,7 @@ theorem localizationToLaurent_mk_monomial (I : Finset (Fin (N + 1))) (p : Poly S
   exact (one_mul _).symm
 
 theorem iota_mk (I : StdCell N) (p : Poly S N) :
-    iota I (locMk (Poly S N) I.1 p) = polyToLaurent S N p := by
+    iota I (locMk (M := Poly S N) I.1 p) = polyToLaurent S N p := by
   rw [iota_apply, ← coeff_toL]
   congr 1
   change iotaP I.1 (LocalizedModule.mk p 1) = _
@@ -202,7 +200,7 @@ variable {S : Type u} [CommRing S] {N : ℕ}
 attribute [local instance] algP
 
 theorem iota_gen_mem (c : ℤ) (I : StdCell N) (m : Poly S N) (s : monos (S := S) I.1) (a : ℤ) (e : ℕ)
-    (hm : m ∈ (polyGraded S N).piece a) (hs : (s : Poly S N).IsHomogeneous e) (hc : a - e = c) :
+    (hm : m ∈ (polyGraded (S := S) (N := N)).piece a) (hs : (s : Poly S N).IsHomogeneous e) (hc : a - e = c) :
     iota I (LocalizedModule.mk m s : LocalizedModule (monos (S := S) I.1) (Poly S N)) ∈
       laurentDeg S N c I := by
   obtain ⟨f, hfI, hf⟩ := mem_monos_iff s.2
@@ -232,7 +230,7 @@ theorem iota_gen_mem (c : ℤ) (I : StdCell N) (m : Poly S N) (s : monos (S := S
     simp [expToInt, hfI j hj]
 
 theorem single_mem_map (c : ℤ) (I : StdCell N) (x : Fin (N + 1) → ℤ) (hx : x ∈ laurentExps N c I.1) :
-    Finsupp.single x (1 : S) ∈ (degLoc (polyGraded S N) c I).map (iota I) := by
+    Finsupp.single x (1 : S) ∈ (degLoc (polyGraded (S := S) (N := N)) c I).map (iota I) := by
   obtain ⟨hsum, hnn⟩ := hx
   set dp : Fin (N + 1) →₀ ℕ := Finsupp.equivFunOnFinite.symm fun j => (x j).toNat
   set dm : Fin (N + 1) →₀ ℕ := Finsupp.equivFunOnFinite.symm fun j => (-x j).toNat
@@ -262,7 +260,7 @@ theorem single_mem_map (c : ℤ) (I : StdCell N) (x : Fin (N + 1) → ℤ) (hx :
     rfl
 
 theorem iota_deg (c : ℤ) (I : StdCell N) :
-    (degLoc (polyGraded S N) c I).map (iota I) = laurentDeg S N c I := by
+    (degLoc (polyGraded (S := S) (N := N)) c I).map (iota I) = laurentDeg S N c I := by
   apply le_antisymm
   · rw [degLoc, Submodule.map_span, Submodule.span_le]
     rintro _ ⟨z, ⟨m, s, a, e, hm, hs, hc, rfl⟩, rfl⟩

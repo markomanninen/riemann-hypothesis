@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcrisEqAcrisLocalizationPeriodT
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineTIsUnitBcrisAndUniformizerBdRPlus
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeKurOfNorm
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BcrisEqAcrisLocalizationPeriodT
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineTIsUnitBcrisAndUniformizerBdRPlus
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeKurOfNorm
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct
 open scoped Formalism.Per
 
@@ -33,7 +38,7 @@ theorem ratio_adjoin {k Ω B D : Type} [Field k] [Field Ω] [Algebra k Ω] [Comm
     obtain ⟨a, b, hb, e⟩ := hz
     obtain ⟨a', b', hb', e'⟩ := hw
     refine ⟨a * b' + a' * b, b * b', hmul _ _ hb hb', ?_⟩
-    simp only [map_add, map_mul, e, e']
+    simp only [map_add (f := _), map_mul, e, e']
     ring
   | inv z _ hz =>
     obtain ⟨a, b, hb, e⟩ := hz
@@ -53,8 +58,8 @@ section
 set_option allowUnsafeReducibility true in
 attribute [local irreducible] Per.Acris Per.Bcris
 
-open GlobalTheory.MemLoc in
 
+open GlobalTheory.MemLoc in
 theorem norm_of_ratio {l : ℕ} [Fact l.Prime] (C : Core l) (a b : Per.Bcris l) (x : Om l) (hb : b ≠ 0)
     (hx : x ≠ 0) (e : C.ι a = C.oD x * C.ι b) : ∃ k : ℤ, ‖x‖ = (l : ℝ) ^ k := by
   obtain ⟨r, a', ha'⟩ := bcris_eq_acris_localization_periodT_alt l C a

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CurvaturePowerPullbackHolomorphicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTransgressionFormHolomorphicPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CurvaturePowerSumTransgressionSmoothDbarClosedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramConnectionPairChernFieldsLocalFrameStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CurvaturePowerPullbackHolomorphicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernTransgressionFormHolomorphicPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CurvaturePowerSumTransgressionSmoothDbarClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramConnectionPairChernFieldsLocalFrameStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -41,13 +46,13 @@ theorem contDiffAt_change (x x' : A.Pt) (h : x.pt = x'.pt) : ContDiffAt ℂ 2 (x
     x.ch.isOpen_inter_preimage_symm x'.ch.open_source
   have hm : x.crd ∈ x.ch.target ∩ x.ch.symm ⁻¹' x'.ch.source := by
     refine ⟨x.ch.map_source x.2, ?_⟩
-    show x.ch.symm (x.ch x.pt) ∈ x'.ch.source
+    show x.ch.symm ((x.ch) x.pt) ∈ x'.ch.source
     rw [x.ch.left_inv x.2]
     exact (congrArg (fun y => y ∈ x'.ch.source) h).mpr x'.2
   exact GlobalTheory.SCV.contDiffAt_of_differentiableOn (A.holo x.1.1 x'.1.1) (hs.mem_nhds hm) 2
 
 theorem change_crd (x x' : A.Pt) (h : x.pt = x'.pt) : (x'.ch ∘ x.ch.symm) x.crd = x'.crd := by
-  show x'.ch (x.ch.symm (x.ch x.pt)) = x'.ch x'.pt
+  show (x'.ch) (x.ch.symm ((x.ch) x.pt)) = (x'.ch) x'.pt
   rw [x.ch.left_inv x.2]
   exact congrArg x'.ch h
 
@@ -55,18 +60,18 @@ theorem germ_change (G : M → M → Matrix r r ℂ) (x x' : A.Pt) (h : x.pt = x
     (fun u => G x.pt (x.ch.symm u)) =ᶠ[𝓝 x.crd] fun u => G x'.pt (x'.ch.symm ((x'.ch ∘ x.ch.symm) u)) := by
   have hc : ContinuousAt x.ch.symm x.crd := x.ch.continuousAt_symm (x.ch.map_source x.2)
   have hmem : x'.ch.source ∈ 𝓝 (x.ch.symm x.crd) := by
-    show x'.ch.source ∈ 𝓝 (x.ch.symm (x.ch x.pt))
+    show x'.ch.source ∈ 𝓝 (x.ch.symm ((x.ch) x.pt))
     rw [x.ch.left_inv x.2]
     exact (congrArg (fun y => x'.ch.source ∈ 𝓝 y) h).mpr (x'.ch.open_source.mem_nhds x'.2)
   filter_upwards [hc hmem] with u hu
-  show G x.pt (x.ch.symm u) = G x'.pt (x'.ch.symm (x'.ch (x.ch.symm u)))
+  show G x.pt (x.ch.symm u) = G x'.pt (x'.ch.symm ((x'.ch) (x.ch.symm u)))
   rw [x'.ch.left_inv hu]
   exact congrArg (fun y => G y (x.ch.symm u)) h
 
 theorem smooth_crd (G : M → M → Matrix r r ℂ) (hG : ∀ y, SmoothUnitAt A (G y) y) (x : A.Pt) :
     MContDiffAt ∞ (fun u => G x.pt (x.ch.symm u)) x.crd ∧ IsUnit (G x.pt (x.ch.symm x.crd)).det := by
   refine ⟨((hG x.pt).2 x.1.1 x.2).self_of_nhds, ?_⟩
-  show IsUnit (G x.pt (x.ch.symm (x.ch x.pt))).det
+  show IsUnit (G x.pt (x.ch.symm ((x.ch) x.pt))).det
   rw [x.ch.left_inv x.2]
   exact (hG x.pt).1
 

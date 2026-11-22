@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterOfUnitaryTensorIdeles
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOfBalanced
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCongLevelIntG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterOfUnitaryTensorIdeles
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOfBalanced
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCongLevelIntG
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain UniqueFactorizationMonoid
 open scoped Classical Pointwise
@@ -66,7 +70,7 @@ theorem adEquiv_eq (D : D7) (z : Formalism.MainNotions.StandardLatticesGL3.AE D)
     change GlobalTheory.Mem.Col2.SplitChar.adEquiv D (Formalism.MainNotions.StandardLatticesGL3.inc D a) P = GlobalTheory.BotFormula.toFinE D (Formalism.MainNotions.StandardLatticesGL3.inc D a) P
     rw [GlobalTheory.Mem.Col2.SplitChar.adEquiv_inc, toFinE_inc]
   have e1 : f1 z - f2 z = (n : P.adicCompletion D.host.E) * (f1 r - f2 r) := by
-    rw [hz, map_add, map_add, map_mul, map_mul, map_natCast, map_natCast, ha]
+    rw [hz, map_add (f := _), map_add (f := _), map_mul, map_mul, map_natCast, map_natCast, ha]
     ring
   have h1 : Valued.v (f1 r) ≤ 1 := GlobalTheory.Mem.Col2.SplitChar.vl_le hr P
   have h2 : Valued.v (f2 r) ≤ 1 := toFinE_int D hr P

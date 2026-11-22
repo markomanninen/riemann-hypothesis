@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchSlice
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.DictHaar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchSlice
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.DictHaar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,12 +74,14 @@ def lft (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (c : In
   ∑ w, GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.tensNU (inInf w) (inInf_mul w) ((RingEquiv.ofBijective _ (infEmb_bijective h (τ w))).symm (c w))
 
 theorem fin_lft (h : IsCMExt F E σ) (τ) (c) (v : Pl F) : compFin F E v (lft h τ c) = 0 := by
-  rw [lft, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lft, map_sum]
   exact Finset.sum_eq_zero fun w _ => GlobalTheory.AutFunCompare.map_tensNU_zero (evFin F v) _ _ (fun _ => map_zero (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v)) _
 
 theorem pi_lft (h : IsCMExt F E σ) (τ) (c) (w : InfinitePlace F) : piInf (τ w) (lft h τ c) = c w := by
   classical
-  rw [lft, map_sum, Finset.sum_eq_single w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lft, map_sum, Finset.sum_eq_single w]
   · have := GlobalTheory.AutFunCompare.map_tensNU_self (E := E) (evInf F w) (inInf w) (inInf_mul w) (fun a => Pi.single_eq_same w a)
       ((RingEquiv.ofBijective _ (infEmb_bijective h (τ w))).symm (c w))
     exact (congrArg (infEmb (τ w)) this).trans ((RingEquiv.ofBijective _ (infEmb_bijective h (τ w))).apply_symm_apply _)
@@ -88,7 +94,7 @@ theorem pi_lft (h : IsCMExt F E σ) (τ) (c) (w : InfinitePlace F) : piInf (τ w
 theorem cont_lft (h : IsCMExt F E σ) (τ) : Continuous (lft h τ) := by
   haveI := isTopologicalRing_tens (F := F) (E := E) (R := AF F)
   classical
-  refine continuous_finset_sum _ fun w _ => ?_
+  refine continuous_finsetSum _ fun w _ => ?_
   have hc : Continuous (inInf (F := F) w) := (continuous_single w).prodMk continuous_const
   exact (GlobalTheory.AutFunCompare.continuous_tensNU (R' := AF F) (inInf w) (inInf_mul w) hc).comp
     ((GlobalTheory.AdelicU.Frames.continuous_infEmb_symm h (τ w)).comp (continuous_apply w))
@@ -112,7 +118,7 @@ theorem pi_conj (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (a
     piInf τ (cA σ a) = starRingEnd ℂ (piInf τ a) := by
   induction a using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul c x =>
     change piInf τ (c ⊗ₜ[F] σ x) = _
     rw [pi_tmul, pi_tmul, map_mul, emb_real h, h.2.2.2]; rfl
@@ -144,11 +150,11 @@ theorem emb_trace (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) 
   induction a using TensorProduct.induction_on with
   | zero => simp only [map_zero, add_zero]; exact map_zero _
   | add x y hx hy =>
-    rw [map_add (piInf τ), map_add (cA σ), map_add (piInf τ), add_add_add_comm, ← hx, ← hy, ← map_add,
+    rw [map_add (piInf τ), map_add (cA σ), map_add (piInf τ), add_add_add_comm, ← hx, ← hy, ← map_add (f := _),
       map_add (Algebra.trace (AF F) (AE F E))]; rfl
   | tmul c x =>
     change _ = _ + piInf τ (c ⊗ₜ[F] σ x)
-    rw [← map_add, ← TensorProduct.tmul_add, ← trace_E h, trace_tmul, Algebra.algebraMap_eq_smul_one (A := E),
+    rw [← map_add (f := _), ← TensorProduct.tmul_add, ← trace_E h, trace_tmul, Algebra.algebraMap_eq_smul_one (A := E),
       TensorProduct.tmul_smul, TensorProduct.smul_tmul', pi_tmul, map_one, mul_one, Algebra.smul_def, mul_comm]
 
 theorem trace_pi_real {ι : Type} [Fintype ι] (y : ι → ℝ) : Algebra.trace ℝ (ι → ℝ) y = ∑ i, y i := by
@@ -187,10 +193,10 @@ def uv (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (c : Inf
   1 + lft h τ (c - 1)
 
 theorem fin_uv (h : IsCMExt F E σ) (τ) (c) (v : Pl F) : compFin F E v (uv h τ c) = 1 := by
-  rw [uv, map_add, map_one, fin_lft, add_zero]
+  rw [uv, map_add (f := _), map_one, fin_lft, add_zero]
 
 theorem pi_uv (h : IsCMExt F E σ) (τ) (c) (w : InfinitePlace F) : piInf (τ w) (uv h τ c) = c w := by
-  rw [uv, map_add, map_one, pi_lft]; simp
+  rw [uv, map_add (f := _), map_one, pi_lft]; simp
 
 theorem uv_mul (h : IsCMExt F E σ) (τ) {c c' : InfinitePlace F → ℂ} (e : ∀ w, c w * c' w = 1) : uv h τ c * uv h τ c' = 1 :=
   ext_at h τ (fun v => by rw [map_mul, fin_uv, fin_uv, one_mul, map_one]) fun w => by rw [map_mul, pi_uv, pi_uv, e, map_one]
@@ -229,32 +235,34 @@ theorem openEmb (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w)
   · rintro ⟨l, rfl⟩ w; exact pi_ne _ _
   · exact funext fun w => pi_uv h τ _ w
 
-theorem isLift_lft (B : Base F E) (hB : B.IsGood σ) : IsLift σ B (lft hB.cm B.emb) where
-  supp c := at_of_fin (fin_lft _ _ c)
-  pi := pi_lft _ _
-  inv a ha := ext_at hB.cm B.emb (fun v => by rw [fin_lft, fin_of_at ha]) (pi_lft _ _ _)
-  part a := ⟨at_of_fin fun v => compFin_eps v a, fun w => pi_eps _ a⟩
-  conj a w := pi_conj hB.cm _ a
-  incl x w := by
-    change piInf (B.emb w) ((1 : AF F) ⊗ₜ[F] x) = _
-    rw [pi_tmul]
-    exact (congrArg (· * _) (map_one _)).trans (one_mul _)
-  cont w := cont_pi _
-  psi a ha := by
-    rw [hB.std.2.2 _ fun u hu => by rw [← map_smul, ha u hu, map_zero],
-      trace_mixed hB.cm _ _ fun w => emb_trace hB.cm (B.emb w) a]
-  abs l hl := by
-    rw [absE_apply, finprod_eq_one_of_forall_eq_one fun v => by rw [at_unit_iff.1 hl v, map_one], mul_one]
-    push_cast
-    refine Finset.prod_congr rfl fun w _ => ?_
-    rw [absEw_eq_sq hB.cm (B.emb w)]; rfl
-  idAt l := mem_idAt
-  unit c hc := ⟨(un hB.cm B.emb ⟨c, hc⟩).1, mem_idAt.1 (un hB.cm B.emb ⟨c, hc⟩).2, pi_uv _ _ _⟩
-  haar x hx := by
-    haveI := isTopologicalRing_tens (F := F) (E := E) (R := AF F)
-    letI : MeasurableSpace (Loc.idAt E (evI F)) := borel _
-    haveI : BorelSpace (Loc.idAt E (evI F)) := ⟨rfl⟩
-    exact haar_units _ (openEmb hB.cm B.emb).1 (openEmb hB.cm B.emb).2 (fun a b => funext fun w => map_mul (piInf (B.emb w)) _ _) x
+theorem isLift_lft (B : Base F E) (hB : B.IsGood σ) : IsLift σ B (lft hB.cm B.emb) := by
+  exact
+    { supp c := at_of_fin (fin_lft _ _ c)
+      pi := pi_lft _ _
+      inv a ha := ext_at hB.cm B.emb (fun v => by rw [fin_lft, fin_of_at ha]) (pi_lft _ _ _)
+      part a := ⟨at_of_fin fun v => compFin_eps v a, fun w => pi_eps _ a⟩
+      conj a w := pi_conj hB.cm _ a
+      incl x w := by
+        change piInf (B.emb w) ((1 : AF F) ⊗ₜ[F] x) = _
+        rw [pi_tmul]
+        exact (congrArg (· * _) (map_one _)).trans (one_mul _)
+      cont w := cont_pi _
+      psi a ha := by
+        rw [hB.std.2.2 _ fun u hu => by rw [← map_smul, ha u hu, map_zero],
+          trace_mixed hB.cm _ _ fun w => emb_trace hB.cm (B.emb w) a]
+      abs l hl := by
+        rw [absE_apply, finprod_eq_one_of_forall_eq_one fun v => by rw [at_unit_iff.1 hl v, map_one], mul_one]
+        push_cast
+        refine Finset.prod_congr rfl fun w _ => ?_
+        rw [absEw_eq_sq hB.cm (B.emb w)]; rfl
+      idAt l := mem_idAt
+      unit c hc := ⟨(un hB.cm B.emb ⟨c, hc⟩).1, mem_idAt.1 (un hB.cm B.emb ⟨c, hc⟩).2, pi_uv _ _ _⟩
+      haar x hx := by
+        haveI := isTopologicalRing_tens (F := F) (E := E) (R := AF F)
+        letI : MeasurableSpace (Loc.idAt E (evI F)) := borel _
+        haveI : BorelSpace (Loc.idAt E (evI F)) := ⟨rfl⟩
+        exact haar_units _ (openEmb hB.cm B.emb).1 (openEmb hB.cm B.emb).2
+          (fun a b => funext fun w => map_mul (piInf (B.emb w)) _ _) x }
 
 theorem archDict_of : ArchDict := fun _ _ _ _ _ _ _ _ B hB => ⟨_, isLift_lft B hB⟩
 

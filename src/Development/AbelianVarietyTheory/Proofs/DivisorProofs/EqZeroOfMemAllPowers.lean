@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementF
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
-import GroundTheory.LocalFields.FilteredSurj
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
+public import GroundTheory.LocalFields.FilteredSurj
+
+@[expose] public section
+
 open Polynomial Matrix Formalism.UG
 
 noncomputable section
@@ -46,7 +51,11 @@ theorem eq_zero_of_forall_mem_piPow {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsU
   refine int_eq_zero_of_forall_dvd h fun m => ?_
   obtain ⟨b, hb⟩ := Ideal.mem_span_singleton'.1 (ha m)
   refine ⟨(GlobalTheory.UTr.powBasis P).repr b i, ?_⟩
-  rw [← hb, mul_comm, ← map_pow, ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul]
+  have he : b * (algebraMap (intL L) (GlobalTheory.UTr.Alg P)) (piO h) ^ m =
+      (piO h ^ m) • b := by
+    rw [Algebra.smul_def, map_pow, mul_comm]
+  change b * (algebraMap (intL L) (GlobalTheory.UTr.Alg P)) (piO h) ^ m = a at hb
+  rw [← hb, he, map_smul, Finsupp.smul_apply, smul_eq_mul]
 
 theorem sep : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (σ : L →+* L) (ϖ : L) (q : ℕ)
     (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (GlobalTheory.NormEq.sigO σ h.2.1)) (a : GlobalTheory.UTr.Alg P),

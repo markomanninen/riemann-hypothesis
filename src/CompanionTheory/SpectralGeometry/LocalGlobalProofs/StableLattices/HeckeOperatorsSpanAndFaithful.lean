@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+
+@[expose] public section
 
 open CompanionTheory.Rg.Fl
 
@@ -28,7 +32,7 @@ theorem lam_one (u : (G ⧸ K) →₀ ℂ) : lam K 1 u = u := by
 
 theorem lam_apply_smul (g : G) (u : (G ⧸ K) →₀ ℂ) (y : G ⧸ K) :
     lam K g u (g • y) = u y :=
-  Finsupp.mapDomain_apply (MulAction.injective g) u y
+  Finsupp.mapDomain_apply_of_injective (MulAction.injective g) u y
 
 def IsFixed (u : (G ⧸ K) →₀ ℂ) : Prop := ∀ k ∈ K, lam K k u = u
 

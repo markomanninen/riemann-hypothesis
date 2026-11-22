@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.IsUnitWitt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.IsUnitWitt
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -18,8 +22,9 @@ theorem map_frob_w (r : Res l K) (w : WittVector l r.k) :
   simp only [WittVector.map_coeff, frobenius_def, map_pow]
 
 theorem w_phi (r : Res l K) (w : WittVector l r.k) :
-    ACris.phi ℂ_[l] l (r.w w) = r.w (WittVector.frobenius w) := by
-  show ACris.phi ℂ_[l] l (algebraMap (Ainf l) (Acris l) (WittVector.map r.s w)) =
+    ACris.phi (K := ℂ_[l]) (p := l) (r.w w) = r.w (WittVector.frobenius w) := by
+  show ACris.phi (K := ℂ_[l]) (p := l)
+    (algebraMap (Ainf l) (Acris l) (WittVector.map r.s w)) =
     algebraMap (Ainf l) (Acris l) (WittVector.map r.s (WittVector.frobenius w))
   rw [ACris.phi_algebraMap, map_frob_w]
   rfl

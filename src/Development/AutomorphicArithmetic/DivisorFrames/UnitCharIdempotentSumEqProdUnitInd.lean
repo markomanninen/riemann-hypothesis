@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels ComplexConjugate
@@ -17,7 +22,7 @@ private theorem cpt_finAd {D : D7} (Q : Pl D.host.E) (z : AE D) :
     have h2 := congrArg (fun s : FiniteAdeleRing (𝓞 D.host.E) D.host.E => s Q)
       ((GlobalTheory.LFun.toFinAd_tmul (F := D.host.F) a.2 x).trans (mul_comm _ _))
     exact h1.trans h2.symm
-  | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, RingHom.map_add, RingEquiv.map_add, ha, hb]; rfl
+  | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), RingEquiv.map_add (e := _), ha, hb]; rfl
 
 private theorem cpt_loc {D : D7} (w Q : Pl D.host.E) (y : (Kw w)ˣ) :
     cpt (D := D) Q (toEAf D (GlobalTheory.LFun.locIdele D.host.F w y : AE D)) =
@@ -29,7 +34,8 @@ open Classical in
 private theorem cpt_sum {D : D7} {P : Finset (Pl D.host.E)} {e : AE D} (he : IsIdemSum e P) (Q : Pl D.host.E) :
     cpt (D := D) Q (toEAf D e) = if Q ∈ P then 1 else 0 := by
   obtain ⟨⟨es, hes, hsum⟩, -⟩ := he
-  rw [hsum, map_sum (toEAf D), map_sum (cpt (D := D) Q)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum (toEAf D), map_sum (cpt (D := D) Q)]
   split_ifs with hQ
   · rw [Finset.sum_eq_single Q (fun P hP hPQ => (cpt_of_isIdemAt (hes P hP)).2 Q (Ne.symm hPQ))
       (fun h => absurd hQ h)]
@@ -70,7 +76,7 @@ theorem UpperTheory.unitChar_idempotentSum_eq_prod_unitInd :
   classical
   have hc : ∀ Q, cpt (D := D) Q (1 - toEAf D ε + toEAf D ε * N.det) = if Q ∈ Pw then cpt (D := D) Q N.det else 1 := by
     intro Q
-    rw [RingHom.map_add, RingHom.map_sub, RingHom.map_mul, RingHom.map_one, cpt_sum hε]
+    rw [RingHom.map_add (f := _), RingHom.map_sub, RingHom.map_mul, RingHom.map_one, cpt_sum hε]
     split_ifs <;> simp
   by_cases h : ∀ i, GlobalTheory.BotMatch.evW (τ i) N.det ≠ 0 ∧ valuation (Fv D.host.F (pl i)) (GlobalTheory.BotMatch.evW (τ i) N.det) = 1
   · let y : ∀ i, (Kw (D := D) (splitPrime (τ i)))ˣ := fun i =>
@@ -103,13 +109,13 @@ theorem UpperTheory.unitChar_idempotentSum_eq_prod_unitInd :
     have hex : ∃ x, GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.IsUnitDet ε N x := ⟨x, hU⟩
     have he : hex.choose = x := Units.ext (ae_ext (hex.choose_spec.1.trans hU.1.symm) fun Q => by
       rw [hex.choose_spec.2.1, hU.2.1])
-    rw [GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.unitChar, dif_pos hex, he, hx, map_prod ν, ← Finset.prod_inv_distrib]
+    rw [GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.unitChar, dite_eq_left hex, he, hx, map_prod ν, ← Finset.prod_inv_distrib]
     refine (map_prod Circle.coeHom _ _).trans (Finset.prod_congr rfl fun i _ => ?_)
-    rw [GlobalTheory.StdPairCone.unitInd, dif_pos (h i)]
+    rw [GlobalTheory.StdPairCone.unitInd, dite_eq_left (h i)]
     rfl
   · obtain ⟨i, hi⟩ := not_forall.1 h
-    rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [GlobalTheory.StdPairCone.unitInd, dif_neg hi]),
-      GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.unitChar, dif_neg]
+    rw [Finset.prod_eq_zero (Finset.mem_univ i) (by rw [GlobalTheory.StdPairCone.unitInd, dite_eq_right hi]),
+      GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.unitChar, dite_eq_right]
     rintro ⟨x, -, h2, h3⟩
     apply hi
     have h4 := (mem_OA_iff _).1 h3 (splitPrime (τ i))

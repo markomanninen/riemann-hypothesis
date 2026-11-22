@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,10 +57,12 @@ namespace PDiv
 variable {O : Type} [CommRing O]
 
 theorem exists_spOver {B D : Type} [CommRing B] [Algebra O B] [CommRing D] [Algebra O D]
-    (v : SpAlg O B ⟶ SpAlg O D) : ∃ ψ : D →ₐ[O] B, spOver ψ = v := by
-  let ψ₀ : D →+* B := (Spec.preimage v.left).hom
-  have h0 : spMap ψ₀ = v.left := (congrArg Spec.map (CommRingCat.ofHom_hom _)).trans
-    (Spec.map_preimage v.left)
+    (v : Over.mk (spMap (algebraMap O B)) ⟶ Over.mk (spMap (algebraMap O D))) :
+    ∃ ψ : D →ₐ[O] B, spOver ψ = v := by
+  let f : Sp B ⟶ Sp D := v.left
+  let ψ₀ : D →+* B := (Spec.preimage f).hom
+  have h0 : spMap ψ₀ = f := (congrArg Spec.map (CommRingCat.ofHom_hom _)).trans
+    (Spec.map_preimage f)
   have e : CommRingCat.ofHom (ψ₀.comp (algebraMap O D)) = CommRingCat.ofHom (algebraMap O B) :=
     Spec.map_injective (by
       change spMap (ψ₀.comp (algebraMap O D)) = spMap (algebraMap O B)
@@ -76,7 +82,7 @@ namespace PDivGroup.TorsionTower
 open PDiv ReciprocityTheory.ChartRestriction.G.Semi
 
 variable {p : ℕ} {O : Type} [CommRing O] {G : PDivGroup p O} {A : Over (Sp O)} [GrpObj A]
-  (t : G.TorsionTower A)
+  (t : TorsionTower G A)
 
 theorem y_comp_mulN (n : ℕ) : t.y n ≫ mulN A (p ^ n) = toUnit _ ≫ η[A] := by
   rw [GrpTangent.mulN_eq_pow, MonObj.comp_pow, Category.comp_id, t.y_pow]
@@ -85,21 +91,9 @@ theorem y_comp_mulN (n : ℕ) : t.y n ≫ mulN A (p ^ n) = toUnit _ ≫ η[A] :=
 def toTorsion (n : ℕ) : SpAlg O (G.A n) ⟶ torsion A (p ^ n) :=
   pullback.lift (t.y n) (toUnit _) (t.y_comp_mulN n)
 
-@[reassoc (attr := simp)] theorem toTorsion_ι (n : ℕ) : t.toTorsion n ≫ torsion.ι A (p ^ n) = t.y n :=
+@[reassoc (attr := simp)] theorem toTorsion_ι (n : ℕ) :
+    t.toTorsion n ≫ torsion.ι A (p ^ n) = t.y n :=
   pullback.lift_fst _ _ _
-
-end PDivGroup.TorsionTower
-
-end GlobalTheory
-
-namespace GlobalTheory
-
-namespace PDivGroup.TorsionTower
-
-open PDiv ReciprocityTheory.ChartRestriction.G.Semi
-
-variable {p : ℕ} {O : Type} [CommRing O] {G : PDivGroup p O} {A : Over (Sp O)} [GrpObj A]
-  (t : G.TorsionTower A)
 
 theorem toTorsion_left_injective (n : ℕ) (R : CommRingCat.{0}) :
     Function.Injective fun a : Spec R ⟶ (SpAlg O (G.A n)).left => a ≫ (t.toTorsion n).left := by
@@ -115,13 +109,12 @@ theorem toTorsion_left_injective (n : ℕ) (R : CommRingCat.{0}) :
   obtain ⟨φ, hφ⟩ := exists_spOver a'
   obtain ⟨ψ, hψ⟩ := exists_spOver b'
   have hy : a' ≫ t.y n = b' ≫ t.y n := by
-    rw [← t.toTorsion_ι, ← Category.assoc, ← Category.assoc]
-    congr 1
-    exact Over.OverMorphism.ext e
+    have hab : a' ≫ t.toTorsion n = b' ≫ t.toTorsion n := Over.OverMorphism.ext e
+    simpa only [Category.assoc, toTorsion_ι] using
+      congrArg (fun q => q ≫ torsion.ι A (p ^ n)) hab
   rw [← hφ, ← hψ] at hy
-  have := t.inj n R φ ψ hy
-  subst this
-  exact (congrArg Over.Hom.left hφ).symm.trans (congrArg Over.Hom.left hψ)
+  have h : φ = ψ := t.inj n R φ ψ hy
+  exact congrArg Over.Hom.left (hφ.symm.trans ((congrArg spOver h).trans hψ))
 
 theorem toTorsion_left_surjective (n : ℕ) (R : CommRingCat.{0}) :
     Function.Surjective fun a : Spec R ⟶ (SpAlg O (G.A n)).left => a ≫ (t.toTorsion n).left := by
@@ -157,12 +150,8 @@ def torsionIso (n : ℕ) : SpAlg O (G.A n) ≅ torsion A (p ^ n) :=
     (t.torsionIso n).hom ≫ torsion.ι A (p ^ n) = t.y n :=
   t.toTorsion_ι n
 
-@[reassoc (attr := simp)] theorem torsionIso_inv_y (n : ℕ) :
-    (t.torsionIso n).inv ≫ t.y n = torsion.ι A (p ^ n) := by
-  rw [Iso.inv_comp_eq, torsionIso_hom_ι]
-
 theorem isPullback_y : ∀ (p : ℕ) (O : Type) [CommRing O] (G : GlobalTheory.PDivGroup p O) (A : Over (Sp O))
-    [GrpObj A] (t : G.TorsionTower A) (n : ℕ), IsPullback (t.y n) (toUnit _) (mulN A (p ^ n)) η[A] := by
+    [GrpObj A] (t : TorsionTower G A) (n : ℕ), IsPullback (t.y n) (toUnit _) (mulN A (p ^ n)) η[A] := by
   intro p O _ G A _ t n
   exact IsPullback.of_iso_pullback ⟨t.y_comp_mulN n⟩ (t.torsionIso n) (t.torsionIso_hom_ι n)
     (pullback.lift_snd _ _ _)

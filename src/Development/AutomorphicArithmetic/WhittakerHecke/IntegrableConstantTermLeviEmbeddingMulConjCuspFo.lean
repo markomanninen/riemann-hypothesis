@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RapidDecay
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ContinuousConstantTerm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CuspUmg
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RapidDecay
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.GoodSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ContinuousConstantTerm
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin GlobalTheory.LFun Formalism.UG Formalism.UG.P
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW
 
@@ -57,10 +62,10 @@ private theorem height_lev_le (s : ℕ) (a : GA E r) : AutomorphicForm.height (l
       simp only [Set.Finite.coe_toFinset, Set.mem_union]; exact Or.inr hv
   unfold AutomorphicForm.height
   refine mul_le_mul ?_ ?_ (le_trans zero_le_one (one_le_finprod_locHeight _)) (le_trans zero_le_one (one_le_prod_locHeight _))
-  · exact Finset.prod_le_prod (fun w _ => pow_nonneg (locHeight_pos _).le _)
+  · exact Finset.prod_le_prod₀ (fun w _ => pow_nonneg (locHeight_pos _).le _)
       fun w _ => pow_le_pow_left₀ (locHeight_pos _).le (locHeight_inf_le w a) _
   · rw [e1, e2]
-    exact Finset.prod_le_prod (fun v _ => (locHeight_pos _).le) fun v _ => locHeight_fin_le v a
+    exact Finset.prod_le_prod₀ (fun v _ => (locHeight_pos _).le) fun v _ => locHeight_fin_le v a
 
 private theorem ct_growth {n : ℕ} (r : ℕ) (φ : GA E n → ℂ) {B : ℝ} {N : ℕ} (hφ : ∀ g, ‖φ g‖ ≤ B * AutomorphicForm.height g ^ N) :
     ∃ C : ℝ, ∀ g, ‖constantTerm r φ g‖ ≤ C * AutomorphicForm.height g ^ N := by
@@ -85,8 +90,8 @@ private theorem ct_growth {n : ℕ} (r : ℕ) (φ : GA E n → ℂ) {B : ℝ} {N
 end
 
 theorem UpperTheory.integrable_constantTerm_leviEmbedding_mul_conj_cuspForm :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (S : Set (Pl E)) (r s : ℕ) (b : Blo S r) (φ : Sm E (r + s)), Umg φ → ∀ (g : GA E r) (m : GA E s),
-      Integrable (fun y : RightCosetSpace (rationalGLOne E r) => AutomorphicForm.constantTerm r φ.1 (lev (Ad E) r s (((Quotient.out y : normOneGL E r) : GA E r) * g, m)) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL E r) : GA E r))) (quotientMeasure (rationalGLOne E r) (mu1 E r)) := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (S : Set (Pl E)) (r s : ℕ) (b : Blo S r) (φ : Sm E (r + s)), Umg φ → ∀ (g : GA E r) (m : GA E s),
+      Integrable (fun y : RightCosetSpace (rationalGLOne (K := E) (n := r)) => AutomorphicForm.constantTerm r φ.1 (lev (Ad E) r s (((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r) * g, m)) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r))) (quotientMeasure (rationalGLOne (K := E) (n := r)) (mu1 E r)) := by
   intro E _ _ _ S r s b φ hφ g m
   obtain ⟨F, hF, -, hFl, -⟩ := UpperTheory.ConvolutionTheory.BW.ctOps E r s φ hφ
   have hcφ : Continuous φ.1 := ((UpperTheory.ConvolutionTheory.BW.umgOps E (r + s)).2 φ hφ).1
@@ -119,12 +124,12 @@ theorem UpperTheory.integrable_constantTerm_leviEmbedding_mul_conj_cuspForm :
   set L := AutomorphicForm.height (lev (Ad E) r s (g, m)) with hL
   have hL0 : 0 < L := AutomorphicForm.height_pos _
   have hc0 : 0 < AutomorphicForm.heightConst E (r + s) := one_pos.trans_le AutomorphicForm.one_le_heightConst
-  have hbound : ∀ y : normOneGL E r, ‖H (y : GA E r)‖ ≤ |C| * (2 * AutomorphicForm.heightConst E (r + s) * L) ^ N * D := by
+  have hbound : ∀ y : normOneGL (K := E) (n := r), ‖H (y : GA E r)‖ ≤ |C| * (2 * AutomorphicForm.heightConst E (r + s) * L) ^ N * D := by
     intro y
     have hq1 : 1 ≤ PositivityTheory.Rg.Tf.Core.qht y := le_ciInf fun γ => AutomorphicForm.one_le_height _
     obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (show PositivityTheory.Rg.Tf.Core.qht y < 2 * PositivityTheory.Rg.Tf.Core.qht y by linarith)
     obtain ⟨γ', hγ'⟩ := Subgroup.mem_subgroupOf.1 γ.2
-    have hγ'' : ((γ : normOneGL E r) : GA E r) = ratGL E r γ' := hγ'.symm
+    have hγ'' : ((γ : normOneGL (K := E) (n := r)) : GA E r) = ratGL E r γ' := hγ'.symm
     set y' : GA E r := ratGL E r γ' * (y : GA E r) with hy'
     have hy'h : AutomorphicForm.height y' < 2 * PositivityTheory.Rg.Tf.Core.qht y := by
       rw [hy', ← hγ'']; exact hγ
@@ -156,14 +161,15 @@ theorem UpperTheory.integrable_constantTerm_leviEmbedding_mul_conj_cuspForm :
       _ = |C| * (2 * AutomorphicForm.heightConst E (r + s) * L) ^ N * (‖b.f.1 (y : GA E r)‖ * PositivityTheory.Rg.Tf.Core.qht y ^ N) := by ring
       _ ≤ _ := mul_le_mul_of_nonneg_left (hD y) hK
   have := isFiniteMeasure_quotientMeasure (K := E) (n := r) (mu1 E r)
-  have he : (fun y : RightCosetSpace (rationalGLOne E r) => AutomorphicForm.constantTerm r φ.1 (lev (Ad E) r s (((Quotient.out y : normOneGL E r) : GA E r) * g, m)) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL E r) : GA E r))) =
+  have he : (fun y : RightCosetSpace (rationalGLOne (K := E) (n := r)) => AutomorphicForm.constantTerm r φ.1 (lev (Ad E) r s (((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r) * g, m)) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r))) =
       CuspidalSpectrum.cuspQuot hHl := funext fun y => by
     have h := CuspidalSpectrum.cuspQuot_mk hHl (Quotient.out y)
-    rw [show RightCosetSpace.mk (rationalGLOne E r) (Quotient.out y) = y from Quotient.out_eq y] at h
+    rw [show RightCosetSpace.mk (rationalGLOne (K := E) (n := r)) (Quotient.out y) = y from Quotient.out_eq y] at h
     exact h.symm
   rw [he]
+  set_option synthInstance.maxHeartbeats 200000 in
   refine Integrable.of_bound (CuspidalSpectrum.continuous_cuspQuot hHl hHc).aestronglyMeasurable
     (|C| * (2 * AutomorphicForm.heightConst E (r + s) * L) ^ N * D) (Filter.Eventually.of_forall fun q => ?_)
-  obtain ⟨y, rfl⟩ := mk_surjective (rationalGLOne E r) q
+  obtain ⟨y, rfl⟩ := mk_surjective (rationalGLOne (K := E) (n := r)) q
   rw [CuspidalSpectrum.cuspQuot_mk]
   exact hbound y

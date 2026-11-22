@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBlockOrderedSumEquivTrueIndex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VecOfMulToMatMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBlockOrderedSumEquivTrueIndex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VecOfMulToMatMul
+
+@[expose] public section
 
 noncomputable section
 

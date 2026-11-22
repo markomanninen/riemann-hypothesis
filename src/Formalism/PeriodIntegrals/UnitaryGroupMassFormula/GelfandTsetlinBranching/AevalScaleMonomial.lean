@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFRowActRight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFRowActRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem eval_matrixCoeffPoly (x : Fin n × Fin n → ℂ) : eval x (mcP f) = mcF
     have h2 : (genY n).map (eval x) = matOf x := by ext i j; simp [genY, matOf]
     rw [h1, map_id, h2]
   unfold mcP mcF
-  rw [map_sum, fockF_eq_sum _ f f.support (fun m _ h => mem_support_iff.mpr h)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, fockF_eq_sum _ f f.support (fun m _ h => mem_support_iff.mpr h)]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, eval_C, ← coeff_map, hmap, mul_assoc]
 
@@ -162,7 +167,7 @@ theorem aeval_scale_monomial (t : Fin n → ℂ) (m : Fin n × Fin n →₀ ℕ)
   ring
 
 theorem coeff_scale (t : Fin n → ℂ) (P : MvPolynomial (Fin n × Fin n) ℂ) (m : Fin n × Fin n →₀ ℕ) :
-    coeff m (aeval (fun v : Fin n × Fin n => C (t v.2) * X v) P) = (m.prod fun v e => t v.2 ^ e) * coeff m P := by
+    AddMonoidAlgebra.coeff (aeval (fun v : Fin n × Fin n => C (t v.2) * X v) P) m = (m.prod fun v e => t v.2 ^ e) * AddMonoidAlgebra.coeff P m := by
   refine MvPolynomial.induction_on' P ?_ ?_
   · intro m' a
     rw [aeval_scale_monomial, coeff_monomial, coeff_monomial]
@@ -170,7 +175,7 @@ theorem coeff_scale (t : Fin n → ℂ) (P : MvPolynomial (Fin n × Fin n) ℂ) 
     · subst h; ring
     · simp
   · intro p q hp hq
-    rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+    rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem isWH_of_scale (κ : Fin n → ℕ) (P : MvPolynomial (Fin n × Fin n) ℂ)
     (h : ∀ t : Fin n → ℂˣ, aeval (fun v : Fin n × Fin n => C ((t v.2 : ℂ)) * X v) P =

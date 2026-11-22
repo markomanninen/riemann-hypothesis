@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSplitK
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -148,7 +153,8 @@ theorem κ_shear (κ : K ≃+* (W → ℂ)) (w v : W) (a : Fin n) (t : Fin n →
     (X : Fin n → Fin M → K) (i : Fin M) :
     κ (shearK a (sig κ w a t) X a i) v = κ (X a i) v +
       ∑ b, (if b = a then 0 else if v = w then t b else 0) * κ (X b i) v := by
-  rw [shearK_self, map_add, map_sum, Pi.add_apply, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [shearK_self, map_add (f := _), map_sum, Pi.add_apply, Finset.sum_apply]
   congr 1
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [map_mul, Pi.mul_apply, κ_sig]

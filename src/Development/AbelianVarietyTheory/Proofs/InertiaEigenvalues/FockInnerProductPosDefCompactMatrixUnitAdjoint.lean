@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsKHwMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOfMemGfC
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RaisingLoweringOperators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TranslateMemCoefLatFn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsKHwMap
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -54,10 +59,10 @@ theorem fct_add_single (α : σ →₀ ℕ) (v : σ) : fct (α + Finsupp.single 
   ring
 
 def form0 (P Q : MvPolynomial σ ℂ) : ℂ :=
-  ∑ α ∈ Q.support, (fct α : ℂ) * (star (coeff α P) * coeff α Q)
+  ∑ α ∈ Q.support, (fct α : ℂ) * (star (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α)
 
 theorem fischerSumSupport_eq_sum_factorial_coeff (P Q : MvPolynomial σ ℂ) (s : Finset (σ →₀ ℕ)) (h : Q.support ⊆ s) :
-    form0 P Q = ∑ α ∈ s, (fct α : ℂ) * (star (coeff α P) * coeff α Q) := by
+    form0 P Q = ∑ α ∈ s, (fct α : ℂ) * (star (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α) := by
   unfold form0
   apply Finset.sum_subset h
   intro α _ hα
@@ -69,7 +74,7 @@ def form : MvPolynomial σ ℂ →ₗ⋆[ℂ] MvPolynomial σ ℂ →ₗ[ℂ] �
       rw [fischerSumSupport_eq_sum_factorial_coeff (P + P') Q Q.support subset_rfl, fischerSumSupport_eq_sum_factorial_coeff P Q Q.support subset_rfl,
         fischerSumSupport_eq_sum_factorial_coeff P' Q Q.support subset_rfl, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun α _ => ?_
-      simp only [coeff_add, star_add]; ring)
+      simp only [MvPolynomial.coeff_add, star_add]; ring)
     (fun c P Q => by
       rw [fischerSumSupport_eq_sum_factorial_coeff (c • P) Q Q.support subset_rfl, fischerSumSupport_eq_sum_factorial_coeff P Q _ subset_rfl, smul_eq_mul, Finset.mul_sum]
       refine Finset.sum_congr rfl fun α _ => ?_
@@ -81,7 +86,7 @@ def form : MvPolynomial σ ℂ →ₗ⋆[ℂ] MvPolynomial σ ℂ →ₗ[ℂ] �
         fischerSumSupport_eq_sum_factorial_coeff P Q' (Q.support ∪ Q'.support) Finset.subset_union_right,
         ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun α _ => ?_
-      simp only [coeff_add]; ring)
+      simp only [MvPolynomial.coeff_add]; ring)
     (fun c P Q => by
       rw [fischerSumSupport_eq_sum_factorial_coeff P (c • Q) Q.support support_smul, fischerSumSupport_eq_sum_factorial_coeff P Q _ subset_rfl, smul_eq_mul,
         Finset.mul_sum]
@@ -89,7 +94,7 @@ def form : MvPolynomial σ ℂ →ₗ⋆[ℂ] MvPolynomial σ ℂ →ₗ[ℂ] �
       simp only [coeff_smul, smul_eq_mul, RingHom.id_apply]; ring)
 
 theorem form_eq (P Q : MvPolynomial σ ℂ) (s : Finset (σ →₀ ℕ)) (h : Q.support ⊆ s) :
-    form P Q = ∑ α ∈ s, (fct α : ℂ) * (star (coeff α P) * coeff α Q) := fischerSumSupport_eq_sum_factorial_coeff P Q s h
+    form P Q = ∑ α ∈ s, (fct α : ℂ) * (star (AddMonoidAlgebra.coeff P α) * AddMonoidAlgebra.coeff Q α) := fischerSumSupport_eq_sum_factorial_coeff P Q s h
 
 theorem form_symm (P Q : MvPolynomial σ ℂ) : form P Q = star (form Q P) := by
   classical
@@ -99,7 +104,7 @@ theorem form_symm (P Q : MvPolynomial σ ℂ) : form P Q = star (form Q P) := by
   simp [star_mul', mul_comm]
 
 theorem form_self (P : MvPolynomial σ ℂ) :
-    form P P = ((∑ α ∈ P.support, (fct α : ℝ) * Complex.normSq (coeff α P) : ℝ) : ℂ) := by
+    form P P = ((∑ α ∈ P.support, (fct α : ℝ) * Complex.normSq (AddMonoidAlgebra.coeff P α) : ℝ) : ℂ) := by
   rw [form_eq P P P.support subset_rfl]
   push_cast
   refine Finset.sum_congr rfl fun α _ => ?_
@@ -113,7 +118,7 @@ theorem form_self_eq_zero (P : MvPolynomial σ ℂ) (h : form P P = 0) : P = 0 :
   rw [form_self, Complex.ofReal_eq_zero,
     Finset.sum_eq_zero_iff_of_nonneg (fun α _ => mul_nonneg (Nat.cast_nonneg _) (Complex.normSq_nonneg _))] at h
   ext α
-  rw [coeff_zero]
+  change P.coeff α = 0
   by_contra hne
   have := h α (mem_support_iff.mpr hne)
   rcases mul_eq_zero.mp this with h1 | h1
@@ -160,9 +165,9 @@ theorem form_X_mul (v : σ) (P Q : MvPolynomial σ ℂ) : form (X v * P) Q = for
         split_ifs
         · push_cast; ring
         · rfl
-    | add Q Q' hQ hQ' => rw [map_add, map_add, map_add, hQ, hQ']
+    | add Q Q' hQ hQ' => rw [map_add (f := _), map_add (f := _), map_add (f := _), hQ, hQ']
   | add P P' hP hP' =>
-    rw [mul_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hP, hP']
+    rw [mul_add, map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hP, hP']
 
 theorem form_pderiv (v : σ) (P Q : MvPolynomial σ ℂ) : form (pderiv v P) Q = form P (X v * Q) := by
   rw [form_symm, ← form_X_mul, ← form_symm]
@@ -185,7 +190,7 @@ def FAdj (T S : Module.End ℂ (PolF D m n)) : Prop := ∀ P Q, form (T P) Q = f
 
 theorem fadj_add {T S T' S' : Module.End ℂ (PolF D m n)} (h : FAdj T S) (h' : FAdj T' S') :
     FAdj (T + T') (S + S') := by
-  intro P Q; simp only [LinearMap.add_apply, map_add, h P Q, h' P Q]
+  intro P Q; simp only [LinearMap.add_apply, map_add (f := _), h P Q, h' P Q]
 
 theorem fadj_mul {T S T' S' : Module.End ℂ (PolF D m n)} (h : FAdj T S) (h' : FAdj T' S') :
     FAdj (T * T') (S' * S) := by
@@ -197,7 +202,8 @@ theorem fadj_neg {T S : Module.End ℂ (PolF D m n)} (h : FAdj T S) : FAdj (-T) 
 theorem fadj_sum {ι : Type} (s : Finset ι) (T S : ι → Module.End ℂ (PolF D m n))
     (h : ∀ i ∈ s, FAdj (T i) (S i)) : FAdj (∑ i ∈ s, T i) (∑ i ∈ s, S i) := by
   intro P Q
-  rw [LinearMap.sum_apply, map_sum, LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum, LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   exact Finset.sum_congr rfl fun i hi => h i hi P Q
 
 theorem fadj_X {_ : DecidableEq (FVar D m n)} (v : FVar D m n) :

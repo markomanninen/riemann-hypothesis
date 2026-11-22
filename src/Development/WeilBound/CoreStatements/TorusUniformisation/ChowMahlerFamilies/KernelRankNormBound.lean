@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace PositivityTheory.Xgn.AmalgamKernelBound
@@ -176,7 +181,7 @@ theorem corank_le {M : Type} [AddCommGroup M] [Module.Free ℤ M] [Module.Finite
   have hpow' : p ^ Fintype.card {i // (p : ℤ) ∣ d i} ∣ (LinearMap.det f).natAbs := by
     have := Int.natAbs_dvd_natAbs.mpr hpow
     rwa [Int.natAbs_pow, Int.natAbs_natCast] at this
-  have hv := (padicValNat_dvd_iff_le hne).mp hpow'
+  have hv := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hne).mp hpow'
   omega
 
 end PositivityTheory.Xgn.AmalgamKernelBound
@@ -188,7 +193,7 @@ theorem PositivityTheory.Xgn.kernel_rank_norm_bound : ∀ (E : Type) [Field E] [
   refine ⟨?_, ?_⟩
   · have h := PositivityTheory.Xgn.AmalgamKernelBound.corank_le k p
       ((LinearMap.lsmul (𝓞 E) Λ a).restrictScalars ℤ) (by rw [hdet]; exact pow_ne_zero _ hN)
-    rw [hdet, Int.natAbs_pow, padicValNat.pow] at h
-    exact h
+    rw [hdet, Int.natAbs_pow] at h
+    simpa only [Nat.padicValNat_def, Nat.multiplicity_pow] using h
   · rw [LinearMap.charpoly_baseChange, PositivityTheory.Xgn.AmalgamKernelBound.charpoly_lsmul,
       Polynomial.map_pow, algebraMap_int_eq]

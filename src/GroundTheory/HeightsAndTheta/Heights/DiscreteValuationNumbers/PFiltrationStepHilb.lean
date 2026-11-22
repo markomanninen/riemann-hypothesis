@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -33,9 +38,8 @@ theorem finiteDimensional_piece (n : K → ℕ) :
   have := hfin.to_subtype
   exact Module.Finite.of_basis (basisRestrictSupport F {d | Finsupp.weight (blockWeight ι) d = n})
 
-omit [∀ k, Fintype (ι k)] in
-open Classical in
 
+open Classical in
 theorem component_mul {f : MRing ι F} {s : K → ℕ} (hf : IsMultiHomog f s) (c : MRing ι F)
     (n : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) n (f * c) =
@@ -45,9 +49,8 @@ theorem component_mul {f : MRing ι F} {s : K → ℕ} (hf : IsMultiHomog f s) (
   rw [← weightedDecomposition.decompose'_apply, ← weightedDecomposition.decompose'_apply]
   exact h
 
-omit [∀ k, Fintype (ι k)] in
-open Classical in
 
+open Classical in
 theorem mem_sup_span {L : Ideal (MRing ι F)} {f : MRing ι F} {s : K → ℕ}
     (hL : IsMultiHomogIdeal L) (hf : IsMultiHomog f s) {n : K → ℕ} {x : MRing ι F}
     (hx : x ∈ weightedHomogeneousSubmodule F (blockWeight ι) n) (hx' : x ∈ L ⊔ Ideal.span {f}) :
@@ -58,11 +61,11 @@ theorem mem_sup_span {L : Ideal (MRing ι F)} {f : MRing ι F} {s : K → ℕ}
   refine ⟨c, ?_⟩
   have hx2 := weightedHomogeneousComponent_eq_self
     ((mem_weightedHomogeneousSubmodule _ _ _ _).mp hx)
-  rw [← hx2, map_add, mul_comm c f, component_mul hf, add_sub_cancel_right]
+  rw [← hx2, map_add (f := _), mul_comm c f, component_mul hf, add_sub_cancel_right]
   exact hL l hl n
 
-open Classical in
 
+open Classical in
 theorem finrank_step (L : Ideal (MRing ι F)) (f : MRing ι F) (s : K → ℕ)
     (hL : IsMultiHomogIdeal L) (hf : IsMultiHomog f s) (n : K → ℕ) :
     Module.finrank F (gradedPiece L n) =

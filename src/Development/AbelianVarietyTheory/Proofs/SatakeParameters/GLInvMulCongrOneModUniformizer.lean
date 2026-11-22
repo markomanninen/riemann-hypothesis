@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -44,7 +49,7 @@ theorem GL_inv_mul_congr_one : ∀ {K : Type} [Field K] [Valued K (WithZero (Mul
     have hm : (Ideal.Quotient.mk I).mapMatrix A' = 1 := by
       ext i j
       rw [RingHom.mapMatrix_apply, Matrix.map_apply]
-      simp only [A', Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, hp, zero_mul,
+      simp only [A', Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, hp, zero_mul,
         add_zero, Matrix.one_apply]
       split_ifs <;> simp
     rw [hm, det_one, sub_self]

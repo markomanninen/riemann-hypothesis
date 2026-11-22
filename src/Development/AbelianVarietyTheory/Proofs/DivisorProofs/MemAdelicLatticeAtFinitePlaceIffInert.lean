@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockOfMatrix
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceLocalFieldDataExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InLat2
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockOfMatrix
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPlaceLocalFieldDataExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InLat2
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -20,22 +25,24 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem smul_inclR (a : AF F) (e : E) : a • inclR (F := F) (AF F) e = a ⊗ₜ[F] e := by
   rw [show inclR (F := F) (AF F) e = (1 : AF F) ⊗ₜ[F] e from rfl, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
 
-theorem iotaW_toCompl {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w)
+theorem iotaW_toCompl {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w)
     (y : Fv F v ⊗[F] E) :
-    GlobalTheory.InertBigCell.iotaW hw (toCompl (under_eq_of_isInertAt hw) y) = liftT E v y := by
-  show liftT E v ((complEquiv hw (under_eq_of_isInertAt hw)).symm
-    (complEquiv hw (under_eq_of_isInertAt hw) y)) = liftT E v y
+    GlobalTheory.InertBigCell.iotaW hw (toCompl (under_eq_of_isInertAt hw) y) = liftT (E := E) v y := by
+  show liftT (E := E) v ((complEquiv hw (under_eq_of_isInertAt hw)).symm
+    (complEquiv hw (under_eq_of_isInertAt hw) y)) = liftT (E := E) v y
   rw [RingEquiv.symm_apply_apply]
 
-theorem gen_mem {v : Pl F} {d : ℕ} (W : Spc F E d) {t : Fv F v} (ht : t ∈ v.adicCompletionIntegers F)
+theorem gen_mem {v : Pl (F := F)} {d : ℕ} (W : Spc F E d) {t : Fv F v} (ht : t ∈ v.adicCompletionIntegers F)
     {y : Fin d → E} (hy : y ∈ W.L) :
     (fun i => GlobalTheory.LatVac.liftV v t ⊗ₜ[F] y i) ∈ GlobalTheory.InertSph.latAt W v :=
   AddSubgroup.subset_closure ⟨GlobalTheory.LatVac.liftV v t, GlobalTheory.LatVac.at_liftV v t,
     by rw [GlobalTheory.LatVac.evFin_liftV]; exact ht, y, hy, by funext i; rw [Pi.smul_apply, smul_inclR]⟩
 
-theorem mem_latAt_iff {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) {d : ℕ}
+theorem mem_latAt_iff {v : Pl (F := F)} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalism.UG.IsInertAt F E v w) {d : ℕ}
     (W : Spc F E d) (z : Fin d → AE F E) :
     z ∈ GlobalTheory.InertSph.latAt W v ↔ ∃ u ∈ GlobalTheory.LFun.latAt w W.L, z = fun i => GlobalTheory.InertBigCell.iotaW hw (u i) := by
+  have liftT_tmul (a : Fv F v) (e : E) :
+      liftT (E := E) v (a ⊗ₜ[F] e) = GlobalTheory.LatVac.liftV v a ⊗ₜ[F] e := rfl
   have h := under_eq_of_isInertAt hw
   let f : (Fin d → w.adicCompletion E) →+ (Fin d → AE F E) :=
     AddMonoidHom.compLeft (GlobalTheory.InertBigCell.iotaW hw) (Fin d)
@@ -67,7 +74,7 @@ theorem mem_latAt_iff {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalis
         obtain ⟨t, ht⟩ := toCompl_surjective h (o : w.adicCompletion E)
         have htI : t ∈ intLoc F E v := (mem_intLoc_iff hw h t).2 (ht ▸ o.2)
         have e1 : f (o • fun i => algebraMap E (w.adicCompletion E) (y i)) =
-            fun i => liftT E v (t * ((1 : Fv F v) ⊗ₜ[F] y i)) := by
+            fun i => liftT (E := E) v (t * ((1 : Fv F v) ⊗ₜ[F] y i)) := by
           funext i
           rw [hf]
           dsimp only
@@ -75,7 +82,7 @@ theorem mem_latAt_iff {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalis
             show algebraMap E (w.adicCompletion E) (y i) = toCompl h ((1 : Fv F v) ⊗ₜ[F] y i) by
               rw [toCompl_tmul, map_one, one_mul], ← map_mul, iotaW_toCompl]
         rw [e1]
-        refine intLoc_induction (p := fun t => (fun i => liftT E v (t * ((1 : Fv F v) ⊗ₜ[F] y i))) ∈
+        refine intLoc_induction (p := fun t => (fun i => liftT (E := E) v (t * ((1 : Fv F v) ⊗ₜ[F] y i))) ∈
           GlobalTheory.InertSph.latAt W v) (fun a ha x => ?_) ?_ (fun p q hp hq => ?_) (fun p hp => ?_) htI
         · convert gen_mem W ha (W.L.smul_mem x hy) using 1
           funext i
@@ -85,12 +92,12 @@ theorem mem_latAt_iff {v : Pl F} {w : HeightOneSpectrum (𝓞 E)} (hw : Formalis
           simp
         · convert add_mem hp hq using 1
           funext i
-          simp [add_mul, map_add]
+          simp [add_mul, map_add (f := _)]
         · convert neg_mem hp using 1
           funext i
           simp [neg_mul, map_neg]
       | zero => intro o; rw [smul_zero, map_zero]; exact zero_mem _
-      | add x y _ _ hx hy => intro o; rw [smul_add, map_add]; exact add_mem (hx o) (hy o)
+      | add x y _ _ hx hy => intro o; rw [smul_add, map_add (f := _)]; exact add_mem (hx o) (hy o)
       | smul a x _ hx => intro o; rw [smul_smul]; exact hx (o * a)
     have := key u hu 1
     rw [one_smul] at this

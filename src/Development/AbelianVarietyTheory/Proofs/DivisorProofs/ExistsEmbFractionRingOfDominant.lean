@@ -1,5 +1,11 @@
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.IsE8ThetaStructure
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.ImmersedBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZH
@@ -37,7 +43,7 @@ theorem exists_emb_fractionRing_of_dominant : ∀ (o Ω : Type) [CommRing o] [Fi
     rw [GlobalTheory.Points.valR_eq ξ U h]
     exact e2
   have hinj0 : Function.Injective g0 := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨x, hx⟩ h0
     obtain ⟨U, f, hz, rfl⟩ := RatModel.mem_O.1 hx
     rw [hg0 U f hz] at h0

@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestWeightMatrixCoefficientDependsOnWeightStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KTypeExtendsHolomorphicComplexifiedK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHolRepOfIsTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestWeightMatrixCoefficientDependsOnWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KTypeExtendsHolomorphicComplexifiedK
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.JointHarm
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -50,7 +55,7 @@ theorem exists_op_of_isTau {n : ℕ} {ε : Fin n → Bool} {abelian₂ : Fin n �
     · rintro g hg _ ⟨c, rfl⟩
       induction c using Finsupp.induction_linear with
       | zero => simp
-      | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
       | single k a => exact ⟨Finsupp.single ⟨g * k.1, mul_mem_K hg k.2⟩ a, by rw [hΦ, hΦ, map_smul, hmul g hg _ k.2]⟩
     · have : w ∈ LinearMap.range Φ := ⟨_, hw1⟩
       rw [h0, Submodule.mem_bot] at this
@@ -75,11 +80,11 @@ theorem exists_op_of_isTau {n : ℕ} {ε : Fin n → Bool} {abelian₂ : Fin n �
     intro c c'
     induction c using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, inner_add_left, mul_add]
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb, inner_add_left, mul_add]
     | single k a =>
       induction c' using Finsupp.induction_linear with
       | zero => simp
-      | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, inner_add_right, mul_add]
+      | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb, inner_add_right, mul_add]
       | single k' a' =>
         simp only [hΦ, hΨ, LinearMap.smul_apply, map_smul, LinearMap.map_smulₛₗ, inner_smul_left, inner_smul_right,
           gram0, smul_eq_mul]
@@ -95,7 +100,7 @@ theorem exists_op_of_isTau {n : ℕ} {ε : Fin n → Bool} {abelian₂ : Fin n �
   · obtain ⟨c, rfl⟩ : s ∈ LinearMap.range Φ := hsurj ▸ Submodule.mem_top
     induction c using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
     | single k a =>
       have e : τ g (Φ (Finsupp.single k a)) = Φ (Finsupp.single ⟨g * k.1, mul_mem_K hg k.2⟩ a) := by
         rw [hΦ, hΦ, map_smul, hmul g hg _ k.2]

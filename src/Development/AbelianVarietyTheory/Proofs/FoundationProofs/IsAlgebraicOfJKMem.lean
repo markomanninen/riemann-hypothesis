@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+
+@[expose] public section
+
 open scoped MatrixGroups
 
 open Polynomial
@@ -43,7 +48,7 @@ theorem normal_of_fixed (F L : Type) [Field F] [Field L] [Algebra F L] [Algebra.
     intro n
     apply h
     intro σ
-    have := congrArg (fun Q => coeff Q n) (hmap σ)
+    have := congrArg (fun Q => Q.coeff n) (hmap σ)
     simpa [coeff_map] using this
   have hmon : P.Monic := monic_prod_of_monic _ _ fun g _ => monic_X_sub_C g
   obtain ⟨Q, hQ⟩ := (mem_lifts P).1 hl

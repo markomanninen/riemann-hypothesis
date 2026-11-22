@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegularStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionIffSectionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegularStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionIffSectionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SectionEqZeroOfValuesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace GlobalTheory.CompanionTheory.Ar.BT.SubOrder
 
@@ -302,7 +306,8 @@ theorem exists_den [Finite T] (Γ : QFGroup R T) {U : Γ.G.left.Opens} (hc : IsC
     · have := regularAt_mul Γ d (h' g hg)
       simpa [mul_assoc, mul_comm, mul_left_comm] using this
   · intro g _
-    obtain ⟨d, hd, V, hg, s, hs⟩ := GlobalTheory.T.exists_denominator_regular R T Γ f g
+    have hreg := RegDenom.exists_denom_regularAt R T Γ f g
+    obtain ⟨d, hd, V, hg, s, hs⟩ := hreg
     refine ⟨V, mem_nhdsWithin_of_mem_nhds (V.isOpen.mem_nhds hg), d, hd, fun g' hg' => ⟨V, hg', s, hs⟩⟩
 
 end GlobalTheory.CompanionTheory.Ar.BT.SubOrder
@@ -343,9 +348,10 @@ theorem hopfOrder_of_finOpenSub : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIn
     · rintro ⟨s, hs⟩
       exact ⟨s, funext fun t => inj ((hΦ s t t.2).symm.trans (hs t t.2))⟩
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro s hs
-    refine GlobalTheory.T.section_eq_zero_of_values R T Γ U s fun t h => ?_
+    have hzero := section_eq_zero_of_val_generic R T Γ U s
+    refine hzero fun t h => ?_
     have := hΦ s ⟨t, h⟩ h
     rw [hs] at this
     simpa using this
@@ -358,7 +364,8 @@ theorem hopfOrder_of_finOpenSub : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIn
     have h1 : ∀ h : subH Γ hF, ∃ d : R, d ≠ 0 ∧ d • (Pi.single h 1 : subH Γ hF → R) ∈ Φ.range := by
       intro h
       obtain ⟨d, hd, hreg⟩ := exists_den Γ hc (fun t => if t = (h : T) then 1 else 0)
-      obtain ⟨s, hs⟩ := (GlobalTheory.T.regular_function_iff_section R T Γ U _).1 hreg
+      have hsection := (regularAt_forall_iff_exists_section R T Γ U _).1 hreg
+      obtain ⟨s, hs⟩ := hsection
       refine ⟨d, hd, (hA _).2 ⟨s, fun t ht => ?_⟩⟩
       rw [hs t ht]
       by_cases e : t = h
@@ -385,7 +392,6 @@ theorem hopfOrder_of_finOpenSub : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIn
           Algebra.TensorProduct.productMap (valAlg hρ z.1 z.1.2) (valAlg hρ z.2 z.2.2) c' := by
       intro c'
       induction c' with
-      | zero => exact ⟨0, Submodule.zero_mem _, fun z => by simp⟩
       | tmul a b =>
         refine ⟨fun z => Φ a z.1 * Φ b z.2, Submodule.subset_span ⟨Φ a, ⟨a, rfl⟩, Φ b, ⟨b, rfl⟩, rfl⟩, fun z => ?_⟩
         simp only [map_mul, Algebra.TensorProduct.productMap_apply_tmul]

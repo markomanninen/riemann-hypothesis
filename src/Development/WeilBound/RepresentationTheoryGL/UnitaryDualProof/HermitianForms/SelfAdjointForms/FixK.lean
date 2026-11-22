@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.TransversalSums.SumTranslateTransversal
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.StepForm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.TransversalSums.SumTranslateTransversal
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.StepForm
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.AlgKlein
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.AlgKlein
+
+@[expose] public section
 
 noncomputable section
 
@@ -566,8 +570,6 @@ theorem kernel_torsion_translates_algebraic : KerTransAll := kerTransAll_of_klei
 theorem algebraic_fact_kernels : AlgFact := algFact_of_kerTrans kernel_torsion_translates_algebraic
 
 theorem zero_value_algebraic : AlgZero := algZero_of_trans kernel_torsion_translates_algebraic
-
-theorem vanishing_algebraic : Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.RestB.ZeroAlg := zeroAlg_of_kerTrans kernel_torsion_translates_algebraic
 
 end KleinAllPf
 

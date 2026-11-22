@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPosHermFormV
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralCharImEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableExpNegHermStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPosHermFormV
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetIntegralCharImEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableExpNegHermStatement
+
+@[expose] public section
+
 open Complex MeasureTheory GlobalTheory.UnitaryTheta
 open scoped BigOperators ComplexConjugate Real Classical
 
@@ -22,7 +27,7 @@ theorem heis_kerSum_diag {V : Type} [AddCommGroup V] [Module ℂ V] (H : Sesq V)
     intro w
     apply Complex.ext <;> simp
     ring
-  simp only [map_add, LinearMap.add_apply, Complex.add_im, Complex.ofReal_add]
+  simp only [map_add (f := _), LinearMap.add_apply, Complex.add_im, Complex.ofReal_add]
   rw [hH.1 z r, hH.1 z x, hH.1 r x]
   simp only [hc]
   ring
@@ -133,7 +138,7 @@ theorem integral_heis_kerSum_diag : ∀ (V : Type) [NormedAddCommGroup V] [Norme
         obtain ⟨m1, hm1⟩ := hr y hy
         obtain ⟨m2, hm2⟩ := hα.2.1 x x.2 y (hle hy)
         refine ⟨m1 + m2, ?_⟩
-        rw [map_add, LinearMap.add_apply, Complex.add_im, hm1, hm2]
+        rw [map_add (f := _), LinearMap.add_apply, Complex.add_im, hm1, hm2]
         push_cast
         ring
     simp only [hint]

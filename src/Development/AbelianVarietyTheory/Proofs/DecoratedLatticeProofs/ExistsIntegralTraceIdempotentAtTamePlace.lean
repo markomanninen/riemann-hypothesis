@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ namespace GlobalTheory.IwaPlace
 
 variable {D : D7}
 
-open GlobalTheory.SelfDualAt in
 
+open GlobalTheory.SelfDualAt in
 theorem idAt₂ (v : Pl D) : algebraMap (AF D.host.F) (AE D) (cP (· = v)) ∈ idAt D (· = v) := by
   refine Ideal.mem_inf.2 ⟨?_, Ideal.mem_iInf.2 fun w => ?_⟩
   · rw [RingHom.mem_ker]
@@ -31,8 +35,8 @@ theorem idAt₂ (v : Pl D) : algebraMap (AF D.host.F) (AE D) (cP (· = v)) ∈ i
     rw [h, evalV_indP, if_neg w.2]
     exact TensorProduct.zero_tmul _ _
 
-open GlobalTheory.SelfDualAt in
 
+open GlobalTheory.SelfDualAt in
 theorem eq_alg_cP {v : Pl D} {ε : AE D} (hεI : ε ∈ intAt D (· = v)) (hε : ∀ a, a ∈ idAt D (· = v) ↔ ε * a = a) :
     ε = algebraMap (AF D.host.F) (AE D) (cP (· = v)) := by
   have h1 := algebraMap_placeIdempotent_mul (· = v) ε hεI.1
@@ -40,8 +44,8 @@ theorem eq_alg_cP {v : Pl D} {ε : AE D} (hεI : ε ∈ intAt D (· = v)) (hε :
   rw [← h2, mul_comm]
   exact h1.symm
 
-open GlobalTheory.SelfDualAt in
 
+open GlobalTheory.SelfDualAt in
 theorem placeIdem_eq_cP {v : Pl D} {εF : AF D.host.F} (h : IsPlaceIdem D v εF) : εF = cP (· = v) := by
   obtain ⟨α, rfl, h1, h0⟩ := h
   unfold cP
@@ -65,8 +69,8 @@ theorem half_mem_int (v : Pl D) (h2 : (2 : 𝓞 D.host.F) ∉ v.asIdeal) :
     exact HeightOneSpectrum.intValuation_eq_one_iff.2 h2
   rw [e1, map_inv₀, e2, inv_one]
 
-open GlobalTheory.SelfDualAt in
 
+open GlobalTheory.SelfDualAt in
 theorem exists_trace_one_at_tame : ∀ (D : D7) (v : Pl D) (ε : AE D) (hεε : ε * ε = ε) (hεc : cA D ε = ε)
     (hεI : ε ∈ intAt D (· = v)) (hε : ∀ a, a ∈ idAt D (· = v) ↔ ε * a = a), Tame D v →
     ∃ w ∈ intAt D (· = v), w + cA D w = ε := by
@@ -87,7 +91,7 @@ theorem exists_trace_one_at_tame : ∀ (D : D7) (v : Pl D) (ε : AE D) (hεε : 
         exact half_mem_int w h2
       · rw [if_neg hw, zero_mul]
         exact zero_mem _
-    · rw [cA_alg, ← map_add, hεη]
+    · rw [cA_alg, ← map_add (f := _), hεη]
       congr 1
       rw [← two_mul, mul_left_comm, ← map_ofNat (algebraMap D.host.F (AF D.host.F)) 2, ← map_mul,
         mul_inv_cancel₀ two_ne_zero, map_one, mul_one]

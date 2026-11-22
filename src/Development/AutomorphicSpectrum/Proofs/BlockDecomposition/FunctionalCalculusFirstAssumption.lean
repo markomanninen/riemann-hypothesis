@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,20 +18,10 @@ namespace GlobalTheory.CompanionTheory.WaveFc.Asm
 
 variable {n : ℕ}
 
-theorem val_mem (y : G n) : y.val ∈ GLs n :=
-  ((Matrix.isUnit_iff_isUnit_det _).1 y.isUnit).ne_zero
-
 theorem open_GLs : IsOpen (GLs n) := by
   have : GLs n = (fun g : Mat n => g.det) ⁻¹' {0}ᶜ := rfl
   rw [this]
   exact isOpen_compl_singleton.preimage (Continuous.matrix_det continuous_id)
-
-theorem mul_mem_GLs {y : Mat n} (hy : y ∈ GLs n) (h : G n) : y * h.val ∈ GLs n := by
-  have h1 : h.val.det ≠ 0 := val_mem h
-  have h2 : y.det ≠ 0 := hy
-  show (y * h.val).det ≠ 0
-  rw [Matrix.det_mul]
-  exact mul_ne_zero h2 h1
 
 section Rw
 
@@ -184,7 +178,7 @@ theorem cpt_add {f f' : Mat n → V} (h : Cpt f) (h' : Cpt f') : Cpt (f + f') :=
 end Bop
 
 theorem CE_add (E : KMod n) {f f' : Mat n → E.V} (h : f ∈ CE E) (h' : f' ∈ CE E) : f + f' ∈ CE E :=
-  ⟨h.1.add h'.1, fun g hg k => by rw [Pi.add_apply, Pi.add_apply, h.2 g hg k, h'.2 g hg k, map_add]⟩
+  ⟨h.1.add h'.1, fun g hg k => by rw [Pi.add_apply, Pi.add_apply, h.2 g hg k, h'.2 g hg k, map_add (f := _)]⟩
 
 theorem CE_smul (E : KMod n) (a : ℂ) {f : Mat n → E.V} (h : f ∈ CE E) : a • f ∈ CE E :=
   ⟨h.1.const_smul a, fun g hg k => by rw [Pi.smul_apply, Pi.smul_apply, h.2 g hg k, map_smul]⟩
@@ -207,7 +201,7 @@ section Fn
 
 theorem coe_toC0 {f : ℝ → ℂ} (h : Continuous f ∧ Tendsto f (cocompact ℝ) (𝓝 0)) : ⇑(toC0 f) = f := by
   unfold toC0
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 def rf (y : ℝ) : ℂ := (((1 + y ^ 2)⁻¹ : ℝ) : ℂ)
@@ -284,7 +278,7 @@ variable [MeasurableSpace (G n)] [BorelSpace (G n)] {μ : Measure (G n)} [μ.IsH
 theorem cls_zero {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] : cls μ (0 : Mat n → V) = 0 := by
   have h : MemLp (fun y : G n => (0 : Mat n → V) y.val) 2 μ := MemLp.zero
   unfold cls
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact MemLp.toLp_zero h
 
 theorem cut_eq_one {c y : ℝ} (h : y ≤ c) : cut c y = 1 := by

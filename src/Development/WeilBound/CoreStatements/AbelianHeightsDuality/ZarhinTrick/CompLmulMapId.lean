@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +23,7 @@ theorem comp_lmul_map_id (ε : H →ₐ[K] K) (f : H →ₐ[K] H) (t : H ⊗[K] 
   | tmul a b =>
     simp only [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lmul'_apply_tmul, AlgHom.id_apply,
       AlgHom.comp_apply, Algebra.ofId_apply, map_mul, AlgHom.commutes]
-  | add s t hs ht => simp only [map_add, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), hs, ht]
 
 theorem counit_pw (Δ : H →ₐ[K] H ⊗[K] H) (ε : H →ₐ[K] K) (hL : CounitL Δ ε) (hR : CounitR Δ ε) (n : ℕ) :
     ε.comp (pw Δ ε n) = ε := by
@@ -39,7 +43,7 @@ theorem counit_pw (Δ : H →ₐ[K] H ⊗[K] H) (ε : H →ₐ[K] K) (hL : Couni
           AlgHom.comp_apply, Algebra.ofId_apply, AlgHom.commutes, AlgHom.id_apply]
         rw [← AlgHom.comp_apply ε (pw Δ ε n), ih]
         simp
-      | add s t hs ht => simp only [map_add, hs, ht]
+      | add s t hs ht => simp only [map_add (f := _), hs, ht]
     have hx := DFunLike.congr_fun hL x
     simp only [CounitL, AlgHom.comp_apply, AlgHom.id_apply] at hx
     show ε (Algebra.TensorProduct.lmul' K (Algebra.TensorProduct.map (pw Δ ε n) (AlgHom.id K H) (Δ x))) = ε x
@@ -68,7 +72,7 @@ theorem pw_sub_mem (Δ : H →ₐ[K] H ⊗[K] H) (ε : H →ₐ[K] K) (hL : Coun
       · rw [RingHom.mem_ker, map_sub, ← AlgHom.comp_apply, hf, AlgHom.commutes]; simp
       · rw [RingHom.mem_ker, map_sub, AlgHom.commutes]; simp
     | add s t hs ht =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       convert Ideal.add_mem _ hs ht using 1
       ring
   induction n with

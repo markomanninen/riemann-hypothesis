@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHsSumPfR
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHsSumPfR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

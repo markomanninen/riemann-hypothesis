@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTTop
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTTop
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -41,8 +46,6 @@ def TopNMixedLimit.Statement : Prop :=
       ∀ k : ℕ, k ≤ D.n → ∃ L : ℝ, Tendsto (X.mixN B k) (𝓝[>] 0) (𝓝 L)
 
 namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
 
 end Line
 

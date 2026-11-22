@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.InnerConj
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsUnramifiedOutsideIffLeMaxUnramifiedOutside
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -14,8 +19,8 @@ section DecompHom
 variable {K E Kv Ωv : Type u} [Field K] [Field E] [Field Kv] [Field Ωv] [Algebra K E]
   [Algebra K Kv] [Algebra Kv Ωv] [Algebra K Ωv] [IsScalarTower K Kv Ωv]
 
-variable (Kv) in
 
+variable (Kv) in
 noncomputable def decompHom [Normal K E] (ι : E →ₐ[K] Ωv) : Gal(Ωv/Kv) →* Gal(E/K) :=
   letI : Algebra E Ωv := ι.toRingHom.toAlgebra
   haveI : IsScalarTower K E Ωv := IsScalarTower.of_algebraMap_eq fun x => (ι.commutes x).symm
@@ -60,10 +65,12 @@ theorem continuous_decompHom [Normal K E] (ι : E →ₐ[K] Ωv) : Continuous (d
   intro y hy
   have hy' : y = ∑ i, b.repr ⟨y, hy⟩ i • (b i : E) := by
     have := congrArg L.val (b.sum_repr ⟨y, hy⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul] at this
     exact this.symm
-  rw [hy', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy', map_sum]
   simp only [map_smul, hb]
 
 theorem exists_eq_comp_of_normal [Normal K E] (ι ι' : E →ₐ[K] Ωv) :
@@ -73,13 +80,6 @@ theorem exists_eq_comp_of_normal [Normal K E] (ι ι' : E →ₐ[K] Ωv) :
   refine ⟨ι'.restrictNormal' E, ?_⟩
   ext x
   exact (AlgHom.restrictNormal_commutes ι' E x).symm
-
-theorem decompHom_comp [Normal K E] (ι : E →ₐ[K] Ωv) (g : Gal(E/K)) (σ : Gal(Ωv/Kv)) :
-    decompHom Kv (ι.comp (g : E →ₐ[K] E)) σ = g⁻¹ * decompHom Kv ι σ * g := by
-  rw [decompHom_eq_iff]
-  intro x
-  simp only [AlgHom.comp_apply, AlgEquiv.coe_toAlgHom, AlgEquiv.mul_apply, AlgEquiv.aut_inv,
-    AlgEquiv.apply_symm_apply, decompHom_apply]
 
 theorem decompHom_comp_val [Normal K E] (ι : E →ₐ[K] Ωv) (N : IntermediateField K E) [Normal K N] :
     decompHom Kv (ι.comp N.val) = (AlgEquiv.restrictNormalHom N).comp (decompHom Kv ι) := by
@@ -110,11 +110,6 @@ noncomputable def conjResMor (A : Rep.{u} k G) {φ φ' : H →* G} (g : G)
     congr 2
     group⟩
 
-omit [TopologicalSpace G] [TopologicalSpace H] [IsTopologicalGroup G] [IsTopologicalGroup H]
-  [CompactSpace G] in
-theorem conjResMor_hom_apply (A : Rep.{u} k G) {φ φ' : H →* G} (g : G)
-    (h : ∀ x, φ' x = g⁻¹ * φ x * g) (a : A) : (conjResMor A g h).hom a = A.ρ g⁻¹ a :=
-  rfl
 
 theorem cohomologyMapAlong_conj (A : Rep.{u} k G) [IsDiscreteRep A] {φ φ' : H →* G}
     (hφ : Continuous φ) (hφ' : Continuous φ') (g : G) (h : ∀ x, φ' x = g⁻¹ * φ x * g)
@@ -156,25 +151,6 @@ variable {k K E Kv Ωv : Type u} [CommRing k] [Field K] [Field E] [Field Kv] [Fi
   [Algebra K E] [Algebra K Kv] [Algebra Kv Ωv] [Algebra K Ωv] [IsScalarTower K Kv Ωv]
   [IsGalois K E]
 
-instance isDiscreteRep_res_decompHom (ι : E →ₐ[K] Ωv) (A : Rep.{u} k Gal(E/K)) [IsDiscreteRep A] :
-    IsDiscreteRep (Rep.res (decompHom Kv ι) A) :=
-  IsDiscreteRep.res (continuous_decompHom ι) A
-
-variable (Kv) in
-
-noncomputable def localCohomologyMap (ι : E →ₐ[K] Ωv) (A : Rep.{u} k Gal(E/K)) [IsDiscreteRep A]
-    (n : ℕ) : cohomology A n ⟶ cohomology (Rep.res (decompHom Kv ι) A) n :=
-  cohomologyMapAlong (decompHom Kv ι) (continuous_decompHom ι) (𝟙 _) n
-
-theorem localCohomologyMap_comp (ι : E →ₐ[K] Ωv) (g : Gal(E/K)) (A : Rep.{u} k Gal(E/K))
-    [IsDiscreteRep A] (n : ℕ) :
-    localCohomologyMap Kv (ι.comp (g : E →ₐ[K] E)) A n =
-      localCohomologyMap Kv ι A n ≫
-        cohomologyMapAlong (MonoidHom.id _) continuous_id
-          (conjResMor (φ := decompHom Kv ι) (φ' := decompHom Kv (ι.comp (g : E →ₐ[K] E))) A g
-            (decompHom_comp ι g)) n :=
-  cohomologyMapAlong_conj A (continuous_decompHom ι) (continuous_decompHom _) g
-    (decompHom_comp ι g) n
 
 end Local
 
@@ -185,8 +161,8 @@ open NumberField IsDedekindDomain
 variable {K Ω Kv Ωv : Type u} [Field K] [NumberField K] [Field Ω] [Algebra K Ω] [IsGalois K Ω]
   [Field Kv] [Field Ωv] [Algebra K Kv] [Algebra Kv Ωv] [Algebra K Ωv] [IsScalarTower K Kv Ωv]
 
-variable (Kv) in
 
+variable (Kv) in
 noncomputable def decompHomS (S : Set (HeightOneSpectrum (𝓞 K))) (ι : Ω →ₐ[K] Ωv) :
     Gal(Ωv/Kv) →* galUnramifiedOutside K Ω S :=
   decompHom Kv (ι.comp (maxUnramifiedOutside K Ω S).val)
@@ -200,17 +176,7 @@ theorem continuous_decompHomS (S : Set (HeightOneSpectrum (𝓞 K))) (ι : Ω �
     Continuous (decompHomS Kv S ι) :=
   continuous_decompHom _
 
-omit [IsGalois K Ω] in
 
-theorem nonempty_algHom_adicCompletion [IsSepClosure K Ω] (v : HeightOneSpectrum (𝓞 K)) :
-    Nonempty (Ω →ₐ[K] AlgebraicClosure (v.adicCompletion K)) :=
-  nonempty_algHom_of_isSepClosed
-
-omit [NumberField K] [IsGalois K Ω] in
-
-theorem nonempty_algHom_infinitePlace_completion [IsSepClosure K Ω] (v : InfinitePlace K) :
-    Nonempty (Ω →ₐ[K] AlgebraicClosure v.Completion) :=
-  nonempty_algHom_of_isSepClosed
 
 end Places
 

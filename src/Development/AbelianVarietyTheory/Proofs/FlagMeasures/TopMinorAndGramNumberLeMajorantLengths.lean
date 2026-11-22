@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace GlobalTheory.Amp.YBound
 open GlobalTheory.Amp.GramFlag (eucl_eq)
 
 theorem det_upper {r : ℕ} (x : UT r → ℂ) : (upper x).det = 1 := by
-  rw [Matrix.det_of_upperTriangular]
+  rw [Matrix.det_of_isUpperTriangular]
   · simp [upper]
   · intro a b h
     have h' : b < a := h
@@ -29,7 +33,8 @@ theorem det_change {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℂ V₁] [Add
   have e : (Matrix.of fun a b => B (∑ c, U c a • y c) (∑ c, U' c b • y' c)) =
       Uᵀ * (Matrix.of fun a b => B (y a) (y' b)) * (U'ᴴ)ᵀ := by
     ext a b
-    simp only [Matrix.of_apply, Matrix.mul_apply, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.of_apply, Matrix.mul_apply, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply,
       LinearMap.map_smulₛₗ, Matrix.transpose_apply, Matrix.conjTranspose_apply, smul_eq_mul, Finset.sum_mul,
       Finset.mul_sum]
     first
@@ -40,7 +45,7 @@ theorem det_change {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℂ V₁] [Add
 
 theorem prod_le_pow' {n : ℕ} (f : Fin n → ℝ) (R : ℝ) (h0 : ∀ i, 0 ≤ f i) (h : ∀ i, f i ≤ R) :
     ∏ i, f i ≤ R ^ n := by
-  calc _ ≤ ∏ _a : Fin n, R := Finset.prod_le_prod (fun i _ => h0 i) fun i _ => h i
+  calc _ ≤ ∏ _a : Fin n, R := Finset.prod_le_prod₀ (fun i _ => h0 i) fun i _ => h i
     _ = _ := by simp
 
 def formE {n : ℕ} (H : Matrix (Fin n) (Fin n) ℂ) :
@@ -59,7 +64,7 @@ theorem formE_le {n : ℕ} (H : Matrix (Fin n) (Fin n) ℂ) (hH : Hᴴ * H = 1) 
       rw [← LinearMap.adjoint_inner_right, ← Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
       congr 1
       ext i
-      simp [Matrix.toEuclideanLin_apply, Matrix.mulVec_mulVec, hH]
+      simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hH]
     rw [norm_eq_sqrt_re_inner (𝕜 := ℂ), this, ← norm_eq_sqrt_re_inner]
   show ‖⟪w, Matrix.toEuclideanLin H v⟫_ℂ‖ ≤ _
   rw [mul_comm, ← h1]
@@ -78,7 +83,8 @@ theorem gramProj_le {n r : ℕ} (P : Submodule ℂ (EuclideanSpace ℂ (Fin n)))
     (fun a => ∑ b, U b a • P.starProjection (WithLp.toLp 2 (v b)))).2 R (fun a => by
       refine le_trans ?_ (hR a)
       rw [eucl_eq, WithLp.toLp_sum]
-      simp only [← map_smul, ← map_sum, WithLp.toLp_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← map_smul, ← map_sum, WithLp.toLp_smul]
       exact P.norm_starProjection_apply_le _)
   have e : ∀ w : Fin r → EuclideanSpace ℂ (Fin n), (Matrix.gram ℂ w).det =
       (Matrix.of fun a b => (innerₛₗ ℂ).flip (w a) (w b)).det := by
@@ -118,7 +124,7 @@ theorem dr_y_le : ∀ (k r : ℕ) (z z' : (Fin (2 * r + k + 1) → ℂ)) (γ : M
       have hb := b.2
       simp only at ha hb
       simp only [Matrix.transpose_apply, Matrix.submatrix_apply, Zhat, fvec, Matrix.of_apply, formE_apply]
-      rw [dif_pos (by simpa using ha), dif_pos (by simpa using hb),
+      rw [dite_eq_left (by simpa using ha), dite_eq_left (by simpa using hb),
         ← herm_mulVec (hG.2.2 _ hgx).2, Matrix.mulVec_mulVec, Matrix.mul_inv_rev,
         Matrix.nonsing_inv_mul_cancel_right _ _ (hG.2.2 _ hg).1]
       rfl

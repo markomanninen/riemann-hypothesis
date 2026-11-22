@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TruncKerPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TruncKerPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry CochainComplex CochainComplex.HomComplex GlobalTheory.EtC LateralTheory.E.t_E3Cut LateralTheory.E.StalkCut LateralTheory.E.LeafGhostCut

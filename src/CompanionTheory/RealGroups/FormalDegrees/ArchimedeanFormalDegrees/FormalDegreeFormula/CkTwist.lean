@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.FormalDegreeFormula.ModelFunctionsMultiply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+module
+
+public import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.FormalDegreeFormula.ModelFunctionsMultiply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTwist
+
+@[expose] public section
 
 noncomputable section
 

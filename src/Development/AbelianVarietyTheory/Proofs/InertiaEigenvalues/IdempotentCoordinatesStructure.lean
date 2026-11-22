@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR.Hyp
@@ -55,10 +60,10 @@ theorem coord_structure : ∀ (F E : Type) [NontriviallyNormedField F] [Nontrivi
           - algebraMap A.K A.L q.1 * algebraMap A.K A.L p.1
           - algebraMap A.K A.L q.2 * algebraMap A.K A.L p.2) * hee
     have ht : Algebra.trace A.K A.L (star (Hyp.cc A e q) * Hyp.cc A e p) = q.1 * p.2 + q.2 * p.1 := by
-      rw [hprod, map_add, htrs, htrs, hte, htf, mul_one, mul_one]
+      rw [hprod, map_add (f := _), htrs, htrs, hte, htf, mul_one, mul_one]
     simp only [Et.kerL, Hyp.kx, Et.psiK]
     rw [ht]
-    rw [show x * (q.1 * p.2 + q.2 * p.1) = x * q.1 * p.2 + x * q.2 * p.1 by ring, map_add,
+    rw [show x * (q.1 * p.2 + q.2 * p.1) = x * q.1 * p.2 + x * q.2 * p.1 by ring, map_add (f := _),
       AddChar.map_add_eq_mul]
   · intro s p
     simp only [Hyp.cc, Algebra.smul_def, map_mul]

@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdmissibleFiniteLength
-import GroundTheory.LocalFields.LocalFourierHaar
-import GroundTheory.LocalFields.LocalFourierChar
-import GroundTheory.LocalFields.LocalZetaEpsilon
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdmissibleFiniteLength
+public import GroundTheory.LocalFields.LocalFourierHaar
+public import GroundTheory.LocalFields.LocalFourierChar
+public import GroundTheory.LocalFields.LocalZetaEpsilon
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ def absDet (g : GL (Fin n) F) : ℝ :=
 def detPow (g : GL (Fin n) F) (s : ℂ) : ℂ :=
   (absDet g : ℂ) ^ s
 
-variable (F) in
 
+variable (F) in
 def qs (s : ℂ) : ℂ :=
   (LocalField.residueCard F : ℂ) ^ (-s)
 
@@ -82,10 +86,10 @@ theorem exists_valBall_subset {S : Set (Matrix (Fin n) (Fin n) F)}
   intro i _
   refine hJu i ?_
   intro j _
-  refine hr i j (LocalField.valBall_antitone ?_ (hY i j))
-  have : (r i j).toNat ≤ Finset.univ.sup fun p : Fin n × Fin n => (r p.1 p.2).toNat :=
-    Finset.le_sup (f := fun p : Fin n × Fin n => (r p.1 p.2).toNat) (Finset.mem_univ (i, j))
-  omega
+  refine hr i j (LocalField.valBall_antitone (by
+    have : (r i j).toNat ≤ Finset.univ.sup fun p : Fin n × Fin n => (r p.1 p.2).toNat :=
+      Finset.le_sup (f := fun p : Fin n × Fin n => (r p.1 p.2).toNat) (Finset.mem_univ (i, j))
+    omega) (hY i j))
 
 theorem exists_valBall_of_isCompact {K : Set (Matrix (Fin n) (Fin n) F)} (hK : IsCompact K) :
     ∃ A : ℕ, ∀ X ∈ K, ∀ i j, X i j ∈ LocalField.valBall F (-(A : ℤ)) := by
@@ -102,9 +106,9 @@ theorem exists_valBall_of_isCompact {K : Set (Matrix (Fin n) (Fin n) F)} (hK : I
   have hcover : K ⊆ ⋃ m, U m := by
     intro X _
     choose m hm using fun p : Fin n × Fin n => LocalField.exists_mem_valBall_neg_nat (X p.1 p.2)
-    refine Set.mem_iUnion.2 ⟨Finset.univ.sup m, fun i j => LocalField.valBall_antitone ?_ (hm (i, j))⟩
-    have := Finset.le_sup (f := m) (Finset.mem_univ (i, j))
-    omega
+    refine Set.mem_iUnion.2 ⟨Finset.univ.sup m, fun i j => LocalField.valBall_antitone (by
+      have := Finset.le_sup (f := m) (Finset.mem_univ (i, j))
+      omega) (hm (i, j))⟩
   have hdir : Directed (· ⊆ ·) U := by
     intro a b
     refine ⟨max a b, fun X hX i j => LocalField.valBall_antitone ?_ (hX i j),

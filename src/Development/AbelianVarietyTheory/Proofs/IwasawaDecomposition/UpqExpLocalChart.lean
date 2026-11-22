@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMatExp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EntrySumMulLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMatExp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EntrySumMulLe
+
+@[expose] public section
+
 open Formalism.BasicNotions MeasureTheory Filter Topology Matrix
 
 namespace GlobalTheory.ExpBallSandwich
@@ -121,7 +126,5 @@ theorem defect_le (η : ℝ) (hη : 0 < η) (hη1 : η ≤ 1) : ∃ ρ : ℝ, 0 
   linarith
 
 end Matrices
-
-theorem mat_mul {P Q : ℕ} (g h : UpqT P Q) : UpqT.mat (g * h) = UpqT.mat g * UpqT.mat h := rfl
 
 end GlobalTheory.ExpBallSandwich

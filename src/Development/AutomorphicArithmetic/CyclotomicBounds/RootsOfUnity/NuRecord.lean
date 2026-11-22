@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.HostCls
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuLe
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuQDUnit
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.SumFactorizationMulLogLe
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.WDvdQS
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.SplitNotDvd
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuLe
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuQDUnit
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.SumFactorizationMulLogLe
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.WDvdQS
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.SplitNotDvd
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions KStar.Tree
 

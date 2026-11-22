@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RInv2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsContragredientCuspSub
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RInv2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsContragredientCuspSub
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial Formalism.L2.Host Neutral.B1
 open GlobalTheory.CuspRep GlobalTheory.GalOfCusp GlobalTheory.HeckeGal UpperTheory.V UpperTheory.V.Af
@@ -153,7 +157,10 @@ private theorem sat_stable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [A
     simp
   have hq : (0 : ℝ) < normV w := by
     have : 1 < Ideal.absNorm w.asIdeal := NumberField.HeightOneSpectrum.one_lt_absNorm w
-    have h : 0 < normV w := zero_lt_one.trans this
+    have h : 0 < normV w := by
+      have : 1 < normV w := by
+        simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using this
+      exact zero_lt_one.trans this
     exact_mod_cast h
   set c : ℂ := (((normV w : ℝ) ^ (((n : ℝ) - 1) / 2) : ℝ) : ℂ) with hc
   have hc0 : c ≠ 0 := Complex.ofReal_ne_zero.2 (Real.rpow_pos_of_pos hq _).ne'
@@ -190,11 +197,6 @@ private theorem hasSat_invT {F : Type} [Field F] [NumberField F] [IsTotallyReal 
   refine InvT.hasSatGL_invT e (fun g x => ?_) hB
   rw [TR.CuspSub.locRep_eq, TR.CuspSub.locRep_eq, he, InvT.locGL_invT]
 
-private theorem exDual : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (a : ℕ) (π : TR.CuspSub F a),
-    ∃ π' : TR.CuspSub F a, IsInvTOf π π' := fun F _ _ _ a π =>
-  let ⟨π', h, _⟩ := UpperTheory.exists_contragredient_cuspSub F a π
-  ⟨π', h⟩
-
 private theorem isTwistOf_twist {F : Type} [Field F] [NumberField F] [IsTotallyReal F] {a : ℕ} (π : TR.CuspSub F a)
     (χ : HChar F) : IsTwistOf π χ (π.twist χ) := by
   refine ⟨π.toTwist χ, (TR.dchi χ).toLinearMap, fun z u hu => ?_, fun k φ => ?_, fun k φ => ?_, fun X φ => ?_⟩
@@ -202,20 +204,3 @@ private theorem isTwistOf_twist {F : Type} [Field F] [NumberField F] [IsTotallyR
     rw [e]
     exact TR.chiInf_expU χ z
   all_goals simp [TR.CuspSub.op_toTwist, TR.opMul, TR.opAdd]
-
-theorem UpperTheory.V.Af.selfDualQ :
-    UpperTheory.V.Af.Hypotheses₂ → UpperTheory.V.Af.SelfDualQ := by
-  intro H n hn wt l _ Ω _ _ _ ι r π θ hθ hr hπ
-  obtain ⟨art, ha⟩ := H.litN.aut.art ℚ Ω
-  obtain ⟨χ, a, h1, h2⟩ := exists_hchar ha ι hθ ((n : ℤ) - 1)
-  refine ⟨χ, ?_, art, a, ha, h1, h2⟩
-  obtain ⟨π₁, h₁⟩ := exDual ℚ n π
-  obtain ⟨B, hl, hr', hf, hc, hX⟩ := H.gkR ℚ n π
-  refine isSelfDualBy_of_iso B hl hr' hf hc hX h₁ (isTwistOf_twist π₁ χ) (H.smoR ℚ n hn _ _ ?_)
-  have h0 : Ideal.span {((l : ℕ) : 𝓞 ℚ)} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact_mod_cast (Fact.out : l.Prime).ne_zero
-  have hl : ∀ᶠ v : HeightOneSpectrum (𝓞 ℚ) in Filter.cofinite, ((l : ℕ) : 𝓞 ℚ) ∉ v.asIdeal :=
-    (Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.mpr (not_not.1 hv)
-  filter_upwards [hπ.2, hl, (GlobalTheory.Mem.UnrAe.unr_ae_and_level ℚ χ).1] with w ⟨S, hS, hE⟩ hw hu
-  exact ⟨S, hS, sat_stable hr ha h2 hw hu hE ▸ (hasSat_invT h₁ hS).twist hu⟩

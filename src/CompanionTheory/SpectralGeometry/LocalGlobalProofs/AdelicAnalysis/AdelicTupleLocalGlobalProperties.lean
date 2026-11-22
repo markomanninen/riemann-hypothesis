@@ -1,5 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix RestrictedProduct
 
@@ -19,7 +24,7 @@ theorem repr_map {R R' : Type} [CommRing R] [CommRing R'] [Algebra F R] [Algebra
   | zero => simp
   | tmul r e =>
     simp [Algebra.TensorProduct.basis_repr_tmul, Algebra.smul_def]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 variable (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [IsTopologicalRing R]
 
@@ -79,20 +84,40 @@ theorem crd_v (v : HeightOneSpectrum (𝓞 F)) (X : Fin n → Fin M → AF F ⊗
   refine h1.trans ?_
   exact congrArg (evalV F v) h2
 
-include b in
 
+include b in
 theorem tuple_ext (X Y : Fin n → Fin M → AF F ⊗[F] E) (hinf : projInf X = projInf Y)
     (hv : ∀ v, projV v (projFin X) = projV v (projFin Y)) : X = Y := by
+  classical
+  let b := Module.Free.chooseBasis F E
+  have repr_map' {R R' : Type} [CommRing R] [CommRing R'] [Algebra F R] [Algebra F R']
+      (φ : R →ₐ[F] R') (y : R ⊗[F] E) (k : Module.Free.ChooseBasisIndex F E) :
+      (Algebra.TensorProduct.basis R' b).repr (Algebra.TensorProduct.map φ (AlgHom.id F E) y) k =
+        φ ((Algebra.TensorProduct.basis R b).repr y k) := by
+    induction y using TensorProduct.induction_on with
+    | zero => simp
+    | tmul r e => simp [Algebra.TensorProduct.basis_repr_tmul, Algebra.smul_def]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   funext a i
-  refine (Algebra.TensorProduct.basis (AF F) b).ext_elem fun k => ?_
+  apply (Algebra.TensorProduct.basis (AF F) b).repr.injective
+  ext k
   refine Prod.ext ?_ ?_
-  · have := crd_inf b X a i k
-    rw [hinf, crd_inf b Y a i k] at this
-    exact this.symm
+  · change fstA F ((Algebra.TensorProduct.basis (AF F) b).repr (X a i) k) =
+      fstA F ((Algebra.TensorProduct.basis (AF F) b).repr (Y a i) k)
+    simpa [projInf, repr_map'] using
+      congrArg (fun z => (Algebra.TensorProduct.basis (Ainf F) b).repr z k)
+        (congrFun (congrFun hinf a) i)
   · refine Subtype.ext (funext fun v => ?_)
-    have := crd_v b v X a i k
-    rw [hv v, crd_v b v Y a i k] at this
-    exact this.symm
+    have h := congrFun (congrFun (hv v) a) i
+    change Algebra.TensorProduct.map (evalV F v) (AlgHom.id F E)
+        (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E) (X a i)) =
+      Algebra.TensorProduct.map (evalV F v) (AlgHom.id F E)
+        (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E) (Y a i)) at h
+    have hcoord := congrArg (fun z => (Algebra.TensorProduct.basis (Fv F v) b).repr z k) h
+    have hval : (evalV F v) (sndA F ((Algebra.TensorProduct.basis (AF F) b).repr (X a i) k)) =
+        (evalV F v) (sndA F ((Algebra.TensorProduct.basis (AF F) b).repr (Y a i) k)) := by
+      simpa [repr_map'] using hcoord
+    exact congrArg (fun z : Fv F v => (z : v.adicCompletion F)) hval
 
 theorem eventually_lat (X : Fin n → Fin M → AF F ⊗[F] E) :
     ∀ᶠ v in Filter.cofinite, projV v (projFin X) ∈ latV b v := by

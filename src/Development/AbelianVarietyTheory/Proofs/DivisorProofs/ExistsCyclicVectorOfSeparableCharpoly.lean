@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.Statement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
-import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.Statement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLat
+public import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
+
+@[expose] public section
 
 open Polynomial Matrix GlobalTheory.LatOrb
 

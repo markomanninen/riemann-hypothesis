@@ -1,5 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TminusLinApply
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremCIiiMulti
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TminusLinApply
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementC
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.GaussElementarySymmetric
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +21,7 @@ theorem lamI_fin (lam0 : Fin n' → Fin (k1 + 1) → ℤ) (s : Fin n') (i : Fin 
     lamI lam0 s (i.val + 1) = lam0 s i := by
   have hi := i.isLt
   unfold lamI
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   exact congrArg (lam0 s) (Fin.ext (by simp))
 
 theorem sum_head (lam0 : Fin n' → Fin (k1 + 1) → ℤ) (s : Fin n') (r : ℕ) (hr : r ≤ k1 + 1) :
@@ -102,7 +108,7 @@ def KkR (h3b : ∀ j < X.mm, ∀ F ∈ X.FQ j, X.Kz j F ∈ X.FQ (j + 1)) (j : �
 
 theorem KkR_coe (h3b : ∀ j < X.mm, ∀ F ∈ X.FQ j, X.Kz j F ∈ X.FQ (j + 1)) {j : ℕ} (hj : j < X.mm)
     (F : X.FQ j) : ((KkR X h3b j F : X.FQ (j + 1)) : X.Fm (j + 1)) = X.Kz j F := by
-  rw [KkR, dif_pos hj]
+  rw [KkR, dite_eq_left hj]
   rfl
 
 theorem Kc_coe (h3b : ∀ j < X.mm, ∀ F ∈ X.FQ j, X.Kz j F ∈ X.FQ (j + 1)) (j : ℕ) (hj : j ≤ X.mm)
@@ -179,7 +185,7 @@ theorem Zop_coe (hT : RestTmFQ X) (v : X.Pl) (u m : ℕ → X.G.Kf) {j : ℕ} (h
       (fun i => ((∏ a ∈ Icc 1 j, uExt X u a) ^ i)⁻¹ • TmR X hT v j i) G : X.FQ j) : X.Fm j) =
       X.Zop v u (mHat u m) j G.1 := by
   simp only [Formalism.InvariantFactorPaths.G7.Zop, Formalism.InvariantFactorPaths.G7.Ttil, Sys.Zop, Sys.Ttu, LinearMap.sum_apply,
-    LinearMap.smul_apply, AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul, TmR_coe]
+    LinearMap.smul_apply, AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, TmR_coe]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [cCoef_eq X v u m hj l, Tt_eq X v _ j G.2, prod_uExt X u hj, zpow_neg, zpow_natCast]
   congr 1
@@ -188,7 +194,8 @@ theorem Zop_coe (hT : RestTmFQ X) (v : X.Pl) (u m : ℕ → X.G.Kf) {j : ℕ} (h
 private theorem eval_smul_esymm_eq_pow_mul {K σ : Type} [Field K] [Fintype σ] (c : K) (x : σ → K) (l : ℕ) :
     MvPolynomial.eval (fun s => c * x s) (MvPolynomial.esymm σ K l) =
       c ^ l * MvPolynomial.eval x (MvPolynomial.esymm σ K l) := by
-  simp only [MvPolynomial.esymm, map_sum, map_prod, MvPolynomial.eval_X, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [MvPolynomial.esymm, map_sum, map_prod, MvPolynomial.eval_X, Finset.mul_sum]
   refine Finset.sum_congr rfl fun t ht => ?_
   rw [Finset.prod_mul_distrib, Finset.prod_const, (Finset.mem_powersetCard.mp ht).2]
 
@@ -243,7 +250,7 @@ theorem Ci (hT : RestTmFQ X) (h3b : ∀ j < X.mm, ∀ F ∈ X.FQ j, X.Kz j F ∈
     intro G
     apply Subtype.ext
     simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.sum_apply, Submodule.coe_smul,
-      AddSubmonoidClass.coe_finset_sum, TmR_coe, KkR_coe X h3b hj'm]
+      AddSubmonoidClass.coe_finsetSum, TmR_coe, KkR_coe X h3b hj'm]
     simp only [he]
     rw [H j' hj'm i _ G.2, smul_smul, ← map_smul (X.Kz j'), Finset.smul_sum]
     congr 1

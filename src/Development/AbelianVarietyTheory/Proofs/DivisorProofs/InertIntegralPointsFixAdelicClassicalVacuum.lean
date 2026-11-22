@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroStandardThetaLineReadAdelic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateFixesThetaDeepLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilOperatorLatticeStabiliserFixesVacuumNonsplit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairUnitModulusFactor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeOIffScaleMulFinitePartMemIdealLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartRationalTensorZeroAtPrimeIffPlaceIdemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeIffNonSplitPlaceIdempotentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroStandardThetaLineReadAdelic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateFixesThetaDeepLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilOperatorLatticeStabiliserFixesVacuumNonsplit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairUnitModulusFactor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeOIffScaleMulFinitePartMemIdealLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartRationalTensorZeroAtPrimeIffPlaceIdemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeIffNonSplitPlaceIdempotentStatement
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain
 open scoped Classical
@@ -82,7 +86,7 @@ def inertInt (D : D7) : NonUnitalSubring (AE D) where
   carrier := {z | infPart D z = 0 ∧ finPart D z ∈ intAE D ∧
     ∀ v ε, IsPlaceIdem D v ε → ¬ NonSplitAt D v ε → algebraMap (AF D.host.F) (AE D) ε * z = 0}
   zero_mem' := ⟨RingHom.map_zero _, by rw [RingHom.map_zero]; exact zero_mem _, fun _ _ _ _ => mul_zero _⟩
-  add_mem' := fun {a b} ha hb => ⟨by rw [RingHom.map_add, ha.1, hb.1, add_zero], by rw [RingHom.map_add]; exact add_mem ha.2.1 hb.2.1,
+  add_mem' := fun {a b} ha hb => ⟨by rw [RingHom.map_add (f := _), ha.1, hb.1, add_zero], by rw [RingHom.map_add (f := _)]; exact add_mem ha.2.1 hb.2.1,
     fun v ε h h' => by rw [mul_add, ha.2.2 v ε h h', hb.2.2 v ε h h', add_zero]⟩
   neg_mem' := fun {a} ha => ⟨by rw [RingHom.map_neg, ha.1, neg_zero], by rw [RingHom.map_neg]; exact neg_mem ha.2.1,
     fun v ε h h' => by rw [mul_neg, ha.2.2 v ε h h', neg_zero]⟩
@@ -94,8 +98,8 @@ theorem mul_mem_inertInt {f : AE D} (hf : finPart D f ∈ intAE D) : ∀ z ∈ i
   fun z hz => ⟨by rw [RingHom.map_mul, hz.1, mul_zero], by rw [RingHom.map_mul]; exact GlobalTheory.HostAdeleIso.intAE_mul_mem D hf hz.2.1,
     fun v ε h h' => by rw [mul_left_comm, hz.2.2 v ε h h', mul_zero]⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem congrGroup_le (V : HSp D) (H : Subgroup (GA D V)) (hH : IsClosed (H : Set (GA D V)))
     (hpl : ∀ v ε, NonSplitAt D v ε → ∀ g ∈ congrGroup V (inertInt D), SuppPl ε V g → g ∈ H) :
     congrGroup V (inertInt D) ≤ H := by
@@ -205,7 +209,7 @@ theorem finQ_mt_mem {V : HSp D} {g : GA D V} (hg : g ∈ congrGroup V (inertInt 
     finQ D (mt V g i j) ∈ Formalism.MainNotions.StandardLatticesGL3.OhE D := by
   have e : mt V g i j = (mt V g - 1) i j + (1 : Matrix (Fin V.rank) (Fin V.rank) (AE D)) i j := by
     rw [Matrix.sub_apply, sub_add_cancel]
-  rw [e, RingHom.map_add]
+  rw [e, RingHom.map_add (f := _)]
   refine add_mem ((finQ_mem_iff _).2 (hg i j).1.2.1) ?_
   rw [Matrix.one_apply]
   split_ifs

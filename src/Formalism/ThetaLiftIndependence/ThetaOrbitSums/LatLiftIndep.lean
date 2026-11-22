@@ -1,5 +1,9 @@
-import Formalism.ThetaLiftIndependence.Statement
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Formalism.ThetaLiftIndependence.Statement
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+
+@[expose] public section
 
 noncomputable section
 

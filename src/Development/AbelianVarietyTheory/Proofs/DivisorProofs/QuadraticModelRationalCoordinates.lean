@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -26,7 +30,7 @@ theorem hat_injective {κ : Type} : Function.Injective (hat (F := F) (κ := κ))
   · exact hinj (congrFun h2 i)
 
 theorem hat_add {κ : Type} (w w' : (κ → F) × (κ → F)) : hat (w + w') = hat w + hat w' := by
-  simp only [hat, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add]; rfl
+  simp only [hat, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _)]; rfl
 
 theorem hat_smul {κ : Type} (c : F) (w : (κ → F) × (κ → F)) :
     hat (c • w) = algebraMap F (AF F) c • hat w := by
@@ -62,7 +66,7 @@ theorem GlobalTheory.RatCoord.ratEquiv : ∀ (F E : Type) [Field F] [NumberField
     { toFun := Φ₀
       map_add' := fun x x' => by
         apply hat_injective
-        rw [hat_add, ← hΦ₀, ← hΦ₀, ← hΦ₀, incM_add, map_add]
+        rw [hat_add, ← hΦ₀, ← hΦ₀, ← hΦ₀, incM_add, map_add (f := _)]
       map_smul' := fun c x => by
         apply hat_injective
         rw [RingHom.id_apply, hat_smul, ← hΦ₀, ← hΦ₀, incM_smul', LinearEquiv.map_smul] }

@@ -1,11 +1,15 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeOrbVecFin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelMeasure
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.StandardCoordinates
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.PiMeasureScaling
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TriangularProducts
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotientSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RealConjugatorData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootPatterns
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeOrbVecFin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelMeasure
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.StandardCoordinates
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.PiMeasureScaling
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TriangularProducts
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotientSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RealConjugatorData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootPatterns
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,8 +115,8 @@ theorem conj_trG {n N : ℕ} {ε : Fin n → Bool} {Q : Matrix (Fin n) (Fin N) �
       rw [hQQi, Matrix.mul_one, Matrix.mul_one]
       rfl
 
-open Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf in
 
+open Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf in
 theorem rset_of_stV {D : D7} {X : HidaSetting D} (v : InfinitePlace X.B.I.F) {lam : ℂ} (hl : lam ≠ 0)
     {Q : Matrix (Fin X.B.I.n) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ} {Qi : Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin X.B.I.n) ℂ}
     (hT : IsTranspC X v lam D.R.k D.R.rS Q Qi) (u u' : D.what₂.Word) (γ : X.B.I.Ginf) (hh hh' : Formalism.REAL.UJ (X.B.I.ε v))
@@ -315,7 +319,7 @@ theorem measPinAt_of (sc : ℝ) (hsc : 0 < sc) (i0 i0' : ∀ _ : InfinitePlace X
       unfold stCoordV Formalism.L2.SG.HidaSetting.hJ
       fun_prop
     have hGm : Measurable (fun (y' : Formalism.L2.SG.RealObj.FreeE w → ℂ) (q : ↥(Formalism.MainNotions.S.rootPat pN)) => sP q.1 * y' (idxE q)) :=
-      measurable_pi_lambda _ fun q => measurable_const.mul (measurable_pi_apply _)
+      Measurable.of_eval fun q => measurable_const.mul (measurable_pi_apply _)
     rw [Measure.map_map hΦ2 hΦ1]
     refine (Measure.map_map ?_ (hΦ2.comp hΦ1)).trans ?_
     · refine Continuous.measurable ((Formalism.L2.SG.RootPatterns.rootCoords_cont _ _ _ _).comp ?_)
@@ -328,7 +332,7 @@ theorem measPinAt_of (sc : ℝ) (hsc : 0 < sc) (i0 i0' : ∀ _ : InfinitePlace X
       have ha : q.1.1.val < D.R.rS := by have := Fin.lt_def.1 hq.1; have := q.1.2.isLt; omega
       simp only [Function.comp_apply, Formalism.MainNotions.S.rootCoords, Equiv.apply_symm_apply]
       unfold Formalism.MainNotions.S.flagMat
-      rw [dif_pos ha]
+      rw [dite_eq_left ha]
       erw [Formalism.L2.SG.BlockScaling.conj_trG hT'.1 hT'.2.1]
       have hcoe : Formalism.MainNotions.S.uMat ((h' v)⁻¹ * ((gamW X u u' w v)⁻¹ * y * gamW X u u' w v) * h' v) =
           (Formalism.MainNotions.S.uMat (h' v))⁻¹ * Formalism.MainNotions.S.uMat ((gamW X u u' w v)⁻¹ * y * gamW X u u' w v) * Formalism.MainNotions.S.uMat (h' v) := by

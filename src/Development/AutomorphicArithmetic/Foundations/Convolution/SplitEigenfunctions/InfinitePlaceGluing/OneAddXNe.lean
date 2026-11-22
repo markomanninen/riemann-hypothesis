@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.AutomorphicArithmetic.WhittakerHecke.SatakeParamMulEqCentralCharPowInertiaDeg
-import Development.AutomorphicArithmetic.WhittakerHecke.GoodPrimeSplitOrInertOfQuadratic
-import Development.AutomorphicArithmetic.WhittakerHecke.ExistsRatHeightOneSpectrumNormVEqPrimeBadIffDvd
-import Development.AutomorphicArithmetic.WhittakerHecke.FalseOfLandauNonnegEulerFactorsEntire
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.AutomorphicArithmetic.WhittakerHecke.SatakeParamMulEqCentralCharPowInertiaDeg
+public import Development.AutomorphicArithmetic.WhittakerHecke.GoodPrimeSplitOrInertOfQuadratic
+public import Development.AutomorphicArithmetic.WhittakerHecke.ExistsRatHeightOneSpectrumNormVEqPrimeBadIffDvd
+public import Development.AutomorphicArithmetic.WhittakerHecke.FalseOfLandauNonnegEulerFactorsEntire
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -84,7 +88,7 @@ private theorem one_add_X_ne : (1 + X : PowerSeries ℂ) ≠ 0 := fun h => by
 private theorem Gs_Dp (τ : ℝ) : Gs τ * Dp τ = 1 := by
   refine mul_right_cancel₀ one_add_X_ne ?_
   have hC : C ((τ : ℂ) ^ 2 - 1) = C ((τ : ℂ) ^ 2 - 2) + (1 : PowerSeries ℂ) := by
-    rw [← map_one (C (R := ℂ)), ← map_add]
+    rw [← map_one (C (R := ℂ)), ← map_add (f := _)]
     congr 1
     ring
   calc Gs τ * Dp τ * (1 + X) = (Gs τ * (1 - X ^ 2)) * (1 - C ((τ : ℂ) ^ 2 - 1) * X + C ((τ : ℂ) ^ 2 - 1) * X ^ 2 - X ^ 3) := by
@@ -99,7 +103,7 @@ private theorem eq_Gs {τ : ℝ} {S : PowerSeries ℂ} (h : S * Dp τ = 1) : S =
 
 private theorem lin_mul (p q : ℂ) (Y : PowerSeries ℂ) :
     (1 - C p * Y) * (1 - C q * Y) = (1 - C (p + q) * Y + C (p * q) * Y ^ 2 : PowerSeries ℂ) := by
-  rw [map_add, map_mul]
+  rw [map_add (f := _), map_mul]
   ring
 
 private theorem tau_sq {α β c : ℂ} (h1 : starRingEnd ℂ (α + β) * (α * β) = α + β) (hc : c * (α * β) = 1) :
@@ -158,7 +162,7 @@ private theorem serInert {α β c : ℂ} {S S' : PowerSeries ℂ} (h1 : starRing
     have e1 : expand 2 two_ne_zero (Dp τ) = (1 - X ^ 2) ^ 2 * (1 - C ((τ : ℂ) ^ 2 - 2) * X ^ 2 + (X ^ 2) ^ 2) := by
       rw [Dp]
       generalize (τ : ℂ) ^ 2 - 2 = b
-      simp only [map_mul, map_sub, map_add, map_pow, map_one, expand_C, expand_X]
+      simp only [map_mul, map_sub, map_add (f := _), map_pow, map_one, expand_C, expand_X]
     have L := lin_mul (α * α * (c * c)) (β * β * (c * c)) (X ^ 2)
     rw [hs, hq, map_one] at L
     have hp : C (α * α * (c * c)) = C (α * c) * C (α * c) := by

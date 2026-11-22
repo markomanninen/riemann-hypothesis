@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem stabInv_mul (A B : Subgroup H) (x : H) {a b : H} (ha : a ∈ A) (hb : b 
 
 theorem stabInv_eq_of_mk_eq (A B : Subgroup H) {x y : H}
     (h : DoubleCoset.mk A B x = DoubleCoset.mk A B y) : stabInv A B x = stabInv A B y := by
-  obtain ⟨a, ha, b, hb, rfl⟩ := (DoubleCoset.eq _ _ _ _).1 h
+  obtain ⟨a, ha, b, hb, rfl⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 h
   exact (stabInv_mul A B x ha hb).symm
 
 def dcMulRight (A B : Subgroup H) (s : H) :

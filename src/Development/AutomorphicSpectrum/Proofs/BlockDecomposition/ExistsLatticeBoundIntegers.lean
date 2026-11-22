@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatCDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegerMemLatticeSubBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetGenerators
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PadicIntMemSub
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatCDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegerMemLatticeSubBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetGenerators
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PadicIntMemSub
+
+@[expose] public section
 
 open GroundTheory.PAdicHodge Formalism.Per6 DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb CrystallineSemistableComparison.Pb.Lat
 
@@ -21,11 +25,13 @@ theorem exists_uniform_mem_sub : ∀ (l : ℕ) [Fact l.Prime]
   have h1 : Lat.kP l K a = ∑ i ∈ s, algClToBdR l (algebraMap ℚ_[l] (PadicAlgCl l) (d i : ℚ_[l])) *
       Lat.kP l K i := by
     have h2 : Lat.kP l K a = algClToBdR l (((a : K) : PadicAlgCl l)) := rfl
-    rw [h2, hd, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, hd, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.smul_def, map_mul]
     rfl
-  rw [h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum]
   refine Subring.sum_mem _ fun i hi => ?_
   rw [map_mul]
   exact Subring.mul_mem _ (GlobalTheory.CompanionTheory.LatCZp.padicInt_mem_sub l _ k (d i))

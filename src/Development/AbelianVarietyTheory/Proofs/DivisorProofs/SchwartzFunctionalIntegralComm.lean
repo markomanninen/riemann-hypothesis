@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.RealWeil
 open scoped SchwartzMap BoundedContinuousFunction
 
@@ -36,15 +41,14 @@ def weightedDerivCLM (k m : ℕ) :
   SchwartzMap.mkCLMtoNormedSpace (σ := RingHom.id ℂ) (weightedDeriv k m)
     (fun f g => by
       ext x : 1
-      simp only [weightedDeriv_apply, BoundedContinuousFunction.coe_add, Pi.add_apply, SchwartzMap.add_apply]
-      rw [show ⇑(f + g) = ⇑f + ⇑g from rfl, iteratedFDeriv_add_apply ((f.smooth ⊤).of_le (by exact_mod_cast le_top)).contDiffAt
+      simp only [weightedDeriv_apply, add_apply, FunLike.coe_add]
+      rw [iteratedFDeriv_add_apply ((f.smooth ⊤).of_le (by exact_mod_cast le_top)).contDiffAt
         ((g.smooth ⊤).of_le (by exact_mod_cast le_top)).contDiffAt, smul_add])
     (fun a f => by
       ext x : 1
-      simp only [weightedDeriv_apply, BoundedContinuousFunction.coe_smul, Pi.smul_apply,
-        RingHom.id_apply]
-      rw [show ⇑(a • f) = a • ⇑f from rfl,
-        iteratedFDeriv_const_smul_apply ((f.smooth ⊤).of_le (by exact_mod_cast le_top)).contDiffAt, smul_comm])
+      simp only [weightedDeriv_apply, FunLike.coe_smul, Pi.smul_apply, RingHom.id_apply]
+      rw [iteratedFDeriv_const_smul_apply ((f.smooth ⊤).of_le (by exact_mod_cast le_top)).contDiffAt,
+        smul_comm])
     ⟨{(k, m)}, 1, zero_le_one, fun f => by
       simpa [Finset.sup_singleton, SchwartzMap.schwartzSeminormFamily_apply] using norm_weightedDeriv_le k m f⟩
 
@@ -165,7 +169,7 @@ theorem clm_apply_eq_integral (L : 𝓢(E, ℂ) →L[ℂ] ℂ) {G : W → 𝓢(E
   haveI : SecondCountableTopology W := inferInstance
   haveI : SecondCountableTopologyEither W (Target E t) := secondCountableTopologyEither_of_left _ _
   have hInt : Integrable (fun w => embed t (G w)) ν :=
-    (integrable_finset_sum t fun i _ => hint i.1 i.2).mono' hcont.aestronglyMeasurable
+    (MeasureTheory.integrable_finsetSum t fun i _ => hint i.1 i.2).mono' hcont.aestronglyMeasurable
       (.of_forall fun w => norm_embed_le t (G w))
   have hemb : embed t g = ∫ w, embed t (G w) ∂ν := by
     funext i

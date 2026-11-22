@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepHeightOfNormOne
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGram
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.DensInertDisplayHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.FinrankOrthAddLe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepHeightOfNormOne
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGram
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.DensInertDisplayHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PairCorankPositivity.FinrankOrthAddLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem span_pair_orth_eq_zero {T T' : E} (F : FlagG S r T) (F' : FlagG S r T') 
   have hc : Formalism.L2.SG.GramJoint.gramFF F F' *ᵥ c = 0 := by
     funext i
     have h := ho i
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
     rw [← h]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -47,7 +52,7 @@ theorem hT_eq_zero_of_mem_Hp {T T' : E} (Λ : Submodule (𝓞 E) S.V) (F : LFlag
   simp only [orth, Submodule.mem_iInf, LinearMap.mem_ker] at hx'
   exact hx' y hy
 
-theorem Xsp_Hp_eq_zero {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ)
+theorem Xsp_Hp_eq_zero {T T' : E} (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ)
     (F : LFlag S r T) (F' : LFlag S r T') (hL : IsLift Λ F) (hL' : IsLift Λ F') (hG : Gval F F' ≠ 0)
     {x : S.V} (hx : x ∈ Xsp F) (hH : x ∈ Hp Λ F F') : x = 0 := by
   refine span_pair_orth_eq_zero F.fl F'.fl hG x (Xsp_le_span F.fl F'.fl hx) fun i => ?_
@@ -85,7 +90,7 @@ theorem mem_Hp_of_orth {T T' : E} (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T
   exact (hK y).1 (hUUE hy)
 
 theorem finrank_Hp {T T' : E} (k : ℕ) (hdim : finrank E S.V = k + 2 * r + 1) (Λ : Submodule (𝓞 E) S.V)
-    (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' : LFlag S r T') (hL : IsLift Λ F) (hL' : IsLift Λ F')
+    (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' : LFlag S r T') (hL : IsLift Λ F) (hL' : IsLift Λ F')
     (hG : Gval F F' ≠ 0) : finrank E (Hp Λ F F') = k - 1 ∧ 1 ≤ k := by
   have hu := PI.PairCorankPos.W.linIndep F.fl F'.fl hG
   have h1 := PI.PairCorankPos.W.finrank_orth_add_le S _ hu (UUE Λ F F')
@@ -107,7 +112,7 @@ theorem finrank_Hp {T T' : E} (k : ℕ) (hdim : finrank E S.V = k + 2 * r + 1) (
   omega
 
 theorem s0_eq_one_iff_Th_eq_Hp {T T' : E} (k : ℕ) (hdim : finrank E S.V = k + 2 * r + 1) (Λ : Submodule (𝓞 E) S.V)
-    (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
+    (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
     (hL : IsLift Λ F) (hL' : IsLift Λ F') (hG : Gval F F' ≠ 0) :
     s0 Λ F F' F'' β k = 1 ↔ Th Λ F F' F'' β = Hp Λ F F' := by
   obtain ⟨h1, hk⟩ := finrank_Hp k hdim Λ hΛ F F' hL hL' hG
@@ -137,7 +142,7 @@ theorem Th_one {T T' : E} (Λ : Submodule (𝓞 E) S.V) (F : LFlag S r T) (F' : 
     simp
 
 theorem Th_symm {T T' : E} (k : ℕ) (hdim : finrank E S.V = k + 2 * r + 1) (Λ : Submodule (𝓞 E) S.V)
-    (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F₁ F₂ : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
+    (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F₁ F₂ : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
     (hL : IsLift Λ F) (hL₁ : IsLift Λ F₁) (hL₂ : IsLift Λ F₂) (hG₁ : Gval F F₁ ≠ 0) (hG₂ : Gval F F₂ ≠ 0)
     (hβ : ∀ x, x ∈ Xsp F₁ ↔ β x ∈ Xsp F₂) (h : Th Λ F F₁ F₂ β = Hp Λ F F₁) :
     Th Λ F F₂ F₁ β⁻¹ = Hp Λ F F₂ := by
@@ -207,7 +212,7 @@ theorem mem_Xsp_mapLF {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.H
     x ∈ Xsp (Formalism.L2.SG.TermOp.mapLF γ F) ↔ γ.symm x ∈ Xsp F := by
   have h1 : Xsp (Formalism.L2.SG.TermOp.mapLF γ F) = (Xsp F).map (γ : S.V →ₗ[E] S.V) := by
     unfold Formalism.L2.SG.TermOp.mapLF
-    rw [dif_pos hγ]
+    rw [dite_eq_left hγ]
     show Submodule.span E (Set.range fun a => γ (F.fl.e a)) =
       (Submodule.span E (Set.range F.fl.e)).map (γ : S.V →ₗ[E] S.V)
     rw [Submodule.map_span, ← Set.range_comp]
@@ -252,7 +257,7 @@ theorem corankOne_equivalence_holds : CorankOneEquivalence := by
     unfold Formalism.L2.SG.TermOp.Gt
     rw [if_pos ((Formalism.L2.SG.Pf.SatGram.gterm_G Y t).trans h)]
   have hlat : ∀ t : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
-      Submodule.IsLattice D.host.E t.lam := fun t => ((Y.rowsOK u).1 t.lam t.mem).2.1.1
+      Submodule.IsFullLattice D.host.E t.lam := fun t => ((Y.rowsOK u).1 t.lam t.mem).1.1
   have hLF : ∀ t : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
       IsLift t.lam (lf D (X.Fu u)) := fun t => ((Y.rowsOK u).1 t.lam t.mem).2.1.2.2.1
   have hLt : ∀ t : Formalism.L2.SG.TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'), IsLift t.lam t.frame :=

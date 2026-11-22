@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticNinth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverTransferIdealEq
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighth
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.LocalAnalyticSectionCoords
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticNinth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverTransferIdealEq
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighth
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.LocalAnalyticSectionCoords
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.CovMap GlobalTheory.CompanionTheory.Ar.PB.CovGraph PositivityTheory.Xgp.c_algsq
@@ -83,7 +88,7 @@ theorem ptOf_step (M : FlagModel y Ψ N j) (ψ : M.Ω →+* L) (G : Ψ → Matri
   have h : ¬ ∀ p, M.blk p ≠ some k := fun h => h p hp
   have e : stepOf M k h = p := M.blk_inj _ _ k (blk_stepOf M k h) hp
   show (if h : ∀ p, M.blk p ≠ some k then _ else _) = _
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   simp only [e]
 
 def IsGenLow {Ω : Type} [Field Ω] (ψ : Ω →+* L) (j : ℕ) (G : Ψ → Matrix (Fin N) (Fin N) L) : Prop :=
@@ -203,7 +208,8 @@ theorem wCo_v₀ (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (k₀ : K) (ca cb : 
       (ptOf_base M ((algebraMap Φ (RatFunc Φ)).comp (algebraMap M.Ω Φ)) (flag₀ M.g) ⟨⟨k, hk⟩, m⟩).symm
   · push_neg at hk
     obtain ⟨p, hp⟩ := hk
-    rw [ptOf_step M _ _ p k hp, M.y_step p k hp, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ptOf_step M _ _ p k hp, M.y_step p k hp, map_sum]
     exact Finset.sum_congr rfl fun I _ => by rw [map_mul, ← CPts.minorIJ_map]; rfl
 
 theorem Sw.wCo_v₁ (S : Sw M τ a b k₀ ca cb) :

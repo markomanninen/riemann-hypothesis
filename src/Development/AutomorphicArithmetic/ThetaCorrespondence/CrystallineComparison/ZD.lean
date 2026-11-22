@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+module
+
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+
+@[expose] public section
 
 noncomputable section
 

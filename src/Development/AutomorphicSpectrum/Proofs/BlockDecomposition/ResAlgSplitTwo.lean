@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.LocalDefs
+
+@[expose] public section
 
 open PositivityTheory.PfSWUS.Loc
 
@@ -25,36 +29,6 @@ structure ResAlg (E : Type) [CommRing E] (τ : E →+* E) (q : ℕ) (ε : ℤ) :
   card : Nat.card E = q ^ 2
   eps : (ε = -1 ∧ IsField E) ∨ (ε = 1 ∧ ¬ IsField E)
 
-theorem resAlg_split_two :
-    ResAlg (ZMod 2 × ZMod 2) (RingEquiv.prodComm : ZMod 2 × ZMod 2 ≃+* ZMod 2 × ZMod 2).toRingHom 2 1 := by
-  refine ⟨fun a => ?_, ?_, ?_, by norm_num, ?_, ?_⟩
-  · first
-      | rfl
-      | simp
-      | (ext <;> rfl)
-  · rintro ⟨x, y⟩ h hne
-    fin_cases x <;> fin_cases y
-    all_goals first
-      | exact (hne rfl).elim
-      | exact absurd h (by decide)
-      | exact isUnit_one
-      | (convert isUnit_one using 1; decide)
-  · refine ⟨(1, 0), ?_, ?_⟩
-    · convert isUnit_one using 1
-      decide
-    · rintro ⟨p, r⟩
-      refine ⟨(r, r), (p - r, p - r), rfl, rfl, ?_⟩
-      ext <;> first | simp | (simp; ring) | ring
-  · first
-      | simp
-      | (rw [Nat.card_eq_fintype_card]; rfl)
-      | decide
-  · right
-    refine ⟨rfl, fun hF => ?_⟩
-    obtain ⟨b, hb⟩ := hF.mul_inv_cancel (a := ((1, 0) : ZMod 2 × ZMod 2)) (by decide)
-    have h2 := congrArg Prod.snd hb
-    simp at h2
-
 variable {E : Type} [CommRing E] {τ : E →+* E}
 
 structure HermSp (E : Type) [CommRing E] (τ : E →+* E) (V : Type) [AddCommGroup V] [Module E V] where
@@ -74,11 +48,8 @@ theorem zero_left (w : V) : B.h 0 w = 0 := by
   have h0 := B.smul_left 0 0 w
   rwa [zero_smul, zero_mul] at h0
 
-theorem zero_right (v : V) : B.h v 0 = 0 := by
-  rw [B.symm 0 v, B.zero_left, map_zero]
-
 theorem add_right (v u w : V) : B.h v (u + w) = B.h v u + B.h v w := by
-  rw [B.symm (u + w) v, B.add_left, map_add, ← B.symm, ← B.symm]
+  rw [B.symm (u + w) v, B.add_left, map_add (f := _), ← B.symm, ← B.symm]
 
 theorem smul_right (a : E) (v w : V) : B.h v (a • w) = τ a * B.h v w := by
   rw [B.symm (a • w) v, B.smul_left, map_mul, ← B.symm]
@@ -97,9 +68,6 @@ def perp (w : V) : Submodule E V where
     intro c x hx
     simp only [Set.mem_setOf_eq] at *
     rw [B.smul_left, hx, mul_zero]
-
-theorem mem_perp {w v : V} : v ∈ B.perp w ↔ B.h v w = 0 := by
-  exact Iff.rfl
 
 noncomputable def coef {w : V} (hw : IsUnit (B.h w w)) (z : V) : E := B.h z w * (hw.unit⁻¹ : Eˣ)
 
@@ -165,13 +133,6 @@ theorem norm_perp {w v : V} (hv : B.h v w = 0) (a : E) :
 
 end HermSp
 
-def HermSp.self (hτ : ∀ a, τ (τ a) = a) : HermSp E τ E where
-  h a b := a * τ b
-  add_left u v w := by ring
-  smul_left a v w := by simp [mul_assoc]
-  symm v w := by simp [hτ, mul_comm]
-  nondeg v hv := by simpa using hv 1
-
 def HermSp.ofMatrix (hτ : ∀ a, τ (τ a) = a) {m : ℕ} (S : Matrix (Fin m) (Fin m) E)
     (hS : cT τ S = S) (hd : IsUnit S.det) : HermSp E τ (Fin m → E) where
   h v w := dotProduct (fun i => τ (w i)) (S.mulVec v)
@@ -181,7 +142,8 @@ def HermSp.ofMatrix (hτ : ∀ a, τ (τ a) = a) {m : ℕ} (S : Matrix (Fin m) (
     have hij : ∀ i j, τ (S j i) = S i j := fun i j => by
       have := congrFun (congrFun hS i) j
       simpa [cT] using this
-    simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, hτ, hij]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Matrix.mulVec, map_sum, map_mul, hτ, hij]
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

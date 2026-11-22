@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
-import Lemmata.CurryModusPonens.CurryMp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
+public import Lemmata.CurryModusPonens.CurryMp
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,6 @@ abbrev Up (N : ℕ) : Type := {ab : Fin N × Fin N // ab.1 < ab.2}
 variable {N : ℕ}
 
 local instance volTri : (volume : Measure (TriCo N)).IsAddHaarMeasure := Measure.prod.instIsAddHaarMeasure _ _
-local instance volUCo : (volume : Measure (UCo N)).IsAddHaarMeasure := Measure.prod.instIsAddHaarMeasure _ _
 
 def idx (N : ℕ) : Fin N ⊕ (Lo N ⊕ Up N) ≃ Fin N × Fin N where
   toFun i := match i with

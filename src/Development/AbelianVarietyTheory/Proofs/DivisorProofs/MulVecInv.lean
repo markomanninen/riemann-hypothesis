@@ -1,6 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VecLineOneLeVecLine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.LanglandsSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLineReps
+
+@[expose] public section
+
 open scoped TensorProduct NNReal ENNReal Matrix ComplexConjugate
-open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.EisRes GlobalTheory.StdPar GlobalTheory.EisUnfold
+open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.StdPar
 open GlobalTheory.Doubling (absE)
 open GlobalTheory.EisMidHt (adVec)
 open Matrix
@@ -63,8 +72,8 @@ theorem perp_inv {X : Matrix (Fin n) (Fin r) E} {k : Fin r} {g : GAd σ J}
 
 end GlobalTheory.FlagNorm
 
-open GlobalTheory.FlagNorm in
 
+open GlobalTheory.FlagNorm in
 theorem GlobalTheory.FlagNorm.conj_mem_unip : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ →
     ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (r : ℕ) (X Y : Matrix (Fin n) (Fin r) E), IsWittFrame σ J X Y →
     ∀ (T : Finset (Fin r)) (m : GAd σ J),

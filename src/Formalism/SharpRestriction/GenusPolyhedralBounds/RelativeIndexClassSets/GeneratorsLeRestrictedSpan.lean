@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ReductionUniformizerSmulMem
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ReductionUniformizerSmulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem ker_rhoN (e : ℕ) (h64 : In64 G la) (hN : N1 G la ≤ M1 X la G.N (addL
     rw [NovK_eq] at hx'
     obtain ⟨n, hn, z, hz, rfl⟩ := Submodule.mem_sup.1 hx'
     have hz0 : rhoK X la G.w wF (a0 D j T) T z = 0 := ZK_le_ker G la hDT hal hz
-    rw [map_add, hz0, add_zero] at h
+    rw [map_add (f := _), hz0, add_zero] at h
     rw [h64 n hn h, zero_add]
     exact hz
   · intro h

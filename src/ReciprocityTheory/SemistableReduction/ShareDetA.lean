@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 noncomputable section
 

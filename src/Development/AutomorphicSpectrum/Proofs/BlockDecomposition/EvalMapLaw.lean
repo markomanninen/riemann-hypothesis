@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PrincipalSeriesSupport.PrinSeriesWord
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionPreservesSubquotient
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PrincipalSeriesSupport.PrinSeriesWord
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionPreservesSubquotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ def frobMap {π : Representation ℂ (GL (Fin (a + b)) k) V} (hs : IsSmooth π)
         rw [map_mul, Module.End.mul_apply, hh'])⟩
     map_add' := fun v w => Subtype.ext (Subtype.ext (funext fun x => by
       show evalMap φ (π x (v + w)) = evalMap φ (π x v) + evalMap φ (π x w)
-      rw [map_add, map_add]))
+      rw [map_add (f := _), map_add (f := _)]))
     map_smul' := fun c v => Subtype.ext (Subtype.ext (funext fun x => by
       show evalMap φ (π x (c • v)) = c • evalMap φ (π x v)
       rw [map_smul, map_smul]))

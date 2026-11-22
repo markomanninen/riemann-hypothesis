@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
-import Formalism.PeriodIntegrals.SwSand
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+public import Formalism.PeriodIntegrals.SwSand
+
+@[expose] public section
 
 noncomputable section
 

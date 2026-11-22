@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SpreadLe
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+
+@[expose] public section
 
 namespace GlobalTheory.Mem
 
@@ -28,8 +32,8 @@ open Formalism.L2.Col
   T := B.T
   piT := X.piT
 
-open Classical in
 
+open Classical in
 @[reducible] def Base.wts (B : Base) : Wts B.fields B.Word B.R where
   row := fun τ => RowPar.of (B.hc τ)
   hc := B.hcW
@@ -86,23 +90,25 @@ theorem mem_wts_tops (τ : Tau B.R) : τ ∈ B.wts.tops ↔ (τ : B.R.GG) ∈ B.
   classical
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
 
-theorem wts_isOk : B.wts.Ok where
-  row_ok τ := ⟨B.hc τ, rfl⟩
-  hc_row u τ := by
-    show RowPar.of (B.hcW u τ) = RowPar.of (B.hc τ)
-    unfold RowPar.of
-    rw [B.hcW_v, B.hcW_b, B.hcW_e]
-  u_first u u' τ h := (B.hcW_first u τ h).trans (B.hcW_first u' τ h).symm
-  u_last u u' τ h := (B.hcW_last u τ (by omega)).trans (B.hcW_last u' τ (by omega)).symm
+theorem wts_isOk : B.wts.Ok := by
+  exact
+    { row_ok τ := ⟨B.hc τ, rfl⟩
+      hc_row u τ := by
+        show RowPar.of (B.hcW u τ) = RowPar.of (B.hc τ)
+        unfold RowPar.of
+        rw [B.hcW_v, B.hcW_b, B.hcW_e]
+      u_first u u' τ h := (B.hcW_first u τ h).trans (B.hcW_first u' τ h).symm
+      u_last u u' τ h := (B.hcW_last u τ (by omega)).trans (B.hcW_last u' τ (by omega)).symm }
 
-theorem primes_sizes (X : PreX B.toPre) : Sizes (B.primes X) B.wts X.a where
-  g_big i := by rw [B.fields_f]; exact X.g_big i
-  T_gt := X.T_gt
-  a_gt := by rw [B.fields_f]; exact X.a_gt
-  spread_le u j hj τ := by
-    unfold Wts.lamTrue
-    rw [spread_shiftW]
-    exact X.spread_le u j hj τ
+theorem primes_sizes (X : PreX B.toPre) : Sizes (B.primes X) B.wts X.a := by
+  exact
+    { g_big i := by rw [B.fields_f]; exact X.g_big i
+      T_gt := X.T_gt
+      a_gt := by rw [B.fields_f]; exact X.a_gt
+      spread_le u j hj τ := by
+        unfold Wts.lamTrue
+        rw [spread_shiftW]
+        exact X.spread_le u j hj τ }
 
 theorem baseData_embedding_conj (X : PreX B.toPre) (Ch : Chars B.fields (B.primes X) B.R.m) (x : (B.dat X Ch).X.K) :
     (B.dat X Ch).sig0 (star x) = starRingEnd ℂ ((B.dat X Ch).sig0 x) := B.starLL_cx x
@@ -111,15 +117,6 @@ theorem dat_e_even (X : PreX B.toPre) (Ch : Chars B.fields (B.primes X) B.R.m) (
     ∃ z : ℤ, ∑ τ, ((B.dat X Ch).W.row τ).e j = 2 * (z : ℚ) := (X.e_even j).even
 
 end Base
-
-example (B : Base) : B.fields.f = 2 * B.R.n := B.fields_f
-
-example (B : Base) (X : PreX B.toPre) (i : Fin 2) : B.host.g i ≡ 1 [MOD B.host.QS * B.host.q * B.host.d] :=
-  (B.primes_piGCong X).g_cong (B.primes_piG_norm X) i
-
-example (B : Base) (X : PreX B.toPre) (Ch : Chars B.fields (B.primes X) B.R.m) (u : B.Word) :
-    0 < (B.dat X Ch).a ∧ 2 * B.fields.f * B.R.N B.R.m + 1 < B.T u :=
-  ⟨(B.primes_sizes X).a_pos, (B.primes_sizes X).T_big u⟩
 
 end
 

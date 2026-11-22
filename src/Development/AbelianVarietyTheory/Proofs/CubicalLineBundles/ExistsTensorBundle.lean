@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -23,10 +27,10 @@ def gramForm (β : V →+ V →+ U) (p : I → W →ₗ[O] V) (g : I → I → O
 variable {β : V →+ V →+ U} {p : I → W →ₗ[O] V} {g : I → I → O} {br : O ≃+* O}
 
 theorem gramForm_add_left (x y z : W) : gramForm β p g (x + y) z = gramForm β p g x z + gramForm β p g y z := by
-  simp only [gramForm, map_add, smul_add, AddMonoidHom.add_apply, Finset.sum_add_distrib]
+  simp only [gramForm, map_add (f := _), smul_add, AddMonoidHom.add_apply, Finset.sum_add_distrib]
 
 theorem gramForm_add_right (x y z : W) : gramForm β p g x (y + z) = gramForm β p g x y + gramForm β p g x z := by
-  simp only [gramForm, map_add, Finset.sum_add_distrib]
+  simp only [gramForm, map_add (f := _), Finset.sum_add_distrib]
 
 theorem gramForm_zero (y : W) : gramForm β p g 0 y = 0 := by
   simp [gramForm]
@@ -54,7 +58,8 @@ theorem gramForm_polar (hs : ∀ x y, β x y = β y x) (ha : ∀ c x y, β (c �
 theorem gramForm_pure (ha : ∀ c x y, β (c • x) y = β x (br c • y)) (hb : ∀ c, br (br c) = c)
     {x y : W} {u v : V} {s s' : I → O} (hx : ∀ i, p i x = s i • u) (hy : ∀ i, p i y = s' i • v) :
     gramForm β p g x y = β ((∑ k : I × I, br (s' k.2) * (g k.1 k.2 * s k.1)) • u) v := by
-  rw [Finset.sum_smul, map_sum, AddMonoidHom.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_smul, map_sum, AddMonoidHom.finsetSum_apply]
   exact Finset.sum_congr rfl fun k _ => by rw [hx, hy, mul_smul (br _), ha (br _), hb, mul_smul]
 
 theorem hermitian_expand {M : Type} [AddCommGroup M] [Module O M] (h : M →ₗ[O] M →+ O)
@@ -62,9 +67,11 @@ theorem hermitian_expand {M : Type} [AddCommGroup M] [Module O M] (h : M →ₗ[
     ∑ k : I × I, br (s' k.2) * (h (e k.1) (e k.2) * s k.1) = h (∑ i, s i • e i) (∑ i, s' i • e i) := by
   have sm : ∀ c x y, h x (c • y) = br c * h x y := fun c x y => by
     rw [hh (c • y) x, map_smul, AddMonoidHom.smul_apply, smul_eq_mul, map_mul, ← hh]
-  rw [map_sum h, AddMonoidHom.finset_sum_apply, Fintype.sum_prod_type]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum h, AddMonoidHom.finsetSum_apply, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [sm, map_smul, AddMonoidHom.smul_apply, smul_eq_mul, mul_comm (s i)]
 
@@ -109,7 +116,8 @@ theorem exists_tensor_bundle : ∀ (S : Scheme.{0}) (O : Type) [CommRing O] (G A
     have : ∑ i, P.incl m i • (Pi.single i 1 : Fin P.n → O) = P.incl m := by
       ext j
       simp [Pi.single_apply]
-    simp only [e, ← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, ← map_smul, ← map_sum]
     exact (congrArg P.proj this).trans congr($(P.proj_incl) m)
   let π : Fin P.n → (A ⟶ G) := fun i => t.mapLeft (IsTensor.self a) (c i)
   have hπ : ∀ i, IsLinearHom b a (π i) := fun i => t.isLinearHom_mapLeft _ _

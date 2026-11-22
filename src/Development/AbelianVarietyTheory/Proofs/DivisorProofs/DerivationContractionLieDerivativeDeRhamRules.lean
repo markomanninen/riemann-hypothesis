@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem ctr_mul (x y : DR R B) : ctr v (x * y) = ctr v x * y + sgn x * ctr v y :
   induction x using indLeft with
   | h b =>
     rw [← Algebra.smul_def, map_smul, ctr_algebraMap, zero_mul, zero_add, AlgHom.commutes, Algebra.smul_def]
-  | ha x x' hx hx' => rw [add_mul, map_add, hx, hx', map_add, map_add, add_mul, add_mul]; abel
+  | ha x x' hx hx' => rw [add_mul, map_add (f := _), hx, hx', map_add (f := _), map_add (f := _), add_mul, add_mul]; abel
   | hm ω x ih =>
     rw [mul_assoc, ctr_ι_mul, ih, ctr_ι_mul, map_mul, sgn_ι]
     simp only [mul_add, sub_mul, smul_mul_assoc, mul_assoc, neg_mul]
@@ -41,14 +45,14 @@ theorem ctr_ctr (x : DR R B) : ctr v (ctr v x) = 0 :=
 theorem ctr_sgn (x : DR R B) : ctr v (sgn x) = -sgn (ctr v x) := by
   induction x using indLeft with
   | h b => rw [AlgHom.commutes, ctr_algebraMap, map_zero, neg_zero]
-  | ha x x' hx hx' => rw [map_add, map_add, hx, hx', map_add, map_add, neg_add]
+  | ha x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', map_add (f := _), map_add (f := _), neg_add]
   | hm ω x ih =>
     rw [map_mul, sgn_ι, neg_mul, map_neg, ctr_ι_mul, ih, ctr_ι_mul, map_sub, map_smul, map_mul, sgn_ι, mul_neg, neg_mul]
 
 theorem ctr_mem_pred {n : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^n Ω[B⁄R]) : ctr v x ∈ ⋀[B]^(n - 1) Ω[B⁄R] := by
   induction hx using Submodule.pow_induction_on_left' with
   | algebraMap b => rw [ctr_algebraMap]; exact zero_mem _
-  | add x y i _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y i _ _ hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   | mem_mul m hm i x hx ih =>
     obtain ⟨ω, rfl⟩ := hm
     change ctr v (ι1 ω * x) ∈ _
@@ -70,7 +74,7 @@ theorem ctr_mem {j : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^(j + 1) Ω[B⁄R]) : c
 theorem lie_apply (x : DR R B) : lie v x = dDR R B (ctr v x) + ctr v (dDR R B x) := rfl
 
 theorem lie_mul (x y : DR R B) : lie v (x * y) = lie v x * y + x * lie v y := by
-  simp only [lie_apply, ctr_mul, dDR_mul, map_add, ctr_sgn, dDR_sgn, sgn_sgn, map_neg, neg_mul, add_mul, mul_add]
+  simp only [lie_apply, ctr_mul, dDR_mul, map_add (f := _), ctr_sgn, dDR_sgn, sgn_sgn, neg_mul, add_mul, mul_add]
   abel
 
 theorem lie_algebraMap (b : B) : lie v (algebraMap B (DR R B) b) = algebraMap B (DR R B) (v b) := by
@@ -81,10 +85,10 @@ theorem lie_D (b : B) : lie v (ι1 (D R B b)) = ι1 (D R B (v b)) := by
   rw [lie_apply, ctr_ι, Derivation.liftKaehlerDifferential_comp_D, dDR_algebraMap, dDR_D, map_zero, add_zero]
 
 theorem lie_dDR (x : DR R B) : lie v (dDR R B x) = dDR R B (lie v x) := by
-  rw [lie_apply, lie_apply, dDR_dDR, map_zero, add_zero, map_add, dDR_dDR, zero_add]
+  rw [lie_apply, lie_apply, dDR_dDR, map_zero, add_zero, map_add (f := _), dDR_dDR, zero_add]
 
 theorem lie_ctr (x : DR R B) : lie v (ctr v x) = ctr v (lie v x) := by
-  rw [lie_apply, lie_apply, ctr_ctr, map_zero, zero_add, map_add, ctr_ctr, add_zero]
+  rw [lie_apply, lie_apply, ctr_ctr, map_zero, zero_add, map_add (f := _), ctr_ctr, add_zero]
 
 theorem lie_mem {j : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^j Ω[B⁄R]) : lie v x ∈ ⋀[B]^j Ω[B⁄R] := by
   cases j with

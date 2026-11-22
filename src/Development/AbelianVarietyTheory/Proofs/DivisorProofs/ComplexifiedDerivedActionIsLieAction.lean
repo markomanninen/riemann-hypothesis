@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjInvol
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjInvol
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem dRep_lin (hh : G.IsHermitian) (hd : G.det ≠ 0) (hπ : IsURepOn (Formal
     dRep π (a • X + Y) v = (a : ℂ) • dRep π X v + dRep π Y v := by
   refine ext_inner_left ℂ fun y => ?_
   obtain ⟨D, hD⟩ := exists_coef hh hd hπ hv y
-  rw [inner_add_right, inner_smul_right, hD _ (add_mem_lie (smul_mem_lie a hX) hY), hD _ hX, hD _ hY, map_add,
+  rw [inner_add_right, inner_smul_right, hD _ (add_mem_lie (smul_mem_lie a hX) hY), hD _ hX, hD _ hY, map_add (f := _),
     map_smul, Complex.real_smul]
 
 theorem conjH_parts (hd : G.det ≠ 0) {X Y : Mt n} (hX : X ∈ SmVec.lieG G) (hY : Y ∈ SmVec.lieG G) :
@@ -195,7 +199,7 @@ theorem dRepC_bracket (hh : G.IsHermitian) (hd : G.det ≠ 0) (hπ : IsURepOn (F
     fun hA hB hC => by
       rw [SmVec.dRep_add (SmVec.dRep_mem hG hπ hv hB) (Submodule.smul_mem _ _ (SmVec.dRep_mem hG hπ hv hC)) hA,
         SmVec.dRep_smul _ (SmVec.dRep_mem hG hπ hv hC) hA]
-  rw [e, hl, map_add, map_add, map_add, map_smul, map_smul, map_smul, ← hl, ← hl, ← hl, ← hl,
+  rw [e, hl, map_add (f := _), map_add (f := _), map_add (f := _), map_smul, map_smul, map_smul, ← hl, ← hl, ← hl, ← hl,
     dRepC_bracket_real hh hd hπ hv hX' hX, dRepC_bracket_real hh hd hπ hv hY' hX,
     dRepC_bracket_real hh hd hπ hv hX' hY, dRepC_bracket_real hh hd hπ hv hY' hY]
   simp only [dRepC_parts hd hX hY, dRepC_parts hd hX' hY', hs hX hX' hY', hs hY hX' hY', hs hX' hX hY, hs hY' hX hY]

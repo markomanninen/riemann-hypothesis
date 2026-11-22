@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AcoordSumVecMul
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AcoordSumVecMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ theorem liftΔ [FiniteDimensional Qp LL] (W : LocWach PD LL O v n) (hcase : Form
     refine ⟨?_, fun δ' hδ' => ?_⟩
     · rw [hn₁, ← algebraMap_smul (LetA O n)]
       exact (W.N T₁).smul_mem _ ((W.N T₁).sum_mem fun δ _ => W.N_Γ T₁ δ x₁ hx₁N)
-    · rw [hn₁, map_smul, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [hn₁, map_smul, map_sum]
       congr 1
       refine Finset.sum_nbij' (δ' * ·) (δ'⁻¹ * ·) (fun g hg => TypesA.delF_mul W hδ' hg)
         (fun g hg => TypesA.delF_mul W (TypesA.delF_inv W hδ') hg) (fun g _ => by simp)
@@ -69,7 +74,8 @@ theorem liftΔ [FiniteDimensional Qp LL] (W : LocWach PD LL O v n) (hcase : Form
   · have hγ₂ : ∀ δ ∈ W.DelF, W.γD T₂ δ (W.map F x₁) = lA W ^ rr • y₂ := by
       intro δ hδ
       rw [hx₁F', TypesA.lA_pow_smul, map_nsmul, hy₂'.2 δ hδ]
-    rw [hn₁, ← algebraMap_smul W.EE, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hn₁, ← algebraMap_smul W.EE, map_smul, map_sum]
     simp only [W.map_γ]
     rw [Finset.sum_congr rfl hγ₂, Finset.sum_const, algebraMap_smul, ← Nat.cast_smul_eq_nsmul O, smul_smul]
     have : ((u⁻¹ : Oˣ) : O) * (W.DelF.card : O) = 1 := by
@@ -107,7 +113,7 @@ theorem coeff_p1_pow_top_isUnit {O : Type*} [CommRing O] [IsDomain O] [IsDiscret
   rw [hdiff] at hS
   have hexp : P.p 1 ^ y = P.u ^ y * PowerSeries.X ^ (l * y) + PowerSeries.C (l : O) * (P.eps * S) := by
     rw [← mul_assoc, ← hS, mul_pow, ← pow_mul]; ring
-  rw [hexp, map_add, PowerSeries.coeff_C_mul]
+  rw [hexp, map_add (f := _), PowerSeries.coeff_C_mul]
   have h0 : PowerSeries.coeff (l * y) (P.u ^ y * PowerSeries.X ^ (l * y)) =
       PowerSeries.constantCoeff (P.u ^ y) := by
     have := PowerSeries.coeff_mul_X_pow (P.u ^ y) (l * y) 0
@@ -124,8 +130,8 @@ theorem coeff_p1_pow_top_isUnit {O : Type*} [CommRing O] [IsDomain O] [IsDiscret
   rw [add_sub_cancel_right] at this
   exact (IsLocalRing.mem_maximalIdeal _).1 this hu
 
-open Formalism.MainNotions.UnusedSlot80.SatW in
 
+open Formalism.MainNotions.UnusedSlot80.SatW in
 theorem isUnit_ps [FiniteDimensional Qp LL] (W : LocWach PD LL O v n) (hcase : Formalism.MainNotions.LiftingTheory.CaseA W)
     (hP9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) (s : ℕ) :
     IsUnit (algebraMap (LetA O n) W.EE (ps W s)) := by
@@ -187,17 +193,19 @@ theorem crisMap_dvO (W : LocWach PD LL O v n) {T₁ T₂ : LocLat G Qp LL O} (F 
     (c₁ : Fin d₁ → O) (k₀ : Fin d) (P : O) (hSig : ∀ j, ∑ m, c₁ m * μ m j = if j = k₀ then P else 0) :
     Formalism.MainNotions.TruncatedSeriesCountingBounds.crisMap B F.f (dvO W T₁ e b₁ c₁) = algebraMap O LL P • dv W T₂ e b (Pi.single k₀ 1) := by
   unfold dvO
-  rw [dv_eq_sum_single, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dv_eq_sum_single, map_sum]
   simp only [map_smul, hμ]
   unfold dvO
   rw [← dv_sum W T₂ e b Finset.univ (fun m => algebraMap O LL (c₁ m)) (fun m k => algebraMap O LL (μ m k)),
     ← dv_smul]
   congr 1
   funext k
-  simp only [← map_mul, ← map_sum, hSig k]
+  have h := congrArg (algebraMap O LL) (hSig k)
+  simp only [map_sum, map_mul] at h
   by_cases hk : k = k₀
-  · subst hk; simp
-  · simp [hk, Pi.single_apply]
+  · subst hk; simpa using h
+  · simpa [hk, Pi.single_apply] using h
 
 end ArcLengthTwoLifting
 

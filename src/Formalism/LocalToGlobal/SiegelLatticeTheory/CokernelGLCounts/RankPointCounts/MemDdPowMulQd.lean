@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLatSk
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfLatSk
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,19 +132,19 @@ theorem Xmat_upU (y : FreeE w → D.host.E) : UpU (Xmat w y) := by
   intro a c
   refine ⟨fun h => ?_, fun h => ?_⟩
   · simp only [Xmat, ne_of_gt h, if_false]
-    rw [dif_neg (fun h' => absurd h'.1 (not_lt.2 (le_of_lt h)))]
+    rw [dite_eq_right (fun h' => absurd h'.1 (not_lt.2 (le_of_lt h)))]
   · simp [Xmat, h]
 
 theorem Xmat_blk (y : FreeE w → D.host.E) : IsBlockDiagonalMatrix w (Xmat w y) := by
   intro a c hne
   have hac : a ≠ c := fun e => hne (by rw [e])
   simp only [Xmat, hac, if_false]
-  rw [dif_neg (fun h' => hne h'.2)]
+  rw [dite_eq_right (fun h' => hne h'.2)]
 
 theorem Xmat_q (y : FreeE w → D.host.E) (q : FreeE w) : Xmat w y q.1.1 q.1.2 = y q := by
   have hne : q.1.1 ≠ q.1.2 := ne_of_lt q.2.1
   simp only [Xmat, hne, if_false]
-  rw [dif_pos q.2]
+  rw [dite_eq_left q.2]
   rfl
 
 theorem Xmat_grD (y : FreeE w → D.host.E) (hy : ∀ q, y q ∈ ddPow D (hgt w q)) : GrD (Xmat w y) := by

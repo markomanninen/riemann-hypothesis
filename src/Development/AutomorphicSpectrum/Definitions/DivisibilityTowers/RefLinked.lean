@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HasBaseDegreeSetting
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HasBaseDegreeSetting
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,11 +47,6 @@ def Flat : Prop :=
 def Pos : Prop := ∀ c, IsPosPot (R.Sys c).A ((R.Sys c).th none)
 
 def Unif : Prop := ∀ c, PB.IsUniformised (R.Sys c).A (R.Sys c).open' T.j fun p => (R.Sys c).potH (some p)
-
-def Squares (II : IntersectionSystem) : Prop :=
-  ∀ B c, ∃ (d : ℕ) (S : PB.AnSys (d + 1) (Ψ × Fin N)) (K : Type) (_ : Fintype K) (ι : K → Type)
-    (_ : ∀ k, Fintype (ι k)) (P : Ideal (MRing ι)) (Re : PB.Realis S P), Nonempty (PB.FlagSys Re T.j) ∧
-      PB.toWt (Re.PB II) = (R.tie B c).Re.PBwt II ∧ S.degPoly = ((R.Sys c).comap some).degPoly
 
 def RefLinked (II : IntersectionSystem) : Prop :=
   ∃ (C : ℝ) (thH : ∀ c, LocPot (R.Sys c).X) (Pfix : T.Comp → RPA Ψ N), (∀ c, IsPotential (R.Sys c).A (thH c)) ∧

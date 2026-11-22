@@ -1,5 +1,9 @@
-import Formalism.GrowthSums.StatementC
-import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
+module
+
+public import Formalism.GrowthSums.StatementC
+public import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem four_padicValNat_le (p s : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p) (hs : 1 �
     4 * padicValNat p s + 2 ≤ 3 * s := by
   have hv := four_mul_add_two_le_three_mul_five_pow (padicValNat p s)
   have h1 : 5 ^ padicValNat p s ≤ p ^ padicValNat p s := Nat.pow_le_pow_left hp5 _
-  have h2 : p ^ padicValNat p s ≤ s := Nat.le_of_dvd (by omega) pow_padicValNat_dvd
+  have h2 : p ^ padicValNat p s ≤ s := Nat.le_of_dvd (by omega) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   omega
 
 theorem padicValHarmonicPowerSumDivLowerBound : LogCoefVal := by
@@ -42,6 +46,7 @@ theorem padicValHarmonicPowerSumDivLowerBound : LogCoefVal := by
   have hs0 : (s : ℚ) ≠ 0 := by exact_mod_cast (by omega : s ≠ 0)
   have key : (s : ℤ) - (padicValNat p s : ℤ) ≤ padicValRat p (X / s) := by
     rw [padicValRat.div (ne_of_gt hpos) hs0, padicValRat.of_nat]
+    rw [Nat.padicValNat_def]
     omega
   have hk : (s : ℝ) - (padicValNat p s : ℝ) ≤ ((padicValRat p (X / s) : ℤ) : ℝ) := by
     exact_mod_cast key

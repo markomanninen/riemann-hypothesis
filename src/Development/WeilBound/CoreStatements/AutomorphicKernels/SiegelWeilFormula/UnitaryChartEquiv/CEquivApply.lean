@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SymplecticFormCoordinates
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoublingPairLatticeTheta
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SymplecticFormCoordinates
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoublingPairLatticeTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem cmap_cinv (d : SD σ) {κ : Type} (τ : κ ≃ Ix d) (c : κ → AF F) :
 theorem cmap_add (d : SD σ) {κ : Type} (τ : κ ≃ Ix d) (X Y : Mx F E d.m d.n) :
     cmap d τ (X + Y) = cmap d τ X + cmap d τ Y := by
   funext k
-  simp [cmap, SD.crd, map_add]
+  simp [cmap, SD.crd, map_add (f := _)]
 
 theorem cont_cmap (d : SD σ) {κ : Type} (τ : κ ≃ Ix d) : Continuous (cmap d τ) := by
   haveI := GlobalTheory.AdelicUnitaryTop.secondCountable_adele F
@@ -65,8 +69,6 @@ def cEquiv (d : SD σ) {κ : Type} (τ : κ ≃ Ix d) : Mx F E d.m d.n ≃ₜ+ (
   map_add' := cmap_add d τ
   continuous_toFun := cont_cmap d τ
   continuous_invFun := cont_cinv d τ
-
-theorem cEquiv_apply (d : SD σ) {κ : Type} (τ : κ ≃ Ix d) (X : Mx F E d.m d.n) : cEquiv d τ X = cmap d τ X := rfl
 
 theorem map_haar (d : SD σ) {κ : Type} [Fintype κ] (τ : κ ≃ Ix d) (ν : Measure (Mx F E d.m d.n))
     (hν : ν.IsAddHaarMeasure) :

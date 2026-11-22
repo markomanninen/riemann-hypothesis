@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.I
 
@@ -17,8 +21,5 @@ def EvalNeed (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
   ∀ (X : EtaleStein n M) (ps : M → ℝ) (x0 : M), SmoothR n X.z ps →
     ∃ C : ℝ, ∀ F : M → ℂ, Holo n X.z F →
       ENNReal.ofReal (‖F x0‖ ^ 2) ≤ ENNReal.ofReal C * wint n X.z F ps
-
-def CVXNeed.{u} : Prop :=
-  ∀ (H : Type u) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H], CVXStatement H
 
 end ReciprocityTheory.L2DbarEstimates.I

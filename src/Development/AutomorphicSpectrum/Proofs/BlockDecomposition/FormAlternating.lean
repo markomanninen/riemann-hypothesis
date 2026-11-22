@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NegOnePowBoundaryTermsCancel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupAssocC
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.Coords
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NegOnePowBoundaryTermsCancel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CupAssocC
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 set_option linter.unusedVariables false
@@ -36,7 +41,6 @@ def one : Co A 0 := fun _ => 1
 
 theorem dd_add {n : ℕ} (f g : Co A n) : dd n (f + g) = dd n f + dd n g := map_add (CH.d (CH.modF A) n) f g
 theorem dd_zero {n : ℕ} : dd n (0 : Co A n) = 0 := map_zero (CH.d (CH.modF A) n)
-theorem dd_neg {n : ℕ} (f : Co A n) : dd n (-f) = -dd n f := map_neg (CH.d (CH.modF A) n) f
 theorem dd_zsmul {n : ℕ} (u : ℤ) (f : Co A n) : dd n (u • f) = u • dd n f := map_zsmul (CH.d (CH.modF A) n) u f
 
 section cp
@@ -141,7 +145,6 @@ def In (a : IdF A) {n : ℕ} (z : Co A n) : Prop := ∀ s : ComposableArrows C n
 variable {a : IdF A} {n : ℕ} {f g : Co A n}
 
 theorem In.add (hf : In a f) (hg : In a g) : In a (f + g) := fun s => (a.S _).add_mem (hf s) (hg s)
-theorem In.neg (hf : In a f) : In a (-f) := fun s => (a.S _).neg_mem (hf s)
 theorem In.sub (hf : In a f) (hg : In a g) : In a (f - g) := fun s => (a.S _).sub_mem (hf s) (hg s)
 theorem In.zsmul (u : ℤ) (hf : In a f) : In a (u • f) := fun s => zsmul_mem (hf s) u
 theorem In.zero : In a (0 : Co A n) := fun s => (a.S _).zero_mem
@@ -207,15 +210,6 @@ theorem Cob.add {m n : ℕ} {z z' : Co Φ.A n} (h : Cob Fil m n z) (h' : Cob Fil
     have e : z + z' - dd n (b + b') = (z - dd n b) + (z' - dd n b') := by rw [dd_add]; abel
     rw [e]; exact he.add he'
 
-theorem Cob.neg {m n : ℕ} {z : Co Φ.A n} (h : Cob Fil m n z) : Cob Fil m n (-z) := by
-  cases n with
-  | zero => exact In.neg h
-  | succ n =>
-    obtain ⟨b, hb, he⟩ := h
-    refine ⟨-b, hb.neg, ?_⟩
-    have e : -z - dd n (-b) = -(z - dd n b) := by rw [dd_neg]; abel
-    rw [e]; exact he.neg
-
 theorem Cob.of_dd {m n : ℕ} {b : Co Φ.A n} (u : ℤ) (h : In (Fil (m : ℤ)) b) : Cob Fil m (n + 1) (u • dd n b) :=
   ⟨u • b, h.zsmul u, by rw [dd_zsmul, sub_self]; exact In.zero⟩
 
@@ -258,10 +252,10 @@ theorem wd_mem (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c : Fin j → Co Φ.A 1), (�
     In (Fil (j : ℤ)) (wd j c) ∧ dd j (wd j c) = 0
   | 0, c, _ => ⟨In.unit hF, dd_one⟩
   | j + 1, c, hc => by
-    obtain ⟨h1, h2⟩ := wd_mem hF j (c ∘ Fin.castSucc) (fun k => hc _)
-    refine ⟨In.mulc' hF rfl h1 (hc _).1 rfl, ?_⟩
+    have ih := wd_mem hF j (c ∘ Fin.castSucc) (fun k => hc k.castSucc)
+    refine ⟨In.mulc' hF rfl ih.1 (hc (Fin.last j)).1 rfl, ?_⟩
     change dd (j + 1) (cp rfl _ _) = 0
-    rw [dd_cp, h2, (hc _).2, cp_zero_left, cp_zero_right, smul_zero, add_zero]
+    rw [dd_cp, ih.2, (hc (Fin.last j)).2, cp_zero_left, cp_zero_right, smul_zero, add_zero]
 
 theorem In.J (hF : IsFil Φ Fil) {n : ℕ} {a : Co Φ.A n} (h : In (Fil ((1 : ℕ) : ℤ)) a) : In Φ.J a := fun s => by
   have := h s
@@ -335,8 +329,8 @@ theorem wd_swap (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c : Fin (j + 1) → Co Φ.A
           ((c ∘ Equiv.swap (Fin.last j).castSucc (Fin.last j).succ) (Fin.last (j + 1))) = _
         rw [e1, e2, e3]
       rw [w1]
-      obtain ⟨hu, hdu⟩ := wd_mem hF j ((c ∘ Fin.castSucc) ∘ Fin.castSucc) (fun k => hc _)
-      exact cob_swap_top hF hu hdu (hc _) (hc _)
+      have hm := wd_mem hF j ((c ∘ Fin.castSucc) ∘ Fin.castSucc) (fun k => hc k.castSucc.castSucc)
+      exact cob_swap_top hF hm.1 hm.2 (hc _) (hc _)
     | cast k' =>
       have e1 : (c ∘ Equiv.swap k'.castSucc.castSucc k'.castSucc.succ) ∘ Fin.castSucc =
           (c ∘ Fin.castSucc) ∘ Equiv.swap k'.castSucc k'.succ := by
@@ -356,7 +350,7 @@ theorem wd_swap (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c : Fin (j + 1) → Co Φ.A
       rw [w1]
       change Cob Fil (j + 1 + 1) (j + 1 + 1) (cp rfl (wd (j + 1) (c ∘ Fin.castSucc)) (c (Fin.last (j + 1))) + _)
       rw [← cp_add_left]
-      exact Cob.cp_right (q := 1) hF rfl (wd_swap hF j (c ∘ Fin.castSucc) (fun k => hc _) k') (hc _).1
+      exact Cob.cp_right (q := 1) hF rfl (wd_swap hF j (c ∘ Fin.castSucc) (fun k => hc k.castSucc) k') (hc _).1
         (by rw [(hc _).2]; exact In.zero)
 
 theorem wd_sq (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c : Fin (j + 1) → Co Φ.A 1), (∀ k, Coc Fil (c k)) → ∀ k : Fin j,
@@ -371,10 +365,10 @@ theorem wd_sq (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c : Fin (j + 1) → Co Φ.A 1
         change cp rfl (cp rfl (wd j ((c ∘ Fin.castSucc) ∘ Fin.castSucc)) (c (Fin.last j).castSucc)) (c (Fin.last (j + 1))) = _
         rw [← hk]
       rw [w1]
-      obtain ⟨hu, hdu⟩ := wd_mem hF j ((c ∘ Fin.castSucc) ∘ Fin.castSucc) (fun k => hc _)
-      exact cob_sq_top hF hu hdu (hc _)
+      have hm := wd_mem hF j ((c ∘ Fin.castSucc) ∘ Fin.castSucc) (fun k => hc k.castSucc.castSucc)
+      exact cob_sq_top hF hm.1 hm.2 (hc _)
     | cast k' =>
-      exact Cob.cp_right (q := 1) hF rfl (wd_sq hF j (c ∘ Fin.castSucc) (fun k => hc _) k'
+      exact Cob.cp_right (q := 1) hF rfl (wd_sq hF j (c ∘ Fin.castSucc) (fun k => hc k.castSucc) k'
         (by simp only [Function.comp_apply]; rw [hk, Fin.succ_castSucc])) (hc _).1
         (by rw [(hc _).2]; exact In.zero)
 
@@ -386,14 +380,14 @@ theorem wd_change (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c c' : Fin j → Co Φ.A 
     rw [sub_self]
     exact In.zero
   | j + 1, c, c', b, hc, hc', hb, hd => by
-    obtain ⟨hu, hdu⟩ := wd_mem hF j (c ∘ Fin.castSucc) (fun k => hc _)
-    have ih := wd_change hF j (c ∘ Fin.castSucc) (c' ∘ Fin.castSucc) (b ∘ Fin.castSucc) (fun k => hc _) (fun k => hc' _)
-      (fun k => hb _) (fun k => hd _)
+    have hm := wd_mem hF j (c ∘ Fin.castSucc) (fun k => hc k.castSucc)
+    have ih := wd_change hF j (c ∘ Fin.castSucc) (c' ∘ Fin.castSucc) (b ∘ Fin.castSucc)
+      (fun k => hc k.castSucc) (fun k => hc' k.castSucc) (fun k => hb k.castSucc) (fun k => hd k.castSucc)
     have hz : j + 0 = j := rfl
     have e : wd (j + 1) c' - wd (j + 1) c = cp rfl (wd j (c' ∘ Fin.castSucc) - wd j (c ∘ Fin.castSucc)) (c' (Fin.last j)) +
         ((-1 : ℤ) ^ j) • dd j (cp hz (wd j (c ∘ Fin.castSucc)) (b (Fin.last j))) := by
       have e1 : c' (Fin.last j) = c (Fin.last j) + dd 0 (b (Fin.last j)) := by rw [← hd]; abel
-      rw [dd_cp, hdu, cp_zero_left, zero_add, smul_smul, ← mul_pow]
+      rw [dd_cp, hm.2, cp_zero_left, zero_add, smul_smul, ← mul_pow]
       change cp rfl (wd j (c' ∘ Fin.castSucc)) (c' (Fin.last j)) - cp rfl (wd j (c ∘ Fin.castSucc)) (c (Fin.last j)) = _
       rw [cp_sub_left]
       nth_rewrite 3 [e1]
@@ -402,7 +396,7 @@ theorem wd_change (hF : IsFil Φ Fil) : ∀ (j : ℕ) (c c' : Fin j → Co Φ.A 
       abel
     rw [e]
     exact (Cob.cp_right (q := 1) hF rfl ih (hc' _).1 (by rw [(hc' _).2]; exact In.zero)).add
-      (Cob.of_dd _ (In.mulc' hF hz hu (hb _) rfl))
+      (Cob.of_dd _ (In.mulc' hF hz hm.1 (hb _) rfl))
 
 end
 end GlobalTheory.CompanionTheory.AltForm
@@ -421,7 +415,8 @@ theorem d_pj (a b : IdF A) {n : ℕ} (z : Co A n) (hz : In a z) (s : ComposableA
   change (sqM a b _).subtype (∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) •
     ((sq a b).map (GlobalTheory.CatH.toLast i s)).hom (pj a b z hz (GlobalTheory.CatH.face i s))) =
     Ideal.Quotient.mk _ (∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • tm s z i.succAbove (Fin.strictMono_succAbove i).monotone)
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, map_zsmul]
   rfl
@@ -464,14 +459,14 @@ theorem Rep.of_cob {m n : ℕ} {z z' : Co Φ.A n} {c : CH.H (gr Fil (m : ℤ)) n
     obtain ⟨β, hβ, he⟩ := hc
     rw [hcast] at he
     refine ⟨f + CH.d (gr Fil (m : ℤ)) n (pj _ _ β hβ), ?_, ?_, fun s => ?_⟩
-    · rw [map_add, hf, zero_add]
+    · rw [map_add (f := _), hf, zero_add]
       exact CH.d_d _ n _
     · refine (Submodule.Quotient.eq _).2 ?_
       refine ⟨-pj _ _ β hβ, ?_⟩
       change CH.d (gr Fil (m : ℤ)) n (-pj _ _ β hβ) = f - (f + CH.d (gr Fil (m : ℤ)) n (pj _ _ β hβ))
       rw [map_neg]; abel
     · change (show sqM _ _ _ from f s).1 + (show sqM _ _ _ from CH.d (gr Fil (m : ℤ)) n (pj _ _ β hβ) s).1 = _
-      rw [hv s, d_pj, ← map_add]
+      rw [hv s, d_pj, ← map_add (f := _)]
       refine Ideal.Quotient.eq.2 ?_
       have := he s
       have e : z s + dd n β s - z' s = -((z' - z - dd n β) s) := by
@@ -519,7 +514,7 @@ theorem wd_apply : ∀ (j : ℕ) (c : Fin j → Co Φ.A 1) (s : ComposableArrows
       rw [tm_sub]
       exact tm_congr s _ _ _ (funext fun i => Fin.ext (by simp [pr, CH.front]))
 
-variable {d : ℕ} (E : Frame Φ d)
+variable {d : ℕ} (E : Frame (Φ := Φ) d)
 
 def ca (σ : ∀ T : C, E.D ⟶ T) (i : Fin d) : Co Φ.A 1 := fun s => E.a σ i (s.map (homOfLE (Fin.le_last 0)))
 
@@ -594,7 +589,7 @@ namespace GlobalTheory.CompanionTheory.AltForm
 noncomputable section
 variable {R : Type} [CommRing R] {C : Type 1} [Category.{0} C]
 variable {Φ : PDF R C} {Fil : ℤ → IdF Φ.A}
-variable {d : ℕ} (E : Frame Φ d)
+variable {d : ℕ} (E : Frame (Φ := Φ) d)
 
 theorem cx_mem (σ : ∀ T : C, E.D ⟶ T) {q : ℕ} {x : Φ.A.obj E.D} (hx : x ∈ (Fil q).S E.D) :
     In (Fil (q : ℤ)) (cx E σ x) := fun s => (Fil q).map_mem _ hx
@@ -701,7 +696,7 @@ end GlobalTheory.CompanionTheory.AltForm
 namespace GlobalTheory.CompanionTheory.AltForm
 
 theorem form_alternating : ∀ {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF R C} {Fil : ℤ → IdF Φ.A} (hF : IsFil Φ Fil)
-    {d : ℕ} (E : Frame Φ d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil) (j q : ℕ) (r : ℤ) (hr : r = j + q)
+    {d : ℕ} (E : Frame (Φ := Φ) d) (σ : ∀ T : C, E.D ⟶ T) (hc : E.GrConst Fil) (j q : ℕ) (r : ℤ) (hr : r = j + q)
     (I : Fin j → Fin d) (x : Φ.A.obj E.D) (hx : x ∈ (Fil q).S E.D) (c : CH.H (gr Fil r) j),
     Rep (Fil r) (Fil (r + 1)) (E.form σ I x) c →
       (¬ Function.Injective I → c = 0) ∧

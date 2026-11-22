@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreSt
-import Formalism.FilteredPoleLength.LocalDescentLevels.LengthBaseChange
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.TieLDA
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.TieLDB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QCoreSt
+public import Formalism.FilteredPoleLength.LocalDescentLevels.LengthBaseChange
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.TieLDA
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.TieLDB
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.QAt
 

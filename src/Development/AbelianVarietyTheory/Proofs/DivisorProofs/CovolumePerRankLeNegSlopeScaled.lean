@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Formalism.QuotientMetricDivisors.Statement
-import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.MeasureFailsForLargeConstant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Formalism.QuotientMetricDivisors.Statement
+public import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.MeasureFailsForLargeConstant
+
+@[expose] public section
+
 open NumberField
 
 noncomputable section
@@ -62,7 +67,7 @@ theorem lcv_div_le_neg_slope_sq : ∀ (K V : Type) [Field K] [NumberField K] [Is
     (∀ x ∈ L, x ∈ Submodule.span K (Set.range b)) →
     ∀ (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ) (s : ℝ), 0 < s → s ≤ 1 → (∀ v, IsUnit (X v).det) →
     (∀ v (c : Fin d → K), Formalism.HermitianLatticesTheory.normAt (Pi.basisFun K (Fin d)) X v c = s * N v.embedding (∑ k, c k • b k)) →
-    Submodule.IsLattice K (L.comap ((Fintype.linearCombination K b).restrictScalars (𝓞 K))) →
+    Submodule.IsFullLattice K (L.comap ((Fintype.linearCombination K b).restrictScalars (𝓞 K))) →
     Formalism.DivisionValues.lcv X (L.comap ((Fintype.linearCombination K b).restrictScalars (𝓞 K))) / (d : ℝ) ≤
       -GlobalTheory.AllWt.slope_sq N L := by
   intro K V _ _ _ _ _ _ _ _ N hN L d hd b hb hLb X s hs0 hs1 hX hnorm hM
@@ -101,7 +106,7 @@ theorem lcv_div_le_neg_slope_sq : ∀ (K V : Type) [Field K] [NumberField K] [Is
     refine mul_nonpos_of_nonneg_of_nonpos (by positivity) (Finset.sum_nonpos fun v _ => ?_)
     exact Real.log_nonpos (sq_nonneg _) (by nlinarith)
   have hdR : (d : ℝ) ≠ 0 := by exact_mod_cast hd.ne'
-  have hMfg : M.FG := hM.fg
+  have hMfg : M.FG := hM.toIsLattice.fg
   have hML : ∀ y, y ∈ L ↔ ∃ x ∈ M, φ x = y := fun y =>
     ⟨fun hy => by
       obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 (hLb y hy)

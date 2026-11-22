@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.NsetExpInjectiveSurjective
+module
+
+public import ReciprocityTheory.DualLattices.NsetExpInjectiveSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ lemma BX.ev_map (B : BX R₀) {R S : LAlg R₀} (f : (R : Type u) →ₐ[R₀] (
   | zero => simp [BX.ev]
   | tmul g r => simp [BX.ev]
   | add a b ha hb =>
-    simp only [BX.ev, map_add] at ha hb ⊢
+    simp only [BX.ev, map_add (f := _)] at ha hb ⊢
     rw [ha, hb]
 
 private lemma one_add_pow_of_sq {S : Type*} [CommRing S] (a : S) (ha : a * a = 0) (k : ℕ) :
@@ -63,7 +67,7 @@ theorem b4 (B : BX R₀) (hB1 : PairingPropertiesStatement B) (hB3 : TangentPair
       simp [BX.evK, BX.ev, ξmul]
       ring
     | add a b ha hb =>
-      simp only [BX.evK, BX.ev, map_add] at ha hb ⊢
+      simp only [BX.evK, BX.ev, map_add (f := _)] at ha hb ⊢
       rw [ha, hb, mul_add]
   rw [hev, hev] at hB3'
   have hpow : ((Tw.zh n ^ k : (Tw.R' n : Type u)ˣ) : (Tw.R' n : Type u)) ^ (p ^ (n + 1)) =

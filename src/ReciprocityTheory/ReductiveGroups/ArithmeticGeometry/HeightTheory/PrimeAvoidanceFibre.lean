@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SpanTopOfComplete
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SpanTopOfComplete
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0.PrimeAvoidanceFibre
 
@@ -95,7 +99,8 @@ theorem finite_of_fibre {O T : Type*} [CommRing O] [IsDomain O] [IsDiscreteValua
     obtain ⟨cb, hcb⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hx
     choose c hc using fun i => Ideal.Quotient.mk_surjective (cb i)
     have hmem : x - ∑ i, c i • S i ∈ J := by
-      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_sum, ← hcb, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_sum, ← hcb, sub_eq_zero]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← hc i, ← hS i, Algebra.smul_def, Algebra.smul_def, map_mul, hmk]
     obtain ⟨y, hy⟩ := Ideal.mem_span_singleton'.1 hmem

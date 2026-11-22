@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.HerbrandB
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.HerbrandB
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.Herbrand
 

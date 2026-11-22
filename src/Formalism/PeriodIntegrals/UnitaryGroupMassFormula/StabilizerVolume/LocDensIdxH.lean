@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHI
-import ReciprocityTheory.Automorphisms.InstMainA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensHI
+public import ReciprocityTheory.Automorphisms.InstMainA
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem mem_hermO_iff (S : HermR (Fv F v) σ a) :
 
 theorem crdS_add (S T : HermR (Fv F v) σ a) (i j : Fin a) (k : Fin d) :
     crdS b v σ a (S + T) i j k = crdS b v σ a S i j k + crdS b v σ a T i j k := by
-  simp [crdS, Matrix.add_apply, map_add]
+  simp [crdS, Matrix.add_apply, map_add (f := _)]
 
 theorem crdS_smul (t : Fv F v) (S : HermR (Fv F v) σ a) (i j : Fin a) (k : Fin d) :
     crdS b v σ a (t • S) i j k = t * crdS b v σ a S i j k := by
@@ -39,7 +43,7 @@ def redH : (hermO b v σ a) →+
     rw [show (⟨0, _⟩ : v.adicCompletionIntegers F) = 0 from rfl, map_zero]
   map_add' S T := by
     funext i j k
-    simp only [Pi.add_apply, ← map_add]
+    simp only [Pi.add_apply, ← map_add (f := _)]
     congr 1
     ext
     simp [crdS_add]
@@ -96,13 +100,5 @@ theorem ker_redH :
     exact h3
 
 end IdxHW
-
-def IdxCount : Prop := ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
-    [Algebra F E] (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (M : ℕ) (J : Matrix (Fin M) (Fin M) E)
-    (hJ : IsHermND σ J), SWa1 F E σ M J → Formalism.L2.SG.Pf.NcWeil.StabilizerFirstChernCompatibility F E σ M J →
-    ∀ (a : ℕ), 1 ≤ a → 2 * a < M → ∀ (X0 : Fin a → Fin M → E)
-    (hT : ∀ i j, σ (gramE σ J X0 j i) = gramE σ J X0 i j), (gramE σ J X0).det ≠ 0 →
-    ∀ (d : ℕ) (b : Module.Basis (Fin d) F E), ∀ᶠ v in cofinite,
-      Nat.card (IdxHW.redH b v σ a).range = Nat.card (𝓞 F ⧸ v.asIdeal) ^ (a ^ 2)
 
 end PI.VolStabS

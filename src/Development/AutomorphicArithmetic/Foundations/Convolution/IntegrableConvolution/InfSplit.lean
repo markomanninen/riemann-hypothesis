@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GalSplit
-import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GalSplit
+public import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+
+@[expose] public section
 
 open NumberField GroundTheory.Global.InfinitePlace
 open scoped TensorProduct
@@ -28,7 +32,8 @@ theorem UpperTheory.ConvolutionTheory.L1.infSplit :
     · let b := Module.finBasis F E
       have h : ∀ y i, e y i = ∑ j, p ((σ ^ (i : ℕ)) (b j)) * adeleCoord b j y := fun y i => by
         conv_lhs => rw [← tensorInfiniteAdeleRingEquiv_sum_adeleCoord b y]
-        rw [map_sum, map_sum, Finset.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum, Finset.sum_apply]
         exact Finset.sum_congr rfl fun j _ => he _ _ _
       refine continuous_pi fun i => ?_
       simp_rw [h]
@@ -37,7 +42,8 @@ theorem UpperTheory.ConvolutionTheory.L1.infSplit :
           ∑ i, infiniteAdeleRingMap (K := F) (L := E) (a i) * e.symm (Pi.single i 1) := fun a => by
         apply e.injective
         funext k
-        rw [map_sum, Finset.sum_apply, RingEquiv.apply_symm_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_apply, RingEquiv.apply_symm_apply]
         simp_rw [map_mul, RingEquiv.apply_symm_apply, Pi.mul_apply, hd]
         rw [Finset.sum_eq_single k]
         · simp

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Filter Topology
 
@@ -138,7 +142,7 @@ theorem eventually_root (hH : HenselN K) {π : K} (h0 : π ≠ 0) (h1 : ‖π‖
     intro q k
     have h : ∀ t, ((f.map (ev t)).comp q).coeff k =
         ∑ n ∈ f.support, ev t (f.coeff n) * (q ^ n).coeff k := fun t => by
-      rw [Polynomial.comp, eval₂_map, eval₂_eq_sum, Polynomial.sum, finset_sum_coeff]
+      rw [Polynomial.comp, eval₂_map, eval₂_eq_sum, Polynomial.sum, finsetSum_coeff]
       simp only [RingHom.coe_comp, RingHom.comp_apply, Function.comp_apply, coeff_C_mul]
     exact (continuous_finsetSum _ fun n _ => (hev _).mul continuous_const).congr
       fun t => (h t).symm

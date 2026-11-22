@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WittFrobeniusPowEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WittFrobeniusPowEqOne
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory
@@ -43,7 +48,8 @@ theorem wittModule_free_finite_of_reduction : ∀ (p : ℕ) [Fact p.Prime] (k : 
     simp only [LinearMap.comp_apply, Submodule.mkQ_apply]
     rw [Submodule.Quotient.eq]
     have h0 : r (F (fun i => WittVector.teichmuller p (b.repr (r x) i)) - x) = 0 := by
-      rw [map_sub, Fintype.linearCombination_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, Fintype.linearCombination_apply, map_sum]
       simp only [map_smulₛₗ, hm, WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
       rw [sub_eq_zero]
       exact b.sum_repr (r x)

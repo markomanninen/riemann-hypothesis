@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisLog
-import GroundTheory.PAdicHodge.LogPowSeries
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisLog
+public import GroundTheory.PAdicHodge.LogPowSeries
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -60,13 +65,11 @@ section Expansion
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "θ" => fontaineTheta (normInteger K) p
 
 variable (p) in
-
-def logCoeff (n j : ℕ) : ℤ :=
+def logCoeff (p n j : ℕ) : ℤ :=
   (-1) ^ n * powCoeff p (n + 1) (j + 1) * (((j + 1).factorial / (n + 1) : ℕ) : ℤ)
 
 omit hp in
@@ -96,7 +99,7 @@ theorem one_add_pow_sub_one_pow_eq_sum (x : AInf K p) (N L : ℕ) (hL : p * N �
   have hdeg : ((((1 : ℤ[X]) + X) ^ p - 1) ^ N).natDegree < L + 1 :=
     Nat.lt_succ_of_le ((natDegree_one_add_X_pow_sub_one_pow_le p N).trans hL)
   have h := aeval_eq_sum_range' (R := ℤ) hdeg x
-  simp only [map_pow, map_sub, map_add, map_one, aeval_X] at h
+  simp only [map_pow, map_sub, map_add (f := _), map_one, aeval_X] at h
   rw [h]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [zsmul_eq_mul, powCoeff]
@@ -107,7 +110,8 @@ theorem factorial_mul_dpow_eq_sum (x : AInf K p) (n L : ℕ) (hL : p * (n + 1) �
         (((j + 1).factorial / (n + 1) : ℕ) : ℤ) : ℤ) : 𝔸) * dpow (j + 1) x := by
   have h1 := isUnit_natCast (K := K) (p := p) (Nat.succ_ne_zero n)
   apply h1.mul_left_cancel
-  rw [← mul_assoc, ← Nat.cast_mul, ← Nat.factorial_succ, factorial_mul_dpow, ← map_pow,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← mul_assoc, ← Nat.cast_mul, ← Nat.factorial_succ, factorial_mul_dpow, ← map_pow,
     one_add_pow_sub_one_pow_eq_sum x (n + 1) L hL, map_sum, Finset.sum_range_succ', Finset.mul_sum]
   simp only [map_mul, map_intCast, map_pow, pow_zero, mul_one, powCoeff_of_lt p n.succ_pos,
     Int.cast_zero, zero_mul, map_zero, add_zero]
@@ -127,11 +131,11 @@ variable {x : AInf K p}
 
 theorem one_add_pow_sub_one_mem (hx : x ∈ RingHom.ker θ) : (1 + x) ^ p - 1 ∈ RingHom.ker θ := by
   rw [RingHom.mem_ker] at hx ⊢
-  rw [map_sub, map_pow, map_add, map_one, hx, add_zero, one_pow, sub_self]
+  rw [map_sub, map_pow, map_add (f := _), map_one, hx, add_zero, one_pow, sub_self]
 
 theorem logTermZero_one_add_pow (hx : x ∈ RingHom.ker θ) (n L : ℕ) (hL : p * (n + 1) ≤ L) :
     logTermZero (one_add_pow_sub_one_mem hx) n =
-      ∑ j ∈ Finset.range L, (logCoeff p n j : ACrisZero K p) * dpowZero hx (j + 1) := by
+      ∑ j ∈ Finset.range L, (logCoeff p n j : ACrisZero (K := K) (p := p)) * dpowZero hx (j + 1) := by
   apply Subtype.ext
   simp only [logTermZero, Subalgebra.coe_mul, Subalgebra.coe_pow, Subalgebra.coe_neg,
     Subalgebra.coe_one, SubringClass.coe_natCast, coe_dpowZero, AddSubmonoidClass.coe_finsetSum,
@@ -143,8 +147,8 @@ theorem logTermZero_one_add_pow (hx : x ∈ RingHom.ker θ) (n L : ℕ) (hL : p 
   ring
 
 theorem p_mul_logTermZero (hx : x ∈ RingHom.ker θ) (j : ℕ) :
-    (p : ACrisZero K p) * logTermZero hx j =
-      ∑ n ∈ Finset.range (j + 1), (logCoeff p n j : ACrisZero K p) * dpowZero hx (j + 1) := by
+    (p : ACrisZero (K := K) (p := p)) * logTermZero hx j =
+      ∑ n ∈ Finset.range (j + 1), (logCoeff p n j : ACrisZero (K := K) (p := p)) * dpowZero hx (j + 1) := by
   rw [← Finset.sum_mul, ← Int.cast_sum, sum_logCoeff, logTermZero]
   push_cast
   ring
@@ -159,26 +163,25 @@ section PhiT
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
-local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
-local notation "𝔭" => Ideal.span {(p : ACris K p)}
-local notation "𝔭₀" => Ideal.span {(p : ACrisZero K p)}
+local notation "θ" => fontaineTheta (normInteger K) p
+local notation "𝒪♭" => PreTilt (normInteger K) p
+local notation "φ" => WittVector.frobeniusEquiv p 𝒪♭
+local notation "𝔭₀" => Ideal.span {(p : ACrisZero (K := K) (p := p))}
+local notation "𝔭" => Ideal.span {(p : ACris (K := K) (p := p))}
 
 variable {x : AInf K p}
 
 theorem sum_p_mul_logTermZero_sub_mem (hx : x ∈ RingHom.ker θ) {k M : ℕ} (hM : p * (p * k + 1) ≤ M) :
-    ∑ j ∈ Finset.range M, (p : ACrisZero K p) * logTermZero hx j -
+    ∑ j ∈ Finset.range M, (p : ACrisZero (K := K) (p := p)) * logTermZero hx j -
       ∑ n ∈ Finset.range M, logTermZero (one_add_pow_sub_one_mem hx) n ∈ 𝔭₀ ^ k := by
   have hpM : M ≤ p * M := Nat.le_mul_of_pos_left M hp.out.pos
   rw [Finset.sum_congr rfl fun n hn => logTermZero_one_add_pow hx n (p * M)
       (Nat.mul_le_mul_left p (Finset.mem_range.1 hn)),
     Finset.sum_congr rfl fun j _ => p_mul_logTermZero hx j]
   have h1 : ∀ j ∈ Finset.range M,
-      ∑ n ∈ Finset.range (j + 1), (logCoeff p n j : ACrisZero K p) * dpowZero hx (j + 1) =
-        ∑ n ∈ Finset.range M, (logCoeff p n j : ACrisZero K p) * dpowZero hx (j + 1) := by
+      ∑ n ∈ Finset.range (j + 1), (logCoeff p n j : ACrisZero (K := K) (p := p)) * dpowZero hx (j + 1) =
+        ∑ n ∈ Finset.range M, (logCoeff p n j : ACrisZero (K := K) (p := p)) * dpowZero hx (j + 1) := by
     intro j hj
     apply Finset.sum_subset (Finset.range_subset_range.2 (Finset.mem_range.1 hj))
     intro n _ hn
@@ -201,17 +204,19 @@ theorem sum_p_mul_logTermZero_sub_mem (hx : x ∈ RingHom.ker θ) {k M : ℕ} (h
 
 theorem log_one_add_pow (hx : x ∈ RingHom.ker θ) :
     log (one_add_pow_sub_one_mem hx) =
-      algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) * log hx := by
-  have hs := (isAdicSum_log hx).mul_left (algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p))
+      algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (p : ACrisZero (K := K) (p := p)) * log hx := by
+  have hs := (isAdicSum_log hx).mul_left (algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (p : ACrisZero (K := K) (p := p)))
   apply log_eq_of_isAdicSum
   intro k
   obtain ⟨N, hN⟩ := hs k
   refine ⟨max N (p * (p * k + 1)), fun M hM => ?_⟩
   have h1 := hN M (le_of_max_le_left hM)
-  have h2 : ∑ n ∈ Finset.range M, algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) *
+  have h2 : ∑ n ∈ Finset.range M, algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (p : ACrisZero (K := K) (p := p)) *
       logTerm hx n - ∑ n ∈ Finset.range M, logTerm (one_add_pow_sub_one_mem hx) n ∈ 𝔭 ^ k := by
     have h := algebraMap_mem_pow (sum_p_mul_logTermZero_sub_mem hx (le_of_max_le_right hM))
-    rw [map_sub, map_sum, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RingHom.map_sub, @map_sum _ _ _ _ _ _ _
+      (RingHomClass.toAddMonoidHomClass (self := RingHom.instRingHomClass))] at h
     simpa only [map_mul, logTerm] using h
   have := add_mem h1 h2
   simp only at this
@@ -221,7 +226,7 @@ theorem log_congr {x y : AInf K p} (h : x = y) (hx : x ∈ RingHom.ker θ) (hy :
     log hx = log hy := by
   subst h; rfl
 
-theorem span_p_le_comap_phi : 𝔭 ≤ Ideal.comap (phi K p) 𝔭 := by
+theorem span_p_le_comap_phi : 𝔭 ≤ Ideal.comap (phi (K := K) (p := p)) 𝔭 := by
   rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
 
@@ -231,38 +236,38 @@ theorem coe_logTermZero {y : AInf K p} (hy : y ∈ RingHom.ker θ) (n : ℕ) :
     Subalgebra.coe_one, SubringClass.coe_natCast, coe_dpowZero]
 
 theorem phiZero_logTermZero (hx : x ∈ RingHom.ker θ) (hφ : φ x ∈ RingHom.ker θ) (n : ℕ) :
-    phiZero K p (logTermZero hx n) = logTermZero hφ n := by
+    phiZero (K := K) (p := p) (logTermZero hx n) = logTermZero hφ n := by
   apply Subtype.ext
   rw [coe_phiZero, coe_logTermZero, coe_logTermZero, map_mul, map_mul, map_pow, map_neg, map_one,
     map_natCast, phiAway_dpow]
 
-theorem phi_algebraMap_zero (y : ACrisZero K p) :
-    phi K p (algebraMap (ACrisZero K p) (ACris K p) y) =
-      algebraMap (ACrisZero K p) (ACris K p) (phiZero K p y) :=
+theorem phi_algebraMap_zero (y : ACrisZero (K := K) (p := p)) :
+    phi (K := K) (p := p) (algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) y) =
+      algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (phiZero (K := K) (p := p) y) :=
   phi_of y
 
 theorem phi_logTerm (hx : x ∈ RingHom.ker θ) (hφ : φ x ∈ RingHom.ker θ) (n : ℕ) :
-    phi K p (logTerm hx n) = logTerm hφ n := by
+    phi (K := K) (p := p) (logTerm hx n) = logTerm hφ n := by
   rw [logTerm, logTerm, phi_algebraMap_zero, phiZero_logTermZero hx hφ]
 
 theorem phi_log (hx : x ∈ RingHom.ker θ) (hφ : φ x ∈ RingHom.ker θ) :
-    phi K p (log hx) = log hφ :=
-  (log_eq_of_isAdicSum (((isAdicSum_log hx).map (phi K p) span_p_le_comap_phi).congr
+    phi (K := K) (p := p) (log hx) = log hφ :=
+  (log_eq_of_isAdicSum (((isAdicSum_log hx).map (phi (K := K) (p := p)) span_p_le_comap_phi).congr
     (phi_logTerm hx hφ))).symm
 
 theorem frobenius_mu (ε : 𝒪♭) : φ (AInf.mu (K := K) ε) = (1 + AInf.mu ε) ^ p - 1 := by
   rw [AInf.mu, map_sub, map_one, WittVector.frobeniusEquiv_teichmuller, map_pow, add_sub_cancel]
 
 theorem phi_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) :
-    phi K p (periodT hε) =
-      algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) * periodT hε := by
+    phi (K := K) (p := p) (periodT hε) =
+      algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (p : ACrisZero (K := K) (p := p)) * periodT hε := by
   have hφ : φ (AInf.mu (K := K) ε) ∈ RingHom.ker θ := by
     rw [frobenius_mu]; exact one_add_pow_sub_one_mem (mu_mem_ker hε)
   rw [periodT, phi_log _ hφ, log_congr (frobenius_mu ε) hφ (one_add_pow_sub_one_mem (mu_mem_ker hε)),
     log_one_add_pow]
 
 theorem phi_periodT_eq_mul {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) :
-    phi K p (periodT hε) = (p : ACris K p) * periodT hε := by
+    phi (K := K) (p := p) (periodT hε) = (p : ACris (K := K) (p := p)) * periodT hε := by
   rw [phi_periodT, map_natCast]
 
 theorem periodT_pow_mem' {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) : periodT hε ^ (p - 1) ∈ 𝔭 := by
@@ -275,7 +280,7 @@ theorem periodT_pow_mem' {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) : periodT 
     have hμ : AInf.mu (K := K) ε = φ (AInf.mu ε') := by
       rw [frobenius_mu, AInf.mu, AInf.mu, hε', map_pow, add_sub_cancel]
     have hφ : φ (AInf.mu (K := K) ε') ∈ RingHom.ker θ := hμ ▸ mu_mem_ker hε
-    have ht : periodT hε = algebraMap (ACrisZero K p) (ACris K p) (p : ACrisZero K p) *
+    have ht : periodT hε = algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p)) (p : ACrisZero (K := K) (p := p)) *
         periodT (ε := ε') hζ := by
       rw [periodT, log_congr hμ _ hφ, ← phi_log (mu_mem_ker hζ) hφ, ← periodT, phi_periodT]
     have hmem : periodT hε ∈ 𝔭 := by

@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HerGenC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormsJointContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadGermSmoothExtension
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialExhaustion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX_UwTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HerGenC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormsJointContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingOfHeads
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadGermSmoothExtension
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialExhaustion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX_UwTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.QuantumDeterminants Filter Topology MeasureTheory
 open scoped ComplexConjugate InnerProductSpace ENNReal ComplexOrder
@@ -31,8 +35,8 @@ def RateAt (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →
       ‖GermRealisation.utOf s (GermFibreKernels.vOf 1 Vec) h x D -
         PBK.mainD s cStd ((-1) ^ (s + 1)) (GermFibreKernels.btOf s ((Real.pi ^ (2 * (s - 1)))⁻¹) Vec h) x D‖ ≤ Cst * ‖x‖⁻¹
 
-omit [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] in
 
+omit [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] in
 theorem slv_congr_group {k r : ℕ} (T : D.LevTower k r Wp Wq) {F F' : B.Mat k r → (Wq →L[ℂ] Wp)}
     (hFF : ∀ g ∈ B.GV k r, F g = F' g) (i : ℕ) (hi : i ≤ r) (w : List C.Letter) (a : C.LPt) (ha : D.IsLocPt a i)
     (e : Wd.Ix (Fin w.length)) : ∀ g ∈ B.GV k (r - i), KB.slv T F i hi w a ha.2 e g = KB.slv T F' i hi w a ha.2 e g := by
@@ -143,7 +147,33 @@ theorem nPt_append (k r : ℕ) (TT : ℝ) (h L : C.LPt) (hh : D.ptSize h ≤ r) 
     TBB.nPt k r TT (h ++ L) =
       nHead k r h * C.nAux k r (D.ptGG TT (h ++ L)) (fun _ _ => 1) (1 + D.ptSize h) L := by
   unfold TBB.nPt nHead
-  rw [GermRateSplit.weight_product_append, GermRateSplit.weight_product_germ_indep k r _ 0 _ 1 h (by omega)]
+  have happ : ∀ (b : ℕ) (P Q : C.LPt), C.nAux k r (D.ptGG TT (h ++ L)) (fun _ _ => 1) b (P ++ Q) =
+      C.nAux k r (D.ptGG TT (h ++ L)) (fun _ _ => 1) b P *
+        C.nAux k r (D.ptGG TT (h ++ L)) (fun _ _ => 1) (b + D.ptSize P) Q := by
+    intro b P
+    induction P generalizing b with
+    | nil => intro Q; simp [C.nAux, D.ptSize]
+    | cons a rest ih =>
+      obtain ⟨s, t⟩ := a
+      intro Q
+      simp only [List.cons_append, C.nAux]
+      rw [ih, ← mul_assoc]
+      congr 2
+      simp [D.ptSize, Nat.add_assoc]
+  have hind : ∀ (b : ℕ) (P : C.LPt), b + D.ptSize P ≤ r + 1 →
+      C.nAux k r (D.ptGG TT (h ++ L)) (fun _ _ => 1) b P = C.nAux k r 0 (fun _ _ => 1) b P := by
+    intro b P
+    induction P generalizing b with
+    | nil => intro _; simp [C.nAux]
+    | cons a rest ih =>
+      obtain ⟨s, t⟩ := a
+      intro hb
+      have hs : D.ptSize ((s, t) :: rest) = s + D.ptSize rest := by simp [D.ptSize]
+      rw [hs] at hb
+      have hc : ¬ (b + s - 1 = r + 1 ∧ s = 1) := by omega
+      simp only [C.nAux, if_neg hc]
+      rw [ih (b + s) (by omega)]
+  rw [happ 1 h L, hind 1 h (by omega)]
 
 theorem sqrt_nPt_long (k r : ℕ) (TT : ℝ) (h : C.LPt) (m e : ℕ) (z : ℂ) (hh : D.ptSize h + (m + 2) ≤ r + 1)
     (he : (e : ℤ) = C.Mlev k r (D.ptSize h + (m + 2)) + m - 1) :
@@ -573,7 +603,8 @@ theorem rate_top (p : KB.Pl P Wp Wq) {nn : ℝ → ℝ} (hnn : ∀ y, 0 < nn y) 
       L i (∑ j ∈ Finset.insertNone (G.rootSet (m + 2) ((-1) ^ (m + 2 + 1) * D)),
         (conj (co (m + 2) x j) * (omTop p nn w (FormNormSumIdentities.PPt (m + 2) h x D j) : ℂ)) •
           p.V (Fi i) (FormNormSumIdentities.PPt (m + 2) h x D j)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_smul]
   rw [e]
@@ -784,9 +815,8 @@ theorem exists_lattice_dual (ω₁ ω₂ : ℂ) (hω : (conj ω₁ * ω₂).im �
     field_simp
     linear_combination (-(σ * (a * ω₁ + b * ω₂))) * Complex.I_mul_I))
   convert h1 using 1
-  funext i
-  simp only [Pi.smul_apply, Complex.real_smul]
-  push_cast
+  ext x
+  simp only [Pi.smul_apply, Complex.real_smul, Complex.ofReal_neg, Complex.ofReal_mul, Complex.ofReal_ofNat]
   field_simp
 
 theorem mean_le_of_eventually {Λ : AddSubgroup (crystallineComparison.V 1)} {LIM : (Λ → ℂ) → ℂ} (hL : crystallineComparison.IsMeanInf Λ LIM)

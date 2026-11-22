@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproxF
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproximationFiniteUnitary
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproxF
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.WeakApproximationFiniteUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,9 @@ theorem unitary_scalars : UnitS := by
   have key : IsUnit (⟨1 + dv E v π * s, hxS⟩ : S) := by
     by_contra h
     obtain ⟨M, hM, hxM⟩ := exists_max_ideal_of_mem_nonunits (mem_nonunits_iff.2 h)
-    have hP : (M.comap (algebraMap O S)).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    have hP : (M.comap (algebraMap O S)).IsMaximal := by
+      letI := hIntS
+      exact Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
     have hπM : algebraMap O S πO ∈ M := by
       have : πO ∈ M.comap (algebraMap O S) := by
         rw [IsLocalRing.eq_maximalIdeal hP]; exact hπmax

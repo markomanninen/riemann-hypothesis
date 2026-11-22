@@ -1,9 +1,13 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HalfSumNormSubSq
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportOfVanish
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.TstarNormSq
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HalfSumNormSubSq
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportOfVanish
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.TstarNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.E
 

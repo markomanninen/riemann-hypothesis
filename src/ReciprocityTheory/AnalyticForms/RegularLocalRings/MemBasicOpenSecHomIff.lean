@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.StalkLoc
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FromSpecResidueFieldAppTopIso
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory MvPolynomial
 

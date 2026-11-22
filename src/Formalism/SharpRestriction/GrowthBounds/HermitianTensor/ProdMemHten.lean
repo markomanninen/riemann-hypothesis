@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LamPolySmulRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LamPolySmulRight
+
+@[expose] public section
 
 noncomputable section
 

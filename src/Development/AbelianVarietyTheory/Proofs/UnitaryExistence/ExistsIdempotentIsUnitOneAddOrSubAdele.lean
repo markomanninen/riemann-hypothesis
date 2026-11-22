@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Matrix nonZeroDivisors
@@ -63,7 +67,7 @@ theorem infinite_part (K : Type*) [Field K] [CharZero K] (s : InfiniteAdeleRing 
     ∃ e : InfiniteAdeleRing K, e * e = e ∧ IsUnit (e * (1 + s) + (1 - e) * (1 - s)) := by
   have h2 : ∀ v : InfinitePlace K, (1 + 1 : v.Completion) ≠ 0 := by
     intro v h
-    have : algebraMap K v.Completion (1 + 1) = 0 := by rw [map_add, map_one]; exact h
+    have : algebraMap K v.Completion (1 + 1) = 0 := by rw [map_add (f := _), map_one]; exact h
     rw [map_eq_zero] at this
     norm_num at this
   choose e he hu using fun v : InfinitePlace K => local_field (h2 v) (s v)

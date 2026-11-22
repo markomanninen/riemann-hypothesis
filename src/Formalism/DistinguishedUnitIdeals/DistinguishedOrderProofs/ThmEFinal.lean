@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.FinalArcProps
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.ThmEPrim
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Partners
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.PolynomialEvaluationValuation
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Rounding
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Bridge
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.FinalArcProps
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.ThmEPrim
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Partners
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.PolynomialEvaluationValuation
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Graded
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Rounding
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,114 +73,6 @@ theorem thick_lt {n : ℕ} {Cu : Cuts n} {kd : ZMod n → Kind} {j : ℕ}
   rw [h2] at h1
   exact h1
 
-theorem inWindows3 {JS : Finset ℤ} {a0 a1 a2 : ℤ} {y0 y1 y2 R : ℕ}
-    (h : ∀ i ∈ JS, ((a0 ≤ i ∧ i < a0 + (y0 : ℤ)) ∨ (a1 ≤ i ∧ i < a1 + (y1 : ℤ)) ∨
-      (a2 ≤ i ∧ i < a2 + (y2 : ℤ))) ∧ |i| ≤ (R : ℤ)) :
-    InWindows JS 3 ![a0, a1, a2] ![y0, y1, y2] R := by
-  refine ⟨fun i hi => ?_, fun i hi => (h i hi).2⟩
-  rw [Finset.mem_biUnion]
-  rcases (h i hi).1 with h0 | h1 | h2
-  · exact ⟨0, Finset.mem_univ _, by simpa [Finset.mem_Ico] using h0⟩
-  · exact ⟨1, Finset.mem_univ _, by simpa [Finset.mem_Ico] using h1⟩
-  · exact ⟨2, Finset.mem_univ _, by simpa [Finset.mem_Ico] using h2⟩
-
-def st2 (k : Kind) (g b : ℤ) : ℤ :=
-  match k with
-  | Kind.thin => -g
-  | Kind.up => -b - g
-  | Kind.down => b - g
-
-def st4 (k : Kind) (g Sz b : ℤ) : ℤ :=
-  match k with
-  | Kind.thin => -(2 * g)
-  | Kind.up => -b - Sz - g
-  | Kind.down => b - g
-
-theorem exponent_window_subset_short {k : Kind} {g b i : ℤ} (hi : i ∈ win2 k g b) :
-    (-g ≤ i ∧ i < -g + g) ∨ (st2 k g b ≤ i ∧ i < st2 k g b + g) := by
-  cases k <;> simp only [win2, st2, Finset.mem_union, Finset.mem_Icc] at hi ⊢ <;> omega
-
-theorem second_window_abs_le {k : Kind} {g b Sz hh : ℕ} {i : ℤ} (hg : g ≤ hh) (hb : k ≠ Kind.thin → b + Sz ≤ hh)
-    (hi : i ∈ win2 k g b) : |i| ≤ ((2 * hh : ℕ) : ℤ) := by
-  rw [abs_le]
-  cases k
-  · simp only [win2, Finset.mem_Icc] at hi
-    omega
-  · have := hb (by decide)
-    simp only [win2, Finset.mem_union, Finset.mem_Icc] at hi
-    omega
-  · have := hb (by decide)
-    simp only [win2, Finset.mem_union, Finset.mem_Icc] at hi
-    omega
-
-theorem exponent_window_subset_long {k : Kind} {g G₀ Sz η b i : ℤ} (hG : G₀ ≤ g) (hS : Sz ≤ g) (hη : η ≤ g)
-    (hi : i ∈ win4 k g G₀ Sz η b) :
-    (-(2 * g) ≤ i ∧ i < -(2 * g) + 3 * g) ∨ (st4 k g Sz b ≤ i ∧ i < st4 k g Sz b + 2 * g) := by
-  cases k <;> simp only [win4, st4, Finset.mem_union, Finset.mem_Icc] at hi ⊢ <;> omega
-
-theorem fourth_window_abs_le {k : Kind} {g G₀ Sz η b hh : ℕ} {i : ℤ} (hG : G₀ ≤ g) (hη : η ≤ g) (hg : g ≤ hh)
-    (hb : k ≠ Kind.thin → b + Sz ≤ hh) (hi : i ∈ win4 k g G₀ Sz η b) :
-    |i| ≤ ((2 * hh : ℕ) : ℤ) := by
-  rw [abs_le]
-  cases k
-  · simp only [win4, Finset.mem_Icc] at hi
-    omega
-  · have := hb (by decide)
-    simp only [win4, Finset.mem_union, Finset.mem_Icc] at hi
-    omega
-  · have := hb (by decide)
-    simp only [win4, Finset.mem_union, Finset.mem_Icc] at hi
-    omega
-
-theorem second_jump_set_in_windows {ell g Sz hh : ℕ} {kind : ℕ → Kind} {b : ℕ → ℕ} (hg : g ≤ hh)
-    (hb : ∀ s < ell, kind s ≠ Kind.thin → b s + Sz ≤ hh) {t₀ t₁ : ℕ}
-    (ht : ∀ s < ell, s ≠ t₀ → s ≠ t₁ → kind s = Kind.thin) :
-    InWindows (jumpWindows ell g kind b) 3
-      ![-(g : ℤ), st2 (kind t₀) g (b t₀), st2 (kind t₁) g (b t₁)] ![g, g, g] (2 * hh) := by
-  apply inWindows3
-  intro i hi
-  obtain ⟨s, hs, his⟩ := Finset.mem_biUnion.1 hi
-  rw [Finset.mem_range] at hs
-  refine ⟨?_, second_window_abs_le hg (hb s hs) his⟩
-  rcases exponent_window_subset_short his with h | h
-  · exact Or.inl h
-  · by_cases h0 : s = t₀
-    · subst h0
-      exact Or.inr (Or.inl h)
-    · by_cases h1 : s = t₁
-      · subst h1
-        exact Or.inr (Or.inr h)
-      · rw [ht s hs h0 h1] at h
-        exact Or.inl h
-
-theorem kappa_of_kappa_bound {ell g G₀ Sz η hh : ℕ} {kind : ℕ → Kind} {b : ℕ → ℕ} (hG : G₀ ≤ g)
-    (hS : Sz ≤ g) (hη : η ≤ g) (hg : g ≤ hh)
-    (hb : ∀ s < ell, kind s ≠ Kind.thin → b s + Sz ≤ hh) {t₀ t₁ : ℕ}
-    (ht : ∀ s < ell, s ≠ t₀ → s ≠ t₁ → kind s = Kind.thin) :
-    InWindows (wideWindows ell g G₀ Sz η kind b) 3
-      ![-(2 * (g : ℤ)), st4 (kind t₀) g Sz (b t₀), st4 (kind t₁) g Sz (b t₁)]
-      ![3 * g, 2 * g, 2 * g] (2 * hh) := by
-  apply inWindows3
-  intro i hi
-  obtain ⟨s, hs, his⟩ := Finset.mem_biUnion.1 hi
-  rw [Finset.mem_range] at hs
-  refine ⟨?_, fourth_window_abs_le hG hη hg (hb s hs) his⟩
-  have hw := exponent_window_subset_long (by exact_mod_cast hG) (by exact_mod_cast hS) (by exact_mod_cast hη) his
-  push_cast
-  rcases hw with h | h
-  · exact Or.inl h
-  · by_cases h0 : s = t₀
-    · subst h0
-      exact Or.inr (Or.inl h)
-    · by_cases h1 : s = t₁
-      · subst h1
-        exact Or.inr (Or.inr h)
-      · rw [ht s hs h0 h1] at h
-        refine Or.inl ⟨h.1, ?_⟩
-        have := h.2
-        simp only [st4] at this
-        omega
-
 theorem mem_second_jump_set {ell g : ℕ} {kind : ℕ → Kind} {b : ℕ → ℕ} {s : ℕ} (hs : s < ell) {i : ℤ}
     (hi : G.Win2 (kind s) g (b s) i) : i ∈ jumpWindows ell g kind b := by
   refine Finset.mem_biUnion.2 ⟨s, Finset.mem_range.2 hs, ?_⟩
@@ -191,50 +87,6 @@ theorem mem_fourth_jump_set {LL D : Type} [Field LL] [AddCommGroup D] [Module LL
   revert hJ
   cases kind s <;> simp only [G.Jumps, win4, Finset.mem_union, Finset.mem_Icc] <;> intro hJ <;>
     have := hJ v hv <;> omega
-
-theorem kap_mono {ℓ ell ellmax g hh kap : ℕ} (hle : ell ≤ ellmax)
-    (hk : kapOf ℓ (ellmax - 1) g hh ≤ (kap : ℝ)) :
-    ((ell - 1 : ℕ) : ℝ) + 7 * (g : ℝ) * (((ell - 1 : ℕ) : ℝ) + 1 + 1 / ((ℓ : ℝ) - 1)) +
-      3 * Real.logb ℓ (2 * (hh : ℝ)) ≤ (kap : ℝ) := by
-  have h1 : ((ell - 1 : ℕ) : ℝ) ≤ ((ellmax - 1 : ℕ) : ℝ) := by
-    exact_mod_cast Nat.sub_le_sub_right hle 1
-  have h2 : (0 : ℝ) ≤ 7 * (g : ℝ) := by positivity
-  have h3 := mul_le_mul_of_nonneg_left
-    (add_le_add_right (add_le_add_right h1 1) (1 / ((ℓ : ℝ) - 1))) h2
-  unfold kapOf at hk
-  linarith
-
-theorem kapExp_le {ℓ ell ellmax g G₀ Sz η hh kap a₀ : ℕ} {kind : ℕ → Kind} {b : ℕ → ℕ}
-    (hp : ℓ.Prime) (hG : G₀ ≤ g) (hS : Sz ≤ g) (hη : η ≤ g) (hg : g ≤ hh)
-    (hb : ∀ s < ell, kind s ≠ Kind.thin → b s + Sz ≤ hh) (hw : TextWord ℓ ell a₀ b kind)
-    (hle : ell ≤ ellmax) (hk : kapOf ℓ (ellmax - 1) g hh ≤ (kap : ℝ)) :
-    kapExp ℓ (ell - 1) (jumpWindows ell g kind b) ≤ kap ∧
-      kapExp ℓ (ell - 1) (wideWindows ell g G₀ Sz η kind b) ≤ kap := by
-  obtain ⟨⟨t₀, t₁, ht⟩, -⟩ := hw
-  have hk' := kap_mono hle hk
-  have hl : (0 : ℝ) ≤ ((ell - 1 : ℕ) : ℝ) + 1 + 1 / ((ℓ : ℝ) - 1) := by
-    have : (1 : ℝ) < (ℓ : ℝ) := by exact_mod_cast hp.one_lt
-    have : (0 : ℝ) < (ℓ : ℝ) - 1 := by linarith
-    positivity
-  have key : ∀ z : Fin 3 → ℕ, ∑ m, z m ≤ 7 * g → kapWin ℓ (ell - 1) 3 z (2 * hh) ≤ (kap : ℝ) := by
-    intro z hz
-    have hz' : (∑ m, (z m : ℝ)) ≤ 7 * (g : ℝ) := by exact_mod_cast hz
-    have h1 := mul_le_mul_of_nonneg_left hz' hl
-    unfold kapWin
-    push_cast
-    linarith
-  constructor
-  · have h2 := (kappa_exponent_in_window ℓ (ell - 1) _ 3 _ _ (2 * hh) hp (second_jump_set_in_windows hg hb ht)).trans
-      (key _ (by
-        simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
-        omega))
-    exact_mod_cast h2
-  · have h4 := (kappa_exponent_in_window ℓ (ell - 1) _ 3 _ _ (2 * hh) hp
-      (kappa_of_kappa_bound hG hS hη hg hb ht)).trans
-      (key _ (by
-        simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
-        omega))
-    exact_mod_cast h4
 
 theorem ppval {O : Type} [CommRing O] (u : Oˣ) {ℓ E kap : ℕ} {JS JS' : Finset ℤ} (hp : ℓ.Prime)
     (hV : FactVval u ℓ) (h : kapExp ℓ E JS ≤ kap ∧ kapExp ℓ E JS' ≤ kap) :
@@ -259,33 +111,33 @@ theorem partModel (hF : FinalLevels L c ell H S R ϖ u j M g G₀ Sz η kind b e
     (hH : ∀ s < ell, H s = Formalism.ExponentWindows.G.HK g G₀ Sz η (kind s) (b s))
     (hne : algebraMap O LL (B.ℓ : O) ≠ 0)
     (hnum : G.HeightNumerics ell j B.ℓ M g G₀ Sz η hh kind b) :
-    G.PrimPartModel L c ell (fun s => hJ G₀ Sz η (kind s) (b s)) H S R ϖ j M g G₀ Sz hh e lam where
-  invX := hX
-  invP := fun s _ => hP s
-  p9 := h9
-  p5h := h5
-  hh_le := fun s hs => by rw [hH s hs, HK_eq]; omega
-  span := hF.span
-  mem := hF.mem
-  pa1b := hF.pa1b
-  locReg := hF.locReg
-  k1b := hF.k1b
-  unitsAt := hF.unitsAt
-  compl := hF.compl
-  flDef := hF.flDef
-  locLIs := hF.locLIs
-  lamInd := hF.lamInd
-  ell_ne := hne
-  num := by
-    obtain ⟨a1, a2, a3, a4, a5, a6⟩ := hnum
-    refine ⟨a1, a2, a3, by rw [hF.η_eq]; exact a4, a5, fun s hs hk => ?_⟩
-    rw [hF.kind_eq s hs] at hk
-    rw [hF.b_eq s hs]
-    exact a6 s hs hk
-  H_eq := fun s hs => by rw [hF.kind_eq s hs, hF.b_eq s hs, hF.η_eq]; exact hH s hs
-  filt := fun s hs => by
-    rw [hF.kind_eq s hs, hF.b_eq s hs, hF.η_eq]
-    exact ⟨hF.filt s hs, hF.jumps s hs⟩
+    G.PrimPartModel L c ell (fun s => hJ G₀ Sz η (kind s) (b s)) H S R ϖ j M g G₀ Sz hh e lam :=
+  { invX := hX
+    invP := fun s _ => hP s
+    p9 := h9
+    p5h := h5
+    hh_le := fun s hs => by rw [hH s hs, HK_eq]; omega
+    span := hF.span
+    mem := hF.mem
+    pa1b := hF.pa1b
+    locReg := hF.locReg
+    k1b := hF.k1b
+    unitsAt := hF.unitsAt
+    compl := hF.compl
+    flDef := hF.flDef
+    locLIs := hF.locLIs
+    lamInd := hF.lamInd
+    ell_ne := hne
+    num := by
+      obtain ⟨a1, a2, a3, a4, a5, a6⟩ := hnum
+      refine ⟨a1, a2, a3, by rw [hF.η_eq]; exact a4, a5, fun s hs hk => ?_⟩
+      rw [hF.kind_eq s hs] at hk
+      rw [hF.b_eq s hs]
+      exact a6 s hs hk
+    H_eq := fun s hs => by rw [hF.kind_eq s hs, hF.b_eq s hs, hF.η_eq]; exact hH s hs
+    filt := fun s hs => by
+      rw [hF.kind_eq s hs, hF.b_eq s hs, hF.η_eq]
+      exact ⟨hF.filt s hs, hF.jumps s hs⟩ }
 
 theorem rd (hF : FinalLevels L c ell H S R ϖ u j M g G₀ Sz η kind b e lam U) (hG : G₀ ≤ g)
     (hS : Sz ≤ g) (hη : η ≤ g) (hb : ∀ s < ell, kind s ≠ Kind.thin → g < b s) : S.RD g :=
@@ -312,18 +164,18 @@ theorem sat (hF : FinalLevels L c ell H S R ϖ u j M g G₀ Sz η kind b e lam U
   exact (Submodule.smul_mem_iff _ hϖ).1 hv
 
 theorem bridgeItems (hF : FinalLevels L c ell H S R ϖ u j M g G₀ Sz η kind b e lam U)
-    (hfr : IsFractionRing O LL) : G.BridgeItems R ϖ η kind b lam U where
-  frac := hfr
-  kind_eq := hF.kind_eq
-  b_eq := hF.b_eq
-  η_eq := hF.η_eq
-  k1b := hF.k1b
-  unitsAt := hF.unitsAt
-  compl := hF.compl
-  locLIs := hF.locLIs
-  lamInd := hF.lamInd
-  lamSpan := hF.lamSpan
-  uIs := hF.uIs
+    (hfr : IsFractionRing O LL) : G.BridgeItems R ϖ η kind b lam U :=
+  { frac := hfr
+    kind_eq := hF.kind_eq
+    b_eq := hF.b_eq
+    η_eq := hF.η_eq
+    k1b := hF.k1b
+    unitsAt := hF.unitsAt
+    compl := hF.compl
+    locLIs := hF.locLIs
+    lamInd := hF.lamInd
+    lamSpan := hF.lamSpan
+    uIs := hF.uIs }
 
 theorem bridge (hϖ : Irreducible ϖ)
     (hF : FinalLevels L c ell H S R ϖ u j M g G₀ Sz η kind b e lam U)
@@ -375,11 +227,13 @@ theorem lLift_of {h : LatHom L₁ L₂} {c' : ZMod n} {r₁ r₂ : ℕ} {e₁ : 
     simp only [Finset.smul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l _ => ?_
-    rw [← LinearMap.toMatrix'_mulVec prL v₁, Matrix.mulVec, dotProduct, map_sum, Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.toMatrix'_mulVec prL v₁, Matrix.mulVec, dotProduct, map_sum, Finset.sum_smul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [← mul_smul, ← map_mul, mul_comm]
   have h3 : h.f (∑ k, a k • e₁ k) - ∑ l, C (prL v₁ l) • e₂ l ∈ sm (X : PowerSeries O) (L₂.N c') := by
-    rw [← h2, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, map_sum, ← Finset.sum_sub_distrib]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_smul]
     exact h1 k
@@ -505,10 +359,6 @@ end arc
 end Formalism.ExponentWindows.E.JumpSetWindowBounds
 
 namespace Formalism.ExponentWindows.E
-
-theorem aux_statement_1 : KapOfKAP := by
-  intro ℓ n Cu kd bb g G₀ Sz η hh kap ellmax a₀ hp hG hS hη hg hb hle hw hk c hc
-  exact JumpSetWindowBounds.kapExp_le hp hG hS hη hg (fun s _ hs => hb _ hs) (hw c hc) (hle c hc) hk
 
 theorem theorem_E_final_form : ThmEFinal := by
   intro O _ _ _ ϖ hϖ B eO n _ Cu kd bb j g G₀ Sz η hh sig rr kap ellmax u x LL _ _ Ks _ _ Δ

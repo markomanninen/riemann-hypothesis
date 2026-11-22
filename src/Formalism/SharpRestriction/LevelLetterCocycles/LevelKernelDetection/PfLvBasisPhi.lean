@@ -1,4 +1,8 @@
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem lvBasis_φ_act (ρ : Representation LL G V) (g : G) (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [Formalism.WeaklyAdmissibleFiltrations.actVB, Formalism.WeaklyAdmissibleFiltrations.φVB, PD.φ_comm]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lvBasis_φ_mul (c : K₀) (x : V ⊗[Qp] B) :
     mulVB (K₀ := K₀) (B := B) (V := V) (LL := LL) (PD.σ c) (φVB PD (LL := LL) (V := V) x) =
@@ -28,7 +32,7 @@ theorem lvBasis_φ_mul (c : K₀) (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [Formalism.WeaklyAdmissibleFiltrations.mulVB, Formalism.WeaklyAdmissibleFiltrations.φVB, PD.φ_K₀]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lvBasis_mem_Dcris (ρ : Representation LL G V) (x : V ⊗[Qp] B) :
     x ∈ Dcris PD ρ ↔ ∀ g, actVB PD ρ g x = x := by
@@ -59,7 +63,7 @@ theorem lvBasis_φ_inj : Function.Injective (φVB PD (LL := LL) (V := V)) := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [Formalism.WeaklyAdmissibleFiltrations.φVB]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [hfun]
   exact Module.Flat.lTensor_preserves_injective_linearMap _ PD.φ_inj
 
@@ -86,7 +90,8 @@ private theorem eigen_finset_eq_zero_of_injective_embeddings {ι : Type} [Decida
       · intro i hi c'
         rw [map_smul, hx i (Finset.mem_insert_of_mem hi) c', smul_comm]
       · have h1 := congrArg (Formalism.WeaklyAdmissibleFiltrations.mulVB (K₀ := K₀) (B := B) (V := V) (LL := LL) c) hs
-        rw [map_add, map_sum, map_zero, hx j (Finset.mem_insert_self j s) c,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_add (f := _), map_sum, map_zero, hx j (Finset.mem_insert_self j s) c,
           Finset.sum_congr rfl (fun i hi => hx i (Finset.mem_insert_of_mem hi) c)] at h1
         simp_rw [sub_smul]
         rw [Finset.sum_sub_distrib, ← Finset.smul_sum, h2, smul_neg, sub_neg_eq_add, add_comm]

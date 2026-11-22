@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.ArcLiftOfLocalizationData
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ theorem polyAct_map (f : V →ₗ[PowerSeries O] V') (γ : V →+ V) (γ' : V' �
     | zero => intro v; rfl
     | succ k ih => intro v; rw [Function.iterate_succ_apply, Function.iterate_succ_apply, ih, hf]
   unfold polyAct
-  rw [Polynomial.sum_def, Polynomial.sum_def, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.sum_def, Polynomial.sum_def, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, hit]
 
@@ -70,7 +75,8 @@ theorem polyAct_shift (γ : V →+ V) (U : Submodule (PowerSeries O) V) (hU : �
       rw [this]
       exact U.add_mem (hU _ ih) hw
   unfold polyAct
-  rw [Polynomial.eval_eq_sum, Polynomial.sum_def, Polynomial.sum_def, map_sum, Finset.sum_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.eval_eq_sum, Polynomial.sum_def, Polynomial.sum_def, map_sum, Finset.sum_smul,
     ← Finset.sum_sub_distrib]
   refine U.sum_mem fun k _ => ?_
   rw [one_pow, mul_one, ← smul_sub]
@@ -204,7 +210,7 @@ theorem step3 (m : LevelMap h S₁ S₂) (g sig rr a₀ : ℕ) (ϖ : O) (H b : �
     rw [map_sub, map_smul, m.loc_comm s hs x₁.1 x₁.2 (map_mem_arcSpan h c ell Λ _ x₁.2),
       m.locL_comm s hs] at a2
     have heq := congrArg (S₂.locL s) hyeq
-    rw [map_add, map_smul, map_smul, ← lc_pow] at heq
+    rw [map_add (f := _), map_smul, map_smul, ← lc_pow] at heq
     have key : S₂.loc s Δ = -(B.lc ^ (sig + 2 * a₀) • (S₂.locL s y - B.lc ^ sig • S₂.loc s x'))
         - (S₂.loc s hx - B.lc ^ sig • S₂.locL s (extL m.prL y₁))
         + (B.lc ^ sig * B.lc ^ (2 * a₀)) • S₂.locL s ν := by
@@ -229,7 +235,7 @@ theorem step3 (m : LevelMap h S₁ S₂) (g sig rr a₀ : ℕ) (ϖ : O) (H b : �
   have hD1 := (hP4a₁.2 D1).1 hΔ₁
   refine ⟨B.lc ^ rr • x₁ + D1, ?_, ?_⟩
   · show h.f (B.lc ^ rr • (x₁ : V₁) + Δ₁) = _
-    rw [map_add, map_smul, hΔim]
+    rw [map_add (f := _), map_smul, hΔim]
     show B.lc ^ rr • h.f x₁ + B.lc ^ rr • (B.lc ^ (2 * sig + 2 * a₀) • (x' : V₂) - h.f x₁) = _
     rw [smul_sub, smul_smul, ← pow_add, add_sub_cancel, add_comm rr]
   · intro s hs
@@ -238,7 +244,7 @@ theorem step3 (m : LevelMap h S₁ S₂) (g sig rr a₀ : ℕ) (ϖ : O) (H b : �
     have e : S₁.loc s (B.lc ^ rr • x₁ + D1) - B.lc ^ rr • B.lc ^ sig • d
         = B.lc ^ rr • (S₁.loc s x₁ - B.lc ^ sig • S₁.locL s y₁)
           + B.lc ^ rr • B.lc ^ sig • (S₁.locL s y₁ - d) + S₁.loc s D1 := by
-      rw [map_add, map_smul]
+      rw [map_add (f := _), map_smul]
       simp only [smul_sub]
       abel
     rw [e]
@@ -404,7 +410,7 @@ theorem lifts_mod_const_of_down_down : ConstLiftDD := by
   refine ⟨abelian₂ p H ell • cst lam₁ + (abelian₂ p H ell * fρ) • cst lam₁', ν,
     (hM O ϖ hϖ ℓ ell r₁ p H b kind U₁ h2 hP hsat₁ hup s₀ s₁ h01 hs₁ hk₁ hk₀ hth ρ fρ hρ hmin hf₁
       hf₀ _).2 ⟨lam₁, lam₁', 0, NN_zero _ _ _ _ _ _ _, by simp⟩, hν, ?_⟩
-  rw [map_add, extL_term prL _ _ h₁, extL_term prL _ _ h₁', smul_add, smul_add]
+  rw [map_add (f := _), extL_term prL _ _ h₁, extL_term prL _ _ h₁', smul_add, smul_add]
 
 theorem lifts_mod_const_of_up_down : ConstLiftUD := by
   intro hM O _ _ _ ϖ hϖ ℓ ell r₁ r₂ a₀ rr p H b kind U₁ U₂ prL hS hL hr s₀ s₁ h01 hs₁ hk₁ hk₀ hth
@@ -417,7 +423,7 @@ theorem lifts_mod_const_of_up_down : ConstLiftUD := by
   refine ⟨abelian₂ p H ell • cst lam₁ + (α * LamLess p H ell s₁ (b s₁)) • cst lam₁', ν,
     (hM O ϖ hϖ ℓ ell r₁ p H b kind U₁ h2 hP hsat₁ hup s₀ s₁ h01 hs₁ hk₁ hk₀ hth c α β hc hnc _).2
       ⟨lam₁, lam₁', 0, hm₁', NN_zero _ _ _ _ _ _ _, by simp⟩, hν, ?_⟩
-  rw [map_add, extL_term prL _ _ h₁, extL_term prL _ _ h₁', smul_add, smul_add]
+  rw [map_add (f := _), extL_term prL _ _ h₁, extL_term prL _ _ h₁', smul_add, smul_add]
 
 theorem lifts_mod_const_of_words : ConstLiftOf :=
   ⟨lifts_mod_const_of_no_down, lifts_mod_const_of_one_down, lifts_mod_const_of_down_up, lifts_mod_const_of_down_down, lifts_mod_const_of_up_down⟩

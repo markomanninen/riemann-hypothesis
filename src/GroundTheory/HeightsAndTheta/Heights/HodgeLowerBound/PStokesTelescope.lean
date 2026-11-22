@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesStep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ATeleSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesStep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ATeleSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -260,8 +265,8 @@ theorem top_sub_top_le (hS : StokesStep.Statement) (hI : IsIntersectionFamily I)
 
 end StokesTelescope
 
-open StokesTelescope in
 
+open StokesTelescope in
 theorem StokesTelescope.proof (hS : StokesStep.Statement) : StokesTelescope.Statement := by
   intro II Ψ _ _ K _ ι _ Ω _ _ E _ _ D O Lt _ _ _ X B p q t t' hII hq hMU hN
   have hq0 : (0 : ℝ) < q := by exact_mod_cast (show 0 < q by omega)

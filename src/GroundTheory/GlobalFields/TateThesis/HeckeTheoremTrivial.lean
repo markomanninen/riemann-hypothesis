@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.HeckeTheoremConj
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.HeckeTheoremConj
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex
 open scoped NumberField.AdeleRing
@@ -12,15 +16,15 @@ variable {K : Type*} [Field K] [NumberField K]
 
 open IdeleGroup
 
-variable (K) in
 
+variable (K) in
 theorem normOneClassMeasure_univ_ne_zero : normOneClassMeasure K Set.univ ≠ 0 := by
   rw [normOneClassMeasure_univ]
   exact (isFundamentalDomain_normOneFundamentalDomain K (normOneMeasure K)).measure_ne_zero
     (NeZero.ne _)
 
-variable (K) in
 
+variable (K) in
 theorem normOneClassMeasure_univ_toReal_ne_zero : (normOneClassMeasure K Set.univ).toReal ≠ 0 :=
   ENNReal.toReal_ne_zero.2 ⟨normOneClassMeasure_univ_ne_zero K, measure_ne_top _ _⟩
 

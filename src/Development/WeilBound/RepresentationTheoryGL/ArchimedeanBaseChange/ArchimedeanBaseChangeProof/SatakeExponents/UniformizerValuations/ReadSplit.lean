@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TreeParts
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.IsTransl
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.FieldNOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TreeParts
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.IsTransl
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.FieldNOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,8 +73,8 @@ def WeightJoin : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E],
 
 def TreeSat : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (t : Tr E N) (P : Pre E N) (w : Pl E),
   t.Good → t.Untw → TreeParts t P →
-  (∃ φ ∈ t.space, φ ≠ 0 ∧ ∀ k ∈ KGL w N, finRep E N (locGL E N w k) φ = φ) →
-  ∃ B, P.Sat w B ∧ ∀ φ ∈ t.space, φ ≠ 0 → (∀ k ∈ KGL w N, finRep E N (locGL E N w k) φ = φ) →
+  (∃ φ ∈ t.space, φ ≠ 0 ∧ ∀ k ∈ KGL w (n := N), finRep E N (locGL E N w k) φ = φ) →
+  ∃ B, P.Sat w B ∧ ∀ φ ∈ t.space, φ ≠ 0 → (∀ k ∈ KGL w (n := N), finRep E N (locGL E N w k) φ = φ) →
     IsSatVecGL w ((finRep E N).comp (locGL E N w)) φ B
 
 def PairSat : Prop := TreeSat → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b : ℕ) (s₁ : Tr E a) (s₂ : Tr E b)

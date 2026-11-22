@@ -1,7 +1,13 @@
-import Formalism.SharpRestriction.Divisibility.HookProducts.HhOfInputs
-import Formalism.LocalToGlobal.Divisibility.RecBridgeWire
-import Formalism.LocalToGlobal.ClassOfRecordOfChoice
-import Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems
+module
+
+public import Formalism.SharpRestriction.Divisibility.HookProducts.GaugeFormBoundOfUniformSize
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.HeightBoundOfComponentBounds
+public import Formalism.LocalToGlobal.GlobalTheory.PlacesP
+public import Formalism.LocalToGlobal.Divisibility.RecBridgeWire
+public import Formalism.LocalToGlobal.ClassOfRecordOfChoice
+public import Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems
+
+@[expose] public section
 
 noncomputable section
 

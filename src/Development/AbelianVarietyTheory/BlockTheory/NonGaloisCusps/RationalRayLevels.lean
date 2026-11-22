@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IntFormsSubset
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.FiniteDimensionalOfSz
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealPoints
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,7 +57,7 @@ def SmallIn {k : Type} [Field k] (σ : k →+* ℂ) : Prop :=
 
 def ratVec (c0 : VsV D i D.what₂.LL →ₛₗ[D.what₂.embLL] (R.cV i).W) (k : Subfield ℂ) : Submodule k (R.cV i).W :=
   Submodule.span k {w | ∃ v : VsV D i D.what₂.LL,
-    (∀ m, D.what₂.embLL (MvPolynomial.coeff m (v : Formalism.L2.DIV.Pol D.what₂.LL D.what₂.Tau (Vc D i).rank)) ∈ k) ∧ w = c0 v}
+    (∀ m, D.what₂.embLL (AddMonoidAlgebra.coeff (v : Formalism.L2.DIV.Pol D.what₂.LL D.what₂.Tau (Vc D i).rank) m) ∈ k) ∧ w = c0 v}
 
 def harmVec (u : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ) (w : (R.cV i).W) (f : WO (Vc D i) (Wc D i) → ℂ) :
     WO (Vc D i) (Wc D i) → ℂ :=

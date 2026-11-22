@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HasQOfSmallSubOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.OneUseOf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HasQOfSmallSubOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.OneUseOf
+
+@[expose] public section
 
 namespace UpperTheory.V
 

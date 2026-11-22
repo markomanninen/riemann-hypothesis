@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SpanDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IrredIffSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DensityProd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IntertwinerIso
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.SpanDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IrredIffSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DensityProd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IntertwinerIso
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 

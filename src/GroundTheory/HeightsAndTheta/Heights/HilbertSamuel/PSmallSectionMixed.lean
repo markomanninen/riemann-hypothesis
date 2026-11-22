@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionMixed
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BirationalYPt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftNefBig
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPerturbSemipos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionMixed
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.BirationalYPt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftNefBig
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPerturbSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotIsHorizontalOfDimOne
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -141,7 +146,7 @@ theorem exists_form_of_mem_chartRingZ {Ω : Type} [Field Ω] (y : (Σ k, ι k) �
     rw [add_comm δ₂ δ₁] at hB'
     refine ⟨δ₁ + δ₂, e₁ * ∏ k, (X ⟨k, c k⟩ : MRing ι) ^ δ₂ k + e₂ * ∏ k, (X ⟨k, c k⟩ : MRing ι) ^ δ₁ k,
       isMultiHomog_add hA hB', ?_⟩
-    · rw [map_add, map_mul, map_mul, v₁, v₂, aeval_coordProd, aeval_coordProd, hpow]
+    · rw [map_add (f := _), map_mul, map_mul, v₁, v₂, aeval_coordProd, aeval_coordProd, hpow]
       ring
   | mul x z _ _ hx hz =>
     obtain ⟨δ₁, e₁, h₁, v₁⟩ := hx
@@ -302,23 +307,23 @@ theorem isNefBigDatum_zcomb (hD : GroundTheory.Heights₂.Heights.Inter.DegreeGe
     have hnef := nefOnGenericDeg_of_semipos NefOnGenericOfSemipos.proof hD hP0 hs'
     have h := hB K ι (mCoordIdeal y) D _ hP hnef 1
     convert h using 2
-    funext k
-    simp only [HermLine.zcomb, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.one_apply, hHa, Nat.cast_one,
+    ext k
+    simp only [HermLine.zcomb, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hHa, Pi.one_apply,
       one_mul]
     rw [Nat.cast_sub hp]
     ring
 
 end SmallSectionMixedAlt
 
-open SmallSectionMixedAlt in
 
+open SmallSectionMixedAlt in
 theorem SmallSectionMixed.proof (hG4 : G4.Statement) (hG41 : ArithmeticVolumeDimensionOne.Statement)
     (hD : GroundTheory.Heights₂.Heights.Inter.DegreeGeneric.Statement) (hB : NefPlusAmpleDegree.Statement) :
     SmallSectionMixed.Statement := by
   intro K _ ι _ P P0 d M H p q II hII hd hP hP0 hMs hMn hMc hHa hHs hHm hHc hp htop
   obtain ⟨Ω, _, y, rfl, hbir⟩ := BirationalModelExists.proof K ι P d hP
   have hinj : Function.Injective (algebraMap ℤ Ω) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro m hm
     have hmem : (C m : MRing ι) ∈ mCoordIdeal y := by
       rw [mCoordIdeal, RingHom.mem_ker, mConeMap, aeval_C, MvPolynomial.algebraMap_apply, hm, map_zero]

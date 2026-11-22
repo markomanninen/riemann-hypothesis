@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.LocHom
 
@@ -113,7 +117,8 @@ theorem isLocalizedModule_compRight_away :
     intro D _ _ σ φ
     ext p
     conv_rhs => rw [← hexp p]
-    simp [assemble, evalAt, coord, s₀, map_sum, map_away_smul σ, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [assemble, evalAt, coord, s₀, map_sum, map_away_smul σ, mul_comm]
   haveI : IsLocalizedModule (Submonoid.powers t)
       (LinearMap.pi fun k : Fin n => c.toLinearMap ∘ₗ LinearMap.proj k) :=
     IsLocalizedModule.pi (Submonoid.powers t) (fun _ : Fin n => c.toLinearMap)
@@ -125,6 +130,7 @@ theorem isLocalizedModule_compRight_away :
     rfl
   · intro v
     ext p
-    simp [assemble, coord, ρ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [assemble, coord, ρ', map_sum]
 
 end GlobalTheory.CompanionTheory.LocHom

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.DataHodge
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.EqZeroOfIsIsoSub
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.DataHodge
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.EqZeroOfIsIsoSub
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -65,8 +70,8 @@ def HermDatum.gramLie (A : HermDatum Em Ψ N j) (hj : j ≤ N) (P : Matrix (Fin 
     {ρ : ℕ} (v : Fin ρ → Fin N → Em) : Matrix (Fin ρ) (Fin ρ) ℂ :=
   Matrix.of fun a b => ∑ c, starRingEnd ℂ (A.lieComp hj P τ (v a) c) * A.lieComp hj P τ (v b) c
 
-open Classical in
 
+open Classical in
 def HermDatum.nz (A : HermDatum Em Ψ N j) (hj : j ≤ N) (per : Ψ → Matrix (Fin N) (Fin N) ℂ)
     (I : Submodule (𝓞 Em) (Fin N → Em)) : ℝ :=
   if h : ∃ ρ v, IsNzFamily I ρ v then
@@ -117,12 +122,6 @@ variable {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {K : Type} [Fintype 
   [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [Algebra ℚ Ω] {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)]
   [∀ τ, Module Ω (E τ)] {Em : Type} [Field Em] [NumberField Em] [IsCMField Em]
   (D : FullerData II Ψ K ι Ω E Em)
-
-def nz (z : (Σ k, ι k) → ℂ) (I : Submodule (𝓞 Em) (Fin D.N → Em)) : ℝ :=
-  D.herm.nz (D.j_le.trans (Nat.sub_le _ _)) (D.per z) I
-
-def cuspU (z : (Σ k, ι k) → ℂ) : ℝ :=
-  max 0 (⨆ s, -Real.log (D.nz z (D.torLat s)))
 
 end FullerData
 

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
-import Development.AutomorphicArithmetic.TwistedTraces.MemFixedVectorsOfProductOfCompactOpen
-import Development.AutomorphicArithmetic.TwistedTraces.FixedProjectionInvariantAndCommutingReps
-import Development.AutomorphicArithmetic.TwistedTraces.IsotypicProjectionProductCommute
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.LocUApply
+public import Development.AutomorphicArithmetic.TwistedTraces.MemFixedVectorsOfProductOfCompactOpen
+public import Development.AutomorphicArithmetic.TwistedTraces.FixedProjectionInvariantAndCommutingReps
+public import Development.AutomorphicArithmetic.TwistedTraces.IsotypicProjectionProductCommute
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.C.Sf
 
@@ -59,7 +64,7 @@ theorem UpperTheory.isotypic_submodule_product_decomposition :
       obtain ⟨q, hq⟩ := h2
       refine ⟨X.add_mem p q, ?_⟩
       show ρ (c i a (⟨u, p⟩ + ⟨v, q⟩)) = c i b (ρ (⟨u, p⟩ + ⟨v, q⟩))
-      rw [map_add, map_add, map_add, map_add, hp, hq]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | smul k u _ h1 =>
       obtain ⟨p, hp⟩ := h1
       refine ⟨X.smul_mem k p, ?_⟩

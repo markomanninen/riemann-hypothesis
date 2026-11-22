@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.stupidPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.stupidPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits ZeroObject
@@ -39,19 +43,17 @@ def eIso (K : CochainComplex C ℤ) [K.IsStrictlyLE 0] :
 lemma stupidTruncGEZeroIsoSingle_hom_f_zero (K : CochainComplex C ℤ) [K.IsStrictlyLE 0] :
     (eIso K).hom.f 0 = (K.stupidTruncXIso (ComplexShape.embeddingUpIntGE 0) (i := 0) (by simp)).hom ≫
       (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 (K.X 0)).inv := by
-  simp [eIso] <;> rfl
+  simp [eIso]
 
 lemma nat {K L : CochainComplex C ℤ} [K.IsStrictlyLE 0] [L.IsStrictlyLE 0] (g : K ⟶ L) :
     HomologicalComplex.stupidTruncMap g (ComplexShape.embeddingUpIntGE 0) ≫ (eIso L).hom =
       (eIso K).hom ≫ (CochainComplex.singleFunctor C 0).map (g.f 0) := by
-  ext i
+  apply HomologicalComplex.hom_ext
+  intro i
   by_cases h : i = 0
   · subst h
     simp only [HomologicalComplex.comp_f, stupidTruncGEZeroIsoSingle_hom_f_zero, cochainComplex_singleFunctor_zero_map_f_zero, Category.assoc, Iso.inv_hom_id_assoc]
     erw [HomologicalComplex.stupidTruncMap_stupidTruncXIso_hom_assoc]
-    first
-    | (apply Eq.symm; refine (Category.assoc _ _ _).trans ?_; congr 1; exact Iso.inv_hom_id_assoc _ _)
-    | (dsimp only [CochainComplex.singleFunctor, CochainComplex.singleFunctors] at *; simp)
   · exact (HomologicalComplex.isZero_single_obj_X _ 0 _ i h).eq_of_tgt _ _
 
 theorem trunc0_of : LateralTheory.E.stupidPf.trunc0 := by

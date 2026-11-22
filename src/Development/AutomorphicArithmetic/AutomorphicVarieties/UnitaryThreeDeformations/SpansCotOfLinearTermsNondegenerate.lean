@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MemSatSqIffConstantCoeffAndLinearCoeffEqZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AbsDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MemSatSqIffConstantCoeffAndLinearCoeffEqZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AbsDefs
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia.Abs
 
@@ -33,7 +37,8 @@ private theorem span_of_ann {O : Type} [CommRing O] [IsDomain O] {σ : Type} [Fi
           rw [hfV] at h2
           exact (Submodule.mem_bot _).mp h2
         rw [LinearMap.pi_apply_eq_sum_univ] at hvk
-        rw [map_zero, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_zero, map_sum]
         calc ∑ i, ι (v k i * d i) = ∑ i, (b : O) • (ι (v k i) * e i) := by
               refine Finset.sum_congr rfl fun i _ => ?_
               rw [map_mul, hd i, mul_smul_comm]
@@ -70,7 +75,8 @@ private theorem span_of_ann {O : Type} [CommRing O] [IsDomain O] {σ : Type} [Fi
   refine ⟨b, nonZeroDivisors.coe_ne_zero b, a, fun i => hinj ?_⟩
   have hi := congrFun hc i
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at hi
-  rw [map_mul, map_sum, ← hi, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, map_sum, ← hi, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, ha k, Algebra.smul_def]
   ring
@@ -104,18 +110,21 @@ theorem UpperTheory.spansCot_of_linear_terms_nondegenerate :
     rw [mem_satSq_iff_constantCoeff_and_linearCoeff_eq_zero]
     constructor
     · rw [← weightedSeriesOrigin_apply]
-      simp [map_sub, map_sum, map_smul, hg0', hx]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sub, map_sum, map_smul, hg0', hx]
     · intro i
       have hser : ser (c • g - ∑ k, a k • F k) = c • ser g - ∑ k, a k • ser (F k) := by
         simp [ser]
-      rw [hser, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hser, map_sub, map_sum]
       simp only [map_smul, smul_eq_mul]
       exact sub_eq_zero.mpr (ha i)
   have heq : (satSq (x0 O wt)).mkQ (c • g) = (satSq (x0 O wt)).mkQ (∑ k, a k • F k) := by
     rw [Submodule.mkQ_apply, Submodule.mkQ_apply, Submodule.Quotient.eq]
     exact hsat
   unfold cotSpan
-  rw [← map_smul, heq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_smul, heq, map_sum]
   refine Submodule.sum_mem _ fun k _ => ?_
   rw [map_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open PowerSeries
 
@@ -40,7 +44,8 @@ theorem coeff_X_pow_mul_expand {k : ℕ} (hk : k ≠ 0) {j : ℕ} (hj : j < k) (
 theorem sum_residuePart {k : ℕ} (hk : k ≠ 0) (f : PowerSeries O) :
     ∑ l ∈ Finset.range k, X ^ l * expand k hk (residuePart k l f) = f := by
   ext m
-  rw [map_sum, Finset.sum_congr rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl
     (fun l hl => coeff_X_pow_mul_expand hk (Finset.mem_range.1 hl) _ m), Finset.sum_ite_eq,
     if_pos (Finset.mem_range.2 (Nat.mod_lt _ (Nat.pos_of_ne_zero hk))), coeff_residuePart,
     Nat.div_add_mod]
@@ -87,10 +92,12 @@ theorem extendAdd_mul (φ : PowerSeries O →+* K) {k : ℕ} (hk : k ≠ 0) {t :
     (ht : t ^ k = φ X) (f g : PowerSeries O) :
     extendAdd φ k t (f * g) = extendAdd φ k t f * extendAdd φ k t g := by
   conv_lhs => rw [← sum_residuePart hk f, ← sum_residuePart hk g]
-  rw [extendAdd_apply φ k t f, extendAdd_apply φ k t g, Finset.sum_mul_sum, Finset.sum_mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [extendAdd_apply φ k t f, extendAdd_apply φ k t g, Finset.sum_mul_sum, Finset.sum_mul_sum,
     map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_mul_mul_comm, ← pow_add, ← map_mul, extendAdd_X_pow_mul_expand φ hk ht, map_mul,
     pow_add]

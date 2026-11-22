@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TraceIntegralSubringExtension
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TraceIntegralSubringExtension
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -13,7 +17,8 @@ theorem UpperTheory.V.Th.Sp.trp :
   apply hf
   have htr : ∀ M : Matrix (Fin n) (Fin n) O, f M.trace = (M.map f).trace := by
     intro M
-    simp [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, map_sum]
   have haeval : (aeval A p).map f = aeval (A.map f) (p.map f) := by
     have := Polynomial.map_aeval_eq_aeval_map (φ := f) (ψ := f.mapMatrix) ?_ p A
     · simpa using this
@@ -23,5 +28,6 @@ theorem UpperTheory.V.Th.Sp.trp :
   have hchar : (A.map f).charpoly = ((Finset.univ.val.map fun i => f (α i)).map fun a => X - C a).prod := by
     rw [Matrix.charpoly_map, h, Polynomial.map_prod]
     simp [Finset.prod_eq_multiset_prod, Multiset.map_map, Function.comp_def]
-  rw [htr, haeval, GlobalTheory.CompanionTheory.TraceSpec.trace_aeval_matrix, hchar, Polynomial.roots_multiset_prod_X_sub_C, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [htr, haeval, GlobalTheory.CompanionTheory.TraceSpec.trace_aeval_matrix, hchar, Polynomial.roots_multiset_prod_X_sub_C, map_sum]
   simp [Multiset.map_map, Finset.sum_eq_multiset_sum, Function.comp_def]

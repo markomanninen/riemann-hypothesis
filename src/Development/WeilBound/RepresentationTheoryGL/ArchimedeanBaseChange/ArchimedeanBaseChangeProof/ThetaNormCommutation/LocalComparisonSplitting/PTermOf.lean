@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem termOf_holds : TermOf := by
   have hint : ∀ v, Integrable (f v) (ν₁.prod ν₂) := fun v => (hfc v).integrable_of_hasCompactSupport (hfs v)
   have hF₁i : Integrable F₁ α := Integrable.fintype_prod hint
   have hF₁m : Measurable F₁ :=
-    (continuous_finset_prod _ fun v _ => (hfc v).comp (continuous_apply v)).measurable
+    (continuous_finsetProd _ fun v _ => (hfc v).comp (continuous_apply v)).measurable
   haveI : Countable ↥((ratCent d₁).prod (ratCent d₂)) := by
     have hsub : (((ratCent d₁).prod (ratCent d₂) : Subgroup (GA E a × GA E b)) : Set (GA E a × GA E b)) ⊆
         Set.range (fun p : GL (Fin a) E × GL (Fin b) E => (ratGL E a p.1, ratGL E b p.2)) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.MeanHeightDescent.BadRowsNumeric
+module
+
+public import Mathlib
+public import Formalism.MeanHeightDescent.BadRowsNumeric
+
+@[expose] public section
 
 open Finset
 

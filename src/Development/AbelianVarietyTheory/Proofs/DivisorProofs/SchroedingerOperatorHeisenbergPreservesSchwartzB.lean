@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsBisSide
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsBisSide
+
+@[expose] public section
 
 namespace SchrodingerSchwartzBruhat
 section

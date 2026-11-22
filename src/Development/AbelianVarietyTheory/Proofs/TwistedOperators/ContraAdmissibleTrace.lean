@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInvariantForm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,6 @@ variable {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 def res (π : Representation ℂ G V) (K : Subgroup G) :
     fixed (contra π) K →ₗ[ℂ] Module.Dual ℂ (fixed π K) :=
   (fixed π K).subtype.dualMap ∘ₗ (smoothPart π.dual).subtype ∘ₗ (fixed (contra π) K).subtype
-
-theorem res_apply (π : Representation ℂ G V) (K : Subgroup G) (l : fixed (contra π) K)
-    (v : fixed π K) : res π K l v = (l.1 : Module.Dual ℂ V) v.1 := rfl
 
 theorem invariant_of_fixed {π : Representation ℂ G V} {K : Subgroup G} (l : fixed (contra π) K)
     (h : G) (hh : h ∈ K) (w : V) : (l.1 : Module.Dual ℂ V) (π h w) = (l.1 : Module.Dual ℂ V) w := by

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Development.AutomorphicArithmetic.PrimitiveCosets.charsA
-import Development.AutomorphicArithmetic.PrimitiveCosets.GmAEq
-import Development.AutomorphicArithmetic.PrimitiveCosets.SigALe
-import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChTop
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChCore
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.charsA
+public import Development.AutomorphicArithmetic.PrimitiveCosets.GmAEq
+public import Development.AutomorphicArithmetic.PrimitiveCosets.SigALe
+public import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChTop
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChCore
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr
   Formalism.LFunctionChainParameters.LChain Formalism.LFunctionChainParameters.LHost

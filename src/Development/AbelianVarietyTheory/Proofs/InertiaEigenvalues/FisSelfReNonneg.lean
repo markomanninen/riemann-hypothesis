@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.FischerSelfNeZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.FischerSelfNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem fis_conj (P Q : MvPolynomial σ ℂ) : starRingEnd ℂ (fis P Q) = fis Q
   unfold fis
   set P' := rename (flat σ) P
   set Q' := rename (flat σ) Q
-  rw [ReciprocityTheory.PGsh.fischer_eq_sum P' Q' (P'.support ∪ Q'.support) Finset.subset_union_left,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ReciprocityTheory.PGsh.fischer_eq_sum P' Q' (P'.support ∪ Q'.support) Finset.subset_union_left,
     ReciprocityTheory.PGsh.fischer_eq_sum Q' P' (P'.support ∪ Q'.support) Finset.subset_union_right, map_sum]
   refine Finset.sum_congr rfl fun A _ => ?_
   simp only [ReciprocityTheory.PGsh.fw, map_mul, Complex.conj_conj, map_natCast]
@@ -41,15 +46,11 @@ theorem fis_self_ne_zero {P : MvPolynomial σ ℂ} (hP : P ≠ 0) : fis P P ≠ 
 
 theorem fis_add_right (P Q Q' : MvPolynomial σ ℂ) : fis P (Q + Q') = fis P Q + fis P Q' := by
   unfold fis
-  rw [map_add, ReciprocityTheory.PGsh.fischer_add_right]
+  rw [map_add (f := _), ReciprocityTheory.PGsh.fischer_add_right]
 
 theorem fis_smul_right (c : ℂ) (P Q : MvPolynomial σ ℂ) : fis P (c • Q) = starRingEnd ℂ c * fis P Q := by
   unfold fis
   rw [map_smul, ReciprocityTheory.PGsh.fischer_smul_right]
-
-theorem fis_add_left (P P' Q : MvPolynomial σ ℂ) : fis (P + P') Q = fis P Q + fis P' Q := by
-  unfold fis
-  rw [map_add, ReciprocityTheory.PGsh.fischer_add_left]
 
 theorem fis_smul_left (c : ℂ) (P Q : MvPolynomial σ ℂ) : fis (c • P) Q = c * fis P Q := by
   unfold fis

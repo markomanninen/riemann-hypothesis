@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalSmulOfIsHomogeneousAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StGoodChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalSmulOfIsHomogeneousAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -29,7 +34,8 @@ theorem eval_homogenize {m : ℕ} (f : MvPolynomial (Fin m) ℂ) {D : ℕ} (hD :
     refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) fun d _ hd' => ?_
     exact homogeneousComponent_eq_zero (n := d) (φ := f) (by simp at hd'; omega)
   conv_rhs => rw [hf]
-  rw [map_mul, map_sum, map_sum, eval_X, Finset.mul_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, map_sum, map_sum, eval_X, Finset.mul_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdD : d ≤ D := by simp at hd; omega
   rw [eval_smul_of_isHomogeneous (homogeneousComponent_isHomogeneous d f), map_mul, map_pow, eval_X]
@@ -40,8 +46,8 @@ theorem eval_homogenize {m : ℕ} (f : MvPolynomial (Fin m) ℂ) {D : ℕ} (hD :
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem segre_scaleBlock [DecidableEq K] (k0 : K) (c : ℂ) (z : (Σ k, ι k) → ℂ) :
     segre (scaleBlock k0 c z) = c • segre z := by
   funext j
@@ -49,8 +55,8 @@ theorem segre_scaleBlock [DecidableEq K] (k0 : K) (c : ℂ) (z : (Σ k, ι k) �
   rw [Finset.prod_mul_distrib]
   simp
 
-open Classical in
 
+open Classical in
 def linForm {m e : ℕ} (σ : Fin m ≃ ((k : K) → ι k))
     (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)) : MvPolynomial (Fin m) ℂ :=
   ∑ a, C (Ψ (fun i' => if σ a = i' then (1 : ℂ) else 0) 0) * X a
@@ -64,7 +70,8 @@ theorem eval_linForm {m e : ℕ} (σ : Fin m ≃ ((k : K) → ι k))
     rw [pi_eq_sum_univ (fun i' => x (σ.symm i'))]
     exact (Equiv.sum_comp σ _).symm.trans (by simp)
   rw [hv]
-  simp only [map_sum, Finset.sum_apply, map_smul, Pi.smul_apply, smul_eq_mul, map_mul, eval_C, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_apply, map_smul, Pi.smul_apply, smul_eq_mul, map_mul, eval_C, eval_X]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [mul_comm]
 
@@ -77,8 +84,8 @@ theorem exists_segre_smul (P : Ideal (MRing ι)) (hP : IsMultiHomogIdeal P) {z :
   · obtain ⟨k0⟩ := not_isEmpty_iff.1 h
     exact ⟨scaleBlock k0 c z, scaleBlock_mem_zeroLocus P hP k0 hc hz, segre_scaleBlock k0 c z⟩
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem segre_of_isEmpty (hK : IsEmpty K) (z : (Σ k, ι k) → ℂ) (j : (k : K) → ι k) : segre z j = 1 := by
   simp [segre]
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecialFibreNotInClosure
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgeTateKernel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HodgeTateLatticePointFinrankTateModule
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgeTateKernel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +92,8 @@ theorem finite_free_and_sq_smul_mem_span : ∀ (p : ℕ) [Fact p.Prime] (C : Typ
         ext j
         simp [toO, Finset.sum_apply, Pi.single_apply, apply_ite]
       conv_lhs => rw [hy]
-      rw [map_sum, map_sum, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Submodule.coe_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, hal, map_smul Ψ (y i), Submodule.coe_smul]
   obtain ⟨y, hy⟩ := hb (Ψ w) (Ψ w).2

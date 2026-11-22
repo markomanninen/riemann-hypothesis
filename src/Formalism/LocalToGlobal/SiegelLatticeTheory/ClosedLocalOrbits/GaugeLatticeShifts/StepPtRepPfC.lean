@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StepPtRepPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,10 +98,10 @@ theorem realize (A B : Fr ε r k) (i0 : Fin k) (Z : Matrix (Fin (r + 1)) (Fin (r
   have hs : LinearIndependent ℂ s :=
     li_of_pair ε s (Sum.elim B.Fv (fun i => B.wb i.1)) 1 (by simp) (by
       rintro (a|j) (b|i)
-      · simp [s, B.Fv_fam, one_apply]
-      · simp [s, B.Fv_w, one_apply]
-      · simp [s, B.w_fam, one_apply]
-      · simp [s, B.ww, one_apply, Subtype.ext_iff])
+      · simp [s, B.Fv_fam, Matrix.one_apply]
+      · simp [s, B.Fv_w]
+      · simp [s, B.w_fam]
+      · simp [s, B.ww, Matrix.one_apply, Subtype.coe_inj])
   have ht : LinearIndependent ℂ tt :=
     li_of_pair ε tt (Sum.elim (fam A.e A.z) (fun i => A.wb i.1)) (Matrix.fromBlocks Z 0 0 1)
       (by rw [det_fromBlocks_zero₂₁, det_one, mul_one]; exact hZ) (by
@@ -105,7 +109,7 @@ theorem realize (A B : Fr ε r k) (i0 : Fin k) (Z : Matrix (Fin (r + 1)) (Fin (r
       · simp [tt, hydef, A.p1]
       · simp [tt, A.fam_w]
       · simp [tt, hydef, A.p4, j.2]
-      · simp [tt, A.ww, one_apply, Subtype.ext_iff])
+      · simp [tt, A.ww, Matrix.one_apply, Subtype.coe_inj])
   have hG : ∀ i j, hJ ε (tt i) (tt j) = hJ ε (s i) (s j) := by
     rintro (b|i) (c'|j)
     · exact hgram b c'

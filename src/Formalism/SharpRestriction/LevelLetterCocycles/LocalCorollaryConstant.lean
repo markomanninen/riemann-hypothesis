@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfInputs
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfInputs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ def dD (v : κ → mixedEmbedding.mixedSpace F) (f : (κ → AF F) → ℂ) (x :
 def mM (l : (κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ) (f : (κ → AF F) → ℂ) (x : κ → AF F) : ℂ :=
   (l (arch F x) : ℂ) * f x
 
-variable (κ) in
 
+variable (κ) in
 abbrev Op : Type := (κ → mixedEmbedding.mixedSpace F) ⊕ ((κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ)
 
 def app (o : Op F κ) (f : (κ → AF F) → ℂ) : (κ → AF F) → ℂ := Sum.elim (fun v => dD F v f) (fun l => mM F l f) o
@@ -40,8 +44,6 @@ def wordD (w : List (κ → mixedEmbedding.mixedSpace F)) (f : (κ → AF F) →
 def Per (m : ℕ) (f : (κ → AF F) → ℂ) : Prop :=
   ∀ x z : κ → AF F, (∀ i, ∃ a : AF F, evI F a = 0 ∧ (∀ v, evFin F v a ∈ v.adicCompletionIntegers F) ∧
     z i = (m : AF F) * a) → f (x + z) = f x
-
-@[simp] theorem word_nil (f : (κ → AF F) → ℂ) : word F [] f = f := rfl
 
 @[simp] theorem word_cons (o : Op F κ) (w : List (Op F κ)) (f : (κ → AF F) → ℂ) :
     word F (o :: w) f = app F o (word F w f) := rfl

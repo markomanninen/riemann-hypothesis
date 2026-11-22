@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -87,8 +92,8 @@ theorem toFun_range_of_injective (ρ : Representation (ZMod l) Γ X)
   rw [d.toFun_eq_ker_add_range ρ σ φ hφ,
     d.toFun_eq_zero_of_subsingleton (X := LinearMap.ker φ), zero_add]
 
-omit [Finite X] in
 
+omit [Finite X] in
 theorem toFun_range_of_surjective (ρ : Representation (ZMod l) Γ X)
     (σ : Representation (ZMod l) Γ Y) (φ : X →ₗ[ZMod l] Y) (hφ : ρ.IsIntertwiningMap σ φ)
     (hs : Function.Surjective φ) :
@@ -147,11 +152,6 @@ def torsNMap (f : A →+ B) : TorsN A n →ₗ[ZMod n] TorsN B n :=
     (q := LinearMap.ker (LinearMap.lsmul ℤ B (n : ℤ))) (fun x hx => by
       rw [mem_ker_lsmul_iff] at hx ⊢
       simp [← map_nsmul, hx])).toAddMonoidHom.toZModLinearMap n
-
-@[simp]
-theorem coe_torsNMap_apply (f : A →+ B) (x : TorsN A n) :
-    ((torsNMap n f x : TorsN B n) : B) = f x :=
-  rfl
 
 def modNMap (f : A →+ B) : ModN A n →ₗ[ZMod n] ModN B n :=
   (Submodule.mapQ _ _ f.toIntLinearMap (by
@@ -223,20 +223,17 @@ noncomputable def connecting : TorsN C n →ₗ[ZMod n] ModN A n :=
       map_zero' := connectingFun_zero hh hfh hf
       map_add' := connectingFun_add hh hfh hf }
 
-theorem connecting_apply (c : TorsN C n) : connecting hh hfh hf c = connectingFun f h hh c :=
-  rfl
-
 theorem connecting_spec (c : TorsN C n) (b : B) (a : A) (hb : h b = c) (ha : f a = n • b) :
     connecting hh hfh hf c = Submodule.Quotient.mk a :=
   connectingFun_spec hh hfh hf c b a hb ha
 
-omit hh hfh in
 
+omit hh hfh in
 theorem torsNMap_injective : Function.Injective (torsNMap n f) := fun _ _ hxy =>
   Subtype.ext (hf (congrArg Subtype.val hxy))
 
-omit hh in
 
+omit hh in
 theorem exact_torsNMap_torsNMap : Function.Exact (torsNMap n f) (torsNMap n h) := by
   intro y
   constructor
@@ -256,7 +253,8 @@ theorem exact_torsNMap_connecting : Function.Exact (torsNMap n h) (connecting hh
   · rintro ⟨a₁, ha₁⟩
     have hb₁ : n • (b - f a₁) = 0 := by rw [smul_sub, ← ha, ← map_nsmul, ha₁, sub_self]
     refine ⟨⟨b - f a₁, (mem_ker_lsmul_iff n _).2 hb₁⟩, Subtype.ext ?_⟩
-    simp [hb, (hfh _).2 ⟨a₁, rfl⟩]
+    change h (b - f a₁) = (c : C)
+    rw [map_sub, (hfh _).2 ⟨a₁, rfl⟩, sub_zero, hb]
   · rintro ⟨t, rfl⟩
     have h₀ := connecting_spec hh hfh hf (torsNMap n h t) t 0 rfl
       (by rw [map_zero, (mem_ker_lsmul_iff n (t : B)).1 t.2])
@@ -281,8 +279,8 @@ theorem exact_connecting_modNMap : Function.Exact (connecting hh hfh hf) (modNMa
     simp only [LinearMap.lsmul_apply, natCast_zsmul] at hy
     rw [smul_sub, ← ha', ← map_nsmul, ← map_sub, hy, sub_sub_cancel]
 
-omit hf in
 
+omit hf in
 theorem exact_modNMap_modNMap : Function.Exact (modNMap n f) (modNMap n h) := by
   intro q
   obtain ⟨b, rfl⟩ := Submodule.Quotient.mk_surjective _ q
@@ -302,8 +300,8 @@ theorem exact_modNMap_modNMap : Function.Exact (modNMap n f) (modNMap n h) := by
     refine ⟨-h y, ?_⟩
     rw [smul_neg, ← map_nsmul, hy, map_sub, (hfh _).2 ⟨a, rfl⟩, zero_sub, neg_neg]
 
-omit hfh hf in
 
+omit hfh hf in
 theorem modNMap_surjective : Function.Surjective (modNMap n h) := by
   intro q
   obtain ⟨c, rfl⟩ := Submodule.Quotient.mk_surjective _ q
@@ -360,10 +358,6 @@ theorem finite_modN_of_exact (hh : Function.Surjective h) (hfh : Function.Exact 
 theorem finite_torsN_of_injective (hf : Function.Injective f) [Finite (TorsN B n)] :
     Finite (TorsN A n) :=
   Finite.of_injective _ (torsNMap_injective hf)
-
-theorem finite_modN_of_surjective (hh : Function.Surjective h) [Finite (ModN B n)] :
-    Finite (ModN C n) :=
-  Finite.of_surjective _ (modNMap_surjective hh)
 
 end Finiteness
 

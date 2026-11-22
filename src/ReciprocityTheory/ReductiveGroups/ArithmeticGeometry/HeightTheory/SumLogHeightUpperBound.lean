@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UpSiegel
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UpSiegel
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 

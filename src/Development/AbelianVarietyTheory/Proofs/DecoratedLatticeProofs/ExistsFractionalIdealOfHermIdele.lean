@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardCharacterConductorAlmostAll
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StrongApproximationDecomposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardCharacterConductorAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StrongApproximationDecomposition
+
+@[expose] public section
+
 open NumberField
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel IsLocalRing GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.FinPl
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -18,8 +23,6 @@ namespace GlobalTheory.SeeSaw.IdeleIdeal
 
 variable {D : D7}
 
-local notation "ZF" => Af D.host.F ⊗[D.host.F] D.host.E
-
 theorem one_tmul_mem (o : 𝓞 D.host.E) : (1 : Af D.host.F) ⊗ₜ[D.host.F] (o : D.host.E) ∈ intAE D :=
   GlobalTheory.FinPl.Conductor.tmul_mem (fun v => by rw [map_one]; exact one_mem _) o
 
@@ -32,7 +35,7 @@ theorem one_tmul_mem_iff (e : D.host.E) :
   rw [← h]
   exact (GlobalTheory.SplitDec.int_iff (incA D e)).trans (GlobalTheory.SplitDec.rat_int_iff e)
 
-theorem exists_int_mul (y : ZF) : ∃ N : 𝓞 D.host.E, N ≠ 0 ∧
+theorem exists_int_mul (y : Af D.host.F ⊗[D.host.F] D.host.E) : ∃ N : 𝓞 D.host.E, N ≠ 0 ∧
     ((1 : Af D.host.F) ⊗ₜ[D.host.F] (N : D.host.E)) * y ∈ intAE D := by
   obtain ⟨x, u, hu, rfl⟩ := GlobalTheory.FinPl.Conductor.approx y
   obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective (A := 𝓞 D.host.E) x
@@ -47,7 +50,8 @@ theorem exists_int_mul (y : ZF) : ∃ N : 𝓞 D.host.E, N ≠ 0 ∧
   rw [e]
   exact one_tmul_mem a
 
-theorem approx_mul (z : ZF) {N : 𝓞 D.host.E} (hN : N ≠ 0) : ∃ x : D.host.E, ∃ u ∈ intAE D,
+theorem approx_mul (z : Af D.host.F ⊗[D.host.F] D.host.E) {N : 𝓞 D.host.E} (hN : N ≠ 0) :
+    ∃ x : D.host.E, ∃ u ∈ intAE D,
     z = (1 : Af D.host.F) ⊗ₜ[D.host.F] x + ((1 : Af D.host.F) ⊗ₜ[D.host.F] (N : D.host.E)) * u := by
   have hN' : (N : D.host.E) ≠ 0 := by exact_mod_cast hN
   obtain ⟨x, u, hu, e⟩ := GlobalTheory.FinPl.Conductor.approx
@@ -103,8 +107,8 @@ theorem mem_idealOf {y y' : Af D.host.F ⊗[D.host.F] D.host.E} (h : y' * y = 1)
 
 end GlobalTheory.SeeSaw.IdeleIdeal
 
-open GlobalTheory.SeeSaw.IdeleIdeal GlobalTheory.FinPlLoc in
 
+open GlobalTheory.SeeSaw.IdeleIdeal GlobalTheory.FinPlLoc in
 theorem GlobalTheory.SeeSaw.exists_idealOfIdele : ∀ (D : D7) (m : (AE D)ˣ), ∃ 𝔞 : FI D, ∀ x : Pl D, ∀ a ∈ idAt D (· = x),
     a ∈ idV 𝔞 x ↔ ((m⁻¹ : (AE D)ˣ) : AE D) * a ∈ intAt D (· = x) := by
   intro D m
@@ -131,7 +135,7 @@ theorem GlobalTheory.SeeSaw.exists_idealOfIdele : ∀ (D : D7) (m : (AE D)ˣ), �
         simpa using GlobalTheory.FinPl.Conductor.tmul_mem hα (1 : 𝓞 D.host.E)
       exact GlobalTheory.FinPl.Conductor.mul_mem_int h1 ((hmemA d).1 hd)
     | zero => rw [map_zero, mul_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [map_add, mul_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _), mul_add]; exact add_mem hy hz
     | neg y _ hy => rw [map_neg, mul_neg]; exact neg_mem hy
   · intro hi
     have hz : mi * finPart D a ∈ intAE D := by
@@ -173,9 +177,9 @@ theorem GlobalTheory.SeeSaw.exists_idealOfIdele : ∀ (D : D7) (m : (AE D)ˣ), �
         rw [e4]
         exact GlobalTheory.FinPl.Conductor.mul_mem_int hNm (one_tmul_mem o)
       | zero => rw [mul_zero, mul_zero, map_zero]; exact zero_mem _
-      | add y z _ _ hy hz => rw [mul_add, mul_add, map_add]; exact add_mem hy hz
+      | add y z _ _ hy hz => rw [mul_add, mul_add, map_add (f := _)]; exact add_mem hy hz
       | neg y _ hy => rw [mul_neg, mul_neg, map_neg]; exact neg_mem hy
-    rw [eq_finIn (infPart_of_idAt ha), ← hidem, e, mul_add, map_add]
+    rw [eq_finIn (infPart_of_idAt ha), ← hidem, e, mul_add, map_add (f := _)]
     refine add_mem ?_ (hrest u hu)
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, finIn_tmul]
     exact AddSubgroup.subset_closure ⟨_, hε, fun w hw => GlobalTheory.FinPl.Conductor.ev_ne hw, d, hd, rfl⟩

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.SplitQuadratic
 
@@ -46,7 +50,7 @@ theorem isPrincipalIdealRing_of_sq_eq_sq :
           (-(ι x.1 * ι y.2 + ι x.2 * ι y.1)) * h12
       map_zero' := by simp
       map_add' := fun x y => by
-        simp only [Prod.fst_add, Prod.snd_add, map_add]
+        simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]
         ring }
   have hsurj : Function.Surjective φ := by
     intro y
@@ -54,7 +58,7 @@ theorem isPrincipalIdealRing_of_sq_eq_sq :
     refine ⟨(p + q * e, p - q * e), ?_⟩
     show ι (p + q * e) * ε₁ + ι (p - q * e) * ε₂ = ι p + ι q * δ
     rw [hε₁, hε₂]
-    simp only [map_add, map_sub, map_mul]
+    simp only [map_add (f := _), map_sub, map_mul]
     linear_combination (ι p + ι q * ι e * ι e' * δ) * h2' + (ι q * δ) * hee'
   exact IsPrincipalIdealRing.of_surjective φ hsurj
 

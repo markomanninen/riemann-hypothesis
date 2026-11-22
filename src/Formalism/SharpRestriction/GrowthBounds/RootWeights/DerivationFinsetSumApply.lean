@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantIsotypicOrthogonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ theorem derivation_finset_sum_apply {σ α : Type} (s : Finset α)
   · intro a s ha ih
     rw [Finset.sum_insert ha, Finset.sum_insert ha, Derivation.add_apply, ih]
 
-open Classical in
 
+open Classical in
 def glDerivation (K : Type) [Field K] {ι : Type} [Fintype ι] {n : ℕ} (LL : Letters ι) (S : Set ι) (a b : Fin n) :
     Derivation K (MvPolynomial (ι × Fin n) K) (MvPolynomial (ι × Fin n) K) :=
   ∑ l : ι, if l ∈ S then

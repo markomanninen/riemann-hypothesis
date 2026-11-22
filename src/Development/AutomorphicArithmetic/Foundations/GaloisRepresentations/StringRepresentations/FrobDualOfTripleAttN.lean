@@ -1,10 +1,19 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HodgeOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PureOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpsGoodOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobDualOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HkFrobOfAttached
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NoInvAwayOfPure
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedOfAttached
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HodgeOfAttached
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TripleAtt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpsGoodOfAttached
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobDualOfAttached
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HkFrobOfAttached
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NoInvAwayOfPure
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +23,8 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 
 variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
 
-open Classical in
 
+open Classical in
 structure AttN (A : NAut N) (bkP : BKPh X) (i : X.Tw) (ι : FractionRing (X.O0 i) →+* ℂ)
     (ρ : Gen.GE N →* GL (Fin D.R.r) (X.O0 i)) (π : A.CG D.R.r) (sh : ℝ) : Prop where
   unr : ∀ w, w ∉ placesOver D.host.E (X.l i) → A.unr (A.locG π w) → ∀ σ ∈ Ine (F := D.host.E) (N.plOm.1 w), ρ σ = 1
@@ -233,6 +242,7 @@ theorem hkFrob_of_tripleAtt_n : ∀ (D : D7) (bkP : BlochKatoReduction.BK D) (i 
     rw [coeff_charpolyRev_map, Matrix.map_smul' _ _ _ (map_mul _), map_pow (rd i ι) _ D.R.t, heps, key, map_mul,
       map_mul, map_pow, map_pow, map_neg, map_one, map_natCast, ← hq, hes, Multiset.map_map, Multiset.map_map]
     congr 2
+    congr 1
     apply Multiset.map_congr rfl
     intro a _
     simp only [Function.comp]

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialBaseChange
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialBaseChange
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -42,7 +46,7 @@ theorem exists_eq_add_mul_genY (c : E.toAffine.FunctionField) :
     (q.coeff 0).2, (q.coeff 1).2, ?_⟩
   change aeval (genY E) p = _
   rw [hval, eq_X_add_C_of_natDegree_le_one hq]
-  simp only [map_add, map_mul, aeval_C, aeval_X, coeff_add, coeff_C_mul_X, coeff_C]
+  simp only [map_add (f := _), map_mul, aeval_C, aeval_X, coeff_add, coeff_C_mul_X, coeff_C]
   simp
   ring
 
@@ -64,7 +68,7 @@ theorem exists_algebraMap_eq_of_bcEmb {c : E.toAffine.FunctionField} {a : F'}
     | inv x _ hx => rw [map_inv₀]; exact inv_mem hx
     | mul x y _ _ hx hy => rw [map_mul]; exact mul_mem hx hy
   obtain ⟨r, s, hr, hs, rfl⟩ := exists_eq_add_mul_genY E c
-  rw [map_add, map_mul, bcEmb_genY] at h
+  rw [map_add (f := _), map_mul, bcEmb_genY] at h
   have hs0 : bcEmb (F' := F') E s = 0 := by
     by_contra hne
     apply genY_not_mem (E.baseChange F')
@@ -91,7 +95,7 @@ theorem exists_algebraMap_eq_of_bcEmb {c : E.toAffine.FunctionField} {a : F'}
   rw [aeval_genX_eq_zero_iff] at key
   have hcoeff : ∀ j, algebraMap F F' (p.coeff j) = a * algebraMap F F' (q.coeff j) := by
     intro j
-    have := congrArg (coeff · j) key
+    have := congrArg (fun (f : F'[X]) => f.coeff j) key
     simp only [coeff_sub, coeff_map, coeff_C_mul, coeff_zero] at this
     linear_combination this
   have hqi : q.coeff q.natDegree ≠ 0 := leadingCoeff_ne_zero.mpr hq
@@ -130,21 +134,11 @@ theorem isogenyPullback_eq_invConst_smul (φ : Isogeny E E') :
     isogenyPullback φ (invariantDifferential E') = invConst φ • invariantDifferential E := by
   rw [isogenyPullback_invariantDifferential_eq_smul, ← algebraMap_invConst, algebraMap_smul]
 
-theorem invConst_add {φ ψ χ : Isogeny E E'} (h : χ.1 = φ.1 + ψ.1) :
-    invConst χ = invConst φ + invConst ψ :=
-  (algebraMap F E.toAffine.FunctionField).injective (by
-    rw [map_add, algebraMap_invConst, algebraMap_invConst, algebraMap_invConst, isogCoeff_add h])
 
 variable (E) in
-
 theorem invConst_mulIsogeny (n : ℤ) (hn : n ≠ 0) : invConst (mulIsogeny E n hn) = n :=
   (algebraMap F E.toAffine.FunctionField).injective (by
     rw [algebraMap_invConst, isogCoeff_mulIsogeny, map_intCast])
-
-theorem isSeparable_iff_invConst_ne_zero (φ : Isogeny E E') :
-    φ.IsSeparable ↔ invConst φ ≠ 0 := by
-  rw [isSeparable_iff_isogCoeff_ne_zero, ← algebraMap_invConst, ne_eq, ne_eq,
-    map_eq_zero_iff _ (algebraMap F E.toAffine.FunctionField).injective]
 
 theorem invConst_isogBaseChange {F' : Type u} [Field F'] [Algebra F F'] [DecidableEq F']
     (φ : Isogeny E E') :

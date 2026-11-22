@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBaseFrame
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -60,7 +65,7 @@ theorem logDerivation_atPrime_span : ∀ (F A R : Type) [Field F] [CommRing A] [
       rw [hk, mul_comm (tg x) k, mul_assoc]
       exact Ideal.mul_mem_left _ _ (htgI x hx)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Ideal.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Ideal.add_mem _ hx hy
     | smul a x hxs hx =>
       rw [smul_eq_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul]
       refine Ideal.add_mem _ (Ideal.mul_mem_left _ _ hx) (Ideal.mul_mem_right _ _ ?_)
@@ -76,7 +81,8 @@ theorem logDerivation_atPrime_span : ∀ (F A R : Type) [Field F] [CommRing A] [
       intro s; induction s using Finset.induction_on with
       | empty => simp
       | insert x s hx ih => rw [Finset.sum_insert hx, Finset.sum_insert hx, Derivation.add_apply, ih, Derivation.smul_apply, smul_eq_mul]
-    rw [this, map_sum]; simp only [map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]; simp only [map_mul]
   have e2 : algebraMap A R (D₁ a) = algebraMap A R (t' * s) * D' (algebraMap A R a) := by
     rw [hD₁, map_mul, hD₀, map_mul, mul_assoc]
   rw [e2] at e1

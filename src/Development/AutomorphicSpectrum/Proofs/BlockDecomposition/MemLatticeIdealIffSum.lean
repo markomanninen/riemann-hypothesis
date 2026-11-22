@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeXiMulDpowSuccStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.LatDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemLatticeSubIffSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeXiMulDpowSucc
+
+@[expose] public section
 
 open DividedPowers CrystallineSemistableComparison.Pb
 
@@ -102,7 +106,7 @@ private theorem exists_repr_of_mem_closure_f_mul_dpE {y : B}
     obtain ⟨a, c, rfl⟩ := h1
     obtain ⟨b, d, rfl⟩ := h2
     refine ⟨a + b, c + d, ?_⟩
-    rw [Finsupp.sum_add_index', map_add]
+    rw [Finsupp.sum_add_index', map_add (f := _)]
     · ring
     · intro i
       simp

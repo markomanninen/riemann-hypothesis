@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConeMap
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomologyMapPiLiftPiHomologyIsoHom
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ConeMap
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomologyMapPiLiftPiHomologyIsoHom
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.LongExactSequence
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -18,13 +23,11 @@ noncomputable def piMap {K K' : ι → CochainComplex (ModuleCat.{u} k) ℕ} (g 
     piComplex K ⟶ piComplex K' :=
   piLift fun v => piProj K v ≫ g v
 
-@[reassoc (attr := simp)]
 theorem piLift_piMap {M : CochainComplex (ModuleCat.{u} k) ℕ}
     {K K' : ι → CochainComplex (ModuleCat.{u} k) ℕ} (h : ∀ v, M ⟶ K v) (g : ∀ v, K v ⟶ K' v) :
     piLift h ≫ piMap g = piLift fun v => h v ≫ g v :=
   HomologicalComplex.hom_ext _ _ fun _ => ModuleCat.hom_ext (LinearMap.ext fun _ => rfl)
 
-@[reassoc (attr := simp)]
 theorem piMap_piProj {K K' : ι → CochainComplex (ModuleCat.{u} k) ℕ} (g : ∀ v, K v ⟶ K' v)
     (v : ι) : piMap g ≫ piProj K' v = piProj K v ≫ g v :=
   HomologicalComplex.hom_ext _ _ fun _ => ModuleCat.hom_ext (LinearMap.ext fun _ => rfl)
@@ -104,7 +107,6 @@ noncomputable def localToCompact (n : ℕ) :
     ModuleCat.of k (∀ v, cohomology (Aᵥ v) n) ⟶ compactCohomology φ A Aᵥ a (n + 1) :=
   (localCohomologyIso Aᵥ n).inv ≫ mappingCoconeNat.homologyδ (localRes φ A Aᵥ a) n
 
-@[reassoc (attr := simp)]
 theorem compactToGlobal_globalToLocal (n : ℕ) :
     compactToGlobal φ A Aᵥ a n ≫ globalToLocal φ A Aᵥ a n = 0 := by
   have h := mappingCoconeNat.homologyMap_fst_homologyMap_assoc (localRes φ A Aᵥ a) n
@@ -112,7 +114,6 @@ theorem compactToGlobal_globalToLocal (n : ℕ) :
   rw [homologyMap_localRes_localCohomologyIso_hom, zero_comp] at h
   exact h
 
-@[reassoc (attr := simp)]
 theorem globalToLocal_localToCompact (n : ℕ) :
     globalToLocal φ A Aᵥ a n ≫ localToCompact φ A Aᵥ a n = 0 := by
   have h := mappingCoconeNat.homologyMap_homologyδ (localRes φ A Aᵥ a) n
@@ -120,7 +121,6 @@ theorem globalToLocal_localToCompact (n : ℕ) :
     ← Category.assoc, homologyMap_localRes_localCohomologyIso_hom] at h
   exact h
 
-@[reassoc (attr := simp)]
 theorem localToCompact_compactToGlobal (n : ℕ) :
     localToCompact φ A Aᵥ a n ≫ compactToGlobal φ A Aᵥ a (n + 1) = 0 := by
   have h := congrArg ((localCohomologyIso Aᵥ n).inv ≫ ·)
@@ -231,29 +231,6 @@ theorem compactCohomologyMap_comp (g' : B ⟶ C) (gᵥ' : ∀ v, Bᵥ v ⟶ Cᵥ
   exact (congrArg (HomologicalComplex.homologyMap · n) h).trans
     (HomologicalComplex.homologyMap_comp _ _ n)
 
-include hg in
-
-theorem cohomologyMap_globalToLocal (n : ℕ) :
-    cohomologyMap g n ≫ globalToLocal φ B Bᵥ b n =
-      globalToLocal φ A Aᵥ a n ≫ ModuleCat.ofHom (LinearMap.pi fun v =>
-        (cohomologyMap (gᵥ v) n).hom.comp (LinearMap.proj v)) := by
-  have h := congrArg (fun F => HomologicalComplex.homologyMap F n ≫ (localCohomologyIso Bᵥ n).hom)
-    (localRes_naturality φ g gᵥ hg)
-  simp only [HomologicalComplex.homologyMap_comp, Category.assoc] at h
-  have e1 : HomologicalComplex.homologyMap (localRes φ A Aᵥ a) n ≫
-      HomologicalComplex.homologyMap (piMap fun v => cochainsMap (gᵥ v)) n ≫
-        (localCohomologyIso Bᵥ n).hom =
-      (HomologicalComplex.homologyMap (localRes φ A Aᵥ a) n ≫ (localCohomologyIso Aᵥ n).hom) ≫
-        ModuleCat.ofHom (LinearMap.pi fun v =>
-          (cohomologyMap (gᵥ v) n).hom.comp (LinearMap.proj v)) := by
-    exact (congrArg (HomologicalComplex.homologyMap (localRes φ A Aᵥ a) n ≫ ·)
-      (homologyMap_piMap_piHomologyIso_hom (fun v => cochainsMap (gᵥ v)) n)).trans
-      (Category.assoc _ _ _).symm
-  exact (congrArg (cohomologyMap g n ≫ ·)
-    (homologyMap_localRes_localCohomologyIso_hom φ B Bᵥ b n).symm).trans (h.symm.trans (e1.trans
-      (congrArg (· ≫ ModuleCat.ofHom (LinearMap.pi fun v =>
-          (cohomologyMap (gᵥ v) n).hom.comp (LinearMap.proj v)))
-        (homologyMap_localRes_localCohomologyIso_hom φ A Aᵥ a n))))
 
 theorem localToCompact_compactCohomologyMap (n : ℕ) :
     localToCompact φ A Aᵥ a n ≫ compactCohomologyMap φ g gᵥ hg (n + 1) =
@@ -289,14 +266,6 @@ noncomputable def localResShortComplex :
   comm₁₂ := localRes_naturality φ S.f (fun v => (Sᵥ v).f) fun v => (s v).comm₁₂
   comm₂₃ := localRes_naturality φ S.g (fun v => (Sᵥ v).g) fun v => (s v).comm₂₃
 
-theorem compactCohomologyMap_f_g (n : ℕ) :
-    compactCohomologyMap φ S.f (fun v => (Sᵥ v).f) (fun v => (s v).comm₁₂) n ≫
-      compactCohomologyMap φ S.g (fun v => (Sᵥ v).g) (fun v => (s v).comm₂₃) n = 0 :=
-  (HomologicalComplex.homologyMap_comp _ _ n).symm.trans
-    ((congrArg (HomologicalComplex.homologyMap · n)
-      (mappingCoconeNat.mapShortComplex (localResShortComplex φ S Sᵥ s)).zero).trans
-      (HomologicalComplex.homologyMap_zero _ _ n))
-
 variable {S Sᵥ}
 
 theorem compactCochains_shortExact (hS : S.ShortExact) (hSᵥ : ∀ v, (Sᵥ v).ShortExact) :
@@ -311,13 +280,6 @@ noncomputable def compactδ (hS : S.ShortExact) (hSᵥ : ∀ v, (Sᵥ v).ShortEx
       compactCohomology φ S.X₁ (fun v => (Sᵥ v).X₁) (fun v => (s v).τ₁) (n + 1) :=
   (compactCochains_shortExact φ s hS hSᵥ).δ n (n + 1) rfl
 
-include hS hSᵥ in
-
-theorem compactCohomology_exact₂ (n : ℕ) :
-    (ShortComplex.mk (compactCohomologyMap φ S.f (fun v => (Sᵥ v).f) (fun v => (s v).comm₁₂) n)
-      (compactCohomologyMap φ S.g (fun v => (Sᵥ v).g) (fun v => (s v).comm₂₃) n)
-      (compactCohomologyMap_f_g φ S Sᵥ s n)).Exact :=
-  (compactCochains_shortExact φ s hS hSᵥ).homology_exact₂ n
 
 theorem compactCohomology_exact₃ (n : ℕ) :
     (ShortComplex.mk (compactCohomologyMap φ S.g (fun v => (Sᵥ v).g) (fun v => (s v).comm₂₃) n)

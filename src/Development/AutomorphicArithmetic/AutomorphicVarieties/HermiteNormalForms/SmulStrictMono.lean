@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -86,8 +90,6 @@ def minVec (h : HS L N) : Set (Lat L N) := {y | q h y = 1}
 
 def face (M : Set (Lat L N)) : Set (HS L N) := {h | h ∈ Ry L N ∧ M ⊆ minVec h}
 
-def comVec (F : Set (HS L N)) : Set (Lat L N) := {y | ∀ h ∈ F, q h y = 1}
-
 def toL (y : Lat L N) : Fin N → L := fun a => (y a : L)
 
 def spanL (M : Set (Lat L N)) : Submodule L (Fin N → L) := Submodule.span L (toL '' M)
@@ -95,8 +97,6 @@ def spanL (M : Set (Lat L N)) : Submodule L (Fin N → L) := Submodule.span L (t
 def Spans (M : Set (Lat L N)) : Prop := spanL M = ⊤
 
 variable (L N)
-
-def Yj (j : ℕ) : Set (HS L N) := {h | h ∈ Ry L N ∧ j ≤ Module.finrank L (spanL (minVec h))}
 
 def WR : Set (HS L N) := {h | h ∈ Ry L N ∧ Spans (minVec h)}
 
@@ -106,21 +106,8 @@ instance : PartialOrder (Cell L N) := Subtype.partialOrder _
 
 variable {L N}
 
-theorem Cell.le_def {F F' : Cell L N} : F ≤ F' ↔ F.1 ⊆ F'.1 := Iff.rfl
-
 def carrier (h : HS L N) (hh : h ∈ WR L N) : Cell L N :=
   ⟨face (minVec h), ⟨h, hh.1, subset_rfl⟩, minVec h, hh.2, rfl⟩
-
-def IsVertex (F : Cell L N) : Prop := ∃ h, F.1 = {h}
-
-instance : DistribMulAction (Gm L N) (Lat L N) where
-  smul g y := (g : Matrix (Fin N) (Fin N) (𝓞 L)) *ᵥ y
-  one_smul y := by change ((1 : Gm L N) : Matrix _ _ _) *ᵥ y = y; simp
-  mul_smul g k y := by
-    change ((g * k : Gm L N) : Matrix _ _ _) *ᵥ y = g.val *ᵥ (k.val *ᵥ y)
-    simp
-  smul_zero g := mulVec_zero _
-  smul_add g := mulVec_add _
 
 theorem smul_lat (g : Gm L N) (y : Lat L N) :
     g • y = (g : Matrix (Fin N) (Fin N) (𝓞 L)) *ᵥ y := rfl
@@ -168,64 +155,11 @@ theorem smul_mem_Ry (g : Gm L N) {h : HS L N} (hh : h ∈ Ry L N) : g • h ∈ 
   rw [q_smul]
   exact hh _ (fun e => hy (by rw [← smul_inv_smul g y, e, smul_zero]))
 
-theorem image_face (g : Gm L N) (M : Set (Lat L N)) :
-    (fun h => g • h) '' face M = face ((fun y => g • y) '' M) := by
-  ext h
-  constructor
-  · rintro ⟨k, ⟨hk, hM⟩, rfl⟩
-    refine ⟨smul_mem_Ry g hk, ?_⟩
-    rintro _ ⟨y, hy, rfl⟩
-    have := hM hy
-    simpa [minVec, q_smul] using this
-  · rintro ⟨hk, hM⟩
-    refine ⟨g⁻¹ • h, ⟨smul_mem_Ry _ hk, fun y hy => ?_⟩, by simp⟩
-    have := hM ⟨y, hy, rfl⟩
-    simpa [minVec, q_smul] using this
-
-theorem Spans.image (g : Gm L N) {M : Set (Lat L N)} (hM : Spans M) :
-    Spans ((fun y => g • y) '' M) := by
-  let f : Gm L N → (Fin N → L) →ₗ[L] (Fin N → L) := fun g =>
-    Matrix.mulVecLin ((g : Matrix (Fin N) (Fin N) (𝓞 L)).map (algebraMap (𝓞 L) L))
-  have hf : ∀ g y, f g (toL y) = toL (g • y) := fun g y => by
-    ext a; simp [f, toL, smul_lat, mulVec, dotProduct]
-  have hs : Function.Surjective (f g) := fun v => ⟨f g⁻¹ v, by
-    simp only [f, mulVecLin_apply, mulVec_mulVec, ← Matrix.map_mul, ← Units.val_mul]
-    simp⟩
-  have e : toL '' ((fun y => g • y) '' M) = f g '' (toL '' M) := by
-    simp only [Set.image_image, hf]
-  unfold Spans spanL at *
-  rw [e, Submodule.span_image, hM, Submodule.map_top, LinearMap.range_eq_top.2 hs]
-
-instance : MulAction (Gm L N) (Cell L N) where
-  smul g F := ⟨(fun h => g • h) '' F.1, F.2.1.image _, by
-    obtain ⟨M, hM, e⟩ := F.2.2
-    exact ⟨_, hM.image g, by rw [e, image_face]⟩⟩
-  one_smul F := Subtype.ext (by change (fun h => (1 : Gm L N) • h) '' F.1 = F.1; simp)
-  mul_smul g k F := Subtype.ext (by
-    change (fun h => (g * k) • h) '' F.1 = (fun h => g • h) '' ((fun h => k • h) '' F.1)
-    simp [Set.image_image, mul_smul])
-
-theorem Cell.smul_val (g : Gm L N) (F : Cell L N) : (g • F).1 = (fun h => g • h) '' F.1 := rfl
-
-theorem Cell.smul_mono (g : Gm L N) : Monotone (fun F : Cell L N => g • F) :=
-  fun _ _ h => Set.image_mono h
-
-theorem Cell.smul_strictMono (g : Gm L N) : StrictMono (fun F : Cell L N => g • F) :=
-  (Cell.smul_mono g).strictMono_of_injective (MulAction.injective g)
-
 variable (L N)
 
 def Simp (p : ℕ) : Type := {s : Fin (p + 1) → Cell L N // StrictMono s}
 
 variable {L N}
-
-instance (p : ℕ) : MulAction (Gm L N) (Simp L N p) where
-  smul g s := ⟨fun i => g • s.1 i, (Cell.smul_strictMono g).comp s.2⟩
-  one_smul s := Subtype.ext (funext fun i => one_smul _ (s.1 i))
-  mul_smul g k s := Subtype.ext (funext fun i => mul_smul g k (s.1 i))
-
-theorem Simp.smul_val {p : ℕ} (g : Gm L N) (s : Simp L N p) (i : Fin (p + 1)) :
-    (g • s).1 i = g • s.1 i := rfl
 
 def Simp.del {p : ℕ} (i : Fin (p + 2)) (s : Simp L N (p + 1)) : Simp L N p :=
   ⟨fun j => s.1 (i.succAbove j), s.2.comp (Fin.strictMono_succAbove i)⟩
@@ -234,12 +168,6 @@ variable (L N)
 
 def bd (p : ℕ) : (Simp L N (p + 1) →₀ ℤ) →ₗ[ℤ] (Simp L N p →₀ ℤ) :=
   ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • Finsupp.lmapDomain ℤ ℤ (Simp.del i)
-
-def aug : (Simp L N 0 →₀ ℤ) →ₗ[ℤ] ℤ := Finsupp.linearCombination ℤ (fun _ => (1 : ℤ))
-
-def Acyclic : Prop :=
-  Function.Surjective (aug L N) ∧ Function.Exact (bd L N 0) (aug L N) ∧
-    ∀ p, Function.Exact (bd L N (p + 1)) (bd L N p)
 
 def I0 : ℕ := absD L ^ N * dd L N ^ dd L N
 
@@ -257,8 +185,5 @@ def nrmDet (A : Matrix (Fin N) (Fin N) (𝓞 L)) : ℕ := (Algebra.norm ℤ A.de
 
 def nearVec (A : Matrix (Fin N) (Fin N) (𝓞 L)) : Set (Lat L N) :=
   {y | ∃ h ∈ Ry L N, ColsMin A h ∧ q h y = 1}
-
-def nearCell (A : Matrix (Fin N) (Fin N) (𝓞 L)) : Set (Cell L N) :=
-  {F | ∃ h ∈ F.1, ColsMin A h}
 
 end UpperTheory.V.KT

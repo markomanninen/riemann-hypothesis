@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegreeBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsDegreeBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -66,8 +71,8 @@ theorem exists_nat_of_nonneg_of_lt {x : WithBot (WithTop ℤ)} {n : ℕ} (h0 : 0
 
 variable [Fintype K] [DecidableEq K] {ι : K → Type*} {F : Type*} [Field F]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem relDim_nonneg_of_card_le (I : Ideal (MRing ι F))
     (h : ((Fintype.card K : ℕ) : WithBot ℕ∞) ≤ ringKrullDim (MRing ι F ⧸ I)) : 0 ≤ relDim I := by
   unfold relDim
@@ -115,7 +120,7 @@ theorem hilbFn_eventually_zero_of_not_relevant (I : Ideal (MRing ι F)) (hI : ¬
         obtain ⟨k', i⟩ := v
         subst hvk
         exact hk i
-      have e : monomial s (coeff s f) = X v * monomial (s - Finsupp.single v 1) (coeff s f) := by
+      have e : monomial s (AddMonoidAlgebra.coeff f s) = X v * monomial (s - Finsupp.single v 1) (AddMonoidAlgebra.coeff f s) := by
         rw [show (X v : MRing ι F) = monomial (Finsupp.single v 1) 1 from rfl, monomial_mul,
           one_mul, add_tsub_cancel_of_le hle]
       rw [e]
@@ -126,8 +131,8 @@ theorem hilbFn_eventually_zero_of_not_relevant (I : Ideal (MRing ι F)) (hI : ¬
 
 end MultEqualsCoeff
 
-open MultEqualsCoeff in
 
+open MultEqualsCoeff in
 theorem MultEqualsCoeff.proof (h1 : PrimeFiltration.Statement.{u})
     (h2 : MixedDiffConst.Statement.{u}) (h3 : RelevantPrimeDimGe.Statement.{u}) :
     MultEqualsCoeff.Statement.{u} := by

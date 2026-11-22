@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+module
+
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -221,7 +225,7 @@ theorem step (hGr : RuleGr) (X : HidaSetting k) (F : X.Mod) (hF : F.IsGr X.𝒜)
     obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hz
     refine ⟨a, ?_⟩
     show a • N.mkQ x = N.mkQ (n + a • x)
-    rw [map_add, map_smul, (Submodule.Quotient.mk_eq_zero N).2 hn |> (show N.mkQ n = 0 from ·),
+    rw [map_add (f := _), map_smul, (Submodule.Quotient.mk_eq_zero N).2 hn |> (show N.mkQ n = 0 from ·),
       zero_add]
   let g : N' →ₗ[X.R] X.R ⧸ LinearMap.ker φ :=
     (φ.quotKerEquivRange.symm : LinearMap.range φ →ₗ[X.R] X.R ⧸ LinearMap.ker φ) ∘ₗ
@@ -313,7 +317,12 @@ def Good (X : HidaSetting k) (F : X.Mod) (N₀ : Submodule X.R F.M) : Prop :=
 theorem good_bot (X : HidaSetting k) (F : X.Mod) : Good X F ⊥ := by
   refine ⟨0, fun _ => ⊥, fun _ => ⊥, fun _ => 0, rfl, rfl, ?_, fun _ => le_rfl, ?_⟩
   · intro _
-    exact (Submodule.span_eq_bot.2 (fun x hx => (Submodule.mem_bot _).1 hx.1)).symm
+    change (⊥ : Submodule X.R F.M) = Submodule.span X.R
+      {x | x ∈ (⊥ : Submodule X.R F.M) ∧ ∃ m, x ∈ F.gr m}
+    symm
+    apply Submodule.span_eq_bot.2
+    intro x hx
+    exact (Submodule.mem_bot _).1 hx.1
   · intro i hi
     exact absurd hi (Nat.not_lt_zero i)
 

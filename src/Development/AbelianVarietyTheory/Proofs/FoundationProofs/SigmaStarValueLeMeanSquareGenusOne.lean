@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralLeOfDisjointTranslates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationDenominatorsAndHostFieldSizes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralLeOfDisjointTranslates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationDenominatorsAndHostFieldSizes
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 open MeasureTheory
@@ -102,7 +107,7 @@ theorem sup_le_mean (Λ : AddSubgroup ℂ) (a v : ℝ) (F : Set ℂ) (g : ℂ �
   have hA : ∀ x, x ∈ A ↔ φ x ∈ Λ := fun _ => Iff.rfl
   have hF' : IsAddFundamentalDomain A (φ ⁻¹' F) volume := by
     refine hF.preimage_of_equiv (f := φ) (e := fun y : Λ => (⟨φ.symm y, (hA _).2 (by simp)⟩ : A))
-      ⟨hmp.measurable, ?_⟩ ⟨?_, ?_⟩ ?_
+      ⟨hmp.measurable.aemeasurable, ?_⟩ ⟨?_, ?_⟩ ?_
     · rw [hmp.map_eq]; exact Measure.smul_absolutelyContinuous
     · intro x y h
       exact Subtype.ext (φ.symm.injective (congrArg Subtype.val h))
@@ -127,7 +132,7 @@ theorem sup_le_mean (Λ : AddSubgroup ℂ) (a v : ℝ) (F : Set ℂ) (g : ℂ �
     rw [hn, div_eq_mul_one_div] at this
     exact le_of_mul_le_mul_left this ha
   · intro x hx y
-    simp only [hw, map_add]
+    simp only [hw, map_add (f := _)]
     exact hper _ hx _
   · simp only [hw]
     refine (hmp.integrableOn_comp_preimage hemb

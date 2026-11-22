@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplDefY
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplDefY
+
+@[expose] public section
 
 open UpperTheory.Lit.CharWD GlobalTheory.Published
 
@@ -24,7 +28,7 @@ private theorem eo_lt (j : Emb l w) (x : 𝓞 F) (hx : x ∈ w.asIdeal) : ‖j.1
 
 private theorem eo_over (j : Emb l w) : w.asIdeal.LiesOver (Ideal.span {(l : ℤ)}) := by
   have hmax : (w.asIdeal.under ℤ).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal w.asIdeal
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal w.asIdeal
   have hle : w.asIdeal.under ℤ ≤ Ideal.span {(l : ℤ)} := by
     intro n hn
     rw [Ideal.mem_span_singleton]

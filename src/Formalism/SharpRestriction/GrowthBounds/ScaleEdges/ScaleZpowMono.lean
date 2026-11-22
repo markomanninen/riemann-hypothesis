@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GoodRankOfPrim
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GoodRankOfPrim
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ variable {Kf : Type} [Field Kf] {n' m : ℕ}
 theorem be_add_left (p r : ℕ) (lam0 : Fin n' → Fin (m + 1) → ℤ) (F F' : Vsp Kf lam0)
     (G : Module.Dual Kf (Vsp Kf lam0)) : be p r lam0 (F + F') G = be p r lam0 F G + be p r lam0 F' G := by
   unfold be
-  rw [smul_add, map_add]
+  rw [smul_add, map_add (f := _)]
 
 theorem be_smulK_left (p r : ℕ) (lam0 : Fin n' → Fin (m + 1) → ℤ) (c : Kf) (F : Vsp Kf lam0)
     (G : Module.Dual Kf (Vsp Kf lam0)) : be p r lam0 (c • F) G = c * be p r lam0 F G := by
@@ -114,7 +118,7 @@ theorem edgeFamOf : EdgeFamOf := by
     refine ⟨a + (p : O) ^ (D1 + 1) * (w ^ (c' - 2 * (D1 + 1)) * z), b', ?_, hb'.symm⟩
     show be p r lam0 (∑ i, c i • Fs (eqv.symm i)) G = _
     rw [e1, be_add_left, ha, ← hyE, be_smulK_left, ← hz, zpow_natCast, ← map_pow, hwc]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     ring
 
 end Formalism.MainNotions.Pf14

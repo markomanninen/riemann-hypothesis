@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GoodTwo
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.StatementH
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ChainPC
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ExistsNormEqTwoPow
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGoodReductionAlgebraicWeierstrassModel
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GoodTwo
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.StatementH
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ChainPC
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ExistsNormEqTwoPow
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGoodReductionAlgebraicWeierstrassModel
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -286,7 +290,7 @@ theorem jUnit_of (hW : TwoIsog) (hN : NormPow) (hC : Chain) (hR : RootCubic) (hU
   have hcubι : ∀ i, i < h → (ι (r i) + 16) ^ 3 = ι (jInv (M i)) * ι (r i) := by
     intro i hi
     have := congrArg ι (hcub i hi)
-    simpa [map_add, map_pow, map_mul, map_ofNat] using this
+    simpa [map_add (f := _), map_pow, map_mul, map_ofNat] using this
   have hle : ∀ i, i < h → ‖ι (r i)‖ ≤ 1 := fun i hi =>
     hR _ _ (norm_jInv_le_one d (M i) hsf hd4 (hMcm i) 2 ι) (hcubι i hi)
 
@@ -308,7 +312,7 @@ theorem jUnit_of (hW : TwoIsog) (hN : NormPow) (hC : Chain) (hR : RootCubic) (hU
   obtain ⟨k, rfl⟩ : ∃ k, h = k + 1 := ⟨h - 1, by omega⟩
   rw [Finset.prod_range_succ'] at hnorm
   have hrest : ∏ i ∈ Finset.range k, ‖ι (r (i + 1))‖ ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun i hi => hle (i + 1) (by simp at hi; omega))
+    Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun i hi => hle (i + 1) (by simp at hi; omega))
   have h0le := hle 0 (by omega)
   have hr0 : ‖ι (r 0)‖ = 1 := by
     have := mul_le_of_le_one_left (norm_nonneg (ι (r 0))) hrest
@@ -550,7 +554,7 @@ theorem norm_odd_eq_one (n : ℤ) (hn : Odd n) : ‖(n : ℂ_[2])‖ = 1 := by
   rw [norm_one]; exact max_eq_right hk.le
 
 theorem omegaK_add_conj (d : ℕ) : omegaK d + conj (omegaK d) = 1 := by
-  simp only [omegaK, map_div₀, map_add, map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
+  simp only [omegaK, map_div₀, map_add (f := _), map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
   ring
 
 theorem omegaK_sq_four (d : ℕ) : 4 * omegaK d ^ 2 = 4 * omegaK d - (1 + d) := by
@@ -575,7 +579,7 @@ theorem exists_unit_conjugate_norm_two_power_two_adic : UnitChoice := by
   set a := ι ((x : ℂ) + (y : ℂ) * ω) with ha_def
   set b := ι ((x : ℂ) + (y : ℂ) * conj ω) with hb_def
   have hsum : a + b = ((2 * x + y : ℤ) : ℂ_[2]) := by
-    rw [ha_def, hb_def, ← map_add, hc,
+    rw [ha_def, hb_def, ← map_add (f := _), hc,
       show ((x : ℂ) + y * ω + (x + y * (1 - ω))) = ((2 * x + y : ℤ) : ℂ) by push_cast; ring]
     exact map_intCast ι _
   have hprod : a * b = 2 ^ h := by

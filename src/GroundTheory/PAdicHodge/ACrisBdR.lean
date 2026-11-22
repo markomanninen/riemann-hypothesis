@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FactorizationFactorialLe
-import GroundTheory.PAdicHodge.BdRLattice
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.PrecompleteOfSurjective
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FactorizationFactorialLe
+public import GroundTheory.PAdicHodge.BdRLattice
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.PrecompleteOfSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Span
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "θ" => fontaineTheta (normInteger K) p
 
 def dpowSpan (ξ : AInf K p) : Submodule (AInf K p) 𝔸 :=
   Submodule.span (AInf K p) (Set.range fun n => dpow n ξ)
@@ -40,10 +44,10 @@ theorem mul_mem_dpowSpan (ξ : AInf K p) {a b : 𝔸} (ha : a ∈ dpowSpan ξ) (
   exact h (Submodule.mul_mem_mul ha hb)
 
 theorem mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) {y : 𝔸}
-    (hy : y ∈ ACrisZero K p) : y ∈ dpowSpan ξ := by
+    (hy : y ∈ ACrisZero (K := K) (p := p)) : y ∈ dpowSpan ξ := by
   let S : Subalgebra (AInf K p) 𝔸 := (dpowSpan ξ).toSubalgebra (one_mem_dpowSpan ξ)
     (fun _ _ ha hb => mul_mem_dpowSpan ξ ha hb)
-  have h : ACrisZero K p ≤ S := by
+  have h : ACrisZero (K := K) (p := p) ≤ S := by
     rw [acrisZero_eq_adjoin hξ]
     apply Algebra.adjoin_le
     rintro _ ⟨n, rfl⟩
@@ -52,14 +56,14 @@ theorem mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) {y
 
 theorem exists_decomp_of_mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) (m : ℕ)
     {y : 𝔸} (hy : y ∈ dpowSpan ξ) :
-    ∃ y' ∈ ACrisZero K p, ∃ w : AInf K p, ∃ r : 𝔸,
+    ∃ y' ∈ ACrisZero (K := K) (p := p), ∃ w : AInf K p, ∃ r : 𝔸,
       ((m - 1).factorial : 𝔸) * y' = algebraMap (AInf K p) 𝔸 w ∧
         y = y' + algebraMap (AInf K p) 𝔸 (ξ ^ m) * r := by
   have hξm : ξ ∈ RingHom.ker θ := hξ ▸ Ideal.mem_span_singleton_self ξ
   induction hy using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨n, rfl⟩ := hx
-    show ∃ y' ∈ ACrisZero K p, ∃ w : AInf K p, ∃ r : 𝔸,
+    show ∃ y' ∈ ACrisZero (K := K) (p := p), ∃ w : AInf K p, ∃ r : 𝔸,
       ((m - 1).factorial : 𝔸) * y' = algebraMap (AInf K p) 𝔸 w ∧
         dpow n ξ = y' + algebraMap (AInf K p) 𝔸 (ξ ^ m) * r
     by_cases hn : n < m
@@ -77,7 +81,7 @@ theorem exists_decomp_of_mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Id
   | add x z _ _ hx hz =>
     obtain ⟨x', hx', wx, rx, hwx, hrx⟩ := hx
     obtain ⟨z', hz', wz, rz, hwz, hrz⟩ := hz
-    exact ⟨x' + z', add_mem hx' hz', wx + wz, rx + rz, by rw [mul_add, hwx, hwz, map_add],
+    exact ⟨x' + z', add_mem hx' hz', wx + wz, rx + rz, by rw [mul_add, hwx, hwz, map_add (f := _)],
       by rw [hrx, hrz]; ring⟩
   | smul a x _ hx =>
     obtain ⟨x', hx', wx, rx, hwx, hrx⟩ := hx
@@ -87,8 +91,8 @@ theorem exists_decomp_of_mem_dpowSpan {ξ : AInf K p} (hξ : RingHom.ker θ = Id
     · rw [Algebra.smul_def, hrx]; ring
 
 theorem exists_decomp {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) (m : ℕ) {y : 𝔸}
-    (hy : y ∈ ACrisZero K p) :
-    ∃ y' ∈ ACrisZero K p, ∃ w : AInf K p, ∃ r : 𝔸,
+    (hy : y ∈ ACrisZero (K := K) (p := p)) :
+    ∃ y' ∈ ACrisZero (K := K) (p := p), ∃ w : AInf K p, ∃ r : 𝔸,
       ((m - 1).factorial : 𝔸) * y' = algebraMap (AInf K p) 𝔸 w ∧
         y = y' + algebraMap (AInf K p) 𝔸 (ξ ^ m) * r :=
   exists_decomp_of_mem_dpowSpan hξ m (mem_dpowSpan hξ hy)
@@ -106,10 +110,6 @@ theorem subring_pow_dvd_iff {S : Subring Q} (n : ℕ) (x : S) :
     exact ⟨s, s.2, by simp⟩
   · rintro ⟨s, hs, h⟩
     exact ⟨⟨s, hs⟩, Subtype.ext (by simpa using h)⟩
-
-private theorem mem_span_singleton_pow_smul_top {R : Type*} [CommRing R] (x y : R) (n : ℕ) :
-    y ∈ (Ideal.span {x} ^ n • ⊤ : Submodule R R) ↔ x ^ n ∣ y := by
-  rw [Ideal.smul_eq_mul, Ideal.mul_top, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
 
 theorem isPrecomplete_of_surjective {A B : Type*} [CommRing A] [CommRing B] (f : A →+* B)
     (hf : Function.Surjective f) (a : A) [IsPrecomplete (Ideal.span {a}) A] :
@@ -202,15 +202,13 @@ section Quot
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
 
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "θ" => fontaineTheta (normInteger K) p
 
 variable (K p) in
-
 abbrev kerAway : Ideal 𝔸 := RingHom.ker (fontaineThetaInvertP (normInteger K) p)
 
 variable (K p) in
-
 abbrev xiGen : AInf K p := IsPerfectoidField.kerThetaGenerator K p
 
 theorem ker_eq_span_xiGen : RingHom.ker θ = Ideal.span {xiGen K p} :=
@@ -237,16 +235,14 @@ theorem algebraMap_dvd_iff (m : ℕ) (w : AInf K p) :
     exact dvd_mul_right _ _
 
 variable (K p) in
-
 def latticeQ (m : ℕ) : Subring (𝔸 ⧸ kerAway K p ^ m) :=
   ((Ideal.Quotient.mk (kerAway K p ^ m)).comp (algebraMap (AInf K p) 𝔸)).range
 
 variable (K p) in
-
 def acrisQ (m : ℕ) : Subring (𝔸 ⧸ kerAway K p ^ m) :=
-  (ACrisZero K p).toSubring.map (Ideal.Quotient.mk (kerAway K p ^ m))
+  (ACrisZero (K := K) (p := p)).toSubring.map (Ideal.Quotient.mk (kerAway K p ^ m))
 
-theorem mk_mem_acrisQ (m : ℕ) {y : 𝔸} (hy : y ∈ ACrisZero K p) :
+theorem mk_mem_acrisQ (m : ℕ) {y : 𝔸} (hy : y ∈ ACrisZero (K := K) (p := p)) :
     Ideal.Quotient.mk (kerAway K p ^ m) y ∈ acrisQ K p m :=
   ⟨y, hy, rfl⟩
 
@@ -282,10 +278,9 @@ theorem pow_mul_mem_latticeQ (m : ℕ) :
           ((p : 𝔸) ^ v * y') := by rw [← hfac]; ring
       _ = (p : 𝔸) ^ v * y' := by rw [hinv, one_mul]
   show Ideal.Quotient.mk _ (algebraMap (AInf K p) 𝔸 (↑hu.unit⁻¹ * w)) = _
-  rw [hcalc, map_mul, map_pow, map_natCast, map_add, hz, add_zero]
+  rw [hcalc, map_mul, map_pow, map_natCast, map_add (f := _), hz, add_zero]
 
 variable (K p) in
-
 instance isAdicComplete_latticeQ (m : ℕ) :
     IsAdicComplete (Ideal.span {(p : latticeQ K p m)}) (latticeQ K p m) := by
   set f := (Ideal.Quotient.mk (kerAway K p ^ m)).comp (algebraMap (AInf K p) 𝔸)
@@ -313,7 +308,6 @@ instance isAdicComplete_latticeQ (m : ℕ) :
   exact ⟨⟩
 
 variable (K p) in
-
 instance isAdicComplete_acrisQ (m : ℕ) :
     IsAdicComplete (Ideal.span {(p : acrisQ K p m)}) (acrisQ K p m) :=
   isAdicComplete_of_pow_mul_mem p (latticeQ_le m) (isUnit_p_quot m) _ (pow_mul_mem_latticeQ m)
@@ -325,35 +319,31 @@ section Iota
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
 
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
 
 variable (K p) in
-
-def iotaZero (m : ℕ) : ACrisZero K p →+* acrisQ K p m :=
-  ((Ideal.Quotient.mk (kerAway K p ^ m)).comp (ACrisZero K p).val.toRingHom).codRestrict
+def iotaZero (m : ℕ) : ACrisZero (K := K) (p := p) →+* acrisQ K p m :=
+  ((Ideal.Quotient.mk (kerAway K p ^ m)).comp (ACrisZero (K := K) (p := p)).val.toRingHom).codRestrict
     (acrisQ K p m) fun y => mk_mem_acrisQ m y.2
 
-theorem coe_iotaZero (m : ℕ) (y : ACrisZero K p) :
+theorem coe_iotaZero (m : ℕ) (y : ACrisZero (K := K) (p := p)) :
     (iotaZero K p m y : 𝔸 ⧸ kerAway K p ^ m) = Ideal.Quotient.mk (kerAway K p ^ m) (y : 𝔸) :=
   rfl
 
 theorem span_p_le_comap_iotaZero (m : ℕ) :
-    Ideal.span {(p : ACrisZero K p)} ≤ (Ideal.span {(p : acrisQ K p m)}).comap (iotaZero K p m) := by
+    Ideal.span {(p : ACrisZero (K := K) (p := p))} ≤ (Ideal.span {(p : acrisQ K p m)}).comap (iotaZero K p m) := by
   rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
 
 variable (K p) in
-
-def embedding₂ (m : ℕ) : ACris K p →+* acrisQ K p m :=
+def embedding₂ (m : ℕ) : ACris (K := K) (p := p) →+* acrisQ K p m :=
   AdicCompletion.extendRingHom _ _ (iotaZero K p m) (span_p_le_comap_iotaZero m)
 
 variable (K p) in
-
-def iotaQ (m : ℕ) : ACris K p →+* 𝔸 ⧸ kerAway K p ^ m :=
+def iotaQ (m : ℕ) : ACris (K := K) (p := p) →+* 𝔸 ⧸ kerAway K p ^ m :=
   (acrisQ K p m).subtype.comp (embedding₂ K p m)
 
-theorem iotaQ_of (m : ℕ) (y : ACrisZero K p) :
+theorem iotaQ_of (m : ℕ) (y : ACrisZero (K := K) (p := p)) :
     iotaQ K p m (_root_.AdicCompletion.of _ _ y) = Ideal.Quotient.mk (kerAway K p ^ m) (y : 𝔸) := by
   rw [iotaQ, RingHom.comp_apply, embedding₂, AdicCompletion.extendRingHom_of]
   rfl
@@ -383,15 +373,14 @@ theorem iotaQ_compat {m n : ℕ} (hle : m ≤ n) :
   rfl
 
 variable (K p) in
-
-def iota : ACris K p →+* BDeRhamPlus (normInteger K) p :=
+def iota : ACris (K := K) (p := p) →+* BDeRhamPlus (normInteger K) p :=
   _root_.AdicCompletion.liftRingHom (kerAway K p) (iotaQ K p) fun hle => iotaQ_compat hle
 
-theorem evalₐ_iota (m : ℕ) (y : ACris K p) :
+theorem evalₐ_iota (m : ℕ) (y : ACris (K := K) (p := p)) :
     _root_.AdicCompletion.evalₐ (kerAway K p) m (iota K p y) = iotaQ K p m y :=
   _root_.AdicCompletion.evalₐ_liftRingHom _ _ _ m y
 
-theorem iota_of (y : ACrisZero K p) :
+theorem iota_of (y : ACrisZero (K := K) (p := p)) :
     iota K p (_root_.AdicCompletion.of _ _ y) = toBDeRhamPlus (normInteger K) p (y : 𝔸) := by
   apply _root_.AdicCompletion.ext_evalₐ
   intro m
@@ -399,7 +388,7 @@ theorem iota_of (y : ACrisZero K p) :
   exact (_root_.AdicCompletion.evalₐ_of _ m (y : 𝔸)).symm
 
 theorem iota_algebraMap (w : AInf K p) :
-    iota K p (algebraMap (AInf K p) (ACris K p) w) = wittToBDeRhamPlus (normInteger K) p w := by
+    iota K p (algebraMap (AInf K p) (ACris (K := K) (p := p)) w) = wittToBDeRhamPlus (normInteger K) p w := by
   rw [AdicCompletion.algebraMap_apply, iota_of]
   rfl
 

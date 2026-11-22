@@ -1,6 +1,10 @@
-import Formalism.PieriBlockIdeals.TailInequalityEventually
-import Formalism.QuotientMetricDivisors.ClassSumDualLe
-import Formalism.MirabolicMackeyTheory.StatementT
+module
+
+public import Formalism.PieriBlockIdeals.TailInequalityEventually
+public import Formalism.QuotientMetricDivisors.ClassSumDualLe
+public import Formalism.MirabolicMackeyTheory.StatementT
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -22,12 +26,6 @@ def JointPlace : Prop :=
       (jw (Eᴴ * H * E) w (matLat Pr A) : ℝ) ≤
         ((J : ℝ) * (ramw w : ℝ) + (vw w (DG : K) : ℝ)) * (d : ℝ) +
           (Formalism.HermitianLatticesTheory.locLen w.asIdeal (matLat Pr A) (cutLat E A) : ℝ)
-
-def JointSum : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (S : Finset (HeightOneSpectrum (𝓞 K)))
-    (J : ℕ → ℕ) (DG : ℕ), 0 < DG → ∀ Bd : ℝ,
-    (∀ Q : Finset ℕ, (∀ l ∈ Q, l.Prime) → ∑ l ∈ Q, (J l : ℝ) * Real.log (l : ℝ) ≤ Bd) →
-      ∑ w ∈ S, lw w * ((J (plc w) : ℝ) * (ramw w : ℝ) + (vw w (DG : K) : ℝ)) ≤ Bd + Real.log (DG : ℝ)
 
 def JointSize : Prop :=
   ∀ (P : Formalism.CohomologicalDescent.LogSmallConstantBounds.Par) (T : ℕ) (ε xe Nc : ℝ), P.Hyp → T ≤ P.f → 0 < ε → P.x ^ ε ≤ xe → 0 ≤ Nc →

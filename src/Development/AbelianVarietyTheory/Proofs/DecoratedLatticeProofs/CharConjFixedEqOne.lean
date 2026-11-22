@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
@@ -17,8 +22,8 @@ theorem finrank_AE (D : D7) : Module.finrank (AF D.host.F) (AE D) = 2 := by
 theorem cA_tmul (D : D7) (a : AF D.host.F) (e : D.host.E) :
     cA D (a ⊗ₜ[D.host.F] e) = a ⊗ₜ[D.host.F] star e := rfl
 
-set_option synthInstance.maxHeartbeats 200000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem trace_mem (D : D7) (y : AE D) :
     ∃ b : AF D.host.F, algebraMap (AF D.host.F) (AE D) b = y + cA D y := by
   induction y using TensorProduct.induction_on with
@@ -27,7 +32,7 @@ theorem trace_mem (D : D7) (y : AE D) :
     obtain ⟨u, hu⟩ := ha
     obtain ⟨v, hv⟩ := hb
     refine ⟨u + v, ?_⟩
-    rw [map_add, hu, hv, map_add]; abel
+    rw [map_add (f := _), hu, hv, map_add (f := _)]; abel
   | tmul a e =>
     have hfix : star (e + star e) = e + star e := by
       rw [star_add, star_star, add_comm]
@@ -61,8 +66,8 @@ theorem fixed_unit (D : D7) (x : (AE D)ˣ) (hx : cA D (x : AE D) = x) :
 
 end GlobalTheory.CharConjFixed
 
-open GlobalTheory.CharConjFixed in
 
+open GlobalTheory.CharConjFixed in
 theorem GlobalTheory.char_conj_fixed_eq_one : ∀ (D : D7) (μ : (AE D)ˣ →* Circle) (n : ℕ), ResEta D μ n → Even n →
     ∀ (V : HSp D) (x : (AE D)ˣ), IsDetRoot V 1 x → μ x = 1 := by
   intro D μ n hμ hn V x hx

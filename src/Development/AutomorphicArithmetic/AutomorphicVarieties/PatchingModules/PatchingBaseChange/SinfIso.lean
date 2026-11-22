@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.SinfRel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilMvps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.SinfRel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilMvps
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
@@ -55,6 +59,5 @@ theorem UpperTheory.V.Pa.BC.sinf_iso :
     congr 1
     congr 1
     funext p
-    simp only [Function.comp_apply, RingHom.comp_apply]
-    erw [key]
-    simp [MvPowerSeries.map_X]
+    simp only [Function.comp_apply, RingHom.comp_apply, RingEquiv.coe_toRingHom,
+      AlgEquiv.coe_toRingEquiv, key, map_sub, map_pow, map_add, map_one, MvPowerSeries.map_X]

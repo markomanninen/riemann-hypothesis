@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsUnitaryBasisSameFlag
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UMatUpper
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ExistsUnitaryBasisSameFlag
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.LminorSubmatrixCastSucc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.UMatUpper
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.GramSchmidtSelfImaginary
 
@@ -32,7 +36,7 @@ theorem perp_span_right (hG : ∀ a b, cc (G a b) = G b a) {s : Set (Fin r → �
   | zero => simp [hermC]
   | add x y _ _ hx hy =>
     have e : hermC τ G v (x + y) = hermC τ G v x + hermC τ G v y := by
-      simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+      simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
     rw [e, hx, hy, add_zero]
   | smul c x _ hx =>
     have e : hermC τ G v (c • x) = conj c * hermC τ G v x := by
@@ -84,7 +88,8 @@ theorem hC_self_im (v : Fin r → ℂ) : (hermC τ G v v).im = 0 := by
     | (simp only [cc]; exact (NumberField.IsCMField.complexEmbedding_complexConj τ (G a b)).symm)
     | (simp [cc])
   have hc : conj (hermC τ G v v) = hermC τ G v v := by
-    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hermC, map_sum, map_mul, Complex.conj_conj]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
     rw [hτ]
@@ -117,7 +122,8 @@ theorem gs_exists {n : ℕ} (p : ℕ) (Y : Fin n → Fin r → ℂ) (hind : Line
     | (simp [cc])
   have csym : ∀ u w, conj (hermC τ G u w) = hermC τ G w u := by
     intro u w
-    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hermC, map_sum, map_mul, Complex.conj_conj]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
     rw [hτ]

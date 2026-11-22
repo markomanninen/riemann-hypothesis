@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
@@ -70,8 +74,8 @@ theorem corr_of_pmaps {X X' Y₀ Y₁ Y₀' Y₁' : Scheme.{0}} {L : LB X} {L' :
 
 end LevelCompat
 
-open LevelCompat in
 
+open LevelCompat in
 theorem gtCoord_compat_of_pull : ∀ (R R' : Type) [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R'] (φ : R →+* R') (D : DegPre R) (D' : DegPre R') (hD : IsPullDeg φ D D') (I : Ideal R) (I' : Ideal R') (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] (G' : Over (Spec (CommRingCat.of R'))) [GrpObj G'] [IsCommMonObj G'] (Ψ : G'.left ⟶ G.left) (e : ℕ) (g₀ : GtCoord I D e G) (g₁ : GtCoord I D (e + 1) G) (g₀' : GtCoord I' D' e G') (g₁' : GtCoord I' D' (e + 1) G') (h₀ : (thickObj R' I' e G').left ⟶ (thickObj R I e G).left) (h₁ : (thickObj R' I' (e + 1) G').left ⟶ (thickObj R I (e + 1) G).left), h₀ ≫ (fstG I e G).left = (fstG I' e G').left ≫ Ψ → h₁ ≫ (fstG I (e + 1) G).left = (fstG I' (e + 1) G').left ≫ Ψ → ((g₀').pG.left ≫ (hD.e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ)) = h₀ ≫ (g₀).pG.left ∧ ∀ x : D'.X, (∀ κ : Fin 4, D'.Oφ (g₀').pG x κ ≫ (hD.e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ)) = h₀ ≫ D.Oφ (g₀).pG (hD.xe x) κ) ∧ Geo.Tor.PMaps hD.w (D'.Oφ (g₀').pG x) (D.Oφ (g₀).pG (hD.xe x)) Oinvε ((g₀').t x) ((g₀).t (hD.xe x)) h₀) → ((g₁').pG.left ≫ (hD.e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ)) = h₁ ≫ (g₁).pG.left ∧ ∀ x : D'.X, (∀ κ : Fin 4, D'.Oφ (g₁').pG x κ ≫ (hD.e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ)) = h₁ ≫ D.Oφ (g₁).pG (hD.xe x) κ) ∧ Geo.Tor.PMaps hD.w (D'.Oφ (g₁').pG x) (D.Oφ (g₁).pG (hD.xe x)) Oinvε ((g₁').t x) ((g₁).t (hD.xe x)) h₁) → thickMap R I e G ≫ g₁.pG.left = g₀.pG.left → (∀ χ : D.X, LB.Gen.Corr D.P.L _ _ _ _ (LB.pullGen D.P.L _ _ (g₁.t χ) (thickMap R I e G)) (g₀.t χ)) → thickMap R' I' e G' ≫ g₁'.pG.left = g₀'.pG.left ∧ ∀ χ : D'.X, LB.Gen.Corr D'.P.L _ _ _ _ (LB.pullGen D'.P.L _ _ (g₁'.t χ) (thickMap R' I' e G')) (g₀'.t χ) := by
   intro R R' _ _ _ _ φ D D' hD I I' G _ _ G' _ _ Ψ e g₀ g₁ g₀' g₁' h₀ h₁ hh₀ hh₁ ⟨p₀, H₀⟩ ⟨p₁, H₁⟩ hq ht
   have hm : thickMap R' I' e G' ≫ h₁ = h₀ ≫ thickMap R I e G := by

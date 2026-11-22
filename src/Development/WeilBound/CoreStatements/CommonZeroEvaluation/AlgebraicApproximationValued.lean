@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsRootAdicComplete
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.IsAlgebraicStd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.ExistsRootAdicComplete
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.IsAlgebraicStd
+
+@[expose] public section
 
 open Formalism.L2.Pj
 

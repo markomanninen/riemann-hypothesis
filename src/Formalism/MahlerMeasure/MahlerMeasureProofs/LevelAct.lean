@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.LevelSum
+module
+
+public import Formalism.MahlerMeasure.LevelSum
+
+@[expose] public section
 
 namespace Formalism.GM
 
@@ -16,7 +20,7 @@ theorem tieF_apply' (g : MvPolynomial σ k) :
   simp [tieF]
 
 theorem coeff_X_mul_pderiv' (i : σ) (p : MvPolynomial σ k) (m : σ →₀ ℕ) :
-    coeff m (X i * pderiv i p) = coeff m p * (m i : k) := by
+    AddMonoidAlgebra.coeff (X i * pderiv i p) m = AddMonoidAlgebra.coeff p m * (m i : k) := by
   classical
   refine MvPolynomial.induction_on' p ?_ ?_
   · intro s a
@@ -39,7 +43,7 @@ theorem coeff_X_mul_pderiv' (i : σ) (p : MvPolynomial σ k) (m : σ →₀ ℕ)
     · subst h; rfl
     · simp
   · intro p q hp hq
-    simp only [map_add, mul_add, coeff_add, hp, hq, add_mul]
+    simp only [map_add (f := _), mul_add, MvPolynomial.coeff_add, hp, hq, add_mul]
 
 theorem euler_w_of_biHom {a b : ℕ} {g : MvPolynomial σ k} (h : BiHom w e a b g) :
     (∑ c, X (w c) * pderiv (w c) g) = (a : k) • g := by
@@ -47,7 +51,7 @@ theorem euler_w_of_biHom {a b : ℕ} {g : MvPolynomial σ k} (h : BiHom w e a b 
   rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_smul, smul_eq_mul]
   simp_rw [coeff_X_mul_pderiv']
   rw [← Finset.mul_sum]
-  by_cases hm : coeff m g = 0
+  by_cases hm : AddMonoidAlgebra.coeff g m = 0
   · rw [hm]; simp
   · obtain ⟨h1, -⟩ := h m (MvPolynomial.mem_support_iff.mpr hm)
     rw [← h1, Nat.cast_sum]
@@ -59,7 +63,7 @@ theorem euler_e_of_biHom {a b : ℕ} {g : MvPolynomial σ k} (h : BiHom w e a b 
   rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_smul, smul_eq_mul]
   simp_rw [coeff_X_mul_pderiv']
   rw [← Finset.mul_sum]
-  by_cases hm : coeff m g = 0
+  by_cases hm : AddMonoidAlgebra.coeff g m = 0
   · rw [hm]; simp
   · obtain ⟨-, h2⟩ := h m (MvPolynomial.mem_support_iff.mpr hm)
     rw [← h2, Nat.cast_sum]
@@ -85,7 +89,8 @@ theorem pderiv_X_inj {f : Fin r → σ} (hf : Function.Injective f) (c d : Fin r
 theorem pderiv_e_S (he : Function.Injective e) (hwe : ∀ c d, w c ≠ e d)
     (c : Fin r) : pderiv (e c) (∑ d, X (w d) * X (e d) : MvPolynomial σ k) = X (w c) := by
   have h0 : ∀ d, pderiv (e c) (X (w d) : MvPolynomial σ k) = 0 := fun d => mvPolynomial_pderiv_X_of_ne (hwe d c)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [Derivation.leibniz, h0, pderiv_X_inj he, smul_eq_mul, mul_ite, mul_one, mul_zero,
     add_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
 
@@ -93,7 +98,8 @@ theorem pderiv_w_S (hw : Function.Injective w) (hwe : ∀ c d, w c ≠ e d)
     (c : Fin r) : pderiv (w c) (∑ d, X (w d) * X (e d) : MvPolynomial σ k) = X (e c) := by
   have h0 : ∀ d, pderiv (w c) (X (e d) : MvPolynomial σ k) = 0 :=
     fun d => mvPolynomial_pderiv_X_of_ne (fun h => hwe c d h.symm)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [Derivation.leibniz, h0, pderiv_X_inj hw, smul_eq_mul, mul_ite, mul_one, mul_zero,
     zero_add, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
 
@@ -124,7 +130,7 @@ theorem F_S_mul (hw : Function.Injective w) (he : Function.Injective e) (hwe : �
       = ∑ c, (g + (X (w c) * pderiv (w c) g + X (e c) * pderiv (e c) g) +
           (∑ d, X (w d) * X (e d)) * pderiv (w c) (pderiv (e c) g)) := by
         refine Finset.sum_congr rfl (fun c _ => ?_)
-        rw [h1, map_add, h2, h3]
+        rw [h1, map_add (f := _), h2, h3]
         ring
     _ = (∑ _c : Fin r, g) + ((∑ c, X (w c) * pderiv (w c) g) + ∑ c, X (e c) * pderiv (e c) g) +
           (∑ d, X (w d) * X (e d)) * ∑ c, pderiv (w c) (pderiv (e c) g) := by

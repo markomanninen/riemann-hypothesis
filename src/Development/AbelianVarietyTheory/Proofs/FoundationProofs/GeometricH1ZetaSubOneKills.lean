@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmallTracesSubgroupGaloisTowerTopStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteGaloisApproximationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SmallTracesSubgroupGaloisTowerTopStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteGaloisApproximationStatement
+
+@[expose] public section
 
 open GlobalTheory.K5
 
@@ -11,31 +15,31 @@ namespace GlobalTheory.K5.TateGeo
 
 variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
-theorem cong_refl' (k : ℕ) (x : Ω) : Cong p k x x :=
+theorem cong_refl' (k : ℕ) (x : Ω) : Cong (p := p) k x x :=
   ⟨0, isIntegral_zero, by simp⟩
 
-theorem cong_symm' {k : ℕ} {x y : Ω} (h : Cong p k x y) : Cong p k y x := by
+theorem cong_symm' {k : ℕ} {x y : Ω} (h : Cong (p := p) k x y) : Cong (p := p) k y x := by
   obtain ⟨z, hz, e⟩ := h
   exact ⟨-z, hz.neg, by rw [mul_neg, ← e]; ring⟩
 
-theorem cong_trans' {k : ℕ} {x y w : Ω} (h1 : Cong p k x y) (h2 : Cong p k y w) : Cong p k x w := by
+theorem cong_trans' {k : ℕ} {x y w : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k y w) : Cong (p := p) k x w := by
   obtain ⟨z, hz, e⟩ := h1
   obtain ⟨z', hz', e'⟩ := h2
   exact ⟨z + z', hz.add hz', by rw [mul_add, ← e, ← e']; ring⟩
 
-theorem cong_add' {k : ℕ} {x y x' y' : Ω} (h1 : Cong p k x y) (h2 : Cong p k x' y') :
-    Cong p k (x + x') (y + y') := by
+theorem cong_add' {k : ℕ} {x y x' y' : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k x' y') :
+    Cong (p := p) k (x + x') (y + y') := by
   obtain ⟨z, hz, e⟩ := h1
   obtain ⟨z', hz', e'⟩ := h2
   exact ⟨z + z', hz.add hz', by rw [mul_add, ← e, ← e']; ring⟩
 
-theorem cong_mul_left' {k : ℕ} {x y : Ω} (a : Ω) (ha : IsInt p a) (h : Cong p k x y) :
-    Cong p k (a * x) (a * y) := by
+theorem cong_mul_left' {k : ℕ} {x y : Ω} (a : Ω) (ha : IsInt (p := p) a) (h : Cong (p := p) k x y) :
+    Cong (p := p) k (a * x) (a * y) := by
   obtain ⟨z, hz, e⟩ := h
   exact ⟨a * z, ha.mul hz, by rw [← mul_sub, e]; ring⟩
 
 theorem cong_sum' {k : ℕ} {ι : Type*} (s : Finset ι) (f f' : ι → Ω)
-    (h : ∀ i ∈ s, Cong p k (f i) (f' i)) : Cong p k (∑ i ∈ s, f i) (∑ i ∈ s, f' i) := by
+    (h : ∀ i ∈ s, Cong (p := p) k (f i) (f' i)) : Cong (p := p) k (∑ i ∈ s, f i) (∑ i ∈ s, f' i) := by
   classical
   induction s using Finset.induction_on with
   | empty => simpa using cong_refl' (p := p) k (0 : Ω)
@@ -43,7 +47,7 @@ theorem cong_sum' {k : ℕ} {ι : Type*} (s : Finset ι) (f f' : ι → Ω)
     rw [Finset.sum_insert ha, Finset.sum_insert ha]
     exact cong_add' (h a (Finset.mem_insert_self a s)) (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
 
-theorem cong_of_eq' {k : ℕ} {x y : Ω} (h : x = y) : Cong p k x y := h ▸ cong_refl' k x
+theorem cong_of_eq' {k : ℕ} {x y : Ω} (h : x = y) : Cong (p := p) k x y := h ▸ cong_refl' k x
 
 theorem mem_geoTop_iff (T : Tower p Ω) (g : Gal p Ω) :
     g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n ↔
@@ -73,11 +77,11 @@ theorem exists_moved (T : Tower p Ω) {g : Gal p Ω} (hg : g ∉ Ggeo p Ω ⊓ �
 theorem uniform_lc_on (hΩ : IsClo p Ω) (T : Tower p Ω) {k : ℕ} {c : Gal p Ω → Ω}
     (hc : IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c) :
     ∃ S₀ : Finset Ω, ∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n,
-      (∀ x ∈ S₀, h x = g x) → Cong p k (c h) (c g) := by
+      (∀ x ∈ S₀, h x = g x) → Cong (p := p) k (c h) (c g) := by
   classical
   set H := Ggeo p Ω ⊓ ⨅ n, Gn T n with hH
   have hS : ∀ g : Gal p Ω, ∃ S : Finset Ω,
-      (g ∈ H → ∀ h ∈ H, (∀ x ∈ S, h x = g x) → Cong p k (c h) (c g)) ∧
+      (g ∈ H → ∀ h ∈ H, (∀ x ∈ S, h x = g x) → Cong (p := p) k (c h) (c g)) ∧
       (g ∉ H → ∀ h ∈ H, ¬ ∀ x ∈ S, h x = g x) := by
     intro g
     by_cases hg : g ∈ H
@@ -95,18 +99,18 @@ theorem uniform_lc_on (hΩ : IsClo p Ω) (T : Tower p Ω) {k : ℕ} {c : Gal p �
   have hg0H : g0 ∈ H := by
     by_contra hn
     exact hS2 g0 hn g hg hg0
-  have h1 : Cong p k (c g) (c g0) := hS1 g0 hg0H g hg hg0
-  have h2 : Cong p k (c h) (c g0) := hS1 g0 hg0H h hh (fun x hx => by
+  have h1 : Cong (p := p) k (c g) (c g0) := hS1 g0 hg0H g hg hg0
+  have h2 : Cong (p := p) k (c h) (c g0) := hS1 g0 hg0H h hh (fun x hx => by
     rw [hgh x (Finset.mem_biUnion.mpr ⟨g0, hg0F, hx⟩), hg0 x hx])
   exact cong_trans' h2 (cong_symm' h1)
 
 theorem uniform_lc_on_int (hΩ : IsClo p Ω) (T : Tower p Ω) {k : ℕ} {c : Gal p Ω → Ω}
     (hc : IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c) :
-    ∃ S₁ : Finset Ω, (∀ s ∈ S₁, IsInt p s) ∧ ∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n,
-      ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, (∀ x ∈ S₁, h x = g x) → Cong p k (c h) (c g) := by
+    ∃ S₁ : Finset Ω, (∀ s ∈ S₁, IsInt (p := p) s) ∧ ∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n,
+      ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, (∀ x ∈ S₁, h x = g x) → Cong (p := p) k (c h) (c g) := by
   classical
   obtain ⟨S₀, hS₀⟩ := uniform_lc_on hΩ T hc
-  have hm : ∀ x : Ω, ∃ a : O0 p, a ≠ 0 ∧ IsInt p (a • x) := fun x => by
+  have hm : ∀ x : Ω, ∃ a : O0 p, a ≠ 0 ∧ IsInt (p := p) (a • x) := fun x => by
     obtain ⟨a, ha, hi⟩ := (hΩ.alg.isAlgebraic x).exists_integral_multiple
     exact ⟨a, ha, hi⟩
   choose a ha hai using hm
@@ -123,7 +127,7 @@ theorem uniform_lc_on_int (hΩ : IsClo p Ω) (T : Tower p Ω) {k : ℕ} {c : Gal
 
 theorem h1_killed_by_zeta_sub_one_geo : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ c : Gal p Ω → Ω, IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (c (g * h)) (c g + g (c h))) →
+  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (c (g * h)) (c g + g (c h))) →
   Cob1 k (Ggeo p Ω ⊓ ⨅ n, Gn T n) (fun g => (T.ζ j - 1) * c g) := by
   intro p _ hp2 Ω _ _ hΩ T k j hj c hc hcoc
   classical
@@ -132,7 +136,7 @@ theorem h1_killed_by_zeta_sub_one_geo : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 �
   obtain ⟨y, E, hy, hEH, hu, hsum⟩ :=
     GlobalTheory.T.smallTraces_subgroup_galois_towerTop p Ω hp2 hΩ T H inf_le_right S₁ j hj
   set x : Ω := ∑ g ∈ E, g y * c g with hx
-  have hxint : IsInt p x := by
+  have hxint : IsInt (p := p) x := by
     refine IsIntegral.sum _ fun g hg => ?_
     exact (IsIntegral.map g.toAlgHom hy).mul (hc.1 g (hEH g hg))
   refine ⟨-x, hxint.neg, fun h hh => ?_⟩
@@ -156,19 +160,21 @@ theorem h1_killed_by_zeta_sub_one_geo : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 �
   have hperm : ∑ g ∈ E, σ g y * c (σ g) = x := by
     rw [hx, ← Finset.sum_image (f := fun g' => g' y * c g') hσinj, himg]
   have hhx : h x = ∑ g ∈ E, h (g y) * h (c g) := by
-    rw [hx, map_sum]; simp only [map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]; simp only [map_mul]
   have hζ : h (T.ζ j) = T.ζ j := (((mem_geoTop_iff T h).mp hh).2 j).1
   have hsumh : ∑ g ∈ E, h (g y) = T.ζ j - 1 := by
-    rw [← map_sum, hsum, map_sub, map_one, hζ]
-  have step : ∀ g ∈ E, Cong p k (h (g y) * h (c g)) (σ g y * c (σ g) - h (g y) * c h) := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hsum, map_sub, map_one, hζ]
+  have step : ∀ g ∈ E, Cong (p := p) k (h (g y) * h (c g)) (σ g y * c (σ g) - h (g y) * c h) := by
     intro g hg
     have hgH := hEH g hg
-    have c1 : Cong p k (h (c g)) (c (h * g) - c h) := by
+    have c1 : Cong (p := p) k (h (c g)) (c (h * g) - c h) := by
       obtain ⟨z, hz, e⟩ := hcoc h hh g hgH
       exact ⟨-z, hz.neg, by rw [mul_neg, ← e]; ring⟩
-    have c2 : Cong p k (c (h * g)) (c (σ g)) :=
+    have c2 : Cong (p := p) k (c (h * g)) (c (σ g)) :=
       hS₁ (σ g) (hEH _ (hσE g hg)) (h * g) (H.mul_mem hh hgH) (hσS g hg)
-    have c3 : Cong p k (c (h * g) - c h) (c (σ g) - c h) := by
+    have c3 : Cong (p := p) k (c (h * g) - c h) (c (σ g) - c h) := by
       obtain ⟨z, hz, e⟩ := c2
       exact ⟨z, hz, by rw [← e]; ring⟩
     have := cong_mul_left' (h (g y)) (IsIntegral.map h.toAlgHom (IsIntegral.map g.toAlgHom hy))

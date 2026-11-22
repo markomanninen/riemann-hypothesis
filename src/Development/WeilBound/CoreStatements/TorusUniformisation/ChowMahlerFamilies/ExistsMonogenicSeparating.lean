@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace PositivityTheory.Xgn.MonogenicSeparating
@@ -36,7 +41,7 @@ private theorem exists_finite_subalgebra_pi_of_ringHom_lemma_2 {O V S : Type} [C
       rw [← Algebra.smul_def]
       exact Submodule.smul_mem _ v (Submodule.subset_span ⟨a, rfl⟩)
     | add t₁ t₂ h₁ h₂ =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ h₁ h₂
 
 theorem sep_poly (E : Type) [Field E] [NumberField E] (P : Ideal (𝓞 E)) (hP : P.IsPrime)
@@ -216,7 +221,7 @@ theorem adjoin_top {O V R : Type} [CommRing O] [CommRing V] [IsLocalRing V] [Com
       refine ⟨v₁ + v₂, z₁ + z₂, ?_⟩
       have h₁₂ := Ideal.add_mem _ h₁ h₂
       convert h₁₂ using 1
-      rw [map_add]
+      rw [map_add (f := _)]
       ring
     | smul r x _ hx =>
       obtain ⟨v, z, h⟩ := hx
@@ -281,14 +286,14 @@ theorem ex_poly (E : Type) [Field E] [NumberField E] (V : Type) [CommRing V] [Is
     ∃ π : 𝓞 E, ∀ a : 𝓞 E, ∃ g : V[X], ∀ s, e s a = g.eval (e s π) := by
   have hP : ((IsLocalRing.maximalIdeal V).comap c).IsPrime := Ideal.comap_isPrime c _
   obtain ⟨π, hπP, hπ⟩ := PositivityTheory.Xgn.MonogenicSeparating.ex_unif E _ hP
-  obtain ⟨R, hRfin, hFR, hRspan⟩ := exists_finite_subalgebra_pi_of_ringHom_lemma_2 (Pi.ringHom e)
+  obtain ⟨R, hRfin, hFR, hRspan⟩ := exists_finite_subalgebra_pi_of_ringHom_lemma_2 (RingHom.pi e)
   haveI := hRfin
   obtain ⟨φ, hφ⟩ : ∃ φ : 𝓞 E →+* R, ∀ a s, (φ a : S → V) s = e s a :=
-    ⟨(Pi.ringHom e).codRestrict R hFR, fun a s => rfl⟩
+    ⟨(RingHom.pi e).codRestrict R hFR, fun a s => rfl⟩
   have hgen : Submodule.span V (Set.range φ) = ⊤ := by
     rw [eq_top_iff]
     rintro ⟨x, hx⟩ -
-    have key : ∀ y (hy : y ∈ Submodule.span V (Set.range (Pi.ringHom e))),
+    have key : ∀ y (hy : y ∈ Submodule.span V (Set.range (RingHom.pi e))),
         ∃ h : y ∈ R, (⟨y, h⟩ : R) ∈ Submodule.span V (Set.range φ) := by
       intro y hy
       induction hy using Submodule.span_induction with
@@ -309,7 +314,8 @@ theorem ex_poly (E : Type) [Field E] [NumberField E] (V : Type) [CommRing V] [Is
     intro a
     apply Subtype.ext
     funext s
-    rw [SubmonoidClass.coe_finset_prod, Finset.prod_apply]
+    change (R.val (∏ s', (φ a - algebraMap V R (e s' a)))) s = 0
+    rw [map_prod, Finset.prod_apply]
     exact Finset.prod_eq_zero (Finset.mem_univ s) (by simp [hφ])
   have hnil : ∀ a, ∃ n, (φ a - algebraMap V R (c a)) ^ n ∈
       (IsLocalRing.maximalIdeal V).map (algebraMap V R) := by
@@ -373,7 +379,7 @@ theorem ex_idem {O V ι : Type} [CommRing O] [CommRing V] [IsLocalRing V] [Finty
     intro r hr
     have hex : ∃ a, IsUnit (e r a - e σ a) := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hr ((hK r).mpr hcon)
     have hu := hA r hex
     rw [hy, IsUnit.prod_iff]

@@ -1,8 +1,12 @@
-import ReciprocityTheory.DualLattices.EigenQuotientSmithStatement
-import ReciprocityTheory.DualLattices.StdJForm4
-import ReciprocityTheory.DualLattices.ExistsMatOfEquiv
-import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
-import ReciprocityTheory.DualLattices.MatEquivApply
+module
+
+public import ReciprocityTheory.DualLattices.EigenQuotientSmithStatement
+public import ReciprocityTheory.DualLattices.StdJForm4
+public import ReciprocityTheory.DualLattices.ExistsMatOfEquiv
+public import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
+public import ReciprocityTheory.DualLattices.MatEquivApply
+
+@[expose] public section
 
 noncomputable section
 

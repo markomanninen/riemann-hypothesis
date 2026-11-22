@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMemMeasurableSet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMemMeasurableSet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousMulMt
+
+@[expose] public section
 
 noncomputable section
 

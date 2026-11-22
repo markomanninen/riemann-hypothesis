@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ContinuousAevalMvPolynomial
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.PowCardLeNormProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ContinuousAevalMvPolynomial
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.PowCardLeNormProd
+
+@[expose] public section
 
 namespace GlobalTheory.AffinePoints
 
@@ -19,7 +23,8 @@ theorem exists_comap_eq_of_isIntegral {K A B : Type*} [Field K] [IsAlgClosed K] 
   have hcomp : ∀ a, Ideal.Quotient.mk Q (φ a) = algebraMap K (B ⧸ Q) (p a) := by
     intro a
     have : a - algebraMap K A (p a) ∈ Q.comap (algebraMap A B) := by
-      rw [hQp]; simp [RingHom.mem_ker]
+      rw [← Ideal.under_def, hQp]
+      simp [RingHom.mem_ker]
     have h2 : φ (a - algebraMap K A (p a)) ∈ Q := this
     rw [map_sub, AlgHom.commutes] at h2
     exact Ideal.Quotient.eq.2 h2
@@ -36,13 +41,6 @@ theorem exists_comap_eq_of_isIntegral {K A B : Type*} [Field K] [IsAlgClosed K] 
   ext a
   change e.symm (Ideal.Quotient.mk Q (φ a)) = p a
   rw [hcomp, AlgEquiv.commutes]; rfl
-
-theorem surjective_comap_of_isIntegral {K A B : Type*} [Field K] [IsAlgClosed K] [CommRing A]
-    [Algebra K A] [CommRing B] [Algebra K B] (φ : A →ₐ[K] B) (hφ : φ.toRingHom.IsIntegral)
-    (hinj : Function.Injective φ) :
-    Function.Surjective (comap φ : (B →ₐ[K] K) → (A →ₐ[K] K)) := fun p =>
-  exists_comap_eq_of_isIntegral φ hφ p fun a ha => by
-    rw [(injective_iff_map_eq_zero φ).1 hinj a ha, map_zero]
 
 theorem finite_fiber_comap {R A B K : Type*} [CommRing R] [CommRing A] [Algebra R A] [CommRing B]
     [Algebra R B] [Field K] [Algebra R K] (φ : A →ₐ[R] B) (hφ : φ.Finite) (p : A →ₐ[R] K) :
@@ -74,7 +72,7 @@ theorem isProperMap_comap (φ : A →ₐ[ℂ] B) (hφ : φ.toRingHom.IsIntegral)
     obtain ⟨h, hm, hb⟩ := hφ b
     let M : (A →ₐ[ℂ] ℂ) → ℝ := fun r => ∑ i ∈ Finset.range h.natDegree, ‖r (h.coeff i)‖ + 1
     have hM : Continuous M :=
-      (continuous_finset_sum _ fun i _ => (continuous_eval _).norm).add continuous_const
+      (continuous_finsetSum _ fun i _ => (continuous_eval _).norm).add continuous_const
     have hbd : ∀ q : B →ₐ[ℂ] ℂ, ‖q b‖ ≤ M (comap φ q) := by
       intro q
       have hr : (h.map (comap φ q).toRingHom).IsRoot (q b) := by

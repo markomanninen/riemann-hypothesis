@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocJacTyp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExCore
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExChar
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocJacTyp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExCore
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HaarFibreUniqueness.SdExChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem exists_gens : ∃ (m : ℕ) (w : Fin m → Fv F v ⊗[F] E), (∀ k, w k
     | add a b _ _ ha hb =>
       have e : inclR (F := F) (Fv F v) (((a + b : 𝓞 E)) : E) =
           inclR (F := F) (Fv F v) (a : E) + inclR (F := F) (Fv F v) (b : E) := by
-        simp [map_add]
+        simp [map_add (f := _)]
       show inclR (F := F) (Fv F v) (((a + b : 𝓞 E)) : E) ∈ _
       rw [e]
       exact Submodule.add_mem _ ha hb
@@ -155,7 +159,7 @@ theorem isOpen_oev : IsOpen (OEv (E := E) v) :=
 
 def trC : (Fv F v ⊗[F] E) →ₗ[Fv F v] (Fin (Module.finrank F E) → Fv F v) where
   toFun y i := Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (bas (E := E) v i * y)
-  map_add' x y := by funext i; simp [mul_add, map_add]
+  map_add' x y := by funext i; simp [mul_add, map_add (f := _)]
   map_smul' c x := by funext i; simp [map_smul]
 
 theorem trC_apply (y : Fv F v ⊗[F] E) (i : Fin (Module.finrank F E)) :
@@ -172,7 +176,8 @@ theorem trC_injective : Function.Injective (trC (E := E) v) := by
     funext i
     have h1 := congrFun hy i
     rw [trC_apply, ← (bas (E := E) v).sum_equivFun y, Finset.mul_sum] at h1
-    simp only [mul_smul_comm, map_sum, map_smul, smul_eq_mul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mul_smul_comm, map_sum, map_smul, smul_eq_mul] at h1
     rw [Pi.zero_apply] at h1
     rw [Pi.zero_apply, ← h1, Matrix.mulVec, dotProduct]
     refine Finset.sum_congr rfl fun j _ => ?_

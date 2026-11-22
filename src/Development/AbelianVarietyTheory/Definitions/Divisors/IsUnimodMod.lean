@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,11 +69,6 @@ structure FSys {O : Type} [CommRing O] (bar : O → O) (q : ℕ) {s : ℕ} (W : 
         ‖ev y f - ∑ μ ∈ S, ∏ i, t y (fun u => μ (i, u)) (c i)‖ ≤ max ε (‖ev y h‖ ^ e)
 
 attribute [instance] FSys.add FSys.mod FSys.fin FSys.proj FSys.freeZ FSys.finZ
-
-def FSys.Approx {O : Type} [CommRing O] {bar : O → O} {q s : ℕ} {W : Matrix (Fin s) (Fin s) ℤ} {N₁ p : ℕ} [Fact p.Prime]
-    {A : Type} [CommRing A] [IsLocalRing A] (Φ : FSys bar q W N₁ p A) (φ : InvFun O) (d : ℕ) : Prop :=
-  ∀ (y₀ : Φ.Y) (e : ℕ), ∃ f : A, ‖Φ.ev y₀ f‖ = Real.exp (-(Φ.sc y₀ * (d * φ.evalZ (Φ.β y₀)))) ∧
-    ∀ y, ‖Φ.ev y f‖ ≤ Real.exp (-(Φ.sc y * (d * φ.evalZ (Φ.β y)))) ∨ ∃ h ∈ maximalIdeal A, ‖Φ.ev y f‖ ≤ ‖Φ.ev y h‖ ^ e
 
 structure Supports {O : Type} [CommRing O] (bar : O → O) (φ : InvFun O) (d : ℕ) {X : Type} [AddCommGroup X] [Module O X]
     [Module.Finite O X] {r : ℕ} (γ : Fin r → LinearMap.BilinForm ℤ X) {m : ℕ} (a : Fin m → X) : Prop where

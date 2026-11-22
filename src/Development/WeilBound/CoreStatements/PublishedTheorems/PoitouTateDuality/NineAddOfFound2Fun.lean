@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsNineAdd
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsNineAddIntro
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualQZ
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PfNineAddFSCReindex
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsNineAdd
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsNineAddIntro
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualQZ
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PfNineAddFSCReindex
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ namespace PositivityTheory.Lit1.PTN
 
 attribute [local instance 2000] Rep.hV2
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem nineAdd_of_found2 {N : ℕ} [NeZero N]
     {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     {ι : Type} [Fintype ι] {Hv : ι → Type} [∀ v, Group (Hv v)] [∀ v, TopologicalSpace (Hv v)]
@@ -115,7 +119,8 @@ theorem nineAdd_of_found2 {N : ℕ} [NeZero N]
     rw [AddEquiv.trans_apply]
     change ptLocalDualMap φ D M inv h (reindexAdd (fun v => cohomology (Rep.res (φ v).toMonoidHom M) r) e
       (fun k => Ev k (x k))) y = _
-    rw [ptLocalDualMap_reindex, AddMonoidHom.smul_apply, dualQZ_apply, hf, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ptLocalDualMap_reindex, AddMonoidHom.smul_apply, dualQZ_apply, hf, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hQ, tq, AddEquiv.apply_symm_apply, ptLocalPairing_apply]
   exact nineAdd_intro (ptGlobalToLocal φ M 0).hom.toAddMonoidHom

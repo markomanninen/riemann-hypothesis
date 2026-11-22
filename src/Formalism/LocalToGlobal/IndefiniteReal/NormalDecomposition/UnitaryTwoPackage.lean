@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.PairingCommutesLiftOperators
-import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.Decomp
-import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RangeAdjointRat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.PairingCommutesLiftOperators
+public import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.Decomp
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalAdjoints.RangeAdjointRat
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped InnerProductSpace

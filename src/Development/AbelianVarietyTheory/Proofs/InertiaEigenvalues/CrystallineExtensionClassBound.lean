@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TorsionBoundOfWeightHypStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SesLatticeTrivialQuotientStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisOfSubmodule
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cocycle
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCocTmulOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContractEquivariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsExpStarZeroNear
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoboundaryBcrisOfDualExponentialZeroStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowSmulMemHfDOfRestriction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemLayerIff
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TorsionBoundOfWeightHypStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SesLatticeTrivialQuotientStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisOfSubmodule
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Cocycle
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCocTmulOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContractEquivariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsExpStarZeroNear
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoboundaryBcrisOfDualExponentialZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowSmulMemHfDOfRestriction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemLayerIff
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 
@@ -38,7 +42,7 @@ theorem padicInt_hom_witt_ext_pt {R : Type} [CommRing R] [CharP R l]
   have h : f z - g z = (f c - g c) * (l : WittVector l R) ^ (n + 1) := by
     generalize PadicInt.appr z (n + 1) = m at hz
     rw [hz]
-    simp only [map_add, map_mul, map_pow, map_natCast]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast]
     ring
   rw [h, WittVector.mul_pow_charP_coeff_zero _ (Nat.lt_succ_self n), WittVector.zero_coeff]
 
@@ -79,7 +83,8 @@ theorem exists_coords {G : Type} [Group G] [TopologicalSpace G] {LL O : Type} [F
     refine Finset.sum_congr rfl fun j _ => ?_
     change _ = algebraMap ℤ_[l] O (a j) • u j
     rw [← algebraMap_smul LL (algebraMap ℤ_[l] O (a j)), hc, algebraMap_smul]
-  rw [hy, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) fun j _ => ?_
   rw [map_smul]
   change ‖u.repr (y : Y.V) j * _‖ ≤ _
@@ -98,13 +103,14 @@ theorem actVB_sum_tmul {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field
     (hz : ∀ i, algebraMap Qp B (z i) = c • PD.actB g (x i) - x i) :
     w.equivFun.symm z ⊗ₜ[Qp] (1 : B) =
       actVB PD ρ g (∑ i, w i ⊗ₜ[Qp] x i) - ∑ i, w i ⊗ₜ[Qp] x i := by
-  rw [map_sum, ← Finset.sum_sub_distrib, Module.Basis.equivFun_symm_apply, sum_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib, Module.Basis.equivFun_symm_apply, sum_tmul]
   refine Finset.sum_congr rfl fun i _ => ?_
   change _ = ρ g (w i) ⊗ₜ[Qp] PD.actB g (x i) - _
   rw [hc, smul_tmul, smul_tmul, ← tmul_sub, ← hz i, Algebra.algebraMap_eq_smul_one]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem mem_HfD_of_coords (P : LocPrime l) (K LL : FinExt l) (s : ℕ) (hK : K.1 ≤ Ks K s)
     (V : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (c : GQ l → ℚ_[l])
     (hV : ∀ (g : ↥(GK K)) (x : V.V), V.ρ g x = c g • x) {n : ℕ}
@@ -123,7 +129,7 @@ theorem mem_HfD_of_coords (P : LocPrime l) (K LL : FinExt l) (s : ℕ) (hK : K.1
   · refine hwc.comp_continuousOn (continuousOn_pi.2 fun i => ?_)
     exact (hz i).1.comp continuous_subtype_val.continuousOn fun g hg => hg
   · intro g hg h hh
-    rw [hV, ← map_smul, ← map_add]
+    rw [hV, ← map_smul, ← map_add (f := _)]
     congr 1
     funext i
     exact (hz i).2.2 g hg h hh
@@ -183,7 +189,7 @@ theorem scalar_step (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : Archimed
         (l : Ainf l) ^ N * algebraMap ℤ_[l] (Ainf l) u, ?_⟩
       have := hsm (s + padicValNat l (e + 1)) _ _ ha
       convert this using 1
-      simp only [hu, map_add, map_mul, map_pow, map_natCast, hι]
+      simp only [hu, map_add (f := _), map_mul, map_pow, map_natCast, hι]
       ring⟩
   obtain ⟨x, hx⟩ := GlobalTheory.T.coboundary_bcris_of_dualExponential_zero D h2 h4 l K s hs e z' hz'
   refine ⟨z', x, hz'.1, hx, fun σ hσ => ?_⟩
@@ -224,7 +230,7 @@ theorem scalar_of_isCob (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : Arch
   have H2 : ∀ σ ∈ Gj K s, ∀ τ ∈ Gj K s, ‖c (σ * τ) - c σ -
       (((D.loc l).χQ σ ^ (-(e : ℤ)) : ℚ_[l]ˣ) : ℚ_[l]) * c τ‖ ≤ 1 := fun σ hσ τ hτ => by
     have h1 : f ⟨σ * τ, hle (mul_mem hσ hτ)⟩ = _ := hf ⟨σ, hle hσ⟩ ⟨τ, hle hτ⟩
-    rw [hc σ (hle hσ), hc τ (hle hτ), hc _ (hle (mul_mem hσ hτ)), h1, ψ.map_add,
+    rw [hc σ (hle hσ), hc τ (hle hτ), hc _ (hle (mul_mem hσ hτ)), h1, map_add ψ,
       add_sub_cancel_left]
     exact hψe ⟨σ, hle hσ⟩ _
   have H3 : ∀ σ ∈ Gj K s, ∀ᶠ τ in nhdsWithin σ (Gj K s), ‖c τ - c σ‖ ≤ 1 := fun σ hσ => by
@@ -252,8 +258,8 @@ theorem scalar_of_isCob (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : Arch
   have := hzc g hg
   rwa [hc g g.2] at this
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mem_HfD_of_isCob (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : ArchimedeanSignatureMatching D) (K LL : FinExt l) (s : ℕ)
     (hs : Lev l s) (hK : K.1 ≤ Ks K s) (hle : Gj K s ≤ GK K) (e N r : ℕ)
     (Y : Type) [AddCommGroup Y] [Module ℤ_[l] Y]
@@ -287,7 +293,7 @@ theorem mem_HfD_of_isCob (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : Arc
     (s + padicValNat l (e + 1)) = k at hzc ⊢
   have A1 : ∀ g h, (l ^ k : ℕ) • Φ (f (g * h)) -
       ((l ^ k : ℕ) • Φ (f g) + V.ρ g ((l ^ k : ℕ) • Φ (f h))) ∈ V.L.T := fun g h => by
-    rw [hf g h, Φ.map_add, map_nsmul (V.ρ g), ← smul_add, ← smul_sub, add_sub_add_left_eq_sub]
+    rw [hf g h, map_add Φ, map_nsmul (V.ρ g), ← smul_add, ← smul_sub, add_sub_add_left_eq_sub]
     exact nsmul_mem (hΦ _ _) _
   have A2 : ∀ i (g : ↥(GK K)), (g : GQ l) ∈ Gj K s →
       ‖z i g - w.repr ((l ^ k : ℕ) • Φ (f g)) i‖ ≤ 1 := fun i g hg => by
@@ -322,8 +328,8 @@ theorem lift_equivariant {G : Type} [Group G] [TopologicalSpace G] {Qp LL O : Ty
   rw [← hΦ, ← hΦ] at h1
   exact h1
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem mem_HfD_of_lattice (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : ArchimedeanSignatureMatching D) (K LL : FinExt l) (s : ℕ)
     (hs : Lev l s) (hK : K.1 ≤ Ks K s) (hle : Gj K s ≤ GK K) (e N : ℕ)
     (Y V : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL))
@@ -354,8 +360,8 @@ theorem mem_HfD_of_lattice (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h4 : A
   rw [cTB, funext (h3 _ _)]
   exact key
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem class_bound : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), admitted D HW F → ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let S := sit D.loc HW l (D.locA l) K s LL h; let E : S.Comparison₂ := ((F l).E K s LL h).tie; TBat S E := by
   intro D HW F hA l _ K s LL h S E e M0 h0 Yt Y Z Ve ι π hses _ hZ _ hVe hcr hW yt hyt _ φ hφ f hf
   obtain ⟨-, h2, -, h4, h5, -, h7, -, -⟩ := hA

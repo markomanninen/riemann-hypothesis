@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagConeAlg
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairConeAlg
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagClosureModel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagConeAlg
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPairConeAlg
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagClosureModel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -25,7 +30,8 @@ theorem apply_castLE {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Modul
     (ψ : Module.Dual Ω E) :
     ψ v = ∑ j : Fin k, w.repr v (Fin.castLE hkN j) * ψ (w (Fin.castLE hkN j)) := by
   conv_lhs => rw [← w.sum_repr v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   exact sum_castLE hkN _ fun j hj => by rw [hv j hj, zero_mul]
 
@@ -47,7 +53,8 @@ theorem exists_coords {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Modu
   have hsk : Matrix.vecMul (Matrix.vecMul sk TΦ⁻¹) TΦ = sk := by
     rw [Matrix.vecMul_vecMul, Matrix.nonsing_inv_mul _ hTΦ, Matrix.vecMul_one]
   rw [sum_castLE hkN _ fun j hj => by rw [hs j hj, zero_mul]]
-  simp_rw [apply_castLE hkN w (u _) (hu _) ψ, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [apply_castLE hkN w (u _) (hu _) ψ, map_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h := congrFun hsk j
@@ -63,7 +70,8 @@ theorem expand_coords {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Modu
     (hV : V = ∑ q, s' q * algebraMap Ω Φ (ψ (u q))) (Y Z : Ω) (o : σ) :
     ∑ q, C (algebraMap Ω Φ (ψ (u q) / Z)) * (C (algebraMap Ω Φ Y * s' q) * (X o : MvPolynomial σ Φ)) =
       C (algebraMap Ω Φ (Y / Z) * V) * X o := by
-  rw [hV, Finset.mul_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hV, Finset.mul_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [← mul_assoc, ← map_mul]
   congr 2
@@ -72,8 +80,8 @@ theorem expand_coords {Ω : Type*} [Field Ω] {E : Type*} [AddCommGroup E] [Modu
 
 end SegreFlagConeAlg
 
-open PairConeAlg SegreFlagConeAlg SegreFlagClosureModel GenericProjClosureDim in
 
+open PairConeAlg SegreFlagConeAlg SegreFlagClosureModel GenericProjClosureDim in
 theorem SegreFlagConeAlg.proof : SegreFlagConeAlg.Statement := by
   intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N E _ _ B B' hB w w' x x' f g hfl M M' a₀ a₀' φ φ' hφ hφ'
     Φ _ _ _ _ e t ht k hk hkN
@@ -189,7 +197,7 @@ theorem SegreFlagConeAlg.proof : SegreFlagConeAlg.Statement := by
           exact AC.mul_mem ha hb
         add_mem' := fun {a b} ha hb => by
           show ψ (a + b) ∈ AC
-          rw [map_add]
+          rw [map_add (f := _)]
           exact AC.add_mem ha hb
         algebraMap_mem' := fun r => by
           show ψ (algebraMap O Ω r) ∈ AC

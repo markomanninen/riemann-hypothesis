@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory
@@ -70,7 +75,8 @@ theorem integral_norm_sq_expSum (s : Finset ℕ) (b : ℕ → ℂ) (y : ℝ) :
       = ∑ n ∈ s, ∑ m ∈ s, b n * (starRingEnd ℂ) (b m) *
         Complex.exp (2 * Real.pi * I * ((n : ℂ) - m) * t) := by
     intro t
-    rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Complex.ofReal_pow, ← Complex.mul_conj', map_sum, Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun n _ => Finset.sum_congr rfl fun m _ => ?_
     rw [map_mul, ← Complex.exp_conj]
     simp only [map_mul, conj_ofReal, conj_I, map_natCast, map_ofNat]
@@ -80,10 +86,10 @@ theorem integral_norm_sq_expSum (s : Finset ℕ) (b : ℕ → ℂ) (y : ℝ) :
   apply Complex.ofReal_injective
   rw [← intervalIntegral.integral_ofReal]
   simp_rw [key]
-  rw [intervalIntegral.integral_finset_sum (fun n _ => Continuous.intervalIntegrable (by fun_prop) _ _)]
+  rw [intervalIntegral.integral_finsetSum (fun n _ => Continuous.intervalIntegrable (by fun_prop) _ _)]
   push_cast
   refine Finset.sum_congr rfl fun n hn => ?_
-  rw [intervalIntegral.integral_finset_sum (fun n _ => Continuous.intervalIntegrable (by fun_prop) _ _)]
+  rw [intervalIntegral.integral_finsetSum (fun n _ => Continuous.intervalIntegrable (by fun_prop) _ _)]
   simp_rw [intervalIntegral.integral_const_mul, integral_exp_two_pi_sub]
   simp [hn, Complex.mul_conj']
 
@@ -100,7 +106,7 @@ theorem sum_intervalIntegral_le_of_spaced (g : ℝ → ℝ) (hg : Continuous g) 
   rw [← integral_biUnion_finset S (s := fun x => Set.Ioc (p x) (p x + δ))
     (fun _ _ => measurableSet_Ioc) ?_ (fun x _ => hi _ _)]
   · apply setIntegral_mono_set (hi _ _) (Filter.Eventually.of_forall h0)
-    apply HasSubset.Subset.eventuallyLE
+    apply Filter.Eventually.of_forall
     intro t ht
     simp only [Set.mem_iUnion] at ht
     obtain ⟨x, hx, ht⟩ := ht

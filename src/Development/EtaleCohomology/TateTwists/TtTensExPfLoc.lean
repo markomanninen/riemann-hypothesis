@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TtTensExPf
+module
+
+public import Development.EtaleCohomology.TateTwists.TtTensExPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

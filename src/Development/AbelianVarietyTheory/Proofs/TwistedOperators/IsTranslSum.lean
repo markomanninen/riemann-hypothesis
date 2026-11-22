@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.RegTie
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.RegTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,9 +33,6 @@ def Lin {K : Type} [CommRing K] {x x' : Sp K ⟶ Xo.X} (f : Fib Xo x ⟶ Fib Xo 
 def IsPair (N : ℕ) {K : Type} [CommRing K] {x x' : Sp K ⟶ Xo.X} (f : Fib Xo x ⟶ Fib Xo x')
     (f' : Fib Xo x' ⟶ Fib Xo x) : Prop :=
   IsMonHom f ∧ IsMonHom f' ∧ f ≫ f' = 𝟙 _ ^ N ∧ f' ≫ f = 𝟙 _ ^ N ∧ Lin f ∧ Lin f'
-
-example {K : Type} [CommRing K] (x : Sp K ⟶ Xo.X) : IsPair 1 (𝟙 (Fib Xo x)) (𝟙 _) :=
-  ⟨inferInstance, inferInstance, by simp, by simp, fun _ => by simp, fun _ => by simp⟩
 
 def HkWith (p : ℕ) {K : Type} [Field K] [Algebra c.F K] (y z : FrPt Xo c K) (f : Fib Xo y.x ⟶ Fib Xo z.x)
     (f' : Fib Xo z.x ⟶ Fib Xo y.x) : Prop :=

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelMembershipPackage
-import Formalism.SharpRestriction.LevelLetterCocycles.CoboundaryMemInvariantCocycles
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsLinearLiftOfFree
-import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationQuotientFiniteDimensional
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelMembershipPackage
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoboundaryMemInvariantCocycles
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsLinearLiftOfFree
+public import Formalism.SharpRestriction.LevelLetterCocycles.FiltrationQuotientFiniteDimensional
+
+@[expose] public section
 
 noncomputable section
 
@@ -314,7 +318,7 @@ theorem second_lift_at_situation [NeZero n] (W : LocWach PD LL O v n) (hZ : TToo
         (fun c' => tL c' (Submodule.inclusion hle f)) c) =
       frobeniusSquareDefectOfLiftCorrection W T₂ s₁ σ (y f) (fun c' => ms c' f) (fun c' => tL c' (Submodule.inclusion hle f)) c := by
     intro c hc f δ hδ
-    rw [cocycleY_eq_frobenius_add, ← hw, map_add, gammaD_frobenius_comm, (hfacts c hc f).2.2.2 δ hδ,
+    rw [cocycleY_eq_frobenius_add, ← hw, map_add (f := _), gammaD_frobenius_comm, (hfacts c hc f).2.2.2 δ hδ,
       (htL c hc (Submodule.inclusion hle f)).2.1.2 δ hδ]
   have hpack : ∀ f : ↥F₂, ∀ c, ∃ (xc : ↥(W.wachCocyclesDelta T₂)) (κc : G → T₂.V) (hκc : κc ∈ latticeCocycles T₂.L),
       c ∈ evens n d → (RhoCoc W T₂ c M η σ (wL c f) κc ∧
@@ -348,11 +352,12 @@ theorem second_lift_at_situation [NeZero n] (W : LocWach PD LL O v n) (hZ : TToo
       (fun c' => tL c' f₁) d) = liftCorrectionSum W T₂ s₁ σ (y f) (fun c' => ms c' f) (fun c' => tL c' f₁) d := by
     intro δ hδ
     unfold liftCorrectionSum
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun c hc => ?_
     have h1 : W.γD T₂ δ (liftCorrection W T₂ s₁ σ (y f) (fun c' => ms c' f) (fun c' => tL c' f₁) c) =
         liftCorrection W T₂ s₁ σ (y f) (fun c' => ms c' f) (fun c' => tL c' f₁) c := (hmhDL c hc f₁).2 δ hδ
-    rw [map_add, map_add, map_smul, gammaD_letter_smul, ((hyz f).2 δ hδ).1, gammaD_frobenius_comm, h1]
+    rw [map_add (f := _), map_add (f := _), map_smul, gammaD_letter_smul, ((hyz f).2 δ hδ).1, gammaD_frobenius_comm, h1]
   have hcls := Step2C.sum_clK_eq_pow_smul_clK_of_level_decomposition W T₂ M (s₁ + σ) σ (evens n d) hgam hπ F2c2
     (fun i x h1 h2 h3 => ((F2c3 i x h1 h2).1 h3)) hcob x0 _ hmE
     (fun c => frobeniusSquareDefectOfLiftCorrection W T₂ s₁ σ (y f) (fun c' => ms c' f) (fun c' => tL c' f₁) c) xc

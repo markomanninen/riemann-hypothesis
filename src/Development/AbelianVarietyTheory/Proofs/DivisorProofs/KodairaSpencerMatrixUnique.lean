@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -47,7 +51,8 @@ theorem IsPolForm.unique (P : AbelianDeRham.Free) {A : Over (Sp R)} [GrpObj A] {
   have ex : ∀ c : primDR A, x' c.1 = x c := fun c => congrArg x (o.symm_apply_apply c)
   have ey : ∀ c : primDR A, y' c.1 = y c := fun c => congrArg y (o.symm_apply_apply c)
   have := congrArg (exteriorPower.alternatingMapLinearEquiv (wedgeDual x' y')) hw
-  simpa [map_sum, wedgeDual, ex, ey] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum, wedgeDual, ex, ey] using this
 
 theorem isDPMorphism_red : IsDPMorphism (epsDP R) (dp0 R) (TrivSqZeroExt.fstHom R R R).toRingHom := by
   refine (isDPMorphism_iff _ _ _).2 ⟨Ideal.map_le_iff_le_comap.2 fun a ha => ?_, fun n hn a ha => ?_⟩
@@ -60,8 +65,8 @@ theorem isDPMorphism_red : IsDPMorphism (epsDP R) (dp0 R) (TrivSqZeroExt.fstHom 
     · have e : (epsDP R).dpow (n + 1 + 1) a = 0 := squareZeroDividedPowers_dpow _ (by omega) a
       rw [e, map_zero]
 
-variable (A : Over (Sp R)) [GrpObj A] in
 
+variable (A : Over (Sp R)) [GrpObj A] in
 theorem redMor : GrpMor (epsDP R) (epsRed R) A (dp0 R) (𝟙 _) A (TrivSqZeroExt.fstHom R R R).toRingHom (𝟙 _)
     (Over.Hom.left (𝟙 A)) :=
   GrpMor.of_hom isDPMorphism_red (by rw [Category.id_comp]) (𝟙 A)
@@ -96,14 +101,13 @@ theorem constMor_surjective (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {g 
   obtain ⟨z, rfl⟩ := bc.2 q
   refine ⟨z, ?_⟩
   induction z with
-  | zero => rw [map_zero, map_zero, map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul r c =>
     rw [liftSemi_tmul, liftSemi_tmul, map_smul,
       ← GrpMor.pull_pull (bcMor hφ) (liftMor (epsDP R) hic) (constMor A) (fun _ => rfl) (by simpa using e1) c]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem IsKSValue.unique (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {A' : Over (Sp (DualNumber R))} [GrpObj A']
     {g : ℕ} (hA : IsAbelianScheme A') (hg : SmoothOfRelativeDimension g A'.hom) {i : A.left ⟶ A'.left}
     {h : IsGrpPullback A A' (epsRed R) i} {f : HdR A} {v v' : epsR R ⟶ A} (e : IsKSValue h f v)
@@ -131,8 +135,7 @@ theorem IsKSValue.unique (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {A' : 
   have key : ∀ z, (d - d') (liftSemi (constMor A).pull z) =
       TrivSqZeroExt.inr ((k - k') ((redMor A).pull (liftSemi (constMor A).pull z))) := fun z => by
     induction z with
-    | zero => simp only [map_zero, TrivSqZeroExt.inr_zero]
-    | add x y hx hy => simp only [map_add, hx, hy, TrivSqZeroExt.inr_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, TrivSqZeroExt.inr_add]
     | tmul r c =>
       rw [liftSemi_tmul, LinearMap.map_smul, eD, LinearMap.map_smulₛₗ, redMor_constMor, LinearMap.map_smul]
       ext <;> simp [mul_comm]
@@ -157,8 +160,8 @@ section Frame
 variable {y : FrPt Xo c K} {B : Over (Sp K)} [GrpObj B] [IsCommMonObj B] {ρ : B.left ⟶ Xo.univ.t.G.left}
   (hρ : IsGrpPullback B Xo.univ.t.G y.x ρ)
 
-include hρ in
 
+include hρ in
 theorem exists_sub_mem_Fil (hL : LieExact B) {vb : (Σ σ : E →+* ℂ, Fin (Dw.mult σ)) → (epsR K ⟶ B)}
     {kb : (Σ σ : E →+* ℂ, Fin (Dw.mult σ)) → HdR B} (hv : ∀ k, pushHom hρ (epsR K) (vb k) = tv (fullB y k))
     (hl : ∀ k, IsLieImage (kb k) (vb k)) (h : HdR B) : ∃ a : (Σ σ : E →+* ℂ, Fin (Dw.mult σ)) → K,
@@ -182,8 +185,8 @@ theorem exists_sub_mem_Fil (hL : LieExact B) {vb : (Σ σ : E →+* ℂ, Fin (Dw
   obtain rfl := push_inj hρ ew
   exact hh.sub_mem hw
 
-include hρ in
 
+include hρ in
 theorem coef_unique {τ : E →+* ℂ} {u : Fin (Dw.mult τ) → (epsR K ⟶ B)}
     (hu : ∀ i, pushHom hρ (epsR K) (u i) = tv (fullB y ⟨τ, i⟩)) {a b : Fin (Dw.mult τ) → K} {w : epsR K ⟶ B}
     (ha : IsLieComb a u w) (hb : IsLieComb b u w) : a = b := by
@@ -272,12 +275,21 @@ theorem IsKS.unique (P : AbelianDeRham) {Φ : Finset (E →+* ℂ)} {y : FrPt Xo
     refine LinearMap.ext fun h => ?_
     obtain ⟨a, ha⟩ := exists_sub_mem_Fil hρ hL hvs (kb := kb) (fun k => hl₂ k.1 k.2) h
     have := iso f hf _ ha
-    rw [map_sub, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum] at this
     simpa [h0] using this
   have ed : ∀ k, th (hb k) - kb k ∈ Fil B := fun k => by
-    have := (hl k.1 k.2).baseChange (hφ := hφ) hF hL (hth _) (htv _)
-    rw [et] at this
-    exact this.sub_mem (hl₂ k.1 k.2)
+    rw [Fil, hF, Submodule.mem_dualAnnihilator]
+    intro c hc
+    refine (Submodule.span_le (p := LinearMap.ker (th (hb k) - kb k))).2 (fun c hc => ?_) hc
+    obtain ⟨⟨c, hc'⟩, hc, rfl⟩ := hc
+    change c ∈ F1 _ at hc
+    rw [hodgeFiltration_eq_range] at hc
+    obtain ⟨f, rfl⟩ := hc
+    change th (hb k) _ - kb k _ = 0
+    rw [hth (hb k), (hl k.1 k.2).2 f hc', ← tanVal_baseChange (AbelianDeRham.bcMor hφ).isMor (htv _) f, et, sub_eq_zero]
+    exact ((hl₂ k.1 k.2).2 _ ((AbelianDeRham.bcMor hφ).pullback_mem_primitive hc')).symm
+
   funext t
   obtain ⟨τ, r, s⟩ := t
   obtain ⟨w₁, hc₁, f₁, hf₁, hd₁, hv₁⟩ := hM τ r

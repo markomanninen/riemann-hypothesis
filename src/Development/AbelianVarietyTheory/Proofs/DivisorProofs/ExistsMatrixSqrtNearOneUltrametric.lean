@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix Filter Topology
 
 namespace GlobalTheory.MatSqrtNearOne
@@ -13,7 +18,7 @@ theorem norm_mul_le_ultra (A B : Matrix (Fin n) (Fin n) K) : ‖A * B‖ ≤ ‖
   rw [Matrix.mul_apply]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (by positivity) fun k _ => ?_
   rw [norm_mul]
-  exact mul_le_mul (norm_entry_le_entrywise_sup_norm A) (norm_entry_le_entrywise_sup_norm B)
+  exact mul_le_mul (norm_apply_le_norm A) (norm_apply_le_norm B)
     (norm_nonneg _) (norm_nonneg _)
 
 theorem norm_add_le_max_ultra (A B : Matrix (Fin n) (Fin n) K) : ‖A + B‖ ≤ max ‖A‖ ‖B‖ := by
@@ -21,7 +26,7 @@ theorem norm_add_le_max_ultra (A B : Matrix (Fin n) (Fin n) K) : ‖A + B‖ ≤
   intro i j
   rw [Matrix.add_apply]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans
-    (max_le_max (norm_entry_le_entrywise_sup_norm A) (norm_entry_le_entrywise_sup_norm B))
+    (max_le_max (norm_apply_le_norm A) (norm_apply_le_norm B))
 
 theorem norm_sub_le_max_ultra (A B : Matrix (Fin n) (Fin n) K) : ‖A - B‖ ≤ max ‖A‖ ‖B‖ := by
   rw [sub_eq_add_neg, ← norm_neg B]
@@ -36,10 +41,12 @@ theorem commute_iter {u a : Matrix (Fin n) (Fin n) K} (h : Commute a u) :
   | 0 => Commute.zero_right a
   | k + 1 => h.sub_right ((commute_iter h k).mul_right (commute_iter h k))
 
-theorem norm_iter_le {u : Matrix (Fin n) (Fin n) K} (hc : ‖u‖ < 1) : ∀ k, ‖iter u k‖ ≤ ‖u‖
-  | 0 => by simp [iter]
-  | k + 1 => by
-    have ih := norm_iter_le hc k
+theorem norm_iter_le {u : Matrix (Fin n) (Fin n) K} (hc : ‖u‖ < 1) : ∀ k, ‖iter u k‖ ≤ ‖u‖ := by
+  intro k
+  induction k with
+  | zero => simp [iter]
+  | succ k ih =>
+    rw [iter]
     refine (norm_sub_le_max_ultra _ _).trans (max_le le_rfl ?_)
     calc ‖iter u k * iter u k‖ ≤ ‖iter u k‖ * ‖iter u k‖ := norm_mul_le_ultra _ _
       _ ≤ ‖u‖ * 1 := mul_le_mul ih (ih.trans hc.le) (norm_nonneg _) (norm_nonneg _)
@@ -51,19 +58,23 @@ theorem matrix_sub_mul_self_sub_eq_neg_mul_of_commute (u a b : Matrix (Fin n) (F
   abel
 
 theorem norm_iter_diff_le {u : Matrix (Fin n) (Fin n) K} (hc : ‖u‖ < 1) :
-    ∀ k, ‖iter u (k + 1) - iter u k‖ ≤ ‖u‖ * ‖u‖ ^ k
-  | 0 => by simp [iter]
-  | k + 1 => by
+    ∀ k, ‖iter u (k + 1) - iter u k‖ ≤ ‖u‖ * ‖u‖ ^ k := by
+  intro k
+  induction k with
+  | zero => simp [iter]
+  | succ k ih =>
     have hcomm : Commute (iter u k) (iter u (k + 1)) :=
       commute_iter (commute_iter (Commute.refl u) k).symm (k + 1)
-    show ‖(u - iter u (k + 1) * iter u (k + 1)) - (u - iter u k * iter u k)‖ ≤ _
-    rw [matrix_sub_mul_self_sub_eq_neg_mul_of_commute u _ _ hcomm, norm_neg]
+    have hstep : iter u (k + 1 + 1) - iter u (k + 1) =
+        (u - iter u (k + 1) * iter u (k + 1)) - (u - iter u k * iter u k) :=
+      congrArg₂ (· - ·) (iter.eq_2 u (k + 1)) (iter.eq_2 u k)
+    rw [hstep, matrix_sub_mul_self_sub_eq_neg_mul_of_commute u _ _ hcomm, norm_neg]
     have hab : ‖iter u k + iter u (k + 1)‖ ≤ ‖u‖ :=
       (norm_add_le_max_ultra _ _).trans (max_le (norm_iter_le hc k) (norm_iter_le hc (k + 1)))
     calc ‖(iter u (k + 1) - iter u k) * (iter u k + iter u (k + 1))‖
         ≤ ‖iter u (k + 1) - iter u k‖ * ‖iter u k + iter u (k + 1)‖ := norm_mul_le_ultra _ _
       _ ≤ (‖u‖ * ‖u‖ ^ k) * ‖u‖ :=
-          mul_le_mul (norm_iter_diff_le hc k) hab (norm_nonneg _) (by positivity)
+          mul_le_mul ih hab (norm_nonneg _) (by positivity)
       _ = ‖u‖ * ‖u‖ ^ (k + 1) := by ring
 
 theorem tau_add (σ : K →+* K) (A B : Matrix (Fin n) (Fin n) K) :

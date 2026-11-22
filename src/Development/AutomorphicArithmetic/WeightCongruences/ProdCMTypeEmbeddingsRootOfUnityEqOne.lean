@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions
 

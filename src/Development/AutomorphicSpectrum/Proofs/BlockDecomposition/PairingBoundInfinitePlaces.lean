@@ -1,13 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB.D1
 
 namespace GlobalTheory.CompanionTheory.Wedge
 
-open ComplexOrder in
 
+open ComplexOrder in
 theorem pairI_of_detMono : DetMono → PairI := by
+  open scoped ComplexOrder in
   intro hD ι κ _ _ _ U W
   have hG : (Uᴴ * U).PosSemidef := posSemidef_conjTranspose_mul_self U
   have hH : (Wᴴ * W).PosSemidef := posSemidef_conjTranspose_mul_self W

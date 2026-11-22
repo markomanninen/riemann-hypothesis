@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure
 open scoped InnerProductSpace ComplexConjugate
@@ -26,14 +30,14 @@ theorem eq_haarProb (μ : Measure K) [μ.IsHaarMeasure] [IsProbabilityMeasure μ
 
 instance haarProb_isMulRightInvariant : (haarProb K).IsMulRightInvariant := by
   refine ⟨fun g => ?_⟩
-  have : IsProbabilityMeasure (Measure.map (fun x => x * g) (haarProb K)) :=
-    isProbabilityMeasure_map (measurable_mul_const g).aemeasurable
+  have : IsProbabilityMeasure (Measure.map (fun x => x * g) (haarProb K)) := inferInstance
   exact eq_haarProb _
 
 instance haarProb_isInvInvariant : (haarProb K).IsInvInvariant := by
   refine ⟨?_⟩
-  have : IsProbabilityMeasure (haarProb K).inv :=
-    isProbabilityMeasure_map measurable_inv.aemeasurable
+  have : IsProbabilityMeasure (haarProb K).inv := by
+    unfold Measure.inv
+    infer_instance
   have : (haarProb K).inv.IsHaarMeasure := {}
   exact eq_haarProb _
 
@@ -53,7 +57,8 @@ theorem isMulRightInvariant_of_compactSpace (μ : Measure K) [μ.IsHaarMeasure] 
 theorem isInvInvariant_of_compactSpace (μ : Measure K) [μ.IsHaarMeasure] :
     μ.IsInvInvariant := by
   refine ⟨?_⟩
-  rw [eq_smul_haarProb μ, Measure.inv, Measure.map_smul, map_inv_eq_self]
+  rw [eq_smul_haarProb μ, Measure.inv, Measure.map_smul _ measurable_inv.aemeasurable,
+    map_inv_eq_self]
 
 end Haar
 
@@ -79,8 +84,8 @@ variable {K : Type*} [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [Comp
   {V W : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V] [FiniteDimensional ℂ V]
   [NormedAddCommGroup W] [InnerProductSpace ℂ W] [FiniteDimensional ℂ W]
 
-omit [Group K] [IsTopologicalGroup K] in
 
+omit [Group K] [IsTopologicalGroup K] in
 theorem integrable_of_continuous_of_compactSpace [IsFiniteMeasure μ] {E : Type*}
     [NormedAddCommGroup E] {f : K → E} (hf : Continuous f) : Integrable f μ :=
   hf.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace f)
@@ -116,8 +121,8 @@ noncomputable def rankOneAverage (hρc : ∀ v, Continuous fun k => ρ k v)
     rw [← h1]
     simpa using h2
 
-omit [FiniteDimensional ℂ V] in
 
+omit [FiniteDimensional ℂ V] in
 theorem inner_rankOneAverage (hρc : ∀ v, Continuous fun k => ρ k v)
     (hρu : ∀ k v, ‖ρ k v‖ = ‖v‖) (hσc : ∀ w, Continuous fun k => σ k w) (u v : V) (u' w : W) :
     ⟪u', rankOneAverage μ ρ σ hρc hρu hσc v w u⟫_ℂ =
@@ -128,9 +133,9 @@ theorem inner_rankOneAverage (hρc : ∀ v, Continuous fun k => ρ k v)
   refine Eq.trans h.symm ?_
   simp [inner_smul_right]
 
+
 omit [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K] [MeasurableSpace K]
   [BorelSpace K] in
-
 theorem finrank_pos_of_isIrreducible [h : ρ.IsIrreducible] : 0 < Module.finrank ℂ V := by
   rw [Module.finrank_pos_iff]
   by_contra hV
@@ -197,7 +202,8 @@ theorem integral_conj_character_mul_character_self [ρ.IsIrreducible]
     fun i j => integrable_of_continuous_of_compactSpace μ
       ((Complex.continuous_conj.comp (continuous_const.inner (hρc _))).mul
         (continuous_const.inner (hρc _)))
-  simp only [Representation.character, LinearMap.trace_eq_sum_inner _ b, _root_.map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Representation.character, LinearMap.trace_eq_sum_inner _ b, _root_.map_sum,
     Finset.sum_mul_sum]
   rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun j _ => hi i j)]
   simp only [integral_finsetSum _ (fun j _ => hi _ j),
@@ -242,28 +248,6 @@ theorem isSemisimpleRepresentation_of_invariant_core {G V : Type*} [Group G] [Ad
   rw [@norm_eq_sqrt_re_inner 𝕜, @norm_eq_sqrt_re_inner 𝕜]
   exact congrArg (fun z : 𝕜 => √(RCLike.re z)) (hc k v v)
 
-theorem isIrreducible_toRepresentation_of_isAtom {F G V : Type*} [Field F] [Monoid G]
-    [AddCommGroup V] [Module F V] {ρ : Representation F G V} {U : Subrepresentation ρ}
-    (hU : IsAtom U) : U.toRepresentation.IsIrreducible := by
-  have hne : U.toSubmodule ≠ ⊥ := fun h => hU.1 (Subrepresentation.toSubmodule_injective h)
-  have hnt : Nontrivial (Subrepresentation U.toRepresentation) := by
-    refine ⟨⊥, ⊤, fun h => hne ?_⟩
-    have h' : (⊥ : Submodule F U.toSubmodule) = ⊤ := congrArg Subrepresentation.toSubmodule h
-    rw [← U.toSubmodule.map_subtype_top, ← h', Submodule.map_bot]
-  refine ⟨fun S => ?_⟩
-  let T : Subrepresentation ρ := ⟨S.toSubmodule.map U.toSubmodule.subtype, by
-    rintro g _ ⟨x, hx, rfl⟩
-    exact ⟨_, S.apply_mem_toSubmodule g hx, rfl⟩⟩
-  have hT : T ≤ U := U.toSubmodule.map_subtype_le S.toSubmodule
-  have hinj := Submodule.map_injective_of_injective U.toSubmodule.injective_subtype
-  rcases hU.le_iff.mp hT with h | h
-  · left
-    refine Subrepresentation.toSubmodule_injective (hinj ?_)
-    exact (congrArg Subrepresentation.toSubmodule h).trans (Submodule.map_bot _).symm
-  · right
-    refine Subrepresentation.toSubmodule_injective (hinj ?_)
-    exact (congrArg Subrepresentation.toSubmodule h).trans U.toSubmodule.map_subtype_top.symm
-
 variable {K : Type*} [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
 
 @[reducible] noncomputable def averageCore [MeasurableSpace K] [BorelSpace K] {V E : Type*}
@@ -279,7 +263,7 @@ variable {K : Type*} [Group K] [TopologicalSpace K] [IsTopologicalGroup K] [Comp
   add_left u u' v := by
     have hi : ∀ z : V, Integrable (fun k => ⟪e (ρ k z), e (ρ k v)⟫_𝕜) (haarProb K) := fun z =>
       integrable_of_continuous_of_compactSpace _ ((hc z).inner (hc v))
-    simp only [map_add, inner_add_left]
+    simp only [map_add (f := _), inner_add_left]
     exact integral_add (hi u) (hi u')
   smul_left u v r := by
     simp only [map_smul, inner_smul_left, integral_const_mul]

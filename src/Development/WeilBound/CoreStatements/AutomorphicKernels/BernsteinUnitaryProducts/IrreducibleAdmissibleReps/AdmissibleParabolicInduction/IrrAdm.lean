@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.JacquetAdmissible
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.IrreducibleAdmissibleReps.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.JacquetAdmissible
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.IrreducibleAdmissibleReps.Assembly
+
+@[expose] public section
 
 namespace PositivityTheory.PfBern.Props1
 
@@ -10,8 +14,8 @@ section Bridge
 
 variable {G V : Type} [Group G] [TopologicalSpace G] [AddCommGroup V] [Module ℂ V]
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem fixed_eq_fixedVectors (ρ : Representation ℂ G V) (K : Subgroup G) :
     GlobalTheory.PRep.fixed ρ K = GroundTheory.Automorphic.fixedVectors ρ K := by
   ext v

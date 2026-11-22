@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatQMinOp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -48,10 +52,11 @@ theorem ri_ginv (v : Fin (2 * r + k + 1) → ℂ) (p : Fin (2 * r + k + 1)) :
     (MvPolynomial.totalDegree_mul _ _).trans (by simp)
   refine ⟨∑ c, ∑ b, ∑ a, MvPolynomial.C (Hpk k r p a * Hpk k r b c * v c) * MvPolynomial.X (Sum.inr (b, a)),
     ?_, fun g => ?_⟩
-  · exact (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun c _ =>
-      (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun b _ =>
-        (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun a _ => hdeg _ _)))
-  · simp only [ginvH, Matrix.mulVec, dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply, map_sum,
+  · exact (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun c _ =>
+      (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun b _ =>
+        (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun a _ => hdeg _ _)))
+  · set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ginvH, Matrix.mulVec, dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply, map_sum,
       MvPolynomial.eval_mul, MvPolynomial.eval_C, MvPolynomial.eval_X, Sum.elim_inr, Finset.sum_mul]
     refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => ?_
     ring
@@ -72,7 +77,7 @@ theorem ri_beJ (z : Fin (2 * r + k + 1) → ℂ) (J : Fin (r + k) → Fin (2 * r
   choose Pq hPdeg hPev using fun q p => ri_colR (k := k) (r := r) z J q p
   refine ⟨(Matrix.of fun p q => Pq q p).det, ?_, fun g => ?_⟩
   · rw [Matrix.det_apply']
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun σ _ => ?_)
+    refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun σ _ => ?_)
     refine (MvPolynomial.totalDegree_mul _ _).trans ?_
     have h0 : (((Equiv.Perm.sign σ : ℤ) : MvPolynomial
         ((Fin (2 * r + k + 1) × Fin (2 * r + k + 1)) ⊕ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1))) ℂ)).totalDegree = 0 := by
@@ -82,7 +87,7 @@ theorem ri_beJ (z : Fin (2 * r + k + 1) → ℂ) (J : Fin (r + k) → Fin (2 * r
       rw [hc]
       exact MvPolynomial.totalDegree_C _
     rw [h0, zero_add]
-    refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     calc ∑ i, (Matrix.of (fun p q => Pq q p) (σ i) i).totalDegree ≤ ∑ _i : Fin (2 * r + k + 1), 1 :=
           Finset.sum_le_sum fun i _ => hPdeg _ _
       _ = 2 * r + k + 1 := by simp

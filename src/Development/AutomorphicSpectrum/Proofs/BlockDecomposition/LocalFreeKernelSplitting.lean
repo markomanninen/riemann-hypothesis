@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.CompanionTheory.LocalSplit
@@ -9,7 +14,8 @@ theorem injective_of_basis_image {k V U ι : Type} [Field k] [AddCommGroup V] [M
   have hg : ⇑g = (Finsupp.linearCombination k (g ∘ b)) ∘ b.repr := by
     funext x
     conv_lhs => rw [← b.linearCombination_repr x]
-    simp [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
   rw [hg]
   exact (show Function.Injective (Finsupp.linearCombination k (g ∘ b)) from h).comp b.repr.injective
 

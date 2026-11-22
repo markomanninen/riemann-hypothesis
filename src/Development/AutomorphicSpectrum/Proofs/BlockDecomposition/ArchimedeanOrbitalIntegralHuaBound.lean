@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TupCoordApply
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSeminormDiffSLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetConjUnitary
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PiDens
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TupCoordApply
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSeminormDiffSLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetConjUnitary
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PiDens
+
+@[expose] public section
 
 open MeasureTheory
 open GlobalTheory.CompanionTheory.SiegelND.Integ.Arch
@@ -131,7 +135,7 @@ theorem trace_gram {n M : ℕ} (J : Matrix (Fin M) (Fin M) ℂ) (b : Matrix (Fin
 
 theorem sesq_add_left {n M : ℕ} (J : Matrix (Fin M) (Fin M) ℂ) (b : Matrix (Fin n) (Fin n) ℂ)
     (X X' Y : Fin n → Fin M → ℂ) : sesq J b (X + X') Y = sesq J b X Y + sesq J b X' Y := by
-  simp only [sesq, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [sesq, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem sesq_add_right {n M : ℕ} (J : Matrix (Fin M) (Fin M) ℂ) (b : Matrix (Fin n) (Fin n) ℂ)
     (X Y Y' : Fin n → Fin M → ℂ) : sesq J b X (Y + Y') = sesq J b X Y + sesq J b X Y' := by
@@ -144,7 +148,8 @@ theorem sesq_conj {n M : ℕ} {J : Matrix (Fin M) (Fin M) ℂ} {b : Matrix (Fin 
     rw [starRingEnd_apply]; exact hJ.apply j i
   have hb' : ∀ i j, (starRingEnd ℂ) (b i j) = b j i := fun i j => by
     rw [starRingEnd_apply]; exact hb.apply j i
-  simp only [sesq, map_sum, map_mul, Complex.conj_conj, hJ', hb']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sesq, map_sum, map_mul, Complex.conj_conj, hJ', hb']
   refine Eq.trans ?_ (sum_four_swap_pairs_alt _).symm
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
     Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -175,7 +180,7 @@ theorem inner_polarOp {W : Type} [Fintype W] {n M : ℕ} (J : W → Matrix (Fin 
   have key : ∑ p, inner ℂ (x (w, p)) (mixOp J (diagOp b y) (w, p)) =
       2 * sesq (J w) (b w) (tupCoord x w) (tupCoord y w) := by
     simp only [PiLp.inner_apply, mixOp_apply, diagOp_apply, tupCoord_apply]
-    simp [sesq, Matrix.toEuclideanLin_apply, Matrix.mulVec, dotProduct, Finset.mul_sum, Finset.sum_mul]
+    simp [sesq, Matrix.mulVec, dotProduct, Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
       Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   calc ∑ p, inner ℝ (x (w, p)) (mixOp J (diagOp b y) (w, p))
@@ -189,7 +194,7 @@ theorem phase_polar : ∀ (W : Type) [Fintype W] (n M : ℕ) (J : W → Matrix (
     ∀ x y : TupV W n M, phaseM J b (tupCoord (x + y)) =
       phaseM J b (tupCoord x) + phaseM J b (tupCoord y) + inner ℝ x (polarOp J b y) := by
   intro W _ n M J hJ b hb x y
-  simp only [phaseM, trace_gram, map_add, Pi.add_apply, inner_polarOp]
+  simp only [phaseM, trace_gram, map_add (f := _), Pi.add_apply, inner_polarOp]
   rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun w _ => sesq_re_add (hJ w) (hb w) _ _
 
@@ -245,7 +250,7 @@ theorem weight_le (κ : Type) [Fintype κ] (L : ℕ) (C r s : ℝ) (u v : κ →
           inv_pow, inv_pow, ← pow_mul, ← pow_mul, mul_comm L]
     _ ≤ (C ^ L) ^ Fintype.card κ * ∏ k, (((1 + u k) ^ L)⁻¹ * ((1 + v k) ^ L)⁻¹) := by
         apply mul_le_mul_of_nonneg_left _ (pow_nonneg (pow_nonneg hC0.le L) _)
-        exact Finset.prod_le_prod (fun k _ => mul_nonneg (inv_nonneg.mpr (pow_nonneg hr1.le L))
+        exact Finset.prod_le_prod₀ (fun k _ => mul_nonneg (inv_nonneg.mpr (pow_nonneg hr1.le L))
           (mul_nonneg (inv_nonneg.mpr (pow_nonneg hC0.le L)) (inv_nonneg.mpr (pow_nonneg hs1.le L))))
           (fun k _ => key k)
 

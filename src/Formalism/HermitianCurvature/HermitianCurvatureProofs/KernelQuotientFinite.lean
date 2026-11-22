@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.DoubleCosetMeasures.LatticeCoset
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.DoubleCosetMeasures.LatticeCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ open scoped ComplexConjugate
 
 namespace Formalism.FourierDecayAlt.P.A5x4
 
-open Formalism.DoubleCosetMeasures.P Formalism.DoubleCosetMeasures.P.Supp in
 
+open Formalism.DoubleCosetMeasures.P Formalism.DoubleCosetMeasures.P.Supp in
 theorem isCompact_intPairs {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K]
     [T2Space K] (R : Subring K) (hRc : IsCompact (R : Set K)) (s : List ℕ) (t : ℕ → Kˣ) :
     IsCompact {p : lowW K s t × upUniG K s.sum |
@@ -168,8 +172,8 @@ theorem Kp_eq_sum {K : Type} [CommRing K] (R : Subring K) (ψ : AddChar K ℂ) (
       apply hcon
       simp [hI.1, hI.2]
 
-open Classical in
 
+open Classical in
 theorem BB_eq_sum {K : Type} [CommRing K] [TopologicalSpace K] [IsTopologicalRing K]
     (R : Subring K) (ψ : AddChar K ℂ) (hL : LocalDatum K R ψ) (w : Point K)
     (μ₁ : Measure (lowW K w.1 w.2)) (μ₂ : Measure (upUniG K w.1.sum))
@@ -311,7 +315,8 @@ theorem gram_kernel_identity : Formalism.FourierDecayAlt.A5.GramIdentity := by
         (Nat.card (autSet R (C a) (e a) (lam a)) : ℂ)) * phase ψ (rep R q) *
         conj (phase ψ (rep R q')) := by
     intro a
-    rw [BB_eq_sum R ψ hL w μ₁ μ₂ h1 h2 (C a) (e a) (lam a) hf,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [BB_eq_sum R ψ hL w μ₁ μ₂ h1 h2 (C a) (e a) (lam a) hf,
       BB_eq_sum R ψ hL w' μ₁' μ₂' h1' h2' (C a) (e a) (lam a) hf', map_sum,
       Finset.sum_mul_sum, Finset.sum_div]
     refine Finset.sum_congr rfl fun q _ => ?_
@@ -399,7 +404,8 @@ theorem sum_of_classes {T Q : Type} [Fintype T] [Fintype Q] [DecidableEq Q] (f :
       ∑ i, ∑ j, (μ κ : ℂ) * ((if f i = κ then c i else 0) *
         conj (if f j = κ then c j else 0)) := by
     intro κ
-    rw [Complex.ofReal_mul, ← Complex.mul_conj, map_sum, Finset.sum_mul_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Complex.ofReal_mul, ← Complex.mul_conj, map_sum, Finset.sum_mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.mul_sum]
   rw [Complex.ofReal_sum, Finset.sum_congr rfl fun κ _ => h κ,

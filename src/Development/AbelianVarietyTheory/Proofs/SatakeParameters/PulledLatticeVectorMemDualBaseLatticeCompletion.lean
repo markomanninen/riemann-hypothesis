@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TwistEmptyOfChartsEx
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
-import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCompletionMapsDualLattices
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemLatSLatAdIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Formalism.LocalToGlobal.Columns.XtPhiTopGCongr
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TwistEmptyOfChartsEx
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocBases
+public import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCompletionMapsDualLattices
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemLatSLatAdIff
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -26,7 +31,7 @@ theorem prV_sigR {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
     prV (E := E) v (sigR σ (FiniteAdeleRing (𝓞 F) F) x) = sigR σ (v.adicCompletion F) (prV (E := E) v x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
   | tmul a b => simp [prV, sigR]
 
 theorem bc_prV_mem_UPts {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -83,8 +88,10 @@ theorem mem_latS_dual_of_latCo : ∀ {R : Ranks} {F E : Type} [Field F] [NumberF
   set σ : E →ₐ[F] E := sp.cm.sig with hσ
   set Λ := latAd x Lb with hΛ
   set xv := bc (prV (E := E) v) x with hxv
-  have hLb : Submodule.IsLattice E Lb := ⟨Module.Finite.iff_fg.mp hfin, hspan⟩
-  have hLam : Submodule.IsLattice E Λ := by
+  have hLb : Submodule.IsFullLattice E Lb := {
+    toIsLattice := Submodule.IsLattice.of_fg E (Module.Finite.iff_fg.mp hfin)
+    span_eq_top := hspan }
+  have hLam : Submodule.IsFullLattice E Λ := by
     have hlat : Formalism.L2.PairingIndexBounds.F.latAd x Lb = Formalism.UG.CS.globLat x Lb := Submodule.span_eq (Formalism.UG.CS.globLat x Lb)
     rw [hΛ, hlat]
     exact Formalism.UG.P.csGlob_lattice Lb hfin hspan x

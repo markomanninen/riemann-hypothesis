@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStD
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem fnTrace_coe (x : ι → Ω) (e : Fin (D + 1) → ι) (s : Lx x e) :
       ((Algebra.trace (fnField (x ∘ e)) (Lx x e) s : fnField (x ∘ e)) : Ω) := by
   have hs : (s : Ω) ∈ fnField x := (IntermediateField.mem_extendScalars _).mp s.2
   unfold fnTrace
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
 
 theorem exists_gen (x : ι → Ω) (e : Fin (D + 1) → ι) (h : IsProjFrame x e) :
     ∃ G : Gen x e, G.P.natDegree = projDeg x e ∧
@@ -136,11 +140,11 @@ theorem exists_gen (x : ι → Ω) (e : Fin (D + 1) → ι) (h : IsProjFrame x e
       hUV := by
         have e1 : (UV 0).map r * Pa.map r + (UV 1).map r * derivative (Pa.map r) - C (r b') =
             (UV 0 * Pa + UV 1 * derivative Pa - C b').map r := by
-          rw [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul,
+          rw [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul,
             Polynomial.derivative_map, Polynomial.map_C]
         have e2 : (UV 0 * Pa + UV 1 * derivative Pa - C b').map
             (algebraMap (chartRing y) (fnField y)) = 0 := by
-          rw [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul,
+          rw [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul,
             ← Polynomial.derivative_map, Polynomial.map_C, hUV 0, hUV 1, ← hPK]
           simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
           linear_combination (C (algebraMap (chartRing y) (fnField y) b')) * huv
@@ -160,9 +164,11 @@ theorem exists_gen (x : ι → Ω) (e : Fin (D + 1) → ι) (h : IsProjFrame x e
       show _ = H.eval₂ (deh y 0) (deh x (e 0) Θ)
       rw [eval₂_eq_sum_range, hθ, hsdef]
       simp [Algebra.smul_def]
-    rw [← hs, fnTrace_coe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hs, fnTrace_coe, map_sum]
     simp only [LinearMap.map_smul, smul_eq_mul, trace_pow_eq_psumC hc]
-    rw [Gen.TrP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Gen.TrP, map_sum]
     push_cast
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, ← coe_dehK y (G.S j), hS j]

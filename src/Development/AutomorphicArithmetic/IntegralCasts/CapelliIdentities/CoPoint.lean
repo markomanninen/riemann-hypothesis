@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LeAdicClosure
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
-import Formalism.ConjugateSelfDual.Statement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsUnitOfInvIntegral
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ResidueHomNorm
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteOfIsFiniteLength
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DigitExpansionLattice
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LeAdicClosure
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+public import Formalism.ConjugateSelfDual.Statement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsUnitOfInvIntegral
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ResidueHomNorm
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FiniteOfIsFiniteLength
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DigitExpansionLattice
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.CoPoint.coPt :
     ∀ (l : ℕ) [inst : Fact (Nat.Prime l)] (c : UpperTheory.V.HV.Coef l) [UpperTheory.V.Fr.IsCoef l ↥c.O] (R : Type)
@@ -57,7 +61,7 @@ theorem UpperTheory.Reformulated.B.CoPoint.coPt :
       obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 ht
       refine ⟨_, Finset.mem_image.2 ⟨Ideal.Quotient.mk _ r, Finset.mem_univ _, rfl⟩, y a, ⟨a, rfl⟩, ?_⟩
       have h2 := congrArg y hjt
-      rw [map_add, RingHom.mem_ker.1 hj, map_sub, map_mul, AlgHom.commutes] at h2
+      rw [map_add (f := _), RingHom.mem_ker.1 hj, map_sub, map_mul, AlgHom.commutes] at h2
       rw [Algebra.smul_def, mul_comm]
       linear_combination -h2)
   exact key

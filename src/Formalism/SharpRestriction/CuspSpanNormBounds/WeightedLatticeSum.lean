@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -230,7 +234,7 @@ theorem latSum (ι : Type) [Fintype ι] (P : Finset (ι → ℂ)) (R : ℝ) (hR 
   have hpt : ∀ p : ι → ℂ, ∏ i, (max 1 (‖p i‖ / R)) ^ (-(3 : ℝ)) ≤
       ∏ i, wt R (cell p i).1.natAbs * wt R (cell p i).2.natAbs := by
     intro p
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i _
       exact Real.rpow_nonneg (le_trans zero_le_one (le_max_left _ _)) _
     · intro i _
@@ -252,7 +256,7 @@ theorem latSum (ι : Type) [Fintype ι] (P : Finset (ι → ℂ)) (R : ℝ) (hR 
     · exact hne (funext fun i => hι.elim i)
     · obtain ⟨i0⟩ := hι
       have hE : ∏ i ∈ Finset.univ.erase i0, ‖p i - q i‖ ≤ 1 :=
-        Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => (hlt i).le)
+        Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => (hlt i).le)
       have hE0 : 0 ≤ ∏ i ∈ Finset.univ.erase i0, ‖p i - q i‖ :=
         Finset.prod_nonneg (fun i _ => norm_nonneg _)
       have hsplit : ‖p i0 - q i0‖ * ∏ i ∈ Finset.univ.erase i0, ‖p i - q i‖ = ∏ i, ‖p i - q i‖ :=
@@ -289,7 +293,7 @@ theorem latSum (ι : Type) [Fintype ι] (P : Finset (ι → ℂ)) (R : ℝ) (hR 
         (Finset.prod_univ_sum (fun _ : ι => S)
           (fun _ x => wt R x.1.natAbs * wt R x.2.natAbs)).symm
     _ ≤ ∏ _i : ι, ((18 * R) * (18 * R)) := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro i _
           exact Finset.sum_nonneg (fun x _ => hf0 x)
         · intro i _

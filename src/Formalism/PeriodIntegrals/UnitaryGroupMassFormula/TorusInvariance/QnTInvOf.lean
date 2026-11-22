@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TorusInvariance.TransferInvarianceCongruence
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TorusInvariance.TransferInvarianceCongruence
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.Q.TInvW
 

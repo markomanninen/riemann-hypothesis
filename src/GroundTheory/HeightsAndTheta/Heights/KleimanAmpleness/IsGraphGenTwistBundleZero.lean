@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AlgebraMapMemChartRingLine
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.EqZeroOrIsHomogeneousOfMemPolyPiece
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AlgebraMapMemChartRingLine
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.EqZeroOrIsHomogeneousOfMemPolyPiece
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -139,15 +144,8 @@ def graphDeg (n : ℤ) : Unit ⊕ Unit → ℤ := Sum.elim (fun _ => -n) (fun _ 
 def graphChart (i : Fin (N + 1)) (j : Fin m) : ∀ k, graphIdx N m k :=
   IndefiniteRowSideFullHecke.Kleiman2.joinChart (fun _ : Unit => i) (fun _ : Unit => j)
 
-@[simp] theorem graphVec_inl (x : Fin (N + 1) → Ω) (s : Fin m → Ω) (a : Fin (N + 1)) :
-    graphVec x s ⟨Sum.inl (), a⟩ = x a := rfl
-
 @[simp] theorem graphVec_inr (x : Fin (N + 1) → Ω) (s : Fin m → Ω) (b : Fin m) :
     graphVec x s ⟨Sum.inr (), b⟩ = s b := rfl
-
-@[simp] theorem graphChart_inl (i : Fin (N + 1)) (j : Fin m) : graphChart i j (Sum.inl ()) = i := rfl
-
-@[simp] theorem graphChart_inr (i : Fin (N + 1)) (j : Fin m) : graphChart i j (Sum.inr ()) = j := rfl
 
 @[simp] theorem graphDeg_inl (n : ℤ) : graphDeg n (Sum.inl ()) = -n := rfl
 
@@ -174,10 +172,11 @@ theorem div_mem_graphRing_inr (x : Fin (N + 1) → Ω) (s : Fin m → Ω) (i : F
 
 theorem chartRing_le_graphRing (x : Fin (N + 1) → Ω) (s : Fin m → Ω) {i : Fin (N + 1)} (hi : x i ≠ 0)
     (j : Fin m) : Kleiman.chartRing S x (Kleiman.singleChart hi) ≤ graphRing S x s i j := by
-  rw [← TranslateEq.chartRing.equiv S x hi]
-  refine Algebra.adjoin_le ?_
-  rintro _ ⟨a, rfl⟩
-  exact div_mem_graphRing_inl x s i a j
+  have hle : Kleiman.ampleBase (S := S) x i ≤ graphRing S x s i j := by
+    refine Algebra.adjoin_le ?_
+    rintro _ ⟨a, rfl⟩
+    exact div_mem_graphRing_inl x s i a j
+  exact fun _ ha => hle (Kleiman.mem_ampleBase_of_mem_chartRing hi ha)
 
 theorem graphRing_le (x : Fin (N + 1) → Ω) (s : Fin m → Ω) {i : Fin (N + 1)} (hi : x i ≠ 0) (j : Fin m)
     (T : Subalgebra S Ω) (hA : Kleiman.chartRing S x (Kleiman.singleChart hi) ≤ T)
@@ -211,6 +210,8 @@ end Graph
 
 section Sections
 
+open scoped Pointwise
+
 variable {S : Type} [CommRing S] {Ω : Type} [Field Ω] [Algebra S Ω] {N m : ℕ} {x : Fin (N + 1) → Ω}
 
 def IsGraphGen (Q : Kleiman.LineBundle S x) (n : ℤ) (s : Fin m → Ω) : Prop :=
@@ -235,6 +236,14 @@ theorem mem_sub_iff_graph (Q : Kleiman.LineBundle S x) (n : ℤ) (s : Fin m → 
   set I := Kleiman.singleChart hi with hIdef
   have hiI : i ∈ I.1 := Finset.mem_singleton_self i
   have hxn : x i ^ n ≠ 0 := zpow_ne_zero n hi
+  have htwist : (Q.twist (Kleiman.twistSys S x n)).sub I = x i ^ n • Q.sub I := by
+    rw [← Submodule.span_singleton_mul, ← Kleiman.twistMod_eq_span n I hiI, Submodule.mul_def]
+    unfold Kleiman.SubSystem.twist
+    apply congrArg (Submodule.span (Kleiman.chartRing S x I))
+    ext z
+    simp only [Set.mem_ofPred_eq, Set.mem_mul, SetLike.mem_coe, smul_eq_mul]
+    exact exists_congr fun q => and_congr_right fun _ =>
+      exists_congr fun y => and_congr_right fun _ => eq_comm
   let g : Fin m → Ω := fun b => x i ^ (-n) * s b
   have hgQ : Submodule.span (Kleiman.chartRing S x I) (Set.range g) = Q.sub I := by
     apply le_antisymm
@@ -242,16 +251,12 @@ theorem mem_sub_iff_graph (Q : Kleiman.LineBundle S x) (n : ℤ) (s : Fin m → 
       rintro _ ⟨b, rfl⟩
       have hb : s b ∈ (Q.twist (Kleiman.twistSys S x n)).sub I := by
         rw [← hgen I]; exact Submodule.subset_span ⟨b, rfl⟩
-      obtain ⟨y, hy, hyb⟩ := (TranslateEq.mem_twist_twistSys_iff Q.toSubSystem n I hiI (s b)).mp hb
-      have : g b = y := by
-        simp only [g, hyb, smul_eq_mul, zpow_neg]
-        field_simp
-      rw [SetLike.mem_coe, this]
-      exact hy
+      rw [htwist, Submodule.mem_smul_iff_inv_mul_mem hxn, ← zpow_neg] at hb
+      exact hb
     · intro y hy
       have hy' : x i ^ n * y ∈ Submodule.span (Kleiman.chartRing S x I) (Set.range s) := by
-        rw [hgen I]
-        exact (TranslateEq.mem_twist_twistSys_iff Q.toSubSystem n I hiI _).mpr ⟨y, hy, rfl⟩
+        rw [hgen I, htwist]
+        exact Submodule.smul_mem_pointwise_smul _ _ _ hy
       obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun _).mp hy'
       rw [Submodule.mem_span_range_iff_exists_fun]
       refine ⟨a, ?_⟩
@@ -316,15 +321,18 @@ theorem twist_secs_eq_secOver (Q : Kleiman.LineBundle S x) (n : ℤ) (s : Fin m 
   have key : ∀ i (hi : x i ≠ 0), t ∈ (Q.twist (Kleiman.twistSys S x c)).sub (Kleiman.singleChart hi) ↔
       x i ^ (-c) * t ∈ Q.sub (Kleiman.singleChart hi) := by
     intro i hi
-    rw [TranslateEq.mem_twist_twistSys_iff Q.toSubSystem c _ (Finset.mem_singleton_self i)]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      have : x i ^ (-c) * x i ^ c • y = y := by
-        rw [smul_eq_mul, zpow_neg, ← mul_assoc, inv_mul_cancel₀ (zpow_ne_zero c hi), one_mul]
-      rw [this]; exact hy
-    · intro h
-      refine ⟨_, h, ?_⟩
-      rw [smul_eq_mul, zpow_neg, ← mul_assoc, mul_inv_cancel₀ (zpow_ne_zero c hi), one_mul]
+    let I := Kleiman.singleChart hi
+    have htwist : (Q.twist (Kleiman.twistSys S x c)).sub I = x i ^ c • Q.sub I := by
+      rw [← Submodule.span_singleton_mul,
+        ← Kleiman.twistMod_eq_span c I (Finset.mem_singleton_self i), Submodule.mul_def]
+      unfold Kleiman.SubSystem.twist
+      apply congrArg (Submodule.span (Kleiman.chartRing S x I))
+      ext z
+      simp only [Set.mem_ofPred_eq, Set.mem_mul, SetLike.mem_coe, smul_eq_mul]
+      exact exists_congr fun q => and_congr_right fun _ =>
+        exists_congr fun y => and_congr_right fun _ => eq_comm
+    change t ∈ (Q.twist (Kleiman.twistSys S x c)).sub I ↔ _
+    rw [htwist, Submodule.mem_smul_iff_inv_mul_mem (zpow_ne_zero c hi), zpow_neg]
   have hmul : ∀ i j, x i ≠ 0 → x i ^ (-c) * t * (x i ^ n * (s j)⁻¹) =
       t * (x i ^ (-(-n + c)) * s j ^ (-(1 : ℤ))) := by
     intro i j hi

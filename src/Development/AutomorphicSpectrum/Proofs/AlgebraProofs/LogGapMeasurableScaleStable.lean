@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 

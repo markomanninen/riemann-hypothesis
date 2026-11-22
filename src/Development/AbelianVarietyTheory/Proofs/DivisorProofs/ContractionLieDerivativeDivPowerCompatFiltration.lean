@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationDividedPowerFiltrationSuccLeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationDividedPowerFiltrationSuccLeStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ theorem ctr_mul' (v : Derivation R B B) (x y : DR R B) :
     simp only [mul_add, add_mul, mul_assoc]
     abel
   | ha x z hx hz =>
-    rw [add_mul, map_add, hx, hz, map_add, map_add, add_mul, add_mul]
+    rw [add_mul, map_add (f := _), hx, hz, map_add (f := _), map_add (f := _), add_mul, add_mul]
     abel
 
 theorem ctr_mem_of_span (v : Derivation R B B) {S : Set (DR R B)} {T : Ideal (DR R B)}
@@ -43,7 +47,7 @@ theorem ctr_mem_of_span (v : Derivation R B B) {S : Set (DR R B)} {T : Ideal (DR
   induction hx using Submodule.span_induction with
   | mem x hx => exact hS x hx
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   | smul r x hx ih =>
     rw [smul_eq_mul, ctr_mul']
     exact add_mem (Ideal.mul_mem_left _ _ (hST hx))
@@ -84,7 +88,7 @@ theorem span_le_filDR' (n : ℕ) : Ideal.span (algebraMap B (DR R B) '' fil δ n
 theorem ctr_mem_filDR (hv : ∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow n a * v a) (n : ℕ) {x : DR R B}
     (hx : x ∈ filDR R δ n) : ctr v x ∈ filDR R δ n := by
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   refine add_mem (ctr_mem_of_span v (span_le_filDR' δ n) ?_ y hy) (rel_le_filDR' δ n (ctr_mem_rel δ v hv hz))
   rintro _ ⟨b, _, rfl⟩
   rw [ctr_algebraMap']
@@ -93,18 +97,18 @@ theorem ctr_mem_filDR (hv : ∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow 
 theorem ι_mem_filDR (n : ℕ) {ω : Ω[B⁄R]} (hω : ω ∈ fil δ n • (⊤ : Submodule B Ω[B⁄R]) ⊔ N1 R δ) :
     ι1 ω ∈ filDR R δ n := by
   obtain ⟨u, hu, w, hw, rfl⟩ := Submodule.mem_sup.1 hω
-  rw [map_add]
+  rw [map_add (f := _)]
   refine add_mem ?_ (rel_le_filDR' δ n hw)
   refine span_le_filDR' δ n ?_
   refine Submodule.smul_induction_on hu (fun c hc ω _ ↦ ?_) (fun x y hx hy ↦ ?_)
   · rw [map_smul, Algebra.smul_def, Algebra.commutes]
     exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨c, hc, rfl⟩)
-  · rw [map_add]; exact add_mem hx hy
+  · rw [map_add (f := _)]; exact add_mem hx hy
 
 theorem dDR_mem_filDR (hv : ∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow n a * v a) (n : ℕ) {x : DR R B}
     (hx : x ∈ filDR R δ (n + 1)) : dDR R B x ∈ filDR R δ n := by
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   refine add_mem ?_ (rel_le_filDR' δ n (dDR_mem_rel R δ hz))
   clear hx
   induction hy using Submodule.span_induction with
@@ -115,7 +119,7 @@ theorem dDR_mem_filDR (hv : ∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow 
     intro m a ha
     exact Ideal.subset_span ⟨m, a, ha, rfl⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact add_mem hx hy
   | smul r x hx ih =>
     rw [smul_eq_mul, dDR_mul]
     refine add_mem (Ideal.mul_mem_left _ _ ih) (Ideal.mul_mem_left _ _ ?_)
@@ -129,8 +133,8 @@ theorem lie_mem_filDR (hv : ∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow 
 
 end GlobalTheory.CtrFil
 
-open GlobalTheory.CtrFil in
 
+open GlobalTheory.CtrFil in
 theorem GlobalTheory.PDForm.ctr_lie_rel_filDR : (∀ (R B : Type) [CommRing R] [CommRing B] [Algebra R B] (J : Ideal B)
     (δ : DividedPowers J) (v : Derivation R B B), (∀ n, ∀ a ∈ J, v (δ.dpow (n + 1) a) = δ.dpow n a * v a) →
     ∀ x ∈ rel R δ, ctr v x ∈ rel R δ ∧ lie v x ∈ rel R δ) ∧ ∀ (R B : Type) [CommRing R] [CommRing B]

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageRegSet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageRegSet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -69,7 +74,8 @@ theorem linDisj_of_flat : ∀ (T D : Type) [CommRing T] [CommRing D] (a : T →+
     intro c hc
     apply hu c
     have h1 := congrArg (fnOf U hηU) hc
-    simp only [f, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_zero, Algebra.smul_def, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, LinearMap.coe_mk, AddHom.coe_mk, map_sum, map_zero, Algebra.smul_def, map_mul,
       RingHom.algebraMap_toAlgebra, fnOf_algX, hA'] at h1
     have e : fnOf U hηU s * ∑ i, cst H.hom (c i) * u i = 0 := by
       rw [Finset.mul_sum, ← h1]; refine Finset.sum_congr rfl fun i _ => ?_; ring
@@ -77,9 +83,11 @@ theorem linDisj_of_flat : ∀ (T D : Type) [CommRing T] [CommRing D] (a : T →+
   have hfD : Function.Injective (f.lTensor D) := Module.Flat.lTensor_preserves_injective_linearMap f hf
   let x := (TensorProduct.piScalarRight T T D (Fin n)).symm r
   have hx : f.lTensor D x = ∑ i, r i ⊗ₜ[T] A i := by
-    conv_lhs => rw [show x = ∑ i, (TensorProduct.piScalarRight T T D (Fin n)).symm (Pi.single i (r i)) by
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [show x = ∑ i, (TensorProduct.piScalarRight T T D (Fin n)).symm (Pi.single i (r i)) by
       simp only [x, ← map_sum, Finset.univ_sum_single]]
-    simp only [TensorProduct.piScalarRight_symm_single, map_sum, LinearMap.lTensor_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [TensorProduct.piScalarRight_symm_single, map_sum, LinearMap.lTensor_tmul]
     refine Finset.sum_congr rfl fun i _ => ?_
     congr 1
     simp [f, Pi.single_apply]
@@ -88,9 +96,11 @@ theorem linDisj_of_flat : ∀ (T D : Type) [CommRing T] [CommRing D] (a : T →+
   let E := ReciprocityTheory.ChartRestriction.G.DVR.FlatBC.eTens H.hom H'.hom π hpb U hUa
   let y : TensorProduct T Γ(H.left, U) D := TensorProduct.comm T D Γ(H.left, U) (f.lTensor D x)
   have hy : y = ∑ i, A i ⊗ₜ[T] r i := by
-    simp only [y, hx, map_sum, TensorProduct.comm_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, hx, map_sum, TensorProduct.comm_tmul]
   have hEy : fnOf V' hV' (E y) = 0 := by
-    rw [hy, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum, map_sum]
     have step : ∀ i, fnOf V' hV' (E (A i ⊗ₜ[T] r i)) = θ (fnOf U hηU s * u i) * cst H'.hom (r i) := fun i => by
       rw [show E (A i ⊗ₜ[T] r i) = _ from ReciprocityTheory.ChartRestriction.G.DVR.FlatBC.eTens_tmul H.hom H'.hom π hpb U hUa (A i) (r i)]
       rw [map_mul, fnOf_appLE hθ U V' inf_le_left hηU hV', fnOf_algX, hA']

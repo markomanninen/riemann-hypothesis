@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KchMul
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.UnifMetricScalar
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TangentVectorExistsUniqueUniformisingVector
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaKeyRulePowComplex
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormalFormOfParts
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExponentialDerivativeAtZeroIsTangent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KchMul
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.UnifMetricScalar
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TangentVectorExistsUniqueUniformisingVector
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaKeyRulePowComplex
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormalFormOfParts
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExponentialDerivativeAtZeroIsTangent
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem exists_unif_of_frame {σ : KA l →+* ℂ} {g : ℕ} {ty : Fin g → (E 
   obtain ⟨w, ⟨hw, hrig⟩, hth⟩ := val_tie Φ.m ht
   obtain ⟨w', hw', hinv⟩ := ConjUnif.exists_inv w hw
   have hL := Φ.T.t.PP.isLB
-  have hM := pull_isLB Xo.univ.t.PP.isLB Φ.m.φ
+  have hM := LB.isLB_pull Xo.univ.t.PP.isLB Φ.m.φ
   have hol := isHolTo_exp F i hP
   let u₁ := fibreUnif Φ.m.cart (F.ex i P) P.range fr (F.ex_add i P hP) (F.ex_onto i P hP) (F.ex_ker i P hP)
     hP.2.2.1 hP.2.2.2.1 hol c₁ c₂ c₃
@@ -97,7 +101,8 @@ theorem mulVec_period {g : ℕ} {La : Type} [AddCommGroup La] (P : La →+ (Fin 
     ext k; simp [Finset.sum_apply, Pi.single_apply]
   rw [h1 (fun i => a (Sum.inl i)), h1 (fun i => a (Sum.inr i))]
   conv_lhs => rw [h2]
-  simp only [map_sum, map_zsmul, Fintype.sum_sum_type, map_add, Matrix.mulVec_add, Matrix.mulVec_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, Fintype.sum_sum_type, map_add (f := _), Matrix.mulVec_add, Matrix.mulVec_sum,
     Matrix.mulVec_smul, (hn _).1, (hn _).2]
 
 theorem normalAt_of_coord (x : KeyIn ℂ) (u : HolUnif x.P.A x.P.L x.P.g) {La : Type} [AddCommGroup La]

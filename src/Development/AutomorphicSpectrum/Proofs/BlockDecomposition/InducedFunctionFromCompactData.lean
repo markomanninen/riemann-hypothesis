@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EGPgTrueEqLastIff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EGPgTrueEqLastIff
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZRes Topology
 open scoped TensorProduct
 
@@ -32,7 +37,7 @@ theorem exists_equivariant_extension :
     intro q c hc κ hκ
     have h : Ω ((q : G) * x * (c : G) * κ) := ⟨q, c, hc, κ, hκ, rfl⟩
     simp only [f]
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     obtain ⟨hc', κ', hκ', e⟩ := h.choose_spec.choose_spec
     exact wd _ _ _ _ hc' hc κ' hκ' κ hκ e.symm
   have h0 : ∀ g, ¬ Ω g → f g = 0 := fun g h => dif_neg h

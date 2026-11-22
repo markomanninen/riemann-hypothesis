@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.WeilActionPreservesThetaAndInnerProduct
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaCharacteristicsIffTestFunctionThetaSeries
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.EqOfSiegelThetaSeriesRationalEq
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticSiegelActionMemUpperHalfSpaceAndCocycl
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsWeilOfSymplectic
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisenbergOperatorRationalPointLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.WeilActionPreservesThetaAndInnerProduct
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaCharacteristicsIffTestFunctionThetaSeries
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.EqOfSiegelThetaSeriesRationalEq
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticSiegelActionMemUpperHalfSpaceAndCocycl
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsWeilOfSymplectic
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisenbergOperatorRationalPointLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariant
+
+@[expose] public section
 
 section Siegel
 
@@ -275,8 +279,8 @@ namespace GlobalTheory.Dict.VacForm
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r g n : ℕ} {X : Data E r}
   {bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ} (idx : Fin g ≃ X.Ψ × Fin r)
 
-variable (X bas) in
 
+variable (X bas) in
 noncomputable def spB (b : Fin g ⊕ Fin g → Fin r → E) : Matrix (Fin g ⊕ Fin g) (Fin g ⊕ Fin g) ℚ :=
   Matrix.of fun p q => crd X bas (b p.swap) q.swap
 
@@ -288,7 +292,7 @@ theorem spB_mem (hs : IsSympl X bas) {b : Fin g ⊕ Fin g → Fin r → E}
   have hE := hb p.swap q.swap
   rw [EF_crd hs] at hE
   rcases p with i | i <;> rcases q with j | j <;> by_cases hij : i = j <;>
-    simp [Matrix.mul_apply, Matrix.J, spB, Fintype.sum_sum_type, omegaStd, Pi.single_apply,
+    simp [Matrix.mul_apply, Matrix.J, spB, Function.swap, Fintype.sum_sum_type, omegaStd, Pi.single_apply,
       Matrix.one_apply, Finset.sum_sub_distrib, @eq_comm _ j i, hij] at hE ⊢ <;> linarith
 
 theorem hMat_mul_per (hs : IsSympl X bas) (b : Fin g ⊕ Fin g → Fin r → E)

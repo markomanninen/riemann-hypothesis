@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.MemSpanOfSharpG
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.MemSpanOfSharpG
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem mem_O_of_comp {M : Model F E} (g : SplitG M.L) (x : E) (h1 : (g.e x).1 �
   rw [M.L.O_def]
   have hx : x = ((g.e x).1 : F) • g.e.symm (1, 0) + ((g.e x).2 : F) • g.e.symm (0, 1) := by
     apply g.e.injective
-    simp only [map_add, map_smul, AlgEquiv.apply_symm_apply, Prod.smul_mk, smul_eq_mul, mul_one, mul_zero,
+    simp only [map_add (f := _), map_smul, AlgEquiv.apply_symm_apply, Prod.smul_mk, smul_eq_mul, mul_one, mul_zero,
       Prod.mk_add_mk, add_zero, zero_add]
   have hid : ∀ y : F × F, y * y = y → IsIntegral 𝒪[F] (g.e.symm y) := by
     intro y hy
@@ -95,13 +99,13 @@ theorem mmInt_G {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) (hT : t.T �
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A2 ⊢
-          simp only [map_mul, map_add, ecj, eal, Prod.fst_mul, Prod.fst_add, Prod.fst_swap]
+          simp only [map_mul, map_add (f := _), ecj, eal, Prod.fst_mul, Prod.fst_add, Prod.fst_swap]
           convert add_mem (neg_mem A2) (mul_mem hqO c0.2) using 1
           field_simp
           linear_combination hc0
         · have h' : ¬(b = Fin.last r ∧ a = Fin.last r) := fun h'' => h ⟨h''.2, h''.1⟩
           simp only [cor, h, h', if_false] at A2 ⊢
-          simp only [map_mul, map_add, ecj, eal, Prod.fst_mul, Prod.fst_add, Prod.fst_swap, map_zero,
+          simp only [map_mul, map_add (f := _), ecj, eal, Prod.fst_mul, Prod.fst_add, Prod.fst_swap, map_zero,
             Prod.fst_zero, add_zero]
           convert neg_mem A2 using 1
           field_simp
@@ -109,12 +113,12 @@ theorem mmInt_G {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) (hT : t.T �
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A1 ⊢
-          simp only [map_mul, map_add, ecj, eal, Prod.snd_mul, Prod.snd_add, Prod.snd_swap]
+          simp only [map_mul, map_add (f := _), ecj, eal, Prod.snd_mul, Prod.snd_add, Prod.snd_swap]
           convert A1 using 1
           field_simp
           ring
         · simp only [cor, h, if_false] at A1 ⊢
-          simp only [map_mul, map_add, ecj, eal, Prod.snd_mul, Prod.snd_add, Prod.snd_swap, map_zero,
+          simp only [map_mul, map_add (f := _), ecj, eal, Prod.snd_mul, Prod.snd_add, Prod.snd_swap, map_zero,
             Prod.snd_zero, add_zero]
           convert A1 using 1
           field_simp
@@ -126,25 +130,25 @@ theorem mmInt_G {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) (hT : t.T �
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A1 ⊢
-          simp only [map_mul, map_add, eal, Prod.fst_mul, Prod.fst_add]
+          simp only [map_mul, map_add (f := _), eal, Prod.fst_mul, Prod.fst_add]
           convert A1 using 1
           field_simp
           ring
         · have h' : ¬(b = Fin.last r ∧ a = Fin.last r) := fun h'' => h ⟨h''.2, h''.1⟩
           simp only [cor, h, h', if_false] at A1 ⊢
-          simp only [map_mul, map_add, eal, Prod.fst_mul, Prod.fst_add, map_zero, Prod.fst_zero, add_zero]
+          simp only [map_mul, map_add (f := _), eal, Prod.fst_mul, Prod.fst_add, map_zero, Prod.fst_zero, add_zero]
           convert A1 using 1
           field_simp
           ring
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A2 ⊢
-          simp only [map_mul, map_add, eal, Prod.snd_mul, Prod.snd_add]
+          simp only [map_mul, map_add (f := _), eal, Prod.snd_mul, Prod.snd_add]
           convert add_mem (neg_mem A2) (mul_mem hqO c0.2) using 1
           field_simp
           linear_combination hc0
         · simp only [cor, h, if_false] at A2 ⊢
-          simp only [map_mul, map_add, eal, Prod.snd_mul, Prod.snd_add, map_zero, Prod.snd_zero, add_zero]
+          simp only [map_mul, map_add (f := _), eal, Prod.snd_mul, Prod.snd_add, map_zero, Prod.snd_zero, add_zero]
           convert neg_mem A2 using 1
           field_simp
           ring
@@ -155,14 +159,14 @@ theorem mmInt_G {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) (hT : t.T �
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A3 ⊢
-          simp only [map_mul, map_add, map_sub, map_neg, ecj, eal, Prod.fst_mul, Prod.fst_add,
+          simp only [map_mul, map_add (f := _), map_sub, map_neg, ecj, eal, Prod.fst_mul, Prod.fst_add,
             Prod.fst_sub, Prod.fst_neg, Prod.fst_swap]
           convert neg_mem c.2 using 1
           field_simp at A3 ⊢
           first | linear_combination A3 | linear_combination -A3 | linear_combination (g.q : F) * A3 | linear_combination -(g.q : F) * A3
         · have h' : ¬(b = Fin.last r ∧ a = Fin.last r) := fun h'' => h ⟨h''.2, h''.1⟩
           simp only [cor, h, h', if_false] at A3 ⊢
-          simp only [map_mul, map_add, map_sub, map_neg, ecj, eal, Prod.fst_mul, Prod.fst_add,
+          simp only [map_mul, map_add (f := _), map_sub, map_neg, ecj, eal, Prod.fst_mul, Prod.fst_add,
             Prod.fst_sub, Prod.fst_neg, Prod.fst_swap, map_zero, Prod.fst_zero, sub_zero]
           convert neg_mem c.2 using 1
           field_simp at A3 ⊢
@@ -170,13 +174,13 @@ theorem mmInt_G {g : SplitG M.L} {t : Term V M r} (hg : GoodG H g t) (hT : t.T �
       · by_cases h : a = Fin.last r ∧ b = Fin.last r
         · obtain ⟨rfl, rfl⟩ := h
           simp only [cor, and_self, if_true] at A3' ⊢
-          simp only [map_mul, map_add, map_sub, map_neg, ecj, eal, Prod.snd_mul, Prod.snd_add,
+          simp only [map_mul, map_add (f := _), map_sub, map_neg, ecj, eal, Prod.snd_mul, Prod.snd_add,
             Prod.snd_sub, Prod.snd_neg, Prod.snd_swap]
           convert neg_mem c'.2 using 1
           field_simp at A3' ⊢
           first | linear_combination A3' | linear_combination -A3' | linear_combination (g.q : F) * A3' | linear_combination -(g.q : F) * A3'
         · simp only [cor, h, if_false] at A3' ⊢
-          simp only [map_mul, map_add, map_sub, map_neg, ecj, eal, Prod.snd_mul, Prod.snd_add,
+          simp only [map_mul, map_add (f := _), map_sub, map_neg, ecj, eal, Prod.snd_mul, Prod.snd_add,
             Prod.snd_sub, Prod.snd_neg, Prod.snd_swap, map_zero, Prod.snd_zero, sub_zero]
           convert neg_mem c'.2 using 1
           field_simp at A3' ⊢

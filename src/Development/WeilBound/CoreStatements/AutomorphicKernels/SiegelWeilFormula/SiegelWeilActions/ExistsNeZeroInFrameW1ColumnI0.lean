@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PartialDerivativeAlgebra
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PartialDerivativeAlgebra
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,8 @@ theorem exists_E {n : ℕ} (i₀ : Fin n) (hσ : ∀ a, σ (σ a) = a) (ε : ℤ
       rw [hw]
       ring
     have e2 : ∑ j, vy j * σ (vx j) = b₀ * σ (X i₀) := by
-      rw [hXi, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hXi, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hvyA, map_mul]
       ring
@@ -129,7 +134,8 @@ theorem exists_E {n : ℕ} (i₀ : Fin n) (hσ : ∀ a, σ (σ a) = a) (ε : ℤ
       funext k
       calc ((((A⁻¹).1)ᵀ.map σ) *ᵥ vy) k = ∑ l, σ ((A⁻¹).1 l k) * vy l := rfl
         _ = b₀ * σ (∑ l, A.1 i₀ l * (A⁻¹).1 l k) := by
-          rw [map_sum, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.mul_sum]
           refine Finset.sum_congr rfl fun l _ => ?_
           rw [hvyA, map_mul]
           ring

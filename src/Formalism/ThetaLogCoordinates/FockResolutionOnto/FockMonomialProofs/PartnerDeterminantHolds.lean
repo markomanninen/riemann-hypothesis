@@ -1,7 +1,11 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementA
-import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
-import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithZp
-import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementA
+public import Formalism.PolynomialDimension.MultinomialDepth.PartnerM
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.SmithZp
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -51,7 +55,8 @@ theorem partner_determinant_holds : PartnerDet := by
     have hWG : ∀ b, be u (g b) = dg i * V i b := by
       intro b
       have e1 : be u (g b) = ((W.map φ) * G) i b := by
-        rw [Matrix.mul_apply, hu, map_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Matrix.mul_apply, hu, map_sum, LinearMap.sum_apply]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [hsm, map_smul, LinearMap.smul_apply, smul_eq_mul]; rfl
       have e2 : (W.map φ) * U = 1 := by
@@ -59,7 +64,8 @@ theorem partner_determinant_holds : PartnerDet := by
         exact Matrix.map_one φ (map_zero φ) (map_one φ)
       rw [e1, hGUV, ← Matrix.mul_assoc, ← Matrix.mul_assoc, e2, Matrix.one_mul, Matrix.diagonal_mul]
     have hval : be u (∑ b, c b • g b) = dg i * ((∑ b, c b * V' i b : ℤ_[p]) : ℚ_[p]) := by
-      rw [map_sum, PadicInt.coe_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, PadicInt.coe_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [hsm, map_smul, smul_eq_mul, hWG b, PadicInt.coe_mul]
       show _ = dg i * ((c b : ℚ_[p]) * V i b)
@@ -74,7 +80,7 @@ theorem partner_determinant_holds : PartnerDet := by
   calc (p : ℝ) ^ (-(D * k)) = ∏ _i : Fin k, (p : ℝ) ^ (-D) := by
         rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← Real.rpow_mul_natCast hp0.le]
         congr 1; ring
-    _ ≤ ∏ i, ‖dg i‖ := Finset.prod_le_prod (fun _ _ => (Real.rpow_pos_of_pos hp0 _).le) fun i _ => hd i
+    _ ≤ ∏ i, ‖dg i‖ := Finset.prod_le_prod₀ (fun _ _ => (Real.rpow_pos_of_pos hp0 _).le) fun i _ => hd i
 
 section Gr
 variable {p : ℕ} [Fact p.Prime] {K r : ℕ} [NeZero r]
@@ -133,8 +139,8 @@ theorem graded_piece_bound_holds : GradedPieceBound := by
   have huI : u ∈ IntPol p (Fin (K + 1) × Fin r) := grLat_le_int LLw J M ρ w _ e hu
   have huP : u ∈ Pol p r LLw := grLat_le_pol LLw J M ρ w _ e hu
   have hne : u.support.Nonempty := by rwa [Finset.nonempty_iff_ne_empty, Ne, support_eq_empty]
-  obtain ⟨m, hm, hmax⟩ := Finset.exists_max_image u.support (fun m => ‖coeff m u‖) hne
-  set a := coeff m u with ha
+  obtain ⟨m, hm, hmax⟩ := Finset.exists_max_image u.support (fun m => ‖AddMonoidAlgebra.coeff u m‖) hne
+  set a := AddMonoidAlgebra.coeff u m with ha
   have ha0 : a ≠ 0 := mem_support_iff.mp hm
   have han : 0 < ‖a‖ := norm_pos_iff.mpr ha0
   have hmD : MultiDeg LLw m := by
@@ -149,7 +155,7 @@ theorem graded_piece_bound_holds : GradedPieceBound := by
     · exact hmax m' hm'
     · rw [notMem_support_iff.mp hm', norm_zero]; exact han.le
   have hu0X : u0 ∈ XX := XX.smul_mem _ (hGX u hu)
-  have hu0c : ‖coeff m u0‖ = 1 := by
+  have hu0c : ‖AddMonoidAlgebra.coeff u0 m‖ = 1 := by
     rw [hu0def, coeff_smul, smul_eq_mul, ← ha, inv_mul_cancel₀ ha0, norm_one]
   have huu0 : u = a • u0 := by rw [hu0def, smul_smul, mul_inv_cancel₀ ha0, one_smul]
   have hy : ((p : ℚ_[p]) ^ c) • u0 ∈ Gr := hSat u0 hu0X hu0I

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkGLOneCorner
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkGLOneCorner
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep
 
 noncomputable section
@@ -28,7 +33,7 @@ theorem setIntegral_comp_contAddEquiv {X : Type} [AddCommGroup X] [TopologicalSp
     h𝓕.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e
       fun n x => by
         change T (T.symm n + x) = n + T x
-        rw [map_add, T.apply_symm_apply]
+        rw [map_add (f := _), T.apply_symm_apply]
   have hD2 : IsAddFundamentalDomain N 𝓕 (μ.map m) :=
     h𝓕.mono (Measure.absolutelyContinuous_isAddHaarMeasure _ _)
   have hinv : ∀ (n : N) (x : X), f (n +ᵥ x) = f x := fun n x => hf n n.2 x
@@ -79,14 +84,14 @@ theorem nilM_shear (D : Matrix (Fin a) (Fin a) R) (hD : ∀ i j : Fin a, r ≤ (
     rfl
   · have h0 : nilM (shear D x) i j = 0 := by
       unfold nilM
-      rw [Matrix.of_apply, dif_neg h]
+      rw [Matrix.of_apply, dite_eq_right h]
     rw [h0, Matrix.mul_apply]
     refine (Finset.sum_eq_zero fun k _ => ?_).symm
     by_cases hk : (i : ℕ) < r ∧ r ≤ (k : ℕ)
     · rw [hD k j hk.2 (by omega), mul_zero]
     · have h1 : nilM x i k = 0 := by
         unfold nilM
-        rw [Matrix.of_apply, dif_neg hk]
+        rw [Matrix.of_apply, dite_eq_right hk]
       rw [h1, zero_mul]
 
 theorem mul_nilM (D : Matrix (Fin a) (Fin a) R)
@@ -100,14 +105,14 @@ theorem mul_nilM (D : Matrix (Fin a) (Fin a) R)
     rw [← Matrix.mul_apply, Matrix.one_mul]
   · have h0 : nilM x i j = 0 := by
       unfold nilM
-      rw [Matrix.of_apply, dif_neg (fun h => hi h.1)]
+      rw [Matrix.of_apply, dite_eq_right (fun h => hi h.1)]
     rw [h0]
     refine Finset.sum_eq_zero fun k _ => ?_
     by_cases hk : (k : ℕ) < r ∧ r ≤ (j : ℕ)
     · rw [hD i k (by omega) hk.1, zero_mul]
     · have h1 : nilM x k j = 0 := by
         unfold nilM
-        rw [Matrix.of_apply, dif_neg hk]
+        rw [Matrix.of_apply, dite_eq_right hk]
       rw [h1, mul_zero]
 
 theorem unip_mul_eq (D : GL (Fin a) R)
@@ -173,7 +178,7 @@ theorem blkGL_one_low (hr : r ≤ a) (l : GL (Fin (a - r)) R) (i j : Fin a) (hi 
 
 end Shear
 
-theorem slice_ratGL_mul : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ) (hr : r ≤ a)
+theorem slice_ratGL_mul : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ) (hr : r ≤ a)
     [MeasurableSpace (BlockIx a r → Ad E)] [BorelSpace (BlockIx a r → Ad E)] (μ : Measure (BlockIx a r → Ad E))
     (𝓕 : Set (BlockIx a r → Ad E)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratN E a r) 𝓕 μ → μ 𝓕 = 1 →
     ∀ φ : GA E a → ℂ, Continuous φ → (∀ γ g, φ (ratGL E a γ * g) = φ g) →

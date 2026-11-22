@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+module
+
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,6 @@ theorem bTopOf_ge {D : D7} (L : SizeData₂ D) (h : L.sc.x ^ L.sc.eps ≤ L.LaG)
     rw [mul_assoc (2 * (D.R.n : ℝ) * L.sc.delta1) (L.sc.x ^ L.sc.eps) L.LaG]
     exact mul_le_mul_of_nonneg_left h1 (by positivity)
   linarith
-
-def mkSc (eps : ℝ) (h0 : 0 < eps) (h1 : eps < 1 / 52) (x : ℝ) (hx : 1 < x) : Scale := ⟨x, eps, hx, h0, h1, 1, le_rfl⟩
 
 end Formalism.MainNotions.Inhab
 

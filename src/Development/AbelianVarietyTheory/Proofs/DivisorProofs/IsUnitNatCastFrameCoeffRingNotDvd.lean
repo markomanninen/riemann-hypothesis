@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+
+@[expose] public section
+
 open GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative
 
 namespace GlobalTheory.ExpFrame.Frame

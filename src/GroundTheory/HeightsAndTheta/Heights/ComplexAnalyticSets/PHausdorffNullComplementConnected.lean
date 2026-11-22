@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHausdorffNullComplementConnected
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHausdorffNullComplementConnected
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -62,7 +67,7 @@ theorem segment_hits_image_null {F : Type} [NormedAddCommGroup F] [NormedSpace �
       exact hx hcC
     have hspos : 0 < s := lt_of_le_of_ne hs0 (Ne.symm hs)
     have hτ : (ℓ (x + s • (m - x)) - ℓ x) / (α - ℓ x) = s := by
-      rw [map_add, map_smul, map_sub, hm, smul_eq_mul, add_sub_cancel_left, mul_div_assoc,
+      rw [map_add (f := _), map_smul, map_sub, hm, smul_eq_mul, add_sub_cancel_left, mul_div_assoc,
         div_self hβ, mul_one]
     obtain ⟨j, hj⟩ := exists_nat_gt (max s⁻¹ ‖s • (m - x)‖)
     refine mem_iUnion.2 ⟨j, x + s • (m - x), ⟨hcC, ?_, ?_⟩, ?_⟩
@@ -132,7 +137,7 @@ theorem convex_diff_isPreconnected [FiniteDimensional ℝ E] {k : ℕ}
     hBc hx.1 hy.1 (by norm_num) (by norm_num) (by norm_num)
   have hψz₀ : ψ (g ((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y)) = (1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y := by
     have h1 : φ ((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y) i = (φ x i + φ y i) / 2 := by
-      simp only [map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]; ring
+      simp only [map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]; ring
     simp only [ψ, hg]
     rw [← h1, Fin.insertNth_self_removeNth, ContinuousLinearEquiv.symm_apply_apply]
   have hWpos : 0 < volume (ψ ⁻¹' B) :=

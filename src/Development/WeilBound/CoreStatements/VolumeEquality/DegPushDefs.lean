@@ -1,6 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+module
+
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +24,8 @@ variable (k : Type) [Field k] {Ω : Type} [Field Ω] [Algebra k Ω] {K : Type} [
 def fnField (y : (Σ b, ι b) → Ω) : IntermediateField k Ω :=
   IntermediateField.adjoin k {t | ∃ p q : Σ b, ι b, p.1 = q.1 ∧ t = y p / y q}
 
-open Classical in
 
+open Classical in
 def inum (y : (Σ b, ι b) → Ω) {n : ℕ} (a : Fin n → K → ℤ) : ℤ := intNum k (pointIdeal k y) a
 
 def num (y : (Σ b, ι b) → Ω) {n : ℕ} (a : Fin n → K → ℤ) : ℤ := (Module.finrank (fnField k y) Ω : ℤ) * inum k y a
@@ -57,8 +62,8 @@ abbrev PlIx (r : S → ℕ) (b : Σ s, Fin (r s)) : Type := Fin (b.2 + 1) → Fi
 def plPt (u : ∀ s, Matrix (Fin (r s)) (Fin (r s)) Ω) : (Σ b : (Σ s, Fin (r s)), PlIx r b) → Ω := fun x =>
   Matrix.det (Matrix.of fun a b : Fin (x.1.2 + 1) => u x.1.1 (x.2 a) (Fin.castLE x.1.2.2 b))
 
-open Classical in
 
+open Classical in
 def plDeg (b : Σ s, Fin (r s)) : (Σ s, Fin (r s)) → ℤ := fun b' => if b' = b then -1 else 0
 
 variable {Ψ : Type} {p q : ℕ} {K : Type}
@@ -85,8 +90,8 @@ def Dom {X : Scheme.{0}} {Ω Ω₃ : Type} [Field Ω] [Field Ω₃] (O : Valuati
     (q : Cpt ξ) : Prop :=
   (∀ a ∈ regAt ξ q, i a ∈ O) ∧ ∀ a ∈ regAt ξ q, a ≠ 0 → (i a)⁻¹ ∈ O → a⁻¹ ∈ regAt ξ q
 
-open Classical in
 
+open Classical in
 def PtDim : Prop :=
   ∀ (k : Type) [Field k] (Ω : Type) [Field Ω] [Algebra k Ω] (K : Type) [Fintype K] (ι : K → Type) [∀ b, Fintype (ι b)]
     (y : (Σ b, ι b) → Ω) (d : ℕ), IsPt k y d →

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -22,7 +26,7 @@ theorem UpperTheory.V.CA.d_toDet :
         D.D B (1 + ofT A G B h * MonoidAlgebra.mapRingHom G (algebraMap A B) y) := by
     intro B _ _ h
     change D.D B (ofT A G B (1 + h * (1 ⊗ₜ y))) = _
-    rw [map_add, map_one, map_mul, ofT_tmul, one_smul]
+    rw [map_add (f := _), map_one, map_mul, ofT_tmul, one_smul]
   constructor
   · intro hk B _ _ h
     have := hk B (toT A G B h)

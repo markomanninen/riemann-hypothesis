@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSMulRegularCokerDualMapOfExactFibres
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSMulRegularCokerDualMapOfExactFibres
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Abelian IsLocalRing TensorProduct Function
 
@@ -23,8 +27,8 @@ theorem extZero_of_isRegularLocalRing (R : Type) [CommRing R] [IsRegularLocalRin
 
 end DualCokernel
 
-open DualCokernel in
 
+open DualCokernel in
 theorem exact_dualMap_of_exact_fibres_of_isRegularLocalRing :
     ∀ (A : Type) [CommRing A] [IsRegularLocalRing A] (g : ℕ), ringKrullDim A = g →
       ∀ C : CochainComplex (ModuleCat.{0} A) ℕ,
@@ -52,7 +56,7 @@ theorem exact_dualMap_of_exact_fibres_of_isRegularLocalRing :
     refine ⟨t, ht, fun f hf => ⟨k₁.dualMap f, LinearMap.ext fun x => ?_⟩⟩
     have h1 : f ((C.d (i - 1) i).hom (k₀ x)) = 0 := LinearMap.congr_fun hf (k₀ x)
     have h2 := congrArg f (hk x)
-    rw [map_add, h1, zero_add, map_smul] at h2
+    rw [map_add (f := _), h1, zero_add, map_smul] at h2
     exact h2
 
   have hhom : ∀ i, g ≤ i → ∃ (s : C.X (i + 1) →ₗ[A] C.X i) (t : C.X (i + 1 + 1) →ₗ[A] C.X (i + 1)),
@@ -115,7 +119,7 @@ theorem exact_dualMap_of_exact_fibres_of_isRegularLocalRing :
     refine ⟨t.dualMap f, LinearMap.ext fun x => ?_⟩
     have h1 : f ((C.d i (i + 1)).hom (s x)) = 0 := LinearMap.congr_fun hf (s x)
     have h2 := congrArg f (hst x)
-    rw [map_add, h1, zero_add] at h2
+    rw [map_add (f := _), h1, zero_add] at h2
     exact h2
 
 end GlobalTheory

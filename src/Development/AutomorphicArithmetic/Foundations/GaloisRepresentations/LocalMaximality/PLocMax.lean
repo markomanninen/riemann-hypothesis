@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCoverChartSmoothNormal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAffineOpenRingPolynomialEquivStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteCoverChartSmoothNormal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAffineOpenRingPolynomialEquivStatement
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -51,10 +55,10 @@ private theorem exists_const_sub_mem_span_tco_of_mem_rA {F L : Type} [Field F] [
   | add f g _ _ ihf ihg =>
     obtain ⟨c, hb, h⟩ := ihf
     obtain ⟨c', hb', h'⟩ := ihg
-    refine ⟨c + c', by rw [map_add]; exact Subalgebra.add_mem _ hb hb', ?_⟩
+    refine ⟨c + c', by rw [map_add (f := _)]; exact Subalgebra.add_mem _ hb hb', ?_⟩
     convert Ideal.add_mem _ h h' using 1
     apply Subtype.ext
-    simp only [map_add, Subalgebra.coe_sub, Subalgebra.coe_add, Subalgebra.coe_algebraMap]
+    simp only [map_add (f := _), Subalgebra.coe_sub, Subalgebra.coe_add, Subalgebra.coe_algebraMap]
     ring
   | mul f g _ _ ihf ihg =>
     obtain ⟨c, hb, h⟩ := ihf
@@ -95,6 +99,7 @@ private lemma fin_quot {F L : Type} [Field F] [Field L] [Algebra ℂ F] [Algebra
     exact map_add (Ideal.Quotient.mk _) _ _
   | smul r u _ hu =>
     obtain ⟨c, hb, hc'⟩ := exists_const_sub_mem_span_tco_of_mem_rA (L := L) d x r.1 r.2
+    set_option synthInstance.maxHeartbeats 200000 in
     have e : (⟨((r • u : integralClosure (rA ℂ (xv x) {0}) L) : L), (r • u).2⟩ : rB ℂ L (xv x) {0}) =
         ⟨_, hb⟩ * ⟨u.1, u.2⟩ := by
       apply Subtype.ext

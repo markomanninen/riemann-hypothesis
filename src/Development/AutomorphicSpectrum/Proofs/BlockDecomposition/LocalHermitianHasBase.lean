@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianValuationSplitCriterionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianSplitRankOneStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitOrderFgIdealProductStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MaxEvenLatticeRankOneSplitStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjugationInvariantValuationFieldStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorFixedByInvolutionIsBaseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitLocalTensorProductSwapStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianValuationSplitCriterionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianSplitRankOneStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitOrderFgIdealProductStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MaxEvenLatticeRankOneSplitStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjugationInvariantValuationFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorFixedByInvolutionIsBaseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitLocalTensorProductSwapStatement
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.KFin
@@ -19,7 +23,7 @@ namespace GlobalTheory.CompanionTheory.KFin.Base
 
 theorem herm_add_left {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] {c : R →+* R} {h : V → V → R} (hH : IsHerm c h)
     (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [hH.symm, hH.add_right, map_add, ← hH.symm, ← hH.symm]
+  rw [hH.symm, hH.add_right, map_add (f := _), ← hH.symm, ← hH.symm]
 
 theorem herm_smul_left {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] {c : R →+* R} {h : V → V → R} (hH : IsHerm c h)
     (a : R) (x z : V) : h (a • x) z = c a * h x z := by
@@ -51,7 +55,7 @@ theorem hasBase_of_field {k R : Type} [Field k] [CommRing R] [Algebra k R] (c : 
       add_mem' := by
         rintro z w ⟨a, ha, hz⟩ ⟨b, hb, hw⟩
         refine ⟨a + b + h z w, add_mem (add_mem ha hb) (key z w a b ha hb hz hw), ?_⟩
-        rw [herm_add_left hH, hH.add_right, hH.add_right, hz, hw, hH.symm z w, map_add, map_add]
+        rw [herm_add_left hH, hH.add_right, hH.add_right, hz, hw, hH.symm z w, map_add (f := _), map_add (f := _)]
         ring
       zero_mem' := ⟨0, zero_mem _, by rw [h0, map_zero, add_zero]⟩
       smul_mem' := by
@@ -185,7 +189,7 @@ theorem hasBase_place : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [Nu
       induction a using TensorProduct.induction_on with
       | zero => simp
       | tmul x y => simp [sigR, GlobalTheory.AdelicU.cm_conj_conj hcm]
-      | add x y hx hy => rw [map_add, map_add, hx, hy]
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     · intro x
       simp [sigR, Algebra.TensorProduct.algebraMap_apply]
     · intro a

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairInfApply
+
+@[expose] public section
+
 open MeasureTheory
 
 noncomputable section
@@ -159,8 +164,7 @@ theorem fderiv_gaussMoment_apply (ys : List (V →L[ℝ] V →L[ℝ] ℂ)) {B : 
   unfold gaussMoment
   congr 1
   funext x
-  simp only [integrandDeriv, diagProd, ContinuousLinearMap.smul_apply, evalDiag_apply, smul_eq_mul,
-    List.map_cons, List.prod_cons]
+  simp [integrandDeriv, diagProd]
   ring
 
 theorem contDiffOn_gaussMoment (n : ℕ) :
@@ -180,24 +184,22 @@ theorem contDiffOn_gaussMoment (n : ℕ) :
         rw [fderivWithin_of_isOpen isOpen_negDef hB, fderiv_gaussMoment_apply μ ys hB])
     exact_mod_cast this
 
-omit [MeasurableSpace V] [BorelSpace V] in
 
+omit [MeasurableSpace V] [BorelSpace V] in
 def toCont (N : V →ₗ[ℝ] V →ₗ[ℝ] ℂ) : V →L[ℝ] V →L[ℝ] ℂ :=
   LinearMap.toContinuousLinearMap
     ((LinearMap.toContinuousLinearMap : (V →ₗ[ℝ] ℂ) ≃ₗ[ℝ] (V →L[ℝ] ℂ)).toLinearMap ∘ₗ N)
 
-omit [MeasurableSpace V] [BorelSpace V] in
-@[simp] theorem toCont_apply (N : V →ₗ[ℝ] V →ₗ[ℝ] ℂ) (x y : V) : toCont N x y = N x y := rfl
+
 
 omit [MeasurableSpace V] [BorelSpace V] in
-
 def pairForm (M : ℝ → V →ₗ[ℝ] V →ₗ[ℝ] ℂ) (p : ℝ × ℝ) : V →L[ℝ] V →L[ℝ] ℂ :=
   toCont (M p.1 + (M p.2).compr₂ (Complex.conjAe.toLinearMap))
 
 omit [MeasurableSpace V] [BorelSpace V] in
 @[simp] theorem pairForm_apply (M : ℝ → V →ₗ[ℝ] V →ₗ[ℝ] ℂ) (p : ℝ × ℝ) (x y : V) :
     pairForm M p x y = M p.1 x y + starRingEnd ℂ (M p.2 x y) := by
-  simp [pairForm]
+  simp [pairForm, toCont]
 
 theorem gauss_pairing_smooth_ne_zero (M : ℝ → V →ₗ[ℝ] V →ₗ[ℝ] ℂ)
     (hM : ∀ x y, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun t => M t x y)

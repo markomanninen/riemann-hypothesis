@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HodgeTateCupKummerClassesEqDlogDeterminant
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HodgeTateCupKummerClassesEqDlogDeterminant
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+
+@[expose] public section
+
 open GlobalTheory.K5
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.hodgeTate_cup_kummer_classes_eq_dlog_determinant : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →

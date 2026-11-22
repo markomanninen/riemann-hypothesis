@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem isLocalHom_algebraMap_of_moduleFinite (R T : Type) [CommRing R] [IsLocal
   by_contra hna
   haveI : Algebra.IsIntegral R T := Algebra.IsIntegral.of_finite R T
   haveI hmax : (Ideal.comap (algebraMap R T) (maximalIdeal T)).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal T)
+    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal T)
   have heq := IsLocalRing.eq_maximalIdeal hmax
   have hm : a ∈ Ideal.comap (algebraMap R T) (maximalIdeal T) := by
     rw [heq]; exact (mem_maximalIdeal a).2 hna

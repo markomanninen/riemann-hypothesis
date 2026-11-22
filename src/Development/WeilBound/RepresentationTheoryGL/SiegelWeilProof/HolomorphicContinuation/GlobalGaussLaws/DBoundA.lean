@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DBound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,8 @@ def rowC {m : ℕ} (u : Fin m → Fin n → ℂ) (a : Fin m) : Fin n → ℂ := 
 theorem trace_gramB {m : ℕ} (Z : Matrix (Fin n) (Fin n) ℂ) (ε : Fin m → Bool) (b : Bool) (u : Fin m → Fin n → ℂ) :
     (Z * gramB ε b u).trace = ∑ a ∈ Finset.univ.filter (fun a => ε a = b),
       star (rowC u a) ⬝ᵥ (Z *ᵥ rowC u a) := by
-  simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, gramB, evX, Qb, map_sum, map_mul, MvPolynomial.eval_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, gramB, evX, Qb, map_sum, map_mul, MvPolynomial.eval_X,
     dotProduct, Matrix.mulVec, rowC, Pi.star_apply, star_star, Finset.mul_sum, Finset.sum_mul]
   simp only [Bool.true_eq_false, if_true, if_false]
   conv_rhs => rw [Finset.sum_comm]
@@ -112,7 +117,7 @@ theorem posDef_unif {P : Type} [TopologicalSpace P] {p₀ : P} (H : P → Matrix
   have hf : Tendsto (fun p => ∑ i, ∑ j, ‖H p i j - H p₀ i j‖) (𝓝 p₀) (𝓝 0) := by
     have h00 : (0 : ℝ) = ∑ i : Fin n, ∑ j : Fin n, ‖H p₀ i j - H p₀ i j‖ := by simp
     rw [h00]
-    exact tendsto_finset_sum _ fun i _ => tendsto_finset_sum _ fun j _ =>
+    exact tendsto_finsetSum _ fun i _ => tendsto_finsetSum _ fun j _ =>
       ((hH i j).tendsto.sub tendsto_const_nhds).norm
   have hev := (tendsto_order.1 hf).2 (c / 2) (by positivity)
   refine ⟨c / 2, by positivity, hev.mono fun p hp w => ?_⟩

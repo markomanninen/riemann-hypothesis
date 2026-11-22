@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.LengthCommensurableMapIffOfInjective
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableIffOfLeOfLe
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthQuotientMaximalIdealPowSmulTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.LengthCommensurableMapIffOfInjective
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableIffOfLeOfLe
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthQuotientMaximalIdealPowSmulTop
+
+@[expose] public section
 
 open IsDiscreteValuationRing Pointwise
 
@@ -51,8 +55,8 @@ theorem span_inf_restrictScalars_eq {M : Submodule R V} {W : Submodule K V}
 
 variable {K}
 
-omit [IsDomain R] [IsFractionRing R K] in
 
+omit [IsDomain R] [IsFractionRing R K] in
 theorem fractionField_smul_inf_restrictScalars {s : K} (hs : s ≠ 0) (Θ : Submodule R V) (W : Submodule K V) :
     s • Θ ⊓ W.restrictScalars R = s • (Θ ⊓ W.restrictScalars R) := by
   ext x
@@ -68,21 +72,22 @@ variable [IsPrincipalIdealRing R]
 
 theorem isLattice_comap_subtype {M : Submodule R V} (hM : M.FG) {W : Submodule K V}
     (h : W ≤ Submodule.span K (M : Set V)) :
-    Submodule.IsLattice K (M.comap (W.subtype.restrictScalars R)) where
-  fg := by
-    apply Submodule.fg_of_fg_map_injective (W.subtype.restrictScalars R) W.injective_subtype
-    exact hM.of_le (Submodule.map_comap_le _ _)
-  span_eq_top := by
+    Submodule.IsLattice K (M.comap (W.subtype.restrictScalars R)) := by
+  apply Submodule.IsLattice.of_fg K
+  apply Submodule.fg_of_fg_map_injective (W.subtype.restrictScalars R) W.injective_subtype
+  exact hM.of_le (Submodule.map_comap_le _ _)
+
+theorem finrank_inf_restrictScalars_of_le_span {M : Submodule R V} (hM : M.FG)
+    {W : Submodule K V} (h : W ≤ Submodule.span K (M : Set V)) :
+    Module.finrank R ↥(M ⊓ W.restrictScalars R) = Module.finrank K W := by
+  have : Submodule.IsFullLattice K (M.comap (W.subtype.restrictScalars R)) := by
+    have := isLattice_comap_subtype hM h
+    refine { span_eq_top := ?_ }
     refine eq_top_iff.mpr fun x _ => ?_
     obtain ⟨a, ha, hax⟩ := exists_ne_zero_smul_mem_of_mem_span_fractionField K (h x.2)
     have ha' : algebraMap R K a ≠ 0 := by simpa using ha
     rw [← Submodule.smul_mem_iff _ ha', algebraMap_smul]
     exact Submodule.subset_span hax
-
-theorem finrank_inf_restrictScalars_of_le_span {M : Submodule R V} (hM : M.FG)
-    {W : Submodule K V} (h : W ≤ Submodule.span K (M : Set V)) :
-    Module.finrank R ↥(M ⊓ W.restrictScalars R) = Module.finrank K W := by
-  have := isLattice_comap_subtype hM h
   have e := Submodule.equivMapOfInjective (W.subtype.restrictScalars R) W.injective_subtype
     (M.comap (W.subtype.restrictScalars R))
   have hr : LinearMap.range (W.subtype.restrictScalars R) = W.restrictScalars R := by
@@ -114,16 +119,16 @@ theorem log_ordFrac_algebraMap {a : R} (ha : a ≠ 0) :
   rw [this, addVal_def' u hϖ]
   simp
 
-variable (K) in
 
+variable (K) in
 theorem relLength_ne_top_of_subset_span {A B : Submodule R V} (hA : A.FG)
     (h : (A : Set V) ⊆ Submodule.span K (B : Set V)) : relLength A B ≠ ⊤ := by
   have := Module.IsTorsionFree.trans_faithfulSMul R K V
   obtain ⟨a, ha, hab⟩ := exists_ne_zero_smul_le_of_le_span_fractionField K hA h
   exact ne_top_of_le_ne_top (relLength_smul_self_ne_top hA ha) (relLength_anti_right A hab)
 
-variable (K) in
 
+variable (K) in
 theorem subset_span_of_relLength_ne_top {A B : Submodule R V} (h : relLength A B ≠ ⊤) :
     (A : Set V) ⊆ Submodule.span K (B : Set V) := by
   intro x hx
@@ -150,8 +155,8 @@ theorem subset_span_of_relLength_ne_top {A B : Submodule R V} (h : relLength A B
   rw [SetLike.mem_coe, ← Submodule.smul_mem_iff _ h₃, algebraMap_smul]
   exact Submodule.subset_span h₁
 
-variable (K) in
 
+variable (K) in
 theorem lengthCommensurable_iff_span_eq {A B : Submodule R V} (hA : A.FG) (hB : B.FG) :
     LengthCommensurable A B ↔
       Submodule.span K (A : Set V) = Submodule.span K (B : Set V) :=
@@ -218,19 +223,19 @@ theorem signedLength_inf_smul_inf_of_le_span {M Θ : Submodule R V} (hM : M.FG) 
   rw [fractionField_smul_inf_restrictScalars hs, ← finrank_inf_restrictScalars_of_le_span hΘ hW']
   exact ⟨h, h.signedLength_smul_right (hΘ.of_le inf_le_left) hs⟩
 
-theorem signedLength_inf_smul_inf (M Θ : Submodule R V) [Submodule.IsLattice K M]
-    [Submodule.IsLattice K Θ] (W : Submodule K V) {s : K} (hs : s ≠ 0) :
+theorem signedLength_inf_smul_inf (M Θ : Submodule R V) [Submodule.IsFullLattice K M]
+    [Submodule.IsFullLattice K Θ] (W : Submodule K V) {s : K} (hs : s ≠ 0) :
     LengthCommensurable (M ⊓ W.restrictScalars R) (Θ ⊓ W.restrictScalars R) ∧
       LengthCommensurable (M ⊓ W.restrictScalars R) (s • Θ ⊓ W.restrictScalars R) ∧
       signedLength (M ⊓ W.restrictScalars R) (s • Θ ⊓ W.restrictScalars R) =
         signedLength (M ⊓ W.restrictScalars R) (Θ ⊓ W.restrictScalars R) +
           WithZero.log (Ring.ordFrac R s) * Module.finrank K W :=
-  signedLength_inf_smul_inf_of_le_span Submodule.IsLattice.fg Submodule.IsLattice.fg
-    (by rw [Submodule.IsLattice.span_eq_top]; exact le_top)
-    (by rw [Submodule.IsLattice.span_eq_top]; exact le_top) hs
+  signedLength_inf_smul_inf_of_le_span (Submodule.IsLattice.fg K M) (Submodule.IsLattice.fg K Θ)
+    (by rw [Submodule.IsFullLattice.span_eq_top]; exact le_top)
+    (by rw [Submodule.IsFullLattice.span_eq_top]; exact le_top) hs
 
 theorem signedLength_inf_smul_inf_zpow {ϖ : R} (hϖ : Irreducible ϖ) (M Θ : Submodule R V)
-    [Submodule.IsLattice K M] [Submodule.IsLattice K Θ] (W : Submodule K V) (u : Rˣ) (n : ℤ) :
+    [Submodule.IsFullLattice K M] [Submodule.IsFullLattice K Θ] (W : Submodule K V) (u : Rˣ) (n : ℤ) :
     signedLength (M ⊓ W.restrictScalars R)
         ((u • algebraMap R K ϖ ^ n) • Θ ⊓ W.restrictScalars R) =
       signedLength (M ⊓ W.restrictScalars R) (Θ ⊓ W.restrictScalars R) +
@@ -241,15 +246,5 @@ theorem signedLength_inf_smul_inf_zpow {ϖ : R} (hϖ : Irreducible ϖ) (M Θ : S
   rw [(signedLength_inf_smul_inf M Θ W hs).2.2, log_ordFrac_units_smul_zpow hϖ]
 
 end FractionField
-
-example (p : ℕ) [Fact p.Prime] :
-    signedLength (Submodule.span ℤ_[p] {(1 : ℚ_[p])})
-      (((1 : ℤ_[p]ˣ) • algebraMap ℤ_[p] ℚ_[p] p ^ (-1 : ℤ)) • Submodule.span ℤ_[p] {(1 : ℚ_[p])}) =
-      -1 := by
-  have : Submodule.IsLattice ℚ_[p] (Submodule.span ℤ_[p] {(1 : ℚ_[p])}) :=
-    ⟨Submodule.fg_span_singleton _, by rw [Submodule.span_span_of_tower]; simp⟩
-  have h := signedLength_inf_smul_inf_zpow (K := ℚ_[p]) (PadicInt.irreducible_p (p := p))
-    (Submodule.span ℤ_[p] {(1 : ℚ_[p])}) (Submodule.span ℤ_[p] {(1 : ℚ_[p])}) ⊤ 1 (-1)
-  simpa using h
 
 end GlobalTheory

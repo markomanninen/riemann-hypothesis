@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleCocyclesCardLeSumDimsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleCocyclesCardLeSumDimsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodCoefficientRingPadicIntegersFinExt
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
 open Formalism.MainNotions.N (twistRep coefRep)
@@ -17,7 +22,7 @@ theorem exists_residue (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomai
   have hm : IsLocalRing.maximalIdeal O = Ideal.span {lam} := h.maximalIdeal_eq
   have hl : (l : O) ∈ IsLocalRing.maximalIdeal O := by
     have h1 : ((IsLocalRing.maximalIdeal O).comap (algebraMap ℤ_[l] O)).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _
+      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _ Algebra.IsIntegral.isIntegral _
     have h2 := IsLocalRing.eq_maximalIdeal h1
     have h3 : (l : ℤ_[l]) ∈ IsLocalRing.maximalIdeal ℤ_[l] := by
       rw [PadicInt.maximalIdeal_eq_span_p]; exact Ideal.mem_span_singleton_self _
@@ -98,7 +103,7 @@ theorem exists_ext (T : Ob k G) (z : G → Fin T.m → k) (hz : ∀ g h, z (g * 
     simp at this
   · rw [he']
     change _ = e (0, 1) + e (z g, 0)
-    rw [← map_add]
+    rw [← map_add (f := _)]
     simp
 
 variable [TopologicalSpace G]
@@ -113,11 +118,13 @@ theorem linearIndependent_of_indepMod (hs : Function.Surjective (algebraMap O k)
   choose x hx using fun a => hs (c a)
   rw [← hx, hk]
   refine hz x ?_ a
-  simp only [← map_smul, ← map_sum] at hc
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_smul, ← map_sum] at hc
   obtain ⟨b, hb⟩ := (Submodule.Quotient.mk_eq_zero _).1 hc
   have h1 : ∑ a, x a • (Submodule.Quotient.mk (z a) : H1 π ⊤) = Submodule.Quotient.mk (∑ a, x a • z a) := by
     change ∑ a, x a • Submodule.mkQ _ (z a) = Submodule.mkQ _ _
-    simp only [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum]
   rw [h1, Submodule.Quotient.mk_eq_zero]
   refine ⟨φ.symm b, Submodule.mem_top, ?_⟩
   funext g
@@ -137,7 +144,7 @@ theorem exists_ext_Ea (hs : Function.Surjective (algebraMap O k)) (hk : ∀ x, a
       IsExt T E (fun g => φ ((z : G → M ⊗[O] X) g)) ∧
       ∀ g x, e (twistRep (Ea W χ ha z) χ⁻¹ g x) = E.ρ g (e x) := by
   obtain ⟨E, e, hE, he⟩ := exists_ext T (fun g => φ ((z : G → M ⊗[O] X) g)) (fun g h => by
-    rw [cocycle_mul, map_add, hφ])
+    rw [cocycle_mul, map_add (f := _), hφ])
   have hker : Ideal.span {lam ^ 1} = LinearMap.ker (Algebra.linearMap O k) := by
     ext x
     rw [pow_one, Ideal.mem_span_singleton, ← hk]
@@ -154,10 +161,10 @@ theorem exists_ext_Ea (hs : Function.Surjective (algebraMap O k)) (hk : ∀ x, a
     simp
   rw [h1]
   change e (φ _, ψ _) = E.ρ g (e (φ _, ψ _))
-  rw [he, map_add, hφ, map_smul, hψ, algebraMap_smul]
+  rw [he, map_add (f := _), hφ, map_smul, hψ, algebraMap_smul]
+
 
 omit [TopologicalSpace G] in
-
 theorem exists_coef_equiv {M : Type} [AddCommGroup M] [Module O M] (W : Representation O G M)
     (χ : G →* Oˣ) (T : Ob k G) (q : M →ₗ[O] (Fin T.m → k)) (hq : Function.Surjective q) (hk : KerIs lam q)
     (he : ∀ σ x, q (twistRep W χ⁻¹ σ x) = T.ρ σ (q x)) :
@@ -170,7 +177,7 @@ theorem exists_coef_equiv {M : Type} [AddCommGroup M] [Module O M] (W : Represen
   | tmul m y =>
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective y
     rw [coefRep_tmul, hφ, hφ, he, LinearMap.map_smul_of_tower]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem exists_independent_admissible_cocycles_residue {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]

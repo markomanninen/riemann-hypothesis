@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open WeierstrassCurve WeierstrassCurve.Projective
 
@@ -613,17 +617,17 @@ lemma diagZ_smul (P Q : Fin 3 → R) (u v : R) :
 
 lemma map_diagX (f : R →+* S) (P Q : Fin 3 → R) :
     diagX (W.map f) (f ∘ P) (f ∘ Q) = f (diagX W P Q) := by
-  simp only [diagX, map_ofNat, map_neg, map_add, map_sub, map_mul, map_pow,
+  simp only [diagX, map_ofNat, map_neg, map_add (f := _), map_sub, map_mul, map_pow,
     WeierstrassCurve.map, Function.comp_apply]
 
 lemma map_negDiagY (f : R →+* S) (P Q : Fin 3 → R) :
     negDiagY (W.map f) (f ∘ P) (f ∘ Q) = f (negDiagY W P Q) := by
-  simp only [negDiagY, map_ofNat, map_neg, map_add, map_sub, map_mul, map_pow,
+  simp only [negDiagY, map_ofNat, map_neg, map_add (f := _), map_sub, map_mul, map_pow,
     WeierstrassCurve.map, Function.comp_apply]
 
 lemma map_diagZ (f : R →+* S) (P Q : Fin 3 → R) :
     diagZ (W.map f) (f ∘ P) (f ∘ Q) = f (diagZ W P Q) := by
-  simp only [diagZ, map_ofNat, map_neg, map_add, map_sub, map_mul, map_pow,
+  simp only [diagZ, map_ofNat, map_neg, map_add (f := _), map_sub, map_mul, map_pow,
     WeierstrassCurve.map, Function.comp_apply]
 
 end GlobalTheory.AddLaw

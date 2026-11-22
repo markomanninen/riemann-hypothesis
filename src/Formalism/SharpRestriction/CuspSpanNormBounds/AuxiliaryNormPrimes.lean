@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeSCSCl
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.HermitianLattices.StatementMass
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeSCSCl
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,69 +162,12 @@ section Family
 
 variable {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
 
-def SecondSizeStatement : Prop := ∀ x (i : Fm.Ix x), FamilySchurFormalDegree (Fm.D x i)
-
-def BesselFormLine : Prop := ∀ x (i : Fm.Ix x), GL5LogLValueBoundByZeta (Fm.D x i)
-
-def FamilyRankTwoMassBound (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => ∀ u u', RankTwoMassBound (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C
-
-def FamilyGaugeMassVolumes : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), MassVolumeForGaugeFamily (Fm.D x i) (Fm.ex x hx i).gauge
-
-def LocalGenericDensity (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => ∀ u u', CharacterCutVolume (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A C
-
-def FamilyFormulaUnderLoopData (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  OwnEv Fm fun C' Cl x i => ∀ u u', SpectralWeightsCM (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A
-
 def FamilyTemperatureProductAsymptotic (Cg cb Cu cT CT C0 : ℝ) : Prop :=
   ∀ δ > 0, OwnEv Fm fun C' Cl x i => TemperatureProductAsymptotic (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 δ
-
-def FamilyCriticalTemperatureLower (Cg cb Cu cT CT C0 : ℝ) : Prop :=
-  OwnEv Fm fun C' Cl x i => CriticalTemperatureLowerBound (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0
-
-def FamilyPlancherelOneParameter (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => PlancherelBoundOneParameter (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def FamilyPlancherelFiniteSums (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => PlancherelBoundFiniteSums (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def FamilyPlancherelDifferenceOperator (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => PlancherelBoundDifferenceOperator (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def FamilyBesselDegreeNormalization (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∀ Cn, OwnEv Fm fun C' Cl x i => BesselDegreeNormalization (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1
-
-def FamilyDegreeRatioUnitStep (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => DegreeRatioUnitStepBound (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 C
-
-def FamilyArchimedeanMomentBound (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∀ Cq, ∃ C, ∀ Cn, OwnEv Fm fun C' Cl x i => ArchimedeanMomentBound (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1 Cq C
-
-def FamilyDimensionConstantBound (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => DimensionConstantBound (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 C1 C
 
 variable (C1 : ℝ) (X : ∀ x, Fm.x1 < x → ∀ i : Fm.Ix x, TermTie (Fm.D x i))
   (Y : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x) (u u' : (Fm.D x i).what₂.Word),
     LoopTie (Fm.D x i) (Fm.L x i) (X x hx i) u u' C1)
-
-def FamilyTermVolumeBound (Cg cb Cu cT CT C0 A : ℝ) : Prop :=
-  ∃ C, OwnEv Fm fun C' Cl x i => ∀ (hx : Fm.x1 < x) u u',
-    TermVolumeSmallCellBound (Fm.D x i) (Fm.L x i) (X x hx i) u u' C1 (Y x hx i u u') C' Cl Cg cb Cu cT CT C0 A C
-
-def AdmF : Prop :=
-  SecondSizeStatement Fm ∧ BesselFormLine Fm ∧ FamilyGaugeMassVolumes Fm ∧ UnitaryBranchingMultiplicityOne ∧ HadamardDeterminantInequality ∧ BanaszczykTransferenceBound ∧ MinkowskiFiniteSubgroupOrder ∧
-  ∀ Cg cb Cu cT CT C0 A : ℝ,
-    FamilyRankTwoMassBound Fm Cg cb Cu cT CT C0 A ∧ LocalGenericDensity Fm Cg cb Cu cT CT C0 A ∧ FamilyFormulaUnderLoopData Fm Cg cb Cu cT CT C0 A ∧ FamilyTemperatureProductAsymptotic Fm Cg cb Cu cT CT C0 ∧ FamilyCriticalTemperatureLower Fm Cg cb Cu cT CT C0 ∧
-    FamilyPlancherelOneParameter Fm Cg cb Cu cT CT C0 C1 ∧ FamilyPlancherelFiniteSums Fm Cg cb Cu cT CT C0 C1 ∧ FamilyPlancherelDifferenceOperator Fm Cg cb Cu cT CT C0 C1 ∧ FamilyBesselDegreeNormalization Fm Cg cb Cu cT CT C0 C1 ∧
-    FamilyDegreeRatioUnitStep Fm Cg cb Cu cT CT C0 C1 ∧ FamilyArchimedeanMomentBound Fm Cg cb Cu cT CT C0 C1 ∧ FamilyDimensionConstantBound Fm Cg cb Cu cT CT C0 C1 ∧ FamilyTermVolumeBound Fm C1 X Y Cg cb Cu cT CT C0 A
-
-def OrbitValuationBound (c : ℝ) : Prop :=
-  0 < c ∧ ∀ Cg cb Cu cT CT C0 A : ℝ,
-    OwnEv Fm fun C' Cl x i => ∀ u u', aux₃ (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A c
-
-def KudlaFamilyStatement (c : ℝ) : Prop := AdmF Fm C1 X Y → OrbitValuationBound Fm c
 
 end Family
 

@@ -1,16 +1,22 @@
-import Mathlib
-import Formalism.WindowSums.PowerSeriesRelationList
-import Formalism.WachModuleLifts.WachModuleProofs.LemmaCLower
-import Formalism.WachModuleLifts.WachModuleProofs.LemmaCSharp
-import Formalism.WachModuleLifts.WachModuleProofs.LemmaCSharpOddUnitInvHolds
-import Formalism.WachModuleLifts.WachModuleProofs.LemmaCSharpG
-import Formalism.WachModuleLifts.WachModuleProofs.LemmaCSharpOddG
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
-import Formalism.GaussValuationBounds.NokLemmaCVal
-import Formalism.GaussValuationBounds.GaussValueContraction.ScaledPowMemSpanCeil
-import Formalism.WeaklyAdmissibleFiltrations.PhtGalois
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
+module
+
+public import Mathlib
+public import Formalism.WindowSums.PowerSeriesRelationList
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.DualWByLettersExtended
+public import Formalism.GaussValuationBounds.Statement
+public import Formalism.GaussValuationBounds.GaussValueContraction.TruncationExponentBounds
+public import Formalism.GaussValuationBounds.GaussValueContraction.PhiIterXProof
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussValueContractionProofFactBis
+public import Formalism.GaussValuationBounds.GaussValueContraction.KapBoundProof
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussMul
+public import Formalism.GaussValuationBounds.GaussValueContraction.GaussBasic
+public import Formalism.GaussValuationBounds.GaussUnit
+public import Formalism.GaussValuationBounds.GaussValueContraction.ScaledPowMemSpanCeil
+public import Formalism.WeaklyAdmissibleFiltrations.PhtGalois
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +136,7 @@ theorem zl_chi_int {K : FinExt l} {s : ℕ} {LL : FinExt l} (h : Good K s LL)
     rw [← h1]
     exact (((H.W K s LL h).χΓ ((H.W K s LL h).resΓ g') : (↥(OL LL))ˣ) : ↥(OL LL)).2
   have hint' : IsIntegral ℤ_[l] (((P.PD K).χ g' : ℚ_[l]ˣ) : ℚ_[l]) :=
-    (isIntegral_algebraMap_iff (algebraMap ℚ_[l] ↥LL.1).injective).1 hint
+    (isIntegral_algebraMap_iff ).1 hint
   obtain ⟨y, hy⟩ := (IsIntegrallyClosed.isIntegral_iff (R := ℤ_[l]) (K := ℚ_[l])).1 hint'
   refine ⟨y, ?_⟩
   apply zl_O_inj LL
@@ -163,8 +169,6 @@ theorem gam_zl {K : FinExt l} {s : ℕ} {LL : FinExt l} (h : Good K s LL) :
   exact_mod_cast hg
 
 end Zl
-
-example {l : ℕ} [Fact l.Prime] (LL : FinExt l) : IsDomain ↥(OL LL) := inferInstance
 
 end Formalism.MainNotions.LiftingTheory
 
@@ -268,16 +272,16 @@ theorem partR_coreHval {K : FinExt l} {s : ℕ} {LL : FinExt l} (h : Good K s LL
     rw [map_sub, map_one, partR_zpow h z hz, zpow_natCast, Units.val_pow_eq_pow_val, pow_mul]
     unfold u₁
     rw [P.PD_p K]
-  rw [hu, zl_map_O, v_zl P LL _ hne, hval, hs1, padicValInt.of_nat,
-    padicValNat.mul (by omega) (by omega),
-    padicValNat.eq_zero_of_not_dvd (fun hd => by have := Nat.le_of_dvd (by omega) hd; omega), zero_add]
+  have hnd : ¬ l ∣ l - 1 := Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
+  rw [hu, zl_map_O, v_zl P LL _ hne, hval, hs1, padicValInt.of_nat, Nat.padicValNat_def,
+    Nat.multiplicity_mul (p := l) (a := l - 1) (b := r) (by omega) (by omega),
+    multiplicity_eq_zero_of_not_dvd hnd, zero_add]
 
 theorem partR_coreHleg (p : ℕ) (hp : p.Prime) : coreHleg p := by
-  haveI := Fact.mk hp
   intro r
   have hp1 : (1 : ℚ) < p := by exact_mod_cast hp.one_lt
   have key : (p - 1) * padicValNat p r.factorial ≤ r := by
-    rw [sub_one_mul_padicValNat_factorial]
+    rw [Nat.padicValNat_def, hp.sub_one_mul_multiplicity_factorial]
     exact Nat.sub_le _ _
   have key' : ((p : ℚ) - 1) * (padicValNat p r.factorial : ℚ) ≤ r := by
     have h := (Nat.cast_le (α := ℚ)).2 key
@@ -323,7 +327,7 @@ theorem constantCoeff_gamma (W : LocWach PD LL O v n) (g : W.Gam) (a : PowerSeri
       simp
     rw [this, AlgHom.commutes]
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const a]
-  rw [map_add, map_mul, hC, map_add, map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
+  rw [map_add (f := _), map_mul, hC, map_add (f := _), map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
     PowerSeries.constantCoeff_C]
 
 theorem gamma_X_eq (W : LocWach PD LL O v n) (g : W.Gam) :
@@ -434,7 +438,7 @@ theorem gamma_uniformizer_eq_mul_unit' (W : LocWach PD LL O v n) (h9 : P9π₀ W
       rw [mul_pow] at this
       linear_combination -this
     have e4 := congrArg PowerSeries.constantCoeff (PowerSeries.X_pow_mul_cancel e3)
-    rw [map_mul, map_mul, constantCoeff_gamma, map_pow, map_add, map_mul, PowerSeries.constantCoeff_X, zero_mul,
+    rw [map_mul, map_mul, constantCoeff_gamma, map_pow, map_add (f := _), map_mul, PowerSeries.constantCoeff_X, zero_mul,
       add_zero, PowerSeries.constantCoeff_C] at e4
     have hu : IsUnit (PowerSeries.constantCoeff ((w : LetA O n) i)) := by
       have h1 : IsUnit ((w : LetA O n) i) :=
@@ -466,7 +470,7 @@ theorem gamma_uniformizer_eq_mul_unit' (W : LocWach PD LL O v n) (h9 : P9π₀ W
       PowerSeries.subst_X hs, PowerSeries.subst_C] at e1
     have e2 : a i = W.π₀ i * t i + PowerSeries.C (PowerSeries.constantCoeff (f i)) := e1
     have e3 := congrArg PowerSeries.constantCoeff e2
-    rw [ha0, map_add, map_mul, hπ0, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e3
+    rw [ha0, map_add (f := _), map_mul, hπ0, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e3
     rw [e2, ← e3, map_zero, add_zero]
     rfl
   have htΔ : t ∈ W.AΔ := by
@@ -603,8 +607,8 @@ theorem recursiveSequence_stable (n r : ℕ) (hr : r ≤ n) : (h3F Q a h1 hstep 
     · have : r = n + 1 := by omega
       rw [this]
 
-include h1 hstep in
 
+include h1 hstep in
 theorem exists_sequence_of_extension (hcongr : ∀ (R : ℕ) (c c' : ℕ → α), (∀ r < R, c r = c' r) → Q R c → Q R c') :
     ∃ c : ℕ → α, c 0 = a ∧ ∀ R : ℕ, 1 ≤ R → Q R c := by
   refine ⟨fun r => (h3F Q a h1 hstep r).1 r, (h3F Q a h1 hstep 0).2.1, fun R hR => ?_⟩
@@ -732,7 +736,7 @@ theorem step (R k j : ℕ) (w z : D) (ξ yR : Fin d → O) (x' : D) (hx' : x' �
   have h2 : g (P ^ R • h3β b yR) = P ^ R • h3β b yR + (U ^ R - 1) • (P ^ R • h3β b yR) +
       P ^ (R + 1) • x₁ := by
     rw [add_assoc, ← e₁]; abel
-  rw [map_add, map_smul, h1, h2, h3β_add, h3β_smul, h3β_smul]
+  rw [map_add (f := _), map_smul, h1, h2, h3β_add, h3β_smul, h3β_smul]
   simp only [← algebraMap_smul A (((p : ℕ) : O) ^ j), ← algebraMap_smul A (((p : ℕ) : O) ^ k),
     ← algebraMap_smul A (U ^ R - 1), pow_add]
   module
@@ -820,7 +824,7 @@ theorem stepP (z : D) (hz : z ∈ N) (R : ℕ) (hR : 1 ≤ R) (c : ℕ → Fin d
     apply H.inj
     have h1 := hy R (by omega) m
     rw [Function.update_self] at h1
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul, map_pow, map_natCast,
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_pow, map_natCast,
       Pi.zero_apply]
     rw [h1, map_zero]
     field_simp
@@ -944,17 +948,21 @@ theorem gamma_equation_hypotheses_hold (W : LocWach PD LL O v n) (hO1 : ∀ y : 
     (hO3 : Function.Injective (algebraMap O LL)) (h9 : P9π₀ W) (T : LocLat G Qp LL O)
     (hm : Formalism.MainNotions.DeltaInvariantLattices.wachModuleOverLetters W T W.π₀) (hval : coreHval W) (i : ZMod n) {d : ℕ}
     (b : Fin d → W.DD T) (hb : IsFrameΔ W T i b) :
-    GammaEquationHypotheses v PD.p W.π₀ (u₁ W) (W.γ T) (NΔi W T i) b where
-  hp := PD.hp
-  inj := hO3
-  v_p := W.v_l
-  v_int := hO1
-  v_O := hO2
-  precomp_injective := uniformizer_smul_injective W h9 T
-  P_N := fun x hx => ⟨invariant_smul_mem_invariants' W T _ h9.1 x hx.1, (W.Nl T i).smul_mem _ hx.2⟩
-  b_N := hb.1
-  dec := by
-    intro x hx
+    GammaEquationHypotheses v PD.p W.π₀ (u₁ W) (W.γ T) (NΔi W T i) b := by
+  refine
+    { hp := PD.hp
+      inj := hO3
+      v_p := W.v_l
+      v_int := hO1
+      v_O := hO2
+      precomp_injective := uniformizer_smul_injective W h9 T
+      P_N := fun x hx => ⟨invariant_smul_mem_invariants' W T _ h9.1 x hx.1, (W.Nl T i).smul_mem _ hx.2⟩
+      b_N := hb.1
+      dec := ?_
+      uniq := ?_
+      gr := first_H_clause_of_uniformizer W T i h9 hm
+      val := hval }
+  · intro x hx
     obtain ⟨a, ⟨ha, hxa⟩, -⟩ := hb.2 x hx
     have hsp := fun m => invariants_eq_constants_add_uniformizer W h9 (a m) (ha m).1
     choose a₀ t ht hat using hsp
@@ -975,8 +983,7 @@ theorem gamma_equation_hypotheses_hold (W : LocWach PD LL O v n) (hO1 : ∀ y : 
         rw [smul_smul, h1, mul_smul, hE, algebraMap_smul]
       conv_lhs => rw [hat m]
       rw [add_smul, h2, mul_smul]
-  uniq := by
-    intro y ⟨x', hx', hyx⟩
+  · intro y ⟨x', hx', hyx⟩
     obtain ⟨a', ⟨ha', hxa'⟩, -⟩ := hb.2 x' hx'
     have hX : InNΔi W T i (h3β b y) :=
       (NΔi W T i).sum_mem fun m _ => (NΔi W T i).smul_mem _ (hb.1 m)
@@ -1000,8 +1007,6 @@ theorem gamma_equation_hypotheses_hold (W : LocWach PD LL O v n) (hO1 : ∀ y : 
     have h3 : (W.π₀ * a' m) i = W.π₀ i * a' m i := rfl
     rw [h2, h3, PowerSeries.constantCoeff_C, map_mul, uniformizer_constantCoeff_zero W h9, zero_mul] at h1
     exact h1
-  gr := first_H_clause_of_uniformizer W T i h9 hm
-  val := hval
 
 theorem coreH_sol_exists (W : LocWach PD LL O v n) (hO1 : ∀ y : O, 0 ≤ v (algebraMap O LL y))
     (hO2 : ∀ x : LL, 0 ≤ v x → ∃ y : O, algebraMap O LL y = x)
@@ -1104,7 +1109,8 @@ theorem coreH_inv_holds (W : LocWach PD LL O v n) {d : ℕ} (sol : Fin d → ℕ
     intro r
     rw [← hmul]
     ext i j
-    simp only [Matrix.sum_apply, Matrix.mul_apply, Matrix.map_apply, map_sum, PowerSeries.coeff_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.sum_apply, Matrix.mul_apply, Matrix.map_apply, map_sum, PowerSeries.coeff_mul]
     rw [Finset.sum_comm]
   have hone0 : (1 : Matrix (Fin d) (Fin d) (PowerSeries LL)).map (PowerSeries.coeff (R := LL) 0) = 1 := by
     ext i j
@@ -1316,7 +1322,7 @@ theorem frame_const (g₀ : PowerSeries O →ₐ[O] PowerSeries O)
     PowerSeries.constantCoeff (g₀ f) = PowerSeries.constantCoeff f := by
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const f]
   have hC : ∀ c : O, g₀ (PowerSeries.C c) = PowerSeries.C c := fun c => g₀.commutes c
-  rw [map_add, map_mul, hC, map_add, map_mul, h, zero_mul, zero_add, PowerSeries.constantCoeff_C]
+  rw [map_add (f := _), map_mul, hC, map_add (f := _), map_mul, h, zero_mul, zero_add, PowerSeries.constantCoeff_C]
 
 theorem frame_γA_comm (W : LocWach PD LL O v n) (g h : W.Gam) (a : LetA O n) :
     W.γA g (W.γA h a) = W.γA h (W.γA g a) := by
@@ -1398,14 +1404,14 @@ theorem gamma_uniformizer_eq_mul_unit (W : LocWach PD LL O v n) (E : ZMod n → 
     intro i
     have hs : PowerSeries.HasSubst (W.π₀ i) := PowerSeries.HasSubst.of_constantCoeff_zero' (hπc i)
     have e := hf i
-    rw [PowerSeries.eq_X_mul_shift_add_const (f i), ← PowerSeries.coe_substAlgHom hs, map_add,
+    rw [PowerSeries.eq_X_mul_shift_add_const (f i), ← PowerSeries.coe_substAlgHom hs, map_add (f := _),
       map_mul, PowerSeries.substAlgHom_X] at e
     have hC : PowerSeries.substAlgHom hs (PowerSeries.C (PowerSeries.constantCoeff (f i))) =
         PowerSeries.C (PowerSeries.constantCoeff (f i)) :=
       (PowerSeries.substAlgHom hs).commutes _
     rw [hC] at e
     have e0 := congrArg (PowerSeries.constantCoeff (R := O)) e
-    rw [map_add, map_mul, hπc i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e0
+    rw [map_add (f := _), map_mul, hπc i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e0
     have e1 : PowerSeries.constantCoeff ((g - algebraMap O (LetA O n) (u₁ W)) i) = 0 := by
       rw [Pi.sub_apply, map_sub, hgc i]
       simp
@@ -1545,12 +1551,12 @@ theorem frame_red (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n)
       exact Finset.sum_congr rfl fun m _ => (mul_smul _ _ _).symm⟩
   refine ⟨fun m => frameε O n i (a₁ m), fun m => ?_⟩
   have e := congrArg (frameε O n i) (congrFun huniq m)
-  simpa [map_add, map_mul, frameε_letE, frameε_alg, frameε_π₀ W hw i] using e
+  simpa [map_add (f := _), map_mul, frameε_letE, frameε_alg, frameε_π₀ W hw i] using e
 
 theorem frame_aH_succ (p : ℕ) [Fact p.Prime] (s : ℕ) :
     Formalism.RepresentationBoundsCohomology.N2.aH p (s + 1) = Formalism.RepresentationBoundsCohomology.N2.aH p s + (1 + padicValNat p (s + 1)) := by
   unfold Formalism.RepresentationBoundsCohomology.N2.aH
-  rw [Nat.factorial_succ, padicValNat.mul (show s + 1 ≠ 0 by omega) (Nat.factorial_ne_zero s)]
+  rw [Nat.factorial_succ, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (show s + 1 ≠ 0 by omega) (Nat.factorial_ne_zero s)]
   omega
 
 theorem frame_aH_mono (p : ℕ) [Fact p.Prime] {j s : ℕ} (h : j ≤ s) :
@@ -1605,7 +1611,7 @@ theorem coreH_sol_bound (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZM
     cases r with
     | zero =>
       intro m
-      simpa [Formalism.RepresentationBoundsCohomology.N2.aH] using hc0 m
+      simpa [Formalism.RepresentationBoundsCohomology.N2.aH, Nat.padicValNat_def] using hc0 m
     | succ s =>
       intro m₀
       set a := Formalism.RepresentationBoundsCohomology.N2.aH PD.p s with ha
@@ -1656,7 +1662,7 @@ theorem coreH_sol_bound (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZM
       have E : ((PD.p : ℕ) : O) ^ (K - a) • (W.π₀ ^ (s + 1) • x₀) +
           ((u₁ W ^ (s + 1) - 1) • (W.π₀ ^ (s + 1) • vecB W T b yt) + W.π₀ ^ (s + 1 + 1) • x₂) =
           W.π₀ ^ (s + 1 + 1) • x₁ := by
-        rw [← e₁, ← e₀, ← e₂, map_add, LinearMap.map_smul (W.γ T) (((PD.p : ℕ) : O) ^ (K - a)) S₀, hKa,
+        rw [← e₁, ← e₀, ← e₂, map_add (f := _), LinearMap.map_smul (W.γ T) (((PD.p : ℕ) : O) ^ (K - a)) S₀, hKa,
           mul_smul, smul_sub, smul_sub]
         abel
       have heq : (u₁ W ^ (s + 1) - 1) • vecB W T b yt + ((PD.p : ℕ) : O) ^ (K - a) • x₀ =
@@ -1669,7 +1675,7 @@ theorem coreH_sol_bound (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZM
       obtain ⟨e, he⟩ := frame_red W T i hw hπΔ b hb yt _ _ x₀ (x₁ - x₂) hx₀
         ⟨(W.NΔ T).sub_mem hx₁.1 hx₂.1, (W.Nl T i).sub_mem hx₁.2 hx₂.2⟩ heq
       have h3 := congrArg (algebraMap O LL) (he m₀)
-      rw [map_add, map_mul, map_mul, hyt m₀, map_pow, map_natCast, map_zero] at h3
+      rw [map_add (f := _), map_mul, map_mul, hyt m₀, map_pow, map_natCast, map_zero] at h3
       set U := algebraMap O LL (u₁ W ^ (s + 1) - 1) with hU
       have h4 : (PD.p : LL) ^ a * U * c (s + 1) m₀ = -algebraMap O LL (e m₀) := by
         have h5 : (PD.p : LL) ^ (K - a) *
@@ -1786,8 +1792,8 @@ theorem arith_eWA_mono (l : ℕ) (hl : 2 ≤ l) {H H' : ℕ} (h : H ≤ H') : eW
 
 theorem arith_val_fact_mono (l : ℕ) [Fact l.Prime] {a b : ℕ} (h : a ≤ b) :
     padicValNat l a.factorial ≤ padicValNat l b.factorial := by
-  exact (padicValNat_dvd_iff_le (Nat.factorial_ne_zero b)).1
-    (dvd_trans pow_padicValNat_dvd (Nat.factorial_dvd_factorial h))
+  exact ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) (Nat.factorial_ne_zero b)).1
+    (dvd_trans (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) (Nat.factorial_dvd_factorial h))
 
 theorem arith_eWB_mono (l : ℕ) [Fact l.Prime] (s : ℕ) {H H' : ℕ} (h : H ≤ H') :
     eWB l s H ≤ eWB l s H' := by
@@ -2176,7 +2182,8 @@ theorem desc_val_g (K K' : FinExt l) (hKK : K'.1 ≤ K.1) (h0 : K0 K ≤ K'.1)
   rw [hg, Nat.mul_div_cancel_left _ hb]
   rw [hd, hg, hb', mul_assoc] at hc
   have h1 : l - 1 = b' * g := Nat.eq_of_mul_eq_mul_left ha hc
-  apply padicValNat.eq_zero_of_not_dvd
+  rw [Nat.padicValNat_def]
+  apply multiplicity_eq_zero_of_not_dvd
   intro hdv
   have h2 : l ∣ l - 1 := h1 ▸ Dvd.dvd.mul_left hdv b'
   have h3 := Nat.le_of_dvd (by omega) h2
@@ -2294,7 +2301,7 @@ theorem tr_π₀_ne [IsDomain O] (W : LocWach PD LL O v n) (h9 : UniformizerRing
 theorem tr_qp_ne (W : LocWach PD LL O v n) (h9 : UniformizerRingClause W) (i : ZMod n) : qp W i ≠ 0 := by
   intro h
   have := congrArg PowerSeries.constantCoeff h
-  simp only [qp, Pi.add_apply, map_add, tr_π₀_const W h9 i, zero_add, map_zero] at this
+  simp only [qp, Pi.add_apply, map_add (f := _), tr_π₀_const W h9 i, zero_add, map_zero] at this
   apply tr_p_ne W
   simpa using this
 
@@ -2319,7 +2326,7 @@ theorem tr_split [IsDomain O] (W : LocWach PD LL O v n) (h9 : UniformizerRingCla
         algebraMap O (PowerSeries O) (PowerSeries.constantCoeff (f i)) := rfl
     rw [hf i, Pi.add_apply, Pi.mul_apply]
     conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const (f i)]
-    rw [← PowerSeries.coe_substAlgHom (hs i), map_add, map_mul, PowerSeries.substAlgHom_X, h,
+    rw [← PowerSeries.coe_substAlgHom (hs i), map_add (f := _), map_mul, PowerSeries.substAlgHom_X, h,
       AlgHom.commutes]
     ring
   refine ⟨_, _, ?_, hab⟩
@@ -2375,7 +2382,7 @@ theorem tr_exists_base [IsDomain O] (W : LocWach PD LL O v n) (h9 : UniformizerR
       ⟨⟨(1 + wγ * qp W) * W.γA W.gam b - b, W.AΔ.sub_mem (W.AΔ.mul_mem
         (W.AΔ.add_mem W.AΔ.one_mem (W.AΔ.mul_mem hwγm hq)) (tr_γA_mem W _ hb)) hb⟩, Subtype.ext ?_⟩
     change ((1 + wγ * qp W) * W.γA W.gam b - b) * W.π₀ = W.γA W.gam a - a
-    rw [hab, map_add, map_mul, tr_const_γ, hγπ]
+    rw [hab, map_add (f := _), map_mul, tr_const_γ, hγπ]
     ring
 
 theorem tr_iter (W : LocWach PD LL O v n) (a : ↥W.AΔ) (k : ℕ) :
@@ -2530,7 +2537,7 @@ theorem valuation_decomposition_frobenius_pow [IsDomain O] (W : LocWach PD LL O 
   have hp0 := tr_pLL_ne W
   rw [mul_comm a] at hab
   have hab' := congrArg (toLL (LL := LL)) hab
-  rw [tr_toLL_ppow, map_add, tr_toLL_ppow, map_mul] at hab'
+  rw [tr_toLL_ppow, map_add (f := _), tr_toLL_ppow, map_mul] at hab'
   have hcσ : v (c * ((PD.p : LL) ^ σ)⁻¹) + ((σ : ℚ) : WithTop ℚ) =
       (((-((r : ℚ) * PD.p / ((PD.p : ℚ) - 1))) : ℚ) : WithTop ℚ) := by
     rw [← tr_v_pow W, ← AddValuation.map_mul, ← hc]
@@ -2977,7 +2984,7 @@ theorem gen_isCrys_congr (PD : PeriodData G Qp K₀ K B BdR) {LL : Type} [Field 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [E, actVB, he]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have hD : Dcris PD ρ = (Dcris PD ρ').comap (E : V ⊗[Qp] B →ₗ[LL] V' ⊗[Qp] B) := by
     ext x
     simp only [Dcris, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
@@ -3099,7 +3106,7 @@ theorem liftb_q_unit (W : LocWach PD LL O v n) : IsUnit (algebraMap (LetA O n) W
   have h1 := (Ideal.mem_jacobson_bot.1 hj) (algebraMap (LetA O n) W.EE w * ((u⁻¹ : W.EEˣ) : W.EE))
   have h2 : algebraMap (LetA O n) W.EE W.q =
       (u : W.EE) * (((PD.p : ℕ) : W.EE) * (algebraMap (LetA O n) W.EE w * ((u⁻¹ : W.EEˣ) : W.EE)) + 1) := by
-    rw [hw, map_add, map_mul, map_pow, map_natCast, ← hu]
+    rw [hw, map_add (f := _), map_mul, map_pow, map_natCast, ← hu]
     have : (u : W.EE) * ((u⁻¹ : W.EEˣ) : W.EE) = 1 := u.mul_inv
     linear_combination (-(((PD.p : ℕ) : W.EE) * algebraMap (LetA O n) W.EE w)) * this
   rw [h2]
@@ -3185,7 +3192,7 @@ theorem liftb_gammaXk (W : LocWach PD LL O v n) (g : W.Gam) (k : ℕ) :
     rw [ht]
     rfl
   refine ⟨(W.φA ^ k) (fun _ => t), ?_⟩
-  rw [← liftb_φpow_γ, h, map_mul, map_add, map_mul, AlgHom.commutes]
+  rw [← liftb_φpow_γ, h, map_mul, map_add (f := _), map_mul, AlgHom.commutes]
 
 theorem liftb_gammaX (W : LocWach PD LL O v n) :
     ∃ t : LetA O n, W.γA W.gam W.X =
@@ -3238,7 +3245,7 @@ theorem wmap_γAX (W : LocWach PD LL O v n) (g : W.Gam) (k : ℕ) : ∃ t : LetA
       Pi.mul_apply, Pi.add_apply, Pi.algebraMap_apply, ht]
     rfl
   refine ⟨(W.φA ^ k) fun _ => t, ?_⟩
-  rw [wmap_φpow_γA, hπ, map_mul, map_add, map_mul, AlgHom.commutes]
+  rw [wmap_φpow_γA, hπ, map_mul, map_add (f := _), map_mul, AlgHom.commutes]
 
 theorem wmap_φE_pow (W : LocWach PD LL O v n) (k : ℕ) (a : LetA O n) :
     algebraMap (LetA O n) W.EE ((W.φA ^ k) a) = (W.φE ^ k) (algebraMap (LetA O n) W.EE a) := by
@@ -3746,10 +3753,6 @@ theorem gammaA_comm' (W : LocWach PD LL O v n) (g g' : W.Gam) (a : LetA O n) :
   change W.γ₀ g (W.γ₀ g' (a i)) = W.γ₀ g' (W.γ₀ g (a i))
   rw [h1, h2, mul_comm]
 
-theorem gammaD_comm (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (g g' : W.Gam) (x : W.DD T) :
-    W.γD T g (W.γD T g' x) = W.γD T g' (W.γD T g x) := by
-  rw [← W.γD_mul, ← W.γD_mul, mul_comm]
-
 theorem delta_mul_mem (W : LocWach PD LL O v n) {δ δ' : W.Gam} (h : δ ∈ W.DelF) (h' : δ' ∈ W.DelF) :
     δ * δ' ∈ W.DelF := by
   obtain ⟨k, hk, e⟩ := (W.DelF_def δ).1 h
@@ -3774,7 +3777,8 @@ theorem trace_delta_invariant (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (
     ∀ δ' ∈ W.DelF, W.γD T δ' (wk1Tr W T x) = wk1Tr W T x := by
   intro δ' h'
   unfold wk1Tr
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [← W.γD_mul]
   exact Finset.sum_equiv (Equiv.mulLeft δ') (fun δ => mem_delta_iff_mul_mem W h' δ) (fun δ _ => rfl)
 
@@ -3786,7 +3790,8 @@ theorem trace_of_fixed (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (x : W.D
 theorem trace_map_comm (W : LocWach PD LL O v n) {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L)
     (x : W.DD T₁) : W.map F (wk1Tr W T₁ x) = wk1Tr W T₂ (W.map F x) := by
   unfold wk1Tr
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [W.map_γ]
 
 theorem gammaD_mem_letter (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (g : W.Gam) (i : ZMod n)
@@ -3865,7 +3870,7 @@ theorem constantCoeff_gamma_eq (W : LocWach PD LL O v n) (g : W.Gam) (a : PowerS
       simp
     rw [this, AlgHom.commutes]
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const a]
-  rw [map_add, map_mul, hC, map_add, map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
+  rw [map_add (f := _), map_mul, hC, map_add (f := _), map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
     PowerSeries.constantCoeff_C]
 
 theorem gamma_uniformizer_power_eq (W : LocWach PD LL O v n) (e s' : ℕ) (hk : s' ≠ 0) (π' : LetA O n)
@@ -3909,7 +3914,7 @@ theorem gamma_uniformizer_power_eq (W : LocWach PD LL O v n) (e s' : ℕ) (hk : 
       rw [mul_pow] at this
       linear_combination -this
     have e4 := congrArg PowerSeries.constantCoeff (PowerSeries.X_pow_mul_cancel e3)
-    rw [map_mul, map_mul, constantCoeff_gamma_eq, map_pow, map_add, map_mul, PowerSeries.constantCoeff_X, zero_mul,
+    rw [map_mul, map_mul, constantCoeff_gamma_eq, map_pow, map_add (f := _), map_mul, PowerSeries.constantCoeff_X, zero_mul,
       add_zero, PowerSeries.constantCoeff_C] at e4
     have hu : IsUnit (PowerSeries.constantCoeff ((w : LetA O n) i)) := by
       have h1 : IsUnit ((w : LetA O n) i) :=
@@ -3938,7 +3943,7 @@ theorem gamma_uniformizer_power_eq (W : LocWach PD LL O v n) (e s' : ℕ) (hk : 
       PowerSeries.subst_X hs, PowerSeries.subst_C] at e1
     have e2 : a i = π' i * t i + PowerSeries.C (PowerSeries.constantCoeff (f i)) := e1
     have e3 := congrArg PowerSeries.constantCoeff e2
-    rw [ha0, map_add, map_mul, hπ0, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e3
+    rw [ha0, map_add (f := _), map_mul, hπ0, zero_mul, zero_add, PowerSeries.constantCoeff_C] at e3
     rw [e2, ← e3, map_zero, add_zero]
     rfl
   have htΔ : t ∈ W.AΔ := by
@@ -3956,7 +3961,7 @@ def wk1Sub (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (S : Submodule (LetA
   carrier := {x | x ∈ S ∧ ∀ δ ∈ W.DelF, W.γD T δ x = x}
   zero_mem' := ⟨S.zero_mem, fun δ _ => map_zero _⟩
   add_mem' := fun {a b} ha hb =>
-    ⟨S.add_mem ha.1 hb.1, fun δ hδ => by rw [map_add, ha.2 δ hδ, hb.2 δ hδ]⟩
+    ⟨S.add_mem ha.1 hb.1, fun δ hδ => by rw [map_add (f := _), ha.2 δ hδ, hb.2 δ hδ]⟩
   smul_mem' := fun a x hx => ⟨S.smul_mem (a : LetA O n) hx.1, fun δ hδ => by
     change W.γD T δ ((a : LetA O n) • x) = (a : LetA O n) • x
     rw [wmap_γD_smul, a.2 δ hδ, hx.2 δ hδ]⟩
@@ -4232,13 +4237,14 @@ theorem phib_shift (φ : PowerSeries O →ₐ[O] PowerSeries O) (c : ℕ → O) 
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_mk]
   rw [h1, h2] at h
   conv_lhs => rw [h]
-  rw [map_add, map_mul, phib_C]
+  rw [map_add (f := _), map_mul, phib_C]
   ring
 
 theorem phib_poly (r : Polynomial O) (p : ℕ) (h : r.degree < (p : WithBot ℕ)) :
     (r : PowerSeries O) = ∑ k : Fin p, PowerSeries.X ^ (k : ℕ) * PowerSeries.C (r.coeff k) := by
   ext m
-  rw [Polynomial.coeff_coe, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.coeff_coe, map_sum,
     Fin.sum_univ_eq_sum_range
       (fun k => PowerSeries.coeff m (PowerSeries.X ^ k * PowerSeries.C (r.coeff k))) p]
   simp_rw [mul_comm (PowerSeries.X ^ _) (PowerSeries.C _), PowerSeries.coeff_C_mul_X_pow]
@@ -4429,7 +4435,7 @@ theorem phii_shift (φ : PowerSeries O →ₐ[O] PowerSeries O) (f : PowerSeries
     φ f = PowerSeries.C (PowerSeries.constantCoeff f) +
       φ PowerSeries.X * φ (PowerSeries.mk fun j => PowerSeries.coeff (j + 1) f) := by
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const f]
-  rw [map_add, map_mul, phib_C]
+  rw [map_add (f := _), map_mul, phib_C]
   ring
 
 theorem phii_step (p : ℕ) (hp : p.Prime) [IsHausdorff (Ideal.span {((p : ℕ) : O)}) O]
@@ -4455,7 +4461,8 @@ theorem phii_step (p : ℕ) (hp : p.Prime) [IsHausdorff (Ideal.span {((p : ℕ) 
   have hrd : r.degree < (p : WithBot ℕ) := Polynomial.degree_sum_fin_lt _
   have hrc : (r : PowerSeries O) = ∑ k : Fin p,
       PowerSeries.X ^ (k : ℕ) * PowerSeries.C (PowerSeries.constantCoeff (a k)) := by
-    rw [hr, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hr, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Polynomial.coeToPowerSeries.ringHom_apply, Polynomial.coe_mul, Polynomial.coe_C,
       Polynomial.coe_pow, Polynomial.coe_X, mul_comm]
@@ -4564,9 +4571,10 @@ theorem phii_EE (W : LocWach PD LL O v n) [IsAdicComplete (Ideal.span {((PD.p : 
           W.φE (c k * algebraMap (LetA O n) W.EE (letπ ^ M)) = 0 := by
         simp_rw [map_mul, ← mul_assoc]
         rw [← Finset.sum_mul, h, zero_mul]
-      simp_rw [hd, map_add, map_mul, map_pow, map_natCast, mul_add] at h2
+      simp_rw [hd, map_add (f := _), map_mul, map_pow, map_natCast, mul_add] at h2
       rw [Finset.sum_add_distrib] at h2
-      rw [map_sum, mul_neg, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, mul_neg, Finset.mul_sum]
       rw [eq_neg_iff_add_eq_zero, ← h2]
       congr 1
       · refine Finset.sum_congr rfl fun k _ => ?_
@@ -4609,8 +4617,8 @@ theorem phii_finite (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (hT : IsCry
     Module.Finite W.EE (W.DD T) := by
   obtain ⟨S, hS⟩ := W.N_fg T
   refine ⟨⟨S, top_le_iff.1 fun y _ => ?_⟩⟩
-  refine (W.N_base T hT).inductionOn y (fun y => y ∈ Submodule.span W.EE (S : Set (W.DD T)))
-    (Submodule.zero_mem _) (fun m => ?_) (fun e y hy => Submodule.smul_mem _ e hy)
+  refine (W.N_base T hT).inductionOn y (motive := fun y => y ∈ Submodule.span W.EE (S : Set (W.DD T)))
+    (fun m => ?_) (fun e y hy => Submodule.smul_mem _ e hy)
     (fun y₁ y₂ h₁ h₂ => Submodule.add_mem _ h₁ h₂)
   have hm : (m : W.DD T) ∈ Submodule.span (LetA O n) (S : Set (W.DD T)) := by rw [hS]; exact m.2
   exact Submodule.span_le_restrictScalars (LetA O n) W.EE (S : Set (W.DD T)) hm
@@ -4625,7 +4633,8 @@ theorem phii_basis (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (hT : IsCrys
     intro y
     refine ⟨fun t => W.φE (β.equivFun y t), ?_⟩
     rw [hL]
-    conv_rhs => rw [← β.sum_equivFun y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← β.sum_equivFun y, map_sum]
     exact Finset.sum_congr rfl fun t _ => (W.φD_smul T _ _).symm
   have hN : ∀ m ∈ W.N T, m ∈ LinearMap.range L := by
     intro m hm
@@ -4643,8 +4652,8 @@ theorem phii_basis (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (hT : IsCrys
     rwa [smul_smul, Units.inv_mul, one_smul] at h3
   have hsurj : Function.Surjective L := by
     intro y
-    exact (W.N_base T hT).inductionOn y (fun y => y ∈ LinearMap.range L)
-      (Submodule.zero_mem _) (fun m => hN m m.2) (fun e y hy => Submodule.smul_mem _ e hy)
+    exact (W.N_base T hT).inductionOn y (motive := fun y => y ∈ LinearMap.range L)
+      (fun m => hN m m.2) (fun e y hy => Submodule.smul_mem _ e hy)
       (fun y₁ y₂ h₁ h₂ => Submodule.add_mem _ h₁ h₂)
   have hinj : Function.Injective (L ∘ₗ β.equivFun.toLinearMap) :=
     OrzechProperty.injective_of_surjective_endomorphism _
@@ -4666,7 +4675,8 @@ theorem phii_DD (W : LocWach PD LL O v n) [IsAdicComplete (Ideal.span {((PD.p : 
   let β := Module.finBasis W.EE (W.DD T)
   have hx : ∀ k, W.φD T (x k) = ∑ t, W.φE (β.equivFun (x k) t) • W.φD T (β t) := by
     intro k
-    conv_lhs => rw [← β.sum_equivFun (x k), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← β.sum_equivFun (x k), map_sum]
     exact Finset.sum_congr rfl fun t _ => W.φD_smul T _ _
   have h1 : ∑ t, (∑ k : Fin PD.p, (algebraMap (LetA O n) W.EE letπ) ^ (k : ℕ) *
       W.φE (β.equivFun (x k) t)) • W.φD T (β t) = 0 := by

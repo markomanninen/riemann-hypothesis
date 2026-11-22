@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FLimit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FLimit
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -13,9 +17,8 @@ theorem UpperTheory.V.CA.finE :
     refine ⟨s, hs, fun y => ?_⟩
     obtain ⟨z, hz, hyz⟩ := hy y
     refine ⟨z, hz, ?_⟩
-    refine (TwoSidedIdeal.span_le.2 ?_) hyz
+    apply TwoSidedIdeal.span_mono ?_ hyz
     intro x hx
-    apply TwoSidedIdeal.subset_span
     rcases hx with (hx | hx) | hx
     · exact Or.inl (Or.inl (Or.inl hx))
     · exact Or.inl (Or.inr hx)

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagLineSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagLineSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -89,8 +94,8 @@ theorem isMultiHomog_X_none (l : Fin M) :
   unfold IsMultiHomog
   exact isWeightedHomogeneous_X F _ _
 
-variable (F M) in
 
+variable (F M) in
 def IsChartForm (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E)
     (φ : Fin M → Module.Dual Ω E) (t : Fin N → Φ) (c : ∀ k, ι k) (a : Ω) (n : ℕ)
     (A : MRing (bundleIdx ι M) F) : Prop :=
@@ -99,8 +104,8 @@ def IsChartForm (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E)
 
 theorem IsChartForm.pad {y : (Σ k, ι k) → Ω} {w : Module.Basis (Fin N) Ω E}
     {φ : Fin M → Module.Dual Ω E} {t : Fin N → Φ} {c : ∀ k, ι k} {a : Ω} {n : ℕ}
-    {A : MRing (bundleIdx ι M) F} (h : IsChartForm F M y w φ t c a n A) (m : ℕ) :
-    IsChartForm F M y w φ t c a (n + m) (A * chartMon F M c (fun _ => m)) := by
+    {A : MRing (bundleIdx ι M) F} (h : IsChartForm (F := F) (M := M) y w φ t c a n A) (m : ℕ) :
+    IsChartForm (F := F) (M := M) y w φ t c a (n + m) (A * chartMon F M c (fun _ => m)) := by
   refine ⟨?_, ?_⟩
   · have := h.1.mul (isMultiHomog_chartMon (F := F) (M := M) c (fun _ => m))
     rwa [← liftN_add] at this
@@ -113,7 +118,7 @@ theorem IsChartForm.pad {y : (Σ k, ι k) → Ω} {w : Module.Basis (Fin N) Ω E
 theorem exists_chartForm (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E)
     (φ : Fin M → Module.Dual Ω E) (t : Fin N → Φ) (c : ∀ k, ι k) (hc : segreVec y c ≠ 0)
     {a : Ω} (ha : a ∈ chartRing F (segreVec y) c) :
-    ∃ (n : ℕ) (A : MRing (bundleIdx ι M) F), IsChartForm F M y w φ t c a n A := by
+    ∃ (n : ℕ) (A : MRing (bundleIdx ι M) F), IsChartForm (F := F) (M := M) y w φ t c a n A := by
   induction ha using Algebra.adjoin_induction with
   | mem x hx =>
     obtain ⟨j, rfl⟩ := hx
@@ -136,7 +141,7 @@ theorem exists_chartForm (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω 
     have h₂' := h₂.pad n₁
     rw [Nat.add_comm n₂ n₁] at h₂'
     refine ⟨n₁ + n₂, _, h₁'.1.add h₂'.1, ?_⟩
-    rw [map_add, h₁'.2, h₂'.2, add_mul, map_add, C_add, add_mul]
+    rw [map_add (f := _), h₁'.2, h₂'.2, add_mul, map_add (f := _), C_add, add_mul]
   | mul x z _ _ hx hz =>
     obtain ⟨n₁, A₁, h₁⟩ := hx
     obtain ⟨n₂, A₂, h₂⟩ := hz
@@ -152,7 +157,8 @@ theorem exists_chartForm (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω 
 theorem exists_chartForm_family (y : (Σ k, ι k) → Ω) (w : Module.Basis (Fin N) Ω E)
     (φ : Fin M → Module.Dual Ω E) (t : Fin N → Φ) (c : ∀ k, ι k) (hc : segreVec y c ≠ 0)
     {J : Type*} [Fintype J] (a : J → Ω) (ha : ∀ j, a j ∈ chartRing F (segreVec y) c) :
-    ∃ n : ℕ, ∀ m, n ≤ m → ∀ j, ∃ A : MRing (bundleIdx ι M) F, IsChartForm F M y w φ t c (a j) m A := by
+    ∃ n : ℕ, ∀ m, n ≤ m → ∀ j, ∃ A : MRing (bundleIdx ι M) F,
+      IsChartForm (F := F) (M := M) y w φ t c (a j) m A := by
   choose n A hA using fun j => exists_chartForm (M := M) y w φ t c hc (ha j)
   refine ⟨∑ j, n j, fun m hm j => ?_⟩
   have hle : n j ≤ m := (Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ j)).trans hm

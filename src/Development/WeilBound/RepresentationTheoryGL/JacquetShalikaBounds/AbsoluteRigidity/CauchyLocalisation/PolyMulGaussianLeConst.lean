@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,8 +97,8 @@ theorem fin (T : Finset ι) :
       have := (e.hasSum_iff (f := fun p : {l : ι →₀ L // l.support ⊆ T} × L => ‖Φ F p.1.1‖ * ‖F a p.2‖)).2 hH'
       convert this using 1
       funext l
-      simp only [Function.comp_apply]
       rw [Φ_split F h0 a T ha l, norm_mul]
+      rfl
     rw [Finset.prod_insert ha, Finset.prod_insert ha, mul_comm (∑' l, F a l), mul_comm (∑' l, ‖F a l‖)]
     exact ⟨k2.summable, k1, k2⟩
 
@@ -106,7 +110,7 @@ theorem main (ht : Summable fun w => (∑' l, ‖F w l‖) - 1) :
     rwa [h0, norm_one] at this
   have hprod : ∀ T : Finset ι, ∏ w ∈ T, ∑' l, ‖F w l‖ ≤ c := fun T => by
     calc ∏ w ∈ T, ∑' l, ‖F w l‖ ≤ ∏ w ∈ T, Real.exp ((∑' l, ‖F w l‖) - 1) :=
-          Finset.prod_le_prod (fun w _ => by linarith [hge w])
+          Finset.prod_le_prod₀ (fun w _ => by linarith [hge w])
             (fun w _ => by linarith [Real.add_one_le_exp ((∑' l, ‖F w l‖) - 1)])
       _ = Real.exp (∑ w ∈ T, ((∑' l, ‖F w l‖) - 1)) := (Real.exp_sum _ _).symm
       _ ≤ c := Real.exp_le_exp.2 (ht.sum_le_tsum T (fun w _ => by linarith [hge w]))

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFormalFibresRegular
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFlatNormalFibres
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFormalFibresRegular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -12,8 +17,5 @@ def FormalFibreQuotient.Statement : Prop :=
         P'.asIdeal.comap (algebraMap B (AdicCompletion (m.comap f) B)) =
             (P.comap (algebraMap A (AdicCompletion m A))).comap f ∧
           Nonempty (primeFibreLocalRing A P ≃+* primeFibreLocalRing B P'.asIdeal)
-
-noncomputable def dropSecondVariable : MvPolynomial (Fin 2) ℂ →ₐ[ℂ] MvPolynomial (Fin 1) ℂ :=
-  MvPolynomial.aeval fun i => if i = 0 then MvPolynomial.X 0 else 0
 
 end GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+
+@[expose] public section
 
 open GlobalTheory.PolFan GlobalTheory.LocM
 
@@ -29,7 +33,9 @@ theorem cones_eq_min_linear : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : 
       (∃ (i : Fin p) (k : ℕ) (cf : Fin (m i) → ℕ), 0 < k ∧ k • b' = ∑ j, cf j • γ i j) →
       (∀ i, (Nℓ : ℝ) * φ.evalZ b' ≤ ℓ i b') ∧ ∃ i, (Nℓ : ℝ) * φ.evalZ b' = ℓ i b' := by
   intro O _ bar φ Y _ _ _ p m γ hγ
-  choose N ℓ hN h1 h2 h3 using fun i => (hγ i).strict
+  have hs : ∀ i, IsStrict bar φ (γ i) := fun i => (hγ i).strict
+  unfold IsStrict at hs
+  choose N ℓ hN h1 h2 h3 using hs
   refine ⟨∏ i, N i, fun i => ((∏ j ∈ Finset.univ.erase i, N j : ℕ) : ℤ) • ℓ i,
     Finset.prod_pos fun i _ => hN i, ?_⟩
   rintro b' hb hp ⟨i, k, cf, hk, he⟩
@@ -46,7 +52,8 @@ theorem cones_eq_min_linear : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : 
     have hev := evalZ_eq_of_nsmul_eq_sum (hγ i).linear hk he
     have hl : (k : ℤ) * ℓ i b' = ∑ j, (cf j : ℤ) * ℓ i (γ i j) := by
       have := congrArg (ℓ i) he
-      simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_nsmul, nsmul_eq_mul] using this
     have hl' : (k : ℝ) * ℓ i b' = ∑ j, (cf j : ℝ) * ℓ i (γ i j) := by exact_mod_cast hl
     have hk' : (k : ℝ) ≠ 0 := by positivity
     rw [hev, Finset.mul_sum, show (ℓ i b' : ℝ) = (∑ j, (cf j : ℝ) * ℓ i (γ i j)) / k by

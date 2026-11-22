@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfAssemble
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfArcChoices
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfTeichOnto
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicFrobeniusPowerSeriesX
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfAssemble
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfArcChoices
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfTeichOnto
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicFrobeniusPowerSeriesX
+
+@[expose] public section
 
 noncomputable section
 

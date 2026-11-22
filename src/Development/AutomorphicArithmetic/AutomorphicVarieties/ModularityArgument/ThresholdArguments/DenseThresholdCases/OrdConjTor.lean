@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ConjTor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ConjTor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -17,7 +21,7 @@ section Loc
 variable {k k' : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   [Field k'] [ValuativeRel k'] [TopologicalSpace k'] [IsNonarchimedeanLocalField k']
 private theorem hasSupport_contra {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
-    {π : Representation ℂ (GL (Fin N) k) V} {s : Multiset (IrrGL k)} (h : HasSupport π s) :
+    {π : Representation ℂ (GL (Fin N) k) V} {s : Multiset (IrrGL (k := k))} (h : HasSupport π s) :
     HasSupport (contra π) (s.map Zc.dualCl) := by
   have hsm := h.isSmooth
   obtain ⟨c, x, rfl, hi, hc, e, hsub⟩ := h
@@ -42,7 +46,7 @@ private theorem hasSupport_contra {N : ℕ} {V : Type} [AddCommGroup V] [Module 
 private theorem hasSupport_of_invT (c : k ≃+* k') (hc : Continuous c) {N : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V]
     [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (GL (Fin N) k) V) (τ : Representation ℂ (GL (Fin N) k') W)
     (T : V ≃ₗ[ℂ] W) (hT : ∀ g v, τ (GlobalTheory.LFun.ConjPlace.invT c N g) (T v) = T (σ g v))
-    {s : Multiset (IrrGL k)} (h : HasSupport σ s) :
+    {s : Multiset (IrrGL (k := k))} (h : HasSupport σ s) :
     HasSupport τ ((s.map Zc.dualCl).map (GlobalTheory.SuppIne.trGL c (GlobalTheory.LocalFieldIso.continuous_symm c hc))) := by
   have hA := CompanionTheory.Tls2.BZGL.irreducibleAdmissibleGL_top
   have hc' := GlobalTheory.LocalFieldIso.continuous_symm c hc
@@ -58,7 +62,7 @@ private theorem hasSupport_of_invT (c : k ≃+* k') (hc : Continuous c) {N : ℕ
   rw [LinearMap.comp_apply, LinearMap.comp_apply]
   change T (σ (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorLiftConclusion.invTranspose N k (Matrix.GeneralLinearGroup.map (n := Fin N) c.symm.toRingHom g)) v) = τ g (T v)
   rw [← hT, hg]
-private theorem dualCl_eq_of {x y : IrrGL k} (H : GlobalTheory.LocLanglands.DualCl x y) : Zc.dualCl x = y := by
+private theorem dualCl_eq_of {x y : IrrGL (k := k)} (H : GlobalTheory.LocLanglands.DualCl x y) : Zc.dualCl x = y := by
   have hA := CompanionTheory.Tls2.BZGL.irreducibleAdmissibleGL_top
   obtain ⟨n, π, π', rfl, rfl, ⟨E⟩⟩ := H
   rw [GlobalTheory.CompanionTheory.ZcDual.dualCl_eq hA]
@@ -115,7 +119,7 @@ private theorem unram_unif (i : k ≃+* k') (hi : Continuous i) (μ : kˣ →* �
 private theorem isUnram_comp (i : k ≃+* k') (hi : Continuous i) {μ : kˣ →* ℂˣ} (hμ : IsUnram μ) :
     IsUnram (μ.comp (Units.map i.symm.toRingHom.toMonoidHom)) := fun x hx =>
   hμ _ ((val_eq_one_iff i.symm (GlobalTheory.LocalFieldIso.continuous_symm i hi) _).2 hx)
-private theorem unl_of_map (i : k ≃+* k') (hi : Continuous i) (q : ℕ) (s : Multiset (IrrGL k))
+private theorem unl_of_map (i : k ≃+* k') (hi : Continuous i) (q : ℕ) (s : Multiset (IrrGL (k := k)))
     (h : ImaginaryQuadraticEtaCharacter.Unl q ((s.map Zc.dualCl).map (GlobalTheory.SuppIne.trGL i (GlobalTheory.LocalFieldIso.continuous_symm i hi)))) :
     ImaginaryQuadraticEtaCharacter.Unl q s := by
   have hi' := GlobalTheory.LocalFieldIso.continuous_symm i hi

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClr
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PSchSchurHomogeneous
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMulOfIsHomogeneous
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.SchurYOffClr
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PSchSchurHomogeneous
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMulOfIsHomogeneous
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BlockGLSupportedMemMirabolicSupported
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume GroundTheory.Automorphic GlobalTheory.CompanionTheory.Ar.Cusp.Dict
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -18,7 +23,7 @@ theorem apply_eq_re (l : ℂ →ₗ[ℝ] ℝ) (z : ℂ) :
   have hz : z = z.re • (1 : ℂ) + z.im • Complex.I := by
     apply Complex.ext <;> simp
   conv_lhs => rw [hz]
-  rw [map_add, map_smul, map_smul]
+  rw [map_add (f := _), map_smul, map_smul]
   simp
   ring
 
@@ -84,7 +89,8 @@ theorem span_eq_top {E : Type} [Field E] {Ψ : Type} [Fintype Ψ] (N : ℕ) (s :
         · subst hj
           simp
         · simp [Pi.single_apply, hj]
-      rw [LinearMap.mem_ker, hsum, map_sum] at hmem
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, hsum, map_sum] at hmem
       exact hmem) τ
     have h1 : l i τ 1 = 0 := by
       have := congrArg Complex.re hc0
@@ -115,7 +121,8 @@ theorem exists_basis {E : Type} [Field E] {Ψ : Type} [Fintype Ψ] {g N : ℕ} (
   have hlat : ∀ x : Λ, vecOf N s (e x) ∈
       Submodule.span ℝ (Set.range fun k => vecOf N s (e (lam k))) := by
     intro x
-    rw [← lam.sum_repr x, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← lam.sum_repr x, map_sum, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_zsmul, map_zsmul, ← Int.cast_smul_eq_zsmul ℝ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)

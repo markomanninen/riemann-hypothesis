@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -13,7 +17,7 @@ private theorem evI_mulVec {L : Type} [AddCommGroup L] {g : ℕ} (P : L →+ (Fi
     simp [Polynomial.aeval_C, Module.algebraMap_end_apply, Algebra.algebraMap_eq_smul_one, Matrix.smul_mulVec]
     ext j
     simp
-  | add p r hp hr => simp only [map_add, LinearMap.add_apply, hp, hr, Matrix.add_mulVec]
+  | add p r hp hr => simp only [map_add (f := _), LinearMap.add_apply, hp, hr, Matrix.add_mulVec]
   | monomial n a ih =>
     rw [pow_succ, ← _root_.mul_assoc, map_mul (aeval f) (C a * X ^ n) X, map_mul (aeval H) (C a * X ^ n) X,
       aeval_X, aeval_X, Module.End.mul_apply, ih, h, Matrix.mulVec_mulVec]
@@ -26,7 +30,7 @@ private theorem evI_diag {g : ℕ} (H Sb : Matrix (Fin g) (Fin g) ℂ) (ev : Fin
     rw [Polynomial.aeval_C]
     simp only [Polynomial.aeval_C, algebraMap_int_eq, eq_intCast, map_intCast]
     rw [Matrix.diagonal_intCast, Int.cast_comm]
-  | add p r hp hr => simp only [map_add, add_mul, hp, hr, ← Matrix.diagonal_add, mul_add, Pi.add_def]
+  | add p r hp hr => simp only [map_add (f := _), add_mul, hp, hr, ← Matrix.diagonal_add, mul_add, Pi.add_def]
   | monomial n a ih =>
     rw [pow_succ, ← _root_.mul_assoc, map_mul (aeval H) (C a * X ^ n) X, aeval_X, _root_.mul_assoc, h,
       ← _root_.mul_assoc, ih, _root_.mul_assoc, Matrix.diagonal_mul_diagonal]
@@ -82,7 +86,7 @@ theorem UpperTheory.Gal.W2.evIntegral_of :
   have hhalf : IsIntegral ℤ (algebraMap ℚ ℂ (1 / 2)) := by
     rw [hprod]
     exact hint_t.mul hint_ev
-  rw [isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective] at hhalf
+  rw [isIntegral_algebraMap_iff ] at hhalf
   obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.1 hhalf
   have h2n : ((2 * n : ℤ) : ℚ) = 1 := by
     push_cast

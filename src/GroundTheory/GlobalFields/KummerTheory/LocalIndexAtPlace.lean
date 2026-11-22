@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.GlobalFields.KummerTheory.LocalIndex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndex
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

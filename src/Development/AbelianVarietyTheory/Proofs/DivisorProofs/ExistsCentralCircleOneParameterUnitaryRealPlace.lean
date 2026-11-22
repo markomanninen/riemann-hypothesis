@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
+
+@[expose] public section
 
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix Classical
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift GlobalTheory.RealLift.Dbl
@@ -12,8 +16,8 @@ namespace GlobalTheory.CentralLine
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F) in
 
+variable (F) in
 def mk (x : mixedEmbedding.mixedSpace F) (y : Af F) : AF F := ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm x, y)
 
 theorem mk_add (x x' : mixedEmbedding.mixedSpace F) (y y' : Af F) : mk F x y + mk F x' y' = mk F (x + x') (y + y') :=
@@ -92,7 +96,7 @@ theorem exists_anti (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (τ : E →+* �
     intro s t hst
     rw [Algebra.smul_def, Algebra.smul_def, mul_one] at hst
     have h2 := congrArg σ hst
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσθ, map_zero] at h2
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσθ, map_zero] at h2
     have h3 : algebraMap F E (2 * s) = 0 := by rw [map_mul, map_ofNat]; linear_combination hst + h2
     have hs : s = 0 := by
       have := hA (h3.trans (map_zero _).symm)
@@ -111,7 +115,7 @@ theorem exists_anti (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (τ : E →+* �
   set c0 := b.repr (θ * θ) 0
   set c1 := b.repr (θ * θ) 1
   have h2 := congrArg σ hsum
-  rw [map_add, map_mul, map_mul, AlgHom.commutes, AlgHom.commutes, hσθ] at h2
+  rw [map_add (f := _), map_mul, map_mul, AlgHom.commutes, AlgHom.commutes, hσθ] at h2
   have h4 : algebraMap F E (2 * c1) * θ = 0 := by rw [map_mul, map_ofNat]; linear_combination hsum - h2
   rcases mul_eq_zero.1 h4 with h | h
   · have hc1 : 2 * c1 = 0 := hA (h.trans (map_zero _).symm)
@@ -120,12 +124,12 @@ theorem exists_anti (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) (τ : E →+* �
     rw [← hsum, this, map_zero, zero_mul, add_zero]
   · exact absurd h hθ0
 
-variable (F) in
 
+variable (F) in
 def aF (i₀ : {w : InfinitePlace F // w.IsReal}) (t : ℝ) : AF F := mk F (Function.update 1 i₀ (Real.cos t), 1) 1
 
-variable (F) in
 
+variable (F) in
 def bF (i₀ : {w : InfinitePlace F // w.IsReal}) (c t : ℝ) : AF F := mk F (Function.update 0 i₀ (Real.sin t / c), 0) 0
 
 theorem aF_add (i₀ : {w : InfinitePlace F // w.IsReal}) {c : ℝ} (hc : c ≠ 0) (P : AF F)
@@ -193,8 +197,8 @@ theorem mul_bF (i₀ : {w : InfinitePlace F // w.IsReal}) (c t : ℝ) (u : AF F)
     u * bF F i₀ c t = 0 := by
   rw [bF, mul_mk_zero, show InfiniteAdeleRing.ringEquiv_mixedSpace F u.1 = 0 from hu, zero_mul, mk_zero]
 
-variable (E) in
 
+variable (E) in
 def Z (i₀ : {w : InfinitePlace F // w.IsReal}) (c : ℝ) (θ : E) (t : ℝ) : AE F E :=
   aF F i₀ t ⊗ₜ[F] (1 : E) + bF F i₀ c t ⊗ₜ[F] θ
 
@@ -212,7 +216,7 @@ theorem Z_add (i₀ : {w : InfinitePlace F // w.IsReal}) {c : ℝ} (hc : c ≠ 0
 
 theorem cA_Z {σ : E →ₐ[F] E} {θ : E} (hσθ : σ θ = -θ) (i₀ : {w : InfinitePlace F // w.IsReal}) (c t : ℝ) :
     cA σ (Z E i₀ c θ t) = Z E i₀ c θ (-t) := by
-  simp only [Z, cA, map_add, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hσθ, TensorProduct.tmul_neg,
+  simp only [Z, cA, map_add (f := _), Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hσθ, TensorProduct.tmul_neg,
     aF_neg, bF_neg, TensorProduct.neg_tmul]
 
 theorem Z_zero (i₀ : {w : InfinitePlace F // w.IsReal}) (c : ℝ) (θ : E) : Z E i₀ c θ 0 = 1 := by
@@ -228,7 +232,7 @@ theorem piInf_Z {w : InfinitePlace F} (τ : EmbOver E w) (hw : w.IsReal) (i₀ :
     (c : ℝ) (θ : E) (t : ℝ) :
     piInf τ (Z E i₀ c θ t) = (Function.update (1 : {w : InfinitePlace F // w.IsReal} → ℝ) i₀ (Real.cos t) ⟨w, hw⟩ : ℂ) +
       (Function.update (0 : {w : InfinitePlace F // w.IsReal} → ℝ) i₀ (Real.sin t / c) ⟨w, hw⟩ : ℂ) * τ.1 θ := by
-  rw [Z, map_add, piInf_tmul τ hw, piInf_tmul τ hw, aF, bF, mk_fst, mk_fst, map_one, mul_one]
+  rw [Z, map_add (f := _), piInf_tmul τ hw, piInf_tmul τ hw, aF, bF, mk_fst, mk_fst, map_one, mul_one]
 
 theorem continuous_Z (i₀ : {w : InfinitePlace F // w.IsReal}) (c : ℝ) (θ : E) : Continuous (Z E i₀ c θ) := by
   haveI : ContinuousSMul (AF F) (AE F E) := IsModuleTopology.toContinuousSMul (AF F) (AE F E)
@@ -250,7 +254,7 @@ theorem algebraMap_eq_diag {β : Type} [Fintype β] [DecidableEq β] (x : AE F E
 theorem exists_central_line : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (β : Type)
     [Fintype β] [DecidableEq β] (R S : ℕ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (J : Matrix β β (AE F E))
     (C : InfinitePlace F → Matrix β (Ix R S) ℂ) (w₀ : InfinitePlace F), IsCMExt F E σ →
-    ∃ z : ℝ → (AE F E)ˣ, ∃ γ ∈ RLines σ J,
+    ∃ z : ℝ → (AE F E)ˣ, ∃ γ ∈ RLines (σ := σ) J,
       IsGen τ C γ (fun w => if w = w₀ then Complex.I • (1 : Mat R S) else 0) ∧
       (∀ t : ℝ, ((γ (Multiplicative.ofAdd t)).1 : Matrix β β (AE F E)) = (z t : AE F E) • (1 : Matrix β β (AE F E))) ∧
       (∀ t : ℝ, At (evI F) ((z t : AE F E) - 1)) ∧
@@ -322,13 +326,15 @@ theorem exists_central_line : ∀ (F E : Type) [Field F] [NumberField F] [Field 
     simp only [Function.comp_apply, map_inv]
   refine ⟨zu, γ, ⟨hgc.subtype_mk _, fun t => ?_⟩, fun t w => ?_, fun t => ?_, fun t => Z_at i₀ c θ t, hpi⟩
   · intro u hu
+    change u • ((((γ t : UG (cA σ) J) : GL β (AE F E)) : Matrix β β (AE F E)) - 1) = 0
     rw [hγ]
     ext i j
     rw [Matrix.smul_apply, Matrix.sub_apply, Matrix.diagonal_apply, Matrix.one_apply]
     split_ifs
     · exact Z_at i₀ c θ _ u hu
     · simp
-  · rw [hγ, Matrix.diagonal_map (map_zero _), toAdd_ofAdd, hpi t w]
+  · change ((((γ (Multiplicative.ofAdd t) : UG (cA σ) J) : GL β (AE F E)) : Matrix β β (AE F E)).map (piInf (τ w))) * C w = _
+    rw [hγ, Matrix.diagonal_map (map_zero _), toAdd_ofAdd, hpi t w]
     show _ = C w * NormedSpace.exp (t • (if w = w₀ then Complex.I • (1 : Mat R S) else 0))
     by_cases h : w = w₀
     · rw [if_pos h, if_pos h]

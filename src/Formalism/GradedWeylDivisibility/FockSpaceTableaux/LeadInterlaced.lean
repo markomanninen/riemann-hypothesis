@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementC
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -14,7 +18,7 @@ theorem lclint_degreeOf_none_rename_some {B : Type*} [CommRing B] {σ : Type*}
   intro m hm
   rw [support_rename_of_injective (Option.some_injective σ)] at hm
   obtain ⟨m', -, rfl⟩ := Finset.mem_image.1 hm
-  exact (Finsupp.mapDomain_notin_range m' none (by simp)).le
+  exact (Finsupp.mapDomain_of_notMem_range m' none (by simp)).le
 
 private theorem colAddGen_eq_rename_some_of_mem_dualWeyl {B : Type*} [CommRing B] {r n : ℕ}
     {ν : Fin n → ℕ} {f : MvPolynomial (Fin r × Fin n) B} (hf : f ∈ dualWeyl B r n ν)
@@ -30,24 +34,25 @@ private theorem colAddGen_eq_rename_some_of_mem_dualWeyl {B : Type*} [CommRing B
 theorem leadInterlaced_of (h1 : CompDeg) (h2 : LeadComp) (h3 : TwoColumn) : LeadInterlaced := by
   intro B _ _ r n ν f hf hf0
   intro l j hlj
-  have hlt : l < j := Fin.lt_iff_val_lt_val.2 (by omega)
+  have hlt : l < j := Fin.lt_def.mpr (by omega)
   have hdeg : (colLex r n).degree
       (weightedHomogeneousComponent (pairW (r := r) l j)
         (Finsupp.weight (pairW (r := r) l j) ((colLex r n).degree f)) f) =
       (colLex r n).degree f :=
     h2 B r n (Fin r × Fin n →₀ ℕ) (pairW (r := r) l j) f
-  have hcoeff : coeff ((colLex r n).degree f)
-      (weightedHomogeneousComponent (pairW (r := r) l j)
-        (Finsupp.weight (pairW (r := r) l j) ((colLex r n).degree f)) f) =
-      coeff ((colLex r n).degree f) f := by
-    rw [coeff_weightedHomogeneousComponent, if_pos rfl]
+  have hcoeff : AddMonoidAlgebra.coeff (weightedHomogeneousComponent (pairW (r := r) l j)
+        (Finsupp.weight (pairW (r := r) l j) ((colLex r n).degree f)) f)
+      ((colLex r n).degree f) =
+      AddMonoidAlgebra.coeff f ((colLex r n).degree f) := by
+    simp only [coeff_weightedHomogeneousComponent, ↓reduceIte]
   have hg0 : weightedHomogeneousComponent (pairW (r := r) l j)
       (Finsupp.weight (pairW (r := r) l j) ((colLex r n).degree f)) f ≠ 0 := by
     intro h
-    have hne : coeff ((colLex r n).degree f) f ≠ 0 :=
+    have hne : AddMonoidAlgebra.coeff f ((colLex r n).degree f) ≠ 0 :=
       (colLex r n).coeff_degree_ne_zero_iff.mpr hf0
     apply hne
-    rw [← hcoeff, h, coeff_zero]
+    rw [← hcoeff, h]
+    rfl
   have hcol : degreeOf none (colAddGen B l j f) ≤ 0 := by
     rw [colAddGen_eq_rename_some_of_mem_dualWeyl hf hlt, lclint_degreeOf_none_rename_some]
   have hcomp := h1 B r n l j

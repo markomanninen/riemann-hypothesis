@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetAreaCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetImageArea
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PProjectionFormula
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.IsAddHaarMeasureHausdorffMeasureEuclideanSpaceCo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetAreaCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSheetImageArea
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PProjectionFormula
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.IsAddHaarMeasureHausdorffMeasureEuclideanSpaceCo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -72,8 +77,8 @@ theorem exists_sheet_nhds {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fi
 
 end SheetAreaCompare
 
-open SheetAreaCompare in
 
+open SheetAreaCompare in
 theorem SheetAreaCompare.proof (h₁ : SheetImageArea.Statement) : SheetAreaCompare.Statement := by
   classical
   intro n d J A
@@ -174,8 +179,11 @@ theorem SheetAreaCompare.proof (h₁ : SheetImageArea.Statement) : SheetAreaComp
         · by_cases hx : ∃ s, IsSheetAt J A x s
           · obtain ⟨k, hk⟩ := hEcover x hx
             rw [Set.indicator_of_mem hxf]
+            have hle : (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x ≤
+                ∑' k, (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x :=
+              le_tsum (fun k => (E k ∩ fibre J A y).indicator (fun x => ENNReal.ofReal (t x)) x) k
             exact (Set.indicator_of_mem (show x ∈ E k ∩ fibre J A y from ⟨hk, hxf⟩)
-              (fun x => ENNReal.ofReal (t x))).symm.le.trans (ENNReal.le_tsum k)
+              (fun x => ENNReal.ofReal (t x))).symm.le.trans hle
           · have : t x = 0 := by simp only [ht, dif_neg hx]
             rw [Set.indicator_of_mem hxf, this, ENNReal.ofReal_zero]
             exact zero_le

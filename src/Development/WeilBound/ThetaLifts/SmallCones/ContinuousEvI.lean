@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SliceSummable
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SliceSummable
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -127,7 +131,8 @@ theorem slice_unif (hS : Slice) (hB : B.IsGood σ) (hM : M.IsGood B.ψ) (hM₁ :
     choose q hq hb using fun i => theta_unif h (h1 i)
     choose p hp hpq using fun i => h4 (q i) N (hq i)
     refine ⟨_, hN.mul_left (∑ i, p i f), fun y w => ?_⟩
-    rw [show e (rhoL B M _ _) = _ from h2 _ f, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show e (rhoL B M _ _) = _ from h2 _ f, map_sum, map_sum]
     have hb' : ∀ i (f' : SInf F (Fin n₁ × Fin d₁)), ‖l (rhoL B M₁ w (pureA F f' (φ₁ i)))‖ ≤ q i f' := fun i f' =>
       (congrArg norm (hl _ (rho_mem M₁ h w (Submodule.subset_span ⟨f', _, h1 i, rfl⟩)))).trans_le (hb i f' _)
     split_ifs with hy
@@ -142,7 +147,7 @@ theorem slice_unif (hS : Slice) (hB : B.IsGood σ) (hM : M.IsGood B.ψ) (hM₁ :
     obtain ⟨a, a1, a2⟩ := h1
     obtain ⟨b, b1, b2⟩ := h2
     exact ⟨a + b, a1.add b1, fun y w => by
-      simp only [map_add]; exact (norm_add_le _ _).trans (add_le_add (a2 y w) (b2 y w))⟩
+      simp only [map_add (f := _)]; exact (norm_add_le _ _).trans (add_le_add (a2 y w) (b2 y w))⟩
   | smul c Φ _ h1 =>
     obtain ⟨a, a1, a2⟩ := h1
     exact ⟨fun y => ‖c‖ * a y, a1.mul_left _, fun y w => by

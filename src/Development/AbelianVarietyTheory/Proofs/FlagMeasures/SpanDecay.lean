@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SpanDecay
 
@@ -12,7 +16,7 @@ theorem span_decay : (let d1 : {G H : Type} → [inst : NormedAddCommGroup H] �
     obtain ⟨C1, h1⟩ := hx
     obtain ⟨C2, h2⟩ := hy
     refine ⟨C1 + C2, fun g => ?_⟩
-    rw [map_add, inner_add_right, add_mul]
+    rw [map_add (f := _), inner_add_right, add_mul]
     exact (norm_add_le _ _).trans (add_le_add (h1 g) (h2 g))
   | smul a x _ hx =>
     obtain ⟨C, h⟩ := hx

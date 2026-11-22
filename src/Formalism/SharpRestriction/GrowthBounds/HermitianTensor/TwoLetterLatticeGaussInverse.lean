@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TaIntOfRename
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TaIntOfRename
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,14 +100,14 @@ theorem two_letter_lattice_gauss_inverse : TwoLetterLatticeGaussInverse := by
       · rintro y ⟨F, hF, rfl⟩
         have ht := hF true
         have hf' := hF false
-        simp only [if_true, Bool.false_eq_true, if_false] at ht hf'
+        simp only [ite_true, Bool.false_eq_true, ite_false] at ht hf'
         obtain ⟨a, ha, hIa, ea⟩ := ta_vec_of R m hm g hg P _ ht
         obtain ⟨b, hb, hIb, eb⟩ := ta_cov_of R m hm g hg Q _ hf'
         refine ⟨rename Sum.inl a * rename Sum.inr b, ta_Int_mul (ta_Int_rename _ hIa) (ta_Int_rename _ hIb), ?_⟩
         rw [ta_Psi_gl g hg g' hg' Q a b hb, ← ea, ← eb, Fintype.prod_bool]
       · exact ⟨0, ⟨0, map_zero _⟩, by simp⟩
       · rintro x y _ _ ⟨f1, h1, rfl⟩ ⟨f2, h2, rfl⟩
-        exact ⟨f1 + f2, ta_Int_add h1 h2, by rw [map_add, map_add]⟩
+        exact ⟨f1 + f2, ta_Int_add h1 h2, by rw [map_add (f := _), map_add (f := _)]⟩
       · rintro c x _ ⟨f1, h1, rfl⟩
         exact ⟨algebraMap R.O R.Kf c • f1, ta_Int_smul c h1, by rw [map_smul, map_smul, algebraMap_smul]⟩
     obtain ⟨f₀, hI, he⟩ := key _ hx
@@ -116,9 +120,10 @@ theorem two_letter_lattice_gauss_inverse : TwoLetterLatticeGaussInverse := by
     have hf₀ : f₀ ∈ PolAB R.Kf (m + 1) P Q := by
       have := glAct_mem_PolAB g'⁻¹ _ hf
       rwa [glAct_inv_glAct] at this
-    rw [f₀.as_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [f₀.as_sum, map_sum, map_sum]
     refine Submodule.sum_mem _ fun v hv => ?_
-    obtain ⟨c, hc⟩ : ∃ c : R.O, algebraMap R.O R.Kf c = coeff v f₀ := hG v
+    obtain ⟨c, hc⟩ : ∃ c : R.O, algebraMap R.O R.Kf c = AddMonoidAlgebra.coeff f₀ v := hG v
     rw [ta_monomial_split, map_smul, map_smul, ← hc, algebraMap_smul]
     refine Submodule.smul_mem _ _ ?_
     have hP : (∏ i : Fin (m + 1), (X i : MvPolynomial (Fin (m + 1)) R.Kf) ^ v (Sum.inl i)).IsHomogeneous P := by
@@ -136,9 +141,9 @@ theorem two_letter_lattice_gauss_inverse : TwoLetterLatticeGaussInverse := by
         MvPolynomial (Fin (m + 1) × Fin (m + 1)) R.Kf), ?_, ?_⟩
     · intro b
       cases b
-      · simp only [Bool.false_eq_true, if_false, cond_false]
+      · simp only [Bool.false_eq_true, ite_false, Bool.cond_false]
         exact ta_cov_mem R m hm g hg Q _ hQ (ta_Int_prodX _)
-      · simp only [if_true, cond_true]
+      · simp only [ite_true, Bool.cond_true]
         exact ta_vec_mem R m hm g hg P _ hP (ta_Int_prodX _)
     · rw [Fintype.prod_bool]
       rfl

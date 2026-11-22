@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDivisorComponents
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDivisorComponents
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

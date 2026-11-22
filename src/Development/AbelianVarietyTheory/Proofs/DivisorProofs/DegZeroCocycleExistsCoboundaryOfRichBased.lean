@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectionFormDegZeroCocycleClosedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsJetMorphismExtendingTranslationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CochainEqOfSameDegreeChartMorphismStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimitiveCechPoincareRichChartsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConnectionFormDegZeroCocycleClosedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsJetMorphismExtendingTranslationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CochainEqOfSameDegreeChartMorphismStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimitiveCechPoincareRichChartsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,7 @@ theorem tszeSec_sub_inl {g : ℕ} {O : Type} [CommRing O] [Algebra ℂ O] (D : F
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam I g Λ} {K : Charts F}
 
 theorem translationChartShiftSubstitution_comp_degZero {k k' k'' : K.K} (e : K.le 0 k' k) (e' : K.le 0 k'' k') (e'' : K.le 0 k'' k)
-    (f : Hol (K.W k)) : sh e' (sh e f) = sh e'' f :=
+    (f : Hol (K.W k)) : K.sh e' (K.sh e f) = K.sh e'' f :=
   Hol.ext_fn fun p hp ↦ by
     rw [fn_sh e' _ hp, fn_sh e _ (K.maps e' p hp), fn_sh e'' _ hp]
     simp only [F.shift_zero]
@@ -84,7 +88,7 @@ theorem vanish (h : C1 K.Oc)
   have v5 : ∀ (k : K.K) (T : K.Obj) (f : K.triv k ⟶ T), f.deg = 0 → h _ _ f = 0 := by
     intro k T f hd
     have e : K.le 0 T.k k := hd ▸ Charts.Hom.le f
-    have hs : ∀ c : Hol (K.W k), sh (Charts.Hom.le f) c = sh (K.le_refl T.k) (sh e c) := fun c ↦ by
+    have hs : ∀ c : Hol (K.W k), K.sh (Charts.Hom.le f) c = K.sh (K.le_refl T.k) (K.sh e c) := fun c ↦ by
       rw [sh_refl]
       exact Hol.ext_fn fun p hp ↦ by rw [fn_sh (Charts.Hom.le f) c hp, fn_sh e c hp, hd]
     have hcomp : ptHom T (Charts.Hom.le f) = ptHom (K.triv T.k) e ≫ ptHom T (K.le_refl T.k) :=
@@ -102,7 +106,7 @@ def trans0 (h : C1 K.Oc) (k k' : K.K) (e : K.le 0 k' k) : Hol (K.W k') := h _ _ 
 theorem jetDiff_sh (h : C1 K.Oc)
     (hc : ∀ (T T' T'' : K.Obj) (φ : T ⟶ T') (ψ : T' ⟶ T''), φ.deg = 0 → ψ.deg = 0 →
       h T T'' (φ ≫ ψ) = ψ.φ (h T T' φ) + h T' T'' ψ) (k k' : K.K) (e : K.le 0 k' k) (i : Fin g) :
-    (jetDiff h k').snd i - sh e ((jetDiff h k).snd i) = dw i (trans0 h k k' e) := by
+    (jetDiff h k').snd i - K.sh e ((jetDiff h k).snd i) = dw i (trans0 h k k' e) := by
   obtain ⟨χ, hχ, h0, h1, hx⟩ := GlobalTheory.T.exists_jet_morphism_extending_translation K e
   have c0 := hc _ _ _ (jet0 k) χ rfl hχ
   have c1 := hc _ _ _ (jet1 k) χ rfl hχ
@@ -115,7 +119,7 @@ theorem jetDiff_sh (h : C1 K.Oc)
   have s := (hx (jetDiff h k)).2 i
   rw [key'] at s
   have s' : (0 : Hol (K.W k')) - (tszeSec (g := g) dw (trans0 h k k' e)).snd i + (jetDiff h k').snd i =
-      sh e ((jetDiff h k).snd i) := s
+      K.sh e ((jetDiff h k).snd i) := s
   rw [snd_tszeSec] at s'
   rw [← s']
   abel

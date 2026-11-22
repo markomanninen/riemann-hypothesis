@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectNonneg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LenEqLenI
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectNonneg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LenEqLenI
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -22,12 +26,17 @@ def RHyp : List ℝ → Prop
 
 theorem prodR_props (hC : 0 ≤ C) : ∀ ys : List ℝ, RHyp l0 a e ρ Pv C ys →
     (topRprod l0 a e ρ ys).im = 0 ∧ 0 < (topRprod l0 a e ρ ys).re ∧
-      (ys.map fun y => |Pv y|).prod ≤ C ^ ys.length * (topRprod l0 a e ρ ys).re
-  | [], _ => by simp [topRprod]
-  | y :: ys, ⟨⟨h1, h2, h3⟩, hr⟩ => by
-    obtain ⟨i1, i2, i3⟩ := prodR_props hC ys hr
+      (ys.map fun y => |Pv y|).prod ≤ C ^ ys.length * (topRprod l0 a e ρ ys).re := by
+  intro ys
+  induction ys with
+  | nil => simp [topRprod]
+  | cons y ys ih =>
+    intro h
+    rw [RHyp] at h
+    obtain ⟨⟨h1, h2, h3⟩, hr⟩ := h
+    obtain ⟨i1, i2, i3⟩ := ih hr
     simp only [topRprod, Complex.mul_im, Complex.mul_re, List.map_cons, List.prod_cons, List.length_cons]
-    refine ⟨by rw [i1, h2]; ring, by rw [i1, h2]; simp only [mul_zero, zero_mul, sub_zero]; positivity, ?_⟩
+    refine ⟨by rw [i1, h2]; ring, by rw [i1, h2]; simp only [mul_zero, sub_zero]; positivity, ?_⟩
     rw [i1, h2]
     simp only [mul_zero, sub_zero]
     have hp : 0 ≤ (ys.map fun y => |Pv y|).prod := List.prod_nonneg fun x hx => by

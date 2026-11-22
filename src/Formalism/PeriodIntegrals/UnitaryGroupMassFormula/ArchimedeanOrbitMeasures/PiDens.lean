@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem pi_chart_dens {V : Type} [Fintype V] {X E : V → Type} [∀ v, Measurab
       ∫⁻ z in A, ∏ v, ENNReal.ofReal (D v (z v)) ∂Measure.pi lam := by
   classical
   set Ψ : (∀ v, E v) → (∀ v, X v) := fun z v => Φ v (z v) with hΨ
-  have hΨm : Measurable Ψ := measurable_pi_lambda _ fun v => (hΦm v).comp (measurable_pi_apply v)
+  have hΨm : Measurable Ψ := Measurable.of_eval fun v => (hΦm v).comp (measurable_pi_apply v)
   let S : ∀ v, Set (X v) := fun v => Φ v '' U v
   let ν : ∀ v, Measure (E v) := fun v => (lam v).withDensity fun x => ENNReal.ofReal (D v x)
   haveI : ∀ v, SigmaFinite (ν v) := fun v => SigmaFinite.withDensity_ofReal (D v)

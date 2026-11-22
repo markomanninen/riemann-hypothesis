@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormInertiaPowPrimePowSubLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGeomSumGaloisLeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormInertiaPowPrimePowSubLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGeomSumGaloisLeStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -23,7 +28,7 @@ theorem norm_natCast_lt_one (l : ℕ) [Fact l.Prime] : ‖((l : ℕ) : Om l)‖ 
 
 def fixedAdd {l : ℕ} [Fact l.Prime] (H : Subgroup (GQ l)) : AddSubgroup (Om l) where
   carrier := {x | ∀ g ∈ H, g x = x}
-  add_mem' := fun {a b} ha hb g hg => by rw [map_add, ha g hg, hb g hg]
+  add_mem' := fun {a b} ha hb g hg => by rw [map_add (f := _), ha g hg, hb g hg]
   zero_mem' := fun g _ => map_zero g
   neg_mem' := fun {a} ha g hg => by rw [map_neg, ha g hg]
 
@@ -40,7 +45,8 @@ theorem apply_sum_pow {l : ℕ} [Fact l.Prime] (σ : GQ l) (m : ℕ) {x : Om l}
     (hx : (σ ^ m) x = x) :
     σ (∑ j ∈ Finset.range m, (σ ^ j) x) = ∑ j ∈ Finset.range m, (σ ^ j) x := by
   have h1 : σ (∑ j ∈ Finset.range m, (σ ^ j) x) = ∑ j ∈ Finset.range m, (σ ^ (j + 1)) x := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [pow_succ']; rfl
   have h2 := Finset.sum_range_succ' (fun j => (σ ^ j) x) m
@@ -111,7 +117,8 @@ theorem norm_sum_pow_le : ∀ (l : ℕ) [Fact l.Prime] (γ : GQ l), γ ∈ (Maxi
         = ∑ i ∈ Finset.range (l ^ n), (γ ^ i) y := by
       rw [pow_succ, sum_range_mul_eq]
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [hy, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hy, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [pow_add, pow_mul]; rfl
     rw [hsum]

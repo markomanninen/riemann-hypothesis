@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.CorrOpEq
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.SpecCorrOfHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.CorrOpEq
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.SpecCorrOfHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et GlobalTheory.GalV
 open UpperTheory.Gal.TranscendenceTraces (gp pt Wt fib IsWt)
@@ -83,8 +87,7 @@ private theorem push_one {W S : Scheme.{0}} (c : W ⟶ S) [IsFinite c] [Surjecti
       obtain ⟨j, hj, -⟩ := key (pullback.lift z z0 hzc) (pullback.lift_snd _ _ _)
       refine ⟨e j, ?_⟩
       have h1 := congrArg (· ≫ pullback.fst c c) hj
-      simp only [Category.assoc] at h1
-      rw [pullback.lift_fst, pullback.lift_fst] at h1
+      simp only [Category.assoc, pullback.lift_fst] at h1
       exact h1
     · rintro ⟨g, rfl⟩
       show (z0 ≫ a g) ≫ c = x
@@ -155,7 +158,7 @@ theorem UpperTheory.Gal.Mod.corrOpEq :
   refine DFinsupp.ext fun k => ?_
   have h1 := LinearMap.congr_fun (hsplitQ k) (pullHQ l (sch.map c.f) k 0 (x k))
   simp only [LinearMap.comp_apply, LinearMap.sum_apply] at h1
-  erw [DFinsupp.finset_sum_apply]
+  erw [DirectSum.sum_apply]
   simp only [pullTot, DirectSum.lmap_apply, TranscendenceTraces.Corr.opQ, hw, LinearMap.comp_apply, h1,
     TranscendenceTraces.pullHQ_comp]
   exact (e.sum_comp (fun j => pullHQ l (sch.map (σ j)) k 0 (pullHQ l (sch.map c.f) k 0 (x k)))).symm

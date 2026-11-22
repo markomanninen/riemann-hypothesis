@@ -1,9 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormsOfInduces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeModelInducesRootMetric
-import Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumLifts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormsOfInduces
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueLiesUnder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.JGenSpecializes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FromModelNeg
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsProperToroidalModelStructureMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoverFunctionFieldMapEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IoOfLeOneIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumLifts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Formalism.BasicNotions GlobalTheory GlobalTheory.Cartier GlobalTheory.CxPts GlobalTheory.ProjVar GlobalTheory.TrueGeo GlobalTheory.Mean4O GlobalTheory.CoverNorm
 
@@ -32,7 +44,7 @@ theorem j_genericPoint {F : Type} [Field F] [NumberField F] {Y : Var F} (V : Cov
   haveI := V.int
   haveI := V.intG
 
-  let η : Sp F := ⟨⊥, Ideal.bot_prime⟩
+  let η : Sp F := ⟨⊥, Ideal.isPrime_bot⟩
   have hη : ∀ w : Sp F, (spMap (algebraMap (𝓞 F) F) w).asIdeal = ⊥ := by
     intro w
     have hw : w.asIdeal = ⊥ := by

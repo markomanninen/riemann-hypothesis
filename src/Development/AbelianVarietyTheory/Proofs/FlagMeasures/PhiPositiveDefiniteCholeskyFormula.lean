@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdPartialZpow
+
+@[expose] public section
 
 open Matrix Finset Formalism.MainNotions.S
 open scoped ComplexOrder
@@ -20,7 +24,7 @@ theorem exists_isLo_mul_conjTranspose {n : ℕ} {x : Matrix (Fin n) (Fin n) ℂ}
   classical
 
   have hLi : (LDL.lowerInv hx).BlockTriangular OrderDual.toDual :=
-    fun i j hij => LDL.lowerInv_triangular hx (OrderDual.toDual_lt_toDual.mp hij)
+    LDL.isLowerTriangular_lowerInv hx
   have hL : (LDL.lower hx).BlockTriangular OrderDual.toDual :=
     Matrix.blockTriangular_inv_of_blockTriangular hLi
 

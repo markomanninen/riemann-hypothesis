@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemSpanRatPolysVanishingOfAutStableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemSpanRatPolysVanishingOfAutStableStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -34,7 +39,7 @@ private lemma mem_span_rational_of_vanishing {ι : Type} (Γ : Set (Matrix ι ι
   let W : Submodule ℂ (MvPolynomial (ι × ι) ℂ) :=
     { carrier := {w | ∀ g ∈ Γ, _root_.GlobalTheory.ClassFin.evC w g = 0}
       add_mem' := fun {a b} ha hb g hg => by
-        simp only [_root_.GlobalTheory.ClassFin.evC, map_add] at *
+        simp only [_root_.GlobalTheory.ClassFin.evC, map_add (f := _)] at *
         rw [ha g hg, hb g hg, add_zero]
       zero_mem' := fun g _ => by simp [_root_.GlobalTheory.ClassFin.evC]
       smul_mem' := fun c w hw g hg => by
@@ -65,9 +70,9 @@ private lemma mem_span_rational_of_vanishing {ι : Type} (Γ : Set (Matrix ι ι
   rw [ev_eq_evC_map_algebraMap]
   exact hwW g hg
 
+
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
-
 theorem _root_.GlobalTheory.ClassFin.evC_eq_zero_of_mem_pts_of_stable : ∀ (ι : Type) [Fintype ι] [DecidableEq ι]
     (Γ : Set (Matrix ι ι ℂ)), (∀ σ : ℂ ≃+* ℂ, ∀ g ∈ Γ, g.map σ ∈ Γ) →
     ∀ f : MvPolynomial (ι × ι) ℂ, (∀ g ∈ Γ, _root_.GlobalTheory.ClassFin.evC f g = 0) →
@@ -82,7 +87,7 @@ theorem _root_.GlobalTheory.ClassFin.evC_eq_zero_of_mem_pts_of_stable : ∀ (ι 
     exact hy p hp
   | zero => simp [_root_.GlobalTheory.ClassFin.evC]
   | add a b _ _ ha hb =>
-    simp only [_root_.GlobalTheory.ClassFin.evC, map_add] at *
+    simp only [_root_.GlobalTheory.ClassFin.evC, map_add (f := _)] at *
     rw [ha, hb, add_zero]
   | smul c w _ hw =>
     simp only [_root_.GlobalTheory.ClassFin.evC] at *

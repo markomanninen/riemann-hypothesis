@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHopfIdealKerIdealOfBialgHom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,48 @@ theorem finrank_quot_kerIdeal_comp_le {k A B C : Type} [Field k] [CommRing A] [C
     [Module.Finite k B] (ψ : B →ₐc[k] A) (φ : C →ₐc[k] B) :
     Module.finrank k (A ⧸ kerIdeal (ψ.comp φ)) ≤
       Module.finrank k (A ⧸ kerIdeal ψ) * Module.finrank k (B ⧸ kerIdeal φ) := by
-  haveI := isHopfIdeal_kerIdeal_of_bialgHom k A C (ψ.comp φ)
-  haveI := isHopfIdeal_kerIdeal_of_bialgHom k B C φ
+  have hHopf (X Y : Type) [CommRing X] [CommRing Y] [HopfAlgebra k X]
+      [HopfAlgebra k Y] (f : Y →ₐc[k] X) : (kerIdeal f).IsHopfIdeal k := by
+    refine {
+    counit_eq_zero := by
+      intro x hx
+      exact (kerIdeal_le_ker_iff f (counitAlgHom k X)).2 (fun c => by simp) hx
+    map_mkQ_comul_eq_zero := by
+      intro x hx
+      have h0 := (kerIdeal_le_ker_iff f (Ideal.Quotient.mkₐ k (kerIdeal f))).1
+        fun a ha => Ideal.Quotient.eq_zero_iff_mem.2 ha
+      have h : kerIdeal f ≤ RingHom.ker
+          ((Algebra.TensorProduct.map (Ideal.Quotient.mkₐ k (kerIdeal f))
+            (Ideal.Quotient.mkₐ k (kerIdeal f))).comp (comulAlgHom k X)) := by
+        refine (kerIdeal_le_ker_iff f _).2 fun c => ?_
+        have key : ∀ t : Y ⊗[k] Y, Algebra.TensorProduct.map (Ideal.Quotient.mkₐ k (kerIdeal f))
+            (Ideal.Quotient.mkₐ k (kerIdeal f)) (pullbackTwo f t) =
+            algebraMap k _ (counit (R := k)
+              (TensorProduct.lid k Y (LinearMap.rTensor Y (counit (R := k) (A := Y)) t))) := by
+          intro t
+          induction t with
+          | add x y hx hy => simp only [map_add (f := _), hx, hy]
+          | tmul x y =>
+            rw [TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, LinearMap.rTensor_tmul,
+              TensorProduct.lid_tmul, map_smul]
+            erw [h0, h0]
+            simp [Algebra.algebraMap_eq_smul_one, Algebra.TensorProduct.one_def, smul_tmul',
+              smul_smul, mul_comm]
+        rw [AlgHom.comp_apply, comulAlgHom_apply, ← pullTwo_comul, key, rTensor_counit_comul,
+          TensorProduct.lid_tmul, one_smul]
+      exact h hx
+    antipode_mem := by
+      intro x hx
+      have h : kerIdeal f ≤ (kerIdeal f).comap (HopfAlgebra.antipodeAlgHom k X) := by
+        refine Ideal.map_le_iff_le_comap.2 fun a ha => ?_
+        have ha' : counit (R := k) a = 0 := ha
+        change HopfAlgebra.antipode k (f a) ∈ kerIdeal f
+        rw [← bialgHom_map_antipode]
+        exact Ideal.mem_map_of_mem (f : Y →ₐ[k] X) (by simp [RingHom.mem_ker, ha'])
+      exact h hx
+    }
+  haveI := hHopf A C (ψ.comp φ)
+  haveI := hHopf B C φ
   let πA : A →ₐc[k] A ⧸ kerIdeal (ψ.comp φ) := Bialgebra.Quotient.mkBialgHom (kerIdeal (ψ.comp φ))
   let πB : B →ₐc[k] B ⧸ kerIdeal φ := Bialgebra.Quotient.mkBialgHom (kerIdeal φ)
   have hπA : Function.Surjective πA := Ideal.Quotient.mk_surjective

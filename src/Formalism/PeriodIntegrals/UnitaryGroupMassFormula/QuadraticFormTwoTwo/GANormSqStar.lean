@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticFormTwoTwo.InLieW
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff

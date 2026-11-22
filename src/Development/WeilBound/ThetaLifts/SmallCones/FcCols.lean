@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.UnfParH
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfParH
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,8 @@ theorem conjEx (h : IsCMExt F E σ) {n : ℕ} {J J' : Matrix (Fin n) (Fin n) E} 
   have ha : inclR (F := F) (AF F) ξ • (a.1ᵀ * incM F J * a.1.map (cA σ : AE F E →+* AE F E))ᵀ = incM F J' := by
     rw [← hA]
     ext i j
-    simp only [Matrix.smul_apply, Matrix.transpose_apply, Matrix.mul_apply, incM, Matrix.map_apply, smul_eq_mul, map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.smul_apply, Matrix.transpose_apply, Matrix.mul_apply, incM, Matrix.map_apply, smul_eq_mul, map_mul, map_sum]
     rfl
   have k := fun (g g' : GL (Fin n) (AE F E)) (e : g * a = a * g') =>
     conj_iff (cA σ : AE F E →+* AE F E) ((IsUnit.mk0 ξ hξ).map _) a ha (congrArg Units.val e)

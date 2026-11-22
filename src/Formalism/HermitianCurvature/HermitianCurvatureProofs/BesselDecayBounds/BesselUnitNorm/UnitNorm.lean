@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped InnerProductSpace

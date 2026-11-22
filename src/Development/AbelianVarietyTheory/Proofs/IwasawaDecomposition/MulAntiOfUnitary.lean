@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsSigmaList
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinear
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalEigenspaceSumSqInvariantFieldsAStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalKerAevalOfEigenspacesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfFiniteDimensionalTranslationStableStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuadraticGelfandInvariantEqNegSumSqDefiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteHermitianEqPmGramUnitaryCompactStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntertwineAeval
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsSigmaList
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RightDerivativeAlongLieSmoothAndLinear
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalEigenspaceSumSqInvariantFieldsAStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalKerAevalOfEigenspacesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothOfFiniteDimensionalTranslationStableStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QuadraticGelfandInvariantEqNegSumSqDefiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteHermitianEqPmGramUnitaryCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntertwineAeval
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,13 +73,13 @@ def uGrp (H : IsLieData σ j s) : Subgroup 𝔸ˣ where
     rw [h]
     exact unitary_anti H hu
 
-open Classical in
 
+open Classical in
 def toU (H : IsLieData σ j s) (a : 𝔸) : uGrp H :=
   if h : σ a * a = 1 then ⟨⟨a, σ a, mul_anti_of_unitary h, h⟩, h⟩ else 1
 
 theorem toU_val (H : IsLieData σ j s) {a : 𝔸} (h : σ a * a = 1) : ((toU H a).1 : 𝔸) = a := by
-  rw [toU, dif_pos h]
+  rw [toU, dite_eq_left h]
 
 theorem toU_coe (H : IsLieData σ j s) (k : uGrp H) : toU H (k.1 : 𝔸) = k :=
   Subtype.ext (Units.ext (toU_val H k.2))
@@ -187,7 +191,8 @@ theorem finite_translates (H : IsLieData σ j s) (hl : HasLog σ j) (hc : IsComp
     have := map_aeval (res H x ∘ₗ W.subtype) (T := T)
       (T' := ∑ i, derOp (isLieData_toU H) hl (X i) * derOp (isLieData_toU H) hl (X i)) (fun v => by
         change res H x ((∑ i, derOp H hl (X i) * derOp H hl (X i)) v.1) = _
-        simp only [LinearMap.sum_apply, map_sum, Module.End.mul_apply, res_derOp]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.sum_apply, map_sum, Module.End.mul_apply, res_derOp]
         rfl) T.charpoly ⟨φ, hφ⟩
     rw [LinearMap.aeval_self_charpoly, LinearMap.zero_apply, map_zero] at this
     exact this.symm

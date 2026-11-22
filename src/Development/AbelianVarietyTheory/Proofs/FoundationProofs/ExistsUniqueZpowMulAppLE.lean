@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallPowDvdGerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqZeroOfForallPowDvdGerm
+
+@[expose] public section
 
 universe u v
 
@@ -61,9 +65,10 @@ variable {X : Scheme.{u}} {t : Γ(X, ⊤)} {η : X}
   {ι : Type v} {U : ι → X.Opens} {g : ∀ a b, Γ(X, U a ⊓ U b)}
   {W : ι → Y.Opens} (hW : ∀ a, W a = j ⁻¹ᵁ U a)
 
+include hj
+
 omit [IsIntegral X] [IsLocallyNoetherian X] in
 include hj in
-
 theorem exists_transport (r : ∀ a, Γ(Y, W a))
     (hr : ∀ a b, Y.presheaf.map (homOfLE inf_le_left).op (r a) =
       j.appLE (U a ⊓ U b) (W a ⊓ W b) (inf_le_inf (hW a).le (hW b).le) (g a b) *
@@ -100,8 +105,9 @@ theorem exists_transport (r : ∀ a, Γ(Y, W a))
   · rw [← (hb a).1.eq_iff, map_mul, appLE_res, appLE_res, hr', ← hττ, ← map_zpow, Units.coe_map]
     exact iff_of_eq (congrArg (_ = · * _) (res_appLE j htop le_top _).symm)
 
-include hη hp hj in
+include hη hp
 
+include hη hp hj in
 theorem existsUnique_zpow_mul_appLE (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, IsUnit (g a b))
     (τ : Γ(Y, ⊤)ˣ) (hτ : (τ : Γ(Y, ⊤)) = j.appTop t) {r : ∀ a, Γ(Y, W a)}
     (hr : ∀ a b, Y.presheaf.map (homOfLE inf_le_left).op (r a) =
@@ -118,8 +124,8 @@ theorem existsUnique_zpow_mul_appLE (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀
   simpa only [H] using existsUnique_zpow_mul hη hp hU hg τ' hτ' hr'
     (hr0.imp fun a ha h ↦ ha (h0 a h))
 
-include hη hp hj in
 
+include hη hp hj in
 theorem exists_isUnit_appLE_eq (hU : ∀ x : X, ∃ a, x ∈ U a) (hg : ∀ a b, IsUnit (g a b))
     {r : ∀ a, Γ(Y, W a)}
     (hr : ∀ a b, Y.presheaf.map (homOfLE inf_le_left).op (r a) =
@@ -227,8 +233,8 @@ theorem ker_app_eq_span {X Z : Scheme.{u}} {A C : CommRingCat.{u}} {β : A ⟶ C
     (hβ : Function.Surjective β) {c : A} (hc : RingHom.ker β.hom = Ideal.span {c})
     {f : X ⟶ Spec A} {i : Z ⟶ X} {f' : Z ⟶ Spec C} (h : IsPullback i f' f (Spec.map β))
     {U : X.Opens} (hU : IsAffineOpen U) :
-    RingHom.ker (i.app U).hom = Ideal.span {X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op
-      (f.appTop ((Scheme.ΓSpecIso A).inv c))} := by
+    RingHom.ker (i.app U).hom = Ideal.span {(X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op
+      (f.appTop ((Scheme.ΓSpecIso A).inv c)))} := by
   have hpo := (isIso_pushoutSection_iff h (US := ⊤) (UT := ⊤) (UX := U) (UY := i ⁻¹ᵁ U) le_top
     le_top (by simp)).1 (isIso_pushoutSection_of_isAffineOpen h _ _ _ (isAffineOpen_top _)
       (isAffineOpen_top _) hU)

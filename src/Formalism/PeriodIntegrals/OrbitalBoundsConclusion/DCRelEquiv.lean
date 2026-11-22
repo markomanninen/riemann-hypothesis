@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DCRelEquiv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DCRelEquiv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+
+@[expose] public section
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

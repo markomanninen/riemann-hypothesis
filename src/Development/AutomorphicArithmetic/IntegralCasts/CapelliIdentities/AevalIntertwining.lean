@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.AevalIntertwining.aeval_intertwine :
     ∀ {K : Type} [inst : Field K] {M N : Type} [inst_1 : AddCommGroup M]
@@ -19,7 +23,7 @@ theorem UpperTheory.Reformulated.B.AevalIntertwining.aeval_intertwine :
   induction p using Polynomial.induction_on' with
   | add p q hp hq =>
     intro x
-    simp only [map_add, LinearMap.add_apply, hp, hq]
+    simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial n a =>
     intro x
     simp only [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,

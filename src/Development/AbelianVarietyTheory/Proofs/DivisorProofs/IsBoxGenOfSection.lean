@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProdUnif
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProductDegenerationDataSum
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFunctional
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProdUnif
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProductDegenerationDataSum
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFunctional
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HasBasisOfBasis
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+
+@[expose] public section
 
 noncomputable section
 
@@ -296,8 +300,8 @@ def IsBoxFam₂ {D D₁ D₂ : DegPre R} (p₁ : D.P.A ⟶ D₁.P.A) (p₂ : D.P
     (E : Fam D F k) (E₁ : Fam D₁ F k) (E₂ : Fam D₂ F k) : Prop :=
   ∀ α : D.X, IsBoxSec w (TF (R := R) F ◁ p₁).left (TF (R := R) F ◁ p₂).left (E.s α) (E₁.s (q₁ α)) (E₂.s (q₂ α))
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem thick_fstG (I : Ideal R) (e : ℕ) {G H : Over (Sp R)} (π : G ⟶ H) :
     (fstG I e G).left ≫ π.left = ((Over.pullback (thick R I e)).map π).left ≫ (fstG I e H).left :=
   (pullback.lift_fst _ _ _).symm

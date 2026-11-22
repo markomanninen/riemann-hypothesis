@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open AlgebraicGeometry CategoryTheory
 
@@ -32,9 +37,9 @@ theorem exists_tan_basis {R A K ι : Type} [CommRing R] [CommRing A] [Algebra R 
     rfl
   have hδmul : ∀ a a', δ (a * a') = xr a • δ a' + xr a' • δ a := by
     intro a a'
-    simp only [δ, Derivation.leibniz, TensorProduct.tmul_add, hsm, map_add, map_smul]
+    simp only [δ, Derivation.leibniz, TensorProduct.tmul_add, hsm, map_add (f := _), map_smul]
   have hδadd : ∀ a a', δ (a + a') = δ a + δ a' := by
-    intro a a'; simp only [δ, map_add, TensorProduct.tmul_add]
+    intro a a'; simp only [δ, map_add (f := _), TensorProduct.tmul_add]
   have hδalg : ∀ r, δ (algebraMap R A r) = 0 := by
     intro r; simp only [δ, Derivation.map_algebraMap, TensorProduct.tmul_zero, map_zero]
   have hδ1 : δ 1 = 0 := by simpa using hδalg 1

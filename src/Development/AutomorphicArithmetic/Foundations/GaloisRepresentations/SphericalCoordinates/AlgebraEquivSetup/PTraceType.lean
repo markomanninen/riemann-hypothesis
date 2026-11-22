@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.W2.Seed
 open scoped TensorProduct
 
@@ -15,7 +20,7 @@ private theorem tau_bar (A : Arith E) (τ : E →+* ℂ) :
 private theorem tau_add (A : Arith E) (τ : E →+* ℂ) :
     τ (A.ω : E) + (starRingEnd ℂ) (τ (A.ω : E)) = (A.tr : ℂ) := by
   have h1 := congrArg (fun x : 𝓞 E => τ (x : E)) A.tr_eq
-  simp only [map_add, map_intCast] at h1
+  simp only [map_add (f := _), map_intCast] at h1
   rw [tau_bar A τ] at h1
   exact h1
 

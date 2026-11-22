@@ -1,23 +1,27 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.AdjKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.DetVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.BdxLog
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ActConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.AdjKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.DetVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.BdxLog
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 
 private theorem nat_dvd_pow (l : ℕ) [hl : Fact l.Prime] (X : ℕ) (h0 : X ≠ 0) :
     ∃ r : ℕ, l ^ r ≤ X ∧ (X : ℤ_[l]) ∣ (l : ℤ_[l]) ^ r := by
-  have hdvd : l ^ padicValNat l X ∣ X := pow_padicValNat_dvd
+  have hdvd : l ^ padicValNat l X ∣ X := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   refine ⟨padicValNat l X, Nat.le_of_dvd (Nat.pos_of_ne_zero h0) hdvd, ?_⟩
   obtain ⟨m, hm⟩ := hdvd
   have hm0 : ¬ l ∣ m := by
     rintro ⟨k, rfl⟩
     apply pow_succ_padicValNat_not_dvd (p := l) h0
-    exact ⟨k, by rw [pow_succ, mul_assoc]; exact hm⟩
+    exact ⟨k, by rw [pow_succ, mul_assoc]; simpa [Nat.padicValNat_def] using hm⟩
   have hu : IsUnit (m : ℤ_[l]) := by
     rw [PadicInt.isUnit_iff]
     exact le_antisymm (PadicInt.norm_le_one _) (not_lt.mp fun h => hm0 (by simpa using h))

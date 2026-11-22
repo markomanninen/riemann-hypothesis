@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsBasisMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsBasisMem
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up MeasureTheory Topology
 open scoped ComplexOrder ENNReal Matrix
@@ -17,7 +21,7 @@ theorem height_continuousOn : (∀ (r : ℕ) (X : Data E r) (d : Frame X.Ψ r �
       {x : Frame X.Ψ r | (∀ τ : X.Ψ, (mat x τ).det ≠ 0)} by rwa [hsp] at H
   refine ContinuousOn.congr ?_ (fun x hx => hd x hx _ w hw hΛ)
   refine ContinuousOn.div_const ?_ _
-  refine continuousOn_finset_prod _ fun τ _ x hx => ContinuousAt.continuousWithinAt ?_
+  refine continuousOn_finsetProd _ fun τ _ x hx => ContinuousAt.continuousWithinAt ?_
   have hm : Continuous (fun x : Frame X.Ψ r => mat x τ) := continuous_apply τ
   have hr : ContinuousAt (Ring.inverse : ℂ → ℂ) (mat x τ).det := by
     rw [Ring.inverse_eq_inv']

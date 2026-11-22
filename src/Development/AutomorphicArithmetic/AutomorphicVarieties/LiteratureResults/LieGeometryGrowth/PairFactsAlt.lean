@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ def Zig {Γ V S : Type} [Group Γ] [NormedAddCommGroup V] [NormedSpace ℝ V] {d
 
 section Defs
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 abbrev Co (Ξ : AlgRep E a) (q : ℕ) : Type := Herm E a [⋀^Fin q]→ₗ[ℝ] (Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ))
 
@@ -97,24 +101,19 @@ def IsPer (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) {q : ℕ} (α : C
 end Defs
 
 def QhtFacts : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), (∀ g : GA E a, 1 ≤ qht g) ∧
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), (∀ g : GA E a, 1 ≤ qht g) ∧
     (∀ γ t (g : GA E a), qht (ratGL E a γ * splitCentre E a t * g) = qht g) ∧
     (∀ C : Set (GA E a), IsCompact C → ∃ B : ℝ, ∀ (g : GA E a), ∀ h ∈ C, qht (g * h) ≤ B * qht g) ∧
     ∀ R : ℝ, ∃ C : Set (GA E a), IsCompact C ∧ ∀ g : GA E a, qht g ≤ R → ∃ γ t, ratGL E a γ * splitCentre E a t * g ∈ C
 
-def CutEx : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ U : Subgroup (GL (Fin a) (Af E)),
-    IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ ε R : ℝ, 0 < ε → ∃ (u : Sm E a) (R' : ℝ), IsCut U u ∧
-      (∀ g, qht g ≤ R → u.1 g = 1) ∧ (∀ g, R' < qht g → u.1 g = 0) ∧ ∀ (X : Lie E a) g, ‖(lie E a X u).1 g‖ ≤ ε * ‖X‖
-
 def MulEx : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (q : ℕ) (u : Sm E a) (α : Co Ξ q), IsCut U u → IsLev U Ξ α → ∃ β : Co Ξ q, IsLev U Ξ β ∧ IsMulBy u α β ∧
       ∀ (X : Fin (q + 1) → Herm E a) g, ev (dCo (smLie Ξ) β X) g = u.1 g • ev (dCo (smLie Ξ) α X) g +
         ∑ i : Fin (q + 1), ((-1 : ℂ) ^ (i : ℕ) * (lie E a (toL (X i).1) u).1 g) • ev (α (i.removeNth X)) g
 
 def PairFacts : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (μ : Measure (GA E a)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (μ : Measure (GA E a)) [μ.IsHaarMeasure]
     (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → ∀ (Ξ : AlgRep E a) (r : ℝ) (χ : HChar E)
     (G : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) (n : ℕ) (e : Fin n → Herm E a), IsData Ξ r χ G e → ∀ q : ℕ,
     (∀ α β : Co Ξ q, IsLev U Ξ α → IsLev U Ξ β → Rapid α → Moderate β → PairInt μ χ G e α β) ∧
@@ -124,35 +123,35 @@ def PairFacts : Prop :=
       pair μ χ G e β (dCo (smLie Ξ) η) = ((q : ℂ) + 1) * pair μ χ G e (del (smAdj Ξ r) e β) η
 
 def CuspRapid : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (Ξ : AlgRep E a) (q : ℕ) (ω : Co Ξ q),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CuspSub E a) (Ξ : AlgRep E a) (q : ℕ) (ω : Co Ξ q),
     (∀ X, ω X ∈ tens Ξ.d π.V) → RapidD ω
 
 def G1 : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (μ : Measure (GA E a)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (μ : Measure (GA E a)) [μ.IsHaarMeasure]
     (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → IsCompact (U : Set (GL (Fin a) (Af E))) →
     ∀ (Ξ : AlgRep E a) (r : ℝ) (χ : HChar E) (G : Matrix (Fin Ξ.d) (Fin Ξ.d) ℂ) (n : ℕ) (e : Fin n → Herm E a),
     IsData Ξ r χ G e → ∀ (q : ℕ) (β : Co Ξ (q + 1)) (η : Co Ξ q), IsLev U Ξ β → IsLev U Ξ η → Rapid β →
       del (smAdj Ξ r) e β = 0 → Moderate (dCo (smLie Ξ) η) → pair μ χ G e β (dCo (smLie Ξ) η) = 0
 
 def G2 : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (U : Subgroup (GL (Fin a) (Af E))),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (U : Subgroup (GL (Fin a) (Af E))),
     IsOpen (U : Set (GL (Fin a) (Af E))) → IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ (Ξ : AlgRep E a) (q : ℕ) (ω : Co Ξ q),
     IsLev U Ξ ω → dCo (smLie Ξ) ω = 0 → RapidD ω →
       ∃ α : Co Ξ q, IsLev U Ξ α ∧ dCo (smLie Ξ) α = 0 ∧ CSupp α ∧ IsRelExact U Ξ (ω - α)
 
 def PerEx : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (q : ℕ), (∀ α : Co Ξ q, IsLev U Ξ α → dCo (smLie Ξ) α = 0 → ∃ c, IsPer U Ξ α c) ∧
     (∀ (α : Co Ξ q) c, IsLev U Ξ α → IsPer U Ξ α c → dCo (smLie Ξ) α = 0 ∧ HCoc (levelRep ⊤ U (ratC Ξ)) q c) ∧
     ∀ (α β : Co Ξ q) c c' (s t : ℂ), IsPer U Ξ α c → IsPer U Ξ β c' → IsPer U Ξ (s • α + t • β) (s • c + t • c')
 
 def PerKer : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (U : Subgroup (GL (Fin a) (Af E))),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (U : Subgroup (GL (Fin a) (Af E))),
     IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ (Ξ : AlgRep E a) (q : ℕ) (α : Co Ξ q) c, IsLev U Ξ α → IsPer U Ξ α c →
       (HCob (levelRep ⊤ U (ratC Ξ)) q c ↔ IsRelExact U Ξ α)
 
 def PerNat : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U U' : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U U' : Subgroup (GL (Fin a) (Af E)))
     (x : GL (Fin a) (Af E)), (∀ u ∈ U', x⁻¹ * u * x ∈ U) → ∀ (Ξ : AlgRep E a) (q : ℕ) (α : Co Ξ q), IsLev U Ξ α →
     IsLev U' Ξ (trans x α) ∧ dCo (smLie Ξ) (trans x α) = trans x (dCo (smLie Ξ) α) ∧
       ∀ c c', (∀ z (y : GL (Fin a) (Af E)), c' z (y : GL (Fin a) (Af E) ⧸ U') = c z ((y * x : GL (Fin a) (Af E)) : _ ⧸ U)) →

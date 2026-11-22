@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 noncomputable section
@@ -16,9 +21,9 @@ theorem rep_add {A : C ⥤ CommAlgCat.{0} R} {a b : IdF A} {j : ℕ}
     Rep a b z'' (c + c') := by
   obtain ⟨f, hf, rfl, e⟩ := hc
   obtain ⟨f', hf', rfl, e'⟩ := hc'
-  refine ⟨f + f', by rw [map_add, hf, hf', add_zero], rfl, fun s => ?_⟩
+  refine ⟨f + f', by rw [map_add (f := _), hf, hf', add_zero], rfl, fun s => ?_⟩
   change (show sqM a b _ from f s).1 + (show sqM a b _ from f' s).1 = _
-  rw [e s, e' s, ← map_add]
+  rw [e s, e' s, ← map_add (f := _)]
   refine Ideal.Quotient.eq.2 ?_
   have := (b.S _).neg_mem (h s)
   rwa [neg_sub] at this
@@ -55,7 +60,7 @@ variable {O : Type} [CommRing O] {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.o
 
 theorem lft_add_sub {W : X.Opens} (T : Thick (LL q)) (h : InU W T) (f g : Γ(X, W)) :
     lft W T (f + g) - (lft W T f + lft W T g) ∈ T.J := by
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_add, lft_spec T h, lft_spec T h, lft_spec T h, map_add, sub_self]
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_add (f := _), lft_spec T h, lft_spec T h, lft_spec T h, map_add (f := _), sub_self]
 
 theorem lft_neg_sub {W : X.Opens} (T : Thick (LL q)) (h : InU W T) (f : Γ(X, W)) :
     lft W T (-f) - (-lft W T f) ∈ T.J := by

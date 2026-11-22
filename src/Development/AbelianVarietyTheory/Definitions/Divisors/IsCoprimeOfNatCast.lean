@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
-import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LevelCarrying
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActLevIffLevelActionOver
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRightActFunPull
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+public import Formalism.LocalToGlobal.ProjectiveLattices.PartitionExtendByZeroAntitone
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LevelCarrying
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActLevIffLevelActionOver
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRightActFunPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -115,7 +119,7 @@ theorem halfPrime_eq (l : Level H) {v : Ideal (𝓞 (maximalRealSubfield E))} (h
     rw [hc, Ideal.mem_comap, hz]
     exact P.mul_mem_right _ (add_mem (P.mul_mem_left _ hx) (h (Ideal.mem_sup_left ha)))
   have h1 := Ideal.mem_map_of_mem (algebraMap _ (𝓞 E)) hzv
-  rw [hz, map_add, map_mul, bar_bar'] at h1
+  rw [hz, map_add (f := _), map_mul, bar_bar'] at h1
   refine Submodule.mem_sup.2 ⟨a * (x - 1) + b' * ((1 - H.bar x) * (H.bar b' * x + a)),
     add_mem (l.Mb.mul_mem_right _ ha) (l.Mb.mul_mem_right _ hb'), _, h1, ?_⟩
   linear_combination x * hab + (H.bar b' * x + a) * hab'
@@ -187,18 +191,7 @@ theorem genChar_apply (ψ : ∀ v : Sq Hs, AddChar (ZMod (Hs.g v.1)) K) (u : lev
 
 variable (Hs)
 
-def factorG (i : Fin 2) : Subgroup (LevelGroup Hs) := Subgroup.pi {v | v.1 ≠ i} fun _ => ⊥
-
-def factorH (i : Fin 2) : Subgroup (LevelGroup Hs) := factorG Hs i ⊓ levelU Hs
-
 def levelGU (i : Fin 2) : Subgroup (LevelGroup Hs) := Subgroup.pi {v | v.1 ≠ i} fun v => unitri R.r (ZMod (Hs.g v.1))
-
-theorem exists_factor (a : LevelGroup Hs) : ∃ b ∈ factorG Hs 0, ∃ c ∈ factorG Hs 1, a = b * c ∧
-    (∀ v, v.1 = 0 → b v = a v) ∧ ∀ v, v.1 = 1 → c v = a v := by
-  refine ⟨fun v => if v.1 = 0 then a v else 1, fun v hv => if_neg hv, fun v => if v.1 = 1 then a v else 1,
-    fun v hv => if_neg hv, funext fun v => ?_, fun v h => if_pos h, fun v h => if_pos h⟩
-  obtain ⟨i, w⟩ := v
-  fin_cases i <;> simp
 
 end Generic
 
@@ -260,7 +253,7 @@ theorem typePrime_coprime : Pairwise (Function.onFun IsCoprime (typePrime l)) :=
     have hvw : v.1 ≠ w.1 := fun e => hne (congrArg _ (Subtype.ext e))
     obtain ⟨a, ha, b, hb, e⟩ := Ideal.isCoprime_iff_exists.1 (HeightOneSpectrum.isCoprime_of_ne _ _ hvw)
     exact Ideal.isCoprime_iff_exists.2 ⟨_, Ideal.mem_sup_right (Ideal.mem_map_of_mem _ ha), _,
-      Ideal.mem_sup_right (Ideal.mem_map_of_mem _ hb), by rw [← map_add, e, map_one]⟩
+      Ideal.mem_sup_right (Ideal.mem_map_of_mem _ hb), by rw [← map_add (f := _), e, map_one]⟩
   · exact isCoprime_of_natCast (g_coprime h) (g_mem_typePrime ⟨i, v⟩) (g_mem_typePrime ⟨j, w⟩)
 
 theorem iInf_typePrime_le :
@@ -433,44 +426,11 @@ theorem IsTypeLevel.commute (hl : IsTypeLevel l) {γ δ : LevelAut Dw l} (hγ : 
     have : hl.parts δ (some v) = 1 := (autRed_eq_one _ δ).2 (mem_grpR_iff.1 hδ v)
     simp [this]
 
-def prodEquiv (hl : IsTypeLevel l) (fr : TypeFrame Dw l) : LevelGroup D.host × grpR Dw l ≃* LevelAut Dw l :=
-  MulEquiv.ofBijective
-    ((typeEmb hl fr).noncommCoprod (grpR Dw l).subtype fun a b => hl.commute (typeEmb_mem hl fr a) b.2) ⟨by
-      rw [injective_iff_map_eq_one]
-      rintro ⟨a, b⟩ h
-      have h' : typeEmb hl fr a * b = 1 := h
-      have h1 : a = 1 := by
-        have := congrArg (typeRed fr) h'
-        rwa [map_mul, typeRed_typeEmb, (typeRed_eq_one fr).2 b.2, mul_one, map_one] at this
-      subst h1
-      rw [map_one, one_mul] at h'
-      exact Prod.ext rfl (Subtype.ext h'), fun γ =>
-      ⟨(typeRed fr γ, ⟨(typeEmb hl fr (typeRed fr γ))⁻¹ * γ, (typeRed_eq_one fr).1 (by
-        rw [map_mul, map_inv, typeRed_typeEmb, inv_mul_cancel])⟩), mul_inv_cancel_left _ _⟩⟩
-
-theorem prodEquiv_apply (hl : IsTypeLevel l) (fr : TypeFrame Dw l) (a : LevelGroup D.host) (b : grpR Dw l) :
-    prodEquiv hl fr (a, b) = typeEmb hl fr a * b := rfl
-
-theorem typeRed_prodEquiv (hl : IsTypeLevel l) (fr : TypeFrame Dw l) (x : LevelGroup D.host × grpR Dw l) :
-    typeRed fr (prodEquiv hl fr x) = x.1 := by
-  rw [prodEquiv_apply, map_mul, typeRed_typeEmb, (typeRed_eq_one fr).2 x.2.2, mul_one]
-
 def grpOf (fr : TypeFrame Dw l) (S : Subgroup (LevelGroup D.host)) : Subgroup (LevelAut Dw l) := S.comap (typeRed fr)
 
 def grpHR (fr : TypeFrame Dw l) : Subgroup (LevelAut Dw l) := grpOf fr (levelU D.host)
 
 def grpGHR (fr : TypeFrame Dw l) (i : Fin 2) : Subgroup (LevelAut Dw l) := grpOf fr (levelGU D.host i)
-
-def grpOfEquiv (hl : IsTypeLevel l) (fr : TypeFrame Dw l) (S : Subgroup (LevelGroup D.host)) :
-    S × grpR Dw l ≃* grpOf fr S where
-  toFun x := ⟨prodEquiv hl fr (x.1, x.2), by
-    show typeRed fr _ ∈ S
-    rw [typeRed_prodEquiv]; exact x.1.2⟩
-  invFun γ := (⟨((prodEquiv hl fr).symm γ).1, by
-    rw [← typeRed_prodEquiv hl fr, MulEquiv.apply_symm_apply]; exact γ.2⟩, ((prodEquiv hl fr).symm γ).2)
-  left_inv x := by simp
-  right_inv γ := Subtype.ext ((prodEquiv hl fr).apply_symm_apply γ)
-  map_mul' x y := Subtype.ext (map_mul (prodEquiv hl fr) ((x.1 : LevelGroup D.host), x.2) ((y.1 : LevelGroup D.host), y.2))
 
 variable {K : Type} [Field K]
 

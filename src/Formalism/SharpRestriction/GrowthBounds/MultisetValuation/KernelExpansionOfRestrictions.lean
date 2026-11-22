@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,12 +64,14 @@ theorem sSer_const {n' r0 r1 : ℕ} (K' : Type) [Field K'] (e : Fin n') (a : Fin
 theorem hhS_const {n' r0 r1 : ℕ} (K' : Type) [Field K'] (u : Fin n' → K') :
     MvPowerSeries.constantCoeff (hhS (r0 := r0) (r1 := r1) p K' u) = 0 := by
   unfold hhS
-  simp only [map_sum, map_mul, sSer_const, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, sSer_const, mul_zero, Finset.sum_const_zero]
 
 theorem coordZ_const {n' r0 r1 : ℕ} (B : OmBasis p n') (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K')
     (x : Eidx n' r0 r1 ⊕ Eidx n' r0 r1) : MvPowerSeries.constantCoeff (coordZ B K' vp x) = 0 := by
   rcases x with ⟨r, a, b⟩ | ⟨r, a, b⟩ <;>
-  simp only [coordZ, map_sum, map_mul, MvPowerSeries.constantCoeff_X, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordZ, map_sum, map_mul, MvPowerSeries.constantCoeff_X, mul_zero, Finset.sum_const_zero]
 
 theorem ThZ_mul {n' r0 r1 : ℕ} (B : OmBasis p n') (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K')
     (f g : MvPowerSeries (Eidx n' r0 r1 ⊕ Eidx n' r0 r1) K') :
@@ -88,7 +94,7 @@ theorem atPi_mul {σ R : Type} [CommRing R] (vp : R) (f g : MvPowerSeries σ R) 
   refine Finset.sum_congr rfl fun x hx => ?_
   have hx' : x.1 + x.2 = n := Finset.HasAntidiagonal.mem_antidiagonal.1 hx
   show _ = (vp ^ x.1.degree * MvPowerSeries.coeff x.1 f) * (vp ^ x.2.degree * MvPowerSeries.coeff x.2 g)
-  rw [← hx', map_add, pow_add]
+  rw [← hx', map_add (f := _), pow_add]
   ring
 
 theorem exp_change {ι : Type} (K' : Type) [Field K'] [Algebra (K0 p) K'] (c : K') (hh hh' G : MvPowerSeries ι K')
@@ -100,7 +106,7 @@ theorem exp_change {ι : Type} (K' : Type) [Field K'] [Algebra (K0 p) K'] (c : K
   have hp0 := pK'_ne p K'
   have hG : MvPowerSeries.constantCoeff G = 0 := by
     have := congrArg MvPowerSeries.constantCoeff hE
-    rw [map_add, map_mul, h0, h0', zero_add, MvPowerSeries.constantCoeff_C] at this
+    rw [map_add (f := _), map_mul, h0, h0', zero_add, MvPowerSeries.constantCoeff_C] at this
     rcases mul_eq_zero.1 this.symm with h | h
     · exact absurd h hp0
     · exact h

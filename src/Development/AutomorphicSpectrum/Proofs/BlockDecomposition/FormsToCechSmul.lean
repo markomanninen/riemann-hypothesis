@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.Bridge
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.Bridge
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite Limits GroundTheory.Arith.SchemeCoh GlobalTheory.SheafPull CrystallineSemistableComparison CrystallineSemistableComparison.Om CrystallineSemistableComparison.Om.Cech
 
@@ -23,7 +28,8 @@ theorem algebraMap_sec (W : X.Opens) (r : K) :
 theorem toOm_smul (a : ℕ) (W : X.Opens) (r : K) (x : OmU q W a) :
     letI := algΓ q
     CrystallineSemistableComparison.Om.Cech.toOm q a W (r • x) =
-      (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).hom.app (op W) (CrystallineSemistableComparison.Om.Cech.toOm q a W x) := by
+      (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).asHom.hom.app (op W)
+        (CrystallineSemistableComparison.Om.Cech.toOm q a W x) := by
   letI := algΓ q
   rw [← algebraMap_smul (Sec q W) r x]
   have h := ((toOmega q a).app (op W)).hom.map_smul (algebraMap K (Sec q W) r) x
@@ -36,15 +42,16 @@ variable {ι : Type} (U : ι → X.Opens) (a : ℕ)
 theorem formCoch_smul (n : ℕ) (r : K) (c : (Glob.formCos q U a).X n) :
     letI := algΓ q
     formCoch q U a n (r • c) =
-      push U (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).hom n (formCoch q U a n c) := by
+      GroundTheory.Arith.SchemeCoh.push U
+        (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).asHom.hom n (formCoch q U a n c) := by
   letI := algΓ q
   funext i
   change res _ (inter_le_capO U i) (CrystallineSemistableComparison.Om.Cech.toOm q a (Pb.capO U i) (r • c i)) =
-    (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).hom.app (op (inter U i))
+    (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).asHom.hom.app (op (inter U i))
       (res _ (inter_le_capO U i) (CrystallineSemistableComparison.Om.Cech.toOm q a (Pb.capO U i) (c i)))
   rw [toOm_smul]
   exact (ConcreteCategory.congr_hom
-    ((smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).hom.naturality
+    ((smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).asHom.hom.naturality
       (homOfLE (inter_le_capO U i)).op) _).symm
 
 theorem formToCO_smul (j : ℕ) (r : K) (x : (Glob.formCos q U a).cx.H j) :
@@ -59,7 +66,7 @@ theorem formToCO_smul (j : ℕ) (r : K) (x : (Glob.formCos q U a).cx.H j) :
   have hd : d (modulesAb (Omega q a)).obj U j (formCoch q U a j c) = 0 := by
     rw [← formCoch_d]
     exact (congrArg _ hc').trans (map_zero _)
-  change _ = GroundTheory.Arith.SchemeCoh.cechHMap U (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).hom j
+  change _ = GroundTheory.Arith.SchemeCoh.cechHMap U (smulAbRingHom (Omega q a) (algebraMap K Γ(X, ⊤) r)).asHom.hom j
     (GroundTheory.Arith.SchemeCoh.cls (formCoch q U a j c) hd)
   rw [GroundTheory.Arith.SchemeCoh.cechHMap_cls]
   exact GroundTheory.Arith.SchemeCoh.cls_congr U (formCoch_smul q U a j r c) _ _

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfE
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetMeasStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfE
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 
@@ -31,7 +35,7 @@ private theorem db_subtype_val_eq_wdb {n : ℕ} {U : Set (V n)} (hz : IsLocalHom
     (g : V n → ℂ) (k : Fin n) (y : U) : db n Subtype.val k (fun y : U => g y.1) y = wdb n k g y.1 := by
   have hex := exists_isChart_subtype_val hz y
   unfold db
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc := Classical.choose_spec hex
   have hw : y.1 ∈ (Classical.choose hex).target := by
     rw [hc.1 hc.2]
@@ -43,7 +47,7 @@ private theorem d_subtype_val_eq_wd {n : ℕ} {U : Set (V n)} (hz : IsLocalHomeo
     (g : V n → ℂ) (k : Fin n) (y : U) : d n Subtype.val k (fun y : U => g y.1) y = wd n k g y.1 := by
   have hex := exists_isChart_subtype_val hz y
   unfold d
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc := Classical.choose_spec hex
   have hw : y.1 ∈ (Classical.choose hex).target := by
     rw [hc.1 hc.2]

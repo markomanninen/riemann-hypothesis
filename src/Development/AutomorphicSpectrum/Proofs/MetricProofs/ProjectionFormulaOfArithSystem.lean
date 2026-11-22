@@ -1,30 +1,35 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenericDegreeOfArithSystemStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FibreDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PfAtZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFStep
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFSecRed
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFVert
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFIntZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFHoriz
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreSum
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreBij
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreMult
-import GroundTheory.HeightsAndTheta.Heights.Intersections.EqZeroOfEventuallyEval
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRatioAlgDep
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Multilin
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixedField
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixed
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Contract
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageArithClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenericDegreeOfArithSystemStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FibreDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PfAtZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFStep
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFSecRed
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFVert
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFIntZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFHoriz
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreSum
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreBij
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPFFibreMult
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.EqZeroOfEventuallyEval
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRatioAlgDep
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Multilin
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ExistsUnique
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixedField
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ContractMixed
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Contract
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ProjContract
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageArithClosed
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv.ProjF

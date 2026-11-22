@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusDifferenceIdentity
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusDifferenceIdentity
+
+@[expose] public section
 
 noncomputable section
 

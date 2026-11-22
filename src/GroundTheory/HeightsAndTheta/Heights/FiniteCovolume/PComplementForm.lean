@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementForm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsComplementForm
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -45,9 +49,9 @@ theorem proj_of_mem (h : HermitianForm F E W) (v w : W) (hp : IsHyperbolicPair h
 def restr (h : HermitianForm F E W) (v w : W) :
     hypComplement h v w →ₛₗ[conjHom F E] hypComplement h v w →ₗ[E] E :=
   LinearMap.mk₂'ₛₗ (conjHom F E) (RingHom.id E) (fun x y => h.toSesq x y)
-    (fun _ _ _ => by simp only [Submodule.coe_add, map_add, LinearMap.add_apply])
+    (fun _ _ _ => by simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply])
     (fun _ _ _ => by simp only [Submodule.coe_smul, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul])
-    (fun _ _ _ => by simp only [Submodule.coe_add, map_add])
+    (fun _ _ _ => by simp only [Submodule.coe_add, map_add (f := _)])
     (fun _ _ _ => by simp only [Submodule.coe_smul, map_smul, smul_eq_mul, RingHom.id_apply])
 
 theorem restr_apply (h : HermitianForm F E W) (v w : W) (x y : hypComplement h v w) :
@@ -67,7 +71,7 @@ def form (h : HermitianForm F E W) (v w : W) (hp : IsHyperbolicPair h v w) :
         ext y
         have hy : h.toSesq (a : W) (proj h v w hp y) = 0 := by
           rw [← restr_apply, ha, LinearMap.zero_apply]
-        rw [eq_add_proj h v w hp y, map_add, map_add, map_smul, map_smul, hav, haw, hy,
+        rw [eq_add_proj h v w hp y, map_add (f := _), map_add (f := _), map_smul, map_smul, hav, haw, hy,
           LinearMap.zero_apply]
         simp
       have : (a : W) = 0 := h.nonsingular.1 (hall.trans (map_zero _).symm)

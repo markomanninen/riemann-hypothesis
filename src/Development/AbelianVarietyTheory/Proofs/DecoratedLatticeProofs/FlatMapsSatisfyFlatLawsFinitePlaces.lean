@@ -1,14 +1,42 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsConvergeThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergThetaMixedModelTargetOfMixedModelStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToJacobiFlatSchwartzEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilActionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCoreStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsConvergeThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergThetaMixedModelTargetOfMixedModelStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselToJacobiFlatSchwartzEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselFlatIntertwinesWeilActionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatSchwartzTargetUnipotentConjBesselCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCoreStatement
+
+namespace I195MixedCoordinates_e025acfe930a3926902b259b
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_e025acfe930a3926902b259b
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +51,9 @@ variable {D : D7}
 
 theorem mixT_smul {S T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (ψ : AddChar (AF D.host.F) ℂ)
     (μ : Measure (Mx D ρ S.rank)) (𝓕 : Set (Mx D ρ S.rank)) (c : ℂ) (f : WO S T → ℂ) (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (c • f) y = c • d.mixT S ψ μ 𝓕 f y := by
+    (_root_.I195MixedCoordinates_e025acfe930a3926902b259b.target d) S ψ μ 𝓕 (c • f) y = c • (_root_.I195MixedCoordinates_e025acfe930a3926902b259b.target d) S ψ μ 𝓕 f y := by
   funext w
-  simp only [HypDec.mixT, heisO, Pi.smul_apply, smul_eq_mul]
+  simp only [_root_.I195MixedCoordinates_e025acfe930a3926902b259b.target, heisO, Pi.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]
   congr 1; funext ξ; ring
 
@@ -47,48 +75,70 @@ theorem flatAt_dual (hψ : IsStdChar D ψ (-1)) (f : WO V W → ℂ) (hf : IsThe
     (ha : GlobalTheory.FinPl.UInv W x a) :
     flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y (heisO ψ V W (dV.extY W a) f) =
       ψ (symplO V W (dV.extX W x) (dV.extY W a)) • flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y f := by
-  have key : ∀ u : UX D ρ, dV.mixS W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.extY W a) f) (x ⬝ u.1.1) =
-      ψ (symplO V W (dV.extX W x) (dV.extY W a)) • dV.mixS W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1) := by
+  have key : ∀ u : UX D ρ, (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.extY W a) f) (x ⬝ u.1.1) =
+      ψ (symplO V W (dV.extX W x) (dV.extY W a)) • (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1) := by
     intro u
-    rw [(GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.1 (x ⬝ u.1.1) a]
+    have hs := (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.1 (x ⬝ u.1.1) a
+    unfold _root_.I195MixedCoordinates_0bc2bf51bedd9bcbcf543475.source at hs
+    unfold _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source
+    rw [hs]
     rw [symplO_eq_of_symplOH (a := dV.extX W (x ⬝ u.1.1)) (b := dV.extY W a) (a' := dV.extX W x) (b' := dV.extY W a)
       (by rw [dV.symplOH_extX_extY W, dV.symplOH_extX_extY W, ha u])]
+  have hm := mixT_smul dW ψ vT.μ vT.𝓕 (ψ (symplO V W (dV.extX W x) (dV.extY W a)))
+  unfold _root_.I195MixedCoordinates_e025acfe930a3926902b259b.target at hm
   funext w
-  simp only [flatAt, flatFun, evalAt, key, mixT_smul, Pi.smul_apply, smul_eq_mul]
+  simp only [flatAt, flatFun, evalAt, key, hm, Pi.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]
-  congr 1; funext u; ring
+  congr 1; funext u
+  unfold _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target
+  rw [congrFun (hm _ _) w]
+  simp only [Pi.smul_apply, smul_eq_mul]
+  ring
 
 theorem flatAt_iso (hψ : IsStdChar D ψ (-1)) (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) (ξ : Mx D σ V₀.rank) :
     flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y (heisO ψ V W (dV.ext0 W (dW.incX V₀ ξ)) f) =
       ψ (symplO V₀ W (dW.incAdj V₀ y) (dW.incX V₀ ξ)) • flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y f := by
-  have key : ∀ u : UX D ρ, dW.mixT V₀ ψ vT.μ vT.𝓕
-      (dV.mixS W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.ext0 W (dW.incX V₀ ξ)) f) (x ⬝ u.1.1)) y =
+  have key : ∀ u : UX D ρ, (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target dW) V₀ ψ vT.μ vT.𝓕
+      ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.ext0 W (dW.incX V₀ ξ)) f) (x ⬝ u.1.1)) y =
       ψ (symplO V₀ W (dW.incAdj V₀ y) (dW.incX V₀ ξ)) •
-        dW.mixT V₀ ψ vT.μ vT.𝓕 (dV.mixS W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1)) y := by
+        (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target dW) V₀ ψ vT.μ vT.𝓕 ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1)) y := by
     intro u
-    rw [(GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.2.1 (x ⬝ u.1.1) (dW.incX V₀ ξ)]
+    have hs := (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.2.1 (x ⬝ u.1.1) (dW.incX V₀ ξ)
+    unfold _root_.I195MixedCoordinates_0bc2bf51bedd9bcbcf543475.source at hs
+    unfold _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source
+    rw [hs]
     have hg := (GlobalTheory.T.mixedCoordinates_of_thetaFunction_are_thetaFunctions D ψ hψ).1 V V₀ W ρ dV vS.μ vS.𝓕 vS.covol f hf (x ⬝ u.1.1)
-    exact (GlobalTheory.T.heisenbergThetaMixedModelTarget_of_mixedModel D ψ hψ V₀ W W₀ σ dW vT.μ vT.𝓕 vT.covol _ hg).1 ξ y
+    unfold _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source at hg
+    simpa only [_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target, _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target] using (GlobalTheory.T.heisenbergThetaMixedModelTarget_of_mixedModel D ψ hψ V₀ W W₀ σ dW vT.μ vT.𝓕 vT.covol _ hg).1 ξ y
   funext w
   simp only [flatAt, flatFun, evalAt, key, Pi.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]
-  congr 1; funext u; ring
+  congr 1; funext u
+  rw [congrFun (key u) w]
+  simp only [Pi.smul_apply, smul_eq_mul]
+  ring
 
 theorem flatAt_core (hψ : IsStdChar D ψ (-1)) (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) (w₀ : WO V₀ W₀) :
     flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y (heisO ψ V W (dV.ext0 W (dW.inc0 V₀ w₀)) f) =
       heisO ψ V₀ W₀ w₀ (flatAt ψ dV dW vS.μ vS.𝓕 vT.μ vT.𝓕 νU x y f) := by
-  have key : ∀ u : UX D ρ, dW.mixT V₀ ψ vT.μ vT.𝓕
-      (dV.mixS W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.ext0 W (dW.inc0 V₀ w₀)) f) (x ⬝ u.1.1)) y =
-      heisO ψ V₀ W₀ w₀ (dW.mixT V₀ ψ vT.μ vT.𝓕 (dV.mixS W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1)) y) := by
+  have key : ∀ u : UX D ρ, (_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target dW) V₀ ψ vT.μ vT.𝓕
+      ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 (heisO ψ V W (dV.ext0 W (dW.inc0 V₀ w₀)) f) (x ⬝ u.1.1)) y =
+      heisO ψ V₀ W₀ w₀ ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target dW) V₀ ψ vT.μ vT.𝓕 ((_root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source dV) W ψ vS.μ vS.𝓕 f (x ⬝ u.1.1)) y) := by
     intro u
-    rw [(GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.2.1 (x ⬝ u.1.1) (dW.inc0 V₀ w₀)]
+    have hs := (GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ V V₀ W ρ dV vS f hf).2.2.1 (x ⬝ u.1.1) (dW.inc0 V₀ w₀)
+    unfold _root_.I195MixedCoordinates_0bc2bf51bedd9bcbcf543475.source at hs
+    unfold _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.source
+    rw [hs]
     have hg := (GlobalTheory.T.mixedCoordinates_of_thetaFunction_are_thetaFunctions D ψ hψ).1 V V₀ W ρ dV vS.μ vS.𝓕 vS.covol f hf (x ⬝ u.1.1)
-    exact (GlobalTheory.T.heisenbergThetaMixedModelTarget_of_mixedModel D ψ hψ V₀ W W₀ σ dW vT.μ vT.𝓕 vT.covol _ hg).2.1 w₀ y
+    unfold _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source at hg
+    simpa only [_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target, _root_.I195MixedCoordinates_14b5fd3aa93c7f4842f1a892.target] using (GlobalTheory.T.heisenbergThetaMixedModelTarget_of_mixedModel D ψ hψ V₀ W W₀ σ dW vT.μ vT.𝓕 vT.covol _ hg).2.1 w₀ y
   funext w
   simp only [flatAt, flatFun, evalAt, key, heisO]
   rw [← integral_const_mul]
-  congr 1; funext u; ring
-
+  congr 1; funext u
+  rw [congrFun (key u) w]
+  simp only [heisO]
+  ring
 end Gen
 
 end GlobalTheory.FlatLawsDuality

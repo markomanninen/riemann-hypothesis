@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NumericalClosedOfNeed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NumericalClosedOfNeed
+
+@[expose] public section
 
 noncomputable section
 

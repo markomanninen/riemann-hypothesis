@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip
 open scoped Topology
@@ -38,8 +42,8 @@ end Curry
 variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A C : Type*} [Fintype A] [DecidableEq C]
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] [Fintype A] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] [Fintype A] in
 def restrictCols (P : Finset C) (X : Matrix A C k) : Matrix A P k := Matrix.of fun i j => X i j
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype A] in
@@ -82,16 +86,16 @@ theorem pairCols_eq_dotProduct (P : Finset C) (Y : Matrix A C k) (U : Matrix A P
 
 variable [MeasurableSpace k] [BorelSpace k]
 
-omit [DecidableEq C] in
 
+omit [DecidableEq C] in
 theorem isAddHaarMeasure_volM (m : Measure k) [m.IsAddHaarMeasure] (B : Type*) [Fintype B] :
     (volM m A B).IsAddHaarMeasure := by
   haveI := secondCountable k; haveI := t2Space k
   haveI : (Measure.pi fun _ : B => m).IsAddHaarMeasure := inferInstance
   exact Measure.pi.isAddHaarMeasure (fun _ : A => (Measure.pi fun _ : B => m))
 
-omit [DecidableEq C] in
 
+omit [DecidableEq C] in
 theorem integral_volM (m : Measure k) [SigmaFinite m] (B : Type*) [Fintype B] (f : Matrix A B k → ℂ) :
     ∫ U, f U ∂(volM m A B) =
       ∫ x : (_ : A) × B → k, f (Matrix.of fun i j => x ⟨i, j⟩) ∂(Measure.pi fun _ => m) := by

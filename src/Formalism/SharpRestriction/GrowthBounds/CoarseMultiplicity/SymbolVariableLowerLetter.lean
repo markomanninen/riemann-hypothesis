@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSplit
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DegSplit
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ theorem wh_aeval {K : Type} [CommRing K] {σ τ : Type} (ω : τ → ℕ) (f : �
   have e : aeval (fun v => (X (f v) : MvPolynomial τ K) ^ lev v) u =
       ∑ μ ∈ u.support, aeval (fun v => (X (f v) : MvPolynomial τ K) ^ lev v) (monomial μ (u.coeff μ)) := by
     conv_lhs => rw [← support_sum_monomial_coeff u]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   rw [e]
   refine IsWeightedHomogeneous.sum _ _ _ fun μ hμ => ?_
   rw [aeval_monomial, MvPolynomial.algebraMap_eq, Finsupp.prod]
@@ -32,7 +37,7 @@ theorem sum_chain {s : ℕ} (f : Fin (2 * s + 1) → ℕ) :
     rw [Finset.sum_range]
     refine Finset.sum_congr rfl fun a _ => ?_
     simp only [F]
-    rw [dif_pos a.2]
+    rw [dite_eq_left a.2]
   have e2 : ∀ n, ∑ k ∈ Finset.range (2 * n + 1), F k = ∑ i ∈ Finset.range n, (F (2 * i) + F (2 * i + 1)) + F (2 * n) := by
     intro n
     induction n with
@@ -46,9 +51,9 @@ theorem sum_chain {s : ℕ} (f : Fin (2 * s + 1) → ℕ) :
   · refine Finset.sum_congr rfl fun i _ => ?_
     have := i.2
     simp only [F]
-    rw [dif_pos (by omega), dif_pos (by omega)]
+    rw [dite_eq_left (by omega), dite_eq_left (by omega)]
   · simp only [F]
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
 
 theorem sum_uTop {s : ℕ} (S : SegData s) (g : Fin s → ℕ) :
     ∑ l : Fin S.t, g (uTop S l) = ∑ i : Fin s, if S.sigma ≤ i.val then g i else 0 := by
@@ -73,31 +78,31 @@ variable (C0 CE1 CE2 : ℝ) (X : Loc) (j : Fin (numSeg X.TT))
 theorem sv_Z (l : Fin (X.seg C0 CE1 CE2 j).t) (β : Bool) :
     symVar C0 CE1 CE2 X j (Sum.inr (Fin.castSucc l, β)) = ((topOdd X j (uTop (X.seg C0 CE1 CE2 j) l), !β), 0) := by
   simp only [symVar]
-  rw [dif_pos (show ((Fin.castSucc l : Fin _) : ℕ) < _ from l.2)]
+  rw [dite_eq_left (show ((Fin.castSucc l : Fin _) : ℕ) < _ from l.2)]
   rfl
 
 theorem sl_Z (l : Fin (X.seg C0 CE1 CE2 j).t) (β : Bool) :
     symLev X.p C0 CE1 CE2 X j (Sum.inr (Fin.castSucc l, β)) =
       (X.seg C0 CE1 CE2 j).P X.p (uTop (X.seg C0 CE1 CE2 j) l) := by
   simp only [symLev]
-  rw [dif_pos (show ((Fin.castSucc l : Fin _) : ℕ) < _ from l.2)]
+  rw [dite_eq_left (show ((Fin.castSucc l : Fin _) : ℕ) < _ from l.2)]
   rfl
 
 theorem symbol_variable_last (β : Bool) :
     symVar C0 CE1 CE2 X j (Sum.inr (Fin.last _, β)) = ((topEnd X j, !β), 0) := by
   simp only [symVar]
-  rw [dif_neg (hnc := by show ¬ ((Fin.last (X.seg C0 CE1 CE2 j).t : Fin _) : ℕ) < _; exact lt_irrefl _)]
+  rw [dite_eq_right (hnc := by show ¬ ((Fin.last (X.seg C0 CE1 CE2 j).t : Fin _) : ℕ) < _; exact lt_irrefl _)]
 
 theorem symbol_level_last (β : Bool) : symLev X.p C0 CE1 CE2 X j (Sum.inr (Fin.last _, β)) = 1 := by
   simp only [symLev]
-  rw [dif_neg (hnc := by show ¬ ((Fin.last (X.seg C0 CE1 CE2 j).t : Fin _) : ℕ) < _; exact lt_irrefl _)]
+  rw [dite_eq_right (hnc := by show ¬ ((Fin.last (X.seg C0 CE1 CE2 j).t : Fin _) : ℕ) < _; exact lt_irrefl _)]
 
 theorem symbol_variable_lower_letter (i : Fin (segS X.TT j)) (c : Fin X.m) :
     symVar C0 CE1 CE2 X j (Sum.inl (Fin.castSucc (⟨2 * i.val, by omega⟩ : Fin (2 * segS X.TT j + 1)), c)) =
       ((topOdd X j i, true), c.succ) := by
   have hi := i.2
   simp only [symVar]
-  rw [dif_pos (hc := by show 2 * i.val < 2 * segS X.TT j; omega)]
+  rw [dite_eq_left (hc := by show 2 * i.val < 2 * segS X.TT j; omega)]
   have e1 : (⟨(2 * i.val) / 2, by omega⟩ : Fin (segS X.TT j)) = i := Fin.ext (by show 2 * i.val / 2 = i.val; omega)
   have e2 : decide ((2 * i.val) % 2 = 0) = true := by simp
   show ((topOdd X j ⟨(2 * i.val) / 2, _⟩, decide ((2 * i.val) % 2 = 0)), c.succ) = _
@@ -108,7 +113,7 @@ theorem symbol_level_lower_letter (i : Fin (segS X.TT j)) (c : Fin X.m) :
       (X.seg C0 CE1 CE2 j).P X.p i := by
   have hi := i.2
   simp only [symLev]
-  rw [dif_pos (hc := by show 2 * i.val < 2 * segS X.TT j; omega)]
+  rw [dite_eq_left (hc := by show 2 * i.val < 2 * segS X.TT j; omega)]
   have e1 : (⟨(2 * i.val) / 2, by omega⟩ : Fin (segS X.TT j)) = i := Fin.ext (by show 2 * i.val / 2 = i.val; omega)
   show (X.seg C0 CE1 CE2 j).P X.p ⟨(2 * i.val) / 2, _⟩ = _
   rw [e1]
@@ -118,7 +123,7 @@ theorem sv_E (i : Fin (segS X.TT j)) (c : Fin X.m) :
       ((topOdd X j i, false), c.succ) := by
   have hi := i.2
   simp only [symVar]
-  rw [dif_pos (hc := by show 2 * i.val + 1 < 2 * segS X.TT j; omega)]
+  rw [dite_eq_left (hc := by show 2 * i.val + 1 < 2 * segS X.TT j; omega)]
   have e1 : (⟨(2 * i.val + 1) / 2, by omega⟩ : Fin (segS X.TT j)) = i :=
     Fin.ext (by show (2 * i.val + 1) / 2 = i.val; omega)
   have e2 : decide ((2 * i.val + 1) % 2 = 0) = false := by
@@ -132,7 +137,7 @@ theorem sl_E (i : Fin (segS X.TT j)) (c : Fin X.m) :
       (X.seg C0 CE1 CE2 j).P X.p i := by
   have hi := i.2
   simp only [symLev]
-  rw [dif_pos (hc := by show 2 * i.val + 1 < 2 * segS X.TT j; omega)]
+  rw [dite_eq_left (hc := by show 2 * i.val + 1 < 2 * segS X.TT j; omega)]
   have e1 : (⟨(2 * i.val + 1) / 2, by omega⟩ : Fin (segS X.TT j)) = i :=
     Fin.ext (by show (2 * i.val + 1) / 2 = i.val; omega)
   show (X.seg C0 CE1 CE2 j).P X.p ⟨(2 * i.val + 1) / 2, _⟩ = _
@@ -142,26 +147,26 @@ theorem sv_U (c : Fin X.m) :
     symVar C0 CE1 CE2 X j (Sum.inl (Fin.castSucc (⟨2 * segS X.TT j, by omega⟩ : Fin (2 * segS X.TT j + 1)), c)) =
       ((topEnd X j, true), c.succ) := by
   simp only [symVar]
-  rw [dif_neg (hnc := by show ¬ 2 * segS X.TT j < 2 * segS X.TT j; exact lt_irrefl _)]
+  rw [dite_eq_right (hnc := by show ¬ 2 * segS X.TT j < 2 * segS X.TT j; exact lt_irrefl _)]
   show ((topEnd X j, decide (2 * segS X.TT j = 2 * segS X.TT j)), c.succ) = _
   simp
 
 theorem sl_U (c : Fin X.m) :
     symLev X.p C0 CE1 CE2 X j (Sum.inl (Fin.castSucc (⟨2 * segS X.TT j, by omega⟩ : Fin (2 * segS X.TT j + 1)), c)) = 1 := by
   simp only [symLev]
-  rw [dif_neg (hnc := by show ¬ 2 * segS X.TT j < 2 * segS X.TT j; exact lt_irrefl _)]
+  rw [dite_eq_right (hnc := by show ¬ 2 * segS X.TT j < 2 * segS X.TT j; exact lt_irrefl _)]
 
 theorem sv_xi (c : Fin X.m) :
     symVar C0 CE1 CE2 X j (Sum.inl (Fin.last (2 * segS X.TT j + 1), c)) = ((topEnd X j, false), c.succ) := by
   simp only [symVar]
-  rw [dif_neg (hnc := by show ¬ 2 * segS X.TT j + 1 < 2 * segS X.TT j; omega)]
+  rw [dite_eq_right (hnc := by show ¬ 2 * segS X.TT j + 1 < 2 * segS X.TT j; omega)]
   show ((topEnd X j, decide (2 * segS X.TT j + 1 = 2 * segS X.TT j)), c.succ) = _
   simp
 
 theorem sl_xi (c : Fin X.m) :
     symLev X.p C0 CE1 CE2 X j (Sum.inl (Fin.last (2 * segS X.TT j + 1), c)) = 1 := by
   simp only [symLev]
-  rw [dif_neg (hnc := by show ¬ 2 * segS X.TT j + 1 < 2 * segS X.TT j; omega)]
+  rw [dite_eq_right (hnc := by show ¬ 2 * segS X.TT j + 1 < 2 * segS X.TT j; omega)]
 
 end Sym
 

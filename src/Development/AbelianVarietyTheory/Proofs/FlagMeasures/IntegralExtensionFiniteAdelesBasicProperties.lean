@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IntegralFiniteAdeleCompactClosedMultiples
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -18,19 +22,21 @@ theorem levelafC_natCast (m : ℕ) : levelafC (F := F) E (m : 𝓞 F) = (m : E �
   | zero => simp only [levelafC, Nat.cast_zero, map_zero, TensorProduct.tmul_zero]
   | succ k ih =>
     simp only [levelafC] at ih ⊢
-    rw [Nat.cast_succ, Nat.cast_succ, map_add, map_one, TensorProduct.tmul_add, ih,
+    rw [Nat.cast_succ, Nat.cast_succ, map_add (f := _), map_one, TensorProduct.tmul_add, ih,
       Algebra.TensorProduct.one_def]
 
 private theorem sum_afsplitI_one_apply_of_mem (S : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpectrum (𝓞 F))
     (hw : w ∈ S) : (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w = 1 := by
-  rw [show (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w =
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w =
       ∑ v ∈ S, (afsplitI v (1 : v.adicCompletion F)) w from map_sum (evalV F w) _ S]
   rw [Finset.sum_eq_single_of_mem w hw (fun v _ hv => afsplitI_ne v w (Ne.symm hv) 1),
     afsplitI_self]
 
 private theorem sum_afsplitI_one_apply_of_not_mem (S : Finset (HeightOneSpectrum (𝓞 F))) (w : HeightOneSpectrum (𝓞 F))
     (hw : w ∉ S) : (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w = 0 := by
-  rw [show (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w =
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show (∑ v ∈ S, afsplitI v (1 : v.adicCompletion F)) w =
       ∑ v ∈ S, (afsplitI v (1 : v.adicCompletion F)) w from map_sum (evalV F w) _ S]
   exact Finset.sum_eq_zero (fun v hv => afsplitI_ne v w (fun h => hw (by rw [h]; exact hv)) 1)
 
@@ -102,7 +108,7 @@ theorem expand_trace {ι : Type} [Fintype ι] [DecidableEq ι] (β : Module.Basi
     conv_lhs => rw [hx, hy]
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [mul_add, map_add, TensorProduct.tmul_add]
+    rw [mul_add, map_add (f := _), TensorProduct.tmul_add]
 
 private theorem adelstabT_inclE_of_forall_divisible (a : E ⊗[F] Ad F)
     (h : ∀ m : ℕ, 0 < m → ∃ t ∈ OAd F E, a = (m : E ⊗[F] Ad F) * t) (e : E) :

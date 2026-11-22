@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem tvMap_comp (e v : S.V) (l μ : E) (hee : S.hT e e = 0) (hev : S.hT e v =
     (hve : S.hT v e = 0) (y : S.V) :
     tvMap e (-v) μ (tvMap e v l y) = y + (S.hT e y * (l + S.hT v v + μ)) • e := by
   rw [tvMap_apply, tvMap_apply]
-  simp only [map_add, map_sub, map_smul, map_neg, LinearMap.neg_apply, LinearMap.add_apply,
+  simp only [map_add (f := _), map_sub, map_smul, map_neg, LinearMap.neg_apply, LinearMap.add_apply,
     LinearMap.sub_apply, LinearMap.smul_apply, hee, hev, hve, smul_eq_mul, mul_zero, add_zero,
     sub_zero, smul_zero]
   module

@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TBBTie
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpBig
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselNormSqEqBigCellNormSqAltImports
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TBBTie
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpBig
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselNormSqEqBigCellNormSqAltImports
+
+@[expose] public section
 
 noncomputable section
 

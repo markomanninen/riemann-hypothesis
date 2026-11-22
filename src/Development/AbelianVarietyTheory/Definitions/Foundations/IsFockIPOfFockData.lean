@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.FockAlg

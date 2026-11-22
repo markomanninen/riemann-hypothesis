@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -8,8 +12,8 @@ open GlobalTheory.Nef
 
 namespace GlobalTheory.Nef
 
-open Polynomial in
 
+open Polynomial in
 theorem coeff_max_mul_linear {F Γ : Type} [Field F] [LinearOrderedCommGroupWithZero Γ] (v : Valuation F Γ)
     (p : F[X]) (N : Γ) (α β : F) (h1 : ∀ i, v (p.coeff i) ≤ N) (h2 : ∃ i, v (p.coeff i) = N) :
     (∀ i, v (((C α + C β * X) * p).coeff i) ≤ max (v α) (v β) * N) ∧
@@ -58,8 +62,8 @@ theorem coeff_max_mul_linear {F Γ : Type} [Field F] [LinearOrderedCommGroupWith
     calc v α * v (p.coeff (i + 1)) ≤ v α * N := mul_le_mul' le_rfl (h1 _)
       _ < v β * N := mul_lt_mul_of_pos_right h (zero_lt_iff.2 hN)
 
-open Polynomial in
 
+open Polynomial in
 theorem coeff_max_prod_linear {F Γ ι : Type} [Field F] [LinearOrderedCommGroupWithZero Γ] (v : Valuation F Γ)
     (α β : ι → F) (s : Finset ι) :
     (∀ i, v ((∏ j ∈ s, (C (α j) + C (β j) * X)).coeff i) ≤ ∏ j ∈ s, max (v (α j)) (v (β j))) ∧

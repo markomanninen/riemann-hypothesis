@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
+module
+
+public import Mathlib
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
+
+@[expose] public section
 
 noncomputable section
 

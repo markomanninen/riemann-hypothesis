@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
-import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
-import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
-import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
-import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgTAll
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingEquivTranscendental
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CurveDictOfCm
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgStatus
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorStatus
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsRepDict
+public import Formalism.LocalToGlobal.InertKernelTheory.GenusOneModelExistsLattice
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementJets
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementAlgT
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AlgTAll
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingEquivTranscendental
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CurveDictOfCm
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgStatus
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorStatus
+
+@[expose] public section
 
 namespace GlobalTheory.CurveThetaInert
 

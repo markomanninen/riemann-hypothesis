@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.DefsGH
-import Formalism.LocalToGlobal.Columns.RecLevelLocT
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.DefsGH
+public import Formalism.LocalToGlobal.Columns.RecLevelLocT
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.UG Formalism.L2.Forms Matrix
 open scoped TensorProduct

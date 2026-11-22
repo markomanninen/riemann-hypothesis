@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevSph
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RealPack
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopReadAt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevSph
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RealPack
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopReadAt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -21,10 +25,10 @@ def twistedLevelSubgroup (W : _root_.GlobalTheory.MiS.RealPackAlt ex) (x : GA (I
   (Formalism.IndefR.Lev.levG _ (_root_.GlobalTheory.Fam.pk_z W).βX (datXP (_root_.GlobalTheory.Fam.pk_z W) (_root_.GlobalTheory.Fam.complexLevelStructure W) t)).comap (MulAut.conj x⁻¹).toMonoidHom
 theorem mem_level_sphere_iff_conj_mem_levS {W : _root_.GlobalTheory.MiS.RealPackAlt ex} {x : GA (I.rec7 l Z) (I.rec7 l Z).sp.X'} (h : GA (I.rec7 l Z) (I.rec7 l Z).sp.X') :
     h ∈ _root_.GlobalTheory.TopVol.sphericalLevelSubgroup W x ↔ x⁻¹ * h * x ∈ levS _ (_root_.GlobalTheory.Fam.pk_z W).βX (_root_.GlobalTheory.TopVol.datSph_alt W) := by
-  simp [_root_.GlobalTheory.TopVol.sphericalLevelSubgroup, levS, MulAut.conj_apply]
+  simp [_root_.GlobalTheory.TopVol.sphericalLevelSubgroup, levS]
 theorem mem_level_twist_iff_conj_mem_levS_datXP {W : _root_.GlobalTheory.MiS.RealPackAlt ex} {x : GA (I.rec7 l Z) (I.rec7 l Z).sp.X'} {t : W.P.T} (h : GA (I.rec7 l Z) (I.rec7 l Z).sp.X') :
     h ∈ _root_.GlobalTheory.TopVol.twistedLevelSubgroup W x t ↔ x⁻¹ * h * x ∈ levS _ (_root_.GlobalTheory.Fam.pk_z W).βX (datXP (_root_.GlobalTheory.Fam.pk_z W) (_root_.GlobalTheory.Fam.complexLevelStructure W) t) := by
-  simp [_root_.GlobalTheory.TopVol.twistedLevelSubgroup, levS, MulAut.conj_apply]
+  simp [_root_.GlobalTheory.TopVol.twistedLevelSubgroup, levS]
 end GlobalTheory.TopVol
 end
 end

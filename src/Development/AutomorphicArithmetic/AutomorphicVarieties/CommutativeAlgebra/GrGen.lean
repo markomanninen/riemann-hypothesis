@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -33,10 +37,11 @@ private theorem exists_decomp {O σ X : Type} [CommRing O] [Fintype σ] [AddComm
     apply hk
     have hm : Finsupp.weight wt m = j := hwt m (hTP m hmT)
     have hkm := hwt _ h1
-    rw [map_add, hm] at hkm
+    rw [map_add (f := _), hm] at hkm
     simpa using hkm
   · ext n
-    rw [map_sum, Finset.sum_congr rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_congr rfl
       (g := fun m => if c n = m then (if coeff n f ≠ 0 then coeff n f else 0) else 0),
       Finset.sum_ite_eq]
     · by_cases hn : coeff n f ≠ 0
@@ -98,9 +103,10 @@ theorem UpperTheory.V.Alg.gr_gen :
       · exact Algebra.subset_adjoin (Set.mem_union_left _ (he m))
     convert hmem using 1
     apply Subtype.ext
-    simp only [AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul, SubmonoidClass.coe_finset_prod,
+    simp only [AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, SubmonoidClass.coe_finsetProd,
       SubmonoidClass.coe_pow, e, WPres.zA, WPres.z]
-    rw [AlgHom.toLinearMap_apply, hfe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AlgHom.toLinearMap_apply, hfe, map_sum]
     refine Finset.sum_congr rfl fun m hm => ?_
     rw [if_pos hm, map_mul, monomial_eq_prod, map_prod]
     simp only [map_pow]

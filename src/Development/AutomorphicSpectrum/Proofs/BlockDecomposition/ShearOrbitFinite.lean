@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem shearGL_val (n : ℕ) (b : Fin (n + 1) → k) (hb : 1 + b (Fin.last n) �
   have h := GlobalTheory.CompanionTheory.MirPair.ShearOrbit.shear_mul_inv n b hb
   have hu : IsUnit (1 + vecMulVec (GlobalTheory.BZMir.eLast k n) b) :=
     ⟨⟨_, _, h, mul_eq_one_comm.mp h⟩, rfl⟩
-  rw [GlobalTheory.CompanionTheory.MirPair.shearGL, dif_pos hu]
+  rw [GlobalTheory.CompanionTheory.MirPair.shearGL, dite_eq_left hu]
   exact hu.unit_spec
 
 theorem shearGL_inv_val (n : ℕ) (b : Fin (n + 1) → k) (hb : 1 + b (Fin.last n) ≠ 0) :
@@ -68,8 +72,8 @@ theorem continuous_shearGL (n : ℕ) {r : kˣ} (hr : valuation k (r : k) < 1) :
       (continuous_const.add ((continuous_apply _).comp continuous_subtype_val)).inv₀ hne
     exact (continuous_const.sub (hinv.smul hv)).congr fun b => (GlobalTheory.CompanionTheory.MirPair.ShearOrbit.shearGL_inv_val n b.1 (hne b)).symm
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem continuous_levi (m : ℕ) : Continuous (levi k m) := by
   have hmat : Continuous (GlobalTheory.BZMir.glEmbHom k m) := by
     apply continuous_matrix

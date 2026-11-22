@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,15 +13,15 @@ open Finset
 def fac {σ : Type} (κ : σ →₀ ℕ) : ℕ := ∏ x ∈ κ.support, (κ x).factorial
 
 def jp {K A σ : Type} [CommRing K] [CommRing A] [Algebra K A] (P : MvPolynomial σ A) (f : MvPowerSeries σ K) : A :=
-  ∑ κ ∈ P.support, (((fac κ : ℕ) : K) * MvPowerSeries.coeff κ f) • MvPolynomial.coeff κ P
+  ∑ κ ∈ P.support, (((fac κ : ℕ) : K) * MvPowerSeries.coeff κ f) • AddMonoidAlgebra.coeff P κ
 
 theorem jp_eq_sum {K A σ : Type} [CommRing K] [CommRing A] [Algebra K A] (P : MvPolynomial σ A)
     (f : MvPowerSeries σ K) (S : Finset (σ →₀ ℕ)) (hS : P.support ⊆ S) :
-    jp P f = ∑ κ ∈ S, (((fac κ : ℕ) : K) * MvPowerSeries.coeff κ f) • MvPolynomial.coeff κ P := by
+    jp P f = ∑ κ ∈ S, (((fac κ : ℕ) : K) * MvPowerSeries.coeff κ f) • AddMonoidAlgebra.coeff P κ := by
   unfold jp
   refine Finset.sum_subset hS ?_
   intro κ _ hκ
-  have h0 : MvPolynomial.coeff κ P = 0 := by simpa [MvPolynomial.mem_support_iff] using hκ
+  have h0 : AddMonoidAlgebra.coeff P κ = 0 := by simpa [MvPolynomial.mem_support_iff] using hκ
   rw [h0, smul_zero]
 
 section Alg
@@ -26,10 +30,6 @@ variable {K Pl : Type} [CommRing K] {ι : Pl → Type}
 
 def atP (v : Pl) (f : MvPowerSeries (ι v) K) : MvPowerSeries (Σ v, ι v) K :=
   MvPowerSeries.rename (Function.Embedding.sigmaMk v) f
-
-theorem memLocalization_mul (v : Pl) (f g : MvPowerSeries (ι v) K) : atP v (f * g) = atP v f * atP v g := by
-  unfold atP
-  exact map_mul _ f g
 
 variable [Fintype Pl]
 
@@ -120,8 +120,8 @@ private theorem coe_rename_sigma_mk_eq_atP (v : Pl) (p : MvPolynomial (ι v) K) 
     exact congrArg eqv (Finsupp.embDomain_eq_mapDomain (Function.Embedding.sigmaMk v) u)
 
 theorem coeff_prod_rename (P : ∀ v, MvPolynomial (ι v) K) (n : (Σ v, ι v) →₀ ℕ) :
-    MvPolynomial.coeff n (∏ v, MvPolynomial.rename (Sigma.mk v) (P v)) =
-      ∏ v, MvPolynomial.coeff (eqv n v) (P v) := by
+    AddMonoidAlgebra.coeff (∏ v, MvPolynomial.rename (Sigma.mk v) (P v)) n =
+      ∏ v, AddMonoidAlgebra.coeff (P v) (eqv n v) := by
   have h1 : ((∏ v, MvPolynomial.rename (Sigma.mk v) (P v) : MvPolynomial (Σ v, ι v) K) :
       MvPowerSeries (Σ v, ι v) K) = ∏ v, atP v (P v : MvPowerSeries (ι v) K) := by
     rw [← Finset.prod_congr rfl fun v _ => coe_rename_sigma_mk_eq_atP v (P v)]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteConjugacyExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.G8FiniteAuxiliaryStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalComparisonInert
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteConjugacyExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.G8FiniteAuxiliaryStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalComparisonInert
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -190,7 +194,7 @@ theorem exists_projv {w : Above v} (hs : IsSplitAt w.1) (x : Av v) : ∃ X : Af 
       exact Pi.single_eq_of_ne (fun e => h (Subtype.ext e)) z
   funext u
   show pLoc E u.1 (sLoc E w.1 (x w) + sLoc E (conjAbove w).1 (x (conjAbove w))) = x u
-  rw [map_add, hl, hl]
+  rw [map_add (f := _), hl, hl]
   rcases above_cases hs u with rfl | rfl
   · rw [sg_same, sg_ne (conjAbove_ne hs).symm, add_zero]
   · rw [sg_ne (conjAbove_ne hs), sg_same, zero_add]
@@ -228,8 +232,8 @@ theorem glSplit_theta (hC : CjEx) (n : ℕ) {w : Above v} (hs : IsSplitAt w.1) (
     rw [glSplit_fst, glSplit_snd, ev, map_thetaGL_comp, evb_comp_cjv hC hs]
 
 theorem map_conjLoc_mem {n : ℕ} (w : Pl E) (g : GLw n (conjSrc (conjE E) w)) :
-    GeneralLinearGroup.map (conjLoc (conjE E) w) g ∈ GlobalTheory.LFun.KGL w n ↔
-      g ∈ GlobalTheory.LFun.KGL (conjSrc (conjE E) w) n := by
+    GeneralLinearGroup.map (conjLoc (conjE E) w) g ∈ GlobalTheory.LFun.KGL w (n := n) ↔
+      g ∈ GlobalTheory.LFun.KGL (conjSrc (conjE E) w) (n := n) := by
   have e1 : ∀ (h : GLw n (conjSrc (conjE E) w)) (i j : Fin n),
       Valued.v ((GeneralLinearGroup.map (conjLoc (conjE E) w) h).val i j) = Valued.v (h.val i j) :=
     fun h i j => (conjLoc_spec (conjE E) w).2.2 _
@@ -237,11 +241,11 @@ theorem map_conjLoc_mem {n : ℕ} (w : Pl E) (g : GLw n (conjSrc (conjE E) w)) :
   simp only [e1]
 
 theorem map_sA_mem {n : ℕ} (w : Above v) (g : GLw n (conjAbove w).1) :
-    GeneralLinearGroup.map (sA w) g ∈ GlobalTheory.LFun.KGL w.1 n ↔ g ∈ GlobalTheory.LFun.KGL (conjAbove w).1 n :=
+    GeneralLinearGroup.map (sA w) g ∈ GlobalTheory.LFun.KGL w.1 (n := n) ↔ g ∈ GlobalTheory.LFun.KGL (conjAbove w).1 n :=
   map_conjLoc_mem w.1 g
 
 theorem mem_Kn_iff {n : ℕ} {w : Above v} (hs : IsSplitAt w.1) (g : GL (Fin n) (Av v)) :
-    g ∈ Kn n v ↔ (glSplit n w hs g).1 ∈ GlobalTheory.LFun.KGL w.1 n ∧ (glSplit n w hs g).2 ∈ GlobalTheory.LFun.KGL w.1 n := by
+    g ∈ Kn n v ↔ (glSplit n w hs g).1 ∈ GlobalTheory.LFun.KGL w.1 (n := n) ∧ (glSplit n w hs g).2 ∈ GlobalTheory.LFun.KGL w.1 (n := n) := by
   have e : (glSplit n w hs g).2 = GeneralLinearGroup.map (sA w) (ev (conjAbove w) g) := by
     apply Units.ext
     ext i j

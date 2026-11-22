@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -69,7 +74,7 @@ theorem ringHom_eq_of_comap_eq_unramified_degree_one
       obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hy
       have hx : x = c * p + z + a := by rw [hyz]; ring
       have he : f x - g x = (f c - g c) * p + (f z - g z) := by
-        rw [hx]; simp only [map_add, map_mul, map_natCast, map_intCast]; ring
+        rw [hx]; simp only [map_add (f := _), map_mul, map_natCast, map_intCast]; ring
       rw [he]
       refine add_mem ?_ (sub_mem (hmap f hφ _ _ hz) (hmap g hψ _ _ hz))
       rw [pow_succ]

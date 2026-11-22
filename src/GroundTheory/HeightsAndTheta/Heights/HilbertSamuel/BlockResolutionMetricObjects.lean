@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -16,8 +21,8 @@ def blockCGram (d : HSMBlockDatum D K ι Ω) (n : ℕ) {r : ℕ} (b : Fin r → 
     Matrix (Fin r) (Fin r) ℂ :=
   fun k l => ∫ x, pairValH d.A n (b k) (b l) (blockPt d x) ∂d.dV
 
-open Classical in
 
+open Classical in
 def blockCChi (d : HSMBlockDatum D K ι Ω) (n : ℕ) : ℝ :=
   if h : ∃ p : (Σ r : ℕ, Fin r → MvPolynomial (Σ k, ι k) ℚ), IsSecBasisM d.y d.k₀ n p.2 then
     -(1 / 2) * Real.log (blockCGram d n h.choose.2).det.re

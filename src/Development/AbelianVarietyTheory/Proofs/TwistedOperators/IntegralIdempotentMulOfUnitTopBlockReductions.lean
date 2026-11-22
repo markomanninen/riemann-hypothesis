@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralInverseAtSplitPlacesOfUnitsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralInverseAtSplitPlacesOfUnitsStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
@@ -33,7 +37,6 @@ theorem isIntM_map {b a : ℕ} (X : Matrix (Fin b) (Fin a) SI) : IsIntM (X.map (
   exact (X i j).2
 
 open Classical in
-
 def redE (PP : Formalism.L2.DIV.Pl D.host.E) (x : EAf D) : Formalism.L2.DIV.kP PP :=
   if h : x ∈ SI then Formalism.L2.DIV.resS D.host.F PP ⟨x, h⟩ else 0
 
@@ -111,12 +114,6 @@ theorem topL_mul {m n : ℕ} (hnm : n ≤ m) (A : Matrix (Fin m) (Fin n) (EAf D)
   rw [topL_pos _ ⟨hi, j.2⟩, Matrix.mul_apply, Matrix.mul_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [topL_pos _ ⟨hi, k.2⟩]
-
-theorem topL_smul {m n : ℕ} (c : EAf D) (A : Matrix (Fin m) (Fin n) (EAf D)) : topL n (c • A) = c • topL n A := by
-  ext i j
-  by_cases h : i.val < m ∧ j.val < n
-  · rw [topL_pos _ h, Matrix.smul_apply, Matrix.smul_apply, topL_pos _ h]
-  · rw [topL_neg _ h, Matrix.smul_apply, topL_neg _ h, smul_zero]
 
 end GlobalTheory.HalfUnit
 

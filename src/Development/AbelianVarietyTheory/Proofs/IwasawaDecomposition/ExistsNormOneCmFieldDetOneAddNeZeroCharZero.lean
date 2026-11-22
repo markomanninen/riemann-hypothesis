@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CMScalar
@@ -40,7 +45,7 @@ theorem exists_unit_norm_one_det_ne_zero (L : Type) [Field L] [NumberField L] [I
     have hd' : (1 : L) - (t : L) * i ≠ 0 := by
       intro h; apply hden (-t); push_cast; linear_combination h
     have e : c (f t) = (1 + (t : L) * i) / (1 - (t : L) * i) := by
-      simp only [f, map_div₀, map_sub, map_add, map_one, map_mul, map_ratCast, hci]
+      simp only [f, map_div₀, map_sub, map_add (f := _), map_one, map_mul, map_ratCast, hci]
       congr 1 <;> ring
     rw [e, div_mul_div_comm]
     exact (div_eq_one_iff_eq (mul_ne_zero hd hd')).2 (by ring)

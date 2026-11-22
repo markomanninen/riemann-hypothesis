@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumSupportRename
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvSelfTwo
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CovariantDerivativeValueCharacterGermsStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CanonicalGaugeEigenvectorPairingIntegralStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumSupportRename
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvSelfTwo
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CovariantDerivativeValueCharacterGermsStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CanonicalGaugeEigenvectorPairingIntegralStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField IsDedekindDomain IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj
@@ -21,7 +25,7 @@ def ballIdeal {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [CommRing
   add_mem' := by
     intro a b ha hb
     show v (algebraMap O C (a + b)) < t
-    rw [map_add]
+    rw [map_add (f := _)]
     exact v.map_add_lt ha hb
   smul_mem' := by
     intro c a ha
@@ -41,7 +45,8 @@ theorem dAct_mulVec {R : Type} [CommRing R] {d : ℕ} {OE : Type} [CommRing OE] 
     (TB.dAct k B a).mulVec (fun i => algebraMap R k (u i)) = algebraMap R k s • (fun i => algebraMap R k (u i)) := by
   funext i
   have h := congrArg (algebraMap R k) (congrFun hu i)
-  simp only [Matrix.mulVec, dotProduct, linPart, Matrix.of_apply, map_sum, map_mul, Pi.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, linPart, Matrix.of_apply, map_sum, map_mul, Pi.smul_apply,
     smul_eq_mul] at h
   simp only [Matrix.mulVec, dotProduct, TB.dAct, FB.actK, MvPowerSeries.coeff_map, Pi.smul_apply, smul_eq_mul]
   exact h
@@ -96,14 +101,14 @@ theorem exists_germ_valuation_eq : ∀ (C : Type) [Field C] [CharZero C] (v : Va
         rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_rename_mapDomain _ (letterEquiv Ty r n).injective]
         exact MvPolynomial.mem_support_iff.1 hmo
       exact hP _ hmem (letterEquiv Ty r n (l, b))
-        (by rwa [Finsupp.mapDomain_apply (letterEquiv Ty r n).injective]))
+        (by rwa [Finsupp.mapDomain_apply_of_injective (letterEquiv Ty r n).injective]))
   refine ⟨PowGerm.boxSer g, ?_⟩
   rw [map_boxSer, MvPolynomial.map_rename,
     GlobalTheory.nabValN_boxSer O d OE B C h w0 hh k n _ (Σ τ : Ty, Fin (r τ)) (Letter Ty r n) (letterEquiv Ty r n) _
       (fun l i => algebraMap O C (u l i)) _ (fun _ => rfl) (fun _ => rfl),
     MvPolynomial.support_map_of_injective _ hinj]
   simp only [MvPolynomial.coeff_map]
-  rw [hsum, map_add]
+  rw [hsum, map_add (f := _)]
   exact v.map_add_eq_of_lt_left hρ
 
 end GlobalTheory.CharValue

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.BaseChangeCharts
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.BaseChangeCharts
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -32,7 +36,8 @@ theorem sum_regroup {M M' : Type} [AddCommGroup M] [Module K M] [AddCommGroup M'
     (a : M →ₛₗ[algebraMap K F] M') {n N : ℕ} (c : Fin n → F) (e : Fin N → F) (m : Fin N → Fin n → K)
     (hc : ∀ i, c i = ∑ l, m l i • e l) (x : Fin n → M) :
     ∑ i, c i • a (x i) = ∑ l, e l • a (∑ i, m l i • x i) := by
-  simp only [map_sum, map_smulₛₗ, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hc, Finset.sum_smul]
@@ -67,7 +72,8 @@ theorem comb_iff (X : Submodule R (V₀ × ∀ j, P₀ j))
     choose Λ hΛ using fun l j => (hb j).coord (B.coord (q l))
     choose w hw using fun l => desc _ (Λ l) (hΛ l)
     have hw' : ∀ l j, π j (w l) = ∑ i, B.coord (q l) (c i) • ρ' j ((x i).2 j) := fun l j => by
-      rw [hw, e₂, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hw, e₂, map_sum]
       exact Finset.sum_congr rfl fun i _ => hΛ l j _ _
     refine ⟨S.card, fun l => B (q l), fun l => ∑ i, B.coord (q l) (c i) • ρ (x i).1, w, fun l => ?_,
       e₁.trans (sum_regroup a c _ _ hc _), fun j => ?_⟩
@@ -76,10 +82,12 @@ theorem comb_iff (X : Submodule R (V₀ × ∀ j, P₀ j))
       choose m hm using hr
       refine (hE _ _).2 ⟨r, nonZeroDivisors.coe_ne_zero r, ∑ i, m i • x i,
         Submodule.sum_mem _ fun i _ => X.smul_mem _ (hx i), ?_, fun j => ?_⟩
-      · rw [Finset.smul_sum, Prod.fst_sum, map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.smul_sum, Prod.fst_sum, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Prod.smul_fst, map_smulₛₗ, hm, smul_smul, Algebra.smul_def]
-      · rw [hw', Finset.smul_sum, Prod.snd_sum, Finset.sum_apply, map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [hw', Finset.smul_sum, Prod.snd_sum, Finset.sum_apply, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [Prod.smul_snd, Pi.smul_apply, map_smulₛₗ, hm, smul_smul, Algebra.smul_def]
     · simp only [hw']
@@ -117,7 +125,8 @@ theorem famComb_iff (k : ℕ) {n : ℕ} (c : Fin n → F) (f : Fin n → Fam D (
         ((DegPre.BF D F).left.presheaf.map (homOfLE (IndefiniteRowSideFullHecke.BaseChangeCharts.chart_le_bcB D F α j)).op).hom
           (((IndefiniteRowSideFullHecke.BaseChangeCharts.bcB D F).left.app (LB.wchart D.P.L (DegPre.famφ D (FractionRing R) α) j)).hom
             (((f i).s α).f j)) := fun j => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul]
     refine congrArg (DegPre.constBF D F (c i) (LB.wchart D.P.L (DegPre.famφ D F α) j) * ·)
@@ -193,8 +202,8 @@ theorem expandsG_iff_comb (k : ℕ) (v : GroupSec U F k) (s : Fam D.toPre F k) :
     (exists_fam_coord D.toPre F k s)).trans ?_)
   refine exists₄_congr fun n c σ f => and_congr Iff.rfl (and_congr Iff.rfl (famComb_iff D.toPre F k c f s).symm)
 
-variable (G) in
 
+variable (G) in
 abbrev prGK : (UnifPre.GF (G := G) F).left ⟶ pullback G.hom (jK R) :=
   (snd (TFK (R := R) F) ((Over.pullback (jK R)).obj G)).left
 

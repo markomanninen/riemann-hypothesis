@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPoly
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPoly
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -17,7 +21,8 @@ private theorem hom_two {n : ℕ} {A : Type} [CommRing A] (P : MvPolynomial (Fin
     ← Finset.sum_fiberwise_of_maps_to (t := Finset.range (n + 1)) (g := fun d => d 1)
       (fun d h => by have := hd d h; simp only [Finset.mem_range]; omega)]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum, Finset.sum_mul, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d h => ?_
   rw [Finset.mem_filter] at h
   have h0 : d 0 = n - i := by have := hd d h.1; have := h.2; omega
@@ -42,7 +47,7 @@ private theorem lam_two {n : ℕ} {A E : Type} [CommRing A] [Ring E] [Algebra A 
       simp only [Polynomial.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply, map_mul, map_pow, map_neg,
         map_one]
       ring
-    rw [Det.lam, hchi, finset_sum_coeff, Finset.sum_eq_single j]
+    rw [Det.lam, hchi, finsetSum_coeff, Finset.sum_eq_single j]
     · rw [coeff_C_mul_X_pow, if_pos rfl, ← mul_assoc, ← mul_pow]; simp
     · intro i hi hij
       have : i ≤ n := by simpa [Nat.lt_succ_iff] using hi
@@ -92,6 +97,6 @@ theorem UpperTheory.V.CA.d_chi :
         smul_eq_C_mul]
       ring
     have h2 := congrArg (fun p => p.coeff j) h'
-    simp only [finset_sum_coeff, coeff_C_mul_X_pow, Finset.sum_ite_eq, Finset.mem_range, Nat.lt_succ_iff, hj,
+    simp only [finsetSum_coeff, coeff_C_mul_X_pow, Finset.sum_ite_eq, Finset.mem_range, Nat.lt_succ_iff, hj,
       if_true] at h2
     exact h2.symm

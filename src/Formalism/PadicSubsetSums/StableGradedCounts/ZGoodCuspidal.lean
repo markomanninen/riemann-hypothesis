@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.PrimitiveRootFifteenSubOneUnit
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.PrimitiveRootFifteenSubOneUnit
+
+@[expose] public section
 
 open Polynomial
 

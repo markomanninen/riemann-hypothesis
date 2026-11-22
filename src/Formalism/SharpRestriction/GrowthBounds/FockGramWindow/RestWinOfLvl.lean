@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LvlDef
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfMinimalVector
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FockKSmulRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LvlDef
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfMinimalVector
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.FockKSmulRight
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.IsModuleTopologyTens
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.FinAlg
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.IsModuleTopologyTens
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.FinAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem ev_OE (x : AF F ⊗[F] E) : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cof
     exact OE_mul v (AddSubgroup.subset_closure ⟨evFin F v a, ha, 1, by simp⟩) he
   | add x y hx hy =>
     filter_upwards [hx, hy] with v h1 h2
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem h1 h2
 
 theorem ev_OE_latO {k : ℕ} (bs : Module.Basis (Fin k) F E) : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cofinite,
@@ -95,8 +99,12 @@ theorem ev_OE_latO {k : ℕ} (bs : Module.Basis (Fin k) F E) : ∀ᶠ v : Height
     have hz' : z ∈ (OE E v : Set (v.adicCompletion F ⊗[F] E)) := hz
     rw [OE_eq_image] at hz'
     obtain ⟨c, hc, rfl⟩ := hz'
-    rw [map_sum, Finsupp.coe_finset_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+    change (Finsupp.applyAddHom j) (∑ i, B.repr (c i ⊗ₜ[F] ((RingOfIntegers.basis E) i : E))) ∈ _
+    rw [map_sum]
     refine sum_mem fun i _ => ?_
+    change B.repr (c i ⊗ₜ[F] ((RingOfIntegers.basis E) i : E)) j ∈ _
     rw [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, smul_eq_mul]
     exact mul_mem (hc i trivial) (h2 i j)
   · intro hz

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
@@ -37,7 +41,7 @@ theorem fracIotaBasicOpen : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     set y := (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom r with hy
     have hv : valR x' ⊤ ((t.G.hom.appTop).hom y) = 0 := by
       unfold valR
-      rw [dif_pos ht]
+      rw [dite_eq_left ht]
       have : x'.appLE ⊤ ⊤ ht = x'.appTop := Scheme.Hom.appLE_eq_app _
       rw [this, e1, hy]
       simpa using hr

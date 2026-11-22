@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibreProductAffineOpenClosureLegsEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerConditionRestrictBasicOpenOfAffine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromSpecAppLETopEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineHomOfField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibreProductAffineOpenClosureLegsEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerConditionRestrictBasicOpenOfAffine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromSpecAppLETopEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineHomOfField
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -63,7 +68,7 @@ theorem eq_zero_of_kills_both : ∀ (Z Z' X X' : Scheme.{0}) (p : Z ⟶ X) (p' :
         exact hp' D _ hDO htop r
     | zero => rw [map_zero, ← hδ, map_zero]
     | one => rw [map_one, h1]
-    | add x y _ _ hx hy => rw [map_add, hadd D hDO htop, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hadd D hDO htop, hx, hy, add_zero]
     | neg x _ hx => rw [map_neg, ← hδ, map_neg, hδ, hx, neg_zero]
     | mul x y _ _ hx hy => rw [map_mul, hmul D hDO htop, hx, hy, mul_zero, mul_zero, add_zero]
   have hall : ∀ b : Γ(Z', D), Δ D b = 0 := by

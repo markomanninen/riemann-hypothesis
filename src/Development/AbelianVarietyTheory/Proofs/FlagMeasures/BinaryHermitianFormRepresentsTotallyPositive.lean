@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMass
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LandherrAndLandherrSt
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCMFieldOfStar
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LandherrAndLandherrSt
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCMFieldOfStar
+
+@[expose] public section
 
 noncomputable section
 

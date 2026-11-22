@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleCupAlexanderWhitneyLeibnizEvalDegreeZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleCupAlexanderWhitneyLeibnizEvalDegreeZero
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -14,7 +18,7 @@ theorem awleib_ext_pf : EtaleSimplicialCochainEqOfEvaluationsAgree := by
   · obtain ⟨N, rfl⟩ := hp
     rw [← cancel_epi (chainsXIso R E N).inv]
     apply Sheaf.hom_ext
-    apply sheafify_hom_ext _ _ _ (Sheaf.cond _)
+    apply sheafify_hom_ext _ _ _ (K.X q).property
     ext U : 2
     apply ModuleCat.free_hom_ext
     intro x

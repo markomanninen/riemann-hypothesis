@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsobaricDiscreteSelfDualStrongMultiplicityOne
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
-import Formalism.LocalToGlobal.GaloisLevelStructure.Checks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BlockSplitAll
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsobaricDiscreteSelfDualStrongMultiplicityOne
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+public import Formalism.LocalToGlobal.GaloisLevelStructure.Checks
+
+@[expose] public section
 
 namespace GlobalTheory.TypeOrthogonality
 
@@ -262,7 +266,7 @@ theorem orth_of_not_iso (hB : Good ρ B) (hfin : ∀ N : ℕ, 0 < N → FiniteDi
         · intro w hw
           have e : (a : GAf L n → W) + b - (Classical.choose (hex a) + Classical.choose (hex b)) =
             ((a : GAf L n → W) - Classical.choose (hex a)) + (b - Classical.choose (hex b)) := by abel
-          rw [e, map_add, LinearMap.add_apply, (Classical.choose_spec (hex a)).2 w hw,
+          rw [e, map_add (f := _), LinearMap.add_apply, (Classical.choose_spec (hex a)).2 w hw,
             (Classical.choose_spec (hex b)).2 w hw, add_zero]
       map_smul' := fun c a => by
         apply Subtype.ext

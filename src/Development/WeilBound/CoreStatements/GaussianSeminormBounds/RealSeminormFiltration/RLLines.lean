@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,8 +123,8 @@ theorem exp_preserves {Y J : Matrix ι ι ℂ} (h : Yᴴ * J + J * Y = 0) :
   rw [← Matrix.exp_conjTranspose, ← he, Matrix.mul_assoc, ← Matrix.exp_add_of_commute _ _ (Commute.refl Y).neg_left]
   simp
 
-open scoped Matrix.Norms.L2Operator in
 
+open scoped Matrix.Norms.L2Operator in
 theorem exists_log_unitary {k J : Matrix ι ι ℂ} (hk : kᴴ * k = 1) (hJ : Jᴴ = J) (hc : Commute k J) :
     ∃ Y : Matrix ι ι ℂ, Yᴴ = -Y ∧ Commute Y J ∧ NormedSpace.exp Y = k := by
   have hku : k ∈ unitary (Matrix ι ι ℂ) := Matrix.mem_unitaryGroup_iff'.2 hk
@@ -334,7 +338,7 @@ theorem piInf_cA {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace F}
     piInf τ (cA σ z) = star (piInf τ z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, star_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, star_add]
   | tmul a e =>
     show piInf τ (a ⊗ₜ[F] σ e) = _
     rw [piInf_tmul, piInf_tmul, h.2.2.2, star_mul']
@@ -372,7 +376,7 @@ theorem eq_zero_of_piInf {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w :
     exact (one_mul _).symm.trans h3
   have hre : ∀ w i, (C.repr x i).1 w = 0 := fun w => by
     have e := hinf w
-    rw [hdec, map_add, piInf_tmul, piInf_tmul, hB0, hB1, map_one, mul_one] at e
+    rw [hdec, map_add (f := _), piInf_tmul, piInf_tmul, hB0, hB1, map_one, mul_one] at e
     have hi := congrArg Complex.im e
     have him := im_ne_zero h hβ (τ w).1
     set p := InfinitePlace.Completion.extensionEmbedding w ((C.repr x 0).1 w) with hp
@@ -437,7 +441,7 @@ theorem exists_section {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : I
         piInf (τ w) (ofInf c • ((1 : AF F) ⊗ₜ[F] y)) = ((e w (c w) : ℝ) : ℂ) * (τ w).1 y := fun c y => by
       rw [← he, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
       rfl
-    rw [map_add, hc, hc]
+    rw [map_add (f := _), hc, hc]
     simp only [(e w).apply_symm_apply, map_one, mul_one]
     apply Complex.ext
     · simp only [Complex.add_re, Complex.ofReal_re, Complex.re_ofReal_mul, r]; ring
@@ -448,8 +452,8 @@ theorem exists_section {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : I
 
 variable {β : Type} [Fintype β] [DecidableEq β]
 
-omit [Fintype β] [DecidableEq β] in
 
+omit [Fintype β] [DecidableEq β] in
 theorem mat_ext {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) {X X' : Matrix β β (AE F E)}
     (hx : At (evI F) (X - X')) (hinf : ∀ w, X.map (piInf (τ w)) = X'.map (piInf (τ w))) : X = X' := by
   ext i j
@@ -457,8 +461,8 @@ theorem mat_ext {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (τ : ∀ w : Infinite
   rw [map_sub, sub_eq_zero]
   exact congrFun (congrFun (hinf w) i) j
 
-omit [DecidableEq β] in
 
+omit [DecidableEq β] in
 theorem map_form {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (g J : Matrix β β (AE F E)) :
     (gᵀ * J * g.map (cA σ)).map (piInf τ) = (g.map (piInf τ))ᵀ * J.map (piInf τ) * (g.map (piInf τ)).map star := by
   rw [Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map]

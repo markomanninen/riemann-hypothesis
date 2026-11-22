@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.WeilBound.CoreStatements.FlagImmersions.RealTowerPlurisubharmonicPotential
-import Development.WeilBound.CoreStatements.FlagImmersions.PshSumPotentialsSmallParameter
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.RefLinked
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.WeilBound.CoreStatements.FlagImmersions.RealTowerPlurisubharmonicPotential
+public import Development.WeilBound.CoreStatements.FlagImmersions.PshSumPotentialsSmallParameter
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,6 @@ theorem comp_psh {D : ℕ} (S : PB.AnSys D (Option (Ψ × Fin N))) (k : ℕ) (hk
     have h3 := hbase x j y hy' w
     convert h3 using 2
     funext z
-    simp only [Function.comp_apply]
     show (S.th none).φ x _ + S.phT none t _ + -c₀ * S.Θ.φ x _ =
       (S.th none).φ x _ + -c₀ * S.Θ.φ x _
     rw [h0]
@@ -116,7 +119,7 @@ theorem comp_psh {D : ℕ} (S : PB.AnSys D (Option (Ψ × Fin N))) (k : ℕ) (hk
         have hne : (p.2 : ℕ) + 1 ≠ N := fun h => ha ⟨p, rfl, h⟩
         have := p.2.isLt
         omega
-      rw [dif_pos hlt]
+      rw [dite_eq_left hlt]
       have := hdom p.1 p.2 ⟨(p.2 : ℕ) + 1, hlt⟩ (by
         show (p.2 : ℕ) ≤ (p.2 : ℕ) + 1
         omega)

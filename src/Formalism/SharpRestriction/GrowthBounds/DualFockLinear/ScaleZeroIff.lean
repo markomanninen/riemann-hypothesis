@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.PairFormula
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.PairFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ variable {p n' : ℕ} [Fact p.Prime] [NeZero n'] {W Qq O Kf : Type} [CommRing W]
   [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf]
   {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} {m : ℕ}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem realAt_gen (hS : HidaSetting p n' W Qq O Kf ι σ j w) (φ : WF p n' ≃+* W) (hφ : IsWittIdent σ φ)
     (hm1 : 1 ≤ m) (r : ℕ) (hr1 : 1 ≤ r) (hr2 : r < m + 1) (d : Fin n' → ℕ) (cP κ : ℕ)
     (hMD : MultDiv O p κ (k := m + 1) d)
@@ -91,13 +95,13 @@ theorem realAt_gen (hS : HidaSetting p n' W Qq O Kf ι σ j w) (φ : WF p n' ≃
       obtain ⟨c1, hc1⟩ := hsym mm
       obtain ⟨c2, hc2⟩ := hint mm
       refine ⟨c2 + w ^ cP * c1, ?_⟩
-      have e1 : coeff mm (subst p n' O w n' r gv Ff) =
-          coeff mm (subst p n' O w n' r gv Ff - C (algebraMap O (KK O) (w ^ o)) * sig) +
-            algebraMap O (KK O) (w ^ o) * coeff mm sig := by
+      have e1 : AddMonoidAlgebra.coeff (subst p n' O w n' r gv Ff) mm =
+          AddMonoidAlgebra.coeff (subst p n' O w n' r gv Ff - C (algebraMap O (KK O) (w ^ o)) * sig) mm +
+            algebraMap O (KK O) (w ^ o) * AddMonoidAlgebra.coeff sig mm := by
         rw [coeff_sub, coeff_C_mul]
         ring
-      show coeff mm (subst p n' O w n' r gv Ff) = _
-      rw [e1, hc1, hc2, ← map_mul, ← map_add]
+      show AddMonoidAlgebra.coeff (subst p n' O w n' r gv Ff) mm = _
+      rw [e1, hc1, hc2, ← map_mul, ← map_add (f := _)]
       congr 1
       ring
     have h2 := (hv2 gv hgv e.dual hbv F' (o + 0)).1 h1
@@ -159,7 +163,7 @@ theorem realAt_gen (hS : HidaSetting p n' W Qq O Kf ι σ j w) (φ : WF p n' ≃
         algebraMap O Kf w ^ o * kapR hS ((p : KK O) ^ κ * fock SF sig / (((∏ s, (d s).factorial : ℕ) : ℕ) : KK O)) +
           algebraMap O Kf w ^ (o + cP) * algebraMap O Kf z := by
       rw [← hz]
-      simp only [map_div₀, map_mul, map_add, map_pow, map_natCast, kapR_alg, e3]
+      simp only [map_div₀, map_mul, map_add (f := _), map_pow, map_natCast, kapR_alg, e3]
       ring
     rw [e4, zpow_neg, zpow_natCast, map_mul, map_pow, pow_add]
     field_simp

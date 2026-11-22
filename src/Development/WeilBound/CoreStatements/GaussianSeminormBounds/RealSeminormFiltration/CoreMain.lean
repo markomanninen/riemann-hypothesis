@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasGl
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasGl
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,8 @@ theorem casK_intertw {V : Type} [AddCommGroup V] [Module ℂ V] {ρ : Ix r s →
     {ρ' : Ix r s → Ix r s → Module.End ℂ M} (ι : V →ₗ[ℂ] M)
     (h : ∀ a b, sameBlock a b → ∀ v, ι (ρ a b v) = ρ' a b (ι v)) (v : V) :
     ι (casK ρ v) = casK ρ' (ι v) := by
-  simp only [casK, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casK, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   split_ifs with hab
   · simp only [Module.End.mul_apply]
@@ -231,7 +236,7 @@ theorem local_of (act : Mat r s →ₗ[ℂ] Module.End ℂ M) (hL : IsLie act) (
       have h1 : ρ a b w0 ∈ W := hWK a b hsb w0 hw0
       have h2 : ρ a b v0 ∈ Wᗮ := hWpK a b hsb v0 hv0
       have h3 : ρ a b w0 = - ρ a b v0 := by
-        rw [eq_neg_iff_add_eq_zero, ← map_add, hfwv, hw.2 a b hab]
+        rw [eq_neg_iff_add_eq_zero, ← map_add (f := _), hfwv, hw.2 a b hab]
       have h4 : ρ a b w0 = 0 := by
         have : ρ a b w0 ∈ W ⊓ Wᗮ := ⟨h1, by rw [h3]; exact Wᗮ.neg_mem h2⟩
         rw [Submodule.inf_orthogonal_eq_bot] at this
@@ -481,7 +486,7 @@ theorem local_of (act : Mat r s →ₗ[ℂ] Module.End ℂ M) (hL : IsLie act) (
           rw [mul_comm, map_mul, Module.End.mul_apply, hpx, map_zero]
         have h2 : Polynomial.aeval C (p * q) y = 0 := by
           rw [map_mul, Module.End.mul_apply, hqy, map_zero]
-        rw [map_add, h1, h2, add_zero]
+        rw [map_add (f := _), h1, h2, add_zero]
       zero_mem' := ⟨1, by simp, by simp⟩
       smul_mem' := by
         rintro a x ⟨q, hq, hqx⟩
@@ -504,7 +509,7 @@ theorem local_of (act : Mat r s →ₗ[ℂ] Module.End ℂ M) (hL : IsLie act) (
     induction P using Polynomial.induction_on' with
     | add p q hp hq =>
       intro v
-      simp only [map_add, LinearMap.add_apply, Submodule.coe_add, hp, hq]
+      simp only [map_add (f := _), LinearMap.add_apply, Submodule.coe_add, hp, hq]
     | monomial n a =>
       intro v
       rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, Module.End.mul_apply,

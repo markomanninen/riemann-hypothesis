@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockOneStepConst
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelDensities.Pieces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockOneStepConst
+
+@[expose] public section
 
 noncomputable section
 

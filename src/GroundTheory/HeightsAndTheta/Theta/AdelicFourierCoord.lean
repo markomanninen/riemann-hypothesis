@@ -1,6 +1,11 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
-import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Theta
@@ -21,7 +26,7 @@ theorem measurePreserving_comp_equiv {α : Type*} [MeasurableSpace α] (μ : Mea
     MeasurePreserving (fun x : ι → α ↦ x ∘ e) (Measure.pi fun _ ↦ μ)
       (Measure.pi fun _ ↦ μ) := by
   have hm : Measurable (fun x : ι → α ↦ x ∘ e) :=
-    measurable_pi_lambda _ fun k ↦ measurable_pi_apply (e k)
+    Measurable.of_eval fun k ↦ measurable_pi_apply (e k)
   refine ⟨hm, (Measure.pi_eq fun s hs ↦ ?_).symm⟩
   rw [Measure.map_apply hm (MeasurableSet.univ_pi hs)]
   have hpre : (fun x : ι → α ↦ x ∘ e) ⁻¹' Set.pi Set.univ s =
@@ -114,8 +119,8 @@ theorem finPartPi_mulVec (hNM : N * M = 1) (hMN : M * N = 1) (x : ι → 𝔸[K]
     mulVecHomeomorph_apply]
 
 theorem comp_mulVec_mem_schwartzBruhatPi (hNM : N * M = 1) (hMN : M * N = 1)
-    {F : (κ → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi K κ) :
-    (fun x ↦ F (M.map (algebraMap K 𝔸[K]) *ᵥ x)) ∈ schwartzBruhatPi K ι := by
+    {F : (κ → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := K) (ι := κ)) :
+    (fun x ↦ F (M.map (algebraMap K 𝔸[K]) *ᵥ x)) ∈ schwartzBruhatPi (K := K) (ι := ι) := by
   induction hF using Submodule.span_induction with
   | mem G hG =>
     obtain ⟨φ, g, hg, rfl⟩ := hG
@@ -136,8 +141,8 @@ theorem comp_mulVec_mem_schwartzBruhatPi (hNM : N * M = 1) (hMN : M * N = 1)
   | add G H _ _ hG hH => exact add_mem hG hH
   | smul c G _ hG => exact Submodule.smul_mem _ c hG
 
-omit [Fintype κ] [DecidableEq ι] [DecidableEq κ] in
 
+omit [Fintype κ] [DecidableEq ι] [DecidableEq κ] in
 theorem measurePreserving_mulVec_fin {n : ℕ} (M N : Matrix (Fin n) (Fin n) K) (hNM : N * M = 1)
     (hMN : M * N = 1) :
     MeasurePreserving (fun x : Fin n → 𝔸[K] ↦ M.map (algebraMap K 𝔸[K]) *ᵥ x)
@@ -207,8 +212,8 @@ theorem measurePreserving_mulVec (hNM : N * M = 1) (hMN : M * N = 1) :
   rw [hfun]
   exact h3.comp (h2.comp h1)
 
-omit [Fintype κ] [DecidableEq κ] in
 
+omit [Fintype κ] [DecidableEq κ] in
 theorem adelicFourierPi_comp_mulVec (M N : Matrix ι ι K) (hNM : N * M = 1) (hMN : M * N = 1)
     (F : (ι → 𝔸[K]) → ℂ) (y : ι → 𝔸[K]) :
     adelicFourierPi K (fun x ↦ F (M.map (algebraMap K 𝔸[K]) *ᵥ x)) y =

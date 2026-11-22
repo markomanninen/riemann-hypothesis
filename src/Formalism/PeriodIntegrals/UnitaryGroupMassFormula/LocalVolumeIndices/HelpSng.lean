@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.Single
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.Single
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,8 @@ theorem HelpSng_theta_mul (x y : Fv I.F p ⊗[I.F] I.E) :
     | tmul c d =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, localTheta_tmul, localTheta_tmul, localTheta_tmul,
         Algebra.TensorProduct.tmul_mul_tmul, HelpSng_sL_mul]
-    | add y1 y2 h1 h2 => simp only [mul_add, map_add, h1, h2]
-  | add x1 x2 h1 h2 => simp only [add_mul, map_add, h1, h2]
+    | add y1 y2 h1 h2 => simp only [mul_add, map_add (f := _), h1, h2]
+  | add x1 x2 h1 h2 => simp only [add_mul, map_add (f := _), h1, h2]
 
 theorem HelpSng_theta_one : thetaP I p 1 = eP I p := by
   rw [Algebra.TensorProduct.one_def, localTheta_tmul]
@@ -61,7 +65,7 @@ theorem HelpSng_eval_theta (t : Fv I.F p ⊗[I.F] I.E) :
     rw [localTheta_tmul, tensMap_tmul_lemma_2]
     show singleV I.F p a p ⊗ₜ[I.F] b = a ⊗ₜ[I.F] b
     rw [Comp_single_same]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem HelpSng_eval_theta_ne (v : HeightOneSpectrum (𝓞 I.F)) (hv : v ≠ p) (t : Fv I.F p ⊗[I.F] I.E) :
     tensMap (E := I.E) (evalV I.F v) (thetaP I p t) = 0 := by
@@ -71,7 +75,7 @@ theorem HelpSng_eval_theta_ne (v : HeightOneSpectrum (𝓞 I.F)) (hv : v ≠ p) 
     rw [localTheta_tmul, tensMap_tmul_lemma_2]
     show singleV I.F p a v ⊗ₜ[I.F] b = 0
     rw [Comp_single_ne I p v hv, TensorProduct.zero_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 theorem HelpSng_eval_e : tensMap (E := I.E) (evalV I.F p) (eP I p) = 1 := by
   show tensMap (E := I.E) (evalV I.F p) (chi I p ⊗ₜ[I.F] (1 : I.E)) = 1
@@ -94,7 +98,7 @@ theorem HelpSng_e_theta (t : Fv I.F p ⊗[I.F] I.E) : eP I p * thetaP I p t = th
     show (chi I p ⊗ₜ[I.F] (1 : I.E)) * (sL I p a ⊗ₜ[I.F] b) = sL I p a ⊗ₜ[I.F] b
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, show chi I p = sL I p 1 from rfl,
       ← HelpSng_sL_mul, one_mul]
-  | add x y hx hy => simp only [mul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [mul_add, map_add (f := _), hx, hy]
 
 theorem idempotent_complement_mul (t : Fv I.F p ⊗[I.F] I.E) : (1 - eP I p) * thetaP I p t = 0 := by
   rw [sub_mul, one_mul, HelpSng_e_theta, sub_self]
@@ -118,7 +122,7 @@ theorem HelpSng_sig_theta (t : Fv I.F p ⊗[I.F] I.E) :
   induction t using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a b => rw [localTheta_tmul, sigR_tmul_lemma_3, sigR_tmul_lemma_3, localTheta_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def mixM {m o : Type} (A : Matrix m o (Af I.F ⊗[I.F] I.E)) (K : Matrix m o (Fv I.F p ⊗[I.F] I.E)) :
     Matrix m o (Af I.F ⊗[I.F] I.E) :=
@@ -129,7 +133,8 @@ theorem HelpSng_mix_mul {m o q : Type} [Fintype o] (A : Matrix m o (Af I.F ⊗[I
     (L : Matrix o q (Fv I.F p ⊗[I.F] I.E)) :
     mixM I p A K * mixM I p B L = mixM I p (A * B) (K * L) := by
   ext i j
-  simp only [mixM, Matrix.mul_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mixM, Matrix.mul_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul,
     map_sum, Finset.mul_sum, HelpSng_theta_mul]
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl (fun k _ => ?_)
@@ -159,7 +164,7 @@ theorem HelpSng_cT_mix {m o : Type} (A : Matrix m o (Af I.F ⊗[I.F] I.E))
   ext i j
   show sigR (Af I.F) I.cm.sig (mixM I p A K j i) = mixM I p (Formalism.UG.cT (sigR (Af I.F) I.cm.sig) A)
     (Formalism.UG.cT (sigR (Fv I.F p) I.cm.sig) K) i j
-  simp only [mixM, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, map_add, map_mul,
+  simp only [mixM, Matrix.add_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul, map_add (f := _), map_mul,
     map_sub, map_one, HelpSng_sig_e, HelpSng_sig_theta]
   rfl
 
@@ -197,7 +202,7 @@ theorem HelpSng_piV_same (k : HA (Fv I.F p) I.cm.sig I.J) : piV I p (sngHA I p k
     ((HA.mat (Fv I.F p) I.cm.sig I.J k : GL (Fin I.n) (Fv I.F p ⊗[I.F] I.E)) :
       Matrix (Fin I.n) (Fin I.n) (Fv I.F p ⊗[I.F] I.E))
   ext i j
-  simp only [Matrix.map_apply, mixM, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul,
+  simp only [Matrix.map_apply, mixM, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul,
     map_sub, map_one, HelpSng_eval_e, HelpSng_eval_theta, sub_self, zero_mul, zero_add]
 
 theorem HelpSng_piV_ne (k : HA (Fv I.F p) I.cm.sig I.J) (v : HeightOneSpectrum (𝓞 I.F)) (hv : v ≠ p) :
@@ -207,7 +212,7 @@ theorem HelpSng_piV_ne (k : HA (Fv I.F p) I.cm.sig I.J) (v : HeightOneSpectrum (
   show (mixM I p 1 ((HA.mat (Fv I.F p) I.cm.sig I.J k : GL (Fin I.n) (Fv I.F p ⊗[I.F] I.E)) :
       Matrix (Fin I.n) (Fin I.n) (Fv I.F p ⊗[I.F] I.E))).map (tensMap (E := I.E) (evalV I.F v)) = 1
   ext i j
-  simp only [Matrix.map_apply, mixM, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul,
+  simp only [Matrix.map_apply, mixM, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul,
     map_sub, map_one, HelpSng_eval_e_ne I p v hv, HelpSng_eval_theta_ne I p v hv, sub_zero, one_mul,
     add_zero]
   rcases eq_or_ne i j with h | h <;> simp [Matrix.one_apply, h]

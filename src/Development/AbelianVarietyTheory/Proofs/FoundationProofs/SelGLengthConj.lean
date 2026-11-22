@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem blochKatoCocycle_map_equivariant (f : V →ₗ[LL] V) (hf : Continuous f
   obtain ⟨⟨h1, h2⟩, x, hx⟩ := hc
   refine ⟨⟨hf.comp h1, fun g h => ?_⟩,
     AlgebraTensorModule.map f (LinearMap.id : B →ₗ[Qp] B) x, fun g => ?_⟩
-  · simp only [h2, map_add, he]
+  · simp only [h2, map_add (f := _), he]
   · have e := congrArg (AlgebraTensorModule.map f (LinearMap.id : B →ₗ[Qp] B)) (hx g)
     rw [map_sub, AlgebraTensorModule.map_tmul, LinearMap.id_apply] at e
     rw [e]
@@ -36,7 +40,7 @@ theorem blochKatoCocycle_map_equivariant (f : V →ₗ[LL] V) (hf : Continuous f
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [actVB, he]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem hfD_map (L : Lattice (O := O) ρ) (L' : Lattice (O := O) ρ') (f : V →ₗ[LL] V)
     (hf : Continuous f) (he : ∀ g x, f (ρ g x) = ρ' g (f x))

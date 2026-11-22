@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,10 +58,10 @@ theorem UpperTheory.tower_finiteEtale_of_trivial_powerCartesian :
     ((GlobalTheory.KS.pow S.M.univ.A k).hom ≫ S.M.s) (gen (Ow w) E)
     (GlobalTheory.KS.powMap S.π S.mπ.φ hpb.w k) (𝟙 _) (𝟙 _) h1 h2
   have h3 : gen (Ow w) E = 𝟙 _ ≫ gen (Ow w) E := (Category.id_comp _).symm
-  have hmF : IsFinite hm := MorphismProperty.pullback_map (P := @IsFinite) hfinP inferInstance hcomm h3
+  have hmF : IsFinite hm := MorphismProperty.pullbackMap (P := @IsFinite) hfinP inferInstance hcomm h3
   haveI := hetP
   have hmU : FormallyUnramified hm :=
-    MorphismProperty.pullback_map (P := @FormallyUnramified) inferInstance inferInstance hcomm h3
+    MorphismProperty.pullbackMap (P := @FormallyUnramified) inferInstance inferInstance hcomm h3
   have hkey : pullback.lift (S.pi T C) (T.X.q (T.lev N)) eY ≫ hm =
       T.X.tr _ _ 1 hx hy ≫ pullback.lift ρ _ e0 := by
     apply pullback.hom_ext

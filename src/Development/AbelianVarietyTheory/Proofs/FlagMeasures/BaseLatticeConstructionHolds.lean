@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedFrameSelfNormalFormExistsProofStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryHostFieldArithmeticConditionsProofStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefinitePartLatticeDiscriminantEqQuotien
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EmbeddedDatumOfTermDefiniteSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FixedFrameSelfNormalFormExistsProofStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryHostFieldArithmeticConditionsProofStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefinitePartLatticeDiscriminantEqQuotien
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EmbeddedDatumOfTermDefiniteSpace
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical Pointwise
@@ -117,7 +121,7 @@ theorem quotEquiv (hE : IsEmb F HW e) (Λ : Submodule (𝓞 K) V)
     have hw'M : w' ∈ M := (memL_e hE Λ w').1 (by simpa using L.sub_mem hx (X_L Λ _ hw'))
     have h1 : H.B (e w) x = HW.B w w' := by
       have e1 : x = e w' + (x - e w') := by abel
-      rw [e1, map_add, B_swap (XB_e hE _ hw' w), add_zero, hE.1]
+      rw [e1, map_add (f := _), B_swap (XB_e hE _ hw' w), add_zero, hE.1]
     rw [h1]
     exact (hmemW w).1 hw w' hw'M
   let f : DW →ₗ[𝓞 K] DV :=
@@ -139,7 +143,7 @@ theorem quotEquiv (hE : IsEmb F HW e) (Λ : Submodule (𝓞 K) V)
         rw [← hE.1]
         have e1 : v = e w + (v - e w) := by abel
         conv_rhs => rw [e1]
-        rw [map_add, LinearMap.add_apply, XB_e hE (v - e w) hw y, add_zero]
+        rw [map_add (f := _), LinearMap.add_apply, XB_e hE (v - e w) hw y, add_zero]
       rw [h1]
       exact hv'.2 _ ((memL_e hE Λ y).2 hy)
     refine ⟨⟨w, hwD⟩, ?_⟩

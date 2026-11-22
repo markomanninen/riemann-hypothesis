@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PackExOf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PackExOf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ structure Frame (S : Setup A n p) where
   surj : Function.Surjective j
   ker : ∀ g, j g = 1 ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → comp w g = 1
   a : ∀ w : Plc E, GLw n w
-  a_int : ∀ (w : Plc E) (q : ℕ), q.Prime → A.Good q → (q : 𝓞 E) ∈ w.asIdeal → a w ∈ KGL w n
-  a_cof : ∀ᶠ w in Filter.cofinite, a w ∈ KGL w n
+  a_int : ∀ (w : Plc E) (q : ℕ), q.Prime → A.Good q → (q : 𝓞 E) ∈ w.asIdeal → a w ∈ KGL w (n := n)
+  a_cof : ∀ᶠ w in Filter.cofinite, a w ∈ KGL w (n := n)
   vec : ∀ w : Plc E, AfP p ⊗[ℚ] VQ S.D →+ (Fin n → w.adicCompletion E)
   vec_inj : ∀ v, (∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → vec w v = 0) → v = 0
   vec_hat : ∀ v, v ∈ LaHat S.D ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → ∀ i, vec w v i ∈ w.adicCompletionIntegers E
@@ -46,7 +50,7 @@ structure Frame (S : Setup A n p) where
   mem : ∀ y : GL (Fin n) E × ℚˣ, y ∈ GlobalTheory.LKCx.grp S.G B.β ↔ y ∈ Gam0 E n
   emb1 : ∀ (y : GL (Fin n) E × ℚˣ) (h : y ∈ GlobalTheory.LKCx.grp S.G B.β) (h' : y ∈ Gam0 E n), (B.embAt x t hx ⟨y, h⟩).1 = j (rat ⟨y, h'⟩)
   emb2 : ∀ (y : GL (Fin n) E × ℚˣ) (h : y ∈ GlobalTheory.LKCx.grp S.G B.β) (h' : y ∈ Gam0 E n),
-    (B.embAt x t hx ⟨y, h⟩).2 ∈ LocalSmoothExtension.Kp S.G ↔ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat ⟨y, h'⟩) ∈ KGL w n
+    (B.embAt x t hx ⟨y, h⟩).2 ∈ LocalSmoothExtension.Kp S.G ↔ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat ⟨y, h'⟩) ∈ KGL w (n := n)
   th : GUf E n →* GUf E n
   th_mat : ∀ g, (mat (th g)).val = ((mat g)⁻¹).valᵀ
   th_sim : ∀ g, sim (th g) = (sim g)⁻¹
@@ -132,7 +136,7 @@ def InId (w : Plc E) (𝔟 : Ideal (𝓞 E)) (y : w.adicCompletion E) : Prop :=
 def Gen (A : Arith E) (x : E) : Prop := (A.ω : E) ∈ IntermediateField.adjoin ℚ {x} ∧ x ∈ IntermediateField.adjoin ℚ {(A.ω : E)}
 
 def Off (V : Vec x U w₀ Up) (p : ℕ) : Prop :=
-  (∀ u ∈ V.S, (p : 𝓞 E) ∉ u.asIdeal) ∧ ∃ g₀, V.Φ g₀ ≠ 0 ∧ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g₀ ∈ KGL w n
+  (∀ u ∈ V.S, (p : 𝓞 E) ∉ u.asIdeal) ∧ ∃ g₀, V.Φ g₀ ≠ 0 ∧ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g₀ ∈ KGL w (n := n)
 
 end UpperTheory.Gal.Int.Geo.Pl
 
@@ -168,7 +172,7 @@ def ExpOf : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : 
         IsHExp A.τ₀ (epsOf S.D) (conjWt σ V.lam) h ∧ (h i : ℤ) = j + mOf x V.W V.jz τ
 
 def IntCof : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (g : GUf E n), ∀ᶠ w in Filter.cofinite, comp w g ∈ KGL w n
+  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (g : GUf E n), ∀ᶠ w in Filter.cofinite, comp w g ∈ KGL w (n := n)
 
 def PrimeProj : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n q : ℕ), q.Prime → ∃ π : GUf E n →* GUf E n, ∀ (g : GUf E n) (w : Plc E),
@@ -189,7 +193,7 @@ def Sides : Prop :=
 
 def Dict : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p) (F : Frame S) (g : GUf E n),
     (Integ S.L (F.j g) ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → ∀ i k, F.cmp w g i k ∈ w.adicCompletionIntegers E) ∧
-    (F.j g ∈ S.L.KN 1 ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → F.a w * comp w g * (F.a w)⁻¹ ∈ KGL w n) ∧
+    (F.j g ∈ S.L.KN 1 ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → F.a w * comp w g * (F.a w)⁻¹ ∈ KGL w (n := n)) ∧
     (∀ 𝔟 : Ideal (𝓞 E), 𝔟 ≠ ⊥ → (CongId S.L 𝔟 (F.j g) ↔ ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → ∀ i k, InId w 𝔟 ((F.cmp w g - 1) i k))) ∧
     (∀ c : ℕ, (∀ v ∈ LaHat S.D, ∃ v' ∈ LaHat S.D, S.L.actG (F.j g) v' = c • v) ↔
       ∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → ∀ i k, (c : w.adicCompletion E) * F.cmp w g⁻¹ i k ∈ w.adicCompletionIntegers E)

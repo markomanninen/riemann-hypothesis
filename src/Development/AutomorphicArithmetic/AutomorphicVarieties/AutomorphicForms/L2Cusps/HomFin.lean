@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
-import GroundTheory.AutomorphicForms.TensorProductTheorem.KProjApplyEqSelfIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.KProjApplyEqSelfIff
+
+@[expose] public section
 
 open GroundTheory.Automorphic
 
@@ -33,8 +37,7 @@ theorem UpperTheory.V.KernelIndexFullLattice.homFin_holds :
     rw [map_smul]
     rfl
   haveI : IsNoetherian (MonoidAlgebra ℂ C) τ.asModule := isNoetherian_of_tower ℂ inferInstance
-  obtain ⟨t, ht, htop⟩ := CompleteLattice.WellFoundedGT.isSupFiniteCompact
-    (Submodule (MonoidAlgebra ℂ C) τ.asModule) {m | IsSimpleModule (MonoidAlgebra ℂ C) m}
+  obtain ⟨t, ht, htop⟩ := WellFoundedGT.isSupFiniteCompact (α := Submodule (MonoidAlgebra ℂ C) τ.asModule) {m | IsSimpleModule (MonoidAlgebra ℂ C) m}
   rw [IsSemisimpleModule.sSup_simples_eq_top] at htop
   let W : Submodule (MonoidAlgebra ℂ C) τ.asModule → Submodule ℂ M := fun m =>
     F ⊓ ((isotypicComponent (MonoidAlgebra ℂ C) σ.asModule m).restrictScalars ℂ : Submodule ℂ σ.asModule)
@@ -93,7 +96,7 @@ theorem UpperTheory.V.KernelIndexFullLattice.homFin_holds :
         intro hs y hy
         rw [Finset.sup_insert] at hy
         obtain ⟨y1, hy1, y2, hy2, rfl⟩ := Submodule.mem_sup.1 hy
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem (one a (hs (Finset.mem_insert_self a s)) y1 hy1)
           (ih ((Finset.subset_insert a s).trans hs) y2 hy2)
     have hx : (show τ.asModule from x) ∈ t.sup id := htop ▸ Submodule.mem_top

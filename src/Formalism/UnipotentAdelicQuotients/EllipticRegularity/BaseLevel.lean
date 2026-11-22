@@ -1,4 +1,8 @@
-import Formalism.UnipotentAdelicQuotients.EllRegCut
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegCut
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 
@@ -7,9 +11,6 @@ open scoped ContDiff FourierTransform ENNReal
 
 lemma norm_fourier_le_integral_norm {d : ℕ} (g : E d → ℂ) (ξ : E d) : ‖𝓕 g ξ‖ ≤ ∫ x, ‖g x‖ := by
   exact VectorFourier.norm_fourierIntegral_le_integral_norm _ _ _ _ _
-
-lemma om_zero {d : ℕ} (s : ℝ) (ξ : E d) : om s 0 0 ξ = (1 + ‖ξ‖ ^ 2) ^ (s / 2) := by
-  simp [om]
 
 theorem sobolevOfCompactSupport : BaseLevel := by
   intro d g hg hgs

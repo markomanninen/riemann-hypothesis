@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+
+@[expose] public section
 
 open Formalism.UG GlobalTheory.PRep GlobalTheory.LFun
 
@@ -21,7 +25,8 @@ theorem heckeVec_dosetInd {σ : Representation ℂ G V} (hσ : IsSmooth σ) (hc 
     exact ⟨fun ⟨a, ha, b, hb, e⟩ => ⟨⟨a, ha⟩, ⟨b, hb⟩, e⟩, fun ⟨a, b, e⟩ => ⟨a, a.2, b, b.2, e⟩⟩
   rw [← idem_of_mem hσ hc (SatCompare.heckeVec_mem_fixed hK (Final.DosetIndMem G K ℂ g) hz)]
   unfold heckeVec
-  rw [finsum_eq_sum_of_support_subset (s := (P.finite_cosets_in_doset hK g).toFinset), map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [finsum_eq_sum_of_support_subset (s := (P.finite_cosets_in_doset hK g).toFinset), map_sum,
     Nat.cast_smul_eq_nsmul, ← Finset.sum_const]
   · refine Finset.sum_congr rfl fun c hc' => ?_
     have h1 := (hmem c).2 hc'
@@ -34,8 +39,8 @@ theorem heckeVec_dosetInd {σ : Representation ℂ G V} (hσ : IsSmooth σ) (hc 
       show dosetInd ℂ K g c.out • _ = 0
       rw [dosetInd, Set.indicator_of_notMem (fun h' => h ((hmem c).1 h')), zero_smul])
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem card_ne_zero (hK : IsCommensurated K) (g : G) :
     ((P.finite_cosets_in_doset hK g).toFinset.card : ℂ) ≠ 0 := by
   refine Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨(g : G ⧸ K), (Set.Finite.mem_toFinset _).2 ?_⟩)
@@ -57,7 +62,7 @@ theorem idem_orbitMap {π : Representation ℂ G V} {ρ : Representation ℂ G W
   | add a b ha hb =>
     obtain ⟨c, h1, h2⟩ := ha
     obtain ⟨d, h3, h4⟩ := hb
-    exact ⟨c + d, by rw [map_add, map_add, h1, h3, add_smul], by rw [map_add, map_add, h2, h4, add_smul]⟩
+    exact ⟨c + d, by rw [map_add (f := _), map_add (f := _), h1, h3, add_smul], by rw [map_add (f := _), map_add (f := _), h2, h4, add_smul]⟩
   | smul r a ha =>
     obtain ⟨c, h1, h2⟩ := ha
     exact ⟨r * c, by rw [map_smul, map_smul, h1, mul_smul], by rw [map_smul, map_smul, h2, mul_smul]⟩

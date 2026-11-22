@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.LevelCuspCharacters
+
+@[expose] public section
 
 open Polynomial
 

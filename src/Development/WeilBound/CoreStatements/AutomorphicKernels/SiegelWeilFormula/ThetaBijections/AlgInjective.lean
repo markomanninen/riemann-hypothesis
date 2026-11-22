@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticChangeOfGoodModelsIntertwines
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticChangeOfGoodModelsIntertwines
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,7 +125,7 @@ theorem rat_surj {κ α β : Type} [Fintype κ] [Fintype α] [Fintype β] (bs : 
     { toFun := fun x => (fy x, fz x)
       map_add' := fun x x' => by
         have h := congrArg e (hadd x x')
-        rw [map_add, hf, hf, hf] at h
+        rw [map_add (f := _), hf, hf, hf] at h
         ext i
         · exact hinj (by simpa [ratV] using congrFun (congrArg Prod.fst h) i)
         · exact hinj (by simpa [ratV] using congrFun (congrArg Prod.snd h) i)

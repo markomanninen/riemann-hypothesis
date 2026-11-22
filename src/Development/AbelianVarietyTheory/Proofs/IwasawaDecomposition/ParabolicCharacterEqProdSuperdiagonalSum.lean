@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StandardAddCharPlaceIdempotentDivPrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnCharacterReductionEqExp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsKilledHeisenbergAverageIsotropic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
-import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StandardAddCharPlaceIdempotentDivPrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnCharacterReductionEqExp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockVectorsKilledHeisenbergAverageIsotropic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPlaceChartOfSplitIdempotent
+public import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -98,7 +103,7 @@ theorem core (ψ : AddChar (AF D.host.F) ℂ) (hψ : IsStdChar D ψ (-1)) (k : F
     ext c'
     have hx : xiBar D PP = 0 := by
       unfold xiBar Formalism.L2.Col.redP
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨_, r, s, hs, hsa, _⟩
       apply hs
       rw [hE0 s r hsa]
@@ -238,7 +243,8 @@ theorem edgeSum_eq_supSum {κ : Type} [CommRing κ] {r : ℕ} (g : GL (Fin r) κ
 theorem supSum_map {κ κ' : Type} [CommRing κ] [CommRing κ'] (φ : κ →+* κ') {r : ℕ} (x : Matrix (Fin r) (Fin r) κ) :
     Formalism.IndefR.Mi.supSum (x.map φ) = φ (Formalism.IndefR.Mi.supSum x) := by
   unfold Formalism.IndefR.Mi.supSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   split_ifs <;> simp
 
@@ -247,7 +253,7 @@ theorem parabolicCharacter_eq_prod_superdiagonalSum {Pg : Finset (Pl D.host.E)} 
     (((Formalism.L2.DIV.P0 Pg r ψ).chi ⟨x, hx⟩ : D.what₂.LLˣ) : D.what₂.LL) =
       ∏ PP : ↥Pg, ψ PP.1 (Formalism.IndefR.Mi.supSum ((x PP : GL (Fin r) (kP PP.1)) : Matrix (Fin r) (Fin r) (kP PP.1))) := by
   unfold Formalism.L2.DIV.P0 LevelP.ofLocal
-  rw [MonoidHom.finset_prod_apply, Units.coe_prod]
+  rw [MonoidHom.finsetProd_apply, Units.coe_prod]
   refine Finset.prod_congr rfl fun PP _ => ?_
   rw [← edgeSum_eq_supSum]
   rfl

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaInfinite
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem exists_norm_rd_le (φ : 𝓢(Unit → mixedSpace k, ℂ)) (K : ℕ) :
 theorem module_rpow_eq (a : (InfiniteAdeleRing k)ˣ) (x : ℝ) :
     (ideleModule k (ofInfinite a) : ℝ) ^ x =
       ∏ w : InfinitePlace k, ‖(a : InfiniteAdeleRing k) w‖ ^ ((w.mult : ℝ) * x) := by
-  rw [ideleModule_ofInfinite_eq, ← Real.finset_prod_rpow _ _ (fun w _ => by positivity)]
+  rw [ideleModule_ofInfinite_eq, ← Real.finsetProd_rpow _ _ (fun w _ => by positivity)]
   refine Finset.prod_congr rfl fun w _ => ?_
   rw [Real.rpow_mul (norm_nonneg _), Real.rpow_natCast]
 

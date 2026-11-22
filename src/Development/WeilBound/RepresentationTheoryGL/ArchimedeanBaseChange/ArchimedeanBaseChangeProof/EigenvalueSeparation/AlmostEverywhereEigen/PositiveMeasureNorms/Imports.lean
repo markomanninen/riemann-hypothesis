@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+
+@[expose] public section
+
 open PositivityTheory.Rg.BcB.E1 PositivityTheory.Rg.BcB.E2
 namespace PositivityTheory.Rg.BcB.E2.P
 
@@ -33,7 +38,8 @@ theorem point : Point := by
   let v : S → ℝ := fun t => ∑ s ∈ F, ‖e (c s) t‖ ^ 2
   have hpG : p G = 0 := by simp [G, hpg]
   have heG : ∀ t, e G t = (v t : ℂ) := fun t => by
-    simp only [G, v, map_sum, ContinuousMap.sum_apply, heg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, v, map_sum, ContinuousMap.sum_apply, heg]
     push_cast
     rfl
   have hv : ∀ t, 0 < v t := fun t => by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitLoc
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFinsetNormOne
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FiniteAdeleSndAlgebraMap
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitLoc
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFinsetNormOne
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FiniteAdeleSndAlgebraMap
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SplitChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -293,7 +297,7 @@ theorem exists_int_delta (D : D7) : ∃ (δ : 𝓞 D.host.E) (Δ : 𝓞 D.host.F
   have h3 : D.sp.cm.sig (d • δ0) = -(d • δ0) := by rw [map_zsmul, h1, smul_neg]
   obtain ⟨Δ, hΔ⟩ := exists_Delta D (d • δ0) h3
   have h4 : IsIntegral ℤ Δ :=
-    (isIntegral_algebraMap_iff (algebraMap D.host.F D.host.E).injective).1 (hΔ ▸ hd.mul hd)
+    (isIntegral_algebraMap_iff ).1 (hΔ ▸ hd.mul hd)
   exact ⟨⟨d • δ0, hd⟩, ⟨Δ, h4⟩, h3, smul_ne_zero hd0 h2, hΔ⟩
 
 def epInf (F : Type) [Field F] [NumberField F] : AF F := pairA F 1 0

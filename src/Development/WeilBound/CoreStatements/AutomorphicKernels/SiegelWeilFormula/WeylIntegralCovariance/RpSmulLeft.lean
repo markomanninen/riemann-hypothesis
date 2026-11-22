@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylTheta.TWeylOf
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SymplecticFormCoordinates
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.MeasND
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylTheta.TWeylOf
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaBijections.SymplecticFormCoordinates
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.MeasND
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ def rc (d : SD σ) : Matrix (Fin d.m) (Fin d.n) E ≃ₗ[F] (Ix d → F) where
   map_smul' c Y := by funext k; simp
 
 theorem rp_add_left (d : SD σ) (Y Y' W : Matrix (Fin d.m) (Fin d.n) E) : rp d (Y + Y') W = rp d Y W + rp d Y' W := by
-  simp only [rp, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add]
+  simp only [rp, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add (f := _)]
 
 theorem rp_smul_left (d : SD σ) (c : F) (Y W : Matrix (Fin d.m) (Fin d.n) E) : rp d (c • Y) W = c * rp d Y W := by
   simp only [rp, Matrix.transpose_smul, Matrix.smul_mul, Matrix.trace_smul, map_smul, smul_eq_mul]
@@ -44,7 +48,7 @@ def Lm (d : SD σ) (ε : ℤˣ) : (Ix d → F) →ₗ[F] (Ix d → F) where
   toFun a q := ((ε : ℤ) : F) * rp d ((rc d).symm a) (eq d q)
   map_add' a b := by
     funext q
-    simp only [map_add, rp_add_left, Pi.add_apply]
+    simp only [map_add (f := _), rp_add_left, Pi.add_apply]
     ring
   map_smul' c a := by
     funext q
@@ -77,7 +81,7 @@ def ttL (d : SD σ) (X : Mx F E d.m d.n) : Mx F E d.m d.n →ₗ[AF F] AF F wher
   toFun Z := d.tt (d.gram X Z)
   map_add' Z Z' := by
     have e : (Z + Z').map (cA σ) = Z.map (cA σ) + Z'.map (cA σ) := Matrix.map_add _ (map_add _) _ _
-    simp only [SD.tt, SD.gram, e, Matrix.mul_add, Matrix.trace_add, map_add]
+    simp only [SD.tt, SD.gram, e, Matrix.mul_add, Matrix.trace_add, map_add (f := _)]
   map_smul' a Z := by
     have e : (a • Z).map (cA σ) = a • Z.map (cA σ) := Matrix.map_smul _ a (fun x => map_smul (cA σ) a x) _
     simp only [SD.tt, SD.gram, e, Matrix.mul_smul, Matrix.trace_smul, map_smul, RingHom.id_apply]
@@ -138,7 +142,8 @@ theorem rp_nondeg (d : SD σ) (Y : Matrix (Fin d.m) (Fin d.n) E) (h : ∀ q, rp 
     intro i j
     refine (traceForm_nondegenerate F E).1 _ fun z => ?_
     obtain ⟨e, rfl⟩ := hσ z
-    rw [Algebra.traceForm_apply, ← d.bs.sum_repr e, map_sum, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.traceForm_apply, ← d.bs.sum_repr e, map_sum, Finset.mul_sum, map_sum]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [AlgHom.map_smul_of_tower, mul_smul_comm, map_smul, ← rp_eq, h, smul_zero]
   have hdet : IsUnit d.A.J.det := isUnit_iff_ne_zero.2 (PositivityTheory.SiegelWeilFormula.KWhit.meas_detA d)

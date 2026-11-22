@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGaloisSubfieldConjStable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetTypeNormPrincipal
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsBaseTwoWords
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGaloisSubfieldConjStable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetTypeNormPrincipal
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsBaseTwoWords
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,29 +18,6 @@ namespace GlobalTheory.Mem.BaseEx
 section ext
 
 variable {K K' : Type} [Field K] [Field K'] (f : K →+* K')
-
-theorem span_image_span (s : Set K) :
-    Submodule.span (𝓞 K') (f '' (Submodule.span (𝓞 K) s : Set K)) = Submodule.span (𝓞 K') (f '' s) := by
-  refine le_antisymm (Submodule.span_le.2 ?_)
-    (Submodule.span_mono (Set.image_mono Submodule.subset_span))
-  rintro _ ⟨x, hx, rfl⟩
-  induction hx using Submodule.span_induction with
-  | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
-  | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx =>
-    have : f (a • x) = RingOfIntegers.mapRingHom f a • f x := by
-      rw [Algebra.smul_def, Algebra.smul_def, map_mul]; rfl
-    rw [this]
-    exact Submodule.smul_mem _ _ hx
-
-def extend : Submodule (𝓞 K) K →* Submodule (𝓞 K') K' where
-  toFun M := Submodule.span (𝓞 K') (f '' (M : Set K))
-  map_one' := by
-    rw [Submodule.one_eq_span, span_image_span, Submodule.one_eq_span]; simp
-  map_mul' M N := by
-    conv_lhs => rw [← M.span_eq, ← N.span_eq, Submodule.span_mul_span, span_image_span]
-    rw [Submodule.span_mul_span, Set.image_mul]
 
 end ext
 
@@ -85,25 +66,8 @@ theorem sum_emb_bijective : Function.Bijective
     · obtain ⟨t, ht⟩ := (emb_cm H σ).2 h
       exact ⟨Sum.inl t, ht⟩
 
-open Classical in
-
-def typeExp (p q : ℕ) (σ : H.E →+* ℂ) : ℕ := if ∃ t : Tau R, H.emb t = σ then p else q
 
 end host
-
-@[instance_reducible] def starOf (K : IntermediateField ℚ ℂ) (h : ∀ z ∈ K, starRingEnd ℂ z ∈ K) : StarRing K where
-  star x := ⟨starRingEnd ℂ x, h _ x.2⟩
-  star_involutive x := Subtype.ext (Complex.conj_conj _)
-  star_mul x y := Subtype.ext (by
-    show starRingEnd ℂ ((x : ℂ) * y) = starRingEnd ℂ y * starRingEnd ℂ x
-    rw [map_mul, mul_comm])
-  star_add x y := Subtype.ext (map_add (starRingEnd ℂ) (x : ℂ) (y : ℂ))
-
-def toTop (K : IntermediateField ℚ ℂ) : K →+* (⊤ : IntermediateField ℚ K) :=
-  (IntermediateField.topEquiv (F := ℚ) (E := K)).symm
-
-theorem exists_base : ∀ (B : Pre) (S₀ S₁ S₂ : Finset ℂ), (∀ z ∈ S₀, IsAlgebraic ℚ z) → (∀ z ∈ S₁, IsAlgebraic ℚ z) → (∀ z ∈ S₂, IsAlgebraic ℚ z) → ∃ B' : Base, B'.toPre = B ∧ (∀ z ∈ S₀, ∃ x ∈ B'.Ks, B'.embLL x = z) ∧ (∀ z ∈ S₁, ∃ x ∈ B'.LL0, B'.embLL x = z) ∧ ∀ z ∈ S₂, ∃ x : B'.LL, B'.embLL x = z :=
-  GlobalTheory.Mem.BaseField.exists_base
 
 end GlobalTheory.Mem.BaseEx
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThtAdapted
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRTWNeAlg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThtAdapted
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRTWNeAlg
+
+@[expose] public section
 
 open Matrix Finset Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

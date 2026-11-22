@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowBesZeroE
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowBesZeroE
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumDescendsToWittCore
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastTwoStepsDoubleLiftPeriodEqIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,10 @@ def diagDec (d : HypDec S S₀ ρ) (l : Fin ρ → D.host.E) (hl : ∀ a, l a �
   ee := by rw [sandwich, d.ee, Matrix.mul_zero, Matrix.zero_mul]
   e'e' := by rw [sandwich, d.e'e', Matrix.mul_zero, Matrix.zero_mul]
   e'e := by
-    rw [sandwich, d.e'e, Matrix.mul_one, diagonal_conjTranspose, diagonal_mul_diagonal, ← diagonal_one]
-    congr 1
-    funext a
-    simp only [Pi.star_apply, star_inv₀, star_star]
-    exact inv_mul_cancel₀ (hl a)
+    rw [sandwich, d.e'e, Matrix.mul_one, diagonal_conjTranspose, diagonal_mul_diagonal,
+      ← diagonal_one, Matrix.diagonal_eq_diagonal_iff]
+    intro a
+    simpa only [Pi.star_apply, star_inv₀, star_star] using inv_mul_cancel₀ (hl a)
   iso := d.iso
   i₀e := by rw [← Matrix.mul_assoc, d.i₀e, Matrix.zero_mul]
   i₀e' := by rw [← Matrix.mul_assoc, d.i₀e', Matrix.zero_mul]
@@ -151,7 +154,9 @@ theorem getD_all {S : Arrow T → Type} (P : ∀ a, S a → Prop) (t : T) (i : �
     unfold getD
     split_ifs with hj
     · exact getD_all P t i n _ hs.2 j hj
-    · obtain rfl : n = j := by omega
+    · have hnj : n = j := by omega
+      subst j
+      change P (.down t i n) (splitFam (downPath t i n) d).1.2
       exact hs.1.2
 
 end GlobalTheory.RowChain

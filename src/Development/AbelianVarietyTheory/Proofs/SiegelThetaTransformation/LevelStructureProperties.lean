@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsIntMulIntegral
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -130,7 +134,7 @@ theorem smul_map_mem {L L' : Submodule O M} (f : M →ₗ[O] M) (h : ∀ v ∈ L
     (hv : v ∈ 𝔟 • L) : s • f v ∈ 𝔟 • L' := by
   refine Submodule.smul_induction_on hv (fun m hm x hx => ?_) fun x y hx hy => ?_
   · rw [map_smul, smul_comm]; exact Submodule.smul_mem_smul hm (h x hx)
-  · rw [map_add, smul_add]; exact add_mem hx hy
+  · rw [map_add (f := _), smul_add]; exact add_mem hx hy
 
 theorem relIndex_eq {A B C : AddSubgroup M} (h : C ≤ A) (h' : A ≤ C ⊔ B ⊓ A) :
     B.relIndex A = B.relIndex C := by
@@ -189,7 +193,7 @@ theorem cop_bar {P : Ideal (𝓞 E)} {s : 𝓞 E} (h : IsCoprime (Ideal.span {s}
     IsCoprime (Ideal.span {bar s}) (conjI P) := by
   obtain ⟨a, m, hm, e⟩ := cop_iff.1 h
   exact cop_iff.2 ⟨bar a, bar m, mem_conjI.2 (by rwa [bar_bar]),
-    by rw [← map_mul, ← map_add, e, map_one]⟩
+    by rw [← map_mul, ← map_add (f := _), e, map_one]⟩
 
 theorem O_smul (a : 𝓞 E) (v : Fin r → E) : a • v = (a : E) • v := rfl
 
@@ -202,10 +206,10 @@ theorem EF_smul (a : 𝓞 E) (u v : Fin r → E) : EF X (a • u) v = EF X u (ba
   rw [O_smul, O_smul, coe_bar, EF_smulE]
 
 theorem EF_add_left (u u' v : Fin r → E) : EF X (u + u') v = EF X u v + EF X u' v := by
-  simp only [EF_def, ← map_add, herm, Pi.add_apply, add_mul, Finset.sum_add_distrib, mul_add]
+  simp only [EF_def, ← map_add (f := _), herm, Pi.add_apply, add_mul, Finset.sum_add_distrib, mul_add]
 
 theorem EF_add_right (u v v' : Fin r → E) : EF X u (v + v') = EF X u v + EF X u v' := by
-  simp only [EF_def, herm, cc, Pi.add_apply, map_add, Finset.sum_add_distrib, mul_add]
+  simp only [EF_def, herm, cc, Pi.add_apply, map_add (f := _), Finset.sum_add_distrib, mul_add]
 
 theorem EF_zsmul (k : ℤ) (u v : Fin r → E) : EF X (k • u) v = k * EF X u v := by
   simp only [EF_def, herm, Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, mul_smul_comm,
@@ -525,7 +529,8 @@ theorem red_lin_iff {γ : GL (Fin r) E} {k l : GL (Fin r) (𝓞 E ⧸ D.𝔪)}
     D.Red (fun i => lin γ (u i)) (k * l) ↔ D.Red u l := by
   have key {b : Matrix (Fin r) (Fin r) (𝓞 E)} (hb : b.map (Ideal.Quotient.mk D.𝔪) = l) :
       D.Red (fun i => lin γ (∑ j, b j i • D.β j)) (k * l) := by
-    simpa only [map_sum, map_smul] using red_comb h hb
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul] using red_comb h hb
   constructor
   · intro H
     obtain ⟨b, hb⟩ := exists_lift l
@@ -592,7 +597,7 @@ theorem dat_pos {y : Matrix (Fin n) (Fin r) E} {k : D.J}
     (h' : ∀ k : Fin n, r ≤ (k : ℕ) → Cong X D.𝔪 (y k) 0) : D.dat hn y = (D.lam k : ℂˣ) := by
   have H : (∃ k : D.J, D.Red (fun i => y (Fin.castLE hn i)) k) ∧
       ∀ k : Fin n, r ≤ (k : ℕ) → Cong X D.𝔪 (y k) 0 := ⟨⟨k, h⟩, h'⟩
-  rw [Level.dat, dif_pos H, Subtype.ext (red_unique H.1.choose_spec h)]
+  rw [Level.dat, dite_eq_left H, Subtype.ext (red_unique H.1.choose_spec h)]
 
 theorem dat_congr {y y' : Matrix (Fin n) (Fin r) E} (h : ∀ k, Cong X D.𝔪 (y k) (y' k)) :
     D.dat hn y = D.dat hn y' := by
@@ -601,7 +606,7 @@ theorem dat_congr {y y' : Matrix (Fin n) (Fin r) E} (h : ∀ k, Cong X D.𝔪 (y
   · obtain ⟨⟨k, hk⟩, H⟩ := H
     rw [dat_pos hn hk H, dat_pos hn (red_congr (fun i => h _) hk)
       fun j hj => cong_trans (h j) (H j hj)]
-  · rw [Level.dat, Level.dat, dif_neg H, dif_neg]
+  · rw [Level.dat, Level.dat, dite_eq_right H, dite_eq_right]
     rintro ⟨⟨k, hk⟩, H'⟩
     exact H ⟨⟨k, red_congr (fun i => cong_symm (h _)) hk⟩,
       fun j hj => cong_trans (cong_symm (h j)) (H' j hj)⟩
@@ -619,7 +624,7 @@ theorem dat_lin {γ : GL (Fin r) E} {k : D.J} (h : D.Red (fun i => lin γ (D.β 
     rw [dat_pos hn hl H, dat_pos hn (k := k * l), map_mul, Units.val_mul]
     · simp only [e]; exact (red_lin_iff h).2 hl
     · intro j hj; rw [e, e0]; exact H j hj
-  · rw [Level.dat, Level.dat, dif_neg H, dif_neg, mul_zero]
+  · rw [Level.dat, Level.dat, dite_eq_right H, dite_eq_right, mul_zero]
     rintro ⟨⟨l, hl⟩, H'⟩
     refine H ⟨⟨k⁻¹ * l, (red_lin_iff h).1 ?_⟩, fun j hj => ?_⟩
     · simpa [e] using hl

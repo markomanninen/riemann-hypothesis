@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatNull
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IteratedFDerivEqZeroOfIsBigO
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.VanishingOrderTransfer
-import Mathlib.Topology.Algebra.MvPolynomial
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FlatNull
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IteratedFDerivEqZeroOfIsBigO
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.VanishingOrderTransfer
+public import Mathlib.Topology.Algebra.MvPolynomial
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

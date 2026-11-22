@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivAt0CompMem
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivAt0CompMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker
 open scoped ContDiff
@@ -117,9 +121,11 @@ theorem jetC_comp_subst : ∀ (ι : Type) [Fintype ι] (a b : ℕ) (cD : ι → 
   have h2 : (fun i => T (coordX (f i))) = fun i =>
       ∑ p : Fin b × Fin a, (h (f i).1 p.1 (f i).2.1 * g (f i).1 (f i).2.2 p.2) • coordX ((f i).1, p.1, p.2) :=
     funext fun i => subst_coordX g h (f i)
-  rw [h2, ContinuousMultilinearMap.map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, ContinuousMultilinearMap.map_sum, Finset.mul_sum]
   simp only [MvPolynomial.aeval_X, ← Fintype.sum_prod_type']
-  rw [Finset.prod_univ_sum, Fintype.piFinset_univ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.prod_univ_sum, Fintype.piFinset_univ, map_sum]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [Finset.prod_mul_distrib, ← map_prod, ← MvPolynomial.smul_eq_C_mul, map_smul,
     constr_prod_X cD G hG (fun i => ((f i).1, (r i).1, (r i).2)), ContinuousMultilinearMap.map_smul_univ]

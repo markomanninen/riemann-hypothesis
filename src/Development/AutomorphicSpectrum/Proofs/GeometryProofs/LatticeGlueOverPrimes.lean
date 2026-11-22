@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
@@ -118,7 +122,7 @@ theorem exists_nat_mul_mem [CharZero Ω] (hξ : IsCptGen ξ) (W : X.Opens) (hW :
     { carrier := {s | ∃ t, φ s * a = φ t}
       add_mem' := by
         rintro x y ⟨t, ht⟩ ⟨u, hu⟩
-        exact ⟨t + u, by rw [map_add, map_add, add_mul, ht, hu]⟩
+        exact ⟨t + u, by rw [map_add (f := _), map_add (f := _), add_mul, ht, hu]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro c x ⟨t, ht⟩
@@ -266,7 +270,9 @@ theorem local_step [CharZero Ω] [IsLocallyNoetherian X] (hξ : IsCptGen ξ) (S 
       noetherianSpace_of_isAffineOpen U₂ hU₂aff
     have hcpt := hN.isCompact (Subtype.val ⁻¹' C : Set (U₂ : Set X))
     have := Subtype.isCompact_iff.1 hcpt
-    rwa [Subtype.image_preimage_coe, Set.inter_eq_right.2 (fun x hx => hx.1)] at this
+    have hCU : C ⊆ (U₂ : Set X) := fun x hx => hx.1
+    rw [Subtype.image_preimage_coe, Set.inter_eq_right.2 hCU] at this
+    exact this
   have key : ∀ x ∈ C, ∃ W : X.Opens, x ∈ W ∧ ∃ m : ℕ, m ≠ 0 ∧ ∀ q : Cpt ξ, q.1 ∈ W → ¬ InFibre ξ l q →
       (∀ n : ℕ, n.Prime → n ∣ m → ¬ InFibre ξ n q) →
       L₀ q = Submodule.span (regAt ξ q) (Set.range b) := by
@@ -319,7 +325,7 @@ theorem lat_glue : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommR
       exact LatGlue.not_inFibre_of_inFibre hξ q (hS _ h.choose_spec.1) (hS l hl) hne
         h.choose_spec.2 hq
     show (if h : ∃ l ∈ S, InFibre ξ l q then Lp h.choose q else L₀ q) = Lp l q
-    rw [dif_pos h, e]
+    rw [dite_eq_left h, e]
   refine ⟨L, ?_, hL1, hL2⟩
   intro p _
   by_cases h : ∃ l ∈ S, InFibre ξ l p

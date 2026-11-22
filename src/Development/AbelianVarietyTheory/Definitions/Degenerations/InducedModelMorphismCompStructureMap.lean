@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -119,9 +123,6 @@ theorem res_resG {U V : M.Z.Opens} (h : V ≤ U) (hV : (V : Set M.Z).Nonempty) (
     M.res V hV (resG M.Z h f) = M.res U (hV.mono h) f := by
   rw [res_apply, res_apply, M.valF_resG h hV]
 
-theorem res_comp_resG {U V : M.Z.Opens} (h : V ≤ U) (hV : (V : Set M.Z).Nonempty) :
-    (M.res V hV).comp (resG M.Z h) = M.res U (hV.mono h) := RingHom.ext fun f => M.res_resG h hV f
-
 private theorem stalkClosedPointTo_injective :
     Function.Injective (Scheme.stalkClosedPointTo (R := CommRingCat.of Ω) M.pt).hom := by
   have hG : ∀ x : M.Z, x = genericPoint M.Z → IsField (M.Z.presheaf.stalk x) := by
@@ -129,7 +130,7 @@ private theorem stalkClosedPointTo_injective :
     exact isField_stalk_of_closure_mem_irreducibleComponents M.Z _
       (by simp [irreducibleComponents_eq_singleton])
   have hF := hG _ (M.pt_apply (IsLocalRing.closedPoint Ω))
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra hne
   obtain ⟨b, hb⟩ := hF.mul_inv_cancel hne
@@ -176,7 +177,7 @@ def O (z : M.Z) : Subalgebra o Ω where
     rintro _ _ ⟨U, f, hU, rfl⟩ ⟨V, g, hV, rfl⟩
     have h : ((U ⊓ V : M.Z.Opens) : Set M.Z).Nonempty := ⟨z, hU, hV⟩
     refine ⟨U ⊓ V, resG M.Z inf_le_left f + resG M.Z inf_le_right g, ⟨hU, hV⟩, ?_⟩
-    rw [← M.res_apply _ h, map_add, res_apply, res_apply, M.valF_resG _ h, M.valF_resG _ h]
+    rw [← M.res_apply _ h, map_add (f := _), res_apply, res_apply, M.valF_resG _ h, M.valF_resG _ h]
   algebraMap_mem' a := ⟨⊤, constFn M.s ⊤ a, trivial, M.valF_constFn (U := ⊤) ⟨z, trivial⟩ a⟩
 
 def ringOn (U : Set M.Z) : Subalgebra o Ω := ⨅ z ∈ U, M.O z
@@ -231,16 +232,16 @@ theorem mem_ringOn_iff_exists {U : M.Z.Opens} (hU : (U : Set M.Z).Nonempty) {x :
   · rintro ⟨f, rfl⟩
     exact mem_ringOn.2 fun z hz => valF_mem_O hz f
 
-variable (M) in
 
+variable (M) in
 theorem range_res (U : M.Z.Opens) (hU : (U : Set M.Z).Nonempty) :
     (M.res U hU).range = (M.ringOn U).toSubring := by
   ext x
   rw [RingHom.mem_range, Subalgebra.mem_toSubring, mem_ringOn_iff_exists hU]
   simp only [res_apply]
 
-variable (M) in
 
+variable (M) in
 def sectionsEquiv (U : M.Z.Opens) (hU : (U : Set M.Z).Nonempty) : Γ(M.Z, U) ≃+* M.ringOn U :=
   RingEquiv.ofBijective ((M.res U hU).codRestrict (M.ringOn U) fun f =>
       (mem_ringOn_iff_exists hU).2 ⟨f, (M.res_apply U hU f).symm⟩)
@@ -251,8 +252,8 @@ def sectionsEquiv (U : M.Z.Opens) (hU : (U : Set M.Z).Nonempty) : Γ(M.Z, U) ≃
 theorem coe_sectionsEquiv (U : M.Z.Opens) (hU : (U : Set M.Z).Nonempty) (f : Γ(M.Z, U)) :
     (M.sectionsEquiv U hU f : Ω) = valF M.pt U f := M.res_apply U hU f
 
-variable (M) in
 
+variable (M) in
 def stalkHom (z : M.Z) : M.Z.presheaf.stalk z →+* Ω :=
   (M.Z.presheaf.stalkSpecializes (M.pt_specializes (IsLocalRing.closedPoint Ω) z) ≫
     Scheme.stalkClosedPointTo (R := CommRingCat.of Ω) M.pt).hom
@@ -268,18 +269,18 @@ theorem stalkHom_germ {z : M.Z} {U : M.Z.Opens} (hz : z ∈ U) (f : Γ(M.Z, U)) 
   rw [valF_eq_valR, valR_eq M.pt U h', ← key]
   rfl
 
-variable (M) in
 
+variable (M) in
 theorem stalkHom_injective (z : M.Z) : Function.Injective (M.stalkHom z) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨U, hz, f, rfl⟩ := M.Z.presheaf.germ_exist a
   rw [stalkHom_germ hz f] at ha
   have hf : f = 0 := M.valF_injective ⟨z, hz⟩ (by rw [ha, ← M.res_apply U ⟨z, hz⟩ 0, map_zero])
   rw [hf, map_zero]
 
-variable (M) in
 
+variable (M) in
 def stalkEquiv (z : M.Z) : M.Z.presheaf.stalk z ≃+* M.O z :=
   RingEquiv.ofBijective ((M.stalkHom z).codRestrict (M.O z) fun a => by
       obtain ⟨U, hz, f, rfl⟩ := M.Z.presheaf.germ_exist a
@@ -314,8 +315,8 @@ theorem O_le_of_specializes {ξ z : M.Z} (h : ξ ⤳ z) : M.O z ≤ M.O ξ := by
   obtain ⟨U, f, hz, rfl⟩ := mem_O.1 hx
   exact valF_mem_O (h.mem_open U.isOpen hz) f
 
-variable (M) in
 
+variable (M) in
 theorem O_genericPoint : M.O (genericPoint M.Z) = ⊤ := by
   refine eq_top_iff.2 fun x _ => ?_
   obtain ⟨U, f, hU, rfl⟩ := M.onto x
@@ -360,8 +361,8 @@ instance isFractionRing_O (z : M.Z) : IsFractionRing (M.O z) Ω := by
   obtain ⟨a, b, -, h⟩ := exists_eq_div hV ⟨z, hz⟩ x
   exact ⟨⟨_, valF_mem_O hz a⟩, ⟨_, valF_mem_O hz b⟩, h⟩
 
-variable (M) in
 
+variable (M) in
 theorem isOpen_setOf_mem_O (x : Ω) : IsOpen {z | x ∈ M.O z} := by
   refine isOpen_iff_forall_mem_open.2 fun z hz => ?_
   obtain ⟨U, f, hzU, rfl⟩ := mem_O.1 (show x ∈ M.O z from hz)
@@ -438,33 +439,10 @@ theorem div_mul_iff {J : Type} {t : J → Ω} {i : J} {z : M.Z} {c : Ω} (hc : c
     rw [mul_div_mul_left (t j) (t i) hc]
     exact h2 j
 
-private lemma isIntegral_of_isIntegral_of_le {S T : Subalgebra o Ω} (hST : S ≤ T) {x : Ω} (hx : IsIntegral S x) :
-    IsIntegral T x := by
-  obtain ⟨p, hp, hpx⟩ := hx
-  refine ⟨p.map (Subalgebra.inclusion hST).toRingHom, hp.map _, ?_⟩
-  rw [Polynomial.eval₂_map]
-  exact hpx
-
-theorem IsCl.isNm {J : Type} {t : J → Ω} (h : M.IsCl t) (hn : ∀ z, IsIntegrallyClosed (M.O z)) : M.IsNm t := by
-  refine ⟨h.1, fun i hi => ?_⟩
-  obtain ⟨U, hU, hset, hring⟩ := h.2 i hi
-  refine ⟨U, hU, hset, fun x => ?_⟩
-  rw [← hring]
-  constructor
-  · intro hx
-    exact isIntegral_algebraMap (R := M.ringOn U) (A := Ω) (x := ⟨x, hx⟩)
-  · intro hx
-    refine mem_ringOn.2 fun z hz => ?_
-    have := hn z
-    obtain ⟨y, hy⟩ := (IsIntegrallyClosed.isIntegral_iff (R := M.O z) (K := Ω)).1
-      (isIntegral_of_isIntegral_of_le (ringOn_le_O hz) hx)
-    rw [← hy]
-    exact y.2
-
 variable (M)
 
-open Classical in
 
+open Classical in
 def val {K : Type} [Field K] (y : Sp K ⟶ M.Z) (x : Ω) : K :=
   if h : ∃ q : (Σ U : M.Z.Opens, Γ(M.Z, U)), Set.range y ⊆ q.1 ∧ valF M.pt q.1 q.2 = x then
     valF y h.choose.1 h.choose.2 else 0
@@ -483,7 +461,7 @@ theorem val_eq {y : Sp K ⟶ M.Z} {U : M.Z.Opens} (hy : Set.range y ⊆ U) {f : 
     exact valR_res y e ((top_le_preimage_iff y _).2 hW) g
   have hex : ∃ q : (Σ U : M.Z.Opens, Γ(M.Z, U)), Set.range y ⊆ q.1 ∧ valF M.pt q.1 q.2 = x := ⟨⟨U, f⟩, hy, hf⟩
   unfold RatModel.val
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨hq1, hq2⟩ := hex.choose_spec
   have hy2 : Set.range y ⊆ ((hex.choose.1 ⊓ U : M.Z.Opens) : Set M.Z) := fun p hp => ⟨hq1 hp, hy hp⟩
   have hW : ((hex.choose.1 ⊓ U : M.Z.Opens) : Set M.Z).Nonempty := ⟨_, hy2 ⟨IsLocalRing.closedPoint K, rfl⟩⟩
@@ -495,7 +473,7 @@ theorem val_valF {y : Sp K ⟶ M.Z} {U : M.Z.Opens} (hy : Set.range y ⊆ U) (f 
 
 theorem val_of_notMem {y : Sp K ⟶ M.Z} (w : Sp K) {x : Ω} (hx : x ∉ M.O (y w)) : M.val y x = 0 := by
   unfold RatModel.val
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨q, hq, rfl⟩
   exact hx (valF_mem_O (hq ⟨w, rfl⟩) q.2)
 
@@ -555,9 +533,6 @@ theorem isUnit_valLoc_iff {C : Type} [CommRing C] [IsLocalRing C] (y : Sp C ⟶ 
   · intro ha
     exact ha.map _
 
-theorem isLocalHom_valLoc {C : Type} [CommRing C] [IsLocalRing C] (y : Sp C ⟶ M.Z) {z : M.Z}
-    (h : y (IsLocalRing.closedPoint C) = z) : IsLocalHom (valLoc y z (h ▸ specializes_rfl)) := ⟨fun a ha => (isUnit_valLoc_iff y h a).1 ha⟩
-
 theorem val_spMap_comp {C K : Type} [CommRing C] [IsLocalRing C] [Field K] (σ : C →+* K) (y : Sp C ⟶ M.Z)
     {z : M.Z} (h : y (IsLocalRing.closedPoint C) ⤳ z) (x : M.O z) :
     M.val (spMap σ ≫ y) x = σ (valLoc y z h x) := by
@@ -599,12 +574,6 @@ theorem val_ne_zero_iff {y : Sp K ⟶ M.Z} {z : M.Z} (h : Set.range y = {z}) (x 
   have hz : y (IsLocalRing.closedPoint K) = z :=
     Set.mem_singleton_iff.1 (h ▸ Set.mem_range_self (IsLocalRing.closedPoint K))
   rw [← isUnit_valLoc_iff y hz x, valLoc_eq_val, isUnit_iff_ne_zero]
-
-theorem ker_valHom (y : Sp K ⟶ M.Z) (z : M.Z) (h : Set.range y = {z}) :
-    RingHom.ker (valHom y z h) = IsLocalRing.maximalIdeal (M.O z) := by
-  ext x
-  rw [RingHom.mem_ker, valHom_apply, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, ← val_ne_zero_iff h,
-    not_not]
 
 variable {y : Sp K ⟶ M.Z} {z : M.Z}
 
@@ -704,8 +673,8 @@ theorem IsHom.div (hf : M.IsHom M' φ f) {J : Type} {t : J → Ω} {i : J} {z : 
 
 end Hom
 
-variable (M) in
 
+variable (M) in
 def Cen (U : Set M.Z) (z : M.Z) {p : ℕ} [Fact p.Prime] (y : Sp (OO p) ⟶ M.Z) : Prop :=
   y (cPt p) = z ∧ Set.range (gPt p ≫ y) ⊆ U
 
@@ -764,8 +733,8 @@ def ofBasis (b : Matrix J J Ω) (hb : b.det ≠ 0) : M.Lat J where
   E z := Submodule.span (M.O z) (Set.range b)
   loc _ := ⟨⊤, b, trivial, hb, fun _ _ => rfl⟩
 
-variable (J) in
 
+variable (J) in
 def const : M.Lat J := ofBasis M (Matrix.of fun i => Pi.single i 1) (by
   have : (Matrix.of fun i => Pi.single i 1 : Matrix J J Ω) = 1 := by
     ext i j
@@ -799,23 +768,6 @@ theorem mem_const_iff {z : M.Z} {v : J → Ω} : v ∈ (const M J).E z ↔ ∀ j
     rw [e]
     exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
 
-variable {M} in
-
-def ofTuple {I : Type} [Finite I] (t : I → Ω) (h : M.HasDiv t) : M.Lat Unit where
-  E z := Submodule.span (M.O z) (Set.range fun i _ => t i)
-  loc z := by
-    obtain ⟨i, hi⟩ := h z
-    refine ⟨⟨_, M.isOpen_setOf_div t i⟩, Matrix.of fun _ _ => t i, hi, by simpa using hi.1, fun w hw => ?_⟩
-    refine le_antisymm (Submodule.span_le.2 ?_) (Submodule.span_mono ?_)
-    · rintro _ ⟨j, rfl⟩
-      have e : (fun _ : Unit => t j) = (⟨t j / t i, hw.2 j⟩ : M.O w) • fun _ : Unit => t i := by
-        ext
-        simp [Subalgebra.smul_def, hi.1]
-      show (fun _ : Unit => t j) ∈ _
-      rw [e]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨(), rfl⟩)
-    · rintro _ ⟨_, rfl⟩
-      exact ⟨i, rfl⟩
 
 end Lat
 
@@ -824,8 +776,8 @@ section Affine
 variable (o Ω) (A : Type) [CommRing A] [IsDomain A] [Algebra o A] [Algebra.FiniteType o A] [Algebra A Ω]
   [IsScalarTower o A Ω] [IsFractionRing A Ω]
 
-omit [IsDomain A] [IsFractionRing A Ω] in
 
+omit [IsDomain A] [IsFractionRing A Ω] in
 theorem valF_spMap_algebraMap (a : A) :
     valF (spMap (algebraMap A Ω)) ⊤ ((Scheme.ΓSpecIso (CommRingCat.of A)).inv a) = algebraMap A Ω a := by
   rw [valF_eq_valR]
@@ -850,8 +802,8 @@ private theorem le_spMap_preimage_basicOpen_of_algebraMap_ne_zero {L B : Type} [
     rw [← valF_eq_valR, valF_spMap_algebraMap]
     exact hg.isUnit)
 
-omit [IsDomain A] in
 
+omit [IsDomain A] in
 theorem exists_valF_basicOpen_eq_div (a b : A) (hb : algebraMap A Ω b ≠ 0) :
     ∃ f : Γ(Sp A, (Sp A).basicOpen ((Scheme.ΓSpecIso (CommRingCat.of A)).inv b)),
       valF (spMap (algebraMap A Ω)) _ f = algebraMap A Ω a / algebraMap A Ω b := by
@@ -1024,14 +976,6 @@ theorem isIntegrallyClosed_O_ofAffine [IsIntegrallyClosed A] (z : PrimeSpectrum 
   exact isIntegrallyClosed_of_isLocalization _ z.asIdeal.primeCompl
     (fun s hs => mem_nonZeroDivisors_of_ne_zero fun h => Ideal.mem_primeCompl_iff.1 hs (h ▸ z.asIdeal.zero_mem))
 
-theorem isHom_ofAffine {Ω' B : Type} [Field Ω'] [Algebra o Ω'] [CommRing B] [IsDomain B] [Algebra o B]
-    [Algebra.FiniteType o B] [Algebra B Ω'] [IsScalarTower o B Ω'] [IsFractionRing B Ω'] (φ : Ω →ₐ[o] Ω')
-    (ψ : A →+* B) (h : ∀ a, algebraMap B Ω' (ψ a) = φ (algebraMap A Ω a)) :
-    (ofAffine o Ω A).IsHom (ofAffine o Ω' B) φ (spMap ψ) := by
-  show spMap (algebraMap B Ω') ≫ spMap ψ = spMap φ.toRingHom ≫ spMap (algebraMap A Ω)
-  have e : (algebraMap B Ω').comp ψ = φ.toRingHom.comp (algebraMap A Ω) := RingHom.ext h
-  rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp, e]
-
 end Affine
 
 theorem isCl_ofAffine_self [IsDomain o] [IsFractionRing o Ω] {J : Type} (t : J → o)
@@ -1045,7 +989,8 @@ theorem isCl_ofAffine_self [IsDomain o] [IsFractionRing o Ω] {J : Type} (t : J 
     have key : (algebraMap o Ω (t i))⁻¹ =
         c.sum fun j a => algebraMap o Ω a * (algebraMap o Ω (t j) / algebraMap o Ω (t i)) := by
       rw [← one_div, ← map_one (algebraMap o Ω), ← hc]
-      simp only [Finsupp.sum, map_sum, Finset.sum_div, smul_eq_mul, map_mul, mul_div_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finsupp.sum, map_sum, Finset.sum_div, smul_eq_mul, map_mul, mul_div_assoc]
     rw [key]
     exact sum_mem fun j _ => mul_mem (Subalgebra.algebraMap_mem _ _) (hS j)
   have divIff : ∀ (z : PrimeSpectrum o) (i : J),
@@ -1080,49 +1025,9 @@ theorem isCl_ofAffine_self [IsDomain o] [IsFractionRing o Ω] {J : Type} (t : J 
       · exact Algebra.adjoin_le (Set.range_subset_iff.2 fun j =>
           (mem_ringOn_basicOpen_ofAffine (Ω := Ω) hti).2 ⟨t j, 1, by rw [pow_one]⟩)
 
+
 variable (o) in
-
 abbrev affineLine [IsDomain o] : RatModel o (RatFunc o) := ofAffine o (RatFunc o) (Polynomial o)
-
-example : (ofAffine ℤ ℚ ℤ).IsCl (fun j => algebraMap ℤ ℚ (![2, 3] j)) ∧
-    (ofAffine ℤ ℚ ℤ).IsNm (fun j => algebraMap ℤ ℚ (![2, 3] j)) := by
-  have h : (ofAffine ℤ ℚ ℤ).IsCl (fun j => algebraMap ℤ ℚ (![2, 3] j)) := by
-    refine isCl_ofAffine_self _ ((Ideal.eq_top_iff_one _).2 ?_)
-    rw [show (1 : ℤ) = 3 - 2 by norm_num]
-    exact sub_mem (Ideal.subset_span ⟨1, rfl⟩) (Ideal.subset_span ⟨0, rfl⟩)
-  exact ⟨h, h.isNm isIntegrallyClosed_O_ofAffine⟩
-
-example (z : PrimeSpectrum (Polynomial ℤ)) :
-    (RatFunc.X : RatFunc ℤ)⁻¹ ∈ (affineLine ℤ).O z ↔ Polynomial.X ∉ z.asIdeal :=
-  inv_mem_O_ofAffine_iff Polynomial.X_ne_zero
-
-example : (affineLine ℤ).val (spMap (Polynomial.eval₂RingHom (Int.castRingHom ℚ) 2))
-    (algebraMap (Polynomial ℤ) (RatFunc ℤ) (Polynomial.X ^ 2 + 1)) = 5 := by
-  rw [val_ofAffine]
-  norm_num
-
-example (z : PrimeSpectrum ℤ) :
-    (fun _ => (2 : ℚ)⁻¹) ∈ (Lat.const (ofAffine ℤ ℚ ℤ) Unit).E z ↔ 2 ∉ z.asIdeal :=
-  (Lat.mem_const_iff _).trans (forall_const Unit |>.trans (inv_mem_O_ofAffine_iff (o := ℤ) (Ω := ℚ) two_ne_zero))
-
-example (p : ℕ) [Fact p.Prime] : ∃ (z : (ofAffine ℤ ℚ ℤ).Z) (y : Sp (OO p) ⟶ (ofAffine ℤ ℚ ℤ).Z),
-    (ofAffine ℤ ℚ ℤ).Cen Set.univ z y ∧ (ofAffine ℤ ℚ ℤ).val (gPt p ≫ y) (algebraMap ℤ ℚ p) = p := by
-  refine ⟨_, spMap (Int.castRingHom (OO p)), ⟨rfl, Set.subset_univ _⟩, ?_⟩
-  refine (val_algebraMap (σ := Int.castRingHom _) ?_ _).trans (by simp)
-  show (gPt p ≫ spMap (Int.castRingHom (OO p))) ≫ spMap (algebraMap ℤ ℤ) = _
-  rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
-  exact congrArg (fun φ => spMap φ) (RingHom.ext_int _ _)
-
-example : (affineLine ℤ).HasDiv (fun _ : Unit => 1) ∧ ¬ (affineLine ℤ).IsCl fun _ : Unit => 1 := by
-  refine ⟨fun z => ⟨(), one_ne_zero, fun _ => by simp⟩, fun h => ?_⟩
-  obtain ⟨U, -, -, hR⟩ := h.2 () one_ne_zero
-  have hX : algebraMap (Polynomial ℤ) (RatFunc ℤ) Polynomial.X ∈ (affineLine ℤ).ringOn U :=
-    mem_ringOn.2 fun z _ => algebraMap_mem_O_ofAffine z _
-  have hle : Algebra.adjoin ℤ (Set.range fun _ : Unit => (1 : RatFunc ℤ) / 1) ≤ ⊥ :=
-    Algebra.adjoin_le (by rintro _ ⟨_, rfl⟩; exact ⟨1, by simp⟩)
-  obtain ⟨c, hc⟩ := Algebra.mem_bot.1 (hle (hR ▸ hX))
-  rw [IsScalarTower.algebraMap_apply ℤ (Polynomial ℤ) (RatFunc ℤ)] at hc
-  exact Polynomial.X_ne_C c (IsFractionRing.injective _ _ hc).symm
 
 end RatModel
 end GlobalTheory.ZH

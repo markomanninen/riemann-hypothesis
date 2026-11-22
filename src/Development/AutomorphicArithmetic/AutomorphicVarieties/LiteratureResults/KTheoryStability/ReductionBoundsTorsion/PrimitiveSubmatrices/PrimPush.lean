@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PrimitiveSubmatrices.GlobalTheory
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PrimitiveSubmatrices.GlobalTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,10 +84,10 @@ private theorem exists_conj_blk_mulSingle_eq_stab (R : Type) [CommRing R] (q n :
     simp only [padMat, Matrix.of_apply, e1]
     by_cases hX : X.divNat = 0
     · by_cases hY : Y.divNat = 0
-      · rw [dif_pos ⟨(hlt X).2 hX, (hlt Y).2 hY⟩, if_pos ⟨hX, hY⟩]
-      · rw [dif_neg (fun hh => hY ((hlt Y).1 hh.2)),
+      · rw [dite_eq_left ⟨(hlt X).2 hX, (hlt Y).2 hY⟩, if_pos ⟨hX, hY⟩]
+      · rw [dite_eq_right (fun hh => hY ((hlt Y).1 hh.2)),
           if_neg (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hY hh.2)]
-    · rw [dif_neg (fun hh => hX ((hlt X).1 hh.1)),
+    · rw [dite_eq_right (fun hh => hX ((hlt X).1 hh.1)),
         if_neg (fun hh : X.divNat = 0 ∧ Y.divNat = 0 => hX hh.1)]
   ext x y
   rw [show (((MulAut.conj (⟨Pm, Pm, hPP, hPP⟩ : GL (Fin (q * n)) R)).toMonoidHom.comp
@@ -138,7 +142,8 @@ private theorem isBd_cmap_pi_sub_sum_cmap_mulSingle_of_isPrim (hC : SChain) {G :
     have e5 : ∀ j : Fin (q + 1), cmap ψ (k + 1) (cmap (MonoidHom.mulSingle (fun _ : Fin (q + 1) => G) j) (k + 1) z) =
         cmap (MonoidHom.mulSingle (fun _ : Fin (q + 2) => G) j.succ) (k + 1) z := fun j => by
       rw [← hC.2.2.1, e4]
-    rw [map_sub, map_sum] at hq
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum] at hq
     simp only [e5] at hq
     have key : cmap (MonoidHom.pi fun _ : Fin (q + 2) => MonoidHom.id G) (k + 1) z -
         ∑ j, cmap (MonoidHom.mulSingle (fun _ : Fin (q + 2) => G) j) (k + 1) z =
@@ -158,7 +163,8 @@ theorem sPsi_of (hC : SChain) : SPsi := by
   intro R _ d n k h z hzc hzp
   rw [PsiBlockMatrix.psi_eq R (d + 1) n, hC.2.2.1]
   have h1 := PsiBlockMatrix.bd_map hC (PsiBlockMatrix.blk R (d + 1) n) (isBd_cmap_pi_sub_sum_cmap_mulSingle_of_isPrim hC hzp d)
-  rw [map_sub, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum] at h1
   simp only [← hC.2.2.1] at h1
   rw [hC.2.2.1 _ _ _ (MonoidHom.pi fun _ : Fin (d + 1) => MonoidHom.id (GL (Fin n) R))
     (PsiBlockMatrix.blk R (d + 1) n)] at h1

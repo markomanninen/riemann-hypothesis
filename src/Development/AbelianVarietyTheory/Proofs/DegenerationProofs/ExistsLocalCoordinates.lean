@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+
+@[expose] public section
 
 open TensorProduct
 
@@ -50,11 +54,11 @@ theorem span_of_derivation {k A K B W : Type} [Field k] [PerfectField k] [CommRi
     intro x y
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x x' h h' => simp only [add_mul, map_add, h, h', add_smul, smul_add]; abel
+    | add x x' h h' => simp only [add_mul, map_add (f := _), h, h', add_smul, smul_add]; abel
     | tmul c a =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y y' h h' => simp only [mul_add, map_add, h, h', add_smul, smul_add]; abel
+      | add y y' h h' => simp only [mul_add, map_add (f := _), h, h', add_smul, smul_add]; abel
       | tmul d b =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, hψ c, hψ d]
         simp only [E, LinearMap.liftBaseChange_tmul, hD, smul_add, smul_smul]
@@ -73,7 +77,7 @@ theorem span_of_derivation {k A K B W : Type} [Field k] [PerfectField k] [CommRi
       intro y
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y y' h h' => simp only [map_add, h, h']
+      | add y y' h h' => simp only [map_add (f := _), h, h']
       | tmul d b => rfl
     rw [key, h0, map_zero]
   choose l hl using hφ
@@ -81,9 +85,11 @@ theorem span_of_derivation {k A K B W : Type} [Field k] [PerfectField k] [CommRi
   obtain ⟨c, hc⟩ := Ideal.mem_span_range_iff_exists_fun.mp (hb _ ha)
   have h1 : E (l s * 1 ⊗ₜ a - ∑ i, l (c i) * l (t i)) = 0 := by
     refine hEN _ (hker ?_)
-    rw [RingHom.mem_ker, map_sub, map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [RingHom.mem_ker, map_sub, map_mul, map_sum]
     simp only [map_mul, hl, hc, sub_self]
-  rw [map_sub, map_sum, sub_eq_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, sub_eq_zero] at h1
   simp only [hE, hl, ha, ht, zero_smul, add_zero] at h1
   have h2 : E (1 ⊗ₜ a) = D a := by simp [E]
   rw [h2] at h1
@@ -109,13 +115,13 @@ theorem exists_local_coordinates :
   let r := Module.finrank (A ⧸ m) (m.Cotangent ⧸ N')
   let b := Module.finBasis (A ⧸ m) (m.Cotangent ⧸ N')
   let p : m → m.Cotangent ⧸ N' := fun x => N'.mkQ (m.toCotangent x)
-  have hpadd : ∀ x y, p (x + y) = p x + p y := fun x y => by simp only [p, map_add]
+  have hpadd : ∀ x y, p (x + y) = p x + p y := fun x y => by simp only [p, map_add (f := _)]
   have hpsmul : ∀ (a : A) x, p (a • x) = Ideal.Quotient.mk m a • p x := fun a x => by
     simp only [p, map_smul]; rfl
   have hpsurj : Function.Surjective p := N'.mkQ_surjective.comp m.toCotangent_surjective
   let L : m → Fin r → K := fun x j => ι' (b.repr (p x) j)
   have hLadd : ∀ x y, L (x + y) = L x + L y := fun x y => by
-    ext j; simp only [L, hpadd, map_add, Finsupp.add_apply, Pi.add_apply]
+    ext j; simp only [L, hpadd, map_add (f := _), Finsupp.add_apply, Pi.add_apply]
   have hLsmul : ∀ (a : A) x, L (a • x) = ι a • L x := fun a x => by
     ext j
     simp only [L, hpsmul, map_smul, Finsupp.smul_apply, Pi.smul_apply, smul_eq_mul, map_mul]
@@ -123,7 +129,7 @@ theorem exists_local_coordinates :
   let D : A →ₗ[k] Fin r → K :=
     { toFun := fun a => L ⟨a - F a, hF a⟩
       map_add' := fun a a' => by
-        rw [← hLadd]; congr 1; ext; simp only [map_add, Submodule.coe_add]; ring
+        rw [← hLadd]; congr 1; ext; simp only [map_add (f := _), Submodule.coe_add]; ring
       map_smul' := fun c a => by
         rw [RingHom.id_apply, ← algebraMap_smul K c (L _), ← ι.commutes, ← hLsmul]
         congr 1; ext

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDcvFrame
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxAFrG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxAJacE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDSI
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDcvFrame
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxAFrG
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxAJacE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDSI
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ theorem idxDFrame_of (hS : IdxDSig) (hJ : IdxDJacE) (hG : FrGram) : IdxDFrame :=
     have := fixV_perp hS hE.2.1 u (X.bw i) w hw
     rw [eps_eq, show E1 X e * X.ew * hA X.B.I w (Qv X e u (X.bw i)) =
       X.ew * (E1 X e * hA X.B.I w (Qv X e u (X.bw i))) by ring, this, mul_zero, map_zero]
-  · rw [hA_symm X.B.I w, ← hL_apply, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [hA_symm X.B.I w, ← hL_apply, map_sum]
     have hz : ∀ l, hL X.B.I w (sigA X.B.I (M i l) • cv e u l) = 0 := fun l => by
       rw [hL_apply, hA_smul_right, cv, hA_smul_right, sig_eps]
       have := fixV_perp hS hE.2.1 u (X.bwd l) w hw
@@ -73,12 +78,12 @@ theorem idxDFrame_of (hS : IdxDSig) (hJ : IdxDJacE) (hG : FrGram) : IdxDFrame :=
     rw [hs, hMG] at h2
     rw [hs] at h1
     refine to_ew hE (hA_int X.B.I (Submodule.sum_mem _ fun l _ =>
-      smul_int_mem (sigA_mem X.B.I (hMint i l)) (cv_Lf hJ hE u l)) ((frame_Lf X).2.2.2.1 j)) (i = j) ?_
+      smul_int_mem (sigA_mem X.B.I (hMint i l)) (cv_Lf hJ hE u l)) ((X.vectorsInLattice.2.2 j).1)) (i = j) ?_
     rw [hsum]
     have := Z_sub X.B.I X.B.g h1 h2
     convert this using 1
     ring
-  · exact to_ew hE (hA_int X.B.I ((frame_Lf X).2.2.2.2 i) (bv_Lf hJ hE u j)) (i = j) (bwdb_cong hJ hE u i j)
+  · exact to_ew hE (hA_int X.B.I ((X.vectorsInLattice.2.2 i).2) (bv_Lf hJ hE u j)) (i = j) (bwdb_cong hJ hE u i j)
 
 theorem idxDFrame : IdxDFrame := idxDFrame_of idxDSig idxDJacE frGram
 

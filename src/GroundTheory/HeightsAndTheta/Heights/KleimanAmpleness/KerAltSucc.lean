@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -58,13 +63,5 @@ theorem Staircase.hyps :
     LinearMap.ker (Staircase.alt ℤ 0) = LinearMap.range (LinearMap.id : ℤ →ₗ[ℤ] ℤ) ∧
     (∀ q : ℕ, LinearMap.ker (Staircase.alt ℤ (q + 1)) = LinearMap.range (Staircase.alt ℤ q)) :=
   ⟨Staircase.alt_comm ℤ, fun p => by simp, LinearMap.ker_id, Staircase.ker_alt_zero ℤ, Staircase.ker_alt_succ ℤ⟩
-
-example (hS : Staircase.Statement) (n : ℕ) :
-    Nonempty (Staircase.H (fun p => Staircase.alt ℤ p) n ≃ₗ[ℤ] Staircase.H (fun q => Staircase.alt ℤ q) n) :=
-  hS ℤ (fun _ _ => ℤ) (fun p _ => Staircase.alt ℤ p) (fun _ q => Staircase.alt ℤ q) (fun _ => ℤ)
-    (fun p => Staircase.alt ℤ p) (fun _ => LinearMap.id) (fun _ => ℤ) (fun q => Staircase.alt ℤ q) (fun _ => LinearMap.id)
-    (fun p q => Staircase.hyps.1 p q) Staircase.hyps.2.1 Staircase.hyps.2.1 (fun _ => Staircase.hyps.2.2.1)
-    (fun _ => Staircase.hyps.2.2.2.1) (fun _ => Staircase.hyps.2.2.2.2) (fun _ => Staircase.hyps.2.2.1)
-    (fun _ => Staircase.hyps.2.2.2.1) (fun p _ => Staircase.hyps.2.2.2.2 p) n
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

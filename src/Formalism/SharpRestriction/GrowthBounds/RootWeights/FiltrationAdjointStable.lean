@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionExtremalFormula
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionExtremalFormula
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,7 @@ theorem hwv_mem_nMinus_eq_zero (D : Formalism.BasicNotions.D7) {K V : Type} [Fie
     rintro _ ⟨w, rfl⟩
     have hw : w ∈ isoSub E mu ⊔ X' := by rw [hc.sup_eq_top]; exact Submodule.mem_top
     obtain ⟨p, hp, q, hq, rfl⟩ := Submodule.mem_sup.1 hw
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup ⟨cr_lower E hE.1 mu a b hab (hXle hp), hXst a b p hp⟩ (hX' a b q hq)
   obtain ⟨s, hs, x', hx', hsum⟩ := Submodule.mem_sup.1 (hle hn)
   have hx'X : x' ∈ isoSub E mu := by

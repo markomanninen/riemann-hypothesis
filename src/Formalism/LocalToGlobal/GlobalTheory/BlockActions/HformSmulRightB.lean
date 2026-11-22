@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.RestrictionSymmetric
-import Formalism.LocalToGlobal.GlobalTheory.GL4.CTEqConjTranspose
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.RestrictionSymmetric
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.CTEqConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ theorem gram_bZ {u : D.what₂.Word} (z0 : Fin (D.R.N D.R.m) → D.host.E) (hz :
     have hi : (((finSumFinEquiv.trans (finCongr (Nm_succ D.R))) (Sum.inl i) : Fin (D.R.N D.R.m)) : ℕ) < D.R.N D.R.m - 1 := by
       simp
     have hi' : (⟨_, hi⟩ : Fin (D.R.N D.R.m - 1)) = i := Fin.ext (by simp)
-    simp only [bZ, dif_pos hi, hi', iXm, LinearMap.toMatrix'_apply]
+    simp only [bZ, dite_eq_left hi, hi', iXm, LinearMap.toMatrix'_apply]
   have hcol2 : ∀ j : Fin 1,
       (fun k => bZ u (a • zc D) k ((finSumFinEquiv.trans (finCongr (Nm_succ D.R))) (Sum.inr j))) =
         (a / ((D.mem u).A.T : D.host.E)) • zc D := by
@@ -122,7 +126,7 @@ theorem gram_bZ {u : D.what₂.Word} (z0 : Fin (D.R.N D.R.m) → D.host.E) (hz :
     funext k
     have hj : ¬ (((finSumFinEquiv.trans (finCongr (Nm_succ D.R))) (Sum.inr j) : Fin (D.R.N D.R.m)) : ℕ) < D.R.N D.R.m - 1 := by
       simp
-    simp only [bZ, dif_neg hj, Pi.smul_apply, smul_eq_mul]
+    simp only [bZ, dite_eq_right hj, Pi.smul_apply, smul_eq_mul]
     ring
   ext x y
   obtain ⟨p, rfl⟩ := (finSumFinEquiv.trans (finCongr (Nm_succ D.R))).surjective x

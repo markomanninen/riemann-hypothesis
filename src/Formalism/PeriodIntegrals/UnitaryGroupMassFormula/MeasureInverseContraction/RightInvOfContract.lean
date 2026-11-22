@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem haarOn_props (H : Subgroup G) (hH : IsClosed (H : Set G)) (μ : Measure 
     intro h; apply h0; rw [← hmc, h, Measure.map_zero]
   obtain ⟨c, hc0, hct, hceq⟩ := abs_scal_lemma_2 H (μ.comap (Subtype.val : H → G)) hne
   have hμeq : μ = c • (haar : Measure H).map Subtype.val := by
-    rw [← hmc, hceq, Measure.map_smul]
+    rw [← hmc, hceq, Measure.map_smul c hemb.measurable.aemeasurable]
   constructor
   · intro K hK
     rw [hμeq, Measure.smul_apply, Measure.map_apply hemb.measurable hK.isClosed.measurableSet,
@@ -127,14 +131,15 @@ theorem haar_unique (S : Subgroup G) (hS : IsClosed (S : Set G)) (μ m : Measure
     ⟨_, isMulLeftInvariant_eq_smul _ _⟩
   obtain ⟨b, eb⟩ : ∃ b : ℝ≥0, m.comap (Subtype.val : S → G) = b • (haar : Measure S) :=
     ⟨_, isMulLeftInvariant_eq_smul _ _⟩
+  have hval : Measurable (Subtype.val : S → G) := measurable_subtype_coe
   have hμ' : μ = a • (haar : Measure S).map Subtype.val := by
     calc μ = (μ.comap (Subtype.val : S → G)).map Subtype.val := hμM.symm
       _ = (a • (haar : Measure S)).map Subtype.val := by rw [ea]
-      _ = _ := by rw [Measure.map_smul]
+      _ = _ := Measure.map_smul a hval.aemeasurable
   have hm' : m = b • (haar : Measure S).map Subtype.val := by
     calc m = (m.comap (Subtype.val : S → G)).map Subtype.val := hmM.symm
       _ = (b • (haar : Measure S)).map Subtype.val := by rw [eb]
-      _ = _ := by rw [Measure.map_smul]
+      _ = _ := Measure.map_smul b hval.aemeasurable
   have ha0 : a ≠ 0 := by rintro rfl; apply hμ0; rw [hμ', zero_smul]
   refine ⟨((b / a : ℝ≥0) : ℝ≥0∞), ENNReal.coe_ne_top, ?_⟩
   rw [hm', hμ']
@@ -180,7 +185,8 @@ theorem haarOn_map (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : Measure G}
     exact h1
   · exact fun h => h0 ((Measure.map_eq_zero_iff hφm.aemeasurable).mp h)
   · rw [Measure.map_apply hφm hN.isOpen_compl.measurableSet]
-    exact measure_mono_null (fun x hx hxN => hx (hNφ x hxN)) hc
+    exact measure_mono_null (show φ ⁻¹' (N : Set G)ᶜ ⊆ (N : Set G)ᶜ from
+      fun x hx hxN => hx (hNφ x hxN)) hc
   · intro s hs
     obtain ⟨s', hs', hss⟩ := hl s hs
     rw [Measure.map_map (measurable_const_mul s) hφm]
@@ -228,7 +234,7 @@ theorem rightInv_of_contract (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : 
       have h1 : (fun x : G => x * n ^ (p + 1)) = (fun x => x * n) ∘ (fun x => x * n ^ p) := by
         funext x; simp [pow_succ, mul_assoc]
       rw [h1, ← Measure.map_map (measurable_mul_const n) (measurable_mul_const _), ih,
-        Measure.map_smul, hc, smul_smul, pow_succ]
+        Measure.map_smul _ (measurable_mul_const n).aemeasurable, hc, smul_smul, pow_succ]
   have hconj : ∀ a : G, (∀ x ∈ N, a * x * a⁻¹ ∈ N) → (∀ x ∈ N, a⁻¹ * x * a ∈ N) →
       ∀ m ∈ N, ∀ c : ℝ≥0∞, μ.map (fun x => x * m) = c • μ →
         μ.map (fun x => x * (a * m * a⁻¹)) = c • μ := by
@@ -241,7 +247,7 @@ theorem rightInv_of_contract (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : 
       have h3 : ((fun x : G => a⁻¹ * x * a) ∘ fun x => a * x * a⁻¹) = id := by
         funext x; simp [mul_assoc]
       rw [h3, Measure.map_id]
-    rw [hk, Measure.map_smul] at hid
+    rw [hk, Measure.map_smul k hψim.aemeasurable] at hid
     have hback : μ.map (fun x => a⁻¹ * x * a) = k⁻¹ • μ := by
       calc μ.map (fun x => a⁻¹ * x * a) = (k⁻¹ * k) • μ.map (fun x => a⁻¹ * x * a) := by
             rw [ENNReal.inv_mul_cancel hk0 hkt, one_smul]
@@ -251,8 +257,9 @@ theorem rightInv_of_contract (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : 
         (fun x => a * x * a⁻¹) ∘ (fun x => x * m) ∘ (fun x => a⁻¹ * x * a) := by
       funext x; simp [mul_assoc]
     rw [hcomp, ← Measure.map_map hψm ((measurable_mul_const m).comp hψim),
-      ← Measure.map_map (measurable_mul_const m) hψim, hback, Measure.map_smul, hc, smul_smul,
-      Measure.map_smul, hk, smul_smul]
+      ← Measure.map_map (measurable_mul_const m) hψim, hback,
+      Measure.map_smul _ (measurable_mul_const m).aemeasurable, hc, smul_smul,
+      Measure.map_smul _ hψm.aemeasurable, hk, smul_smul]
     congr 1
     rw [mul_comm (k⁻¹ * c) k, ← mul_assoc, ENNReal.mul_inv_cancel hk0 hkt, one_mul]
   obtain ⟨S, hS⟩ : ∃ S : Set G, S = (fun q : G × G => q.1 * q.2⁻¹) '' (K ×ˢ C) := ⟨_, rfl⟩
@@ -286,7 +293,7 @@ theorem rightInv_of_contract (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : 
       rw [Measure.map_map (measurable_mul_const _) (measurable_mul_const _)]
       have h2 : ((fun x : G => x * n⁻¹) ∘ fun x => x * n) = id := by funext x; simp
       rw [h2, Measure.map_id]
-    rw [hc, Measure.map_smul, hd, smul_smul] at h1
+    rw [hc, Measure.map_smul c (measurable_mul_const n⁻¹).aemeasurable, hd, smul_smul] at h1
     exact smul_cancel hK0 hKt (h1.trans (one_smul ℝ≥0∞ μ).symm)
   have hc_eq : c = 1 := by
     by_contra hne
@@ -321,8 +328,8 @@ theorem invInv_of_right (N : Subgroup G) (hN : IsClosed (N : Set G)) {μ : Measu
     have h3 : ((fun x : G => x⁻¹) ∘ fun x : G => x⁻¹) = id := by funext x; simp
     rw [h3, Measure.map_id]
   have hcc : (c * c) • μ = (1 : ℝ≥0∞) • μ := by
-    rw [one_smul, mul_smul]
-    conv_rhs => rw [← hii, hcμ, Measure.map_smul, hcμ]
+    rw [hcμ, Measure.map_smul c measurable_inv.aemeasurable, hcμ, smul_smul] at hii
+    simpa only [one_smul] using hii
   obtain ⟨K, hK, hK0, hKt⟩ := exists_K N hN μ hμ
   have h1 : c * c = 1 := smul_cancel hK0 hKt hcc
   have h2 : c = 1 := by

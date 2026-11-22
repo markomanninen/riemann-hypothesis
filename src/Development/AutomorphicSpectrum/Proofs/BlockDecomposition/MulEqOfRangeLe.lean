@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LogAbsBasicFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LogAbsBasicFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,7 +208,8 @@ theorem lam_rat (e : Matrix (Fin n) (Fin n) E) (he : e * e = e) (r : GL (Fin n) 
       have h2 : (ratGL E n r).val = r.val.map (algebraMap E (Ad E)) := rfl
       rw [h2]
       ext i j
-      simp [rm, Matrix.mul_apply, Matrix.one_apply, Matrix.sub_apply, apply_ite, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [rm, Matrix.mul_apply, Matrix.one_apply, Matrix.sub_apply, apply_ite, map_sum]
     rw [chi, this]
     exact (RingHom.map_det _ _).symm
   have h2 := chi_isUnit e he _ hr

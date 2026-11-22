@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.NonvanishingHypotheses
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace
@@ -49,11 +53,6 @@ lemma ab_cancel (x : H) : σ₁ a (σ₁ b x) = x := by
   rw [hab, hrep.1.1] at h
   rw [← ContinuousLinearMap.comp_apply, ← h, ContinuousLinearMap.one_apply]
 
-include hrep hba ha hb in
-lemma ba_cancel (x : H) : σ₁ b (σ₁ a x) = x := by
-  have h := hrep.1.2 b (kset_uj hb) a (kset_uj ha)
-  rw [hba, hrep.1.1] at h
-  rw [← ContinuousLinearMap.comp_apply, ← h, ContinuousLinearMap.one_apply]
 
 include hrep ha hb in
 lemma conj_apply {g : Matrix (Fin n) (Fin n) ℂ} (hg : g ∈ Formalism.MainNotions.S.UJset ε) (x : H) :
@@ -184,15 +183,5 @@ lemma ktype_iff (μ : Fin n → ℝ) (S : Submodule ℂ H) :
     intro μ' u huS hu0 hwu
     exact hdom μ' (σ₁ a u) (hs a ha u huS) (ne_a σ₁ hrep ha hu0) (wt21 σ₁ hrep hab ha hb hwu)
 
-include hab hba ha hb in
-lemma ds_conj (lam : Fin n → ℝ) (hds : Formalism.MainNotions.S.IsDS ε lam σ₁) :
-    Formalism.MainNotions.S.IsDS ε lam (fun g => σ₁ (b * g * a)) ∧
-      Formalism.MainNotions.S.lowKSub ε lam (fun g => σ₁ (b * g * a)) = Formalism.MainNotions.S.lowKSub ε lam σ₁ := by
-  obtain ⟨hc, hnt, hrep, hirr, hsq, ⟨S0, hS0⟩, hmin⟩ := hds
-  have hk : ∀ μ S, Formalism.MainNotions.S.IsKTypeOf ε (fun g => σ₁ (b * g * a)) μ S ↔ Formalism.MainNotions.S.IsKTypeOf ε σ₁ μ S :=
-    fun μ S => ktype_iff σ₁ hrep hab hba ha hb μ S
-  refine ⟨⟨hc, hnt, urep_conj σ₁ hrep hab hba ha hb, irred_conj σ₁ hab hba ha hb hirr,
-    sqint_conj σ₁ hrep hab ha hb hsq, ⟨S0, (hk _ S0).2 hS0⟩, fun μ S h => hmin μ S ((hk μ S).1 h)⟩, ?_⟩
-  simp only [Formalism.MainNotions.S.lowKSub, hk]
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.CayleyIndepA

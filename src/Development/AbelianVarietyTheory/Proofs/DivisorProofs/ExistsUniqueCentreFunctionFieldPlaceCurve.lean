@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -17,7 +21,7 @@ theorem existsUnique_centre : ∀ (k K E : Type) [Field k] [IsAlgClosed k] [Char
   ∀ p : Place k E, ∃! b : Sp p.O ⟶ C, spMap p.O.subtype ≫ b = spMap (algebraMap K E) ≫ x := by
   intro k K E _ _ _ _ _ _ _ _ _ _ C _ x hx p
   obtain ⟨⟨-, hproj, -⟩, -, hxs⟩ := hx
-  have hprop : IsProper (strHom k C) := (isProper_and_exists_isAmpleLB_of_isProjOver hproj).1
+  have hprop : IsProper (strHom k (X := C)) := (isProper_and_exists_isAmpleLB_of_isProjOver hproj).1
   have hk : ∀ c : k, algebraMap k E c ∈ p.O := by
     intro c
     rw [Valuation.mem_valuationSubring_iff]

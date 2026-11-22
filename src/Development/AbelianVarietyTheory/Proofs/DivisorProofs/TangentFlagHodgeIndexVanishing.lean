@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLieCombIffIsCombAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixExistsStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLieCombIffIsCombAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -33,7 +37,7 @@ theorem exists_mem_Fil_corr (P : AbelianDeRham) {T : Type} [CommRing T] [Algebra
   haveI : Module.Projective T (primDR C) := (P.1.prim hC gC).2.1
   let l : primDR C →ₗ[T] R :=
     { toFun c := f ((bcMor h).pull c)
-      map_add' := fun a b => by rw [map_add, map_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun a b => by rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, RingHom.id_apply, Algebra.smul_def] }
   obtain ⟨d₀, hd₀⟩ := Module.projective_lifting_property (Algebra.linearMap T R) l su
   have e₀ : ∀ c, algebraMap T R (d₀ c) = f ((bcMor h).pull c) := fun c => LinearMap.congr_fun hd₀ c
@@ -45,15 +49,15 @@ theorem exists_mem_Fil_corr (P : AbelianDeRham) {T : Type} [CommRing T] [Algebra
   have p1 : ∀ c, c - p c ∈ PrimitiveSubmodule C := fun c => by
     obtain ⟨a, b, rfl, -⟩ := Submodule.existsUnique_add_of_isCompl hN c
     have e : p b = b := congrArg N.subtype (Submodule.linearProjOfIsCompl_apply_left hN.symm b)
-    rw [map_add, p0 a a.2, e, zero_add, add_sub_cancel_right]
+    rw [map_add (f := _), p0 a a.2, e, zero_add, add_sub_cancel_right]
     exact a.2
   refine ⟨d₀ ∘ₗ p, (Submodule.mem_dualAnnihilator _).2 fun c hc => ?_, fun c => ?_⟩
   · rw [LinearMap.comp_apply, p0 c hc, map_zero]
   · rw [LinearMap.comp_apply, e₀, ← sub_eq_zero, ← map_sub, ← map_sub]
     exact z _ (p1 c)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_isFilLift_dir (P : AbelianDeRham) {ι : Type} [Fintype ι] {C : Over (Sp (TrivSqZeroExt R (ι → R)))}
     [GrpObj C] {g : ℕ} (hC : IsAbelianScheme C) (gC : SmoothOfRelativeDimension g C.hom) {A : Over (Sp R)} [GrpObj A]
     {φ₀ : A.left ⟶ C.left} (h₀ : IsGrpPullback A C (spMap (TrivSqZeroExt.fstHom R R (ι → R)).toRingHom) φ₀)
@@ -98,7 +102,7 @@ theorem exists_isFilLift_dir (P : AbelianDeRham) {ι : Type} [Fintype ι] {C : O
     exact ((congrArg f k2).trans (ed e)).symm
   let gs : ι → HdR A := fun k =>
     { toFun c := (D (cst.pull c)).snd k
-      map_add' := fun a b => by rw [LinearMap.map_add, LinearMap.map_add]; rfl
+      map_add' := fun a b => by rw [LinearMap.map_add (f := _), LinearMap.map_add (f := _)]; rfl
       map_smul' := fun a b => by
         rw [LinearMap.map_smulₛₗ, map_smul]
         simp [TrivSqZeroExt.algebraMap_eq_inl] }
@@ -196,10 +200,91 @@ theorem IsKS.row (P : AbelianDeRham) {Φ : Finset (E →+* ℂ)} {y : FrPt Xo c 
     refine LinearMap.ext fun h => ?_
     obtain ⟨a, ha⟩ := exists_sub_mem_Fil hρ hL hvs (kb := kb) (fun k => hl₂ k.1 k.2) h
     have := iso f hf _ ha
-    rw [map_sub, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum] at this
     simpa [h0] using this
+  open GlobalTheory.CatCoh GlobalTheory.Published.AbelianDeRham in
+  have tanValBC {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {A : Over (Sp R)} {B : Over (Sp R')} {φ : B.left ⟶ A.left}
+      (m : IsMor (dp0 R) (A.hom ≫ 𝟙 _) (dp0 R') (B.hom ≫ 𝟙 _) σ φ) {v : epsR R ⟶ A} {v' : epsR R' ⟶ B}
+      (e : v'.left ≫ φ = spMap (dualMap σ) ≫ v.left) (f : Form (A.hom ≫ 𝟙 _)) :
+      tanVal v' (m.pullForm f) = σ (tanVal v f) := by
+    let E := SqExt.dual R
+    let E' := SqExt.dual R'
+    have hy := pt_w v
+    have hy' := pt_w v'
+    have hc : ∀ r : R, dualMap σ (algebraMap R (DualNumber R) r) = algebraMap R' (DualNumber R') (σ r) := fun r => by
+      ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+    have e₀ : spMap σ ≫ spMap (E.π : E.C →+* E.B) ≫ v.left = (spMap (E'.π : E'.C →+* E'.B) ≫ v'.left) ≫ φ := by
+      rw [Category.assoc, e, ← Category.assoc, ← Category.assoc, ← Cris.spMap_comp, ← Cris.spMap_comp]
+      congr 2
+      ext a <;> simp [dualMap, E, E', TrivSqZeroExt.algebraMap_eq_inl]
+    let Φ : E.thick _ (E.red_w hy) ⟶ m.obj (E'.thick _ (E'.red_w hy')) :=
+      { φ := { dualMap σ with commutes' := hc }
+        φ₀ := σ
+        comm := fun b => by
+          change σ b.fst = (dualMap σ b).fst
+          simp [dualMap]
+        dp := isDPMorphism_sqDP E.sq E'.sq _ fun a ha => by
+          have ha' : a.fst = 0 := ha
+          change (dualMap σ a).fst = 0
+          simp [dualMap, ha']
+        pt := e₀ }
+    let a : Thick.triv E.C _ hy ⟶ m.obj (Thick.triv E'.C _ hy') :=
+      Thick.trivHom { dualMap σ with commutes' := hc } e.symm
+    let b : Thick.triv E.B _ (E.red_w hy) ⟶ m.obj (Thick.triv E'.B _ (E'.red_w hy')) :=
+      Thick.trivHom { σ with commutes' := fun _ => rfl } e₀
+    have k1 := Form.ev_sq f a (m.functor.map (E'.idHom hy')) (E.idHom hy) Φ rfl rfl fun _ => rfl
+    have k2 := Form.ev_sq f b (m.functor.map (E'.secHom (E'.red_w hy') E'.i E'.π_i))
+      (E.secHom (E.red_w hy) E.i E.π_i) Φ rfl rfl fun c => (hc c).symm
+    have k : E'.val v'.left hy' (m.pullForm f).1 = dualMap σ (E.val v.left hy f.1) :=
+      (congrArg₂ (fun u v : E'.C => u - v) k2 k1).trans
+        ((add_sub_add_right_eq_sub (G := E'.C) _ _ _).trans (map_sub (dualMap σ) _ _).symm)
+    rw [tanVal_apply, tanVal_apply]
+    refine (congrArg (TrivSqZeroExt.snd (R := R')) k).trans ?_
+    exact zero_add _
+  
+  
+  have lieBC {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R']
+        {A : Over (Sp R)} [GrpObj A] {B : Over (Sp R')} [GrpObj B] {φ : B.left ⟶ A.left}
+        {hφ : IsGrpPullback B A (spMap (algebraMap R R')) φ} (hF : PrimitiveSubmodule B = Submodule.span R' ((bcMor hφ).pull '' (PrimitiveSubmodule A)))
+      (hL : LieExact B) {h : HdR A} {h' : HdR B} (e : (bcMor hφ).Corr h h') {v : epsR R ⟶ A} {v' : epsR R' ⟶ B}
+      (ev : v'.left ≫ φ = spMap (dualMap (algebraMap R R')) ≫ v.left) (hv : IsLieImage h v) : IsLieImage h' v' := open CategoryTheory.MonoidalCategory CategoryTheory.CartesianMonoidalCategory CategoryTheory.MonObj in open scoped CategoryTheory.Obj in by
+    have ht : IsTangent v' := by
+      apply hφ.1.hom_ext
+      · rw [Category.assoc, ev, ← Category.assoc, ← Cris.spMap_comp]
+        have ee : (TrivSqZeroExt.fstHom R' R' R').toRingHom.comp
+            (dualMap (algebraMap R R')) =
+            (algebraMap R R').comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
+          ext x <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+        rw [ee, Cris.spMap_comp, Category.assoc, hv.1]
+        letI : Monoid (Over.mk (𝟙 (Sp R')) ⟶ B) := CategoryTheory.Hom.monoid
+        letI : Monoid (Over.mk ((Over.mk (𝟙 (Sp R'))).hom ≫ spMap (algebraMap R R')) ⟶ A) := CategoryTheory.Hom.monoid
+        have he := congrArg (fun t => t.left) (map_one (pushHom hφ (Over.mk (𝟙 (Sp R')))))
+        simpa [pushHom, pushPt, ArcQ.NormalForm.one_left_eq] using he.symm
+      · have ee : spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫
+            spMap (algebraMap R' (DualNumber R')) = 𝟙 _ := ArcLieCompare.epsRed_hom
+        change spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ v'.left ≫ B.hom = _
+        rw [Over.w]
+        change spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ spMap (algebraMap R' (DualNumber R')) = _
+        rw [ee, Over.w]
+        rfl
+    obtain ⟨k, hk⟩ := hL.2 v' ht
+    have : h' - k ∈ Fil B := by
+      rw [Fil, hF, Submodule.mem_dualAnnihilator]
+      intro c hc
+      refine (Submodule.span_le (p := LinearMap.ker (h' - k))).2 (fun c hc => ?_) hc
+      obtain ⟨⟨c, hc'⟩, hc, rfl⟩ := hc
+      change c ∈ F1 _ at hc
+      rw [hodgeFiltration_eq_range] at hc
+      obtain ⟨f, rfl⟩ := hc
+      change h' _ - k _ = 0
+      rw [e, hv.2 f hc', ← tanValBC (bcMor hφ).isMor ev f, sub_eq_zero]
+      exact (hk.2 _ ((bcMor hφ).pullback_mem_primitive hc')).symm
+    refine ⟨ht, fun f hf => ?_⟩
+    rw [← hk.2 f hf, ← sub_eq_zero]
+    exact mem_Fil.1 this f hf
   have ed : ∀ k, th (hb k) - kb k ∈ Fil B := fun k => by
-    have := (hl k.1 k.2).baseChange (hφ := hφ) hF hL (hth _) (htv _)
+    have := lieBC (hφ := hφ) hF hL (hth _) (htv _) (hl k.1 k.2)
     rw [et] at this
     exact this.sub_mem (hl₂ k.1 k.2)
   obtain ⟨w₁, hc₁, f₁, hf₁, hd₁, hv₁⟩ := hM τ r

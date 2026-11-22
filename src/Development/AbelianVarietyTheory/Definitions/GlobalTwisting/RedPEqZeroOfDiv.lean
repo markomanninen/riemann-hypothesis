@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.BaseLemmas
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col
@@ -150,7 +154,8 @@ theorem smul_mem_locP {N : Submodule (𝓞 E) (Sp E n)} {a : E} (ha : IntAt P a)
 theorem apply_eq_sum {m : ℕ} (f : Sp E n →ₗ[E] Sp E m) (x : Sp E n) (i : Fin m) :
     f x i = ∑ j, x j * f (Pi.single j 1) i := by
   conv_lhs => rw [← Finset.univ_sum_single x]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   have : (Pi.single j (x j) : Sp E n) = x j • (Pi.single j 1 : Sp E n) := by rw [← Pi.single_smul, smul_eq_mul, mul_one]
   rw [this, map_smul, Pi.smul_apply, smul_eq_mul]
@@ -185,8 +190,8 @@ theorem redMat_eq (k : GLint E n P) {A : Matrix (Fin n) (Fin n) (𝓞 E ⧸ P.as
   rw [redV_single, Matrix.mulVec_single_one] at this
   exact this
 
-variable (n P) in
 
+variable (n P) in
 def redGL : GLint E n P →* GL (Fin n) (𝓞 E ⧸ P.asIdeal) :=
   MonoidHom.toHomUnits
     { toFun := redMat
@@ -223,8 +228,8 @@ theorem redP_mul_det (k : GLint E n P) (hk : redGL n P k = 1) (a : E) :
     rwa [InvMemClass.coe_inv, map_inv, Units.val_inv_eq_inv_val] at this
   · rw [(det_glint k).2, ← redGL_val, hk, Units.val_one, Matrix.det_one]
 
-variable (n P) in
 
+variable (n P) in
 def prinCong (c : ℕ) : Subgroup (GLint E n P) where
   carrier := {k | ∀ x ∈ stdAt E n P, ((qOf P : E) ^ c)⁻¹ • (k.1 x - x) ∈ stdAt E n P}
   one_mem' := fun x _ => by
@@ -309,11 +314,11 @@ def sumL (g : Sp E n →ₗ[E] Sp E n) (t : E) : Sp E N →ₗ[E] Sp E N :=
 
 theorem prH_sumL (g : Sp E n →ₗ[E] Sp E n) (t : E) (x : Sp E N) : prH E hN (sumL hN g t x) = g (prH E hN x) := by
   funext i
-  rw [prH_apply, sumL, LinearMap.pi_apply, dif_pos (show (Br.iC hN i).1 < n from i.2)]
+  rw [prH_apply, sumL, LinearMap.pi_apply, dite_eq_left (show (Br.iC hN i).1 < n from i.2)]
   rfl
 
 theorem sumL_last (g : Sp E n →ₗ[E] Sp E n) (t : E) (x : Sp E N) : sumL hN g t x (Br.iL hN) = t * x (Br.iL hN) := by
-  rw [sumL, LinearMap.pi_apply, dif_neg (show ¬ (Br.iL hN).1 < n from lt_irrefl n)]
+  rw [sumL, LinearMap.pi_apply, dite_eq_right (show ¬ (Br.iL hN).1 < n from lt_irrefl n)]
   rfl
 
 def sumE (g : Sp E n ≃ₗ[E] Sp E n) (t : Eˣ) : Sp E N ≃ₗ[E] Sp E N :=
@@ -349,7 +354,7 @@ theorem extUH_val (γ : UF E n) : (extUH hN γ).1 = sumE hN γ.1 1 := by
   exact LinearEquiv.ext fun x => ext_prH rfl ((initL_extE γ.1 x).trans (prH_sumE rfl γ.1 1 x).symm)
     ((extE_last γ.1 x).trans (by rw [sumE_last, Units.val_one, one_mul]; rfl))
 
-theorem extGH_apply {SG : Finset (HeightOneSpectrum (𝓞 E))} (h : GLG E n SG) (w : SG) :
+theorem extGH_apply {SG : Finset (HeightOneSpectrum (𝓞 E))} (h : GLG (E := E) (n := n) (SG := SG)) (w : SG) :
     extGH hN h w = diagEmb _ (by omega : n ≤ N) (h w) := by
   subst hN
   apply Units.ext
@@ -368,8 +373,8 @@ theorem mem_stdAt_succ {x : Sp E N} : x ∈ stdAt E N P ↔ prH E hN x ∈ stdAt
   · exact h.1 i
   · exact h.2
 
-variable (P) in
 
+variable (P) in
 def extI : GLint E n P →* GLint E N P where
   toFun j := ⟨sumE hN j.1 1, fun x => by
     rw [mem_stdAt_succ hN, mem_stdAt_succ hN, prH_sumE, sumE_last, Units.val_one, one_mul, j.2]⟩
@@ -487,7 +492,33 @@ theorem exists_liftFr {d : Deco E n ST SG} (hd : d.Ok) (w : SG) : ∃ f, IsLiftF
     · replace e : f x = r • s • y := e
       rw [map_smul, e, smul_smul r s, ← algebraMap_smul E (r * s), smul_smul, inv_mul_cancel₀ h0, one_smul]
   have hsurj : Function.Surjective f := by
-    rw [← LinearMap.range_eq_top, eq_top_iff, ← hd.lat.span_eq_top, Submodule.span_le]
+    have hspan : Submodule.span E (d.N : Set (Sp E n)) = ⊤ := by
+      let W := Submodule.span E (d.N : Set (Sp E n))
+      change W = ⊤
+      by_contra h
+      let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+      let g : Sp E n →ₗ[E] Module.Dual E W :=
+        (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+      have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt h
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+      have hsmul (a : E) : a • e x ∈ d.N := by
+        rw [← hd.uni, dualBasic_mem_dual]
+        intro y hy
+        apply hStd_mem_one_symm
+        have hxy : hStd E n (e x) y = 0 :=
+          congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+        simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+      let i : E →ₗ[𝓞 E] d.N :=
+        ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict d.N hsmul
+      let : Module.Finite (𝓞 E) d.N := Module.Finite.iff_fg.mpr hd.lat.fg
+      let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    rw [← LinearMap.range_eq_top, eq_top_iff, ← hspan, Submodule.span_le]
     intro y hy
     obtain ⟨x, -, e⟩ := h3 y (le_locP _ _ hy)
     exact ⟨x, e⟩
@@ -499,14 +530,14 @@ theorem exists_liftFr {d : Deco E n ST SG} (hd : d.Ok) (w : SG) : ∃ f, IsLiftF
 theorem liftFr_spec {d : Deco E n ST SG} (hd : d.Ok) (w : SG) : IsLiftFr d w (d.liftFr w) :=
   Classical.epsilon_spec (exists_liftFr hd w)
 
-def passFr {d : Deco E n ST SG} {w : SG} (γ : Sp E n ≃ₗ[E] Sp E n) (h : GLG E n SG) {f f' : Sp E n ≃ₗ[E] Sp E n}
+def passFr {d : Deco E n ST SG} {w : SG} (γ : Sp E n ≃ₗ[E] Sp E n) (h : GLG (E := E) (n := n) (SG := SG)) {f f' : Sp E n ≃ₗ[E] Sp E n}
     (hf : IsLiftFr d w f) (hf' : IsLiftFr (d.act γ h) w f') : GLint E n w.1 :=
   ⟨f'⁻¹ * γ * f, fun x => by
     rw [← hf'.1, ← hf.1]
     show f' (f'.symm (γ (f x))) ∈ localization₂ w.1.asIdeal (gmap γ d.N) ↔ _
     rw [LinearEquiv.apply_symm_apply, mem_localization_gmap, LinearEquiv.symm_apply_apply]⟩
 
-theorem redGL_passFr {d : Deco E n ST SG} {w : SG} (γ : Sp E n ≃ₗ[E] Sp E n) (h : GLG E n SG) {f f' : Sp E n ≃ₗ[E] Sp E n}
+theorem redGL_passFr {d : Deco E n ST SG} {w : SG} (γ : Sp E n ≃ₗ[E] Sp E n) (h : GLG (E := E) (n := n) (SG := SG)) {f f' : Sp E n ≃ₗ[E] Sp E n}
     (hf : IsLiftFr d w f) (hf' : IsLiftFr (d.act γ h) w f') : redGL n w.1 (passFr γ h hf hf') = h w := by
   refine redGL_eq _ fun x hx => ?_
   rw [← hf'.2 _ (glint_mem _ hx), ← hf.2 x hx]
@@ -522,7 +553,7 @@ theorem exists_of_isLiftFr {d : Deco E n ST SG} {w : SG} {f f' : Sp E n ≃ₗ[E
 
 variable {N : ℕ} (hN : N = n + 1)
 
-theorem isLiftFr_tilH (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
+theorem isLiftFr_tilH (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
     (w : SG) {f : Sp E n ≃ₗ[E] Sp E n} (hf : IsLiftFr d.1 w f) (t : Eˣ) (ht : (t : E) = (pi : E)) :
     IsLiftFr (DecoSet.tilH (ST := ST) hN pi d).1 w (sumE hN f t) := by
   classical

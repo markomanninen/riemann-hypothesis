@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftSubstitutionCoeffDivisible
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem inWj_mul {w : O} {P Q : MvPolynomial σ (KK O)} {a b : ℕ} (hP : InWj w
   choose cp hcp using hP
   choose cq hcq using hQ
   refine ⟨∑ x ∈ Finset.HasAntidiagonal.antidiagonal m, cp x.1 * cq x.2, ?_⟩
-  rw [coeff_mul, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_mul, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [hcp, hcq, ← map_mul]
   congr 1
@@ -84,7 +89,8 @@ theorem hook_key_lift_exact (w : O) (LL : LiftLetters ι) (r : ℕ) (g : Matrix 
     liftSubst p f O w r LL g (hKey O k l l') = C (algebraMap O (KK O) w) * hKey O k l l' := by
   classical
   unfold hKey
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, liftSubst_X_vec p f O w LL r g hg l _ hl, liftSubst_X_cov p f O w LL r g l' _ hl']
   have hinv : ∀ b b' : Fin k, ∑ a : Fin k, sigMat p f O g⁻¹ (LL.pos l) b a * sigMat p f O g (LL.pos l') a b' =
       if b = b' then 1 else 0 := by
@@ -108,7 +114,8 @@ theorem hook_key_lift_exact (w : O) (LL : LiftLetters ι) (r : ℕ) (g : Matrix 
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun b' _ => ?_
-        rw [map_sum, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.mul_sum]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [map_mul]
         ring

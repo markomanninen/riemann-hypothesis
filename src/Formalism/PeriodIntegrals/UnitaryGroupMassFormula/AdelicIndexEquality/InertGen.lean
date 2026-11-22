@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem H_symm (hσ : ∀ a, σ (σ a) = a) (hJ : cT σ J = J) (x y : Fin n → 
     have h := congrFun (congrFun hJ j) i
     simpa [cT] using h
   unfold H
-  simp only [dotProduct, Matrix.mulVec, Function.comp_apply, map_sum, map_mul, hσ, hJ',
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, Matrix.mulVec, Function.comp_apply, map_sum, map_mul, hσ, hJ',
     Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => by ring))
@@ -77,7 +82,8 @@ theorem H_mulVec (M : Matrix (Fin n) (Fin n) K) (x y : Fin n → K) :
     H σ J (M *ᵥ x) (M *ᵥ y) = H σ (cT σ M * J * M) x y := by
   have e1 : σ ∘ (M *ᵥ x) = (M.map σ) *ᵥ (σ ∘ x) := by
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum]
   unfold H
   rw [e1]
   conv_rhs => rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec]

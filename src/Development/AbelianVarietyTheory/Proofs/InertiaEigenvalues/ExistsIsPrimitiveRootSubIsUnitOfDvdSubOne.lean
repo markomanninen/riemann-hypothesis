@@ -1,10 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open PowerSeries
 
 namespace GlobalTheory
 
-open IsLocalRing Polynomial in
 
+open IsLocalRing Polynomial in
 theorem exists_isPrimitiveRoot_sub_isUnit_of_dvd_sub_one {l : ℕ} {O : Type} [CommRing O]
     [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
     (hl : l.Prime) (hu : ¬ IsUnit (l : O)) (e : ℕ) (he : e ∣ l - 1) :
@@ -50,7 +55,7 @@ theorem exists_isPrimitiveRoot_sub_isUnit_of_dvd_sub_one {l : ℕ} {O : Type} [C
       simp [hζk.pow_eq_one])
     (by
       have h : IsUnit ((e : O) * ω₀ ^ (e - 1)) := heu.mul (hω₀u.pow _)
-      simpa [derivative_X_pow] using h.map (Ideal.Quotient.mk (maximalIdeal O)))
+      simpa [Polynomial.derivative_X_pow] using h.map (Ideal.Quotient.mk (maximalIdeal O)))
   have hres : residue O ω = residue O ω₀ := by
     rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff]; exact hsub
   have hωe : ω ^ e = 1 := by

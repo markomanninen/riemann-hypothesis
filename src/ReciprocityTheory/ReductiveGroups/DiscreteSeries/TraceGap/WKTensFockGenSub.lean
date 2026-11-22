@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TsubValInjective
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TsubValInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem wK_KK (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {V : S
   have h1 := LinearMap.congr_fun (wK_dOp hσ hD hk) y
   have h2 := LinearMap.congr_fun (wK_dOp' hσ hD hk) y
   simp only [Module.End.mul_apply] at h1 h2
-  rw [LinearMap.add_apply, ← h1, ← h2, ← map_add, ← LinearMap.add_apply, hyD, map_zero]
+  rw [LinearMap.add_apply, ← h1, ← h2, ← map_add (f := _), ← LinearMap.add_apply, hyD, map_zero]
 
 theorem kType_clause {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     {lam : Fin n → ℝ} {h : ℝ}

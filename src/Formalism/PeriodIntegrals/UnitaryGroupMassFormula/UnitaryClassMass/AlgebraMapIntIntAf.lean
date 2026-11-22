@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjS
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.OneSubEvTInvInt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjS
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.OneSubEvTInvInt
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory IsDedekindDomain PI.UnitaryGroupMassFormula.UJClassFin
 open scoped TensorProduct
@@ -134,89 +138,6 @@ theorem crd_iff (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V) (s : 
     algebraMap (𝓞 F) (𝓞 E) s • w ∈ L0 ↔ (algebraMap (𝓞 F) F s) • b.equivFun w ∈ crdOf b L0 := by
   rw [mem_iff_crdOf b L0, equivFun_osmul, ← IsScalarTower.algebraMap_apply,
     IsScalarTower.algebraMap_apply (𝓞 F) F E, algebraMap_smul]
-
-theorem flocHat [FiniteDimensional E V] (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V)
-    (hL : Submodule.IsLattice E L0)
-    (hsat : ∀ y : Fin M → E, vinc (F := F) y ∈ latHat F E (crdOf b L0) → y ∈ crdOf b L0)
-    (S : Set (HeightOneSpectrum (𝓞 F))) (w : V) :
-    (evT S ⊗ₜ[F] (1 : E)) • vinc (F := F) (b.equivFun w) ∈ latHat F E (crdOf b L0) ↔
-      ∀ v ∈ S, w ∈ Floc v L0 := by
-  classical
-  obtain ⟨m, hm0, hmL⟩ := cofin1 (Submodule.span (𝓞 E) {w}) L0 (Submodule.fg_span_singleton w) hL.span_eq_top
-  set mF : 𝓞 F := (m : 𝓞 F) with hmF
-  have hmF0 : mF ≠ 0 := intCast_ne_zero_OF m hm0
-  have hmw : algebraMap (𝓞 F) (𝓞 E) mF • w ∈ L0 := by
-    rw [hmF, map_intCast]
-    exact hmL w (Submodule.mem_span_singleton_self w)
-  have hmy := (crd_iff b L0 mF w).1 hmw
-  have hne : ∀ t : 𝓞 F, t ≠ 0 → algebraMap (𝓞 F) F t ≠ 0 := fun t ht h =>
-    ht (FaithfulSMul.algebraMap_injective (𝓞 F) F (by rw [h, map_zero]))
-  constructor
-  · intro hY v hv
-    obtain ⟨t, htv, htint⟩ := t_lemma v mF hmF0
-    have htF : algebraMap (𝓞 F) F t ≠ 0 := hne t (fun h => htv (by rw [h]; exact v.asIdeal.zero_mem))
-    have key : vinc (F := F) ((algebraMap (𝓞 F) F t) • b.equivFun w) ∈ latHat F E (crdOf b L0) := by
-      have hdec : vinc (F := F) ((algebraMap (𝓞 F) F t) • b.equivFun w) =
-          (evT {v} ⊗ₜ[F] (1 : E)) • ((algebraMap (𝓞 F) F t) • vinc (F := F) (b.equivFun w)) +
-          ((1 - evT {v}) ⊗ₜ[F] (1 : E)) • ((algebraMap (𝓞 F) F t) • vinc (F := F) (b.equivFun w)) := by
-        rw [vinc_Fsmul, ← add_smul, ← TensorProduct.add_tmul, add_sub_cancel,
-          ← Algebra.TensorProduct.one_def, one_smul]
-      rw [hdec]
-      apply add_mem
-      · rw [tmul_one_smul_Fsmul]
-        have e2 : ((evT {v} * algebraMap F (Af F) (algebraMap (𝓞 F) F t)) ⊗ₜ[F] (1 : E)) •
-              vinc (F := F) (b.equivFun w) =
-            ((evT {v} * algebraMap F (Af F) (algebraMap (𝓞 F) F t)) ⊗ₜ[F] (1 : E)) •
-              ((evT S ⊗ₜ[F] (1 : E)) • vinc (F := F) (b.equivFun w)) := by
-          rw [tmul_one_smul_smul, mul_right_comm, evT_mul_of_subset (Set.singleton_subset_iff.2 hv)]
-        rw [e2]
-        exact latHat_smul _ (intAf_mul (evT_int _) (algebraMap_int_intAf t)) hY
-      · have e3 : ((1 - evT {v}) ⊗ₜ[F] (1 : E)) • ((algebraMap (𝓞 F) F t) • vinc (F := F) (b.equivFun w)) =
-            (((1 - evT {v}) * algebraMap F (Af F) (algebraMap (𝓞 F) F t / algebraMap (𝓞 F) F mF)) ⊗ₜ[F] (1 : E)) •
-              vinc (F := F) ((algebraMap (𝓞 F) F mF) • b.equivFun w) := by
-          rw [vinc_Fsmul, tmul_one_smul_Fsmul, tmul_one_smul_Fsmul, mul_assoc, ← map_mul,
-            div_mul_cancel₀ _ (hne mF hmF0)]
-        rw [e3]
-        exact latHat_smul _ htint (vinc_mem _ hmy)
-    exact ⟨t, htv, (crd_iff b L0 t w).2 (hsat _ key)⟩
-  · intro hS
-    set B : Set (HeightOneSpectrum (𝓞 F)) := {u | u ∈ S ∧ mF ∈ u.asIdeal} with hB
-    have hBfin : B.Finite := (finElt mF hmF0).subset (fun u hu => hu.2)
-    have hBS : B ⊆ S := fun u hu => hu.1
-    obtain ⟨t, htI, ht0, htB⟩ : ∃ t : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) t • w ∈ L0 ∧ t ≠ 0 ∧
-        ∀ u ∈ B, t ∉ u.asIdeal := by
-      by_cases hBe : hBfin.toFinset = ∅
-      · refine ⟨mF, hmw, hmF0, fun u hu => ?_⟩
-        have : u ∈ hBfin.toFinset := (Set.Finite.mem_toFinset _).2 hu
-        rw [hBe] at this
-        simp at this
-      · obtain ⟨a, ha⟩ := Finset.nonempty_iff_ne_empty.2 hBe
-        let I : Ideal (𝓞 F) := Ideal.comap (algebraMap (𝓞 F) (𝓞 E)) (Submodule.comap (LinearMap.toSpanSingleton (𝓞 E) V w) L0)
-        have hnot : ¬ ((I : Set (𝓞 F)) ⊆ ⋃ i ∈ (↑hBfin.toFinset : Set (HeightOneSpectrum (𝓞 F))),
-            (fun u : HeightOneSpectrum (𝓞 F) => u.asIdeal) i) := by
-          rw [Ideal.subset_union_prime a a (fun i _ _ _ => i.isPrime)]
-          rintro ⟨u, hu, hIu⟩
-          obtain ⟨s, hs, hsw⟩ := hS u ((Set.Finite.mem_toFinset _).1 hu).1
-          exact hs (hIu hsw)
-        rw [Set.not_subset] at hnot
-        obtain ⟨t, htI, htU⟩ := hnot
-        have htB : ∀ u ∈ B, t ∉ u.asIdeal := fun u hu hut =>
-          htU (Set.mem_biUnion (x := u) ((Set.Finite.mem_toFinset _).2 hu) hut)
-        refine ⟨t, htI, fun h => htB a ((Set.Finite.mem_toFinset _).1 ha) (by rw [h]; exact a.asIdeal.zero_mem), htB⟩
-    have hty := (crd_iff b L0 t w).1 htI
-    have htF := hne t ht0
-    rw [evT_split hBS, TensorProduct.add_tmul, add_smul]
-    apply add_mem
-    · have e1 : evT B = (evT B * algebraMap F (Af F) ((algebraMap (𝓞 F) F t)⁻¹)) *
-          algebraMap F (Af F) (algebraMap (𝓞 F) F t) := by
-        rw [mul_assoc, ← map_mul, inv_mul_cancel₀ htF, map_one, mul_one]
-      rw [e1, ← tmul_one_smul_Fsmul, ← vinc_Fsmul]
-      exact latHat_smul _ (evT_inv_int B t htB) (vinc_mem _ hty)
-    · have e1 : evT (S \ B) = (evT (S \ B) * algebraMap F (Af F) ((algebraMap (𝓞 F) F mF)⁻¹)) *
-          algebraMap F (Af F) (algebraMap (𝓞 F) F mF) := by
-        rw [mul_assoc, ← map_mul, inv_mul_cancel₀ (hne mF hmF0), map_one, mul_one]
-      rw [e1, ← tmul_one_smul_Fsmul, ← vinc_Fsmul]
-      exact latHat_smul _ (evT_inv_int (S \ B) mF (fun u hu hmu => hu.2 ⟨hu.1, hmu⟩)) (vinc_mem _ hmy)
 
 end FL
 

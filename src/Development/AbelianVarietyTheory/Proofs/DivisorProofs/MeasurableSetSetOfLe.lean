@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorUniformizerExponent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorUniformizerExponent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 
@@ -31,11 +35,6 @@ theorem prod_apow_finset (ϖ : kˣ) {α : Type*} (s : Finset α) (f : α → ℂ
   induction s using Finset.induction_on with
   | empty => simp
   | insert i s hi ih => rw [Finset.prod_insert hi, Finset.sum_insert hi, ih, ← apow_add]
-
-theorem cast_list_sum {α : Type*} (l : List α) (f : α → ℤ) : (((l.map f).sum : ℤ) : ℂ) = (l.map fun b => (f b : ℂ)).sum := by
-  induction l with
-  | nil => simp
-  | cons b l ih => simp [ih]
 
 end Generic
 end GlobalTheory.OriginBox
@@ -102,8 +101,8 @@ variable (G : Grid k)
 def vtxDet (a a' : ℤ) (X : ℕ × ℕ) : ℤ :=
   if X.1 = G.m then ∑ x : Fin (G.rank (G.m, X.2)), vtxExp a a' (G.m - 1 - X.2) (topRank G X.2) x else 0
 
-open Classical in
 
+open Classical in
 def expo (a a' : ℤ) : ℤ :=
   ((oppositePath G.m).map fun b => vtxDet G a a' b.src * G.rank b.tgt - vtxDet G a a' b.tgt * G.rank b.src).sum -
     2 * ∑ j, ∑ v, boxExp G a a' j v

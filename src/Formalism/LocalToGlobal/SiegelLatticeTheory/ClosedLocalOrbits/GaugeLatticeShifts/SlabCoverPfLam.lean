@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabCoverPfSteps
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHFinOrd
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SlabCoverPfSteps
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NilradicalLatticeZMemSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHFinOrd
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem exists_ker_mat {E : Type*} [Field E] {n : ℕ} (W : Submodule E (Fin n �
     intro i
     conv_rhs => rw [show w = ∑ j, w j • Pi.single j 1 by
       funext x; simp [Finset.sum_apply, Pi.single_apply]]
-    simp [Matrix.mulVec, dotProduct, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, mul_comm]
   constructor
   · intro h
     rw [← Submodule.Quotient.mk_eq_zero]
@@ -49,7 +54,8 @@ theorem rv_desc {D : D7} (X : HidaSetting D) (v : InfinitePlace X.B.I.F) (T : Se
       (B.map (X.B.I.φ v)) *ᵥ (fun i => X.B.I.φ v (y i)) = fun i => X.B.I.φ v ((B *ᵥ y) i) := by
     intro y
     funext i
-    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
   have hrv : ∀ y, (fun i => X.B.I.φ v (y i)) = X.B.I.P v *ᵥ rv X.B.I v y := by
     intro y
     rw [rv, Matrix.mulVec_mulVec, Formalism.MainNotions.LeviCoordinates.rrg_P_mul_inv, Matrix.one_mulVec]
@@ -111,7 +117,8 @@ theorem nilradical_rational_lattice : NRatLam := by
     rw [← Matrix.mulVec_mulVec]
     congr 1
     funext i
-    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
   have hsub : ∀ (v : InfinitePlace X.B.I.F) (y : Fin X.B.I.n → X.B.I.E),
       (uMat (ν.1 v) - 1) *ᵥ rv X.B.I v y =
         rv X.B.I v ((γ : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) *ᵥ y - y) := by

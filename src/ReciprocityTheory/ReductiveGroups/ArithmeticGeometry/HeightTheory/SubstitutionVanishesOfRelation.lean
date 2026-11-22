@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FZEqConstMulIrreduciblePow
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SubstitutionSplitIrreducibleOf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AevalElimEqRenameLinearSubstitution
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FZEqConstMulIrreduciblePow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SubstitutionSplitIrreducibleOf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -17,7 +21,7 @@ theorem ratio_self' {Ω V : Type*} [Field Ω] [AddCommGroup V] [Module Ω V] {f 
     ratio (Ω := Ω) f f = 1 := by
   have hex : ∃ a : Ω, f = a • f := ⟨1, (one_smul Ω f).symm⟩
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hs := hex.choose_spec
   have h0 : (hex.choose - 1) • f = 0 := by rw [sub_smul, ← hs, one_smul, sub_self]
   rcases smul_eq_zero.mp h0 with h | h
@@ -59,7 +63,8 @@ theorem substitution_comp_relation (hd : d.AxH 𝒜) (c : ι) :
     AlgHom.restrictScalars_apply]
   simp only [Data.relationEliminateColumn, aeval_X]
   split_ifs with ht
-  · rw [map_neg, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_neg, map_sum]
     simp only [map_mul, hrho, MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq]
 
     have htot : ∑ k, (d.affineRowCombination c 0 * X (t.1.succ, k) - d.affineRowCombination c t.1.succ * X (0, k)) *

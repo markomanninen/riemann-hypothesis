@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
@@ -33,7 +37,7 @@ lemma lowers_of_gen (f : Fin m → W) (n : W ≃ₗ[K] W)
     exact flag_mono f (Nat.lt_succ_iff.mp hb) (h b)
   | zero => simp
   | add x y _ _ hx hy =>
-    have : n (x + y) - (x + y) = (n x - x) + (n y - y) := by rw [map_add]; abel
+    have : n (x + y) - (x + y) = (n x - x) + (n y - y) := by rw [map_add (f := _)]; abel
     rw [this]; exact add_mem hx hy
   | smul c x _ hx =>
     have : n (c • x) - c • x = c • (n x - x) := by rw [map_smul, smul_sub]

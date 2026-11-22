@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+
+@[expose] public section
+
 open NumberField TensorProduct GroundTheory.Heights₂.Heights GlobalTheory.CompanionTheory.Ar.Lines Matrix
 open scoped ComplexOrder nonZeroDivisors
 
@@ -75,7 +80,7 @@ theorem exists_coordinates (K : Type*) [Field K] [Algebra R K] [IsFractionRing R
         dsimp only [Pi.add_apply]
         rw [key (x + y) _ _ (mul_ne_zero (hDx x) (hDx y)) hrel j,
           div_add_div _ _ (hne (hDx x)) (hne (hDx y))]
-        simp only [map_add, map_mul]
+        simp only [map_add (f := _), map_mul]
         ring
       map_smul' := fun r x => by
         funext j

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -47,6 +51,7 @@ private theorem posFd {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measu
   rw [integral_pos_iff_support_of_nonneg h0 (intg _ hc hb), pos_iff_ne_zero]
   intro h
   rw [Measure.restrict_apply hc.isOpen_support.measurableSet] at h
+  set_option synthInstance.maxHeartbeats 200000 in
   have := (isFundamentalDomain_fundamentalDomain (Gam K n) μ).measure_zero_of_invariant _ (by
     intro γ
     ext z
@@ -86,6 +91,7 @@ private theorem core {K : Type} [Field K] [NumberField K] (μ₂ : Measure (G1 K
     ∃ C : ℝ, ∀ x y, ‖∫ m₁, ∫ m₂, conj (f (a (m₁, m₂) * x)) * f' (b (m₁, m₂) * y) ∂fd μ₂ ∂fd μ₂‖ ≤ C := by
   haveI := finFd μ₂
   obtain ⟨C, hC⟩ := bdd2 hf hf'
+  set_option synthInstance.maxHeartbeats 200000 in
   exact core0 (fd μ₂) hf.cont hf'.cont hC ha hb
 
 private theorem lin0 {M : Type} [MeasurableSpace M] (ν : Measure M) [IsFiniteMeasure ν] (a : ℂ) {u v w : M × M → ℂ}
@@ -116,6 +122,7 @@ private theorem pos2 {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measur
   have hb2 : ∀ m, ‖‖F m‖ ^ 2‖ ≤ C ^ 2 := fun m => by
     rw [norm_pow, norm_norm]
     exact pow_le_pow_left₀ (norm_nonneg _) (hC _) 2
+  set_option synthInstance.maxHeartbeats 200000 in
   have hin := contInt (fd μ) hc2 hb2
   refine posFd μ hin.1 hin.2 (fun z => integral_nonneg fun _ => sq_nonneg _) (fun γ z => ?_) (z₀ := m₁) (ne_of_gt ?_)
   · refine integral_congr_ae (ae_of_all _ fun b => ?_)
@@ -172,7 +179,7 @@ private theorem posK {K : Type} [Field K] [NumberField K] (μ₂ : Measure (G1 K
     rw [← Complex.ofReal_re (∫ m₁, ∫ m₂, ‖f (lv m₁ m₂ 0 * x)‖ ^ 2 ∂fd μ₂ ∂fd μ₂)]
     simp only [pm, ← integral_complex_ofReal, Complex.conj_mul', Complex.ofReal_pow]
   rw [← RCLike.re_to_complex, ← integral_re (intK μ₂ κ hf hf)]
-  refine Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero (f := fun k : KG K (2 + 2) => (pm μ₂ f f k k).re)
+  refine Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero (f := fun k : KG K (2 + 2) => (pm μ₂ f f k k).re)
     (Complex.continuous_re.comp (contK μ₂ hf hf))
     (HasCompactSupport.of_compactSpace _) (fun x => ?_) (x := ⟨k, hkK⟩) (ne_of_gt ?_)
   · exact (integral_nonneg fun _ => integral_nonneg fun _ => sq_nonneg _).trans_eq (hre x).symm

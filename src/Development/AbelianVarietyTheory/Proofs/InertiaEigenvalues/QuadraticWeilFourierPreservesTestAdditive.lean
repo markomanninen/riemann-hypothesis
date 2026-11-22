@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversion
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversion
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+
+@[expose] public section
+
 open GlobalTheory.JR GlobalTheory.JR.WeilQuad Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -21,10 +26,10 @@ theorem star_smul_F (A : Et F E) (c : F) (y : A.L) : star (c • y) = c • star
 
 def beta (A : Et F E) (x : A.K) : LinearMap.BilinForm F A.L :=
   LinearMap.mk₂ F (fun y' y => Algebra.trace F A.K (x * Algebra.trace A.K A.L (star y' * y)))
-    (by intro a b c; simp only [star_add, add_mul, map_add, mul_add])
+    (by intro a b c; simp only [star_add, add_mul, map_add (f := _), mul_add])
     (by intro c a b
         rw [star_smul_F, smul_mul_assoc, LinearMap.map_smul_of_tower, mul_smul_comm, LinearMap.map_smul])
-    (by intro a b c; simp only [mul_add, map_add])
+    (by intro a b c; simp only [mul_add, map_add (f := _)])
     (by intro c a b
         rw [mul_smul_comm, LinearMap.map_smul_of_tower, mul_smul_comm, LinearMap.map_smul])
 
@@ -34,7 +39,7 @@ theorem beta_apply (A : Et F E) (x : A.K) (y' y : A.L) :
 theorem algMap_inj (A : Et F E) (hK : IsField A.K) (hL : IsField A.L) :
     Function.Injective (algebraMap A.K A.L) := by
   haveI : Nontrivial A.L := ⟨hL.exists_pair_ne⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro k hk
   by_contra hne
   obtain ⟨k', hk'⟩ := hK.mul_inv_cancel hne
@@ -104,8 +109,8 @@ theorem cont_psi {ψ : AddChar F ℂ} (hψ : IsStdChar ψ) : Continuous ψ := by
 
 end GlobalTheory.JR.WeilQuad.FourierTest
 
-open GlobalTheory.JR.WeilQuad.FourierTest in
 
+open GlobalTheory.JR.WeilQuad.FourierTest in
 theorem GlobalTheory.JR.WeilQuad.fOp_isTest_add : ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E]
     [NormedAlgebra F E] [StarRing E] [Unram F E] (A : Et F E) (ψ : AddChar F ℂ) (x : A.Kˣ) (μ : Measure A.L)
     (ω : A.K → ℂ), Hyp A ψ x μ ω → ∀ φ : A.L → ℂ, IsTest φ → IsTest (fOp A ψ x μ φ) ∧

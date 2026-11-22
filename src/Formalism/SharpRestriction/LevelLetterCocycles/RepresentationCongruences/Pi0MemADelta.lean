@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcGamLiftCoreT
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcGamLiftCoreT
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,10 +40,10 @@ theorem lA_pow_mem (j : ℕ) : lA W ^ j ∈ W.AΔ := by
   rw [← Nat.cast_pow]
   exact natCast_mem _ _
 
-include W in
 
+include W in
 theorem alg_inj : Function.Injective (algebraMap O LL) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro d hd
   obtain ⟨e, he, hL⟩ := W.one_line
   haveI := W.one.L.free
@@ -76,7 +80,8 @@ theorem pi0_mem_ADelta : W.π₀ ∈ W.AΔ := by
   intro δ hδ
   funext i
   show W.γ₀ δ W.π₀₁ = W.π₀₁
-  simp only [LocWach.π₀₁, map_add, map_sub, map_one, map_natCast, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LocWach.π₀₁, map_add (f := _), map_sub, map_one, map_natCast, map_sum]
   congr 1
   refine Finset.sum_nbij' (δ * ·) (δ⁻¹ * ·) (fun g hg => delF_mul W hδ hg)
     (fun g hg => delF_mul W (delF_inv W hδ) hg) (fun g _ => by simp) (fun g _ => by simp) (fun g _ => ?_)
@@ -187,8 +192,8 @@ theorem InI_add {c : ZMod n} {w w' : W.DD T} (h : InI W T c w) (h' : InI W T c w
   · show (letE (O := O) c : LetA O n) • (w + w') = w + w'
     rw [smul_add, h1, h1']
   · show ∀ δ ∈ W.DelF, W.γD T δ (w + w') = w + w'
-    intro δ hδ; rw [map_add, h2 δ hδ, h2' δ hδ]
-  · have : W.γ T (w + w') - (w + w') = (W.γ T w - w) + (W.γ T w' - w') := by rw [map_add]; abel
+    intro δ hδ; rw [map_add (f := _), h2 δ hδ, h2' δ hδ]
+  · have : W.γ T (w + w') - (w + w') = (W.γ T w - w) + (W.γ T w' - w') := by rw [map_add (f := _)]; abel
     rw [this]; exact InFNc_add W h3 h3'
 
 theorem InI_neg {c : ZMod n} {w : W.DD T} (h : InI W T c w) : InI W T c (-w) := by
@@ -343,7 +348,7 @@ theorem RepVV_add {x x' : W.DD T} {f f' : Fin d → W.EE} (h : RepVV W T c' e M 
     exact IsHorTr_unique W e1 e2
   refine ⟨κ₁ + κ₂, κ₁' + κ₂', fun k => lA W ^ κ₂ • H₁ k, fun k => a₁ k + a₂ k,
     fun k => IsHorTr_smul W κ₂ (hH₁ k),
-    fun k => ⟨add_mem (ha₁ k).1 (ha₂ k).1, by rw [mul_add, map_add, (ha₁ k).2, (ha₂ k).2]⟩, ?_⟩
+    fun k => ⟨add_mem (ha₁ k).1 (ha₂ k).1, by rw [mul_add, map_add (f := _), (ha₁ k).2, (ha₂ k).2]⟩, ?_⟩
   have hφ : ∀ (j : ℕ) (z : W.DD T), ((W.φD T) ^ e) (lA W ^ j • z) = lA W ^ j • ((W.φD T) ^ e) z := by
     intro j z
     rw [lA_pow_smul, lA_pow_smul, map_nsmul]
@@ -404,9 +409,9 @@ theorem LiftsAtT.add {f f' : W.EE} {e : ℕ} (h : LiftsAtT W A F c b sol k₀ f 
     rw [hsplit]
     exact TypesA.InFNc_add W (TypesA.InFNc_smul W (TypesA.Ps_mem W hΛ₂) hΛw₁)
       (TypesA.InFNc_smul W (TypesA.Ps_mem W hΛ₁) hΛw₂)
-  · rw [map_add, smul_add]
+  · rw [map_add (f := _), smul_add]
     exact TypesA.inMultiple_add W hP hP'
-  · refine TypesA.RepVV_congr W (TypesA.RepVV_add W hR hR') (by rw [map_add]; abel) fun k => ?_
+  · refine TypesA.RepVV_congr W (TypesA.RepVV_add W hR hR') (by rw [map_add (f := _)]; abel) fun k => ?_
     rcases eq_or_ne k k₀ with rfl | hk
     · rw [if_pos rfl, if_pos rfl, if_pos rfl, mul_add]
     · rw [if_neg hk, if_neg hk, if_neg hk, add_zero]

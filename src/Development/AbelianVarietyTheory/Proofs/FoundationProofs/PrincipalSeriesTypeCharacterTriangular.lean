@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType
 
 namespace GlobalTheory.PsType
@@ -29,7 +34,7 @@ theorem prod_div_nxt (ψ : Fin n → kˣ →* ℂˣ) (a : Fin n) (u : kˣ) :
   let f : ℕ → ℂˣ := fun j => if h : j < n then ψ ⟨j, h⟩ u else 1
   have hf : ∀ m : Fin n, f m = ψ m u := fun m => by
     show (if h : (m : ℕ) < n then ψ ⟨m, h⟩ u else 1) = ψ m u
-    rw [dif_pos m.isLt]
+    rw [dite_eq_left m.isLt]
   have hnx : ∀ m : Fin n, nxt ψ m u = f (m + 1) := by
     intro m
     unfold nxt
@@ -56,7 +61,7 @@ theorem theta_of_triangular : ∀ (k : Type) [Field k] [ValuativeRel k] [Topolog
   have hev : ∀ (χ : kˣ →* ℂˣ) (u : kˣ), valuation k (u : k) = 1 → ev χ u = χ u := by
     intro χ u hu
     unfold ev
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
     congr 2
     ext
     rfl

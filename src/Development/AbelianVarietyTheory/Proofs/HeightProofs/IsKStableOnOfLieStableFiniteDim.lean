@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.RealPar Matrix MeasureTheory
 open scoped TensorProduct
 
@@ -38,10 +43,12 @@ theorem flow_mem_map {V H : Type*} [AddCommGroup V] [Module ℂ V] [NormedAddCom
     intro s u
     have h3 : (u : V) = ∑ j, b.repr u j • (b j : V) := by
       have := congrArg W.subtype (b.sum_repr u)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm
     rw [h3]
-    simp only [f, map_sum, map_smul, inner_sum, inner_smul_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, map_sum, map_smul, inner_sum, inner_smul_right]
   let M : Matrix (Fin (Module.finrank ℂ W)) (Fin (Module.finrank ℂ W)) ℂ :=
     fun i j => b.repr ⟨a (b i), hW _ (b i).2⟩ j
   let L := LinearMap.toContinuousLinearMap (Matrix.toLin' M)

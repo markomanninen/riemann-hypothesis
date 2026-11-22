@@ -1,12 +1,35 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsFundU
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittTargetStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.QuasiOfFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittTargetStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagUnipotentFourierJacobiGroupStructure
+
+namespace I195MixedCoordinates_33afad4828ca82e8e9e203c8
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_33afad4828ca82e8e9e203c8
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
@@ -38,7 +61,7 @@ theorem mixT_zero_flagN {S T T₀ : HSp D} {σ : ℕ} (d : HypDec T T₀ σ) (ψ
     (hpres : ∀ p f, IsThetaFunO ψ S T f → IsThetaFunO ψ S T (om p f))
     (hF : ∀ f, IsThetaFunO ψ S T f → GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.FormulasT d ψ χS om om₀ μ 𝓕 f)
     (f : WO S T → ℂ) (hf : IsThetaFunO ψ S T f) (n : GA D T) (hn : n ∈ flagN d) :
-    d.mixT S ψ μ 𝓕 (om (1, n) f) 0 = d.mixT S ψ μ 𝓕 f 0 := by
+    (_root_.I195MixedCoordinates_33afad4828ca82e8e9e203c8.target d) S ψ μ 𝓕 (om (1, n) f) 0 = (_root_.I195MixedCoordinates_33afad4828ca82e8e9e203c8.target d) S ψ μ 𝓕 f 0 := by
   obtain ⟨u, hu, b, c, rfl⟩ := ((flag_jacobi_structure D T T₀ σ d).1 n).1 hn
   have e : ((1 : GA D S), d.levi u * (d.nB b * d.nC c)) = (1, d.levi u) * ((1, d.nB b) * (1, d.nC c)) := by
     simp
@@ -48,6 +71,8 @@ theorem mixT_zero_flagN {S T T₀ : HSp D} {σ : ℕ} (d : HypDec T T₀ σ) (ψ
     simp [HypDec.qT, map_zero, symplOH_zero_left]
   have ha : GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj S T₀ 0 = 0 := by
     simp [GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj]
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target d S ψ μ 𝓕 (om (1, d.levi u * (d.nB b * d.nC c)) f) 0 =
+    _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target d S ψ μ 𝓕 f 0
   rw [e, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, (hF _ h2).levi, Matrix.zero_mul,
     det_of_mem_UX hu, map_one, halfMod_of_mem_UX _ hu, (hF _ h3).unip, Matrix.zero_mul, ha, (hF _ hf).centre, hq]
   funext w
@@ -74,17 +99,24 @@ theorem evalAt_zero_equivariant : ∀ (D : D7), Descent D → ∀ (ψ : AddChar 
   have hV := (GlobalTheory.T.mixedCoordinates_of_thetaFunction_are_thetaFunctions D ψ s.weil.std).1 J.W J.W₀ B.V (σ + 1) J.d s.vS.μ s.vS.𝓕 s.vS.covol Ψ hΨ
   have hΨk := s.weil.om_pres (1, n * embA B.d B.o h) Ψ hΨ
   simp only [evalAt]
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕
+    (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 (s.om (J.d.emb0 g, n * embA B.d B.o h) Ψ) x) 0 =
+    s.om₀ (g, B.o.emb (h, 1)) (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕
+    (_root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x)) 0)
   rw [show s.om (J.d.emb0 g, n * embA B.d B.o h) = s.om (J.d.emb0 g, 1) * s.om (1, n * embA B.d B.o h) by
     rw [← map_mul]; simp]
   rw [Module.End.mul_apply, (hS _ hΨk).core, (hS _ hΨ).target]
   have hFt := hV (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x)
-  generalize J.d.mixS B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x) = F at hFt ⊢
+  generalize _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.source J.d B.V ψ s.vS.μ s.vS.𝓕 Ψ (mt B.V (n * embA B.d B.o h)⁻¹ ⬝ x) = F at hFt ⊢
   have hF1 := hom₁.om_pres (1, B.d.emb0 (B.o.emb (h, 1))) F hFt
   have hF2 := hom₁.om_pres (1, n) _ hF1
+  have hz := mixT_zero_flagN B.d ψ s.χV om₁ s.om₀ s.vT.μ s.vT.𝓕 hom₁.om_pres hT _ hF1 n hn
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕 (om₁ (1, n) (om₁ (1, B.d.emb0 (B.o.emb (h, 1))) F)) 0 =
+    _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target B.d J.W₀ ψ s.vT.μ s.vT.𝓕 (om₁ (1, B.d.emb0 (B.o.emb (h, 1))) F) 0 at hz
   rw [show om₁ (1, n * embA B.d B.o h) = om₁ (1, n) * om₁ (1, B.d.emb0 (B.o.emb (h, 1))) by
     rw [← map_mul, embA_apply]; simp]
   rw [Module.End.mul_apply, (hT _ hF2).source, Matrix.mul_zero,
-    mixT_zero_flagN B.d ψ s.χV om₁ s.om₀ s.vT.μ s.vT.𝓕 hom₁.om_pres hT _ hF1 n hn, (hT _ hFt).core,
+    hz, (hT _ hFt).core,
     show s.om₀ (g, B.o.emb (h, 1)) = s.om₀ (g, 1) * s.om₀ (1, B.o.emb (h, 1)) by rw [← map_mul]; simp,
     Module.End.mul_apply]
 

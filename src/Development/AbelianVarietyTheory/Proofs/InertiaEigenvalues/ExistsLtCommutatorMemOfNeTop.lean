@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
+
+@[expose] public section
+
 open GlobalTheory.BI GlobalTheory.BrauerZero
 
 namespace GlobalTheory

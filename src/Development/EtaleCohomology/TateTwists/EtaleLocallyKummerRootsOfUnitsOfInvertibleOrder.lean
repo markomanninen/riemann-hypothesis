@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsPrimitiveRootOfUnityOfInvertib
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleLocallyExistsPrimitiveRootOfUnityOfInvertib
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Polynomial
 
@@ -11,7 +15,7 @@ theorem kpol_monic {A : Type} [CommRing A] (q : ℕ) [NeZero q] (u : A) : (kpol 
 
 theorem kpol_natDegree {A : Type} [CommRing A] [Nontrivial A] (q : ℕ) [NeZero q] (u : A) :
     (kpol q u).natDegree = q :=
-  natDegree_X_pow_sub_C
+  natDegree_X_pow_sub_C _
 
 theorem root_pow {A : Type} [CommRing A] (q : ℕ) (u : A) :
     AdjoinRoot.root (kpol q u) ^ q = algebraMap A (AdjoinRoot (kpol q u)) u := by

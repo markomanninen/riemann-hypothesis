@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsConstOfCover
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.DifferentiableOnFamPtAffine
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsConstOfCover
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.DifferentiableOnFamPtAffine
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -41,7 +45,7 @@ theorem exists_derivation (ρ : R →ₐ[ℂ] ℂ) (hρ : ∀ r, ρ r = 0 → r 
       abel
     have e3 : lam (s i - algebraMap ℂ R (ρ (s i))) = lam (s i) - ρ (s i) * lam 1 := by
       rw [map_sub, Algebra.algebraMap_eq_smul_one, map_smul, smul_eq_mul]
-    rw [e1, map_add, h, e3, map_smul, smul_eq_mul]
+    rw [e1, map_add (f := _), h, e3, map_smul, smul_eq_mul]
   refine ⟨lam - lam 1 • ρ.toLinearMap, by simp, ⟨i₀, ?_⟩, ?_⟩
   · have e : (lam - lam 1 • ρ.toLinearMap) (s i₀) = lam (s i₀ - algebraMap ℂ R (ρ (s i₀))) := by
       simp only [LinearMap.sub_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply, smul_eq_mul,
@@ -54,8 +58,8 @@ theorem exists_derivation (ρ : R →ₐ[ℂ] ℂ) (hρ : ∀ r, ρ r = 0 → r 
     rw [hkey]
     ring
 
-omit [IsLocalRing R] [Module.Finite ℂ R] in
 
+omit [IsLocalRing R] [Module.Finite ℂ R] in
 def jetOf {B : Type} [CommRing B] (ρ : R →ₐ[ℂ] ℂ) (κ : R →ₗ[ℂ] ℂ) (h1 : κ 1 = 0) (e : B →+* R)
     (h : ∀ f r, κ (r * e f) = ρ r * κ (e f) + ρ (e f) * κ r) : B →+* DualNumber ℂ where
   toFun f := (ρ (e f), κ (e f))
@@ -315,7 +319,7 @@ theorem exists_linear_of_gen (hL : L.IsLB) (a : u.Λ → ℂ) (B : u.Λ → ((Fi
     rw [ez, ← add_assoc]
     have h1 := hfr l (j 1) z a1
     have h0 := hfr l (j 0) (w + z) a0
-    rw [h1, h0, map_add, Complex.exp_add]
+    rw [h1, h0, map_add (f := _), Complex.exp_add]
     have hal := ha l
     field_simp
   obtain ⟨lam, hlam⟩ := exists_linear_of_mul_period hF hne (S := (u.Λ : Set (Fin g → ℂ))) u.full
@@ -472,8 +476,8 @@ theorem snd_preimage_le (ρ : R →ₐ[ℂ] ℂ) (x : spO R ⟶ A) (hx : resPt �
     rw [q2]
     exact ha
 
-omit [IsLocalRing R] [Module.Finite ℂ R] in
 
+omit [IsLocalRing R] [Module.Finite ℂ R] in
 theorem first_order_transl (ρ : R →ₐ[ℂ] ℂ) (x : spO R ⟶ A) (κ : R →ₗ[ℂ] ℂ) (w : Fin g → ℂ)
     (hκ : ∀ (W : A.left.Opens) (h : ⊤ ≤ x.left ⁻¹ᵁ W) (f : Γ(A.left, W)),
         (∀ r, κ (r * evalPt (R := R) x.left W h f) =

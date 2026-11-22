@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentChainDegreeEven
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,13 @@ theorem thr_U [NeZero r] (p : ℕ) (S : SegData s) (aTop : Fin s → ℕ) (aPlus
   have e1 : finPos (2 * s + 1) ((blockData p S aTop aPlus m b).T.J k) = ⟨2 * i.val + 1, by omega⟩ := by
     apply Fin.ext
     show min (if h : k.val < S.t then 2 * (uTop S ⟨k.val, h⟩ : ℕ) + 1 else 2 * s + 1) (2 * s + 1) = 2 * i.val + 1
-    rw [dif_pos hkt]
+    rw [dite_eq_left hkt]
     show min (2 * (S.sigma + k.val) + 1) (2 * s + 1) = 2 * i.val + 1
     omega
   have e3 : (blockData p S aTop aPlus m b).T.thr k = ((⌊((cap p S b i.val : ℤ) : ℝ) - m⌋ : ℤ) : WithTop ℤ) := by
     show WithTop.map (fun x : ℤ => ⌊(x : ℝ) - m⌋) (if h : k.val < S.t then ((cap p S b (uTop S ⟨k.val, h⟩) : ℤ) : WithTop ℤ)
       else ((cap p S b s : ℤ) : WithTop ℤ)) = _
-    rw [dif_pos hkt, WithTop.map_coe]
+    rw [dite_eq_left hkt, WithTop.map_coe]
     have hu : ((uTop S ⟨k.val, hkt⟩ : Fin s) : ℕ) = i.val := by
       show S.sigma + k.val = i.val
       omega
@@ -49,12 +53,12 @@ theorem thr_last [NeZero r] (p : ℕ) (S : SegData s) (aTop : Fin s → ℕ) (aP
   have e1 : finPos (2 * s + 1) ((blockData p S aTop aPlus m b).T.J k) = Fin.last _ := by
     apply Fin.ext
     show min (if h : k.val < S.t then 2 * (uTop S ⟨k.val, h⟩ : ℕ) + 1 else 2 * s + 1) (2 * s + 1) = 2 * s + 1
-    rw [dif_neg hkt]
+    rw [dite_eq_right hkt]
     exact min_self _
   have e3 : (blockData p S aTop aPlus m b).T.thr k = ((⌊((cap p S b s : ℤ) : ℝ) - m⌋ : ℤ) : WithTop ℤ) := by
     show WithTop.map (fun x : ℤ => ⌊(x : ℝ) - m⌋) (if h : k.val < S.t then ((cap p S b (uTop S ⟨k.val, h⟩) : ℤ) : WithTop ℤ)
       else ((cap p S b s : ℤ) : WithTop ℤ)) = _
-    rw [dif_neg hkt, WithTop.map_coe]
+    rw [dite_eq_right hkt, WithTop.map_coe]
   rw [e1, e3] at h
   exact (WithTop.coe_le_coe.mp h).trans (floor_sub_le _ hm)
 

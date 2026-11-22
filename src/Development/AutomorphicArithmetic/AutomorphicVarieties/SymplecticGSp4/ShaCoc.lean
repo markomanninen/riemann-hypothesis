@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.QocEquiv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.QocEquiv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ContTw
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem kill_of_len {O M : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [AddCommGroup M]
@@ -137,11 +142,11 @@ private theorem main_abs [IsDomain O] (θ : Γ →* Oˣ) (hc : ∀ m : W, Contin
   let Z : LocSel (Formalism.GaloisCohomology.scalRep W θ) ⊤ 𝒟 →+ (Γ → O ⧸ Ideal.span {a}) := AddMonoidHom.mk' (fun x g => j (N x g))
     fun x y => funext fun g => hι (by
       show ι (j (N (x + y).1 g)) = ι (j (N x.1 g) + j (N y.1 g))
-      rw [ι.map_add, haN, haN, haN, Submodule.coe_add, N.map_add, Pi.add_apply])
+      rw [map_add ι, haN, haN, haN, Submodule.coe_add, map_add N, Pi.add_apply])
   have hZ : ∀ x g, ι (Z x g) = N x g := haN
   refine ⟨a, ha, Z, fun x y h => Subtype.ext (hi (funext fun g => by rw [← hZ, ← hZ, h])), fun x =>
     ⟨(hl x).comp j, fun g h => hι ?_, fun D hD g hg h1 => hι ?_, hι ?_, fun v hv => ?_⟩⟩
-  · rw [map_add, hmul, hZ, hZ, hZ, hco]
+  · rw [map_add ι, hmul, hZ, hZ, hZ, hco]
   · obtain ⟨m, hm⟩ := hloc 𝒟 x x.2 D hD
     rw [hZ, hm g hg, h1, map_zero, Units.val_one, one_smul, sub_self]
   · rw [hZ, h0, map_zero]
@@ -205,6 +210,7 @@ private theorem cont_Psi (hD : D.Good) (m : QO l c.O) : Continuous fun g => ((D.
   rw [← hθ] at hc
   exact (continuous_prod_of_discrete_right.1 hc) m
 
+set_option synthInstance.maxHeartbeats 200000 in
 private theorem conc (hD : D.Good) (ρ : Representation c.O (G ℚ Ω) (QO l c.O)) (hρ : ρ = twist₂ l D.Psi⁻¹)
     (hfin : Module.length c.O (ShaU ρ (∏ p ∈ D.S, p) ⊤) ≠ ⊤) :
     ∃ a : c.O, a ≠ 0 ∧ ∃ Z : ShaU ρ (∏ p ∈ D.S, p) ⊤ →+ (G ℚ Ω → c.O ⧸ Ideal.span {a}), Function.Injective Z ∧

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeakApproximationDVR.BigExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,10 +157,10 @@ theorem big_existence_holds : BigExists := by
           obtain ⟨hd, hbig⟩ := g_B_big (hϖ i) hzi0 hzi ((map_ne_zero _).mpr hy0) hyi hr1
           have hmap : ∀ k, iw k (z ^ r * (1 + z ^ r)⁻¹ * y) =
               (iw k z) ^ r * (1 + (iw k z) ^ r)⁻¹ * iw k y := fun k => by
-            simp only [map_mul, map_pow, map_inv₀, map_add, map_one]
+            simp only [map_mul, map_pow, map_inv₀, map_add (f := _), map_one]
           have hd' : (1 + z ^ r : E) ≠ 0 := fun h => hd (by
             have : iw i (1 + z ^ r) = 1 + (iw i z) ^ r := by
-              simp only [map_add, map_one, map_pow]
+              simp only [map_add (f := _), map_one, map_pow]
             rw [← this, h, map_zero])
           refine ⟨z ^ r * (1 + z ^ r)⁻¹ * y,
             mul_ne_zero (mul_ne_zero (pow_ne_zero _ hz0) (inv_ne_zero hd')) hy0, ?_, ?_⟩

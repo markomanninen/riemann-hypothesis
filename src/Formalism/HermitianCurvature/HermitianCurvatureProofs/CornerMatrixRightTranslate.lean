@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixFirstLineZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixFirstLineZero
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -118,7 +122,8 @@ theorem top_poly (hD : IsOpen D) (z z' yb : Fin (2 * r + k + 1) → ℂ) (i0 s :
     have hlast : Dmin k r z z' x₁ (Fin.last (r + 1)) = C3.Dlead i0 s hh t (r + 1) := by rw [hDl]; rfl
     simp only
     rw [hlast, hE, hDi0, hB u]
-    simp only [map_add, map_sum, Finset.sum_range_succ, dif_neg (lt_irrefl i0)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, Finset.sum_range_succ, dif_neg (lt_irrefl i0)]
     have hm : ∀ (c : ℂ) (X : Module.End ℂ (VS k r 0 D E)),
         La hD K hK x₁ (algebraMap ℂ (Module.End ℂ (VS k r 0 D E)) c * X) = c • La hD K hK x₁ X := by
       intro c X

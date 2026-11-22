@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecEq
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUpperNormalisation
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecEq
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUpperNormalisation
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -17,8 +22,8 @@ namespace SecEqProof
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-variable (ι) in
 
+variable (ι) in
 abbrev Mono (a : K → ℕ) : Type := {μ : (Σ k, ι k) → ℕ // ∀ k, ∑ i, μ ⟨k, i⟩ = a k}
 
 theorem Mono.le {a : K → ℕ} (μ : Mono ι a) (p : Σ k, ι k) : μ.1 p ≤ a p.1 := by
@@ -59,7 +64,8 @@ theorem homog_prod {J : Type} (s : Finset J) (f : J → MRing ι) (d : J → K �
 theorem homog_bind₁ {a : K → ℕ} {N : ℕ} (φ : Fin (N + 1) → MRing ι) (hφ : ∀ j, IsMultiHomog (φ j) a)
     {f : MvPolynomial (Fin (N + 1)) ℤ} {n : ℕ} (hf : f.IsHomogeneous n) :
     IsMultiHomog (bind₁ φ f) (fun k => n * a k) := by
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine SectionBounded.homog_sum _ fun m hm => ?_
   rw [bind₁_monomial]
   refine SectionBounded.homog_congr (SectionBounded.homog_mul (SectionBounded.homog_C _)
@@ -171,8 +177,8 @@ theorem piece_le_secM (y : (Σ k, ι k) → Ω) {a : K → ℕ} {N : ℕ} (e : M
 
 end SecEqProof
 
-open SecEqProof in
 
+open SecEqProof in
 theorem SecEq.proof : SecEq.Statement := by
   intro K _ ι _ Ω _ y a ha hy
   classical

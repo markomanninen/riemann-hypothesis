@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem bddAct_of_isIntegral {O : Type} [CommRing O] (bar : O → O) (hmul : ∀
     intro u v
     refine sq_le_of_forall_nonneg fun s t => ?_
     have := hpsd (s • u + t • v)
-    simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hβ.1 v u] at this
+    simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hβ.1 v u] at this
     linarith
   have hF : ∀ k, β (c ^ k • x) (c ^ k • x) = β x ((bar c * c) ^ k • x) := by
     intro k
@@ -122,7 +126,8 @@ theorem bddAct_of_isIntegral {O : Type} [CommRing O] (bar : O → O) (hmul : ∀
     exact hcs _ _
   have hrec : ∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i * F i = 0 := by
     have h0 : β x ((Polynomial.aeval (bar c * c) P) • x) = 0 := by rw [Polynomial.aeval_def, hP, zero_smul, map_zero]
-    rw [Polynomial.aeval_eq_sum_range, Finset.sum_smul, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.aeval_eq_sum_range, Finset.sum_smul, map_sum] at h0
     rw [← h0]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hFdef]

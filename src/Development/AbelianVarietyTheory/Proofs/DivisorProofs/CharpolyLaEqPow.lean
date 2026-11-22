@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import ReciprocityTheory.ReductiveGroups.Lattices.LatUnrCharA
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyDvdPowOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import ReciprocityTheory.ReductiveGroups.Lattices.LatUnrCharA
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyDvdPowOfAevalEqZero
+
+@[expose] public section
 
 open NumberField Polynomial
 
@@ -23,7 +27,7 @@ theorem charpoly_eq_pow_of_aeval_irreducible {M : Type*} [AddCommGroup M] [Modul
 
 theorem Datum.charpoly_La_eq_pow (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (c : 𝓞 D.F) :
     haveI := D.freeLa; haveI := D.finLa
-    LinearMap.charpoly (DistribMulAction.toLinearMap ℤ D.La (algebraMap (𝓞 D.F) D.O c)) =
+    LinearMap.charpoly (DistribSMul.toLinearMap ℤ D.La (algebraMap (𝓞 D.F) D.O c)) =
       (LinearMap.charpoly (LinearMap.mulLeft ℤ c)) ^ (D.m * D.n) := by
   haveI := D.freeLa; haveI := D.finLa
   have hint : IsIntegral ℤ c := RingOfIntegers.isIntegral c
@@ -34,7 +38,7 @@ theorem Datum.charpoly_La_eq_pow (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel
   have hR : LinearMap.charpoly (LinearMap.mulLeft ℤ c) = minpoly ℤ c ^ r := hr
   let ψ : 𝓞 D.F →+* Module.End ℤ D.La :=
     (Module.toModuleEnd ℤ (S := D.O) D.La).comp (algebraMap (𝓞 D.F) D.O)
-  have hf : DistribMulAction.toLinearMap ℤ D.La (algebraMap (𝓞 D.F) D.O c) = ψ.toIntAlgHom c := rfl
+  have hf : DistribSMul.toLinearMap ℤ D.La (algebraMap (𝓞 D.F) D.O c) = ψ.toIntAlgHom c := rfl
   have h0 : aeval (ψ.toIntAlgHom c) (minpoly ℤ c) = 0 := by
     rw [Polynomial.aeval_algHom_apply, minpoly.aeval, map_zero]
   obtain ⟨s, hs⟩ := charpoly_eq_pow_of_aeval_irreducible _ _ hm hirr h0

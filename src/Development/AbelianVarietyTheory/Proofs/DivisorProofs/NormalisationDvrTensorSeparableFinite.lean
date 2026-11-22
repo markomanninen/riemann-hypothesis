@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteIntegralClosureOfFormallyUnramified
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteIntegralClosureOfFormallyUnramified
+
+@[expose] public section
+
 open IsLocalRing
 open scoped TensorProduct
 set_option synthInstance.maxHeartbeats 400000
@@ -42,7 +47,7 @@ theorem main : ∀ (S K L D : Type) [CommRing S] [IsDomain S] [IsDiscreteValuati
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => rfl
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     rw [h2]; exact h1
   let ι : K' ⊗[S] L ≃ₐ[K] K' ⊗[K] L := (IsLocalization.algebraTensorEquiv (nonZeroDivisors S) K K' L).symm
   have hι : ∀ (a : K') (b : L), ι (a ⊗ₜ[S] b) = a ⊗ₜ[K] b := by

@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.CentralCharts.SmoothOnOfTame
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelAnalyticDataExists
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothContinuous
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularPotentialLogGrowthPshStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AdaptedAtlasSmoothPotentialLocalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdaptedAtlasSncSectionStatement
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.SmoothOnOfTame
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelAnalyticDataExists
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SmoothContinuous
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SingularPotentialLogGrowthPshStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AdaptedAtlasSmoothPotentialLocalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdaptedAtlasSncSectionStatement
+
+@[expose] public section
 
 noncomputable section
 

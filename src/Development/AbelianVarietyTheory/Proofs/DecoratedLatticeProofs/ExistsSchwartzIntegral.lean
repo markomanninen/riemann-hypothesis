@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -219,7 +223,8 @@ theorem integral_tensor {S V Y : Type} [TopologicalSpace S] [CompactSpace S] [No
       rw [Finset.sum_eq_single (fun y => g (a s y))]
       · rw [Set.indicator_of_mem (show s ∈ (fun s y => g (a s y)) ⁻¹' {fun y => g (a s y)} from rfl)]
       · intro g₁ _ hne
-        exact Set.indicator_of_notMem (fun hs => hne hs.symm) _
+        exact Set.indicator_of_notMem (show s ∉ (fun s y => g (a s y)) ⁻¹' {g₁} from
+          fun hs => hne hs.symm) _
       · intro hn
         exact absurd (hfin.mem_toFinset.2 ⟨s, rfl⟩) hn
     calc ∫ s, f (L s x) * g (a s y) ∂ν

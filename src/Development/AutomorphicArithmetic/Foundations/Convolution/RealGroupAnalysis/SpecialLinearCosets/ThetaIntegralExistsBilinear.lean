@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.CuspZero
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.One
-import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.CuspZero
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.One
+public import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -17,8 +21,8 @@ namespace UpperTheory.ConvolutionTheory.R2.I.WL
 variable {F : Type} [Field F] [NumberField F]
 
 private theorem comp_signed_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι) (ε : κ → F)
-    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi F κ) :
-    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi F ι := by
+    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi (K := F) (ι := κ)) :
+    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   have hD : Matrix.diagonal ε * Matrix.diagonal ε = (1 : Matrix κ κ F) := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
@@ -65,8 +69,8 @@ private def sn : Fin 3 ⊕ Unit → F := Sum.elim 1 fun _ => -1
 
 private def FF (φ : V4 F → ℂ) (z : Fin 3 ⊕ Unit → A F) : ℂ := φ fun i => z (eS.symm i)
 
-private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) :
-    FF φ ∈ schwartzBruhatPi F (Fin 3 ⊕ Unit) := by
+private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
+    FF φ ∈ schwartzBruhatPi (K := F) (ι := Fin 3 ⊕ Unit) := by
   have h := comp_signed_mem (F := F) eS.symm (fun _ => 1) (fun _ => by simp) hφ
   have he : FF φ = fun x => φ fun k => rt ((fun _ => 1 : Fin 4 → F) k) * x (eS.symm k) := by
     funext x
@@ -91,8 +95,8 @@ private theorem hat_eq (φ : V4 F → ℂ) (x : V4 F) :
   simp only [FF]
   rw [h1, h2]
 
-private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi F (Fin 4))
-    (hb : b ∈ schwartzBruhatPi F (Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
+private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
+    (hb : b ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
   rw [hat_eq, hat_eq, hat_eq]
   have e : FF (a + b) = FF a + FF b := rfl
   rw [e]
@@ -127,7 +131,7 @@ end
 
 open UpperTheory.ConvolutionTheory.R2.I.WL in
 theorem UpperTheory.ConvolutionTheory.R2.I.thetaIntegral_exists_bilinear :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2) (h : GL (Fin 2) (A E)),
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2) (h : GL (Fin 2) (A E)),
       ∃ B : π.V →ₗ[ℂ] Fock (F := F) D.δ →ₗ[ℂ] ℂ, ∀ f φ, B f φ = W1 W M f.1.1 φ.1 h := by
   intro F E _ _ _ _ _ _ _ D W M π h
   have hint : ∀ (f : π.V) (φ : Fock (F := F) D.δ), Integrable (iw (w1 W f.1.1 φ.1 h)) M.ν :=
@@ -161,7 +165,7 @@ theorem UpperTheory.ConvolutionTheory.R2.I.thetaIntegral_exists_bilinear :
       simp only [w1]
       rw [← mul_add, ← hat_add (W.Om g (W.L h φ.1)).2 (W.Om g (W.L h φ'.1)).2]
       congr 2
-      simp [map_add]
+      simp [map_add (f := _)]
     simp only [W1]
     rw [e]
     exact normOneIntegral_add M (hint f φ) (hint f φ')

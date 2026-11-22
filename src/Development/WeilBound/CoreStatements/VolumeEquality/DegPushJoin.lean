@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinrankAdjoinVarsField
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushDefs
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinrankAdjoinVarsField
+
+@[expose] public section
 
 noncomputable section
 

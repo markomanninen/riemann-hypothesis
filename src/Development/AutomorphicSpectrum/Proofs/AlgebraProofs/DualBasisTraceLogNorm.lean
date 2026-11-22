@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IdealPadicGeneratorLogNormStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCoordinate
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IdealPadicGeneratorLogNormStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsCoordinate
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -12,8 +16,8 @@ noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Ar.RelDual
 
-open Classical in
 
+open Classical in
 theorem sum_dual_embeddings {L E Ω : Type} [Field L] [Field E] [Algebra L E] [FiniteDimensional L E]
     [Algebra.IsSeparable L E] [Field Ω] [Algebra L Ω] [IsAlgClosed Ω] {f : ℕ} (b b' : Fin f → E)
     (hcard : Module.finrank L E = f)
@@ -106,7 +110,7 @@ theorem trace_coord (H : Host E) (x : Kf H) (u v : ℚ) (hx : (x : E) = u + v * 
     apply Subtype.ext
     rw [hx]
     simp [Algebra.smul_def]
-  rw [h, map_add, map_smul, trace_rtL, Algebra.trace_algebraMap, finrank_Kf]
+  rw [h, map_add (f := _), map_smul, trace_rtL, Algebra.trace_algebraMap, finrank_Kf]
   simp
 
 theorem trace_div_rt (H : Host E) (x : Kf H) (u v : ℚ) (hx : (x : E) = u + v * (H.rt : E)) :
@@ -303,7 +307,8 @@ theorem exists_basis (H : Host E) (ℓ f : ℕ) (b : Fin f → 𝓞 E) (h : IsLo
       ring
     have hz : ∑ k, c' k • b k = 0 := by
       apply inj
-      rw [map_sum, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero]
       have h1 : ∀ k, algebraMap (𝓞 E) E (c' k • b k) = P * (g k • (b k : E)) := fun k => by
         rw [Subalgebra.smul_def, smul_eq_mul, map_mul, Algebra.smul_def, ← _root_.mul_assoc]
         exact congrArg (· * _) (hc' k)
@@ -328,7 +333,7 @@ theorem exists_basis (H : Host E) (ℓ f : ℕ) (b : Fin f → 𝓞 E) (h : IsLo
         exact Submodule.subset_span ⟨k, rfl⟩
       | zero => simp
       | add x y _ _ hx hy =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem hx hy
       | smul a x _ hx =>
         have : algebraMap (𝓞 E) E (a • x) = (⟨_, mem_Kf_of_ord H a.2⟩ : Kf H) • algebraMap (𝓞 E) E x := by
@@ -415,7 +420,7 @@ theorem agree_on_Kf (H : Host E) {K : Type} [Field K] (σ σ' : E →+* K)
     (h : σ (H.rt : E) = σ' (H.rt : E)) (l : Kf H) : σ (l : E) = σ' (l : E) := by
   obtain ⟨u, v, hx⟩ := exists_coord H l
   rw [hx]
-  simp only [map_add, map_mul, map_ratCast, h]
+  simp only [map_add (f := _), map_mul, map_ratCast, h]
 
 theorem trace_dual_apply (H : Host E) {f : ℕ} (B : Module.Basis (Fin f) (Kf H) E) (i k : Fin f) :
     Algebra.trace (Kf H) E (B.traceDual i * B k) = if i = k then 1 else 0 := by
@@ -441,7 +446,8 @@ theorem orth_of_dual (H : Host E) {f : ℕ} (B : Module.Basis (Fin f) (Kf H) E) 
   have hs := sum_dual_embeddings (Ω := Ω) B B.traceDual
     (by rw [Module.finrank_eq_card_basis B]; simp) (trace_dual_apply H B) τ τ'
   have hm : em (∑ k, σ (B.traceDual k) * σ' (B k)) = ∑ k, τ (B.traceDual k) * τ' (B k) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => map_mul em _ _
   rw [← hm] at hs
   have heq : τ' = τ ↔ σ = σ' := by
@@ -467,7 +473,8 @@ theorem trace_dual_mem (H : Host E) {f : ℕ} (B : Module.Basis (Fin f) (Kf H) E
   let cK : Fin f → Kf H := fun i => ⟨(((c i : Ord H) : 𝓞 E) : E), mem_Kf_of_ord H (c i).2⟩
   have hx : (n : E) * a = ∑ i, cK i • B i := by
     have h1 := congrArg (algebraMap (𝓞 E) E) hc
-    rw [map_sum, map_nsmul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_nsmul] at h1
     rw [nsmul_eq_mul] at h1
     refine h1.symm.trans (Finset.sum_congr rfl fun i _ => ?_)
     rw [Subalgebra.smul_def, smul_eq_mul, map_mul, Algebra.smul_def, hB]
@@ -529,7 +536,8 @@ theorem relative_dual : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
     have h2 := bridge_up H y h1
     have h3 : y = ∑ k, (B.traceDual.repr y k) • B.traceDual k := (B.traceDual.sum_repr y).symm
     have h4 : ‖j y‖ ≤ ⨆ k, ‖j (B.traceDual k)‖ := by
-      rw [h3, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h3, map_sum]
       refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hnn fun k _ => ?_
       obtain ⟨c, -, hc'⟩ := h2 (b k)
       have e : B.traceDual.repr y k = Algebra.trace (Kf H) E (y * (b k : E)) := by

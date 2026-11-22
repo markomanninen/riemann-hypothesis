@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+
+@[expose] public section
 
 namespace GlobalTheory.SiegelChain
 

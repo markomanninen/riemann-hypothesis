@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyNrmLTwConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularOrbitConjCompactModCentralizerUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalSupportFacts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyNrmLTwConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RegularOrbitConjCompactModCentralizerUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalSupportFacts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousInvolutiveLocalTransposeInverse
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,14 +138,14 @@ theorem finite_dc_pair (hU : Unr E) (a b : ℕ) (w : Pl E) (y : GLw a w × GLw b
     (h₁ : (nrmL a w y.1).val.charpoly.Separable) (h₂ : (nrmL b w y.2).val.charpoly.Separable)
     (f : GLw a w × GLw b w → ℂ) (hf : HasCompactSupport f) :
     {q : DoubleCoset.Quotient (twCent ((thL a w).prodMap (thL b w)) y : Set (GLw a w × GLw b w))
-        (((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) : Subgroup (GLw a w × GLw b w)) : Set (GLw a w × GLw b w)) |
-      ∃ k ∈ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b), f ((Quotient.out q * k)⁻¹ * y *
+        (((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) : Subgroup (GLw a w × GLw b w)) : Set (GLw a w × GLw b w)) |
+      ∃ k ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)), f ((Quotient.out q * k)⁻¹ * y *
         (thL a w).prodMap (thL b w) (Quotient.out q * k)) ≠ 0}.Finite := by
   obtain ⟨D, hD, hP⟩ := GlobalTheory.CompanionTheory.TwistOrbit.proper_pair hU a b w y h₁ h₂ _ hf.isCompact
   obtain ⟨hKo, hKc⟩ := GlobalTheory.BCT.StTw2Add.isOpen_isCompact_KK (E := E) a b w
   refine GlobalTheory.CompanionTheory.TwistOrbit.finite_of_subset_mul' _ _ hKo
     ((fun p : (GLw a w × GLw b w) × (GLw a w × GLw b w) => p.1 * p.2⁻¹) '' (D ×ˢ _))
-    ((hD.prod hKc).image (by fun_prop)) (fun x => ∃ k ∈ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b),
+    ((hD.prod hKc).image (by fun_prop)) (fun x => ∃ k ∈ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)),
       f ((x * k)⁻¹ * y * (thL a w).prodMap (thL b w) (x * k)) ≠ 0) ?_
   rintro x ⟨k, hk, hne⟩
   obtain ⟨t, ht, d, hd, e⟩ := hP (x * k) (subset_tsupport f hne)

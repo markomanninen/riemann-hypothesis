@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ def UnramifiedPlace (v : HeightOneSpectrum (𝓞 F)) : Prop :=
   ∀ w : HeightOneSpectrum (𝓞 E), w.asIdeal.LiesOver v.asIdeal →
     Algebra.IsUnramifiedAt (𝓞 F) w.asIdeal
 
-open Classical in
 
+open Classical in
 def eta (v : HeightOneSpectrum (𝓞 F)) : ℝ :=
   if IsField (Fv F v ⊗[F] E) then -1 else 1
 
@@ -76,20 +80,9 @@ def LocalDensity : Prop :=
           (1 - eta F E v ^ M * (resCard F v ^ M)⁻¹)) ∧
       ∀ t : Fv F v, Valued.v (t - β) < 1 → fib t {X | X 0 ∈ L} = fib β {X | X 0 ∈ L}
 
-def LocalMeasuresExist : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E), IsCMExt F E σ →
-  ∀ (M : ℕ), 1 ≤ M → ∀ (J : Matrix (Fin M) (Fin M) E), IsHermND σ J →
-  ∀ (v : HeightOneSpectrum (𝓞 F)) (ψ : AddChar (Fv F v) ℂ), IsLocalChar v ψ →
-    (∃ n : ℤ, DualExponent v ψ n) ∧
-    ∃ (μ : Measure (Fin 1 → Fin M → Fv F v ⊗[F] E)) (ν : Measure (Fv F v))
-      (fib : Fv F v → Measure (Fin 1 → Fin M → Fv F v ⊗[F] E)),
-      SdW F E σ M J (Fv F v) ψ 1 μ ∧ SdR (Fv F v) ψ ν ∧
-      IsFibreFamily μ (fun X => qR (Fv F v) σ J (X 0)) id Set.univ ν {c | c ≠ 0} fib
 
 open scoped TensorProduct in
 open NumberField IsDedekindDomain MeasureTheory Topology in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.SelfDualUnramifiedPlaces.one_lt_resCard (F : Type) [Field F] [NumberField F]
     (v : HeightOneSpectrum (𝓞 F)) :
     1 < _root_.GlobalTheory.IndefiniteRowSideFullHecke.SelfDualUnramifiedPlaces.resCard F v := by
@@ -102,9 +95,9 @@ theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.SelfDualUnramifiedPlaces.
     exact v.ne_bot
   exact_mod_cast (by omega : 1 < Ideal.absNorm v.asIdeal)
 
+
 open scoped TensorProduct in
 open NumberField IsDedekindDomain MeasureTheory Topology in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.SelfDualUnramifiedPlaces.density_factor_pos (F E : Type) [Field F] [NumberField F] [Field E]
     [NumberField E] [Algebra F E] (v : HeightOneSpectrum (𝓞 F)) (M : ℕ) (hM : 1 ≤ M) :
     0 < 1 - _root_.GlobalTheory.IndefiniteRowSideFullHecke.SelfDualUnramifiedPlaces.eta F E v ^ M *

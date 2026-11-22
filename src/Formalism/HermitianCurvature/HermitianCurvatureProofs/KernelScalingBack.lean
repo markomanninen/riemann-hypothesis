@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LatticeAverageIdentity
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ColumnOperationTripleForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LatticeAverageIdentity
+
+@[expose] public section
 
 open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Formalism.FourierDecayAlt.A6 Filter Topology
 open scoped ComplexConjugate
@@ -312,29 +316,35 @@ theorem Kp_scale (ψ : AddChar K ℂ) (hψ : ∀ r ∈ R, ψ r = 1)
     (w' : Point K) :
     Kp R ψ ((S, T * c) : Point K) w' = Kp R ψ ((S, T) : Point K) w' := by
   have hd : ∀ b, ((dg S c b : Kˣ) : K) ∈ R ∧ (((dg S c b)⁻¹ : Kˣ) : K) ∈ R := fun b => hc _
-  rw [A5x8.Kp_eq_section R ψ hψ ((S, T * c) : Point K) w' (Cos R ((S, T) : Point K)) (Cos R w')
-    (fun q => fm S T c (rep R q)) (fun q => rep R q) (fm_bij R S T c hc)
-    (by simp only [A5x8.inv_toCos_rep]; exact Function.bijective_id)]
+  let f (q : Cos R ((S, T) : Point K)) :=
+    A5x8.toCos R (w := ((S, T * c) : Point K)) (fm S T c (rep R q))
   unfold Kp
+  rw [← finsum_comp (Prod.map f (id : Cos R w' → Cos R w'))
+    ((fm_bij R S T c hc).prodMap Function.bijective_id)]
   refine finsum_congr fun q => ?_
-  show A5x8.Gterm R ψ ((S, T * c) : Point K) w' (fm S T c (rep R q.1)) (rep R q.2) =
-    A5x8.Gterm R ψ ((S, T) : Point K) w' (rep R q.1) (rep R q.2)
-  generalize rep R q.1 = p
+  change pairTerm R ψ ((S, T * c) : Point K) w' (f q.1, q.2) = _
+  have hCos := (A5x8.inv_toCos_rep R (f q.1)).symm
+  change A5x8.toCos R (fm S T c (rep R q.1)) = A5x8.toCos R (rep R (f q.1)) at hCos
+  simp only [pairTerm]
+  generalize rep R q.1 = p at hCos ⊢
+  generalize rep R (f q.1) = p₁ at hCos ⊢
   generalize rep R q.2 = p'
-  unfold A5x8.Gterm
-  by_cases hZ : IsInt R (orbZ ((S, T) : Point K) p)
-  · rw [phase_fm R S T c ψ hψ p (hB p hZ), orbZ_fm,
-      ← A5x4.card_isoZZ_congr R (iso_mul_DG R (dg S c) hd _ (hA p hZ)) (A5x4.isoZZ_refl R _)]
-    have hi := (isInt_mul_DG R (dg S c) hd (orbZ ((S, T) : Point K) p)).2 hZ
-    by_cases h' : IsInt R (orbZ w' p')
-    · rw [if_pos ⟨hi, h'⟩, if_pos ⟨hZ, h'⟩]
-    · rw [if_neg (fun h => h' h.2), if_neg (fun h => h' h.2)]
-  · have hZ' : ¬ IsInt R (orbZ ((S, T * c) : Point K) (fm S T c p)) := by
-      intro h1
-      rw [orbZ_fm] at h1
-      exact hZ ((isInt_mul_DG R (dg S c) hd _).1 h1)
-    rw [if_neg (fun h => hZ' h.1), if_neg (fun h => hZ h.1)]
-    simp
+  obtain ⟨a, ha, b, hb, rfl⟩ := A5x8.inv_exists R (fm S T c p) p₁ hCos
+  have hRepInt := A5x4.isInt_orbZ_inv R ((S, T * c) : Point K) a ha b hb
+    (fm S T c p).1 (fm S T c p).2
+  have hScaleInt : IsInt R (orbZ ((S, T * c) : Point K) (fm S T c p)) ↔
+      IsInt R (orbZ ((S, T) : Point K) p) := by
+    rw [orbZ_fm, isInt_mul_DG R _ hd]
+  have hInt := and_congr (hRepInt.trans hScaleInt) (Iff.refl (IsInt R (orbZ w' p')))
+  by_cases hZ : IsInt R (orbZ ((S, T) : Point K) p) ∧ IsInt R (orbZ w' p')
+  · obtain ⟨φ, hφ⟩ := A5x8.inv_iso R ((S, T * c) : Point K) a ha b hb
+      (fm S T c p).1 (fm S T c p).2
+    have hrefl := A5x4.isoZZ_refl R (orbZ w' p')
+    simp only [hInt.mpr hZ, hZ, if_true, A5x8.inv_phase R ψ hψ _ a ha b hb,
+      ← A5x4.card_isoZZ_congr R hφ hrefl]
+    rw [phase_fm R S T c ψ hψ p (hB p hZ.1), orbZ_fm,
+      ← A5x4.card_isoZZ_congr R (iso_mul_DG R (dg S c) hd _ (hA p hZ.1)) hrefl]
+  · simp [hZ, mt hInt.mp hZ]
 
 end Main
 

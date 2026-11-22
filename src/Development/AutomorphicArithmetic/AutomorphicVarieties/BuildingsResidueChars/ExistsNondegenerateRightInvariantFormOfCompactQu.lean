@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteCovolumeUnimodular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfAeFundamentalDomainOfLeftInvariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteCovolumeUnimodular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqZeroOfAeFundamentalDomainOfLeftInvariant
+
+@[expose] public section
 
 open MeasureTheory in
 theorem UpperTheory.exists_nondegenerate_right_invariant_form_of_compact_quotient :
@@ -60,31 +64,29 @@ theorem UpperTheory.exists_nondegenerate_right_invariant_form_of_compact_quotien
   let B : (G → ℂ) →ₗ⋆[ℂ] (G → ℂ) →ₗ[ℂ] ℂ :=
     LinearMap.mk₂'ₛₗ (starRingEnd ℂ) (RingHom.id ℂ) F
     (fun x x' y => by
-      simp only [F, map_add, Submodule.coe_add]
+      simp only [F, map_add (f := _), Submodule.coe_add]
       rw [← integral_add (hI _ (hPN x) _ (hPN y)) (hI _ (hPN x') _ (hPN y))]
       congr 1
       funext g
-      simp only [Pi.add_apply, star_add, add_mul])
+      simp [add_mul, mul_add])
     (fun c x y => by
       simp only [F, map_smul, Submodule.coe_smul]
       rw [smul_eq_mul, ← integral_const_mul]
       congr 1
       funext g
-      simp only [Pi.smul_apply, smul_eq_mul, star_mul', starRingEnd_apply]
-      ring)
+      simp [smul_eq_mul, star_mul, mul_assoc, mul_comm, mul_left_comm])
     (fun x y y' => by
-      simp only [F, map_add, Submodule.coe_add]
+      simp only [F, map_add (f := _), Submodule.coe_add]
       rw [← integral_add (hI _ (hPN x) _ (hPN y)) (hI _ (hPN x) _ (hPN y'))]
       congr 1
       funext g
-      simp only [Pi.add_apply, mul_add])
+      simp [add_mul, mul_add])
     (fun c x y => by
       simp only [F, map_smul, Submodule.coe_smul]
       rw [smul_eq_mul, ← integral_const_mul]
       congr 1
       funext g
-      simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
-      ring)
+      simp [smul_eq_mul, star_mul, mul_assoc, mul_comm, mul_left_comm])
   have hB : ∀ x ∈ N, ∀ y ∈ N, B x y = ∫ g in 𝓕, star (x g) * y g ∂μ := by
     intro x hx y hy
     show F x y = _

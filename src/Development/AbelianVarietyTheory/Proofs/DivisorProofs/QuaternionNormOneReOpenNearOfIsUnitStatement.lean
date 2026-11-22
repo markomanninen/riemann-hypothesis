@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuaternionNormOneReOpenNearOfIsUnit
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuaternionNormOneReOpenNearOfIsUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceOpen
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.QSA
 open scoped Quaternion Topology
 set_option maxHeartbeats 1000000 in

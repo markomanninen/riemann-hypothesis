@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -19,7 +23,7 @@ theorem finite_quotient_of_complete_nakayama : ∀ {R : Type} [CommRing R] (ϖ :
       simp only [Finset.sum_range_succ]
       set e := C^[n] c with he
       conv_lhs => rw [hACX e]
-      simp only [add_smul, Finset.sum_add_distrib, smul_add, map_add, map_smul, Finset.smul_sum,
+      simp only [add_smul, Finset.sum_add_distrib, smul_add, map_add (f := _), map_smul, Finset.smul_sum,
         mul_smul, pow_succ]
       abel
   have hfin : ∀ c : Z, c - (∑ i ∈ s, limR (fun j => A (C^[j] c) i) • i
@@ -38,7 +42,7 @@ theorem finite_quotient_of_complete_nakayama : ∀ {R : Type} [CommRing R] (ϖ :
     simp only [hα, hY]
     rw [sub_eq_iff_eq_add]
     refine hk.trans ?_
-    simp only [add_smul, Finset.sum_add_distrib, smul_sub, map_add, map_smul, Finset.smul_sum,
+    simp only [add_smul, Finset.sum_add_distrib, smul_sub, map_add (f := _), map_smul, Finset.smul_sum,
       mul_smul]
     abel
   have h0 : ∀ y : T, N.mkQ (d y) = 0 := by
@@ -50,7 +54,8 @@ theorem finite_quotient_of_complete_nakayama : ∀ {R : Type} [CommRing R] (ϖ :
   rintro q -
   obtain ⟨c, rfl⟩ := N.mkQ_surjective q
   have hc := sub_eq_zero.mp (hfin c)
-  rw [hc, map_add, h0, add_zero, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_add (f := _), h0, add_zero, map_sum]
   refine Submodule.sum_mem _ fun i hi => ?_
   rw [map_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span (Finset.mem_coe.2 (Finset.mem_image_of_mem _ hi)))

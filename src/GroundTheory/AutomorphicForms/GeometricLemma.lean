@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaUnnormalized
-import GroundTheory.AutomorphicForms.GeometricLemmaNormal
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaUnnormalized
+public import GroundTheory.AutomorphicForms.GeometricLemmaNormal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

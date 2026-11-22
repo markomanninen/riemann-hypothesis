@@ -1,22 +1,26 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CDvdOfMapEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicIntegersEqWittZetaSubOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueUnramifiedIntegersCoordsBasisStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachInclusionPowerSeriesIntoOneTmulAinfStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeomSumOneAddPrime
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgHomExtOfConstantCoeffZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEqZpowOfMemMaxUnramifiedSubfield
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CDvdOfMapEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicIntegersEqWittZetaSubOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsUniqueUnramifiedIntegersCoordsBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWachInclusionPowerSeriesIntoOneTmulAinfStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeomSumOneAddPrime
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgHomExtOfConstantCoeffZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEqZpowOfMemMaxUnramifiedSubfield
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFontaineThetaOnAinf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,6 +50,7 @@ theorem dvd_of_not_isUnit (K : FinExt l) (w : WK K) (hw : ¬ IsUnit w) : (l : WK
   refine ⟨⟨_, hm⟩, Subtype.ext ?_⟩
   change (w : ↥(K0 K)) = (l : ↥(K0 K)) * ((w : ↥(K0 K)) / (l : ↥(K0 K)))
   field_simp
+  <;> ring
 
 def sigW (P : LocPrime l) (K : FinExt l) : WK K →ₐ[ℤ_[l]] WK K := embW (LL := unr K) (P.PD K).σ
 
@@ -106,6 +111,7 @@ theorem letEmb_QQ (R : WSer Γ) (h : R.φ₀ = phi l ↥(OL LL)) : letEmb Γ.emb
     funext fun i => (map_QQ (embW (Γ.emb i)).toRingHom s).trans h1
   exact h2.trans (letφ_pow_const R.φ₀ (s - 1) R.q₀).symm
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem one_tmul_inj (LL : FinExt l) {a b : Ainf l}
     (h : (1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] inclW l a = (1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] inclW l b) : a = b := by
   obtain ⟨_, _, -, -, _, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
@@ -149,6 +155,7 @@ theorem exists_str {R S C : Type} [CommRing R] [CommRing S] [CommRing C] (f : S 
   rw [RingEquiv.eq_symm_apply, Subtype.ext_iff]
   rfl
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem ker_theta_io (AI : LocAinf l P) (hs : 1 ≤ s) (hK : K.1 ≤ Ks K s) (io : (WK K)⟦X⟧ →+* Ainf l)
     (hX : io X = WittVector.teichmuller l (AI.εroot s) - 1)
     (hC : ∀ w : WK K, Formalism.Per.θ l (io (C w)) = intToOC (unr K) w) :
@@ -202,6 +209,7 @@ theorem coeff_not_isUnit (K : FinExt l) : ¬ IsUnit (l : WK K) := by
   obtain ⟨_, -, -, lu, -⟩ := GlobalTheory.Per.integers_completeDVR l (unr K)
   exact lu
 
+set_option synthInstance.maxHeartbeats 200000 in
 def prismS (P : LocPrime l) (hs : 1 ≤ s) (f : (WK K)⟦X⟧ →+* OC l) (hf : RingHom.ker f = Ideal.span {QQ l (WK K) s})
     (str : ↥(OL K) →+* (WK K)⟦X⟧ ⧸ Ideal.span {QQ l (WK K) s}) : Obj l ↥(OL K) where
   A := (WK K)⟦X⟧
@@ -222,7 +230,7 @@ def prismS (P : LocPrime l) (hs : 1 ≤ s) (f : (WK K)⟦X⟧ →+* OC l) (hf : 
     obtain ⟨h1, -, -, -, ⟨b, hb⟩, -⟩ := XX_QQ_properties l (WK K) s hs
     have h2 : PowerSeries.map (sigW P K).toRingHom (XX l (WK K) s) = XX l (WK K) s := by simp [XX]
     have h3 : phiS (sigW P K) (QQ l (WK K) s) = l + XX l (WK K) s * QQ l (WK K) s * phiS (sigW P K) b := by
-      conv_lhs => rw [hb, map_add, map_natCast, map_mul, phiS_apply _ (XX l (WK K) s), h1, map_mul, h2, map_QQ]
+      conv_lhs => rw [hb, map_add (f := _), map_natCast, map_mul, phiS_apply _ (XX l (WK K) s), h1, map_mul, h2, map_QQ]
     have h4 : (l : (WK K)⟦X⟧) = QQ l (WK K) s * (-(XX l (WK K) s * phiS (sigW P K) b)) +
         phiS (sigW P K) (QQ l (WK K) s) := by rw [h3]; ring
     rw [h4]
@@ -325,9 +333,9 @@ theorem series_isDomain (K : FinExt l) : IsDomain (WK K)⟦X⟧ := inferInstance
 
 end GlobalTheory.PrismS
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.PrismS in
-
 theorem GlobalTheory.PrismS.exists_prism : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → ∃ (PS PW : Obj l ↥(OL K)) (ev : Hom PS PW) (ioH : Hom PS (ainfObj K)) (gH : ↥(GK K) → Hom PS PS) (a : PS.A →+* LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))) (z : PowerSeries ℤ_[l] →+* PS.A) (π Q : PS.A), Function.Injective a ∧ (∀ x, I.io (a x) = (1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] (ainfId K (ioH.f x))) ∧ (∀ x, a (PS.D.φ x) = letφ R.φ₀ (a x)) ∧ (∀ g x, a ((gH g).f x) = letγ (R.γ₀ (Γ.resΓ g)) (a x)) ∧ (∀ g, ioH.comp (gH g) = (ainfHom K g).comp ioH) ∧ (∀ g, ev.comp (gH g) = ev) ∧ a π = letπ ∧ Function.Surjective ev.f ∧ RingHom.ker ev.f = Ideal.span {π} ∧ PS.I = Ideal.span {Q} ∧ a Q = R.Q ∧ a.comp z = zlA LL (Module.finrank ℚ_[l] ↥(K0 K)) ∧ IsLocalRing PS.A ∧ IsDomain PS.A ∧ (∃ (d : ℕ) (w : Fin d → PS.A), ∀ x, ∃! c : Fin d → PowerSeries ℤ_[l], x = ∑ i, z (c i) * w i) ∧ ∀ (d : ℕ) (o : Module.Basis (Fin d) ℤ_[l] ↥(OL LL)) (x : LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K))), ∃! c : Fin d → PS.A, ∀ k, x k = ∑ i, PowerSeries.C (o i) * a (c i) k := by
   intro l _ P AI K s LL hG Γ R I hW
   obtain ⟨hs, -, hK, -⟩ := hG

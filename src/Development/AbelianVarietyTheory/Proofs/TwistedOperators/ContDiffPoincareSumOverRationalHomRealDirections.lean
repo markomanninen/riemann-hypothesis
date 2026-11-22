@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,6 +25,10 @@ variable {D : D7}
 theorem finite_rat_mem (m n : ℕ) (K : Set (Mx D m n)) (hK : IsCompact K) :
     {γ : Matrix (Fin m) (Fin n) D.host.E | rat γ ∈ K}.Finite := by
   obtain ⟨hg, hlc, -, ht2, hdisc, -⟩ := lattice_Mx D m n
+  letI : IsTopologicalAddGroup (Mx D m n) := hg
+  letI : T2Space (Mx D m n) := ht2
+  letI : T1Space (Mx D m n) := T2Space.t1Space
+  letI : DiscreteTopology (ratMx D m n) := hdisc
   have hcl : IsClosed (ratMx D m n : Set (Mx D m n)) := AddSubgroup.isClosed_of_discrete
   have hS : IsCompact ((Subtype.val : ratMx D m n → Mx D m n) ⁻¹' K) :=
     hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hK
@@ -50,16 +58,16 @@ theorem contDiff_psi_symplOH {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D
   have hz1 := GlobalTheory.WeilVacMove.symplOH_zero_left S T
   have hz2 := GlobalTheory.WeilVacMove.symplOH_zero_right S T
   have h1 : ContDiff ℝ ∞ fun t => lam (symplOH S T c (B t)) :=
-    contDiff_of_additive _ (by rw [map_zero, hz2, map_zero]) (fun x y => by rw [map_add, hadd2, map_add])
+    contDiff_of_additive _ (by rw [map_zero, hz2, map_zero]) (fun x y => by rw [map_add (f := _), hadd2, map_add (f := _)])
       (hl.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T continuous_const hB))
   have h2 : ContDiff ℝ ∞ fun t => lam (symplOH S T (A t) c') :=
-    contDiff_of_additive _ (by rw [map_zero, hz1, map_zero]) (fun x y => by rw [map_add, hadd1, map_add])
+    contDiff_of_additive _ (by rw [map_zero, hz1, map_zero]) (fun x y => by rw [map_add (f := _), hadd1, map_add (f := _)])
       (hl.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T hA continuous_const))
   have hQ : ContDiff ℝ ∞ fun t => lam (symplOH S T (A t) (B t)) := by
     let φ : (Fin k → ℝ) → ((Fin k → ℝ) →+ ℂ) := fun t =>
       { toFun := fun s => lam (symplOH S T (A s) (B t))
         map_zero' := by rw [map_zero, hz1, map_zero]
-        map_add' := fun x y => by rw [map_add, hadd1, map_add] }
+        map_add' := fun x y => by rw [map_add (f := _), hadd1, map_add (f := _)] }
     have hφ : ∀ t, Continuous (φ t) := fun t =>
       hl.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T hA continuous_const)
     have e : (fun t => lam (symplOH S T (A t) (B t))) =
@@ -67,14 +75,14 @@ theorem contDiff_psi_symplOH {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D
       funext t
       exact LinearMap.pi_apply_eq_sum_univ ((φ t).toRealLinearMap (hφ t) : (Fin k → ℝ) →ₗ[ℝ] ℂ) t
     rw [e]
-    refine ContDiff.sum fun i _ => (contDiff_apply ℝ ℝ i).smul ?_
-    exact contDiff_of_additive _ (by rw [map_zero, hz2, map_zero]) (fun x y => by rw [map_add, hadd2, map_add])
+    refine ContDiff.sum fun i _ => (contDiff_apply ℝ (fun _ => ℝ) i).smul ?_
+    exact contDiff_of_additive _ (by rw [map_zero, hz2, map_zero]) (fun x y => by rw [map_add (f := _), hadd2, map_add (f := _)])
       (hl.comp (GlobalTheory.WeilVacMove.continuous_symplOH S T continuous_const hB))
   have e : ∀ t, ψ (symplOH S T (c + A t) (c' + B t)) = ψ (symplOH S T c c') *
       Complex.exp (lam (symplOH S T c (B t)) + lam (symplOH S T (A t) c') + lam (symplOH S T (A t) (B t))) := by
     intro t
     have hs : sndA D.host.F (symplOH S T c (B t) + symplOH S T (A t) c' + symplOH S T (A t) (B t)) = 0 := by
-      rw [map_add, map_add, GlobalTheory.WeilVacMove.snd_symplOH S T _ _ (Or.inr (hB0 t)),
+      rw [map_add (f := _), map_add (f := _), GlobalTheory.WeilVacMove.snd_symplOH S T _ _ (Or.inr (hB0 t)),
         GlobalTheory.WeilVacMove.snd_symplOH S T _ _ (Or.inl (hA0 t)), GlobalTheory.WeilVacMove.snd_symplOH S T _ _ (Or.inl (hA0 t)),
         add_zero, add_zero]
     rw [hadd1, hadd2, hadd2, show ∀ a b c d : AF D.host.F, a + b + (c + d) = a + (b + c + d) from fun _ _ _ _ => by abel,
@@ -115,7 +123,7 @@ theorem poinX_smooth : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar 
       have hx' : (w + L t) ⬝ d.jX = w ⬝ d.jX + lX t := Matrix.add_mul _ _ _
       have hy' : (w + L t) ⬝ d.jY = w ⬝ d.jY + lY t := Matrix.add_mul _ _ _
       have e1 : d.extX T (w ⬝ d.jX + lX t + 2 • rat γ) = d.extX T (w ⬝ d.jX + 2 • rat γ) + A t := by
-        rw [add_right_comm, map_add]; rfl
+        rw [add_right_comm, map_add (f := _)]; rfl
       have e2 : d.extY T (w ⬝ d.jY + lY t) = d.extY T (w ⬝ d.jY) + B t := map_add _ _ _
       rw [hx', hy', ← d.symplOH_extX_extY T, e1, e2, add_right_comm (w ⬝ d.jX)]
     rw [show (fun t => ψ (trHalf D (pairS T ((w + L t) ⬝ d.jX + 2 • rat γ) ((w + L t) ⬝ d.jY))) *

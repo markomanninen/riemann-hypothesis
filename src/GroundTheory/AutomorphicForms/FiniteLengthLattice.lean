@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,7 +22,7 @@ variable {ρ : Representation ℂ G V}
 theorem hasFiniteLength_iff :
     HasFiniteLength ρ ↔
       WellFoundedLT (Subrepresentation ρ) ∧ WellFoundedGT (Subrepresentation ρ) := by
-  rw [HasFiniteLength, isFiniteLength_iff_isNoetherian_isArtinian, isNoetherian_iff', IsArtinian]
+  rw [HasFiniteLength, isFiniteLength_iff_isNoetherian_isArtinian, isNoetherian_iff, IsArtinian]
   let e := Subrepresentation.subrepresentationSubmoduleOrderIso (ρ := ρ)
   constructor
   · rintro ⟨h1, h2⟩
@@ -39,7 +44,7 @@ theorem hasFiniteLength_of_strictMono {ι : Type*} [Finite ι] {α : ι → Type
   rw [hasFiniteLength_iff]
   refine ⟨hΛ.wellFoundedLT, ?_⟩
   have h1 : WellFoundedLT (∀ i, (α i)ᵒᵈ) := Pi.wellFoundedLT
-  have h2 : WellFoundedGT (∀ i, α i) := ⟨h1.wf⟩
+  have h2 : WellFoundedGT (∀ i, α i) := h1
   exact hΛ.wellFoundedGT
 
 theorem hasFiniteLength_of_subsingleton [Subsingleton V] : HasFiniteLength ρ := by
@@ -134,7 +139,7 @@ theorem hasFiniteLength_of_filtration {k : ℕ} (Vf : ℕ → Submodule ℂ V)
   refine ⟨hmono', ?_⟩
 
   have hex : ∃ j, j < k ∧ ∃ x ∈ B, x ∈ Vf (j + 1) ∧ x ∉ A := by
-    obtain ⟨x, hxB, hxA⟩ := SetLike.exists_of_lt hAB
+    obtain ⟨x, hxB, hxA⟩ := IsConcreteLE.exists_of_lt hAB
     have hk0 : k ≠ 0 := by
       rintro rfl
       rw [h0] at hk

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRPHPhaseSec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRPHPhaseSec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThtFacts
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q NumberField
 open scoped ComplexConjugate Matrix

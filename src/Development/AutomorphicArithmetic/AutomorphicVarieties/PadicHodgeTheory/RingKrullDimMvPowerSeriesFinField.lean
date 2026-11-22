@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PiSpanVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PiSpanVariable
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg
 
 private theorem dim_ge (E : Type) [Field E] (n : ℕ) :

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorPowCompAdicCompletionMapToQuotientPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorPowCompAdicCompletionMapToQuotientPow
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -62,7 +67,7 @@ theorem flat_tensor_invariants (R R' O : Type) [CommRing R] [CommRing R'] [Algeb
         show x ⊗ₜ[R] galDiff R R' y σ = _
         rw [galDiff_apply, galTensor_tmul, TensorProduct.tmul_sub]
       | add u v hu hv =>
-        rw [map_add, map_add, Pi.add_apply, hu, hv, map_add]
+        rw [map_add (f := _), map_add (f := _), Pi.add_apply, hu, hv, map_add (f := _)]
         abel
     have h0 : LinearMap.lTensor O (galDiff R R') t = 0 := by
       apply (TensorProduct.piRight R R O (fun _ : GlobalTheory.Mum.Gal (algebraMap R R') => R')).injective
@@ -73,9 +78,3 @@ theorem flat_tensor_invariants (R R' O : Type) [CommRing R] [CommRing R'] [Algeb
     rw [← hmap, LinearEquiv.symm_apply_apply, hy]
 
 end GlobalTheory.InvAlg
-
-example : ∀ (R R' O : Type) [CommRing R] [CommRing R'] [Algebra R R'] [CommRing O] [Algebra R O] [Module.Flat R O],
-    Function.Injective (algebraMap R R') → GlobalTheory.Mum.IsGal (algebraMap R R') →
-    Function.Injective (algebraMap O (TensorProduct R O R')) ∧
-    ∀ t : TensorProduct R O R', (∀ σ, GlobalTheory.InvAlg.galTensor O σ t = t) →
-      t ∈ Set.range (algebraMap O (TensorProduct R O R')) := GlobalTheory.InvAlg.flat_tensor_invariants

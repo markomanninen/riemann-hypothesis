@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.MultTendsto
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TrStable
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TwShift
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LimitPairSpaces.MultTendsto
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TrStable
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TensorOperatorTrees.TwShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ open PositivityTheory.Rg.BcB.SpectralAccumulation PositivityTheory.Rg.BcB.E
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-theorem allLeaves_stable_of_disc {N : ℕ} (t : Tr E N) (h : t.Disc) : t.AllLeaves fun _ V => IsStable V := by
+theorem allLeaves_stable_of_disc {N : ℕ} (t : Tr E N) (h : t.Disc) : t.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V := by
   induction t with
   | leaf V z =>
     rcases h with ⟨_, rfl, _⟩ | ⟨_, hV⟩
@@ -142,7 +146,7 @@ theorem lev_mul_cf_int {r s : ℕ} (k : Kinf E (r + s)) (g : GL (Fin (r + s)) (A
 theorem act_fin_apply' {N : ℕ} (g : GL (Fin N) (Af E)) (φ : Sm E N) (x : GA E N) :
     (act (.fin g) φ).1 x = φ.1 (x * finGL E N g) := rfl
 
-theorem mult_operator_shifts_twist {N : ℕ} (b : Tr E N) : ∀ (α β : ℕ → ℂ), (b.AllLeaves fun _ V => IsStable V) →
+theorem mult_operator_shifts_twist {N : ℕ} (b : Tr E N) : ∀ (α β : ℕ → ℂ), (b.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V) →
     ∀ φ ∈ (b.addTw α).space, mulOp (mult b fun i => β i - α i) (mult_mem_Sm b _) φ ∈ (b.addTw β).space := by
   induction b with
   | leaf V z =>
@@ -165,10 +169,10 @@ theorem mult_operator_shifts_twist {N : ℕ} (b : Tr E N) : ∀ (α β : ℕ →
     set L := t₁.twists.length with hL
     set α' : ℕ → ℂ := fun i => α (i + L) with hα'
     set β' : ℕ → ℂ := fun i => β (i + L) with hβ'
-    have hU₁ : IsStable (t₁.addTw α).space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₁)
-    have hU₁' : IsStable (t₁.addTw β).space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₁)
-    have hU₂ : IsStable (t₂.addTw α').space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₂)
-    have hU₂' : IsStable (t₂.addTw β').space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₂)
+    have hU₁ : _root_.GlobalTheory.CuspRep.IsStable (t₁.addTw α).space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₁)
+    have hU₁' : _root_.GlobalTheory.CuspRep.IsStable (t₁.addTw β).space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₁)
+    have hU₂ : _root_.GlobalTheory.CuspRep.IsStable (t₂.addTw α').space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₂)
+    have hU₂' : _root_.GlobalTheory.CuspRep.IsStable (t₂.addTw β').space := Trees.isStable_space _ ((allLeaves_addTw _ _ _).2 hb₂)
 
     have hA : ∀ (z : ℂ) (h : GL (Fin r) (Af E)), ∀ ψ ∈ tw (t₁.addTw α).space z, ∃ χ ∈ tw (t₁.addTw β).space z,
         χ.1 = fun m => mult t₁ (fun i => β i - α i) (m * finGL E r h) * ψ.1 m := by
@@ -243,10 +247,10 @@ theorem mult_operator_shifts_twist {N : ℕ} (b : Tr E N) : ∀ (α β : ℕ →
         rw [e, Submodule.span_image]
         infer_instance
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
 
-theorem flat {N : ℕ} (b : Tr E N) (hb : b.AllLeaves fun _ V => IsStable V) (α β : ℕ → ℂ) (φ : Sm E N)
+theorem flat {N : ℕ} (b : Tr E N) (hb : b.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V) (α β : ℕ → ℂ) (φ : Sm E N)
     (hφ : φ ∈ (b.addTw α).space) :
     ∃ ψ ∈ (b.addTw β).space, ψ.1 = fun x => mult b (fun i => β i - α i) x * φ.1 x :=
   ⟨_, mult_operator_shifts_twist b α β hb φ hφ, rfl⟩

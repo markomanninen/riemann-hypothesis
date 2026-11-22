@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LinearIndependentLaurentMonomial
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SpanLaurentMonomialEqHomLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LinearIndependentLaurentMonomial
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SpanLaurentMonomialEqHomLoc
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 
@@ -12,7 +16,7 @@ theorem exists_xProd_pow_smul_monomial {ι : Type} [DecidableEq ι] (R : Type) [
     ∃ m' : ι →₀ ℕ, (∀ i, m' i = m i + if i ∈ s then j else 0) ∧
       xProd R s ^ j • (monomial m 1 : MvPolynomial ι R) = monomial m' 1 := by
   refine ⟨m + ∑ i ∈ s, Finsupp.single i j, fun i => ?_, ?_⟩
-  · simp [Finsupp.finset_sum_apply, Finsupp.single_apply]
+  · simp [Finsupp.finsetSum_apply, Finsupp.single_apply]
   · rw [smul_eq_mul, xProd, ← Finset.prod_pow, add_comm]
     simp only [X_pow_eq_monomial]
     rw [← monomial_sum_one, monomial_mul, one_mul]

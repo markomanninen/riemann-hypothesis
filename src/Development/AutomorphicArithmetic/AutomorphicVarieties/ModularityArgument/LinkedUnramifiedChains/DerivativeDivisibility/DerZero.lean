@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CondField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CondField
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.Alg
 
@@ -30,7 +34,7 @@ private theorem derivation_eval2_eq_eval2_derivative_mul {O Λ B K : Type} [Comm
     δ (eval₂ (lam : Λ →+* B) t q) = x (eval₂ (lam : Λ →+* B) t (derivative q)) * δ t := by
   induction q using Polynomial.induction_on' with
   | add p r hp hr =>
-    rw [eval₂_add, map_add, hp, hr, derivative_add, eval₂_add, map_add, add_mul]
+    rw [eval₂_add, map_add (f := _), hp, hr, derivative_add, eval₂_add, map_add (f := _), add_mul]
   | monomial n c =>
     rw [derivative_monomial, eval₂_monomial, eval₂_monomial]
     change δ (lam c * t ^ n) = x (lam (c * n) * t ^ (n - 1)) * δ t
@@ -80,7 +84,7 @@ theorem UpperTheory.V.J.derZero :
       rw [UpperTheory.V.J.cmp, Submodule.mem_colon_singleton, smul_eq_mul, ← eval₂_mul, ← hprod]
       exact hC.kill
     exact RingHom.mem_ker.mp (hker hm)
-  rw [hprod, derivative_mul, eval₂_add, eval₂_mul, eval₂_mul, map_add, map_mul, map_mul, hgi,
+  rw [hprod, derivative_mul, eval₂_add, eval₂_mul, eval₂_mul, map_add (f := _), map_mul, map_mul, hgi,
     zero_mul, add_zero] at hF'
   have hgd := left_ne_zero_of_mul hF'
   have hEn := right_ne_zero_of_mul hF'

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.BaseChange
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.BaseChange
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -36,7 +40,7 @@ theorem two_genY_add_ne_zero [E.IsElliptic] :
       (2 : F[X]) • WeierstrassCurve.Affine.CoordinateRing.mk E.toAffine Y = 0 := by
     apply IsFractionRing.injective A K
     rw [map_zero, ← h]
-    simp only [Algebra.smul_def, mul_one, map_add, map_mul, ← IsScalarTower.algebraMap_apply,
+    simp only [Algebra.smul_def, mul_one, map_add (f := _), map_mul, ← IsScalarTower.algebraMap_apply,
       genX_eq, genY, map_ofNat]
     rw [IsScalarTower.algebraMap_apply F F[X] K, IsScalarTower.algebraMap_apply F F[X] K,
       Polynomial.algebraMap_apply, Polynomial.algebraMap_apply]
@@ -44,13 +48,13 @@ theorem two_genY_add_ne_zero [E.IsElliptic] :
     ring
   obtain ⟨h1, h2⟩ := WeierstrassCurve.Affine.CoordinateRing.smul_basis_eq_zero key
   have h2F : (2 : F) = 0 := by
-    have := congrArg (coeff · 0) h2
+    have := congrArg (AddMonoidAlgebra.coeff · 0) h2
     simpa using this
   have ha₁ : E.a₁ = 0 := by
-    have := congrArg (coeff · 1) h1
+    have := congrArg (AddMonoidAlgebra.coeff · 1) h1
     simpa using this
   have ha₃ : E.a₃ = 0 := by
-    have := congrArg (coeff · 0) h1
+    have := congrArg (AddMonoidAlgebra.coeff · 0) h1
     simpa using this
   have hΔ : E.Δ = 0 := by
     simp only [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
@@ -68,8 +72,8 @@ variable {F : Type u} [Field F] {E E' : WeierstrassCurve F} [E.IsElliptic] [E'.I
 theorem isGenPt_neg_genericPoint : IsGenPt E (-genericPoint E) :=
   isGenPt_neg (show IsGenPt E (genericPoint E) from transcendental_genX E)
 
-variable (E) in
 
+variable (E) in
 noncomputable def negFF : E.toAffine.FunctionField →ₐ[F] E.toAffine.FunctionField :=
   genEval E (-genericPoint E) isGenPt_neg_genericPoint
 
@@ -86,14 +90,14 @@ theorem negFF_of_mem {w : E.toAffine.FunctionField} (hw : w ∈ F⟮genX E⟯) :
   induction hw using IntermediateField.adjoin_induction with
   | mem x hx => rw [Set.mem_singleton_iff.mp hx, negFF_genX]
   | algebraMap x => exact AlgHom.commutes _ x
-  | add x y _ _ hx hy => rw [map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
   | inv x _ hx => rw [map_inv₀, hx]
   | mul x y _ _ hx hy => rw [map_mul, hx, hy]
 
 theorem mem_adjoin_genX_of_negFF {c : E.toAffine.FunctionField} (h : negFF E c = c) :
     c ∈ F⟮genX E⟯ := by
   obtain ⟨r, s, hr, hs, rfl⟩ := exists_eq_add_mul_genY E c
-  rw [map_add, map_mul, negFF_of_mem hr, negFF_of_mem hs, negFF_genY] at h
+  rw [map_add (f := _), map_mul, negFF_of_mem hr, negFF_of_mem hs, negFF_genY] at h
   have hs0 : s = 0 := by
     have : s * ((2 : E.toAffine.FunctionField) * genY E + algebraMap F _ E.a₁ * genX E +
         algebraMap F _ E.a₃) = 0 := by linear_combination -h
@@ -193,32 +197,6 @@ theorem ffMap_aeval (p : F[X]) (z : E.toAffine.FunctionField) :
   congr 1
   ext a
   simp [ffMap_algebraMap]
-
-theorem _root_.GroundTheory.Arith.Abelian.Isogeny.degree_map (φ : Isogeny E E') :
-    (φ.map σ).degree = φ.degree := by
-  obtain ⟨r, hr⟩ := φ.exists_ratEmb_eq_x
-  have hcop : IsCoprime (r.num.map σ) (r.denom.map σ) := by
-    simpa using r.isCoprime_num_denom.map (mapRingHom σ)
-  obtain ⟨h1, h2⟩ := num_denom_div_of_isCoprime (r.monic_denom.map σ) hcop
-  have hx : ratEmb (E.map σ) (algebraMap _ _ (r.num.map σ) / algebraMap _ _ (r.denom.map σ)) =
-      (φ.map σ).x := by
-    rw [Isogeny.map_x, ← hr, ratEmb_div]
-    conv_rhs => rw [← RatFunc.num_div_denom r]
-    rw [ratEmb_div, map_div₀, ffMap_aeval, ffMap_aeval, ffMap_genX]
-  rw [φ.degree_eq_max_natDegree hr, (φ.map σ).degree_eq_max_natDegree hx, h1, h2,
-    natDegree_map_eq_of_injective σ.injective, natDegree_map_eq_of_injective σ.injective]
-
-theorem _root_.GroundTheory.Arith.Abelian.Isogeny.degree_mapOf {D D' : WeierstrassCurve F'}
-    [D.IsElliptic] [D'.IsElliptic] (hE : E.map σ = D) (hE' : E'.map σ = D') (φ : Isogeny E E') :
-    (φ.mapOf σ hE hE').degree = φ.degree := by
-  rw [Isogeny.mapOf, Isogeny.degree_congr, Isogeny.degree_map]
-
-theorem _root_.GroundTheory.Arith.Abelian.Isogeny.map_dual [IsAlgClosed F] [DecidableEq F]
-    [IsAlgClosed F'] [DecidableEq F'] (φ : Isogeny E E') : (φ.map σ).dual = φ.dual.map σ := by
-  symm
-  apply (φ.map σ).eq_dual_of_comp
-  rw [← Isogeny.map_comp, Isogeny.dual_comp, Isogeny.map_mulIsogeny]
-  exact mulIsogeny_congr (by rw [Isogeny.degree_map]) _ _
 
 end Degree
 

@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitLocalSum
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartRing
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMax
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartResidue
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMult
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalLengthPlaces
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterChart
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPlaceCentredSum
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartTerm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitLocalSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartRing
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMax
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartResidue
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMult
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightLocalLengthPlaces
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightPlaceCentredSum
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartTerm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,7 +47,7 @@ theorem OrbitLocalSum.proof (hR : OrbitChartRing.Statement) (hM : OrbitChartMax.
     finsum_mem_congr rfl fun v hv ↦ hterm v fun k hk ↦ hc k (by
       rw [← (show orbitCenter x v = V from hv)]
       exact hk)
-  have hdeg := Module.finrank_mul_finrank ℚ (ratioField x) (coordField x)
+  have hdeg := (letI : Module.Free (ratioField x) (coordField x) := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (ratioField x) (coordField x))
   rw [hsum, hset, hS (ratioField x) (coordField x) (chartRing x c) (chartPoint x c V),
     hU ι n A x s hx hs V hV c hc, hF ι n A x s hx hs V hV c hc,
     ← hP (ratioField x) (chartRing x c) hft hfr (chartPoint x c V) (chartEval x c s) hf0, ← hdeg]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PrincipalSeriesSupport.PrinSeriesWord
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionPreservesSubquotient
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSubquotientExtTensorRight
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquivStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PrincipalSeriesSupport.PrinSeriesWord
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionPreservesSubquotient
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSubquotientExtTensorRight
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleAppendEquivStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +27,5 @@ theorem isSubquotient_of_prod₂_equiv {r t : ℕ} {U W A B C D : Type} [AddComm
   (IsSubquotient.of_surjective E.toIntertwiningMap E.toLinearEquiv.surjective).trans
     ((GlobalTheory.CompanionTheory.ProdSubquot.prod₂_isSubquotient k r t U A W B σ α ρ β hα hβ h₁ h₂).trans
       (.of_injective F.toIntertwiningMap F.toLinearEquiv.injective))
-
-theorem nonempty_prod₂_equiv_prodIrr_succ {c : ℕ} (y : Fin (c + 1) → IrrGL k)
-    (hd : ∑ a, (y a).1 = (y 0).1 + ∑ a : Fin c, (y a.succ).1) :
-    Nonempty ((prod₂ (y 0).rep (prodIrr (fun a : Fin c => y a.succ) rfl)).Equiv (prodIrr y hd)) := by
-  have := GlobalTheory.SmGL.MultiIrr.nonempty_prod₂_equiv_multiProd_succ (k := k) (fun a => (y a).1) hd fun a => (y a).rep
-  exact this
 
 end GlobalTheory.CompanionTheory.Ysupp

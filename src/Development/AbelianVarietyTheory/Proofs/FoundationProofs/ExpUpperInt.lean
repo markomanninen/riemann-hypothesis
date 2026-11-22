@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -11,7 +16,7 @@ theorem Tower.exp_upper_int {Ω : Type} [Field Ω] [Algebra ℚ Ω] (ε : Ω →
   have hdet : (0 : ℤ) < (!![a, b; 0, d] : Matrix (Fin 2) (Fin 2) ℤ).det := by
     simp [Matrix.det_fin_two]; positivity
   have e : ∀ i j, ent (toGQ !![a, b; 0, d]) i j = ((!![a, b; 0, d] : Matrix (Fin 2) (Fin 2) ℤ) i j : ℚ) := by
-    intro i j; rw [ent, toGQ, dif_pos hdet]; rfl
+    intro i j; rw [ent, toGQ, dite_eq_left hdet]; rfl
   have h := X.exp_upper (toGQ !![a, b; 0, d]) (by rw [e]; simp) f r
   simpa [e] using h
 

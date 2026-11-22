@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -55,7 +59,7 @@ theorem mulVec_lower {Q : Matrix (Fin m) (Fin m) ℂ} (hQ : ∀ a b : Fin m, a <
 
 theorem mul_diag_upper {A B : Matrix (Fin m) (Fin m) ℂ} (hA : A.BlockTriangular id) (hB : B.BlockTriangular id)
     (i : Fin m) : (A * B) i i = A i i * B i i := by
-  rw [mul_apply, Finset.sum_eq_single i]
+  rw [Matrix.mul_apply, Finset.sum_eq_single i]
   · intro j _ hji
     rcases lt_or_gt_of_ne hji with h | h
     · rw [hA (show id j < id i from h), zero_mul]

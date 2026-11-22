@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.OneLetterJetKernel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.OneLetterJetKernel
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -57,7 +61,8 @@ theorem xOfZ_eq (l : ℕ) (j : K0 →+* K) (σ : K0 →+* K0) (om oms : ι → K
 theorem cc_linP (j : K0 →+* K) (σ : K0 →+* K0) (om oms : ι → K0) (a : Fin N0) (b : Fin N1)
     (x : Bool × ι) : constantCoeff (linP (d := d) j σ om oms a b x) = 0 := by
   unfold linP
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun s _ => ?_
   simp
 
@@ -83,7 +88,8 @@ theorem map_inVar {τ : Type} (j : K0 →+* K) (x : τ) (f : PowerSeries K0) :
 
 theorem map_zXY [Fintype ι] (l : ℕ) (j : K0 →+* K) (σ : K0 →+* K0) (om oms : ι → K0) (s : ZMod d) :
     map j (zXY l σ om oms s) = ∑ x : Bool × ι, C (j (mXY σ om oms s x)) * at1 x (lgF K l) := by
-  rw [zXY_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [zXY_eq, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_mul, map_C, map_inVar, BiextensionSums.map_lgF']
 
@@ -93,7 +99,8 @@ theorem map_letLog (l : ℕ) (j : K0 →+* K) (s : ZMod d) :
   rw [coeff_map]
   show j (letLog (K := K0) l s n) = letLog (K := K) l s n
   unfold letLog
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   split_ifs <;> simp
 
@@ -162,7 +169,8 @@ theorem subst_xOfZ_zXY [Fintype ι] [DecidableEq ι] {l : ℕ} (hl : 2 ≤ l) (h
         ∑ s' : ZMod d, C (j (pXY σ om oms x s')) * (X (s', a, b) : MvPowerSeries (ZV d N0 N1) K)) =
       ∑ s' : ZMod d, C (j (∑ x : Bool × ι, mXY σ om oms s x * pXY σ om oms x s')) *
         (X (s', a, b) : MvPowerSeries (ZV d N0 N1) K) := by
-    simp only [Finset.mul_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, map_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun y _ => Finset.sum_congr rfl fun s' _ => ?_
     rw [map_mul, map_mul, mul_assoc]
@@ -184,7 +192,8 @@ theorem sum_subst_rho_beXY [Fintype ι] (j : K0 →+* K) (be0 : MvPowerSeries (F
     intro ab
     have hρ := hasSubst_rho (K := K) (ι := ι) ab.1 ab.2
     unfold beXY
-    rw [map_sum, subst_sum hρ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, subst_sum hρ]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [map_subst (hs2 (constantCoeff_X _) (constantCoeff_X _)),
       subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (by
@@ -284,7 +293,8 @@ theorem exists_cofactor (l d N0 N1 : ℕ) [NeZero d] (σ : K0 →+* K0) (j : K0 
     have h0 : constantCoeff (map j be0) = 0 := by
       rw [constantCoeff_map, ← coeff_zero_eq_constantCoeff_apply, hF1.1 0 (Or.inl rfl), map_zero]
     unfold sumE
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun e _ => ?_
     exact constantCoeff_subst_eq_zero (hasSubst_of_constantCoeff_zero fun c => constantCoeff_X _)
       (fun c => constantCoeff_X _) h0

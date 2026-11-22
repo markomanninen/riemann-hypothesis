@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -76,9 +80,11 @@ theorem isOpen_subG (hL : FiniteDimensional ℚ_[p] L) : IsOpen (subG p K L : Se
     · intro hσ x hx
       have hx' : x = ∑ i, b.repr ⟨x, hx⟩ i • (b i : PadicAlgCl p) := by
         have := congrArg L.val (b.sum_repr ⟨x, hx⟩)
-        rw [map_sum] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum] at this
         exact this.symm
-      rw [hx', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx', map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul]
       exact congrArg₂ _ ((σ.restrictScalars ℚ_[p]).commutes _) (hσ i)
@@ -97,7 +103,8 @@ theorem degLK_eq_finrank (h : K ≤ L) :
 theorem finrank_eq_degLK_mul (h : K ≤ L) (hL : FiniteDimensional ℚ_[p] L) :
     Module.finrank ℚ_[p] L = degLK p K L * Module.finrank ℚ_[p] K := by
   rw [degLK_eq_finrank h, mul_comm]
-  exact (Module.finrank_mul_finrank ℚ_[p] K (IntermediateField.extendScalars h)).symm
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact (Module.finrank_mul_finrank ℚ_[p] K (IntermediateField.extendScalars h)).symm
 
 theorem degLK_pos (hL : FiniteDimensional ℚ_[p] L) : 0 < degLK p K L :=
   Nat.pos_of_ne_zero (finiteIndex_subG hL).index_ne_zero

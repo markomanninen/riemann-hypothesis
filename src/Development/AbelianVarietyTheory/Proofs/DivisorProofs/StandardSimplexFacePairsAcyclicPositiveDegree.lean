@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -105,7 +110,8 @@ theorem d_single {N : ℕ} (z : Pr N) : Pr.d N (Finsupp.single z 1) = z.d₁ + (
 
 theorem H_sum {N n : ℕ} (f : Fin n → Pr N) :
     H N (∑ i : Fin n, ((-1 : ℤ) ^ (i : ℕ)) • Finsupp.single (f i) 1) = ∑ i : Fin n, ((-1 : ℤ) ^ (i : ℕ)) • hz (f i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_smul, H_single]
 
 theorem key {N : ℕ} (z : Pr N) (hpos : 0 < z.1 + z.2.1) :
@@ -117,12 +123,12 @@ theorem key {N : ℕ} (z : Pr N) (hpos : 0 < z.1 + z.2.1) :
     cases r with
     | zero => simp at hpos
     | succ s =>
-      simp only [hz, if_pos rfl, if_true, map_add, d_single]
+      simp only [hz, if_pos rfl, if_true, map_add (f := _), d_single]
       rw [d₁_cone_zero, d₂_succ, d₁_zero, d₂_cone_succ, d₁_zero, d₂_succ, map_zero, map_smul, H_sum]
       simp only [hz, if_true, ↓reduceIte, Finset.sum_add_distrib, smul_add]
       module
   | succ q =>
-    simp only [hz, Nat.succ_ne_zero, if_false, ↓reduceIte, add_zero, map_add, d_single, map_smul]
+    simp only [hz, Nat.succ_ne_zero, if_false, ↓reduceIte, add_zero, map_add (f := _), d_single, map_smul]
     rw [d₁_cone_succ, d₁_succ, H_sum]
     have hX : ∑ i : Fin (q + 2), ((-1 : ℤ) ^ (i : ℕ)) • hz (⟨q, r, SimplexCategory.δ i ≫ a, b⟩ : Pr N) =
         ∑ i : Fin (q + 2), ((-1 : ℤ) ^ (i : ℕ)) • Finsupp.single (⟨q + 1, r, cone (SimplexCategory.δ i ≫ a), b⟩ : Pr N) 1 := by
@@ -175,7 +181,8 @@ theorem homotopy {N k : ℕ} (c : Pr N →₀ ℤ) (hc : Pr.Deg (k + 1) c) :
   calc Pr.d N (H N c) + H N (Pr.d N c)
       = Pr.d N (H N (c.sum Finsupp.single)) + H N (Pr.d N (c.sum Finsupp.single)) := by rw [Finsupp.sum_single]
     _ = ∑ z ∈ c.support, Finsupp.single z (c z) := by
-        simp only [Finsupp.sum, map_sum, ← Finset.sum_add_distrib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Finsupp.sum, map_sum, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl step
     _ = c := Finsupp.sum_single c
 

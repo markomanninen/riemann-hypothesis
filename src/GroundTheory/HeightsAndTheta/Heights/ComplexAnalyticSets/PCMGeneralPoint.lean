@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMGeneralPoint
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMGeneralPoint
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

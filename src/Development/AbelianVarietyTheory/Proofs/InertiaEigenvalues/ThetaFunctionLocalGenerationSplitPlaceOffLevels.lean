@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DropPlInsert
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSameImagesMatrix
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitFrameSelfDualLatticeCompletion
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHyperspecialIffGIntOfSuppAtSplit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DropPlInsert
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalVAlgebraMapMem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSameImagesMatrix
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitFrameSelfDualLatticeCompletion
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLatticeIffIntegralMatrixSplitChart
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHyperspecialIffGIntOfSuppAtSplit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionLiftPairStepVectorInvLevelChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeMultipleMemOpenLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompletedHomLatticeFinitelyGenerated
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
@@ -50,7 +54,7 @@ theorem isHalf_place_right (he : IsSplitIdem D e) {u : WO S T} (hu : IsHalf (cA 
 theorem place_fin (he : IsSplitIdem D e) {u : WO S T} (hu : IsHalf (e + cA D e) u) : u.map (infPart D) = 0 := by
   ext i j
   show infPart D (u i j) = 0
-  rw [← hu i j, RingHom.map_mul, RingHom.map_add, GlobalTheory.SplitScalar.infPart_splitIdem he,
+  rw [← hu i j, RingHom.map_mul, RingHom.map_add (f := _), GlobalTheory.SplitScalar.infPart_splitIdem he,
     GlobalTheory.SplitScalar.infPart_splitIdem (GlobalTheory.SplitScalar.isSplitIdem_conj he), add_zero, zero_mul]
 
 theorem theta_heis (hψ : IsStdChar D ψ (-1)) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) {u : WO S T}
@@ -163,8 +167,8 @@ theorem coord_tgt {K : Type} [Field K] {a b : ℕ} (c : K) (B H g : Matrix (Fin 
   rw [Matrix.mul_one, Matrix.mul_smul, Matrix.transpose_mul, ← Matrix.mul_assoc, ← Matrix.mul_assoc, h]
   simp only [Matrix.mul_assoc]
 
-open GlobalTheory.SplitHecke GlobalTheory.SplitLinear in
 
+open GlobalTheory.SplitHecke GlobalTheory.SplitLinear in
 theorem exists_coord (S T : HSp D) (he : IsSplitIdem D e) :
     ∃ (v : HeightOneSpectrum (𝓞 D.host.F)) (τ : Matrix (Fin S.rank) (Fin T.rank) (Fv D.host.F v) →+ WO S T),
       (∀ m, IsHalf e (τ m)) ∧ (∀ x, IsHalf e x → ∃ m, τ m = x) ∧
@@ -348,7 +352,8 @@ theorem sum_up (hψ : IsStdChar D ψ (-1)) (he : IsSplitIdem D e) {k : ℕ} (hk 
   · rw [heisO_sum]
     refine Finset.sum_congr rfl fun u hu => ?_
     rw [heisO_comm, psi_down_up hψ he hk ha ha' (hR u hu).1 (hR u hu).2, one_smul, hfix a ha (Or.inl ha')]
-  · rw [map_sum, Finset.sum_congr rfl fun u hu => hℓ u (hR u hu).2 g hg, Finset.sum_const, nsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.sum_congr rfl fun u hu => hℓ u (hR u hu).2 g hg, Finset.sum_const, nsmul_eq_mul]
 
 theorem exists_vac (hψ : IsStdChar D ψ (-1)) (he : IsSplitIdem D e) {h : WO S T → ℂ} (hh : IsThetaFunO ψ S T h) :
     ∃ φ ∈ locSpan ψ S T e h, HalfVac ψ S T e φ ∧ ∀ ℓ, InvForm ψ S T e ℓ → ℓ φ = ℓ h := by
@@ -376,7 +381,8 @@ theorem exists_vac (hψ : IsStdChar D ψ (-1)) (he : IsSplitIdem D e) {h : WO S 
         t2 a (nsmul_mem ha k) ha']
   · obtain ⟨v₀, ⟨hv₀, hv₀'⟩, hu₀⟩ := hRu 0 (zero_mem _) (isHalf_zero _)
     rw [zero_sub, neg_mem_iff] at hv₀'
-    rw [map_smul, map_sum, Finset.sum_eq_single_of_mem v₀ hv₀, t3 v₀ hv₀' (hR _ hv₀).2, t4 ℓ hℓ, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, Finset.sum_eq_single_of_mem v₀ hv₀, t3 v₀ hv₀' (hR _ hv₀).2, t4 ℓ hℓ, smul_eq_mul,
       inv_mul_cancel_left₀ hc]
     intro u hu hne
     obtain ⟨y, hy, hy', hψy⟩ := exists_dual_up hψ he hk
@@ -489,8 +495,8 @@ def vacGen (ψ : AddChar (AF D.host.F) ℂ) (om : GA D S × GA D T →* Module.E
     (f : WO S T → ℂ) : Set (WO S T → ℂ) :=
   {F | ∃ (h : GA D T) (φ : WO S T → ℂ), φ ∈ locSpan ψ S T e f ∧ HalfVac ψ S T e φ ∧ F = om (1, h) φ}
 
-open GlobalTheory.SplitHecke in
 
+open GlobalTheory.SplitHecke in
 theorem mem_span_vacGen (hW : IsWeilDatumO ψ S T χS χT om) (hr : T.rank ≤ S.rank) (he : IsSplitIdem D e)
     {f₀ f : WO S T → ℂ} (hf₀ : HalfVac ψ S T e f₀) (h0 : f₀ ≠ 0) (hf : IsThetaFunO ψ S T f)
     (hK : ∀ g, SuppAt e S g → g ∈ KsphC S ∅ → om (g, 1) f = f ∧ om (g, 1) f₀ = f₀) :
@@ -528,7 +534,7 @@ theorem mem_span_vacGen (hW : IsWeilDatumO ψ S T χS χT om) (hr : T.rank ≤ S
         k • z.map (algebraMap (Ov D v) (Fv D.host.F v)) := by
       ext i j
       simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, map_natCast, nsmul_eq_mul]
-    rw [hM, hM, e1, map_add, map_nsmul, heisO_add_of_orth ψ S T (half_orth he (c1 _) (isHalf_nsmul (c1 _) k)),
+    rw [hM, hM, e1, map_add (f := _), map_nsmul, heisO_add_of_orth ψ S T (half_orth he (c1 _) (isHalf_nsmul (c1 _) k)),
       hfix _ ((c3 _).2 ⟨z, rfl⟩)]
   · rw [map_natCast, Nat.cast_smul_eq_nsmul, ← c3, map_nsmul]
     refine (lat_facts hψ S T he).2.2.2.1 _ (isHalf_nsmul (c1 x) k) fun y hy hy' => ?_
@@ -564,7 +570,7 @@ open GlobalTheory.SplitScalar
 variable {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
 
 theorem cA_place (e : AE D) : cA D (e + cA D e) = e + cA D e := by
-  rw [RingHom.map_add, GlobalTheory.DualPairCheck.cA_cA, add_comm]
+  rw [RingHom.map_add (f := _), GlobalTheory.DualPairCheck.cA_cA, add_comm]
 
 theorem kill_locSpan {f φ : WO S T → ℂ} (L : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ))
     (hL : ∀ u, IsHalf (e + cA D e) u → L (heisO ψ S T u f) = heisO ψ S T u (L f)) (h0 : L f = 0)
@@ -631,7 +637,8 @@ theorem relation_vac (hψ : IsStdChar D ψ (-1)) (he : IsSplitIdem D e) {f₀ φ
   have key : ∀ ℓ, InvForm ψ S T e ℓ → ∀ {g}, HalfVac ψ S T e g →
       ℓ (heisO ψ S T x (∑ i ∈ s, a i • heisO ψ S T (u i) (heisO ψ S T (w i) g))) =
         ℓ (∑ i ∈ s, (a i * c i) • heisO ψ S T (w i) g) := fun ℓ hℓ g hg => by
-    rw [heisO_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heisO_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [heisO_smul, map_smul, map_smul, hc i hi ℓ hℓ _ (v hg i hi), smul_eq_mul, smul_eq_mul, mul_assoc]
   rw [key ℓ hℓ hφ, hrel, map_zero]
@@ -649,12 +656,14 @@ theorem rel_of_finsupp {X V ι : Type} [AddCommGroup V] [Module ℂ V] (p : X �
   classical
   have hc : ∀ K : X → V, ((∑ i ∈ s, Finsupp.single (w i) (a i)).sum fun u z => z • K u) = ∑ i ∈ s, a i • K (w i) :=
     fun K => by
-      rw [← Finsupp.linearCombination_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finsupp.linearCombination_apply, map_sum]
       simp only [Finsupp.linearCombination_single]
   rw [← hc]
   refine H _ (fun u hu => ?_) (by rw [hc, h])
-  obtain ⟨i, hi, h⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hu)
-  rw [Finset.mem_singleton.1 (Finsupp.support_single_subset h)]
+  obtain ⟨i, hi, h⟩ := Finsupp.mem_support_finsetSum u hu
+  have hu_eq : u = w i := Finset.mem_singleton.1 (Finsupp.support_single_subset h)
+  subst u
   exact hw i hi
 
 section Real

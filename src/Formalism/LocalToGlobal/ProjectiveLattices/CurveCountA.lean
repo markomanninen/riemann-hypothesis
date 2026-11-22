@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.CurveCount
 
@@ -84,7 +88,8 @@ theorem exists_indep_ratios {K κ : Type*} [Field K] [Field κ] [Algebra K κ] {
     exact add_le_add h4 le_rfl
   have h5 : (((D + 1) * N : ℕ) : ℕ∞) ≤ (Set.range t).encard := by
     have := ht.injective.encard_range
-    rwa [ENat.card_eq_coe_fintype_card, Fintype.card_prod, Fintype.card_fin, Fintype.card_fin] at this
+    rw [ENat.card_eq_coe_fintype_card, Fintype.card_prod, Fintype.card_fin, Fintype.card_fin] at this
+    exact this.ge
   have hfin : M.eRk (Set.range r) ≠ ⊤ :=
     ne_top_of_le_ne_top (Set.finite_range r).encard_lt_top.ne (M.eRk_le_encard _)
   obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.mp hfin
@@ -154,7 +159,7 @@ theorem countCore {K κ Ω : Type*} [Field K] [Field κ] [Field Ω] [Algebra K �
     next c =>
       simp only [MvPolynomial.aeval_C, AlgHom.commutes]
     next p q hp hq =>
-      rw [map_add, map_add, map_add, hp, hq]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     next p i hp =>
       rw [map_mul, map_mul, map_mul, hp, MvPolynomial.aeval_X, MvPolynomial.aeval_X]
       rfl
@@ -216,14 +221,16 @@ theorem countCore {K κ Ω : Type*} [Field K] [Field κ] [Field Ω] [Algebra K �
     exact ⟨Q, hQ⟩
   choose Qc hQc using hQ
   have hT : aeval ρ (∑ j ∈ Finset.range (p.natDegree + 1), rename f (Qc (p.coeff j)) * P ^ j) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_mul, map_pow, aeval_rename, hQc]
     rw [← hpα, Polynomial.aeval_eq_sum_range]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def]
     rfl
   have hT2 := htrans _ hT
-  rw [map_sum, Finset.sum_range_succ'] at hT2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_range_succ'] at hT2
   simp only [map_mul, map_pow, aeval_rename, hσP, ne_eq, Nat.add_eq_zero, one_ne_zero, and_false,
     not_false_eq_true, zero_pow, mul_zero, Finset.sum_const_zero, zero_add, pow_zero, mul_one] at hT2
   rw [h3] at hT2

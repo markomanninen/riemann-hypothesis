@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+
+@[expose] public section
+
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
 theorem UpperTheory.V.Alg.cocycle_normal_form :
@@ -29,9 +34,9 @@ theorem UpperTheory.V.Alg.cocycle_normal_form :
     obtain ⟨h', y', b1, b2, b3, b4, b5⟩ := ih'
     refine ⟨h + h', y + y', a1.add b1, by simp [a2, b2], ?_, fun v s => ?_, fun q n hn => ?_⟩
     · funext p
-      simp only [Prod.fst_add, Pi.add_apply, a3, b3, dOne, map_add]
+      simp only [Prod.fst_add, Pi.add_apply, a3, b3, dOne, map_add (f := _)]
       abel
-    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add]
+    · simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, a4, b4, map_add (f := _)]
       abel
     · simp only [Prod.snd_add, Pi.add_apply, a5 q n hn, b5 q n hn]
   | smul c x _ ih =>

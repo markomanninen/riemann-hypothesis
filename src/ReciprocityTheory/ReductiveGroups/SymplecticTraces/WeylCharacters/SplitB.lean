@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HasDerivAtRealOfComplex
-import Mathlib.Analysis.InnerProductSpace.TensorProduct
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.HasDerivAtRealOfComplex
+public import Mathlib.Analysis.InnerProductSpace.TensorProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ def sp_dτ (T1 : KType (fun _ : Fin (cnt ε true) => true) Λ1)
     Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] (T1.V ⊗[ℂ] T2.V →L[ℂ] T1.V ⊗[ℂ] T2.V) where
   toFun X := mapL (T1.dτ (sp_sub ε true X)) 1 + mapL 1 (T2.dτ (sp_sub ε false X))
   map_add' X Y := by
-    simp only [sp_sub_add, map_add, mapL_add_left, mapL_add_right]
+    simp only [sp_sub_add, map_add (f := _), mapL_add_left, mapL_add_right]
     abel
   map_smul' c X := by
     simp only [sp_sub_smul, map_smul, mapL_smul_left, mapL_smul_right, smul_add, RingHom.id_apply]

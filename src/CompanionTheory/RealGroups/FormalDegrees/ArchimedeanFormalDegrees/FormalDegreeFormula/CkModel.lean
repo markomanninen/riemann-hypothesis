@@ -1,6 +1,10 @@
-import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.FormalDegreeFormula.ModelFunctionsMultiply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTau
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+module
+
+public import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.FormalDegreeFormula.ModelFunctionsMultiply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelTau
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+
+@[expose] public section
 
 noncomputable section
 
@@ -268,6 +272,6 @@ theorem ckModel : CompanionTheory.RgFd.CkModel := by
   rw [h1, inner_uEv, ev_apply, tauC_fn]
   show ‖((‖w0 ε m‖ : ℝ) : ℂ) * (wN ε m).fn (1 * k)‖ = _
   rw [one_mul, wN, MV.fn_smul, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← Complex.ofReal_mul, mul_inv_cancel₀ hw0]
-  simp [w0]
+  simp [w0, MV.fn, MV.mk]
 
 end CompanionTheory.RgFd.CkM

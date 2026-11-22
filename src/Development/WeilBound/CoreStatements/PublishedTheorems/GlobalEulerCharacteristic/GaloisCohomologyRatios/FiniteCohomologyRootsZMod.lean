@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.ModuleFiniteHomRep
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeRegular
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerShaOpen
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.ModuleFiniteHomRep
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CoprimeRegular
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerShaOpen
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 

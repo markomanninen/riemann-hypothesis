@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.EllipticTorsion.EllipticTorsionWeights
-import Formalism.EllipticTorsion.EllipticTorsionProofs.CompExp
-import Formalism.FormalGroupLog.LogDeterminesLaw
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.EllipticTorsionWeights
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.CompExp
+public import Formalism.FormalGroupLog.LogDeterminesLaw
+
+@[expose] public section
 
 open PowerSeries
 
@@ -53,7 +57,8 @@ theorem coeff_X0_add_X1_pow {R : Type*} [CommRing R] (d i j : ℕ) :
     MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) i + Finsupp.single 1 j)
       ((MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 2) R) ^ d) =
       if i + j = d then (d.choose i : R) else 0 := by
-  rw [add_pow, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_pow, map_sum]
   have hterm : ∀ m ∈ Finset.range (d + 1),
       MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) i + Finsupp.single 1 j)
         ((MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R) ^ m * MvPowerSeries.X 1 ^ (d - m) *
@@ -226,7 +231,7 @@ theorem main (hCE : Formalism.ELL.CompExpWeight.{u}) : Formalism.ELL.EllipticTor
       simp at this
       omega
     have edeg : (Finsupp.single (0 : Fin 2) i + Finsupp.single 1 j).degree = i + j := by
-      rw [map_add, Finsupp.degree_single, Finsupp.degree_single]
+      rw [map_add (f := _), Finsupp.degree_single, Finsupp.degree_single]
     rw [map_sub, map_sub, e1, e2, e3, sub_zero, sub_zero, norm_mul, edeg] at hw
     exact_mod_cast hw
 

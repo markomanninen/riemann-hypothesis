@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.BlockEndMinorsOfCell
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
-import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.BlockEndMinorsOfCell
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilySeparationBound
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OscillatoryIntegralBounds
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,16 +95,18 @@ section Entry
 
 variable {D : D7}
 
-local notation "FI" => FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E
-
 theorem hT_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.HermitianLatticesTheory.IsUnimodular (VS D).hT Λ) (m n : ℕ)
-    (v v' : (VS D).V) (hv : ∀ x ∈ (((dI D ^ m : Ideal (𝓞 D.host.E)) : FI))⁻¹, x • v ∈ Λ)
-    (hv' : ∀ y ∈ (((dI D ^ n : Ideal (𝓞 D.host.E)) : FI))⁻¹, y • v' ∈ Λ) :
+    (v v' : (VS D).V)
+    (hv : ∀ x ∈ ((dI D ^ m : Ideal (𝓞 D.host.E)) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)⁻¹,
+      x • v ∈ Λ)
+    (hv' : ∀ y ∈ ((dI D ^ n : Ideal (𝓞 D.host.E)) : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E)⁻¹,
+      y • v' ∈ Λ) :
     ∃ o ∈ dI D ^ (m + n), (o : D.host.E) = (VS D).hT v v' := by
   set Z := (VS D).hT v v' with hZ
-  set A : FI := (((dI D ^ m : Ideal (𝓞 D.host.E)) : FI))⁻¹
-  set B : FI := (((dI D ^ n : Ideal (𝓞 D.host.E)) : FI))⁻¹
-  have hJ : (((dI D ^ (m + n) : Ideal (𝓞 D.host.E)) : FI)) = (A * B)⁻¹ := by
+  let FI := FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E
+  set A : FI := ((dI D ^ m : Ideal (𝓞 D.host.E)) : FI)⁻¹
+  set B : FI := ((dI D ^ n : Ideal (𝓞 D.host.E)) : FI)⁻¹
+  have hJ : ((dI D ^ (m + n) : Ideal (𝓞 D.host.E)) : FI) = (A * B)⁻¹ := by
     rw [mul_inv, inv_inv, inv_inv, ← FractionalIdeal.coeIdeal_mul, ← pow_add]
   have hAB0 : A * B ≠ 0 := by
     refine mul_ne_zero (inv_ne_zero ?_) (inv_ne_zero ?_) <;>
@@ -124,28 +130,15 @@ theorem hT_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hun : Formalism.Hermit
   obtain ⟨o, ho, e⟩ := (FractionalIdeal.mem_coeIdeal _).1 hmem
   exact ⟨o, ho, e⟩
 
-theorem det_mem {q : ℕ} (M : Matrix (Fin q) (Fin q) (𝓞 D.host.E)) (m : Fin q → ℕ)
-    (hM : ∀ i j, M i j ∈ dI D ^ (m i + m j)) : M.det ∈ dI D ^ (2 * ∑ i, m i) := by
-  rw [Matrix.det_apply]
-  refine Ideal.sum_mem _ fun σ _ => ?_
-  have h := Ideal.prod_mem_prod (s := Finset.univ) (I := fun i => dI D ^ (m (σ i) + m i))
-    (x := fun i => M (σ i) i) (fun i _ => hM (σ i) i)
-  rw [Finset.prod_pow_eq_pow_sum, Finset.sum_add_distrib, Equiv.sum_comp σ m, ← two_mul] at h
-  rw [Units.smul_def]
-  exact zsmul_mem h _
-
 theorem two_sum_sub (r : ℕ) : ∀ q : ℕ, q ≤ r + 1 → 2 * ∑ i : Fin q, (r - (i : ℕ)) = q * (2 * r + 1 - q)
   | 0, _ => by simp
   | q + 1, hq => by
     rw [Fin.sum_univ_castSucc]
     simp only [Fin.val_castSucc, Fin.val_last]
     rw [mul_add, two_sum_sub r q (by omega)]
-    have h1 : q ≤ r := by omega
-    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h1
-    have e1 : 2 * (q + d) + 1 - q = q + 2 * d + 1 := by omega
-    have e2 : 2 * (q + d) + 1 - (q + 1) = q + 2 * d := by omega
-    have e3 : q + d - q = d := by omega
-    rw [e1, e2, e3]
+    have e1 : 2 * r + 1 - q = q + 2 * (r - q) + 1 := by omega
+    have e2 : 2 * r + 1 - (q + 1) = q + 2 * (r - q) := by omega
+    rw [e1, e2]
     ring
 
 end Entry

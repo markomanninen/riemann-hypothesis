@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology Metric Set
 
@@ -40,7 +44,7 @@ theorem gradedSeries_continue {ι : Type} (deg : ι → ℕ) (c : ι → ℂ) (�
   have hρ : 0 < ρ := lt_of_le_of_lt (norm_nonneg _) hX
   have hs0 : 0 < min (δ / 2) ρ := lt_min hx0 hρ
   have hQan : AnalyticOnNhd ℂ Q (ball 0 ρ) := hQ.analyticOnNhd isOpen_ball
-  have hmem : ∀ z : ℂ, ‖z‖ < δ / 2 → z ∈ EMetric.ball (0 : ℂ) p.radius := by
+  have hmem : ∀ z : ℂ, ‖z‖ < δ / 2 → z ∈ Metric.eball (0 : ℂ) p.radius := by
     intro z hz
     change edist _ (0 : ℂ) < _
     rw [edist_zero_right]
@@ -73,7 +77,7 @@ theorem gradedSeries_continue {ι : Type} (deg : ι → ℕ) (c : ι → ℂ) (�
   have hC := hdR.hasFPowerSeriesOnBall hR
   have hCp : cauchyPowerSeries Q 0 R = p := hC.hasFPowerSeriesAt.eq_formalMultilinearSeries hQp
   rw [hCp] at hC
-  have hXm : X ∈ EMetric.ball (0 : ℂ) R := by
+  have hXm : X ∈ Metric.eball (0 : ℂ) R := by
     change edist _ (0 : ℂ) < _
     rw [edist_zero_right]
     exact ENNReal.coe_lt_coe.2 (by rw [← NNReal.coe_lt_coe, coe_nnnorm]; change ‖X‖ < (‖X‖ + ρ) / 2; linarith)

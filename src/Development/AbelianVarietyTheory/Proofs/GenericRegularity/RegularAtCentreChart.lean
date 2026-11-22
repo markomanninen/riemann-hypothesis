@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RegularAtCentre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RegularAtCentre
+
+@[expose] public section
 
 noncomputable section
 

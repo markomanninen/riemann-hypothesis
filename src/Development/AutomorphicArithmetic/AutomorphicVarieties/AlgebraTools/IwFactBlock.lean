@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwFactTorus
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwFactTorus
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 noncomputable section
@@ -68,8 +73,8 @@ private theorem mem_KO_iff (g : GL (Fin n) k) :
     · rw [map_mul, map_one]; exact g.mul_inv
     · rw [map_mul, map_one]; exact g.inv_mul
 
-variable (C) in
 
+variable (C) in
 private def Good (M : Matrix (Fin n) (Fin n) k) : Prop :=
   (∀ a c, valuation k (M a c) ≤ 1) ∧ (∀ a c, c < a → valuation k (M a c) < 1) ∧
     ∀ a, ∃ c ∈ unitsC k C, (c : k) = M a a

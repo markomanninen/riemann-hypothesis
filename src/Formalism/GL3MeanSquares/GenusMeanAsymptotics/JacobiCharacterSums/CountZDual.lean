@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.CountZDefs
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.CountZDefs
+
+@[expose] public section
 
 open Complex Finset
 
@@ -50,7 +54,8 @@ theorem duality_inequality : DualIneq := by
     intro i j
     have e : G j i = (starRingEnd ℂ) (G i j) := by
       rw [hG]
-      simp only [map_sum, map_mul, Complex.conj_conj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, Complex.conj_conj]
       apply Finset.sum_congr rfl
       intro n _
       ring
@@ -60,7 +65,8 @@ theorem duality_inequality : DualIneq := by
     conv_rhs => rw [Finset.sum_comm]
     rw [Complex.ofReal_sum]
     simp_rw [hz]
-    simp only [hw, hG, map_sum, map_mul, Complex.conj_conj, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hw, hG, map_sum, map_mul, Complex.conj_conj, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm (s := I) (t := S)]
     apply Finset.sum_congr rfl
     intro i _

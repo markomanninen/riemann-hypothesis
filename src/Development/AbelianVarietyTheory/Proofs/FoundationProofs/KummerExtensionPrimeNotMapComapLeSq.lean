@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
+
 open GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory
@@ -8,7 +13,7 @@ theorem kummer_aeval_mem_integralClosure {A₀ F E : Type} [CommRing A₀] [Fiel
     [Algebra F E] [Algebra A₀ E] [IsScalarTower A₀ F E] {x : E} (hx : IsIntegral A₀ x)
     (p : (integralClosure A₀ F)[X]) : IsIntegral A₀ (aeval x p) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
   | monomial n c =>
     rw [aeval_monomial]
     refine IsIntegral.mul ?_ (hx.pow n)
@@ -70,7 +75,7 @@ theorem kummer_dual_step (A₀ K₀ F E : Type) [CommRing A₀] [IsDomain A₀] 
     simp [hx, ← IsScalarTower.algebraMap_apply]
   obtain ⟨g, hg⟩ := hdvd
   have hder := congrArg (fun p => aeval x (derivative p)) hg
-  simp only [derivative_sub, derivative_X_pow, derivative_C, sub_zero, derivative_mul, map_add, map_mul,
+  simp only [derivative_sub, derivative_X_pow, derivative_C, sub_zero, derivative_mul, map_add (f := _), map_mul,
     minpoly.aeval, zero_mul, add_zero] at hder
   set d := aeval x (derivative (minpoly C x))
   let v : A₀ˣ := hN.unit * u
@@ -202,7 +207,9 @@ theorem kummer_not_map_comap_le_sq :
     Ideal.comap_ne_bot_of_integral_mem hb0 hbP (Algebra.IsIntegral.isIntegral b)
   haveI : (P.comap (algebraMap A₀ (integralClosure A₀ E))).IsMaximal :=
     Ideal.IsPrime.isMaximal inferInstance hp0
-  have h := pow_sub_one_dvd_differentIdeal_aux A₀ K₀ E P two_ne_zero hp0 (Ideal.dvd_iff_le.mpr hle)
+  have h := pow_sub_one_dvd_differentIdeal_aux A₀ K₀ E
+    (p := P.comap (algebraMap A₀ (integralClosure A₀ E))) P (e := 2) hp0
+    (Ideal.dvd_iff_le.mpr hle)
   rw [hdiff, Ideal.dvd_iff_le] at h
   apply hP.ne_top
   simpa using h

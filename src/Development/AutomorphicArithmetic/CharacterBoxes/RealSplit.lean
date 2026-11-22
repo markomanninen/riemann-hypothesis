@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
-import Development.AutomorphicArithmetic.MeanSquareBounds.realDecomp
-import Development.AutomorphicArithmetic.MeanSquareBounds.realCond
-import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
-import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+public import Development.AutomorphicArithmetic.MeanSquareBounds.realDecomp
+public import Development.AutomorphicArithmetic.MeanSquareBounds.realCond
+public import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
+public import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+
+@[expose] public section
 
 open Formalism.HC UpperTheory.Top
 

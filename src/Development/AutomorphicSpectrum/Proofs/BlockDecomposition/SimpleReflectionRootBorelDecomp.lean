@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjTransposeAntidiagFixed
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConjTransposeAntidiagFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ theorem sR_uR_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
     have hjn : j.val < n := by omega
     unfold chiDeltaU
     rw [Finset.prod_eq_mul i j hij ?_ (by simp) (by simp)]
-    · rw [dif_pos hin, dif_pos hjn]
+    · rw [dite_eq_left hin, dite_eq_left hjn]
       have ei : (⟨i.val, hin⟩ : Fin n) = ⟨a, ha⟩ := Fin.ext hi
       have ej : (⟨j.val, hjn⟩ : Fin n) = ⟨a + 1, ha1⟩ := Fin.ext hj
       rw [ei, ej, diag_a, root_hom_diag_entry_eq, ordL_neg' _ (inv_ne_zero hx), ordL_inv' hx, hi, hj]
@@ -148,7 +152,7 @@ theorem sR_uR_factor : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicat
       exact arith _ _ _ hq _ _
     · intro k _ hk
       have hkn : k.val < n := by omega
-      rw [dif_pos hkn, diag_other hU.1 a h x hx ⟨k.val, hkn⟩ (by simpa using k.2)
+      rw [dite_eq_left hkn, diag_other hU.1 a h x hx ⟨k.val, hkn⟩ (by simpa using k.2)
         (fun e => hk.1 (Fin.ext (by simpa [hi] using e)))
         (fun e => hk.2 (Fin.ext (by simpa [hj] using e))), ordL_one']
       simp

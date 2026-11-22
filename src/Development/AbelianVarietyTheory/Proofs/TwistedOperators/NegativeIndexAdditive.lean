@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSignatureFromBlocks
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSignatureFromBlocks
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem gram_family (S : HSpace E) {ι : Type} [Fintype ι] (v : ι → S.V) :
   have hl := S.frame.sum_repr (v l)
   simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply, HSpace.gram]
   conv_lhs => rw [← hk, ← hl]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
     Finset.sum_mul, Finset.mul_sum, RingHom.id_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring

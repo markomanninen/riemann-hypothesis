@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -112,7 +116,7 @@ lemma g_pull_gen {Z : Scheme.{0}} (h : Z ⟶ Y) (ψ : K → (Y ⟶ X)) (a b : K 
   have hle : LB.wchart L ψ a ⊓ LB.wchart L ψ b ≤ ψ c ⁻¹ᵁ (L.U (a c) ⊓ L.U (b c)) :=
     le_inf (inf_le_left.trans (LB.wchart_le L ψ a c)) (inf_le_right.trans (LB.wchart_le L ψ b c))
   have e : res hle (pullU (ψ c) _ (L.g (a c) (b c))) = tr L _ (ψ c) (a c) (b c) := by
-    rw [tr_eq_tu, tu, dif_pos hle]
+    rw [tr_eq_tu, tu, dite_eq_left hle]
   erw [e]
   exact tr_pull L h hW hle
 

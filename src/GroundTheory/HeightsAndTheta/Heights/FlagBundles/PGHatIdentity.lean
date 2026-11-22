@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FlagBundles
@@ -14,7 +19,7 @@ theorem pderiv_comm_two_variables (i j : Fin 2) (P : MvPolynomial (Fin 2) ℝ) :
   | C a => simp
   | add p q hp hq => simp [hp, hq]
   | mul_X p n hp =>
-    simp only [pderiv_mul, map_add, hp, pderiv_X, Pi.single_apply]
+    simp only [pderiv_mul, map_add (f := _), hp, pderiv_X, Pi.single_apply]
     split_ifs <;> (try simp) <;> ring
 
 theorem hasDerivAt_eval_fst (P : MvPolynomial (Fin 2) ℝ) (s t : ℝ) :
@@ -24,14 +29,14 @@ theorem hasDerivAt_eval_fst (P : MvPolynomial (Fin 2) ℝ) (s t : ℝ) :
     simp only [eval_C, pderiv_C, map_zero]
     exact hasDerivAt_const s a
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p n hp =>
     have hX : HasDerivAt (fun u : ℝ => (![u, t] : Fin 2 → ℝ) n) (eval ![s, t] (pderiv 0 (X n))) s := by
       fin_cases n
       · simpa using hasDerivAt_id' s
       · simpa using hasDerivAt_const s t
-    simp only [map_mul, eval_X, pderiv_mul, map_add]
+    simp only [map_mul, eval_X, pderiv_mul, map_add (f := _)]
     exact hp.mul hX
 
 theorem hasDerivAt_eval_snd (P : MvPolynomial (Fin 2) ℝ) (s t : ℝ) :
@@ -41,14 +46,14 @@ theorem hasDerivAt_eval_snd (P : MvPolynomial (Fin 2) ℝ) (s t : ℝ) :
     simp only [eval_C, pderiv_C, map_zero]
     exact hasDerivAt_const t a
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p n hp =>
     have hX : HasDerivAt (fun u : ℝ => (![s, u] : Fin 2 → ℝ) n) (eval ![s, t] (pderiv 1 (X n))) t := by
       fin_cases n
       · simpa using hasDerivAt_const t s
       · simpa using hasDerivAt_id' t
-    simp only [map_mul, eval_X, pderiv_mul, map_add]
+    simp only [map_mul, eval_X, pderiv_mul, map_add (f := _)]
     exact hp.mul hX
 
 theorem continuous_eval_fst (P : MvPolynomial (Fin 2) ℝ) (t : ℝ) :
@@ -71,7 +76,8 @@ theorem integral_eval_pderiv_snd (P : MvPolynomial (Fin 2) ℝ) (s a b : ℝ) :
 
 theorem gKernel_eval_diag (k : ℕ) (c : ℝ) : eval ![c, c] (gKernel ℝ k) = 0 := by
   unfold gKernel
-  simp only [map_sum, map_sub, map_mul, map_pow, eval_X, Matrix.cons_val_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_sub, map_mul, map_pow, eval_X, Matrix.cons_val_zero,
     Matrix.cons_val_one]
   refine Finset.sum_eq_zero fun j hj => ?_
   have hj' : j < k := Finset.mem_range.1 hj
@@ -138,7 +144,7 @@ theorem GHatIdentity.proof (h0 : GKernelIdentity.Statement) : GHatIdentity.State
         (1 / 2 * ((eval ![1, c] G - eval ![1, -1] G) - (eval ![-1, c] G - eval ![-1, -1] G))))).sub
       ((((hasDerivAt_eval_fst G s 1).sub (hasDerivAt_eval_fst G s (-1))).const_mul (1 / 2)).sub
         ((hasDerivAt_id s).const_mul (k : ℝ)) |>.const_mul (c + 1))
-    convert this using 1
+    convert (preTransparency := .reducible) this using 1
     · funext u
       simp only [Pi.sub_apply, id]
     · ring

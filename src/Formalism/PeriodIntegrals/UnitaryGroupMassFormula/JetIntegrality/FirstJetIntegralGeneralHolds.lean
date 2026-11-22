@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.JetsPhW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.CoeffSubstOfDegreeEqOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ExpLow
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.JetsPhW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.CoeffSubstOfDegreeEqOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.JetIntegrality.ExpLow
+
+@[expose] public section
 
 noncomputable section
 

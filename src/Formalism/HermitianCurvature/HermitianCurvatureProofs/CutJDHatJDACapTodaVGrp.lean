@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrpCut
+
+@[expose] public section
 
 open Matrix
 
@@ -36,9 +40,8 @@ theorem iteratedOperator_eqOn_of_eqOn (w : ℂ) : ∀ (m : ℕ) (f₁ f₂ : (Fi
       rw [h c' hc', pbN_locO _ h hc']
     have ih1 := iteratedOperator_eqOn_of_eqOn w m _ _ hin
     have ih2 := iteratedOperator_eqOn_of_eqOn w m f₁ f₂ h
+    simp only [kvP.eq_2, Pi.sub_apply]
     refine ⟨?_, (ih2 c hc).1⟩
-    show (kvP r w m).1 _ c - cbN r (r - m) (cbiN r (r - m - 1) ((kvP r w m).2 f₁)) c =
-      (kvP r w m).1 _ c - cbN r (r - m) (cbiN r (r - m - 1) ((kvP r w m).2 f₂)) c
     rw [(ih1 c hc).1]
     congr 1
     unfold cbN cbiN
@@ -47,15 +50,13 @@ theorem iteratedOperator_eqOn_of_eqOn (w : ℂ) : ∀ (m : ℕ) (f₁ f₂ : (Fi
 theorem kvC_loc (w : ℂ) (m : ℕ) (f₁ f₂ : (Fin r → ℂ) → X) (h : ∀ c ∈ OmX r, f₁ c = f₂ c) {c : Fin r → ℂ}
     (hc : c ∈ OmX r) : kvC r w m f₁ c = kvC r w m f₂ c := (iteratedOperator_eqOn_of_eqOn w m f₁ f₂ h c hc).1
 
-theorem kvC_zero (w : ℂ) (f : (Fin r → ℂ) → X) : kvC r w 0 f = f := rfl
-
 theorem kvC_one (w : ℂ) (f : (Fin r → ℂ) → X) (hr : 1 ≤ r) (c : Fin r → ℂ) :
     kvC r w 1 f c = w • f c - pbOp ⟨r - 1, by omega⟩ f c := by
   show (w - ((0 : ℕ) : ℂ)) • f c - pbN r (r - 0 - 1) f c - cbN r (r - 0) (cbiN r (r - 0 - 1) (fun _ => 0)) c = _
   have h1 : r - 0 - 1 = r - 1 := by omega
   simp only [Nat.cast_zero, sub_zero, Nat.sub_zero]
   unfold pbN cbN
-  rw [dif_pos (by omega), dif_neg (lt_irrefl r)]
+  rw [dite_eq_left (by omega), dite_eq_right (lt_irrefl r)]
   simp
 
 theorem kvC_two (w : ℂ) (m : ℕ) (f : (Fin r → ℂ) → X) (c : Fin r → ℂ) :
@@ -220,13 +221,13 @@ theorem claimV (hRR : RightRuleEv) (hLR : LeftRuleCellv) (hTC : TorusCellv) (hCh
       (fun c' hc' => by
         rw [hT, la_torus hD hTC v₀ g₀ hg₀ hcell ⟨r - m - 2, by omega⟩ _ P c' hc']
         unfold pbN
-        rw [dif_pos (by omega)]
+        rw [dite_eq_left (by omega)]
         have e : (⟨r - (m + 1) - 1, by omega⟩ : Fin r) = ⟨r - m - 2, by omega⟩ := Fin.ext (by simp only; omega)
         rw [e]) hc
     rw [hloc]
     congr 1
     unfold cbN cbiN
-    rw [dif_pos (by omega), dif_pos (by omega)]
+    rw [dite_eq_left (by omega), dite_eq_left (by omega)]
     have e1 : (⟨r - (m + 1), by omega⟩ : Fin r) = ⟨r - m - 1, by omega⟩ := Fin.ext (by simp only; omega)
     have e2 : (⟨r - (m + 1) - 1, by omega⟩ : Fin r) = ⟨r - m - 2, by omega⟩ := Fin.ext (by simp only; omega)
     rw [e1, e2]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockBaseChange
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsExtra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockBaseChange
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,16 +38,17 @@ theorem exists_dual_family [NumberField K] [NumberField K'] (φ : K →+* K') :
   · exact (F i).map_smul a x
   · intro x
     induction x using hbc.inductionOn with
-    | zero => simp
     | tmul a =>
       have h1 : a = ∑ i, g a i • f (Pi.single i 1) := by
-        conv_lhs => rw [← LinearMap.id_apply (R := 𝓞 K) a, ← hfg, LinearMap.comp_apply, pi_eq_sum_univ' (g a), map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          conv_lhs => rw [← LinearMap.id_apply (R := 𝓞 K) a, ← hfg, LinearMap.comp_apply, pi_eq_sum_univ' (g a), map_sum]
         simp only [map_smul]
       have h2 : ∀ i, (F i).toAddMonoidHom ((IsScalarTower.toAlgHom (𝓞 K) (𝓞 K') K').toLinearMap a) =
           algebraMap (𝓞 K) K (g a i) := fun i => hF i a
       simp only [h2]
       change algebraMap (𝓞 K') K' a = _
-      conv_lhs => rw [h1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [h1, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul, mul_comm, ← IsScalarTower.algebraMap_apply,
         IsScalarTower.algebraMap_apply (𝓞 K) K K']
@@ -58,7 +63,7 @@ theorem exists_dual_family [NumberField K] [NumberField K'] (φ : K →+* K') :
       change φ s * _ = _
       ring
     | add x y hx hy =>
-      simp only [map_add, mul_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
       rw [← hx, ← hy]
 
 theorem map_mulVec' (φ : K →+* K') {n d : ℕ} (E : Matrix (Fin n) (Fin d) K) (x : Fin d → K) :
@@ -127,7 +132,8 @@ theorem comap_baseChange (φ : K →+* K') {R R' : Type} [CommRing R] [CommRing 
     convert this using 1
     funext k
     rw [← hu2, map_one, one_mul]
-    simp only [Matrix.mulVec, dotProduct, map_sum, Matrix.map_apply, hF]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, Matrix.map_apply, hF]
   · rw [Submodule.span_le]
     rintro _ ⟨x, hx, rfl⟩
     rw [SetLike.mem_coe, hM', Matrix.mulVec_mulVec, hE, ← Matrix.mulVec_mulVec, map_mulVec', hN]
@@ -144,7 +150,7 @@ theorem map_baseChange (φ : K →+* K') {R R' : Type} [CommRing R] [CommRing R'
   rw [Submodule.map_span, Submodule.map_coe, Set.image_image, Set.image_image]
   congr 2
   funext x
-  simp only [LinearMap.restrictScalars_apply, Matrix.mulVecLin_apply]
+  change L' *ᵥ (C *ᵥ (fun k => φ (x k))) = A *ᵥ (fun k => φ ((L *ᵥ x) k))
   rw [Matrix.mulVec_mulVec, hL, ← Matrix.mulVec_mulVec, map_mulVec']
 
 theorem span_range (φ : K →+* K') {n n' : ℕ} (C : Matrix (Fin n') (Fin n) K') :
@@ -155,7 +161,8 @@ theorem span_range (φ : K →+* K') {n n' : ℕ} (C : Matrix (Fin n') (Fin n) K
     rintro _ ⟨x, -, rfl⟩
     exact ⟨_, rfl⟩
   · rintro _ ⟨z, rfl⟩
-    rw [pi_eq_sum_univ' z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pi_eq_sum_univ' z, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [map_smul]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨Pi.single j 1, trivial, ?_⟩)
@@ -285,7 +292,8 @@ theorem hform_baseChange (φ : K →+* K') (hφ : ∀ x : K, φ (star x) = star 
     hform H' (C *ᵥ (fun k => φ (x k))) (C *ᵥ (fun k => φ (y k))) = φ (hform H x y) := by
   rw [hform_eq_dot, hform_eq_dot, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
     Matrix.mulVec_mulVec, hH, map_mulVec']
-  simp only [dotProduct, map_sum, map_mul, Pi.star_apply, hφ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, map_mul, Pi.star_apply, hφ]
 
 end Coord
 
@@ -296,14 +304,16 @@ variable {K K' : Type} [Field K] [NumberField K] [StarRing K] [Field K'] [Number
 
 theorem gaMat_sum_single (S : CSD K) (r : Representation K G S.Forms) {ι : Type} (s : Finset ι) (g : ι → G) (c : ι → K) :
     S.gaMat r (∑ i ∈ s, MonoidAlgebra.single (g i) (c i)) = ∑ i ∈ s, c i • S.actMat r (g i) := by
-  rw [CSD.gaMat_eq_lift, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [CSD.gaMat_eq_lift, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [MonoidAlgebra.lift_single]
   rfl
 
 theorem gaMat_sum (S : CSD K) (r : Representation K G S.Forms) {ι : Type} (s : Finset ι) (a : ι → MonoidAlgebra K G) :
     S.gaMat r (∑ i ∈ s, a i) = ∑ i ∈ s, S.gaMat r (a i) := by
-  simp only [CSD.gaMat_eq_lift, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [CSD.gaMat_eq_lift, map_sum]
 
 section
 variable (φ : K →+* K') (e : G ≃* G') (S : CSD K) (r : Representation K G S.Forms) (S' : CSD K') (r' : Representation K' G' S'.Forms)

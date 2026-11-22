@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsPrincipalIdealRingSemiLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsPrincipalIdealRingSemiLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,8 +133,8 @@ theorem one_tmul_mem (a : v.adicCompletionIntegers F) :
     (1 : E) ⊗ₜ[F] (a : v.adicCompletion F) ∈ intV E v :=
   Subring.subset_closure (Or.inr ⟨⟨a, a.2⟩, rfl⟩)
 
-variable (E) in
 
+variable (E) in
 def baseMap : v.adicCompletionIntegers F →+* intV E v :=
   (((Algebra.TensorProduct.includeRight : v.adicCompletion F →ₐ[F] E ⊗[F] v.adicCompletion F) :
     v.adicCompletion F →+* E ⊗[F] v.adicCompletion F).comp
@@ -192,7 +196,7 @@ theorem sigR_sigR (hσ : ∀ x, σ (σ x) = x) (z : E ⊗[F] v.adicCompletion F)
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x a => rw [sigR_tmul, sigR_tmul, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem intV_induction {p : E ⊗[F] v.adicCompletion F → Prop} (h0 : p 0)
     (h1 : ∀ (x : 𝓞 E) (a : v.adicCompletionIntegers F), p ((x : E) ⊗ₜ[F] (a : v.adicCompletion F)))
@@ -215,7 +219,7 @@ theorem intV_induction {p : E ⊗[F] v.adicCompletion F → Prop} (h0 : p 0)
   induction y using TensorProduct.induction_on with
   | zero => rwa [map_zero]
   | tmul x a => exact (hφ x a).symm ▸ h1 x a
-  | add x y hx hy => rw [map_add]; exact h2 _ _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact h2 _ _ hx hy
 
 theorem sigR_mem (z : E ⊗[F] v.adicCompletion F) (hz : z ∈ intV E v) :
     sigR σ (v.adicCompletion F) z ∈ intV E v := by
@@ -239,14 +243,14 @@ theorem exists_trace (hσ : ∀ x, σ (σ x) = x) (hfix : ∀ x, σ x = x → x 
   refine intV_induction v (p := fun z => ∃ a, (baseMap E v a : E ⊗[F] v.adicCompletion F) =
     z + sigR σ (v.adicCompletion F) z) ⟨0, by simp⟩ (fun x a => ?_) ?_ hz
   · obtain ⟨s, hs⟩ := exists_int_of_fixed σ hfix (x := (x : E) + σ x)
-      (x.isIntegral_coe.add (map_isIntegral_int σ x.isIntegral_coe)) (by rw [map_add, hσ, add_comm])
+      (x.isIntegral_coe.add (map_isIntegral_int σ x.isIntegral_coe)) (by rw [map_add (f := _), hσ, add_comm])
     refine ⟨algebraMap (𝓞 F) _ s * a, ?_⟩
     rw [map_mul, Subring.coe_mul, coe_baseMap_algebraMap, hs, sigR_tmul, ← TensorProduct.add_tmul]
     change (((x : E) + σ x) ⊗ₜ[F] (1 : v.adicCompletion F)) *
       ((1 : E) ⊗ₜ[F] (a : v.adicCompletion F)) = _
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
   · rintro x y ⟨a, ha⟩ ⟨b, hb⟩
-    exact ⟨a + b, by rw [map_add, Subring.coe_add, ha, hb, map_add]; ring⟩
+    exact ⟨a + b, by rw [map_add (f := _), Subring.coe_add, ha, hb, map_add (f := _)]; ring⟩
 
 theorem exists_isUnit_sub (hσ : ∀ x, σ (σ x) = x)
     (hfix : ∀ x, σ x = x → x ∈ (algebraMap F E).range)

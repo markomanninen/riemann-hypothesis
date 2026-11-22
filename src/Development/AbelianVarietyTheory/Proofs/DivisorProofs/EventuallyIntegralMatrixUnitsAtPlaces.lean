@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinLocalOrderTensorPadicMatrixAlmostAllStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntVZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralTensorPointsSharpStableRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupActionRingHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinLocalOrderTensorPadicMatrixAlmostAllStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulMemSpan
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -88,7 +93,7 @@ theorem isIntV_theta_locOrder (p : ℕ) [Fact p.Prime] (G : HTGroup p) (v : Away
     have h1k := h1 k
     rw [Algebra.TensorProduct.one_def, basV_repr_tmul, one_mul] at h1k
     exact mul_mem (padicEquiv_symm_coe_mem p G v r) h1k
-  | add x y _ _ hx hy => rw [map_add]; exact isIntV_add' G v hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact isIntV_add' G v hx hy
   | mul x y _ _ hx hy => rw [map_mul]; exact hmul _ _ hx hy
 
 theorem finite_dvd (p : ℕ) (N : ℕ) (hN : 0 < N) :
@@ -134,7 +139,8 @@ theorem matrixUnits_eventually : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p),
       · intro c _ hc; simp [Matrix.single_apply, hc]
       · simp
     simp only [E]
-    rw [← map_sum (theta p G v), ← AddSubmonoidClass.coe_finset_sum, ← map_sum ψ.symm, hs, map_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum (theta p G v), ← AddSubmonoidClass.coe_finsetSum, ← map_sum ψ.symm, hs, map_one,
       OneMemClass.coe_one, map_one]
 
 end GlobalTheory.OrbFinAf.MatrixUnits₂

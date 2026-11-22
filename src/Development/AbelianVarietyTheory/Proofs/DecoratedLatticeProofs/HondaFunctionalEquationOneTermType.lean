@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Formalism.TorsionNormIteration.LubinTateExample
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Formalism.TorsionNormIteration.LubinTateExample
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.Honda Formalism.L2.Th1.CM
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsotypicPartSpannedBySplitPlaceLocalComponentStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryTrivialOutsideSplitPlaceLocEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsotypicPartSpannedBySplitPlaceLocalComponentStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryTrivialOutsideSplitPlaceLocEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,8 @@ theorem exists_eigen_of_sum {M : Type} [AddCommGroup M] [Module ℂ M]
   let e : V → V := fun w => ∑ q : G ⧸ H, F w q.out
   have heig : ∀ i ∈ s, ∀ g, π g (e (u i)) = ((θ g : ℂˣ) : ℂ) • e (u i) := by
     intro i hi g
-    simp only [e, map_sum, hFg, ← Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_sum, hFg, ← Finset.smul_sum]
     congr 1
     refine Fintype.sum_equiv (MulAction.toPerm g) _ _ fun q => ?_
     apply hFH i hi
@@ -58,7 +63,8 @@ theorem exists_eigen_of_sum {M : Type} [AddCommGroup M] [Module ℂ M]
     conv_rhs => rw [← QuotientGroup.out_eq' q]
     rfl
   have htot : ∑ i ∈ s, T i (e (u i)) = (Fintype.card (G ⧸ H) : ℂ) • f := by
-    simp only [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_sum]
     rw [Finset.sum_comm]
     have : ∀ q : G ⧸ H, ∑ i ∈ s, T i (F (u i) q.out) = f := by
       intro q
@@ -84,6 +90,7 @@ theorem finiteIndex_of_isOpen {G : Type} [Group G] [TopologicalSpace G] [IsTopol
     (K : Subgroup G) {C : Set G} (hC : IsCompact C) (hKC : (K : Set G) ⊆ C) (H : Subgroup K)
     (hH : IsOpen (H : Set K)) : H.FiniteIndex := by
   classical
+  open scoped Pointwise in
   obtain ⟨W, hWo, hWH⟩ := isOpen_induced_iff.1 hH
   have h1 : (1 : G) ∈ W := by
     have : (1 : K) ∈ (H : Set K) := H.one_mem
@@ -144,7 +151,8 @@ theorem main : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) 
       intro i _
       rw [hπ, ← hu i]
       exact i.2.2 κ hκ (u i)
-    rw [Finset.sum_congr rfl this, ← map_sum, ← hrt κ hκ hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl this, ← map_sum, ← hrt κ hκ hg]
     rw [← hsum]
     rfl
   let H : Subgroup K := θ.ker ⊓ ⨅ i ∈ φ.support, stabSub π (u i)

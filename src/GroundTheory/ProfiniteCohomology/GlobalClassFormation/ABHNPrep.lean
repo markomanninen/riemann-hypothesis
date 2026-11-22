@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegreeGen
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassSplit
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SumInvariants
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalDegreeGen
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ClassSplit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -9,8 +14,6 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubfield IsDedekindDomain
 
 open scoped DirectSum GroundTheory.Global.SemiLocal
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -27,8 +30,8 @@ theorem idelesSumInv_unitsToIdeles (x : cohomology (unitsLimitRep K) 2) :
     idelesSumInv ι ((unitsToIdeles K 2).hom x) = 0 :=
   brauerSumInv_eq_zero ι x
 
-variable (K) in
 
+variable (K) in
 theorem sumPlaceInv_surjective : Function.Surjective (sumPlaceInv K) := by
   classical
   intro q
@@ -60,7 +63,7 @@ theorem exists_sub_unitsToIdeles_iChar_inl_eq_zero (y : cohomology (limitRep K) 
   change _ - brauerLocal ι (globalCupClass (iChar K) a) (.inl v) = 0
   by_cases hv : v.IsReal
   · apply placeInv_injective (.inl v)
-    rw [map_sub, map_zero, sub_eq_zero, placeInv_brauerLocal_globalCupClass_iChar, dif_pos hv]
+    rw [map_sub, map_zero, sub_eq_zero, placeInv_brauerLocal_globalCupClass_iChar, dite_eq_left hv]
     have hs := ha ⟨v, hv⟩
     simp only [decide_eq_true_eq] at hs
     rcases placeInv_inl_eq_zero_or_eq_half v (idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2) y (.inl v))
@@ -93,40 +96,48 @@ theorem exists_idelesSumInv_eq_one_div :
   choose t ht using ht
   let D : ⨁ u : Place K.1, localGaloisCohomology K 2 u := ∑ u ∈ s, DirectSum.of _ (.inr u) (t u)
   refine ⟨(idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)).symm D, ?_, fun v => ?_, fun v w => ?_⟩
-  · rw [idelesSumInv_apply, AddEquiv.apply_symm_apply, map_sum]
-    simp_rw [sumPlaceInv_of, ht]
-    change ∑ u ∈ s, QZ.mkHom (c u / localDegree E u) = _
-    rw [← map_sum]
-    change QZ.mk _ = _
-    congr 1
-    have hn0 : (Module.finrank K.1 E.1 : ℚ) ≠ 0 := by
-      exact_mod_cast (Module.finrank_pos (R := K.1) (M := E.1)).ne'
-    have hdu : ∀ u ∈ s, (c u / localDegree E u : ℚ) =
-        (c u : ℚ) * (((Module.finrank K.1 E.1 / localDegree E u : ℕ) : ℤ) : ℚ) / Module.finrank K.1 E.1 := by
-      intro u hu
-      have hd0 : (localDegree E u : ℚ) ≠ 0 := by
-        have := Nat.pos_of_dvd_of_pos (hsd u hu) (Module.finrank_pos (R := K.1) (M := E.1))
-        exact_mod_cast (Nat.pos_of_ne_zero (fun h => by rw [h] at this; exact (lt_irrefl 0 this))).ne'
-      rw [Int.cast_natCast, Nat.cast_div (hsd u hu) hd0]
-      field_simp
-    have hsumQ : (∑ u ∈ s, (c u : ℚ) * (((Module.finrank K.1 E.1 / localDegree E u : ℕ) : ℤ) : ℚ)) = 1 := by
-      exact_mod_cast hsum
-    rw [Finset.sum_congr rfl hdu, ← Finset.sum_div, hsumQ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [idelesSumInv_apply, AddEquiv.apply_symm_apply, map_sum]
+      have h : (∑ u ∈ s, sumPlaceInv K (DirectSum.of _ (.inr u) (t u))) =
+          ∑ u ∈ s, QZ.mk (c u / localDegree E u) := by
+        apply Finset.sum_congr rfl
+        intro u hu
+        rw [sumPlaceInv_of, ht]
+      rw [h]
+      change ∑ u ∈ s, QZ.mkHom (c u / localDegree E u) = _
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum]
+      change QZ.mk _ = _
+      congr 1
+      have hn0 : (Module.finrank K.1 E.1 : ℚ) ≠ 0 := by
+        exact_mod_cast (Module.finrank_pos (R := K.1) (M := E.1)).ne'
+      have hdu : ∀ u ∈ s, (c u / localDegree E u : ℚ) =
+          (c u : ℚ) * (((Module.finrank K.1 E.1 / localDegree E u : ℕ) : ℤ) : ℚ) / Module.finrank K.1 E.1 := by
+        intro u hu
+        have hd0 : (localDegree E u : ℚ) ≠ 0 := by
+          have := Nat.pos_of_dvd_of_pos (hsd u hu) (Module.finrank_pos (R := K.1) (M := E.1))
+          exact_mod_cast (Nat.pos_of_ne_zero (fun h => by rw [h] at this; exact (lt_irrefl 0 this))).ne'
+        rw [Int.cast_natCast, Nat.cast_div (hsd u hu) hd0]
+        field_simp
+      have hsumQ : (∑ u ∈ s, (c u : ℚ) * (((Module.finrank K.1 E.1 / localDegree E u : ℕ) : ℤ) : ℚ)) = 1 := by
+        exact_mod_cast hsum
+      rw [Finset.sum_congr rfl hdu, ← Finset.sum_div, hsumQ]
   · rw [AddEquiv.apply_symm_apply, DFinsupp.finsetSum_apply]
     exact Finset.sum_eq_zero fun u _ => DirectSum.of_eq_of_ne _ _ _ (by simp)
-  · rw [AddEquiv.apply_symm_apply, DFinsupp.finsetSum_apply, map_sum, Finset.smul_sum]
-    refine Finset.sum_eq_zero fun u hu => ?_
-    by_cases huv : u = v
-    · subst huv
-      rw [DirectSum.of_eq_same, ht, finrank_eq_localDegree, ← QZ.mk_nsmul]
-      rw [QZ.mk_eq_zero_iff]
-      refine ⟨c u, ?_⟩
-      have hd0 : (localDegree E u : ℚ) ≠ 0 := by
-        have := Nat.pos_of_dvd_of_pos (hsd u hu) (Module.finrank_pos (R := K.1) (M := E.1))
-        exact_mod_cast this.ne'
-      rw [nsmul_eq_mul]
-      field_simp
-    · rw [DirectSum.of_eq_of_ne _ _ _ (by simpa using Ne.symm huv), map_zero, smul_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [AddEquiv.apply_symm_apply, DFinsupp.finsetSum_apply, map_sum, Finset.smul_sum]
+      refine Finset.sum_eq_zero fun u hu => ?_
+      by_cases huv : u = v
+      · subst huv
+        rw [DirectSum.of_eq_same, ht, finrank_eq_localDegree, ← QZ.mk_nsmul]
+        rw [QZ.mk_eq_zero_iff]
+        refine ⟨c u, ?_⟩
+        have hd0 : (localDegree E u : ℚ) ≠ 0 := by
+          have := Nat.pos_of_dvd_of_pos (hsd u hu) (Module.finrank_pos (R := K.1) (M := E.1))
+          exact_mod_cast this.ne'
+        rw [nsmul_eq_mul]
+        field_simp
+      · rw [DirectSum.of_eq_of_ne _ _ _ (by simpa using Ne.symm huv), map_zero, smul_zero]
 
 end Generator
 

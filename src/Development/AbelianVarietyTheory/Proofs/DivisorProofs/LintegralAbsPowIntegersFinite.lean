@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip GlobalTheory.KSplit Classical
 open scoped ENNReal
 
@@ -117,7 +122,7 @@ theorem lintegral_int_nabs_rpow_lt_top (μ : Measure k) [μ.IsAddHaarMeasure] (s
           refine lintegral_mono_ae (hae.mono fun y hy => ?_)
           have hy0 : y ≠ 0 := hy
           by_cases hx : y ∈ (𝒪[k] : Set k)
-          · rw [Set.indicator_of_mem hx, dif_neg hy0]
+          · rw [Set.indicator_of_mem hx, dite_eq_right hy0]
             obtain ⟨m, hm1, hm2⟩ := exists_shell hu hy0 hx
             refine le_trans ?_ (ENNReal.le_tsum m)
             rw [Set.indicator_of_mem hm1]

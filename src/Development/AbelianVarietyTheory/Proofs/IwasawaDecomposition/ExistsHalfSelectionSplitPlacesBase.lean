@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TiedColumnData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemPvSet
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TiedColumnData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemPvSet
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl NumberField IsDedekindDomain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -27,7 +32,10 @@ theorem exists_mem_of_prime (L : Type) [Field L] [NumberField L] {p : ℕ} (hp :
   obtain ⟨Q, hQ, hQ'⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := 𝓞 L) (Ideal.span {(p : ℤ)})
     (by rw [(RingHom.injective_iff_ker_eq_bot _).1 (algebraMap ℤ (𝓞 L)).injective_int]; exact bot_le)
   have hmem : ((p : ℕ) : 𝓞 L) ∈ Q := by
-    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 L)) := by rw [hQ']; exact Ideal.mem_span_singleton_self _
+    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 L)) := by
+      change (p : ℤ) ∈ Ideal.under ℤ Q
+      rw [hQ']
+      exact Ideal.mem_span_singleton_self _
     simpa [Ideal.mem_comap] using this
   refine ⟨⟨Q, hQ.isPrime, ?_⟩, hmem⟩
   rintro rfl
@@ -60,7 +68,7 @@ def primeK (p : ℕ) : HeightOneSpectrum (𝓞 H.K) :=
 
 theorem primeK_mem {p : ℕ} (hp : p.Prime) : ((p : ℕ) : 𝓞 H.K) ∈ (primeK H p).asIdeal := by
   unfold primeK
-  rw [dif_pos hp]
+  rw [dite_eq_left hp]
   exact (exists_mem_of_prime H.K hp).choose_spec
 
 def sel (v : HeightOneSpectrum (𝓞 H.F)) : HeightOneSpectrum (𝓞 H.E) :=
@@ -91,8 +99,8 @@ def splitPlacesTwoPrimes : PlacesOverCommonPrime H :=
 
 end GlobalTheory.Mem.Top.Bl.OnePrimeEach
 
-open GlobalTheory.Mem.Top.Bl.OnePrimeEach in
 
+open GlobalTheory.Mem.Top.Bl.OnePrimeEach in
 theorem GlobalTheory.Mem.Top.Bl.exists_half_selection_split_places : ∀ B : Base, ∃ (Pv : HeightOneSpectrum (𝓞 B.host.F) → HeightOneSpectrum (𝓞 B.host.E)) (d : PlacesOverCommonPrime B.host), Formalism.L2.Col.IsSel B.fields Pv ∧ (∀ v, Pv v ∈ aboveF (L := B.host.E) B.host.F v) ∧ Half B Pv ∧ (∀ v hv, Pv v = d.P v hv) ∧ ∀ v hv, Pv v = d.P' v hv := by
   intro B
   refine ⟨sel B.host, splitPlacesTwoPrimes B.host, ?_, sel_above B.host, ?_, fun _ _ => rfl, fun _ _ => rfl⟩

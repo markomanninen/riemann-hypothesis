@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.DiscreteSeriesTopClasses.IsInvOne
-import Development.WeilBound.RepresentationTheoryGL.StandardBasisDerivatives.ArchimedeanBasisDerivatives.StBasDeriv
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.DiscreteSeriesTopClasses.IsInvOne
+public import Development.WeilBound.RepresentationTheoryGL.StandardBasisDerivatives.ArchimedeanBasisDerivatives.StBasDeriv
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,5 @@ theorem hb_conjTranspose (p : Fin n × Fin n) : (hb p)ᴴ = hb p := by
     rw [conjTranspose_smul, conjTranspose_sub, e]
     simp [neg_smul, smul_sub]
     abel
-
-def kern (F : ℝ → ℝ) (a : ℝ) (j : ℕ) (x v : ℝ) : ℝ :=
-  Real.exp (a * v) * iteratedDeriv j F (Real.exp (2 * v) * x)
-
-def homot (F : ℝ → ℝ) (a : ℝ) (j : ℕ) (v₁ v₂ x : ℝ) : ℝ := ∫ v in v₂..v₁, kern F a j x v
-
-def ex (N k : ℕ) : ℝ := 2 * (k : ℝ) - N
 
 end GlobalTheory.CompanionTheory.TwistHomotopy

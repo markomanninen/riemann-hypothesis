@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSPhaseA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSPhaseA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvariantOperatorUnderJacquet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Finset
 
@@ -18,7 +22,7 @@ theorem fnZ_const_mul (P : M.Par) (c : ℂ) (f : MA.SmQ P.r P.TT) : fnZ P (fun _
   have hmem : (fun _ : MA.Qp P.r P.TT => c) ∈ MA.smSub P.r P.TT :=
     (MA.smSub P.r P.TT).algebraMap_mem c
   unfold fnZ MA.toSm
-  rw [dif_pos hmem]
+  rw [dite_eq_left hmem]
   apply Subtype.ext
   funext q
   simp
@@ -50,9 +54,6 @@ theorem star_ss_fst_apply (P : M.Par) (l : ℕ) (τ σ : M.Ty P) (f : MA.SmQ P.r
     rw [Complex.conj_ofReal]
     rfl
   · simp; rfl
-
-theorem pr_fst_smul (P : M.Par) (x : (MA.DQ P).Pr) (c : ℂ) (f : MA.SmQ P.r P.TT) :
-    x.1 (c • f) = c • x.1 f := map_smul x.1 c f
 
 theorem dzQ_smul (P : M.Par) (c : ℂ) (f : MA.SmQ P.r P.TT) : dzQ P (c • f) = c • dzQ P f := map_smul ((MA.DQ P).dzP).1 c f
 

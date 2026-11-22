@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.MulVecMapInjective
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeAutomorphismFiniteness.MulVecMapInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,12 +18,8 @@ def mj (z x y : S.V) : E := S.hT x y - 2 / S.hT z z * (S.hT x z * S.hT z y)
 
 variable {S}
 
-theorem star_hzz (z : S.V) : star (S.hT z z) = S.hT z z := by
-  have h := S.herm.eq z z
-  rwa [starRingEnd_apply] at h
-
 theorem mj_add_left (z x x' y : S.V) : mj S z (x + x') y = mj S z x y + mj S z x' y := by
-  simp only [mj, map_add, LinearMap.add_apply]
+  simp only [mj, map_add (f := _), LinearMap.add_apply]
   ring
 
 theorem mj_smul_left (z : S.V) (c : E) (x y : S.V) : mj S z (c • x) y = star c * mj S z x y := by
@@ -27,7 +27,7 @@ theorem mj_smul_left (z : S.V) (c : E) (x y : S.V) : mj S z (c • x) y = star c
   ring
 
 theorem mj_add_right (z x y y' : S.V) : mj S z x (y + y') = mj S z x y + mj S z x y' := by
-  simp only [mj, map_add]
+  simp only [mj, map_add (f := _)]
   ring
 
 theorem mj_smul_right (z : S.V) (c : E) (x y : S.V) : mj S z x (c • y) = c * mj S z x y := by
@@ -75,7 +75,7 @@ theorem mj_pos (y : S.V) (hy : y ∈ P) :
   have hm : mj S z y y = S.hT y0 y0 - star c * c * S.hT z z := by
     have hyy : y = y0 + c • z := by simp [y0]
     rw [hyy]
-    simp only [mj, map_add, LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+    simp only [mj, map_add (f := _), LinearMap.add_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
       smul_eq_mul, h1, h2, starRingEnd_apply, RingHom.id_apply]
     field_simp
     ring

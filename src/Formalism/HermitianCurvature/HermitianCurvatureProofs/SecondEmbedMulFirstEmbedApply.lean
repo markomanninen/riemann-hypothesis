@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementWd
+module
+
+public import Formalism.HermitianCurvature.StatementWd
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Wd3
 

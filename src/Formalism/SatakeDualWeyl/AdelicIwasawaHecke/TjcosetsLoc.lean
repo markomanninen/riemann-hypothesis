@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsFF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.TjcosetsFF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 noncomputable section
 

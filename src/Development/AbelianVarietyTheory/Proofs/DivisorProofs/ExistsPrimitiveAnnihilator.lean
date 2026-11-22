@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -100,7 +104,7 @@ theorem exists_extend (F Ω : Type) [Field F] [NumberField F] [Field Ω] [CharZe
     (σ : 𝓞 F →+* Ω) : ∃ σ' : F →ₐ[ℚ] Ω, ∀ a : 𝓞 F, σ' (algebraMap (𝓞 F) F a) = σ a := by
   have hk : RingHom.ker σ = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)
-    rw [RingHom.comap_ker, show σ.comp (algebraMap ℤ (𝓞 F)) = Int.castRingHom Ω from
+    rw [Ideal.under_def, RingHom.comap_ker, show σ.comp (algebraMap ℤ (𝓞 F)) = Int.castRingHom Ω from
       RingHom.ext_int _ _]
     exact (RingHom.injective_iff_ker_eq_bot _).1 Int.cast_injective
   have hinj : Function.Injective σ := (RingHom.injective_iff_ker_eq_bot σ).2 hk
@@ -147,7 +151,8 @@ theorem exists_primitive_annihilator : ∀ (F : Type) [Field F] [NumberField F] 
         τ (algebraMap (𝓞 F) F a) * τ (b' i) := by
       intro i τ
       have e := congrArg (fun t : 𝓞 F => τ (algebraMap (𝓞 F) F t)) (b.sum_repr (a * b i))
-      simp only [map_sum, map_zsmul, map_mul, zsmul_eq_mul] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, map_mul, zsmul_eq_mul] at e
       simpa [hb'] using e
     have := inj (fun j => ∑ i, x i * (b.repr (a * b i) j : Ω) - σ a * x j) (fun τ => by
       have key : ∑ j, (∑ i, x i * (b.repr (a * b i) j : Ω)) * τ (b' j) =
@@ -178,7 +183,8 @@ theorem exists_primitive_annihilator : ∀ (F : Type) [Field F] [NumberField F] 
       _ = ∑ i, x i • ∑ j, (b.repr (a * b i) j : Ω) • Φ (b j) := by
           refine Finset.sum_congr rfl fun i _ => ?_
           conv_lhs => rw [← b.sum_repr (a * b i)]
-          simp only [map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
       _ = ∑ j, (∑ i, x i * (b.repr (a * b i) j : Ω)) • Φ (b j) := by
           simp only [Finset.smul_sum, smul_smul, Finset.sum_smul]
           rw [Finset.sum_comm]

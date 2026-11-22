@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.SameSign
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,23 +86,7 @@ private theorem exists_forall_isHomogeneous_monomial {σ : Type} (u : σ →₀ 
 private theorem homogeneousComponent_eq_ite_of_isHomogeneous {σ : Type} {m n : ℕ} {P : MvPolynomial σ ℂ}
     (h : P.IsHomogeneous m) : homogeneousComponent n P = if m = n then P else 0 := by
   have h' : P ∈ homogeneousSubmodule σ ℂ m := mem_homog_iff_isHomogeneous'.mpr h
-  first
-  | exact homogeneousComponent_of_mem h'
-  | exact homogeneousComponent_homogeneous_polynomial m n P h'
-  | (by_cases hmn : m = n
-     · subst hmn
-       rw [if_pos rfl]
-       ext d
-       rw [coeff_homogeneousComponent]
-       split_ifs with hd
-       · rfl
-       · exact (h.coeff_eq_zero hd).symm
-     · rw [if_neg hmn]
-       ext d
-       rw [coeff_homogeneousComponent, coeff_zero]
-       split_ifs with hd
-       · exact h.coeff_eq_zero (by omega)
-       · rfl)
+  simpa only [eq_comm] using (homogeneousComponent_of_mem h' (m := n))
 
 private theorem homogeneousComponent_pderiv_monomial {σ : Type} (l : σ) (e : ℕ) (u : σ →₀ ℕ) (a : ℂ) :
     homogeneousComponent e (pderiv l (monomial u a)) =
@@ -116,20 +104,21 @@ private theorem homogeneousComponent_pderiv_monomial {σ : Type} (l : σ) (e : �
     have huv : u - Finsupp.single l 1 + Finsupp.single l 1 = u := by
       exact tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hu))
     have hmul : monomial u a = monomial (u - Finsupp.single l 1) a * X l := by
-      rw [X, monomial_mul, huv, mul_one]
+      rw [X, monomial_mul_monomial, huv, mul_one]
     have hu' : (monomial u a).IsHomogeneous (k + 1) := by
       rw [hmul]
       exact (hk a).mul (isHomogeneous_X_complex l)
     rw [pderiv_monomial, homogeneousComponent_eq_ite_of_isHomogeneous (hk _), homogeneousComponent_eq_ite_of_isHomogeneous hu']
     by_cases hke : k = e
     · subst hke
-      rw [if_pos rfl, if_pos rfl, pderiv_monomial]
-    · rw [if_neg hke, if_neg (show ¬ (k + 1 = e + 1) by omega), map_zero]
+      simp only [ite_true, pderiv_monomial]
+    · simp only [hke, Nat.add_right_cancel_iff, ite_false, map_zero]
 
 private theorem homogeneousComponent_pderiv {σ : Type} (l : σ) (e : ℕ) (P : MvPolynomial σ ℂ) :
     homogeneousComponent e (pderiv l P) = pderiv l (homogeneousComponent (e + 1) P) := by
   rw [P.as_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   exact Finset.sum_congr rfl fun u _ => homogeneousComponent_pderiv_monomial l e u _
 
 theorem pderiv_homog_zero {σ : Type} (l : σ) {P : MvPolynomial σ ℂ} (h : P.IsHomogeneous 0) :
@@ -251,9 +240,11 @@ theorem hc_pderiv {σ : Type} (l : σ) (e : ℕ) (P : MvPolynomial σ ℂ) :
 theorem Lop_shift (M : Matrix (FockH1Action.Ln p q r s) (FockH1Action.Ln p q r s) ℂ) (e : ℕ)
     (P : FockH1Action.Pol p q r s) :
     homogeneousComponent e (Lop M P) = Lop M (homogeneousComponent (e + 2) P) := by
-  rw [show e + 2 = e + 1 + 1 from rfl, Lop_apply, Lop_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show e + 2 = e + 1 + 1 from rfl, Lop_apply, Lop_apply, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l' _ => ?_
   split_ifs
   · rw [map_smul, map_neg, hc_pderiv, hc_pderiv]

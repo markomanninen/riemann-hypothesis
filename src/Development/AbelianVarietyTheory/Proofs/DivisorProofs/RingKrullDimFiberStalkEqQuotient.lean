@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 
@@ -90,14 +94,5 @@ theorem nonempty_ringEquiv_stalk_fiber (B Y : Scheme.{0}) (π : Y ⟶ B) (b : B)
           (π.stalkMap (π.fiberι b z)).hom) ≃+* (π.fiber b).presheaf.stalk z) := by
   rw [← ker_stalkMap_fiberι]
   exact ⟨RingHom.quotientKerEquivOfSurjective ((π.fiberι b).stalkMap_surjective z)⟩
-
-theorem ringKrullDim_stalk_fiber : ∀ (B Y : Scheme.{0}) (π : Y ⟶ B) (b : B) (z : π.fiber b),
-    ringKrullDim ((π.fiber b).presheaf.stalk z) =
-      ringKrullDim (Y.presheaf.stalk (π.fiberι b z) ⧸
-        (IsLocalRing.maximalIdeal (B.presheaf.stalk (π (π.fiberι b z)))).map
-          (π.stalkMap (π.fiberι b z)).hom) := by
-  intro B Y π b z
-  obtain ⟨e⟩ := nonempty_ringEquiv_stalk_fiber B Y π b z
-  exact (ringKrullDim_eq_of_ringEquiv e).symm
 
 end GlobalTheory.FibreStalk

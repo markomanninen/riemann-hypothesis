@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -31,7 +35,8 @@ theorem UpperTheory.ConvolutionTheory.R2.M.cdMeas :
   have h3 : M₀.μ.map (cD (t * t)) = (c * c) • M₀.μ := by
     have : (cD (t * t) : G1 F → G1 F) = cD t ∘ cD t := by
       funext g; exact (M.cD_cD t t g).symm
-    rw [this, ← Measure.map_map (hm t) (hm t), hc, Measure.map_smul, hc, smul_smul]
+    rw [this, ← Measure.map_map (hm t) (hm t), hc,
+      Measure.map_smul c (hm t).aemeasurable, hc, smul_smul]
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : G1 F)
   have hpos : M₀.μ K ≠ 0 := (Measure.measure_pos_of_mem_nhds M₀.μ hK1).ne'
   have hfin : M₀.μ K ≠ ∞ := hK.measure_lt_top.ne

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemFiniteCocyclesIffBcrisTensorCoboundary
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemFiniteCocyclesIffBcrisTensorCoboundary
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem filDR_succ_le (τ : K →ₐ[Qp] LL) (a : ℤ) : FildR PD ρ τ (a + 1) 
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => exact ⟨v ⊗ₜ[Qp] ⟨b.1, PD.Fil_anti a b.2⟩, rfl⟩
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 variable [FiniteDimensional LL ↥(DdR PD ρ)]
 
@@ -93,14 +97,14 @@ section Ext
 variable {LL' : Type} [Field LL'] [Algebra Qp LL'] [Algebra LL LL'] [IsScalarTower Qp LL LL']
   [FiniteDimensional LL LL'] {m : ℕ}
 
-variable (LL LL' m) in
 
+variable (LL LL' m) in
 def vecCoord : (Fin m → LL') ≃ₗ[LL] (Fin (finrank LL LL') → Fin m → LL) :=
   (LinearEquiv.piCongrRight fun _ => (finBasis LL LL').equivFun).trans
     { Equiv.piComm _ with map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
 
-omit [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 
+omit [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 theorem vecCoord_mulVec (M : Matrix (Fin m) (Fin m) LL) (x : Fin m → LL') (i : Fin (finrank LL LL')) :
     vecCoord LL LL' m ((M.map (algebraMap LL LL')).mulVec x) i = M.mulVec (vecCoord LL LL' m x i) := by
   funext k
@@ -108,8 +112,8 @@ theorem vecCoord_mulVec (M : Matrix (Fin m) (Fin m) LL) (x : Fin m → LL') (i :
     ∑ j, M k j * (finBasis LL LL').repr (x j) i
   simp [← Algebra.smul_def]
 
-omit [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 
+omit [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 theorem finrank_eq_of_coord {W W' : Type} [AddCommGroup W] [AddCommGroup W'] [Module LL W] [Module LL W']
     [Module LL' W'] [IsScalarTower LL LL' W'] (E : W' ≃ₗ[LL] (Fin (finrank LL LL') → W))
     (S' : Submodule LL' W') (S : Submodule LL W) (h : ∀ x, x ∈ S' ↔ ∀ i, E x i ∈ S) :
@@ -121,8 +125,8 @@ variable {ρ : Representation LL G (Fin m → LL)} {ρ' : Representation LL' G (
     ∀ x, ρ' g x = (M.map (algebraMap LL LL')).mulVec x)
 include hρ
 
-omit [Algebra Qp LL] [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 
+omit [Algebra Qp LL] [Algebra Qp LL'] [IsScalarTower Qp LL LL'] in
 theorem vecCoord_rep (g : G) (x : Fin m → LL') (i : Fin (finrank LL LL')) :
     vecCoord LL LL' m (ρ' g x) i = ρ g (vecCoord LL LL' m x i) := by
   obtain ⟨M, h1, h2⟩ := hρ g
@@ -263,8 +267,8 @@ end Bridge
 
 variable [NumberField E]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsInduced.norm_lt_one_iff {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)}
     {Bw : LocBridge l E Ω (Dec (F := E) A) O} (h : IsPlaceOver A w) (hj : Induces Bw) {τ : E →+* Om l}
     {L : FinExt l} {τ' : ↥Bw.Kw.1 →ₐ[ℚ_[l]] ↥L.1} (hτ : IsInduced Bw τ τ') (x : 𝓞 E) :

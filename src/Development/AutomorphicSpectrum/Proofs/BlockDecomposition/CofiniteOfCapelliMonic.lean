@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapS
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AutomorphicFormsFiniteGLOfGenFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalCentreAnnihilatorCompatibleMaps
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapS
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AutomorphicFormsFiniteGLOfGenFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalCentreAnnihilatorCompatibleMaps
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem exists_finiteDimensional_sub_mem {C : Type*} [CommRing C] [Algebra ℂ C
   rw [← Ideal.Quotient.eq]
   exact hvz.symm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 theorem cap_mem_span_coeffs (τ : E →+* ℂ) (u : ℂ) :
     cap (a := n) τ u ∈ Submodule.span ℂ
@@ -104,7 +108,7 @@ theorem cofin_of_algHom {C : Type} [CommRing C] [Algebra ℂ C] (ι : C →ₐ[�
     induction hw using Submodule.span_induction with
     | mem w hw => exact Submodule.subset_span ⟨1, Subalgebra.one_mem _, ι w, hw, (one_mul _).symm⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [smul_eq_mul, map_mul]
       exact GlobalTheory.CompanionTheory.HCFin.mul_mem_span_zalg_mul (hZ a) hx
@@ -124,14 +128,13 @@ theorem cofin_of_algHom {C : Type} [CommRing C] [Algebra ℂ C] (ι : C →ₐ[�
   rw [map_sub]
   abel
 
-theorem cofin_of_monic (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ)
+theorem cofin_of_monic (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ)
     (J : Set (Module.End ℂ (Sm E n))) (hJ : J ⊆ Zalg E n)
     (hq : ∀ (τ : E →+* ℂ) (u : ℂ), ∃ q : Polynomial ℂ, q.Monic ∧ Polynomial.aeval (cap (a := n) τ u) q ∈ J) :
     Cofin J := by
-  have hcomm : ∀ x ∈ {z : Module.End ℂ (Sm E n) | ∃ (τ : E →+* ℂ) (u : ℂ), z = cap (a := n) τ u},
-      ∀ y ∈ {z : Module.End ℂ (Sm E n) | ∃ (τ : E →+* ℂ) (u : ℂ), z = cap (a := n) τ u}, x * y = y * x :=
-    fun x hx y hy => (GlobalTheory.AutGrowth.KilledFin.Zalg_commute (Algebra.subset_adjoin hx) (Algebra.subset_adjoin hy)).eq
-  exact @cofin_of_algHom E _ _ _ n (Zalg E n) (Algebra.adjoinCommRingOfComm ℂ hcomm) (Subalgebra.algebra _)
+  letI : CommRing (Zalg E n) := { (inferInstance : Ring (Zalg E n)) with
+    mul_comm := fun x y => Subtype.ext (GlobalTheory.AutGrowth.KilledFin.Zalg_commute x.property y.property).eq }
+  exact @cofin_of_algHom E _ _ _ n (Zalg E n) inferInstance (Subalgebra.algebra _)
     (Zalg E n).val Subtype.val_injective (Subalgebra.range_val _) J hJ hq
 
 end GlobalTheory.CompanionTheory.CTFin.MonicCofin

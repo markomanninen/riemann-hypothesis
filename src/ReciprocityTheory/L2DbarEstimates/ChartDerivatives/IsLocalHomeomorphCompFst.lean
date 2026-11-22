@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.MeasurableSetImageOfIsLocalHomeomorph
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.MeasurableSetImageOfIsLocalHomeomorph
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates
 
@@ -22,10 +26,6 @@ def chartSlice {M : Type*} [TopologicalSpace M] {n : ℕ} (e : OpenPartialHomeom
   open_target := e.open_target
   continuousOn_toFun := e.continuousOn.comp continuousOn_fst (fun _q hq => hq.1)
   continuousOn_invFun := e.continuousOn_symm.prodMk continuousOn_const
-
-theorem chartSlice_symm_apply {M : Type*} [TopologicalSpace M] {n : ℕ}
-    (e : OpenPartialHomeomorph M (V n)) {p : ℕ} (i : Fin p) (y : V n) :
-    (chartSlice e i).symm y = (e.symm y, i) := rfl
 
 theorem isChart_chartSlice {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n)
     (e : OpenPartialHomeomorph M (V n)) (he : IsChart n z e) (p : ℕ) (i : Fin p) :
@@ -80,17 +80,6 @@ theorem smooth_prodFin_iff {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M →
       (h i e he).contDiffAt (e.open_target.mem_nhds hye)
     exact (h1.congr_of_eventuallyEq (hev.fun_comp F)).contDiffWithinAt
 
-theorem ck_prodFin_iff {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p k : ℕ) (F : M × Fin p → ℂ) :
-    Ck n (fun q : M × Fin p => z q.1) k F ↔ ∀ i, Ck n z k (fun x => F (x, i)) := by
-  constructor
-  · intro h i e he
-    exact h (chartSlice e i) (isChart_chartSlice n z e he p i)
-  · intro h E hE y hy
-    obtain ⟨e, i, he, hye, hev⟩ := chart_prodFin_local n z hz p E hE y hy
-    have h1 : ContDiffAt ℝ k ((fun x => F (x, i)) ∘ e.symm) y :=
-      (h i e he).contDiffAt (e.open_target.mem_nhds hye)
-    exact (h1.congr_of_eventuallyEq (hev.fun_comp F)).contDiffWithinAt
-
 theorem holo_prodFin_iff {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (F : M × Fin p → ℂ) :
     Holo n (fun q : M × Fin p => z q.1) F ↔ ∀ i, Holo n z (fun x => F (x, i)) := by
   constructor
@@ -101,13 +90,6 @@ theorem holo_prodFin_iff {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V
     have h1 : DifferentiableAt ℂ ((fun x => F (x, i)) ∘ e.symm) y :=
       (h i e he).differentiableAt (e.open_target.mem_nhds hye)
     exact (h1.congr_of_eventuallyEq (hev.fun_comp F)).differentiableWithinAt
-
-theorem d_prodFin {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (j : Fin n) (F : M × Fin p → ℂ) (x : M) (i : Fin p) :
-    d n (fun q : M × Fin p => z q.1) j F (x, i) = d n z j (fun y => F (y, i)) x := by
-  obtain ⟨e, he, hx⟩ := exists_chart n z hz x
-  rw [d_eq_wd n _ (chartSlice e i) (isChart_chartSlice n z e he p i) j F (x, i) ⟨hx, rfl⟩,
-    d_eq_wd n z e he j _ x hx]
-  rfl
 
 theorem db_prodFin {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (j : Fin n) (F : M × Fin p → ℂ) (x : M) (i : Fin p) :
     db n (fun q : M × Fin p => z q.1) j F (x, i) = db n z j (fun y => F (y, i)) x := by
@@ -147,9 +129,16 @@ theorem vol_prodFin_eq {M : Type*} [TopologicalSpace M] [SecondCountableTopology
   have hA' : A = ⋃ i : Fin p, ((fun x => (x, i)) ⁻¹' A) ×ˢ {i} := by
     ext ⟨x, j⟩
     simp
-  rw [Measure.coe_finset_sum, Finset.sum_apply]
+  rw [MeasureTheory.Measure.coe_finsetSum, Finset.sum_apply]
   conv_lhs => rw [hA']
-  rw [measure_iUnion (fun i j hij => Set.disjoint_left.2 fun q hq1 hq2 => hij (hq1.2.symm.trans hq2.2))
+  rw [measure_iUnion (by
+      intro i j hij
+      apply Set.disjoint_left.mpr
+      intro q hqi hqj
+      rcases q with ⟨x, k⟩
+      change x ∈ (fun x => (x, i)) ⁻¹' A ∧ k ∈ ({i} : Set (Fin p)) at hqi
+      change x ∈ (fun x => (x, j)) ⁻¹' A ∧ k ∈ ({j} : Set (Fin p)) at hqj
+      exact hij ((Set.mem_singleton_iff.mp hqi.2).symm.trans (Set.mem_singleton_iff.mp hqj.2)))
     (fun i => (hS i).prod (measurableSet_singleton i)), tsum_fintype]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Measure.map_apply (f := fun x => (x, i)) (measurable_id.prodMk measurable_const) hA,
@@ -158,17 +147,9 @@ theorem vol_prodFin_eq {M : Type*} [TopologicalSpace M] [SecondCountableTopology
 
 theorem lintegral_vol_prodFin {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M] [MeasurableSpace M] [BorelSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (f : M × Fin p → ℝ≥0∞) (hf : Measurable f) :
     ∫⁻ q, f q ∂vol n (fun q : M × Fin p => z q.1) = ∑ i, ∫⁻ x, f (x, i) ∂vol n z := by
-  rw [vol_prodFin_eq n z hz p, lintegral_finset_sum_measure]
+  rw [vol_prodFin_eq n z hz p, MeasureTheory.lintegral_finsetSum_measure]
   refine Finset.sum_congr rfl fun i _ => ?_
   exact lintegral_map hf (measurable_id.prodMk measurable_const)
-
-theorem integral_vol_prodFin {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M] [MeasurableSpace M] [BorelSpace M] (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (p : ℕ) (f : M × Fin p → ℂ) (hf : Integrable f (vol n (fun q : M × Fin p => z q.1))) :
-    ∫ q, f q ∂vol n (fun q : M × Fin p => z q.1) = ∑ i, ∫ x, f (x, i) ∂vol n z := by
-  rw [vol_prodFin_eq n z hz p] at hf ⊢
-  rw [integral_finset_sum_measure (integrable_finset_sum_measure.1 hf)]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  exact integral_map (measurable_id.prodMk measurable_const).aemeasurable
-    (integrable_finset_sum_measure.1 hf i (Finset.mem_univ _)).aestronglyMeasurable
 
 def EtaleStein.prodFin {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]
     [MeasurableSpace M] [BorelSpace M] (n : ℕ) (X : EtaleStein n M) (p : ℕ) :
@@ -186,10 +167,6 @@ def EtaleStein.prodFin {M : Type*} [TopologicalSpace M] [T2Space M] [SecondCount
       ext q; simp
     rw [h]
     exact (X.isCompact_le a).prod isCompact_univ
-
-theorem EtaleStein.prodFin_proj {M : Type*} [TopologicalSpace M] [T2Space M]
-    [SecondCountableTopology M] [MeasurableSpace M] [BorelSpace M] (n : ℕ) (X : EtaleStein n M)
-    (p : ℕ) : (EtaleStein.prodFin n X p).z = fun q => X.z q.1 := rfl
 
 end
 

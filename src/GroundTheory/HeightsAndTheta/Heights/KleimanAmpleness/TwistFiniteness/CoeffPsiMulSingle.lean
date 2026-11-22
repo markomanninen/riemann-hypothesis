@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.IsUnitPhiOfMemMonos
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.IsUnitPhiOfMemMonos
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -46,7 +51,7 @@ theorem single_mem_TMod (M0 : FinGradedSub (S := S) (x := x) Ω)
     rw [this]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
   | zero => rw [single_zero, map_zero]; exact zero_mem _
-  | add p q _ _ hp hq => rw [single_add, map_add]; exact add_mem hp hq
+  | add p q _ _ hp hq => rw [single_add, map_add (f := _)]; exact add_mem hp hq
   | smul s p _ hp =>
     have : (toA x η).symm (single (a, (0 : ℤ)) (s • p)) =
         (C (C s) : Poly (Sy S r) N) • (toA x η).symm (single (a, (0 : ℤ)) p) := by
@@ -169,8 +174,8 @@ theorem gen_pre
     · simp
   · field_simp
 
-variable {n0 d0 g0} in
 
+variable {n0 d0 g0} in
 theorem chart_pre (G B : LineBundle S x)
     (hgen : ∀ I, Submodule.span (chartRing S x I) (Set.range η) = B.sub I)
     (hG : ∀ I, M0.tilde 0 I = G.sub I)
@@ -188,7 +193,7 @@ theorem chart_pre (G B : LineBundle S x)
   | add p q _ _ hp hq =>
     obtain ⟨z1, hz1, e1⟩ := hp
     obtain ⟨z2, hz2, e2⟩ := hq
-    exact ⟨z1 + z2, add_mem hz1 hz2, by rw [map_add, e1, e2, single_add, map_add]⟩
+    exact ⟨z1 + z2, add_mem hz1 hz2, by rw [map_add (f := _), e1, e2, single_add, map_add (f := _)]⟩
   | smul s p _ hp =>
     obtain ⟨z1, hz1, e1⟩ := hp
     refine ⟨(C s : Sy S r) • z1, Submodule.smul_mem _ _ hz1, ?_⟩
@@ -203,7 +208,8 @@ theorem coeff_psi_mul_single (c : Sy S r) (b' b : ℕ) (s' : Ω) :
       ∑ d ∈ Finset.range (c.totalDegree + 1),
         if d + b' = b then aeval η (homogeneousComponent d c) * s' else 0 := by
   conv_lhs => rw [← sum_homogeneousComponent c]
-  rw [map_sum, Finset.sum_mul, AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul, AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [psi_of_isHomogeneous η S (homogeneousComponent_isHomogeneous d c), single_mul_single, coeff_single,
     Finsupp.single_apply]

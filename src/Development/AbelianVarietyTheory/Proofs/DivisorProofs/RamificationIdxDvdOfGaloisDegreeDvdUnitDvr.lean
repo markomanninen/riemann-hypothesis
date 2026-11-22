@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -59,7 +64,7 @@ theorem ramGal : ∀ (S K L : Type) [CommRing S] [IsDomain S] [IsDiscreteValuati
   have hlies : ∀ P : Ideal B, P.IsMaximal → P.LiesOver (maximalIdeal S) := by
     intro P hP
     refine ⟨?_⟩
-    have : (P.under S).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+    have : (P.under S).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
     exact (IsLocalRing.eq_maximalIdeal this).symm
   refine ⟨fun P hP => ?_, fun P hP _ => ?_⟩
   · have := hlies P hP

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -19,11 +23,11 @@ theorem UpperTheory.V.Pa.aaCO :
     obtain ⟨c, hc', hcn⟩ := hN n' hn' n hn
     refine ⟨b' * b + c, Ideal.add_mem _ (Ideal.mul_mem_left _ _ hb) hc', b' • n + b • n',
       N.add_mem (N.smul_mem _ hn) (N.smul_mem _ hn'), ?_⟩
-    rw [Algebra.smul_def, Algebra.smul_def, map_add, map_mul, ← hcn]
+    rw [Algebra.smul_def, Algebra.smul_def, map_add (f := _), map_mul, ← hcn]
     ring
   have hSadd : ∀ a a', a ∈ S → a' ∈ S → a + a' ∈ S := by
     rintro a a' ⟨b, hb, n, hn, rfl⟩ ⟨b', hb', n', hn', rfl⟩
-    exact ⟨b + b', Ideal.add_mem _ hb hb', n + n', N.add_mem hn hn', by rw [map_add]; ring⟩
+    exact ⟨b + b', Ideal.add_mem _ hb hb', n + n', N.add_mem hn hn', by rw [map_add (f := _)]; ring⟩
   have h1 : (1 : A) ∉ S := by
     rintro ⟨b, hb, n, hn, e⟩
     have hn1 : n ∈ (1 : Submodule B A) :=

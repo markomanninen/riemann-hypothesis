@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.IsCompactK
-import GroundTheory.PAdicHodge.NormalizedTrace
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.IsCompactK
+public import GroundTheory.PAdicHodge.NormalizedTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem splitting (d : SD σ) : IsSplitting (adeleClass F) d.B.ψ d.dd (actB (cA
 
 theorem imp (d : SD σ) (k : d.G) :
     Box.Imp d.B.ψ (d.om k) fun w => d.dd.e (actB (cA σ) k (d.dd.e.symm w)) :=
-  ⟨(splitting d).pres k, (splitting d).adm k, fun w w' => by simp only [actB, map_add, Matrix.add_mul],
+  ⟨(splitting d).pres k, (splitting d).adm k, fun w w' => by simp only [actB, map_add (f := _), Matrix.add_mul],
     fun c w => by simp only [actB, map_smul, Matrix.smul_mul], fun w φ hφ => by
       have := (splitting d).impl k (d.dd.e.symm w) φ hφ
       rwa [Darboux.rho, LinearEquiv.apply_symm_apply] at this⟩

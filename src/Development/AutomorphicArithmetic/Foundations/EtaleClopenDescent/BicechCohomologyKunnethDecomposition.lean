@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BicechC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechAndTotalDifferentialAdditiveSquareZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BicechC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechAndTotalDifferentialAdditiveSquareZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,14 +48,16 @@ namespace Gr
 variable (G : Gr k V)
 
 theorem big {c : ℕ} (hc : G.N ≤ c) (a : V) : G.π c a = 0 := by
-  rw [← G.sum a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← G.sum a, map_sum]
   refine Finset.sum_eq_zero fun c' hc' => G.orth _ _ _ ?_
   have := Finset.mem_range.1 hc'
   omega
 
 theorem ext' {U : Type} [AddCommGroup U] [Module k U] {X Y : V →ₗ[k] U}
     (h : ∀ c a, X (G.π c a) = Y (G.π c a)) (a : V) : X a = Y a := by
-  rw [← G.sum a, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← G.sum a, map_sum, map_sum]
   exact Finset.sum_congr rfl fun c _ => h c a
 
 theorem σσ (a : V) : G.σ (G.σ a) = a := by
@@ -74,7 +80,8 @@ theorem exists_contraction : ∃ e h : V →ₗ[k] V,
     simp [h, LinearMap.sum_apply]
   have hπ : ∀ c a, h (G.π (c + 1) a) = G.π c (h a) := by
     intro c a
-    rw [happ, happ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [happ, happ, map_sum]
     by_cases hc : c < G.N
     · rw [Finset.sum_eq_single c, Finset.sum_eq_single c]
       · rw [G.idem, G.idem]
@@ -95,8 +102,10 @@ theorem exists_contraction : ∃ e h : V →ₗ[k] V,
         simp
   have hdhd : ∀ a, G.d (h (G.d a)) = G.d a := by
     intro a
-    rw [happ, map_sum]
-    conv_rhs => rw [← G.sum a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [happ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← G.sum a, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [← G.dπ, G.dπ c (g _), hg]
     rw [G.dπ c a, G.idem]
@@ -154,7 +163,7 @@ theorem tensor_kunneth (G : Gr k V) (G' : Gr k W) (n : ℤ) (t : V ⊗[k] W) (ht
       have := G.σd (e a)
       rw [de, map_zero] at this
       exact neg_eq_zero.1 this.symm
-    simp only [H, Dt, LinearMap.add_apply, LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply, map_add,
+    simp only [H, Dt, LinearMap.add_apply, LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply, map_add (f := _),
       e3, ed, eσ, hσ, G.σσ, map_zero, TensorProduct.zero_tmul, TensorProduct.tmul_zero, TensorProduct.neg_tmul]
     rw [e1, TensorProduct.add_tmul, TensorProduct.add_tmul, e2, TensorProduct.tmul_add, TensorProduct.tmul_add]
     abel
@@ -183,7 +192,7 @@ theorem tensor_kunneth (G : Gr k V) (G' : Gr k W) (n : ℤ) (t : V ⊗[k] W) (ht
             omega
     · simp
     · intro x y _ _ hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     · intro c x _ hx
       rw [map_smul]
@@ -203,7 +212,7 @@ theorem tensor_kunneth (G : Gr k V) (G' : Gr k W) (n : ℤ) (t : V ⊗[k] W) (ht
     · rw [← eπ', hq]
   · simp
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   · intro c x _ hx
     rw [map_smul]
@@ -235,13 +244,13 @@ theorem mem_coch {F : Finset ι → Submodule k E} {a : Finset ι → E} : a ∈
     · simpa using h0
     · simpa [hs] using h s
 
-variable (k ι E) in
 
+variable (k ι E) in
 def prL (c : ℕ) : (Finset ι → E) →ₗ[k] (Finset ι → E) :=
   LinearMap.pi fun s => if s.card = c then LinearMap.proj s else 0
 
-variable (k ι E) in
 
+variable (k ι E) in
 def sgL : (Finset ι → E) →ₗ[k] (Finset ι → E) :=
   LinearMap.pi fun s => ((-1 : ℤ) ^ (s.card + 1)) • LinearMap.proj s
 
@@ -348,9 +357,10 @@ theorem phi_Dt [Fintype ι] [Fintype κ] (μ : E →ₗ[k] E' →ₗ[k] E'') (A 
   have h : phi μ A B ∘ₗ Dt (grC A hA) (grC B hB) = biD k ι κ E'' ∘ₗ phi μ A B := by
     refine TensorProduct.ext' fun a b => ?_
     funext x
-    simp only [LinearMap.comp_apply, Dt, LinearMap.add_apply, TensorProduct.map_tmul, LinearMap.id_apply, map_add,
+    simp only [LinearMap.comp_apply, Dt, LinearMap.add_apply, TensorProduct.map_tmul, LinearMap.id_apply, map_add (f := _),
       phi_tmul, Pi.add_apply]
-    simp only [biD, boxC, grC, LinearMap.pi_apply, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [biD, boxC, grC, LinearMap.pi_apply, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply,
       LinearMap.proj_apply, LinearMap.restrict_coe_apply, deltaL_apply, sgL_apply, map_sum, map_zsmul]
     congr 1
     rw [Finset.smul_sum]
@@ -373,8 +383,8 @@ theorem single_mem_coch (F : Finset ι → Submodule k E) {I : Finset ι} (h : I
       exact x.2
     · exact zero_mem _
 
-open Classical in
 
+open Classical in
 def iL (F : Finset ι → Submodule k E) (I : Finset ι) : F I →ₗ[k] coch F :=
   if h : I.Nonempty then LinearMap.codRestrict (coch F) _ (single_mem_coch F h) else 0
 
@@ -390,7 +400,7 @@ theorem iL_val (F : Finset ι → Submodule k E) (I : Finset ι) (x : F I) (s : 
 
 theorem sum_iL [Fintype ι] (F : Finset ι → Submodule k E) (a : coch F) : ∑ I, iL F I (rL F I a) = a := by
   refine Subtype.ext (funext fun s => ?_)
-  rw [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply]
+  rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply]
   rw [Finset.sum_eq_single s]
   · rw [iL_val]
     rcases s.eq_empty_or_nonempty with rfl | hs
@@ -403,7 +413,7 @@ theorem sum_iL [Fintype ι] (F : Finset ι → Submodule k E) (a : coch F) : ∑
 
 theorem phi_inj [Fintype ι] [Fintype κ] (μ : E →ₗ[k] E' →ₗ[k] E'') (A : Finset ι → Submodule k E)
     (B : Finset κ → Submodule k E') (h : Disjoint₂ μ A B) : Function.Injective (phi μ A B) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   have ev : ∀ I J, (TensorProduct.lift (μ.compl₁₂ (A I).subtype (B J).subtype)) ∘ₗ TensorProduct.map (rL A I) (rL B J) =
       LinearMap.proj (I, J) ∘ₗ phi μ A B := by
@@ -484,7 +494,7 @@ theorem phi_mem [Fintype ι] [Fintype κ] (μ : E →ₗ[k] E' →ₗ[k] E'') (A
         simp
   · simp
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   · intro c x _ hx
     rw [map_smul]
@@ -556,7 +566,7 @@ theorem phi_boxes [Fintype ι] [Fintype κ] (μ : E →ₗ[k] E' →ₗ[k] E'') 
       exact Submodule.mem_inf.2 ⟨mem_cechC hB hq, congrArg Subtype.val hb⟩
   · simp
   · intro x y _ _ hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   · intro c x _ hx
     rw [map_smul]

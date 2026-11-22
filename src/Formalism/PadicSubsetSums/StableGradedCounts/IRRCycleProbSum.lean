@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRJoints
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbPrime
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRJoints
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCycleProbPrime
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 

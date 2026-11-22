@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,12 +39,12 @@ theorem n_add (x y : A E) : gl (nU (x + y)) = gl (nU x) * gl (nU y) := by
   rw [nU_add, gl_mul]
 
 theorem mkE_add (D : Dat ℚ E) (a b c d : A ℚ) : D.mkE (a + c) (b + d) = D.mkE a b + D.mkE c d := by
-  simp only [Dat.mkE, map_add, add_mul]
+  simp only [Dat.mkE, map_add (f := _), add_mul]
   abel
 
 theorem mkE_rat (D : Dat ℚ E) (x y : ℚ) :
     D.mkE (rt x) (rt y) = rt (algebraMap ℚ E x + algebraMap ℚ E y * D.θ) := by
-  simp only [Dat.mkE, UpperTheory.ConvolutionTheory.R2.rt, AdeleBaseChange.adeleMap_algebraMap, map_add, map_mul]
+  simp only [Dat.mkE, UpperTheory.ConvolutionTheory.R2.rt, AdeleBaseChange.adeleMap_algebraMap, map_add (f := _), map_mul]
 
 theorem nE_add (D : Dat ℚ E) (x c : Fin 2 → A ℚ) : nE D (x + c) = nE D x * nE D c := by
   simp only [nE, Pi.add_apply, mkE_add, n_add]
@@ -48,8 +52,8 @@ theorem nE_add (D : Dat ℚ E) (x c : Fin 2 → A ℚ) : nE D (x + c) = nE D x *
 theorem rat_n (k : E) : ∃ γ : GL (Fin 2) E, ratGL E 2 γ = gl (nU (rt k)) := by
   refine ⟨Matrix.SpecialLinearGroup.toGL ⟨!![1, k; 0, 1], by simp [Matrix.det_fin_two]⟩, Units.ext ?_⟩
   ext i j
-  change algebraMap E (A E) (!![1, k; 0, 1] i j) = _
-  fin_cases i <;> fin_cases j <;> simp
+  change algebraMap E (A E) (!![1, k; 0, 1] i j) = (!![1, rt k; 0, 1] : Matrix (Fin 2) (Fin 2) (A E)) i j
+  fin_cases i <;> fin_cases j <;> simp [UpperTheory.ConvolutionTheory.R2.rt]
 
 theorem Wo_right (D : Dat ℚ E) (φ : GL (Fin 2) (A E) → ℂ) (x h : GL (Fin 2) (A E)) :
     Wo D (fun g => φ (g * x)) h = Wo D φ (h * x) := by
@@ -102,11 +106,11 @@ theorem psi_bI (v : ℝ) : ψ (-(bI v)) = Complex.exp (2 * Real.pi * Complex.I *
   simp
 
 theorem iy_coe {y : ℝ} (h : y ≠ 0) : ((iy y : (A ℚ)ˣ) : A ℚ) = 1 - TR.sInf ℚ 1 + TR.sInf ℚ fun _ => y := by
-  rw [iy, dif_neg h]
+  rw [iy, dite_eq_right h]
   rfl
 
 theorem iy_inv_coe {y : ℝ} (h : y ≠ 0) : (((iy y)⁻¹ : (A ℚ)ˣ) : A ℚ) = 1 - TR.sInf ℚ 1 + TR.sInf ℚ fun _ => y⁻¹ := by
-  rw [iy, dif_neg h]
+  rw [iy, dite_eq_right h]
   rfl
 
 theorem iy_one : iy 1 = 1 := by
@@ -116,7 +120,7 @@ theorem iy_one : iy 1 = 1 := by
   simp [this]
 
 theorem re_iy {y : ℝ} (h : y ≠ 0) : re (iy y : A ℚ) = y := by
-  rw [re, iy_coe h, map_add, map_sub, pInf_sInf, pInf_sInf, map_one]
+  rw [re, iy_coe h, map_add (f := _), map_sub, pInf_sInf, pInf_sInf, map_one]
   simp
 
 theorem iy_mul_bI {y : ℝ} (h : y ≠ 0) (u : ℝ) : (iy y : A ℚ) * bI u = bI (y * u) := by
@@ -194,7 +198,7 @@ theorem ideleNorm_embedding_neg_one_real (D : Dat ℚ E) : ideleNorm ℚ E (idel
   rw [ideleNorm_ideleEmbedding, Module.finrank_eq_card_basis D.b, Fintype.card_fin, ← map_pow]
   simp
 
-theorem Wo_rot_pi [IsTotallyComplex E] (D : Dat ℚ E) (ω : HChar ℚ) {φ : GL (Fin 2) (A E) → ℂ}
+theorem Wo_rot_pi [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (ω : HChar ℚ) {φ : GL (Fin 2) (A E) → ℂ}
     (hc : ∀ z g, φ (Matrix.GeneralLinearGroup.scalar (Fin 2) z * g) = ((ω.1 (ideleNorm ℚ E z) : ℂˣ) : ℂ) * φ g) (a : (A ℚ)ˣ) (t : ℝ) :
     Wo D φ (em E (aE a * rot (t + Real.pi))) = Wo D φ (em E (aE a * rot t)) := by
   have e : em E (aE a * rot (t + Real.pi)) =

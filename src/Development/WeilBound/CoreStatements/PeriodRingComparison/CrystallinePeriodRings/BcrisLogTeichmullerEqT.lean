@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
-import Development.WeilBound.CoreStatements.PeriodRingComparison.AinfAlgebraMaps.CAAlgebraMapGOC
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.BcrisPlusHomAlgebraMap
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.AinfAlgebraMaps.CAAlgebraMapGOC
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.BcrisPlusHomAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem cBc_gal (g : GQ l) (b : Reformulated.AutPerF.Bcris l (OC l)) :
         ((cBc l).symm (Formalism.Per6.cB l y))) = _
       rw [cBc_symm_cB, Reformulated.AutPerF.Bcris.map_algebraMap_acris (gOC l g) (Reformulated.AutPerF.toRingHom_injective g),
         cBc_algebraMap, cA_map_gal,
-        RingEquiv.apply_symm_apply, PositivityTheory.LocInh.σB_cB]
+        RingEquiv.apply_symm_apply]
+      exact (PositivityTheory.LocInh.σB_cB g y).symm
   have h := RingHom.congr_fun key (cBc l b)
   change cBc l (Reformulated.AutPerF.Bcris.map l (gOC l g) (Reformulated.AutPerF.toRingHom_injective g)
     ((cBc l).symm (cBc l b))) = _ at h

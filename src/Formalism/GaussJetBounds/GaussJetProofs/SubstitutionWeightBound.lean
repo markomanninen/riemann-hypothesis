@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.WtGeProd
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.WtGeProd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -44,7 +48,7 @@ theorem wtGe_add {pi : ℝ} (h0 : 0 < pi) (h1 : pi ≤ 1) {r : ι → ℝ} {w1 w
     {f g : MvPowerSeries ι K} (hf : WtGe pi r w1 f) (hg : WtGe pi r w2 g) :
     WtGe pi r (min w1 w2) (f + g) := by
   intro n
-  rw [monoWtGe_iff, map_add]
+  rw [monoWtGe_iff, map_add (f := _)]
   refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
   · exact wtGe_mono h0 h1 (min_le_left w1 w2) hf n
   · exact wtGe_mono h0 h1 (min_le_right w1 w2) hg n
@@ -53,7 +57,8 @@ theorem wtGe_sum {pi : ℝ} (h0 : 0 < pi) {r : ι → ℝ} {wt : ℝ} {α : Type
     (F : α → MvPowerSeries ι K) (h : ∀ i ∈ s, WtGe pi r wt (F i)) :
     WtGe pi r wt (∑ i ∈ s, F i) := by
   intro n
-  rw [monoWtGe_iff, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [monoWtGe_iff, map_sum]
   exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (Real.rpow_nonneg h0.le _)
     fun i hi => h i hi n
 

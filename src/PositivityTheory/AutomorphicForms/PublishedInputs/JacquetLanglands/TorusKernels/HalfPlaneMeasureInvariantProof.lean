@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem vol_def : (volume : Measure P) = (Measure.comap val volume).withDensity 
 
 theorem vol_eq (s : Set P) (hs : MeasurableSet s) : volume s = ∫⁻ z in val '' s, rho z := by
   rw [vol_def, withDensity_apply _ hs, measEmb.restrict_comap,
-← measEmb.lintegral_map, measEmb.map_comap,
+    ← measEmb.lintegral_map, measEmb.map_comap,
     Measure.restrict_restrict (measEmb.measurableSet_range),
     Set.inter_eq_right.2 (Set.image_subset_range _ _)]
 

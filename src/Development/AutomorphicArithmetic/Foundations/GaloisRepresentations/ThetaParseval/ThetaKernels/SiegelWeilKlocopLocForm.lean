@@ -1,11 +1,15 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.LocForm
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopCore
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopAway
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopPlumb
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepNM
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.LocForm
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopCore
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopAway
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopPlumb
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKlocopStepNM
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -26,7 +30,7 @@ theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.T_lin (d : _root_.Positiv
       funext x
       simp only [schr, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, Darboux.rho, h, map_add, map_smul, Pi.add_apply, Pi.smul_apply]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, Darboux.rho, h, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply]
 theorem _root_.PositivityTheory.SiegelWeilFormula.RD_k.tens_cancel {Ψ : d.MF} (hΨ : d.IsAwayW w Ψ) (h0 : Ψ ≠ 0) {g g' : d.LF}
     (h : R.tens w g Ψ = R.tens w g' Ψ) : g = g' := by
   obtain ⟨X₀, hX₀⟩ : ∃ X₀, Ψ X₀ ≠ 0 := by
@@ -72,7 +76,7 @@ theorem _root_.PositivityTheory.SiegelWeilFormula.RD_k.locOp_lin (hT : _root_.Po
   have e := (hL y (a • f + g) (isSw_lin a hf hg)).2 Ψ hΨ.1 _ hΦ hTΦ
   have ef := (hL y f hf).2 Ψ hΨ.1 Φf hΦf hTf
   have eg := (hL y g hg).2 Ψ hΨ.1 Φg hΦg hTg
-  rw [map_add, map_smul, d.T_lin, ef, eg] at e
+  rw [map_add (f := _), map_smul, d.T_lin, ef, eg] at e
   apply R.tens_cancel hΨ.1 hΨ.2.1
   rw [← e]
   funext X
@@ -101,7 +105,7 @@ theorem _root_.PositivityTheory.SiegelWeilFormula.RD_k.locOp_mM (hT : _root_.Pos
       rw [dif_pos h]
       exact (R.stepM w hT h.2.choose a h.1 h.2.choose_spec).choose_spec.1
     · dsimp only
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       exact one_ne_zero
   · have h : IsUnit a.det ∧ ∃ y : GR d.n, mR y = mLoc a := ⟨ha, y, hy⟩
     have hy0 : h.2.choose = y := hinj _ _ (h.2.choose_spec.trans hy.symm)

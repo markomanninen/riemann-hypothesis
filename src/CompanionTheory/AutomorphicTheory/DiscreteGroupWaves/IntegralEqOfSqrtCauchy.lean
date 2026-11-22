@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace CompanionTheory.NFCpt
 
@@ -56,13 +60,14 @@ theorem tower_integral : ∀ (n : ℕ) (E : (j : ℕ) → (Fin j → ℂ) → �
       intro c hc
       rw [← (hs n (Nat.lt_succ_self n) c hc).2]
       exact integral_nonneg_of_ae (hGpos c hc)
-    obtain ⟨hI, hV⟩ := tower_integral n E hmn h0n fun j hj => hs j (Nat.lt_succ_of_lt hj)
+    have ih : Integrable (E n) ∧ ∫ c, E n c = E 0 (fun a => a.elim0) :=
+      tower_integral n E hmn h0n fun j hj => hs j (Nat.lt_succ_of_lt hj)
     have hGI : Integrable G ((volume : Measure (Fin n → ℂ)).prod (volume : Measure ℂ)) := by
       rw [integrable_prod_iff hGm]
       refine ⟨?_, ?_⟩
       · filter_upwards [ae_coords_ne_zero n] with c hc
         exact (hs n (Nat.lt_succ_self n) c hc).1
-      · refine hI.congr ?_
+      · refine (And.left ih).congr ?_
         filter_upwards [ae_coords_ne_zero n] with c hc
         rw [← (hs n (Nat.lt_succ_self n) c hc).2]
         refine integral_congr_ae ?_
@@ -77,7 +82,7 @@ theorem tower_integral : ∀ (n : ℕ) (E : (j : ℕ) → (Fin j → ℂ) → �
         rw [← show ∫ q, G q = ∫ q, G q ∂((volume : Measure (Fin n → ℂ)).prod (volume : Measure ℂ)) from rfl, ← this]
         refine integral_congr_ae (Eventually.of_forall fun c => ?_)
         simp [hGe]
-      rw [h1, integral_prod G hGI, integral_congr_ae hae, hV]
+      rw [h1, integral_prod G hGI, integral_congr_ae hae, And.right ih]
 
 theorem abs_sub_le_of_sqrt {a b d δ : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hd : 0 ≤ d) (hδ : 0 < δ)
     (h : |Real.sqrt a - Real.sqrt b| ≤ Real.sqrt d) : |a - b| ≤ d / δ + δ * (a + b) := by

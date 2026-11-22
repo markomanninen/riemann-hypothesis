@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDehomCharpolyForms
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullFormsGeneric
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDehomCharpolyForms
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullFormsGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -40,7 +45,8 @@ theorem aeval_homog {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} (l : Fin (D +
     (hk : l k ≠ 0) (G : MvPolynomial (Fin (D + 1)) ℚ) {N : ℕ} (hN : G.totalDegree ≤ N) :
     aeval l (homog k N G) = l k ^ N * aeval (fun i => l i / l k) G := by
   conv_rhs => rw [← sum_homogeneousComponent_range G hN]
-  simp only [homog, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homog, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   have he' : e ≤ N := Nat.lt_succ_iff.mp (Finset.mem_range.mp he)
   have hpow : l k ^ N = l k ^ (N - e) * l k ^ e := by rw [← pow_add, Nat.sub_add_cancel he']
@@ -51,7 +57,8 @@ theorem aeval_homog {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} (l : Fin (D +
 theorem dehom_homog {D : ℕ} (k : Fin (D + 1)) {N : ℕ} (G : MvPolynomial (Fin (D + 1)) ℚ)
     (hN : G.totalDegree ≤ N) : PullFormsGeneric.dehom k (homog k N G) = PullFormsGeneric.dehom k G := by
   conv_rhs => rw [← sum_homogeneousComponent_range G hN]
-  simp [PullFormsGeneric.dehom, homog, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [PullFormsGeneric.dehom, homog, map_sum]
 
 theorem ne_zero_of_generic {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin (D + 1) → Ω}
     (hgen : ∀ (d : ℕ) (F : MvPolynomial (Fin (D + 1)) ℚ), F.IsHomogeneous d → aeval l F = 0 → F = 0)
@@ -62,7 +69,7 @@ theorem injective_chart {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin 
     (hgen : ∀ (d : ℕ) (F : MvPolynomial (Fin (D + 1)) ℚ), F.IsHomogeneous d → aeval l F = 0 → F = 0)
     (k : Fin (D + 1)) :
     Function.Injective (aeval (R := ℚ) (fun i : {i // i ≠ k} => l i / l k)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro G hG
   set G' : MvPolynomial (Fin (D + 1)) ℚ := rename Subtype.val G with hG'
   have h1 : aeval (fun i => l i / l k) G' = 0 := by rw [hG', aeval_rename]; exact hG
@@ -82,10 +89,10 @@ theorem injective_chart {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin 
 theorem isHomogeneous_of_X_pow_mul {σ : Type*} {k : σ} {a d : ℕ} {H : MvPolynomial σ ℚ}
     (h : (X k ^ a * H).IsHomogeneous (a + d)) : H.IsHomogeneous d := by
   intro μ hμ
-  have h1 : coeff (μ + Finsupp.single k a) (X k ^ a * H) = coeff μ H := by
+  have h1 : AddMonoidAlgebra.coeff (X k ^ a * H) (μ + Finsupp.single k a) = AddMonoidAlgebra.coeff H μ := by
     rw [X_pow_eq_monomial, mul_comm, coeff_mul_monomial, mul_one]
   have h2 := h (by rw [h1]; exact hμ)
-  simp only [map_add, Finsupp.weight_single, Pi.one_apply, smul_eq_mul, mul_one] at h2
+  simp only [map_add (f := _), Finsupp.weight_single, Pi.one_apply, smul_eq_mul, mul_one] at h2
   omega
 
 theorem adjoin_ratios_eq {Ω : Type} [Field Ω] [CharZero Ω] {D : ℕ} {l : Fin (D + 1) → Ω} (hl : ∀ k, l k ≠ 0)
@@ -222,8 +229,8 @@ theorem coeff_mem_of_eval_mem {K : Type*} [Field K] [CharZero K] (B : Subring K)
   rw [← hc]
   exact c.2
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem norm_mem_adjoin {Ω : Type} [Field Ω] [CharZero Ω] (S : Set Ω) [IsIntegrallyClosed (Algebra.adjoin ℚ S)]
     {y : Ω} (hy : IsIntegral (Algebra.adjoin ℚ S) y) :
     ((Algebra.norm (IntermediateField.adjoin ℚ S) y : IntermediateField.adjoin ℚ S) : Ω) ∈
@@ -266,8 +273,8 @@ theorem coeff_mul_pow_mem {Ω : Type} [Field Ω] [CharZero Ω] (S : Set Ω) (P :
 
 end DehomCharpolyForms
 
-open DehomCharpolyForms in
 
+open DehomCharpolyForms in
 theorem DehomCharpolyForms.proof : DehomCharpolyForms.Statement := by
   intro Ω _ _ D l P _ hP hgen j m u hu
   classical
@@ -315,7 +322,8 @@ theorem DehomCharpolyForms.proof : DehomCharpolyForms.Statement := by
       simpa using isHomogeneous_one (σ := Fin (D + 1)) (R := ℚ)
     · exact hchom i hi
   · conv_lhs => rw [f.as_sum_range_C_mul_X_pow, hdeg]
-    rw [Polynomial.map_sum, ← Finset.sum_range_reflect]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.map_sum, ← Finset.sum_range_reflect]
     refine Finset.sum_congr rfl fun i hi => ?_
     have hi' : i ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
     rw [heval i hi', Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_C, Polynomial.map_X,

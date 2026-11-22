@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsAlgebraicIndependentGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ProjPointIdealMemProjComponentsOfIsProjPureDim
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFormDegreeLeHilbertDegreeEvalNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -61,22 +65,24 @@ private theorem isWeightedHomogeneous_aeval_of_forall {R S σ τ Γ Δ : Type} [
     (hp : IsWeightedHomogeneous w p m) (φ : σ → MvPolynomial τ S)
     (hφ : ∀ v, IsWeightedHomogeneous w' (φ v) (g (w v))) :
     IsWeightedHomogeneous w' (aeval φ p) (g m) := by
-  rw [p.as_sum, map_sum, ← mem_weightedHomogeneousSubmodule]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum, ← mem_weightedHomogeneousSubmodule]
   refine Submodule.sum_mem _ fun s hs => ?_
   rw [mem_weightedHomogeneousSubmodule, aeval_monomial, Finsupp.prod]
   have hw : Finsupp.weight w s = m := hp (mem_support_iff.mp hs)
   have hm : g m = 0 + ∑ v ∈ s.support, s v • g (w v) := by
-    rw [zero_add, ← hw, Finsupp.weight_apply, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [zero_add, ← hw, Finsupp.weight_apply, Finsupp.sum, map_sum]
     simp [map_nsmul]
   rw [hm, MvPolynomial.algebraMap_apply]
   exact (isWeightedHomogeneous_C w' _).mul
     (IsWeightedHomogeneous.prod _ _ _ fun v _ => (hφ v).pow _)
 
+
 set_option autoImplicit false in
 open MvPolynomial Filter in
 open scoped ENNReal in
 attribute [local instance] MvPolynomial.gradedAlgebra MvPolynomial.algebraMvPolynomial in
-
 theorem _root_.GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section : ∀ (K L : Type) [Field K] [Field L] (N : ℕ) [Algebra K L] [Algebra (MvPolynomial (Fin N) K) L] [IsScalarTower K (MvPolynomial (Fin N) K) L] [IsFractionRing (MvPolynomial (Fin N) K) L] (P : Ideal (MvPolynomial (Fin N) K)) (D δ : ℕ) (f : MvPolynomial (Fin (D + 1 + 1) × Fin N) K), (∀ g ∈ P, ∀ n : ℕ, homogeneousComponent n g ∈ P) → _root_.GlobalTheory.ChowHt.IsChowFormInt P (D + 1) δ f → ∃ f' : MvPolynomial (Fin (D + 1) × Fin N) L, _root_.GlobalTheory.ChowHt.IsChowFormInt (P.map (MvPolynomial.map (algebraMap K L) : MvPolynomial (Fin N) K →+* MvPolynomial (Fin N) L) ⊔ Ideal.span {(∑ j : Fin N, C (algebraMap (MvPolynomial (Fin N) K) L (X j)) * X j : MvPolynomial (Fin N) L)}) D δ f' := by
   intro K L _ _ N _ _ _ _ P D δ f hP hf
   set t : Fin N → L := fun j => algebraMap (MvPolynomial (Fin N) K) L (X j) with ht
@@ -94,7 +100,7 @@ theorem _root_.GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section : ∀ 
     | last =>
       have hg : g (_root_.GlobalTheory.Chow.blockWeight (Fin.last (D + 1), j)) = 0 := by
         funext i
-        simp [g, _root_.GlobalTheory.Chow.blockWeight, Pi.single_apply, Fin.castSucc_ne_last]
+        simp [g, _root_.GlobalTheory.Chow.blockWeight, Fin.castSucc_ne_last]
       rw [hφ, _root_.GlobalTheory.ChowSpec.lastSubst_last, hg]
       exact isWeightedHomogeneous_C _ _
     | cast i =>
@@ -128,9 +134,9 @@ theorem _root_.GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section : ∀ 
         have hh := hfhom.isHomogeneous
         simp only [Finset.sum_const_zero] at hh
         have hf0 := hf.ne_zero
-        have hC : f = C (coeff 0 f) :=
+        have hC : f = C (AddMonoidAlgebra.coeff f 0) :=
           (totalDegree_eq_zero_iff_eq_C).1 (by simpa using hh.totalDegree hf0)
-        have hc : coeff 0 f ≠ 0 := fun h0 => hf0 (by rw [hC, h0, C_0])
+        have hc : AddMonoidAlgebra.coeff f 0 ≠ 0 := fun h0 => hf0 (by rw [hC, h0, C_0])
         apply hf.irred.not_isUnit
         rw [hC]
         exact hc.isUnit.map C
@@ -144,7 +150,7 @@ theorem _root_.GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section : ∀ 
       obtain ⟨r, hr, hfr⟩ := (MvPolynomial.isUnit_iff_eq_C_of_isReduced).1 hu
       have hh := hf'hom.isHomogeneous
       rw [hfr] at hh
-      have h0 := hh (show coeff 0 (C r) ≠ 0 by simpa using hr.ne_zero)
+      have h0 := hh (show AddMonoidAlgebra.coeff (C r) 0 ≠ 0 by simpa using hr.ne_zero)
       simp at h0
       omega
     have hdisj : Disjoint ((Submonoid.map (C : MvPolynomial (Fin N) K →+*
@@ -187,7 +193,7 @@ theorem _root_.GlobalTheory.ChowSpec.exists_isChowFormInt_generic_section : ∀ 
       intro i r hr
       convert hP r hr i using 1
       conv_lhs => rw [← sum_homogeneousComponent r]
-      rw [DirectSum.decompose_sum, DFinsupp.finset_sum_apply, AddSubmonoidClass.coe_finset_sum,
+      rw [DirectSum.decompose_sum, DFinsupp.finsetSum_apply, AddSubmonoidClass.coe_finsetSum,
         Finset.sum_eq_single i]
       · exact DirectSum.decompose_of_mem_same _ (homogeneousComponent_mem i r)
       · intro b _ hb

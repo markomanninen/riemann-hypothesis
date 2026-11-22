@@ -1,71 +1,75 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
-import Formalism.SharpRestriction.GrowthBounds.InitialMinorTransposeMemHighestWeight
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
-import Formalism.LocalToGlobal.GroupLattices.FockModels.LoBlockActComp
-import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
-import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow
-import Formalism.SharpRestriction.GrowthBounds.WittIdentPI
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestAssumptionsOfThreeInterfaces
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCGlue
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCoreOfNum
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColTop
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColumnPolynomialCovectorZero
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlternative
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KapCore
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.TopDegreeLeTwoB
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.TotalDegreeEplus
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegLow
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankOnDigitsCast
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CardEqChainSum
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.StWeyl
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ChainDim
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.UpperCountOfTopRows
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountLow
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockInj
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.AiAddMulLeA0
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockFG
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdStandardLarge
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairLift
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairCount
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WtBound
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Bracket
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeOfStd
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseThresholdRatioConsecutive
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SymInt
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WittPNe
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinalTheorems
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.DualFlatOf
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.DualLat
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PosCoreLetter
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCharZeroAt
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCZ
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Beyond44OfRestRawTail
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OPlusAtOf
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFFinal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+public import Formalism.SharpRestriction.GrowthBounds.InitialMinorTransposeMemHighestWeight
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.LoBlockActComp
+public import Formalism.PeriodIntegrals.AdmissibleModel.WeylDim
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterWtAnti
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideFinal
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow
+public import Formalism.SharpRestriction.GrowthBounds.WittIdentPI
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestAssumptionsOfThreeInterfaces
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCGlue
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCoreOfNum
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColTop
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColumnPolynomialCovectorZero
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeAlternative
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KapCore
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.TopDegreeLeTwoB
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.TotalDegreeEplus
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinrankTensor
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegLow
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankOnDigitsCast
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CardEqChainSum
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.StWeyl
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ChainDim
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.UpperCountOfTopRows
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountLow
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockInj
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.AiAddMulLeA0
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockFG
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdStandardLarge
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreeRatioConsecutive
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairLift
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.PairCount
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.NotKept
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WtBound
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptBlocksOfSLine
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.Bracket
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseDegreesLargeOfStd
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CoarseThresholdRatioConsecutive
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SymInt
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.WittPNe
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FinalTheorems
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideEdge
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.DualLat
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSidePos
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCharZeroAt
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SettingCZ
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OPlusAtOf
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFFinal
+
+@[expose] public section
 
 noncomputable section
 
@@ -157,13 +161,13 @@ theorem core_room (St : Std C0 Cde CE1 CE2 1 X) (hc : 1 ≤ X.c) (j : Fin (numSe
     (i : Fin (segS X.TT j)) :
     (X.c : ℝ) * (ka1 X + 2 * X.Q + 3 * X.k) + 4 ≤
       X.de C0 Cde / 4 * (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) := by
-  have H := segHyp_of St j
   obtain ⟨hP0, -, -, hQ, hPQ⟩ := St.levels j i
   have hcb := coarse_bounds (X.bT (segPos X.TT j i)) (X.p ^ (segG X.TT j - (segDists X.TT j).get i)) (b.rz i)
     (fun c => (hdig.1 i c).1) (hdig.2.1 i).1 (hdig.2.1 i).2
   have hAP : (X.bT (segPos X.TT j i) : ℝ) - X.k * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) <
       (coarseA X.p (X.seg C0 CE1 CE2 j) b i : ℝ) * ((X.p ^ (segG X.TT j - (segDists X.TT j).get i) : ℕ) : ℝ) := hcb.2
-  have hbT : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) := (H.bT i).1
+  have hbT : X.b' * (1 - _root_.Formalism.MainNotions.ColumnSystems.Pf.be X C0) ≤ (X.bT (segPos X.TT j i) : ℝ) :=
+    (St.winB _ (pos_mem X.TT j i).1).1
   have hc1 : (1 : ℝ) ≤ (X.c : ℝ) := by exact_mod_cast hc
   exact core_roomR St.bpos hAP hbT St.be18 St.eps0 St.de6 St.forty_epsilon_le_delta St.eps_ge St.k5 St.Q1 hP0 (hPQ.trans hQ) St.N1k
     St.N2 St.Y1 St.Hc hc1 (Nat.cast_nonneg _) (Nat.cast_nonneg _) rfl
@@ -199,8 +203,8 @@ theorem core_termS {A A' w w' g g' K q : ℕ} (hA : A ≤ A' + K) (hw : w' ≤ w
   push_cast
   omega
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem numCore_std {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     (hstd : ∀ X : Loc, D1num X → HIext C0 CYb Cde Ck CD Cb X → CBound Cc X → Std C0 Cde CE1 CE2 1 X) :
     NumCoreAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc := by
@@ -354,8 +358,8 @@ theorem numCore_std {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
 theorem numCore_thr : RestNumCore :=
   TransportedAlt.mono (fun _ _ _ _ _ _ _ _ _ _ h => numCore_std h.2) thr_std
 
-set_option maxHeartbeats 3200000 in
 
+set_option maxHeartbeats 3200000 in
 theorem keptPair_bounds {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ}
     (hstd : ∀ X : Loc, D1num X → HIext C0 CYb Cde Ck CD Cb X → CBound Cc X → Std C0 Cde CE1 CE2 1 X) :
     PairSAt C0 CYb Cde Ck CD Cb CE1 CE2 Cc := by
@@ -574,7 +578,8 @@ theorem keptPair_thr : RestPairS :=
 
 theorem keptBlocks : KeptBlocksBeyondThreshold := kept_blocks_of_S_line keptPair_thr
 
-theorem closed_of_bounds {D : Formalism.BasicNotions.D7} (h3 : adm3 D) (hU : RestUp) (hL : RestLow) (hL1 : PartnersToFactors)
+theorem closed_of_bounds {D : Formalism.BasicNotions.D7} (h3 : adm3 D)
+    (hU : Formalism.MainNotions.ColumnSystems.Pf.RestUp) (hL : Formalism.MainNotions.ColumnSystems.Pf.RestLow) (hL1 : PartnersToFactors)
     (hLift : RestLift) : Closed (ExtendedAllConclusions D) :=
   have hA2 : RemainderSegmentBoundSecond D := restAlt2_of (restSegLow_of hL) (dimHH_of h3) charZeroAt
   closed_of_rests (fun _ _ _ => segment_statement_holds D _ _ _) (restFree D) (remainderSegmentBoundFirst D) (rest2 D) (restAlt3 D)
@@ -608,31 +613,34 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formal
 theorem tools : ExtremalProjectorTools where
   extremalProjectorAlt := ExtremalProjector.extremal_projector_statement
 
-theorem inputs : Loc8All where
-  p13B := flipOneThree.Pf.theorem_I_closed_form_holds
-  p13A := GramWindowAlt.theorem_A_closed_form_holds
-  p15 := tensor_closed
-  windowClauseTwo := Model.gl_branching_dimension
-  windowClauseThree := Model.weyl_dual_weight_admissible
-  lWeylV := Model.weylV_proved
-  lWitt := WittPI.wittIdentity_holds
-  tFlatTop := Model.flatTop
-  tFlatHH := Model.flatHH
-  hyperLatticeBasis := Model.dualHeightBasis
-  hyperDualInclusion := Model.dualInclusionLattices
-  tBePerfect := Model.bePerfect
-  tHLSpans := Model.hlSpans
-  tTestSide := Model.testSide
-  tLPOneEvery := Model.lPOneEvery
-  tCartanDomain := Model.cartanDomain_proved
-  tCartanOnto := Model.cartanOnto_proved
-  tKP1 := CountingStatementReduction.key_positivity_condition
-  tKP2 := Joints.saturated_restriction_holds
-  tKP3 := Joints.restriction_dimension_holds
-  tRES := CountingStatementReduction.residue_division_transfer
-  thresholdClauseOne := CountingStatementReduction.positivity_condition_eventually
-  thresholdClauseThree := CountingStatementReduction.exponent_bound_eventually
-  instanceClauseEight := fun D X => PolBridge.combined_weight_of_nested_sets D X (GLWeightTheory.weight_condition_from_integral_form D) (ColumnFamilies.Top.b15 D)
+theorem inputs : Loc8All := by
+  exact
+    { p13B := flipOneThree.Pf.theorem_I_closed_form_holds
+      p13A := GramWindowAlt.theorem_A_closed_form_holds
+      p15 := tensor_closed
+      windowClauseTwo := Model.gl_branching_dimension
+      windowClauseThree := Model.weyl_dual_weight_admissible
+      lWeylV := Model.weylV_proved
+      lWitt := WittPI.wittIdentity_holds
+      tFlatTop := Model.flatTop
+      tFlatHH := Model.flatHH
+      hyperLatticeBasis := Model.dualHeightBasis
+      hyperDualInclusion := Model.dualInclusionLattices
+      tBePerfect := Model.bePerfect
+      tHLSpans := Model.hlSpans
+      tTestSide := Model.testSide
+      tLPOneEvery := Model.lPOneEvery
+      tCartanDomain := Model.cartanDomain_proved
+      tCartanOnto := Model.cartanOnto_proved
+      tKP1 := CountingStatementReduction.key_positivity_condition
+      tKP2 := Joints.saturated_restriction_holds
+      tKP3 := Joints.restriction_dimension_holds
+      tRES := CountingStatementReduction.residue_division_transfer
+      thresholdClauseOne := CountingStatementReduction.positivity_condition_eventually
+      thresholdClauseThree := CountingStatementReduction.exponent_bound_eventually
+      instanceClauseEight := fun D X =>
+        PolBridge.combined_weight_of_nested_sets D X (GLWeightTheory.weight_condition_from_integral_form D)
+          (ColumnFamilies.Top.b15 D) }
 
 theorem rangeOne_abs :
     ∃ (T0 : ℝ) (T2 C : ℝ → ℝ), 0 < T0 ∧ ∀ C₀ : ℝ, T0 ≤ C₀ → 0 < T2 C₀ ∧ 0 < C C₀ ∧ ∀ CH : ℝ, T2 C₀ ≤ CH →

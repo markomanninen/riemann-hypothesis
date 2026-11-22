@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatchStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatchStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,28 @@ theorem exists_fin_add_real (C : Ctx S T) (w : WO S T) : ∃ u v, IsFinPt u ∧ 
 
 theorem isTh_rho (C : Ctx S T) {f : WO S T → ℂ} (hf : C.IsTh f) (w : WO S T) : C.IsTh (C.rho w f) := by
   obtain ⟨u, v, hu, hv, rfl⟩ := exists_fin_add_real C w
-  have h := GlobalTheory.FinTranslate.isTheta_heisO_fin C.std.1 hu (isTheta_heisO_real C.std hv hf)
+  have hfin {a : WO S T} (ha : IsFinPt a) {g : WO S T → ℂ} (hg : C.IsTh g) : C.IsTh (C.rho a g) := {
+    quasi := heisO_quasi C.ψ S T a g hg.quasi
+    level := by
+      obtain ⟨U, hU, h1⟩ := hg.level
+      refine ⟨U ⊓ GlobalTheory.FinTranslate.annSub C.ψ S T a, hU.inter (GlobalTheory.FinTranslate.isOpen_annSub C.std.1 ha), fun u hu h0 => ?_⟩
+      have h2 : C.ψ (symplOH S T u a) = 1 ∧ C.ψ (symplOH S T a u) = 1 := hu.2
+      conv_rhs => rw [← h1 u hu.1 h0]
+      unfold Ctx.rho
+      rw [heisO_heisO, heisO_heisO, h2.1, h2.2, add_comm]
+    cont := by
+      haveI : IsTopologicalAddGroup (AE D) := IsTopologicalRing.to_topologicalAddGroup
+      haveI : IsTopologicalAddGroup (WO S T) := Pi.topologicalAddGroup
+      exact (C.std.1.1.comp (continuous_symplOH S T continuous_id continuous_const)).mul
+        (hg.cont.comp (continuous_id.add continuous_const))
+    smooth k L h1 h2 w := by
+      have e : (fun t => heisO C.ψ S T a g (w + L t)) = fun t => C.ψ (symplOH S T w a) * g (w + a + L t) := by
+        funext t
+        rw [heisO, symplOH_add_left, (symplOH_fin_real S T a (L t) ha (h2 t)).2, add_zero, add_right_comm]
+      rw [e]
+      exact contDiff_const.mul (hg.smooth k L h1 h2 (w + a)) }
+  have h := hfin hu (isTheta_heisO_real C.std hv hf)
+  unfold Ctx.rho at h ⊢
   rwa [heisO_heisO, (symplOH_fin_real S T u v hu hv).1, AddChar.map_zero_eq_one, one_smul] at h
 
 theorem exists_level (C : Ctx S T) {f : WO S T → ℂ} (hf : C.IsTh f) :
@@ -139,8 +164,37 @@ theorem isTh_actO (C : Ctx S T) {f : WO S T → ℂ} (hf : C.IsTh f) {γ : GA D 
 
 theorem theta_space_laws : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), C.IsTh 0 ∧ (∀ f f', C.IsTh f → C.IsTh f' → C.IsTh (f + f') ∧ ((∀ w, IsRealPt w → f w = f' w) → f = f')) ∧ ∀ f, C.IsTh f → (∀ a : ℂ, C.IsTh (a • f)) ∧ (∀ w, C.IsTh (C.rho w f)) ∧ (∀ w w', C.rho w (C.rho w' f) = C.ψ (symplOH S T w w') • C.rho (w + w') f) ∧ (∀ (y : Matrix (Fin S.rank) (Fin T.rank) D.host.E) w, IsRealPt w → C.rho (finW S T y) f w = cexp (π * I * (EFR C.X (C.realPt w) (embR C.X y) : ℝ)) * f (w - (ratW T S yᵀ - finW S T y))) ∧ (∀ γ ∈ GQ S, ∀ γ' ∈ GQ T, C.IsTh fun w => f (actO S T γ γ' w)) ∧ ∃ N : ℕ, 0 < N ∧ ∀ u ∈ hatA S T (tens (stdL D.host.E S.rank) C.X.Λ), C.rho (N • u) f = f := by
   intro D S T C
-  refine ⟨isTheta_zero, fun f f' hf hf' => ⟨isTheta_add hf hf', fun h => ?_⟩, fun f hf =>
-    ⟨fun a => isTheta_smul a hf, isTh_rho C hf, fun w w' => heisO_heisO _ _ _ _ _ _, rho_finW C hf,
+  have hz : C.IsTh 0 := {
+    quasi γ w := by simp only [Pi.zero_apply, mul_zero]
+    level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
+    cont := continuous_const
+    smooth k L _ _ w := contDiff_const }
+  have ha {f g : WO S T → ℂ} (hf : C.IsTh f) (hg : C.IsTh g) : C.IsTh (f + g) := {
+    quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      obtain ⟨U', hU', h2⟩ := hg.level
+      refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu.1 h0) w
+      have e2 := congrFun (h2 u hu.2 h0) w
+      unfold heisO at e1 e2 ⊢
+      rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
+    cont := hf.cont.add hg.cont
+    smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
+  have hs (c : ℂ) {f : WO S T → ℂ} (hf : C.IsTh f) : C.IsTh (c • f) := {
+    quasi γ w := by rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
+    level := by
+      obtain ⟨U, hU, h1⟩ := hf.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    cont := hf.cont.const_smul c
+    smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
+  refine ⟨hz, fun f f' hf hf' => ⟨ha hf hf', fun h => ?_⟩, fun f hf =>
+    ⟨fun a => hs a hf, isTh_rho C hf, fun w w' => heisO_heisO _ _ _ _ _ _, rho_finW C hf,
       fun γ hγ γ' hγ' => isTh_actO C hf hγ hγ', exists_level C hf⟩⟩
   exact sub_eq_zero.1 (eq_zero_of_real C (isTheta_sub hf hf') fun w hw => sub_eq_zero.2 (h w hw))
 

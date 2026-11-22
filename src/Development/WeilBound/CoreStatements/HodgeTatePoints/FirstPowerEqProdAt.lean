@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbBase
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,13 @@ theorem first_form_four_term {a b c e : Pt R n d} (ha : Z a) (hb : Z b) (hc : Z 
 theorem first_power_eq_prod_at (hx : Z x) (hz : Z z) (k : ℕ) :
     ev ![x, z] (pow1 B k) = ∏ j ∈ Finset.range k, ev ![comp1 (B.A.act (j : O)) x, x, z] B.ph1 := by
   rw [pow1]
-  evs
+  have hb : ZZ ![x, z] := ZZ_cons hx (ZZ_cons hz ZZ_nil)
+  rw [evprod hb]
+  apply Finset.prod_congr rfl
+  intro j _
+  rw [ev3 hb (Z_comp1 (Z_act _ _) (Z_pt _)) (Z_pt _) (Z_pt _),
+    ep_comp1 _ hb (Z_pt _), ep_pt hb, ep_pt hb]
+  rfl
 
 private theorem comp1_act_natCast_zero (hx : Z x) : comp1 (B.A.act ((0 : ℕ) : O)) x = 0 := by
   rw [Nat.cast_zero, act_zero]
@@ -162,7 +172,7 @@ theorem first_power_zero_left (hz : Z z) (k : ℕ) : ev ![0, z] (pow1 B k) = 1 :
 
 theorem first_power_zero_right (hx : Z x) (k : ℕ) : ev ![x, 0] (pow1 B k) = 1 := by
   rw [first_power_eq_prod_at B hx Z_zero]
-  exact Finset.prod_eq_one fun j _ => first_form_zero_right B (by zz) hx
+  exact Finset.prod_eq_one fun j _ => first_form_zero_right B (Z_comp1 (Z_act _ _) hx) hx
 
 end
 

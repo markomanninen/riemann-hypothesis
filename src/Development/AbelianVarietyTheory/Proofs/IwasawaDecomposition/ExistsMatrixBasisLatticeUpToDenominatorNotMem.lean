@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -16,14 +20,16 @@ theorem exists_basis_up_to_fintype {O A E : Type} [CommRing O] [CommRing A] [IsD
       ∀ w ∈ L, (s : O) • w ∈ Submodule.span O (Set.range b) := by
   classical
   set M : Submodule A (n → E) := Submodule.span A (L : Set (n → E)) with hM
-  have : Submodule.IsLattice E M :=
-    { fg := by
+  have : Submodule.IsFullLattice E M :=
+    { toIsLattice := Submodule.IsLattice.of_fg E <| by
         obtain ⟨s, hs⟩ := hfg
         refine ⟨s, ?_⟩
         rw [hM, ← hs, Submodule.span_span_of_tower]
       span_eq_top := by rw [hM, Submodule.span_span_of_tower, hsp] }
   have hrk : Module.finrank A M = Fintype.card n := by
-    simpa using Submodule.IsLattice.finrank_of_pi E M
+    simpa using ((Submodule.IsFullLattice.finrank_eq E M).trans (Module.finrank_fintype_fun_eq_card E))
+  have := Submodule.IsLattice.free E M
+  have := Submodule.IsLattice.finite E M
   let c : Basis n A M := (Module.finBasisOfFinrankEq A M hrk).reindex (Fintype.equivFin n).symm
   have hc : ∀ i, ∃ t : S, (t : O) • (c i : n → E) ∈ L := fun i => by
     obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span S A (L : Set (n → E)) _ (c i).2
@@ -37,9 +43,9 @@ theorem exists_basis_up_to_fintype {O A E : Type} [CommRing O] [CommRing A] [IsD
       Submodule.coe_smul_of_tower]
   let b : n → n → E := fun i => (c' i : n → E)
   have hli : LinearIndependent E b := by
-    have h : b = c'.extendOfIsLattice E := funext fun i => by simp [b]
+    have h : b = c'.extendOfIsFullLattice E := funext fun i => by simp [b]
     rw [h]
-    exact (c'.extendOfIsLattice E).linearIndependent
+    exact (c'.extendOfIsFullLattice E).linearIndependent
   have hspanA : Submodule.span A (Set.range b) = M := by
     have : Set.range b = M.subtype '' Set.range c' := by
       rw [← Set.range_comp]; rfl

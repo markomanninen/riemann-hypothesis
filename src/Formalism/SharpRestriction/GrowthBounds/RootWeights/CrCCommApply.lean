@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrRootMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementB
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.CrRootMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementB
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCoefficientTranslation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SetIntegralInvMulVec
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPairingConductorBoundStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCoefficientTranslation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SetIntegralInvMulVec
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicPairingConductorBoundStatement
+
+@[expose] public section
+
 open Matrix MeasureTheory GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZSeg GlobalTheory.BZMir GlobalTheory.SplitWeil GlobalTheory.CompanionTheory.MirFourier GlobalTheory.CompanionTheory.BZOnto.PerpSmall ValuativeRel Zc
 open scoped Topology
 open GlobalTheory.CompanionTheory.MirPair
@@ -44,8 +49,8 @@ theorem box_mono {m : ℕ} {t t' : kˣ} (h : valuation k (t : k) ≤ valuation k
   rw [mem_box_iff_forall_valuation_le] at hx ⊢
   exact fun j => le_trans (hx j) h
 
-omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem val_mul_inv_le {c r t : kˣ} (h : valuation k ((c * r⁻¹ : kˣ) : k) ≤ valuation k (t : k)) :
     valuation k ((c * t⁻¹ : kˣ) : k) ≤ valuation k (r : k) := by
   have e1 : c * t⁻¹ = (c * r⁻¹) * (r * t⁻¹) := by
@@ -59,8 +64,8 @@ theorem val_mul_inv_le {c r t : kˣ} (h : valuation k ((c * r⁻¹ : kˣ) : k) �
     _ = valuation k (r : k) := by
         rw [← map_mul, ← Units.val_mul, e2]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem wt_mir (ψ : AddChar k Circle) {n : ℕ} (p : Mir k n) (y : Fin (n + 1) → k) :
     wt ψ n (((p : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) *ᵥ y) = wt ψ n y := by
   unfold GlobalTheory.CompanionTheory.MirPair.wt

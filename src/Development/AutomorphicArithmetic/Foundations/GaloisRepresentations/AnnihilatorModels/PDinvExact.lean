@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+
+@[expose] public section
+
 open TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
 
@@ -10,7 +15,7 @@ private lemma UpperTheory.Gal.crystallineComparison.map_id_eq_rTensor {F B L U V
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul u b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private lemma UpperTheory.Gal.crystallineComparison.inter_map {F G B L U V : Type} [Field F] [Group G] [AddCommGroup B] [Module F B]
     (σ : G → End F B) [Field L] [Algebra F L] [AddCommGroup U] [Module L U] [Module F U] [IsScalarTower F L U]
@@ -21,7 +26,7 @@ private lemma UpperTheory.Gal.crystallineComparison.inter_map {F G B L U V : Typ
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul u b => simp [hf g u]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem UpperTheory.Gal.crystallineComparison.dinvExact_of :
     DinvExact := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.StableGradedCounts.ExistsNeZeroAevalEqZero
+
+@[expose] public section
+
 open Polynomial Matrix
 
 namespace GlobalTheory.ConjLocal
@@ -26,7 +31,8 @@ theorem exists_linearIndependent_iterates {K : Type} [Field K] (M : Matrix (Fin 
   have hq0 : aeval (toLin' M) q e = 0 := by
     rw [ha, toLin'_apply]
     have haq : aeval M q = ∑ j : Fin n, c j • M ^ (j : ℕ) := by
-      simp [q, map_sum, aeval_monomial, Algebra.smul_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [q, map_sum, aeval_monomial, Algebra.smul_def]
     rw [haq, Matrix.sum_mulVec]
     simpa [Matrix.smul_mulVec] using hc
   have hdvd := he q hq0
@@ -39,7 +45,9 @@ theorem exists_linearIndependent_iterates {K : Type} [Field K] (M : Matrix (Fin 
   have hq : q = 0 := eq_zero_of_dvd_of_degree_lt hdvd hdeg
   intro j
   have := congrArg (fun p : K[X] => p.coeff j) hq
-  simpa [q, finset_sum_coeff, coeff_monomial, Fin.val_inj] using this
+  simp only [q, Polynomial.finsetSum_coeff, coeff_monomial_apply, Fin.val_inj,
+    coeff_zero] at this
+  simpa using this
 
 end GlobalTheory.ConjLocal
 
@@ -53,7 +61,8 @@ theorem pow_dim_mulVec [Nontrivial R] (Y : Matrix (Fin n) (Fin n) R) (v : Fin n 
   have hm := Y.charpoly_monic.as_sum
   rw [charpoly_natDegree_eq_dim, Fintype.card_fin] at hm
   rw [hm] at h0
-  simp only [map_add, map_pow, aeval_X, map_sum, map_mul, aeval_C] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_pow, aeval_X, map_sum, map_mul, aeval_C] at h0
   have := congrArg (fun M => (M *ᵥ v) i) h0
   simp only [add_mulVec, sum_mulVec, Pi.add_apply, Finset.sum_apply, zero_mulVec, Pi.zero_apply] at this
   rw [eq_neg_iff_add_eq_zero, ← this, ← Fin.sum_univ_eq_sum_range]

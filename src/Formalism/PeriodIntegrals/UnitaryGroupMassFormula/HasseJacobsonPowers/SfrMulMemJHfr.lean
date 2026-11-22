@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.HasseJidPow
-import Formalism.PeriodIntegrals.HassePresH
+module
+
+public import Formalism.PeriodIntegrals.HasseJidPow
+public import Formalism.PeriodIntegrals.HassePresH
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem main (hP : PI.HassePresH) (u : WeightFamilies.Wt D j) (a : ℕ) :
       refine Submodule.sum_mem _ fun q hq => ?_
       have hq' : q.1 + q.2 = β := mem_antidiagonal.1 hq
       have hd : Finsupp.degree β = Finsupp.degree q.1 + Finsupp.degree q.2 := by
-        rw [← hq', map_add]
+        rw [← hq', map_add (f := _)]
       by_cases h1 : q.1 = 0
       · have h0 : Finsupp.degree q.1 = 0 := by rw [h1, map_zero]
         rw [h1, H_zero]

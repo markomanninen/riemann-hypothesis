@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,8 +71,8 @@ theorem kur_algHom_ext {B : Type*} [Semiring B] [Algebra ℚ_[l] B] {f g : ↥(M
     (h : ∀ (c : ↥(MaximalUnramifiedExtension l)) (m : ℕ), 0 < m → ¬ l ∣ m → c ^ m = 1 → f c = g c) : f = g :=
   IntermediateField.adjoin_algHom_ext ℚ_[l] fun _ ⟨m, h0, hm, hx⟩ => h _ m h0 hm (Subtype.ext hx)
 
-variable (l) in
 
+variable (l) in
 def frobUr : ↥(MaximalUnramifiedExtension l) →ₐ[ℚ_[l]] ↥(MaximalUnramifiedExtension l) := (GlobalTheory.MemLoc.exists_frobenius_Kur l).choose
 
 theorem frobUr_root (c : ↥(MaximalUnramifiedExtension l)) (m : ℕ) (h0 : 0 < m) (hm : ¬ l ∣ m) (hc : c ^ m = 1) :
@@ -202,7 +206,7 @@ theorem exists_monV_pow_eq_zero (x : V ⊗[ℚ_[l]] Bst P) : ∃ n : ℕ, (monV 
     obtain ⟨m, hm⟩ := hx
     obtain ⟨n, hn⟩ := hy
     refine ⟨m + n, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     nth_rewrite 1 [add_comm m n]
     rw [pow_add, pow_add, End.mul_apply, End.mul_apply, hm, hn, map_zero, map_zero, add_zero]
 
@@ -221,7 +225,7 @@ theorem stRep_crisIncl (g : ↥(GK K)) (x : V ⊗[ℚ_[l]] P.R.B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, P.PD_actB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem phiV_stRep (g : ↥(GK K)) : phiV P LL V * stRep P ρ g = stRep P ρ g * phiV P LL V :=
   end_ext P fun v b => by simp only [End.mul_apply, phiV_tmul, stRep_tmul, phiSt_actSt]
@@ -256,7 +260,7 @@ def Dpst : Submodule LL (V ⊗[ℚ_[l]] Bst P) where
     rintro x y ⟨K₁, h₁, hx⟩ ⟨K₂, h₂, hy⟩
     rw [mem_Dst_resTo] at hx hy
     refine ⟨supExt K₁ K₂, h₁.trans le_sup_left, (mem_Dst_resTo P ρ _).mpr fun g hg => ?_⟩
-    rw [map_add, hx g (GK_le (K' := supExt K₁ K₂) le_sup_left hg),
+    rw [map_add (f := _), hx g (GK_le (K' := supExt K₁ K₂) le_sup_left hg),
       hy g (GK_le (K' := supExt K₁ K₂) le_sup_right hg)]
   smul_mem' := by
     rintro c x ⟨K₁, h₁, hx⟩
@@ -325,8 +329,6 @@ def mulD : ↥(MaximalUnramifiedExtension l) →+* End LL ↥(Dpst P ρ) where
 
 @[simp] theorem coe_phiD (x : ↥(Dpst P ρ)) : (phiD P ρ x : V ⊗[ℚ_[l]] Bst P) = phiV P LL V x := rfl
 
-@[simp] theorem coe_monD (x : ↥(Dpst P ρ)) : (monD P ρ x : V ⊗[ℚ_[l]] Bst P) = monV P LL V x := rfl
-
 @[simp] theorem coe_actD (g : ↥(GK K)) (x : ↥(Dpst P ρ)) :
     (actD P ρ g x : V ⊗[ℚ_[l]] Bst P) = stRep P ρ g x := rfl
 
@@ -363,12 +365,10 @@ instance : Module ↥(MaximalUnramifiedExtension l) (DpstUr P ρ) := Module.comp
 
 def toUr : ↥(Dpst P ρ) ≃+ DpstUr P ρ := AddEquiv.refl _
 
-theorem smul_toUr (c : ↥(MaximalUnramifiedExtension l)) (x : ↥(Dpst P ρ)) : c • toUr P ρ x = toUr P ρ (mulD P ρ c x) := rfl
-
 def urEnd (T : End LL ↥(Dpst P ρ)) (hT : ∀ c, T * mulD P ρ c = mulD P ρ c * T) :
     End ↥(MaximalUnramifiedExtension l) (DpstUr P ρ) where
   toFun x := toUr P ρ (T ((toUr P ρ).symm x))
-  map_add' x y := by simp only [map_add]
+  map_add' x y := by simp only [map_add (f := _)]
   map_smul' c x := LinearMap.congr_fun (hT c) x
 
 def IsPst : Prop := Module.rank ↥(MaximalUnramifiedExtension l) (DpstUr P ρ) = Module.rank ℚ_[l] V
@@ -389,8 +389,8 @@ variable {P ρ}
 theorem IsPst.finiteDimensional (h : IsPst P ρ) : FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ) :=
   ((isPst_iff P ρ).mp h).1
 
-omit [FiniteDimensional ℚ_[l] V] in
 
+omit [FiniteDimensional ℚ_[l] V] in
 theorem phiD_bijective [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)] : Function.Bijective (phiD P ρ) := by
   refine ⟨phiD_injective P ρ, ?_⟩
   let j : DpstUr P ρ →+ DpstUr P ρ := (phiD P ρ).toAddMonoidHom
@@ -417,8 +417,8 @@ theorem phiD_bijective [FiniteDimensional ↥(MaximalUnramifiedExtension l) (Dps
       exact ⟨c • a, hj c a⟩
   exact key _ hy
 
-omit [FiniteDimensional ℚ_[l] V] in
 
+omit [FiniteDimensional ℚ_[l] V] in
 theorem isNilpotent_monD [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)] : IsNilpotent (monD P ρ) := by
   have hp : ∀ (n : ℕ) (x : ↥(Dpst P ρ)), (urEnd P ρ (monD P ρ) (monD_mulD P ρ) ^ n) (toUr P ρ x) =
       toUr P ρ ((monD P ρ ^ n) x) := by
@@ -440,8 +440,8 @@ theorem isNilpotent_monD [FiniteDimensional ↥(MaximalUnramifiedExtension l) (D
     exact ⟨n, by rw [hp, show (monD P ρ ^ n) x = 0 from Subtype.ext ((hc n x).trans hn), map_zero]⟩
   exact ⟨n, LinearMap.ext fun x => (toUr P ρ).injective (by rw [← hp, hn]; rfl)⟩
 
-omit [FiniteDimensional ℚ_[l] V] in
 
+omit [FiniteDimensional ℚ_[l] V] in
 theorem exists_actD_eq_one [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)] : ∃ K' : FinExt l,
     ∀ g : ↥(GK K), (g : GQ l) ∈ GK K' → (∀ c, actD P ρ g * mulD P ρ c = mulD P ρ c * actD P ρ g) →
       actD P ρ g = 1 := by

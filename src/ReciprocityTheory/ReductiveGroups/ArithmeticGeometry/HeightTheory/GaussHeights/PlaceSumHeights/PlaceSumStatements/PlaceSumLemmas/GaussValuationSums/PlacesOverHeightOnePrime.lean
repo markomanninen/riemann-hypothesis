@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtLeafSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.PlaceSumHeights.PlaceSumStatements.PlaceSumLemmas.GaussValuationSums.ValPlWtAddEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.PlaceSumHeights.PlaceSumStatements.PlaceSumLemmas.GaussValuationSums.GaussMaximalIdeal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtLeafSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.PlaceSumHeights.PlaceSumStatements.PlaceSumLemmas.GaussValuationSums.ValPlWtAddEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.PlaceSumHeights.PlaceSumStatements.PlaceSumLemmas.GaussValuationSums.GaussMaximalIdeal
+
+@[expose] public section
 
 namespace PI.HtPlacesSumWork
 
@@ -21,9 +25,52 @@ theorem places_over_height_one_prime (𝒜 : (c : ι) → WT → Submodule (Ω c
   have : IsScalarTower (Op d.D d.N la) (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
     IsScalarTower.of_algebraMap_eq (fun _ => rfl)
   have : IsDiscreteValuationRing (Op d.D d.N la) := gauss_dvr d.D d.N la
-  have : IsFractionRing (Op d.D d.N la) (KTf K d.D d.N) := gauss_frac d.D d.N la
-  obtain ⟨hfd, hrk⟩ := d.omS_finite hd h c
-  have : FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := hfd
+  have : IsFractionRing (Op d.D d.N la) (KTf K d.D d.N) := by
+    let f := algebraMap (KTp K d.D d.N) (KTf K d.D d.N)
+    let g := OTtoKT K d.D d.N
+    have hf : Function.Injective f := IsFractionRing.injective _ _
+    have hg : Function.Injective g :=
+      MvPolynomial.map_injective _ (IsFractionRing.injective (𝓞 K) K)
+    have hinj : Function.Injective (OpToKT d.D d.N la) := by
+      apply (IsLocalization.injective_iff_map_algebraMap_eq (laT d.D d.N la).primeCompl _).2
+      intro x y
+      refine ⟨congrArg (OpToKT d.D d.N la), fun hxy => ?_⟩
+      rw [gauss_lift, gauss_lift] at hxy
+      exact congrArg _ (hg (hf hxy))
+    have : FaithfulSMul (Op d.D d.N la) (KTf K d.D d.N) :=
+      (faithfulSMul_iff_algebraMap_injective _ _).2 hinj
+    apply IsFractionRing.of_field
+    intro z
+    obtain ⟨P, Q, hQ, rfl⟩ := IsFractionRing.div_surjective (A := KTp K d.D d.N) z
+    obtain ⟨a, n, hn, ha⟩ := gauss_clear d.D d.N P
+    obtain ⟨b, m, hm, hb⟩ := gauss_clear d.D d.N Q
+    have hC (k : 𝓞 K) (hk : k ≠ 0) : f (g (MvPolynomial.C k)) ≠ 0 :=
+      (map_ne_zero_iff (f.comp g) (hf.comp hg)).2 (MvPolynomial.C_ne_zero.mpr hk)
+    have hQ' : f Q ≠ 0 := (map_ne_zero_iff f hf).2 (nonZeroDivisors.ne_zero hQ)
+    refine ⟨algebraMap (OT K d.D d.N) (Op d.D d.N la) (a * MvPolynomial.C m),
+      algebraMap (OT K d.D d.N) (Op d.D d.N la) (b * MvPolynomial.C n), ?_⟩
+    change f P / f Q = OpToKT d.D d.N la (algebraMap _ _ (a * MvPolynomial.C m)) /
+      OpToKT d.D d.N la (algebraMap _ _ (b * MvPolynomial.C n))
+    rw [gauss_lift, gauss_lift]
+    change f P / f Q = f (g (a * MvPolynomial.C m)) / f (g (b * MvPolynomial.C n))
+    change g a = g (MvPolynomial.C n) * P at ha
+    change g b = g (MvPolynomial.C m) * Q at hb
+    simp only [map_mul, ha, hb]
+    apply (div_eq_div_iff hQ' (mul_ne_zero (mul_ne_zero (hC m hm) hQ') (hC n hn))).2
+    ring
+  have : FiniteDimensional (d.KT c) (OmS (Ω c) d.D d.N) := d.KT_finiteDimensional hd c
+  let e : KTf K d.D d.N ≃+* d.KT c :=
+    (d.KTtoS h c).rangeRestrictFieldEquiv.trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+  have hc : (algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp e.symm.toRingHom =
+      (RingEquiv.refl (OmS (Ω c) d.D d.N)).toRingHom.comp (algebraMap (d.KT c) (OmS (Ω c) d.D d.N)) := by
+    refine RingHom.ext fun y => ?_
+    have he (z : KTf K d.D d.N) : (e z : OmS (Ω c) d.D d.N) = d.KTtoS h c z := rfl
+    change d.KTtoS h c (e.symm y) = (y : OmS (Ω c) d.D d.N)
+    rw [← he, RingEquiv.apply_symm_apply]
+  have : FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+    Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl _) hc
+  have hrk : Module.finrank (KTf K d.D d.N) (OmS (Ω c) d.D d.N) = d.delc c :=
+    (Algebra.finrank_eq_of_equiv_equiv e.symm (RingEquiv.refl _) hc).symm
   have : Algebra.IsSeparable (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := inferInstance
   have hcomp : ∀ x : OT K d.D d.N,
       algebraMap (Op d.D d.N la) (OmS (Ω c) d.D d.N) (algebraMap (OT K d.D d.N) (Op d.D d.N la) x) =

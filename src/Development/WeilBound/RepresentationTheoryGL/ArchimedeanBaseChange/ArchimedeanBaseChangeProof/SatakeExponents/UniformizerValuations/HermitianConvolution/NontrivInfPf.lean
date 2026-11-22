@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.NontrivInf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.NontrivInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ lemma surj_of_finrank_one (F : Type) [Field F] [NumberField F] (h : Module.finra
   obtain ⟨q, hq⟩ := Algebra.mem_bot.1 hx
   have hint : IsIntegral ℤ q := by
     have : IsIntegral ℤ (x : F) := x.isIntegral_coe
-    rwa [← hq, isIntegral_algebraMap_iff (algebraMap ℚ F).injective] at this
+    rwa [← hq, isIntegral_algebraMap_iff ] at this
   obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
   refine ⟨n, ?_⟩
   apply RingOfIntegers.ext

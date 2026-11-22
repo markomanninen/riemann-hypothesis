@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomProdPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomProdPow
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.EndLoc GlobalTheory.ActFin
@@ -15,7 +20,18 @@ theorem exists_baseChange_hom : ∀ (S S' : Scheme.{0}) (f : S' ⟶ S) (G A : Ov
   have hq2 : hA.1.lift (φG ≫ p.left) G'.hom w ≫ A'.hom = G'.hom := hA.1.lift_snd _ _ _
   let p' : G' ⟶ A' := Over.homMk (hA.1.lift (φG ≫ p.left) G'.hom w) hq2
   have hp' : p'.left ≫ φA = φG ≫ p.left := hq1
-  refine ⟨p', GlobalTheory.Serre.isMonHom_of_mul_comp p' fun T x y => ?_, hp'⟩
+  have isMonHom_of_mul_comp (e : G' ⟶ A')
+      (mul : ∀ (T : Over S') (x y : T ⟶ G'), (x * y) ≫ e = (x ≫ e) * (y ≫ e)) :
+      IsMonHom e := by
+    have hone : (1 : 𝟙_ (Over S') ⟶ G') ≫ e = 1 := by
+      have h1 := mul (𝟙_ (Over S')) 1 1
+      rw [_root_.mul_one] at h1
+      exact _root_.left_eq_mul.mp h1
+    refine ⟨?_, ?_⟩
+    · simpa [Hom.one_def] using hone
+    · have h2 := mul (G' ⊗ G') (fst G' G') (snd G' G')
+      simpa [Hom.mul_def] using h2
+  refine ⟨p', isMonHom_of_mul_comp p' fun T x y => ?_, hp'⟩
   apply Over.OverMorphism.ext
   apply hA.1.hom_ext
   · have e1 := hG.2 T x y (pushPt hG.1.w x) (pushPt hG.1.w y) rfl rfl

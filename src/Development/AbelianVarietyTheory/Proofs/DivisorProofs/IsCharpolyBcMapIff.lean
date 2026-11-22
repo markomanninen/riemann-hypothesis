@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyBaseChangeIffAndDegreeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpMapSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyBaseChangeIffAndDegreeEq
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -15,24 +20,26 @@ namespace GlobalTheory.AV.AbVar
 variable {K : Type} [Field K] (L : Type) [Field L] [Algebra K L]
 
 def bcAdd (A : AbVar K) : End A →+ End (baseChange L A) where
-  toFun := bcMap L
+  toFun f := End.of (bcMap L f.asHom)
   map_zero' := by
-    have h := ((bcMap_functorial K L A A A).1 0 0)
-    simpa using h
-  map_add' := (bcMap_functorial K L A A A).1
+    apply End.ext
+    change bcMap L (0 : A ⟶ A) = 0
+    have h := bcMap_add L (0 : A ⟶ A) 0
+    rw [zero_add] at h
+    exact add_left_cancel (h.symm.trans (add_zero _).symm)
+  map_add' f g := End.ext (bcMap_add L f.asHom g.asHom)
 
 theorem bcMap_intCast_sub (A : AbVar K) (n : ℤ) (f : End A) :
-    bcMap L ((n : End A) - f) = @HSub.hSub (End (baseChange L A)) (End (baseChange L A)) (End (baseChange L A)) _
-      (n : End (baseChange L A)) (bcMap L f) := by
-  have h1 : bcMap L (𝟙 A) = 𝟙 _ := (bcMap_functorial K L A A A).2.2.1
-  have e : ∀ g : End A, bcMap L g = bcAdd L A g := fun _ => rfl
-  rw [e, map_sub, ← zsmul_one, map_zsmul, ← e, ← e]
-  congr 1
-  rw [← zsmul_one]
-  congr 1
+    End.of (bcMap L ((n : End A) - f).asHom) =
+      (n : End (baseChange L A)) - End.of (bcMap L f.asHom) := by
+  have h1 : bcAdd L A 1 = 1 := End.ext (bcMap_id L A)
+  have hn : bcAdd L A (n : End A) = (n : End (baseChange L A)) := by
+    simp only [← zsmul_one, map_zsmul, h1]
+  change bcAdd L A ((n : End A) - f) = (n : End (baseChange L A)) - bcAdd L A f
+  rw [map_sub, hn]
 
 theorem isCharpoly_bcMap_iff (A : AbVar K) (f : End A) (P : Polynomial ℤ) :
-    IsCharpoly (A := baseChange L A) (bcMap L f) P ↔ IsCharpoly f P := by
+    IsCharpoly (End.of (bcMap L f.asHom)) P ↔ IsCharpoly f P := by
   unfold IsCharpoly
   have hd : (baseChange L A).dim = A.dim := rfl
   refine and_congr Iff.rfl (and_congr (by rw [hd]) (forall_congr' fun n => ?_))
@@ -43,18 +50,18 @@ theorem isCharpoly_unique {A : AbVar K} (f : End A) {P Q : Polynomial ℤ}
   Polynomial.funext fun n => by rw [hP.2.2 n, hQ.2.2 n]
 
 theorem charpoly_bcMap : ∀ (K : Type) [Field K] (L : Type) [Field L] [Algebra K L] (A : AbVar K) (f : End A),
-    charpoly (A := baseChange L A) (bcMap L (A := A) (B := A) f) = charpoly f := by
+    charpoly (End.of (bcMap L f.asHom)) = charpoly f := by
   intro K _ L _ _ A f
   classical
   unfold charpoly
   by_cases h : ∃ P, IsCharpoly f P
-  · have h' : ∃ P, IsCharpoly (A := baseChange L A) (bcMap L f) P :=
+  · have h' : ∃ P, IsCharpoly (End.of (bcMap L f.asHom)) P :=
       let ⟨P, hP⟩ := h; ⟨P, (isCharpoly_bcMap_iff L A f P).2 hP⟩
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     exact isCharpoly_unique f ((isCharpoly_bcMap_iff L A f _).1 h'.choose_spec) h.choose_spec
-  · have h' : ¬ ∃ P, IsCharpoly (A := baseChange L A) (bcMap L f) P :=
+  · have h' : ¬ ∃ P, IsCharpoly (End.of (bcMap L f.asHom)) P :=
       fun ⟨P, hP⟩ => h ⟨P, (isCharpoly_bcMap_iff L A f P).1 hP⟩
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
 end GlobalTheory.AV.AbVar
 

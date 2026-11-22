@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -48,22 +53,6 @@ theorem RestConstants.intersectionNumber_baseChange : RestConstants.Statement :=
     field_simp
   rw [this]
   norm_num
-
-theorem SmallRankBound.intersectionNumber_baseChange : SmallRankBound.Statement := by
-  intro k m j' N hm hk hj hN
-  have h3 : 8 ≤ m ^ 3 := by
-    calc 8 = 2 ^ 3 := by norm_num
-      _ ≤ m ^ 3 := Nat.pow_le_pow_left hm 3
-  have h4 : 8 * m ≤ m ^ 4 := by
-    calc 8 * m ≤ m ^ 3 * m := Nat.mul_le_mul_right m h3
-      _ = m ^ 4 := by ring
-  have hk' : 2 * m + 2 ≤ k := by omega
-  exact ⟨hk', by omega⟩
-
-theorem SmallRankWeakHypothesis.intersectionNumber_baseChange : SmallRankWeakHypothesis.Statement := by
-  intro h
-  have := h 5 2 2 6 le_rfl (by norm_num) le_rfl (by norm_num)
-  omega
 
 theorem GeometricTail.intersectionNumber_baseChange : GeometricTail.Statement := by
   intro p k hp hk

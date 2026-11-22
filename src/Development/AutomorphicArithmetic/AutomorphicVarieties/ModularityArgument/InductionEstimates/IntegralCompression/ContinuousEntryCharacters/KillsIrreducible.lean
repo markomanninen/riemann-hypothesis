@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -21,7 +25,7 @@ private lemma kills_irreducible {G H : Type*} [Group G] [TopologicalSpace G] [No
     (P : H →L[ℂ] H) (v : H) (hv : v ∈ τ) (hv0 : v ≠ 0) (hall : ∀ g, P (π g v) = 0) (u : H) (hu : u ∈ τ) : P u = 0 := by
   let ρ : Submodule ℂ H :=
     { carrier := {x | x ∈ τ ∧ ∀ g, P (π g x) = 0}
-      add_mem' := fun {a b} ha hb => ⟨τ.add_mem ha.1 hb.1, fun g => by rw [map_add, map_add, ha.2 g, hb.2 g, add_zero]⟩
+      add_mem' := fun {a b} ha hb => ⟨τ.add_mem ha.1 hb.1, fun g => by rw [map_add (f := _), map_add (f := _), ha.2 g, hb.2 g, add_zero]⟩
       zero_mem' := ⟨τ.zero_mem, fun g => by rw [map_zero, map_zero]⟩
       smul_mem' := fun c x hx => ⟨τ.smul_mem c hx.1, fun g => by rw [map_smul, map_smul, hx.2 g, smul_zero]⟩ }
   have hmem : ∀ x, x ∈ ρ ↔ x ∈ τ ∧ ∀ g, P (π g x) = 0 := fun x => Iff.rfl
@@ -84,7 +88,7 @@ private lemma occ_abs {G H A ι α : Type*} [Group G] [TopologicalSpace G] [Norm
       rw [map_smul, hc, hsw j _ (fun b => hcomm i j hne c b), hw]
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.occ :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (LL μ)), CuspIrr μ τ → ∀ (Z : Submodule ℂ (LL μ)) (s : Finset ι) (n : ι → ℕ) (q : ι → ℤ), Z ≤ τ → Z ≠ ⊥ → (∀ i a, ∀ v ∈ Z, rightRegularRep (Gam K 2) μ (C.gl i a) v ∈ Z) →
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (LL μ)), CuspIrr μ τ → ∀ (Z : Submodule ℂ (LL μ)) (s : Finset ι) (n : ι → ℕ) (q : ι → ℤ), Z ≤ τ → Z ≠ ⊥ → (∀ i a, ∀ v ∈ Z, rightRegularRep (Gam K 2) μ (C.gl i a) v ∈ Z) →
       (∀ i n q, ∀ v ∈ Z, C.Pi μ i n q v ∈ Z) → (∀ i, ∃ v ∈ τ, C.Pi μ i (n i) (q i) v ≠ 0) → ∃ v ∈ Z, v ≠ 0 ∧ ∀ i ∈ s, C.Pi μ i (n i) (q i) v = v := by
   intro K _ _ _ ι _ C μ _ τ hτ Z s n q hZτ hZ hgl hPi hocc
   obtain ⟨-, -, hun, -, -, hcomm, -, hdec, -⟩ := coLaws K ι C

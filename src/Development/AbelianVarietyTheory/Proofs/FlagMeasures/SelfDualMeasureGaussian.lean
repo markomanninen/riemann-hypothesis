@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianRapidDecay
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticValTauCompat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureRealDiagonalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ComplexCoordinatesMeasurePreservingStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianPushforwardDensityStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianRapidDecay
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticValTauCompat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureRealDiagonalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ComplexCoordinatesMeasurePreservingStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianPushforwardDensityStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
@@ -87,7 +91,7 @@ theorem selfDual_complex {ι : Type} [Fintype ι] {n : ℕ} (d : ι → Fin n �
     _ = (ENNReal.ofReal (∏ k, √|d' k|) • (volume : Measure (ι × Fin n × Bool → ℝ))).map e.symm := by
         rw [h2']
     _ = ENNReal.ofReal (∏ k, √|d' k|) • (volume : Measure (ι × Fin n × Bool → ℝ)).map e.symm :=
-        Measure.map_smul _ _ _
+        Measure.map_smul _ e.symm.measurable.aemeasurable
     _ = ENNReal.ofReal (∏ v, ∏ i, |d v i|) • (volume : Measure (ι → Fin n → ℂ)) := by
         rw [(hmp.symm e).map_eq, hconst]
 
@@ -138,7 +142,8 @@ private theorem exists_coord_homeomorph_tensor (I : AutInst) (θ : InfinitePlace
   have hsum : ∀ z v, θ v z = ∑ k, ((a (B.equivFun z k) v : ℝ) : ℂ) * I.φ v (b k) := by
     intro z v
     conv_lhs => rw [← B.sum_equivFun z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hBk, TensorProduct.smul_tmul', smul_eq_mul, mul_one, ← ha, ← (hθ v).1 (b k), ← map_mul,
       Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
@@ -274,7 +279,7 @@ theorem exists_coord_space : ∀ (I : AutInst) (θ : InfinitePlace I.F → (Ainf
     rw [← Matrix.mulVec_add]
     congr 1
     funext i
-    simp [map_add]
+    simp [map_add (f := _)]
   · exact continuous_pi fun v => Continuous.matrix_mulVec continuous_const (continuous_pi fun i =>
       (continuous_apply v).comp (Ψ.continuous.comp ((continuous_apply i).comp (continuous_apply 0))))
   · exact continuous_pi fun _ => continuous_pi fun i => Ψ.symm.continuous.comp (continuous_pi fun v =>
@@ -345,7 +350,7 @@ theorem trace_form : ∀ (I : AutInst) (v : InfinitePlace I.F) (θ : Ainf I.F �
       have hs : sigR (Ainf I.F) I.cm.sig (r ⊗ₜ[I.F] e) = r ⊗ₜ[I.F] I.cm.sig e := by
         simp [sigR, Algebra.TensorProduct.map_tmul]
       rw [hs, hmul r (I.cm.sig e), hmul r e, map_mul, tmul_one_conj_real I v θ hθ r, hconj]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
 
   have htr1 : ∀ e : I.E, Algebra.trace (Ainf I.F) (Ainf I.F ⊗[I.F] I.E) ((1 : Ainf I.F) ⊗ₜ[I.F] e) =
       algebraMap I.F (Ainf I.F) (Algebra.trace I.F I.E e) := by
@@ -357,7 +362,7 @@ theorem trace_form : ∀ (I : AutInst) (v : InfinitePlace I.F) (θ : Ainf I.F �
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.baseChange_tmul]
-      | add a b ha hb => rw [map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     rw [Algebra.trace_apply, hl, LinearMap.trace_baseChange, Algebra.trace_apply]
   have hA : ∀ z : Ainf I.F ⊗[I.F] I.E,
       θ (Algebra.trace (Ainf I.F) (Ainf I.F ⊗[I.F] I.E) z ⊗ₜ[I.F] (1 : I.E)) =
@@ -381,14 +386,15 @@ theorem trace_form : ∀ (I : AutInst) (v : InfinitePlace I.F) (θ : Ainf I.F �
         rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
       rw [htr, hsplit, map_mul, hal, hmul r e, map_mul, tmul_one_conj_real I v θ hθ r]
       ring
-    | add a b ha hb => rw [map_add, TensorProduct.add_tmul, map_add, ha, hb, map_add, map_add]; ring
+    | add a b ha hb => rw [map_add (f := _), TensorProduct.add_tmul, map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]; ring
   rw [hA]
 
   have hC : θ (hR (Ainf I.F) I.cm.sig I.J x y) =
       ∑ i, ∑ j, (starRingEnd ℂ) (θ (x i)) * (I.J.map (I.φ v)) i j * θ (y j) := by
     rw [hR]
     unfold Formalism.UG.hform
-    simp only [map_sum, map_mul, hB, JR, Matrix.map_apply, inclR, AlgHom.toRingHom_eq_coe,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hB, JR, Matrix.map_apply, inclR, AlgHom.toRingHom_eq_coe,
       RingHom.coe_coe, Algebra.TensorProduct.includeRight_apply, hθ.1]
   have hPu : IsUnit (I.P v).det := (Matrix.isUnit_iff_isUnit_det _).1 (I.P_unit v)
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RatioInvLeFrameFactor
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RatioInvLeFrameFactor
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 
@@ -80,9 +84,7 @@ theorem sum_rootPat_diff (γ : Point ℂ (r + 1)) :
   rw [Finset.sum_Ico_eq_sum_range]
   unfold frTri
   refine Finset.sum_congr rfl fun j hj => ?_
-  have := Finset.mem_range.mp hj
-  have := frStart_le γ.1 b
-  omega
+  exact (Nat.sub_sub b (frStart γ.1 b) j).symm
 
 theorem Wbig_eq : Wbig k r κ τ = τ ^ (∑ a ∈ range (r + 1), 4 * (2 * (r - a) + k - 1)) *
     κ ^ (∑ a ∈ range (r + 1), (r - a) * (4 * (2 * (r - a) + k - 1))) := by

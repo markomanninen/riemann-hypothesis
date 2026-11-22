@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LintegralInsertFiberLe
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DeZeroBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.LintegralInsertFiberLe
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.DeZeroBounds
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SchurCoreA
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SchurCoreA
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,37 +17,6 @@ namespace PI.SchurPlaces
 open Formalism.L2.SG.KappaOffDiagonal
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem cplxKer : CplxKer := by
-  intro E _ φ m N A c hc
-  letI : Algebra E ℂ := φ.toAlgebra
-  let b := Module.Basis.ofVectorSpace E ℂ
-  let J := Finset.univ.biUnion (fun i : Fin N => (b.repr (c i)).support)
-  let s : Module.Basis.ofVectorSpaceIndex E ℂ → Fin N → E := fun j i => b.repr (c i) j
-  have hs : ∀ j, A *ᵥ s j = 0 := by
-    intro j
-    funext k
-    have h0 : (A.map φ *ᵥ c) k = 0 := by rw [hc]; rfl
-    have h1 : ∑ i, A k i • c i = 0 := by
-      rw [← h0]
-      simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, Algebra.smul_def,
-        RingHom.algebraMap_toAlgebra]
-    have h2 := congrArg (fun z => b.repr z j) h1
-    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
-      smul_eq_mul, map_zero, Finsupp.coe_zero, Pi.zero_apply] at h2
-    simpa [Matrix.mulVec, dotProduct, s] using h2
-  have hcsum : c = ∑ j ∈ J, b j • (fun i => φ (s j i)) := by
-    funext i
-    rw [Finset.sum_apply]
-    conv_lhs => rw [← b.linearCombination_repr (c i)]
-    rw [Finsupp.linearCombination_apply,
-      Finsupp.sum_of_support_subset _ (Finset.subset_biUnion_of_mem (fun i => (b.repr (c i)).support) (Finset.mem_univ i))]
-    · refine Finset.sum_congr rfl fun j _ => ?_
-      simp only [Pi.smul_apply, smul_eq_mul, Algebra.smul_def, RingHom.algebraMap_toAlgebra, s]
-      ring
-    · intro j _; simp
-  rw [hcsum]
-  exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨s j, hs j, rfl⟩)
 
 theorem hJ_add_r {n : ℕ} (ε : Fin n → Bool) (a y z : Fin n → ℂ) : hJ ε a (y + z) = hJ ε a y + hJ ε a z := by
   unfold hJ
@@ -75,10 +48,7 @@ theorem psiV_add (p q : (VS D).V) : psiV X v (p + q) = psiV X v p + psiV X v q :
   rw [← Matrix.mulVec_add]
   congr 1
   funext i
-  simp only [HidaSetting.crd, Pi.add_apply]
-  rw [← map_add]
-  congr 1
-  simp [crdOf, map_add]
+  simp [HidaSetting.crd, crdOf]
 
 theorem psiV_smul (c : D.host.E) (p : (VS D).V) : psiV X v (c • p) = embS D (X.pl v) c • psiV X v p := by
   unfold psiV rv HidaSetting.crd crdOf
@@ -124,10 +94,12 @@ theorem cplx_comb {ι : Type} [Fintype ι] (g : ι → (VS D).V) (U : Submodule 
       rw [← hc p hp]; refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, RingHom.algebraMap_toAlgebra, mul_comm]
     have h2 := congrArg (fun z => b.repr z j) h1
-    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul, map_zero, Finsupp.coe_zero, Pi.zero_apply] at h2
     show (VS D).hT p (w j) = 0
-    simp only [w, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [w, map_sum, map_smul, smul_eq_mul]
     rw [← h2]; refine Finset.sum_congr rfl fun i _ => ?_; simp only [s]; ring
   have hc' : ∀ i, c i = ∑ j ∈ J, embS D (X.pl v) (s j i) * b j := by
     intro i

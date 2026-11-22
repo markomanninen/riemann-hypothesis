@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ variable (H : LocGood σ J A) (hW : LocInt A) (hHc : LocHypC S A) (hA : A.ActB)
       ∀ w : HeightOneSpectrum (𝓞 F), ((p : ℕ) : 𝓞 F) ∉ w.asIdeal → bc (prV (E := E) w)
         ((A.yG i)⁻¹ * bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) (A.gamI i γ) * A.yG i) ∈ S.Uloc w)
 
-include H hA hΓ in
 
+include H hA hΓ in
 theorem pt_smul (i : G.comp) (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v)) (y : GL (Fin n) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
     (γ₀ : GL (Fin n) E) (κ₀ : S.U)
     (hx : A.IsPt i g (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ₀ * y * κ₀.1)) (γ : (G.lev i).Γ) :
@@ -45,9 +49,9 @@ theorem pt_smul (i : G.comp) (g : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v)) (y : G
   rw [e]
   exact hx'
 
+
 set_option maxHeartbeats 2000000 in
 include H hW hHc hA hΓ in
-
 theorem orbit_of_pts (hci : CompInj S A) (hon : ∀ i, GamOnto S A i) (i i' : G.comp) (L L' : G.P.Tup)
     (g g' : ∀ v, GL (Fin (G.P.m + 1)) (G.P.Qq v))
     (hL : ∀ v, L v = colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)))

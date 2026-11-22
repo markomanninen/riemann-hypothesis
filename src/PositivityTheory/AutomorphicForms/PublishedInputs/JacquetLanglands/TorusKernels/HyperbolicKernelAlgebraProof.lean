@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.IsHolVOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ theorem lie_rotV {k : InfinitePlace F → ℕ} {φ : TR.Sm F 2}
       TR.toL (Matrix.single 1 0 (Pi.single v 1))) := by
     ext i j w
     fin_cases i <;> fin_cases j <;> simp [Finset.sum_apply, Matrix.single, Pi.single_apply]
-  rw [e, map_sum, LinearMap.sum_apply, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, LinearMap.sum_apply, Finset.sum_smul]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [map_smul, map_sub, LinearMap.smul_apply, LinearMap.sub_apply, mul_comm, mul_smul, ← hw v]
   simp only [TR.Eop]
@@ -70,7 +75,6 @@ theorem rot_eq {k : InfinitePlace F → ℕ} {φ : TR.Sm F 2}
     have h2 : HasDerivAt (fun u : ℝ => f (t + u)) (s * f t) 0 := by
       convert h1 using 2
       · simp only [hf, add_smul, rotA_add, map_mul, mul_assoc]
-      · rfl
     have h3 := HasDerivAt.comp_add_const t (-t) (f := fun u : ℝ => f (t + u)) (by simpa using h2)
     simpa using h3
   have he : ∀ t : ℝ, HasDerivAt (fun t : ℝ => Complex.exp (-s * t)) (Complex.exp (-s * t) * -s) t := fun t => by
@@ -207,5 +211,5 @@ theorem UpperTheory.Esk.hyperbolic_kernel_algebra_proof : UpperTheory.Esk.B1b �
   have h : ∃ g' : GL (Fin 2) (TR.Rinf F), (fun v => UpperTheory.Esk.gv v g' • UpperTheory.Esk.iP) = fun v => UpperTheory.Esk.gv v g • UpperTheory.Esk.iP :=
     ⟨g, rfl⟩
   dsimp only
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact UpperTheory.Esk.HyperbolicKernelAlgebraLemmas.key hB hω hφ h.choose g x fun v => congrFun h.choose_spec v

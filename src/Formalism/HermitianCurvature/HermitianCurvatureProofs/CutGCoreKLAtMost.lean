@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplication
-import Lemmata.GeneralBFactSecondAltForm.Imports
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTKLineCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplication
+public import Lemmata.GeneralBFactSecondAltForm.Imports
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -49,7 +53,7 @@ theorem eig_zero {W ι : Type*} [AddCommGroup W] [Module ℂ W] [Fintype ι] (S 
         exact ⟨τ', by simp [hl], by simp⟩
       rw [this, zero_smul]
     | zero => exact map_zero _
-    | add a b _ _ ha hb => rw [map_add, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb, add_zero]
   have h1 := projL_eig C x Y l μ hu
   rw [hzero] at h1
   have hp : (l.map fun τ => μ (Y τ) - x τ (Y τ)).prod ≠ 0 := by
@@ -82,7 +86,7 @@ theorem eig_mem {W ι : Type*} [AddCommGroup W] [Module ℂ W] [Fintype ι] [Dec
         rw [this, zero_smul]
         exact Submodule.zero_mem _
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   have h1 := projL_eig C x Yf l (x σ) hu
   have hp : (l.map fun τ => x σ (Yf τ) - x τ (Yf τ)).prod ≠ 0 := by
     apply List.prod_ne_zero
@@ -310,7 +314,7 @@ theorem lie_weight_at_most_holds : KLAtMost := by
     induction hv using Submodule.iSup_induction' with
     | mem σ w hw => simpa using hcon σ w hw
     | zero => simp
-    | add a b _ _ ha hb => simp only [map_add, ContinuousLinearMap.zero_apply] at ha hb ⊢; rw [ha, hb, add_zero]
+    | add a b _ _ ha hb => simp only [map_add (f := _), ContinuousLinearMap.zero_apply] at ha hb ⊢; rw [ha, hb, add_zero]
   have hx0 : ∀ Y, M.xC (P1 P) σ0 Y = M.xC P ρ Y := by
     by_contra h
     push Not at h
@@ -438,6 +442,6 @@ theorem lie_weight_at_most_holds : KLAtMost := by
         exact ⟨Y, by rw [← hx0 Y]; exact hY⟩
       rw [ContinuousLinearMap.smul_apply, hkill Z hZe σ hd w hw, hkill E hEe σ hd w hw, smul_zero]
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 end Formalism.FourierDecayAlt.P.CutMP.Gauge.GC

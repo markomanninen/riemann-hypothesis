@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh
 
 namespace GlobalTheory.WeightFrobenius
@@ -24,7 +29,7 @@ private theorem ordGe_add' {f g : MvPowerSeries (Fin M) C} {w : ℝ}
     (hf : _root_.ReciprocityTheory.PGsh.OrdGe v ρ f w) (hg : _root_.ReciprocityTheory.PGsh.OrdGe v ρ g w) : _root_.ReciprocityTheory.PGsh.OrdGe v ρ (f + g) w := by
   rw [ordGe_iff_forall_le_valuation_coeff] at *
   intro α
-  rw [map_add]
+  rw [map_add (f := _)]
   exact le_trans (le_min (hf α) (hg α)) (v.map_add _ _)
 
 open MvPowerSeries in

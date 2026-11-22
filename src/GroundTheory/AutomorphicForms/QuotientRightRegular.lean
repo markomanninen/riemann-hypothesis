@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.QuotientMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.QuotientMeasure
+
+@[expose] public section
 
 open MeasureTheory Topology Filter Set
 open scoped ENNReal
@@ -39,11 +43,6 @@ def rightTranslate (g : G) :
         rw [← rightMul_mul, mul_inv_cancel, rightMul_one] }
   norm_map' φ := Lp.norm_compMeasurePreserving φ _
 
-theorem rightTranslate_apply (g : G) (φ : Lp ℂ 2 (quotientMeasure Γ μ)) :
-    rightTranslate Γ μ g φ =
-      Lp.compMeasurePreserving (rightMul Γ g) (measurePreserving_rightMul μ g) φ :=
-  rfl
-
 theorem coeFn_rightTranslate (g : G) (φ : Lp ℂ 2 (quotientMeasure Γ μ)) :
     rightTranslate Γ μ g φ =ᵐ[quotientMeasure Γ μ] fun x ↦ φ (rightMul Γ g x) :=
   Lp.coeFn_compMeasurePreserving φ _
@@ -63,28 +62,12 @@ def rightRegular : G →* (Lp ℂ 2 (quotientMeasure Γ μ) ≃ₗᵢ[ℂ] Lp �
     rw [← Lp.compMeasurePreserving_comp_apply]
     exact compMeasurePreserving_congr (rightMul_mul Γ g h) _ _ φ
 
-@[simp]
-theorem rightRegular_apply (g : G) : rightRegular Γ μ g = rightTranslate Γ μ g :=
-  rfl
-
-def rightRegularUnitary :
-    G →* unitary (Lp ℂ 2 (quotientMeasure Γ μ) →L[ℂ] Lp ℂ 2 (quotientMeasure Γ μ)) :=
-  (Unitary.linearIsometryEquiv (𝕜 := ℂ)).symm.toMonoidHom.comp (rightRegular Γ μ)
-
-theorem rightRegularUnitary_apply (g : G) (φ : Lp ℂ 2 (quotientMeasure Γ μ)) :
-    (rightRegularUnitary Γ μ g : Lp ℂ 2 (quotientMeasure Γ μ) →L[ℂ] _) φ = rightRegular Γ μ g φ :=
-  rfl
-
-theorem inner_rightRegular (g : G) (φ ψ : Lp ℂ 2 (quotientMeasure Γ μ)) :
-    inner ℂ (rightRegular Γ μ g φ) (rightRegular Γ μ g ψ) = inner ℂ φ ψ :=
-  (rightRegular Γ μ g).inner_map_map φ ψ
-
 section Continuity
 
 variable [IsFiniteMeasureOnCompacts μ]
 
-omit [μ.IsMulRightInvariant] in
 
+omit [μ.IsMulRightInvariant] in
 theorem tendsto_lintegral_rightMul_sub {ψ : RightCosetSpace Γ → ℂ} (hc : Continuous ψ)
     (hs : HasCompactSupport ψ) (g₀ : G) :
     Tendsto (fun g ↦ ∫⁻ x, ‖ψ (rightMul Γ g x) - ψ (rightMul Γ g₀ x)‖ₑ ^ (2 : ℝ)
@@ -148,9 +131,10 @@ theorem tendsto_rightRegular_of_continuous {ψ : RightCosetSpace Γ → ℂ} (hc
   have heq : ∀ g, eLpNorm (⇑(rightRegular Γ μ g (hψ.toLp ψ)) - ⇑(rightRegular Γ μ g₀ (hψ.toLp ψ)))
       2 (quotientMeasure Γ μ) = (∫⁻ x, ‖ψ (rightMul Γ g x) - ψ (rightMul Γ g₀ x)‖ₑ ^ (2 : ℝ)
         ∂quotientMeasure Γ μ) ^ (1 / (2 : ℝ)) := fun g ↦ by
-    rw [eLpNorm_congr_ae ((hae g).sub (hae g₀)),
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
-    simp only [Pi.sub_apply, ENNReal.toReal_ofNat]
+    rw [eLpNorm_congr_ae ((hae g).sub (hae g₀))]
+    exact eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      (((hc.comp (continuous_rightMul Γ g)).sub
+        (hc.comp (continuous_rightMul Γ g₀))).measurable.aestronglyMeasurable)
   simp_rw [heq]
   have := ((ENNReal.continuous_rpow_const (y := 1 / (2 : ℝ))).tendsto 0).comp
     (tendsto_lintegral_rightMul_sub Γ μ hc hs g₀)
@@ -178,23 +162,6 @@ theorem continuous_rightRegular_apply (φ : Lp ℂ 2 (quotientMeasure Γ μ)) :
     _ < ε := by
         rw [dist_comm φ₀ φ]
         linarith
-
-theorem continuous_rightRegular_prod :
-    Continuous fun p : G × Lp ℂ 2 (quotientMeasure Γ μ) ↦ rightRegular Γ μ p.1 p.2 := by
-  refine continuous_iff_continuousAt.2 fun ⟨g₀, φ₀⟩ ↦ Metric.tendsto_nhds.2 fun ε hε ↦ ?_
-  have h1 := (continuous_rightRegular_apply Γ μ φ₀).tendsto g₀
-  have h2 : ∀ᶠ p : G × Lp ℂ 2 (quotientMeasure Γ μ) in 𝓝 (g₀, φ₀),
-      dist (rightRegular Γ μ p.1 φ₀) (rightRegular Γ μ g₀ φ₀) < ε / 2 :=
-    (Metric.tendsto_nhds.1 h1 (ε / 2) (by positivity)).prod_inl_nhds φ₀
-  have h3 : ∀ᶠ p : G × Lp ℂ 2 (quotientMeasure Γ μ) in 𝓝 (g₀, φ₀), dist p.2 φ₀ < ε / 2 :=
-    (Metric.tendsto_nhds.1 tendsto_id (ε / 2) (by positivity)).prod_inr_nhds g₀
-  filter_upwards [h2, h3] with p hp2 hp3
-  calc dist (rightRegular Γ μ p.1 p.2) (rightRegular Γ μ g₀ φ₀)
-      ≤ dist (rightRegular Γ μ p.1 p.2) (rightRegular Γ μ p.1 φ₀) +
-          dist (rightRegular Γ μ p.1 φ₀) (rightRegular Γ μ g₀ φ₀) := dist_triangle _ _ _
-    _ = dist p.2 φ₀ + dist (rightRegular Γ μ p.1 φ₀) (rightRegular Γ μ g₀ φ₀) := by
-        rw [LinearIsometryEquiv.dist_map]
-    _ < ε := by linarith
 
 end Continuity
 

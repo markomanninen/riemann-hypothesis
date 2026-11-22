@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,64 +92,10 @@ def ActionLaws : Prop :=
 
 variable {R}
 
-theorem ActionLaws.comap (h : ActionLaws R) {G' : Type} [Group G'] (f : G' →* G) :
-    ActionLaws (fun g => R (f g) : RelFam Xo c G') := by
-  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h
-  refine ⟨fun g => h1 (f g), fun g => h2 (f g), fun S _ _ y => ?_, fun g k S _ _ y y' y'' a b => ?_,
-    fun g => h5 (f g), fun g => h6 (f g)⟩
-  · show R (f 1) S y y
-    rw [map_one]; exact h3 S y
-  · show R (f (g * k)) S y y''
-    rw [map_mul]; exact h4 _ _ S y y' y'' a b
-
-theorem ActionLaws.exists_mulAction (h : ActionLaws R) (S : Type) [CommRing S] [Algebra c.F S] :
-    ∃ _ : MulAction Gᵐᵒᵖ (FrPt Xo c S), ∀ (g : G) (y y' : FrPt Xo c S), R g S y y' ↔ y' = MulOpposite.op g • y := by
-  obtain ⟨h1, h2, h3, h4, -, -⟩ := h
-  choose a ha using fun g => h1 g S
-  refine ⟨{ smul := fun g y => a g.unop y
-            one_smul := fun y => h2 1 S y _ _ (ha 1 y) (h3 S y)
-            mul_smul := fun g k y => h2 _ S y _ _ (ha _ y) (h4 _ _ S _ _ _ (ha k.unop y) (ha g.unop _)) },
-    fun g y y' => ⟨fun r => h2 g S y _ _ r (ha g y), fun e => e ▸ ha g y⟩⟩
-
-example : ActionLaws (fun _ _ _ _ y y' => y' = y : RelFam Xo c G) :=
-  ⟨fun _ _ _ _ y => ⟨y, rfl⟩, fun _ _ _ _ _ _ _ a b => a.trans b.symm, fun _ _ _ _ => rfl,
-    fun _ _ _ _ _ _ _ _ a b => b.trans a, fun _ _ _ _ _ _ _ _ _ _ _ _ m a b => by subst a b; exact m,
-    fun _ _ _ _ _ _ _ _ _ m a b => by subst a b; exact m⟩
-
 end Laws
-
-def levelRel (Xo : Moduli Dw l) (c : Coeff l) : RelFam Xo c (LevelAut Dw l) :=
-  fun g _ _ _ y y' => LevelMove g y y'
-
-example (g : LevelAut Dw l) {S : Type} [CommRing S] [Algebra c.F S] {y y' : FrPt Xo c S} (h : LevelMove g y y') :
-    ∃ (ρ : Xo.X ⟶ Xo.X) (ν : SABMap Xo.univ.t Xo.univ.t ρ), MovesLevel Xo g ρ ν ∧ y'.x = y.x ≫ ρ := by
-  obtain ⟨ρ, ν, w, h1, -, h2⟩ := h
-  exact ⟨ρ, ν, h1, h2.1⟩
-
-def LevelActionOver (Xo : Moduli Dw l) (c : Coeff l) : Prop := ActionLaws (levelRel Xo c)
 
 end General
 
-def PrincipalLevelAction : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H)
-    (Xo : Moduli Dw l) (c : Coeff l), l.A = 1 → LevelActionOver Xo c
-
 variable {D : D7}
-
-def LevelActionAt (T : Core D) (j : ℕ) : Prop :=
-  LevelActionOver (T.Q.Xo j) T.Q.c ∧ ∀ c' : Coeff T.Q.l, T.Q.c.F ≤ c'.F → LevelActionOver (T.Q.Xo j) c'
-
-def LevelActionSt (D : D7) : Prop :=
-  ∀ T : Core D, T.Q.Pins → ∀ j, InR D j → LevelActionAt T j
-
-theorem levelActionSt_of_principal (h : PrincipalLevelAction) (D : D7) : LevelActionSt D :=
-  fun _ hp _ _ => ⟨h _ _ _ _ _ _ hp.2.1.2, fun _ _ => h _ _ _ _ _ _ hp.2.1.2⟩
-
-theorem LevelActionAt.matrixGroup {T : Core D} {j : ℕ} (h : LevelActionAt T j)
-    (f : G0g D.nd →* LevelAut (T.Q.Dw j) T.Q.l) :
-    ActionLaws (fun g => levelRel (T.Q.Xo j) T.Q.c (f g) : RelFam (T.Q.Xo j) T.Q.c (G0g D.nd)) ∧
-      ∀ c' : Coeff T.Q.l, T.Q.c.F ≤ c'.F →
-        ActionLaws (fun g => levelRel (T.Q.Xo j) c' (f g) : RelFam (T.Q.Xo j) c' (G0g D.nd)) :=
-  ⟨ActionLaws.comap h.1 f, fun c' hc => ActionLaws.comap (h.2 c' hc) f⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms

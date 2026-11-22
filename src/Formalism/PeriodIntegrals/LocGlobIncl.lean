@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ExponentGrids.ScaledCoordinatesValuationLemma
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ExponentGrids.ScaledCoordinatesValuationLemma
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

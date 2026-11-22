@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding.EmbedOfLines
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding.EmbedOfLines
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.TwistingSheafOneChartEqPreimageStandardChart
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.t_E2Cut LateralTheory.E.ChowLCut

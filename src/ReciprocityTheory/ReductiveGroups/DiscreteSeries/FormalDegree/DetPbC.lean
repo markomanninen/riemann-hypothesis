@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPbB
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ theorem dpb_det {ε : Fin n → Bool} {U : Matrix (Fin n) (Fin n) ℂ} {x : Fin 
     rw [Jm, Matrix.diagonal_conjTranspose]
     congr 1
     funext a
-    simp only [Pi.star_apply]
+    change star (if ε a then (1 : ℂ) else -1) = (if ε a then 1 else -1)
     split_ifs <;> simp
   have hJJv : ∀ X : Matrix (Fin n) (Fin n) ℂ, Jm ε * (Jm ε * X) = X := fun X => by
     rw [← Matrix.mul_assoc, hJJ, Matrix.one_mul]

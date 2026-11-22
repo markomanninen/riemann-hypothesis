@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CoefDecay
-import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.DecInfPf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CoefDecay
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.BesselDiscreteSeries.DecInfPf
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace ContDiff
@@ -75,7 +79,8 @@ theorem coefM_translate_inCC {σ : B.Mat k r → (H →L[ℂ] H)} (hσ : Formali
   let L : H →ₗᵢ[ℂ] H := ⟨(σ a⁻¹ : H →ₗ[ℂ] H), fun x => hσ.2.1 _ hai x⟩
   have hgb : g * b ∈ B.GV k r := Formalism.MainNotions.LowestKTypeMultiplicity.UH_mul hg hb
   have e1 : σ (a * g * b) v' = σ a (σ g (σ b v')) := by
-    rw [Matrix.mul_assoc, hσ.1.2 a ha _ hgb, hσ.1.2 g hg b hb]; rfl
+    simp only [Matrix.mul_assoc, hσ.1.2 a ha _ hgb, hσ.1.2 g hg b hb,
+      ContinuousLinearMap.comp_apply]
   have e2 : σ a⁻¹ (σ a (σ g (σ b v'))) = σ g (σ b v') := by
     have := hσ.1.2 _ hai _ ha
     rw [haa, hσ.1.1] at this

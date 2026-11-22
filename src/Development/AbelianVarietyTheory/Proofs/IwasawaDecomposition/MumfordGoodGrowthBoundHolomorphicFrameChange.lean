@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeChartBoundsOfSchurLemW
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OpNormLeOpNormBlockDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HodgePeriodGram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeChartBoundsOfSchurLemW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OpNormLeOpNormBlockDiagonal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical
 open Matrix
@@ -28,13 +33,10 @@ theorem EntryLe.add (h : EntryLe M x) (h' : EntryLe N y) : EntryLe (M + N) (x + 
 theorem EntryLe.sub (h : EntryLe M x) (h' : EntryLe N y) : EntryLe (M - N) (x + y) :=
   fun i j => (norm_sub_le _ _).trans (add_le_add (h i j) (h' i j))
 
-theorem EntryLe.neg (h : EntryLe M x) : EntryLe (-M) x := fun i j => by
-  simpa using h i j
-
 theorem EntryLe.mul (hx : 0 ≤ x) (h : EntryLe M x) (h' : EntryLe N y) :
     EntryLe (M * N) (Fintype.card K * x * y) := by
   intro i j
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   calc ‖∑ l, M i l * N l j‖ ≤ ∑ l, ‖M i l * N l j‖ := norm_sum_le _ _
     _ ≤ ∑ _l : K, x * y := Finset.sum_le_sum fun l _ => by
         rw [norm_mul]; exact mul_le_mul (h i l) (h' l j) (norm_nonneg _) hx
@@ -72,7 +74,7 @@ theorem EntryLe.norm_det_le [DecidableEq K] (h : EntryLe M x) :
           rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with hσ | hσ <;> simp [hσ, norm_prod]
         rw [hs]
         calc ∏ i, ‖M (σ i) i‖ ≤ ∏ _i : K, x :=
-              Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => h _ _
+              Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => h _ _
           _ = x ^ Fintype.card K := by rw [Finset.prod_const, Finset.card_univ]
     _ = _ := by rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, nsmul_eq_mul]
 

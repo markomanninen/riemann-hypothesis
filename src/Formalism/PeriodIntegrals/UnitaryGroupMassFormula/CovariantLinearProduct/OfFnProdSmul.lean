@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.ContractionsCovariantIff
+module
+
+public import Formalism.PeriodIntegrals.ContractionsCovariantIff
+
+@[expose] public section
 
 open Matrix Finset
 

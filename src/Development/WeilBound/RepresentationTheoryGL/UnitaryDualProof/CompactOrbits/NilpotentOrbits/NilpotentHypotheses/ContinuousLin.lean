@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.NilpotentHypotheses.PiZLin
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.NilpotentHypotheses.PiZLin
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem sig_sig {n : ℕ} (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR
   have hLL : ∀ x, L (L x) = L x := fun x => hLc _ (hLZ x)
   simp only [sig_eq Z L hL]
   refine Prod.ext ?_ rfl
-  simp only [map_add, map_smul, map_sub, hLL, sub_self, smul_zero, add_zero, add_sub_cancel_left,
+  simp only [map_add (f := _), map_smul, map_sub, hLL, sub_self, smul_zero, add_zero, add_sub_cancel_left,
     Units.val_mul, mul_smul]
 
 theorem sig_one {n : ℕ} (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z) (p : Sp k n) : sig Z 1 p = p := by
@@ -82,11 +86,12 @@ theorem continuous_lin {n : ℕ} (L : Matrix (Fin n) (Fin n) k →ₗ[k] Matrix 
       fun x => ∑ i, ∑ j, x i j • L (Matrix.single i j 1) := by
     funext x
     conv_lhs => rw [Matrix.matrix_eq_sum_single x]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [← map_smul, Matrix.smul_single, smul_eq_mul, mul_one]
   rw [hL]
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_id.matrix_elem i j).smul continuous_const
 
 theorem continuous_sig {n : ℕ} (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z) (t : kˣ) :

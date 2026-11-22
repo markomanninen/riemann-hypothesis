@@ -1,5 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Objects
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Examples
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.DualModel
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.Reading
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -23,17 +31,12 @@ def multiplierIdeal {L : Type*} [Field L] [NumberField L] {ι : Type*} (y : ι �
     intro a a' ha ha' i
     obtain ⟨c, hc⟩ := ha i
     obtain ⟨c', hc'⟩ := ha' i
-    exact ⟨c + c', by rw [map_add, hc, hc', add_mul]⟩
+    exact ⟨c + c', by rw [map_add (f := _), hc, hc', add_mul]⟩
   zero_mem' := fun _ ↦ ⟨0, by rw [map_zero, zero_mul]⟩
   smul_mem' := by
     intro c a ha i
     obtain ⟨d, hd⟩ := ha i
     exact ⟨c * d, by rw [map_mul, hd, Algebra.smul_def, mul_assoc]⟩
-
-def LatticeLineExists.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (r N : ℕ) (F : HermLattice K (r + 1))
-    (φ : Fin (N + 1) → Fin (r + 1) → K), IsDualBasis F.lattice φ →
-    ∃ A : HermLine (fun _ : Unit ↦ N), A.deg = 1 ∧ LatticeMetricAgrees φ F A ∧ A.ConjInvariant
 
 def LineIdealDual.Statement : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (r N : ℕ) (F : HermLattice K (r + 1))

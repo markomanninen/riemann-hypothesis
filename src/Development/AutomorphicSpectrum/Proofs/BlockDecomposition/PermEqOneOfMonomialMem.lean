@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.JPred
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialOfConjTorus
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.ElementaryCosets.CosetMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialOfConjTorus
+
+@[expose] public section
 
 noncomputable section
 

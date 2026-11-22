@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafDictPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.KummerTheory.FlasquePf

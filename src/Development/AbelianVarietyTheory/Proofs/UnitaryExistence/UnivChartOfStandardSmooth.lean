@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.SpanEqTopOfForallMaximal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.Biextensions.CubicalExtendsSt
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.SpanEqTopOfForallMaximal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,9 +41,9 @@ theorem univChart_of_standardSmooth (G : Over (Spec (CommRingCat.of R))) [GrpObj
     IsScalarTower.of_algebraMap_eq fun r => (g.commutes r).symm
   haveI : Algebra.Etale (MvPolynomial (Fin n) R) S := hg
   have hπ : ∀ m : ℕ, ∃ π : S →ₐ[R] JetR R (Fin n) m, (jetAug R (Fin n) m).comp π = ε ∧
-      ∀ i, π (sX R i) = algebraMap R _ (ε (sX R i)) + zR m i := fun m =>
+      ∀ i, π (sX (R := R) i) = algebraMap R _ (ε (sX (R := R) i)) + zR m i := fun m =>
     etale_exists (n := n) ε (jetAug R (Fin n) m) (ker_jetAug_nil (Fin n) m) _ (fun i => by
-      rw [map_add, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
+      rw [map_add (f := _), AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
   choose π hπaug hπX using hπ
   refine ⟨fun m => spMap (π m) ≫ j, fun m => ?_, fun m => ?_, ?_⟩
   · rw [← Category.assoc, spMap_comp]
@@ -49,7 +53,7 @@ theorem univChart_of_standardSmooth (G : Over (Spec (CommRingCat.of R))) [GrpObj
       exact hπaug (m + 1)
     · exact hπaug m
     · intro i
-      rw [AlgHom.comp_apply, hπX, hπX, map_add, AlgHom.commutes]
+      rw [AlgHom.comp_apply, hπX, hπX, map_add (f := _), AlgHom.commutes]
       rfl
   · have e : (jetZeroR R (Fin n) m).comp (π m) = (Algebra.ofId R _).comp ε := by
       refine etale_ext (n := n) ε (jetAug R (Fin n) 0) (ker_jetAug_nil (Fin n) 0) _ _ ?_ ?_ ?_
@@ -58,20 +62,20 @@ theorem univChart_of_standardSmooth (G : Over (Spec (CommRingCat.of R))) [GrpObj
       · ext s
         simp
       · intro i
-        rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
+        rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
         rfl
     rw [← Category.assoc, spMap_comp, e, ← spMap_comp, Category.assoc, hε, comp_one']
   · intro A _ _ aug m hJ y hy
     have hJn := nil_of_pow _ hJ
     obtain ⟨φ, rfl⟩ := hj A aug hJn y hy
     have hφ : aug.comp φ = ε := hinj _ _ _ (by rw [← spMap_comp, Category.assoc, hy, hε])
-    have hmem : ∀ i : Fin n, φ (sX (S := S) R i) - algebraMap R A (ε (sX (S := S) R i)) ∈
+    have hmem : ∀ i : Fin n, φ (sX (R := R) (S := S) i) - algebraMap R A (ε (sX (R := R) (S := S) i)) ∈
         RingHom.ker aug := by
       intro i
       rw [RingHom.mem_ker, map_sub, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply,
         ← AlgHom.comp_apply, hφ, sub_self]
-    let ψ := jetLift R (RingHom.ker aug) hJ
-      (fun i : Fin n => φ (sX (S := S) R i) - algebraMap R A (ε (sX (S := S) R i))) hmem
+    let ψ := jetLift (R := R) (RingHom.ker aug) hJ
+      (fun i : Fin n => φ (sX (R := R) (S := S) i) - algebraMap R A (ε (sX (R := R) (S := S) i))) hmem
     have hψaug : aug.comp ψ = jetAug R (Fin n) m := jet_ext fun i => by
       rw [AlgHom.comp_apply, jetLift_zR, jetAug_zR]; exact hmem i
     have hψπ : ψ.comp (π m) = φ := by
@@ -79,7 +83,7 @@ theorem univChart_of_standardSmooth (G : Over (Spec (CommRingCat.of R))) [GrpObj
       · rw [← AlgHom.comp_assoc, hψaug]
         exact hπaug m
       · intro i
-        rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, jetLift_zR, add_sub_cancel]
+        rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, jetLift_zR, add_sub_cancel]
     refine ⟨ψ, ⟨hψaug, ?_⟩, ?_⟩
     · rw [← Category.assoc, spMap_comp, hψπ]
     · rintro ψ₂ ⟨_, h2⟩
@@ -88,8 +92,8 @@ theorem univChart_of_standardSmooth (G : Over (Spec (CommRingCat.of R))) [GrpObj
       apply jet_ext
       intro i
       rw [jetLift_zR]
-      have := AlgHom.congr_fun h4 (sX R i)
-      rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes] at this
+      have := AlgHom.congr_fun h4 (sX (R := R) i)
+      rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes] at this
       rw [← this, add_sub_cancel_left]
 
 theorem univChart_baseChange (G : Over (Spec (CommRingCat.of R))) [GrpObj G] (n : ℕ)

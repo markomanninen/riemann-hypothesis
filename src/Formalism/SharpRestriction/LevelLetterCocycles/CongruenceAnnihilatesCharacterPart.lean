@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InSpanAdd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InSpanAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ theorem mapSum_mulVec {n m : ℕ} (c : Fin m → N.O i) (M : Fin m → Matrix (F
     ((∑ k, c k • M k).map (toK N i)).mulVec v = ∑ k, toK N i (c k) • ((M k).map (toK N i)).mulVec v := by
   have hm : (∑ k, c k • M k).map (toK N i) = ∑ k, toK N i (c k) • (M k).map (toK N i) := by
     ext a b
-    simp only [Matrix.sum_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.sum_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul]
   rw [hm, Matrix.sum_mulVec]
   simp only [Matrix.smul_mulVec]
 
@@ -90,7 +95,8 @@ theorem psi_sum (hG : GoodCongruenceObjects N r ρ π S) (m : ℕ) (f : Fin m �
       ∑ k, toK N i (f k S.π') • (((rhoO N i ρ π (g k)).map (toK N i)).mulVec (S.e u).1,
         fun c : Fin R.t => toK N i ((chiU N i ((c : ℕ) + 1) (g k) : (N.O i)ˣ) : N.O i) * (S.e u).2 c) := by
     intro u
-    rw [hval, mapSum_mulVec, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hval, mapSum_mulVec, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hdec']
   constructor
@@ -104,7 +110,8 @@ theorem psi_sum (hG : GoodCongruenceObjects N r ρ π S) (m : ℕ) (f : Fin m �
     simp only [LinearEquiv.apply_symm_apply, Prod.snd_sum, Prod.smul_snd, Finset.sum_apply,
       Pi.smul_apply, Pi.single_eq_same, mul_one, smul_eq_mul] at h2
     apply IsFractionRing.injective (N.O i) (KK N i)
-    rw [h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum]
     simp [map_mul]
 
 end Block
@@ -327,7 +334,8 @@ theorem congruence_annihilates_rho_part (hG : GoodCongruenceObjects N r ρ π S)
     simpa using this.symm
   have hφz : φ (zz N r S m t γ) = (-(del51 N S S.π')) • w := by
     unfold zz
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hk : ∀ k, φ ((fun x' => (t k x' * ((chiU N i 1 (γ k) : (N.O i)ˣ) : N.O i)) • (1 : MatN N i)) *
         yg N r S (γ k)) = matQ N (((t k S.π' * ((chiU N i 1 (γ k) : (N.O i)ˣ) : N.O i)) •
           (1 : Matrix (Fin R.r) (Fin R.r) (N.O i))) *
@@ -386,7 +394,8 @@ theorem congruence_annihilates_character_part (hG : GoodCongruenceObjects N r ρ
     simpa using this.symm
   have hφz : φ (zz N r S m t γ) = (-(del51 N S S.π')) • w := by
     unfold zz
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hk : ∀ k, φ ((fun x' => (t k x' * ((chiU N i 1 (γ k) : (N.O i)ˣ) : N.O i)) • (1 : MatN N i)) *
         yg N r S (γ k)) = (t k S.π' * ((chiU N i ((c : ℕ) + 1) (γ k) : (N.O i)ˣ) : N.O i) -
           t k S.π' * ((chiU N i 1 (γ k) : (N.O i)ˣ) : N.O i)) • w := by

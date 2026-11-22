@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPrecompleteFiniteModule
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsPrecompleteFiniteModule
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem map_maximalIdeal_le_maximal {R : Type*} [CommRing R] [IsLocalRing R] (S 
     [Algebra R S] [Module.Finite R S] (n : Ideal S) (hn : n.IsMaximal) :
     (maximalIdeal R).map (algebraMap R S) ≤ n := by
   rw [Ideal.map_le_iff_le_comap]
-  have : (n.comap (algebraMap R S)).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal n
+  have : (n.comap (algebraMap R S)).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal n
   exact (IsLocalRing.eq_maximalIdeal this).ge
 
 theorem finite_maximal_ideals_of_finite {R : Type*} [CommRing R] [IsLocalRing R] (S : Type*) [CommRing S]
@@ -107,7 +111,7 @@ theorem exists_idempotent_henselian {S : Type*} [CommRing S] (J : Ideal S) [Hens
       linear_combination (-(e - e0)) * hu2
     rw [this]
     exact (isUnit_iff_exists_inv.2 ⟨-(2 * e - 1), by linear_combination hu2⟩).mul
-      (Ideal.mem_jacobson_bot.1 (HenselianRing.jac hee) _)
+      (Ring.mem_jacobson_iff.1 (HenselianRing.jac hee) _)
   have hdW : e - e0 ∈ Ideal.span {x * x - x} := by
     obtain ⟨v, hv⟩ := hdu.exists_left_inv
     have hdd : (e - e0) * (e - e0 - (2 * e - 1)) = e0 * e0 - e0 := by
@@ -229,7 +233,7 @@ theorem cl_dvr [IsAdicComplete (maximalIdeal R) R] :
   have hnf : ¬ IsField (integralClosure R L) := fun h =>
     (isField_iff_maximalIdeal_eq.not.mpr IsDiscreteValuationRing.not_a_field')
       (isField_of_isIntegral_of_isField (cl_inj R L) h)
-  exact ((IsDiscreteValuationRing.TFAE (integralClosure R L) hnf).out 0 2).mpr hD
+  exact ((IsDiscreteValuationRing.TFAE (integralClosure R L) hnf).out 1 3).mpr hD
 
 end
 

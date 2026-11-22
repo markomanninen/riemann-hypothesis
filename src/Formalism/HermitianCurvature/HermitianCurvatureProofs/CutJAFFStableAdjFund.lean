@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERHaarPos
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableAdjCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERHaarPos
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjFrom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.FFS
 
@@ -96,7 +100,7 @@ theorem fundamental_domain_group : FundG := by
         ({x : Mt k r | Matrix.of x ∈ B.GV k r} ∩ tsupport φ) :=
       (Formalism.FourierDecayAlt.P.B5.hs_continuous (Wp := Wp) (Wq := Wq)).comp_continuousOn
         (f := fun x : Mt k r => (A₁ (Matrix.of x), φ (Matrix.of x)))
-        ((hA₁.comp hof.continuousOn (fun x hx => hx.1)).prodMk (hφs.continuous.comp hof).continuousOn)
+        ((hA₁.comp hof.continuousOn (fun x (hx : x ∈ {x : Mt k r | Matrix.of x ∈ B.GV k r} ∩ tsupport φ) => hx.1)).prodMk (hφs.continuous.comp hof).continuousOn)
     refine (hc.integrableOn_compact hK).integrable_of_ae_notMem_eq_zero ?_
     filter_upwards [Formalism.FourierDecayAlt.P.HaarUniquenessConjugation.ae_mem hμ] with x hxG hxK
     have hx : x ∉ tsupport φ := fun h => hxK ⟨hxG, h⟩

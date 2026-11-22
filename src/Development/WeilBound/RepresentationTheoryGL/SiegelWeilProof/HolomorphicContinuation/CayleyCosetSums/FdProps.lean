@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CruxSt
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TwoSided
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CruxSt
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TwoSided
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,9 +41,6 @@ def DjFd : Prop :=
       Fd m (x * mX 1 (embOn (blkA j) T) (embOn (blkB j) S) 1))) =
     deriv (fun z : ℂ => (∏ i ∈ Finset.range j, ((i : ℂ) - z)) * (∏ i ∈ Finset.range (n - j), ((i : ℂ) - m - z))) 0 *
       hF j m 0 x
-
-def FdInv : Prop :=
-  ∀ (n m j : ℕ) (x P S : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) ℂ → Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) ℂ), True
 
 def KSplit : Prop :=
   ∀ (n m : ℕ) (a0 b0 : Fin n) (Kg : Type) [Group Kg] (ι : Kg →* M2 n), (∀ g, InK g ↔ ∃ k, ι k = g) →

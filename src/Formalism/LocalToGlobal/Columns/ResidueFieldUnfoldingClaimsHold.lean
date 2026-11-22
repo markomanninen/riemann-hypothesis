@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainOneB
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OneCosetSharp
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainOneB
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.OneCosetSharp
+
+@[expose] public section
 
 namespace Formalism.L2.Col
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroMemBoxF
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroMemBoxF
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.RedCov GlobalTheory.CompanionTheory.RedCov.Simple
 open Formalism.UG (cT)
 open scoped TensorProduct NNReal ENNReal
@@ -13,6 +18,7 @@ theorem exists_nsmul_sub_mem {G : Type*} [AddCommGroup G] [TopologicalSpace G] [
     (S : AddSubgroup G) (K : Set G) (hK : IsCompact K) (hcov : ∀ x, ∃ γ ∈ S, x - γ ∈ K)
     (V : Set G) (hV : V ∈ nhds (0 : G)) :
     ∃ N : ℕ, 1 ≤ N ∧ ∀ b : G, ∃ q : ℕ, 1 ≤ q ∧ q ≤ N ∧ ∃ γ ∈ S, q • b - γ ∈ V := by
+  open scoped Pointwise in
   obtain ⟨W, hWo, hW0, hWV⟩ := exists_open_nhds_zero_half hV
   set U : Set G := W ∩ -W with hUdef
   have hUo : IsOpen U := hWo.inter hWo.neg
@@ -54,7 +60,7 @@ theorem boxF_mem_nhds {ε : ℝ} (hε : 0 < ε) : boxF F ε ∈ nhds (0 : AF F) 
   have hopen : IsOpen ({a : AF F | (∀ w : InfinitePlace F, ‖a.1 w‖ < ε)} ∩
       {a : AF F | a.2 ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 F) F}) := by
     refine IsOpen.inter ?_ ?_
-    · simp only [Set.setOf_forall]
+    · simp only [Set.ofPred_forall]
       exact isOpen_iInter_of_finite fun w =>
         isOpen_lt (continuous_norm.comp ((continuous_apply w).comp continuous_fst)) continuous_const
     · exact GroundTheory.Global.isOpen_integralFiniteAdeles.preimage continuous_snd

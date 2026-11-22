@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.UnipUGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.UnipUGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def LeftLaw (ξ : kˣ →* ℂˣ) (l : (Matrix (Fin n) (Fin d) k → ℂ) →ₗ
 def ColLaw (ψ : AddChar k ℂ) (S : Set (Fin d)) (i i' : Fin d) (l : (Matrix (Fin n) (Fin d) k → ℂ) →ₗ[ℂ] ℂ) : Prop :=
   ∀ φ ∈ SB (Matrix (Fin n) (Fin d) k), ∀ ρ : Fin d → k, (∀ s ∈ S, ρ s = 0) → l (fun Y => φ (colOp i ρ Y)) = ψ (ρ i') * l φ
 
-variable (k n d) in
 
+variable (k n d) in
 def oneO : Matrix (Fin n) (Fin d) k → ℂ := Set.indicator {Y | ∀ a b, ValuativeRel.valuation k (Y a b) ≤ 1} 1
 
 def torus (i₀ i₁ : Fin d) (x : k) : Matrix (Fin d) (Fin d) k :=
@@ -69,8 +73,8 @@ def Places : Prop :=
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {d j : ℕ}
 
-variable (σ) in
 
+variable (σ) in
 structure IsFrame (W : Spc F E d) (u u' : Matrix (Fin d) (Fin j) E) : Prop where
   uu : uᵀ * W.J * u.map σ = 0
   vv : u'ᵀ * W.J * u'.map σ = 0
@@ -78,8 +82,8 @@ structure IsFrame (W : Spc F E d) (u u' : Matrix (Fin d) (Fin j) E) : Prop where
 
 def colSp (u : Matrix (Fin d) (Fin j) E) : Submodule E (Fin d → E) := Submodule.span E (Set.range uᵀ)
 
-variable (σ) in
 
+variable (σ) in
 def levM (W : Spc F E d) (u u' : Matrix (Fin d) (Fin j) E) (g : GL (Fin j) (AE F E)) : Matrix (Fin d) (Fin d) (AE F E) :=
   1 + incM F u * (g.1 - 1) * incM F (W.J * u'.map σ)ᵀ - incM F u' * (((g⁻¹).1.map (cA σ))ᵀ - 1) * incM F (W.J * u.map σ)ᵀ
 
@@ -100,13 +104,17 @@ structure IsWh (W : Spc F E d) (u : Matrix (Fin d) (Fin j) E) (χ : AddChar (AE 
 
 def KeyThree : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E)
-    (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' → ∀ (j : ℕ) (u u' : Matrix (Fin (a + a')) (Fin (j + 3)) E),
-    IsFrame σ G.W u u' → ∀ χ Λ, IsChar σ χ → IsWh (σ := σ) G.W u χ Λ → ∀ f ∈ Sig B G om om', ∀ h, Λ (fun x => f (x * h)) = 0
+    (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W),
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple B G X om om' →
+    ∀ (j : ℕ) (u u' : Matrix (Fin (a + a')) (Fin (j + 3)) E),
+    IsFrame σ G.W u u' → ∀ χ Λ, IsChar σ χ → IsWh (σ := σ) G.W u χ Λ → ∀ f ∈ ThKEnd.Sig B G om om', ∀ h, Λ (fun x => f (x * h)) = 0
 
 def KeyTwo : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E)
-    (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' → ∀ (u u' : Matrix (Fin (a + a')) (Fin 2) E),
-    IsFrame σ G.W u u' → ∀ m, IsLev u u' m → ∀ χ Λ, IsChar σ χ → IsWh (σ := σ) G.W u χ Λ → ∀ f ∈ Sig B G om om', ∀ h₀,
+    (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W),
+    GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple B G X om om' →
+    ∀ (u u' : Matrix (Fin (a + a')) (Fin 2) E),
+    IsFrame σ G.W u u' → ∀ m, IsLev u u' m → ∀ χ Λ, IsChar σ χ → IsWh (σ := σ) G.W u χ Λ → ∀ f ∈ ThKEnd.Sig B G om om', ∀ h₀,
     ∃ V ∈ 𝓝 h₀, ∃ (b : ℕ → GL (Fin 2) (AE F E)) (y : ℕ → ℂ), b 0 = 1 ∧ (∀ i, Matrix.GeneralLinearGroup.det (b i) = 1) ∧
       Tendsto (fun i => ‖y i‖) atTop atTop ∧ ∀ h ∈ V, ∃ x : ℂ, ∀ i, Λ (fun z => f (z * (m (b i) * h))) = x * y i
 

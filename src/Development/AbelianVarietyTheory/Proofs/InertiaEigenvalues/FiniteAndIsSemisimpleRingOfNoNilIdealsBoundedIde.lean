@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AlgRing
 
@@ -22,7 +26,7 @@ private theorem exists_idempotent_of_not_isNilpotent (k R : Type) [Field k] [Rin
         a * Polynomial.X ^ (s + 1) + (-(a * b * Polynomial.X)) * (Polynomial.X ^ s * g) := by
       linear_combination (a * Polynomial.X ^ (s + 1)) * hab
     unfold IsIdempotentElem
-    rw [← map_mul, hpoly, map_add, hE, add_zero]
+    rw [← map_mul, hpoly, map_add (f := _), hE, add_zero]
   · intro he
     apply hn
     refine ⟨s, ?_⟩

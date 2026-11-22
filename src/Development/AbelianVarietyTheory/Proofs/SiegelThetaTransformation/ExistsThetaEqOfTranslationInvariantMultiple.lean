@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsFourierEntire
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsFourierEntire
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open GlobalTheory.SW hiding Level
@@ -33,7 +37,8 @@ theorem exponent_eq {x : Frame X.Ψ r}
   have h2 (k) : hx X bas idx x (z k + (1 / 2 : ℂ) • p k) (p k) = hx X bas idx x (z k) (p k) +
       1 / 2 * hx X bas idx x (p k) (p k) := by
     simp only [hx, mulVec_add, mulVec_smul, add_dotProduct, smul_dotProduct, smul_eq_mul]
-  simp only [h1, h2, Finset.sum_add_distrib, ← Finset.mul_sum, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h1, h2, Finset.sum_add_distrib, ← Finset.mul_sum, ← map_sum]
   have h3 := Complex.sub_conj (∑ k, hx X bas idx x (z k) (p k))
   push_cast at h3
   linear_combination (π / 2 : ℂ) * h3
@@ -119,7 +124,7 @@ theorem exists_thA_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
     have h1 : zR X idx x (N • embR X y) = fun k => N • pv X idx x (y k) := by
       rw [← hL, map_nsmul, hL]; rfl
     have h2 : zR X idx x (v + N • embR X y) = fun k => L v k + N • pv X idx x (y k) := by
-      rw [← hL, map_add, hL (N • _), h1]; rfl
+      rw [← hL, map_add (f := _), hL (N • _), h1]; rfl
     have h3 := hinv y hy v
     rw [← him, h1, h2, ← hL v, gaussR, gaussR, ← mul_assoc, ← Complex.exp_add,
       exponent_eq idx hconj (L v) fun k => N • pv X idx x (y k), Complex.exp_add, mul_assoc] at h3

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleRankR
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleRankR
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SummableExpNegSumAbs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.DegeneratingToriPeriodMapEqBaseOfYEqZero
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SummableExpNegSumAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem summable_exp_neg_size : Summable fun μ => Real.exp (-A.size μ) :=
 
 theorem norm_le_mul_size {E : Type*} [SeminormedAddCommGroup E] (f : A.X →+ E) {C : ℝ}
     (hC : ∀ i, ‖f (Module.Free.chooseBasis ℤ A.X i)‖ ≤ C) (μ : A.X) : ‖f μ‖ ≤ C * A.size μ := by
-  conv_lhs => rw [← (Module.Free.chooseBasis ℤ A.X).sum_repr μ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← (Module.Free.chooseBasis ℤ A.X).sum_repr μ, map_sum]
   rw [size, Finset.mul_sum]
   refine norm_sum_le_of_le _ fun i _ => ?_
   rw [map_zsmul]
@@ -59,7 +64,7 @@ theorem be_sq_le (x y : A.X) : A.be x y ^ 2 ≤ A.be x x * A.be y y :=
 
 theorem exists_sq_le_be (n : A.X →ₗ[ℤ] ℤ) : ∃ C : ℤ, 0 ≤ C ∧ ∀ μ, n μ ^ 2 ≤ C * A.be μ μ := by
   have hinj : Function.Injective A.be := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h
     have := A.be_pos x h
@@ -165,8 +170,8 @@ theorem exists_norm_theta_le {j : ℕ} {α : A.X} {th : (Fin A.gB → ℂ) → �
 def IsConvLine (T₀ : ℝ) : Prop :=
   ∀ μ : A.X, (A.H (A.ct μ) (A.ct μ)).re / 2 - (A.T μ μ).im ≤ T₀ * A.be μ μ
 
-variable {A} in
 
+variable {A} in
 theorem IsConvLine.mono {T₀ T₁ : ℝ} (h : A.IsConvLine T₀) (hT : T₀ ≤ T₁) : A.IsConvLine T₁ := fun μ =>
   (h μ).trans (mul_le_mul_of_nonneg_right hT (by exact_mod_cast A.be_self_nonneg μ))
 
@@ -309,12 +314,12 @@ theorem hasSumLocallyUniformlyOn_term (hj : j ≠ 0) (h : th ∈ A.Theta j α) :
       (fun p => A.Sum j α th p.1 p.2) {p | T₀ < p.1.im} :=
   SCV.hasSumLocallyUniformlyOn_of_locally_normal (locally_normal hT hj h)
 
-omit hT in
 
+omit hT in
 theorem isOpen_above (T : ℝ) : IsOpen {p : ℂ × A.V | T < p.1.im} := isOpen_lt continuous_const (by fun_prop)
 
-omit hT in
 
+omit hT in
 theorem differentiable_term_mul (h : Differentiable ℂ th) (μ : A.X) :
     Differentiable ℂ fun p : ℂ × A.V => A.term j α th μ p.2 * eTwoPi (p.1 * A.exponent j α μ) := by
   have := A.differentiable_term j α h μ
@@ -350,37 +355,37 @@ theorem hasSum_fderiv_term (hj : j ≠ 0) (h : th ∈ A.Theta j α) {w : ℂ} (h
 
 variable [NeZero j]
 
-omit hT in
 
+omit hT in
 theorem hasSum_level {E : Type*} [NormedAddCommGroup E] [CompleteSpace E] {f : A.X → E} {a : E} (hf : HasSum f a) :
     HasSum (fun n : ℤ => ∑ μ ∈ A.level j α n, f μ) a := by
   convert hf.tsum_fiberwise (A.exponent j α) using 2 with n
   have : A.exponent j α ⁻¹' {n} = (A.level j α n : Set A.X) := by ext; simp
   rw [this, Finset.tsum_subtype']
 
-omit hT in
 
+omit hT in
 theorem coeff_FSum_mul (w : ℂ) (v : A.V) (n : ℤ) : (A.FSum j α th v).coeff n * eTwoPi w ^ n =
     ∑ μ ∈ A.level j α n, A.term j α th μ v * eTwoPi (w * A.exponent j α μ) := by
   rw [coeff_FSum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   rw [e_mul_intCast, A.mem_level.1 hμ]
 
-omit hT in
 
+omit hT in
 theorem differentiable_coeff_FSum (h : Differentiable ℂ th) (n : ℤ) :
     Differentiable ℂ fun v => (A.FSum j α th v).coeff n :=
   Differentiable.fun_sum fun μ _ => A.differentiable_term j α h μ
 
-omit hT in
 
+omit hT in
 theorem fderiv_coeff_FSum (h : Differentiable ℂ th) (n : ℤ) (v v₀ : A.V) :
     fderiv ℂ (fun v => (A.FSum j α th v).coeff n) v v₀ = ∑ μ ∈ A.level j α n, fderiv ℂ (A.term j α th μ) v v₀ := by
   simp only [coeff_FSum]
   rw [fderiv_fun_sum fun μ _ => A.differentiable_term j α h μ v, sum_apply]
 
-omit hT in
 
+omit hT in
 theorem fderiv_coeff_FSum_eq_zero {n : ℤ} (hn : n < -A.be α α) (v : A.V) :
     fderiv ℂ (fun v => (A.FSum j α th v).coeff n) v = 0 := by
   simp only [A.coeff_FSum_eq_zero j α th _ hn, fderiv_fun_const, Pi.zero_apply]

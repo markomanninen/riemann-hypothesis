@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.TowerCodimensionTwo
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ open PositivityTheory.ThKG PositivityTheory.ThKF
 variable {n d : ℕ} {X X₂ : Spc F E n} {W W₂ : Spc F E d} {B : Base F E} {M : Model σ X W} {χX χW : Chr F E} {om : Rep σ X W}
   {r s r' s' : ℕ}
 
-variable (M X₂ W₂) in
 
+variable (M X₂ W₂) in
 def reM : Model σ (reS X X₂) (reS W W₂) := ⟨M.co, M.vac, M.μ, M.dom⟩
 
 theorem so_re : M.So B.ψ B.τ₁ ≤ (reM X₂ W₂ M).So B.ψ B.τ₁ := Submodule.span_mono (by
@@ -54,6 +58,29 @@ theorem I_both (hI : PositivityTheory.ThKEst.IInv) (hp : IsPair B M χX χW om r
 
 theorem sigRe_of (hA : ArchOp) (hM : CartanMove) (hC : CartanConj) (hI : PositivityTheory.ThKEst.IInv) (hS : PositivityTheory.ThKCT.SoStab) : SigRe := by
   intro F E _ _ _ _ _ σ B a a' G X om om' t V V' W t₂
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m)
+      (h' : ResEtaPow K χ' n) (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have pairV {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV, h.geo.hW, h.geo.hM, h.chars.heckeβ, hecke_div h.chars.heckeβ h.chars.heckeα, h.chars.resβ,
+      res_div h.chars.resβ h.chars.resα rfl, h.weil⟩
+  have pairV' {G : Geo σ a a'} {om : Rep σ G.V G.W} {om' : Rep σ G.V' G.W} (h : IsTriple B G X om om') :
+      IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨h.base, h.geo.hV', h.geo.hW, h.geo.hM', h.chars.heckeα, hecke_div h.chars.heckeα h.chars.heckeβ, h.chars.resα,
+      res_div h.chars.resα h.chars.resβ (add_comm _ _), h.weil'⟩
+  have polData_le {n d : ℕ} {Y : Spc F E n} {Z : Spc F E d} {M : Model σ Y Z}
+      (hM : M.IsGood B.ψ) : PolData B M ≤ schA F (Fin n × Fin d) := by
+    refine Submodule.span_le.2 ?_
+    rintro _ ⟨f, -, φ, h1, h2, rfl⟩
+    obtain ⟨u, hu, e⟩ := pure_eq_pureA hM φ h1 h2
+    rw [e]
+    exact pureA_mem f hu
   obtain ⟨h, hh, hθ⟩ := hC F E σ B _ G.W W _ _ t.base t.geo.hW t₂.geo.hW
   obtain ⟨g, hg⟩ := move (X₂ := V) hA hM (pairV t) (pairV t₂) hh hθ
   obtain ⟨g', hg'⟩ := move (X₂ := V') hA hM (pairV' t) (pairV' t₂) hh hθ

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SingleMulVecOne
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SingleMulVecOne
+
+@[expose] public section
 
 open Matrix Finset
 

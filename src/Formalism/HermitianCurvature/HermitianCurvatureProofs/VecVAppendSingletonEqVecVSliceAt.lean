@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OuterInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CptCoefContSupp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OuterInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactCoefficientAppend
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CptCoefContSupp
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -58,8 +62,8 @@ theorem lev_inv {k R : ℕ} (y : B.Mat k 0) (hy : IsUnit y.det) : ιLev k R 0 y�
   refine (Matrix.inv_eq_left_inv ?_).symm
   rw [← Dx2.Tower.lev_mul, Matrix.nonsing_inv_mul _ hy, Dx2.Tower.lev_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem vecV_append_singleton_eq_vecV_sliceAt (k R ρ : ℕ) (hρ : ρ = 0) (e : R + ρ = R) (S : B.RealPlaceData k R Wp Wq) (S0 : B.RealPlaceData k ρ Wp Wq)
     (hzL : D.castV e (liftVec k R ρ S0.z) = S.z) (hzL' : D.castV e (liftVec k R ρ S0.z') = S.z')
     (hπ : ∀ y, S0.π y = S.π (D.castM e (ιLev k R ρ y))) (hπ' : ∀ y, S0.π' y = S.π' (D.castM e (ιLev k R ρ y)))
@@ -94,7 +98,7 @@ theorem vecV_append_singleton_eq_vecV_sliceAt (k R ρ : ℕ) (hρ : ρ = 0) (e :
   by_cases hζT : Complex.normSq ζ ≤ Tz k R S.z * Tz k R S.z'
   · have hL : D.vecV S ν' m₀ F (h ++ [(1, ζ)]) = 0 := by
       unfold D.vecV
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨_, hpos⟩
       rw [hG] at hpos
       nlinarith
@@ -144,7 +148,7 @@ theorem vecV_append_singleton_eq_vecV_sliceAt (k R ρ : ℕ) (hρ : ρ = 0) (e :
 
   show _ = D.sliceAt k R S.z S.z' F h (D.castM e' ((Matrix.of y1)⁻¹ * γ0 * Matrix.of y2))
   unfold D.sliceAt
-  rw [dif_pos (by rw [hh.2]), phiFun_tr R (D.ptSize h) (R - D.ptSize h) hh.2 (by rw [hh.2]; simp),
+  rw [dite_eq_left (by rw [hh.2]), phiFun_tr R (D.ptSize h) (R - D.ptSize h) hh.2 (by rw [hh.2]; simp),
     cast_cancel]
 
 end master

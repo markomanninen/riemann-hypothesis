@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem pt_smulK (c : D.host.K) (A : Matrix (Fin N') (Fin N) D.host.E) :
 
 theorem pt_injective (hδ : δ ≠ 0) :
     Function.Injective (pt D (tor0 D cc δ) δ : Matrix (Fin N') (Fin N) D.host.E → VC D N N') := by
-  obtain ⟨τ⟩ : Nonempty D.what₂.Tau := ⟨D.eTau.symm ⟨1, by simp [Formalism.FrobeniusOrbits.Psi]⟩⟩
+  obtain ⟨τ⟩ : Nonempty D.what₂.Tau := ⟨D.eTau.symm ⟨1, by simp⟩⟩
   intro z w h
   refine Matrix.ext fun i j => ?_
   have h1 := congrFun (congrFun (congrFun h τ) i) j
@@ -182,7 +186,8 @@ theorem mem_RL_rows (L : Lat D N) (hL : SD D L) (z : Matrix (Fin N') (Fin N) D.h
     refine ⟨t, ht, fun j => D.host.conj (A i j), (hs _).2 fun x hx => ?_, ?_⟩
     · have h2 := (mem_stdL.1 (mem_homL.1 hA x hx) i).conj
       have e : hE D (fun j => D.host.conj (A i j)) x = D.host.conj (A.mulVec x i) := by
-        simp only [hE, Matrix.mulVec, dotProduct, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hE, Matrix.mulVec, dotProduct, map_sum, map_mul]
       rw [e]; exact h2
     · simp only [conj_conj]; rfl
   · intro h

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperQuotAddSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperSubquotFiniteSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechExact
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechDSq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperQuotAddSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperSubquotFiniteSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechExact
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechDSq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -170,9 +175,9 @@ end Quot
 
 end SnapperQuotientAdditivity
 
+
 set_option maxHeartbeats 1000000 in
 open SnapperQuotientAdditivity in
-
 theorem SnapperQuotAdd.proof (hfin : SnapperSubquotFinite.Statement.{u, v, w}) :
     SnapperQuotAdd.Statement.{u, v, w} := by
   intro k _ Ω _ _ N x E _ _ _ _ F₁ F₂ F₃ hfg h21 h32

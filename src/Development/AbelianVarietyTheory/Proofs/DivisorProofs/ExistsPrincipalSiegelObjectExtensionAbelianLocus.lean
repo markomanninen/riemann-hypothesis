@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelAmpleOfGenericFibreNormalLocalDomainStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NondegeneratePairingOfGenericFibreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelBasisEveryGeometricPointLocalRingStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingDeterminedAtGenericPointStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDescendsFromGenericFibre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelExtends
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilIsDiagRoot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmEndomorphismPlaceIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarisedExtensionFinite
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsQProjOverOfIsIso
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianTorsionFiniteAndMulNSurjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecialisationWithThetaPoint
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionTranslatesCoverSemiAbelian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelAmpleOfGenericFibreNormalLocalDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NondegeneratePairingOfGenericFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelBasisEveryGeometricPointLocalRingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingDeterminedAtGenericPointStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDescendsFromGenericFibre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabelExtends
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilIsDiagRoot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmEndomorphismPlaceIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarisedExtensionFinite
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsQProjOverOfIsIso
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRegularLocalRingOfFlatOfMapEqMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianTorsionFiniteAndMulNSurjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSpecialisationWithThetaPoint
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionTranslatesCoverSemiAbelian
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -39,8 +43,8 @@ section Bundle
 
 variable {O K : Type} [CommRing O] [IsDomain O] [Field K] [Algebra O K] [IsFractionRing O K]
 
-omit [IsDomain O] [Field K] [Algebra O K] [IsFractionRing O K] in
 
+omit [IsDomain O] [Field K] [Algebra O K] [IsFractionRing O K] in
 theorem pic_local [IsLocalRing O] (c : Pic (Sp O)) : c = 0 := by
   obtain ⟨D, hD, rfl⟩ := cls_surj c
   obtain ⟨i, hi⟩ := exists_chart hD (IsLocalRing.closedPoint O)
@@ -59,7 +63,8 @@ theorem generic_props : IsPreimmersion (spMap (algebraMap O K)) ∧ Flat (spMap 
 
 theorem pic_generic [IsLocalRing O] [IsNoetherianRing O] [IsIntegrallyClosed O] (X : Over (Sp O)) [Smooth X.hom]
     [GeometricallyIntegral X.hom] (e : 𝟙_ (Over (Sp O)) ⟶ X) {X' : Scheme.{0}} {t : X' ⟶ Sp K} {ψ : X' ⟶ X.left}
-    (h : IsPullback ψ t X.hom (spMap (algebraMap O K))) {a b : Pic X.left} (hab : pull ψ a = pull ψ b) : a = b := by
+    (h : IsPullback ψ t X.hom (spMap (algebraMap O K))) {a b : Pic X.left}
+    (hab : CechPic.pull ψ a = CechPic.pull ψ b) : a = b := by
   obtain ⟨_, _, _⟩ := generic_props (O := O) (K := K)
   refine ZH.EndoExtend.pic_ext (spMap (algebraMap O K)) (ZJ.isNormalScheme_sp O) X e.left (Over.w e)
     ((pic_local _).trans (pic_local _).symm) ?_
@@ -109,7 +114,7 @@ theorem exists_bundle [IsRegularLocalRing O] {A : Over (Sp O)} [GrpObj A] {A' : 
   have : IsProper (A ⊗ A).hom := inferInstanceAs (IsProper (pullback.fst A.hom A.hom ≫ A.hom))
   have h₂ := AbDual.isPullback_prod h.1 h.1 sq.1 sq.2
   obtain ⟨P, hP, e⟩ := exists_extension (A ⊗ A) h₂ P' hP'
-  have e₀ : pull φ₂ (cls P hP) = cls P' hP' := (cls_eq_iff (pull_isLB hP φ₂) hP').2 e
+  have e₀ : CechPic.pull φ₂ (cls P hP) = cls P' hP' := (cls_eq_iff (pull_isLB hP φ₂) hP').2 e
   have one : (1 : A' ⟶ A').left ≫ φ = φ ≫ (1 : A ⟶ A).left := by
     have a := congrArg (fun q => q.left) (map_one (pushHom h A'))
     have b := congrArg (fun q => q.left) (GlobalTheory.Mum.Cover.comp_one_pt (G := A) (Over.homMk φ h.1.w :
@@ -177,8 +182,8 @@ theorem exists_lev [IsIntegrallyClosed O] (hA : IsAbelianScheme A) (h : IsGrpPul
   · rw [MonObj.comp_mul, K1, K1, K1, add', map_mul]
   · rw [MonObj.comp_pow, K1, ← map_pow, tors', map_one, MonObj.comp_one]
 
-omit [IsDomain O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsFractionRing O K] in
 theorem push_lev (h : IsGrpPullback A' A (spMap (algebraMap O K)) ψ) {u' : 𝟙_ (Over (Sp K)) ⟶ A'}
     {u : 𝟙_ (Over (Sp O)) ⟶ A} (hu : u'.left ≫ ψ = spMap (algebraMap O K) ≫ u.left) (T : Over (Sp K)) :
     pushHom h T (toUnit T ≫ u') = toUnit (Over.mk (T.hom ≫ spMap (algebraMap O K))) ≫ u := by
@@ -191,8 +196,8 @@ end Level
 
 section Extend
 
-open SiegelPull in
 
+open SiegelPull in
 theorem extend (O K : Type) [CommRing O] [IsRegularLocalRing O] [Field K] [Algebra O K] [IsFractionRing O K]
     {B : Type} [CommRing B] (ζ : B) (hζ : IsUnit ζ) (g n : ℕ) (hn : n ≠ 0) (hnB : IsUnit (n : B))
     (s' : Sp O ⟶ Sp B) (s₀ : Sp K ⟶ Sp B) (hs₀ : spMap (algebraMap O K) ≫ s' = s₀) (A : Over (Sp O)) [GrpObj A]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.AevalMulHomog
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.AevalMulHomog
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -113,8 +117,8 @@ theorem evalDuality : EV := by
     have hprod : ∏ i ∈ d.support, (c * b i) ^ d i = c ^ D * ∏ i ∈ d.support, b i ^ d i := by
       rw [← hdeg', ← Finset.prod_pow_eq_pow_sum, ← Finset.prod_mul_distrib]
       exact Finset.prod_congr rfl fun i _ => _root_.mul_pow _ _ _
-    show MvPolynomial.coeff d F' * ∏ i ∈ d.support, (c * b i) ^ d i =
-      c ^ D * (MvPolynomial.coeff d F' * ∏ i ∈ d.support, b i ^ d i)
+    show AddMonoidAlgebra.coeff F' d * ∏ i ∈ d.support, (c * b i) ^ d i =
+      c ^ D * (AddMonoidAlgebra.coeff F' d * ∏ i ∈ d.support, b i ^ d i)
     rw [hprod]
     ring
   have heval : MvPolynomial.eval ρ (dualSub K (m + 1) F') =

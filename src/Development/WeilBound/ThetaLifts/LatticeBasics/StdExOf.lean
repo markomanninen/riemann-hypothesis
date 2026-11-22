@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+
+@[expose] public section
 
 noncomputable section
 

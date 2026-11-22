@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.LocFreeExt
 
@@ -120,13 +124,15 @@ theorem freeOn_ext {R : Subalgebra o Ω} {f : Ω} (hf : f ∈ R) (i : E₁ →�
         = i (∑ p, a₁ p • b₁ p) + ∑ p, a₂ p • t p := by
     intro a₁ a₂
     rw [Fin.sum_univ_add]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have hker : ∀ (e : E) (a₂ : Fin r₂ → Ω), q e = ∑ p, a₂ p • b₂ p →
       ∃ x, i x = e - ∑ p, a₂ p • t p := by
     intro e a₂ he
     have : e - ∑ p, a₂ p • t p ∈ LinearMap.range i := by
       rw [hiq, LinearMap.mem_ker, map_sub, he]
-      simp [map_sum, ht]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, ht]
     exact this
   refine ⟨Fin.append (fun p => i (b₁ p)) t, ?_, ?_, fun e => ⟨?_, ?_⟩⟩
   · rw [Fintype.linearIndependent_iff]
@@ -135,11 +141,13 @@ theorem freeOn_ext {R : Subalgebra o Ω} {f : Ω} (hf : f ∈ R) (i : E₁ →�
     simp only [Fin.append_left, Fin.append_right] at hg
     have h2 : ∑ p, g (Fin.natAdd r₁ p) • b₂ p = 0 := by
       have := congrArg q hg
-      simpa [map_sum, hqi, ht] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, hqi, ht] using this
     have h2' := Fintype.linearIndependent_iff.1 h₂.1 _ h2
     have h1 : ∑ p, g (Fin.castAdd r₂ p) • b₁ p = 0 := by
       apply hi
-      simpa [map_sum, h2'] using hg
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, h2'] using hg
     have h1' := Fintype.linearIndependent_iff.1 h₁.1 _ h1
     intro p
     refine Fin.addCases (fun p => h1' p) (fun p => h2' p) p

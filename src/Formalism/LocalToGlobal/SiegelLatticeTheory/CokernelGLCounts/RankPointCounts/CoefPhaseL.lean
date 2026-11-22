@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPhase
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPh
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOrb
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPhase
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefPh
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOrb
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,14 +93,16 @@ theorem sUp_conj (A : Matrix (Fin n) (Fin n) K) (d d' : Fin n → K) (c : K)
 theorem sLow_map {S : Type} [CommRing S] (f : K →+* S) (A : Matrix (Fin n) (Fin n) K) :
     Formalism.DoubleCosetMeasures.sLow (A.map f) = f (Formalism.DoubleCosetMeasures.sLow A) := by
   unfold Formalism.DoubleCosetMeasures.sLow
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   split_ifs <;> simp
 
 theorem sUp_map {S : Type} [CommRing S] (f : K →+* S) (A : Matrix (Fin n) (Fin n) K) :
     Formalism.DoubleCosetMeasures.sUp (A.map f) = f (Formalism.DoubleCosetMeasures.sUp A) := by
   unfold Formalism.DoubleCosetMeasures.sUp
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   split_ifs <;> simp
 
@@ -130,7 +136,7 @@ theorem phL_of_dec (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) 
   unfold phL
   rw [hw₀]
   try dsimp only
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   congr 2
   have hmat := modShift_holds δ T T' p w w₀ hw₀
   have e1 := zAt_eq hmat hex.choose
@@ -156,7 +162,7 @@ theorem cf_mul_cfi (Zd : LocDat D) (p : PlF D) (a b : Fin (D.R.rS + 1)) (h : a.v
   rw [hb, pow_succ, inv_pow, ← mul_assoc, inv_mul_cancel₀ (pow_ne_zero _ (yP_ne Zd p)), one_mul]
 
 theorem phaseLoc_L (hA : ∀ p, Agree δ M p) {γ : TermDef.Term D u u' F0 what₂} {w : Point D.host.E (D.R.rS + 1)}
-    {F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)} {L U : PairVal.MatR D} (hN : PairVal.NormRep γ w F' L U)
+    {F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)} {L U : PairVal.MatR D} (hN : PairVal.NormRep γ w F' L U)
     (p : PlF D) (hM : (M p).split = none) :
     phL M δ (D.mem u).A.T (D.mem u').A.T p w (CntLocal.ZZP (M := M) δ u u' p (ZhatL (lf D F0) F') * sgnP p) =
       (D.s.atP p).psiE ((D.s.atP p).ιE (-((PairVal.sgLo L + PairVal.sgUp U) / ((gS D : ℕ) : D.host.E)))) := by
@@ -244,18 +250,18 @@ theorem phaseLoc_L (hA : ∀ p, Agree δ M p) {γ : TermDef.Term D u u' F0 what�
       algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (yP ⟨δ, M, hA⟩ p) * (D.s.atP p).ιE (Formalism.DoubleCosetMeasures.sUp U)) *
         algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (δ p)⁻¹ =
       (D.s.atP p).ιE ((Formalism.DoubleCosetMeasures.sLow L + Formalism.DoubleCosetMeasures.sUp U) / ((gS D : ℕ) : D.host.E)) := by
-    rw [div_eq_mul_one_div, ← hup, map_mul, map_add, ← hyP]
+    rw [div_eq_mul_one_div, ← hup, map_mul, map_add (f := _), ← hyP]
     ring
   simp only [sgLo_eq, sgUp_eq, map_neg]
   exact congrArg Neg.neg key
 
 section Steps
 
-variable (M δ u u' F0 what₂) in
 
+variable (M δ u u' F0 what₂) in
 def PhaseLocG : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : PairVal.MatR D),
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : PairVal.MatR D),
     γ.relevant → γ.generic → PairVal.NormRep γ w F' L U → ∀ p : PlF D, (M p).split ≠ none →
     phL M δ (D.mem u).A.T (D.mem u').A.T p w (CntLocal.ZZP (M := M) δ u u' p (ZhatL (lf D F0) F') * sgnP p) =
       (D.s.atP p).psiE ((D.s.atP p).ιE (-((PairVal.sgLo L + PairVal.sgUp U) / ((gS D : ℕ) : D.host.E))))

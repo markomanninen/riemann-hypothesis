@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChart
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartDim
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChart
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartDim
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.SumT0MulRatioEqOne
-import Formalism.LocalToGlobal.ProjectiveLattices.TotalDegreePderivLt
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SumT0MulRatioEqOne
+public import Formalism.LocalToGlobal.ProjectiveLattices.TotalDegreePderivLt
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -117,7 +121,7 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
   letI : Algebra (X.Kl la) (OsK X la w ⧸ m) :=
     ((algebraMap (Kp X la N) (OsK X la w ⧸ m)).comp (algebraMap (X.Kl la) (Kp X la N))).toAlgebra
   let T : Fin (WeightFamilies.dimY D j + 1) × Fin N → OsK X la w ⧸ m := fun q =>
-    algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (Op X la N) (Kp X la N) (Tv X la N q))
+    algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N q))
   let y : Fin N → OsK X la w ⧸ m := fun k => π (toOsK X la w (xr X la w k))
   have hKF : ∀ z : Kp X la N, algebraMap (Kp X la N) (OsK X la w ⧸ m) z =
       π (toOsK X la w (algebraMap (Kp X la N) (Frac0 X la w) z)) := fun z => rfl
@@ -133,12 +137,12 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
     | C a =>
       rw [MvPolynomial.map_C, MvPolynomial.aeval_C]
       show algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (X.Kl la) (Kp X la N) (algebraMap (X.Ol la) (X.Kl la) a)) =
-        algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (Op X la N) (Kp X la N)
+        algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _
           (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.C a)))
       rw [← IsScalarTower.algebraMap_apply (X.Ol la) (X.Kl la) (Kp X la N), ← MvPolynomial.algebraMap_eq,
         ← IsScalarTower.algebraMap_apply (X.Ol la) (Pol X la N) (Op X la N),
         ← IsScalarTower.algebraMap_apply (X.Ol la) (Op X la N) (Kp X la N)]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p q hp =>
       simp only [map_mul, hp, MvPolynomial.map_X, MvPolynomial.aeval_X]
       rfl
@@ -146,7 +150,7 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
       algebraMap (Op X la N) (OsK X la w ⧸ m) (algebraMap (X.Ol la) (Op X la N) a) := by
     intro a
     show algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (X.Kl la) (Kp X la N) (algebraMap (X.Ol la) (X.Kl la) a)) =
-      algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (Op X la N) (Kp X la N) (algebraMap (X.Ol la) (Op X la N) a))
+      algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (X.Ol la) (Op X la N) a))
     rw [← IsScalarTower.algebraMap_apply (X.Ol la) (X.Kl la) (Kp X la N),
       ← IsScalarTower.algebraMap_apply (X.Ol la) (Op X la N) (Kp X la N)]
   have hmaxOl : ∀ a : X.Ol la, a ∈ maximalIdeal (X.Ol la) →
@@ -205,15 +209,15 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
     exact (hmaxOl _ (hg α)).ne hα
   have hδ0 : ∀ l k, δ l (T (0, k)) = if k = l then 1 else 0 := by
     intro l k
-    show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (0, k)))) = _
-    rw [hδK, dK_Tv]
+    show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (0, k)))) = _
+    rw [hδK, dK_Tv X la N (0, l) (0, k)]
     by_cases hk : k = l
     · subst hk; simp
     · rw [if_neg (fun h => hk (Prod.mk.inj h).2), if_neg hk, map_zero]
   have hδs : ∀ l (i : Fin (WeightFamilies.dimY D j)) k, δ l (T (i.succ, k)) = 0 := by
     intro l i k
-    show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i.succ, k)))) = 0
-    rw [hδK, dK_Tv, if_neg (fun h => Fin.succ_ne_zero i (Prod.mk.inj h).1), map_zero]
+    show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i.succ, k)))) = 0
+    rw [hδK, dK_Tv X la N (0, l) (i.succ, k), if_neg (fun h => Fin.succ_ne_zero i (Prod.mk.inj h).1), map_zero]
   have hδKl : ∀ l (c : X.Kl la), δ l (algebraMap (X.Kl la) (OsK X la w ⧸ m) c) = 0 := by
     intro l c
     show δ l (algebraMap (Kp X la N) (OsK X la w ⧸ m) (algebraMap (X.Kl la) (Kp X la N) c)) = 0
@@ -224,7 +228,8 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
     rw [hδv, hδOv, dF_xr, map_neg, map_mul, map_neg, map_mul]
   have h1 : ∑ k, T (0, k) * y k = 1 := by
     have := congrArg (fun z => π (toOsK X la w z)) (sum_T0_mul_ratio_eq_one X la w)
-    simp only [map_sum, map_mul, map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_one] at this
     exact this
   have halg : Algebra.IsAlgebraic (Algebra.adjoin (X.Kl la) (Set.range T)) (OsK X la w ⧸ m) := by
     set Sa := Algebra.adjoin (X.Kl la) (Set.range T) with hSa
@@ -232,7 +237,7 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
       intro Q
       induction Q using MvPolynomial.induction_on with
       | C c => rw [MvPolynomial.aeval_C]; exact Sa.algebraMap_mem c
-      | add p q hp hq => rw [map_add]; exact Sa.add_mem hp hq
+      | add p q hp hq => rw [map_add (f := _)]; exact Sa.add_mem hp hq
       | mul_X p q hp => rw [map_mul, MvPolynomial.aeval_X]; exact Sa.mul_mem hp (Algebra.subset_adjoin ⟨q, rfl⟩)
     letI : Algebra (Pol X la N) (OsK X la w ⧸ m) :=
       ((algebraMap (Op X la N) (OsK X la w ⧸ m)).comp (algebraMap (Pol X la N) (Op X la N))).toAlgebra
@@ -243,7 +248,7 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
       exact hmemS _
     have hinj : Function.Injective (algebraMap (Pol X la N) (OsK X la w ⧸ m)) := by
       show Function.Injective ((algebraMap (Kp X la N) (OsK X la w ⧸ m)).comp
-        ((algebraMap (Op X la N) (Kp X la N)).comp (algebraMap (Pol X la N) (Op X la N))))
+        ((@algebraMap (Op X la N) (Kp X la N) _ _ _).comp (algebraMap (Pol X la N) (Op X la N))))
       exact (algebraMap (Kp X la N) _).injective.comp ((IsFractionRing.injective _ _).comp
         (IsLocalization.injective (Op X la N) (gI X la N).primeCompl_le_nonZeroDivisors))
     let ψ : Pol X la N →+* Sa := (algebraMap (Pol X la N) (OsK X la w ⧸ m)).codRestrict Sa hPS
@@ -251,9 +256,9 @@ theorem isIntegral_xr (hfd : FiniteDimensional (Kp X la N) (OsK X la w)) (k : Fi
     refine ⟨fun f => ?_⟩
     have hfK : IsAlgebraic (Kp X la N) f := (Algebra.IsIntegral.isIntegral f).isAlgebraic
     have hfO : IsAlgebraic (Op X la N) f :=
-      (IsFractionRing.isAlgebraic_iff (A := Op X la N) (K := Kp X la N) (C := OsK X la w ⧸ m)).2 hfK
+      (IsFractionRing.isAlgebraic_iff (Op X la N) (Kp X la N) (OsK X la w ⧸ m)).2 hfK
     obtain ⟨p, hp0, hp⟩ := hfO
-    obtain ⟨⟨b, hb⟩, hbp⟩ := IsLocalization.integerNormalization_map_to_map (gI X la N).primeCompl p
+    obtain ⟨b, hb, hbp⟩ := IsLocalization.integerNormalization_spec (gI X la N).primeCompl p
     have hp'0 : IsLocalization.integerNormalization (gI X la N).primeCompl p ≠ 0 := by
       intro h0
       rw [h0, Polynomial.map_zero] at hbp
@@ -311,17 +316,19 @@ theorem generic_section_minimum_integral {D : D7} {B : WeightFamilies.Prov D} {P
     rw [h0]
     rfl
   have hT : ∀ k, algebraMap (Kp (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)
-      (algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) (Tv (xplus X E hM) la G.N (0, k))) ∈
+      (@algebraMap (Op (xplus X E hM) la G.N) (Kp (xplus X E hM) la G.N) _ _ _ (Tv (xplus X E hM) la G.N (0, k))) ∈
         As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w) := fun k =>
     isIntegral_algebraMap (x := Tv (xplus X E hM) la G.N (0, k))
   let s : ↥(As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)) := ∑ k, ⟨_, hT k⟩ * ⟨_, hint k⟩
   have hs1 : s = 1 := by
     apply Subtype.ext
     have := congrArg (toOsK (xplus X E hM) la G.w) (sum_T0_mul_ratio_eq_one (xplus X E hM) la G.w)
-    simp only [map_sum, map_mul, map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_one] at this
     show (As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)).val s =
       (As (Op (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w)).val 1
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp only [map_mul]
     exact this
   have hsζ : s ∈ ζ.asIdeal := Ideal.sum_mem _ fun k _ => Ideal.mul_mem_left _ _ (hmemζ k)

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.HilbChart
@@ -46,7 +51,8 @@ theorem coord_apply (c : Fin N → Fin r → S) (y : S ⊗[A] B) :
 theorem coord_one_tmul (c : Fin N → Fin r → S) (x : B) :
     coord e c ((1:S) ⊗ₜ x) = ∑ b, e.repr x b • c b := by
   conv_lhs => rw [← e.sum_repr x]
-  simp only [TensorProduct.tmul_sum, map_sum, TensorProduct.tmul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [TensorProduct.tmul_sum, map_sum, TensorProduct.tmul_smul]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [LinearMap.map_smul_of_tower, coord_one_tmul_basis]
 
@@ -68,11 +74,13 @@ theorem coord_sigma {c : Fin N → Fin r → S} (hc : ∀ k k', c (σ k) k' = Pi
 
 theorem coord_ell {c : Fin N → Fin r → S} (hc : ∀ k k', c (σ k) k' = Pi.single (M := fun _ => S) k 1 k')
     (m : Fin N) : coord e c (ell e σ c m) = 0 := by
-  simp only [ell, map_sub, map_sum, map_smul, coord_one_tmul_basis, coord_sigma σ hc, sum_smul_single, sub_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ell, map_sub, map_sum, map_smul, coord_one_tmul_basis, coord_sigma σ hc, sum_smul_single, sub_self]
 
 theorem coord_mul_ell (c : Fin N → Fin r → S) (a m : Fin N) (k : Fin r) :
     coord e c (((1:S) ⊗ₜ[A] e a) * ell e σ c m) k = mulDefect e σ c a m k := by
-  simp only [ell, mul_sub, Finset.mul_sum, mul_smul_comm, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ell, mul_sub, Finset.mul_sum, mul_smul_comm, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
     map_sub, map_sum, map_smul, coord_one_tmul]
   simp only [mulDefect, sc, Pi.sub_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   simp only [Algebra.smul_def, Finset.mul_sum]
@@ -83,7 +91,8 @@ theorem coord_mul_eq_zero {c : Fin N → Fin r → S} (hc : IsChart e σ c) (z y
   have hy' : y = ∑ m, bS.repr y m • ell e σ c m := by
     have := decomp e σ c y; rw [hy] at this; simpa using this
   rw [← bS.sum_repr z, hy']
-  simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul_comm, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul_comm, map_sum, map_smul]
   refine Finset.sum_eq_zero fun a _ => Finset.sum_eq_zero fun m _ => ?_
   have : coord e c (bS m * ell e σ c a) = 0 := by
     funext k; rw [Algebra.TensorProduct.basis_apply, coord_mul_ell]; exact hc.2 m a k
@@ -96,7 +105,7 @@ theorem mem_chartIdeal_iff {c : Fin N → Fin r → S} (hc : IsChart e σ c) (y 
     refine Submodule.span_induction ?_ ?_ ?_ ?_ hy
     · rintro _ ⟨m, rfl⟩; exact coord_ell e σ hc.1 m
     · simp
-    · intro u v _ _ hu hv; rw [map_add, hu, hv, add_zero]
+    · intro u v _ _ hu hv; rw [map_add (f := _), hu, hv, add_zero]
     · intro z u _ hu; exact coord_mul_eq_zero e σ hc z u hu
   · intro hy
     rw [decomp e σ c y, hy]
@@ -110,7 +119,8 @@ theorem mk_smul (J : Ideal (S ⊗[A] B)) (s : S) (y : S ⊗[A] B) :
 
 theorem sum_smul_tmul_sigma (c : Fin N → Fin r → S) (v : Fin r → S) (hc : ∀ k, c (σ k) = Pi.single k 1) :
     coord e c (∑ k, v k • ((1:S) ⊗ₜ[A] e (σ k))) = v := by
-  simp only [map_sum, map_smul, coord_one_tmul_basis, hc, sum_smul_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, coord_one_tmul_basis, hc, sum_smul_single]
 
 theorem quotient_basis {c : Fin N → Fin r → S} (hc : IsChart e σ c) :
     LinearIndependent S (fun k => Ideal.Quotient.mk (chartIdeal e σ c) ((1 : S) ⊗ₜ[A] e (σ k))) ∧
@@ -118,13 +128,15 @@ theorem quotient_basis {c : Fin N → Fin r → S} (hc : IsChart e σ c) :
   constructor
   · rw [Fintype.linearIndependent_iff]
     intro g hg
-    simp only [← mk_smul, ← map_sum, Ideal.Quotient.eq_zero_iff_mem, mem_chartIdeal_iff e σ hc] at hg
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← mk_smul, ← map_sum, Ideal.Quotient.eq_zero_iff_mem, mem_chartIdeal_iff e σ hc] at hg
     rw [sum_smul_tmul_sigma e σ c g (coord_sigma σ hc.1)] at hg
     intro k; rw [hg]; rfl
   · rw [Submodule.eq_top_iff']
     intro x
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective x
-    rw [decomp e σ c y, map_add, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [decomp e σ c y, map_add (f := _), map_sum, map_sum]
     have h0 : ∀ m, Ideal.Quotient.mk (chartIdeal e σ c)
         ((Algebra.TensorProduct.basis S e).repr y m • ell e σ c m) = 0 := fun m => by
       rw [Ideal.Quotient.eq_zero_iff_mem, Algebra.smul_def]
@@ -148,20 +160,12 @@ theorem map_chartIdeal (φ : S →ₐ[A] S') (c : Fin N → Fin r → S) :
       ell e σ (fun m k => φ (c m k)) := funext (map_ell e σ φ c)
   rw [this]
 
-theorem IsChart.map {c : Fin N → Fin r → S} (hc : IsChart e σ c) (φ : S →ₐ[A] S') :
-    IsChart e σ (fun m k => φ (c m k)) := by
-  refine ⟨fun k k' => ?_, fun a m k => ?_⟩
-  · show φ (c (σ k) k') = _
-    rw [hc.1]; by_cases h : k' = k <;> simp [Pi.single_apply, h]
-  · have : mulDefect e σ (fun m k => φ (c m k)) a m k = φ (mulDefect e σ c a m k) := by
-      simp [mulDefect, map_sub, map_sum, map_mul, AlgHom.commutes]
-    rw [this, hc.2, map_zero]
-
 theorem eq_of_chartIdeal_le {c d : Fin N → Fin r → S} (hc : IsChart e σ c)
     (h : chartIdeal e σ d ≤ chartIdeal e σ c) : c = d := by
   funext m
   have h1 := (mem_chartIdeal_iff e σ hc _).1 (h (Ideal.subset_span ⟨m, rfl⟩))
-  simp only [ell, map_sub, map_sum, map_smul, coord_one_tmul_basis, coord_sigma σ hc.1,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ell, map_sub, map_sum, map_smul, coord_one_tmul_basis, coord_sigma σ hc.1,
     sum_smul_single] at h1
   exact sub_eq_zero.1 h1
 
@@ -180,13 +184,15 @@ theorem exists_chart_of_quotient (J : Ideal (S ⊗[A] B))
     · simp [h, Ne.symm h]
   have hell : ∀ m, Ideal.Quotient.mk J (ell e σ c m) = 0 := by
     intro m
-    simp only [ell, map_sub, map_sum, mk_smul, ← hbq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ell, map_sub, map_sum, mk_smul, ← hbq]
     rw [sub_eq_zero]
     exact (bq.sum_repr _).symm
   have hq : ∀ y, Ideal.Quotient.mk J y = ∑ k, coord e c y k • bq k := by
     intro y
     conv_lhs => rw [decomp e σ c y]
-    simp only [map_add, map_sum, mk_smul, hell, smul_zero, Finset.sum_const_zero, zero_add, hbq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, mk_smul, hell, smul_zero, Finset.sum_const_zero, zero_add, hbq]
   have hmem : ∀ y, y ∈ J ↔ coord e c y = 0 := by
     intro y
     rw [← Ideal.Quotient.eq_zero_iff_mem, hq y]
@@ -205,7 +211,8 @@ theorem exists_chart_of_quotient (J : Ideal (S ⊗[A] B))
 
 theorem mulDefect_map (φ : S →ₐ[A] S') (c : Fin N → Fin r → S) (a m : Fin N) (k : Fin r) :
     mulDefect e σ (fun m k => φ (c m k)) a m k = φ (mulDefect e σ c a m k) := by
-  simp [mulDefect, map_sub, map_sum, map_mul, AlgHom.commutes]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mulDefect, map_sub, map_sum, map_mul, AlgHom.commutes]
 
 noncomputable def rels : (Fin r × Fin r) ⊕ (Fin N × Fin N × Fin r) → MvPolynomial (Fin N × Fin r) A
   | .inl p => MvPolynomial.X (σ p.1, p.2) - MvPolynomial.C (Pi.single (M := fun _ => A) p.1 1 p.2)

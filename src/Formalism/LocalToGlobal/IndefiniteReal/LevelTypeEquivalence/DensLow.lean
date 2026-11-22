@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.VanishTranslates
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ApproxId
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.VanishTranslates
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ApproxId
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem ksub_rep {g : Matrix (Fin V.rank) (Fin V.rank) ℂ} (hg : g ∈ Formalis
     refine Submodule.subset_span ⟨g * g', uh_mul τ hg hg', w0, ?_⟩
     rw [rep_mul M τ hg hg', ContinuousLinearMap.comp_apply]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem ksub_closure_top (hlow : ∃ w0 : lowT M τ, ((w0 : M.sm τ) : M.H τ) ≠ 0) :
@@ -117,7 +121,7 @@ theorem cont_orbit {ℓ : M.H τ →ₗ[ℂ] ℂ} (hℓ : Sobolev₂ (lieAt V τ
     have hs := gp_sv_add (hsv h) (gp_sv_smul (-1) (hsv h0))
     have e1 : ℓ (M.σ τ (PI.UpqRep.umat h) w) - ℓ (M.σ τ (PI.UpqRep.umat h0) w) =
         ℓ (M.σ τ (PI.UpqRep.umat h) w + (-1 : ℂ) • M.σ τ (PI.UpqRep.umat h0) w) := by
-      rw [map_add, map_smul]; simp [sub_eq_add_neg]
+      rw [map_add (f := _), map_smul]; simp [sub_eq_add_neg]
     rw [e1]
     refine (hC _ hs).trans ?_
     have e2 : (L.map fun l => ‖l.foldr (dRep (M.rep τ)) (M.σ τ (PI.UpqRep.umat h) w +

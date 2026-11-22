@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.DVR
 
@@ -9,7 +13,7 @@ def qf (B : LinearMap.BilinForm 𝕜 W) (w : W) : 𝕜 := B w w / 2
 variable {B : LinearMap.BilinForm 𝕜 W}
 
 theorem qf_add (hB : ∀ x y, B x y = B y x) (x y : W) : qf B (x + y) = qf B x + B x y + qf B y := by
-  simp only [qf, map_add, LinearMap.add_apply, hB y x]; ring
+  simp only [qf, map_add (f := _), LinearMap.add_apply, hB y x]; ring
 
 theorem qf_smul (c : 𝕜) (x : W) : qf B (c • x) = c ^ 2 * qf B x := by
   simp only [qf, map_smul, LinearMap.smul_apply, smul_eq_mul]; ring

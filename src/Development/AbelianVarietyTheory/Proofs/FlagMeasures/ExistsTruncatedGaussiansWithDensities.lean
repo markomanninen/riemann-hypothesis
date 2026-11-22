@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SiegelMeanCc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianQuadricDensityExistsPosContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SiegelMeanCc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianQuadricDensityExistsPosContinuous
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean
 
@@ -48,7 +52,7 @@ theorem prodFun_nonneg {n : ℕ} (y : Fin n → ℂ) : 0 ≤ prodFun g y := Fins
 include h0 h1 in
 theorem prodFun_le {n : ℕ} (y : Fin n → ℂ) : prodFun g y ≤ gauss y := by
   rw [← prodFun_exp]
-  exact Finset.prod_le_prod (fun _ _ => h0 _) fun _ _ => h1 _
+  exact Finset.prod_le_prod₀ (fun _ _ => h0 _) fun _ _ => h1 _
 
 include hc h0 h1 in
 theorem integrable_prodFun (n : ℕ) : Integrable (prodFun g : (Fin n → ℂ) → ℝ) :=
@@ -214,7 +218,7 @@ theorem tendsto_cutExp (r : ℝ) : Filter.Tendsto (fun k => cutExp k r) Filter.a
 
 theorem tendsto_prodFun {n : ℕ} (y : Fin n → ℂ) : Filter.Tendsto (fun k => prodFun (cutExp k) y) Filter.atTop
     (nhds (prodFun (fun r => Real.exp (-r)) y)) :=
-  tendsto_finset_prod _ fun _ _ => tendsto_cutExp _
+  tendsto_finsetProd _ fun _ _ => tendsto_cutExp _
 
 theorem hasCompactSupport_prodFun (k n : ℕ) : HasCompactSupport (prodFun (cutExp k) : (Fin n → ℂ) → ℝ) := by
   refine HasCompactSupport.intro (isCompact_closedBall (0 : Fin n → ℂ) (k + 1)) fun y hy => ?_
@@ -227,7 +231,7 @@ theorem hasCompactSupport_prodFun (k n : ℕ) : HasCompactSupport (prodFun (cutE
 
 theorem contDiff_prodFun (k n : ℕ) :
     ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (prodFun (cutExp k) : (Fin n → ℂ) → ℝ) :=
-  contDiff_prod fun i _ => (contDiff_cutExp k).comp ((contDiff_apply ℝ ℂ i).norm_sq ℂ)
+  contDiff_prod fun i _ => (contDiff_cutExp k).comp ((contDiff_apply ℝ (fun _ => ℂ) i).norm_sq ℂ)
 
 theorem tendsto_dens {n : ℕ} (ε : Fin (n + 1) → Bool) (t : ℝ) :
     Filter.Tendsto (fun k => dens (cutExp k) ε t) Filter.atTop (nhds (dens (fun r => Real.exp (-r)) ε t)) := by
@@ -248,7 +252,7 @@ theorem exists_truncated (n : ℕ) (ε : Fin n → Bool) :
       ∀ β : ℝ, β ≠ 0 → Filter.Tendsto (fun k => D k β) Filter.atTop (nhds (gaussDens ε β)) := by
   have key : ∀ y : Fin n → ℂ, Monotone (fun k => prodFun (cutExp k) y) ∧
       Filter.Tendsto (fun k => prodFun (cutExp k) y) Filter.atTop (nhds (gauss y)) := fun y =>
-    ⟨fun _ _ h => Finset.prod_le_prod (fun _ _ => cutExp_nonneg _ _) fun _ _ => cutExp_mono _ h,
+    ⟨fun _ _ h => Finset.prod_le_prod₀ (fun _ _ => cutExp_nonneg _ _) fun _ _ => cutExp_mono _ h,
       prodFun_exp y ▸ tendsto_prodFun y⟩
   obtain _ | n := n
   · refine ⟨fun k => prodFun (cutExp k), fun _ _ => 0, fun k => ⟨contDiff_prodFun k 0,

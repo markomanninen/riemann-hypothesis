@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.PairDoubleCosetFiniteSupport
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.RunFinOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdIrrEquivOfOrdered
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmoothColRep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.PairDoubleCosetFiniteSupport
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.RunFinOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdIrrEquivOfOrdered
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSmoothColRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,8 @@ theorem hkG_eqv {ρ : Representation ℂ Γ V} {σ : Representation ℂ Γ W} (�
     (hfin : (Function.support fun q : Γ ⧸ K => f q.out).Finite) (v : V) :
     φ.toLinearEquiv (hkG ρ K f v) = hkG σ K f (φ.toLinearEquiv v) := by
   unfold hkG
-  rw [hsum_eq ρ K f hfin.coe_toFinset.ge, hsum_eq σ K f hfin.coe_toFinset.ge, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum_eq ρ K f hfin.coe_toFinset.ge, hsum_eq σ K f hfin.coe_toFinset.ge, map_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [map_smul, eqv_apply]
 
@@ -215,7 +220,7 @@ theorem fd_pair (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) :
       ((GlobalTheory.T.admissible_parabolic_induction (w.adicCompletion E) _ Pa.h (fun i => Pa.σ i w)).2 _ (hIa 1).2.1 (hIa 1).2.2.1)
       ((GlobalTheory.T.admissible_parabolic_induction (w.adicCompletion E) _ Pb.h (fun i => Pb.σ i w)).2 _ (hIb 1).2.1 (hIb 1).2.2.1)
 
-def key {n : ℕ} (P₀ : Pre E n) (w : Pl E) (P : Pre E n) : Fin P₀.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E) :=
+def key {n : ℕ} (P₀ : Pre E n) (w : Pl E) (P : Pre E n) : Fin P₀.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E) :=
   if h : P₀.c = P.c then fun j => P.cls (Fin.cast h j) w else fun j => P₀.cls j w
 
 theorem c_eq {n : ℕ} {P₀ P : Pre E n} (hP : PreEquiv P₀ P) : P₀.c = P.c := by
@@ -247,23 +252,23 @@ theorem key_eqv {n : ℕ} (P₀ P Q : Pre E n) (w : Pl E) (hP : P₀.c = P.c) (h
   exact ⟨(φ1.trans ψ).trans φ2.symm⟩
 
 def Good (Pa : Pre E a) (Pb : Pre E b) (w : Pl E)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)))
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)))
     (p : Pre E a × Pre E b) : Prop :=
   PreEquiv Pa p.1 ∧ PreEquiv Pb p.2 ∧ key Pa w p.1 = κ.1 ∧ key Pb w p.2 = κ.2
 
 def ZS (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicCompletion E)ˣ)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E))) :
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E))) :
     Set ((Fin a → ℂˣ) × (Fin b → ℂˣ)) :=
   if h : ∃ p, Good Pa Pb w κ p then {ξ | JEig h.choose.1 h.choose.2 w ϖ ξ.1 ξ.2} else ∅
 
 def fr (w : Pl E) (p : Pre E a × Pre E b) : ℕ := Module.finrank ℂ (GlobalTheory.PRep.fixed (pairAt p.1 p.2 w) (I2 a b w))
 
 def MS (Pa : Pre E a) (Pb : Pre E b) (w : Pl E)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E))) : ℕ :=
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E))) : ℕ :=
   if h : ∃ p, Good Pa Pb w κ p then fr w h.choose else 0
 
 theorem zs_finite (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicCompletion E)ˣ)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E))) :
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E))) :
     (ZS Pa Pb w ϖ κ).Finite := by
   unfold ZS
   split_ifs with h
@@ -286,7 +291,7 @@ theorem step (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicCompletion E)
   exact ⟨finrank_fixed_eqv e.some _, fun ξa ξb hJ => je_eqv w ϖ e.some ξa ξb hJ⟩
 
 theorem mem_zs (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicCompletion E)ˣ)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)))
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)))
     (h : ∃ p, Good Pa Pb w κ p) (ξ : (Fin a → ℂˣ) × (Fin b → ℂˣ)) (hJ : JEig h.choose.1 h.choose.2 w ϖ ξ.1 ξ.2) :
     ξ ∈ ZS Pa Pb w ϖ κ := by
   unfold ZS
@@ -294,7 +299,7 @@ theorem mem_zs (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicCompletion 
   exact hJ
 
 theorem ms_eq (Pa : Pre E a) (Pb : Pre E b) (w : Pl E)
-    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)))
+    (κ : (Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)))
     (h : ∃ p, Good Pa Pb w κ p) : MS Pa Pb w κ = fr w h.choose :=
   dif_pos h
 
@@ -303,7 +308,7 @@ theorem jEigFin_at (Pa : Pre E a) (Pb : Pre E b) (w : Pl E) (ϖ : (w.adicComplet
       PreEquiv Pa Pa' → PreEquiv Pb Pb' →
       Module.finrank ℂ (GlobalTheory.PRep.fixed (pairAt Pa' Pb' w) (I2 a b w)) ≤ m ∧
         ∀ ξa ξb, JEig Pa' Pb' w ϖ ξa ξb → (ξa, ξb) ∈ Z := by
-  let KS : Set ((Fin Pa.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (w.adicCompletion E))) :=
+  let KS : Set ((Fin Pa.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E)) × (Fin Pb.c → GlobalTheory.LocGL.IrrGL (k := w.adicCompletion E))) :=
     (Set.univ.pi fun _ => Set.range fun i => Pa.cls i w) ×ˢ (Set.univ.pi fun _ => Set.range fun i => Pb.cls i w)
   have hKS : KS.Finite :=
     (Set.Finite.pi fun _ => Set.finite_range _).prod (Set.Finite.pi fun _ => Set.finite_range _)

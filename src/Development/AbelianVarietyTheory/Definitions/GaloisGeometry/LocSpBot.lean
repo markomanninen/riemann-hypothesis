@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValRat
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValRat
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+
+@[expose] public section
 
 noncomputable section
 

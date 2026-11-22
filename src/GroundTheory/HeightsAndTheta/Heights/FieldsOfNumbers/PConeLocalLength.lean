@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalLength
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalFlat
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsLocalizedQuotientLength
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalLength
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeLocalFlat
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsLocalizedQuotientLength
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -12,8 +17,8 @@ noncomputable section
 
 universe u
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem ConeLocalLength.proof (h₁ : LocalizedQuotientLength.Statement.{u, u})
     (h₂ : ConeLocalFlat.Statement.{u}) : ConeLocalLength.Statement.{u} := by
   intro F _ K _ _ ι _ P hP W hW hPW c a h _ _ hhW α hα
@@ -21,7 +26,7 @@ theorem ConeLocalLength.proof (h₁ : LocalizedQuotientLength.Statement.{u, u})
   have := hW.isPrime
   obtain ⟨_, _, _, hmax⟩ := h₂ F K ι P hP W hW hPW
   have : IsLocalHom (algebraMap (degZeroLoc P {W}) (coneLocal P W hPW)) :=
-    ((local_hom_TFAE _).out 2 0).mp hmax.le
+    ((local_hom_tfae _).out 3 1).mp hmax.le
   have hu : IsUnit (algebraMap (MRing ι F ⧸ P) (coneLocal P W hPW) (Ideal.Quotient.mk P h)) :=
     IsLocalization.map_units (coneLocal P W hPW)
       (⟨_, ⟨h, hhW, rfl⟩⟩ : W.primeCompl.map (Ideal.Quotient.mk P))

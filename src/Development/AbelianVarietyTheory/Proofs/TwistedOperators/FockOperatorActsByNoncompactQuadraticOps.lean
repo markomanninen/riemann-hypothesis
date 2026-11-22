@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtHeisenbergMatrixCoeffRealLineSkewStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfPderivStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaInnerProductHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasDerivAtHeisenbergMatrixCoeffRealLineSkewStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
@@ -90,14 +94,14 @@ theorem quadOp_X_mul {ι : Type} [DecidableEq ι] (c : ℂ) (z z' y : ι) (P : M
       rw [pderiv_mul, pderiv_X, add_comm, Pi.single_apply]
       split_ifs <;> simp
   unfold quadOp
-  rw [hd, map_add, hd, apply_ite (pderiv z), map_zero, mul_sub, mul_smul_comm, mul_smul_comm, mul_left_comm _ (X y),
+  rw [hd, map_add (f := _), hd, apply_ite (pderiv z), map_zero, mul_sub, mul_smul_comm, mul_smul_comm, mul_left_comm _ (X y),
     add_assoc, smul_add, sub_sub]
 
 theorem pderiv_quadOp_one {ι : Type} [DecidableEq ι] (c : ℂ) (z z' y : ι) :
     pderiv y (quadOp c z z' (1 : MvPolynomial ι ℂ)) =
       c • ((if y = z then X z' else 0) + (if y = z' then X z else 0)) := by
   unfold quadOp
-  simp only [pderiv_mul, pderiv_X, Pi.single_apply, map_add, mul_one, pderiv_one, map_zero, smul_zero, sub_zero, Derivation.map_smul]
+  simp only [pderiv_mul, pderiv_X, Pi.single_apply, map_add (f := _), mul_one, pderiv_one, map_zero, smul_zero, sub_zero, Derivation.map_smul]
   simp only [@eq_comm _ y, ite_mul, mul_ite, one_mul, mul_one, zero_mul, mul_zero]
 
 variable {D : D7} {m n pS pT : ℕ} {YS : Matrix (Fin n) (Fin n) ℂ} {YT : Matrix (Fin m) (Fin m) ℂ} {τ : D.what₂.Tau}
@@ -108,7 +112,7 @@ theorem fockOperator_add (P Q : MvPolynomial (FVar D m n) ℂ) :
       (if p then quadOp c z z' P else 0) + (if p then quadOp c z z' Q else 0) := fun p _ c z z' => by
     unfold quadOp
     split_ifs
-    · simp only [map_add, mul_add, smul_add]; abel
+    · simp only [map_add (f := _), mul_add, smul_add]; abel
     · simp
   simp only [fockP, e, Finset.sum_add_distrib]
   abel
@@ -150,7 +154,8 @@ theorem pderiv_fockP_one (hS : IsPMat pS YS) (hT : IsPMat pT YT) (y : FVar D m n
     pderiv y (fockP τ pS pT YS YT 1) = if y.1 = τ then
       ∑ i, ∑ d, lin pS pT (act YS YT (single y.2.1 y.2.2 1)) i d • X (τ, i, d) else 0 := by
   obtain ⟨ρ, i₀, c₀⟩ := y
-  simp only [fockP, map_add, map_sum, apply_ite (pderiv _), map_zero, pderiv_quadOp_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fockP, map_add (f := _), map_sum, apply_ite (pderiv _), map_zero, pderiv_quadOp_one]
   split_ifs with h
   · subst h
     have := comb (RingHom.id ℂ) hS hT (fun i d => (X (ρ, i, d) : MvPolynomial (FVar D m n) ℂ)) i₀ c₀
@@ -217,14 +222,16 @@ theorem expand {d : Matrix (Fin m) (Fin n) ℂ →+ Module.End ℂ M} (hd : ∀ 
     cre pS pT d N = ∑ i, ∑ j, lin pS pT N i j • cre pS pT d (single i j 1) ∧
     ann pS pT d N = ∑ i, ∑ j, conj (lin pS pT N i j) • ann pS pT d (single i j 1) := by
   have hs : ∀ (w : ℂ) u, d (w • u) = (w.re : ℂ) • d u + (w.im : ℂ) • d (I • u) := fun w u => by
-    rw [← hd, ← hd, ← map_add, smul_smul, ← add_smul, Complex.re_add_im]
+    rw [← hd, ← hd, ← map_add (f := _), smul_smul, ← add_smul, Complex.re_add_im]
   have e : N = ∑ i, ∑ j, single i j (N i j) := Matrix.matrix_eq_sum_single N
   have e1 : d N = ∑ i, ∑ j, d (single i j (N i j)) := by
     conv_lhs => rw [e]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
   have e2 : d (cplx pS pT N) = ∑ i, ∑ j, d (cplx pS pT (single i j (N i j))) := by
     conv_lhs => rw [e]
-    simp only [cplx, cplxO, Matrix.mul_sum, Matrix.sum_mul, Finset.smul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cplx, cplxO, Matrix.mul_sum, Matrix.sum_mul, Finset.smul_sum, map_sum]
   have e3 : ∀ i j, single i j (N i j) = N i j • single i j (1 : ℂ) := fun i j => by simp
   unfold cre ann
   rw [e1, e2]
@@ -255,7 +262,7 @@ theorem quad_of_comm (hS : IsPMat (pS τ) YS) (hT : IsPMat (pT τ) YT)
     module
   have ga : ∀ N g, G (ann (pS τ) (pT τ) (d τ) N g) =
       ann (pS τ) (pT τ) (d τ) N (G g) + cre (pS τ) (pT τ) (d τ) (act YS YT N) g := fun N g => by
-    simp only [cre, ann, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, hG,
+    simp only [cre, ann, LinearMap.sub_apply, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, hG,
       act_cplx hS hT, map_neg, LinearMap.neg_apply]
     module
   have gc' : ∀ ρ, ρ ≠ τ → ∀ N g, G (cre (pS ρ) (pT ρ) (d ρ) N g) = cre (pS ρ) (pT ρ) (d ρ) N (G g) :=
@@ -263,7 +270,7 @@ theorem quad_of_comm (hS : IsPMat (pS τ) YS) (hT : IsPMat (pT τ) YT)
       simp only [cre, LinearMap.sub_apply, LinearMap.smul_apply, map_sub, map_smul, hG' ρ h]
   have ga' : ∀ ρ, ρ ≠ τ → ∀ N g, G (ann (pS ρ) (pT ρ) (d ρ) N g) = ann (pS ρ) (pT ρ) (d ρ) N (G g) :=
     fun ρ h N g => by
-      simp only [ann, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, hG' ρ h]
+      simp only [ann, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, hG' ρ h]
   have hv : ∀ ρ i j, ann (pS ρ) (pT ρ) (d ρ) (single i j 1) (E 1) = 0 := fun ρ i j => by
     have := hb (ρ, i, j) 1
     rw [pderiv_one, map_zero] at this
@@ -280,13 +287,14 @@ theorem quad_of_comm (hS : IsPMat (pS τ) YS) (hT : IsPMat (pT τ) YT)
       have := ga (single i j 1) (E 1)
       rw [hv, map_zero, eq_comm, add_eq_zero_iff_eq_neg] at this
       rw [this, (expand (hd ρ) _).1, neg_smul_neg]
-      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       rw [← mul_one (X _), hX, smul_comm]
     · rw [← ga' ρ h, hv, map_zero, map_zero, smul_zero]
   · induction P using MvPolynomial.induction_on with
     | C a => rw [fockP_C, C_eq_smul_one, map_smul, map_smul, h1, map_smul]
-    | add p q hp hq => rw [fockOperator_add, map_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [fockOperator_add, map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p k hp =>
       obtain ⟨ρ, i, j⟩ := k
       rw [mul_comm, fockP_X_mul hS hT, map_sub, hX, hX, map_smul, ← hp]
@@ -295,7 +303,8 @@ theorem quad_of_comm (hS : IsPMat (pS τ) YS) (hT : IsPMat (pT τ) YT)
       · subst h
         rw [gc, smul_add, sub_eq_add_neg, (expand (hd ρ) (act YS YT _)).2]
         congr 1
-        simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum, hb,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum, hb,
           ← Finset.sum_neg_distrib]
         refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
         module
@@ -328,8 +337,8 @@ theorem fockScale_ne (τ : D.what₂.Tau) : (fockScale D τ : ℂ) ≠ 0 := by
   have : (0 : ℝ) < 8 * Real.pi * (tauE D τ D.host.xi0).im := by positivity
   exact this.ne h3
 
-variable (V W) in
 
+variable (V W) in
 def thetaSub (ψ : AddChar (AF D.host.F) ℂ) : Submodule ℂ (WO V W → ℂ) where
   carrier := {g | IsThetaFunO ψ V W g}
   add_mem' := GlobalTheory.OrientedHeis.theta_add
@@ -437,8 +446,8 @@ variable (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
   (bS : ∀ ρ, IsONBasis (gramAt D S ρ) (sS ρ) (BS ρ) (pS ρ)) (bT : ∀ ρ, IsONBasis (gramAt D T ρ) (sT ρ) (BT ρ) (pT ρ))
 include hψ hθ hS hT bS bT
 
-open Classical in
 
+open Classical in
 theorem ccr (k l : FVar D T.rank S.rank) {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) :
     annih (heisO ψ S T) θ k.1 (cplxO (sS k.1) (sT k.1)) (unitMap (BS k.1) (BT k.1) k.2.1 k.2.2)
       (aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT l g) =
@@ -486,9 +495,9 @@ theorem annih_pure {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
   | C a =>
     rw [C_eq_smul_one, map_smul, pure_one, annih_smul hψ hθ _ _ _ _ hf, hv, Derivation.map_smul, pderiv_one, smul_zero,
       smul_zero, map_zero, smul_zero]
-  | add p q hp hq => rw [map_add, annih_add hψ hθ _ _ _ (hm _) (hm _), hp, hq, map_add, map_add, smul_add]
+  | add p q hp hq => rw [map_add (f := _), annih_add hψ hθ _ _ _ (hm _) (hm _), hp, hq, map_add (f := _), map_add (f := _), smul_add]
   | mul_X p j hp =>
-    rw [mul_comm, hX, ccr hψ hθ hS hT bS bT _ _ (hm _), hp, pderiv_mul, map_add, hX, pderiv_X, add_comm, smul_add]
+    rw [mul_comm, hX, ccr hψ hθ hS hT bS bT _ _ (hm _), hp, pderiv_mul, map_add (f := _), hX, pderiv_X, add_comm, smul_add]
     refine congrArg₂ (· + ·) ?_ (aPlus_smul hψ hθ _ _ _ _ (hm _))
     by_cases h : k = j
     · subst h; simp
@@ -496,8 +505,8 @@ theorem annih_pure {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f)
 
 end Model
 
-open GlobalTheory.FockIndep GlobalTheory.OrientedHeis in
 
+open GlobalTheory.FockIndep GlobalTheory.OrientedHeis in
 theorem acts_by_fockP : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D), IsStdChar D ψ (-1) → IsInfFam θ → ∀ (sS BS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (sT BT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ) (pS pT : D.what₂.Tau → ℕ), (∀ ρ, pS ρ ≤ S.rank) → (∀ ρ, pT ρ ≤ T.rank) → (∀ ρ, IsCartanInv (gramAt D S ρ) (sS ρ)) → (∀ ρ, IsCartanInv (gramAt D T ρ) (sT ρ)) → (∀ ρ, IsONBasis (gramAt D S ρ) (sS ρ) (BS ρ) (pS ρ)) → (∀ ρ, IsONBasis (gramAt D T ρ) (sT ρ) (BT ρ) (pT ρ)) → ∀ (τ : D.what₂.Tau) YS YT, IsPMat (pS τ) YS → IsPMat (pT τ) YT → ∀ (μ : Measure (WO S T)) (𝓕 : Set (WO S T)), IsCovolOne (ratL T S) μ 𝓕 → ∀ Gn : Module.End ℂ (WO S T → ℂ), (∀ f, IsThetaFunO ψ S T f → IsThetaFunO ψ S T (Gn f) ∧ (∀ u, Gn (Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ u f) - Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ u (Gn f) = Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ (BT τ * YT * (BT τ)⁻¹ * u - u * (BS τ * YS * (BS τ)⁻¹)) f) ∧ ∀ τ', τ' ≠ τ → ∀ u, Gn (Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ' u f) = Formalism.IndefR.Datum.dRho (heisO ψ S T) θ τ' u (Gn f)) → ∀ f, IsThetaFunO ψ S T f → (∀ ρ, IsFockVacAt (heisO ψ S T) θ ρ (cplxO (sS ρ) (sT ρ)) f) → (∀ g, IsThetaFunO ψ S T g → (∀ ρ, IsFockVacAt (heisO ψ S T) θ ρ (cplxO (sS ρ) (sT ρ)) g) → ipO μ 𝓕 (Gn f) g = 0) → ∀ P, Gn (pureTensorO ψ θ S T sS sT BS BT f P) = pureTensorO ψ θ S T sS sT BS BT f (fockP τ (pS τ) (pT τ) YS YT P) := by
   intro D ψ θ S T hψ hθ sS BS sT BT pS pT _ _ hS hT bS bT τ YS YT yS yT μ 𝓕 hμ Gn hG f hf hv h0
   have hm := pure_mem (A := aPlusAll (heisO ψ S T) θ (fun τ => cplxO (sS τ) (sT τ)) BS BT) (P := IsThetaFunO ψ S T)

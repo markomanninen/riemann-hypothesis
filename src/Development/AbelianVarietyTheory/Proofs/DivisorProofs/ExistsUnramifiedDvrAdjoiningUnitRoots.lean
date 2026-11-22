@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramSub
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnramifiedExtTorsionPointsGoodReduction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramSub
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnramifiedExtTorsionPointsGoodReduction
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.KummerUnram
@@ -92,8 +97,8 @@ end GlobalTheory.KummerUnram
 
 namespace GlobalTheory
 
-open KummerUnram in
 
+open KummerUnram in
 theorem exists_unramSub_of_pow_eq_units : ∀ (F : Type) [Field F] [IsAlgClosed F] (T : Subring F) [IsDiscreteValuationRing T] (k : ℕ), IsUnit (k : T) → ∀ U : Set Tˣ, U.Finite → ∃ T' : Subring F, GlobalTheory.UnramSub T.subtype T' ∧ ∀ x : F, (∃ u ∈ U, x ^ k = ((u : T) : F)) → x ∈ T' := by
   intro F _ _ T _ k hk U hU
   obtain ⟨T₁, h₁, hroots⟩ := exists_rootsOfUnity T hk

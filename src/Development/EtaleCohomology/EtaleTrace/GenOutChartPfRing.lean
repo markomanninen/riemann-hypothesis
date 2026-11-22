@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenOutChartPf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenOutChartPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -14,7 +18,7 @@ theorem homog_div_mem {k : Type} [Field k] {K : Type} [Field K] (κ : k →+* K)
   have hdeg : ∑ j, d j = m := by
     rw [← hg (mem_support_iff.mp hd), Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
     simp
-  have : (κ (coeff d g) * ∏ j, w j ^ d j) / w i ^ m = κ (coeff d g) * ∏ j, (w j / w i) ^ d j := by
+  have : (κ (AddMonoidAlgebra.coeff g d) * ∏ j, w j ^ d j) / w i ^ m = κ (AddMonoidAlgebra.coeff g d) * ∏ j, (w j / w i) ^ d j := by
     rw [mul_div_assoc]; congr 1
     simp_rw [div_pow]
     rw [Finset.prod_div_distrib, Finset.prod_pow_eq_pow_sum, hdeg]

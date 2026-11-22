@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL Finset
 
 namespace GlobalTheory
 
-open Finset in
 
+open Finset in
 theorem _root_.GlobalTheory.qminor_polyMap (A : Type) [Ring A] [Algebra ℂ A] (n t : ℕ) (E : Fin n → Fin n → A)
     (a b : Fin t → Fin n) (s : ℂ) :
     ∃ c : ℕ → A, ∀ u : ℂ, _root_.Formalism.REAL.qminor E a b (u - s) = ∑ i ∈ Finset.range (t + 1), u ^ i • c i := by
@@ -37,13 +42,13 @@ theorem _root_.GlobalTheory.qminor_polyMap (A : Type) [Ring A] [Algebra ℂ A] (
     simp only [F, Polynomial.eval₂_add, Polynomial.eval₂_mul_X, Polynomial.eval₂_C,
       RingHom.id_apply]
     split_ifs with h
-    · rw [one_mul, ← add_assoc, ← map_add]
+    · rw [one_mul, ← add_assoc, ← map_add (f := _)]
       congr 2
       ring
     · simp
   have hP : Polynomial.eval₂ (RingHom.id A) (algebraMap ℂ A u) P = _root_.Formalism.REAL.qminor E a b (u - s) := by
     unfold _root_.Formalism.REAL.qminor
-    simp only [P, Polynomial.eval₂_finset_sum]
+    simp only [P, Polynomial.eval₂_finsetSum]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [Polynomial.eval₂_mul_noncomm _ _ (hcomm _), Polynomial.eval₂_C,
       Polynomial.eval₂_list_prod_noncomm _ _ _ (fun p _ => hcomm p), List.map_ofFn]

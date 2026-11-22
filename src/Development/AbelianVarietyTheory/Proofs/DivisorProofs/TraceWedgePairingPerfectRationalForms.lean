@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+
+@[expose] public section
+
 open GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 set_option autoImplicit false
@@ -53,7 +58,8 @@ theorem wedge_pairing_sep {K V : Type} [Field K] [AddCommGroup V] [Module K V] {
     refine Finset.sum_congr rfl fun I _ => ?_
     rw [Submodule.coe_smul, hcoe]
   have key := h a ha
-  rw [hy', Finset.mul_sum, map_sum, Finset.sum_eq_single J] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy', Finset.mul_sum, map_sum, Finset.sum_eq_single J] at key
   · rw [mul_smul_comm, map_smul, ExteriorAlgebra.ιMulti_family_mul_of_disjoint _ _ _ _ hdisj,
       Units.smul_def, map_zsmul, smul_eq_mul] at key
     rcases mul_eq_zero.1 key with h0 | h0

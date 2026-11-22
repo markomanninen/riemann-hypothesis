@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import ReciprocityTheory.DualLattices.ProdDvdOfIso
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import ReciprocityTheory.DualLattices.ProdDvdOfIso
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -91,7 +95,7 @@ theorem quot_step (M : Submodule R (N → C)) {L K : Submodule F N} (hLK : L ≤
   · rintro ⟨g, ⟨hg, hi⟩, rfl⟩
     refine ⟨g ∘ L.mkQ, ⟨hg, fun x k hk => ?_⟩, ?_⟩
     · show g (L.mkQ (x + k)) = g (L.mkQ x)
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hi _ _ (Submodule.mem_map_of_mem hk)
     · funext a
       show g (L.mkQ (a • t)) = g (a • L.mkQ t)
@@ -111,7 +115,7 @@ theorem quot_step (M : Submodule R (N → C)) {L K : Submodule F N} (hLK : L ≤
     · rintro x _ ⟨k, hk, rfl⟩
       obtain ⟨x, rfl⟩ := hsur x
       show g (Function.surjInv hsur (L.mkQ x + L.mkQ k)) = g (Function.surjInv hsur (L.mkQ x))
-      rw [← map_add, key, key]
+      rw [← map_add (f := _), key, key]
       exact hi x k hk
     · funext a
       show g (Function.surjInv hsur (a • L.mkQ t)) = g (a • t)

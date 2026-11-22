@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.TiedUpDnLoc
-import Formalism.LocalToGlobal.Columns.HeckeSpCount
-import Formalism.LocalToGlobal.Columns.TiedUpDnA
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Formalism.LocalToGlobal.Columns.MtHeckeKv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.TiedUpDnLoc
+public import Formalism.LocalToGlobal.Columns.HeckeSpCount
+public import Formalism.LocalToGlobal.Columns.TiedUpDnA
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Formalism.LocalToGlobal.Columns.MtHeckeKv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -137,7 +141,7 @@ theorem mhl_over_eq (hc : Formalism.BasicNotions.CMData F E) {v : HeightOneSpect
   have hfint : IsIntegral ℤ f := by
     have h := RingOfIntegers.isIntegral_coe (a * cO E a)
     rw [← hf] at h
-    exact (isIntegral_algebraMap_iff (algebraMap F E).injective).1 h
+    exact (isIntegral_algebraMap_iff ).1 h
   let b : 𝓞 F := ⟨f, hfint⟩
   have hb : algebraMap (𝓞 F) (𝓞 E) b = a * cO E a := by
     apply RingOfIntegers.ext
@@ -310,7 +314,8 @@ theorem mhl_prV_pullV_eta (hc : Formalism.BasicNotions.CMData F E) {n : ℕ} [Ne
   classical
   rw [mhl_pullV_mul]
   simp only [Matrix.mulVec, dotProduct]
-  rw [map_sum, Finset.sum_eq_single i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single i]
   · rw [map_mul, mhl_prV_eta_inv, if_pos rfl, map_mul]
   · intro j _ hj
     rw [map_mul, mhl_prV_eta_inv, if_neg (Ne.symm hj), map_zero, map_zero, zero_mul]
@@ -595,8 +600,8 @@ theorem mhl_exists_adapted {K : Type} [Field K] {n k : ℕ} (hk : k ≤ n) (ψ :
       map_add' := fun w w' => by
         funext j
         by_cases h : j.1 < k
-        · simp only [dif_pos h, map_add, Pi.add_apply]
-        · simp only [dif_neg h, map_add, Pi.add_apply]
+        · simp only [dif_pos h, map_add (f := _), Pi.add_apply]
+        · simp only [dif_neg h, map_add (f := _), Pi.add_apply]
       map_smul' := fun c w => by
         funext j
         by_cases h : j.1 < k
@@ -723,7 +728,7 @@ theorem mhl_isSplitSet_single {Pb : Pl E} (hsp : conjPrime₂ Pb ≠ Pb) : Forma
 
 theorem mhl_surj (ST SG : Finset (Pl E)) (hov : IsOver v Pb) (hov2 : ∀ Q : Pl E, IsOver v Q → Q = Pb ∨ Q = conjPrime₂ Pb)
     (hST : ∀ Q ∈ ST, ¬ IsOver v Q) (hSG : ∀ Q ∈ SG, ¬ IsOver v Q) (hsp : conjPrime₂ Pb ≠ Pb) (hk : k ≤ n) (x : UAd hc n)
-    {d' : DecoSet E n ST SG} (hd' : d' ∈ (decoOf ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).heckeSet (conjPrime₂ Pb).asIdeal k) :
+    {d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)} (hd' : d' ∈ (decoOf ST SG (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))).heckeSet (conjPrime₂ Pb).asIdeal k) :
     ∃ κ : UAd hc n, (∀ w : HeightOneSpectrum (𝓞 F), w ≠ v → bc (prV (E := E) w) (κ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = 1) ∧
       (κ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) ∈ St (1 : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) ∧
       decoOf ST SG ((x * κ * mhlEta hc n v U.hπ0 k : UAd hc n) : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = d' := by

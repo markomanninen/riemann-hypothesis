@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -139,7 +143,8 @@ private theorem gramL_mul (s z : R ⊗[k] A) : gramL b s * mat b z = gramL b (s 
   ext i j
   rw [Matrix.mul_apply, gramL_apply, mul_assoc, mul_left_comm z,
     ← (Algebra.TensorProduct.basis R b).sum_repr (z * _)]
-  simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, gramL_apply, mat,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_smul, gramL_apply, mat,
     Algebra.leftMulMatrix_eq_repr_mul, smul_eq_mul, mul_comm]
 
 private theorem gramL_tr (s : R ⊗[k] A) : (gramL b s)ᵀ = gramL b s := by
@@ -152,7 +157,7 @@ private theorem mat_io (c : R ≃ₐ[k] R) (z : R ⊗[k] A) : mat b (io c A z) =
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul r a => simp [io, Algebra.TensorProduct.basis_repr_tmul]
-    | add u v hu hv => simp only [map_add, Finsupp.add_apply, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), Finsupp.add_apply, hu, hv]
   ext i j
   rw [map_apply, mat, mat, Algebra.leftMulMatrix_eq_repr_mul, Algebra.leftMulMatrix_eq_repr_mul, ← h1,
     map_mul (io c A)]

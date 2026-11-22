@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 namespace GlobalTheory.QLog.ValLin
@@ -20,7 +25,7 @@ theorem hasVal_add_smul_map : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommR
     obtain ⟨b₁, hb₁⟩ := h₁ N' (le_trans (le_max_left _ _) hN)
     obtain ⟨b₂, hb₂⟩ := h₂ N' (le_trans (le_max_right _ _) hN)
     refine ⟨b₁ + b₂, ?_⟩
-    rw [map_add, map_add, mul_add, map_add, ← hb₁, ← hb₂]
+    rw [map_add (f := _), map_add (f := _), mul_add, map_add (f := _), ← hb₁, ← hb₂]
     ring
   · intro c m
     obtain ⟨k, b₀, hk⟩ := hF.denom c

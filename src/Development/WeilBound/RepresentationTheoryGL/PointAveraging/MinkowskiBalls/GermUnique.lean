@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL ValuativeRel PositivityTheory.Tls2.Ming3
 open scoped Topology Pointwise
@@ -106,7 +110,7 @@ theorem germ_comb [MeasurableSpace k] (ν : Measure k) (B : SB (Matrix (Fin n) (
   obtain ⟨c₂, e₂⟩ := h₂
   obtain ⟨c, hc₁, hc₂⟩ := exists_le_both c₁ c₂
   refine ⟨c, fun Φ hΦ => ?_⟩
-  rw [map_add, map_smul, e₁ Φ (fun x hx => ballM_mono hc₁ (hΦ x hx)),
+  rw [map_add (f := _), map_smul, e₁ Φ (fun x hx => ballM_mono hc₁ (hΦ x hx)),
     e₂ Φ (fun x hx => ballM_mono hc₂ (hΦ x hx)), smul_add, smul_comm a]
 
 theorem germ_unique (hb : BallSt) [MeasurableSpace k] [BorelSpace k] (ν : Measure k) (hν : IsUnitVol ν)

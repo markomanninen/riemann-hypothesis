@@ -1,6 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num NumberField
 
 namespace PositivityTheory.HtPt.Teich
@@ -17,7 +22,8 @@ theorem eq_of_pow_eq_self {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O] (
       rw [hgeom, one_mul]
     exact mul_right_cancel₀ hsub hmul
   have hres := congrArg (IsLocalRing.residue O) hS
-  rw [map_sum, map_one] at hres
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one] at hres
   simp only [map_mul, map_pow, ← h] at hres
   rw [geom_sum₂_self, hq, zero_mul] at hres
   exact zero_ne_one hres

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntertwiningOperators
 
@@ -11,7 +15,7 @@ theorem intertwine {K : Type} [Field K] {a b : ℕ} (A : Matrix (Fin a) (Fin a) 
   | C c =>
     simp only [aeval_C, Algebra.algebraMap_eq_smul_one, Matrix.smul_mul, Matrix.mul_smul,
       Matrix.one_mul, Matrix.mul_one]
-  | add p q hp hq => rw [map_add, map_add, Matrix.add_mul, Matrix.mul_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), Matrix.add_mul, Matrix.mul_add, hp, hq]
   | monomial n c ih =>
     rw [pow_succ, ← mul_assoc, map_mul (aeval B) (Polynomial.C c * X ^ n) X,
       map_mul (aeval A) (Polynomial.C c * X ^ n) X, aeval_X, aeval_X, Matrix.mul_assoc, ← h,
@@ -25,7 +29,7 @@ theorem main : ∀ {K : Type} [inst : Field K] {a b : ℕ} (A : Matrix (Fin a) (
   obtain ⟨u, v, huv⟩ := hcop
   have h1 : aeval B u * aeval B (Matrix.charpoly A) = 1 := by
     have := congrArg (aeval B) huv
-    rw [map_add, map_mul, map_mul, Matrix.aeval_self_charpoly, mul_zero, add_zero, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, Matrix.aeval_self_charpoly, mul_zero, add_zero, map_one] at this
     exact this
   have h2 : aeval B (Matrix.charpoly A) * C = 0 := by
     rw [intertwine A B C h, Matrix.aeval_self_charpoly, Matrix.mul_zero]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GramBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GramBasic
+
+@[expose] public section
 
 open Matrix Polynomial
 open scoped TensorProduct

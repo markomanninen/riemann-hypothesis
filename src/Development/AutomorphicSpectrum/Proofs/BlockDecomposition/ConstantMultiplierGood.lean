@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
-import Development.AutomorphicArithmetic.LocalEmbeddings.OppLagr
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
+public import Development.AutomorphicArithmetic.LocalEmbeddings.OppLagr
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,10 +87,9 @@ theorem cA_inclR (σ : E →ₐ[F] E) (x : E) :
   simp [cA, inclR, Algebra.TensorProduct.map_tmul]
 
 theorem cA_cA {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (z : AE F E) : cA σ (cA σ z) = z := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a x => simp [cA, Algebra.TensorProduct.map_tmul, GlobalTheory.OppLagr.conj_conj h]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem continuous_cA (σ : E →ₐ[F] E) : Continuous (cA σ) := by
   haveI : Module.Finite (AF F) (AE F E) := inferInstance

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+module
+
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
@@ -32,9 +37,11 @@ theorem colcon_getD_downFam {T : Type} {S : Arrow T → Type} (t : T) (i : ℕ) 
       split_ifs with h
       · erw [hs]
         exact colcon_getD_downFam t i n _ j h
-      · obtain rfl : n = j := by omega
-        erw [hs]
-        rfl
+      · have hnj : n = j := by omega
+        subst j
+        change (splitFam (p := Path.one (.down t i n)) (downPath t i n) _).1.2 =
+          f (Fin.last n)
+        rw [hs]
 
 theorem colcon_nIter_congr {ι : Type} [DecidableEq ι] {H : ι → Type} [∀ i, Group (H i)] [∀ i, MeasurableSpace (H i)]
     {R : ∀ i, Subgroup (H i)} (ρ : ∀ i, Measure (R i)) (μ : ∀ i, Measure (H i)) {q q' : (∀ i, H i) → ℂ} :
@@ -55,7 +62,7 @@ variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc}
 theorem colcon_rowGrp_jac {t : T} {M : Vol G} (hM : M.Is t) (j σ : ℕ) (hj : j + 2 * σ + 1 = D.R.m) :
     rowGrp G j = jacGrp (jacAt G hM j σ hj).d := by
   unfold rowGrp
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   obtain rfl : σ = (D.R.m - 1 - j) / 2 := by omega
   rfl
 
@@ -63,7 +70,7 @@ theorem colcon_rowGrp_bes {t : T} {M : Vol G} (hM : M.Is t) (j σ : ℕ) (hj : j
     (vN : VolN (besDecAt G j σ hj)) :
     rowGrp G j = besGrp (besAt G hM j σ hj vN).d (besAt G hM j σ hj vN).o := by
   unfold rowGrp
-  rw [dif_neg (by omega), dif_pos (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_left (by omega)]
   obtain rfl : σ = (D.R.m - 2 - j) / 2 := by omega
   rfl
 
@@ -76,13 +83,13 @@ theorem colcon_gen (G : GridData L sc) (W : G.Weil) (t : T) {M : Vol G} (hM : M.
       (chainFrom G W t hM σ j hj vN).Iter
         (colPer W hM σ j hj vN (dataFrom G W t hM (downFam t D.R.m D.R.m Φ) σ j hj vN) F φ g) z →
       NIter ρ (fun j => M.ν (.grid D.R.m j)) (fun h' => jPer W M t (conAt W hM Φ h') F σ j hj φ)
-        (List.range' (j + 1) (2 * σ)) h z
+        (List.range' (j + 1) (2 * σ)) h z := fun
   | 0, j, hj, vN, h, g, φ, z, hg, hz => by
       subst hg
       have hc : conAt W hM Φ h j = lastDat W hM j hj vN (h j) (Φ ⟨j, by omega⟩)
           (castSch G (show j + 1 + 1 = D.R.m by omega) (Φ ⟨j + 1, by omega⟩)) := by
         unfold conAt
-        rw [dif_pos hj]
+        rw [dite_eq_left hj]
         rfl
       have hz' : z = colPer W hM 0 j hj vN (dataFrom G W t hM (downFam t D.R.m D.R.m Φ) 0 j hj vN) F φ (h j) () := hz
       show z = jPer W M t (conAt W hM Φ h) F 0 j hj φ
@@ -95,16 +102,31 @@ theorem colcon_gen (G : GridData L sc) (W : G.Weil) (t : T) {M : Vol G} (hM : M.
       rfl
   | σ + 1, j, hj, vN, h, g, φ, z, hg, hz => by
       subst hg
-      obtain ⟨f₁, f₂, h1, h2⟩ := hz
+      have hj' : j + 1 + 1 + 2 * σ + 2 = D.R.m := by omega
+      let vN' := (GlobalTheory.Unf.Inhab.nonempty_volN (besDecAt G (j + 1 + 1) σ hj')).some
+      have hstep : ∃ (f₁ : GA D (G.V (.grid D.R.m (j + 1))) → ℂ)
+          (f₂ : GA D (G.V (.grid D.R.m (j + 1))) → GA D (G.V (.grid D.R.m (j + 1 + 1))) → ℂ),
+        IsQuotIntL1 (jacAt G hM (j + 1) (σ + 1) (by omega)).μR
+          (M.ν (.grid D.R.m (j + 1))) f₁ z ∧
+        ∀ a, IsQuotIntL1 (besAt G hM (j + 1 + 1) σ hj' vN').μR
+          (M.ν (.grid D.R.m (j + 1 + 1))) (f₂ a) (f₁ a) ∧
+          ∀ b, (chainFrom G W t hM σ (j + 1 + 1) hj' vN').Iter
+            (fun rest => colPer W hM (σ + 1) j hj vN
+              (dataFrom G W t hM (downFam t D.R.m D.R.m Φ) (σ + 1) j hj vN)
+              F φ (h j) (a, b, rest)) (f₂ a b) := hz
+      rcases hstep with ⟨f₁, f₂, h1, h2⟩
       have hl : List.range' (j + 1) (2 * (σ + 1)) = (j + 1) :: (j + 1 + 1) :: List.range' (j + 1 + 1 + 1) (2 * σ) := by
         rw [show 2 * (σ + 1) = 2 * σ + 1 + 1 by ring, List.range'_succ, List.range'_succ]
       rw [hl]
-      refine ⟨f₁, colcon_quot (colcon_rowGrp_jac hM (j + 1) (σ + 1) (by omega)) (hJ _ _ _) h1, fun a => ?_⟩
-      refine ⟨f₂ a, colcon_quot (colcon_rowGrp_bes hM (j + 1 + 1) σ (by omega) _) (hB _ _ (by omega)) (h2 a).1,
+      have hjJ : j + 1 + 2 * (σ + 1) + 1 = D.R.m := by omega
+      refine ⟨f₁, colcon_quot (colcon_rowGrp_jac hM (j + 1) (σ + 1) hjJ)
+        (hJ (j + 1) (σ + 1) hjJ) h1, fun a => ?_⟩
+      refine ⟨f₂ a, colcon_quot (colcon_rowGrp_bes hM (j + 1 + 1) σ hj' vN')
+        (hB (j + 1 + 1) σ hj') (h2 a).1,
         fun b => ?_⟩
       have hi := (h2 a).2 b
       dsimp only [GlobalTheory.RowChain.colPer, dataFrom] at hi
-      have ih := colcon_gen G W t hM Φ F ρ hJ hB σ (j + 1 + 1) (by omega) _
+      have ih := colcon_gen G W t hM Φ F ρ hJ hB σ (j + 1 + 1) hj' vN'
         (Function.update (Function.update h (j + 1) a) (j + 1 + 1) b) b _ (f₂ a b) (by simp) hi
       refine colcon_nIter_congr _ _ _ _ _ ih fun h' hh' => ?_
       have e0 : h' j = h j := (hh' j (by simp only [List.mem_range'_1]; omega)).trans
@@ -112,14 +134,19 @@ theorem colcon_gen (G : GridData L sc) (W : G.Weil) (t : T) {M : Vol G} (hM : M.
       have e1 : h' (j + 1) = a := (hh' (j + 1) (by simp only [List.mem_range'_1]; omega)).trans
         ((Function.update_of_ne (by omega) _ _).trans (Function.update_self _ _ _))
       have e2 : h' (j + 1 + 1) = b := (hh' (j + 1 + 1) (by simp only [List.mem_range'_1]; omega)).trans (Function.update_self _ _ _)
-      show _ = jPer W M t (conAt W hM Φ h') F σ (j + 1 + 1) _ (biL W M t j φ (conAt W hM Φ h' j))
-      congr 1
+      change _ = jPer W M t (conAt W hM Φ h') F σ (j + 1 + 1) hj'
+        (biL W M t j φ (conAt W hM Φ h' j))
+      apply congrArg (jPer W M t (conAt W hM Φ h') F σ (j + 1 + 1) hj')
       have hx : j + 2 * ((D.R.m - 4 - j) / 2 + 1) + 2 = D.R.m := by omega
+      have hlast : ¬ (j + 2 * 0 + 2 = D.R.m) := by omega
       have hC : conAt W hM Φ h' j = _ :=
-        (dif_neg (show ¬ (j + 2 * 0 + 2 = D.R.m) by omega)).trans (dif_pos hx)
+        (dite_eq_right hlast).trans (dite_eq_left hx)
       rw [hC]
       obtain rfl : σ = (D.R.m - 4 - j) / 2 := by omega
-      rw [e0, e1, e2, colcon_getD_downFam, colcon_getD_downFam]
+      simp only [e0, e1, e2, colcon_getD_downFam]
+      -- These projections of the Bessel data are independent of the choice of vN.
+      dsimp only [biL, GlobalTheory.SeeSaw.biLift, volAt, contr, flatBF, flatFB, Link.κ,
+        stepAt, linkAt, besAt, jacAt]
       rfl
 
 theorem nIter_conAt_of_colPer : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) (W : G.Weil) (t : T) {M : Vol G} (hM : M.Is t) (Φ : SchDown G t) (F : Fn G (.grid D.R.m D.R.m)) (φ : Fn G (.top 0)) (z : ℂ), (chain G W t hM).Iter (colPer W hM _ 0 top_idx (topVN hM) (chainData G W t hM (downFam t D.R.m D.R.m Φ)) F φ 1) z → ∀ (ρ : ∀ j, Measure (rowGrp G j)), (∀ j σ (hj : j + 2 * σ + 1 = D.R.m), HEq (ρ j) (jacAt G hM j σ hj).μR) → (∀ j σ (hj : j + 2 * σ + 2 = D.R.m), HEq (ρ j) (besAt G hM j σ hj (GlobalTheory.Unf.Inhab.nonempty_volN _).some).μR) → NIter ρ (fun j => M.ν (.grid D.R.m j)) (fun h => jPer W M t (conAt W hM Φ h) F _ 0 top_idx φ) (idx D) 1 z := by

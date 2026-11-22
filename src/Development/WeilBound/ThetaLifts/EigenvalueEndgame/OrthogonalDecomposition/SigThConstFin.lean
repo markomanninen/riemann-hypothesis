@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.LocDecompOf
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConstOf
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.LocDecompOf
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConstOf
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+
+@[expose] public section
 
 noncomputable section
 

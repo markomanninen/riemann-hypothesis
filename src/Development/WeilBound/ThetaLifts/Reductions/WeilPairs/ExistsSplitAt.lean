@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialRatAndSplit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicCharacterTrivialRatAndSplit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSplitAt
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -32,8 +36,8 @@ theorem parts_inj (x y : AEF F E) (h1 : infPartF F E x = infPartF F E y) (h2 : f
     x = y :=
   sub_eq_zero.1 (GlobalTheory.SplitDetCharF.adele_tensor_ext _ (by rw [map_sub, h1, sub_self]) (by rw [map_sub, h2, sub_self]))
 
-variable (E) in
 
+variable (E) in
 def fj : Af F →ₙ+* AEF F E where
   toFun α := pairA F 0 α ⊗ₜ[F] (1 : E)
   map_zero' := TensorProduct.zero_tmul _ _
@@ -60,8 +64,8 @@ theorem singleV_mul (v : HeightOneSpectrum (𝓞 F)) (y : Fv F v) (α : Af F) :
   · subst hw; simp only [map_mul, evalV_singleV_same]
   · simp only [map_mul, evalV_singleV_ne _ v _ hw, mul_zero]
 
-variable (E) in
 
+variable (E) in
 abbrev pl (v : HeightOneSpectrum (𝓞 F)) : AEF F E := fj E (singleV F v 1)
 
 theorem pl_mul_pl {v v' : HeightOneSpectrum (𝓞 F)} (h : v ≠ v') : pl E v * pl E v' = 0 := by
@@ -75,7 +79,8 @@ theorem pl_mul_pl {v v' : HeightOneSpectrum (𝓞 F)} (h : v ≠ v') : pl E v * 
 theorem idem_eq_sum (e : Af F) (he : e * e = e) (S : Finset (HeightOneSpectrum (𝓞 F)))
     (hS : ∀ v, v ∈ S ↔ evalV F v e ≠ 0) : e = ∑ v ∈ S, singleV F v 1 := by
   refine afext fun w => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   by_cases hw : w ∈ S
   · rw [Finset.sum_eq_single w (fun v _ hv => evalV_singleV_ne _ v _ hv.symm) (fun h => absurd hw h),
       evalV_singleV_same]
@@ -90,7 +95,7 @@ theorem exists_of_fixed {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {x : E} (hx : 
   obtain ⟨θ, d, hd, h1, h2, h3⟩ := GlobalTheory.SplitDetCharF.exists_int_basis h
   obtain ⟨u, w, rfl⟩ := h3 x
   have hθ : θ ≠ 0 := fun h0 => hd ((algebraMap F E).injective (by rw [← h2, h0, mul_zero, map_zero]))
-  simp only [Algebra.smul_def, map_add, map_mul, AlgHom.commutes, map_one, h1, add_right_inj] at hx
+  simp only [Algebra.smul_def, map_add (f := _), map_mul, AlgHom.commutes, map_one, h1, add_right_inj] at hx
   rw [← Algebra.smul_def, ← Algebra.smul_def, smul_neg] at hx
   have hw : w • θ = 0 := by
     have : (2 : E) * (w • θ) = 0 := by linear_combination -hx
@@ -100,7 +105,8 @@ theorem exists_of_fixed {σ : E →ₐ[F] E} (h : IsCMExt F E σ) {x : E} (hx : 
 theorem exists_int {σ : E →ₐ[F] E} (h : IsCMExt F E σ) (x : 𝓞 E) (hx : σ (x : E) = x) :
     ∃ t : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) t = x ∧ algebraMap F E (t : F) = x := by
   obtain ⟨t, ht⟩ := exists_of_fixed h hx
-  have hi : IsIntegral ℤ t := (isIntegral_algebraMap_iff (algebraMap F E).injective).1 (ht ▸ x.2)
+  have hxint : IsIntegral ℤ (x : E) := x.2
+  have hi : IsIntegral ℤ t := (isIntegral_algebraMap_iff).1 (ht.symm ▸ hxint)
   exact ⟨⟨t, hi⟩, RingOfIntegers.ext ht, ht⟩
 
 theorem exists_splitAt {c : E ≃ₐ[F] E} (h : IsCMExt F E (c : E →ₐ[F] E)) (v : HeightOneSpectrum (𝓞 F))
@@ -109,7 +115,7 @@ theorem exists_splitAt {c : E ≃ₐ[F] E} (h : IsCMExt F E (c : E →ₐ[F] E))
   have hcc : ∀ x, c (c x) = x := GlobalTheory.SplitDetCharF.sig_invol h
   obtain ⟨t, ht, ht'⟩ := exists_int h (a + b) (by
     show c ((a : E) + b) = (a : E) + b
-    rw [hb, map_add, hcc, add_comm])
+    rw [hb, map_add (f := _), hcc, add_comm])
   obtain ⟨n, hn, hn'⟩ := exists_int h (a * b) (by
     show c ((a : E) * b) = (a : E) * b
     rw [hb, map_mul, hcc, mul_comm])
@@ -132,8 +138,8 @@ theorem exists_splitAt {c : E ≃ₐ[F] E} (h : IsCMExt F E (c : E →ₐ[F] E))
 
 variable {n : ℕ} {σ : E →ₐ[F] E} {J : Matrix (Fin n) (Fin n) E}
 
-variable (σ J) in
 
+variable (σ J) in
 def cutA (ε : AEF F E) (hε : ε * ε = ε) (hσ : cAF σ ε = ε) : GAF σ J →* GAF σ J :=
   cutH (AF F) σ J ε hε hσ
 
@@ -159,8 +165,8 @@ theorem idem_inf : (1 - fj E (1 : Af F)) * (1 - fj E 1) = 1 - fj E 1 := by
 
 theorem conj_inf : cAF σ (1 - fj E (1 : Af F)) = 1 - fj E 1 := by rw [map_sub, map_one, cA_fj]
 
-variable (σ J) in
 
+variable (σ J) in
 def pInf : GAF σ J →* GAF σ J := cutA σ J (1 - fj E 1) idem_inf conj_inf
 
 theorem inf_pInf (g : GAF σ J) : (mtF σ J (pInf σ J g)).map (infPartF F E) = (mtF σ J g).map (infPartF F E) := by

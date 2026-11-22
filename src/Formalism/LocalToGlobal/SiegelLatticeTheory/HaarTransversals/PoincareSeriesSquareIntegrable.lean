@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
+
+@[expose] public section
 
 set_option linter.dupNamespace false
 
@@ -79,10 +83,5 @@ def PoincareSeriesInner (G : Type*) [Group G] [TopologicalSpace G] [IsTopologica
     IntegrableOn (fun x => poinc D Ph x * conj (poinc D' Ph' x)) FΓ μ ∧
     (∫ x in FΓ, poinc D Ph x * conj (poinc D' Ph' x) ∂μ)
       = ∑' r : R, ∫ x in Fs r, Ph x * conj (Ph' ((r : G)⁻¹ * x)) ∂μ
-
-def PoincareSeriesSquareIntegrable (G : Type*) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-    [LocallyCompactSpace G] [SecondCountableTopology G] [T2Space G] [MeasurableSpace G]
-    [BorelSpace G] (μ : Measure G) [μ.IsHaarMeasure] : Prop :=
-  PoincareSeriesFinite G μ ∧ PoincareSeriesMemLp G μ ∧ PoincareSeriesInner G μ
 
 end Formalism.L2.SG.PoincareSeriesSquareIntegrable

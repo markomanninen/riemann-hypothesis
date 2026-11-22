@@ -1,8 +1,12 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohCmp
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohField
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohMu
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTate
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohFin
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohCmp
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohField
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohMu
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohTate
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohFin
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

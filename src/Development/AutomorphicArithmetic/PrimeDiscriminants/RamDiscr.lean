@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SmallRam
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SmallRam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Ideal
 

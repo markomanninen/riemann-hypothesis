@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSignatureFromBlocks
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FrameExistsSignCompat
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSignatureFromBlocks
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FrameExistsSignCompat
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
@@ -55,7 +59,8 @@ theorem hasSignature_of_signCompat {n p q : ℕ} {ε : Fin n → Bool} {P : Matr
 private theorem hT_eq_sum_frame_repr {D : D7} (T : HSp D) (x y : T.V) :
     T.hT x y = ∑ j, ∑ j', star (T.frame.repr x j) * T.gram j j' * T.frame.repr y j' := by
   conv_lhs => rw [← T.frame.sum_repr x, ← T.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun j' _ => ?_
@@ -68,7 +73,8 @@ private theorem gram_tauE_frame_repr_eq_hT {D : D7} (T : HSp D) (τ : D.what₂.
       Matrix.of fun k l => tauE D τ (T.hT (w k) (w' l)) := by
   ext k l
   rw [Matrix.of_apply, hT_eq_sum_frame_repr]
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.of_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.of_apply, map_sum, map_mul,
     GlobalTheory.FockCompare.tauE_star, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun j' _ => ?_

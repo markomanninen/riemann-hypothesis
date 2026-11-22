@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstMulEqUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstMulEqUnit
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,7 +27,7 @@ theorem exists_fibre_generic_of_prime : ∀ (R : Type) [CommRing R] [IsDomain R]
     exact hne
   have hpr : Submodule.IsPrincipal (IsLocalRing.maximalIdeal V) := ⟨⟨_, hmax⟩⟩
   have : IsDiscreteValuationRing V :=
-    ((IsDiscreteValuationRing.TFAE V hnf).out 0 4).mpr hpr
+    ((IsDiscreteValuationRing.TFAE V hnf).out 1 5).mpr hpr
   have hπ : Irreducible (algebraMap R V π) :=
     (IsDiscreteValuationRing.irreducible_iff_uniformizer _).2 hmax
   let l := spMap (algebraMap R V)
@@ -38,7 +42,7 @@ theorem exists_fibre_generic_of_prime : ∀ (R : Type) [CommRing R] [IsDomain R]
   obtain ⟨h₁, h₂⟩ := DvrModel.isDiscreteValuationRing_stalk_generic hπ hs
   have h₃ := DvrModel.notMem_basicOpen_iff_specializes hπ hs
   have hlv : l (IsLocalRing.closedPoint V) = v :=
-    PrimeSpectrum.ext (Localization.AtPrime.comap_maximalIdeal (I := v.asIdeal))
+    PrimeSpectrum.ext (Localization.AtPrime.under_maximalIdeal (I := v.asIdeal))
   have h₄ := (DvrModel.notMem_basicOpen_iff f hπ _).1 ((h₃ _).2 specializes_rfl)
   generalize (pullback.fst f (Spec.map (CommRingCat.ofHom (IsLocalRing.residue V)))) (genericPoint _) = ξ
     at h₁ h₂ h₃ h₄

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.BoundedOnFramesIffIntegralOnFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.BoundedOnFramesIffIntegralOnFrames
+
+@[expose] public section
 
 namespace GlobalTheory.LetterEval
 
@@ -14,8 +18,8 @@ variable {K : Type} [NormedField K] [CompleteSpace K] {V F : Type} [CommRing V] 
   (a : V →+* F) (ι : F →+* K) (hi : ∀ v, ‖(ι.comp a) v‖ ≤ 1) {ϖ : V} (hϖ : a ϖ ≠ 0)
   {t : K} (ht0 : t ≠ 0) (ht : ‖t‖ < 1)
 
-include hϖ ht0 in
 
+include hϖ ht0 in
 theorem hasSum_laurent_of_mul_eq {q : LaurentSeries F} {g : PowerSeries V} {N : ℕ}
     (h : q * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C (R := F) (a ϖ) * PowerSeries.X)) ^ N =
       HahnSeries.ofPowerSeries ℤ F (PowerSeries.map a g)) :
@@ -49,8 +53,8 @@ theorem hasSum_laurent_of_mul_eq {q : LaurentSeries F} {g : PowerSeries V} {N : 
     by_contra h0
     exact hn ⟨(n + N).toNat, by simp only; omega⟩
 
-include hϖ ht0 in
 
+include hϖ ht0 in
 theorem hasSum_lcoeffPoly {σ : Type} (Y : σ → K) {P : MvPolynomial σ (LaurentSeries F)}
     {G : MvPolynomial σ (PowerSeries V)} {N : ℕ}
     (h : P * MvPolynomial.C
@@ -62,7 +66,7 @@ theorem hasSum_lcoeffPoly {σ : Type} (Y : σ → K) {P : MvPolynomial σ (Laure
   have hμ : ∀ μ, P.coeff μ *
       (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C (R := F) (a ϖ) * PowerSeries.X)) ^ N =
       HahnSeries.ofPowerSeries ℤ F (PowerSeries.map a (G.coeff μ)) := fun μ => by
-    have := congrArg (MvPolynomial.coeff μ) h
+    have := congrArg (AddMonoidAlgebra.coeff · μ) h
     rwa [← map_pow, mul_comm, MvPolynomial.coeff_C_mul, mul_comm, MvPolynomial.coeff_map] at this
   set s := P.support ∪ G.support
   have hP : ∀ k : ℤ, GlobalTheory.ArcQ.lcoeffPoly P k =
@@ -79,7 +83,8 @@ theorem hasSum_lcoeffPoly {σ : Type} (Y : σ → K) {P : MvPolynomial σ (Laure
   refine Eq.mpr (congrArg (HasSum · _) (funext fun m => ?_))
     (hasSum_sum fun μ (_ : μ ∈ s) =>
       (hasSum_laurent_of_mul_eq a ι hi hϖ ht0 ht (hμ μ)).mul_right (∏ k ∈ μ.support, Y k ^ μ k))
-  rw [hP, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hP, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [MvPolynomial.map_monomial, MvPolynomial.eval_monomial, Finsupp.prod]
   ring

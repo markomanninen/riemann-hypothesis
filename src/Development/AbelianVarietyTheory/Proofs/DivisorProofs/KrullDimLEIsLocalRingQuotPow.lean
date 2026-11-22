@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndKerBaseChangeOfForallResidueField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndKerBaseChangeOfForallResidueField
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.AbCoh
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -26,7 +31,7 @@ theorem krullDimLE_isLocalRing_quot_pow {R : Type} [CommRing R] (m : Ideal R)
     exact (Ideal.map_comap_of_surjective _ Ideal.Quotient.mk_surjective P).symm.trans
       (congrArg _ (hm.eq_of_le hc.ne_top h1).symm)
   obtain ⟨P, hP⟩ := Ideal.exists_maximal (R ⧸ m ^ (n + 1))
-  exact ((Ring.krullDimLE_zero_and_isLocalRing_tfae (R ⧸ m ^ (n + 1))).out 1 0 rfl rfl).mp
+  exact ((Ring.krullDimLE_zero_and_isLocalRing_tfae (R ⧸ m ^ (n + 1))).out 2 1 rfl rfl).mp
     ⟨P, hP.isPrime, fun Q hQ => (key Q hQ).trans (key P hP.isPrime).symm⟩
 
 variable {R : Type} [CommRing R]
@@ -49,7 +54,7 @@ theorem projective_coker_of_approx [IsNoetherianRing R] {A B : Type} [AddCommGro
   have hinjq : ∀ (m : Ideal R) [m.IsMaximal],
       Function.Injective ((LinearMap.range f).subtype.lTensor (R ⧸ m)) := by
     intro m _
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro t ht
     obtain ⟨⟨_, a, rfl⟩, rfl⟩ := exists_one_tmul m t
     rw [LinearMap.lTensor_tmul, Submodule.subtype_apply, one_tmul_eq_zero_iff] at ht
@@ -95,14 +100,14 @@ theorem projective_coker_of_approx [IsNoetherianRing R] {A B : Type} [AddCommGro
   obtain ⟨l, hl⟩ := GlobalTheory.split_injective_of_forall_lTensor_residueField_injective
     (LinearMap.range f).subtype hinj
   have hex := (Function.Exact.split_tfae (LinearMap.exact_subtype_mkQ (LinearMap.range f))
-    Subtype.val_injective (Submodule.mkQ_surjective _)).out 0 1
+    Subtype.val_injective (Submodule.mkQ_surjective _)).out 1 2
   obtain ⟨s, hs⟩ := hex.2 ⟨l, hl⟩
   exact Module.Projective.of_split s _ hs
 
 end GlobalTheory.AbCoh.LowBaseChange
 
-open GlobalTheory.AbCoh.LowBaseChange in
 
+open GlobalTheory.AbCoh.LowBaseChange in
 theorem GlobalTheory.AbCoh.projective_coker_of_liftsAt :
     ∀ (R : Type) [CommRing R] [IsNoetherianRing R] (K : CochainComplex (ModuleCat.{0} R) ℕ),
       (∀ p, Module.Finite R (K.X p) ∧ Module.Projective R (K.X p)) → (∃ n, ∀ p, n < p → IsZero (K.X p)) →
@@ -142,5 +147,5 @@ theorem GlobalTheory.AbCoh.projective_coker_of_liftsAt :
   have hm : a - (y₀ + (K.d (i - 1) i).hom b₀) ∈ m • (⊤ : Submodule R (K.X i)) := by
     rw [← one_tmul_eq_zero_iff, TensorProduct.tmul_sub, ← hyb, sub_self]
   have := Submodule.mem_map_of_mem (f := (K.d i (i + 1)).hom) hm
-  rw [Submodule.map_smul'', ← LinearMap.range_eq_map, map_sub, map_add, hdd, add_zero] at this
+  rw [Submodule.map_smul'', ← LinearMap.range_eq_map, map_sub, map_add (f := _), hdd, add_zero] at this
   exact this

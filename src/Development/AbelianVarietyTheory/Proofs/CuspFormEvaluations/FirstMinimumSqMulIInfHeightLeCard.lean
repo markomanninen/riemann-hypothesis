@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtDataPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsThetaRunParametersUniformTorusStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtDataPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitC
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsThetaRunParametersUniformTorusStatement
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.I2
 
@@ -154,8 +158,8 @@ theorem prod_eq_sq (T : PT E) (s : (Fin 1 → Vsp T.dim) → ℂ) (a : Fin T.r �
   refine Finset.prod_congr rfl fun j _ => ?_
   rw [div_pow, Real.sq_sqrt (hp _), Real.sq_sqrt hl]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem finsum_le (T : PT E) (S : Set (Fin T.r → Vsp T.dim))
     (hS : ∀ a ∈ S, (∀ j, a j ∈ ZSpan.fundamentalDomain T.b) ∧ ∀ j, ((5 : ℂ) ^ 2) • a j ∈ T.L)
     (f : (Fin T.r → Vsp T.dim) → ℝ) (M : ℝ) (hM : 0 ≤ M) (hf : ∀ a ∈ S, f a ≤ M) :
@@ -246,7 +250,11 @@ theorem growth_decay : TStatement → ∀ (E : Type) [Field E] [NumberField E] [
           field_simp
         have hK' : K = (25 : ℝ) ^ (2 * (Module.finrank ℚ E * A.T.r) * A.T.r) := by rw [hAr]
         rw [hK']
-        refine finsum_le A.T _ (fun a ha => ⟨ha.1, ha.2.1⟩) _ _ (by positivity) fun a ha => ?_
+        refine finsum_le A.T {a | (∀ j, a j ∈ ZSpan.fundamentalDomain A.T.b) ∧
+          (∀ j, ((5 : ℂ) ^ 2) • a j ∈ A.T.L) ∧
+          ∀ x ∈ A.T.L, ∃ c : Fin A.T.r → 𝓞 E, ∃ y ∈ A.T.L,
+            x = ∑ j, act (c j) (((5 : ℂ) ^ 2) • a j) + (5 : ℂ) • y}
+          (fun a ha => ⟨ha.1, ha.2.1⟩) _ _ (by positivity) fun a ha => ?_
         rw [prod_eq_sq]
         refine pow_le_pow_left₀ (Finset.prod_nonneg fun _ _ => by positivity) ?_ 2
         have := (hT E A.T 1 P 5 (by norm_num) a (by exact_mod_cast ha.2.1)
@@ -259,7 +267,11 @@ theorem growth_decay : TStatement → ∀ (E : Type) [Field E] [NumberField E] [
           simp only [Par.ph, PT.ph, hq, hR, hla, if_neg (not_lt.2 h)]
         have hK' : K = (25 : ℝ) ^ (2 * (Module.finrank ℚ E * A.T.r) * A.T.r) := by rw [hAr]
         rw [hK']
-        refine finsum_le A.T _ (fun a ha => ⟨ha.1, ha.2.1⟩) _ _ (by positivity) fun a ha => ?_
+        refine finsum_le A.T {a | (∀ j, a j ∈ ZSpan.fundamentalDomain A.T.b) ∧
+          (∀ j, ((5 : ℂ) ^ 2) • a j ∈ A.T.L) ∧
+          ∀ x ∈ A.T.L, ∃ c : Fin A.T.r → 𝓞 E, ∃ y ∈ A.T.L,
+            x = ∑ j, act (c j) (((5 : ℂ) ^ 2) • a j) + (5 : ℂ) • y}
+          (fun a ha => ⟨ha.1, ha.2.1⟩) _ _ (by positivity) fun a ha => ?_
         rw [prod_eq_sq]
         refine pow_le_pow_left₀ (Finset.prod_nonneg fun _ _ => by positivity) ?_ 2
         have := (hT E A.T 1 P 5 (by norm_num) a (by exact_mod_cast ha.2.1)

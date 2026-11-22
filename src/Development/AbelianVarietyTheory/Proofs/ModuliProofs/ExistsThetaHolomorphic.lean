@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DualRestrictSurjectiveOfIsTorsionFreeQuotient
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,27 +22,11 @@ open Matrix GlobalTheory.CanTh GlobalTheory.RiemannRel
 
 variable {g : ℕ}
 
-theorem pull_eq_imInv (M τ : Matrix (Fin g) (Fin g) ℂ) (hM : ∀ j k, (M j k).im = 0)
-    (hN : ∀ j k, ((M * τ.map (starRingEnd ℂ)) j k).im = -(1 : Matrix (Fin g) (Fin g) ℝ) j k) :
-    M = imInv τ := by
-  have hRY : M.map Complex.re * τ.map Complex.im = 1 := by
-    ext j k
-    have := hN j k
-    simp only [Matrix.mul_apply, Complex.im_sum, map_apply, Complex.mul_im, hM, Complex.conj_im, zero_mul, add_zero,
-      mul_neg, Finset.sum_neg_distrib, neg_inj] at this
-    rw [← this]
-    simp [Matrix.mul_apply]
-  rw [imInv, inv_eq_left_inv hRY]
-  ext j k
-  apply Complex.ext
-  · simp
-  · simp [hM]
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 open Matrix in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.HolTheta.normal_form (G : Matrix (Fin g) (Fin g) ℂ) (e f : Fin g → Fin g → ℂ) (hG : G.IsHermitian)
     (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm G z z).re)
     (hee : ∀ j k, (_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm G (e j) (e k)).im = 0) (hff : ∀ j k, (_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm G (f j) (f k)).im = 0)
@@ -92,11 +80,11 @@ theorem _root_.GlobalTheory.HolTheta.normal_form (G : Matrix (Fin g) (Fin g) ℂ
   rw [_root_.GlobalTheory.RiemannRel.hermForm_mulVec, ← hMdef, hM]
   rfl
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 open Matrix in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.HolTheta.canMult_add (a c : Fin g → ℝ) (m n m' n' : Fin g → ℤ) :
     _root_.GlobalTheory.CanTh.canMult a c (m + m') (n + n') = _root_.GlobalTheory.CanTh.canMult a c m n * _root_.GlobalTheory.CanTh.canMult a c m' n' * (-1) ^ (n ⬝ᵥ m' - m ⬝ᵥ n') := by
   have hneg : ∀ k : ℤ, ((-1 : ℂ)) ^ k = Complex.exp (k * (Real.pi * Complex.I)) := by
@@ -112,11 +100,11 @@ theorem _root_.GlobalTheory.HolTheta.canMult_add (a c : Fin g → ℝ) (m n m' n
   push_cast
   ring
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 open Matrix in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.HolTheta.eq_of_cocycle {La κ : Type*} [AddCommGroup La] (bs : Module.Basis κ ℤ La) (E : La → La → ℂ)
     {χ ψ : La → ℂ} (hE : ∀ x y, E x y ≠ 0) (hχ0 : ∀ x, χ x ≠ 0) (hψ0 : ∀ x, ψ x ≠ 0)
     (hχ : ∀ x y, χ (x + y) = χ x * χ y * E x y) (hψ : ∀ x y, ψ (x + y) = ψ x * ψ y * E x y)
@@ -154,51 +142,6 @@ theorem _root_.GlobalTheory.HolTheta.eq_of_cocycle {La κ : Type*} [AddCommGroup
     exact hb i
   rw [bs.span_eq] at hspan
   exact hspan Submodule.mem_top
-
-theorem exists_canMult {La : Type*} [AddCommGroup La] (bs : Module.Basis (Fin g ⊕ Fin g) ℤ La)
-    (EF : LinearMap.BilinForm ℤ La) (halt : EF.IsAlt) (hbs : IsSymplecticBasis (-EF) bs) {χ : La → ℂ}
-    (h1 : ∀ x, χ x = 1 ∨ χ x = -1) (hχ : ∀ x y, χ (x + y) = χ x * χ y * (-1) ^ EF x y) :
-    ∃ a c : Fin g → ℝ, ∀ x, χ x =
-      canMult a c (fun i => bs.repr x (Sum.inl i)) (fun i => bs.repr x (Sum.inr i)) := by
-  classical
-  have key : ∀ x, ∃ t : ℝ, Complex.exp (2 * Real.pi * Complex.I * t) = χ x := fun x => by
-    rcases h1 x with h | h
-    · exact ⟨0, by simp [h]⟩
-    · refine ⟨1 / 2, ?_⟩
-      rw [h, ← Complex.exp_pi_mul_I]
-      congr 1
-      push_cast
-      ring
-  choose t ht using key
-  refine ⟨fun i => t (bs (Sum.inl i)), fun i => -t (bs (Sum.inr i)),
-    eq_of_cocycle bs (fun x y => (-1) ^ EF x y) (fun x y => zpow_ne_zero _ (by norm_num))
-      (fun x => by rcases h1 x with h | h <;> simp [h]) (fun x => Complex.exp_ne_zero _) hχ (fun x y => ?_) ?_⟩
-  · have h := hbs.apply_eq_sum halt.neg x y
-    have e : EF x y = (fun i => bs.repr x (Sum.inr i)) ⬝ᵥ (fun i => bs.repr y (Sum.inl i)) -
-        (fun i => bs.repr x (Sum.inl i)) ⬝ᵥ (fun i => bs.repr y (Sum.inr i)) := by
-      simp only [LinearMap.neg_apply, neg_eq_iff_eq_neg] at h
-      rw [h]
-      simp [dotProduct]
-    rw [e, ← canMult_add, map_add]
-    rfl
-  · rintro (i | i)
-    · rw [← ht, canMult]
-      simp [dotProduct, Finsupp.single_apply]
-    · rw [← ht, canMult]
-      simp [dotProduct, Finsupp.single_apply]
-
-theorem exp_mul_canTh {τ : Matrix (Fin g) (Fin g) ℂ} (hp : (τ.map Complex.im).PosDef) (a c : Fin g → ℝ)
-    (m n : Fin g → ℤ) {y : Fin g → ℂ} (hy : y = (fun i => (m i : ℂ)) + τ *ᵥ fun i => (n i : ℂ)) (s : ℂ) :
-    Complex.exp (-(Real.pi / 2 / s ^ 2) * hermForm (imInv τ) y y) * canTh τ a c (s⁻¹ • y) =
-      Complex.exp (Real.pi / 2 / s ^ 2 * (2 * Complex.I * (y ⬝ᵥ fun i => (n i : ℂ)))) *
-        thetaChar τ (fun i => (a i : ℂ)) (fun i => (c i : ℂ)) (s⁻¹ • y) := by
-  have h := dot_imInv_eq_hermForm_add hp (fun i => (n i : ℝ)) (fun i => (m i : ℝ)) y
-  simp only [Complex.ofReal_intCast] at h
-  rw [← hy] at h
-  rw [canTh, ← _root_.mul_assoc, ← Complex.exp_add, mulVec_smul, smul_dotProduct, dotProduct_smul, h]
-  congr 2
-  simp only [smul_eq_mul]
-  ring
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
@@ -288,11 +231,11 @@ private theorem differentiable_matrix_mulVec (M : Matrix (Fin g) (Fin g) ℂ) :
     Differentiable ℂ (fun z : Fin g → ℂ => M *ᵥ z) :=
   (LinearMap.toContinuousLinearMap (Matrix.mulVecLin M)).differentiable
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 open Matrix in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.HolTheta.exists_theta_holomorphic : ∀ (La : Type) [AddCommGroup La] [Module.Free ℤ La] [Module.Finite ℤ La] (EF : LinearMap.BilinForm ℤ La) (χ : La → ℂ) (g m N' : ℕ) (B : Set (Fin m → ℂ)) (P : (Fin m → ℂ) → (La →+ (Fin g → ℂ))) (Hm : (Fin m → ℂ) → Matrix (Fin g) (Fin g) ℂ), 0 < N' → Function.Bijective EF → (∀ x, χ x = 1 ∨ χ x = -1) → (∀ x y, χ (x + y) = χ x * χ y * (-1) ^ EF x y) → IsOpen B → (∀ x, DifferentiableOn ℂ (fun b => P b x) B) → (∀ b ∈ B, Function.Injective (P b) ∧ DiscreteTopology (P b).range ∧ Submodule.span ℝ (Set.range (P b)) = ⊤ ∧ (Hm b).IsHermitian ∧ (∀ z : Fin g → ℂ, z ≠ 0 → 0 < (_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm (Hm b) z z).re) ∧ ∀ x y, (_root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm (Hm b) (P b x) (P b y)).im = EF x y) → ∃ θ : (Fin m → ℂ) → (Fin g → ℂ) → ℂ, (∀ b ∈ B, θ b ≠ 0 ∧ Differentiable ℂ (θ b) ∧ ∀ x z, θ b (z + P b x) = χ x * Complex.exp (Real.pi * _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm (Hm b) z (P b x) + Real.pi / 2 * _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm (Hm b) (P b x) (P b x)) * θ b z) ∧ ∀ x, DifferentiableOn ℂ (fun b => Complex.exp (-(Real.pi / 2 / (N' : ℂ) ^ 2) * _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm (Hm b) (P b x) (P b x)) * θ b ((N' : ℂ)⁻¹ • P b x)) B := by
   intro La _ _ _ EF χ g m N' B P Hm hN hbij hpm hχ hB hPd hlat
   classical
@@ -335,7 +278,8 @@ theorem _root_.GlobalTheory.HolTheta.exists_theta_holomorphic : ∀ (La : Type) 
       F b *ᵥ (fun i => (bs.repr x (Sum.inl i) : ℂ)) := by
     intro b x
     conv_lhs => rw [← bs.sum_repr x]
-    rw [map_sum, Fintype.sum_sum_type, add_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Fintype.sum_sum_type, add_comm]
     ext i
     simp [Matrix.mulVec, dotProduct, A, F, Finset.sum_apply, mul_comm]
   have hlat_pt : ∀ b ∈ B, ∀ x, (A b)⁻¹ *ᵥ P b x = (fun i => (bs.repr x (Sum.inr i) : ℂ)) +

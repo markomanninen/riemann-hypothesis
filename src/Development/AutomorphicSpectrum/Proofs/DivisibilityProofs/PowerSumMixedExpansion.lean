@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 
@@ -10,7 +14,8 @@ theorem rename_map_psumExpansion {σ : Type} (r k : ℕ) (e : Fin r → σ) (a :
     rename (Sum.map e e) (MvPolynomial.map (Int.castRingHom ℝ) (psumExpansion r k a)) =
       ∑ j ∈ Finset.range k,
         (X (Sum.inl (e a)) : MvPolynomial (σ ⊕ σ) ℝ) ^ j * X (Sum.inr (e a)) ^ (k - 1 - j) := by
-  simp [psumExpansion, map_sum, map_mul, map_pow, rename_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [psumExpansion, map_sum, map_mul, map_pow, rename_X]
 
 theorem isHomogeneous_rename_map_psumExpansion {σ : Type} (r k : ℕ) (e : Fin r → σ) (a : Fin r) :
     (rename (Sum.map e e) (MvPolynomial.map (Int.castRingHom ℝ) (psumExpansion r k a))).IsHomogeneous
@@ -29,7 +34,8 @@ theorem mixDiff_sum_pow {σ : Type} [Fintype σ] (r k : ℕ) (e : Fin r → σ) 
       ∑ a, (X (Sum.inl (e a)) - X (Sum.inr (e a))) *
         rename (Sum.map e e) (MvPolynomial.map (Int.castRingHom ℝ) (psumExpansion r k a)) := by
   unfold mixDiff
-  simp only [map_sum, map_pow, rename_X, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_pow, rename_X, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [rename_map_psumExpansion, mul_comm, (Commute.all _ _).geom_sum₂_mul]
 

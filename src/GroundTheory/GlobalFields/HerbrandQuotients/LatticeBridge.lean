@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
-import GroundTheory.GlobalFields.HerbrandQuotients.Lattice
-import GroundTheory.GlobalFields.HerbrandQuotients.Permutation
-import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+public import GroundTheory.GlobalFields.HerbrandQuotients.Lattice
+public import GroundTheory.GlobalFields.HerbrandQuotients.Permutation
+public import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

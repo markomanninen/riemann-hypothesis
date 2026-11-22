@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtConclOfIsoOf
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PoitouTateExactSecond
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvFamNormalised
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSubfieldModel
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtConclOfIsoOf
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PoitouTateExactSecond
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvFamNormalised
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSubfieldModel
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExactDualMapOfExactFibresOfIsRegularLocalRing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FlatCokerOfComplexExactModMaximalIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExactDualMapOfExactFibresOfIsRegularLocalRing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FlatCokerOfComplexExactModMaximalIdeal
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits TensorProduct Function
 
@@ -36,7 +40,7 @@ theorem dual_baseChange_eq_zero_iff (M : Type) [AddCommGroup M]
   · intro h
     refine Submodule.smul_induction_on h (fun r hr x _ => ?_) (fun x y hx hy => ?_)
     · rw [map_smul, ← algebraMap_smul B r, RingHom.mem_ker.mp hr, zero_smul]
-    · rw [map_add, hx, hy, add_zero]
+    · rw [map_add (f := _), hx, hy, add_zero]
 
 theorem dual_baseChange_dualMap {M N : Type} [AddCommGroup M] [Module A M] [AddCommGroup N]
     [Module A N] (a : M →ₗ[A] N) (f : Module.Dual A N) :
@@ -109,8 +113,8 @@ theorem mem_sup_of_exact_fibres {A B : Type} [CommRing A] [IsLocalRing A] [CommR
 
 end DualCokernelFlat
 
-open DualCokernelFlat in
 
+open DualCokernelFlat in
 theorem flat_quotient_of_equiv_coker_dualMap_of_exact_fibres :
     ∀ (V A : Type) [CommRing V] [IsNoetherianRing V] [IsLocalRing V] [CommRing A]
       [IsNoetherianRing A] [IsLocalRing A] [Algebra V A] [IsLocalHom (algebraMap V A)]

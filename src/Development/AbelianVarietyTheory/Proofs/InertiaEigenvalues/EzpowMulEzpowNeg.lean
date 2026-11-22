@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinXiExtMemRigidTensorIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinXiExtMemRigidTensorIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,26 +17,26 @@ variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebr
   {l e a : ℕ} [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] [CompleteSpace K]
   {ι : Type} [Fintype ι] [DecidableEq ι]
 
-variable (O K l e) in
 
+variable (O K l e) in
 def cterm (x : Ahat O K l e) : AdjoinRoot (Polynomial.X ^ e + Polynomial.C (l : K)) :=
   PowerSeries.constantCoeff ((AhatEq.equivAhat O K l e).symm x)
 
-variable (O l e) in
-open Classical in
 
+open Classical in
+variable (O l e) in
 def hatR (f : K⟦X⟧) : Ahat O K l e := if h : f ∈ Rpi O K l e then toHat O K l e ⟨f, h⟩ else 0
 
 theorem hatR_of_mem {f : K⟦X⟧} (h : f ∈ Rpi O K l e) : hatR O l e f = toHat O K l e ⟨f, h⟩ := by
   unfold hatR
-  rw [dif_pos h]
+  rw [dite_eq_left h]
+
 
 variable (K a) in
-
 def dvec (k : ι) : ZMod a → ι → K := fun _ => Pi.single k 1
 
-variable (ι) in
 
+variable (ι) in
 def idx : Fin (Fintype.card ι) → ι := (Fintype.equivFin ι).symm
 
 def xiVec (P : PhiMod O K l e a ι) (k : Fin (Fintype.card ι)) : Vec K a ι := P.xi (dvec K a (idx ι k))

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbitt
-import Mathlib.RepresentationTheory.Semisimple
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Formalism.PadicSubsetSums.StableGradedCounts.ZBrauerNesbitt
+public import Mathlib.RepresentationTheory.Semisimple
+
+@[expose] public section
 
 open Polynomial Matrix UpperTheory.V.W
 

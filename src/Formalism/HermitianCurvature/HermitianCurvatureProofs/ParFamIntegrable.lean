@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameTransport
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -78,8 +82,8 @@ def Rep {Par : Type} (Ψ : Par → Q.RadSp k ρ z z' π π') (Ψf : Par → Mt k
 
 def GGpos (k ρ : ℕ) (z z' : Fin (2 * ρ + k + 1) → ℂ) : Set (Mt k ρ) := {y | 0 < Q.GGl k ρ z z' (Matrix.of y)}
 
-variable (z z' π π') in
 
+variable (z z' π π') in
 def Good (A : Module.End ℂ (Q.RadSp k ρ z z' π π')) : Prop :=
   ∀ (Par : Type) [NormedAddCommGroup Par] [NormedSpace ℝ Par] [FiniteDimensional ℝ Par] [MeasurableSpace Par]
     [BorelSpace Par] (U₀ : Set (Par × Mt k ρ)), IsOpen U₀ → U₀ ⊆ Set.univ ×ˢ GGpos k ρ z z' →
@@ -147,12 +151,12 @@ theorem good_smul (a : ℂ) {A : Module.End ℂ (Q.RadSp k ρ z z' π π')} (hA 
     simp only [LinearMap.smul_apply, Submodule.coe_smul, Pi.smul_apply]
     rw [hW₁ ν Kp hKp hν Ψi y V hV hyV hyG hKV hi c, integral_smul]
 
-variable (z z' π π') in
 
+variable (z z' π π') in
 def PGood (x : Q.Pr (Q.RadSp k ρ z z' π π')) : Prop := Good z z' π π' x.1 ∧ Good z z' π π' x.2.unop
 
-variable (z z' π π') in
 
+variable (z z' π π') in
 def goodAlg : StarSubalgebra ℂ (Q.Pr (Q.RadSp k ρ z z' π π')) where
   carrier := {x | PGood z z' π π' x}
   mul_mem' := by
@@ -177,9 +181,6 @@ def goodAlg : StarSubalgebra ℂ (Q.Pr (Q.RadSp k ρ z z' π π')) where
   star_mem' := by
     rintro x ⟨hx1, hx2⟩
     exact ⟨hx2, hx1⟩
-
-theorem mem_goodAlg {x : Q.Pr (Q.RadSp k ρ z z' π π')} :
-    x ∈ goodAlg z z' π π' ↔ Good z z' π π' x.1 ∧ Good z z' π π' x.2.unop := Iff.rfl
 
 theorem good_mkP {X Xs : Module.End ℂ (Q.RadSp k ρ z z' π π')} (h1 : Good z z' π π' X) (h2 : Good z z' π π' Xs) :
     Q.mkP X Xs ∈ goodAlg z z' π π' := ⟨h1, h2⟩

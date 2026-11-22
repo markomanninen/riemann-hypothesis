@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.NormFr
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.NormFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ def frame0 (i : ℕ) : Fin (D.sp.Y 0).rank → D.host.E :=
     (D.sp.Y 0).frame.repr ((-(D.sp.T : D.host.E)) • D.sp.hypF ⟨2 * D.R.rS - i, h'⟩)
   else 0
 
-open Classical in
 
+open Classical in
 def NormalFrame0 (βY0 : GL (Fin (D.sp.Y 0).rank) (EAf D)) (S Pg : Finset (Pl D.host.E)) : Prop :=
   ∀ PP ∈ S, ∀ ei : AE D, Formalism.L2.NTheta.IsIdemAt ei PP →
     (∀ i < D.R.m - 1, ∀ col : Fin (D.sp.Y 0).rank, col.val = D.R.N 0 + i →

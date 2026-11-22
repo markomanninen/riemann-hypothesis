@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -33,7 +37,7 @@ private theorem count {A Q : Type} [AddCommGroup A] [AddCommGroup Q] [Finite Q] 
   rw [h1, h2, mul_comm]
   exact Nat.mul_le_mul h4 h3
 
-private theorem core {R Γ : Type} [CommRing R] [Group Γ] (r : Γ →* GG 3 R) (c g : Γ)
+private theorem core {R Γ : Type} [CommRing R] [Group Γ] (r : Γ →* GG (m := 3) (R := R)) (c g : Γ)
     (hc : c * c = 1) (hc1 : (r c).mat = 1) (hc2 : (r c).right = -1) (hg : (r g).right = 1)
     (z : Γ → Matrix (Fin 3) (Fin 3) R) (hz : ∀ s t, z (s * t) = z s + (r s).adFun (z t))
     (e : z c 0 0 = 0 ∧ z c 0 1 = 0 ∧ z c 1 0 = 0 ∧ z c 0 2 = 0 ∧ z c 2 0 = 0 ∧ z c 1 1 = 0)
@@ -42,7 +46,7 @@ private theorem core {R Γ : Type} [CommRing R] [Group Γ] (r : Γ →* GG 3 R) 
     z c = 0 ∧ ∀ i j, i ≠ j → (z g * (r g).mat - z (c * g⁻¹ * c) * (r (c * g⁻¹ * c)).mat) i j = 0 := by
   have hne : (-1 : ℤˣ) ≠ 1 := by decide
   have hleft : (r c).left = 1 := Units.ext hc1
-  have ad1 : ∀ (x : GG 3 R) X, x.right = 1 →
+  have ad1 : ∀ (x : GG (m := 3) (R := R)) X, x.right = 1 →
       x.adFun X = x.mat * X * ((x.left⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) := by
     intro x X hx
     unfold GG.adFun
@@ -51,7 +55,7 @@ private theorem core {R Γ : Type} [CommRing R] [Group Γ] (r : Γ →* GG 3 R) 
     intro X
     unfold GG.adFun
     rw [if_neg (by rw [hc2]; exact hne), hc1, hleft, inv_one, Units.val_one, one_mul, mul_one]
-  have ad0 : ∀ (x : GG 3 R), x.adFun 0 = 0 := by
+  have ad0 : ∀ (x : GG (m := 3) (R := R)), x.adFun 0 = 0 := by
     intro x
     unfold GG.adFun thetaLie
     simp
@@ -122,7 +126,7 @@ private def zlGrp {l : ℕ} [Fact l.Prime] {κ : Type} [Field κ] (F : Frame l �
   add_mem' := by
     rintro x y ⟨⟨a1, a2⟩, a3⟩ ⟨⟨b1, b2⟩, b3⟩
     refine ⟨⟨a1.add b1, fun s t => ?_⟩, fun v => (Z v).add_mem (a3 v) (b3 v)⟩
-    simp only [Pi.add_apply, a2, b2, map_add]; abel
+    simp only [Pi.add_apply, a2, b2, map_add (f := _)]; abel
   zero_mem' := ⟨⟨IsLocallyConstant.const 0, by simp⟩, fun v => (Z v).zero_mem⟩
   neg_mem' := by
     rintro x ⟨⟨a1, a2⟩, a3⟩
@@ -156,7 +160,11 @@ theorem UpperTheory.V.Z.J.normCnt :
       have e6 := congrFun h0 6
       have e7 := congrFun h0 7
       rw [hs] at e6 e7 ⊢
-      exact core (boxK B k).r F.c F.g0 hF.c_sq (hB.map _).atc (((boxK B k).nu _).trans hF.del_c)
+      have hatc : ((boxK B k).r F.c).mat = 1 := by
+        let q : O →+* Ok l O k := Ideal.Quotient.mk _
+        change q.mapMatrix (B.r F.c).mat = 1
+        rw [hB.atc, map_one]
+      exact core (boxK B k).r F.c F.g0 hF.c_sq hatc (((boxK B k).nu _).trans hF.del_c)
         (((boxK B k).nu _).trans F.g0.2) z hz.1.2
         ⟨congrFun h0 0, congrFun h0 1, congrFun h0 2, congrFun h0 3, congrFun h0 4, congrFun h0 5⟩ e6 e7)
   rwa [Nat.card_fun, Nat.card_eq_fintype_card (α := Fin 8), Fintype.card_fin] at h

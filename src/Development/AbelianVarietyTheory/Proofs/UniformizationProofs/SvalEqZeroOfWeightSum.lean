@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.CancelSecAct
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SecEqZeroAndHomEqOfThickenings
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -92,7 +96,8 @@ theorem sval_eq_zero_of_sum {S B : Scheme.{0}} (X : Type) [AddCommGroup X] (Y : 
       (fun a => Set.mem_iInter.1 (hV _ a.1.2 hw) a.2)
     have E := H w J' hJ'
     have hw' : (𝟙 (splitTorus S X ⊗ Y).left : _ ⟶ _) w ∈ (snd (splitTorus S X) Y).left ⁻¹ᵁ V := hw
-    rw [gs_eq _ w _ hw', gs_eq _ w _ hw', map_zero, map_zero, map_sum, map_sum, ← E]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [gs_eq _ w _ hw', gs_eq _ w _ hw', map_zero, map_zero, map_sum, map_sum, ← E]
     refine Finset.sum_congr rfl fun β hβ => ?_
     rw [← gs_eq _ w _ hw', gs_mul _ w _ hw', gs_res _ w _ hw', gs_pull (𝟙 _) (snd (splitTorus S X) Y).left w V hw, Category.id_comp,
       hc β hβ _ _ w hw, sval_of (s β) _ w J' (j β) (fun k => e (⟨β, hβ⟩, k))]) α hα
@@ -272,8 +277,8 @@ end GlobalTheory.ExpUniq
 
 namespace GlobalTheory
 
-open ExpUniq in
 
+open ExpUniq in
 theorem expT_eq_iff : (AllPre fun {V} _ _ _ {_} {_} {_} _ _ U => ∀ (W : Type) [CommRing W] [IsLocalRing W] [Algebra V W], FinExt V W → ∀ k σ σ' f f', U.ExpT (TA V W) k σ f → U.ExpT (TA V W) k σ' f' → (σ = σ' ↔ f = f')) := by
   intro V _ _ _ hV D A G _ _ U W _ _ _ hW k σ σ' f f' h h'
   have := hV.1

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.IdLiftDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,12 +34,12 @@ theorem l_theta : IntegralTraceSurjective := by
     induction hy using Submodule.span_induction with
     | mem t ht =>
       obtain ⟨x, rfl⟩ := ht
-      exact ⟨(x + σ x) * x, by simp only [map_add, map_mul, hσσ]; ring⟩
+      exact ⟨(x + σ x) * x, by simp only [map_add (f := _), map_mul, hσσ]; ring⟩
     | zero => exact ⟨0, by simp⟩
     | add y y' _ _ ih ih' =>
       obtain ⟨x, hx⟩ := ih
       obtain ⟨x', hx'⟩ := ih'
-      exact ⟨x + x' + y * σ y', by simp only [map_add, map_mul, hσσ]; linear_combination hx + hx'⟩
+      exact ⟨x + x' + y * σ y', by simp only [map_add (f := _), map_mul, hσσ]; linear_combination hx + hx'⟩
     | smul a y _ ih =>
       obtain ⟨x, hx⟩ := ih
       exact ⟨a * σ a * x, by simp only [smul_eq_mul, map_mul, hσσ]; linear_combination (a * σ a) * hx⟩
@@ -43,7 +47,7 @@ theorem l_theta : IntegralTraceSurjective := by
   refine ⟨x, ?_⟩
   rw [map_one, mul_one] at hx
   have h4 := congrArg (fun z : 𝓞 E => (z : E)) hx
-  simp only [map_add, map_one] at h4
+  simp only [map_add (f := _), map_one] at h4
   rw [← hσ]
   exact h4.symm
 

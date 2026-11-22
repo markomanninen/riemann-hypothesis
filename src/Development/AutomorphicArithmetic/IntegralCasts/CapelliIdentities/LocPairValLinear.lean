@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qp9.locPair_val_linear :
     ∀ (O : Type) [inst : CommRing O] [inst_1 : IsDomain O]
@@ -22,7 +26,8 @@ theorem UpperTheory.Reformulated.B.Qp9.locPair_val_linear :
         (GroundTheory.Heights₂.Heights.NumbersDVR.classList (Sum.elim T.x T.x') μ ++ []) : ℝ))
       (MvPolynomial.basisMonomials (σ ⊕ σ) ℝ |>.repr (Gs i)) := fun Gs => rfl
   refine ⟨fun Gs Hs => ?_, fun c Gs => ?_, fun α s Gs => ?_⟩
-  · simp only [key, Pi.add_apply, map_add, Finset.sum_add_distrib]
+  · simp only [key, Pi.add_apply, map_add (f := _), Finset.sum_add_distrib]
   · simp only [key, MvPolynomial.C_mul', map_smul, smul_eq_mul, Finset.mul_sum]
-  · simp only [key, map_sum]
-    exact Finset.sum_comm
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [key, map_sum]
+      exact Finset.sum_comm

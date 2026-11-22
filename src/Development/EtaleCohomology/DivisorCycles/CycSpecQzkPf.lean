@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCountPf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCountPf
+
+@[expose] public section
 
 open Matrix
 namespace LateralTheory.DivDb.CycSpec_qzkPf

@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.LGenflagLU
+module
+
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.LGenflagLU
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar Matrix
 
 namespace PositivityTheory.UnitarySelfGeneration.GF
@@ -71,7 +76,7 @@ theorem adjoin_le {F : Type} [Field F] [Algebra Ω F] (u u' : ∀ σ, Matrix (Fi
   rintro _ ⟨q, rfl⟩
   have := lu_mem (IntermediateField.adjoin Ω (Set.range (ent u))).toSubfield (hC q.1) (e q.1 ▸ hu' q.1)
     (fun i j => by
-      rw [mul_apply]
+      rw [Matrix.mul_apply]
       exact sum_mem fun l _ => mul_mem (IntermediateField.algebraMap_mem _ _) (mem_adjoin_ent u hu _ _ _))
   rw [← e q.1] at this
   exact this _ _
@@ -113,8 +118,8 @@ theorem compositum (K Ω₁ Ω₂ : Type) [Field K] [Field Ω₁] [Field Ω₂] 
     Module.Finite.of_surjective (Ideal.Quotient.mkₐ K M).toLinearMap (Ideal.Quotient.mkₐ_surjective K M)
   let j₁ : Ω₁ →ₐ[K] Ω₃ := (Ideal.Quotient.mkₐ K M).comp Algebra.TensorProduct.includeLeft
   let j₂ : Ω₂ →ₐ[K] Ω₃ := (Ideal.Quotient.mkₐ K M).comp Algebra.TensorProduct.includeRight
-  have e₁ := Module.finrank_mul_finrank K j₁.fieldRange Ω₃
-  have e₂ := Module.finrank_mul_finrank K j₂.fieldRange Ω₃
+  have e₁ := (letI : Module.Free j₁.fieldRange Ω₃ := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank K j₁.fieldRange Ω₃)
+  have e₂ := (letI : Module.Free j₂.fieldRange Ω₃ := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank K j₂.fieldRange Ω₃)
   have q₁ : Module.finrank K Ω₁ = Module.finrank K j₁.fieldRange :=
     (AlgEquiv.ofInjectiveField j₁).toLinearEquiv.finrank_eq
   have q₂ : Module.finrank K Ω₂ = Module.finrank K j₂.fieldRange :=
@@ -165,7 +170,9 @@ theorem fl_coord {Ω' : Type} [Field Ω'] [Algebra Ω Ω'] {E E' : Type} [AddCom
   rw [← hf]
   congr 1
   funext k
-  simp only [hb, hh, map_sum, hj, Finset.smul_sum, smul_smul, mul_apply, map_apply, Finset.sum_smul]
+  rw [hb]
+  simp only [Matrix.mul_apply, Matrix.map_apply, Finset.sum_smul, hh, map_sum, hj,
+    Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   simp only [mul_comm]
 

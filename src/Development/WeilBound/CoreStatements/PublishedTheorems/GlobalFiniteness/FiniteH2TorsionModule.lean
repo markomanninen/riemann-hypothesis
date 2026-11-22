@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CohomologicalDimensionTopologicalIsoStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConstantTermFrameKTypeCoefficientsStatement
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalFiniteness.Transport
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CohomologicalDimensionTopologicalIsoStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ConstantTermFrameKTypeCoefficientsStatement
+
+@[expose] public section
 
 noncomputable section
 

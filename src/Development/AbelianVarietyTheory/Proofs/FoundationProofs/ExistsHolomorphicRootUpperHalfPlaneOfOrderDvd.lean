@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRootBallOfAnalyticOrderDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRootBallOfAnalyticOrderDvd
+
+@[expose] public section
 
 open Matrix GlobalTheory.KZ
 open Filter Topology
@@ -148,13 +152,13 @@ theorem rootHs : ∀ (h : ℂ → ℂ) (m : ℕ), 0 < m → DifferentiableOn ℂ
       have hmem : ball (c z₁ hz₁) (r z₁ hz₁) ∩ Hs ∈ 𝓝 z₁ := (isOpen_ball.inter hHsOpen).mem_nhds ⟨h1 z₁ hz₁, hz₁⟩
       filter_upwards [hmem] with z hz
       show (if h' : z ∈ Hs then g z h' z else 0) = g z₁ hz₁ z
-      rw [dif_pos hz.2]
+      rw [dite_eq_left hz.2]
       exact hloc z₁ hz₁ z hz.2 hz.1
     exact (((hgd z₁ hz₁).differentiableAt (isOpen_ball.mem_nhds (h1 z₁ hz₁))).congr_of_eventuallyEq
       hev).differentiableWithinAt
   · intro z hz
     show (if h' : z ∈ Hs then g z h' z else 0) ^ m = h z
-    rw [dif_pos hz]
+    rw [dite_eq_left hz]
     exact hgp z hz z (h1 z hz)
 
 end GlobalTheory.RootHs

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceMinpolyCoeffLePowMaxEmbeddingsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NnnormMinpolyCoeffFinitePlaceLePowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeHtE
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfinitePlaceMinpolyCoeffLePowMaxEmbeddingsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NnnormMinpolyCoeffFinitePlaceLePowStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdelicU
 open scoped TensorProduct NNReal
@@ -11,9 +15,9 @@ namespace GlobalTheory.RatCount.CoefHt
 theorem mult_le_two (F : Type) [Field F] [NumberField F] (w : InfinitePlace F) : w.mult ≤ 2 := by
   unfold InfinitePlace.mult; split_ifs <;> norm_num
 
+
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes in
 open Classical in
-
 theorem exists_mulHeight_coeff_minpoly_le : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E], ∃ (c : ℝ) (a : ℕ),
     ∀ (x : E) (j : ℕ), Height.mulHeight₁ ((minpoly F x).coeff j) ≤ c * (GlobalTheory.RatCount.htE F x : ℝ) ^ a := by
   intro F E _ _ _ _ _
@@ -53,7 +57,7 @@ theorem exists_mulHeight_coeff_minpoly_le : ∀ (F E : Type) [Field F] [NumberFi
         _ = 4 ^ m * A w ^ (2 * m) := by
           rw [mul_pow, ← pow_mul, ← pow_mul, mul_comm m 2, pow_mul, mul_comm 2 m, pow_mul]; norm_num
     calc (∏ w : InfinitePlace F, max (w c) 1 ^ w.mult) ≤ ∏ w : InfinitePlace F, (4 ^ m * A w ^ (2 * m)) :=
-          Finset.prod_le_prod (fun w _ => pow_nonneg (le_trans zero_le_one (le_max_right _ _)) _) fun w _ => h1 w
+          Finset.prod_le_prod₀ (fun w _ => pow_nonneg (le_trans zero_le_one (le_max_right _ _)) _) fun w _ => h1 w
       _ = _ := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, ← pow_mul, Finset.prod_pow]
 
@@ -76,7 +80,7 @@ theorem exists_mulHeight_coeff_minpoly_le : ∀ (F E : Type) [Field F] [NumberFi
       exact le_antisymm ((hle v).trans (by rw [hv', one_pow])) (le_max_right _ _)
     rw [e]
     calc (∏ᶠ v : HeightOneSpectrum (𝓞 F), max (FinitePlace.mk v c) 1) ≤ ∏ᶠ v, B v ^ m :=
-          finprod_le_finprod hf (fun v => le_trans zero_le_one (le_max_right _ _)) hBm hle
+          finprod_le_finprod₀ hf (fun v => le_trans zero_le_one (le_max_right _ _)) hBm hle
       _ = (∏ᶠ v, B v) ^ m := (finprod_pow hBfin m).symm
       _ ≤ (∏ᶠ v, B v) ^ (2 * m) := pow_le_pow_right₀ (one_le_finprod fun v => hB v) (by omega)
   rw [NumberField.mulHeight₁_eq, hht, mul_pow, ← mul_assoc]

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SubDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import GroundTheory.AutomorphicForms.ReductionIdele
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SubDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+public import GroundTheory.AutomorphicForms.ReductionIdele
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -57,7 +62,7 @@ private theorem lc_rows {R : Type} [CommRing R] (X Y : UPos (2 + 2) 2 → R) (a 
     intro i M j
     rw [unipMatrix, add_mul, one_mul, Matrix.add_apply, Matrix.mul_apply, Finset.sum_eq_zero, add_zero]
     intro l _
-    rw [blockEntry_apply, dif_neg (by simp), zero_mul]
+    rw [blockEntry_apply, dite_eq_right (by simp), zero_mul]
   have hR : ∀ (i : Fin 2) (j : Fin (2 + 2)), (unipGL Y * blk a b * k).val (Fin.natAdd 2 i) j =
       ∑ l, b.val i l * k.val (Fin.natAdd 2 l) j := by
     intro i j
@@ -71,11 +76,11 @@ private theorem lc_rows {R : Type} [CommRing R] (X Y : UPos (2 + 2) 2 → R) (a 
   · ext i j
     rw [Matrix.mul_apply]
     refine (key i (Fin.castAdd 2 j)).trans ?_
-    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dif_neg (fun hh => absurd hh.2 (not_le.2 j.2)), add_zero]
+    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_right (fun hh => absurd hh.2 (not_le.2 j.2)), add_zero]
     simp [Matrix.one_apply, Fin.ext_iff]
   · rw [Matrix.mul_apply]
     refine Eq.trans ?_ (key i (Fin.natAdd 2 j)).symm
-    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dif_pos hp, Matrix.one_apply_ne, zero_add]
+    rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_left hp, Matrix.one_apply_ne, zero_add]
     intro e
     have := congrArg Fin.val e
     simp at this
@@ -91,14 +96,15 @@ private theorem lc_adj {R : Type} [CommRing R] (b c : Matrix (Fin 2) (Fin 2) R) 
 
 private theorem lc_main {K : Type} [Field K] [NumberField K] (X : UPos (2 + 2) 2 → 𝔸[K]) (k : G1 K (2 + 2)) (hk : k ∈ KG K (2 + 2)) :
     ∃ (b : AdelicGLn.AdelicGL K 2), ∃ k' ∈ (maxCompact : Subgroup (AdelicGLn.AdelicGL K (2 + 2))),
-      (detModule K 2 b⁻¹).1 = Real.exp (HH (w0 K * nn X * k)) ∧ (detModule K 2 b⁻¹).1 ≤ 1 ∧
+      (detModule K 2 b⁻¹).1 = Real.exp (HH (w0 K * unipOne (K := K) (n := 2 + 2) 2 X * k)) ∧
+      (detModule K 2 b⁻¹).1 ≤ 1 ∧
       b.val * k'.val.submatrix (Fin.natAdd 2) (Fin.castAdd 2) = 1 ∧
       ∀ (i j : Fin 2) (hp), X ⟨(Fin.castAdd 2 i, Fin.natAdd 2 j), hp⟩ =
         (b.val * k'.val.submatrix (Fin.natAdd 2) (Fin.natAdd 2)) i j := by
-  obtain ⟨Y, m₁, m₂, t, k', hk', e⟩ := iwa (w0 K * nn X)
+  obtain ⟨Y, m₁, m₂, t, k', hk', e⟩ := iwa (w0 K * unipOne (K := K) (n := 2 + 2) 2 X)
   obtain ⟨h1, h2, -⟩ := hpSpec (K := K)
   obtain ⟨b1, -, -, -, -, -, b2, -⟩ := blkLaws (K := K)
-  have hH : HH (w0 K * nn X * k) = t := by
+  have hH : HH (w0 K * unipOne (K := K) (n := 2 + 2) 2 X * k) = t := by
     rw [(h2 k hk).2, e, h1, (h2 k' hk').1, add_zero]
   have e' := congrArg Subtype.val e
   simp only [Subgroup.coe_mul, b1, b2, coe_unipOne] at e'
@@ -146,8 +152,11 @@ private theorem lc_eq {K : Type} [Field K] [NumberField K] (X : UPos (2 + 2) 2 �
   simp [lcF]
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.longCell :
-    ∀ {K : Type} [Field K] [NumberField K], (∀ (X : UPos (2 + 2) 2 → 𝔸[K]), ∀ k ∈ KG K (2 + 2), HH (w0 K * nn X * k) ≤ 0) ∧
-      ∀ R : ℝ, ∃ C : Set (UPos (2 + 2) 2 → 𝔸[K]), IsCompact C ∧ ∀ X, ∀ k ∈ KG K (2 + 2), -R ≤ HH (w0 K * nn X * k) → X ∈ C := by
+    ∀ {K : Type} [Field K] [NumberField K],
+      (∀ (X : UPos (2 + 2) 2 → 𝔸[K]), ∀ k ∈ KG K (2 + 2),
+        HH (w0 K * unipOne (K := K) (n := 2 + 2) 2 X * k) ≤ 0) ∧
+      ∀ R : ℝ, ∃ C : Set (UPos (2 + 2) 2 → 𝔸[K]), IsCompact C ∧ ∀ X, ∀ k ∈ KG K (2 + 2),
+        -R ≤ HH (w0 K * unipOne (K := K) (n := 2 + 2) 2 X * k) → X ∈ C := by
   intro K _ _
   refine ⟨fun X k hk => ?_, fun R => ?_⟩
   · obtain ⟨b, k', -, h1, h2, -⟩ := lc_main X k hk

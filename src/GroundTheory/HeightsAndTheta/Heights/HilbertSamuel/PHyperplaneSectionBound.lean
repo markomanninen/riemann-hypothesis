@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHyperplaneSectionBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHyperplaneQuotientBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHyperplaneQuotientBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -14,8 +19,8 @@ section Mul
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [CharZero Ω]
   {y : (Σ k, ι k) → Ω} {c : ∀ k, ι k}
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem mul_mem_chartLatQ (b : K → ℤ) {t : Ω} (ht : t ∈ chartLatQ y (b - 1) 1) :
     (∏ k, y ⟨k, c k⟩) * t ∈ chartLatQ y b 1 := by
   intro c' hc'
@@ -62,25 +67,6 @@ theorem finrank_chartLatQ_le (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) (b : K → ℤ) 
   rw [← Submodule.finrank_quotient_add_finrank (chartDivSec y c b), ← hφ, add_comm]
 
 end Mul
-
-theorem HyperplaneSectionBound.proof (hQ : HyperplaneQuotientBound.Statement) :
-    HyperplaneSectionBound.Statement := by
-  intro K _ ι _ Ω _ _ y D a hD hV hB
-  have hc : ∀ k, ∃ i, y ⟨k, i⟩ ≠ 0 := by
-    intro k
-    obtain ⟨i, hi⟩ := hV.2.1.2.2 k
-    refine ⟨i, fun h0 => hi ?_⟩
-    rw [mCoordIdeal, RingHom.mem_ker]
-    simp [mConeMap, h0]
-  choose c hc using hc
-  obtain ⟨C, hC⟩ := hQ K ι Ω y D a c hD hV hB hc
-  refine ⟨C, hC.mono fun n hn => ?_⟩
-  have h := finrank_chartLatQ_le hc ((n : ℤ) • a)
-  have h' : (Module.finrank ℚ (chartLatQ y ((n : ℤ) • a) 1) : ℝ) ≤
-      (Module.finrank ℚ (chartLatQ y ((n : ℤ) • a - 1) 1) : ℝ) +
-        (Module.finrank ℚ (chartLatQ y ((n : ℤ) • a) 1 ⧸ chartDivSec y c ((n : ℤ) • a)) : ℝ) := by
-    exact_mod_cast h
-  linarith
 
 end
 

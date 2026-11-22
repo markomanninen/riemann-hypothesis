@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix
 
@@ -106,10 +110,12 @@ lemma oneDim (hp : Sys p) (hc : Corner A p) {i j : Fin n} {x y : Mat C N} (h : P
     _ = (p i * a * p j * y) * x := by simp only [mul_assoc]
     _ = c • x := by rw [h1, smul_mul_assoc, sand_left hp h.2.2.1]
 
-lemma rel_equiv (hp : Sys p) (hc : Corner A p) : Equivalence (rel A p) where
-  refl i := ⟨_, _, pr_refl hp hc i⟩
-  symm := fun ⟨_, _, h⟩ => ⟨_, _, pr_symm h⟩
-  trans := fun ⟨_, _, h⟩ ⟨_, _, h'⟩ => ⟨_, _, pr_trans hp h h'⟩
+lemma rel_equiv (hp : Sys p) (hc : Corner A p) : Equivalence (rel A p) := by
+  refine ⟨fun i => ⟨_, _, pr_refl hp hc i⟩, ?_, ?_⟩
+  · rintro i j ⟨_, _, h⟩
+    exact ⟨_, _, pr_symm h⟩
+  · rintro i j k ⟨_, _, h⟩ ⟨_, _, h'⟩
+    exact ⟨_, _, pr_trans hp h h'⟩
 
 end
 

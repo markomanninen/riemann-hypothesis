@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsOpenSubgroupMemFixedModule
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PulledLatticeVectorMemDualBaseLatticeCompletion
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualLatticeBidual
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PulledLatticeVectorMemDualBaseLatticeCompletion
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdelicLatticeCompletionLocalGlobal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualLatticeBidual
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
 open scoped TensorProduct
 
@@ -13,13 +18,18 @@ namespace GlobalTheory.CompanLatAd
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
+theorem full_span {n : ℕ} (M : Submodule (𝓞 E) (Fin n → E))
+    (hM : Submodule.IsFullLattice E M) : Submodule.span E (M : Set (Fin n → E)) = ⊤ := by
+  letI := hM
+  exact Submodule.IsFullLattice.span_eq_top
+
 theorem dualL_fg {n : ℕ} (τ : E →+* E) (J : Matrix (Fin n) (Fin n) E) (hJ : IsUnit J.det)
-    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsLattice E M) : (dualL τ J M).FG := by
+    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsFullLattice E M) : (dualL τ J M).FG := by
   classical
   obtain ⟨S, hS⟩ := hM.fg
   have hSE : Submodule.span E ((S : Set (Fin n → E))) = ⊤ := by
     rw [← Submodule.span_span_of_tower (𝓞 E) E, hS]
-    exact hM.span_eq_top
+    exact full_span M hM
   let Θ : (Fin n → E) →ₗ[𝓞 E] (S → E) :=
     { toFun := fun y s => hform τ J s.1 y
       map_add' := fun y y' => by
@@ -40,7 +50,7 @@ theorem dualL_fg {n : ℕ} (τ : E →+* E) (J : Matrix (Fin n) (Fin n) E) (hJ :
       | zero => simp [hform]
       | add x x' _ _ hx hx' =>
         have e : hform τ J (x + x') y = hform τ J x y + hform τ J x' y := by
-          simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+          simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
         rw [e, hx, hx', add_zero]
       | smul c x _ hx => rw [GlobalTheory.LevelHecke.DualConj.hform_smul_left, hx, mul_zero]
     have hJy : J *ᵥ y = 0 := by
@@ -136,13 +146,16 @@ namespace GlobalTheory.CompanLatAd
 
 theorem isLattice_compan {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
     (sp : Spaces R F E) {N : ℕ} (J : Matrix (Fin N) (Fin N) E) (hJ : IsUnit J.det) (a : 𝓞 E)
-    (M : Submodule (𝓞 E) (Fin N → E)) (hM : Submodule.IsLattice E M) :
-    Submodule.IsLattice E (compan (sp := sp) J a M) := by
-  refine ⟨?_, ?_⟩
-  · exact hM.fg.sup ((Submodule.FG.smul (IsNoetherian.noetherian (Ideal.span {a})) (dualL_fg (sp.cm.sig : E →+* E) J hJ M hM)))
-  · rw [eq_top_iff, ← hM.span_eq_top]
-    exact Submodule.span_mono (SetLike.coe_subset_coe.2 le_sup_left)
-
+    (M : Submodule (𝓞 E) (Fin N → E)) (hM : Submodule.IsFullLattice E M) :
+    Submodule.IsFullLattice E (compan (sp := sp) J a M) := by
+  have hfg : (compan (sp := sp) J a M).FG :=
+    hM.fg.sup (Submodule.FG.smul (IsNoetherian.noetherian (Ideal.span {a}))
+      (dualL_fg (sp.cm.sig : E →+* E) J hJ M hM))
+  refine { toIsLattice := Submodule.IsLattice.of_fg E hfg, span_eq_top := ?_ }
+  apply top_unique
+  rw [← full_span M hM]
+  apply Submodule.span_mono
+  exact SetLike.coe_subset_coe.mpr le_sup_left
 theorem compan_latAd_eq {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
     (sp : Spaces R F E) {N : ℕ} (σ : E →ₐ[F] E) (hσ : (σ : E →+* E) = sp.cm.sig) (J : Matrix (Fin N) (Fin N) E)
     (hJ : IsUnit J.det) (a : 𝓞 E) (x : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
@@ -154,13 +167,14 @@ theorem compan_latAd_eq {R : Ranks} {F E : Type} [Field F] [NumberField F] [Fiel
     intro M
     unfold compan dualL
     rw [hσ]
-  have hLb : Submodule.IsLattice E Lb := ⟨hfg, hspan⟩
+  have hLb : Submodule.IsFullLattice E Lb :=
+    { toIsLattice := Submodule.IsLattice.of_fg E hfg, span_eq_top := hspan }
   have hfin : Module.Finite (𝓞 E) Lb := Module.Finite.iff_fg.mpr hfg
-  have hlatAd : ∀ M : Submodule (𝓞 E) (Fin N → E), Submodule.IsLattice E M → Submodule.IsLattice E (latAd x M) := by
+  have hlatAd : ∀ M : Submodule (𝓞 E) (Fin N → E), Submodule.IsFullLattice E M → Submodule.IsFullLattice E (latAd x M) := by
     intro M hM
     have e : latAd x M = Formalism.UG.CS.globLat x M := Submodule.span_eq (Formalism.UG.CS.globLat x M)
     rw [e]
-    exact Formalism.UG.P.csGlob_lattice M (Module.Finite.iff_fg.mpr hM.fg) hM.span_eq_top x
+    exact Formalism.UG.P.csGlob_lattice M (Module.Finite.iff_fg.mpr hM.fg) (full_span M hM) x
   have hΛ := hlatAd Lb hLb
   have hcL := isLattice_compan sp J hJ a Lb hLb
   have hcΛ := isLattice_compan sp J hJ a (latAd x Lb) hΛ
@@ -173,7 +187,7 @@ theorem compan_latAd_eq {R : Ranks} {F E : Type} [Field F] [NumberField F] [Fiel
     have hgU : g ∈ UPts σ J (v.adicCompletion F) := GlobalTheory.MemDual.bc_prV_mem_UPts σ J v hx
     have hcar1 := GlobalTheory.LocCarry.mem_latS_latAd_iff x Lb hfin hspan v
     have hcar2 := GlobalTheory.LocCarry.mem_latS_latAd_iff x (compan (sp := sp) J a Lb)
-      (Module.Finite.iff_fg.mpr hcL.fg) hcL.span_eq_top v
+      (Module.Finite.iff_fg.mpr hcL.fg) (full_span _ hcL) v
     have hdm := GlobalTheory.DualCompletion.dual_move F E σ N J v (latAd x Lb) Lb g hJ hΛ hLb hgU hcar1
     have hgg : ∀ w : Fin N → E ⊗[F] v.adicCompletion F, ((g⁻¹ : GL (Fin N) _) : Matrix (Fin N) (Fin N) _) *ᵥ
         ((g : Matrix (Fin N) (Fin N) _) *ᵥ w) = w := by
@@ -193,10 +207,10 @@ theorem compan_latAd_eq {R : Ranks} {F E : Type} [Field F] [NumberField F] [Fiel
       rw [← Matrix.mulVec_smul, ← Matrix.mulVec_add, ← he, hgg']
   apply le_antisymm
   · intro w hw
-    refine GlobalTheory.LatLocGlob.mem_of_forall_locLat (F := F) _ (Module.Finite.iff_fg.mpr hRHS.fg) hRHS.span_eq_top w fun v => ?_
+    refine GlobalTheory.LatLocGlob.mem_of_forall_locLat (F := F) _ (Module.Finite.iff_fg.mpr hRHS.fg) (full_span _ hRHS) w fun v => ?_
     exact (key v _).1 (Submodule.subset_span ⟨w, hw, rfl⟩)
   · intro w hw
-    refine GlobalTheory.LatLocGlob.mem_of_forall_locLat (F := F) _ (Module.Finite.iff_fg.mpr hcΛ.fg) hcΛ.span_eq_top w fun v => ?_
+    refine GlobalTheory.LatLocGlob.mem_of_forall_locLat (F := F) _ (Module.Finite.iff_fg.mpr hcΛ.fg) (full_span _ hcΛ) w fun v => ?_
     exact (key v _).2 (Submodule.subset_span ⟨w, hw, rfl⟩)
 
 theorem locP_companion_latAd : ∀ {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] (sp : Spaces R F E) {N : ℕ} (σ : E →ₐ[F] E), (σ : E →+* E) = sp.cm.sig → ∀ (J : Matrix (Fin N) (Fin N) E), IsUnit J.det → ∀ (a : 𝓞 E) (x : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)), x ∈ UPts σ J (FiniteAdeleRing (𝓞 F) F) → ∀ (Lb : Submodule (𝓞 E) (Fin N → E)), Lb.FG → Submodule.span E (Lb : Set (Fin N → E)) = ⊤ → ∀ (P : HeightOneSpectrum (𝓞 E)), Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (compan (sp := sp) J a (latAd x Lb)) = Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (latAd x (compan (sp := sp) J a Lb)) := by

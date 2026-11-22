@@ -1,7 +1,11 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
-import Formalism.LocalRingCardinality.DataLevel
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsSpan
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+public import Formalism.LocalRingCardinality.DataLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,6 @@ def IsLat (Λ : Submodule (𝓞 E) (n → E)) : Prop :=
   Module.Finite (𝓞 E) Λ ∧ Submodule.span E (Λ : Set (n → E)) = ⊤
 
 variable (F) in
-
 abbrev hat (Λ : Submodule (𝓞 E) (n → E)) : Submodule 𝒮 (n → 𝒜) :=
   latS (F := F) (FiniteAdeleRing (𝓞 F) F) 𝒮 Λ
 
@@ -33,8 +36,11 @@ theorem glob_mono (g : GL n 𝒜) {A B : Submodule (𝓞 E) (n → E)} (h : A �
   fun _ hx => hat_mono h hx
 
 theorem isLat_glob {Λ : Submodule (𝓞 E) (n → E)} (h : IsLat Λ) (g : GL n 𝒜) : IsLat (globLat g Λ) := by
-  have := global_lattice_isLattice_holds F E n Λ h.1 h.2 g
-  exact ⟨Module.Finite.iff_fg.2 this.fg, this.span_eq_top⟩
+  have hLat := global_lattice_isLattice_holds F E n Λ h.1 h.2 g
+  refine ⟨Module.Finite.iff_fg.2 hLat.fg, ?_⟩
+  obtain ⟨c, hc, hLower⟩ := adelstabL_lower (F := F) Λ h.2
+  obtain ⟨d, hd, a, ha, _, hInv⟩ := levelaf_exists_denom g
+  exact adelstab_span g (hat F Λ) c d hc hd hLower (adelstab_entries g⁻¹ d a ha hInv)
 
 theorem glob_one {Λ : Submodule (𝓞 E) (n → E)} (h : IsLat Λ) : globLat (F := F) 1 Λ = Λ :=
   global_lattice_one_holds F E n Λ h.1 h.2
@@ -191,8 +197,37 @@ theorem glob_dl_le (σ : E →ₐ[F] E) (J : Matrix n n E) (Λ : Submodule (𝓞
   have h2 : cT (sigR σ (FiniteAdeleRing (𝓞 F) F)) ((g⁻¹ : GL n 𝒜) : Matrix n n 𝒜) * J.map ιA *
       ((g⁻¹ : GL n 𝒜) : Matrix n n 𝒜) = J.map ιA := hg'
   rw [hform_mulVec, h2, csDual_hform_incl] at h1
-  have h3 := csGlob_int (F := F) _ h1
-  exact ⟨⟨_, h3⟩, rfl⟩
+  let e := hform (σ : E →+* E) J y x
+  let v : Unit → E := fun _ => 1
+  let L : Submodule (𝓞 E) (Unit → E) := Submodule.span (𝓞 E) {v}
+  have hL : IsLat L := by
+    refine ⟨Module.Finite.iff_fg.2 (Submodule.fg_span_singleton v), eq_top_iff.2 ?_⟩
+    intro w _
+    have hv : v ∈ Submodule.span E (L : Set (Unit → E)) :=
+      Submodule.subset_span (Submodule.mem_span_singleton_self v)
+    have hw : w = w () • v := by
+      funext i
+      cases i
+      simp [v]
+    rw [hw]
+    exact Submodule.smul_mem _ _ hv
+  have he : (fun _ : Unit => e) ∈ globLat (F := F) 1 L := by
+    show ((((1 : GL Unit 𝒜)⁻¹ : GL Unit 𝒜) : Matrix Unit Unit 𝒜) *ᵥ
+      (fun _ => ιA e)) ∈ hat F L
+    rw [inv_one, Units.val_one, one_mulVec]
+    have hGenerator : (fun i => ιA (v i)) ∈ hat F L :=
+      Submodule.subset_span ⟨v, Submodule.mem_span_singleton_self v, rfl⟩
+    have hSmul : (⟨ιA e, h1⟩ : 𝒮) • (fun i => ιA (v i)) = fun _ : Unit => ιA e := by
+      funext i
+      simp [v, Pi.smul_apply, Subring.smul_def]
+    rw [← hSmul]
+    exact Submodule.smul_mem _ _ hGenerator
+  rw [glob_one (F := F) hL] at he
+  obtain ⟨a, ha⟩ := Submodule.mem_span_singleton.1 he
+  refine ⟨a, ?_⟩
+  have ha' := congrFun ha ()
+  change algebraMap (𝓞 E) E a * 1 = e at ha'
+  simpa only [mul_one] using ha'
 
 theorem glob_dl (σ : E →ₐ[F] E) (J : Matrix n n E)
     (hJ : ∀ M : Submodule (𝓞 E) (n → E), IsLat M → IsLat (dl σ J M))

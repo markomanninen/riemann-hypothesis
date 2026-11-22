@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped ContDiff
 open scoped Nat
@@ -45,7 +49,7 @@ theorem norm_iteratedFDeriv_cexp_phase_le :
   intro V E _ _ _ _ _ _ B h hh hre n R
   set F : E → ℝ := fun t => ∑ j ∈ Finset.range (n + 1), ‖iteratedFDeriv ℝ j h t‖ with hF
   have hFc : Continuous F := by
-    refine continuous_finset_sum _ (fun j _ => ?_)
+    refine continuous_finsetSum _ (fun j _ => ?_)
     exact (hh.continuous_iteratedFDeriv (by exact_mod_cast le_top)).norm
   obtain ⟨K, hK⟩ := (isCompact_closedBall (0 : E) R).exists_bound_of_continuousOn hFc.continuousOn
   refine ⟨(n ! : ℝ) * (1 + ‖B‖ + |K|) ^ n, fun y t ht => ?_⟩

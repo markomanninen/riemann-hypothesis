@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurableEmbeddingAdelicTupleLocalComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurableEmbeddingAdelicTupleLocalComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorPropertiesStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
 
@@ -26,7 +31,7 @@ theorem basis_compact_open (Z : Type) [TopologicalSpace Z] [T2Space Z] [LocallyC
   refine TopologicalSpace.isTopologicalBasis_of_isOpen_of_nhds (fun u hu => hu.2) ?_
   intro a u hau hu
   obtain ⟨C, hCa, hCu, hC⟩ := local_compact_nhds (hu.mem_nhds hau)
-  obtain ⟨V, hV, haV, hVC⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (H := Z)).mem_nhds_iff.mp hCa
+  obtain ⟨V, hV, haV, hVC⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (X := Z)).mem_nhds_iff.mp hCa
   exact ⟨V, ⟨hC.of_isClosed_subset hV.1 hVC, hV.2⟩, haV, hVC.trans hCu⟩
 
 theorem exists_seq_cover {Z : Type} [TopologicalSpace Z] [T2Space Z] [LocallyCompactSpace Z]
@@ -128,15 +133,15 @@ theorem ext_of_pure {X I Z₀ : Type} {Z : I → Type} [mX : MeasurableSpace X] 
         exact this
     have := hm.comap_le
     rwa [he.comap_eq] at this
-  have hpi : ∀ t, generatePiSystem G t → ∀ K : ∀ v, Set (Z v),
+  have hpi : ∀ t, t ∈ generatePiSystem G → ∀ K : ∀ v, Set (Z v),
       (∀ v, IsCompact (K v) ∧ IsOpen (K v)) → (∀ᶠ v in Filter.cofinite, K v = L v) →
       ∀ A : Set Z₀, MeasurableSet A → ∃ K' : ∀ v, Set (Z v),
       (∀ v, IsCompact (K' v) ∧ IsOpen (K' v)) ∧ (∀ᶠ v in Filter.cofinite, K' v = L v) ∧
       ∃ A' : Set Z₀, MeasurableSet A' ∧ t ∩ (p ⁻¹' A ∩ {x | ∀ v, q v x ∈ K v}) =
         p ⁻¹' A' ∩ {x | ∀ v, q v x ∈ K' v} := by
     intro t ht
-    induction ht with
-    | base hs =>
+    induction ht using generatePiSystem_induction with
+    | base _ hs =>
       intro K hK hKL A hA
       rcases hs with ⟨B, hB, rfl⟩ | ⟨w, U, hU, rfl⟩
       · exact ⟨K, hK, hKL, B ∩ A, hB.inter hA, by rw [Set.preimage_inter, Set.inter_assoc]⟩
@@ -166,7 +171,7 @@ theorem ext_of_pure {X I Z₀ : Type} {Z : I → Type} [mX : MeasurableSpace X] 
             · subst hv; exact h4.2
             · have := h3 v
               rwa [Function.update_of_ne hv] at this
-    | inter _ _ _ ih1 ih2 =>
+    | inter _ _ _ _ _ ih1 ih2 =>
       intro K hK hKL A hA
       obtain ⟨K1, hK1, hKL1, A1, hA1, e1⟩ := ih2 K hK hKL A hA
       obtain ⟨K2, hK2, hKL2, A2, hA2, e2⟩ := ih1 K1 hK1 hKL1 A1 hA1

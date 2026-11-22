@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
-import Mathlib.LinearAlgebra.Eigenspace.Pi
-import Mathlib.LinearAlgebra.Eigenspace.Zero
-import Mathlib.LinearAlgebra.Charpoly.BaseChange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+public import Mathlib.LinearAlgebra.Eigenspace.Pi
+public import Mathlib.LinearAlgebra.Eigenspace.Zero
+public import Mathlib.LinearAlgebra.Charpoly.BaseChange
+
+@[expose] public section
 
 open Polynomial TensorProduct
 
@@ -151,7 +155,7 @@ theorem UpperTheory.V.J.muGe :
       show k ⊗ₜ[Λ] (lam l • m) = x (lam l) • (k ⊗ₜ[Λ] m)
       rw [← h.hs, ← TensorProduct.smul_tmul, TensorProduct.smul_tmul', smul_eq_mul, Algebra.smul_def]
       rfl
-    | add z w hz hw => rw [map_add, map_add, hz, hw]
+    | add z w hz hw => rw [map_add (f := _), map_add (f := _), hz, hw]
   have Fann : ∀ a ∈ Module.annihilator B M, F a = 0 := fun a ha => by
     have h0 : actL lam M h.hs a = 0 := LinearMap.ext fun m => (Module.mem_annihilator.1 ha) m
     simp only [F, h0, LinearMap.baseChange_zero]

@@ -1,20 +1,24 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorsionEqOneOfTranslationKeepsRatios
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGenOfSection
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPhiRelSmul
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PowEqOneOfPush
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsThetaActs
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PtEqOfProportional
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocalC
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorsionEqOneOfTranslationKeepsRatios
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGenOfSection
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsPhiRelSmul
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PowEqOneOfPush
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsThetaActs
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PtEqOfProportional
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -92,8 +96,8 @@ section OneField
 
 variable {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {F : Type} [Field F] [Algebra (FractionRing R) F] {k : ℕ}
 
-variable (A F k) in
 
+variable (A F k) in
 abbrev AbSec : Type := SecOver (abelianBase A F) (LPow A.A A.L (k : ℤ) (TFK (R := R) F))
 
 theorem actVal_unique {θ : ThetaGrp A.A A.L (k : ℤ) (TFK (R := R) F)} {t u u' : AbSec A F k}
@@ -237,8 +241,8 @@ theorem exists_phiVal_pull (hG : GlobalFnsSt) {D : DegPre R} {k : ℕ} {p : QkPt
 variable {I : Ideal R} {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (FractionRing R)))}
   {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] (U : UnifPre I D A G)
 
-variable (E F) in
 
+variable (E F) in
 def grpPull (k : ℕ) : GroupSec U E k →ₛₗ[algebraMap E F] GroupSec U F k :=
   pullOver U.LG.L _ (whisker_fst E F ((Over.pullback (jK R)).obj G))
     (fun _ => ((Category.assoc _ _ _).symm.trans (congrArg (· ≫ _) (whisker_snd E F _))).symm)
@@ -247,13 +251,15 @@ theorem expandsG_pull (hG : GlobalFnsSt) {k : ℕ} {v : GroupSec U E k} {s : Fam
     (h : U.ExpandsG E k v s) : U.ExpandsG F k (grpPull E F U k v) (famPull D.toPre E F hG k s) := by
   obtain ⟨n, c, x, hx, e₁, e₂⟩ := (expandsG_iff U E k v s).1 h
   refine (expandsG_iff U F k _ _).2 ⟨n, fun i => algebraMap E F (c i), x, hx, ?_, fun α => ?_⟩
-  · rw [e₁, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [e₁, map_sum]
     refine Finset.sum_congr rfl fun i _ => (map_smulₛₗ _ _ _).trans (congrArg _ ?_)
     refine sec_ext' U.LG.isLB fun y J hJ => (sval_pullOver _ _ _ _ hJ).trans ((sval_pullOver _ _ _ _ hJ).trans
       (Eq.trans ?_ (sval_pullOver _ _ _ _ hJ).symm))
     rw [Category.assoc, whisker_snd]
   · refine (congrArg (termPull D.toPre E F k α) (e₂ α)).trans ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => (map_smulₛₗ _ _ _).trans (congrArg _ ?_)
     refine sec_ext' D.toPre.P.isLB fun y J hJ => (sval_pullOver _ _ _ _ hJ).trans ((sval_pullOver _ _ _ _ hJ).trans
       (Eq.trans ?_ (sval_pullOver _ _ _ _ hJ).symm))

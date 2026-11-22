@@ -1,28 +1,33 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCoordinateCodimension
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCoordinateCodimensionPullback
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceZeroSection
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceProduct
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceChartPresentation
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceLinearEmbeddings
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BasicOpenClosedEmbedding
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
-import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrongResolution
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCoordinateCodimension
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCoordinateCodimensionPullback
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceZeroSection
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceProduct
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceChartPresentation
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineSpaceLinearEmbeddings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.BasicOpenClosedEmbedding
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.PullbackBlowupSequenceComposition
+public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeCoproduct
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrongResolution
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace
@@ -35,7 +40,7 @@ def baseFieldToGlobalSections {X : Scheme.{u}} (k : Type u) [Field k]
     (p : X ⟶ Spec (CommRingCat.of k)) : k →+* ↑(X.presheaf.obj (Opposite.op ⊤)) :=
   RingHom.comp (Scheme.Hom.appTop p).hom (Scheme.ΓSpecIso (CommRingCat.of k)).inv.hom
 
-private theorem exists_translateLastCoord (k : Type u) [Field k] (M : ℕ) (a : k) :
+theorem exists_translateLastCoord (k : Type u) [Field k] (M : ℕ) (a : k) :
     ∃ f : affineSpaceTimesLine k M ⟶ affineSpaceTimesLine k M,
       f ≫ affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1)) =
           affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1)) ∧
@@ -97,11 +102,6 @@ private theorem appTop_baseFieldToGlobalSections (k : Type u) [Field k] {X Y : S
   rw [baseFieldToGlobalSections_apply, baseFieldToGlobalSections_apply, Scheme.Hom.comp_appTop,
     CommRingCat.comp_apply]
 
-private theorem baseFieldToGlobalSections_neg (k : Type u) [Field k] {X : Scheme.{u}}
-    (p : X ⟶ Spec (CommRingCat.of k)) (a : k) :
-    baseFieldToGlobalSections k p (-a) = -baseFieldToGlobalSections k p a :=
-  map_neg (baseFieldToGlobalSections k p) a
-
 theorem translateLastCoord_comp_translateLastCoord_neg (k : Type u) [Field k] (M : ℕ) (a : k) :
     translateLastCoord k M a ≫ translateLastCoord k M (-a) = 𝟙 (affineSpaceTimesLine k M) := by
   have hstruct : ∀ b : k,
@@ -148,15 +148,7 @@ def translateLastCoordIso (k : Type u) [Field k] (M : ℕ) (a : k) : affineSpace
   hom_inv_id := translateLastCoord_comp_translateLastCoord_neg k M a
   inv_hom_id := translateLastCoord_neg_comp_translateLastCoord k M a
 
-@[simp]
-theorem translateLastCoordIso_hom (k : Type u) [Field k] (M : ℕ) (a : k) :
-    (translateLastCoordIso k M a).hom = translateLastCoord k M a := rfl
-
-@[simp]
-theorem translateLastCoordIso_inv (k : Type u) [Field k] (M : ℕ) (a : k) :
-    (translateLastCoordIso k M a).inv = translateLastCoord k M (-a) := rfl
-
-private theorem exists_sliceAtLastCoord (k : Type u) [Field k] (M : ℕ) (a : k) :
+theorem exists_sliceAtLastCoord (k : Type u) [Field k] (M : ℕ) (a : k) :
     ∃ f : affineSpaceIndexedBy k (ULift.{u, 0} (Fin M)) ⟶ affineSpaceTimesLine k M,
       f ≫ affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1)) =
           affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M)) ∧
@@ -209,12 +201,6 @@ instance instIsClosedImmersionHeightSlice (k : Type u) [Field k] (M : ℕ) (a : 
 theorem sliceAtLastCoord_comp_projLeft (k : Type u) [Field k] (M : ℕ) (a : k) :
     sliceAtLastCoord k M a ≫ projLeft k M 1 = 𝟙 (affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) :=
   (exists_sliceAtLastCoord k M a).choose_spec.2.2.1
-
-@[simp]
-theorem sliceAtLastCoord_comp_projLeft_assoc (k : Type u) [Field k] (M : ℕ) (a : k) {Z : Scheme.{u}}
-    (g : affineSpaceIndexedBy k (ULift.{u, 0} (Fin M)) ⟶ Z) :
-    sliceAtLastCoord k M a ≫ projLeft k M 1 ≫ g = g := by
-  rw [← Category.assoc, sliceAtLastCoord_comp_projLeft, Category.id_comp]
 
 theorem sliceAtLastCoord_appTop_lastCoordinate (k : Type u) [Field k] (M : ℕ) (a : k) :
     (ConcreteCategory.hom (Scheme.Hom.appTop (sliceAtLastCoord k M a))) (lastCoordinate k M) =
@@ -308,7 +294,8 @@ private theorem sliceAtLastCoord_appTop_sum_mul_lagrangeSection (k : Type u) [Fi
     (G : ι → ↑((affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))).presheaf.obj (Opposite.op ⊤))) (i : ι) :
     (ConcreteCategory.hom (Scheme.Hom.appTop (sliceAtLastCoord k M (e i))))
         (∑ j : ι, pullbackAlongProjection k M (G j) * lagrangeBasisSection k M e j) = G i := by
-  rw [map_sum, Finset.sum_eq_single_of_mem i (Finset.mem_univ i)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single_of_mem i (Finset.mem_univ i)]
   · simp only [map_mul, sliceAtLastCoord_appTop_pullbackAlongProjection,
       sliceAtLastCoord_appTop_lagrangeSection k M e he i i]
     simp
@@ -561,7 +548,8 @@ private theorem hasSmoothCoordCodim_comp_sliceAtLastCoord (hsm : AffineSpaceIsSm
   have h1 : HasSmoothCoordCodim (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1)))
       (σ ≫ affineSpaceInl k M 1) (c + 1) := HasSmoothCoordCodim.comp_affineSpaceInl hsm k σ 1 hσ
   have h2 := h1.comp_iso_hom (translateLastCoordIso k M a)
-      (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1))) (by simp)
+      (affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M ⊕ Fin 1)))
+      (translateLastCoord_comp_affineSpaceIndexedByToSpec k M a)
   rw [sliceAtLastCoord_eq_affineSpaceInl_comp_translateLastCoord, ← Category.assoc]
   exact h2
 
@@ -590,106 +578,6 @@ theorem hasSmoothCoordCodim_coproductSliceMap (hsm : AffineSpaceIsSmooth.{u}) (k
     rw [Scheme.IdealSheafData.comap_comp, ← hkerW, restrictIdeal_eq_comap_ι, restrictIdeal_eq_comap_ι,
       ← Scheme.IdealSheafData.comap_comp, Scheme.homOfLE_ι]
     exact hcrux
-
-def componentSliceOpen (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι] [DecidableEq ι]
-    (e : ι → k) (A : ι → Scheme.{u}) (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M)))
-    (i : ι) : (∐ A).Opens :=
-  (Opens.map (coproductSliceMap k M e A ρ).base).obj (sliceSeparatingOpen k M e i)
-
-private theorem sigma_ι_comp_coproductSliceMap_appTop_sliceSeparatingFunction (k : Type u) [Field k] (M : ℕ) {ι : Type u}
-    [Fintype ι] [DecidableEq ι] (e : ι → k) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i j : ι) :
-    (ConcreteCategory.hom (Scheme.Hom.appTop (Sigma.ι A j ≫ coproductSliceMap k M e A ρ)))
-        (sliceSeparatingFunction k M e i) =
-      baseFieldToGlobalSections k (ρ j ≫ affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M)))
-        (∏ l ∈ Finset.univ.erase i, (e j - e l)) := by
-  rw [sigma_ι_coproductSliceMap]
-  exact comp_sliceAtLastCoord_appTop_sliceSeparatingFunction k M e A ρ i j
-
-private theorem preimage_sliceSeparatingOpen_self (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι]
-    [DecidableEq ι] (e : ι → k) (he : Function.Injective e) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) :
-    (Opens.map (Sigma.ι A i ≫ coproductSliceMap k M e A ρ).base).obj (sliceSeparatingOpen k M e i) = ⊤ := by
-  have hpre : (Opens.map (Sigma.ι A i ≫ coproductSliceMap k M e A ρ).base).obj (sliceSeparatingOpen k M e i) =
-      (A i).basicOpen ((ConcreteCategory.hom (Scheme.Hom.appTop
-        (Sigma.ι A i ≫ coproductSliceMap k M e A ρ))) (sliceSeparatingFunction k M e i)) :=
-    Scheme.preimage_basicOpen _ _
-  rw [hpre, sigma_ι_comp_coproductSliceMap_appTop_sliceSeparatingFunction k M e A ρ i i]
-  have hne : (∏ l ∈ Finset.univ.erase i, (e i - e l)) ≠ 0 := by
-    refine Finset.prod_ne_zero_iff.mpr fun l hl => ?_
-    exact sub_ne_zero_of_ne fun hcon => (Finset.mem_erase.mp hl).1 (he hcon).symm
-  apply Scheme.basicOpen_of_isUnit
-  exact IsUnit.map (baseFieldToGlobalSections k (ρ i ≫ affineSpaceIndexedByToSpec k (ULift.{u, 0} (Fin M))))
-    (isUnit_iff_ne_zero.mpr hne)
-
-private theorem preimage_sliceSeparatingOpen_of_ne (k : Type u) [Field k] (M : ℕ) {ι : Type u}
-    [Fintype ι] [DecidableEq ι] (e : ι → k) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i j : ι) (hij : j ≠ i) :
-    (Opens.map (Sigma.ι A j ≫ coproductSliceMap k M e A ρ).base).obj (sliceSeparatingOpen k M e i) = ⊥ := by
-  have hpre : (Opens.map (Sigma.ι A j ≫ coproductSliceMap k M e A ρ).base).obj (sliceSeparatingOpen k M e i) =
-      (A j).basicOpen ((ConcreteCategory.hom (Scheme.Hom.appTop
-        (Sigma.ι A j ≫ coproductSliceMap k M e A ρ))) (sliceSeparatingFunction k M e i)) :=
-    Scheme.preimage_basicOpen _ _
-  have hzero : (∏ l ∈ Finset.univ.erase i, (e j - e l)) = 0 :=
-    Finset.prod_eq_zero (Finset.mem_erase.mpr ⟨hij, Finset.mem_univ j⟩) (sub_self (e j))
-  rw [hpre, sigma_ι_comp_coproductSliceMap_appTop_sliceSeparatingFunction k M e A ρ i j, hzero, map_zero]
-  simp
-
-private theorem range_sigma_ι_eq_range_componentSliceOpen_ι (k : Type u) [Field k] (M : ℕ)
-    {ι : Type u} [Fintype ι] [DecidableEq ι] (e : ι → k) (he : Function.Injective e)
-    (A : ι → Scheme.{u}) (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) :
-    Set.range (Sigma.ι A i).base = Set.range (componentSliceOpen k M e A ρ i).ι.base := by
-  rw [Scheme.Opens.range_ι]
-  refine Set.Subset.antisymm ?_ ?_
-  · rintro x ⟨y, rfl⟩
-    have hy : y ∈ (Opens.map (Sigma.ι A i ≫ coproductSliceMap k M e A ρ).base).obj
-        (sliceSeparatingOpen k M e i) := by
-      rw [preimage_sliceSeparatingOpen_self k M e he A ρ i]
-      simp
-    exact hy
-  · intro x hx
-    obtain ⟨j, y, rfl⟩ := sigma_ι_base_jointly_surjective A x
-    by_cases hij : j = i
-    · subst hij
-      exact Set.mem_range_self y
-    · exfalso
-      have hy : y ∈ (Opens.map (Sigma.ι A j ≫ coproductSliceMap k M e A ρ).base).obj
-          (sliceSeparatingOpen k M e i) := hx
-      rw [preimage_sliceSeparatingOpen_of_ne k M e A ρ i j hij] at hy
-      have hy' : y ∈ ((⊥ : (A j).Opens) : Set ↥(A j)) := hy
-      rw [TopologicalSpace.Opens.coe_bot] at hy'
-      exact (Set.mem_empty_iff_false y).mp hy'
-
-private theorem exists_iso_componentSliceOpen (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι]
-    [DecidableEq ι] (e : ι → k) (he : Function.Injective e) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) :
-    ∃ φ : A i ≅ (↑(componentSliceOpen k M e A ρ i) : Scheme.{u}),
-      φ.hom ≫ (componentSliceOpen k M e A ρ i).ι = Sigma.ι A i := by
-  have hrange := range_sigma_ι_eq_range_componentSliceOpen_ι k M e he A ρ i
-  refine ⟨IsOpenImmersion.isoOfRangeEq (Sigma.ι A i) (componentSliceOpen k M e A ρ i).ι hrange, ?_⟩
-  apply IsOpenImmersion.isoOfRangeEq_hom_fac
-
-def componentIsoSliceOpen (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι] [DecidableEq ι]
-    (e : ι → k) (he : Function.Injective e) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) :
-    A i ≅ (↑(componentSliceOpen k M e A ρ i) : Scheme.{u}) :=
-  (exists_iso_componentSliceOpen k M e he A ρ i).choose
-
-@[simp]
-theorem componentIsoSliceOpen_hom_comp_ι (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι]
-    [DecidableEq ι] (e : ι → k) (he : Function.Injective e) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) :
-    (componentIsoSliceOpen k M e he A ρ i).hom ≫ (componentSliceOpen k M e A ρ i).ι = Sigma.ι A i :=
-  (exists_iso_componentSliceOpen k M e he A ρ i).choose_spec
-
-@[simp]
-theorem componentIsoSliceOpen_hom_comp_ι_assoc (k : Type u) [Field k] (M : ℕ) {ι : Type u} [Fintype ι]
-    [DecidableEq ι] (e : ι → k) (he : Function.Injective e) (A : ι → Scheme.{u})
-    (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) (i : ι) {Z : Scheme.{u}}
-    (g : (∐ A) ⟶ Z) :
-    (componentIsoSliceOpen k M e he A ρ i).hom ≫ (componentSliceOpen k M e A ρ i).ι ≫ g =
-      Sigma.ι A i ≫ g := by
-  rw [← Category.assoc, componentIsoSliceOpen_hom_comp_ι]
 
 abbrev coproductSliceMapReindexed (k : Type u) [Field k] (M : ℕ) {ι : Type u} (e : ι → k) (A : ι → Scheme.{u})
     (ρ : ∀ i, A i ⟶ affineSpaceIndexedBy k (ULift.{u, 0} (Fin M))) :

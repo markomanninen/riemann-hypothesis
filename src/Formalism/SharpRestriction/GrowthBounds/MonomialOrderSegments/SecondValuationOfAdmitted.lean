@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,10 @@ theorem br_onLetter {L : Type} {r : ℕ} (i : L) (β : Fin r →₀ ℕ) :
   classical
   ext ⟨j, b⟩
   unfold onLetter Formalism.MainNotions.PlaneGramData.atLetter
-  rw [Finsupp.coe_finset_sum, Finset.sum_apply]
+  rw [Finset.sum_apply']
   by_cases hj : j = i
   · subst hj
-    rw [Finsupp.mapDomain_apply (fun a a' h => by simpa using h)]
+    rw [Finsupp.mapDomain_apply_of_injective (fun a a' h => by simpa using h)]
     rw [Finset.sum_eq_single b]
     · simp
     · intro a _ hab

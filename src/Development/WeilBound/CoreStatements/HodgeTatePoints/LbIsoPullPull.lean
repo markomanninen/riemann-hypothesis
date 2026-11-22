@@ -1,9 +1,13 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.IBIsKernel
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.IBIsKernel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
@@ -57,7 +61,7 @@ theorem lbIso_refl {X : Scheme.{0}} {L : LB X} (hL : L.IsLB) : LBIso L L := by
 theorem lbIso_pull_pull {X Y Z : Scheme.{0}} {L : LB X} (hL : L.IsLB) (F : Y ⟶ X) (g : Z ⟶ Y) (h : Z ⟶ X)
     (e : g ≫ F = h) : LBIso (L.pull h) ((L.pull F).pull g) :=
   LBIso.chartPull (chartPullId _) (chartPullLinComb L F (fun _ : PUnit => g) (fun _ => h) (fun _ => 1) (𝟙 Z)
-    fun _ => e.trans (Category.id_comp _).symm) (lbIso_refl (pull_isLB hL h))
+    fun _ => e.trans (Category.id_comp _).symm) (lbIso_refl (LB.isLB_pull hL h))
 
 theorem pf_pull {k k₂ : Type} [Field k] [Field k₂] (f : Sp k₂ ⟶ Sp k) {G : Over (Sp k)} [GrpObj G]
     {G₂ : Over (Sp k₂)} [GrpObj G₂] {φ : G₂.left ⟶ G.left} (h : IsGrpPullback G₂ G f φ) {L : LB G.left}
@@ -65,14 +69,14 @@ theorem pf_pull {k k₂ : Type} [Field k] [Field k₂] (f : Sp k₂ ⟶ Sp k) {G
   obtain ⟨T, M, hM, hK, hi⟩ := H
   let := T.grpB
   obtain ⟨e, he, hφ⟩ := grpPullback_iso (isGrpPullback_pullback G f) h
-  have hM₂ := pull_isLB hM (pullback.fst T.B.hom f)
+  have hM₂ := LB.isLB_pull hM (pullback.fst T.B.hom f)
   obtain ⟨u, hu⟩ := lbIso_refl hM₂
   have hK₂ := kTriv_pull (isGrpPullback_pullback T.B f) hM hM₂ ((isGen_iff u).1 hu) hK
   refine ⟨torusExtOfIso e (teBC f T), M.pull (pullback.fst T.B.hom f), hM₂, hK₂, ?_⟩
   have hc : (e.inv ≫ Out.GtBCPf.qB f T.q).left ≫ pullback.fst T.B.hom f = φ ≫ T.q.left := by
     rw [Over.comp_left, Category.assoc, Out.GtBCPf.qB_h, ← hφ, ← Category.assoc, ← Category.assoc, ← Over.comp_left,
       e.inv_hom_id, Over.id_left, Category.id_comp]
-  exact LBIso.trans hL₂ (pull_isLB hL φ) (pull_isLB hM₂ _) w
+  exact LBIso.trans hL₂ (LB.isLB_pull hL φ) (LB.isLB_pull hM₂ _) w
     (LBIso.chartPull (chartPullPull L φ φ rfl) (chartPullLinComb M (pullback.fst T.B.hom f)
       (fun _ : PUnit => (e.inv ≫ Out.GtBCPf.qB f T.q).left) (fun _ => T.q.left) (fun _ => 1) φ fun _ => hc) hi)
 
@@ -85,26 +89,26 @@ theorem geompf_bc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
     have e : φ ≫ pullback.fst t.G.hom x = pullback.fst _ _ := pullback.lift_fst _ _ _
     have hg : IsGrpPullback ((Over.pullback (spMap f ≫ x)).obj t.G) ((Over.pullback x).obj t.G) (spMap f) φ :=
       (isGrpPullback_pullback t.G x).cancel ((isGrpPullback_pullback t.G _).congr rfl e.symm) (pullback.lift_snd _ _ _)
-    exact pf_pull (spMap f) hg (pull_isLB hL _) (pull_isLB hL _) (lbIso_pull_pull hL _ φ _ e) h
+    exact pf_pull (spMap f) hg (LB.isLB_pull hL _) (LB.isLB_pull hL _) (lbIso_pull_pull hL _ φ _ e) h
   · have hL₂ := t₂.PP.isLB
     have h₁ := (isGrpPullback_pullback t₂.G x).comp m.cart
     have h₂ := isGrpPullback_pullback t.G (x ≫ f)
     obtain ⟨w, hw, -⟩ := m.lin
     have w₁ : LBIso (t₂.PP.L.pull (pullback.fst t₂.G.hom x)) ((t.PP.L.pull m.cm.F).pull (pullback.fst t₂.G.hom x)) :=
       LBIso.chartPull (chartPullPull _ _ _ rfl) (chartPullPull _ _ _ rfl) ⟨w, hw⟩
-    have w₂ := LBIso.trans (pull_isLB hL₂ _) (pull_isLB (pull_isLB hL _) _) (pull_isLB hL _) w₁
+    have w₂ := LBIso.trans (LB.isLB_pull hL₂ _) (LB.isLB_pull (LB.isLB_pull hL _) _) (LB.isLB_pull hL _) w₁
       (lbIso_pull_pull hL m.cm.F (pullback.fst t₂.G.hom x) _ rfl).symm
     constructor
     · intro h
       obtain ⟨e, he, hφ⟩ := grpPullback_iso h₂ h₁
-      refine pf_pull (𝟙 _) (isGrpPullback_of_iso e) (pull_isLB hL₂ _) (pull_isLB hL _) ?_ h
-      refine LBIso.trans (pull_isLB hL _) (pull_isLB (pull_isLB hL _) _) (pull_isLB (pull_isLB hL₂ _) _)
+      refine pf_pull (𝟙 _) (isGrpPullback_of_iso e) (LB.isLB_pull hL₂ _) (LB.isLB_pull hL _) ?_ h
+      refine LBIso.trans (LB.isLB_pull hL _) (LB.isLB_pull (LB.isLB_pull hL _) _) (LB.isLB_pull (LB.isLB_pull hL₂ _) _)
         (lbIso_pull_pull hL _ e.hom.left _ hφ) ?_
       exact LBIso.chartPull (chartPullPull _ _ _ rfl) (chartPullPull _ _ _ rfl) w₂.symm
     · intro h
       obtain ⟨e, he, hφ⟩ := grpPullback_iso h₁ h₂
-      refine pf_pull (𝟙 _) (isGrpPullback_of_iso e) (pull_isLB hL _) (pull_isLB hL₂ _) ?_ h
-      exact LBIso.trans (pull_isLB hL₂ _) (pull_isLB hL _) (pull_isLB (pull_isLB hL _) _) w₂
+      refine pf_pull (𝟙 _) (isGrpPullback_of_iso e) (LB.isLB_pull hL _) (LB.isLB_pull hL₂ _) ?_ h
+      exact LBIso.trans (LB.isLB_pull hL₂ _) (LB.isLB_pull hL _) (LB.isLB_pull (LB.isLB_pull hL _) _) w₂
         (lbIso_pull_pull hL _ e.hom.left _ hφ)
 
 theorem exists_common {X₂ X0 : Scheme.{0}} (f : X₂ ⟶ X0) (z : X₂) {k : Type} [Field k] (x : Sp k ⟶ X0)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Topology Filter
 
@@ -57,7 +61,7 @@ theorem exists_nhds_fix : (∀ {V : Type} [AddCommGroup V] [Module ℂ V] (s : S
       rw [← Module.End.mul_apply, ← hmul k (hK₀H hk) k' (hK₀H hk')]
       exact Submodule.subset_span ⟨k * k', K₀.mul_mem hk hk', rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact W.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact W.add_mem hx hy
     | smul c x _ hx => rw [map_smul]; exact W.smul_mem c hx
   let R : K₀ → Module.End ℂ W := fun k => (S k).restrict (hinv k.1 k.2)
   have hRv : ∀ (k : K₀) (w : W), (R k w : V) = S k w := fun _ _ => rfl

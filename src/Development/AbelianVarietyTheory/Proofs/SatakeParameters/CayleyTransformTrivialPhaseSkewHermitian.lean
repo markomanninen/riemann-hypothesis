@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MatrixLatticeIndexIntegralTranslationInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MulSelfEqOneIffOfLinearOrderedCommGroupWithZero
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MatrixLatticeIndexIntegralTranslationInvariance
+
+@[expose] public section
 
 noncomputable section
 
@@ -268,9 +272,9 @@ theorem cayley_phase : ∀ (L : Type) [Field L] [CharZero L] [Valued L (WithZero
   have hc : ψ ((b' + σ b') / 2) = 1 := by
     apply hψ
     · rw [div_eq_mul_inv]; exact mul_mem (add_mem hb'I hσb'I) hhalf
-    · rw [map_div₀, map_add, hσσ, map_ofNat, add_comm]
+    · rw [map_div₀, map_add (f := _), hσσ, map_ofNat, add_comm]
   have e3 : (-a + b' + σ (-a + b')) / 2 = -((a + σ a) / 2) + (b' + σ b') / 2 := by
-    rw [map_add, map_neg]; ring
+    rw [map_add (f := _), map_neg]; ring
   rw [e3, AddChar.map_add_eq_mul, hc, mul_one] at h3
   calc ψ ((a + σ a) / 2) = ψ ((a + σ a) / 2) * ψ (-((a + σ a) / 2)) := by rw [h3, mul_one]
     _ = 1 := by rw [← AddChar.map_add_eq_mul, add_neg_cancel, AddChar.map_zero_eq_one]

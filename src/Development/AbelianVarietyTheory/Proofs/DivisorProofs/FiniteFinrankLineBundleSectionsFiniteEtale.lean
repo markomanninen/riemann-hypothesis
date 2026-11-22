@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiRegularAlongOfEtale
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiRegularAlongOfEtale
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsIsGenOfUniqueFactorizationMonoid
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.NatCardAlgHomEqFinrankOfIsReducedOfIsFractionRin
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,7 +28,11 @@ theorem eq_zero_of_forall_algHom_eq_zero {E A : Type} (Ω : Type) [Field E] [Com
   refine IsNilpotent.eq_zero (nilpotent_iff_mem_prime.2 fun J hJ => ?_)
   have hm : J.IsMaximal := IsArtinianRing.isMaximal_of_isPrime J
   let := Ideal.Quotient.field J
-  let ψ : (A ⧸ J) →ₐ[E] Ω := IsAlgClosed.lift
+  let ψ : (A ⧸ J) →ₐ[E] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have := h (ψ.comp (Ideal.Quotient.mkₐ E J))
   rw [AlgHom.comp_apply, map_eq_zero_iff ψ ψ.toRingHom.injective] at this
   exact Ideal.Quotient.eq_zero_iff_mem.1 this
@@ -49,8 +57,8 @@ theorem H0.val_smul {q : S ⟶ Sp k} {N : LB S} {O : S.Opens} (x : Sp R ⟶ S) {
     (f : H0 q N O) : val x i hO hi (c • f) = φ c * val x i hO hi f := by
   rw [base_smul, val_fun_smul, evalPt_algX_of_eq q x hx]
 
-variable (R) in
 
+variable (R) in
 abbrev PtsOver [Algebra k R] (q : S ⟶ Sp k) : Type :=
   {x : Sp R ⟶ S // x ≫ q = spMap (algebraMap k R)}
 
@@ -93,8 +101,8 @@ theorem exists_generator [IsFinite q] [Etale q] (hN : N.IsLB) : ∃ e : H0 q N �
 
 variable (Ω : Type) [Field Ω] [IsAlgClosed Ω] [Algebra E Ω] [IsFinite q] [Etale q]
 
-omit [IsAlgClosed Ω] in
 
+omit [IsAlgClosed Ω] in
 theorem finite_ptsOver : Finite (PtsOver Ω q) := by
   have : IsAffine S := isAffine_of_isAffineHom q
   let := (algX q ⊤).toAlgebra
@@ -162,20 +170,13 @@ theorem finrank_H0On :
     Module.finrank E (sectionsOnClosedSubscheme p B I) = Nat.card (PtsOver Ω (I.subschemeι ≫ p)) :=
   (finite_finrank_lineBundleSections_finiteEtale _ Ω (LB.isLB_pull hB _)).2
 
-variable {Ω} in
 
+variable {Ω} in
 theorem eq_zero_of_forall_valOn_eq_zero (i : PtsOver Ω (I.subschemeι ≫ p) → B.ι)
     (hi : ∀ x : PtsOver Ω (I.subschemeι ≫ p), ⊤ ≤ (x.1 ≫ I.subschemeι) ⁻¹ᵁ B.U (i x))
     {g : sectionsOnClosedSubscheme p B I} (h : ∀ x : PtsOver Ω (I.subschemeι ≫ p), valOn x.1 (i x) (hi x) g = 0) : g = 0 :=
   H0.eq_zero_of_forall_val_eq_zero (LB.isLB_pull hB _) (fun x _ => i x) _ h
 
 end Subscheme
-
-example (D : ℕ) : Module.finrank ℚ (sectionsOnClosedSubscheme (CanonLB.affStr ℚ D) (AffineExample.triv ℚ D)
-    (AffineExample.ideal MvPolynomial.X)) = 1 := by
-  have := AffineExample.isIso_of_span (k := ℚ) (D := D) (g := MvPolynomial.X) rfl
-  rw [finrank_H0On AffineExample.isLB_triv ℂ, Nat.card_eq_one_iff_exists]
-  exact ⟨⟨spMap (algebraMap ℚ ℂ) ≫ inv _, by simp⟩, fun x => Subtype.ext
-    ((IsIso.eq_comp_inv _).2 x.2)⟩
 
 end GlobalTheory.Vanishing

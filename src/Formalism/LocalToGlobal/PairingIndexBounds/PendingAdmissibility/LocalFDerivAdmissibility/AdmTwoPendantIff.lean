@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.CentralCharacterOfAdmTwo
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.PendingAdmissibility.LocalFDerivAdmissibility.CentralCharacterOfAdmTwo
+
+@[expose] public section
 
 noncomputable section
 

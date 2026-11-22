@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.DotVecMulVec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,6 @@ open NumberField Matrix UpperTheory.V.KT UpperTheory.V.KL
 open scoped ComplexOrder
 
 namespace PositivityTheory.KB.SmoothPartitionUnityBasic
-
-open TraceLipschitz
 
 section GTLipPf
 

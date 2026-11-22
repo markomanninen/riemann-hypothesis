@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorPos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenFibreHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsVertFactorPos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenFibreHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -41,7 +46,7 @@ theorem mCoordIdeal_le {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {z : (Σ
   show F ∈ RingHom.ker (mConeMap z)
   rw [RingHom.mem_ker]
   ext m
-  rw [coeff_zero, ← Finsupp.equivFunOnFinite_symm_coe m,
+  rw [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, ← Finsupp.equivFunOnFinite_symm_coe m,
     HilbertSamuel.GenFibreHomog.coeff_mConeMap, aeval_eq_eval_map]
   exact hz.2 _ (HilbertSamuel.GenFibreHomog.isMultiHomogIdeal_mCoordIdeal y F hF _)
 
@@ -106,11 +111,11 @@ theorem exists_value {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {z : (Σ k
       mConeMap_of_isMultiHomog y hg] at h
     exact h
 
-  have hcoef := congrArg (coeff (m + Finsupp.equivFunOnFinite.symm bf)) hrel'
+  have hcoef := congrArg (AddMonoidAlgebra.coeff · (m + Finsupp.equivFunOnFinite.symm bf)) hrel'
   rw [prod_X_pow_eq_monomial, prod_X_pow_eq_monomial, C_mul_monomial, C_mul_monomial,
     coeff_mul_monomial', coeff_mul_monomial', if_pos le_add_self, add_tsub_cancel_right, mul_one,
     mul_one] at hcoef
-  have hcu : coeff m (mConeMap y u) = aeval y ue := by
+  have hcu : AddMonoidAlgebra.coeff (mConeMap y u) m = aeval y ue := by
     rw [← Finsupp.equivFunOnFinite_symm_coe m, HilbertSamuel.GenFibreHomog.coeff_mConeMap]
   rw [hcu] at hcoef
   by_cases hle : Finsupp.equivFunOnFinite.symm bg ≤ m + Finsupp.equivFunOnFinite.symm bf
@@ -122,8 +127,8 @@ theorem exists_value {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {z : (Σ k
   set a := weightedHomogeneousComponent (NumbersDVR.blockWeight ι) d' v with ha_def
   have ha : IsMultiHomog a d' := HilbertSamuel.GenFibreHomog.isMultiHomog_of_weighted
     (weightedHomogeneousComponent_isWeightedHomogeneous d' v)
-  have hcv : coeff (m + Finsupp.equivFunOnFinite.symm bf - Finsupp.equivFunOnFinite.symm bg)
-      (mConeMap y v) = aeval y a := by
+  have hcv : AddMonoidAlgebra.coeff (mConeMap y v)
+      (m + Finsupp.equivFunOnFinite.symm bf - Finsupp.equivFunOnFinite.symm bg) = aeval y a := by
     rw [← Finsupp.equivFunOnFinite_symm_coe
       (m + Finsupp.equivFunOnFinite.symm bf - Finsupp.equivFunOnFinite.symm bg),
       HilbertSamuel.GenFibreHomog.coeff_mConeMap]
@@ -195,13 +200,13 @@ theorem exists_value {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {z : (Σ k
 
 end VertFactorPos
 
-open VertFactorPos in
 
+open VertFactorPos in
 theorem VertFactorPos.proof : VertFactorPos.Statement := by
   intro II Ψ _ K _ ι _ Ω _ _ E _ _ D p hp z hz
   have hex : ∃ c : (k : K) → ι k, ∀ k, z ⟨k, c k⟩ ≠ 0 :=
     ⟨fun k => (hz.1 k).choose, fun k => (hz.1 k).choose_spec⟩
-  rw [ComponentData.vertFactor, dif_pos hex]
+  rw [ComponentData.vertFactor, dite_eq_left hex]
   obtain ⟨v, hv0, hv⟩ := exists_value hz (D.S_prime p hp).ne_zero (D.vertical p hp) hex.choose
     hex.choose_spec
   rw [valAt_eq hz hv]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Th.AnnihilatorQuotientFinite.closedSub :
       have h2 : (P.comap (algebraMap O (T ⧸ I))).IsPrime := Ideal.comap_isPrime _ _
       rw [← (maximalIdeal.isMaximal O).eq_of_le h2.ne_top h1]
       exact maximalIdeal.isMaximal O
-    haveI := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap P hc
+    haveI := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) P hc
     have h3 : (P.comap q).IsMaximal := Ideal.comap_isMaximal_of_surjective q hq
     have h4 : P.comap q = maximalIdeal T := IsLocalRing.eq_maximalIdeal h3
     rw [hK, Ideal.map_le_iff_le_comap, h4]

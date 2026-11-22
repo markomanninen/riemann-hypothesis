@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FockRBlock
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FockRBlock
+
+@[expose] public section
 
 open MvPolynomial
 

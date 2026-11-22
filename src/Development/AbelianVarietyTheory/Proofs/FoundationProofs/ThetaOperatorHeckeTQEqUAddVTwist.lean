@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsLogDerivQExpansionUpperTriangularActionStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaBasisLinearCombination
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueModPrimePowDiamondIndepende
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeLetterPreservesBasisSet
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntMatrixActionMemHomogeneousPolyFunctions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsThBActSgDDiamIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLogDerivQExpansionModPrimePowOfTranslationStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerClassEqImpPowRatioStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerRootOfInvariantTInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LogDerivQExpansionMulPrimePowCongrStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsLogDerivQExpansionUpperTriangularActionStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaBasisLinearCombination
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueModPrimePowDiamondIndepende
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeLetterPreservesBasisSet
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntMatrixActionMemHomogeneousPolyFunctions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsThBActSgDDiamIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLogDerivQExpansionModPrimePowOfTranslationStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerClassEqImpPowRatioStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularTowerRootOfInvariantTInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LogDerivQExpansionMulPrimePowCongrStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.CyclotomicQExpansion GlobalTheory.Glue
 open scoped MatrixGroups Matrix
 
@@ -20,12 +25,12 @@ namespace GlobalTheory.HeckeTh
 
 theorem toGQ_coe (γ : SL(2, ℤ)) : toGQ (γ : Matrix (Fin 2) (Fin 2) ℤ) = ofSL γ := by
   have h : (0:ℤ) < (γ : Matrix (Fin 2) (Fin 2) ℤ).det := by rw [γ.det_coe]; exact one_pos
-  unfold toGQ; rw [dif_pos h]
+  unfold toGQ; rw [dite_eq_left h]
   apply Subtype.ext; apply Units.ext
   simp [ofSL, Matrix.SpecialLinearGroup.toGLPos]
 
 theorem ent_toGQ (m : Matrix (Fin 2) (Fin 2) ℤ) (h : 0 < m.det) (i j : Fin 2) : ent (toGQ m) i j = (m i j : ℚ) := by
-  unfold ent toGQ; rw [dif_pos h]; simp [Matrix.GeneralLinearGroup.mkOfDetNeZero]
+  unfold ent toGQ; rw [dite_eq_left h]; simp [Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
 theorem exists_inv (q c : ℕ) (hc : 0 < c) (h : Nat.Coprime q c) : ∃ (a : ℕ) (t : ℤ), (a : ℤ) * q - t * c = 1 := by
   have hg := Nat.gcd_eq_gcd_ab q c
@@ -121,8 +126,8 @@ theorem sub_vq (q : ℕ) (ψ : HahnSeries ℚ Ω) : sub ε (q : ℚ) 0 1 ψ = vq
 
 theorem sl_pos (g : SL(2, ℤ)) : 0 < (g : Matrix (Fin 2) (Fin 2) ℤ).det := by rw [g.det_coe]; exact one_pos
 
-open StabHecke in
 
+open StabHecke in
 theorem PP_conj {N l : ℕ} {m : Matrix (Fin 2) (Fin 2) ℤ} (hm : PP N l m) (δ : SL(2, ℤ)) (hN : (N : ℤ) ∣ δ 1 0)
     (hl : (l : ℤ) ∣ δ 1 0) : PP N l (((δ⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) * m * δ) := by
   obtain ⟨h1, h2, h3, h4⟩ := hm
@@ -147,8 +152,8 @@ theorem PP_conj {N l : ℕ} {m : Matrix (Fin 2) (Fin 2) ℤ} (hm : PP N l m) (δ
       (dvd_mul_of_dvd_left h3 (δ 0 1 * δ 0 0))
     rw [ht]; exact h4.add_mul_left_left t
 
-open StabHecke in
 
+open StabHecke in
 theorem mem_coset {N l q : ℕ} (hq : q.Prime) {σ : SL(2, ℤ)} (hσ : IsDiam N l q σ) (hql : IsCoprime (q : ℤ) (l : ℤ))
     (m : Matrix (Fin 2) (Fin 2) ℤ) (hm : m.det = q) (hPm : PP N l m) :
     ∃ o', ∃ g : SL(2, ℤ), g ∈ Gam N l ∧ m = (g : Matrix (Fin 2) (Fin 2) ℤ) * repT q σ o' := by
@@ -166,8 +171,8 @@ theorem mem_coset {N l q : ℕ} (hq : q.Prime) {σ : SL(2, ℤ)} (hσ : IsDiam N
     have hd : g.det = 1 := det_eq_one_of_mul hq.pos g _ _ he (det_repT q σ _) hm
     exact ⟨some ⟨k, hk⟩, ⟨g, hd⟩, mem_Gam_of_PP N l ⟨g, hd⟩ _ _ he (congruenceCondition_heckeRepresentative hσ hql _) hPm, he.symm⟩
 
-open StabHecke in
 
+open StabHecke in
 theorem perm_rep {N l q : ℕ} (hq : q.Prime) {σ : SL(2, ℤ)} (hσ : IsDiam N l q σ) (hql : IsCoprime (q : ℤ) (l : ℤ))
     (δ : SL(2, ℤ)) (hN : (N : ℤ) ∣ δ 1 0) (hl : (l : ℤ) ∣ δ 1 0) :
     ∃ π : Option (Fin q) ≃ Option (Fin q), ∀ o, ∃ g ∈ Gam N l,
@@ -201,8 +206,8 @@ theorem isDiam_one_of_mem {N l : ℕ} {g : SL(2, ℤ)} (hg : g ∈ Gam N l) : Is
   rw [CongruenceSubgroup.Gamma1_mem] at h1
   simpa [en] using h1.2.1
 
-open StabHecke in
 
+open StabHecke in
 theorem coset_decomp (X : Tower Ω ε) (N l : ℕ) [hl : Fact l.Prime] (w d q : ℕ) (hq : q.Prime) (hqNl : ¬ q ∣ N * l)
     (hd : d.Coprime N) (b : X.Fn l) (hb : b ∈ X.B N l w) :
     X.act l (sgD N l d : Matrix (Fin 2) (Fin 2) ℤ) (X.heckeT N l q b) =
@@ -221,7 +226,8 @@ theorem coset_decomp (X : Tower Ω ε) (N l : ℕ) [hl : Fact l.Prime] (w d q : 
     have h1 := isDiam_mul hδ (isDiam_one_of_mem hg)
     rw [one_mul] at h1
     rw [act_act X l _ _ (sl_pos _) (hr o), e, ← act_act X l _ _ (hr _) (sl_pos _), X.act_isDiam_eq hb h1]
-  rw [heckeT_eq, map_sum, Finset.sum_congr rfl fun o _ => step o,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [heckeT_eq, map_sum, Finset.sum_congr rfl fun o _ => step o,
     Equiv.sum_comp π fun o => X.act l (repT q (sgD N l q) o) (X.act l (sgD N l d : Matrix (Fin 2) (Fin 2) ℤ) b),
     Fintype.sum_option, add_comm, Finset.sum_range]
   congr 1
@@ -317,7 +323,8 @@ theorem eval_homog (X : Tower Ω ε) (N l : ℕ) [Fact l.Prime] (w n : ℕ) (b :
   obtain ⟨c, -, hc⟩ := PolAct.subst_mem (A := ⊤) (X.kmap l (X.sl (toGQ m)).toRingEquiv) (fun _ _ => trivial) (mZl l m) h1
   have hc' : ∀ u, X.act l m b u = ∑ i : Fin (w + 1), (u 0 ^ (i : ℕ) * u 1 ^ (w - (i : ℕ))) • c i := hc
   obtain ⟨t, rfl⟩ := hy
-  rw [hc', hc', map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc', hc', map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [map_smul, Matrix.cons_val_zero, Matrix.cons_val_one, one_pow, one_mul, smul_smul]
   rcases Nat.eq_zero_or_pos (w - (i : ℕ)) with h | h
@@ -491,14 +498,15 @@ theorem isThB_heckeT : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosed 
   refine ⟨(∏ k ∈ Finset.range q, su X !![1, (k : ℤ); 0, (q : ℤ)] f₀) * su X !![(q : ℤ), 0; 0, 1] (su X τ f₀),
     ?_, ?_, ?_, ?_⟩
   · rw [hF]; exact hn_inv X hqP hτM hf₀I
-  · rw [coset_decomp X N l w d q hqP hqNl hd b hb, Pi.add_apply, Finset.sum_apply, map_add, map_sum, cls_mul, cls_prod,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [coset_decomp X N l w d q hqP hqNl hd b hb, Pi.add_apply, Finset.sum_apply, map_add (f := _), map_sum, cls_mul, cls_prod,
       eval_act X N l w n b hb _ _ q rfl (by simp) f' hf'c]
-    congr 1
-    · refine Finset.sum_congr rfl fun k _ => ?_
-      rw [eval_act X N l w n b hb _ _ 1 rfl (by simp) f₀ hf₀c, one_pow, pow_one]
-    · have e : f' = su X τ f₀ ^ a ^ w * u ^ l ^ n := Units.ext (by rw [hu]; simp)
-      rw [e, map_mul, map_pow, map_pow, mul_pow, ← pow_mul, ← pow_mul, hs, pow_add, pow_one, cls_mul, cls_mul,
-        cls_lpow, cls_lpow, add_zero, add_zero]
+      congr 1
+      · refine Finset.sum_congr rfl fun k _ => ?_
+        rw [eval_act X N l w n b hb _ _ 1 rfl (by simp) f₀ hf₀c, one_pow, pow_one]
+      · have e : f' = su X τ f₀ ^ a ^ w * u ^ l ^ n := Units.ext (by rw [hu]; simp)
+        rw [e, map_mul, map_pow, map_pow, mul_pow, ← pow_mul, ← pow_mul, hs, pow_add, pow_one, cls_mul, cls_mul,
+          cls_lpow, cls_lpow, add_zero, add_zero]
   · rw [hF]; exact dlt_hn X hNl hqP hτM hf₀I hf₀δ
   · rw [hF, hn_eq X hq0, ← hy]
     have h1 := isDl_hq X A l n hq0 hqA hf₀D

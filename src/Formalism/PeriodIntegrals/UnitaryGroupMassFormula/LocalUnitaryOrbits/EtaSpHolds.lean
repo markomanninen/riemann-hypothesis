@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ResAlgOfEtaSp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GenOfTwo
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.ResAlgOfEtaSp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GenOfTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,19 +66,19 @@ theorem etaSp_holds : EtaSp σ J ψ v := by
     have h0 := hind' (-(algebraMap F (Fv F v) c)) 1 (by
       rw [map_neg, map_one, one_mul, hT, ← hc, inclR_alg', sc_eq', neg_add_cancel])
     exact one_ne_zero h0
-  obtain ⟨t, ht⟩ := fix_range σ hcm (y := (θ : E) + σ θ) (by rw [map_add, sig_sig σ hcm, add_comm])
+  obtain ⟨t, ht⟩ := fix_range σ hcm (y := (θ : E) + σ θ) (by rw [map_add (f := _), sig_sig σ hcm, add_comm])
   obtain ⟨m, hm⟩ := fix_range σ hcm (y := (θ : E) * σ θ) (by rw [map_mul, sig_sig σ hcm, mul_comm])
   set r := φ (θ : E) with hr
   set r' := φ (σ (θ : E)) with hr'
   have hsum : A r + A r' = inclR (F := F) (Fv F v) ((θ : E) + σ θ) := by
-    rw [← ht, inclR_alg', sc_eq', ← φ.commutes t, ht, map_add, map_add]
+    rw [← ht, inclR_alg', sc_eq', ← φ.commutes t, ht, map_add (f := _), map_add (f := _)]
   have hprod : A r * A r' = inclR (F := F) (Fv F v) ((θ : E) * σ θ) := by
     rw [← hm, inclR_alg', sc_eq', ← φ.commutes m, hm, map_mul, map_mul]
   have hkey : (T - A r) * (T - A r') = 0 := by
     calc (T - A r) * (T - A r') = T * T - (A r + A r') * T + A r * A r' := by ring
       _ = inclR (F := F) (Fv F v) ((θ : E) * θ - ((θ : E) + σ θ) * θ + θ * σ θ) := by
           rw [hsum, hprod, hT]
-          simp only [map_add, map_sub, map_mul]
+          simp only [map_add (f := _), map_sub, map_mul]
       _ = 0 := by rw [show (θ : E) * θ - ((θ : E) + σ θ) * θ + θ * σ θ = 0 by ring, map_zero]
   set d := r - r' with hd
   have hd0 : d ≠ 0 := by

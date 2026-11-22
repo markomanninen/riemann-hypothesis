@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RaTpowSinglePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivationCommutesWithTraceStatement
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ResidFinPf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RaTpowSinglePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivationCommutesWithTraceStatement
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.ResidFinPf
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -46,7 +50,7 @@ theorem frac_deriv (D : Derivation K R R) :
     rw [IsScalarTower.algebraMap_apply K R (FractionRing R), hsnd, D.map_algebraMap, map_zero]
   let e : FractionRing R →ₗ[K] FractionRing R :=
     { toFun := fun x => (Λ x).snd
-      map_add' := fun x y => by rw [map_add, TrivSqZeroExt.snd_add]
+      map_add' := fun x y => by rw [map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' := fun c x => by
         rw [RingHom.id_apply, Algebra.smul_def, hmul, hK, smul_zero, add_zero, algebraMap_smul] }
   exact ⟨Derivation.mk' e fun x y => hmul x y, fun r => hsnd r⟩
@@ -81,7 +85,7 @@ theorem trace_deriv [CharZero K] (t : Fin (n + 1) → Rˣ) [FiniteDimensional (f
       rw [Derivation.map_algebraMap]
       exact zero_mem _
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     | inv x hx0 hx =>
       rw [Derivation.leibniz_inv, smul_eq_mul]

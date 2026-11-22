@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem raise_stable {a b : Fin n} (h : a < b) : ∀ x ∈ raiseSpan L Φ, L a b
     obtain ⟨r, hr, rfl⟩ := hy
     exact word_mem (r := (a, b) :: r) (isRaising_cons h hr)
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
 
 theorem gl_apply (hL : IsGlRep L) (a b c d : Fin n) (y : M) :
@@ -98,7 +102,7 @@ theorem letter_stable (hL : IsGlRep L) {μ : Fin n → ℝ} (hd : ∀ a, L a a �
     obtain ⟨r, hr, rfl⟩ := hy
     exact letter_word_mem hL hd hlow r hr a b
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul c y _ hy => rw [map_smul]; exact Submodule.smul_mem _ c hy
 
 theorem any_word_mem (hL : IsGlRep L) {μ : Fin n → ℝ} (hd : ∀ a, L a a Φ = (μ a : ℂ) • Φ)

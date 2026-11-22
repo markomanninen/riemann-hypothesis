@@ -1,12 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BlockSumMultiplicities
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.CrystallineAtPlaces
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TateDualCrystalline
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLetterOfLocalEmbedding
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.CrystallineAtPlaces
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TateDualCrystalline
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLetterOfLocalEmbedding
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +43,7 @@ theorem finite_of_jumps {L M : Type} [Field L] [AddCommGroup M] [Module L M] (F 
   have hb0 : b ≤ a₀ := hb' a₀ ha₀
   have hst : ∀ a ≤ b, F a = F b := by
     intro a ha
-    induction a, ha using Int.le_induction_down with
+    induction a, ha using Int.leInductionDown with
     | base => rfl
     | pred a ha ih =>
       haveI := hfin (a - 1) (by omega)
@@ -71,7 +78,7 @@ theorem filV_anti : Antitone fun a => FilV PD (LL := LL) (V := V) a := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => exact ⟨v ⊗ₜ ⟨b.1, PD.Fil_anti a b.2⟩, rfl⟩
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 theorem filV_exh (x : TensorProduct Qp V BdR) : ∃ a, x ∈ FilV PD (LL := LL) (V := V) a := by
   induction x using TensorProduct.induction_on with
@@ -109,7 +116,8 @@ theorem linearIndepOn_of_invariant {K F W G ι : Type} [Field K] [Field F] [Alge
     have key : ∀ i ∈ s, ∀ g, a g (c i) = c i := by
       intro i hi g
       have h1 : ∑ i ∈ s, a g (c i) • v i = v x := by
-        rw [← hv g x, ← hc, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hv g x, ← hc, map_sum]
         exact Finset.sum_congr rfl fun j _ => by rw [hσ, hv]
       have h2 := linearIndepOn_finset_iff.1 (ih h.1) (fun j => a g (c j) - c j) (by
         simp only [sub_smul, Finset.sum_sub_distrib, h1, hc, sub_self]) i hi
@@ -154,11 +162,11 @@ theorem finite_ddR_of_isField (hF : IsField BdR) [Module.Finite Qp V] (ρ : Repr
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   let U : Submodule K (TensorProduct Qp BdR V) :=
     { carrier := {x | ∀ g, σ g x = x}
       zero_mem' := fun g => map_zero _
-      add_mem' := fun hx hy g => by rw [map_add, hx g, hy g]
+      add_mem' := fun hx hy g => by rw [map_add (f := _), hx g, hy g]
       smul_mem' := fun c x hx g => by
         rw [← algebraMap_smul BdR c x, hσ, hx g, AlgEquiv.commutes] }
   haveI : Module.Finite K U := finite_of_invariant (F := BdR) (fun g b => PD.actdR g b)
@@ -170,7 +178,7 @@ theorem finite_ddR_of_isField (hF : IsField BdR) [Module.Finite Qp V] (ρ : Repr
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ, actVdR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   let f : DdR PD ρ →ₗ[Qp] U :=
     { toFun := fun x => ⟨TensorProduct.comm Qp V BdR x, fun g => by
         have := x.2
@@ -191,38 +199,10 @@ section Place
 
 variable (i : D.nd.Loc) (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i))
 
-theorem over_iff (τ : BlockSumMultiplicities.Emb D i w hw) (g : D.R.GG) :
-    BlockSumMultiplicities.Over D i w hw τ g ↔ CrystallineAtPlaces.Reads D i w hw τ g := by
-  refine forall_congr' fun x => ⟨?_, fun h => ⟨_, h.symm, CrystallineAtPlaces.embLL_sigmaOf g x⟩⟩
-  rintro ⟨y, h1, h2⟩
-  have : y = D.embE (D.host.sigmaOf g x) :=
-    D.what₂.embLL.injective (h2.trans (CrystallineAtPlaces.embLL_sigmaOf g x).symm)
-  rw [← this, h1]
-
 variable {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i))
-
-theorem mult_eq (τ : BlockSumMultiplicities.Emb D i w hw) (a : ℤ) :
-    BlockSumMultiplicities.mult D i w hw M τ a = CrystallineAtPlaces.mult D i w hw M τ a := rfl
 
 end Place
 
-def FinClause : Prop :=
-  ∀ (i : D.nd.Loc) (r : BlockSumMultiplicities.Fam D i D.R.nV) (ρ : BlockSumMultiplicities.Fam D i D.R.r) (π : D.nd.X i),
-    BlockSumMultiplicities.HidaSetting D i r ρ π → ∀ w hw (τ : BlockSumMultiplicities.Emb D i w hw),
-      BlockSumMultiplicities.FinDR D i w hw (T2O D.nd i ρ π) τ
-
 variable {D}
-
-def JumpsByLetterAt (L : SizeData₂ D) (ε : ℤˣ) : Prop :=
-  ∀ (i : D.nd.Loc) (r : BlockSumMultiplicities.Fam D i D.R.nV) (ρ : BlockSumMultiplicities.Fam D i D.R.r) (π : D.nd.X i),
-    CrystallineAtPlaces.HidaSetting D i r ρ π →
-    ∀ (w : HeightOneSpectrum (𝓞 D.host.E)) (hw : w ∈ placesOver D.host.E (D.nd.l i)),
-      CrystallineAtPlaces.CrysInput D i w hw r → CrystallineAtPlaces.JumpInput D i w hw ε r →
-      CrystallineAtPlaces.CrysAt D i w hw (T2O D.nd i ρ π) ∧
-      ∀ τ g, CrystallineAtPlaces.Reads D i w hw τ g →
-        CrystallineAtPlaces.HasJumps D i w hw (T2O D.nd i ρ π) τ
-          (jT2 (hcAt D g) (CrystallineAtPlaces.liftIdx D i) (pos ε g)) ∧
-        ((etaHat L : ℤ) < szT (hcAt D g) (CrystallineAtPlaces.liftIdx D i) (pos ε g) →
-          CrystallineAtPlaces.countIn D i w hw (T2O D.nd i ρ π) τ (etaHat L) = D.R.m)
 
 end GlobalTheory.Cmp.SmallJumps

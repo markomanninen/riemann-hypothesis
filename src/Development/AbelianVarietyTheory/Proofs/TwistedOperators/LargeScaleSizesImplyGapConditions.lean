@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ParRowZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SizesOfSizeRows
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ParRowZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SizesOfSizeRows
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem sizeGap_of_sizes : SizeGap :=
   fun _ => ⟨0, fun _ large₂ _ _ h => GlobalTheory.RowSizes.sizes_of_sizeRows large₂ h⟩
-
-example : SizeGap := sizeGap_of_sizes
 
 end GlobalTheory.SepRows
 

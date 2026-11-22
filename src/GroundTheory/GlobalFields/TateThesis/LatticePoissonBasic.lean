@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -40,9 +44,6 @@ theorem dualLattice_eq_span : dualLattice L = Submodule.span ℤ
 instance : DiscreteTopology (dualLattice L) := by
   rw [dualLattice_eq_span L]; infer_instance
 
-instance : IsZLattice ℝ (dualLattice L) :=
-  ⟨by rw [dualLattice_eq_span L]; exact ZSpan.span_top _⟩
-
 end DualLattice
 
 section Summability
@@ -50,8 +51,8 @@ section Summability
 variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-omit [FiniteDimensional ℝ E] in
 
+omit [FiniteDimensional ℝ E] in
 theorem exists_norm_le_inv_one_add_pow (g : 𝓢(E, F)) (k : ℕ) :
     ∃ C, 0 ≤ C ∧ ∀ x, ‖g x‖ ≤ C * ((1 + ‖x‖) ^ k)⁻¹ := by
   refine ⟨2 ^ k * (SchwartzMap.seminorm ℝ 0 0 g + SchwartzMap.seminorm ℝ k 0 g), by positivity,

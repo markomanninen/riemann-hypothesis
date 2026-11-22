@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+
+@[expose] public section
 
 noncomputable section
 

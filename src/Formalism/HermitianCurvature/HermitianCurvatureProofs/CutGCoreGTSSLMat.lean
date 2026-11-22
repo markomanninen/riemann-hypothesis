@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLocalCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NfRadOrder0OfRadRed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLocalCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnBetaFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NfRadOrder0OfRadRed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -113,7 +117,8 @@ theorem key_slice (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq) (hpl : Q.IsPl
     rw [(he.2 ζ' hζ').2.2 _ hmem]
     refine Finset.sum_congr rfl fun ρ _ => ?_
     rw [hmul ρ (Ψ ρ) c hc ζ' hζ', hΨ ρ c hc ζ' hζ']
-  rw [hT Φ Φc c c hc hc hΦv ζ hζ, map_sum, hsumv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hT Φ Φc c c hc hc hΦv ζ hζ, map_sum, hsumv]
   refine Finset.sum_congr rfl fun ρ _ => ?_
   have hcomm : T (W ρ (Ψ ρ)) = W ρ (T (Ψ ρ)) := by
     have h := (hC (F ρ) (hFs ρ) (W ρ) (hW ρ)).eq

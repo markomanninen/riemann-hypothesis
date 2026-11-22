@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SumMulSumProd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SumMulSumProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem plane_dec (hA : ATL) (hS : ValSlice) (hC : ValComp) (hVB : ValBd p O Fr 
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [MvPolynomial.mem_supported]
     intro v hv'
-    obtain ⟨mo, hmo, hvmo⟩ := (MvPolynomial.mem_vars v).mp (Finset.mem_coe.mp hv')
+    obtain ⟨mo, hmo, hvmo⟩ := (MvPolynomial.mem_vars_iff_mem_support v).mp (Finset.mem_coe.mp hv')
     obtain ⟨mo', hmo', he⟩ := hsup mo hmo
     have hF' := (support_homComp δ _ mo' hmo').1
     have hne : mo' ((j, v.1), v.2) ≠ 0 := by
@@ -82,7 +86,7 @@ theorem normal_dec (hA : ATL) (hS : ValSlice) (hVB : ValBd p O Fr deg Y N₁ G' 
   refine ⟨?_, ?_, fun u hu => ⟨?_, ?_⟩⟩
   · rw [MvPolynomial.mem_supported]
     intro v hv'
-    obtain ⟨mo, hmo, hvmo⟩ := (MvPolynomial.mem_vars v).mp (Finset.mem_coe.mp hv')
+    obtain ⟨mo, hmo, hvmo⟩ := (MvPolynomial.mem_vars_iff_mem_support v).mp (Finset.mem_coe.mp hv')
     obtain ⟨mo', hmo', he⟩ := hsup mo hmo
     have hne : mo' ((j, v.1), v.2) ≠ 0 := by
       rw [← he]
@@ -102,7 +106,8 @@ theorem dec_identity {N1 N2 : ℕ} (A' : Fin N1 → ZMod J → MvPolynomial (ℤ
           nmEmb O r K (B' (finProdFinEquiv.symm q).2 (((t : ℤ)) : ZMod J))) =
       PhiPl Fr p O K J (∑ i, ∏ j, rename (fun v : ℤ × Fin r => ((j, v.1), v.2)) (A' i j)) *
         PhiNo Fr p O K J (∑ i, ∏ j, rename (fun v : ℤ × Fin K => ((j, v.1), v.2)) (B' i j)) := by
-  simp only [map_sum, map_prod, PhiPl_seg, PhiNo_seg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_prod, PhiPl_seg, PhiNo_seg]
   rw [sum_mul_sum_prod]
   refine Finset.sum_congr rfl fun q _ => ?_
   refine (prod_range_zmod (fun t : ℤ => phSeg O K p Fr t

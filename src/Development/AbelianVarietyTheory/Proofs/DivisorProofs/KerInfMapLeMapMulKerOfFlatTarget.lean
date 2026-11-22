@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -23,7 +28,8 @@ theorem ker_inf_map_le_map_mul_ker_of_flat :
     rw [Ideal.smul_top_eq_map]; exact hz.2
   obtain ⟨n, b, p, hb, rfl⟩ := exists_fin_sum_of_mem_ideal_smul_top I hz2
   have h0 : ∑ i, b i • Ψ (p i) = 0 := by
-    simpa [map_sum, map_smul] using hz1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_smul] using hz1
   obtain ⟨k, c, a, hx, hc⟩ := Module.Flat.isTrivialRelation_of_sum_smul_eq_zero (R := B) (M := A)
     (f := b) (x := fun i => Ψ (p i)) h0
   choose q hq using fun j => hΨ (a j)
@@ -38,6 +44,7 @@ theorem ker_inf_map_le_map_mul_ker_of_flat :
   rw [Algebra.smul_def]
   refine Ideal.mul_mem_mul (Ideal.mem_map_of_mem _ (hb i)) ?_
   rw [RingHom.mem_ker]
-  simp only [map_sub, map_sum, map_smul, hq, ← hx i, sub_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, hq, ← hx i, sub_self]
 
 end GlobalTheory

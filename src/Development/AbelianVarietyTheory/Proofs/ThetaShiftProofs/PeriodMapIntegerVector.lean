@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SmulPeriodMapMkZeroFstEqNegForm
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSplitOfCoisotropicKer
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceEqFinrankMulSum
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.Imports
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpPiIInt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TwoMulEqOfIsTypeFn
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SmulPeriodMapMkZeroFstEqNegForm
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSplitOfCoisotropicKer
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceEqFinrankMulSum
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.Imports
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpPiIInt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TwoMulEqOfIsTypeFn
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,18 +79,7 @@ end Model
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
-def perp (D : Datum H) (Hh : Submodule (𝓞 E) D.La) : Submodule (𝓞 E) D.La where
-  carrier := {v | ∀ t ∈ Hh, D.EF t v = 0}
-  zero_mem' t _ := map_zero _
-  add_mem' {v v'} hv hv' t ht := by rw [map_add, hv t ht, hv' t ht, add_zero]
-  smul_mem' a v hv t ht := by
-    have h := D.adj (H.bar a) t v
-    rw [hv _ (Hh.smul_mem _ ht)] at h
-    have h2 : H.bar (H.bar a) = a := H.starRing.star_involutive a
-    rw [h2] at h
-    exact h.symm
-
-theorem exists_datum_Lam : letI := H.starRing
+theorem exists_datum_Lam : letI := H.starRing;
     ∀ (A : AnArc (𝓞 E)) (p q : ℕ) (ty : Fin A.gB → (E →+* ℂ)), IsTypeFn H p q ty →
       (∀ a z i, A.F a z i = ty i (a : E) * z i) →
       ∃ (DB : Datum H) (e : DB.La ≃+ A.abelian₂), DB.p = p ∧ DB.q = q ∧ (∀ (a : 𝓞 E) x, e (a • x) = A.FLam a (e x)) ∧
@@ -117,7 +110,7 @@ theorem exists_anArc_of_period (D : Datum H) {g : ℕ} {ty : Fin g → (E →+* 
     (hker : ∀ v, y v = 0 ↔ ∀ t ∈ Hh, D.EF t v = 0)
     (be : LinearMap.BilinForm ℤ Y) (be_symm : ∀ x x', be x x' = be x' x) (be_pos : ∀ x, x ≠ 0 → 0 < be x x)
     (be_adj : ∀ (a : 𝓞 E) x x', be (a • x) x' = be x (H.bar a • x')) (be_even : ∀ x, (2 : ℤ) ∣ be x x) :
-    letI := H.starRing
+    letI := H.starRing;
     ∃ (A : AnArc (𝓞 E)) (e : A.X ≃ₗ[𝓞 E] Y) (gam : D.La ≃ₗ[𝓞 E] A.La) (h : (Fin g → ℂ) ≃ₗ[ℂ] A.V),
       (∀ x x', A.be x x' = be (e x) (e x')) ∧
       (∀ l, A.chi l = (-1) ^ A.Ef (A.FLam H.w0 l) l) ∧
@@ -205,7 +198,7 @@ theorem exists_anArc_of_period (D : Datum H) {g : ℕ} {ty : Fin g → (E →+* 
   have he : ∀ (a : 𝓞 E) v, e₀ (a • v) =
       (a • (e₀ v).1, (e₀ v).2.1.comp (DistribSMul.toAddMonoidHom Y (star a)), a • (e₀ v).2.2) := fun a v =>
     Prod.ext (by rw [he₁, he₁, map_smul]) (Prod.ext (AddMonoidHom.ext (he₂ a v)) (he₃ a v))
-  obtain ⟨A, e, f, h, hbe, hchi, hpsi, ⟨tyB, hF⟩, hfF, hEf, hact, hh, hB⟩ := exists_arc hw EM hEM
+  obtain ⟨A, e, f, h, hbe, hchi, hpsi, hQ, hfF, hEf, hact, hh, hB⟩ := exists_arc hw EM hEM
     (P.comp e₀.symm.toAddMonoidHom)
     ((congrArg _ (e₀.symm.surjective.range_comp P)).trans hspan) hrk' hconj hpos
     (fun v v' => by
@@ -216,6 +209,7 @@ theorem exists_anArc_of_period (D : Datum H) {g : ℕ} {ty : Fin g → (E →+* 
       rw [← he]
       simp [hPρ]) be be_symm be_pos be_adj be_even
     (fun n F => ∃ ty : Fin n → (E →+* ℂ), ∀ a z i, F a z i = ty i (a : E) * z i) exists_diag
+  obtain ⟨tyB, hF⟩ := hQ
   let gam : D.La ≃ₗ[𝓞 E] A.La :=
     { toFun := fun v => AnArc.La.mk (e.symm (e₀ v).1) ((e₀ v).2.1.comp e.toAddEquiv.toAddMonoidHom) (f (e₀ v).2.2)
       invFun := fun v => e₀.symm (e v.y, v.n.comp e.symm.toAddEquiv.toAddMonoidHom, f.symm v.l)
@@ -303,24 +297,5 @@ theorem exists_anArc_of_period (D : Datum H) {g : ℕ} {ty : Fin g → (E →+* 
       simp
     exact ⟨h1, h2, h3, exists_datum_Lam A _ _ tyB h3 hF⟩
 
-open HostModel in
-
-example (H : Host E) {g : ℕ} {ty : Fin g → (E →+* ℂ)} (hty : IsTypeFn H 1 1 ty) : letI := H.starRing
-    ∃ (P : (hypDatum H).La →+ (Fin g → ℂ)) (A : AnArc (𝓞 E)) (_ : A.X ≃ₗ[𝓞 E] 𝓞 E)
-      (gam : (hypDatum H).La ≃ₗ[𝓞 E] A.La) (h : (Fin g → ℂ) ≃ₗ[ℂ] A.V),
-      IsPeriod (hypDatum H) ty P ∧ ∀ v, h (P v) = A.P0 (gam v) := by
-  obtain ⟨P, hP⟩ := PeriodNonempty.exists_isPeriod E H (hypDatum H) g ty hty
-  obtain ⟨Hm, -, -, hHm⟩ := hP.2.2.2.2
-  obtain ⟨A, e, gam, h, -, -, -, -, -, -, -, hh, -⟩ := exists_anArc_of_period (hypDatum H) hP hHm
-    (LinearMap.ker (LinearMap.fst _ _ _)) (fun k t hk ht => by simpa [hk] using ht)
-    (fun t ht t' ht' => by simp [show t.1 = 0 from ht, show t'.1 = 0 from ht'])
-    (LinearMap.fst _ _ _) LinearMap.fst_surjective
-    (fun v => ⟨fun hv t ht => by simp [show t.1 = 0 from ht, show v.1 = 0 from hv],
-      fun hv => (Module.forall_dual_apply_eq_zero_iff ℤ v.1).1 fun φ => by
-        simpa using hv (0, (ConjDual.toDual H).symm φ) rfl⟩)
-    ((2 : ℤ) • trForm H) (fun x x' => congrArg (2 * ·) (trForm_symm H x x'))
-    (fun x hx => mul_pos two_pos (trForm_pos H hx)) (fun a x x' => congrArg (2 * ·) (trForm_adj H a x x'))
-    fun x => ⟨_, rfl⟩
-  exact ⟨P, A, e, gam, h, hP, hh⟩
 
 end GlobalTheory.OfPeriod

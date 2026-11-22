@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,14 +81,15 @@ theorem isCompl_orth (hs : h.IsSymm) (hd : ∀ x, (∀ y, h x y = 0) → x = 0)
 
 theorem isSelfDualMod_res (hM : IsSelfDualMod S h M) (hsp : Splits h P M) :
     IsSelfDualMod S (h.domRestrict₁₂ (orth h P) (orth h P))
-      (M.comap (orth h P).subtype.toAddMonoidHom) where
-  smul_mem a ha m hm := by
+      (M.comap (orth h P).subtype.toAddMonoidHom) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro a ha m hm
     rw [mem_res, Submodule.coe_smul]
     exact hM.smul_mem a ha _ (mem_res.mp hm)
-  int x hx y hy := by
+  · intro x hx y hy
     rw [LinearMap.domRestrict₁₂_apply]
     exact hM.int _ (mem_res.mp hx) _ (mem_res.mp hy)
-  dual x hx := by
+  · intro x hx
     rw [mem_res]
     apply hM.dual
     intro m hm
@@ -97,7 +102,7 @@ theorem isSelfDualMod_res (hM : IsSelfDualMod S h M) (hsp : Splits h P M) :
     rw [LinearMap.domRestrict₁₂_apply] at e2
     rw [e, e1, zero_add]
     exact e2
-  span x := by
+  · intro x
     obtain ⟨t, ht0, htx⟩ := hM.span x
     exact ⟨t, ht0, mem_res.mpr (by rw [Submodule.coe_smul]; exact htx)⟩
 
@@ -114,7 +119,7 @@ theorem res_nondeg (hs : h.IsSymm) (hd : ∀ x, (∀ y, h x y = 0) → x = 0)
   have e1 : h x a = 0 := orth_symm hs haP x.2
   have e2 := hx ⟨b, hbW⟩
   rw [LinearMap.domRestrict₁₂_apply] at e2
-  rw [map_add, e1, zero_add]
+  rw [map_add (f := _), e1, zero_add]
   exact e2
 
 theorem mem_iff_split {Q : Submodule K V} (hc : IsCompl P Q)
@@ -163,7 +168,7 @@ theorem glue (hs : h.IsSymm) (hc : IsCompl P (orth h P))
     conv_rhs => rw [hx x, hx y]
     have z1 : ∀ (c : P) (d : orth h P), h (c : V) (d : V) = 0 := fun c d => mem_orth.mp d.2 c c.2
     have z2 : ∀ (c : P) (d : orth h P), h (d : V) (c : V) = 0 := fun c d => orth_symm hs c.2 d.2
-    simp only [map_add, LinearMap.add_apply, z1, z2, hg'i, add_zero, zero_add]
+    simp only [map_add (f := _), LinearMap.add_apply, z1, z2, hg'i, add_zero, zero_add]
   · intro w hw
     have e1 : e.symm w = (⟨w, hw⟩, 0) := Submodule.prodEquivOfIsCompl_symm_apply_left P (orth h P) hc ⟨w, hw⟩
     rw [hgx w, e1]
@@ -177,17 +182,18 @@ theorem glue (hs : h.IsSymm) (hc : IsCompl P (orth h P))
     exact and_congr (hag _ (e.symm x).1.2) (hg'M _)
 
 theorem isSelfDualMod_comap (F : V ≃ₗ[K] V) (hF : ∀ x y, h (F x) (F y) = h x y)
-    (hM : IsSelfDualMod S h M) : IsSelfDualMod S h (M.comap F.symm.toLinearMap.toAddMonoidHom) where
-  smul_mem a ha m hm := by
+    (hM : IsSelfDualMod S h M) : IsSelfDualMod S h (M.comap F.symm.toLinearMap.toAddMonoidHom) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro a ha m hm
     change F.symm (a • m) ∈ M
     rw [map_smul]
     exact hM.smul_mem a ha _ hm
-  int x hx y hy := by
+  · intro x hx y hy
     have e := hF (F.symm x) (F.symm y)
     rw [F.apply_symm_apply, F.apply_symm_apply] at e
     rw [e]
     exact hM.int _ hx _ hy
-  dual x hx := by
+  · intro x hx
     change F.symm x ∈ M
     apply hM.dual
     intro m hm
@@ -198,7 +204,7 @@ theorem isSelfDualMod_comap (F : V ≃ₗ[K] V) (hF : ∀ x y, h (F x) (F y) = h
     change F.symm (F m) ∈ M
     rw [F.symm_apply_apply]
     exact hm
-  span x := by
+  · intro x
     obtain ⟨t, ht0, htx⟩ := hM.span (F.symm x)
     exact ⟨t, ht0, by change F.symm (t • x) ∈ M; rw [map_smul]; exact htx⟩
 
@@ -236,11 +242,11 @@ theorem splits_plane (hs : h.IsSymm) (hM : IsSelfDualMod S h M) {z y : V} (hz : 
   refine ⟨α • z + β • y, M.add_mem (hM.smul_mem _ hαS _ hz) (hM.smul_mem _ hβS _ hy),
     Submodule.mem_span_pair.mpr ⟨α, β, rfl⟩, orth_pair ?_ ?_⟩
   · have e : h z (w - (α • z + β • y)) = h z w - (α * h z z + β) := by
-      simp only [map_sub, map_add, map_smul, smul_eq_mul, hzy, mul_one]
+      simp only [map_sub, map_add (f := _), map_smul, smul_eq_mul, hzy, mul_one]
     rw [e, hα]
     linear_combination (-1 : K) * hβD
   · have e : h y (w - (α • z + β • y)) = h y w - (α + β * h y y) := by
-      simp only [map_sub, map_add, map_smul, smul_eq_mul, hyz, mul_one]
+      simp only [map_sub, map_add (f := _), map_smul, smul_eq_mul, hyz, mul_one]
     rw [e, hα]
     ring
 
@@ -255,9 +261,9 @@ theorem mem_plane (hs : h.IsSymm) (hM : IsSelfDualMod S h M) {z y : V} (hz : z �
     have hnz : h z z ∈ S := hM.int _ hz _ hz
     have hb : h y y ∈ S := hM.int _ hy _ hy
     have eA : h z (α • z + β • y) = α * h z z + β := by
-      simp only [map_add, map_smul, smul_eq_mul, hzy, mul_one]
+      simp only [map_add (f := _), map_smul, smul_eq_mul, hzy, mul_one]
     have eB : h y (α • z + β • y) = α + β * h y y := by
-      simp only [map_add, map_smul, smul_eq_mul, hyz, mul_one]
+      simp only [map_add (f := _), map_smul, smul_eq_mul, hyz, mul_one]
     rw [eA] at hA
     rw [eB] at hB
     have hβ : β = ((α * h z z + β) - h z z * (α + β * h y y)) * (1 - h z z * h y y)⁻¹ := by
@@ -366,7 +372,8 @@ theorem exists_dual_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hs
     (hd : ∀ x, (∀ y, h x y = 0) → x = 0) {p : Ideal (𝓞 K)} (hp : p.IsMaximal) {z : V}
     {M₁ : AddSubgroup V} (hM₁ : IsSelfDualMod (locRing p) h M₁) (hz₁ : z ∈ M₁)
     (hp₁ : ∀ c : K, c • z ∈ M₁ → c ∈ locRing p) (hz0 : z ≠ 0) : ∃ y₁ ∈ M₁, h z y₁ = 1 := by
-  have hS := isHermSemilocal_locRing hK hp
+  have hstar : ∀ {a : K}, a ∈ locRing p → star a ∈ locRing p :=
+    fun ha => star_mem_locRing hp.isPrime ha
   let f : V →+ K :=
     { toFun := fun m => h m z
       map_zero' := by simp
@@ -375,7 +382,7 @@ theorem exists_dual_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hs
   have H1 : ∀ s ∈ locRing p, ∀ a ∈ M₁.map f, s * a ∈ M₁.map f := by
     intro s hs' a ha
     obtain ⟨m, hm, rfl⟩ := (hfA a).mp ha
-    refine (hfA _).mpr ⟨star s • m, hM₁.smul_mem _ (hS.star_mem _ hs') _ hm, ?_⟩
+    refine (hfA _).mpr ⟨star s • m, hM₁.smul_mem _ (hstar hs') _ hm, ?_⟩
     rw [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
   have H2 : ∃ a ∈ M₁.map f, a ≠ 0 := by
     obtain ⟨x, hx⟩ : ∃ x, h z x ≠ 0 := by
@@ -393,7 +400,7 @@ theorem exists_dual_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hs
     obtain ⟨m, hm, rfl⟩ := (hfA a).mp ha
     rw [one_mul]
     exact hM₁.int _ hm _ hz₁
-  obtain ⟨α, hαA, hα0, hdiv⟩ := hS.principal (M₁.map f) H1 H2 H3
+  obtain ⟨α, hαA, hα0, hdiv⟩ := principal_locRing hK hp (M₁.map f) H1 H2 H3
   obtain ⟨m₀, hm₀, rfl⟩ := (hfA α).mp hαA
   have hinv : (h m₀ z)⁻¹ ∈ locRing p := by
     apply hp₁
@@ -403,7 +410,7 @@ theorem exists_dual_one (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hs
     exact hdiv _ ((hfA _).mpr ⟨m, hm, rfl⟩)
   refine ⟨(star (h m₀ z))⁻¹ • m₀, hM₁.smul_mem _ ?_ _ hm₀, ?_⟩
   · rw [← star_inv₀]
-    exact hS.star_mem _ hinv
+    exact hstar hinv
   · have e := hs.eq m₀ z
     rw [starRingEnd_apply] at e
     rw [map_smul, smul_eq_mul, ← e]
@@ -457,7 +464,7 @@ theorem zOnly (h1 : SemiGenusLoc) (h2 : PrimPlaneLoc) (hK : Formalism.HermitianL
   have hv : ∀ x, h v x = c * h z x - c * h z z * h y₁ x := by
     intro x
     rw [hvdef]
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, star_star]
     ring
   have hvz : h v z = 0 := by
@@ -471,7 +478,7 @@ theorem zOnly (h1 : SemiGenusLoc) (h2 : PrimPlaneLoc) (hK : Formalism.HermitianL
   have hT : ∀ α β : K, T (α • z + β • y₁) = α • z + β • y₂ := by
     intro α β
     have e : h v (α • z + β • y₁) = β := by
-      rw [map_add, map_smul, map_smul, hvz, hvy]
+      rw [map_add (f := _), map_smul, map_smul, hvz, hvy]
       simp
     rw [hTdef, LinearMap.add_apply, LinearMap.id_apply, LinearMap.smulRight_apply, e, smul_sub]
     abel
@@ -490,7 +497,7 @@ theorem zOnly (h1 : SemiGenusLoc) (h2 : PrimPlaneLoc) (hK : Formalism.HermitianL
     obtain ⟨α, β, hx⟩ := hQ x
     obtain ⟨α', β', hy⟩ := hQ y
     simp only [LinearMap.comp_apply, Submodule.subtype_apply, hx, hy, hT]
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
       hzy₁, hzy₂, hyz₁, hyz₂, hy₂y₂]
   have hinj : Function.Injective (T.comp (Submodule.span K ({z, y₁} : Set V)).subtype) := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
@@ -499,7 +506,7 @@ theorem zOnly (h1 : SemiGenusLoc) (h2 : PrimPlaneLoc) (hK : Formalism.HermitianL
     rw [LinearMap.comp_apply, Submodule.subtype_apply, hx, hT] at hx0
     have e1 := congrArg (h z) hx0
     have e2 := congrArg (h y₂) hx0
-    simp only [map_add, map_smul, smul_eq_mul, map_zero, hzy₂, hyz₂, hy₂y₂] at e1 e2
+    simp only [map_add (f := _), map_smul, smul_eq_mul, map_zero, hzy₂, hyz₂, hy₂y₂] at e1 e2
     have hβ : β * (1 - h z z * h y₁ y₁) = 0 := by linear_combination e1 - h z z * e2
     have hβ0 : β = 0 := (mul_eq_zero.mp hβ).resolve_right hD.1
     have hα0 : α = 0 := by
@@ -556,7 +563,7 @@ theorem semiGenusZLoc_of (h1 : SemiGenusLoc) (h2 : PrimPlaneLoc) : SemiGenusZLoc
       obtain ⟨a, rfl⟩ := hy
       exact hx a
     | zero => simp
-    | add y y' _ _ ihy ihy' => rw [map_add, LinearMap.add_apply, ihy, ihy', add_zero]
+    | add y y' _ _ ihy ihy' => rw [map_add (f := _), LinearMap.add_apply, ihy, ihy', add_zero]
     | smul c y _ ihy => rw [map_smulₛₗ, LinearMap.smul_apply, ihy, smul_zero]
   have hspl : ∀ {M : AddSubgroup V}, (∀ w ∈ M, ∃ w₁ ∈ M, w₁ ∈ Submodule.span K (Set.range s) ∧
       ∀ a, h (s a) (w - w₁) = 0) → Splits h (Submodule.span K (Set.range s)) M := by

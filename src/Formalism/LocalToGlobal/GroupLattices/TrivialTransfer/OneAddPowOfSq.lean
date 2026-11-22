@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClosureUpperUni
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddPowOfMulSelfEqZero
-import Lemmata.GeneralBFactLeftTail.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ClosureUpperUni
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddPowOfMulSelfEqZero
+public import Lemmata.GeneralBFactLeftTail.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,10 +15,6 @@ open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions
 namespace Formalism.L2.G.Triv
 
 section Helpers
-
-theorem conj_pow' {G : Type} [Group G] (a b : G) (n : ℕ) : (a⁻¹ * b * a) ^ n = a⁻¹ * b ^ n * a := by
-  have := conj_pow (a := a⁻¹) (b := b) (i := n)
-  simpa using this
 
 theorem bc_injective {A B : Type} [CommRing A] [CommRing B] {n : Type} [Fintype n] [DecidableEq n] (φ : A →+* B)
     (hφ : Function.Injective φ) : Function.Injective (bc (n := n) φ) := by

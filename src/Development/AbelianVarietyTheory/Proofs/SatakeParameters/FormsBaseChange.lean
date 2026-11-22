@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -17,8 +21,8 @@ theorem mapDR_ιMulti (n : ℕ) (v : Fin n → Ω[K⁄k]) :
     show mapDR k K L (ExteriorAlgebra.ι K (v i)) = _
     rw [mapDR, ExteriorAlgebra.lift_ι_apply]; rfl))
 
-variable {k K L} in
 
+variable {k K L} in
 theorem mapDR_basis {I : Type} [LinearOrder I] (bK : Module.Basis I K Ω[K⁄k]) (bL : Module.Basis I L Ω[L⁄k])
     (h : ∀ i, bL i = KaehlerDifferential.map k k K L (bK i)) (s : Finset I) :
     mapDR k K L (bK.ExteriorAlgebra s) = bL.ExteriorAlgebra s := by
@@ -26,8 +30,8 @@ theorem mapDR_basis {I : Type} [LinearOrder I] (bK : Module.Basis I K Ω[K⁄k])
     ExteriorAlgebra.ιMulti_family, ExteriorAlgebra.ιMulti_family, mapDR_ιMulti]
   exact congrArg _ (funext fun i => (h _).symm)
 
-variable {k K L} in
 
+variable {k K L} in
 theorem repr_mapDR {I : Type} [LinearOrder I] (bK : Module.Basis I K Ω[K⁄k]) (bL : Module.Basis I L Ω[L⁄k])
     (h : ∀ i, bL i = KaehlerDifferential.map k k K L (bK i)) (ω : DR k K) (s : Finset I) :
     bL.ExteriorAlgebra.repr (mapDR k K L ω) s = algebraMap K L (bK.ExteriorAlgebra.repr ω s) := by
@@ -73,8 +77,9 @@ theorem forms_baseChange : ∀ (k K L : Type) [Field k] [CharZero k] [Field K] [
   · have hc : ∀ s, ∀ j, BK.repr (ω j) s = 0 := by
       intro s
       have h0 := congrArg (fun z => BL.repr z s) hsum
-      simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul,
-        map_zero, Finsupp.coe_zero, Pi.zero_apply, BK, BL, repr_mapDR bK bL h] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply, smul_eq_mul,
+        map_zero, Finsupp.zero_apply, BK, BL, repr_mapDR bK bL h] at h0
       refine Fintype.linearIndependent_iff.1 hb (fun j => BK.repr (ω j) s) ?_
       simpa [Algebra.smul_def, mul_comm] using h0
     exact BK.repr.injective (Finsupp.ext fun s => by simpa using hc s j)

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.Development
+
+@[expose] public section
 
 noncomputable section
 

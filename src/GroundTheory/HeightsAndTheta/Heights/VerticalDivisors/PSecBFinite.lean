@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -50,7 +55,8 @@ theorem isHomogeneous_map_of (f : R →+* S) (P : Ideal (MvPolynomial σ R))
     apply le_antisymm
     · rw [Ideal.map_le_iff_le_comap]
       intro p hp
-      rw [Ideal.mem_comap, ← sum_homogeneousComponent p, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Ideal.mem_comap, ← sum_homogeneousComponent p, map_sum]
       exact Ideal.sum_mem _ fun d _ => Ideal.subset_span ⟨p, hp, d, rfl⟩
     · rw [Ideal.span_le]
       rintro _ ⟨p, hp, d, rfl⟩
@@ -93,25 +99,27 @@ theorem finite_of_pow_mem {R : Type*} [CommRing R] {n : ℕ} (Q : Ideal (MvPolyn
           rw [X_pow_eq_monomial, monomial_mul, one_mul]
         rw [hmono, Ideal.Quotient.eq, ← mul_sub]
         exact Q.mul_mem_left _ (hQ j)
-      rw [hmk, (q j).as_sum, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hmk, (q j).as_sum, Finset.mul_sum, map_sum]
       refine Submodule.sum_mem _ fun m hm => ?_
-      have hprod : monomial s' (1 : R) * monomial m (coeff m (q j)) =
-          C (coeff m (q j)) * monomial (s' + m) 1 := by
+      have hprod : monomial s' (1 : R) * monomial m (AddMonoidAlgebra.coeff (q j) m) =
+          C (AddMonoidAlgebra.coeff (q j) m) * monomial (s' + m) 1 := by
         rw [monomial_mul, C_mul_monomial, one_mul, mul_one]
       rw [hprod, hC]
       refine Submodule.smul_mem _ _ (ih _ ?_ _ le_rfl)
       have hm' : m.degree ≤ (q j).totalDegree := le_totalDegree hm
       have hqj := hq j
-      rw [map_add, Finsupp.degree_single] at hs
-      rw [map_add]
+      rw [map_add (f := _), Finsupp.degree_single] at hs
+      rw [map_add (f := _)]
       omega
   refine ⟨(Submodule.fg_def).mpr ⟨S, Set.finite_range _, ?_⟩⟩
   rw [eq_top_iff]
   rintro x -
   obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [p.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum]
   refine Submodule.sum_mem _ fun s _ => ?_
-  rw [← mul_one (coeff s p), ← C_mul_monomial, hC]
+  rw [← mul_one (AddMonoidAlgebra.coeff p s), ← C_mul_monomial, hC]
   exact Submodule.smul_mem _ _ (key _ s le_rfl)
 
 section NumberField
@@ -129,7 +137,7 @@ theorem map_integralModel {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K)) :
     intro x hx
     obtain ⟨m, hm, rfl⟩ := mem_coeffs_iff.mp hx
     rw [coeff_C_mul]
-    by_cases h0 : coeff m f = 0
+    by_cases h0 : AddMonoidAlgebra.coeff f m = 0
     · rw [h0, mul_zero]; exact ⟨0, map_zero _⟩
     · obtain ⟨y, hy⟩ := hb _ (coeff_mem_coeffs m h0)
       exact ⟨y, by rw [hy, Algebra.smul_def]⟩
@@ -143,8 +151,8 @@ theorem map_integralModel {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K)) :
   rw [this]
   exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ hgI)
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem homogeneousComponent_mem_integralModel {n : ℕ} {I : Ideal (MvPolynomial (Fin n) K)}
     (hI : IsHomogIdeal I) : ∀ p ∈ integralModel I, ∀ d, homogeneousComponent d p ∈ integralModel I := by
   intro p hp d
@@ -152,8 +160,8 @@ theorem homogeneousComponent_mem_integralModel {n : ℕ} {I : Ideal (MvPolynomia
   rw [map_homogeneousComponent]
   exact hI _ hp d
 
-attribute [local instance] MvPolynomial.algebraMvPolynomial in
 
+attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem exists_C_mul_mem {σ : Type*} (J : Ideal (MvPolynomial σ (𝓞 K))) (h : MvPolynomial σ (𝓞 K))
     (hh : MvPolynomial.map (algebraMap (𝓞 K) K) h ∈ J.map (MvPolynomial.map (algebraMap (𝓞 K) K))) :
     ∃ d : 𝓞 K, d ≠ 0 ∧ C d * h ∈ J := by
@@ -182,7 +190,8 @@ theorem incIdeal_le_map {n k : ℕ} (I : Ideal (MvPolynomial (Fin n) K)) :
     rintro _ ⟨i, rfl⟩
     have hform : (∑ j, X (Sum.inr (i, j)) * X (Sum.inl j) : MvPolynomial (Fin n ⊕ (Fin k × Fin n)) K) =
         MvPolynomial.map (algebraMap (𝓞 K) K) (∑ j, X (Sum.inr (i, j)) * X (Sum.inl j)) := by
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
     show (∑ j, X (Sum.inr (i, j)) * X (Sum.inl j) : MvPolynomial (Fin n ⊕ (Fin k × Fin n)) K) ∈ _
     rw [hform]
     exact Ideal.mem_map_of_mem _ (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩))
@@ -211,14 +220,15 @@ theorem specHom_rename_inl (e : ℕ) {n : ℕ} (v : HeightOneSpectrum (𝓞 K))
   rw [specHom, coe_eval₂Hom, eval₂_rename, Sum.elim_comp_inl]
   induction p using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [eval₂_add, hp, hq, map_add]
+  | add p q hp hq => rw [eval₂_add, hp, hq, map_add (f := _)]
   | mul_X p i hp => rw [eval₂_mul, hp, eval₂_X, map_mul, map_X]
 
 omit [NumberField K] in
 theorem specHom_form (e : ℕ) {n : ℕ} (v : HeightOneSpectrum (𝓞 K)) (i : Fin (e + 1)) :
     specHom e n v (∑ j, X (Sum.inr (i, j)) * X (Sum.inl j)) =
       linForm fun j => parY e n v (parIdx e n (i, j)) := by
-  simp [specHom, linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [specHom, linForm, map_sum]
 
 omit [NumberField K] in
 theorem specHom_rename_inr (e : ℕ) {n : ℕ} (v : HeightOneSpectrum (𝓞 K))
@@ -230,14 +240,14 @@ theorem specHom_rename_inr (e : ℕ) {n : ℕ} (v : HeightOneSpectrum (𝓞 K))
     rw [rename_C, rename_C, specHom, eval₂Hom_C, RingHom.comp_apply,
       IsScalarTower.algebraMap_apply (𝓞 K) (MvPolynomial (Par e n) (𝓞 K)) (ParDVR e n v),
       MvPolynomial.algebraMap_eq]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, hp, hq, C_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq, C_add]
   | mul_X p ij hp =>
     rw [map_mul, map_mul, map_mul, map_mul, hp, C_mul, rename_X, rename_X]
     congr 1
     simp [specHom, parY]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem incIdeal_le_comap_specHom (e : ℕ) {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K))
     (v : HeightOneSpectrum (𝓞 K)) :
     incIdeal (integralModel I) (e + 1) ≤
@@ -261,9 +271,9 @@ end NumberField
 
 end SecBFinite
 
+
 attribute [local instance] MvPolynomial.gradedAlgebra in
 open SecBFinite in
-
 theorem SecBFinite.proof (hIN : IncidenceNull.Statement) (hCT : ChartTorsion.Statement)
     (hPS : PrimitiveScale.Statement) : SecBFinite.Statement := by
   intro K _ _ n e I f v hI hf
@@ -340,7 +350,7 @@ theorem SecBFinite.proof (hIN : IncidenceNull.Statement) (hCT : ChartTorsion.Sta
     · have hXM : homogeneousComponent (M + 1) (X j ^ (M + 1) : MvPolynomial (Fin n) (ParDVR e n v)) =
           X j ^ (M + 1) := homogeneousComponent_eq_self (isHomogeneous_X_pow _ _)
       have h2 := congrArg (homogeneousComponent (M + 1)) hab
-      rw [map_add, homogeneousComponent_mul_of_deg_one _ (chartForm (parY e n v)) (isHomogeneous_linForm _), hXM] at h2
+      rw [map_add (f := _), homogeneousComponent_mul_of_deg_one _ (chartForm (parY e n v)) (isHomogeneous_linForm _), hXM] at h2
       have ha' : homogeneousComponent (M + 1) a ∈
           modelR e I v ⊔ Ideal.span (Set.range (secForm (parY e n v))) :=
         homogeneousComponent_mem_of_mem hJ0 ha _

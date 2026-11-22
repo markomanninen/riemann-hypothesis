@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRatConstMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsRatConstMul
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -42,10 +46,5 @@ theorem seriesRatS_of (h : SeriesRat) : SeriesRatS := by
   first
     | exact h
     | exact fun D G _ _ Pl0 T0 A T _ R F κ v₀ a b c d e f g i hV hp _ => h D G Pl0 T0 A T R F κ v₀ a b c d e f g i hV hp
-
-theorem SeriesRatS.untw (h : SeriesRatS) : UntwRatS := by
-  intro D G _ _ Pl0 T0 A T _ R F κ v₀ a b c d e f g i hV hp hs gR cR cL hF u hu
-  obtain ⟨ph, h1, h2⟩ := h D G Pl0 T0 A T R F κ v₀ a b c d e f g i hV hp hs gR cR cL hF u hu
-  exact ⟨ph, h1, fun C hC s hs f hf w hw => (h2 C hC s hs f hf w hw).1⟩
 
 end GlobalTheory.SerStd

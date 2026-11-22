@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,9 +54,11 @@ private theorem toZMod_cycZ_eq_one_of_cycMod_eq_one (σ : E →+* K) (hσ : ∀ 
     rw [h1, h2]
   refine ⟨b, ∑ i, y i, Submodule.sum_mem _ fun i _ => hy i, ?_⟩
   conv_lhs => rw [hz]
-  rw [map_sum, map_sum]
-  simp only [he, map_add, hrho, ← hb, algebraMap_smul]
-  rw [Finset.sum_add_distrib, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
+  simp only [he, map_add (f := _), hrho, ← hb, algebraMap_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_add_distrib, map_sum, Finset.smul_sum]
   unfold HTChart.q
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -77,7 +83,7 @@ theorem exists_q_add (σ : E →+* K) (hσ : ∀ a : 𝓞 E, σ (a : E) ∈ (alg
       obtain ⟨x1, y1, hy1, e1⟩ := hu
       obtain ⟨x2, y2, hy2, e2⟩ := hv
       refine ⟨x1 + x2, y1 + y2, D.om.add_mem hy1 hy2, ?_⟩
-      rw [map_add, e1, e2, q_add, map_add, smul_add]
+      rw [map_add (f := _), e1, e2, q_add, map_add (f := _), smul_add]
       abel
     | smul a v _ hv =>
       obtain ⟨x1, y1, hy1, e1⟩ := hv
@@ -88,7 +94,7 @@ theorem exists_q_add (σ : E →+* K) (hσ : ∀ a : 𝓞 E, σ (a : E) ∈ (alg
       = ((p : A) ^ R) • eigProj D.ρΩ σ y0 := by
     simp [LinearMap.map_smul_of_tower]
   refine ⟨x, y' + y0, D.om.add_mem hy' hy0, ?_⟩
-  rw [map_add, e, ht0, map_add, smul_add, add_assoc]
+  rw [map_add (f := _), e, ht0, map_add (f := _), smul_add, add_assoc]
 
 end
 
@@ -115,7 +121,7 @@ theorem q_surj : ∀ (A K : Type) [CommRing A] [Field K] [Algebra A K] [CharZero
         exact Submodule.subset_span (by simp only [Finset.coe_image]; exact ⟨w, hw, rfl⟩)
       | zero => simp
       | add u v _ _ hu hv =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hu hv
       | smul n u _ hu =>
         rw [map_zsmul]

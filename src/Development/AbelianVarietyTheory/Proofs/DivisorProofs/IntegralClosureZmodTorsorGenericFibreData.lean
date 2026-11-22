@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveTraceGaloisData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureOverGenericFibreHartogsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulMemIntegralClosureOverGenericFibreStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveTraceGaloisData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralClosureOverGenericFibreHartogsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulMemIntegralClosureOverGenericFibreStatement
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -62,9 +67,6 @@ def restr (σ : D ≃ₐ[GenFib A R] D) :
     map_add' := fun c c' => Subtype.ext (map_add σ (c : D) (c' : D))
     commutes' := fun r => Subtype.ext (σ.commutes (algebraMap R (GenFib A R) r)) }
 
-@[simp] theorem restr_coe (σ : D ≃ₐ[GenFib A R] D) (c : closure A R D) :
-    ((letI := closureAlg A R D; restr σ c : closure A R D) : D) = σ c := rfl
-
 end
 
 section
@@ -100,7 +102,7 @@ theorem closureData : ∀ (A R : Type) [CommRing A] [IsDomain A] [IsNoetherianRi
     ∀ (q : ℕ) [NeZero q] (D : Type) [CommRing D] [Algebra (GlobalTheory.LocAcyc.GenFib A R) D]
       (act : Multiplicative (ZMod q) →* (D ≃ₐ[GlobalTheory.LocAcyc.GenFib A R] D)),
       GlobalTheory.KeyOriginCut.IsZTorsor (GlobalTheory.LocAcyc.GenFib A R) D q act →
-    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D
+    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D;
     ∃ (act' : Multiplicative (ZMod q) →* (GlobalTheory.KeyOriginNoeth.closure A R D ≃ₐ[R] GlobalTheory.KeyOriginNoeth.closure A R D))
       (T : GlobalTheory.KeyOriginNoeth.closure A R D →ₗ[R] R),
       (∀ c, algebraMap R _ (T c) = ∑ g, act' g c) ∧
@@ -125,8 +127,18 @@ theorem closureData : ∀ (A R : Type) [CommRing A] [IsDomain A] [IsNoetherianRi
   let y' : Fin n → closure A R D := fun i => ⟨b * y i, hmem _ (by simp)⟩
   let act' : Multiplicative (ZMod q) →* (closure A R D ≃ₐ[R] closure A R D) :=
     { toFun := fun g => restr (act g)
-      map_one' := by ext c; simp
-      map_mul' := fun g h => by ext c; simp [map_mul] }
+      map_one' := by
+        apply AlgEquiv.ext
+        intro c
+        apply Subtype.ext
+        change act 1 (c : D) = (c : D)
+        rw [map_one, AlgEquiv.one_apply]
+      map_mul' := fun g h => by
+        apply AlgEquiv.ext
+        intro c
+        apply Subtype.ext
+        change act (g * h) (c : D) = act g (act h (c : D))
+        rw [map_mul, AlgEquiv.mul_apply] }
   have hact' : ∀ g c, ((act' g c : closure A R D) : D) = act g c := fun _ _ => rfl
   let Tf : closure A R D → R := fun c => Classical.choose (htr c c.2)
   have hT' : ∀ c, algebraMap R (GenFib A R) (Tf c) = τ c := fun c => Classical.choose_spec (htr c c.2)
@@ -153,10 +165,10 @@ theorem closureData : ∀ (A R : Type) [CommRing A] [IsDomain A] [IsNoetherianRi
   · intro g
     apply Subtype.ext
     split_ifs with hg
-    · simp only [AddSubmonoidClass.coe_finset_sum, Subring.coe_mul, hact']
+    · simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, hact']
       rw [h1, if_pos hg, hbb]
       rfl
-    · simp only [AddSubmonoidClass.coe_finset_sum, Subring.coe_mul, hact']
+    · simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, hact']
       rw [h1, if_neg hg]
       rfl
   · intro a' ha' c hc
@@ -164,20 +176,103 @@ theorem closureData : ∀ (A R : Type) [CommRing A] [IsDomain A] [IsNoetherianRi
     have h1 := congrArg Subtype.val hc
     rw [smul_coe, Algebra.smul_def] at h1
     simpa using ((isUnit_genFib A R ha').map (algebraMap (GenFib A R) D)).mul_right_eq_zero.mp h1
-  · refine GlobalTheory.T.integralClosureOverGenericFibre_hartogs A R hHart hRinj D τ htr (a * a) (mul_ne_zero ha ha) n
-      (fun i => (x' i : D)) (fun i => (y' i : D)) (fun i => (y' i).2) ?_
-    intro d
-    have e1 : ∀ i, algebraMap (GenFib A R) D (τ ((y' i : D) * d)) = ∑ g, act g (y' i) * act g d := by
-      intro i; rw [hτ]; simp [map_mul]
-    simp only [e1, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    have e2 : ∀ g, ∑ i, (x' i : D) * (act g (y' i) * act g d) =
-        (if g = 1 then b * b else 0) * act g d := by
-      intro g
-      rw [← h1, Finset.sum_mul]
-      exact Finset.sum_congr rfl fun i _ => by ring
-    rw [Finset.sum_congr rfl fun g _ => e2 g]
-    simp [hbb]
+  · have hrec (d : D) : ∑ i, (x' i : D) * algebraMap (GenFib A R) D (τ (y' i * d)) =
+        baseHom A R D (algebraMap A R (a * a)) * d := by
+      simp only [hτ, map_mul, Finset.mul_sum]
+      rw [Finset.sum_comm]
+      simp_rw [← mul_assoc, ← Finset.sum_mul, h1]
+      simp [hbb]
+    letI : Algebra R D := (baseHom A R D).toAlgebra
+    have hτmul (f : GenFib A R) (d : D) :
+        τ (algebraMap (GenFib A R) D f * d) = f * τ d := by
+      rw [← Algebra.smul_def, τ.map_smul, smul_eq_mul]
+    -- Bound the submodule of elements whose products with the closure have trace in R.
+    let N : Submodule R D :=
+      { carrier := {d | ∀ z ∈ closure A R D, ∃ r : R, algebraMap R (GenFib A R) r = τ (d * z)}
+        add_mem' := by
+          intro d e hd he z hz
+          obtain ⟨r, hr⟩ := hd z hz
+          obtain ⟨s, hs⟩ := he z hz
+          exact ⟨r + s, by rw [map_add, hr, hs, add_mul, map_add]⟩
+        zero_mem' := by
+          intro z _
+          exact ⟨0, by simp⟩
+        smul_mem' := by
+          intro r d hd z hz
+          obtain ⟨s, hs⟩ := hd z hz
+          refine ⟨r * s, ?_⟩
+          change _ = τ ((algebraMap (GenFib A R) D (algebraMap R (GenFib A R) r) * d) * z)
+          rw [mul_assoc, hτmul, ← hs, map_mul] }
+    obtain ⟨v, hv⟩ := isUnit_genFib A R (mul_ne_zero ha ha)
+    let w (i : Fin n) : D := algebraMap (GenFib A R) D (↑v⁻¹) * x' i
+    let S := Submodule.span R (Set.range w)
+    have hNS : N ≤ S := by
+      intro d hd
+      have hr : ∀ i, ∃ r : R, algebraMap R (GenFib A R) r = τ (y' i * d) := by
+        intro i
+        obtain ⟨r, hr⟩ := hd (y' i) (y' i).2
+        exact ⟨r, by rw [hr, mul_comm]⟩
+      choose r hr using hr
+      have hd' : d = ∑ i, r i • w i := calc
+        d = algebraMap (GenFib A R) D (↑v⁻¹) *
+            (baseHom A R D (algebraMap A R (a * a)) * d) := by
+          rw [baseHom_apply, ← mul_assoc, ← map_mul, ← hv, Units.inv_mul, map_one, one_mul]
+        _ = ∑ i, r i • w i := by
+          rw [← hrec, Finset.mul_sum]
+          refine Finset.sum_congr rfl fun i _ => ?_
+          rw [← hr i]
+          change _ = algebraMap (GenFib A R) D (algebraMap R (GenFib A R) (r i)) * w i
+          dsimp [w]
+          ring
+      rw [hd']
+      exact Submodule.sum_mem S fun i _ => S.smul_mem _ (Submodule.subset_span ⟨i, rfl⟩)
+    have hS : IsNoetherian R S :=
+      isNoetherian_of_fg_of_noetherian S (Submodule.fg_span (Set.finite_range w))
+    intro a₀ ha₀ m hm
+    obtain ⟨u, hu⟩ := isUnit_genFib A R ha₀
+    let ξ : D := algebraMap (GenFib A R) D (↑u⁻¹) * m
+    have hξN (d : D) (hd : d ∈ N) : ξ * d ∈ N := by
+      intro z hz
+      obtain ⟨r, hr⟩ := hd ((m : D) * z) ((closure A R D).mul_mem m.2 hz)
+      have hdiv : ∃ s : R, r = algebraMap A R a₀ • s := by
+        apply hHart a₀ ha₀ r
+        intro p hp hheight
+        obtain ⟨t, ht, m', hm'⟩ := hm p hp hheight
+        obtain ⟨s, hs⟩ := hd ((m' : D) * z) ((closure A R D).mul_mem m'.2 hz)
+        refine ⟨t, ht, s, hRinj ?_⟩
+        have hmD := congrArg Subtype.val hm'
+        rw [smul_coe, smul_coe, Algebra.smul_def, Algebra.smul_def] at hmD
+        rw [smul_eq_mul, smul_eq_mul, map_mul, map_mul, hr, hs, ← hτmul, ← hτmul]
+        congr 1
+        linear_combination (d * z) * hmD
+      obtain ⟨s, hs⟩ := hdiv
+      refine ⟨s, ?_⟩
+      have heq : ξ * d * z = algebraMap (GenFib A R) D (↑u⁻¹) * (d * ((m : D) * z)) := by
+        dsimp [ξ]
+        ring
+      rw [heq, hτmul, ← hr, hs, smul_eq_mul, map_mul, ← hu, ← mul_assoc, Units.inv_mul, one_mul]
+    have hpow (k : ℕ) : ξ ^ k ∈ N := by
+      induction k with
+      | zero =>
+        rw [pow_zero]
+        intro z hz
+        simpa only [one_mul] using htr z hz
+      | succ k ih => rw [pow_succ']; exact hξN _ ih
+    have hadj : (Algebra.adjoin R {ξ}).toSubmodule ≤ S := by
+      rw [Algebra.adjoin_eq_span]
+      apply le_trans _ hNS
+      rw [Submodule.span_le]
+      intro d hd
+      obtain ⟨k, rfl⟩ := Submonoid.mem_closure_singleton.mp hd
+      exact hpow k
+    have hfg := isNoetherian_submodule.mp hS _ hadj
+    have hξ : ξ ∈ closure A R D :=
+      IsIntegral.of_mem_of_fg _ hfg ξ (Algebra.self_mem_adjoin_singleton R ξ)
+    refine ⟨⟨ξ, hξ⟩, Subtype.ext ?_⟩
+    rw [smul_coe, Algebra.smul_def]
+    change (m : D) = algebraMap (GenFib A R) D (algebraMap R (GenFib A R) (algebraMap A R a₀)) * ξ
+    dsimp [ξ]
+    rw [← mul_assoc, ← map_mul, ← hu, Units.mul_inv, map_one, one_mul]
   · refine ⟨fun c => ?_⟩
     letI := (baseHom A R D).toAlgebra
     let f : closure A R D →ₐ[R] D := { (closure A R D).subtype with commutes' := fun _ => rfl }

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Filter Topology Set
 
@@ -9,15 +13,9 @@ namespace Elliptic
 
 variable (L : PeriodPair)
 
-instance isClosed_lattice_toAddSubgroup : IsClosed (L.lattice.toAddSubgroup : Set ℂ) :=
-  L.isClosed_lattice
-
 abbrev Torus : Type := ℂ ⧸ L.lattice.toAddSubgroup
 
 abbrev Torus.mk (z : ℂ) : Torus L := QuotientAddGroup.mk z
-
-lemma Torus.mk_add {z l : ℂ} (hl : l ∈ L.lattice) : Torus.mk L (z + l) = Torus.mk L z :=
-  QuotientAddGroup.mk_add_of_mem z hl
 
 lemma Torus.mk_eq_mk_iff {z w : ℂ} : Torus.mk L z = Torus.mk L w ↔ z - w ∈ L.lattice := by
   rw [Torus.mk, Torus.mk, QuotientAddGroup.eq_iff_sub_mem]
@@ -25,9 +23,6 @@ lemma Torus.mk_eq_mk_iff {z w : ℂ} : Torus.mk L z = Torus.mk L w ↔ z - w ∈
 
 lemma Torus.mk_surjective : Function.Surjective (Torus.mk L) :=
   QuotientAddGroup.mk_surjective
-
-lemma Torus.continuous_mk : Continuous (Torus.mk L) :=
-  continuous_quot_mk
 
 def IsPeriodic {E : Type*} (f : ℂ → E) : Prop :=
   ∀ z : ℂ, ∀ l ∈ L.lattice, f (z + l) = f z
@@ -51,16 +46,6 @@ lemma IsPeriodic.eq_of_mk_eq {E : Type*} {f : ℂ → E} (hf : IsPeriodic L f) {
   simpa using hf w (z - w) hzw
 
 variable (L)
-
-instance : CompactSpace (Torus L) := by
-  have h := IsZLattice.isCompact_range_of_periodic L.lattice (Torus.mk L) (Torus.continuous_mk L)
-    (fun z w hw ↦ Torus.mk_add L hw)
-  rw [(Torus.mk_surjective L).range_eq] at h
-  exact isCompact_univ_iff.mp h
-
-instance : T2Space (Torus L) := inferInstance
-
-instance : IsTopologicalAddGroup (Torus L) := inferInstance
 
 def fundamentalCompact : Set ℂ := closure (ZSpan.fundamentalDomain L.basis)
 
@@ -107,9 +92,6 @@ lemma IsPeriodic.meromorphicOrderAt_add {E : Type*} [NormedAddCommGroup E] [Norm
 
 def singularSet {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (f : ℂ → E) : Set ℂ :=
   {z | ¬ AnalyticAt ℂ f z}
-
-def poles {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (f : ℂ → E) : Set ℂ :=
-  {z | meromorphicOrderAt f z < 0}
 
 theorem finite_inter_singularSet {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     [CompleteSpace E] {f : ℂ → E} (hf : Meromorphic f) {K : Set ℂ} (hK : IsCompact K) :

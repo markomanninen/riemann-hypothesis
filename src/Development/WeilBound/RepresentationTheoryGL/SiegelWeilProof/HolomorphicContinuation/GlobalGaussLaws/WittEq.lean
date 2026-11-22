@@ -1,5 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.WittEqA
-import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.WittEqA
+public import Formalism.LocalToGlobal.ProjectiveLattices.HalfOneAddSqrtNegIsIntegral
+import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalConjugationSelfDualLatticesHost
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,13 +15,12 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace PositivityTheory.Rg.Sw.Glob.WEq
 
-local notation "hermF" => ReciprocityTheory.ChartRestriction.G.FD.herm
-local notation "ccF" => ReciprocityTheory.ChartRestriction.G.FD.cc
-
 theorem coord_hT (D : D7) [IsCMField D.host.E] (hst : ∀ z : D.host.E, star z = IsCMField.complexConj D.host.E z)
     (V : HSp D) (x y : Fin V.rank → D.host.E) :
-    V.hT (V.frame.equivFun.symm y) (V.frame.equivFun.symm x) = hermF (V.gram)ᵀ x y := by
-  simp only [Module.Basis.equivFun_symm_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+    V.hT (V.frame.equivFun.symm y) (V.frame.equivFun.symm x) =
+      ReciprocityTheory.ChartRestriction.G.FD.herm (V.gram)ᵀ x y := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.Basis.equivFun_symm_apply, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, smul_eq_mul, RingHom.id_apply]
   simp only [ReciprocityTheory.ChartRestriction.G.FD.herm, Matrix.transpose_apply, HSpace.gram, ReciprocityTheory.ChartRestriction.G.FD.cc, Finset.mul_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
@@ -64,13 +68,9 @@ theorem wittLBeq : WittLBeq := by
       simpa [v] using hy
     · intro hx
       exact ⟨v x, hx, V.frame.equivFun.apply_symm_apply x⟩
-  have hL : ReciprocityTheory.MultiplicativeHeights.IsLattice L := by
-    refine ⟨V.standardTuple_isLattice.fg.map _, ?_⟩
-    have hc : (L : Set (Fin r → D.host.E)) = V.frame.equivFun '' (V.L0 : Set V.V) := by
-      ext x; simp [L]
-    rw [hc, show (⇑V.frame.equivFun : V.V → (Fin r → D.host.E)) =
-        ⇑(V.frame.equivFun : V.V →ₗ[D.host.E] (Fin r → D.host.E)) from rfl, Submodule.span_image,
-      V.standardTuple_isLattice.span_eq_top, Submodule.map_top, LinearEquiv.range]
+  have hL : ReciprocityTheory.MultiplicativeHeights.IsLattice L :=
+    GlobalTheory.LocalConjugacy.isLattice_coordLat V V.L0 V.standardTuple_isLattice
+      V.baseLattice_isUnimodular
   have hone : ∀ z : D.host.E, z ∈ (1 : Submodule (𝓞 D.host.E) D.host.E) ↔
       z ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
     intro z
@@ -81,7 +81,8 @@ theorem wittLBeq : WittLBeq := by
     unfold Formalism.HermitianLatticesTheory.IsUnimodular Formalism.HermitianLatticesTheory.dual at hu
     conv_lhs => rw [← hu]
     simp [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap]
-  have hmod : ∀ x, x ∈ L ↔ ∀ y ∈ L, hermF G₁ x y ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
+  have hmod : ∀ x, x ∈ L ↔ ∀ y ∈ L,
+      ReciprocityTheory.ChartRestriction.G.FD.herm G₁ x y ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
     intro x
     rw [memL, hdual]
     constructor
@@ -93,7 +94,7 @@ theorem wittLBeq : WittLBeq := by
       have := h _ hy
       rw [← coord_hT D hst V x _, ← hone] at this
       simpa [v] using this
-  have hG : ∀ a b, ccF (G₁ a b) = G₁ b a := by
+  have hG : ∀ a b, ReciprocityTheory.ChartRestriction.G.FD.cc (G₁ a b) = G₁ b a := by
     intro a b
     have := V.herm.eq (V.frame b) (V.frame a)
     simp only [hG₁, Matrix.transpose_apply, HSpace.gram, ReciprocityTheory.ChartRestriction.G.FD.cc]
@@ -148,10 +149,19 @@ theorem wittLBeq : WittLBeq := by
     · obtain ⟨ρ, hρ⟩ := (GlobalTheory.PointAtPlace.tauE_cm σ).2 h
       rw [← hρ]
       exact key ρ
-  have hL' : ReciprocityTheory.MultiplicativeHeights.IsLattice (GlobalTheory.InertWitt.stdLat D.host.E r) :=
-    ⟨(GlobalTheory.InertWitt.stdLat_isLattice D.host.E r).fg, (GlobalTheory.InertWitt.stdLat_isLattice D.host.E r).span_eq_top⟩
+  have hL' : ReciprocityTheory.MultiplicativeHeights.IsLattice (GlobalTheory.InertWitt.stdLat D.host.E r) := by
+    refine ⟨(GlobalTheory.InertWitt.stdLat_isLattice D.host.E r).fg, top_le_iff.mp ?_⟩
+    rw [← (Pi.basisFun D.host.E (Fin r)).span_eq]
+    apply Submodule.span_mono
+    rintro _ ⟨i, rfl⟩
+    change Pi.basisFun D.host.E (Fin r) i ∈ GlobalTheory.InertWitt.stdLat D.host.E r
+    rw [Pi.basisFun_apply, GlobalTheory.InertWitt.mem_stdLat]
+    intro j
+    by_cases h : j = i
+    · simpa [h] using (isIntegral_one : IsIntegral ℤ (1 : D.host.E))
+    · simpa [Pi.single_apply, h] using (isIntegral_zero : IsIntegral ℤ (0 : D.host.E))
   have hcc : ∀ z ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E),
-      ccF z ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
+      ReciprocityTheory.ChartRestriction.G.FD.cc z ∈ (1 : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) := by
     intro z hz
     rw [mem_one_iff_isIntegral] at hz ⊢
     exact cc_isIntegral hz

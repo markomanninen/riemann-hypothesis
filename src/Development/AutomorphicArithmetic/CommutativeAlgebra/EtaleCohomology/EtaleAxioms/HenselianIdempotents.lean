@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.LiftIdempotentFactorizationHolds
-import Development.EtaleCohomology.EtaleSheaves.FiniteChartSurjPf
-import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
-import Development.EtaleCohomology.EtaleSheaves.LChartPf
-import Development.EtaleCohomology.EtaleSheaves.LEtaleLiftPf
-import Development.EtaleCohomology.EtaleSheaves.LFactorPf
-import Development.EtaleCohomology.EtaleSheaves.LIdemLiftPf
-import Development.EtaleCohomology.EtaleSheaves.LIdemPf
-import Development.EtaleCohomology.EtaleSheaves.LJacPf
-import Development.EtaleCohomology.EtaleSheaves.LMonicPf
-import Development.EtaleCohomology.EtaleSheaves.SurjectiveCharts.EtaleSurjectiveChartOfFiniteChartSurj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.LiftIdempotentFactorizationHolds
+public import Development.EtaleCohomology.EtaleSheaves.FiniteChartSurjPf
+public import Development.EtaleCohomology.EtaleSheaves.HensIdemCut
+public import Development.EtaleCohomology.EtaleSheaves.LChartPf
+public import Development.EtaleCohomology.EtaleSheaves.LEtaleLiftPf
+public import Development.EtaleCohomology.EtaleSheaves.LFactorPf
+public import Development.EtaleCohomology.EtaleSheaves.LIdemLiftPf
+public import Development.EtaleCohomology.EtaleSheaves.LIdemPf
+public import Development.EtaleCohomology.EtaleSheaves.LJacPf
+public import Development.EtaleCohomology.EtaleSheaves.LMonicPf
+public import Development.EtaleCohomology.EtaleSheaves.SurjectiveCharts.EtaleSurjectiveChartOfFiniteChartSurj
+
+@[expose] public section
 
 namespace UpperTheory.Et.HenselianIdempotents
 

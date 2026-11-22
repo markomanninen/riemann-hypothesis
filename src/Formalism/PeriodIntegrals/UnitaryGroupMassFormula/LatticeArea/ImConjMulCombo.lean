@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AreaLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AreaLat
+
+@[expose] public section
 
 namespace PI.AreaLatWork
 
@@ -8,7 +12,7 @@ open PI
 lemma im_conj_mul_combo (w₁ w₂ : ℂ) (m n m' n' : ℤ) :
     ((starRingEnd ℂ) (m • w₁ + n • w₂) * (m' • w₁ + n' • w₂)).im
       = ((m * n' - n * m' : ℤ) : ℝ) * ((starRingEnd ℂ) w₁ * w₂).im := by
-  simp only [zsmul_eq_mul, map_add, map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
+  simp only [zsmul_eq_mul, map_add (f := _), map_mul, map_intCast, Complex.mul_im, Complex.mul_re,
     Complex.add_re, Complex.add_im, Complex.intCast_re, Complex.intCast_im, Complex.conj_re,
     Complex.conj_im]
   push_cast

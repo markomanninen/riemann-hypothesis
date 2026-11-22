@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeMemAsIdeal
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DualityForAbsGal
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CardH1EqCardH0MulCardH2
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousCompOfIsOpenKer
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeMemAsIdeal
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DualityForAbsGal
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CardH1EqCardH0MulCardH2
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousCompOfIsOpenKer
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂
 

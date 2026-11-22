@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.ChsZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.ChsZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ def LpInj : Prop := ∀ A B : Multiset ℂˣ, lp A = lp B → A = B
 def LpPow : Prop := ∀ (f : ℕ), 0 < f → ∀ A B : Multiset ℂˣ, lp A = (lp B).comp (X ^ f) → A.map (· ^ f) = f • B
 
 def ChsFacts : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL k)),
+  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (s : Multiset (IrrGL (k := k))),
     (∀ ξ, ξ ∈ chs s ↔ ξ ∈ chars s) ∧ (∀ ξ ∈ chs s, IsSmoothChar ξ) ∧ ∀ θ : kˣ →* ℂˣ, pol s θ = lp (vals (chs s) θ)
 
 def ValsExt : Prop :=

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -27,7 +31,7 @@ def homAct {V : Type} [AddCommGroup V] [Module K V] (EV : ι → ι → Module.E
     (a b : ι) : Module.End K (V →ₗ[K] W) where
   toFun := fun φ => EW a b ∘ₗ φ - φ ∘ₗ EV a b
   map_add' := by
-    intro φ ψ; ext x; simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.add_apply, map_add]; abel
+    intro φ ψ; ext x; simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.add_apply, map_add (f := _)]; abel
   map_smul' := by
     intro c φ; ext x
     simp only [LinearMap.sub_apply, LinearMap.comp_apply, LinearMap.smul_apply, map_smul, RingHom.id_apply, smul_sub]

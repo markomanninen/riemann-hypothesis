@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 
 noncomputable section
@@ -107,7 +112,8 @@ theorem linearIndependent_periods (R : RiemLat E g Λ) {ι : Type} [Fintype ι] 
   have htop : ⊤ ≤ Submodule.span ℝ (Set.range fun i => R.P (b i)) := by
     rw [← hspan, Submodule.span_le]
     rintro _ ⟨v, rfl⟩
-    rw [← b.sum_repr v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr v, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_zsmul, ← Int.cast_smul_eq_zsmul ℝ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -123,7 +129,8 @@ def comb (R : RiemLat E g Λ) {ι : Type} [Fintype ι] (b : ι → Λ) (a : ι �
 
 theorem comb_repr (R : RiemLat E g Λ) {ι : Type} [Fintype ι] (b : Module.Basis ι ℤ Λ) (v : Λ) :
     comb R b (fun i => ((b.repr v i : ℤ) : ℝ)) = R.P v := by
-  conv_rhs => rw [← b.sum_repr v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← b.sum_repr v, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, ← Int.cast_smul_eq_zsmul ℂ]
   simp
@@ -143,8 +150,8 @@ theorem comb_ne_zero (R : RiemLat E g Λ) {ι : Type} [Fintype ι] (b : Module.B
 
 end GlobalTheory.CompanionTheory.Ar.Cusp.FirstMin
 
-open GlobalTheory.CompanionTheory.Ar.Cusp.FirstMin in
 
+open GlobalTheory.CompanionTheory.Ar.Cusp.FirstMin in
 theorem GlobalTheory.CompanionTheory.Ar.Cusp.continuous_first_minimum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ) (Λ : Type) [AddCommGroup Λ] [Module (𝓞 E) Λ] (X : Type) [TopologicalSpace X] (R : X → RiemLat E g Λ), (∀ v, Continuous fun x => (R x).P v) → (Continuous fun x => (R x).Hm) → Continuous fun x => (R x).lam1 := by
   intro E _ _ _ g Λ _ _ X _ R hP hH
   rcases isEmpty_or_nonempty X with hX | ⟨⟨x₀⟩⟩
@@ -153,10 +160,10 @@ theorem GlobalTheory.CompanionTheory.Ar.Cusp.continuous_first_minimum : ∀ (E :
   haveI := (R x₀).fin
   let b := Module.Free.chooseBasis ℤ Λ
   let Q : X → (Module.Free.ChooseBasisIndex ℤ Λ → ℝ) → ℝ := fun x a =>
-    ((R x).ip (comb (R x) b a) (comb (R x) b a)).re
-  have hL : Continuous fun p : X × (Module.Free.ChooseBasisIndex ℤ Λ → ℝ) => comb (R p.1) b p.2 := by
-    unfold comb
-    refine continuous_finset_sum _ fun i _ => ?_
+    ((R x).ip (FirstMin.comb (R x) b a) (FirstMin.comb (R x) b a)).re
+  have hL : Continuous fun p : X × (Module.Free.ChooseBasisIndex ℤ Λ → ℝ) => FirstMin.comb (R p.1) b p.2 := by
+    unfold FirstMin.comb
+    refine continuous_finsetSum _ fun i _ => ?_
     exact (Complex.continuous_ofReal.comp ((continuous_apply i).comp continuous_snd)).smul
       ((hP (b i)).comp continuous_fst)
   have hQ : Continuous fun p : X × (Module.Free.ChooseBasisIndex ℤ Λ → ℝ) => Q p.1 p.2 := by
@@ -164,16 +171,16 @@ theorem GlobalTheory.CompanionTheory.Ar.Cusp.continuous_first_minimum : ∀ (E :
     exact hL.dotProduct ((hH.comp continuous_fst).matrix_mulVec hL.star)
   have hhom : ∀ x (r : ℝ) a, Q x (r • a) = r ^ 2 * Q x a := by
     intro x r a
-    have hc : comb (R x) b (r • a) = (r : ℂ) • comb (R x) b a := by
-      unfold comb
+    have hc : FirstMin.comb (R x) b (r • a) = (r : ℂ) • FirstMin.comb (R x) b a := by
+      unfold FirstMin.comb
       rw [Finset.smul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [smul_smul]
       simp
     simp only [Q, RiemLat.ip, hc, star_smul, Matrix.mulVec_smul, dotProduct_smul, smul_dotProduct]
     simp [pow_two, mul_assoc]
-  have hpos : ∀ x a, a ≠ 0 → 0 < Q x a := fun x a ha => (R x).pos _ (comb_ne_zero (R x) b a ha)
-  have hmain := continuous_sInf_sqrt_form Q hQ hhom hpos
+  have hpos : ∀ x a, a ≠ 0 → 0 < Q x a := fun x a ha => (R x).pos _ (FirstMin.comb_ne_zero (R x) b a ha)
+  have hmain := FirstMin.continuous_sInf_sqrt_form Q hQ hhom hpos
     (fun (s : {v : Λ // v ≠ 0}) i => ((b.repr s.1 i : ℤ) : ℝ)) (by
       intro s h0
       apply s.2
@@ -188,7 +195,7 @@ theorem GlobalTheory.CompanionTheory.Ar.Cusp.continuous_first_minimum : ∀ (E :
   constructor
   · rintro ⟨v, hv, rfl⟩
     refine ⟨⟨v, hv⟩, ?_⟩
-    simp only [Q, comb_repr, RiemLat.normSq]
+    simp only [Q, FirstMin.comb_repr, RiemLat.normSq]
   · rintro ⟨⟨v, hv⟩, rfl⟩
     refine ⟨v, hv, ?_⟩
-    simp only [Q, comb_repr, RiemLat.normSq]
+    simp only [Q, FirstMin.comb_repr, RiemLat.normSq]

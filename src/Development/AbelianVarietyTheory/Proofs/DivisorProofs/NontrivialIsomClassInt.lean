@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -265,10 +269,6 @@ theorem isometric_pull_tens (π : Y ⟶ X) (hπ : π ≫ p = q) :
     fun σ j y _ => (congrArg₂ (· + ·) ((L.φ σ).pull_φ π hπ _ y) ((M.φ σ).pull_φ π hπ _ y)).trans
       (((L.tens M).φ σ).pull_φ π hπ j y).symm
 
-theorem shift_eq_raise (t : (k →+* ℂ) → ℝ) (ht : ∀ σ, t ((starRingEnd ℂ).comp σ) = t σ) :
-    L.shift t ht = L.raise (fun σ _ => 2 * t σ) (fun _ => cInfAt_const _) fun σ _ _ _ _ h _ =>
-      congrArg (2 * ·) ((congrArg t (eq_conj_of_conj h)).trans (ht σ)) := rfl
-
 variable {L M N}
 
 theorem Isometric.tens (h : L.Isometric M) (h' : L'.Isometric M') : (L.tens L').Isometric (M.tens M') :=
@@ -279,12 +279,12 @@ theorem Isometric.dual (h : L.Isometric M) : L.dual.Isometric M.dual :=
     (isometric_tens_assoc _ _ _).trans <| ((Isometric.refl _).tens ((h.symm.tens_right _).trans
       ((isometric_tens_comm _ _).trans L.isometric_dual_tens))).trans (isometric_tens_triv _)
 
-variable (p) in
 
+variable (p) in
 def isometrySetoid : Setoid (HermLB p) := ⟨Isometric, Isometric.refl, Isometric.symm, Isometric.trans⟩
 
-variable (p) in
 
+variable (p) in
 def IsomClass : Type 1 := Quotient (isometrySetoid p)
 
 def icls (L : HermLB p) : IsomClass p := Quotient.mk _ L
@@ -308,12 +308,6 @@ instance : AddCommGroup (IsomClass p) where
 theorem icls_tens (L M : HermLB p) : (L.tens M).icls = L.icls + M.icls := rfl
 
 theorem icls_dual (L : HermLB p) : L.dual.icls = -L.icls := rfl
-
-theorem icls_triv : (triv p).icls = 0 := rfl
-
-theorem nontrivial_isomClass_int : Nontrivial (IsomClass (𝟙 (Sp ℤ))) :=
-  ⟨(ArithBase.trivShift 0).icls, (ArithBase.trivShift 1).icls, fun h =>
-    zero_ne_one (eq_of_isometric_trivShift (icls_eq_iff.1 h))⟩
 
 theorem icls_pow (L : HermLB p) (m : ℕ) : (L.pow m).icls = m • L.icls := by
   induction m with
@@ -501,20 +495,21 @@ namespace HermLB
 variable {L M : HermLB p} {D : ℕ}
 
 theorem Isometric.isArithHeight (hX : IsArithVar p D) (e : L.Isometric M) {h : X → ℝ} (H : L.IsArithHeight h) :
-    M.IsArithHeight h where
-  vertical Z i _ _ κ _ _ _ d hd := by
+    M.IsArithHeight h := by
+  constructor
+  · intro Z i _ _ κ _ _ _ d hd
     have ⟨w, hw, _⟩ := e.pull i rfl
     have e' : topSelfIntersection κ (L.B.pull i) d = topSelfIntersection κ (M.B.pull i) d := interNum_congr_lbIso κ _
       (fun _ => (L.restr i).isLB) (fun _ => (M.restr i).isLB) fun _ => ⟨w, hw⟩
     rw [H.vertical Z i κ d hd, e']
-  point Z i _ _ _ hc hd r hr := by
+  · intro Z i _ _ _ hc hd r hr
     obtain ⟨r', hr', h₁, h₂⟩ := (e.pull i rfl).symm.exists_isRatSec hr
     have hZ : IsArithVar (i ≫ p) 0 := hX.of_isClosedImmersion i hc hd
     rw [H.point Z i hc hd r' hr', curveDeg, curveDeg, h₁]
     refine congrArg _ (finsum_congr fun σ => finsum_congr fun y => h₂ σ (mem_offSupp.2 ?_))
     rw [hZ.under_eq_genericPoint]
     exact CartierDiv.genericPoint_notMem_supp _
-  recursion Z i _ _ _ hc d hd hd' m r hr := by
+  · intro Z i _ _ _ hc d hd hd' m r hr
     obtain ⟨r', hr', h₁, h₂⟩ := ((e.pull i rfl).pow m).symm.exists_isRatSec hr
     obtain ⟨h₃, h₄⟩ := H.recursion Z i hc d hd hd' m r' hr'
     simp only [ArchIntegrable, archInt, h₁, (e.pull i rfl).chernInt_eq,
@@ -538,7 +533,8 @@ theorem isHomogeneous_lin (n : ι → ℝ) : (lin n).IsHomogeneous 1 :=
 
 theorem aeval_lin (A : κ → ι → ℝ) (m : κ → ℝ) :
     aeval (fun j => lin (A j)) (lin m) = lin fun i => ∑ j, m j * A j i := by
-  simp only [lin, map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lin, map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq, Finset.mul_sum, Finset.sum_mul, mul_assoc]
   exact Finset.sum_comm
 
 theorem lin_single [DecidableEq ι] (i : ι) :

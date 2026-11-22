@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsRegularRingEssFiniteTypeInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsRegularRingEssFiniteTypeInt
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -33,7 +37,7 @@ theorem tensor_map_injective_of_field (A M K L : Type) [CommRing A] [CommRing M]
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp
-      | add a b ha hb => rw [map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     rw [e]
     exact LinearMap.congr_fun this z
   rwa [key, key] at h
@@ -64,7 +68,8 @@ theorem formalFibre_isReduced_of_field :
     ∑ i ∈ S.attach, i.1.1 ⊗ₜ[A] algebraMap T K ⟨i.1.2, hmem i.1 i.2⟩
   let Φ := Algebra.TensorProduct.map (AlgHom.id A (AdicCompletion (maximalIdeal A) A)) ι
   have hΦ : Φ y = ∑ i ∈ S, i.1 ⊗ₜ[A] i.2 := by
-    simp only [y, map_sum, Φ, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hι]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum, Φ, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hι]
     exact Finset.sum_attach S (fun i => i.1 ⊗ₜ[A] i.2)
   haveI : IsRegularRing (AdicCompletion (maximalIdeal A) A ⊗[A] K) :=
     formalFibre_isRegularRing_of_essFiniteType_int A K

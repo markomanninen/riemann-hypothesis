@@ -1,12 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeAreaFormula
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeTangentAverage
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFibreAverage
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PMahlerSection
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.ObjectsChowIntChowFormExists
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjRegularDens
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeAreaFormula
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeTangentAverage
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeFibreAverage
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.ObjectsChowIntChowFormExists
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjRegularDens
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -49,8 +53,8 @@ def fsSum {e : ℕ} (h : HermNorm n) (u : Fin n → ℂ) (S : Set (EuclideanSpac
 def coefRows {e : ℕ} (h : HermNorm n) (π : Fin (e + 1) → Fin n → ℂ) : Fin e × Fin n → ℂ :=
   fun ij => ((h.mat)⁻¹ *ᵥ π ij.1.succ) ij.2
 
-open Classical in
 
+open Classical in
 def logGap (h : HermNorm n) (u : Fin n → ℂ) (y : EuclideanSpace ℂ (Fin n)) : ℝ≥0∞ :=
   if y = 0 then 0
   else if ∑ j, u j * h.pointOf y j = 0 then ⊤

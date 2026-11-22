@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIdentityPullbackDegeneration
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PullPointIdentityDegeneration
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIdentityPullbackDegeneration
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PullPointIdentityDegeneration
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,21 +20,10 @@ namespace GlobalTheory.Mum
 section
 variable {R : Type} [CommRing R] [IsLocalRing R] {S : Scheme.{0}}
 
-def Near.pull (π : S ⟶ Sp R) (G : Over (Sp R)) [Smooth G.hom] [IsSeparated G.hom] [QuasiCompact G.hom] :
-    Near π ((Over.pullback π).obj G) where
-  U := G
-  smooth := inferInstance
-  separated := inferInstance
-  quasiCompact := inferInstance
-  u := 𝟙 _
-  isOpen := inferInstanceAs (IsOpenImmersion (𝟙 (pullback G.hom π)))
-  u_over := Category.id_comp _
-  all := fun g _ => ⟨g, rfl⟩
-
 end
 
-open GlobalTheory.TorsionFormCompare in
 
+open GlobalTheory.TorsionFormCompare in
 theorem isPullUnif_refl {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegData R I}
     {A : PolAV (Sp (FractionRing R))} {G : Over (Sp R)} [GrpObj G] [IsCommMonObj G] (U : Unif I D A G)
     (hD : IsPullDeg (RingHom.id R) D.toPre D.toPre) (hid : IsIdPull hD)

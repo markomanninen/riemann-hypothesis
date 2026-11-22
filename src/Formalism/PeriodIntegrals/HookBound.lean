@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementB
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+
+@[expose] public section
 
 noncomputable section
 

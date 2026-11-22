@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Detlow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hadam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hnf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Detlow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Hadam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ private theorem qR_nonneg_of_mem_pos {L : Type} [Field L] [NumberField L] {N : �
     (hk : k ∈ Pos L N) (z : VR L N) : 0 ≤ qR k z :=
   Finset.sum_nonneg fun w _ => (hk w).posSemidef.re_dotProduct_nonneg (z w)
 
-private theorem thKB_subset_pos {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] {N : ℕ}
+private theorem thKB_subset_pos {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {N : ℕ}
     {c C' : ℝ} (hc : 0 < c) (B : Matrix (Fin N) (Fin N) (𝓞 L)) : thKB c C' B ⊆ Pos L N := by
   intro k hk
   have hR : c⁻¹ • k ∈ Ry L N := by
@@ -130,7 +134,7 @@ private theorem exists_injective_linearMap_gram_of_det_ne_zero {L : Type} [Field
   have := congrFun (congrFun (hw w) i) j
   simpa [mat] using this
 
-private theorem isCompact_thKB_of_det_ne_zero {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] {N : ℕ}
+private theorem isCompact_thKB_of_det_ne_zero {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {N : ℕ}
     {c D : ℝ} (hc : 0 < c) (hD : 0 ≤ D) (B : Matrix (Fin N) (Fin N) (𝓞 L)) (hB : B.det ≠ 0) :
     IsCompact (thKB c D B) := by
   obtain ⟨Φ, hinj, hΦ⟩ := exists_injective_linearMap_gram_of_det_ne_zero B hB
@@ -201,7 +205,8 @@ private theorem spans_setOf_q_le_ten_mul_of_covering {L : Type} [Field L] [Numbe
     have he : ∀ w : InfinitePlace L, ∑ i, w.embedding (a i) * toR v w i = 0 := by
       intro w
       have := congrArg w.embedding hv
-      rw [hfv, map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hfv, map_sum, map_zero] at this
       rw [← this]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp [toR, embO, toL, mul_comm]
@@ -258,7 +263,7 @@ private theorem spans_setOf_q_le_ten_mul_of_covering {L : Type} [Field L] [Numbe
     have hpar : qR h (toR v) + qR h (t • z + (t • z - toR v)) =
         2 * (t * t * R) + 2 * qR h (t • z - toR v) := by
       rw [← thB_self, ← thB_self, ← thB_self, hRdef]
-      simp only [map_sub, map_add, map_smul, LinearMap.sub_apply, LinearMap.add_apply,
+      simp only [map_sub, map_add (f := _), map_smul, LinearMap.sub_apply, LinearMap.add_apply,
         LinearMap.smul_apply, smul_eq_mul]
       ring
     have := qR_nonneg_of_mem_pos hh (t • z + (t • z - toR v))
@@ -292,7 +297,7 @@ private theorem normSq_det_mul_re_det_le_pow_of_posDef {N : ℕ} {K : Matrix (Fi
   rw [inv_pow, mul_assoc, inv_mul_le_iff₀ (by positivity), mul_one] at h1
   exact h1
 
-private theorem prod_normSq_embedding_eq_abs_norm_of_isTotallyComplex {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] (x : L) :
+private theorem prod_normSq_embedding_eq_abs_norm_of_isTotallyComplex {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (x : L) :
     ∏ w : InfinitePlace L, Complex.normSq (w.embedding x) = |(Algebra.norm ℚ x : ℝ)| := by
   have := InfinitePlace.prod_eq_abs_norm x
   have h2 : ∀ w : InfinitePlace L, w.mult = 2 := fun w =>
@@ -302,7 +307,7 @@ private theorem prod_normSq_embedding_eq_abs_norm_of_isTotallyComplex {L : Type}
   refine Finset.prod_congr rfl fun w _ => ?_
   rw [Complex.normSq_eq_norm_sq, InfinitePlace.norm_embedding_eq]
 
-private theorem nrmDet_le_mul_div_pow_of_q_le {L : Type} [Field L] [NumberField L] [IsTotallyComplex L] {N : ℕ}
+private theorem nrmDet_le_mul_div_pow_of_q_le {L : Type} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] {N : ℕ}
     (h : HS L N) (hh : h ∈ Pos L N) {c D : ℝ} (hc : 0 < c) (hD : 0 < D)
     (hlam : ∀ v : Lat L N, v ≠ 0 → c ≤ q h v) (A : Matrix (Fin N) (Fin N) (𝓞 L))
     (hA : ∀ a, q h (fun i => A i a) ≤ D) :
@@ -319,7 +324,7 @@ private theorem nrmDet_le_mul_div_pow_of_q_le {L : Type} [Field L] [NumberField 
   have hpos : ∀ w, 0 < (mat h w).det.re := fun w => (Complex.pos_iff.mp (hh w).det_pos).1
   have hprod : (∏ w : InfinitePlace L, Complex.normSq (w.embedding (A.det : L))) * ∏ w, (mat h w).det.re ≤ (D ^ N) ^ r := by
     rw [← Finset.prod_mul_distrib, hr, ← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun w _ => mul_nonneg (Complex.normSq_nonneg _) (hpos w).le)
+    exact Finset.prod_le_prod₀ (fun w _ => mul_nonneg (Complex.normSq_nonneg _) (hpos w).le)
       (fun w _ => hw w)
   have hRy : c⁻¹ • h ∈ Ry L N := by
     intro y hy

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
-import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+public import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -25,7 +29,7 @@ theorem cmpD_add {x y : W.DD T} (hx : x ∈ W.N T) (hy : y ∈ W.N T) :
     Formalism.MainNotions.ArcLiftingSetup.cmpD W T (x + y) = Formalism.MainNotions.ArcLiftingSetup.cmpD W T x + Formalism.MainNotions.ArcLiftingSetup.cmpD W T y := by
   rw [Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hx, Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T hy,
     Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T ((W.N T).add_mem hx hy)]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   rfl
 
 theorem cmpD_sum {ι : Type} (s : Finset ι) (y : ι → W.DD T) (hy : ∀ k ∈ s, y k ∈ W.N T) :
@@ -120,9 +124,10 @@ theorem ker_NDl [IsDomain O] (c : ZMod n) (h3 : Formalism.MainNotions.DeltaInvar
   choose g hgΔ hg using fun k => frobenius_uniformizer_pow_dvd hR (ha k).1 (ha k).2 (hcc k)
   refine ⟨∑ k, g k • b k, Submodule.sum_mem _ fun k _ => (W.N T).smul_mem _ (hbN k),
     fun δ hδ => ?_, ?_⟩
-  · rw [map_sum]
-    exact Finset.sum_congr rfl fun k _ =>
-      (Formalism.MainNotions.UnusedSlot80.SatW.smul_mem_NΔ W T (hgΔ k) (hb.1 k).1).2 δ hδ
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      exact Finset.sum_congr rfl fun k _ =>
+        (Formalism.MainNotions.UnusedSlot80.SatW.smul_mem_NΔ W T (hgΔ k) (hb.1 k).1).2 δ hδ
   · rw [pow_one, hxa, Finset.smul_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [hg k, mul_smul]
 
@@ -147,7 +152,8 @@ theorem cmpD_mem_NDl (i : ZMod n) (hmod : Formalism.MainNotions.DeltaInvariantLa
   · rw [hy, Finset.smul_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [smul_comm, hb'l j]
   · intro δ hδ
-    rw [hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [map_smul, (hb'Δ j).2 δ hδ]
   · rw [hxs, cmpD_sum W T _ _ (fun j _ => (W.N T).smul_mem _ (hb'Δ j).1), hy,
       cmpD_sum W T _ _ (fun j _ => hyN j)]

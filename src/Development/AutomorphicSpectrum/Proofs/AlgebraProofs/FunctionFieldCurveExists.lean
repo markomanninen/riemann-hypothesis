@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.InhConj
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.InhConj
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,13 +134,13 @@ theorem ga_ext' {g h : GA E n} (h1 : ∀ w, GeneralLinearGroup.map (cV w) g = Ge
   ext i j w
   exact congrArg (fun x : GL (Fin n) ℂ => x i j) (h1 w)
 
-open Classical in
 
+open Classical in
 def sV (v : InfinitePlace E) : ℂ →ₙ+* Ad E where
   toFun x := sInf E (Pi.single v x)
   map_mul' x y := by rw [Pi.single_mul, map_mul]
   map_zero' := by rw [Pi.single_zero, map_zero]
-  map_add' x y := by rw [Pi.single_add, map_add]
+  map_add' x y := by rw [Pi.single_add, map_add (f := _)]
 
 open Classical in
 theorem cV_sV (v w : InfinitePlace E) (x : ℂ) : cV w (sV v x) = (Pi.single v x : InfinitePlace E → ℂ) w :=

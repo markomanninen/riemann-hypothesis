@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.NormExpSubLe
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.NormExpSubLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ variable {l : Type} [Fintype l] [DecidableEq l]
 
 def bl (i j : l → l ⊕ l) : Matrix (l ⊕ l) (l ⊕ l) ℝ →ₗ[ℝ] (Eu l →L[ℝ] Eu l) where
   toFun g := Matrix.toEuclideanCLM (𝕜 := ℝ) (n := l) (g.submatrix i j)
-  map_add' g h := by rw [← map_add]; rfl
+  map_add' g h := by rw [← map_add (f := _)]; rfl
   map_smul' c g := by rw [RingHom.id_apply, ← map_smul]; rfl
 
 theorem bl_apply (i j : l → l ⊕ l) (g : Matrix (l ⊕ l) (l ⊕ l) ℝ) (x : Eu l) (a : l) :
@@ -96,7 +100,8 @@ theorem fou_mq_fouInv (B : Matrix l l ℝ) (f : Sch l) :
   congr 1
   have h : ∀ j (u : Sch l), fouInv l (dRho (Pi.single (Sum.inl j) 1) u) = -dRho (Pi.single (Sum.inr j) 1) (fouInv l u) :=
     fourierInv_dRho_inl
-  simp only [← dRho_single_inl, map_smul, map_sum, h, map_neg, neg_neg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← dRho_single_inl, map_smul, map_sum, h, map_neg, neg_neg]
   ext x
   have hπ : (π : ℂ) ≠ 0 := by simp [Real.pi_ne_zero]
   simp only [mq_apply, SchwartzMap.smul_apply, SchwartzMap.sum_apply, dRho_single_inr, smul_eq_mul,
@@ -142,7 +147,7 @@ theorem quad_eq {X : Matrix (l ⊕ l) (l ⊕ l) ℝ} (hX : X ∈ LieAlgebra.Symp
 theorem differentiableAt_det {M : ℝ → Matrix l l ℝ} {t : ℝ} (h : ∀ i j, DifferentiableAt ℝ (fun t => M t i j) t) :
     DifferentiableAt ℝ (fun t => (M t).det) t := by
   simp only [Matrix.det_apply']
-  exact DifferentiableAt.fun_sum fun σ _ => (DifferentiableAt.fun_finset_prod fun i _ => h _ _).const_mul _
+  exact DifferentiableAt.fun_sum fun σ _ => (DifferentiableAt.fun_finsetProd fun i _ => h _ _).const_mul _
 
 end PositivityTheory.ThKR.LL
 
@@ -152,6 +157,9 @@ open LL
 
 theorem localLift_holds : LocalLift := by
   intro l _ _ X hX
+  letI : HasSummableGeomSeries (Eu l →L[ℝ] Eu l) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
   let g : ℝ → Matrix (l ⊕ l) (l ⊕ l) ℝ := fun t => NormedSpace.exp (t • X)
   have g0 : g 0 = 1 := by simp [g]
   have hd := fun i j t => hasDerivAt_lin_exp (bl i j) X t

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralElementRegular
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRelAlgClosureFinite
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralElementRegular
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtIsLocalRingIsFractionRingStalk
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRelAlgClosureFinite
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -85,7 +90,7 @@ theorem dedekind_finite_of_finite [CharZero Ω] (hf : FiniteDimensional ℚ (alg
   haveI : IsIntegralClosure A ℤ L := by
     refine ⟨fun a b hab => IsIntegralClosure.algebraMap_injective A ℤ Ω ?_, fun {v} => ?_⟩
     · rw [← hcoe, ← hcoe, hab]
-    · rw [← isIntegral_algebraMap_iff (A := L) (B := Ω) (R := ℤ) (algebraMap L Ω).injective]
+    · rw [← isIntegral_algebraMap_iff (A := L) (B := Ω) (R := ℤ) ]
       rw [IsIntegralClosure.isIntegral_iff (A := A) (R := ℤ) (B := Ω)]
       constructor
       · rintro ⟨a, ha⟩

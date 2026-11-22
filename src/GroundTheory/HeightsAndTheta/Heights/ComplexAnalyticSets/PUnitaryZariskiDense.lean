@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnitaryZariskiDense
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StUnitaryZariskiDense
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -14,7 +19,7 @@ theorem eval_aeval_subst {σ τ : Type*} (F : σ → MvPolynomial τ ℂ) (p : M
     (x : τ → ℂ) : eval x (aeval F p) = eval (fun i => eval x (F i)) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p i hp => rw [map_mul, map_mul, hp, aeval_X, map_mul, eval_X]
 
 theorem polyEval_aeval_subst {σ : Type*} (F : σ → Polynomial ℂ) (p : MvPolynomial σ ℂ) (z : ℂ) :
@@ -43,15 +48,13 @@ theorem conj_diagonal_mem {n : ℕ} {V : Matrix (Fin n) (Fin n) ℂ} (hV : V ∈
       ← diagonal_one]
     congr 1
     funext k
-    simp only [Pi.star_apply, RCLike.star_def, Complex.mul_conj,
-      Complex.normSq_eq_norm_sq, hd k]
-    norm_num
+    simpa [Complex.mul_conj', hd k]
   exact Submonoid.mul_mem _ (Submonoid.mul_mem _ hV hD) (Unitary.star_mem hV)
 
 end UnitaryZariskiDense
 
-open UnitaryZariskiDense in
 
+open UnitaryZariskiDense in
 theorem UnitaryZariskiDense.proof : UnitaryZariskiDense.Statement := by
   intro n p hp
   by_contra hall
@@ -72,7 +75,8 @@ theorem UnitaryZariskiDense.proof : UnitaryZariskiDense.Statement := by
       rw [eval_aeval_subst]
       refine congrArg (fun f => eval f p) (funext fun ij => ?_)
       rw [Matrix.mul_apply]
-      simp only [map_sum, map_mul, eval_C, eval_X, Matrix.mul_diagonal]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, eval_C, eval_X, Matrix.mul_diagonal]
       exact Finset.sum_congr rfl fun k _ => by ring
     have hr : aeval (fun ij : Fin n × Fin n => ∑ k, C (V ij.1 k * star V k ij.2) * X k) p = 0 :=
       funext_set (fun _ => {z : ℂ | ‖z‖ = 1}) (fun _ => unit_circle_infinite) fun d hd => by

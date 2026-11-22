@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteClassesSelfDualOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteClassesSelfDualOfSelfDual
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -109,7 +113,7 @@ private lemma related_of_same_reduction_lemma_5 (M : ℕ) {Λ₁ Λ₂ : _root_.
   · rw [hst₁, hst₂]
     positivity
   · rw [hst₁, hst₂]
-    exact Nat.Coprime.mul (by simp) (by simp)
+    exact Nat.Coprime.mul_left (by simp) (by simp)
   · have hcong : ∀ a i, ∃ c : E, IsIntegral ℤ c ∧
         (s₁ : E) * ((s₁ : E) * (Pi.single i (1 : E) : Fin n → E) a) - s₂ * (s₁ * h a i) = c * M := by
       intro a i
@@ -207,7 +211,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} in
 private lemma norm_embedding_entry_le_one_of_unitary {h : Matrix (Fin n) (Fin n) E}
     (hh : _root_.GlobalTheory.SW.ccT h * h = 1) (τ : E →+* ℂ) (k a : Fin n) : ‖τ (h k a)‖ ≤ 1 := by
   have key := congrArg τ (sum_conj_mul_eq_of_unitary hh a a)
-  simp only [map_sum, map_mul, _root_.GlobalTheory.SW.Base.map_cc, Matrix.one_apply_eq, map_one] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, _root_.GlobalTheory.SW.Base.map_cc, Matrix.one_apply_eq, map_one] at key
   have hsum : ∑ b, ‖τ (h b a)‖ ^ 2 = 1 := by
     have : ((∑ b, ‖τ (h b a)‖ ^ 2 : ℝ) : ℂ) = 1 := by
       push_cast
@@ -254,7 +259,8 @@ private lemma herm_one_mulVec_of_unitary {h : Matrix (Fin n) (Fin n) E}
   rw [_root_.GlobalTheory.SW.Base.herm_one, _root_.GlobalTheory.SW.Base.herm_one]
   calc ∑ a, (h *ᵥ x) a * _root_.ReciprocityTheory.ChartRestriction.G.FD.cc ((h *ᵥ y) a)
       = ∑ i, ∑ j, x i * _root_.ReciprocityTheory.ChartRestriction.G.FD.cc (y j) * ∑ a, _root_.ReciprocityTheory.ChartRestriction.G.FD.cc (h a j) * h a i := by
-        simp only [Matrix.mulVec, dotProduct, _root_.ReciprocityTheory.ChartRestriction.G.FD.cc, map_sum, map_mul, Finset.sum_mul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, _root_.ReciprocityTheory.ChartRestriction.G.FD.cc, map_sum, map_mul, Finset.sum_mul,
           Finset.mul_sum]
         have e : ∀ f : Fin n → Fin n → Fin n → E,
             ∑ a, ∑ i, ∑ j, f a i j = ∑ j, ∑ i, ∑ a, f a i j := fun f => by
@@ -334,7 +340,7 @@ private lemma exists_moves_mem_Vset_of_mem_DH {M : ℕ} {h : Matrix (Fin n) (Fin
   · obtain ⟨s₂, hs₂, hc₂, hg₂⟩ := exists_coprime_scale_integral_entries_of_mem_DH hh
     obtain ⟨s₃, hs₃, hc₃, hg₃⟩ :=
       exists_coprime_scale_integral_entries_of_mem_DH (_root_.GlobalTheory.SW.Base.ccT_mem_DH hh)
-    refine ⟨s₁ * s₂ * s₃, by positivity, (hc₁.mul hc₂).mul hc₃, fun v hv => ?_, fun v hv => ?_⟩
+    refine ⟨s₁ * s₂ * s₃, by positivity, Nat.Coprime.mul_left (Nat.Coprime.mul_left hc₁ hc₂) hc₃, fun v hv => ?_, fun v hv => ?_⟩
     · have h1 := smul_mulVec_mem_stdL_of_integral_scaled hg₂ (hstd₁ _ ((hmem v).1 hv))
       have h2 := _root_.GlobalTheory.SW.Base.nat_smul_mem _ s₃ h1
       rw [Matrix.mulVec_smul, hinv, smul_smul, smul_smul] at h2
@@ -350,9 +356,9 @@ private lemma exists_moves_mem_Vset_of_mem_DH {M : ℕ} {h : Matrix (Fin n) (Fin
       push_cast
       ring
 
+
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real in
-
 theorem _root_.GlobalTheory.SW.finite_cls_and_stab : ∀ (E : Type) [Field E] [NumberField E]
     [IsCMField E] (n M : ℕ), 0 < M → Finite (_root_.GlobalTheory.SW.Cls E n M) ∧
     _root_.GlobalTheory.SW.stdL E n ∈ _root_.GlobalTheory.SW.Vset E n M ∧

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MuGPreimageConj
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsClosedEmbeddingOfCongruenceSubgroupsConj
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointRationalEquivariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameOfHasSignature
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MuGPreimageConj
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsClosedEmbeddingOfCongruenceSubgroupsConj
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointRationalEquivariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFrameOfHasSignature
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 open scoped TensorProduct NNReal
@@ -145,8 +149,8 @@ theorem pi_smul {ι : Type} [Fintype ι] {α : ι → Type} [∀ i, MeasurableSp
     [∀ i, SigmaFinite (μ i)] (c : ι → ℝ≥0) :
     Measure.pi (fun i => c i • μ i) = (∏ i, c i) • Measure.pi μ := by
   refine Measure.pi_eq fun s _ => ?_
-  rw [Measure.coe_nnreal_smul_apply, Measure.pi_pi, ENNReal.coe_finset_prod, ← Finset.prod_mul_distrib]
-  simp only [Measure.coe_nnreal_smul_apply]
+  simp only [Measure.coe_nnreal_smul_apply, Measure.pi_pi, Measure.nnreal_smul_coe_apply]
+  simp [Finset.prod_mul_distrib]
 
 theorem map_pi_smul {ι ι' : Type} [Fintype ι] [Fintype ι'] {α : ι → Type} {α' : ι' → Type}
     [∀ i, MeasurableSpace (α i)] [∀ i, MeasurableSpace (α' i)] (μ : ∀ i, Measure (α i))
@@ -358,7 +362,7 @@ theorem adele_hom_ext {F E F' E' : Type} [Field F] [NumberField F] [Field E] [Nu
     rw [← e, ← smul_mul_assoc, TensorProduct.smul_tmul', nsmul_eq_mul,
       mul_inv_cancel₀ (Nat.cast_ne_zero.2 hN.ne'), ← Algebra.TensorProduct.one_def, one_mul]
   refine ⟨f r - g r, sub_mem (hf r hr) (hg r hr), ?_⟩
-  rw [e2, map_nsmul, map_nsmul, map_add, map_add, h, ← smul_sub, add_sub_add_left_eq_sub]
+  rw [e2, map_nsmul, map_nsmul, map_add (f := _), map_add (f := _), h, ← smul_sub, add_sub_add_left_eq_sub]
 
 end Adele
 
@@ -673,8 +677,8 @@ theorem gaugeVol_transport : ∀ (I I' : AutInst) (e : I'.E ≃+* I.E) (A : Matr
         ((∏ v, (c v).toNNReal : ℝ≥0) : ENNReal) ≠ 0 := by
     intro I c hc
     have e1 : ENNReal.ofReal (∏ v, c v) = ((∏ v, (c v).toNNReal : ℝ≥0) : ENNReal) := by
-      rw [ENNReal.ofReal_prod_of_nonneg fun v _ => (pos_of_isGauge (hc v)).le, ENNReal.coe_finset_prod]
-      rfl
+      rw [ENNReal.ofReal_prod_of_nonneg fun v _ => (pos_of_isGauge (hc v)).le]
+      simp [ENNReal.ofReal]
     exact ⟨e1, e1 ▸ (ENNReal.ofReal_pos.2 (Finset.prod_pos fun v _ => pos_of_isGauge (hc v))).ne'⟩
   obtain ⟨e1, n1⟩ := hC I c hc
   obtain ⟨e2, n2⟩ := hC I' c' hc'

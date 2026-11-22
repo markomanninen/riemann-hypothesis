@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldMapCompConstFn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorDominantPullbackWithClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldMapCompConstFn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorDominantPullbackWithClass
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -85,11 +89,6 @@ def IsMultIdeal (p : X ⟶ Sp k) (n : ℕ) (η : RatForms p n) (m : ℕ) (G : Ca
   ∀ (U : X.affineOpens) (f : Γ(X, U.1)), f ∈ J.ideal U ↔
     ∀ (x : X) (hx : x ∈ U.1) (u : X.functionFieldˣ),
       (u : X.functionField) = fnOf U.1 (gen_mem hx) f → InMultAt p n η m G x u
-
-theorem IsMultIdeal.unique {p : X ⟶ Sp k} {n : ℕ} {η : RatForms p n} {m : ℕ} {G : CartierDiv X}
-    {J J' : X.IdealSheafData} (h : IsMultIdeal p n η m G J) (h' : IsMultIdeal p n η m G J') :
-    J = J' :=
-  Scheme.IdealSheafData.ext (funext fun U => Ideal.ext fun f => (h U f).trans (h' U f).symm)
 
 structure IsSncChart [IsLocallyNoetherian Y] (q : Y ⟶ Sp k) (n : ℕ) (B : Closeds Y) (y : Y)
     (U : Y.Opens) (hy : y ∈ U) (z : Fin n → Γ(Y, U)) (J : Finset (Fin n)) (w : Fin n → Y)

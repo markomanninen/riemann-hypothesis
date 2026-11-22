@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory Polynomial GroundTheory.Automorphic GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Parabolic
@@ -102,7 +106,7 @@ private theorem ballInd_mem (r : ℕ) (a : F) : ballInd r a ∈ GroundTheory.Loc
       rfl
     · rw [Set.indicator_of_notMem (show x + h ∉ {y : F | y - a ∈ GroundTheory.LocalField.valBall F (r : ℤ)} from fun h' => hx (key.1 h')),
         Set.indicator_of_notMem (show x ∉ {y : F | y - a ∈ GroundTheory.LocalField.valBall F (r : ℤ)} from hx)]
-  · apply HasCompactSupport.intro ((GroundTheory.LocalField.isCompact_valBall (r : ℤ)).image (continuous_add_right a))
+  · apply HasCompactSupport.intro ((GroundTheory.LocalField.isCompact_valBall (r : ℤ)).image (show Continuous (fun x : F => x + a) from continuous_id.add continuous_const))
     intro x hx
     unfold ballInd
     apply Set.indicator_of_notMem

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementM
+module
+
+public import Formalism.HermitianCurvature.StatementM
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt.M Formalism.FourierDecayAlt Finset
 
@@ -767,15 +771,6 @@ end Formalism.FourierDecayAlt.P.Mx4
 namespace Formalism.FourierDecayAlt.P
 
 open Mx4
-
-theorem shift_scalar_relation : Formalism.FourierDecayAlt.M.SSScalar := by
-  intro P l w
-  show SS P l * sc P w = sc P w * SS P l
-  ext π' π
-  simp only [sc, Matrix.scalar_apply, Matrix.mul_diagonal, Matrix.diagonal_mul, SS, Matrix.of_apply]
-  split_ifs
-  · exact (Algebra.commutes _ _)
-  · simp
 
 theorem shift_shift_relation : Formalism.FourierDecayAlt.M.SSShift := by
   intro P l f g h

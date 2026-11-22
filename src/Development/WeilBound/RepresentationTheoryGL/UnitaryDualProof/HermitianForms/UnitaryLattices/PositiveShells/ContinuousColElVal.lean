@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.DerKer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.DerKer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem blkAt_val_left {n N : ℕ} (h : n ≤ N) (g : GL (Fin n) k) (i j : Fin N
       one_apply_ne (fun e => by rw [e] at hi; omega)]
     rfl
   · rw [cast_eq_natAdd h j (by omega), finSumFinEquiv_symm_apply_natAdd, fromBlocks_apply₂₂]
-    simp only [one_apply, Fin.ext_iff]
+    simp only [Matrix.one_apply, Fin.ext_iff]
     congr 1
     apply propext; omega
 
@@ -73,7 +77,7 @@ theorem colEl_val {m N : ℕ} (h : m + 2 ≤ N) (x : Fin (m + 1) → k) (i j : F
   · by_cases hj : (j : ℕ) < m + 2
     · rw [blkAt_val_lt h _ i j hi hj, unip_val]
       congr 1
-      · simp [one_apply, Fin.ext_iff]
+      · simp [Matrix.one_apply, Fin.ext_iff]
       · by_cases c : (j : ℕ) = m + 1 ∧ (i : ℕ) ≤ m
         · rw [dif_pos ⟨c.1, by simp only [Fin.val_mk]; omega⟩, dif_pos c]
         · rw [dif_neg (by simp only [Fin.val_mk]; omega), dif_neg c]
@@ -118,7 +122,7 @@ theorem mem_colFix_iff {N n : ℕ} (g : GL (Fin N) k) :
       fun r => (g : Matrix (Fin N) (Fin N) k) r i := by
     intro i; funext r; simp [mulVec, dotProduct, Pi.single_apply]
   have e1 : ∀ i : Fin N, (Pi.single i (1 : k) : Fin N → k) = fun r => (1 : Matrix (Fin N) (Fin N) k) r i := by
-    intro i; funext r; simp [Pi.single_apply, one_apply]
+    intro i; funext r; simp [Pi.single_apply, Matrix.one_apply]
   constructor
   · intro hg r i hi
     have hg' : ∀ i : Fin N, (i : ℕ) < n →
@@ -252,16 +256,16 @@ theorem B_scalAt {m N : ℕ} (h : m + 2 ≤ N) {V : Type} [AddCommGroup V] [Modu
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem row_one_mul {N : ℕ} (A M : Matrix (Fin N) (Fin N) k) (i j : Fin N)
     (hA : ∀ l, A i l = (1 : Matrix (Fin N) (Fin N) k) i l) : (A * M) i j = M i j := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp_rw [hA]
-  rw [← mul_apply, Matrix.one_mul]
+  rw [← Matrix.mul_apply, Matrix.one_mul]
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem col_mul_one {N : ℕ} (A M : Matrix (Fin N) (Fin N) k) (i j : Fin N)
     (hA : ∀ l, A l j = (1 : Matrix (Fin N) (Fin N) k) l j) : (M * A) i j = M i j := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp_rw [hA]
-  rw [← mul_apply, Matrix.mul_one]
+  rw [← Matrix.mul_apply, Matrix.mul_one]
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem colFix_mulVec {N n : ℕ} {g : GL (Fin N) k} (hg : g ∈ colFix k N n) (y : Fin N → k)
@@ -283,9 +287,9 @@ theorem mulVec_single_apply {N : ℕ} (M : Matrix (Fin N) (Fin N) k) (i r : Fin 
 theorem colEl_mul_apply {m N : ℕ} (h : m + 2 ≤ N) (x : Fin (m + 1) → k) (M : Matrix (Fin N) (Fin N) k) (i j : Fin N) :
     ((colEl k m N h x : Matrix (Fin N) (Fin N) k) * M) i j =
       M i j + if hi : (i : ℕ) ≤ m then x ⟨i, by omega⟩ * M ⟨m + 1, by omega⟩ j else 0 := by
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp_rw [colEl_val, add_mul, Finset.sum_add_distrib]
-  have e1 : ∑ l, (1 : Matrix (Fin N) (Fin N) k) i l * M l j = M i j := by rw [← mul_apply, Matrix.one_mul]
+  have e1 : ∑ l, (1 : Matrix (Fin N) (Fin N) k) i l * M l j = M i j := by rw [← Matrix.mul_apply, Matrix.one_mul]
   rw [e1]
   congr 1
   by_cases hi : (i : ℕ) ≤ m

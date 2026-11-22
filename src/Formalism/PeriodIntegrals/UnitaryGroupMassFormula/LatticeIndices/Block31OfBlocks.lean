@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LeviEmbeddingBlock32
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LeviEmbeddingBlock32
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -90,12 +94,6 @@ noncomputable def upUniGEquiv (n : ℕ) : upUniG A n ≃ {u : Matrix (Fin n) (Fi
   invFun u := ⟨Matrix.GeneralLinearGroup.mk'' u.1 (uni_unit u.2), u.2⟩
   left_inv g := Subtype.ext (Units.ext rfl)
   right_inv u := rfl
-
-noncomputable def glEquiv (n : ℕ) : GL (Fin n) A ≃ {h : Matrix (Fin n) (Fin n) A // IsUnit h.det} where
-  toFun g := ⟨g.1, (Matrix.isUnit_iff_isUnit_det _).1 g.isUnit⟩
-  invFun h := Matrix.GeneralLinearGroup.mk'' h.1 h.2
-  left_inv g := Units.ext rfl
-  right_inv h := rfl
 
 variable {r k : ℕ}
 

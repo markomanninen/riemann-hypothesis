@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgClose
+module
+
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgClose
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.L1
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StInvarianceOfDomain
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBrouwerFixedPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StInvarianceOfDomain
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBrouwerFixedPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -54,7 +59,7 @@ theorem smoothSubalgebra_separatesPoints : (smoothSubalgebra n).SeparatesPoints 
   obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
   refine ⟨fun z => z i, ⟨⟨fun z => z i, continuous_apply i⟩, ?_, rfl⟩, hi⟩
   show ContDiff ℝ 1 fun z : Fin n → ℝ => z i
-  exact contDiff_apply ℝ ℝ i
+  exact contDiff_apply ℝ (fun _ => ℝ) i
 
 theorem exists_differentiable_near {S : Set (Fin n → ℝ)} (hS : IsCompact S)
     (G : (Fin n → ℝ) → Fin n → ℝ) (hG : Continuous G) {η : ℝ} (hη : 0 < η) :
@@ -111,7 +116,7 @@ theorem radialPush_mem_sphere {c y : Fin n → ℝ} {ρ : ℝ} (hy : dist y c < 
 
 theorem continuousOn_radialPush (c : Fin n → ℝ) (ρ : ℝ) : ContinuousOn (radialPush c ρ) {y | y ≠ c} := by
   have hn : ContinuousOn (fun y : Fin n → ℝ => ρ / ‖y - c‖) {y | y ≠ c} := by
-    refine ContinuousOn.div continuousOn_const (by fun_prop) ?_
+    refine ContinuousOn.div₀ continuousOn_const (by fun_prop) ?_
     intro y hy
     exact norm_ne_zero_iff.2 (sub_ne_zero.2 hy)
   have hm : ContinuousOn (fun y : Fin n → ℝ => max 1 (ρ / ‖y - c‖)) {y | y ≠ c} :=

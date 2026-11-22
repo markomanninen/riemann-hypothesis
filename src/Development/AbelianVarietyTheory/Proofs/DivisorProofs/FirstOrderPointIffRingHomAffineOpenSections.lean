@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDefiniteDatumGoodObj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDefiniteDatumGoodObj
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -37,7 +42,7 @@ theorem range_subset_of_fst {X : Scheme.{0}} (k : Type) [Field k] (M : Type) [Ad
     (h : spMap (TrivSqZeroExt.fstHom k k M).toRingHom ≫ u = x) : Set.range u.base ⊆ Set.range x.base := by
   rintro _ ⟨y, rfl⟩
   haveI := subsingleton_primeSpectrum_trivSqZeroExt k M
-  let z : PrimeSpectrum k := ⟨⊥, Ideal.bot_prime⟩
+  let z : PrimeSpectrum k := ⟨⊥, Ideal.isPrime_bot⟩
   refine ⟨z, ?_⟩
   have hy : (spMap (TrivSqZeroExt.fstHom k k M).toRingHom).base z = y := Subsingleton.elim (α := PrimeSpectrum (TrivSqZeroExt k M)) _ _
   rw [← h, ← hy]

@@ -1,4 +1,8 @@
-import Formalism.LogVandermondeBounds.VandPlace
+module
+
+public import Formalism.LogVandermondeBounds.VandPlace
+
+@[expose] public section
 
 namespace Formalism.LogVandermondeBounds.StandardLattice
 
@@ -85,7 +89,7 @@ private lemma vandN_mul_prod_pow_le_vandN_rowPar (k M : ℕ) (v b : ℕ → ℝ)
     have hA : b m ^ (k - 1) ≤ ∏ i ∈ range (k - 1), (rowPar k v b i - rowPar k v b (k - 1 + m)) := by
       calc b m ^ (k - 1) = ∏ _i ∈ range (k - 1), b m := by simp
         _ ≤ _ := by
-          apply prod_le_prod (fun i _ => hbm.le)
+          apply prod_le_prod₀ (fun i _ => hbm.le)
           intro i hi
           rw [mem_range] at hi
           rw [hr i hi, hr2 m]
@@ -93,7 +97,7 @@ private lemma vandN_mul_prod_pow_le_vandN_rowPar (k M : ℕ) (v b : ℕ → ℝ)
     have hB : (1 : ℝ) ≤ ∏ i ∈ range m, (rowPar k v b (k - 1 + i) - rowPar k v b (k - 1 + m)) := by
       calc (1 : ℝ) = ∏ _i ∈ range m, (1 : ℝ) := by simp
         _ ≤ _ := by
-          apply prod_le_prod (fun i _ => zero_le_one)
+          apply prod_le_prod₀ (fun i _ => zero_le_one)
           intro i hi
           rw [mem_range] at hi
           rw [hr2 i, hr2 m]
@@ -128,7 +132,7 @@ private lemma vandN_le_pow_mul_pow_mul_vandN_of_interlace (p : ℕ) (u v : ℕ �
   beta_reduce
   have hP0 : ∏ j ∈ Ico 1 (p + 1 + 1), (u 0 - u j) ≤ D ^ (p + 1) := by
     calc _ ≤ ∏ _j ∈ Ico 1 (p + 1 + 1), D := by
-          apply prod_le_prod
+          apply prod_le_prod₀
           · intro j hj
             rw [mem_Ico] at hj
             linarith [hu 0 j (by omega) (by omega)]
@@ -143,7 +147,7 @@ private lemma vandN_le_pow_mul_pow_mul_vandN_of_interlace (p : ℕ) (u v : ℕ �
     linarith [hu (i + 1) (p + 1) (by omega) (by omega)]
   have hC : ∏ i ∈ range p, (u (i + 1) - u (p + 1)) ≤ D ^ p := by
     calc _ ≤ ∏ _i ∈ range p, D := by
-          apply prod_le_prod
+          apply prod_le_prod₀
           · intro i hi
             rw [mem_range] at hi
             linarith [hu (i + 1) (p + 1) (by omega) (by omega)]
@@ -169,7 +173,7 @@ private lemma vandN_le_pow_mul_pow_mul_vandN_of_interlace (p : ℕ) (u v : ℕ �
     linarith [(hint i (by omega)).2, (hint (j + 1) (by omega)).1, hu (i + 1) (j + 1) (by omega) (by omega)]
   have hVW : ∏ i ∈ range p, ∏ j ∈ Ico (i + 1) p, (u (i + 1) - u (j + 1))
       ≤ ∏ i ∈ range p, ∏ j ∈ Ico (i + 1) p, (v i - v (j + 1)) := by
-    apply prod_le_prod
+    apply prod_le_prod₀
     · intro i hi
       apply prod_nonneg
       intro j hj
@@ -177,7 +181,7 @@ private lemma vandN_le_pow_mul_pow_mul_vandN_of_interlace (p : ℕ) (u v : ℕ �
       rw [mem_Ico] at hj
       linarith [hu (i + 1) (j + 1) (by omega) (by omega)]
     · intro i hi
-      apply prod_le_prod
+      apply prod_le_prod₀
       · intro j hj
         rw [mem_range] at hi
         rw [mem_Ico] at hj
@@ -189,7 +193,7 @@ private lemma vandN_le_pow_mul_pow_mul_vandN_of_interlace (p : ℕ) (u v : ℕ �
   have hAdj : (1 : ℝ) ≤ ∏ i ∈ range p, (v i - v (i + 1)) := by
     calc (1 : ℝ) = ∏ _i ∈ range p, (1 : ℝ) := by simp
       _ ≤ _ := by
-        apply prod_le_prod (fun i _ => zero_le_one)
+        apply prod_le_prod₀ (fun i _ => zero_le_one)
         intro i hi
         rw [mem_range] at hi
         exact hst i (by omega)

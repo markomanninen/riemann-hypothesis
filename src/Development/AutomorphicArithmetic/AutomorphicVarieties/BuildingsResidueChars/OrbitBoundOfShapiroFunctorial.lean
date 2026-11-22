@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+
+@[expose] public section
 
 theorem UpperTheory.orbit_bound_of_shapiro_functorial :
     UpperTheory.V.Af.CohB.ShapiroFun → UpperTheory.V.Af.CohB.OrbBound := by
@@ -10,7 +14,7 @@ theorem UpperTheory.orbit_bound_of_shapiro_functorial :
   refine (hc _).trans ?_
   have h1 : Cardinal.mk ↥(UpperTheory.V.Af.CohB.fib p hp y) ≤ D := hD
   have hfin : Finite ↥(UpperTheory.V.Af.CohB.fib p hp y) :=
-    Cardinal.lt_aleph0_iff_finite.mp (h1.trans_lt (Cardinal.nat_lt_aleph0 D))
+    Cardinal.lt_aleph0_iff_finite.mp (h1.trans_lt Cardinal.natCast_lt_aleph0)
   have hr : Module.rank ℂ ↑(Rep.of (UpperTheory.V.Af.CohB.fibRep p hp y ξ)) =
       Cardinal.mk ↥(UpperTheory.V.Af.CohB.fib p hp y) * d := by
     change Module.rank ℂ (↥(UpperTheory.V.Af.CohB.fib p hp y) → Fin d → ℂ) = _

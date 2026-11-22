@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.MeasurableSetUH
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerGlobalFactors.MeasurableSetUH
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem fE_comp (f : R →ₐ[F] R') (g : R' →ₐ[F] R'') (x : R ⊗[F] E) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [fE]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fE_inclR (f : R →ₐ[F] R') (e : E) : fE f (inclR R e) = inclR R' e := by
   simp [fE, inclR]
@@ -34,7 +38,8 @@ theorem trace_fE {d : ℕ} (bs : Module.Basis (Fin d) F E) (f : R →ₐ[F] R') 
   have h3 : Algebra.TensorProduct.map (AlgHom.id F R) (AlgHom.id F E) x = x := by
     rw [Algebra.TensorProduct.map_id]; rfl
   rw [h3] at h1
-  rw [fE, h2, h1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fE, h2, h1, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, AlgHom.commutes]
   rfl
@@ -47,13 +52,15 @@ theorem trPair_fE {d : ℕ} (bs : Module.Basis (Fin d) F E) (f : R →ₐ[F] R')
     f (trPair R A B) = trPair R' (A.map (fE f)) (B.map (fE f)) := by
   simp only [trPair, map_mul, AlgHom.commutes]
   rw [trace_fE bs]
-  simp [map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, Matrix.map_apply]
 
 theorem gramR_fE (σ : E →ₐ[F] E) (f : R →ₐ[F] R') {M m : ℕ} (J : Matrix (Fin M) (Fin M) E)
     (Y : Fin m → Fin M → R ⊗[F] E) :
     (gramR R σ J Y).map (fE f) = gramR R' σ J (fun a i => fE f (Y a i)) := by
   ext a c
-  simp only [Matrix.map_apply, gramR, hR, hform, JR, Matrix.map_apply, map_sum, map_mul, sigR_fE, fE_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, gramR, hR, hform, JR, Matrix.map_apply, map_sum, map_mul, sigR_fE, fE_inclR]
 
 theorem trPair_gram_fE {d : ℕ} (bs : Module.Basis (Fin d) F E) (σ : E →ₐ[F] E) (f : R →ₐ[F] R') {M m : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (B : Matrix (Fin m) (Fin m) (R ⊗[F] E)) (Y : Fin m → Fin M → R ⊗[F] E) :

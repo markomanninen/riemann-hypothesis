@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PrimitiveRootPowPrime
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CrystallineToDeRhamInjective
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfKapUnit
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvExp
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PrimitiveRootPowPrime
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CrystallineToDeRhamInjective
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfKapUnit
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvExp
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfMembership
+
+@[expose] public section
 
 noncomputable section
 
@@ -226,7 +230,8 @@ theorem level_expansion_exponent {T : LocLat G Qp LL O} {C : Coord W (baseIdOf h
   rw [Pf_LvExp_coeff_smul _ _ m₀ hGlow k' N hN', Pf_LvExp_coeff_expN]
   apply (Pf_LvExp_Φ W s (Dc W T c)).injective
   funext ζ
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   simp only [Pf_LvExp_Φ_smul]
   apply Subtype.ext
   rw [Pf_LvExp_Φ_coefN, hexp ζ k', cv_eq_sum _ _ m₀ hg k' N hN', Submodule.coe_sum]

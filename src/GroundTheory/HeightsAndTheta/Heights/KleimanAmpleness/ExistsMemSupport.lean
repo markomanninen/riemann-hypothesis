@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechH0SectionsHypothesesLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechH0SectionsHypothesesLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -63,7 +68,8 @@ theorem cocycle_coe_eq (F : SubSystem S x E) {s : Cech.Cochain (fun I => F.sub I
   have hval : ∀ L L' : Cech.Idx (support x) 0, L = L' → (s L : E) = (s L' : E) := by
     rintro L L' rfl; rfl
   have h0 := congrArg (F.sub J.1).subtype (congrFun hs J)
-  rw [Cech.d_apply, map_sum, Pi.zero_apply, map_zero] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Cech.d_apply, map_sum, Pi.zero_apply, map_zero] at h0
   have huniv : (Finset.univ : Finset J.1.1) = {⟨a, ha'⟩, ⟨b, hb'⟩} := by
     ext ⟨z, hz⟩
     simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, Subtype.mk.injEq, true_iff]
@@ -125,7 +131,8 @@ theorem proof : CechZerothCohomologySections.Statement.{u, v, w} := by
       (LinearMap.ker (Cech.d (fun I => F.sub I) F.res 0)).subtype = ⊥ := by
     rw [show Cech.bdry (fun I => F.sub I) F.res 0 = ⊥ from rfl, Submodule.comap_bot,
       Submodule.ker_subtype]
-  exact ⟨(Submodule.quotEquivOfEqBot _ hp).trans
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact ⟨(Submodule.quotEquivOfEqBot _ hp).trans
     (LinearEquiv.ofBijective (toKer F) (toKer_bijective F hx)).symm⟩
 
 end CechZerothCohomologySections

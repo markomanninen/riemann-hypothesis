@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.VectorComplexifiedDerivativeCommutator
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.LieOperatorConjHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothDefs
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.VectorComplexifiedDerivativeCommutator
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.LieOperatorConjHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -165,7 +169,7 @@ theorem orbit_dS (hσ : IsURepOn (UJset ε) σ) {X : Matrix (Fin n) (Fin n) ℂ}
 theorem orbit_ecV (hσ : IsURepOn (UJset ε) σ) (Z : Matrix (Fin n) (Fin n) ℂ) {v : H}
     (hv : IsSmoothVecU ε σ v) {g : Matrix (Fin n) (Fin n) ℂ} (hg : inUJ ε g) :
     σ g (dS σ (S7.cpart1 ε Z) v + Complex.I • dS σ (S7.cpart2 ε Z) v) = S7.EcV ε Z (fun h => σ h v) g := by
-  rw [map_add, map_smul, orbit_dS hσ (smc_cpart Z).1 hv hg, orbit_dS hσ (smc_cpart Z).2.1 hv hg]
+  rw [map_add (f := _), map_smul, orbit_dS hσ (smc_cpart Z).1 hv hg, orbit_dS hσ (smc_cpart Z).2.1 hv hg]
   rfl
 
 end Orbit

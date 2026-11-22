@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.FinIdemSmulOfReal
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutLatA
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.FinIdemSmulOfReal
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutLatA
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GaugeRatio
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogPoinc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GaugeRatio
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogPoinc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ theorem pair_prod (c : k) (s s' : O →+* k)
   have h1 := h (a + 1)
   have h2 := h (a * a)
   have h3 := h (a * a + 1)
-  simp only [map_add, map_one, map_mul, star_add, star_one, star_mul] at h1 h2 h3
+  simp only [map_add (f := _), map_one, map_mul, star_add, star_one, star_mul] at h1 h2 h3
   linear_combination (-1 : k) * (h3 - h2) + (s' a + s (star a) + s' (star a) - s a) * (h1 - h0)
 
 variable {T : Type} (χ : T → O →+* k) (cc : T → T) (hcc : ∀ σ a, χ (cc σ) a = χ σ (star a))
@@ -50,7 +54,7 @@ theorem either {c : k} (hc : c ≠ 0) (σ τ₁ τ₂ : T)
     have h' : (χ σ a₂ - χ τ₂ a₂) * (c * (χ σ a₂ - χ τ₁ a₂)) = 0 := by linear_combination P a₂
     exact hu₂.mul_right_eq_zero.1 h'
   have e3 := P (a₁ + a₂)
-  simp only [map_add] at e3
+  simp only [map_add (f := _)] at e3
   have e4 : ((χ σ a₁ - χ τ₁ a₁) * (χ σ a₂ - χ τ₂ a₂)) * c = 0 := by
     linear_combination e3 - ((χ σ a₁ - χ τ₁ a₁) + (χ σ a₂ - χ τ₁ a₂)) * e1 - (χ σ a₂ - χ τ₂ a₂) * e2
   exact hc ((hu₁.mul hu₂).mul_right_eq_zero.1 e4)
@@ -67,7 +71,6 @@ theorem cc_cc {c : k} (hc : c ≠ 0) (σ : T) : cc (cc σ) = σ := by
     _ = 0 := mul_zero c
 
 include hcc in
-
 theorem pair_index {c : k} (hc : c ≠ 0) (σ σ' : T)
     (h : ∀ a, c * (χ σ a * χ σ (star a) + χ σ' a * χ σ' (star a) - 2 * χ σ a * χ σ' a) = 0) : σ' = cc σ := by
   have P1 : ∀ a, c * ((χ σ a - χ (cc σ) a) * (χ σ a - χ (cc σ') a)) = 0 := by
@@ -162,10 +165,10 @@ theorem gaugeRatio : GaugeRatioSt := by
     have h1 := hfe a
     rw [hE, hE, hE] at h1
     rw [hrq] at h1
-    have s1 : constantCoeff (scaleBy χ a q + scaleBy χ a q) = 0 := by rw [map_add, hA, add_zero]
-    have s2 : constantCoeff (scaleBy χ a q + scaleBy χ a q + q) = 0 := by rw [map_add, s1, hq0, add_zero]
+    have s1 : constantCoeff (scaleBy χ a q + scaleBy χ a q) = 0 := by rw [map_add (f := _), hA, add_zero]
+    have s2 : constantCoeff (scaleBy χ a q + scaleBy χ a q + q) = 0 := by rw [map_add (f := _), s1, hq0, add_zero]
     have s3 : constantCoeff (scaleBy χ a q + scaleBy χ a q + q + scaleBy χ (a * star a) q) = 0 := by
-      rw [map_add, s2, hA, add_zero]
+      rw [map_add (f := _), s2, hA, add_zero]
     apply WickVanishing.exp_inj (hA _) s3
     rw [h1, WickVanishing.exp_add s2 (hA _), WickVanishing.exp_add s1 hq0, WickVanishing.exp_add (hA _) (hA _)]
     ring
@@ -175,7 +178,7 @@ theorem gaugeRatio : GaugeRatioSt := by
           (m.prod fun l e => χ l.1 (a * star a) ^ e)) * coeff m q := by
     intro a m
     have h := congrArg (fun f => coeff m f) (key a)
-    rw [map_add, map_add, map_add] at h
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)] at h
     simp only [coeff_scale] at h
     rw [h]
     ring
@@ -184,7 +187,7 @@ theorem gaugeRatio : GaugeRatioSt := by
     by_contra hdeg
     have h := hcoef 1 m
     have t2 : ∀ l : GLet T rk, χ l.1 (1 + 1) = 2 := fun l => by
-      rw [map_add, map_one, one_add_one_eq_two]
+      rw [map_add (f := _), map_one, one_add_one_eq_two]
     have t1 : ∀ l : GLet T rk, χ l.1 1 = 1 := fun l => map_one _
     simp only [star_one, mul_one, t1, one_pow] at h
     simp only [t2] at h
@@ -196,7 +199,7 @@ theorem gaugeRatio : GaugeRatioSt := by
     refine pair_index χ cc hcc hunit hne l.1 l'.1 (fun a => ?_)
     have h := hcoef a (Finsupp.single l 1 + Finsupp.single l' 1)
     rw [prod_pair, prod_pair, prod_pair] at h
-    simp only [map_add, map_one, map_mul] at h
+    simp only [map_add (f := _), map_one, map_mul] at h
     linear_combination h
 
 end ReciprocityTheory.ChartRestriction.G.TB.GRPf

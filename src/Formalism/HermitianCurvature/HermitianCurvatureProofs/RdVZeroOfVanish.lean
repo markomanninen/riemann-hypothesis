@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbWords
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -18,8 +22,8 @@ variable {k p ρ n : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSp
 
 def sE (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) (x : PBQ.XP k p ρ) : B.Mat k n := D.castM e (PBQ.sP Bj x)
 
-open Classical in
 
+open Classical in
 def gI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) (Ψ : B.Mat k n → (Wq →L[ℂ] Wp)) (x : PBQ.XP k p ρ)
     (g : B.Mat k n) : Wq →L[ℂ] Wp :=
   if PBQ.GoodP Bj x then (Bj.π (Matrix.of x.1.1)).comp (Ψ (sE Bj e x * g)) else 0
@@ -163,7 +167,9 @@ theorem img_cpt (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {K : Set (PBQ
       ∀ x ∈ K, PBQ.GoodP Bj x → ∀ g ∈ Kc, sE Bj e x * g ∈ S := by
   refine ⟨(fun q : PBQ.XP k p ρ × B.Mat k n => sE Bj e q.1 * q.2) '' ((K ∩ {x | PBQ.GoodP Bj x}) ×ˢ Kc), ?_, ?_, ?_⟩
   · refine ((hK.inter_right (goodP_closed Bj)).prod hKc).image_of_continuousOn ?_
-    exact ((sE_contOn Bj e).comp continuous_fst.continuousOn (fun q hq => hq.1.2)).mul continuous_snd.continuousOn
+    refine ((sE_contOn Bj e).comp continuous_fst.continuousOn ?_).mul continuous_snd.continuousOn
+    intro q hq
+    exact hq.1.2
   · rintro _ ⟨q, hq, rfl⟩
     exact Formalism.FourierDecayAlt.P.BetaSesquilinearity.gv_mul (sE_GV Bj e q.1) (hKcG hq.2)
   · intro x hx hg g hgK
@@ -387,11 +393,13 @@ theorem foldT_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat 
     (hΨ : CkOn ⊤ (GV k n) Ψ) {U : Set (B.Mat k n)} (hU : IsOpen U) (hv : VanishL Bj e Ψ U) :
     ∀ ts : List (ℂ × Fin (2 * n + k + 1) × Fin (2 * n + k + 1)),
       CkOn ⊤ (GV k n) (foldT ts Ψ) ∧ VanishL Bj e (foldT ts Ψ) U ∧
-        ∀ y ∈ U, y ∈ GV k n → foldT ts (TI Bj e Ψ) y = TI Bj e (foldT ts Ψ) y
-  | [] => ⟨hΨ, hv, fun _ _ _ => rfl⟩
-  | t :: ts => by
+        ∀ y ∈ U, y ∈ GV k n → foldT ts (TI Bj e Ψ) y = TI Bj e (foldT ts Ψ) y := by
+  intro ts
+  induction ts with
+  | nil => exact ⟨hΨ, hv, fun _ _ _ => rfl⟩
+  | cons t ts hts =>
     have : CompleteSpace Wp := FiniteDimensional.complete ℂ Wp
-    obtain ⟨hc, hvv, ih⟩ := foldT_TI Bj e hΨ hU hv ts
+    obtain ⟨hc, hvv, ih⟩ := hts
     have e0 : ∀ f : B.Mat k n → (Wq →L[ℂ] Wp), foldT (t :: ts) f = Top (Q.EH k n) t.1 t.2.1 t.2.2 (foldT ts f) :=
       fun f => rfl
     refine ⟨by rw [e0]; exact ckOn_top hc _ _ _, by rw [e0]; exact vanish_top Bj e hvv _ _ _, fun y hyU hy => ?_⟩
@@ -467,15 +475,15 @@ theorem int_comb {α : Type*} [MeasurableSpace α] {μ : Measure α} {V : Type*}
   rw [integral_smul, integral_finsetSum s (f := fun i x => b i • f i x) (fun i hi => (hf i hi).smul (b i))]
   simp_rw [integral_smul]
 
-open Classical in
 
+open Classical in
 def cfA (m : ℕ) (hm : m ≤ n) (g : B.Mat k n) (c : Fin m → Fin (2 * n + k + 1)) : ℂ :=
   if StrictMono c then
     (Matrix.of fun a l : Fin m => herm (Hpk k n) (g *ᵥ bvec (c l)) (bvec (eI k n (Fin.castLE hm a)))).det
   else 0
 
-open Classical in
 
+open Classical in
 def cfV (m : ℕ) (hm : m ≤ n) (g : B.Mat k n) (c : Fin m → Fin (2 * n + k + 1)) : ℂ :=
   if StrictMono (fun l => C3.keyS k n (c l)) then
     (Matrix.of fun a l : Fin m => (g⁻¹ *ᵥ bvec (eI k n (Fin.castLE hm a))) (c l)).det
@@ -529,8 +537,8 @@ theorem qminor_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat
     unfold TI
     rw [hfun, int_comb _ 1 _ _ hI, one_smul]
 
-open Classical in
 
+open Classical in
 theorem AA_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k n → (Wq →L[ℂ] Wp)}
     (hΨ : CkOn ⊤ (GV k n) Ψ) {U : Set (B.Mat k n)} (hU : IsOpen U) (hv : VanishL Bj e Ψ U) (m : ℕ) (hm : m ≤ n)
     (u : ℂ) {y : B.Mat k n} (hyU : y ∈ U) (hy : y ∈ GV k n) :
@@ -553,8 +561,8 @@ theorem AA_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k n
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [(hI c).2]; rfl
 
-open Classical in
 
+open Classical in
 theorem AAv_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k n → (Wq →L[ℂ] Wp)}
     (hΨ : CkOn ⊤ (GV k n) Ψ) {U : Set (B.Mat k n)} (hU : IsOpen U) (hv : VanishL Bj e Ψ U) (m : ℕ) (hm : m ≤ n)
     (ell : ℂ) {y : B.Mat k n} (hyU : y ∈ U) (hy : y ∈ GV k n) :
@@ -585,8 +593,8 @@ section vlet
 variable {k p ρ n : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
 
-open Classical in
 
+open Classical in
 theorem vLet_TI (Bj : B.RealPlaceData k ρ Wp Wq) (e : p + ρ = n) {Ψ : B.Mat k n → (Wq →L[ℂ] Wp)}
     (hΨ : CkOn ⊤ (GV k n) Ψ) {U : Set (B.Mat k n)} (hU : IsOpen U) (hv : VanishL Bj e Ψ U)
     (z z' : Fin (2 * n + k + 1) → ℂ) (i : ℕ) (hi : i ≤ n) (l : C.Letter) (ε : Fin 2) {y : B.Mat k n}

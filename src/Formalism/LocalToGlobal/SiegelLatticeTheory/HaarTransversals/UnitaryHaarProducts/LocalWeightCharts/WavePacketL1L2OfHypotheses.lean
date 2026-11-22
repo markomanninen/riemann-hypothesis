@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.StarOfInv
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.StarOfInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,15 +31,9 @@ theorem opn_one : opn (1 : Mat k r) = 1 := by
 
 local instance instAlgCLM (n : ℕ) :
     Algebra ℂ (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := ContinuousLinearMap.algebra
-local instance instModCLM (n : ℕ) :
-    Module ℂ (EuclideanSpace ℂ (Fin n) →L[ℂ] EuclideanSpace ℂ (Fin n)) := ContinuousLinearMap.module
 
 theorem opn_continuous : Continuous (fun M : Mat k r => opn M) := by
-  unfold opn
-  have h : Continuous (fun M : Mat k r => Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ) M) :=
-    LinearMap.continuous_of_finiteDimensional
-      ((Matrix.toEuclideanCLM (n := Fin (2 * r + k + 1)) (𝕜 := ℂ)).toAlgEquiv.toLinearEquiv.toLinearMap)
-  exact continuous_norm.comp h
+  exact open scoped Matrix.Norms.L2Operator in continuous_norm (E := Mat k r)
 
 theorem nilradical_half_sum_nonneg : 0 ≤ N1H k r := by unfold N1H; positivity
 

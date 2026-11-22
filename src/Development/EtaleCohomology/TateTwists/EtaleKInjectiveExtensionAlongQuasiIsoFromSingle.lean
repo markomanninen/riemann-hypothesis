@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleTwistResolutionUniversalExtension
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleTwistResolutionUniversalExtension
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -79,7 +83,8 @@ theorem homotopy_single_eq {F : C} {I : CochainComplex C ℤ} [I.IsStrictlyGE 0]
         exact (I.isZero_of_isStrictlyGE 0 j hj).eq_of_tgt _ _
       · exact h.zero _ _ hr
     · exact (HomologicalComplex.isZero_single_obj_X _ _ _ _ hi).eq_of_src _ _
-  ext n
+  apply HomologicalComplex.hom_ext
+  intro n
   rw [h.comm n]
   have : h.hom = 0 := by funext i j; exact hz i j
   simp [this]
@@ -111,7 +116,7 @@ theorem LateralTheory.EtaleFoundations.TwResExt.linearMap_comp_eq_on_smul_of_eq 
 theorem LateralTheory.EtaleFoundations.TwResExt.twuniq_pf : LateralTheory.EtaleFoundations.EtaleTateTwistHomDeterminedByGenerators := by
   intro q _ i M φ ψ h
   apply Sheaf.hom_ext
-  refine CategoryTheory.sheafify_hom_ext (J := Scheme.etaleTopology) (P := Scheme.Γ ⋙ twF q i) φ.hom ψ.hom M.cond ?_
+  refine CategoryTheory.sheafify_hom_ext (J := Scheme.etaleTopology) (P := Scheme.Γ ⋙ twF q i) φ.hom ψ.hom M.property ?_
   refine NatTrans.ext (funext fun U => ModuleCat.hom_ext (Submodule.linearMap_qext _ (Finsupp.lhom_ext fun ζ b => ?_)))
   have h1 := h (unop U) ζ
   change (φ.hom.app U).hom ((toSheafify Scheme.etaleTopology (Scheme.Γ ⋙ twF q i) |>.app U).hom

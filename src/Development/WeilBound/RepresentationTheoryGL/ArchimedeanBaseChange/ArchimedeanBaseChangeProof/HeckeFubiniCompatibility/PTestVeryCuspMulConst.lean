@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthContinuousProperSublevel
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthContinuousProperSublevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -170,7 +174,8 @@ theorem pTest_entry_le {y : G n} {R : ℝ} (h : lg y.val ≤ R) (i j : Fin n) :
 
 theorem pTest_posLog_sup_le {ι : Type} (f : ι → ℝ) (hf0 : ∀ i, 0 ≤ f i) {R : ℝ} (hR : 0 ≤ R)
     (hf : ∀ i, f i ≤ Real.exp R) : Real.posLog (⨆ i, f i) ≤ R := by
-  have h := Real.posLog_le_posLog (Real.iSup_nonneg hf0) (Real.iSup_le hf (Real.exp_pos R).le)
+  have h := Real.posLog_le_posLog (neg_one_lt_zero.le.trans (Real.iSup_nonneg hf0))
+    (Real.iSup_le hf (Real.exp_pos R).le)
   have e : Real.posLog (Real.exp R) = R := by simp [Real.posLog, hR]
   linarith
 
@@ -299,8 +304,5 @@ theorem pTest_main {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ
       (pTest_prod_finGL fb u₂ g.2).2]
     simp only [hFin, map_mul, pTest_gFin_finGL, Prod.mk_mul_mk, one_mul, mul_one] at k₁ k₂ ⊢
     exact ⟨by rw [k₁], by rw [k₂]⟩
-
-theorem test2 : Test2 := fun E _ _ _ a b fa fb ψ R r U hR ha hb hψs hUo hψU hsz hr₁ hr₂ =>
-  (pTest_main fa fb ψ R r U hR ha hb hψs hUo hψU hsz hr₁ hr₂).1
 
 end PositivityTheory.Rg.BcB.CG

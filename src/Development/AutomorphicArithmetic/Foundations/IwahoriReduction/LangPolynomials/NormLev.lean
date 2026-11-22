@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.WdVal
-import Development.AbelianVarietyTheory.Definitions.Foundations.FrobLiftWittClosure
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.WdVal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FrobLiftWittClosure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
@@ -117,7 +121,8 @@ private theorem nl_nrm {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] (m 
       refine Finset.sum_congr rfl fun i' _ => ?_
       rw [hb i']
       rfl
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     simp [Finsupp.single_apply]
   rw [Model.nrm_ev p m hm hu h, hn]
 
@@ -146,7 +151,8 @@ theorem UpperTheory.Kd.C7.pNormLev :
       = ∑ i, phi l hl0 ((ψ.mapMatrix M) i jx) * PowerSeries.X ^ (i : ℕ) := by
     intro jx
     have := congrArg ψ (hG jx)
-    rw [map_mul, map_pow, hψX, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_pow, hψX, map_sum] at this
     rw [hψ, this]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, map_pow, hψX, hψexp]
@@ -190,9 +196,9 @@ theorem UpperTheory.Kd.C7.pNormLev :
   have hrow : ∀ k (jx : Fin l), pv P (w k) * (w k - 1) ^ (jx : ℕ)
       = ∑ i, pv (G jx i) (ζ m) * (w k - 1) ^ (i : ℕ) := by
     intro k jx
-    have := congrArg (Polynomial.eval₂ (R0 A).subtype (w k)) (hG jx)
-    simp only [Polynomial.eval₂_mul, Polynomial.eval₂_pow, Polynomial.eval₂_sub, Polynomial.eval₂_X,
-      Polynomial.eval₂_one, Polynomial.eval₂_finset_sum] at this
+    have := congrArg (Polynomial.eval₂RingHom (R0 A).subtype (w k)) (hG jx)
+    simp only [map_mul, map_pow, map_sub, map_one, map_sum] at this
+    simp only [Polynomial.coe_eval₂RingHom, Polynomial.eval₂_X] at this
     rw [show pv P (w k) = Polynomial.eval₂ (R0 A).subtype (w k) P from rfl, this]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hwpow k, ← hev]

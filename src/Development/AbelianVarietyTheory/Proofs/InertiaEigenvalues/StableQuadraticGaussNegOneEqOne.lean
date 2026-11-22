@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableQuadraticGaussIntegralTransformWeilStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsStableQuadraticGaussIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGroupSignMulAndNegOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStableGauss
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StableQuadraticGaussIntegralTransformWeilStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsStableQuadraticGaussIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGroupSignMulAndNegOneStatement
+
+@[expose] public section
 
 open GlobalTheory.JR GlobalTheory.JR.WeilQuad Matrix MeasureTheory Filter Topology
 
@@ -15,7 +19,7 @@ theorem absK_units_neg_one {F E : Type} [NontriviallyNormedField F] [Nontriviall
   have hu : IsUnit ((-1 : A.Kˣ) : A.K) := Units.isUnit _
   have he : hu.unit = -1 := Units.ext rfl
   unfold Et.absK
-  rw [dif_pos hu, he]
+  rw [dite_eq_left hu, he]
   have h2 : (distribHaarChar A.K (-1 : A.Kˣ)) ^ 2 = 1 := by
     rw [← map_pow]; simp
   have h3 : distribHaarChar A.K (-1 : A.Kˣ) = 1 :=

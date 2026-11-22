@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGenLab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisAutomorphismActsOnDeeperLevelLabels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFibre
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullObjectOfGenericFibreDvr
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValueUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistedThetaValueSubsingletonBaseStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValuePullbackBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValueTranslateOrthogonalTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedThetaValueEqRootMulThetaOperatorValueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGenLab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisAutomorphismActsOnDeeperLevelLabels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFibre
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullObjectOfGenericFibreDvr
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValueUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistedThetaValueSubsingletonBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValuePullbackBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTwistedThetaValueTranslateOrthogonalTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedThetaValueEqRootMulThetaOperatorValueStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,8 +129,8 @@ theorem IsGenLab.weil_one [ArithBase o Ω] [ArithBase o' Ω'] (h : IsGenLab ρ �
 
 end Add
 
-variable (ρ x) in
 
+variable (ρ x) in
 def TV (m : ℕ) (t h : S'.Gam) (κ : S.Gam) (v : Ω') : Prop :=
   IsTwVal ρ.P S'.N m ρ.th₁ (ρ.fr κ) (genTo _) (x (S'.r • t)) (x h) ((Scheme.ΓSpecIso (CommRingCat.of Ω')).inv.hom v)
 
@@ -187,8 +191,8 @@ theorem zetaN_neg_mul (c : ZMod S'.N) : S'.ζN ^ (-c).val * S'.ζN ^ c.val = 1 :
   have : NeZero S'.N := ⟨by have := S'.N_ge; omega⟩
   rw [← pow_add, pow_eq_pow_mod _ zetaN_pow_level, ← ZMod.val_add, neg_add_cancel, ZMod.val_zero, pow_zero]
 
-variable (S') in
 
+variable (S') in
 def partV (H : AddSubgroup S'.Gam) (i : S'.J) (a h : S'.Gam) : Ω' :=
   ∑ j, algebraMap o' Ω' (S'.proj (S'.perp H) (wtChar S' _ a) j i) * S'.ev h j
 
@@ -196,7 +200,8 @@ theorem partV_eq (H : AddSubgroup S'.Gam) [Fintype (S'.perp H)] (i : S'.J) (a h 
     partV S' H i a h = algebraMap o' Ω' (Ring.inverse (Nat.card (S'.perp H) : o')) *
       ∑ t : S'.perp H, algebraMap o' Ω' (S'.ζN ^ (-(wtChar S' _ a t)).val) *
         ∑ j, algebraMap o' Ω' (S'.ρ t j i) * S'.ev h j := by
-  simp only [partV, ThetaSys.proj, finsum_eq_sum_of_fintype, Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [partV, ThetaSys.proj, finsum_eq_sum_of_fintype, Matrix.smul_apply, Matrix.sum_apply, smul_eq_mul, map_mul,
     map_sum, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun j _ => by ring
@@ -209,8 +214,8 @@ theorem map_inverse_natCast (σ : Ω' →+* Ω') (n : ℕ) :
     rw [e, map_inv₀, map_natCast]
   · rw [Ring.inverse_non_unit _ h, map_zero, map_zero]
 
-variable (ρ') in
 
+variable (ρ') in
 def IsConj (σ : Ω' →+* Ω') (g : S'.Gam → S'.Gam) : Prop :=
   ∃ (P₀ : PolAV (Sp Ω')) (b : P₀.A.left ⟶ ρ'.P.A.left) (t : P₀.A.left ⟶ P₀.A.left),
     IsGrpPullback P₀.A ρ'.P.A (spMap S'.R.val.toRingHom) b ∧ IsGrpPullback P₀.A P₀.A (spMap σ) t ∧
@@ -249,12 +254,8 @@ theorem IsGenLab.exists_conj (hx : IsGenLab ρ ρ' lab φ P₀ a a' x) (σ : Ω'
       exact ((Category.assoc _ _ _).symm.trans (congrArg (· ≫ _) hs)).symm
     · rw [Category.assoc, Category.assoc, ht₂, reassoc_of% e₀, e₀, Category.comp_id]
 
-theorem eStd_nsmul_right {g n : ℕ} (b b' : Fin g ⊕ Fin g → ZMod n) (k : ℕ) : eStd g n b (k • b') = k • eStd g n b b' := by
-  simp only [eStd, Pi.smul_apply, nsmul_eq_mul, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun _ _ => by ring
 
 open Classical in
-
 theorem exists_parts [ArithBase o Ω] [ArithBase o' Ω'] (hS : USame ρ ρ' lab φ) {m : ℕ} (hm : S'.N = m ^ 2)
     (H : AddSubgroup S'.Gam) (x₀ : S.Gam) (h₀ : S.th x₀ ≠ 0) (h₀' : S'.th (lab x₀) ≠ 0) :
     ∃ f : S'.Gam → S.Gam → Ω',
@@ -318,7 +319,8 @@ theorem exists_parts [ArithBase o Ω] [ArithBase o' Ω'] (hS : USame ρ ρ' lab 
           (hV κ (g h) ((hH h).2 hh) (by rw [← map_nsmul, e', hl]) (e t))
       · simp [hV₀ κ he]
     beta_reduce
-    rw [map_div₀, map_mul, map_inverse_natCast, map_sum, show σ (φ (S.th x₀)) = φ (S.th x₀) from RingHom.congr_fun hφ _,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_div₀, map_mul, map_inverse_natCast, map_sum, show σ (φ (S.th x₀)) = φ (S.th x₀) from RingHom.congr_fun hφ _,
       ← Equiv.sum_comp e fun t => algebraMap o' Ω' (S'.ζN ^ (-(wtChar S' _ (g b) t)).val) * V κ t]
     simp only [map_mul, hζ, hσV]
 

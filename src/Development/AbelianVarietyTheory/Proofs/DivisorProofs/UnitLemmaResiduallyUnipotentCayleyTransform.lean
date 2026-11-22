@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitLemmaResiduallyUnipotentViaCayley
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitLemmaResiduallyUnipotentViaCayley
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem mem_adjoin_both' {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (g
     have hR : aeval Y R = 0 := by
       have : aeval Y R = (Y - algebraMap O A a) ^ n * aeval g Q := by
         conv_rhs => rw [aeval_eq_sum_range, Finset.mul_sum]
-        simp only [R, map_sum, map_mul, map_pow, aeval_C, map_sub, aeval_X]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [R, map_sum, map_mul, map_pow, aeval_C, map_sub, aeval_X]
         refine Finset.sum_congr rfl fun i hi => ?_
         have hin : i ≤ n := Nat.lt_succ_iff.1 (Finset.mem_range.1 hi)
         rw [← hgY, mul_pow, Algebra.smul_def]

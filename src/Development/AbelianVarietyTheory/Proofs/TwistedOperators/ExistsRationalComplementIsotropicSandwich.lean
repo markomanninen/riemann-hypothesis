@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeanXMulStarRat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+
+@[expose] public section
 
 noncomputable section
 
@@ -311,13 +315,13 @@ theorem hO_emb {a b : ℕ} (P : Matrix (Fin W.rank) (Fin a) D.host.E) (Q : Matri
     hO V W x (GlobalTheory.IsoMean.emb V W P Q y) =
       (adj y * ((Pᴴ * W.gram).map (incA D) * x * (V.gram⁻¹ * Qᴴ).map (incA D))).trace := by
   rw [hO_eq_trace]
-  have e : adj (GlobalTheory.IsoMean.emb V W P Q y) = GlobalTheory.MixModel.rat Qᴴ ⬝ adj y ⬝ GlobalTheory.MixModel.rat Pᴴ := by
-    show adj (GlobalTheory.MixModel.rat P ⬝ y ⬝ GlobalTheory.MixModel.rat Q) = _
+  have e : adj (GlobalTheory.IsoMean.emb V W P Q y) = GlobalTheory.MixModel.rat Qᴴ * adj y * GlobalTheory.MixModel.rat Pᴴ := by
+    show adj (GlobalTheory.MixModel.rat P * y * GlobalTheory.MixModel.rat Q) = _
     rw [adj_mul, adj_mul, ← rat_conjTranspose, ← rat_conjTranspose, Matrix.mul_assoc]
   rw [e]
-  calc (giA V ⬝ (GlobalTheory.MixModel.rat Qᴴ ⬝ adj y ⬝ GlobalTheory.MixModel.rat Pᴴ ⬝ (gA W ⬝ x))).trace
-      = ((giA V ⬝ GlobalTheory.MixModel.rat Qᴴ) ⬝ (adj y ⬝ GlobalTheory.MixModel.rat Pᴴ ⬝ gA W ⬝ x)).trace := by simp only [Matrix.mul_assoc]
-    _ = ((adj y ⬝ GlobalTheory.MixModel.rat Pᴴ ⬝ gA W ⬝ x) ⬝ (giA V ⬝ GlobalTheory.MixModel.rat Qᴴ)).trace :=
+  calc (giA V * (GlobalTheory.MixModel.rat Qᴴ * adj y * GlobalTheory.MixModel.rat Pᴴ * (gA W * x))).trace
+      = ((giA V * GlobalTheory.MixModel.rat Qᴴ) * (adj y * GlobalTheory.MixModel.rat Pᴴ * gA W * x)).trace := by simp only [Matrix.mul_assoc]
+    _ = ((adj y * GlobalTheory.MixModel.rat Pᴴ * gA W * x) * (giA V * GlobalTheory.MixModel.rat Qᴴ)).trace :=
       Matrix.trace_mul_comm _ _
     _ = _ := by
       simp only [giA, gA, GlobalTheory.MixModel.rat, Matrix.map_mul, Matrix.mul_assoc]
@@ -373,35 +377,35 @@ variable {D : D7} (V W : HSp D) {a b : ℕ} (P : Matrix (Fin W.rank) (Fin a) D.h
   (Q : Matrix (Fin b) (Fin V.rank) D.host.E) (P' : Matrix (Fin a) (Fin W.rank) D.host.E)
   (Q' : Matrix (Fin V.rank) (Fin b) D.host.E)
 
-theorem adj_f_gram : adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D)) ⬝ gA W =
+theorem adj_f_gram : adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D)) * gA W =
     GlobalTheory.MixModel.rat (W.gram * P * P') := by
-  show adj (GlobalTheory.MixModel.rat _) ⬝ GlobalTheory.MixModel.rat W.gram = _
+  show adj (GlobalTheory.MixModel.rat _) * GlobalTheory.MixModel.rat W.gram = _
   rw [← rat_conjTranspose, ← rat_mul]
   congr 1
   simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
     gramInv_conjTranspose, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ (gram_isUnit_det W), Matrix.mul_one]
 
-theorem giA_adj_g : giA V ⬝ adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) =
+theorem giA_adj_g : giA V * adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) =
     GlobalTheory.MixModel.rat (Q' * Q * V.gram⁻¹) := by
-  show GlobalTheory.MixModel.rat V.gram⁻¹ ⬝ adj (GlobalTheory.MixModel.rat _) = _
+  show GlobalTheory.MixModel.rat V.gram⁻¹ * adj (GlobalTheory.MixModel.rat _) = _
   rw [← rat_conjTranspose, ← rat_mul]
   congr 1
   simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
     gramInv_conjTranspose, Matrix.mul_assoc, Matrix.nonsing_inv_mul_cancel_left _ _ (gram_isUnit_det V)]
 
 theorem hO_proj (x γ : WO V W) :
-    hO V W (GlobalTheory.IsoMean.emb V W P Q (P'.map (incA D) ⬝ x ⬝ Q'.map (incA D) : Mx D a b)) γ =
-      hO V W x ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D) ⬝ γ ⬝ (V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D) : WO V W) := by
+    hO V W (GlobalTheory.IsoMean.emb V W P Q (P'.map (incA D) * x * Q'.map (incA D) : Mx D a b)) γ =
+      hO V W x ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D) * γ * (V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D) : WO V W) := by
   rw [hO_eq_trace, hO_eq_trace, adj_mul, adj_mul]
-  have e : (giA V ⬝ (adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) ⬝ (adj γ ⬝
-      adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D))) ⬝ (gA W ⬝ x)) : Mx D V.rank V.rank) =
-      ((giA V ⬝ adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) : Mx D V.rank V.rank) ⬝ (adj γ : Mx D V.rank W.rank) ⬝
-        (adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D)) ⬝ gA W : Mx D W.rank W.rank) ⬝ x : Mx D V.rank V.rank) := by
+  have e : (giA V * (adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) * (adj γ ⬝
+      adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D))) * (gA W * x)) : Mx D V.rank V.rank) =
+      ((giA V * adj ((V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D)) : Mx D V.rank V.rank) * (adj γ : Mx D V.rank W.rank) ⬝
+        (adj ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D)) * gA W : Mx D W.rank W.rank) * x : Mx D V.rank V.rank) := by
     simp only [Matrix.mul_assoc]
   rw [e, adj_f_gram, giA_adj_g]
-  calc _ = (((giA V ⬝ (adj γ : Mx D V.rank W.rank) ⬝ GlobalTheory.MixModel.rat (W.gram * P * P') ⬝ x : Mx D V.rank V.rank)) ⬝ GlobalTheory.MixModel.rat (Q' * Q)).trace := by
+  calc _ = (((giA V * (adj γ : Mx D V.rank W.rank) * GlobalTheory.MixModel.rat (W.gram * P * P') * x : Mx D V.rank V.rank)) * GlobalTheory.MixModel.rat (Q' * Q)).trace := by
         simp only [GlobalTheory.IsoMean.emb, giA, gA, GlobalTheory.MixModel.rat, Matrix.map_mul, Matrix.mul_assoc]
-    _ = (GlobalTheory.MixModel.rat (Q' * Q) ⬝ (giA V ⬝ (adj γ : Mx D V.rank W.rank) ⬝ GlobalTheory.MixModel.rat (W.gram * P * P') ⬝ x : Mx D V.rank V.rank)).trace :=
+    _ = (GlobalTheory.MixModel.rat (Q' * Q) * (giA V * (adj γ : Mx D V.rank W.rank) * GlobalTheory.MixModel.rat (W.gram * P * P') * x : Mx D V.rank V.rank)).trace :=
         Matrix.trace_mul_comm _ _
     _ = _ := by simp only [giA, GlobalTheory.MixModel.rat, Matrix.map_mul, Matrix.mul_assoc]
 
@@ -419,10 +423,10 @@ theorem annih_step {D : D7} (V W : HSp D) {a b k : ℕ} (P : Matrix (Fin W.rank)
     (hxo : (Pᴴ * W.gram).map (incA D) * x * (V.gram⁻¹ * Qᴴ).map (incA D) = 0)
     (γ₀ : Matrix (Fin W.rank) (Fin V.rank) D.host.E) (c : Fin k → D.host.E) (y₁ : Matrix (Fin a) (Fin b) D.host.E)
     (hcy : γ₀ - W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram) * γ₀ * (V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)) = ∑ i, c i • B i + P * y₁ * Q) :
-    symplO V W (x - GlobalTheory.IsoMean.emb V W P Q (P'.map (incA D) ⬝ x ⬝ Q'.map (incA D) : Mx D a b)) (γ₀.map (incA D)) =
+    symplO V W (x - GlobalTheory.IsoMean.emb V W P Q (P'.map (incA D) * x * Q'.map (incA D) : Mx D a b)) (γ₀.map (incA D)) =
       symplO V W x (GlobalTheory.IsoMean.cplx V W B ((Matrix.of fun (_ : Fin 1) i => c i).map (incA D))) := by
   rw [symplO_eq, symplO_eq, hO_sub_left, hO_proj, ← hO_sub_right]
-  have e : γ₀.map (incA D) - ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D) ⬝ γ₀.map (incA D) ⬝
+  have e : γ₀.map (incA D) - ((W.gram⁻¹ * P'ᴴ * (Pᴴ * W.gram)).map (incA D) * γ₀.map (incA D) ⬝
       (V.gram⁻¹ * Qᴴ * (Q'ᴴ * V.gram)).map (incA D) : WO V W) =
       GlobalTheory.IsoMean.cplx V W B ((Matrix.of fun (_ : Fin 1) i => c i).map (incA D)) +
         GlobalTheory.IsoMean.emb V W P Q (y₁.map (incA D)) := by
@@ -437,8 +441,8 @@ namespace GlobalTheory.IsoCompl
 
 open GlobalTheory.MixModel
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem ratCompl : ∀ (D : D7) (V W : HSp D) (a b : ℕ) (P : Matrix (Fin W.rank) (Fin a) D.host.E) (Q : Matrix (Fin b) (Fin V.rank) D.host.E), P.rank = a → Q.rank = b → (∀ y y' : Mx D a b, symplO V W (GlobalTheory.IsoMean.emb V W P Q y) (GlobalTheory.IsoMean.emb V W P Q y') = 0) → ∀ (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∃ (k : ℕ) (B : Fin k → Matrix (Fin W.rank) (Fin V.rank) D.host.E), (∀ (z : Mx D 1 k) (y : Mx D a b), symplO V W (GlobalTheory.IsoMean.cplx V W B z) (GlobalTheory.IsoMean.emb V W P Q y) = 0) ∧ (∀ x : WO V W, (∀ y : Mx D a b, symplO V W x (GlobalTheory.IsoMean.emb V W P Q y) = 0) → ∃ (z : Mx D 1 k) (y : Mx D a b), x = GlobalTheory.IsoMean.cplx V W B z + GlobalTheory.IsoMean.emb V W P Q y) ∧ (∀ (z : Mx D 1 k) (y : Mx D a b), GlobalTheory.IsoMean.cplx V W B z + GlobalTheory.IsoMean.emb V W P Q y = 0 → z = 0 ∧ y = 0) ∧ (∀ (z : Mx D 1 k) (y : Mx D a b), GlobalTheory.IsoMean.cplx V W B z + GlobalTheory.IsoMean.emb V W P Q y ∈ ratL W V → z ∈ GlobalTheory.MixModel.ratMx D 1 k ∧ y ∈ GlobalTheory.MixModel.ratMx D a b) ∧ (∀ z : Mx D 1 k, (∀ c ∈ GlobalTheory.MixModel.ratMx D 1 k, ψ (symplO V W (GlobalTheory.IsoMean.cplx V W B z) (GlobalTheory.IsoMean.cplx V W B c)) = 1) ↔ z ∈ GlobalTheory.MixModel.ratMx D 1 k) := by
   intro D V W a b P Q hPr hQr hiso ψ hψ
   obtain ⟨P', hP'⟩ := exists_left_inv_of_rank P hPr
@@ -491,7 +495,7 @@ theorem ratCompl : ∀ (D : D7) (V W : HSp D) (a b : ℕ) (P : Matrix (Fin W.ran
     constructor
     · intro h
       have hx' : GlobalTheory.IsoMean.cplx V W B z - GlobalTheory.IsoMean.emb V W P Q
-          (P'.map (incA D) ⬝ GlobalTheory.IsoMean.cplx V W B z ⬝ Q'.map (incA D) : Mx D a b) ∈ ratL W V := by
+          (P'.map (incA D) * GlobalTheory.IsoMean.cplx V W B z * Q'.map (incA D) : Mx D a b) ∈ ratL W V := by
         refine (GlobalTheory.RatAnnih.ratL_annihilator D ψ hψ V W _).1 ?_
         rintro _ ⟨γ₀, rfl⟩
         obtain ⟨c, y₁, hcy⟩ := hspan _
@@ -499,9 +503,9 @@ theorem ratCompl : ∀ (D : D7) (V W : HSp D) (a b : ℕ) (P : Matrix (Fin W.ran
         have e := annih_step V W P Q P' Q' B _ (horth z) γ₀ c y₁ hcy
         exact (congrArg ψ e).trans (h _ (rat_mem _))
       have hneg : GlobalTheory.IsoMean.cplx V W B z + GlobalTheory.IsoMean.emb V W P Q
-          (-(P'.map (incA D) ⬝ GlobalTheory.IsoMean.cplx V W B z ⬝ Q'.map (incA D)) : Mx D a b) =
+          (-(P'.map (incA D) * GlobalTheory.IsoMean.cplx V W B z * Q'.map (incA D)) : Mx D a b) =
           GlobalTheory.IsoMean.cplx V W B z - GlobalTheory.IsoMean.emb V W P Q
-            (P'.map (incA D) ⬝ GlobalTheory.IsoMean.cplx V W B z ⬝ Q'.map (incA D) : Mx D a b) := by
+            (P'.map (incA D) * GlobalTheory.IsoMean.cplx V W B z * Q'.map (incA D) : Mx D a b) := by
         rw [sub_eq_add_neg]
         congr 1
         simp only [GlobalTheory.IsoMean.emb, Matrix.mul_neg, Matrix.neg_mul]

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -43,7 +47,8 @@ theorem sN_of : SN := by
         rw [hEE k i0 i0 i0, if_pos rfl, hEE k i0 i0 k, if_pos rfl]
       rw [e1, h0, mul_zero, zero_mul]
     have h1 : ψ 1 = 0 := by
-      rw [← hsum1 (R := F), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hsum1 (R := F), map_sum]
       exact Finset.sum_eq_zero fun k _ => hk k
     rw [map_one] at h1
     exact one_ne_zero h1
@@ -95,9 +100,11 @@ theorem sN_of : SN := by
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => hsc i k _
     rw [hMt]
     conv_lhs => rw [hM]
-    rw [map_sum, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sum, Finset.sum_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, hψ, mul_assoc, hL, ← hR, ← mul_assoc, ← mul_assoc,
       (Matrix.scalar_commute (τ (M i k)) (fun r' => Commute.all _ r') _).eq]

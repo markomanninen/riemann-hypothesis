@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.V.PiLin
 
@@ -42,7 +46,7 @@ theorem iso_sub {H S Y V : Type} [Group H] [AddCommGroup S] [Module ℂ S] [AddC
       exact hle ⟨σ.asModuleEquiv.symm v, rfl⟩
     · simp
     · intro x y hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   have htop := mem_isotypic_of_injective j' hj' h'
   have hy : π.asModuleEquiv.symm y ∈ isotypicComponent (MonoidAlgebra ℂ H) π.asModule σ.asModule := by
@@ -63,7 +67,7 @@ theorem iso_sub {H S Y V : Type} [Group H] [AddCommGroup S] [Module ℂ S] [AddC
     (by simp)
     (by
       intro x z hx hz
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hz)
   simpa using key
 
@@ -96,7 +100,8 @@ private theorem exists_equivariant_projection_onto_invariant_submodule {R V ι :
     have hvs : ∀ i ∈ s, ∀ t, T t (v i) = χ i t • v i :=
       fun i hi => hv i (Finset.mem_insert_of_mem hi)
     have key : (a t - χ b t) • ∑ i ∈ insert b s, v i = ∑ i ∈ s, (χ i t - χ b t) • v i := by
-      rw [sub_smul, ← hx t, Finset.sum_insert hb, map_add, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [sub_smul, ← hx t, Finset.sum_insert hb, map_add (f := _), map_sum,
         Finset.sum_congr rfl (fun i hi => hvs i hi t), hv b (Finset.mem_insert_self b s) t]
       simp only [sub_smul, Finset.sum_sub_distrib, Finset.smul_sum, smul_add]
       abel
@@ -122,7 +127,7 @@ theorem exists_proj {R G V : Type} {J : Type 1} [AddCommGroup V] [Module ℂ V] 
       rw [hW j.1 t y hy, j.2]
     · simp
     · intro y z hy hz
-      rw [map_add, hy, hz, smul_add]
+      rw [map_add (f := _), hy, hz, smul_add]
   have hKz : ∀ c, ∀ x ∈ ⨆ j : {j // χ j ≠ c}, W j, (∀ t, T t x = c t • x) → x = 0 := by
     intro c x hx hxe
     obtain ⟨s, hs⟩ := Submodule.mem_iSup_iff_exists_finset.mp hx
@@ -142,7 +147,7 @@ theorem exists_proj {R G V : Type} {J : Type 1} [AddCommGroup V] [Module ℂ V] 
       exact Submodule.mem_iSup_of_mem j (Submodule.smul_mem _ _ hy)
     · simp
     · intro y z hy hz
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hy hz
   have hEY : ∀ c, ∀ F ∈ E, (∀ t, T t F = c t • F) → F ∈ ⨆ j : {j // χ j = c}, W j := by
     intro c F hF hFe
@@ -151,7 +156,7 @@ theorem exists_proj {R G V : Type} {J : Type 1} [AddCommGroup V] [Module ℂ V] 
     have hke : ∀ t, T t k = c t • k := by
       intro t
       have h1 := hFe t
-      rw [map_add, hYe c y hy t, smul_add] at h1
+      rw [map_add (f := _), hYe c y hy t, smul_add] at h1
       exact add_left_cancel h1
     rw [hKz c k hk hke, add_zero]
     exact hy
@@ -179,7 +184,7 @@ theorem exists_proj {R G V : Type} {J : Type 1} [AddCommGroup V] [Module ℂ V] 
       exact hle h1
     · simp
     · intro y z hy hz
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hy hz
   have h0' := h0
   rw [hsup] at h0'
@@ -229,13 +234,13 @@ theorem exists_proj {R G V : Type} {J : Type 1} [AddCommGroup V] [Module ℂ V] 
         Submodule.mem_iSup_of_mem (⟨i, (Finset.mem_filter.mp hi).2⟩ : {j // χ j ≠ χ j0}) (μ i).2
     intro hp
     apply hu
-    rw [← hμ, ← Finset.sum_filter_add_sum_filter_not s (fun i => χ i = χ j0), map_add,
+    rw [← hμ, ← Finset.sum_filter_add_sum_filter_not s (fun i => χ i = χ j0), map_add (f := _),
       hpK _ hrK, add_zero, hpY _ huY] at hp
     simpa using congrArg Subtype.val hp
   · intro t F hF
     rw [hsplit (χ j0)] at hF
     obtain ⟨y, hy, k, hk, rfl⟩ := Submodule.mem_sup.mp hF
-    simp only [map_add, map_smul, hYe _ y hy t, hpK _ hk, hpK _ (hTK _ t k hk), add_zero]
+    simp only [map_add (f := _), map_smul, hYe _ y hy t, hpK _ hk, hpK _ (hTK _ t k hk), add_zero]
   · intro g F hF
     rw [hsplit (χ j0)] at hF
     obtain ⟨y, hy, k, hk, rfl⟩ := Submodule.mem_sup.mp hF

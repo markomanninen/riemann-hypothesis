@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
-import GroundTheory.LocalFields.Unramified
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+public import GroundTheory.LocalFields.Unramified
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel PositivityTheory.Rg.Tf.Loc
 

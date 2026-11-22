@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
@@ -81,8 +85,8 @@ def wave (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (Λ : AddSubgroup (WO S 
     WO S T → ℂ :=
   fun t => ψ (symplO S T t y) * halfInd e Λ (t + x)
 
-open Classical in
 
+open Classical in
 def prodHalf {S T : HSp D} {ι : Type} (s : Finset ι) (a : ι → AE D) (Φ : ι → WO S T → ℂ) : WO S T → ℂ :=
   fun t => if IsHalf (∑ i ∈ s, a i) t then ∏ i ∈ s, Φ i (a i • t) else 0
 
@@ -124,8 +128,8 @@ theorem isFam_update {S T : HSp D} {ι : Type} [DecidableEq ι] [DecidableEq (Pl
   · rw [Function.update_of_ne (hp j hj)]
     exact hx.2 p hp
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem isPure_of_facts (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D)
     (sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ)
     (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E))
@@ -174,17 +178,20 @@ theorem isPure_of_facts (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
     · exact attach_orth (A1 j hj) (A2 i hi) (vne j hj i hi hji)
   have hcAc : ∀ i ∈ s, cA D (∑ j ∈ s, a j) * cA D (a i) = cA D (a i) := by
     intro i hi
-    rw [map_sum, Finset.sum_mul, Finset.sum_eq_single i
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, Finset.sum_eq_single i
       (fun j hj hji => attach_orth (A2 j hj) (A2 i hi) (vne j hj i hi hji)) (fun h => (h hi).elim),
       ← RingHom.map_mul, (ha i hi).1.1]
   have hAA : (∑ j ∈ s, a j) * (∑ j ∈ s, a j) = ∑ j ∈ s, a j := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl hAa
   have hAcA : (∑ j ∈ s, a j) * cA D (∑ j ∈ s, a j) = 0 := by
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     exact Finset.sum_eq_zero hAc
   have hAinf : infPart D (∑ j ∈ s, a j) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun j hj => GlobalTheory.SplitScalar.infPart_splitIdem (ha j hj).1
   have wsp : ∀ i ∈ s, _ := fun i hi =>
     hwave (a i) (ha i hi).1.1 (ha i hi).1.2.1 (GlobalTheory.SplitScalar.infPart_splitIdem (ha i hi).1)
@@ -253,11 +260,12 @@ theorem isPure_of_facts (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
         simp only [wave]
         rw [Finset.prod_mul_distrib]
         congr 1
-        · rw [← addChar_sum, show symplO S T t (∑ i ∈ s, (xy i).2) = ∑ i ∈ s, symplO S T t (xy i).2 from
+        set_option synthInstance.maxHeartbeats 100000 in
+          · rw [← addChar_sum, show symplO S T t (∑ i ∈ s, (xy i).2) = ∑ i ∈ s, symplO S T t (xy i).2 from
             map_sum (GlobalTheory.LatVac.symplHom S T t) _ _]
-          congr 1
-          refine Finset.sum_congr rfl fun i hi => ?_
-          rw [GlobalTheory.SplitScalar.symplO_smul, hY i hi]
+            apply congrArg ψ
+            refine Finset.sum_congr rfl fun i hi => ?_
+            rw [GlobalTheory.SplitScalar.symplO_smul, hY i hi]
         · have ht' := (GlobalTheory.SplitScalar.isHalf_iff _ _).1 ht
           have hsum : t + ∑ i ∈ s, (xy i).1 = ∑ i ∈ s, (a i • t + (xy i).1) := by
             rw [Finset.sum_add_distrib, ← Finset.sum_smul, ht']
@@ -323,7 +331,7 @@ theorem isPure_of_facts (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D
           have := hlin _ _ x'' _ _ (.inl (v j)) c hg hh
             (fun p hp => by rw [Function.update_of_ne hp, Function.update_of_ne hp])
             (fun p hp => by rw [Function.update_of_ne hp])
-            (by rw [hx''.1 j hjs, Function.update_self, Function.update_self, Function.update_self, map_add,
+            (by rw [hx''.1 j hjs, Function.update_self, Function.update_self, Function.update_self, map_add (f := _),
               map_smul])
           rwa [prodHalf_update s a Φ' hjs, map_add, map_smul]
         have hmem : ∀ G, G ∈ {G | ∃ xi yi : WO S T, IsHalf (a j) xi ∧ IsHalf (cA D (a j)) yi ∧

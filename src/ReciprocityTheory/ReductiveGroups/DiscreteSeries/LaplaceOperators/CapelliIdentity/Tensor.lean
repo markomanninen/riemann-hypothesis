@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Expand
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.Expand
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem isGlRep_tensV {n : ℕ} (E : Fin n → Fin n → Module.End ℂ M) (hE :
   refine LinearMap.ext fun f => funext fun e => ?_
   have h := LinearMap.congr_fun (hE a b c d) (f e)
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, tensV_apply', map_add, Pi.sub_apply]
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, tensV_apply', map_add (f := _), Pi.sub_apply]
   by_cases hbc : b = c <;> by_cases hda : d = a <;>
     simp only [hbc, hda, if_true, if_false, LinearMap.zero_apply, Pi.zero_apply, tensV_apply'] at h ⊢ <;>
     split_ifs <;> simp_all <;> (rw [← sub_eq_zero] at h ⊢; convert h using 1; abel)
@@ -53,7 +57,7 @@ theorem isGlRep_tensVd {n : ℕ} (E : Fin n → Fin n → Module.End ℂ M) (hE 
 theorem casimir_tensV {n : ℕ} (E : Fin n → Fin n → Module.End ℂ M) (f : Fin n → M) :
     casimir (tensV E) f = (fun d => casimir E (f d)) + ((n : ℂ) • f + (2 : ℂ) • eeV E f) := by
   funext e
-  simp only [casimir, LinearMap.sum_apply, Finset.sum_apply, Module.End.mul_apply, tensV_apply', map_add,
+  simp only [casimir, LinearMap.sum_apply, Finset.sum_apply, Module.End.mul_apply, tensV_apply', map_add (f := _),
     Pi.add_apply, Pi.smul_apply, eeV_apply', Finset.sum_add_distrib]
   simp only [apply_ite (E _ _), map_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   have hx : ∀ g : Fin n → Fin n → M, (∑ x, ∑ x_1, if e = x then g x x_1 else 0) = ∑ x_1, g e x_1 := by
@@ -108,7 +112,8 @@ theorem eeV_nnPlus {m : ℕ} (E : Fin (m + 1) → Fin (m + 1) → Module.End ℂ
     rw [h2] at h
     rw [neg_smul, eq_neg_iff_add_eq_zero]; exact h
   rw [eeV_apply', Pi.smul_apply]
-  simp only [nnPlus, map_sum, map_smul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [nnPlus, map_sum, map_smul, Finset.smul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => ?_
   calc _ = y c • ∑ a : Fin (m + 1), ((-1 : ℂ) ^ ((a : ℕ) + (c : ℕ))) •
@@ -140,7 +145,8 @@ theorem eeVd_nnMinus {m : ℕ} (E : Fin (m + 1) → Fin (m + 1) → Module.End �
     rw [h2] at h
     rw [neg_smul, eq_neg_iff_add_eq_zero]; exact h
   rw [eeVd_apply', Pi.smul_apply]
-  simp only [nnMinus, map_sum, map_smul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [nnMinus, map_sum, map_smul, Finset.smul_sum]
   rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun c _ => ?_
   calc _ = -(β c • ∑ d : Fin (m + 1), ((-1 : ℂ) ^ ((d : ℕ) + (c : ℕ))) •

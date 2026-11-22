@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SumLatInvMulVec
+module
+
+public import ReciprocityTheory.DualLattices.SumLatInvMulVec
+
+@[expose] public section
 
 noncomputable section
 

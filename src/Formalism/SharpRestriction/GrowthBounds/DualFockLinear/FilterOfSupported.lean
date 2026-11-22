@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.CloudBStepOfRho
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.CloudBStepOfRho
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem filter_of_supported {P : MvPolynomial (S × τ) K} {q : S × τ → Prop
     e.filter q = e ∧ e.filter (fun v => ¬ q v) = 0 := by
   rw [mem_supported] at hP
   have key : ∀ v, e v ≠ 0 → q v := fun v hv =>
-    hP (Finset.mem_coe.2 ((mem_vars v).2 ⟨e, he, Finsupp.mem_support_iff.2 hv⟩))
+    hP (Finset.mem_coe.2 ((mem_vars_iff_mem_support v).2 ⟨e, he, Finsupp.mem_support_iff.2 hv⟩))
   refine ⟨(Finsupp.filter_eq_self_iff _ _).2 key, (Finsupp.filter_eq_zero_iff _ _).2 fun v hv => ?_⟩
   by_contra h
   exact hv (key v h)
@@ -38,21 +42,23 @@ theorem slice_mul_left (γ : MvPolynomial (S × τ) K →ₗ[K] K) (P R : MvPoly
   | monomial f b =>
     conv_lhs => rw [P.as_sum]
     conv_rhs => rw [P.as_sum]
-    rw [Finset.sum_mul, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun e he => ?_
     have h := filter_of_supported (q := fun v : S × τ => v.1 ∈ A) hP he
     beta_reduce at h
-    rw [monomial_mul, slice_monomial, slice_monomial, Finsupp.filter_add, Finsupp.filter_add, h.1, h.2,
-      zero_add, mul_smul_comm, monomial_mul, smul_monomial, smul_monomial, smul_eq_mul, smul_eq_mul]
+    rw [monomial_mul_monomial, slice_monomial, slice_monomial, Finsupp.filter_add, Finsupp.filter_add, h.1, h.2,
+      zero_add, mul_smul_comm, monomial_mul_monomial, smul_monomial, smul_monomial, smul_eq_mul, smul_eq_mul]
     congr 1
     ring
-  | add p q hp hq => rw [mul_add, map_add, hp, hq, map_add, mul_add]
+  | add p q hp hq => rw [mul_add, map_add (f := _), hp, hq, map_add (f := _), mul_add]
 
 theorem slice_spec (γ : MvPolynomial (S × τ) K →ₗ[K] K) (Q : MvPolynomial (S × τ) K)
     (hQ : Q ∈ supported K {v : S × τ | v.1 ∉ A}) : slice A γ Q = γ Q • 1 := by
   conv_lhs => rw [Q.as_sum]
   conv_rhs => rw [Q.as_sum]
-  rw [map_sum, map_sum, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_smul]
   refine Finset.sum_congr rfl fun e he => ?_
   have h := filter_of_supported (q := fun v : S × τ => v.1 ∉ A) hQ he
   beta_reduce at h
@@ -60,7 +66,7 @@ theorem slice_spec (γ : MvPolynomial (S × τ) K →ₗ[K] K) (Q : MvPolynomial
     rw [Finsupp.filter_eq_zero_iff]
     intro v hv
     exact (Finsupp.filter_eq_zero_iff _ _).1 h.2 v (not_not.2 hv)
-  have h3 : (monomial e (coeff e Q) : MvPolynomial (S × τ) K) = coeff e Q • monomial e 1 := by
+  have h3 : (monomial e (AddMonoidAlgebra.coeff Q e) : MvPolynomial (S × τ) K) = AddMonoidAlgebra.coeff Q e • monomial e 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [slice_monomial, h.1, h2, ← C_apply, C_1, h3, map_smul, smul_eq_mul]
 
@@ -131,7 +137,7 @@ theorem slice_tensor (A : Finset S) (M MT Msp : S → Submodule R (MvPolynomial 
   | add x y _ _ hx hy =>
     obtain ⟨a, ha, ea⟩ := hx
     obtain ⟨b, hb, eb⟩ := hy
-    exact ⟨a + b, add_mem ha hb, by rw [map_add, ea, eb, smul_add]⟩
+    exact ⟨a + b, add_mem ha hb, by rw [map_add (f := _), ea, eb, smul_add]⟩
   | smul r x _ hx =>
     obtain ⟨a, ha, ea⟩ := hx
     exact ⟨r • a, Submodule.smul_mem _ r ha, by rw [LinearMap.map_smul_of_tower, ea, smul_comm]⟩

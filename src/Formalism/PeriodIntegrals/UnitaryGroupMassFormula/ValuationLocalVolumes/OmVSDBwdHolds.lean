@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OneMemOev
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OneMemOev
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem sigR_oev {x : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) : sigR (Fv F 
     rw [sigR_inclR]
     exact incl_mem (F := F) v (⟨σ (o : E), (RingOfIntegers.isIntegral_coe o).map (σ : E →+* E).toIntAlgHom⟩ : 𝓞 E)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul c x _ h =>
     change sigR (Fv F v) σ ((c : Fv F v) • x) ∈ _
     rw [Algebra.smul_def, map_mul, sigR_alg, ← Algebra.smul_def]
@@ -89,8 +93,8 @@ theorem val_le (v : PlX X) (f : X.B.I.F)
     HeightOneSpectrum.valuedAdicCompletion_eq_valuation'] at this
   exact this
 
-open Polynomial in
 
+open Polynomial in
 theorem denom (v : PlX X) (e : X.B.I.E) (he : inclR (F := X.B.I.F) (Fv X.B.I.F v) e ∈ OEv (E := X.B.I.E) v) :
     ∃ s : 𝓞 X.B.I.F, s ∉ v.asIdeal ∧ ∃ c : 𝓞 X.B.I.E, (c : X.B.I.E) = algebraMap X.B.I.F X.B.I.E s * e := by
   have hse : inclR (F := X.B.I.F) (Fv X.B.I.F v) (star e) ∈ OEv (E := X.B.I.E) v := by
@@ -98,7 +102,7 @@ theorem denom (v : PlX X) (e : X.B.I.E) (he : inclR (F := X.B.I.F) (Fv X.B.I.F v
     rwa [sigR_inclR] at this
   obtain ⟨fT, hfT⟩ := fixed_ex X (e + star e) (by rw [star_add, star_star, add_comm])
   obtain ⟨fN, hfN⟩ := fixed_ex X (e * star e) (by rw [star_mul, star_star])
-  have vT : v.valuation X.B.I.F fT ≤ 1 := val_le X v fT (by rw [hfT, map_add]; exact Submodule.add_mem _ he hse)
+  have vT : v.valuation X.B.I.F fT ≤ 1 := val_le X v fT (by rw [hfT, map_add (f := _)]; exact Submodule.add_mem _ he hse)
   have vN : v.valuation X.B.I.F fN ≤ 1 := val_le X v fN (by rw [hfN, map_mul]; exact oev_mul v he hse)
   obtain ⟨nT, ⟨dT, hdT⟩, hT⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer v fT vT
   obtain ⟨nN, ⟨dN, hdN⟩, hN⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer v fN vN
@@ -139,7 +143,7 @@ theorem hform_zero_left (x : Fin X.B.I.n → X.B.I.E) :
 theorem hform_add_left (y y' x : Fin X.B.I.n → X.B.I.E) :
     Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J (y + y') x =
       Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J y x + Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J y' x := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_smul_left (a : 𝓞 X.B.I.E) (y x : Fin X.B.I.n → X.B.I.E) :
     Formalism.UG.hform (starRingEnd X.B.I.E) X.B.I.J (a • y) x =
@@ -194,7 +198,7 @@ theorem locGlob (v : PlX X) (x : Fin X.B.I.n → X.B.I.E)
   | add y y' _ _ h1 h2 =>
       obtain ⟨c1, e1⟩ := h1
       obtain ⟨c2, e2⟩ := h2
-      exact ⟨c1 + c2, by rw [map_add, e1, e2, hform_add_left]⟩
+      exact ⟨c1 + c2, by rw [map_add (f := _), e1, e2, hform_add_left]⟩
   | smul a y _ h1 =>
       obtain ⟨c1, e1⟩ := h1
       exact ⟨starE X a * c1, by rw [map_mul, e1, hform_smul_left]; rfl⟩

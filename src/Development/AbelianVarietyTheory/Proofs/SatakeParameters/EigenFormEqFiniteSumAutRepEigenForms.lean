@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantPositivePeterssonForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AutomorphicRepDualPairing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicParts
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantPositivePeterssonForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AutomorphicRepDualPairing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicParts
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -35,7 +40,7 @@ theorem values_mem_sSup (W : Wt E n) [Nontrivial W.Sp] (f : W.Sp →ₗ[ℂ] (UA
     intro x hx y hy z hz c
     rw [hB2 x hx _ (C.add_mem hy (C.smul_mem c hz)), hB2 x hx y hy, hB2 x hx z hz]
     have e : (⟨y + c • z, C.add_mem hy (C.smul_mem c hz)⟩ : C) = ⟨y, hy⟩ + c • ⟨z, hz⟩ := rfl
-    rw [e, map_add, map_smul, smul_eq_mul]
+    rw [e, map_add (f := _), map_smul, smul_eq_mul]
   have h2 : ∀ x ∈ C, ∀ y ∈ C, B2 x y = starRingEnd ℂ (B2 y x) := by
     intro x hx y hy
     rw [hB2 x hx y hy, hB2 y hy x hx, ← form_herm B hh W.rep ⟨y, hy⟩ ⟨x, hx⟩]
@@ -60,25 +65,25 @@ theorem values_mem_sSup (W : Wt E n) [Nontrivial W.Sp] (f : W.Sp →ₗ[ℂ] (UA
     rw [hB2 _ (ρC g x).2 _ (ρC g y).2, hB2 _ x.2 _ y.2]
     exact form_inv B hi W.rep g x y
   obtain ⟨K0, hK0o, hK0c⟩ := GlobalTheory.DefU.Petersson.exists_isOpen_isCompact_finU E n
-  have hsm : ∀ x : C, IsOpen {k : finU E n | ρC k x = x} := fun x => rep_smooth W.rep x
-  let K : Subgroup (finU E n) := K0 ⊓ GlobalTheory.AdmissibleProjection.stab ρC ⟨f, hf⟩
-  have hKo : IsOpen (K : Set (finU E n)) := by
+  have hsm : ∀ x : C, IsOpen {k : finU (E := E) (n := n) | ρC k x = x} := fun x => rep_smooth W.rep x
+  let K : Subgroup (finU (E := E) (n := n)) := K0 ⊓ GlobalTheory.AdmissibleProjection.stab ρC ⟨f, hf⟩
+  have hKo : IsOpen (K : Set (finU (E := E) (n := n))) := by
     rw [Subgroup.coe_inf]
     exact hK0o.inter (hsm _)
   let F : Submodule ℂ C :=
     { carrier := {w | ∀ k ∈ K, ρC k w = w}
       zero_mem' := fun k _ => map_zero _
-      add_mem' := fun ha hb k hk => by rw [map_add, ha k hk, hb k hk]
+      add_mem' := fun ha hb k hk => by rw [map_add (f := _), ha k hk, hb k hk]
       smul_mem' := fun c w hw k hk => by rw [map_smul, hw k hk] }
   have hF : ∀ w, w ∈ F ↔ ∀ k ∈ K, ρC k w = w := fun w => Iff.rfl
   haveI := rep_fd W.rep K hKo
   haveI : FiniteDimensional ℂ F := by
     let ι : F →ₗ[ℂ] fixed (rep W.rep) K := F.subtype.codRestrict _ (fun w k => by
-      show rep W.rep (k : finU E n) w.1 = ((1 : ℂˣ) : ℂ) • w.1
+      show rep W.rep (k : finU (E := E) (n := n)) w.1 = ((1 : ℂˣ) : ℂ) • w.1
       rw [Units.val_one, one_smul]
       exact w.2 k k.2)
     exact FiniteDimensional.of_injective ι (fun a b h => Subtype.ext (congrArg (fun z : fixed (rep W.rep) K => (z : C)) h))
-  have horb : ∀ y : C, ((fun k => ρC k y) '' (K : Set (finU E n))).Finite := by
+  have horb : ∀ y : C, ((fun k => ρC k y) '' (K : Set (finU (E := E) (n := n)))).Finite := by
     intro y
     refine (GlobalTheory.AdmissibleProjection.orbit_finite ρC hsm K0 hK0c y).subset ?_
     rintro _ ⟨k, hk, rfl⟩
@@ -221,7 +226,8 @@ theorem eigen_decomp : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
     rfl
   have hval : ∀ v, f.1 v ∈ ⨆ U ∈ t, U := by
     intro v
-    rw [← hsup, htS, ← b.sum_repr v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsup, htS, ← b.sum_repr v, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smul]
     refine Submodule.smul_mem _ _ ?_
@@ -269,7 +275,7 @@ theorem eigen_decomp : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
     { toFun := fun v => c v U
       map_add' := fun v w => congrFun (hkey (v + w) (fun U => c v U + c w U) (fun U => U.add_mem (hcm v U) (hcm w U))
         (fun U hU => by rw [hc0 v U hU, hc0 w U hU, add_zero])
-        (by rw [Finset.sum_add_distrib, hcs, hcs, map_add])).symm U
+        (by rw [Finset.sum_add_distrib, hcs, hcs, map_add (f := _)])).symm U
       map_smul' := fun r v => congrFun (hkey (r • v) (fun U => r • c v U) (fun U => U.smul_mem r (hcm v U))
         (fun U hU => by rw [hc0 v U hU, smul_zero])
         (by rw [← Finset.smul_sum, hcs, map_smul])).symm U }
@@ -290,10 +296,11 @@ theorem eigen_decomp : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n
       · exact (htA U hU).stable _ _ (hcm v U)
       · rw [hc0 v U hU, map_zero]
         exact U.zero_mem
-    · rw [← map_sum, ← Finset.smul_sum, hcs]
-      funext g
-      rw [RU_apply, hf c0 v g]
-      rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [← map_sum, ← Finset.smul_sum, hcs]
+        funext g
+        rw [RU_apply, hf c0 v g]
+        rfl
   have hmemA : ∀ U ∈ t, Fl U ∈ algForms W := fun U hU =>
     (⟨fun v => (htA U hU).aut _ (hcm v U), fun x v => by rw [hFl, hFl, hinf x v]⟩ :
       (∀ v, Fl U v ∈ autU E n) ∧ ∀ (x : infU E n) v, Fl U (W.rep x v) = RU E n x (Fl U v))

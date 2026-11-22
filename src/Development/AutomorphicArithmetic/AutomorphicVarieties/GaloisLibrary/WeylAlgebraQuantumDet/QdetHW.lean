@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Matrix UpperTheory.V.Weyl
 
 open Formalism.REAL in
@@ -8,7 +13,8 @@ private theorem UpperTheory.V.Weyl.map_quantum_determinant {A B : Type} [Ring A]
   have hT : ∀ v a b, φ (Tm X v a b) = Tm (fun a b => φ (X a b)) v a b := fun v a b => by
     unfold Tm
     split_ifs <;> simp
-  simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, hT]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, hT]
 
 theorem UpperTheory.V.Weyl.qdetHW :
     ∀ (n d : ℕ) (E : Fin n → Fin n → Matrix (Fin d) (Fin d) ℂ) (ν : Fin n → ℂ) (v : Fin d → ℂ), Formalism.REAL.GlRel E →

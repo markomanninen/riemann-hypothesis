@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ConditionIffAdditiveMaps
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CoeffOneLNe
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ConditionIffAdditiveMaps
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CoeffOneLNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,6 @@ abbrev pendG (X : Sys p) [IsFractionRing X.G.O X.G.Kf] (E : CEmb X.G)
     (F : ∀ j, X.Lt j → X.Lt (j + 1) → MvPowerSeries (T × Fin ((X.Pj (j + 1)).m + 1) × Fin ((X.Pj j).m + 1)) ℂ_[p]) :
     Pend X :=
   pendC X E hfin hst (beLT hLT) (thFOf X pos F)
-
-def wittFractionToCoefficients {X : Sys p} (Y : Pend X) : K0 p →+* Y.Kc := algebraMap (K0 p) Y.Kc
 
 section Ties
 

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartSome
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartSome
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -30,7 +35,7 @@ theorem chart_cover : ∀ {R : Type} [CommRing R] [IsLocalRing R] (S : Scheme.{0
   let g : Over.mk s ⟶ G' := Over.homMk t rfl
   have hp : g.left (IsLocalRing.closedPoint _) = p := Scheme.fromSpecResidueField_apply p _
   rcases H (G'.left.residueField p) s g with h1 | ⟨i, h2⟩
-  · exact ⟨none, by simpa using h1 ⟨_, hp⟩⟩
+  · exact ⟨none, by simpa [Near.chart] using h1 ⟨_, hp⟩⟩
   · let c : Over.mk s ⟶ G' := (Over.homMk s (by simp) : Over.mk s ⟶ Over.mk (𝟙 S)) ≫ x i
     obtain ⟨b, hb⟩ := h2 ⟨IsLocalRing.closedPoint _, rfl⟩
     have key : (g * c) ≫ transl (x i)⁻¹ = g := by

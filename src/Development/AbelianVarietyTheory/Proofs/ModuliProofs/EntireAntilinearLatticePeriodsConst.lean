@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex Matrix
 open scoped ContDiff BigOperators Real
@@ -28,7 +32,7 @@ theorem entire_sub_conj_bounded_const {φ : ℂ → ℂ} {b : ℂ} {C : ℝ} (h�
       show ‖φ (s + a) - φ s‖ ≤ _
       have e : φ (s + a) - φ s = ((φ (s + a) - (starRingEnd ℂ) (s + a) * b)
           - (φ s - (starRingEnd ℂ) s * b)) + (starRingEnd ℂ) a * b := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [e]
       calc _ ≤ ‖(φ (s + a) - (starRingEnd ℂ) (s + a) * b) - (φ s - (starRingEnd ℂ) s * b)‖
             + ‖(starRingEnd ℂ) a * b‖ := norm_add_le _ _

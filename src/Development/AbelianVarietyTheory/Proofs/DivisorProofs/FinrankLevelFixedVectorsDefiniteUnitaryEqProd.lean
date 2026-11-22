@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompOfSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntegralFixedVectorsEqOneAlmostAllStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ISupRangeWeightMapsEqTopDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntegralFixedVectorsEqOneAlmostAllStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ISupRangeWeightMapsEqTopDefiniteUnitary
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -20,13 +25,13 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 theorem ua_ext {g h : UA E n} (h1 : cInf g = cInf h) (h2 : ∀ u : Pl E, cLoc u g = cLoc u h) : g = h :=
   Subtype.ext (ga_ext' h1 h2)
 
-variable (n) in
 
+variable (n) in
 def proj (S : Set (Pl E)) : InfinitePlace E ⊕ S → UA E n →* UA E n :=
   Sum.elim (fun v => (embU n v.embedding).subtype.comp (embRet v.embedding)) fun w => ret0 w.1 n
 
 def lev (S : Set (Pl E)) (K' : ∀ w : Pl E, Subgroup (UL n w)) : Subgroup (UA E n) :=
-  (globLev S K').map (finU E n).subtype
+  (globLev S K').map (finU (E := E) (n := n)).subtype
 
 theorem mem_lev {S : Set (Pl E)} {K' : ∀ w : Pl E, Subgroup (UL n w)} {g : UA E n} :
     g ∈ lev S K' ↔ cInf g = 1 ∧ ∀ w ∈ S, (⟨cLoc w g, cLoc_mem_UL w g⟩ : UL n w) ∈ K' w := by
@@ -128,7 +133,7 @@ theorem mem_lev_iff_proj (hS : IsSection S) (g : UA E n) : g ∈ lev S K' ↔ �
   rw [mem_lev]
   refine and_congr ⟨fun h v => by rw [h, map_one], fun h => gl_ext_evGL fun v => by rw [h, map_one]⟩ (by simp)
 
-theorem eventually_cLoc_mem (g : UA E n) : ∀ᶠ w : Pl E in cofinite, cLoc w g ∈ GlobalTheory.LFun.KGL w n := by
+theorem eventually_cLoc_mem (g : UA E n) : ∀ᶠ w : Pl E in cofinite, cLoc w g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have h : ∀ g : UA E n, ∀ᶠ w : Pl E in cofinite, ∀ i j, Valued.v ((cLoc w g).val i j) ≤ 1 := fun g => by
     simp only [Filter.eventually_all]
     exact fun i j => (pFin E (g.1.val i j)).2
@@ -145,15 +150,15 @@ theorem finite_proj_notMem (hS : IsSection S) (hK : ∀ᶠ w in cofinite, K' w =
   exact h'.2
 
 theorem exists_finset_subset (hU : Unr E) (hn : 1 ≤ n) (hS : IsSection S)
-    (hK : IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K') (O : Set (finU E n)) (hO : IsOpen O)
+    (hK : IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K') (O : Set (finU (E := E) (n := n))) (hO : IsOpen O)
     (h1 : 1 ∈ O) : ∃ T : Finset S, ∀ k ∈ globLev S K', (∀ w ∈ T, proj n S (.inr w) k = 1) → k ∈ O := by
   obtain ⟨-, hc, -, hle, -⟩ := globLev_isOpen_isCompact_isLevel E hU n hn S hS K' hK
   haveI := GlobalTheory.DefU.LocAdm.t2Space_adelicGL_cmField (E := E) (n := n)
   obtain ⟨T, hT⟩ := (hc.diff hO).elim_finite_subfamily_closed
-    (fun w : S => {k : finU E n | proj n S (.inr w) k = 1})
+    (fun w : S => {k : finU (E := E) (n := n) | proj n S (.inr w) k = 1})
     (fun w => isClosed_eq ((continuous_subtype_val.comp (continuous_ret (w := w.1))).comp continuous_subtype_val)
       continuous_const) (by
-      refine Set.eq_empty_of_forall_notMem fun k ⟨hk, hk'⟩ => hk.2 ?_
+      refine Set.disjoint_left.2 fun k hk hk' => hk.2 ?_
       have : k = 1 := by
         refine Subtype.ext (ua_ext (k.2.trans (map_one _).symm) fun u => ?_)
         obtain ⟨w, ⟨hw, hwu⟩, -⟩ := hS u
@@ -162,7 +167,7 @@ theorem exists_finset_subset (hU : Unr E) (hn : 1 ≤ n) (hS : IsSection S)
         rfl
       rwa [this])
   refine ⟨T, fun k hk h => by_contra fun hk' => ?_⟩
-  exact Set.eq_empty_iff_forall_notMem.1 hT k ⟨⟨hle hk, hk'⟩, Set.mem_iInter₂.2 h⟩
+  exact Set.disjoint_left.1 hT ⟨hle hk, hk'⟩ (Set.mem_iInter₂.2 h)
 
 theorem hasComp_inl (π : AutSub E n) (v : InfinitePlace E) (lam : DomWeight n) (h : HasWeightAt π.V v.embedding lam) :
     HasComp π.rep (proj n S (.inl v)) (lev S K') (Module.finrank ℂ (nablaSq ℂ n lam)) := by

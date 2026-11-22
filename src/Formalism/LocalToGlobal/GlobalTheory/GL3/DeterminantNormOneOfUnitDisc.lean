@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem cS_span_le (S : Set D.host.E) :
     induction hy using Submodule.span_induction with
     | mem z hz => exact Submodule.subset_span ⟨z, hz, rfl⟩
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul r a _ ha => rw [CU.conj_smul]; exact Submodule.smul_mem _ _ ha
   have h := key _ hx'
   rwa [Formalism.HC.HostRaw.conj_conj] at h
@@ -189,8 +193,8 @@ namespace Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity.DN
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.TaylorLogMetric Matrix nonZeroDivisors
 
-open FractionalIdeal in
 
+open FractionalIdeal in
 theorem spanPow {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
     [IsFractionRing R K] (I : FractionalIdeal R⁰ K) (hI : I ≠ 0) (S : Set K)
     (hIS : (I : Submodule R K) = Submodule.span R S) (k : ℕ) :
@@ -410,12 +414,6 @@ theorem relative_determinant_norm_one (D : D7) : DetIdealsKernelNormOne D := DN.
 
 theorem character_unit_on_determinant (D : D7) (χ : IdE D → ℂ) (hχ : IsChi D χ) : ChiUnitDet D χ :=
   chi_unit_of_det_norm_one D (relative_determinant_norm_one D) χ hχ
-
-theorem LinkThIndep_of_IopIso
-    (hI : ∀ D : D7, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      IopIso D (tor0 D cc δ)) :
-    LinkThIndep :=
-  theta_norm_indep_of_det_norm_one hI relative_determinant_norm_one
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open scoped TensorProduct
@@ -31,14 +36,14 @@ private def muInv (M : Matrix (Fin n) (Fin n) (R ⊗[ℚ] E)) : R ⊗[ℚ] Matri
 
 private theorem muInv_add (M N : Matrix (Fin n) (Fin n) (R ⊗[ℚ] E)) :
     muInv R E n (M + N) = muInv R E n M + muInv R E n N := by
-  simp [muInv, Matrix.add_apply, map_add, Finset.sum_add_distrib]
+  simp [muInv, Matrix.add_apply, map_add (f := _), Finset.sum_add_distrib]
 
 private theorem muInv_muHom (y : R ⊗[ℚ] Matrix (Fin n) (Fin n) E) :
     muInv R E n (muHom R E n y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp [muInv]
   | add a b ha hb =>
-    rw [map_add, muInv_add, ha, hb]
+    rw [map_add (f := _), muInv_add, ha, hb]
   | tmul r x =>
     simp only [muInv, muHom_tmul, LinearMap.lTensor_tmul, Matrix.singleLinearMap_apply]
     simp only [← TensorProduct.tmul_sum]
@@ -48,7 +53,7 @@ private theorem muHom_single (i k : Fin n) (b : R ⊗[ℚ] E) :
     muHom R E n (LinearMap.lTensor R (Matrix.singleLinearMap ℚ i k) b) = Matrix.single i k b := by
   induction b using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, Matrix.single_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, Matrix.single_add]
   | tmul r x =>
     ext a c
     rw [LinearMap.lTensor_tmul, muHom_tmul, Matrix.singleLinearMap_apply]
@@ -60,7 +65,8 @@ private theorem muHom_single (i k : Fin n) (b : R ⊗[ℚ] E) :
 
 private theorem muHom_muInv (M : Matrix (Fin n) (Fin n) (R ⊗[ℚ] E)) :
     muHom R E n (muInv R E n M) = M := by
-  simp only [muInv, map_sum, muHom_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [muInv, map_sum, muHom_single]
   exact (Matrix.matrix_eq_sum_single M).symm
 
 private def muEquiv : R ⊗[ℚ] Matrix (Fin n) (Fin n) E ≃+* Matrix (Fin n) (Fin n) (R ⊗[ℚ] E) where

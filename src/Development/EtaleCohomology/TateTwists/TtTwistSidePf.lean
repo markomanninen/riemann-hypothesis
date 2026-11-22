@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleTensorTwistedResolutionOfExistenceBoundAndS
-import Development.EtaleCohomology.TateTwists.EtaleTensorHomDescendsAlongTensorPairing
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleTensorTwistedResolutionOfExistenceBoundAndS
+public import Development.EtaleCohomology.TateTwists.EtaleTensorHomDescendsAlongTensorPairing
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped TensorProduct
@@ -60,7 +64,7 @@ theorem tens_ind {I J : Cx R} {U : Scheme.{0}} {w : ℤ} (P : Tens I J U w → P
     induction z using TensorProduct.induction_on with
     | zero => simpa using h0
     | tmul a b => simpa [DirectSum.lof_eq_of] using ht p a b
-    | add z1 z2 h1 h2 => rw [map_add]; exact hadd _ _ h1 h2
+    | add z1 z2 h1 h2 => rw [map_add (f := _)]; exact hadd _ _ h1 h2
 
 theorem lift_lof {I J K : Cx R} (τ : Pair I J K) (U : Scheme.{0}) (w : ℤ) p a b :
     τ.lift U w (DirectSum.lof (ULift.{1} R) _ _ p (a ⊗ₜ b)) = τ.mul U p.1.1 p.1.2 w p.2 a b := by
@@ -118,7 +122,7 @@ theorem twist_side (htm : tw_mul) (htf : tw_flat) (hfl : flip_ex) (hqis : tens_q
     refine ⟨S, hS, fun V g hg => ?_⟩
     obtain ⟨x, hx⟩ := h1 V g hg
     rw [← hx, show Sec.res g (0 : Sec (M.X w) U) = 0 from map_zero _]
-    refine tens_ind (fun x => σ.lift V w x = 0) (map_zero _) (fun x y hx hy => by rw [map_add, hx, hy, add_zero])
+    refine tens_ind (fun x => σ.lift V w x = 0) (map_zero _) (fun x y hx hy => by rw [map_add (f := _), hx, hy, add_zero])
       (fun p a b => ?_) x
     rw [lift_lof]
     rcases p with ⟨⟨s, t⟩, hst⟩
@@ -137,7 +141,7 @@ theorem twist_side (htm : tw_mul) (htf : tw_flat) (hfl : flip_ex) (hqis : tens_q
   have hb : ∀ (V U : Scheme.{0}) (g : V ⟶ U) x, Sec.res g (b U x) = b V (Tens.res g 0 x) := by
     intro V U g x
     refine tens_ind (fun x => Sec.res g (b U x) = b V (Tens.res g 0 x)) (by simp)
-      (fun x y hx hy => by simp only [map_add, hx, hy]) (fun p a c => ?_) x
+      (fun x y hx hy => by simp only [map_add (f := _), hx, hy]) (fun p a c => ?_) x
     rw [hbv, σ.nat, map_res]
     simp only [Tens.res, DirectSum.lmap_lof, TensorProduct.map_tmul]
     rw [hbv]
@@ -150,7 +154,7 @@ theorem twist_side (htm : tw_mul) (htf : tw_flat) (hfl : flip_ex) (hqis : tens_q
     obtain ⟨x, hx⟩ := h1 V g hg
     rw [show Sec.res g (0 : Sec (M.X (0 + 1)) U) = 0 from map_zero _, map_res, hφnat, ← hx, hφlift]
     refine tens_ind (fun x => Sec.map (M.d 0 (0 + 1)) (b V x) = 0) (by simp)
-      (fun x y hx hy => by simp only [map_add, hx, hy, add_zero]) (fun p a c => ?_) x
+      (fun x y hx hy => by simp only [map_add (f := _), hx, hy, add_zero]) (fun p a c => ?_) x
     rcases p with ⟨⟨s, t⟩, hst⟩
     rw [hbv]
     have hl := σ.leibniz V s t 0 hst a (Sec.map (ε'.f t) c)

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestBlockForm
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ExtendedStatementOfParts
+
+@[expose] public section
 
 noncomputable section
 

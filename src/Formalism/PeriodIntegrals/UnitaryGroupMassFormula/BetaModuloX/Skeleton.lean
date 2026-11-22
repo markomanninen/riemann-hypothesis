@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScalPairs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScalPairs
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def ModXAbs : Prop :=
   ∀ {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) (r T' g : ℕ)
     (F' : LFlag S r (T' : E)) (Λ : Submodule (𝓞 E) S.V) (γ : S.V ≃ₗ[E] S.V),
     (∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a)) →
-    0 < T' → 3 ≤ g → Submodule.IsLattice E Λ →
+    0 < T' → 3 ≤ g → Submodule.IsFullLattice E Λ →
     (∀ τ : E →+* ℂ, ∀ w ∈ orth S (Xplus F'), w ∉ Xsp F' → 0 < (τ (S.hT w w)).re) →
     IsAutLam S Λ γ → (Xsp F').map (γ : S.V →ₗ[E] S.V) = Xsp F' → γ F'.fl.z = F'.fl.z →
     (∀ w ∈ Lrep Λ F', γ w - w ∈ Ideal.span {(g : 𝓞 E)} • Λ ⊔ XLam Λ F') →
@@ -74,13 +78,6 @@ theorem aut_mul {Λ : Submodule (𝓞 E) S.V} {β β' : S.V ≃ₗ[E] S.V} (h : 
     · show β (β' (β'.symm (β.symm x))) = x
       simp
 
-theorem isPair_refl (Λ : Submodule (𝓞 E) S.V) (g : ℕ) {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') :
-    IsPair Λ F F' F' (LinearEquiv.refl E S.V) g := by
-  refine ⟨⟨fun _ _ => rfl, ?_⟩, fun j => ?_, rfl, fun _ _ _ _ => Iff.rfl⟩
-  · unfold Formalism.HermitianLatticesTheory.gmap
-    ext x; simp
-  · ext x; simp
-
 end Gen
 
 section D7
@@ -100,7 +97,7 @@ def XLamSub : Prop :=
       XLam Λ (lf D F0) ≤ Ideal.span {(gS D : 𝓞 D.host.E)} • Λ ⊔ XLam Λ y.1
 
 def PosW : Prop :=
-  ∀ (D : D7) (T' : ℕ) (F' : LFlag (hS D) D.R.rS ((T' : ℕ) : D.host.E)) (τ : D.host.E →+* ℂ) (w : (hS D).V),
+  ∀ (D : D7) (T' : ℕ) (F' : LFlag (D.sp.Y 0) D.R.rS ((T' : ℕ) : D.host.E)) (τ : D.host.E →+* ℂ) (w : (hS D).V),
     0 < T' → w ∈ orth (hS D) (Xplus F') → w ∉ Xsp F' → 0 < (τ ((hS D).hT w w)).re
 
 theorem gS_ge_three (D : D7) (hg : ∀ i, 3 ≤ D.host.g i ∧ PI.ScalPairs.Unram D.host.E (D.host.g i)) :
@@ -187,7 +184,7 @@ theorem betaModX_of (h1 : IotaSurj) (h2 : XLamSub) (h3 : PosW) (h4 : ModXAbs)
     exact hφ ⟨_, hd, rfl⟩
   have hpos : 0 < Tu D u' := (D.mem u').A.T_prime.pos
   have key := h4 (VS D) D.R.rS (Tu D u') (gS D) x.1 Λ γ (fun τ => D.sp.cm.cmUnram.2.1 τ) hpos
-    (gS_ge_three D hg) hΛ.2.1.1 (fun τ w hw hwX => h3 D (Tu D u') x.1 τ w hpos hw hwX) hA hXγ hz hcong v hv
+    (gS_ge_three D hg) hΛ.1.1 (fun τ w hw hwX => h3 D (Tu D u') x.1 τ w hpos hw hwX) hA hXγ hz hcong v hv
   have : β₁ v - β₂ v = β₂ (γ v - v) := by
     rw [map_sub, hγv, LinearEquiv.apply_symm_apply]
   rw [this]

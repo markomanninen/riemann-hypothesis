@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.CosetGroupMembership
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ClassesDoubleCosets
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.CosetGroupMembership
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ClassesDoubleCosets
+
+@[expose] public section
 
 noncomputable section
 

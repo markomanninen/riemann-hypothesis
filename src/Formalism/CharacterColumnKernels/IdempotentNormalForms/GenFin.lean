@@ -1,9 +1,13 @@
-import Formalism.CharacterColumnKernels.Statement
-import Formalism.CharacterColumnKernels.StatementG
-import Formalism.CharacterColumnKernels.StatementX
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.GenRelMapApply
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LenCokerOfDetNeZero
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.SingleEqSmul
+module
+
+public import Formalism.CharacterColumnKernels.Statement
+public import Formalism.CharacterColumnKernels.StatementG
+public import Formalism.CharacterColumnKernels.StatementX
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.GenRelMapApply
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LenCokerOfDetNeZero
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.SingleEqSmul
+
+@[expose] public section
 
 open Finset
 
@@ -15,9 +19,9 @@ lemma genfin_det_totalDegree {ι K n : Type*} [CommRing K] [Fintype n] [Decidabl
     (A : Matrix n n (MvPolynomial ι K)) (h : ∀ i j, (A i j).totalDegree ≤ 1) :
     A.det.totalDegree ≤ Fintype.card n := by
   rw [Matrix.det_apply]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun σ _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun σ _ => ?_)
   have hprod : (∏ i, A (σ i) i).totalDegree ≤ Fintype.card n := by
-    refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     calc ∑ i, (A (σ i) i).totalDegree ≤ ∑ _i : n, 1 := Finset.sum_le_sum fun i _ => h _ _
       _ = Fintype.card n := by simp
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with hs | hs
@@ -49,7 +53,8 @@ theorem genericFin : StatGenericFin := by
     rw [RingHom.map_det, RingHom.map_det]
     congr 1
     ext p q
-    simp [L, Matrix.mul_apply, bigRect, Matrix.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [L, Matrix.mul_apply, bigRect, Matrix.sum_apply, map_sum]
 
   have hsum : ∀ w (φ : g × m × d w × d w → O),
       bigRect (ρ w) (∑ j : (Σ w : s, g × m × d w × d w),
@@ -57,7 +62,8 @@ theorem genericFin : StatGenericFin := by
         fun p q => φ (p.1, q.1, p.2, q.2) := by
     intro w φ
     funext p q
-    simp only [bigRect, Matrix.sum_apply, Matrix.smul_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [bigRect, Matrix.sum_apply, Matrix.smul_apply, map_sum, map_smul]
     rw [Fintype.sum_sigma]
     rw [Fintype.sum_eq_single w (fun x hx => by simp [Pi.single_eq_of_ne hx])]
     simp only [Pi.single_eq_same]

@@ -1,8 +1,13 @@
-import Formalism.DoubleCosetMeasures.Statement
+module
+
+public import Formalism.DoubleCosetMeasures.Statement
+
+@[expose] public section
 
 noncomputable section
 
 open MeasureTheory Matrix Formalism.DoubleCosetMeasures
+open Classical
 open scoped ComplexConjugate
 
 namespace Formalism.FourierDecayAlt.A5
@@ -79,16 +84,6 @@ def InTT {n n' : ℕ} (k : ℕ) (Z : Matrix (Fin n) (Fin n) K) (Z' : Matrix (Fin
     φ (Submodule.Quotient.mk v) = Submodule.Quotient.mk v' →
       lamN R Z' j v' = lamN R Z j v + ∑ l ∈ Finset.Ioo j n, a l • lamN R Z l v
 
-def InTTeq {n n' : ℕ} (k : ℕ) (Z : Matrix (Fin n) (Fin n) K) (Z' : Matrix (Fin n') (Fin n') K)
-    (φ : coker R Z ≃ₗ[R] coker R Z') : Prop :=
-  ∀ j, k ≤ j → j < n → ∀ (v : Fin n → R) (v' : Fin n' → R),
-    φ (Submodule.Quotient.mk v) = Submodule.Quotient.mk v' → lamN R Z' j v' = lamN R Z j v
-
-def LiftRel {n n' : ℕ} (k : ℕ) (Z : Matrix (Fin n) (Fin n) K) (Z' : Matrix (Fin n') (Fin n') K)
-    (φ : coker R Z ≃ₗ[R] coker R Z') (v : Fin n → R) (v' : Fin n' → R) : Prop :=
-  φ (Submodule.Quotient.mk v) = Submodule.Quotient.mk v' ∧
-    ∀ j, k ≤ j → lamTil R Z' j v' = lamTil R Z j v
-
 end Defs
 
 section Kernel
@@ -110,8 +105,8 @@ def phase (ψ : AddChar K ℂ) {w : Point K} (p : lowW K w.1 w.2 × upUniG K w.1
   ψ (sLow ((p.1 : GL (Fin w.1.sum) K) : Matrix (Fin w.1.sum) (Fin w.1.sum) K) +
     sUp ((p.2 : GL (Fin w.1.sum) K) : Matrix (Fin w.1.sum) (Fin w.1.sum) K))
 
-open Classical in
 
+open Classical in
 def pairTerm (ψ : AddChar K ℂ) (w w' : Point K) (q : Cos R w × Cos R w') : ℂ :=
   (if IsInt R (orbZ w (rep R q.1)) ∧ IsInt R (orbZ w' (rep R q.2)) then
     (Nat.card (isoZZ R (orbZ w (rep R q.1)) (orbZ w' (rep R q.2))) : ℂ) else 0) *
@@ -119,8 +114,8 @@ def pairTerm (ψ : AddChar K ℂ) (w w' : Point K) (q : Cos R w × Cos R w') : �
 
 def Kp (ψ : AddChar K ℂ) (w w' : Point K) : ℂ := ∑ᶠ q : Cos R w × Cos R w', pairTerm R ψ w w' q
 
-open Classical in
 
+open Classical in
 def intTT (ψ : AddChar K ℂ) (k : ℕ) (w w' : Point K) : ℂ :=
   ∑ᶠ q : Cos R w × Cos R w',
     (if IsInt R (orbZ w (rep R q.1)) ∧ IsInt R (orbZ w' (rep R q.2)) then
@@ -136,26 +131,6 @@ def Ns (ψ : AddChar K ℂ) (s : ℕ) (h h' : Point K) (t t' : Kˣ) : ℂ :=
     Kp R ψ (addBlock h s t) (addBlock h' s t')
 
 end Kernel
-
-def IsoZZIsIso : Prop :=
-  ∀ (K : Type) [CommRing K] (R : Subring K) (n n' : ℕ) (Z : Matrix (Fin n) (Fin n) K)
-    (Z' : Matrix (Fin n') (Fin n') K) (lam' : coker R Z' →ₗ[R] KR R),
-    (∀ v', lam' (Submodule.Quotient.mk v') = lamLin R Z' v') →
-      isoZZ R Z Z' = isoSet R Z (coker R Z') (eZ R Z') lam'
-
-def LamLast : Prop :=
-  ∀ (K : Type) [CommRing K] (R : Subring K) (n : ℕ) (Z : Matrix (Fin (n + 1)) (Fin (n + 1)) K),
-    lamN R Z n = lamLin R Z
-
-def IsoCount : Prop :=
-  ∀ (K : Type) [CommRing K] (R : Subring K) (n n' : ℕ) (Z : Matrix (Fin n) (Fin n) K)
-    (Z' : Matrix (Fin n') (Fin n') K) (ι : Type) [Fintype ι] (C : ι → Type)
-    [∀ a, AddCommGroup (C a)] [∀ a, Module R (C a)] (e : ∀ a, C a) (lam : ∀ a, C a →ₗ[R] KR R),
-    (∀ a b, a ≠ b → ¬ ∃ φ : C a ≃ₗ[R] C b, φ (e a) = e b ∧ ∀ c, lam b (φ c) = lam a c) →
-    (∃ a, (isoSet R Z (C a) (e a) (lam a)).Nonempty) →
-    ∑ a, (Nat.card (isoSet R Z (C a) (e a) (lam a)) : ℂ) *
-        (Nat.card (isoSet R Z' (C a) (e a) (lam a)) : ℂ) /
-        (Nat.card (autSet R (C a) (e a) (lam a)) : ℂ) = (Nat.card (isoZZ R Z Z') : ℂ)
 
 def KpFinite : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
@@ -220,10 +195,6 @@ def DualSpan : Prop :=
       (lam : ι → C →ₗ[R] KR R) (μ : C →ₗ[R] KR R),
       (∀ c, (∀ j, lam j c = 0) → μ c = 0) → μ ∈ Submodule.span R (Set.range lam)
 
-def EndKR : Prop :=
-  ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
-    (ψ : AddChar K ℂ), LocalDatum K R ψ → ∀ f : KR R →ₗ[R] KR R, ∃ r : R, ∀ x, f x = r • x
-
 def InvLastCol : Prop :=
   ∀ (K : Type) [CommRing K] (h : Point K) (s : ℕ) (t : Kˣ), 1 ≤ s →
     ∀ x y : Matrix (Fin (addBlock h s t).1.sum) (Fin (addBlock h s t).1.sum) K,
@@ -233,35 +204,6 @@ def InvLastCol : Prop :=
         (x * pt (addBlock h s t).1 (addBlock h s t).2 * y)⁻¹ a b = ((t⁻¹ : Kˣ) : K) * y⁻¹ a c ∧
         (c < a → (x * pt (addBlock h s t).1 (addBlock h s t).2 * y)⁻¹ a b = 0) ∧
         (x * pt (addBlock h s t).1 (addBlock h s t).2 * y)⁻¹ c b = ((t⁻¹ : Kˣ) : K)
-
-def ColOp : Prop :=
-  ∀ (K : Type) [CommRing K] (n : ℕ) (Z u : Matrix (Fin n) (Fin n) K) (m : Fin n → K)
-    (c r : Fin n), IsUnit Z.det → IsUpUni u → r.val + 1 = c.val →
-    (∀ a, c ≤ a → (Z⁻¹ *ᵥ m) a = 0) →
-      IsUpUni (1 + vecMulVec (Z⁻¹ *ᵥ m) (Pi.single c 1)) ∧
-      Z * (1 + vecMulVec (Z⁻¹ *ᵥ m) (Pi.single c 1)) = Z + vecMulVec m (Pi.single c 1) ∧
-      (∀ a b, c ≤ a → (Z + vecMulVec m (Pi.single c 1))⁻¹ a b = Z⁻¹ a b) ∧
-      sUp (u * (1 + vecMulVec (Z⁻¹ *ᵥ m) (Pi.single c 1))) = sUp u + (Z⁻¹ *ᵥ m) r
-
-def ColOpRow : Prop :=
-  ∀ (K : Type) [CommRing K] (n : ℕ) (Z : Matrix (Fin n) (Fin n) K) (m : Fin n → K)
-    (c : Fin n), IsUnit Z.det → (∀ a, c ≤ a → (Z⁻¹ *ᵥ m) a = 0) →
-      ∀ a b, (Z + vecMulVec m (Pi.single c 1))⁻¹ a b = Z⁻¹ a b - (Z⁻¹ *ᵥ m) a * Z⁻¹ c b
-
-def ColOpTriple : Prop :=
-  ∀ (K : Type) [CommRing K] (R : Subring K) (n : ℕ) (Z Z' : Matrix (Fin n) (Fin n) K),
-    IsInt R Z → IsInt R Z' → IsUnit Z.det → IsUnit Z'.det →
-    ∀ φ ∈ isoZZ R Z Z', ∀ c : Fin n, InTTeq R c.val Z Z' φ →
-    LiftRel R c.val Z Z' φ (eLast R) (eLast R) →
-    ∀ m m' : Fin n → R, LiftRel R c.val Z Z' φ m m' → (∀ j, c.val ≤ j → lamTil R Z j m = 0) →
-    ∃ φn : coker R (Z + vecMulVec (coeLin R m) (Pi.single c 1)) ≃ₗ[R]
-        coker R (Z' + vecMulVec (coeLin R m') (Pi.single c 1)),
-      φn ∈ isoZZ R (Z + vecMulVec (coeLin R m) (Pi.single c 1))
-        (Z' + vecMulVec (coeLin R m') (Pi.single c 1)) ∧
-      InTTeq R c.val (Z + vecMulVec (coeLin R m) (Pi.single c 1))
-        (Z' + vecMulVec (coeLin R m') (Pi.single c 1)) φn ∧
-      ∀ v v', LiftRel R c.val Z Z' φ v v' →
-        φn (Submodule.Quotient.mk v) = Submodule.Quotient.mk v'
 
 def TripleForm : Prop :=
   ∀ (K : Type) [CommRing K] (R : Subring K) (ψ : AddChar K ℂ) (w w' : Point K) (k : ℕ),
@@ -312,8 +254,8 @@ def A2 : Prop := BlockKernelPosSemidef ∧ BlockKernelSupport
 def BlockKernelPropertiesOfSteps : Prop :=
   KpGram → ModMul → TripleForm → AvgClaim → TTEnd → A2
 
-open Classical in
 
+open Classical in
 def CharOrthDual : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → ∀ (n : ℕ) (Z : Matrix (Fin n) (Fin n) K),
@@ -321,8 +263,8 @@ def CharOrthDual : Prop :=
         ∑ᶠ α : coker R Z →ₗ[R] KR R, psiKR R ψ (α x) =
           ((if x = 0 then Nat.card (coker R Z) else 0 : ℕ) : ℂ)
 
-open Classical in
 
+open Classical in
 def CharOrth : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → ∀ (n : ℕ) (Z : Matrix (Fin n) (Fin n) K),
@@ -330,8 +272,8 @@ def CharOrth : Prop :=
         ∑ᶠ β : coker R Z, psiKR R ψ (μ β) =
           ((if μ = 0 then Nat.card (coker R Z) else 0 : ℕ) : ℂ)
 
-open Classical in
 
+open Classical in
 def singleBlockInner {K : Type} [CommRing K] (R : Subring K) (ψ : AddChar K ℂ) {n n' : ℕ}
     (Z : Matrix (Fin n) (Fin n) K) (Z' : Matrix (Fin n') (Fin n') K) (c : K) : ℂ :=
   ∑ᶠ θ : coker R Z ≃ₗ[R] coker R Z', ∑ᶠ α : coker R Z →ₗ[R] KR R, ∑ᶠ β : coker R Z,
@@ -340,8 +282,8 @@ def singleBlockInner {K : Type} [CommRing K] (R : Subring K) (ψ : AddChar K ℂ
         (lamLin R Z (Quotient.out β) - lamLin R Z' (Quotient.out (θ β))))
     else 0
 
-open Classical in
 
+open Classical in
 def SingleBlockFormula : Prop :=
   ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
     (ψ : AddChar K ℂ), LocalDatum K R ψ → ∀ (h h' : Point K) (c : Kˣ), h.1.sum = h'.1.sum →
@@ -381,8 +323,8 @@ def BaseKernelOne : Prop :=
   ∀ (K : Type) [CommRing K] (R : Subring K) (ψ : AddChar K ℂ), (∀ r ∈ R, ψ r = 1) →
     ∀ h h' : Point K, h.1.sum = h'.1.sum → InGLR R h → InGLR R h' → N0 R ψ h h' = 1
 
-open Classical in
 
+open Classical in
 def ThetaProps {K : Type} [CommRing K] [TopologicalSpace K] (R : Subring K) (ψ : AddChar K ℂ)
     (s : ℕ) (F : Finset (Point K)) (Θ : K → Point K → Point K → ℂ) : Prop :=
   (∀ x, ∀ r ∈ R, Θ (x + r) = Θ x) ∧
@@ -428,9 +370,6 @@ def SingleBlockThetaProps : Prop :=
           ((cSize R h * cSize R h' : ℝ) : ℂ) * N0 R ψ h h') ∧
       ∀ F : Finset (Point K), (∀ h ∈ F, h.1.sum = m) → ThetaProps R ψ 1 F Θ
 
-def SingleBlockThetaOfSteps : Prop :=
-  SingleBlockPeriodic → SingleBlockPosSemidef → SingleBlockParseval → NsSupport → NsBlockDiag → BaseKernelOne → Th1Eq ∧ SingleBlockThetaProps
-
 def ThetaExistsStep : Prop :=
   A2 → SingleBlockParseval →
     ∀ (K : Type) [CommRing K] [TopologicalSpace K] [IsTopologicalRing K] (R : Subring K)
@@ -442,10 +381,5 @@ def LemmaA : Prop :=
 
 def LemmaAAssemble : Prop :=
   A2 → SingleBlockParseval → Th1Eq → SingleBlockThetaProps → ThetaExistsStep → BaseKernelOne → NsSupport → NsBlockDiag → LemmaA
-
-def DatumPadic : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime],
-    (∃ ψ : AddChar ℚ_[p] ℂ, LocalDatum ℚ_[p] (PadicInt.subring p) ψ) ∧
-      ∀ n : ℕ, n ≠ 0 → IsUnit (n : ℚ_[p])
 
 end Formalism.FourierDecayAlt.A5

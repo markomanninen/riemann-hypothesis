@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.GenericFibreKerTarget
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -50,12 +55,6 @@ def SectionIndexNorm.Statement : Prop :=
         Real.log |(Algebra.norm ℚ (aeval y s) : ℝ)| +
           Real.log (genIndex (Submodule.span (𝓞 K') (Set.range y)).toAddSubgroup
             (1 : Submodule (𝓞 K') K').toAddSubgroup)
-
-theorem chartRingZ_yPt (c : ∀ _ : Unit, PBlk 1 ()) :
-    chartRingZ IndefiniteRowSideFullHecke.HeightsSet.yPt c = ⊥ := by
-  refine eq_bot_iff.mpr (Algebra.adjoin_le ?_)
-  rintro _ ⟨p, rfl⟩
-  simp [IndefiniteRowSideFullHecke.HeightsSet.yPt]
 
 end
 

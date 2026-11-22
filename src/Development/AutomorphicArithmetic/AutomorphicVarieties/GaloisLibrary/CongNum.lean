@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyScaledInverse
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharpolyScaledInverse
+
+@[expose] public section
 
 open Polynomial
 
@@ -10,7 +14,7 @@ theorem exists_int_of_fixed {x : ℂ} (hx : IsIntegral ℤ x) (h : ∀ σ : ℂ 
   have h1 : x ∈ (⊥ : IntermediateField ℚ ℂ) :=
     GroundTheory.Global.mem_bot_iff_forall_algEquiv_apply_eq.2 fun σ => h σ.toRingEquiv
   obtain ⟨q, rfl⟩ := IntermediateField.mem_bot.1 h1
-  have h2 : IsIntegral ℤ q := (isIntegral_algebraMap_iff (algebraMap ℚ ℂ).injective).1 hx
+  have h2 : IsIntegral ℤ q := (isIntegral_algebraMap_iff ).1 hx
   obtain ⟨n, rfl⟩ := IsIntegrallyClosed.isIntegral_iff.1 h2
   exact ⟨n, by simp⟩
 
@@ -47,7 +51,7 @@ theorem norm_le_prod {l : ℕ} [Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ) {S :
   classical
   have e : (n : PadicAlgCl l) = ∏ s, ι.symm (f s) := by rw [← map_prod, ← hn, map_intCast]
   rw [e, norm_prod, ← Finset.prod_image (s := Finset.univ) (g := j) (f := fun s => ‖ι.symm (f s)‖) hj.injOn]
-  exact Finset.prod_le_prod_of_subset_of_le_one (Finset.subset_univ _) (fun _ _ => norm_nonneg _)
+  exact Finset.prod_le_prod_of_subset_of_le_one₀ (Finset.subset_univ _) (fun _ _ => norm_nonneg _)
     fun s _ _ => norm_le_one ι (hi s)
 
 theorem exists_unit_pow (k : ℕ) [NeZero k] (σ : ℂ ≃+* ℂ) :

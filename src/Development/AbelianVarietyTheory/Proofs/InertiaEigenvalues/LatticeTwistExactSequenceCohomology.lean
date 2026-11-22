@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
-import Formalism.GaloisCohomology.LocalTateDualityK
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MkMemAdmissibleAtIffCocycle
+public import Formalism.GaloisCohomology.LocalTateDualityK
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ theorem five {πA : Representation O G A} {πB : Representation O G B} {πC : Re
     obtain ⟨hzlc, hzc⟩ := (mem_cocycles_units_iff (z : G → B)).1 z.2
     have hβz : (fun g => β ((z : G → B) g)) ∈ Z1 πC ⊤ := by
       refine (mem_cocycles_units_iff _).2 ⟨hzlc.comp β, fun g h => ?_⟩
-      rw [← hβ, ← map_sub, ← map_add, hzc g h, map_zero]
+      rw [← hβ, ← map_sub, ← map_add (f := _), hzc g h, map_zero]
     have hC' := (mem_range_toAmb (Submodule.Quotient.mk (fun g => β ((z : G → B) g)) : Amb πC)).2
       ⟨_, hβz, rfl⟩
     rw [← hC.2] at hC'
@@ -131,7 +135,7 @@ theorem five {πA : Representation O G A} {πB : Representation O G B} {πC : Re
     have hk : ∀ g, β ((z : G → B) g - z' g + (πB g m₀ - m₀)) = 0 := by
       intro g
       have e := hc g
-      rw [map_add, map_sub, map_sub, hβ, hm₀, e]
+      rw [map_add (f := _), map_sub, map_sub, hβ, hm₀, e]
       abel
     choose u hu using fun g => (ex ((z : G → B) g - z' g + (πB g m₀ - m₀))).1 (hk g)
     have hulc : IsLocallyConstant u := by
@@ -149,14 +153,14 @@ theorem five {πA : Representation O G A} {πB : Representation O G B} {πC : Re
         have e := hz'c g h
         rw [sub_add_eq_add_sub, sub_eq_zero] at e
         exact e.symm
-      rw [map_zero, map_add, map_sub, hα, hu, hu, hu, e1, e2, map_mul, Module.End.mul_apply]
-      simp only [map_add, map_sub]
+      rw [map_zero, map_add (f := _), map_sub, hα, hu, hu, hu, e1, e2, map_mul, Module.End.mul_apply]
+      simp only [map_add (f := _), map_sub]
       abel
     obtain ⟨x, hx⟩ : Submodule.Quotient.mk u ∈ LinearMap.range φA := by
       rw [hA.2]
       exact (mem_range_toAmb _).2 ⟨u, hum, rfl⟩
     refine ⟨y + a x, ?_⟩
-    rw [map_add, ← sqa, hx, ambMap_mk, ← hz'eq, ← Submodule.Quotient.mk_add]
+    rw [map_add (f := _), ← sqa, hx, ambMap_mk, ← hz'eq, ← Submodule.Quotient.mk_add]
     change _ = (Submodule.Quotient.mk (z : G → B) : Amb πB)
     rw [amb_eq_iff]
     refine ⟨m₀, fun g => ?_⟩
@@ -171,14 +175,14 @@ variable {G LL O V : Type} [Group G] [TopologicalSpace G] [Field LL] [CommRing O
   [ContinuousConstSMul LL V] {ρ : Representation LL G V} (L : Lattice (O := O) ρ) (χ : G →* Oˣ)
   {X X' : Type} [AddCommGroup X] [Module O X] [AddCommGroup X'] [Module O X']
 
-omit [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V] [ContinuousConstSMul LL V] in
 
+omit [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V] [ContinuousConstSMul LL V] in
 theorem lTensor_equivariant (f : X →ₗ[O] X') (g : G) (m : ↥L.T ⊗[O] X) :
     f.lTensor ↥L.T (twCoef (latRep L) χ X g m) = twCoef (latRep L) χ X' g (f.lTensor ↥L.T m) := by
   induction m using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul t x => simp only [twCoef, coefRep_tmul, LinearMap.lTensor_tmul]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem tensAmb_natural (f : X →ₗ[O] X') (y : H1tw L χ ⊗[O] X) :
     ambMap (f.lTensor ↥L.T) (lTensor_equivariant L χ f) (tensAmb L χ X y) =
@@ -189,7 +193,7 @@ theorem tensAmb_natural (f : X →ₗ[O] X') (y : H1tw L χ ⊗[O] X) :
     obtain ⟨c, rfl⟩ := Submodule.Quotient.mk_surjective _ c
     rw [LinearMap.lTensor_tmul, tensAmb_tmul, tensAmb_tmul, ambMap_mk]
     congr 1
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 end Tens
 
@@ -209,6 +213,6 @@ theorem tensIso_of_exact : ∀ (G LL O V : Type) [Group G] [TopologicalSpace G] 
     obtain ⟨c, rfl⟩ := Submodule.Quotient.mk_surjective _ c
     rw [tensAmb_tmul]
     exact (mem_range_toAmb _).2 ⟨_, hcoc c x, rfl⟩
-  | add p q hp hq => rw [map_add]; exact Submodule.add_mem _ hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact Submodule.add_mem _ hp hq
 
 end GlobalTheory.TensIsoExt

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -17,7 +21,9 @@ theorem covol_prod_le_tsum_slices : ∀ (G₁ G₂ : Type) [Group G₁] [Group G
     by_cases h0 : μ₂ K = 0
     · exact ⟨Set.univ, MeasurableSet.univ, by simp [h0], Or.inl rfl⟩
     · have hc : μ₂ K * covol (Γc c) μ₁ (Ac c) ≠ ⊤ :=
-        ne_top_of_le_ne_top hb.ne (mul_le_mul_right (ENNReal.le_tsum c) _)
+        ne_top_of_le_ne_top hb.ne (by
+          gcongr
+          exact le_tsum (fun i => covol (Γc i) μ₁ (Ac i)) c)
       have hlt : μ₂ K * covol (Γc c) μ₁ (Ac c) < μ₂ K * covol (Γc c) μ₁ (Ac c) + ε' c :=
         ENNReal.lt_add_right hc (by exact_mod_cast (hε' c).ne')
       have h2 : μ₂ K * covol (Γc c) μ₁ (Ac c) = ⨅ (D : Set G₁) (_ : MeasurableSet D)

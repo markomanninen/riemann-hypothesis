@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoreStepOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoreStepOf
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
@@ -89,8 +93,10 @@ theorem assembly_reduction : AsmStep := by
       have hμ : l - (∑ a, S.hT (f a) l • F0.e a) - (∑ b, S.hT (F0.e b) l • f b) ∈ L := by
         rw [hmemL]
         refine ⟨Λ.sub_mem (Λ.sub_mem hl (hXle hPmem)) (hYle hQmem), fun c => ⟨?_, ?_⟩⟩
-        · simp [map_sum, F0.e_iso, hF.1, Finset.sum_ite_eq]
-        · simp [map_sum, hfe, hiso, Finset.sum_ite_eq']
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp [map_sum, F0.e_iso, hF.1, Finset.sum_ite_eq]
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp [map_sum, hfe, hiso, Finset.sum_ite_eq']
       have hsplit : l = (∑ a, S.hT (f a) l • F0.e a) +
           (l - (∑ a, S.hT (f a) l • F0.e a) - (∑ b, S.hT (F0.e b) l • f b)) +
           (∑ b, S.hT (F0.e b) l • f b) := by abel

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymEdgeStableSubmoduleEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KerReductionLeRangeReductionOfMulEqSmulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymEdgeStableSubmoduleEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KerReductionLeRangeReductionOfMulEqSmulStatement
+
+@[expose] public section
+
 open Matrix Formalism.UG Formalism.L2.DIV GlobalTheory.LevNorm
 
 namespace GlobalTheory.ScalInt
@@ -221,7 +226,7 @@ theorem isScal_of_normalises (K : Type) [Field K] (O : ValuationSubring K) (k : 
         · have hij : i ≠ j := fun e => by unfold symEdge at he; rw [e] at he; omega
           show a i j * r ((x' : Matrix (Fin n) (Fin n) O) i j) = _
           rw [hx'e, Matrix.one_apply_ne hij]
-          simp only [map_add, map_mul, map_zero, zero_add]
+          simp only [map_add (f := _), map_mul, map_zero, zero_add]
           ring
         · rw [mul_zero]
       rw [← hev, hψx, hxr, edgeVal_one, AddChar.map_zero_eq_one]
@@ -242,7 +247,7 @@ theorem isScal_of_normalises (K : Type) [Field K] (O : ValuationSubring K) (k : 
     have hxe : ∀ p q, ((bc r x : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) p q =
         r ((1 : Matrix (Fin n) (Fin n) O) p q) + (if i = p ∧ j = q then 1 else 0) := fun p q => by
       show r ((1 + Matrix.single i j (1 : O)) p q) = _
-      rw [Matrix.add_apply, map_add, Matrix.single_apply]
+      rw [Matrix.add_apply, map_add (f := _), Matrix.single_apply]
       split_ifs <;> simp
     have hxu : bc r x ∈ unipSym k n ρ κ := by
       refine mem_unipSym_of _ (fun p q hpq => ?_) (fun p => ?_) (fun p q h1 h2 h3 => ?_)

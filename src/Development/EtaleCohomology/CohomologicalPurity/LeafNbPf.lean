@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite
@@ -63,5 +67,3 @@ theorem nb (hE : LeafExc) : Cl.LeafNb := by
   rw [← hr]; rfl
 
 end LateralTheory.CohomologicalPurity.NbPf
-
-theorem LateralTheory.CohomologicalPurity.Cl.LeafNb_of (hE : LateralTheory.CohomologicalPurity.LeafExc) : LateralTheory.CohomologicalPurity.Cl.LeafNb := LateralTheory.CohomologicalPurity.NbPf.nb hE

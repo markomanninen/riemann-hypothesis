@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi58.aeval_inter :
     ∀ {L M N : Type} [inst : Field L]
@@ -17,7 +21,7 @@ theorem UpperTheory.Reformulated.B.Qi58.aeval_inter :
       intro y
       rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply, ih, h]
   induction Q using Polynomial.induction_on' with
-  | add p q hp' hq' => simp only [map_add, LinearMap.add_apply, hp', hq']
+  | add p q hp' hq' => simp only [map_add (f := _), LinearMap.add_apply, hp', hq']
   | monomial n a =>
     simp only [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,
       map_smul, hp]

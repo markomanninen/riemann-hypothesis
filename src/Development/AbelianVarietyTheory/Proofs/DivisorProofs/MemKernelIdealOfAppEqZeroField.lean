@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMapEqSelfOfInjectiveFiniteHopf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMapEqSelfOfInjectiveFiniteHopf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +23,7 @@ theorem mulP_mem_kerIdeal_comp_of_app_eq_zero (p : ℕ) [Fact p.Prime] (R : Type
   have hx := (kerIdeal_le_ker_iff ((G.mulP 1).comp (f.app 1)) x).1
     fun c hc => Ideal.Quotient.eq_zero_iff_mem.2 hc
   let y := x.comp (f.app 2 : H.A 2 →ₐ[R] G.A 2)
-  have hy : torsionIdeal R (H.A 2) p ≤ RingHom.ker y :=
+  have hy : torsionIdeal (R := R) (A := H.A 2) p ≤ RingHom.ker y :=
     (kerIdeal_le_ker_iff _ y).2 fun z => by
       have e : f.app 2 (mulBy R _ p z) = G.mulP 1 (f.app 1 (H.res 1 z)) := by
         rw [map_mulBy, ← PDivGroup.res_app, mulP_res]
@@ -28,8 +32,8 @@ theorem mulP_mem_kerIdeal_comp_of_app_eq_zero (p : ℕ) [Fact p.Prime] (R : Type
       exact (congrArg x e).trans this
   obtain ⟨b, rfl⟩ := G.res_surjective 1 a
   rw [← PDivGroup.res_app] at ha
-  have hb : g.app 2 b ∈ torsionIdeal R (H.A 2) p := by
-    have : g.app 2 b ∈ torsionIdeal R (H.A 2) (p ^ 1) := by
+  have hb : g.app 2 b ∈ torsionIdeal (R := R) (A := H.A 2) p := by
+    have : g.app 2 b ∈ torsionIdeal (R := R) (A := H.A 2) (p ^ 1) := by
       rw [← H.ker_res 1]
       exact ha
     rwa [pow_one] at this
@@ -44,8 +48,8 @@ theorem mulP_mem_kerIdeal_comp_of_app_eq_zero (p : ℕ) [Fact p.Prime] (R : Type
 
 end GlobalTheory.PDivGroup
 
-open GlobalTheory.PDivGroup in
 
+open GlobalTheory.PDivGroup in
 theorem GlobalTheory.PDivGroup.mem_kerIdeal_of_app_eq_zero : ∀ (p : ℕ) [Fact p.Prime] (K : Type) [Field K]
     (G H : PDivGroup p K) (f : G ⟶ H) (g : H ⟶ G), f ≫ g = (p : ℤ_[p]) • 𝟙 G →
     g ≫ f = (p : ℤ_[p]) • 𝟙 H → ∀ a : G.A 1, g.app 1 a = 0 → a ∈ kerIdeal (f.app 1) := by

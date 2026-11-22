@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.GoodU
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -73,24 +77,24 @@ theorem UpperTheory.ConvolutionTheory.R2.I.matLaws :
       refine Matrix.ext fun i j => ?_
       fin_cases i <;> fin_cases j
       · change cp v (X 1 + sg v (m 0 0)) = cp v (X 1) + m 0 0
-        rw [map_add, cp_sg]
+        rw [map_add (f := _), cp_sg]
       · change cp v (X 2 + sg v ((m 0 1 + m 1 0) / 2)) +
             cp v (X 3 + sg v ((m 0 1 - m 1 0) / (2 * θ))) * θ = cp v (X 2) + cp v (X 3) * θ + m 0 1
-        rw [map_add, map_add, cp_sg, cp_sg]
+        rw [map_add (f := _), map_add (f := _), cp_sg, cp_sg]
         linear_combination e1
       · change cp v (X 2 + sg v ((m 0 1 + m 1 0) / 2)) -
             cp v (X 3 + sg v ((m 0 1 - m 1 0) / (2 * θ))) * θ = cp v (X 2) - cp v (X 3) * θ + m 1 0
-        rw [map_add, map_add, cp_sg, cp_sg]
+        rw [map_add (f := _), map_add (f := _), cp_sg, cp_sg]
         linear_combination e2
       · change cp v (X 0 + sg v (m 1 1)) = cp v (X 0) + m 1 1
-        rw [map_add, cp_sg]
+        rw [map_add (f := _), cp_sg]
     · funext i
       change (X i + _) - sg v (cp v (X i + _)) = X i - sg v (cp v (X i))
-      rw [map_add, sg_add']
+      rw [map_add (f := _), sg_add']
       fin_cases i <;> simp [cp_sg] <;> ring
   · intro X Y
     have hB : BM (mat v θ Y) (mat v θ X) = cp v (B4 δ Y X) := by
-      simp only [BM, mat, B4, map_sub, map_add, map_mul, cp_rt, ← hθ, map_ofNat]
+      simp only [BM, mat, B4, map_sub, map_add (f := _), map_mul, cp_rt, ← hθ, map_ofNat]
       simp
       ring
     rw [hB, sg_cp]

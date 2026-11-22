@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColsDef
+
+@[expose] public section
 
 noncomputable section
 

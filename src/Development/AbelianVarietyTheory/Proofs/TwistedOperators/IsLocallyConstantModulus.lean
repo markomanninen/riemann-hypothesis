@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockTriangularOneAddMat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,12 +53,10 @@ theorem isUnitarisable_extTensor {ρ : Representation ℂ G V} {σ : Representat
   · exact (re_inner_self_pos (𝕜 := ℂ)).2 hv
   · show inner ℂ (extTensor ρ σ g w) (extTensor ρ σ g v) = inner ℂ w v
     induction v with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, inner_add_right, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), inner_add_right, hx, hy]
     | tmul v v' =>
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, inner_add_left, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), inner_add_left, hx, hy]
       | tmul w w' =>
         rw [extTensor_tmul, extTensor_tmul, TensorProduct.inner_tmul, TensorProduct.inner_tmul]
         exact congrArg₂ _ (b3 _ _ _) (c3 _ _ _)
@@ -126,7 +128,8 @@ theorem isUnitarisable_piTensor {Γ : α → Type} [∀ a, Group (Γ a)] {ρ : �
     have hmem : v ∈ Submodule.span ℂ (Set.range E) := by
       rw [← hx]
       refine Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ ?_
-      rw [← hy, show y i = fun a => ∑ j, c i a j • b a j from funext (hc i), MultilinearMap.map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hy, show y i = fun a => ∑ j, c i a j • b a j from funext (hc i), MultilinearMap.map_sum]
       refine Submodule.sum_mem _ fun I _ => ?_
       rw [MultilinearMap.map_smul_univ]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨I, rfl⟩)
@@ -252,8 +255,8 @@ theorem exists_iwasawa (x : GL n k) :
   simp only [conj, inv_mul_cancel_right]
   rw [← h]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem det_rmat_unip (u : unipRad k e) : (rmat e ((u : GL n k) : Matrix n n k)).det = 1 := by
   rw [← det_transpose, det_of_blocks _ (fun p : Idx e => blk e p.1.2) ?_ (fun a => {j : n // blk e j < a})
     (fun _ => 1) (colEquiv e) ?_]
@@ -407,7 +410,7 @@ theorem form_eq_of_diag {V : Type} [AddCommGroup V] [Module ℂ V] (B C : V →�
     (h : ∀ v, B v v = C v v) (v w : V) : B v w = C v w := by
   have h1 := h (v + w)
   have h2 := h (v + Complex.I • w)
-  simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, h v, h w,
+  simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, h v, h w,
     Complex.conj_I, smul_eq_mul, RingHom.id_apply] at h1 h2
   linear_combination (1 / 2 : ℂ) * h1 + (Complex.I / 2) * h2 +
     ((1 / 2 : ℂ) * (B v w - C v w - B w v + C w v)) * Complex.I_mul_I

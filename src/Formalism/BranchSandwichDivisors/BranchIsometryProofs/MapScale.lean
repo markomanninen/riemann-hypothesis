@@ -1,5 +1,9 @@
-import Formalism.BranchSandwichDivisors.StatementL
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Formalism.BranchSandwichDivisors.StatementL
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -64,7 +68,7 @@ theorem ms_htQ_bot (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
   congr 2
   rw [← Real.rpow_natCast, Nat.cast_mul]
 
-theorem ms_mu_eq [IsTotallyComplex K] (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
+theorem ms_mu_eq [_root_.NumberField.IsTotallyComplex K] (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) {L : Submodule (𝓞 K) V} (hfg : L.FG) (hL : L ≠ ⊥) :
     muDef b X L = -(Real.log (ht b X L) / ((nPl K : ℝ) * (rkK L : ℝ))) := by
   have h := size_maximal_slope K V ι b X hX L hfg hL
@@ -90,7 +94,7 @@ theorem ms_opNorm_nat [Nonempty ι] (b : Basis ι K V) (X : InfinitePlace K → 
   have h3 : Matrix.toEuclideanLin (1 : Matrix ι ι ℂ) = LinearMap.id := by
     first
       | exact Matrix.toEuclideanLin_one
-      | (ext x i; simp [Matrix.toEuclideanLin_apply])
+      | (ext x i; simp [Matrix.toLpLin_apply])
       | (simp [Matrix.toEuclideanLin, Matrix.toLin'_one])
   have h4 : LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin ((n : ℂ) • (1 : Matrix ι ι ℂ)))
       = (n : ℂ) • ContinuousLinearMap.id ℂ (EuclideanSpace ℂ ι) := by

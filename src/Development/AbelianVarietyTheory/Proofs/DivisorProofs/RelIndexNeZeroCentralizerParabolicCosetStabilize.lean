@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open scoped Classical
 
@@ -209,7 +214,7 @@ theorem relIndex_twCent_inf_ne_zero : ∀ (K : Type) [Field K] [TopologicalSpace
         have h2 : y ∈ (((⊥ : Ideal K).closure : Ideal K) : Set K) := this
         simpa only [Ideal.coe_closure, Submodule.bot_coe] using h2
       have hsp : ∀ c y : K, c ⤳ y := fun c y => by
-        have := (hsp0 (y - c)).map (continuous_add_right c)
+        have := (hsp0 (y - c)).map (show Continuous (fun z : K => z + c) from continuous_id.add continuous_const)
         simpa using this
       have hspM : ∀ A B : Matrix ι ι K, A ⤳ B := fun A B =>
         specializes_pi.2 fun i => specializes_pi.2 fun j => hsp _ _

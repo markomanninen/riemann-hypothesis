@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem PositivityTheory.Rg.BcB.G3.absSum_pf : PositivityTheory.Rg.BcB.G3.AbsSum
       apply (U.finite_toSet).subset
       intro v hv
       by_contra hvU
-      exact hv (by dsimp only [yz]; rw [dif_neg (fun h => hvU (Finset.mem_coe.mpr h))])
+      exact hv (by dsimp only [yz]; rw [dite_eq_right (fun h => hvU (Finset.mem_coe.mpr h))])
   have hfibfin : ∀ z, {c | c ∈ D ∧ ∀ v ∈ S, loc c v = yz z v}.Finite := by
     intro z
     have h := hcard (yz z) (hyz_ok z).1 (hyz_ok z).2
@@ -88,8 +92,8 @@ theorem PositivityTheory.Rg.BcB.G3.absSum_pf : PositivityTheory.Rg.BcB.G3.AbsSum
     refine Set.mem_iUnion.mpr ⟨zmap c, hcD, fun v hvS => ?_⟩
     dsimp only [yz, zmap]
     by_cases hvU : v ∈ U
-    · rw [dif_pos hvU, dif_pos ((hD c hcD).1 v)]
-    · rw [dif_neg hvU]; exact hc v hvS hvU
+    · rw [dite_eq_left hvU, dite_eq_left ((hD c hcD).1 v)]
+    · rw [dite_eq_right hvU]; exact hc v hvS hvU
   have hGfin : G.Finite := (Set.finite_iUnion hfibfin).subset hGsub
   have hsuppG : ∀ c, c ∈ D → (∏ᶠ v ∈ S, f v (loc c v)) ≠ 0 → c ∈ G := by
     intro c hcD hne
@@ -110,7 +114,7 @@ theorem PositivityTheory.Rg.BcB.G3.absSum_pf : PositivityTheory.Rg.BcB.G3.AbsSum
       apply Finset.prod_congr rfl
       intro v _
       dsimp only [zmap]
-      rw [dif_pos ((hD c hcD).1 v.1)]
+      rw [dite_eq_left ((hD c hcD).1 v.1)]
     · intro c hc
       rw [Function.mem_support] at hc
       rw [Set.Finite.coe_toFinset]
@@ -125,21 +129,21 @@ theorem PositivityTheory.Rg.BcB.G3.absSum_pf : PositivityTheory.Rg.BcB.G3.AbsSum
       refine ⟨hcD, fun v hvS => ?_⟩
       dsimp only [yz]
       by_cases hvU : v ∈ U
-      · rw [dif_pos hvU, ← hzc]
+      · rw [dite_eq_left hvU, ← hzc]
         dsimp only [zmap]
-        rw [dif_pos ((hD c hcD).1 v)]
-      · rw [dif_neg hvU]; exact hcG v hvS hvU
+        rw [dite_eq_left ((hD c hcD).1 v)]
+      · rw [dite_eq_right hvU]; exact hcG v hvS hvU
     · rintro ⟨hcD, hc⟩
       refine ⟨⟨hcD, fun v hvS hvU => ?_⟩, ?_⟩
-      · rw [hc v hvS]; dsimp only [yz]; rw [dif_neg hvU]
+      · rw [hc v hvS]; dsimp only [yz]; rw [dite_eq_right hvU]
       · funext v
         apply Subtype.ext
         dsimp only [zmap]
-        rw [dif_pos ((hD c hcD).1 v.1)]
+        rw [dite_eq_left ((hD c hcD).1 v.1)]
         show loc c v.1 = (z v).1
         rw [hc v.1 (hUS v.1 v.2)]
         dsimp only [yz]
-        rw [dif_pos v.2]
+        rw [dite_eq_left v.2]
   have hcardfib : ∀ z (s' : Finset C), (∀ c, c ∈ s' ↔ (c ∈ D ∧ ∀ v ∈ S, loc c v = yz z v)) →
       s'.card = Nat.card {c : C // c ∈ D ∧ ∀ v ∈ S, loc c v = yz z v} := by
     intro z s' hs'

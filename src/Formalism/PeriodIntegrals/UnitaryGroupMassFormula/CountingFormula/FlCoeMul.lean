@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFL
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFL
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem fl_local {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [C
       have hrootE : algebraMap F E (a : F) ^ 2 + (algebraMap F E (n : F) -
           algebraMap F E (t : F) * algebraMap F E (a : F)) = 0 := by
         have := congrArg (fun r : 𝒪[F] => algebraMap F E (r : F)) hroot
-        simpa [map_sub, map_mul, map_pow, map_add] using this
+        simpa [map_sub, map_mul, map_pow, map_add (f := _)] using this
       have hfac : (x - algebraMap F E (a : F)) * (x - (algebraMap F E (t : F) - algebraMap F E (a : F))) = 0 := by
         linear_combination hquad - hrootE
       have hxF : ∃ b : 𝒪[F], x = algebraMap F E (b : F) := by

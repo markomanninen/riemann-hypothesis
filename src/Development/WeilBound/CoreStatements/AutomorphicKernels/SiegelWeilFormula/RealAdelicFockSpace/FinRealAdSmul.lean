@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.FinOneMulEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealScalarArchimedeanAdeleSmulMatrixRealPlace
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealAdelicFockSpace.FinOneMulEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealScalarArchimedeanAdeleSmulMatrixRealPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem arc_add' (R : RD d) (X Y : Mx F E d.m d.n) : arc R (X + Y) = arc R X + a
     funext i
     simp only [arcAF, locA_add, Matrix.add_apply, Pi.add_apply]
     split_ifs <;> simp
-  rw [arcA_eq, arcA_eq, arcA_eq, this, map_add]
+  rw [arcA_eq, arcA_eq, arcA_eq, this, map_add (f := _)]
 
 theorem arc_realAd' (R : RD d) (t : ℝ) (X : Mx F E d.m d.n) : arc R (realAd F t • X) = t • arc R X := by
   have : arcAF R (realAd F t • X) = t • arcAF R X := by

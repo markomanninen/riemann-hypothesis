@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.RelativeGroupHatForm
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.RelativeGroupHatForm
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem mem_of_tmul {N : Type} [AddCommGroup N] [Module Zhat N] (P : Submodule Z
     have : z ⊗ₜ[ℤ] a = z • ((1 : Zhat) ⊗ₜ[ℤ] a) := by rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     rw [this, map_smul]
     exact P.smul_mem _ (h a)
-  | add x y hx hy => rw [map_add]; exact P.add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact P.add_mem hx hy
 
 theorem mulSub_le {n : ℕ} {𝔞 : Ideal (𝓞 E)} (h : (n : 𝓞 E) ∈ 𝔞) : mulSub D n ≤ hatSub D 𝔞 := by
   rintro _ ⟨y, rfl⟩
@@ -189,7 +193,7 @@ theorem exists_endo (f : ℕ → D.La →ₗ[𝓞 E] D.La)
   choose x hx using fun a => exists_limit (fun n => f n a) fun n m hn hm => hf n m hn hm a
   let χ : D.La →+ Lhat D := AddMonoidHom.mk' x fun a b => sub_eq_zero.1 (eq_zero_of_mem fun n hn => by
     convert Submodule.sub_mem _ (hx (a + b) n hn) (Submodule.add_mem _ (hx a n hn) (hx b n hn)) using 1
-    rw [map_add, TensorProduct.tmul_add]; abel)
+    rw [map_add (f := _), TensorProduct.tmul_add]; abel)
   exact ⟨LinearMap.liftBaseChange Zhat χ.toIntLinearMap, fun n hn a => by simpa [χ] using hx a n hn⟩
 
 theorem exists_lift (φ : Lhat D →ₗ[Zhat] Lhat D) (hφ : ∀ c x, φ (hatMul D c x) = hatMul D c (φ x)) {n : ℕ}
@@ -203,9 +207,9 @@ theorem exists_lift (φ : Lhat D →ₗ[Zhat] Lhat D) (hφ : ∀ c x, φ (hatMul
   let F : D.La →ₗ[𝓞 E] D.La ⧸ P :=
     { toFun := fun a => P.mkQ (c a)
       map_add' := fun a b => by
-        rw [← map_add, key]
+        rw [← map_add (f := _), key]
         convert Submodule.sub_mem _ (Submodule.add_mem _ (hc a) (hc b)) (hc (a + b)) using 1
-        rw [TensorProduct.tmul_add, TensorProduct.tmul_add, map_add]; abel
+        rw [TensorProduct.tmul_add, TensorProduct.tmul_add, map_add (f := _)]; abel
       map_smul' := fun r a => by
         rw [RingHom.id_apply, ← map_smul, key]
         convert Submodule.sub_mem _ (map_mem_mulSub (hatMul D r) (hc a)) (hc (r • a)) using 1
@@ -400,7 +404,7 @@ theorem map_mem_hatSub {u : Lhat D ≃ₗ[Zhat] Lhat D} (hu : ∀ c x, u (hatMul
       refine mem_of_tmul _ _ (fun b => ?_) _
       rw [hatMul_tmul]
       exact Submodule.subset_span ⟨_, Submodule.smul_mem_smul hc trivial, rfl⟩
-    · rw [TensorProduct.tmul_add, map_add]
+    · rw [TensorProduct.tmul_add, map_add (f := _)]
       exact Submodule.add_mem _ ha hb)
   exact this hx
 
@@ -574,8 +578,5 @@ theorem levelMaps_iff (hpq : 1 ≤ D.p + D.q) :
     exact ⟨r, _, m, IntermediateField.coe_inclusion (KA_le h), hr, h₁, h₂, (covering_iff hpq h hr).2 hcov⟩
 
 end Geometry
-
-theorem exists_iff : N1ab ↔ ModuliExists :=
-  ⟨fun k E _ _ _ H D h l => k E H D l h, fun k E _ _ _ H D l h => k E H D h l⟩
 
 end GlobalTheory.LevelCompare

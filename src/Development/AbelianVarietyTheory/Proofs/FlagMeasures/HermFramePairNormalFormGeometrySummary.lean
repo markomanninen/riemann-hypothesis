@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SameBlockAppend
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SameBlockAppend
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 open Formalism.HermitianLatticeCounting.P
@@ -15,8 +20,6 @@ namespace GlobalTheory.DegCnt.NFGeom
 
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   {H : HermSpace K V} {r : ℕ} (N : NF H r)
-
-theorem c_ne : N.c ≠ 0 := fun h => by simpa [h] using N.c_norm
 
 open NumberField in
 open scoped Pointwise ENNReal Classical in
@@ -47,10 +50,6 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.e_eq (a : Fin (r + 1))
   have hc : N.c ≠ 0 := left_ne_zero_of_mul_eq_one N.c_norm
   rw [N.same a h, smul_smul, inv_mul_cancel₀ hc, one_smul]
 
-theorem z'_eq : N.F'.z = N.c • N.F.z := N.same (Fin.last r) (by simpa using N.j_le)
-
-theorem z_eq : N.F.z = N.c⁻¹ • N.F'.z := e_eq N (Fin.last r) (by simpa using N.j_le)
-
 open NumberField in
 open scoped Pointwise ENNReal Classical in
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
@@ -63,15 +62,6 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.e_mem_II (a : Fin r)
   rw [_root_.GlobalTheory.DegCnt.NFGeom.e_eq N a.castSucc h]
   exact Submodule.smul_mem _ _ (_root_.Formalism.HermitianLatticeCounting.P.e_mem_X _ a)
 
-open NumberField in
-open scoped Pointwise ENNReal Classical in
-variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
-  {H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V} {r : ℕ} (N : _root_.GlobalTheory.DegCnt.NF H r) in
-theorem _root_.GlobalTheory.DegCnt.NFGeom.e'_mem_II (a : Fin r)
-    (h : N.j ≤ a.val) :
-    N.F'.e a.castSucc ∈ _root_.Formalism.HermitianLatticeCounting.S6.II N.F N.F' := by
-  rw [N.same a.castSucc h]
-  exact Submodule.smul_mem _ _ (_root_.GlobalTheory.DegCnt.NFGeom.e_mem_II N a h)
 
 def proj : V →ₗ[K] V :=
   ∑ b ∈ Finset.univ.filter (fun b : Fin r => N.j ≤ b.val),
@@ -124,7 +114,8 @@ private theorem sub_proj_mem_perp_Ist (y : V) :
     rw [Submodule.span_le]
     rintro _ ⟨b, hb, rfl⟩
     have hb' : N.j ≤ b.val := hb
-    rw [SetLike.mem_coe, LinearMap.mem_ker, map_sub, LinearMap.sub_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, LinearMap.mem_ker, map_sub, LinearMap.sub_apply,
       _root_.GlobalTheory.DegCnt.NFGeom.proj_apply, map_sum, LinearMap.sum_apply]
     simp_rw [map_smul, LinearMap.smul_apply, N.ist_e _ _ hb']
     simp [hb']
@@ -493,11 +484,6 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.mem_perp_sup (S T : Submodule K V) (y 
   intro x hx
   exact _root_.Formalism.HermitianLatticeCounting.P.perp_sup H h.1 h.2 x hx
 
-omit [NumberField K] in
-theorem perp_perp [FiniteDimensional K V] (S : Submodule K V) : perp H (perp H S) = S := by
-  refine le_antisymm (fun w hw => memOfOrthogonalOrthogonal K V H S w fun v hv => ?_) fun s hs => ?_
-  · exact (mem_perp_iff H _ _).1 hw v ((mem_perp' S v).2 hv)
-  · exact (mem_perp_iff H _ _).2 fun x hx => (mem_perp' S x).1 hx s hs
 
 open NumberField in
 open scoped Pointwise ENNReal Classical in
@@ -530,13 +516,6 @@ variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [M
 theorem _root_.GlobalTheory.DegCnt.NFGeom.sub_proj_perp (y : V) :
     y - _root_.GlobalTheory.DegCnt.NFGeom.proj N y ∈ _root_.GlobalTheory.HermLat.perp H N.Ist :=
   sub_proj_mem_perp_Ist N y
-
-theorem wSp_eq : wSp N.F N.F' = N.Wt ⊔ II N.F N.F' := by
-  refine le_antisymm (fun w hw => ?_)
-    (sup_le (fun w hw => ((mem_perp_sup _ _ _).1 hw).1) (II_le_wSp N))
-  have h : w - proj N w ∈ N.Wt := (mem_perp_sup _ _ _).2
-    ⟨Submodule.sub_mem _ hw (II_le_wSp N (proj_mem N w)), sub_proj_perp N w⟩
-  simpa using Submodule.add_mem_sup h (proj_mem N w)
 
 open NumberField in
 open scoped Pointwise ENNReal Classical in
@@ -784,7 +763,8 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.isCompl [FiniteDimensional K V] :
     have hi : ∀ b : Fin r, N.j ≤ b.val →
         H.B (N.F.e b.castSucc) (v - p2 - s • N.F.z) = 0 := by
       intro b hb
-      rw [map_sub, map_sub, map_smulₛₗ, _root_.Formalism.HermitianLatticeCounting.P.pairing_isotropicSpan_lastVector _ (_root_.Formalism.HermitianLatticeCounting.P.e_mem_X _ b), smul_zero, sub_zero, hp2, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sub, map_smulₛₗ, _root_.Formalism.HermitianLatticeCounting.P.pairing_isotropicSpan_lastVector _ (_root_.Formalism.HermitianLatticeCounting.P.e_mem_X _ b), smul_zero, sub_zero, hp2, map_sum,
         Finset.sum_eq_single_of_mem b (Finset.mem_filter.2 ⟨Finset.mem_univ _, hb⟩)]
       · rw [map_smulₛₗ, N.ist_e _ _ hb, if_pos rfl, starRingEnd_apply,
           star_star, smul_eq_mul, mul_one, sub_self]
@@ -792,7 +772,8 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.isCompl [FiniteDimensional K V] :
         rw [map_smulₛₗ, N.ist_e _ _ (Finset.mem_filter.1 ha).2,
           if_neg (fun h => hab h.symm), smul_zero]
     have hii : H.B N.F.z (v - p2 - s • N.F.z) = 0 := by
-      rw [map_sub, map_sub, map_smulₛₗ, hp2, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sub, map_smulₛₗ, hp2, map_sum]
       have h0 : ∀ a ∈ Finset.univ.filter (fun a : Fin r => N.j ≤ a.val),
           H.B N.F.z (star (H.B (N.F.e a.castSucc) v) •
             N.ist a) = 0 := by
@@ -861,7 +842,8 @@ theorem _root_.GlobalTheory.DegCnt.NFGeom.finrank_Wt [FiniteDimensional K V] :
       H.B (N.F.e i.1.castSucc) (∑ a, g a • N.ist a.1) =
         star (g i) := by
     intro g i
-    rw [map_sum, Finset.sum_eq_single i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single i]
     · rw [map_smulₛₗ, N.ist_e _ _ i.2, if_pos rfl, smul_eq_mul, mul_one,
         starRingEnd_apply]
     · intro a _ hai
@@ -912,11 +894,11 @@ end GlobalTheory.DegCnt.NFGeom
 
 namespace GlobalTheory.DegCnt
 
+
 open NumberField in
 open scoped Pointwise ENNReal Classical in
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   {H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V} {r : ℕ} (N : _root_.GlobalTheory.DegCnt.NF H r) in
-
 theorem _root_.GlobalTheory.DegCnt.NF.geometry : ∀ (K V : Type) [Field K]
     [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
     [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (H : _root_.Formalism.HermitianLatticeCounting.S6.HermSpace K V), _root_.Formalism.HermitianLatticesTheory.IsCMUnram K →
@@ -976,7 +958,7 @@ theorem _root_.GlobalTheory.DegCnt.NF.geometry : ∀ (K V : Type) [Field K]
     apply N.F.hT
     rw [N.hT, hT0, Nat.cast_zero]
   · unfold _root_.GlobalTheory.DegCnt.NF.nD
-    rw [dif_pos (N.j_le.trans (Nat.le_succ r))]
+    rw [dite_eq_left (N.j_le.trans (Nat.le_succ r))]
     have hI : (Ideal.absNorm N.𝔡 : ℝ) ≠ 0 := by
       exact_mod_cast mt Ideal.absNorm_eq_zero_iff.1 N.𝔡_ne
     refine mul_ne_zero ?_ ?_

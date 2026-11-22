@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj Pointwise
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -52,7 +57,7 @@ theorem dv_mono {k k' : ℕ} (hk : k ≤ k') {t : Tate l M} (ht : Dv k' t) : Dv 
   rw [smul_smul, ← pow_add, Nat.add_sub_cancel' hk]
 
 theorem eq_zero_of_nsmul {t : Tate l M} (h : l • t = 0) : t = 0 := by
-  ext m
+  refine Tate.ext fun m => ?_
   show t.lev m = 1
   calc t.lev m = t.lev (m + 1) ^ l := (Tate.lev_succ t m).symm
     _ = (l • t).lev (m + 1) := (lev_nsmul t l (m + 1)).symm
@@ -81,7 +86,7 @@ theorem dv_one_of_nsmul {q : ℕ} (hq : Nat.Coprime q l) {s : Tate l M} (h : Dv 
       rw [natCast_zsmul, natCast_zsmul, hr, pow_one, smul_add, smul_comm a l r, smul_comm b l s]
 
 theorem eq_zero_of_dv {t : Tate l M} (h : ∀ k, Dv k t) : t = 0 := by
-  ext k
+  refine Tate.ext fun k => ?_
   show t.lev k = 1
   obtain ⟨s, hs⟩ := h k
   rw [hs, lev_nsmul, Tate.lev_pow]
@@ -90,7 +95,7 @@ theorem dv_two_of_lev {w : Tate l M} (h : w.lev 2 = 1) : Dv 2 w := by
   refine ⟨Tate.mk (fun n => w.lev (n + 2)) fun n => ⟨?_, ?_⟩, ?_⟩
   · rw [add_comm, Tate.lev_add_pow, h]
   · exact Tate.lev_succ w (n + 2)
-  · ext n
+  · refine Tate.ext fun n => ?_
     rw [lev_nsmul, Tate.lev_mk, Tate.lev_add_pow]
 
 end Lemmas

@@ -1,14 +1,18 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobal
-import GroundTheory.AutomorphicForms.GL2.GJStandardLUnramified
-import GroundTheory.AutomorphicForms.GL2.GJLocalFEGamma
-import GroundTheory.AutomorphicForms.GL2.GJFEInduced
-import GroundTheory.AutomorphicForms.GL2.GJFELevi
-import GroundTheory.AutomorphicForms.GL2.FiniteIdeleDecomp
-import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
-import GroundTheory.AutomorphicForms.GL2.GJFEInducedLevi
-import GroundTheory.AutomorphicForms.RestrictedHaarProduct
-import GroundTheory.GlobalFields.LocalFieldAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobal
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLUnramified
+public import GroundTheory.AutomorphicForms.GL2.GJLocalFEGamma
+public import GroundTheory.AutomorphicForms.GL2.GJFEInduced
+public import GroundTheory.AutomorphicForms.GL2.GJFELevi
+public import GroundTheory.AutomorphicForms.GL2.FiniteIdeleDecomp
+public import GroundTheory.AutomorphicForms.GL2.GodementSectionFactor
+public import GroundTheory.AutomorphicForms.GL2.GJFEInducedLevi
+public import GroundTheory.AutomorphicForms.RestrictedHaarProduct
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology IsDedekindDomain NumberField NumberField.mixedEmbedding
 open scoped NumberField.AdeleRing RestrictedProduct SchwartzMap Classical
@@ -27,18 +31,18 @@ instance measurableSpace_infiniteAdelicGL : MeasurableSpace (AdelicGLn.InfiniteA
 
 instance borelSpace_infiniteAdelicGL : BorelSpace (AdelicGLn.InfiniteAdelicGL K n) := ⟨rfl⟩
 
-variable (K n) in
 
+variable (K n) in
 def archComp : AdelicGLn.AdelicGL K n →* AdelicGLn.InfiniteAdelicGL K n :=
   (MonoidHom.fst _ _).comp (AdelicGLn.prodEquiv K n).toMonoidHom
 
-variable (K n) in
 
+variable (K n) in
 def finComp : AdelicGLn.AdelicGL K n →* AdelicGLn.FiniteAdelicGL K n :=
   (MonoidHom.snd _ _).comp (AdelicGLn.prodEquiv K n).toMonoidHom
 
-variable (n) in
 
+variable (n) in
 def localComp (v : HeightOneSpectrum (𝓞 K)) :
     AdelicGLn.AdelicGL K n →* GL (Fin n) (v.adicCompletion K) where
   toFun g := AdelicGLn.finiteRestrictedEquiv K n (finComp K n g) v
@@ -93,8 +97,8 @@ def archZeta (μ : Measure (AdelicGLn.InfiniteAdelicGL K n))
     (s : ℂ) : ℂ :=
   ∫ x, archIntegrand φ f s x ∂μ
 
-variable (n) in
 
+variable (n) in
 def integralGLPositiveCompacts (v : HeightOneSpectrum (𝓞 K)) :
     TopologicalSpace.PositiveCompacts (GL (Fin n) (v.adicCompletion K)) where
   carrier := integralGL (v.adicCompletion K) n
@@ -103,8 +107,8 @@ def integralGLPositiveCompacts (v : HeightOneSpectrum (𝓞 K)) :
     rw [(isOpen_integralGL _ n).interior_eq]
     exact ⟨1, (integralGL _ n).one_mem⟩
 
-variable (n) in
 
+variable (n) in
 def localHaar (v : HeightOneSpectrum (𝓞 K)) : Measure (GL (Fin n) (v.adicCompletion K)) :=
   Measure.haarMeasure (integralGLPositiveCompacts n v)
 

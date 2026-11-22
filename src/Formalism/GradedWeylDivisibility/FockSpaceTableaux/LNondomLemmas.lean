@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementA
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -29,19 +33,19 @@ lemma nd_weight_apply (s : Fin n) (m : Fin r × Fin n →₀ ℕ) :
   simp only [Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply, Pi.smul_apply]
 
 lemma ndEul_coeff (s : Fin n) (g : MvPolynomial (Fin r × Fin n) R) (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (ndEul R r n s g) =
-      (Finsupp.weight (fun v => colW r n v s) m : R) * coeff m g := by
+    AddMonoidAlgebra.coeff (ndEul R r n s g) m =
+      (Finsupp.weight (fun v => colW r n v s) m : R) * AddMonoidAlgebra.coeff g m := by
   classical
   induction g using MvPolynomial.induction_on generalizing m with
   | C a =>
-    rw [derivation_C, coeff_zero, coeff_C]
+    rw [derivation_C, AddMonoidAlgebra.coeff_zero, coeff_C]
     split_ifs with h
     · subst h; simp
     · simp
-  | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
   | mul_X p v hp =>
     have hX : ndEul R r n s (X v) = colW r n v s • X v := mkDerivation_X _ _ _
-    rw [Derivation.leibniz, hX, coeff_add, smul_eq_mul, smul_eq_mul,
+    rw [Derivation.leibniz, hX, MvPolynomial.coeff_add, smul_eq_mul, smul_eq_mul,
       mul_smul_comm, coeff_smul, coeff_mul_X', coeff_X_mul']
     split_ifs with h
     · rw [hp]
@@ -51,7 +55,7 @@ lemma ndEul_coeff (s : Fin n) (g : MvPolynomial (Fin r × Fin n) R) (m : Fin r �
       have hw : Finsupp.weight (fun v => colW r n v s) m =
           Finsupp.weight (fun v => colW r n v s) (m - Finsupp.single v 1) + colW r n v s := by
         conv_lhs => rw [hm]
-        rw [map_add, Finsupp.weight_single, one_smul]
+        rw [map_add (f := _), Finsupp.weight_single, one_smul]
       rw [hw, nsmul_eq_mul]; push_cast; ring
     · simp
 
@@ -60,16 +64,16 @@ lemma ndEul_homog {g : MvPolynomial (Fin r × Fin n) R} {μ : Fin n → ℕ}
     ndEul R r n s g = (μ s : R) • g := by
   ext m
   rw [ndEul_coeff, coeff_smul, smul_eq_mul]
-  by_cases h : coeff m g = 0
+  by_cases h : AddMonoidAlgebra.coeff g m = 0
   · simp [h]
   · rw [nd_weight_apply, hg h]
 
 lemma ndEul_neg_eq_zero [IsDomain R] [CharZero R] {g : MvPolynomial (Fin r × Fin n) R}
     (s : Fin n) (h : ndEul R r n s g = -g) : g = 0 := by
   ext m
-  have h1 := congrArg (coeff m) h
+  have h1 := congrArg (AddMonoidAlgebra.coeff · m) h
   rw [ndEul_coeff, coeff_neg] at h1
-  have h2 : ((Finsupp.weight (fun v => colW r n v s) m : R) + 1) * coeff m g = 0 := by
+  have h2 : ((Finsupp.weight (fun v => colW r n v s) m : R) + 1) * AddMonoidAlgebra.coeff g m = 0 := by
     linear_combination h1
   rcases mul_eq_zero.1 h2 with h3 | h3
   · exact absurd h3 (Nat.cast_add_one_ne_zero _)

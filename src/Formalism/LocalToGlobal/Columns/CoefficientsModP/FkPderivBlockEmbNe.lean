@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+module
+
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+
+@[expose] public section
 
 open MvPolynomial
 open scoped Matrix
@@ -37,7 +41,7 @@ theorem fk_pderiv_blockEmb_ne {τ τ' : ι} (h : τ ≠ τ') (v : Fin n × Fin n
   induction g using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq => simp [hp, hq]
-  | mul_X p w hp => simp [Derivation.leibniz, hp, pderiv_X, Pi.single_apply, Prod.ext_iff, Ne.symm h]
+  | mul_X p w hp => simp [Derivation.leibniz, hp, pderiv_X, Prod.ext_iff, Ne.symm h]
 
 theorem fk_fock_right (τ : ι) (P Q : MvPolynomial (ι × Fin n × Fin n) K) (hP : ∀ v, pderiv (τ, v) P = 0)
     (g : MvPolynomial (Fin n × Fin n) K) :
@@ -45,7 +49,7 @@ theorem fk_fock_right (τ : ι) (P Q : MvPolynomial (ι × Fin n × Fin n) K) (h
   classical
   induction g using MvPolynomial.induction_on with
   | C a => rw [fk_blockEmb_C, ← smul_eq_C_mul, map_smul, smul_eq_mul, constantCoeff_C]
-  | add p q hp hq => rw [map_add, add_mul, map_add, hp, hq, map_add, add_mul]
+  | add p q hp hq => rw [map_add (f := _), add_mul, map_add (f := _), hp, hq, map_add (f := _), add_mul]
   | mul_X p v _ =>
     rw [map_mul (Formalism.GradedWeylDivisibility.blockEmb K τ), fk_blockEmb_X, mul_comm _ (X (τ, v)), mul_assoc, ← fockL_pderiv_X, hP, map_zero,
       LinearMap.zero_apply, map_mul constantCoeff, constantCoeff_X, mul_zero, zero_mul]
@@ -59,7 +63,7 @@ theorem fk_fock_mul (τ : ι) (P P' : MvPolynomial (ι × Fin n × Fin n) K) (hP
     rw [fk_blockEmb_C, ← smul_eq_C_mul, LinearMap.map_smulₛₗ, LinearMap.smul_apply, fk_fock_right τ P P' hP,
       fockL_C_left, smul_eq_mul, starRingEnd_apply, mul_assoc]
   | add p q hp hq =>
-    rw [map_add, add_mul, map_add, LinearMap.add_apply, hp, hq, map_add, LinearMap.add_apply, add_mul]
+    rw [map_add (f := _), add_mul, map_add (f := _), LinearMap.add_apply, hp, hq, map_add (f := _), LinearMap.add_apply, add_mul]
   | mul_X p v hp =>
     rw [map_mul (Formalism.GradedWeylDivisibility.blockEmb K τ), fk_blockEmb_X, mul_comm _ (X (τ, v)), mul_assoc, fockL_X_pderiv, Derivation.leibniz, hP',
       smul_zero, zero_add, fk_pderiv_blockEmb, smul_eq_mul, mul_comm P', hp, mul_comm p, fockL_X_pderiv]
@@ -98,10 +102,10 @@ section Rat
 variable {K : Type} [Field K] (K0 : Subfield K)
 
 theorem fk_coeff_mem {σ : Type} {P : MvPolynomial σ K} (hP : P ∈ (map (σ := σ) K0.subtype).range) (m : σ →₀ ℕ) :
-    coeff m P ∈ K0 := by
+    AddMonoidAlgebra.coeff P m ∈ K0 := by
   obtain ⟨Q, rfl⟩ := hP
   rw [MvPolynomial.coeff_map]
-  exact (coeff m Q).2
+  exact (AddMonoidAlgebra.coeff Q m).2
 
 theorem fk_int_mem {σ : Type} (P : MvPolynomial σ ℤ) :
     map (Int.castRingHom K) P ∈ (map (σ := σ) K0.subtype).range := by
@@ -123,7 +127,7 @@ theorem fk_blockAct_mem {ι : Type} [Fintype ι] {n : ℕ} (U : ι → Matrix (F
     rw [map_C, algHom_C]
     exact fk_C_mem K0 a.2
   | add p q hp hq =>
-    rw [map_add (map K0.subtype), map_add]
+    rw [map_add (map K0.subtype), map_add (f := _)]
     exact add_mem hp hq
   | mul_X p v hp =>
     rw [map_mul (map K0.subtype), map_X, map_mul, blockAct_X]
@@ -167,15 +171,16 @@ theorem fk_descent {σ κ : Type} [Fintype κ] (v : κ → MvPolynomial σ K) (h
     rw [this, map_smul, smul_eq_mul, mul_comm]
   have key : ∑ i, (c i - (π (c i) : K)) • v i = 0 := by
     ext m
-    rw [coeff_sum, coeff_zero]
+    rw [coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     simp only [coeff_smul, smul_eq_mul, sub_mul, Finset.sum_sub_distrib]
     rw [sub_eq_zero]
-    have h1 : coeff m (∑ i, c i • v i) = ∑ i, c i * coeff m (v i) := by
+    have h1 : AddMonoidAlgebra.coeff (∑ i, c i • v i) m = ∑ i, c i * AddMonoidAlgebra.coeff (v i) m := by
       rw [coeff_sum]
       simp only [coeff_smul, smul_eq_mul]
-    have h2 : ((π (coeff m (∑ i, c i • v i)) : K0) : K) = coeff m (∑ i, c i • v i) :=
+    have h2 : ((π (AddMonoidAlgebra.coeff (∑ i, c i • v i) m) : K0) : K) = AddMonoidAlgebra.coeff (∑ i, c i • v i) m :=
       congrArg (fun a : K0 => (a : K)) (hπ' ⟨_, fk_coeff_mem K0 hx m⟩)
-    rw [← h1, ← h2, h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, ← h2, h1, map_sum]
     push_cast
     refine Finset.sum_congr rfl fun i _ => ?_
     have := hmul ⟨_, fk_coeff_mem K0 (hv0 i) m⟩ (c i)

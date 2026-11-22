@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PrimeCount
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChebyshevPrimeBounds.PrimeCountBoundOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChebyshevPrimeBounds.SmallLoop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PrimeCount
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChebyshevPrimeBounds.PrimeCountBoundOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChebyshevPrimeBounds.SmallLoop
+
+@[expose] public section
 
 namespace PI.PC
 

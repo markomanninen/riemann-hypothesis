@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SatBlock
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CharZeroOfW
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymVarInlFst
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LeadingExponentHomogeneous
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.MemIntPolOfCoeff
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockMonomial
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SatBlock
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.CharZeroOfW
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SymVarInlFst
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.LeadingExponentHomogeneous
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
+
+@[expose] public section
 
 noncomputable section
 

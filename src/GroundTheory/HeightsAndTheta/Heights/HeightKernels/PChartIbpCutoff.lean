@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartCutoffParts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartCutoffParts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PHermFormCompare
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -125,8 +130,8 @@ theorem tendsto_boundary {T : Fin n → Matrix (Fin (n + 1 + 1)) (Fin (n + 1 + 1
 
 end ChartIntegrationByPartsCutoff
 
-open ChartIntegrationByPartsCutoff in
 
+open ChartIntegrationByPartsCutoff in
 theorem ChartIbpCutoff.proof (hE : ChartCutoffEnergy.Statement) (hD : ChartDiffEnergy.Statement) :
     ChartIbpCutoff.Statement := by
   intro n A B C D T hA hB hC hD' hT

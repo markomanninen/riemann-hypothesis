@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.DataLevel
+module
+
+public import Formalism.LocalRingCardinality.DataLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,14 @@ theorem isUnit_det_gram0 (sp : Spaces R F E) : IsUnit sp.gram0.det := by
     intro i
     have h := congrFun hv i
     simp only [Matrix.mulVec, dotProduct, HSpace.gram, Pi.zero_apply] at h
-    simp only [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul]
     rw [← h]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hy : ∀ x, (sp.X 0).hT x (∑ j, v j • (sp.X 0).frame j) = 0 := by
     intro x
-    rw [← (sp.X 0).frame.sum_repr x, map_sum (sp.X 0).hT, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← (sp.X 0).frame.sum_repr x, map_sum (sp.X 0).hT, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hi, smul_zero]
   have h0 := (sp.X 0).nondeg.2 _ hy

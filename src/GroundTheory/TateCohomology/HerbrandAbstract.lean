@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.GroupCoh
 
@@ -496,11 +500,6 @@ theorem herbrandQuotient_eq_of_injective_of_finite {fA gA : A →+ A} {fB gB : B
 
 def restrictEnd (f : B →+ B) (S : AddSubgroup B) (hS : ∀ x ∈ S, f x ∈ S) : S →+ S :=
   (f.comp S.subtype).codRestrict S fun x => hS x x.2
-
-@[simp]
-theorem restrictEnd_apply (f : B →+ B) (S : AddSubgroup B) (hS : ∀ x ∈ S, f x ∈ S) (x : S) :
-    (restrictEnd f S hS x : B) = f x :=
-  rfl
 
 theorem hasHerbrandQuotient_restrictEnd_iff {f g : B →+ B} (S : AddSubgroup B) [S.FiniteIndex]
     (hfS : ∀ x ∈ S, f x ∈ S) (hgS : ∀ x ∈ S, g x ∈ S) (hfg : ∀ b, f (g b) = 0)

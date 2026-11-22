@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,17 +29,18 @@ theorem tensCoord_mulV (c : ↥(MaximalUnramifiedExtension l)) (x : V' ⊗[ℚ_[
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => rfl
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
 
 variable (hE : ∀ g x i, E (ρ' g x) i = ρ g (E x i))
 include hE
 
 theorem tensCoord_stRep (g : ↥(GK K)) (x : V' ⊗[ℚ_[l]] Bst P) (i : ι) :
     tensCoord E (Bst P) (stRep P ρ' g x) i = stRep P ρ g (tensCoord E (Bst P) x i) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | tmul v b => simp [hE]
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+  change tensCoord E (Bst P) (AlgebraTensorModule.map (ρ' g)
+    (actSt P (g : GQ l)).toLinearMap x) i =
+    AlgebraTensorModule.map (ρ g) (actSt P (g : GQ l)).toLinearMap
+      (tensCoord E (Bst P) x i)
+  exact tensCoord_map E (ρ' g) (ρ g) (hE g) _ x i
 
 theorem mem_Dpst_coord (x : V' ⊗[ℚ_[l]] Bst P) :
     x ∈ Dpst P ρ' ↔ ∀ i, tensCoord E (Bst P) x i ∈ Dpst P ρ := by
@@ -47,7 +52,8 @@ theorem mem_Dpst_coord (x : V' ⊗[ℚ_[l]] Bst P) :
     choose K' hK using fun i => (mem_Dpst P ρ).1 (hx i)
     have hsum : x = ∑ i, (tensCoord E (Bst P)).symm (Pi.single i (tensCoord E (Bst P) x i)) := by
       apply (tensCoord E (Bst P)).injective
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [LinearEquiv.apply_symm_apply]
       exact (Finset.univ_sum_single _).symm
     rw [hsum]
@@ -96,6 +102,6 @@ theorem isPst_enlarge : ∀ {l : ℕ} [Fact l.Prime] (P : LocPrime l) {E Ω : Ty
       ∀ x, Bw.repE L₂ (mapRep (IntermediateField.inclusion hL).toRingHom r₁) g x =
         (M.map (algebraMap ↥L₁.1 ↥L₂.1)).mulVec x :=
     fun g => ⟨r₁ (Bw.e.symm g), fun _ => rfl, fun _ => rfl⟩
-  exact isPst_of_coord P (E := vecCoord ↥L₁.1 ↥L₂.1 m) (vecCoord_rep hρ) h
+  exact isPst_of_coord P (E := GlobalTheory.Pst.vecCoord ↥L₁.1 ↥L₂.1 m) (vecCoord_rep hρ) h
 
 end GlobalTheory.PstExt

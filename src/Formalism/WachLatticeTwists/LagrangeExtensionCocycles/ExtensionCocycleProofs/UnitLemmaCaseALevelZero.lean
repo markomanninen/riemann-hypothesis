@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.MemSpanOfFrobeniusMemSpan
-import Formalism.ResultantValuation.ResultantAdjugateProofs.Window
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.MemSpanOfFrobeniusMemSpan
+public import Formalism.ResultantValuation.ResultantAdjugateProofs.Window
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem aH_le_eWA (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (H : ℕ) :
   have hp := (Fact.out : ℓ.Prime)
   have hℓ3 : 3 ≤ ℓ := by have := hp.two_le; omega
   have hv : (ℓ - 1) * padicValNat ℓ a.factorial ≤ a := by
-    rw [sub_one_mul_padicValNat_factorial]
+    rw [Nat.padicValNat_def, hp.sub_one_mul_multiplicity_factorial]
     exact Nat.sub_le _ _
   have haH : (ℓ - 1) * a ≤ H + (ℓ - 2) := Nat.mul_div_le (H + (ℓ - 2)) (ℓ - 1)
   have hcast : ((ℓ - 1 : ℕ) : ℝ) = (ℓ : ℝ) - 1 := by rw [Nat.cast_sub (by omega), Nat.cast_one]
@@ -97,8 +101,8 @@ theorem prod_sub_one_dvd (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (u : �
       rintro rfl
       exact hm (dvd_zero ℓ)
     have hval : padicValNat ℓ i = k := by
-      rw [hkm, padicValNat.mul (pow_ne_zero _ hp.ne_zero) hm0, padicValNat.prime_pow,
-        padicValNat.eq_zero_of_not_dvd hm, add_zero]
+      rw [hkm, Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hm0,
+        Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hm, add_zero]
     have hdivk : (ℓ : ℤ_[ℓ]) ∣ (u : ℤ_[ℓ]) ^ (ℓ ^ k) - 1 := by
       have := sub_dvd_pow_sub_pow (u : ℤ_[ℓ]) 1 (ℓ ^ k)
       rw [one_pow] at this
@@ -131,7 +135,7 @@ theorem prod_sub_one_dvd (ℓ : ℕ) [Fact ℓ.Prime] (hℓ : ℓ ≠ 2) (u : �
   | zero => simp
   | succ a ih =>
     rw [Finset.prod_Icc_succ_top (by omega), Nat.factorial_succ,
-      padicValNat.mul (by omega) (Nat.factorial_ne_zero a)]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by omega) (Nat.factorial_ne_zero a)]
     have e : a + 1 + (padicValNat ℓ (a + 1) + padicValNat ℓ a.factorial) =
         (a + padicValNat ℓ a.factorial) + (1 + padicValNat ℓ (a + 1)) := by ring
     rw [e, pow_add (ℓ : ℤ_[ℓ]) (a + padicValNat ℓ a.factorial) (1 + padicValNat ℓ (a + 1))]

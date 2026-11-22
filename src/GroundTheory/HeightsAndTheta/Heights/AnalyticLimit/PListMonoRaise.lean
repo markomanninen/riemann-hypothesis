@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoRaise
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StListMonoRaise
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

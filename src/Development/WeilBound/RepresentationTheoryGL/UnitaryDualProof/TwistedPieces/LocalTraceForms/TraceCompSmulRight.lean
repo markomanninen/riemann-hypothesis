@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,7 @@ def tI (I : MaximalSpectrum R) (x : V →ₗ[R] V) : k :=
   lam (k := k) I (LinearMap.trace (R ⧸ I.asIdeal) _ (xq I.asIdeal x))
 
 theorem tI_add (I : MaximalSpectrum R) (x y : V →ₗ[R] V) : tI (k := k) I (x + y) = tI I x + tI I y := by
-  simp only [tI, xq_add, map_add]
+  simp only [tI, xq_add, map_add (f := _)]
 
 theorem tI_smul (I : MaximalSpectrum R) (c : k) (x : V →ₗ[R] V) : tI (k := k) I (c • x) = c • tI I x := by
   simp only [tI, xq_smul, map_smul, smul_eq_mul]
@@ -159,7 +163,8 @@ theorem eI_mul (I : MaximalSpectrum R) {r : R} (hr : r ∈ I.asIdeal) : eI I * r
 
 theorem sum_eI : ∑ I : MaximalSpectrum R, eI I = 1 := by
   apply (IsArtinianRing.equivPi R).injective
-  rw [map_sum, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one]
   simp only [eI, AlgEquiv.apply_symm_apply]
   exact Finset.univ_sum_single 1
 

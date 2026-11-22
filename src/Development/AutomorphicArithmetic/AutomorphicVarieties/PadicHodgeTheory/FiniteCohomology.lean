@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EqOfPowEqOneOfNormSubLt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalPrimeAinf
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EqOfPowEqOneOfNormSubLt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalPrimeAinf
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable (v : ℕ) [Fact v.Prime]
 
 def Iq : Subgroup (GQ v) := (MaximalUnramifiedExtension v).fixingSubgroup
 
-variable {v} in
 
+variable {v} in
 def IsFrob (σ : GQ v) : Prop := ∀ x : Om v, ‖x‖ ≤ 1 → ‖σ x - x ^ v‖ < 1
 
 def cyc (l : ℕ) [Fact l.Prime] : GQ v →* ℤ_[l]ˣ :=
@@ -101,8 +105,8 @@ def Dcr : Submodule A (V ⊗[ℚ_[l]] Bcr l) := ⨅ g : G, LinearMap.ker (actC �
 
 def Ddr : Submodule A (V ⊗[ℚ_[l]] Bdr l) := ⨅ g : G, LinearMap.ker (actD φ ρ g - LinearMap.id)
 
-variable (A V) in
 
+variable (A V) in
 def FilT (a : ℤ) : Submodule A (V ⊗[ℚ_[l]] Bdr l) :=
   LinearMap.range (AlgebraTensorModule.map (LinearMap.id : V →ₗ[A] V)
     ((((PP l).PD (botExt l)).Fil a).restrictScalars ℚ_[l]).subtype)
@@ -116,7 +120,7 @@ def finiteCocycles [TopologicalSpace G] [TopologicalSpace V] [IsTopologicalAddGr
   add_mem' := by
     rintro a b ⟨ha, x, hx⟩ ⟨hb, y, hy⟩
     refine ⟨(Z1 ρ).add_mem ha hb, x + y, fun g => ?_⟩
-    simp only [Pi.add_apply, add_tmul, hx, hy, map_add]
+    simp only [Pi.add_apply, add_tmul, hx, hy, map_add (f := _)]
     abel
   smul_mem' := by
     rintro c a ⟨ha, x, hx⟩
@@ -139,17 +143,15 @@ def Crys (K : FinExt l) (ρ : Representation A ↥(GK K) V) : Prop := IsCrys ((P
 
 def DeRham (K : FinExt l) (ρ : Representation A ↥(GK K) V) : Prop := IsDR ((PP l).PD K) (resCoef ℚ_[l] ρ)
 
-def Semist (K : FinExt l) (ρ : Representation A ↥(GK K) V) : Prop := GlobalTheory.Pst.IsSst (PP l) (resCoef ℚ_[l] ρ)
 
 variable (V) in
-
 def smulD (K : FinExt l) : A ⊗[ℚ_[l]] ↥K.1 →ₗ[ℚ_[l]] Module.End ℚ_[l] (V ⊗[ℚ_[l]] Bdr l) :=
   (TensorProduct.homTensorHomMap (RingHom.id ℚ_[l]) V (Bdr l) V (Bdr l)).comp
     (TensorProduct.map (Algebra.lsmul ℚ_[l] ℚ_[l] V : A →ₐ[ℚ_[l]] Module.End ℚ_[l] V).toLinearMap
       (Algebra.lsmul ℚ_[l] ℚ_[l] (Bdr l) : ↥K.1 →ₐ[ℚ_[l]] Module.End ℚ_[l] (Bdr l)).toLinearMap)
 
-variable (V) in
 
+variable (V) in
 def smulC (K : FinExt l) : A ⊗[ℚ_[l]] ↥(K0 K) →ₗ[ℚ_[l]] Module.End ℚ_[l] (V ⊗[ℚ_[l]] Bcr l) :=
   (TensorProduct.homTensorHomMap (RingHom.id ℚ_[l]) V (Bcr l) V (Bcr l)).comp
     (TensorProduct.map (Algebra.lsmul ℚ_[l] ℚ_[l] V : A →ₐ[ℚ_[l]] Module.End ℚ_[l] V).toLinearMap

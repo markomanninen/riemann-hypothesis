@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix
 open scoped BigOperators
 
@@ -69,7 +74,7 @@ theorem span_image_eq_span_root {E M : Type} [Field E] [Field M] (ψ : E →+* M
         rw [map_mul]
         exact Submodule.mul_mem_mul (ih a ha) (Submodule.subset_span ⟨b, hb, rfl⟩)
       · intro a b ha hb
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ ha hb
   refine le_antisymm hle ?_
   rw [Submodule.span_le, Set.singleton_subset_iff]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ArtSch
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmallArtinSchreier.CoordPowEqZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ArtSch
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmallArtinSchreier.CoordPowEqZero
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.ASSmall
 

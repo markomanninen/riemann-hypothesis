@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOpenConditions
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationOverZpHolds
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundOfDualFamilies
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.EpsilonBoundMConstant
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOpenConditions
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationOverZpHolds
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundOfDualFamilies
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.EpsilonBoundMConstant
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -86,7 +91,7 @@ theorem hat_ind : ∀ (F F' : Type) [Field F] [Field F'] [Algebra F F'] [Finite 
     unfold ext0
     by_cases hw : InPar a w.left
     · have hw' : (inr u)⁻¹ * w * inr u ∈ P := by rw [hP, hl]; exact (inPar_gal _ a _).2 hw
-      rw [dif_pos hw', dif_pos ((hP w).2 hw)]
+      rw [dite_eq_left hw', dite_eq_left ((hP w).2 hw)]
       simp only [hψ]
       have : πh ⟨(inr u)⁻¹ * w * inr u, hw'⟩ = (inr u)⁻¹ * πh ⟨w, (hP w).2 hw⟩ * inr u := by
         apply SemidirectProduct.ext
@@ -101,7 +106,7 @@ theorem hat_ind : ∀ (F F' : Type) [Field F] [Field F'] [Algebra F F'] [Finite 
       simpa using this
     · have hw' : (inr u)⁻¹ * w * inr u ∉ P := by
         rw [hP, hl]; exact fun h => hw ((inPar_gal _ a _).1 h)
-      rw [dif_neg hw', dif_neg (fun h => hw ((hP w).1 h))]
+      rw [dite_eq_right hw', dite_eq_right (fun h => hw ((hP w).1 h))]
   haveI : Fintype (GHat F F' n) := Fintype.ofFinite _
   haveI : Fintype (GL (Fin n) F') := Fintype.ofFinite _
   haveI : Fintype (F' ≃ₐ[F] F') := Fintype.ofFinite _
@@ -115,7 +120,7 @@ theorem hat_ind : ∀ (F F' : Type) [Field F] [Field F'] [Algebra F F'] [Finite 
     have hr : ((inl y)⁻¹ * g * inl y).right = t := by simp [hg]
     unfold ext0
     by_cases hw : InPar a (y⁻¹ * δ * gal (t : F' →+* F') n y)
-    · rw [dif_pos (by rw [hP, hl]; exact hw), if_pos hw, mul_one]
+    · rw [dite_eq_left (by rw [hP, hl]; exact hw), if_pos hw, mul_one]
       simp only [hψ]
       congr 1
       apply SemidirectProduct.ext
@@ -123,7 +128,7 @@ theorem hat_ind : ∀ (F F' : Type) [Field F] [Field F'] [Algebra F F'] [Finite 
         rw [hl]; simp
       · change ((inl y)⁻¹ * g * inl y).right = _
         rw [hr]; simp
-    · rw [dif_neg (by rw [hP, hl]; exact hw), if_neg hw]
+    · rw [dite_eq_right (by rw [hP, hl]; exact hw), if_neg hw]
   have hz : ∀ (y : GL (Fin n) F') (u : F' ≃ₐ[F] F'),
       ((SemidirectProduct.equivProd (φ := galAct F F' n)).symm (y, u)) = inl y * inr u := by
     intro y u

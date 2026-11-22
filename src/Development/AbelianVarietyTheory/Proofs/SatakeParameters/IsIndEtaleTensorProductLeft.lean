@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+
+@[expose] public section
 
 open CategoryTheory
 
@@ -14,10 +18,5 @@ theorem isIndEtale_tensorProduct_left (C A M : Type) [CommRing C] [CommRing A] [
   exact MorphismProperty.of_isPushout (P := MorphismProperty.ind.{0}
     (RingHom.toMorphismProperty @RingHom.Etale))
     (CommRingCat.isPushout_tensorProduct C M A) h
-
-example : ∀ (C A M : Type) [CommRing C] [CommRing A] [CommRing M] [Algebra C A] [Algebra C M],
-    GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap C A) →
-      GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.IsIndEtale (algebraMap M (TensorProduct C M A)) :=
-  @isIndEtale_tensorProduct_left
 
 end GlobalTheory

@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DcOpCommOfCommute
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubleCosetSumFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicativeInnerProductModel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeElementComponentMemStandardDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAntiStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermitiStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DcOpCommOfCommute
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubleCosetSumFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicativeInnerProductModel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeElementComponentMemStandardDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAntiStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermitiStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -238,30 +242,6 @@ theorem LocRep.mult (hβ : IsBaseFrame V β Λ N) {P : Pl D.host.E} (hP : OffLev
   rw [h.translate hβ hP (hi v) (hJ' k hk)]
   simp only [heckeLin_apply, hT.lev v k hk, Finset.mul_sum]
 
-theorem LocRep.gaL_comm (hβ : IsBaseFrame V β Λ N) {P : Pl D.host.E} (hP : OffLevel L N P) {x : GA D V}
-    {A : Finset (GA D V)} (h : LocRep (levG V β L) P x A) {G : Type} [Group G] [Fintype G] (eG : G ≃* G0 L.Pg L.r)
-    (c : G → ℂ) {F : GA D V → ℂ} (hF : RInv (levG V β L) F) :
-    gaL V β L eG c (heckeLin V A F) = heckeLin V A (gaL V β L eG c F) := by
-  simp only [gaL, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
-  refine Finset.sum_congr rfl fun g _ => congrArg _ ?_
-  show actG0 V β L (eG g) (heckeLin V A F) = heckeLin V A (actG0 V β L (eG g) F)
-  unfold actG0
-  split_ifs with hk
-  · funext y
-    rw [h.translate hβ hP hF (κ := hk.choose) ⟨hk.choose_spec.1, hk.choose_spec.2.1, Subgroup.mem_top _⟩]
-    simp only [heckeLin_apply, Finset.mul_sum]
-  · rw [map_zero]
-
-theorem LocRep.good (hβ : IsBaseFrame V β Λ N) {P : Pl D.host.E} (hP : OffLevel L N P) {x : GA D V}
-    {A : Finset (GA D V)} (h : LocRep (levG V β L) P x A) {G : Type} [Group G] [Fintype G] (eG : G ≃* G0 L.Pg L.r)
-    (c : G → ℂ) {J' : Set (GA D V)} {χ' : GA D V → ℂ} (hJ' : ∀ k ∈ J', k ∈ levG V β (flagL L)) {T : MMap M}
-    (hT : T ∈ goodPart θ M J' χ' (gaL V β L eG c)) (hi : ∀ v, RInv (levG V β L) (T v)) :
-    heckeOn M A T ∈ goodPart θ M J' χ' (gaL V β L eG c) := by
-  rw [mem_goodPart] at hT ⊢
-  refine ⟨h.mult hβ hP hJ' hT.1 hi, fun v => ?_⟩
-  show gaL V β L eG c (heckeLin V A (T v)) = heckeLin V A (T v)
-  rw [h.gaL_comm hβ hP eG c (hi v), hT.2]
-
 variable {μ : Measure (GA D V)} {𝓕 : Set (GA D V)} {HM : HMod (MMap M)} {U : Submodule ℂ (MMap M)} {c : ℂ}
 
 theorem exists_isMultIP (h : HM.Is U fun T T' => c * ipM M μ 𝓕 T T') (x y : HM.H) :
@@ -280,7 +260,7 @@ theorem exists_isMultIP (h : HM.Is U fun T T' => c * ipM M μ 𝓕 T T') (x y : 
   obtain ⟨b, hb⟩ := hd y
   obtain ⟨s, hs⟩ := hd (x + y)
   obtain ⟨t, ht⟩ := hd (x + Complex.I • y)
-  rw [map_add] at hs ht
+  rw [map_add (f := _)] at hs ht
   rw [map_smul] at ht
   exact ⟨_, GlobalTheory.SchurPolar.exists_of_diag M μ 𝓕 _ _ ha hb hs ht⟩
 

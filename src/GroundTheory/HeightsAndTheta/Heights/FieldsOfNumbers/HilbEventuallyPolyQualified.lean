@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -30,8 +35,8 @@ theorem isMultiHomogIdeal_iff_isHomogeneous (I : Ideal (MRing ι F)) :
   · intro h f hf b
     exact weightedHomogeneousComponent_mem_of_mem F (blockWeight ι) h hf b
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomog_X (v : Σ k, ι k) :
     IsMultiHomog (X v : MRing ι F) (Pi.single v.1 1) :=
   isWeightedHomogeneous_X F (blockWeight ι) v
@@ -94,8 +99,8 @@ theorem hilbFn_eq_zero_of_block {I : Ideal (MRing ι F)} (k : K)
         rw [hw] at h0
         simp only at h0
         omega
-      have hmono : monomial d (coeff d f) =
-          X ⟨k, i⟩ * monomial (d - Finsupp.single ⟨k, i⟩ 1) (coeff d f) := by
+      have hmono : monomial d (AddMonoidAlgebra.coeff f d) =
+          X ⟨k, i⟩ * monomial (d - Finsupp.single ⟨k, i⟩ 1) (AddMonoidAlgebra.coeff f d) := by
         rw [X, monomial_mul, one_mul, add_tsub_cancel_of_le]
         rw [Finsupp.single_le_iff]
         omega
@@ -105,8 +110,8 @@ theorem hilbFn_eq_zero_of_block {I : Ideal (MRing ι F)} (k : K)
     simp
   · rfl
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem eventually_sub {P : (K → ℤ) → Prop} (h : ∀ᶠ m in Filter.atTop, P m) (e : K → ℤ) :
     ∀ᶠ m in Filter.atTop, P (m - e) := by
   rw [Filter.eventually_atTop] at h ⊢
@@ -117,8 +122,8 @@ theorem eventually_sub {P : (K → ℤ) → Prop} (h : ∀ᶠ m in Filter.atTop,
   simp only [Pi.sub_apply]
   linarith
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem eval_shift (p : MvPolynomial K ℚ) (e m : K → ℤ) :
     eval (fun k => ((m - e) k : ℚ)) p =
       eval (fun k => (m k : ℚ)) (bind₁ (fun j => X j - C ((e j : ℤ) : ℚ)) p) := by
@@ -129,8 +134,8 @@ theorem eval_shift (p : MvPolynomial K ℚ) (e m : K → ℤ) :
   refine congrArg (fun x => eval x p) (funext fun j => ?_)
   simp
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem cast_single (k : K) :
     (fun k' => (((Pi.single k 1 : K → ℕ) k' : ℕ) : ℤ)) = Pi.single k 1 := by
   funext k'
@@ -165,7 +170,7 @@ theorem HilbEventuallyPoly.of_exactDivide_polyOfDiffs (h1 : HilbExactDivide.Stat
     refine ⟨bind₁ (fun j => X j - C (((Pi.single v.1 1 : K → ℤ) j : ℤ) : ℚ)) p1 + p2, ?_⟩
     filter_upwards [eventually_sub hp1 (Pi.single v.1 1), hp2] with m hm1 hm2
     have hz := hex m
-    rw [map_add, ← eval_shift, ← hm1, ← hm2]
+    rw [map_add (f := _), ← eval_shift, ← hm1, ← hm2]
     have hz' : hilbFn J m = hilbFn (J.colon (Ideal.span {(X v : MRing ι F)})) (m - Pi.single v.1 1)
         + hilbFn (J ⊔ Ideal.span {(X v : MRing ι F)}) m := by linarith
     rw [hz']

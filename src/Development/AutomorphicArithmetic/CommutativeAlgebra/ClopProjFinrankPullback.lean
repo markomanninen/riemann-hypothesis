@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFiniteEtaleOfIsClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFiniteEtaleOfIsClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory
 

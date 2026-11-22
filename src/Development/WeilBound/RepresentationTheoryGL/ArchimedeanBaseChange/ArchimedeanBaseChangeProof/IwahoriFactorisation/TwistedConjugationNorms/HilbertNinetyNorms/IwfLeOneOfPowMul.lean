@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriAndMaximalCompactCriteria
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryIwahoriFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,8 @@ theorem iwf_v_sign {w : Pl E} (i j : ℕ) (x : w.adicCompletion E) :
     Valued.v ((-1) ^ i * (-1) ^ j * x) = Valued.v x := by
   rw [map_mul, map_mul, map_pow, map_pow, Valuation.map_neg, map_one, one_pow, one_pow, one_mul, one_mul]
 
-theorem iwf_theta_KGL (w : Pl E) (n : ℕ) (g : GLw n w) (hg : g ∈ GlobalTheory.LFun.KGL w n) :
-    GlobalTheory.CuspRep.thetaGL n (cj w) g ∈ GlobalTheory.LFun.KGL w n := by
+theorem iwf_theta_KGL (w : Pl E) (n : ℕ) (g : GLw n w) (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) :
+    GlobalTheory.CuspRep.thetaGL n (cj w) g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have hc := iwf_cj_continuous w
   rw [GlobalTheory.CompanionTheory.IwEntries.mem_KGL_iff] at hg ⊢
   refine ⟨fun i j => ?_, fun i j => ?_⟩
@@ -144,19 +148,19 @@ theorem iwf_theta_iwGL (w : Pl E) (n : ℕ) (g : GLw n w) (hg : g ∈ iwGL n w) 
     exact iwf_lt_one _ hc (hg'.2.2 _ _ (Fin.rev_lt_rev.2 hij))
 
 theorem iwf_KGL_eq_KO (w : Pl E) (n : ℕ) :
-    GlobalTheory.LFun.KGL w n = GlobalTheory.SplitWeil.KO (w.adicCompletion E) (Fin n) := by
+    GlobalTheory.LFun.KGL w (n := n) = GlobalTheory.SplitWeil.KO (w.adicCompletion E) (Fin n) := by
   ext g
   rw [GlobalTheory.CompanionTheory.IwEntries.mem_KGL_iff, GlobalTheory.CompanionTheory.IwEntries.mem_KO_iff]
 
-theorem iwf_isOpen_KGL (w : Pl E) (n : ℕ) : IsOpen (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := by
+theorem iwf_isOpen_KGL (w : Pl E) (n : ℕ) : IsOpen (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
   rw [iwf_KGL_eq_KO]
   exact GlobalTheory.SplitFlip.isOpen_KO
 
-theorem iwf_isCompact_KGL (w : Pl E) (n : ℕ) : IsCompact (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := by
+theorem iwf_isCompact_KGL (w : Pl E) (n : ℕ) : IsCompact (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
   rw [iwf_KGL_eq_KO]
   exact GlobalTheory.SplitFlip.isCompact_KO
 
-theorem iwf_iwGL_le_KGL (w : Pl E) (n : ℕ) : iwGL n w ≤ GlobalTheory.LFun.KGL w n := by
+theorem iwf_iwGL_le_KGL (w : Pl E) (n : ℕ) : iwGL n w ≤ GlobalTheory.LFun.KGL w (n := n) := by
   rw [iwf_KGL_eq_KO]
   exact GlobalTheory.SmGL.iwahori_le_KO _ _
 
@@ -175,9 +179,9 @@ theorem iwf_isClosed_UL {w : Pl E} (hw : ¬ IsSplitAt w) (n : ℕ) : IsClosed (U
   exact GlobalTheory.CompanionTheory.UnitaryWitt.isClosed_UJ_one n (iwf_cj_continuous w)
 
 theorem iw_facts_pf (w : Pl E) (hw : ¬ IsSplitAt w) (a : ℕ) (t : GLw a w) :
-    IsOpen (GlobalTheory.LFun.KGL w a : Set (GLw a w)) ∧ IsCompact (GlobalTheory.LFun.KGL w a : Set (GLw a w)) ∧
-    (∀ k ∈ GlobalTheory.LFun.KGL w a, thL a w k ∈ GlobalTheory.LFun.KGL w a) ∧ IsLevel (thL a w) (GlobalTheory.LFun.KGL w a) (iwGL a w) ∧
-    IsLevel (MonoidHom.id _) (GlobalTheory.LFun.KGL w a) (iwGL a w) ∧ (iwGL a w).relIndex (GlobalTheory.LFun.KGL w a) ≠ 0 ∧
+    IsOpen (GlobalTheory.LFun.KGL w (n := a) : Set (GLw a w)) ∧ IsCompact (GlobalTheory.LFun.KGL w (n := a) : Set (GLw a w)) ∧
+    (∀ k ∈ GlobalTheory.LFun.KGL w (n := a), thL a w k ∈ GlobalTheory.LFun.KGL w (n := a)) ∧ IsLevel (thL a w) (GlobalTheory.LFun.KGL w (n := a)) (iwGL a w) ∧
+    IsLevel (MonoidHom.id _) (GlobalTheory.LFun.KGL w (n := a)) (iwGL a w) ∧ (iwGL a w).relIndex (GlobalTheory.LFun.KGL w (n := a)) ≠ 0 ∧
     IsCompact {g : GLw a w | dcos a w t g ≠ 0} := by
   have hθ : thL a w = GlobalTheory.CuspRep.thetaGL a (cj w) := if_neg hw
   have hKo := iwf_isOpen_KGL w a

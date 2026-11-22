@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UniformizerOfResidueIndep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormByPlaces
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -24,7 +28,7 @@ theorem fsum_eq_sum {α M : Type*} [AddCommMonoid M] (s : Set α) (S : Finset α
   rw [finsum_mem_def]
   apply finsum_eq_sum_of_support_subset
   intro x hx
-  simp only [Function.mem_support, ne_eq, Set.indicator_apply_eq_zero, _root_.not_imp] at hx
+  simp only [Function.mem_support, ne_eq, Set.indicator_apply_eq_zero, Classical.not_imp] at hx
   exact hS x hx.1 hx.2
 
 noncomputable def Emin (c : ι) (v : AddValuation (Ω c) (WithTop ℤ)) : ℤ :=
@@ -44,7 +48,36 @@ theorem hh_good_adm (hd : d.AxH 𝒜) (h : d.S1) {c : ι} {p : Ideal (KTp K d.D 
 
 theorem good_finite (hd : d.AxH 𝒜) (h : d.S1) (c : ι) {p : Ideal (KTp K d.D d.N)}
     (hp : p ∈ d.HtOne) : (d.GoodP c p).Finite :=
-  ((d.norm_by_places hd h c).1 p hp).subset (fun _ hw => hw.1)
+  have hOverFinite : (d.OverP c p).Finite := by
+    letI : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
+    haveI : FiniteDimensional (d.KT c) (OmS (Ω c) d.D d.N) :=
+      d.KT_finiteDimensional hd c
+    let e : KTf K d.D d.N ≃+* d.KT c :=
+      (d.KTtoS h c).rangeRestrictFieldEquiv.trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+    have he : (algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp e.symm.toRingHom =
+        (RingEquiv.refl (OmS (Ω c) d.D d.N)).toRingHom.comp (algebraMap (d.KT c) (OmS (Ω c) d.D d.N)) := by
+      refine RingHom.ext fun x => ?_
+      change d.KTtoS h c (e.symm x) = (x : OmS (Ω c) d.D d.N)
+      exact congrArg (fun u : d.KT c => (u : OmS (Ω c) d.D d.N)) (e.apply_symm_apply x)
+    haveI : FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+      Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl _) he
+    have hmap : ∀ x : KTp K d.D d.N,
+        algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)
+          (algebraMap (KTp K d.D d.N) (KTf K d.D d.N) x) = d.sH c x := by
+      intro x
+      exact IsFractionRing.lift_algebraMap (h c) x
+    have hOver : d.OverP c p =
+        HNm.OverR (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+          (L := OmS (Ω c) d.D d.N) p := by
+      ext w
+      simp only [Data.OverP, HNm.OverR, Set.mem_setOf_eq, hmap]
+    obtain ⟨hprime, hh⟩ := hp
+    haveI := hprime
+    rw [hOver]
+    exact (HNm.local_norm (R := KTp K d.D d.N) (F := KTf K d.D d.N)
+      (L := OmS (Ω c) d.D d.N) p hh (d.gen p) (d.gen_span ⟨hprime, hh⟩) 1
+      one_ne_zero).1
+  hOverFinite.subset (fun _ hw => hw.1)
 
 theorem w_mem_WW (hd : d.AxH 𝒜) (j : Fin (d.N + 1)) : d.w j ∈ d.WW := by
   rw [hd.WW_span]

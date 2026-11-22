@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.ExPhiPlusOnto
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.BZMir.Fun GlobalTheory.SplitWeil
 open scoped Topology
@@ -54,7 +58,7 @@ theorem thetaOpen : ThetaOpen k := by
   have hc : Continuous fun u : MirUin k n => a ⬝ᵥ lastCol k u := by
     have h := continuous_lastCol k n
     simp only [dotProduct]
-    exact continuous_finset_sum _ fun i _ => continuous_const.mul ((continuous_apply i).comp h)
+    exact continuous_finsetSum _ fun i _ => continuous_const.mul ((continuous_apply i).comp h)
   have he : ((thetaA k ψ a).ker : Set (MirUin k n)) =
       (fun u : MirUin k n => a ⬝ᵥ lastCol k u) ⁻¹' {x : k | ψ x = 1} := by
     ext u

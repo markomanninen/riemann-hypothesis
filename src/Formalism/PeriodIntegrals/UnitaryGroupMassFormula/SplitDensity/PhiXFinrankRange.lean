@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SplitDensity.FiberCard
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.DensExact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SplitDensity.FiberCard
+
+@[expose] public section
 
 open Finset Formalism.L2.SG.DensExact
 

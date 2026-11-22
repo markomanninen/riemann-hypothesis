@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSemiAbelianImage
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormallyUnramifiedAdjointRingActionScheme
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsNoetherianRingCompletedStalkSiegelFibrePower
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelAmpleSpreadSubring
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingConditionLocusIsClopen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdditiveSwapOfTrivAxes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSemiAbelianImage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormallyUnramifiedAdjointRingActionScheme
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsNoetherianRingCompletedStalkSiegelFibrePower
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelAmpleSpreadSubring
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingConditionLocusIsClopen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdditiveSwapOfTrivAxes
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 open scoped CategoryTheory.Obj
@@ -48,32 +53,71 @@ theorem exists_weilIs_root {S : Scheme.{0}} [IsLocallyNoetherian S] {A : Over S}
     ∃ c₀ : Γ(T.left, ⊤)ˣ, c₀ ^ N = 1 ∧ Out.WeilIs A (P.pull (lift (𝟙 A) (𝟙 A)).left) N x y c₀ := by
   have hG : Out.GlobalFnsSt := GlobalTheory.globalFns_holds
   have hD : (P.pull (lift (𝟙 A) (𝟙 A)).left).IsLB := pull_isLB hP _
-  have hB : ∀ (T : Over S) (x x' y : T ⟶ A), pc hP (x * x') y = pc hP x y + pc hP x' y :=
+  let pc := fun {T : Over S} (a b : T ⟶ A) => pull (lift a b).left (cls P hP)
+  have hB : ∀ (T : Over S) (x x' y : T ⟶ A), pc (x * x') y = pc x y + pc x' y :=
     fun T x x' y => by
       obtain ⟨t, ht⟩ := (biadd_noeth hG hA P hP r₁ r₂ T x x' y).1
       have e := (cls_eq_zero_iff (LB.isLB_linComb hP _ _)).2 ⟨t, ht⟩
       rw [cls_linComb hP, Fin.sum_univ_three] at e
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
         Matrix.tail_cons, one_smul, neg_smul] at e
-      unfold pc
+      dsimp only [pc]
       rw [← sub_eq_zero, ← e]
       abel
-  have hB' : ∀ (T : Over S) (x y y' : T ⟶ A), pc hP x (y * y') = pc hP x y + pc hP x y' :=
+  have hB' : ∀ (T : Over S) (x y y' : T ⟶ A), pc x (y * y') = pc x y + pc x y' :=
     fun T x y y' => by
       obtain ⟨t, ht⟩ := (biadd_noeth hG hA P hP r₁ r₂ T y y' x).2
       have e := (cls_eq_zero_iff (LB.isLB_linComb hP _ _)).2 ⟨t, ht⟩
       rw [cls_linComb hP, Fin.sum_univ_three] at e
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
         Matrix.tail_cons, one_smul, neg_smul] at e
-      unfold pc
+      dsimp only [pc]
       rw [← sub_eq_zero, ← e]
       abel
   have lifts : ∀ z : T ⟶ A, z ^ N = 1 → ∀ p : T.left, ∃ V : T.left.Opens, p ∈ V ∧
       ∃ θ : Out.ThetaGrp A (P.pull (lift (𝟙 A) (𝟙 A)).left) N (Out.overRes V), θ.pt = Out.overResι V ≫ z :=
     fun z hz p => by
-      obtain ⟨θ, hθ⟩ := exists_theta_diag hP hB hB' (k := N) (Out.overResι ⊤ ≫ z)
-        (by rw [← MonObj.comp_pow, hz, MonObj.comp_one])
-      exact ⟨⊤, trivial, θ, hθ⟩
+      let x := Out.overResι ⊤ ≫ z
+      have hx : x ^ N = 1 := by dsimp [x]; rw [← MonObj.comp_pow, hz, MonObj.comp_one]
+      have powleft : ∀ {U : Over S} (a b : U ⟶ A) (k : ℕ), pc (a ^ k) b = k • pc a b := by
+        intro U a b k
+        have one : pc (1 : U ⟶ A) b = 0 := by
+          have h := hB U 1 1 b
+          rwa [_root_.mul_one, left_eq_add] at h
+        induction k with
+        | zero => rw [pow_zero, one, zero_smul]
+        | succ k ih => rw [pow_succ, hB, ih, succ_nsmul]
+      have powright : ∀ {U : Over S} (a b : U ⟶ A) (k : ℕ), pc a (b ^ k) = k • pc a b := by
+        intro U a b k
+        have one : pc a (1 : U ⟶ A) = 0 := by
+          have h := hB' U a 1 1
+          rwa [_root_.mul_one, left_eq_add] at h
+        induction k with
+        | zero => rw [pow_zero, one, zero_smul]
+        | succ k ih => rw [pow_succ, hB', ih, succ_nsmul]
+      have e : ∀ g : (Out.overRes (⊤ : T.left.Opens)) ⊗ A ⟶ A, pull g.left (cls _ hD) = pc g g := fun g => by
+        rw [cls_pull hP, ← pull_comp, ← Over.comp_left, comp_lift, Category.comp_id]
+      have ha : (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) ^ N = 1 := by rw [← MonObj.comp_pow, hx, MonObj.comp_one]
+      have h1 : N • pc (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) = 0 := by
+        rw [← powleft, ha]
+        have h := hB _ 1 1 (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x)
+        rwa [_root_.mul_one, left_eq_add] at h
+      have h2 : N • pc (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) (snd (Out.overRes (⊤ : T.left.Opens)) A) = 0 := by
+        rw [← powleft, ha]
+        have h := hB _ 1 1 (snd (Out.overRes (⊤ : T.left.Opens)) A)
+        rwa [_root_.mul_one, left_eq_add] at h
+      have h3 : N • pc (snd (Out.overRes (⊤ : T.left.Opens)) A) (fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) = 0 := by
+        rw [← powright, ha]
+        have h := hB' _ (snd (Out.overRes (⊤ : T.left.Opens)) A) 1 1
+        rwa [_root_.mul_one, left_eq_add] at h
+      obtain ⟨t, ht⟩ : ∃ t : LB.Gen (Out.thetaLB A (P.pull (lift (𝟙 A) (𝟙 A)).left) N x), t.IsGen := by
+        refine (cls_eq_zero_iff (LB.isLB_linComb hD _ _)).1 ?_
+        rw [cls_linComb hD, Fin.sum_univ_two]
+        show (N : ℤ) • pull (snd (Out.overRes (⊤ : T.left.Opens)) A).left (cls _ hD) + (-(N : ℤ)) • pull ((fst (Out.overRes (⊤ : T.left.Opens)) A ≫ x) * snd (Out.overRes (⊤ : T.left.Opens)) A).left (cls _ hD) = 0
+        rw [e, e, hB, hB', hB']
+        simp only [natCast_zsmul, neg_smul, smul_add, h1, h2, h3]
+        abel
+      exact ⟨⊤, trivial, ⟨x, t, ht⟩, rfl⟩
   obtain ⟨c₀, hc₀⟩ := GlobalTheory.CommutatorPairing.exists_weilIs hG hA hD (lifts x hx) (lifts y hy)
   obtain ⟨c₁, hc₁⟩ := GlobalTheory.CommutatorPairing.exists_weilIs hG hA hD (lifts 1 (one_pow N)) (lifts y hy)
   have h11 := GlobalTheory.DiagPairing.weilIs_mul_left hG hA hD hc₁ hc₁

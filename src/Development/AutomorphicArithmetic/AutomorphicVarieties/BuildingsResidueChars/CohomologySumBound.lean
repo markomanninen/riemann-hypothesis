@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+
+@[expose] public section
 
 private theorem UpperTheory.V.Af.CohB.cardSum_eq (I : Type) [hI : Fintype I] :
     ∀ f : I → Cardinal.{0}, Cardinal.sum f = ∑ i, f i := by
@@ -32,12 +36,13 @@ theorem UpperTheory.cohomology_sum_bound :
   let F : Rep.{0} ℂ Γ ⥤ ModuleCat.{0} ℂ :=
     groupCohomology.cochainsFunctor ℂ Γ ⋙ HomologicalComplex.homologyFunctor (ModuleCat.{0} ℂ) (ComplexShape.up ℕ) q
   have hF : ∑ i, F.map (π i) ≫ F.map (ι i) = 𝟙 (F.obj A) := by
-    rw [← F.map_id, ← h, F.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← F.map_id, ← h, F.map_sum]
     simp only [Functor.map_comp]
   change Module.rank ℂ (F.obj A) ≤ ∑ i, Module.rank ℂ (F.obj (B i))
   let φ : F.obj A →ₗ[ℂ] (∀ i, F.obj (B i)) := LinearMap.pi fun i => (F.map (π i)).hom
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have h1 := congrArg (fun f => ModuleCat.Hom.hom f x) hF
     simp only [ModuleCat.hom_sum, ModuleCat.hom_comp, ModuleCat.hom_id, LinearMap.sum_apply,

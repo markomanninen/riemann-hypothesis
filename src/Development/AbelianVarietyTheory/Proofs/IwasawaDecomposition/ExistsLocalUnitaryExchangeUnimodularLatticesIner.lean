@@ -1,18 +1,59 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CartanExchangeUnimodularInertPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubmodulePatchAtPrimeIsLatticeLocPStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SameAtOfLocalizationEqStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationHermitianDualEqStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimePowSmulLeOfLocalizationsEqAwayStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PatchAtSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CartanExchangeUnimodularInertPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SubmodulePatchAtPrimeIsLatticeLocPStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SameAtOfLocalizationEqStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationHermitianDualEqStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPrimePowSmulLeOfLocalizationsEqAwayStatement
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.L2.Col GlobalTheory.InertExchange
 open Classical
 
 namespace GlobalTheory.InertExchange
+
+open Module
+
+variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
+
+private theorem isFullLattice_of_unimodular {L : Submodule (𝓞 E) (Sp E n)}
+    (hL : Submodule.IsLattice E L) (hu : IsUnimodular (hStd E n) L) :
+    Submodule.IsFullLattice E L := by
+  let := hL
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra h
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  -- Every multiple of the orthogonal vector lies in the self-dual lattice.
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hu, dualBasic_mem_dual]
+    intro y hy
+    apply hStd_mem_one_symm
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 
 theorem exchange : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} (P : HeightOneSpectrum (𝓞 E)),
   conjPrime₂ P = P → (∃ x : 𝓞 E, cO E x - x ∉ P.asIdeal) →
@@ -77,47 +118,52 @@ theorem exchange : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : �
       rw [GlobalTheory.T.localization_hermitianDual_eq P A B hA hB h1, hBu', hAP]
     · have hQ' : conjPrime₂ Q ≠ P := fun h => hQ (by rw [← hcc Q, h, hP])
       rw [GlobalTheory.T.localization_hermitianDual_eq Q A C hA hC (hAQ _ hQ'), hCu', hAQ Q hQ]
-  have locσ : ∀ Y : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E Y → ∀ Q : HeightOneSpectrum (𝓞 E),
-      localization₂ Q.asIdeal (patchAt P (gmap g Y) Y) = localization₂ Q.asIdeal (if Q = P then gmap g Y else Y) :=
-    fun Y hY => (GlobalTheory.T.submodulePatchAtPrime_isLattice_locP P (gmap g Y) Y (gmap_lattice g Y hY) hY).2
-  have latσ : ∀ Y : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E Y →
-      Submodule.IsLattice E (patchAt P (gmap g Y) Y) :=
-    fun Y hY => (GlobalTheory.T.submodulePatchAtPrime_isLattice_locP P (gmap g Y) Y (gmap_lattice g Y hY) hY).1
+  have patch_lat_loc : ∀ (h : Sp E n ≃ₗ[E] Sp E n), h ∈ UF E n →
+      ∀ Y : Submodule (𝓞 E) (Sp E n), Submodule.IsLattice E Y → IsUnimodular (hStd E n) Y →
+      Submodule.IsLattice E (patchAt P (gmap h Y) Y) ∧ ∀ Q : HeightOneSpectrum (𝓞 E),
+        localization₂ Q.asIdeal (patchAt P (gmap h Y) Y) = localization₂ Q.asIdeal (if Q = P then gmap h Y else Y) := by
+    intro h hh Y hY hu
+    exact GlobalTheory.T.submodulePatchAtPrime_isLattice_locP P (gmap h Y) Y
+      (isFullLattice_of_unimodular (gmap_lattice h Y hY) (unimodG h hh Y hu))
+      (isFullLattice_of_unimodular hY hu)
+  have locσ := fun Y hY hu => (patch_lat_loc g hg Y hY hu).2
+  have latσ := fun Y hY hu => (patch_lat_loc g hg Y hY hu).1
   refine ⟨fun Y => patchAt P (gmap g Y) Y, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · show patchAt P (gmap g X) X = Z
     apply Formalism.L2.DIV.eq_of_forall_localized_eq
     intro Q
-    rw [locσ X hXl Q]
+    rw [locσ X hXl hXu Q]
     split_ifs with hQ
     · rw [hQ]; exact hgX.localization_eq.symm
     · exact (hXZ Q hQ).localization_eq.symm
   · show patchAt P (gmap g Z) Z = X
     apply Formalism.L2.DIV.eq_of_forall_localized_eq
     intro Q
-    rw [locσ Z hZl Q]
+    rw [locσ Z hZl hZu Q]
     split_ifs with hQ
     · rw [hQ]; exact hgZ.localization_eq.symm
     · exact (hXZ Q hQ).localization_eq
   · intro Y hYl hYu hYS
     show Submodule.IsLattice E (patchAt P (gmap g Y) Y) ∧ IsUnimodular (hStd E n) (patchAt P (gmap g Y) Y) ∧
       ∀ Q : HeightOneSpectrum (𝓞 E), Q ≠ P → SameAt Q X (patchAt P (gmap g Y) Y)
-    refine ⟨latσ Y hYl, ?_, ?_⟩
-    · refine unimod _ (gmap g Y) X (latσ Y hYl) (gmap_lattice g Y hYl) hXl (unimodG g hg Y hYu) hXu ?_ ?_
-      · rw [locσ Y hYl P, if_pos rfl]
+    refine ⟨latσ Y hYl hYu, ?_, ?_⟩
+    · refine unimod _ (gmap g Y) X (latσ Y hYl hYu) (gmap_lattice g Y hYl) hXl (unimodG g hg Y hYu) hXu ?_ ?_
+      · rw [locσ Y hYl hYu P, if_pos rfl]
       · intro Q hQ
-        rw [locσ Y hYl Q, if_neg hQ]
+        rw [locσ Y hYl hYu Q, if_neg hQ]
         exact (hYS Q hQ).localization_eq
     · intro Q hQ
-      apply GlobalTheory.T.sameAt_of_localization_eq Q X _ hXl (latσ Y hYl)
-      rw [locσ Y hYl Q, if_neg hQ]
+      apply GlobalTheory.T.sameAt_of_localization_eq Q X _ hXl (latσ Y hYl hYu)
+      rw [locσ Y hYl hYu Q, if_neg hQ]
       exact (hYS Q hQ).localization_eq.symm
   · intro Y' hl' hu' hS'
-    obtain ⟨hYl, hYloc⟩ := GlobalTheory.T.submodulePatchAtPrime_isLattice_locP P (gmap g⁻¹ Y') Y' (gmap_lattice _ _ hl') hl'
-    refine ⟨patchAt P (gmap g⁻¹ Y') Y', hYl, ?_, ?_, ?_⟩
-    · refine unimod _ (gmap g⁻¹ Y') Y' hYl (gmap_lattice _ _ hl') hl' (unimodG _ hginv Y' hu') hu' ?_ ?_
+    obtain ⟨hYl, hYloc⟩ := patch_lat_loc g⁻¹ hginv Y' hl' hu'
+    have hYu : IsUnimodular (hStd E n) (patchAt P (gmap g⁻¹ Y') Y') := by
+      refine unimod _ (gmap g⁻¹ Y') Y' hYl (gmap_lattice _ _ hl') hl' (unimodG _ hginv Y' hu') hu' ?_ ?_
       · rw [hYloc P, if_pos rfl]
       · intro Q hQ
         rw [hYloc Q, if_neg hQ]
+    refine ⟨patchAt P (gmap g⁻¹ Y') Y', hYl, hYu, ?_, ?_⟩
     · intro Q hQ
       apply GlobalTheory.T.sameAt_of_localization_eq Q X _ hXl hYl
       rw [hYloc Q, if_neg hQ]
@@ -125,7 +171,7 @@ theorem exchange : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : �
     · show patchAt P (gmap g (patchAt P (gmap g⁻¹ Y') Y')) (patchAt P (gmap g⁻¹ Y') Y') = Y'
       apply Formalism.L2.DIV.eq_of_forall_localized_eq
       intro Q
-      rw [locσ _ hYl Q]
+      rw [locσ _ hYl hYu Q]
       split_ifs with hQ
       · rw [hQ]
         ext x
@@ -141,23 +187,23 @@ theorem exchange : ∀ {E : Type} [Field E] [NumberField E] [StarRing E] {n : �
     · rw [hQ]
       apply locg_inv g P
       have h1 := congrArg (localization₂ P.asIdeal) he'
-      rw [locσ Y hYl P, locσ Y' hY'l P, if_pos rfl, if_pos rfl] at h1
+      rw [locσ Y hYl hYu P, locσ Y' hY'l hY'u P, if_pos rfl, if_pos rfl] at h1
       exact h1
     · rw [(hYS Q hQ).localization_eq, (hY'S Q hQ).localization_eq]
   · intro s Y Y' hYl hYu hYS hY'l hY'u hY'S
     show IsInertNbr P.asIdeal s (patchAt P (gmap g Y) Y) (patchAt P (gmap g Y') Y') ↔ IsInertNbr P.asIdeal s Y Y'
     have hAl := gmap_lattice g Y hYl
     have hBl := gmap_lattice g Y' hY'l
-    have hAA' := GlobalTheory.T.sameAt_of_localization_eq P (gmap g Y) _ hAl (latσ Y hYl) (by rw [locσ Y hYl P, if_pos rfl])
-    have hBB' := GlobalTheory.T.sameAt_of_localization_eq P (gmap g Y') _ hBl (latσ Y' hY'l) (by rw [locσ Y' hY'l P, if_pos rfl])
+    have hAA' := GlobalTheory.T.sameAt_of_localization_eq P (gmap g Y) _ hAl (latσ Y hYl hYu) (by rw [locσ Y hYl hYu P, if_pos rfl])
+    have hBB' := GlobalTheory.T.sameAt_of_localization_eq P (gmap g Y') _ hBl (latσ Y' hY'l hY'u) (by rw [locσ Y' hY'l hY'u P, if_pos rfl])
     have hAB : ∀ Q : HeightOneSpectrum (𝓞 E), Q ≠ P → localization₂ Q.asIdeal (gmap g Y) = localization₂ Q.asIdeal (gmap g Y') :=
       fun Q hQ => locg g Q Y Y' ((hYS Q hQ).localization_eq.trans (hY'S Q hQ).localization_eq.symm)
     have hA'B' : ∀ Q : HeightOneSpectrum (𝓞 E), Q ≠ P →
         localization₂ Q.asIdeal (patchAt P (gmap g Y) Y) = localization₂ Q.asIdeal (patchAt P (gmap g Y') Y') := by
       intro Q hQ
-      rw [locσ Y hYl Q, locσ Y' hY'l Q, if_neg hQ, if_neg hQ, (hYS Q hQ).localization_eq, (hY'S Q hQ).localization_eq]
+      rw [locσ Y hYl hYu Q, locσ Y' hY'l hY'u Q, if_neg hQ, if_neg hQ, (hYS Q hQ).localization_eq, (hY'S Q hQ).localization_eq]
     obtain ⟨k1, hk1, hk1'⟩ := GlobalTheory.T.exists_prime_pow_smul_le_of_localizations_eq_away P _ _ hAl hBl hAB
-    obtain ⟨k2, hk2, hk2'⟩ := GlobalTheory.T.exists_prime_pow_smul_le_of_localizations_eq_away P _ _ (latσ Y hYl) (latσ Y' hY'l) hA'B'
+    obtain ⟨k2, hk2, hk2'⟩ := GlobalTheory.T.exists_prime_pow_smul_le_of_localizations_eq_away P _ _ (latσ Y hYl hYu) (latσ Y' hY'l hY'u) hA'B'
     obtain ⟨a, ha, a', ha', h1, h2⟩ := hAA'
     obtain ⟨b, hb, b', hb', h3, h4⟩ := hBB'
     have hα0 : a * a' * b * b' ∉ P.asIdeal :=

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,7 @@ theorem measurable_invM : Measurable (invM : Mt k r → Mt k r) := by
     hc.matrix_det.measurable.inv
   have hadj : ∀ i j, Measurable fun x : Mt k r => (Matrix.of x : Mat k r).adjugate i j :=
     fun i j => ((continuous_apply_apply i j).comp hc.matrix_adjugate).measurable
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have key : (fun x : Mt k r => invM x i j) =
       fun x => ((Matrix.of x : Mat k r).det)⁻¹ * (Matrix.of x : Mat k r).adjugate i j := by
     funext x
@@ -201,20 +205,5 @@ theorem Decay.mono {σ : Mat k r → (H →L[ℂ] H)} {V V' : Set H} {a : ℝ} (
     Decay σ V' a := fun u hu v hv => h u (hV hu) v (hV hv)
 
 theorem Greg_subset (z z' : Fin (2 * r + k + 1) → ℂ) : Greg k r z z' ⊆ GG k r := fun _ hγ => hγ.1
-
-example : invM (k := 1) (r := 0) !![1, 2; 0, 1] = !![1, -2; 0, 1] := by
-  show ((!![1, 2; 0, 1] : Matrix (Fin 2) (Fin 2) ℂ)⁻¹ : Matrix (Fin 2) (Fin 2) ℂ) = _
-  apply Matrix.inv_eq_right_inv
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
-
-example (x : Mt k r) : invM x = @Inv.inv (Mat k r) Matrix.inv (Matrix.of x) := rfl
-
-example : dil 1 1 2 = Matrix.diagonal ![2, 1, 1, 2⁻¹] := by
-  unfold dil
-  congr 1; funext i
-  fin_cases i <;> simp
-
-example : rk1 (1 : ℂ) (Complex.I : ℂ) (1 : ℂ) = -Complex.I := by simp [rankOneInnerOperator_apply]
 
 end GlobalTheory.SgInf

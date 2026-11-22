@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularityAtPlaceOfSubadditive
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularityAtPlaceOfSubadditive
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP2
 
@@ -128,14 +132,14 @@ lemma big_sh (p : KB.Pl P Wp Wq) (q : KB.Pl (shP P u u') Wp Wq') (f : B.Mat P.k 
       _ = _ := by rw [← pow_mul]
   · have hq0 : q.V (fpmSh (P := P) q f A p₀) γ = 0 := by
       unfold KB.Pl.V D.vecV
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨-, h⟩
       apply hG
       rw [← hGq]
       exact h
     have hp0 : p.V f γ = 0 := by
       unfold KB.Pl.V D.vecV
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨-, h⟩
       exact hG h
     have e1 := Formalism.FourierDecayAlt.P.TBBx4.hsVec_real_smul_sq 0 (0 : Wq' →L[ℂ] Wp)

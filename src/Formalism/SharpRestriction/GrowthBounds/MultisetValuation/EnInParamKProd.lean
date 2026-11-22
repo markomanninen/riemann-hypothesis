@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FacEmbDomain
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FacEmbDomain
+
+@[expose] public section
 
 noncomputable section
 

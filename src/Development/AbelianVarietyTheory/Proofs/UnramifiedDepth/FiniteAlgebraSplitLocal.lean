@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -55,7 +59,7 @@ private theorem finSplit_exists {O A : Type} [CommRing O] [IsLocalRing O] [CommR
     obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.1 h1
     refine ⟨b, fun _ _ => ⟨?_, RingHom.mem_ker.1 hb⟩⟩
     have hφab := congrArg φ hab
-    rw [map_add, RingHom.mem_ker.1 ha, zero_add, map_one] at hφab
+    rw [map_add (f := _), RingHom.mem_ker.1 ha, zero_add, map_one] at hφab
     exact hφab
   choose x hx using key
   refine ⟨1 - ∏ φ ∈ Finset.univ.filter (fun φ : A →ₐ[O] O => (maximalIdeal O).comap φ = M),
@@ -125,7 +129,8 @@ theorem finite_algebra_split_local :
     all_goals simp
   · apply ext
     intro φ
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp only [hval]
     rw [Fintype.sum_equiv eqv _
       (fun M : Pts => if (maximalIdeal O).comap φ = M.1 then (1 : O) else 0) (fun _ => rfl)]

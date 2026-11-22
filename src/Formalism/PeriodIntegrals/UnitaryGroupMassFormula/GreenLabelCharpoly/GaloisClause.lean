@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GreenLabelCharpoly.IrreducibleCharpolyInv
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GreenLabelCharpoly.IrreducibleCharpolyInv
+
+@[expose] public section
 
 open Polynomial CategoryTheory Formalism.IrreducibleCountingLemmas.TYPES
 
@@ -48,7 +52,8 @@ theorem galois_clause (Cv : LabelConv K) (hC : CuspParam K Cv) (d : ℕ) (α : �
       rw [hdeg', hdeg, Fintype.card_fin]
     · intro y hy γ hγ z hz m hm'
       obtain ⟨r, hr, rfl⟩ := (conj_roots hm hi hw (fun x => x ^ a) hf y).1 hy
-      rw [htr γ, hval r hr γ hγ z hz m hm', map_mul, map_pow, map_neg, map_one, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [htr γ, hval r hr γ hγ z hz m hm', map_mul, map_pow, map_neg, map_one, map_sum]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
       have hu : (Cv.ι r ^ (m * Fintype.card K ^ i)) ^ (∏ e ∈ Finset.Icc 1 d, (q K ^ e - 1)) = 1 := by
@@ -111,29 +116,5 @@ theorem dual_clause (Cv : LabelConv K) (hC : CuspParam K Cv) (d : ℕ)
       ac_rfl
   rw [greenLab_eq Cv hC hd hs' hc' hlab]
   exact aroots_eq_map hm hi hw (fun x => x⁻¹) hf hinj
-
-theorem labelMapGreen : LabelMapGreen K := by
-  intro C hC
-  refine ⟨{ lab := greenLab C
-            lab_iso := greenLab_iso C
-            lab_spec := ?_
-            lab_inj := ?_
-            lab_one := ?_ }, ⟨?_, ?_⟩, ?_⟩
-  · intro d τ hd hs hc
-    obtain ⟨h1, h2, h3, h4, -⟩ := greenLab_spec C hC hd hs hc
-    exact ⟨h1, h2, h3, by simpa using h4⟩
-  · intro d τ τ' hd hs hc hs' hc' heq
-    have h' : HasCuspLabel C τ' (greenLab C d τ) := by
-      rw [heq]
-      exact greenLab_spec C hC hd hs' hc'
-    exact (hC d hd).2.2 τ τ' (greenLab C d τ) hs hc hs' hc' (greenLab_spec C hC hd hs hc) h'
-  · intro τ x hs hx htr
-    exact greenLab_one C hC τ x hs hx htr
-  · intro d α a hα τ τ' hd hs hc hs' hc' htr
-    exact galois_clause C hC d α a hα τ τ' hd hs hc hs' hc' htr
-  · intro d τ τ' hd hs hc hs' hc' htr
-    exact dual_clause C hC d τ τ' hd hs hc hs' hc' htr
-  · intro d τ hd hs hc
-    exact greenLab_spec C hC hd hs hc
 
 end PI.GreenLabelMapW

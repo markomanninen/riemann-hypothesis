@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section Rep
 
 variable {G : Type} [Group G] {LL LL' : Type} [Field LL] [Field LL'] [Algebra LL LL']
 
-variable (LL') in
 
+variable (LL') in
 def bρ {V : Type} [AddCommGroup V] [Module LL V] (ρ : Representation LL G V) :
     Representation LL' G (LL' ⊗[LL] V) where
   toFun g := (ρ g).baseChange LL'
@@ -31,8 +35,8 @@ section Top
 variable {LL LL' : Type} [Field LL] [Field LL'] [Algebra LL LL'] [TopologicalSpace LL]
   [TopologicalSpace LL'] [IsTopologicalRing LL']
 
-set_option warn.classDefReducibility false in
 
+set_option warn.classDefReducibility false in
 def bTop (V : Type) [AddCommGroup V] [Module LL V] : TopologicalSpace (LL' ⊗[LL] V) :=
   moduleTopology LL' (LL' ⊗[LL] V)
 
@@ -85,12 +89,6 @@ theorem contSMul_of (hc : Continuous (algebraMap LL LL')) (M : Type) [AddCommGro
     funext p; rw [algebraMap_smul]
   rw [e]
   exact (hc.comp continuous_fst).smul continuous_snd
-
-example (V : Type) [AddCommGroup V] [Module LL V] : Module O' (LL' ⊗[LL] V) := inferInstance
-example (V : Type) [AddCommGroup V] [Module LL V] : IsScalarTower O' LL' (LL' ⊗[LL] V) := inferInstance
-example (V : Type) [AddCommGroup V] [Module LL V] : IsScalarTower Qp LL' (LL' ⊗[LL] V) := inferInstance
-example (V : Type) [AddCommGroup V] [Module LL V] [FiniteDimensional LL V] :
-    FiniteDimensional LL' (LL' ⊗[LL] V) := inferInstance
 
 end Lat
 
@@ -197,7 +195,7 @@ def bLattice (hO' : Function.Injective (algebraMap O' LL')) {ρ : Representation
       (fun c a _ ha => ?_) hx
     · obtain ⟨t, rfl⟩ := hy
       exact Submodule.subset_span ⟨⟨ρ g t, L.stable g t t.2⟩, rfl⟩
-    · rw [map_add]; exact Submodule.add_mem _ ha hb
+    · rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     · rw [← algebraMap_smul LL' c a, map_smul, algebraMap_smul]; exact Submodule.smul_mem _ _ ha
   fg := by
     haveI := L.free
@@ -247,7 +245,7 @@ theorem bf_equiv {ρ : Representation LL G V} {ρ₂ : Representation LL G V₂}
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a v => simp [bf, bρ, hf]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem baseChange_map_mem_lattice {f : V →ₗ[LL] V₂} {T : Submodule O V} {T₂ : Submodule O V₂} (hf : ∀ x ∈ T, f x ∈ T₂)
     (x : LL' ⊗[LL] V) (hx : x ∈ bT (LL' := LL') (O' := O') T) :
@@ -256,14 +254,14 @@ theorem baseChange_map_mem_lattice {f : V →ₗ[LL] V₂} {T : Submodule O V} {
     (fun c a _ ha => ?_) hx
   · obtain ⟨t, rfl⟩ := hy
     exact Submodule.subset_span ⟨⟨f t, hf t t.2⟩, by simp [bf]⟩
-  · rw [map_add]; exact Submodule.add_mem _ ha hb
+  · rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   · rw [← algebraMap_smul LL' c a, map_smul, algebraMap_smul]; exact Submodule.smul_mem _ _ ha
 
 theorem bf_onto {f : V →ₗ[LL] V₂} {T : Submodule O V} {T₂ : Submodule O V₂}
     (hon : ∀ y ∈ T₂, ∃ x ∈ T, f x = y) (y : LL' ⊗[LL] V₂) (hy : y ∈ bT (LL' := LL') (O' := O') T₂) :
     ∃ x ∈ bT (LL' := LL') (O' := O') T, bf (LL' := LL') f x = y := by
   refine Submodule.span_induction (fun z hz => ?_) ⟨0, Submodule.zero_mem _, by simp⟩
-    (fun a b _ _ ⟨xa, ha, ea⟩ ⟨xb, hb, eb⟩ => ⟨xa + xb, Submodule.add_mem _ ha hb, by rw [map_add, ea, eb]⟩)
+    (fun a b _ _ ⟨xa, ha, ea⟩ ⟨xb, hb, eb⟩ => ⟨xa + xb, Submodule.add_mem _ ha hb, by rw [map_add (f := _), ea, eb]⟩)
     (fun c a _ ⟨xa, ha, ea⟩ => ⟨c • xa, Submodule.smul_mem _ _ ha, by
       rw [← algebraMap_smul LL' c xa, map_smul, ea, algebraMap_smul]⟩) hy
   obtain ⟨t, rfl⟩ := hz
@@ -302,7 +300,7 @@ def bLoc (hc : Continuous (algebraMap LL LL')) (hO' : Function.Injective (algebr
         exact (hl.comp (T.cont v)).const_smul a
       | add x y hx hy =>
         have e : (fun g => bρ LL' T.ρ g (x + y)) = fun g => bρ LL' T.ρ g x + bρ LL' T.ρ g y := by
-          funext g; rw [map_add]
+          funext g; rw [map_add (f := _)]
         rw [e]; exact hx.add hy
     L := bLattice (LL' := LL') (O' := O') hO' T.L }
 

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfStepForm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThmPActualCptOfStepForm
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

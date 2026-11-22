@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -69,7 +73,7 @@ theorem prod_le_re_det_gram {E : Type*} [NormedAddCommGroup E] [InnerProductSpac
     ∏ k, δ k ≤ (Matrix.gram ℂ v).det.re := by
   classical
   rw [det_gram_eq_prod_gramSchmidt, ← Complex.ofReal_prod, Complex.ofReal_re]
-  refine Finset.prod_le_prod (fun k _ => hδ k) (fun k _ => ?_)
+  refine Finset.prod_le_prod₀ (fun k _ => hδ k) (fun k _ => ?_)
   obtain ⟨c, hc⟩ := exists_eq_gramSchmidt_add_sum_Iio n v
   have hmem : ∑ i ∈ Iio k, c k i • gramSchmidt ℂ v i ∈ Submodule.span ℂ (v '' Set.Iio k) := by
     rw [← span_gramSchmidt_Iio (𝕜 := ℂ) v k]

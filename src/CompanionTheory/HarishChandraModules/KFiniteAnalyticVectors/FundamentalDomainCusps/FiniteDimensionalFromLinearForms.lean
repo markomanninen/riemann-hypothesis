@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.IntegrableMulBc
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.ShortIsot
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.IntegrableMulBc
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.FundamentalDomainCusps.ShortIsot
+
+@[expose] public section
 
 open MeasureTheory Topology Filter Set
 open scoped ENNReal Pointwise
@@ -339,7 +343,7 @@ theorem finite_dimensional_from_linear_forms : FiniteDimensionalFromLinearForms 
         exact integral_const_mul _ _ }
   have hker : LinearMap.ker l ≤ LinearMap.ker r := fun h hh => by
     have hfin : sq μ D h.1 ≠ ∞ := by
-      have := (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top two_ne_zero (by simp) h.2.2.2).ne
+      have := (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top two_ne_zero (by simp) h.2.2).ne
       simpa [sq] using this
     have h0 := hdet h.1 h.2.1 hfin fun i => congrFun hh i
     rw [sq, lintegral_eq_zero_iff (h.2.1.1.1.measurable.enorm.pow_const 2)] at h0

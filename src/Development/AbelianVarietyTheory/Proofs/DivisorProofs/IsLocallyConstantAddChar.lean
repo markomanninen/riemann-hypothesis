@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPowTwoPowSubOneGe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPowTwoPowSubOneGe
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem eq_zero_of_mul_invariant {X : Type} [TopologicalSpace X] (l : (X → ℂ
       exact ⟨U, hU, hst.trans htU, h'⟩
     · rintro s t ⟨U, hU, hsU, h1⟩ ⟨V, hV, htV, h2⟩
       refine ⟨U ∪ V, hU.union hV, Set.union_subset_union hsU htV, fun φ' hφ' hs => ?_⟩
-      rw [← Set.indicator_self_add_compl U φ', map_add, h1 _ (hind U hU _ hφ') Set.support_indicator_subset,
+      rw [← Set.indicator_self_add_compl U φ', map_add (f := _), h1 _ (hind U hU _ hφ') Set.support_indicator_subset,
         h2 _ (hind _ hU.compl _ hφ'), add_zero]
       rw [Set.support_indicator]
       rintro x ⟨hx, hx'⟩
@@ -122,7 +126,7 @@ theorem smul_map_mulVec_pi (M : Matrix κ κ F) (u : Fˣ) (hu : (u : F) = M.det)
       ext f
       simp only [Set.mem_preimage, Set.mem_univ_pi, mulVec_diagonal]
       exact forall_congr' fun i => (Set.mem_inv_smul_set_iff (a := Units.mk0 (D i) (A i))).symm
-    rw [this, Measure.pi_pi, hu', map_prod, ENNReal.coe_finset_prod, smul_eq_mul, ← Finset.prod_mul_distrib]
+    rw [this, Measure.pi_pi, hu', map_prod, ENNReal.ofNNReal_finsetProd, smul_eq_mul, ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [distribHaarChar_mul, smul_inv_smul]
   · intro t u hu
@@ -144,6 +148,7 @@ theorem smul_map_mulVec_pi (M : Matrix κ κ F) (u : Fˣ) (hu : (u : F) = M.det)
     have e : (A * B).mulVec = A.mulVec ∘ B.mulVec := funext fun x => (mulVec_mulVec x A B).symm
     rw [hu', map_mul, ENNReal.coe_mul, mul_smul, e, ← Measure.map_map (hm _) (hm _), ← Measure.map_smul,
       IHB _ rfl, IHA _ rfl]
+    exact (hm A).aemeasurable
 
 theorem integral_comp_mulVec (g : GL κ F) (f : (κ → F) → ℂ) :
     ((distribHaarChar F (Matrix.GeneralLinearGroup.det g) : ℝ) : ℂ) *

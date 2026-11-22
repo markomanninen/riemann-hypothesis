@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.CayDivOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.CayDivOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,11 +69,6 @@ theorem rcp_comp {T U : Fm n →ₗ[ℂ] Fm n} (hT : RCP T) (hU : RCP U) : RCP (
 
 theorem rcp_add {T U : Fm n →ₗ[ℂ] Fm n} (hT : RCP T) (hU : RCP U) : RCP (T + U) := fun R q => by
   simp only [LinearMap.add_apply, hT R q, hU R q, add_mul]
-
-theorem rcp_smul (c : ℂ) {T : Fm n →ₗ[ℂ] Fm n} (hT : RCP T) : RCP (c • T) := fun R q => by
-  simp only [LinearMap.smul_apply, hT R q, smul_mul_assoc]
-
-theorem rcp_id : RCP (LinearMap.id : Fm n →ₗ[ℂ] Fm n) := fun _ _ => rfl
 
 theorem divZ_of_rcp {T : Fm n →ₗ[ℂ] Fm n} (hT : RCP T) {i : ℕ} {Q : Fm n} (hQ : DivZ i Q) : DivZ i (T Q) := by
   obtain ⟨R, rfl⟩ := (divZ_iff i Q).1 hQ
@@ -137,7 +136,7 @@ theorem pderiv_false_AT {Q : Fm n} (hQ : Q ∈ AT n) (a d : Fin n) : pderiv (fal
     obtain ⟨v, rfl⟩ := hx
     exact pderiv_X_of_ne (by simp)
   | algebraMap r => rw [MvPolynomial.algebraMap_eq, pderiv_C]
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | mul x y _ _ hx hy => rw [Derivation.leibniz, hx, hy, smul_zero, smul_zero, add_zero]
 
 theorem pderiv_true_AT {Q : Fm n} (hQ : Q ∈ AT n) (a d : Fin n) : pderiv (true, a, d) Q ∈ AT n := by
@@ -150,7 +149,7 @@ theorem pderiv_true_AT {Q : Fm n} (hQ : Q ∈ AT n) (a d : Fin n) : pderiv (true
     · exact Subalgebra.one_mem _
     · exact Subalgebra.zero_mem _
   | algebraMap r => rw [MvPolynomial.algebraMap_eq, pderiv_C]; exact Subalgebra.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Subalgebra.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hx hy
   | mul x y hx' hy' hx hy =>
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     exact Subalgebra.add_mem _ (Subalgebra.mul_mem _ hx' hy) (Subalgebra.mul_mem _ hy' hx)

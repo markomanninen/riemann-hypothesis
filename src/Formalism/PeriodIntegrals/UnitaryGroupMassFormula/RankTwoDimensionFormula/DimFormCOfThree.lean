@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfSteps
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem orbitCount : OrbitCount := by
   intro G _ Γ K n t A N hA hAN hK hΓ
   classical
   have key : ∀ j i, DoubleCoset.mk Γ K (t i) = DoubleCoset.mk Γ K (t j) →
-      ∃ γ ∈ Γ, ∃ κ ∈ K, t j = γ * t i * κ := fun j i h => (DoubleCoset.eq Γ K (t i) (t j)).mp h
+      ∃ γ ∈ Γ, ∃ κ ∈ K, t j = γ * t i * κ := fun j i h => (@DoubleCoset.eq _ _ Γ K (t i) (t j)).mp h
   have hcard : (Finset.univ : Finset (Fin n)).card ≤
       N * (Finset.univ.image fun i => DoubleCoset.mk Γ K (t i)).card := by
     apply Finset.card_le_mul_card_image

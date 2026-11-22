@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
-import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.NFTopSq
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+public import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.NFTopSq
+
+@[expose] public section
 
 namespace CompanionTheory.NFCpt
 

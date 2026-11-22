@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPrimitiveRootAndRootsOfUnityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGeneratedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPropertyCalculusRules
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleSheafSectionsExtAndGlue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocalPrimitiveRootAndRootsOfUnityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGeneratedStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -24,10 +29,10 @@ variable {q}
 def pu {A : Type} [CommRing A] (ζ : Prim q A) : Aˣ :=
   Units.ofPowEqOne ζ.1 q ((GlobalTheory.EtC.PrimBasic.prim_basic q A).1 ζ) (NeZero.ne q)
 
-@[simp] theorem pu_val {A : Type} [CommRing A] (ζ : Prim q A) : (pu ζ : A) = ζ.1 := rfl
-
 theorem pu_pow {A : Type} [CommRing A] (ζ : Prim q A) : pu ζ ^ q = 1 :=
-  Units.ext (by simp [(GlobalTheory.EtC.PrimBasic.prim_basic q A).1 ζ])
+  Units.ext (by
+    change ζ.1 ^ q = 1
+    exact (GlobalTheory.EtC.PrimBasic.prim_basic q A).1 ζ)
 
 def coefHom {A : Type} [CommRing A] (u : Aˣ) (hu : u ^ q = 1) : ZMod q →+ Additive Aˣ :=
   ZMod.lift q ⟨zmultiplesHom _ (Additive.ofMul u), by
@@ -47,7 +52,7 @@ theorem coefHom_one {A : Type} [CommRing A] (u : Aˣ) (hu : u ^ q = 1) : coefHom
 theorem ulift_smul_eq {M : Type*} [AddCommGroup M] [Module (ULift.{1} (ZMod q)) M] (c : ULift.{1} (ZMod q)) (x : M) :
     c • x = c.down.val • x := by
   have : c = ((c.down.val : ℕ) : ULift.{1} (ZMod q)) := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     rw [ULift.down_natCast, ZMod.natCast_zmod_val]
   conv_lhs => rw [this]
   rw [Nat.cast_smul_eq_nsmul]
@@ -75,7 +80,9 @@ theorem twRel_le_gKer (A : Type) [CommRing A] : twRel q 1 A ≤ gKer A := by
   refine Submodule.span_le.2 ?_
   rintro x ⟨ζ, ξ, a, h, rfl⟩
   show gHom A _ = 0
-  have hu : pu ξ = pu ζ ^ (a : ZMod q).val := Units.ext (by simp [h])
+  have hu : pu ξ = pu ζ ^ (a : ZMod q).val := Units.ext (by
+    change ξ.1 = ζ.1 ^ (a : ZMod q).val
+    exact h)
   rw [map_sub, gHom_single, gHom_single, zpow_one]
   change coefHom (pu ξ) (pu_pow ξ) 1 - coefHom (pu ζ) (pu_pow ζ) (a : ZMod q) = 0
   rw [coefHom_one, coefHom_apply, hu, ofMul_pow, sub_self]
@@ -95,7 +102,7 @@ variable {q : ℕ} [NeZero q]
 theorem kapA_smul (A : Type) [CommRing A] (n : ℤ) (x : (Prim q A →₀ ULift.{1} (ZMod q)) ⧸ twRel q 1 A) :
     kapA A ((ULift.up.{1} (n : ZMod q)) • x) = n • kapA A x := by
   have : (ULift.up.{1} (n : ZMod q) : ULift.{1} (ZMod q)) = (n : ULift.{1} (ZMod q)) := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     rw [ULift.down_intCast]
   exact (congrArg (fun c => kapA A (c • x)) this).trans (by rw [Int.cast_smul_eq_zsmul, map_zsmul])
 
@@ -110,7 +117,7 @@ theorem kapA_nat {A B : CommRingCat.{0}} (f : A ⟶ B) (x : (Prim q A →₀ ULi
     rw [Submodule.mapQ_apply, kapA_mk, kapA_mk]
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, map_add, ha, hb, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb, map_add (f := _)]
     | single ζ c =>
       rw [Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, gHom_single, gHom_single, coefHom_apply,
         coefHom_apply, pu_map, map_nsmul]
@@ -165,7 +172,7 @@ abbrev Rt (q : ℕ) [NeZero q] : Shv ℤ := (restr (Int.castRingHom (ZMod q))).o
 theorem kap_exists (q : ℕ) [NeZero q] :
     ∃ κ : (restr (Int.castRingHom (ZMod q))).obj (tw q 1) ⟶ Gm, eta q ≫ κ.hom = phi0 q := by
   have hW : Scheme.etaleTopology.W (eta q) := GrothendieckTopology.W_of_isLocallyBijective _ _
-  obtain ⟨f, hf⟩ := (hW Gm.obj Gm.cond).2 (phi0 q)
+  obtain ⟨f, hf⟩ := (hW Gm.obj Gm.property).2 (phi0 q)
   exact ⟨⟨f⟩, hf⟩
 
 end GlobalTheory.EtC.KummerSeq
@@ -240,7 +247,7 @@ variable {q : ℕ} [NeZero q]
 theorem sec_q_smul (F : Shv (ZMod q)) (U : Scheme.{0}) (x : Sec F U) : q • x = 0 := by
   rw [← Nat.cast_smul_eq_nsmul (ULift.{1} (ZMod q))]
   have : ((q : ℕ) : ULift.{1} (ZMod q)) = 0 := by
-    refine ULift.ext _ _ ?_
+    refine ULift.ext ?_
     rw [ULift.down_natCast, ZMod.natCast_self]
     rfl
   rw [this, zero_smul]
@@ -400,8 +407,8 @@ theorem kap_roots (U : Scheme.{0}) (hq : IsUnit (q : Γ(U, ⊤))) (b : Sec Gm U)
 
 end GlobalTheory.EtC.KummerSeq
 
-open GlobalTheory.EtC.KummerSeq in
 
+open GlobalTheory.EtC.KummerSeq in
 theorem GlobalTheory.EtC.kummer_sequence : ∀ (q : ℕ) [NeZero q], ∃ κ : (restr (Int.castRingHom (ZMod q))).obj (tw q 1) ⟶ Gm, Mono κ ∧ κ ≫ ((q : ℤ) • 𝟙 Gm) = 0 ∧ (∀ (U : Scheme.{0}) (ζ : Prim q Γ(U, ⊤)) (u : (Γ(U, ⊤))ˣ), (u : Γ(U, ⊤)) = ζ.1 → Sec.map κ (show Sec ((restr (Int.castRingHom (ZMod q))).obj (tw q 1)) U from twGen 1 ζ) = unitSec u) ∧ (∀ (U : Scheme.{0}), IsUnit (q : Γ(U, ⊤)) → ∀ b : Sec Gm U, Sec.map ((q : ℤ) • 𝟙 Gm) b = 0 → ∃ a, Sec.map κ a = b) ∧ ∀ (U : Scheme.{0}), IsUnit (q : Γ(U, ⊤)) → ∀ b : Sec Gm U, Loc U fun V g => ∃ c : Sec Gm V, Sec.map ((q : ℤ) • 𝟙 Gm) c = Sec.res g b := by
   intro q _
   refine ⟨kap q, kap_mono, kap_q, ?_, fun U hq b hb => kap_ker U hq b hb, fun U hq b => kap_roots U hq b⟩

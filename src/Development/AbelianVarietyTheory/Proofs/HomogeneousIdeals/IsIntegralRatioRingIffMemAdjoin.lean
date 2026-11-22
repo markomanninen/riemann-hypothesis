@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,7 @@ def spread (L : Type*) [CommRing L] : L[X] →+* L[X][X] :=
 theorem coeff_spread {L : Type*} [CommRing L] (p : L[X]) (n : ℕ) :
     (spread L p).coeff n = C (p.coeff n) * X ^ n := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, coeff_add, hp, hq, add_mul]
+  | add p q hp hq => simp only [map_add (f := _), coeff_add, hp, hq, add_mul]
   | monomial m a =>
     rw [spread, coe_eval₂RingHom, eval₂_monomial, mul_pow, ← C_pow, RingHom.comp_apply,
       ← mul_assoc, ← C_mul, coeff_C_mul_X_pow, coeff_monomial]
@@ -174,7 +178,7 @@ theorem isIntegral_cone_iff {p : L[X]} :
       | algebraMap r =>
         refine ⟨C (algebraMap o _ r), ?_⟩
         simp [spread]
-      | add x y _ _ hx hy => simpa only [map_add] using add_mem hx hy
+      | add x y _ _ hx hy => simpa only [map_add (f := _)] using add_mem hx hy
       | mul x y _ _ hx hy => simpa only [map_mul] using mul_mem hx hy
     choose φ hφ using h1
     have hinj : Function.Injective (mapRingHom (algebraMap (cone o t) L[X])) :=
@@ -183,7 +187,7 @@ theorem isIntegral_cone_iff {p : L[X]} :
       { toFun := φ
         map_one' := hinj (by rw [hφ, map_one]; exact map_one _)
         map_zero' := hinj (by rw [hφ, map_zero]; exact map_zero _)
-        map_add' := fun a b => hinj (by rw [map_add, hφ, hφ, hφ]; exact map_add _ _ _)
+        map_add' := fun a b => hinj (by rw [map_add (f := _), hφ, hφ, hφ]; exact map_add _ _ _)
         map_mul' := fun a b => hinj (by rw [map_mul, hφ, hφ, hφ]; exact map_mul _ _ _) }
     letI : Algebra (cone o t)[X] L[X][X] := Polynomial.algebra _ _
     have h2 : IsIntegral (cone o t)[X] (spread L p) :=
@@ -267,7 +271,7 @@ theorem finite_integralClosure_cone :
   haveI : Algebra.FiniteType o (cone o t) := .adjoin_of_finite (Set.finite_range _)
   haveI : Algebra.EssFiniteType o L[X] := .comp o L _
   haveI : Algebra.EssFiniteType (cone o t) L[X] := .of_comp o _ _
-  exact finite_integralClosure_of_essFiniteType_of_isReduced o _ _
+  exact finite_integralClosure_of_essFiniteType_of_isReduced (R := cone o t) o L[X]
 
 theorem exists_generators : ∃ e : ℕ, 0 < e ∧ ∃ N : ℕ → Submodule o L, (∀ q, (N q).FG) ∧
     (∀ q, N q ≤ piece o t q) ∧ (∀ q, e < q → N q = ⊥) ∧ ∀ n, piece o t n ≤

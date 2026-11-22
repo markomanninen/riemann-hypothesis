@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
@@ -55,7 +59,7 @@ private theorem UpperTheory.V.Pa.Core.spCong_kill (hI : (I • ⊤ : Submodule R
   rw [← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero]
   refine UpperTheory.V.Pa.Core.spCong_killI I a M hI _ ?_ w
   obtain ⟨b, hb, c, hc, rfl⟩ := Submodule.mem_sup.1 hz
-  rw [map_add, (RingHom.mem_ker).1 hb, zero_add, ← UpperTheory.V.Pa.Core.spCong_map f I]
+  rw [map_add (f := _), (RingHom.mem_ker).1 hb, zero_add, ← UpperTheory.V.Pa.Core.spCong_map f I]
   exact Ideal.mem_map_of_mem (f : A →+* S) hc
 
 private theorem UpperTheory.V.Pa.Core.spCong_smul (f : A →ₐ[R] S) (z : A) (x : A ⊗[R] M) :
@@ -63,7 +67,7 @@ private theorem UpperTheory.V.Pa.Core.spCong_smul (f : A →ₐ[R] S) (z : A) (x
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul t m => simp [TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 private theorem UpperTheory.V.Pa.Core.spCong_ker (hI : (I • ⊤ : Submodule R M) ≤ a • ⊤) (f : A →ₐ[R] S)
     (f' : A →ₐ[R] S') (hf : Function.Surjective f)
@@ -85,7 +89,7 @@ private theorem UpperTheory.V.Pa.Core.spCong_ker (hI : (I • ⊤ : Submodule R 
       rw [← UpperTheory.V.Pa.Core.spCong_map f' a]
       exact Ideal.mem_map_of_mem (f' : A →+* S') hz
     · rintro _ _ ⟨x, rfl, hx⟩ ⟨y, rfl, hy⟩
-      exact ⟨x + y, map_add _ _ _, by rw [map_add]; exact Submodule.add_mem _ hx hy⟩
+      exact ⟨x + y, map_add _ _ _, by rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy⟩
   have h2 : ∀ w : (LinearMap.ker f.toLinearMap) ⊗[R] M,
       f'.toLinearMap.rTensor M ((LinearMap.ker f.toLinearMap).subtype.rTensor M w) ∈
         (a.map (algebraMap R S') • ⊤ : Submodule S' (S' ⊗[R] M)) := by
@@ -97,7 +101,7 @@ private theorem UpperTheory.V.Pa.Core.spCong_ker (hI : (I • ⊤ : Submodule R 
       rw [← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero] at h
       simpa [TensorProduct.smul_tmul'] using h
     | add x y hx hy =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact Submodule.add_mem _ hx hy
   obtain ⟨x', hx', hm⟩ := h1 _ hx
   have hex := rTensor_exact M (LinearMap.exact_subtype_ker_map f.toLinearMap) hf

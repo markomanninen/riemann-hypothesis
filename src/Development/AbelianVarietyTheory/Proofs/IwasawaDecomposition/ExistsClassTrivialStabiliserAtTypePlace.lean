@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsHecke
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteRationalConjMemBoundedCompact
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsHecke
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteRationalConjMemBoundedCompact
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,8 +77,6 @@ theorem eq_one_of_finOrder {R : Type} [CommRing R] [IsDomain R] {P : Ideal R} (h
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
-
 theorem monomial {n : ℕ} {g : GL (Fin n) L} (hg : g ∈ GQ0 L n)
     (hint : ∀ i j, IsIntegral ℤ ((g : Matrix (Fin n) (Fin n) L) i j)) (i : Fin n) :
     ∃ j, IsOfFinOrder ((g : Matrix (Fin n) (Fin n) L) i j) ∧ ∀ k, k ≠ j → (g : Matrix (Fin n) (Fin n) L) i k = 0 := by
@@ -83,7 +85,8 @@ theorem monomial {n : ℕ} {g : GL (Fin n) L} (hg : g ∈ GQ0 L n)
   have h1 := congrFun (congrFun h0 i) i
   simp only [Matrix.mul_apply, conjT, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply_eq] at h1
   have h2 := congrArg φ h1
-  simp only [map_sum, map_mul, map_one] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_one] at h2
   have h3 : ∑ k, ((‖φ ((g : Matrix (Fin n) (Fin n) L) i k)‖ ^ 2 : ℝ) : ℂ) = 1 := by
     rw [← h2]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -135,8 +138,8 @@ theorem exists_class (m r : ℕ) (hr : 2 ≤ r) (s : SplitPlace L) {p : ℕ} (hp
   classical
   obtain ⟨-, -, hlift⟩ := GlobalTheory.T.unitaryFiniteAdeles_splitPlace_decomposition L (m + 2) s
   let A₀ : GL (Fin (m + 2)) ℤ := Matrix.nonsingInvUnit (frameM m) (by rw [det_frameM]; exact isUnit_one)
-  let A : GL (Fin (m + 2)) (s.v.adicCompletion L⁺) := Matrix.GeneralLinearGroup.map (Int.castRingHom _) A₀
-  have hA : ∀ i j, A.1 i j = ((frameM m i j : ℤ) : s.v.adicCompletion L⁺) := fun i j => rfl
+  let A : GL (Fin (m + 2)) (s.v.adicCompletion (maximalRealSubfield L)) := Matrix.GeneralLinearGroup.map (Int.castRingHom (s.v.adicCompletion (maximalRealSubfield L))) A₀
+  have hA : ∀ i j, A.1 i j = ((frameM m i j : ℤ) : s.v.adicCompletion (maximalRealSubfield L)) := fun i j => rfl
   obtain ⟨g, ⟨hgT, hgA⟩, -⟩ := hlift A
   have hgU : g ∈ Umax L (m + 2) := by
     rw [← GlobalTheory.HeckeScalarSph.loc_mem_GLint_iff s hgT, hgA, GlobalTheory.HeckeScalarSph.mem_GLint_iff]
@@ -167,8 +170,8 @@ theorem exists_class (m r : ℕ) (hr : 2 ≤ r) (s : SplitPlace L) {p : ℕ} (hp
       rw [hloc, hσ0 i k hk, map_zero, zero_mul]
     · simp
   have hAint : ∀ i j, Valued.v (A.1 i j) ≤ 1 := fun i j =>
-    (intCast_mem (s.v.adicCompletionIntegers L⁺) (frameM m i j) :)
-  have hcong : ∀ (i b) (x : Fin (m + 2) → s.v.adicCompletion L⁺), (∀ l, Valued.v (H.1 l b - x l) < 1) →
+    (intCast_mem (s.v.adicCompletionIntegers (maximalRealSubfield L)) (frameM m i j) :)
+  have hcong : ∀ (i b) (x : Fin (m + 2) → s.v.adicCompletion (maximalRealSubfield L)), (∀ l, Valued.v (H.1 l b - x l) < 1) →
       Valued.v (s.i ((c : Matrix _ _ L) i (σ i)) * A.1 (σ i) b - ∑ l, A.1 i l * x l) < 1 := by
     intro i b x hx
     rw [hrow, ← Finset.sum_sub_distrib]
@@ -202,7 +205,7 @@ theorem exists_class (m r : ℕ) (hr : 2 ≤ r) (s : SplitPlace L) {p : ℕ} (hp
       simpa [eζ] using h3)
     exact congrArg (fun y : 𝓞 L => (y : L)) this
   have h10 : (1 : Fin (m + 2)) ≠ 0 := by simp
-  have hsh : ∀ i, Valued.v (((((σ i).val : ℤ) - (i.val : ℤ) : ℤ) : s.v.adicCompletion L⁺) - H.1 0 1) < 1 := by
+  have hsh : ∀ i, Valued.v (((((σ i).val : ℤ) - (i.val : ℤ) : ℤ) : s.v.adicCompletion (maximalRealSubfield L)) - H.1 0 1) < 1 := by
     intro i
     have h3 := hcong i 1 (Pi.single 0 (H.1 0 1) + Pi.single 1 1) (by
       intro l

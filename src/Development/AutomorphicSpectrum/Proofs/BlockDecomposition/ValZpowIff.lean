@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CongIndex
 
@@ -23,7 +27,7 @@ theorem red_of_le {ϖ : k} (h0 : ϖ ≠ 0) {c : ℕ} {x : k}
     (hx : valuation k x ≤ valuation k (ϖ ^ c)) :
     red ϖ c x = IsLocalRing.residue _ ⟨x * (ϖ ^ c)⁻¹, scaled_le h0 hx⟩ := by
   unfold red
-  rw [dif_pos (scaled_le h0 hx)]
+  rw [dite_eq_left (scaled_le h0 hx)]
 
 theorem val_add_le {c : ℕ} {ϖ x y : k}
     (hx : valuation k x ≤ valuation k (ϖ ^ c)) (hy : valuation k y ≤ valuation k (ϖ ^ c)) :
@@ -33,7 +37,7 @@ theorem val_add_le {c : ℕ} {ϖ x y : k}
 theorem red_add {ϖ : k} (h0 : ϖ ≠ 0) {c : ℕ} {x y : k}
     (hx : valuation k x ≤ valuation k (ϖ ^ c)) (hy : valuation k y ≤ valuation k (ϖ ^ c)) :
     red ϖ c (x + y) = red ϖ c x + red ϖ c y := by
-  rw [red_of_le h0 hx, red_of_le h0 hy, red_of_le h0 (val_add_le hx hy), ← map_add]
+  rw [red_of_le h0 hx, red_of_le h0 hy, red_of_le h0 (val_add_le hx hy), ← map_add (f := _)]
   congr 1
   apply Subtype.ext
   simp [add_mul]

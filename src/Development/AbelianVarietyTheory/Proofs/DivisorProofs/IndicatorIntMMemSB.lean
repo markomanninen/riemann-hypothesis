@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 def IsSmU (χ : kˣ →* ℂˣ) : Prop := IsOpen (χ.ker : Set kˣ) ∧ ∀ x, ‖(χ x : ℂ)‖ = 1
 
-theorem isSmU_one : IsSmU (1 : kˣ →* ℂˣ) := ⟨by simp, by simp⟩
 
 variable (k) in
-
 def intM (m n : Type) : Set (Matrix m n k) := {X | ∀ i j, X i j ∈ 𝒪[k]}
 
 def IsEqv {n : ℕ} (ν : kˣ →* ℂˣ) (z : ℂ) (l : (Matrix (Fin n) (Fin n) k → ℂ) → ℂ) : Prop :=
@@ -26,9 +28,6 @@ def IsEqv {n : ℕ} (ν : kˣ →* ℂˣ) (z : ℂ) (l : (Matrix (Fin n) (Fin n)
   (∀ c : ℂ, ∀ φ ∈ SB (Matrix (Fin n) (Fin n) k), l (c • φ) = c * l φ) ∧
   ∀ g₁ g₂ : GL (Fin n) k, ∀ φ ∈ SB (Matrix (Fin n) (Fin n) k),
     (ν (gdet g₁ * gdet g₂) : ℂ) * apow (gdet g₁ * gdet g₂) z * l (fun X => φ (g₁.val * X * g₂.val)) = l φ
-
-example (n : ℕ) : IsEqv (n := n) (1 : kˣ →* ℂˣ) 0 (fun φ => φ 0) :=
-  ⟨fun _ _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ _ => by simp⟩
 
 def indSp (a a' : ℕ) (α β : kˣ →* ℂˣ) : Submodule ℂ (GL (Fin (a + a')) k → ℂ) where
   carrier := {f | (∀ (b : GL (Fin (a + a')) k) (A : GL (Fin a) k) (D : GL (Fin a') k) (N : Matrix (Fin a) (Fin a') k),
@@ -51,10 +50,6 @@ def mapA {a : ℕ} (a' : ℕ) (l : (Matrix (Fin a) (Fin a) k → ℂ) → ℂ) (
     (Φ : Matrix (Fin a) (Fin (a + a')) k → ℂ) (h : GL (Fin (a + a')) k) : ℂ :=
   l fun g => omA ν β 1 h Φ (g * X0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ Fin (a + a')))
 
-def mapB (a : ℕ) {a' : ℕ} (l : (Matrix (Fin a') (Fin a') k → ℂ) → ℂ) (ν α : kˣ →* ℂˣ)
-    (Ψ : Matrix (Fin a') (Fin (a + a')) k → ℂ) (h : GL (Fin (a + a')) k) : ℂ :=
-  l fun g => omB ν α 1 h Ψ (g * Y0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ Fin (a + a')))
-
 section Frames
 
 variable {R S D : Type} [Fintype R] [DecidableEq R] [Fintype S] [DecidableEq S] [Fintype D] [DecidableEq D]
@@ -69,8 +64,8 @@ theorem restrict_mem_SB {P : Matrix R D k} {P' : Matrix D R k} (hP : P * P' = 1)
       (fun g => by simp only [Matrix.mul_assoc, hP, Matrix.mul_one]) c2 c1
   exact ⟨hΦ.1.comp_continuous c1, hΦ.2.comp_isClosedEmbedding e⟩
 
-omit [DecidableEq R] [DecidableEq D] in
 
+omit [DecidableEq R] [DecidableEq D] in
 theorem indicator_intM_mem_SB : (intM k R D).indicator (1 : Matrix R D k → ℂ) ∈ SB (Matrix R D k) := by
   obtain ⟨_, _⟩ := Model.secondCountable_and_t2_local_field (k := k)
   have hc : IsCompact (intM k R D) := isCompact_intMatrix
@@ -98,18 +93,18 @@ theorem exists_extend_SB {P : Matrix R D k} {Q : Matrix S D k} (hP : P * Pᵀ = 
     rw [Set.indicator_of_mem (show (0 : Matrix R S k) ∈ intM k R S from fun _ _ => zero_mem _)]
     simp
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem frame_rel (σ : R ⊕ S ≃ D) : X0 k σ * (X0 k σ)ᵀ = 1 ∧ Y0 k σ * (Y0 k σ)ᵀ = 1 ∧ X0 k σ * (Y0 k σ)ᵀ = 0 ∧
     Y0 k σ * (X0 k σ)ᵀ = 0 ∧ (X0 k σ)ᵀ * X0 k σ + (Y0 k σ)ᵀ * Y0 k σ = 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · ext i j; rw [frameMatrixFirstColumnBlock_mul_apply]; simp [X0, one_apply, eq_comm]
-  · ext i j; rw [frameMatrixSecondColumnBlock_mul_apply]; simp [Y0, one_apply, eq_comm]
+  · ext i j; rw [frameMatrixFirstColumnBlock_mul_apply]; simp [X0, Matrix.one_apply, eq_comm]
+  · ext i j; rw [frameMatrixSecondColumnBlock_mul_apply]; simp [Y0, Matrix.one_apply, eq_comm]
   · ext i j; simp [frameMatrixFirstColumnBlock_mul_apply, Y0]
   · ext i j; simp [frameMatrixSecondColumnBlock_mul_apply, X0]
   · ext i j
     obtain ⟨i | i, rfl⟩ := σ.surjective i <;> obtain ⟨j | j, rfl⟩ := σ.surjective j <;>
-      simp [X0, Y0, Matrix.mul_apply, one_apply, eq_comm]
+      simp [X0, Y0, Matrix.mul_apply, Matrix.one_apply, Function.swap, eq_comm]
 
 end Frames
 
@@ -119,19 +114,10 @@ theorem restrict_X0 {Φ : Matrix (Fin a) (Fin (a + a')) k → ℂ} (hΦ : Φ ∈
     (fun g : Matrix (Fin a) (Fin a) k => Φ (g * X0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ Fin (a + a')))) ∈ SB _ :=
   restrict_mem_SB (frame_rel _).1 hΦ
 
-theorem restrict_Y0 {Ψ : Matrix (Fin a') (Fin (a + a')) k → ℂ} (hΨ : Ψ ∈ SB (Matrix (Fin a') (Fin (a + a')) k)) :
-    (fun g : Matrix (Fin a') (Fin a') k => Ψ (g * Y0 k (finSumFinEquiv : Fin a ⊕ Fin a' ≃ Fin (a + a')))) ∈ SB _ :=
-  restrict_mem_SB (frame_rel _).2.1 hΨ
-
 theorem mapA_omA_right (l : (Matrix (Fin a) (Fin a) k → ℂ) → ℂ) (Φ : Matrix (Fin a) (Fin (a + a')) k → ℂ)
     (x h : GL (Fin (a + a')) k) : mapA a' l ν β (omA ν β 1 x Φ) h = mapA a' l ν β Φ (h * x) := by
   unfold mapA
   rw [← omA_mul, one_mul]
-
-theorem mapB_omB_right (l : (Matrix (Fin a') (Fin a') k → ℂ) → ℂ) (Ψ : Matrix (Fin a') (Fin (a + a')) k → ℂ)
-    (x h : GL (Fin (a + a')) k) : mapB a l ν α (omB ν α 1 x Ψ) h = mapB a l ν α Ψ (h * x) := by
-  unfold mapB
-  rw [← omB_mul, one_mul]
 
 end Local
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -51,7 +55,7 @@ theorem adjoin_reesChart_eq_top {R : Type} [CommRing R] (c : ℂ →+* R) {σ : 
     | C a =>
       rw [eval₂_C]
       exact Subalgebra.algebraMap_mem _ a
-    | add f h hf hh => rw [eval₂_add, map_add]; exact add_mem hf hh
+    | add f h hf hh => rw [eval₂_add, map_add (f := _)]; exact add_mem hf hh
     | mul_X f q hf =>
       rw [eval₂_mul, eval₂_X, map_mul]
       obtain ⟨l, hl⟩ := hyz q

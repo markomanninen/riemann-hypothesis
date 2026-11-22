@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsAbLift
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalBundlePairingCompatiblePullback
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVariety
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NonDegAtOfSabMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CubicalTripleTrivialStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsAbLift
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubicalBundlePairingCompatiblePullback
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVariety
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NonDegAtOfSabMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CubicalTripleTrivialStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 open GlobalTheory.UU
@@ -136,21 +141,21 @@ theorem cube_ratio_faces {w : LB.Iso L₁.L L₂.L} (c₁ : CubicalStr G L₁) (
     obtain ⟨J₁, h₁⟩ := exists_good_pt L₁.isLB z
     obtain ⟨J₂, h₂⟩ := exists_good_pt L₂.isLB z
   · have e := hv T z J₁ J₂ h₁ h₂ _ (fun _ => rfl) 1 x y
-    rw [(isCub_cubV c₁ h₁).face, (isCub_cubV c₂ h₂).face] at e
+    rw [(isCub_cubV c₁ (T := T) h₁).face x y, (isCub_cubV c₂ (T := T) h₂).face x y] at e
     simp only [_root_.one_mul, _root_.mul_one] at e
     apply Additive.ofMul.injective
     have e' := congrArg Additive.ofMul e
     simp only [ofMul_mul, ofMul_one] at e' ⊢
     linear_combination (norm := abel) -e'
   · have e := hv T z J₁ J₂ h₁ h₂ _ (fun _ => rfl) x 1 y
-    rw [(isCub_cubV c₁ h₁).face₂, (isCub_cubV c₂ h₂).face₂] at e
+    rw [(isCub_cubV c₁ (T := T) h₁).face₂ x y, (isCub_cubV c₂ (T := T) h₂).face₂ x y] at e
     simp only [_root_.one_mul, _root_.mul_one] at e
     apply Additive.ofMul.injective
     have e' := congrArg Additive.ofMul e
     simp only [ofMul_mul, ofMul_one] at e' ⊢
     linear_combination (norm := abel) -e'
   · have e := hv T z J₁ J₂ h₁ h₂ _ (fun _ => rfl) x y 1
-    rw [(isCub_cubV c₁ h₁).face₃, (isCub_cubV c₂ h₂).face₃] at e
+    rw [(isCub_cubV c₁ (T := T) h₁).face₃ x y, (isCub_cubV c₂ (T := T) h₂).face₃ x y] at e
     simp only [_root_.one_mul, _root_.mul_one] at e
     apply Additive.ofMul.injective
     have e' := congrArg Additive.ofMul e

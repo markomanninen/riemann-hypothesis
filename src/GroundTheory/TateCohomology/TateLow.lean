@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.ModuleHomologyData
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.ModuleHomologyData
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -29,7 +34,8 @@ private lemma iso_inv_injective {A B : ModuleCat.{u} R} (e : A ≅ B) : Function
 
 lemma repHom_norm_apply {X Y : Rep.{u} R G} (f : X ⟶ Y) (m : X) :
     f.hom (X.ρ.norm m) = Y.ρ.norm (f.hom m) := by
-  simp [Representation.norm, map_sum, Rep.hom_comm_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Representation.norm, map_sum, Rep.hom_comm_apply]
 
 lemma range_norm_le_invariants (M : Rep.{u} R G) :
     LinearMap.range M.ρ.norm ≤ M.ρ.invariants := by
@@ -42,8 +48,8 @@ lemma coinvariantsKer_le_ker_norm (M : Rep.{u} R G) :
   rintro _ ⟨⟨g, m⟩, rfl⟩
   simp
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 lemma coinvariantsKer_le_comap {X Y : Rep.{u} R G} (f : X ⟶ Y) :
     Coinvariants.ker X.ρ ≤ (Coinvariants.ker Y.ρ).comap f.hom.toLinearMap := by
   refine Submodule.span_le.2 ?_
@@ -66,8 +72,8 @@ noncomputable def augmentationKerNorm (M : Rep.{u} R G) : Submodule R (LinearMap
 lemma mem_augmentationKerNorm_iff (M : Rep.{u} R G) (x : LinearMap.ker M.ρ.norm) :
     x ∈ augmentationKerNorm M ↔ (x : M) ∈ Coinvariants.ker M.ρ := Iff.rfl
 
-variable (R G) in
 
+variable (R G) in
 noncomputable def tateZeroFunctor : Rep.{u} R G ⥤ ModuleCat.{u} R where
   obj M := ModuleCat.of R (M.ρ.invariants ⧸ normRangeInvariants M)
   map {X Y} f := ModuleCat.ofHom (Submodule.mapQ _ _ ((Rep.invariantsFunctor R G).map f).hom (by
@@ -86,12 +92,8 @@ noncomputable def kerNormMap {X Y : Rep.{u} R G} (f : X ⟶ Y) :
     simp only [LinearMap.mem_ker] at hx ⊢
     rw [show f.hom.toLinearMap x = f.hom x from rfl, ← repHom_norm_apply, hx, map_zero])
 
-@[simp]
-lemma kerNormMap_apply {X Y : Rep.{u} R G} (f : X ⟶ Y) (x : LinearMap.ker X.ρ.norm) :
-    (kerNormMap f x : Y) = f.hom x := rfl
 
 variable (R G) in
-
 noncomputable def tateNegOneFunctor : Rep.{u} R G ⥤ ModuleCat.{u} R where
   obj M := ModuleCat.of R (LinearMap.ker M.ρ.norm ⧸ augmentationKerNorm M)
   map {X Y} f := ModuleCat.ofHom (Submodule.mapQ _ _ (kerNormMap f) (fun x hx =>
@@ -102,25 +104,6 @@ noncomputable def tateNegOneFunctor : Rep.{u} R G ⥤ ModuleCat.{u} R where
   map_comp f g := by
     ext x
     rfl
-
-@[simp]
-lemma tateZeroFunctor_obj (M : Rep.{u} R G) :
-    (tateZeroFunctor R G).obj M = ModuleCat.of R (M.ρ.invariants ⧸ normRangeInvariants M) := rfl
-
-@[simp]
-lemma tateZeroFunctor_map_mk {X Y : Rep.{u} R G} (f : X ⟶ Y) (x : X.ρ.invariants) :
-    ((tateZeroFunctor R G).map f).hom (Submodule.Quotient.mk x) =
-      Submodule.Quotient.mk (((Rep.invariantsFunctor R G).map f).hom x) := rfl
-
-@[simp]
-lemma tateNegOneFunctor_obj (M : Rep.{u} R G) :
-    (tateNegOneFunctor R G).obj M =
-      ModuleCat.of R (LinearMap.ker M.ρ.norm ⧸ augmentationKerNorm M) := rfl
-
-@[simp]
-lemma tateNegOneFunctor_map_mk {X Y : Rep.{u} R G} (f : X ⟶ Y) (x : LinearMap.ker X.ρ.norm) :
-    ((tateNegOneFunctor R G).map f).hom (Submodule.Quotient.mk x) =
-      Submodule.Quotient.mk (kerNormMap f x) := rfl
 
 end Tate
 
@@ -203,10 +186,10 @@ noncomputable def tateZeroMapData {X Y : Rep.{u} R G} (f : X ⟶ Y) :
       rw [e, iso_hom_inv_apply, iso_hom_inv_apply])
     (normRangeInvariants_le_comap f)
 
-variable (R G) in
 
+variable (R G) in
 noncomputable def tateCohomologyZeroIso :
-    tateCohomologyFunctor (R := R) (G := G) 0 ≅ tateZeroFunctor R G :=
+    tateCohomologyFunctor (R := R) (G := G) 0 ≅ tateZeroFunctor (R := R) (G := G) :=
   Functor.isoWhiskerLeft (tateComplexFunctor R G)
       (HomologicalComplex.homologyFunctorIso' (ModuleCat.{u} R) (ComplexShape.up ℤ) (-1) 0 1
         (by simp) (by simp)) ≪≫
@@ -215,7 +198,7 @@ noncomputable def tateCohomologyZeroIso :
 
 lemma tateCohomologyZeroIso_hom_homologyπ (M : Rep.{u} R G) (z : (tateComplex M).cycles 0)
     (x : M.ρ.invariants) (hx : (cochainsIso₀ M).inv.hom x = ((tateComplex M).iCycles 0).hom z) :
-    ((tateCohomologyZeroIso R G).app M).hom.hom (((tateComplex M).homologyπ 0).hom z) =
+    ((tateCohomologyZeroIso (R := R) (G := G)).app M).hom.hom (((tateComplex M).homologyπ 0).hom z) =
       Submodule.Quotient.mk x :=
   homologyFunctorIso'_moduleLeftHomologyData_apply (tateComplex M) (-1) 0 1 (by simp) (by simp)
     M.ρ.invariants (tateZeroι M) (tateZeroι_injective M) (tateZeroι_range M)
@@ -223,11 +206,11 @@ lemma tateCohomologyZeroIso_hom_homologyπ (M : Rep.{u} R G) (z : (tateComplex M
 
 lemma tateCohomologyZeroIso_inv_mk (M : Rep.{u} R G) (z : (tateComplex M).cycles 0)
     (x : M.ρ.invariants) (hx : (cochainsIso₀ M).inv.hom x = ((tateComplex M).iCycles 0).hom z) :
-    ((tateCohomologyZeroIso R G).app M).inv.hom (Submodule.Quotient.mk x) =
+    ((tateCohomologyZeroIso (R := R) (G := G)).app M).inv.hom (Submodule.Quotient.mk x) =
       ((tateComplex M).homologyπ 0).hom z := by
-  exact (congrArg (fun w => ((tateCohomologyZeroIso R G).app M).inv.hom w)
+  exact (congrArg (fun w => ((tateCohomologyZeroIso (R := R) (G := G)).app M).inv.hom w)
     (tateCohomologyZeroIso_hom_homologyπ M z x hx)).symm.trans
-      (iso_inv_hom_apply ((tateCohomologyZeroIso R G).app M) _)
+      (iso_inv_hom_apply ((tateCohomologyZeroIso (R := R) (G := G)).app M) _)
 
 lemma exists_tateComplex_cycles_zero (M : Rep.{u} R G) (x : M.ρ.invariants) :
     ∃ z : (tateComplex M).cycles 0,
@@ -238,7 +221,8 @@ lemma exists_tateComplex_cycles_zero (M : Rep.{u} R G) (x : M.ρ.invariants) :
 
 theorem isZero_tateCohomology_zero_iff (M : Rep.{u} R G) :
     IsZero (tateCohomology M 0) ↔ LinearMap.range M.ρ.norm = M.ρ.invariants := by
-  rw [((tateCohomologyZeroIso R G).app M).isZero_iff, ModuleCat.isZero_iff_subsingleton]
+  rw [((tateCohomologyZeroIso (R := R) (G := G)).app M).isZero_iff,
+    ModuleCat.isZero_iff_subsingleton]
   change Subsingleton (M.ρ.invariants ⧸ normRangeInvariants M) ↔ _
   rw [Submodule.Quotient.subsingleton_iff]
   constructor
@@ -332,28 +316,20 @@ noncomputable def tateNegOneMapData {X Y : Rep.{u} R G} (f : X ⟶ Y) :
       rw [e, iso_hom_inv_apply, iso_hom_inv_apply])
     (fun x hx => coinvariantsKer_le_comap f hx)
 
-variable (R G) in
 
+variable (R G) in
 noncomputable def tateCohomologyNegOneIso :
-    tateCohomologyFunctor (R := R) (G := G) (-1) ≅ tateNegOneFunctor R G :=
+    tateCohomologyFunctor (R := R) (G := G) (-1) ≅ tateNegOneFunctor (R := R) (G := G) :=
   Functor.isoWhiskerLeft (tateComplexFunctor R G)
       (HomologicalComplex.homologyFunctorIso' (ModuleCat.{u} R) (ComplexShape.up ℤ) (-2) (-1) 0
         (by norm_num) (by norm_num)) ≪≫
     NatIso.ofComponents (fun M => (tateNegOneData M).homologyIso)
       (fun {X Y} f => (tateNegOneMapData f).homologyMap_comm)
 
-lemma tateCohomologyNegOneIso_hom_homologyπ (M : Rep.{u} R G) (z : (tateComplex M).cycles (-1))
-    (x : LinearMap.ker M.ρ.norm)
-    (hx : (chainsIso₀ M).inv.hom x = ((tateComplex M).iCycles (-1)).hom z) :
-    ((tateCohomologyNegOneIso R G).app M).hom.hom (((tateComplex M).homologyπ (-1)).hom z) =
-      Submodule.Quotient.mk x :=
-  homologyFunctorIso'_moduleLeftHomologyData_apply (tateComplex M) (-2) (-1) 0 (by norm_num)
-    (by norm_num) (LinearMap.ker M.ρ.norm) (tateNegOneι M) (tateNegOneι_injective M)
-    (tateNegOneι_range M) (augmentationKerNorm M) (tateNegOne_mem_iff M) z x hx
-
 theorem isZero_tateCohomology_neg_one_iff (M : Rep.{u} R G) :
     IsZero (tateCohomology M (-1)) ↔ LinearMap.ker M.ρ.norm = Coinvariants.ker M.ρ := by
-  rw [((tateCohomologyNegOneIso R G).app M).isZero_iff, ModuleCat.isZero_iff_subsingleton]
+  rw [((tateCohomologyNegOneIso (R := R) (G := G)).app M).isZero_iff,
+    ModuleCat.isZero_iff_subsingleton]
   change Subsingleton (LinearMap.ker M.ρ.norm ⧸ augmentationKerNorm M) ↔ _
   rw [Submodule.Quotient.subsingleton_iff]
   constructor

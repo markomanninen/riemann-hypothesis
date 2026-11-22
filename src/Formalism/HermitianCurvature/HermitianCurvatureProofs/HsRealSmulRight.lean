@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormCDZPsiCLe
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormCDZPsiCLe
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff

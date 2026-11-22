@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.CoefOfOfWsp
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.CoefOfOfWsp
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,6 +13,24 @@ open CompanionTheory.WaveGrid.Coef CompanionTheory.WaveGrid.WAt
 open CompanionTheory.WaveGrid.MomL (mnr momL)
 open CompanionTheory.LimBd.Main (ZuckT ZuckDualT Wsp Box gap_of_box)
 open scoped ENNReal
+
+private theorem sum_natAbs_le_ball_local {n : ℕ} : ∀ e, ∀ ν ∈ ball n e, ∑ i, (ν i).natAbs ≤ e := by
+  intro e
+  induction e with
+  | zero =>
+    intro ν h
+    rw [ball, Finset.mem_singleton] at h
+    simp [h]
+  | succ e ih =>
+    intro ν h
+    rw [ball, Finset.mem_image₂] at h
+    obtain ⟨x, hx, s, hs, rfl⟩ := h
+    have h1 := ih x hx
+    have h2 := sum_natAbs_le_one_of_mem_unitShifts hs
+    have h3 : ∑ i, ((x + s) i).natAbs ≤ ∑ i, (x i).natAbs + ∑ i, (s i).natAbs := by
+      rw [← Finset.sum_add_distrib]
+      exact Finset.sum_le_sum fun i _ => Int.natAbs_add_le _ _
+    omega
 
 def gapY (k r : ℕ) : ℝ :=
   ((2 * r + 2 : ℕ) : ℝ) ^ ((9 : ℝ) / 2) *
@@ -240,7 +262,7 @@ theorem wBp_of {t : ∀ n : ℕ, (Fin n → Bool) → ℝ} {Ct : ℝ} (hCt : 0 �
         ENNReal.ofReal (b ^ (max (max C₁ C₂) 0 * ((2 * P.r + 2 : ℕ) : ℝ) ^ 4) *
           max 1 (1 / TBB.Gp p γ) ^ (40 * (P.r + 1) ^ 2)) * TBB.jN2 p F := by
     intro ν hν F hF
-    have hν1 : BranchingSupport.n1 ν ≤ (P.r + 1) * a := sum_natAbs_le_of_mem_ball _ ν hν
+    have hν1 : BranchingSupport.n1 ν ≤ (P.r + 1) * a := sum_natAbs_le_ball_local _ ν hν
     have hbox : (fun s => lam s + (ν s : ℝ)) ∈ Box lam e := fun s => by
       rw [he]
       simpa using abs_ball hν s

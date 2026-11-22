@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory.LeadingMinors
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.LeadingMinors.isHomogeneous_det_X {k σ ι : Type*} [CommRing k] [Fintype ι]
     [DecidableEq ι] (v : ι → ι → σ) :
     (Matrix.of fun a i : ι => (MvPolynomial.X (v a i) : MvPolynomial σ k)).det.IsHomogeneous
@@ -21,8 +25,8 @@ theorem _root_.GlobalTheory.LeadingMinors.isHomogeneous_det_X {k σ ι : Type*} 
     (fun _ => 1) fun i _ => MvPolynomial.isHomogeneous_X k _
   simpa using h
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.LeadingMinors.det_X_mem_supported {k σ ι : Type*} [CommRing k] [Fintype ι]
     [DecidableEq ι] (v : ι → ι → σ) (S : Set σ) (hS : ∀ a i, v a i ∈ S) :
     (Matrix.of fun a i : ι => (MvPolynomial.X (v a i) : MvPolynomial σ k)).det ∈
@@ -33,8 +37,8 @@ theorem _root_.GlobalTheory.LeadingMinors.det_X_mem_supported {k σ ι : Type*} 
   refine zsmul_mem (Subalgebra.prod_mem _ fun i _ => ?_) _
   exact Algebra.subset_adjoin (Set.mem_image_of_mem MvPolynomial.X (hS (e i) i))
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.LeadingMinors.killCompl_det_X {k σ ρ ι : Type*} [CommRing k] [Fintype ι]
     [DecidableEq ι] {f : ρ → σ} (hf : Function.Injective f) (v : ι → ι → σ) (u : ι → ρ)
     (hd : ∀ a, v a a = f (u a)) (ho : ∀ a i, a ≠ i → v a i ∉ Set.range f) :
@@ -50,12 +54,12 @@ theorem _root_.GlobalTheory.LeadingMinors.killCompl_det_X {k σ ρ ι : Type*} [
     split_ifs with h
     · subst h
       rw [hd, ← MvPolynomial.rename_X f, MvPolynomial.killCompl_rename_app]
-    · rw [MvPolynomial.killCompl, MvPolynomial.aeval_X, dif_neg (ho a i h)]
+    · rw [MvPolynomial.killCompl, MvPolynomial.aeval_X, dite_eq_right (ho a i h)]
   rw [hM, Matrix.det_diagonal, MvPolynomial.monomial_sum_one]
   rfl
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.LeadingMinors.coeff_prod_leading_minors : ∀ (k : Type) [CommRing k] (T : Type) [Fintype T] [DecidableEq T] (r : T → ℕ) (n : ℕ) (col : ∀ τ, Fin (r τ) → Fin n) (m : ∀ τ, Fin (r τ) → ℕ), (∀ τ, Function.Injective (col τ)) → ∀ (P : MvPolynomial ((Σ τ : T, Fin (r τ)) × Fin n) k) (al : (Σ τ : T, Fin (r τ)) × Fin n →₀ ℕ), P = (∏ τ, ∏ s : Fin (r τ), (Matrix.of fun a i : Fin (s.val + 1) => (MvPolynomial.X ((⟨τ, Fin.castLE s.isLt a⟩ : Σ τ : T, Fin (r τ)), col τ (Fin.castLE s.isLt i)) : MvPolynomial ((Σ τ : T, Fin (r τ)) × Fin n) k)).det ^ m τ s) → al = ∑ τ, ∑ s : Fin (r τ), m τ s • ∑ a : Fin (s.val + 1), Finsupp.single ((⟨τ, Fin.castLE s.isLt a⟩ : Σ τ : T, Fin (r τ)), col τ (Fin.castLE s.isLt a)) 1 → P.coeff al = 1 ∧ P.IsHomogeneous al.degree ∧ al.degree = ∑ τ, ∑ s : Fin (r τ), m τ s * (s.val + 1) ∧ ∀ mo ∈ P.support, ∀ l b, mo (l, b) ≠ 0 → ∃ i, col l.1 i = b := by
   intro k _ T _ _ r n col m hcol P al hP hal
   have hf : Function.Injective
@@ -86,10 +90,11 @@ theorem _root_.GlobalTheory.LeadingMinors.coeff_prod_leading_minors : ∀ (k : T
   have hmap : Finsupp.mapDomain
       (fun l : Σ τ : T, Fin (r τ) => ((l, col l.1 l.2) : (Σ τ : T, Fin (r τ)) × Fin n)) B = al := by
     rw [hal, hBdef]
-    simp [Finsupp.mapDomain_finset_sum, Finsupp.mapDomain_smul, Finsupp.mapDomain_single]
+    simp [Finsupp.mapDomain_finsetSum, Finsupp.mapDomain_smul, Finsupp.mapDomain_single]
   have hdeg : al.degree = ∑ τ, ∑ s : Fin (r τ), m τ s * (s.val + 1) := by
     rw [hal]
-    simp [map_sum, Finsupp.degree_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finsupp.degree_single]
   have hhom : P.IsHomogeneous (∑ τ, ∑ s : Fin (r τ), m τ s * (s.val + 1)) := by
     rw [hP]
     refine MvPolynomial.IsHomogeneous.prod _ _ _ fun τ _ =>
@@ -111,7 +116,7 @@ theorem _root_.GlobalTheory.LeadingMinors.coeff_prod_leading_minors : ∀ (k : T
   refine ⟨?_, by rw [hdeg]; exact hhom, hdeg, fun mo hmo l b hlb => ?_⟩
   · rw [← hmap, ← MvPolynomial.coeff_killCompl hf, hkill, MvPolynomial.coeff_monomial, if_pos rfl]
   · have hv : (l, b) ∈ P.vars :=
-      (MvPolynomial.mem_vars _).2 ⟨mo, hmo, Finsupp.mem_support_iff.2 hlb⟩
+      (MvPolynomial.mem_vars_iff_mem_support _).2 ⟨mo, hmo, Finsupp.mem_support_iff.2 hlb⟩
     exact MvPolynomial.mem_supported.1 hsupp hv
 
 end GlobalTheory.LeadingMinors

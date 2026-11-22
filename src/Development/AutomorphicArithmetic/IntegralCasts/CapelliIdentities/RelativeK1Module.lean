@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoTermComparisonRestrictScalars
-import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.IsIsoTermComparisonRestrictScalars
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CupPair
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.KoszulComplexHomotopy.Stab :
     {S E : Type} →
@@ -91,7 +95,8 @@ private def dd (r : κ → R) (c : Finset κ → N) : Finset κ → N :=
 
 private theorem dd_map {N' : Type} [AddCommGroup N'] [Module R N'] (φ : N →ₗ[R] N') (r : κ → R)
     (c : Finset κ → N) (t : Finset κ) : dd r (fun s => φ (c s)) t = φ (dd r c t) := by
-  simp [dd, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dd, map_sum]
 
 private theorem dd_add (r : κ → R) (a b : Finset κ → N) (t : Finset κ) :
     dd r (fun s => a s + b s) t = dd r a t + dd r b t := by

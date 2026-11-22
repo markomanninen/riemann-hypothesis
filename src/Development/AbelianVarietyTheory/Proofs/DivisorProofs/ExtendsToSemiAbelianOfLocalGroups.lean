@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpLawAndUnitAgreeOfOpenInDescentModelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFieldPt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSemiAbelianOfCharts
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyLawAbelianSchemeProperClosure
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsCommMonObjOfDominant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrpLawAndUnitAgreeOfOpenInDescentModelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFieldPt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSemiAbelianOfCharts
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyLawAbelianSchemeProperClosure
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsCommMonObjOfDominant
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,11 @@ theorem exists_ringHom_extend {A R Ω : Type} [CommRing A] [IsLocalRing A] [Comm
     rw [← ResidueField.map_comp_residue] at hφ
     exact RingHom.Finite.of_comp_finite hφ
   haveI : Module.Finite (ResidueField A) (ResidueField R) := hf
-  let l : ResidueField R →ₐ[ResidueField A] Ω := IsAlgClosed.lift
+  let l : ResidueField R →ₐ[ResidueField A] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨l.toRingHom.comp (residue R), RingHom.ext fun a => ?_⟩
   exact l.commutes (residue A a)
 
@@ -162,8 +170,8 @@ end GlobalTheory.Desc.UnionFib
 
 namespace GlobalTheory.Desc
 
-open UnionFib GroupGlue in
 
+open UnionFib GroupGlue in
 theorem Emb.hasExt_of_locGrp : ∀ (σ : Setup) (E : Emb σ), σ.Common → (∀ x : Sp σ.R, ∃ g : σ.R, g ∉ x.asIdeal ∧ ∃ (H : Over (Sp (Localization.Away g))) (_ : GrpObj H) (h : H.left ⟶ E.P), E.LocGrp g H h ∧ Set.range h = E.U ∩ E.p ⁻¹' {z : Sp σ.R | g ∉ z.asIdeal}) → HasExt (awayMap σ.f) σ.A := by
   intro σ E hC hloc
   choose g hg H iH h hL hr using hloc

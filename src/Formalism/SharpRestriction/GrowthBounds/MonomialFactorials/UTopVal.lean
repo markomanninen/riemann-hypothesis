@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMSizeOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMSizeOf
+
+@[expose] public section
 
 noncomputable section
 

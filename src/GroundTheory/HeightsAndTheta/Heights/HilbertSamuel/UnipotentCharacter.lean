@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLatticeCount
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallBallVolume
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEuclideanSections
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLatticeCount
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallBallVolume
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -204,7 +209,7 @@ theorem G7.proof (hG1 : SuccessiveMinimaSpan.Statement) (hE : EuclideanSections.
         exact zero_mem _
       | add x z hx hz ihx ihz =>
         have : (⟨x + z, hle (add_mem hx hz)⟩ : chartLat y A.a n) = ⟨x, hle hx⟩ + ⟨z, hle hz⟩ := rfl
-        rw [this, map_add]
+        rw [this, map_add (f := _)]
         exact add_mem ihx ihz
       | neg x hx ihx =>
         have : (⟨-x, hle (neg_mem hx)⟩ : chartLat y A.a n) = -⟨x, hle hx⟩ := rfl

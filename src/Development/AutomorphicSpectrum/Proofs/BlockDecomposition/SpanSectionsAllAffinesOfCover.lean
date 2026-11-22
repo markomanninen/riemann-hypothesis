@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KerOpsComm
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KerOpsComm
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.HasFiniteBiproductsModules
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,8 @@ theorem span_range_app_eq_top_of_surjective {X : Scheme.{0}} {ι : Type} [Fintyp
     Submodule.span Γ(X, U) (⋃ i, Set.range ((φ i).app U)) = ⊤ := by
   refine (Submodule.eq_top_iff').2 fun s => ?_
   obtain ⟨t, rfl⟩ := h s
-  rw [GroundTheory.Arith.SchemeCoh.biproduct_app_eq_sum F U t, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [GroundTheory.Arith.SchemeCoh.biproduct_app_eq_sum F U t, map_sum]
   refine Submodule.sum_mem _ fun j _ => Submodule.subset_span (Set.mem_iUnion.2 ⟨j, ?_⟩)
   refine ⟨(biproduct.π F j).app U t, ?_⟩
   rw [GlobalTheory.QCoh.app_app (biproduct.ι F j), biproduct.ι_desc]

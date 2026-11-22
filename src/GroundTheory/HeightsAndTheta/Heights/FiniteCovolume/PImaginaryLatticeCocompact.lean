@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StImaginaryLatticeCocompact
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StImaginaryLatticeCocompact
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -8,16 +12,16 @@ open NumberField GroundTheory.Automorphic Module
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem im_embedding_algebraMap (σ : E →+* ℂ) (c : F) : (σ (algebraMap F E c)).im = 0 := by
   have h := embedding_conj (F := F) σ (algebraMap F E c)
   rw [conj_algebraMap] at h
   exact Complex.conj_eq_iff_im.mp h.symm
 
-omit [IsTotallyReal F] [IsTotallyComplex E] in
-variable (F E) in
 
+omit [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
+variable (F E) in
 theorem exists_imaginary_integer : ∃ t : 𝓞 E, (t : E) ≠ 0 ∧ conj F E (t : E) = -(t : E) := by
   obtain ⟨ζ, hζ⟩ := exists_not_mem_range (F := F) (E := E)
   obtain ⟨y, hy0, hyi⟩ := (IsFractionRing.isAlgebraic_iff ℤ ℚ E |>.mpr (.of_finite ℚ ζ)).exists_integral_multiple
@@ -39,9 +43,9 @@ theorem exists_imaginary_integer : ∃ t : 𝓞 E, (t : E) ≠ 0 ∧ conj F E (t
     rw [map_sub, conj_conj]
     ring
 
+
 omit [IsTotallyReal F] in
 variable (F E) in
-
 theorem card_infinitePlace_eq : Fintype.card (InfinitePlace E) = finrank ℚ F := by
   have h1 := IsTotallyComplex.finrank (K := E)
   have h2 := InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces (K := E)
@@ -95,7 +99,11 @@ theorem ImaginaryLatticeCocompact.proof : ImaginaryLatticeCocompact.Statement F 
     have hτ : ∀ τ : F →+* ℂ, ∑ i, (c i : ℂ) * τ (integralBasis F i) = 0 := by
       intro τ
       let _ : Algebra F ℂ := τ.toAlgebra
-      let σ : E →ₐ[F] ℂ := IsAlgClosed.lift
+      let σ : E →ₐ[F] ℂ := (by
+        refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+        solve_by_elim* (maxDepth := 2) only [*,
+          @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+          @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
       have hστ : ∀ x : F, (σ : E →+* ℂ) (algebraMap F E x) = τ x := fun x => σ.commutes x
       have hre : ∀ x : F,
           ((InfinitePlace.mk (σ : E →+* ℂ)).embedding (algebraMap F E x)).re = (τ x).re := by
@@ -141,7 +149,8 @@ theorem ImaginaryLatticeCocompact.proof : ImaginaryLatticeCocompact.Statement F 
   refine ⟨⟨x, hx⟩, ?_, fun w => ?_⟩
   · change (m : E) * x + conj F E ((m : E) * x) = 0
     have : conj F E x = -x := by
-      simp only [x, map_sum, map_mul, map_intCast, conj_algebraMap, htc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [x, map_sum, map_mul, map_intCast, conj_algebraMap, htc]
       rw [← Finset.sum_neg_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
       ring
@@ -153,7 +162,8 @@ theorem ImaginaryLatticeCocompact.proof : ImaginaryLatticeCocompact.Statement F 
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         ring
-      rw [e, map_sum, Complex.im_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e, map_sum, Complex.im_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, map_intCast]
       simp [Complex.mul_im, L]

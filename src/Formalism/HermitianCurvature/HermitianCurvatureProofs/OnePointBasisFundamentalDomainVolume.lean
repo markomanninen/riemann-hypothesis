@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftDegreeLemmas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeAtMinusW
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
+module
+
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftDegreeLemmas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeAtMinusW
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TBBx5
 
@@ -54,44 +58,10 @@ theorem cs_abs {V : Type} [AddCommGroup V] [Module ℂ V] (Dv : V → Prop) (β 
     field_simp at this
     nlinarith [Complex.normSq_nonneg b]
 
-def FormNonneg {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (p : KB.Pl P Wp Wq) : Prop :=
-  ∀ (j : ℕ) (hj : j ≤ P.r) (w : List C.Letter), KB.CutWord P p.l0 w →
-    ∀ (x : Wd.Ix (Fin w.length) → B.Mat P.k (P.r - j) → (Wq →L[ℂ] Wp)) (ε : ℝ), 0 < ε →
-      (∀ e, JC.NiceCoef (p.T.bs j) ε (x e)) → 0 ≤ p.form j hj w x x
-
 section place
 
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-
-theorem formNonneg_of (hA : P5.ThmPActual) (hFP : PBL.FormPos) (p : KB.Pl P Wp Wq) : FormNonneg p :=
-  fun j hj w hw x ε hε hx => hFP hA Wp Wq P p j hj w hw x ε hε hx
-
-theorem form_cs (p : KB.Pl P Wp Wq) (hpos : FormNonneg p) (j : ℕ) (hj : j ≤ P.r) (w : List C.Letter)
-    (hw : KB.CutWord P p.l0 w) {ε : ℝ} (hε : 0 < ε)
-    (x y : Wd.Ix (Fin w.length) → B.Mat P.k (P.r - j) → (Wq →L[ℂ] Wp))
-    (hx : PBL.NV (p.T.bs j) ε x) (hy : PBL.NV (p.T.bs j) ε y) :
-    ‖p.form j hj w x y‖ ^ 2 ≤ (p.form j hj w x x).re * (p.form j hj w y y).re := by
-  let VT := Wd.Ix (Fin w.length) → B.Mat P.k (P.r - j) → (Wq →L[ℂ] Wp)
-  have hadd : ∀ x y : VT, PBL.NV (p.T.bs j) ε x → PBL.NV (p.T.bs j) ε y → PBL.NV (p.T.bs j) ε (x + y) :=
-    fun _ _ => PBL.nv_add
-  have hsmul : ∀ (c : ℂ) (x : VT), PBL.NV (p.T.bs j) ε x → PBL.NV (p.T.bs j) ε (c • x) := fun c _ => PBL.nv_smul c
-  have hl : ∀ (x₁ x₂ y : VT) (c : ℂ), PBL.NV (p.T.bs j) ε x₁ → PBL.NV (p.T.bs j) ε x₂ → PBL.NV (p.T.bs j) ε y →
-      p.form j hj w (x₁ + c • x₂) y = p.form j hj w x₁ y + c * p.form j hj w x₂ y :=
-    fun x₁ x₂ y c h₁ h₂ h₃ => PBL.form_sl p j hj w x₁ x₂ y c h₁ h₂ h₃
-  have hr : ∀ (x y₁ y₂ : VT) (c : ℂ), PBL.NV (p.T.bs j) ε x → PBL.NV (p.T.bs j) ε y₁ → PBL.NV (p.T.bs j) ε y₂ →
-      p.form j hj w x (y₁ + c • y₂) = p.form j hj w x y₁ + conj c * p.form j hj w x y₂ :=
-    fun x y₁ y₂ c h₁ h₂ h₃ => PBL.form_sr p j hj w x y₁ y₂ c h₁ h₂ h₃
-  have hp : ∀ x : VT, PBL.NV (p.T.bs j) ε x → 0 ≤ p.form j hj w x x := fun x hx => hpos j hj w hw x ε hε hx
-  refine cs_abs (PBL.NV (p.T.bs j) ε) (p.form j hj w) hadd hsmul hl hr hp x y hx hy ?_
-  exact PBL.herm_of_nonneg (PBL.NV (p.T.bs j) ε) (p.form j hj w) PBL.nv_zero hadd hsmul hl hr hp x y hx hy
-
-theorem form_re_nonneg (p : KB.Pl P Wp Wq) (hpos : FormNonneg p) (j : ℕ) (hj : j ≤ P.r) (w : List C.Letter)
-    (hw : KB.CutWord P p.l0 w) {ε : ℝ} (hε : 0 < ε)
-    (x : Wd.Ix (Fin w.length) → B.Mat P.k (P.r - j) → (Wq →L[ℂ] Wp)) (hx : PBL.NV (p.T.bs j) ε x) :
-    0 ≤ (p.form j hj w x x).re :=
-  (Complex.nonneg_iff.1 (hpos j hj w hw x ε hε hx)).1
 
 end place
 
@@ -167,10 +137,6 @@ def GridOK (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (Y : Finset ℝ) (Λ : ℝ) (K
   ∑ n : Fin K → Fin (d + 1), |∏ a, F7.lagCo (grid a) (n a)| *
     Real.sqrt (((ysOf grid n).map nn).prod * ((ysOf grid n).map fun y => nn (y + 1)).prod /
       ((ysOf grid n).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) ≤ Λ ^ K
-
-theorem ysOf_length {K d : ℕ} (grid : Fin K → Fin (d + 1) → ℝ) (n : Fin K → Fin (d + 1)) :
-    (ysOf grid n).length = K := by
-  simp [ysOf]
 
 theorem ysOf_mem {K d : ℕ} {Y : Finset ℝ} (grid : Fin K → Fin (d + 1) → ℝ) (hY : ∀ a i, grid a i ∈ Y)
     (n : Fin K → Fin (d + 1)) : ∀ y ∈ ysOf grid n, y ∈ Y := by
@@ -381,93 +347,6 @@ theorem lp_fourier (E : ℂ → ℝ) (τ : Fin 1 → ℂ) :
   funext z
   simp [MeasurableEquiv.funUnique, mul_comm]
 
-theorem lp_inj (ω₁ ω₂ : ℂ) (hω : (conj ω₁ * ω₂).im ≠ 0) (z₀ : ℂ) :
-    Function.Injective (fun ab : ℤ × ℤ => (fun _ : Fin 1 => z₀ + (ab.1 : ℂ) * ω₁ + (ab.2 : ℂ) * ω₂)) := by
-  intro ab ab' h
-  have h0 := congrFun h 0
-  simp only at h0
-  obtain ⟨hs, ht⟩ := real_linear_independent_of_im_ne_zero ω₁ ω₂ hω ((ab.1 - ab'.1 : ℤ) : ℝ) ((ab.2 - ab'.2 : ℤ) : ℝ)
-    (by push_cast; linear_combination h0)
-  have h1 : ab.1 - ab'.1 = 0 := by exact_mod_cast hs
-  have h2 : ab.2 - ab'.2 = 0 := by exact_mod_cast ht
-  exact Prod.ext (by omega) (by omega)
-
-theorem lattice_poisson (E : ℂ → ℝ) (hE0 : ∀ z, 0 ≤ E z) (hEl : LowerSemicontinuous E) (hEi : Integrable E)
-    (ω₁ ω₂ z₀ : ℂ) (hω : (conj ω₁ * ω₂).im ≠ 0) :
-    ENNReal.ofReal (|(conj ω₁ * ω₂).im| / Real.pi) *
-        ∑' ab : ℤ × ℤ, ENNReal.ofReal (E (z₀ + (ab.1 : ℂ) * ω₁ + (ab.2 : ℂ) * ω₂)) ≤
-      ∑' σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ},
-        (‖(Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ.1 z * (E z : ℂ)‖₊ : ℝ≥0∞) := by
-  have hpi : 0 < Real.pi := Real.pi_pos
-  have hN0 : ∀ z : crystallineComparison.V 1, 0 ≤ (fun z : crystallineComparison.V 1 => E (z 0)) z := fun z => hE0 _
-  have hNl : LowerSemicontinuous (fun z : crystallineComparison.V 1 => E (z 0)) :=
-    LowerSemicontinuous.comp (f := E) (g := fun z : crystallineComparison.V 1 => z 0) hEl (continuous_apply 0)
-  have hNi : Integrable (fun z : crystallineComparison.V 1 => E (z 0)) := by
-    have h := (volume_preserving_funUnique (Fin 1) ℂ).integrable_comp_emb
-      (MeasurableEquiv.measurableEmbedding _) (g := E)
-    exact h.2 hEi
-  have hPD : crystallineComparison.PDOn (crystallineComparison.dualSet (Submodule.span ℤ (Set.range (lp_b ω₁ ω₂ hω)))) (fun _ => (0 : ℂ)) := by
-    intro S c _
-    simp
-  set J : ℂ → ℂ := fun σ => ∫ z : ℂ, P5.fsv σ z * (E z : ℂ) with hJ
-  have hF : ∀ τ : crystallineComparison.dualSet (Submodule.span ℤ (Set.range (lp_b ω₁ ω₂ hω))),
-      ‖crystallineComparison.fourier (fun z : crystallineComparison.V 1 => E (z 0)) τ + (fun _ => (0 : ℂ)) (τ : crystallineComparison.V 1)‖ =
-        (fun σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ} => ‖J σ.1‖) ((lp_eqv ω₁ ω₂ hω).symm τ) := by
-    intro τ
-    simp only [add_zero, hJ]
-    rw [lp_fourier]
-    rfl
-  by_cases hs : Summable (fun σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ} => ‖J σ.1‖)
-  · have hs' : Summable (fun τ : crystallineComparison.dualSet (Submodule.span ℤ (Set.range (lp_b ω₁ ω₂ hω))) =>
-        ‖crystallineComparison.fourier (fun z : crystallineComparison.V 1 => E (z 0)) τ + (fun _ => (0 : ℂ)) (τ : crystallineComparison.V 1)‖) := by
-      simp_rw [hF]
-      exact (lp_eqv ω₁ ω₂ hω).symm.summable_iff.2 hs
-    have hR : ∀ T : Finset (ℤ × ℤ), |(conj ω₁ * ω₂).im| * ∑ ab ∈ T, E (z₀ + (ab.1 : ℂ) * ω₁ + (ab.2 : ℂ) * ω₂) ≤
-        ∑' σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ}, ‖J σ.1‖ := by
-      intro T
-      have h1 := Formalism.FourierDecayAlt.P.latticeHerglotzBound_statement 1 (Submodule.span ℤ (Set.range (lp_b ω₁ ω₂ hω)))
-        (fun z : crystallineComparison.V 1 => E (z 0)) (fun _ => 0) hN0 hNl hNi hPD hs' (fun _ => z₀)
-        (T.image (fun ab : ℤ × ℤ => (fun _ : Fin 1 => z₀ + (ab.1 : ℂ) * ω₁ + (ab.2 : ℂ) * ω₂))) (by
-          intro z hz
-          obtain ⟨ab, -, rfl⟩ := Finset.mem_image.1 hz
-          refine (lp_mem ω₁ ω₂ hω _).2 ⟨ab.1, ab.2, ?_⟩
-          funext i
-          simp only [Pi.sub_apply]
-          ring)
-      rw [lp_covol, Finset.sum_image (fun x _ y _ h => lp_inj ω₁ ω₂ hω z₀ h)] at h1
-      simp_rw [hF] at h1
-      rw [(lp_eqv ω₁ ω₂ hω).symm.tsum_eq (fun σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ} => ‖J σ.1‖)] at h1
-      exact h1
-    have hrhs : ∑' σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ},
-        (‖(Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ.1 z * (E z : ℂ)‖₊ : ℝ≥0∞) =
-          ENNReal.ofReal (Real.pi⁻¹ * ∑' σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ}, ‖J σ.1‖) := by
-      rw [← tsum_mul_left, ENNReal.ofReal_tsum_of_nonneg (fun _ => by positivity) (hs.mul_left _)]
-      congr 1
-      funext σ
-      rw [← ENNReal.ofReal_coe_nnreal, coe_nnnorm, norm_mul]
-      simp [hJ, abs_of_pos hpi]
-    rw [hrhs, ENNReal.tsum_eq_iSup_sum, ENNReal.mul_iSup]
-    refine iSup_le fun T => ?_
-    rw [← ENNReal.ofReal_sum_of_nonneg (fun _ _ => hE0 _), ← ENNReal.ofReal_mul (by positivity)]
-    apply ENNReal.ofReal_le_ofReal
-    rw [div_eq_inv_mul, mul_assoc]
-    exact mul_le_mul_of_nonneg_left (hR T) (by positivity)
-  · have htop : ∑' σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ},
-        (‖(Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ.1 z * (E z : ℂ)‖₊ : ℝ≥0∞) = ⊤ := by
-      by_contra hne
-      apply hs
-      have h2 := ENNReal.tsum_coe_ne_top_iff_summable.1 hne
-      have h3 : Summable (fun σ : {σ : ℂ // TBB.InDual ω₁ ω₂ σ} =>
-          ‖(Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ.1 z * (E z : ℂ)‖) := by
-        rw [← NNReal.summable_coe] at h2
-        simpa using h2
-      have h4 := h3.mul_left Real.pi
-      refine h4.congr fun σ => ?_
-      rw [norm_mul]
-      simp [hJ, abs_of_pos hpi, hpi.ne']
-    rw [htop]
-    exact le_top
-
 end
 
 end Formalism.FourierDecayAlt.P.TBBx5
@@ -517,148 +396,6 @@ theorem li_np (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq 
         p.form j hj w (KB.slv p.T F j hj w a ha.2) (KB.slv p.T F j hj w a' ha'.2) := by
   unfold TBB.NP
   rw [PBL.rr_eq_form p F j hj w a a' ha ha']
-
-theorem integral_four_at_place_of_parts (hA : P5.ThmPActual) (hSS : KB.SizeStd) (hDL : KB.DegLift) (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ) (hpos : FormNonneg p)
-    (hF : KB.CptCoef p.T.base F) (hnn : ∀ y, 0 < nn y) (hgrid : LiftGrid p nn Y Λ K N) :
-    TBB.KernelArgumentHypothesisScalar p nn F Y Λ K N := by
-  intro b s hb hs hbs h hh w hw hN t t' ht ht'
-  set j := b + s - 1 with hjdef
-  have hj : j ≤ P.r := hbs
-  obtain ⟨grid, hinj, hY, hcut, hsum⟩ := hgrid b s hb hs hbs w hw hN
-  simp only [ysOf] at hsum hcut
-  have ha := li_locPt h b s t hb hs hh ht
-  have ha' := li_locPt h b s t' hb hs hh ht'
-  set u := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) (h ++ [(s, t)])) with hudef
-  set u' := Real.sqrt (TBB.nPt P.k P.r (TBB.TTp p) (h ++ [(s, t')])) with hu'def
-  set n := TBB.normC nn w with hndef
-  have hn : 0 < n := normC_pos nn hnn w
-  have hu : 0 ≤ u := Real.sqrt_nonneg _
-  have hu' : 0 ≤ u' := Real.sqrt_nonneg _
-  have hα : 0 ≤ u * u' / n := by positivity
-  set x := KB.slv p.T F j hj w _ ha.2 with hxdef
-  set x' := KB.slv p.T F j hj w _ ha'.2 with hx'def
-  have hNP : ‖TBB.NP p nn F j w (h ++ [(s, t)]) (h ++ [(s, t')])‖ = (u * u' / n) * ‖p.form j hj w x x'‖ := by
-    rw [li_np p nn F j hj w _ _ ha ha', norm_mul, Complex.norm_real, Real.norm_of_nonneg hα]
-
-  have c1 : ‖TBB.NP p nn F j w (h ++ [(s, t)]) (h ++ [(s, t')])‖ ≤
-      (TBB.Ew p nn F j w (h ++ [(s, t)]) + TBB.Ew p nn F j w (h ++ [(s, t')])) / 2 := by
-    obtain ⟨ε₁, hε₁, hx⟩ := PBL.slv_nv p hF j hj w _ ha
-    obtain ⟨ε₂, hε₂, hx'⟩ := PBL.slv_nv p hF j hj w _ ha'
-    have hxm := PBL.nv_mono hx (min_le_left ε₁ ε₂)
-    have hx'm := PBL.nv_mono hx' (min_le_right ε₁ ε₂)
-    have hcs := form_cs p hpos j hj w hw.1 (lt_min hε₁ hε₂) x x' hxm hx'm
-    have hf := form_re_nonneg p hpos j hj w hw.1 hε₁ x hx
-    have hf' := form_re_nonneg p hpos j hj w hw.1 hε₂ x' hx'
-    have key := scal_cs (u * u' / n) (u * u / n) (u' * u' / n) ‖p.form j hj w x x'‖ 1 1 1
-      (p.form j hj w x x).re (p.form j hj w x' x').re hα (by field_simp) (by positivity) (by positivity)
-      one_pos one_pos one_pos (norm_nonneg _) hf hf' (by rw [mul_one]; exact hcs)
-    rw [hNP, li_ew p nn F j hj w _ ha, li_ew p nn F j hj w _ ha']
-    refine key.trans ?_
-    simp only [mul_one, div_one, Real.sqrt_one, one_mul]
-    exact sqrt_mul_le_avg _ _ (mul_nonneg (by positivity) hf) (mul_nonneg (by positivity) hf')
-
-  have hEnn : ∀ (w' : List C.Letter) (a : C.LPt) (ha : D.IsLocPt a j), KB.CutWord P p.l0 w' →
-      0 ≤ TBB.Ew p nn F j w' a := by
-    intro w' a ha hw'
-    rw [li_ew p nn F j hj w' a ha]
-    obtain ⟨ε, hε, hxa⟩ := PBL.slv_nv p hF j hj w' a ha
-    exact mul_nonneg (div_nonneg (mul_self_nonneg _) (normC_pos nn hnn w').le)
-      (form_re_nonneg p hpos j hj w' hw' hε _ hxa)
-
-  have hdeg := hDL Wp Wq P p F j s hj w h h t t' ha ha' K grid hF hinj
-  rw [PBL.rr_eq_form p F j hj w _ _ ha ha'] at hdeg
-  have hper : ∀ m : Fin K → Fin (2 * (j - s) + s + 1),
-      (u * u' / n) * ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-          (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) _ ha.2)
-          (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) _ ha'.2)‖ ≤
-        Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-          ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-          ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-        ((TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m a)) w) (h ++ [(s, t)]) +
-          TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m a)) w) (h ++ [(s, t')])) / 2) := by
-    intro m
-    set ys := List.ofFn fun a => grid a (m a) with hys
-    obtain ⟨hqpos, hSSm⟩ := hSS hA Wp Wq P p j hj w ys (hcut m).1 (hcut m).2.1 (hcut m).2.2
-    obtain ⟨ε₁, hε₁, hx⟩ := PBL.slv_nv p hF j hj (KB.plusW ys w) _ ha
-    obtain ⟨ε₂, hε₂, hx'⟩ := PBL.slv_nv p hF j hj (KB.minusW ys w) _ ha'
-    have hxm := PBL.nv_mono hx (min_le_left ε₁ ε₂)
-    have hx'm := PBL.nv_mono hx' (min_le_right ε₁ ε₂)
-    have hcs := hSSm _ _ _ (lt_min hε₁ hε₂) hxm hx'm
-    set fp := (p.form j hj (KB.plusW ys w) (KB.slv p.T F j hj (KB.plusW ys w) (h ++ [(s, t)]) ha.2)
-      (KB.slv p.T F j hj (KB.plusW ys w) (h ++ [(s, t)]) ha.2)).re with hfp
-    set fm := (p.form j hj (KB.minusW ys w) (KB.slv p.T F j hj (KB.minusW ys w) (h ++ [(s, t')]) ha'.2)
-      (KB.slv p.T F j hj (KB.minusW ys w) (h ++ [(s, t')]) ha'.2)).re with hfm
-    have hf : 0 ≤ fp := form_re_nonneg p hpos j hj _ (hcut m).1 hε₁ _ hx
-    have hf' : 0 ≤ fm := form_re_nonneg p hpos j hj _ (hcut m).2.1 hε₂ _ hx'
-    have hq : 0 < (ys.map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod := by
-      refine List.prod_pos fun z hz => ?_
-      obtain ⟨y, hy, rfl⟩ := List.mem_map.1 hz
-      exact hqpos y hy
-    have hQ₁ := prod_map_pos nn hnn ys
-    have hQ₂ := prod_map_pos (fun y => nn (y + 1)) (fun y => hnn _) ys
-    have key := scal_cs (u * u' / n) (u * u / n) (u' * u' / n) _ _ _ _ fp fm hα (by field_simp) (by positivity)
-      (by positivity) hq hQ₁ hQ₂ (norm_nonneg _) hf hf' hcs
-    refine key.trans ?_
-    refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
-    rw [li_ew p nn F j hj _ _ ha, li_ew p nn F j hj _ _ ha', normC_plusW, normC_minusW, ← hfp, ← hfm]
-    have e₁ : u * u / n * fp / (ys.map nn).prod = u * u / ((ys.map nn).prod * n) * fp := by
-      field_simp
-    have e₂ : u' * u' / n * fm / (ys.map fun y => nn (y + 1)).prod =
-        u' * u' / ((ys.map fun y => nn (y + 1)).prod * n) * fm := by
-      field_simp
-    rw [e₁, e₂]
-    exact sqrt_mul_le_avg _ _ (by positivity) (by positivity)
-  set g : (Fin K → Fin (2 * (j - s) + s + 1)) → ℝ := fun m =>
-    (TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m a)) w) (h ++ [(s, t)]) +
-      TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m a)) w) (h ++ [(s, t')])) / 2 with hg
-  have hg0 : ∀ m, 0 ≤ g m := fun m =>
-    div_nonneg (add_nonneg (hEnn _ _ ha (hcut m).1) (hEnn _ _ ha' (hcut m).2.1)) zero_le_two
-  obtain ⟨m₀, hm₀⟩ := sum_le_max (fun m => |∏ a, F7.lagCo (grid a) (m a)| *
-      Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-        ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-        ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod))
-    g (Λ ^ K) (fun m => mul_nonneg (abs_nonneg _) (Real.sqrt_nonneg _)) hg0 hsum
-  have c2 : ‖t⁻¹ - t'⁻¹‖ ^ K * ‖TBB.NP p nn F j w (h ++ [(s, t)]) (h ++ [(s, t')])‖ ≤ Λ ^ K * g m₀ := by
-    have hn1 : ‖((-1 : ℂ) ^ (s - 1) * (t⁻¹ - t'⁻¹)) ^ K * p.form j hj w x x'‖ =
-        ‖t⁻¹ - t'⁻¹‖ ^ K * ‖p.form j hj w x x'‖ := by
-      rw [norm_mul, norm_pow, norm_mul, norm_pow, norm_neg, norm_one, one_pow, one_mul]
-    rw [hNP]
-    calc ‖t⁻¹ - t'⁻¹‖ ^ K * (u * u' / n * ‖p.form j hj w x x'‖)
-        = u * u' / n * ‖((-1 : ℂ) ^ (s - 1) * (t⁻¹ - t'⁻¹)) ^ K * p.form j hj w x x'‖ := by rw [hn1]; ring
-      _ ≤ u * u' / n * ∑ m : Fin K → Fin (2 * (j - s) + s + 1), ‖((∏ a, F7.lagCo (grid a) (m a) : ℝ) : ℂ)‖ *
-          ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-            (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) _ ha.2)
-            (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) _ ha'.2)‖ := by
-          refine mul_le_mul_of_nonneg_left ?_ hα
-          rw [hdeg]
-          refine (norm_sum_le _ _).trans (le_of_eq ?_)
-          exact Finset.sum_congr rfl fun m _ => norm_mul _ _
-      _ = ∑ m : Fin K → Fin (2 * (j - s) + s + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          (u * u' / n * ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-            (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) _ ha.2)
-            (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) _ ha'.2)‖) := by
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl fun m _ => ?_
-          rw [Complex.norm_real, Real.norm_eq_abs]
-          ring
-      _ ≤ ∑ m : Fin K → Fin (2 * (j - s) + s + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          (Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-            ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-            ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-            g m) :=
-          Finset.sum_le_sum fun m _ => mul_le_mul_of_nonneg_left (hper m) (abs_nonneg _)
-      _ = ∑ m : Fin K → Fin (2 * (j - s) + s + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-            ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-            ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-            g m := Finset.sum_congr rfl fun m _ => by ring
-      _ ≤ Λ ^ K * g m₀ := hm₀
-  rcases mn_pick Λ ‖t⁻¹ - t'⁻¹‖ _ _ (g m₀) K (norm_nonneg _) c1 (fun _ => c2) with hc | hc
-  · exact ⟨w, w, isExt_self P p.l0 Y N K w hw (by omega), isExt_self P p.l0 Y N K w hw (by omega), hc⟩
-  · refine ⟨KB.plusW (List.ofFn fun a => grid a (m₀ a)) w, KB.minusW (List.ofFn fun a => grid a (m₀ a)) w,
-      isExt_plusW P p.l0 Y N K w _ hN (by simp) (ysOf_mem grid hY m₀) (hcut m₀).1,
-      isExt_minusW P p.l0 Y N K w _ hN (by simp) (ysOf_mem grid hY m₀) (hcut m₀).2.1, hc⟩
 
 end lift
 
@@ -762,156 +499,6 @@ theorem wv_ew (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq 
       (p.form j hj w' (KB.slv p.T F j hj w' h hh.2) (KB.slv p.T F j hj w' h hh.2)).re := by
   rw [li_ew p nn F j hj w' h hh, wv_nPt p j hj h hh, Real.mul_self_sqrt (weighted_auxiliary_norm_nonneg P j hj h hh)]
 
-theorem integral_three_at_place_of_parts (hA : P5.ThmPActual) (hPS : KB.PStd) (hVI : KB.VIso) (hSS : KB.SizeStd) (hDW : KB.DegWave)
-    (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ)
-    (Cb : ℝ) (hCb : KB.InDDplus2 P p.l0 p.T.base Cb p.Θ) (hpos : FormNonneg p) (hF : KB.CptCoef p.T.base F)
-    (hnn : ∀ y, 0 < nn y) (hgrid : WaveGrid p nn Y Λ K N) : TBB.KernelFourierIntegralBound p nn F Y Λ K N := by
-  intro j hj h hh w hw hN s
-  obtain ⟨grid, hinj, hY, hcut, hsum⟩ := hgrid j hj w hw hN
-  simp only [ysOf] at hsum hcut
-  set A := C.nAux P.k P.r 0 (fun _ _ => 1) 1 h with hAdef
-  have hA0 : 0 ≤ A := weighted_auxiliary_norm_nonneg P j hj h hh
-  set n := TBB.normC nn w with hndef
-  have hn : 0 < n := normC_pos nn hnn w
-  have hα : 0 ≤ A / n := div_nonneg hA0 hn.le
-  set x := KB.slv p.T F j hj w h hh.2 with hxdef
-  obtain ⟨φ, -, -, hφ, hφs⟩ := hPS hA Wp Wq P p F j hj w h h hh hh Cb hCb hF hw.1
-
-  have hint : ∫ c : ℂ, P5.fsv s c * TBB.NP p nn F (j + 1) w (h ++ [(1, c)]) (h ++ [(1, c)]) =
-      ((A / n : ℝ) : ℂ) * p.form j hj w (KB.waveG (p.T.bs j) s w x) x := by
-    rw [← hφs s, ← integral_const_mul]
-    refine integral_congr_ae ?_
-    filter_upwards [PBL.ae_ne_zero_complex] with c hc
-    rw [← wv_np p nn F j hj h hh w c, ← hφ c hc]
-    ring
-  set I := ‖∫ c : ℂ, P5.fsv s c * TBB.NP p nn F (j + 1) w (h ++ [(1, c)]) (h ++ [(1, c)])‖ with hIdef
-  have hI : I = A / n * ‖p.form j hj w (KB.waveG (p.T.bs j) s w x) x‖ := by
-    rw [hIdef, hint, norm_mul, Complex.norm_real, Real.norm_of_nonneg hα]
-
-  have hEnn : ∀ w' : List C.Letter, KB.CutWord P p.l0 w' → 0 ≤ TBB.Ew p nn F j w' h := by
-    intro w' hw'
-    rw [wv_ew p nn F j hj w' h hh]
-    obtain ⟨ε, hε, hxa⟩ := PBL.slv_nv p hF j hj w' h hh
-    exact mul_nonneg (div_nonneg hA0 (normC_pos nn hnn w').le) (form_re_nonneg p hpos j hj w' hw' hε _ hxa)
-
-  have c1 : I ≤ TBB.Ew p nn F j w h := by
-    obtain ⟨ε, hε, hx⟩ := PBL.slv_nv p hF j hj w h hh
-    obtain ⟨hVn, hVeq⟩ := hVI hA Wp Wq P p j hj w hw.1 s x x ε hε hx hx
-    have hcs := form_cs p hpos j hj w hw.1 hε (KB.waveG (p.T.bs j) s w x) x hVn hx
-    rw [hVeq] at hcs
-    have hf := form_re_nonneg p hpos j hj w hw.1 hε x hx
-    have key := scal_cs (A / n) (A / n) (A / n) ‖p.form j hj w (KB.waveG (p.T.bs j) s w x) x‖ 1 1 1
-      (p.form j hj w x x).re (p.form j hj w x x).re hα (by ring) hα hα one_pos one_pos one_pos (norm_nonneg _)
-      hf hf (by rw [mul_one]; exact hcs)
-    rw [hI, wv_ew p nn F j hj w h hh]
-    refine key.trans (le_of_eq ?_)
-    simp only [mul_one, div_one, Real.sqrt_one, one_mul]
-    exact Real.sqrt_mul_self (mul_nonneg hα hf)
-
-  have hdeg := hDW Wp Wq P p F j hj w h h hh hh K grid s LinearMap.id (fun ε x hx => hx) hF hinj
-  simp only [PBL.onOld_id] at hdeg
-  simp only [LinearMap.id_coe, id] at hdeg
-  have hper : ∀ m : Fin K → Fin (2 * j + 1),
-      (A / n) * ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-          (KB.waveG (p.T.bs j) s (KB.plusW (List.ofFn fun a => grid a (m a)) w)
-            (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) h hh.2))
-          (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) h hh.2)‖ ≤
-        Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-          ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-          ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-        max (TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m a)) w) h)
-          (TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m a)) w) h) := by
-    intro m
-    set ys := List.ofFn fun a => grid a (m a) with hys
-    obtain ⟨hqpos, hSSm⟩ := hSS hA Wp Wq P p j hj w ys (hcut m).1 (hcut m).2.1 (hcut m).2.2
-    obtain ⟨ε₁, hε₁, hx⟩ := PBL.slv_nv p hF j hj (KB.plusW ys w) h hh
-    obtain ⟨ε₂, hε₂, hx'⟩ := PBL.slv_nv p hF j hj (KB.minusW ys w) h hh
-    obtain ⟨hVn, hVeq⟩ := hVI hA Wp Wq P p j hj (KB.plusW ys w) (hcut m).1 s _ _ ε₁ hε₁ hx hx
-    have hxm := PBL.nv_mono hVn (min_le_left ε₁ ε₂)
-    have hx'm := PBL.nv_mono hx' (min_le_right ε₁ ε₂)
-    have hcs := hSSm _ _ _ (lt_min hε₁ hε₂) hxm hx'm
-    rw [hVeq] at hcs
-    set fp := (p.form j hj (KB.plusW ys w) (KB.slv p.T F j hj (KB.plusW ys w) h hh.2)
-      (KB.slv p.T F j hj (KB.plusW ys w) h hh.2)).re with hfp
-    set fm := (p.form j hj (KB.minusW ys w) (KB.slv p.T F j hj (KB.minusW ys w) h hh.2)
-      (KB.slv p.T F j hj (KB.minusW ys w) h hh.2)).re with hfm
-    have hf : 0 ≤ fp := form_re_nonneg p hpos j hj _ (hcut m).1 hε₁ _ hx
-    have hf' : 0 ≤ fm := form_re_nonneg p hpos j hj _ (hcut m).2.1 hε₂ _ hx'
-    have hq : 0 < (ys.map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod := by
-      refine List.prod_pos fun z hz => ?_
-      obtain ⟨y, hy, rfl⟩ := List.mem_map.1 hz
-      exact hqpos y hy
-    have hQ₁ := prod_map_pos nn hnn ys
-    have hQ₂ := prod_map_pos (fun y => nn (y + 1)) (fun y => hnn _) ys
-    have key := scal_cs (A / n) (A / n) (A / n) _ _ _ _ fp fm hα (by ring) hα hα hq hQ₁ hQ₂ (norm_nonneg _)
-      hf hf' hcs
-    refine key.trans ?_
-    refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
-    rw [wv_ew p nn F j hj _ h hh, wv_ew p nn F j hj _ h hh, normC_plusW, normC_minusW, ← hfp, ← hfm]
-    have e₁ : A / n * fp / (ys.map nn).prod = A / ((ys.map nn).prod * n) * fp := by
-      field_simp
-    have e₂ : A / n * fm / (ys.map fun y => nn (y + 1)).prod =
-        A / ((ys.map fun y => nn (y + 1)).prod * n) * fm := by
-      field_simp
-    rw [e₁, e₂]
-    exact sqrt_mul_le_max _ _ (by positivity) (by positivity)
-  set g : (Fin K → Fin (2 * j + 1)) → ℝ := fun m =>
-    max (TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m a)) w) h)
-      (TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m a)) w) h) with hg
-  have hg0 : ∀ m, 0 ≤ g m := fun m => le_max_of_le_left (hEnn _ (hcut m).1)
-  obtain ⟨m₀, hm₀⟩ := sum_le_max (fun m => |∏ a, F7.lagCo (grid a) (m a)| *
-      Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-        ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-        ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod))
-    g (Λ ^ K) (fun m => mul_nonneg (abs_nonneg _) (Real.sqrt_nonneg _)) hg0 hsum
-  have c2 : ‖s‖ ^ K * I ≤ Λ ^ K * g m₀ := by
-    rw [hI]
-    calc ‖s‖ ^ K * (A / n * ‖p.form j hj w (KB.waveG (p.T.bs j) s w x) x‖)
-        = A / n * ‖s ^ K * p.form j hj w (KB.waveG (p.T.bs j) s w x) x‖ := by
-          rw [norm_mul, norm_pow]; ring
-      _ ≤ A / n * ∑ m : Fin K → Fin (2 * j + 1), ‖((∏ a, F7.lagCo (grid a) (m a) : ℝ) : ℂ)‖ *
-          ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-            (KB.waveG (p.T.bs j) s (KB.plusW (List.ofFn fun a => grid a (m a)) w)
-              (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) h hh.2))
-            (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) h hh.2)‖ := by
-          refine mul_le_mul_of_nonneg_left ?_ hα
-          rw [hxdef, hdeg]
-          refine (norm_sum_le _ _).trans (le_of_eq ?_)
-          exact Finset.sum_congr rfl fun m _ => norm_mul _ _
-      _ = ∑ m : Fin K → Fin (2 * j + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          (A / n * ‖KB.pairJ (p.form j hj w) (List.ofFn fun a => grid a (m a))
-            (KB.waveG (p.T.bs j) s (KB.plusW (List.ofFn fun a => grid a (m a)) w)
-              (KB.slv p.T F j hj (KB.plusW (List.ofFn fun a => grid a (m a)) w) h hh.2))
-            (KB.slv p.T F j hj (KB.minusW (List.ofFn fun a => grid a (m a)) w) h hh.2)‖) := by
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl fun m _ => ?_
-          rw [Complex.norm_real, Real.norm_eq_abs]
-          ring
-      _ ≤ ∑ m : Fin K → Fin (2 * j + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          (Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-            ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-            ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-            g m) :=
-          Finset.sum_le_sum fun m _ => mul_le_mul_of_nonneg_left (hper m) (abs_nonneg _)
-      _ = ∑ m : Fin K → Fin (2 * j + 1), |∏ a, F7.lagCo (grid a) (m a)| *
-          Real.sqrt (((List.ofFn fun a => grid a (m a)).map nn).prod *
-            ((List.ofFn fun a => grid a (m a)).map fun y => nn (y + 1)).prod /
-            ((List.ofFn fun a => grid a (m a)).map fun y : ℝ => (Wd.qw (M.qC P) (D.positionted w) (y : ℂ)).re).prod) *
-            g m := Finset.sum_congr rfl fun m _ => by ring
-      _ ≤ Λ ^ K * g m₀ := hm₀
-  rcases mn_pick Λ ‖s‖ I _ (g m₀) K (norm_nonneg _) c1 (fun _ => c2) with hc | hc
-  · exact ⟨w, isExt_self P p.l0 Y N K w hw (by omega), hc⟩
-  · rcases le_total (TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m₀ a)) w) h)
-      (TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m₀ a)) w) h) with hle | hle
-    · refine ⟨KB.plusW (List.ofFn fun a => grid a (m₀ a)) w,
-        isExt_plusW P p.l0 Y N K w _ hN (by simp) (ysOf_mem grid hY m₀) (hcut m₀).1, ?_⟩
-      have : g m₀ = TBB.Ew p nn F j (KB.plusW (List.ofFn fun a => grid a (m₀ a)) w) h := max_eq_left hle
-      rw [← this]; exact hc
-    · refine ⟨KB.minusW (List.ofFn fun a => grid a (m₀ a)) w,
-        isExt_minusW P p.l0 Y N K w _ hN (by simp) (ysOf_mem grid hY m₀) (hcut m₀).2.1, ?_⟩
-      have : g m₀ = TBB.Ew p nn F j (KB.minusW (List.ofFn fun a => grid a (m₀ a)) w) h := max_eq_right hle
-      rw [← this]; exact hc
-
 end wave
 
 end
@@ -932,45 +519,14 @@ section germ
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
 
-def GermAt (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (K N : ℕ) :
-    Prop :=
-  ∀ b s : ℕ, 1 ≤ b → 2 ≤ s → b + s - 1 ≤ P.r + 1 → ∀ h : C.LPt, D.IsLocPt h (b - 1) → ∀ w, TBB.AdmW P p.l0 Y w →
-    w.length + K ≤ N →
-    (∀ w', TBB.IsExt P p.l0 Y N K w w' →
-      BddAbove (Set.range fun t : {t : ℂ // t ≠ 0} => TBB.Ew p nn F (b + s - 2) w' (h ++ [(s - 1, t.1)]))) →
-    ContinuousOn (fun z : ℂ => TBB.Ew p nn F (b + s - 1) w (h ++ [(s, z)])) {0}ᶜ ∧
-    Integrable (fun z : ℂ => TBB.Ew p nn F (b + s - 1) w (h ++ [(s, z)])) ∧
-    ∀ σ : ℂ, (‖(Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ z * (TBB.Ew p nn F (b + s - 1) w (h ++ [(s, z)]) : ℂ)‖₊ :
-        ℝ≥0∞) ≤
-      limsup (fun t : ℂ =>
-        (‖TBB.NP p nn F (b + s - 2) w (h ++ [(s - 1, t)]) (h ++ [(s - 1, (t⁻¹ + σ)⁻¹)])‖₊ : ℝ≥0∞)) (𝓝[≠] 0)
-
 theorem gm_ew_zero (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (i : ℕ)
     (w : List C.Letter) (h : C.LPt) (s : ℕ) : TBB.Ew p nn F i w (h ++ [(s, 0)]) = 0 := by
   have hn : ¬ (D.IsLocPt (h ++ [(s, 0)]) i ∧ D.IsLocPt (h ++ [(s, 0)]) i) := by
     rintro ⟨⟨h1, -⟩, -⟩
     exact (h1 (s, 0) (List.mem_append_right _ (List.mem_singleton_self _))).2 rfl
   unfold TBB.Ew TBB.NP KB.Pl.RR D.RRplace
-  rw [dif_neg hn]
+  rw [dite_eq_right hn]
   simp
-
-theorem integral_five_at_place_of_parts (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ)
-    (K N : ℕ) (hP : TBB.PosAt p nn F Y N) (hG : GermAt p nn F Y K N) : TBB.BlockGrowthBound p nn F Y K N := by
-  intro b s hb hs hbs h hh w hw hN hBdd ω₁ ω₂ z₀ hω
-  obtain ⟨hcont, hint, htr⟩ := hG b s hb hs hbs h hh w hw hN hBdd
-  set E : ℂ → ℝ := fun z => TBB.Ew p nn F (b + s - 1) w (h ++ [(s, z)]) with hEdef
-  have hE0 : ∀ z, 0 ≤ E z := fun z => hP (b + s - 1) w (h ++ [(s, z)]) hw (by omega)
-  have hEz : E 0 = 0 := gm_ew_zero p nn F (b + s - 1) w h s
-  have hlsc : LowerSemicontinuous E := by
-    intro z
-    by_cases hz : z = 0
-    · subst hz
-      intro y hy
-      rw [hEz] at hy
-      exact Filter.Eventually.of_forall fun z' => lt_of_lt_of_le hy (hE0 z')
-    · exact (hcont.continuousAt (isOpen_compl_singleton.mem_nhds hz)).lowerSemicontinuousAt
-  refine ⟨fun σ => (Real.pi⁻¹ : ℂ) * ∫ z : ℂ, P5.fsv σ z * (E z : ℂ), ?_, fun σ _ => htr σ⟩
-  exact lattice_poisson E hE0 hlsc hint ω₁ ω₂ z₀ hω
 
 end germ
 
@@ -982,62 +538,10 @@ namespace Formalism.FourierDecayAlt.P.TBBx5
 
 open Formalism.FourierDecayAlt
 
-def CurvatureIntegralOfParts : Prop :=
-  P5.ThmPActual → KB.PStd → KB.VIso → KB.SizeStd → KB.DegWave → PBL.FormPos →
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ) (Cb : ℝ),
-    KB.InDDplus2 P p.l0 p.T.base Cb p.Θ → KB.CptCoef p.T.base F → (∀ y, 0 < nn y) → WaveGrid p nn Y Λ K N →
-    TBB.KernelFourierIntegralBound p nn F Y Λ K N
-
-def IntegralFourFromComponents : Prop :=
-  P5.ThmPActual → KB.SizeStd → KB.DegLift → PBL.FormPos →
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ),
-    KB.CptCoef p.T.base F → (∀ y, 0 < nn y) → LiftGrid p nn Y Λ K N → TBB.KernelArgumentHypothesisScalar p nn F Y Λ K N
-
-def IntegralFiveFromComponents : Prop :=
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (K N : ℕ),
-    TBB.PosAt p nn F Y N → GermAt p nn F Y K N → TBB.BlockGrowthBound p nn F Y K N
-
-theorem integral_three_of_parts_holds : CurvatureIntegralOfParts := by
-  intro hA hPS hVI hSS hDW hFP Wp Wq _ _ _ _ _ _ P p nn F Y Λ K N Cb hCb hF hnn hgrid
-  exact integral_three_at_place_of_parts hA hPS hVI hSS hDW p nn F Y Λ K N Cb hCb (formNonneg_of hA hFP p) hF hnn hgrid
-
-theorem integral_four_of_parts_holds : IntegralFourFromComponents := by
-  intro hA hSS hDL hFP Wp Wq _ _ _ _ _ _ P p nn F Y Λ K N hF hnn hgrid
-  exact integral_four_at_place_of_parts hA hSS hDL p nn F Y Λ K N (formNonneg_of hA hFP p) hF hnn hgrid
-
-theorem integral_five_of_parts_holds : IntegralFiveFromComponents := by
-  intro Wp Wq _ _ _ _ _ _ P p nn F Y K N hP hG
-  exact integral_five_at_place_of_parts p nn F Y K N hP hG
-
 end Formalism.FourierDecayAlt.P.TBBx5
 
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.FourierDecayAlt
-
-theorem integral_three_at_place (hA : P5.ThmPActual) (hPS : KB.PStd) (hVI : KB.VIso) (hSS : KB.SizeStd)
-    (hDW : KB.DegWave) (hFP : PBL.FormPos) {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {P : M.Par}
-    (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ)
-    (Cb : ℝ) (hCb : KB.InDDplus2 P p.l0 p.T.base Cb p.Θ) (hF : KB.CptCoef p.T.base F) (hnn : ∀ y, 0 < nn y)
-    (hgrid : TBBx5.WaveGrid p nn Y Λ K N) : Formalism.FourierDecayAlt.TBB.KernelFourierIntegralBound p nn F Y Λ K N := TBBx5.integral_three_of_parts_holds hA hPS hVI hSS hDW hFP Wp Wq P p nn F Y Λ K N Cb hCb hF hnn hgrid
-
-theorem integral_four_at_place (hA : P5.ThmPActual) (hSS : KB.SizeStd) (hDL : KB.DegLift) (hFP : PBL.FormPos)
-    {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {P : M.Par} (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (Λ : ℝ) (K N : ℕ)
-    (hF : KB.CptCoef p.T.base F) (hnn : ∀ y, 0 < nn y) (hgrid : TBBx5.LiftGrid p nn Y Λ K N) :
-    Formalism.FourierDecayAlt.TBB.KernelArgumentHypothesisScalar p nn F Y Λ K N := TBBx5.integral_four_of_parts_holds hA hSS hDL hFP Wp Wq P p nn F Y Λ K N hF hnn hgrid
-
-theorem integral_five_at_place {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] {P : M.Par} (p : KB.Pl P Wp Wq)
-    (nn : ℝ → ℝ) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Y : Finset ℝ) (K N : ℕ) (hP : Formalism.FourierDecayAlt.TBB.PosAt p nn F Y N)
-    (hG : TBBx5.GermAt p nn F Y K N) : Formalism.FourierDecayAlt.TBB.BlockGrowthBound p nn F Y K N := TBBx5.integral_five_of_parts_holds Wp Wq P p nn F Y K N hP hG
 
 end Formalism.FourierDecayAlt.P

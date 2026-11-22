@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.EllipticTorsion.UnitCancel
-import Formalism.FormalGroupLog.LogDeterminesLaw
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.UnitCancel
+public import Formalism.FormalGroupLog.LogDeterminesLaw
+
+@[expose] public section
 
 open PowerSeries
 

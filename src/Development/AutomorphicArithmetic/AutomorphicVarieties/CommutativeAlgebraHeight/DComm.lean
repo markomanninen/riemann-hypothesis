@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -13,19 +17,18 @@ theorem UpperTheory.V.CA.d_comm :
   have hπι : ∀ c z, π c (ι z) = z := by
     intro c z
     induction z with
-    | zero => simp
     | tmul s e => simp [π, ι, ev, i]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   let t : S[X] ⊗[A] E := X ⊗ₜ 1
   have ht : ∀ c, π c t = c ⊗ₜ 1 := by
     intro c
     simp [π, t, ev]
   let u : S[X] ⊗[A] E := 1 + t * ι (x - 1)
   have hu0 : π 0 u = 1 := by
-    simp only [u, map_add, map_mul, map_one, hπι, ht]
+    simp only [u, map_add (f := _), map_mul, map_one, hπι, ht]
     simp
   have hu1 : π 1 u = x := by
-    simp only [u, map_add, map_mul, map_one, hπι, ht]
+    simp only [u, map_add (f := _), map_mul, map_one, hπι, ht]
     rw [← Algebra.TensorProduct.one_def]
     simp
   have hc : (D.D S[X] u).coeff 0 = 1 := by
@@ -44,4 +47,4 @@ theorem UpperTheory.V.CA.d_comm :
   have h := congrArg (ev 1) key
   rw [← D.nat, ← D.nat] at h
   change D.D S (π 1 _) = D.D S (π 1 _) at h
-  simpa only [map_add, map_mul, map_one, hπι, hu1] using h
+  simpa only [map_add (f := _), map_mul, map_one, hπι, hu1] using h

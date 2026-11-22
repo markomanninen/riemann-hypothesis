@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh GlobalTheory.CatCoh
 
 set_option autoImplicit false
@@ -34,7 +39,7 @@ variable {C' : Type u} [Category.{0} C'] (G : C' ⥤ C)
 
 theorem h1_injective (hi : Function.Injective (CoefMap.restrict F G).pull1) :
     Function.Injective ((Cx.single (Coef.ofAlg F)).resMap G).h1 := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨z, rfl⟩ := QuotientAddGroup.mk_surjective c
   have hz : z.1.1 ∈ Z1 F := (singleComplex_mem_cocyclesOne_iff_algebraFunctor F z.1).1 z.2
@@ -73,7 +78,7 @@ theorem h1_surjective (hs : Function.Surjective (CoefMap.restrict F G).pull1) :
 
 theorem h2_injective (hi : Function.Injective (CoefMap.restrict F G).pull2) :
     Function.Injective ((Cx.single (Coef.ofAlg F)).resMap G).h2 := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨z, rfl⟩ := QuotientAddGroup.mk_surjective c
   have hz : z.1.1 ∈ Z2 F := (singleComplex_mem_cocyclesTwo_iff_algebraFunctor F z.1).1 z.2

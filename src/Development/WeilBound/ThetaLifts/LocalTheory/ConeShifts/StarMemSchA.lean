@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.MemIntLocOfIdem
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.MemIntLocOfIdem
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,7 +155,7 @@ theorem lDiag_ne {κ : Type} [Fintype κ] {Φ : (κ → AF F) → ℂ} (h : Φ �
       exact ((compD F κ f).continuous.comp continuous_fst).mul (hg.1.continuous.comp
         (continuous_pi fun i => by cases i <;> exact (continuous_apply _).comp continuous_snd))
     | zero => rw [map_zero]; exact continuous_zero
-    | add x y _ _ hx hy => rw [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => rw [map_smul]; exact hx.const_smul c
   have e : resD F κ (boxFun Φ (star Φ)) = fun p => ((Complex.normSq (Φ (glue p)) : ℝ) : ℂ) := funext fun p =>
     Complex.mul_conj _
@@ -165,7 +169,7 @@ theorem lDiag_ne {κ : Type} [Fintype κ] {Φ : (κ → AF F) → ℂ} (h : Φ �
     funext i
     refine Prod.ext ?_ (zero_add _)
     change (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm (eI F κ 0 i) + _ = _
-    simp
+    simp only [map_zero, Pi.zero_apply, zero_add]
   haveI : (mu F κ).IsOpenPosMeasure := by unfold mu; infer_instance
   refine (integral_pos_of_integrable_nonneg_nonzero (x := 0 + shiftOf x) (Complex.continuous_re.comp hc') hi.re
     (fun p => Complex.normSq_nonneg _) ?_).ne'
@@ -199,8 +203,8 @@ theorem mul_latAtV {X : Spc F E n} {W : Spc F E d} {k : Matrix (Fin n) (Fin n) (
   | add y z _ _ hy hz => rw [Matrix.mul_add]; exact add_mem hy hz
   | neg y _ hy => rw [Matrix.mul_neg]; exact neg_mem hy
 
-variable (v) in
 
+variable (v) in
 def PresD (X : Spc F E n) (g : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) (AE F E)) : Prop :=
   ∃ a ∈ Pres v X, ∃ b ∈ Pres v X, ∃ c ∈ Pres v X, ∃ e ∈ Pres v X, g = Matrix.fromBlocks a b c e
 

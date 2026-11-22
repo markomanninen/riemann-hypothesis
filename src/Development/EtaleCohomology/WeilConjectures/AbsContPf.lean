@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.WeilConjectures.ContinCut
+module
+
+public import Development.EtaleCohomology.WeilConjectures.ContinCut
+
+@[expose] public section
 
 namespace LateralTheory.EWeil.AbsContPf
 
@@ -43,7 +47,7 @@ theorem goal1 (l : ℕ) [Fact l.Prime] (M : Type u) [AddCommGroup M] [Module ℤ
       exact Finset.single_le_sum (f := fun x => ‖φ x‖) (fun _ _ => norm_nonneg _) hx
   | zero => simpa using Finset.sum_nonneg (fun (x : M) (_ : x ∈ s) => norm_nonneg (φ x))
   | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (Padic.nonarchimedean _ _).trans (max_le hx hy)
   | smul a x _ hx =>
       rw [map_smul]

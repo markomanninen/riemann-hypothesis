@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.FockLatticeFiniteSpanning
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.FockLatticeFiniteSpanning
+
+@[expose] public section
 
 noncomputable section
 
@@ -155,7 +159,7 @@ theorem valuation_add_ge_min (p : ℕ) (x y : KK O) : min (vK p x) (vK p y) ≤ 
   have e2 : y * algebraMap O (KK O) (b * d) = algebraMap O (KK O) (c * b) := by
     rw [map_mul, map_mul, ← hcd]; ring
   have e3 : (x + y) * algebraMap O (KK O) (b * d) = algebraMap O (KK O) (a * d + c * b) := by
-    rw [map_add, ← e1, ← e2]; ring
+    rw [map_add (f := _), ← e1, ← e2]; ring
   have hs0 : a * d + c * b ≠ 0 := by
     intro h0
     rw [h0, map_zero] at e3
@@ -230,8 +234,8 @@ theorem valuation_natCast_padicVal {p : ℕ} (hp : p.Prime) (S : UniformizedDVR 
     dvr_order_mul (pow_ne_zero _ hpO) hnU.ne_zero, dvr_order_pow hpO, dvr_order_unit_eq_zero hnU]
   have hval : padicValNat p (p ^ k * n) = k := by
     haveI := Fact.mk hp
-    rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) hn0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hn, add_zero]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hn0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hn, add_zero]
   have hr : dvrOrderNat (p : O) = ramE p O := rfl
   have he : (ramE p O : ℚ) ≠ 0 := by exact_mod_cast ramification_index_ne_zero S
   rw [hval, hr, add_zero]

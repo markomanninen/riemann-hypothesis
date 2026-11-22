@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfCountAtOf
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLevelGenB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfCountAtOf
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLevelGenB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ private theorem reps_fg {V : Type} [AddCommGroup V] [Module ℚ V] [Module.Finit
     (hn : 0 < n) : ∃ R : Finset V, R.card ≤ n ^ Module.finrank ℚ V ∧ ∀ u ∈ M, ∃ r ∈ R, ∃ v ∈ M, u = r + n • v := by
   classical
   haveI : Module.Finite ℤ M := Module.Finite.iff_fg.2 hM
-  haveI : IsAddTorsionFree V := IsAddTorsionFree.of_module_rat V
+  haveI : HasUniqueDiv V := HasUniqueDiv.of_module_rat V
   haveI : Module.Free ℤ M := inferInstance
   let b := Module.finBasis ℤ M
   have h1 : LinearIndependent ℤ (fun i => (b i : V)) := b.linearIndependent.map' M.subtype M.ker_subtype
@@ -39,7 +43,8 @@ private theorem reps_fg {V : Type} [AddCommGroup V] [Module ℚ V] [Module.Finit
       ∑ i, (c i / n) • (b i : V), M.sum_mem fun i _ => M.smul_mem _ (b i).2, ?_⟩
     have e : u = ∑ i, c i • (b i : V) := by
       have := congrArg M.subtype (b.sum_repr ⟨u, hu⟩)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm
     rw [e, Finset.smul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -118,14 +123,14 @@ private theorem reps_latO (S T : HSp D) (LS : Submodule (𝓞 D.host.E) (Fin S.r
     | add x y _ _ hx hy =>
       obtain ⟨a, ha, v, hv, rfl⟩ := hx
       obtain ⟨a', ha', v', hv', rfl⟩ := hy
-      exact ⟨a + a', add_mem ha ha', v + v', add_mem hv hv', by rw [map_add, nsmul_add]; abel⟩
+      exact ⟨a + a', add_mem ha ha', v + v', add_mem hv hv', by rw [map_add (f := _), nsmul_add]; abel⟩
     | neg x _ hx =>
       obtain ⟨a, ha, v, hv, rfl⟩ := hx
       exact ⟨-a, neg_mem ha, -v, neg_mem hv, by rw [map_neg, smul_neg]; abel⟩
   refine ⟨R.image φ, Finset.card_image_le.trans hR, fun u hu => ?_⟩
   obtain ⟨x, hx, v, hv, rfl⟩ := key u hu
   obtain ⟨r, hr, y, hy, rfl⟩ := hR' x hx
-  exact ⟨φ r, Finset.mem_image_of_mem _ hr, φ y + v, add_mem (hφ y hy) hv, by rw [map_add, map_nsmul, nsmul_add]; abel⟩
+  exact ⟨φ r, Finset.mem_image_of_mem _ hr, φ y + v, add_mem (hφ y hy) hv, by rw [map_add (f := _), map_nsmul, nsmul_add]; abel⟩
 
 private theorem coset_fns {a b : ℕ} (e : AE D) (Λ : AddSubgroup (Mx D a b)) {k : ℕ} (hk : 0 < k) (R : Finset (Mx D a b))
     (hR : ∀ u ∈ Λ, ∃ r ∈ R, ∃ v ∈ Λ, u = r + (k * k) • v) :
@@ -242,7 +247,7 @@ private theorem depth_le {k : ℕ} (hk : 0 < k) (h : ∀ l : ℕ, l.Prime → pa
     (mul_ne_zero (D.host.g_prime 0).ne_zero (D.host.g_prime 1).ne_zero) D.host.pde_prime.ne_zero) D.host.pde'_prime.ne_zero)
   refine Nat.le_of_dvd (Nat.pos_of_ne_zero (pow_ne_zero _ hP0)) ?_
   refine (Nat.factorization_prime_le_iff_dvd hk.ne' (pow_ne_zero _ hP0)).1 fun l hl => ?_
-  rw [Nat.factorization_def _ hl, Nat.factorization_pow]
+  rw [Nat.factorization_def _ hl, Nat.factorization_pow, ← Nat.padicValNat_def]
   refine (h l hl).trans (Finset.sup_le fun w hw => ?_)
   obtain ⟨hw, hlw⟩ := Finset.mem_filter.1 hw
   obtain ⟨v, hv, rfl⟩ : ∃ v ∈ G.pl.S0, G.pl.w v = w := by simpa [Places.W0] using hw
@@ -411,7 +416,10 @@ theorem _root_.GlobalTheory.T.pureTensorCountBound_of_cosetDepthBound : GlobalTh
     obtain ⟨Q, hQ1, hQ2⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain (S := 𝓞 D.what₂.LL) (Ideal.span {(l : ℤ)})
       (by rw [(RingHom.injective_iff_ker_eq_bot _).1 (algebraMap ℤ (𝓞 D.what₂.LL)).injective_int]; exact bot_le)
     have hm : (l : 𝓞 D.what₂.LL) ∈ Q := by
-      have : (l : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 D.what₂.LL)) := by rw [hQ2]; exact Ideal.mem_span_singleton_self _
+      have : (l : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 D.what₂.LL)) := by
+        change (l : ℤ) ∈ Q.under ℤ
+        rw [hQ2]
+        exact Ideal.mem_span_singleton_self _
       simpa using this
     refine hd ⟨Q, hQ1, fun z => ?_⟩ l hl hm fun PP hP => ?_
     · rw [z, Ideal.mem_bot] at hm

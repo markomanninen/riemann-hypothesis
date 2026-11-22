@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.MemRamLine
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RamifiedLineCharacters.MemRamLine
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -23,7 +27,7 @@ private theorem continuous_of_right_invariant_on_nhds_one {Γ X : Type*} [Group 
     (hf : ∀ g, ∀ h ∈ U, f (g * h) = f g) : Continuous f := by
   refine continuous_iff_continuousAt.2 fun g => ?_
   have ht : Filter.Tendsto (fun x => g⁻¹ * x) (nhds g) (nhds 1) := by
-    have := (continuous_mul_left g⁻¹).tendsto g
+    have := (continuous_const_mul g⁻¹).tendsto g
     simpa using this
   have hev : ∀ᶠ x in nhds g, f x = f g := by
     filter_upwards [ht hU] with x hx

@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpeelLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpeelLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,7 +19,7 @@ theorem peelDecomposition : PeelDecomp := by
     rw [hw] at this
     simpa using this.symm
   have hterm : ∀ k, X (a0, l) ^ k * X (a0, j) ^ (ω (a0, l) - k) * peel l j a0 k g =
-      ∑ m ∈ g.support.filter (fun m => m (a0, l) = k), monomial m (coeff m g) := by
+      ∑ m ∈ g.support.filter (fun m => m (a0, l) = k), monomial m (AddMonoidAlgebra.coeff g m) := by
     intro k
     unfold peel
     rw [Finset.mul_sum]
@@ -24,7 +28,7 @@ theorem peelDecomposition : PeelDecomp := by
     obtain ⟨hm1, hm2⟩ := Finset.mem_filter.1 hm
     have hkey := key m hm1
     rw [X_pow_eq_monomial, X_pow_eq_monomial, monomial_mul, monomial_mul, one_mul, one_mul]
-    refine congrArg (fun e => monomial e (coeff m g)) ?_
+    refine congrArg (fun e => monomial e (AddMonoidAlgebra.coeff g m)) ?_
     ext ⟨b, t⟩
     simp only [Finsupp.add_apply, Finsupp.single_apply, Finsupp.erase_apply, Prod.mk.injEq]
     rcases eq_or_ne b a0 with rfl | hb
@@ -43,7 +47,7 @@ theorem peelDecomposition : PeelDecomp := by
     show m (a0, l) ∈ _
     rw [Finset.mem_range]
     omega
-  have hfib := Finset.sum_fiberwise_of_maps_to hmaps (fun m => monomial m (coeff m g))
+  have hfib := Finset.sum_fiberwise_of_maps_to hmaps (fun m => monomial m (AddMonoidAlgebra.coeff g m))
   exact (hfib.trans (as_sum g).symm).symm
 
 end Formalism.GradedWeylDivisibility

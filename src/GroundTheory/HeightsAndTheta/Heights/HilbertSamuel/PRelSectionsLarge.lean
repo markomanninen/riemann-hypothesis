@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelSectionsLarge
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelChartPoly
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelOneStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelSectionsLarge
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelChartPoly
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelOneStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

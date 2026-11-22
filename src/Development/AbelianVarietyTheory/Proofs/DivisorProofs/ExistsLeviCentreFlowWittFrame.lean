@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealIdeleFlow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousSplitTorusSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusElementUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusElementMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusInLeviParabolic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelicFrameTorusElementMatrixEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ScalesBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRealIdeleFlow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsContinuousSplitTorusSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusElementUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusElementMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusInLeviParabolic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdelicFrameTorusElementMatrixEqStatement
+
+@[expose] public section
 
 open scoped TensorProduct NNReal ENNReal Matrix
 open NumberField MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.ResLine GlobalTheory.ResidueEisenstein
@@ -105,8 +109,8 @@ theorem const_centre {X Y : Matrix (Fin n) (Fin (r + 1)) E} (hCM : IsCMExt F E �
 
 end GlobalTheory.ResidueFlow
 
-open GlobalTheory.IdTorus in
 
+open GlobalTheory.IdTorus in
 theorem GlobalTheory.ResidueEisenstein.exists_isFlowJ : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (r : ℕ) (X Y : Matrix (Fin n) (Fin (r + 1)) E), IsCMExt F E σ → IsHermND σ J → IsWittFrame σ J X Y → ∃ b : ℝ → GAd σ J, IsFlowJ σ J X Y b := by
   intro F E _ _ _ _ _ σ n J r X Y hc hJ hW
   obtain ⟨t, htc, ht⟩ := exists_continuous_isIdTorusElt hc hJ hW

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LevelFamInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexNeZeroOfIsOpen
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LeviOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeCosetSumCompact
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermLocallyConstant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LevelFamInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexNeZeroOfIsOpen
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralLeviConstantTerm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcN.F2
@@ -158,8 +162,8 @@ theorem unip_conj (h : a + b = n) (w : Pl E) (k : GLw a w × GLw b w) (l : NM a 
   rw [mul_assoc, ← e, inv_mul_cancel_left]
 
 theorem stab_unip (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w))
-    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (f : GLw n w → ℂ)
-    (hr : ∀ u ∈ K', ∀ g, f (g * u) = f g) (c d : GLw n w) (hd : d ∈ GlobalTheory.LFun.KGL w n)
+    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (f : GLw n w → ℂ)
+    (hr : ∀ u ∈ K', ∀ g, f (g * u) = f g) (c d : GLw n w) (hd : d ∈ GlobalTheory.LFun.KGL w (n := n))
     (m : GLw a w × GLw b w) :
     uLev h w K' ≤ rStab (fun Y : NM a b w => f (c * blk h w m (Multiplicative.toAdd Y) * d)) := by
   intro l hl Y
@@ -219,7 +223,7 @@ theorem absHalf_delta_mul (w : Pl E) (m' k : GLw a w × GLw b w) :
 def Phi {w : Pl E} (f₁ f₂ : GLw n w → ℂ) (x z B g : GLw n w) : ℂ := f₁ (x⁻¹ * g) * f₂ (g⁻¹ * B * z)
 
 theorem gconv_eq {w : Pl E} (f₁ f₂ : GLw n w → ℂ) (x z B : GLw n w) :
-    gconv f₁ f₂ (x⁻¹ * B * z) = hint (GlobalTheory.LFun.KGL w n) (Phi f₁ f₂ x z B) := by
+    gconv f₁ f₂ (x⁻¹ * B * z) = hint (GlobalTheory.LFun.KGL w (n := n)) (Phi f₁ f₂ x z B) := by
   unfold gconv
   rw [← GlobalTheory.CompanionTheory.FamClP.hint_left _ (fun g => f₁ g * f₂ (g⁻¹ * (x⁻¹ * B * z))) x⁻¹]
   congr 1
@@ -266,9 +270,9 @@ def Gf (h : a + b = n) (w : Pl E) (f₁ f₂ : GLw n w → ℂ) (x y z : GLw n w
     Phi f₁ f₂ x z (blk h w m (Multiplicative.toAdd Y)) (blk h w m' (Multiplicative.toAdd Y') * y)
 
 theorem Gf_stab (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w))
-    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (f₁ f₂ : GLw n w → ℂ)
+    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (f₁ f₂ : GLw n w → ℂ)
     (h₂ : ∀ u ∈ K', ∀ g, f₂ (u * g) = f₂ g ∧ f₂ (g * u) = f₂ g) (x y z : GLw n w)
-    (hz : z ∈ GlobalTheory.LFun.KGL w n) (m m' : GLw a w × GLw b w) :
+    (hz : z ∈ GlobalTheory.LFun.KGL w (n := n)) (m m' : GLw a w × GLw b w) :
     uLev h w K' ≤ rStab (Gf h w f₁ f₂ x y z m m') := by
   intro l hl Y
   show hint _ _ = hint _ _
@@ -281,9 +285,9 @@ theorem Gf_stab (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w))
 def mLev (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) : Subgroup (GLw a w × GLw b w) :=
   K'.comap (CtLevel.dgM h w)
 
-theorem levi_stab (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKK : K' ≤ GlobalTheory.LFun.KGL w n)
-    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (Φ : GLw n w → ℂ)
-    (hΦ : ∀ g k, k ∈ K' → Φ (g * k) = Φ g) (y : GLw n w) (hy : y ∈ GlobalTheory.LFun.KGL w n) :
+theorem levi_stab (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKK : K' ≤ GlobalTheory.LFun.KGL w (n := n))
+    (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') (Φ : GLw n w → ℂ)
+    (hΦ : ∀ g k, k ∈ K' → Φ (g * k) = Φ g) (y : GLw n w) (hy : y ∈ GlobalTheory.LFun.KGL w (n := n)) :
     mLev h w K' ≤ rStab (fun m' : GLw a w × GLw b w => hint (intMat a b w) fun Y' : NM a b w =>
       Φ (blk h w m' (Multiplicative.toAdd Y') * y)) := by
   intro k hk m'
@@ -308,11 +312,11 @@ theorem levi_stab (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKK : K'
     k.1 k.2⁻¹ h1 (inv_mem h2)
 
 theorem Gf_conv (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : IsOpen (K' : Set (GLw n w)))
-    (hKK : K' ≤ GlobalTheory.LFun.KGL w n) (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
+    (hKK : K' ≤ GlobalTheory.LFun.KGL w (n := n)) (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
     (f₁ f₂ : GLw n w → ℂ) (h₁ : ∀ u ∈ K', ∀ g, f₁ (u * g) = f₁ g ∧ f₁ (g * u) = f₁ g)
     (h₂ : ∀ u ∈ K', ∀ g, f₂ (u * g) = f₂ g ∧ f₂ (g * u) = f₂ g)
     (c₁ : HasCompactSupport f₁) (c₂ : HasCompactSupport f₂) (x y z : GLw n w)
-    (hy : y ∈ GlobalTheory.LFun.KGL w n) (hz : z ∈ GlobalTheory.LFun.KGL w n) (m m' : GLw a w × GLw b w) :
+    (hy : y ∈ GlobalTheory.LFun.KGL w (n := n)) (hz : z ∈ GlobalTheory.LFun.KGL w (n := n)) (m m' : GLw a w × GLw b w) :
     hint (intMat a b w) (Gf h w f₁ f₂ x y z m m') =
       hint (intMat a b w) (fun Y : NM a b w => f₁ (x⁻¹ * blk h w m' (Multiplicative.toAdd Y) * y)) *
       hint (intMat a b w) (fun Y : NM a b w => f₂ (y⁻¹ * blk h w (m'⁻¹ * m) (Multiplicative.toAdd Y) * z)) := by
@@ -381,27 +385,27 @@ theorem mLev_open (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : Is
     IsOpen (mLev h w K' : Set (GLw a w × GLw b w)) :=
   hKo.preimage (GlobalTheory.CompanionTheory.GL3BlockMatrixLocal.continuous_dgM h w)
 
-theorem mLev_le (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKK : K' ≤ GlobalTheory.LFun.KGL w n) :
-    mLev h w K' ≤ (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b) := fun k hk =>
+theorem mLev_le (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKK : K' ≤ GlobalTheory.LFun.KGL w (n := n)) :
+    mLev h w K' ≤ (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)) := fun k hk =>
   Subgroup.mem_prod.2 (GlobalTheory.CompanionTheory.GL3BlockMatrixLocal.blocks_mem_KGL h w k (hKK hk))
 
 theorem mLev_index (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : IsOpen (K' : Set (GLw n w))) :
-    (mLev h w K').relIndex ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) ≠ 0 := by
+    (mLev h w K').relIndex ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) ≠ 0 := by
   refine GlobalTheory.CompanionTheory.SplitConvHecke.relIndex_ne_zero_of_isOpen _ _ (mLev_open h w K' hKo) ?_
   rw [Subgroup.coe_prod]
   exact (GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w a).prod (GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w b)
 
 theorem conv_entry (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : IsOpen (K' : Set (GLw n w)))
-    (hKK : K' ≤ GlobalTheory.LFun.KGL w n) (hN : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
+    (hKK : K' ≤ GlobalTheory.LFun.KGL w (n := n)) (hN : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K')
     (f₁ f₂ : GLw n w → ℂ) (h₁ : ∀ u ∈ K', ∀ g, f₁ (u * g) = f₁ g ∧ f₁ (g * u) = f₁ g)
     (h₂ : ∀ u ∈ K', ∀ g, f₂ (u * g) = f₂ g ∧ f₂ (g * u) = f₂ g)
     (c₁ : HasCompactSupport f₁) (c₂ : HasCompactSupport f₂) (x y z : GLw n w)
-    (hy : y ∈ GlobalTheory.LFun.KGL w n) (hz : z ∈ GlobalTheory.LFun.KGL w n) (m : GLw a w × GLw b w)
+    (hy : y ∈ GlobalTheory.LFun.KGL w (n := n)) (hz : z ∈ GlobalTheory.LFun.KGL w (n := n)) (m : GLw a w × GLw b w)
     (T : Finset (NM a b w ⧸ uLev h w K'))
     (hT : ∀ Y : NM a b w, blk h w m (Multiplicative.toAdd Y) ∈
       ({x} : Set (GLw n w)) * (tsupport f₁ * tsupport f₂) * {z⁻¹} → (Y : NM a b w ⧸ uLev h w K') ∈ T) :
     absHalf w (m.1.val.det ^ b / m.2.val.det ^ a) *
-      hint (intMat a b w) (fun Y : NM a b w => hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))
+      hint (intMat a b w) (fun Y : NM a b w => hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))
         fun m' => Gf h w f₁ f₂ x y z m m' Y) =
       mconv (phi3 h w f₁ x y) (phi3 h w f₂ y z) m := by
   obtain ⟨hLA, hfin⟩ := GlobalTheory.CompanionTheory.UnipLevel.unip_level E a b n h w K' hKo hKK
@@ -409,7 +413,7 @@ theorem conv_entry (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : I
     ((isCompact_singleton.mul c₁).mul isCompact_singleton)
   obtain ⟨T₂, hT₂⟩ := finite_out (mLev h w K') (mLev h w K') (mLev_open h w K' hKo) id
     (fun _ _ hz => hz) D₁ hD₁
-  have hsw := hint_swap (intMat a b w) (uLev h w K') ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) (mLev h w K')
+  have hsw := hint_swap (intMat a b w) (uLev h w K') ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) (mLev h w K')
     hLA (mLev_le h w K' hKK) hfin (mLev_index h w K' hKo)
     (fun (Y : NM a b w) m' => Gf h w f₁ f₂ x y z m m' Y)
     (fun m' => Gf_stab h w K' hN f₁ f₂ h₂ x y z hz m m')
@@ -431,7 +435,7 @@ theorem conv_entry (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)) (hKo : I
   rw [e]
   ring
 
-theorem constant_term_convolution : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w n → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') → ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w n) → (∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ X, x⁻¹ * k ∈ K') → ∀ f₁ f₂ : GLw n w → ℂ, IsHk K' f₁ → IsHk K' f₂ → ∀ x ∈ X, ∀ z ∈ X, ∀ m, phi3 h w (gconv f₁ f₂) x z m = ((X.card : ℂ))⁻¹ * ∑ y ∈ X, mconv (phi3 h w f₁ x y) (phi3 h w f₂ y z) m := by
+theorem constant_term_convolution : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (K' : Subgroup (GLw n w)), IsOpen (K' : Set (GLw n w)) → K' ≤ GlobalTheory.LFun.KGL w (n := n) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ K', k * k' * k⁻¹ ∈ K') → ∀ X : Finset (GLw n w), (∀ x ∈ X, x ∈ GlobalTheory.LFun.KGL w (n := n)) → (∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ X, x⁻¹ * k ∈ K') → ∀ f₁ f₂ : GLw n w → ℂ, IsHk K' f₁ → IsHk K' f₂ → ∀ x ∈ X, ∀ z ∈ X, ∀ m, phi3 h w (gconv f₁ f₂) x z m = ((X.card : ℂ))⁻¹ * ∑ y ∈ X, mconv (phi3 h w f₁ x y) (phi3 h w f₂ y z) m := by
   intro E _ _ _ n a b h w K' hKo hKK hN X hXK hX f₁ f₂ hf₁ hf₂ x hx z hz m
   have h₁ : ∀ u ∈ K', ∀ g, f₁ (u * g) = f₁ g ∧ f₁ (g * u) = f₁ g := fun u hu g =>
     ⟨by simpa using hf₁.2.2.2 u hu 1 K'.one_mem g, by simpa using hf₁.2.2.2 1 K'.one_mem u hu g⟩
@@ -444,7 +448,7 @@ theorem constant_term_convolution : ∀ (E : Type) [Field E] [NumberField E] [Is
   obtain ⟨T, hT⟩ := finite_out (uLev h w K') K' hKo (fun Y : NM a b w => blk h w m (Multiplicative.toAdd Y))
     (theta_sep h w K' m) (({x} : Set (GLw n w)) * (tsupport f₁ * tsupport f₂) * {z⁻¹})
     ((isCompact_singleton.mul (IsCompact.mul c₁ c₂)).mul isCompact_singleton)
-  let v : GLw n w → NM a b w → ℂ := fun y Y => hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))
+  let v : GLw n w → NM a b w → ℂ := fun y Y => hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))
     fun m' => Gf h w f₁ f₂ x y z m m' Y
   have step : ∀ Y : NM a b w, gconv f₁ f₂ (x⁻¹ * blk h w m (Multiplicative.toAdd Y) * z) =
       ((X.card : ℂ))⁻¹ * ∑ y ∈ X, v y Y := by
@@ -456,7 +460,7 @@ theorem constant_term_convolution : ∀ (E : Type) [Field E] [NumberField E] [Is
     intro y _ l hl Y
     have e : (fun m' => Gf h w f₁ f₂ x y z m m' (Y * l)) = fun m' => Gf h w f₁ f₂ x y z m m' Y :=
       funext fun m' => Gf_stab h w K' hN f₁ f₂ h₂ x y z hzK m m' hl Y
-    exact congrArg (hint ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b))) e
+    exact congrArg (hint ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b)))) e
   have hsupp : ∀ y ∈ X, (Function.support fun q : NM a b w ⧸ uLev h w K' => v y q.out).Finite := by
     intro y _
     refine T.finite_toSet.subset fun q hq => ?_

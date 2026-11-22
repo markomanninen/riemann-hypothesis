@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatio
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
+
+@[expose] public section
 
 open NumberField Module
 
@@ -20,7 +24,8 @@ theorem gram_det_eq (h : V →ₗ⋆[K] V →ₗ[K] K) (b : Basis ι K V) (u w :
     ext i j
     rw [Matrix.of_apply]
     conv_lhs => rw [← b.sum_repr (u i), ← b.sum_repr (w j)]
-    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, Matrix.mul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, Matrix.mul_apply,
       Matrix.conjTranspose_apply, Basis.toMatrix_apply, Matrix.of_apply, smul_eq_mul,
       Finset.sum_mul, Finset.mul_sum, starRingEnd_apply, RingHom.id_apply]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -114,7 +119,7 @@ theorem mixed_mem (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V �
     have hw : z11 + conjO K θ * θ * z22 + θ * z + conjO K θ * z21 ∈ discrIdeal h L := by
       refine mem_discrIdeal b (update_mem hx (L.add_mem hy (L.smul_mem θ hy'))) ?_
       rw [hd]
-      simp only [map_add, map_mul, h11, h22, h21, hz, algebraMap_conjO, star_add, star_mul']
+      simp only [map_add (f := _), map_mul, h11, h22, h21, hz, algebraMap_conjO, star_add, star_mul']
       ring
     have he : θ * z + conjO K θ * z21 =
         (z11 + conjO K θ * θ * z22 + θ * z + conjO K θ * z21) - z11 - conjO K θ * θ * z22 := by
@@ -128,8 +133,8 @@ theorem mixed_mem (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V �
   rw [he]
   exact Ideal.sub_mem _ (key θ) (Ideal.mul_mem_left _ _ h1)
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem exists_prim {J : Type*} [Finite J] (a : J → K) {j₀ : J} (ha : a j₀ ≠ 0) {P : Ideal (𝓞 K)}
     (hP : P ≠ ⊤) :
     ∃ (t : K) (c : J → 𝓞 K), (∀ j, algebraMap (𝓞 K) K (c j) = t * a j) ∧ ∃ j, c j ∉ P := by

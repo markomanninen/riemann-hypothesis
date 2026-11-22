@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.GoodPartLeTypeSubspace
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.Objects
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.GoodPartLeTypeSubspace
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.Objects
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ variable {Ks L0 L WL}
 
 def jBil (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) : L →+ WL →+ W (σ.comp (algebraMap L0 L)) :=
   AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun x => σ a • jj (σ.comp (algebraMap L0 L)) x)
-    (fun x y => by simp only [map_add, smul_add]))
-    (fun a b => by ext x; simp only [map_add, add_smul, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply])
+    (fun x y => by simp only [map_add (f := _), smul_add]))
+    (fun a b => by ext x; simp only [map_add (f := _), add_smul, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply])
 
 theorem jBil_apply (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) (a : L) (x : WL) :
     jBil jj σ a x = σ a • jj (σ.comp (algebraMap L0 L)) x := rfl
@@ -91,7 +95,7 @@ def jbc (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) :
     | tmul a x =>
       rw [TensorProduct.smul_tmul', jAdd_tmul, jAdd_tmul, smul_eq_mul, map_mul, mul_smul]
       try rfl
-    | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem jbc_tmul (jj : ∀ τ : L0 →+* ℂ, WL →ₛₗ[τ] W τ) (σ : L →+* ℂ) (a : L) (x : WL) :
     jbc (Ks := Ks) jj σ (a ⊗ₜ[L0] x : L ⊗[L0] WL) = (σ a • jj (σ.comp (algebraMap L0 L)) x : W _) :=
@@ -106,10 +110,6 @@ variable (L : Type) [Field L] [NumberField L] [Algebra L0 L] [Algebra Ks L] [IsS
 variable {WL : Type} [AddCommGroup WL] [Module L0 WL] [Module Ks WL] [IsScalarTower Ks L0 WL]
 variable {W : (L0 →+* ℂ) → Type} [∀ σ, NormedAddCommGroup (W σ)] [∀ σ, InnerProductSpace ℂ (W σ)]
 variable {G0 : Type} [Group G0]
-
-instance modOL : Module (𝓞 L) (BCW Ks L0 L WL) := Module.compHom _ (algebraMap (𝓞 L) L)
-
-instance towOL : IsScalarTower (𝓞 L) L (BCW Ks L0 L WL) := IsScalarTower.of_algebraMap_smul fun _ _ => rfl
 
 instance modOKs : Module (𝓞 Ks) (BCW Ks L0 L WL) :=
   Module.compHom _ ((algebraMap Ks L).comp (algebraMap (𝓞 Ks) Ks))
@@ -128,7 +128,7 @@ def bc : Arith.FormsL L Ks (BCW Ks L0 L WL) (Wbc L0 L W) G0 where
   nrm lp y f := A.nrm lp y ((wkEquiv L A).symm f)
   nrm_nonneg lp y f := A.nrm_nonneg lp y _
   nrm_zero lp y := by rw [map_zero]; exact A.nrm_zero lp y
-  nrm_add lp y f g := by rw [map_add]; exact A.nrm_add lp y _ _
+  nrm_add lp y f g := by rw [map_add (f := _)]; exact A.nrm_add lp y _ _
   nrm_smul lp y a f := by rw [map_smul]; exact A.nrm_smul lp y a _
   towKs := inferInstance
   ρ := ((Module.End.baseChangeHom L0 L WL).toMonoidHom.comp A.ρ : G0 →* Module.End L (L ⊗[L0] WL))
@@ -156,9 +156,6 @@ theorem bc_j_incl (σ : L →+* ℂ) (x : WL) :
     (bc L A).j σ (incl Ks L0 L WL x) = A.j (σ.comp (algebraMap L0 L)) x := by
   rw [incl_apply, bc_j_tmul, map_one, one_smul]
 
-def fmBC (K : Type) [Field K] [Algebra Ks K] : K ⊗[Ks] A.WK ≃ₗ[K] K ⊗[Ks] (bc L A).WK :=
-  LinearEquiv.baseChange Ks K _ _ (wkE L A)
-
 variable [Module (𝓞 L0) WL] [IsScalarTower (𝓞 L0) L0 WL] [Module (𝓞 Ks) WL] [IsScalarTower (𝓞 Ks) Ks WL]
   [Fintype G0]
 
@@ -174,66 +171,9 @@ variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} [NumberField what₂.L
 def ιOf (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) : C.L0 →+* what₂.LL :=
   (algebraMap (↥LL0) what₂.LL).comp eL.toRingHom
 
-abbrev baseFieldAlgebra (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) : Algebra C.L0 what₂.LL := (ιOf C eL).toAlgebra
-
-abbrev algKsLL (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) : Algebra C.Ks what₂.LL :=
-  ((ιOf C eL).comp (algebraMap C.Ks C.L0)).toAlgebra
-
-theorem towKsLL (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) :
-    letI := baseFieldAlgebra C eL
-    letI := algKsLL C eL
-    IsScalarTower C.Ks C.L0 what₂.LL :=
-  letI := baseFieldAlgebra C eL
-  letI := algKsLL C eL
-  IsScalarTower.of_algebraMap_eq fun _ => rfl
-
-def ofCore (tw : NTw R H what₂ LL0 N) (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) (eG : C.G ≃* G0g N) : RatDat tw :=
-  letI := baseFieldAlgebra C eL
-  letI := algKsLL C eL
-  haveI := towKsLL C eL
-  { Ks := C.Ks
-    WL := fun j => BCW C.Ks C.L0 what₂.LL (C.WL j)
-    modWL := fun j => modL C.Ks C.L0 what₂.LL (C.WL j)
-    modKsWL := fun j => modKs C.Ks C.L0 what₂.LL (C.WL j)
-    towWL := fun j => towKsL C.Ks C.L0 what₂.LL (C.WL j)
-    modOLLWL := fun _ => modOL what₂.LL
-    towOLLWL := fun _ => towOL what₂.LL
-    modOKsWL := fun _ => modOKs what₂.LL
-    towOKsWL := fun _ => towOKs what₂.LL
-    W := fun j => Wbc C.L0 what₂.LL (C.W j)
-    G := C.G
-    eG := eG
-    A := fun j => bc what₂.LL (C.A j)
-    kKs := eL.toRingHom.comp (algebraMap C.Ks C.L0)
-    kKs_spec := fun _ => rfl }
-
 def rdTw (tw : NTw R H what₂ LL0 N) (i : tw.Tw) (b : Bool) : ↥LL0 →+* FractionRing (tw.O i) :=
   (IsFractionRing.map (A := tw.O0 i) (B := tw.O i) (K := FractionRing (tw.O0 i)) (L := FractionRing (tw.O i))
     (tw.O_inj i)).comp (if b then tw.emb0 i else tw.emb0b i)
-
-abbrev withTw (tw : NTw R H what₂ LL0 N) (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) : Core.RatCore where
-  L0 := C.L0
-  Ks := C.Ks
-  Tw := tw.Tw
-  O := tw.O
-  fractionRingMaps i b := (rdTw tw i b).comp eL.toRingHom
-  G := C.G
-  WL := C.WL
-  W := C.W
-  A := C.A
-
-instance modFmCoreW (tw : NTw R H what₂ LL0 N) (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) (i : tw.Tw) (j : ℕ)
-    (b : Bool) : Module (FractionRing (tw.O i)) (Core.Fm (withTw tw C eL) i j b) :=
-  Core.modFmK (withTw tw C eL) i j b
-
-def fmEquiv (tw : NTw R H what₂ LL0 N) (C : Core.RatCore) (eL : C.L0 ≃+* ↥LL0) (eG : C.G ≃* G0g N)
-    (i : tw.Tw) (j : ℕ) (b : Bool) :
-    Core.Fm (withTw tw C eL) i j b ≃ₗ[FractionRing (tw.O i)] Fm (ofCore tw C eL eG) i j b :=
-  letI := baseFieldAlgebra C eL
-  letI := algKsLL C eL
-  haveI := towKsLL C eL
-  letI : Algebra C.Ks (Core.KB (withTw tw C eL) i b) := (Core.ιK (withTw tw C eL) i b).toAlgebra
-  fmBC what₂.LL (C.A j) (Core.KB (withTw tw C eL) i b)
 
 end Rec
 
@@ -251,8 +191,6 @@ def testA : Arith.FormsL ℚ ℚ ℚ (fun _ => ℂ) Unit where
   ρ := 1
   chi := 1
   j σ := { toFun := σ, map_add' := map_add σ, map_smul' := fun c x => by simp [smul_eq_mul] }
-
-example : Arith.FormsL ℚ ℚ (BCW ℚ ℚ ℚ ℚ) (Wbc ℚ ℚ fun _ => ℂ) Unit := bc ℚ testA
 
 end Test
 

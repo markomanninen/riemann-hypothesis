@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreAffine
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RelSerreAffine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -58,8 +63,8 @@ lemma algebraMap_overBase {V : X.Opens} (hV : IsAffineOpen V) (b : Γ(X, V)) :
   refine (app_eqToHom_apply ψ (Scheme.Opens.ι_image_top V) _ _ b).trans ?_
   simp
 
-omit [X.Over (Spec (.of A))] in
 
+omit [X.Over (Spec (.of A))] in
 lemma smul_restrict_top (M : X'.Modules) (U : X'.Opens) (a : Γ(U.toScheme, ⊤))
     (y : Γ(M.restrict U.ι, ⊤)) :
     M.presheaf.map (eqToHom (Scheme.Opens.ι_image_top U).symm).op
@@ -86,7 +91,7 @@ def H0ToSections {V : X.Opens} (hV : IsAffineOpen V) (M : X'.Modules) :
       (Sheaf.H.equiv₀ (modulesAb (M.restrict (ψ ⁻¹ᵁ V).ι)) isTerminalTop x :
         Γ(M, (ψ ⁻¹ᵁ V).ι ''ᵁ ⊤))
     map_add' := fun x y => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact map_add _ _ _
     map_smul' := fun b x => by
       rw [H.smul_def, ← Sheaf.H.equiv₀_naturality]

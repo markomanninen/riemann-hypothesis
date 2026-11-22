@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SecondDualReduction
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SecondDualReduction
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
@@ -82,17 +86,21 @@ theorem measure_isomorphism_at_infinity : IsoStep := by
       simp [c, hab, h1, h2, herm]
   refine ⟨f', ⟨?_, ?_, ?_⟩, ?_⟩
   · intro a b
-    simp [f', map_sum, F0.e_iso, hF.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [f', map_sum, F0.e_iso, hF.1]
   · intro b
-    simp [f', map_sum, F0.z_orth, hF.2.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [f', map_sum, F0.z_orth, hF.2.1]
   · intro b l hl
     have hexp : S.hT (f' b) l = S.hT (f b) l + ∑ k, star (c k b) * S.hT (F0.e k) l := by
-      simp [f', map_sum, starRingEnd_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [f', map_sum, starRingEnd_apply]
     rw [hexp]
     exact addm (hF.2.2 b l hl) (summ _ (fun k => hprod k b _ _ (hc_mem k b) (hE k l hl)))
   · intro a b
     have h := hsum a b
-    simp [f', map_sum, hfe, hF.1, F0.e_iso, Finset.sum_ite_eq', starRingEnd_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [f', map_sum, hfe, hF.1, F0.e_iso, Finset.sum_ite_eq', starRingEnd_apply]
     linear_combination h
 
 end PI.SRW

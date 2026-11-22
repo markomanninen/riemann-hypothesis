@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.UnlinkedHalfIntegral.UnitFormC
+
+@[expose] public section
 
 open UpperTheory.V.Af UpperTheory.V.Sd
 
@@ -19,8 +23,8 @@ theorem conjEig : ConjEig := by
     · have hm : 1 ≤ n / p := Nat.div_pos (Nat.le_of_dvd hn hd) hp.pos
       simp only [hd, if_true] at e ⊢
       rw [h2 _ hm]
-      simpa [map_add, map_mul, map_pow, map_natCast] using e
+      simpa [map_add (f := _), map_mul, map_pow, map_natCast] using e
     · simp only [hd, if_false] at e ⊢
-      simpa [map_add, map_mul, map_pow, map_natCast] using e
+      simpa [map_add (f := _), map_mul, map_pow, map_natCast] using e
 
 end UpperTheory.V.Z.Sym.Unl

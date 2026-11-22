@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTrivialityOfNoetherianDescent
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFibreAct
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTrivialityOfNoetherianDescent
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFibreAct
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem UpperTheory.quotient_moduli_iso : UpperTheory.Gal.Int.Geo.QIso := by
     fun L hL => (GlobalTheory.CechPic.cls_eq_iff hL hL).mp rfl
   have h1 : (Hecke.lbPow o'.P 1).IsLB := DVR.linComb_isLB _ o'.isLB _ _
   have e1 : LBIso o'.P (Hecke.lbPow o'.P 1) :=
-    (GlobalTheory.CechPic.cls_eq_iff o'.isLB h1).mp (by rw [GlobalTheory.LocTrivDescent.cls_lbPow_eq o'.isLB 1 h1, one_smul])
+    (GlobalTheory.CechPic.cls_eq_iff o'.isLB h1).mp (by simpa only [one_smul] using (GlobalTheory.LocTrivDescent.cls_lbPow_eq o'.isLB 1 h1).symm)
   have e3 : LBIso (o.P.pull (Hecke.sq2 ψ)) ((u.P.pull n.φ₂).pull (Hecke.sq2 ψ)) :=
     LBIso.chartPull (chartPullPull _ _ _ rfl) (chartPullPull _ _ _ rfl) n.pol
   have e4 : LBIso ((u.P.pull n.φ₂).pull (Hecke.sq2 ψ)) (u.P.pull (Hecke.sq2 ψ ≫ n.φ₂)) :=

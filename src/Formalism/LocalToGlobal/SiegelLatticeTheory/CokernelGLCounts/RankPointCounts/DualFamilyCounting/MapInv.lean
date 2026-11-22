@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.OneMemZpowZero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HTAaLbMem
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibAlg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.OneMemZpowZero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HTAaLbMem
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NOfibAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ variable (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.host.E) (hup : ∀ b a : Fin D
 include hup hd
 
 theorem det_one : X0.det = 1 := by
-  rw [Matrix.det_of_upperTriangular (fun i j hij => hup i j hij)]
+  rw [Matrix.det_of_isUpperTriangular (fun i j hij => hup i j hij)]
   simp [hd]
 
 theorem inv_mul : X0⁻¹ * X0 = 1 := Matrix.nonsing_inv_mul _ (by rw [det_one X0 hup hd]; exact isUnit_one)
@@ -34,7 +38,7 @@ theorem mul_inv : X0 * X0⁻¹ = 1 := Matrix.mul_nonsing_inv _ (by rw [det_one X
 theorem inv_up : ∀ b a : Fin D.R.rS, a < b → X0⁻¹ b a = 0 := by
   have hU : IsUnit X0.det := by rw [det_one X0 hup hd]; exact isUnit_one
   have hbt : X0.BlockTriangular id := fun i j hij => hup i j hij
-  haveI : Invertible X0 := Matrix.invertibleOfIsUnitDet X0 hU
+  have : Invertible X0 := Matrix.invertibleOfIsUnitDet X0 hU
   exact fun b a h => Matrix.blockTriangular_inv_of_blockTriangular hbt h
 
 theorem inv_diag : ∀ a, X0⁻¹ a a = 1 := by
@@ -67,9 +71,11 @@ theorem gram_mem (xs : Fin D.R.rS → (VS D).V) (hxs : ∀ b, xs b ∈ aaLb X b)
     rw [map_smul, smul_eq_mul, mul_comm d]
     exact FractionalIdeal.mul_mem_mul (LatA.hT_aaLb_mem X (hxs b) hl) hdm
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul o x _ hx =>
     rw [← algebraMap_smul D.host.E o x, map_smul, smul_eq_mul]
-    exact LatA.fi_smul_mem hx o
+    have h := ((aaD D b * aaD D c : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) : Submodule (𝓞 D.host.E) D.host.E).smul_mem o hx
+    rw [Algebra.smul_def] at h
+    exact h
 
 end Formalism.L2.SG.Pf.NcReal.JX.NOf

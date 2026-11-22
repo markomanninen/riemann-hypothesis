@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,10 +153,7 @@ theorem step3 (F : ℂ → ℂ) (hF : IntegrableOn F (ball 0 1)) :
   have hae : polarCoord.symm '' (Ioo (0 : ℝ) 1 ×ˢ Ioo (-π) π) =ᵐ[volume]
       Complex.measurableEquivRealProd.symm ⁻¹' ball 0 1 := by
     filter_upwards [polarCoord_source_ae_eq_univ] with q hq
-    have hq' : q ∈ polarCoord.source := by
-      change polarCoord.source q
-      rw [hq]; trivial
-    apply propext
+    have hq' : q ∈ polarCoord.source := hq.mpr (by trivial)
     constructor
     · exact fun h => hsub h
     · intro hqT

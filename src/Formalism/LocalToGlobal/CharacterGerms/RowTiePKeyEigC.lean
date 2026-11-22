@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigB
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigB
+
+@[expose] public section
 
 noncomputable section
 

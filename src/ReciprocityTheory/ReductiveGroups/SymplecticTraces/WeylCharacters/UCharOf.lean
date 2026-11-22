@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Statement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.BranchModel
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Statement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.BranchModel
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousTorepK
+
+@[expose] public section
 
 noncomputable section
 

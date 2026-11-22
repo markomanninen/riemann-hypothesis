@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DoubleCoverUpqKsetGeneratedByExp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtremalLowestKtypeKilledByCompactRoots
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DoubleCoverUpqKsetGeneratedByExp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtremalLowestKtypeKilledByCompactRoots
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
@@ -59,7 +63,8 @@ theorem torus_iff (R : DSRep T) (ν : Ix p q → ℝ) (v : R.HK.V) :
     exact smul_right_injective _ Complex.I_ne_zero h4
   · intro h θ
     apply flow_eq R (torX_mem _)
-    rw [torX_eq_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [torX_eq_sum, map_sum, LinearMap.sum_apply]
     simp only [map_smul, LinearMap.smul_apply, h, smul_smul, ← Finset.sum_smul]
     congr 1
     push_cast
@@ -131,9 +136,6 @@ theorem Eab_bracket (x a b : Ix p q) : Eab x x * Eab a b - Eab a b * Eab x x =
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} {M : DSModel V S} {τ : D.what₂.Tau} {R : DSRep T}
   {br cj : Bool} {e : Ix p q ≃ Fin V.rank} {m : ℤ} {U : M.H τ → R.U.H}
 
-theorem tie_zero (h : Comparison₂ R M τ br cj e m U) : U 0 = 0 := by
-  rw [← norm_eq_zero, h.norm, norm_zero]
-
 theorem tie_orth (h : Comparison₂ R M τ br cj e m U) {x y : M.H τ} (hxy : ⟪x, y⟫_ℂ = 0) : ⟪U x, U y⟫_ℂ = 0 := by
   have key : ∀ z : ℂ, (z * ⟪U x, U y⟫_ℂ).re = 0 := by
     intro z
@@ -195,7 +197,7 @@ theorem orth_act (h : Comparison₂ R M τ br cj e m U) (he : SignCompat (M.ε �
     rw [h4] at h3
     exact h3.unique (hasDerivAt_const _ _)
   obtain ⟨X, Y, hX, hXK, hY, hYK, rfl⟩ := exists_decomp hZ
-  rw [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, inner_add_right,
+  rw [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, inner_add_right,
     inner_smul_right, key X hX hXK, key Y hY hYK, mul_zero, add_zero]
 
 theorem mem_hwSub {lam : Ix p q → ℚ} {c : ℚ} (hp : IsParam lam) (ho : IsOrd (M.ε τ) (M.lam τ) lam c (sg br cj) e)

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraTail
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerRest
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerSide
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerLast
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsExtraTail
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerRest
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerSide
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerLast
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -23,6 +28,7 @@ theorem X_base_mem_mIdealOver_graph (s : Fin m → Ω) {i : Fin (N + 1)} (hi : x
     (X ⟨baseBlock, i⟩ : NumbersDVR.MRing (graphIdx N m) S) ∈ mIdealOver S (graphVec x s) := by
   change mConeMapOver S (graphVec x s) (X _) = 0
   simp [mConeMapOver, hi]
+  exact hi
 
 end Zero
 

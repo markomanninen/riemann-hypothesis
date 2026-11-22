@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.HermitianPerpSubgroup
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.ColumnDimensionRational
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MulVecMemHatSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.HermitianPerpSubgroup
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.LocalToGlobal.Columns.GenericUnipotentCharacter
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FrameLats
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIrreducible
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix
 open scoped TensorProduct ENNReal Pointwise
-open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.SgAlg GlobalTheory.SgGlob GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.ColCmp
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.SgAlg GlobalTheory.SgGlob GlobalTheory.IndefiniteRowSideFullHecke
 
 namespace GlobalTheory.SplitResidue
 
@@ -31,7 +36,7 @@ theorem card_eq_ncard_primesOver (E : Type) [Field E] [NumberField E] {g : ℕ} 
       (Ideal.mem_span_singleton_self _)
 
 theorem residue_and_unramified : ∀ (E : Type) [Field E] [NumberField E] (g : ℕ), g.Prime →
-    FlagUnipotentStabilizers.SplitsCompletely E g →
+    GlobalTheory.IndefiniteRowSideFullHecke.FlagUnipotentStabilizers.SplitsCompletely E g →
     ∀ w : HeightOneSpectrum (𝓞 E), (g : 𝓞 E) ∈ w.asIdeal →
       Nonempty ((𝓞 E ⧸ w.asIdeal) ≃+* ZMod g) ∧ (g : 𝓞 E) ∉ w.asIdeal ^ 2 := by
   intro E _ _ g hg h w hw

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LinkExactAff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
+
+@[expose] public section
 
 open GlobalTheory.SeqCx Matrix UpperTheory.V.KL
 
@@ -10,7 +14,8 @@ theorem finsupp_coord_ideal_eq_top {R : Type} [CommRing R] (u : ℕ →₀ R) (g
     (hg : g u = 1) (K : Ideal R) (hK : ∀ i, u i ∈ K) : K = ⊤ := by
   rw [Ideal.eq_top_iff_one, ← hg]
   rw [show g u = g (u.sum Finsupp.single) by rw [Finsupp.sum_single]]
-  rw [Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum]
   refine Ideal.sum_mem _ fun i _ => ?_
   rw [← Finsupp.smul_single_one, map_smul, smul_eq_mul]
   exact Ideal.mul_mem_right _ _ (hK i)
@@ -29,7 +34,8 @@ private theorem linearMap_apply_mem_span_range_coeffs {R : Type} [CommRing R] (w
     (g : (ℕ →₀ R) →ₗ[R] R) : g w ∈ Ideal.span (Set.range fun i => w i) := by
   have e : g w = ∑ i ∈ w.support, w i * g (Finsupp.single i 1) := by
     conv_lhs => rw [← Finsupp.sum_single w]
-    rw [Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← Finsupp.smul_single_one, map_smul, smul_eq_mul]
   rw [e]
@@ -81,13 +87,13 @@ theorem unimodular_partner_aff : ∀ (R : Type) [CommRing R] (s : ℕ), StableRa
   let y : ℕ →₀ R := ∑ i : Fin n, Finsupp.single (i : ℕ) (-(t i * a j))
   have hy0 : ∀ m, n ≤ m → y m = 0 := by
     intro m hm
-    simp only [y, Finsupp.finset_sum_apply]
+    simp only [y, Finsupp.finsetSum_apply]
     exact Finset.sum_eq_zero fun i _ => by
       have := i.isLt
       simp [Finsupp.single_apply, show (i : ℕ) ≠ m by omega]
   have hyi : ∀ i : Fin n, y i = -(t i * a j) := by
     intro i
-    simp only [y, Finsupp.finset_sum_apply]
+    simp only [y, Finsupp.finsetSum_apply]
     rw [Finset.sum_eq_single i]
     · simp
     · intro b _ hb
@@ -101,7 +107,8 @@ theorem unimodular_partner_aff : ∀ (R : Type) [CommRing R] (s : ℕ), StableRa
     intro m hm
     simp [x, hy0 m hm]
   have hφx : φ x = 0 := by
-    simp only [x, map_add, hφj, zero_add, y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [x, map_add (f := _), hφj, zero_add, y, map_sum]
     exact Finset.sum_eq_zero fun i _ => hφs _ _ i.isLt
   let v' : ℕ →₀ R := v - v j • x
   have hv'i : ∀ i : Fin n, v' i = v i + v j * (t i * a j) := by
@@ -126,7 +133,7 @@ theorem unimodular_partner_aff : ∀ (R : Type) [CommRing R] (s : ℕ), StableRa
   have hvdec : v = v' + v j • x := by simp [v']
   have hhv : h v = 1 + v j * h x := by
     conv_lhs => rw [hvdec]
-    rw [map_add, map_smul, hh, smul_eq_mul]
+    rw [map_add (f := _), map_smul, hh, smul_eq_mul]
   have hf1x : f1 x = 0 := by
     simp only [f1, LinearMap.sub_apply, LinearMap.smul_apply, Finsupp.lapply_apply, smul_eq_mul, hxj]
     ring

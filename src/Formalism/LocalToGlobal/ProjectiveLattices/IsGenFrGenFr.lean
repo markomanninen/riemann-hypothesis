@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsCombAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,8 @@ def IsGenFr (Z : Comp Xo c) (y : FrPt Xo c (Om Z)) : Prop :=
       ∀ τ i, IsCombAt y.x (fun j => spMap (dualMap (algebraMap (kap Z) (Om Z))) ≫ y₀.u τ j)
         (genCoef Z τ i) (y.u τ i)
 
-variable (Xo c) in
 
+variable (Xo c) in
 def GenFrEx : Prop := ∀ Z : Comp Xo c, ∃ y : FrPt Xo c (Om Z), IsGenFr Z y
 
 def genFr (h : GenFrEx Xo c) (Z : Comp Xo c) : FrPt Xo c (Om Z) := (h Z).choose
@@ -52,8 +56,8 @@ theorem isGenFr_genFr (h : GenFrEx Xo c) (Z : Comp Xo c) : IsGenFr Z (genFr h Z)
 
 def evC (h : GenFrEx Xo c) (Z : Comp Xo c) (f : Rul Xo c) : Om Z := evR Xo c f (genFr h Z)
 
-variable (Xo c) in
 
+variable (Xo c) in
 def GenFromTest (h : GenFrEx Xo c) : Prop := ∀ Z : Comp Xo c,
   FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) (genFr h Z)
 

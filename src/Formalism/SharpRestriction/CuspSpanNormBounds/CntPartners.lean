@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataParams₂
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
-import Formalism.HermitianLattices.StatementMass
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataParams₂
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+public import Formalism.HermitianLattices.StatementMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,34 +178,34 @@ def cntCl {α : Type} (X : Set α) (R : α → α → Prop) : ℕ∞ :=
 
 variable (Λ : LatV D)
 
-def TEqv {T T' : D.host.E} (F : LFlag (hS D) D.R.rS T) (F' F'₂ : LFlag (hS D) D.R.rS T') : Prop :=
+def TEqv {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'₂ : LFlag (D.sp.Y 0) D.R.rS T') : Prop :=
   ∃ n ∈ NLam Λ F, FrameEqv D n F' F'₂
 
-def IsTermF {T T' : D.host.E} (F : LFlag (hS D) D.R.rS T) (F' : LFlag (hS D) D.R.rS T') : Prop :=
+def IsTermF {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') : Prop :=
   IsTerm Λ (gS D) F F' ∧ FrameOK D Λ F'
 
 abbrev Trip (T' : D.host.E) : Type :=
   LFlag (hS D) D.R.rS T' × LFlag (hS D) D.R.rS T' × ((hS D).V ≃ₗ[D.host.E] (hS D).V)
 
-def PEqv {T T' : D.host.E} (F : LFlag (hS D) D.R.rS T) (p q : Trip D T') : Prop :=
+def PEqv {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (p q : Trip D T') : Prop :=
   ∃ n' ∈ NLam Λ F, ∃ n'' ∈ NLam Λ F, FrameEqv D n' p.1 q.1 ∧ FrameEqv D n'' p.2.1 q.2.1 ∧
     ∀ x ∈ orth (hS D) (Xsp q.1), q.2.2 x - n'' (p.2.2 (n'.symm x)) ∈ Xsp q.2.1
 
-def PairSet {T : D.host.E} (T' : D.host.E) (F : LFlag (hS D) D.R.rS T) (Z' Z'' : GramM D) (s : ℕ) (De : ℝ) :
+def PairSet {T : D.host.E} (T' : D.host.E) (F : LFlag (D.sp.Y 0) D.R.rS T) (Z' Z'' : GramM D) (s : ℕ) (De : ℝ) :
     Set (Trip D T') :=
   {p | IsTermF D Λ F p.1 ∧ IsTermF D Λ F p.2.1 ∧ IsPair Λ F p.1 p.2.1 p.2.2 (gS D) ∧
     ZEquiv (ZhatL F p.1) Z' ∧ ZEquiv (ZhatL F p.2.1) Z'' ∧ s0 Λ F p.1 p.2.1 p.2.2 D.R.k = s ∧
     latDet (hS D) (Mlat Λ F p.1 p.2.1 p.2.2 (gS D)) * (iIdx Λ (gS D) F p.1 : ℝ) * (iIdx Λ (gS D) F p.2.1 : ℝ) ≤ De}
 
-def cntPairs {T : D.host.E} (T' : D.host.E) (F : LFlag (hS D) D.R.rS T) (Z' Z'' : GramM D) (s : ℕ) (De : ℝ) : ℕ∞ :=
+def cntPairs {T : D.host.E} (T' : D.host.E) (F : LFlag (D.sp.Y 0) D.R.rS T) (Z' Z'' : GramM D) (s : ℕ) (De : ℝ) : ℕ∞ :=
   cntCl (PairSet D Λ T' F Z' Z'' s De) (PEqv D Λ F)
 
-def Partners {T T' : D.host.E} (F : LFlag (hS D) D.R.rS T) (F' : LFlag (hS D) D.R.rS T') (Z : GramM D) :
+def Partners {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Z : GramM D) :
     Set (LFlag (hS D) D.R.rS T') :=
   {F'' | IsTermF D Λ F F'' ∧ IsGeneric Λ (gS D) F F'' ∧ ZEquiv (ZhatL F F'') Z ∧
     ∃ β, IsPair Λ F F' F'' β (gS D) ∧ s0 Λ F F' F'' β D.R.k = 1}
 
-def cntPartners {T T' : D.host.E} (F : LFlag (hS D) D.R.rS T) (F' : LFlag (hS D) D.R.rS T') (Z : GramM D) : ℕ∞ :=
+def cntPartners {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Z : GramM D) : ℕ∞ :=
   cntCl (Partners D Λ F F' Z) (TEqv D Λ F)
 
 def massRows {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (s : Finset (LatV D)) : ℝ := ∑ Λ ∈ s, wRow D F0 Λ

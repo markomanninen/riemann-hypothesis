@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohDefs
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.EulerCharGaloisOfCardEq
+module
+
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohDefs
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.EulerCharGaloisOfCardEq
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

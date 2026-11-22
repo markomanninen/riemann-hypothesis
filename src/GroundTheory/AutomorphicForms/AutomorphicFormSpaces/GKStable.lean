@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableConv
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableParabolic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableConv
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableLaplacian
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableParabolic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory
 open scoped NumberField.AdeleRing
@@ -122,7 +126,7 @@ theorem exists_height_infEmb_le {S : Set (archGroup K n)} (hS : IsCompact S) :
       (fun i j => le_trans (le_add_of_nonneg_left (norm_nonneg _)) ((hterm w i j).trans hFy))
   unfold height
   rw [finprod_eq_one_of_forall_eq_one (fun v => by rw [finAt_infEmb, locHeight_one]), mul_one]
-  exact Finset.prod_le_prod (fun w _ => pow_nonneg (locHeight_pos _).le _)
+  exact Finset.prod_le_prod₀ (fun w _ => pow_nonneg (locHeight_pos _).le _)
     fun w _ => pow_le_pow_left₀ (locHeight_pos _).le (hloc w) _
 
 section Integral
@@ -267,7 +271,7 @@ theorem IsAutomorphicForm.uAction (u : UEnv K n) :
     exact ha (hb hφ)
   | hadd a b ha hb =>
     intro φ hφ
-    rw [map_add, LinearMap.add_apply, Submodule.coe_add]
+    rw [map_add (f := _), LinearMap.add_apply, Submodule.coe_add]
     exact (ha hφ).add (hb hφ)
 
 theorem mem_cuspForms_uAction (u : UEnv K n) :
@@ -286,14 +290,14 @@ theorem mem_cuspForms_uAction (u : UEnv K n) :
     exact ha (hb hφ)
   | hadd a b ha hb =>
     intro φ hφ
-    rw [map_add, LinearMap.add_apply, Submodule.coe_add]
+    rw [map_add (f := _), LinearMap.add_apply, Submodule.coe_add]
     exact (cuspForms K n).add_mem (ha hφ) (hb hφ)
 
 theorem automorphicForms_le_archSmooth : automorphicForms K n ≤ archSmooth K n :=
   fun _ hφ => hφ.isSmooth.1
 
-variable (K n) in
 
+variable (K n) in
 def uActionAF : UEnv K n →ₐ[ℝ] Module.End ℂ (automorphicForms K n) where
   toFun u := LinearMap.codRestrict (automorphicForms K n)
     ((archSmooth K n).subtype ∘ₗ AutomorphicForm.uAction u ∘ₗ
@@ -311,19 +315,14 @@ def uActionAF : UEnv K n →ₐ[ℝ] Module.End ℂ (automorphicForms K n) where
     rw [map_zero]; rfl)
   map_add' u v := LinearMap.ext fun φ => Subtype.ext (by
     show ((AutomorphicForm.uAction (u + v) _ : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) = _
-    rw [map_add]; rfl)
+    rw [map_add (f := _)]; rfl)
   commutes' r := LinearMap.ext fun φ => Subtype.ext (by
     show ((AutomorphicForm.uAction (algebraMap ℝ (UEnv K n) r) _ : archSmooth K n) :
       AdelicGLn.AdelicGL K n → ℂ) = _
     rw [AlgHom.commutes]; rfl)
 
-@[simp] theorem coe_uActionAF (u : UEnv K n) (φ : automorphicForms K n) :
-    ((uActionAF K n u φ : automorphicForms K n) : AdelicGLn.AdelicGL K n → ℂ) =
-      ((AutomorphicForm.uAction u ⟨φ, φ.2.isSmooth.1⟩ : archSmooth K n) :
-        AdelicGLn.AdelicGL K n → ℂ) := rfl
 
 variable (K n) in
-
 def uActionCusp : UEnv K n →ₐ[ℝ] Module.End ℂ (cuspForms K n) where
   toFun u := LinearMap.codRestrict (cuspForms K n)
     ((archSmooth K n).subtype ∘ₗ AutomorphicForm.uAction u ∘ₗ
@@ -342,7 +341,7 @@ def uActionCusp : UEnv K n →ₐ[ℝ] Module.End ℂ (cuspForms K n) where
     rw [map_zero]; rfl)
   map_add' u v := LinearMap.ext fun φ => Subtype.ext (by
     show ((AutomorphicForm.uAction (u + v) _ : archSmooth K n) : AdelicGLn.AdelicGL K n → ℂ) = _
-    rw [map_add]; rfl)
+    rw [map_add (f := _)]; rfl)
   commutes' r := LinearMap.ext fun φ => Subtype.ext (by
     show ((AutomorphicForm.uAction (algebraMap ℝ (UEnv K n) r) _ : archSmooth K n) :
       AdelicGLn.AdelicGL K n → ℂ) = _
@@ -353,13 +352,6 @@ def uActionCusp : UEnv K n →ₐ[ℝ] Module.End ℂ (cuspForms K n) where
       ((AutomorphicForm.uAction u ⟨φ, φ.2.1.isSmooth.1⟩ : archSmooth K n) :
         AdelicGLn.AdelicGL K n → ℂ) := rfl
 
-theorem uActionAF_finRep (u : UEnv K n) (h : AdelicGLn.FiniteAdelicGL K n)
-    (φ : automorphicForms K n) :
-    uActionAF K n u (finRep K n h φ) = finRep K n h (uActionAF K n u φ) := by
-  apply Subtype.ext
-  exact congrArg (fun ψ : archSmooth K n => (ψ : AdelicGLn.AdelicGL K n → ℂ))
-    (uAction_rtFin u h ⟨φ, φ.2.isSmooth.1⟩)
-
 theorem uActionCusp_finRepCusp (u : UEnv K n) (h : AdelicGLn.FiniteAdelicGL K n)
     (φ : cuspForms K n) :
     uActionCusp K n u (finRepCusp K n h φ) = finRepCusp K n h (uActionCusp K n u φ) := by
@@ -369,45 +361,38 @@ theorem uActionCusp_finRepCusp (u : UEnv K n) (h : AdelicGLn.FiniteAdelicGL K n)
 
 section GK
 
-variable (K n) in
 
+variable (K n) in
 def lieActionAF : (isExpLieAlgebra K n).lieSubalgebra →ₗ⁅ℝ⁆ Module.End ℂ (automorphicForms K n) where
   toFun X := uActionAF K n (UniversalEnvelopingAlgebra.ι ℝ X)
-  map_add' X Y := by rw [map_add, map_add]
+  map_add' X Y := by rw [map_add (f := _), map_add (f := _)]
   map_smul' r X := by rw [map_smul, map_smul]; rfl
   map_lie' {X Y} := by
     rw [LieHom.map_lie, Ring.lie_def, Ring.lie_def, map_sub, map_mul, map_mul]
 
-variable (K n) in
 
+variable (K n) in
 def lieActionCusp : (isExpLieAlgebra K n).lieSubalgebra →ₗ⁅ℝ⁆ Module.End ℂ (cuspForms K n) where
   toFun X := uActionCusp K n (UniversalEnvelopingAlgebra.ι ℝ X)
-  map_add' X Y := by rw [map_add, map_add]
+  map_add' X Y := by rw [map_add (f := _), map_add (f := _)]
   map_smul' r X := by rw [map_smul, map_smul]; rfl
   map_lie' {X Y} := by
     rw [LieHom.map_lie, Ring.lie_def, Ring.lie_def, map_sub, map_mul, map_mul]
 
-variable (K n) in
 
+variable (K n) in
 def gkModuleAF : (isExpLieAlgebra K n).GKModule (archCompact K n) (automorphicForms K n) :=
   IsExpLieAlgebra.GKModule.comap (isExpLieAlgebra K n) (gkModule K n) (Submodule.inclusion automorphicForms_le_smoothKZ)
     (Submodule.inclusion_injective _) (lieActionAF K n) (archCompactRep K n)
     (fun _ _ => Subtype.ext rfl) (fun _ _ => Subtype.ext rfl)
 
-variable (K n) in
 
+variable (K n) in
 def gkModuleCusp : (isExpLieAlgebra K n).GKModule (archCompact K n) (cuspForms K n) :=
   IsExpLieAlgebra.GKModule.comap (isExpLieAlgebra K n) (gkModule K n)
     (Submodule.inclusion (cuspForms_le_automorphicForms.trans automorphicForms_le_smoothKZ))
     (Submodule.inclusion_injective _) (lieActionCusp K n) (archCompactRepCusp K n)
     (fun _ _ => Subtype.ext rfl) (fun _ _ => Subtype.ext rfl)
-
-@[simp] theorem gkModuleAF_ρ_apply (X : (isExpLieAlgebra K n).lieSubalgebra)
-    (φ : automorphicForms K n) :
-    (gkModuleAF K n).ρ X φ = uActionAF K n (UniversalEnvelopingAlgebra.ι ℝ X) φ := rfl
-
-@[simp] theorem gkModuleAF_σ_apply (k : archCompact K n) (φ : automorphicForms K n) :
-    (gkModuleAF K n).σ k φ = archCompactRep K n k φ := rfl
 
 @[simp] theorem gkModuleCusp_ρ_apply (X : (isExpLieAlgebra K n).lieSubalgebra)
     (φ : cuspForms K n) :
@@ -415,16 +400,6 @@ def gkModuleCusp : (isExpLieAlgebra K n).GKModule (archCompact K n) (cuspForms K
 
 @[simp] theorem gkModuleCusp_σ_apply (k : archCompact K n) (φ : cuspForms K n) :
     (gkModuleCusp K n).σ k φ = archCompactRepCusp K n k φ := rfl
-
-theorem gkModuleAF_ρ_finRep (X : (isExpLieAlgebra K n).lieSubalgebra)
-    (h : AdelicGLn.FiniteAdelicGL K n) (φ : automorphicForms K n) :
-    (gkModuleAF K n).ρ X (finRep K n h φ) = finRep K n h ((gkModuleAF K n).ρ X φ) :=
-  uActionAF_finRep _ h φ
-
-theorem gkModuleAF_σ_finRep (k : archCompact K n) (h : AdelicGLn.FiniteAdelicGL K n)
-    (φ : automorphicForms K n) :
-    (gkModuleAF K n).σ k (finRep K n h φ) = finRep K n h ((gkModuleAF K n).σ k φ) :=
-  (finRep_archCompactRep_comm h k φ).symm
 
 theorem gkModuleCusp_ρ_finRepCusp (X : (isExpLieAlgebra K n).lieSubalgebra)
     (h : AdelicGLn.FiniteAdelicGL K n) (φ : cuspForms K n) :

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)} {
 theorem isSatVecGL_twist {ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V} {x : V} {B : Multiset ℂˣ}
     (hx : IsSatVecGL w ρ x B) (s : ℂ) {z : ℂˣ} (hz : (z : ℂ) = (qV E w : ℂ) ^ (-s)) :
     IsSatVecGL w (twist ρ (detChar (Fin n) (absPow (w.adicCompletion E) s))) x (B.map (· * z)) := by
-  have hfix : x ∈ fixed (twist ρ (detChar (Fin n) (absPow (w.adicCompletion E) s))) (KGL w n) :=
+  have hfix : x ∈ fixed (twist ρ (detChar (Fin n) (absPow (w.adicCompletion E) s))) (KGL w (n := n)) :=
     GlobalTheory.LGrp.mem_fixed.2 fun g hg => by
       rw [twist_apply, detChar_apply, absPow_det_of_mem s hg, Units.val_one, one_smul]
       exact GlobalTheory.LGrp.mem_fixed.1 hx.2.1 g hg
@@ -119,10 +123,10 @@ variable {c : ℕ} {N : Fin c → ℕ} (h : ∑ i, N i = n)
 theorem isSatVecGL_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [∀ a, Module ℂ (X a)]
     {π : ∀ a, Representation ℂ (GL (Fin (N a)) (w.adicCompletion E)) (X a)} (hs : ∀ a, IsSmooth (π a))
     {S : Fin c → Multiset ℂˣ} {x : ∀ a, X a} (hx : ∀ a, IsSatVecGL w (π a) (x a) (S a))
-    {f : IndSp (stdBlocks N h) (piTensor π)} (hf : f ∈ fixed (multiProd (stdBlocks N h) π) (KGL w n)) (h0 : f ≠ 0)
+    {f : IndSp (stdBlocks N h) (piTensor π)} (hf : f ∈ fixed (multiProd (stdBlocks N h) π) (KGL w (n := n))) (h0 : f ≠ 0)
     {r : ℂ} (hr : f.1.1 1 = r • PiTensorProduct.tprod ℂ x) :
     IsSatVecGL w (multiProd (stdBlocks N h) π) f (∑ a, S a) := by
-  have hKO : ∀ m, KGL w m = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
+  have hKO : ∀ m, KGL w (n := m) = KO (w.adicCompletion E) (Fin m) := fun m => (SphCompletion.KO_completion w m).symm
   have hf' := hf
   rw [hKO] at hf'
   choose Z iZ mZ R β l y hR hβ hyS h1 hl using fun a => exists_model (w := w) (hx a).2.2.1
@@ -137,7 +141,7 @@ theorem isSatVecGL_multiProd {X : Fin c → Type} [∀ a, AddCommGroup (X a)] [�
   refine ⟨h0, hf, hY.2.2.1, fun ϖ hϖ j hj => ?_⟩
   have hϖ0 : ϖ ≠ 0 := fun e => by simp [IsUnifV, e] at hϖ
   have hT := Tj_mem_hecke (n := n) hϖ j
-  have hK : IsCommensurated (KGL w n) := Final.GLintComm E w n
+  have hK : IsCommensurated (KGL w (n := n)) := Final.GLintComm E w n
   have e1 := (map_heckeVec (ρ := multiProd (stdBlocks N h) R) hK hT Y hYe F).trans (hY.2.2.2 ϖ hϖ j hj)
   rw [hKO] at hT hK e1 ⊢
   have hp : ∀ q : GL (Fin n) (w.adicCompletion E) ⧸ KO (w.adicCompletion E) (Fin n),

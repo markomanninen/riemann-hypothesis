@@ -1,6 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPrimOfGood
-import Formalism.SharpRestriction.LevelLetterCocycles.SplitShapeLRec
-import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfPolarShape
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPrimOfGood
+public import Formalism.SharpRestriction.LevelLetterCocycles.SplitShapeLRec
+public import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfLiteratureExactness
+public import Formalism.SharpRestriction.LevelLetterCocycles.PolarToPoleOfCtx
+
+@[expose] public section
 
 noncomputable section
 

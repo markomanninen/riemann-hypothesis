@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTyp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem sigR_mem {x : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) : sigR (Fv F 
     rw [sigR_inclR]
     exact VolUTr.TrW.inclR_mem' (E := E) v ⟨σ a, (a.2).map σ.toRingHom.toIntAlgHom⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact Submodule.add_mem _ h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact Submodule.add_mem _ h1 h2
   | smul c x _ h =>
     have e : c • x = (c : Fv F v) • x := rfl
     rw [e, sigR_smul]
@@ -48,7 +52,7 @@ theorem sigR_sigR (hinv : ∀ y, σ (σ y) = y) (x : Fv F v ⊗[F] E) : sigR (Fv
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, Algebra.TensorProduct.map_tmul, hinv]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 section Phi
 
@@ -86,7 +90,7 @@ def phiE : (Fin (r + 1) × Fin (r + 1) → Fv F v ⊗[F] E) ≃ₜ+ (Fin (r + 1)
   map_add' Y Z := by
     funext p
     by_cases h : p.1 < p.2
-    · simp only [phiF, h, if_true, Pi.add_apply, map_add]
+    · simp only [phiF, h, if_true, Pi.add_apply, map_add (f := _)]
       abel
     · simp [phiF, h]
   continuous_toFun := by
@@ -161,7 +165,7 @@ theorem volTW_eq (hinv : ∀ y, σ (σ y) = y) (g r : ℕ) (c : Matrix (Fin (r +
       have := (h i i).2.2 rfl
       rwa [phiF_low σ v r Y (lt_irrefl _)] at this
     · have h1 := sigR_mem σ v ((h j i).2.1 hij)
-      rw [phiF_up σ v r Y hij, map_mul, sigR_sc, map_sub, map_add, sigR_sigR σ v hinv, ← hc.1 j i] at h1
+      rw [phiF_up σ v r Y hij, map_mul, sigR_sc, map_sub, map_add (f := _), sigR_sigR σ v hinv, ← hc.1 j i] at h1
       rw [show Y (i, j) + sigR (Fv F v) σ (Y (j, i)) - c i j =
         sigR (Fv F v) σ (Y (j, i)) + Y (i, j) - c i j by ring]
       exact h1

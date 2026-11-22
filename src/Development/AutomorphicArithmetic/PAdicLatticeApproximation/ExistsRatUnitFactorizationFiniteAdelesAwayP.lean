@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+
+@[expose] public section
 
 open NumberField
 open GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo UpperTheory.Gal.W2.Wit
@@ -96,7 +100,7 @@ private theorem valuation_generator_eq_exp_neg_one (v : HeightOneSpectrum ℤ) (
   have e : (l : ℚ) = algebraMap ℤ ℚ (l : ℤ) := by simp
   have hl0 : (l : ℤ) ≠ 0 := by omega
   rw [e, valuation_of_algebraMap, v.intValuation_eq_exp_neg_multiplicity hl0, ← hspan,
-    multiplicity_self]
+    multiplicity_self (Ideal.finiteMultiplicity v.isPrime.ne_top v.ne_bot)]
   rfl
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum in

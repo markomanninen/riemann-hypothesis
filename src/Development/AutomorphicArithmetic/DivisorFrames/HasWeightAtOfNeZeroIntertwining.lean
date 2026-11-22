@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFiniteStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
 private theorem cEmb_of_mem_embU {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {τ σ : E →+* ℂ}
@@ -22,8 +27,16 @@ theorem UpperTheory.hasWeightAt_of_ne_zero_intertwining :
   obtain ⟨e, he⟩ : ∃ e, f (GlobalTheory.CoefIrred.tenMul lam e) ≠ 0 := by
     by_contra hc
     push Not at hc
-    exact hf0 ((GlobalTheory.T.dualWeylModule_tensor_coefficient_universal ι n lam (UA E n → ℂ) 0).unique (y₁ := f) (y₂ := 0)
-      (fun u => hc u) (fun u => rfl))
+    apply hf0
+    apply (Formalism.L2.DIV.bVV ℂ lam).ext
+    intro i
+    have hB : Formalism.L2.DIV.bVV ℂ lam i = GlobalTheory.CoefIrred.tenMul lam
+        (fun τ => GlobalTheory.CoefIrred.ssBasis ℂ (lam τ) (i τ)) := by
+      apply Subtype.ext
+      rw [Formalism.L2.DIV.bVV_coe, GlobalTheory.CoefIrred.tenMul_coe, Formalism.L2.DIV.bVVfun]
+      simp only [GlobalTheory.CoefIrred.ssBasis_coe]
+    rw [hB]
+    exact hc _
   refine ⟨isIrreducible_sqRep n (lam τ), f ∘ₗ (GlobalTheory.CoefIrred.tenMul lam).toLinearMap e τ, fun h0 => he ?_,
     fun a => hf _, fun x a => ?_⟩
   · have := LinearMap.congr_fun h0 (e τ)

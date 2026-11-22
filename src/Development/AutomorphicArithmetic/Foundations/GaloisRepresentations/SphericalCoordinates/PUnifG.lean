@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -59,7 +64,7 @@ private theorem marked_symm {O : Type} [Ring O] {bar : O → O} {Λ : Type} {N :
   · obtain ⟨e, he⟩ := h.2 a
     refine ⟨-(w.symm e), ?_⟩
     have h2 := congrArg w.symm he
-    rw [LinearEquiv.symm_apply_apply, map_add, map_nsmul] at h2
+    rw [LinearEquiv.symm_apply_apply, map_add (f := _), map_nsmul] at h2
     rw [h2, smul_neg]
     abel
 

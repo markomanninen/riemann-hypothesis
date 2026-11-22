@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Pdvr
 
@@ -26,8 +30,12 @@ theorem exists_root (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRin
   have huniq : ∀ M : Ideal (AdjoinRoot P), M.IsMaximal →
       M = Ideal.map (AdjoinRoot.of P) (maximalIdeal V) := by
     intro M hM
-    have h1 : (M.comap (algebraMap V (AdjoinRoot P))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    have h1 : (M.comap (algebraMap V (AdjoinRoot P))).IsMaximal := by
+      letI := hM
+      exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal
+        (algebraMap V (AdjoinRoot P)) (by
+          intro x
+          exact Algebra.IsIntegral.isIntegral x) M
     have h2 := eq_maximalIdeal h1
     refine (hmax.eq_of_le hM.ne_top ?_).symm
     rw [Ideal.map_le_iff_le_comap, ← h2]
@@ -43,7 +51,7 @@ theorem exists_root (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRin
     exact fun h => hπ.ne_zero (hinj (h.trans (map_zero _).symm))
   have : IsNoetherianRing (AdjoinRoot P) := IsNoetherianRing.of_finite V _
   have hdvr : IsDiscreteValuationRing (AdjoinRoot P) :=
-    ((IsDiscreteValuationRing.TFAE (AdjoinRoot P) hnf).out 0 4).mpr
+    ((IsDiscreteValuationRing.TFAE (AdjoinRoot P) hnf).out 1 5).mpr
       (show (maximalIdeal (AdjoinRoot P)).IsPrincipal from ⟨_, hme'⟩)
   have hloc : IsLocalHom (AdjoinRoot.of P) := by
     refine ⟨fun a ha => ?_⟩
@@ -147,7 +155,7 @@ theorem exists_complete (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuatio
       exact (Units.mul_right_eq_zero u).mp h2⟩
   have : IsDomain R := NoZeroDivisors.to_isDomain R
   have hinj : Function.Injective (algebraMap V R) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     by_contra h
     exact one_ne_zero (hreg a h 1 (by rw [ha, zero_mul]))
@@ -161,39 +169,5 @@ theorem exists_complete (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuatio
       ⟨ϖ, hϖ, fun {x} hx => hfac x hx⟩
   exact ⟨R, inferInstance, inferInstance, hdvr, algebraMap V R, inferInstance,
     (inferInstance : IsAdicComplete (maximalIdeal R) R), hinj⟩
-
-theorem dvr_ext : ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] (l : Type)
-    [Field l] [Algebra (IsLocalRing.ResidueField V) l]
-    [FiniteDimensional (IsLocalRing.ResidueField V) l],
-    ∃ (R : Type) (_ : CommRing R) (_ : IsDomain R) (_ : IsDiscreteValuationRing R)
-      (f : V →+* R) (_ : IsLocalHom f) (s : l →+* IsLocalRing.ResidueField R),
-      IsAdicComplete (IsLocalRing.maximalIdeal R) R ∧ Function.Injective f ∧
-        s.comp (algebraMap _ l) = IsLocalRing.ResidueField.map f := by
-  intro V _ _ _ l _ _ _
-  let b := Module.finBasis (ResidueField V) l
-  let q : (ResidueField V)[X] := ∏ i, minpoly (ResidueField V) (b i)
-  have hint : ∀ x : l, IsIntegral (ResidueField V) x := fun x => Algebra.IsIntegral.isIntegral x
-  have hq0 : q ≠ 0 := Finset.prod_ne_zero_iff.mpr fun i _ => minpoly.ne_zero (hint _)
-  obtain ⟨S, _, _, _, f, _, hf, hs⟩ := exists_splits _ V q rfl
-  obtain ⟨R, _, _, _, g, _, hR, hg⟩ := exists_complete S
-  have hs' : (q.map (ResidueField.map (g.comp f))).Splits := by
-    rw [ResidueField.map_comp, ← Polynomial.map_map]
-    exact hs.map _
-  let : Algebra (ResidueField V) (ResidueField R) := (ResidueField.map (g.comp f)).toAlgebra
-  have htop : IntermediateField.adjoin (ResidueField V) (Set.range b) = ⊤ := by
-    rw [IntermediateField.adjoin_eq_top_iff, eq_top_iff]
-    intro x _
-    have : x ∈ Submodule.span (ResidueField V) (Set.range b) := by
-      rw [b.span_eq]
-      trivial
-    exact Algebra.span_le_adjoin _ _ this
-  obtain ⟨s⟩ : Nonempty (l →ₐ[ResidueField V] ResidueField R) := by
-    refine IntermediateField.nonempty_algHom_of_adjoin_splits ?_ htop
-    rintro _ ⟨i, rfl⟩
-    refine ⟨hint _, ?_⟩
-    exact hs'.of_dvd (Polynomial.map_ne_zero hq0)
-      (Polynomial.map_dvd _ (Finset.dvd_prod_of_mem _ (Finset.mem_univ i)))
-  exact ⟨R, inferInstance, inferInstance, inferInstance, g.comp f, inferInstance, s.toRingHom,
-    hR, hg.comp hf, s.comp_algebraMap⟩
 
 end PositivityTheory.HtPt.Pdvr

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleSymmetryHypothesisBaseChange
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.RigGen
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleSymmetryHypothesisBaseChange
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -47,8 +51,8 @@ theorem lbIso_cube (h : IsGrpPullback A G j a) {L : LB G.left} {LA : LB A.left} 
     (hb : LBIso LA (L.pull a)) {T : Over S} {T' : Over U} {n : ℕ} (x : Fin n → (T ⟶ G)) (x' : Fin n → (T' ⟶ A))
     (V : Over.mk (T'.hom ≫ j) ⟶ T) (hx : ∀ i, pushPt h.1.w (x' i) = V ≫ x i) :
     LBIso (cubeLB A x' LA) ((cubeLB G x L).pull V.left) :=
-  LBIso.trans (DVR.linComb_isLB _ hLA _ _) (DVR.linComb_isLB _ (pull_isLB hL a) _ _)
-    (pull_isLB (DVR.linComb_isLB _ hL _ _) _) (GlobalTheory.PowPrimitive.lbIso_linComb hb _ _)
+  LBIso.trans (DVR.linComb_isLB _ hLA _ _) (DVR.linComb_isLB _ (LB.isLB_pull hL a) _ _)
+    (LB.isLB_pull (DVR.linComb_isLB _ hL _ _) _) (GlobalTheory.PowPrimitive.lbIso_linComb hb _ _)
     (LBIso.chartPull (chartPullLinComb L a _ _ _ V.left fun I => psum_push h _ _ V hx I.down)
       (Geo.Tor.chartPullPull _ V.left V.left rfl) (lbIso_refl (DVR.linComb_isLB _ hL _ _)))
 
@@ -101,10 +105,10 @@ theorem exists_forall_hypS : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsNoeth
     change IsProper (pullback.fst G.hom G.hom ≫ G.hom)
     infer_instance
   obtain ⟨a₁, ha₁, H₁⟩ := GenSpread.exists_lbIso G.hom h.1 hL (cl _)
-    (hb.symm.trans (pull_isLB hL _) hL₀ (pull_isLB (cl _) _) (hp.trans hL₀ (cl₀ _) (pull_isLB (cl _) _) c₁))
+    (hb.symm.trans (LB.isLB_pull hL _) hL₀ (LB.isLB_pull (cl _) _) (hp.trans hL₀ (cl₀ _) (LB.isLB_pull (cl _) _) c₁))
   obtain ⟨a₂, ha₂, H₂⟩ := GenSpread.exists_lbIso (G ⊗ G).hom (isPullback_square h) (cl _) (cl _)
-    (c₂.symm.trans (pull_isLB (cl _) _) (cl₀ _) (pull_isLB (cl _) _)
-      (ha.trans (cl₀ _) (cl₀ _) (pull_isLB (cl _) _) c₃))
+    (c₂.symm.trans (LB.isLB_pull (cl _) _) (cl₀ _) (LB.isLB_pull (cl _) _)
+      (ha.trans (cl₀ _) (cl₀ _) (LB.isLB_pull (cl _) _) c₃))
   refine ⟨a₁ * a₂, mul_ne_zero ha₁ ha₂, fun R' _ g hg G' _ _ π L' h' hL' hb' => ?_⟩
   rw [map_mul, IsUnit.mul_iff] at hg
   obtain ⟨w', hw', pa⟩ := SymBaseChange.exists_endo h' w
@@ -119,10 +123,10 @@ theorem exists_forall_hypS : ∀ (R K : Type) [CommRing R] [IsDomain R] [IsNoeth
     have d := pd (𝟙 G')
     rw [Category.id_comp] at c d
     rw [b, c, d, ← MonObj.comp_mul, hsum, Category.comp_id]
-  · exact hb'.trans hL' (pull_isLB hL _) (cl' _)
-      ((H₁ R' g hg.1 _ π G'.hom h'.1.w).trans (pull_isLB hL _) (pull_isLB (cl _) _) (cl' _) d₁.symm)
-  · exact d₂.trans (cl' _) (pull_isLB (cl _) _) (cl' _)
-      ((H₂ R' g hg.2 _ _ (G' ⊗ G').hom (isPullback_square h').w).trans (pull_isLB (cl _) _) (pull_isLB (cl _) _)
+  · exact hb'.trans hL' (LB.isLB_pull hL _) (cl' _)
+      ((H₁ R' g hg.1 _ π G'.hom h'.1.w).trans (LB.isLB_pull hL _) (LB.isLB_pull (cl _) _) (cl' _) d₁.symm)
+  · exact d₂.trans (cl' _) (LB.isLB_pull (cl _) _) (cl' _)
+      ((H₂ R' g hg.2 _ _ (G' ⊗ G').hom (isPullback_square h').w).trans (LB.isLB_pull (cl _) _) (LB.isLB_pull (cl _) _)
         (cl' _) d₃.symm)
 
 end GlobalTheory.SymSpread

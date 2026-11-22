@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HaarOnSkOfB
-import Formalism.FormalDegreeBessel.FinalBF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HaarOnSkOfB
+public import Formalism.FormalDegreeBessel.FinalBF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,10 +56,10 @@ theorem bigCell_mulVec_wb {k r : ℕ} (c : Fin r → ℂ) (μ : Matrix (Fin (k +
   by_cases hj : r ≤ j.val ∧ j.val ≤ r + k
   · have hj1 : ¬ j.val < r := by omega
     unfold Formalism.QuantumDeterminants.bigCell Formalism.FourierDecayAlt.B2.embWb
-    rw [dif_neg hj1, dif_pos hj.2]
+    rw [dite_eq_right hj1, dite_eq_left hj.2]
     by_cases hi : r ≤ i.val ∧ i.val ≤ r + k
-    · rw [dif_pos hi, dif_pos ⟨hi, hj⟩]
-    · rw [dif_neg hi, dif_neg (fun h => hi h.1),
+    · rw [dite_eq_left hi, dite_eq_left ⟨hi, hj⟩]
+    · rw [dite_eq_right hi, dite_eq_right (fun h => hi h.1),
         if_neg (fun (h : i = j ∧ ¬(r ≤ i.val ∧ i.val ≤ r + k)) => hi (by rw [h.1]; exact hj))]
   · rw [hw j (by omega)]
     simp
@@ -92,13 +96,13 @@ theorem zBig : ZBig := by
   · subst hab
     rw [Matrix.diagonal_apply_eq, Matrix.diagonal_apply_eq]
     by_cases ha : a.val < r
-    · rw [dif_pos ha]
+    · rw [dite_eq_left ha]
       have ha' : a = Fin.castSucc ⟨a.val, ha⟩ := Fin.ext rfl
       conv_rhs => rw [ha']
       unfold coordSc
       rw [Fin.snoc_castSucc]
       ring
-    · rw [dif_neg ha, hlast]
+    · rw [dite_eq_right ha, hlast]
       have ha' : a = Fin.last r := Fin.ext (by have := a.2; simp only [Fin.val_last]; omega)
       subst ha'
       unfold coordSc

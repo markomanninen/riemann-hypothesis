@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rd3.exists_infiniteAdelicChar_ne_one :
     ∀ {F : Type} [inst : Field F] [inst_1 : NumberField F]

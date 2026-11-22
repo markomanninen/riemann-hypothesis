@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+
+@[expose] public section
+
 open CategoryTheory Limits
 open scoped TensorProduct
 
@@ -15,13 +20,13 @@ def zmodTensorAct (U B : Type) [CommRing U] [CommRing B] [Algebra U B] (q : ℕ)
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul b x => simp
-    | add z w hz hw => simp_all [map_add]
+    | add z w hz hw => simp_all [map_add (f := _)]
   map_mul' g h := by
     ext z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul b x => simp
-    | add z w hz hw => simp_all [map_add]
+    | add z w hz hw => simp_all [map_add (f := _)]
 
 @[simp] theorem zmodTensorAct_tmul (U B : Type) [CommRing U] [CommRing B] [Algebra U B] (q : ℕ)
     (D : Type) [CommRing D] [Algebra U D] (act : Multiplicative (ZMod q) →* (D ≃ₐ[U] D))
@@ -56,8 +61,8 @@ theorem isZModTorsor_tensorBase (U B : Type) [CommRing U] [CommRing B] [Algebra 
         funext g
         simp [e1, L, e2, hΦ, hΦB, Algebra.TensorProduct.productMap_apply_tmul]
       | add w w' hw hw' =>
-        simp only [TensorProduct.tmul_add, map_add, hw, hw']
-    | add z w hz hw => simp only [map_add, hz, hw]
+        simp only [TensorProduct.tmul_add, map_add (f := _), hw, hw']
+    | add z w hz hw => simp only [map_add (f := _), hz, hw]
   have : (ΦB : _ → _) = e2 ∘ L ∘ e1.symm := by
     funext w
     simpa using key (e1.symm w)

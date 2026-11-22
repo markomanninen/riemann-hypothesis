@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix MeasureTheory ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolRead
 open scoped TensorProduct InnerProductSpace Classical
@@ -52,13 +56,14 @@ theorem diag_of_upper {r : ℕ} (s : Fin r → ℂ) (hs : ∀ a, s a * s a = 1) 
     rw [norm_mul, Complex.norm_conj, norm_one] at h4
     nlinarith [norm_nonneg (b a a)]
   refine ⟨fun a => Complex.arg (b a a), ?_⟩
-  rw [hd]
-  congr 1
-  funext a
-  simp only [diagonal_apply_eq]
-  have := Complex.norm_mul_exp_arg_mul_I (b a a)
-  rw [hn a] at this
-  simpa using this.symm
+  calc
+    b = diagonal (fun a => b a a) := hd
+    _ = diagonal (fun a => Complex.exp ((Complex.arg (b a a) : ℂ) * Complex.I)) := by
+      congr 1
+      funext a
+      have harg := Complex.norm_mul_exp_arg_mul_I (b a a)
+      rw [hn a] at harg
+      simpa using harg.symm
 
 theorem exp_keeps {r : ℕ} {H Z : Matrix (Fin r) (Fin r) ℂ} (hH : H * H = 1) (hZ : Zᴴ * H + H * Z = 0) :
     (NormedSpace.exp Z)ᴴ * H * NormedSpace.exp Z = H := by

@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.TaylorMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.TaylorMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ def jetOf (m : ℕ) (θ : (Fin g → ℂ) → ℂ) : Jet ℂ (Fin 1 × Fin g) m 
 
 theorem psJet_add' {ι : Type} [Fintype ι] [DecidableEq ι] (m : ℕ) (f h : MvPowerSeries ι ℂ) :
     psJet m (f + h) = psJet m f + psJet m h := by
-  simp only [psJet, psTrunc, map_add, Finset.sum_add_distrib]
+  simp only [psJet, psTrunc, map_add (f := _), Finset.sum_add_distrib]
 
 theorem jetOf_mul (m : ℕ) {f h : (Fin g → ℂ) → ℂ} (hf : ContDiffAt ℂ ω f 0) (hh : ContDiffAt ℂ ω h 0) :
     jetOf m (f * h) = jetOf m f * jetOf m h := by

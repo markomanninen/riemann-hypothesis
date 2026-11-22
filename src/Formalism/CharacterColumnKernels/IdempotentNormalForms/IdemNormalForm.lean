@@ -1,4 +1,8 @@
-import Formalism.CharacterColumnKernels.StatOntoLattice
+module
+
+public import Formalism.CharacterColumnKernels.StatOntoLattice
+
+@[expose] public section
 
 open Module
 
@@ -20,21 +24,6 @@ theorem burnside : StatBurnside := by
   refine ⟨a, (Module.finBasis k V).ext fun i => ?_⟩
   have := ha (Module.finBasis k V i) (Finset.mem_image_of_mem _ (Finset.mem_univ i))
   simpa [F] using this.symm
-
-theorem ontoLattice : StatOntoLattice := by
-  intro O A L _ _ _ _ _ _ _ _ φ hφ
-  have hle : (⊤ : Submodule O (Module.End O L)) ≤
-      LinearMap.range φ.toLinearMap ⊔ IsLocalRing.maximalIdeal O • ⊤ := by
-    intro f _
-    obtain ⟨a, ha⟩ := hφ f
-    have hf : f = φ a + (f - φ a) := by abel
-    rw [hf]
-    exact Submodule.add_mem_sup (LinearMap.mem_range.mpr ⟨a, rfl⟩) ha
-  have htop := Submodule.le_of_le_smul_of_le_jacobson_bot Module.Finite.fg_top
-    (IsLocalRing.jacobson_eq_maximalIdeal ⊥ bot_ne_top).ge hle
-  intro f
-  obtain ⟨a, ha⟩ := LinearMap.mem_range.mp (htop Submodule.mem_top)
-  exact ⟨a, ha⟩
 
 section RankMod
 
@@ -125,10 +114,5 @@ private theorem rank_map_conj {F : Type*} [Field F] (f : O →+* F) (P Q : Matri
     exact one_ne_zero
 
 end RankMod
-
-theorem rankMod : StatRankMod := by
-  intro O _ _ _ r _ _ e he
-  obtain ⟨P, Q, d, hd, hPQ, hQP, rfl⟩ := idem_normal_form e he
-  rw [rank_map_conj _ P Q d hd hPQ hQP, rank_map_conj _ P Q d hd hPQ hQP]
 
 end Formalism.NG

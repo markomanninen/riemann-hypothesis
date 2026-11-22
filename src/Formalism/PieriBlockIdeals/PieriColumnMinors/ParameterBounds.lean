@@ -1,8 +1,12 @@
-import Formalism.PieriBlockIdeals.MertensReciprocalElementary
-import Formalism.PieriBlockIdeals.PieriColumnMinors.SharperSizeNeedsMleKFalse
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LocalComponentGL
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LogarithmEquivalence
-import Formalism.RankGapBounds.RankGapProofs.CardLargePrimeFactorsLeOneHolds
+module
+
+public import Formalism.PieriBlockIdeals.MertensReciprocalElementary
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.SharperSizeNeedsMleKFalse
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LocalComponentGL
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LogarithmEquivalence
+public import Formalism.RankGapBounds.RankGapProofs.CardLargePrimeFactorsLeOneHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -1130,7 +1134,7 @@ theorem sum_div_mul_log_le_log_factorial' (n : ℕ) :
     rw [Real.log_prod (fun p hp => pow_ne_zero _
       (Nat.cast_ne_zero.2 (Finset.mem_filter.1 hp).2.ne_zero))] at h
     simp only [Real.log_pow] at h
-    exact h.symm
+    simpa only [Nat.padicValNat_def] using h.symm
   rw [hlog]
   calc ∑ p ∈ Formalism.RankGapBounds.ChebyshevFactorialBounds.primesUpTo n, ((n / p : ℕ) : ℝ) * Real.log (p : ℝ)
       ≤ ∑ p ∈ Formalism.RankGapBounds.ChebyshevFactorialBounds.primesUpTo n, (padicValNat p n.factorial : ℝ) * Real.log (p : ℝ) := by
@@ -1139,6 +1143,7 @@ theorem sum_div_mul_log_le_log_factorial' (n : ℕ) :
         have hp' : p.Prime := (Finset.mem_filter.1 hp).2
         have := Fact.mk hp'
         have hv : n / p ≤ padicValNat p n.factorial := by
+          rw [Nat.padicValNat_def]
           rw [padicValNat_factorial (b := max 2 (Nat.log p n + 1))
             (lt_of_lt_of_le (Nat.lt_succ_self _) (le_max_right _ _))]
           calc n / p = n / p ^ 1 := by rw [pow_one]

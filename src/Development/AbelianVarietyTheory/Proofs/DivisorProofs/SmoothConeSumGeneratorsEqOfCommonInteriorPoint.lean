@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothConeFaceOfInteriorCommonPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExtId
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothConeFaceOfInteriorCommonPoint
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.TChart GlobalTheory.UT GlobalTheory.Mum.Two
@@ -36,7 +41,8 @@ theorem cone_gen_mem_of_common {O : Type} [CommRing O] {bar : O → O} {φ : Inv
     obtain ⟨k', e, hk', he'⟩ := habs i hi
     have h0 : k' • G' i = ∑ m, e m • G m := Subtype.ext (by simp [G, G', he'])
     have h1 := congrArg (f l) h0
-    rw [map_nsmul, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_sum] at h1
     simp only [map_nsmul, hfG, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, nsmul_eq_mul,
       _root_.mul_one] at h1
     have hk'' : (0 : ℤ) < k' := by exact_mod_cast hk'
@@ -60,7 +66,8 @@ theorem cone_gen_mem_of_common {O : Type} [CommRing O] {bar : O → O} {φ : Inv
   have hzero : ∀ l, l ≠ j → f l (G' i) = 0 := by
     intro l hl
     have h1 := congrArg (f l) hdG
-    rw [map_nsmul, map_sum, hfG, if_neg hl, smul_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_sum, hfG, if_neg hl, smul_zero] at h1
     simp only [map_nsmul, nsmul_eq_mul] at h1
     have hnn : ∀ i' ∈ Finset.univ, 0 ≤ (d i' : ℤ) * f l (G' i') := fun i' _ => by
       rcases Nat.eq_zero_or_pos (d i') with h | h
@@ -73,7 +80,8 @@ theorem cone_gen_mem_of_common {O : Type} [CommRing O] {bar : O → O} {φ : Inv
   have hem : ∀ m, (e m : ℤ) = k' * f m (G' i) := by
     intro m
     have h1 := congrArg (f m) hE
-    rw [map_nsmul, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_sum] at h1
     simp only [map_nsmul, hfG, smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, nsmul_eq_mul,
       _root_.mul_one] at h1
     exact h1.symm

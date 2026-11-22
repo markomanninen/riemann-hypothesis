@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
@@ -26,15 +30,15 @@ end Gen
 section Pos
 variable (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (c ρ : ℕ)
 
-open Classical in
 
+open Classical in
 def evC : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) :=
   Finset.univ.filter fun e =>
     (∃ i, e.2 = Sum.inr i ∧ i.val < ρ ∧ ¬ Free (ρ + 1) e) ∨
     (∃ l, e.1 = Sum.inr l ∧ ρ ≤ l.val ∧ ∀ i, e.2 = Sum.inr i → i.val = ρ)
 
-open Classical in
 
+open Classical in
 def itB : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) :=
   Finset.univ.filter fun e => Free (ρ + 1) e ∧ ∀ i, e.2 = Sum.inr i → ρ ≤ i.val
 
@@ -43,13 +47,13 @@ def IsRead : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) → Prop
   | (.inl _, .inr i) => i.val = ρ
   | (.inr _, _) => False
 
-open Classical in
 
+open Classical in
 def evAll : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) :=
   Finset.univ.filter fun e => ¬ Free (ρ + 1) e ∧ ¬ IsRead n n' c ρ e
 
-open Classical in
 
+open Classical in
 def itFree : Finset ((n ⊕ Fin c) × (n' ⊕ Fin (c + 1))) :=
   Finset.univ.filter fun e => Free (ρ + 1) e
 

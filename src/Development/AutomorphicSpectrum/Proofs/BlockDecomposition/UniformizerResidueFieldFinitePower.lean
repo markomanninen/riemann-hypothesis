@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValuationLtOneOfEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalEmbeddingRangeEqField
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniformizerGaloisAction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormSubLeOfNear
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EvalMod
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ValuationLtOneOfEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalEmbeddingRangeEqField
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniformizerGaloisAction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormSubLeOfNear
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.HeckeGal GlobalTheory.Pst GlobalTheory.TripleGal GlobalTheory.CompanionTheory.LTHodge GlobalTheory.CompanionTheory.LTPer
@@ -24,11 +29,15 @@ theorem resfield_of_irreducible : ∀ {l : ℕ} [Fact l.Prime] (K : FinExt l) (�
     rw [IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] ↥K.1,
       IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] ↥K.1 b] at h1
     exact IsFractionRing.injective ℤ_[l] ℚ_[l] ((algebraMap ℚ_[l] ↥K.1).injective h1)
-  have hi : Algebra.IsIntegral ℤ_[l] ↥(OL K) := integralClosure.AlgebraIsIntegral
+  have hi : Algebra.IsIntegral ℤ_[l] ↥(OL K) := integralClosure.algebraIsIntegral
   have hf : FaithfulSMul ℤ_[l] ↥(OL K) := (faithfulSMul_iff_algebraMap_injective _ _).mpr hinj
   have hl : ¬ IsUnit ((l : ℕ) : ↥(OL K)) := by
     intro hu
     rw [← map_natCast (algebraMap ℤ_[l] ↥(OL K))] at hu
+    letI : Algebra.IsIntegral ℤ_[l] ↥(OL K) := hi
+    letI : FaithfulSMul ℤ_[l] ↥(OL K) := hf
+    letI : IsLocalHom (algebraMap ℤ_[l] ↥(OL K)) :=
+      Algebra.IsIntegral.isLocalHom ℤ_[l] ↥(OL K)
     exact PadicInt.irreducible_p.not_isUnit (isUnit_of_map_unit _ _ hu)
   have hdvd : π ∣ ((l : ℕ) : ↥(OL K)) := by
     have hm : ((l : ℕ) : ↥(OL K)) ∈ IsLocalRing.maximalIdeal ↥(OL K) := hl

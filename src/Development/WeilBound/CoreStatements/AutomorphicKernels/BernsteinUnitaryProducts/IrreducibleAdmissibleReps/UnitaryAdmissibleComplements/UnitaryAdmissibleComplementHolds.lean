@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.IrreducibleAdmissibleReps.Assembly
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasis
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.IrreducibleAdmissibleReps.Assembly
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem unitaryAdmissibleComplement_at (N : ℕ) (X : Type) [AddCommGroup X] [Mo
   let T : Subrepresentation π :=
     { toSubmodule :=
         { carrier := {w | ∀ z ∈ S.toSubmodule, B.flip z w = 0}
-          add_mem' := fun {a b} ha hb z hz => by rw [map_add, ha z hz, hb z hz, add_zero]
+          add_mem' := fun {a b} ha hb z hz => by rw [map_add (f := _), ha z hz, hb z hz, add_zero]
           zero_mem' := fun z _ => by rw [map_zero]
           smul_mem' := fun c w hw z hz => by rw [map_smul, hw z hz, smul_zero] }
       apply_mem_toSubmodule := fun g w hw =>

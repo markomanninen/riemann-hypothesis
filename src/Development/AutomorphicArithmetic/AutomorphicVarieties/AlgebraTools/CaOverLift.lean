@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -33,7 +37,7 @@ private theorem exists_field_lift {R S F K L : Type} [CommRing R] [CommRing S] [
       obtain ⟨i, rfl⟩ := hy
       exact IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩
     | algebraMap r => rw [hab']; exact IntermediateField.algebraMap_mem _ _
-    | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add b]; exact add_mem hy hz
     | mul y z _ _ hy hz => rw [map_mul]; exact mul_mem hy hz
   let b' : S →+* IntermediateField.adjoin F (Set.range (fun i => b (u i))) :=
     b.codRestrict _ hmem
@@ -110,7 +114,7 @@ theorem UpperTheory.V.AlgebraTools.exists_lift_ker_eq :
         Polynomial.eval₂_C] at hc
       exact (sub_eq_zero.1 hc).symm
     | algebraMap r => exact ⟨x r, (RingHom.congr_fun hψ1 r).symm⟩
-    | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add ψ]; exact add_mem hy hz
     | mul y z _ _ hy hz => rw [map_mul]; exact mul_mem hy hz
   choose g hg using hmem
   let x' : S →+* A :=
@@ -118,7 +122,7 @@ theorem UpperTheory.V.AlgebraTools.exists_lift_ker_eq :
       map_one' := hj (by rw [hg, map_one, map_one])
       map_mul' := fun s t => hj (by rw [map_mul, hg, hg, hg, map_mul])
       map_zero' := hj (by rw [hg, map_zero, map_zero])
-      map_add' := fun s t => hj (by rw [map_add, hg, hg, hg, map_add]) }
+      map_add' := fun s t => hj (by rw [map_add (f := _), hg, hg, hg, map_add (f := _)]) }
   refine ⟨x', ?_, ?_⟩
   · ext r
     exact hj ((hg _).trans (RingHom.congr_fun hψ1 r))

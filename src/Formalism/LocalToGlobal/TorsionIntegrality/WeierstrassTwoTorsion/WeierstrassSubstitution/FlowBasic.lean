@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+
+@[expose] public section
 
 universe u
 
@@ -35,12 +39,6 @@ theorem map_natCast (h : IsDer D) (n : ℕ) : D (n : A) = 0 := by
   | zero => rw [Nat.cast_zero]; exact h.map_zero
   | succ n ih => rw [Nat.cast_succ, h.map_add, ih, h.map_one, add_zero]
 
-theorem map_intCast (h : IsDer D) (n : ℤ) : D (n : A) = 0 := by
-  rcases n with n | n
-  · rw [Int.ofNat_eq_coe, Int.cast_natCast]
-    exact h.map_natCast n
-  · rw [Int.cast_negSucc, h.map_neg, h.map_natCast, neg_zero]
-
 theorem map_ofNat (h : IsDer D) (n : ℕ) [n.AtLeastTwo] : D (OfNat.ofNat n : A) = 0 := by
   have h1 := h.map_natCast (OfNat.ofNat n)
   rwa [Nat.cast_ofNat] at h1
@@ -49,42 +47,10 @@ theorem map_sq (h : IsDer D) (a : A) : D (a ^ 2) = 2 * a * D a := by
   rw [pow_two, h.map_mul]
   ring
 
-theorem map_pow_succ (h : IsDer D) (a : A) (n : ℕ) :
-    D (a ^ (n + 1)) = (n + 1 : A) * a ^ n * D a := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [pow_succ, h.map_mul, ih]
-    push_cast
-    ring
-
-theorem map_pow (h : IsDer D) (a : A) (n : ℕ) : D (a ^ n) = (n : A) * a ^ (n - 1) * D a := by
-  rcases n with _ | n
-  · rw [pow_zero, h.map_one, Nat.cast_zero, zero_mul, zero_mul]
-  · rw [h.map_pow_succ, Nat.add_sub_cancel]
-    push_cast
-    ring
-
 theorem map_of_mul_eq_one (h : IsDer D) {v w : A} (hvw : v * w = 1) : D v = -v ^ 2 * D w := by
   have h2 := h.2 v w
   rw [hvw, h.map_one] at h2
   linear_combination (-D v) * hvw - v * h2
-
-theorem neg (h : IsDer D) : IsDer (fun a => -D a) :=
-  ⟨fun a b => by
-    show -D (a + b) = -D a + -D b
-    rw [h.map_add]
-    ring,
-   fun a b => by
-    show -D (a * b) = a * -D b + b * -D a
-    rw [h.map_mul]
-    ring⟩
-
-def toDerivation (h : IsDer D) : Derivation ℤ A A :=
-  Derivation.mk' (AddMonoidHom.toIntLinearMap ⟨⟨D, h.map_zero⟩, h.1⟩) fun a b => by
-    simpa [smul_eq_mul] using h.2 a b
-
-@[simp] theorem toDerivation_apply (h : IsDer D) (a : A) : h.toDerivation a = D a := rfl
 
 end IsDer
 

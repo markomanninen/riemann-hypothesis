@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzDeterminedBySchrodingerThetaValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryPairOfTransposedGramInverseGram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTransformRationalDarbouxQuasiInvariantCmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTransformHasLevelCmExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousThetaTransformRationalDarbouxCmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffThetaTransformRealLinesCmExtensionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzDeterminedBySchrodingerThetaValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryPairOfTransposedGramInverseGram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTransformRationalDarbouxQuasiInvariantCmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaTransformHasLevelCmExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousThetaTransformRationalDarbouxCmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffThetaTransformRealLinesCmExtensionStatement
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -23,7 +28,7 @@ theorem cA_eq_cAF (σ : E →ₐ[F] E) (z : AF F ⊗[F] E) : cA σ z = cAF σ z 
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rfl
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem triple_sum_comm_reverse {ι κ μ M : Type} [Fintype ι] [Fintype κ] [Fintype μ] [AddCommMonoid M] (f : ι → κ → μ → M) :
     ∑ i, ∑ k, ∑ l, f i k l = ∑ l, ∑ k, ∑ i, f i k l := by
@@ -80,7 +85,7 @@ theorem thetaTr_rhoF (σ : E →ₐ[F] E) {nS nT : ℕ} {JS : Matrix (Fin nS) (F
     rw [← map_ofNat (algebraMap F (AF F)) 2, ← map_mul]
     norm_num
   have hf := co.form v w
-  simp only [GlobalTheory.WeilSchrodinger.thetaTr, thetaSum, Darboux.rho, heisOF, schr, symplOHF, ← hs, hf, hhalf, map_add,
+  simp only [GlobalTheory.WeilSchrodinger.thetaTr, thetaSum, Darboux.rho, heisOF, schr, symplOHF, ← hs, hf, hhalf, map_add (f := _),
     Prod.fst_add, Prod.snd_add]
   rw [← tsum_mul_left]
   exact tsum_congr fun x => schr_schr_apply ψ _ _ _ _ _ φ
@@ -100,8 +105,8 @@ theorem actOF_eq (σ : E →ₐ[F] E) {nS nT : ℕ} {JS : Matrix (Fin nS) (Fin n
       _ = (b.1.1)ᵀ := by rw [← Matrix.mul_assoc, h1, Matrix.one_mul]
   simp only [actOF, actAB, hh, h3]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem schr_theta_inj (ψ : AddChar (AF F) ℂ) (hψ : IsCharAF F ψ) (κ : Type) [Fintype κ] :
     ∀ φ ∈ schA F κ, ∀ φ' ∈ schA F κ,
       (∀ w : (κ → AF F) × (κ → AF F), thetaSum F (schr ψ w φ) = thetaSum F (schr ψ w φ')) → φ = φ' := by
@@ -193,8 +198,8 @@ theorem keeps_inv_gram (σ : E →ₐ[F] E) {nS : ℕ} (JS JB : Matrix (Fin nS) 
   rw [e2] at e1
   exact hxi.smul_left_cancel.1 e1
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem memS_of_UG (σ : E →ₐ[F] E) {nS : ℕ} (JS JB : Matrix (Fin nS) (Fin nS) E) (hdet : JS.det ≠ 0) (ξ₀ : E)
     (hξ₀ : ξ₀ ≠ 0) (ξ : AF F ⊗[F] E) (hB : ξ • incM F JB = incM F (ξ₀ • JS⁻¹)) (b : UG (cA σ) (incM F JB)) :
     ∃ G : GL (Fin nS) (AF F ⊗[F] E), G.1 = (b⁻¹).1.1ᵀ ∧ G ∈ HR (AF F) σ JS := by
@@ -245,8 +250,8 @@ theorem isThetaFunOF_thetaTr : ∀ (F E : Type) [Field F] [NumberField F] [Field
       cont := GlobalTheory.T.continuous_thetaTransform_rationalDarboux_cm F E σ B hB nS nT JS JT hS hT ξ₀ hξ₀ hξc hstd JA JB ξ hA hBξ κ co hco φ hφ
       smooth := GlobalTheory.T.contDiff_thetaTransform_realLines_cmExtension F E σ B hB nS nT JS JT hS hT ξ₀ hξ₀ hξc hstd JA JB ξ hA hBξ κ co hco φ hφ }
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem pres_impl : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
     B.IsGood σ → ∀ (nS nT : ℕ) (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E),
       IsHermND σ JS → IsHermND σ JT → ∀ ξ₀ : E, ξ₀ ≠ 0 → σ ξ₀ = -ξ₀ →

@@ -1,6 +1,10 @@
-import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
-import Formalism.AdmissibleDesigns.InertiaActsTrivially
-import Formalism.AdmissibleDesigns.SelfGood
+module
+
+public import Formalism.AdmissibleDesigns.HigherColumnInvariantsBound
+public import Formalism.AdmissibleDesigns.InertiaActsTrivially
+public import Formalism.AdmissibleDesigns.SelfGood
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -29,7 +33,7 @@ theorem symm_equiv (g : G) (w : W) : φ.symm (ρW g w) = ρM g (φ.symm w) := by
 def psiZ : ReciprocityTheory.Gal.Z1 ρW →ₗ[O] coZ1s ρM where
   toFun f := ⟨fun g => φ.symm (f.1 g), fun g h => by
     show φ.symm (f.1 (g * h)) = φ.symm (f.1 g) + ρM g (φ.symm (f.1 h))
-    rw [f.2.2 g h, map_add, symm_equiv ρM ρW φ hφ]⟩
+    rw [f.2.2 g h, map_add (f := _), symm_equiv ρM ρW φ hφ]⟩
   map_add' _ _ := by ext; simp
   map_smul' _ _ := by ext; simp
 
@@ -71,7 +75,7 @@ theorem lc_mem_range {x : H1z ρM} (hx : x ∈ lcH1 ρM) : ∃ y, psi ρM ρW φ
   have hcont : Continuous (fun g => φ ((c : G → M) g)) := (hc'.comp (⇑φ)).continuous
   have hcoc : ∀ g h, φ ((c : G → M) (g * h)) = φ ((c : G → M) g) + ρW g (φ ((c : G → M) h)) := by
     intro g h
-    rw [c.2 g h, map_add, hφ]
+    rw [c.2 g h, map_add (f := _), hφ]
   refine ⟨Submodule.Quotient.mk ⟨fun g => φ ((c : G → M) g), hcont, hcoc⟩, ?_⟩
   rw [psi_mk]
   show Submodule.Quotient.mk _ = Submodule.Quotient.mk c
@@ -185,7 +189,7 @@ theorem tieSel1_of
         (idx_mem_rows_cols i dc hw)
       have hb := hBk v hw y hm
       unfold Br.LlG
-      rw [dif_pos hw]
+      rw [dite_eq_left hw]
       exact hb
     · exact Submodule.mem_top
     · have hS : v ∉ D.nd.S i := fun h => h2 (Or.inl h)
@@ -226,32 +230,11 @@ private theorem plOf_idx_of_mem_plSet (v : HeightOneSpectrum (𝓞 D.host.E)) (h
     plOf i dc (idx i dc v) = v := by
   have h1 : idx i dc v = ((plSet i dc).equivFin ⟨v, hv⟩ : ℕ) := by
     unfold idx
-    rw [dif_pos hv]
+    rw [dite_eq_left hv]
   rw [h1]
   unfold plOf
-  rw [dif_pos (Fin.is_lt _)]
+  rw [dite_eq_left (Fin.is_lt _)]
   simp
-
-theorem plOf_mem_row {n : ℕ} (hn : n ∈ rowsN i dc) : plOf i dc n ∈ dc.row := by
-  unfold rowsN at hn
-  obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hn
-  have hvp : v ∈ plSet i dc := by
-    unfold plSet
-    simp [hv]
-  rw [plOf_idx_of_mem_plSet i dc v hvp]
-  exact hv
-
-theorem tieRow_of (rowLen : ℕ → ℕ∞) (lenRow : HeightOneSpectrum (𝓞 D.host.E) → ℚ)
-    (hG : K.SelfGood i) (hadm : TruncatedSeriesCountingIdentities.LengthBoundAtPlaces i r ρ π dc lenRow) (hlen : LenOlSelf i)
-    (hT : RowTie i dc r ρ π rowLen) : TieRow i dc rowLen lenRow := by
-  intro n hn
-  have hrow := plOf_mem_row i dc hn
-  have hw : plOf i dc n ∈ placesOver D.host.E (D.nd.l i) := (dc.cover _).mp (Or.inl hrow)
-  have hb := hadm (plOf i dc n) hw hrow (TruncatedSeriesCountingIdentities.CoefExt.self i (plOf i dc n) hw) (hG _ hw)
-  obtain ⟨h1, h2⟩ := hT n hn hw (lenRow (plOf i dc n)) hb
-  refine ⟨h1, ?_⟩
-  rw [hlen (plOf i dc n) hw] at h2
-  linarith [h2, mul_comm (lenRow (plOf i dc n)) (((eON i).toNat : ℚ))]
 
 end Row
 
@@ -350,8 +333,8 @@ def quotSL {R S : Type} [CommRing R] [CommRing S] (e : R ≃+* S) [RingHomInvPai
     rw [Algebra.smul_def, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, Ideal.Quotient.algebraMap_eq, map_mul]
     rfl
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem lenOlSelf {D : D7} (i : D.nd.Loc) : LenOlSelf i := by
   intro w hw
   unfold lenOl eON
@@ -362,16 +345,6 @@ theorem lenOlSelf {D : D7} (i : D.nd.Loc) : LenOlSelf i := by
   have h := length_semilinear (D.nbr i w hw).eO (quotSL (D.nbr i w hw).eO ((D.nd.l i : ℕ) : D.nd.O i))
   rw [map_natCast] at h
   exact h.symm
-
-theorem tieRow_rec {D : D7} (i : D.nd.Loc) (dc : TruncatedSeriesCountingIdentities.Decl D i)
-    (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
-    (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i))) (π : D.nd.X i)
-    (rowLen : ℕ → ℕ∞) (lenRow : HeightOneSpectrum (𝓞 D.host.E) → ℚ)
-    (hG : K.SelfGood i) (hadm : TruncatedSeriesCountingIdentities.LengthBoundAtPlaces i r ρ π dc lenRow) (hT : RowTie i dc r ρ π rowLen) :
-    TieRow i dc rowLen lenRow := by
-  first
-  | exact tieRow_of i dc r ρ π rowLen lenRow hG hadm (lenOlSelf i) hT
-  | exact tieRow_of _ _ _ _ _ rowLen lenRow hG hadm (lenOlSelf i) hT
 
 end LenUnit
 

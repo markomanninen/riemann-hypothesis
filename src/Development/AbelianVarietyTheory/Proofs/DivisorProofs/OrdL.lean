@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
+
+@[expose] public section
 
 namespace GlobalTheory.DiagVol
 

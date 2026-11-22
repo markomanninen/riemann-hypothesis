@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
-import Formalism.LocalToGlobal.IndefiniteReal.MajAtEqZeroOfMemQpOfNe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.NormalDecomposition.LiftHeckeOperators
+public import Formalism.LocalToGlobal.IndefiniteReal.MajAtEqZeroOfMemQpOfNe
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped InnerProductSpace
@@ -61,8 +65,22 @@ theorem opAll_goodR {s : ℕ} (hok : A3.fam3.Ok3 s) (hH : ∀ j t, (A3.A.fam.L j
     {f : A3.fam3.amb3.FL j A3.A.fam.μ0} (hf : f ∈ BlockGood.goodR (A3.A.fam.L j A3.A.fam.μ0) ℓ) :
     (A3.liftI j A3.A.fam.μ0).opAll i f ∈ BlockGood.goodR (A3.A.fam.L j A3.A.fam.μ0) ℓ := by
   obtain ⟨y, rfl⟩ := hf
-  have hO := okOp_opAll (hok.ok2.lifts j A3.A.fam.μ0) (hok.lifts j A3.A.fam.μ0) (hH j A3.A.fam.μ0).1
-    (hH j A3.A.fam.μ0).2
+  have hO : GroupActionMatrices.OkOp (A3.A.fam.L j A3.A.fam.μ0) (A3.liftI j A3.A.fam.μ0).opAll := by
+    let h := hok.ok2.lifts j A3.A.fam.μ0
+    let hD := hok.lifts j A3.A.fam.μ0
+    let hH' := hH j A3.A.fam.μ0
+    refine ⟨?_, ?_, hD.comm, InertDat3.splitOver_opAll _ h hD, ?_⟩
+    · intro i a b; rcases i with p | k
+      · exact hH'.1.rat p a b
+      · exact hH'.2.rat k a b
+    · intro i; rcases i with p | k
+      · obtain ⟨p', hp'⟩ := hH'.1.adj p
+        exact ⟨Sum.inl p', hp'⟩
+      · obtain ⟨k', hk'⟩ := hH'.2.adj k
+        exact ⟨Sum.inr k', hk'⟩
+    · intro i g; rcases i with p | k
+      · exact h.opG p g
+      · exact hD.opG k g
   have hB : BlockHyp (A3.A.fam.L j A3.A.fam.μ0) ℓ A3.A.fam.v0 s :=
     ⟨hok.ok2.conj, hℓ ▸ hok.ok2.irr, hok.ok2.lifts j A3.A.fam.μ0⟩
   refine ⟨Matrix.mulVec (GroupActionMatrices.tVg (A3.A.fam.L j A3.A.fam.μ0) ℓ (A3.liftI j A3.A.fam.μ0).opAll i) y, ?_⟩
@@ -83,7 +101,7 @@ theorem goodL_stable {s : ℕ} (hok : A3.fam3.Ok3 s) (hH : ∀ j t, (A3.A.fam.L 
     rw [lift_operators_embedding hK]
     exact Submodule.subset_span ⟨_, opAll_goodR hok hH j _ rfl i hf, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
 
 end Lemmas
@@ -154,7 +172,22 @@ theorem good_inf_eigSum_le {I A : Type} [NormedAddCommGroup A] [InnerProductSpac
 theorem eig0Of : @ZeroEigenvalueCondition K _ _ _ G _ _ Pl0 I0 Ty T m := by
   intro A3 X s P0 ψ0 P1 ψ1 hW hDec hok hK hJ hH hE j
   have hO : GroupActionMatrices.OkOp (A3.A.fam.L j A3.A.fam.μ0) (A3.liftI j A3.A.fam.μ0).opAll :=
-    okOp_opAll (hok.ok2.lifts j A3.A.fam.μ0) (hok.lifts j A3.A.fam.μ0) (hH j A3.A.fam.μ0).1 (hH j A3.A.fam.μ0).2
+    by
+      let h := hok.ok2.lifts j A3.A.fam.μ0
+      let hD := hok.lifts j A3.A.fam.μ0
+      let hH' := hH j A3.A.fam.μ0
+      refine ⟨?_, ?_, hD.comm, InertDat3.splitOver_opAll _ h hD, ?_⟩
+      · intro i a b; rcases i with p | k
+        · exact hH'.1.rat p a b
+        · exact hH'.2.rat k a b
+      · intro i; rcases i with p | k
+        · obtain ⟨p', hp'⟩ := hH'.1.adj p
+          exact ⟨Sum.inl p', hp'⟩
+        · obtain ⟨k', hk'⟩ := hH'.2.adj k
+          exact ⟨Sum.inr k', hk'⟩
+      · intro i g; rcases i with p | k
+        · exact h.opG p g
+        · exact hD.opG k g
   have : FiniteDimensional K (A3.fam3.amb3.FL j A3.A.fam.μ0) :=
     Module.Finite.of_basis (A3.A.fam.L j A3.A.fam.μ0).S.basis
   have hinj : Function.Injective (X.jL j A3.A.fam.μ0) :=

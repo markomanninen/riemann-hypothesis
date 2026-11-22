@@ -1,9 +1,13 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsIsBump
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurH
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Unimod
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Poulsen
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsIsBump
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurH
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Unimod
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeries₂.Poulsen
+
+@[expose] public section
 
 open Matrix Filter Topology Set MeasureTheory MeasureTheory.Measure
 open scoped InnerProductSpace
@@ -37,8 +41,8 @@ theorem isInvInvariant_haar {ε : Fin (2 * r + k + 1) → Bool} {P : Mat (2 * r 
     have : (Inv.inv ∘ f : UJ ε → _) = f ∘ Inv.inv := funext fun g => (map_inv f g).symm
     rw [this, ← Measure.map_map hf.measurable measurable_inv, Measure.map_inv_eq_self]
   refine ⟨?_⟩
-  rw [isMulLeftInvariant_eq_smul haar (Measure.map f (muG ε)), Measure.inv_def, Measure.map_smul, ← Measure.inv_def,
-    hinv]
+  rw [isMulLeftInvariant_eq_smul haar (Measure.map f (muG ε)), Measure.inv_def,
+    Measure.map_smul _ measurable_inv.aemeasurable, ← Measure.inv_def, hinv]
 
 def theta (k r : ℕ) : Mat (2 * r + k + 1) →L[ℝ] Mat (2 * r + k + 1) :=
   LinearMap.toContinuousLinearMap

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.WfEndOfLog
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittLogarithm
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittEndomorphism.WfEndOfLog
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittLogarithm
+
+@[expose] public section
 
 theorem witt_pairing : PI.PairW := PI.WfEndProof.pairW
 

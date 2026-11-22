@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.ClosedAtLConclusionOfMem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,20 +37,7 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
     (ρ : Representation LL G V)
 
-def IsPhiD (T : ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ) ≃ₗ[LL] ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ)) : Prop :=
-  ∀ x, ((T x : ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ)) : V ⊗[Qp] B) = Formalism.WeaklyAdmissibleFiltrations.φVB PD (LL := LL) (V := V) x
 
-open Classical in
-
-def phiTr (m : ℤ) : LL :=
-  if h : ∃ T, IsPhiD PD ρ T then
-    LinearMap.trace LL _ ((h.choose ^ ((Module.finrank Qp K₀ : ℤ) * m) : ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ) ≃ₗ[LL] ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ)) :
-      ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ) →ₗ[LL] ↥(Formalism.WeaklyAdmissibleFiltrations.Dcris PD ρ))
-  else 0
-
-open Classical in
-
-def phiLetter (m : ℤ) : LL := phiTr PD ρ m / (Module.finrank Qp K₀ : LL)
 
 end Local
 
@@ -67,12 +58,6 @@ def CrysLe (P : LocPrime l) (K : FinExt l) {a : ℕ} (ρ : ↥(GK K) →* GL (Fi
     Formalism.WeaklyAdmissibleFiltrations.DdR (P.PD K) (matRep L r') ≤ Formalism.WeaklyAdmissibleFiltrations.FilV (P.PD K) (LL := ↥L.1) (V := Fin a → ↥L.1) (-(N : ℤ)) ∧
     Formalism.WeaklyAdmissibleFiltrations.DdR (P.PD K) (matRep L r') ⊓ Formalism.WeaklyAdmissibleFiltrations.FilV (P.PD K) (LL := ↥L.1) (V := Fin a → ↥L.1) ((N : ℤ) + 1) = ⊥
 
-open Classical in
-
-def phiOm (P : LocPrime l) (K : FinExt l) {a : ℕ} (ρ : ↥(GK K) →* GL (Fin a) (Om l)) (m : ℤ) : Om l :=
-  if h : ∃ (L : FinExt l) (r' : ↥(GK K) →* GL (Fin a) ↥L.1), IsMod ρ L r' then
-    ((phiLetter (P.PD K) (matRep h.choose h.choose_spec.choose) m : ↥h.choose.1) : Om l)
-  else 0
 
 end Om
 

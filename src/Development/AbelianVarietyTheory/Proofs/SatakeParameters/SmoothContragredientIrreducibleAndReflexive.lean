@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,9 +141,6 @@ theorem exists_fixed_contra {π : Representation ℂ G V} (hπ : IsSmooth π) {K
 def res (π : Representation ℂ G V) (K : Subgroup G) :
     fixed (contra π) K →ₗ[ℂ] Module.Dual ℂ (fixed π K) :=
   (fixed π K).subtype.dualMap ∘ₗ (smoothPart π.dual).subtype ∘ₗ (fixed (contra π) K).subtype
-
-theorem res_apply (π : Representation ℂ G V) (K : Subgroup G) (l : fixed (contra π) K)
-    (v : fixed π K) : res π K l v = ((l : smoothPart π.dual) : Module.Dual ℂ V) v := rfl
 
 theorem invariant_of_fixed {π : Representation ℂ G V} {K : Subgroup G} (l : fixed (contra π) K)
     (h : G) (hh : h ∈ K) (w : V) :
@@ -346,11 +347,6 @@ def contraMap {X Y : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Mod
     refine LinearMap.ext fun l => Subtype.ext (LinearMap.ext fun x => ?_)
     show (l : Module.Dual ℂ Y) (τ g⁻¹ (f x)) = (l : Module.Dual ℂ Y) (f (σ g⁻¹ x))
     rw [f.isIntertwining]
-
-theorem contraMap_apply {X Y : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y]
-    {σ : Representation ℂ G X} {τ : Representation ℂ G Y} (f : σ.IntertwiningMap τ)
-    (l : smoothPart τ.dual) (x : X) :
-    (contraMap f l : Module.Dual ℂ X) x = (l : Module.Dual ℂ Y) (f x) := rfl
 
 def contraEquiv {X Y : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y]
     {σ : Representation ℂ G X} {τ : Representation ℂ G Y} (e : σ.Equiv τ) :

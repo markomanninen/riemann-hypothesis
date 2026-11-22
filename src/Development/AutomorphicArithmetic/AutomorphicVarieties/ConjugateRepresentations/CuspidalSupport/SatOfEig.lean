@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,12 +14,12 @@ namespace UpperTheory.V.Cj.S
 
 theorem satOfEig : SatOfEig := by
   intro E _ _ w n V _ _ π x hx0 hx hsc
-  have hK : IsCommensurated (KGL w n) := Final.GLintComm E w n
+  have hK : IsCommensurated (KGL w (n := n)) := Final.GLintComm E w n
   obtain ⟨ϖ, hu⟩ := exists_isUnifV w
   have h0 := ne_zero_of_isUnifV hu
   choose c hc using fun j => hsc _ (Tj_mem_hecke (n := n) hu j)
   have c0 : c 0 = 1 := by
-    have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w n) 1 := by
+    have e : Tj ℂ n (Ov E w) ϖ 0 = dosetInd ℂ (KGL w (n := n)) 1 := by
       rw [Tj_eq h0]
       congr 1
     refine smul_left_injective ℂ hx0 ?_
@@ -23,7 +27,7 @@ theorem satOfEig : SatOfEig := by
   have cn : c n ≠ 0 := by
     intro e
     have h1 := hc n
-    have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w n) (tor h0 fun _ => 1) := by
+    have hTn : Tj ℂ n (Ov E w) ϖ n = dosetInd ℂ (KGL w (n := n)) (tor h0 fun _ => 1) := by
       rw [Tj_eq h0]; simp
     rw [e, zero_smul, hTn, heckeVec_dosetInd (R := {tor h0 fun _ => 1}) hx, Finset.sum_singleton] at h1
     · exact hx0 (by simpa [← Module.End.mul_apply, ← map_mul] using congrArg (π (tor h0 fun _ => 1)⁻¹) h1)

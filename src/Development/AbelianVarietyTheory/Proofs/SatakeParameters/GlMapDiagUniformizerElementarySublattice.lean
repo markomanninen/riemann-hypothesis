@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RpowNegLeNormOfComponent
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RpowNegLeNormOfComponent
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.LatHecke Formalism.UG
 
 noncomputable section
@@ -83,7 +88,7 @@ def redS {n : ℕ} (S : Finset (Fin n)) :
   toFun x i := IsLocalRing.residue _ ⟨x.1 i, (mem_std w x.1).1 x.2 i⟩
   map_add' x y := by
     funext i
-    rw [Pi.add_apply, ← map_add]
+    rw [Pi.add_apply, ← map_add (f := _)]
     rfl
   map_smul' c x := by
     funext i
@@ -106,7 +111,15 @@ theorem redS_surjective {n : ℕ} (S : Finset (Fin n)) : Function.Surjective (re
     ext
     simp [hi]
 
-theorem glMap_diag_mem_subElem : ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ) (ϖ : w.adicCompletion E), IsUnifV E w ϖ → ∀ (S : Finset (Fin n)) (d : GL (Fin n) (w.adicCompletion E)), (d : Matrix (Fin n) (Fin n) (w.adicCompletion E)) = Matrix.diagonal (fun i => if i ∈ S then ϖ else 1) → haveI := GlobalTheory.RowSatakeBound.finite_residue w; glMap d (std (w.adicCompletionIntegers E) (w.adicCompletion E) n).1 ∈ Subtype.val '' subElem S.card (std (w.adicCompletionIntegers E) (w.adicCompletion E) n) := by
+theorem glMap_diag_mem_subElem :
+    ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E))
+      (n : ℕ) (ϖ : w.adicCompletion E), IsUnifV E w ϖ →
+      ∀ (S : Finset (Fin n)) (d : GL (Fin n) (w.adicCompletion E)),
+        (d : Matrix (Fin n) (Fin n) (w.adicCompletion E)) =
+          Matrix.diagonal (fun i => if i ∈ S then ϖ else 1) →
+        (haveI := GlobalTheory.RowSatakeBound.finite_residue w
+         glMap d (std (w.adicCompletionIntegers E) (w.adicCompletion E) n).1 ∈
+           Subtype.val '' subElem S.card (std (w.adicCompletionIntegers E) (w.adicCompletion E) n)) := by
   intro E _ _ w n ϖ hϖ S d hd
   have hd' : (d : Matrix (Fin n) (Fin n) (w.adicCompletion E)) = Matrix.diagonal (dEnt w ϖ S) := hd
   have hϖle : Valued.v ϖ ≤ WithZero.exp (-1 : ℤ) := hϖ.le

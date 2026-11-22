@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteIrrCharactersAndFinsumCentralIdempotentsEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteIrrCharactersAndFinsumCentralIdempotentsEq
+
+@[expose] public section
+
 open GlobalTheory.GLq GlobalTheory.MirAvg Polynomial
 
 noncomputable section
@@ -19,7 +24,7 @@ theorem sum_irr_coeff (h : H) :
   obtain ⟨hfin, hsum⟩ := irr_finite_and_finsum_zOf_eq_one H
   rw [finsum_mem_eq_finite_toFinset_sum _ hfin] at hsum
   have e := congrArg (fun z : MonoidAlgebra ℂ H => z.coeff h) hsum
-  simp only [MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply] at e
+  simp only [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at e
   rw [e, MonoidAlgebra.one_def, MonoidAlgebra.coeff_single, Finsupp.single_apply]
   by_cases hh : h = 1
   · simp [hh]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsFinsetRepresentatives
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.VGeIffExtended
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SymFrameClause
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsFinsetRepresentatives
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.VGeIffExtended
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SymFrameClause
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnivIdentity
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.CompactFixesLattice
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.CompactFixesLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem sum_coord {ι : Type} [Fintype ι] (b : Module.Basis ι F E) (x : AE F E
     simp only [coord_tmul, TensorProduct.tmul_smul, TensorProduct.smul_tmul', ← TensorProduct.sum_tmul,
       Module.Basis.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
 
 theorem coord_mul_tmul {ι : Type} (b : Module.Basis ι F E) (i : ι) (x : AE F E) (a : AF F) :
     coord b i (x * ((1 : E) ⊗ₜ[F] a)) = coord b i x * a := by
@@ -32,7 +36,7 @@ theorem coord_mul_tmul {ι : Type} (b : Module.Basis ι F E) (i : ι) (x : AE F 
   | tmul e a' =>
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, coord_tmul, coord_tmul, smul_mul_assoc]
   | add x y hx hy =>
-    rw [add_mul, map_add, map_add, hx, hy, add_mul]
+    rw [add_mul, map_add (f := _), map_add (f := _), hx, hy, add_mul]
 
 theorem continuous_coord {ι : Type} (b : Module.Basis ι F E) (i : ι) :
     letI := tensTop (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)

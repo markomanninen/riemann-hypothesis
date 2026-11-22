@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBase
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CellBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,13 @@ section Rev
 variable {K : Type*} [Field K] {s : ℕ}
 
 theorem revJ_mul_apply (M : Matrix (Fin s) (Fin s) K) (i j : Fin s) : (revJ K s * M) i j = M (Fin.rev i) j := by
-  rw [mul_apply, Finset.sum_eq_single (Fin.rev i)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.rev i)]
   · simp [revJ]
   · intro k _ hk; simp [revJ, hk]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 theorem mul_revJ_apply (M : Matrix (Fin s) (Fin s) K) (i j : Fin s) : (M * revJ K s) i j = M i (Fin.rev j) := by
-  rw [mul_apply, Finset.sum_eq_single (Fin.rev j)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (Fin.rev j)]
   · simp [revJ]
   · intro k _ hk
     have : j ≠ Fin.rev k := by
@@ -36,7 +40,7 @@ theorem mul_revJ_apply (M : Matrix (Fin s) (Fin s) K) (i j : Fin s) : (M * revJ 
 theorem revJ_revJ : revJ K s * revJ K s = 1 := by
   ext i j
   rw [revJ_mul_apply]
-  simp only [revJ, Fin.rev_rev, one_apply]
+  simp only [revJ, Fin.rev_rev, Matrix.one_apply]
   by_cases h : i = j
   · simp [h]
   · simp [h, Ne.symm h]

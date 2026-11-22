@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LocStab
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LocStab
+
+@[expose] public section
 
 open UpperTheory.HF
 
@@ -21,7 +25,7 @@ theorem UpperTheory.HF.loc_onto :
         intro a b ha hb
         simp only [Set.mem_setOf_eq] at ha hb ⊢
         show ‖J ((a : L) + (b : L))‖ < 1
-        rw [map_add]
+        rw [map_add (f := _)]
         exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
       zero_mem' := by simp
       smul_mem' := by

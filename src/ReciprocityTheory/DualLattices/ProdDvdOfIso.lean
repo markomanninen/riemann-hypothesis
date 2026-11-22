@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+module
+
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,12 +88,14 @@ private lemma prod_mem_span_prod_of_linearEquiv_pi_quotient {R : Type} [CommRing
     have h1 : (∑ j, Ideal.Quotient.mk (Ideal.span {c i'}) (B i' j * A j i)) =
         (Pi.single i 1 : (i : ι) → R ⧸ Ideal.span {c i}) i' := by
       have h0 := congrArg (fun y => y i') (f.symm_apply_apply (Pi.single i 1))
-      rw [← h0, pi_quotient_eq_sum_smul_single _ (f (Pi.single i 1)) (fun j => A j i) (fun j => hA j i),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0, pi_quotient_eq_sum_smul_single _ (f (Pi.single i 1)) (fun j => A j i) (fun j => hA j i),
         map_sum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, Pi.smul_apply, ← hB, Algebra.smul_def, Ideal.Quotient.algebraMap_eq,
         ← map_mul, mul_comm]
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
     by_cases h : i' = i
     · subst h
       rw [Pi.single_eq_same, if_pos rfl, map_one]
@@ -100,12 +106,14 @@ private lemma prod_mem_span_prod_of_linearEquiv_pi_quotient {R : Type} [CommRing
     have h1 : (∑ i, Ideal.Quotient.mk (Ideal.span {d j}) (A j i * B i j')) =
         (Pi.single j' 1 : (j : κ) → R ⧸ Ideal.span {d j}) j := by
       have h0 := congrArg (fun y => y j) (f.apply_symm_apply (Pi.single j' 1))
-      rw [← h0, pi_quotient_eq_sum_smul_single _ (f.symm (Pi.single j' 1)) (fun i => B i j') (fun i => hB i j'),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h0, pi_quotient_eq_sum_smul_single _ (f.symm (Pi.single j' 1)) (fun i => B i j') (fun i => hB i j'),
         map_sum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, Pi.smul_apply, ← hA, Algebra.smul_def, Ideal.Quotient.algebraMap_eq,
         ← map_mul, mul_comm]
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, sub_eq_zero, map_sum, h1]
     by_cases h : j = j'
     · subst h
       rw [Pi.single_eq_same, if_pos rfl, map_one]
@@ -213,7 +221,7 @@ theorem hasLen_unique {C : Type} [Field C] {v : Valuation C NNReal} {R : Type} [
   haveI : IsLocalRing R := by
     refine IsLocalRing.of_nonunits_add fun a b ha hb hab => ?_
     have h1 := hv.isUnit_iff_valuation_eq_one.mp hab
-    rw [map_add] at h1
+    rw [map_add (f := _)] at h1
     have h2 := (v.map_add _ _).trans_lt (max_lt (hlt a ha) (hlt b hb))
     rw [h1] at h2
     exact lt_irrefl _ h2

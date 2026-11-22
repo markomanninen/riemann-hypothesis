@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FirstChernCoboundary
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FirstChernCoboundary
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -46,7 +50,7 @@ theorem les_one {K : Cx.{w} R} {L : Cx.{w'} R} {M : Cx.{w''} R} (f : Cx.Hom K L 
   · cases a with
     | zero => exact h0
     | succ k =>
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨y, rfl⟩ := (hδf k x).1 hx
       have := hM k (by omega)
@@ -71,7 +75,7 @@ theorem res_surj (hQ : Cosieve Q) (hle : U ⊓ Q ≤ U) (n : ℕ) : Function.Sur
   funext s
   have hs : Q ((s ⋙ ObjectProperty.ιOfLE hle).obj 0).obj := (s.obj 0).property.2
   change (if hs : Q ((s ⋙ ObjectProperty.ιOfLE hle).obj 0).obj then z (liftQ U Q hQ _ hs) else 0) = z s
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
   rfl
 
 theorem res_exact (hQ : Cosieve Q) (hle : U ⊓ Q ≤ U) (ι : Cx.Hom (RC F U hQ) (CH.cx (U.ι ⋙ F)) (RingHom.id R))

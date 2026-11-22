@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.SmoothRepIrreducibleSubcontainingVector
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.SmoothRepIrreducibleSubcontainingVector
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem maschke [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
     rw [hP, Finset.sum_congr rfl fun g _ => h1 g, Finset.sum_const, Finset.card_univ]
   have hPeq : ∀ h v, P (ρ h v) = ρ h (P v) := by
     intro h v
-    rw [hP, hP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hP, hP, map_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft h⁻¹) _ _ fun x => ?_
     simp only [Equiv.coe_mulLeft]
     rw [hmul h, mul_inv_cancel_left, mul_inv_rev, inv_inv, ← hmul]
@@ -101,14 +106,14 @@ theorem invariantComplement_holds : SmoothRepIrreducibleSubcontainingVector := b
     have hsup : ∀ k, ∀ x ∈ U ⊔ W, V k x ∈ U ⊔ W := by
       intro k x hx
       obtain ⟨u, hu, w, hw, rfl⟩ := Submodule.mem_sup.1 hx
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hUst k u hu) (hWst k w hw)
     have hmem : v0 ∈ U ⊔ W := by
       by_contra hn
       refine hUmax (U ⊔ W) ⟨hsup, hn⟩ (lt_of_le_of_ne le_sup_left fun heq => hW0 ?_)
       refine eq_bot_iff.2 ((le_inf (le_sup_right.trans heq.ge) hWS).trans (disjoint_iff.1 hUS.disjoint).le)
     obtain ⟨u, hu, w, hw, hsum⟩ := Submodule.mem_sup.1 hmem
-    rw [← hsum, map_add, hpU u hu, zero_add, hpid w (hWS hw)]
+    rw [← hsum, map_add (f := _), hpU u hu, zero_add, hpid w (hWS hw)]
     exact hw
   refine ⟨S, p, fun h => hpv0 ?_, hSst, fun S' hS'S hS'st => ?_, hpS, hpid, fun k v => ?_, hpv0⟩
   · have := hpS v0
@@ -139,9 +144,9 @@ theorem invariantComplement_holds : SmoothRepIrreducibleSubcontainingVector := b
     rw [← hat, ht0, add_zero]
     exact ha
   · have hv : V k v = V k (p v) + V k (v - p v) := by
-      rw [← map_add]
+      rw [← map_add (f := _)]
       congr 1
       abel
-    rw [hv, map_add, hpid _ (hSst k _ (hpS v)), hpU _ (hUst k _ (hdec v)), add_zero]
+    rw [hv, map_add (f := _), hpid _ (hSst k _ (hpS v)), hpU _ (hUst k _ (hdec v)), add_zero]
 
 end UpperTheory.NonzeroTypeTheory

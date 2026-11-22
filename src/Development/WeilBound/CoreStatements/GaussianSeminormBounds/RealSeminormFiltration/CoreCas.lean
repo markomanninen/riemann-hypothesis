@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasA
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasB
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasC
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasA
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasB
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreCasC
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,10 +108,11 @@ theorem cas_bound {K I : Type} [Fintype K] [Fintype I] [DecidableEq I] (σ : K �
           refine h0.trans ?_
           simp [wordX]
         simp only [key]
-        rw [← map_sum, ← map_sum, hΘ, map_zero, map_zero]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, ← map_sum, hΘ, map_zero, map_zero]
     apply hφx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 (filtX_succ_le X ι n hx)
-    rw [map_add, hφz y (Submodule.mem_sup_left hy), zero_add]
+    rw [map_add (f := _), hφz y (Submodule.mem_sup_left hy), zero_add]
     have : Submodule.span ℂ {y | ∃ (w : Fin (n + 1) → I) (v : V), y = wordX X (List.ofFn w) (ι v)} ≤
         LinearMap.ker φ := by
       rw [Submodule.span_le]

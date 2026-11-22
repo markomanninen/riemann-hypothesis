@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HermitianETransportInvariant
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.RightInvOfLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ private theorem hA_sum_right_lemma_3 {ι : Type*} (s : Finset ι) (x : VA X.B.I)
     rw [Finset.sum_insert ha, Finset.sum_insert ha, hA_add_right_lemma_2, ih]
 
 private theorem hA_add_left_lemma_4 (x x' y : VA X.B.I) : hA X.B.I (x + x') y = hA X.B.I x y + hA X.B.I x' y := by
-  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 private theorem hA_sum_left_lemma_5 {ι : Type*} (s : Finset ι) (f : ι → VA X.B.I) (y : VA X.B.I) :
     hA X.B.I (∑ i ∈ s, f i) y = ∑ i ∈ s, hA X.B.I (f i) y := by
@@ -160,14 +164,14 @@ theorem PW_span (s : VA X.B.I)
   | (induction hs using Submodule.span_induction with
       | mem x hx => obtain ⟨a, rfl⟩ := hx; exact PW_e X u a
       | zero => exact map_zero _
-      | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
       | smul c x _ hx => rw [map_smul, hx, smul_zero])
   | (refine Submodule.span_induction hs ?_ ?_ ?_ ?_
       · rintro x ⟨a, rfl⟩
         exact PW_e X u a
       · exact map_zero _
       · intro x y hx hy
-        rw [map_add, hx, hy, add_zero]
+        rw [map_add (f := _), hx, hy, add_zero]
       · intro c x hx
         rw [map_smul, hx, smul_zero])
 
@@ -428,8 +432,8 @@ theorem SA.sub_PW_mem (h : SA (u := u) G G') (w : VA X.B.I) (he : ∀ a, hA X.B.
   simp only [hpe, hpz, zero_smul, Finset.sum_const_zero, add_zero, mul_zero]
   exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (e_mem_span X a)
 
-variable (X u) in
 
+variable (X u) in
 def Hf (G : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)) (y : VA X.B.I) : VA X.B.I :=
   PWl X u (G *ᵥ PWl X u y) + (y - PWl X u y)
 
@@ -438,7 +442,7 @@ def Hl (G : Matrix (Fin X.B.I.n) (Fin X.B.I.n) (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)
     VA X.B.I →ₗ[X.B.I.E ⊗[X.B.I.F] Af X.B.I.F] VA X.B.I where
   toFun := Hf X u G
   map_add' y y' := by
-    simp only [Hf, map_add, mulVec_add]; abel
+    simp only [Hf, map_add (f := _), mulVec_add]; abel
   map_smul' c y := by
     simp only [Hf, map_smul, mulVec_smul, RingHom.id_apply, smul_add, smul_sub]
 
@@ -472,7 +476,7 @@ theorem SA.hA_H (h : SA (u := u) G G') (x y : VA X.B.I) :
   have hPH : ∀ z, PWl X u (Hm X u G *ᵥ z) = PWl X u (G *ᵥ PWl X u z) := by
     intro z
     rw [Hm_mulVec]
-    simp only [Hf, map_add, PW_idem, PW_sub_self, add_zero]
+    simp only [Hf, map_add (f := _), PW_idem, PW_sub_self, add_zero]
   have hRH : ∀ z, Hm X u G *ᵥ z - PWl X u (Hm X u G *ᵥ z) = z - PWl X u z := by
     intro z
     rw [hPH, Hm_mulVec]
@@ -499,7 +503,7 @@ theorem Hl_comp (h : SA (u := u) G G') (h' : SA (u := u) G' G) : (Hl X u G).comp
   refine LinearMap.ext fun y => ?_
   show Hf X u G (Hf X u G' y) = y
   have hp1 : PWl X u (Hf X u G' y) = PWl X u (G' *ᵥ PWl X u y) := by
-    simp only [Hf, map_add, PW_idem, PW_sub_self, add_zero]
+    simp only [Hf, map_add (f := _), PW_idem, PW_sub_self, add_zero]
   have hp2 : Hf X u G' y - PWl X u (Hf X u G' y) = y - PWl X u y := by
     rw [hp1]
     simp only [Hf]

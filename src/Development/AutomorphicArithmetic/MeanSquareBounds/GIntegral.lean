@@ -1,14 +1,15 @@
-import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
-import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SmoothedRemainderRealIntegralFormula
-import Mathlib
-import Formalism.GL3MeanSquares.HookFormulaTorsion.ExpNegLeDivPowFour
-import Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SmallPrimeFactorSumBound
-import Formalism.GL3MeanSquares.HookFormulaTorsion.PsiZeroIntegral
-import Formalism.GL3MeanSquares.HookFormulaTorsion.HasDerivAtLogSquareAntiderivative
-import Formalism.GL3MeanSquares.HookFormulaTorsion.ShortIntervalImpliesProgressionsStatement
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SizeEstimates
+module
+
+public import Development.AutomorphicArithmetic.MeanSquareBounds.PrimeSetTwoBounds
+public import Formalism.LandauZeroFreeBounds.SiegelWalfiszAPOfSiegelLower
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.SmoothedRemainderRealIntegralFormula
+public import Mathlib
+public import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.PsiZeroIntegral
+public import Formalism.GL3MeanSquares.PrimeCountAsymptoticInProgressions
+
+@[expose] public section
 
 open Finset Formalism.HermitianLattices.ZeroFreeRegionGL2 Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds
 
@@ -55,11 +56,6 @@ private lemma exp_sqrt_le {c : ℝ} (hc : 0 < c) {x : ℝ} (hx : 1 < x) :
   rw [hf] at hexp
   rw [neg_mul, Real.exp_neg, div_div, inv_le_comm₀ (Real.exp_pos _) (by positivity), inv_div]
   exact hexp
-
-private noncomputable def remA (a : ℕ → ℂ) (m : ℂ) (t : ℝ) : ℂ := (∑ k ∈ Icc 1 ⌊t⌋₊, a k) - m * t
-
-private noncomputable def RemBound (a : ℕ → ℂ) (m : ℂ) : Prop :=
-  ∃ K x₁ : ℝ, 1 < x₁ ∧ ∀ t : ℝ, x₁ ≤ t → ‖remA a m t‖ ≤ K * t / Real.log t ^ 2
 
 private noncomputable def aChi {N : ℕ} (χ : DirichletCharacter ℂ N) (n : ℕ) : ℂ := ((vonMangoldt n : ℝ) : ℂ) * χ (n : ZMod N)
 

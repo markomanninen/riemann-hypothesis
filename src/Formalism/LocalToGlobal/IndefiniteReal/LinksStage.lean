@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.StepVecThetaLem
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
-import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.StepVecThetaLem
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.BaseSt
+public import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,13 +63,6 @@ def reScal (X : CxData Am) (κ : InfinitePlace K → ℝ) (lam : type_of% X.lam)
 
 theorem zs_reScal (X : CxData Am) (κ lam) : (reScal X κ lam).zs = X.zs := rfl
 
-def NonzeroIndexPlaceOfSide (cr : Crd Am fc) (X : CxData Am) (w : HeightOneSpectrum (𝓞 K)) : Prop :=
-  ∃ w', (w' = w ∨ w' = conjPl w) ∧ ∃ i : Bs.J,
-    idx w' (X.M false i) (matLat (X.liftMat cr false i Bs.μ0) ((lv (fc X.zs) false).Tl i Bs.μ0)) ≠ 0 ∨
-    idx (conjPl w') (X.M false i) (matLat (X.liftMat cr false i Bs.μ0) ((lv (fc X.zs) false).Tl i Bs.μ0)) ≠ 0 ∨
-    jw ((lv (fc X.zs) false).HT i Bs.μ0) w' ((lv (fc X.zs) false).Tl i Bs.μ0) ≠ 0 ∨
-    (fc X.zs).Z.F0 w' i ≠ 0 ∨ (fc X.zs).Z.F0 (conjPl w') i ≠ 0
-
 def PartX (cr : Crd Am fc) (X : CxData Am) (b : Bool) (i : Bs.J) (p : Bs.Ix) (v : InfinitePlace K) : Prop :=
   ∃ x, X.tC cr b i Bs.μ0 (cpt Bs.v0.embedding x) ∈ X.Wp i p ∧
     Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K _) ((lv (fc X.zs) b).XT i Bs.μ0) v x x ≠ 0
@@ -90,14 +87,14 @@ open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-variable (D) in
 
+variable (D) in
 def CartanOK : Prop :=
   (∀ (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S), V.SigOK → ∀ τ, IsCartanInv (gramAt D V τ) (cart M τ)) ∧
     ∀ V : HSp D, V.SigOK → V.IsPosDef → ∀ τ, IsCartanInv (gramAt D V τ) 1
 
-variable (D) in
 
+variable (D) in
 def SelfDualOK : Prop :=
   ∀ (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (N : ℕ),
     IsBaseFrame V β Λ N → IsSelfDualC V Λ
@@ -119,8 +116,8 @@ def SplitAt : Prop :=
       ResEta D (Lift.chrTh (R.toLevCh.mu t) R.eta ((i : ℕ) + 1)).1 (Vc D i).rank ∧
       ResEta D (Lift.chrTh (R.toLevCh.mu t) R.eta ((i : ℕ) + 1)).2 (Wc D i).rank
 
-open Classical in
 
+open Classical in
 def IdemAt : Prop := ∀ t, Disjoint R.Pg (R.Q t) ∧ ∃ e : AE D, IsIdemSum e (R.Pg ∪ R.Q t)
 
 def FullY : Prop :=
@@ -143,10 +140,6 @@ variable (D A Ks)
 
 def SeedFacts (F : Face D A) : Prop := ∀ R : RealDat D A Ks, R.Pre0 F → R.SplitAt ∧ R.IdemAt
 
-def VecTheta : Prop :=
-  (∀ ψ θ S T sS sT ΛS ΛT βS βT LS χ Q ξ f₀ f, IsStepVecOf (D := D) ψ θ S T sS sT ΛS ΛT βS βT LS χ Q ξ f₀ f → IsThetaFunO ψ S T f) ∧
-    ∀ ψ θ S T sS sT ΛS ΛT βS βT Pg Q ξ f₀ f, IsThPVecOf (D := D) ψ θ S T sS sT ΛS ΛT βS βT Pg Q ξ f₀ f → IsThetaFunO ψ S T f
-
 def ItExists (F : Face D A) : Prop :=
   ∀ R : RealDat D A Ks, R.Pre1 F → R.KerY →
     (∀ k, k + 1 < D.R.m → ∃ It, ∀ t, IsItW R.θ (R.MY k) (R.MY (k + 1)) (R.ωY t k) (R.ptY t k) It) ∧
@@ -167,14 +160,6 @@ def GoodLands (F : Face D A) : Prop :=
 def IoWExists (F : Face D A) : Prop :=
   ∀ R : RealDat D A Ks, R.Pre1 F → R.KerP → ∀ i, ∃ io, ∀ t,
     IsIoW R.θ (R.MW i (sg0 D A)) (R.cV i) (R.ωP i t) (R.ptP i t) (RealDat.Delta i) io
-
-def ThetaPExists (F : Face D A) : Prop :=
-  ∀ R : RealDat D A Ks, R.Pre1 F → R.KerP → R.thP_ioP → ∀ i t, ∃ th : (R.HV i t).H →ₗ[ℂ] MMap (R.MW i (sg0 D A)),
-    (∀ x, th x ∈ R.Wall i (sg0 D A)) ∧
-      ∃ thP, Lift.IsThetaP (R.νV i t) (R.fdV i t) (fun g h f => thetaKO (R.ωP i t) h g f) (R.ptP i t) (R.ioP i)
-          (LinearMap.range (R.extV i t)) thP ∧
-        ∀ x (v : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ),
-          th x (fun ρ => v ρ) = thP ((R.extV i t).rangeRestrict x) (PiTensorProduct.tprod ℂ v)
 
 variable {D A Ks}
 
@@ -279,14 +264,14 @@ open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-variable (D A Ks) in
 
+variable (D A Ks) in
 def LiftsAt (F : Face D A) : Prop :=
   ∀ R : RealDat D A Ks, R.Pre0 F →
     LiftsExist (Yc D 0) (R.βY 0) (R.dat0 R.triv) ∧ ∀ i, LiftsExist (Wc D i) (R.βW i) (R.datWp i R.triv)
 
-variable (D) in
 
+variable (D) in
 structure Inputs : Prop where
   weil : WeilExistsFull D
   vac : VacExistsO D

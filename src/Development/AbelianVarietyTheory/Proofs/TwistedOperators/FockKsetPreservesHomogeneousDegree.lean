@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.FockDegree
@@ -112,7 +116,8 @@ theorem omAct_I_Jm_homog (p q r s d : ℕ) (P : Pol p q r s) (hP : P ∈ homog (
   have hP' : P.IsHomogeneous d := hP
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun α hα => ?_
   have hd : α.degree = d := by
     rw [Finsupp.degree_eq_weight_one]
@@ -165,7 +170,7 @@ theorem Om_Kset_homog : ∀ (p q r s : ℕ) (T0 : GrpData (p * r + q * s) (p * s
   have h0 : ∀ R, inner ℂ (F.ι R) w' = 0 := by
     intro R
     induction R using MvPolynomial.induction_on' with
-    | add R S hR hS => rw [map_add, inner_add_left, hR, hS, add_zero]
+    | add R S hR hS => rw [map_add (f := _), inner_add_left, hR, hS, add_zero]
     | monomial α c =>
       have hm : MvPolynomial.monomial α c ∈ homog (Ix p q × Ix r s) α.degree :=
         MvPolynomial.isHomogeneous_monomial c rfl

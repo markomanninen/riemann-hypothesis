@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.KillOp
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandRep
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenPiecesK
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ExistsFinMap
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ASmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.KillOp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandRep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.GenPiecesK
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ExistsFinMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ private theorem app_abs {M : Type} [AddCommGroup M] [Module ℂ M] (S : Set (Upp
       intro a b ha hb V hV
       have e : B ^ (a + b).degree * zm ev (a + b) * V = B ^ a.degree * zm ev a * (B ^ b.degree * zm ev b * V) := by
         have hc : Commute (B ^ b.degree) (zm ev a) := (hB _).pow_left _
-        rw [map_add, pow_add, zm_add, mul_assoc (B ^ a.degree), ← mul_assoc (B ^ b.degree), hc.eq]
+        rw [map_add (f := _), pow_add, zm_add, mul_assoc (B ^ a.degree), ← mul_assoc (B ^ b.degree), hc.eq]
         simp only [mul_assoc]
       have e2 : (monomial (a + b) 1 : MvPolynomial (Ix K n) ℂ) = monomial a 1 * monomial b 1 := by rw [monomial_mul, one_mul]
       rw [e, ha _ (fx b V hV), hb V hV, e2, map_mul, Module.End.mul_apply]
@@ -88,10 +92,12 @@ private theorem app_abs {M : Type} [AddCommGroup M] [Module ℂ M] (S : Set (Upp
     intro p V hV
     have e : z p = ∑ α ∈ p.support, p.coeff α • z (monomial α 1) := by
       conv_lhs => rw [p.as_sum]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun α _ => ?_
       rw [← map_smul, smul_monomial, smul_eq_mul, mul_one]
-    rw [e, tp_eq, Finset.sum_mul, ContinuousLinearMap.sum_apply, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, tp_eq, Finset.sum_mul, ContinuousLinearMap.sum_apply, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun α _ => ?_
     rw [smul_mul_assoc, ContinuousLinearMap.smul_apply, map_smul, h2 α V hV, LinearMap.smul_apply]
   have h5 : ∀ p : UpperTheory.ConvolutionTheory.Pl K × Fin n, p.1 ∉ S → ∀ (e : ℕ) v, L (ev (X p ^ e) v) = (h p ^ e) (L v) := by
@@ -108,7 +114,8 @@ private theorem app_abs {M : Type} [AddCommGroup M] [Module ℂ M] (S : Set (Upp
       intro hl v
       rw [List.map_cons, List.map_cons, List.prod_cons, List.prod_cons, map_mul, ContinuousLinearMap.mul_apply,
         h5 p (hl p List.mem_cons_self), ih fun q hq => hl q (List.mem_cons_of_mem _ hq), Module.End.mul_apply]
-  rw [yk, ContinuousLinearMap.sum_apply, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [yk, ContinuousLinearMap.sum_apply, map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun β hβ => ?_
   rw [mul_assoc, h3 _ _ (fix_mul hB hW (ev_comm ev _ _) (hB _).symm), Module.End.mul_apply, ContinuousLinearMap.mul_apply,
     ← h6 β _ fun p hp => hg β hβ p (Finset.mem_toList.1 hp), Finset.prod_map_toList, monomial_eq, C_1, one_mul]
@@ -159,9 +166,10 @@ private theorem core_abs {M : Type} [AddCommGroup M] [Module ℂ M] (S : Set (Up
           (((ContinuousLinearMap.apply ℂ H (Q u)).continuous.tendsto _).comp
             (tendsto_const_nhds.sub hsum.hasSum.tendsto_sum_nat)).norm
         simpa only [sub_self, ContinuousLinearMap.zero_apply, norm_zero] using t1
-      · rw [ContinuousLinearMap.sub_apply, map_sub, ContinuousLinearMap.sum_apply, map_sum]
-        congr 1
-        exact Finset.sum_congr rfl fun k _ => app_abs S ev L z h hz h4 B hB _ hW' _ (hoff k) _
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [ContinuousLinearMap.sub_apply, map_sub, ContinuousLinearMap.sum_apply, map_sum]
+          congr 1
+          exact Finset.sum_congr rfl fun k _ => app_abs S ev L z h hz h4 B hB _ hW' _ (hoff k) _
     show A (Y (Q u)) = 0
     rw [← hp, ← ContinuousLinearMap.mul_apply A, ← ContinuousLinearMap.mul_apply, (c1.1.mul_right c1.2).eq,
       ContinuousLinearMap.mul_apply, hq1, map_zero]
@@ -177,7 +185,7 @@ private theorem core_abs {M : Type} [AddCommGroup M] [Module ℂ M] (S : Set (Up
 
 end Abs
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {n : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {n : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 private theorem pc_comm (hn : 0 < n) (𝔞 : Amp μ) (ev : PR K n →+* (LL μ →L[ℂ] LL μ)) (hev : 𝔞.IsEv ev) (R : PR K n)
     (hR : ∀ y ∈ R.vars, y.1 ∉ 𝔞.S) : Commute (Pc μ) (ev R) := by
@@ -194,7 +202,7 @@ private theorem pc_comm (hn : 0 < n) (𝔞 : Amp μ) (ev : PR K n →+* (LL μ �
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => rw [hev.const, he0.const]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p i hp =>
       simp only [map_mul, hp]
       rcases i with _ | x
@@ -209,7 +217,7 @@ private theorem pc_comm (hn : 0 < n) (𝔞 : Amp μ) (ev : PR K n →+* (LL μ �
     rw [hev.hecke w hy, ← he0.hecke w hy]
     exact h0 _
   | algebraMap r => rw [algebraMap_eq, hC]; exact h0 _
-  | add x y _ _ hx hy => rw [map_add]; exact hx.add_right hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add_right hy
   | mul x y _ _ hx hy => rw [map_mul]; exact hx.mul_right hy
 
 theorem killCore (hn : 0 < n) (𝔞 : Amp μ) (η : ℝ) (hη : 0 < η) :

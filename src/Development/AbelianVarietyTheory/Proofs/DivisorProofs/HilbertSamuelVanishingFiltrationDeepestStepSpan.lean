@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InclEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilSpaceVEqSpaceP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulPowMemAndSpaceVLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertSamuelSectionShiftCommSingleMonomialStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InclEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilSpaceVEqSpaceP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulPowMemAndSpaceVLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HilbertSamuelSectionShiftCommSingleMonomialStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

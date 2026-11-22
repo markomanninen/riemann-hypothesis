@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.HighestVectorFullHolds
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.HighestVectorFullHolds
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -15,7 +19,7 @@ attribute [local instance] Formalism.MainNotions.G.GAtP.ringO Formalism.MainNoti
 namespace PairingSeriesCoefficients
 
 theorem ev_eq {σ τ K : Type} [Field K] (P : MvPolynomial σ (MvPolynomial τ K)) (d0 : σ → K) :
-    eval₂Hom (RingHom.id _) (fun z => C (d0 z)) P = ∑ n ∈ P.support, (∏ i ∈ n.support, d0 i ^ n i) • coeff n P := by
+    eval₂Hom (RingHom.id _) (fun z => C (d0 z)) P = ∑ n ∈ P.support, (∏ i ∈ n.support, d0 i ^ n i) • AddMonoidAlgebra.coeff P n := by
   rw [coe_eval₂Hom, eval₂_eq]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [RingHom.id_apply, smul_eq_C_mul, mul_comm, map_prod]
@@ -24,11 +28,12 @@ theorem ev_eq {σ τ K : Type} [Field K] (P : MvPolynomial σ (MvPolynomial τ K
 theorem coeff_of_eval {σ τ K : Type} [Field K] [Infinite K] (P : MvPolynomial σ (MvPolynomial τ K))
     (l : MvPolynomial τ K →ₗ[K] K) (R : MvPolynomial σ K)
     (h : ∀ d0 : σ → K, eval d0 R = l (eval₂Hom (RingHom.id _) (fun z => C (d0 z)) P)) (n : σ →₀ ℕ) :
-    coeff n R = l (coeff n P) := by
+    AddMonoidAlgebra.coeff R n = l (AddMonoidAlgebra.coeff P n) := by
   classical
-  have hR : R = ∑ n ∈ P.support, monomial n (l (coeff n P)) := by
+  have hR : R = ∑ n ∈ P.support, monomial n (l (AddMonoidAlgebra.coeff P n)) := by
     refine MvPolynomial.funext fun d0 => ?_
-    rw [h d0, ev_eq, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h d0, ev_eq, map_sum, map_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [map_smul, eval_monomial, smul_eq_mul, mul_comm]
     rfl
@@ -45,7 +50,8 @@ theorem pairing_series_linear_form_holds : PairingSeriesLinearForm := by
   intro p _ X Kc _ _ _ j P f l R h
   have hc := PairingSeriesCoefficients.coeff_of_eval P l R h
   unfold pairD
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul, hc]
   classical
   rw [Finset.sum_subset (Finset.subset_union_left (s₁ := P.support) (s₂ := R.support)),
@@ -87,8 +93,8 @@ theorem mono_wh (v : X.Pl) (s : Fin (X.G.P.n' v)) (m : X.ZA j →₀ ℕ) :
   exact IsWeightedHomogeneous.prod _ _ _ fun x _ => (isWeightedHomogeneous_linP X Kc j Lk hne v s x).pow _
 
 theorem hGd (m n : X.ZA j →₀ ℕ)
-    (h : coeff n (aeval (linP fun x y => algebraMap Kc (XspC (X.Pj (j + 1)) Kc) (Lk x y))
-        (monomial m (1 : XspC (X.Pj (j + 1)) Kc))) ≠ 0) : GoodDeg X j n ↔ GoodDeg X j m := by
+    (h : AddMonoidAlgebra.coeff (aeval (linP fun x y => algebraMap Kc (XspC (X.Pj (j + 1)) Kc) (Lk x y))
+        (monomial m (1 : XspC (X.Pj (j + 1)) Kc))) n ≠ 0) : GoodDeg X j n ↔ GoodDeg X j m := by
   have key : ∀ (v : X.Pl) (s : Fin (X.G.P.n' v)), ∑ a, ∑ b, n ⟨v, (s, a, b)⟩ = ∑ a, ∑ b, m ⟨v, (s, a, b)⟩ := by
     intro v s
     rw [← wt_eq, ← wt_eq]
@@ -103,8 +109,8 @@ theorem pairD_linSub (Q : DA X Kc j) (f : MvPowerSeries (X.ZA j) Kc) :
   classical
   exact pr_sub Lk (GoodDeg X j) (hGd X Kc j Lk hne) Q f
 
-omit hne in
 
+omit hne in
 theorem evD_linT (d0 : X.ZA j → Kc) (Q : DA X Kc j) :
     evD X Kc j d0 (aeval (linT fun x y => algebraMap Kc (XspC (X.Pj (j + 1)) Kc) (Lk x y)) Q) =
       evD X Kc j (fun y => ∑ z, Lk z y * d0 z) Q := by
@@ -113,7 +119,8 @@ theorem evD_linT (d0 : X.ZA j → Kc) (Q : DA X Kc j) :
         DA X Kc j →ₐ[XspC (X.Pj (j + 1)) Kc] DA X Kc j).toRingHom = evD X Kc j (fun y => ∑ z, Lk z y * d0 z) := by
     refine ringHom_ext (fun r => ?_) fun y => ?_
     · simp [evD]
-    · simp only [evD, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_X, linT, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [evD, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_X, linT, map_sum, map_mul,
         coe_eval₂Hom, eval₂_C, eval₂_X, RingHom.id_apply, algebraMap_eq]
   exact RingHom.congr_fun h Q
 
@@ -152,7 +159,8 @@ variable {p : ℕ} [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.
 theorem evD_xd (b : BX X) (x : Fin (NJ X j) → ℕ → X.G.Kf) (d0 : X.ZA j → Kc) (b' : Fin (NJ X (j + 1))) (i : ℕ) :
     evD X Kc j d0 (xd X Kc j b.1 b.2 x b' i) =
       C (mulC (dM X Kc j b d0).transpose (fun a i => algebraMap X.G.Kf Kc (x a i)) b' i) := by
-  simp only [xd, mulC, map_sum, map_mul, Matrix.transpose_apply, dMat, dM, evD, coe_eval₂Hom, eval₂_X, MvPolynomial.algebraMap_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [xd, mulC, map_sum, map_mul, Matrix.transpose_apply, dMat, dM, evD, coe_eval₂Hom, eval₂_X, MvPolynomial.algebraMap_apply,
     eval₂_C, RingHom.id_apply]
 
 theorem evD_yMat (b : BX X) (d0 : X.ZA j → Kc) :
@@ -239,7 +247,7 @@ theorem PI_wh (I : X.ColCh j) (i0 : X.Pl → ℕ) (v : X.Pl) (s : Fin (X.G.P.n' 
   · intro h
     exact absurd (Finset.mem_univ _) h
 
-theorem PI_good (I : X.ColCh j) (i0 : X.Pl → ℕ) (n : X.ZA j →₀ ℕ) (hn : coeff n (X.PI j I i0) ≠ 0) : GoodDeg X j n := by
+theorem PI_good (I : X.ColCh j) (i0 : X.Pl → ℕ) (n : X.ZA j →₀ ℕ) (hn : AddMonoidAlgebra.coeff (X.PI j I i0) n ≠ 0) : GoodDeg X j n := by
   intro v s
   rw [← wt_eq, PI_wh X j I i0 v s hn, Finset.sum_range]
   exact sum_colHt X v j s
@@ -253,7 +261,8 @@ theorem frame_change_group_action_holds : XG := by
   classical
   rw [Finset.sum_subset (support_map_subset _ _) (fun n _ hn => by rw [notMem_support_iff.1 hn, mul_zero])]
   unfold applyD
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun n hn => ?_
   rw [smul_eval, eval_map, coeff_map, coe_eval₂Hom]
   congr 1

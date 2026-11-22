@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+
+@[expose] public section
+
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 
@@ -45,7 +50,7 @@ open Finsupp in
 variable {C : Type} [Field C] {ι τ : Type} [Fintype ι] {σ : ι → Type} (e : ∀ i, σ i ↪ τ) in
 private lemma jetAt0_eq_sum_coeff_mul_mfact_of_support_subset {α : Type} (P : MvPolynomial α C) (G : MvPowerSeries α C)
     {s : Finset (α →₀ ℕ)} (hs : P.support ⊆ s) :
-    _root_.Formalism.IncomingBounds.jetAt0 P G = ∑ m ∈ s, MvPolynomial.coeff m P * (_root_.Formalism.IncomingBounds.mfact m : C) * MvPowerSeries.coeff m G := by
+    _root_.Formalism.IncomingBounds.jetAt0 P G = ∑ m ∈ s, AddMonoidAlgebra.coeff P m * (_root_.Formalism.IncomingBounds.mfact m : C) * MvPowerSeries.coeff m G := by
   unfold _root_.Formalism.IncomingBounds.jetAt0
   refine Finset.sum_subset hs fun m _ hm => ?_
   rw [MvPolynomial.mem_support_iff, not_not] at hm
@@ -108,7 +113,7 @@ private lemma sum_embDomain_apply_eq_of_disjoint (hd : ∀ i j x y, e i x = e j 
     (z : ∀ i, σ i →₀ ℕ) (j : ι) (x : σ j) :
     (∑ k, Finsupp.embDomain (e k) (z k)) (e j x) = z j x := by
   classical
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single j]
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single j]
   · exact Finsupp.embDomain_apply_self (e j) (z j) x
   · intro k _ hk
     apply Finsupp.embDomain_notin_range
@@ -171,7 +176,7 @@ private lemma prod_factorial_sum_embDomain_eq_prod_prod_factorial (hd : ∀ i j 
   classical
   have hsub : (∑ k, Finsupp.embDomain (e k) (m k)).support ⊆
       Finset.univ.biUnion fun j => (m j).support.map (e j) := by
-    refine (Finsupp.support_finset_sum).trans ?_
+    refine (Finsupp.support_finsetSum).trans ?_
     simp [Finsupp.support_embDomain]
   have hdisj : ((Finset.univ : Finset ι) : Set ι).PairwiseDisjoint
       fun j => (m j).support.map (e j) := by
@@ -199,11 +204,12 @@ theorem _root_.GlobalTheory.JetProd.jetAt0_prod_rename (hd : ∀ i j x y, e i x 
   have hP : ∏ j, MvPolynomial.rename (e j) (P j) =
       ∑ f ∈ Fintype.piFinset fun j => (P j).support,
         MvPolynomial.monomial (∑ k, Finsupp.embDomain (e k) (f k))
-          (∏ k, MvPolynomial.coeff (f k) (P k)) := by
+          (∏ k, AddMonoidAlgebra.coeff (P k) (f k)) := by
     conv_lhs => rw [show P = fun j => ∑ v ∈ (P j).support,
-      MvPolynomial.monomial v (MvPolynomial.coeff v (P j)) from
+      MvPolynomial.monomial v (AddMonoidAlgebra.coeff (P j) v) from
         funext fun j => MvPolynomial.as_sum (P j)]
-    simp only [map_sum, MvPolynomial.rename_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, MvPolynomial.rename_monomial]
     rw [Finset.prod_univ_sum]
     refine Finset.sum_congr rfl fun f _ => ?_
     rw [prod_monomial_eq_monomial_sum_prod']
@@ -215,17 +221,6 @@ theorem _root_.GlobalTheory.JetProd.jetAt0_prod_rename (hd : ∀ i j x y, e i x 
   rw [coeff_sum_embDomain_prod_rename_eq_prod_coeff e hd, _root_.Formalism.IncomingBounds.mfact, prod_factorial_sum_embDomain_eq_prod_prod_factorial e hd,
     Nat.cast_prod, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
   rfl
-
-theorem mvExp_zero' {σ : Type} : mvExp (0 : MvPowerSeries σ C) = 1 := by
-  classical
-  ext m
-  show (∑ k ∈ Finset.range (m.degree + 1),
-    MvPowerSeries.coeff m ((0 : MvPowerSeries σ C) ^ k) / (k.factorial : C)) = _
-  rw [Finset.sum_eq_single 0]
-  · simp
-  · intro k _ hk
-    simp [zero_pow hk]
-  · simp
 
 end General
 
@@ -351,8 +346,8 @@ theorem _root_.GlobalTheory.JetProd.jetProd : _root_.Formalism.L2.FormalSeriesBo
       rfl
     · intro ρ hρ
       have hn : ¬ ∃ s, pl s = ρ := fun ⟨s, hs⟩ => hρ ⟨s, hs⟩
-      have hZ1 : _root_.Formalism.L2.FormalSeriesBounds.grAll pl gr ρ = 1 := by unfold _root_.Formalism.L2.FormalSeriesBounds.grAll; rw [dif_neg hn]
-      have hK : _root_.Formalism.L2.FormalSeriesBounds.kindAll pl kind ρ = none := by unfold _root_.Formalism.L2.FormalSeriesBounds.kindAll; rw [dif_neg hn]
+      have hZ1 : _root_.Formalism.L2.FormalSeriesBounds.grAll pl gr ρ = 1 := by unfold _root_.Formalism.L2.FormalSeriesBounds.grAll; rw [dite_eq_right hn]
+      have hK : _root_.Formalism.L2.FormalSeriesBounds.kindAll pl kind ρ = none := by unfold _root_.Formalism.L2.FormalSeriesBounds.kindAll; rw [dite_eq_right hn]
       rw [hZ1, hK]
       show MvPowerSeries.rename _ (1 * _root_.Formalism.IncomingBounds.mvExp 0) = 1
       rw [mvExp_zero_eq_one', mul_one, map_one]

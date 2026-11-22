@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.QuasiCharConductorLoc
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.HcToIdele
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.QuasiCharConductorLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,8 +127,8 @@ theorem integral_gI {ω : HChar F} (hfin : IsOfFinOrder ω) (c : HeightOneSpectr
       (multHaar (v.adicCompletion F)) := fun j _ =>
     (integrableOn_shell hfin v (A + j)).integrable_indicator (measurableSet_ordShell _)
   rw [hfun]
-  refine ⟨integrable_finset_sum _ hint, ?_⟩
-  rw [integral_finset_sum _ hint]
+  refine ⟨integrable_finsetSum _ hint, ?_⟩
+  rw [integral_finsetSum _ hint]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [integral_indicator (measurableSet_ordShell _)]
 

@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.DivisorCycles.SepPolyProof
-import Development.EtaleCohomology.DivisorCycles.ChainPf
-import Development.EtaleCohomology.DivisorCycles.OpenCosetPf
-import Development.EtaleCohomology.DivisorCycles.FinDensePf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.SepPolyProof
+public import Development.EtaleCohomology.DivisorCycles.ChainPf
+public import Development.EtaleCohomology.DivisorCycles.OpenCosetPf
+public import Development.EtaleCohomology.DivisorCycles.FinDensePf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.FinDense
 theorem etale_frobenius_charpoly_separable : LateralTheory.DivDb.SepPoly := by

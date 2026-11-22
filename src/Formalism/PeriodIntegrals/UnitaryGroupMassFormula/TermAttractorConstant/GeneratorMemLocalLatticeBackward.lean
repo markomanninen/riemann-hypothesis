@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.GpMfixMapLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermAttractorConstant.GpMfixMapLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem generator_mem_local_lattice_forward (P : HeightOneSpectrum (𝓞 E)) (hF
     refine (gp_mem_K _).2 ⟨n (frameAct (frame F) ξ a),
       gp_Mfix_map_loc _ hFl hn (gp_frameAct_mem P g hFl hFc hP ξ a), n (gpGen g F x ξ a),
       gp_le_locP _ _ (Submodule.subset_span ⟨a, rfl⟩), ?_⟩
-    rw [hdec a, map_add, map_smul]
+    rw [hdec a, map_add (f := _), map_smul]
   have hH : frame y b - n (frame x b) ∈ gpK P.asIdeal (gpMfix Λ F) N (g : E) := by
     have hd : m (frame x b) - frame x b ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal (XLam Λ x) :=
       gp_loc_X _ (sub_mem (gp_locΛ_map _ hm.1 (gp_frame_loc P g hxl hxc hP b))

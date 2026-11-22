@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.UniquelyDivisible
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.UniquelyDivisible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -37,14 +42,14 @@ noncomputable def ratSES : ShortComplex (Rep.{0} ℤ G) :=
     rw [AddCircle.coe_eq_zero_iff]
     exact ⟨n, by simp⟩)
 
-theorem ratSES_shortExact : (ratSES G).ShortExact where
-  mono_f := (Rep.mono_iff_injective _).2 fun a b h => Int.cast_injective (α := ℚ) h
-  epi_g := (Rep.epi_iff_surjective _).2 fun x => QuotientAddGroup.mk_surjective x
-  exact := by
-    refine shortComplex_exact_of_forall fun q hq => ?_
+theorem ratSES_shortExact : (ratSES G).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · refine shortComplex_exact_of_forall fun q hq => ?_
     have hq' : ((show ℚ from q) : AddCircle (1 : ℚ)) = 0 := hq
     obtain ⟨n, hn⟩ := (AddCircle.coe_eq_zero_iff _).1 hq'
     exact ⟨n, by change ((n : ℤ) : ℚ) = (show ℚ from q); rw [← hn, zsmul_one]⟩
+  · exact (Rep.mono_iff_injective (intToRat G)).2 (Int.cast_injective (α := ℚ))
+  · exact (Rep.epi_iff_surjective (ratToRatModInt G)).2 QuotientAddGroup.mk_surjective
 
 end Sequence
 
@@ -56,8 +61,8 @@ noncomputable def h1RatModIntIso :
     H1 (Rep.trivial ℤ G (AddCircle (1 : ℚ))) ≅ ModuleCat.of ℤ (Additive G →+ AddCircle (1 : ℚ)) :=
   H1IsoOfIsTrivial _
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem h1RatModIntIso_inv_apply (χ : Additive G →+ AddCircle (1 : ℚ)) :
     (h1RatModIntIso G).inv χ =
       H1π _ ((cocycles₁IsoOfIsTrivial (Rep.trivial ℤ G (AddCircle (1 : ℚ)))).inv χ) :=
@@ -107,17 +112,9 @@ section Cyclic
 
 variable {G : Type} [Group G] [Fintype G] (σ : G) (hσ : ∀ g : G, g ∈ Subgroup.zpowers σ)
 
-omit [Fintype G] in
-include hσ in
 
-theorem forall_mem_zmultiples_ofMul :
-    ∀ x : Additive G, x ∈ AddSubgroup.zmultiples (Additive.ofMul σ) := by
-  intro x
-  obtain ⟨k, hk⟩ := Subgroup.mem_zpowers_iff.1 (hσ x.toMul)
-  exact AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [← ofMul_zpow, hk, ofMul_toMul]⟩
 
 include hσ in
-
 theorem orderOf_ofAdd_div_card_dvd :
     orderOf (Multiplicative.ofAdd (((1 : ℚ) / Nat.card G : ℚ) : AddCircle (1 : ℚ))) ∣
       orderOf σ := by
@@ -135,63 +132,6 @@ theorem cyclicChar_apply_gen :
   rw [monoidHomOfForallMemZpowers_apply_gen]
   rfl
 
-theorem zmultiples_cyclicChar : AddSubgroup.zmultiples (cyclicChar σ hσ) = ⊤ := by
-  refine eq_top_iff.2 fun f _ => ?_
-  set n := Nat.card G
-  have hn : (n : ℚ) ≠ 0 := Nat.cast_ne_zero.2 Nat.card_pos.ne'
-  obtain ⟨q, hq⟩ := QuotientAddGroup.mk_surjective (f (Additive.ofMul σ))
-  have h0 : n • f (Additive.ofMul σ) = 0 := by
-    have hpow : σ ^ n = 1 := by
-      rw [show n = orderOf σ from (orderOf_eq_card_of_forall_mem_zpowers hσ).symm]
-      exact pow_orderOf_eq_one σ
-    rw [← map_nsmul, ← ofMul_pow, hpow, ofMul_one, map_zero]
-  rw [← hq] at h0
-  have h1 : (((n : ℚ) * q : ℚ) : AddCircle (1 : ℚ)) = 0 := by
-    rw [← nsmul_eq_mul]; exact h0
-  obtain ⟨m, hm⟩ := (AddCircle.coe_eq_zero_iff _).1 h1
-  refine AddSubgroup.mem_zmultiples_iff.2 ⟨m, ?_⟩
-  refine ((AddMonoidHom.eq_iff_eq_on_generator (forall_mem_zmultiples_ofMul σ hσ) _ _).2 ?_)
-  rw [AddMonoidHom.zsmul_apply, cyclicChar_apply_gen, ← hq]
-  have hq' : q = m • ((1 : ℚ) / n) := by
-    rw [zsmul_one] at hm
-    rw [zsmul_eq_mul, hm]; field_simp
-  rw [hq']
-  rfl
-
-theorem addOrderOf_cyclicChar : addOrderOf (cyclicChar σ hσ) = Nat.card G := by
-  have : Fact ((0 : ℚ) < 1) := ⟨one_pos⟩
-  let ev : (Additive G →+ AddCircle (1 : ℚ)) →+ AddCircle (1 : ℚ) :=
-    AddMonoidHom.mk' (fun f => f (Additive.ofMul σ)) fun _ _ => rfl
-  have hev : Function.Injective ev := fun f g h =>
-    (AddMonoidHom.eq_iff_eq_on_generator (forall_mem_zmultiples_ofMul σ hσ) _ _).2 h
-  rw [← addOrderOf_injective ev hev]
-  change addOrderOf (cyclicChar σ hσ (Additive.ofMul σ)) = _
-  rw [cyclicChar_apply_gen, AddCircle.addOrderOf_period_div Nat.card_pos]
-
-noncomputable def cyclicH2Gen : H2 (Rep.trivial ℤ G ℤ) :=
-  (h2IntAddEquiv G).symm (cyclicChar σ hσ)
-
-theorem zmultiples_cyclicH2Gen : AddSubgroup.zmultiples (cyclicH2Gen σ hσ) = ⊤ := by
-  refine eq_top_iff.2 fun x _ => ?_
-  have hx : h2IntAddEquiv G x ∈ AddSubgroup.zmultiples (cyclicChar σ hσ) := by
-    rw [zmultiples_cyclicChar]; trivial
-  obtain ⟨m, hm⟩ := AddSubgroup.mem_zmultiples_iff.1 hx
-  refine AddSubgroup.mem_zmultiples_iff.2 ⟨m, ?_⟩
-  rw [cyclicH2Gen, ← map_zsmul, hm, AddEquiv.symm_apply_apply]
-
-theorem addOrderOf_cyclicH2Gen : addOrderOf (cyclicH2Gen σ hσ) = Nat.card G :=
-  (addOrderOf_injective (h2IntAddEquiv G).symm.toAddMonoidHom
-    (h2IntAddEquiv G).symm.injective (cyclicChar σ hσ)).trans (addOrderOf_cyclicChar σ hσ)
-
-include hσ in
-
-theorem card_h2Int_of_cyclic : Nat.card (H2 (Rep.trivial ℤ G ℤ)) = Nat.card G := by
-  rw [← addOrderOf_cyclicH2Gen σ hσ, ← Nat.card_zmultiples, zmultiples_cyclicH2Gen,
-    AddSubgroup.card_top]
-
-noncomputable def zmodAddEquivH2Int : ZMod (Nat.card G) ≃+ H2 (Rep.trivial ℤ G ℤ) :=
-  zmodAddEquivOfGenerator (g := cyclicH2Gen σ hσ)
-    (fun x => by rw [zmultiples_cyclicH2Gen]; trivial) (card_h2Int_of_cyclic σ hσ)
 
 end Cyclic
 

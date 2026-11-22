@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FoldMult
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FoldMult
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -15,7 +19,7 @@ theorem cnt_encard_le (Γ : Subgroup G) [DiscreteTopology Γ] (Ω : Set G) (hΩ 
   set K : Set G := (fun p : G × G => x * p.1 * (x * p.2)⁻¹) '' (Ω ×ˢ Ω) with hKdef
   have hK : IsCompact K := (hΩ.prod hΩ).image (by fun_prop)
   have hS : ((Subtype.val : Γ → G) ⁻¹' K).Finite :=
-    ((Subgroup.isClosed_of_discrete (H := Γ)).isClosedEmbedding_subtypeVal.isCompact_preimage hK).finite_of_discrete
+    ((Subgroup.isClosed_of_discreteTopology (U := Γ)).isClosedEmbedding_subtypeVal.isCompact_preimage hK).finite_of_discrete
   refine ⟨((Subtype.val : Γ → G) ⁻¹' K).encard, hS.encard_lt_top, fun y => ?_⟩
   rcases (cnt Γ Ω x y).eq_empty_or_nonempty with h | ⟨γ₀, hγ₀⟩
   · rw [h, Set.encard_empty]

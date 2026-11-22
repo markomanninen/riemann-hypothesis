@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsPlaceWeightConjInvariantStatement
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemOfAevalEqZero
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsPlaceWeightConjInvariantStatement
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.HodgeIPIffHodgeFormConj
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -22,14 +26,15 @@ theorem evC_conj (w : (Σ k, J k) → ℂ) (f : MRing J) :
     evC (fun p => (starRingEnd ℂ) (w p)) f = (starRingEnd ℂ) (evC w f) := by
   simp only [evC, MvPolynomial.eval_map]
   rw [MvPolynomial.eval₂_eq', MvPolynomial.eval₂_eq']
-  simp [map_sum, map_prod, map_pow, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_prod, map_pow, map_mul]
 
 theorem contDiff_evC (f : MRing J) : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) fun w : (Σ k, J k) → ℂ => evC w f := by
   simp only [evC_eq]
   induction f using MvPolynomial.induction_on with
   | C a => simpa using contDiff_const
   | add p q hp hq => simpa using hp.add hq
-  | mul_X p i hp => simpa using hp.mul (contDiff_apply ℝ ℂ i)
+  | mul_X p i hp => simpa using hp.mul (contDiff_apply ℝ (fun _ => ℂ) i)
 
 def blk (k : K) (w : (Σ k, J k) → ℂ) : ℝ := ∑ i, ‖w ⟨k, i⟩‖ ^ 2
 
@@ -46,7 +51,7 @@ theorem blk_conj (w : (Σ k, J k) → ℂ) (k : K) : blk k (fun p => (starRingEn
 
 theorem contDiff_blk (k : K) : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (blk (J := J) k) := by
   unfold blk
-  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, J k))
+  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, J k))
 
 def nu (f : MRing J) (d : K → ℕ) (w : (Σ k, J k) → ℂ) : ℝ := ‖evC w f‖ ^ 2 / ∏ k, blk k w ^ d k
 
@@ -104,7 +109,7 @@ theorem exists_finset {T : Type} (z : T → (Σ k, J k) → ℂ) (f : T → MRin
   classical
   have hc : IsCompactElement (⨆ t, Ideal.span {f t}) :=
     (Submodule.fg_iff_compact _).1 (IsNoetherian.noetherian _)
-  obtain ⟨s, hs⟩ := CompleteLattice.IsCompactElement.exists_finset_of_le_iSup _ hc
+  obtain ⟨s, hs⟩ := IsCompactElement.exists_finset_of_le_iSup hc
     (fun t => Ideal.span {f t}) le_rfl
   refine ⟨s, fun t => ?_⟩
   by_contra hno

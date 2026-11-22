@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 
@@ -44,19 +48,5 @@ def SumComponents : Prop :=
     max 0 ((1 - ρ) * cs - X - cc) ≤ (∑ c, (h c + cs)) / (Fintype.card ι : ℝ) →
     -(T * (X + cc)) - cs * (6 * D + 10 + T * (z + 2 * ρ)) - (A * Real.log (max A 1) + 4) - R1
         - 2 * z * R2 ≤ (∑ c, degc c) / (∑ c, dc c)
-
-def DescentNumeric : Prop :=
-  ∀ dA dB muA muN cfl X P Λ Q ε : ℝ,
-    0 < dA → dA ≤ dB → (1 - ε) * dB ≤ dA → 0 ≤ ε → 0 ≤ X → 0 ≤ P →
-    dA * (muA - P) + (dB - dA) * (-Λ) ≤ dB * muN →
-    cfl - X ≤ muA → |cfl| ≤ Q → Λ ≤ Q →
-    cfl - X - P - 2 * ε * Q ≤ muN
-
-def BadRowsNumeric : Prop :=
-  ∀ d dg db muN muG mmax G Q δ : ℝ,
-    0 < d → d = dg + db → 0 ≤ db → db ≤ 3 * δ * d → 0 ≤ δ → δ ≤ 1 / 12 →
-    d * muN ≤ dg * muG + db * (mmax + G) →
-    |muN| ≤ Q → mmax ≤ Q → G ≤ Q →
-    muN - 12 * δ * Q ≤ muG
 
 end Formalism.ExtensionFiltration

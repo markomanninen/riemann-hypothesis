@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleClassGroup.Invariants
-import GroundTheory.LocalFields.CompleteTrivial
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleClassGroup.Invariants
+public import GroundTheory.LocalFields.CompleteTrivial
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -30,15 +34,6 @@ theorem coe_norm_of_eq {K L : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)} [(L.subgroupOf
       of F (FiniteSubfield.ideleClassNorm h c) := by
   subst hK hL
   exact congrArg Subtype.val (norm_fixedEquiv h c)
-
-theorem coe_norm_openSubgroup {U U' : OpenSubgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)} (hUU' : U' ≤ U)
-    (c : IdeleClassGroup (ofOpenSubgroup U').1)
-    (hc : of (ofOpenSubgroup U') c ∈ fixedModule IdeleClassLimit (U' : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄))) :
-    (norm IdeleClassLimit (U : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄)) (U' : Subgroup (ℚ̄ ≃ₐ[ℚ] ℚ̄))
-      ⟨of (ofOpenSubgroup U') c, hc⟩ : IdeleClassLimit) =
-      of (ofOpenSubgroup U) (FiniteSubfield.ideleClassNorm (ofOpenSubgroup_le hUU') c) :=
-  coe_norm_of_eq (ofOpenSubgroup_le hUU') (fixingSubgroup_ofOpenSubgroup U).symm
-    (fixingSubgroup_ofOpenSubgroup U').symm c hc
 
 end IdeleClassLimit
 
@@ -135,6 +130,8 @@ variable {F E : FiniteSubfield} [hFE : Fact (F ≤ E)]
   [(E.1.fixingSubgroup.subgroupOf F.1.fixingSubgroup).Normal]
 
 theorem smul_of_of_normal (g : F.1.fixingSubgroup) (c : IdeleClassGroup E.1) :
+    letI action : MulDistribMulAction (E.1 ≃ₐ[F.1] E.1) (IdeleClassGroup E.1) := inferInstance
+    letI := action.toMulAction.toSemigroupAction.toSMul
     (g : ℚ̄ ≃ₐ[ℚ] ℚ̄) • of E c = of E (restrictHom (E := E) g • c) :=
   smul_of_eq_of_ideleClassEquiv _ ((restrictHom (E := E) g : E.1 ≃ₐ[F.1] E.1) : E.1 ≃+* E.1)
     (fun _ ↦ rfl) c
@@ -208,8 +205,8 @@ theorem map_augmentation :
   · rintro ⟨g, hg, a, ha, rfl⟩
     rw [fixedModule_fixingSubgroup] at ha
     obtain ⟨c, rfl⟩ := ha
-    exact ⟨restrictHom ⟨g, hg⟩ • c / c, ⟨_, c, rfl⟩, by
-      rw [map_div, ← smul_of_of_normal ⟨g, hg⟩ c]⟩
+    refine ⟨_, ⟨(restrictHom ⟨g, hg⟩ : E.1 ≃ₐ[F.1] E.1), c, rfl⟩, ?_⟩
+    rw [map_div, ← smul_of_of_normal ⟨g, hg⟩ c]
 
 theorem coe_invariantsEquiv_tateNorm (c : IdeleClassGroup E.1) :
     (invariantsEquiv ⟨tateNorm (E.1 ≃ₐ[F.1] E.1) (IdeleClassGroup E.1) c,
@@ -255,11 +252,6 @@ def kerEquiv :
     · intro a ha
       obtain ⟨c, rfl⟩ := (fixedEquiv E).surjective a
       exact ⟨c, (tateNorm_eq_one_iff c).2 ha, rfl⟩))
-
-@[simp]
-theorem coe_coe_kerEquiv (c : (tateNorm (E.1 ≃ₐ[F.1] E.1) (IdeleClassGroup E.1)).ker) :
-    ((kerEquiv c : fixedModule IdeleClassLimit E.1.fixingSubgroup) : IdeleClassLimit) = of E c :=
-  rfl
 
 theorem map_augmentation_subgroupOf :
     ((GroundTheory.LocalField.augmentation (E.1 ≃ₐ[F.1] E.1) (IdeleClassGroup E.1)).subgroupOf

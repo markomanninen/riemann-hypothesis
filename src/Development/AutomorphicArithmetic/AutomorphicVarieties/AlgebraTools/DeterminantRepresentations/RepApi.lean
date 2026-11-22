@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -20,7 +24,7 @@ private theorem repAlg_map (ρ : G →* Matrix (Fin n) (Fin n) A) (B : Type) [Co
   | of g =>
     simp [MonoidAlgebra.of_apply, repAlg_single]
   | add x y hx hy =>
-    rw [map_add, map_add, hx, hy, map_add]
+    rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
     ext i j
     simp
   | smul r x hx =>
@@ -79,7 +83,7 @@ theorem UpperTheory.V.AlgebraTools.Det.repApi :
   · intro y hy
     unfold GDet.Kills
     intro B _ _ h
-    rw [ofRep_D, map_add, map_mul, repAlg_map, hy, Matrix.map_zero _ (map_zero _), mul_zero, add_zero, map_one,
+    rw [ofRep_D, map_add (f := _), map_mul, repAlg_map, hy, Matrix.map_zero _ (map_zero _), mul_zero, add_zero, map_one,
       Matrix.det_one]
   · intro A' _ f
     refine GDet.ext fun B _ _ x => ?_
@@ -98,7 +102,7 @@ theorem UpperTheory.V.AlgebraTools.Det.repApi :
     | of h =>
       simp [MonoidAlgebra.of_apply, repAlg_single, MonoidAlgebra.mapDomainRingHom]
     | add x y hx hy =>
-      rw [map_add, map_add, map_add, hx, hy]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
     | smul r x hx =>
       have hr : r • x = MonoidAlgebra.single 1 r * x := by
         rw [Algebra.smul_def]
@@ -117,7 +121,7 @@ theorem UpperTheory.V.AlgebraTools.Det.repApi :
         rw [MonoidAlgebra.of_apply, repAlg_single, repAlg_single, one_smul, one_smul,
           ← Matrix.map_mul, ← Matrix.map_mul, hP]
       | add y z hy hz =>
-        rw [map_add, map_add, Matrix.mul_add, Matrix.add_mul, hy, hz]
+        rw [map_add (f := _), map_add (f := _), Matrix.mul_add, Matrix.add_mul, hy, hz]
       | smul r y hy =>
         rw [map_smul, map_smul, Matrix.mul_smul, Matrix.smul_mul, hy]
     have hd := congrArg Matrix.det (key x)

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+
+@[expose] public section
+
 open NumberField Complex
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.HeckeTwo
@@ -209,9 +214,9 @@ theorem fTerm_contDiffOn : ∀ (F : Type) [Field F] [NumberField F] (b ν : F), 
   have he : ContDiff ℝ ∞ (fun z : Emb F → ℂ =>
       Complex.exp (2 * (Real.pi : ℂ) * I * ((τ ν * τ b * (z τ).re : ℝ) : ℂ))) :=
     (contDiff_const.mul (Complex.ofRealCLM.contDiff.comp
-      (contDiff_const.mul (Complex.reCLM.contDiff.comp (contDiff_apply ℝ ℂ τ))))).cexp
+      (contDiff_const.mul (Complex.reCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) τ))))).cexp
   have hg : ContDiff ℝ ∞ (fun z : Emb F → ℂ => τ b * (z τ).im) :=
-    contDiff_const.mul (Complex.imCLM.contDiff.comp (contDiff_apply ℝ ℂ τ))
+    contDiff_const.mul (Complex.imCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) τ))
   have hh : ContDiffOn ℝ ∞ (fun z : Emb F → ℂ => hTrans σ (τ ν) (τ b * (z τ).im)) (upperHalf F) :=
     (TermSmooth.contDiffOn_hTrans σ hσ (τ ν)).comp hg.contDiffOn
       fun z hz => mul_ne_zero ((map_ne_zero τ).2 hb) (hz τ).ne'

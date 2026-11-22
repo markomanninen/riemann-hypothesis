@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.EisensteinGrowth
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.EisensteinGrowth
+
+@[expose] public section
 
 noncomputable section
 

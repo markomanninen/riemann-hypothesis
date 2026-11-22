@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem exists_trOne (D : Formalism.BasicNotions.D7) : ∃ x : D.host.E, IsInteg
   refine ⟨(1 + D.host.sqd) / 2, Formalism.BasicNotions.Examples₂.isIntegral_halfB (H := D.host), ?_⟩
   first
     | (rw [Formalism.BasicNotions.Examples₂.conj_half (H := D.host), hc]; ring)
-    | (rw [map_div₀, map_add, map_one, hc, map_ofNat]; ring)
+    | (rw [map_div₀, map_add (f := _), map_one, hc, map_ofNat]; ring)
 
 theorem trace_iE_eq_one (D : Formalism.BasicNotions.D7) (p : PlF D) (x : D.host.E) (hx1 : x + D.host.conj x = 1) :
     Algebra.trace (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιE x) = 1 := by
@@ -28,7 +32,7 @@ theorem trace_iE_eq_one (D : Formalism.BasicNotions.D7) (p : PlF D) (x : D.host.
       | exact FiniteDimensional.of_finrank_pos (by rw [(D.s.atP p).rank]; norm_num)
   haveI : CharZero (D.s.atP p).Fp := (D.s.atP p).char0
   have hsum : (D.s.atP p).ιE x + (D.s.atP p).cj ((D.s.atP p).ιE x) = 1 := by
-    rw [(D.s.atP p).cj_ιE, D.conjF_eq, ← map_add, hx1, map_one]
+    rw [(D.s.atP p).cj_ιE, D.conjF_eq, ← map_add (f := _), hx1, map_one]
   have hinv : Algebra.trace (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).cj ((D.s.atP p).ιE x)) =
       Algebra.trace (D.s.atP p).Fp (D.s.atP p).Ep ((D.s.atP p).ιE x) := by
     first
@@ -43,7 +47,7 @@ theorem trace_iE_eq_one (D : Formalism.BasicNotions.D7) (p : PlF D) (x : D.host.
       ((D.s.atP p).ιE x + (D.s.atP p).cj ((D.s.atP p).ιE x)) =
       Algebra.trace (D.s.atP p).Fp (D.s.atP p).Ep 1 := by
     rw [hsum]
-  rw [map_add, hinv, hone] at h2
+  rw [map_add (f := _), hinv, hone] at h2
   linear_combination h2 / 2
 
 theorem norm_trace_le_of_psi {ℓ : ℕ} [Fact ℓ.Prime] {Fp Ep : Type} [Field Fp] [CommRing Ep] [Algebra Fp Ep]

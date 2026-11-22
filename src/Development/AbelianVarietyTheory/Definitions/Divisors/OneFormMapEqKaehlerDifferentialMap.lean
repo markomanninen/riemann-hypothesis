@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CrystallineConnectionFormCoboundaryZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,9 +31,6 @@ def sgn : DR R B →ₐ[B] DR R B := CliffordAlgebra.involute
 
 @[simp] theorem sgn_sgn (x : DR R B) : sgn (sgn x) = x := CliffordAlgebra.involute_involute x
 
-theorem sgn_smul (r : R) (x : DR R B) : sgn (r • x) = r • sgn x := by
-  rw [← algebraMap_smul B r x, map_smul, algebraMap_smul]
-
 theorem ι_mul_ι_swap (a b : Ω[B⁄R]) : ι1 a * ι1 b = -(ι1 b * ι1 a) :=
   eq_neg_of_add_eq_zero_left (ExteriorAlgebra.ι_add_mul_swap a b)
 
@@ -38,7 +39,7 @@ theorem ι_mul (ω : Ω[B⁄R]) (x : DR R B) : ι1 ω * x = sgn x * ι1 ω := by
   | algebraMap b => rw [AlgHom.commutes, Algebra.commutes]
   | ι a => rw [sgn_ι, neg_mul]; exact ι_mul_ι_swap _ _
   | mul a b ha hb => rw [← mul_assoc, ha, mul_assoc, hb, map_mul, mul_assoc]
-  | add a b ha hb => rw [mul_add, ha, hb, map_add, add_mul]
+  | add a b ha hb => rw [mul_add, ha, hb, map_add (f := _), add_mul]
 
 theorem ind1 {P : Ω[B⁄R] → Prop} (h : ∀ b c : B, P (b • D R B c)) (h0 : P 0)
     (ha : ∀ x y, P x → P y → P (x + y)) (ω : Ω[B⁄R]) : P ω := by
@@ -59,12 +60,12 @@ theorem indDR {P : DR R B → Prop} (h : ∀ b : B, P (algebraMap B _ b)) (hd : 
     induction a using ind1 with
     | h b c => rw [map_smul, Algebra.smul_def]; exact hm _ _ (h b) (hd c)
     | h0 => simpa using h 0
-    | ha x y hx hy => rw [map_add]; exact ha _ _ hx hy
+    | ha x y hx hy => rw [map_add (f := _)]; exact ha _ _ hx hy
   | mul a b h1 h2 => exact hm _ _ h1 h2
   | add a b h1 h2 => exact ha _ _ h1 h2
 
-variable (R B) in
 
+variable (R B) in
 def Tw : Type := DR R B × DR R B
 
 namespace Tw
@@ -77,11 +78,12 @@ instance : One (Tw R B) := ⟨(1, 0)⟩
 
 def mk (x y : DR R B) : Tw R B := (x, y)
 
-@[simp] theorem mk_1 (x y : DR R B) : (mk x y).1 = x := rfl
+@[local simp] private theorem mk_1 (x y : DR R B) : (mk x y).1 = x := rfl
 
-@[simp] theorem mk_2 (x y : DR R B) : (mk x y).2 = y := rfl
+@[local simp] private theorem mk_2 (x y : DR R B) : (mk x y).2 = y := rfl
 
-@[ext] theorem ext' {a b : Tw R B} (h1 : a.1 = b.1) (h2 : a.2 = b.2) : a = b := Prod.ext h1 h2
+@[local ext] private theorem ext' {a b : Tw R B} (h₁ : a.1 = b.1) (h₂ : a.2 = b.2) :
+    a = b := Prod.ext h₁ h₂
 
 @[simp] theorem mul_1 (a b : Tw R B) : (a * b).1 = a.1 * b.1 := rfl
 
@@ -91,13 +93,13 @@ def mk (x y : DR R B) : Tw R B := (x, y)
 
 @[simp] theorem add_2 (a b : Tw R B) : (a + b).2 = a.2 + b.2 := rfl
 
-@[simp] theorem zero_1 : (0 : Tw R B).1 = 0 := rfl
+@[local simp] private theorem zero_1 : (0 : Tw R B).1 = 0 := rfl
 
-@[simp] theorem zero_2 : (0 : Tw R B).2 = 0 := rfl
+@[local simp] private theorem zero_2 : (0 : Tw R B).2 = 0 := rfl
 
-@[simp] theorem one_1 : (1 : Tw R B).1 = 1 := rfl
+@[local simp] private theorem one_1 : (1 : Tw R B).1 = 1 := rfl
 
-@[simp] theorem one_2 : (1 : Tw R B).2 = 0 := rfl
+@[local simp] private theorem one_2 : (1 : Tw R B).2 = 0 := rfl
 
 instance : Ring (Tw R B) :=
   { (inferInstance : AddCommGroup (Tw R B)), (inferInstance : Mul (Tw R B)),
@@ -120,9 +122,9 @@ def ofFun : B →+* Tw R B where
     · simp
     · simp [← Algebra.smul_def, ← Algebra.commutes b]
 
-@[simp] theorem ofFun_1 (b : B) : (ofFun (R := R) b).1 = algebraMap B _ b := rfl
+@[local simp] private theorem ofFun_1 (b : B) : (ofFun (R := R) b).1 = algebraMap B _ b := rfl
 
-@[simp] theorem ofFun_2 (b : B) : (ofFun (R := R) b).2 = ι1 (D R B b) := rfl
+@[local simp] private theorem ofFun_2 (b : B) : (ofFun (R := R) b).2 = ι1 (D R B b) := rfl
 
 instance : Algebra B (Tw R B) := (ofFun (R := R)).toAlgebra' fun b x ↦ by
   ext
@@ -133,9 +135,9 @@ theorem smul_def' (b : B) (x : Tw R B) : b • x = ofFun b * x := rfl
 
 instance : Module R (Tw R B) := inferInstanceAs (Module R (DR R B × DR R B))
 
-@[simp] theorem smul_1 (r : R) (a : Tw R B) : (r • a).1 = r • a.1 := rfl
+@[local simp] private theorem smul_1 (r : R) (a : Tw R B) : (r • a).1 = r • a.1 := rfl
 
-@[simp] theorem smul_2 (r : R) (a : Tw R B) : (r • a).2 = r • a.2 := rfl
+@[local simp] private theorem smul_2 (r : R) (a : Tw R B) : (r • a).2 = r • a.2 := rfl
 
 instance : IsScalarTower R B (Tw R B) := ⟨fun r b x ↦ by
   ext <;> simp [smul_def', ← Algebra.smul_def]⟩
@@ -146,6 +148,8 @@ def der : Derivation R B (Tw R B) :=
       map_add' a b := by ext <;> simp
       map_smul' r b := by ext <;> simp }
     fun a b ↦ by
+      change mk (ι1 (D R B (a * b))) 0 =
+        a • mk (ι1 (D R B b)) 0 + b • mk (ι1 (D R B a)) 0
       ext
       · simp [smul_def', ← Algebra.smul_def]
       · simp [smul_def', ι_mul_ι_swap (D R B a)]
@@ -157,11 +161,11 @@ theorem lift_anti (a b : Ω[B⁄R]) :
       der.liftKaehlerDifferential b * der.liftKaehlerDifferential a = (0 : Tw R B) := by
   induction a using ind1 with
   | h0 => simp
-  | ha x y hx hy => rw [map_add, add_mul, mul_add, add_add_add_comm, hx, hy, add_zero]
+  | ha x y hx hy => rw [map_add (f := _), add_mul, mul_add, add_add_add_comm, hx, hy, add_zero]
   | h a a' =>
     induction b using ind1 with
     | h0 => simp
-    | ha x y hx hy => rw [map_add, add_mul, mul_add, add_add_add_comm, hx, hy, add_zero]
+    | ha x y hx hy => rw [map_add (f := _), add_mul, mul_add, add_add_add_comm, hx, hy, add_zero]
     | h b b' =>
       simp only [map_smul, smul_mul_assoc, mul_smul_comm, Derivation.liftKaehlerDifferential_comp_D]
       rw [smul_comm a b, ← smul_add, ← smul_add]
@@ -174,7 +178,7 @@ theorem lift_sq (a : Ω[B⁄R]) :
   induction a using ind1 with
   | h0 => simp
   | ha x y hx hy =>
-    rw [map_add, add_mul, mul_add, mul_add, hx, hy, zero_add, add_zero, lift_anti]
+    rw [map_add (f := _), add_mul, mul_add, mul_add, hx, hy, zero_add, add_zero, lift_anti]
   | h a a' =>
     simp only [map_smul, smul_mul_assoc, mul_smul_comm, Derivation.liftKaehlerDifferential_comp_D]
     have : der (R := R) a' * der a' = 0 := by ext <;> simp [der_apply]
@@ -190,15 +194,15 @@ theorem graph_1 (x : DR R B) : (graph x).1 = x := by
   | h b => rw [AlgHom.commutes]; rfl
   | hd b => rw [graph_D]; rfl
   | hm x y hx hy => rw [map_mul, mul_1, hx, hy]
-  | ha x y hx hy => rw [map_add, add_1, hx, hy]
+  | ha x y hx hy => rw [map_add (f := _), add_1, hx, hy]
 
 end Tw
 
-variable (R B) in
 
+variable (R B) in
 def dDR : DR R B →ₗ[R] DR R B where
   toFun x := (Tw.graph x).2
-  map_add' x y := by rw [map_add, Tw.add_2]
+  map_add' x y := by rw [map_add (f := _), Tw.add_2]
   map_smul' r x := by
     rw [← algebraMap_smul B r x, map_smul, algebraMap_smul]; rfl
 
@@ -244,12 +248,12 @@ theorem dDR_ι_mem (ω : Ω[B⁄R]) : dDR R B (ι1 ω) ∈ ⋀[B]^2 Ω[B⁄R] :=
   induction ω using ind1 with
   | h b c => rw [map_smul, dDR_smul, dDR_D, smul_zero, add_zero]; exact mul_mem (ι_mem _) (ι_mem _)
   | h0 => simp
-  | ha x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | ha x y hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
 
 theorem dDR_mem {j : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^j Ω[B⁄R]) : dDR R B x ∈ ⋀[B]^(j + 1) Ω[B⁄R] := by
   induction hx using Submodule.pow_induction_on_left' with
   | algebraMap b => rw [dDR_algebraMap]; exact ι_mem _
-  | add x y i _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y i _ _ hx hy => rw [map_add (f := dDR R B)]; exact add_mem hx hy
   | mem_mul m hm i x hx ih =>
     obtain ⟨ω, rfl⟩ := hm
     rw [dDR_mul, sgn_ι, neg_mul]
@@ -262,14 +266,14 @@ theorem dDR_mem {j : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^j Ω[B⁄R]) : dDR R B
 theorem sgn_of_mem {j : ℕ} {x : DR R B} (hx : x ∈ ⋀[B]^j Ω[B⁄R]) : sgn x = (-1) ^ j * x := by
   induction hx using Submodule.pow_induction_on_left' with
   | algebraMap b => simp
-  | add x y i _ _ hx hy => rw [map_add, hx, hy, mul_add]
+  | add x y i _ _ hx hy => rw [map_add (f := _), hx, hy, mul_add]
   | mem_mul m hm i x hx ih =>
     obtain ⟨ω, rfl⟩ := hm
     rw [map_mul, sgn_ι, ih, pow_succ]
     rcases neg_one_pow_eq_or (DR R B) i with h | h <;> simp [h]
 
-variable (R B) in
 
+variable (R B) in
 def dOm (j : ℕ) : Om R B j →ₗ[R] Om R B (j + 1) where
   toFun x := ⟨dDR R B x, dDR_mem x.2⟩
   map_add' x y := Subtype.ext (map_add _ _ _)
@@ -280,28 +284,23 @@ def dOm (j : ℕ) : Om R B j →ₗ[R] Om R B (j + 1) where
 @[simp] theorem dOm_dOm {j : ℕ} (x : Om R B j) : dOm R B (j + 1) (dOm R B j x) = 0 :=
   Subtype.ext (dDR_dDR _)
 
-variable (R B) in
 
+variable (R B) in
 def dOne : Ω[B⁄R] →ₗ[R] Om R B 2 where
   toFun ω := ⟨dDR R B (ι1 ω), dDR_ι_mem ω⟩
   map_add' x y := Subtype.ext (by simp)
   map_smul' r x := Subtype.ext (by simp)
 
-variable (R B) in
 
+variable (R B) in
 def dTwo : Om R B 2 →ₗ[R] Om R B 3 := dOm R B 2
 
 @[simp] theorem coe_dOne (ω : Ω[B⁄R]) : (dOne R B ω : DR R B) = dDR R B (ι1 ω) := rfl
 
-@[simp] theorem coe_dTwo (x : Om R B 2) : (dTwo R B x : DR R B) = dDR R B x := rfl
-
 theorem dOne_eq_dOm (ω : Ω[B⁄R]) : dOne R B ω = dOm R B 1 ⟨ι1 ω, ι_mem ω⟩ := rfl
 
-theorem dOm_zero (b : B) (h : algebraMap B (DR R B) b ∈ ⋀[B]^0 Ω[B⁄R]) :
-    dOm R B 0 ⟨_, h⟩ = ⟨ι1 (D R B b), ι_mem _⟩ := Subtype.ext (dDR_algebraMap b)
 
 variable (R B) in
-
 def wedge : Ω[B⁄R] →ₗ[B] Ω[B⁄R] →ₗ[B] Om R B 2 :=
   LinearMap.mk₂ B (fun a b ↦ ⟨ι1 a * ι1 b, mul_mem (ι_mem a) (ι_mem b)⟩)
     (fun _ _ _ ↦ Subtype.ext (by simp [add_mul])) (fun _ _ _ ↦ Subtype.ext (by simp))
@@ -337,7 +336,9 @@ theorem dTwo_wedge {a b : Ω[B⁄R]} (ha : dOne R B a = 0) (hb : dOne R B b = 0)
     dTwo R B (wedge R B a b) = 0 := by
   have ha' : dDR R B (ι1 a) = 0 := congrArg Subtype.val ha
   have hb' : dDR R B (ι1 b) = 0 := congrArg Subtype.val hb
-  exact Subtype.ext (by simp [dDR_mul, ha', hb'])
+  apply Subtype.ext
+  change dDR R B (ι1 a * ι1 b) = 0
+  simp [dDR_mul, ha', hb']
 
 end Alg
 
@@ -437,7 +438,7 @@ theorem SemiHom.mDR_mem (h : SemiHom σ α) {j : ℕ} {x : DR R B} (hx : x ∈ �
     rw [h.mDR_algebraMap]
     change _ ∈ LinearMap.range _ ^ 0
     rw [pow_zero]; exact Submodule.algebraMap_mem _
-  | add x y i _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y i _ _ hx hy => rw [map_add (f := h.mDR)]; exact add_mem hx hy
   | mem_mul m hm i x hx ih =>
     obtain ⟨ω, rfl⟩ := hm
     rw [map_mul, h.mDR_ι]
@@ -473,7 +474,7 @@ theorem SemiHom.oneFormMap_eq_self_of_id {τ : R →+* R} {β : B →+* B} (h : 
   induction ω using ind1 with
   | h b c => simp [e]
   | h0 => simp
-  | ha x y hx hy => rw [map_add, hx, hy]
+  | ha x y hx hy => rw [map_add (f := _), hx, hy]
 
 theorem SemiHom.mOm_id {τ : R →+* R} {β : B →+* B} (h : SemiHom τ β) (e : ∀ b, β b = b) {j : ℕ}
     (x : Om R B j) : h.mOm j x = x := by
@@ -483,7 +484,7 @@ theorem SemiHom.mOm_id {τ : R →+* R} {β : B →+* B} (h : SemiHom τ β) (e 
   | h b => simp [e]
   | hd b => simp [e]
   | hm x y hx hy => rw [map_mul, hx, hy]
-  | ha x y hx hy => rw [map_add, hx, hy]
+  | ha x y hx hy => rw [map_add (f := _), hx, hy]
 
 variable {τ : R' →+* R''} {β : B' →+* B''} {ρ : R →+* R''} {γ : B →+* B''}
 
@@ -495,7 +496,7 @@ theorem SemiHom.oneFormMap_comp_oneFormMap (h : SemiHom σ α) (h' : SemiHom τ 
   induction ω using ind1 with
   | h b c => simp [e]
   | h0 => simp
-  | ha x y hx hy => simp only [map_add, hx, hy]
+  | ha x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem SemiHom.mOm_mOm (h : SemiHom σ α) (h' : SemiHom τ β) (h'' : SemiHom ρ γ) (e : ∀ b, β (α b) = γ b)
     {j : ℕ} (x : Om R B j) : h'.mOm j (h.mOm j x) = h''.mOm j x := by
@@ -505,7 +506,7 @@ theorem SemiHom.mOm_mOm (h : SemiHom σ α) (h' : SemiHom τ β) (h'' : SemiHom 
   | h b => simp [e]
   | hd b => simp [e]
   | hm x y hx hy => simp only [map_mul, hx, hy]
-  | ha x y hx hy => simp only [map_add, hx, hy]
+  | ha x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem SemiHom.oneFormMap_eq_kaehlerDifferential_map [Algebra R B'] [Algebra B B'] [IsScalarTower R B B'] {τ : R →+* R}
     {β : B →+* B'} (h : SemiHom τ β) (e : ∀ b, β b = algebraMap B B' b) (ω : Ω[B⁄R]) :
@@ -513,7 +514,7 @@ theorem SemiHom.oneFormMap_eq_kaehlerDifferential_map [Algebra R B'] [Algebra B 
   induction ω using ind1 with
   | h b c => simp [e, KaehlerDifferential.map_D]
   | h0 => simp
-  | ha x y hx hy => simp only [map_add, hx, hy]
+  | ha x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Map
 

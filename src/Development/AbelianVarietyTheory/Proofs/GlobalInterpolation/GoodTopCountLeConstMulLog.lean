@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

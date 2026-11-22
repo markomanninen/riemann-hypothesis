@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,8 +98,5 @@ def ofChar (N : ℕ) (χ : HChar D.host.E) (n : D.what₂.Tau → ℤ) (hu : χ.
     (mul N χ₁ χ₂ h).f x = χ₁.f x * χ₂.f x := rfl
 
 @[simp] theorem inv_f {N N' : ℕ} (χ : HeckeU D N) (h) (x) : (inv N' χ h).f x = (χ.f x)⁻¹ := rfl
-
-@[simp] theorem ofChar_f (N : ℕ) (χ : HChar D.host.E) (n) (hu hi hc hn hp hr) (x) :
-    (ofChar N χ n hu hi hc hn hp hr).f x = χ.1 (finIdl D x) := rfl
 
 end GlobalTheory.HeckeUOps

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsAlt
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.CharDotKill

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotTransSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoPieceSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoFiltSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.QuotTransSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StepTwoPieceSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -29,8 +34,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   {x : Fin (N + 1) → Ω} {E : Type v} [AddCommGroup E] [Module Ω E] [Module S E]
   [IsScalarTower S Ω E]
 
-omit [IsScalarTower S Ω E] in
 
+omit [IsScalarTower S Ω E] in
 theorem tildeSys_twist_mono {M M' : FinGradedSub (S := S) (x := x) E} (h : ∀ c, M.piece c ≤ M'.piece c)
     (Q : SubSystem S x Ω) (I : Chart x) :
     ((M.tildeSys 0).twist Q).sub I ≤ ((M'.tildeSys 0).twist Q).sub I := by

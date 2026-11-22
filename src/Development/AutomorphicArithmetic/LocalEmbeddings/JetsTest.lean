@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.JetsGlue
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealModelSq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CuspidalListedTopForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselPeriodCorankConvergesColumn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsFunForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.JetsGlue
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealModelSq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CuspidalListedTopForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselPeriodCorankConvergesColumn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsFunForm
+
+@[expose] public section
 
 noncomputable section
 

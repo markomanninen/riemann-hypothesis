@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.IncomingBounds.IncomingBound
-import Formalism.IncomingBounds.FlowDegreeBounds.MaxFlowValueAttained
+module
+
+public import Mathlib
+public import Formalism.IncomingBounds.IncomingBound
+public import Formalism.IncomingBounds.FlowDegreeBounds.MaxFlowValueAttained
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.IncomingBounds

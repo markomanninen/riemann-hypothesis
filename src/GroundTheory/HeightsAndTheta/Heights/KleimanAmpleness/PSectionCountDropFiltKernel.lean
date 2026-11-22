@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropFiltKernelSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropFiltKernelSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -40,7 +45,7 @@ theorem idealMod_le (j : Fin (N + 1)) (b : ℕ) (I : Chart x) {i : Fin (N + 1)} 
   let K : Ideal (Poly S N) :=
     { carrier := {f | aeval (fun l => x l / x i) f ∈ M}
       add_mem' := fun {f g} hf hg => by
-        simp only [Set.mem_ofPred_eq, map_add] at *; exact M.add_mem hf hg
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at *; exact M.add_mem hf hg
       zero_mem' := by simp only [Set.mem_ofPred_eq, map_zero]; exact M.zero_mem
       smul_mem' := fun r f hf => by
         simp only [Set.mem_ofPred_eq, smul_eq_mul, map_mul] at *
@@ -48,7 +53,8 @@ theorem idealMod_le (j : Fin (N + 1)) (b : ℕ) (I : Chart x) {i : Fin (N + 1)} 
   have hK : primeOf (S := S) x ⊔ zeroIdeal (twistSys S x (b : ℤ)) (x j ^ b) ≤ K := by
     refine sup_le (fun f hf => ?_) (Ideal.span_le.mpr ?_)
     · change aeval (fun l => x l / x i) f ∈ M
-      rw [← sum_homogeneousComponent f, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_homogeneousComponent f, map_sum]
       convert M.zero_mem
       refine Finset.sum_eq_zero fun d _ => ?_
       rw [aeval_div_of_isHomogeneous (homogeneousComponent_isHomogeneous d f) i,

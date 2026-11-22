@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.ComplexSpanBlockActionStable
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.ComplementSmulLocalExtensionMatrix
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.ComplexSpanBlockActionStable
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.ComplementSmulLocalExtensionMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem local_diamond_of_idempotent (S : StepLevel F E σ J T f bad) (v : Height
     linear_combination (-c ^ 2 + 2 * c * c' - c' ^ 2) * hee + hcc
   have hμ'μ : μ' * μ = 1 := by rw [mul_comm]; exact hμμ'
   have hσμ : sigR σ (v.adicCompletion F) μ = μ' := by
-    rw [hμdef, hμ'def, map_add, map_mul, map_mul, map_sub, map_one, hσ, hσc, hσc']
+    rw [hμdef, hμ'def, map_add (f := _), map_mul, map_mul, map_sub, map_one, hσ, hσc, hσc']
     ring
   have hμO : μ ∈ intV E v :=
     add_mem (mul_mem hc he) (mul_mem hc' (sub_mem (one_mem _) he))

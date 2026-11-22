@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
-import Formalism.FilteredPoleLength.LocalDescentLevels.IntegralMulExpNegSq
-import Formalism.FilteredPoleLength.LocalDescentLevels.ExistsSumOfMemSpanImage
-import Formalism.FilteredPoleLength.LocalDescentLevels.MinimumChainBounds
-import Formalism.FilteredPoleLength.LocalDescentLevels.DetMulEqSumPrincipal
-import Formalism.FilteredPoleLength.LocalDescentLevels.GAdjugateNormBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GaussianTailBound
+public import Formalism.FilteredPoleLength.LocalDescentLevels.IntegralMulExpNegSq
+public import Formalism.FilteredPoleLength.LocalDescentLevels.ExistsSumOfMemSpanImage
+public import Formalism.FilteredPoleLength.LocalDescentLevels.MinimumChainBounds
+public import Formalism.FilteredPoleLength.LocalDescentLevels.DetMulEqSumPrincipal
+public import Formalism.FilteredPoleLength.LocalDescentLevels.GAdjugateNormBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.Ext
 

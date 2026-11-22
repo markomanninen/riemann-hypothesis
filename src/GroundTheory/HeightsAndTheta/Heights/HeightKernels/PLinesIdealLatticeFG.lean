@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLines
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -43,8 +48,8 @@ theorem single_mem_span (K : Type) [Field K] [NumberField K] {n : ℕ}
 
 end KLinesIdealLatticeFG
 
-open KLinesIdealLatticeFG in
 
+open KLinesIdealLatticeFG in
 theorem LinesIdealLatticeFG.proof : LinesIdealLatticeFG.Statement := by
   intro K _ _ n a ha
   refine ⟨fg K a, ?_⟩

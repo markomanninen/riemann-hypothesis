@@ -1,6 +1,11 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FewEquationsStatement
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FewEquationsStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR MainStatements.Hodge
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.FewEquationsStatement : FewEqSt := by

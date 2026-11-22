@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ZeroGeneratorsLeThetaSpan
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseOrdBd
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HassePresH
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.FinitePtsOfCurve
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ZeroGeneratorsLeThetaSpan
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseOrdBd
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HassePresH
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.FinitePtsOfCurve
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ def Dp (u : WeightFamilies.Wt D j) (t : ι → ℝ) : Submodule (𝓞 B.KO) (B.C
   carrier := {F | ∀ ζ, ((t ζ : ℝ) : EReal) ≤ X.vAt la (y ζ) (X.inc u F)}
   zero_mem' := fun ζ => by rw [map_zero, X.vAt_zero]; exact le_top
   add_mem' := fun {a b} ha hb ζ => by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact le_trans (le_min (ha ζ) (hb ζ)) (X.vAt_add la (y ζ) _ _)
   smul_mem' := fun a F hF ζ => by
     by_cases ha : a = 0
@@ -47,9 +51,6 @@ def Dp (u : WeightFamilies.Wt D j) (t : ι → ℝ) : Submodule (𝓞 B.KO) (B.C
       have h1 : (0 : EReal) ≤ (((vAdd la (algebraMap (𝓞 B.KO) B.KO a) : ℤ) : ℝ) : EReal) := by exact_mod_cast h0
       calc ((t ζ : ℝ) : EReal) = 0 + (t ζ : ℝ) := (zero_add _).symm
         _ ≤ _ := add_le_add h1 (hF ζ)
-
-theorem mem_Dp {u : WeightFamilies.Wt D j} {t : ι → ℝ} {F : B.Cusp j u} :
-    F ∈ Dp X la y u t ↔ ∀ ζ, ((t ζ : ℝ) : EReal) ≤ X.vAt la (y ζ) (X.inc u F) := Iff.rfl
 
 theorem Dp_mono (u : WeightFamilies.Wt D j) {t t' : ι → ℝ} (h : ∀ ζ, t' ζ ≤ t ζ) : Dp X la y u t ≤ Dp X la y u t' :=
   fun _ hF ζ => le_trans (by exact_mod_cast h ζ) (hF ζ)
@@ -114,18 +115,18 @@ theorem hasse_smul_Kl (β : Idx D j G.N →₀ ℕ) (c0 : X.Kl la) (z : Lc X la 
       (algebraMap (X.Kl la) (Kp X la G.N) c0) • hasse X la G.w β z := by
   rw [smul_Lc_eq, map_smul, smul_Lc_eq]
 
-theorem unifO_pow_eq (e : ℕ) : algebraMap (Op X la G.N) (Kp X la G.N) (unifO X la G.N ^ e) =
+theorem unifO_pow_eq (e : ℕ) : @algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (unifO X la G.N ^ e) =
     algebraMap (X.Kl la) (Kp X la G.N) (algebraMap (X.Ol la) (X.Kl la) (unif X la ^ e)) := by
   unfold unifO
   rw [← map_pow, ← IsScalarTower.algebraMap_apply (X.Ol la) (Op X la G.N) (Kp X la G.N),
     IsScalarTower.algebraMap_apply (X.Ol la) (X.Kl la) (Kp X la G.N)]
 
 theorem ordA_unif_smul (hC : Q.InCurve) (ζ : PtsG G la) (e : ℕ) (a : SectionSheafQuotient X la G.w wF) :
-    Q.ordA ζ (algebraMap (Op X la G.N) (Kp X la G.N) (unifO X la G.N ^ e) • a) =
+    Q.ordA ζ (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (unifO X la G.N ^ e) • a) =
       (((e : ℤ) * (ep (unifO X la G.N) ζ : ℤ) : ℤ) : WithTop ℤ) + Q.ordA ζ a := by
   have := isDVRAt_of_curve Q hC ζ
   have hU := isUnif_of_curve Q hC
-  have h1 : algebraMap (Op X la G.N) (Kp X la G.N) (unifO X la G.N ^ e) • a =
+  have h1 : @algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (unifO X la G.N ^ e) • a =
       (algebraMap (Op X la G.N) (OsK X la G.w) (unifO X la G.N ^ e)) • a := by
     rw [IsScalarTower.algebraMap_apply (Op X la G.N) (Kp X la G.N) (OsK X la G.w)]
     exact (algebraMap_smul (OsK X la G.w) _ a).symm
@@ -139,7 +140,7 @@ theorem smul_AAp_mem (hC : Q.InCurve) (e : ℕ) (m m' : PtsG G la → ℕ)
   | mem x hx =>
     obtain ⟨x0, ⟨hx0, hb0⟩, rfl⟩ := hx
     have hc := unifO_pow_eq (X := X) (G := G) (la := la) e
-    set c : Kp X la G.N := algebraMap (Op X la G.N) (Kp X la G.N) (unifO X la G.N ^ e) with hcdef
+    set c : Kp X la G.N := @algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (unifO X la G.N ^ e) with hcdef
     have hh : ∀ β, hasse X la G.w β ((c • x0 : ↥(HK X la G.w wF)) : Lw X la G.w) =
         c • hasse X la G.w β (x0 : Lw X la G.w) := fun β => by
       rw [hc]; exact hasse_smul_Kl β _ _

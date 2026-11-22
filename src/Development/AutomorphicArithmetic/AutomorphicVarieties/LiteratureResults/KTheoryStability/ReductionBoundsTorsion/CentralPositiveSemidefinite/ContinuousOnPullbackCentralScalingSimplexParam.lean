@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.AvCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.AvCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,10 +14,10 @@ def Smp (q : ℕ) : Set (Fin q → ℝ) := {t | (∀ j, 0 ≤ t j) ∧ ∑ j, t 
 
 theorem smp_closed (q : ℕ) : IsClosed (Smp q) := by
   have h1 : IsClosed {t : Fin q → ℝ | ∀ j, 0 ≤ t j} := by
-    simp only [Set.setOf_forall]
+    simp only [Set.ofPred_forall]
     exact isClosed_iInter fun j => isClosed_le continuous_const (continuous_apply j)
   have h2 : IsClosed {t : Fin q → ℝ | ∑ j, t j ≤ 1} :=
-    isClosed_le (continuous_finset_sum _ fun j _ => continuous_apply j) continuous_const
+    isClosed_le (by fun_prop) continuous_const
   exact h1.inter h2
 
 theorem smp_compact (q : ℕ) : IsCompact (Smp q) := by
@@ -72,7 +76,8 @@ theorem intS_lin {q : ℕ} (ω : Form (HS L N) q) (A : HS L N →L[ℝ] HS L N) 
   unfold intS
   congr 1
   ext t
-  simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply, map_add, map_sum, map_smul, map_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply, map_add (f := _), map_sum, map_smul, map_sub,
     Function.comp_def]
 
 section One
@@ -101,7 +106,7 @@ theorem continuous_pullback_centralScaling_line_apply (F1 : ContinuousOn (fun p 
 
 theorem av_cont (F1 : ContinuousOn (fun p : ℝ × HS L N => pb (sc (p.1 • v)) ω p.2) (Set.univ ×ˢ Pos L N)) :
     ContinuousOn (av v ω) (Pos L N) := by
-  rw [continuousOn_iff_continuous_restrict]
+  rw [continuousOn_iff_continuous_domRestrict]
   have hg : Continuous fun p : Pos L N × ℝ => ((p.2, (p.1 : HS L N)) : ℝ × HS L N) := by fun_prop
   have hm : ∀ p : Pos L N × ℝ, ((p.2, (p.1 : HS L N)) : ℝ × HS L N) ∈ Set.univ ×ˢ Pos L N :=
     fun p => Set.mk_mem_prod trivial p.1.2

@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.StatementT
+module
+
+public import Formalism.MahlerMeasure.StatementT
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 

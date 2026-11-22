@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
-import Development.AutomorphicSpectrum.RootSurvey.GeometrySurvey.ExistsTopDegreeCoefficientFormAndEqOnTopForms
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EpSplit
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EpInert
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+public import Development.AutomorphicSpectrum.RootSurvey.GeometrySurvey.ExistsTopDegreeCoefficientFormAndEqOnTopForms
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EpSplit
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EpInert
+
+@[expose] public section
 
 open MvPolynomial NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Flat
 

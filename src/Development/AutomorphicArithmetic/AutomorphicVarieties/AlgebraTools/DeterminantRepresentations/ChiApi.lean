@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.Expand
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 
@@ -51,7 +55,7 @@ theorem UpperTheory.V.AlgebraTools.Det.chiApi :
     refine (Polynomial.natDegree_C_mul_X_pow_le _ _).trans ?_
     omega
   have hcoeff : (D.chi y).coeff n = 1 := by
-    rw [hsum, Polynomial.finset_sum_coeff, Finset.sum_eq_single 0]
+    rw [hsum, Polynomial.finsetSum_coeff, Finset.sum_eq_single 0]
     · simp [h0]
     · intro b hb hb0
       have : n ≠ n - b := by

@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.RegWeightLevi
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuSheetLeviNonneg
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartLeviThGe
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartMollifiedBounds
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.RegWeightLevi
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PMuSheetLeviNonneg
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartLeviThGe
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartMollifiedBounds
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.ChartFun
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree

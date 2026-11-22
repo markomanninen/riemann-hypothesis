@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RowWtSpan
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RowWtSpan
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -64,10 +68,6 @@ theorem wt_le {k N : ℕ} (sz : Fin N → ℕ) (I : ∀ j, Fin (sz j) → Fin k)
       Finset.univ_eq_empty_iff.2 ⟨fun p => hj (lt_of_le_of_lt (Nat.zero_le _) p.2)⟩
     rw [hem]
     simp
-
-def Data (m : ℕ) (ν : Fin (m + 1) → ℕ) : Type :=
-  {d : Σ N : ℕ, Σ sz : Fin N → ℕ, ∀ j, Fin (sz j) → Fin (m + 1) //
-    (∀ j, d.2.1 j ≤ m + 1) ∧ shapeDeg d.2.1 = ν ∧ ∀ j, StrictMono (d.2.2 j)}
 
 theorem rowWtSpan_of_bideterminant (h1 : BideterminantMem) (h2 : BideterminantSpan) : PI.RowWtSpan := by
   intro K _ m ν _

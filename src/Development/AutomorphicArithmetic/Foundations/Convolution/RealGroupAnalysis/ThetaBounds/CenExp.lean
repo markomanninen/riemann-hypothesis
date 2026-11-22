@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.NormInf
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.NormInf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -31,7 +35,7 @@ private theorem inf_scalarF {F : Type} [Field F] [NumberField F] [IsTotallyReal 
     ext i j
     by_cases e : i = j <;> simp [Matrix.diagonal_apply, e, h2]
 
-private theorem inf_scalarE {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (u : (Cinf E)ˣ) :
+private theorem inf_scalarE {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (u : (Cinf E)ˣ) :
     infGL E 2 (Matrix.GeneralLinearGroup.scalar (Fin 2) u) =
       Matrix.GeneralLinearGroup.scalar (Fin 2) (infId E u) := by
   have hd : infId E u =
@@ -53,7 +57,7 @@ private theorem inf_scalarE {E : Type} [Field E] [NumberField E] [IsTotallyCompl
     ext i j
     by_cases e : i = j <;> simp [Matrix.diagonal_apply, e, h2]
 
-private theorem ex_zE {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (s : Cinf E) (t : ℝ) :
+private theorem ex_zE {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (s : Cinf E) (t : ℝ) :
     ex (zE s) t = Matrix.GeneralLinearGroup.scalar (Fin 2) (euE s t) := by
   apply Units.ext
   have e : t • Matrix.of (zE s) = Matrix.diagonal (fun _ : Fin 2 => t • s) := by
@@ -68,7 +72,7 @@ private theorem ex_zE {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] 
   · simp [Matrix.diagonal_apply, h]
 
 private theorem norm_euE {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    [IsTotallyReal F] [IsTotallyComplex E] (s : Cinf E) (t : ℝ) (v : InfinitePlace F) :
+    [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (s : Cinf E) (t : ℝ) (v : InfinitePlace F) :
     (∏ w : InfinitePlace E, if w.comap (algebraMap F E) = v then ‖(euE s t).val w‖ ^ 2 else 1) =
       (euF (trI F s) t).val v := by
   have h : ∀ w : InfinitePlace E, (if w.comap (algebraMap F E) = v then ‖(euE s t).val w‖ ^ 2 else 1) =
@@ -85,7 +89,7 @@ private theorem norm_euE {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   rfl
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.cenExp :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (_D : Dat F E), CenExp F E := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (_D : Dat F E), CenExp F E := by
   intro F E _ _ _ _ _ _ _ D s
   refine ⟨fun t => infId E (euE s t), fun t => Matrix.GeneralLinearGroup.scalar (Fin 2) (euF (trI F s) t),
     ⟨fun a b => ?_, ?_⟩, fun t => ⟨?_, ?_⟩⟩

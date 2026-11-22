@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SOnCols
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SOnCols
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem ramIff_all : ∀ D : D7, RamIff D := by
       have : ∀ s : 𝓀[k]ˣ, formOf β.rep P v (s • h • P) = β.rep h (rTrans (β.gl (g s)) φ) := by
         intro s
         rw [← smul_comm h s P, ← hg, smul_smul, hv, map_mul, Module.End.mul_apply, rp (g s)]
-      rw [Finset.sum_congr rfl fun s _ => this s, ← map_sum, h0, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl fun s _ => this s, ← map_sum, h0, map_zero]
     · obtain ⟨h, rfl⟩ := MulAction.exists_smul_eq (GL n k) P Q
       rw [hv, rp]
       exact ⟨fun γ hγ y => by simp only [rTrans]; rw [mul_assoc, hc.1 γ hγ], hc.2.comp (continuous_id.mul continuous_const)⟩

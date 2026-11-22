@@ -1,19 +1,24 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
 open NumberField NumberField.InfinitePlace NumberField.mixedEmbedding Module MeasureTheory
-open scoped nonZeroDivisors NNReal ENNReal
+open scoped nonZeroDivisors NNReal ENNReal Classical
 
 section General
 
 variable (K : Type*) [Field K] [NumberField K]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem exists_ne_zero_mem_fractionalIdeal_place_le (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
     (g : InfinitePlace K → ℝ≥0) (h : minkowskiBound K I ≤ volume (convexBodyLT K g)) :
     ∃ a ∈ (I : FractionalIdeal (𝓞 K)⁰ K), a ≠ 0 ∧ ∀ w : InfinitePlace K, w a ≤ g w := by
+  classical
   set S : Set (mixedSpace K) :=
     (Set.univ.pi (fun w : { w : InfinitePlace K // IsReal w } => Metric.closedBall 0 (g w))) ×ˢ
     (Set.univ.pi (fun w : { w : InfinitePlace K // IsComplex w } => Metric.closedBall 0 (g w)))
@@ -55,7 +60,7 @@ end General
 
 section TotallyComplex
 
-variable {E : Type*} [Field E] [NumberField E] [IsTotallyComplex E] {f : ℕ}
+variable {E : Type*} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {f : ℕ}
 
 theorem exists_ne_zero_mem_fractionalIdeal_norm_sq_le (hf : finrank ℚ E = 2 * f)
     (J : FractionalIdeal (𝓞 E)⁰ E) (hJ : J ≠ 0) :

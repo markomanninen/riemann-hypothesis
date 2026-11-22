@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeIndicatorFormula
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOrdLConjGramDetOfUnitGramAdicCompletion
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.OrbitalCosetFiniteness.CvGelfandAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.HintSph
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeckeIndicatorFormula
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCompactSupportDcos
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOrdLConjGramDetOfUnitGramAdicCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ private theorem Tj_lr {L : Type} [Field L] (n : ℕ) (O : Subring L) (ϖ : L) (j
   · simp only [Units.val_mul, e, Matrix.mul_assoc]
 
 private theorem Tj_top (n : ℕ) (w : Pl E) (ϖ : w.adicCompletion E) (s : (w.adicCompletion E)ˣ) (hs : (s : w.adicCompletion E) = ϖ)
-    (y : GLw n w) : Tj ℂ n (Ov E w) ϖ n y = if ∃ k ∈ KGL w n, y = sc n w s * k then 1 else 0 := by
+    (y : GLw n w) : Tj ℂ n (Ov E w) ϖ n y = if ∃ k ∈ KGL w (n := n), y = sc n w s * k then 1 else 0 := by
   have hD : Formalism.UG.diagJ n ϖ n = (sc n w s).val := by
     rw [sc_val, hs, Formalism.UG.diagJ]
     ext i j
@@ -159,7 +163,7 @@ theorem genTw : GenTw := by
   have hgen : ∀ (q : Fin (a + 1) × Fin (b + 1)) (y : GLw a w × GLw b w), gen2 a b w q y =
       Tj ℂ a (Ov E w) (unif w) q.1 y.1 * Tj ℂ b (Ov E w) (unif w) q.2 y.2 := fun _ _ => rfl
   have hth : ∀ n, thL n w = thetaGL n (cj w) := fun n => by rw [thL, if_neg hs]
-  have hKa : ∀ n {k : GLw n w}, k ∈ KGL w n → thetaGL n (cj w) k ∈ KGL w n := fun n _ hk =>
+  have hKa : ∀ n {k : GLw n w}, k ∈ KGL w (n := n) → thetaGL n (cj w) k ∈ KGL w (n := n) := fun n _ hk =>
     GlobalTheory.CompanionTheory.IwFacts.thetaGL_mem_KGL w n hk
   set z : GLw a w × GLw b w := (sc a w s, sc b w s) with hz
   set f := gen2 a b w (Fin.last a, Fin.last b) with hf
@@ -196,8 +200,8 @@ theorem genTw : GenTw := by
     · obtain ⟨k, hk, rfl⟩ := h
       rw [if_pos ⟨k.1, hk.1, rfl⟩, if_pos ⟨k.2, hk.2, rfl⟩, if_pos ⟨k, hk, rfl⟩, one_mul]
     · rw [if_neg h]
-      by_cases h1 : ∃ k ∈ KGL w a, x.1 = sc a w s * k
-      · by_cases h2 : ∃ k ∈ KGL w b, x.2 = sc b w s * k
+      by_cases h1 : ∃ k ∈ KGL w (n := a), x.1 = sc a w s * k
+      · by_cases h2 : ∃ k ∈ KGL w (n := b), x.2 = sc b w s * k
         · obtain ⟨k1, hk1, e1⟩ := h1
           obtain ⟨k2, hk2, e2⟩ := h2
           exact absurd ⟨(k1, k2), ⟨hk1, hk2⟩, Prod.ext e1 e2⟩ h

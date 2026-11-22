@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.YGSlice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableBlockIntegrand
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOrbitalBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.YGSlice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableBlockIntegrand
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOrbitalBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 
@@ -75,12 +79,11 @@ theorem slice_germ_points : Formalism.FourierDecayAlt.P.FormNormSumIdentities.YG
     unfold G.OmBlock
     congr 1
     funext p
-    simp only [G.blockIntegrand]
+    unfold G.blockIntegrand
     congr 1
     have hp := hL _ (hne p) (himg p)
     simp only [G.orbM] at hp
-    rw [hp]
-    exact (phiFun_tr (by rw [ptSize_ptG]; omega) _ _ z z' F _ _ _ γ).symm
+    exact hp.trans (phiFun_tr (by rw [ptSize_ptG]; omega) _ _ z z' F _ _ _ γ).symm
   · obtain ⟨D0, hDK, hz⟩ := hq
     have hz0 : w0 ≠ 0 := by
       rintro rfl

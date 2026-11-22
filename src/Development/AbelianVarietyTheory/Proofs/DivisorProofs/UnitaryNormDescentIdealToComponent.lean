@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UValThruTopOfDisjoint
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormDescentIdealSheafFiniteOpenClosedImageStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryTraitThroughModuliGenericPointStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UValThruTopOfDisjoint
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolarizationTransferModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormDescentIdealSheafFiniteOpenClosedImageStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryTraitThroughModuliGenericPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdlAlongComapEq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.Models GlobalTheory.LN GlobalTheory.ShFam GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc
@@ -69,10 +74,32 @@ theorem normDescent : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
   have hcomp : spMap (f₂.comp f) = spMap f₂ ≫ spMap f := by
     simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
   haveI : IsLocalHom (f₂.comp f) := RingHom.isLocalHom_comp f₂ f
+  have idlAlong_eq_map_local {X : Scheme.{0}} (I : X.IdealSheafData) {R : Type}
+      [CommRing R] [IsLocalRing R] (χ : Sp R ⟶ X) (U : X.affineOpens)
+      (hle : ⊤ ≤ χ ⁻¹ᵁ U.1) :
+      idlAlong I χ = (I.ideal U).map (χ.appLE U.1 ⊤ hle ≫ (Scheme.ΓSpecIso (.of R)).hom).hom := by
+    have hx : χ (closedPoint R) ∈ U.1 := hle trivial
+    unfold idlAlong
+    rw [ds_stalkId_eq_map I U _ hx, Ideal.map_map, ← CommRingCat.hom_comp, Scheme.germ_stalkClosedPointTo]
+    congr 2
+  have idlAlong_comp_local {X : Scheme.{0}} (I : X.IdealSheafData) {R S : Type}
+      [CommRing R] [IsLocalRing R] [CommRing S] [IsLocalRing S]
+      (χ : Sp R ⟶ X) (g : R →+* S) : idlAlong I (spMap g ≫ χ) = (idlAlong I χ).map g := by
+    obtain ⟨U, hU, hx, -⟩ := TopologicalSpace.Opens.isBasis_iff_nbhd.1 X.isBasis_affineOpens
+      (show χ (closedPoint R) ∈ (⊤ : X.Opens) from trivial)
+    have hle : ⊤ ≤ χ ⁻¹ᵁ U := (Scheme.preimage_eq_top_of_closedPoint_mem χ hx).ge
+    have hle' : ⊤ ≤ (spMap g ≫ χ) ⁻¹ᵁ U := fun x _ => hle (show spMap g x ∈ (⊤ : (Sp R).Opens) from trivial)
+    rw [idlAlong_eq_map_local I χ ⟨U, hU⟩ hle, idlAlong_eq_map_local I _ ⟨U, hU⟩ hle', Ideal.map_map]
+    congr 1
+    have e : (spMap g ≫ χ).appLE U ⊤ hle' = χ.appLE U ⊤ hle ≫ (spMap g).appTop := by
+      rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    rw [e, Category.assoc, Scheme.ΓSpecIso_naturality, ← Category.assoc, CommRingCat.hom_comp]
+    rfl
   apply GlobalTheory.TraitOrder.map_injective (f₂.comp f) (hi₂.comp hfi)
   have hmp := map_prod (Ideal.mapHom f₂) (fun j => idlAlong J₁ (ψ j)) Finset.univ
   simp only [Ideal.mapHom_apply] at hmp
-  rw [← Ideal.map_map, hprod, Ideal.map_pow, ← GlobalTheory.TraitOrder.idlAlong_comp, hcomp, Category.assoc, h₀, hmp]
-  simp only [← GlobalTheory.TraitOrder.idlAlong_comp, hj, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  rw [← Ideal.map_map, hprod, Ideal.map_pow, ← idlAlong_comp_local, hcomp, Category.assoc, h₀, hmp]
+  simp only [← idlAlong_comp_local, hj, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
 end GlobalTheory.UPoinc.UNormDown

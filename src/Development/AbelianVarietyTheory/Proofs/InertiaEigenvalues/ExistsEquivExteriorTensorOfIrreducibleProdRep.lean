@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Topology
 open scoped TensorProduct
@@ -63,9 +67,6 @@ def evMap : (extTensor (homRep τ ρ) ρ).IntertwiningMap τ where
       homRep_apply_coe]
     rw [φ.2 h v, ← apply_pair]
 
-@[simp] theorem evMap_tmul (φ : homSpace τ ρ) (v : Y) :
-    evMap τ ρ (φ ⊗ₜ v) = (φ : Y →ₗ[ℂ] X) v := rfl
-
 end GlobalTheory.TensorFactor
 
 namespace GlobalTheory.TensorFactor
@@ -94,8 +95,8 @@ theorem homRep_eq_of_apply_eq [ρ.IsIrreducible] {g : G} {φ : homSpace τ ρ} {
 
 end GlobalTheory.TensorFactor
 
-open GlobalTheory.TensorFactor in
 
+open GlobalTheory.TensorFactor in
 theorem GlobalTheory.TensorFactor.exists_equiv_extTensor : ∀ (G H X Y : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Group H] [TopologicalSpace H] [IsTopologicalGroup H] [AddCommGroup X] [Module ℂ X] [AddCommGroup Y] [Module ℂ Y] (τ : Representation ℂ (G × H) X) (ρ : Representation ℂ H Y), IsSmooth τ → τ.IsIrreducible → ρ.IsIrreducible → (∀ (M : Submodule ℂ (Y →ₗ[ℂ] X)), (∀ φ ∈ M, ∀ g v, φ (ρ g v) = τ (1, g) (φ v)) → Function.Injective (TensorProduct.lift M.subtype)) → (∃ ι : Y →ₗ[ℂ] X, ι ≠ 0 ∧ ∀ g v, ι (ρ g v) = τ (1, g) (ι v)) → ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W) (σ : Representation ℂ G W), IsSmooth σ ∧ σ.IsIrreducible ∧ Nonempty (τ.Equiv (extTensor σ ρ)) := by
   intro G H X Y _ _ _ _ _ _ _ _ _ _ τ ρ hτs hτ hρ hinj hex
   obtain ⟨ι, hι0, hι⟩ := hex
@@ -110,7 +111,7 @@ theorem GlobalTheory.TensorFactor.exists_equiv_extTensor : ∀ (G H X Y : Type) 
   have hy0' : y0 ≠ 0 := fun h => hy0 (by simp [h])
   have hsurj : Function.Surjective (evMap τ ρ) :=
     (Representation.IsIrreducible.surjective_or_eq_zero (evMap τ ρ)).resolve_right fun h0 =>
-      hy0 (by simpa [ι'] using congrArg (fun f => f (ι' ⊗ₜ y0)) h0)
+      hy0 (by simpa [evMap, ι'] using congrArg (fun f => f (ι' ⊗ₜ y0)) h0)
   refine ⟨homSpace τ ρ, inferInstance, inferInstance, homRep τ ρ, ?_, ?_,
     ⟨(Representation.IntertwiningMap.ofBijective (evMap τ ρ) ⟨hev, hsurj⟩).symm⟩⟩
   · refine isSmooth_of_nhds fun φ => ?_
@@ -139,7 +140,7 @@ theorem GlobalTheory.TensorFactor.exists_equiv_extTensor : ∀ (G H X Y : Type) 
               τ (g, h) (((ψ : homSpace τ ρ) : Y →ₗ[ℂ] X) z)
             rw [homRep_apply_coe, LinearMap.comp_apply, (ψ : homSpace τ ρ).2 h z, ← apply_pair]
           | add a b ha hb =>
-            rw [map_add, map_add]
+            rw [map_add (f := _), map_add (f := _)]
             exact add_mem ha hb }
     rcases IsSimpleOrder.eq_bot_or_eq_top U with hU | hU
     · left
@@ -149,7 +150,7 @@ theorem GlobalTheory.TensorFactor.exists_equiv_extTensor : ∀ (G H X Y : Type) 
           U.toSubmodule := ⟨⟨ψ, hψ⟩ ⊗ₜ z, rfl⟩
       rw [hU] at hm
       have h2 := (Submodule.mem_bot ℂ).1 hm
-      have h3 : ((ψ : homSpace τ ρ) : Y →ₗ[ℂ] X) z = 0 := by simpa using h2
+      have h3 : ((ψ : homSpace τ ρ) : Y →ₗ[ℂ] X) z = 0 := by simpa [evMap] using h2
       simpa using h3
     · right
       apply Subrepresentation.toSubmodule_injective
@@ -163,7 +164,7 @@ theorem GlobalTheory.TensorFactor.exists_equiv_extTensor : ∀ (G H X Y : Type) 
         | zero => simp
         | tmul ψ z => simpa [P] using S.toSubmodule.smul_mem (l z) ψ.2
         | add a b ha hb =>
-          rw [map_add, map_add]
+          rw [map_add (f := _), map_add (f := _)]
           exact add_mem ha hb
       have hmem : evMap τ ρ (φ ⊗ₜ y0) ∈ U.toSubmodule := by
         rw [hU]

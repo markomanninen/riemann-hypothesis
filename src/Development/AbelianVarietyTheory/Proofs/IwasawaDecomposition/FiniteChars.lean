@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+
+@[expose] public section
 
 open IsDedekindDomain NumberField
 
@@ -49,8 +53,8 @@ namespace GlobalTheory.LevelChars
 theorem finite_chars {G : Type} [CommGroup G] (H : Subgroup G) [H.FiniteIndex] :
     {ψ : G →* ℂˣ | H ≤ ψ.ker}.Finite := by
   classical
-  haveI : Finite (G ⧸ H) := Subgroup.finite_quotient_of_finiteIndex
-  haveI : NeZero (Nat.card (G ⧸ H)) := ⟨Nat.card_pos.ne'⟩
+  have : Finite (G ⧸ H) := Subgroup.finite_quotient_of_finiteIndex
+  have : NeZero (Nat.card (G ⧸ H)) := ⟨Nat.card_pos.ne'⟩
   let f : {ψ : G →* ℂˣ | H ≤ ψ.ker} → (G ⧸ H → rootsOfUnity (Nat.card (G ⧸ H)) ℂ) := fun ψ q =>
     ⟨QuotientGroup.lift H ψ.1 ψ.2 q, by
       rw [mem_rootsOfUnity, ← map_pow, pow_card_eq_one', map_one]⟩
@@ -74,7 +78,7 @@ theorem heckeFin_of
   rcases Set.eq_empty_or_nonempty {χ : Formalism.L2.Host.HChar L | χ.HasInf φ n ∧ (∀ v, v ∉ S → χ.UnrAt v) ∧
     ∀ v ∈ S, χ.LevelLe v N} with h | ⟨χ0, hχ0⟩
   · rw [h]; exact Set.finite_empty
-  haveI := hC L S N hS
+  have := hC L S N hS
   refine ((finite_chars ((Units.map (algebraMap L (AdeleRing (𝓞 L) L)).toMonoidHom).range ⊔ levSub L S N)).preimage (f := fun χ : Formalism.L2.Host.HChar L => (χ * χ0⁻¹).1)
     (fun χ _ χ' _ h => mul_right_cancel (Subtype.ext h))).subset ?_
   intro χ hχ
@@ -84,8 +88,9 @@ theorem heckeFin_of
     exact MonoidHom.mem_ker.2 ((χ * χ0⁻¹).2.2 k)
   · have e : χ.inf k = χ0.inf k := Units.ext ((hχ.1 k).trans (hχ0.1 k).symm)
     rw [Formalism.L2.Host.HChar.inf_mul, Formalism.L2.Host.HChar.inf_inv, e, mul_inv_cancel]
-  · rw [Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_inv, hχ.2.1 v hv x hx, hχ0.2.1 v hv x hx, inv_one, one_mul]
-  · rw [Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_inv, hχ.2.2 v hv x hx hle, hχ0.2.2 v hv x hx hle, inv_one,
-      one_mul]
+  · change χ.loc v x * (χ0.loc v x)⁻¹ = 1
+    rw [hχ.2.1 v hv x hx, hχ0.2.1 v hv x hx, inv_one, one_mul]
+  · change χ.loc v x * (χ0.loc v x)⁻¹ = 1
+    rw [hχ.2.2 v hv x hx hle, hχ0.2.2 v hv x hx hle, inv_one, one_mul]
 
 end GlobalTheory.LevelChars

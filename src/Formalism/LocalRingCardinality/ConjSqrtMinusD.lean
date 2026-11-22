@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 namespace Formalism.BasicNotions
 
@@ -40,10 +44,7 @@ theorem Host.exists_trace_one (H : Host R) : ∃ c : 𝓞 H.E, (c : H.E) + H.con
     simp [Polynomial.eval₂_sub, Polynomial.eval₂_add, hc]⟩
   refine ⟨⟨c, hint⟩, ?_⟩
   show c + H.conj c = 1
-  simp only [c, map_div₀, map_add, map_one, H.conj_sqrtMinusD, map_ofNat]
+  simp only [c, map_div₀, map_add (f := _), map_one, H.conj_sqrtMinusD, map_ofNat]
   ring
-
-theorem factTrOne (D : D7) : ∃ c : 𝓞 D.host.E, (c : D.host.E) + D.host.conj c = 1 :=
-  D.host.exists_trace_one
 
 end Formalism.BasicNotions

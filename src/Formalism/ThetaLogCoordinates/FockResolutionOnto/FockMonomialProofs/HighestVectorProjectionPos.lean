@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementH
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.HighestVectorProjection
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementH
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.HighestVectorProjection
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 
@@ -14,7 +18,7 @@ theorem supp_le_of_monomial {σ : Type} (Q : Set (σ →₀ ℕ)) (S : Submodule
   rw [MvPolynomial.mem_restrictSupport_iff] at hx
   rw [x.as_sum]
   refine S.sum_mem fun m hm => ?_
-  have hmon : monomial m (coeff m x) = coeff m x • monomial m (1 : ℚ_[p]) := by
+  have hmon : monomial m (AddMonoidAlgebra.coeff x m) = AddMonoidAlgebra.coeff x m • monomial m (1 : ℚ_[p]) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [hmon]
   exact S.smul_mem _ (h m (hx hm))

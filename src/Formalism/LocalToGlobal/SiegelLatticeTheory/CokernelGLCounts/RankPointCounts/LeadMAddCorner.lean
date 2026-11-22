@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOfSteps
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem det_map' {m : ℕ} (f : K →+* K') (A : Matrix (Fin m) (Fin m) K) : (A.
   (RingHom.map_det f A).symm
 
 theorem leadM_top {r : ℕ} (A : Matrix (Fin (r + 1)) (Fin (r + 1)) K) : leadM A (r + 1) = A.det := by
-  unfold leadM; rw [dif_pos le_rfl]; rfl
+  unfold leadM; rw [dite_eq_left le_rfl]; rfl
 
 theorem leadM_map {m : ℕ} (f : K →+* K') (A : Matrix (Fin m) (Fin m) K) (l : ℕ) :
     leadM (A.map f) l = f (leadM A l) := by
@@ -47,7 +51,7 @@ theorem castLE_ne_last {r : ℕ} (a : Fin r) : Fin.castLE (Nat.le_succ r) a ≠ 
 theorem leadM_add_corner {r : ℕ} (A : Matrix (Fin (r + 1)) (Fin (r + 1)) K) (c : K) :
     leadM (A + c • Ecorner r) r = leadM A r := by
   unfold leadM
-  rw [dif_pos (Nat.le_succ r), dif_pos (Nat.le_succ r)]
+  rw [dite_eq_left (Nat.le_succ r), dite_eq_left (Nat.le_succ r)]
   congr 1
   ext a b
   simp [Ecorner, castLE_ne_last a]
@@ -77,7 +81,7 @@ theorem det_add_corner {r : ℕ} (A : Matrix (Fin (r + 1)) (Fin (r + 1)) K) (c :
     simp only [Matrix.submatrix_apply]
     rw [Matrix.updateRow_ne (Fin.castSucc_ne_last a)]
     rfl
-  rw [hs, leadM, dif_pos (Nat.le_succ r)]
+  rw [hs, leadM, dite_eq_left (Nat.le_succ r)]
   have hpow : ((-1 : K) ^ ((Fin.last r : ℕ) + (Fin.last r : ℕ))) = 1 := Even.neg_one_pow ⟨_, rfl⟩
   rw [hpow, one_mul]
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -32,7 +36,7 @@ theorem LeafImgHom_of (hG : LeafGen) : LeafImgHom := by
   · apply ext; intro U x
     rw [hT]; show ρ.app U s 0 = 0; exact map_zero _
   · intro φ ψ; apply ext; intro U x
-    rw [sec_map_add, hT, hT, hT, sec_map_add, map_add]
+    rw [sec_map_add, hT, hT, hT, sec_map_add, map_add (f := _)]
   · intro P s φ U x; exact hT P s φ U x
   · intro P s t φ; apply ext; intro U x
     show Sec.map (T P t (φ ≫ I.d s t)) _ = Sec.map (T P s φ ≫ J.d s t) _

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonnegOfMemCStarSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonnegOfMemCStarSet
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -28,22 +32,22 @@ def NuBetween (la : PointsOfFlagModel.abelian₂ p c) (cx : Lt1 Dw → ℕ) (A B
   ∀ (T : CDVR) (io : c.F →+* T.Fr) (e : ℕ), OverLa la.1 T.V io e → ∀ y : IntFr Xo c T io,
     (A : EReal) ≤ nuP p y cx ∧ (y.IsAlg → nuP p y cx ≤ (B : EReal))
 
-variable (c p) in
 
+variable (c p) in
 def OscLe (cx : Lt1 Dw → ℕ) (b : ℝ) : Prop :=
   ∀ la : PointsOfFlagModel.abelian₂ p c, ∃ A : ℕ, NuBetween Xo la cx A (A + b)
 
-variable (Dw) in
 
+variable (Dw) in
 def nCol : ℕ := 8 * ((∑ f : Lt1 Dw, 2 * rk f) / 8 + Fintype.card (Lt1 Dw) + 1)
 
-variable (Dw) in
 
+variable (Dw) in
 def shift (u : Weight Dw) (n : ℕ) (τ : Psi H) : ℤ :=
   ((n / 2 : ℕ) : ℤ) + 1 - if h : 0 < Dw.p then u τ ⟨Dw.p - 1, by omega⟩ else 0
 
-variable (Dw) in
 
+variable (Dw) in
 def thA (u : Weight Dw) (n : ℕ) : (E →+* ℂ) × ℕ → ℕ :=
   fun x => ((wtOf Dw (u + GlobalTheory.FlatLine.parWt Dw (shift Dw u n)) ((n / 2 : ℕ) : ℤ)).1 x).toNat
 
@@ -59,8 +63,6 @@ theorem OscLe.mono {cx : Lt1 Dw → ℕ} {b b' : ℝ} (h : OscLe Xo c p cx b) (h
 
 def PrimeSum (S : Finset ℕ) (e : ℕ → ℝ) (s : ℝ) : Prop :=
   (∀ q ∈ S, q.Prime) ∧ (∀ q, 0 ≤ e q) ∧ (∀ q ∉ S, e q = 0) ∧ ∑ q ∈ S, e q * Real.log q ≤ s
-
-example : PrimeSum ∅ 0 0 := ⟨by simp, fun _ => le_rfl, fun _ _ => rfl, by simp⟩
 
 end Free
 
@@ -84,15 +86,6 @@ def RefAt {l : Level p.T.Q.H} {Xo : Moduli (dat p i) l} {c : Coeff l} (U : ∀ �
     ∀ q : ℕ, q.Prime → refExp_vp U (1 / 2500) G q ≤ (e q : EReal)
 
 end Point
-
-def SumPt : Prop := Lifts fun Fm x _ ι p i PP C => (i : ℕ) + 1 < (Fm.D x ι).R.m → ∀ u1, Quo p i PP u1 → SumAt p i PP C u1
-
-def RefCore : Prop := Lifts fun Fm x _ ι p i PP C => (i : ℕ) + 1 < (Fm.D x ι).R.m → ∀ u1, Quo p i PP u1 →
-  RefAt p i (p.T.U ((i : ℕ) + 1)) (GOf p i u1) PP C
-
-def RefTheta : Prop := Covers fun _ _ _ _ p i Y PP C => ∀ u1, Quo p i PP u1 → RefAt p i Y.U (GOf p i u1) PP C
-
-def RefW : Prop := Covers fun _ _ _ _ p i Y PP C => ∀ u1, Quo p i PP u1 → RefAt p i Y.U (wtOf (dat p i) u1 0) PP C
 
 end GlobalTheory.RefSum
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainMassOneCocompactLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SetIntegralFundamentalDomainEqMassMulAverageStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric
 
 namespace GlobalTheory.CuspGeneric
@@ -26,11 +31,11 @@ theorem avg_equiv : ∀ (G : Type) [AddCommGroup G] [TopologicalSpace G] [IsTopo
   have h𝓕' : IsAddFundamentalDomain Γ' (f '' 𝓕) (μ.map f) := by
     refine h𝓕.image_of_equiv f.toEquiv hqmp eΓ fun g x => ?_
     show e (e.symm (g : G') + x) = (g : G') + e x
-    rw [map_add, ContinuousAddEquiv.apply_symm_apply]
+    rw [map_add (f := _), ContinuousAddEquiv.apply_symm_apply]
   have hm : (μ.map f) (f '' 𝓕) = 1 := by
     rw [MeasurableEquiv.map_apply, Set.preimage_image_eq _ f.injective, h1]
   have hΦ' : Per Γ (fun x => Φ (e x)) :=
-    ⟨hΦ.1.comp e.continuous, fun γ hγ x => by show Φ (e (γ + x)) = Φ (e x); rw [map_add]; exact hΦ.2 _ ((he γ).2 hγ) _⟩
+    ⟨hΦ.1.comp e.continuous, fun γ hγ x => by show Φ (e (γ + x)) = Φ (e x); rw [map_add (f := _)]; exact hΦ.2 _ ((he γ).2 hγ) _⟩
   have A := (GlobalTheory.T.setIntegral_fundamentalDomain_eq_mass_mul_average G' Γ' hΓ' (μ.map f) (f '' 𝓕) hμ' h𝓕' Φ hΦ).2.2.2
   have B := (GlobalTheory.T.setIntegral_fundamentalDomain_eq_mass_mul_average G Γ hΓ μ 𝓕 hμ h𝓕 _ hΦ').2.2.2
   rw [hm] at A

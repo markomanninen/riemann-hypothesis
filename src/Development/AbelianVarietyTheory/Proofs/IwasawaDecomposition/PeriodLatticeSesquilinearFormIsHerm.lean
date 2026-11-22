@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.ProductThetaMem
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.HasSumLocallyUniformlyWeierstrassZetaExcept
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.ProductThetaMem
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.HasSumLocallyUniformlyWeierstrassZetaExcept
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem chi_half (ω ω₀ : ℂ) :
     cexp (π * I * (altE (form1 L) ω ω₀ : ℂ)) * chi (form1 L) ω (ω₀ / 2) = 1 := by
   have : altE (form1 L) ω ω₀ = 2 * altE (form1 L) ω (ω₀ / 2) := by
     conv_lhs => rw [← add_halves ω₀]
-    simp only [altE, map_add, add_im]; ring
+    simp only [altE, map_add (f := _), add_im]; ring
   rw [chi, ← Complex.exp_add, this, ← Complex.exp_zero]
   congr 1; push_cast; ring
 
@@ -193,7 +197,7 @@ theorem mem_of_int {x : ℂ} (h : ∀ y ∈ L.lattice, ∃ m : ℤ, altE (form1 
   have e : ∀ y, altE (form1 L) x y = s * altE (form1 L) L.ω₁ y + t * altE (form1 L) L.ω₂ y := by
     intro y
     rw [← altE_real_smul_left, ← altE_real_smul_left, ← hx]
-    simp only [altE, map_add, LinearMap.add_apply, add_im]
+    simp only [altE, map_add (f := _), LinearMap.add_apply, add_im]
   rw [e, hs] at ha hb
   rw [altE_swap (periodLatticeSesquilinearForm_isHerm L) L.ω₂] at hb
   have h1 : |altE (form1 L) L.ω₂ L.ω₁| = 1 := abs_im_latticeForm L
@@ -219,7 +223,8 @@ theorem stdH_apply (z w : n → ℂ) : stdH L n z w = ∑ i, form1 L (z i) (w i)
   ring
 
 theorem stdH_herm : IsHerm (stdH L n) := fun x y => by
-  simp only [stdH_apply, map_sum, ← periodLatticeSesquilinearForm_isHerm L _ _]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [stdH_apply, map_sum, ← periodLatticeSesquilinearForm_isHerm L _ _]
 
 theorem altE_stdH (z w : n → ℂ) : altE (stdH L n) z w = ∑ i, altE (form1 L) (z i) (w i) := by
   simp only [altE, stdH_apply, Complex.im_sum]
@@ -462,7 +467,7 @@ theorem thetaVector : ThetaVector := by
       ((LinearMap.toContinuousLinearMap (g : (Fin 4 × n → ℂ) →ₗ[ℂ] (Fin 4 × n → ℂ))).analyticAt z),
       fun x hx z => ?_⟩
     have := hK.2 (g x) ⟨x, hx, rfl⟩ (g z)
-    rw [opU, hiso, hiso, ← map_add, S.betaAlpha] at this
+    rw [opU, hiso, hiso, ← map_add (f := _), S.betaAlpha] at this
     exact this
   have hne : κ • kernel4 L ω₀ Λ β g ≠ 0 := by
     refine smul_ne_zero hκ fun h0 => hK0 (funext fun z => ?_)
@@ -476,7 +481,7 @@ theorem thetaVector : ThetaVector := by
       rintro _ ⟨x, hx, rfl⟩ z
       obtain ⟨y, rfl⟩ := g.surjective z
       change β (g x) * opU _ (g x) _ (g y) = G (g.symm (g y))
-      rw [opU, hiso, hiso, ← map_add, S.betaAlpha, g.symm_apply_apply, g.symm_apply_apply]
+      rw [opU, hiso, hiso, ← map_add (f := _), S.betaAlpha, g.symm_apply_apply, g.symm_apply_apply]
       exact hG.2 x hx y
     have h1 := std_line L S.half S.betaStd
       (differentiableOn_univ.1 (analytic_inter (stdH L _) β A (stdLat L _) hG'.1).differentiableOn)

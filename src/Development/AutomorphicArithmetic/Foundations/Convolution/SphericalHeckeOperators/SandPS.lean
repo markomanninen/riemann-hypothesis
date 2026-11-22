@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.EigBasis
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.VandSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.Mac
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.HlEval
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.GapDom
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.PsDimDecomp
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.IntegralConv
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.ThPMul
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.EigBasis
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.VandSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.Mac
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.HlEval
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.GapDom
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.PsDimDecomp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.IntegralConv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.ThPMul
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 open GroundTheory.Automorphic.HeckeAlgebra GroundTheory.Automorphic.Parabolic
@@ -264,7 +268,8 @@ private theorem key (hK : μ (integralGL F n : Set (GL (Fin n) F)) = 1) {ν₁ �
     have hsum : heckeAct μ (rz F z) (th μ (ν₁ + eL S)) (∑ σ, c σ • (b σ : Wz F z)) =
         ∑ σ, (c σ * monomialChar (ν₁ + eL S) (z ∘ σ)) • (b σ : Wz F z) := by
       change act μ z (th_mem μ a₁) _ = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun σ _ => ?_
       rw [map_smul]
       change c σ • heckeAct μ (rz F z) (th μ (ν₁ + eL S)) _ = _

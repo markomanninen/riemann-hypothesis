@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult
 
 noncomputable section
@@ -46,12 +51,24 @@ theorem diagGL_conj_mem {n : ℕ} {α : Type*} [LinearOrder α] {β : Fin n → 
       rw [h0, mul_zero, zero_mul, one_apply_ne hil, sub_zero, map_zero]
       exact zero_le
   have hP : diagGL k n D ∈ blockUpper k n β := levi_le_blockUpper (diagGL_mem_levi D)
-  refine Subgroup.mem_inf.2 ⟨mem_congruenceSubgroup_of_le (hb u hu) ?_,
+  have hentry : ∀ w ∈ congruenceSubgroup k n m ⊓ unipotentRadical k n β, ∀ i l,
+      valuation k ((diagGL k n D * w * (diagGL k n D)⁻¹ : GL (Fin n) k) i l) ≤ 1 := by
+    intro w hw i l
+    have he : valuation k ((1 : Matrix (Fin n) (Fin n) k) i l) ≤ 1 := by
+      by_cases h : i = l <;> simp [Matrix.one_apply, h]
+    have eq : (diagGL k n D * w * (diagGL k n D)⁻¹ : GL (Fin n) k) i l =
+        ((diagGL k n D * w * (diagGL k n D)⁻¹ : GL (Fin n) k) i l -
+          (1 : Matrix (Fin n) (Fin n) k) i l) + (1 : Matrix (Fin n) (Fin n) k) i l := by ring
+    rw [eq]
+    exact ((valuation k).map_add _ _).trans
+      (max_le ((hb w hw i l).trans (pow_le_one' (valuation_uniformizer_lt_one k).le m)) he)
+  refine Subgroup.mem_inf.2 ⟨(mem_congruenceSubgroup_iff k n).2 ⟨?_, hb u hu⟩,
     conj_mem_unipotentRadical hP (Subgroup.mem_inf.1 hu).2⟩
-  have : (diagGL k n D * u * (diagGL k n D)⁻¹)⁻¹ =
+  refine (mem_integralGL_iff k n).2 ⟨hentry u hu, ?_⟩
+  have eq : (diagGL k n D * u * (diagGL k n D)⁻¹)⁻¹ =
       diagGL k n D * u⁻¹ * (diagGL k n D)⁻¹ := by group
-  rw [this]
-  exact hb _ (Subgroup.inv_mem _ hu)
+  rw [eq]
+  exact hentry _ (Subgroup.inv_mem _ hu)
 
 def zjDiag {h N : ℕ} (d : Fin h → ℕ) (hd : ∑ a, d a = N) (t : kˣ) (j : Fin h) : Fin N → kˣ :=
   fun i => if Zl.JC.blockIdx d hd i ≤ j then t else 1

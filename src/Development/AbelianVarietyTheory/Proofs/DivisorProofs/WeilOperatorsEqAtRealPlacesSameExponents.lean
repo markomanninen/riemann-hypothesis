@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DownRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DownRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicWeilRepSchrodingerModelUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,8 +125,8 @@ section Adelic
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F) in
 
+variable (F) in
 def eInf : AF F := LinearMap.inl F (Ainf F) (Af F) 1
 
 theorem eInf_mul_self : eInf F * eInf F = eInf F :=
@@ -136,8 +140,8 @@ theorem evI_one_sub_eInf : evI F (1 - eInf F) = 0 := by
   show InfiniteAdeleRing.ringEquiv_mixedSpace F (1 - (eInf F).1) = 0
   rw [show (eInf F).1 = 1 from rfl, sub_self, map_zero]
 
-variable (F E) in
 
+variable (F E) in
 def eE : AE F E := algebraMap (AF F) (AE F E) (eInf F)
 
 theorem eE_mul_self : eE F E * eE F E = eE F E := by rw [eE, ← map_mul, eInf_mul_self]
@@ -177,8 +181,8 @@ abbrev archUG (σ : E →ₐ[F] E) {ι : Type} [Fintype ι] [DecidableEq ι] (J 
 theorem continuous_archUG (σ : E →ₐ[F] E) {ι : Type} [Fintype ι] [DecidableEq ι] (J : Matrix ι ι (AE F E)) :
     Continuous (archUG σ J) := continuous_cutUG eE_mul_self (cA σ) (cA_eE σ) J
 
-open GlobalTheory.WeilSchUnique in
 
+open GlobalTheory.WeilSchUnique in
 theorem member_eq_of_arch (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {a b : ℕ} (JA : Matrix (Fin a) (Fin a) E)
     (JB : Matrix (Fin b) (Fin b) E) (ε : ℤˣ) (hJ : ∀ i j, σ (JB j i) = ((ε : ℤ) : E) * JB i j) (hdet : JB.det ≠ 0)
     (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) {κ : Type} [Fintype κ]
@@ -387,9 +391,9 @@ theorem GlobalTheory.ArchWeil.weil_eq_at_real_places : ∀ (F E : Type) [Field F
     have h1 := GlobalTheory.ArchWeil.det_ne_zero_of_hasSig (ha.geo.hW.sig w)
     rw [Matrix.det_smul, h0, mul_zero] at h1
     exact h1 rfl
-  have eβ : ∀ z : (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)ˣ, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) ((z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) - 1) →
+  have eβ : ∀ z : (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))ˣ, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) ((z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) - 1) →
       Xb.β z = Xa.β z := fun z hz => Circle.ext (by rw [hb.chars.expβ z hz, ha.chars.expβ z hz])
-  have eα : ∀ z : (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)ˣ, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) ((z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E) - 1) →
+  have eα : ∀ z : (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))ˣ, GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.At (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.evI F) ((z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) - 1) →
       Xb.α z = Xa.α z := fun z hz => Circle.ext (by rw [hb.chars.expα z hz, ha.chars.expα z hz])
   refine ⟨GlobalTheory.ArchWeil.pair_eq_of_arch σ hσ Γ.V Γ.W Γ.M B.ψ hψ _ _ _ _ ha.geo.hV.herm hVd ha.geo.hW.skew hWd eβ
       (fun z hz => by rw [MonoidHom.div_apply, MonoidHom.div_apply, eβ z hz, eα z hz]) oa ob ha.weil hb.weil,

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsZeroPtEpsScalePt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PulledRead
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EpsZeroPtEpsScalePt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -24,7 +28,7 @@ private lemma alg_core {F κ V : Type} [CommRing F] [Field κ] [AddCommGroup V] 
     rw [map_mul, map_natCast]
     have hz : ((p : ℕ) : Module.End κ V) = 0 := by
       ext y
-      rw [Module.End.natCast_apply, ← Nat.cast_smul_eq_nsmul κ, CharP.cast_eq_zero, zero_smul]
+      rw [natCast_apply_eq_smul, ← Nat.cast_smul_eq_nsmul κ, CharP.cast_eq_zero, zero_smul]
       rfl
     rw [hz, mul_zero]
   have key : ∀ a ∈ u, T a = T (a * α') := by
@@ -32,7 +36,7 @@ private lemma alg_core {F κ V : Type} [CommRing F] [Field κ] [AddCommGroup V] 
     have e1 : T (a * (α + α' - 1)) = 0 := hp _ (Ideal.mul_mem_left _ _ h2)
     have e2 : T (a * α) = 0 := hp _ (h1 a ha)
     have hs : a * α' = a + a * (α + α' - 1) - a * α := by ring
-    rw [hs, map_sub, map_add, e1, e2]
+    rw [hs, map_sub, map_add (f := _), e1, e2]
     simp
   intro a ha
   have step : ∀ k : ℕ, T a = T (a * α' ^ k) ∧ a * α' ^ k ∈ u ^ (k + 1) := by
@@ -92,9 +96,9 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.tanOne_of :
   let Tm : 𝓞 D.F →+* Module.End κ (GlobalTheory.TanPtMod.Tan (𝟙 (Sp κ)) o.A) :=
     (GlobalTheory.TanPtMod.actEnd o.act).comp (algebraMap (𝓞 D.F) D.O)
   let toE : (algPt κ (DualNumber κ) ⟶ o.A) → (epsPtR (𝟙 (Sp κ)) ⟶ o.A) :=
-    fun v => Over.homMk v.left (by simpa using Over.w v)
+    fun v => Over.homMk v.left (by simp)
   let frE : (epsPtR (𝟙 (Sp κ)) ⟶ o.A) → (algPt κ (DualNumber κ) ⟶ o.A) :=
-    fun v => Over.homMk v.left (by simpa using Over.w v)
+    fun v => Over.homMk v.left (by simp)
   have eig : ∀ v : algPt κ (DualNumber κ) ⟶ o.A, Inf (TrivSqZeroExt.fstHom κ κ κ) v →
       (∃ e', KilledBy o (uIdeal D r ^ e') v) →
       IsLieEigen (OActN.toF D o.act) (𝟙 (Sp κ)) (β.comp (b.t i0)) (toE v) := by
@@ -104,7 +108,6 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.tanOne_of :
     have hkill : ∀ a ∈ uIdeal D r ^ e', Tm a (GlobalTheory.TanPtMod.Tan.mk (toE v) hmem) = 0 := by
       intro a ha'
       apply GlobalTheory.TanPtMod.Tan.ext
-      rw [GlobalTheory.TanPtMod.Tan.hom_zero]
       show toE v ≫ o.act.act (algebraMap _ _ a) = 1
       ext1
       have h4 := congrArg Over.Hom.left (hk a ha')
@@ -119,7 +122,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.tanOne_of :
       · have hz := hu _ (sub_mem_uIdeal D r)
         rw [map_sub, LinearMap.sub_apply, sub_eq_zero, map_intCast] at hz
         have hz2 := congrArg GlobalTheory.TanPtMod.Tan.hom hz
-        rw [Module.End.intCast_apply, ← Int.cast_smul_eq_zsmul κ, GlobalTheory.TanPtMod.Tan.hom_smul] at hz2
+        rw [intCast_apply_eq_smul, ← Int.cast_smul_eq_zsmul κ, GlobalTheory.TanPtMod.Tan.hom_smul] at hz2
         rw [hρ]
         exact congrArg Over.Hom.left hz2
     obtain ⟨w', hw', hprod⟩ := o.lie κ β (𝟙 (Sp κ)) (Category.id_comp _) (toE v) hsc

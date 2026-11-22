@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RepresentationIndependence.GmapInjective
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RepresentationIndependence.GmapInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem ModG_map {γ : S.V ≃ₗ[E] S.V} {Λ : Submodule (𝓞 E) S.V} {g : ℕ
 
 theorem frameAct_map {γ : S.V ≃ₗ[E] S.V} {n : ℕ} (f : Fin n → S.V) (ξ : Matrix (Fin n) (Fin n) (𝓞 E))
     (b : Fin n) : frameAct (fun i => γ (f i)) ξ b = γ (frameAct f ξ b) := by
-  simp only [frameAct, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [frameAct, map_sum, map_smul]
 
 theorem frame_mapL' {T : E} {γ : S.V ≃ₗ[E] S.V} (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) :
     frame (mapL γ hγ F) = fun i => γ (frame F i) :=
@@ -95,7 +100,7 @@ theorem Mplus_map {T T' : E} {γ : S.V ≃ₗ[E] S.V} (hγ : γ ∈ Formalism.He
     ← Set.range_comp]
   congr 3
   funext b
-  simp only [Function.comp_apply, map_smul, map_sub, frame_mapL' hγ, frameAct_map]
+  simp only [Function.comp_apply, frame_mapL' hγ, frameAct_map, map_smul, map_sub]
 
 theorem IsGeneric_map {T T' : E} {γ : S.V ≃ₗ[E] S.V} (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) {Λ : Submodule (𝓞 E) S.V}
     {g : ℕ} {F : LFlag S r T} {F' : LFlag S r T'} (h : IsGeneric Λ g F F') :
@@ -135,16 +140,5 @@ theorem NLam_conj {T : E} {γ : S.V ≃ₗ[E] S.V} (hγ : γ ∈ Formalism.Hermi
     obtain ⟨y, hy, rfl⟩ := hx
     refine ⟨n y - y, h3 y hy, ?_⟩
     simp [conj_apply, map_sub]
-
-theorem rel_map {T T' : E} {γ : S.V ≃ₗ[E] S.V} (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) {Λ : Submodule (𝓞 E) S.V}
-    {F : LFlag S r T} {F' F'' : LFlag S r T'}
-    (h : ∃ n ∈ NLam Λ F, (∀ a, n (frame F a) = frame F a) ∧ ∀ b, n (frame F' b) = frame F'' b) :
-    ∃ n ∈ NLam (Formalism.HermitianLatticesTheory.gmap γ Λ) (mapL γ hγ F),
-      (∀ a, n (frame (mapL γ hγ F) a) = frame (mapL γ hγ F) a) ∧
-        ∀ b, n (frame (mapL γ hγ F') b) = frame (mapL γ hγ F'') b := by
-  obtain ⟨n, hn, h1, h2⟩ := h
-  refine ⟨conj γ n, NLam_conj hγ hn, fun a => ?_, fun b => ?_⟩
-  · simp only [frame_mapL' hγ, conj_apply, LinearEquiv.symm_apply_apply, h1]
-  · simp only [frame_mapL' hγ, conj_apply, LinearEquiv.symm_apply_apply, h2]
 
 end PI.RepsIndep.Tr

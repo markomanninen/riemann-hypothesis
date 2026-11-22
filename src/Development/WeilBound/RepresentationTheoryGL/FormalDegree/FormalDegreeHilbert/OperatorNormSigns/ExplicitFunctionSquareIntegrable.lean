@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarMirror
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.HlamStable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarMirror
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem pl_opNorm_le {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V
   have h1 : ‖A‖ ≤ ∑ i, ‖A (b i)‖ := by
     refine A.opNorm_le_bound (Finset.sum_nonneg fun _ _ => norm_nonneg _) fun v => ?_
     conv_lhs => rw [← b.sum_repr' v]
-    rw [map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [map_smul, norm_smul, mul_comm]
     refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
@@ -33,7 +38,7 @@ theorem pl_opNorm_le {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℂ V
 theorem square_integrable_of_norm : PsiNorm → PositivityTheory.RgDs.ExplicitFunctionSquareIntegrable := by
   intro hN n ε lam T μ hl hμ ν hν
   have hfin := hN n ε lam hl T μ hμ
-  have := muCD_isHaar ε
+  haveI : (show Measure (UJ ε) from muCD ε).IsHaarMeasure := muCD_isHaar ε
   set f : UJ ε → (T.V →L[ℂ] T.V) := fun g => PsiM T μ (toM g) with hf
   have hcont : Continuous f :=
     (psiM_continuousOn T μ hμ).comp_continuous (continuous_toM ε) (fun g => g.2)
@@ -43,7 +48,7 @@ theorem square_integrable_of_norm : PsiNorm → PositivityTheory.RgDs.ExplicitFu
     have hle : ∀ g : Formalism.REAL.UJ ε, ‖‖f g‖ ^ 2‖ₑ ≤
         ENNReal.ofReal (Module.finrank ℂ T.V : ℝ) * ENNReal.ofReal (hsOp (PsiM T μ (Formalism.MainNotions.S.umat g))) := by
       intro g
-      rw [← ENNReal.ofReal_mul (Nat.cast_nonneg _), Real.enorm_eq_ofReal (by positivity)]
+      rw [← ENNReal.ofReal_mul (Nat.cast_nonneg _), Real.eNorm_eq_ofReal (sq_nonneg _)]
       exact ENNReal.ofReal_le_ofReal (pl_opNorm_le _)
     calc ∫⁻ g, ‖‖f g‖ ^ 2‖ₑ ∂(muCD ε) ≤ ∫⁻ g : Formalism.REAL.UJ ε, ENNReal.ofReal (Module.finrank ℂ T.V : ℝ) *
           ENNReal.ofReal (hsOp (PsiM T μ (Formalism.MainNotions.S.umat g))) ∂(muCD ε) := lintegral_mono hle
@@ -51,9 +56,8 @@ theorem square_integrable_of_norm : PsiNorm → PositivityTheory.RgDs.ExplicitFu
           ∫⁻ g : Formalism.REAL.UJ ε, ENNReal.ofReal (hsOp (PsiM T μ (Formalism.MainNotions.S.umat g))) ∂(muCD ε) :=
           lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
       _ < ⊤ := by rw [hfin]; exact ENNReal.mul_lt_top ENNReal.ofReal_lt_top ENNReal.ofReal_lt_top
-  haveI hH : (show Measure (UJ ε) from muCD ε).IsHaarMeasure := muCD_isHaar ε
   have heq := Measure.isMulLeftInvariant_eq_smul ν (show Measure (UJ ε) from muCD ε)
   rw [heq]
-  exact hmCD.smul_measure ENNReal.coe_ne_top
+  exact hmCD.smul_measure_nnreal
 
 end PositivityTheory.RgFd

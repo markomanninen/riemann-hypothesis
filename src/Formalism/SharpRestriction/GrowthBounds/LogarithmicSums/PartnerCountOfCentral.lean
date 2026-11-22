@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.Conclusion1OfGainBoundAll
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.TsumTruncatedShiftLe
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Development.AutomorphicArithmetic.OrbitLabellings.EvenAddOrderOfHPOfPowLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.Conclusion1OfGainBoundAll
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.TsumTruncatedShiftLe
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Development.AutomorphicArithmetic.OrbitLabellings.EvenAddOrderOfHPOfPowLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -303,8 +307,8 @@ theorem gam_bounds {p : ℕ} (hp : p.Prime) : 0 ≤ gam p ∧ gam p ≤ 1 := by
   rw [div_le_one hd]
   nlinarith
 
-open Classical in
 
+open Classical in
 theorem gU_lower (X : Inst D L) (K : Consts) (P : ParameterChoice' D L) {a b : HH D → ℤ} (hW : InWin L a b) {p : ℕ}
     (hp : p.Prime) (hlg : 1 ≤ Real.logb p (2 * L.sc.a)) {j : ℕ} (hj : j ∈ SizeData₂.lifts D) (t0 : HH D) :
     (∑ s ∈ topsOn X p t0, askP X a b p j s) +
@@ -364,8 +368,8 @@ theorem sum_topsOn_nV (X : Inst D L) {p : ℕ} (hc : IsResidueClassZero D p) {t0
   intro i _
   exact if_congr (not_congr (isV_phi X hc h0 i)) rfl rfl
 
-open Classical in
 
+open Classical in
 theorem kinkHH (X : Inst D L) (P : ParameterChoice' D L) {a b : HH D → ℤ} (hW : InWin L a b) {p : ℕ} (hp : p.Prime)
     (hc : IsResidueClassZero D p) (h1 : Even (addOrderOf (hP D p))) {t0 : HH D} (h0 : X.bs (stepP D p) t0 = t0) {j : ℕ}
     (hj : j ∈ SizeData₂.lifts D) :

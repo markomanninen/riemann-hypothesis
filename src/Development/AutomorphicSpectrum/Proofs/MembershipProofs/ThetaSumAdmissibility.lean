@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixInfinite
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain GlobalTheory.WeilM MeasureTheory
 open scoped TensorProduct SchwartzMap nonZeroDivisors Classical
@@ -45,8 +49,8 @@ theorem tempered_sum {E X : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] (p 
 
 variable (F : Type) [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-open GroundTheory.Global GroundTheory.Automorphic.GJMatrix in
 
+open GroundTheory.Global GroundTheory.Automorphic.GJMatrix in
 theorem summable_weight {g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ} (hg : g ∈ SB (κ → FiniteAdeleRing (𝓞 F) F)) :
     ∃ k : ℕ, Summable fun x : κ → F => ‖g (fun i => algebraMap F (FiniteAdeleRing (𝓞 F) F) (x i))‖ *
       ((1 + ‖(fun i => mixedEmbedding F (x i) : κ → mixedEmbedding.mixedSpace F)‖) ^ k)⁻¹ := by
@@ -89,8 +93,8 @@ theorem summable_weight {g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ} (hg : 
     rw [Set.indicator_of_mem hmem, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
     exact mul_le_mul_of_nonneg_right (hC _) (by positivity)
 
-omit [Fintype κ] in
 
+omit [Fintype κ] in
 theorem pureA_rat (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ) (x : κ → F) :
     pureA F f g (fun i => algebraMap F (AdeleRing (𝓞 F) F) (x i)) =
       f (fun i => mixedEmbedding F (x i)) * g (fun i => algebraMap F (FiniteAdeleRing (𝓞 F) F) (x i)) := by
@@ -113,8 +117,8 @@ def thetaLin : schA F κ →ₗ[ℂ] ℂ where
   map_add' Φ Ψ := (summable_schA F Φ.2).of_norm.tsum_add (summable_schA F Ψ.2).of_norm
   map_smul' a Φ := by simp [thetaSum, tsum_mul_left]
 
-open GroundTheory.Global in
 
+open GroundTheory.Global in
 theorem indicator_mem_SB : (Set.univ.pi fun _ : κ => (integralFiniteAdeles (𝓞 F) F : Set (FiniteAdeleRing (𝓞 F) F))).indicator
     (fun _ => (1 : ℂ)) ∈ SB (κ → FiniteAdeleRing (𝓞 F) F) := by
   have hc : IsCompact (Set.univ.pi fun _ : κ => (integralFiniteAdeles (𝓞 F) F : Set (FiniteAdeleRing (𝓞 F) F))) :=
@@ -131,8 +135,8 @@ theorem indicator_mem_SB : (Set.univ.pi fun _ : κ => (integralFiniteAdeles (�
   · exact ⟨_, ho, hx, fun y hy => by rw [Set.indicator_of_mem hx, Set.indicator_of_mem hy]⟩
   · exact ⟨_, hcl.isOpen_compl, hx, fun y hy => by rw [Set.indicator_of_notMem hx, Set.indicator_of_notMem hy]⟩
 
-open GroundTheory.Global in
 
+open GroundTheory.Global in
 theorem exists_thetaSum_ne_zero : ∃ Φ ∈ schA F κ, thetaSum F Φ ≠ 0 := by
   let b : ContDiffBump (0 : κ → mixedEmbedding.mixedSpace F) := default
   have hb : HasCompactSupport fun v => (b v : ℂ) := b.hasCompactSupport.comp_left (g := fun r : ℝ => (r : ℂ)) (by simp)

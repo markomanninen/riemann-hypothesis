@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm :
     {g : ℕ} → Matrix (Fin g) (Fin g) ℂ → (Fin g → ℂ) → (Fin g → ℂ) → ℂ :=
@@ -47,7 +51,7 @@ theorem UpperTheory.Reformulated.B.HermitianFormImEqSum.bil_eq :
       (fun y => ∑ v : P, r v * (-s v * Complex.I * UpperTheory.Reformulated.B.HermitianFormImEqSum.hv (M v) (a v) (y v)).re)
       S hS ?_ ?_ ?_ ?_ (H a ha) y
     · intro u w
-      simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_add, star_add, Matrix.mulVec_add, dotProduct_add,
+      simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_add (f := _), star_add, Matrix.mulVec_add, dotProduct_add,
         Complex.add_im]
     · intro c u
       simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_smul, star_smul, star_trivial, Matrix.mulVec_smul,
@@ -62,7 +66,7 @@ theorem UpperTheory.Reformulated.B.HermitianFormImEqSum.bil_eq :
     (fun x => ∑ v : P, r v * (-s v * Complex.I * UpperTheory.Reformulated.B.HermitianFormImEqSum.hv (M v) (x v) (y v)).re)
     S hS ?_ ?_ ?_ ?_ (fun a ha => step a ha y) x
   · intro u w
-    simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_add, add_dotProduct, Complex.add_im]
+    simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_add (f := _), add_dotProduct, Complex.add_im]
   · intro c u
     simp only [UpperTheory.Reformulated.B.HermitianFormImEqSum.hermForm, map_smul, smul_dotProduct, Complex.smul_im, smul_eq_mul]
   · intro u w

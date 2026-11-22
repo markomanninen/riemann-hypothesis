@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WWMulCube
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SlZero
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.Imports
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.RightInv
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.JExExists
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
-import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WWMulCube
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SlZero
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.Imports
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.RightInv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.JExExists
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+public import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -22,8 +26,8 @@ namespace UpperTheory.ConvolutionTheory.R2.H.T0
 variable {F : Type} [Field F] [NumberField F]
 
 private theorem comp_signed_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι) (ε : κ → F)
-    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi F κ) :
-    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi F ι := by
+    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi (K := F) (ι := κ)) :
+    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   have hD : Matrix.diagonal ε * Matrix.diagonal ε = (1 : Matrix κ κ F) := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
@@ -70,8 +74,8 @@ private def sn : Fin 3 ⊕ Unit → F := Sum.elim 1 fun _ => -1
 
 private def FF (φ : V4 F → ℂ) (z : Fin 3 ⊕ Unit → A F) : ℂ := φ fun i => z (eS.symm i)
 
-private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) :
-    FF φ ∈ schwartzBruhatPi F (Fin 3 ⊕ Unit) := by
+private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
+    FF φ ∈ schwartzBruhatPi (K := F) (ι := Fin 3 ⊕ Unit) := by
   have h := comp_signed_mem (F := F) eS.symm (fun _ => 1) (fun _ => by simp) hφ
   have he : FF φ = fun x => φ fun k => rt ((fun _ => 1 : Fin 4 → F) k) * x (eS.symm k) := by
     funext x
@@ -96,8 +100,8 @@ private theorem hat_eq (φ : V4 F → ℂ) (x : V4 F) :
   simp only [FF]
   rw [h1, h2]
 
-private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi F (Fin 4))
-    (hb : b ∈ schwartzBruhatPi F (Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
+private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
+    (hb : b ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
   rw [hat_eq, hat_eq, hat_eq]
   have e : FF (a + b) = FF a + FF b := rfl
   rw [e]
@@ -273,7 +277,7 @@ end
 
 open UpperTheory.ConvolutionTheory.R2.H.T0 in
 theorem UpperTheory.ConvolutionTheory.R2.H.integral_thetaRowZero_eq_zero_of_iwahori_invariant :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (v : P F) (ϖ : (Kv v)ˣ), IsU ϖ → Gd D.δ v → Aniso D.δ v → ∀ j, IsJ v j →
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (v : P F) (ϖ : (Kv v)ˣ), IsU ϖ → Gd D.δ v → Aniso D.δ v → ∀ j, IsJ v j →
       ∀ (f : G1 F → ℂ) (φ : S4 F), (∀ γ g, f (ratS F γ * g) = f g) →
       (∀ g (x : Matrix.SpecialLinearGroup (Fin 2) (Kv v)), IsInt (x 0 0) → IsInt (x 1 1) → IsInt (((ϖ⁻¹ : (Kv v)ˣ) : Kv v) * x 0 1) → IsInt ((ϖ : Kv v) * x 1 0) →
         f (g * j x) = f g) →
@@ -352,7 +356,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.integral_thetaRowZero_eq_zero_of_iwah
     rw [e, thRow_sum] at h
     rw [h, mul_zero]
   have hsum : ∑ k ∈ s, ∫ g in M.D, u (g * j k.1) ∂M.μ = 0 := by
-    rw [← integral_finset_sum s fun k _ => (rightInv F M u hu hint (j k.1)).1]
+    rw [← integral_finsetSum s fun k _ => (rightInv F M u hu hint (j k.1)).1]
     simp only [hz, integral_zero]
   have hcard : (s.card : ℂ) * ∫ g in M.D, u g ∂M.μ = 0 := by
     have e : ∀ k ∈ s, ∫ g in M.D, u (g * j k.1) ∂M.μ = ∫ g in M.D, u g ∂M.μ :=

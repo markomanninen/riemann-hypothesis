@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
-import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CyclicReductionCohomology.DualPair
+public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th GlobalTheory.GalOfCusp
 
@@ -27,9 +31,9 @@ theorem UpperTheory.V.Th.omFacts :
     exact this
   · rw [nsmul_eq_mul, Nat.cast_pow, hpow, zero_mul]
   · have h : a - 1 ∈ RingHom.ker (PadicInt.toZModPow (p := l) m) := by
-      rw [RingHom.mem_ker, map_sub, ha, map_one, sub_self]
+      rw [RingHom.mem_ker, RingHom.map_sub, ha, map_one, sub_self]
     rw [PadicInt.ker_toZModPow, Ideal.mem_span_singleton'] at h
     obtain ⟨b, hb⟩ := h
     have e : a = 1 + b * (l : ℤ_[l]) ^ m := by rw [hb]; ring
     rw [e]
-    simp only [map_add, map_one, map_mul, map_pow, map_natCast, hpow, mul_zero, add_zero]
+    simp only [map_add (f := _), map_one, map_mul, map_pow, map_natCast, hpow, mul_zero, add_zero]

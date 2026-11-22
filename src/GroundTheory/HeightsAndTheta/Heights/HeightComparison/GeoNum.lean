@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PIntNumPoint
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialMultAt
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PIntNumPoint
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSpecialMultAt
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Bridge
@@ -119,7 +124,7 @@ theorem cycEval_divCycle_eq (Q : Ideal (MRing ι (ZMod p))) (s : MRing ι ℤ)
     apply hW'
     show divCycle Q (red p s) W' * N W' = 0
     unfold divCycle
-    rw [dif_neg (show ¬ (_ ∧ _) from hT), zero_mul]
+    rw [dite_eq_right (show ¬ (_ ∧ _) from hT), zero_mul]
 
 theorem intNum_eq_geoNum_comap (n : ℕ) : ∀ Q : Ideal (MRing ι (ZMod p)), IsMultiProjPrime Q →
     relDim Q = ((n : ℕ) : WithBot (WithTop ℤ)) → ∀ a : Fin n → K → ℤ,
@@ -173,7 +178,8 @@ theorem intNum_eq_geoNum_comap (n : ℕ) : ∀ Q : Ideal (MRing ι (ZMod p)), Is
         simp [Finset.sum_apply, Pi.single_apply]
       have : f c = ∑ k, c k • f (Pi.single k 1) := by
         conv_lhs => rw [hc]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_congr rfl fun k _ => map_zsmul f (c k) _
       simpa [f, smul_eq_mul] using this
 
@@ -211,8 +217,8 @@ theorem intNum_eq_geoNum_comap (n : ℕ) : ∀ Q : Ideal (MRing ι (ZMod p)), Is
 
 end GeoNum
 
-open GeoNum in
 
+open GeoNum in
 theorem intNum_map_eq_geoNum {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type}
     [∀ k, Fintype (ι k)] (p : ℕ) [Fact p.Prime] (n : ℕ) (V : Ideal (Geo.MRing ι))
     (hV : Geo.IsMultiProjPrime V) (hpV : (C (p : ℤ) : Geo.MRing ι) ∈ V)
@@ -242,8 +248,8 @@ theorem intNum_map_eq_geoNum {K : Type} [Fintype K] [DecidableEq K] {ι : K → 
   have := intNum_eq_geoNum_comap p n _ hQ hd a
   rwa [hcm] at this
 
-open GeoNum in
 
+open GeoNum in
 theorem intNum_map_eq_geoNum_hyps (p : ℕ) [Fact p.Prime] (D : ℕ) :
     Geo.IsMultiProjPrime (RingHom.ker (red (ι := fun _ : Unit => Fin (D + 1)) p)) ∧
       (C (p : ℤ) : Geo.MRing (fun _ : Unit => Fin (D + 1))) ∈
@@ -270,7 +276,8 @@ theorem intNum_map_eq_geoNum_hyps (p : ℕ) [Fact p.Prime] (D : ℕ) :
     have hc : Nat.card ((_ : Unit) × Fin (D + 1)) = D + 1 := by
       rw [Nat.card_eq_fintype_card, Fintype.card_sigma]
       simp
-    rw [hc, Fintype.card_unit]
+    rw [ENat.card_eq_coe_natCard, hc, Fintype.card_unit]
+    simp
 
 end
 

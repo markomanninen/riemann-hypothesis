@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums
-import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorOfPairLift
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorOfPairLift
+
+@[expose] public section
 
 noncomputable section
 

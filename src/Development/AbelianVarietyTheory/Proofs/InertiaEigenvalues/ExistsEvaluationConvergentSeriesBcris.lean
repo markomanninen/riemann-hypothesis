@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProductMapTensorAinfToBcrisWachInclusionConstantStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionLayerIoCommutesFrobeniusGaloisStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolynomialTeichmullerRootTaylorModFilStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBanachModelTensorAcrisStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProductMapTensorAinfToBcrisWachInclusionConstantStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionLayerIoCommutesFrobeniusGaloisStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PolynomialTeichmullerRootTaylorModFilStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBanachModelTensorAcrisStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ section Letters
 variable {O N : Type} [CommRing O] [CommRing N] {n : ℕ} [NeZero n] (f : LetA O n →+* N)
 
 theorem sum_letE : ∑ i, f (letE i) = 1 := by
-  rw [← map_sum, ← map_one f]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_one f]
   exact congrArg f (Finset.univ_sum_single (1 : LetA O n))
 
 theorem sum_letE_mul (x y : ZMod n → N) :
@@ -45,7 +50,8 @@ theorem sum_letE_mul (x y : ZMod n → N) :
 
 theorem sum_letE_const (a : LetA O n) : ∑ i, f (letE i) * f (fun _ => a i) = f a := by
   simp only [← map_mul]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   ext1 j
   simp [letE, Pi.single_apply]
@@ -87,8 +93,8 @@ theorem crisFrobenius_periodT_eq_prime_smul (P : LocPrime l) (K : FinExt l) : P.
   have h := (P.PD K).t_φ
   rwa [P.PD_φ, P.period_datum_t_eq, P.PD_p] at h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P), LocTied l P AI → ∀ (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → ∀ β : RA LL →+* ↥LL.1 ⊗[ℚ_[l]] P.R.B, IsBeta AI β → ∃ J, IsEval I β J := by
   intro l _ P AI T K s LL hG Γ R I hW β hβ
   obtain ⟨N, _, _, c, b, κ, φ, γ, t, ⟨hκb, hφb, hκφ, hγb, hκγ, hκt⟩, hc, hb, hbo, hκc, ⟨hφ, hφc⟩, hγ, hs, hlog, hcl⟩ :=
@@ -99,6 +105,7 @@ theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
   let μ : ℕ → N := fun s => b ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] (WittVector.teichmuller l (AI.εroot s) - 1))
   have hμ : ∀ s, Small (μ s) := hs
   have hc' : Bdd c := hc
+  set_option synthInstance.maxHeartbeats 200000 in
   let f : LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K)) →+* N := b.comp I.io.toRingHom
   have hf : ∀ a, f a = b (I.io a) := fun _ => rfl
   have hfπ : f letπ = μ s := congrArg b I.io_π
@@ -120,7 +127,7 @@ theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
     exact h5.unique (hasSum_map hc' (hμ s) ha' ψ h1 h2)
   refine ⟨fun a => κ (∑ i, f (letE i) * ev c (μ s) (a i)), ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a a' ha ha'
-    rw [← map_add, ← Finset.sum_add_distrib]
+    rw [← map_add (f := _), ← Finset.sum_add_distrib]
     refine congrArg κ (Finset.sum_congr rfl fun i _ => ?_)
     rw [Pi.add_apply, ev_add hc' (hμ s) ((conv_iff_sc _).1 (ha i)) ((conv_iff_sc _).1 (ha' i)), mul_add]
   · intro a a' ha ha'
@@ -139,13 +146,15 @@ theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
     have hy : R.φ₀ X = (1 + X) ^ l - 1 := by rw [R.φ₀_X, R.q₀_def, P.PD_p]
     have hy' : ((1 + X) ^ l - 1 : (↥LL.1)⟦X⟧) = map (algebraMap ↥(OL LL) ↥LL.1) (R.φ₀ X) := by
       simp [hy]
-    rw [← hκφ, map_sum φ, ← Equiv.sum_comp (Equiv.subRight (1 : ZMod _))
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hκφ, map_sum φ, ← Equiv.sum_comp (Equiv.subRight (1 : ZMod _))
       (fun i => φ (f (letE i) * ev c (μ s) (a i)))]
     refine congrArg κ (Finset.sum_congr rfl fun i _ => ?_)
     rw [Equiv.subRight_apply, map_mul, ← hfφ, letφ_letE, hy',
       hsub φ _ hφ hφc (by simp [hy]) (hfπ ▸ hfφ letπ) _ (ha _)]
   · intro g a ha
-    rw [← hκγ, map_sum (γ g)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hκγ, map_sum (γ g)]
     refine congrArg κ (Finset.sum_congr rfl fun i _ => ?_)
     rw [map_mul, ← hfγ, letγ_letE,
       hsub (γ g) _ (hγ g).1 (hγ g).2 (R.γ₀_X _).1 (hfπ ▸ hfγ g letπ) _ (ha _)]
@@ -187,11 +196,12 @@ theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
       simp
     have hev : ∀ x : ℕ → ↥LL.1, π (∑ k ∈ Finset.range m, c (x k) * τ ^ k) =
         ∑ k ∈ Finset.range m, ι (x k) * ((((l : ℚ_[l]) ^ s)⁻¹) • P.ιB P.tB) ^ k := fun x => by
-      simp only [map_sum, map_mul π, map_pow π, hπc, hπτ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul π, map_pow π, hπc, hπτ]
     have hlim : Tendsto (fun M : ℕ => Polynomial.eval₂ c (μ s) (trunc M (a i)) - ∑ k ∈ Finset.range m,
         c (coeff k (Polynomial.aeval (C ζ * exp ↥LL.1 - 1) (trunc M (a i)))) * τ ^ k) atTop
         (nhds (ev c (μ s) (a i) - ∑ k ∈ Finset.range m, c (coeff k e) * τ ^ k)) := by
-      refine (tendsto_ev hc' (hμ s) ((conv_iff_sc _).1 (ha i))).sub (tendsto_finset_sum _ fun k _ => ?_)
+      refine (tendsto_ev hc' (hμ s) ((conv_iff_sc _).1 (ha i))).sub (tendsto_finsetSum _ fun k _ => ?_)
       exact ((hc'.continuous.tendsto _).comp (tendsto_subtype_rng.2 (he k))).mul_const _
     have hmem := (hcl ι m).mem_of_tendsto hlim (Eventually.of_forall fun M => by
       have h := GlobalTheory.T.polynomial_teichmullerRoot_taylor_modFil l P AI T LL s ζ ι hζ (trunc M (a i)) m
@@ -199,7 +209,8 @@ theorem exists_eval : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAin
       exact h)
     rw [Set.mem_setOf_eq, ← hπ, map_sub, hev] at hmem
     have e2 : π (∑ j, f (letE j) * ev c (μ s) (a j)) = π (ev c (μ s) (a i)) := by
-      simp [map_sum, map_mul π, hπE]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_mul π, hπE]
     rw [← hπ, e2]
     exact (Set.ext_iff.1 (P.PD_Fil _ K m) _).1 hmem
 

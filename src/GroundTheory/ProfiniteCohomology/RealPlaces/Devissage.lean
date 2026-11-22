@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.DevissageNatural
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.DevissageNatural
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,14 +33,14 @@ variable (H : TateCompactDualityHypotheses φ ψ n D t U₀)
 
 include H in
 theorem finite_D : Finite D :=
-  finite_of_nonempty_addEquiv H.nonempty_addEquiv
+  finite_of_nonempty_addEquiv (n := n) H.nonempty_addEquiv
 
 include H in
 theorem nsmul_D (d : D) : n • d = 0 :=
   nsmul_eq_zero_of_nonempty_addEquiv H.nonempty_addEquiv d
 
-include H in
 
+include H in
 theorem exists_devissage (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
     ∃ (I Q : Rep.{u} (ULift.{u} ℤ) G) (_ : IsDiscreteRep I) (_ : IsDiscreteRep Q) (_ : Finite I)
@@ -88,15 +93,15 @@ namespace TateCompactDualityHypotheses
 
 variable (H : TateCompactDualityHypotheses φ ψ n D t U₀)
 
-include H in
 
+include H in
 theorem injective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
     Function.Injective (tateCompactDualityMap φ ψ D (rfl : 0 + 3 = 3) t M) := by
   have := H.finite_D
   obtain ⟨I, Q, _, _, _, _, i, p, w, hS, hnI, hnQ, hI⟩ := H.exists_devissage M hM
   have hi : Function.Injective i.hom := (Rep.mono_iff_injective i).1 hS.mono_f
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 : tateCompactDualityMap φ ψ D (rfl : 0 + 3 = 3) t I ((cohomologyMap i 0).hom x) = 0 := by
     ext y
@@ -106,8 +111,8 @@ theorem injective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite
     (injective_iff_map_eq_zero _).1 (hI (rfl : 0 + 3 = 3) (by norm_num)).1 _ h1
   exact (injective_iff_map_eq_zero _).1 (injective_cohomologyMap_zero i hi) x h2
 
-include H in
 
+include H in
 theorem surjective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) :
     Function.Surjective (tateCompactDualityMap φ ψ D (rfl : 0 + 3 = 3) t M) := by
@@ -151,8 +156,8 @@ theorem bijective_zero (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite
 
 variable {r s : ℕ} (h₁ : r + 1 + s = 3) (h₀ : r + (s + 1) = 3) (hs : 1 ≤ s)
 
-include H hs in
 
+include H hs in
 theorem injective_succ
     (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
       Function.Bijective (tateCompactDualityMap φ ψ D h₀ t M))
@@ -163,7 +168,7 @@ theorem injective_succ
   let S := ShortComplex.mk i p w
   have hT : (dualShortComplex D S).ShortExact :=
     dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h1 : tateCompactDualityMap φ ψ D h₁ t I ((cohomologyMap i (r + 1)).hom x) = 0 := by
     ext y
@@ -193,8 +198,8 @@ theorem injective_succ
   rw [← hq, ← hpv]
   exact congrArg (fun F => F.hom v) (comp_δ hS r (r + 1) rfl)
 
-include H hs in
 
+include H hs in
 theorem surjective_succ
     (ih : ∀ (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M], (∀ m : M, n • m = 0) →
       Function.Bijective (tateCompactDualityMap φ ψ D h₀ t M))
@@ -206,7 +211,8 @@ theorem surjective_succ
   have hT : (dualShortComplex D S).ShortExact :=
     dualShortComplex_shortExact H.nonempty_addEquiv hS hnI
   intro l
-  obtain ⟨v, hv⟩ := (hI h₁ hs).2 (l.comp (tateCompactCohomologyResMap φ ψ (dualMap D i) s).hom.toAddMonoidHom)
+  obtain ⟨v, hv⟩ := (hI h₁ hs).2
+    (l.comp (tateCompactCohomologyResMap φ ψ (dualMap D i) s).hom.toAddMonoidHom)
   have hpv : (cohomologyMap p (r + 1)).hom v = 0 := by
     apply (injective_iff_map_eq_zero _).1 (H.injective_succ h₁ h₀ hs ih Q hnQ)
     ext y
@@ -236,7 +242,7 @@ theorem surjective_succ
   have e := tateCompactDualityMap_δ φ ψ D t hS hT h₁ h₀ q y
   change tateCompactDualityMap φ ψ D h₁ t M ((δ hS r (r + 1) rfl).hom q) y = _ at e
   have hχy : χ ((tateCompactδRes φ ψ hT s).hom y) = ν y := congrArg (fun f => f y) hχ
-  rw [map_add, map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, e, hq,
+  rw [map_add (f := _), map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, e, hq,
     neg_neg_one_pow_zsmul_zsmul]
   change _ + χ ((tateCompactδRes φ ψ hT s).hom y) = l y
   rw [hχy, hν, AddMonoidHom.sub_apply, add_sub_cancel]
@@ -267,8 +273,8 @@ namespace TateCompactDualityHypotheses
 
 variable (H : TateCompactDualityHypotheses φ ψ n D t U₀)
 
-include H in
 
+include H in
 theorem bijective_tateCompactDualityMap (M : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep M] [Finite M]
     (hM : ∀ m : M, n • m = 0) {r s : ℕ} (h : r + s = 3) (hs : 1 ≤ s) :
     Function.Bijective (tateCompactDualityMap φ ψ D h t M) := by

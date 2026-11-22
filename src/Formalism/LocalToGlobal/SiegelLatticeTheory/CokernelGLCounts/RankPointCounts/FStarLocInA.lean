@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfD
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfD
+
+@[expose] public section
 
 noncomputable section
 
@@ -232,8 +236,8 @@ theorem locInA_mk_e (x : ↥(H.perp (H.X t₁.f))) (y : ↥(H.perp (H.X t₁.f))
     | (simp only [Loc.HermSp.mkW, Submodule.mkQ_apply]
        exact (Submodule.Quotient.eq _).2 h2)
 
-include hf hX in
 
+include hf hX in
 theorem lset_eq {Lam₂ Lam₃ : Submodule M.L.O V} (hL : ∀ x, x ∈ Lam₃ ↔ e.symm x ∈ Lam₂) :
     H.Lset Lam₂ t₁.f = H.Lset Lam₃ t₁.f := by
   ext w
@@ -277,8 +281,8 @@ theorem lset_q {Lam₂ Lam₃ : Submodule M.L.O V} (hL : ∀ x, x ∈ Lam₃ ↔
     exact ⟨H.mkW f₂' ⟨e.symm y, hp⟩, ⟨⟨e.symm y, hp⟩, (hL _).1 hy, rfl⟩,
       locInA_q_mk H e hiso hf' ⟨e.symm y, hp⟩ y (e.apply_symm_apply _).symm⟩
 
-include hf hX in
 
+include hf hX in
 theorem iota_q {Lam₂ Lam₃ : Submodule M.L.O V} (hL : ∀ x, x ∈ Lam₃ ↔ e.symm x ∈ Lam₂) (g : Loc.SplitG M.L)
     (T T' : F) :
     H.iotaGraph g (⟨Lam₃, t₁.f, f₃', T, T'⟩ : Loc.Term V M r) =
@@ -355,8 +359,8 @@ theorem locInA_dl' (l : ℕ) : H.Dl t₁.f f₃' l = H.Dl t₁.f f₂' l := by
   calc H.Dl t₁.f f₃' l = H.Dl (fun a => e (t₁.f a)) (fun b => e (f₂' b)) l := by rw [h1, h2]
     _ = H.Dl t₁.f f₂' l := locInA_dl H e hiso t₁.f f₂' l
 
-include hf hf' hX in
 
+include hf hf' hX in
 theorem ident_trans (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂')
     (hI : H.Ident t₁ ⟨⊥, t₁.f, f₂', t₁.T, t₁.T'⟩ (LinearEquiv.refl E _) φ') :
     H.Ident t₁ ⟨⊥, t₁.f, f₃', t₁.T, t₁.T'⟩ (LinearEquiv.refl E _) (φ'.trans (qE H e hiso hf')) := by
@@ -364,9 +368,11 @@ theorem ident_trans (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂')
   have hz := locInA_zhat' H e hiso t₁ hf hf'
   have hd : ∀ l, H.Dl t₁.f f₃' l = H.Dl t₁.f f₂' l := fun l => locInA_dl' H e hiso t₁ hf hf' l
   have hom' : H.om' t₁.f f₃' = e (H.om' t₁.f f₂') := by
-    simp only [Loc.HermSp.om', hz, map_sum, map_smul, hf']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Loc.HermSp.om', hz, map_sum, map_smul, hf']
   have hom : H.om t₁.f f₃' = e (H.om t₁.f f₂') := by
-    simp only [Loc.HermSp.om, hz, map_sum, map_smul, hf]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Loc.HermSp.om, hz, map_sum, map_smul, hf]
   have h21 : ∀ y ∈ H.Xp t₁.f ⊔ H.Xp f₃', e.symm y ∈ H.Xp t₁.f ⊔ H.Xp f₂' := by
     intro y hy
     have key : H.Xp t₁.f ⊔ H.Xp f₃' ≤ (H.Xp t₁.f ⊔ H.Xp f₂').comap (e.symm : V →ₗ[E] V) := by
@@ -418,8 +424,8 @@ theorem ident_trans (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂')
     rw [hd, hd]
     exact i6
 
-include hf hf' hX in
 
+include hf hf' hX in
 theorem locSet_back {Lam₂ Lam₃ : Submodule M.L.O V} (hL : ∀ x, x ∈ Lam₃ ↔ e.symm x ∈ Lam₂)
     (φ' : H.Wb t₁.f' ≃ₗ[E] H.Wb f₂')
     (hI : H.Ident t₁ ⟨⊥, t₁.f, f₂', t₁.T, t₁.T'⟩ (LinearEquiv.refl E _) φ')

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflection
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartanInvolutionCommQuasiReflection
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+
+@[expose] public section
+
 open Matrix Formalism.IndefR.Datum
 open scoped ComplexOrder
 set_option maxHeartbeats 1000000 in

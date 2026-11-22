@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+
+@[expose] public section
 
 set_option autoImplicit false
 

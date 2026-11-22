@@ -1,19 +1,49 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegTwoLeGapKap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TestValueEqConstMulReadingSecZ
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CnormMapConjMulVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearL2CuspForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RdZeroOfPetAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightLatticeSpanEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightLatticeFinitelyGeneratedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TestValueEqConstMulReadingSecZ
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CnormMapConjMulVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearL2CuspForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RdZeroOfPetAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulNonnegOfPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulNonnegLargeAtThreeFive
+public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKeySectionValuationBoundsDifferent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsKeySectionFourthRootPerComponent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitSectionThetaKeyRuleWeightFour
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyFamOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrdConjDifferentEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKeyRuleValuationNonnegIntegralFramedPointStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstantSmulIntegralOfFourthPowerStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsParallelWeightInvertibleSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyWeightSectionProducts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FgIntOfForallIsIntegral
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IntegralOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodCmPtFrPolyNeZero
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolyDivDet
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedModuliAlgebraicLawsChartWeightIntegrality
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TestPointValueEqConstMulReading
+public import Formalism.LocalToGlobal.ProjectiveLattices.RosatiLatticeNorms.LinkFD
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartWD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodCoverComponentExtendsToRankOneCuspDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniformisationFrameReadingNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNumberFieldFrameValueNeZeroOfComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDetNeZeroEvalFrNeZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeExistsUniqueOfSamePoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedSectionExponentShift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonDenomFramePolynomialsCmPointStatement
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -35,8 +65,8 @@ open MeasureTheory ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotion
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ} {D : D7}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_semilinear_L2_independent (hS : Out.SecBaseChangeSt) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (σ : c.F →+* ℂ)
     (hσ : GoodEmb c σ) (hU : IsUnf (U σ)) (V : HSp D)
     (dict : Formalism.L2.Theta.GA D V → Σ k, Frame ((U σ).X k).Ψ r) (mu : Formalism.L2.Theta.GA D V → ℂ)
@@ -50,25 +80,34 @@ theorem exists_semilinear_L2_independent (hS : Out.SecBaseChangeSt) (U : ∀ σ 
   have hhol : ∀ f : GlobalTheory.AllWt.cuspW Xo c U G,
       rdU (U σ) (f : Rul Xo c) ∈ holSub (U σ).X (GlobalTheory.AllWt.modelWt (U σ) G) := fun f =>
     (GlobalTheory.AllWt.mem_cuspW.1 f.2).2 σ hσ
-  have heq : ∀ P : FDSec (U σ).X,
+  have heq : ∀ P : holSub (U σ).X (GlobalTheory.AllWt.modelWt (U σ) G),
       eLpNorm (onQ V (adel V dict mu P)) 2 (muQ1 V) =
         GlobalTheory.AllWt.petE V dict (muQ1 V) (GlobalTheory.AllWt.modelWt (U σ) G) P := by
     intro P
     unfold GlobalTheory.AllWt.petE
-    refine eLpNorm_congr_norm_ae (Filter.Eventually.of_forall fun q => ?_)
-    show ‖mu q.out * P (dict q.out).1 (dict q.out).2‖ = _
-    rw [norm_mul, hmu1, one_mul, Real.norm_of_nonneg (GlobalTheory.AllWt.ptN_nonneg _ _ _), GlobalTheory.AllWt.ptN,
-      pnorm_eq_of_unit _ _ _ _ (hunit q.out)]
+    have hp : ∀ q : AutQ V, ‖mu q.out * (P : FDSec (U σ).X) (dict q.out).1 (dict q.out).2‖ =
+        GlobalTheory.AllWt.ptN (GlobalTheory.AllWt.modelWt (U σ) G) P (dict q.out) := by
+      intro q
+      rw [norm_mul, hmu1, one_mul, GlobalTheory.AllWt.ptN,
+        pnorm_eq_of_unit _ _ _ _ (hunit q.out)]
+    have hf := aesm_of_holSub hm _ P.2
+    have hg := hf.norm.congr (Filter.Eventually.of_forall hp)
+    have hh := eLpNorm_congr_norm_ae (p := 2) hf hg (Filter.Eventually.of_forall fun q => by
+      rw [Real.norm_of_nonneg (GlobalTheory.AllWt.ptN_nonneg _ _ _)]
+      exact hp q)
+    rw [eLpNorm_eq_eLpNorm' (by norm_num) (by simp) hg] at hh
+    simpa using hh
   have hmem : ∀ P : holSub (U σ).X (GlobalTheory.AllWt.modelWt (U σ) G),
       MemLp (onQ V (adel V dict mu (P : FDSec (U σ).X))) 2 (muQ1 V) := fun P =>
-    ⟨aesm_of_holSub hm _ P.2, by
-      rw [heq]
-      exact lt_top_iff_ne_top.2 (GlobalTheory.AllWt.petE_ne_top V dict (muQ1 V) prob_le_one hd P.2)⟩
+    by
+      change eLpNorm _ _ _ < ⊤
+      rw [heq P]
+      exact lt_top_iff_ne_top.2 (GlobalTheory.AllWt.petE_ne_top V dict (muQ1 V) prob_le_one hd P.2)
   let L : holSub (U σ).X (GlobalTheory.AllWt.modelWt (U σ) G) →ₗ[ℂ] Lp ℂ 2 (muQ1 V) :=
     { toFun := fun P => (hmem P).toLp _
       map_add' := fun P Q => by
         rw [← MemLp.toLp_add]
-        exact MemLp.toLp_congr _ _ (Filter.EventuallyEq.of_eq (by rw [Submodule.coe_add, map_add, map_add]))
+        exact MemLp.toLp_congr _ _ (Filter.EventuallyEq.of_eq (by rw [Submodule.coe_add, map_add (f := _), map_add (f := _)]))
       map_smul' := fun a P => by
         rw [RingHom.id_apply, ← MemLp.toLp_const_smul]
         exact MemLp.toLp_congr _ _ (Filter.EventuallyEq.of_eq (by rw [Submodule.coe_smul, map_smul, map_smul])) }
@@ -76,13 +115,13 @@ theorem exists_semilinear_L2_independent (hS : Out.SecBaseChangeSt) (U : ∀ σ 
   let R : GlobalTheory.AllWt.cuspW Xo c U G → holSub (U σ).X (GlobalTheory.AllWt.modelWt (U σ) G) := fun f => ⟨_, hhol f⟩
   have hRadd : ∀ f g, R (f + g) = R f + R g := fun f g => Subtype.ext (by
     show rdU (U σ) ((f + g : GlobalTheory.AllWt.cuspW Xo c U G) : Rul Xo c) = rdU (U σ) (f : Rul Xo c) + rdU (U σ) (g : Rul Xo c)
-    rw [Submodule.coe_add, map_add])
+    rw [Submodule.coe_add, map_add (f := _)])
   have hRsm : ∀ (a : c.F) f, R (a • f) = σ a • R f := fun a f => Subtype.ext (by
     show rdU (U σ) ((a • f : GlobalTheory.AllWt.cuspW Xo c U G) : Rul Xo c) = σ a • rdU (U σ) (f : Rul Xo c)
     rw [Submodule.coe_smul, map_smulₛₗ])
   let cf : ℝ := GlobalTheory.AllWt.lieFacZ Dw x G
   have hcf : 0 < cf := GlobalTheory.AllWt.lieFacZ_pos x G
-  refine ⟨AddMonoidHom.mk' (fun f => (cf : ℂ) • L (R f)) (fun f g => by rw [hRadd, map_add, smul_add]),
+  refine ⟨AddMonoidHom.mk' (fun f => (cf : ℂ) • L (R f)) (fun f g => by rw [hRadd, map_add (f := _), smul_add]),
     fun a f => ?_, fun f => ?_, fun n e he => ?_⟩
   · show (cf : ℂ) • L (R (a • f)) = σ a • ((cf : ℂ) • L (R f))
     rw [hRsm, map_smul, smul_comm]
@@ -98,7 +137,8 @@ theorem exists_semilinear_L2_independent (hS : Out.SecBaseChangeSt) (U : ∀ σ 
     refine hc w ?_
     have h1 : (cf : ℂ) • L (∑ i, w i • R (e i)) = 0 := by
       have hw' : ∑ i, w i • ((cf : ℂ) • L (R (e i))) = 0 := hw
-      rw [map_sum, Finset.smul_sum, ← hw']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum, ← hw']
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [L.map_smul]
       exact smul_comm _ _ _
@@ -122,8 +162,8 @@ theorem exists_semilinear_L2_independent (hS : Out.SecBaseChangeSt) (U : ∀ σ 
 
 end Gen
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem hasGram_nrm_of_good (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : ℕ) (o : ℝ) (hY : Y.Good e o)
     (G : WTZ D.host.E) : GlobalTheory.AllWt.HasGram (Y.nrm G) := by
   haveI := GlobalTheory.Deep.finiteDimensional_V_of_good D T j Y e o hY G
@@ -147,21 +187,5 @@ theorem hasGram_nrm_of_good (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : 
     refine ((Classical.choose_spec hex).1 a x).trans ?_
     exact congrArg (· • Classical.choose hex x) (congrArg (fun τ : Y.d.c₂.F →+* ℂ => τ a) (if_neg h))
 
-set_option maxHeartbeats 1000000 in
-
-theorem goodAt_of_gapGe : GlobalTheory.CovTop.Hypotheses2 → ∀ (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : ℕ) (o : ℝ), Y.Good e o →
-    2 < Module.finrank ℚ D.host.E / 2 → ∀ la : GlobalTheory.AllWt.Weight (T.Q.Dw j), GapGe 1 la → Y.GoodAt (wtOf _ la 0) := by
-  intro hP D T j Y e o hY hf la hla
-  have hfd := GlobalTheory.Deep.finiteDimensional_V_of_good D T j Y e o hY (wtOf _ la 0)
-  exact ⟨hasGram_nrm_of_good D T j Y e o hY _, GlobalTheory.T.weight_lattice_finitely_generated hP D T j Y e o hY hf la hla hfd,
-    GlobalTheory.T.weight_lattice_span_eq_top hP D T j Y e o hY hf la hla hfd⟩
-
-theorem goodAt_hs : GlobalTheory.CovTop.Hypotheses2 → ∀ (D : D7) (T : Core D) (j : ℕ) (Y : Deep T j) (e : ℕ) (o : ℝ), Y.Good e o →
-    2 < Module.finrank ℚ D.host.E / 2 → ∀ P : WtPar (T.Q.Dw j), WtBig P →
-      Y.GoodAt (wtOf _ P.u₁ 0) ∧ Y.GoodAt (wtOf _ P.u₂ 0) ∧ ∀ i ≤ P.T, Y.GoodAt (wtOf _ (P.wt i) 0) := by
-  intro hP D T j Y e o hY hf P hB
-  obtain ⟨h1, h2, h3⟩ := GlobalTheory.HSApp.GapArith.gaps_main _ _ _ P hB
-  exact ⟨goodAt_of_gapGe hP D T j Y e o hY hf _ h1, goodAt_of_gapGe hP D T j Y e o hY hf _ h2,
-    fun i _ => goodAt_of_gapGe hP D T j Y e o hY hf _ (h3 i)⟩
 
 end GlobalTheory.HSApp

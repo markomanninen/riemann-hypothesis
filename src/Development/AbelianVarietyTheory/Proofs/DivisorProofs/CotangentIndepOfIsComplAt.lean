@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.Poinc GlobalTheory.SiegJoin GlobalTheory.TChart
@@ -24,7 +29,7 @@ theorem cotangent_indep_of_isComplAt : ∀ (W : Type) [CommRing W] [IsLocalRing 
   let δ : MvPolynomial I W → ResidueField R := fun f => residue R (ψ (MvPolynomial.pderiv (ι₀ k) f))
   have hπP : ∀ p ∈ P, residue R (ψ p) = 0 := fun p hp => (residue_eq_zero_iff _).2 hp
   have hδmul : ∀ a b, δ (a * b) = residue R (ψ a) * δ b + residue R (ψ b) * δ a := by
-    intro a b; simp only [δ, Derivation.leibniz, smul_eq_mul, map_add, map_mul]
+    intro a b; simp only [δ, Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul]
   have hδadd : ∀ a b, δ (a + b) = δ a + δ b := by intro a b; simp [δ]
   let K : Ideal (MvPolynomial I W) :=
     { carrier := {x | x ∈ P ∧ δ x = 0}
@@ -73,7 +78,7 @@ theorem cotangent_indep_of_isComplAt : ∀ (W : Type) [CommRing W] [IsLocalRing 
       intro r
       obtain ⟨t₁, h₁, h₁'⟩ := hx r
       obtain ⟨t₂, h₂, h₂'⟩ := hy r
-      exact ⟨t₁ + t₂, by rw [map_add, h₁, h₂]; ring, by rw [map_add, h₁', h₂', add_zero]⟩
+      exact ⟨t₁ + t₂, by rw [map_add (f := _), h₁, h₂]; ring, by rw [map_add (f := _), h₁', h₂', add_zero]⟩
     | smul a x _ hx =>
       intro r
       obtain ⟨t, h₁, h₂⟩ := hx (r * a)
@@ -81,9 +86,11 @@ theorem cotangent_indep_of_isComplAt : ∀ (W : Type) [CommRing W] [IsLocalRing 
   have hX' : ∀ j, MvPolynomial.X (ι₀ j) ∈ P := hX
   let t₀ : TensorProduct (MvPolynomial I W) R P := ∑ j, c j ⊗ₜ ⟨MvPolynomial.X (ι₀ j), hX' j⟩
   have hmu0 : muT t₀ = ∑ j, c j * ψ (MvPolynomial.X (ι₀ j)) := by
-    simp only [t₀, map_sum, hmut]; exact Finset.sum_congr rfl fun j _ => mul_comm _ _
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [t₀, map_sum, hmut]; exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   have hL₀ : L t₀ = residue R (c k) := by
-    simp only [t₀, map_sum, hLt, δ, MvPolynomial.pderiv_X, Pi.single_apply, ι₀.injective.eq_iff]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [t₀, map_sum, hLt, δ, MvPolynomial.pderiv_X, Pi.single_apply, ι₀.injective.eq_iff]
     simp
   obtain ⟨t, ht₁, ht₂⟩ := hspan _ (hJ hc) 1
   have : t = t₀ := hmu (by rw [ht₁, _root_.one_mul, hmu0])

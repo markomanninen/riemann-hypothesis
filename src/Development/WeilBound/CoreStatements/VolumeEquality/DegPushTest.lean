@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTestA
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTestB
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.DegreeGenericOfDegree
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTestA
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushTestB
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DegreeGenericOfDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem monoLines_perm {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype 
     (w : Fin d → J) :
     (List.ofFn fun k => (monoLines l (∑ j, Finsupp.single (w j) 1) d k).a).Perm (List.ofFn fun j => (l (w j)).a) := by
   have h1 : Finsupp.toMultiset (∑ j, Finsupp.single (w j) 1 : J →₀ ℕ) = (List.ofFn w : Multiset J) := by
-    rw [map_sum, ← Fin.univ_val_map, Finset.sum_eq_multiset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Fin.univ_val_map, Finset.sum_eq_multiset_sum]
     simp only [Finsupp.toMultiset_single, one_smul]
     conv_rhs => rw [← Multiset.sum_map_singleton (Multiset.map w Finset.univ.val), Multiset.map_map]
     rfl
@@ -56,7 +61,8 @@ theorem geoFun_word (hI : PB.Inputs) (w : Fin (dimFl Ψ N) → Ψ × Fin N) :
     rw [monomial_sum_one]
     rfl
   have h2 : (∑ j, Finsupp.single (some (w j)) 1 : Option (Ψ × Fin N) →₀ ℕ).degree = dimFl Ψ N := by
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have h3 : (∑ j, Finsupp.single (some (w j)) 1 : Option (Ψ × Fin N) →₀ ℕ) none = 0 := by
     simp [Finsupp.finsetSum_apply]
   have hs : ∀ j, IsSmoothHerm (M.line 1 j) := fun j => by
@@ -76,15 +82,18 @@ theorem geoFun_prod (hI : PB.Inputs) (c : Fin (dimFl Ψ N) → Ψ × Fin N → �
     M.geoFun (toA (∏ j, ∑ x, c j x • X x)) * M.δ =
       (intNum ℚ (M.P.map (MvPolynomial.map (Int.castRingHom ℚ))) fun j => ∑ x, c j x • M.xdeg x : ℤ) := by
   obtain ⟨F, hF⟩ := exists_multilinear_gen (P := M.P) M.arith
-  rw [← hF, F.map_sum, Fintype.prod_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hF, F.map_sum, Fintype.prod_sum]
   have h1 : ∀ w : Fin (dimFl Ψ N) → Ψ × Fin N, toA (∏ j, c j (w j) • X (w j) : RP Ψ N) =
       ((∏ j, c j (w j) : ℤ) : ℝ) • toA (∏ j, X (w j)) := fun w => by
     rw [Finset.prod_smul, Int.cast_smul_eq_zsmul, toA, toA, map_zsmul]
   have h2 : toA (∑ w : Fin (dimFl Ψ N) → Ψ × Fin N, ∏ j, c j (w j) • X (w j) : RP Ψ N) =
       ∑ w : Fin (dimFl Ψ N) → Ψ × Fin N, toA (∏ j, c j (w j) • X (w j)) := map_sum (rename some) _ _
-  rw [h2, map_sum, Finset.sum_mul, Int.cast_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum, Finset.sum_mul, Int.cast_sum]
   refine Finset.sum_congr rfl fun w _ => ?_
   rw [h1, map_smul, F.map_smul_univ, smul_eq_mul, smul_eq_mul, mul_assoc, geoFun_word M hI, hF, Int.cast_mul]
+  rfl
 
 theorem test_pointIdeal_rat {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω] [h : Algebra ℚ Ω]
     (y : (Σ k, ι k) → Ω) : pointIdeal ℚ y = (mCoordIdeal y).map (MvPolynomial.map (Int.castRingHom ℚ)) := by

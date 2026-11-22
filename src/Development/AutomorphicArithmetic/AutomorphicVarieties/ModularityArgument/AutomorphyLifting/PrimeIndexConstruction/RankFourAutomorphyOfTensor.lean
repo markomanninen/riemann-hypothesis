@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.ThruBad
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.AutomorphyRankFourPolarizedAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.ThruBad
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.IsAutCsdA
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.AutomorphyRankFourPolarizedAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ def IndAutLP : Prop :=
 
 def OffW {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (K' : IntermediateField ℚ Ω)
     (ρ : G ℚ Ω →* GL (Fin 2) (Qbar l)) (R : G ℚ Ω →* GL (Fin 4) (Qbar l)) : Prop :=
-  ∀ (L : IntermediateField ℚ Ω) [NumberField L] [IsTotallyComplex L], IsAbelianGalois ℚ L → ¬ K' ≤ L → GoodAt K' L ρ →
+  ∀ (L : IntermediateField ℚ Ω) [NumberField L] [_root_.NumberField.IsTotallyComplex L], IsAbelianGalois ℚ L → ¬ K' ≤ L → GoodAt K' L ρ →
     IsIrr (R.comp (resQ L)) → AllW ι (R.comp (resQ L))
 
 def RankFourAutomorphyOfTensor : Prop :=
@@ -50,7 +54,7 @@ def RankFourAutomorphyOfTensor : Prop :=
       TauDat ι K' g0 (m * j) c₁ τ s (κ ^ j) → AutOffS ι K' ρ (tenB ρ₁ τ) ∧ OffW ι K' ρ (tenB ρ₁ τ)
 
 def AwChain : Prop :=
-  ∀ (F E M Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E] [NumberField E] [IsCMField E] [Field M] [NumberField M] [IsTotallyComplex M]
+  ∀ (F E M Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E] [NumberField E] [IsCMField E] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M]
     [Field Ω] [Algebra F E] [Algebra E M] [Algebra F Ω] [Algebra E Ω] [Algebra M Ω] [IsScalarTower F E Ω] [IsScalarTower E M Ω] [IsAlgClosure F Ω]
     [IsAlgClosure M Ω] [IsGalois E M] [Group.IsSolvable (M ≃ₐ[E] M)], Module.finrank F E = 2 → ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ)
     (r : G F Ω →* GL (Fin 2) (Qbar l)) (κ : G E Ω →* (Qbar l)ˣ), Continuous r → PR ι r → Sd.IsAlgChar ι κ →

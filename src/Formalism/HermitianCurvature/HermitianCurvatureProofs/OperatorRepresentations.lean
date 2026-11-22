@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementQr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+module
+
+public import Formalism.HermitianCurvature.StatementQr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff

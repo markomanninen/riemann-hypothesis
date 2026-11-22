@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -295,8 +299,8 @@ def YY (C6 C18 : ℝ) (G : MvPolynomial (ML J Dt.nL r × Fin r) (KK O)) : Prop :
 
 end SignedChainData
 
-open SignedChainData in
 
+open SignedChainData in
 def ProjectionDerivativeEstimate (p : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (CH CE C6 C18 : ℝ) : Prop :=
   ∀ (r : ℕ) [NeZero r] (J : ℕ) [NeZero J] (Dt : SignedChainData p O r J),
     Dt.Hyp CH → 4 * (Dt.Dm + Dt.Dl + 3 * Dt.kp) < Dt.c →
@@ -319,33 +323,5 @@ def Stmt (_D : Formalism.BasicNotions.D7) (CH CE C6 C18 : ℝ) : Prop :=
 
 def ClosedFormOfAdmitted (D : Formalism.BasicNotions.D7) : Prop :=
   ∃ FormalChartAtZero CE C6 C18 : ℝ, 0 < FormalChartAtZero ∧ 0 < CE ∧ 0 < C6 ∧ 0 < C18 ∧ ∀ CH : ℝ, FormalChartAtZero ≤ CH → Stmt D CH CE C6 C18
-
-def admF1 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), adm1 (Fm.D x i)
-def admF2 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), adm2 (Fm.D x i)
-def admF3 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), adm3 (Fm.D x i)
-def admF4 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), ArchimedeanSignatureMatching (Fm.D x i)
-def admF5 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), adm5 (Fm.D x i)
-def admF6 {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), adm6 (Fm.D x i)
-
-def AdmF {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop :=
-  admF1 Fm ∧ admF2 Fm ∧ admF3 Fm ∧ admF4 Fm ∧ admF5 Fm ∧ admF6 Fm
-
-def OrbitValuationBound {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (CH CE C6 C18 : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x, x0 ≤ x → ∀ i : Fm.Ix x, aux₃ (Fm.D x i) CH CE C6 C18
-
-def KudlaFamilyStatement {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (CH CE C6 C18 : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x, x0 ≤ x → ∀ i : Fm.Ix x, Stmt (Fm.D x i) CH CE C6 C18
-
-def DerivativeStatementDesign (Fm : Formalism.MainNotions.DFamP) (CH CE C6 C18 : ℝ) : Prop :=
-  ∀ (ε : ℝ) (h0 : 0 < ε) (h1 : ε < 1 / 52), KudlaFamilyStatement (Fm ε h0 h1) CH CE C6 C18
-
-def FamilyClosedForm {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop :=
-  ∃ FormalChartAtZero CE C6 C18 : ℝ, 0 < FormalChartAtZero ∧ 0 < CE ∧ 0 < C6 ∧ 0 < C18 ∧
-    ∃ x0 : ℝ, ∀ CH : ℝ, FormalChartAtZero ≤ CH → ∀ x, x0 ≤ x → ∀ i : Fm.Ix x, Stmt (Fm.D x i) CH CE C6 C18
-
-def DerivativeStatementClosedDesign (Fm : Formalism.MainNotions.DFamP) : Prop :=
-  ∃ FormalChartAtZero CE C6 C18 : ℝ, 0 < FormalChartAtZero ∧ 0 < CE ∧ 0 < C6 ∧ 0 < C18 ∧
-    ∀ (ε : ℝ) (h0 : 0 < ε) (h1 : ε < 1 / 52),
-      ∃ x0 : ℝ, ∀ CH : ℝ, FormalChartAtZero ≤ CH → ∀ x, x0 ≤ x → ∀ i : (Fm ε h0 h1).Ix x, Stmt ((Fm ε h0 h1).D x i) CH CE C6 C18
 
 end Formalism.MainNotions.PlaneGramData

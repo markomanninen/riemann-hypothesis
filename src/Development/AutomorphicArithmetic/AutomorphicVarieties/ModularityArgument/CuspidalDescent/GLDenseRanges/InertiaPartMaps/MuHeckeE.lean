@@ -1,11 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.SubalgebraIntegrality.FieldNontrivial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.EigBoxE
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.SubalgebraIntegrality.FieldNontrivial
+
+@[expose] public section
 
 open Polynomial TensorProduct UpperTheory.V.Hi UpperTheory.V.J UpperTheory.V.Z.J.D
 
 namespace UpperTheory.V.Z.Desc.V0
-
-open private exists_semi joint_gen act_lam from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.SubalgebraIntegrality.FieldNontrivial
 
 section Lin
 
@@ -40,7 +42,7 @@ private theorem sp_opE {A C M₀ W G : Type} [CommRing A] [CommRing C] [AddCommG
       refine ⟨a g • ⟨ρ g m, hm⟩ + v, ?_, ?_⟩
       · rw [Finset.sum_insert hg, ← h1]
         simp
-      · rw [Finset.sum_insert hg, map_add, map_zsmul, h2, ← hs]
+      · rw [Finset.sum_insert hg, map_add (f := _), map_zsmul, h2, ← hs]
         rfl
   obtain ⟨v, h1, h2⟩ := key _ subset_rfl
   have e1 : opE ρ a m = ∑ g ∈ a.support, a g • ρ g m := by
@@ -121,17 +123,88 @@ private theorem mu_eqE [Module.Free A M] {I : Type} (g : I → B)
   unfold muE
   letI : Algebra A K := (y.comp lam).toRingHom.toAlgebra
   have hK : ∀ a, algebraMap A K a = y (lam a) := fun _ => rfl
-  obtain ⟨Ψ, ht, hk, hi, hr⟩ := exists_semi M ι sp hsm hind
-  rw [joint_gen lam M hs y hann g hg hK]
+  obtain ⟨Ψ, ht, hk, hi, hr⟩ := UpperTheory.Reformulated.B.Ra9.exists_semi M ι sp hsm hind
+  have joint_gen :
+      (⨅ b : B, Module.End.maxGenEigenspace ((actL lam M hs b).baseChange K) (y b)) =
+        ⨅ i, Module.End.maxGenEigenspace ((actL lam M hs (g i)).baseChange K) (y (g i)) := by
+    have act_add (a b : B) : actL lam M hs (a + b) = actL lam M hs a + actL lam M hs b :=
+      LinearMap.ext fun m => add_smul a b m
+    have act_mul (a b : B) : actL lam M hs (a * b) = actL lam M hs a * actL lam M hs b :=
+      LinearMap.ext fun m => mul_smul a b m
+    have act_comm (a b : B) :
+        Commute ((actL lam M hs a).baseChange K) ((actL lam M hs b).baseChange K) := by
+      rw [Commute, SemiconjBy, ← LinearMap.baseChange_mul, ← LinearMap.baseChange_mul,
+        ← act_mul, ← act_mul, mul_comm]
+    have gen_add {f g : Module.End K (K ⊗[A] M)} (hc : Commute f g) {μ ν : K} {v : K ⊗[A] M}
+        (hf : v ∈ f.maxGenEigenspace μ) (hg : v ∈ g.maxGenEigenspace ν) :
+        v ∈ (f + g).maxGenEigenspace (μ + ν) := by
+      simpa using Module.End.genEigenspace_inf_le_add f g μ ν ⊤ ⊤ hc ⟨hf, hg⟩
+    have gen_left {a f : Module.End K (K ⊗[A] M)} (hc : Commute a f) {μ : K} {v : K ⊗[A] M}
+        (hv : v ∈ f.maxGenEigenspace μ) : v ∈ (a * (f - μ • 1)).maxGenEigenspace 0 := by
+      rw [Module.End.mem_maxGenEigenspace] at hv ⊢
+      obtain ⟨k, hk⟩ := hv
+      have hc' : Commute a (f - μ • 1) := hc.sub_right ((Commute.one_right a).smul_right μ)
+      exact ⟨k, by rw [zero_smul, sub_zero, hc'.mul_pow, mul_apply_eq_comp, hk, map_zero]⟩
+    have gen_scalar (c : K) (v : K ⊗[A] M) :
+        v ∈ (c • (1 : Module.End K (K ⊗[A] M))).maxGenEigenspace c := by
+      rw [Module.End.mem_maxGenEigenspace]
+      exact ⟨1, by simp⟩
+    have gen_mul {f g : Module.End K (K ⊗[A] M)} (hc : Commute f g) {μ ν : K} {v : K ⊗[A] M}
+        (hf : v ∈ f.maxGenEigenspace μ) (hg : v ∈ g.maxGenEigenspace ν) :
+        v ∈ (f * g).maxGenEigenspace (μ * ν) := by
+      have scalar_comm (c : K) (p : Module.End K (K ⊗[A] M)) : Commute (c • 1) p :=
+        (Commute.one_left p).smul_left c
+      have hfg : Commute f (g - ν • 1) := hc.sub_right (scalar_comm ν f).symm
+      have hterms : Commute (f * (g - ν • 1)) (ν • 1 * (f - μ • 1)) :=
+        (scalar_comm ν _).symm.mul_right
+          (((Commute.refl f).mul_left hfg.symm).sub_right (scalar_comm μ _).symm)
+      have hv := gen_add (scalar_comm (μ * ν) _).symm
+        (gen_add hterms (gen_left hc hg) (gen_left (scalar_comm ν f) hf)) (gen_scalar (μ * ν) v)
+      have he : f * (g - ν • 1) + ν • 1 * (f - μ • 1) + (μ * ν) • 1 = f * g := by
+        simp only [mul_sub, mul_smul_comm, smul_mul_assoc, mul_one, one_mul, smul_smul]
+        abel
+      rwa [he, zero_add, zero_add] at hv
+    refine le_antisymm (le_iInf fun i => iInf_le _ (g i)) fun v hv => (Submodule.mem_iInf _).2 fun b => ?_
+    have key : ∀ φ ∈ Algebra.adjoin A (Set.range fun i => actL lam M hs (g i)),
+        ∃ b, actL lam M hs b = φ ∧ v ∈ Module.End.maxGenEigenspace ((actL lam M hs b).baseChange K) (y b) := by
+      intro φ hφ
+      induction hφ using Algebra.adjoin_induction with
+      | mem φ h =>
+        obtain ⟨i, rfl⟩ := h
+        exact ⟨g i, rfl, (Submodule.mem_iInf _).1 hv i⟩
+      | algebraMap a =>
+        have ha : actL lam M hs (lam a) = algebraMap A _ a := LinearMap.ext fun m => (hs a m).symm
+        refine ⟨lam a, ha, ?_⟩
+        rw [ha, Algebra.algebraMap_eq_smul_one, LinearMap.baseChange_smul, LinearMap.baseChange_one,
+          ← hK, ← algebraMap_smul K a]
+        exact gen_scalar _ v
+      | add _ _ _ _ h1 h2 =>
+        obtain ⟨b1, rfl, m1⟩ := h1
+        obtain ⟨b2, rfl, m2⟩ := h2
+        refine ⟨b1 + b2, act_add b1 b2, ?_⟩
+        rw [act_add, LinearMap.baseChange_add, map_add (f := _)]
+        exact gen_add (act_comm b1 b2) m1 m2
+      | mul _ _ _ _ h1 h2 =>
+        obtain ⟨b1, rfl, m1⟩ := h1
+        obtain ⟨b2, rfl, m2⟩ := h2
+        refine ⟨b1 * b2, act_mul b1 b2, ?_⟩
+        rw [act_mul, LinearMap.baseChange_mul, map_mul]
+        exact gen_mul (act_comm b1 b2) m1 m2
+    obtain ⟨b', hact, hmem⟩ := key _ (hg b)
+    have hy : y b' = y b := by
+      rw [← sub_eq_zero, ← map_sub]
+      exact hann _ fun m => by rw [sub_smul, sub_eq_zero]; exact LinearMap.congr_fun hact m
+    rwa [hact, hy] at hmem
+  rw [joint_gen]
   have hΨ : ∀ i v, Ψ ((actL lam M hs (g i)).baseChange K v) = γ i (Ψ v) := fun i v => by
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
     | tmul k m => rw [LinearMap.baseChange_tmul, ht, ht, map_smul, ← hop]; rfl
   have hΨe : ∀ v, (N : C) • Ψ (e.baseChange K v) = E (Ψ v) := fun v => by
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, smul_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), smul_add, hu, hv]
     | tmul k m => rw [LinearMap.baseChange_tmul, ht, ht, map_smul, ← hE, smul_comm]
   have p : ∀ i (k : ℕ) (v : K ⊗[A] M), Ψ ((((actL lam M hs (g i)).baseChange K - y (g i) • 1) ^ k) v) =
       ((γ i - ι (y (g i)) • 1) ^ k) (Ψ v) := by
@@ -175,7 +248,8 @@ private theorem mu_heckeE {O A B K M₀ I C W : Type} [CommRing O] [CommRing A] 
     muE j Y hs e (z.comp f) = Module.finrank C ↥(Z ⊓ LinearMap.ker (E - (N : Module.End C W))) := by
   choose g hg using fun i => hf (heckeGen Y op i)
   have hact : ∀ b, actL j Y hs b = (f b).1 := fun b => LinearMap.ext (hB b)
-  have hj : ∀ a, f (j a) = algebraMap A _ a := fun a => Subtype.ext ((hact _).symm.trans (act_lam j Y hs a))
+  have hj : ∀ a, f (j a) = algebraMap A _ a := fun a =>
+    Subtype.ext ((hact _).symm.trans (LinearMap.ext fun m => (hs a m).symm))
   refine mu_eqE j Y hs (z.comp f) (fun b hb => ?_) g (fun b => ?_) ι
     (AddMonoidHom.mk' (fun m : Y => sp m) fun m m' => hadd _ (hY m.2) _ (hY m'.2)) (fun a m => ?_) h.1 γ (fun i m => ?_) Z ?_
     e N hN E hE

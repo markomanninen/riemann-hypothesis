@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.LimBdFpm
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.KDecayOfGap
+module
+
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.LimBdFpm
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.KDecayOfGap
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 

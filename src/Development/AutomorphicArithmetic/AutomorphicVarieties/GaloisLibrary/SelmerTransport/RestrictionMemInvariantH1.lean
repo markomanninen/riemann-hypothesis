@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -167,7 +171,7 @@ private theorem cocycle_conj_identity (ρ : Representation R G M) (U : Subgroup 
     intro w
     rw [← Module.End.mul_apply, ← map_mul]
     simp
-  rw [hz, hz, map_add, hmul, hinv]
+  rw [hz, hz, map_add (f := _), hmul, hinv]
   abel
 
 theorem conjRep_of_mem (ρ : Representation R G M) (U : Subgroup G) [U.Normal] {g : G} (hg : g ∈ U) (x : H1U ρ U) :

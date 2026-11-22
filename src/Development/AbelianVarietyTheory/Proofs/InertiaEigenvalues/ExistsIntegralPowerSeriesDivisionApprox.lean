@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
+
+@[expose] public section
 
 namespace GlobalTheory.BK.DivApprox
 
@@ -18,7 +22,7 @@ theorem eq_low_add_high (f : K⟦X⟧) (n₀ : ℕ) :
     f = (PowerSeries.mk fun n => if n < n₀ then coeff n f else 0) +
       X ^ n₀ * PowerSeries.mk fun n => coeff (n + n₀) f := by
   ext n
-  rw [map_add, coeff_mk, coeff_X_pow_mul', coeff_mk]
+  rw [map_add (f := _), coeff_mk, coeff_X_pow_mul', coeff_mk]
   by_cases h : n < n₀
   · rw [if_pos h, if_neg (not_le.2 h), add_zero]
   · rw [if_neg h, if_pos (not_lt.1 h), zero_add, Nat.sub_add_cancel (not_lt.1 h)]
@@ -79,10 +83,10 @@ theorem iterate {g p u w : K⟦X⟧} {n₀ : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (h
     obtain ⟨q', r', hq', hr0', hr', he'⟩ := step hρ (pow_nonneg hρ k) hg huw hw hp _ he
     have h1 : ρ ^ k ≤ 1 := pow_le_one₀ hρ hρ1
     refine ⟨q + q', r + r', fun n => ?_, fun i hi => ?_, fun n => ?_, fun n => ?_⟩
-    · rw [map_add]
+    · rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hq n) ((hq' n).trans h1))
-    · rw [map_add, hr0 i hi, hr0' i hi, add_zero]
-    · rw [map_add]
+    · rw [map_add (f := _), hr0 i hi, hr0' i hi, add_zero]
+    · rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hr n) ((hr' n).trans h1))
     · have : f - (q + q') * g - (r + r') = f - q * g - r - q' * g - r' := by ring
       rw [this, pow_succ]

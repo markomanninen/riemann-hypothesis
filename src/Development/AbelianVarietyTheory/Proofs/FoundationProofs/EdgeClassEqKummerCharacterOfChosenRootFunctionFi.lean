@@ -1,10 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeCupProps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerGeneratorOfChar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitMulPowOfKummerVanishesOnInertiaCurve
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeEqZeroOfInert
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerExponentOfGaloisElementIsKummerCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EdgeCupProps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerGeneratorOfChar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitMulPowOfKummerVanishesOnInertiaCurve
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CobOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertFixesRootOfUnitRatio
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerExponentOfGaloisElementIsKummerCharacter
+
+@[expose] public section
 
 open GlobalTheory.K4 GlobalTheory.KEdge GlobalTheory.NeedB Polynomial
 
@@ -61,14 +67,14 @@ theorem _root_.GlobalTheory.K4.TopSpec.continuous_res [Algebra.IsAlgebraic K Ω]
         obtain ⟨i, rfl⟩ := hu
         exact hfix i
       | zero => simp
-      | add u v _ _ hu hv => rw [IntermediateField.coe_add, map_add, hu, hv]
+      | add u v _ _ hu hv => rw [IntermediateField.coe_add, map_add (f := _), hu, hv]
       | smul a u _ hu => rw [IntermediateField.coe_smul, map_smul, hu]
     exact key ⟨y, hy⟩
 
 end GlobalTheory.K4.TopSpec
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.K4.isTopW_topW : ∀ (k K Ω F : Type) [Field k]
     [IsAlgClosed k] [CharZero k] [Field K] [Algebra k[X] K] [Algebra (RatFunc k) K]
     [IsScalarTower k[X] (RatFunc k) K] [FiniteDimensional (RatFunc k) K] [Field Ω] [Algebra K Ω]

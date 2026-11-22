@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.RegularLocalRing
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.RegularLocalRing
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -241,12 +246,6 @@ theorem isDomain_stalk_of_smooth {X : Scheme.{u}} {k : Type u} [Field k]
   have : _root_.IsRegularLocalRing (X.presheaf.stalk x) :=
     isRegularLocalRing_stalk_of_smooth p x
   exact IsRegularLocalRing.isDomain _
-
-theorem smooth_isRegularLocalRing_stalk {X : Scheme.{u}} {k : Type u} [Field k]
-    (p : X ⟶ Spec (CommRingCat.of k)) (hp : AlgebraicGeometry.Smooth p) (x : X) :
-    _root_.IsRegularLocalRing (X.presheaf.stalk x) := by
-  have := hp
-  exact isRegularLocalRing_stalk_of_smooth p x
 
 theorem smooth_isDomain_stalk {X : Scheme.{u}} {k : Type u} [Field k]
     (p : X ⟶ Spec (CommRingCat.of k)) (hp : AlgebraicGeometry.Smooth p) (x : X) :

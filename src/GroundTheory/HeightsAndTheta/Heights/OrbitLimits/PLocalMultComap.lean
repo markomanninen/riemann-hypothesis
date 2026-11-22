@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StLocalMultComap
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StLocalMultComap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,7 +18,7 @@ theorem LocalMultComap.proof : LocalMultComap.Statement := by
   set P := W.comap σ with hPdef
   have hPW : P = W.comap σ := rfl
   unfold localMult
-  rw [dif_pos hW, dif_pos (Ideal.comap_isPrime σ W)]
+  rw [dite_eq_left hW, dite_eq_left (Ideal.comap_isPrime σ W)]
 
   have hM : P.primeCompl.map σ = W.primeCompl := by
     ext y

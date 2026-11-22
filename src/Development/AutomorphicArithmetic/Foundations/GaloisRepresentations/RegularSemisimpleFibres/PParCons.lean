@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -13,13 +17,13 @@ variable {F : Type} [Field F]
 private theorem tl_entry {a n : ℕ} (M : Matrix (Fin n) (Fin n) F) (i j : Fin a) (I J : Fin n)
     (hI : (I : ℕ) = i) (hJ : (J : ℕ) = j) : GlobalTheory.Shin.tl a M i j = M I J := by
   unfold GlobalTheory.Shin.tl GlobalTheory.Shin.ent
-  rw [dif_pos ⟨by rw [← hI]; exact I.isLt, by rw [← hJ]; exact J.isLt⟩]
+  rw [dite_eq_left ⟨by rw [← hI]; exact I.isLt, by rw [← hJ]; exact J.isLt⟩]
   congr 1 <;> ext <;> simp [hI, hJ]
 
 private theorem br_entry {a b n : ℕ} (M : Matrix (Fin n) (Fin n) F) (i j : Fin b) (I J : Fin n)
     (hI : (I : ℕ) = a + i) (hJ : (J : ℕ) = a + j) : GlobalTheory.Shin.br a b M i j = M I J := by
   unfold GlobalTheory.Shin.br GlobalTheory.Shin.ent
-  rw [dif_pos ⟨by rw [← hI]; exact I.isLt, by rw [← hJ]; exact J.isLt⟩]
+  rw [dite_eq_left ⟨by rw [← hI]; exact I.isLt, by rw [← hJ]; exact J.isLt⟩]
   congr 1 <;> ext <;> simp [hI, hJ]
 
 private theorem units_of {a b n : ℕ} (hn : n = a + b) (p : GL (Fin n) F) (h : GlobalTheory.Shin.InPar a p) :
@@ -50,7 +54,7 @@ private theorem units_of {a b n : ℕ} (hn : n = a + b) (p : GL (Fin n) F) (h : 
 private theorem toG_coe {n : ℕ} {M : Matrix (Fin n) (Fin n) F} (h : IsUnit M) :
     ((GlobalTheory.Shin.toG M : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = M := by
   unfold GlobalTheory.Shin.toG
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 private theorem sv0 {s n : ℕ} (d : Fin (s + 1) → ℕ) (hd : ∑ i, d i = n) (i : Fin (d 0)) :

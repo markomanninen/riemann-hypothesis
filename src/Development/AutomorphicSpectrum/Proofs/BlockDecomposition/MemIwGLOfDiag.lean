@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.CasselmanStrictlyDominantExample
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestBis
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.JointGeneralisedEigenvectors.CasselmanStrictlyDominantExample
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestBis
+
+@[expose] public section
 
 open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.SphericalProduct
 open scoped Pointwise
@@ -162,7 +166,7 @@ theorem eigU_of (hIw : IwahoriU) (hDom : DomU) (hKU : KUFacts)
   · intro t ht
     have htT : t ∈ D.T := (hT t).2 ht
     beta_reduce
-    rw [dif_pos htT, ← hproj0]
+    rw [dite_eq_left htT, ← hproj0]
     have h1 := hc' ⟨t, htT⟩
     rw [← hy', hpi] at h1
     show D.proj ρ (ρ t y' - c ⟨t, htT⟩ • y') = 0
@@ -171,7 +175,7 @@ theorem eigU_of (hIw : IwahoriU) (hDom : DomU) (hKU : KUFacts)
   · intro k hk hkd
     have hkT : k ∈ D.T := (hT k).2 hkd
     beta_reduce
-    rw [dif_pos hkT]
+    rw [dite_eq_left hkT]
     have hkJ : k ∈ D.J := hJ ▸ mem_iwU_of_diag k hk hkd
     have h1 := hc' ⟨k, hkT⟩
     have h2 := (hmemS _).1 w.2 ⟨⟨k, hkT⟩, hkJ⟩

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.DoubledGroupTopologicalProperties
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.DoubledGroupTopologicalProperties
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -23,8 +27,8 @@ theorem nM_mul (β γ : Matrix (Fin n) (Fin n) (AE F E)) : nM β * nM γ = nM (�
 theorem nM_zero : nM (0 : Matrix (Fin n) (Fin n) (AE F E)) = 1 := by
   simp [nM, Matrix.fromBlocks_one]
 
-variable (σ n) in
 
+variable (σ n) in
 def nCond (ε : ℤˣ) : AddSubgroup (Matrix (Fin n) (Fin n) (AE F E)) where
   carrier := {β | βᵀ = -((((ε : ℤ) : AE F E)) • β.map (cA σ))}
   add_mem' := by
@@ -49,8 +53,8 @@ def nU (b : GL (Fin n ⊕ Fin n) E) (β : Matrix (Fin n) (Fin n) (AE F E)) : GL 
 omit [NumberField E] in
 theorem inclR_int (z : ℤ) : inclR (F := F) (AF F) ((z : ℤ) : E) = ((z : ℤ) : AE F E) := map_intCast _ z
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem nM_form (e : AE F E) (β : Matrix (Fin n) (Fin n) (AE F E)) :
     (nM β)ᵀ * Matrix.fromBlocks 0 1 (e • 1) 0 * (nM β).map (cA σ) =
       Matrix.fromBlocks 0 1 (e • 1) (e • β.map (cA σ) + βᵀ) := by
@@ -88,8 +92,8 @@ theorem nU_mem {b : GL (Fin n ⊕ Fin n) E} {ε : ℤˣ} (hσ : ∀ a, σ (σ a)
           ((incM F b.1).map (cA σ) * (incM F (b⁻¹).1).map (cA σ)) := by simp only [Matrix.mul_assoc]
     _ = dbl (incM F Y.J) := by rw [h1, h2, Matrix.one_mul, Matrix.mul_one]
 
-variable (σ Y) in
 
+variable (σ Y) in
 def nbE (b : GL (Fin n ⊕ Fin n) E) (β : nA σ Y b) : G2 σ Y := by
   classical
   exact if h : nU b β.1 ∈ UG (cA σ) (dbl (incM F Y.J)) then ⟨nU b β.1, h⟩ else 1
@@ -168,10 +172,6 @@ theorem nb_zero {b : GL (Fin n ⊕ Fin n) E} {nb : nA σ Y b → G2 σ Y} (h : I
   rw [h, inFrame_one]
   exact nM_zero
 
-theorem nb_comm {b : GL (Fin n ⊕ Fin n) E} {nb : nA σ Y b → G2 σ Y} (h : IsNMap b nb) (β γ : nA σ Y b) :
-    nb β * nb γ = nb γ * nb β := by
-  rw [← nb_add h, ← nb_add h, add_comm]
-
 theorem continuous_nM : Continuous (nM (F := F) (E := E) (n := n)) :=
   continuous_const.matrix_fromBlocks continuous_id continuous_const continuous_const
 
@@ -182,8 +182,8 @@ theorem nb_continuous {b : GL (Fin n ⊕ Fin n) E} (hσ : ∀ a, σ (σ a) = a) 
   · exact (continuous_const.matrix_mul (continuous_nM.comp continuous_subtype_val)).matrix_mul continuous_const
   · exact (continuous_const.matrix_mul (continuous_nM.comp continuous_subtype_val.neg)).matrix_mul continuous_const
 
-variable (σ Y) in
 
+variable (σ Y) in
 def nRat (b : GL (Fin n ⊕ Fin n) E) : AddSubgroup (nA σ Y b) where
   carrier := {β | ∃ T, β.1 = incM F T}
   add_mem' := by
@@ -283,7 +283,7 @@ theorem cA_cA' (σ : E →ₐ[F] E) (hσ : ∀ a, σ (σ a) = a) (z : AE F E) : 
     show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
       (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ (a ⊗ₜ[F] x)) = a ⊗ₜ[F] x
     rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 omit [NumberField E] in
 theorem cA_half : cA σ (inclR (F := F) (AF F) (2⁻¹ : E)) = inclR (F := F) (AF F) (2⁻¹ : E) := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsMaxHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsMaxHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -26,7 +31,7 @@ theorem GenericDimBound.proof (hmax : MaximalIdealHeightFG.Statement.{u}) :
     intro f hf
     have h0 := hP.multiHomog f hf 0
     rw [weightedHomogeneousComponent_zero] at h0
-    · have : coeff 0 f ∈ P.comap (C : O →+* S) := h0
+    · have : AddMonoidAlgebra.coeff f 0 ∈ P.comap (C : O →+* S) := h0
       rw [hT, Ideal.mem_bot] at this
       rw [constantCoeff_eq]
       exact this

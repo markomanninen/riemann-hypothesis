@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.FrameExists2
+module
+
+public import Formalism.HermitianCurvature.FrameExists2
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 

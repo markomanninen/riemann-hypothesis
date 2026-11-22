@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensGen
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,6 +19,7 @@ variable {D : D7} (X : HidaSetting D)
 
 def matCoord : (Fin (D.R.rS + 1 + D.R.rS) → Fin (D.R.rS + 1 + D.R.rS) → Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) ≃ₜ EuclideanSpace ℝ (Fin (D.R.rS + 1 + D.R.rS) × Fin (D.R.rS + 1 + D.R.rS) × Module.Free.ChooseBasisIndex (Ainf X.B.I.F) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E) × InfinitePlace X.B.I.F) :=
   haveI : FiniteDimensional X.B.I.F X.B.I.E := fd_of X
+  have hReal : ∀ v : InfinitePlace X.B.I.F, v.IsReal := X.B.I.cm.totReal.isReal
   (Homeomorph.piCongrRight fun _ => Homeomorph.piCongrRight fun _ =>
     (tensCoord (F := X.B.I.F) (E := X.B.I.E) (Ainf X.B.I.F)).trans
       (Homeomorph.piCongrRight fun _ => ainfReal (totReal_of X))).trans (flat4 _ _ _ _)
@@ -108,7 +113,11 @@ theorem hermCoord_mem (S : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.r
 def hermCoord : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS) ≃ₜ Wh X where
   toFun S := ⟨matCoord X (Matrix.of.symm (S : Matrix (Fin (D.R.rS + 1 + D.R.rS)) (Fin (D.R.rS + 1 + D.R.rS)) (Ainf X.B.I.F ⊗[X.B.I.F] X.B.I.E))), hermCoord_mem X S⟩
   invFun w := ⟨Matrix.of ((matCoord X).symm w), w.2⟩
-  left_inv S := by apply Subtype.ext; simp
+  left_inv S := by
+    apply Subtype.ext
+    simp only [Homeomorph.symm_apply_apply]
+    ext i j
+    rfl
   right_inv w := by apply Subtype.ext; simp
   continuous_toFun := ((matCoord X).continuous.comp continuous_subtype_val).subtype_mk _
   continuous_invFun := ((matCoord X).symm.continuous.comp continuous_subtype_val).subtype_mk _
@@ -119,7 +128,10 @@ theorem hermCoord_add (S T : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R
 
 theorem hermCoord_symm_add (x y : Wh X) :
     (hermCoord X).symm (x + y) = (hermCoord X).symm x + (hermCoord X).symm y := by
-  apply (hermCoord X).injective; rw [hermCoord_add]; simp
+  apply (hermCoord X).injective
+  rw [hermCoord_add X]
+  rw [(hermCoord X).apply_symm_apply, (hermCoord X).apply_symm_apply,
+    (hermCoord X).apply_symm_apply]
 
 end Coord
 
@@ -130,12 +142,12 @@ variable {D : D7} (X : HidaSetting D)
 theorem pairHerm_addL (S S' T : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS)) :
     pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ (S + S') T =
       pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S T + pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S' T := by
-  simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add, mul_add]
+  simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _), mul_add]
 
 theorem pairHerm_addR (S T T' : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS)) :
     pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S (T + T') =
       pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S T + pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S T' := by
-  simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [pairHerm, AddSubgroup.coe_add, Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem pairHerm_symm (S T : HermR (Ainf X.B.I.F) X.B.I.cm.sig (D.R.rS + 1 + D.R.rS)) :
     pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ S T = pairHerm (Ainf X.B.I.F) X.B.I.cm.sig _ T S := by
@@ -161,7 +173,7 @@ theorem sumReI_add (a b : Ainf X.B.I.F) : sumReI X (a + b) = sumReI X a + sumReI
   simp only [sumReI]
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun w _ => ?_
-  rw [show (a + b) w = a w + b w from rfl, map_add, Complex.add_re]
+  rw [show (a + b) w = a w + b w from rfl, map_add (f := _), Complex.add_re]
 
 theorem continuous_sumReI : Continuous (sumReI X) :=
   continuous_finsetSum _ fun w _ => Complex.continuous_re.comp

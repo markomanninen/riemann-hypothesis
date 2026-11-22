@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.AnalyticLineDerivative
 
@@ -16,7 +20,7 @@ theorem hasDerivAt_line {S : Type*} {J : Type*} [CommRing S] [Fintype J] (φ : S
     simp only [eval₂Hom_C, pderiv_C, map_zero, mul_zero, Finset.sum_const_zero]
     exact hasDerivAt_const _ _
   | add p q hp hq =>
-    simp only [map_add, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
     exact hp.add hq
   | mul_X p i hp =>
     have hlin : HasDerivAt (fun t : ℂ => u i + t * v i) (v i) 0 := by
@@ -30,7 +34,7 @@ theorem hasDerivAt_line {S : Type*} {J : Type*} [CommRing S] [Fintype J] (φ : S
     have key : ∀ j, v j * eval₂Hom φ u (pderiv j (p * X i)) =
         (if j = i then v i * eval₂Hom φ u p else 0) + v j * eval₂Hom φ u (pderiv j p) * u i := by
       intro j
-      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, eval₂Hom_X', hX]
+      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, eval₂Hom_X', hX]
       split_ifs with h
       · subst h; ring
       · ring
@@ -50,7 +54,7 @@ theorem analyticAt_eval {E : Type*} {S : Type*} {J : Type*} [NormedAddCommGroup 
     simp only [eval₂Hom_C]
     exact (h a).comp_of_eq analyticAt_fst rfl
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p i hp =>
     simp only [map_mul, eval₂Hom_X']

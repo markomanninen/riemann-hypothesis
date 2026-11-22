@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -106,6 +110,7 @@ theorem exists_vec_det_ne_zero (F : Type) [Field F] [CharZero F] [Algebra F ℂ]
   rw [hP] at hne
   convert hne using 2
   ext h g
-  simp [map_sum, Finset.sum_apply, Algebra.smul_def, ht]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Finset.sum_apply, Algebra.smul_def, ht]
 
 end GlobalTheory.GenericGroupDet

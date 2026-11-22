@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ private lemma star_smulE (a : Lsq K Δ) (x : EL Δ τ) : star (a • x) = a • 
 
 private lemma herm_add_left (c : K) (m : EL Δ τ) (x x' y : Sp Δ τ) :
     herm c m (x + x') y = herm c m x y + herm c m x' y := by
-  simp only [herm, Prod.fst_add, Prod.snd_add, mul_add, add_mul, map_add]
+  simp only [herm, Prod.fst_add, Prod.snd_add, mul_add, add_mul, map_add (f := _)]
   ring
 
 private lemma herm_smul_left (c : K) (m : EL Δ τ) (a : Lsq K Δ) (x y : Sp Δ τ) :
@@ -40,7 +44,7 @@ private lemma herm_smul_left (c : K) (m : EL Δ τ) (a : Lsq K Δ) (x y : Sp Δ 
 
 private lemma herm_add_right (c : K) (m : EL Δ τ) (x y y' : Sp Δ τ) :
     herm c m x (y + y') = herm c m x y + herm c m x y' := by
-  simp only [herm, Prod.fst_add, Prod.snd_add, sigL_add, star_add, mul_add, add_mul, map_add]
+  simp only [herm, Prod.fst_add, Prod.snd_add, sigL_add, star_add, mul_add, add_mul, map_add (f := _)]
   ring
 
 private lemma herm_smul_right (c : K) (m : EL Δ τ) (a : Lsq K Δ) (x y : Sp Δ τ) :
@@ -89,8 +93,7 @@ private lemma quo_star (z : (Etau K τ)ˣ) : quo z * star (quo z) = 1 := by
     _ = 1 := by rw [e, e', one_mul]
 
 variable (Δ) in
-
-private def torL (z : (Etau K τ)ˣ) : Sp Δ τ →ₗ[Lsq K Δ] Sp Δ τ where
+private def torL (Δ : K) (z : (Etau K τ)ˣ) : Sp Δ τ →ₗ[Lsq K Δ] Sp Δ τ where
   toFun := tor Δ z
   map_add' x y := by simp [tor, mul_add]
   map_smul' a x := by simp [tor, mul_smul_comm]
@@ -190,7 +193,7 @@ private def spm (x : Sp Δ τ) : Sp (f Δ) (f τ) := (lmap f Δ x.1, elmap f x.2
 
 private lemma herm_spm (c : K) (m : EL Δ τ) (x y : Sp Δ τ) :
     herm (f c) (elmap f m) (spm f x) (spm f y) = lmap f Δ (herm c m x y) := by
-  simp only [herm, spm, map_add, map_mul, lmap_alg, lmap_star, lmap_trace, elmap_mul, elmap_star, elmap_sigL]
+  simp only [herm, spm, map_add (f := _), map_mul, lmap_alg, lmap_star, lmap_trace, elmap_mul, elmap_star, elmap_sigL]
 
 private lemma semi_spm (d : EL Δ τ) (x : Sp Δ τ) : semi (elmap f d) (spm f x) = spm f (semi d x) := by
   simp only [semi, spm, lmap_star, elmap_mul, elmap_sigL]
@@ -215,23 +218,18 @@ private lemma sp_ind {p : Sp (f Δ) (f τ) → Prop} (hadd : ∀ x y, p x → p 
   rw [e]
   exact hadd _ _ (hsmul _ _ (h _)) (hadd _ _ (hsmul _ _ (h _)) (hsmul _ _ (h _)))
 
-private lemma isDat_map {c : K} {d m : EL Δ τ} (h : IsDat c d m) : IsDat (f c) (elmap f d) (elmap f m) where
-  reg := by
-    rw [show f τ ^ 2 - 4 = f (τ ^ 2 - 4) by rw [map_sub, map_pow, map_ofNat]]
+private lemma isDat_map {c : K} {d m : EL Δ τ} (h : IsDat c d m) : IsDat (f c) (elmap f d) (elmap f m) := by
+  refine ⟨?_, (map_ne_zero f).2 h.c_ne, ?_, ?_, ?_, ?_⟩
+  · rw [show f τ ^ 2 - 4 = f (τ ^ 2 - 4) by rw [map_sub, map_pow, map_ofNat]]
     exact (map_ne_zero f).2 h.reg
-  c_ne := (map_ne_zero f).2 h.c_ne
-  d_norm := by
-    rw [← elmap_sigL, ← elmap_mul, h.d_norm, elmap_ofE, emap_omega]
-  m_unit := by
-    obtain ⟨u, hu⟩ := h.m_unit
+  · rw [← elmap_sigL, ← elmap_mul, h.d_norm, elmap_ofE, emap_omega]
+  · obtain ⟨u, hu⟩ := h.m_unit
     have e1 : (u : EL Δ τ) * ((u⁻¹ : (EL Δ τ)ˣ) : EL Δ τ) = 1 := by simp
     have e2 := congrArg (elmap f) e1
     rw [elmap_mul, elmap_one, hu] at e2
     exact IsUnit.of_mul_eq_one _ e2
-  m_star := by
-    rw [← elmap_sigL, ← elmap_star, h.m_star]
-  m_sig := by
-    rw [← elmap_sigL, h.m_sig, ← elmap_sigL, ← elmap_star, elmap_mul, elmap_mul]
+  · rw [← elmap_sigL, ← elmap_star, h.m_star]
+  · rw [← elmap_sigL, h.m_sig, ← elmap_sigL, ← elmap_star, elmap_mul, elmap_mul]
 
 end Nat
 
@@ -240,8 +238,7 @@ section Main
 variable {K K' : Type} [Field K] [Field K'] (f : K →+* K') {Δ τ : K}
 
 variable (Δ τ) in
-
-private def cdE : Sp Δ τ ≃ₗ[Lsq K Δ] (Fin 3 → Lsq K Δ) where
+private def cdE (Δ τ : K) : Sp Δ τ ≃ₗ[Lsq K Δ] (Fin 3 → Lsq K Δ) where
   toFun x := ![x.1, x.2.re, x.2.im]
   invFun u := (u 0, ⟨u 1, u 2⟩)
   map_add' x y := by
@@ -294,20 +291,21 @@ private lemma form_map {c : K} {m : EL Δ τ} (P : Sp Δ τ ≃ₗ[Lsq K Δ] (Fi
   revert y
   refine sp_ind f (p := fun x => ∀ y, herm (f c) (elmap f m) x y = ∑ i, mapP f P x i * star (mapP f P y i)) ?_ ?_ ?_ x
   · intro x x' hx hx' y
-    simp only [herm_add_left, hx, hx', map_add, Pi.add_apply, add_mul, Finset.sum_add_distrib]
+    simp only [herm_add_left, hx, hx', map_add (f := _), Pi.add_apply, add_mul, Finset.sum_add_distrib]
   · intro a x hx y
     simp only [herm_smul_left, hx, map_smul, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
   · intro x y
     refine sp_ind f (p := fun y => herm (f c) (elmap f m) (spm f x) y = ∑ i, mapP f P (spm f x) i * star (mapP f P y i)) ?_ ?_ ?_ y
     · intro y y' hy hy'
-      simp only [herm_add_right, hy, hy', map_add, Pi.add_apply, star_add, mul_add, Finset.sum_add_distrib]
+      simp only [herm_add_right, hy, hy', map_add (f := _), Pi.add_apply, star_add, mul_add, Finset.sum_add_distrib]
     · intro a y hy
       rw [herm_smul_right, hy, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [map_smul, Pi.smul_apply, smul_eq_mul, star_mul']
       ring
     · intro y
-      rw [herm_spm, hP, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [herm_spm, hP, map_sum]
       simp only [map_mul, lmap_star, mapP_spm, Function.comp_apply]
 
 private lemma semi_map {d : EL Δ τ} {δ : Matrix (Fin 3) (Fin 3) (Lsq K Δ)} (P : Sp Δ τ ≃ₗ[Lsq K Δ] (Fin 3 → Lsq K Δ))
@@ -315,7 +313,7 @@ private lemma semi_map {d : EL Δ τ} {δ : Matrix (Fin 3) (Fin 3) (Lsq K Δ)} (
     mapP f P (semi (elmap f d) x) = δ.map (lmap f Δ) *ᵥ star (mapP f P x) := by
   refine sp_ind f (p := fun x => mapP f P (semi (elmap f d) x) = δ.map (lmap f Δ) *ᵥ star (mapP f P x)) ?_ ?_ ?_ x
   · intro x y hx hy
-    rw [semi_add, map_add, hx, hy, map_add, star_add, Matrix.mulVec_add]
+    rw [semi_add, map_add (f := _), hx, hy, map_add (f := _), star_add, Matrix.mulVec_add]
   · intro a x hx
     rw [semi_smul, map_smul, hx, map_smul, star_smul, Matrix.mulVec_smul]
   · intro x

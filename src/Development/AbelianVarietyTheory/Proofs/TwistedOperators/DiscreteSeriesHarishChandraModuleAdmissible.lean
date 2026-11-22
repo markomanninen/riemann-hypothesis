@@ -1,44 +1,48 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealPlaceThetaObjectsTheoremARPartsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaModelsAreCoverDiscreteSeriesOfHarishChandraStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniformRealThetaIntertwinerChainStepStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesIntegrableCoefficientProjectorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestTypePositiveAndDecays
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PolarCoordinatesUnitaryPQDoubleCoverStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HighestWeightTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymmetrisationInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDualPairSwapSymmetry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestKTypesJointShapeBlockUnitary
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAdaptedBasisUnitarySubstitutionStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoGradedIsometryStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAtOneRealPlaceOverVacuumStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperatorsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsRealPlaceActAsFockPolynomialsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealPlaceGroupsActUnitarilyWeaklyOnThetaStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSignCompatibleNumberingDecreasingEnumeratiStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelParamShiftedWeightOfCoverDiscStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsKFiniteIsometryDiscreteSeriesModelDetCoverStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelIsometryUnitHighestVectorIffStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceModelsOfCoversRealPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockJointHarmonicVectorsIffPolynomialsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondencePairingLawOfTensorLawStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceTensorLawBothOrdersOfCoversStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIntegralModelOfCoverStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsMatrixCoefficientsEqFockRepresentatioStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignCompatibleNumberingOfWittTowerLowerStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponentStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoThetaMapModelsOfNoPairingCoversStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoInvariantThetaPairingOfNoTensorIntertwinerStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoThetaTensorIntertwinerLowerTowerMembersStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaChainStepCentredBlockParametersStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefiniteSourcePairCentredBlockParametersStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealThetaIntertwinersProportionalOfHarishChandraStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypeFockMapExistsOfDiscreteSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSumWordCombinationCoefficientsLeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypeFockMapHarmonicOfDiscreteSeriesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRealPlaceThetaObjectsTheoremARPartsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaModelsAreCoverDiscreteSeriesOfHarishChandraStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniformRealThetaIntertwinerChainStepStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesIntegrableCoefficientProjectorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestTypePositiveAndDecays
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PolarCoordinatesUnitaryPQDoubleCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HighestWeightTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SymmetrisationInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDualPairSwapSymmetry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeights
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowestKTypesJointShapeBlockUnitary
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAdaptedBasisUnitarySubstitutionStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFockPolynomialIsoGradedIsometryStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsAtOneRealPlaceOverVacuumStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperatorsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsRealPlaceActAsFockPolynomialsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealPlaceGroupsActUnitarilyWeaklyOnThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSignCompatibleNumberingDecreasingEnumeratiStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelParamShiftedWeightOfCoverDiscStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsKFiniteIsometryDiscreteSeriesModelDetCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelIsometryUnitHighestVectorIffStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceModelsOfCoversRealPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockJointHarmonicVectorsIffPolynomialsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondencePairingLawOfTensorLawStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaCorrespondenceTensorLawBothOrdersOfCoversStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ZetaIntegralModelOfCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockVectorsMatrixCoefficientsEqFockRepresentatioStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SignCompatibleNumberingOfWittTowerLowerStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplittingHeckeCharExistsArchimedeanExponentStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoThetaMapModelsOfNoPairingCoversStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoInvariantThetaPairingOfNoTensorIntertwinerStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NoThetaTensorIntertwinerLowerTowerMembersStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaChainStepCentredBlockParametersStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefiniteSourcePairCentredBlockParametersStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealThetaIntertwinersProportionalOfHarishChandraStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypeFockMapExistsOfDiscreteSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSumWordCombinationCoefficientsLeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypeFockMapHarmonicOfDiscreteSeriesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,29 +104,31 @@ variable {ι ι' σ σ' Z : Type} {n p q : ℕ} {A : Mn n → (Z → ℂ) → (Z
 theorem Side.comp {pt : MvPolynomial ι ℂ → (Z → ℂ)} {pt' : MvPolynomial ι' ℂ → (Z → ℂ)}
     {κ : MvPolynomial ι ℂ ≃ₗ[ℂ] MvPolynomial σ ℂ} {a : Mat p q →ₗ[ℂ] Module.End ℂ (MvPolynomial σ ℂ)}
     (h : Side A pt κ φ c a) (ς : MvPolynomial ι' ℂ ≃ₗ[ℂ] MvPolynomial ι ℂ) (hς : ∀ P, pt' P = pt (ς P)) :
-    Side A pt' (ς.trans κ) φ c a where
-  der Y hY P P' := by
+    Side A pt' (ς.trans κ) φ c a := by
+  refine ⟨?_, ?_⟩
+  · intro Y hY P P'
     have e : PolDer A pt' (φ Y) P P' ↔ PolDer A pt (φ Y) (ς P) (ς P') := by simp only [PolDer, hς]
     rw [e]
     exact h.der Y hY (ς P) (ς P')
-  wt μ P := by
+  · intro μ P
     simp only [hς]
     exact h.wt μ (ς P)
 
 theorem Side.trans {pt : MvPolynomial ι ℂ → (Z → ℂ)} {κ : MvPolynomial ι ℂ ≃ₗ[ℂ] MvPolynomial σ ℂ}
     {a : Mat p q →ₗ[ℂ] Module.End ℂ (MvPolynomial σ ℂ)} {a' : Mat p q →ₗ[ℂ] Module.End ℂ (MvPolynomial σ' ℂ)}
     (h : Side A pt κ φ c a) (w : MvPolynomial σ ℂ ≃ₗ[ℂ] MvPolynomial σ' ℂ) (hw : ∀ Y P, w (a Y P) = a' Y (w P)) :
-    Side A pt (κ.trans w) φ c a' where
-  der Y hY P P' := by
+    Side A pt (κ.trans w) φ c a' := by
+  refine ⟨?_, ?_⟩
+  · intro Y hY P P'
     rw [h.der Y hY P P']
     simp only [LinearEquiv.trans_apply]
     constructor
     · intro e
-      rw [e, map_add, map_smul, hw]
+      rw [e, map_add (f := _), map_smul, hw]
     · intro e
       apply w.injective
-      rw [e, map_add, map_smul, hw]
-  wt μ P := by
+      rw [e, map_add (f := _), map_smul, hw]
+  · intro μ P
     rw [← h.wt μ P]
     simp only [LinearEquiv.trans_apply, wtSub, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
       LinearMap.smul_apply, LinearMap.id_apply]
@@ -137,7 +143,7 @@ theorem L2UnitaryRepresentationData.comp {G : Mn n} {pt : MvPolynomial ι ℂ �
   exact
   { mem := fun P => by rw [hς]; exact h.mem _
     pt_lin := fun z P Q => by
-      simp only [hς, map_add, map_smul]
+      simp only [hς, map_add (f := _), map_smul]
       exact h.pt_lin z (ς P) (ς Q)
     ip_lin := h.ip_lin
     ip_symm := h.ip_symm
@@ -191,11 +197,11 @@ structure Reads {ι Z : Type} {n n' p q r s : ℕ} (G : Mn n) (G' : Mn n') (A : 
 theorem Reads.swap {ι Z : Type} {n n' p q r s : ℕ} {G : Mn n} {G' : Mn n'} {A : Mn n → (Z → ℂ) → (Z → ℂ)}
     {B : Mn n' → (Z → ℂ) → (Z → ℂ)} {pt : MvPolynomial ι ℂ → (Z → ℂ)} {IP : ((Z → ℂ) → (Z → ℂ) → ℂ) → Prop}
     {φ : Mat p q → Mn n} {φ' : Mat r s → Mn n'} {c c' : ℚ} {κ : MvPolynomial ι ℂ ≃ₗ[ℂ] Pol p q r s}
-    (h : Reads G G' A B pt IP φ φ' c c' κ) : Reads G' G B A pt IP φ' φ c' c (κ.trans (swp _ _)) where
-  gr := h.gr.trans (graded_swp _ _)
-  s₁ := h.s₂.trans (swp _ _) fun Y P => by rw [swp_apply, swp_apply, GlobalTheory.FockSwap.rename_fockAct2]
-  s₂ := h.s₁.trans (swp _ _) fun Y P => by rw [swp_apply, swp_apply, GlobalTheory.FockSwap.rename_fockAct1]
-  l2 ip hip := by
+    (h : Reads G G' A B pt IP φ φ' c c' κ) : Reads G' G B A pt IP φ' φ c' c (κ.trans (swp _ _)) := by
+  refine ⟨h.gr.trans (graded_swp _ _), ?_, ?_, ?_⟩
+  · exact h.s₂.trans (swp _ _) fun Y P => by rw [swp_apply, swp_apply, GlobalTheory.FockSwap.rename_fockAct2]
+  · exact h.s₁.trans (swp _ _) fun Y P => by rw [swp_apply, swp_apply, GlobalTheory.FockSwap.rename_fockAct1]
+  · intro ip hip
     obtain ⟨N, Θ, hF, h1, h2⟩ := h.l2 ip hip
     refine ⟨N, Θ, ⟨hF.1, fun P Q => ?_⟩, h2, h1⟩
     rw [hF.2 P Q, LinearEquiv.trans_apply, LinearEquiv.trans_apply, fockIp_swp]

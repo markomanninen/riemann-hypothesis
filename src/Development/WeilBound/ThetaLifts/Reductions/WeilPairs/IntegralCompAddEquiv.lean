@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SmulMemConjHalf
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ExistsCompactOfFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierUniquenessOfOpenSubgroup
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SmulMemConjHalf
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.ExistsCompactOfFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierUniquenessOfOpenSubgroup
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels

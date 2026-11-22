@@ -1,6 +1,10 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+
+@[expose] public section
 
 open Module Submodule
 
@@ -148,7 +152,8 @@ theorem degree_quotient : DegQuot := by
         rw [map_zsmul, hPW _ (hNW _ (bN i).2), smul_zero]
       have h2 : ∀ j, P (g (Sum.inr j) • ℓ j) = g (Sum.inr j) • (eQ j : E) := fun j => by
         rw [map_zsmul, hℓP]
-      rw [map_add, map_sum, map_sum, map_zero, Finset.sum_congr rfl (fun i _ => h1 i),
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, map_sum, map_zero, Finset.sum_congr rfl (fun i _ => h1 i),
         Finset.sum_const_zero, zero_add, Finset.sum_congr rfl (fun j _ => h2 j)] at h
       exact h
     have hQz : ∀ j, g (Sum.inr j) = 0 := by
@@ -180,7 +185,8 @@ theorem degree_quotient : DegQuot := by
     have hy : x - ∑ j, r j • ℓ j ∈ N := by
       apply hker
       · exact L.sub_mem hx (L.sum_mem fun j _ => L.smul_mem _ (hℓL j))
-      · rw [map_sub, map_sum, ← hr]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum, ← hr]
         simp only [map_zsmul, hℓP]
         exact sub_self _
     obtain ⟨s, hs⟩ : ∃ s : Module.Free.ChooseBasisIndex ℤ N → ℤ,
@@ -216,7 +222,8 @@ theorem degree_quotient : DegQuot := by
     intro a ha
     have hmem : ∑ j, a j • ℓ j ∈ W := by
       have h1 : P (∑ j, a j • ℓ j) = 0 := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_smul, hℓP]
         exact ha
       have h := hPsub (∑ j, a j • ℓ j)

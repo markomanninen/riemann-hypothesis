@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LevelWeightSumBound
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LevelWeightSumBound
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+
+@[expose] public section
+
 open Finset Polynomial
 open Formalism.REAL (GlRel KHighest IsWeight qdet Tm qminor)
 open CompanionTheory.D.LK (Pos Cn ann cre lift bd cpt allT wt ev)

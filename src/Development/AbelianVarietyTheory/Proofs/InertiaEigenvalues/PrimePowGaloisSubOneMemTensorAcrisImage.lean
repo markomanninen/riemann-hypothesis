@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensorStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -26,7 +31,7 @@ theorem actB_smul {G : Type} [Group G] [TopologicalSpace G] (s : G →* GQ l)
   | tmul x y =>
     simp only [actB, TWact, TensorProduct.smul_tmul', TensorProduct.map_tmul, AlgHom.toLinearMap_apply,
       smul_eq_mul, map_mul]
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 theorem taylor_iC (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e) (g : ↥(GK (ϖ.field a))) (f : ZMod a → S O K e)
     (r : ℕ) : ∃ M₀, ∀ M ≥ M₀, (l : OCr l O) ^ r ∣ galOCr O g (ϖ.iC t K f) -
@@ -36,7 +41,8 @@ theorem taylor_iC (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e) (g : ↥(GK (�
   refine ⟨Finset.univ.sup N, fun M hM => ?_⟩
   choose z hz using fun τ => hN τ M ((Finset.le_sup (Finset.mem_univ τ)).trans hM)
   refine ⟨∑ τ, idem (constC t) τ * z τ, ?_⟩
-  simp only [PiSys.iC, glue_apply, map_sum, map_mul, galOCr_idem, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PiSys.iC, glue_apply, map_sum, map_mul, galOCr_idem, Finset.mul_sum]
   rw [Finset.sum_comm, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [mul_left_comm, ← hz τ, mul_sub, Finset.mul_sum]
@@ -54,11 +60,11 @@ theorem descConn_xiExt (P : PhiMod O K l e a ι) (i : ℕ) (w : Vec K a ι) :
   induction i generalizing w with
   | zero => simp [descN]
   | succ i ih =>
-    rw [descPochhammer_succ_right, map_mul, Module.End.mul_apply, map_sub, Polynomial.aeval_X, map_natCast,
+    rw [descPochhammer_succ_right, map_mul, mul_apply_eq_comp, map_sub, Polynomial.aeval_X, map_natCast,
       LinearMap.sub_apply, Module.End.natCast_apply, PhiMod.conn_xiExt, ← map_nsmul, ← map_sub, ih]
     congr 1
     funext τ j
-    simp only [descN, descPochhammer_succ_right, map_mul, Module.End.mul_apply, map_sub, Polynomial.aeval_X,
+    simp only [descN, descPochhammer_succ_right, map_mul, mul_apply_eq_comp, map_sub, Polynomial.aeval_X,
       map_natCast, LinearMap.sub_apply, Module.End.natCast_apply, Pi.sub_apply, Pi.smul_apply]
     rfl
 
@@ -69,14 +75,14 @@ theorem aeval_descPochhammer_mem {V R : Type} [AddCommGroup V] [Module K V] [Com
   | zero => intro m hm; simpa using hm
   | succ n ih =>
     intro m hm
-    rw [descPochhammer_succ_right, map_mul, Module.End.mul_apply, map_sub, Polynomial.aeval_X, map_natCast,
+    rw [descPochhammer_succ_right, map_mul, mul_apply_eq_comp, map_sub, Polynomial.aeval_X, map_natCast,
       LinearMap.sub_apply, Module.End.natCast_apply]
     exact ih _ (sub_mem (hφ m hm) (nsmul_mem hm n))
 
 theorem descConn_mem (P : PhiMod O K l e a ι) (hP : ∀ m ∈ P.MM, P.conn m ∈ P.MM) {v : Vec K a ι} {c : ℕ}
     (hv : (l : K) ^ c • P.conn v ∈ P.MM) (i : ℕ) :
     (l : K) ^ c • Polynomial.aeval P.conn (descPochhammer K (i + 1)) v ∈ P.MM := by
-  rw [descPochhammer_succ_left, mul_comm, map_mul, Module.End.mul_apply, Polynomial.aeval_X, ← LinearMap.map_smul,
+  rw [descPochhammer_succ_left, mul_comm, map_mul, mul_apply_eq_comp, Polynomial.aeval_X, ← LinearMap.map_smul,
     Polynomial.aeval_comp, map_sub, Polynomial.aeval_X, map_one]
   exact aeval_descPochhammer_mem P.MM (P.conn - 1) (fun m hm => sub_mem (hP m hm) hm) i _ hv
 
@@ -118,11 +124,13 @@ theorem toBcris_xiExt (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e) (P : PhiMo
     apply Subtype.ext
     show P.xiExt W = _
     rw [Submodule.coe_sum]
-    conv_lhs => rw [eq_sum_bas W, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [eq_sum_bas W, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     show _ = (fun τ => W τ j) • P.xi (fun _ => Pi.single j 1)
     rw [PhiMod.xiExt_smul_tot, PhiMod.xi_apply, cst_single]
-  rw [hsum, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [toBcris_apply, toBcris_apply, ← ϖ.iB_of_mem t K, ← map_mul]
   congr 1
@@ -203,14 +211,16 @@ theorem lpow_galDiff_eq_jB_toOB : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZe
     rw [mul_comm, this, toBcris_xiExt t ϖ D.toPhiMod hWS hWM hxj k]
   have hb : (l ^ n₁) • R.jB (toBcris t ϖ D.toPhiMod σ) = ∑ j, toOB l O (β j) • R.jB (X j) := by
     rw [← map_nsmul]
-    simp only [← LinearEquiv.map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← LinearEquiv.map_smul, ← map_sum]
     congr 1
-    funext k
-    simp only [Pi.smul_apply, nsmul_eq_mul, Nat.cast_pow, Finset.sum_apply, smul_eq_mul]
-    rw [mul_comm, hA k]
+    ext k
+    simpa only [Pi.smul_apply, Finset.sum_apply, nsmul_eq_mul, Nat.cast_pow,
+      smul_eq_mul, mul_comm] using hA k
   have hgb : (l ^ n₁) • (actB (sQ l) T g (R.jB (toBcris t ϖ D.toPhiMod σ)) - R.jB (toBcris t ϖ D.toPhiMod σ)) =
       ∑ j, toOB l O (galOCr O (sQ l g) (β j) - β j) • R.jB (X j) := by
-    rw [nsmul_sub, ← map_nsmul, hb, map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [nsmul_sub, ← map_nsmul, hb, map_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [actB_smul, hv, galOB_toOB, map_sub, sub_smul]
 
@@ -245,7 +255,8 @@ theorem lpow_galDiff_eq_jB_toOB : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZe
     have hstar : ∑ j, toOB l O (galOCr O (sQ l g) (β j) - β j) * X j k =
         ∑ i ∈ Finset.range M, toOB l O (ϖ.muDiv a O g' (i + 1)) * Y i k +
           (l : OB l O) ^ (n₁ + n₂) * ∑ j, toOB l O (ε j) * X j k := by
-      simp only [hε, map_add, map_sum, map_mul, map_pow, map_natCast, add_mul, Finset.sum_add_distrib,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hε, map_add (f := _), map_sum, map_mul, map_pow, map_natCast, add_mul, Finset.sum_add_distrib,
         Finset.sum_mul]
       congr 1
       · rw [Finset.sum_comm]
@@ -268,7 +279,8 @@ theorem lpow_galDiff_eq_jB_toOB : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZe
       linear_combination toOB l O (ε j) * hG j k
     have hz : toOB l O (z k) = ∑ i ∈ Finset.range M, toOB l O (ϖ.muDiv a O g' (i + 1)) * toOB l O (y i k) +
         (l : OB l O) ^ c * ∑ j, toOB l O (ε j) * toOB l O (u j k) := by
-      simp only [z, map_add, map_sum, map_mul, map_pow, map_natCast]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [z, map_add (f := _), map_sum, map_mul, map_pow, map_natCast]
     rw [hstar, hz]
     linear_combination (l : OB l O) ^ n₂ * hF' + (l : OB l O) ^ (n₁ + n₂) * (l : OB l O) ^ c * hG'
   apply cancel (n₁ + n₂)
@@ -278,14 +290,14 @@ theorem lpow_galDiff_eq_jB_toOB : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZe
   rw [e1, smul_smul, show l ^ (n₁ + n₂) * l ^ c = (l ^ n₂ * l ^ c) * l ^ n₁ by ring, ← smul_smul, hgb]
   have eL : (l ^ n₂ * l ^ c) • ∑ j, toOB l O (galOCr O (sQ l g) (β j) - β j) • R.jB (X j) =
       R.jB ((l ^ n₂ * l ^ c) • ∑ j, toOB l O (galOCr O (sQ l g) (β j) - β j) • X j) := by
-    rw [map_nsmul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_sum]
     simp only [LinearEquiv.map_smul]
   have eR : (l ^ (n₁ + n₂)) • R.jB (fun i => toOB l O (z i)) =
       R.jB ((l ^ (n₁ + n₂)) • fun i => toOB l O (z i)) := (map_nsmul _ _ _).symm
   rw [eL, eR]
   congr 1
-  funext k
-  simp only [Pi.smul_apply, nsmul_eq_mul, Nat.cast_pow, Nat.cast_mul, Finset.sum_apply, smul_eq_mul]
-  linear_combination key k
+  ext k
+  simpa only [Pi.smul_apply, Finset.sum_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_mul, Nat.cast_pow] using key k
 
 end GlobalTheory.GalTaylor

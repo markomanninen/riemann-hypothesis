@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.Imports
-import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.LagAlg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDual
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariantStatement
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.RealTest
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.Imports
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.LagrangianUniqueness.LagAlg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDual
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariantStatement
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -50,8 +54,8 @@ theorem ne_one (hψ : IsStd ψ) : ψ ≠ 1 := by
   norm_num at h1
 
 theorem tr_half (a : mixedEmbedding.mixedSpace F) : tr (q (⅟(2 : AF F)) * a) = tr a / 2 := by
-  have h : q (⅟(2 : AF F)) + q (⅟(2 : AF F)) = 1 := by rw [← map_add, invOf_two_add_invOf_two, map_one]
-  have : tr a = tr (q (⅟(2 : AF F)) * a) + tr (q (⅟(2 : AF F)) * a) := by rw [← map_add, ← add_mul, h, one_mul]
+  have h : q (⅟(2 : AF F)) + q (⅟(2 : AF F)) = 1 := by rw [← map_add (f := _), invOf_two_add_invOf_two, map_one]
+  have : tr a = tr (q (⅟(2 : AF F)) * a) + tr (q (⅟(2 : AF F)) * a) := by rw [← map_add (f := _), ← add_mul, h, one_mul]
   linarith
 
 theorem schr_pure (hψ : IsStd ψ) (w : (κ → AF F) × (κ → AF F)) (f : (κ → mixedEmbedding.mixedSpace F) → ℂ)
@@ -67,7 +71,7 @@ theorem schr_pure (hψ : IsStd ψ) (w : (κ → AF F) × (κ → AF F)) (f : (κ
       f ((fun i => q (x i)) + q ∘ w.1)) *
     (finChar ψ ((p2 ∘ x) ⬝ᵥ (p2 ∘ w.2) + p2 (⅟(2 : AF F)) * ((p2 ∘ w.1) ⬝ᵥ (p2 ∘ w.2))) * g ((fun i => p2 (x i)) + p2 ∘ w.1))
   rw [h1, h2, psi_split hψ]
-  simp only [map_add, map_mul, RingHom.map_dotProduct, tr_half, neg_add, neg_div]
+  simp only [map_add (f := _), map_mul, RingHom.map_dotProduct, tr_half, neg_add, neg_div]
   ring
 
 theorem nondeg (hψ : IsStd ψ) (x : AF F) (hx : q x = 0 ∨ p2 x = 0)
@@ -84,8 +88,8 @@ theorem nondeg (hψ : IsStd ψ) (x : AF F) (hx : q x = 0 ∨ p2 x = 0)
 theorem exists_tr (hψ : IsStd ψ) (l : (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] ℝ) : ∃ y, ∀ x, l x = -tr (x ⬝ᵥ y) := by
   let B : LinearMap.BilinForm ℝ (κ → mixedEmbedding.mixedSpace F) :=
     LinearMap.mk₂ ℝ (fun y x => -tr (x ⬝ᵥ y))
-      (fun _ _ _ => by rw [dotProduct_add, map_add, neg_add]) (fun _ _ _ => by rw [dotProduct_smul, map_smul, smul_neg])
-      (fun _ _ _ => by rw [add_dotProduct, map_add, neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
+      (fun _ _ _ => by rw [dotProduct_add, map_add (f := _), neg_add]) (fun _ _ _ => by rw [dotProduct_smul, map_smul, smul_neg])
+      (fun _ _ _ => by rw [add_dotProduct, map_add (f := _), neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
   have hinj : Function.Injective (B : _ →ₗ[ℝ] Module.Dual ℝ _) := by
     refine (injective_iff_map_eq_zero _).2 fun y hy => funext fun i => ?_
     have h0 : upI (y i) = 0 := nondeg hψ _ (Or.inr rfl) fun a => by
@@ -121,8 +125,8 @@ theorem test (hR : RealTest) (hψ : IsStd ψ) (hP : P * P = P) (hb : bᵀ = b) :
         rw [mulVec_smul, hx] }
   let bi : (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] (κ → mixedEmbedding.mixedSpace F) →ₗ[ℝ] ℝ :=
     LinearMap.mk₂ ℝ (fun x y => -tr (x ⬝ᵥ b.map q *ᵥ y))
-      (fun _ _ _ => by rw [add_dotProduct, map_add, neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
-      (fun _ _ _ => by rw [mulVec_add, dotProduct_add, map_add, neg_add])
+      (fun _ _ _ => by rw [add_dotProduct, map_add (f := _), neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
+      (fun _ _ _ => by rw [mulVec_add, dotProduct_add, map_add (f := _), neg_add])
       (fun _ _ _ => by rw [mulVec_smul, dotProduct_smul, map_smul, smul_neg])
   obtain ⟨f₀, hf₀⟩ := hR _ Pi' bi fun x y => congrArg (fun t => -tr t) (hsym q x y)
   haveI := nonarch_finiteAdeleRing (F := F)
@@ -131,7 +135,7 @@ theorem test (hR : RealTest) (hψ : IsStd ψ) (hP : P * P = P) (hb : bᵀ = b) :
     ⟨GlobalTheory.CompanionTheory.ThetaUniq.levelSub F κ 1, GlobalTheory.CompanionTheory.ThetaUniq.levelSub_isOpen F κ one_pos⟩
   have hU₀ : IsCompact (U₀ : Set (κ → Af F)) := GlobalTheory.CompanionTheory.ThetaUniq.levelSub_isCompact F κ 1
   let h : Af F := p2 (⅟(2 : AF F))
-  have hh : h + h = 1 := by rw [← map_add, invOf_two_add_invOf_two, map_one]
+  have hh : h + h = 1 := by rw [← map_add (f := _), invOf_two_add_invOf_two, map_one]
   let Q : (κ → Af F) → Af F := fun z => h * (z ⬝ᵥ b.map p2 *ᵥ z)
   have hQ : Continuous Q := continuous_const.mul (continuous_id.dotProduct (continuous_const.matrix_mulVec continuous_id))
   have hlc := finChar_isLocallyConstant ψ hψ.1

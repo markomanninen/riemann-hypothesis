@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsInverseBlock
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularFrameChangeOfTriangularPeriod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsInverseBlock
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmTypeLetterFrameColumnDictionary
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.TriangularFrameChangeOfTriangularPeriod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
+
+@[expose] public section
 
 open Matrix NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree
 open scoped ComplexOrder
@@ -18,18 +22,18 @@ theorem exists_block {r : ℕ} (q : ℕ) (K : Matrix (Fin r) (Fin r) ℂ) (hK : 
   let K₂ : Matrix (Fin r) (Fin r) ℂ := of fun a c => if (a : ℕ) < q then (1 : Matrix _ _ ℂ) a c else K a c
   have hm : K₁ * K₂ = K := by
     ext a c
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     by_cases ha : (a : ℕ) < q
     · have : ∀ b, K₁ a b * K₂ b c = K a b * (1 : Matrix _ _ ℂ) b c := fun b => by
         by_cases hb : (b : ℕ) < q
         · simp only [K₁, K₂, of_apply, if_pos ha, if_pos hb]
         · simp only [K₁, K₂, of_apply, if_pos ha, h0 a b (by simp [ha, hb]), zero_mul]
       simp only [this]
-      rw [← mul_apply, Matrix.mul_one]
+      rw [← Matrix.mul_apply, Matrix.mul_one]
     · have : ∀ b, K₁ a b * K₂ b c = (1 : Matrix _ _ ℂ) a b * K₂ b c := fun b => by
         simp only [K₁, of_apply, if_neg ha]
       simp only [this]
-      rw [← mul_apply, Matrix.one_mul]
+      rw [← Matrix.mul_apply, Matrix.one_mul]
       simp only [K₂, of_apply, if_neg ha]
   rw [← hm, det_mul] at hK
   have u1 : IsUnit K₁ᵀ.det := by rw [det_transpose]; exact (left_ne_zero_of_mul hK).isUnit
@@ -40,7 +44,7 @@ theorem exists_block {r : ℕ} (q : ℕ) (K : Matrix (Fin r) (Fin r) ℂ) (hK : 
   · have e1 : K₂ *ᵥ Pi.single a 1 = Pi.single a 1 := by
       ext b
       by_cases hb : (b : ℕ) < q
-      · simp [K₂, hb, one_apply, Pi.single_apply]
+      · simp [K₂, hb, Matrix.one_apply, Pi.single_apply]
       · have : b ≠ a := fun h => hb (h ▸ ha)
         simp [K₂, hb, h0 b a (by simp [ha, hb]), this]
     have e2 : K₂⁻¹ *ᵥ Pi.single a 1 = Pi.single a 1 := by
@@ -58,11 +62,11 @@ theorem exists_block {r : ℕ} (q : ℕ) (K : Matrix (Fin r) (Fin r) ℂ) (hK : 
         by_cases hd : (d : ℕ) < q
         · rw [h0 a d (by simp [ha, hd]), mul_zero]
         · simp only [K₁, of_apply, if_pos hb, h0 b d (by simp [hb, hd]), zero_mul]
-      · simp [K₁, mulVec, dotProduct, hb, one_apply]
+      · simp [K₁, mulVec, dotProduct, hb, Matrix.one_apply]
     have e2 : K a ᵥ* K₁ᵀ⁻¹ = K a := by
       conv_lhs => rw [← e1]
       rw [vecMul_vecMul, mul_nonsing_inv _ u1, vecMul_one]
-    rw [Matrix.mul_inv_rev, nonsing_inv_nonsing_inv _ u2, ← congrFun e2 c, mul_apply, vecMul, dotProduct]
+    rw [Matrix.mul_inv_rev, nonsing_inv_nonsing_inv _ u2, ← congrFun e2 c, Matrix.mul_apply, vecMul, dotProduct]
     simp only [K₂, of_apply, if_neg ha]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
@@ -83,15 +87,15 @@ theorem rmul_mem_dom (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (b : F
     intro c
     ext i
     show (mat x τ * mat b τ) i (f c) = _
-    rw [mul_apply, Finset.sum_apply]
+    rw [Matrix.mul_apply, Finset.sum_apply]
     simp only [mul_comm (mat x τ i _)]
     exact hs c _
   have e : X.gramPos (rmul x b) τ = B * X.gramPos x τ * Bᴴ := by
     ext c d
     show hermC τ.1 X.Gm (FD.col (mat (rmul x b) τ) (f c)) (FD.col (mat (rmul x b) τ) (f d)) = _
-    rw [hc, hc, hermC_sum_right, mul_apply]
+    rw [hc, hc, hermC_sum_right, Matrix.mul_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [hermC_smul_right, hermC_sum_left, mul_apply, mul_comm]
+    rw [hermC_smul_right, hermC_sum_left, Matrix.mul_apply, mul_comm]
     simp only [hermC_smul_left]
     rfl
   rw [e]
@@ -106,8 +110,8 @@ theorem rmul_mem_dom (X : Data E r) {x : Frame X.Ψ r} (hx : x ∈ X.dom) (b : F
   · have : ∀ c, mat b τ a (f c) = 0 := fun c => h0 τ a (f c) c.2 ha
     simp [this]
 
-open GlobalTheory.TrueCx in
 
+open GlobalTheory.TrueCx in
 theorem domPt_rmul_block (X : Data E r) {j : ℕ} (hj : j ≤ r) {Tau : Type} (ι : Tau → X.Ψ) (x b : Frame X.Ψ r)
     (hb : ∀ τ, (mat b τ).det ≠ 0) (h0 : ∀ τ (a c : Fin r), (c : ℕ) < r - j → ¬ (a : ℕ) < r - j → b τ a c = 0) :
     domPt X hj ι (rmul x b) = domPt X hj ι x := by
@@ -157,10 +161,10 @@ theorem exists_frame_mulVec (X : Data E r) {p : ℕ} (hr : r = p + X.p0) (ρ : (
     rcases h with ⟨a, rfl, rfl⟩ | ⟨a, rfl, rfl, d⟩
     · rw [if_neg (by omega)]
       unfold perFr
-      rw [dif_pos a, dif_pos hn]
+      rw [dite_eq_left a, dite_eq_left hn]
     · rw [if_pos (by omega)]
       unfold perFr
-      rw [dif_neg a, dif_pos (show conjEmb (ρ (e j).1) ∈ X.Ψ from hτ), dif_pos hn]
+      rw [dite_eq_right a, dite_eq_left (show conjEmb (ρ (e j).1) ∈ X.Ψ from hτ), dite_eq_left hn]
       rfl
   have hbl : ∀ j j', V j j' ≠ 0 → (idx j).1 = (idx j').1 ∧ (((idx j).2 : ℕ) < X.p0 ↔ ((idx j').2 : ℕ) < X.p0) := by
     intro j j' h
@@ -204,7 +208,7 @@ theorem exists_frame_mulVec (X : Data E r) {p : ℕ} (hr : r = p + X.p0) (ρ : (
   split_ifs with ha
   · have : FD.col (mat x τ * b τ) a = ∑ c, K τ a c • FD.col (mat x τ) c := by
       ext i
-      simp [FD.col, mul_apply, hb1 τ a _ ha, mul_comm]
+      simp [FD.col, Matrix.mul_apply, hb1 τ a _ ha, mul_comm]
     rw [this, hermC_sum_left, mulVec, dotProduct]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hermC_smul_left]
@@ -219,8 +223,8 @@ theorem exists_frame_mulVec (X : Data E r) {p : ℕ} (hr : r = p + X.p0) (ρ : (
     · rw [hK0 τ a c (by simp [ha, hc]), zero_mul, zero_mul]
     · rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_adapted {H : Host E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ}
     {g : ℕ} (e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ))
     (F : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) (fun j => relab c σ (e j).1))
@@ -300,11 +304,3 @@ end GlobalTheory.PointOfFrames
 open Matrix NumberField MeasureTheory Formalism.DegreeFormula Formalism.MJ Formalism.UG Formalism.L2.Geo
 open ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.HodgeDomain GlobalTheory.TrueCx
 open scoped ComplexOrder ENNReal
-
-theorem GlobalTheory.PointOfFrames.ptOfFrame_eq_of_point_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H) (l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H) (Xo : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Moduli Dw l) (c : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Coeff l) (σ : c.F →+* ℂ) (r j : ℕ) (U : Formalism.L2.PjFree.Unf Xo c σ r) (hU : Formalism.L2.PjFree.IsUnf U) (e : Dw.p = j) (Tau : Type) [Fintype Tau] (hr : 0 < r) (T : Tau ≃ {τ : E →+* ℂ // τ (H.rt : E) = H.rt0}) (B : ∀ k, BdData Tau j (r - j) (gammaU (U.X k) (le_of_isUnf U hU e) (cmEquiv U hU T k))) (s : U.Comp → Tau → ℂˣ), Formalism.L2.PjFree.GoodEmb c σ → ∀ (k k' : U.Comp) (x : (U.X k).dom) (x' : (U.X k').dom), (U.un k x).x = (U.un k' x').x → ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k x = ptOfFrame (le_of_isUnf U hU e) U.X hr (first_index_eq_of_unfolded U hU e) (cmEquiv U hU T) B s k' x' := by
-  intro E _ _ _ H Dw l Xo c σ r j U hU e Tau _ hr T B s hσ k k' x x' h
-  obtain ⟨b, hb, hb0, hm, ht⟩ := GlobalTheory.PointOfFrames.exists_frBor U hU hσ k x _ h
-  rw [← ptOfFrame_eq_of_frBor U hU e hr T B s ⟨_, hm⟩ x' ht]
-  rw [first_index_eq_of_unfolded U hU e] at hb0
-  refine congrArg (Sigma.mk k) (congrArg (Quot.mk _) (Subtype.ext ?_))
-  exact (GlobalTheory.PointOfFrames.domPt_rmul_block _ _ _ _ b hb hb0).symm

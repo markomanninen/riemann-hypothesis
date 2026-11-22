@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.ExistsCoprimePowEqOne
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem beCoef : Formalism.L2.KerInert.BeCob.BeCoef := by
   have hs0 : MvPowerSeries.constantCoeff
       (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) (K0 l)) L0 +
         PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) (K0 l)) L0) = 0 := by
-    rw [map_add, PowerSeries.constantCoeff_subst_eq_zero (hX 0) _ hL00,
+    rw [map_add (f := _), PowerSeries.constantCoeff_subst_eq_zero (hX 0) _ hL00,
       PowerSeries.constantCoeff_subst_eq_zero (hX 1) _ hL00, add_zero]
   have hs1 : MvPowerSeries.constantCoeff (PowerSeries.subst
       (PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) (K0 l)) L0 +

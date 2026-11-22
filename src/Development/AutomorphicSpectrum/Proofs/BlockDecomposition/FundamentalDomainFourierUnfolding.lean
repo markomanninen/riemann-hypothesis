@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped Pointwise
 
@@ -17,8 +22,8 @@ theorem hasSum_integral_of_norm_bound {A Z : Type} [MeasurableSpace A] (μ : Mea
   refine summable_of_sum_le (c := ∫ _, M ∂μ)
     (fun q => integral_nonneg fun _ => norm_nonneg _) ?_
   intro s
-  rw [← integral_finset_sum s (fun q _ => (hint q).norm)]
-  exact integral_mono (integrable_finset_sum _ fun q _ => (hint q).norm) (integrable_const _)
+  rw [← MeasureTheory.integral_finsetSum s (fun q _ => (hint q).norm)]
+  exact integral_mono (MeasureTheory.integrable_finsetSum _ fun q _ => (hint q).norm) (integrable_const _)
     (fun b => ((hb b).1.sum_le_tsum s (fun _ _ => norm_nonneg _)).trans (hb b).2)
 
 theorem setIntegral_eq_zero_of_translate {A : Type} [AddCommGroup A] [MeasurableSpace A]

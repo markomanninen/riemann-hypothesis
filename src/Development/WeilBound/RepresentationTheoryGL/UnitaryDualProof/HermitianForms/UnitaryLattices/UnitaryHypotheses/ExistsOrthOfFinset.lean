@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem exists_orth_of_finset {D : Type} [AddCommGroup D] [Module ℂ D] (B : D 
         rw [Finset.coe_insert, Set.mem_insert_iff] at hm
         rcases hm with hm | hm
         · have hsplit : m = a' + wa := by rw [hm, ha']; abel
-          rw [hsplit, map_add, hs wa hwa, add_zero, hexp]
+          rw [hsplit, map_add (f := _), hs wa hwa, add_zero, hexp]
           by_cases h0 : B a' a' = 0
           · have h0' : a' = 0 := by
               by_contra hne
@@ -149,11 +153,13 @@ theorem exists_orth_decomp {G D : Type} [Group G] [TopologicalSpace G] [IsTopolo
     · obtain ⟨k, rfl⟩ := (hTmem v).1 hv; exact hW _ _ hw'
     · rw [mem_fixed_iff_irr]
       intro h
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_nbij' (fun v => ρ (h : G) v) (fun v => ρ ((h⁻¹ : K) : G) v) (hTst h) (hTst h⁻¹)
         (fun v _ => hinv h v) (fun v _ => hinv' h v) (fun v _ => rfl)
   have h0 := hw _ hsumF
-  rw [map_sum] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h0
   have hterm : ∀ v ∈ T, B (u - w) v = B (u - w) w' := by
     intro v hv
     obtain ⟨k, rfl⟩ := (hTmem v).1 hv
@@ -183,7 +189,7 @@ theorem irr_of_forms {G D : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
       { carrier := {x | ∀ w ∈ Wm, B x w = 0}
         add_mem' := by
           intro a b ha hb w hw
-          rw [map_add, LinearMap.add_apply, ha w hw, hb w hw, add_zero]
+          rw [map_add (f := _), LinearMap.add_apply, ha w hw, hb w hw, add_zero]
         zero_mem' := by intro w _; simp
         smul_mem' := by
           intro c x hx w hw
@@ -218,8 +224,8 @@ theorem irr_of_forms {G D : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
     have hPρ : ∀ g x, P (ρ g x) = ρ g (P x) := by
       intro g x
       have hx : ρ g x = ρ g (P x) + ρ g (x - P x) := by
-        rw [← map_add]; congr 1; abel
-      rw [hx, map_add, hPw _ (hWs g _ (hPW x)), hP0 _ (hWps g _ (hPq x)), add_zero]
+        rw [← map_add (f := _)]; congr 1; abel
+      rw [hx, map_add (f := _), hPw _ (hWs g _ (hPW x)), hP0 _ (hWps g _ (hPq x)), add_zero]
     let C : D →ₗ[ℂ] D →ₗ⋆[ℂ] ℂ := (B ∘ₗ P).compl₂ P
     have hCapp : ∀ x y, C x y = B (P x) (P y) := fun x y => rfl
     have hBsplit : ∀ x, B x x = B (P x) (P x) + B (x - P x) (x - P x) := by
@@ -227,7 +233,7 @@ theorem irr_of_forms {G D : Type} [Group G] [TopologicalSpace G] [IsTopologicalG
       have h1 : B (x - P x) (P x) = 0 := (hWp _).1 (hPq x) _ (hPW x)
       have h2 : B (P x) (x - P x) = 0 := by rw [hBh (x - P x) (P x), h1, map_zero]
       conv_lhs => rw [show x = P x + (x - P x) by abel]
-      simp only [map_add, LinearMap.add_apply, h1, h2, add_zero, zero_add]
+      simp only [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero, zero_add]
     have hnn : ∀ x, 0 ≤ (B x x).re := by
       intro x
       by_cases h : x = 0

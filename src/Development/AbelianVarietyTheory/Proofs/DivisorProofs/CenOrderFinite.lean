@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+
+@[expose] public section
+
 open scoped TensorProduct
 open GlobalTheory.LKInvGood
 
@@ -29,7 +34,7 @@ theorem cenOrder_finite : ∀ (F : Type) [Field F] [NumberField F] (ℓ : ℕ) [
         { carrier := {x | f x ∈ A}
           add_mem' := by
             intro x y hx hy
-            simp only [Set.mem_setOf_eq, f, map_add, TensorProduct.tmul_add] at hx hy ⊢
+            simp only [Set.mem_setOf_eq, f, map_add (f := _), TensorProduct.tmul_add] at hx hy ⊢
             exact A.add_mem hx hy
           zero_mem' := by
             simp only [Set.mem_setOf_eq, f, map_zero, TensorProduct.tmul_zero]

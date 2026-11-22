@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open NumberField Matrix MeasureTheory GlobalTheory.CompanionTheory.Ar GroundTheo
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {g : ℕ} {Λ : Type} [AddCommGroup Λ] [Module (𝓞 E) Λ]
   {Ψ : Type} [Fintype Ψ] {j j' n : ℕ}
 
-structure GroupDict (F : UnivFam E Ψ j j' n g Λ) where
+structure GroupDict (F : UnivFam (E := E) Ψ j j' n g Λ) where
 
   h : HermitianForm (maximalRealSubfield E) E (Fin (j + j') → E)
 

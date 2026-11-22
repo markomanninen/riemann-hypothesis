@@ -1,8 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.HalfOne
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.KcDual
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.InvContDiffOn
+module
 
-import PositivityTheory.Representations.BoundaryCones.ArchimedeanCones.ConeOverlaps.OpenConeCriteria.OpenConeFormulation.IsOpenConeInvariant
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.HalfOne
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.KcDual
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.InvContDiffOn
+public import PositivityTheory.Representations.BoundaryCones.ArchimedeanCones.ConeOverlaps.OpenConeCriteria.OpenConeFormulation.IsOpenConeInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,14 +45,16 @@ theorem eps_sum_trace (hH : HbFacts) {V : Type} [NormedAddCommGroup V] [InnerPro
     rw [← trace_real (hher p)]
     ext a b
     simp [Complex.real_smul]
-  rw [← e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← e, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [map_smul, real_smul_clm, trace_real (hher p)]
 
 theorem eps_sum_sq (hH : HbFacts) {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V]
     (ε : Mat n →ₗ[ℝ] (V →L[ℂ] V)) : ∑ p, ε ((hb p : Mat n) * hb p + hb p * hb p) = ((2 * n : ℕ) : ℂ) • ε 1 := by
   obtain ⟨-, -, -, -, -, hsq, -, -⟩ := hH n
-  rw [← map_sum, Finset.sum_add_distrib, hsq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, Finset.sum_add_distrib, hsq]
   have e : (n : ℂ) • (1 : Mat n) + (n : ℂ) • 1 = ((2 * n : ℕ) : ℝ) • (1 : Mat n) := by
     ext a b
     simp [Complex.real_smul]
@@ -240,7 +245,7 @@ def psiL {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] (K0 : V →
     (w0 : Mat n) (Γ T : V →L[ℂ] V) : Mat n →ₗ[ℝ] (V →L[ℂ] V) where
   toFun X := ((-(2 * n : ℂ)) * X.trace) • K0 * Γ * T - Dk (w0 * X) * Γ * T - K0 * Γ * T * DF X
   map_add' X Y := by
-    simp only [Matrix.trace_add, mul_add, add_smul, add_mul, Matrix.mul_add, map_add]
+    simp only [Matrix.trace_add, mul_add, add_smul, add_mul, Matrix.mul_add, map_add (f := _)]
     abel
   map_smul' r X := by
     simp only [Matrix.trace_smul, Matrix.mul_smul, map_smul, RingHom.id_apply]

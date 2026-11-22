@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomEvalCompEqEvAMapStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalChartPresentsLevelsModIdealStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgHomEvalCompEqEvAMapStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalChartPresentsLevelsModIdealStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,17 +23,15 @@ def twoRing {R R' A A' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} [Com
   map_zero' := map_zero _
   map_add' := map_add _
   map_one' := by
-    rw [Algebra.TensorProduct.one_def, TensorProduct.map_tmul, SemiBialgHom.lin_apply, map_one,
-      Algebra.TensorProduct.one_def]
+    simp only [Algebra.TensorProduct.one_def, TensorProduct.map_tmul, SemiBialgHom.lin_apply,
+      map_one f.toRingHom]
   map_mul' x y := by
     induction x with
-    | zero => simp
-    | add a b ha hb => simp only [add_mul, map_add, ha, hb]
+    | add a b ha hb => simp only [add_mul, map_add (f := _), ha, hb]
     | tmul a b =>
       induction y with
-      | zero => simp
-      | add u v hu hv => simp only [mul_add, map_add, hu, hv]
-      | tmul u v => simp
+      | add u v hu hv => simp only [mul_add, map_add (f := _), hu, hv]
+      | tmul u v => simp [SemiBialgHom.lin_apply, map_mul f.toRingHom]
 
 theorem ev₂_map {p m d : ℕ} {O k : Type} [CommRing O] [CommRing k] {r : O →+* k}
     {G : PDivGroup p O} {G' : PDivGroup p k} (s : SemiHom r G' G) (c : QLog.Chart G d)

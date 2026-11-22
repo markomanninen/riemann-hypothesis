@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TupMemLatT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TupMemLatT
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong Matrix
 open scoped Formalism.Per NNReal
 
@@ -26,7 +31,8 @@ theorem coord_inj {l : ℕ} [Fact l.Prime] {X : Type} [AddCommGroup X] [Module (
 theorem dsum {l : ℕ} [Fact l.Prime] {X : Type} [AddCommGroup X] [Module (Om l) X] {p q : ℕ} (α : Fin p → ℤ_[l])
     (β : Fin p → Fin q → ℤ_[l]) (w : Fin q → X) :
     ∑ s, zOm l (α s) • ∑ i, zOm l (β s i) • w i = ∑ i, zOm l (∑ s, β s i * α s) • w i := by
-  simp only [Finset.smul_sum, smul_smul, map_sum, map_mul, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.smul_sum, smul_smul, map_sum, map_mul, Finset.sum_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun s _ => ?_
   rw [mul_comm]
@@ -119,7 +125,7 @@ theorem transition : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] (a : �
       funext k
       simp only [Finset.sum_apply, Pi.smul_apply]
       rw [← hB k, hA k]
-    exact congrFun key i
+    exact congrArg _ (congrFun key i)
   · intro i j
     have hsingle : ∑ s, zOm l ((Pi.single j 1 : Fin d₂ → ℤ_[l]) s) • bb₂ s = bb₂ j := by
       simp [Pi.single_apply]

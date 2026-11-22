@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut
 

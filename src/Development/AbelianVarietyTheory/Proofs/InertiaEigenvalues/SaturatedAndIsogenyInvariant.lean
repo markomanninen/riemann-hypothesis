@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMulIntegralBis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMulIntegralBis
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem isog_of {T' T : LocLat G Qp LL O} (f : LatHom T'.L T.L)
 
 end Generic
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 theorem saturated_and_isogeny_invariant : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; (∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → wachSaturated W T) ∧ ∀ (T' T : Lt K LL) (f : LatHom T'.L T.L), IsCrys ((D.loc l).PD K) T'.ρ → IsCrys ((D.loc l).PD K) T.ρ → p6V W f := by
   intro D HW F l _ K s LL h W E
   refine ⟨fun T hT => sat_of W T fun m x hx => sat_loc (HW l) K s LL h T hT m x hx,

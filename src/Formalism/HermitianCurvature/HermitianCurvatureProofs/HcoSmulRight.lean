@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SupportPhiZeroSubset
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SupportPhiZeroSubset
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 
@@ -21,12 +25,12 @@ section lin
 variable {r : ℕ} (T' : ℝ)
 
 theorem hco_add_left (c c' d : Co r) : hco T' (c + c') d = hco T' c d + hco T' c' d := by
-  simp only [hco, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, add_mul, mul_add,
+  simp only [hco, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), add_mul, mul_add,
     Finset.sum_add_distrib]
   ring
 
 theorem hco_add_right (c d d' : Co r) : hco T' c (d + d') = hco T' c d + hco T' c d' := by
-  simp only [hco, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add, add_mul, mul_add,
+  simp only [hco, Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _), add_mul, mul_add,
     Finset.sum_add_distrib]
   ring
 
@@ -73,7 +77,8 @@ theorem hco_sum_right {ι : Type*} (s : Finset ι) (c : Co r) (f : ι → Co r) 
   rw [Finset.sum_insert ha, Finset.sum_insert ha, hco_add_right, ih]
 
 theorem hco_symm (c d : Co r) : hco T' d c = conj (hco T' c d) := by
-  simp only [hco, map_add, map_sub, map_mul, map_sum, Complex.conj_conj, Complex.conj_ofReal]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hco, map_add (f := _), map_sub, map_mul, map_sum, Complex.conj_conj, Complex.conj_ofReal]
   have e1 : ∑ a, d.1 a * conj (c.2.1 a) = ∑ a, conj (c.2.1 a) * d.1 a :=
     Finset.sum_congr rfl fun _ _ => mul_comm _ _
   have e2 : ∑ a, d.2.1 a * conj (c.1 a) = ∑ a, conj (c.1 a) * d.2.1 a :=
@@ -95,10 +100,6 @@ theorem cvec_smul (x : ℂ) (c : Co r) : cvec k z' ν' (x • c) = x • cvec k 
   simp only [cvec, Prod.smul_fst, Prod.smul_snd, Pi.smul_apply, smul_eq_mul, mul_smul,
     ← Finset.smul_sum, smul_add]
 
-theorem cvec_sub (c d : Co r) : cvec k z' ν' (c - d) = cvec k z' ν' c - cvec k z' ν' d := by
-  simp only [cvec, Prod.fst_sub, Prod.snd_sub, Pi.sub_apply, sub_smul, Finset.sum_sub_distrib]
-  abel
-
 theorem cvec_sum {ι : Type*} (s : Finset ι) (f : ι → Co r) :
     cvec k z' ν' (∑ i ∈ s, f i) = ∑ i ∈ s, cvec k z' ν' (f i) := by
   classical
@@ -116,7 +117,8 @@ theorem herm_cvec (hz' : inWb k r z') (hν : inWb k r ν') (hνz : herm (Hpk k r
   have hsym : ∀ v w : Fin (2 * r + k + 1) → ℂ,
       herm (Hpk k r) v w = conj (herm (Hpk k r) w v) := by
     intro v w
-    simp only [herm, dotProduct, Matrix.mulVec, Pi.star_apply, map_sum, map_mul, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, dotProduct, Matrix.mulVec, Pi.star_apply, map_sum, map_mul, Finset.mul_sum,
       Finset.sum_mul, Complex.star_def, Complex.conj_conj]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -130,7 +132,7 @@ theorem herm_cvec (hz' : inWb k r z') (hν : inWb k r ν') (hνz : herm (Hpk k r
     intro x v w; simp only [herm, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul]
   have a2 : ∀ v w w' : Fin (2 * r + k + 1) → ℂ,
       herm (Hpk k r) v (w + w') = herm (Hpk k r) v w + herm (Hpk k r) v w' := by
-    intro v w w'; rw [hsym, a1, map_add, ← hsym, ← hsym]
+    intro v w w'; rw [hsym, a1, map_add (f := _), ← hsym, ← hsym]
   have s2 : ∀ (x : ℂ) (v w : Fin (2 * r + k + 1) → ℂ),
       herm (Hpk k r) v (x • w) = conj x * herm (Hpk k r) v w := by
     intro x v w; rw [hsym, s1, map_mul, ← hsym]

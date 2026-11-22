@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassFieldFinrankPowPrincipal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassFieldFinrankPowPrincipal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NatCastMulFinrankMemDifferentIdeal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Host GlobalTheory.NT GlobalTheory.Published GlobalTheory.Mem GlobalTheory.Mem.Fld
 open scoped nonZeroDivisors IntermediateField
@@ -128,8 +132,10 @@ theorem exists_intTrace_not_mem [IsGalois K L] (P Q : Ideal (𝓞 L)) [P.IsPrime
   have h0 : ∑ σ, Finsupp.single (f σ) (f σ x) = 0 := by
     refine linearIndependent_iff.1 (linearIndependent_monoidHom (𝓞 L) (𝓞 L ⧸ P)) _ (funext fun y => ?_)
     have h1 := Ideal.Quotient.eq_zero_iff_mem.2 (H _ (Q.mul_mem_right y hx))
-    rw [GlobalTheory.DifferentBound.algebraMap_intTrace_eq_sum, map_sum] at h1
-    simp only [map_sum, Finsupp.linearCombination_single, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlobalTheory.DifferentBound.algebraMap_intTrace_eq_sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finsupp.linearCombination_single, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply,
       ← map_mul, hf]
     simpa only [smul_mul'] using h1
   have h2 := DFunLike.congr_fun h0 (f 1)

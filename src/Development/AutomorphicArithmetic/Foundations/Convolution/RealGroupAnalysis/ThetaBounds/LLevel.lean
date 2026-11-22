@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ActCont
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightFinGLLeInvAbsDet
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Tube
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ActCont
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightFinGLLeInvAbsDet
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Tube
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -39,7 +43,10 @@ private theorem fin_fst (k : GL (Fin 2) (Af E)) (a b : Fin 2) :
     ((finGL E 2 k).val a b).1 = ((1 : Matrix (Fin 2) (Fin 2) (A E)) a b).1 := by
   have := GlobalTheory.HenQ.finGL_apply k a b
   rw [this]
-  simp [GlobalTheory.HenQ.sFin_fst]
+  change ((1 : Matrix (Fin 2) (Fin 2) (A E)) a b).1 -
+    (GlobalTheory.CuspRep.sFin E ((1 : Matrix (Fin 2) (Fin 2) (Af E)) a b)).1 +
+    (GlobalTheory.CuspRep.sFin E (k.val a b)).1 = _
+  rw [GlobalTheory.HenQ.sFin_fst, GlobalTheory.HenQ.sFin_fst, sub_zero, add_zero]
 
 private theorem eI_mul (x y : A E) (h : x.1 = y.1) : eI E * x = eI E * y :=
   Prod.ext (by rw [eI_fst, eI_fst, h]) (by rw [eI_snd, eI_snd])
@@ -126,7 +133,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Ff.lLevel :
     have e := finPart_act D k⁻¹ (D.act (finGL E 2 k) (io w))
     rw [map_inv, D.act_inv_act, finPart_io] at e
     exact e.symm
-  have key : ∀ f ∈ schwartzBruhatPi F (Fin 4), ∀ᶠ k in 𝓝 (1 : GL (Fin 2) (Af E)),
+  have key : ∀ f ∈ schwartzBruhatPi (K := F) (ι := Fin 4), ∀ᶠ k in 𝓝 (1 : GL (Fin 2) (Af E)),
       ∀ v, f (D.act (finGL E 2 k)⁻¹ v) = f v := by
     intro f hf
     induction hf using Submodule.span_induction with
@@ -134,7 +141,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Ff.lLevel :
       obtain ⟨φ₀, g, hg, rfl⟩ := hG
       obtain ⟨hlc, hcs⟩ := (mem_finiteSchwartzBruhatPi F).1 hg
       have ht : Tendsto (fun k : GL (Fin 2) (Af E) => k⁻¹) (𝓝 1) (𝓝 1) := by
-        simpa using (continuous_inv (G := GL (Fin 2) (Af E))).tendsto 1
+        simpa only [inv_one] using (continuous_inv (G := GL (Fin 2) (Af E))).tendsto 1
       filter_upwards [ht.eventually (tube (TT D) hT h1 hinv hlc hcs)] with k hk v
       have e1 : infPartPi (D.act (finGL E 2 k)⁻¹ v) = infPartPi v := by
         funext i

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsRep
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsRep
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBeCob
+
+@[expose] public section
 
 noncomputable section
 

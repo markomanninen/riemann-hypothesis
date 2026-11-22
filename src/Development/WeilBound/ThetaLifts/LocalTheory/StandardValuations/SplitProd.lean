@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IntIndPow
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IntIndPow
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -40,8 +44,8 @@ theorem detA {b : ℕ} (N : Matrix (Fin (b + 2)) (Fin (b + 2)) k) (h0 : ∀ i, i
   · simp
   · ext i j; simp [hm]
 
-open Classical in
 
+open Classical in
 def rad (ϖ : kˣ) (c : ℕ) (e : Fin n → Fin d) (j : Fin d) : k := if j ∈ Set.range e then 1 else (ϖ : k) ^ c
 
 def std (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c : ℕ) (e : Fin n → Fin d) (Y : Matrix (Fin n) (Fin d) k) : ℂ :=

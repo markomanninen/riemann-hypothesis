@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices
 
 namespace GlobalTheory
@@ -53,13 +58,13 @@ theorem isBaseChange_comap_of_exact (A E : Type) [CommRing A] [CommRing E] [Alge
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [Φ, IsBaseChange.equiv_tmul, hιv]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hcomm₂ : ∀ t : E ⊗[A] N₁, h₂.equiv (LinearMap.lTensor E f t) = q (h₁.equiv t) := by
     intro t
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [IsBaseChange.equiv_tmul, hfv]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hΦi : Function.Injective Φ := by
     intro s t hst
     apply hιT

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.PoincareDeRhamDualityOfCube
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StructureSheafComparisonInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.PoincareDeRhamDualityOfCube
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StructureSheafComparisonInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,8 +44,8 @@ theorem pt_comp {s : X ⟶ Sp R} {T T' : TT s} (a : T ⟶ T') :
 def ofPC (s : X ⟶ Sp R) : CoefMap (RingHom.id R) (FP s) ((IsTriv s).ι ⋙ O (dp0 R) s) where
   G := { obj := ptOf
          map := fun a ↦ ⟨a.hom.φ, pt_comp a⟩
-         map_id := fun _ ↦ hom_ext fun _ ↦ rfl
-         map_comp := fun _ _ ↦ hom_ext fun _ ↦ rfl }
+         map_id := fun _ ↦ CrystallinePoints.Pd.hom_ext' fun _ ↦ rfl
+         map_comp := fun _ _ ↦ CrystallinePoints.Pd.hom_ext' fun _ ↦ rfl }
   α T := RingHom.id T.obj.B
   naturality _ _ := rfl
   smul _ _ _ := rfl
@@ -69,7 +73,7 @@ theorem toPO_ofPC (s : X ⟶ Sp R) (c : H1OnPoints s) : (toPO s).pull1 ((ofPC s)
   rw [← CoefMap.pullCohomologyOne_comp]
   let θ : ((ofPC s).comp (toPO s)).G ⟶ (CoefMap.id (FP s)).G :=
     { app := fun P => ⟨AlgHom.id R P.B, spMap_id_comp_spMap_symm_comp _ (fun _ => rfl) P.x⟩
-      naturality := fun _ _ _ => CrystallinePoints.Pd.hom_ext fun _ => rfl }
+      naturality := fun _ _ _ => CrystallinePoints.Pd.hom_ext' fun _ => rfl }
   exact (CoefMap.pullCohomologyOne_eq_of_natTrans _ (CoefMap.id (FP s)) θ (fun _ _ => rfl) c).trans (CoefMap.pullCohomologyOne_id c)
 
 private theorem cmpO_toH1O_eq_toHO1_cmp1 (s : X ⟶ Sp R) (c : FirstDeRham s) :

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import Development.EtaleCohomology.EtaleTrace.FrobTraceOf
-import Development.EtaleCohomology.EtaleTrace.LPdCut
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import Development.EtaleCohomology.EtaleTrace.FrobTraceOf
+public import Development.EtaleCohomology.EtaleTrace.LPdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace UpperTheory.Gal.KunnethLefschetz
@@ -23,7 +27,7 @@ private theorem pt_restrict {k : Type} [Field k] {l : ℕ} [Fact l.Prime] (G : G
     pb l U.ι _ (G.pt d y) = G.pt d y' := by
   show pb l U.ι _ (G.cls d 0 p y.1) = G.cls d 0 (U.ι ≫ p) y'.1
   unfold GysQ.cls
-  rw [dif_pos h, dif_pos h', G.nat h' h U.ι (𝟙 _) rfl (lift_square U.ι y.1 y'.1 hy), pb_id]
+  rw [dite_eq_left h, dite_eq_left h', G.nat h' h U.ι (𝟙 _) rfl (lift_square U.ι y.1 y'.1 hy), pb_id]
   rfl
 
 theorem trComp_holds : TrComp := by
@@ -72,7 +76,7 @@ theorem trComp_holds : TrComp := by
       exact (hdisj j' j hj').le_bot (show y.1 s ∈ U j' ⊓ U j from ⟨ht, hj⟩)
     rw [LinearMap.comp_apply, ← Scheme.homOfLE_ι X hle, pb_comp, LinearMap.comp_apply]
     unfold GysQ.pt GysQ.cls
-    rw [dif_pos hy, G.off hy _ W hW, map_zero, map_zero]
+    rw [dite_eq_left hy, G.off hy _ W hW, map_zero, map_zero]
   · intro h
     exact absurd (Finset.mem_univ j) h
 

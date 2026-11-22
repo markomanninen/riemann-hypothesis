@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -78,7 +82,7 @@ theorem hermForm_eq_of_im {p q a b : ℕ} (HA : Matrix (Fin a) (Fin a) ℂ) (HB 
       | mem w hw => exact h z hz w hw
       | zero => simp [hermForm]
       | add x y _ _ hx hy =>
-        simp only [hermForm, map_add, star_add, Matrix.mulVec_add, dotProduct_add, Complex.add_im] at hx hy ⊢
+        simp only [hermForm, map_add (f := _), star_add, Matrix.mulVec_add, dotProduct_add, Complex.add_im] at hx hy ⊢
         rw [hx, hy]
       | smul r x _ hx =>
         rw [← Complex.coe_smul]
@@ -87,7 +91,7 @@ theorem hermForm_eq_of_im {p q a b : ℕ} (HA : Matrix (Fin a) (Fin a) ℂ) (HB 
         rw [hx]
     | zero => simp [hermForm]
     | add x y _ _ hx hy =>
-      simp only [hermForm, map_add, add_dotProduct, Complex.add_im] at hx hy ⊢
+      simp only [hermForm, map_add (f := _), add_dotProduct, Complex.add_im] at hx hy ⊢
       rw [hx, hy]
     | smul r x _ hx =>
       rw [← Complex.coe_smul]

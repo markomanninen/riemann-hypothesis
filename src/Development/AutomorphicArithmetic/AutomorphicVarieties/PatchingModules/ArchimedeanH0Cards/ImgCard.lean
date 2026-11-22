@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.CardSelmerMulCardBoundaryLeCardSelmerMatrix
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.FiniteSelmerModuleOfFiniteCohomology
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.FiniteTruncatedLocallyConstantMatrixSolutions
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelLin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.AmFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.CardSelmerMulCardBoundaryLeCardSelmerMatrix
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.FiniteSelmerModuleOfFiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SelmerModuleFiniteness.FiniteTruncatedLocallyConstantMatrixSolutions
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelLin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.AmFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -67,12 +71,12 @@ private theorem eqn_map (p : R →+* R') (f : F.G₀ ⊕ F.Vl → Matrix (Fin n)
   | ine u g hg i j => rfl
   | coc g h i j =>
     simp only [eqn]
-    rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add, ← Matrix.map_sub, Matrix.map_apply]
+    rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add (f := _), ← Matrix.map_sub, Matrix.map_apply]
     all_goals intro a₁ a₂
     all_goals first | exact map_sub p a₁ a₂ | exact map_add p a₁ a₂
   | pol g i j =>
     simp only [eqn]
-    rw [← Matrix.transpose_map, ← Matrix.map_add, Matrix.map_apply]
+    rw [← Matrix.transpose_map, ← Matrix.map_add (f := _), Matrix.map_apply]
     intro a₁ a₂
     exact map_add p a₁ a₂
   | loc v g i j _ =>
@@ -179,7 +183,8 @@ private theorem img_card {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} (x : 
     refine ⟨(fun j => π (c j), fun g => (b g).map π), ⟨Set.mem_univ _, hred b hb⟩, ?_⟩
     funext g
     ext i j
-    simp [Φ, Matrix.sum_apply, map_sum, Finset.sum_apply, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Φ, Matrix.sum_apply, map_sum, Finset.sum_apply, Matrix.map_apply]
   have hfinB : Bm.Finite := by
     refine (Set.finite_range (fun Y : Matrix (Fin n) (Fin n) (x.Am m) => dY F (x.ρX (x.Am m)) Y)).subset ?_
     rintro z ⟨Y, _, _, rfl⟩

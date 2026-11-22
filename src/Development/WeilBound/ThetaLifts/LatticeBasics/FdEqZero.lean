@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.Inde
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n : ℕ}
 
-variable (σ) in
 
+variable (σ) in
 structure Cpt (J : Matrix (Fin n) (Fin n) E) : Prop where
   lc : LocallyCompactSpace (UA σ J)
   sc : SecondCountableTopology (UA σ J)

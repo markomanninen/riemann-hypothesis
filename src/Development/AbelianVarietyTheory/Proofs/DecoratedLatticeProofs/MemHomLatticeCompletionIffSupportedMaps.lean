@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TermTiesEmptyOfLargeIndex
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FinTensMemLatO
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl Matrix
 open IsDedekindDomain NumberField
@@ -13,8 +17,8 @@ set_option synthInstance.maxHeartbeats 160000
 namespace GlobalTheory.FinPl.LatMem
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 def indP (F : Type) [Field F] [NumberField F] (P : HeightOneSpectrum (𝓞 F) → Prop) : Af F :=
   ⟨fun v => if P v then 1 else 0, Filter.Eventually.of_forall fun v => by
     show (if P v then (1 : Fv F v) else 0) ∈ (v.adicCompletionIntegers F : Set (Fv F v))
@@ -113,7 +117,65 @@ theorem exists_dualBasis (S : HSp D) {Λ : Submodule (𝓞 D.host.E) (Fin S.rank
   set V := Fin S.rank → E
   have hlat := hΛ.1
   have hfg : Λ.FG := hlat.fg
-  have hsp : Submodule.span E (Λ : Set V) = ⊤ := hlat.span_eq_top
+  have hsp : Submodule.span E (Λ : Set V) = ⊤ := by
+    obtain ⟨t, ht⟩ := hΛ.1.fg
+    apply eq_top_iff.mpr
+    intro y _
+    let p : (Fin S.rank → D.host.E) → D.host.E := fun x =>
+      ∑ i, ∑ j, star (x i) * S.gram i j * y j
+    obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors (𝓞 D.host.E)) t p
+    have hp : ∀ x ∈ Λ, IsIntegral ℤ ((b : 𝓞 D.host.E) • p x) := by
+      intro x hx
+      rw [← ht] at hx
+      induction hx using Submodule.span_induction with
+      | mem x hx =>
+        obtain ⟨a, ha⟩ := hb x hx
+        rw [← ha]
+        exact RingOfIntegers.isIntegral_coe a
+      | zero => simpa [p] using (isIntegral_zero : IsIntegral ℤ (0 : D.host.E))
+      | add x z hx hz ihx ihz =>
+        have heq : p (x + z) = p x + p z := by
+          simp [p, star_add, add_mul, Finset.sum_add_distrib]
+        rw [heq, smul_add]
+        exact ihx.add ihz
+      | smul c x hx ih =>
+        have heq : p (c • x) = star (c : D.host.E) * p x := by
+          simp only [p, Pi.smul_apply, algebraMap_smul, star_mul', Finset.mul_sum]
+          apply Finset.sum_congr rfl; intro i _
+          apply Finset.sum_congr rfl; intro j _
+          change star ((c : D.host.E) * x i) * S.gram i j * y j = _
+          rw [star_mul']
+          ring
+        rw [heq, Algebra.smul_def]
+        have hc := (RingOfIntegers.isIntegral_coe c).map (starRingEnd D.host.E).toIntAlgHom
+        have hc' : IsIntegral ℤ (star (c : D.host.E)) := hc
+        convert hc'.mul ih using 1 <;> simp only [Algebra.smul_def] <;> ring
+    have hy : (b : 𝓞 D.host.E) • y ∈ Λ := (hΛ.2 _).2 (by
+      intro x hx
+      have hi := hp x hx
+      refine ⟨⟨_, ?_⟩, rfl⟩
+      have heq : (∑ i, ∑ j, star (x i) * S.gram i j * ((b : 𝓞 D.host.E) • y) j) =
+          (b : 𝓞 D.host.E) • p x := by
+        simp only [p, Pi.smul_apply, algebraMap_smul, Algebra.smul_def, Finset.mul_sum]
+        apply Finset.sum_congr rfl; intro i _
+        apply Finset.sum_congr rfl; intro j _
+        change star (x i) * S.gram i j * ((b : 𝓞 D.host.E) • y j) = _
+        rw [Algebra.smul_def]
+        ring
+      change IsIntegral ℤ (∑ i, ∑ j, star (x i) * S.gram i j * ((b : 𝓞 D.host.E) • y) j)
+      rw [heq]
+      exact hi)
+    have hb0 : (algebraMap (𝓞 D.host.E) D.host.E b) ≠ 0 :=
+      IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
+    have hy' : (b : 𝓞 D.host.E) • y ∈ Submodule.span D.host.E (Λ : Set (Fin S.rank → D.host.E)) :=
+      Submodule.subset_span hy
+    have hy'' : (algebraMap (𝓞 D.host.E) D.host.E b) • y ∈
+        Submodule.span D.host.E (Λ : Set (Fin S.rank → D.host.E)) := by
+      simpa only [algebraMap_smul] using hy'
+    have := (Submodule.span D.host.E (Λ : Set (Fin S.rank → D.host.E))).smul_mem
+      (algebraMap (𝓞 D.host.E) D.host.E b)⁻¹ hy''
+    rw [smul_smul, inv_mul_cancel₀ hb0, one_smul] at this
+    exact this
   haveI hfin : Module.Finite O Λ := Module.Finite.iff_fg.2 hfg
   have hcancel : ∀ (d : O) (x : V), d ≠ 0 → d • x = 0 → x = 0 := by
     intro d x hd h

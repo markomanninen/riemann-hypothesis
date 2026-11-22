@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WeightOccurrence.OccSome
-import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.OneLeDiff
-import Development.WeilBound.CoreStatements.BranchingTraces.FormTSingle
-import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.ColSq
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.WeightOccurrence.OccSome
+public import Development.WeilBound.CoreStatements.BranchingTraces.BranchingComatrices.OneLeDiff
+public import Development.WeilBound.CoreStatements.BranchingTraces.FormTSingle
+public import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.ColSq
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
+
+@[expose] public section
 
 noncomputable section
 

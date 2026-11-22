@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
-import GroundTheory.GlobalFields.ComplexMultiplication.Residue
-import GroundTheory.GlobalFields.ComplexMultiplication.RectangleIntegral
-import GroundTheory.GlobalFields.ComplexMultiplication.ResidueTheorem
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
+public import GroundTheory.GlobalFields.ComplexMultiplication.Residue
+public import GroundTheory.GlobalFields.ComplexMultiplication.RectangleIntegral
+public import GroundTheory.GlobalFields.ComplexMultiplication.ResidueTheorem
+
+@[expose] public section
 
 open Complex Filter Topology Set
 open scoped Interval Real
@@ -24,9 +28,9 @@ lemma IsPeriodic.residue_eq_of_mk_eq {f : ℂ → ℂ} (hp : IsPeriodic L f) (hf
   have := hp.residue_add hf hzw w
   rwa [add_sub_cancel] at this
 
-variable (L) in
 
-def torusResidue (f : ℂ → ℂ) (x : Torus L) : ℂ :=
+variable (L) in
+def torusResidue (L : PeriodPair) (f : ℂ → ℂ) (x : Torus L) : ℂ :=
   residue f x.out
 
 lemma torusResidue_mk {f : ℂ → ℂ} (hf : IsEllipticFunction L f) (z : ℂ) :

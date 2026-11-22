@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ChartPeriods
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsIsDerivAt0Loc
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ChartPeriods
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsIsDerivAt0Loc
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
@@ -96,7 +100,7 @@ theorem model_periods {Xo : Moduli D l} {c : Coeff l} {Y : Model Xo c (algebraMa
   classical
   have hsm : Smooth 𝔐.t.G.hom := 𝔐.t.semi.smooth
   let ea := Fintype.equivFin A
-  obtain ⟨W, hW, v, hq, htan, hval⟩ := GlobalTheory.T.lattice_tangent_vectors_affine_open 𝔐.X 𝔐.t.G Ω 𝔐.ξ 𝔐.Li 𝔐.M ⟨centre (p 0), 𝔐.all _⟩ _
+  obtain ⟨W, hW, v, hq, htan, hval⟩ := GlobalTheory.CompanionTheory.Ar.HodgeMetric.FrameExt.exists_affine_frame 𝔐.X 𝔐.t.G Ω 𝔐.ξ 𝔐.Li 𝔐.M ⟨centre (p 0), 𝔐.all _⟩ _
     (fun k => b (ea.symm k)) 𝔐.tie.gen (fun k => hlat _)
   have hW0 : ⊤ ≤ p 0 ⁻¹ᵁ W := fun x _ => by
     have : x = IsLocalRing.closedPoint ℂ := Subsingleton.elim _ _
@@ -118,7 +122,49 @@ theorem model_periods {Xo : Moduli D l} {c : Coeff l} {Y : Model Xo c (algebraMa
   obtain ⟨θ, hθ⟩ : ∃ θ : Γ(𝔐.X, W) →+* C.R, spMap θ = h := ⟨(Spec.preimage h).hom, Spec.map_preimage _⟩
   subst hθ
   obtain ⟨mX, -⟩ := GlobalTheory.ObjMaps.exists_sab_comp mW mC
-  obtain ⟨x, hx⟩ := GlobalTheory.T.abelian_map_tangent_coordinates E H 𝔐.X 𝔐.t Γ(𝔐.X, W) hW.fromSpec _ v C.R C.t θ mX C.g C.M htan
+  have hbase : spMap (GlobalTheory.CompanionTheory.Ar.dualMap θ) ≫ (epsAt hW.fromSpec).hom =
+      (epsAt (𝟙 (Sp C.R) ≫ spMap θ ≫ hW.fromSpec)).hom := by
+    have e : (CommRingCat.ofHom (algebraMap Γ(𝔐.X, W) (DualNumber Γ(𝔐.X, W)))) ≫ CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap θ) =
+        CommRingCat.ofHom θ ≫ CommRingCat.ofHom (algebraMap C.R (DualNumber C.R)) := by
+      refine CommRingCat.hom_ext (RingHom.ext fun a => ?_)
+      show GlobalTheory.CompanionTheory.Ar.dualMap θ (algebraMap _ _ a) = algebraMap _ _ (θ a)
+      rw [TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.algebraMap_eq_inl]
+      ext <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+    have e' := congrArg Spec.map e
+    simp only [Spec.map_comp] at e'
+    show spMap (GlobalTheory.CompanionTheory.Ar.dualMap θ) ≫ Spec.map _ ≫ hW.fromSpec = Spec.map _ ≫ 𝟙 (Sp C.R) ≫ spMap θ ≫ hW.fromSpec
+    rw [Category.id_comp, ← Category.assoc, e', Category.assoc]
+  let push (k : Fin (Fintype.card A)) : epsAt (𝟙 (Sp C.R) ≫ spMap θ ≫ hW.fromSpec) ⟶ 𝔐.t.G :=
+    Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap θ) ≫ (v k).left) (by rw [Category.assoc, Over.w, hbase])
+  have hpush (k : Fin (Fintype.card A)) : IsTanAt 𝔐.t.G (𝟙 (Sp C.R) ≫ spMap θ ≫ hW.fromSpec) (push k) := by
+    have hk := htan k
+    unfold IsTanAt at hk ⊢
+    have key : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom C.R C.R C.R).toRingHom) ≫
+          Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap θ)) =
+        Spec.map (CommRingCat.ofHom θ) ≫ Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom Γ(𝔐.X, W) Γ(𝔐.X, W) Γ(𝔐.X, W)).toRingHom) := by
+      rw [← Spec.map_comp, ← Spec.map_comp]
+      congr 1
+      refine CommRingCat.hom_ext (RingHom.ext fun a => ?_)
+      simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+    let s : Over.mk (𝟙 (Sp C.R) ≫ spMap θ ≫ hW.fromSpec) ⟶ Over.mk hW.fromSpec :=
+      Over.homMk (spMap θ) (by simp)
+    have h1 : s ≫ (1 : Over.mk hW.fromSpec ⟶ 𝔐.t.G) = 1 := MonObj.comp_one s
+    have h2 := congrArg CommaMorphism.left h1
+    refine Eq.trans ?_ h2
+    change _ = spMap θ ≫ (1 : Over.mk hW.fromSpec ⟶ 𝔐.t.G).left
+    rw [← hk]
+    change Spec.map _ ≫ spMap (GlobalTheory.CompanionTheory.Ar.dualMap θ) ≫ (v k).left = _
+    rw [← Category.assoc, key, Category.assoc]
+  have hex : ∀ k, ∃ e : Fin C.g → C.R, (C.M.pt e).left ≫ mX.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap θ) ≫ (v k).left := fun k => by
+    have ht : IsTanAt C.t.G (𝟙 (Sp C.R)) ((LiePull.tanPts mX.cart (𝟙 (Sp C.R))).symm (push k)) :=
+      (LiePull.isTan_iff mX.cart (𝟙 (Sp C.R)) _).1 (by
+        rw [MulEquiv.apply_symm_apply]
+        exact hpush k)
+    obtain ⟨e, he⟩ := C.M.onto _ ht
+    refine ⟨e, ?_⟩
+    rw [he, ← LiePull.pts_left mX.cart (LiePull.eps_assoc (𝟙 (Sp C.R))), MulEquiv.apply_symm_apply]
+    rfl
+  choose x hx using hex
   have hw : ∀ z : Fin n → ℂ, ∃ w : A → (epsAt (spMap (C.ψ z) ≫ spMap θ ≫ hW.fromSpec) ⟶ 𝔐.t.G),
       (∀ k, 𝔐.M.ValAt _ (b k) (w k)) ∧
       ∀ k, (w k).left = spMap (dualMap (C.ψ z)) ≫ (C.M.pt (x (ea k))).left ≫ mX.φ := fun z => by

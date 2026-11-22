@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+
+@[expose] public section
 
 noncomputable section
 
@@ -160,7 +164,7 @@ private theorem lies_or {E : Type} [Field E] [NumberField E] [IsCMField E] (A : 
       LiesOver P.Kq P.u f := by
     intro f hf x
     obtain ⟨a, b, rfl⟩ := span_omega A P.Kq P.hKq.1 h x
-    simp only [map_add, map_mul, Subfield.coe_add, Subfield.coe_mul, hf]
+    simp only [map_add (f := _), map_mul, Subfield.coe_add, Subfield.coe_mul, hf]
     simp
   have hr : (algebraMap ℚ_[p] (PadicAlgCl p) (P.u ⟨A.ω, h⟩)) ^ 2 -
       (A.tr : PadicAlgCl p) * algebraMap ℚ_[p] (PadicAlgCl p) (P.u ⟨A.ω, h⟩) + (A.nm : PadicAlgCl p) = 0 := by
@@ -168,7 +172,7 @@ private theorem lies_or {E : Type} [Field E] [NumberField E] [IsCMField E] (A : 
       apply Subtype.ext
       simpa using omega_root A
     have h1 := congrArg ((algebraMap ℚ_[p] (PadicAlgCl p)).comp P.u) h0
-    simp only [map_add, map_sub, map_mul, map_pow, map_intCast, map_zero] at h1
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_intCast, map_zero] at h1
     exact h1
   have ht : (τ (A.ω : E)) ^ 2 - (A.tr : PadicAlgCl p) * τ (A.ω : E) + (A.nm : PadicAlgCl p) = 0 := by
     have h1 := congrArg τ (omega_root A)
@@ -183,7 +187,7 @@ private theorem lies_or {E : Type} [Field E] [NumberField E] [IsCMField E] (A : 
       have h := congrArg (fun z : 𝓞 E => (z : E)) A.tr_eq
       simpa [A.bar_eq] using h
     have h2 := congrArg τ h1
-    simp only [map_add, map_intCast] at h2
+    simp only [map_add (f := _), map_intCast] at h2
     simp only [RingHom.comp_apply]
     linear_combination h2 - e
 
@@ -307,7 +311,7 @@ private theorem all_norm (S : Setup A n p) (y : Gam0 E n)
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 private theorem mem_KGL_of_entries {w : Plc E} {g : GL (Fin n) (w.adicCompletion E)}
-    (h1 : ∀ i j, Valued.v (g.val i j) ≤ 1) (h2 : ∀ i j, Valued.v (g⁻¹.val i j) ≤ 1) : g ∈ KGL w n :=
+    (h1 : ∀ i j, Valued.v (g.val i j) ≤ 1) (h2 : ∀ i j, Valued.v (g⁻¹.val i j) ≤ 1) : g ∈ KGL w (n := n) :=
   GlobalTheory.StabInt.mem_KGL_of_mem_integralGL ((GroundTheory.Automorphic.GLnLocal.mem_integralGL_iff _ _).2
     ⟨fun i j => (GlobalTheory.StabInt.mem_O_iff _).2 (h1 i j), fun i j => (GlobalTheory.StabInt.mem_O_iff _).2 (h2 i j)⟩)
 

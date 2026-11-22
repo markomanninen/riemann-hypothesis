@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.DetOfBlockDiag
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.DetOfBlockDiag
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,7 +56,7 @@ theorem isUnit_nmat (τ : X.Ψ) (z : V (nd X)) : IsUnit (mat (nmat X z) τ) := b
   · intro a c hac
     have h' : a < c := OrderDual.toDual_lt_toDual.mp hac
     simp only [mat, nmat, Matrix.of_apply]
-    rw [dif_neg (not_lt.mpr h'.le), if_neg h'.ne]
+    rw [dite_eq_right (not_lt.mpr h'.le), if_neg h'.ne]
 
 def entryL (a c : Fin r) : Matrix (Fin r) (Fin r) ℂ →ₗ[ℂ] ℂ where
   toFun M := M a c

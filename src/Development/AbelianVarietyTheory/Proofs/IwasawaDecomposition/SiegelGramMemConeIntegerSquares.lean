@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetSquaresConeOfCompactPosDefStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegelZeroFront
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetSquaresConeOfCompactPosDefStatement
+
+@[expose] public section
 
 open Matrix GlobalTheory.RedTh
 
@@ -65,7 +69,7 @@ theorem tailForm_posDef {n : ℕ} (k : Fin n) {u : Matrix (Fin n) (Fin n) ℝ} (
 
 theorem tailForm_apply {n : ℕ} (k : Fin n) (u : Matrix (Fin n) (Fin n) ℝ) (a b : Tail k) :
     tailForm k u a b = ∑ m : Fin n, if k ≤ m then ((4 : ℝ) ^ (m : ℕ))⁻¹ * u m a.1 * u m b.1 else 0 := by
-  rw [tailForm, mul_apply]
+  rw [tailForm, Matrix.mul_apply]
   simp only [mul_diagonal, transpose_apply, submatrix_apply]
   rw [← Finset.sum_filter, Finset.sum_subtype (Finset.univ.filter (k ≤ ·)) (p := (k ≤ ·)) (by simp)]
   refine Finset.sum_congr rfl fun c _ => by ring
@@ -166,7 +170,7 @@ theorem gram_mem_cone : ∀ n : ℕ, ∃ S : Finset (Fin n → ℤ), ∀ (d : Fi
   ext i j
   have hL : GlobalTheory.RedTh.gram d u i j = ∑ k, G k * ∑ m : Fin n, if k ≤ m then ((4 : ℝ) ^ (m : ℕ))⁻¹ * u m i * u m j else 0 := by
     calc GlobalTheory.RedTh.gram d u i j = ∑ m, u m i * d m * u m j := by
-          rw [GlobalTheory.RedTh.gram, mul_apply]; simp only [mul_diagonal, transpose_apply]
+          rw [GlobalTheory.RedTh.gram, Matrix.mul_apply]; simp only [mul_diagonal, transpose_apply]
       _ = ∑ m : Fin n, ∑ k : Fin n, if k ≤ m then G k * (((4 : ℝ) ^ (m : ℕ))⁻¹ * u m i * u m j) else 0 := by
           refine Finset.sum_congr rfl fun m _ => ?_
           rw [hd m, Finset.mul_sum, Finset.mul_sum, Finset.sum_mul]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
@@ -11,7 +15,6 @@ variable {k : Type} [Field k] {ι ι' n n' : Type} [Fintype ι] [DecidableEq ι]
   [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n']
 
 omit [Fintype ι] [DecidableEq ι] in
-
 theorem typeFrame_bas_zero (ϖ : kˣ) (ord : ι ≃ n ⊕ Fin 0) : (typeFrame ϖ ord).bas = 1 := by
   apply Units.ext
   ext i j
@@ -22,7 +25,6 @@ theorem typeFrame_bas_zero (ϖ : kˣ) (ord : ι ≃ n ⊕ Fin 0) : (typeFrame ϖ
   · exact i.elim0
 
 omit [Fintype ι] [DecidableEq ι] [Fintype ι'] [DecidableEq ι'] in
-
 theorem coords_withCol (ϖ : kˣ) (ord : ι ≃ n ⊕ Fin 0) (ord' : ι' ≃ n' ⊕ Fin (0 + 1)) (x₀ : Matrix n n' k)
     (y : n → k) : (typeFrame ϖ ord).coords (typeFrame ϖ ord') (withCol x₀ y) =
       (withCol x₀ ((ϖ : k) • y)).submatrix ord ord' := by
@@ -59,7 +61,6 @@ theorem SymData.Psi_one_eq (x₀ : Matrix (XIx (Fin κ) t (s + 1)) (XIx (Fin κ)
     TypeDatum.iterPhi]
 
 omit [Fintype t] [DecidableEq t] in
-
 theorem not_freeIx_col (ρ : ℕ) {l j : ℕ} (a : Ix (Fin κ ⊕ Fin (l + 1)) t j) :
     ¬ FreeIx ρ a (.inl (.inr 0)) := by
   rcases a with (i | i) | p <;> simp [FreeIx, FreeTop]
@@ -85,12 +86,14 @@ theorem SymData.symmetricChain_sub_base_mem_latticeBox_iff (y : XIx (Fin κ) t (
   rw [e, unif_mul_lt_one_iff S.unif]
   simp
 
+omit [Fintype t] [DecidableEq t] in
 private theorem stdOrd_ixSucc_inl_inr_zero :
     stdOrd (Fin κ) t (s + 1) 0 rfl (ixSucc (Fin κ ⊕ Fin (s + 1)) t s (Sum.inl (Sum.inl (Sum.inr 0)))) =
       Sum.inl (Sum.inl (Sum.inr 0)) := by
   have h : ixSucc (Fin κ ⊕ Fin (s + 1)) t s (Sum.inl (Sum.inl (Sum.inr 0))) = Sum.inl (Sum.inr 0) := rfl
   rw [h, stdOrd_last]
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype t] [DecidableEq t] in
 private theorem submatrix_withCol_stdOrd_ixSucc_apply_eq (x₀ : Matrix (XIx (Fin κ) t (s + 1)) (XIx (Fin κ) t s) k)
     (w : XIx (Fin κ) t (s + 1) → k) (r : Ix (Fin κ ⊕ Fin (s + 1)) t s ⊕ t) (i : XIx (Fin κ) t (s + 1))
     (hr : stdOrd (Fin κ) t (s + 1) 0 rfl (ixSucc _ t s r) = Sum.inl i) :

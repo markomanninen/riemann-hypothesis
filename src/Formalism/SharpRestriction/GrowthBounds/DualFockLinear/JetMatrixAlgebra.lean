@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.BaseMatrixAlgebra
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FormCoreSKXOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.BaseMatrixAlgebra
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FormCoreSKXOf
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -130,14 +134,16 @@ theorem ten_sideX (O Kf : Type) [CommRing O] [IsDomain O] [Field Kf] [Algebra O 
         congr 1
         exact Finset.prod_congr rfl fun s _ => dualB_repr (β s) (b s) (Q s) (i s)
       have h3 : ∀ i, x.repr u i = ∏ s, (b s).repr (P s) (i s) := fun i => repr_prod V b x hx P u hu i
-      rw [h2, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h2, map_sum, LinearMap.sum_apply]
       simp only [map_smul, LinearMap.smul_apply, h1, Module.Basis.coord_apply, smul_eq_mul, h3,
         ← Finset.prod_mul_distrib]
       rw [← Fintype.piFinset_univ,
         ← Finset.prod_univ_sum (fun _ => Finset.univ) (fun s a => β s (Q s) (b s a) * (b s).repr (P s) a)]
       refine Finset.prod_congr rfl fun s _ => ?_
       conv_rhs => rw [← (b s).sum_repr (P s)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_smul, smul_eq_mul, mul_comm]
     have hB := TS.fock_pairing_bilinear

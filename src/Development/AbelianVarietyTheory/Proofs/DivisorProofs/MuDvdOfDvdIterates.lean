@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LieInj
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuCoeffZeroNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TiltIsDomainValuationRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IotaScalarOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HodgeTateLatticePointFinrankTateModule
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EpsilonPairingZeta
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfSmulMemRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MuCoeffZeroNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TiltIsDomainValuationRing
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.SandwichMaps GlobalTheory.DetInv GlobalTheory.HTLat Matrix TensorProduct
 
@@ -54,8 +59,8 @@ variable {p : ℕ} [hp : Fact p.Prime] {C : Type} [Field C] [IsAlgClosed C] [Cha
   {v : Valuation C NNReal} {O : Type} [CommRing O] [Algebra O C]
   [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O]
 
-omit [IsAlgClosed C] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 
+omit [IsAlgClosed C] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 theorem modP_isNilpotent_of_not_isUnit (hv : v.Integers O) (x : ModP O p) (hx : ¬IsUnit x) : IsNilpotent x := by
   obtain ⟨o, rfl⟩ := Ideal.Quotient.mk_surjective (I := Ideal.span {(p : O)}) x
 
@@ -72,8 +77,8 @@ theorem modP_isNilpotent_of_not_isUnit (hv : v.Integers O) (x : ModP O p) (hx : 
   rw [← map_pow]
   exact Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton.2 hdvd)
 
-omit [IsAlgClosed C] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 
+omit [IsAlgClosed C] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 theorem eq_zero_of_forall_pow_dvd (hv : v.Integers O) (c m : PreTilt O p) (hc : ¬IsUnit c)
     (h : ∀ n, c ^ p ^ n ∣ m) : m = 0 := by
   have h0 : ¬IsUnit (PreTilt.coeff 0 c) := fun hu => hc (GlobalTheory.AinfXi.isUnit_of_coeff_zero hu)

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Loc4ResOfLine
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Loc4ResOfLine
+
+@[expose] public section
 
 noncomputable section
 

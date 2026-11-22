@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSplitDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSplitDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,8 +100,8 @@ def IsTheta (ρ : Representation A (GL (Fin n) k) M) (C : Subgroup 𝓀[k]ˣ)
     (θ : (Fin n → kˣ) →* (Module.End A (fixd ρ (iwC k n C)))ˣ) : Prop :=
   ∀ t, Dom t → (θ t : Module.End A (fixd ρ (iwC k n C))) = hk ρ (iwC k n C) (diagT k (Fin n) t)
 
-variable (k) in
 
+variable (k) in
 def IsGenMod (C : Subgroup 𝓀[k]ˣ) (δ : kˣ) : Prop :=
   ∃ d : 𝒪[k]ˣ, Units.map (algebraMap 𝒪[k] k).toMonoidHom d = δ ∧
     Subgroup.zpowers (Units.map (residue 𝒪[k]).toMonoidHom d) ⊔ C = ⊤

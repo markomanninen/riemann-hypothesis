@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.ValuationDetEqOfSpanEq
-import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
-import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
+module
+
+public import ReciprocityTheory.DualLattices.ValuationDetEqOfSpanEq
+public import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
+public import ReciprocityTheory.DualLattices.VIntCastLtOneOfDvd
+
+@[expose] public section
 
 noncomputable section
 

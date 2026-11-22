@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlmostNormClassCount
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaProdEqOfEverywhereNormDiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlmostNormClassCount
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem ringEquivReal_infDiag {K : Type} [Field K] [NumberField K] {w : Infinite
     (hw : w.IsReal) (t : Kˣ) :
     InfinitePlace.Completion.ringEquivRealOfIsReal hw ((infDiag K t w : (w.Completion)ˣ) : w.Completion) =
       InfinitePlace.embedding_of_isReal hw (t : K) :=
-  InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv _).symm (t : K))
+  by
+    simp [infDiag, QuadSymbol.toUnits, InfinitePlace.Completion.algebraMap_apply]
 
 theorem mem_normGroup_of_pos {K L : Type} [Field K] [NumberField K] [Field L] [Algebra K L]
     [Algebra.IsQuadraticExtension K L] {w : InfinitePlace K} (hw : w.IsReal) (z : (w.Completion)ˣ)
@@ -55,8 +60,8 @@ namespace GlobalTheory.QuadRecip
 
 open GlobalTheory.QuadSymbol
 
-open Classical in
 
+open Classical in
 theorem prod_sign_eq {K : Type} [Field K] [NumberField K] (S : Finset {w : InfinitePlace K // w.IsReal})
     (f : InfinitePlace K → ℤˣ)
     (hf : ∀ w, f w = if (∃ hw : w.IsReal, (⟨w, hw⟩ : {w : InfinitePlace K // w.IsReal}) ∈ S) then -1 else 1) :
@@ -78,8 +83,8 @@ theorem prod_sign_eq {K : Type} [Field K] [NumberField K] (S : Finset {w : Infin
       exact ⟨u.2, hu⟩
   rw [this, Finset.card_map]
 
-open Classical in
 
+open Classical in
 theorem exists_signs_iff_even (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L]
     [Algebra K L] [Algebra.IsQuadraticExtension K L] (hL : IsTotallyComplex L)
     (S : Finset {w : InfinitePlace K // w.IsReal}) :

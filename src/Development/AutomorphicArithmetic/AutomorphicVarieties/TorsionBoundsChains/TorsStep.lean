@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TorsStep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TorsionBoundsChains.FaceDSingle
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TorsStep
+
+@[expose] public section
 
 open CategoryTheory UpperTheory.V.KH
 

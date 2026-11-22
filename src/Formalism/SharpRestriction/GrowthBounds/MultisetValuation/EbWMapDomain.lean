@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EaGeCOfNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,10 @@ def eb_w (F : MvPowerSeries σ K) (n : σ →₀ ℕ) : K :=
   (∏ x ∈ n.support, ((n x).factorial : K)) * MvPowerSeries.coeff n F
 
 def eb_J (F : MvPowerSeries σ K) (Q : MvPolynomial σ (MvPolynomial τ K)) : MvPolynomial τ K :=
-  ∑ n ∈ Q.support, eb_w F n • MvPolynomial.coeff n Q
+  ∑ n ∈ Q.support, eb_w F n • AddMonoidAlgebra.coeff Q n
 
 theorem eb_J_subset (F : MvPowerSeries σ K) (Q : MvPolynomial σ (MvPolynomial τ K)) (S : Finset (σ →₀ ℕ))
-    (h : Q.support ⊆ S) : eb_J F Q = ∑ n ∈ S, eb_w F n • MvPolynomial.coeff n Q := by
+    (h : Q.support ⊆ S) : eb_J F Q = ∑ n ∈ S, eb_w F n • AddMonoidAlgebra.coeff Q n := by
   unfold eb_J
   apply Finset.sum_subset h
   intro n _ hn
@@ -34,17 +38,6 @@ theorem eb_applyD (P : MvPolynomial σ (MvPolynomial τ ℤ)) (F : MvPowerSeries
   intro n _
   rw [MvPolynomial.coeff_map]
 
-theorem eb_J_C_mul (F : MvPowerSeries σ K) (r : MvPolynomial τ K) (Q : MvPolynomial σ (MvPolynomial τ K)) :
-    eb_J F (MvPolynomial.C r * Q) = r * eb_J F Q := by
-  rw [eb_J_subset F (MvPolynomial.C r * Q) Q.support (by
-    rw [MvPolynomial.C_mul']
-    exact MvPolynomial.support_smul)]
-  unfold eb_J
-  rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro n _
-  rw [MvPolynomial.coeff_C_mul, mul_smul_comm]
-
 theorem eb_w_mapDomain (ε : κ → σ) (hε : Function.Injective ε) (F : MvPowerSeries σ K) (n : κ →₀ ℕ) :
     eb_w F (n.mapDomain ε) = eb_w (resV ε F) n := by
   classical
@@ -53,7 +46,7 @@ theorem eb_w_mapDomain (ε : κ → σ) (hε : Function.Injective ε) (F : MvPow
   congr 1
   apply Finset.prod_congr rfl
   intro y _
-  rw [Finsupp.mapDomain_apply hε]
+  rw [Finsupp.mapDomain_apply_of_injective hε]
 
 theorem eb_J_rename (ε : κ → σ) (hε : Function.Injective ε) (F : MvPowerSeries σ K)
     (Q : MvPolynomial κ (MvPolynomial τ K)) : eb_J F (MvPolynomial.rename ε Q) = eb_J (resV ε F) Q := by
@@ -70,7 +63,8 @@ theorem eb_J_map (φ : τ' → τ) (G : MvPowerSeries κ K) (Pc : MvPolynomial �
       MvPolynomial.rename φ (Formalism.DworkPowerSeriesWeights.jetPairPoly Pc G) := by
   rw [eb_J_subset G _ Pc.support (MvPolynomial.support_map_subset _ _)]
   unfold Formalism.DworkPowerSeriesWeights.jetPairPoly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply Finset.sum_congr rfl
   intro n _
   rw [MvPolynomial.coeff_map, map_mul, MvPolynomial.rename_C, MvPolynomial.smul_eq_C_mul, mul_comm]
@@ -113,7 +107,8 @@ theorem eb_fac (v : X.Pl) (j : ℕ) (K' : Type) [Field K'] (I : X.ColCh j) (s : 
   change _ = MvPolynomial.map (MvPolynomial.map (Int.castRingHom K')) (∑ a : Fin (NN X.G.P.m X.t j),
     MvPolynomial.C (MvPolynomial.X (⟨v, ((ea_e X v).symm s, r.val, a)⟩ : X.FrI j)) *
       MvPolynomial.X (⟨v, ((ea_e X v).symm s, a, I v ((ea_e X v).symm s) c.val r'.val)⟩ : X.ZA j))
-  simp only [RingHom.mapMatrix_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
     MvPolynomial.map_C, MvPolynomial.map_X, MvPolynomial.rename_C, MvPolynomial.rename_X, AlgHom.toRingHom_eq_coe,
     RingHom.coe_coe]
   rfl

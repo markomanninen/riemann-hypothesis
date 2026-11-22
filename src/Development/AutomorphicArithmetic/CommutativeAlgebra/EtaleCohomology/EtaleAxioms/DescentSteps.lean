@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyLongExactFirstOfInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNaturalHomotopyEquivChainsConstantPresheafStatement
-import Development.EtaleCohomology.EtaleSheaves.CxDescPf
-import Development.EtaleCohomology.EtaleSheaves.DescentInduction.Bounds
-import Development.EtaleCohomology.EtaleSheaves.LevelIdentPf
-import Development.EtaleCohomology.EtaleSheaves.inclPf
-import Development.EtaleCohomology.EtaleSheaves.longPf
-import Development.EtaleCohomology.EtaleSheaves.longPfSes
-import Development.EtaleCohomology.EtaleSheaves.shiftPf
-import Development.EtaleCohomology.EtaleSheaves.stupidPf
-import Development.EtaleCohomology.EtaleSheaves.CochainComplexSingleFunctorZeroMapFZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyLongExactFirstOfInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNaturalHomotopyEquivChainsConstantPresheafStatement
+public import Development.EtaleCohomology.EtaleSheaves.CxDescPf
+public import Development.EtaleCohomology.EtaleSheaves.DescentInduction.Bounds
+public import Development.EtaleCohomology.EtaleSheaves.LevelIdentPf
+public import Development.EtaleCohomology.EtaleSheaves.inclPf
+public import Development.EtaleCohomology.EtaleSheaves.longPf
+public import Development.EtaleCohomology.EtaleSheaves.longPfSes
+public import Development.EtaleCohomology.EtaleSheaves.shiftPf
+public import Development.EtaleCohomology.EtaleSheaves.stupidPf
+public import Development.EtaleCohomology.EtaleSheaves.CochainComplexSingleFunctorZeroMapFZero
+
+@[expose] public section
 
 namespace UpperTheory.Et.EtaleDescentEtaleAxioms
 

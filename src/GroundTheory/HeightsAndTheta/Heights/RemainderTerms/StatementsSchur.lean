@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.AltCoeff
-import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.AltCoeff
+public import GroundTheory.HeightsAndTheta.Heights.KernelsRest
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -20,7 +25,7 @@ def SchAltPartitionExpansion.Statement : Prop :=
   ∀ (r n : ℕ) (P : MvPolynomial (Fin r) ℚ), Comb.IsAlt P →
     P.IsHomogeneous (r * (r - 1) / 2 + n) →
     P = ∑ lam ∈ partitionsOf r n,
-      C (coeff (Finsupp.equivFunOnFinite.symm fun i : Fin r => lam i + (r - 1 - (i : ℕ))) P) *
+      C (AddMonoidAlgebra.coeff P (Finsupp.equivFunOnFinite.symm fun i : Fin r => lam i + (r - 1 - (i : ℕ)))) *
         (vandermondeOf (fun i : Fin r => (X i : MvPolynomial (Fin r) ℚ)) * schur (Fin r) lam)
 
 def rootOfUnity (k : ℕ) : ℂ := Complex.exp (2 * Real.pi * Complex.I / k)
@@ -63,7 +68,7 @@ def SchEvalPowerSumHom.Statement : Prop :=
   ∀ (N k : ℕ) (hk1 : 1 ≤ k) (hkN : k ≤ N) (S : MvPolynomial (Fin N) ℚ),
     S.IsWeightedHomogeneous (fun i : Fin N => (i : ℕ) + 1) k →
       aeval (rootOfUnityPoint N k) (powerSumHom N S) =
-        (k : ℂ) * ((coeff (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) S : ℚ) : ℂ)
+        (k : ℂ) * ((AddMonoidAlgebra.coeff S (Finsupp.single (⟨k - 1, by omega⟩ : Fin N) 1) : ℚ) : ℂ)
 
 def SchSchurHomogeneous.Statement : Prop :=
   ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (r : ℕ) (lam : Fin r → ℕ),

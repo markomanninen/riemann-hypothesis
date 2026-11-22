@@ -1,20 +1,24 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentTermInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityCuspidalProductStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicitySubquotientLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSubquotientCuspidalPermutationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLength
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrrParIffCuspidalProduct
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentTermInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityCuspidalProductStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicitySubquotientLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSubquotientCuspidalPermutationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLength
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrrParIffCuspidalProduct
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,9 +91,9 @@ theorem absPow_natCast (d : ℕ) : absPow k (d : ℂ) = absPow k 1 ^ d := by
   | zero => simp
   | succ n ih => rw [Nat.cast_succ, absPow_add, pow_succ, ih]
 
-abbrev seg2 (ρ : IrrGL k) (hρ : ρ.IsCusp) : Segment k := Segment.ofFirst ρ hρ 2 two_pos
+abbrev seg2 (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) : Segment k := Segment.ofFirst ρ hρ 2 two_pos
 
-theorem not_isSubquotient_dec (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL k) (hρ : ρ.IsCusp) :
+theorem not_isSubquotient_dec (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (ρ : IrrGL (k := k)) (hρ : ρ.IsCusp) :
     ¬ IsSubquotient (piTensor fun a => (dec (seg2 ρ hρ) a).rep) (piTensor fun a => ((seg2 ρ hρ).term a).rep) := by
   intro h
   obtain ⟨ω, -, hω⟩ := exists_smooth_hasCentralChar ρ.2.rep.smooth ρ.2.rep.irr
@@ -202,7 +206,7 @@ theorem sub_le_ker {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [Add
     obtain ⟨A, hA', hAk⟩ := (eq_bot_or_exists_atom_le f.ker).resolve_left hb
     exact hn (hu A (GlobalTheory.CuspFactor.irr_of_atom _ A hA') ▸ hAk)
 
-theorem jm_eq_zero_of_sub (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL k)
+theorem jm_eq_zero_of_sub (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (x : Fin h → IrrGL (k := k))
     (hd : ∑ a, (x a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)
     (hc : IsCosocle π (prodIrr x hd)) (S : Subrepresentation (prodIrr x hd))
     (hu : ∀ S' : Subrepresentation (prodIrr x hd), S'.toRepresentation.IsIrreducible → S' = S) (hS : S ≠ ⊤)
@@ -231,7 +235,7 @@ theorem sub_ne_top {s N : ℕ} {d : Fin s → ℕ} (e : (Σ a, Fin (d a)) ≃ Fi
   exact h2 ((h1.trans (.of_surjective _ (GlobalTheory.JacquetExact.jacMap_surjective e ι hιs))).trans
     (.of_surjective φ.symm.toIntertwiningMap φ.symm.toLinearEquiv.surjective))
 
-theorem jm_term_eq_zero (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hZ : GlobalTheory.Published.SegmentRepresentation) (ρ : IrrGL k)
+theorem jm_term_eq_zero (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hZ : GlobalTheory.Published.SegmentRepresentation) (ρ : IrrGL (k := k))
     (hρ : ρ.IsCusp) {N : ℕ} (hd : ∑ a, ((seg2 ρ hρ).term a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) (hc : IsCosocle π (prodIrr (seg2 ρ hρ).term hd)) :
     jm (seg2 ρ hρ).term hd π = 0 := by
@@ -250,7 +254,7 @@ theorem perm_two (e : Equiv.Perm (Fin 2)) : e = 1 ∨ e = Fin.revPerm := by
   revert e
   decide
 
-theorem fine_jacquet_length_two_segment (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hZ : GlobalTheory.Published.SegmentRepresentation) (ρ : IrrGL k)
+theorem fine_jacquet_length_two_segment (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hZ : GlobalTheory.Published.SegmentRepresentation) (ρ : IrrGL (k := k))
     (hρ : ρ.IsCusp) : FineJac (seg2 ρ hρ) := by
   intro N V _ _ π hL
   obtain ⟨hd, hc⟩ := hL
@@ -258,7 +262,7 @@ theorem fine_jacquet_length_two_segment (hA : GlobalTheory.Published.Irreducible
   have hsq := hc.isSubquotient
   have hπs : IsSmooth π := hsq.isSmooth hsm
   have hz := jm_term_eq_zero hA hZ ρ hρ hd π hc
-  have hmono : ∀ {c : ℕ} (y : Fin c → IrrGL k) (hy : ∑ a, (y a).1 = N), jm y hy π ≤ jm y hy (prodIrr (seg2 ρ hρ).term hd) :=
+  have hmono : ∀ {c : ℕ} (y : Fin c → IrrGL (k := k)) (hy : ∑ a, (y a).1 = N), jm y hy π ≤ jm y hy (prodIrr (seg2 ρ hρ).term hd) :=
     fun y hy => GlobalTheory.CompanionTheory.JmMono.jm_le_of_isSubquotient y hy π _ hsm hsq
   have hdec : ∃ hy : ∑ a, (dec (seg2 ρ hρ) a).1 = N, 1 ≤ jm (dec (seg2 ρ hρ)) hy π := by
     obtain ⟨e, he, h1⟩ := GlobalTheory.T.irreducible_subquotient_cuspidal_permutation hA (seg2 ρ hρ).term hd (seg2 ρ hρ).isCusp_term π hπs hc.1 hsq

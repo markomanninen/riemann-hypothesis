@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ThSphSt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.ThSphSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,10 +38,12 @@ theorem finInt {K : Type*} [TopologicalSpace K] [MeasurableSpace K] [BorelSpace 
       simp only [Submodule.coe_smul] at h3
       exact h3.symm
     conv_lhs => rw [h2]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, smul_eq_mul, ← hL i ⟨v k, hv k⟩]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [map_smul, smul_eq_mul]
   have hint : ∀ i, Integrable (fun k => w k * L i (v k) * l (b i)) μ := fun i =>
     integrable_of_cpt μ hK ((hw.mul (hc (L i))).mul continuous_const)
@@ -49,8 +55,8 @@ theorem finInt {K : Type*} [TopologicalSpace K] [MeasurableSpace K] [BorelSpace 
         refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
         simp only [hv' k, Finset.mul_sum, mul_assoc]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem thSph_of' (hA : HelpA) (hC : HelpC) (hKAK : KAK) (hMult : Mult) (hD : DerivativeVacuumDilations) (hSph : Sph)
     (hSZ : SecZero) (hHP : HolParam) (hLC : LC) : ThSph := by
   intro m n ε c t p q e sL ρ hL G _ _ _ _ _ _ Pp Γ ι s₀ Ht sec I Λ hG _ _ μ _ _ g y

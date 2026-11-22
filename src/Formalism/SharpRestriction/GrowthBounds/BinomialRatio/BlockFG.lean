@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FockZeroRight
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FockZeroRight
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FactorsOfPerturb
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem bb_coeff {p : ℕ} (S : UniformizedDVR p O) (h2 : S.w ^ 2 = (p : O)) {σ
   | add x y _ _ hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [coeff_add, mul_add, ha, hb, map_add]⟩
+    exact ⟨a + b, by rw [MvPolynomial.coeff_add, mul_add, ha, hb, map_add (f := _)]⟩
   | smul o x _ hx =>
     obtain ⟨a, ha⟩ := hx
     refine ⟨o * a, ?_⟩

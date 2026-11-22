@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisConjCentralIdempotent
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.TypesDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,24 +119,6 @@ theorem isCuspidal_transp (e : ι ≃ κ) {τ : FDRep ℂ (GL ι K)} (h : IsCusp
   exact h s (b ∘ e) (hb.comp e.surjective) hs v (fun u hu => by
     have := hv _ (mem_unip_glEquiv b e hu)
     rwa [transp_ρ, MulEquiv.symm_apply_apply] at this)
-
-theorem hasCuspLabel_transp (cv : LabelConv K) (e : ι ≃ κ) {τ : FDRep ℂ (GL ι K)} {P : K[X]}
-    (h : HasCuspLabel cv τ P) : HasCuspLabel cv (transp e τ) P := by
-  unfold HasCuspLabel at *
-  obtain ⟨h1, h2, h3, h4, h5⟩ := h
-  have hc : Fintype.card κ = Fintype.card ι := (Fintype.card_congr e).symm
-  refine ⟨h1, h2, h3, by rw [h4, hc], ?_⟩
-  intro x hx γ hγ z hz m hm
-  have hcp : (((glEquiv K e).symm γ : GL ι K) : Matrix ι ι K).charpoly = (γ : Matrix κ κ K).charpoly := by
-    first
-      | rw [coe_glEquiv_symm, Matrix.charpoly_reindex]
-      | simp [coe_glEquiv_symm, Matrix.charpoly_reindex]
-  rw [hc] at hm ⊢
-  have key := h5 x hx ((glEquiv K e).symm γ) (by rw [hcp]; exact hγ) z (by rw [hcp]; exact hz) m hm
-  first
-    | (rw [transp_ρ]; exact key)
-    | exact key
-    | simpa [transp_ρ] using key
 
 end Transp
 

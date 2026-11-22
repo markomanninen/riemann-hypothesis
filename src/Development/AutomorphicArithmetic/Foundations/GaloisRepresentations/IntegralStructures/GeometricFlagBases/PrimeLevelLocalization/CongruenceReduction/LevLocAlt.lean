@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,10 +35,10 @@ def CjEnt : Prop :=
 
 def CjInt : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (g : GUf E n) (w : Plc E),
-    (comp w g ∈ KGL w n → comp (cj w) g ∈ KGL (cj w) n → 0 < n →
+    (comp w g ∈ KGL w (n := n) → comp (cj w) g ∈ KGL (cj w) (n := n) → 0 < n →
       Valued.v (GroundTheory.Global.AdeleBaseChange.finiteAdeleMap ℚ E ((sim g : AfQˣ) : AfQ) w) = 1) ∧
-    (Valued.v (GroundTheory.Global.AdeleBaseChange.finiteAdeleMap ℚ E ((sim g : AfQˣ) : AfQ) w) = 1 → comp w g ∈ KGL w n →
-      comp (cj w) g ∈ KGL (cj w) n)
+    (Valued.v (GroundTheory.Global.AdeleBaseChange.finiteAdeleMap ℚ E ((sim g : AfQˣ) : AfQ) w) = 1 → comp w g ∈ KGL w (n := n) →
+      comp (cj w) g ∈ KGL (cj w) (n := n))
 
 def ShpOf : Prop :=
   Sides → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n : ℕ) (x : E), Gen A x → ∀ q : ℕ, q.Prime → A.SplitK q →
@@ -64,11 +68,11 @@ def TMult : Prop := AtSite fun _ _ _ _ _ _ p _ S F _ w _ i g =>
 
 def LocIdx : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Plc E) (i : ℕ), i ≤ n → ∀ t : GLw n w, IsT w i t →
-    ∀ [w.asIdeal.IsMaximal], ((KGL w n).comap (MulAut.conj t).toMonoidHom).relIndex (KGL w n) =
+    ∀ [w.asIdeal.IsMaximal], ((KGL w (n := n)).comap (MulAut.conj t).toMonoidHom).relIndex (KGL w (n := n)) =
       Nat.card (crystallineComparison.Gr (𝓞 E ⧸ w.asIdeal) (Fin n → 𝓞 E ⧸ w.asIdeal) i)
 
 def LevLoc : Prop := AtSite fun _ _ _ _ _ n _ _ _ F _ w σ _ g =>
-  (∀ k, F.j k ∈ σ.K₀ → comp w k ∈ KGL w n) ∧ (∀ κ ∈ KGL w n, ∃ k, F.j k ∈ σ.K₀ ∧ comp w k = κ) ∧
-    ∀ k, F.j k ∈ σ.K₀ → (F.j (g * k * g⁻¹) ∈ σ.K₀ ↔ comp w (g * k * g⁻¹) ∈ KGL w n)
+  (∀ k, F.j k ∈ σ.K₀ → comp w k ∈ KGL w (n := n)) ∧ (∀ κ ∈ KGL w (n := n), ∃ k, F.j k ∈ σ.K₀ ∧ comp w k = κ) ∧
+    ∀ k, F.j k ∈ σ.K₀ → (F.j (g * k * g⁻¹) ∈ σ.K₀ ↔ comp w (g * k * g⁻¹) ∈ KGL w (n := n))
 
 end UpperTheory.Gal.Int.Geo.Pl.Tj

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LineHigh
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LineHigh
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -39,7 +43,7 @@ theorem comp_sq (hP : SchPB) {U V X U' V' X' : Scheme.{0}} (f : U ⟶ X) (g : V 
     (hu' : sch.map f ≫ sch.map p = sch.map u ≫ sch.map f') (hv' : sch.map g ≫ sch.map p = sch.map v ≫ sch.map g') :
     have := hP f g; have := hP f' g'
     inv (pullbackComparison sch f g) ≫ sch.map (pullback.map f g f' g' u v p hu hv) =
-      pullback.map _ _ _ _ (sch.map u) (sch.map v) (sch.map p) hu' hv' ≫ inv (pullbackComparison sch f' g') := by
+      pullback.map _ _ _ _ (sch.map u) (sch.map v) (sch.map p) hu' hv' ≫ inv (pullbackComparison sch f' g') := set_option synthInstance.maxHeartbeats 200000 in by
   have := hP f g; have := hP f' g'
   rw [IsIso.inv_comp_eq, ← Category.assoc, IsIso.eq_comp_inv]
   apply pullback.hom_ext

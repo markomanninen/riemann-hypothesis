@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MkLeContinuumOfDenseRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,8 +105,8 @@ theorem isIntegral_of_norm_le (x : ℂ) (h : ∀ (l : ℕ) [Fact l.Prime] (ι : 
   obtain ⟨f, hf, -, hfm⟩ := lifts_and_natDegree_eq_and_monic ((lifts_iff_coeff_lifts _).2 hc) hm
   exact ⟨f, hfm, by rw [← aeval_def, ← aeval_map_algebraMap ℚ, hf, minpoly.aeval]⟩
 
-open scoped Matrix in
 
+open scoped Matrix in
 theorem norm_root_eq_one {Γ k : Type} [Group Γ] [TopologicalSpace Γ] [CompactSpace Γ] [NormedField k] {n : ℕ}
     (r : Γ →* GL (Fin n) k) (hr : Continuous r) (g : Γ) (b : k)
     (hb : (r g : Matrix (Fin n) (Fin n) k).charpoly.IsRoot b) : ‖b‖ = 1 := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.WpBridge
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.WpBridge
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,28 +92,28 @@ lemma stepB (L : PeriodPair) {z w : ℂ} (hz : z ∉ L.lattice) (hw : w ∉ L.la
 
 end OriginCoordinatesAdd
 
-open OriginCoordinatesAdd in
 
+open OriginCoordinatesAdd in
 theorem addLaw : AddLaw := by
   intro L z w hz hw hm hp
-  have hB := stepB L hz hw hm hp
+  have hB := OriginCoordinatesAdd.stepB L hz hw hm hp
   refine ⟨hB, ?_⟩
-  have hA := stepA L hz hw hm hp
-  have hne := wp_ne L hz hw hm hp
+  have hA := OriginCoordinatesAdd.stepA L hz hw hm hp
+  have hne := OriginCoordinatesAdd.wp_ne L hz hw hm hp
   have hF : HasDerivAt (fun z' => L.weierstrassP (z' + w)) (L.derivWeierstrassP (z + w)) z :=
-    HasDerivAt.comp_add_const z w (hasDerivAt_wp L hp)
-  have hG := ((((hasDerivAt_lam L hz hne).pow 2).div_const 4).sub (hasDerivAt_wp L hz)).sub_const
-    (L.weierstrassP w)
+    HasDerivAt.comp_add_const z w (OriginCoordinatesAdd.hasDerivAt_wp L hp)
+  have hG := ((((OriginCoordinatesAdd.hasDerivAt_lam L hz hne).pow 2).div_const 4).sub
+    (OriginCoordinatesAdd.hasDerivAt_wp L hz)).sub_const (L.weierstrassP w)
   have hEq : (fun z' => L.weierstrassP (z' + w)) =ᶠ[𝓝 z]
-      (fun z' => lam L w z' ^ 2 / 4 - L.weierstrassP z' - L.weierstrassP w) := by
-    filter_upwards [ev_adm L hz hm hp] with z' ⟨h1, h2, h3⟩
-    rw [stepB L h1 hw h2 h3]
+      (fun z' => OriginCoordinatesAdd.lam L w z' ^ 2 / 4 - L.weierstrassP z' - L.weierstrassP w) := by
+    filter_upwards [OriginCoordinatesAdd.ev_adm L hz hm hp] with z' ⟨h1, h2, h3⟩
+    rw [OriginCoordinatesAdd.stepB L h1 hw h2 h3]
     rfl
   have hD := hF.unique (hG.congr_of_eventuallyEq hEq)
   rw [hD]
   unfold addY
   rw [← hB, hA]
-  unfold lam
+  unfold OriginCoordinatesAdd.lam
   norm_num
   ring
 

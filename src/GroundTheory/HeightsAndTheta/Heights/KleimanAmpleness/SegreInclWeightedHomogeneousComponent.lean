@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideLast
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideLast
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -13,8 +18,8 @@ section
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} {F : Type} [Field F]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem segre_weight_mapDomain (e : (Σ k, ι k) →₀ ℕ) :
     Finsupp.weight (NumbersDVR.blockWeight (segreIdx ι))
         (Finsupp.mapDomain (fun v : Σ k, ι k => (⟨Sum.inr v.1, v.2⟩ : Σ c, segreIdx ι c)) e) =
@@ -78,7 +83,7 @@ theorem segreLiftMap_monomial (W : Ideal (MRing ι F)) (s : (Σ c, segreIdx ι c
     have hm : (monomial (Finsupp.single v n + s) r : MRing (segreIdx ι) F) =
         X v ^ n * monomial s r := by
       rw [X_pow_eq_monomial, monomial_mul, one_mul]
-    rw [hm, map_mul, map_pow, ha, segreLiftMap, aeval_X, hβ, map_add, Pi.add_apply,
+    rw [hm, map_mul, map_pow, ha, segreLiftMap, aeval_X, hβ, map_add (f := _), Pi.add_apply,
       Finsupp.weight_single, Pi.smul_apply, smul_eq_mul, map_mul, map_pow]
     ring
 
@@ -86,10 +91,11 @@ theorem segreLiftMap_of_isWeightedHomogeneous (W : Ideal (MRing ι F)) {f : MRin
     {e : Unit ⊕ K → ℕ} (hf : IsWeightedHomogeneous (NumbersDVR.blockWeight (segreIdx ι)) f e) :
     ∃ a, segreLiftMap ι F W f = Polynomial.X ^ e (Sum.inl ()) * Polynomial.C a := by
   classical
-  choose a ha using fun s => segreLiftMap_monomial W s (coeff s f)
+  choose a ha using fun s => segreLiftMap_monomial W s (AddMonoidAlgebra.coeff f s)
   refine ⟨∑ s ∈ f.support, a s, ?_⟩
   conv_lhs => rw [f.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [ha s, hf (mem_support_iff.mp hs)]
 
@@ -170,7 +176,8 @@ theorem SegreLiftComap.proof : SegreLiftComap.Statement := by
   rw [segreLift, RingHom.mem_ker]
   constructor
   · intro hf
-    rw [← sum_weightedHomogeneousComponent (NumbersDVR.blockWeight (segreIdx ι)) f,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← sum_weightedHomogeneousComponent (NumbersDVR.blockWeight (segreIdx ι)) f,
       finsum_eq_sum _ (weightedHomogeneousComponent_finsupp f), map_sum]
     refine Finset.sum_eq_zero fun e _ => ?_
     obtain ⟨a, ha⟩ := segreLiftMap_of_isWeightedHomogeneous W

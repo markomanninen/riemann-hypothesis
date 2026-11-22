@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCM
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAddCharIsStandardCharOfAdmissibleCM
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem lamBd : LamBd := by
       Matrix (Fin d.n) (Fin d.n) (AE F E)) * β.1))))
   have hχadd : ∀ β γ, χ (β + γ) = χ β * χ γ := by
     intro β γ
-    simp only [χ, AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add, neg_add]
+    simp only [χ, AddSubgroup.coe_add, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add]
     exact AddChar.map_add_eq_mul _ _ _
   have hχns : ∀ (k : ℕ) β, χ (k • β) = χ β ^ k := by
     intro k β
@@ -55,7 +59,8 @@ theorem lamBd : LamBd := by
   have htr : ∀ X : Matrix (Fin d.n) (Fin d.n) E,
       Matrix.trace (incM F X) = inclR (AF F) (Matrix.trace X) := by
     intro X
-    simp [incM, Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [incM, Matrix.trace, map_sum]
   have hχF : ∀ γ ∈ nF σ d.Y d.b, χ γ = 1 := by
     intro γ hγ
     obtain ⟨G0, hG0⟩ := (mem_nF_iff γ).1 hγ

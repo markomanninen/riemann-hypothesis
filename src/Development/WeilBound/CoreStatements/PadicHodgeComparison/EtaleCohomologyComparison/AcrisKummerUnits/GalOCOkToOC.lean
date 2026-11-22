@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HarishChandraFormulaStatement
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -12,14 +16,14 @@ namespace CrystallineSemistableComparison
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
-variable (l) in
 
+variable (l) in
 def clToC : PadicAlgCl l →+* ℂ_[l] := algebraMap _ _
 
 theorem norm_clToC (x : PadicAlgCl l) : ‖clToC l x‖ = ‖x‖ := UniformSpace.Completion.norm_coe x
 
-variable (l K) in
 
+variable (l K) in
 def okToOC : OK l K →+* OC l :=
   (((clToC l).comp K.val.toRingHom).comp (OK l K).subtype).codRestrict (normInteger ℂ_[l]) fun x =>
     mem_normInteger.2 ((norm_clToC _).trans_le (mem_normInteger.1 x.2))
@@ -48,7 +52,8 @@ abbrev MH (M : Model l K) (n j : ℕ) : Type 1 := CrystallineSemistableCompariso
 def galMH (M : Model l K) (σ : Gal(PadicAlgCl l/K)) (n j : ℕ) : M.MH n j →ₛₗ[ACris.galCris σ] M.MH n j :=
   (galMor σ (pxTw M.p (okToOC l K) σ (galOC_okToOC σ)) n).pull j
 
-def phiMH (M : Model l K) (n j : ℕ) : M.MH n j →ₛₗ[ACris.phi ℂ_[l] l] M.MH n j := (phiMor M.P n).pull j
+def phiMH (M : Model l K) (n j : ℕ) : M.MH n j →ₛₗ[ACris.phi (K := ℂ_[l]) (p := l)] M.MH n j :=
+  (phiMor M.P n).pull j
 
 def pullMH {M N : Model l K} (u : M.X ⟶ N.X) (hu : u ≫ N.p = M.p) (n j : ℕ) : N.MH n j →ₗ[Acris l] M.MH n j :=
   (pullMor (pxMap (okToOC l K) u hu) n).pull j

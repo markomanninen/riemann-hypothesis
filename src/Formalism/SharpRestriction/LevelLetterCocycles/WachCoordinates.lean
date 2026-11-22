@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoryWindows
-import Formalism.WindowSums.Statement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoryWindows
+public import Formalism.WindowSums.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,8 +110,8 @@ def CrysLat (T : LocLat G Qp LL O) : Prop :=
   FiniteDimensional LL T.V ∧ IsModuleTopology LL T.V ∧ (∀ x, Continuous fun g => T.ρ g x) ∧
     IsCrys PD T.ρ
 
-variable (LL O) in
 
+variable (LL O) in
 def HodgeExact : Prop :=
   (∀ (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L), CrysLat PD T₁ → CrysLat PD T₂ → F.Onto →
     ∀ (τ : K →ₐ[Qp] LL) (a : ℤ), IsJumpV PD T₂.ρ τ a → IsJumpV PD T₁.ρ τ a) ∧
@@ -138,8 +142,8 @@ def ThmELiftAt (n : ℕ) [NeZero n] (emb : ZMod n → (K₀ →ₐ[Qp] LL))
         arcLen →
       F.LiftF PD (ePar PD.p n j (gPar Gp S η) h (Mb₁ + hb₁) (Mb₂ + hb₂) cuts arcLen)
 
-open Classical in
 
+open Classical in
 def hCor {n : ℕ} (b w S η : ℕ) (sz : ZMod n → ℕ) : ℕ :=
   if ∃ i, b ≤ sz i ∧ sz i ≤ b + η then b + η + S else w + S + η
 
@@ -362,18 +366,6 @@ def admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf 
 
 def Stmt (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (C C₁ C₂ : ℝ) : Prop :=
   admitted D HW F Cm C → Conclusion1 D C₁ ∧ Conclusion2 D C₂
-
-def RealisationStatementAll : Prop :=
-  ∃ C₁ C₀ : ℝ, ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (C : ℝ), admitted D HW F Cm C → Conclusion1 D C₁ ∧ ∀ C₂ : ℝ, C₀ ≤ C₂ → Conclusion2 D C₂
-
-theorem closed_form_iff_threshold_form : RealisationStatementAll ↔ ∃ C₁ C₀ : ℝ, ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (C C₂ : ℝ), C₀ ≤ C₂ → Stmt D HW F Cm C C₁ C₂ := by
-  constructor
-  · rintro ⟨C₁, C₀, h⟩
-    exact ⟨C₁, C₀, fun D HW F Cm C C₂ hC₂ hA =>
-      ⟨(h D HW F Cm C hA).1, (h D HW F Cm C hA).2 C₂ hC₂⟩⟩
-  · rintro ⟨C₁, C₀, h⟩
-    exact ⟨C₁, C₀, fun D HW F Cm C hA =>
-      ⟨(h D HW F Cm C C₀ le_rfl hA).1, fun C₂ hC₂ => (h D HW F Cm C C₂ hC₂ hA).2⟩⟩
 
 end Record
 

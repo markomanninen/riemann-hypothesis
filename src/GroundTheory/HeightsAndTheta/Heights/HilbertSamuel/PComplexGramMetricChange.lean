@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexGramMetricChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMetricPair
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionFormsIndependent
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexGramMetricChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullFSExtension
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMetricPair
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionFormsIndependent
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -98,8 +103,8 @@ theorem eventually_pow_le (C ε : ℝ) (hε : 0 < ε) (hD : 1 ≤ D) :
 
 end ComplexGramMetricChange
 
-open ComplexGramMetricChange in
 
+open ComplexGramMetricChange in
 theorem ComplexGramMetricChange.proof (hMC : MetricChange.Statement) (hPB : ProjectionBounds.Statement)
     (hFS : PullFSExtension.Statement) (hPair : ResolutionMetricPair.Statement)
     (hInd : ResolutionFormsIndependent.Statement) (hDeg : ResolutionDegree.Statement) :
@@ -166,12 +171,12 @@ theorem ComplexGramMetricChange.proof (hMC : MetricChange.Statement) (hPB : Proj
   have hC₀ : ∀ n, resCChi d n = -(1 / 2) * Real.log (Matrix.det (fun k l =>
       ∫ y, pairVal d.m n ((p n).2 k) ((p n).2 l) (resPt d y) ∂d.dV :
         Matrix (Fin (p n).1) (Fin (p n).1) ℂ)).re := fun n => by
-    rw [resCChi, dif_pos (hex n)]
+    rw [resCChi, dite_eq_left (hex n)]
     rfl
   have hC₁ : ∀ n, resCChi (d.withMetric m₁ P0₁ hs hc hle hp) n = -(1 / 2) * Real.log (Matrix.det (fun k l =>
       ∫ y, pairVal m₁ n ((p n).2 k) ((p n).2 l) (resPt d y) ∂d.dV :
         Matrix (Fin (p n).1) (Fin (p n).1) ℂ)).re := fun n => by
-    rw [resCChi, dif_pos (show ∃ q : (Σ r : ℕ, Fin r → MvPolynomial (Ix κ) ℚ),
+    rw [resCChi, dite_eq_left (show ∃ q : (Σ r : ℕ, Fin r → MvPolynomial (Ix κ) ℚ),
       IsSecBasis (d.withMetric m₁ P0₁ hs hc hle hp).x n q.2 from hex n)]
     rfl
 

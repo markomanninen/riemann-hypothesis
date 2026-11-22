@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOfIntegral
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountOfIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 theorem lead_eq_head (M : Loc.Model F E) {m : ℕ} (P : Matrix (Fin (m + 1)) (Fin (m + 1)) E) (Y : M.Mat m)
     (hY : ∀ a b : Fin m, (Y.Z a b : E) = P a.castSucc b.castSucc) : leadM P m = (Y.Z.map M.R.subtype).det := by
   unfold leadM
-  rw [dif_pos (Nat.le_succ m)]
+  rw [dite_eq_left (Nat.le_succ m)]
   congr 1
   ext a b
   exact (hY a b).symm

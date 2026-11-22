@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.PeriodIntegrals.QuotSetU
-import Formalism.PeriodIntegrals.QuotInv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SymmetricMeasureL2NormEqResolutionL2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.PeriodIntegrals.QuotSetU
+public import Formalism.PeriodIntegrals.QuotInv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SymmetricMeasureL2NormEqResolutionL2
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -28,7 +32,11 @@ theorem unimodular_normal : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (�
   obtain ⟨b, -, eb⟩ := eq_smul_of_twoSided (P.B2x2.closedN k r) hN hνN
   refine ⟨fun s hs => ?_, ⟨?_⟩, fun s hs => ?_,
     fun h hh m hm => (Formalism.QuantumDeterminants.uWNormal k r z hz h hh m hm).1, fun h hh => ?_⟩
-  · rw [ea, Measure.map_smul]
+  · rw [ea, Measure.map_smul _ (by
+      apply Continuous.aemeasurable
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      simp only [PI.rmulQ, Matrix.mul_apply, Matrix.of_apply]
+      fun_prop)]
     exact congrArg (a • ·) (hνW.right s hs)
   · have hK : IsCompact (Formalism.QuantumDeterminants.UWset k r z) := P.weyl_subgroup_compact k r z hz hT
     have h1 : νW (Formalism.QuantumDeterminants.UWset k r z) < ⊤ := hνW.finite_compact _ hK
@@ -38,9 +46,17 @@ theorem unimodular_normal : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (�
     rw [h3, add_zero] at h2
     rw [ea, Measure.smul_apply, smul_eq_mul]
     exact ENNReal.mul_lt_top a1.lt_top (h2.trans_lt h1)
-  · rw [eb, Measure.map_smul]
+  · rw [eb, Measure.map_smul _ (by
+      apply Continuous.aemeasurable
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      simp only [PI.rmulQ, Matrix.mul_apply, Matrix.of_apply]
+      fun_prop)]
     exact congrArg (b • ·) (hνN.right s hs)
-  · rw [eb, Measure.map_smul]
+  · rw [eb, Measure.map_smul _ (by
+      apply Continuous.aemeasurable
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      simp only [Matrix.mul_apply, Matrix.of_apply]
+      fun_prop)]
     exact congrArg (b • ·) (P.b2_conjInvRaw_proof k r z νN hz hT hνN h hh)
 
 end GlobalTheory.UnipotentRadicalHaar

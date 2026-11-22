@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopLePreimageOfClosedPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogVectorFieldBasisToroidalModelSnc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulEqLogDerivationExtendLocalizationAw
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulEqOfLogDerivationExtendEq
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopLePreimageOfClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogVectorFieldBasisToroidalModelSnc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulEqLogDerivationExtendLocalizationAw
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowSmulEqOfLogDerivationExtendEq
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -100,10 +104,11 @@ theorem exists_dual {K R : Type} [CommRing K] [CommRing R] [Algebra K R]
   have h3 := congrFun this r
   rw [Finset.sum_apply] at h3
   refine Eq.trans ?_ h3.symm
-  rw [← hD', ← D'.liftKaehlerDifferential_comp_D r, ← bΩ.sum_repr (KaehlerDifferential.D K R r), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hD', ← D'.liftKaehlerDifferential_comp_D r, ← bΩ.sum_repr (KaehlerDifferential.D K R r), map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, hb, D'.liftKaehlerDifferential_comp_D, hD']
-  simp [hd', mul_comm]
+  simp [Derivation.coeFnAddMonoidHom_apply, hd', mul_comm]
 
 theorem exists_sum_of_coords {K B R : Type} [Field K] [CharZero K] [CommRing B] [Algebra K B] [IsNoetherianRing B]
     [CommRing R] (I : Ideal R) {n m : ℕ} (z : Fin n → B) (bΩ : Module.Basis (Fin n) B Ω[B⁄K])
@@ -140,7 +145,7 @@ theorem exists_sum_of_coords {K B R : Type} [Field K] [CharZero K] [CommRing B] 
         have h3 := congrFun this (z (e i))
         rw [Finset.sum_apply, h2] at h3
         refine h3.trans ?_
-        simp [hb']
+        simp [Derivation.coeFnAddMonoidHom_apply, hb']
       refine ⟨_, z (e i) • d (e i), h1 i _ hc, hv _ _ fun j hj => by rw [hj], ?_⟩
       rw [smul_smul, ← hc]
     · exact ⟨D (z k), (1 : B) • d k, h0 _, hv _ _ fun j hj => absurd ⟨j, hj.symm⟩ hk, by rw [one_smul]⟩
@@ -162,7 +167,7 @@ theorem mem_smul_top_of_sum {K A B ι : Type} [Field K] [CommRing A] [CommRing B
     · rintro x y ⟨s, D₁, h₁, e₁⟩ ⟨t, D₂, h₂, e₂⟩
       refine ⟨s * t, (t : A) • D₁ + (s : A) • D₂,
         add_mem (Submodule.smul_mem _ _ h₁) (Submodule.smul_mem _ _ h₂), ?_⟩
-      rw [Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, map_add, map_smul, map_smul, ← e₁, ← e₂,
+      rw [Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, map_add (f := _), map_smul, map_smul, ← e₁, ← e₂,
         smul_smul, smul_smul, smul_add, Submonoid.coe_mul, mul_comm (t : A)]
     · intro k _
       obtain ⟨s, a, ha, e⟩ := hg k
@@ -207,7 +212,7 @@ theorem mem_smul_top_of_coords {K A B R : Type} [Field K] [CharZero K] [CommRing
     have e' : y * algebraMap A B t = algebraMap A B a := e
     have h1 := congrArg (fun y => ψ (extL (S := B) f D.1 y)) e'
     have h2 := congrArg (fun y => δ (ψ y)) e'
-    simp only [Derivation.leibniz, smul_eq_mul, map_mul, map_add, extL_algebraMap, hδ] at h1 h2
+    simp only [Derivation.leibniz, smul_eq_mul, map_mul, map_add (f := _), extL_algebraMap, hδ] at h1 h2
     exact hu.mul_left_cancel (by linear_combination h1 - h2)
   have hD : extL (S := B) f D.1 ∈ logSub (algebraMap K B) (Ideal.span {∏ i, z (e i)}) := by
     rw [← hK, ← hJ]
@@ -284,7 +289,7 @@ theorem mem_smul_top_of_chart {K : Type} [Field K] [CharZero K] {X : Scheme.{0}}
   have hχU : ⊤ ≤ χ ⁻¹ᵁ U.1 := (top_le_iff χ U.1).2 hx
   have hval : ∀ g, valHom χ W.1 hχ (algebraMap Γ(X, U.1) Γ(X, W.1) g) = valR χ U.1 g := fun g =>
     (valR_eq χ W.1 hχ _).symm.trans (valR_res χ hW hχ g)
-  refine mem_smul_top_of_coords (K := K) (B := Γ(X, W.1)) f (algX p U.1) hφ (GlobalTheory.TopForm.resG_comp_algX p hW)
+  refine mem_smul_top_of_coords (K := K) (B := Γ(X, W.1)) f (algX p U.1) hφ (GlobalTheory.TopForm.resG_comp_algX (p := p) hW)
     (I.ideal U) m hm (fun h => hxm f h hxf) z bΩ hb (e ∘ ix) (he.comp hix)
     ((I.map_ideal (U := W) (V := U) hW).trans hideal) (valHom χ W.1 hχ) (fun g hg => ?_) D δ
     (fun g => by rw [hval, hval]; exact hδ g) h0 (fun i => ?_)

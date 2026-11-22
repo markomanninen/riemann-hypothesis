@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FineJacquetLengthOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityConcat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviIrreducibleTensorDecomposition
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FineJacquetLengthOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityConcat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LeviIrreducibleTensorDecomposition
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSubquotientCompMulSingle
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -60,10 +64,10 @@ private theorem piece_irr {s : ℕ} {d : Fin s → ℕ} {t : Fin s → ℕ} {d' 
     ((isSubquotient_of_equiv (topEquiv ρ)).isSmooth hρ) (isSubquotient_of_equiv (topEquiv ρ).symm)
 
 private theorem piece_coarse (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) {s N : ℕ} (c : Fin s → ℕ)
-    (x : ∀ a, Fin (c a) → IrrGL k) (hcat : ∑ i, (Zc.Seg.concat c x i).1 = N) {V : Type} [AddCommGroup V]
+    (x : ∀ a, Fin (c a) → IrrGL (k := k)) (hcat : ∑ i, (Zc.Seg.concat c x i).1 = N) {V : Type} [AddCommGroup V]
     [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hfl : HasFiniteLength π)
     (h1 : jm (Zc.Seg.concat c x) hcat π ≠ 0) :
-    ∃ (σ : Fin s → IrrGL k) (hσ : ∑ a, (σ a).1 = N), jm σ hσ π ≠ 0 ∧
+    ∃ (σ : Fin s → IrrGL (k := k)) (hσ : ∑ a, (σ a).1 = N), jm σ hσ π ≠ 0 ∧
       ∀ a, ∃ hx : ∑ i, (x a i).1 = (σ a).1, jm (x a) hx (σ a).rep ≠ 0 := by
   classical
   have hA : GlobalTheory.Published.IrreducibleAdmissibleGL := fun k _ _ _ _ n V _ _ π => (hBZ k).1 (Fin n) V π
@@ -102,29 +106,29 @@ private theorem piece_coarse (hBZ : GlobalTheory.Published.BernsteinZelevinskyFi
   exact isSubquotient_factor (fun a => jac (e' a) (σ a).rep.ρ) a (hi a)
     ((GlobalTheory.CompanionTheory.Hypotheses₂.TD.isSubquotient_comp_mulSingle _ hi a).trans (isSubquotient_comp h4 _))
 
-private def Wd (W : ℕ → IrrGL k) (n : ℕ) (x : IrrGL k) : Prop :=
+private def Wd (W : ℕ → IrrGL (k := k)) (n : ℕ) (x : IrrGL (k := k)) : Prop :=
   ∃ hd : ∑ i : Fin n, (W i).1 = x.1, jm (fun i : Fin n => W i) hd x.rep ≠ 0
 
-private theorem wd_iff {W : ℕ → IrrGL k} {n m : ℕ} {x : IrrGL k} (h : m = n) (f : Fin m → IrrGL k)
+private theorem wd_iff {W : ℕ → IrrGL (k := k)} {n m : ℕ} {x : IrrGL (k := k)} (h : m = n) (f : Fin m → IrrGL (k := k))
     (hf : ∀ i, f i = W i) : Wd W n x ↔ ∃ hd : ∑ i, (f i).1 = x.1, jm f hd x.rep ≠ 0 := by
   subst h
   obtain rfl : f = fun i : Fin m => W i := funext hf
   rfl
 
-private def cut (W : ℕ → IrrGL k) (a b : ℕ) (j : Fin 2) (i : Fin (![a, b] j)) : IrrGL k :=
+private def cut (W : ℕ → IrrGL (k := k)) (a b : ℕ) (j : Fin 2) (i : Fin (![a, b] j)) : IrrGL (k := k) :=
   W (finSigmaFinEquiv (n := ![a, b]) ⟨j, i⟩)
 
-private theorem concat_cut (W : ℕ → IrrGL k) (a b : ℕ) (i) : Zc.Seg.concat ![a, b] (cut W a b) i = W i := by
+private theorem concat_cut (W : ℕ → IrrGL (k := k)) (a b : ℕ) (i) : Zc.Seg.concat ![a, b] (cut W a b) i = W i := by
   simp [Zc.Seg.concat, cut]
 
-private theorem cut_zero (W : ℕ → IrrGL k) (a b : ℕ) (i) : cut W a b 0 i = W i := by
+private theorem cut_zero (W : ℕ → IrrGL (k := k)) (a b : ℕ) (i) : cut W a b 0 i = W i := by
   simp [cut, finSigmaFinEquiv_apply]
 
-private theorem cut_one (W : ℕ → IrrGL k) (a b : ℕ) (i) : cut W a b 1 i = W (a + i) := by
+private theorem cut_one (W : ℕ → IrrGL (k := k)) (a b : ℕ) (i) : cut W a b 1 i = W (a + i) := by
   simp [cut, finSigmaFinEquiv_apply]
 
-private theorem wd_up (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) {x : IrrGL k} (y : Fin 2 → IrrGL k)
-    (hy : ∑ a, (y a).1 = x.1) (h : jm y hy x.rep ≠ 0) (W : ℕ → IrrGL k) (a b : ℕ) (h0 : Wd W a (y 0))
+private theorem wd_up (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) {x : IrrGL (k := k)} (y : Fin 2 → IrrGL (k := k))
+    (hy : ∑ a, (y a).1 = x.1) (h : jm y hy x.rep ≠ 0) (W : ℕ → IrrGL (k := k)) (a b : ℕ) (h0 : Wd W a (y 0))
     (h1 : Wd (fun i => W (a + i)) b (y 1)) : Wd W (a + b) x := by
   have hA : GlobalTheory.Published.IrreducibleAdmissibleGL := fun k _ _ _ _ n V _ _ π => (hBZ k).1 (Fin n) V π
   have H : ∀ j, ∃ hd : ∑ i, (cut W a b j i).1 = (y j).1, jm (cut W a b j) hd (y j).rep ≠ 0 :=
@@ -140,14 +144,14 @@ private theorem wd_up (hBZ : GlobalTheory.Published.BernsteinZelevinskyFinitenes
   exact (ENat.one_le_iff_ne_zero.2 h).trans (GlobalTheory.CompanionTheory.JmTrans.jm_le_jm_concat hA y hy _ _ hx hcat
     (fun j => ENat.one_le_iff_ne_zero.2 (hj j)) x.rep x.2.rep.smooth x.2.rep.hasFiniteLength)
 
-private theorem wd_down (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) {x : IrrGL k} (W : ℕ → IrrGL k) (a b : ℕ)
-    (h : Wd W (a + b) x) : ∃ (y : Fin 2 → IrrGL k) (hy : ∑ a, (y a).1 = x.1), jm y hy x.rep ≠ 0 ∧ Wd W a (y 0) ∧
+private theorem wd_down (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) {x : IrrGL (k := k)} (W : ℕ → IrrGL (k := k)) (a b : ℕ)
+    (h : Wd W (a + b) x) : ∃ (y : Fin 2 → IrrGL (k := k)) (hy : ∑ a, (y a).1 = x.1), jm y hy x.rep ≠ 0 ∧ Wd W a (y 0) ∧
       Wd (fun i => W (a + i)) b (y 1) := by
   obtain ⟨hcat, h⟩ := (wd_iff (by simp) _ (concat_cut W a b)).1 h
   obtain ⟨y, hy, h1, h2⟩ := piece_coarse hBZ _ _ hcat x.rep x.2.rep.smooth x.2.rep.hasFiniteLength h
   exact ⟨y, hy, h1, (wd_iff rfl _ (cut_zero W a b)).2 (h2 0), (wd_iff rfl _ (cut_one W a b)).2 (h2 1)⟩
 
-private theorem wd_one {W : ℕ → IrrGL k} {x : IrrGL k} : Wd W 1 x ↔ W 0 = x := by
+private theorem wd_one {W : ℕ → IrrGL (k := k)} {x : IrrGL (k := k)} : Wd W 1 x ↔ W 0 = x := by
   constructor
   · rintro ⟨hd, h⟩
     exact GlobalTheory.CompanionTheory.SegFine.eq_of_one_le_jm x x.rep (.refl _) _ hd (ENat.one_le_iff_ne_zero.2 h)
@@ -157,7 +161,7 @@ private theorem wd_one {W : ℕ → IrrGL k} {x : IrrGL k} : Wd W 1 x ↔ W 0 = 
     exact (GlobalTheory.CompanionTheory.SegFine.jm_eq_one (W 0) (W 0).rep (.refl _) _ _ hf).trans_ne one_ne_zero
 
 private theorem wd_exists (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
-    (x : IrrGL k) (hx : 0 < x.1) : ∃ (s : ℕ) (u : Fin (s + 1) → IrrGL k) (hd : ∑ i, (u i).1 = x.1),
+    (x : IrrGL (k := k)) (hx : 0 < x.1) : ∃ (s : ℕ) (u : Fin (s + 1) → IrrGL (k := k)) (hd : ∑ i, (u i).1 = x.1),
       (∀ i, (u i).IsCusp) ∧ jm u hd x.rep ≠ 0 ∧ HasSupport x.rep (Finset.univ.val.map u) := by
   have hA : GlobalTheory.Published.IrreducibleAdmissibleGL := fun k _ _ _ _ n V _ _ π => (hBZ k).1 (Fin n) V π
   obtain ⟨s, u, e, hu, φ, hφ⟩ := GlobalTheory.CompanionTheory.CuspEmbed.main hBZ hG k x.1 (GlobalTheory.SplitRead.Irr.ofIrrRep x.2.rep)
@@ -179,11 +183,11 @@ private theorem wd_exists (hG : GlobalTheory.Published.GeometricLemma) (hBZ : Gl
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.Lit.Full.piece :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL k) (P : Set (IrrGL k)) (q : Fin 2 → IrrGL k) (hq : ∑ a, (q a).1 = x.1), jm q hq x.rep ≠ 0 → (FirstIn x P → 0 < (q 0).1 → ∃ A, HasSupport (q 0).rep A ∧ ∃ y ∈ A, y ∈ P) ∧ (LastIn x P → 0 < (q 1).1 → ∃ A, HasSupport (q 1).rep A ∧ ∃ y ∈ A, y ∈ P) := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL (k := k)) (P : Set (IrrGL (k := k))) (q : Fin 2 → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1), jm q hq x.rep ≠ 0 → (FirstIn x P → 0 < (q 0).1 → ∃ A, HasSupport (q 0).rep A ∧ ∃ y ∈ A, y ∈ P) ∧ (LastIn x P → 0 < (q 1).1 → ∃ A, HasSupport (q 1).rep A ∧ ∃ y ∈ A, y ∈ P) := by
   intro hG hBZ k _ _ _ _ x P q hq h
   refine ⟨fun hP hpos => ?_, fun hP hpos => ?_⟩
   · obtain ⟨s, u, hd, hu, hj, hs⟩ := wd_exists hG hBZ (q 0) hpos
-    let W : ℕ → IrrGL k := fun i => if hi : i < s + 1 then u ⟨i, hi⟩ else q 1
+    let W : ℕ → IrrGL (k := k) := fun i => if hi : i < s + 1 then u ⟨i, hi⟩ else q 1
     have h1 : Wd W (s + 1 + 1) x := wd_up hBZ q hq h W (s + 1) 1
       ((wd_iff rfl u fun i => by simp only [W, dif_pos i.2]).2 ⟨hd, hj⟩) (wd_one.2 (by simp [W]))
     rw [add_comm] at h1
@@ -191,7 +195,7 @@ theorem UpperTheory.Lit.Full.piece :
     have h4 : y 0 = u 0 := (wd_one.1 h3).symm.trans (by simp [W])
     exact ⟨_, hs, u 0, Multiset.mem_map_of_mem _ (Finset.mem_univ_val _), h4 ▸ hP y hy (h4 ▸ hu 0) h2⟩
   · obtain ⟨s, u, hd, hu, hj, hs⟩ := wd_exists hG hBZ (q 1) hpos
-    let W : ℕ → IrrGL k := fun i => if hi : 0 < i ∧ i - 1 < s + 1 then u ⟨i - 1, hi.2⟩ else q 0
+    let W : ℕ → IrrGL (k := k) := fun i => if hi : 0 < i ∧ i - 1 < s + 1 then u ⟨i - 1, hi.2⟩ else q 0
     have hW : ∀ i : Fin (s + 1), u i = W (1 + i) := fun i => by
       have hi : 0 < 1 + i.1 ∧ 1 + i.1 - 1 < s + 1 := by omega
       simp only [W, dif_pos hi]

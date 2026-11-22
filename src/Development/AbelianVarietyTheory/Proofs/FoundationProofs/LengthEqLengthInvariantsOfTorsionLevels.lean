@@ -1,21 +1,25 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecompositionGroupMulEquivLocalGaloisCyclotomicStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowNStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntLengthEqOfCardQuotientEqCardSubmoduleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTorsionFreeOfCardQuotientPowStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntModuleFiniteOfSeparatedOfFiniteQuotientAStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.QzTorsionZmodEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoboundaryOfSubsingletonContCohomologyThreStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCardStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContCohomologyTransportMulEquivStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundaryStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModLThreeCocycleConditionStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisibleStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Sha1TorsionLevelFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NatCardCokerKerPadicModPowStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsPrimitiveRootPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecompositionGroupMulEquivLocalGaloisCyclotomicStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowNStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntLengthEqOfCardQuotientEqCardSubmoduleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTorsionFreeOfCardQuotientPowStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntModuleFiniteOfSeparatedOfFiniteQuotientAStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.QzTorsionZmodEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCoboundaryOfSubsingletonContCohomologyThreStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCardStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContCohomologyTransportMulEquivStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModLThreeCocycleConditionStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisibleStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Sha1TorsionLevelFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NatCardCokerKerPadicModPowStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ def reduceTwoCocyclesModPrimePow (ρ : Representation ℤ_[l] Γ ℤ_[l]) (r : �
     Z2 ρ →ₛₗ[(PadicInt.toZModPow r : ℤ_[l] →+* ZMod (l ^ r))] Z2 ρr where
   toFun z := ⟨fun p => PadicInt.toZModPow r (z.1 p),
     GlobalTheory.Published.PoitouTate.continuous_toZModPow.comp z.2.1, fun g h' k => by
-      simp only [← h, ← map_sub, ← map_add, z.2.2 g h' k, map_zero]⟩
+      simp only [← h, ← map_sub, ← map_add (f := _), z.2.2 g h' k, map_zero]⟩
   map_add' z z' := Subtype.ext (funext fun p => map_add _ _ _)
   map_smul' c z := Subtype.ext (funext fun p => map_mul _ _ _)
 
@@ -186,8 +190,9 @@ theorem exists_iota {Γ : Type} [Group Γ] (χ : Γ →* ℤ_[l]ˣ) (e : ℤ) (r
       rw [smul_eq_mul, mul_one, smul_eq_mul] at this
       exact this
   have hev : Function.Bijective ev := by
-    refine ⟨fun φ ψ h => TDual.ext fun m => ?_, fun y => ⟨y • TDual.mk LinearMap.id, ?_⟩⟩
-    · rw [hlin φ, hlin ψ]; exact congrArg _ h
+    refine ⟨fun φ ψ h => LinearMap.ext fun m => ?_, fun y => ⟨y • TDual.mk LinearMap.id, ?_⟩⟩
+    · change φ m = ψ m
+      rw [hlin φ, hlin ψ]; exact congrArg _ h
     · exact mul_one y
   refine ⟨ι.comp ev, h1.comp hev.1, fun a => ?_, fun g n => ?_⟩
   · rw [h2, AddMonoidHom.coe_comp, hev.2.range_comp]
@@ -216,7 +221,8 @@ theorem finite_cohomology_and_card_H2_eq_card_H0_dual (hF : LocalFinitenessK) (h
   refine ⟨Finite.of_equiv _ e1, Finite.of_equiv _ e2, e3 (f3 3 le_rfl), ?_⟩
   have hfin : Finite (TDual (ZMod (l ^ r)) M) := DFunLike.finite _
   have hH : H0 τ = H0 ((twDual (cycK l K r) ρK).comp (MonoidHom.id _)) := by
-    have key : ∀ g φ, τ g φ = twDual (cycK l K r) ρK (e g) φ := fun g φ => TDual.ext fun m => by
+    have key : ∀ g φ, τ g φ = twDual (cycK l K r) ρK (e g) φ := fun g φ => LinearMap.ext fun m => by
+      change τ g φ m = twDual (cycK l K r) ρK (e g) φ m
       rw [hτ, twDual_apply, hc]
       simp [ρK]
     ext φ
@@ -433,8 +439,8 @@ theorem nonempty_S : Nonempty D.S := by
     exact (Fact.out : l.Prime).ne_zero (Nat.cast_eq_zero.1 hl')
   exact ⟨⟨⟨m, hm.isPrime, h0⟩, (mem_above D _).2 hl'⟩⟩
 
-include hF hT in
 
+include hF hT in
 theorem exists_kill_pi (he : e ≠ 0) : ∃ m : ℕ,
     ∀ p : ∀ v : D.S, H2 ((zlTw D (e + 1)).comp (locFam D.S D.A v)), (l : ℤ_[l]) ^ m • p = 0 := by
   obtain ⟨c, hc⟩ := exists_kill D e he
@@ -512,8 +518,8 @@ theorem ptShaAt : PTShaAt D e := by
   rw [loc2, LinearMap.ker_pi]
   rfl
 
-omit hN hS h3 in
 
+omit hN hS h3 in
 theorem finite_level (hP : PoitouTateDuality) (hc : PTCase F l) (r : ℕ) (hr : 0 < r) :
     (∃ j, NineTermExact D.S D.A (redChar D.chi r) j (zr D (e + 1) r) (contAction_zr D (e + 1) r)) ∧
     ShaDual D.S D.A (redChar D.chi r) (zr D (e + 1) r) ∧ Subsingleton (Hn (zr D (e + 1) r) 3) := by

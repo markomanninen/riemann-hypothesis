@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.DYka2.IsSmooth :
     {k G V : Type} →
@@ -91,7 +95,8 @@ theorem UpperTheory.Reformulated.B.DYka2.main :
   refine ⟨∑ q : L ⧸ H, ψ q, ?_, ?_⟩
   · intro h0
     have e : f (∑ q : L ⧸ H, ψ q) = (Fintype.card (L ⧸ H) : ℂ) • f u := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hfψ]
       rw [Finset.sum_const, Finset.card_univ, Nat.cast_smul_eq_nsmul]
     rw [h0, map_zero] at e
@@ -99,6 +104,7 @@ theorem UpperTheory.Reformulated.B.DYka2.main :
       exact_mod_cast Fintype.card_ne_zero
     exact (smul_ne_zero hc hu) e.symm
   · intro g hg
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     simp only [hact ⟨g, hg⟩]
     exact (Equiv.sum_comp (MulAction.toPerm (⟨g, hg⟩ : L)) (fun q => χ g • ψ q))

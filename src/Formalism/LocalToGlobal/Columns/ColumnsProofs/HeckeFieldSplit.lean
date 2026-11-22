@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSCoef
-import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
-import Formalism.LocalToGlobal.Divisibility.LiftLatInst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.ColumnsProofs.HFSCoef
+public import Formalism.LocalToGlobal.Columns.PathCountSymmetricHolds
+public import Formalism.LocalToGlobal.Divisibility.LiftLatInst
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 
@@ -16,9 +20,9 @@ section FormBC
 variable {X : Fields} {L : Type} [Field L] [NumberField L] [StarRing L] (ι : X.K →+* L) {n : ℕ}
   {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
 
-def hfsFormBC (F : CoefFrame ι) (C : CoefPk X n (DecoSet X.E n ST SG))
+def hfsFormBC (F : CoefFrame ι) (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)))
     (rho' : UF X.E n →* Module.End L (VV L C.lam)) (pair' : VV L C.lam →ₗ⋆[L] VV L C.lam →ₗ[L] L)
-    (Nab' Del' : DecoSet X.E n ST SG → Submodule (𝓞 L) (VV L C.lam))
+    (Nab' Del' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Submodule (𝓞 L) (VV L C.lam))
     (hrho : ∀ γ v, rho' γ (hfsJ ι C.lam v) = hfsJ ι C.lam (C.rho γ v)) (Λ : LevFam X.E X.K n SG) :
     GSDBC ι (formGSD C Λ) (formGSD (X := X.coefExt L ι) ⟨C.lam, rho', pair', Nab', Del'⟩ (Λ.coefMap ι)) where
   eG := MonoidHom.id _
@@ -36,19 +40,19 @@ def hfsFormBC (F : CoefFrame ι) (C : CoefPk X n (DecoSet X.E n ST SG))
       congrArg Units.val (LevFam.coefMap_chr ι Λ g.2)
     rw [hfsJ_smul, hrho, hc]
 
-theorem hfs_nb (C : CoefPk X n (DecoSet X.E n ST SG)) (C' : CoefPk (X.coefExt L ι) n (DecoSet X.E n ST SG))
-    (Λ : LevFam X.E X.K n SG) (Λ' : LevFam X.E L n SG) (P : Ideal (𝓞 X.E)) (i : ℕ) (d' : DecoSet X.E n ST SG) :
-    ((formPts (X := X.coefExt L ι) C' Λ').nb P i d').map (Equiv.refl (DecoSet X.E n ST SG)).toEmbedding =
+theorem hfs_nb (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (C' : CoefPk (X.coefExt L ι) n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)))
+    (Λ : LevFam X.E X.K n SG) (Λ' : LevFam X.E L n SG) (P : Ideal (𝓞 X.E)) (i : ℕ) (d' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
+    ((formPts (X := X.coefExt L ι) C' Λ').nb P i d').map (Equiv.refl (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))).toEmbedding =
       (formPts C Λ).nb P i d' := by
-  rw [show (Equiv.refl (DecoSet X.E n ST SG)).toEmbedding = Function.Embedding.refl _ from rfl,
+  rw [show (Equiv.refl (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))).toEmbedding = Function.Embedding.refl _ from rfl,
     Finset.map_refl]
   rfl
 
-theorem hfs_nbI (C : CoefPk X n (DecoSet X.E n ST SG)) (C' : CoefPk (X.coefExt L ι) n (DecoSet X.E n ST SG))
-    (Λ : LevFam X.E X.K n SG) (Λ' : LevFam X.E L n SG) (P : Ideal (𝓞 X.E)) (s : List ℕ) (d' : DecoSet X.E n ST SG) :
-    ((formPts (X := X.coefExt L ι) C' Λ').nbI P s d').map (Equiv.refl (DecoSet X.E n ST SG)).toEmbedding =
+theorem hfs_nbI (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (C' : CoefPk (X.coefExt L ι) n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)))
+    (Λ : LevFam X.E X.K n SG) (Λ' : LevFam X.E L n SG) (P : Ideal (𝓞 X.E)) (s : List ℕ) (d' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) :
+    ((formPts (X := X.coefExt L ι) C' Λ').nbI P s d').map (Equiv.refl (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))).toEmbedding =
       (formPts C Λ).nbI P s d' := by
-  rw [show (Equiv.refl (DecoSet X.E n ST SG)).toEmbedding = Function.Embedding.refl _ from rfl,
+  rw [show (Equiv.refl (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))).toEmbedding = Function.Embedding.refl _ from rfl,
     Finset.map_refl]
   rfl
 
@@ -59,7 +63,8 @@ private theorem lifts_heckeD_of_nb_map {S : GSD X.K} {S' : GSD L} (b : GSDBC ι 
   intro φ
   apply Subtype.ext
   funext d'
-  simp only [heckeD_op_apply, GSDBC.lift_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [heckeD_op_apply, GSDBC.lift_apply, map_sum]
   rw [← hnb d', Finset.sum_map]
   rfl
 
@@ -70,15 +75,16 @@ private theorem lifts_heckeI_of_nbI_map {S : GSD X.K} {S' : GSD L} (b : GSDBC ι
   intro φ
   apply Subtype.ext
   funext d'
-  simp only [heckeI_op_apply, GSDBC.lift_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [heckeI_op_apply, GSDBC.lift_apply, map_sum]
   rw [← hnb d', Finset.sum_map]
   rfl
 
-theorem hfs_splitAll_formPts (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam X.E X.K n SG)
+theorem hfs_splitAll_formPts (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG)
     (S0 : Set (HeightOneSpectrum (𝓞 X.E))) [FiniteDimensional X.K (formGSD C Λ).EqFun] (hc : HeckeCommAll (formPts C Λ) S0)
     {p : X.K[X]} (hp : HeckePolyFor (heckeFamAll (formPts C Λ) S0) p) (hsp : (p.map ι).Splits)
     (rho' : UF X.E n →* Module.End L (VV L C.lam)) (pair' : VV L C.lam →ₗ⋆[L] VV L C.lam →ₗ[L] L)
-    (Nab' Del' : DecoSet X.E n ST SG → Submodule (𝓞 L) (VV L C.lam))
+    (Nab' Del' : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG) → Submodule (𝓞 L) (VV L C.lam))
     (hrho : ∀ γ v, rho' γ (hfsJ ι C.lam v) = hfsJ ι C.lam (C.rho γ v)) :
     SplitOver (heckeFamAll (formPts (X := X.coefExt L ι) ⟨C.lam, rho', pair', Nab', Del'⟩ (Λ.coefMap ι)) S0) := by
   obtain ⟨F⟩ : Nonempty (CoefFrame ι) := CoefFrame.nonempty (ι := ι)
@@ -90,40 +96,40 @@ theorem hfs_splitAll_formPts (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam
 
 theorem hfs_splitAll_sq_reidx {SG₁ SG₂ : Finset (HeightOneSpectrum (𝓞 X.E))} (h : SG₁ = SG₂) (lam : X.Tau → DomWeight n)
     (Λ : LevFam X.E X.K n SG₂) (S0 : Set (HeightOneSpectrum (𝓞 X.E)))
-    (hfd : FiniteDimensional X.K (formGSD (squarePk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv).EqFun)
-    (hc : HeckeCommAll (formPts (squarePk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv) S0) {p : X.K[X]}
-    (hp : HeckePolyFor (heckeFamAll (formPts (squarePk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv) S0) p)
+    (hfd : FiniteDimensional X.K (formGSD (squarePk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv).EqFun)
+    (hc : HeckeCommAll (formPts (squarePk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv) S0) {p : X.K[X]}
+    (hp : HeckePolyFor (heckeFamAll (formPts (squarePk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv) S0) p)
     (hsp : (p.map ι).Splits) :
-    SplitOver (heckeFamAll (formPts (X := X.coefExt L ι) (squarePk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N)
+    SplitOver (heckeFamAll (formPts (X := X.coefExt L ι) (squarePk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N)
       ((Λ.coefMap ι).reidx h).inv) S0) := by
   subst h
   haveI := hfd
   have e : ((Λ.coefMap ι).reidx rfl).inv = Λ.inv.coefMap ι := LevFam.coefMap_inv (ι := ι) Λ
   rw [e]
-  exact hfs_splitAll_formPts ι (squarePk X lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N) Λ.inv S0 hc hp hsp
-    (squarePk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).rho
-    (squarePk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).pair
-    (squarePk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).Nab
-    (squarePk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).Del
+  exact hfs_splitAll_formPts ι (squarePk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N) Λ.inv S0 hc hp hsp
+    (squarePk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).rho
+    (squarePk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).pair
+    (squarePk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).Nab
+    (squarePk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).Del
     (fun γ v => hfs_rhoV (ι := ι) (lam := lam) (emb := X.emb) (γ := ufGL X.E n γ) (v := v))
 
 theorem hfs_splitAll_rd_reidx {SG₁ SG₂ : Finset (HeightOneSpectrum (𝓞 X.E))} (h : SG₁ = SG₂) (lam : X.Tau → DomWeight n)
     (Λ : LevFam X.E X.K n SG₂) (S0 : Set (HeightOneSpectrum (𝓞 X.E)))
-    (hfd : FiniteDimensional X.K (formGSD (roundPk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv).EqFun)
-    (hc : HeckeCommAll (formPts (roundPk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv) S0) {p : X.K[X]}
-    (hp : HeckePolyFor (heckeFamAll (formPts (roundPk X lam fun d : DecoSet X.E n ∅ SG₂ => d.1.N) Λ.inv) S0) p)
+    (hfd : FiniteDimensional X.K (formGSD (roundPk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv).EqFun)
+    (hc : HeckeCommAll (formPts (roundPk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv) S0) {p : X.K[X]}
+    (hp : HeckePolyFor (heckeFamAll (formPts (roundPk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₂) => d.1.N) Λ.inv) S0) p)
     (hsp : (p.map ι).Splits) :
-    SplitOver (heckeFamAll (formPts (X := X.coefExt L ι) (roundPk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N)
+    SplitOver (heckeFamAll (formPts (X := X.coefExt L ι) (roundPk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N)
       ((Λ.coefMap ι).reidx h).inv) S0) := by
   subst h
   haveI := hfd
   have e : ((Λ.coefMap ι).reidx rfl).inv = Λ.inv.coefMap ι := LevFam.coefMap_inv (ι := ι) Λ
   rw [e]
-  exact hfs_splitAll_formPts ι (roundPk X lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N) Λ.inv S0 hc hp hsp
-    (roundPk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).rho
-    (roundPk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).pair
-    (roundPk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).Nab
-    (roundPk (X.coefExt L ι) lam fun d : DecoSet X.E n ∅ SG₁ => d.1.N).Del
+  exact hfs_splitAll_formPts ι (roundPk X lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N) Λ.inv S0 hc hp hsp
+    (roundPk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).rho
+    (roundPk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).pair
+    (roundPk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).Nab
+    (roundPk (X.coefExt L ι) lam fun d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG₁) => d.1.N).Del
     (fun γ v => hfs_rhoVr (ι := ι) (lam := lam) (emb := X.emb) (γ := ufGL X.E n γ) (v := v))
 
 end FormBC

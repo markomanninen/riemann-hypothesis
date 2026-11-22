@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField NumberField.ComplexEmbedding
 
@@ -20,7 +24,7 @@ theorem isTotallyReal_fixedField (K : Type) [Field K] [NumberField K] {σ : Gal(
   rw [conjugate_coe_eq]
   exact h.symm
 
-theorem isCMField_of_forall_isConj (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+theorem isCMField_of_forall_isConj (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     {σ : Gal(K/ℚ)} (hσ : ∀ φ : K →+* ℂ, IsConj φ σ) : IsCMField K := by
   obtain ⟨φ⟩ : Nonempty (K →+* ℂ) := inferInstance
   have hne : σ ≠ 1 :=

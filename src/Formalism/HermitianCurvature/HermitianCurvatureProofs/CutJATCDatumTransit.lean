@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSStab
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSStab
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.Rep.Core.TC.MC
 

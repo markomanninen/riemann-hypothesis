@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyValuation
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogenyExists
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilPairing
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyValuation
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogenyExists
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilPairing
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -14,11 +18,6 @@ variable {F : Type u} [Field F] [IsAlgClosed F] [DecidableEq F] {E E' E'' : Weie
   [E.IsElliptic] [E'.IsElliptic] [E''.IsElliptic]
 
 namespace Isogeny
-
-theorem divisorOf_comap (φ : Isogeny E E') {f : E'.toAffine.FunctionField} (hf : f ≠ 0)
-    (R : E.toAffine.Point) :
-    divisorOf E (φ.comap f) R = (φ.ramIdx : ℤ) * divisorOf E' f (φ.pointMap R) := by
-  rw [divisorOf_apply, divisorOf_apply, φ.ordPoint_comap R hf]
 
 end Isogeny
 
@@ -143,7 +142,7 @@ theorem ramIdx_mulIsogeny_mul_card_ker (n : ℤ) (hn : n ≠ 0) :
   have hD : divisorOf E a = D := by
     ext P
     rw [divisorOf_apply]
-    simp only [D, Finsupp.add_apply, Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp only [D, Finsupp.add_apply, Finsupp.finsetSum_apply, Finsupp.single_apply]
     by_cases hP : P = 0
     · subst hP
       rw [Finset.sum_eq_zero (fun T hT => if_neg (Finset.ne_of_mem_erase hT)), if_pos rfl, zero_add,
@@ -156,7 +155,8 @@ theorem ramIdx_mulIsogeny_mul_card_ker (n : ℤ) (hn : n ≠ 0) :
       · rw [if_pos hT, if_pos (hmem.mpr hT)]
       · rw [if_neg hT, if_neg (fun h' => hT (hmem.mp h'))]
   have hdeg := divisorDegree_divisorOf E ha
-  rw [hD, map_add, map_sum, divisorDegree_single] at hdeg
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hD, map_add (f := _), map_sum, divisorDegree_single] at hdeg
   simp only [divisorDegree_single, Finset.sum_const, Finset.card_erase_of_mem h0S, smul_eq_mul] at hdeg
   have hS : 1 ≤ S.card := Finset.card_pos.mpr ⟨0, h0S⟩
   rw [hcard]
@@ -193,9 +193,9 @@ theorem exists_ordPoint_eq_ite (S : Finset E.toAffine.Point) :
   set D : CurveDivisor E := Finsupp.single 0 1 + Finsupp.single (B + C) 1 - Finsupp.single B 1 -
     Finsupp.single C 1
   have hdeg : divisorDegree E D = 0 := by
-    simp only [D, map_sub, map_add, divisorDegree_single]; norm_num
+    simp only [D, map_sub, map_add (f := _), divisorDegree_single]; norm_num
   have hsum : divisorSum E D = 0 := by
-    simp only [D, map_sub, map_add, divisorSum_single, one_smul]; abel
+    simp only [D, map_sub, map_add (f := _), divisorSum_single, one_smul]; abel
   obtain ⟨t, ht, htD⟩ := exists_divisorOf_eq E hdeg hsum
   refine ⟨t, ht, fun T hT => ?_⟩
   rw [← divisorOf_apply, htD]
@@ -223,7 +223,7 @@ theorem ramIdx_dvd_insepDeg (φ : Isogeny E E') : φ.ramIdx ∣ φ.insepDeg := b
     exact Fintype.prod_equiv (Equiv.addLeft (⟨R, hR⟩ : φ.pointHom.ker)) _ _ (fun T => rfl)
   have hu : ordPoint E 0 u = 1 := by
     rw [← divisorOf_apply, divisorOf_prod E _ _ (fun T _ => translate_ne_zero E _ ht),
-      Finsupp.finset_sum_apply]
+      Finsupp.finsetSum_apply]
     have : ∀ T : φ.pointHom.ker, divisorOf E (translate E T t) 0 =
         if (T : E.toAffine.Point) = 0 then 1 else 0 := by
       intro T

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 private lemma mem_K {n : ℕ} {w : Pl E} (g : GLw n w) :
-    g ∈ KGL w n ↔ (∀ i j, Valued.v (g.val i j) ≤ 1) ∧ (∀ i j, Valued.v ((g⁻¹).val i j) ≤ 1) := by
+    g ∈ KGL w (n := n) ↔ (∀ i j, Valued.v (g.val i j) ≤ 1) ∧ (∀ i j, Valued.v ((g⁻¹).val i j) ≤ 1) := by
   constructor
   · rintro ⟨a, rfl⟩
     refine ⟨fun i j => (a.val i j).2, fun i j => ?_⟩
@@ -125,7 +129,7 @@ private lemma blk_eq {a b n : ℕ} (h : a + b = n) (w : Pl E) (m : GLw a w × GL
   have hv : (blk h w m X).val = Matrix.reindex e e (Matrix.fromBlocks m.1.val (m.1.val * X) 0 m.2.val) := by
     unfold blk
     simp only [← he]
-    rw [dif_pos hU]
+    rw [dite_eq_left hU]
     exact hU.unit_spec
   refine ⟨hv, Units.inv_eq_of_mul_eq_one_right ?_⟩
   rw [hv]
@@ -133,7 +137,7 @@ private lemma blk_eq {a b n : ℕ} (h : a + b = n) (w : Pl E) (m : GLw a w × GL
 
 private lemma blk_mem_iff {a b n : ℕ} (h : a + b = n) (w : Pl E) (m : GLw a w × GLw b w)
     (X : Matrix (Fin a) (Fin b) (w.adicCompletion E)) :
-    blk h w m X ∈ KGL w n ↔ m ∈ K2 a b w ∧ ∀ i j, Valued.v (X i j) ≤ 1 := by
+    blk h w m X ∈ KGL w (n := n) ↔ m ∈ K2 a b w ∧ ∀ i j, Valued.v (X i j) ≤ 1 := by
   obtain ⟨hv, hi⟩ := blk_eq h w m X
   set e := finSumFinEquiv.trans (finCongr h) with he
   have e1 : ∀ (A : Matrix (Fin a) (Fin a) (w.adicCompletion E)) (B : Matrix (Fin a) (Fin b) (w.adicCompletion E))
@@ -193,8 +197,8 @@ private lemma blk_mem_iff {a b n : ℕ} (h : a + b = n) (w : Pl E) (m : GLw a w 
       · simp
       · simpa using i2 p q
 
-private lemma det_K {r : ℕ} {w : Pl E} {k : GLw r w} (hk : k ∈ KGL w r) : Valued.v k.val.det = 1 := by
-  have h1 : ∀ k ∈ KGL w r, Valued.v (k : GLw r w).val.det ≤ 1 := by
+private lemma det_K {r : ℕ} {w : Pl E} {k : GLw r w} (hk : k ∈ KGL w (n := r)) : Valued.v k.val.det = 1 := by
+  have h1 : ∀ k ∈ KGL w (n := r), Valued.v (k : GLw r w).val.det ≤ 1 := by
     rintro _ ⟨c, rfl⟩
     have : (GeneralLinearGroup.map (Ov E w).subtype c).val.det = ((c.val.det : Ov E w) : w.adicCompletion E) :=
       ((Ov E w).subtype.map_det c.val).symm
@@ -213,7 +217,7 @@ private lemma absHalf_one {w : Pl E} {x : w.adicCompletion E} (hx : Valued.v x =
   have h0 : ordL x = 0 := by
     have hne : Valued.v x ≠ 0 := by rw [hx]; exact one_ne_zero
     unfold ordL
-    rw [dif_neg hne]
+    rw [dite_eq_right hne]
     have : WithZero.unzero hne = 1 := by
       apply WithZero.coe_injective
       rw [WithZero.coe_unzero, hx]
@@ -230,39 +234,39 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.ctUnit :
   intro E _ _ _ w n a b h
   funext m
   unfold ct
-  have hconj : ∀ y : GLw n w, (avg fun k : KGL w n =>
-      (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) ((k : GLw n w)⁻¹ * y * k)) =
-      (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) y := by
+  have hconj : ∀ y : GLw n w, (avg fun k : KGL w (n := n) =>
+      (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) ((k : GLw n w)⁻¹ * y * k)) =
+      (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) y := by
     intro y
-    have hf : (fun k : KGL w n => (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) ((k : GLw n w)⁻¹ * y * k)) =
-        fun _ => (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) y := by
+    have hf : (fun k : KGL w (n := n) => (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) ((k : GLw n w)⁻¹ * y * k)) =
+        fun _ => (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) y := by
       funext k
-      have hiff : (k : GLw n w)⁻¹ * y * k ∈ KGL w n ↔ y ∈ KGL w n := by
+      have hiff : (k : GLw n w)⁻¹ * y * k ∈ KGL w (n := n) ↔ y ∈ KGL w (n := n) := by
         constructor
         · intro hy
-          have := (KGL w n).mul_mem ((KGL w n).mul_mem k.2 hy) ((KGL w n).inv_mem k.2)
+          have := (KGL w (n := n)).mul_mem ((KGL w (n := n)).mul_mem k.2 hy) ((KGL w (n := n)).inv_mem k.2)
           simpa [mul_assoc] using this
         · intro hy
-          exact (KGL w n).mul_mem ((KGL w n).mul_mem ((KGL w n).inv_mem k.2) hy) k.2
-      by_cases hy : y ∈ KGL w n
-      · rw [Set.indicator_of_mem (show _ ∈ (KGL w n : Set (GLw n w)) from hiff.2 hy),
-          Set.indicator_of_mem (show _ ∈ (KGL w n : Set (GLw n w)) from hy)]
+          exact (KGL w (n := n)).mul_mem ((KGL w (n := n)).mul_mem ((KGL w (n := n)).inv_mem k.2) hy) k.2
+      by_cases hy : y ∈ KGL w (n := n)
+      · rw [Set.indicator_of_mem (show _ ∈ (KGL w (n := n) : Set (GLw n w)) from hiff.2 hy),
+          Set.indicator_of_mem (show _ ∈ (KGL w (n := n) : Set (GLw n w)) from hy)]
         rfl
-      · rw [Set.indicator_of_notMem (show _ ∉ (KGL w n : Set (GLw n w)) from fun h' => hy (hiff.1 h')),
-          Set.indicator_of_notMem (show _ ∉ (KGL w n : Set (GLw n w)) from hy)]
+      · rw [Set.indicator_of_notMem (show _ ∉ (KGL w (n := n) : Set (GLw n w)) from fun h' => hy (hiff.1 h')),
+          Set.indicator_of_notMem (show _ ∉ (KGL w (n := n) : Set (GLw n w)) from hy)]
     rw [hf, avg_const]
   simp only [hconj]
   by_cases hm : m ∈ K2 a b w
   · have hu : (fun X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) =>
-        (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) (blk h w m (Multiplicative.toAdd X))) =
+        (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) (blk h w m (Multiplicative.toAdd X))) =
         (intMat a b w : Set _).indicator 1 := by
       funext X
       by_cases hX : X ∈ intMat a b w
-      · rw [Set.indicator_of_mem (show _ ∈ (KGL w n : Set (GLw n w)) from
+      · rw [Set.indicator_of_mem (show _ ∈ (KGL w (n := n) : Set (GLw n w)) from
             (blk_mem_iff h w m _).2 ⟨hm, (mem_intMat X).1 hX⟩),
           Set.indicator_of_mem (show X ∈ (intMat a b w : Set _) from hX)]
         rfl
-      · rw [Set.indicator_of_notMem (show _ ∉ (KGL w n : Set (GLw n w)) from
+      · rw [Set.indicator_of_notMem (show _ ∉ (KGL w (n := n) : Set (GLw n w)) from
             fun h' => hX ((mem_intMat X).2 ((blk_mem_iff h w m _).1 h').2)),
           Set.indicator_of_notMem (show X ∉ (intMat a b w : Set _) from hX)]
     obtain ⟨k1, k2⟩ := Subgroup.mem_prod.1 hm
@@ -272,7 +276,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.ctUnit :
     rw [hu, hint_ind, absHalf_one hx, Set.indicator_of_mem (show m ∈ (K2 a b w : Set _) from hm)]
     simp
   · have hu : (fun X : Multiplicative (Matrix (Fin a) (Fin b) (w.adicCompletion E)) =>
-        (KGL w n : Set (GLw n w)).indicator (1 : GLw n w → ℂ) (blk h w m (Multiplicative.toAdd X))) =
+        (KGL w (n := n) : Set (GLw n w)).indicator (1 : GLw n w → ℂ) (blk h w m (Multiplicative.toAdd X))) =
         fun _ => 0 := by
       funext X
       exact Set.indicator_of_notMem (fun h' => hm ((blk_mem_iff h w m _).1 h').1) _

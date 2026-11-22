@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DensityConstantOfParts
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.Dx2.DF
 open scoped ComplexConjugate
@@ -133,7 +137,7 @@ theorem sec_spec {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ W
         have : π b ≠ Fin.last r := by intro h; rw [← hB] at h; exact hbne (π.injective h)
         rw [monomialMatrix_adj π d0 hd0, if_neg this]; simp
       · simp
-    rw [hcof, prW_smul, orthoProj_m0_intertwine m₀ hmU hme hms hz hz' μ hμ.ne' hmz hzz0, hσz]
+    rw [hcof, prW_smul,  Formalism.FourierDecayAlt.P.Dx2.DF.orthoProj_m0_intertwine m₀ hmU hme hms hz hz' μ hμ.ne' hmz hzz0, hσz]
     simp only [hYdef, YB, Matrix.cons_val_zero]
     rw [prW_smul, prW_sub, prW_smul, prW_perp hν hνz, prW_self hz' hzz0, sub_zero, hZ,
       Matrix.mulVec_smul, Matrix.mulVec_smul, smul_smul, smul_smul, hdl]
@@ -225,7 +229,7 @@ theorem sec_spec {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ W
     have hinv : (m₀ * σ)⁻¹ *ᵥ u = v := by
       have : (m₀ * σ) *ᵥ v = u := by rw [← Matrix.mulVec_mulVec, hfix, hmv]
       rw [← this, Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hγu, Matrix.one_mulVec]
-    rw [hinv, ← hmv, orthoProj_m0_intertwine m₀ hmU hme hms hz hz' μ hμ.ne' hmz hzz0]
+    rw [hinv, ← hmv,  Formalism.FourierDecayAlt.P.Dx2.DF.orthoProj_m0_intertwine m₀ hmU hme hms hz hz' μ hμ.ne' hmz hzz0]
 
 theorem secDiag_cont (z z' : Fin (2 * r + k + 1) → ℂ) (π : Equiv.Perm (Fin (r + 1))) (b : Fin (r + 1)) :
     Continuous fun d0 => secDiag k r z z' π d0 b := by
@@ -283,7 +287,7 @@ theorem secMat_cont {z z' : Fin (2 * r + k + 1) → ℂ} (ν' : Fin (2 * r + k +
   simp only [smat, Matrix.of_apply]
   refine continuousOn_pi.1 ?_ a
   unfold smap
-  refine continuousOn_const.add (continuousOn_finset_sum _ fun i _ => ?_)
+  refine continuousOn_const.add (continuousOn_finsetSum _ fun i _ => ?_)
   have h := secY_cont ν' hT hT' π (Real.sqrt (Tz k r z')) i
   fun_prop
 

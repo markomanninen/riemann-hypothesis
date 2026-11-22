@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsUniformDenominator
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsUniformDenominator
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Num
 
@@ -141,7 +145,8 @@ private theorem refl_lemma_4 {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω
           (f l' ^ (Finset.univ.sup (n₁ l') - n₁ l' q') *
             (f l ^ m l * (B l).repr (f l' ^ n₁ l' q' • b l' q') q)) := by
       rw [he']
-      simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.coe_smul,
         Pi.smul_apply, smul_eq_mul]
       rw [Finset.mul_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun q' _ => ?_
@@ -169,7 +174,8 @@ private theorem combo_lemma_5 {Ω : Type} [Field Ω] {E : Type} [AddCommGroup E]
   have h : ∀ j, w.repr (∑ b, c b • w (Fin.castLE i.2 b)) j =
       ∑ b, if Fin.castLE i.2 b = j then c b else 0 := by
     intro j
-    simp [map_sum, Finsupp.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finsupp.single_apply]
   constructor
   · intro j hj
     rw [h]
@@ -211,7 +217,8 @@ theorem PositivityTheory.Xgn.t_minor_graded : ∀ {o Ω : Type} [CommRing o] [Fi
     have hdetA : flagMinor φ w ((i : ℕ) + 1) i.2 J = A.det := rfl
     have hy : Matrix.mulVec A c = fun a => φ (J a) v := by
       ext a
-      simp [Matrix.mulVec, dotProduct, A, v, map_sum, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mulVec, dotProduct, A, v, map_sum, mul_comm]
     have hcr : Matrix.cramer A (Matrix.mulVec A c) = A.det • c := by
       rw [Matrix.cramer_eq_adjugate_mulVec, Matrix.mulVec_mulVec, Matrix.adjugate_mul,
         Matrix.smul_mulVec, Matrix.one_mulVec]
@@ -255,7 +262,8 @@ theorem PositivityTheory.Xgn.t_minor_graded : ∀ {o Ω : Type} [CommRing o] [Fi
         congr 1
         ext r d
         simp
-      rw [hdet, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hdet, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       simp only [map_smul, smul_eq_mul, cf]
       ring

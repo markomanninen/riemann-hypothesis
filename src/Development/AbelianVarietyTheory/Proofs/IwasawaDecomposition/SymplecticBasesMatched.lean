@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CastFrMemDom
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CastFrMemDom
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix
@@ -44,9 +48,9 @@ theorem hx_renum (h : SameSp X' X) {bas' : (Fin g' ⊕ Fin g' → ℤ) ≃ₗ[�
     (fun z w => hx X bas idx (castFr h.psi x) z w - hx X' bas' idx' x (renum q z) (renum q w))
     (fun w => ⟨fun u v => ?_, fun c u => ?_⟩) (fun z => ⟨fun u v => ?_, fun c u => ?_⟩) _
     (span_range_pv idx hs hx1) ?_ z w)
-  · simp only [hx, map_add, mulVec_add, add_dotProduct]; ring
+  · simp only [hx, map_add (f := _), mulVec_add, add_dotProduct]; ring
   · simp only [hx, map_smul, mulVec_smul, smul_dotProduct, smul_eq_mul]; ring
-  · simp only [hx, map_add, star_add, mulVec_add, dotProduct_add]; ring
+  · simp only [hx, map_add (f := _), star_add, mulVec_add, dotProduct_add]; ring
   · have : renum q (c • u) = c • renum q u := rfl
     simp only [hx, this, star_smul, star_trivial, mulVec_smul, dotProduct_smul, smul_sub]
   · rintro _ ⟨u, rfl⟩ _ ⟨v, rfl⟩
@@ -115,7 +119,7 @@ theorem anFib_move_renum : ∀ (D : D7) (H : ReciprocityTheory.ChartRestriction.
       fun ⟨v, hv, hz⟩ => ⟨_, Lev.mem_mapL.1 hv, (congrArg (renum q) hz).trans (hp' v)⟩⟩
   refine ⟨
     { ex := fun z => A.ex (renum q z)
-      ex_add := fun z w => by rw [map_add, A.ex_add]
+      ex_add := fun z w => by rw [map_add (f := _), A.ex_add]
       ex_onto := A.ex_onto.comp (renum q).surjective
       ex_ker := fun z => (A.ex_ker _).trans (hlat z)
       ex_lin := fun a z => by
@@ -133,7 +137,7 @@ theorem anFib_move_renum : ∀ (D : D7) (H : ReciprocityTheory.ChartRestriction.
       χ := fun v => A.χ (Lev.lin ga⁻¹ v)
       χ_norm := fun v hv => A.χ_norm _ (Lev.mem_mapL.1 hv)
       fr_per := fun v hv j z hz => by
-        rw [hhx, hhx, map_add, hp']; exact A.fr_per _ (Lev.mem_mapL.1 hv) j _ hz },
+        rw [hhx, hhx, map_add (f := _), hp']; exact A.fr_per _ (Lev.mem_mapL.1 hv) j _ hz },
     fun z => th' (renum q z), fun j z => hth j (renum q z), fun mk hk a ha => ?_, fun n v' v hv => ?_⟩
   · exact ⟨(A.hol U f).1.preimage (renum q).continuous,
       (A.hol U f).2.comp (renum q).differentiableOn fun z hz => hz⟩

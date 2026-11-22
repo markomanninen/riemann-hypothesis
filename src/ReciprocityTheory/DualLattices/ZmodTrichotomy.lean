@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.MulIterateRootEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.MulIterateRootEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {S M : Type*} [CommRing S] [AddCommGroup M] [Module S M]
 private lemma principal_inj (g : S)
     (h : ∀ m : M, g • m = 0 → (⟨g, mem_span_singleton_self g⟩ : span {g}) ⊗ₜ[S] m = 0) :
     Function.Injective (TensorProduct.lift ((LinearMap.lsmul S M).comp (span {g}).subtype)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   have ex : ∀ t : span {g} ⊗[S] M,
       ∃ m : M, t = (⟨g, mem_span_singleton_self g⟩ : span {g}) ⊗ₜ[S] m := by
     intro t
@@ -156,7 +160,7 @@ theorem flatW' : FlatW'Statement p O := by
       have := p_mul_eq_zero _ (h1.symm.trans h2)
       linear_combination this
     refine ⟨Ideal.Quotient.mk I c, ?_⟩
-    rw [hpc, h3, map_add, map_mul, map_mul, hTI]
+    rw [hpc, h3, map_add (f := _), map_mul, map_mul, hTI]
     ring
   refine ⟨?_, ?_, hann, ?_⟩
   · apply le_antisymm

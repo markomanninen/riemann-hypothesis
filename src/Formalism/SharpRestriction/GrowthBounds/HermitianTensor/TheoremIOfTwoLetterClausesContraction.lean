@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfWtPQCast
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudA
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudB
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudC
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIso
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.NuOfWtPQCast
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudA
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudB
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudC
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIso
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf
 

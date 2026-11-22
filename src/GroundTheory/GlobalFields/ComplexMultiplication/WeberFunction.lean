@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.VariableChangePoints
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.VariableChangePoints
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -28,11 +33,6 @@ theorem IsShortForm.Δ_eq {W : WeierstrassCurve F} (hW : IsShortForm W) :
   simp only [WeierstrassCurve.Δ, b₂, b₄, b₆, b₈, hW.a₁_eq, hW.a₂_eq, hW.a₃_eq]
   ring
 
-theorem IsShortForm.Δ_eq_g {W : WeierstrassCurve F} (hW : IsShortForm W) :
-    W.Δ = g₂ W ^ 3 - 27 * g₃ W ^ 2 := by
-  rw [hW.Δ_eq, g₂, g₃]
-  ring
-
 theorem IsShortForm.a₄_ne_zero_or_a₆_ne_zero {W : WeierstrassCurve F} [W.IsElliptic]
     (hW : IsShortForm W) : W.a₄ ≠ 0 ∨ W.a₆ ≠ 0 := by
   by_contra h
@@ -41,8 +41,9 @@ theorem IsShortForm.a₄_ne_zero_or_a₆_ne_zero {W : WeierstrassCurve F} [W.IsE
   rw [hW.Δ_eq, h.1, h.2] at this
   simp at this
 
-open scoped Classical in
 
+open Classical in
+open scoped Classical in
 noncomputable def weberValue (W : WeierstrassCurve F) (x : F) : F :=
   if W.a₆ = 0 then g₂ W ^ 2 / W.Δ * x ^ 2
   else if W.a₄ = 0 then g₃ W / W.Δ * x ^ 3
@@ -51,9 +52,6 @@ noncomputable def weberValue (W : WeierstrassCurve F) (x : F) : F :=
 noncomputable def weberFunction (W : WeierstrassCurve F) : W.toAffine.Point → OnePoint F
   | .zero => ∞
   | .some x _ _ => OnePoint.some (weberValue W x)
-
-@[simp]
-theorem weberFunction_zero (W : WeierstrassCurve F) : weberFunction W .zero = ∞ := rfl
 
 @[simp]
 theorem weberFunction_some (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :

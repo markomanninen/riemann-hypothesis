@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ theorem chiEx : ChiEx := by
     omega
   refine ⟨(quadraticChar (ZMod H.d)).ringHomComp (Int.castRingHom ℂ), GlobalTheory.isKroneckerChar_quadraticChar h4, ?_⟩
   have hr : rootDiscr E = hostRd E := by
-    simp [rootDiscr, hostRd, Int.cast_abs, one_div]
+    simp [rootDiscr_def, hostRd, Int.cast_abs, one_div]
   have hpos : 0 < hostRd E := by
     unfold hostRd
     apply Real.rpow_pos_of_pos

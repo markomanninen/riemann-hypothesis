@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 noncomputable section
 

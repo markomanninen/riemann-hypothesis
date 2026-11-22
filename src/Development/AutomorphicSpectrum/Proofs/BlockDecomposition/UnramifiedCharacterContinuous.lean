@@ -1,22 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsAlgHomMulEquivDec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowCharPowEqSelf
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
-import GroundTheory.LocalFields.MaximalUnramified
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsAlgHomMulEquivDec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowCharPowEqSelf
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.IsZeroGroupCohomologyQuotientToInvariantsGalAdd
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+public import GroundTheory.LocalFields.MaximalUnramified
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ExistsEqNsmulOfProjEqZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate
 open GroundTheory.ProfCoh GroundTheory.LocalField ValuativeRel CategoryTheory
 
 namespace GlobalTheory.CompanionTheory.LocalUnram
 
-open GroundTheory.LocalField.Abstract in
 
+open GroundTheory.LocalField.Abstract in
 theorem continuous_of_additive_of_frobenius_eq_one :
     ∀ (K Ω : Type) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
       [Field Ω] [Algebra K Ω] [IsSepClosure K Ω] (n : ℕ) [NeZero n] (χ : Gal(Ω/K) → ZMod n),

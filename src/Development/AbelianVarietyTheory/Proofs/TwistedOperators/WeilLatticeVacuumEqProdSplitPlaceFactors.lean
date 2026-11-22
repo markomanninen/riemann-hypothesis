@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MovFn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetIdlVal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepLatticeStabilizerVacuumEqDetCharSmul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsLocalVacuumOfIsLatticeVacuumCoprimeLevel
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InLatticeStabilizerAtPlaceOfSupportedStabilizer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalVCutIdemOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairPtsEqSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MovFn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetIdlVal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepLatticeStabilizerVacuumEqDetCharSmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsLocalVacuumOfIsLatticeVacuumCoprimeLevel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InLatticeStabilizerAtPlaceOfSupportedStabilizer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalVCutIdemOfNotMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance GlobalTheory.RowVertexInv GlobalTheory.SplitFlip
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -65,7 +70,7 @@ theorem hom_one_apply {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R')
 
 theorem hom_entry {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') (t m o : R) :
     φ (t * m + (o - t * o)) = φ t * φ m + (φ o - φ t * φ o) := by
-  rw [map_add, map_sub, map_mul, map_mul]
+  rw [map_add (f := _), map_sub, map_mul, map_mul]
 
 theorem hom_entry_zero {R R' : Type} [CommRing R] [CommRing R'] (φ : R →+* R') {t : R} (ht : φ t = 0) (m o : R) :
     φ (t * m + (o - t * o)) = φ o := by
@@ -294,8 +299,8 @@ theorem om_locPart_pair {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT 
     hvac.2 _ (GlobalTheory.SplitScalar.isSplitIdem_conj he) u hu hh
   exact GlobalTheory.VacStabFixed.om_split_halves hW hΛS hΛT he sa sb hL hx hy hf v1 v2
 
-open Classical in
 
+open Classical in
 theorem weilLatticeVacuum_placeSet_induction {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (hW : IsWeilDatumO ψ S T χS χT om)
     {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}

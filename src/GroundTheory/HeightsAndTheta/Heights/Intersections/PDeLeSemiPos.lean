@@ -1,14 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
-import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAddFirst
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsRegLimit
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsMonoSemiPos
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRegCurvBound
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StHorizNotMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NoCommonComponentCoordinatesPlane
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAddFirst
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsRegLimit
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsMonoSemiPos
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRegCurvBound
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StHorizNotMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -86,7 +91,7 @@ theorem DeLeSemiPos.proof (hPL1 : ArithmeticPoincareLelongFormula) (hSt : Stokes
   have ht' : ∃ b : K → ℕ, (∀ k, A'.a k = b k) ∧ IsMultiHomog s' b := ⟨a', haA', hsa'⟩
   obtain ⟨C, hC⟩ := hCurv K ι A' s' ht' hA'
   have hT := isSmoothHerm_ofMetrics_fs (ι := ι) (fun _ => (C : ℤ))
-  generalize HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun _ => (C : ℤ)) = T at hC hT
+  generalize HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun _ => (C : ℤ)) = T at hC hT
   have hfin : ∀ t : MRing ι, {W | W ∈ divSupp P t ∧ IsHorizontal W}.Finite :=
     fun t => (divSupp_finite P t).subset fun W h => h.1
 

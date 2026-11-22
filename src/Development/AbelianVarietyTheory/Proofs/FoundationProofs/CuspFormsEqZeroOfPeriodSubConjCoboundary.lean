@@ -1,27 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerPeriodCocycleMemCocyclesAndEqStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecayAtCusp
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspFormEqZeroOfPeriodicOfBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalPolyDegreeSlashAction
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PolyDegreeSlashActionRightActionProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EichlerPeriodCocycleMemCocyclesAndEqStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DecayAtCusp
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CuspFormEqZeroOfPeriodicOfBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalPolyDegreeSlashAction
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PolyDegreeSlashActionRightActionProperties
+
+@[expose] public section
 
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
 
 namespace GlobalTheory.HeckeFamilyMatrices.Positivity
-
-noncomputable def segPt (τ : ℍ) (t : ℝ) : ℍ :=
-  ⟨Complex.I + ((Set.projIcc (0 : ℝ) 1 zero_le_one t : ℝ) : ℂ) * ((τ : ℂ) - Complex.I), by
-    have h0 := (Set.projIcc (0 : ℝ) 1 zero_le_one t).2.1
-    have h1 := (Set.projIcc (0 : ℝ) 1 zero_le_one t).2.2
-    have h2 := τ.im_pos
-    simp only [Complex.add_im, Complex.I_im, Complex.mul_im, Complex.ofReal_re, Complex.sub_im,
-      Complex.ofReal_im, zero_mul, add_zero, UpperHalfPlane.coe_im]
-    rcases h1.eq_or_lt with h | h
-    · rw [h]; linarith
-    · nlinarith [mul_nonneg h0 h2.le]⟩
 
 open Polynomial UpperHalfPlane in
 open scoped MatrixGroups ModularForm in
@@ -59,7 +52,7 @@ private lemma eval_eq_denom_pow_mul_eval_of_slP_invariant (w : ℕ) (V : ℍ →
   rw [← hrel, _root_.GlobalTheory.HeckeFamilyMatrices.eval_polySlash w _ _ _ hmem (sl_denom_ne_zero γ τ)]
   congr 2
   rw [UpperHalfPlane.coe_specialLinearGroup_apply]
-  simp [_root_.GlobalTheory.HeckeFamilyMatrices.mat]
+  simp
 
 open Polynomial UpperHalfPlane in
 open scoped MatrixGroups ModularForm in
@@ -85,7 +78,7 @@ private lemma continuous_eval_of_continuous_coeff_of_degree_le (w : ℕ) (V : �
       rw [mem_degreeLT] at this
       exact (natDegree_lt_iff_degree_lt h0).2 this
   rw [h]
-  exact continuous_finset_sum _ fun i _ => (hc i).mul (continuous_coe.pow i)
+  exact continuous_finsetSum _ fun i _ => (hc i).mul (continuous_coe.pow i)
 
 open Polynomial UpperHalfPlane in
 open scoped MatrixGroups ModularForm in
@@ -181,10 +174,10 @@ private lemma eq_zero_of_eichler_conj_slash_relation (Γ : Subgroup SL(2, ℤ)) 
   simp only [Int.cast_zero, zero_mul, zero_add, Int.cast_one, one_pow, one_mul, hT] at he
   exact he.symm
 
+
 open Polynomial UpperHalfPlane in
 open scoped MatrixGroups ModularForm in
 open scoped Manifold in
-
 theorem _root_.GlobalTheory.HeckeFamilyMatrices.Positivity.eq_zero_of_per_sub_cj_mem : ∀ (N : ℕ) (Γ : Subgroup SL(2, ℤ)) (k : ℕ), 5 ≤ N →
     Γ ≤ CongruenceSubgroup.Gamma1 N → Γ.FiniteIndex → 3 ≤ k → ∀ (f h : CuspForm Γ (k : ℤ)),
     _root_.GlobalTheory.HeckeFamilyMatrices.per Γ (k - 2) ⇑f - _root_.GlobalTheory.HeckeFamilyMatrices.cj (_root_.GlobalTheory.HeckeFamilyMatrices.per Γ (k - 2) ⇑h) ∈

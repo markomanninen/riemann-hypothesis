@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 noncomputable section
 namespace GlobalTheory.KeyKa.KosKer
@@ -68,7 +73,8 @@ theorem mulVec_inl_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {d
     (ev : ∀ j, Matrix (Fin d) (Fin (N j)) R) (ev' : ∀ j, Matrix (Fin d') (Fin (N j)) S)
     (u : KIx g d N → R) (u' : KIx g d' N → S) (hu : ∀ q, u' (.inl q) = f (u (.inl q))) (p) :
     (kosD (fun i j j' => (m i j j').map f) ev' *ᵥ u') (.inl p) = f ((kosD m ev *ᵥ u) (.inl p)) := by
-  simp only [mulVec, dotProduct, Fintype.sum_sum_type, kosD, zero_mul, Finset.sum_const_zero, add_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulVec, dotProduct, Fintype.sum_sum_type, kosD, zero_mul, Finset.sum_const_zero, add_zero,
     map_sum, map_mul, hu, apply_ite f, map_zero, map_pow, map_neg, map_one, Matrix.map_apply]
 
 theorem div_unif {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
+
 open CategoryTheory GlobalTheory.CxCoh
 
 namespace GlobalTheory.CxCoh.Cx
@@ -47,7 +52,7 @@ theorem fnMap_h1_bijective (C : Type 1) [Category.{0} C] (K : Cx C) (hA0 : K.M1.
     obtain ⟨w, hw⟩ := hA1 (fun T T' φ => K.d0 T' (c.1.1 T T' φ)) (by
       intro T T' T'' φ ψ
       have h := congrArg (K.d0 T'') (hδ T T' T'' φ ψ)
-      simp only [map_add, map_sub, map_zero, K.diffZero_natural] at h ⊢
+      simp only [map_add (f := _), map_sub, map_zero, K.diffZero_natural] at h ⊢
       rw [← sub_eq_zero, ← neg_eq_zero, ← h]; abel)
     have hdw := hB0 (fun T => K.d1 T (w T)) (by
       intro T T' φ

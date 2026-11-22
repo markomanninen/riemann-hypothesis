@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.AdelicUnitaryGroups
+
+@[expose] public section
 
 namespace GlobalTheory.MiscellaneousLemmas
 
@@ -11,8 +15,9 @@ theorem main : ∀ {F E : Type} [inst : Field F] [inst_1 : NumberField F] [inst_
     obtain ⟨a, ha, w, hw, rfl⟩ := hy
     obtain ⟨n, rfl⟩ := hx w hw
     refine ⟨fun j => n j • a, fun j => zsmul_mem ha _, fun i => ?_⟩
-    simp only [map_sum, map_zsmul, Finsupp.coe_finset_sum, Finsupp.coe_smul, Finset.sum_apply,
-      Pi.smul_apply, TensorProduct.tmul_sum, TensorProduct.smul_tmul]
+    change a ⊗ₜ[F] (V.frame.repr (∑ j, n j • x j) i) = _
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, Finsupp.finsetSum_apply, Finsupp.smul_apply, TensorProduct.tmul_sum, TensorProduct.smul_tmul]
   | zero => exact ⟨0, fun j => zero_mem _, fun i => by simp⟩
   | add y z _ _ hy hz =>
     obtain ⟨a, ha, h⟩ := hy

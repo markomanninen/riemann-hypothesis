@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.Ramification
-import GroundTheory.LocalFields.Monogenic
-import GroundTheory.LocalFields.Unramified
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Ramification
+public import GroundTheory.LocalFields.Monogenic
+public import GroundTheory.LocalFields.Unramified
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,10 +156,10 @@ theorem lowerRamificationGroup_map_fixedField [IsGalois K L] (H : Subgroup (L â‰
 
 end Subgroup
 
-variable (K L) in
 
+variable (K L) in
 theorem card_lowerRamificationGroup_zero [IsGalois K L] :
-    Nat.card (lowerRamificationGroup K L 0) = ramificationIndex K L := by
+    Nat.card (lowerRamificationGroup K L 0) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) := by
   rw [lowerRamificationGroup_zero]
   exact card_inertiaSubgroup K L
 

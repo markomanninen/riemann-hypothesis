@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.OnePrimeOfTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.OnePrimeOfTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.B1
 
@@ -108,5 +112,3 @@ theorem UpperTheory.V.B1.decComm :
       rwa [← IsLocalRing.residue_eq_zero_iff, map_sub, sub_eq_zero]
     rw [ValuationSubring.valuation_lt_one_iff] at hmem
     convert hmem using 2
-    rw [commutatorElement_def]
-    rfl

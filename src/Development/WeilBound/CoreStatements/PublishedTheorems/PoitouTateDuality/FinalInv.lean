@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalInvPf
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalInvPf
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+
+@[expose] public section
 
 noncomputable section
 

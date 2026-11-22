@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CyclotomicConjugation.QuadConjAlt
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Conjugation
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CyclotomicConjugation.QuadConjAlt
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Conjugation
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU Formalism.L2.Host GlobalTheory.HeckeGal
 open GlobalTheory.SplitPts (conjE)
@@ -61,7 +65,7 @@ private theorem aut_cases {d : ℕ} {x : E} (hd : 0 < d) (hx : x ^ 2 = -(d : E))
       intro a ha
       obtain rfl : a = x := Set.mem_singleton_iff.1 ha
       exact h)
-    exact AlgEquiv.coe_algHom_injective this
+    exact AlgEquiv.coe_toAlgHom_injective this
   rcases sq_eq_sq_iff_eq_or_eq_neg.1 hsq with h | h
   · exact Or.inl (ext' 1 h)
   · refine Or.inr (ext' _ (h.trans (Subtype.ext ?_)))

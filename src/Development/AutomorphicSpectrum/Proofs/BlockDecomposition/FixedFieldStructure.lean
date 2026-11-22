@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem exists_eq_algebraMap_of_sigR_eq {F E K : Type} [Field F] [CharZero F] [F
     intro s t h
     have h2 : s • (1 : E) + t • σ u = 0 := by
       have := congrArg σ h
-      simpa [map_add, map_smul] using this
+      simpa [map_add (f := _), map_smul] using this
     have h3 : t • (σ u - u) = 0 := by
       have : t • (σ u - u) = (s • (1 : E) + t • σ u) - (s • (1 : E) + t • u) := by module
       rw [this, h, h2, sub_zero]
@@ -40,7 +44,7 @@ theorem exists_eq_algebraMap_of_sigR_eq {F E K : Type} [Field F] [CharZero F] [F
     have h1 : u = p • (1 : E) + q • σ u := by
       have := hσ u
       rw [hsu] at this
-      simpa [map_add, map_smul] using this.symm
+      simpa [map_add (f := _), map_smul] using this.symm
     rw [hsu] at h1
     have : (p + q * p) • (1 : E) + (q * q - 1) • u = (p • (1 : E) + q • (p • (1 : E) + q • u)) - u := by module
     rw [this, ← h1, sub_self]

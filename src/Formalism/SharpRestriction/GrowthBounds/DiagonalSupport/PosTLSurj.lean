@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundReal
+
+@[expose] public section
 
 noncomputable section
 

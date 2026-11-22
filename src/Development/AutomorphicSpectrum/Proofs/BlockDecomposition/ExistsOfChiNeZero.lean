@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem chi_eq {ω : HeckeCharacter k} {M₀ M : ℕ} (hL : Lvl ω M₀ M)
     (hu : u ∈ finiteIntegralUnits k) (h : InM M (a - (u : FiniteAdeleRing (𝓞 k) k))) :
     chi ω M a = val ω u := by
   have hex : ∃ u ∈ finiteIntegralUnits k, InM M (a - (u : FiniteAdeleRing (𝓞 k) k)) := ⟨u, hu, h⟩
-  rw [chi, dif_pos hex]
+  rw [chi, dite_eq_left hex]
   obtain ⟨h1, h2⟩ := hex.choose_spec
   refine val_eq_of_inM hL.cond h1 hu (inM_dvd hL.dvd ?_)
   have := inM_sub h h2
@@ -108,7 +112,7 @@ theorem chi_eq {ω : HeckeCharacter k} {M₀ M : ℕ} (hL : Lvl ω M₀ M)
 theorem chi_eq_zero {ω : HeckeCharacter k} {M : ℕ} {a : FiniteAdeleRing (𝓞 k) k}
     (h : ¬ ∃ u ∈ finiteIntegralUnits k, InM M (a - (u : FiniteAdeleRing (𝓞 k) k))) :
     chi ω M a = 0 := by
-  rw [chi, dif_neg h]
+  rw [chi, dite_eq_right h]
 
 theorem exists_of_chi_ne_zero {ω : HeckeCharacter k} {M : ℕ} {a : FiniteAdeleRing (𝓞 k) k}
     (h : chi ω M a ≠ 0) :

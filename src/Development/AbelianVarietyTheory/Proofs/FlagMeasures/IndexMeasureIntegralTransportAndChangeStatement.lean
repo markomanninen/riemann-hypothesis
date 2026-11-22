@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralTransportAndChange
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IndexMeasureIntegralTransportAndChange
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Cint
+
+@[expose] public section
+
 open GlobalTheory.IdxInt
 open scoped Pointwise Classical
 set_option maxHeartbeats 1000000 in

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
@@ -93,7 +97,7 @@ theorem exists_measurable_cutoff_fibre_integral_one (G : Type) [Group G] [Topolo
     (measurable_const.mul (measurable_one.indicator (E.isCompact k).isClosed.measurableSet)).mul
       (measurable_const.add (hFm k)).inv
   let f : G → ENNReal := fun y => ∑' k, w k y
-  have hfm : Measurable f := Measurable.ennreal_tsum hwm
+  have hfm : Measurable f := Measurable.tsum hwm
   let T : G → ENNReal := fun y => ∫⁻ m, f (m⁻¹ * y) ∂ν
   have hTm : Measurable T :=
     Measurable.lintegral_prod_right' (f := fun p : G × G => f (p.2⁻¹ * p.1))

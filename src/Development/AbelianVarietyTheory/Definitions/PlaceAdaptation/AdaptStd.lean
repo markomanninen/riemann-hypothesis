@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GermExCut
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GermExCut
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -16,8 +20,8 @@ namespace GlobalTheory.PlaceInt
 
 section Formal
 variable {V : Type} [CommRing V]
-open Classical in
 
+open Classical in
 def evC {σ τ : Type} (a : σ → MvPowerSeries τ V) (f : MvPowerSeries σ V) : MvPowerSeries τ V :=
   if h : ∃ ψ : MvPowerSeries σ V →ₐ[V] MvPowerSeries τ V, ∀ j, ψ (MvPowerSeries.X j) = a j then h.choose f else 0
 variable {d : ℕ}
@@ -187,34 +191,6 @@ structure Adapt {n : ℕ} (Λ : GenLat E n) (N ℓ : ℕ) where
   spans : ∀ w ∈ Λ.Ln, ∃ v ∈ stdLat E n, (k₁ : E) • w = (g.map (algebraMap (𝓞 E) E)).mulVec v
   gq : g * q = ((k₁ * N : ℕ) : 𝓞 E) • (1 : Matrix (Fin n) (Fin n) (𝓞 E))
 
-def adaptStd (n N ℓ : ℕ) : Adapt (⟨stdLat E n⟩ : GenLat E n) N ℓ where
-  k := 1
-  k₁ := 1
-  ga := 1
-  p := 1
-  q := (N : 𝓞 E) • (1 : Matrix (Fin n) (Fin n) (𝓞 E))
-  g := 1
-  odd := odd_one
-  cop := Nat.coprime_one_left ℓ
-  cop₁ := Nat.coprime_one_left ℓ
-  unitary i j := by
-    classical
-    rw [Finset.sum_eq_single i]
-    · simp [Matrix.one_apply]
-    · intro b _ hb; simp [Matrix.one_apply_ne hb]
-    · simp
-  into v hv := by simpa using hv
-  onto v hv := ⟨v, hv, by simp⟩
-  prod := by
-    ext i j
-    by_cases h : i = j <;> simp [Matrix.one_apply, h]
-  cols v hv := by
-    have : (1 : Matrix (Fin n) (Fin n) (𝓞 E)).map (algebraMap (𝓞 E) E) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
-    rw [this, Matrix.one_mulVec]; exact ⟨hv, hv⟩
-  spans w hw := by
-    have : (1 : Matrix (Fin n) (Fin n) (𝓞 E)).map (algebraMap (𝓞 E) E) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
-    exact ⟨w, hw.1, by rw [this, Matrix.one_mulVec]; simp⟩
-  gq := by simp
 end Lattice
 
 end GlobalTheory.PlaceInt

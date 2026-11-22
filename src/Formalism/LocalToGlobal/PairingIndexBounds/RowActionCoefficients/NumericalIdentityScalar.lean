@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.XFacts
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.XFacts
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -34,7 +38,7 @@ def PairingSeriesLinearForm : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra X.G.Kf Kc] [Infinite Kc] (j : ℕ)
     (P : DA X Kc j) (f : MvPowerSeries (X.ZA j) Kc) (l : XspC (X.Pj (j + 1)) Kc →ₗ[Kc] Kc) (R : MvPolynomial (X.ZA j) Kc),
     (∀ d0 : X.ZA j → Kc, eval d0 R = l (evD X Kc j d0 P)) →
-      l (pairD X Kc j P f) = ∑ n ∈ R.support, derAt X Kc j n f * coeff n R
+      l (pairD X Kc j P f) = ∑ n ∈ R.support, derAt X Kc j n f * AddMonoidAlgebra.coeff R n
 
 def XMid : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Kc : Type) [Field Kc] [Algebra (K0 p) Kc] [Algebra X.G.Kf Kc] [CharZero Kc] (j : ℕ)
@@ -45,7 +49,7 @@ def XMid : Prop :=
         fockR (delF X Kc j (∏ b, rename (emX X j b) (rowAct X.G.Kf (mF X j b ((φ.g b.1)⁻¹ : GL _ _))
             (evX (fun s => x (xmX X j b s)) (HgX X X.G.Kf j b)))) (linSub (bc Kc φ) f))
           (map (algebraMap X.G.Kf Kc) (∏ b, rename (emX X (j + 1) b)
-            (rowAct X.G.Kf (mF X (j + 1) b (φ.g' b.1) * DgX X X.G.Kf j i0 b.1).transpose
+            (rowAct X.G.Kf (mF X (j + 1) b (φ.g' b.1).val * DgX X X.G.Kf j i0 b.1).transpose
               (bideterminant X.G.Kf (szT X j b) (szT_le X j b) (I b))))) =
         ε * numericalIdentityScalar X Kc j (fun v => φ.g v) (fun v => φ.g' v) i0 * (∏ b, cN Kc (nuT X j b)) *
           eval (fun t => algebraMap X.G.Kf Kc (x t)) (applyD (X.PI j Ist i0) f)
@@ -70,7 +74,7 @@ def XUnit : Prop :=
             ((∏ v : X.Pl, (p : X.G.Kf) ^ (X.vm v (j + 1) * len X v j L)) *
               (∏ v : X.Pl, (p : X.G.Kf) ^ (X.vm v (j + 1) * len X v (j + 1) L''))⁻¹) *
             sX X j (fun v => g v) *
-            (∏ b : BX X, (mF X (j + 1) b (g' b.1) * DgX X X.G.Kf j i0 b.1).det ^ (-(eJ X (j + 1) b.1 b.2)))⁻¹) *
+            (∏ b : BX X, (mF X (j + 1) b (g' b.1).val * DgX X X.G.Kf j i0 b.1).det ^ (-(eJ X (j + 1) b.1 b.2)))⁻¹) *
           numericalIdentityScalar X Kc j (fun v => g v) (fun v => g' v) i0 ∈ Oc
 
 def XEdge : Prop :=
@@ -81,6 +85,6 @@ def XEdge : Prop :=
     ∃ g' h' : ∀ v : X.Pl, GL (Fin ((X.Pj (j + 1)).m + 1)) (X.G.P.Qq v),
       (∀ v, X.latAt v (j + 1) L'' = colSpan (X.G.P.W v) (g' v : Matrix _ _ (X.G.P.Qq v))) ∧
       (∀ v, X.latAt v (j + 1) L' = colSpan (X.G.P.W v) (h' v : Matrix _ _ (X.G.P.Qq v))) ∧
-      ∀ b : BX X, mF X (j + 1) b (h' b.1) = mF X (j + 1) b (g' b.1) * DgX X X.G.Kf j i0 b.1
+      ∀ b : BX X, mF X (j + 1) b (h' b.1).val = mF X (j + 1) b (g' b.1).val * DgX X X.G.Kf j i0 b.1
 
 end Formalism.L2.PairingIndexBounds.Ent

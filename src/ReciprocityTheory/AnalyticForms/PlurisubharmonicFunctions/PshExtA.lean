@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshPoisson
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshPoisson
+
+@[expose] public section
 
 open Metric Real Filter Topology MeasureTheory
 

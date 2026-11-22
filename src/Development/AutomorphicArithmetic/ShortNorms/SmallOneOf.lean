@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimesAPIntervalOfPrimesRel
+module
+
+public import Development.AutomorphicArithmetic.ShortNorms.ShortNorm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimesAPIntervalOfPrimesRel
+
+@[expose] public section
 
 open GlobalTheory.Mem.An
 

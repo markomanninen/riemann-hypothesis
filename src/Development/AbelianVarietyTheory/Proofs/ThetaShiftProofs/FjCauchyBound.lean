@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HolomorphicPeriodicityExtension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMajorantFlags
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspCoefficientFlow
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FjFlow
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HolomorphicPeriodicityExtension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMajorantFlags
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspCoefficientFlow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FjFlow
+
+@[expose] public section
 
 open NumberField Complex ReciprocityTheory.ChartRestriction.G.FD
 
@@ -13,9 +17,9 @@ namespace GlobalTheory.FjCauchy
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r)
 
+
 open NumberField Complex Filter Topology in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FjCauchy.isIsoV_embV {ξ : Fin r → E} (hξ : X.IsIso ξ) :
     X.IsIsoV (X.embV ξ) := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.Data.IsIsoV
@@ -24,9 +28,9 @@ theorem _root_.GlobalTheory.FjCauchy.isIsoV_embV {ξ : Fin r → E} (hξ : X.IsI
   show _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC (τ : E →+* ℂ) X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ ξ) (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ ξ) = 0
   rw [_root_.ReciprocityTheory.ChartRestriction.G.FD.hermC_emb, hξ.2.1, map_zero]
 
+
 open NumberField Complex Filter Topology in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FjCauchy.tt_pos {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r}
     (hx : x ∈ X.dom) (τ : X.Ψ) :
     0 < X.tt ξ x τ := by
@@ -56,9 +60,9 @@ private theorem one_add_two_mul_pos_of_inv_add_pos {c y hp : ℝ} (hc : 0 < c) (
   rw [← e]
   exact mul_pos hs hk
 
+
 open NumberField Complex Filter Topology in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FjCauchy.flow_mem_dom {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r}
     (hx : x ∈ X.dom) (s : X.Ψ → ℂ) (hs : ∀ τ, 0 < X.tt ξ x τ + (s τ).im) :
     X.flow ξ s x ∈ X.dom := by
@@ -88,9 +92,9 @@ theorem _root_.GlobalTheory.FjCauchy.flow_mem_dom {ξ : Fin r → E} (hξ : X.Is
     have hp0 : 0 < _root_.ReciprocityTheory.ChartRestriction.G.FD.PositiveMinorUnits.mN (τ : E →+* ℂ) X.Gm (_root_.ReciprocityTheory.ChartRestriction.G.FD.mat x τ) (X.embV ξ τ) X.p0 := by linarith
     exact mul_pos hmi (one_add_two_mul_pos_of_le hc hb.1 hb.2 (one_add_two_mul_pos_of_inv_add_pos hc hp0 hsτ))
 
+
 open NumberField Complex Filter Topology in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FjCauchy.tt_flow {ξ : Fin r → E} (hξ : X.IsIso ξ) {x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r}
     (hx : x ∈ X.dom) (s : X.Ψ → ℂ) (hs : X.flow ξ s x ∈ X.dom) (τ : X.Ψ) :
     X.tt ξ (X.flow ξ s x) τ = X.tt ξ x τ + (s τ).im := by
@@ -128,9 +132,9 @@ private theorem differentiable_flow_affine_line (ξ : Fin r → E) (x : _root_.R
   simp only [Matrix.mul_apply, Matrix.of_apply]
   fun_prop
 
+
 open NumberField Complex Filter Topology in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.Data E r) in
-
 theorem _root_.GlobalTheory.FjCauchy.fj_flow {la : _root_.ReciprocityTheory.ChartRestriction.G.FD.Wt X.Ψ r} {P : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r → ℂ}
     (hP : X.IsBddSec la P) {ξ : Fin r → E}
     (hξ : X.IsIso ξ) (ν : X.Ψ → ℝ) {x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r} (hx : x ∈ X.dom) (s : X.Ψ → ℂ)

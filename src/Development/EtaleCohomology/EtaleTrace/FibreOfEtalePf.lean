@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.FibrePf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.FibrePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

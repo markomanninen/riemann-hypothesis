@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ lemma inv_norm_succ_le (k : ℕ) : ‖((k : ℚ_[l]) + 1)‖⁻¹ ≤ 2 ^ k := b
   have h1 : ((k : ℚ_[l]) + 1) = ((k + 1 : ℕ) : ℚ_[l]) := by push_cast; rfl
   rw [h1, Padic.norm_eq_zpow_neg_valuation h0, Padic.valuation_natCast, zpow_neg, inv_inv,
     zpow_natCast]
-  have h2 : l ^ padicValNat l (k + 1) ≤ k + 1 := Nat.le_of_dvd (Nat.succ_pos k) pow_padicValNat_dvd
+  have h2 : l ^ padicValNat l (k + 1) ≤ k + 1 := Nat.le_of_dvd (Nat.succ_pos k) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
+  rw [Nat.padicValNat_def] at h2
   have h3 : k + 1 ≤ 2 ^ k := Nat.lt_two_pow_self
   exact_mod_cast h2.trans h3
 
@@ -157,7 +162,7 @@ lemma norm_unit_pow_sub_one {u : ℚ_[l]} (hu : ‖u‖ = 1) :
   have h1 := ZMod.pow_totient v
   rw [Nat.totient_prime_pow hl.out (by norm_num)] at h1
   have h2 : z ^ (l * (l - 1)) - 1 ∈ RingHom.ker (PadicInt.toZModPow (p := l) 2) := by
-    rw [RingHom.mem_ker, map_sub, map_pow, map_one, ← hv, ← Units.val_pow_eq_pow_val]
+    rw [RingHom.mem_ker, RingHom.map_sub, map_pow, map_one, ← hv, ← Units.val_pow_eq_pow_val]
     simp only [Nat.add_one_sub_one, pow_one] at h1
     rw [h1]
     simp

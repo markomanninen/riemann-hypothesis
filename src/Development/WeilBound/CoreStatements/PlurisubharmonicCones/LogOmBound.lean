@@ -1,6 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TowerOrigin
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsIsKroneckerCharOfDiscr
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.TowerOrigin
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsIsKroneckerCharOfDiscr
+
+@[expose] public section
 
 open NumberField GlobalTheory.CompanionTheory.Ar
 
@@ -21,8 +25,8 @@ theorem logOm_bound : ∃ C : ℝ, 0 ≤ C ∧ ∀ (E : Type) [Field E] [NumberF
     simp only [GlobalTheory.CM.logOm, Complex.sub_re, Complex.ofReal_re]
     rfl
   have hrd : rootDiscr E = hostRd E := by
-    unfold hostRd rootDiscr
-    rw [Int.cast_abs, one_div]
+    unfold hostRd
+    rw [NumberField.rootDiscr_def, Int.cast_abs, one_div]
   have h1 : 1 ≤ hostRd E := by
     unfold hostRd
     apply Real.one_le_rpow

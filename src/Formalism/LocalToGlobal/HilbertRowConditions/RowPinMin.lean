@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+module
+
+public import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+
+@[expose] public section
 
 noncomputable section
 

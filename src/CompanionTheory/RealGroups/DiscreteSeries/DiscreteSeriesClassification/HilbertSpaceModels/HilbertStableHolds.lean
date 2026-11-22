@@ -1,5 +1,9 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.HilbertSpaceModels.StepSqInt
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.HilbertSpaceModels.StepSqInt
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 noncomputable section
 

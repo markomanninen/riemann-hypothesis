@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem delta_ne_zero (c : Matrix (Fin m) (Fin m) K) : delta c ≠ 0 := by
       algebraMap (𝓞 K) K o = c.mulVec (fun j => algebraMap (𝓞 K) K (y j)) i
     intro i
     refine ⟨∑ j, r i j * z j, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [Matrix.mulVec, dotProduct]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [map_mul, hr' i j, ← hz j, map_mul]

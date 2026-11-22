@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.MemSpanMonomial.mem_span_X :
     ∀ {O σ : Type} [inst : CommRing O] [inst_1 : Fintype σ]
@@ -34,7 +38,8 @@ theorem UpperTheory.Reformulated.B.MemSpanMonomial.mem_span_X :
       exact Nat.one_le_iff_ne_zero.mpr (hc m hm)
   refine ⟨g, ?_⟩
   ext m
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [key]
   by_cases hm : m = 0
   · subst hm

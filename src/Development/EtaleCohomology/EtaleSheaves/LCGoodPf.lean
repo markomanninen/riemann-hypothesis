@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
+
+@[expose] public section
 
 open LateralTheory.E.t_E1Cut
 

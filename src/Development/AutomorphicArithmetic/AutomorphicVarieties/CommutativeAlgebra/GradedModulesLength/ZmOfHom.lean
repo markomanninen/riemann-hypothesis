@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ExistsSecNotMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NsPoint
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.OzTwoMulEqPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ExistsSecNotMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NsPoint
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.OzTwoMulEqPow
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -14,7 +18,7 @@ variable {O A R : Type} [CommRing O] [CommRing A] [Algebra O A] [CommRing R]
 
 private def zmJ (ι : ℕ → A →+ R) (p : Ideal R) : Ideal A where
   carrier := {a | ∀ h n, ι n (h * a) ∈ p}
-  add_mem' {a b} ha hb h n := by rw [mul_add, map_add]; exact add_mem (ha h n) (hb h n)
+  add_mem' {a b} ha hb h n := by rw [mul_add, map_add (f := _)]; exact add_mem (ha h n) (hb h n)
   zero_mem' h n := by simp
   smul_mem' c a ha h n := by rw [smul_eq_mul, ← mul_assoc]; exact ha _ n
 
@@ -25,7 +29,8 @@ private theorem zm_of_hom (h0 : ∀ (n : ℕ) j a, a ∈ 𝒜 j → j ≠ -(2 * 
   classical
   show ∀ h n, ι n (h * g) ∈ p
   intro h n
-  rw [← DirectSum.sum_support_decompose 𝒜 h, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 h, Finset.sum_mul, map_sum]
   refine Ideal.sum_mem _ fun i _ => ?_
   by_cases hi : i = -(2 * (n : ℤ)) - j
   · subst hi
@@ -112,7 +117,7 @@ private theorem zm_iota {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (�
       map_add' := fun a b => by
         apply Subtype.ext
         show MvPolynomial.monomial _ _ = MvPolynomial.monomial _ _ + MvPolynomial.monomial _ _
-        simp [map_add] }
+        simp [map_add (f := _)] }
   refine ⟨ι, ?_, ?_⟩
   · intro n j a ha hj
     apply Subtype.ext
@@ -140,8 +145,8 @@ private theorem zm_f {B A : Type} [CommRing B] [CommRing A] [Algebra B A] {k : �
   apply hp
   refine hle.trans (Ideal.span_le.mpr ?_)
   intro s hs
-  have hs' : ∀ m : Fin k →₀ ℕ, toDeg m ≠ e i → MvPolynomial.coeff m s.1 = 0 := hs
-  have hc : MvPolynomial.coeff (Finsupp.single i 1) s.1 ∈ N i := by
+  have hs' : ∀ m : Fin k →₀ ℕ, toDeg m ≠ e i → AddMonoidAlgebra.coeff s.1 m = 0 := hs
+  have hc : AddMonoidAlgebra.coeff s.1 (Finsupp.single i 1) ∈ N i := by
     rw [← lat_single N i]
     exact s.2 _
   have hval : s = sec N i _ hc := by
@@ -222,9 +227,6 @@ theorem UpperTheory.V.Alg.M.zm_holds :
       rw [← (hpow (n + 1)).2, mem_oz]
       have := SetLike.pow_mem_graded 2 hg
       convert this using 2
-      rw [nsmul_eq_mul]
-      push_cast
-      ring
     have hle : oz 𝒜 2 ^ (n + 1) ≤ (zmJ ι p).restrictScalars (𝒜 0) := by
       rw [pow_succ, Submodule.mul_le]
       intro a _ b hb

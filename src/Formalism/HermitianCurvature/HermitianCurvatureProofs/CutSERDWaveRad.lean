@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterpolationInverseMatrixSumIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvOther
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialIdentityOfQuadratic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterpolationInverseMatrixSumIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtFsvOther
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopTwistDensOfWaveQQ
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem radial_wave_radial : RDWaveRad := by
   · rw [hcbi]; exact Formalism.FourierDecayAlt.P.NFx3.mkPair_commute (hcomm Wv _ hW1 5 (by decide)) (hcomm Wv' _ hW2 2 (by decide))
   · rw [hpb, hcb]
     refine pr_ext ?_ ?_
-    · simp only [mkPair_fst', pr_mul_fst, rdw_sub_fst, pr_alg_fst]
+    · change X.op ⟨0, hr⟩ 3 * Wv = Wv * X.op ⟨0, hr⟩ 3 -
+        algebraMap ℂ _ (starRingEnd ℂ s) * Wv * X.op ⟨0, hr⟩ 4
       apply LinearMap.ext; intro Φ; apply Subtype.ext; funext c g
       obtain ⟨hd, h0⟩ := radSp_regular Φ g c
       simp only [Module.End.mul_apply, LinearMap.sub_apply, Module.algebraMap_end_apply,
@@ -63,7 +68,8 @@ theorem radial_wave_radial : RDWaveRad := by
       rw [e]
       simp only [cbOp, map_neg]
       module
-    · simp only [mkPair_snd', pr_mul_snd, rdw_sub_snd, pr_alg_snd]
+    · change Wv' * (-X.op ⟨0, hr⟩ 0) = (-X.op ⟨0, hr⟩ 0) * Wv' -
+        X.op ⟨0, hr⟩ 1 * Wv' * algebraMap ℂ _ (starRingEnd ℂ (starRingEnd ℂ s))
       apply LinearMap.ext; intro Φ; apply Subtype.ext; funext c g
       obtain ⟨hd, h0⟩ := radSp_regular Φ g c
       simp only [Module.End.mul_apply, LinearMap.sub_apply, LinearMap.neg_apply, Module.algebraMap_end_apply,

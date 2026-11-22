@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.Statement
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+module
+
+public import Formalism.WachLatticeTwists.Statement
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+
+@[expose] public section
 
 open Module IsDiscreteValuationRing Matrix
 

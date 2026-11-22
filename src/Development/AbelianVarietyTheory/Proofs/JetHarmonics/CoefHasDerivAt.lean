@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 open Formalism.REAL (qdet GlRel IsHW)
 
@@ -69,7 +74,7 @@ theorem EB_tensor_std : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace
       Complex.I * herm (Hpk k r) (hpart2 (Hpk k r) (unitB (Hpk k r) B a b) *ᵥ B d) (B c) =
       if d = b then (if c = a then 1 else 0) else 0 := by
     intro d
-    rw [← coefL_apply, ← coefL_apply, ← smul_eq_mul Complex.I, ← map_smul, ← map_add, hpart_sum, coefL_apply,
+    rw [← coefL_apply, ← coefL_apply, ← smul_eq_mul Complex.I, ← map_smul, ← map_add (f := _), hpart_sum, coefL_apply,
       Qx8.unitB_mulVec, hB.2.1]
     have := hB.2.1 a c
     by_cases hd : d = b

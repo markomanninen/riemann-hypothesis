@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxD
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxD
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -6,21 +10,6 @@ open MeasureTheory Filter Topology Complex Metric
 open scoped ContDiff ENNReal ComplexConjugate
 
 noncomputable section
-
-theorem dbv_add {n : ℕ} (D₁ D₂ : V n →L[ℝ] ℂ) (ζ : V n) : dbv (D₁ + D₂) ζ = dbv D₁ ζ + dbv D₂ ζ := by
-  simp only [dbv, ContinuousLinearMap.add_apply]
-  ring
-
-theorem dbv_smul {n : ℕ} (c : ℂ) (D : V n →L[ℝ] ℂ) (ζ : V n) : dbv (c • D) ζ = c * dbv D ζ := by
-  simp only [dbv, ContinuousLinearMap.smul_apply, smul_eq_mul]
-  ring
-
-theorem dbv_holo {n : ℕ} {G : V n → ℂ} {v : V n} (hG : DifferentiableAt ℂ G v) (ζ : V n) :
-    dbv (fderiv ℝ G v) ζ = 0 := by
-  unfold dbv
-  rw [hG.fderiv_restrictScalars ℝ]
-  simp only [ContinuousLinearMap.coe_restrictScalars', map_smul, smul_eq_mul, ← mul_assoc, I_mul_I]
-  ring
 
 theorem leviV_smul_real {n : ℕ} (g : V n → ℂ) (u : V n) (r : ℝ) (ζ : V n) :
     leviV n g u (r • ζ).ofLp = ((r ^ 2 : ℝ) : ℂ) * leviV n g u ζ.ofLp := by
@@ -53,8 +42,10 @@ theorem levi_pos_compact {n : ℕ} {g : V n → ℂ} {U : Set (V n)} (hU : IsOpe
       (K0 ×ˢ Metric.sphere (0 : V n) 1) := by
     unfold leviV
     refine Complex.continuous_re.comp_continuousOn ?_
-    refine continuousOn_finset_sum _ fun j _ => continuousOn_finset_sum _ fun k _ => ?_
-    refine (((continuousOn_wd_wdb hU hg j k).comp continuousOn_fst fun q hq => hK0U hq.1).mul
+    refine continuousOn_finsetSum _ fun j _ => continuousOn_finsetSum _ fun k _ => ?_
+    have hfst : Set.MapsTo Prod.fst (K0 ×ˢ Metric.sphere (0 : V n) 1) U :=
+      fun _ hq => hK0U hq.1
+    refine (((continuousOn_wd_wdb hU hg j k).comp continuousOn_fst hfst).mul
       ((EuclideanSpace.proj j : V n →L[ℂ] ℂ).continuous.comp continuous_snd).continuousOn).mul
       (Complex.continuous_conj.comp
         ((EuclideanSpace.proj k : V n →L[ℂ] ℂ).continuous.comp continuous_snd)).continuousOn

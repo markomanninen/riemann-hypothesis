@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

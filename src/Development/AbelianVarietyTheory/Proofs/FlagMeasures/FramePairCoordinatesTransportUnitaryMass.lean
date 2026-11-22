@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GgNone
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GgNone
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc GlobalTheory.HL
 open scoped Pointwise ENNReal Classical
@@ -17,54 +21,12 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 variable {L : LocE F E} {r k : ℕ} (S : Frames L r k)
 
-lemma mem_smul_lat (n : S.GLV) (Λ : Submodule L.O S.V) (v : S.V) :
-    v ∈ n • Λ ↔ ∃ y ∈ Λ, n y = v :=
-  Submodule.mem_smul_pointwise_iff_exists _ _ _
-
-lemma mem_riemannRochSpace_iff_regularAt_everywhere (g : S.GLV) : g ∈ S.H0 ↔ (∀ x y, S.h (g x) (g y) = S.h x y) ∧
-    ∀ b, g (S.f b) = S.f b ∧ g (S.f' b) = S.f' b := by
-  constructor
-  · rintro ⟨h1, -, h2⟩
-    refine ⟨h1, fun b => ⟨?_, ?_⟩⟩
-    · exact sub_eq_zero.1 (h2 _ (Submodule.mem_sup_left (FrameOnto.mem_spanTo S _ b.2)))
-    · exact sub_eq_zero.1 (h2 _ (Submodule.mem_sup_right (FrameOnto.mem_spanTo S _ b.2)))
-  · rintro ⟨h1, h2⟩
-    have h3 : ∀ v ∈ S.ME, g v = v := by
-      have : S.ME ≤ LinearMap.eqLocus (g : S.V →ₗ[E] S.V) LinearMap.id := by
-        refine sup_le (Submodule.span_le.2 ?_) (Submodule.span_le.2 ?_)
-        · rintro _ ⟨i, -, rfl⟩; exact (h2 i).1
-        · rintro _ ⟨i, -, rfl⟩; exact (h2 i).2
-      exact fun v hv => this hv
-    refine ⟨h1, fun v => ⟨fun hv => ?_, fun hv => ?_⟩, fun v hv => ?_⟩
-    · rwa [← g.injective (h3 _ hv)]
-    · rwa [h3 v hv]
-    · rw [h3 v hv, sub_self]; exact zero_mem _
-
 end
 
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F]
 variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableSpace E]
 variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] {H : HermSp M V} {r k : ℕ}
 variable {P : LocNG.FPair H r} {S : Frames M.L r k} (c : Coord P S)
-
-lemma mem_lat (Λ : Submodule M.L.O V) (v : V) : c.e v ∈ c.lat Λ ↔ v ∈ Λ := by
-  constructor
-  · rintro ⟨y, hy, hxy⟩
-    rwa [← c.e.injective hxy]
-  · intro hx; exact ⟨v, hx, rfl⟩
-
-lemma lat_img (g : V ≃ₗ[E] V) (Λ : Submodule M.L.O V) :
-    c.lat (LocNG.img g Λ) = c.grp g • c.lat Λ := by
-  ext v
-  obtain ⟨v, rfl⟩ := c.e.surjective v
-  rw [mem_lat, mem_smul_lat]
-  constructor
-  · rintro ⟨y, hy, rfl⟩
-    exact ⟨c.e y, (mem_lat c _ _).2 hy, grp_apply c g y⟩
-  · rintro ⟨y, hy, h⟩
-    obtain ⟨y, rfl⟩ := c.e.surjective y
-    rw [grp_apply] at h
-    exact ⟨y, (mem_lat c _ _).1 hy, c.e.injective h⟩
 
 open ValuativeRel in
 open scoped Pointwise ENNReal Classical in
@@ -164,9 +126,9 @@ private lemma unipotent_pairing_integral_iff_mem_stabilizer_lemma {F : Type} [Fi
     rw [this, hpair]
     exact (d a.castSucc).2
 
+
 open ValuativeRel in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.HL.CoordMass.transport :
     ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] {E : Type} [CommRing E]
       [Algebra F E] [TopologicalSpace E] [MeasurableSpace E] (M : _root_.Formalism.MainNotions.S.Loc.Model F E), M.OK →

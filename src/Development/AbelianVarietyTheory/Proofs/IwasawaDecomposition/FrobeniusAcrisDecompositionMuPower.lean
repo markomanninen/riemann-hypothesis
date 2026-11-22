@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLimitSeries
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AcrisMembershipSpanIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineThetaEqZeroIffFontaineXiElementDvd
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLimitSeries
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -38,7 +42,7 @@ theorem approx {R A : Type} [CommRing R] [CommRing A] (ι : R →+* A) (p : ℕ)
     induction k with
     | zero => simp
     | succ k ih =>
-      rw [Finset.sum_range_succ, Finset.sum_range_succ, Function.iterate_succ_apply', map_add, map_mul,
+      rw [Finset.sum_range_succ, Finset.sum_range_succ, Function.iterate_succ_apply', map_add (f := _), map_mul,
         map_pow, map_natCast]
       linear_combination ih + (p : A) ^ k * h (nx^[k] y)
   refine ⟨α, ζ, sub_eq_zero.1 (IsHausdorff.haus (I := Ideal.span {(p : A)}) inferInstance _ fun k => ?_)⟩
@@ -67,7 +71,8 @@ variable {l : ℕ} [Fact l.Prime]
 theorem phi_xi (e : Per.Fl l) : ∃ c : Per.Ainf l, Per.φA l (xi e) = l * c + mu e ^ (l - 1) := by
   obtain ⟨c, hc⟩ := geom_sum_one_add (Fact.out : l.Prime) (mu e)
   refine ⟨c, ?_⟩
-  rw [← hc, xi, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hc, xi, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_pow, mu, sub_add_cancel]
   congr 1
@@ -131,7 +136,7 @@ theorem on_span {R P A : Type} [CommRing R] [CommRing P] [Algebra R P] [CommRing
     obtain ⟨a', z', h'⟩ := ihy ((hB y).2 hy)
     have : (⟨x + y, hs⟩ : B) = ⟨x, (hB x).2 hx⟩ + ⟨y, (hB y).2 hy⟩ := rfl
     refine ⟨a + a', z + z', ?_⟩
-    rw [this, map_add, map_add, h, h', map_add, map_add]
+    rw [this, map_add (f := _), map_add (f := _), h, h', map_add (f := _), map_add (f := _)]
     ring
   | smul r x hx ihx =>
     obtain ⟨a, z, h⟩ := ihx ((hB x).2 hx)
@@ -154,9 +159,9 @@ theorem phiA_mem_ainf_add : ∀ (l : ℕ) [Fact l.Prime], ∀ e : Per.Fl l, IsEp
   obtain ⟨s, y', hy⟩ := hd y 1
   obtain ⟨a, z, h⟩ := on_span (l := l) (Per.Acris0 l) (algebraMap (Per.Acris0 l) (Per.Acris l)) (Per.zA l) ht
     (phiA l) (Per.φA l) (fun a => by rw [alg_tower, alg_tower, phiA_alg]) (xi e) c w
-    (by rw [alg_tower, alg_tower, hc', map_add, map_mul, map_natCast, map_pow, mul_add, hw])
+    (by rw [alg_tower, alg_tower, hc', map_add (f := _), map_mul, map_natCast, map_pow, mul_add, hw])
     (mem_Acris0_iff_span l e he) s
   refine ⟨a, z, y', ?_⟩
-  rw [hy, map_add, h, alg_tower, pow_one, map_mul, map_natCast]
+  rw [hy, map_add (f := _), h, alg_tower, pow_one, map_mul, map_natCast]
 
 end GlobalTheory.MemLoc

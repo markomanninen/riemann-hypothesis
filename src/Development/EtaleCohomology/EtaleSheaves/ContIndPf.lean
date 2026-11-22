@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ContPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ContPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

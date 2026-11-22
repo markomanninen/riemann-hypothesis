@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMemLocSpan
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.UG GlobalTheory
 
 namespace GlobalTheory.JSW.MirSemi.OpenInv
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def invSub (F : GA E a → ℂ) : Subgroup (GL (Fin a) (Af E)) where
   carrier := {k | ∀ g, F (g * finGL E a k) = F g}
@@ -20,8 +24,8 @@ def invSub (F : GA E a → ℂ) : Subgroup (GL (Fin a) (Af E)) where
     rw [mul_assoc, ← map_mul, inv_mul_cancel, map_one, mul_one] at this
     exact this.symm
 
-variable (E a) in
 
+variable (E a) in
 def openInv : Submodule ℂ (GA E a → ℂ) where
   carrier := {F | IsOpen (invSub F : Set (GL (Fin a) (Af E)))}
   zero_mem' := by
@@ -84,9 +88,9 @@ theorem mem_openInv_of_mem {π : CuspSub E a} {φ : Sm E a} (hφ : φ ∈ π.V) 
 
 end GlobalTheory.JSW.MirSemi.OpenInv
 
-open GlobalTheory.JSW.MirSemi.OpenInv in
 
-theorem GlobalTheory.JSW.MirSemi.locSpan_openInv : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+open GlobalTheory.JSW.MirSemi.OpenInv in
+theorem GlobalTheory.JSW.MirSemi.locSpan_openInv : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (S : Finset (HeightOneSpectrum (𝓞 E))) (π : CuspSub E a) (φ : Sm E a), φ ∈ π.V →
     ∀ F ∈ GlobalTheory.JSW.MirSemi.locSpan S φ.1, ∃ U : Subgroup (GL (Fin a) (Af E)),
       IsOpen (U : Set (GL (Fin a) (Af E))) ∧ ∀ u ∈ U, ∀ g, F (g * finGL E a u) = F g := by

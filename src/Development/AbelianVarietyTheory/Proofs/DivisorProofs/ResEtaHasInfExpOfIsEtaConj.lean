@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGalConjEta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaAtOfIsEtaConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPsiOfOverK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharFiniteOrderOfTrivialAtInfinity
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResFinEqOneOfAway
-import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGalConjEta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaAtOfIsEtaConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPsiOfOverK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharFiniteOrderOfTrivialAtInfinity
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResFinEqOneOfAway
+public import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilGramSignature
@@ -36,7 +41,7 @@ theorem mk_eq (P : HeightOneSpectrum (𝓞 E)) (k : Eˣ) : FinitePlace.mk P (k :
   rw [hk, Units.val_mul, Units.val_zpow_eq_zpow_val, map_mul, map_zpow₀, GlobalTheory.EtaConjLocal.mk_unit P hu,
     GlobalTheory.EtaConjLocal.mk_unif, mul_one, ← rt_sq, sq, sq, mul_zpow]
 
-theorem prod_rt [IsTotallyComplex E] {I : Type} [Fintype I] (φ : I → E →+* ℂ)
+theorem prod_rt [_root_.NumberField.IsTotallyComplex E] {I : Type} [Fintype I] (φ : I → E →+* ℂ)
     (hφ : Function.Bijective fun i => InfinitePlace.mk (φ i)) (k : Eˣ) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (hS : ∀ P, ordF P k ≠ 0 → P ∈ S) : (∏ i, ‖φ i k‖) * ∏ P ∈ S, rt P ^ ordF P k = 1 := by
   have h := prod_abs_eq_one k.ne_zero
@@ -85,7 +90,7 @@ variable {L : Type} [Field L] (ι σ : L →+* ℂ) {χ χ' : HChar E} (hu : ∀
 
 include hu hu' hy hy'
 
-theorem inf_eq [IsTotallyComplex E] {I : Type} [Fintype I] (φ : I → E →+* ℂ)
+theorem inf_eq [_root_.NumberField.IsTotallyComplex E] {I : Type} [Fintype I] (φ : I → E →+* ℂ)
     (hφ : Function.Bijective fun i => InfinitePlace.mk (φ i)) (hi : χ.HasInf φ fun _ => 1)
     (ht : ∀ k : E, ∃ t : L, ι t = ∏ i, φ i k ∧ σ t = ∏ i, φ i k) (k : Eˣ) : χ'.inf k = χ.inf k := by
   obtain ⟨t, ht1, ht2⟩ := ht k
@@ -157,7 +162,9 @@ theorem isEtaT_of_conj {D : D7} {σ : D.what₂.LL →+* ℂ} (hσ : OverK σ) {
     obtain ⟨y, hy1, hy2⟩ := hη.2.2 P e he (locU he.1 (unif P)) rfl
     rw [hc.2 P e he _ (locU he.1 (unif P)) rfl] at hy1
     rw [hc'.2 P e he _ (locU he.1 (unif P)) rfl] at hy2
-    exact ⟨y, hy1, hy2⟩
+    refine ⟨y, ?_, ?_⟩
+    · simpa only [HChar.val, rt, Ideal.absNorm_eq_natCard] using hy1
+    · simpa only [HChar.val, rt, Ideal.absNorm_eq_natCard] using hy2
   choose y hy hy' using hy
   obtain ⟨c, -, hcm, -⟩ := GlobalTheory.Mem.HostCM.host_cm D.R D.host
   haveI := hcm.cplx
@@ -181,17 +188,5 @@ theorem isEtaT_of_conj {D : D7} {σ : D.what₂.LL →+* ℂ} (hσ : OverK σ) {
       exact Finset.prod_eq_one fun w' _ => GlobalTheory.ToricDistribution.locInf_of_pow hn.ne' hp w' _
   have := hχ.mul_cls hξ
   rwa [mul_comm χ', mul_inv_cancel_left] at this
-
-theorem resEta_hasInfExp_of_isEtaConj : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), R.Char F → ∀ (i : Fin D.R.m), ∀ (σ : D.what₂.LL →+* ℂ), OverK σ → ∀ η', IsEtaConj σ R.eta η' → ResEta D η' 1 ∧ ∀ ρ, HasInfExp D η' ρ (1 / 2) := by
-  intro D G _ _ Pl0 T0 A Ks _ _ _ R F hR _ σ hσ η' hη
-  obtain ⟨χ', hc⟩ := GlobalTheory.HeckeTensorRead.exists_hchar_chrEq D η' hη.1
-  have h := isEtaT_of_conj hσ hR.lev.eta hc R.C.isEta hη
-  have he := GlobalTheory.Mem.EtaTilde.isEta_res D η' χ' hc h
-  refine ⟨⟨⟨_, he⟩, fun η hη' a => ?_⟩, fun τ => ⟨1, by norm_num, ?_, fun θ hθ x hx hx' => ?_⟩⟩
-  · rw [(GlobalTheory.IdeleNormChar.existsUnique_isEta D).unique hη' he, pow_one, MonoidHom.comp_apply]
-  · obtain ⟨⟨θ', hθ'⟩, -⟩ := GlobalTheory.Member.infiniteAdele_bijective D
-    exact ⟨fun τ => θ' (tauE D τ), fun τ => hθ' _⟩
-  · rw [GlobalTheory.Mem.EtaTilde.val_infinite D η' χ' hc h.unr _ h.inf θ hθ x hx,
-      Finset.prod_eq_single τ (fun τ' _ hτ => by rw [hx' τ' hτ]; simp) (by simp)]
 
 end GlobalTheory.EtaConjType

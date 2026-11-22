@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -54,12 +58,12 @@ theorem nullMeasurableSet_shear_image {N : Subgroup H} (hN : IsClosed (N : Set H
   have he := measurableEmbedding_shear hN
   have hAB : NullMeasurableSet (A ×ˢ B) (κ.prod ν) := hA.prod hB
   refine (he.measurableSet_image.2 (measurableSet_toMeasurable (κ.prod ν) (A ×ˢ B))).nullMeasurableSet.congr ?_
-  refine (he.ae_map_iff (p := fun y => (shear N '' toMeasurable (κ.prod ν) (A ×ˢ B)) y =
-    (shear N '' (A ×ˢ B)) y)).2 ?_
+  refine (he.ae_map_iff (p := fun y => (y ∈ shear N '' toMeasurable (κ.prod ν) (A ×ˢ B)) ↔
+    (y ∈ shear N '' (A ×ˢ B)))).2 ?_
   filter_upwards [hAB.toMeasurable_ae_eq] with x hx
-  have e1 : (shear N '' toMeasurable (κ.prod ν) (A ×ˢ B)) (shear N x) = toMeasurable (κ.prod ν) (A ×ˢ B) x :=
-    propext he.injective.mem_set_image
-  have e2 : (shear N '' (A ×ˢ B)) (shear N x) = (A ×ˢ B) x := propext he.injective.mem_set_image
+  have e1 : shear N x ∈ shear N '' toMeasurable (κ.prod ν) (A ×ˢ B) ↔ x ∈ toMeasurable (κ.prod ν) (A ×ˢ B) :=
+    he.injective.mem_set_image
+  have e2 : shear N x ∈ shear N '' (A ×ˢ B) ↔ x ∈ (A ×ˢ B) := he.injective.mem_set_image
   rw [e1, e2]
   exact hx
 

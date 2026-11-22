@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NabBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffAdjointFrameMatrixInte
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffFrameMatrixIntegralOnH
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDualHalfLatticeDetectingCharacter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinPartMulIncAMem
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NabBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffAdjointFrameMatrixInte
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffFrameMatrixIntegralOnH
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDualHalfLatticeDetectingCharacter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinPartMulIncAMem
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.InfPartOfSplitIdem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR
 open Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open GlobalTheory.ConjTwist GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.OnTies GlobalTheory.OnCmp GlobalTheory.BaseCmp
@@ -23,7 +28,7 @@ open Formalism.IndefR.Fin.LevelGroupLemmas.Lat (liftE lift lift_add lift_zero to
 
 theorem liftE_add {D : D7} (a b : EAf D) : liftE (a + b) = liftE a + liftE b := by
   unfold liftE
-  rw [map_add, lift_add]
+  rw [map_add (f := _), lift_add]
 
 theorem liftE_zero {D : D7} : liftE (0 : EAf D) = 0 := by
   unfold liftE
@@ -40,13 +45,14 @@ def psiE {D : D7} (ψ : AddChar (AF D.host.F) ℂ) : AddChar (EAf D) ℂ where
   map_zero_eq_one' := by
     rw [liftE_zero, mul_zero, map_zero, neg_zero, AddChar.map_zero_eq_one]
   map_add_eq_mul' a b := by
-    rw [liftE_add, mul_add, map_add, neg_add, AddChar.map_add_eq_mul]
+    rw [liftE_add, mul_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul]
 
 theorem psi_sympl {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (βS : GL (Fin S.rank) (EAf D))
     (βT : GL (Fin T.rank) (EAf D)) (t y : WO S T) (hy : ∀ i j, infPart D (y i j) = 0) :
     ψ (symplO S T t y) = psiE ψ (Matrix.trace (frMapAdj S T βS βT t * frMapO S T βS βT y)) := by
   have hinf : infPart D (hO S T y t) = 0 := by
-    simp only [hO, map_sum, map_mul, hy, mul_zero, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hO, map_sum, map_mul, hy, mul_zero, Finset.sum_const_zero]
   rw [GlobalTheory.OrientedHeis.symplO_skew y t, ← GlobalTheory.HalfDuality.trace_id]
   change _ = ψ (-Algebra.trace (AF D.host.F) (AE D) (incA D D.host.xi0 * liftE (toEAf D (hO S T y t))))
   rw [liftE_toEAf hinf]
@@ -75,7 +81,7 @@ theorem fac {D : D7} (Φ : AddChar (EAf D) ℂ) (Q : Finset (Pl D.host.E)) (a : 
       map_zero_eq_one' := h1 PP hPP _ (L PP 0).2 (hL PP 0)
       map_add_eq_mul' := fun x y => by
         rw [← AddChar.map_add_eq_mul, ← mul_add]
-        exact hcong PP hPP (L PP (x + y)) (L PP x + L PP y) (by rw [map_add, hL, hL, hL]) }
+        exact hcong PP hPP (L PP (x + y)) (L PP x + L PP y) (by rw [map_add (f := _), hL, hL, hL]) }
     else 1
   have hψ : ∀ PP ∈ Q, ∀ w (hw : w ∈ Formalism.L2.Herm.intAf D.host.F D.host.E),
       ψP PP (resS D.host.F PP ⟨w, hw⟩) = Φ (a PP * w) := by
@@ -95,8 +101,8 @@ theorem fac {D : D7} (Φ : AddChar (EAf D) ℂ) (Q : Finset (Pl D.host.E)) (a : 
   rw [AddChar.mulShift_apply, ← mul_assoc, mul_inv_cancel₀ hc, one_mul] at this
   simpa using this
 
-open GlobalTheory.StdFrames (cpt) in
 
+open GlobalTheory.StdFrames (cpt) in
 theorem mem_int_of_mul {D : D7} {PP : Pl D.host.E} {e : AE D} (he : Formalism.L2.NTheta.IsIdemAt e PP) {ϖ : 𝓞 D.host.E}
     (hϖ : ϖ ∈ PP.asIdeal ∧ ϖ ∉ PP.asIdeal ^ 2) {m : EAf D} (hm : toEAf D e * m = m)
     (hr : Valued.v (cpt PP (eToEAf D (ϖ : D.host.E) * m)) < 1) :
@@ -245,11 +251,12 @@ theorem trace_redM {D : D7} (PP : Pl D.host.E) {a b : ℕ} {A : Matrix (Fin a) (
       Matrix.trace (redM PP A * redM PP B) = resS D.host.F PP ⟨_, h⟩ := by
   have e : Matrix.trace (A * B) = ((∑ i, ∑ j, (⟨A i j, hA i j⟩ * ⟨B j i, hB j i⟩) :
       Formalism.L2.Herm.intAf D.host.F D.host.E) : EAf D) := by
-    simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul]
+    simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul]
   refine ⟨e ▸ Subtype.prop _, ?_⟩
   rw [show (⟨Matrix.trace (A * B), e ▸ Subtype.prop _⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) =
     ∑ i, ∑ j, (⟨A i j, hA i j⟩ * ⟨B j i, hB j i⟩) from Subtype.ext e]
-  simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [GlobalTheory.HalfDuality.redM_apply_of_mem PP A i j (hA i j), GlobalTheory.HalfDuality.redM_apply_of_mem PP B j i (hB j i)]
 
@@ -282,7 +289,8 @@ theorem assemble {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (βS : 
       Matrix.ext fun k l => (toEAf D).map_mul _ _
     simp only [frMapO, h, Matrix.mul_smul, Matrix.smul_mul]
   have hhalf : (∑ PP ∈ Q, toEAf D (es PP)) • frMapAdj S T βS βT t = frMapAdj S T βS βT t := by
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     exact Matrix.ext fun k l => GlobalTheory.AdjVecLocal.frMapAdj_half _ _ _ _ ht k l
   rw [psi_sympl ψ S T βS βT t y hy, sum_divisible_eq_sum_mul Q _ hinv _ _ hhalf, addChar_sum, ← hdil]
   refine Finset.prod_congr rfl fun PP hPP => ?_

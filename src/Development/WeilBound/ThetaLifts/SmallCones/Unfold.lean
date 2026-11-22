@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.SmallCones.FcCols
-import Development.WeilBound.ThetaLifts.SmallCones.UnfMain
-import Development.WeilBound.ThetaLifts.SmallCones.StabDec
-import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.FcCols
+public import Development.WeilBound.ThetaLifts.SmallCones.UnfMain
+public import Development.WeilBound.ThetaLifts.SmallCones.StabDec
+public import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+
+@[expose] public section
 
 noncomputable section
 

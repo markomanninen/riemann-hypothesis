@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormOneAtOne
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionCoreProjMulCoreEqOne
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormOneAtOne
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionCoreProjMulCoreEqOne
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.Core.Rk GlobalTheory.Core.Mi
 open scoped TensorProduct InnerProductSpace Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -77,15 +82,8 @@ theorem selfDual_core_monoAt (D : D7) (S S₀ : HSp D) (ρ : ℕ) (d : HypDec S 
     have h2 := h1.map L.subtype
     rwa [Submodule.map_comap_subtype, inf_eq_right.mpr hle] at h2
   ·
-    rw [eq_top_iff]
-    intro x _
-    have hx : d.i₀ *ᵥ x ∈ Submodule.span D.host.E (L : Set (Fin S.rank → D.host.E)) := by
-      rw [hL.1.span_eq_top]; exact Submodule.mem_top
-    have hm := Submodule.mem_map_of_mem (f := Matrix.mulVecLin d.q0) hx
-    rw [Submodule.map_span, Matrix.mulVecLin_apply, Matrix.mulVec_mulVec, wittDecomposition_coreProj_mul_core_eq_one, Matrix.one_mulVec] at hm
-    refine Submodule.span_mono ?_ hm
-    rintro _ ⟨z, hz, rfl⟩
-    exact hcore z hz
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   ·
     obtain ⟨b, hb⟩ := (hL.2 (d.i₀ *ᵥ y)).1 hy (d.i₀ *ᵥ x) hx
     refine ⟨b, ?_⟩

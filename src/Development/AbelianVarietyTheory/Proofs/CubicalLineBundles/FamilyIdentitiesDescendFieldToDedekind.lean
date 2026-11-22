@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPicardGroup
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LbIsoCubeLBMulRightOf
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsCubeLBPairingIsoBaseChange
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LineBundleIsoDescendsFieldToDedekindDomainStatement
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPicardGroup
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LbIsoCubeLBMulRightOf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsCubeLBPairingIsoBaseChange
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LineBundleIsoDescendsFieldToDedekindDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -103,18 +107,18 @@ theorem isFam_descend : Out.Laws → ∀ (E : Type) [Field E] [NumberField E] [I
     have := (hlin a).isMonHom
     ExtUnique.isMonHom_of_isGrpPullback hC m.cart (ψ' a) (ψ a) (hψ a)
   refine ⟨fun a => ⟨hm a, fun c => ?_⟩, fun a b => ?_, fun s a => ?_, fun a b => ?_⟩
-  · refine ExtUnique.over_hom_ext_of_isPullback hC.1 ?_
+  · refine ExtUnique.over_hom_ext_of_isPullback (j := spMap f) hC.1 ?_
     have e := congrArg (fun z => z.left ≫ m.φ) ((hlin a).comm c)
     simp only [Over.comp_left, Category.assoc, Serre.comapAct_act] at e ⊢
     rw [hψ, m.act, ← Category.assoc, ← Category.assoc, hact, hψ, Category.assoc, Category.assoc] at e
     exact e
-  · refine ExtUnique.over_hom_ext_of_isPullback hC.1 ?_
+  · refine ExtUnique.over_hom_ext_of_isPullback (j := spMap f) hC.1 ?_
     let φ₀ : Over.mk (C'.P.A.hom ≫ spMap f) ⟶ C.P.A := Over.homMk φ hC.1.w
     have e := m.cart.2 C'.P.A (ψ' a) (ψ' b) (φ₀ ≫ ψ a) (φ₀ ≫ ψ b) (hψ a).symm (hψ b).symm
     rw [← MonObj.comp_mul] at e
     rw [← hψ, hadd, ← e]
     rfl
-  · refine ExtUnique.over_hom_ext_of_isPullback hC.1 ?_
+  · refine ExtUnique.over_hom_ext_of_isPullback (j := spMap f) hC.1 ?_
     rw [← hψ, hsm, Over.comp_left, Over.comp_left, Category.assoc, m.act, ← Category.assoc, hψ, Category.assoc]
   · have := hm a
     have := hm b

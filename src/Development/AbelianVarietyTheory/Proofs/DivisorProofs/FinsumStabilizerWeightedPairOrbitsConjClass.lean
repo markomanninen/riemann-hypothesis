@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemStabilizerIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemStabilizerIff
+
+@[expose] public section
+
 open scoped Classical
 
 namespace GlobalTheory.MassConj

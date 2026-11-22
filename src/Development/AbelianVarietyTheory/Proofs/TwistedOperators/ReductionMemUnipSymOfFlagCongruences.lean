@@ -1,16 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelPlacesNotIsConjPlaceRealDat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BunExists
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BSlotD
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ResidueCoordinatesInFrameLinearStabiliserStatement
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NatCastKPZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelPlacesNotIsConjPlaceRealDat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BunExists
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BSlotD
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ResidueCoordinatesInFrameLinearStabiliserStatement
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NatCastKPZero
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -66,19 +71,19 @@ theorem single_mem_pi_bot {κ : Type} [CommRing κ] {n : ℕ} {A : Set (Fin n)} 
 
 theorem flagV_of_lt {M : Type} [Zero M] (ρ k n : ℕ) (e f : Fin ρ → M) (b : Fin k → M) (z : M) (i : Fin n)
     (h : i.1 < ρ) : flagV ρ k n e f b z i = e ⟨i.1, h⟩ := by
-  unfold flagV; rw [dif_pos h]
+  unfold flagV; rw [dite_eq_left h]
 
 theorem flagV_of_mid {M : Type} [Zero M] (ρ k n : ℕ) (e f : Fin ρ → M) (b : Fin k → M) (z : M) (i : Fin n)
     (h1 : ρ ≤ i.1) (h2 : i.1 < ρ + k) : flagV ρ k n e f b z i = b ⟨i.1 - ρ, by omega⟩ := by
-  unfold flagV; rw [dif_neg (by omega), dif_pos h2]
+  unfold flagV; rw [dite_eq_right (by omega), dite_eq_left h2]
 
 theorem flagV_of_eq {M : Type} [Zero M] (ρ k n : ℕ) (e f : Fin ρ → M) (b : Fin k → M) (z : M) (i : Fin n)
     (h : i.1 = ρ + k) : flagV ρ k n e f b z i = z := by
-  unfold flagV; rw [dif_neg (by omega), dif_neg (by omega), dif_pos h]
+  unfold flagV; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left h]
 
 theorem flagV_of_gt {M : Type} [Zero M] (ρ k n : ℕ) (e f : Fin ρ → M) (b : Fin k → M) (z : M) (i : Fin n)
     (h1 : ρ + k < i.1) (h2 : i.1 < 2 * ρ + k + 1) : flagV ρ k n e f b z i = f ⟨2 * ρ + k - i.1, by omega⟩ := by
-  unfold flagV; rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega), dif_pos h2]
+  unfold flagV; rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left h2]
 
 theorem restrictedBlock_mem_unipSym_of_columns {κ : Type} [CommRing κ] {n r : ℕ} (ρ k : ℕ) (hr : r = n) (hle : r ≤ n) (N : GL (Fin n) κ)
     (hcol : ∀ j q : Fin n, ¬ ((j.1 = ρ + k ∧ q.1 < ρ) ∨ (j.1 ≠ ρ + k ∧ q.1 < j.1)) →
@@ -108,8 +113,8 @@ theorem restrictedBlock_mem_unipSym_of_columns {κ : Type} [CommRing κ] {n r : 
 theorem mem_hatL_of_Lf (D : D7) : ∀ v ∈ (II D).Lf, v ∈ Formalism.L2.Herm.hatL (F := D.host.F) (E := D.host.E) (n := (Yc D 0).rank) (II D).L :=
     fun v hv => (Set.ext_iff.1 (Formalism.IndefR.Eqv.lamAf_eq_hatL (V := Yc D 0) (II D).L) v).1 hv
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redV_mL (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host.E) (hβ : IsFrame β (II D).L)
     (hg : ((g : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal) :
     ∀ v ∈ Formalism.L2.SG.HidaSetting.mL (II D) g,
@@ -148,8 +153,8 @@ theorem redV_mL (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : P
     have hm := Submodule.smul_mem _ (⟨_, c2⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) ha.1
     exact ⟨hm, (hsmul ⟨_, c2⟩ a ha.1).trans (by rw [ha.2, smul_zero])⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redV_span (D : D7) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host.E) (hβ : IsFrame β (II D).L)
     (T : Submodule (kP PP) (Fin (Yc D 0).rank → kP PP)) (S : Set (VA (II D)))
     (hS : ∀ s ∈ S, s ∈ Formalism.L2.Herm.hatL (F := D.host.F) (E := D.host.E) (n := (Yc D 0).rank) (II D).L ∧ redV β PP s ∈ T) :
@@ -172,8 +177,8 @@ theorem redV_span (D : D7) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host
     have hm := Submodule.smul_mem _ (⟨_, c2⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) ha.1
     exact ⟨hm, (hsmul ⟨_, c2⟩ a ha.1) ▸ T.smul_mem _ ha.2⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redV_Mo (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host.E) (hβ : IsFrame β (II D).L)
     (hg : ((g : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal)
     (T : Submodule (kP PP) (Fin (Yc D 0).rank → kP PP)) (S : Set (VA (II D)))
@@ -190,8 +195,8 @@ theorem redV_Mo (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : P
   rw [hz2, add_zero] at e
   exact e ▸ hy2
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redFn_col_of_Mo (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host.E) (hβ : IsFrame β (II D).L)
     (hg : ((g : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal) (w : Fin (Yc D 0).rank → VA (II D))
     (hw : ∀ j, w j ∈ Formalism.L2.Herm.hatL (F := D.host.F) (E := D.host.E) (n := (Yc D 0).rank) (II D).L ∧
@@ -215,8 +220,8 @@ theorem redFn_col_of_Mo (D : D7) (g : ℕ) (β : GL (Fin (Yc D 0).rank) (EAf D))
     rw [h2]
     exact Submodule.zero_mem _
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem redFn_mem_unipSym_of_cong : ∀ {D : D7} (g : ℕ) (e0 f0 : Fin D.R.rS → VA (II D)) (z0 : VA (II D)) (bb cc : Fin D.R.k → VA (II D)) (β : GL (Fin (Yc D 0).rank) (EAf D)) (PP : Pl D.host.E), IsFrame β (II D).L → ((g : 𝓞 D.host.E) ∈ PP.asIdeal) → RedIs β PP (flagV D.R.rS D.R.k (Yc D 0).rank e0 f0 bb z0) → (∀ i, cc i ∈ (II D).Lf ∧ redV β PP (cc i) = 0) → ∀ M : GL (Fin (Yc D 0).rank) (EAf D), M ∈ St β → (∀ a, (M.val - 1) *ᵥ e0 a ∈ Formalism.L2.SG.Pf.unitaryCongruence.Mo (II D) g (e0 '' {b | b.1 < a.1})) → ((M.val - 1) *ᵥ z0 ∈ Formalism.L2.SG.Pf.unitaryCongruence.Mo (II D) g (Set.range e0)) → (∀ i, (M.val - 1) *ᵥ bb i ∈ Formalism.L2.SG.Pf.unitaryCongruence.Mo (II D) g (Set.range e0 ∪ Set.range cc ∪ bb '' {j | j.1 < i.1})) → (∀ b, (M.val - 1) *ᵥ f0 b ∈ Formalism.L2.SG.Pf.unitaryCongruence.Mo (II D) g (Set.range e0 ∪ {z0} ∪ Set.range bb ∪ Set.range cc ∪ f0 '' {c | b < c})) → upperLeftBlock (r_le_Y (D := D) 0) (redFn β PP M) ∈ unipSym (kP PP) D.R.r D.R.rS D.R.k := by
   intro D g e0 f0 z0 bb cc β PP hβ hg hRed hcc M hM he0 hz0 hbb hf0
   have hn : (Yc D 0).rank = 2 * D.R.rS + D.R.k + 1 := by
@@ -234,7 +239,7 @@ theorem redFn_mem_unipSym_of_cong : ∀ {D : D7} (g : ℕ) (e0 f0 : Fin D.R.rS �
     funext i
     obtain ⟨hm, he⟩ := hRed i j
     unfold redV
-    rw [dif_pos hm, Pi.single_apply]
+    rw [dite_eq_left hm, Pi.single_apply]
     exact he
   have hcol : ∀ j q : Fin (Yc D 0).rank, ¬ ((j.1 = D.R.rS + D.R.k ∧ q.1 < D.R.rS) ∨ (j.1 ≠ D.R.rS + D.R.k ∧ q.1 < j.1)) →
       ((redFn β PP M : GL (Fin (Yc D 0).rank) (kP PP)) : Matrix (Fin (Yc D 0).rank) (Fin (Yc D 0).rank) (kP PP)) q j =

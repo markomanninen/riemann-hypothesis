@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,8 @@ variable {d : ℕ} {I : Fin 2 → Type} [∀ g, Fintype (I g)] {κ : Type} [Fint
 theorem van_lin (g : Fin 2) (b : I g → C) :
     Van {w : WV I | w.1 = g} (∑ c : I g, b c • (MvPowerSeries.X (⟨g, c⟩ : WV I) : MvPowerSeries (WV I) C)) := by
   intro ν hν
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   apply Finset.sum_eq_zero
   intro c _
   rw [coeff_smul, coeff_X, if_neg, mul_zero]

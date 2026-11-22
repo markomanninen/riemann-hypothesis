@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNetOfThickPoints
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConjKappa
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticSiegelActionMemUpperHalfSpaceAndCocyclStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticActionOfPeriodLatticeMapStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SiegelThetaMulConjEqBlockThetaStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticDoubledHermitianCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.GaussianQuadFormRationalCoordsHermitianStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetDoubledCoordinatesToRationalCoordsStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsWeilOfSymplecticStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiableOnDetHMat
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsNetOfThickPoints
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ConjKappa
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFnStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticSiegelActionMemUpperHalfSpaceAndCocyclStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticActionOfPeriodLatticeMapStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SiegelThetaMulConjEqBlockThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticDoubledHermitianCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.GaussianQuadFormRationalCoordsHermitianStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetDoubledCoordinatesToRationalCoordsStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CanonicalThetaExponentSymplecticInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsWeilOfSymplecticStatement
+
+@[expose] public section
+
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
 
@@ -34,13 +39,15 @@ theorem zetaOf_period : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (
     simp [Base.map_cc]
   have h2 : ∀ (τ : Ψ) c, τ.1 (d k c) = ∑ l, (t (c, l) : ℂ) * τ.1 (Module.finBasis ℚ E l) := by
     intro τ c
-    rw [hd, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hd, map_sum]
     simp [Rat.smul_def]
   simp only [zetaOf, Pi.add_apply, qv, h1, mulVec, dotProduct, tauOf, Matrix.of_apply,
     Finset.sum_mul, Matrix.add_apply, Matrix.map_apply, Matrix.mul_apply, Matrix.transpose_apply]
   rw [Finset.sum_comm, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  simp only [h2, Fintype.sum_prod_type, map_sum, map_mul, map_ratCast, Finset.sum_mul, mul_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h2, Fintype.sum_prod_type, map_sum, map_mul, map_ratCast, Finset.sum_mul, mul_add,
     add_mul, Finset.mul_sum, Finset.sum_add_distrib]
   rw [add_add_add_comm]
   congr 1
@@ -270,7 +277,8 @@ theorem exists_isDbl (hs : IsSympl X bas) (hn : Even n) {φ₁ φ₂ : TF n g} (
     congr 2
     ring
   rw [e1, e2, thA, thA, imInv_eq, imInv_eq]
-  simp only [map_mul, map_pow, ← Complex.exp_conj, map_div₀, conj_ofReal, map_ofNat, map_sum (starRingEnd ℂ)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_pow, ← Complex.exp_conj, map_div₀, conj_ofReal, map_ofNat, map_sum (starRingEnd ℂ)]
   have hne : h.det ^ (n / 2) * (h.det⁻¹) ^ (n / 2) = 1 := by
     rw [← mul_pow, mul_inv_cancel₀ hu.ne_zero, one_pow]
   rw [mul_pow, mul_pow] at key

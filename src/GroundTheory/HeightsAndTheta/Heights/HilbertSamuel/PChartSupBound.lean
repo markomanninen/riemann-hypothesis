@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartSup
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolydiscSubmean
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartTaylorCover
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartSup
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolydiscSubmean
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartTaylorCover
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

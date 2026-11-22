@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FiniteCosetsInDoset
+
+@[expose] public section
 
 noncomputable section
 

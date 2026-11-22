@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbUnitary
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published GlobalTheory.QSA GlobalTheory.PlaneSU
 open scoped TensorProduct Quaternion
 
@@ -18,7 +23,7 @@ theorem neg_inv_ratio_norm : ∀ (F E : Type) [Field F] [Field E] [Algebra F E] 
       algebraMap R (R ⊗[F] E) (x ^ 2 - algebraMap F R δ * y ^ 2) := by
     intro x y
     have e : sigR R σ (x • B 0 + y • B 1) = x • B 0 - y • B 1 := by
-      rw [map_add, hB, hB, TensorProduct.smul_tmul', TensorProduct.smul_tmul', hs, hs, hb1, hb0,
+      rw [map_add (f := _), hB, hB, TensorProduct.smul_tmul', TensorProduct.smul_tmul', hs, hs, hb1, hb0,
         map_one, TensorProduct.tmul_neg, sub_eq_add_neg]
     rw [e]
     rw [h0] at h1 ⊢
@@ -29,7 +34,7 @@ theorem neg_inv_ratio_norm : ∀ (F E : Type) [Field F] [Field E] [Algebra F E] 
   rw [Fin.sum_univ_two] at hz
   set p₀ := B.repr t 0
   set q₀ := B.repr t 1
-  rw [← hz, key, IsScalarTower.algebraMap_apply F R (R ⊗[F] E), ← map_add, ← map_mul] at hε
+  rw [← hz, key, IsScalarTower.algebraMap_apply F R (R ⊗[F] E), ← map_add (f := _), ← map_mul] at hε
   have hinj : Function.Injective (algebraMap R (R ⊗[F] E)) := by
     have := Algebra.TensorProduct.includeLeft_injective (R := F) (S := F) (A := R) (B := E)
       (algebraMap F E).injective

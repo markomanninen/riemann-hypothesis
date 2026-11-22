@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -307,7 +311,7 @@ theorem hc_pderiv (l : σ) (e : ℕ) (P : MvPolynomial σ ℂ) :
     homogeneousComponent e (pderiv l P) = pderiv l (homogeneousComponent (e + 1) P) := by
   induction P using MvPolynomial.induction_on' with
   | monomial u c => exact homogeneousComponent_pderiv_monomial_eq_pderiv_succ l e u c
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
 
 theorem pderiv_comm (i j : σ) (P : MvPolynomial σ ℂ) :
     pderiv i (pderiv j P) = pderiv j (pderiv i P) := by
@@ -338,24 +342,6 @@ theorem eq_zero_of_hc (x : MvPolynomial σ ℂ) (h : ∀ e, homogeneousComponent
   rw [hx]
   exact Finset.sum_eq_zero fun i _ => h i
 
-theorem sum_hc_of_le (P : MvPolynomial σ ℂ) (n : ℕ) (hn : P.totalDegree < n) :
-    ∑ i ∈ Finset.range n, homogeneousComponent i P = P := by
-  have hx : ∑ i ∈ Finset.range (P.totalDegree + 1), homogeneousComponent i P = P := by
-    first
-    | exact sum_homogeneousComponent P
-    | exact sum_homogeneousComponent
-  calc ∑ i ∈ Finset.range n, homogeneousComponent i P
-      = ∑ i ∈ Finset.range (P.totalDegree + 1), homogeneousComponent i P := by
-        symm
-        apply Finset.sum_subset
-        · intro i hi
-          simp only [Finset.mem_range] at hi ⊢
-          omega
-        · intro i _ hi
-          simp only [Finset.mem_range, not_lt] at hi
-          exact homogeneousComponent_eq_zero i P (by omega)
-    _ = P := hx
-
 theorem minusPart_eq_sum (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolynomial σ ℂ) :
     minusPart A P = ∑ d ∈ Finset.range (P.totalDegree + 1),
       homogeneousComponent d (A (homogeneousComponent (d + 2) P)) := by
@@ -369,17 +355,14 @@ theorem minusPart_eq_sum (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolyn
   show homogeneousComponent d (A (homogeneousComponent (d + 2) P)) = 0
   rw [homogeneousComponent_eq_zero (d + 2) P (by omega), map_zero, map_zero]
 
-theorem minusPart_add (A B : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolynomial σ ℂ) :
-    minusPart (A + B) P = minusPart A P + minusPart B P := by
-  simp only [minusPart_eq_sum, LinearMap.add_apply, map_add, Finset.sum_add_distrib]
-
 theorem minusPart_smul (c : ℂ) (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolynomial σ ℂ) :
     minusPart (c • A) P = c • minusPart A P := by
   simp only [minusPart_eq_sum, LinearMap.smul_apply, map_smul, Finset.smul_sum]
 
 theorem minusPart_sum {ι : Type*} (t : Finset ι) (A : ι → Module.End ℂ (MvPolynomial σ ℂ))
     (P : MvPolynomial σ ℂ) : minusPart (∑ i ∈ t, A i) P = ∑ i ∈ t, minusPart (A i) P := by
-  simp only [minusPart_eq_sum, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [minusPart_eq_sum, LinearMap.sum_apply, map_sum]
   exact Finset.sum_comm
 
 theorem minusPart_raise (A : Module.End ℂ (MvPolynomial σ ℂ))
@@ -394,7 +377,8 @@ private theorem homogeneousComponent_minusPart (A : Module.End ℂ (MvPolynomial
     (P : MvPolynomial σ ℂ) (e : ℕ) :
     homogeneousComponent e (FockH1Action.minusPart A P) =
       homogeneousComponent e (A (homogeneousComponent (e + 2) P)) := by
-  rw [minusPart_eq_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [minusPart_eq_sum, map_sum]
   simp only [hc_hc]
   first
   | rw [Finset.sum_ite_eq]
@@ -597,26 +581,26 @@ variable {p q r s : ℕ}
 open MvPolynomial
 
 theorem coeff_fockAct1_diag (a : Ix p q) (P : Pol p q r s) (m : Ln p q r s →₀ ℕ) :
-    coeff m (fockAct1 p q r s (Eab a a) P) =
-      (((wt1 m a : ℚ) + sh1 p q r s a : ℚ) : ℂ) * coeff m P := by
+    AddMonoidAlgebra.coeff (fockAct1 p q r s (Eab a a) P) m =
+      (((wt1 m a : ℚ) + sh1 p q r s a : ℚ) : ℂ) * AddMonoidAlgebra.coeff P m := by
   induction P using MvPolynomial.induction_on' with
   | monomial u c =>
     rw [fockAct1_Eab_diag_monomial, coeff_smul, smul_eq_mul, coeff_monomial]
     split_ifs with h
     · rw [h]
     · simp
-  | add P Q hP hQ => simp only [map_add, coeff_add, hP, hQ, mul_add]
+  | add P Q hP hQ => simp only [map_add (f := _), MvPolynomial.coeff_add, hP, hQ, mul_add]
 
 theorem coeff_fockAct2_diag (c : Ix r s) (P : Pol p q r s) (m : Ln p q r s →₀ ℕ) :
-    coeff m (fockAct2 p q r s (Eab c c) P) =
-      (((wt2 m c : ℚ) + sh2 p q r s c : ℚ) : ℂ) * coeff m P := by
+    AddMonoidAlgebra.coeff (fockAct2 p q r s (Eab c c) P) m =
+      (((wt2 m c : ℚ) + sh2 p q r s c : ℚ) : ℂ) * AddMonoidAlgebra.coeff P m := by
   induction P using MvPolynomial.induction_on' with
   | monomial u b =>
     rw [fockAct2_Eab_diag_monomial, coeff_smul, smul_eq_mul, coeff_monomial]
     split_ifs with h
     · rw [h]
     · simp
-  | add P Q hP hQ => simp only [map_add, coeff_add, hP, hQ, mul_add]
+  | add P Q hP hQ => simp only [map_add (f := _), MvPolynomial.coeff_add, hP, hQ, mul_add]
 
 theorem mem_wtSub1 (μ : Ix p q → ℚ) (P : Pol p q r s) :
     P ∈ wtSub (fockAct1 p q r s) μ ↔ ∀ m ∈ P.support, ∀ a, (wt1 m a : ℚ) + sh1 p q r s a = μ a := by
@@ -624,7 +608,7 @@ theorem mem_wtSub1 (μ : Ix p q → ℚ) (P : Pol p q r s) :
     LinearMap.smul_apply, LinearMap.id_apply, sub_eq_zero]
   constructor
   · intro h m hm a
-    have hc := congrArg (coeff m) (h a)
+    have hc := congrArg (AddMonoidAlgebra.coeff · m) (h a)
     rw [coeff_fockAct1_diag, coeff_smul, smul_eq_mul] at hc
     exact_mod_cast mul_right_cancel₀ (MvPolynomial.mem_support_iff.mp hm) hc
   · intro h a
@@ -632,7 +616,7 @@ theorem mem_wtSub1 (μ : Ix p q → ℚ) (P : Pol p q r s) :
     rw [coeff_fockAct1_diag, coeff_smul, smul_eq_mul]
     by_cases hm : m ∈ P.support
     · rw [h m hm a]
-    · have h0 : coeff m P = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
+    · have h0 : AddMonoidAlgebra.coeff P m = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
       rw [h0, mul_zero, mul_zero]
 
 theorem mem_wtSub2 (μ : Ix r s → ℚ) (P : Pol p q r s) :
@@ -641,7 +625,7 @@ theorem mem_wtSub2 (μ : Ix r s → ℚ) (P : Pol p q r s) :
     LinearMap.smul_apply, LinearMap.id_apply, sub_eq_zero]
   constructor
   · intro h m hm c
-    have hc := congrArg (coeff m) (h c)
+    have hc := congrArg (AddMonoidAlgebra.coeff · m) (h c)
     rw [coeff_fockAct2_diag, coeff_smul, smul_eq_mul] at hc
     exact_mod_cast mul_right_cancel₀ (MvPolynomial.mem_support_iff.mp hm) hc
   · intro h c
@@ -649,7 +633,7 @@ theorem mem_wtSub2 (μ : Ix r s → ℚ) (P : Pol p q r s) :
     rw [coeff_fockAct2_diag, coeff_smul, smul_eq_mul]
     by_cases hm : m ∈ P.support
     · rw [h m hm c]
-    · have h0 : coeff m P = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
+    · have h0 : AddMonoidAlgebra.coeff P m = 0 := by simpa [MvPolynomial.mem_support_iff] using hm
       rw [h0, mul_zero, mul_zero]
 
 theorem ne_of_posC {n k : ℕ} {a b : Ix n k} (h : posC a b) : a ≠ b := by

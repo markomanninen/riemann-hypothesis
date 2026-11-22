@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial MeasureTheory
 
@@ -40,7 +44,7 @@ theorem schur_half {p q : ℕ} {T : GrpData p q} (D : DSRep T) (w u₁ u₂ : D.
     (fun x y g => inner ℂ w (D.U.π g x) * star (inner ℂ w (D.U.π g y)))
     (fun x y => ((D.fdeg : ℂ))⁻¹ * inner ℂ y x * star (inner ℂ w w)) Complex.I ?_ ?_ ?_ u₁ u₂
   · intro x y g
-    simp only [map_add, map_sub, map_smul, inner_add_right, inner_sub_right, inner_smul_right,
+    simp only [map_add (f := _), map_sub, map_smul, inner_add_right, inner_sub_right, inner_smul_right,
       star_add, star_sub, star_mul', Complex.star_def, Complex.conj_I]
     linear_combination (1 / 2 : ℂ) * (inner ℂ w (D.U.π g x) * (starRingEnd ℂ) (inner ℂ w (D.U.π g y))
       - inner ℂ w (D.U.π g y) * (starRingEnd ℂ) (inner ℂ w (D.U.π g x))) * Complex.I_mul_I
@@ -71,7 +75,7 @@ theorem schur_polarised (p q : ℕ) (T : GrpData p q) (D : DSRep T) (u₁ w₁ u
     (fun x y => ((D.fdeg : ℂ))⁻¹ * inner ℂ u₂ u₁ * star (inner ℂ y x)) (-Complex.I) ?_ ?_
     (fun x => schur_half D x u₁ u₂) w₁ w₂
   · intro x y g
-    simp only [inner_add_left, inner_sub_left, inner_smul_left, map_add, map_sub, map_mul, map_neg,
+    simp only [inner_add_left, inner_sub_left, inner_smul_left, map_add (f := _), map_sub, map_mul, map_neg,
       star_add, star_sub, star_mul', Complex.star_def, Complex.conj_I, neg_neg]
     linear_combination (1 / 2 : ℂ) *
       (inner ℂ x (D.U.π g u₁) * (starRingEnd ℂ) (inner ℂ y (D.U.π g u₂))

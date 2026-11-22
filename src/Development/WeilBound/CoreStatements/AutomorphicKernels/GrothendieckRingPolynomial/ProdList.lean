@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GrothendieckRingPolynomial
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GrothendieckRingPolynomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,21 +17,21 @@ namespace PositivityTheory.Groth
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-open Classical in
 
+open Classical in
 def cl0 {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) : GrothGL k :=
   if h : HasFiniteLength π then clsGL π h else 0
 
-def sg (x : IrrGL k) : GrothGL k := Finsupp.single x 1
+def sg (x : IrrGL (k := k)) : GrothGL k := Finsupp.single x 1
 
 def mulR (a b : GrothGL k) : GrothGL k :=
   a.sum fun x m => b.sum fun y n => (m * n) • cl0 (prod₂ (IrrGL.rep x) (IrrGL.rep y))
 
-def J (W : List (IrrGL k)) (a : GrothGL k) : ℤ := a.sum fun x m => m * ((jmL W (IrrGL.rep x)).toNat : ℤ)
+def J (W : List (IrrGL (k := k))) (a : GrothGL k) : ℤ := a.sum fun x m => m * ((jmL W (IrrGL.rep x)).toNat : ℤ)
 
 def sq (𝔪 : Multiset (Segment k)) : ℕ := (𝔪.map fun Δ => Δ.len ^ 2).sum
 
-def vWord (Δ : Segment k) (S : Finset (Fin Δ.len)) : List (IrrGL k) :=
+def vWord (Δ : Segment k) (S : Finset (Fin Δ.len)) : List (IrrGL (k := k)) :=
   (((List.finRange Δ.len).filter fun a => a ∈ S).reverse ++ (List.finRange Δ.len).filter fun a => a ∉ S).map Δ.term
 
 def vSets (Δ : Segment k) : Finset (Finset (Fin Δ.len)) := Finset.univ.filter fun S => ∀ a ∈ S, (a : ℕ) ≠ 0
@@ -35,8 +39,8 @@ def vSets (Δ : Segment k) : Finset (Finset (Fin Δ.len)) := Finset.univ.filter 
 variable (k)
 
 structure Cls : Prop where
-  ex : ∀ 𝔪 : Multiset (Segment k), ∃ x : IrrGL k, IsL 𝔪 x.rep
-  exh : ∀ x : IrrGL k, ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep
+  ex : ∀ 𝔪 : Multiset (Segment k), ∃ x : IrrGL (k := k), IsL 𝔪 x.rep
+  exh : ∀ x : IrrGL (k := k), ∃ 𝔪 : Multiset (Segment k), IsL 𝔪 x.rep
   free : LOrderFree k
   soc : LSocleGL k
   jac : LSegJacquet k
@@ -49,30 +53,30 @@ def MulCls : Prop := ∀ (r t : ℕ) (V W : Type) [AddCommGroup V] [Module ℂ V
   HasFiniteLength π₁ → HasFiniteLength π₂ → IsSmooth π₁ → IsSmooth π₂ →
     HasFiniteLength (prod₂ π₁ π₂) ∧ cl0 (prod₂ π₁ π₂) = mulR (cl0 π₁) (cl0 π₂)
 
-def Assoc : Prop := ∀ x y z : IrrGL k, mulR (mulR (sg x) (sg y)) (sg z) = mulR (sg x) (mulR (sg y) (sg z))
+def Assoc : Prop := ∀ x y z : IrrGL (k := k), mulR (mulR (sg x) (sg y)) (sg z) = mulR (sg x) (mulR (sg y) (sg z))
 
-def Comm : Prop := ∀ x y : IrrGL k, cl0 (prod₂ x.rep y.rep) = cl0 (prod₂ y.rep x.rep)
+def Comm : Prop := ∀ x y : IrrGL (k := k), cl0 (prod₂ x.rep y.rep) = cl0 (prod₂ y.rep x.rep)
 
-def One : Prop := ∀ x : IrrGL k, mulR (GrothGL.unit k) (sg x) = sg x
+def One : Prop := ∀ x : IrrGL (k := k), mulR (GrothGL.unit k) (sg x) = sg x
 
-def ProdList : Prop := ∀ (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N),
+def ProdList : Prop := ∀ (h N : ℕ) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N),
   cl0 (prodIrr x hd) = (List.ofFn x).foldr (fun y a => mulR (sg y) a) (GrothGL.unit k)
 
-def Tri : Prop := ∀ (𝔪 𝔫 : Multiset (Segment k)) (h : ℕ) (x : Fin h → IrrGL k) (y : IrrGL k) (hd : ∑ a, (x a).1 = y.1),
+def Tri : Prop := ∀ (𝔪 𝔫 : Multiset (Segment k)) (h : ℕ) (x : Fin h → IrrGL (k := k)) (y : IrrGL (k := k)) (hd : ∑ a, (x a).1 = y.1),
   LFactors 𝔪 x → IsL 𝔫 y.rep → jhMult y.rep (prodIrr x hd) ≠ 0 → msupp 𝔪 = msupp 𝔫 ∧ (𝔪 = 𝔫 ∨ sq 𝔪 < sq 𝔫)
 
-def MultOne : Prop := ∀ (𝔪 : Multiset (Segment k)) (h : ℕ) (x : Fin h → IrrGL k) (y : IrrGL k) (hd : ∑ a, (x a).1 = y.1),
+def MultOne : Prop := ∀ (𝔪 : Multiset (Segment k)) (h : ℕ) (x : Fin h → IrrGL (k := k)) (y : IrrGL (k := k)) (hd : ∑ a, (x a).1 = y.1),
   LFactors 𝔪 x → IsL 𝔪 y.rep → jhMult y.rep (prodIrr x hd) = 1
 
-def JCls : Prop := ∀ (W : List (IrrGL k)) (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V),
+def JCls : Prop := ∀ (W : List (IrrGL (k := k))) (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V),
   IsSmooth π → HasFiniteLength π → jmL W π ≠ ⊤ ∧ J W (cl0 π) = ((jmL W π).toNat : ℤ)
 
 def JSeg : Prop := ∀ Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k), IsSegmentClass k Z → ∀ Δ : Segment k,
-  jmL (List.ofFn Δ.term) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL k)) = 1 ∧
-    ∀ S ∈ vSets Δ, S ≠ ∅ → jmL (vWord Δ S) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL k)) = 0
+  jmL (List.ofFn Δ.term) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) = 1 ∧
+    ∀ S ∈ vSets Δ, S ≠ ∅ → jmL (vWord Δ S) (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) = 0
+
 
 open Classical in
-
 def AltSum : Prop := ∀ (Δ : Segment k) (h : ℕ) (Γ : Fin h → Segment k),
   ∑ S ∈ vSets Δ, (-1 : ℤ) ^ S.card * (shuffleCount (vWord Δ S) (fun i => decWord (Γ i)) : ℤ) =
     if Finset.univ.val.map Γ = {Δ} then (-1) ^ (Δ.len - 1) else 0

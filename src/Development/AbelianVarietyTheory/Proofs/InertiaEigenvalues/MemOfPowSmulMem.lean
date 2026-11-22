@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PointRingCommRing
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachModuleUniqueness
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfWachMonoidal
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowSmulMemOfLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.PointRingCommRing
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfWachMonoidal
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowSmulMemOfLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,8 @@ theorem mem_of_pow_smul_mem (hp : ∀ a : O, (PD.p : O) * a = 0 → a = 0) (T : 
   set a := b.repr ⟨_, hx⟩ with ha
   have h1 : ∑ j, algebraMap (LetA O n) W.EE (a j) • (b j : W.DD T) = ((PD.p : O) ^ m) • x := by
     have := congrArg (W.N T).subtype (b.sum_repr ⟨_, hx⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simpa only [algebraMap_smul, map_smul, Submodule.subtype_apply] using this
   have h2 : ∑ j, ((PD.p : W.EE) ^ m * e j) • (b j : W.DD T) = ((PD.p : O) ^ m) • x := by
     rw [← he, Finset.smul_sum]

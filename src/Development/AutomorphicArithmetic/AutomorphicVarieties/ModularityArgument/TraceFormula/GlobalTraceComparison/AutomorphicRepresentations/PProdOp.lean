@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ private theorem tm_unit {S : Set (Pl E)} {N : ∀ w : Pl E, Subgroup (GLw n w)} 
 
 private theorem exP {S : Set (Pl E)} {Z : Finset (Pl E)} {N : ∀ w : Pl E, Subgroup (GLw n w)}
     {I : Finset (Pl E × Bool)} {F : ∀ w : Pl E, Bool → GLw n w → ℂ}
-    (hb : ∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 n}.Finite)
+    (hb : ∀ g : GF E n, {i : Pl E × Bool | qw n i.1 i.2 g ∉ KGL i.1 (n := n)}.Finite)
     (hG : Good Z N) (hF : Fam S N I F) (g : GF E n) :
     ∃ P : Finset (Pl E), ∀ w ∈ S, w ∉ P → tm F g w = 1 := by
   refine ⟨Z ∪ I.image Prod.fst ∪ (hb g).toFinset.image Prod.fst, ?_⟩
@@ -83,7 +87,7 @@ private theorem exP {S : Set (Pl E)} {Z : Finset (Pl E)} {N : ∀ w : Pl E, Subg
   have hZ : w ∉ Z := fun h => hP (by simp [h])
   have hI : ∀ b, (w, b) ∉ I := fun b h => hP (Finset.mem_union_left _ (Finset.mem_union_right _
     (Finset.mem_image.2 ⟨(w, b), h, rfl⟩)))
-  have hB : ∀ b, qw n w b g ∈ KGL w n := by
+  have hB : ∀ b, qw n w b g ∈ KGL w (n := n) := by
     intro b
     by_contra hc
     exact hP (Finset.mem_union_right _ (Finset.mem_image.2 ⟨(w, b), by simpa using hc, rfl⟩))

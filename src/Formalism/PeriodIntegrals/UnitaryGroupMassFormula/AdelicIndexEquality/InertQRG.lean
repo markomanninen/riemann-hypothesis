@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.ChiEqOneOfClosure
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.InertGen
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.ChiEqOneOfClosure
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.InertGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,6 @@ namespace PI.UnitaryGroupMassFormula.AdIndexEq
 open NumberField IsDedekindDomain
 open scoped TensorProduct
 open Formalism.MainNotions.S
-
-theorem sig_apply (I : AutInst) (e : I.E) : I.cm.sig e = star e := rfl
 
 theorem sigV_tmul (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (x : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv I.F v)
     (e : I.E) : sigV I v (x ⊗ₜ e) = x ⊗ₜ star e := by
@@ -21,7 +23,7 @@ theorem sigV_invol (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F))
   induction a using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul x e => rw [sigV_tmul, sigV_tmul, star_star]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sigV_inclV (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (e : I.E) :
     sigV I v (inclV I v e) = inclV I v (star e) := by

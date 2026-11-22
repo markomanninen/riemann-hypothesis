@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LamProdMonomial
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestCountOf
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FiniteRestrictSupport
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LamProdMonomial
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestCountOf
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FiniteRestrictSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def lamG : Fin X.F.J → ℤ × Fin (r + K) → Fin n' × Fin (r + K) := fun _ v
 
 def lamE : Fin X.F.J → ℤ × Fin (r + K) → ℕ := fun j v => p ^ (X.F.dist (j.val : ℤ) v.1 + X.Rj p K (j.val : ℤ))
 
-omit [NeZero n'] in
 
+omit [NeZero n'] in
 def lamL (la : Fin n' → Fin (r + K) → ℕ) : Fin n' × Fin (r + K) →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm fun v => la v.1 v.2
 
@@ -55,7 +59,7 @@ theorem lam_map_phc {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {n' r
     MvPolynomial.map f (X.phc p K R (j.val : ℤ) P) = lam_ph (X.lamG K) (X.lamE p K) j (MvPolynomial.map f P) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [Dat.phc, lam_ph]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
   | mul_X q v h =>
     simp only [map_mul, h, map_X]
     simp [Dat.phc, lam_ph, Dat.lamG, Dat.lamE]

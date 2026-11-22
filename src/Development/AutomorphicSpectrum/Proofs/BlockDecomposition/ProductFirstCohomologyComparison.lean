@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.USt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.USt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -97,7 +101,7 @@ theorem bijective_tens (U : X.affineOpens) (V : Y.affineOpens) (W : (pullback f 
   have hEq : ∀ t, α t = a.hom t := fun t ↦ by
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul b c =>
       rw [hα, ← hL, ← hR, RingHom.comp_apply, RingHom.comp_apply, ← map_mul]
       congr 1

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchHeisOf
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.RationalWeightSuccMulInvNorm
-import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.ArchHeisOf
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.RationalWeightSuccMulInvNorm
+public import Development.WeilBound.ThetaLifts.SmallCones.MatCancel
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem rho_rho (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (u u' : Matrix (Fin
     M.co.rho ψ u (M.co.rho ψ u' Φ) = ψ (⅟(2 : AF F) * sy σ X W u u') • M.co.rho ψ (u + u') Φ := by
   funext x
   have h2 : ⅟(2 : AF F) * 2 = 1 := invOf_mul_self _
-  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, map_add, Prod.fst_add, Prod.snd_add, sy, M.co.2 u u', ← mul_assoc,
+  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, map_add (f := _), Prod.fst_add, Prod.snd_add, sy, M.co.2 u u', ← mul_assoc,
     ← AddChar.map_add_eq_mul, add_assoc]
   congr 2
   simp only [add_dotProduct, dotProduct_add]
@@ -44,8 +48,8 @@ theorem rho_comm (M : Model σ X W) (ψ : AddChar (AF F) ℂ) (u u' : Matrix (Fi
   simp only [sy, M.co.2]
   linear_combination ((M.co.e u).1 ⬝ᵥ (M.co.e u').2 - (M.co.e u').1 ⬝ᵥ (M.co.e u).2) * h2
 
-variable (σ) in
 
+variable (σ) in
 def bA (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → AE F E) : AE F E := x ⬝ᵥ incM F J *ᵥ fun i => cA σ (y i)
 
 theorem sy_vv (x x' : Fin n → AE F E) (y y' : Fin d → AE F E) :
@@ -58,7 +62,8 @@ theorem sy_vv (x x' : Fin n → AE F E) (y y' : Fin d → AE F E) :
   exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun k _ => by ring
 
 theorem bA_inc (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → E) : bA σ J (incV F x) (incV F y) = inclR (F := F) (AF F) (form σ J x y) := by
-  simp only [bA, form, dotProduct, Matrix.mulVec, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bA, form, dotProduct, Matrix.mulVec, map_sum, map_mul]
   rfl
 
 theorem bA_smul (J : Matrix (Fin n) (Fin n) E) (a b : AE F E) (x y : Fin n → AE F E) : bA σ J (a • x) (b • y) = a * cA σ b * bA σ J x y := by
@@ -112,17 +117,17 @@ theorem pv_opI (hA : ArchOp) {M : Model σ X W} {χX χW om r s r' s'} (hP : IsP
     beta_reduce
     rw [e]
     exact h₂ q ⟨hq.1, e ▸ om_sch hP _ hq.2⟩⟩
-  rw [opI, dif_pos h]
+  rw [opI, dite_eq_left h]
   exact (pv_act hP.good h.choose_spec).symm
 
-open Classical in
 
+open Classical in
 def unp (M : Model σ X W) (l : SInf F (Fin n × Fin d) →L[ℂ] ℂ) (Ψ : Fn F n d) : ℂ :=
   if h : ∃ g, Ψ = PV M g then l h.choose else 0
 
 theorem un_pv {M : Model σ X W} (hM : M.IsGood B.ψ) (l) (g) : unp M l (PV M g) = l g := by
   have h : ∃ g', PV M g = PV M g' := ⟨g, rfl⟩
-  rw [unp, dif_pos h, ← pure_inj M.vac (fun v => (hM.vac v).2.1) hM.std h.choose_spec]
+  rw [unp, dite_eq_left h, ← pure_inj M.vac (fun v => (hM.vac v).2.1) hM.std h.choose_spec]
 
 theorem e_pv {M : Model σ X W} {M₁ : Model σ X₁ W₁} (hM : M.IsGood B.ψ) {e ei ev} (h : IsEvLoc M M₁ e ei ev) (f) :
     e (PV M f) = PV M₁ (ei f) := by

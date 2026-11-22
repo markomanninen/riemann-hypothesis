@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.SmoothVectors
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -24,9 +28,6 @@ def kHom (τ : Representation ℂ K W) (σ : Representation ℂ K V) : Submodule
   smul_mem' c T hT k := by
     simp only [mem_setOf_eq] at *
     rw [LinearMap.smul_comp, LinearMap.comp_smul, hT k]
-
-theorem mem_kHom {τ : Representation ℂ K W} {σ : Representation ℂ K V} {T : W →ₗ[ℂ] V} :
-    T ∈ kHom τ σ ↔ ∀ k : K, T ∘ₗ τ k = σ k ∘ₗ T := Iff.rfl
 
 end KHom
 
@@ -73,20 +74,9 @@ noncomputable def toRepresentation (π : BanachRep K' E) : Representation ℂ K'
   map_one' := by ext v; simp
   map_mul' k k' := by ext v; simp [map_mul_apply]
 
-@[simp] theorem toRepresentation_apply (π : BanachRep K' E) (k : K') (v : E) :
-    π.toRepresentation k v = π k v := rfl
-
 noncomputable def restrict (π : BanachRep K' E) (K : Subgroup K') : BanachRep K E where
   toHom := π.toHom.comp K.subtype
   continuous_orbit' v := (π.continuous_orbit v).comp continuous_subtype_val
-
-@[simp] theorem restrict_apply (π : BanachRep K' E) (K : Subgroup K') (k : K) :
-    π.restrict K k = π k := rfl
-
-def IsAdmissible (π : BanachRep K' E) (K : Subgroup K') : Prop :=
-  ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (τ : Representation ℂ K W),
-    τ.IsIrreducible → Representation.HasContinuousCoeff τ →
-      FiniteDimensional ℂ (kHom τ (π.restrict K).toRepresentation)
 
 variable (π : BanachRep K' E) (K : Subgroup K')
 
@@ -107,7 +97,7 @@ theorem map_mem_kSpan_of_mem {v w : E} (hw : w ∈ π.kSpan K v) (k : K) : π k 
     rw [← map_mul_apply]
     exact Submodule.subset_span ⟨k * k', by simp⟩
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
 
 theorem kSpan_le_of_mem {v w : E} (hw : w ∈ π.kSpan K v) : π.kSpan K w ≤ π.kSpan K v := by
@@ -140,7 +130,7 @@ def kFiniteVectors : Submodule ℂ E where
     rw [kSpan, Submodule.span_le]
     rintro _ ⟨k, rfl⟩
     show π k (v + w) ∈ _
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (π.map_mem_kSpan K v k) (π.map_mem_kSpan K w k)
   smul_mem' c v hv := by
     change FiniteDimensional ℂ (π.kSpan K v) at hv
@@ -152,8 +142,6 @@ def kFiniteVectors : Submodule ℂ E where
     show π k (c • v) ∈ _
     rw [map_smul]
     exact Submodule.smul_mem _ c (π.map_mem_kSpan K v k)
-
-theorem mem_kFiniteVectors {v : E} : v ∈ π.kFiniteVectors K ↔ π.IsKFinite K v := Iff.rfl
 
 end BanachRep
 
@@ -185,7 +173,8 @@ theorem isKFinite_derivOp {v : E} (hv : h.IsSmoothVector π v) (hK : π.IsKFinit
     have e : h.derivEnd π Y = ∑ i, b.repr Y i • h.derivEnd π (b i) := by
       conv_lhs => rw [← b.sum_repr Y]
       show h.derivEndL π (∑ i, b.repr Y i • b i) = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul]
       rfl
     rw [e, LinearMap.sum_apply]
@@ -204,9 +193,6 @@ theorem isKFinite_derivOp {v : E} (hv : h.IsSmoothVector π v) (hK : π.IsKFinit
   exact Submodule.finiteDimensional_of_le hle
 
 def gkVectors : Submodule ℂ E := h.smoothVectors π ⊓ π.kFiniteVectors K
-
-theorem mem_gkVectors {v : E} :
-    v ∈ h.gkVectors π K ↔ h.IsSmoothVector π v ∧ π.IsKFinite K v := Iff.rfl
 
 theorem map_mem_gkVectors {v : E} (hv : v ∈ h.gkVectors π K) (k : K) :
     π k v ∈ h.gkVectors π K :=
@@ -227,9 +213,6 @@ noncomputable def derivGK (X : 𝔤) : Module.End ℂ (h.gkVectors π K) where
   map_add' v w := by ext; exact h.derivOp_add π v.2.1 w.2.1 X
   map_smul' c v := by ext; exact h.derivOp_smul π v.2.1 c X
 
-@[simp] theorem coe_derivGK (X : 𝔤) (v : h.gkVectors π K) :
-    ((h.derivGK π K X v : h.gkVectors π K) : E) = h.derivOp π X v := rfl
-
 noncomputable def kRepGK : Representation ℂ K (h.gkVectors π K) where
   toFun k :=
     { toFun := fun v => ⟨π k v, h.map_mem_gkVectors π K v.2 k⟩
@@ -237,9 +220,6 @@ noncomputable def kRepGK : Representation ℂ K (h.gkVectors π K) where
       map_smul' := fun c v => by ext; simp }
   map_one' := by ext v; simp
   map_mul' k k' := by ext v; simp [BanachRep.map_mul_apply]
-
-@[simp] theorem coe_kRepGK (k : K) (v : h.gkVectors π K) :
-    ((h.kRepGK π K k v : h.gkVectors π K) : E) = π k v := rfl
 
 theorem exists_strongDual_eq [CompleteSpace E] (φ : Module.Dual ℂ (h.gkVectors π K))
     (v : h.gkVectors π K) :
@@ -307,28 +287,6 @@ noncomputable def gkModule [CompleteSpace E] : h.GKModule K (h.gkVectors π K) w
   map_ρ k X v := by
     ext
     exact (h.derivOp_map π v.2.1 k X).symm
-
-@[simp] theorem gkModule_σ_apply [CompleteSpace E] (k : K) (v : h.gkVectors π K) :
-    (((h.gkModule π K).σ k v : h.gkVectors π K) : E) = π k v := rfl
-
-@[simp] theorem gkModule_ρ_apply [CompleteSpace E] (X : h.lieSubalgebra) (v : h.gkVectors π K) :
-    (((h.gkModule π K).ρ X v : h.gkVectors π K) : E) = h.derivOp π (h.ofLie X) v := rfl
-
-theorem isAdmissible_gkModule [CompleteSpace E] (hπ : π.IsAdmissible K) :
-    (h.gkModule π K).IsAdmissible := by
-  intro W _ _ _ τ hirr hcont
-  haveI := hπ W τ hirr hcont
-  let f : kHom τ (h.gkModule π K).σ →ₗ[ℂ] kHom τ (π.restrict K).toRepresentation :=
-    { toFun := fun T => ⟨(h.gkVectors π K).subtype ∘ₗ T.1, fun k => by
-        ext w
-        have := congrArg Subtype.val (LinearMap.congr_fun (T.2 k) w)
-        simpa using this⟩
-      map_add' := fun S T => by ext; simp
-      map_smul' := fun c T => by ext; simp }
-  refine Module.Finite.of_injective f fun S T hST => ?_
-  ext w
-  have := LinearMap.congr_fun (congrArg Subtype.val hST) w
-  simpa [f] using this
 
 end IsExpLieAlgebra
 

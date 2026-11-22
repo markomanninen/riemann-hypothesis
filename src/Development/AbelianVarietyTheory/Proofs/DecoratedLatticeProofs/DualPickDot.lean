@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing
@@ -26,7 +30,7 @@ theorem dualPick_dot {m : Type} [Fintype m] [DecidableEq m] (g : m → k) (hg : 
     push_neg at h'
     exact hg (funext h')
   unfold dualPick
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp only [single_dotProduct]
   exact inv_mul_cancel₀ h.choose_spec
 

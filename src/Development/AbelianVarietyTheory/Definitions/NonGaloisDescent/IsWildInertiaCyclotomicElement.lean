@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
-import Formalism.AdmissibleDesigns.RestrictedSevenEightOfFull
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CoefficientCompatibilityOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
+public import Formalism.AdmissibleDesigns.RestrictedSevenEightOfFull
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CoefficientCompatibilityOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ def EigSet {D : D7} {μ : D.what₂.Tup} {j : ℕ} (X : MtReal D μ j) (l : ℕ)
       GenAt D l Q v k → IsConjPl D.host v s.w → IsUnif D.host.E s.v ϖ →
       NG.tN X.J s ϖ k (X.real y) = c v k • X.real y}
 
-open Classical in
 
+open Classical in
 def ptSys (D : D7) (i : D.nd.Loc) (x : D.nd.X i) : PlE D.host → ℕ → ℂ := fun v k =>
   if GenAt D (D.nd.l i) (D.nd.Q i) v k then iotaOC D i ((D.nd.hT i v k : D.nd.X i → D.nd.O i) x) else 0
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LeviColsPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LeviColsPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -272,12 +276,13 @@ theorem chiL_eq_psiG {x : X.B.I.Gf} (hx : Good X x) (hk : x ∈ X.K2) : chiL X x
     have e : (⟨C, hCint⟩ : ↥(IntAf X.B.I.F X.B.I.E)) = ∑ i : Fin D.R.k,
         (if h : i.1 + 1 < D.R.k then (⟨_, hint i ⟨i.1 + 1, h⟩⟩ : ↥(IntAf X.B.I.F X.B.I.E)) else 0) := by
       apply Subtype.ext
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
       show C = _
       rw [hC]
       refine Finset.sum_congr rfl (fun i _ => ?_)
       split_ifs <;> rfl
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     split_ifs <;> simp
   have hinner : ∀ (v : TR.Pl) (M : Matrix (Fin D.R.k) (Fin D.R.k) (TR.Fq v)) (i : Fin D.R.k),
@@ -327,8 +332,8 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
   {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (cs : ColSys X u what₂) (cs' : ColSys X u' rows')
 
-variable (F0 F0') in
 
+variable (F0 F0') in
 def AdmN : Prop :=
   ∀ t : GTerm X u u' F0 F0' what₂ rows',
     NCong X (kOf X u u' (cs.h (cs.base t.lam) : X.B.I.Gf) (cs'.h (cs'.base t.lam') : X.B.I.Gf) t.pt)

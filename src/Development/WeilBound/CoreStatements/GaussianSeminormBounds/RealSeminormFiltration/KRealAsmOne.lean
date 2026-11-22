@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNontrivialLiftModule
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLM
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.Tensor
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNontrivialLiftModule
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLM
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.Tensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ def actL : Mat R S →ₗ[ℂ] Module.End ℂ V where
   map_add' Y Z := by
     refine LinearMap.ext fun v => ?_
     obtain ⟨f, rfl⟩ := hp v
-    simp only [LinearMap.add_apply, h, map_add]
+    simp only [LinearMap.add_apply, h, map_add (f := _)]
   map_smul' c Y := by
     refine LinearMap.ext fun v => ?_
     obtain ⟨f, rfl⟩ := hp v
@@ -70,7 +74,7 @@ def gkImage : GKMod R S where
       exact Submodule.mem_iSup_of_mem _ (actL_wt p hp act h μ g hg)
     · simp
     · intro g g' hg hg'
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hg hg'
 
 end Image
@@ -126,7 +130,7 @@ theorem onePlaceD (D : RealData) (h : D.Hyp) :
     refine (h2 W _).symm.trans ?_
     have e : PositivityTheory.KReal.opV' D W (thMkC _ _ _ _ _ f) =
         thMkC _ _ _ _ _ (FockH1Action.fockAct2 _ _ _ _ W f) + ((D.κ : ℂ) / 2 * W.trace) • thMkC _ _ _ _ _ f := rfl
-    rw [e, map_add, map_smul]
+    rw [e, map_add (f := _), map_smul]
     rfl
   have hI : Formalism.MainNotions.SchurIrreducible.IrrGK (gkImage p hp act ha) := ⟨hn, hirr⟩
   refine ⟨gkImage p hp act ha, p, p', ⟨hp, fun X f => ?_, fun Y f => ?_⟩, ⟨hp', fun X f => ?_, fun Y f => ?_⟩, hI,

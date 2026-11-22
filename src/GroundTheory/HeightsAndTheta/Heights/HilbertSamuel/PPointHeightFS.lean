@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPointHeightFS
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPointHeightFS
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsSmoothHermFubiniStudyO1
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -11,7 +16,7 @@ noncomputable section
 
 namespace PointHeightFSAux
 
-abbrev fsOne : HermLine (GlobalTheory (Fin 1)) := HermLine.ofCone (fsMetric (Ix (Fin 1)))
+abbrev fsOne : HermLine (GlobalTheory (Fin 1)) := HermLine.ofCone (fsMetric (ι := Ix (Fin 1)))
 
 abbrev x0 : MRing (GlobalTheory (Fin 1)) := X ⟨(), 0⟩
 
@@ -51,8 +56,8 @@ theorem ptsIntegral_zero {e : ℕ} (P : Ideal (MRing (GlobalTheory (Fin 1))))
 
 end PointHeightFSAux
 
-open PointHeightFSAux in
 
+open PointHeightFSAux in
 theorem PointHeightFS.proof : PointHeightFS.Statement := by
   intro I hI
   classical

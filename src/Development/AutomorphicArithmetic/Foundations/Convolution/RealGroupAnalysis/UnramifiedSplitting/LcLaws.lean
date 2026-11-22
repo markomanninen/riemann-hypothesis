@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -52,7 +56,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.lcLaws :
   · intro y
     apply Units.ext
     ext i j
-    rw [Matrix.GeneralLinearGroup.map_apply, hlc, map_add, hcp]
+    rw [Matrix.GeneralLinearGroup.map_apply, hlc, map_add (f := _), hcp]
     fin_cases i <;> fin_cases j <;> simp
   · intro g y
     have one_l : ∀ (R : Type) [CommRing R] (M : Matrix (Fin 2) (Fin 2) R) (i j : Fin 2),

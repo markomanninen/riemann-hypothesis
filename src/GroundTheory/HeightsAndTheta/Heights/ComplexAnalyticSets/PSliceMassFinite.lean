@@ -1,8 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceFormMass
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartHomogenise
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.MeasurableOfContinuousOnNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPlaneSliceMass
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartHomogenise
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.MeasurableOfContinuousOnNeZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -24,7 +30,7 @@ theorem SliceMassFinite.exists_projClosure {n e : ℕ} (I : Ideal (MvPolynomial 
     refine mem_nonZeroDivisors_of_ne_zero fun h0 => hP.ne_top ?_
     have h00 := hW.isHomog _ (Ideal.Quotient.eq_zero_iff_mem.mp h0) 0
     rw [homogeneousComponent_zero] at h00
-    have hc : coeff 0 (linForm ℓ - 1) = -1 := by
+    have hc : AddMonoidAlgebra.coeff (linForm ℓ - 1) 0 = -1 := by
       simp [linForm, coeff_sum, coeff_C_mul, coeff_X]
     rw [hc, map_neg, map_one, Ideal.neg_mem_iff] at h00
     exact (Ideal.eq_top_iff_one W).mpr h00
@@ -35,7 +41,7 @@ theorem SliceMassFinite.exists_projClosure {n e : ℕ} (I : Ideal (MvPolynomial 
 
   have h2 : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ W) ≤ (n : WithBot ℕ∞) := by
     have := ringKrullDim_quotient_le W
-    rwa [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add,
+    rwa [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field, zero_add,
       Nat.card_eq_fintype_card, Fintype.card_fin] at this
 
   have hdimW : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ W) = ((e + 1 + 1 : ℕ) : WithBot ℕ∞) := by
@@ -60,28 +66,6 @@ theorem SliceMassFinite.exists_projClosure {n e : ℕ} (I : Ideal (MvPolynomial 
         rfl
   obtain ⟨F, hFW⟩ := (IndefiniteRowSideFullHecke.ComplexSets.exists_isChowForm_iff (e := e + 1) hW).mpr ⟨hP, hdimW⟩
   exact ⟨W, F, hW, hFW, hℓW, hWI⟩
-
-theorem SliceMassFinite.proof (hF : SliceFormMass.Statement) : SliceMassFinite.Statement := by
-  intro n d h I ℓ A hI hℓ hdim hA
-  cases d with
-  | zero =>
-    have hconst : chartAbsDens I A (fun _ => 1) (fun _ x => Real.log (h.dualNorm x)) =
-        fun _ => chartAbsDens I A (fun _ => 1) (fun _ x => Real.log (h.dualNorm x)) 0 :=
-      funext fun y => congrArg _ (Subsingleton.elim y 0)
-    rw [hconst]
-    have : IsFiniteMeasure (volume : Measure (Fin 0 → ℂ)) := by
-      rw [MeasureTheory.volume_pi, Measure.pi_of_empty (x := 0)]
-      infer_instance
-    exact integrable_const _
-  | succ e =>
-    obtain ⟨W, F, hW, hFW, hℓW, hWI⟩ := SliceMassFinite.exists_projClosure I ℓ hI hℓ hdim
-    have hA2 : IsFiniteProjection (W ⊔ Ideal.span {linForm ℓ - 1}) A := by
-      rw [hWI]
-      exact hA
-    have hmass := hF n e h W F ℓ A (fun _ => 1) (fun _ => 1) (fun _ _ => 0) hW hFW hℓW hA2
-      (fun _ _ _ => rfl) continuousOn_const (fun _ _ _ _ => rfl) (fun _ => contDiffOn_const)
-    rw [hWI] at hmass
-    simpa only [one_mul, add_zero] using hmass
 
 end
 

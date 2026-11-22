@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramLocSetCApp
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StandardPairingDecay
 

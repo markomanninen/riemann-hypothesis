@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclicA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecCyclicA
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.RecCyc
 
@@ -58,7 +62,7 @@ theorem defect_mem_B_iff {R : Type} [CommRing R] {G : Type} [Group G] [Topologic
       rw [Finset.sum_congr rfl fun g _ => ha g]
       simp
     refine ⟨u • b.1 ![g₀] + v • a, ?_⟩
-    simp only [map_add, map_zsmul]
+    simp only [map_add (f := _), map_zsmul]
     rw [Finset.sum_add_distrib, ← Finset.smul_sum, ← Finset.smul_sum, ← h1, h3, smul_smul, smul_smul, ← add_smul,
       huv, one_smul]
   · rintro ⟨y, rfl⟩
@@ -75,8 +79,8 @@ theorem exists_ofK_eq (x : KbarMult p) (hx : x ∈ multOf p K) : ∃ a : Kˣ, of
     (fun h => (Additive.toMul x : (PadicAlgCl p)ˣ).ne_zero (congrArg Subtype.val h)), ?_⟩
   exact Units.ext rfl
 
-variable (p K L) in
 
+variable (p K L) in
 noncomputable def kToLayer [(subG p K L).Normal] : Additive Kˣ →+ (layer p K L).V where
   toFun a := ⟨ofK p K a, fun g => kbarRep_ofK g.1 a⟩
   map_zero' := Subtype.ext (map_zero _)
@@ -94,7 +98,7 @@ theorem exists_lift_layer [(subG p K L).Normal] (χ : charGrp (GK p K)) (hχ : T
   have key : ∀ g : GK p K, χ.1 (Additive.ofMul (QuotientGroup.mk g : GalLK p K L).out) = χ.1 (Additive.ofMul g) := by
     intro g
     obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul (subG p K L) g
-    rw [hh, ofMul_mul, map_add, hχ h.1 h.2, add_zero]
+    rw [hh, ofMul_mul, map_add (f := _), hχ h.1 h.2, add_zero]
   refine ⟨fun q => (χ.1 (Additive.ofMul q.out)).out, fun s => ?_, fun g => ?_⟩
   · rw [← QuotientGroup.isOpenQuotientMap_mk.isQuotientMap.isOpen_preimage]
     have h1 : IsLocallyConstant fun g : GK p K => (χ.1 (Additive.ofMul g)).out :=

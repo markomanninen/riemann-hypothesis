@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -197,7 +201,7 @@ private def g2Z : (∀ v, Z1 (σ v)) →ₗ[k] continuousCocycles2 loc ρ (fun v
     fun v => ((IsLocallyConstant.iff_continuous _).2 (a v).2.1).comp (r v), by simp,
     fun v s t => by
       change q v _ = 0
-      simp only [Alg.dOne, (a v).2.2 s t, Pi.zero_apply, map_sub, map_add, MonoidHom.comp_apply, hq, hr, map_zero,
+      simp only [Alg.dOne, (a v).2.2 s t, Pi.zero_apply, map_sub, map_add (f := _), MonoidHom.comp_apply, hq, hr, map_zero,
         sub_self]⟩
   map_add' _ _ := Subtype.ext (Prod.ext (by simp) (funext fun v => funext fun s => by simp))
   map_smul' _ _ := Subtype.ext (Prod.ext (by simp) (funext fun v => funext fun s => by simp))
@@ -234,7 +238,7 @@ private theorem range_h2_eq_inf_ker_pairing : LinearMap.range (h2 loc ρ q) =
     rw [LinearMap.mem_ker, map_sub, sub_eq_zero] at h4
     show _ = q v (x.1.1 (loc v p.1, loc v p.2))
     rw [h4]
-    simp only [Alg.dOne, map_sub, map_add, MonoidHom.comp_apply, hq]
+    simp only [Alg.dOne, map_sub, map_add (f := _), MonoidHom.comp_apply, hq]
   · intro hc
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ c
     have hv : ∀ v, ∃ cv : Gv v → Q v, Continuous cv ∧
@@ -255,7 +259,7 @@ private theorem range_h2_eq_inf_ker_pairing : LinearMap.range (h2 loc ρ q) =
       have e := congrFun (hd v) (s, t)
       rw [first_differential_eq] at e
       rw [LinearMap.mem_ker, map_sub, ← e]
-      simp only [Alg.dOne, map_sub, map_add, MonoidHom.comp_apply, hq, hr, sub_self]
+      simp only [Alg.dOne, map_sub, map_add (f := _), MonoidHom.comp_apply, hq, hr, sub_self]
 
 include hloc in
 private theorem ker_h2_eq_range_g2 : LinearMap.ker (h2 loc ρ q) = LinearMap.range (g2 loc ρ σ q hq r hr) := by
@@ -274,7 +278,7 @@ private theorem ker_h2_eq_range_g2 : LinearMap.ker (h2 loc ρ q) = LinearMap.ran
       intro v s t
       have h4 := x.2.2.2.2 v s t
       rw [hd', LinearMap.mem_ker] at h4
-      simp only [Alg.dOne, MonoidHom.comp_apply, map_mul, map_sub, map_add, hq] at h4 ⊢
+      simp only [Alg.dOne, MonoidHom.comp_apply, map_mul, map_sub, map_add (f := _), hq] at h4 ⊢
       rw [← sub_eq_zero, ← h4]; abel
     refine ⟨fun v => ⟨fun s => q v (x.1.2 v s - β (loc v s)), ?_, hcoc v⟩, ?_⟩
     · exact (continuous_of_discreteTopology (f := q v)).comp

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+
+@[expose] public section
+
 open Filter Topology
 
 namespace GlobalTheory.CompanionTheory.EisCross
@@ -74,7 +79,7 @@ theorem dom : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup 
   obtain ⟨A₁, hA₁⟩ := hl₁ C hCc
   obtain ⟨A₂, hA₂⟩ := hl₂ C hCc
   have hU : (fun g' => g⁻¹ * g') ⁻¹' C ∈ 𝓝 g := by
-    apply (continuous_mul_left g⁻¹).continuousAt.preimage_mem_nhds
+    apply (continuous_const_mul g⁻¹).continuousAt.preimage_mem_nhds
     simpa using hC1
   refine ⟨(fun g' => g⁻¹ * g') ⁻¹' C, hU, fun r => |M| *
       (Real.exp (|e₁| * Aξ) * Real.exp A₁ * (Real.exp (e₁ * ξ (rep r * g)) * pos Δ P l₁ (rep r * g)) +

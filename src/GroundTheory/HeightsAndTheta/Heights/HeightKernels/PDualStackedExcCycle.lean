@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcReduced
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedGraphHorizontal
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcReduced
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedGraphHorizontal
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -147,8 +152,8 @@ end Graph
 
 end StackedExceptionalCycle
 
-open StackedExceptionalCycle StackedGraphHorizontal in
 
+open StackedExceptionalCycle StackedGraphHorizontal in
 theorem DualStackedExcCycle.proof (hR : DualStackedExcReduced.Statement) : DualStackedExcCycle.Statement := by
   intro K _ _ i F F' T _ _ b b' a hi hlt hcov hab
   obtain ⟨E, hE, huniq, hmult⟩ := hR K i F F' T b b' a hi hlt hcov hab

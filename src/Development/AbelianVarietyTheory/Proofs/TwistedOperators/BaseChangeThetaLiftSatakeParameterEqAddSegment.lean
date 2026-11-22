@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+
+@[expose] public section
 
 open Matrix Formalism.UG GlobalTheory.Hk3 GlobalTheory.FinWeil GlobalTheory.SphTheta ValuativeRel Classical
 open GlobalTheory.LFun (HasSatU IsSatVecU heckeVec)
@@ -80,14 +84,14 @@ private theorem sum_pi_single_one_smul {ι : Type} (s : Finset ι) (f : ι → �
   | empty => simp
   | cons a m ih => rw [Multiset.map_cons, Multiset.sum_cons, ih, Multiset.map_cons, Multiset.singleton_add]
 
-open GlobalTheory.LGrp (bcParam) in
 
+open GlobalTheory.LGrp (bcParam) in
 theorem bcParam_map_mul (c : ℂˣ) (N : ℕ) (γ : Fin (N / 2) → ℂˣ) :
     (bcParam N γ).map (fun x => c * x) =
       ∑ i, ({c * γ i, c * (γ i)⁻¹} : Multiset ℂˣ) + Multiset.replicate (N % 2) c := by
   have hpair : ∀ i, ({c * γ i, c * (γ i)⁻¹} : Multiset ℂˣ) = {c * γ i} + {c * (γ i)⁻¹} := fun i => by
     rw [Multiset.insert_eq_cons, Multiset.singleton_add]
-  simp only [hpair, Finset.sum_add_distrib, sum_pi_single_one_smul, bcParam, Multiset.map_add, Multiset.map_map,
+  simp only [hpair, Finset.sum_add_distrib, sum_pi_single_one_smul, bcParam, Multiset.map_add (f := _), Multiset.map_map,
     Multiset.map_replicate, mul_one]
   rfl
 
@@ -121,14 +125,14 @@ theorem bcParam_liftPar (q : ℂˣ) (n n' : ℕ) (h : n ≤ n') (α : Fin (n / 2
       have hL : liftPar q n n' α (finCongr hD (Fin.castAdd (n / 2) i)) =
           (-1) ^ n * q ^ ((n' : ℤ) - n - 1 - 2 * ((i : ℕ) : ℤ)) := by
         unfold liftPar
-        rw [dif_pos (by simp)]
+        rw [dite_eq_left (by simp)]
         simp
       rw [hL, mul_inv, inv_mul_cancel_left, neg_one_pow_inv, ← mul_assoc, hs, one_mul, ← _root_.zpow_neg]
     · refine Fintype.sum_equiv Fin.revPerm _ _ fun j => ?_
       have hL : liftPar q n n' α (finCongr hD (Fin.natAdd (n' / 2 - n / 2) j)) =
           (-1) ^ n * (-1) ^ n' * (α (Fin.revPerm j))⁻¹ := by
         unfold liftPar
-        rw [dif_neg (by simp), pow_add]
+        rw [dite_eq_right (by simp), pow_add]
         congr 3
         ext
         simp

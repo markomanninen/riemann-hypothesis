@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhNormUnits
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.ConstantCoeffFormalSMul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.TendstoCoeffOfCont
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhNormUnits
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.ConstantCoeffFormalSMul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PowerSeriesNormUnits.TendstoCoeffOfCont
+
+@[expose] public section
 
 noncomputable section
 
@@ -199,7 +203,7 @@ theorem be_nat (hph : PowerSeries.constantCoeff ph = 0)
     have h3 := (hE p τ _ _ _ 0).2.2.1 h1 h2
     have h4 : MvPowerSeries.C (k : ℂ_[p]) * be l ex ph z y + be l ex ph z y =
         MvPowerSeries.C ((k + 1 : ℕ) : ℂ_[p]) * be l ex ph z y := by
-      rw [Nat.cast_succ, map_add, map_one]
+      rw [Nat.cast_succ, map_add (f := _), map_one]
       ring
     rw [← h4]
     exact h3

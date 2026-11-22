@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiPart
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TauPart
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DerivG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ByParts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiM
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiPart
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.TauPart
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.DerivG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ByParts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiM
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,11 +150,11 @@ lemma integral_Ssum [CompactSpace (KG ε)] (T : KType ε Λ) (μ : Fin n → ℤ
       InfKA.Ek T μ x (InfKA.entryCLM a b) A (Matrix.single a b 1) k) (muK ε) := fun a b =>
     InfKA.integrable_of_cont ((InfKA.continuous_Ek T μ hx (InfKA.entryCLM a b) A
       (Matrix.single a b 1)).const_smul (if b < a then (1 : ℂ) else -1))
-  refine ⟨integrable_finset_sum _ fun a _ => integrable_finset_sum _ fun b _ => hI a b, ?_⟩
+  refine ⟨MeasureTheory.integrable_finsetSum _ fun a _ => MeasureTheory.integrable_finsetSum _ fun b _ => hI a b, ?_⟩
   unfold Ssum
-  rw [integral_finset_sum _ fun a _ => integrable_finset_sum _ fun b _ => hI a b]
+  rw [MeasureTheory.integral_finsetSum _ fun a _ => MeasureTheory.integrable_finsetSum _ fun b _ => hI a b]
   refine sum_eq_zero fun a _ => ?_
-  rw [integral_finset_sum _ fun b _ => hI a b]
+  rw [MeasureTheory.integral_finsetSum _ fun b _ => hI a b]
   refine sum_eq_zero fun b hb => ?_
   rw [integral_smul (if b < a then (1 : ℂ) else -1)
     (fun k => InfKA.Ek T μ x (InfKA.entryCLM a b) A (Matrix.single a b 1) k), InfKA.integral_Ek_block T μ hx _ A (isBlock_single (mem_filter.mp hb).2.1), smul_zero]

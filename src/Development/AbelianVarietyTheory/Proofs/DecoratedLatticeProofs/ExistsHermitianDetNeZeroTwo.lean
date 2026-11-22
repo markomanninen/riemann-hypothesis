@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -29,7 +33,7 @@ theorem eval_det_affine_matrix {κ ι : Type} [Field κ] {n : ℕ} (c d : Matrix
     (G : Matrix (Fin n) (Fin n) (MvPolynomial ι κ)) (u : ι → κ) :
     MvPolynomial.eval u (c.map C * G + d.map C).det =
       (c * G.map (MvPolynomial.eval u) + d).det := by
-  rw [RingHom.map_det, map_add, map_mul]
+  rw [RingHom.map_det, map_add (f := _), map_mul]
   congr 1
   ext i j
   simp [Matrix.mul_apply]
@@ -77,7 +81,7 @@ theorem exists_hermitian_det_ne_zero_two :
     simp [x]
   refine ⟨x, ?_, ?_, ?_⟩
   · ext i j
-    simp only [x, Matrix.map_apply, Matrix.of_apply, Matrix.transpose_apply, map_add, map_mul,
+    simp only [x, Matrix.map_apply, Matrix.of_apply, Matrix.transpose_apply, map_add (f := _), map_mul,
       map_sub, map_natCast, hσ]
     ring
   · rw [hx]; exact left_ne_zero_of_mul hm

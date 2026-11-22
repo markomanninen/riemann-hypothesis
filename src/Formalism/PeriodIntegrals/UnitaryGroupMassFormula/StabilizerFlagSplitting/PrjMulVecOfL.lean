@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -71,7 +75,7 @@ lemma exists_C (A : Matrix n ι ℂ)
   ext i j
   have h := congrFun (hc j) i
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h
-  rw [mul_apply, ← h]
+  rw [Matrix.mul_apply, ← h]
   simp [mul_comm]
 
 lemma Y_inj (hG : IsUnit (Yᴴ * H * Y).det) (c : ι → ℂ) (hc : Y *ᵥ c = 0) : c = 0 := by

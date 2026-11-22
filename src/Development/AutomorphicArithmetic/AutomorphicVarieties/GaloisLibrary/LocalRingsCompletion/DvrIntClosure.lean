@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+
+@[expose] public section
 
 open PowerSeries IsLocalRing UpperTheory.V.abelian₂
 open IsDiscreteValuationRing (addVal)
@@ -27,7 +31,11 @@ theorem UpperTheory.V.abelian₂.dvr_intClosure :
       IsDiscreteValuationRing (integralClosure ℤ_[l] K) ∧ Module.Finite ℤ_[l] (integralClosure ℤ_[l] K) ∧
         IsFractionRing (integralClosure ℤ_[l] K) K := by
   intro l hl K _ _ _ _ _
-  let φ : K →ₐ[ℚ_[l]] PadicAlgCl l := IsAlgClosed.lift
+  let φ : K →ₐ[ℚ_[l]] PadicAlgCl l := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hint := UpperTheory.V.abelian₂.isIntegral_iff_norm_le_one_bis φ
   have hunit : ∀ a : integralClosure ℤ_[l] K, ‖φ a‖ = 1 → IsUnit a := by
     intro a ha
@@ -59,6 +67,6 @@ theorem UpperTheory.V.abelian₂.dvr_intClosure :
     exact IsFractionRing.injective ℤ_[l] ℚ_[l] ((algebraMap ℚ_[l] K).injective h)
   have hnf : ¬ IsField (integralClosure ℤ_[l] K) := fun hf =>
     IsDiscreteValuationRing.not_isField ℤ_[l] ((Algebra.IsIntegral.isField_iff_isField hinj).2 hf)
-  exact ⟨((IsDiscreteValuationRing.TFAE _ hnf).out 0 2).mpr hded,
+  exact ⟨((IsDiscreteValuationRing.TFAE _ hnf).out 1 3).mpr hded,
     IsIntegralClosure.finite ℤ_[l] ℚ_[l] K (integralClosure ℤ_[l] K),
     integralClosure.isFractionRing_of_finite_extension ℚ_[l] K⟩

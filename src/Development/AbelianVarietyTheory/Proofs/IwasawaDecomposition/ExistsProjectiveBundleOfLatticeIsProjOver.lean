@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjBundleClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjBundleClosure
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,8 +27,8 @@ def genPt (Ω : Type) [Field Ω] (j₀ j : J) : FractionRing (MvPolynomial {j //
 omit [Fintype J] in
 theorem genPt_self (j₀ : J) : genPt Ω j₀ j₀ = 1 := by simp [genPt, genPoly]
 
-omit [Fintype J] in
 
+omit [Fintype J] in
 theorem eq_top_of_genPt_mem (j₀ : J) (K : Subfield (FractionRing (MvPolynomial {j // j ≠ j₀} Ω)))
     (h1 : ∀ a : Ω, algebraMap Ω _ a ∈ K) (h2 : ∀ j, genPt Ω j₀ j ∈ K) : K = ⊤ := by
   have h : ∀ p : MvPolynomial {j // j ≠ j₀} Ω, algebraMap _ _ p ∈ K := fun p => by
@@ -42,11 +46,13 @@ theorem eq_top_of_genPt_mem (j₀ : J) (K : Subfield (FractionRing (MvPolynomial
 theorem eq_zero_of_sum_genPt (j₀ : J) (b : J → Ω) (h : ∑ j, algebraMap Ω _ (b j) * genPt Ω j₀ j = 0) : b = 0 := by
   have h' : ∑ j, MvPolynomial.C (b j) * genPoly Ω j₀ j = 0 := by
     apply IsFractionRing.injective _ (FractionRing (MvPolynomial {j // j ≠ j₀} Ω))
-    rw [map_zero, map_sum, ← h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum, ← h]
     exact Finset.sum_congr rfl fun j _ => by rw [map_mul]; rfl
   have e : ∀ x : J → Ω, x j₀ = 1 → ∑ j, b j * x j = 0 := fun x hx => by
     have := congrArg (MvPolynomial.eval fun j : {j // j ≠ j₀} => x j.1) h'
-    rw [map_zero, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at this
     rw [← this]
     refine Finset.sum_congr rfl fun j _ => ?_
     by_cases hj : j = j₀
@@ -97,7 +103,7 @@ end Generic
 theorem exists_projBundle : ∀ (F Ω : Type) [Field F] [Field Ω] [Algebra F Ω] (M : RatModel F Ω) (J : Type) [Fintype J] [DecidableEq J] [Nonempty J] (EE : M.Lat J), IsProjOver M.s → ∃ (Ω' : Type) (_ : Field Ω') (_ : Algebra F Ω') (M' : RatModel F Ω') (φ : Ω →ₐ[F] Ω') (f : M'.Z ⟶ M.Z) (s : J → Ω'), ProjBundle M EE M' φ f s ∧ IsProjOver M'.s := by
   intro F Ω _ _ _ M J _ inst ⟨j₀⟩ EE hM
   obtain rfl : inst = fun a b => Classical.propDecidable (a = b) := Subsingleton.elim _ _
-  letI : DecidableEq J := fun a b => Classical.propDecidable (a = b)
+  let : DecidableEq J := fun a b => Classical.propDecidable (a = b)
   let Ω' := FractionRing (MvPolynomial {j // j ≠ j₀} Ω)
   let φ : Ω →ₐ[F] Ω' := IsScalarTower.toAlgHom F Ω Ω'
   obtain ⟨M', f, hf, hp, hc⟩ := RatModel.exists_projBundle_closure F Ω M Ω' φ J EE (genPt Ω j₀) hM

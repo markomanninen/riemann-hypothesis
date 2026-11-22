@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLP
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.PieriBlockIdeals.StatementLP
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LP
 
@@ -204,14 +208,12 @@ end Form
 
 theorem lpc_formMod {K P M : Type} {q : ℕ} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [AddCommGroup M] [Module K M]
     [DecidableEq P] [Fintype P] (EM : Fin q → Fin q → Module.End K M) (B : LinearMap.BilinForm K M) (n : ℕ) (h : FormMod EM B)
-    (j : ℕ) : FormMod (Dpart K EM j : Fin q → Fin q → Module.End K (Tens (Fin q) P M n)) (tensForm n B) where
-  gl := lpc_Dpart_glrel K h.gl j
-  symm := by
-    intro x y
+    (j : ℕ) : FormMod (Dpart K EM j : Fin q → Fin q → Module.End K (Tens (Fin q) P M n)) (tensForm n B) := by
+  refine ⟨lpc_Dpart_glrel K h.gl j, ?_, ?_, ?_, ?_⟩
+  · intro x y
     rw [lpc_form_apply, lpc_form_apply]
     exact Finset.sum_congr rfl fun g _ => h.symm _ _
-  pos := by
-    intro x hx
+  · intro x hx
     obtain ⟨g, hg⟩ : ∃ g, x g ≠ 0 := by
       by_contra hc
       push Not at hc
@@ -222,15 +224,14 @@ theorem lpc_formMod {K P M : Type} {q : ℕ} [Field K] [LinearOrder K] [IsStrict
     by_cases h0 : x g' = 0
     · simp [h0]
     · exact (h.pos _ h0).le
-  adj := by
-    intro a b x y
+  · intro a b x y
     unfold Dpart
-    simp only [LinearMap.add_apply, map_add, LinearMap.sum_apply, map_sum, lpc_form_unitY]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.add_apply, map_add (f := _), LinearMap.sum_apply, map_sum, lpc_form_unitY]
     congr 1
     rw [lpc_form_apply, lpc_form_apply]
     exact Finset.sum_congr rfl fun g _ => h.adj a b _ _
-  diag := by
-    intro a
+  · intro a
     rw [eq_top_iff]
     intro z _
     have hz : z = ∑ g, LinearMap.single K (fun _ : Fin n → Fin q × P => M) g (z g) := by
@@ -254,7 +255,7 @@ theorem lpc_formMod {K P M : Type} {q : ℕ} [Field K] [LinearOrder K] [IsStrict
       · simp [hg]
     · simp
     · intro m1 m2 h1 h2
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ h1 h2
 
 theorem tensor_tower : TensTower := by

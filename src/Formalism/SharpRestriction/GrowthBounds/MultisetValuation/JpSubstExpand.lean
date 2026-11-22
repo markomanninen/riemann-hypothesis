@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoeffProdRename
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoeffProdRename
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ def SuppOn (π : σ → Pl) (v : Pl) : Subring (MvPowerSeries σ R) where
     · exact absurd rfl hm
   add_mem' := by
     intro f g hf hg m hm x hx
-    rw [map_add] at hm
+    rw [map_add (f := _)] at hm
     by_cases h : MvPowerSeries.coeff m f = 0
     · rw [h, zero_add] at hm; exact hg m hm x hx
     · exact hf m h x hx
@@ -166,9 +170,9 @@ theorem jp_subst_expand {K A σ τ : Type} [CommRing K] [CommRing A] [Algebra K 
     ring
   unfold jp
   have hL : ∑ κ ∈ Q.support, (((fac κ : ℕ) : K) * MvPowerSeries.coeff κ (F * MvPowerSeries.subst a U)) •
-        MvPolynomial.coeff κ Q =
+        AddMonoidAlgebra.coeff Q κ =
       ∑ κ ∈ Q.support, ∑ β ∈ B, (((fac κ : ℕ) : K) * (MvPowerSeries.coeff β U *
-        MvPowerSeries.coeff κ (F * β.prod fun s e => a s ^ e))) • MvPolynomial.coeff κ Q := by
+        MvPowerSeries.coeff κ (F * β.prod fun s e => a s ^ e))) • AddMonoidAlgebra.coeff Q κ := by
     refine Finset.sum_congr rfl fun κ hκ' => ?_
     rw [hκ κ hκ', Finset.mul_sum, Finset.sum_smul]
   rw [hL, Finset.sum_comm]

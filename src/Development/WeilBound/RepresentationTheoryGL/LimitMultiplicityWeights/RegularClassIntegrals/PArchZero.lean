@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ArchUnimod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HyperbolicTermsVanish
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCyclicOfFiniteQuotient
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ArchUnimod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HyperbolicTermsVanish
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCyclicOfFiniteQuotient
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -68,8 +72,8 @@ section Gen
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
 
-open Classical in
 
+open Classical in
 def rest (fa : ∀ w, GArch σ J w → ℂ) (ff : ∀ v, GLoc σ J v → ℂ) (w : InfinitePlace F) (g : GAd σ J) : ℂ :=
   (∏ u ∈ Finset.univ.erase w, fa u (projArch σ J u g)) * ∏ᶠ v, ff v (proj σ J v g)
 
@@ -91,7 +95,7 @@ theorem rest_conj (fa : ∀ w, GArch σ J w → ℂ) (ff : ∀ v, GLoc σ J v �
       simp only [map_mul, projArch_embArch_ne σ J (Finset.ne_of_mem_erase hu), one_mul, mul_one]
   · simp only [map_mul, proj_embArch, one_mul, mul_one]
 
-theorem continuous_rest {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsLattice E L] {fa : ∀ w, GArch σ J w → ℂ}
+theorem continuous_rest {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsFullLattice E L] {fa : ∀ w, GArch σ J w → ℂ}
     {ff : ∀ v, GLoc σ J v → ℂ} (hfa : ∀ w, fa w ∈ CcArch σ J w) (hff : IsFinFamily σ J L ff) (w : InfinitePlace F) :
     Continuous (rest fa ff w) := by
   classical
@@ -100,7 +104,7 @@ theorem continuous_rest {L : Submodule (𝓞 E) (Fin n → E)} [Submodule.IsLatt
   have h2 : (fun g : GAd σ J => tensorFin σ J ff (projFin σ J g)) = fun g => ∏ᶠ v, ff v (proj σ J v g) := by
     funext g; simp [tensorFin]
   rw [h2] at h1
-  exact (continuous_finset_prod _ fun u _ =>
+  exact (continuous_finsetProd _ fun u _ =>
     (continuous_of_mem_ccSmooth (continuous_archCoord σ J u) (hfa u)).comp (continuous_projArch σ J u)).mul h1
 
 open Classical in
@@ -112,8 +116,8 @@ theorem update_mem {fa : ∀ w, GArch σ J w → ℂ} (hfa : ∀ w, fa w ∈ CcA
 
 end Gen
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem integral_class_eq_zero (hB : BumpOn) (hW : Weight) (hV : Vanish) (hFD : FDRight) (hG : ArchGroup)
     (hU : ArchUnimod) (hR : MainStatements.RegularCuspidalTrace.RegClassInt) (μ : Measure (GA D V)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
     (fa : ∀ w, GArch D.sp.cm.sig V.gram w → ℂ) (ff : ∀ v, GLoc D.sp.cm.sig V.gram v → ℂ)

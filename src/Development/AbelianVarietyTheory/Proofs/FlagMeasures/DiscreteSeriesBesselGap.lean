@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselQuotientMassEqConstMulNormSqTranslatesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsKFinNeZeroOfCwCont
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapDimensionFormula
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumNonneg
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GrowthUnitaryGroupRpowNegIntegrable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecayThresholdsOfSpectralGapCondition
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecSmoothAtGapOfDecSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselQuotientMassEqConstMulNormSqTranslatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsKFinNeZeroOfCwCont
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselGapDimensionFormula
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumNonneg
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GrowthUnitaryGroupRpowNegIntegrable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecayThresholdsOfSpectralGapCondition
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DecSmoothAtGapOfDecSmooth
+
+@[expose] public section
+
 open BranchingSupport GlobalTheory.CellAmp GlobalTheory.Amp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -21,9 +26,9 @@ namespace GlobalTheory.BesselPeriodNonzero
 
 open Formalism.FourierDecayAlt.P.MatrixMultiplicationContinuity
 
+
 open Matrix MeasureTheory Finset in
 open scoped InnerProductSpace ENNReal in
-
 theorem _root_.GlobalTheory.BesselPeriodNonzero.sq_int {X E : Type} [MeasurableSpace X] [NormedAddCommGroup E]
     {ν : Measure X} {f : X → E} {a : ℝ}
     (hf : AEStronglyMeasurable f ν) (ha : 0 ≤ a) (h : ∫⁻ x, (‖f x‖₊ : ℝ≥0∞) ^ 2 ∂ν = ENNReal.ofReal a) :
@@ -40,9 +45,9 @@ theorem _root_.GlobalTheory.BesselPeriodNonzero.sq_int {X E : Type} [MeasurableS
     simp_rw [key, h]
     exact ENNReal.toReal_ofReal ha
 
+
 open Matrix MeasureTheory Finset in
 open scoped InnerProductSpace ENNReal in
-
 theorem _root_.GlobalTheory.BesselPeriodNonzero.inner_int {X E : Type} [MeasurableSpace X] [NormedAddCommGroup E]
     [InnerProductSpace ℂ E] {ν : Measure X}
     {f g : X → E} (hf : AEStronglyMeasurable f ν) (hg : AEStronglyMeasurable g ν)
@@ -70,9 +75,9 @@ theorem _root_.GlobalTheory.BesselPeriodNonzero.inner_int {X E : Type} [Measurab
     rw [e, s1, s2, integral_const_mul, hre']
     ring
 
+
 open Matrix MeasureTheory Finset in
 open scoped InnerProductSpace ENNReal in
-
 theorem _root_.GlobalTheory.BesselPeriodNonzero.unfold_zero {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {mu : Fin (2 * r + k + 1) → ℝ} {R : _root_.BranchingSupport.Rep k r}
     {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [CompleteSpace Wp] [FiniteDimensional ℂ Wp]
     {z : Fin (2 * r + k + 1) → ℂ} {π : _root_.Formalism.FourierDecayAlt.ThreeDimData.Mx k r → (Wp →L[ℂ] Wp)} {u : ℕ → ℝ}
@@ -156,8 +161,8 @@ theorem _root_.GlobalTheory.BesselPeriodNonzero.unfold_zero {k r : ℕ} {ε : Fi
   rw [integral_congr_ae hae, integral_conj, hL, hbe0]
   simp
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem nzOn_of_mass (hy : Hyps) {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {mu : Fin (2 * r + k + 1) → ℝ} {h : ℝ}
     {R : Rep k r}
     {Wp : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [CompleteSpace Wp] [FiniteDimensional ℂ Wp]
@@ -232,7 +237,7 @@ theorem nzOn_of_mass (hy : Hyps) {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool}
       rw [← (hsq (a + b) (Submodule.add_mem _ ha hb)).2]
       apply integral_congr_ae
       filter_upwards [hνae] with y hy
-      rw [map_add, hB.1 _ (hsm _ hy a (DDsm a ha)) _ (hsm _ hy b (DDsm b hb))]
+      rw [map_add (f := _), hB.1 _ (hsm _ hy a (DDsm a ha)) _ (hsm _ hy b (DDsm b hb))]
     rw [(hsq a ha).2, (hsq b hb).2] at i2 i3
     rw [e, norm_add_sq (𝕜 := ℂ)] at i3
     refine ⟨i1, i2, ?_⟩
@@ -260,9 +265,17 @@ theorem nzOn_of_mass (hy : Hyps) {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool}
     refine aesm_of_contOn (s := {q : Mt k r × Mt k r | Matrix.of q.1 ∈ GG k r ∧ Matrix.of q.2 ∈ GG k r}) ?_
       ((isClosed_UH.preimage c1).inter (isClosed_UH.preimage c2)).measurableSet
       ((Measure.quasiMeasurePreserving_fst.ae hGae).and (Measure.quasiMeasurePreserving_snd.ae hνae))
-    exact (continuous_star.comp_continuousOn (hmc.comp continuous_fst.continuousOn fun q hq => hq.1)).mul
-      (((hΦ w hw).comp c2.continuousOn fun q hq => hq.2).inner
-        ((hΦ w hw).comp (c2.matrix_mul c1).continuousOn fun q hq => Formalism.FourierDecayAlt.P.DDSmoothness.uh_mul hq.2 hq.1))
+    have hm' : ContinuousOn (fun q : Mt k r × Mt k r => m q.1)
+        {q | Matrix.of q.1 ∈ GG k r ∧ Matrix.of q.2 ∈ GG k r} :=
+      hmc.comp continuous_fst.continuousOn (fun q hq => hq.1)
+    have hΦ2 : ContinuousOn (fun q : Mt k r × Mt k r => B (R.σ (Matrix.of q.2) w))
+        {q | Matrix.of q.1 ∈ GG k r ∧ Matrix.of q.2 ∈ GG k r} :=
+      (hΦ w hw).comp c2.continuousOn (fun q hq => hq.2)
+    have hΦ21 : ContinuousOn (fun q : Mt k r × Mt k r => B (R.σ (Matrix.of q.2 * Matrix.of q.1) w))
+        {q | Matrix.of q.1 ∈ GG k r ∧ Matrix.of q.2 ∈ GG k r} :=
+      (hΦ w hw).comp (c2.matrix_mul c1).continuousOn
+        (fun q hq => Formalism.FourierDecayAlt.P.DDSmoothness.uh_mul hq.2 hq.1)
+    exact (continuous_star.comp_continuousOn hm').mul (hΦ2.inner hΦ21)
   have hF1 : ∀ g : Mt k r, Matrix.of g ∈ GG k r → (fun y => F (g, y)) =ᵐ[νq] fun y =>
       star (m g) * ⟪B (R.σ (Matrix.of y) w), B (R.σ (Matrix.of y) (R.σ (Matrix.of g) w))⟫_ℂ := by
     intro g hg

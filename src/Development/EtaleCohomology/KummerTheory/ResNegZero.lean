@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.KummerTheory.EtaleKummerDegreeZeroCohomologyOfTwistSectionCla
-import Development.EtaleCohomology.KummerTheory.CupAWCutEv
+module
+
+public import Development.EtaleCohomology.KummerTheory.EtaleKummerDegreeZeroCohomologyOfTwistSectionCla
+public import Development.EtaleCohomology.KummerTheory.CupAWCutEv
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

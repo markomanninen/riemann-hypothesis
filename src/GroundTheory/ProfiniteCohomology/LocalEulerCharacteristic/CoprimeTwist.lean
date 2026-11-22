@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyMapTensorRightMorCompCohomologyConj
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyMapTensorRightMorCompCohomologyConj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -47,7 +52,7 @@ theorem evalMor_bijective (T M : Rep.{u} k G) (hT : Module.finrank k T = 1) :
     | tmul t f =>
       simp only [φ, TensorProduct.lift.tmul, LinearMap.comp_apply, LinearMap.lsmul_apply]
       rw [← TensorProduct.smul_tmul, ht]
-    | add x y hx hy => rw [map_add, TensorProduct.tmul_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), TensorProduct.tmul_add, hx, hy]
   constructor
   · rw [injective_iff_map_eq_zero]
     intro x hx
@@ -93,19 +98,19 @@ variable {k G : Type u} [Field k] [Group G] [TopologicalSpace G] [IsTopologicalG
   (hT : ∀ (g : (P : Subgroup G)) (t : T), T.ρ g t = t)
   (hM : ∀ (g : (P : Subgroup G)) (m : M), M.ρ g m = m)
 
+
 omit [IsTopologicalGroup G] [CompactSpace G] [(P : Subgroup G).Normal] [IsDiscreteRep T]
   [IsDiscreteRep M] in
 include hT hM in
-
 theorem homRep_ρ_of_mem (g : (P : Subgroup G)) (f : homRep T M) : (homRep T M).ρ g f = f := by
   apply LinearMap.ext
   intro t
   change M.ρ g (f (T.ρ (g : G)⁻¹ t)) = f t
   rw [hM, show ((g : G)⁻¹) = ((g⁻¹ : (P : Subgroup G)) : G) from rfl, hT]
 
+
 omit [CompactSpace G] [(P : Subgroup G).Normal] [IsDiscreteRep T] [IsDiscreteRep M] in
 include hT hM in
-
 theorem isDiscreteRep_homRep : IsDiscreteRep (homRep T M) :=
   ⟨fun f => Subgroup.isOpen_mono (H₁ := (P : Subgroup G))
     (fun g hg => homRep_ρ_of_mem P T M hT hM ⟨g, hg⟩ f) P.isOpen⟩
@@ -139,8 +144,8 @@ noncomputable def coprimeTwistEquiv (n : ℕ) :
     coprimeDescentEquiv P (T ⊗ homRep T M) (bijective_nsmul_of_ne_zero hP) n ≪≫ₗ
     (twistInvariantsEquiv (P : Subgroup G) T (homRep T M) (homRep_ρ_of_mem P T M hT hM) n).symm
 
-include hTr hP in
 
+include hTr hP in
 theorem finrank_cohomology_eq_finrank_invariants (n : ℕ) :
     Module.finrank k (cohomology M n) = Module.finrank k
       ((cohomologyConjRep T (P : Subgroup G) n).tprod

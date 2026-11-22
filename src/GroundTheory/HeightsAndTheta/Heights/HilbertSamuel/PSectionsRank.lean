@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionsRank
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionsRank
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -35,7 +40,7 @@ theorem exists_int_multiple {ι : Type*} (f : MvPolynomial ι ℚ) :
     obtain ⟨a, ha, p, hp⟩ := hf
     obtain ⟨b, hb, r, hr⟩ := hg
     refine ⟨a * b, Nat.mul_pos ha hb, (b : ℤ) • p + (a : ℤ) • r, ?_⟩
-    rw [map_add, smul_eq_C_mul, smul_eq_C_mul, map_mul, map_mul, hp, hr, map_C, map_C]
+    rw [map_add (f := _), smul_eq_C_mul, smul_eq_C_mul, map_mul, map_mul, hp, hr, map_C, map_C]
     simp only [smul_eq_C_mul, eq_intCast, Int.cast_natCast, Nat.cast_mul, map_mul]
     ring
   | mul_X f i hf =>
@@ -109,8 +114,8 @@ theorem finrank_sec_int [Fintype J] (x : J → Ω) (n : ℕ) :
 
 end SectionsRank
 
-open SectionsRank in
 
+open SectionsRank in
 theorem SectionsRank.proof : SectionsRank.Statement := by
   intro Ω _ _ κ _ x n
   set q := (coordIdeal ℤ x).map (MvPolynomial.map (Int.castRingHom ℚ))

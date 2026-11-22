@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormDehomIntegral
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBadPrimesFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormGoodPrimeIntegral
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormPrimeBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormDehomIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormBadPrimesFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormGoodPrimeIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFibreNormPrimeBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -22,13 +27,13 @@ theorem den_eq_one_of_padicValRat_nonneg {a : ℚ} (h : ∀ p : ℕ, p.Prime →
     exact hp.one_lt.ne' (Nat.dvd_one.mp h1)
   have h0 := h p hp
   rw [padicValRat, padicValInt.eq_zero_of_not_dvd hnum] at h0
-  have h2 : 1 ≤ padicValNat p a.den := one_le_padicValNat_of_dvd a.den_ne_zero hpd
+  have h2 : 1 ≤ multiplicity p a.den := one_le_multiplicity_of_dvd a.den_ne_zero hpd
   omega
 
 end FibreNormDehomIntegral
 
-open FibreNormDehomIntegral in
 
+open FibreNormDehomIntegral in
 theorem FibreNormDehomIntegral.proof (hF : FibreNormBadPrimesFinite.Statement)
     (hG : FibreNormGoodPrimeIntegral.Statement) (hB : FibreNormPrimeBound.Statement) :
     FibreNormDehomIntegral.Statement := by
@@ -52,10 +57,10 @@ theorem FibreNormDehomIntegral.proof (hF : FibreNormBadPrimesFinite.Statement)
     have hMq : ((M₀ : ℚ) ^ τ) ≠ 0 := pow_ne_zero _ (by exact_mod_cast hM0)
     rw [padicValRat.mul hMq ha, padicValRat.pow, padicValRat.of_nat]
     by_cases hpT : p ∈ T
-    · have hle : C p ≤ padicValNat p M₀ :=
-        (padicValNat_dvd_iff_le hM0).mp (Finset.dvd_prod_of_mem (fun p => p ^ C p) hpT)
+    · have hle : C p ≤ multiplicity p M₀ :=
+        (multiplicity_dvd_iff_le hM0).mp (Finset.dvd_prod_of_mem (fun p => p ^ C p) hpT)
       have hb := hC p hp τ s hs j c hc m
-      have hle' : ((C p * τ : ℕ) : ℤ) ≤ (τ : ℤ) * (padicValNat p M₀ : ℤ) := by
+      have hle' : ((C p * τ : ℕ) : ℤ) ≤ (τ : ℤ) * (multiplicity p M₀ : ℤ) := by
         push_cast
         rw [mul_comm]
         exact mul_le_mul_of_nonneg_left (by exact_mod_cast hle) (by positivity)
@@ -63,7 +68,7 @@ theorem FibreNormDehomIntegral.proof (hF : FibreNormBadPrimesFinite.Statement)
     · have hgood : ¬ HasCommonZeroModP y L p hp := fun h =>
         hpT ((Set.Finite.mem_toFinset hSf).mpr ⟨hp, h⟩)
       have hg := hG K ι Ω y D e L q hV hBir he hL hz p hp hgood τ s hs j c hc m
-      have : (0 : ℤ) ≤ (τ : ℤ) * (padicValNat p M₀ : ℤ) := by positivity
+      have : (0 : ℤ) ≤ (τ : ℤ) * (multiplicity p M₀ : ℤ) := by positivity
       linarith
 
   have hmem : ((M₀ : ℚ) ^ τ) • c (Module.finrank (pullField y L) Ω) ∈

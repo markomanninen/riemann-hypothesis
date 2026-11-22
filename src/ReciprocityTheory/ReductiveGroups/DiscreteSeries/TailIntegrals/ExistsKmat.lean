@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixOfPerp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.FixOfPerp
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem exists_Kmat (hk : 1 ≤ k) (c u : Fin (r + 1) → EE k r) (hc : Orthonor
     intro v
     have h1 : Matrix.toEuclideanLin κ = κL.toLinearEquiv.toLinearMap := LinearEquiv.apply_symm_apply _ _
     have := LinearMap.congr_fun h1 (WithLp.toLp 2 v)
-    rw [Matrix.toEuclideanLin_apply, WithLp.ofLp_toLp] at this
+    rw [Matrix.toLpLin_apply, WithLp.ofLp_toLp] at this
     exact this
   have hunit : κᴴ * κ = 1 := by
     ext i j
@@ -85,11 +89,11 @@ theorem exists_Kmat (hk : 1 ≤ k) (c u : Fin (r + 1) → EE k r) (hc : Orthonor
         inner ℂ (WithLp.toLp 2 (Pi.single i 1) : EE k r) (WithLp.toLp 2 (Pi.single j 1)) := by
       rw [hκ, hκ, LinearIsometryEquiv.inner_map_map]
     simp only [EuclideanSpace.inner_eq_star_dotProduct, WithLp.ofLp_toLp, dotProduct] at h2
-    simp only [mul_apply, conjTranspose_apply, one_apply]
+    simp only [Matrix.mul_apply, conjTranspose_apply, one_apply]
     convert h2 using 1
     · refine Finset.sum_congr rfl fun m _ => ?_
       simp [mulVec_single, mul_comm]
-    · simp [Pi.single_apply, eq_comm]
+    · simp [Pi.single_apply, Matrix.one_apply, eq_comm]
   have hv : ∀ v, κ *ᵥ (Hpk k r *ᵥ v) = Hpk k r *ᵥ (κ *ᵥ v) := by
     intro v
     have := hκH (WithLp.toLp 2 v)
@@ -117,13 +121,13 @@ theorem phiV_apply (b : Fin (r + 1)) (i : Fin (2 * r + k + 1)) :
       ((Real.sqrt 2)⁻¹ : ℂ) * ((if i.val = r then 1 else 0) + (if i.val = r + k then 1 else 0)) := by
   unfold phiV
   by_cases hb : (b : ℕ) < r
-  · rw [dif_pos hb, if_pos hb]
+  · rw [dite_eq_left hb, if_pos hb]
     show (Pi.single (esI k r ⟨b.val, hb⟩) (1 : ℂ) : Fin (2 * r + k + 1) → ℂ) i = _
     rw [Pi.single_apply]
     by_cases hi : (i : ℕ) = 2 * r + k - b.val
     · rw [if_pos hi, if_pos (show i = esI k r ⟨b.val, hb⟩ from Fin.ext hi)]
     · rw [if_neg hi, if_neg (show ¬ i = esI k r ⟨b.val, hb⟩ from fun h => hi (congrArg Fin.val h))]
-  · rw [dif_neg hb, if_neg hb]
+  · rw [dite_eq_right hb, if_neg hb]
     simp [epsV, bvec, Pi.single_apply, Fin.ext_iff]
     have e1 : ((wI k r 0 : Fin (2 * r + k + 1)) : ℕ) = r := by first | rfl | simp [wI]
     have e2 : ((wI k r (Fin.last k) : Fin (2 * r + k + 1)) : ℕ) = r + k := by first | rfl | simp [wI]

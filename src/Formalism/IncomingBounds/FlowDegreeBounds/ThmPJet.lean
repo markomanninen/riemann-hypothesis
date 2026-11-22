@@ -1,4 +1,8 @@
-import Formalism.IncomingBounds.DefsThmP
+module
+
+public import Formalism.IncomingBounds.DefsThmP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -10,7 +14,7 @@ variable {C : Type} [Field C]
 
 theorem tpjet_jetAt0_superset {σ : Type} (P : MvPolynomial σ C) (G : MvPowerSeries σ C)
     (S : Finset (σ →₀ ℕ)) (hS : P.support ⊆ S) :
-    jetAt0 P G = ∑ m ∈ S, MvPolynomial.coeff m P * (mfact m : C) * MvPowerSeries.coeff m G := by
+    jetAt0 P G = ∑ m ∈ S, AddMonoidAlgebra.coeff P m * (mfact m : C) * MvPowerSeries.coeff m G := by
   unfold jetAt0
   refine Finset.sum_subset hS fun m _ hm => ?_
   rw [MvPolynomial.notMem_support_iff.1 hm, zero_mul, zero_mul]
@@ -19,7 +23,7 @@ private theorem mem_support_or_of_mem_support_add {σ : Type} (P Q : MvPolynomia
     (a : σ →₀ ℕ) (ha : a ∈ (P + Q).support) : a ∈ P.support ∨ a ∈ Q.support := by
   rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_add] at ha
   rw [MvPolynomial.mem_support_iff, MvPolynomial.mem_support_iff]
-  by_cases hP : MvPolynomial.coeff a P = 0
+  by_cases hP : AddMonoidAlgebra.coeff P a = 0
   · right
     rwa [hP, zero_add] at ha
   · exact Or.inl hP

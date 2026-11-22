@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ theorem isEll_conj {F : Type} [Field F]
 
 variable {F I Gf ι : Type} [Field F] [Group Gf] [Fintype I] [Fintype ι]
 
+open scoped Classical in
 open Classical in
-
 def uT (D : Dat F I Gf) (k : I → ℕ) (a : ι → Gf) (T : ℝ) (γ : PG F) (y : D.Y) : ℂ :=
   if IsEll γ then 0 else (D.LamF T γ).indicator (D.kk k a γ) y
 
@@ -57,6 +61,7 @@ theorem enorm_ind_le (D : Dat F I Gf) (k : I → ℕ) (a : ι → Gf) (T : ℝ) 
   rw [Set.indicator_apply]
   split_ifs <;> simp
 
+open scoped Classical in
 open Classical in
 theorem fhyp (hC4 : C4) (hE0a : E0a) (hE0c : KernelTermsInvariantBounded) (hE0d : E0d) (hE2 : E2) (hE3 : E3) (hEcut : Ecut)
     (hFsum : Fsum) (hF5 : F5) (hF6 : F6) (D : Dat F I Gf) (k : I → ℕ) (a : ι → Gf) (hyp : D.Hyp k a)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+
+@[expose] public section
+
 open GlobalTheory.BCT PositivityTheory.Rg.BcB.G8.Fin
 open scoped Classical
 
@@ -21,7 +26,7 @@ theorem exists_compact_reps_of_finite_doubleCosets :
   · exact (hfin C hC).isCompact_biUnion fun q _ =>
       hK.image (continuous_const.mul continuous_id)
   · intro x hx
-    obtain ⟨h, k, hh, hk, hout⟩ :=
+    obtain ⟨h, hh, k, hk, hout⟩ :=
       DoubleCoset.mk_out_eq_mul (twCent (MonoidHom.id H) N) K x
     have hcomm : h * N = N * h := hh
     have hconj : (h * x)⁻¹ * N * (h * x) = x⁻¹ * N * x := by

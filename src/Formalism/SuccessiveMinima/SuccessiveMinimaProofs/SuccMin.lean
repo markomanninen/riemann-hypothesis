@@ -1,4 +1,8 @@
-import Formalism.SuccessiveMinima.DefsMink
+module
+
+public import Formalism.SuccessiveMinima.DefsMink
+
+@[expose] public section
 
 open MeasureTheory Module Metric Set
 open scoped Pointwise
@@ -163,7 +167,7 @@ theorem Formalism.FN.existsSuccessiveMinimaVectors : Formalism.FN.SuccMinFacts :
         rw [finrank_span_eq_card hw, Fintype.card_fin] at h1
         omega
       obtain ⟨x, ⟨hxL, hxK⟩, hxw⟩ := hex
-      refine ⟨Fin.snoc w x, linearIndependent_fin_snoc.mpr ⟨hw, hxw⟩, fun j => ?_⟩
+      refine ⟨Fin.snoc w x, linearIndependent_finSnoc.mpr ⟨hw, hxw⟩, fun j => ?_⟩
       refine Fin.lastCases ?_ (fun i => ?_) j
       · simp only [Fin.snoc_last, Fin.val_last]
         exact ⟨hxL, hxK⟩

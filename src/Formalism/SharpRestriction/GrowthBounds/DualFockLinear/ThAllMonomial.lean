@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DgFalseDiag
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DgFalseDiag
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,12 +30,9 @@ instance XsFinP' (m : ℕ) (top vec : Bool) (ν : Fin (m + 1) → ℕ) : Finite 
 def glue {n' k : ℕ} {d : Fin n' → ℕ} (a : ∀ s, Aset k (d s)) : Fin n' × Fin k →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm fun v => (a v.1).1 v.2
 
-theorem glue_apply {n' k : ℕ} {d : Fin n' → ℕ} (a : ∀ s, Aset k (d s)) (s : Fin n') (c : Fin k) :
-    glue a (s, c) = (a s).1 c := rfl
-
 theorem expand {R : Type} [CommRing R] {n' k : ℕ} {d : Fin n' → ℕ} [Fintype (∀ s, Aset k (d s))]
     (Q : MvPolynomial (Fin n' × Fin k) R) (hQ : IsMultiHom d Q) :
-    Q = ∑ a : (∀ s, Aset k (d s)), monomial (glue a) (coeff (glue a) Q) := by
+    Q = ∑ a : (∀ s, Aset k (d s)), monomial (glue a) (AddMonoidAlgebra.coeff Q (glue a)) := by
   classical
   ext e
   rw [coeff_sum]
@@ -55,7 +56,7 @@ theorem expand {R : Type} [CommRing R] {n' k : ℕ} {d : Fin n' → ℕ} [Fintyp
       exact this
     · intro h
       exact absurd (Finset.mem_univ _) h
-  · have h0 : coeff e Q = 0 := by simpa using he
+  · have h0 : AddMonoidAlgebra.coeff Q e = 0 := by simpa using he
     rw [h0]
     symm
     refine Finset.sum_eq_zero fun a _ => ?_
@@ -106,14 +107,15 @@ theorem famG_li (hpos : ∀ s, LinearIndependent F (fam1 F n' m vec d b s)) :
 
 theorem famG_sum [Fintype (∀ s, Aset (m + 1) (d s))] (Q : MvPolynomial (Fin n' × Fin (m + 1)) F) (hQ : IsMultiHom d Q)
     (i : ∀ s, X s) :
-    (∑ a : (∀ s, Aset (m + 1) (d s)), coeff (glue a) Q • famG F n' m vec d b (a, i)) =
+    (∑ a : (∀ s, Aset (m + 1) (d s)), AddMonoidAlgebra.coeff Q (glue a) • famG F n' m vec d b (a, i)) =
       thAll F n' m vec Q * ∏ s, blockEmb F s (b s (i s)) := by
   have e := expand Q hQ
   have e2 : thAll F n' m vec Q =
-      ∑ a : (∀ s, Aset (m + 1) (d s)), coeff (glue a) Q •
+      ∑ a : (∀ s, Aset (m + 1) (d s)), AddMonoidAlgebra.coeff Q (glue a) •
         ∏ s, blockEmb F s (∏ c, Nv F m (vec s) c ^ (a s).1 c) := by
     conv_lhs => rw [e]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun a _ => thAll_monomial F n' m vec d a _
   rw [e2, Finset.sum_mul]
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -131,7 +133,7 @@ theorem big_core [∀ s, Finite (X s)] (hpos : ∀ s, LinearIndependent F (fam1 
   have : Fintype (∀ s, X s) := Fintype.ofFinite _
   have hli2 := famG_li F n' m vec d b hpos
   rw [Fintype.linearIndependent_iff] at hli2
-  have key := hli2 (fun z => if z.2 ∈ J then coeff (glue z.1) (Q z.2) else 0) ?_
+  have key := hli2 (fun z => if z.2 ∈ J then AddMonoidAlgebra.coeff (Q z.2) (glue z.1) else 0) ?_
   · intro i hi
     rw [expand (Q i) (hQ i)]
     refine Finset.sum_eq_zero fun a _ => ?_
@@ -140,7 +142,7 @@ theorem big_core [∀ s, Finite (X s)] (hpos : ∀ s, LinearIndependent F (fam1 
     rw [h1, monomial_zero]
   · rw [Fintype.sum_prod_type_right, ← hsum]
     have h1 : ∀ i : (∀ s, X s),
-        (∑ a : (∀ s, Aset (m + 1) (d s)), (if i ∈ J then coeff (glue a) (Q i) else 0) • famG F n' m vec d b (a, i)) =
+        (∑ a : (∀ s, Aset (m + 1) (d s)), (if i ∈ J then AddMonoidAlgebra.coeff (Q i) (glue a) else 0) • famG F n' m vec d b (a, i)) =
         if i ∈ J then thAll F n' m vec (Q i) * ∏ s, blockEmb F s (b s (i s)) else 0 := by
       intro i
       by_cases hi : i ∈ J

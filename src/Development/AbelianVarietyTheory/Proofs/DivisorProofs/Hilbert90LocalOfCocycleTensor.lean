@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueBaseChangeEqOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvertibleOfFaithfullyFlat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueBaseChangeEqOfMem
+
+@[expose] public section
+
 open TensorProduct
 
 namespace GlobalTheory.FlatDescent
@@ -28,14 +32,14 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, tmul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, tmul_add]
     | tmul a b => simp [ψ]
   have h3 : ∀ x, ψ (Algebra.TensorProduct.map (Algebra.TensorProduct.includeLeft (R := R) (S := R) (A := S) (B := S))
       (AlgHom.id R S) x) = x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a b => simp [ψ]
   have hμ : Algebra.TensorProduct.lmul' R (c : S ⊗[R] S) = 1 := by
     have h := congrArg ψ hc
@@ -47,7 +51,7 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a b => simp
   have hcounit : ∀ n, act R S S (θ n) = n := by
     intro n
@@ -62,7 +66,7 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro a b z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, mul_add, smul_add, tmul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add, smul_add, tmul_add]
     | tmul a' b' =>
       simp only [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.includeRight_apply,
         Algebra.TensorProduct.includeLeft_apply, AlgHom.id_apply,
@@ -75,7 +79,7 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, add_mul]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_mul]
     | tmul a b =>
       rw [LinearMap.lTensor_tmul, LinearMap.coe_restrictScalars]
       exact hL0 a b _
@@ -85,14 +89,14 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a b => simp [e]
   have hsmul : ∀ (g : S →ₗ[R] S ⊗[R] S) (n : S) (x : S ⊗[R] S),
       g.lTensor S (n • x) = n • g.lTensor S x := by
     intro g n x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
     | tmul a b => simp [smul_tmul']
   have hcoassoc : ∀ n, (θ.restrictScalars R).lTensor S (θ n) = (TensorProduct.mk R S S 1).lTensor S (θ n) := by
     intro n
@@ -107,7 +111,8 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     obtain ⟨T, hT⟩ := ((Module.Invertible.linearEquiv R (invariants θ)).symm 1).exists_finset
     have h1 : (1 : R) = ∑ i ∈ T, i.1 i.2 := by
       have := congrArg (Module.Invertible.linearEquiv R (invariants θ)) hT
-      simpa [Module.Invertible.linearEquiv, map_sum] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Module.Invertible.linearEquiv, map_sum] using this
     exact hp.ne_top ((Ideal.eq_top_iff_one _).2 (h1 ▸ Ideal.sum_mem _ fun i _ => hcon i.1 i.2))
   have hcomm : ∀ x : invariants θ, f m • x = f x • m := by
     intro x
@@ -120,7 +125,7 @@ theorem hilbert90_local_of_cocycle : ∀ (R S : Type) [CommRing R] [CommRing S] 
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, mul_add]; exact Ideal.add_mem _ hx hy
+    | add x y hx hy => rw [map_add (f := _), mul_add]; exact Ideal.add_mem _ hx hy
     | tmul b x =>
       have hx : algebraMap R S (f m) * (x : S) = algebraMap R S (f x) * (m : S) := by
         have := congrArg Subtype.val (hcomm x)

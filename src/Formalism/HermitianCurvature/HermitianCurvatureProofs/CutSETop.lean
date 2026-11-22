@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpansionSiteZeroInduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWdExpand
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEIbTInv
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEBTCls
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DecayPairEstimate
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExpansionSiteZeroInduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWdExpand
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEIbTInv
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEBTCls
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DecayPairEstimate
+
+@[expose] public section
 
 noncomputable section
 

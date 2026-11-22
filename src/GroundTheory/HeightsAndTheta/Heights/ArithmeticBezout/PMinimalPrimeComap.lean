@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMinimalPrimeComap
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMinimalPrimeComap
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -7,18 +12,18 @@ namespace GroundTheory.Heights₂.Heights
 open MvPolynomial
 
 theorem MinimalPrimeComap.flat (K L : Type) [Field K] [Field L] (σ : K →+* L) (ι : Type) :
-    let := σ.toAlgebra
-    let := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
+    letI := σ.toAlgebra
+    letI := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
     Module.Flat (MvPolynomial ι K) (MvPolynomial ι L) := by
-  let := σ.toAlgebra
-  let := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
+  letI := σ.toAlgebra
+  letI := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
   have h : Algebra.IsPushout K (MvPolynomial ι K) L (MvPolynomial ι L) := inferInstance
   exact Module.Flat.isBaseChange K (MvPolynomial ι K) L (MvPolynomial ι L) h.out
 
 theorem MinimalPrimeComap.proof : MinimalPrimeComap.Statement := by
   intro K L _ _ σ ι I hI P hP
-  let := σ.toAlgebra
-  let := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
+  letI := σ.toAlgebra
+  letI := MvPolynomial.algebraMvPolynomial (σ := ι) (R := K) (S := L)
   have := MinimalPrimeComap.flat K L σ ι
   have halg : algebraMap (MvPolynomial ι K) (MvPolynomial ι L) = MvPolynomial.map σ := rfl
   have : P.IsPrime := hP.1.1

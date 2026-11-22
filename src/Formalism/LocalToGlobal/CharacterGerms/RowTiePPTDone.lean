@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTEig
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePPTEig
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+
+@[expose] public section
 
 namespace Formalism.L2.FormalSeriesBounds
 

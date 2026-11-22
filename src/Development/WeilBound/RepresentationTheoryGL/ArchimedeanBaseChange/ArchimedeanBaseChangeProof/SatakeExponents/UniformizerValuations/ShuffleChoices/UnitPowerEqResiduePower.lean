@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.Choice
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.Choice
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem qh_ne_zero' {E : Type} [Field E] [NumberField E] (w : Pl E) : qh w ≠ 0
 theorem unit_power_eq_residue_power {E : Type} [Field E] [NumberField E] (w : Pl E) (k : ℤ) :
     qU w k = Units.mk0 (qh w) (qh_ne_zero' w) ^ k := by
   unfold qU
-  rw [dif_pos (qh_ne_zero' w)]
+  rw [dite_eq_left (qh_ne_zero' w)]
 
 theorem zpow_finsum' {ι : Type} (u : ℂˣ) (s : Finset ι) (f : ι → ℤ) :
     u ^ (∑ i ∈ s, f i) = ∏ i ∈ s, u ^ f i := by

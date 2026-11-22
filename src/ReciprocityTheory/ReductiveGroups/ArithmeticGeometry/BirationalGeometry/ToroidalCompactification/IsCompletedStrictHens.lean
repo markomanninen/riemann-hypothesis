@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,13 +31,5 @@ def IsQProjOver {R : Type} [CommRing R] {X : Scheme.{0}} (f : X ⟶ Sp R) : Prop
 
 def IsNormalScheme (X : Scheme.{0}) : Prop :=
   ∀ x : X, IsDomain (X.presheaf.stalk x) ∧ IsIntegrallyClosed (X.presheaf.stalk x)
-
-structure IsCompletedStrictHens (A R : Type) [CommRing A] [IsLocalRing A] [CommRing R] [IsLocalRing R]
-    [Algebra A R] [IsLocalHom (algebraMap A R)] : Prop where
-  noeth : IsNoetherianRing R
-  complete : IsAdicComplete (IsLocalRing.maximalIdeal R) R
-  flat : Module.Flat A R
-  unram : (IsLocalRing.maximalIdeal A).map (algebraMap A R) = IsLocalRing.maximalIdeal R
-  res : IsSepClosure (IsLocalRing.ResidueField A) (IsLocalRing.ResidueField R)
 
 end ReciprocityTheory.ChartRestriction.G.Geo.Tor

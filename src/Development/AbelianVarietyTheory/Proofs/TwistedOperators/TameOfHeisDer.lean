@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RapidDecayLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtWeilRepRealOneParamAdelicPointStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLieActionThroughWeylAlgebra
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilDatumGeneratorRealOneParamGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RapidDecayLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtWeilRepRealOneParamAdelicPointStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLieActionThroughWeylAlgebra
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilDatumGeneratorRealOneParamGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ section Tame
 
 variable {X : Type} [AddCommGroup X] [Module ℂ X] {j : X →ₗ[ℂ] (WO V W → ℂ)} {r r' : ℕ} {S S' : X → X}
 
-variable (ψ θ j r S) in
 
+variable (ψ θ j r S) in
 def Tame : Prop :=
   (∀ U x, j x ∈ thetaLevel ψ V W U → j (S x) ∈ thetaLevel ψ V W U) ∧
     ∃ c : ℝ≥0, ∀ μ 𝓕 d x, IsThetaFunO ψ V W (j x) → sobO ψ θ μ 𝓕 d (j (S x)) ≤ c * sobO ψ θ μ 𝓕 (d + r) (j x)
@@ -43,12 +47,6 @@ theorem tame_id : Tame ψ θ j r fun x => x := by
   rw [ENNReal.coe_one, one_mul]
   exact sobO_mono (Nat.le_add_right d r)
 
-theorem Tame.mono (h : Tame ψ θ j r S) (hr : r ≤ r') : Tame ψ θ j r' S := by
-  obtain ⟨hlev, c, hc⟩ := h
-  refine ⟨hlev, c, fun μ 𝓕 d x hx => (hc μ 𝓕 d x hx).trans ?_⟩
-  gcongr
-  exact sobO_mono (Nat.add_le_add_left hr d)
-
 theorem Tame.smul (a : ℂ) (h : Tame ψ θ j r S) : Tame ψ θ j r fun x => a • S x := by
   obtain ⟨hlev, c, hc⟩ := h
   refine ⟨fun U x hx => ?_, ‖a‖₊ * c, fun μ 𝓕 d x hx => ?_⟩
@@ -61,9 +59,9 @@ theorem Tame.smul (a : ℂ) (h : Tame ψ θ j r S) : Tame ψ θ j r fun x => a �
 theorem Tame.add (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (h : Tame ψ θ j r S) (h' : Tame ψ θ j r S') :
     Tame ψ θ j r fun x => S x + S' x := by
   refine ⟨fun U x hx => ?_, h.2.choose + h'.2.choose, fun μ 𝓕 d x hx => ?_⟩
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact Submodule.add_mem _ (h.1 U x hx) (h'.1 U x hx)
-  · rw [map_add, ENNReal.coe_add, add_mul]
+  · rw [map_add (f := _), ENNReal.coe_add, add_mul]
     exact (sobO_add_le hψ hθ (h.theta hx) (h'.theta hx) d).trans
       (add_le_add (h.2.choose_spec μ 𝓕 d x hx) (h'.2.choose_spec μ 𝓕 d x hx))
 
@@ -120,7 +118,8 @@ private theorem dH_eq_sum_re_im_single {ι B : Type} [Fintype ι] [DecidableEq �
     exact (Complex.re_add_im (v x)).symm
   conv_lhs => rw [hv]
   unfold dH
-  simp only [map_sum, map_add, map_smul, Complex.coe_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), map_smul, Complex.coe_smul]
 
 private theorem single_eq_vecL_single (i : Fin W.rank) (j : Fin V.rank) (τ : D.what₂.Tau) (c : ℂ) :
     (Pi.single ((i, j), τ) c : Ix V W → ℂ) =
@@ -141,8 +140,8 @@ private theorem single_eq_vecL_single (i : Fin W.rank) (j : Fin V.rank) (τ : D.
 
 end Tame
 
-variable (ψ V W) in
 
+variable (ψ V W) in
 def coeB : BB ψ V W →ₗ[ℂ] (WO V W → ℂ) where
   toFun F := F.1
   map_add' _ _ := rfl

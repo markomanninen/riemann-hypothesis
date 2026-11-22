@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFourierGau
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder
@@ -35,7 +39,7 @@ theorem integral_gau_twisted_conv (hJ : ∀ x, J (J x) = -x) (a y : V) :
     have h2 : omJ J (v + m) a + omJ J (v + m + a) y = ⟪J (a + y), v⟫ := by
       unfold omJ
       rw [real_inner_comm v (J (a + y)), hm]
-      simp only [map_add, inner_add_left, inner_add_right, real_inner_smul_left, inner_sub_left]
+      simp only [map_add (f := _), inner_add_left, inner_add_right, real_inner_smul_left, inner_sub_left]
       have h3 := hsk a y
       have h4 := hself a
       have h5 := hself y
@@ -83,7 +87,7 @@ theorem proj_heis_proj {ρ : V → B →L[ℂ] B} (hJ : ∀ x, J (J x) = -x) (h 
     have hw : omJ J (u + a) (w + (u + a)) = omJ J (u + a) w := by
       have h0 := hself (u + a)
       unfold omJ at h0 ⊢
-      rw [map_add, inner_add_right, h0, add_zero]
+      rw [map_add (f := _), inner_add_right, h0, add_zero]
     show _ = (gau u * (gau (w + (u + a) - (u + a)) *
       cexp (π * I * ((omJ J u a + omJ J (u + a) (w + (u + a)) : ℝ) : ℂ)))) • ρ (w + (u + a)) f
     rw [add_sub_cancel_right, hw, add_comm w (u + a), map_smul, h.2.1 (u + a) w, smul_smul, smul_smul,

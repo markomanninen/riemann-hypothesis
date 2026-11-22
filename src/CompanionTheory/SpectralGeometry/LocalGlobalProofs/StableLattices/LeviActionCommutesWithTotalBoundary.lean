@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrderedCreationCommutesPastLevi
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OrderedCreationCommutesPastLevi
+
+@[expose] public section
 
 open Finset Polynomial
 open Formalism.REAL (GlRel KHighest IsWeight qdet Tm qminor)
@@ -391,7 +395,7 @@ theorem lF_bd : ∀ (n : ℕ) (lev : Fin n → ℕ) (V : Type) [AddCommGroup V] 
       rw [ann_eq_zero hx ha, map_zero, map_zero, smul_zero]
   rw [bd_eq]
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at h1 h2
-  simp only [LinearMap.add_apply, map_add]
+  simp only [LinearMap.add_apply, map_add (f := _)]
   rw [sub_eq_zero.1 h1, sub_eq_zero.1 h2]
 
 end GlobalTheory.CompanionTheory.RgCOBlock.LeviBd

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfAcyclic
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfAcyclic
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.HigherDirectImagesVanishOfIsAffineHom
+
+@[expose] public section
 
 open CategoryTheory
 
@@ -152,12 +156,13 @@ theorem totalD_total (X : ∀ s, A.obj s) (t : Finset κ) :
     Cube.totalD B (P.total X) t = P.total (Cube.totalD A X) t := by
   rw [Cube.totalD_apply]
   by_cases ht : Set.InjOn τ (t : Set κ)
-  · rw [total_of_inj _ _ ht, Cube.totalD_apply, Finset.sum_image ht, map_sum, Finset.smul_sum]
-    refine Finset.sum_congr rfl fun i hi => ?_
-    have hs : Set.InjOn τ (t.erase i : Finset κ) := ht.mono (by simp [Finset.erase_subset])
-    rw [total_of_inj _ _ hs, map_zsmul, ← P.app_res (Finset.erase_subset i t), map_zsmul,
-      Cube.res_congr A X (image_erase_of_injOn τ hi ht) _ (Finset.erase_subset _ _),
-      smul_smul, smul_smul, sign_erase τ hi ht]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [total_of_inj _ _ ht, Cube.totalD_apply, Finset.sum_image ht, map_sum, Finset.smul_sum]
+      refine Finset.sum_congr rfl fun i hi => ?_
+      have hs : Set.InjOn τ (t.erase i : Finset κ) := ht.mono (by simp [Finset.erase_subset])
+      rw [total_of_inj _ _ hs, map_zsmul, ← P.app_res (Finset.erase_subset i t), map_zsmul,
+        Cube.res_congr A X (image_erase_of_injOn τ hi ht) _ (Finset.erase_subset _ _),
+        smul_smul, smul_smul, sign_erase τ hi ht]
   · rw [total_of_not _ _ ht]
     obtain ⟨a, ha, b, hb, hτab, hab⟩ : ∃ a ∈ t, ∃ b ∈ t, τ a = τ b ∧ a ≠ b := by
       simpa [Set.InjOn] using ht
@@ -192,7 +197,7 @@ theorem totalD_total (X : ∀ s, A.obj s) (t : Finset κ) :
 
 def term (p : ℕ) : Cube.Term A p →ₛₗ[σ] Cube.Term B p where
   toFun x t := P.total (Cube.extend A p x) t.1
-  map_add' x y := funext fun t => by rw [map_add, map_add]; rfl
+  map_add' x y := funext fun t => by rw [map_add (f := _), map_add (f := _)]; rfl
   map_smul' r x := funext fun t => by rw [map_smul, map_smulₛₗ]; rfl
 
 theorem term_of_card {p : ℕ} (x : Cube.Term A p) (t : {s : Finset κ // s.card = p})
@@ -307,13 +312,6 @@ def altAb (f : T' ⟶ T) {F : AbSheaf T} {G : AbSheaf T'} (φ : F ⟶ (push f).o
     refine (congrArg (G.obj.map _) (ConcreteCategory.congr_hom (φ.hom.naturality _) x)).trans ?_
     exact (map_map_thin _ _ _ (homOfLE ((cechOpen_anti W U' h).trans (hτ s))).op _).trans
       (map_map_thin _ _ _ _ _).symm
-
-theorem altAb_app (f : T' ⟶ T) {F : AbSheaf T} {G : AbSheaf T'} (φ : F ⟶ (push f).obj G)
-    {V : Opens T} {W : Opens T'} {U : ι → Opens T} {U' : κ → Opens T'} (τ : κ → ι)
-    (hτ : ∀ t : Finset κ, cechOpen W U' t ≤ (Opens.map f).obj (cechOpen V U (t.image τ)))
-    (t : Finset κ) (x : F.obj.obj (op (cechOpen V U (t.image τ)))) :
-    (altAb f φ τ hτ).app t x =
-      G.obj.map (homOfLE (hτ t)).op (φ.hom.app (op (cechOpen V U (t.image τ))) x) := rfl
 
 theorem altAb_comm (f : T' ⟶ T) {A B : AbSheaf T} {A' B' : AbSheaf T'} (a : A ⟶ B) (b : A' ⟶ B')
     (φ₁ : A ⟶ (push f).obj A') (φ₂ : B ⟶ (push f).obj B') (h : a ≫ φ₂ = φ₁ ≫ (push f).map b)

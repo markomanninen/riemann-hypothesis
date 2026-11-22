@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AlgebraMapConeRing
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -21,7 +25,7 @@ theorem equiv_lTensor {p : P →ₗ[B] P'} {q : Q →ₗ[B] Q'} (hp : IsBaseChan
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => simp [IsBaseChange.equiv_tmul, h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exact_core [Module.Flat B A] {p : P →ₗ[B] P'} {q : Q →ₗ[B] Q'} {s : R →ₗ[B] R'}
     (hp : IsBaseChange A p) (hq : IsBaseChange A q) (hs : IsBaseChange A s)
@@ -114,7 +118,8 @@ theorem exP_flat : ∀ {B A : Type} [CommRing B] [CommRing A] [Algebra B A] [Mod
     intro m c
     funext i
     change ∑ k : Fin (m + 2), _ = ψ _ (∑ k : Fin (m + 2), _)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul]
     congr 1

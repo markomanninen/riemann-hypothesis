@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsInIInPNPowSmulSubMap
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -121,9 +125,9 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
     apply φinj
     apply smul_right_injective _ (pow_ne_zero kB hp)
     have hwa : w ⟨((f + g : ↥F5) : FF), hF5 (f + g).2⟩ = w ⟨f, hF5 f.2⟩ + w ⟨g, hF5 g.2⟩ := by
-      rw [← map_add]; rfl
+      rw [← map_add (f := _)]; rfl
     simp only
-    rw [← e1 (f + g), hwa, cmpD_add W T₂ (hwN _) (hwN _), e1 f, e1 g, map_add, smul_add]
+    rw [← e1 (f + g), hwa, cmpD_add W T₂ (hwN _) (hwN _), e1 f, e1 g, map_add (f := _), smul_add]
   have smul1 : ∀ (o : O) (f : ↥F5), Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y1 (o • f)) =
       algebraMap O LL o • Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y1 f) := by
     intro o f
@@ -137,7 +141,7 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
       Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y2 f) + Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y2 g) := by
     intro f g
     apply φinj
-    rw [map_add, ← e2, ← e2, ← e2, add1, smul_add]
+    rw [map_add (f := _), ← e2, ← e2, ← e2, add1, smul_add]
   have smul2 : ∀ (o : O) (f : ↥F5), Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y2 (o • f)) =
       algebraMap O LL o • Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y2 f) := by
     intro o f
@@ -149,7 +153,7 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
   let ψ6 : ↥F5 →ₗ[O] ↥(Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T₂ (c - 1 - 1)) ⧸ K6 :=
     { toFun := fun f => K6.mkQ ⟨y2 f, hy2 f⟩
       map_add' := fun f g => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         apply (Submodule.Quotient.eq _).2
         show Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y2 (f + g) - (y2 f + y2 g)) = 0
         rw [cmpD_sub W T₂ (hy2N _) ((W.N T₂).add_mem (hy2N _) (hy2N _)),
@@ -186,8 +190,8 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
       apply smul_right_injective _ (pow_ne_zero hh hp)
       have h5 : (⟨((f + g : ↥F6) : FF), hF6 (f + g).2⟩ : ↥F5) = ⟨f, hF6 f.2⟩ + ⟨g, hF6 g.2⟩ := rfl
       simp only
-      rw [← e3 (f + g), h5, add2, e3 f, e3 g, map_add, smul_add]
-    simp only [hell, h, map_add]
+      rw [← e3 (f + g), h5, add2, e3 f, e3 g, map_add (f := _), smul_add]
+    simp only [hell, h, map_add (f := _)]
   have smul3 : ∀ (o : O) (f : ↥F6), ell (o • f) = algebraMap O LL o • ell f := by
     intro o f
     have h : Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y3 (o • f)) = algebraMap O LL o • Formalism.MainNotions.ArcLiftingSetup.cmpD W T₂ (y3 f) := by
@@ -207,7 +211,7 @@ theorem frobenius_sq_bound_at (hs : W.s = 1) (hR : Formalism.MainNotions.UnusedS
           have := congrArg (fun z => z - ell 0) h
           simpa using this.symm
         rw [h0, map_zero]
-      map_add' := fun f g => by rw [add3, map_add] }
+      map_add' := fun f g => by rw [add3, map_add (f := _)] }
   have hψ7 : ∀ (o : O) (x : ↥F6), ψ7 (o • x) = algebraMap O LL o • ψ7 x := by
     intro o x
     show (FilCris PD T₂.ρ (b' : ℤ)).mkQ (ell (o • x)) =

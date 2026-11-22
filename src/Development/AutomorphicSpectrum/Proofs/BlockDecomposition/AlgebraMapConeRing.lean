@@ -1,6 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CombinatorialCechAcyclic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.NLeA
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -51,7 +54,7 @@ theorem omMap_mem_relOm (φ : A →ₐ[K] B) {I : Ideal A} {J : Ideal B} (h : �
     · exact Or.inl (h _ hg)
     · exact Or.inr ⟨k, h _ hk⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [omMap_smul]; exact Submodule.smul_mem _ _ hx
 
 def relMap (φ : A →ₐ[K] B) {I : Ideal A} {J : Ideal B} (h : ∀ x ∈ I, φ x ∈ J) (a : ℕ) :
@@ -82,7 +85,7 @@ theorem map_map_apply (φ : A →ₐ[K] B) (χ : B →ₐ[K] C) (v : Ω[A⁄K]) 
     simp only [KaehlerDifferential.map_D]
     rfl
   | zero => rw [map_zero, map_zero, map_zero]
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
   | smul c x _ hx =>
     have h1 : KaehlerDifferential.map K K A B (c • x) = algebraMap A B c • KaehlerDifferential.map K K A B x := by
       rw [map_smul]; exact (algebraMap_smul B c _).symm
@@ -101,7 +104,7 @@ theorem omMap_comp (φ : A →ₐ[K] B) (χ : B →ₐ[K] C) (a : ℕ) (ω : Om 
     funext k
     exact map_map_apply φ χ (v k)
   | zero => rw [map_zero, map_zero, map_zero]
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
   | smul c x _ hx => rw [omMap_smul, omMap_smul, omMap_smul, hx]; rfl
 end Forms
 
@@ -167,8 +170,8 @@ variable {K}
 def incl {M M' : AddSubmonoid (Gam n d)} (h : M ≤ M') : Rg K M →ₐ[K] Rg K M' :=
   AddMonoidAlgebra.mapDomainAlgHom K K (AddSubmonoid.inclusion h)
 
-variable (K) in
 
+variable (K) in
 def mon {M : AddSubmonoid (Gam n d)} (g : Gam n d) (hg : g ∈ M) : Rg K M := AddMonoidAlgebra.single ⟨g, hg⟩ 1
 
 theorem incl_mon {M M' : AddSubmonoid (Gam n d)} (h : M ≤ M') (g : Gam n d) (hg : g ∈ M) :
@@ -182,7 +185,7 @@ theorem incl_comp {M M' M'' : AddSubmonoid (Gam n d)} (h : M ≤ M') (h' : M' �
   refine AlgHom.ext fun x => ?_
   induction x using AddMonoidAlgebra.induction_linear with
   | zero => rw [map_zero, map_zero]
-  | add f g hf hg => rw [map_add, map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), hf, hg]
   | single m c =>
     simp only [incl, AlgHom.comp_apply, AddMonoidAlgebra.mapDomainAlgHom_apply]
     simp
@@ -193,8 +196,8 @@ theorem mon_mul {M : AddSubmonoid (Gam n d)} (g g' : Gam n d) (hg : g ∈ M) (hg
   simp only [mon, AddMonoidAlgebra.single_mul_single, mul_one]
   rfl
 
-variable (K n) in
 
+variable (K n) in
 def poly (S : Finset (Fin d)) : Bp K n d →ₐ[K] R0 K n d S :=
   MvPolynomial.aeval fun e => mon K (oneE e) (oneE_mem S e)
 
@@ -213,8 +216,8 @@ theorem incl_poly {S T : Finset (Fin d)} (h : S ⊆ T) (b : Bp K n d) :
     simp only [AlgHom.comp_apply, poly_X, incl_mon]
   exact DFunLike.congr_fun this b
 
-variable (K n) in
 
+variable (K n) in
 def I0 (S : Finset (Fin d)) : Ideal (R0 K n d S) :=
   Ideal.span {y | ∃ k, (S = ∅ ∨ k ∈ S) ∧ y = mon K (oneE (Sum.inr k)) (oneE_mem S _)}
 
@@ -264,8 +267,8 @@ theorem wv_mem {S : Finset (Fin d)} {k : Fin d} (hk : k ∈ S) (e : E n d) : wv 
     · exact oneE_mem S _
     · exact ratE_mem hk j
 
-variable (K) in
 
+variable (K) in
 def monL (g : Gam n d) : Lr K n d := mon K g (AddSubmonoid.mem_top g)
 
 def dl (e : E n d) : Ω[Lr K n d⁄K] :=
@@ -276,16 +279,16 @@ def wedge {a : ℕ} (f : Fin a → E n d) : Om K (Lr K n d) a := exteriorPower.�
 def enumD {a : ℕ} (D : {D : Finset (E n d) // D.card = a}) : Fin a → E n d := fun i =>
   finSumFinEquiv.symm ((D.1.map finSumFinEquiv.toEmbedding).orderEmbOfFin (by simpa using D.2) i)
 
-variable (K) in
 
+variable (K) in
 def monW {a : ℕ} (g : Gam n d) (D : {D : Finset (E n d) // D.card = a}) : Om K (Lr K n d) a :=
   monL K g • wedge (K := K) (enumD D)
 
 def good (g : Gam n d) (D : Finset (E n d)) : Prop :=
   (∀ l, 0 ≤ g (Sum.inl l) ∧ (g (Sum.inl l) = 0 → Sum.inl l ∉ D)) ∧ 1 ≤ tdeg g
 
-open Classical in
 
+open Classical in
 def Tset (g : Gam n d) (D : Finset (E n d)) : Finset (Fin d) :=
   Finset.univ.filter fun j => g (Sum.inr j) < 0 ∨ (g (Sum.inr j) = 0 ∧ Sum.inr j ∈ D)
 

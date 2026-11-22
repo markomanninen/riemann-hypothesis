@@ -1,15 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfI
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfA
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingCurry
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LintegralFlagDensityFibreBoundedDomain
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorFlagDensityGlueLowerUnitriangular
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorBlockDecomposition
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LintegralPiFibreMeasurePreserving
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingFlagFibreChartCoordinates
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenAndFderivMoebI
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.KronHolPsiStatementHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfI
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfA
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingCurry
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LintegralFlagDensityFibreBoundedDomain
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorFlagDensityGlueLowerUnitriangular
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LeadingMinorBlockDecomposition
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LintegralPiFibreMeasurePreserving
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingFlagFibreChartCoordinates
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenAndFderivMoebI
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory
 open Matrix Formalism.DegreeFormula Formalism.MJ GlobalTheory.TrueCx GlobalTheory.FlagFibre
@@ -129,7 +133,7 @@ namespace GlobalTheory.KernelIntegral
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
-def cube (p q : ℕ) : Set (Fin p × Fin q → ℂ) := Set.univ.pi fun _ => Metric.closedBall (0 : ℂ) 1
+noncomputable def cube (p q : ℕ) : Set (Fin p × Fin q → ℂ) := Set.univ.pi fun _ => Metric.closedBall (0 : ℂ) 1
 
 theorem fibre_bound (X : Data E r) {j : ℕ} (hj : j ≤ r) (hp : X.p0 = r - j) {bb : ℝ} (hbb : (r : ℝ) ≤ bb)
     (v : Fin j × Fin (r - j) → ℂ) :
@@ -167,7 +171,7 @@ theorem lintegral_x0F_le (X : Data E r) {j : ℕ} (hj : j ≤ r) (hp : X.p0 = r 
   have hDm : Measurable D := (measurable_dens _).ennreal_ofReal
   have hφm : Measurable φ := Finset.measurable_prod _ fun t _ => (measurable_wt _ _ _).comp (measurable_pi_apply t)
   have hGm : Measurable G :=
-    (hφm.comp (measurable_pi_lambda _ fun t => (measurable_base _).comp (measurable_pi_apply t))).mul
+    (hφm.comp (Measurable.of_eval fun t => (measurable_base _).comp (measurable_pi_apply t))).mul
       (Finset.measurable_prod _ fun t _ => hDm.comp (measurable_pi_apply t))
   have hco := GlobalTheory.FlagFibre.measurePreserving_coords_sorted E r X X.Ψ κ
   have hdm : Measurable fun z => ENNReal.ofReal (densF X (x0F X) z) := by
@@ -224,7 +228,7 @@ theorem one_div_flagConst_le (m : ℕ) : 1 / flagConst m ≤ Real.pi ^ (m * m) :
     have e : (Real.pi ^ (m * m))⁻¹ = ∏ _i ∈ Finset.range m, (Real.pi ^ m)⁻¹ := by
       rw [Finset.prod_const, Finset.card_range, pow_mul, inv_pow]
     rw [e, flagConst]
-    refine Finset.prod_le_prod (fun _ _ => by positivity) fun i hi => ?_
+    refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun i hi => ?_
     have hi' : i ≤ m := (Finset.mem_range.1 hi).le
     have h1 : (1 : ℝ) ≤ i.factorial := by exact_mod_cast i.factorial_pos
     calc (Real.pi ^ m)⁻¹ ≤ (Real.pi ^ i)⁻¹ :=

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsMulEqPolynomialWeierstrassP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsMulEqPolynomialWeierstrassP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators Topology
@@ -22,10 +26,10 @@ open PowerSeries
 variable {R S : Type} [CommRing R] [CommRing S]
 
 def wSer (s : R) (A : R⟦X⟧) : R⟦X⟧ :=
-  d⁄dX R A ^ 2 - A * d⁄dX R (d⁄dX R A) - C s * A ^ 2
+  d⁄dX A ^ 2 - A * d⁄dX (d⁄dX A) - C s * A ^ 2
 
 def OdeSer (s a b : R) (A : R⟦X⟧) : Prop :=
-  (d⁄dX R (wSer s A) * A - 2 * wSer s A * d⁄dX R A) ^ 2 =
+  (d⁄dX (wSer s A) * A - 2 * wSer s A * d⁄dX A) ^ 2 =
     4 * wSer s A ^ 3 - C a * wSer s A * A ^ 4 - C b * A ^ 6
 
 def homSer (m : ℕ) (q : ℕ → R) (s : R) (A : R⟦X⟧) : R⟦X⟧ :=
@@ -34,7 +38,7 @@ def homSer (m : ℕ) (q : ℕ → R) (s : R) (A : R⟦X⟧) : R⟦X⟧ :=
 def EndSer (α : R) (N m : ℕ) (q : ℕ → R) (s : R) (A : R⟦X⟧) : Prop :=
   rescale α A ^ 2 * A ^ (2 * m) = A ^ (2 * N) * homSer m q s A
 
-lemma map_deriv (φ : R →+* S) (A : R⟦X⟧) : map φ (d⁄dX R A) = d⁄dX S (map φ A) := by
+lemma map_deriv (φ : R →+* S) (A : R⟦X⟧) : map φ (d⁄dX A) = d⁄dX (map φ A) := by
   ext n; simp [coeff_derivative]
 
 lemma map_rescale (φ : R →+* S) (α : R) (A : R⟦X⟧) :
@@ -70,36 +74,38 @@ lemma EndSer.descend {M : Type} [Field M] [Algebra M ℂ] {α s : M} {N m : ℕ}
   have h1 := congrArg (fun B => r (coeff n B)) h
   have c1 : ∀ (x y : ℂ⟦X⟧) (c : ℂ), x * (C c * y) = C c * (x * y) := fun x y c => by ring
   have c2 : ∀ (x y : M⟦X⟧) (c : M), x * (C c * y) = C c * (x * y) := fun x y c => by ring
-  simp only [homSer, Finset.mul_sum, c1, ← map_rescale, ← map_wSer,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homSer, Finset.mul_sum, c1, ← map_rescale, ← map_wSer,
     ← map_pow (PowerSeries.map (algebraMap M ℂ)), ← map_mul (PowerSeries.map (algebraMap M ℂ)),
     map_sum, coeff_C_mul, coeff_map, hr'] at h1
-  simp only [homSer, Finset.mul_sum, c2, map_sum, coeff_C_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [homSer, Finset.mul_sum, c2, map_sum, coeff_C_mul]
   rw [h1]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_comm (q k), ← Algebra.smul_def, r.map_smul, smul_eq_mul, mul_comm (r (q k))]
 
 lemma ode_unique {a b : ℂ} {P Q : ℂ⟦X⟧} (hP0 : constantCoeff P = 1) (hQ0 : constantCoeff Q = 1)
-    (hP : (X * d⁄dX ℂ P - 2 * P) ^ 2 = 4 * P ^ 3 - C a * X ^ 4 * P - C b * X ^ 6)
-    (hQ : (X * d⁄dX ℂ Q - 2 * Q) ^ 2 = 4 * Q ^ 3 - C a * X ^ 4 * Q - C b * X ^ 6) : P = Q := by
+    (hP : (X * d⁄dX P - 2 * P) ^ 2 = 4 * P ^ 3 - C a * X ^ 4 * P - C b * X ^ 6)
+    (hQ : (X * d⁄dX Q - 2 * Q) ^ 2 = 4 * Q ^ 3 - C a * X ^ 4 * Q - C b * X ^ 6) : P = Q := by
   by_contra hne
   have hD : P - Q ≠ 0 := sub_ne_zero.2 hne
   obtain ⟨n, E, hE, hE0⟩ : ∃ (n : ℕ) (E : ℂ⟦X⟧), P = Q + X ^ n * E ∧ constantCoeff E ≠ 0 :=
     ⟨(P - Q).order.toNat, divXPowOrder (P - Q), by rw [X_pow_order_mul_divXPowOrder]; ring,
       by simpa [constantCoeff_divXPowOrder_eq_zero_iff] using hD⟩
-  have hx : (X : ℂ⟦X⟧) * d⁄dX ℂ (X ^ n : ℂ⟦X⟧) = (n : ℂ⟦X⟧) * X ^ n := by
+  have hx : (X : ℂ⟦X⟧) * d⁄dX (X ^ n : ℂ⟦X⟧) = (n : ℂ⟦X⟧) * X ^ n := by
     cases n with
     | zero => simp
     | succ n => simp [Derivation.leibniz_pow]; ring
-  have hd : X * d⁄dX ℂ P = X * d⁄dX ℂ Q + X ^ n * ((n : ℂ⟦X⟧) * E + X * d⁄dX ℂ E) := by
-    rw [hE, map_add, Derivation.leibniz]
+  have hd : X * d⁄dX P = X * d⁄dX Q + X ^ n * ((n : ℂ⟦X⟧) * E + X * d⁄dX E) := by
+    rw [hE, map_add (f := _), Derivation.leibniz]
     simp only [smul_eq_mul]
     linear_combination E * hx
-  have key : X ^ n * ((((n : ℂ⟦X⟧) * E + X * d⁄dX ℂ E) - 2 * E) *
-      (X * d⁄dX ℂ P - 2 * P + (X * d⁄dX ℂ Q - 2 * Q))) =
+  have key : X ^ n * ((((n : ℂ⟦X⟧) * E + X * d⁄dX E) - 2 * E) *
+      (X * d⁄dX P - 2 * P + (X * d⁄dX Q - 2 * Q))) =
       X ^ n * (E * (4 * (P ^ 2 + P * Q + Q ^ 2) - C a * X ^ 4)) := by
     have e : X ^ n * E = P - Q := by rw [hE]; ring
-    linear_combination hP - hQ - (X * d⁄dX ℂ P - 2 * P + (X * d⁄dX ℂ Q - 2 * Q)) * hd
-      - (2 * (X * d⁄dX ℂ P - 2 * P + (X * d⁄dX ℂ Q - 2 * Q))
+    linear_combination hP - hQ - (X * d⁄dX P - 2 * P + (X * d⁄dX Q - 2 * Q)) * hd
+      - (2 * (X * d⁄dX P - 2 * P + (X * d⁄dX Q - 2 * Q))
         + (4 * (P ^ 2 + P * Q + Q ^ 2) - C a * X ^ 4)) * e
   have k2 := congrArg constantCoeff (mul_left_cancel₀ (pow_ne_zero n (X_ne_zero (R := ℂ))) key)
   simp [hP0, hQ0, map_ofNat] at k2
@@ -107,7 +113,7 @@ lemma ode_unique {a b : ℂ} {P Q : ℂ⟦X⟧} (hP0 : constantCoeff P = 1) (hQ0
   exact (mul_ne_zero (Nat.cast_add_one_ne_zero n) hE0) this
 
 lemma ode_reduce {s a b : ℂ} {U V : ℂ⟦X⟧} (hUV : U * V = 1) (h : OdeSer s a b (X * U)) :
-    (X * d⁄dX ℂ (wSer s (X * U) * V ^ 2) - 2 * (wSer s (X * U) * V ^ 2)) ^ 2 =
+    (X * d⁄dX (wSer s (X * U) * V ^ 2) - 2 * (wSer s (X * U) * V ^ 2)) ^ 2 =
       4 * (wSer s (X * U) * V ^ 2) ^ 3 - C a * X ^ 4 * (wSer s (X * U) * V ^ 2) - C b * X ^ 6 := by
   unfold OdeSer at h
   set P := wSer s (X * U) * V ^ 2 with hP
@@ -136,29 +142,29 @@ lemma theta_unique {s a b : ℂ} {A B : ℂ⟦X⟧} (hA0 : coeff 0 A = 0) (hA1 :
   generalize T⁻¹ = Y at hTV hV1
   have hPQ := ode_unique (by simp [wSer, Derivation.leibniz, hA1, hV0])
     (by simp [wSer, Derivation.leibniz, hB1, hV1]) (ode_reduce hUV hA) (ode_reduce hTV hB)
-  have dV : d⁄dX ℂ V = -V ^ 2 * d⁄dX ℂ U := by
-    have := congrArg (d⁄dX ℂ) hUV
+  have dV : d⁄dX V = -V ^ 2 * d⁄dX U := by
+    have := congrArg (PowerSeries.derivative (R := ℂ)) hUV
     simp only [Derivation.leibniz, smul_eq_mul, Derivation.map_one_eq_zero] at this
-    linear_combination V * this - d⁄dX ℂ V * hUV
-  have dY : d⁄dX ℂ Y = -Y ^ 2 * d⁄dX ℂ T := by
-    have := congrArg (d⁄dX ℂ) hTV
+    linear_combination V * this - d⁄dX V * hUV
+  have dY : d⁄dX Y = -Y ^ 2 * d⁄dX T := by
+    have := congrArg (PowerSeries.derivative (R := ℂ)) hTV
     simp only [Derivation.leibniz, smul_eq_mul, Derivation.map_one_eq_zero] at this
-    linear_combination Y * this - d⁄dX ℂ Y * hTV
-  have h1 : d⁄dX ℂ U * V = d⁄dX ℂ T * Y := by
+    linear_combination Y * this - d⁄dX Y * hTV
+  have h1 : d⁄dX U * V = d⁄dX T * Y := by
     refine derivative.ext ?_ ?_
     · apply mul_left_cancel₀ (pow_ne_zero 2 (X_ne_zero (R := ℂ)))
-      simp only [wSer, Derivation.leibniz, smul_eq_mul, derivative_X, map_add, mul_one] at hPQ ⊢
+      simp only [wSer, Derivation.leibniz, smul_eq_mul, derivative_X, map_add (f := _), mul_one] at hPQ ⊢
       rw [dV, dY]
-      linear_combination -hPQ + ((U * V + 1) * (1 - C s * X ^ 2) - X ^ 2 * V * d⁄dX ℂ (d⁄dX ℂ U)) * hUV
-        - ((T * Y + 1) * (1 - C s * X ^ 2) - X ^ 2 * Y * d⁄dX ℂ (d⁄dX ℂ T)) * hTV
-    · have e : ∀ F : ℂ⟦X⟧, constantCoeff (d⁄dX ℂ F) = coeff 1 F := fun F => by
+      linear_combination -hPQ + ((U * V + 1) * (1 - C s * X ^ 2) - X ^ 2 * V * d⁄dX (d⁄dX U)) * hUV
+        - ((T * Y + 1) * (1 - C s * X ^ 2) - X ^ 2 * Y * d⁄dX (d⁄dX T)) * hTV
+    · have e : ∀ F : ℂ⟦X⟧, constantCoeff (d⁄dX F) = coeff 1 F := fun F => by
         rw [← coeff_zero_eq_constantCoeff_apply, coeff_derivative]; simp
       rw [map_mul, map_mul, e, e, hA2, hB2, zero_mul, zero_mul]
   have h2 : U * Y = 1 := by
     refine derivative.ext ?_ (by simp [hA1, hV1])
     simp only [Derivation.leibniz, smul_eq_mul, Derivation.map_one_eq_zero]
     rw [dY]
-    linear_combination U * Y * h1 - Y * d⁄dX ℂ U * hUV
+    linear_combination U * Y * h1 - Y * d⁄dX U * hUV
   have : U = T := by linear_combination T * h2 - U * hTV
   rw [this]
 
@@ -232,7 +238,7 @@ def tay : Ent →+* ℂ⟦X⟧ where
       simp [coeff_one]
   map_add' f g := by
     ext n
-    simp only [coeff_mk, map_add, coef1, Subring.coe_add]
+    simp only [coeff_mk, map_add (f := _), coef1, Subring.coe_add]
     rw [iteratedDeriv_add (Ent.contDiff f n).contDiffAt (Ent.contDiff g n).contDiffAt, add_div]
   map_mul' f g := by
     ext n
@@ -249,7 +255,7 @@ def tay : Ent →+* ℂ⟦X⟧ where
 
 lemma coeff_tay (f : Ent) (n : ℕ) : coeff n (tay f) = coef1 f.1 n := coeff_mk n (coef1 f.1)
 
-lemma tay_dE (f : Ent) : tay (dE f) = d⁄dX ℂ (tay f) := by
+lemma tay_dE (f : Ent) : tay (dE f) = d⁄dX (tay f) := by
   ext n
   have h3 : (n.factorial : ℂ) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
   have h4 : ((n : ℂ) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
@@ -261,7 +267,7 @@ lemma tay_cE (c : ℂ) : tay (cE c) = C c := by
   ext n
   cases n with
   | zero => simp [coeff_tay, coef1, cE]
-  | succ n => simp [coeff_tay, coef1, cE, iteratedDeriv_const, coeff_C]
+  | succ n => simp [coeff_tay, coef1, cE, iteratedDeriv_const]
 
 lemma tay_sE (α : ℂ) (f : Ent) : tay (sE α f) = rescale α (tay f) := by
   ext n
@@ -330,7 +336,7 @@ lemma endSer_tay_iff (L : PeriodPair) {s α : ℂ} {f : Ent} {N m : ℕ} {q : �
       (∑ k ∈ Finset.range (m + 1), cE (q k) * (wE s f ^ k * f ^ (2 * (m - k))) : Ent).1 z =
       (∑ k ∈ Finset.range (m + 1), q k * L.weierstrassP z ^ k) * f.1 z ^ (2 * m) := by
     intro z hz
-    rw [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, Finset.sum_mul]
+    rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, Finset.sum_mul]
     refine Finset.sum_congr rfl fun k hk => ?_
     obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le (Nat.lt_succ_iff.1 (Finset.mem_range.1 hk))
     simp only [cE, Subring.coe_pow, Subring.coe_mul, Pi.pow_apply, Pi.mul_apply, h z hz,

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType GlobalTheory.CompRat
@@ -8,9 +12,9 @@ open scoped CategoryTheory.Obj
 
 namespace GlobalTheory.CompRat
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj in
-
 theorem _root_.GlobalTheory.CompRat.exists_real_extension_of_lattice {A V W : Type} [AddCommGroup A] [NormedAddCommGroup V] [NormedSpace ℝ V]
     [FiniteDimensional ℝ V] [AddCommGroup W] [Module ℝ W] (P : A →+ V) (hi : Function.Injective P)
     (hd : DiscreteTopology P.range) (hs : Submodule.span ℝ (Set.range P) = ⊤) (Q : A →+ W) :
@@ -71,7 +75,7 @@ theorem _root_.GlobalTheory.CompRat.exists_complex_linear_of_pure_types : ∀ (E
     have rz' : r (H.rt0 • P z) = H.rt0 • r (P z) := by
       rw [neg_smul, map_neg, neg_smul, neg_inj] at rz
       exact rz
-    simp only [map_add, smul_add, ry, rz']
+    simp only [map_add (f := _), smul_add, ry, rz']
   have hrot : ∀ v, r (H.rt0 • v) = H.rt0 • r v := by
     have hext : r.comp (H.rt0 • LinearMap.id) = (H.rt0 • LinearMap.id).comp r :=
       LinearMap.ext_on_range hs fun a => by simpa using hkey a
@@ -82,7 +86,7 @@ theorem _root_.GlobalTheory.CompRat.exists_complex_linear_of_pure_types : ∀ (E
     have hc : c = ((c.re - c.im / H.rt0.im * H.rt0.re : ℝ) : ℂ) +
         ((c.im / H.rt0.im : ℝ) : ℂ) * H.rt0 := by
       apply Complex.ext <;> simp <;> field_simp <;> ring
-    rw [hc, add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul, map_add, map_smul, map_smul,
+    rw [hc, add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul, map_add (f := _), map_smul, map_smul,
       hrot, add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
   have hl : ∀ v, r' (r v) = v := by
     have hext : r'.comp r = LinearMap.id :=

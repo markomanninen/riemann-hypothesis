@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.StageGeoDefs
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AutomorphicArithmetic.DivisorFrames.ThetaOperatorIntertwinesHeisenberg
-import Development.AutomorphicArithmetic.DivisorFrames.PtOSgnMemLatAtVIffMemLatO
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsNeZeroLinearModelVacuumEqSmul
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergStableRelationOfVacuaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxGraphGraphHeis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitBasisWittModelLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddCharStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawWeilZetaGlobal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.StageGeoDefs
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AutomorphicArithmetic.DivisorFrames.ThetaOperatorIntertwinesHeisenberg
+public import Development.AutomorphicArithmetic.DivisorFrames.PtOSgnMemLatAtVIffMemLatO
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsNeZeroLinearModelVacuumEqSmul
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergStableRelationOfVacuaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxGraphGraphHeis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitBasisWittModelLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddCharStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SeesawWeilZetaGlobal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum GlobalTheory.IndefiniteRowSideFullHecke.MatchingAdjoints GlobalTheory.Grid GlobalTheory.ChainFr GlobalTheory.SquareComm GlobalTheory.FinMatch
 open scoped TensorProduct ComplexConjugate GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Classical
@@ -38,46 +43,47 @@ private theorem at_liftV_smul {M : Type} [AddCommGroup M] [Module (AF F) M] (v :
     At (evFin F v) (liftV v (1 : Fv F v) • z) := fun u hu => by
   rw [smul_smul, ← smul_eq_mul u, at_liftV v 1 u hu, zero_smul]
 
-private theorem at_entry {n d : ℕ} {v : HeightOneSpectrum (𝓞 F)} {x : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)}
+private theorem at_entry {n d : ℕ} {v : HeightOneSpectrum (𝓞 F)} {x : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))}
     (hx : At (evFin F v) x) (i : Fin n) (j : Fin d) : At (evFin F v) (x i j) := fun u hu =>
   congrFun (congrFun (hx u hu) i) j
 
 private theorem exists_idem (hcm : IsCMExt F E σ) {v : HeightOneSpectrum (𝓞 F)} (t : E →ₐ[F] Fv F v) :
-    ∃ a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E, At (evFin F v) a ∧ piW t a = 1 ∧ piW (t.comp σ) a = 0 := by
+    ∃ a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E), At (evFin F v) a ∧ piW t a = 1 ∧ piW (t.comp σ) a = 0 := by
   obtain ⟨h1, h0⟩ := GlobalTheory.LatSplit.piW_splitIdemAd hcm t
   refine ⟨liftV v (1 : Fv F v) • GlobalTheory.AdelicU.Supp.splitIdemAd hcm t, at_liftV_smul v _, ?_, ?_⟩
   · rw [GlobalTheory.LatFill.piW_smul, h1, evFin_liftV, mul_one]
   · rw [GlobalTheory.LatFill.piW_smul, h0, mul_zero]
 
-private theorem piW_of_at_ne {v w : HeightOneSpectrum (𝓞 F)} (h : w ≠ v) (t : E →ₐ[F] Fv F w) {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E}
+private theorem piW_of_at_ne {v w : HeightOneSpectrum (𝓞 F)} (h : w ≠ v) (t : E →ₐ[F] Fv F w) {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)}
     (hz : At (evFin F v) z) : piW t z = 0 := by
   have h1 := GlobalTheory.LatFill.piW_smul t (liftV w (1 : Fv F w)) z
   rw [hz _ (evFin_liftV_ne h.symm 1), map_zero, evFin_liftV, one_mul] at h1
   exact h1.symm
 
 private theorem halfEl_of_at {P : Finset (HeightOneSpectrum (𝓞 F))} (t : ∀ v : P, E →ₐ[F] Fv F v) (v : P)
-    {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E} (hz : At (evFin F v.1) z) (h0 : piW (t v) z = 0) : HalfEl P t z := by
+    {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hz : At (evFin F v.1) z) (h0 : piW (t v) z = 0) : HalfEl P t z := by
   refine ⟨fun u hu => hz u (hu v v.2), fun w => ?_⟩
   by_cases h : w = v
   · subst h; exact h0
   · exact piW_of_at_ne (fun e => h (Subtype.ext e)) _ hz
 
 private theorem eq_sum_of_halfEl {P : Finset (HeightOneSpectrum (𝓞 F))} {t : ∀ v : P, E →ₐ[F] Fv F v}
-    {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E} (hz : HalfEl P t z) : z = ∑ v : P, liftV v.1 (1 : Fv F v) • z := by
+    {z : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hz : HalfEl P t z) : z = ∑ v : P, liftV v.1 (1 : Fv F v) • z := by
   have h := hz.1 (1 - ∑ v : P, liftV v.1 (1 : Fv F v)) fun w hw => by
-    rw [map_sub, map_one, map_sum, Finset.sum_eq_single (⟨w, hw⟩ : P) (fun v _ hv => evFin_liftV_ne
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_one, map_sum, Finset.sum_eq_single (⟨w, hw⟩ : P) (fun v _ hv => evFin_liftV_ne
       (fun e => hv (Subtype.ext e.symm)) 1) (fun h => absurd (Finset.mem_univ _) h), evFin_liftV, sub_self]
   rw [sub_smul, one_smul, sub_eq_zero, Finset.sum_smul] at h
   exact h
 
-private theorem at_mul_smul {n d : ℕ} {v : HeightOneSpectrum (𝓞 F)} {a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E} (ha : At (evFin F v) a)
-    (x : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) : At (evFin F v) (a • x) := fun u hu => by
+private theorem at_mul_smul {n d : ℕ} {v : HeightOneSpectrum (𝓞 F)} {a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (ha : At (evFin F v) a)
+    (x : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) : At (evFin F v) (a • x) := fun u hu => by
   rw [← smul_assoc, ha u hu, zero_smul]
 
 private theorem symp_idem (hcm : IsCMExt F E σ) {v : HeightOneSpectrum (𝓞 F)} (t : E →ₐ[F] Fv F v)
-    {a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E} (h1 : piW t a = 1) {n d : ℕ} (ξ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)
-    (JA : Matrix (Fin n) (Fin n) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) (JB : Matrix (Fin d) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E))
-    (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)) {y : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)}
+    {a : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (h1 : piW t a = 1) {n d : ℕ} (ξ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))
+    (JA : Matrix (Fin n) (Fin n) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (JB : Matrix (Fin d) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)))
+    (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) {y : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))}
     (hy : At (evFin F v) y) (hy1 : y.map (piW t) = 0) :
     GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) ξ JA JB u y =
       GlobalTheory.WeilM.symp (R := AF F) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) ξ JA JB (a • u) y := by
@@ -111,7 +117,7 @@ private theorem infPart_liftV_smul (v : HeightOneSpectrum (𝓞 D.host.F)) (z : 
     infPart D (liftV v (1 : Fv D.host.F v) • z) = 0 := by
   induction z using TensorProduct.induction_on with
   | zero => rw [smul_zero, map_zero]
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, add_zero]
   | tmul b x =>
     rw [TensorProduct.smul_tmul']
     change ((0 : Ainf D.host.F) * b.1) ⊗ₜ[D.host.F] x = 0
@@ -119,7 +125,8 @@ private theorem infPart_liftV_smul (v : HeightOneSpectrum (𝓞 D.host.F)) (z : 
 
 private theorem infPart_halfEl {P : Finset (HeightOneSpectrum (𝓞 D.host.F))} {t : ∀ v : P, D.host.E →ₐ[D.host.F] Fv D.host.F v}
     {z : AE D} (hz : HalfEl P t z) : infPart D z = 0 := by
-  rw [eq_sum_of_halfEl hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_of_halfEl hz, map_sum]
   exact Finset.sum_eq_zero fun v _ => infPart_liftV_smul _ _
 
 private theorem ptO_smul {m k d : ℕ} (G : Matrix (Fin m) (Fin m) D.host.E) (e : Fin k ≃ Fin d) (a : AE D)
@@ -225,7 +232,7 @@ theorem UpperTheory.exists_isSBHalf_theta_of_selfDual_lattices :
         rw [zero_smul, zero_smul] at this
         exact (map_zero T).trans this.symm⟩
       add_mem' := fun {p q} hp hq => ⟨add_mem hp.1 hq.1, sb_add hp.2.1 hq.2.1, by
-        rw [Prod.snd_add, ladd _ hp.1 _ hq.1, ← hp.2.2, ← hq.2.2, ← map_add]; rfl⟩
+        rw [Prod.snd_add, ladd _ hp.1 _ hq.1, ← hp.2.2, ← hq.2.2, ← map_add (f := _)]; rfl⟩
       smul_mem' := fun a p hp => ⟨Submodule.smul_mem _ a hp.1, sb_smul hp.2.1 a, by
         rw [Prod.smul_snd, lsmul, ← hp.2.2, ← map_smul]; rfl⟩ }
   have hind : ∀ χ : ∀ v : HeightOneSpectrum (𝓞 D.host.F), (Fin S.rank × Fin d → Fv D.host.F v) → ℂ, ∀ x : WO (sgn ε S) X,
@@ -289,7 +296,8 @@ theorem UpperTheory.exists_isSBHalf_theta_of_selfDual_lattices :
       obtain ⟨y, rfl⟩ := hbij.2 x
       have hy : IsHalf eh y := (hH y).1 fun i j =>
         (h₀ _).2 (halfEl_of_at t₀ v (at_entry hx.1 i j) (congrFun (congrFun hx.2 i) j))
-      obtain ⟨k, hk, hky⟩ := GlobalTheory.PlaceVec.exists_nsmul_mem_latO (S := sgn ε S) (T := X) sdS.1 sdX.1 y
+      obtain ⟨k, hk, hky⟩ := GlobalTheory.PlaceVec.exists_nsmul_mem_latO (S := sgn ε S) (T := X)
+        (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ sdS) (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ sdX) y
         (Matrix.ext fun i j => infPart_halfEl ((h₀ _).1 (hy i j)))
       refine ⟨GlobalTheory.HeisSchA.rho_mem_schA M _ hstd _ _ hp.1, ?_, ?_⟩
       · simp only [← ptO_add]
@@ -301,7 +309,8 @@ theorem UpperTheory.exists_isSBHalf_theta_of_selfDual_lattices :
       obtain ⟨y, rfl⟩ := hbij.2 x
       have hy : IsHalf (cA D eh) y := (isHalf_iff_ptO (sgn ε S).gram hG e _ y).2 fun i j =>
         (h₁ _).2 (halfEl_of_at t₁ v (at_entry hx.1 i j) (congrFun (congrFun hx.2 i) j))
-      obtain ⟨k, hk, hky⟩ := GlobalTheory.PlaceVec.exists_nsmul_mem_latO (S := sgn ε S) (T := X) sdS.1 sdX.1 y
+      obtain ⟨k, hk, hky⟩ := GlobalTheory.PlaceVec.exists_nsmul_mem_latO (S := sgn ε S) (T := X)
+        (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ sdS) (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ sdX) y
         (Matrix.ext fun i j => infPart_halfEl ((h₁ _).1 (hy i j)))
       refine ⟨GlobalTheory.HeisSchA.rho_mem_schA M _ hstd _ _ hp.1, ?_, ?_⟩
       · simp only [lsym]

@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterAlgRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPCProof
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.LocTransfer
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartB
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionCompactEmbedded
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionTransitionPolynomial
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionCoverAndCone
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionLocalChartPolynomial
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionRegularLocalRing
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStandardSmoothLocalization
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterAlgRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPCProof
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.LocTransfer
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartB
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionCompactEmbedded
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionTransitionPolynomial
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionCoverAndCone
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionLocalChartPolynomial
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SncResolutionRegularLocalRing
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsStandardSmoothLocalization
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem exists_span_of_fibre (A : Type) [CommRing A] [Algebra ℚ A] [Algebra A 
     intro q
     rw [← hl]
     have h := congrArg l (B.sum_repr ((1 : ℂ) ⊗ₜ[A] KaehlerDifferential.D ℚ A (u q)))
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     rw [← h]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
   have he : (fun q => (Φ (u q)).snd) =
@@ -84,8 +89,8 @@ theorem exists_span_of_fibre (A : Type) [CommRing A] [Algebra ℚ A] [Algebra A 
   rw [he]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
-open scoped IntermediateField.algebraAdjoinAdjoin in
 
+open scoped IntermediateField.algebraAdjoinAdjoin in
 theorem card_le_of_smooth (σ : Type) [Fintype σ] (Ω : Type) [Field Ω] [CharZero Ω] (u : σ → Ω)
     (V : Submodule ℂ (σ → ℂ)) (w : σ → ℂ)
     (hker : ∀ g : MvPolynomial σ ℚ, aeval u g = 0 → eval w (map (algebraMap ℚ ℂ) g) = 0)
@@ -149,8 +154,8 @@ theorem card_le_finrank_jacSpanAt (K : Type) [Fintype K] (ι : K → Type) [∀ 
   exact card_le_of_smooth (Σ k, ι k) Ω _ (ReciprocityTheory.AnForm.R.jacSpanAt _ w) w (fun g hg => hw _ (hkerC g hg))
     (fun g hg => Submodule.subset_span ⟨_, hkerC g hg, rfl⟩) (hsm p hp) e htr
 
-open ReciprocityTheory.AnForm.R ReciprocityTheory.AnForm.R.JacobianCriterionAlt in
 
+open ReciprocityTheory.AnForm.R ReciprocityTheory.AnForm.R.JacobianCriterionAlt in
 theorem exists_params_of_regular {m : ℕ} (I : Ideal (MvPolynomial (Fin m) ℂ)) (t : Fin m → ℂ)
     (hI : ∀ h ∈ I, eval t h = 0) (e : ℕ) (hreg : IsRegularLocalRing (locRing I t))
     (hd : ringKrullDim (locRing I t) = e) :
@@ -250,8 +255,8 @@ theorem isUnit_algebraMap_locRing' {n : ℕ} (I : Ideal (MvPolynomial (Fin n) �
     (algebraMap (ReciprocityTheory.AnForm.R.locPt pt) (ReciprocityTheory.AnForm.R.locRing I pt))
   rwa [← IsScalarTower.algebraMap_apply] at this
 
-open GlobalTheory.CompanionTheory.Ar.Cmp.SncRes in
 
+open GlobalTheory.CompanionTheory.Ar.Cmp.SncRes in
 theorem nonempty_algRes (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω]
     [CharZero Ω] (y : (Σ k, ι k) → Ω) (e : ℕ) (hP : IsArithVar (mCoordIdeal y) (e + 1))
     (hsm : SmoothGenericFibreM y) :

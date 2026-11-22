@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices.InstFintypeFlIdx
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GeometricAbelianConnected
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices.InstFintypeFlIdx
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GeometricAbelianConnected
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,24 +44,6 @@ structure FlagSys {d : ℕ} {S : AnSys (d + 1) (Ψ × Fin N)} {P : Ideal (MRing 
 
   sq : ∀ (τ : Ψ) (a b : Fin N), (b : ℕ) = a + 1 → ((b : ℕ) < j ∨ j ≤ (a : ℕ)) → SqSys Re (τ, a) (xiCoef τ a)
 
-def Agreement : Prop :=
-  Inputs → ∀ (D : ℕ) (σ : Type) [Fintype σ] (S : AnSys D σ) (abelian₂ : ℝ) (_ : 0 < S.t₀ := by assumption),
-    ∃ C₃ s₀ : ℝ, 0 < s₀ ∧
-    ∀ (II : IntersectionSystem), IsFullIntersectionSystem II →
-    ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι)) (Re : Realis S P),
-      (∀ w, Tendsto (fun t => Re.num II t w) (𝓝[>] 0) (𝓝 (Re.limNum II w))) ∧
-      ∀ s, 0 < s → s ≤ s₀ → Real.exp (-(s ^ 2)⁻¹) ≤ S.t₀ ∧ ∀ c : σ → ℝ, ∑ a, |c a| ≤ abelian₂ →
-        |eval c (Re.FT II (Real.exp (-(s ^ 2)⁻¹))) - eval c (Re.PB II)| ≤ C₃ * s
-
-theorem agreement_iff_guarded : Agreement ↔
-  (Inputs → ∀ (D : ℕ) (σ : Type) [Fintype σ] (S : AnSys D σ) (abelian₂ : ℝ), 0 < S.t₀ → ∃ C₃ s₀ : ℝ, 0 < s₀ ∧
-    ∀ (II : IntersectionSystem), IsFullIntersectionSystem II →
-    ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι)) (Re : Realis S P),
-      (∀ w, Tendsto (fun t => Re.num II t w) (𝓝[>] 0) (𝓝 (Re.limNum II w))) ∧
-      ∀ s, 0 < s → s ≤ s₀ → Real.exp (-(s ^ 2)⁻¹) ≤ S.t₀ ∧ ∀ c : σ → ℝ, ∑ a, |c a| ≤ abelian₂ →
-        |eval c (Re.FT II (Real.exp (-(s ^ 2)⁻¹))) - eval c (Re.PB II)| ≤ C₃ * s) :=
-  Iff.rfl
-
 def Coefficients : Prop :=
   Inputs → ∀ (D N : ℕ) (Ψ : Type) [Fintype Ψ] (S : AnSys D (Option (Ψ × Fin N))) (thH : LocPot S.X),
     IsPotential S.A thH → ∃ C₂ : ℝ,
@@ -70,8 +56,8 @@ def Coefficients : Prop :=
         SamePot Re.R.A Set.univ (potOf Re.R H) (thH.pullback Re.π Re.holo.1) →
         (∀ a t, 0 < t → t ≤ S.t₀ → VertClose P T α (Re.line a t) (Re'.line a t)) →
         (∀ p ∈ T, NefAt P p H.a ∧ ∀ a, NefAt P p ((Re.ref a).a + H.a) ∧ NefAt P p ((Re'.ref a).a + H.a)) →
-        (∀ m, |coeff m (Re.PBs II) - coeff m (Re'.PBs II)| ≤ C₂ * ∑ p ∈ T, α p * Real.log p) ∧
-          ∀ m, |coeff m (Re.PBwt II) - coeff m (Re'.PBwt II)| ≤ C₂ * ∑ p ∈ T, α p * Real.log p
+        (∀ m, |(Re.PBs II).coeff m - (Re'.PBs II).coeff m| ≤ C₂ * ∑ p ∈ T, α p * Real.log p) ∧
+          ∀ m, |(Re.PBwt II).coeff m - (Re'.PBwt II).coeff m| ≤ C₂ * ∑ p ∈ T, α p * Real.log p
 
 def Proportional : Prop :=
   Inputs → ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] [Nonempty Ψ] (N j : ℕ), 2 ≤ N → j ≤ N →

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeIdempotentCoeffAcrossLayers
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
-import ReciprocityTheory.GaloisValuations.GlobalB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeIdempotentCoeffAcrossLayers
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenCuspidalIff
+public import ReciprocityTheory.GaloisValuations.GlobalB
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 
 namespace GlobalTheory
@@ -42,7 +47,8 @@ theorem eq_of_perturbed_pow_sub_one {R : Type*} [CommRing R] [IsDomain R] [IsLoc
     rw [h0, zero_pow hmpos] at hy1
     exact zero_ne_one hy1
   have := congrArg (IsLocalRing.residue R) hS'
-  simp only [map_sum, map_mul, map_pow, hu0, zero_mul, hzy0] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_pow, hu0, zero_mul, hzy0] at this
   rw [geom_sum₂_self] at this
   exact mul_ne_zero hm0 (pow_ne_zero _ hy0) this
 
@@ -80,7 +86,7 @@ theorem exists_roots_fixed_of_mem_Ine (E Ω : Type) [Field E] [NumberField E] [F
     rw [← hf0d]; exact Polynomial.degree_add_eq_left_of_degree_lt hlt
   have hev : ∀ y : Ω, Polynomial.aeval y g0 = Polynomial.aeval y f + e * Polynomial.aeval y h := by
     intro y
-    simp only [g0, map_add, map_mul, Polynomial.aeval_map_algebraMap, Polynomial.aeval_C]
+    simp only [g0, map_add (f := _), map_mul, Polynomial.aeval_map_algebraMap, Polynomial.aeval_C]
     rfl
   have hhev : ∀ y : Ω, Polynomial.aeval y h = y ^ m - 1 - Polynomial.aeval y f := by
     intro y

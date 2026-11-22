@@ -1,19 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
 namespace GlobalTheory.FitSquare
 
 variable {R : Type} [CommRing R]
-
-theorem exists_lift {ι N M : Type} [Fintype ι] [DecidableEq ι] [AddCommGroup N] [Module R N]
-    [AddCommGroup M] [Module R M] (h : (ι → R) →ₗ[R] M) (g : N →ₗ[R] M)
-    (hh : ∀ y, ∃ z, g z = h y) : ∃ l : (ι → R) →ₗ[R] N, g ∘ₗ l = h := by
-  choose z hz using hh
-  refine ⟨(Pi.basisFun R ι).constr R (fun i => z (Pi.basisFun R ι i)), ?_⟩
-  apply (Pi.basisFun R ι).ext
-  intro i
-  rw [LinearMap.comp_apply, Module.Basis.constr_basis, hz]
 
 section blocks
 variable {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n]
@@ -57,10 +52,10 @@ private theorem det_eq_mul_of_toBlocks₁₂_eq_zero {α β : Type} [Fintype α]
   conv_lhs => rw [← fromBlocks_toBlocks M, h]
   exact det_fromBlocks_zero₁₂ _ _ _
 
+
 open Matrix in
 variable {R : Type} [CommRing R] in
 variable {m n : Type} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n] in
-
 theorem _root_.GlobalTheory.FitSquare.relations_mem {M : Type} [AddCommGroup M] [Module R M]
     (π : (n → R) →ₗ[R] M) (hπ : Function.Surjective π) (Φ : Matrix n n R)
     (hΦ : ∀ y, π y = 0 → ∃ z, Φ *ᵥ z = y)
@@ -86,7 +81,7 @@ theorem _root_.GlobalTheory.FitSquare.relations_mem {M : Type} [AddCommGroup M] 
   let N : Matrix (n ⊕ m) (n ⊕ m) R := fromBlocks 1 0 (-B) T
   have hker : ∀ u v, π u + q v = 0 → ∃ w, (U * D) *ᵥ w = Sum.elim u v := by
     intro u v h
-    obtain ⟨z, hz⟩ := hΦ (u + A *ᵥ v) (by rw [map_add, hA, h])
+    obtain ⟨z, hz⟩ := hΦ (u + A *ᵥ v) (by rw [map_add (f := _), hA, h])
     refine ⟨Sum.elim z v, ?_⟩
     rw [← mulVec_mulVec]
     simp [U, D, fromBlocks_mulVec, hz, neg_mulVec]
@@ -94,7 +89,7 @@ theorem _root_.GlobalTheory.FitSquare.relations_mem {M : Type} [AddCommGroup M] 
     rintro (i | j)
     · obtain ⟨w, hw⟩ := hker (Pi.single i 1) (-b i) (by rw [map_neg, hb, add_neg_cancel])
       refine ⟨w, hw.trans ?_⟩
-      ext (r | r) <;> simp [N, B, Pi.single_apply, one_apply]
+      ext (r | r) <;> simp [N, B, Pi.single_apply, Matrix.one_apply]
     · obtain ⟨w, hw⟩ := hker 0 (fun r => T r j) (by
         have h := hT (Pi.single j 1)
         rw [mulVec_single_one] at h
@@ -147,16 +142,16 @@ theorem _root_.GlobalTheory.FitSquare.relations_mem {M : Type} [AddCommGroup M] 
         rw [h₁, h₂, det_one, one_mul]
       · ext s t
         simp [N, toBlocks₁₂, updateRow_apply]
-    rw [hadj, hN, adjugate_mul_distrib, adjugate_mul_distrib, mul_apply]
+    rw [hadj, hN, adjugate_mul_distrib, adjugate_mul_distrib, Matrix.mul_apply]
     refine Ideal.sum_mem _ fun x _ => Ideal.mul_mem_left _ _ ?_
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     exact Ideal.sum_mem _ fun y _ => Ideal.mul_mem_right _ _ (hD x y)
 
 end blocks
 
+
 open Matrix in
 variable {R : Type} [CommRing R] in
-
 theorem _root_.GlobalTheory.FitSquare.fitting_exact : ∀ (R : Type) [CommRing R] (M₁ M₂ M₃ : Type) [AddCommGroup M₁] [Module R M₁] [AddCommGroup M₂] [Module R M₂] [AddCommGroup M₃] [Module R M₃] (f : M₁ →ₗ[R] M₂) (g : M₂ →ₗ[R] M₃), Function.Exact f g → Function.Surjective g → ∀ (k : ℕ) (x : R) (v : Fin k → M₁), Submodule.span R (Set.range v) = ⊤ → (∀ m : M₁, x • m = 0) → ∀ (a b : ℕ) (Φ : Matrix (Fin a) (Fin a) R) (Ψ : Matrix (Fin b) (Fin b) R), Nonempty (M₂ ≃ₗ[R] ((Fin a → R) ⧸ LinearMap.range Φ.mulVecLin)) → Nonempty (M₃ ≃ₗ[R] ((Fin b → R) ⧸ LinearMap.range Ψ.mulVecLin)) → x ^ k * Ψ.det ∈ Ideal.span {Φ.det} ∧ (a = 0 ∨ ((∀ p q, x ^ k * Ψ.adjugate p q ∈ Ideal.span (Set.range fun p : Fin a × Fin a => Φ.adjugate p.1 p.2)) ∧ (b = 0 → x ^ k ∈ Ideal.span (Set.range fun p : Fin a × Fin a => Φ.adjugate p.1 p.2)))) := by
   intro R _ M₁ M₂ M₃ _ _ _ _ _ _ f g hfg hg k x v hv hx a b Φ Ψ ⟨e₂⟩ ⟨e₃⟩
   let π : (Fin a → R) →ₗ[R] M₂ := e₂.symm.toLinearMap ∘ₗ (LinearMap.range Φ.mulVecLin).mkQ
@@ -212,8 +207,10 @@ theorem _root_.GlobalTheory.FitSquare.fitting_exact : ∀ (R : Type) [CommRing R
         LinearMap.single_apply, mulVec_single_one, LinearMap.zero_apply]
       rw [Fintype.linearCombination_apply, Fintype.sum_sum_type]
       rcases c with i | j
-      · simp [T, col, one_apply]
-        rw [← map_smul, hx, map_zero]
+      · simp [T, col]
+        apply Finset.sum_eq_zero
+        intro r _
+        rw [mul_comm x, mul_smul, ← map_smul, hx, map_zero, smul_zero]
       · have hCj := hC j
         simp only [H, Fintype.linearCombination_apply] at hCj
         simp [T, col, neg_smul, Finset.sum_neg_distrib, hCj]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardIcutFilter
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardIcutFilter
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem li_mono_words {R σ ι α : Type} [CommRing R] [IsDomain R] (Tset : Set 
         (M q + n).filter (· ∉ Tset) = n := by
       intro n hn
       have hnv : ∀ v, n v ≠ 0 → v ∉ Tset := fun v hv =>
-        hwsup ((mem_vars v).2 ⟨n, hn, Finsupp.mem_support_iff.2 hv⟩)
+        hwsup ((mem_vars_iff_mem_support v).2 ⟨n, hn, Finsupp.mem_support_iff.2 hv⟩)
       constructor
       · ext v
         rw [Finsupp.filter_apply, Finsupp.add_apply]
@@ -80,7 +84,8 @@ theorem li_mono_words {R σ ι α : Type} [CommRing R] [IsDomain R] (Tset : Set 
             exact hv (hM q v h)
           rw [this, zero_add]
     conv_lhs => rw [(w (x q)).as_sum]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     simp only [monomial_mul, one_mul, hΦmono]
     split_ifs with hMq
     · conv_rhs => rw [(w (x q)).as_sum]
@@ -94,7 +99,8 @@ theorem li_mono_words {R σ ι α : Type} [CommRing R] [IsDomain R] (Tset : Set 
   have hfib : LinearIndependent R (w ∘ fun q : {q // M q = M q₀} => x q.1) := hw.comp _ hxinj
   have h2 : ∑ q ∈ s, g q • (if M q = M q₀ then w (x q) else 0) = 0 := by
     have h := congrArg Φ hsum
-    rw [map_sum, map_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h
     calc ∑ q ∈ s, g q • (if M q = M q₀ then w (x q) else 0)
         = ∑ q ∈ s, Φ (g q • (monomial (M q) (1 : R) * w (x q))) :=
           Finset.sum_congr rfl fun q _ => by rw [map_smul, hkey]

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExistsCommonEigenvectorMemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteJointEigensystemsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMatricesIntertwiningOfSemilinearStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormEigenvalueLeOneOfEntries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixExistsCommonEigenvectorMemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteJointEigensystemsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMatricesIntertwiningOfSemilinearStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormEigenvalueLeOneOfEntries
+
+@[expose] public section
 
 open Matrix
 
@@ -17,7 +21,7 @@ theorem eq_top_of_isUnit_det (O : Type) [CommRing O] (R : Type) [CommRing R] [Al
     rw [← Polynomial.aeval_algHom_apply, Matrix.aeval_self_charpoly]
   have h0 : algebraMap O R (f.coeff 0) ∈ m := by
     have h := hq
-    rw [← Polynomial.X_mul_divX_add f, map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h
+    rw [← Polynomial.X_mul_divX_add f, map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at h
     exact (Submodule.add_mem_iff_right m (m.mul_mem_right _ hp)).1 h
   have hc : IsUnit (f.coeff 0) := by
     rw [Matrix.det_eq_sign_charpoly_coeff] at hu
@@ -34,7 +38,7 @@ theorem eigen_ringHom (R : Type) [CommRing R] (K : Type) [Field K] (n : ℕ)
   · intro a b; apply inj
     rw [← hμ, map_mul, ← mulVec_mulVec, hμ b, mulVec_smul, hμ a, smul_smul, mul_comm (μ b)]
   · apply inj; rw [← hμ, map_zero, zero_mulVec, zero_smul]
-  · intro a b; apply inj; rw [← hμ, map_add, add_mulVec, hμ a, hμ b, add_smul]
+  · intro a b; apply inj; rw [← hμ, map_add (f := _), add_mulVec, hμ a, hμ b, add_smul]
 
 theorem norm_det_eq_one (K : Type) [NormedField K] [IsAlgClosed K] (n : ℕ)
     (N : Matrix (Fin n) (Fin n) K)
@@ -86,7 +90,7 @@ theorem unitBall_prime (R : Type) [CommRing R] (l : ℕ) [Fact l.Prime] (χ : R 
   refine ⟨{ carrier := {p | ‖χ p‖ < 1}, add_mem' := ?_, zero_mem' := ?_, smul_mem' := ?_ }, ?_,
     fun p => Iff.rfl⟩
   · intro a b ha hb
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
   · simp
   · intro c x hx

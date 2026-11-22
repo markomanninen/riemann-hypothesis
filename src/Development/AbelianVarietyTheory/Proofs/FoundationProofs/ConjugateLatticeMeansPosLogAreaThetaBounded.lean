@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoundMeansPosLogAreaNormalisedTheta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoundMeansPosLogAreaNormalisedTheta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaComplexConjugationCompatible
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -70,7 +74,7 @@ theorem means_le : ∃ C : ℝ, 0 < C ∧ ∀ (D : D7), ∀ (cc : Ideal (𝓞 D.
   have hl2p : 0 ≤ Real.log (2 * Real.pi) := Real.log_nonneg (by linarith)
   rw [Real.log_div (by positivity) (by positivity), Real.log_sqrt hd0.le, div_eq_iff hn.ne'] at hper
   have hB : Real.posLog (3 * (2 * D.host.rdE + 1)) ≤ 9 * L := by
-    refine (Real.posLog_le_posLog (by positivity) (show _ ≤ 9 * D.host.rdE by linarith)).trans ?_
+    refine (Real.posLog_le_posLog (by linarith) (show _ ≤ 9 * D.host.rdE by linarith)).trans ?_
     rw [Real.posLog_eq_log (by rw [abs_of_pos (by positivity)]; linarith),
       Real.log_mul (by norm_num) (by positivity)]
     have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 9 by norm_num)
@@ -89,7 +93,7 @@ theorem means_le : ∃ C : ℝ, 0 < C ∧ ∀ (D : D7), ∀ (cc : Ideal (𝓞 D.
     obtain ⟨ha0, haC⟩ := hA _ hΛ hdisc
     constructor
     · rw [Real.log_div ha0.ne' (by positivity)]
-      have h1 := Real.posLog_le_posLog ha0.le haC
+      have h1 := Real.posLog_le_posLog (by linarith) haC
       have h4 := Real.posLog_sub_posLog_inv (x := area (lamOf D cc' δ'))
       linarith
     · have := posLog_nrm_le _ hΛ hdisc ((GlobalTheory.T.admJ_and_torsion_data_algebraic D (GlobalTheory.InducedType.induced_type D).1).1 cc' δ' hc'.1 hc'.2)

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+
+@[expose] public section
 
 open Matrix
 
@@ -209,9 +213,9 @@ theorem ell_conj (z : Fin (2 * r + k + 1) → ℂ)
   have hrow : ∀ p, h (eI k r a) p = if eI k r a = p then 1 else 0 :=
     fun p => hh.2 _ p (by simp only [eI]; omega)
   by_cases ha : a.val + 1 < r
-  · rw [dif_pos ha, dif_pos ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
+  · rw [dite_eq_left ha, dite_eq_left ha, mul_apply_of_col _ _ _ (fun q => hh'.1 q _ (by simp only [eI]; omega)),
       mul_apply_of_row _ _ _ hrow]
-  · rw [dif_neg ha, dif_neg ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
+  · rw [dite_eq_right ha, dite_eq_right ha, ← Matrix.mulVec_mulVec, hz, ← Matrix.mulVec_mulVec,
       mulVec_apply_of_row _ _ hrow]
 
 abbrev mid (k r : ℕ) (i : Fin (2 * r + k + 1)) : Prop := r ≤ i.val ∧ i.val ≤ r + k
@@ -236,7 +240,7 @@ lemma wI_inj {a b : Fin (k + 1)} (h : wI k r a = wI k r b) : a = b := by
 lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hj : ¬ mid k r j) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hj h.2)]
+  rw [dite_eq_right (fun h => hj h.2)]
   by_cases h : q = j
   · subst h; rw [if_pos ⟨rfl, hj⟩, if_pos rfl]
   · rw [if_neg (fun h' => h h'.1), if_neg h]
@@ -244,7 +248,7 @@ lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : ¬ mid k r q) :
     embWb k r μ q j = if q = j then 1 else 0 := by
   unfold embWb
-  rw [dif_neg (fun h => hq h.1)]
+  rw [dite_eq_right (fun h => hq h.1)]
   by_cases h : q = j
   · rw [if_pos ⟨h, hq⟩, if_pos h]
   · rw [if_neg (fun h' => h h'.1), if_neg h]
@@ -252,7 +256,7 @@ lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : mid k r q) (hj : mid k r j) :
     embWb k r μ q j = μ (midx hq) (midx hj) := by
   unfold embWb
-  rw [dif_pos ⟨hq, hj⟩]
+  rw [dite_eq_left ⟨hq, hj⟩]
   rfl
 
 def Em (k r : ℕ) : Matrix (Fin (2 * r + k + 1)) (Fin (k + 1)) ℂ := fun i m => if i = wI k r m then 1 else 0

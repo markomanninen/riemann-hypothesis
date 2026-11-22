@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ExistsFamilyValuationDetEqOne
+module
+
+public import ReciprocityTheory.DualLattices.ExistsFamilyValuationDetEqOne
+
+@[expose] public section
 
 noncomputable section
 

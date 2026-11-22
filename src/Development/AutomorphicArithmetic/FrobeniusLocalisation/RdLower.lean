@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+
+@[expose] public section
 
 open NumberField Ideal Formalism.HC Formalism.FrobeniusOrbits
 open scoped Pointwise

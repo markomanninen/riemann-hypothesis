@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CkOnZeroOfContOn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CkOnZeroOfContOn
+
+@[expose] public section
 
 noncomputable section
 

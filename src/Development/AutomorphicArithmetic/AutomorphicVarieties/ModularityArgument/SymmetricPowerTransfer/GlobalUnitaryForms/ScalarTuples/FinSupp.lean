@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.EmbAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.GlobNegOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.EmbAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.GlobNegOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Glob UpperTheory.V.Z.Sym.Loc
 
@@ -53,7 +57,7 @@ private theorem tr_map {K K' : Type} [Field K] [Field K'] (f : K →+* K') {Δ �
   refine ⟨γ', ?_, ?_⟩
   · rw [e, Matrix.det_fin_two_of]
     linear_combination hd'
-  · rw [e, Matrix.trace_fin_two_of, ← lmap_star', ← map_add, ht]
+  · rw [e, Matrix.trace_fin_two_of, ← lmap_star', ← map_add (f := _), ht]
     ext <;> simp [lmap]
 
 private theorem conj_tr {K : Type} [Field K] {Δ τ : K} {γ : DX Δ} (h : HasTr γ τ) (y : DX Δ) :
@@ -157,7 +161,7 @@ private theorem den_bound (O : Type) {K : Type} [Field K] [CharZero K] [CommRing
   have e : N • (algebraMap K (Lsq K Δ) τ) = algebraMap K (Lsq K Δ) (algebraMap O K N * τ) := by
     rw [map_mul, ← IsScalarTower.algebraMap_apply, Algebra.smul_def]
   rw [e] at hint
-  exact (isIntegral_algebraMap_iff (algebraMap K (Lsq K Δ)).injective).1 hint
+  exact (isIntegral_algebraMap_iff ).1 hint
 
 private theorem val_small {F : Type} [Field F] [NumberField F] (v : Pl F) {x : Kv v} (hx : x ≠ 0) :
     ∃ a : 𝓞 F, a ≠ 0 ∧ Valued.v (cv v (algebraMap (𝓞 F) F a)) ≤ Valued.v x := by

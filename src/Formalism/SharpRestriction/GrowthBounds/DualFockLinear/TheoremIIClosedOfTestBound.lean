@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestrictedWeightFirstTwoEq
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestrictedWeightFirstTwoEq
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ namespace Formalism.MainNotions.TestSideCounting
 open Formalism.MainNotions.G Formalism.GradedWeylDivisibility Formalism.MainNotions.SourceCleaning Formalism.MainNotions.Pf14 MvPolynomial
 open Formalism.L2.G.Model (Nv)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem primStep_of (hTr : TransStep) (hSub : SubstPol) (C CLa : ℝ) (hSP : SPStep C) : PrimStep C CLa := by
   intro p W Qq O Kf _ _ _ _ _ _ _ _ _ _ ι σ j w n' m r _ _ TT L₁ L₂ de h x lam0 aT bT a Y cpp c0 Dp cStar hSet H φ hφ K
     _ _ hk hrk F hF E' hE' nb B hB hli hc e he htgt hm g hhm hg hbasis
@@ -55,8 +59,10 @@ theorem primStep_of (hTr : TransStep) (hSub : SubstPol) (C CLa : ℝ) (hSP : SPS
         MvPolynomial (TV n' (m + 1)) (KK O)) =
         ∑ bb, algebraMap O (KK O) (c (bb, eI i)) • (FsB bb : MvPolynomial (TV n' (m + 1)) (KK O)) := by
       simp only [P, Submodule.coe_sum, Submodule.coe_smul, algebraMap_smul]
-    rw [e1, map_sum]
-    simp only [map_smul, hFsB, symB, toK, Q, T0, map_mul, map_sum, ← hSPO1, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, hFsB, symB, toK, Q, T0, map_mul, map_sum, ← hSPO1, Finset.sum_mul]
     refine Finset.sum_congr rfl fun bb _ => ?_
     simp only [MvPolynomial.smul_eq_C_mul, map_mul, map_C, mul_assoc]
   have hv : (((∑ y, c y • S y : Vsp Kf lam0)) : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) =
@@ -67,7 +73,8 @@ theorem primStep_of (hTr : TransStep) (hSub : SubstPol) (C CLa : ℝ) (hSP : SPS
         ∑ bb, c (bb, eI i) • ((Θ (FsB bb) : Vsp Kf (flW (m := m) (dT TT lam0))) :
           MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) Kf) := by
       intro i
-      simp only [P, map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul_of_tower]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul_of_tower]
     simp only [e2, Submodule.coe_sum, Submodule.coe_smul_of_tower, Finset.sum_mul]
     rw [Fintype.sum_prod_type, Finset.sum_comm, ← Equiv.sum_comp eI]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun bb _ => ?_
@@ -83,7 +90,8 @@ theorem primStep_of (hTr : TransStep) (hSub : SubstPol) (C CLa : ℝ) (hSP : SPS
   have h0 : ∑ i ∈ (Finset.univ : Finset I), thAll Fr n' m (vecE n') (map res (Q i)) *
       ∏ s, blockEmb Fr s (map res (bX s (i s))) = 0 := by
     have h1 := congrArg (map res) hR
-    simp only [map_sum, map_mul, map_thAll, map_C, hresw, C_0, zero_mul, sO, map_prod, blockEmb, map_rename] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_thAll, map_C, hresw, C_0, zero_mul, sO, map_prod, blockEmb, map_rename] at h1
     simpa only [blockEmb] using h1
   have hQhom : ∀ i, IsMultiHom (dT TT lam0) (map res (Q i)) := by
     intro i ee hee s
@@ -122,8 +130,8 @@ theorem primStep_of (hTr : TransStep) (hSub : SubstPol) (C CLa : ℝ) (hSP : SPS
   have hdvd : MvPolynomial.C w ∣ T0 (eI.symm x0.2) := by
     rw [C_dvd_iff_dvd_coeff]
     intro ee
-    have h1 : res (coeff ee (T0 (eI.symm x0.2))) = 0 := by
-      rw [← coeff_map, hT', coeff_zero]
+    have h1 : res (AddMonoidAlgebra.coeff (T0 (eI.symm x0.2)) ee) = 0 := by
+      simp only [← coeff_map, hT', AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     rw [IsLocalRing.residue_eq_zero_iff, hwirr.maximalIdeal_eq, Ideal.mem_span_singleton] at h1
     exact h1
   obtain ⟨y, hy⟩ := hdvd

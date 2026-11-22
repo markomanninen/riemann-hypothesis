@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemStalkIdealOfCodimOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemStalkIdealOfCodimOne
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -43,7 +48,7 @@ theorem hart_of_flat : ∀ (A : Type) [CommRing A] [IsDomain A] [IsNoetherianRin
       · simp [f]
     have h0 : α (f (Pi.single s 1)) = 0 := by
       simpa using congrArg (fun g => g (Pi.single s 1)) hαf
-    rw [e, map_add, map_smul, map_smul] at h0
+    rw [e, map_add (f := _), map_smul, map_smul] at h0
     have h1 := congrArg (fun w => w j) h0
     simp only [Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul, Finsupp.coe_zero,
       Pi.zero_apply] at h1

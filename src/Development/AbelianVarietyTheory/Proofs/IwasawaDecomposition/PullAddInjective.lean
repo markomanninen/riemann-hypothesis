@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,9 +26,5 @@ def pullAddLin (f : X →+ Y) : LinearMap.BilinForm ℤ Y →ₗ[ℤ] LinearMap.
   toFun := pullAdd f
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
-
-@[simp] theorem pullAddLin_apply (f : X →+ Y) (u : LinearMap.BilinForm ℤ Y) : pullAddLin f u = pullAdd f u := rfl
-
-example : pullAdd (zmultiplesHom ℤ 2 : ℤ →+ ℤ) mulForm 1 1 = 4 := by simp
 
 end GlobalTheory.PolFan.OrbMark

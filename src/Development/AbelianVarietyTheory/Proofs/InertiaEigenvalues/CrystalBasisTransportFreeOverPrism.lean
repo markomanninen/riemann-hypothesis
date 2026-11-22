@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleBasisOfFCrystal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinPrismCrystalCoordinates
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCrystalCoordinatesOverBreuilKisin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleBasisOfFCrystal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinPrismCrystalCoordinates
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCrystalCoordinatesOverBreuilKisin
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -29,9 +33,9 @@ theorem exists_read {Z O S W R N ι : Type} [CommRing Z] [CommRing O] [CommRing 
   choose C hC using hD
   refine ⟨AddMonoidHom.mk' (fun x i => Ψ (C x i)) fun x y => funext fun i => ?_, fun s x x' i h => ?_,
     fun c x i h => ?_⟩
-  · have : C (x + y) i = C x i + C y i := hi (by rw [map_add, hC, hC, hC, map_add, Pi.add_apply])
+  · have : C (x + y) i = C x i + C y i := hi (by rw [map_add (f := _), hC, hC, hC, map_add (f := _), Pi.add_apply])
     change Ψ (C (x + y) i) = Ψ (C x i) + Ψ (C y i)
-    rw [this, map_add]
+    rw [this, map_add (f := _)]
   · have : C x' i = ((1 : O) ⊗ₜ[Z] s) * C x i := hi (by
       rw [map_mul, hC, hC, h, Algebra.TensorProduct.map_tmul]; rfl)
     change Ψ (C x' i) = g s * Ψ (C x i)
@@ -72,14 +76,15 @@ theorem indep_of_coord {Z O S W B R M N ι : Type} [CommRing Z] [CommRing O] [Co
     · rw [Algebra.smul_def, mul_comm]
     · rw [map_zero, mul_zero]
   change lam _ () i = _
-  simp only [map_sum, Finset.sum_apply, h3]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_apply, h3]
   rw [Finset.sum_comm]
   simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
 
 variable {l : ℕ} [hl : Fact l.Prime] {a : ℕ} [NeZero a] {e : ℕ} [NeZero e]
 
-variable (a) in
 
+variable (a) in
 noncomputable def evW (ϖ : PiSys l e) : (Wq l a)⟦X⟧ →ₐ[ℤ_[l]] WCb l where
   toRingHom := (inclW l).comp (ϖ.ev a)
   commutes' z := by
@@ -99,7 +104,8 @@ theorem exists_toW_eq {m : Vec K a ι} (hm : m ∈ P.M) (i : ι) :
   obtain ⟨s, hs⟩ := exists_eq_sum_toAc t K (Module.Free.chooseBasis ℤ_[l] O)
     (fun τ => ⟨m τ i, mem_tot.1 hm τ i⟩)
   refine ⟨∑ k, Module.Free.chooseBasis ℤ_[l] O k • ((1 : O) ⊗ₜ[ℤ_[l]] s k), ?_⟩
-  rw [h1, hs, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, hs, map_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, map_smul, OfCrystal.iR_toAc]
   rfl

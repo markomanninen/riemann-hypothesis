@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem levN_Psi {L₁ N₁ : ℕ} (hp : 0 < p) (hV : Fr.Valid L₁ N₁) (hr : 
     levN Fr p hk nL (Psi (O := O) Fr p hk nL H) = H := by
   induction H using MvPolynomial.induction_on' with
   | monomial a c => rw [Psi_monomial, levN_monomial, noMon_psiExp p hk hp hV hr hJ hnL]
-  | add F G hF hG => rw [map_add, levN_add, hF, hG]
+  | add F G hF hG => rw [map_add (f := _), levN_add, hF, hG]
 
 end Lev
 

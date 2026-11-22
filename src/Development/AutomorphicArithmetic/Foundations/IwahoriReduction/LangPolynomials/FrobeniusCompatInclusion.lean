@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotZeroChi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +17,7 @@ def R0 (A : ValuationSubring Ω) : Subring Ω where
   carrier := {x | x ∈ A ∧ ∀ s ∈ Ine (F := ℚ) A, s x = x}
   mul_mem' ha hb := ⟨A.mul_mem _ _ ha.1 hb.1, fun s hs => by rw [map_mul, ha.2 s hs, hb.2 s hs]⟩
   one_mem' := ⟨A.one_mem, fun s _ => map_one s⟩
-  add_mem' ha hb := ⟨A.add_mem _ _ ha.1 hb.1, fun s hs => by rw [map_add, ha.2 s hs, hb.2 s hs]⟩
+  add_mem' ha hb := ⟨A.add_mem _ _ ha.1 hb.1, fun s hs => by rw [map_add (f := _), ha.2 s hs, hb.2 s hs]⟩
   zero_mem' := ⟨A.zero_mem, fun s _ => map_zero s⟩
   neg_mem' ha := ⟨A.neg_mem _ ha.1, fun s hs => by rw [map_neg, ha.2 s hs]⟩
 
@@ -121,8 +126,5 @@ abbrev intg (φ : DirichletCharacter (Qbar l) l) (k : ℕ) (L : PowerSeries (Qba
 
 def IntZero (φ : DirichletCharacter (Qbar l) l) (k : ℕ) (L : PowerSeries (Qbar l)) : Prop :=
   ∀ n : ℕ, ∃ r₁, ∀ r, r₁ ≤ r → ∀ ξ : Qbar l, IsPrimitiveRoot ξ (l ^ r) → Cg (n + r) (intg φ k L r ξ) 0
-
-theorem iwI_zero (c : Coef l) (A : ValuationSubring Ω) : IwI c A (fun _ _ _ => 0) :=
-  ⟨fun _ _ _ _ => zero_mem _, by simp, by simp⟩
 
 end UpperTheory.Kd.C7

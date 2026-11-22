@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
-import Formalism.LocalToGlobal.CharacterGerms.FirstPartialLawAtPoints
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MixedCoefficientClosed
+public import Formalism.LocalToGlobal.CharacterGerms.FirstPartialLawAtPoints
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem exp_sum_range {σ : Type} (f : ℕ → MvPowerSeries σ C) (hf : ∀ k, 
   | zero => simp [rtj_mvExp_zero]
   | succ n ih =>
     have h0 : MvPowerSeries.constantCoeff (∑ k ∈ Finset.range n, f k) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_eq_zero fun k _ => hf k
     rw [Finset.sum_range_succ, VP.exp_add h0 (hf n), ih, List.range_succ, List.map_append, List.prod_append]
     simp
@@ -113,7 +118,38 @@ theorem col_left (Y : FBChart C V O dd) {τ : Type} (n : ℕ) (a : ℕ → Fin d
     (hsum : s = VP.sumL Y ((List.range n).map a)) :
     IntS V (mvExp (∑ k ∈ Finset.range n, VP.hAt Y (a k) c - VP.hAt Y s c)) ∧
       MvPowerSeries.constantCoeff (∑ k ∈ Finset.range n, VP.hAt Y (a k) c - VP.hAt Y s c) = 0 := by
-  obtain ⟨U, hU, e⟩ := VP.biadd_left Y hc ((List.range n).map a) (by
+  open VP in
+  have biadd :
+    ∀ l : List (Fin dd → MvPowerSeries τ C), (∀ a ∈ l, GoodPt V a) →
+      ∃ U : MvPowerSeries τ C, IsIU V U ∧ mvExp (hAt Y (sumL Y l) c) * U = (l.map fun a => mvExp (hAt Y a c)).prod := by
+    intro l
+    induction l with
+    | nil =>
+      intro _
+      exact ⟨1, IsIU.one, by
+      show mvExp (hAt Y (fun _ => 0) c) * 1 = 1
+      rw [hAt_zero_left Y hc.1, rtj_mvExp_zero, one_mul]⟩
+    | cons a l ih =>
+      intro h
+      have ha := h a List.mem_cons_self
+      have hl := good_sumL Y l fun b hb => h b (List.mem_cons_of_mem _ hb)
+      obtain ⟨U, hU, e⟩ := ih fun b hb => h b (List.mem_cons_of_mem _ hb)
+      have hp := first_partial_law_at_points Y ha.1 hl.1 hc.1
+      have hpi : IntS V (MvPowerSeries.subst (P3 a (sumL Y l) c) Y.B.ph1) :=
+        IntS.subst (constantCoeff_triple_substitution ha.1 hl.1 hc.1) (integral_triple_substitution ha.2 hl.2 hc.2) Y.intPh1
+      refine ⟨MvPowerSeries.subst (P3 a (sumL Y l) c) Y.B.ph1 * U, (isIU_of_exp hpi hp).mul hU, ?_⟩
+      have c1 := cc_hAt Y ha.1 hc.1
+      have c2 := cc_hAt Y hl.1 hc.1
+      have c3 := cc_hAt Y (cc_addAt Y ha.1 hl.1) hc.1
+      have e2 : mvExp (hAt Y (addAt Y a (sumL Y l)) c) * MvPowerSeries.subst (P3 a (sumL Y l) c) Y.B.ph1 =
+          mvExp (hAt Y a c) * mvExp (hAt Y (sumL Y l) c) := by
+        rw [hp, ← exp_add c3 (by rw [map_sub, map_add (f := _), c1, c2, c3]; simp), ← exp_add c1 c2]
+        congr 1
+        ring
+      show mvExp (hAt Y (addAt Y a (sumL Y l)) c) * _ = _
+      rw [List.map_cons, List.prod_cons, ← e, ← mul_assoc, e2, mul_assoc]
+
+  obtain ⟨U, hU, e⟩ := biadd ((List.range n).map a) (by
     intro b hb
     obtain ⟨k, -, rfl⟩ := List.mem_map.1 hb
     exact ha k)
@@ -121,7 +157,8 @@ theorem col_left (Y : FBChart C V O dd) {τ : Type} (n : ℕ) (a : ℕ → Fin d
   have c1 : ∀ k, MvPowerSeries.constantCoeff (VP.hAt Y (a k) c) = 0 := fun k => VP.cc_hAt Y (ha k).1 hc.1
   have c2 : MvPowerSeries.constantCoeff (VP.hAt Y s c) = 0 := VP.cc_hAt Y hs.1 hc.1
   have cS : MvPowerSeries.constantCoeff (∑ k ∈ Finset.range n, VP.hAt Y (a k) c) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun k _ => c1 k
   have c2' : MvPowerSeries.constantCoeff (-VP.hAt Y s c) = 0 := by rw [map_neg, c2, neg_zero]
   have hU' : mvExp (∑ k ∈ Finset.range n, VP.hAt Y (a k) c) = mvExp (VP.hAt Y s c) * U := by
@@ -140,7 +177,38 @@ theorem col_right (Y : FBChart C V O dd) {τ : Type} (n : ℕ) (a : ℕ → Fin 
     (hsum : s = VP.sumL Y ((List.range n).map a)) :
     IntS V (mvExp (∑ k ∈ Finset.range n, VP.hAt Y c (a k) - VP.hAt Y c s)) ∧
       MvPowerSeries.constantCoeff (∑ k ∈ Finset.range n, VP.hAt Y c (a k) - VP.hAt Y c s) = 0 := by
-  obtain ⟨U, hU, e⟩ := VP.biadd_right Y hc ((List.range n).map a) (by
+  open VP in
+  have biadd :
+    ∀ l : List (Fin dd → MvPowerSeries τ C), (∀ a ∈ l, GoodPt V a) →
+      ∃ U : MvPowerSeries τ C, IsIU V U ∧ mvExp (hAt Y c (sumL Y l)) * U = (l.map fun a => mvExp (hAt Y c a)).prod := by
+    intro l
+    induction l with
+    | nil =>
+      intro _
+      exact ⟨1, IsIU.one, by
+      show mvExp (hAt Y c (fun _ => 0)) * 1 = 1
+      rw [hAt_zero_right Y hc.1, rtj_mvExp_zero, one_mul]⟩
+    | cons a l ih =>
+      intro h
+      have ha := h a List.mem_cons_self
+      have hl := good_sumL Y l fun b hb => h b (List.mem_cons_of_mem _ hb)
+      obtain ⟨U, hU, e⟩ := ih fun b hb => h b (List.mem_cons_of_mem _ hb)
+      have hp := second_partial_law_at_points Y hc.1 ha.1 hl.1
+      have hpi : IntS V (MvPowerSeries.subst (P3 c a (sumL Y l)) Y.B.ph2) :=
+        IntS.subst (constantCoeff_triple_substitution hc.1 ha.1 hl.1) (integral_triple_substitution hc.2 ha.2 hl.2) Y.intPh2
+      refine ⟨MvPowerSeries.subst (P3 c a (sumL Y l)) Y.B.ph2 * U, (isIU_of_exp hpi hp).mul hU, ?_⟩
+      have c1 := cc_hAt Y hc.1 ha.1
+      have c2 := cc_hAt Y hc.1 hl.1
+      have c3 := cc_hAt Y hc.1 (cc_addAt Y ha.1 hl.1)
+      have e2 : mvExp (hAt Y c (addAt Y a (sumL Y l))) * MvPowerSeries.subst (P3 c a (sumL Y l)) Y.B.ph2 =
+          mvExp (hAt Y c a) * mvExp (hAt Y c (sumL Y l)) := by
+        rw [hp, ← exp_add c3 (by rw [map_sub, map_add (f := _), c1, c2, c3]; simp), ← exp_add c1 c2]
+        congr 1
+        ring
+      show mvExp (hAt Y c (addAt Y a (sumL Y l))) * _ = _
+      rw [List.map_cons, List.prod_cons, ← e, ← mul_assoc, e2, mul_assoc]
+
+  obtain ⟨U, hU, e⟩ := biadd ((List.range n).map a) (by
     intro b hb
     obtain ⟨k, -, rfl⟩ := List.mem_map.1 hb
     exact ha k)
@@ -148,7 +216,8 @@ theorem col_right (Y : FBChart C V O dd) {τ : Type} (n : ℕ) (a : ℕ → Fin 
   have c1 : ∀ k, MvPowerSeries.constantCoeff (VP.hAt Y c (a k)) = 0 := fun k => VP.cc_hAt Y hc.1 (ha k).1
   have c2 : MvPowerSeries.constantCoeff (VP.hAt Y c s) = 0 := VP.cc_hAt Y hc.1 hs.1
   have cS : MvPowerSeries.constantCoeff (∑ k ∈ Finset.range n, VP.hAt Y c (a k)) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun k _ => c1 k
   have c2' : MvPowerSeries.constantCoeff (-VP.hAt Y c s) = 0 := by rw [map_neg, c2, neg_zero]
   have hU' : mvExp (∑ k ∈ Finset.range n, VP.hAt Y c (a k)) = mvExp (VP.hAt Y c s) * U := by

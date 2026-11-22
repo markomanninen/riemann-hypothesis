@@ -1,6 +1,10 @@
-import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDecay
-import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDil
-import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDer
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDecay
+public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDil
+public import Formalism.UnipotentAdelicQuotients.EllipticRegularity.KernDer
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 

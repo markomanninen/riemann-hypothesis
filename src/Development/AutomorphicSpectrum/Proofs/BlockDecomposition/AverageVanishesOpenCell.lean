@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantCompactSupportUnipotent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicDoubleCosetDecompositionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCellStructureData
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProjectionToTwistedEigenfunctionSupport
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfEigOfMemTwKer
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantCompactSupportUnipotent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicDoubleCosetDecompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicCellStructureData
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProjectionToTwistedEigenfunctionSupport
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfEigOfMemTwKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,16 +20,16 @@ namespace GlobalTheory.CompanionTheory.BZPhiPG.LocO
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def vEl (i t : ℕ) (v : Fin ((i + 1) + t + 1) → k) : Mir k ((i + 1) + t + 1) :=
   unipIn k ((i + 1) + t + 1) (Multiplicative.ofAdd v)
 
 def ap (i t : ℕ) (c : Fin (i + 1) → k) (d : Fin (t + 1) → k) : Fin ((i + 1) + t + 1) → k :=
   Fin.append (m := i + 1) (n := t + 1) c d
 
-variable (k) in
 
+variable (k) in
 def cEl (i t : ℕ) (c : Fin (i + 1) → k) : Mir k ((i + 1) + t + 1) := vEl k i t (ap i t c 0)
 
 theorem vEl_add (i t : ℕ) (v w : Fin ((i + 1) + t + 1) → k) : vEl k i t (v + w) = vEl k i t v * vEl k i t w :=
@@ -195,7 +199,7 @@ theorem sigX_cEl {i t : ℕ} (τ : MRep k (i + 1)) (σ : GRep k (t + 1)) (c : Fi
   rw [pgProj_cEl]
   induction w using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul a b =>
     refine (extTensor_tmul _ _ _ a b).trans ?_
     have h1 : (σ.tw (-((i + 1 + 1 : ℕ) : ℝ) / 2)).ρ 1 b = b := by rw [map_one]; rfl
@@ -311,7 +315,7 @@ theorem mem_twKer_of_qO {i t : ℕ} (ψ : AddChar k Circle) (τ : MRep k (i + 1)
     induction x using TensorProduct.induction_on with
     | zero => simp
     | add x y hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | tmul w b =>
       rw [LinearMap.rTensor_tmul]
@@ -334,6 +338,7 @@ theorem continuous_ap (i t : ℕ) :
   · simp only [ap, Fin.append_right]
     fun_prop
 
+set_option synthInstance.maxHeartbeats 100000 in
 def psiHom (i t : ℕ) (y : Mir k ((i + 1) + t + 1)) :
     Multiplicative (Fin (i + 1) → k) × Multiplicative (Fin (t + 1) → k) →* Mir k ((i + 1) + t + 1) where
   toFun p := y⁻¹ * vEl k i t (ap i t p.1.toAdd p.2.toAdd) * y

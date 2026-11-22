@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.ActFormContract
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.PathProductHighestWeight
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IsWeightedHomogeneousZeroStripPathWord
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.ActFormContract
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.PathProductHighestWeight
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.IsWeightedHomogeneousZeroStripPathWord
+
+@[expose] public section
 
 noncomputable section
 
@@ -243,12 +247,14 @@ theorem factEV_of : IndexWeightsDominance → PsiWeight → FactEV := by
   rw [act_psi hF g hI]
   constructor
   · intro ν hne
-    rw [map_sum] at hne
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hne
     obtain ⟨p, _, hp'⟩ := Finset.exists_ne_zero_of_sum_ne_zero hne
     obtain ⟨h1, h2⟩ := key ν p hp'
     rw [← h2]
     exact (hT n (μ N) _ hanti h1).1
-  · rw [map_sum, Finset.sum_eq_single (fun c _ => canIdx (μ N) c)]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single (fun c _ => canIdx (μ N) c)]
     · have hcan : extF F (fun c _ => canIdx (μ N) c) = canIdx (μ N) := by
         funext c
         unfold extF
@@ -270,7 +276,7 @@ theorem factEV_of : IndexWeightsDominance → PsiWeight → FactEV := by
       funext c hc
       have h4 := congrFun h3 c
       unfold extF at h4
-      rw [dif_pos hc] at h4
+      rw [dite_eq_left hc] at h4
       exact h4
     · intro h
       exact absurd (Finset.mem_pi.2 fun _ _ => Finset.mem_univ _) h
@@ -405,7 +411,8 @@ theorem lemmaA2indep_of : FactEV → FactBrk → LemmaA2indep := by
   obtain ⟨μ₀, hμ₀⟩ : ∃ μ₀, x₀.1.1 N = μ₀ := ⟨_, rfl⟩
   have hanti : Antitone μ₀ := hμ₀ ▸ x₀.2.1.2.1 N le_rfl
   have h1 := congrArg (evC k n isVec μ₀) hsum
-  rw [map_sum, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h1
   simp_rw [map_smul] at h1
   have h2 : ∑ x ∈ s.filter (fun x => x.1.1 N = μ₀), a x • fam k x = 0 := by
     have h3 := Finset.sum_filter_of_ne (s := s)

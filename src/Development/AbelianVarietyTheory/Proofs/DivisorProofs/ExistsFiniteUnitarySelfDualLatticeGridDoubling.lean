@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoreChainAdjointLatticeExchange
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PolarisationTwistLatticeSelfDualSameStabilisers
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OrthogonalSumSelfDualExists
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeGridRowLocalEqCompletedHomLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoreChainAdjointLatticeExchange
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PolarisationTwistLatticeSelfDualSameStabilisers
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OrthogonalSumSelfDualExists
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIdeleGenerator
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeDvdAbsNormHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DepthLatticeGridRowLocalEqCompletedHomLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta Formalism.L2.DIV IsDedekindDomain NumberField MeasureTheory Matrix
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest GlobalTheory.SqTop GlobalTheory.SqTower GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdFrames GlobalTheory.ChainFr GlobalTheory.SquareDict GlobalTheory.SquareComm GlobalTheory.BigNZ GlobalTheory.FlipMatch GlobalTheory.AdelicU
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
@@ -38,7 +43,7 @@ theorem Clears.mul {a b : EAf D} {I J : FI D} (h : Clears a I) (h' : Clears b J)
   refine FractionalIdeal.mul_induction_on (C := fun x => eToEAf D x * (a * b) ∈ GlobalTheory.StdFrames.OA D) hx
     (fun c hc d hd => ?_) (fun c d hc hd => ?_)
   · rw [map_mul, mul_mul_mul_comm]; exact mul_mem (h c hc) (h' d hd)
-  · rw [map_add, add_mul]; exact add_mem hc hd
+  · rw [map_add (f := _), add_mul]; exact add_mem hc hd
 
 theorem Clears.conj {a : EAf D} {I J : FI D} (h : Clears a I) (h' : StarLE J I) : Clears (sg D a) J := by
   intro c hc
@@ -85,10 +90,10 @@ theorem exists_gen (B : Ideal (𝓞 D.host.E)) (hB : B ≠ ⊥) : ∃ a a' : EAf
     rw [← map_mul, mul_inv_cancel₀ hβE, map_one]
   have c1 : ∀ (x : D.host.E) (Q : Pl D.host.E), B ≤ Q.asIdeal →
       cpt Q (f * eToEAf D x + (1 - f)) = algebraMap _ _ x := fun x Q hQ => by
-    rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, h1 Q hQ, cpt_rat]; simp
+    rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, h1 Q hQ, cpt_rat]; simp
   have c0 : ∀ (x : D.host.E) (Q : Pl D.host.E), ¬ B ≤ Q.asIdeal →
       cpt Q (f * eToEAf D x + (1 - f)) = 1 := fun x Q hQ => by
-    rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, h0 Q hQ]; simp
+    rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, h0 Q hQ]; simp
   refine ⟨f * eToEAf D β + (1 - f), f * eToEAf D (β : D.host.E)⁻¹ + (1 - f), ?_, fun c hc => ?_, fun c hc => ?_,
     fun Q hQ => c0 _ Q fun h => hQ (Ideal.dvd_iff_le.2 h)⟩
   · exact mix_inv hff hinv
@@ -150,9 +155,9 @@ theorem exists_twist (D : D7) : ∃ U : AE D, U * cA D U = 1 ∧ infPart D U = 1
   obtain ⟨z, hz, hz'⟩ := (comp_toAd D).surj (toAd D (a' * sg D a - 1))
   have e1 : toEAf D (1 + z) = a' * sg D a := by
     have : toEAf D z = a' * sg D a - 1 := GlobalTheory.AdeleBaseChange.map_injective (toAd_spec D) hz'
-    rw [RingHom.map_add, RingHom.map_one, this]; ring
+    rw [RingHom.map_add (f := _), RingHom.map_one, this]; ring
   have e2 : toEAf D (cA D (1 + z)) = sg D a' * a := by rw [GlobalTheory.StdFrames.toEAf_cA, e1, RingHom.map_mul, sg_sg]
-  have e3 : infPart D (1 + z) = 1 := by rw [RingHom.map_add, RingHom.map_one, hz, add_zero]
+  have e3 : infPart D (1 + z) = 1 := by rw [RingHom.map_add (f := _), RingHom.map_one, hz, add_zero]
   have ha' : sg D a * sg D a' = 1 := by rw [← RingHom.map_mul, ha, RingHom.map_one]
   refine ⟨1 + z, (comp_toAd D).ext' ?_ fun Q => ?_, e3, ?_, ?_, fun Q hQ => ?_⟩
   · rw [RingHom.map_mul, (parts_cA _).1, e3, RingHom.map_one, RingHom.map_one, one_mul]
@@ -178,8 +183,8 @@ theorem idemSum_mul {U ε : AE D} {P : Finset (Pl D.host.E)} (hε : IsIdemSum ε
     · rw [h, hU w hw, mul_one]
     · rw [(cpt_of_isIdemAt (hes w hw)).2 Q h, zero_mul]
 
-open GlobalTheory.AdelicLatMove in
 
+open GlobalTheory.AdelicLatMove in
 theorem smul_mem_latO {S T : HSp D} {LS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
     {LT LT' : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)} {U : AE D} {I J : FI D} (hIJ : I * J = 1)
     (hU : Clears (toEAf D U) J) (hL : ∀ d ∈ I, ∀ t ∈ LT, d • t ∈ LT') {y : WO S T}
@@ -213,7 +218,7 @@ theorem smul_mem_latO {S T : HSp D} {LS : Submodule (𝓞 D.host.E) (Fin S.rank 
         have h4 : (eToEAf D c * toEAf D U) • (fun i => (d • t) i ⊗ₜ[D.host.F] α : Fin T.rank → EAf D) ∈
             Formalism.L2.Herm.hatL (F := D.host.F) LT' := h2
         rwa [h3, smul_smul, mul_comm (eToEAf D c * toEAf D U), ← mul_assoc, ← RingHom.map_mul] at h4
-      · rw [RingHom.map_add, add_mul, add_smul]; exact add_mem hx hy
+      · rw [RingHom.map_add (f := _), add_mul, add_smul]; exact add_mem hx hy
     rwa [RingHom.map_one, one_mul] at key
   | zero => rw [smul_zero]; exact zero_mem _
   | add y z _ _ hy hz => rw [smul_add]; exact add_mem hy hz
@@ -238,8 +243,8 @@ theorem rows_ext {A B : HSp D} {n : ℕ} {x y : Mx D (A.rank + B.rank) n} (h : t
   · exact congrFun h' i
 
 theorem mem_latO_sum {S A B : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LA : Submodule (𝓞 D.host.E) (Fin A.rank → D.host.E)}
-    {LB : Submodule (𝓞 D.host.E) (Fin B.rank → D.host.E)} {P : HeightOneSpectrum (𝓞 D.host.F) → Prop} {x : WO S (hsum A B)} :
-    x ∈ latO S (hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P ↔
+    {LB : Submodule (𝓞 D.host.E) (Fin B.rank → D.host.E)} {P : HeightOneSpectrum (𝓞 D.host.F) → Prop} {x : WO S (GlobalTheory.Doubling.hsum A B)} :
+    x ∈ latO S (GlobalTheory.Doubling.hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P ↔
       topR (A := A) (B := B) x ∈ latO S A LS LA P ∧ botR (A := A) (B := B) x ∈ latO S B LS LB P := by
   constructor
   · intro hx
@@ -252,8 +257,8 @@ theorem mem_latO_sum {S A B : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LA : 
     | add y z _ _ hy hz => exact ⟨add_mem hy.1 hz.1, add_mem hy.2 hz.2⟩
     | neg y _ hy => exact ⟨neg_mem hy.1, neg_mem hy.2⟩
   · rintro ⟨h1, h2⟩
-    have k1 : ∀ y ∈ latO S A LS LA P, (stack (B := B) y 0 : WO S (hsum A B)) ∈
-        latO S (hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P := fun y hy => by
+    have k1 : ∀ y ∈ latO S A LS LA P, (stack (B := B) y 0 : WO S (GlobalTheory.Doubling.hsum A B)) ∈
+        latO S (GlobalTheory.Doubling.hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P := fun y hy => by
       induction hy using AddSubgroup.closure_induction with
       | mem w hw =>
         obtain ⟨α, hα, hP, a, ha, s, hs, t, ht, rfl⟩ := hw
@@ -278,8 +283,8 @@ theorem mem_latO_sum {S A B : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LA : 
           ((topR_stack _ _).trans (congrArg (- ·) (topR_stack _ _)).symm)
           ((botR_stack _ _).trans ((congrArg (- ·) (botR_stack _ _)).trans neg_zero).symm)]
         exact neg_mem hy
-    have k2 : ∀ y ∈ latO S B LS LB P, (stack (A := A) 0 y : WO S (hsum A B)) ∈
-        latO S (hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P := fun y hy => by
+    have k2 : ∀ y ∈ latO S B LS LB P, (stack (A := A) 0 y : WO S (GlobalTheory.Doubling.hsum A B)) ∈
+        latO S (GlobalTheory.Doubling.hsum A B) LS (GlobalTheory.Doubling.sumLat finSumFinEquiv LA LB) P := fun y hy => by
       induction hy using AddSubgroup.closure_induction with
       | mem w hw =>
         obtain ⟨α, hα, hP, a, ha, s, hs, t, ht, rfl⟩ := hw
@@ -322,10 +327,10 @@ def scal (V : HSp D) (U : AE D) (hU : U * cA D U = 1) : GA D V :=
       · rw [if_neg h1, if_neg (Ne.symm h1)]; simp
     rw [hm, Matrix.smul_mul, Matrix.one_mul, Matrix.mul_smul, Matrix.mul_one, smul_smul, hU, one_smul]⟩
 
-theorem act_blk {S A B : HSp D} {U : AE D} (hU : U * cA D U = 1) (x : WO S (hsum A B)) :
-    actO S (hsum A B) 1 (blk A B (1, scal B U hU)) x =
+theorem act_blk {S A B : HSp D} {U : AE D} (hU : U * cA D U = 1) (x : WO S (GlobalTheory.Doubling.hsum A B)) :
+    actO S (GlobalTheory.Doubling.hsum A B) 1 (GlobalTheory.SquareComm.blk A B (1, scal B U hU)) x =
       stack (topR (A := A) (B := B) x) (U • botR (A := A) (B := B) x) := by
-  have e : actO S (hsum A B) 1 (blk A B (1, scal B U hU)) x =
+  have e : actO S (GlobalTheory.Doubling.hsum A B) 1 (GlobalTheory.SquareComm.blk A B (1, scal B U hU)) x =
       blkMat finSumFinEquiv (1 : Matrix (Fin A.rank) (Fin A.rank) (AE D))
         (U • (1 : Matrix (Fin B.rank) (Fin B.rank) (AE D))) * x := by
     unfold actO
@@ -343,7 +348,7 @@ theorem act_blk {S A B : HSp D} {U : AE D} (hU : U * cA D U = 1) (x : WO S (hsum
   · rw [pairVec_inr]; exact (congrFun (pairVec_inr finSumFinEquiv (topR (A := A) (B := B) x) (U • botR (A := A) (B := B) x) i) j).symm
 
 theorem blk_mem_GfC {A B : HSp D} {U : AE D} (hU : U * cA D U = 1) (h : infPart D U = 1) :
-    blk A B (1, scal B U hU) ∈ GfC (hsum A B) := by
+    GlobalTheory.SquareComm.blk A B (1, scal B U hU) ∈ GfC (GlobalTheory.Doubling.hsum A B) := by
   refine Units.ext ?_
   change (blkMat finSumFinEquiv (1 : Matrix (Fin A.rank) (Fin A.rank) (AE D))
     (U • (1 : Matrix (Fin B.rank) (Fin B.rank) (AE D)))).map (infPart D) = 1
@@ -392,8 +397,8 @@ theorem latO_neg (S T : HSp D) (LS : Set (Fin S.rank → D.host.E)) (LT : Set (F
 
 end GlobalTheory.TopFlip.TwistElt
 
-open GlobalTheory.TopFlip.TwistElt GlobalTheory.LatExchPf GlobalTheory.RouteSeesaw in
 
+open GlobalTheory.TopFlip.TwistElt GlobalTheory.LatExchPf GlobalTheory.RouteSeesaw in
 theorem GlobalTheory.TopFlip.exists_twistElt : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.ChiGrid.Consts} {G : GridData L sc} {μ₀ : T}, L.Is μ₀ → ∀ i j : Fin D.R.m, ∃ h ∈ GfC (spX G i j), ∃ Λ : Submodule (𝓞 D.host.E) (Fin (spX G i j).rank → D.host.E),
       IsSelfDualC (spX G i j) Λ ∧
       (∀ t, SquareStanding G t → ∀ ε, IsIdemSum ε (locPl G t) → ∀ (S : HSp D) (x : WO S (spX G i j)),
@@ -410,7 +415,7 @@ theorem GlobalTheory.TopFlip.exists_twistElt : ∀ {D : D7} {T : Type} {L : LevC
   have hb : (D.host.AAbar * D.host.AA⁻¹) ^ (0 + 1) = D.host.AAbar * D.host.AA⁻¹ := pow_one _
   have hbi : ((D.host.AAbar * D.host.AA⁻¹) ^ (0 + 1))⁻¹ = D.host.AA * D.host.AAbar⁻¹ := by
     rw [hb, mul_inv, inv_inv, mul_comm]
-  refine ⟨blk _ _ (1, scal _ U hU), blk_mem_GfC hU hinf, GlobalTheory.Doubling.sumLat finSumFinEquiv (G.Λ (.grid i (j + 1)))
+  refine ⟨GlobalTheory.SquareComm.blk _ _ (1, scal _ U hU), blk_mem_GfC hU hinf, GlobalTheory.Doubling.sumLat finSumFinEquiv (G.Λ (.grid i (j + 1)))
     (GlobalTheory.CoreOnto.scaleLat ((D.host.AAbar * D.host.AA⁻¹) ^ (0 + 1)) (G.Λ (.grid (i + 1) j))),
     GlobalTheory.Twist.OrthSum.selfDual_hsum hV (GlobalTheory.ScaleSelfDual.scaleLat_twist_selfDual D _ _ hV₁ _).1,
     fun t ht ε hε S x hx => ?_, fun S ΛS _ u => ?_, ?_, ?_⟩

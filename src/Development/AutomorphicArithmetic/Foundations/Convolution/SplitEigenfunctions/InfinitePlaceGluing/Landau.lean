@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Mathlib.NumberTheory.LSeries.Positivity
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Mathlib.NumberTheory.LSeries.Positivity
+
+@[expose] public section
 
 open UpperTheory.ConvolutionTheory.RankTwoDescent
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -15,7 +19,7 @@ theorem algebraMap_norm_mem_span {R S : Type} [CommRing R] [CommRing S] [Algebra
   have h3 : algebraMap R S (p.coeff 0) = -(g * aeval g p.divX) := by
     have h4 := X_mul_divX_add p
     rw [← h4] at h1
-    simp only [map_add, map_mul, aeval_X, aeval_C] at h1
+    simp only [map_add (f := _), map_mul, aeval_X, aeval_C] at h1
     linear_combination h1
   rw [Algebra.norm_apply, LinearMap.det_eq_sign_charpoly_coeff, map_mul, ← hp, h3]
   exact Ideal.mul_mem_left _ _ ((Ideal.span {g}).neg_mem

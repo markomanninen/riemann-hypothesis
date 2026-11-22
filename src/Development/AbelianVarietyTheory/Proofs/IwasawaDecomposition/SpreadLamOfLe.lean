@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WindowLower
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHFrameDtPackPre
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DsPPosAndLower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WindowLower
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHFrameDtPackPre
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DsPPosAndLower
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 
@@ -19,7 +23,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
   have hNm := N_mono (R := R) hj
   have h2 := R.two_le_m
   unfold DomWeight.spread
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   push_cast
   rw [lamOf_eq p j hj, lamOf_eq p j hj, wtQ_eq_wtN, wtQ_eq_wtN]
   have a1 : wtN p (R.N R.m - 1) ≤ wtN p (R.N j - 1) := wtN_anti p (by omega) (by omega)
@@ -35,7 +39,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
     have c1 : ¬ R.N R.m - 1 < R.k := by unfold Ranks.N; omega
     have c2 : blkN R (R.N R.m - 1) < R.m := by omega
     unfold wtN
-    rw [dif_neg c1, dif_pos c2]
+    rw [dite_eq_right c1, dite_eq_left c2]
     have e : (⟨blkN R (R.N R.m - 1), c2⟩ : Fin R.m) = ⟨R.m - 1, hm⟩ := Fin.ext hb
     rw [e]
     unfold wG
@@ -49,7 +53,7 @@ theorem spread_lamOf_le {R : Ranks} (p : HCParam R) (j : ℕ) (hj : j ≤ R.m) (
     linarith
   have a3 : wtN p 0 ≤ p.u ⟨0, hk⟩ := by
     unfold wtN
-    rw [dif_pos hk]
+    rw [dite_eq_left hk]
     unfold hcToWeightQ rhoVec
     have : (1 : ℚ) ≤ R.k := by exact_mod_cast hk
     simp only [Nat.cast_zero]
@@ -72,8 +76,8 @@ theorem hcW_injective {s : Scale} {C : FC} {cD ch : ℝ} {P : PreCh} {q1 : ℕ} 
   change _ - (if c u' l then _ else _) = _ - (if c u l then _ else _) at e1
   cases h1 : c u l <;> cases h2 : c u' l <;> simp only [h1, h2, if_true, Bool.false_eq_true, if_false] at e1 ⊢ <;> (exfalso; linarith)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ev_preX_frame : StandardLattice.SiegelMassRatioCM → Ev fun K => ∀ B : Pre, K.Over B → Nonempty (PreX B) ∧ Nonempty (Fr B) := by
   intro h2b
   refine ⟨1, one_pos, fun eps C8 h0 _ h1 _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun C hC _ _ => ⟨0, fun cD hcD => ?_⟩⟩⟩

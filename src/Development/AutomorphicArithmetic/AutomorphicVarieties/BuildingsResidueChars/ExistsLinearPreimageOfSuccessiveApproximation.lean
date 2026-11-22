@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.exists_linear_preimage_of_successive_approximation :
     ∀ (A M ι : Type) [CommRing A] [AddCommGroup M] [Module A M] [Fintype ι] (I : Ideal A) [IsAdicComplete I A] (V : ℕ → Submodule A M) (σ : (ι → A) →ₗ[A] M), Antitone V → (∀ k, (I ^ k • ⊤ : Submodule A M) ≤ V k) → (∀ f, (∀ k, f ∈ V k) → f = 0) → (∀ j, ∀ f ∈ V j, ∃ a : ι → A, (∀ i, a i ∈ I ^ j) ∧ f - σ a ∈ V (j + 1)) → ∀ j, ∀ f ∈ V j, ∃ a : ι → A, (∀ i, a i ∈ I ^ j) ∧ σ a = f := by
@@ -26,7 +30,7 @@ theorem UpperTheory.exists_linear_preimage_of_successive_approximation :
     | zero => simp [r]
     | succ N ih =>
       show r N - σ (b N) = f - σ (∑ n ∈ Finset.range (N + 1), b n)
-      rw [ih, Finset.sum_range_succ, map_add]
+      rw [ih, Finset.sum_range_succ, map_add (f := _)]
       abel
   have hlim : ∀ i, ∃ L : A, ∀ n,
       (∑ k ∈ Finset.range n, b k i) ≡ L [SMOD (I ^ n • ⊤ : Submodule A A)] := by
@@ -57,7 +61,8 @@ theorem UpperTheory.exists_linear_preimage_of_successive_approximation :
         simpa [Finset.sum_apply, smul_eq_mul, Ideal.mul_top] using this
       have hσ : σ ((∑ n ∈ Finset.range N, b n) - L) ∈ (I ^ N • ⊤ : Submodule A M) := by
         set v := (∑ n ∈ Finset.range N, b n) - L
-        rw [pi_eq_sum_univ v, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [pi_eq_sum_univ v, map_sum]
         refine Submodule.sum_mem _ (fun i _ => ?_)
         rw [map_smul]
         exact Submodule.smul_mem_smul (hv i) Submodule.mem_top

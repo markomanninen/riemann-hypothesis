@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrmOfPosDef
-import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
-import Formalism.LocalRingCardinality.Lemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrmOfPosDef
+public import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
+public import Formalism.LocalRingCardinality.Lemmas
+
+@[expose] public section
+
 open NumberField Formalism.L2.DIV Formalism.L2.Rows GlobalTheory.AmbCrd
 open scoped Matrix ComplexOrder
 
@@ -17,7 +22,7 @@ theorem hAt_single_single {n : ℕ} (H : Matrix (Fin n) (Fin n) K) (v : Infinite
     hAt H v (Pi.single i 1) (Pi.single j 1) = v.embedding (H i j) := by
   simp [hAt, Pi.single_apply]
 
-theorem posDef_map_of_posAt [IsTotallyComplex K] {n : ℕ} (H : Matrix (Fin n) (Fin n) K) (v : InfinitePlace K)
+theorem posDef_map_of_posAt [_root_.NumberField.IsTotallyComplex K] {n : ℕ} (H : Matrix (Fin n) (Fin n) K) (v : InfinitePlace K)
     (h : PosAt H v) : (H.map v.embedding).PosDef := by
   have herm : (H.map v.embedding).IsHermitian := by
     ext i j

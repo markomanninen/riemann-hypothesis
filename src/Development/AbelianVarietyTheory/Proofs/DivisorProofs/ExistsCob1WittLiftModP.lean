@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawLinearCoeffAdditiveStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleLawAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawLinearCoeffAdditiveStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.CoeffSingleLawAdd
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 set_option autoImplicit false
@@ -55,7 +60,7 @@ theorem constantCoeff_subst0 {σ τ : Type} [Finite σ] {a : σ → MvPowerSerie
   have hs : HasSubst a := hasSubst_of_constantCoeff_zero ha
   have h1 : f = (f - C (constantCoeff f)) + C (constantCoeff f) := by ring
   conv_lhs => rw [h1]
-  rw [subst_add hs, map_add, constantCoeff_subst_eq_zero hs ha (by simp), subst_C, zero_add]
+  rw [subst_add hs, map_add (f := _), constantCoeff_subst_eq_zero hs ha (by simp), subst_C, zero_add]
   simp
 
 theorem constantCoeff_op {τ : Type} {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
@@ -75,7 +80,7 @@ theorem coeff_single_op {τ : Type} {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin
   classical
   unfold op
   rw [coeff_single_linear_substitution_pair _ _ _ hu hv]
-  simp only [hμ, addLaw, map_add, GlobalTheory.FormalCalc.coeff_single_X]
+  simp only [hμ, addLaw, map_add (f := _), GlobalTheory.FormalCalc.coeff_single_X]
   simp [add_mul, Finset.sum_add_distrib]
 
 theorem coeff_single_coc {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
@@ -91,7 +96,7 @@ theorem coeff_single_coc {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
     intro j
     have h := congrArg (coeff (Finsupp.single (Sum.inl j : Fin d ⊕ (Fin d ⊕ Fin d)) 1)) hc.1
     unfold cob2 at h
-    rw [map_sub, map_add, map_sub, map_zero,
+    rw [map_sub, map_add (f := _), map_sub, map_zero,
       coeff_single_linear_substitution_pair _ _ _ hx2 hx3,
       coeff_single_linear_substitution_pair _ _ _ (constantCoeff_op hμ0 _ _ hx1 hx2) hx3,
       coeff_single_linear_substitution_pair _ _ _ hx1 (constantCoeff_op hμ0 _ _ hx2 hx3),
@@ -140,7 +145,8 @@ theorem start : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [P
   have hcoeff : ∀ α, coeff α f = (if α = 0 then -T (constantCoeff c) else 0) +
       ∑ i, if α = Finsupp.single i 1 then T (w i) else 0 := by
     intro α
-    rw [hf, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf, map_add (f := _), map_sum]
     have e : ∀ (r : WittVector p k) (g : MvPowerSeries (Fin d) (Fr p k)),
         coeff α (r • g) = algebraMap (WittVector p k) (Fr p k) r * coeff α g := fun r g => by
       rw [← algebraMap_smul (Fr p k) r g, coeff_smul]
@@ -154,7 +160,8 @@ theorem start : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [P
     rw [hcoeff α]
     refine ⟨(if α = 0 then -WittVector.teichmuller p (constantCoeff c) else 0) +
       ∑ i, if α = Finsupp.single i 1 then WittVector.teichmuller p (w i) else 0, ?_⟩
-    rw [one_mul, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [one_mul, map_add (f := _), map_sum]
     congr 1
     · split_ifs <;> simp [hT]
     · refine Finset.sum_congr rfl fun i _ => ?_
@@ -182,7 +189,7 @@ theorem start : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [P
       rw [map_sub, map_sub, GlobalTheory.FormalCalc.coeff_single_subst hμ0F,
         GlobalTheory.FormalCalc.coeff_single_subst (fun _ => constantCoeff_X _),
         GlobalTheory.FormalCalc.coeff_single_subst (fun _ => constantCoeff_X _)]
-      simp only [hμF, addLaw, map_add, mul_add, Finset.sum_add_distrib]
+      simp only [hμF, addLaw, map_add (f := _), mul_add, Finset.sum_add_distrib]
       ring
 
 end GlobalTheory.WittStart

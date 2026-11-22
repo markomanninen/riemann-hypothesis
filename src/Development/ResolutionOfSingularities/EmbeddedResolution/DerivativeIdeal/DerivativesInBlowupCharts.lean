@@ -1,7 +1,12 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealEtaleBaseChange
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 namespace EtaleCoordinates
 
@@ -39,7 +44,7 @@ theorem partialDeriv_map_of_mem
     show coord k ι S₁ s * φ (partialDeriv k ι S i (a * b))
         = a • (coord k ι S₁ s * φ (partialDeriv k ι S i b))
           + b • (coord k ι S₁ s * φ (partialDeriv k ι S i a))
-    simp only [hsmul, (partialDeriv k ι S i).leibniz, smul_eq_mul, map_add, map_mul]
+    simp only [hsmul, (partialDeriv k ι S i).leibniz, smul_eq_mul, map_add (f := _), map_mul]
     ring
   have hD : Derivation.mk' L₁ h₁ = Derivation.mk' L₂ h₂ := by
     refine derivation_ext_of_coord k ι S S₁ _ _ ?_
@@ -92,7 +97,7 @@ theorem partialDeriv_map_of_notMem
     show φ (partialDeriv k ι S i (a * b))
         = a • φ (partialDeriv k ι S i b) + b • φ (partialDeriv k ι S i a)
     rw [Derivation.leibniz]
-    simp only [smul_eq_mul, map_add, map_mul, hsmul]
+    simp only [smul_eq_mul, map_add (f := _), map_mul, hsmul]
   have key :
       Derivation.mk' ((partialDeriv k ι S₁ i).toLinearMap.comp (φ.toLinearMap : S →ₗ[k] S₁)) h₁
         = Derivation.mk' ((φ.toLinearMap : S →ₗ[k] S₁).comp
@@ -132,7 +137,7 @@ theorem coord_mul_partialDeriv_map_eq_map_sum
     intro x y
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_add, mul_add]
+    rw [map_add (f := _), mul_add]
   have hsum_smul : ∀ (c : k) (x : S),
       (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i (c • x))
         = c • (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i x) := by
@@ -157,7 +162,7 @@ theorem coord_mul_partialDeriv_map_eq_map_sum
         show coord k ι S₁ s * partialDeriv k ι S₁ s (φ (x + y))
           = coord k ι S₁ s * partialDeriv k ι S₁ s (φ x)
             + coord k ι S₁ s * partialDeriv k ι S₁ s (φ y)
-        rw [map_add, map_add, mul_add]
+        rw [map_add (f := _), map_add (f := _), mul_add]
       map_smul' := by
         intro c x
         show coord k ι S₁ s * partialDeriv k ι S₁ s (φ (c • x))
@@ -170,7 +175,7 @@ theorem coord_mul_partialDeriv_map_eq_map_sum
         show φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i (x + y))
           = φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i x)
             + φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i y)
-        rw [hsum_add, map_add]
+        rw [hsum_add, map_add (f := _)]
       map_smul' := by
         intro c x
         show φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i (c • x))
@@ -189,7 +194,7 @@ theorem coord_mul_partialDeriv_map_eq_map_sum
     show φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i (a * b))
       = a • φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i b)
         + b • φ (∑ i ∈ T, coord k ι S i * partialDeriv k ι S i a)
-    rw [hsum_leib, map_add, map_mul, map_mul, hsmul a, hsmul b]
+    rw [hsum_leib, map_add (f := _), map_mul, map_mul, hsmul a, hsmul b]
   have hD : Derivation.mk' L₁ hleib1 = Derivation.mk' L₂ hleib2 := by
     refine derivation_ext_of_coord k ι S S₁ _ _ fun j => ?_
     show coord k ι S₁ s * partialDeriv k ι S₁ s (φ (coord k ι S j))
@@ -322,7 +327,8 @@ theorem map_partialDeriv_self_eq_pow_mul
       = coord k ι S₁ s * φ (partialDeriv k ι S s f)
         + coord k ι S₁ s ^ (e + 1)
           * ∑ i ∈ T.erase s, coord k ι S₁ i * partialDeriv k ι S₁ i g := by
-    rw [coord_mul_partialDeriv_map_eq_map_add_sum_erase k ι S S₁ φ T s hin hs hout hsT f, map_add, map_mul, hs, map_sum, hsum2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coord_mul_partialDeriv_map_eq_map_add_sum_erase k ι S S₁ φ T s hin hs hout hsT f, map_add (f := _), map_mul, hs, map_sum, hsum2]
   rw [h2] at h1
   have h0 : (φ (partialDeriv k ι S s f)
       - coord k ι S₁ s ^ e
@@ -403,7 +409,8 @@ theorem map_derivIdeal_le_span_pow_mul [Fintype ι]
       rw [h1]
       exact finset_sum_smul_derivation_apply Finset.univ (fun i => D (coord k ι S i))
         (fun i => partialDeriv k ι S i) x
-    rw [hDx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hDx, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_mul]
     exact Ideal.mul_mem_left _ _ (hkey x hx i)

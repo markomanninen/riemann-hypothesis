@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.Friedrichs
+
+@[expose] public section
 
 open scoped InnerProductSpace
 
@@ -126,7 +130,7 @@ theorem exists_inverse_of_coercive {H D : Type} [NormedAddCommGroup H] [InnerPro
       re_inner_nonneg := fun x => le_trans (sq_nonneg _) (hpos x)
       add_left := fun x y z => by
         show ⟪B (x + y), ι z⟫_ℂ = ⟪B x, ι z⟫_ℂ + ⟪B y, ι z⟫_ℂ
-        rw [map_add, inner_add_left]
+        rw [map_add (f := _), inner_add_left]
       smul_left := fun x y r => by
         show ⟪B (r • x), ι y⟫_ℂ = (starRingEnd ℂ) r * ⟪B x, ι y⟫_ℂ
         rw [map_smul, inner_smul_left] }

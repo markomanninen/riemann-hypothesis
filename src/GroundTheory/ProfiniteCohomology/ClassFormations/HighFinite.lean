@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.TateCohomology.TateCup
-import GroundTheory.TateCohomology.CupTateShift
-import GroundTheory.TateCohomology.CupTateNatural
-import GroundTheory.TateCohomology.CupFunctorial
-import GroundTheory.TateCohomology.Annihilation
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.TateCup
+public import GroundTheory.TateCohomology.CupTateShift
+public import GroundTheory.TateCohomology.CupTateNatural
+public import GroundTheory.TateCohomology.CupFunctorial
+public import GroundTheory.TateCohomology.Annihilation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -54,8 +59,8 @@ variable {Γ : Type} [Group Γ] [Fintype Γ] (M : Rep ℤ Γ) (u : groupCohomolo
   (h3 : ∀ (S : Subgroup Γ) (y : groupCohomology (res S.subtype M) 2),
     ∃ m : ℤ, y = m • groupCohomology.map S.subtype (𝟙 (res S.subtype M)) 2 u)
 
-omit [Fintype Γ] in
 
+omit [Fintype Γ] in
 theorem tateIsoH_map_apply' {X Y : Rep ℤ Γ} [Fintype Γ] (φ : X ⟶ Y) {p : ℤ} (n : ℕ) [NeZero n]
     (hp : p = n) (x : tateCohomology X p) :
     (tateIsoH Y p n hp).hom.hom (((tateCohomologyFunctor p).map φ).hom x) =

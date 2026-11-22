@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.BockCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.BockCut
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

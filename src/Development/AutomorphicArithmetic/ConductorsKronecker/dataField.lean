@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
-import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Formalism Formalism.HC Formalism.D5 Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.LHost NumberField Ideal
 

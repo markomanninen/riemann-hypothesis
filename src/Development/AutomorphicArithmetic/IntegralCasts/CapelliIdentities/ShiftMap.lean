@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private def UpperTheory.Reformulated.B.ShiftMap.shift {G H : Type} [Group G] [Group H] (p : G →* H) :
     G →* ((H → ℂ) →ₗ[ℂ] (H → ℂ)) where
@@ -74,7 +78,8 @@ theorem UpperTheory.Reformulated.B.ShiftMap.finite_translates_matrix_coefficient
   · intro x hx z
     have h1 : (x.sum fun k c => c • σ k) = 0 := by
       apply e.injective
-      rw [map_zero, ← hx, Finsupp.sum, Finsupp.sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, ← hx, Finsupp.sum, Finsupp.sum, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_smul]
       rfl

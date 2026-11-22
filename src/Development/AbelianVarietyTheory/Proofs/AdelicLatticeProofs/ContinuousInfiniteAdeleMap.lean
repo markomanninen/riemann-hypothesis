@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterOfUnitaryTensorIdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterOfUnitaryTensorIdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem exists_finite : ∃ ι : Af F ⊗[F] E →+* FiniteAdeleRing (𝓞 E) E,
     fun z => ?_, fun y => ⟨fun hy => ?_, fun hy => ?_⟩⟩
   · induction z using TensorProduct.induction_on with
     | zero => rw [RingHom.map_zero, RingHom.map_zero, RingHom.map_zero]; rfl
-    | add x y hx hy => rw [RingHom.map_add, RingHom.map_add, RingHom.map_add, ← hx, ← hy]; rfl
+    | add x y hx hy => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), ← hx, ← hy]; rfl
     | tmul a x =>
       change _ = ι (x ⊗ₜ[F] a.2)
       rw [toAdele_tmul, hι, mul_comm]
@@ -77,7 +81,8 @@ theorem exists_finite : ∃ ι : Af F ⊗[F] E →+* FiniteAdeleRing (𝓞 E) E,
     obtain ⟨r, hr, e⟩ := Formalism.UG.P.levelaf_decomp g hg hz
     have : y = ∑ j, r j ⊗ₜ[F] (g j : E) := by
       apply c.injective
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact e
     rw [this]
     exact sum_mem fun j _ => AddSubgroup.subset_closure ⟨r j, hr j, g j, rfl⟩
@@ -111,7 +116,7 @@ theorem bijective_toAdele {σ : E →ₐ[F] E} (h : IsCMExt F E σ) : Function.B
     induction z using TensorProduct.induction_on with
     | zero => rw [RingHom.map_zero, s.map_zero]; exact j.map_zero.symm
     | add x y hx hy =>
-      rw [RingHom.map_add, s.map_add]
+      rw [RingHom.map_add (f := _), s.map_add]
       exact (congrArg₂ (· + ·) hx hy).trans (j.map_add _ _).symm
     | tmul a x =>
       rw [(hs _).1]
@@ -208,7 +213,7 @@ theorem toAdele_cA [IsCMExtension F E] (z : AE F E) :
     toAdele F E (cA (conj F E : E →ₐ[F] E) z) = adeleConj F E (toAdele F E z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [RingHom.map_zero]
-  | add x y hx hy => simp only [RingHom.map_add, hx, hy]
+  | add x y hx hy => simp only [RingHom.map_add (f := _), hx, hy]
   | tmul a x =>
     change toAdele F E (a ⊗ₜ[F] conj F E x) = _
     rw [toAdele_tmul, toAdele_tmul, RingHom.map_mul, adeleConj_adeleMap, adeleConj_algebraMap]
@@ -256,14 +261,14 @@ theorem eq_or_eq_cP (h : IsCMExt F E σ) {P Q : HeightOneSpectrum (𝓞 E)}
 theorem cA_cA (h : IsCMExt F E σ) (z : AE F E) : cA σ (cA σ z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [RingHom.map_zero]
-  | add x y hx hy => simp only [RingHom.map_add, hx, hy]
+  | add x y hx hy => simp only [RingHom.map_add (f := _), hx, hy]
   | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (sig_sig h x)
 
 theorem finPart_cA_mem {z : AE F E} (hz : finPart F E z ∈ intAE F E) : finPart F E (cA σ z) ∈ intAE F E := by
   have e : ∀ z : AE F E, finPart F E (cA σ z) = sigR (Af F) σ (finPart F E z) := fun z => by
     induction z using TensorProduct.induction_on with
     | zero => simp only [RingHom.map_zero]
-    | add x y hx hy => simp only [RingHom.map_add, hx, hy]
+    | add x y hx hy => simp only [RingHom.map_add (f := _), hx, hy]
     | tmul a x => rfl
   rw [e]
   have : intAE F E ≤ (intAE F E).comap (sigR (Af F) σ).toAddMonoidHom := by
@@ -399,7 +404,7 @@ theorem of_isPrimeIdem {P : HeightOneSpectrum (𝓞 E)} {e f : AE F E} (hp : IsP
     have h5 : P.under (𝓞 F) = v := by
       by_contra hv
       have := hc.2.2 P hv
-      rw [← h3, RingHom.map_add, ev_add, h4, hd.2.1 P rfl, add_zero] at this
+      rw [← h3, RingHom.map_add (f := _), ev_add, h4, hd.2.1 P rfl, add_zero] at this
       exact one_ne_zero this
     rw [h3, h5]
     exact ⟨hd, hc⟩
@@ -433,7 +438,7 @@ theorem exists_isPrimeIdem (P : HeightOneSpectrum (𝓞 E)) : ∃ e f, IsPrimeId
       · subst hQ
         rw [he'.2.2 Q (Ne.symm hP), mul_zero]
       · rw [he.2.2 Q hQ, zero_mul]
-    · rw [RingHom.map_add]
+    · rw [RingHom.map_add (f := _)]
       refine IsIndicator.unique ⟨by rw [fst_add, he.1, he'.1, add_zero], fun Q hQ => ?_, fun Q hQ => ?_⟩ hc
       · rw [ev_add]
         rcases eq_or_eq_cP h hQ with rfl | rfl
@@ -448,8 +453,8 @@ section Chars
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-variable (F E) in
 
+variable (F E) in
 def toIdele : (AE F E)ˣ →* Idele E := Units.map (toAdele F E).toMonoidHom
 
 theorem coe_toIdele (x : (AE F E)ˣ) : (toIdele F E x : AdeleRing (𝓞 E) E) = toAdele F E x := rfl
@@ -465,8 +470,8 @@ def ideleEquiv (h : IsCMExt F E σ) : (AE F E)ˣ ≃ₜ* Idele E :=
 
 theorem ideleEquiv_apply (h : IsCMExt F E σ) (x : (AE F E)ˣ) : ideleEquiv h x = toIdele F E x := rfl
 
-variable (F) in
 
+variable (F) in
 def pull (χ : UnitaryHeckeChar E) : (AE F E)ˣ →* Circle := χ.toHom.comp (toIdele F E)
 
 theorem isHeckeChar_pull (χ : UnitaryHeckeChar E) : IsHeckeChar F E (pull F χ) :=
@@ -518,7 +523,7 @@ theorem mix_eq_localIdele {P : HeightOneSpectrum (𝓞 E)} {a : AdeleRing (𝓞 
 
 theorem toAdele_mix (e y : AE F E) :
     toAdele F E (e * y + (1 - e)) = toAdele F E e * toAdele F E y + (1 - toAdele F E e) := by
-  rw [RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
+  rw [RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
 
 theorem valued_eq_iff (P : HeightOneSpectrum (𝓞 E)) (r : 𝓞 E) :
     Valued.v (algebraMap E (P.adicCompletion E) r) = WithZero.exp (-1 : ℤ) ↔
@@ -616,9 +621,9 @@ theorem chiAt_eq (χ : UnitaryHeckeChar E) (P : HeightOneSpectrum (𝓞 E)) :
   · have hc : IsUnramAt σ (pull F χ) P ∧ ∃ x, IsUnifIdele σ P x :=
       ⟨(isUnramAt_iff h χ P).2 hχ, exists_isUnifIdele h P⟩
     obtain ⟨ϖ, hϖ, -, e⟩ := (isUnifIdele_iff h P _).1 hc.2.choose_spec
-    rw [chiAt, dif_pos hc, χ.valueAt_eq hχ hϖ]
+    rw [chiAt, dite_eq_left hc, χ.valueAt_eq hχ hϖ]
     exact congrArg (fun y => ((χ.toHom y : Circle) : ℂ)) e
-  · rw [chiAt, dif_neg fun hc => hχ ((isUnramAt_iff h χ P).1 hc.1), χ.valueAt_of_ramified hχ]
+  · rw [chiAt, dite_eq_right fun hc => hχ ((isUnramAt_iff h χ P).1 hc.1), χ.valueAt_of_ramified hχ]
 
 theorem lfac_eq (χ : UnitaryHeckeChar E) (P : HeightOneSpectrum (𝓞 E)) (s : ℂ) :
     lfac σ (pull F χ) P s = χ.eulerFactor P s := by

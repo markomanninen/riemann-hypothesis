@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SmoothRep
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SmoothRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,8 +108,10 @@ theorem algebraMap_intertwiningMap_bijective_of_rank_le_aleph0 [ρ.IsIrreducible
       set P : ℂ[X] := ∑ j ∈ s, a j • ∏ k ∈ s.erase j, (X - C k) with hPdef
       have hP : aeval φ P v = 0 := by
         have h0 := congrArg (aeval φ (∏ k ∈ s, (X - C k))) hsum
-        rw [map_sum, map_zero] at h0
-        rw [hPdef, map_sum, sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at h0
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hPdef, map_sum, sum_apply]
         rw [← h0]
         refine Finset.sum_congr rfl fun j hj => ?_
         rw [map_smul, map_smul, key j hj]

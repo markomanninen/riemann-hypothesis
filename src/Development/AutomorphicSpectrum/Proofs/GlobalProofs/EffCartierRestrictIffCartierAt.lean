@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WChartsB
+
+@[expose] public section
 
 noncomputable section
 

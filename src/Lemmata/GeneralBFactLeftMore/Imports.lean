@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial IsLocalRing
 
@@ -12,7 +16,7 @@ theorem goal1 (p : Fin n → ℂ) (a : MvPolynomial (Fin n) ℂ) :
   | C c => simp
   | add f g hf hg =>
     have h : f + g - C (eval p (f + g)) = (f - C (eval p f)) + (g - C (eval p g)) := by
-      simp only [map_add]; ring
+      simp only [map_add (f := _)]; ring
     rw [h]
     exact Ideal.add_mem _ hf hg
   | mul_X f i hf =>

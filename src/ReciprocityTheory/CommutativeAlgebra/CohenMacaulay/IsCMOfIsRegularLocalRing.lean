@@ -1,5 +1,9 @@
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
-import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RegGens
+module
+
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.ModDepthGE
+public import ReciprocityTheory.CommutativeAlgebra.CohenMacaulay.RegGens
+
+@[expose] public section
 
 namespace ReciprocityTheory.CA
 

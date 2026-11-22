@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviFormLogAffForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSchurBilinearEntry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPosDefGrD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffAtFlagCellGradedLinePotential
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviFormLogAffForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSchurBilinearEntry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPosDefGrD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContDiffAtFlagCellGradedLinePotential
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -38,7 +43,7 @@ noncomputable def rowEquiv {ι : Type} (m : ι → ℕ) (τ : ι) (i : Fin (m τ
 theorem add_sum_coord_apply {n : ℕ} {B : Type} [Fintype B] (e : B → Fin n) (he : Function.Injective e)
     (z : V n) (t : B → ℂ) (k : Fin n) :
     (z + ∑ a, t a • coordVec (e a)) k = z k + ∑ a, if k = e a then t a else 0 := by
-  simp [coordVec, Finset.sum_apply, EuclideanSpace.single_apply, Pi.single_apply, mul_ite]
+  simp [coordVec, Finset.sum_apply, PiLp.single_apply, Pi.single_apply, mul_ite]
 
 end GlobalTheory.FlagCell2
 
@@ -89,7 +94,7 @@ theorem row_levi_det_of (hR : ∀ (n : ℕ) (B : Type) [Fintype B] [DecidableEq 
       rw [Finset.sum_eq_zero]
       · simp
       intro a _
-      rw [if_neg]
+      rw [ite_eq_right]
       simp [e]
     have hf : ∀ s : Low (m τ), fb ε w' ⟨τ, s⟩ = y s + if h : s.1.2 = i then t ⟨s, h⟩ else 0 := by
       intro s
@@ -99,12 +104,12 @@ theorem row_levi_det_of (hR : ∀ (n : ℕ) (B : Type) [Fintype B] [DecidableEq 
       · rw [Finset.sum_eq_single ⟨s, h⟩]
         · simp [e]
         · intro b _ hb
-          rw [if_neg]
+          rw [ite_eq_right]
           intro h'
           exact hb (he (show e ⟨s, h⟩ = e b from h')).symm
         · simp
       · refine Finset.sum_eq_zero fun b _ => ?_
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h'
         have := ε.symm.injective h'
         simp only [e, Sum.inr.injEq, Sigma.mk.inj_iff, heq_eq_eq, true_and] at this
@@ -112,11 +117,11 @@ theorem row_levi_det_of (hR : ∀ (n : ℕ) (B : Type) [Fintype B] [DecidableEq 
     have hfa : ∀ a : Option {j : Low (m τ) // j.1.2 = i}, Option.elim a 1 (fun a => fb ε w' ⟨τ, a.1⟩) = Option.elim a 1 (fun a => w (e a) + t a) := by
       rintro (_ | b)
       · rfl
-      · simp only [Option.elim, hf, dif_pos b.2]
+      · simp only [Option.elim, hf, dite_eq_left b.2]
         rfl
     simp only [cellPot, neg_neg]
     rw [hb, show upM (fb ε w') τ = upU (fun s => fb ε w' ⟨τ, s⟩) from rfl,
-      hQg _ (fun j hj => by rw [hf, dif_neg (ne_of_lt hj)]; simp)]
+      hQg _ (fun j hj => by rw [hf, dite_eq_right (ne_of_lt hj)]; simp)]
     simp only [hfa]
   have hR' := hR n {j : Low (m τ) // j.1.2 = i} e he Q hQpd.1 (fun v => -cellPot ε G ⟨τ, i⟩ v) w hsm.1.neg hres q hq hq0
   have hD' := hD {j : Low (m τ) // j.1.2 = i} Q (fun a => w (e a)) (fun b => star (w (e b))) q (by rw [hq]; simp only [hstar]) hq0

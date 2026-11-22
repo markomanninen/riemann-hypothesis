@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -33,7 +38,8 @@ theorem cycloSq_coeff_eq {l : ℕ} (hl : l.Prime) {ζ : ℂ} (hζ : IsPrimitiveR
     have hl' : l = (l - 1) + 1 := by omega
     rw [hl', Finset.sum_range_succ] at h1
     simp only [Nat.add_sub_cancel, sub_self, Int.cast_zero, zero_mul, add_zero] at h1
-    rw [hQdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hQdef, map_sum]
     simpa using h1
   have hdvd : minpoly ℚ ζ ∣ Q := minpoly.dvd ℚ ζ hQ
   have hdeg : (minpoly ℚ ζ).natDegree = l - 1 := by
@@ -48,7 +54,7 @@ theorem cycloSq_coeff_eq {l : ℕ} (hl : l.Prime) {ζ : ℂ} (hζ : IsPrimitiveR
   by_cases hd' : d = l - 1
   · rw [hd']
   have h1 : Q.coeff d = 0 := by rw [hQ0]; simp
-  rw [hQdef, finset_sum_coeff] at h1
+  rw [hQdef, finsetSum_coeff] at h1
   simp only [coeff_C_mul_X_pow, Finset.sum_ite_eq, Finset.mem_range] at h1
   rw [if_pos (by omega)] at h1
   have : ((a d - a (l - 1) : ℤ) : ℚ) = 0 := h1

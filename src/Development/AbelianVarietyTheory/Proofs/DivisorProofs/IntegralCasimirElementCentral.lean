@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjugateGramSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjugateGramSymm
+
+@[expose] public section
+
 open GlobalTheory.CasimirOrder
 
 namespace GlobalTheory.CasimirOrder
@@ -35,10 +40,12 @@ theorem casimir_central : ∀ {O : Type} [Ring O] {r : ℕ} (x : Module.Basis (F
   have key1 : ∀ i j, G.det • (A i j • (a * (s (x i) * x j))) = ∑ k, ∑ l, F i j k l := by
     intro i j
     have e : a * (s (x i) * x j) = s (x i * s a) * x j := by rw [hs, hss, mul_assoc]
-    rw [e, smul_comm, show G.det • (s (x i * s a) * x j) = s (G.det • (x i * s a)) * x j by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, smul_comm, show G.det • (s (x i * s a) * x j) = s (G.det • (x i * s a)) * x j by
       rw [map_zsmul, smul_mul_assoc], hds, map_sum, Finset.sum_mul, Finset.smul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_sum, Finset.sum_mul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_zsmul, smul_mul_assoc, smul_smul]
   have key2 : ∀ p q, G.det • (A p q • (s (x p) * x q * a)) = ∑ i, ∑ j, F i j q p := by

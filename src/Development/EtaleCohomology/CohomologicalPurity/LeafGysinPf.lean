@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -46,7 +50,7 @@ theorem fgt_pull {q : ℕ} {P' P : Arrow Spc} (φ : P' ⟶ P) (n i : ℤ) (x : H
     Hs.fgt q P' n i (Hs.pull q φ n i x) = pull _ φ.right _ _ (Hs.fgt q P n i x) := by
   change pull _ (dbl.inl P') _ n (pull _ (dbl.map φ) _ n x.1) = pull _ φ.right _ n (pull _ (dbl.inl P) _ n x.1)
   rw [← pull_comp, ← pull_comp,
-    show dbl.inl P' ≫ dbl.map φ = φ.right ≫ dbl.inl P from pushout.inl_desc _ _ _]
+    show dbl.inl P' ≫ dbl.map φ = φ.right ≫ dbl.inl P from pushout.inl_desc (f := P'.hom) (g := P'.hom) _ _ _]
 
 theorem fgt_red {Q q : ℕ} {P : Arrow Spc} (n i : ℤ) (x : Hs Q P n i) (y : Hs q P n i)
     (h : y.1 = red Q q _ n i x.1) : Hs.fgt q P n i y = red Q q _ n i (Hs.fgt Q P n i x) := by
@@ -60,8 +64,8 @@ theorem exact_cast {q : ℕ} {P : Arrow Spc} {a b : ℤ} (i : ℤ) (h : a = b) {
 
 end GysinPf
 
-open GysinPf in
 
+open GysinPf in
 theorem LeafGysin_of (hBd : LeafBd) (hPur : LeafPur) : LeafGysin := by
   intro hH d
   obtain ⟨δ, hex, hnatδ, hredδ⟩ := hBd

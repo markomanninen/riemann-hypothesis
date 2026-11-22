@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsComplexLinearExtensionOfTraceIsometry
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsComplexLinearExtensionOfTraceIsometry
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Ker Matrix
 open scoped BigOperators
 set_option maxHeartbeats 1000000 in

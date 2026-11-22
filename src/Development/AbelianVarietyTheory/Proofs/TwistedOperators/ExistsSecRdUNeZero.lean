@@ -1,11 +1,40 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GeneralDiagonalMatrix
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeoActMemCusp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowGeneratorEqConstMulVacuumTheta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCongruenceEndomorphism
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MarkingComponentUniqueFrameUniqueArithmeticGroup
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongruenceLatticeFractionalMultipleAgree
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GeneralDiagonalMatrix
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActLevOfLiftsOfEqOne
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevelActionMemCuspForms
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralFramedPointOfLevelMove
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevActMemMlat
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.AbsGeneratorRatioEqOneOfUnitFrameMove
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFramedPointMoveUniversalTriple
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointMoveCalculus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RightTranslationLiftEqLevelMoveUnitConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodCoordinatesFrameRationalIsometry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConstMulReadingOfMovedSectionAtFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MovedSectionReadingEqMovedFrameReadingStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelGroupLiftExists
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PrincipalLevelEqHalfMarkingStabilizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorResIEqResS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetReducedBlockEqResidueDet
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterAtDetRootCongOneOddEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIntegralUnitRootNormOneAdele
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinitePartPreservesFormDetNormOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MarkedIsometryHalf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatchingDeterminantRootOfUnity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTraceFormLattice
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletion
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongruenceLatticeFractionalMultipleAgree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLinearApproxTower
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MarkingComponentUniqueFrameUniqueArithmeticGroup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowGeneratorEqConstMulVacuumTheta
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -93,31 +122,6 @@ open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
-
-theorem finHom_mulVec_mul (V : HSp D) (κ κ' : GA D V) (z : Fin V.rank → Af D.host.F ⊗[D.host.F] D.host.E) :
-    (finHom V (κ * κ')).1 *ᵥ z = (finHom V κ).1 *ᵥ ((finHom V κ').1 *ᵥ z) := by
-  rw [map_mul, Units.val_mul, Matrix.mulVec_mulVec]
-
-theorem finHom_mulVec_one (V : HSp D) (z : Fin V.rank → Af D.host.F ⊗[D.host.F] D.host.E) :
-    (finHom V 1).1 *ᵥ z = z := by
-  rw [map_one, Units.val_one, Matrix.one_mulVec]
-
-def stabGrp (V : HSp D) : Subgroup (GA D V) where
-  carrier := {κ | StabLat V κ}
-  one_mem' := stabLat_one V
-  mul_mem' := by
-    rintro κ κ' ⟨a, h⟩ ⟨a', h'⟩
-    refine ⟨mul_mem a a', ?_⟩
-    unfold gLat at h h' ⊢
-    rw [show (finHom V (κ * κ')).1.mulVec = (finHom V κ).1.mulVec ∘ (finHom V κ').1.mulVec from
-      funext (finHom_mulVec_mul V κ κ'), Set.image_comp, h', h]
-  inv_mem' := by
-    rintro κ ⟨a, h⟩
-    refine ⟨inv_mem a, ?_⟩
-    unfold gLat at h ⊢
-    conv_lhs => rw [← h]
-    rw [← Set.image_comp, show (finHom V κ⁻¹).1.mulVec ∘ (finHom V κ).1.mulVec = id from funext fun z => by
-      rw [Function.comp_apply, ← finHom_mulVec_mul, inv_mul_cancel, finHom_mulVec_one, id], Set.image_id]
 
 variable {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {V : HSp D} {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La]
   {ι : La →ₗ[𝓞 D.host.E] (Fin V.rank → D.host.E)}

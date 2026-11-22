@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -281,7 +285,7 @@ theorem span_sval {a : ℤ} {T : Over S} {I : Type} [Fintype I] (b : I → LB.Se
     (show SecM.ofSec A s ∈ _ from hb ▸ Submodule.mem_top)
   have hc' : ∀ j, s.f j = ∑ i, liftHom A _ (c i) * (b i).f j := fun j => by
     have := congrArg (fun x : SecM A L a T => x.1 j) hc
-    simp only [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply] at this
+    simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply] at this
     exact this.symm
   refine ⟨c, fun Z r z J hJ => ?_⟩
   have hm := hJ.mem (fun _ : Fin 1 => (snd T A).left) r

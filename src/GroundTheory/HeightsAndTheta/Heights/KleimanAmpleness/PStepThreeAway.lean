@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeAway
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsStepThreeAway
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -22,7 +27,8 @@ theorem homogeneousComponent_homog_mul {σ R : Type*} [CommRing R] {P : MvPolyno
     homogeneousComponent d (P * G) =
       if l ≤ d then P * homogeneousComponent (d - l) G else 0 := by
   conv_lhs => rw [← sum_homogeneousComponent G, Finset.mul_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hterm : ∀ i, homogeneousComponent d (P * homogeneousComponent i G) =
       if d = l + i then P * homogeneousComponent i G else 0 := fun i =>
     homogeneousComponent_of_mem ((hP.mul (homogeneousComponent_isHomogeneous i G)))
@@ -115,13 +121,14 @@ theorem homogeneousComponent_mul_mem (D : SubSystem S x Ω) (σ : Ω) (I : Chart
   | zero => intro δ _; rw [map_zero, map_zero, zero_mul]; exact Submodule.zero_mem _
   | add f g _ _ hf hg =>
     intro δ hδ
-    rw [map_add, map_add, add_mul]
+    rw [map_add (f := _), map_add (f := _), add_mul]
     exact Submodule.add_mem _ (hf e δ hδ) (hg e δ hδ)
   | smul r f _ hf =>
     intro δ hδ
     have hsum : r * f = ∑ d ∈ Finset.range (r.totalDegree + 1), homogeneousComponent d r * f := by
       rw [← Finset.sum_mul, sum_homogeneousComponent]
-    rw [smul_eq_mul, hsum, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_mul, hsum, map_sum, map_sum, Finset.sum_mul]
     refine Submodule.sum_mem _ fun d _ => ?_
     rw [homogeneousComponent_homog_mul (homogeneousComponent_isHomogeneous d r) f e]
     split_ifs with hde

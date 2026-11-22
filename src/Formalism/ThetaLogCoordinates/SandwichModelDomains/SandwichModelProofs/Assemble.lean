@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.ThetaLogCoordinates.SandwichModelDomains.SpreadSquare
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 open MvPolynomial
 

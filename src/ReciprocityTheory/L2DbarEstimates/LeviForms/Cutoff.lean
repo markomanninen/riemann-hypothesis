@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+
+@[expose] public section
 
 universe u
 
@@ -121,7 +125,5 @@ theorem isCutoff_chi : IsCutoff chi := by
     nlinarith [bump_le_one t, prim_one_ge]
 
 end SmoothCutoff
-
-theorem cutoff : CutoffStatement := ⟨SmoothCutoff.chi, SmoothCutoff.isCutoff_chi⟩
 
 end ReciprocityTheory.L2DbarEstimates.I

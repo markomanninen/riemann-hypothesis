@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.ThetaIsometryFactsHold
-import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DominantWeightPolynomialFunctionalMinorsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.ThetaIsometryFactsHold
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DominantWeightPolynomialFunctionalMinorsStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -21,15 +26,17 @@ theorem deX_map {Lt k k' : Type} [Fintype Lt] [CommRing k] [CommRing k'] (f : k 
   simp only [map_prod, RingHom.map_det]
   refine Finset.prod_congr rfl fun s _ => Finset.prod_congr rfl fun c _ => congrArg Matrix.det ?_
   ext i j
-  simp [map_sum, map_mul, map_C, map_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, map_C, map_X]
 
 theorem dual_map_eval {σ V k : Type} [Field k] (χ : Module.Dual k (MvPolynomial σ k)) (p : MvPolynomial σ (MvPolynomial V k)) (x : V → k) :
-    MvPolynomial.eval x (∑ m ∈ p.support, coeff m p * C (χ (monomial m 1))) = χ (MvPolynomial.map (MvPolynomial.eval x) p) := by
+    MvPolynomial.eval x (∑ m ∈ p.support, AddMonoidAlgebra.coeff p m * C (χ (monomial m 1))) = χ (MvPolynomial.map (MvPolynomial.eval x) p) := by
   conv_rhs => rw [p.as_sum]
-  rw [map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, eval_C, map_monomial]
-  rw [show monomial m (MvPolynomial.eval x (coeff m p)) = (MvPolynomial.eval x (coeff m p)) • (monomial m 1 : MvPolynomial σ k) by
+  rw [show monomial m (MvPolynomial.eval x (AddMonoidAlgebra.coeff p m)) = (MvPolynomial.eval x (AddMonoidAlgebra.coeff p m)) • (monomial m 1 : MvPolynomial σ k) by
     rw [smul_monomial, smul_eq_mul, mul_one]]
   rw [map_smul, smul_eq_mul]
 
@@ -44,7 +51,7 @@ def uFr : Bool × HH D → Fin N → ℕ → MvPolynomial (GL3Theta.FrV D N) (Cw
   fun s a j => if h : j < N then X (tauPl D s, a, ⟨j, h⟩) else 0
 
 def canPol (χ : Module.Dual (Cw D w) (MvPolynomial ((Bool × HH D) × ℕ × Fin N) (Cw D w))) : MvPolynomial (GL3Theta.FrV D N) (Cw D w) :=
-  ∑ m ∈ (GL3Columns.DeX N nu (uFr w N)).support, coeff m (GL3Columns.DeX N nu (uFr w N)) * C (χ (monomial m 1))
+  ∑ m ∈ (GL3Columns.DeX N nu (uFr w N)).support, AddMonoidAlgebra.coeff (GL3Columns.DeX N nu (uFr w N)) m * C (χ (monomial m 1))
 
 theorem canM_apply (χ : Module.Dual (Cw D w) (MvPolynomial ((Bool × HH D) × ℕ × Fin N) (Cw D w))) (y : FrP D w N) :
     canM D w N nu χ y = χ (GL3Columns.DeX N nu fun s => GL3Columns.colsOf (y (tauPl D s))) := rfl
@@ -96,7 +103,7 @@ theorem onMin_canInv_mem (hfit : ∀ s c, (nu s).colLen c ≤ N) (F : FrP D w N 
     (LinearMap.ker_eq_bot.2 (P.iL w).injective)
   let ρ : Cw D w → Cw D w := fun z => P.iL w (π z)
   have ρ_add : ∀ a b, ρ (a + b) = ρ a + ρ b := fun a b => by
-    simp only [ρ, map_add]
+    simp only [ρ, map_add (f := _)]
   have ρ_mul : ∀ x z, ρ (P.iL w x * z) = P.iL w x * ρ z := fun x z => by
     have : P.iL w x * z = x • z := by rw [Algebra.smul_def]; rfl
     simp only [ρ, this, map_smul, smul_eq_mul, map_mul]
@@ -120,7 +127,7 @@ theorem onMin_canInv_mem (hfit : ∀ s c, (nu s).colLen c ≤ N) (F : FrP D w N 
         rw [map_monomial, smul_monomial, smul_eq_mul, mul_one]
       rw [e, map_smul, map_smul, smul_eq_mul, smul_eq_mul, ρ_mul, ψ'_mon]
     | add p q hp hq =>
-      rw [map_add, map_add, map_add, hp, hq, ρ_add]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq, ρ_add]
   have hpt : ∀ y : D.what₂.Tau → Matrix (Fin N) (Fin N) D.what₂.LL,
       canM D w N nu ψ' (fun τ => (y τ).map (P.iL w)) = canM D w N nu ψ (fun τ => (y τ).map (P.iL w)) := by
     intro y

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+
+@[expose] public section
 
 open ModularForm UpperHalfPlane Matrix EisensteinSeries Filter Topology
 open scoped MatrixGroups
@@ -85,7 +89,7 @@ private lemma cSer_zero {N : ℕ} [NeZero N] (b : Fin 2 → ZMod N) (hb : b 0 �
   set F : Filter ℍ := atImInfty ⊓ 𝓟 (verticalStrip N 1) with hF
   set C : ℝ := r ⟨⟨N, 1⟩, one_pos⟩ with hC
   have hsum : Summable (fun v : cSet b => C ^ (-(k : ℝ)) * ‖v.1‖ ^ (-(k : ℝ))) :=
-    ((summable_one_div_norm_rpow hkr).subtype (cSet b)).mul_left _
+    ((summable_one_div_norm_rpow hkr).subtype (fun v => v ∈ cSet b)).mul_left _
   have hT : Tendsto (fun z => cSer b k z) F (𝓝 0) := by
     have h0 : (0 : ℂ) = ∑' v : cSet b, (0 : ℂ) := by simp
     rw [h0]

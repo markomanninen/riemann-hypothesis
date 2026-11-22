@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsPChartOfFramedPoint
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ModelChartLiftCoordsGeneratorIndep
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SecValuesComplexFibreAbelianScheme
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsPChartOfFramedPoint
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ModelChartLiftCoordsGeneratorIndep
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.SecValuesComplexFibreAbelianScheme
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -144,8 +149,61 @@ theorem exists_cut (h₀ : RigIso Y.m0.toSABMap w₀) (h₁ : RigIso Y.m w₁)
     (hs : s₀ ∈ secOn Y.t.PP.L (Y.t.G.hom ⁻¹ᵁ V)) {T : Type} [CommRing T] {z : Sp T ⟶ Xo.XF c} {x : Sp T ⟶ Xo.X}
     (hx : z ≫ pullback.fst _ _ = x) (hV : ⊤ ≤ (z ≫ Y.j) ⁻¹ᵁ V) : ∃ S, Cut Y V s₀ w₀ w₁ z x 1 S := by
   obtain ⟨t', ⟨n⟩⟩ : ∃ t' : SAB H (Sp T), Nonempty (SABMap t' Y.oF.t z) := by
-    obtain ⟨_, _, _, _, _, m, -⟩ := sabPull Out.CubePf.cubePull z Y.oF.t
-    exact ⟨_, ⟨m⟩⟩
+    open scoped CategoryTheory.Obj in
+    have aux {S S' : Scheme.{0}} (f : S' ⟶ S) (t : SAB H S) :
+        ∃ t' : SAB H S', Nonempty (SABMap t' t f) := by
+      have hC := Out.CubePf.cubePull
+      have hsemi : IsSemiAbelian ((Over.pullback f).obj t.G) := by
+        refine { comm := ?_, smooth := ?_, separated := ?_, quasiCompact := ?_, geomConnected := ?_, fibres := ?_ }
+        · have := t.semi.comm
+          infer_instance
+        · have := t.semi.smooth
+          change Smooth (pullback.snd t.G.hom f)
+          infer_instance
+        · have := t.semi.separated
+          change IsSeparated (pullback.snd t.G.hom f)
+          infer_instance
+        · have := t.semi.quasiCompact
+          change QuasiCompact (pullback.snd t.G.hom f)
+          infer_instance
+        · have := t.semi.geomConnected
+          change GeometricallyConnected (pullback.snd t.G.hom f)
+          infer_instance
+        · intro Ω _ _ q
+          obtain ⟨A⟩ := t.semi.fibres Ω (q ≫ f)
+          exact ⟨torusExtOfIso (pullCompIso q f t.G) A⟩
+      have hp : ∃ (PP' : RigLB ((Over.pullback f).obj t.G)) (cub : CubicalStr _ PP') (sym : PP'.IsSymmetric) (adj : _) (prim : _)
+          (m : SABMap ⟨(Over.pullback f).obj t.G, hsemi, OAct.pullback f t.G t.act, PP', cub,
+            sym, adj, prim⟩ t f), m.φ = pullback.fst t.G.hom f := by
+        have h := isGrpPullback_pullback t.G f
+        obtain ⟨hL, hr, ⟨c', hc'⟩, hs⟩ := hC S S' t.G _ (cubeMapOf h) t.PP t.cub
+        have hact : ∀ a, ((OAct.pullback f t.G t.act).act a).left ≫ pullback.fst t.G.hom f =
+            pullback.fst t.G.hom f ≫ (t.act.act a).left := fun a => pullback.lift_fst _ _ _
+        have pa : ∀ {T : Over S'} (x : T ⟶ (Over.pullback f).obj t.G) a,
+            pushPt h.1.w (x ≫ (OAct.pullback f t.G t.act).act a) = pushPt h.1.w x ≫ t.act.act a := fun x a =>
+          Over.OverMorphism.ext (by
+            show (x.left ≫ _) ≫ _ = (x.left ≫ _) ≫ _
+            rw [Category.assoc, hact, Category.assoc])
+        refine ⟨(cubeMapOf h).rigLB t.PP hL hr, c', hs t.sym, fun a => ?_, ?_, ⟨cubeMapOf h, h, rfl, hact, hc'⟩, rfl⟩
+        · let U := lift (pushPt h.1.w (fst ((Over.pullback f).obj t.G) ((Over.pullback f).obj t.G)))
+            (pushPt h.1.w (snd ((Over.pullback f).obj t.G) ((Over.pullback f).obj t.G)))
+          refine LBIso.chartPull (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down)
+            (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down) (t.adj a)
+          · fin_cases i
+            · exact (pa _ a).trans (by simp [U])
+            · simp [U]
+          · fin_cases i
+            · simp [U]
+            · exact (pa _ _).trans (by simp [U])
+        · let U := pushPt h.1.w (𝟙 ((Over.pullback f).obj t.G))
+          refine LBIso.chartPull (chartPullPull t.PP.L _ _ rfl)
+            (chartPullLinComb t.PP.L _ _ _ _ U.left fun I => psum_push h _ _ U (fun i => ?_) I.down) t.prim
+          fin_cases i
+          · simp [U]
+          · exact (congrArg (pushPt h.1.w) (Category.id_comp _).symm).trans (pa _ _)
+      obtain ⟨_, _, _, _, _, m, -⟩ := hp
+      exact ⟨_, ⟨m⟩⟩
+    exact aux z Y.oF.t
   obtain ⟨wn, rn⟩ := exists_rigIso n
   obtain ⟨m1, e1, w1, r1, T1⟩ := exists_comp_rig Y.m0.toSABMap n x hx.symm h₀ rn
   obtain ⟨m2, e2, w2, r2, T2⟩ := exists_comp_rig Y.m n _ rfl h₁ rn
@@ -405,8 +463,8 @@ theorem exists_val_ne [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (Fract
   rw [show valF b _ (th.f j) = 0 from h0, map_zero] at hun
   exact not_isUnit_zero hun
 
-open GlobalTheory.Conv in
 
+open GlobalTheory.Conv in
 theorem exists_hasSum_div {A B R s : ℂ⸨X⸩} (n : ℕ) (hA : A ∈ convLaurent) (hB : B ∈ convLaurent) (hR : R ∈ convLaurent)
     (hB0 : B ≠ 0) (hR0 : R ≠ 0) (h : A = B ^ n * (R * s)) : ∃ T : ℝ, ∀ w : ℂ, T < w.im → ∀ a b r : ℂ,
       HasSum (fun m : ℤ => A.coeff m * eTwoPi w ^ m) a → HasSum (fun m : ℤ => B.coeff m * eTwoPi w ^ m) b →

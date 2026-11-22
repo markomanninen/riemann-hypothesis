@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.UliftSmulEq
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.UliftSmulEq
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Polynomial
@@ -43,7 +47,8 @@ theorem local_case {q : ℕ} {O : Type} [CommRing O] [IsLocalRing O] (ζ ξ : Pr
   rw [prim_pow, hηq, sub_self] at hg
   have hu : IsUnit (∑ i ∈ Finset.range q, ξ.1 ^ i * η ^ (q - 1 - i)) := by
     rw [← IsLocalRing.residue_ne_zero_iff_isUnit]
-    simp only [map_sum, map_mul, map_pow, ha]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, ha]
     rw [geom_sum₂_self]
     have h1 : IsUnit ((q : O) * η ^ (q - 1)) := ζ.2.1.mul (hηu.pow _)
     have h2 := (h1.map (IsLocalRing.residue O)).ne_zero

@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousOfDense
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsSubOfDisjoint
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousOfDense
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AbsSubOfDisjoint
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg MvPolynomial
 
 namespace GlobalTheory.FockAlg
 
-open GlobalTheory.JointHarm GlobalTheory.FockSeq in
 
+open GlobalTheory.JointHarm GlobalTheory.FockSeq in
 theorem harmonic_homog_of_type : ∀ (p q r s : ℕ),
     (∀ (μ : Ix p q → ℚ) (P : Pol p q r s), P ≠ 0 → OfType (fockAct1 p q r s) μ P →
       P ∈ harm1 p q r s →

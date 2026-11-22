@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -89,11 +93,6 @@ def EvNat : Prop := ∀ (R : Type) [CommRing R] (E : Spc) (I : GlobalTheory.EtC.
   (∀ (V : Scheme.{0}) (g : V ⟶ U) (x : Sx E p U), ev α p s h V (Sx.res g x) = Sec.res g (ev α p s h U x)) ∧
   ∀ (E' : Spc) (f : E' ⟶ E) (x : Sx E' p U),
     ev ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h U x = ev α p s h U (Sx.map f x)
-
-def EvMk : Prop := ∀ (R : Type) [CommRing R] (E : Spc) (I : GlobalTheory.EtC.Cx R) (n : ℤ)
-  (a : ∀ (p : ℕ) (s : ℤ), -(p : ℤ) + n = s → ∀ U : Scheme.{0}, Sx E p U → Sec (I.X s) U),
-  (∀ p s h (U V : Scheme.{0}) (g : V ⟶ U) (x : Sx E p U), a p s h V (Sx.res g x) = Sec.res g (a p s h U x)) →
-  ∃ α : Cochain ((chains R).obj E) I n, ∀ p s h U x, ev α p s h U x = a p s h U x
 
 def EvDel : Prop := ∀ (R : Type) [CommRing R] (E : Spc) (I : GlobalTheory.EtC.Cx R) (n m : ℤ) (hm : n + 1 = m) (β : Cochain ((chains R).obj E) I n)
   (U : Scheme.{0}),

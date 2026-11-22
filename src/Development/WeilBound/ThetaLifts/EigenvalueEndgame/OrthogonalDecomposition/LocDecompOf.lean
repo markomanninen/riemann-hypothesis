@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.PairLocOf
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.Imports
-import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.PairLocOf
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.Imports
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SchToPol
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ theorem qht_le (x h : UA σ W.J) : qht x ≤ qht (x * h) * ht h⁻¹ := by
   have := heightGL_mul_le F (γ.1 * (x * h)).1 (h⁻¹).1
   rwa [← Subgroup.coe_mul, mul_assoc, mul_inv_cancel_right] at this
 
-variable (σ W) in
 
+variable (σ W) in
 def rapid : Submodule ℂ (UA σ W.J → ℂ) where
   carrier := {f | IsRapid (Y := W) f}
   zero_mem' := ⟨continuous_const, fun _ _ _ => rfl, fun _ => ⟨0, fun _ => by simp⟩⟩
@@ -104,7 +108,7 @@ theorem mem_vals (hB : ThetaBasic) (hE : EpsOf) (hU : PositivityTheory.ThKF.Unim
     have c : ∀ ψ ∈ SB _, T ψ ∈ schA F _ ∧ M.Conv om (T ψ) := fun ψ hψ => hc _ (Submodule.subset_span (t1 ψ ▸ p3 ψ hψ))
     let J : SB (Fin n × Fin d → Fv F v) →ₗ[ℂ] (UA σ W.J → ℂ) :=
       { toFun := fun ψ => M.I om (T ψ)
-        map_add' := fun a b => by rw [Submodule.coe_add, map_add, I_add hp (c _ a.2) (c _ b.2)]
+        map_add' := fun a b => by rw [Submodule.coe_add, map_add (f := _), I_add hp (c _ a.2) (c _ b.2)]
         map_smul' := fun z a => by rw [Submodule.coe_smul, map_smul, I_smul']; rfl }
     have k : augAt om v ≤ (LinearMap.ker J).map (SB _).subtype := Submodule.span_le.2 (by
       rintro _ ⟨g, -, ψ, hψ, ψ₁, hψ₁, hA, rfl⟩

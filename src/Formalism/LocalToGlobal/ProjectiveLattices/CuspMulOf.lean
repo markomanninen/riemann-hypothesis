@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HolSubMul
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HolSubMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l} {c : Coeff l} {r : ℕ}
 
-open Classical in
 
+open Classical in
 theorem rdU_mul {σ : c.F →+* ℂ} (U : Unf Xo c σ r) (f g : Rul Xo c) : rdU U (f * g) = rdU U f * rdU U g := by
   funext k x
   show (if h : x ∈ (U.X k).dom then toC (evR Xo c (f * g) (U.un k ⟨x, h⟩)) else 0) =

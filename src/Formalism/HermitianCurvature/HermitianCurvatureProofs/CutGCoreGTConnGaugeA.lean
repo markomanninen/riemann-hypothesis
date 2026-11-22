@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTConnCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GTConnCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -94,7 +98,7 @@ theorem toSm_mulZ (P : M.Par) {v w : ℂ → ℂ} (hv : ContDiffOn ℝ ((⊤ : �
       simp only [Pi.mul_apply]
       rw [← mul_assoc, h3, one_mul]
     unfold MA.toSm
-    rw [dif_neg hvg, dif_neg hg, mul_zero]
+    rw [dite_eq_right hvg, dite_eq_right hg, mul_zero]
 
 variable {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]

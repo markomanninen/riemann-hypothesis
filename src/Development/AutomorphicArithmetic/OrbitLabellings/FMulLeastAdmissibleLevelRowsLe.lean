@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds
 

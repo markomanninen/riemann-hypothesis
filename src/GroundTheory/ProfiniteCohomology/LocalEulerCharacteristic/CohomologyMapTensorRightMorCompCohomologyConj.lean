@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.TwistDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.TwistDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -17,13 +22,13 @@ variable (T : Rep.{u} k G) [IsDiscreteRep T] {M : Rep.{u} k G} [IsDiscreteRep M]
 
 include hM
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 theorem form_invariant_of_forall_eq (f : M →ₗ[k] k) (g : G) (m : M) : f (M.ρ g m) = f m := by
   rw [hM]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 theorem tensorRightMor_comp_tensorFormMor (m : M) (f : M →ₗ[k] k) :
     tensorRightMor T m (fun g => hM g m) ≫
         tensorFormMor T f (form_invariant_of_forall_eq hM f) = f m • 𝟙 T := by
@@ -31,8 +36,8 @@ theorem tensorRightMor_comp_tensorFormMor (m : M) (f : M →ₗ[k] k) :
   change f m • t = f m • t
   rfl
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep T] [IsDiscreteRep M] in
 theorem sum_tensorFormMor_comp_tensorRightMor {ι : Type*} [Fintype ι] (b : Module.Basis ι k M) :
     ∑ i, tensorFormMor T (b.coord i) (form_invariant_of_forall_eq hM _) ≫
         tensorRightMor T (b i) (fun g => hM g (b i)) = 𝟙 (T ⊗ M) := by
@@ -53,7 +58,8 @@ noncomputable def twistInv {ι : Type*} [Fintype ι] (b : Module.Basis ι k M) (
 theorem twistMap_comp_twistInv {ι : Type*} [Fintype ι] (b : Module.Basis ι k M) (n : ℕ) :
     twistMap T hM n ∘ₗ twistInv T hM b n = LinearMap.id := by
   ext y
-  simp only [twistInv, LinearMap.comp_apply, LinearMap.sum_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [twistInv, LinearMap.comp_apply, LinearMap.sum_apply, map_sum,
     LinearMap.flip_apply, TensorProduct.mk_apply, twistMap_tmul, LinearMap.id_apply]
   simp_rw [← ModuleCat.comp_apply, ← cohomologyMap_comp]
   rw [← LinearMap.sum_apply, ← ModuleCat.hom_sum, ← cohomologyMap_sum,

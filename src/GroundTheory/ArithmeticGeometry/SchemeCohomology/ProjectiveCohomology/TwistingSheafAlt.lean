@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.IsQuasicoherentTensorOfInvertible
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheafCore
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.IsQuasicoherentTensorOfInvertible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -34,30 +39,6 @@ section Iso
 
 variable {X : Scheme.{u}}
 
-private theorem isCoherent_unit' : IsCoherent (𝟙_ X.Modules) := by
-  refine ⟨isQuasicoherent_unit X, fun U _ => ?_⟩
-  let one : Γ(𝟙_ X.Modules, U) := (1 : Γ(X, U))
-  refine ⟨⟨{one}, ?_⟩⟩
-  rw [eq_top_iff]
-  intro m _
-  have hm : m = (show Γ(X, U) from m) • one := (mul_one (show Γ(X, U) from m)).symm
-  rw [hm]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span (Finset.mem_coe.2 (Finset.mem_singleton_self _)))
-
-private theorem isCoherent_of_iso' {M N : X.Modules} (e : M ≅ N) (hM : IsCoherent M) :
-    IsCoherent N := by
-  obtain ⟨hq, hf⟩ := hM
-  refine ⟨(SheafOfModules.isQuasicoherent X.ringCatSheaf).prop_of_iso e hq, fun U hU => ?_⟩
-  have := hf U hU
-  let φ : Γ(M, U) →ₗ[Γ(X, U)] Γ(N, U) :=
-    { toFun := e.hom.app U
-      map_add' := map_add _
-      map_smul' := fun r m => Scheme.Modules.Hom.app_smul e.hom r m }
-  refine Module.Finite.of_surjective φ fun n => ⟨e.inv.app U n, ?_⟩
-  change (e.inv ≫ e.hom).app U n = n
-  rw [e.inv_hom_id]
-  rfl
-
 end Iso
 
 namespace ProjSpace
@@ -65,14 +46,6 @@ namespace ProjSpace
 variable {A : Type u} [CommRing A] {n : ℕ}
 
 open ProjTwist
-
-theorem isCoherent_twistingSheaf (k : ℤ) : IsCoherent (twistingSheaf (grading A n) k) :=
-  isCoherent_of_iso' (λ_ _)
-    (isCoherent_tensor_of_invertible isCoherent_unit' (isInvertibleSheaf_twistingSheaf k))
-
-instance isQuasicoherent_twistingSheaf (k : ℤ) :
-    (twistingSheaf (grading A n) k).IsQuasicoherent :=
-  (isCoherent_twistingSheaf k).1
 
 def twistTwistIso (G : (projectiveSpace A n).Modules) (a b : ℤ) :
     twist (twist G a) b ≅ twist G (a + b) :=

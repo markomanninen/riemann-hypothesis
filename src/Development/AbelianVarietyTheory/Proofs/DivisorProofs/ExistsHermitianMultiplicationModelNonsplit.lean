@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReducedFreeAlgebraTraceFormPerfect
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ReducedFreeAlgebraTraceFormPerfect
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem cj_cj {K : GlobalTheory.UnitLemma.UQ} {e : K.E ≃+* w.adicCompletion E}
 
 theorem stdH_symm {K : GlobalTheory.UnitLemma.UQ} {e : K.E ≃+* w.adicCompletion E} (hB : Bridge w K e)
     (a b : Fin n → w.adicCompletion E) : stdH w b a = cj w (stdH w a b) := by
-  simp only [stdH, map_sum, map_mul, cj_cj w hB]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [stdH, map_sum, map_mul, cj_cj w hB]
   exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 
 theorem stdH_unitary (γ : GLw n w) (hγ : cT (cj w) γ.val * 1 * γ.val = 1)
@@ -224,7 +229,7 @@ theorem exists_isModel : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
 
   let lam : B.A →ₗ[K.E] K.E :=
     { toFun := fun a => e.symm (stdH w (ψ a) v)
-      map_add' := by intro a b; rw [map_add, stdH_add_left, map_add]
+      map_add' := by intro a b; rw [map_add (f := _), stdH_add_left, map_add (f := _)]
       map_smul' := by
         intro r a
         rw [hψs, stdH_smul_left, map_mul, RingEquiv.symm_apply_apply]

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.EntriesZero
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.WspOrth
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.TraceRestrictSupDisjoint
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.EntriesZero
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.WspOrth
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.TraceRestrictSupDisjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem UpperTheory.RealTr.chEv :
       exact hσW μ _ (hBW μ v v.2)
     rw [hr, map_smul, smul_eq_mul, hc μ]
     unfold trOn
-    rw [dif_pos (hBW μ)]
+    rw [dite_eq_left (hBW μ)]
   have hz : ∀ μ, μ ∉ s → cf c μ = 0 := by
     intro μ hμ
     rw [hc μ, hs0 μ hμ]

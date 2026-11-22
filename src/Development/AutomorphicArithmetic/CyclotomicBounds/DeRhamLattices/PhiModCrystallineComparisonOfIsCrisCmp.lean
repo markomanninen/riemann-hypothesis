@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRpToBdR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImageDeRhamEqEisensteinPowMulOfComponents
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisInclIBEqDeRhamInclID
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.TamePhiModuleCrystallineBasisCompat
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.PhiModDeRhamImageCoordExpansion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRpToBdR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImageDeRhamEqEisensteinPowMulOfComponents
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisInclIBEqDeRhamInclID
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.TamePhiModuleCrystallineBasisCompat
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.PhiModDeRhamImageCoordExpansion
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 open GlobalTheory.BKGal.HatVal
@@ -20,7 +25,7 @@ private theorem twSmul {O R R' G Qp LL : Type} [CommRing O] [CommRing R] [CommRi
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [TWincl, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, map_add, smul_add, hx, hy]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), smul_add, hx, hy]
 
 private theorem mxMem {l : ℕ} [Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e]
     {O K : Type} [CommRing O] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O]
@@ -58,7 +63,8 @@ theorem _root_.UpperTheory.KN.phiMod_crystalline_comparison_of_isCrisCmp :
       rw [Pi.smul_apply, Pi.single_eq_of_ne hj.symm, smul_zero]
     · intro h
       exact absurd (Finset.mem_univ i) h
-  rw [UpperTheory.KN.phiMod_deRham_image_coord_expansion l a e O K t ϖ ι P α hx σ, hσ, map_sum, map_sum, map_sum, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [UpperTheory.KN.phiMod_deRham_image_coord_expansion l a e O K t ϖ ι P α hx σ, hσ, map_sum, map_sum, map_sum, map_sum,
     Finset.smul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [jD.map_smul, jB.map_smul, twSmul, twSmul,

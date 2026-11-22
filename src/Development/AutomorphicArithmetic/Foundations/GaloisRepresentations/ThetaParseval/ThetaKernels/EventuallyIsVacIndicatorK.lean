@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EventuallySelfDualLatticeIndicatorIsVacuum
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodKAlt
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.EventuallySelfDualLatticeIndicatorIsVacuum
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodKAlt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -64,7 +68,7 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
       (Set.indicator {x | ∀ k, x k ∈ v.adicCompletionIntegers F} 1) := by
   classical
   obtain ⟨θ, hθ⟩ := hθ
-  obtain ⟨G, hG⟩ := exists_gen X.L Y.L hX.lat hY.lat
+  obtain ⟨G, hG⟩ := exists_gen X.L Y.L hX.lat.toIsLattice hY.lat.toIsLattice
   choose yc zc hc using hrat
   have e1 := eventually_psiLoc_eq_one B.ψ hB.std.1
   have e2 := eventually_int (F := F) (1 / 2)
@@ -96,7 +100,7 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
       exact ⟨at_zero, at_zero, zero_mem _, zero_mem _⟩
     | add z z' _ _ h h' =>
       intro k
-      simp only [map_add, Prod.fst_add, Prod.snd_add, Pi.add_apply]
+      simp only [map_add (f := _), Prod.fst_add, Prod.snd_add, Pi.add_apply]
       exact ⟨at_add (h k).1 (h' k).1, at_add (h k).2.1 (h' k).2.1, add_mem (h k).2.2.1 (h' k).2.2.1,
         add_mem (h k).2.2.2 (h' k).2.2.2⟩
     | neg z _ h =>
@@ -113,7 +117,7 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
       rw [hS, symp_smul_incM, map_mul, map_mul, evFin_algebraMap]
       exact ⟨at_mul_right (at_mul_right ha), mul_mem (mul_mem hai hai') (h4 g hg g' hg')⟩
     | zero => rw [hS, symp_zero_right, map_zero]; exact ⟨at_zero, zero_mem _⟩
-    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_right, map_add]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
+    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_right, map_add (f := _)]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
     | neg z₁ _ h => rw [hS, symp_neg_right, map_neg]; exact ⟨at_neg h.1, neg_mem h.2⟩
   have hB2 : ∀ z ∈ AddSubgroup.closure T, ∀ z' ∈ AddSubgroup.closure T,
       At (evFin F v) (S z z') ∧ evFin F v (S z z') ∈ O := by
@@ -121,7 +125,7 @@ theorem isVac_indicator_of_theta_k {σ : E →ₐ[F] E} (B : Base F E) (hB : _ro
     induction hz using AddSubgroup.closure_induction with
     | mem z hz => exact hB1 z hz z' hz'
     | zero => rw [hS, symp_zero_left, map_zero]; exact ⟨at_zero, zero_mem _⟩
-    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_left, map_add]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
+    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_left, map_add (f := _)]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
     | neg z₁ _ h => rw [hS, symp_neg_left, map_neg]; exact ⟨at_neg h.1, neg_mem h.2⟩
   refine ⟨indicator_int_mem_SB v, indicator_int_ne_zero v, θ, hθ, fun γ hγ => ?_⟩
   have hγ' := latAtV_le X Y G hG v hγ

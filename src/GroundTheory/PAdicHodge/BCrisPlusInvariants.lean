@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisFrobFixed
-import GroundTheory.PAdicHodge.BCrisGalois
-import GroundTheory.PAdicHodge.BdRInvariants
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisFrobFixed
+public import GroundTheory.PAdicHodge.BCrisGalois
+public import GroundTheory.PAdicHodge.BdRInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -15,9 +20,9 @@ namespace ACris
 variable {p : ℕ} [hp : Fact p.Prime]
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝒪♭" => PreTilt (normInteger ℂ_[p]) p
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "φW" => WittVector.frobeniusEquiv p (PreTilt (normInteger ℂ_[p]) p)
+local notation "𝒪♭" => PreTilt 𝒪 p
+local notation "𝔹" => BDeRhamPlus 𝒪 p
+local notation "φW" => WittVector.frobeniusEquiv p 𝒪♭
 
 section Teichmuller
 
@@ -81,7 +86,8 @@ theorem eq_of_pow_eq_one_of_theta_eq {u v : 𝔹} {m : ℕ} (hm : 0 < m) (hu : u
   have hS : ∑ i ∈ Finset.range m, u ^ i * v ^ (m - 1 - i) ≠ 0 := by
     intro hS
     have h1 := congrArg (thetaAlgHom p) hS
-    rw [map_zero, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at h1
     simp only [map_mul, map_pow, hθ] at h1
     rw [Finset.sum_congr rfl fun i hi => (by
       rw [← pow_add]; congr 1; have := Finset.mem_range.1 hi; omega :
@@ -128,9 +134,6 @@ def padicToBCrisPlus : ℚ_[p] →+* BCrisPlus ℂ_[p] p :=
     fun y => isUnit_padicIntToBCrisPlus (nonZeroDivisors.coe_ne_zero y)
 
 instance algebraPadicBCrisPlus : Algebra ℚ_[p] (BCrisPlus ℂ_[p] p) := padicToBCrisPlus.toAlgebra
-
-theorem algebraMap_padic_bCrisPlus : algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) = padicToBCrisPlus :=
-  rfl
 
 theorem iotaPlus_algebraMap_padic (q : ℚ_[p]) :
     iotaPlus ℂ_[p] p (algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) q) = algebraMap ℚ_[p] 𝔹 q := by
@@ -206,7 +209,7 @@ theorem algebraMap_aCris_injective :
 set_option maxHeartbeats 1600000 in
 theorem phiPlus_iterate_algebraMap (n : ℕ) (a : ACris ℂ_[p] p) :
     (phiPlus ℂ_[p] p)^[n] (algebraMap (ACris ℂ_[p] p) (BCrisPlus ℂ_[p] p) a) =
-      algebraMap (ACris ℂ_[p] p) (BCrisPlus ℂ_[p] p) ((phi ℂ_[p] p)^[n] a) := by
+      algebraMap (ACris ℂ_[p] p) (BCrisPlus ℂ_[p] p) ((phi (K := ℂ_[p]) (p := p))^[n] a) := by
   induction n with
   | zero => rfl
   | succ n ih => rw [Function.iterate_succ_apply', ih, phiPlus_algebraMap,
@@ -227,8 +230,8 @@ theorem exists_root_of_aeval_eq_zero {Q : ℚ_[p][X]} (hQ : Q.Monic) {z : 𝔹} 
   simp only [Function.comp_apply, eval₂_sub, eval₂_X, eval₂_C] at hr0
   exact ⟨r, hr, sub_eq_zero.1 hr0⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem mem_unramifiedClosure_of_iotaPlus_eq {x : BCrisPlus ℂ_[p] p} {β : PadicAlgCl p}
     (hx : iotaPlus ℂ_[p] p x = algClToBdR p β) : β ∈ unramifiedClosure p := by
   classical
@@ -281,7 +284,7 @@ theorem mem_unramifiedClosure_of_iotaPlus_eq {x : BCrisPlus ℂ_[p] p} {β : Pad
     induction n with
     | zero => rfl
     | succ n ih => rw [Function.iterate_succ_apply', ih, map_pow, map_natCast]
-  have ha : (phi ℂ_[p] p)^[N] a = a := by
+  have ha : (phi (K := ℂ_[p]) (p := p))^[N] a = a := by
     apply algebraMap_aCris_injective
     rw [← phiPlus_iterate_algebraMap, ← hs, hsk, ← RingHom.coe_pow, map_mul, RingHom.coe_pow,
       hfix, hphik]
@@ -343,8 +346,8 @@ theorem bCrisPlus_fixed (x : BCrisPlus ℂ_[p] p) (hx : ∀ σ : Gal(PadicAlgCl 
     rw [← iotaPlus_gal_smul, hx σ]
   exact ⟨k, ⟨k.2, mem_unramifiedClosure_of_iotaPlus_eq hk.symm⟩, hk.symm⟩
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem exists_bCrisPlus_fixed {k : PadicAlgCl p} (hk : k ∈ maxUnramified p K) :
     ∃ x : BCrisPlus ℂ_[p] p, (∀ σ : Gal(PadicAlgCl p/K), σ • x = x) ∧
       iotaPlus ℂ_[p] p x = algClToBdR p k := by
@@ -353,18 +356,6 @@ theorem exists_bCrisPlus_fixed {k : PadicAlgCl p} (hk : k ∈ maxUnramified p K)
   rw [iotaPlus_gal_smul, hx, gal_smul_algClToBdR]
   congr 1
   exact σ.commutes ⟨k, hk.1⟩
-
-theorem image_iotaPlus_fixedPoints :
-    iotaPlus ℂ_[p] p '' MulAction.fixedPoints Gal(PadicAlgCl p/K) (BCrisPlus ℂ_[p] p) =
-      algClToBdR p '' (maxUnramified p K : Set (PadicAlgCl p)) := by
-  ext b
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    obtain ⟨k, hk, hxk⟩ := bCrisPlus_fixed x hx
-    exact ⟨k, hk, hxk.symm⟩
-  · rintro ⟨k, hk, rfl⟩
-    obtain ⟨x, hx, hxk⟩ := exists_bCrisPlus_fixed hk
-    exact ⟨x, hx, hxk⟩
 
 end Invariants
 

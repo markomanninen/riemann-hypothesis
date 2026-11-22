@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementQr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+module
+
+public import Formalism.HermitianCurvature.StatementQr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -58,15 +62,14 @@ theorem map_qminor {B : Type} [Ring B] [Algebra ℂ B] (f : B →+* A)
     (hf : ∀ v, f (algebraMap ℂ B v) = algebraMap ℂ A v) (E' : Fin n → Fin n → B) (hE' : ∀ a b, f (E' a b) = E a b)
     {t : ℕ} (a b : Fin t → Fin n) (u : ℂ) : f (qminor E' a b u) = qminor E a b u := by
   unfold qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
   congr 3
   funext k
-  simp only [Function.comp, Tm, map_add, hE']
-  split_ifs
-  · rw [hf]
-  · rw [map_zero]
+  simp only [Function.comp_apply, Tm, map_add, hE']
+  split_ifs <;> simp [hf]
 
 def EX (a b : Fin n) : A[X] := C (E a b) + if a = b then X else 0
 
@@ -98,7 +101,7 @@ theorem Tm_EX (v : ℂ) (c p : Fin n) : Tm (EX E) v c p = C (Tm E v c p) + if c 
 theorem cancel (Z : Fin n → A[X]) (v : ℂ) (h : ∀ c, ∑ p, Z p * Tm (EX E) v c p = 0) : ∀ p, Z p = 0 := by
   have step : ∀ k, (∀ p, (Z p).coeff (k + 1) = 0) → ∀ p, (Z p).coeff k = 0 := by
     intro k hk c
-    have h1 := congrArg (fun f => coeff f (k + 1)) (h c)
+    have h1 := congrArg (fun f : A[X] => f.coeff (k + 1)) (h c)
     simp only [Tm_EX, mul_add, Finset.sum_add_distrib, coeff_add, finsetSum_coeff, coeff_mul_C, hk, zero_mul,
       Finset.sum_const_zero, zero_add, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, coeff_mul_X,
       coeff_zero] at h1

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DualWeylZeroConst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DualWeylZeroConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ theorem V_flat_supported {Kf : Type} [Field Kf] {n' m : ℕ} (TT : Finset (Fin n
   | add a b _ _ ha hb => exact Subalgebra.add_mem _ ha hb
   | smul t a _ ha => exact Subalgebra.smul_mem _ ha t
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem rho_peel (D : Formalism.BasicNotions.D7) {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf]
     {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} (h : HidaSetting p n' W Qq O Kf ι σ j w) {m : ℕ} (r : ℕ)
@@ -211,7 +215,7 @@ theorem rho_peel (D : Formalism.BasicNotions.D7) {p n' : ℕ} {W Qq O Kf : Type}
         rw [smul_smul, smul_mul_assoc, mul_smul_comm]
       | zero => simp
       | add a b _ _ ha hb =>
-        simp only [map_add, smul_add, add_mul, Finset.sum_add_distrib]
+        simp only [map_add (f := _), smul_add, add_mul, Finset.sum_add_distrib]
         rw [← ha, ← hb]
       | smul t a _ ha =>
         conv_lhs => rw [ha]

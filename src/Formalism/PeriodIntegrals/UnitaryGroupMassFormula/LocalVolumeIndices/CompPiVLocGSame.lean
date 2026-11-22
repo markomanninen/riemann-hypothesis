@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.Bridge
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.LocBEOfNatCast
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.Bridge
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalVolumeIndices.LocBEOfNatCast
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ theorem Comp_chi_mul (p : HeightOneSpectrum (𝓞 I.F)) (t : Af I.F ⊗[I.F] I.E
     by_cases h : v = p
     · subst h; rw [Comp_chi_same, Comp_single_same, one_mul]
     · rw [Comp_chi_ne I p v h, Comp_single_ne I p v h, zero_mul]
-  | add x y hx hy => rw [mul_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [mul_add, hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem Comp_sep (p : HeightOneSpectrum (𝓞 I.F)) (z w : I.Gf)
     (h : piV I p (tf I hb z) = piV I p (tf I hb w)) : locG I (chi I p) z = locG I (chi I p) w := by

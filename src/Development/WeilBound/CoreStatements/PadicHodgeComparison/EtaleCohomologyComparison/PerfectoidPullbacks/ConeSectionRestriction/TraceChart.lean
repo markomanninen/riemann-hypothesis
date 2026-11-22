@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.TorusMemFldF
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FractionFieldTranscendenceBasisExtStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.TorusMemFldF
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FractionFieldTranscendenceBasisExtStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -68,7 +72,7 @@ theorem trace_chart (t : Fin (n + 1) → Rˣ) (S : Finset (Fin (n + 2))) (u : Fi
       obtain ⟨x1, x2, hx2, rfl⟩ := hx
       obtain ⟨y1, y2, hy2, rfl⟩ := hy
       refine ⟨x1 * y2 + y1 * x2, x2 * y2, by simpa using mul_ne_zero hx2 hy2, ?_⟩
-      simp only [Subalgebra.coe_add, Subalgebra.coe_mul, map_add, map_mul]
+      simp only [Subalgebra.coe_add, Subalgebra.coe_mul, map_add (f := _), map_mul]
       rw [div_add_div _ _ hx2 hy2]
       ring
     | inv x _ hx =>
@@ -134,7 +138,7 @@ theorem trace_chart (t : Fin (n + 1) → Rˣ) (S : Finset (Fin (n + 2))) (u : Fi
   | add x y _ _ hx hy =>
     obtain ⟨a, ha, hxa⟩ := hx
     obtain ⟨b, hb, hyb⟩ := hy
-    exact ⟨a + b, add_mem ha hb, by simp only [map_add] at hxa hyb ⊢; rw [hxa, hyb]⟩
+    exact ⟨a + b, add_mem ha hb, by simp only [map_add (f := _)] at hxa hyb ⊢; rw [hxa, hyb]⟩
   | neg x _ hx =>
     obtain ⟨a, ha, hxa⟩ := hx
     exact ⟨-a, neg_mem ha, by simp only [map_neg] at hxa ⊢; rw [hxa]⟩

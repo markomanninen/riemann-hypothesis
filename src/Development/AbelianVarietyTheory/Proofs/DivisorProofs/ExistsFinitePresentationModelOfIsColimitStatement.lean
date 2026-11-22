@@ -1,13 +1,37 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinitePresentationModelOfIsColimit
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinitePresentationModelOfIsColimit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.exists_finitePresentation_descent_of_isColimit : ∀ (J : Type) [SmallCategory J] [IsFiltered J] (F : J ⥤ CommRingCat.{0}) (c : Cocone F),
     IsColimit c → ∀ (D : Type) [CommRing D] [Algebra c.pt D], Algebra.FinitePresentation c.pt D →
     ∃ (j : J) (A : Type) (_ : CommRing A) (_ : Algebra (F.obj j) A)
       (_ : Algebra.FinitePresentation (F.obj j) A),
-      letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra;
+      letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra
       Nonempty (c.pt ⊗[F.obj j] A ≃ₐ[c.pt] D) := by
-  first | (exact @GlobalTheory.FpDescent.exists_finitePresentation_model_of_isColimit) | (exact GlobalTheory.FpDescent.exists_finitePresentation_model_of_isColimit) | (intros; apply GlobalTheory.FpDescent.exists_finitePresentation_model_of_isColimit  <;> assumption)
+  intro J _ _ F c hc D _ _ hD
+  classical
+  have hc' := isColimitOfPreserves (forget _) hc
+  let P := Algebra.Presentation.ofFinitePresentation c.pt D
+  obtain ⟨j, hj⟩ : ∃ j, P.coeffs ⊆ Set.range (c.ι.app j).hom := by
+    have hfin := P.finite_coeffs
+    choose jx x hx using fun y : c.pt ↦ Types.jointly_surjective_of_isColimit hc' y
+    obtain ⟨j, hj⟩ := IsFiltered.sup_objs_exists (hfin.toFinset.image jx)
+    refine ⟨j, fun y hy ↦ ?_⟩
+    obtain ⟨f⟩ := hj (Finset.mem_image_of_mem jx (hfin.mem_toFinset.mpr hy))
+    refine ⟨F.map f (x y), ?_⟩
+    have hw := congr(($(c.w f)).hom (x y))
+    simp only [CommRingCat.hom_comp, RingHom.coe_comp, Function.comp_apply] at hw
+    rw [hw]
+    exact hx y
+  let : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra
+  let : Algebra (F.obj j) D := ((algebraMap c.pt D).comp (c.ι.app j).hom).toAlgebra
+  have : IsScalarTower (F.obj j) c.pt D := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
+  have : P.HasCoeffs (F.obj j) := ⟨hj⟩
+  exact ⟨j, P.ModelOfHasCoeffs (F.obj j), inferInstance, inferInstance, inferInstance,
+    ⟨P.tensorModelOfHasCoeffsEquiv (F.obj j)⟩⟩

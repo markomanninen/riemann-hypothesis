@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WhitMulLocGLDiagPowOfFixed
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Spherical
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Formalism.UG GlobalTheory.LFun Matrix Filter Topology
 
 noncomputable section
@@ -13,7 +18,7 @@ namespace GlobalTheory.CuspRep.TailFix
 
 variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 
-theorem entry_int {w : HeightOneSpectrum (𝓞 E)} {g : GL (Fin a) (w.adicCompletion E)} (hg : g ∈ KGL w a)
+theorem entry_int {w : HeightOneSpectrum (𝓞 E)} {g : GL (Fin a) (w.adicCompletion E)} (hg : g ∈ KGL w (n := a))
     (i j : Fin a) : g i j ∈ w.adicCompletionIntegers E := by
   obtain ⟨h, rfl⟩ := hg
   exact (h i j).2
@@ -36,14 +41,14 @@ theorem tendsto_of_loc {α : Type} {l : Filter α} {f : α → Af E} {x : Af E}
 
 theorem exists_tail {U : Set (GL (Fin a) (Af E))} (hU : U ∈ 𝓝 (1 : GL (Fin a) (Af E))) :
     ∃ F : Finset (HeightOneSpectrum (𝓞 E)), ∀ r : GL (Fin a) (Af E),
-      (∀ v, GeneralLinearGroup.map (pLoc E v) r ∈ KGL v a) →
+      (∀ v, GeneralLinearGroup.map (pLoc E v) r ∈ KGL v (n := a)) →
       (∀ v ∈ F, GeneralLinearGroup.map (pLoc E v) r = 1) → r ∈ U := by
   classical
   by_contra hn
   push_neg at hn
   choose r hr1 hr2 hrU using hn
   have ent : ∀ q : Finset (HeightOneSpectrum (𝓞 E)) → GL (Fin a) (Af E),
-      (∀ F v, GeneralLinearGroup.map (pLoc E v) (q F) ∈ KGL v a) →
+      (∀ F v, GeneralLinearGroup.map (pLoc E v) (q F) ∈ KGL v (n := a)) →
       (∀ F, ∀ v ∈ F, GeneralLinearGroup.map (pLoc E v) (q F) = 1) →
       Tendsto (fun F => (q F).val) atTop (𝓝 1) := fun q hq1 hq2 =>
     tendsto_pi_nhds.2 fun i => tendsto_pi_nhds.2 fun j =>
@@ -63,12 +68,12 @@ theorem exists_tail {U : Set (GL (Fin a) (Af E))} (hU : U ∈ 𝓝 (1 : GL (Fin 
 
 end GlobalTheory.CuspRep.TailFix
 
-open GlobalTheory.CuspRep.TailFix in
 
-theorem GlobalTheory.CuspRep.fixed_of_locFixed : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+open GlobalTheory.CuspRep.TailFix in
+theorem GlobalTheory.CuspRep.fixed_of_locFixed : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (φ : Sm E a), IsAutForm φ → ∀ S : Finset (HeightOneSpectrum (𝓞 E)),
-    (∀ w ∉ S, ∀ k ∈ KGL w a, act (.fin (locGL E a w k)) φ = φ) → ∀ k : GL (Fin a) (Af E),
-    (∀ w ∉ S, GeneralLinearGroup.map (pLoc E w) k ∈ KGL w a) →
+    (∀ w ∉ S, ∀ k ∈ KGL w (n := a), act (.fin (locGL E a w k)) φ = φ) → ∀ k : GL (Fin a) (Af E),
+    (∀ w ∉ S, GeneralLinearGroup.map (pLoc E w) k ∈ KGL w (n := a)) →
     (∀ w ∈ S, GeneralLinearGroup.map (pLoc E w) k = 1) → act (.fin k) φ = φ := by
   classical
   intro E _ _ _ a φ hφ S hS k hk1 hk2
@@ -76,7 +81,7 @@ theorem GlobalTheory.CuspRep.fixed_of_locFixed : ∀ (E : Type) [Field E] [Numbe
     hφ.level.mem_nhds (by simp)
   obtain ⟨F, hF⟩ := exists_tail hU
   have key : ∀ T : Finset (HeightOneSpectrum (𝓞 E)), ∀ k : GL (Fin a) (Af E),
-      (∀ w ∉ S, GeneralLinearGroup.map (pLoc E w) k ∈ KGL w a) →
+      (∀ w ∉ S, GeneralLinearGroup.map (pLoc E w) k ∈ KGL w (n := a)) →
       (∀ w ∈ S, GeneralLinearGroup.map (pLoc E w) k = 1) →
       (∀ w ∈ F, w ∉ T → GeneralLinearGroup.map (pLoc E w) k = 1) → finRep E a k φ = φ := by
     intro T

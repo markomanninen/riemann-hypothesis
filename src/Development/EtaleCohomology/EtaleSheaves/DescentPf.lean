@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LCSurjPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LCSurjPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E1Cut LateralTheory.E.LocallyConstantH0

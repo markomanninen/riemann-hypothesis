@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AbsDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AbsDefs
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia.Abs
 
@@ -92,7 +96,8 @@ theorem UpperTheory.length_le_cotLen_of_injective_tangent_map :
         rw [h0, zero_smul]
       · simp [e', h]
     · intro f
-      rw [hD, lin_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hD, lin_apply, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← he' i, smul_eq_mul, map_mul, Algebra.smul_def]
       rfl

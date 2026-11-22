@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetGramRatOneNeZero
+
+@[expose] public section
 
 open Set Filter Polynomial NumberField IsDedekindDomain
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -44,11 +48,11 @@ theorem exists_incl_eq_add (z : Ten P k) : ∃ a, incl P k a = z + sigR k (star'
     refine ⟨s ⊗ₜ ⟨y + star' P y, ?_⟩, TensorProduct.tmul_add _ _ _⟩
     change star' P (y + star' P y) = y + star' P y
     have : star' P (star' P y) = y := GlobalTheory.IndefiniteRowSideFullHecke.SelfReciprocalLocalField.invol_invol (toSR P) y
-    rw [map_add, this, add_comm]
+    rw [map_add (f := _), this, add_comm]
   | add y z hy hz =>
     obtain ⟨a, ha⟩ := hy
     obtain ⟨b, hb⟩ := hz
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]; ring⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]; ring⟩
 
 theorem exists_incl_eq {z : Ten P k} (hz : sigR k (star' P) z = z) : ∃ a, incl P k a = z := by
   obtain ⟨a, ha⟩ := exists_incl_eq_add P k ((2⁻¹ : maximalRealSubfield E) • z)
@@ -120,7 +124,7 @@ theorem incl_toLocalPlus (a) : incl P k (GlobalTheory.IndefiniteRowSideFullHecke
   induction a using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero, map_zero]; exact (map_zero _).symm
   | tmul a b => rfl
-  | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]; exact (map_add _ _ _).symm
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]; exact (map_add _ _ _).symm
 
 theorem mapsCls_iff (q) (c : Cls P k) :
     MapsCls P (k := maximalRealSubfield E) (Algebra.ofId (maximalRealSubfield E) k) (clsMap P _ q) c ↔

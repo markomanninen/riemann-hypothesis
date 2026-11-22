@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.Rosati
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Rosati
+
+@[expose] public section
 
 noncomputable section
 

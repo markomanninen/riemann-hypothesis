@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+
+@[expose] public section
 
 namespace GlobalTheory.LiftAndFactorization
 
@@ -34,7 +38,7 @@ theorem exists_factor (T : CDVR) {F : Type} [Field F] (io : F →+* T.Fr)
             map_one' := inj (by rw [hf, map_one, map_one])
             map_mul' := fun a b => inj (by rw [map_mul, hf, hf, hf, map_mul])
             map_zero' := inj (by rw [hf, map_zero, map_zero])
-            map_add' := fun a b => inj (by rw [map_add, hf, hf, hf, map_add]) }, ?_⟩
+            map_add' := fun a b => inj (by rw [map_add (f := _), hf, hf, hf, map_add (f := _)]) }, ?_⟩
   ext a
   exact hf a
 

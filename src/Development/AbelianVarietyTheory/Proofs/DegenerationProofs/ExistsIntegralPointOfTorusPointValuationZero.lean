@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsAdicCompleteOfNe
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TestFieldFiniteOverPadicStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsAdicCompleteOfNe
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TestFieldFiniteOverPadicStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -44,8 +49,23 @@ theorem exists_ring {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRin
     ReciprocityTheory.ChartRestriction.G.T0.FiniteAlgebraLocalCompletion.cl_dvr ℤ_[p] ℚ_[p] E
   have hf : Module.Finite ℤ_[p] (integralClosure ℤ_[p] E) := IsIntegralClosure.finite ℤ_[p] ℚ_[p] E _
   have := CompleteFiniteExtension.isAdicComplete_of_finite_local ℤ_[p] (integralClosure ℤ_[p] E)
-  let κ := integralClosureToPadicAlgClIntegers E
-  have hl : IsLocalHom κ := isLocalHom_integralClosureToPadicAlgClIntegers E
+  let κ : integralClosure ℤ_[p] E →+* OO p :=
+    (E.val.toRingHom.comp (integralClosure ℤ_[p] E).val.toRingHom).codRestrict (OO p) fun x =>
+      (mem_OO_iff _).2 ((mem_integralClosure_padicInt_iff E _).1 x.2)
+  have hl : IsLocalHom κ := by
+    refine ⟨fun x hx => ?_⟩
+    obtain ⟨y, hy⟩ := hx.exists_right_inv
+    have hy' : ((x : E) : PadicAlgCl p) * (y : PadicAlgCl p) = 1 :=
+      congrArg (fun z : OO p => (z : PadicAlgCl p)) hy
+    have h0 : (x : E) ≠ 0 := by
+      intro h0
+      rw [h0] at hy'
+      simp at hy'
+    have hinv : (x : E)⁻¹ ∈ integralClosure ℤ_[p] E := by
+      rw [mem_integralClosure_padicInt_iff, IntermediateField.coe_inv,
+        ← eq_inv_of_mul_eq_one_right hy']
+      exact (mem_OO_iff _).1 y.2
+    exact IsUnit.of_mul_eq_one ⟨_, hinv⟩ (Subtype.ext (mul_inv_cancel₀ h0))
   have hκ : Function.Injective κ := fun a b h =>
     Subtype.ext (Subtype.ext (congrArg (fun z : OO p => (z : PadicAlgCl p)) h))
   let f₁ : V →+* E := ((OO p).subtype.comp j).codRestrict E fun x => (le_sup_left : K ≤ E) (hK x)
@@ -128,23 +148,37 @@ theorem exists_model (hl : IsLocalHom u.j) (hj : Function.Injective u.j) (K : In
   let b : Over.mk (spMap f) ⟶ u.D.toPre.P.A := Over.homMk b' hb₃
   have hb : spMap ((OO p).subtype.comp κ) ≫ b' = g.b.left := by rw [eκ, Category.assoc, hb₄, hb₂]
   let ξ' : GtPt u.D.toPre (TF (R := u.V) (PadicAlgCl p)) := ⟨g.b, g.s, g.isGen, g.s_zero, g.mult⟩
+  have hX : AddSubmonoid.closure ((Subtype.val : (⊤ : AddSubmonoid u.D.toPre.X) → u.D.toPre.X) '' (X₀ : Set _)) = ⊤ := by
+    apply top_unique
+    intro χ _
+    have hh : ∀ x : (⊤ : AddSubmonoid u.D.toPre.X), x ∈ AddSubsemigroup.closure (X₀ : Set _) →
+        (x : u.D.toPre.X) ∈ AddSubmonoid.closure ((Subtype.val : (⊤ : AddSubmonoid u.D.toPre.X) → u.D.toPre.X) '' (X₀ : Set _)) := by
+      intro x hx
+      induction hx using AddSubsemigroup.closure_induction with
+      | mem x hx => exact AddSubmonoid.subset_closure ⟨x, hx, rfl⟩
+      | add x y hx hy ihx ihy => exact AddSubmonoid.add_mem _ ihx ihy
+    apply hh ⟨χ, trivial⟩
+    rw [hX₀]
+    trivial
   obtain ⟨ξ, h₁, h₂⟩ := exists_descend π (appTop_injective _ (Subtype.val_injective.comp hκ)) ξ' b
-    (Over.OverMorphism.ext hb) X₀ hX₀ fun χ hχ => by
-      obtain ⟨a, ha⟩ := hs (v χ) (Finset.mem_union_right _ (Finset.mem_image_of_mem v hχ))
-      have hau : IsUnit a := IsLocalHom.map_nonunit (f := κ) a (ha ▸ hu χ)
-      have hφ : ∀ k, spMap ((OO p).subtype.comp κ) ≫ DegPre.gtφT u.D.toPre _ b χ k =
-          DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ k := fun k => by
+    (Over.OverMorphism.ext hb) _ hX fun χ hχ => by
+      obtain ⟨χ₀, hχ₀, hχeq⟩ := hχ
+      subst χ
+      obtain ⟨a, ha⟩ := hs (v χ₀) (Finset.mem_union_right _ (Finset.mem_image_of_mem v (by simpa [Finset.bind_def, Finset.pure_def] using hχ₀)))
+      have hau : IsUnit a := IsLocalHom.map_nonunit (f := κ) a (ha ▸ hu χ₀)
+      have hφ : ∀ k, spMap ((OO p).subtype.comp κ) ≫ DegPre.gtφT u.D.toPre _ b χ₀ k =
+          DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ₀ k := fun k => by
         have := (TorusCoord.comp_eq_of_left b g.b (spMap ((OO p).subtype.comp κ)) (𝟙 _)
-          (hb.trans (Category.id_comp _).symm)).1 χ k
+          (hb.trans (Category.id_comp _).symm)).1 χ₀ k
         rw [Category.id_comp, ← TorusCoord.gtφT_eq] at this
         exact this
-      refine exists_gen_extend hL ((OO p).subtype.comp κ) hφ (g.s χ) (g.isGen χ)
-        (fun k => J (DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ k)) ?_ hau.unit (congrArg Subtype.val ha)
-      refine (top_le_iff_cpt (𝟙 (Sp W)) (LB.wchart u.D.toPre.P.L (DegPre.gtφT u.D.toPre _ b χ)
-        (fun k => J (DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ k)))).2 ?_
+      refine exists_gen_extend hL ((OO p).subtype.comp κ) hφ (g.s χ₀) (g.isGen χ₀)
+        (fun k => J (DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ₀ k)) ?_ hau.unit (congrArg Subtype.val ha)
+      refine (top_le_iff_cpt (𝟙 (Sp W)) (LB.wchart u.D.toPre.P.L (DegPre.gtφT u.D.toPre _ b χ₀)
+        (fun k => J (DegPre.gtφ u.D.toPre (PadicAlgCl p) g.b χ₀ k)))).2 ?_
       refine Set.mem_iInter.2 fun k => ?_
-      have h3 := (top_le_iff_cpt _ _).1 (hJ (spMap κ ≫ DegPre.gtφT u.D.toPre _ b χ k)
-        ((Category.assoc _ _ _).trans ((congrArg _ (gtφT_over b χ k)).trans ef)))
+      have h3 := (top_le_iff_cpt _ _).1 (hJ (spMap κ ≫ DegPre.gtφT u.D.toPre _ b χ₀ k)
+        ((Category.assoc _ _ _).trans ((congrArg _ (gtφT_over b χ₀ k)).trans ef)))
       rw [← Category.assoc, ← eκ, hφ k, Scheme.Hom.comp_apply, spMap_cpt] at h3
       exact h3
   exact ⟨W, inferInstance, inferInstance, f, κ, hκl, hc, hW, ξ, by rw [h₁]; exact hb, h₂⟩

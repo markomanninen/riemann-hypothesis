@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilThetaConvergence
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SiegelConeIntegralMatrixLatticeCount
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TsumPiProdEnnreal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilThetaConvergence
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SiegelConeIntegralMatrixLatticeCount
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TsumPiProdEnnreal
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
@@ -78,7 +83,7 @@ theorem weighted_count : ∀ (D : D7) (κ : Type) [Fintype κ] (L : ℕ), 0 < L 
     rw [Finset.prod_inv_distrib]
     apply inv_anti₀ (Finset.prod_pos fun p _ => by have := hb p; positivity)
     calc ∏ p, (1 + b p * |((kap η p : ℤ) : ℝ)|) ^ 2 ≤ ∏ _p : P, (1 + T) ^ 2 :=
-          Finset.prod_le_prod (fun p _ => by have := hb p; positivity)
+          Finset.prod_le_prod₀ (fun p _ => by have := hb p; positivity)
             (fun p _ => pow_le_pow_left₀ (by have := hb p; positivity) (hkp p) 2)
       _ = (1 + T) ^ (2 * Fintype.card P) := by
           rw [Finset.prod_const, Finset.card_univ, ← pow_mul]
@@ -119,7 +124,7 @@ theorem weighted_count : ∀ (D : D7) (κ : Type) [Fintype κ] (L : ℕ), 0 < L 
           ∏ k, max 1 (s k) ^ Module.finrank ℚ D.host.E) := by
         apply ENNReal.ofReal_le_ofReal
         calc ∏ p : P, (1 + 2 / b p) ≤ ∏ p : P, ((1 + 2 * C₀ * L) * max 1 (s p.1)) :=
-              Finset.prod_le_prod (fun p _ => by have := hb p; positivity) (fun p _ => hbnd p)
+              Finset.prod_le_prod₀ (fun p _ => by have := hb p; positivity) (fun p _ => hbnd p)
           _ = (1 + 2 * C₀ * L) ^ Fintype.card P * ∏ k, max 1 (s k) ^ Module.finrank ℚ D.host.E := by
               rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
               congr 1

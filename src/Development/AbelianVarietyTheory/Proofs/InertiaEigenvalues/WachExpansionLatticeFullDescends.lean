@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -232,7 +236,7 @@ theorem phi_mem (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (x
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [actVB, φVB, PD.φ_comm]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have a2 : ∀ (c : K₀) (y : T.V ⊗[Qp] B),
       mulVB (K₀ := K₀) (B := B) (V := T.V) (LL := LL) (PD.σ c) (φVB PD (LL := LL) (V := T.V) y) =
       φVB PD (LL := LL) (V := T.V) (mulVB (K₀ := K₀) (B := B) (V := T.V) (LL := LL) c y) := by
@@ -240,7 +244,7 @@ theorem phi_mem (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (x
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [mulVB, φVB, PD.φ_K₀]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   refine ⟨fun g => by rw [a1, h1], fun c => ?_⟩
   obtain ⟨c, rfl⟩ := PD.σ_bij.2 c
   have h3 := DFunLike.congr_fun (W.emb_σ (i - 1)) c
@@ -257,8 +261,8 @@ theorem lev_q_ne (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL)
     funext a
     simpa [letπ, LocWach.q] using W.q₀_def
   have h4 := congrArg (W.lev i ζ) h3
-  rw [map_mul, h, mul_zero, map_sub, map_pow, map_add, map_one, h2] at h4
-  have h5 := congrArg (fun f => PowerSeries.constantCoeff (PowerSeries.derivative LL f)) h4
+  rw [map_mul, h, mul_zero, map_sub, map_pow, map_add (f := _), map_one, h2] at h4
+  have h5 := congrArg (fun f => PowerSeries.constantCoeff (PowerSeries.derivative (R := LL) f)) h4
   simp [Derivation.leibniz_pow, h0, h1, hz, p_ne W] at h5
 
 theorem root_pow {ζ : LL} {p : ℕ} (hp : p.Prime) (hζ : ∃ j : ℕ, IsPrimitiveRoot ζ (p ^ j)) :
@@ -312,7 +316,7 @@ theorem pow_mem (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) {M : Type} [Add
     { carrier := {x | e x ∈ Λ}
       zero_mem' := by simp
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_setOf_eq, map_add] at ha hb ⊢
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at ha hb ⊢
         exact Λ.add_mem ha hb
       smul_mem' := fun a x hx => hs a x hx }
   let U' : Submodule (LetA O n) (W.DD T) := U.map (W.N T).subtype
@@ -382,8 +386,8 @@ theorem full_down_generic (W : LocWach PD LL O v n) {RW : Type} [CommRing RW] [A
 
 end Generic
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem full_down : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1), (∃ j : ℕ, IsPrimitiveRoot ζ (l ^ j)) → Full (Di (HW l) h T i) (Lat C h T i ζ) → Full (Di (HW l) h T (i - 1)) (Lat C h T (i - 1) (ζ ^ l)) := by
   intro D HW F Cm l _ K s LL h W E C T hT i ζ hζ hF
   have hp : ((D.loc l).PD K).p = l := (D.loc l).PD_p K

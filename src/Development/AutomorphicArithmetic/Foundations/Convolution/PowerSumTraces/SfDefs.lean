@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import GroundTheory.AutomorphicForms.SmoothRep
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import GroundTheory.AutomorphicForms.SmoothRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {H : Type} [NormedAddCommGrou
 
 def fixU (π : UnitaryRep G H) (U : Subgroup G) : Submodule ℂ H where
   carrier := {v | ∀ u ∈ U, π u v = v}
-  add_mem' {a b} ha hb u hu := by rw [map_add, ha u hu, hb u hu]
+  add_mem' {a b} ha hb u hu := by rw [map_add (f := _), ha u hu, hb u hu]
   zero_mem' u _ := map_zero _
   smul_mem' c v hv u hu := by rw [map_smul, hv u hu]
 

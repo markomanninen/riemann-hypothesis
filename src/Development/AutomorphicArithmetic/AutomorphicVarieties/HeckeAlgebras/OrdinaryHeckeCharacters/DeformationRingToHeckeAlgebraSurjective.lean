@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckePolynomialTorsion.EqOnTors
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckePolynomialTorsion.HeckePolCoeff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckePolynomialTorsion.EqOnTors
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckePolynomialTorsion.HeckePolCoeff
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -29,11 +34,26 @@ theorem UpperTheory.V.Hi.deformationRing_to_heckeAlgebra_surjective :
         rw [← map_natCast (algebraMap c.O T), ← map_mul, hu, map_one]
       have e := JEx.heckePol_coeff n (normV w.1)
         (fun j => if h : 0 < j ∧ j - 1 < n then gen (.inl (w, ⟨j - 1, h.2⟩)) else 1) (k + 1) k.2
-      rw [← h1 w P σ hP hσ, dif_pos ⟨Nat.succ_pos _, k.2⟩] at e
+      rw [← h1 w P σ hP hσ, dite_eq_left ⟨Nat.succ_pos _, k.2⟩] at e
       have e2 : (D₀.map f.toRingHom).chi (MonoidAlgebra.single (H.prj σ⁻¹) 1) =
           (D₀.chi (MonoidAlgebra.single (H.prj σ⁻¹) 1)).map f.toRingHom := by
-        rw [← (AlgebraTools.Det.mapApi D₀ _).1]
-        simp
+        let y := MonoidAlgebra.single (H.prj σ⁻¹) (1 : B)
+        have he (z : MonoidAlgebra B H.Gq) : MonoidAlgebra.single 1 X - MonoidAlgebra.mapRingHom H.Gq C
+            (MonoidAlgebra.mapRingHom H.Gq f.toRingHom z) =
+            MonoidAlgebra.mapRingHom H.Gq (Polynomial.mapRingHom f.toRingHom)
+              (MonoidAlgebra.single 1 X - MonoidAlgebra.mapRingHom H.Gq C z) := by
+          rw [map_sub, MonoidAlgebra.mapRingHom_single, Polynomial.coe_mapRingHom, Polynomial.map_X,
+            ← RingHom.comp_apply, ← RingHom.comp_apply, ← MonoidAlgebra.mapRingHom_comp,
+            ← MonoidAlgebra.mapRingHom_comp, Polynomial.mapRingHom_comp_C]
+        let : Algebra B T[X] := ((algebraMap T T[X]).comp f.toRingHom).toAlgebra
+        have hn := D₀.nat B[X] T[X]
+          { toRingHom := Polynomial.mapRingHom f.toRingHom
+            commutes' := fun a => by change (Polynomial.mapRingHom f.toRingHom) (C a) = C (f a); simp }
+          (MonoidAlgebra.single 1 X - MonoidAlgebra.mapRingHom H.Gq C y)
+        change (D₀.map f.toRingHom).D T[X] _ = _
+        rw [← show MonoidAlgebra.mapRingHom H.Gq f.toRingHom y =
+          MonoidAlgebra.single (H.prj σ⁻¹) 1 by simp [y], he y]
+        exact hn
       rw [e2, coeff_map] at e
       have e3 : gen (.inl (w, k)) = algebraMap c.O T u ^ ((k + 1) * (k + 1 - 1) / 2 : ℕ) *
           ((-1) ^ ((k : ℕ) + 1) * f ((D₀.chi (MonoidAlgebra.single (H.prj σ⁻¹) 1)).coeff (n - (k + 1)))) := by

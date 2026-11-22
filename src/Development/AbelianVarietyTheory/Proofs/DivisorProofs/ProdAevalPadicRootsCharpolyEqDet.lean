@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetAevalEqProdArootsCharpolyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetAevalEqProdArootsCharpolyStatement
+
+@[expose] public section
 
 namespace GlobalTheory
 open Polynomial
@@ -21,7 +25,11 @@ theorem prod_aeval_aroots_padic_eq_det : ∀ (p : ℕ) [Fact p.Prime] (S : Type)
   let Ω := AlgebraicClosure K
   letI : Algebra ℚ_[p] Ω := ((algebraMap K Ω).comp ψ').toAlgebra
   have hΩ : algebraMap ℚ_[p] Ω = (algebraMap K Ω).comp ψ' := rfl
-  let j : PadicAlgCl p →ₐ[ℚ_[p]] Ω := IsAlgClosed.lift
+  let j : PadicAlgCl p →ₐ[ℚ_[p]] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hj : Function.Injective j := j.toRingHom.injective
   let uK : Module.End K (TensorProduct S K N) := u.baseChange K
   have key := GlobalTheory.T.det_aeval_eq_prod_aroots_charpoly' K Ω (TensorProduct S K N) uK (R.map (Int.castRingHom K))

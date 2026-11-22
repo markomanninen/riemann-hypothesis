@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+module
 
-open GlobalTheory.PsCo.PcEG
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
+
+@[expose] public section
 
 namespace GlobalTheory.PsCo.PcEG
 
-theorem numShift_holds : NumShift := by
-  intro n ε m c t ht
-  unfold ReciprocityTheory.ChartRestriction.TR.Weyl.numK
+theorem numShift_holds (n : ℕ) (ε : Fin n → Bool) (m : Fin n → ℤ) (c : Bool → ℤ)
+    (t : Fin n → ℂ) (ht : ∀ a, t a ≠ 0) :
+    ReciprocityTheory.ChartRestriction.TR.Weyl.numK ε (fun a => m a - c (ε a)) t =
+      (∑ w ∈ Finset.univ.filter (fun w : Equiv.Perm (Fin n) => ε ∘ w = ε),
+        ((Equiv.Perm.sign w : ℤ) : ℂ) * ∏ a, t a ^ m (w.symm a)) * ∏ a, t a ^ (-c (ε a)) := by
+  delta ReciprocityTheory.ChartRestriction.TR.Weyl.numK
   have hfilt : (Finset.univ.filter (fun σ : Equiv.Perm (Fin n) => ∀ i, ε (σ i) = ε i)) =
       Finset.univ.filter (fun w : Equiv.Perm (Fin n) => ε ∘ w = ε) := by
     ext w; simp [funext_iff]

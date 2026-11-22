@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.FlatHermitianReps.IrredSt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.FlatHermitianReps.IrredSt
+
+@[expose] public section
 
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -176,7 +180,7 @@ theorem exists_irreducible_subrepresentation_bis (hρ : IsUnitaryRep ρ) {a Q : 
         rw [mul_div_assoc', div_lt_iff₀ (by positivity)]
         nlinarith [norm_nonneg a]
       linarith
-    refine h0 ((CStarRing.mul_star_self_eq_zero_iff _).1 ?_)
+    refine h0 (CStarRing.mul_star_self_eq_zero_iff.1 ?_)
     have e : a * Q * star (a * Q) = a * b * star a := by
       rw [star_mul, hbdef]; simp only [mul_assoc]
     rw [e, hab0, zero_mul]

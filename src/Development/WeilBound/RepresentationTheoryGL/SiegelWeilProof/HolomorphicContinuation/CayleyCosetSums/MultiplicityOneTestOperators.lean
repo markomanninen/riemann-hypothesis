@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DifferentiableHf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DifferentiableHf
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,10 +53,6 @@ variable {Kg : Type} [Group Kg] [TopologicalSpace Kg] [IsTopologicalGroup Kg] [C
 include hK in
 theorem ιK (k : Kg) : InK (ι k) := (hK _).mpr ⟨k, rfl⟩
 
-theorem ι_inv (k : Kg) : ι k⁻¹ = (ι k)⁻¹ := by
-  refine (Matrix.inv_eq_left_inv ?_).symm
-  rw [← map_mul, inv_mul_cancel, map_one]
-
 include hK in
 theorem first_cayley_block_inv (k : Kg) : u1 (ι k⁻¹) = (u1 (ι k))⁻¹ := by
   have h : u1 (ι k⁻¹) * u1 (ι k) = 1 := by
@@ -101,8 +101,8 @@ theorem Hf_up (m : ℕ) (e : ℤ) (ψ : (Fin n → Fin n → ℝ) → ℂ) {a b 
     fz_up hp hp21 (inG_path hy ha hb t)]
   ring
 
-include hK in
 
+include hK in
 theorem tOp_formula (m : ℕ) (e : ℤ) (ψ : (Fin n → Fin n → ℝ) → ℂ) {a b p : M2 n} (ha : InG a) (hb : InG b)
     (hp : InG p) (hp21 : p.toBlocks₂₁ = 0) (k1 : Kg) (Y : Matrix (Fin n) (Fin n) ℂ) (z : ℂ) :
     tOp μ ι (rhoP ι m e Y) ψ a b (fz m e z) (p * ι k1) =

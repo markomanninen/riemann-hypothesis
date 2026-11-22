@@ -1,13 +1,20 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TateTwistAffineLineProjectionEquiv
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveCohomologyGmProductKummerCup
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ProjectiveBundleFormulaRankOneOfHomotopyInvarian
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
-import Development.AutomorphicArithmetic.CommutativeAlgebra.FirstChernClassEqZeroOfIsTrivialized
-import Development.AutomorphicArithmetic.CommutativeAlgebra.KummerCocycleMayerVietorisOfCover
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AutomorphicArithmetic.CupPullbacks.TwoCore
-import Development.AutomorphicArithmetic.CupPullbacks.TwoChart
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TateTwistAffineLineProjectionEquiv
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveCohomologyGmProductKummerCup
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ProjectiveBundleFormulaRankOneOfHomotopyInvarian
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.FirstChernClassEqZeroOfIsTrivialized
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.KummerCocycleMayerVietorisOfCover
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AutomorphicArithmetic.CupPullbacks.TwoCore
+public import Development.AutomorphicArithmetic.CupPullbacks.TwoChart
+
+@[expose] public section
+
+set_option synthInstance.maxHeartbeats 100000
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
 namespace UpperTheory.P2
@@ -150,7 +157,7 @@ theorem UpperTheory.projectiveBundleFormula_rank_two :
       rw [← hρ1, pull_comp]
     funext p
     simp only [Function.comp]
-    rw [a1, a1, a2, map_add, pull_cup]
+    rw [a1, a1, a2, map_add (f := _), pull_cup]
   have t0 : IsTrivBy (f 0 ≫ L) wc := by rw [hfL]; exact gch_triv 0
   have t1 : IsTrivBy (f 1 ≫ L) wc := by rw [hfL]; exact gch_triv 1
   have uc : ∀ (T : Scheme.{0}) (y : Sx (pullback (f 0) (f 1)) 0 T),

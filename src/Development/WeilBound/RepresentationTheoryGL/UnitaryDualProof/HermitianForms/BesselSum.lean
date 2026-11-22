@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.StepForm
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnipotentBounds.UnipBLeDerUnipOne
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.SelfAdjointForms.StepForm
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnipotentBounds.UnipBLeDerUnipOne
+
+@[expose] public section
 
 namespace PositivityTheory.RgUd.Form.Final
 

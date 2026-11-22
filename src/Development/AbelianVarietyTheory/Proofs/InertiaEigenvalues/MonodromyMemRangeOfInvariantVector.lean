@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinSectionTrivialisesInvertPrimeTensorStatement
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.BK
 
@@ -78,8 +82,8 @@ theorem exists_conn_eq_zeta_of_mem_Y (D : BKDat O K l e a ι η H) {y : Vec K a 
       rfl
     rw [PhiMod.eq_xi_red_of_conn_eq_zero _ h1, Hom.red_app, hrt, map_zero, map_zero]
   have key : ∀ τ, t τ (Sum.inr ()) = 0 := fun τ => by
+    rw [← join_eta t, PhiMod.plusProj_app] at hx
     have := congrFun (congrFun hx τ) ()
-    rw [← join_eta t, PhiMod.plusProj_app] at this
     simpa using this
   set s : Vec K a ι := fun τ i => t τ (Sum.inl i)
   have hts : t = F.app s := by

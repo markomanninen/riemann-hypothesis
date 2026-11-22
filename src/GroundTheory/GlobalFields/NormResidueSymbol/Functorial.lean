@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialInfinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialInfinite
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -12,8 +16,8 @@ variable {K K' L L' : Type*} [Field K] [NumberField K] [Field K'] [NumberField K
   [NumberField L] [Field L'] [NumberField L'] [Algebra K K'] [Algebra K L] [Algebra K L']
   [Algebra K' L'] [Algebra L L'] [IsScalarTower K K' L'] [IsScalarTower K L L']
 
-variable (K) in
 
+variable (K) in
 def restrictScalarsHom : (L' ≃ₐ[K'] L') →* (L' ≃ₐ[K] L') where
   toFun σ := σ.restrictScalars K
   map_one' := rfl

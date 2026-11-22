@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.SmoothForms Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -26,7 +31,7 @@ theorem mem_span_words (L : Type) [LieRing L] [LieAlgebra ℝ L] (u : UniversalE
         rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
       rw [h, map_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨[X], by simp⟩)
-    | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | mul a b ha hb =>
     rw [map_mul]
     have h := Submodule.mul_mem_mul ha hb
@@ -34,7 +39,7 @@ theorem mem_span_words (L : Type) [LieRing L] [LieAlgebra ℝ L] (u : UniversalE
     refine Submodule.span_mono ?_ h
     rintro _ ⟨_, ⟨l, rfl⟩, _, ⟨m, rfl⟩, rfl⟩
     exact ⟨l ++ m, by simp only [List.map_append, List.prod_append]⟩
-  | add a b ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
 
 theorem envOf_surjective : ∀ (D : D7) (V : HSp D) (τ : D.what₂.Tau),
     Function.Surjective (GlobalTheory.IndefiniteRowSideFullHecke.LieAlgebraExponentialFamilies.envOf V τ) := by

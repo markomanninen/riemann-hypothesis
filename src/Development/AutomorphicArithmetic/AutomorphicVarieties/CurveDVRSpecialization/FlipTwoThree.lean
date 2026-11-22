@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.V.Pr
 
@@ -106,7 +110,5 @@ def GlobOfCharts : Prop :=
         ∀ Y Y', M.CompI Y → M.CompI Y' → x ∈ Y → x ∈ Y' → Y ⊆ M.Good → Y' ⊆ M.Good) ∧
       ((∀ P : PrimeSpectrum R, P.asIdeal ∈ minimalPrimes R → P ∈ L.TI) → ∃ Y, M.CompI Y ∧ x ∈ Y) ∧
       ((∃ I ∈ L.Good, I ∈ L.TI ∧ (L.D1 : WithBot ℕ∞) ≤ qdim I.asIdeal) → ∃ Y, M.CompI Y ∧ Y ⊆ M.Good)
-
-example : (⟨∅, ∅, ∅, ∅, ∅⟩ : GlobData PUnit).Cl ⊆ (⟨∅, ∅, ∅, ∅, ∅⟩ : GlobData PUnit).Core := subset_rfl
 
 end UpperTheory.V.Pr

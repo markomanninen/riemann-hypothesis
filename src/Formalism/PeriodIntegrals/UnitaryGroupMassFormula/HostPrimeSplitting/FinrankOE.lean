@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.EtaHostFacts
+module
+
+public import Formalism.PeriodIntegrals.EtaHostFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem approx (P : HeightOneSpectrum (𝓞 H.E)) (hf : P.asIdeal.inertiaDeg (�
 theorem unram : PI.EtaHostFacts.Unram := by
   intro R H P h1
   haveI := P.isPrime
-  have he := Ideal.ramificationIdx_pos P.asIdeal (𝓞 H.F)
+  have he := Ideal.ramificationIdx_pos (R := 𝓞 H.F) P.asIdeal
   have hf := Ideal.inertiaDeg_pos P.asIdeal (𝓞 H.F)
   have hef := ef_le_two H P
   by_contra hne

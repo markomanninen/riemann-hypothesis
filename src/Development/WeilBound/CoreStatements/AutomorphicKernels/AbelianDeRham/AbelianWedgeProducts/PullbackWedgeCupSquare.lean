@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianPullbackLattices.CompositeRestrictionPullInjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianPullbackLattices.CompositeRestrictionPullInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ theorem pullback_wedge_cup_square {Y Z : Over (Sp R)} (f : Y ⟶ Z)
     rw [hv, exteriorPower.map_apply_ιMulti, hv2, hZ, hY, CoefMap.pullCohomologyTwo_cup, CoefMap.pullCohomologyTwo_cup, h0, h1]
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add, map_add, map_add, map_add, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   | smul a x _ hx =>
     simp only [map_smul, map_smulₛₗ, RingHom.id_apply]
     rw [hx]

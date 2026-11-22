@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IteratedFDerivMulConstOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IteratedFDerivMulConstOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,9 +78,9 @@ theorem spherical_detD (hHI : HolInt) (F : M2 n → ℂ) (hF : ContDiffOn ℂ �
   rw [e0, detD_detD_comp _ Ω hΩo hAv g hgΩ (LA g) (LB g), integral_congr_ae (Filter.Eventually.of_forall hk)]
   simp only [key]
   symm
-  rw [integral_finset_sum _ (fun σ _ => integrable_finset_sum _ (fun τ _ => (hint σ τ).const_mul _))]
+  rw [MeasureTheory.integral_finsetSum _ (fun σ _ => MeasureTheory.integrable_finsetSum _ (fun τ _ => (hint σ τ).const_mul _))]
   refine Finset.sum_congr rfl fun σ _ => ?_
-  rw [integral_finset_sum _ (fun τ _ => (hint σ τ).const_mul _)]
+  rw [MeasureTheory.integral_finsetSum _ (fun τ _ => (hint σ τ).const_mul _)]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [integral_const_mul]
 
@@ -162,11 +166,11 @@ theorem transpose_detD (hI : InfInv) (F1 F2 : M2 n → ℂ) (χ1 χ2 : M2 n → 
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun τ _ => ?_
     ring
-  rw [eL, eR, integral_finset_sum _ (fun σ _ => integrable_finset_sum _ (fun τ _ => (hint1 σ τ).const_mul _)),
-    integral_finset_sum _ (fun σ _ => integrable_finset_sum _ (fun τ _ => (hint2 σ τ).const_mul _)), Finset.mul_sum]
+  rw [eL, eR, MeasureTheory.integral_finsetSum _ (fun σ _ => MeasureTheory.integrable_finsetSum _ (fun τ _ => (hint1 σ τ).const_mul _)),
+    MeasureTheory.integral_finsetSum _ (fun σ _ => MeasureTheory.integrable_finsetSum _ (fun τ _ => (hint2 σ τ).const_mul _)), Finset.mul_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
-  rw [integral_finset_sum _ (fun τ _ => (hint1 σ τ).const_mul _),
-    integral_finset_sum _ (fun τ _ => (hint2 σ τ).const_mul _), Finset.mul_sum]
+  rw [MeasureTheory.integral_finsetSum _ (fun τ _ => (hint1 σ τ).const_mul _),
+    MeasureTheory.integral_finsetSum _ (fun τ _ => (hint2 σ τ).const_mul _), Finset.mul_sum]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [integral_const_mul, integral_const_mul,
     transpose hI F1 F2 χ1 χ2 hF1 hF2 h1 h2 h12 Kg μ ι hι hK N (W σ τ) (hWW σ τ)]

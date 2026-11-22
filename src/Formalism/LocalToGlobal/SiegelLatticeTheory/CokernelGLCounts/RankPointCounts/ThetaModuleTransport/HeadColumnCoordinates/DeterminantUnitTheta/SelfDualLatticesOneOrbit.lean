@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.FirstIsoLinear
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.FirstIsoLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem firstIso_backward_holds : FirstIsometryBackward := by
   have hpt : ∀ (η : M.R) (l x : Fin (r + 1) → M.R), γ.1 (Submodule.Quotient.mk l) = Submodule.Quotient.mk x →
       γ.1 (Submodule.Quotient.mk (η • eV r + q2 hs • l)) = Submodule.Quotient.mk (η • eV r + q2 hs • x) := by
     intro η l x h
-    rw [Submodule.Quotient.mk_add, Submodule.Quotient.mk_smul, Submodule.Quotient.mk_smul, map_add, map_smul,
+    rw [Submodule.Quotient.mk_add, Submodule.Quotient.mk_smul, Submodule.Quotient.mk_smul, map_add (f := _), map_smul,
       map_smul, h, show (Submodule.Quotient.mk (eV r) : MbMod Z₁.Z) = eCl Z₁.Z from rfl, γ.2.2]
     rfl
   refine ⟨thEquiv hs TT γ, ?_, ?_, fun l l₂ h => thEquiv_spec hs TT γ h⟩

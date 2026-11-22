@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitivePresentationCover
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitivePresentationCover
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -92,9 +97,6 @@ def analyticSubring {d : ℕ} (y₀ : Fin d → ℂ) : Subring ((Fin d → ℂ) 
 def evalAt {d : ℕ} (y₀ y : Fin d → ℂ) : analyticSubring y₀ →+* ℂ :=
   (Pi.evalRingHom (fun _ : Fin d → ℂ => ℂ) y).comp (analyticSubring y₀).subtype
 
-@[simp] theorem evalAt_apply {d : ℕ} (y₀ y : Fin d → ℂ) (f : analyticSubring y₀) :
-    evalAt y₀ y f = (f : (Fin d → ℂ) → ℂ) y := rfl
-
 def pev {d : ℕ} {y₀ : Fin d → ℂ} (y : Fin d → ℂ) (t : ℂ) : (analyticSubring y₀)[X] →+* ℂ :=
   (Polynomial.evalRingHom t).comp (Polynomial.mapRingHom (evalAt y₀ y))
 
@@ -104,7 +106,7 @@ variable {d : ℕ} {y₀ : Fin d → ℂ}
 
 @[simp] theorem pev_C (y : Fin d → ℂ) (t : ℂ) (f : analyticSubring y₀) :
     pev y t (C f) = (f : (Fin d → ℂ) → ℂ) y := by
-  simp [pev]
+  simp [pev, evalAt]
 
 @[simp] theorem pev_X (y : Fin d → ℂ) (t : ℂ) : pev (y₀ := y₀) y t X = t := by
   simp [pev]
@@ -145,7 +147,8 @@ theorem presPoly_degree {d N : ℕ} {y₀ : Fin d → ℂ} (c : Fin N → (Fin d
 theorem pev_presPoly {d N : ℕ} {y₀ : Fin d → ℂ} (c : Fin N → (Fin d → ℂ) → ℂ)
     (hc : ∀ j, AnalyticAt ℂ (c j) y₀) (y : Fin d → ℂ) (t : ℂ) :
     pev y t (presPoly c hc) = t ^ N + ∑ j, c j y * t ^ (j : ℕ) := by
-  simp [presPoly, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [presPoly, map_sum]
 
 theorem pev_eq_zero_of_presentation {σ : Type} [Fintype σ] {w : σ → ℂ} {k : ℕ} {p : Fin k → (σ → ℂ) → ℂ}
     {d : ℕ} {A : (σ → ℂ) →L[ℂ] (Fin d → ℂ)} {ℓ : (σ → ℂ) →L[ℂ] ℂ} {N : ℕ} {c : Fin N → (Fin d → ℂ) → ℂ}
@@ -162,7 +165,7 @@ theorem pev_eq_zero_of_presentation {σ : Type} [Fintype σ] {w : σ → ℂ} {k
   set Q := H /ₘ F with hQdef
   have hdec : ∀ y t, pev y t H = pev y t R + pev y t F * pev y t Q := by
     intro y t
-    rw [← map_mul, ← map_add, hRdef, hQdef, modByMonic_add_div]
+    rw [← map_mul, ← map_add (f := _), hRdef, hQdef, modByMonic_add_div]
   have hRdeg : R.natDegree < N := by
     by_cases hR0 : R = 0
     · rw [hR0, natDegree_zero]; exact hN

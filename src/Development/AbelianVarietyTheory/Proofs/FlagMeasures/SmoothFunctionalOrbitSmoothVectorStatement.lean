@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SmoothFunctionalOrbitSmoothVector
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SmoothFunctionalOrbitSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace
 set_option maxHeartbeats 1000000 in

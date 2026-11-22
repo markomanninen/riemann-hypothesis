@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsLie
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsLie
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -45,8 +49,8 @@ theorem contMDiffAt_iff_expG {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ‚
     rfl
   rw [e1, e2, modelWithCornersSelf_coe, range_id, contDiffWithinAt_univ]
 
-include h in
 
+include h in
 theorem locallyCompactSpace : LocallyCompactSpace G := by
   let := h.chartedSpace
   exact ChartedSpace.locallyCompactSpace ùî§ G

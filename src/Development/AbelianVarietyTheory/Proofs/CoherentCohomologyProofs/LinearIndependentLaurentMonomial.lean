@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 
@@ -32,14 +36,14 @@ theorem linearIndependent_laurentMonomial :
     exact (add_right_cancel h1).symm
   have h0 : awayFrac (MvPolynomial ι R) (xProd R s) k
       (∑ a ∈ T, g a • monomial (m a) (1 : R)) = 0 := by
-    rw [map_sum, ← hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← hg]
     refine Finset.sum_congr rfl fun a ha => ?_
     rw [hv a k (m a) (hm a ha), LinearMap.map_smul_of_tower]
-  have h1 := congrArg (coeff (m j))
+  have h1 := congrArg (AddMonoidAlgebra.coeff · (m j))
     ((map_eq_zero_iff _ (awayFrac_injective (xProd_smul_injective s) k)).1 h0)
-  rw [coeff_sum, Finset.sum_eq_single j, coeff_smul, coeff_monomial, if_pos rfl, coeff_zero,
-    smul_eq_mul, mul_one] at h1
-  · exact h1
+  rw [coeff_sum, Finset.sum_eq_single j, coeff_smul, coeff_monomial, if_pos rfl] at h1
+  · simpa using h1
   · intro a ha hne
     rw [coeff_smul, coeff_monomial, if_neg fun e => hne (hinj a ha e), smul_zero]
   · exact fun h => absurd hj h

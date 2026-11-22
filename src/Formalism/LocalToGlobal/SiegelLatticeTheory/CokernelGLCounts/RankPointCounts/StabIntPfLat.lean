@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TwistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TwistC
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem Xmat_coordX {X : MatR D} (hU : UpU X) (hB : IsBlockDiagonalMatrix w X) :
   · subst h; simp [Xmat, (hU a a).2 rfl]
   · simp only [Xmat, h, if_false]
     by_cases h2 : a < c ∧ blkOf w.1 a.val = blkOf w.1 c.val
-    · rw [dif_pos h2]; rfl
-    · rw [dif_neg h2]
+    · rw [dite_eq_left h2]; rfl
+    · rw [dite_eq_right h2]
       by_cases h3 : a < c
       · exact (hB a c (fun e => h2 ⟨h3, e⟩)).symm
       · exact ((hU a c).1 (lt_of_le_of_ne (not_lt.1 h3) (Ne.symm h))).symm

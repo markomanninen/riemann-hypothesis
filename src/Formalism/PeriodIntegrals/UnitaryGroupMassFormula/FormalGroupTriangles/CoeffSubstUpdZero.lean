@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.SubstMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem fact_div {S : Subring K} {k : σ} {s G : MvPowerSeries σ K}
     ∃ H ∈ SerS S σ, G = (MvPowerSeries.X k - s) * H := by
   have hz0 : MvPowerSeries.constantCoeff (0 : MvPowerSeries σ K) = 0 := map_zero _
   have hp0 : MvPowerSeries.constantCoeff (MvPowerSeries.X k + s : MvPowerSeries σ K) = 0 := by
-    rw [map_add, hs0, add_zero]; exact MvPowerSeries.constantCoeff_X k
+    rw [map_add (f := _), hs0, add_zero]; exact MvPowerSeries.constantCoeff_X k
   have hm0 : MvPowerSeries.constantCoeff (MvPowerSeries.X k - s : MvPowerSeries σ K) = 0 := by
     rw [map_sub, hs0, sub_zero]; exact MvPowerSeries.constantCoeff_X k
   have hG' : MvPowerSeries.subst (upd k (MvPowerSeries.X k + s)) G ∈ PI.AddIntG.Wk.SerS S σ :=

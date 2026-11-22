@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -156,7 +160,7 @@ theorem dense_hasCompactSupport : ∀ (n : ℕ), Dense {f : SchwartzMap (Fin n �
             rw [(L R).iteratedFDeriv_comp_right hus x (by exact_mod_cast le_top)]
             refine (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans ?_
             refine (mul_le_of_le_one_right (norm_nonneg _) ?_).trans (hC i _)
-            exact Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun _ _ => hL1 R)
+            exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun _ _ => hL1 R)
           have h3 := SchwartzMap.le_seminorm ℂ (k + 1) (j - i) f x
           have h4 := hC0 i
           gcongr
@@ -226,7 +230,7 @@ theorem exists_div (n : ℕ) (f : SchwartzMap (Fin n → ℝ) ℂ)
     have hx' : x ∈ Metric.ball (0 : Fin n → ℝ) 1 := hbs (tsupport_smul_subset_left _ _ hx)
     refine b.contDiff.contDiffAt.smul (ContDiffAt.mul ?_ (hh i).contDiffAt)
     exact ContDiffAt.comp x (g := q) (f := fun x : Fin n → ℝ => x i)
-      (hq.contDiffAt (Metric.isOpen_ball.mem_nhds (hcoord i x hx'))) (contDiffAt_apply ℝ ℝ i x)
+      (hq.contDiffAt (Metric.isOpen_ball.mem_nhds (hcoord i x hx'))) (contDiffAt_apply ℝ (fun _ : Fin n => ℝ) i x)
   have hcs : ∀ i, HasCompactSupport (fun x : Fin n → ℝ => b x • (q (x i) * h i x)) :=
     fun i => b.hasCompactSupport.smul_right
   refine ⟨fun i => (hcs i).toSchwartzMap (hsm i), hcs, fun x => ?_⟩
@@ -250,7 +254,7 @@ theorem zero_of_ball (n : ℕ) (T : SchwartzMap (Fin n → ℝ) ℂ →L[ℂ] �
     have hsm : ∀ i, ContDiff ℝ ∞ (fun x : Fin n → ℝ => cexp (2 * π * I * x i) * g i x) := by
       intro i
       refine ContDiff.mul ?_ ((g i).smooth ⊤)
-      exact (contDiff_const.mul (Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ ℝ i))).cexp
+      exact (contDiff_const.mul (Complex.ofRealCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) i))).cexp
     have hcs : ∀ i, HasCompactSupport (fun x : Fin n → ℝ => cexp (2 * π * I * x i) * g i x) :=
       fun i => (hg i).mul_left
     have e : f = ∑ i, ((hcs i).toSchwartzMap (hsm i) - g i) := by
@@ -259,7 +263,8 @@ theorem zero_of_ball (n : ℕ) (T : SchwartzMap (Fin n → ℝ) ℂ →L[ℂ] �
       refine Finset.sum_congr rfl fun i _ => ?_
       show _ = cexp (2 * π * I * x i) * g i x - g i x
       ring
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_sub, hχ i (g i) _ (fun x => rfl), sub_self]
 

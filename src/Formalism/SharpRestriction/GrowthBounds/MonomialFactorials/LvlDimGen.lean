@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiRenameMon
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BePhiSmulRight
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SumFinrankLeOfIndep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiRenameMon
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BePhiSmulRight
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SumFinrankLeOfIndep
+
+@[expose] public section
 
 noncomputable section
 

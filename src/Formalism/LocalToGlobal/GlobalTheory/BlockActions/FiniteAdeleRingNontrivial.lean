@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem latS_functional (Λ : Submodule (𝓞 E) (Fin n → E)) (f : Module.Dual
       ext j
       simp [Finset.sum_apply, Pi.single_apply]
     conv_lhs => rw [hy]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
   have key : ∀ u ∈ latS (F := F) (FiniteAdeleRing (𝓞 F) F) 𝒮 Λ, ∑ i, ι (c i) * u i = 0 := by
@@ -48,7 +53,8 @@ theorem latS_functional (Λ : Submodule (𝓞 E) (Fin n → E)) (f : Module.Dual
     induction hu using Submodule.span_induction with
     | mem u hu =>
       obtain ⟨y, hy, rfl⟩ := hu
-      simp only [← map_mul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← map_mul, ← map_sum]
       rw [← hfc, hf y hy, map_zero]
     | zero => simp
     | add u w _ _ hu hw =>
@@ -63,7 +69,8 @@ theorem latS_functional (Λ : Submodule (𝓞 E) (Fin n → E)) (f : Module.Dual
         ring
       rw [h, hu, mul_zero]
   have h1 := key _ hx
-  simp only [← map_mul, ← map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_mul, ← map_sum] at h1
   rw [← hfc] at h1
   exact inclE_injective_fin h1
 where

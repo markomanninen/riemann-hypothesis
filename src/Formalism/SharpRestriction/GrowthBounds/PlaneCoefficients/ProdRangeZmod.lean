@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.PlMonPsiExpPAdd
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundJoint
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.FrRevInj
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.PlMonPsiExpPAdd
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.SlackBoundJoint
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem seg_PsiP (p : ℕ) {n' r K m : ℕ} [NeZero n'] [NeZero r] (O : Type) [C
   | algebraMap c =>
     simp only [MvPolynomial.algebraMap_eq, MvPolynomial.algHom_C, map_C]
   | add x y _ _ hx hy =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [hx, hy]
   | mul x y _ _ hx hy =>
     simp only [map_mul]
@@ -138,7 +142,7 @@ theorem restTr : RestTr := by
       exact Int.even_iff.mp (Int.even_coe_nat _ |>.mpr hev)
     show (l.mapDomain (castV hk) + ga) (plVar Fr hk Dt.nL (⟨j, Sum.inl ll⟩ : TL J Dt.nL r) a) /
       lowP Fr p (⟨j, Sum.inl ll⟩ : TL J Dt.nL r) = 0
-    rw [Finsupp.add_apply, hgz, add_zero, hpv, Finsupp.mapDomain_apply hinj]
+    rw [Finsupp.add_apply, hgz, add_zero, hpv, Finsupp.mapDomain_apply_of_injective hinj]
     exact Nat.div_eq_of_lt hlab
 
 end Formalism.MainNotions.PairMembershipBlocks

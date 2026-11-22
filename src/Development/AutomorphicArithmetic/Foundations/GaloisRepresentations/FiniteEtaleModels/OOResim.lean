@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OTResim
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OTResim
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ private def reObj {G : GDatum} {R : Type} [CommRing R] [Algebra ℚ R] {gb : GBa
     (o : GObj gb N s) (g : ℕ → G.La →+ G.La) (hg : IsSys g) (hpos : 0 < N) : GObj gb N s :=
   { o with
     eta := fun y => o.eta (g N y)
-    eta_add := fun x y => by rw [map_add, o.eta_add]
+    eta_add := fun x y => by rw [map_add (f := _), o.eta_add]
     eta_lin := fun a x => by
       obtain ⟨z, hz⟩ := hg.lin N hpos a x
       rw [hz, o.eta_add, o.eta_ker, _root_.mul_one, o.eta_lin]

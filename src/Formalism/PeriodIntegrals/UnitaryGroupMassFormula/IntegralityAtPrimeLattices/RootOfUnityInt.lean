@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfIncrements
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.NaturalTranslateAdelicFunction
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityAtPrimeLattices.IntegralityAtFormsOfIncrements
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.NaturalTranslateAdelicFunction
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,15 @@ theorem bases0 (T : Forms0 D u) (c : (D.mem u).C.cls 0) :
       IsLocBasis (D.mem u).A.T (Lk T.atT 0 (Nat.zero_le _) v c : Set _) B' := by
   have : Fact (D.mem u).A.T.Prime := ⟨(D.mem u).A.T_prime⟩
   have hL := bwB_clsCrd_lat D u 0 (Nat.zero_le _) c
+  have hLfull : Submodule.IsFullLattice D.host.E (clsCrd D u 0 (Nat.zero_le _) c) := by
+    refine { toIsLattice := hL, span_eq_top := ?_ }
+    letI := D.host.cmStar
+    unfold clsCrd
+    rw [Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image,
+      (D.clsLat_lat u 0 c).span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+    exact LinearEquiv.surjective _
   obtain ⟨d, hd, hle⟩ := dual_le_bnd (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))
-    (bwB_gramN_det D 0 (Nat.zero_le _)) _ hL
+    (bwB_gramN_det D 0 (Nat.zero_le _)) _ hLfull
   obtain ⟨d0, hd0, hle0⟩ := exists_le_bnd _ hL
   have hLd : Ld D u 0 (Nat.zero_le _) c ≤ bnd d := hle
   have hLd_sp := dual_span (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _)) _ hL
@@ -52,7 +63,25 @@ theorem bases0 (T : Forms0 D u) (c : (D.mem u).C.cls 0) :
     refine (Submodule.smul_le_right.trans hLd).trans ?_
     rw [mul_comm]
     exact bnd_mono d d0
-  · exact eq_top_iff.2 (hL.span_eq_top ▸ Submodule.span_mono (SetLike.coe_subset_coe.2 le_sup_left))
+  · apply eq_top_iff.2
+    rw [← hLd_sp]
+    apply Submodule.span_le.2
+    intro z hz
+    have ht : (((D.mem u).A.T : ℕ) : D.host.E) ≠ 0 := by
+      exact_mod_cast (D.mem u).A.T_prime.ne_zero
+    have hm := bwA_T_smul_Ld_mem_Lk D u T.atT 0 (Nat.zero_le _) v c z hz
+    have hm' : (((D.mem u).A.T : ℕ) : D.host.E) • z ∈
+        Submodule.span D.host.E (Lk T.atT 0 (Nat.zero_le _) v c : Set _) := by
+      apply Submodule.subset_span
+      change (((D.mem u).A.T : ℕ) : D.host.E) • z ∈ Lk T.atT 0 (Nat.zero_le _) v c
+      simpa only [Nat.cast_smul_eq_nsmul] using hm
+    have hm'' : ((((D.mem u).A.T : ℕ) : D.host.E)⁻¹) •
+        ((((D.mem u).A.T : ℕ) : D.host.E) • z) ∈
+        Submodule.span D.host.E (Lk T.atT 0 (Nat.zero_le _) v c : Set _) :=
+      by
+        apply Submodule.smul_mem
+        exact hm'
+    simpa [smul_smul, ht] using hm''
 
 theorem rootOfUnity_int (w : D.what₂.places.Pl) (r : D.what₂.LL) {n : ℕ} (hn : 0 < n) (hr : r ^ n = 1) :
     r ∈ intW D.what₂.places w := by

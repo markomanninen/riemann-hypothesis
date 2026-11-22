@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleSectionDiv
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsMultAtOfSaturated
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsProjIdealFormValue
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTruncSpecialize
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleChartSection
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleSectionDiv
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsMultAtOfSaturated
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsProjIdealFormValue
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsTruncSpecialize
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleChartSection
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -44,7 +49,7 @@ theorem eq_of_lt_of_le_of_mem_minimalPrimes {A : Type*} [CommRing A] [IsNoetheri
 theorem divCycle_eq_zero_of_not_mem {K : Type*} {ι : K → Type*} {R : Type*} [CommRing R]
     {P W : Ideal (MRing ι R)} {x : MRing ι R} (hx : x ∉ W) : divCycle P x W = 0 := by
   unfold divCycle
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨h, -⟩
   exact hx (h.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self x)))
 
@@ -72,8 +77,8 @@ theorem divCycle_congr {K : Type*} {ι : K → Type*} {R : Type*} [CommRing R]
 
 end FlagBundleSectionDivProof
 
-open FlagBundleSectionDivProof in
 
+open FlagBundleSectionDivProof in
 theorem FlagBundleSectionDiv.proof (hDim : FlagBundleDim.Statement)
     (hSat : MultAtOfSaturated.Statement.{0}) (hForm : ProjIdealFormValue.Statement)
     (hTrunc : TruncSpecialize.Statement) (hChart : FlagBundleChartSection.Statement) :
@@ -153,7 +158,7 @@ theorem FlagBundleSectionDiv.proof (hDim : FlagBundleDim.Statement)
           obtain ⟨n, hn⟩ := hsat q hq
           exact ⟨_, hsW n, hn⟩)
       unfold divCycle
-      rw [dif_pos ⟨hmin, hQ.relevant⟩, hmult]
+      rw [dite_eq_left ⟨hmin, hQ.relevant⟩, hmult]
       rfl
     · by_contra hne
       have hmin : W ∈ (projIdeal F y w φ (truncCoord t ((i : ℕ) + 1)) ⊔ Ideal.span {l}).minimalPrimes := by
@@ -169,7 +174,7 @@ theorem FlagBundleSectionDiv.proof (hDim : FlagBundleDim.Statement)
       exact hWQ (eq_of_lt_of_le_of_mem_minimalPrimes hmin hPQ' hQW).symm
   · have h0 : ∀ x, divCycle (projIdeal F y w φ (truncCoord t ((i : ℕ) + 1))) x W = 0 := fun x => by
       unfold divCycle
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨h, hr⟩
       exact hW ⟨h.1.1, hr, le_sup_left.trans h.1.2⟩
     have hWQ : W ≠ projIdeal F y w φ (truncCoord t i) := by

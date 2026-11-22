@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.GoodModelAll
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SecondLogDerivativeUnique
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalA
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalD
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.GoodModelAll
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SecondLogDerivativeUnique
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalA
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.FinalD
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -81,7 +85,7 @@ variable {p : ℕ} [Fact p.Prime] (ι : ℂ ≃+* ℂ_[p])
 theorem sum_bar (dK : ℕ) (m : ℤ) :
     ι ((m : ℂ) + ((1 : ℤ) : ℂ) * omegaK dK) + ι ((m : ℂ) + ((1 : ℤ) : ℂ) * (1 - omegaK dK)) =
       ((2 * m + 1 : ℤ) : ℂ_[p]) := by
-  rw [← map_add]
+  rw [← map_add (f := _)]
   have e : ((m : ℂ) + ((1 : ℤ) : ℂ) * omegaK dK) + ((m : ℂ) + ((1 : ℤ) : ℂ) * (1 - omegaK dK)) =
       ((2 * m + 1 : ℤ) : ℂ) := by
     push_cast
@@ -157,8 +161,9 @@ theorem CMDatum_proof : CMDatum := by
     rwa [Formalism.L2.Th1.E.ScaledModelNorms.py_ptOf p L ι hΔ _ (hker P).2] at h
   · rw [← map_mul, hprod, Fintype.card_coe]
     simp
-  · rw [← map_sub, ← map_mul, ← map_mul, hs2C, map_sum, hb2]
-    simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sub, ← map_mul, ← map_mul, hs2C, map_sum, hb2]
+      simp
 
 theorem ShapeCM_of (hD : CMDatum) : ShapeCM := by
   intro dK L hmod hCM p _ hpd ι hW

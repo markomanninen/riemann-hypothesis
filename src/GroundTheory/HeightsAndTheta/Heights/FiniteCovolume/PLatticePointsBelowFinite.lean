@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Imports
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoerciveOfPositiveDefinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Imports
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoerciveOfPositiveDefinite
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -16,11 +20,11 @@ theorem exists_coercive_of_posDef {ι : Type*} [Fintype ι] {P : Matrix ι ι �
 section Spaces
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem exists_coord_le_len {h : HermitianForm F E W} {v : Basis ι E W} (M : Majorant h v)
     (g : archUnitary h v) : ∃ K : ℝ, 0 ≤ K ∧ ∀ (y : InfinitePlace E → ι → ℂ) w i,
       ‖y w i‖ ≤ K * M.len (invApply g y) := by
@@ -60,8 +64,8 @@ theorem exists_coord_le_len {h : HermitianForm F E W} {v : Basis ι E W} (M : Ma
         exact Finset.single_le_sum (f := fun i' => ∑ j, ‖G w i' j‖ / Real.sqrt (c w))
           (fun _ _ => by positivity) (Finset.mem_univ i)
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem LatticePointsBelowFinite.proof (h : HermitianForm F E W) (v : Basis ι E W) :
     LatticePointsBelowFinite.Statement h v := by
   classical
@@ -73,15 +77,24 @@ theorem LatticePointsBelowFinite.proof (h : HermitianForm F E W) (v : Basis ι E
   let T : AddSubgroup W :=
     { carrier := {y | ∀ i, IsIntegral ℤ (d • v.repr y i)}
       add_mem' := fun {a b} ha hb i => by
-        simpa only [map_add, Finsupp.add_apply, smul_add] using (ha i).add (hb i)
+        simpa only [map_add (f := _), Finsupp.add_apply, smul_add] using (ha i).add (hb i)
       zero_mem' := fun i => by
         simpa only [map_zero, Finsupp.zero_apply, smul_zero] using isIntegral_zero
       neg_mem' := fun {a} ha i => by
         simpa only [map_neg, Finsupp.neg_apply, smul_neg] using (ha i).neg }
   have hLaT : La ≤ T := by
-    rw [← hS, AddSubgroup.closure_le]
-    intro s hs i
-    exact hd _ (Finset.mem_biUnion.2 ⟨s, hs, Finset.mem_image.2 ⟨i, Finset.mem_univ _, rfl⟩⟩)
+    have hall : ∀ s : La, (s : W) ∈ T := by
+      intro s
+      have hmem : s ∈ AddSubsemigroup.closure (S : Set La) := by
+        rw [hS]
+        trivial
+      induction hmem using AddSubsemigroup.closure_induction with
+      | mem s hs =>
+        intro i
+        exact hd _ (Finset.mem_biUnion.2 ⟨s, hs, Finset.mem_image.2 ⟨i, Finset.mem_univ _, rfl⟩⟩)
+      | add a b _ _ ha hb => exact T.add_mem ha hb
+    intro x hx
+    exact hall ⟨x, hx⟩
   have hdE : (d : E) ≠ 0 := Int.cast_ne_zero.2 hd0
 
   obtain ⟨K, hK0, hK⟩ := exists_coord_le_len M g

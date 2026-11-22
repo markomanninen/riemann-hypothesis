@@ -1,8 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.PowComp
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NmCent
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.PowComp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NmCent
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 
 open Polynomial NumberField IsDedekindDomain UpperTheory.ConvolutionTheory.D
@@ -51,8 +56,9 @@ private theorem isGal_equiv {R' : Type} [CommRing R'] [Algebra k R'] (e : R ≃�
   · obtain ⟨z, rfl⟩ := e.surjective z
     obtain ⟨c, rfl⟩ := h.fix z (e.injective (by simpa using hz))
     exact ⟨c, (e.commutes c).symm⟩
-  · simp only [hp, ← map_mul, ← map_sum, hxy j hj]
-    split_ifs <;> simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [hp, ← map_mul, ← map_sum, hxy j hj]
+      split_ifs <;> simp
 
 private theorem abstract_hilbert90 (σ : R ≃ₐ[k] R) (q : ℕ) (hσ : IsGal σ q) (O : Subring k) [IsLocalRing O] (S : Subring R)
     (hOS : ∀ x, algebraMap k R x ∈ S ↔ x ∈ O) (hS : ∀ r ∈ S, σ r ∈ S)
@@ -97,9 +103,10 @@ private theorem abstract_hilbert90 (σ : R ≃ₐ[k] R) (q : ℕ) (hσ : IsGal �
       m, fun i => ⟨x i, (hm i).1⟩, fun i => ⟨y i, (hm i).2⟩, fun j hj' => hj ?_⟩
     · obtain ⟨c, hc⟩ := hσ.fix r (congrArg S.subtype hr)
       exact ⟨⟨c, (hOS c).1 (hc ▸ r.2)⟩, Subtype.ext hc⟩
-    · simp only [map_sum, map_mul, hjp]
-      refine (hxy j hj').trans ?_
-      split_ifs <;> simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [map_sum, map_mul, hjp]
+        refine (hxy j hj').trans ?_
+        split_ifs <;> simp
   obtain ⟨a, rfl⟩ := (intGL_iff S a).1 ha
   obtain ⟨γ, rfl⟩ := (intGL_iff O γ).1 hγ
   have hcp : cp (Matrix.GeneralLinearGroup.map O.subtype γ) = (cp γ).map O.subtype := by
@@ -111,7 +118,7 @@ private theorem abstract_hilbert90 (σ : R ≃ₐ[k] R) (q : ℕ) (hσ : IsGal �
     obtain ⟨u, rfl⟩ := (mem_lifts _).1 hu
     obtain ⟨w, rfl⟩ := (mem_lifts _).1 hw
     refine ⟨u, w, map_injective _ O.subtype_injective ?_⟩
-    rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, ← derivative_map, ← hcp, huw, Polynomial.map_one]
+    rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← derivative_map, ← hcp, huw, Polynomial.map_one]
   have hsg : ∀ (m : ℕ) (g : GL (Fin n) S), Matrix.GeneralLinearGroup.map S.subtype (sg (s ^ m) g) =
       sg (σ ^ m) (Matrix.GeneralLinearGroup.map S.subtype g) := fun m g => by
     ext a b
@@ -172,8 +179,8 @@ private theorem galHom_mem (σ : E ≃ₐ[F] E) (w w' : HeightOneSpectrum (𝓞 
   rw [mem_O, ← Valued.toNormedField.norm_le_one_iff] at hy ⊢
   exact h1.trans_le hy
 
-variable (E) in
 
+variable (E) in
 private noncomputable def intOver (v : HeightOneSpectrum (𝓞 F)) : Subring (CompletionsOver E v) :=
   ⨅ w : PlacesOver E v, (𝒪[w.1.adicCompletion E]).comap
     (Pi.evalRingHom (fun w : PlacesOver E v => w.1.adicCompletion E) w)
@@ -226,7 +233,7 @@ private theorem galFin_eq (σ : E ≃ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) 
     · exact (sigLoc_algebraMap σ v a).symm
     · exact ((sigLoc σ v).commutes b).symm
   | add a b ha hb =>
-    rw [map_add, map_add, map_add, map_add, ha, hb]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
 
 private theorem ev_elt (t : F) : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
     algebraMap F (v.adicCompletion F) t ∈ 𝒪[v.adicCompletion F] := by
@@ -259,7 +266,7 @@ private theorem alg_mem {v : HeightOneSpectrum (𝓞 F)}
   have hv : ∀ w : PlacesOver E v, algebraMap _ (CompletionsOver E v) c w ∈ 𝒪[w.1.adicCompletion E] ↔
       c ∈ 𝒪[v.adicCompletion F] := fun w => by
     rw [mem_O, mem_O, Pi.algebraMap_apply, algebraMap_completion_eq, valued_completionMap,
-      pow_le_one_iff (Ideal.ramificationIdx_pos w.1.asIdeal (𝓞 F)).ne']
+      pow_le_one_iff (Ideal.ramificationIdx_pos (R := 𝓞 F) w.1.asIdeal).ne']
   rw [mem_intOver]
   refine ⟨fun h => ?_, fun h w => (hv w).2 h⟩
   rcases isEmpty_or_nonempty (PlacesOver E v) with h0 | ⟨⟨w⟩⟩
@@ -331,10 +338,11 @@ theorem UpperTheory.ConvolutionTheory.G.firstCohomologyBound_of_boundaryBound :
     exact congrArg (mapGL n) (RingHom.ext fun _ => rfl)
   have key := abstract_hilbert90 (sigLoc σ v) _ hσ 𝒪[v.adicCompletion F] (intOver E v) (alg_mem hσ.inj) (sigLoc_mem σ v)
     ⟨s, fun i => algebraMap E _ (x i), fun i => algebraMap E _ (y i), fun i => ⟨hx i, hy i⟩, fun j hj => by
-      simp only [sigLoc_pow, ← map_mul, ← map_sum, hxy j hj]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [sigLoc_pow, ← map_mul, ← map_sum, hxy j hj]
       split_ifs <;> simp⟩ _ _
     (intGL_map _ _ δ hδ hδ') (intGL_map _ _ γ hγ hγ') ⟨_, _, hu, hw, by
-      rw [cp_map, derivative_map, ← Polynomial.map_mul, ← Polynomial.map_mul, ← Polynomial.map_add, huw,
+      rw [cp_map, derivative_map, ← Polynomial.map_mul, ← Polynomial.map_mul, ← Polynomial.map_add (f := _), huw,
         Polynomial.map_one]⟩ (nm_loc σ v δ γ hN) z
   rw [sgConj] at key
   rw [e1, e2, e3, e4]

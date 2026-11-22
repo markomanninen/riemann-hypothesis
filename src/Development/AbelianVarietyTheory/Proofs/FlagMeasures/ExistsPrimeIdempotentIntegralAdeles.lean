@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsDual
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S GlobalTheory.RowLev NumberField IsDedekindDomain Matrix
 open scoped InnerProductSpace ComplexOrder TensorProduct Pointwise Classical
@@ -73,7 +77,7 @@ theorem exists_idem_prime {B R : Type} [CommRing B] [IsDedekindDomain B] [CommRi
     rw [← Ideal.map_mul, ← hk, Ideal.map_span, Set.image_singleton, Ideal.mem_span_singleton] at this
     exact this
   have hgc : g ∈ c := Ideal.dvd_span_singleton.1 (hk ▸ Dvd.intro_left _ rfl)
-  have haa' : ψ a' = 1 - ψ a := by rw [← map_one ψ, ← haa, map_add]; ring
+  have haa' : ψ a' = 1 - ψ a := by rw [← map_one ψ, ← haa, map_add (f := _)]; ring
   obtain ⟨x, hx⟩ := hH (ψ a) (by
     obtain ⟨r, hr⟩ := hmul _ (Ideal.mem_map_of_mem ψ ha') _ (Ideal.mem_map_of_mem ψ ha)
     rw [Ideal.mem_span_singleton]
@@ -103,7 +107,7 @@ theorem exists_idem_prime {B R : Type} [CommRing B] [IsDedekindDomain B] [CommRi
       exact hb ((le_sup_right.trans (hwm.eq_of_le hne le_sup_left).ge) (Ideal.mem_span_singleton_self b))
     obtain ⟨d, hd, d', hd', hdd⟩ := Ideal.isCoprime_iff_exists.1 (hcb.pow_left (m := k))
     obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.1 hd'
-    have hdd' : ψ d = 1 - ψ b * ψ q := by rw [← map_one ψ, ← hdd, map_add, map_mul]; ring
+    have hdd' : ψ d = 1 - ψ b * ψ q := by rw [← map_one ψ, ← hdd, map_add (f := _), map_mul]; ring
     obtain ⟨r, hr⟩ := hmul _ (Ideal.mem_map_of_mem ψ hd) _ hεc
     obtain ⟨s, hs⟩ := hJ (r - t * ψ q * ε)
     rw [hdd'] at hr
@@ -183,7 +187,7 @@ theorem epsV_lift (v : HeightOneSpectrum (𝓞 F)) (g : ℕ) (hg : (g : 𝓞 F) 
   obtain ⟨d, hd⟩ := Ideal.mem_span_singleton.1 hy'
   obtain ⟨x, rfl⟩ := prInt_surj v d
   have h1 : prInt E v (a + g * x) = y := by
-    rw [map_add, map_mul, map_natCast, ← hd]; ring
+    rw [map_add (f := _), map_mul, map_natCast, ← hd]; ring
   have h2 := epsV_mul_eq v (x := (a + (g : IntAf F E) * x) * (a + (g : IntAf F E) * x))
     (y := a + (g : IntAf F E) * x) (by rw [map_mul, h1, hy])
   exact ⟨x, by linear_combination h2 + (a + g * x) * (a + g * x) * epsV_idem (E := E) v⟩
@@ -191,7 +195,7 @@ theorem epsV_lift (v : HeightOneSpectrum (𝓞 F)) (g : ℕ) (hg : (g : 𝓞 F) 
 theorem epsV_unit (v : HeightOneSpectrum (𝓞 F)) (g : ℕ) (hg : (g : 𝓞 F) ∈ v.asIdeal) (r : IntAf F E) :
     ∃ s, epsV E v * (1 - g * r) * s = epsV E v := by
   have hH := henselian_locInt (E := E) v g hg
-  have h1 := Ideal.mem_jacobson_bot.1 (hH.jac (Ideal.mem_span_singleton_self _)) (-prInt E v r)
+  have h1 := Ring.mem_jacobson_iff.1 (hH.jac (Ideal.mem_span_singleton_self _)) (-prInt E v r)
   obtain ⟨d, hd⟩ := h1.exists_right_inv
   obtain ⟨s, rfl⟩ := prInt_surj v d
   have h2 := epsV_mul_eq v (x := (1 - (g : IntAf F E) * r) * s) (y := 1) (by

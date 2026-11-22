@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PiNonunit
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SelMain
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.PiNonunit
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalCartanPairs.SelMain
+
+@[expose] public section
 
 noncomputable section
 open Matrix

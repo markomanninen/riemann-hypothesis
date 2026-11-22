@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.InvSerSub
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.WfLogOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.FormalLogarithmHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.InvSerSub
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.WfLogOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittLogarithm.FormalLogarithmHolds
+
+@[expose] public section
 
 private lemma inv_series_sub : PI.InvSerSub := by
   intro K _ S l ex hl hl0 hl1 hex0 hsub n

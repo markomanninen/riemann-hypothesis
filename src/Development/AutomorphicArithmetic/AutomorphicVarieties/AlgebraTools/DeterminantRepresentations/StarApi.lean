@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+
+@[expose] public section
 
 open Polynomial Matrix UpperTheory.V UpperTheory.V.W
 
@@ -65,7 +69,7 @@ theorem UpperTheory.V.AlgebraTools.Det.starApi :
   · intro R' _ _ f y
     induction y using MonoidAlgebra.induction_linear
     next => simp [star_zero']
-    next y z hy hz => rw [map_add, star_add', star_add', map_add, hy, hz]
+    next y z hy hz => rw [map_add (f := _), star_add', star_add', map_add (f := _), hy, hz]
     next g r =>
       simp only [star_single_eq_single_conj_inv_mul_eps_zpow, MonoidAlgebra.mapRingHom_single, RingHom.coe_coe, map_mul]
       rw [algHom_eps_zpow_eq]

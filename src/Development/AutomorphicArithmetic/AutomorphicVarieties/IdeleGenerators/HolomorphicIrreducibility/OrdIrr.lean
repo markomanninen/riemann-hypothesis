@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.OrdAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.RealExistenceFromPublished
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPowHeckeCharUnramifiedEverywhere
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfMapEq
-import Formalism.LocalToGlobal.UnitaryNorms.CharProd
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HomOr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.OrdAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.RealExistenceFromPublished
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDecompositionGroupCyclotomicCharacterZpowN
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPowHeckeCharUnramifiedEverywhere
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfMapEq
+public import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HomOr
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ private theorem type_zero {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
   have hy : ∀ φ : F →+* ℂ, φ (y : F) = (((1 + M * ((T + t : ℕ) : ℝ)) + c φ : ℝ) : ℂ) := fun φ => by
     simp only [y, c]
     push_cast
-    simp only [hre, map_add, map_mul, map_one, map_natCast]
+    simp only [hre, map_add (f := _), map_mul, map_one, map_natCast]
     ring
   obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
   have hy0 : (y : F) ≠ 0 := fun e => (hpos t w.embedding).ne' (by
@@ -182,7 +186,7 @@ private theorem chars_of_red {Γ : Type} [Group Γ] [TopologicalSpace Γ] {k : T
     field_simp
   rw [e1, e2, Matrix.charpoly_fin_two, t]
   conv_lhs => rw [u]
-  rw [← u, map_add]
+  rw [← u, map_add (f := _)]
   conv_lhs => enter [2]; rw [u, map_mul]
   ring
 
@@ -312,7 +316,7 @@ theorem UpperTheory.V.Sd.ordIrr :
   have hl : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite, ((l : ℕ) : 𝓞 F) ∉ v.asIdeal :=
     (Ideal.finite_factors h0).subset fun v hv => Ideal.dvd_span_singleton.mpr (not_not.1 hv)
   obtain rfl : n = 0 := type_zero χ n hn (by
-    filter_upwards [hl, hr.att.2, (GlobalTheory.Mem.UnrAe.unr_ae_and_level F χ).1] with w hw ⟨B, _, hF⟩ hu
+    filter_upwards [hl, hr.att.2, Filter.eventually_cofinite.2 (GlobalTheory.Mem.UnrAe.unr_ae_and_level F χ).1] with w hw ⟨B, _, hF⟩ hu
     obtain ⟨A, hA⟩ := exists_isPlaceOver Ω w
     obtain ⟨x, hx, ht⟩ := hG.pure w hw A hA
     have e1 := norm_of_pure hw (hF A hA).1 hx ht (b := c₁ (frob hA : G F Ω)⁻¹) (by rw [hch]; simp)

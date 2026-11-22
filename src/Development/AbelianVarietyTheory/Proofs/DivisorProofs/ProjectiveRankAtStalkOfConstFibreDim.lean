@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+
+@[expose] public section
 
 open CategoryTheory Coalgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.HTPair
 open scoped TensorProduct
@@ -56,7 +60,7 @@ theorem nonempty_equiv_fin (O : Type) [CommRing O] [IsDomain O] [IsLocalRing O] 
     rw [← LinearMap.range_eq_top, Fintype.range_linearCombination]
     exact IsLocalRing.span_eq_top_of_tmul_eq_basis f b hf
   have hinj : Function.Injective g := by
-    let q₀ : PrimeSpectrum O := ⟨⊥, Ideal.bot_prime⟩
+    let q₀ : PrimeSpectrum O := ⟨⊥, Ideal.isPrime_bot⟩
     let K := q₀.asIdeal.ResidueField
     have hK : Module.finrank K (K ⊗[O] M) = n := h q₀
     let gK := g.baseChange K

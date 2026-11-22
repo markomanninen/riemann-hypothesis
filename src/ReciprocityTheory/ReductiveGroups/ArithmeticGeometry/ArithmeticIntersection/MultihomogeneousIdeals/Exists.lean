@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemMinimalPrimesOfMemDivSuppDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsHomogeneousOfIsMultiHomogIdeal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemMinimalPrimesOfMemDivSuppDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsHomogeneousOfIsMultiHomogIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,18 +15,18 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo
 
 variable {K : Type*} [Fintype K] {ι : K → Type*} [∀ k, Fintype (ι k)] {F : Type*} [Field F]
 
-open Classical in
 
+open Classical in
 def secNum (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] (V : Ideal (MRingOver F ι)) (a : K → ℤ) : MRingOver F ι :=
   if h : IsRelevant V then ∏ k, (X ⟨k, (h k).choose⟩ : MRingOver F ι) ^ (a k).toNat else 1
 
-open Classical in
 
+open Classical in
 def secDen (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] (V : Ideal (MRingOver F ι)) (a : K → ℤ) : MRingOver F ι :=
   if h : IsRelevant V then ∏ k, (X ⟨k, (h k).choose⟩ : MRingOver F ι) ^ (-a k).toNat else 1
 
-open Classical in
 
+open Classical in
 def ptDeg0 (F : Type*) [Field F] (ι : K → Type*) [∀ k, Fintype (ι k)] (V : Ideal (MRingOver F ι)) : ℕ :=
   if h : IsRelevant V then ptDeg V (fun k => (h k).choose) else 0
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,9 @@ private theorem conj_cartan_involution_props {n : ℕ} (F J : Matrix (Fin n) (Fi
       Matrix.nonsing_inv_mul_cancel_left _ _ hdh, Matrix.mul_nonsing_inv_cancel_left _ _ hd, hJJ]
   · simp only [Matrix.mul_assoc, Matrix.mul_nonsing_inv_cancel_left _ _ hd, hJJ]
 
+
 open Matrix in
 open scoped ComplexOrder in
-
 theorem cart_isCartanInv {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (τ : D.what₂.Tau) :
     IsCartanInv (gramAt D V τ) (cart M τ) := by
   unfold IsCartanInv cart
@@ -58,29 +62,6 @@ theorem cart_isCartanInv {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V
   rw [h3]
   have hinj : Function.Injective (M.fr τ).mulVec := Matrix.mulVec_injective_iff_isUnit.mpr (M.fr_unit τ)
   simpa only [Matrix.mul_one] using Matrix.PosDef.one.conjTranspose_mul_mul_same hinj
-
-private theorem exists_isVacVec_of_isSelfDualC {V W : HSp D} {S S' : D.what₂.Tau → SPar} (ψ : AddChar (AF D.host.F) ℂ)
-    (θ : InfFam D) (M : DSModel V S) (M' : DSModel W S') (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
-    (L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E))
-    (hL : IsSelfDualC V L) (hL' : IsSelfDualC W L') : ∃ f, IsVacVec ψ θ M M' f := by
-  obtain ⟨f, hne, hf⟩ := GlobalTheory.VacuumO.exists_ne_zero ψ θ hψ hθ V W (cart M) (cart M')
-    (cart_isCartanInv M) (cart_isCartanInv M') L L' hL hL'
-  have hone : (fun w => (1 : ℂ) * f w) = f := funext fun w => one_mul (f w)
-  obtain ⟨hth, -, hvac⟩ := hf 1
-  rw [hone] at hth hvac
-  exact ⟨f, ⟨hth, hne, hvac⟩⟩
-
-theorem exists_isVacVec {V W : HSp D} {S S' : D.what₂.Tau → SPar} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
-    (M : DSModel V S) (M' : DSModel W S') (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) :
-    ∃ f, IsVacVec ψ θ M M' f :=
-  exists_isVacVec_of_isSelfDualC ψ θ M M' hψ hθ _ _ (GlobalTheory.PlaceModel.isSelfDualC_latFrame V)
-    (GlobalTheory.PlaceModel.isSelfDualC_latFrame W)
-
-theorem exists_char_fam_isVacVec {V W : HSp D} {S S' : D.what₂.Tau → SPar} (M : DSModel V S) (M' : DSModel W S') :
-    ∃ ψ θ f, IsStdChar D ψ (-1) ∧ IsInfFam θ ∧ IsVacVec ψ θ M M' f := by
-  obtain ⟨⟨θ, hθ⟩, ψ, hψ⟩ := GlobalTheory.Ker.exists_infFam_and_stdChar D
-  obtain ⟨f, hf⟩ := exists_isVacVec ψ θ M M' hψ hθ
-  exact ⟨ψ, θ, f, hψ, hθ, hf⟩
 
 end GlobalTheory.Chain.VacVec
 

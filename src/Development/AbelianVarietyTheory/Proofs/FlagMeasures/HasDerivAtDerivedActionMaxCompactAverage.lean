@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactKH
+
+@[expose] public section
+
 open MeasureTheory Matrix Filter Topology
 
 noncomputable section
@@ -59,7 +64,7 @@ theorem hasDerivAt_exp_integral_dsigW (k r : ℕ) (H : Type) [NormedAddCommGroup
       rw [← sub_self t] at h1
       have h2 := h1.comp_sub_const t t
       simp only [map_smul]
-      convert h2 using 1
+      convert (preTransparency := .reducible) h2 using 1
       · funext s
         have e : NormedSpace.exp ((s : ℂ) • X) =
             NormedSpace.exp ((t : ℂ) • X) * NormedSpace.exp (((s - t : ℝ) : ℂ) • X) := by

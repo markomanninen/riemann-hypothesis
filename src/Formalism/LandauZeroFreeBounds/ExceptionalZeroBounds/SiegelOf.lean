@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.SiegelProductCharacterInequality
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.SiegelProductCharacterInequality
+
+@[expose] public section
 
 open Complex
 

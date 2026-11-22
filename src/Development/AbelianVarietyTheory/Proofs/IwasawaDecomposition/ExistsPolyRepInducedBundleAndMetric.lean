@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PolyRep
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GoodTopChernForm
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PolyRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.GoodTopChernForm
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ChernWeilNumbers
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -166,14 +170,14 @@ theorem cs_aeval {κ : Type} (P : MvPolynomial κ ℤ) {w : κ → CxPts X.str �
     CS (fun z => aeval (fun a => w a z) P) y := by
   induction P using MvPolynomial.induction_on with
   | C a => simpa using cs_const (y := y) (a : ℂ)
-  | add p q hp hq => simpa only [map_add] using hp.add hq
+  | add p q hp hq => simpa only [map_add (f := _)] using hp.add hq
   | mul_X p a hp => simpa only [map_mul, aeval_X] using hp.mul (h a)
 
 theorem cs_ratVal {f : X.Fn} (hf : RegAt (under y) f) : CS (fun z => ratVal f z) y :=
   ⟨cInfAt_ratVal (κ := Unit) (f := fun _ => f) (fun _ => hf) (G := fun w => (w ()).re)
-      (Complex.reCLM.contDiff.comp (contDiff_apply ℝ ℂ ())),
+      (Complex.reCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) ())),
     cInfAt_ratVal (κ := Unit) (f := fun _ => f) (fun _ => hf) (G := fun w => (w ()).im)
-      (Complex.imCLM.contDiff.comp (contDiff_apply ℝ ℂ ()))⟩
+      (Complex.imCLM.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) ()))⟩
 
 theorem cs_conj_entry {n : ℕ} {T R : CxPts X.str σ → Matrix (Fin n) (Fin n) ℂ} (hT : ∀ i j, CS (fun z => T z i j) y)
     (hR : ∀ i j, CS (fun z => R z i j) y) (i j : Fin n) : CS (fun z => (T z * R z * (T z)ᴴ) i j) y := by

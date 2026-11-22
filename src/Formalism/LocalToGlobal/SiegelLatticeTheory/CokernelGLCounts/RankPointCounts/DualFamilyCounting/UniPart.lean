@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SdBasisBot
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.SdBasisBot
+
+@[expose] public section
 
 open Module
 
@@ -47,7 +51,8 @@ private theorem linInd_lemma_6 {K V : Type} [Field K] [StarRing K] [AddCommGroup
   rw [linearIndependent_iff']
   intro s g hg i hi
   have h1 := congrArg (h (f i)) hg
-  rw [map_sum, map_zero, Finset.sum_eq_single i] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_eq_single i] at h1
   · rw [map_smul, smul_eq_mul] at h1
     exact (mul_eq_zero.1 h1).resolve_right (hn i)
   · intro j _ hji
@@ -59,9 +64,11 @@ private theorem form_sum_lemma_7 {K V : Type} [Field K] [StarRing K] [AddCommGro
     {h : V →ₗ⋆[K] V →ₗ[K] K} {ι : Type} [Fintype ι] {b : ι → V}
     (ho : ∀ i j, i ≠ j → h (b i) (b j) = 0) (a c : ι → K) :
     h (∑ i, a i • b i) (∑ j, c j • b j) = ∑ i, star (a i) * c i * h (b i) (b i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_smul, map_sum, LinearMap.sum_apply, Finset.sum_eq_single i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum, LinearMap.sum_apply, Finset.sum_eq_single i]
   · rw [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, smul_eq_mul, starRingEnd_apply]
     ring
   · intro j _ hji
@@ -82,18 +89,16 @@ private theorem isSD_lemma_8 {K V : Type} [Field K] [StarRing K] [AddCommGroup V
     {S : Subring K} (hS : IsHermSemilocal S) {h : V →ₗ⋆[K] V →ₗ[K] K} {ι : Type} [Fintype ι]
     [DecidableEq ι] {b : ι → V} (ho : ∀ i j, i ≠ j → h (b i) (b j) = 0)
     (hu : ∀ i, IsUnitIn S (h (b i) (b i))) :
-    IsSD S h (Submodule.span K (Set.range b)) (spanS S b) where
-  le := fun m hm => mem_span_lemma_4 hm
-  smul_mem := fun a ha m hm => smul_mem_lemma_2 ha hm
-  int := by
-    intro x hx y hy
+    IsSD S h (Submodule.span K (Set.range b)) (spanS S b) := by
+  refine ⟨⟨fun _ hm => mem_span_lemma_4 hm, fun _ ha _ hm => smul_mem_lemma_2 ha hm,
+    ?_, ?_⟩, ?_⟩
+  · intro x hx y hy
     rw [mem_iff_lemma] at hx hy
     obtain ⟨a, ha, rfl⟩ := hx
     obtain ⟨c, hc, rfl⟩ := hy
     rw [form_sum_lemma_7 ho]
     exact sum_mem fun i _ => S.mul_mem (S.mul_mem (hS.star_mem _ (ha i)) (hc i)) (hu i).2.1
-  span := by
-    intro x hx
+  · intro x hx
     obtain ⟨g, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hx
     choose T hTS hT0 hTg using fun i => hS.frac (g i)
     refine ⟨∏ i, T i, Finset.prod_ne_zero_iff.2 fun i _ => hT0 i, ?_⟩
@@ -104,13 +109,13 @@ private theorem isSD_lemma_8 {K V : Type} [Field K] [StarRing K] [AddCommGroup V
       exact S.mul_mem (S.prod_mem fun j _ => hTS j) (hTg i)
     · rw [Finset.smul_sum]
       simp only [smul_smul]
-  dual := by
-    intro x hx hdual
+  · intro x hx hdual
     obtain ⟨g, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hx
     rw [mem_iff_lemma]
     refine ⟨g, fun i => ?_, rfl⟩
     have h1 := hdual (b i) (mem_self_lemma_9 b i)
-    rw [map_sum, Finset.sum_eq_single i] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single i] at h1
     · rw [map_smul, smul_eq_mul] at h1
       have h2 := S.mul_mem h1 (hu i).2.2
       rwa [mul_assoc, mul_inv_cancel₀ (hu i).1, mul_one] at h2
@@ -228,12 +233,14 @@ theorem uni_part {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K 
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hw
     have hne : ∀ p : {i // e i = e i₀}, (p : ι) ≠ j := fun p hq => hj (hq ▸ p.2)
     constructor
-    · rw [map_sum, LinearMap.sum_apply]
-      exact Finset.sum_eq_zero fun p _ => by
-        rw [map_smulₛₗ, LinearMap.smul_apply, hbP, ho _ _ (hne p), smul_zero]
-    · rw [map_sum]
-      exact Finset.sum_eq_zero fun p _ => by
-        rw [map_smul, hbP, ho _ _ (hne p).symm, smul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_sum, LinearMap.sum_apply]
+        exact Finset.sum_eq_zero fun p _ => by
+          rw [map_smulₛₗ, LinearMap.smul_apply, hbP, ho _ _ (hne p), smul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_sum]
+        exact Finset.sum_eq_zero fun p _ => by
+          rw [map_smul, hbP, ho _ _ (hne p).symm, smul_zero]
   have hoc : ∀ i j, i ≠ j → h (c i) (c j) = 0 := by
     intro i j hij
     by_cases hi : e i = e i₀

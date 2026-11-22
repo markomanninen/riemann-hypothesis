@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColDerApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColDerApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem colDer_mul_X {d a : ℕ} (τ : ι) (S : Matrix (Fin a) (Fin a) ℂ) (R :
   ring
 
 theorem hasDerivAt_coeff_mul_X {σ : Type} {A : ℝ → MvPolynomial σ ℂ} {B : MvPolynomial σ ℂ}
-    (hA : ∀ m, HasDerivAt (fun h => coeff m (A h)) (coeff m B) 0) (w : σ) (m : σ →₀ ℕ) :
-    HasDerivAt (fun h => coeff m (A h * X w)) (coeff m (B * X w)) 0 := by
+    (hA : ∀ m, HasDerivAt (fun h => AddMonoidAlgebra.coeff (A h) m) (AddMonoidAlgebra.coeff B m) 0) (w : σ) (m : σ →₀ ℕ) :
+    HasDerivAt (fun h => AddMonoidAlgebra.coeff (A h * X w) m) (AddMonoidAlgebra.coeff (B * X w) m) 0 := by
   classical
   simp only [coeff_mul_X']
   split_ifs
@@ -41,7 +45,7 @@ theorem hasDerivAt_coeff_colSub_of_curve [Fintype ι] {d a : ℕ} (τ : ι) (S :
     (g : ℝ → ι → Matrix (Fin a) (Fin a) ℂ) (h0 : g 0 = 1)
     (hg : ∀ σ i j, HasDerivAt (fun h => g h σ i j) (if σ = τ then S i j else 0) 0)
     (R : Pol ι d a) (m : Var ι d a →₀ ℕ) :
-    HasDerivAt (fun h : ℝ => coeff m (colSub (g h) R)) (coeff m (colDer τ S R)) 0 := by
+    HasDerivAt (fun h : ℝ => AddMonoidAlgebra.coeff (colSub (g h) R) m) (AddMonoidAlgebra.coeff (colDer τ S R) m) 0 := by
   have hone : ∀ P : Pol ι d a, colSub (g 0) P = P := by
     have : (colSub (g 0) : Pol ι d a →ₐ[ℂ] Pol ι d a) = AlgHom.id ℂ _ := by
       apply MvPolynomial.algHom_ext
@@ -58,14 +62,14 @@ theorem hasDerivAt_coeff_colSub_of_curve [Fintype ι] {d a : ℕ} (τ : ι) (S :
   induction R using MvPolynomial.induction_on generalizing m with
   | C c =>
     have h1 : colDer τ S (C c : Pol ι d a) = 0 := by simp [colDer_apply]
-    simp only [h1, algHom_C, coeff_zero]
+    simp only [h1, algHom_C, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     exact hasDerivAt_const _ _
   | add P Q hP hQ =>
-    simp only [map_add, coeff_add]
+    simp only [map_add (f := _), AddMonoidAlgebra.coeff_add, Finsupp.add_apply]
     exact (hP m).add (hQ m)
   | mul_X P v hP =>
-    have e1 : ∀ h, coeff m (colSub (g h) (P * X v)) =
-        ∑ k, g h v.1 k v.2.2 * coeff m (colSub (g h) P * X (v.1, v.2.1, k)) := by
+    have e1 : ∀ h, AddMonoidAlgebra.coeff (colSub (g h) (P * X v)) m =
+        ∑ k, g h v.1 k v.2.2 * AddMonoidAlgebra.coeff (colSub (g h) P * X (v.1, v.2.1, k)) m := by
       intro h
       rw [map_mul]
       conv_lhs => rw [show colSub (g h) (X v : Pol ι d a) = ∑ k, C (g h v.1 k v.2.2) * X (v.1, v.2.1, k) by
@@ -77,7 +81,7 @@ theorem hasDerivAt_coeff_colSub_of_curve [Fintype ι] {d a : ℕ} (τ : ι) (S :
     have hd := HasDerivAt.fun_sum (u := Finset.univ) fun k _ =>
       (hg v.1 k v.2.2).fun_mul (hasDerivAt_coeff_mul_X hP (v.1, v.2.1, k) m)
     refine hd.congr_deriv ?_
-    rw [colDer_mul_X, coeff_add, Finset.sum_add_distrib, add_comm]
+    rw [colDer_mul_X, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, Finset.sum_add_distrib, add_comm]
     congr 1
     · rw [h0, Finset.sum_eq_single v.2.2]
       · simp
@@ -92,8 +96,8 @@ theorem hasDerivAt_coeff_colSub_of_curve [Fintype ι] {d a : ℕ} (τ : ι) (S :
 
 theorem hasDerivAt_coeff_colSub_exp {ι : Type} [Fintype ι] [DecidableEq ι] (d a : ℕ) (τ : ι)
     (S : Matrix (Fin a) (Fin a) ℂ) (R : Pol ι d a) (m : Var ι d a →₀ ℕ) :
-    HasDerivAt (fun h : ℝ => coeff m (colSub (atPl τ (NormedSpace.exp ((h : ℂ) • S))) R))
-      (coeff m (colDer τ S R)) 0 := by
+    HasDerivAt (fun h : ℝ => AddMonoidAlgebra.coeff (colSub (atPl τ (NormedSpace.exp ((h : ℂ) • S))) R) m)
+      (AddMonoidAlgebra.coeff (colDer τ S R) m) 0 := by
   refine hasDerivAt_coeff_colSub_of_curve τ S (fun h => atPl τ (NormedSpace.exp ((h : ℂ) • S))) ?_ ?_ R m
   · simp only [Complex.ofReal_zero, zero_smul, NormedSpace.exp_zero, atPl]
     exact Function.update_eq_self τ 1

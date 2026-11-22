@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Transference
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
+
+@[expose] public section
 
 open NumberField Module Submodule
 open scoped nonZeroDivisors
@@ -72,9 +76,9 @@ private lemma norm_sq_realCoords_eq_sum_norm_sq {K : Type} [Field K] [NumberFiel
   rw [Complex.sq_norm, Complex.normSq_apply]
   linear_combination (σ x).im ^ 2 * hε
 
+
 open NumberField Module Submodule in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.exists_short_independent_integers (K : Type) [Field K] [NumberField K] :
     ∃ ω : Fin (Module.finrank ℚ K) → 𝓞 K, LinearIndependent ℚ (fun k => (ω k : K)) ∧
       ∀ (s : K →+* ℂ) k, ‖s (ω k : K)‖ ≤ (Module.finrank ℚ K : ℝ) ^ 3 *
@@ -126,11 +130,12 @@ theorem _root_.GlobalTheory.exists_short_independent_integers (K : Type) [Field 
       ?_ ?_ ?_ ?_ hspan
     · rintro _ ⟨k, rfl⟩
       refine ⟨c k, ?_⟩
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       simp [Algebra.traceForm_apply, mul_comm (β _) (α k), hαβ]
     · simp
     · intro x y _ _ hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
     · intro m x _ hx
       rw [map_zsmul]
@@ -144,7 +149,8 @@ theorem _root_.GlobalTheory.exists_short_independent_integers (K : Type) [Field 
     intro x hx hx0
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hx
     have hxz : ∑ i, c i • b i = ψ (∑ i, (c i : ℚ) • β i) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [LinearMap.map_smul, Int.cast_smul_eq_zsmul, coe_basisOfLinearIndependentOfCardEqFinrank]
     rw [hxz] at hx0 ⊢
@@ -169,7 +175,8 @@ theorem _root_.GlobalTheory.exists_short_independent_integers (K : Type) [Field 
   have hy : ∀ i, y i = φ (ω i) := by
     intro i
     refine InnerProductSpace.ext_inner_right_basis b fun j => ?_
-    rw [hm, coe_basisOfLinearIndependentOfCardEqFinrank, hpair, hω, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, coe_basisOfLinearIndependentOfCardEqFinrank, hpair, hω, Finset.sum_mul, map_sum]
     simp [smul_mul_assoc, hαβ]
   refine ⟨ω, ?_, ?_⟩
   · have h := hyli.restrict_scalars' ℚ

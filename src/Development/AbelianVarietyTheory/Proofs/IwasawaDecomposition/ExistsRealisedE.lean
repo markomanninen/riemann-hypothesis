@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSplittingCharacterSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemberPeriodAtTrivialPositionSpec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSplittingCharacterSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemberPeriodAtTrivialPositionSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem ker_leftE {ψ : AddChar (AF D.host.F) ℂ} (Wf : WeilFun D ψ) (hW : Wf.
   have e : Wf.om V W χ χ' (γ * g, h) = Wf.om V W χ χ' (γ, 1) * Wf.om V W χ χ' (g, h) := by
     rw [← map_mul, Prod.mk_mul_mk, one_mul]
   unfold WeilFun.ker
-  rw [e, Module.End.mul_apply]
+  rw [e, mul_apply_eq_comp]
   exact ha.elim (fun ha => Wf.om_aut V W χ χ' ha γ hγ 1 (one_mem _) _)
     fun ha => (hW.weil V W χ χ' ha).aut γ hγ 1 (one_mem _) _
 
@@ -92,10 +96,10 @@ abbrev recXE : ThetaX D where
   actR_one V τ := LinearMap.ext fun F => Subtype.ext <| funext fun x => by
     rw [actReal_apply hθ V τ (by simp [Formalism.QuantumDeterminants.UH]), (GlobalTheory.PointAtPlaceHom.atTau_laws D θ hθ V τ).2.1, mul_one]; rfl
   actR_mul V τ g hg h hh := LinearMap.ext fun F => Subtype.ext <| funext fun x => by
-    rw [Module.End.mul_apply, actReal_apply hθ V τ hg, actReal_apply hθ V τ hh, actReal_apply hθ V τ (mul_mem_UH hg hh),
+    rw [mul_apply_eq_comp, actReal_apply hθ V τ hg, actReal_apply hθ V τ hh, actReal_apply hθ V τ (mul_mem_UH hg hh),
       (GlobalTheory.PointAtPlaceHom.atTau_laws D θ hθ V τ).2.2.1 g hg h hh, mul_assoc]
   actR_cusp V τ g hg F hF := by
-    rw [actReal, dif_pos hg]; exact trE_cusp hθ V _ _ F hF
+    rw [actReal, dite_eq_left hg]; exact trE_cusp hθ V _ _ F hF
   Gf V := GfC V
   actF := actFin hθ
   actF_cusp V g F hF := trE_cusp hθ V g (fun φ h => GlobalTheory.T.smoothAutomorphicForm_rightTranslate_finiteAdelic D θ hθ V φ h g g.2) F hF
@@ -176,7 +180,7 @@ abbrev recTE : ThetaTied D (recXE hP hT hB hL hE hθ hψ Wf hW Tw Rc) where
     have h1 := (GlobalTheory.PointAtPlaceHom.atTau_laws D θ' hθ V τ).1 g hg
     refine ⟨h1.exists, fun h hh F x => ?_⟩
     have e : atTau θ' V τ g = h := by
-      rw [atTau, dif_pos h1.exists]; exact h1.unique h1.exists.choose_spec hh
+      rw [atTau, dite_eq_left h1.exists]; exact h1.unique h1.exists.choose_spec hh
     rw [← e]
     exact actReal_apply hθ V τ hg F x⟩
   ksph V S g := mem_ksph
@@ -219,19 +223,19 @@ abbrev recWE : WeilTied D (recXE hP hT hB hL hE hθ hψ Wf hW Tw Rc) (recTE hP h
   om_tw :=
     { twW_up := fun V W χ χ' ν h h1 h2 h3 g k x hx => by
         have := Wf.twW V W _ _ ν.1 (adm χ χ' h.ne h1 h2) (mem_chrGrp.1 ν.2) h3 g k x hx
-        rw [if_pos h] at this
+        rw [ite_eq_left h] at this
         exact this
       twV_up := fun V W χ χ' ν h h1 h2 h3 g k x hx => by
         have := Wf.twV V W _ _ ν.1 (adm χ χ' h.ne h1 h2) (mem_chrGrp.1 ν.2) h3 g k x hx
-        rw [if_pos h] at this
+        rw [ite_eq_left h] at this
         exact this
       twW_dn := fun V W χ χ' ν h h1 h2 h3 g k x hx => by
         have := Wf.twW V W _ _ ν.1 (adm χ χ' h.ne' h1 h2) (mem_chrGrp.1 ν.2) h3 g k x hx
-        rw [if_neg h.not_gt] at this
+        rw [ite_eq_right h.not_gt] at this
         exact this
       twV_dn := fun V W χ χ' ν h h1 h2 h3 g k x hx => by
         have := Wf.twV V W _ _ ν.1 (adm χ χ' h.ne' h1 h2) (mem_chrGrp.1 ν.2) h3 g k x hx
-        rw [if_neg h.not_gt] at this
+        rw [ite_eq_right h.not_gt] at this
         exact this }
   om_swap V W χ χ' h h1 h2 := Wf.om_swap V W _ _ (adm χ χ' h h1 h2)
   th V W χ χ' h h1 h2 hV μ 𝓕 hμ Φ F x := congrArg (fun z => (Rc.petC V : ℂ) * z) <|
@@ -267,45 +271,47 @@ def recBE : BesselTied D (recXE hP hT hB hL hE hθ hψ Wf hW Tw Rc) (recTE hP hT
     · obtain ⟨u, hu⟩ := hp
       exact absurd hu (inr_ne A B ι x _)
 
-theorem realisesE : RealisesE (θ := θ) (recBE hP hT hB hL hE hθ hψ Wf hW Tw Rc) Wf Tw Rc where
-  inf := hθ
-  forms V := Set.ext fun φ => ⟨fun ⟨x, hx⟩ => hx ▸ aut hθ x, fun h => ⟨⟨φ, Submodule.subset_span h⟩, rfl⟩⟩
-  typ V P F := Iff.rfl
-  sch V V' := range_ThS V V'
-  chr μ j := rfl
-  eta := rfl
-  col u μ j φ := rfl
-  row μ j F := rfl
-  phi μ j := rfl
-  phiUp μ j hj x := transp_apply hψ (rank_Y_ne (recXE hP hT hB hL hE hθ hψ Wf hW Tw Rc) j hj) (Rc.Phi μ j) x
-  mY := rfl
-  petF := rfl
-  petR := rfl
-  xs := rfl
-  ys := rfl
-  ysLow := rfl
-  iXYs t j := HEq.rfl
-  iYXm t := HEq.rfl
-  om V V' χ χ' p Φ f h := by
-    obtain rfl : Φ = f := Subtype.ext h
-    rfl
-  thOff V V' χ χ' h := by
-    change (Rc.petC V : ℂ) • (exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose.compl₂ (cuspEq θ V).toLinearMap = 0
-    rw [(exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose_spec.1 h]
-    ext
-    simp
-  thEq V V' χ χ' h hV μ 𝓕 hμ Φ F x := congrArg (fun z => (Rc.petC V : ℂ) * z) <|
-    (exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose_spec.2 (Or.inr h) hV μ 𝓕 hμ Φ (cuspEq θ V F) x
-  fact V V' Φ := Iff.rfl
-  kfin := ⟨recKE hP hT hB hL hE hθ hψ Wf hW Tw Rc, rfl, rfl⟩
-  posDat u ho := ⟨rfl, rfl⟩
-  pos1Val u σ μ 𝓕 hμ ν 𝓝 hν s hs φ F := memberPeriodAtTrivialPosition_spec hB hθ hψ Rc u hμ hν hs φ F
-  besAll A A' ι ho hA hι d hd :=
-    ⟨(.inl fun _ => ⟨d, hd⟩ : PosT A A' ι), rfl, besGlobE_inl hP hT hB hL hE hθ hψ Wf hW Tw Rc ho hA hι fun _ => ⟨d, hd⟩⟩
-  besOnly A A' ι ho hA hι p := by
-    rcases p with f | x
-    · exact Or.inl (besGlobE_inl hP hT hB hL hE hθ hψ Wf hW Tw Rc ho hA hι f)
-    · exact Or.inr ⟨x.1, inr_eq A A' ι x⟩
+theorem realisesE : RealisesE (θ := θ) (recBE hP hT hB hL hE hθ hψ Wf hW Tw Rc) Wf Tw Rc := by
+  exact {
+    inf := hθ
+    eqRank := hW
+    forms V := Set.ext fun φ => ⟨fun ⟨x, hx⟩ => hx ▸ aut hθ x, fun h => ⟨⟨φ, Submodule.subset_span h⟩, rfl⟩⟩
+    typ V P F := Iff.rfl
+    sch V V' := range_ThS V V'
+    chr μ j := rfl
+    eta := rfl
+    col u μ j φ := rfl
+    row μ j F := rfl
+    phi μ j := rfl
+    phiUp μ j hj x := transp_apply hψ (rank_Y_ne (recXE hP hT hB hL hE hθ hψ Wf hW Tw Rc) j hj) (Rc.Phi μ j) x
+    mY := rfl
+    petF := rfl
+    petR := rfl
+    xs := rfl
+    ys := rfl
+    ysLow := rfl
+    iXYs t j := HEq.rfl
+    iYXm t := HEq.rfl
+    om V V' χ χ' p Φ f h := by
+      obtain rfl : Φ = f := Subtype.ext h
+      rfl
+    thOff V V' χ χ' h := by
+      change (Rc.petC V : ℂ) • (exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose.compl₂ (cuspEq θ V).toLinearMap = 0
+      rw [(exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose_spec.1 h]
+      ext
+      simp
+    thEq V V' χ χ' h hV μ 𝓕 hμ Φ F x := congrArg (fun z => (Rc.petC V : ℂ) * z) <|
+      (exists_liftE hL hE hθ hψ Wf hW V V' χ.1 χ'.1).choose_spec.2 (Or.inr h) hV μ 𝓕 hμ Φ (cuspEq θ V F) x
+    fact V V' Φ := Iff.rfl
+    kfin := ⟨recKE hP hT hB hL hE hθ hψ Wf hW Tw Rc, rfl, rfl⟩
+    posDat u ho := ⟨rfl, rfl⟩
+    pos1Val u σ μ 𝓕 hμ ν 𝓝 hν s hs φ F := memberPeriodAtTrivialPosition_spec hB hθ hψ Rc u hμ hν hs φ F
+    besAll A A' ι ho hA hι d hd :=
+      ⟨(.inl fun _ => ⟨d, hd⟩ : PosT A A' ι), rfl, besGlobE_inl hP hT hB hL hE hθ hψ Wf hW Tw Rc ho hA hι fun _ => ⟨d, hd⟩⟩
+    besOnly A A' ι ho hA hι p := by
+      rcases p with f | x
+      · exact Or.inl (besGlobE_inl hP hT hB hL hE hθ hψ Wf hW Tw Rc ho hA hι f)
+      · exact Or.inr ⟨x.1, inr_eq A A' ι x⟩ }
 
 end Record
 

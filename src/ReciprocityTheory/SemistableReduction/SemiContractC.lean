@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.LatSemiSt
-import Lemmata.GeneralBFactSecond.Imports
+module
+
+public import ReciprocityTheory.SemistableReduction.LatSemiSt
+public import Lemmata.GeneralBFactSecond.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -85,7 +89,8 @@ theorem sc_append_li {K : Type} [Field K] [NumberField K] {r k m : ℕ}
   simp only [Fin.append_left, Fin.append_right] at hg
   have h1 : ∑ j, g (Fin.natAdd k j) • (N *ᵥ c j) = 0 := by
     have := congrArg N.mulVecLin hg
-    simpa [map_add, map_sum, map_smul, Matrix.mulVecLin_apply, hbN] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_add (f := _), map_sum, map_smul, Matrix.mulVecLin_apply, hbN] using this
   have hc0 := Fintype.linearIndependent_iff.mp hc _ h1
   have hb0 : ∀ i, g (Fin.castAdd m i) = 0 := by
     apply Fintype.linearIndependent_iff.mp hb
@@ -135,7 +140,8 @@ theorem sc_index {K : Type} [Field K] [NumberField K] {r k m : ℕ}
       Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
     have hzL : z ∈ L := Submodule.sum_mem _ fun j _ => L.smul_mem _ (hcL j)
     have hfz : f (x - z) = 0 := by
-      rw [map_sub, hz, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, hz, map_sum]
       simp only [map_smul]
       simp only [hfx] at ha ⊢
       rw [ha, sub_self]
@@ -150,7 +156,7 @@ theorem sc_index {K : Type} [Field K] [NumberField K] {r k m : ℕ}
       have h := hspanb hy.2
       rw [LinearMap.mem_ker] at h
       exact h
-    rw [map_add, hy0, zero_add]
+    rw [map_add (f := _), hy0, zero_add]
     exact hspanc hz
 
 end ReciprocityTheory.MultiplicativeHeights

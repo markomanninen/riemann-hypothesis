@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
-import GroundTheory.GlobalFields.TateThesis.Chebotarev
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.ExistsPrimeAbsNormOfHasDirichletDensity
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
+public import GroundTheory.GlobalFields.TateThesis.Chebotarev
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.ExistsPrimeAbsNormOfHasDirichletDensity
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExistsPowIdem
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExistsPowIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,8 +35,10 @@ theorem skew_two (hc : ∀ z, c (c z) = z) (hG : ∀ i j, c (G j i) = G i j) (u 
       G * (vecMulVec u (G *ᵥ c ∘ w) - vecMulVec w (G *ᵥ c ∘ u)).map c = 0 := by
   have k : ∀ u w : β → A, (vecMulVec u (G *ᵥ c ∘ w))ᵀ * G = G * (vecMulVec w (G *ᵥ c ∘ u)).map c := fun u w => by
     ext i j
-    simp only [mul_apply, transpose_apply, vecMulVec_apply, map_apply, map_mul, mulVec, dotProduct, map_sum, hc, hG,
-      Function.comp_apply, Finset.mul_sum, Finset.sum_mul]
+    change (∑ k : β, (u k * (G *ᵥ c ∘ w) i) * G k j) =
+      ∑ k : β, G i k * c (w k * (G *ᵥ c ∘ u) j)
+    simp only [mulVec, dotProduct, Function.comp_apply, Finset.mul_sum, Finset.sum_mul,
+      map_sum, map_mul, hc, hG]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   rw [transpose_sub, Matrix.sub_mul, Matrix.map_sub _ (map_sub c), Matrix.mul_sub, k, k]

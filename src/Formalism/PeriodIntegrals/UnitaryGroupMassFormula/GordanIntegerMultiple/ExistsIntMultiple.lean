@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.GordanCones
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.GordanCones
+
+@[expose] public section
 
 set_option autoImplicit false
 

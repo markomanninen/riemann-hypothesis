@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementD
-import Mathlib.LinearAlgebra.PiTensorProduct.Basis
-import Mathlib.RingTheory.Localization.Module
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+public import Mathlib.LinearAlgebra.PiTensorProduct.Basis
+public import Mathlib.RingTheory.Localization.Module
+
+@[expose] public section
 
 open MvPolynomial PiTensorProduct
 open scoped Pointwise
@@ -39,7 +43,7 @@ theorem ldtensor_span_prod (R K : Type*) [CommRing R] [CommRing K] [Algebra R K]
   rw [Submodule.prod_span] at h2
   refine Submodule.span_mono ?_ h2
   intro y hy
-  rw [Set.mem_finset_prod] at hy
+  rw [Set.mem_finsetProd] at hy
   obtain ⟨g, hg, rfl⟩ := hy
   choose i hi using fun s => hg (Finset.mem_univ s)
   exact ⟨i, Finset.prod_congr rfl fun s _ => hi s⟩
@@ -50,8 +54,8 @@ variable (K : Type*) [Field K] {S : Type*} [Fintype S] [DecidableEq S] {k n : �
 
 theorem ldtensor_glue_apply (α : S → (Fin k × Fin n →₀ ℕ)) (s : S) (v : Fin k × Fin n) :
     (∑ t, (α t).mapDomain (Prod.mk t)) (s, v) = α s v := by
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single s]
-  · exact Finsupp.mapDomain_apply (fun x y h => by simpa using h) _ v
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single s]
+  · exact Finsupp.mapDomain_apply_of_injective (fun x y h => by simpa using h) _ v
   · intro t _ hts
     apply Finsupp.mapDomain_notin_range
     rintro ⟨w, hw⟩

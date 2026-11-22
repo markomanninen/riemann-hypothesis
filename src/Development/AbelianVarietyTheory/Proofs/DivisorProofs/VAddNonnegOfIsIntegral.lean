@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotDvdTrace
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotDvdTrace
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField Classical
 
 namespace GlobalTheory.SeenHalf

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteSmoothIrreducible
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensorProductDefiniteUnitaryLocalModelsIrreducib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FactTypePrime
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteSmoothIrreducible
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensorProductDefiniteUnitaryLocalModelsIrreducib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,8 @@ theorem exists_contragredient {G X κ : Type} [Group G] [TopologicalSpace G] [Ad
     simp_rw [h2]
     have h3 : ∑ q, B.repr (T g (B p)) q * B.repr (T g⁻¹ (B q)) r =
         B.repr (T g⁻¹ (∑ q, B.repr (T g (B p)) q • B q)) r := by
-      rw [map_sum, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun q _ => ?_
       rw [map_smul, map_smul, Finsupp.smul_apply, smul_eq_mul]
     rw [h3, B.sum_repr, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply,
@@ -69,7 +74,8 @@ theorem exists_contragredient {G X κ : Type} [Group G] [TopologicalSpace G] [Ad
           starRingEnd ℂ (∑ p, x p * starRingEnd ℂ (B.repr (T g (B p)) q))
         = ∑ p, ∑ r, starRingEnd ℂ (x p) * y r *
             ∑ q, B.repr (T g (B p)) q * starRingEnd ℂ (B.repr (T g (B r)) q) := by
-          simp only [map_sum, map_mul, Complex.conj_conj, Finset.sum_mul, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_mul, Complex.conj_conj, Finset.sum_mul, Finset.mul_sum]
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun r _ => ?_
           rw [Finset.sum_comm]
@@ -175,7 +181,7 @@ theorem nontrivial_dual_tensor {ι : Type} [Fintype ι] {H : ι → Type} [∀ i
     simp only [not_exists, not_not] at h
     exact hv i ((Module.forall_dual_apply_eq_zero_iff ℂ (v i)).mp h)
   choose f hf using hf
-  let m : MultilinearMap ℂ H ℂ := (MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap f
+  let m : (∀ i, H i) →ₘₗ[ℂ] ℂ := (MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap f
   let φ : Module.Dual ℂ (⨂[ℂ] i, H i) := PiTensorProduct.lift m
   refine ⟨⟨φ, 0, fun h => ?_⟩⟩
   have hz := LinearMap.congr_fun h (PiTensorProduct.tprod ℂ v)

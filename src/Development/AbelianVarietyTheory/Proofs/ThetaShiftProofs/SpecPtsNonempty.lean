@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSumsAtHalfCurveFraction
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyProjCoordsConvergentCoefficientsStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueLiftCoordsLocalSubringStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSumsAtHalfCurveFraction
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyProjCoordsConvergentCoefficientsStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueLiftCoordsLocalSubringStatement
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -168,11 +172,11 @@ theorem specPts_nonempty : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [
     xt := fun w hw v => Over.homMk (z w hw v) (hz1 w hw v)
     xt_gen := hz2
     τt := fun w v => if hw : T < w.im then σ w hw v else fun _ => 1
-    τt_frm := fun w hw v => by rw [dif_pos hw]; exact hz3 w hw v
-    τt_gen := fun w hw v j hj => by rw [dif_pos hw]; exact hz4 w hw v j hj
+    τt_frm := fun w hw v => by rw [dite_eq_left hw]; exact hz3 w hw v
+    τt_gen := fun w hw v j hj => by rw [dite_eq_left hw]; exact hz4 w hw v j hj
     yw := Conv.halfCurve yT
     yw_eq := fun w hw => Conv.halfCurve_eq yT hw
     pi := fun w v => if hw : T < w.im then Over.homMk (spMap (Γ.ev w).toRingHom ≫ z w hw v) (hpi w hw v) else 1
-    pi_eq := fun w hw v => by rw [dif_pos hw]; rfl }⟩
+    pi_eq := fun w hw v => by rw [dite_eq_left hw]; rfl }⟩
 
 end GlobalTheory.ArcPts.Special

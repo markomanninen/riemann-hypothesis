@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FirstWeightLeOfSupport
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.FirstWeightLeOfSupport
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 

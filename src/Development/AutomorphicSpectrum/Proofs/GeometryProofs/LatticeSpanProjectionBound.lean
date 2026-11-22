@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem linearIndependent_comp_basis (h : IsExtOver i ι) {K : Type} (B : Module
     B.linearIndependent.comp (fun k => (e.symm k : K)) (Subtype.val_injective.comp e.symm.injective)
   have h3 := (h.2 s.card _ hb).comp e e.injective
   convert h3 using 1
-  funext x
+  funext k
   simp
 
 theorem exists_dual_ext (h : IsExtOver i ι) (hs : Submodule.span Ω (Set.range ι) = ⊤)
@@ -36,7 +40,7 @@ theorem exists_dual_ext (h : IsExtOver i ι) (hs : Submodule.span Ω (Set.range 
       obtain ⟨k, rfl⟩ := hx
       exact Submodule.subset_span ⟨k, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx => rw [h.1]; exact Submodule.smul_mem _ _ hx
   have hsp : ⊤ ≤ Submodule.span Ω (Set.range fun k => ι (B k)) := by
     rw [← hs, Submodule.span_le]
@@ -51,7 +55,7 @@ theorem exists_dual_ext (h : IsExtOver i ι) (hs : Submodule.span Ω (Set.range 
     have hk : ι (B k) = B' k := (Module.Basis.mk_apply hli hsp k).symm
     rw [hk, Module.Basis.constr_basis]
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), hx, hy]
   | smul a x _ hx =>
     rw [h.1]
     simp only [map_smul, hx, smul_eq_mul, map_mul]
@@ -76,7 +80,7 @@ theorem two_frames (Ω Ω₀ : Type) [Field Ω] [Field Ω₀] (i : Ω₀ →+* �
       induction hx using Submodule.span_induction with
       | mem y hy => exact hT y hy
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+      | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
       | smul w y _ hy =>
         rw [Subring.smul_def, map_smul]
         have hw := Submodule.smul_mem _ w hy
@@ -90,7 +94,8 @@ theorem two_frames (Ω Ω₀ : Type) [Field Ω] [Field Ω₀] (i : Ω₀ →+* �
       intro a
       obtain ⟨ψ, hψ⟩ := exists_dual_ext hext hs (π₀ a)
       have hψv : ψ (κ • b j) = c a := by
-        rw [← hc, map_sum, Finset.sum_eq_single a]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hc, map_sum, Finset.sum_eq_single a]
         · rw [map_smul, hψ, hπ, if_pos rfl, map_one, smul_eq_mul, mul_one]
         · intro x _ hx
           rw [map_smul, hψ, hπ, if_neg (Ne.symm hx), map_zero, smul_zero]
@@ -104,7 +109,7 @@ theorem two_frames (Ω Ω₀ : Type) [Field Ω] [Field Ω₀] (i : Ω₀ →+* �
           obtain ⟨e, he, rfl⟩ := hy
           rw [hψ, ← map_mul]; exact hint a e he
         | zero => simp
-        | add y z _ _ hy hz => rw [map_add, mul_add]; exact W.add_mem hy hz
+        | add y z _ _ hy hz => rw [map_add (f := _), mul_add]; exact W.add_mem hy hz
         | smul w y _ hy =>
           rw [Subring.smul_def, map_smul, smul_eq_mul, mul_left_comm]
           exact W.mul_mem w.2 hy

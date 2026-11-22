@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLEntireAndNonzeroAtOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCompactLatticeGL
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.ExistsPrimeAbsNormOfHasDirichletDensity
-import GroundTheory.AutomorphicForms.CompactAbelianCharacters
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLEntireAndNonzeroAtOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCompactLatticeGL
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.ExistsPrimeAbsNormOfHasDirichletDensity
+public import GroundTheory.AutomorphicForms.CompactAbelianCharacters
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem hchar_eq_one (H : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne) (�
     have sx : Summable x := summable_absNorm_rpow K hs
     have s1 : HasSum (fun w => x w - 2 * (A.indicator x w + (hS.toFinset : Set _).indicator x w))
         (∑' w, x w - 2 * (∑' w : A, x w + ∑ w ∈ hS.toFinset, x w)) :=
-      sx.hasSum.sub (((hasSum_subtype_iff_indicator.1 (sx.subtype A).hasSum).add
+      sx.hasSum.sub (((hasSum_subtype_iff_indicator.1 (sx.subtype (· ∈ A)).hasSum).add
         (hasSum_subtype_iff_indicator.1 (hS.toFinset.hasSum x))).mul_left 2)
     have le : ∀ w, Real.exp (x w - 2 * (A.indicator x w + (hS.toFinset : Set _).indicator x w)) ≤ ‖eulerFactor χ s w‖ := fun w => by
       by_cases hw : w ∈ A ∨ w ∈ (hS.toFinset : Set _)
@@ -67,8 +71,9 @@ theorem hchar_eq_one (H : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne) (�
           show χ.val w = 1 from hl _, xc]
         simpa using exp_le_inv (x1 w)
     refine le_trans (Real.exp_le_exp.2 ?_) (le_of_tendsto_of_tendsto' s1.rexp (hP s hs).norm fun T =>
-      Finset.prod_le_prod (fun _ _ => (Real.exp_pos _).le) fun w _ => le w)
-    have e1 : ∑' w : A, x w ≤ C := hC s hs
+      Finset.prod_le_prod₀ (fun _ _ => (Real.exp_pos _).le) fun w _ => le w)
+    have e1 : ∑' w : A, x w ≤ C := by
+      simpa only [NumberField.Set.primeIdealZetaSum_def, hx] using hC s hs
     have e2 : ∑ w ∈ hS.toFinset, x w ≤ hS.toFinset.card := by
       simpa using Finset.sum_le_card_nsmul _ _ 1 fun w _ => (x1 w).le
     rw [NumberField.Set.primeIdealZetaSum_def, tsum_univ x]
@@ -86,7 +91,7 @@ theorem exists_prime_norm (H : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOn
   obtain ⟨t, ht⟩ := GlobalTheory.HeckeOne.exists_normChar_ne_one (K := K)
   exact ht (hchar_eq_one H _ (GlobalTheory.HeckeOne.isUnitary_normChar t) hS fun w h1 h2 => absurd h2 (hn w h1))
 
-theorem closed_eq_top [IsTotallyComplex K] (H : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne) (M : Subgroup (Ideles K))
+theorem closed_eq_top [_root_.NumberField.IsTotallyComplex K] (H : GlobalTheory.Published.HeckeLEntireAndNonzeroAtOne) (M : Subgroup (Ideles K))
     (hM : IsClosed (M : Set (Ideles K))) (h1 : ∀ k, diagUnits K k ∈ M) (h2 : GlobalTheory.IdeleCovolume.eIdele K ∈ M)
     {S : Set (HeightOneSpectrum (𝓞 K))} (hS : S.Finite)
     (h : ∀ w ∉ S, (Ideal.absNorm w.asIdeal).Prime → ∀ x, localIdele K w x ∈ M) (z : Ideles K) : z ∈ M := by

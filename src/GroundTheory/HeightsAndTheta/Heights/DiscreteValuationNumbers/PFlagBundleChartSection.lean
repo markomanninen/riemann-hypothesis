@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleChartSection
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleChartSectionTools
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleChartSection
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleChartSectionTools
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -9,9 +14,9 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo
 
 noncomputable section
 
+
 open FlagBundleSectionForms (chartPow chartMono liftNat) in
 open FlagBundleChartSection in
-
 theorem FlagBundleChartSection.proof : FlagBundleChartSection.Statement := by
   intro F _ Ω _ _ K _ _ ι y N E _ _ B w b hfl M a φ hφ Φ _ _ t ht i c hsc
   classical
@@ -72,7 +77,7 @@ theorem FlagBundleChartSection.proof : FlagBundleChartSection.Statement := by
     simp only [← chartPow_add hY]
     congr 1
     funext k
-    simp only [Pi.add_apply, δ, γ₁, γ₂]
+    simp only [Pi.add_apply, Nat.cast_add, δ, γ₁, γ₂]
     omega
   have hevY : ∀ l, eval₂ ((algebraMap Ω Φ).comp (algebraMap F Ω))
       (projCoord y w φ (truncCoord t ((i : ℕ) + 1))) (Y l) =
@@ -100,7 +105,8 @@ theorem FlagBundleChartSection.proof : FlagBundleChartSection.Statement := by
       have hφv : algebraMap Ω Φ (φ p vi) =
           ∑ j, algebraMap Ω Φ (w.repr vi j) * algebraMap Ω Φ (φ p (w j)) := by
         conv_lhs => rw [← w.sum_repr vi]
-        simp only [map_sum, map_smul, smul_eq_mul, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_eq_mul, map_mul]
       rw [hevY p, hφv]
       simp only [projCoord]
       rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]

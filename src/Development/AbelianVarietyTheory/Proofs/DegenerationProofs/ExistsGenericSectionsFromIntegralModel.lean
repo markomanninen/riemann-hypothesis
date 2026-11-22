@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KfBijective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCarries
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFOfIntegral
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralDegenerationFamilyBaseChangeExtensionFie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.KfBijective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCarries
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsFOfIntegral
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralDegenerationFamilyBaseChangeExtensionFie
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor

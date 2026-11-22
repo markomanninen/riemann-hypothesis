@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import ReciprocityTheory.DualLattices.FischerSelfNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import ReciprocityTheory.DualLattices.FischerSelfNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ open MvPolynomial
 variable {ι σ : Type} [Fintype ι]
 
 def prodRename [DecidableEq ι] :
-    MultilinearMap ℂ (fun _ : ι => MvPolynomial σ ℂ) (MvPolynomial (ι × σ) ℂ) :=
+    (ι → MvPolynomial σ ℂ) →ₘₗ[ℂ] MvPolynomial (ι × σ) ℂ :=
   (MultilinearMap.mkPiAlgebra ℂ ι (MvPolynomial (ι × σ) ℂ)).compLinearMap
     fun i => (rename (Prod.mk i) : MvPolynomial σ ℂ →ₐ[ℂ] _).toLinearMap
 
@@ -26,8 +30,8 @@ theorem prodRename_apply [DecidableEq ι] (P : ι → MvPolynomial σ ℂ) :
 theorem sum_mapDomain_apply (a : ι → σ →₀ ℕ) (j : ι) (s : σ) :
     (∑ i, Finsupp.mapDomain (Prod.mk i) (a i)) (j, s) = a j s := by
   classical
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single j]
-  · exact Finsupp.mapDomain_apply (Prod.mk_right_injective j) _ _
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single j]
+  · exact Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective j) _ _
   · intro i _ hi
     refine Finsupp.mapDomain_notin_range _ _ ?_
     rintro ⟨t, ht⟩
@@ -92,7 +96,8 @@ theorem substF_rename {N n : ℕ} (h : ι → Matrix (Fin N) (Fin N) ℂ) (g : �
     substF h g (rename (Prod.mk i) P) = rename (Prod.mk i) (subst2 (h i) (g i) P) := by
   have key : (substF h g).comp (rename (Prod.mk i)) = (rename (Prod.mk i)).comp (subst2 (h i) (g i)) := by
     refine algHom_ext fun p => ?_
-    simp only [AlgHom.comp_apply, rename_X, substF_X, subst2_X, map_sum, map_mul, rename_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rename_X, substF_X, subst2_X, map_sum, map_mul, rename_C]
   exact congrArg (fun f => f P) key
 
 theorem exists_tensor : ∀ (ι : Type) [Fintype ι] (N n : ℕ) (A B : ι → Type) [∀ i, AddCommGroup (A i)] [∀ i, Module ℂ (A i)] [∀ i, AddCommGroup (B i)] [∀ i, Module ℂ (B i)] (I : ∀ i, MvPolynomial (Fin N × Fin n) ℂ →ₗ[ℂ] A i →ₗ[ℂ] B i), (∀ i, I i ≠ 0) → ∃ It : MvPolynomial (ι × Fin N × Fin n) ℂ →ₗ[ℂ] (⨂[ℂ] i, A i) →ₗ[ℂ] ⨂[ℂ] i, B i, It ≠ 0 ∧ ∀ (c : ι → ℂ) (h : ι → Matrix (Fin N) (Fin N) ℂ) (g : ι → Matrix (Fin n) (Fin n) ℂ) (a : ∀ i, A i →ₗ[ℂ] A i) (b : ∀ i, B i →ₗ[ℂ] B i), (∀ i P v, I i (c i • subst2 (h i) (g i) P) (a i v) = b i (I i P v)) → ∀ P x, It ((∏ i, c i) • substF h g P) (PiTensorProduct.map a x) = PiTensorProduct.map b (It P x) := by
@@ -134,7 +139,7 @@ theorem exists_tensor : ∀ (ι : Type) [Fintype ι] (N n : ℕ) (A B : ι → T
       rw [e, map_smul (substF h g), smul_comm, map_smul (tens I), LinearMap.smul_apply, this, map_smul (tens I),
         LinearMap.smul_apply, map_smul]
     | add p q hp hq =>
-      rw [map_add, smul_add, map_add, LinearMap.add_apply, hp, hq, map_add (tens I),
+      rw [map_add (f := _), smul_add, map_add (f := _), LinearMap.add_apply, hp, hq, map_add (tens I),
         LinearMap.add_apply, map_add]
 
 end GlobalTheory.CompactHowe.PolyTensor

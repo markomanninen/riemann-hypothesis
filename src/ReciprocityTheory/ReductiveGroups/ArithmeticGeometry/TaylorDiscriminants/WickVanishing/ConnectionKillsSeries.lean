@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,17 +17,19 @@ section VF
 
 variable {k : Type} [CommRing k] {τ : Type} [Fintype τ]
 
-def vf (c : τ → MvPowerSeries τ k) (G : MvPowerSeries τ k) : MvPowerSeries τ k := ∑ t, c t * pderiv k t G
+def vf (c : τ → MvPowerSeries τ k) (G : MvPowerSeries τ k) : MvPowerSeries τ k :=
+  ∑ t, c t * pderiv (R := k) t G
 
 theorem vf_add (c : τ → MvPowerSeries τ k) (f G : MvPowerSeries τ k) : vf c (f + G) = vf c f + vf c G := by
-  simp only [vf, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [vf, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem vf_sub (c : τ → MvPowerSeries τ k) (f G : MvPowerSeries τ k) : vf c (f - G) = vf c f - vf c G := by
   simp only [vf, map_sub, mul_sub, Finset.sum_sub_distrib]
 
 theorem vf_sum {ι : Type} (s : Finset ι) (c : τ → MvPowerSeries τ k) (f : ι → MvPowerSeries τ k) :
     vf c (∑ i ∈ s, f i) = ∑ i ∈ s, vf c (f i) := by
-  simp only [vf, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vf, map_sum, Finset.mul_sum]
   exact Finset.sum_comm
 
 theorem vf_C (c : τ → MvPowerSeries τ k) (a : k) : vf c (C a) = 0 := by
@@ -63,37 +69,64 @@ theorem liftX_mul (f g : PS k 1 d) : liftX k (f * g) = liftX k f * liftX k g := 
 
 theorem liftX_sum {ι : Type} (s : Finset ι) (f : ι → PS k 1 d) :
     liftX k (∑ i ∈ s, f i) = ∑ i ∈ s, liftX k (f i) := by
-  simp only [← liftHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← liftHom_apply, map_sum]
 
 theorem pderiv_inl_liftX (f : PS k 1 d) (j : Fin d) :
-    pderiv k (Sum.inl j) (liftX k f) = liftX k (pderiv k ((0 : Fin 1), j) f) := by
+    pderiv (R := k) (Sum.inl j) (liftX k f) = liftX k (pderiv (R := k) ((0 : Fin 1), j) f) := by
   classical
-  unfold liftX
-  rw [LogPf.pderiv_subst (fun _ => MvPowerSeries.constantCoeff_X _) f (Sum.inl j)]
-  rw [Finset.sum_eq_single ((0 : Fin 1), j)]
-  · simp [MvPowerSeries.pderiv_X]
-  · intro p _ hp
-    have hp' : p.2 ≠ j := by
-      intro h
-      exact hp (Prod.ext (Subsingleton.elim _ _) h)
-    simp [MvPowerSeries.pderiv_X, Pi.single_apply, hp']
-  · simp
+  let e : (Fin 1 × Fin d) ↪ (Fin d ⊕ Fin d) :=
+    ⟨fun p => Sum.inl p.2, fun _ _ h => Prod.ext (Subsingleton.elim _ _) (Sum.inl.inj h)⟩
+  have hlift (g : PS k 1 d) : liftX k g = rename e g :=
+    (MvPowerSeries.rename_eq_subst e g).symm
+  simp only [hlift]
+  ext n
+  rw [MvPowerSeries.coeff_pderiv]
+  by_cases hn : n ∈ Set.range (Finsupp.embDomain e)
+  · obtain ⟨m, rfl⟩ := hn
+    change coeff (Finsupp.embDomain e m + Finsupp.single (e (0, j)) 1) (rename e f) *
+      (Finsupp.embDomain e m (e (0, j)) + 1) =
+        coeff (Finsupp.embDomain e m) (rename e (pderiv (0, j) f))
+    rw [← Finsupp.embDomain_single, ← Finsupp.embDomain_add,
+      MvPowerSeries.coeff_embDomain_rename, Finsupp.embDomain_apply_self,
+      MvPowerSeries.coeff_embDomain_rename, MvPowerSeries.coeff_pderiv]
+  · have hshift : n + Finsupp.single (Sum.inl j) 1 ∉ Set.range (Finsupp.embDomain e) :=
+      fun h => hn (Finsupp.isLowerSet_range_embDomain e (le_iff_exists_add.mpr ⟨_, rfl⟩) h)
+    have he : Finsupp.embDomain e = (Finsupp.mapDomain e : (Fin 1 × Fin d →₀ ℕ) → _) :=
+      funext (Finsupp.embDomain_eq_mapDomain e)
+    rw [he] at hn hshift
+    rw [MvPowerSeries.coeff_rename_eq_zero e f hshift, zero_mul,
+      MvPowerSeries.coeff_rename_eq_zero e _ hn]
 
-theorem pderiv_inr_liftX (f : PS k 1 d) (i : Fin d) : pderiv k (Sum.inr i) (liftX k f) = 0 := by
+theorem pderiv_inr_liftX (f : PS k 1 d) (i : Fin d) :
+    pderiv (R := k) (Sum.inr i) (liftX k f) = 0 := by
   classical
-  unfold liftX
-  rw [LogPf.pderiv_subst (fun _ => MvPowerSeries.constantCoeff_X _) f (Sum.inr i)]
-  simp [MvPowerSeries.pderiv_X, Pi.single_apply]
+  let e : (Fin 1 × Fin d) ↪ (Fin d ⊕ Fin d) :=
+    ⟨fun p => Sum.inl p.2, fun _ _ h => Prod.ext (Subsingleton.elim _ _) (Sum.inl.inj h)⟩
+  have hlift : liftX k f = rename e f := (MvPowerSeries.rename_eq_subst e f).symm
+  rw [hlift]
+  ext n
+  have hshift : n + Finsupp.single (Sum.inr i) 1 ∉ Set.range (Finsupp.mapDomain e) := by
+    rintro ⟨m, hm⟩
+    have hzero : Finsupp.embDomain e m (Sum.inr i) = 0 := by
+      apply Finsupp.embDomain_of_notMem_range
+      rintro ⟨p, hp⟩
+      exact Sum.inl_ne_inr hp
+    rw [Finsupp.embDomain_eq_mapDomain, hm] at hzero
+    simp at hzero
+  rw [MvPowerSeries.coeff_pderiv, MvPowerSeries.coeff_rename_eq_zero e f hshift, zero_mul, map_zero]
 
 def cf (B : FB R d O) (h : PS k 2 d) (u φ : Fin d → k) : Fin d ⊕ Fin d → AA k d :=
-  Sum.elim (fun j => liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (B.FK k j))))
+  Sum.elim (fun j => liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0]
+    (pderiv (R := k) ((1 : Fin 2), i) (B.FK k j))))
     (fun i => liftX k (Dof (B.FK k) u (sgOf k h i)) + C (φ i))
 
 def fm (h : PS k 2 d) (u : Fin d → k) : AA k d := ∑ i : Fin d, (X (Sum.inr i) - liftX k (sgOf k h i)) * C (u i)
 
 theorem cf_inl (B : FB R d O) (h : PS k 2 d) (u φ : Fin d → k) (j : Fin d) :
     cf k B h u φ (Sum.inl j) =
-      liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) (B.FK k j))) := rfl
+      liftX k (∑ i : Fin d, C (u i) * ev (n := 1) ![pt k d 0, 0]
+        (pderiv (R := k) ((1 : Fin 2), i) (B.FK k j))) := rfl
 
 theorem cf_inr (B : FB R d O) (h : PS k 2 d) (u φ : Fin d → k) (i : Fin d) :
     cf k B h u φ (Sum.inr i) = liftX k (Dof (B.FK k) u (sgOf k h i)) + C (φ i) := rfl

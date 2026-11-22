@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COnePropertyFiniteExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNonzeroZeroFormPolynomialIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -55,7 +60,7 @@ variable {σ k : Type} [CommRing k] in
 private theorem coeffHom_sum {ι : Type} (s : Finset ι) {e : ℕ} (p : ι → (MvPolynomial σ k)[X])
     (hp : ∀ i ∈ s, _root_.GlobalTheory.TsenCount.CoeffHom e (p i)) :
     _root_.GlobalTheory.TsenCount.CoeffHom e (∑ i ∈ s, p i) := fun j => by
-  rw [Polynomial.finset_sum_coeff]
+  rw [Polynomial.finsetSum_coeff]
   exact MvPolynomial.IsHomogeneous.sum _ _ _ fun i hi => hp i hi j
 
 open Polynomial in
@@ -232,7 +237,8 @@ private theorem exists_ne_zero_polynomial_zero_of_homogeneous {k : Type} [Field 
         Polynomial.map_id, RingHom.id_apply]
     have h3 : Polynomial.map (MvPolynomial.eval a) ∘ y = x := by
       funext i
-      simp [y, x, Polynomial.map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [y, x, Polynomial.map_sum]
     rw [h2, h3]
     rfl
   refine ⟨x, ?_, hΦx ▸ hmapΦ⟩
@@ -246,7 +252,7 @@ private theorem exists_ne_zero_polynomial_zero_of_homogeneous {k : Type} [Field 
     rw [congrFun hx i]
     simp
   have hc : (x i).coeff j = a (e (i, j)) := by
-    simp only [x, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow]
+    simp only [x, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single j]
     · simp
     · intro b _ hb
@@ -292,8 +298,8 @@ private theorem exists_ne_zero_ratFunc_homogeneous_zero {k : Type} [Field k] [Is
     simp only [map_mul, MvPolynomial.eval_C] at key
     exact (mul_eq_zero.1 key).resolve_left hc0
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.tsen_algebraic_extension_ratFunc :
     ∀ (k K : Type) [Field k] [IsAlgClosed k] [Field K] [Algebra (RatFunc k) K]
       [Algebra.IsAlgebraic (RatFunc k) K] (n d : ℕ) (f : MvPolynomial (Fin n) K),

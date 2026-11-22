@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEllRegBridge
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEllRegBridge
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity
 

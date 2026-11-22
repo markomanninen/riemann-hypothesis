@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AppLEFromOfGlobalSectionsChartHom
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowSegre
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FinCover
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.AppLEFromOfGlobalSectionsChartHom
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SegreGlue
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowSegre
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GroundTheory.Arith.SchemeCoh GroundTheory.Arith.SchemeCoh.ProjSpace
@@ -23,7 +27,7 @@ private theorem exists_closed_prod {R : Type} [CommRing R] {X Y : Scheme.{0}} (N
   have hmap : IsClosedImmersion (pullback.map (i ≫ toSpecBase R N) (j ≫ toSpecBase R M)
       (toSpecBase R N) (toSpecBase R M) i j (𝟙 _)
       ((Category.comp_id _).trans rfl) ((Category.comp_id _).trans rfl)) :=
-    MorphismProperty.pullback_map (P := (@IsClosedImmersion : MorphismProperty Scheme.{0}))
+    MorphismProperty.pullbackMap (P := (@IsClosedImmersion : MorphismProperty Scheme.{0}))
       inferInstance inferInstance rfl rfl
   refine ⟨pullback.map (i ≫ toSpecBase R N) (j ≫ toSpecBase R M)
       (toSpecBase R N) (toSpecBase R M) i j (𝟙 _)

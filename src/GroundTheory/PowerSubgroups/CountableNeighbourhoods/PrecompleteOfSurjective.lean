@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Variant₂.N1
 
@@ -30,7 +34,7 @@ theorem isPrecomplete_of_surjective {A : Type*} {B : Type*} [CommRing A] [CommRi
     intro n
     induction n with
     | zero => simp [y, hy₀]
-    | succ n ih => rw [hy_succ, map_add, ih, hx]
+    | succ n ih => rw [hy_succ, map_add (f := _), ih, hx]
   have hcauchy : ∀ {m n : ℕ}, m ≤ n → a ^ m ∣ y m - y n := by
     intro m n hmn
     induction n, hmn using Nat.le_induction with

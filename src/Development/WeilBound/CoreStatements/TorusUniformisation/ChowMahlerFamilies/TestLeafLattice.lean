@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticPeriodMatrixIntegrality
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PolarisedAugmentationTheorem
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAddEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FromNAdd
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SymplecticPeriodMatrixIntegrality
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PolarisedAugmentationTheorem
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsAddEquiv
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -35,7 +40,7 @@ theorem leaf_of_afLat (p : ℕ) [Fact p.Prime] (cp : R) {I : Type} [Fintype I] [
   refine ⟨g, hg, fun x => ?_⟩
   let fb : (I → ZMod p) →+ R ⧸ Ideal.span {(p : R)} := AddMonoidHom.mk' (fun x => Ideal.Quotient.mk _ (f x))
     fun x y => by
-      rw [← map_add, Ideal.Quotient.eq, ← sub_sub]
+      rw [← map_add (f := _), Ideal.Quotient.eq, ← sub_sub]
       exact hf x y
   have hx : x = ∑ i, (x i).val • Pi.single i (1 : ZMod p) := by
     ext j
@@ -46,10 +51,12 @@ theorem leaf_of_afLat (p : ℕ) [Fact p.Prime] (cp : R) {I : Type} [Fintype I] [
     rw [← Ideal.Quotient.eq]
     have h2 : fb x = ∑ i, (x i).val • fb (Pi.single i 1) := by
       conv_lhs => rw [hx]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => map_nsmul _ _ _
     have h3 : fb x = Ideal.Quotient.mk _ (f x) := rfl
-    rw [← h3, h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h3, h2, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [mul_comm, map_mul, map_natCast, nsmul_eq_mul]
     rfl
@@ -63,7 +70,7 @@ theorem Leaf.retract {p : ℕ} {cp : R} {N N' : Type} [AddCommGroup N] [AddCommG
     (hj : ∀ g ∈ M', (fun x => g (j x)) ∈ M) (h : Leaf p cp M') : Leaf p cp M := by
   intro f hf
   obtain ⟨g, hg, h1⟩ := h (fun x => f (r x)) fun x y => by
-    rw [map_add]; exact hf _ _
+    rw [map_add (f := _)]; exact hf _ _
   refine ⟨_, hj g hg, fun x => ?_⟩
   have := h1 (j x)
   rwa [hr] at this
@@ -199,7 +206,7 @@ theorem chi_add (p : ℕ) [Fact p.Prime] {O : Type} [CommRing O] [IsLocalRing O]
   change v (1 - (χ (a + b) - χ a - χ b) ^ (m + 1)) = 1
   obtain ⟨o, ho⟩ := IsLocalRing.residue_surjective (σ a)
   obtain ⟨o', ho'⟩ := IsLocalRing.residue_surjective (σ b)
-  have h3 := v.map_sub_lt (v.map_sub_lt (hlt (a + b) (o + o') (by rw [map_add, map_add, ho, ho'])) (hlt a o ho))
+  have h3 := v.map_sub_lt (v.map_sub_lt (hlt (a + b) (o + o') (by rw [map_add (f := _), map_add (f := _), ho, ho'])) (hlt a o ho))
     (hlt b o' ho')
   have h4 : χ (a + b) - algebraMap O C (o + o') - (χ a - algebraMap O C o) - (χ b - algebraMap O C o') =
       χ (a + b) - χ a - χ b := by rw [map_add (algebraMap O C)]; ring
@@ -247,7 +254,7 @@ theorem PositivityTheory.Xgn.test_leaf_lattice : GlobalTheory.CompanionTheory.Ar
   obtain ⟨g, hg, hgf⟩ := hleaf (fun x => t * ∑ k, ⟨z k, hz' k⟩ * χ' (TestPt.fromNAdd pq x k)) fun x x' => by
     rw [← mul_sub, ← mul_sub, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
     refine Ideal.mul_mem_left _ _ (Ideal.sum_mem _ fun k _ => ?_)
-    rw [← mul_sub, ← mul_sub, map_add, Pi.add_apply]
+    rw [← mul_sub, ← mul_sub, map_add (f := _), Pi.add_apply]
     exact Ideal.mul_mem_left _ _ (hf _ _)
   have hgM : (fun a => g (TestPt.toNAdd sc a)) ∈ ((chartD e b pq sc w P i).bc RC).M := by
     refine Submodule.span_induction (p := fun g _ => (fun a => g (TestPt.toNAdd sc a)) ∈ ((chartD e b pq sc w P i).bc RC).M)
@@ -265,7 +272,7 @@ theorem PositivityTheory.Xgn.test_leaf_lattice : GlobalTheory.CompanionTheory.Ar
   have hft : ∀ k, TestPt.fromNAdd pq (TestPt.toNAdd sc a) k = a k := fun k => hsec.1 (a k)
   simp only [hft] at h
   change (s a : C) * (p : C) = g _ - (cp : C) * ((t : C) * ((∑ k, ⟨z k, hz' k⟩ * χ' (a k) : RC) : C)) at h
-  rw [← _root_.mul_assoc, ht, AddSubmonoidClass.coe_finset_sum] at h
+  rw [← _root_.mul_assoc, ht, AddSubmonoidClass.coe_finsetSum] at h
   simp only [MulMemClass.coe_mul, ← hχσ] at h
   change g _ + (p : C) * -(s a : C) = linMap _ (fun a => χ τ a) (algebraMap O C w • z) a
   simp only [linMap, Fintype.linearCombination_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, _root_.mul_assoc,

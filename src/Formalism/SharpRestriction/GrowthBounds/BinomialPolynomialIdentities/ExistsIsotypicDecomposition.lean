@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.SaturatedLowerSetSpanOfLowerSetTypesSpan
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.SaturatedLowerSetSpanOfLowerSetTypesSpan
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem span_inter_eq_span_image {O Kf : Type} [CommRing O] [Field Kf] [Algebra 
   have hmaplc : ∀ c : X →₀ O, MvPolynomial.map (algebraMap O Kf) (Finsupp.linearCombination O bO c) =
       Finsupp.linearCombination Kf bK (c.mapRange (algebraMap O Kf) (map_zero _)) := by
     intro c
-    rw [Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
       Finsupp.sum_mapRange_index (by intro i; exact zero_smul _ _), Finsupp.sum, Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, hmap, ← MvPolynomial.smul_eq_C_mul]
@@ -58,7 +63,7 @@ theorem span_inter_eq_span_image {O Kf : Type} [CommRing O] [Field Kf] [Algebra 
       exact this.2
     | zero => exact ⟨Submodule.zero_mem _, by rw [map_zero]; exact Submodule.zero_mem _⟩
     | add x y _ _ hx hy =>
-      exact ⟨Submodule.add_mem _ hx.1 hy.1, by rw [map_add]; exact Submodule.add_mem _ hx.2 hy.2⟩
+      exact ⟨Submodule.add_mem _ hx.1 hy.1, by rw [map_add (f := _)]; exact Submodule.add_mem _ hx.2 hy.2⟩
     | smul a x _ hx =>
       exact ⟨Submodule.smul_mem _ _ hx.1, by
         rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SubgroupQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SubgroupQuot
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
@@ -33,7 +37,9 @@ private theorem finite_open_homs_to_finite_group (G : Type) [Group G] [Topologic
   exact htop (Subgroup.mem_top g)
 
 theorem UpperTheory.V.Pa.phi_fg :
-    ∀ {l : ℕ} [Fact l.Prime] (F : GFrame l), (∃ s : Finset F.Γ, (Subgroup.closure (s : Set F.Γ)).topologicalClosure = ⊤) → PhiCond F.G₀ l := by
+    ∀ {l : ℕ} [Fact l.Prime] (F : GFrame l),
+      (∃ s : Finset F.Γ, (Subgroup.closure (s : Set F.Γ)).topologicalClosure = ⊤) →
+        PhiCond (Γ := F.G₀) l := by
   intro l _ F hF
   obtain ⟨s, hs⟩ := hF
   have hΓ : TopFG F.Γ := ⟨(s : Set F.Γ), s.finite_toSet, (topGen_iff _).mpr hs⟩

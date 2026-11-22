@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDefs
-import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeRename
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDefs
+public import Formalism.SharpRestriction.GrowthBounds.ValuationLowestDegreeRename
+
+@[expose] public section
 
 noncomputable section
 

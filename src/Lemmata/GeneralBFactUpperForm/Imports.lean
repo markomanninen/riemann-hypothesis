@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_3 u_4
 
@@ -20,7 +24,7 @@ theorem goal1 :
     rw [Polynomial.aeval_C, Module.algebraMap_end_apply]
     exact W.smul_mem a hx
   · intro p q hp hq x hx
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact W.add_mem (hp x hx) (hq x hx)
   · intro n a h x hx
     rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X, Module.End.mul_apply]

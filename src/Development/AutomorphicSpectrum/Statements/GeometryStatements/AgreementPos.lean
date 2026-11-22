@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+
+@[expose] public section
 
 noncomputable section
 

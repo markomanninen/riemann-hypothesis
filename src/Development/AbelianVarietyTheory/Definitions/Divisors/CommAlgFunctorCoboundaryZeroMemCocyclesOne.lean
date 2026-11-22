@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,12 +35,12 @@ abbrev C2 := ∀ (T T' T'' : C) (_ : T ⟶ T') (_ : T' ⟶ T''), F.obj T''
 
 def d0 : C0 F →ₗ[R] C1 F where
   toFun g T T' φ := g T' - mp F φ (g T)
-  map_add' g g' := by funext T T' φ; simp only [Pi.add_apply, map_add]; ring
+  map_add' g g' := by funext T T' φ; simp only [Pi.add_apply, map_add (f := _)]; ring
   map_smul' r g := by funext T T' φ; simp only [Pi.smul_apply, map_smul, smul_sub, RingHom.id_apply]
 
 def d1 : C1 F →ₗ[R] C2 F where
   toFun f T T' T'' φ ψ := mp F ψ (f T T' φ) - f T T'' (φ ≫ ψ) + f T' T'' ψ
-  map_add' g g' := by funext T T' T'' φ ψ; simp only [Pi.add_apply, map_add]; ring
+  map_add' g g' := by funext T T' T'' φ ψ; simp only [Pi.add_apply, map_add (f := _)]; ring
   map_smul' r g := by
     funext T T' T'' φ ψ; simp only [Pi.smul_apply, map_smul, smul_sub, smul_add, RingHom.id_apply]
 
@@ -49,7 +53,7 @@ def Z1 : Submodule R (C1 F) where
   carrier := {f | ∀ ⦃T T' T'' : C⦄ (φ : T ⟶ T') (ψ : T' ⟶ T''),
     f T T'' (φ ≫ ψ) = mp F ψ (f T T' φ) + f T' T'' ψ}
   add_mem' {f g} hf hg T T' T'' φ ψ := by
-    simp only [Pi.add_apply, map_add, hf φ ψ, hg φ ψ]; ring
+    simp only [Pi.add_apply, map_add (f := _), hf φ ψ, hg φ ψ]; ring
   zero_mem' T T' T'' φ ψ := by simp
   smul_mem' r f hf T T' T'' φ ψ := by
     simp only [Pi.smul_apply, map_smul, hf φ ψ, smul_add]
@@ -58,7 +62,7 @@ def Z2 : Submodule R (C2 F) where
   carrier := {z | ∀ ⦃T T' T'' T''' : C⦄ (φ : T ⟶ T') (ψ : T' ⟶ T'') (χ : T'' ⟶ T'''),
     mp F χ (z T T' T'' φ ψ) + z T T'' T''' (φ ≫ ψ) χ = z T T' T''' φ (ψ ≫ χ) + z T' T'' T''' ψ χ}
   add_mem' {f g} hf hg T T' T'' T''' φ ψ χ := by
-    simp only [Pi.add_apply, map_add]; linear_combination hf φ ψ χ + hg φ ψ χ
+    simp only [Pi.add_apply, map_add (f := _)]; linear_combination hf φ ψ χ + hg φ ψ χ
   zero_mem' T T' T'' T''' φ ψ χ := by simp
   smul_mem' r f hf T T' T'' T''' φ ψ χ := by
     simp only [Pi.smul_apply, map_smul, ← smul_add, hf φ ψ χ]
@@ -97,7 +101,7 @@ theorem commAlgFunctorCoboundaryZero_mem_cocyclesOne (g : C0 F) : d0 F g ∈ Z1 
 
 theorem differential_one_mem_scaled_lattice (f : C1 F) : d1 F f ∈ Z2 F := by
   intro T T' T'' T''' φ ψ χ
-  simp only [d1_apply, map_add, map_sub, mp_comp, Category.assoc]
+  simp only [d1_apply, map_add (f := _), map_sub, mp_comp, Category.assoc]
   ring
 
 def H1 : Type _ := Z1 F ⧸ LinearMap.range ((d0 F).codRestrict (Z1 F) (commAlgFunctorCoboundaryZero_mem_cocyclesOne F))
@@ -159,7 +163,7 @@ variable (F)
 def cupZ : Z1 F →ₗ[R] Z1 F →ₗ[R] Z2 F :=
   LinearMap.mk₂ R
     (fun a b ↦ ⟨fun T T' T'' φ ψ ↦ mp F ψ (a.1 T T' φ) * b.1 T' T'' ψ, fun T T' T'' T''' φ ψ χ ↦ by
-      simp only [Z1.comp a, Z1.comp b, map_mul, map_add, mp_comp]; ring⟩)
+      simp only [Z1.comp a, Z1.comp b, map_mul, map_add (f := _), mp_comp]; ring⟩)
     (fun a a' b ↦ Subtype.ext (by funext T T' T'' φ ψ; simp [add_mul]))
     (fun r a b ↦ Subtype.ext (by funext T T' T'' φ ψ; simp))
     (fun a b b' ↦ Subtype.ext (by funext T T' T'' φ ψ; simp [mul_add]))
@@ -241,14 +245,14 @@ variable (m : CoefMap σ F F')
 
 def pullbackOneCocycle : Z1 F →ₛₗ[σ] Z1 F' where
   toFun f := ⟨fun T T' φ ↦ m.α T' (f.1 _ _ (m.G.map φ)), fun T T' T'' φ ψ ↦ by
-    simp only [Functor.map_comp, Z1.comp f, map_add, m.naturality]⟩
+    simp only [Functor.map_comp, Z1.comp f, map_add (f := _), m.naturality]⟩
   map_add' f g := Subtype.ext (by funext T T' φ; simp)
   map_smul' r f := Subtype.ext (by funext T T' φ; simp [m.smul])
 
 def pullbackTwoCocycle : Z2 F →ₛₗ[σ] Z2 F' where
   toFun z := ⟨fun T T' T'' φ ψ ↦ m.α T'' (z.1 _ _ _ (m.G.map φ) (m.G.map ψ)),
     fun T T' T'' T''' φ ψ χ ↦ by
-      simp only [Functor.map_comp, ← map_add, ← m.naturality, z.2 (m.G.map φ) (m.G.map ψ) (m.G.map χ)]⟩
+      simp only [Functor.map_comp, ← map_add (f := _), ← m.naturality, z.2 (m.G.map φ) (m.G.map ψ) (m.G.map χ)]⟩
   map_add' f g := Subtype.ext (by funext T T' T'' φ ψ; simp)
   map_smul' r f := Subtype.ext (by funext T T' T'' φ ψ; simp [m.smul])
 
@@ -270,7 +274,7 @@ def pull2 : H2 F →ₛₗ[σ] H2 F' :=
     rintro _ ⟨g, rfl⟩
     refine ⟨fun T T' φ ↦ m.α T' (g _ _ (m.G.map φ)), Subtype.ext ?_⟩
     funext T T' T'' φ ψ
-    simp only [LinearMap.codRestrict_apply, pullCocycleTwo_apply, d1_apply, map_sub, map_add, m.naturality,
+    simp only [LinearMap.codRestrict_apply, pullCocycleTwo_apply, d1_apply, map_sub, map_add (f := _), m.naturality,
       Functor.map_comp])
 
 theorem pullCohomologyOne_class (f : Z1 F) : m.pull1 (H1.mk F f) = H1.mk F' (m.pullbackOneCocycle f) := rfl
@@ -314,7 +318,7 @@ theorem pullCohomologyOne_eq_of_natTrans {σ' : R →+* R'} (m' : CoefMap σ' F 
   have h2 := Z1.comp f (θ.app T) (m'.G.map φ)
   rw [θ.naturality φ] at h1
   have h3 := congrArg (m'.α T') (h1.symm.trans h2)
-  rw [map_add, map_add, h, m'.naturality] at h3
+  rw [map_add (f := _), map_add (f := _), h, m'.naturality] at h3
   simp only [amitsur_d0_apply, map_neg, Pi.sub_apply, pullCocycleOne_apply]
   linear_combination -h3
 
@@ -336,7 +340,7 @@ theorem pullCohomologyTwo_eq_of_natTrans {σ' : R →+* R'} (m' : CoefMap σ' F 
     rw [map_sub]
     linear_combination e1 - e2 + e3
   have e := congrArg (m'.α T'') key
-  simp only [map_sub, map_add, h, m'.naturality] at e
+  simp only [map_sub, map_add (f := _), h, m'.naturality] at e
   simp only [d1_apply, Pi.sub_apply, pullCocycleTwo_apply, Functor.map_comp, map_sub]
   linear_combination -e
 

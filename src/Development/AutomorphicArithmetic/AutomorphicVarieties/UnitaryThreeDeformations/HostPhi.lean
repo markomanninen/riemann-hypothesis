@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -196,8 +200,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.hostFrame_phi :
     unfold ReciprocityTheory.Gal.ContainsAbove
     intro v hv
     apply (hF.mem v).mpr
-    rw [Nat.cast_mul]
-    exact Ideal.mul_mem_right _ _ hv
+    simpa [Nat.cast_mul, mul_comm] using Ideal.mul_mem_right (N : NumberField.RingOfIntegers ℚ) v.asIdeal hv
   unfold GlobalFiniteness at hGF
   have key : ∀ k : ℕ, k = l ^ 1 → ∀ (M : Type) [AddCommGroup M] [Module (ZMod k) M] [TopologicalSpace M]
       [DiscreteTopology M] [Finite M] (ρ : Representation (ZMod k) (Gam Ω S) M),

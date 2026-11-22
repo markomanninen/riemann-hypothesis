@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -16,7 +20,7 @@ theorem isAlgebraic_unit_inv {K R : Type} [Field K] [CommRing R] [IsDomain R] [A
     (A : Subalgebra K R) (u : Rˣ) (hu : (u : R) ∈ A) : IsAlgebraic A ((u⁻¹ : Rˣ) : R) := by
   refine ⟨Polynomial.C (⟨u, hu⟩ : A) * Polynomial.X - 1, ?_, ?_⟩
   · intro h
-    have h1 := congrArg (fun p => Polynomial.coeff p 0) h
+    have h1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) h
     simp at h1
   · simp [Polynomial.aeval_def, Polynomial.eval₂_sub, Polynomial.eval₂_mul]
 
@@ -64,6 +68,7 @@ theorem isAlgebraic_of_integral_torusS : ∀ {K R : Type} [Field K] [CommRing R]
     refine ⟨p.map φ, hm.map φ, ?_⟩
     rw [Polynomial.eval₂_map]
     exact hp
-  exact hS.isAlgebraic.restrictScalars A
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact hS.isAlgebraic.restrictScalars A
 
 end GlobalTheory.CompanionTheory.GeoTorus

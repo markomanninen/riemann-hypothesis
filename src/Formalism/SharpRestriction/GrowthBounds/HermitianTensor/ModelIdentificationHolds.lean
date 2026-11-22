@@ -1,12 +1,16 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TheoremIOfTwoLetterClausesContraction
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TwoLetterLatticeGaussInverse
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ContractionOfPairingLemmas
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubCoeffP
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ImportsAlt
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubYDPsiMonomial
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TopLinePOf
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetYNeZero
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsP
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TheoremIOfTwoLetterClausesContraction
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TwoLetterLatticeGaussInverse
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ContractionOfPairingLemmas
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubCoeffP
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ImportsAlt
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.SubYDPsiMonomial
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TopLinePOf
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetYNeZero
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsP
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf
 

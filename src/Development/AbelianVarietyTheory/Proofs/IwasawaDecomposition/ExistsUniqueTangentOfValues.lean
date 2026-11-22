@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualNumberSpecAffineOpenFunctionsBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualNumberSpecAffineOpenFunctionsBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ theorem form_d (w : v ≫ π = (specO k (DualNumber k)).hom ≫ x) (we : sec (ep
   have hV : U ≤ sec (epsZero k) ⁻¹ᵁ (specO k (DualNumber k)).hom ⁻¹ᵁ U :=
     (le_preimage_of_comp (sec_hom (epsZero k))).2 le_rfl
   refine (congrArg ((epsIso k).hom.app U) (baseMap_d he (sec_hom (epsZero k)) w we h hU hV q f)).trans ?_
-  rw [H, map_add, d_base, zero_add, d_mul, d_base,
+  rw [H, map_add (f := _), d_base, zero_add, d_mul, d_base,
     smul_zero, add_zero, appLE_base (sec_hom _) _ _ le_rfl, resG_self, d_resG,
     ← resM_d _ (le_preimage_top _ ⊤) le_top, Scheme.Modules.Hom.app_smul, app_resM, epsIso_d]
   exact (congrArg (b * ·) (map_one (resG (Sp k) (le_top : U ≤ ⊤)))).trans (_root_.mul_one b)
@@ -61,15 +65,15 @@ theorem appLE_eq (w : v ≫ π = (specO k (DualNumber k)).hom ≫ x) (we : sec (
   have hb := form_d he w we le_rfl f h (preimage_le we h) a b E.symm
   have ha : (x ≫ e).appLE W U h f = a := by
     have e' := congrArg ((sec (epsZero k)).appLE _ U hV) E
-    simp only [map_add, map_mul] at e'
+    simp only [map_add (f := _), map_mul] at e'
     rw [appLE_sec_epsZero_epsFn, mul_zero, add_zero, appLE_base (sec_hom _) _ _ le_rfl,
       resG_self, appLE_appLE we _ _ h] at e'
     exact e'.symm
   rw [ha, hb]
   exact E.symm
 
-include he in
 
+include he in
 theorem eq_of_form_eq (w : v ≫ π = (specO k (DualNumber k)).hom ≫ x) (we : sec (epsZero k) ≫ v = x ≫ e)
     (w' : v' ≫ π = (specO k (DualNumber k)).hom ≫ x) (we' : sec (epsZero k) ≫ v' = x ≫ e)
     (H : form w we = form w' we') : v = v' := by
@@ -87,8 +91,8 @@ theorem eq_of_form_eq (w : v ≫ π = (specO k (DualNumber k)).hom ≫ x) (we : 
     ← hW.SpecMap_appLE_fromSpec _ hT (preimage_le we h),
     ← hW.SpecMap_appLE_fromSpec _ hT (preimage_le we' h), E]
 
-include he in
 
+include he in
 theorem exists_form_eq [QuasiSeparated π]
     (L : (Scheme.Modules.pullback x).obj (conormal e) ⟶ structureModule (Sp k)) :
     ∃ (v : (specO k (DualNumber k)).left ⟶ Y) (w : v ≫ π = (specO k (DualNumber k)).hom ≫ x)
@@ -118,7 +122,7 @@ theorem exists_form_eq [QuasiSeparated π]
   · have k₃ : (specO k (DualNumber k)).hom ⁻¹ᵁ x ⁻¹ᵁ e ⁻¹ᵁ W ≤ u ⁻¹ᵁ pullback.fst π x ⁻¹ᵁ W := k₂
     have e₁ : u.appLE _ _ k₃ g = resG _ k₂ (psi _ _ (epsFn_sq k) D _ g) :=
       deform_appLE _ _ (epsFn_sq k) D _ k₂ g
-    rw [← appLE_appLE (f := u) (g := pullback.fst π x) rfl le_rfl k₃, e₁, psi_apply, map_add, map_mul, LB.resG_resG, DualPull.resG_appLE, DualPull.resG_appLE,
+    rw [← appLE_appLE (f := u) (g := pullback.fst π x) rfl le_rfl k₃, e₁, psi_apply, map_add (f := _), map_mul, LB.resG_resG, DualPull.resG_appLE, DualPull.resG_appLE,
       ← DualPull.resG_appLE e' k₁ le_rfl, DualPull.appLE_resG,
       show val D k₁ g = resG _ k₁ (val D le_rfl g) from (D.res_app le_rfl k₁ g).symm, DualPull.appLE_resG]
   · have b := baseMap_d he he' (IsPullback.of_hasPullback π x).w we' le_rfl le_rfl k₁ le_rfl f

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqZeroOfSecTraceMulEqZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqZeroOfSecTraceMulEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem aeval_chartGen (y : Fin (D + 1) → Ω) (g : MvPolynomial {k : Fin (D + 
       deh y 0 (MvPolynomial.rename Subtype.val g) := by
   induction g using MvPolynomial.induction_on with
   | C a => simp [deh_apply]
-  | add p q hp hq => simp only [map_add, AddMemClass.coe_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), AddMemClass.coe_add, hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, MvPolynomial.aeval_X, MvPolynomial.rename_X, MulMemClass.coe_mul, hp]
     congr 1
@@ -146,7 +150,7 @@ theorem coord_div_isIntegral (x : ι → Ω) (e : Fin (D + 1) → ι) (h : IsPro
   change IsIntegral _ (x i / y 0)
   have hl : y 0 ≠ 0 := coord_ne_zero y h.free 0
   have hinj : Function.Injective (coneMap ℤ y) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f hf
     have : f ∈ coordIdeal ℤ y := by rw [coordIdeal, RingHom.mem_ker]; exact hf
     rwa [h.free, Ideal.mem_bot] at this
@@ -166,7 +170,7 @@ theorem coord_div_isIntegral (x : ι → Ω) (e : Fin (D + 1) → ι) (h : IsPro
     intro f
     induction f using MvPolynomial.induction_on with
     | C a => simp [coneMap, ψ]
-    | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p k hp => rw [map_mul, map_mul, map_mul, hp]; simp [coneMap, ψ]
   let φ : coneRing ℤ y →+* chartRing y :=
     (MvPolynomial.aeval w).toRingHom.comp eqv.symm.toAlgHom.toRingHom

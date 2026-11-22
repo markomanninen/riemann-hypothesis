@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
@@ -39,14 +43,21 @@ def sig (bs : List (Eˣ × ℕ+)) : ℕ → ℕ :=
 theorem sig_cons (t : Eˣ) (s : ℕ+) (bs : List (Eˣ × ℕ+)) (a : ℕ) :
     sig ((t, s) :: bs) a = if a < s then s - 1 - a else s + sig bs (a - s) := rfl
 
-theorem sig_sig : ∀ (bs : List (Eˣ × ℕ+)) (a : ℕ), sig bs (sig bs a) = a
-  | [], a => rfl
-  | (t, s) :: bs, a => by
-    by_cases h : a < s
+theorem sig_sig : ∀ (bs : List (Eˣ × ℕ+)) (a : ℕ), sig bs (sig bs a) = a := by
+  intro bs
+  induction bs with
+  | nil => intro a; rfl
+  | cons p bs ih =>
+    obtain ⟨t, s⟩ := p
+    intro a
+    by_cases h : a < (s : ℕ)
     · have h2 : (s : ℕ) - 1 - a < s := by omega
-      simp only [sig_cons, h, h2, if_true]; omega
+      rw [sig_cons t s bs a, ite_eq_left h, sig_cons, ite_eq_left h2]
+      omega
     · have h2 : ¬ ((s : ℕ) + sig bs (a - s) < s) := by omega
-      simp only [sig_cons, h, h2, if_false, Nat.add_sub_cancel_left, sig_sig bs]; omega
+      rw [sig_cons t s bs a, ite_eq_right h, sig_cons, ite_eq_right h2,
+        Nat.add_sub_cancel_left, ih]
+      omega
 
 theorem entry_zero : ∀ (bs : List (Eˣ × ℕ+)) (a b : ℕ), b ≠ sig bs a → ptEntryL bs a b = 0
   | [], a, b, _ => rfl
@@ -54,26 +65,32 @@ theorem entry_zero : ∀ (bs : List (Eˣ × ℕ+)) (a b : ℕ), b ≠ sig bs a �
     simp only [sig_cons] at hb
     simp only [ptEntryL]
     split_ifs with h1 h2 h3
-    · rw [if_pos h1.1] at hb; omega
+    · rw [ite_eq_left h1.1] at hb; omega
     · rfl
-    · rw [if_neg (by omega)] at hb
+    · rw [ite_eq_right (by omega)] at hb
       exact entry_zero bs _ _ (by omega)
     · rfl
 
 theorem entry_unit : ∀ (bs : List (Eˣ × ℕ+)) (a : ℕ), a < (bs.map (fun b => (b.2 : ℕ))).sum →
-    sig bs a < (bs.map (fun b => (b.2 : ℕ))).sum ∧ IsUnit (ptEntryL bs a (sig bs a))
-  | [], a, h => by simp at h
-  | (t, s) :: bs, a, h => by
+    sig bs a < (bs.map (fun b => (b.2 : ℕ))).sum ∧ IsUnit (ptEntryL bs a (sig bs a)) := by
+  intro bs
+  induction bs with
+  | nil => intro a h; simp at h
+  | cons p bs ih =>
+    obtain ⟨t, s⟩ := p
+    intro a h
     simp only [List.map_cons, List.sum_cons] at h ⊢
-    by_cases h1 : a < s
-    · simp only [sig_cons, ptEntryL, h1, if_true]
+    rw [sig_cons t s bs a]
+    by_cases h1 : a < (s : ℕ)
+    · rw [ite_eq_left h1]
       refine ⟨by omega, ?_⟩
-      rw [if_pos ⟨trivial, by omega⟩, if_pos (by omega)]
+      rw [ptEntryL, ite_eq_left ⟨h1, by omega⟩, ite_eq_left (by omega)]
       exact t.isUnit
-    · obtain ⟨h2, h3⟩ := entry_unit bs (a - s) (by omega)
-      simp only [sig_cons, ptEntryL, h1, if_false, false_and]
+    · obtain ⟨h2, h3⟩ := ih (a - s) (by omega)
+      rw [ite_eq_right h1]
       refine ⟨by omega, ?_⟩
-      rw [if_pos ⟨by omega, by omega⟩, Nat.add_sub_cancel_left]
+      rw [ptEntryL, ite_eq_right (fun h => h1 h.1), ite_eq_left ⟨by omega, by omega⟩,
+        Nat.add_sub_cancel_left]
       exact h3
 
 theorem det_mono {n : ℕ} (A : Matrix (Fin n) (Fin n) E) (σ : Fin n → Fin n)
@@ -119,7 +136,7 @@ theorem lead_unit {n : ℕ} (w : Pt E n) (ε : Fin n → E) (hε : ∀ b, IsUnit
     rw [entry_zero, zero_mul]
     intro h
     apply hb
-    rw [dif_pos (h ▸ b.2)]
+    rw [dite_eq_left (h ▸ b.2)]
     exact Fin.ext h
   · intro a
     simp only [Matrix.submatrix_apply, Matrix.of_apply, Pt.mat, Fin.val_castLE]
@@ -193,7 +210,8 @@ def hfL (L : LocE F E) {n : ℕ} (H : Matrix (Fin n) (Fin n) E) (y : Fin n → E
 theorem hf_conj (L : LocE F E) {n : ℕ} {H : Matrix (Fin n) (Fin n) E} (h : IsHerm L H)
     (x y : Fin n → E) : hf L H x y = L.cj (hf L H y x) := by
   have h1 : ∀ i j, L.cj (H j i) = H i j := fun i j => congrFun (congrFun h i) j
-  simp only [hf, map_sum, map_mul, L.cj_cj, h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, map_mul, L.cj_cj, h1]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -217,14 +235,15 @@ theorem split_of_gram (L : LocE F E) [IsArtinianRing E] {n : ℕ} {H : Matrix (F
   have key : ∀ (α : ι → E) (y : Fin n → E),
       hf L H (∑ i, α i • g i) y = ∑ i, α i * hf L H (g i) y := fun α y => by
     change hfL L H y _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul]; rfl
   let φ : (ι → E) →ₗ[E] (ι → E) :=
     LinearMap.pi fun j => (hfL L H (g j)).comp (Fintype.linearCombination E g)
   have hφ : ∀ α j, φ α j = hf L H (∑ i, α i • g i) (g j) := fun α j => by
     simp only [φ, LinearMap.pi_apply, LinearMap.comp_apply, Fintype.linearCombination_apply]; rfl
   have hinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro α hα
     refine hg α fun j => ?_
     rw [← key, ← hφ, hα]; rfl

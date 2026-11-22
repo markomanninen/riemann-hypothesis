@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.RingHomExtensionOfIntegral.exists_ringHom_extend_of_isIntegral.{u_1, u_2, u_3} :
     ∀ {R : Type u_1} {S : Type u_2} {K : Type u_3} [inst : CommRing R] [inst_1 : CommRing S] [inst_2 : Field K]
@@ -29,7 +33,11 @@ theorem UpperTheory.Reformulated.B.RingHomExtensionOfIntegral.exists_ringHom_ext
     Ideal.Quotient.algebra_isIntegral_of_liesOver Q (RingHom.ker f)
   have halg : Algebra.IsAlgebraic (R ⧸ RingHom.ker f) (S ⧸ Q) :=
     Algebra.IsIntegral.isAlgebraic
-  let φ : (S ⧸ Q) →ₐ[R ⧸ RingHom.ker f] K := IsAlgClosed.lift
+  let φ : (S ⧸ Q) →ₐ[R ⧸ RingHom.ker f] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨φ.toRingHom.comp (Ideal.Quotient.mk Q), fun r => ?_⟩
   have h1 : φ (algebraMap (R ⧸ RingHom.ker f) (S ⧸ Q) (Ideal.Quotient.mk _ r)) =
       algebraMap (R ⧸ RingHom.ker f) K (Ideal.Quotient.mk _ r) := φ.commutes _

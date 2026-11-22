@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralQuotientComparisonFundamentalDomainsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HaarMeasureInverseInvariantStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HaarMeasureUniformizerTranslateStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainRationalUpperUnitriangulaStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LintegralQuotientComparisonFundamentalDomainsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HaarMeasureInverseInvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HaarMeasureUniformizerTranslateStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalDomainRationalUpperUnitriangulaStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,8 @@ theorem lintegral_tl_inv_mul : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ
   haveI := countable_NE (E := E) (n := n)
   set ν : Measure (NA E n) := Measure.haar with hν
   haveI : ν.IsInvInvariant := GlobalTheory.T.haar_measure_inverse_invariant E n ν
-  haveI : SFinite ν := inferInstance
+  set_option synthInstance.maxHeartbeats 200000 in
+    haveI : SFinite ν := inferInstance
   obtain ⟨D, hD, hD0, hDtop⟩ := GlobalTheory.T.exists_fundamentalDomain_rational_upperUnitriangular E n ν
   set t := tl n ϖ l with ht
 
@@ -151,7 +156,7 @@ theorem lintegral_tl_inv_mul : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ
   have hD' : IsFundamentalDomain Γ' (c ⁻¹' D) ν := by
     have hsymm : ∀ u : NA E n, ((cM.symm u : NA E n) : GA E n) = t⁻¹ * u * t := fun _ => rfl
     have hc : ∀ u : NA E n, c u = cM u := fun _ => rfl
-    refine hD.preimage_of_equiv (f := c) ⟨c.measurable, by rw [hmap]; exact Measure.smul_absolutelyContinuous⟩
+    refine hD.preimage_of_equiv (f := c) ⟨c.measurable.aemeasurable, by rw [hmap]; exact Measure.smul_absolutelyContinuous⟩
       (e := fun g : Γ => (⟨cM.symm g, Subgroup.mem_comap.2 (by
           rw [MulEquiv.coe_toMonoidHom, MulEquiv.apply_symm_apply]; exact g.2)⟩ : Γ'))
       ⟨fun a b h => Subtype.ext (cM.symm.injective (congrArg (fun z : Γ' => (z : NA E n)) h)),

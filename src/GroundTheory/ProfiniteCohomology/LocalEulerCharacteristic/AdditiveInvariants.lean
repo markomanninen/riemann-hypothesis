@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -15,8 +20,8 @@ variable {k Γ : Type*} [Field k] [Group Γ] [Fintype Γ]
   [AddCommGroup X₃] [Module k X₃]
   {ρ₁ : Representation k Γ X₁} {ρ₂ : Representation k Γ X₂} {ρ₃ : Representation k Γ X₃}
 
-omit [Fintype Γ] in
 
+omit [Fintype Γ] in
 theorem mapsTo_invariants {f : X₁ →ₗ[k] X₂} (hf : ρ₁.IsIntertwiningMap ρ₂ f) (x : X₁)
     (hx : x ∈ ρ₁.invariants) : f x ∈ ρ₂.invariants := fun γ => by
   rw [← hf.isIntertwining, hx γ]
@@ -27,7 +32,8 @@ theorem exists_invariant_preimage (hΓ : (Fintype.card Γ : k) ≠ 0) {g : X₂ 
   obtain ⟨x, rfl⟩ := hs y
   refine ⟨(Fintype.card Γ : k)⁻¹ • ρ₂.norm x, fun γ => by rw [map_smul, self_norm_apply], ?_⟩
   have hnorm : g (ρ₂.norm x) = ρ₃.norm (g x) := by
-    simp [Representation.norm, LinearMap.sum_apply, map_sum, hg.isIntertwining]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Representation.norm, LinearMap.sum_apply, map_sum, hg.isIntertwining]
   have hinv : ρ₃.norm (g x) = (Fintype.card Γ : k) • g x := by
     have hy' : ∀ γ, ρ₃ γ (g x) = g x := hy
     simp only [Representation.norm, LinearMap.sum_apply, hy', Finset.sum_const, Finset.card_univ]
@@ -73,7 +79,7 @@ theorem isIntertwiningMap_rTensor {k Γ X Y N : Type*} [CommRing k] [Monoid Γ] 
     induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul x n => simp [hf.isIntertwining]
-    | add v w hv hw => simp only [map_add, hv, hw]⟩
+    | add v w hv hw => simp only [map_add (f := _), hv, hw]⟩
 
 namespace AdditiveFunction
 

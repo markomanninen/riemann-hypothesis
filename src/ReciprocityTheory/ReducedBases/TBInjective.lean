@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReducedBases.GsInnerBOfLt
-import ReciprocityTheory.ReducedBases.LatDefs
+module
+
+public import ReciprocityTheory.ReducedBases.GsInnerBOfLt
+public import ReciprocityTheory.ReducedBases.LatDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,8 @@ lemma Q_eq (A B : Matrix (Fin d) (Fin d) ℝ) (hAB : A = Bᴴ * B) (x : Fin d �
 lemma fB_expand (B : Matrix (Fin d) (Fin d) ℝ) (e : Module.Basis (Fin d) ℤ (Fin d → ℤ))
     (x : Fin d → ℤ) : fB B x = ∑ i, ((e.repr x i : ℤ) : ℝ) • fB B (e i) := by
   conv_lhs => rw [← e.sum_repr x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.map_smul, Int.cast_smul_eq_zsmul]
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QuotientIntegralParabolicUnfolding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.QuotientIntegralParabolicUnfolding
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.PosOne
 open GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage (app HasTensorVal fl opEFJ IsQuotIntFJ IsFJ Represents)
@@ -139,7 +143,7 @@ theorem isQuotInt_cells : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
       push_cast
       field_simp
     show ∫ x, (∑ t ∈ T, _) ∂μG = _
-    rw [integral_finset_sum _ (fun t _ => (hind t).1)]
+    rw [MeasureTheory.integral_finsetSum _ (fun t _ => (hind t).1)]
     exact Finset.sum_congr rfl fun t _ => (hind t).2
 
   have hRinv : ∀ (y t : GL (n ⊕ Fin c) k), t⁻¹ * y ∈ J →
@@ -171,7 +175,7 @@ theorem isQuotInt_cells : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     intro x
     by_cases hx : ∃ t ∈ T, DoubleCoset.mk (R k n c p) J x = DoubleCoset.mk (R k n c p) J t
     · obtain ⟨t₀, ht₀, hxt⟩ := hx
-      obtain ⟨r, hr, j, hj, rfl⟩ := (DoubleCoset.eq _ _ _ _).1 hxt.symm
+      obtain ⟨r, hr, j, hj, rfl⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 hxt.symm
       obtain ⟨g₀, u₁, hu₁, rfl⟩ := Radical.exists_of_mem_R hr
       set φ : GL (n ⊕ Fin c) k → ℂ := fun y => f t₀ / (((volCell ν μX p J t₀).toReal : ℝ) : ℂ) *
               (if t₀⁻¹ * y * t₀ ∈ J then (1 : ℂ) else 0) with hφ

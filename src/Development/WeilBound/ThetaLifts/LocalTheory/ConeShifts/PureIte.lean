@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ActsRhoFin
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ActsRhoFin
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,12 +154,12 @@ theorem gen (hA : ActsEx) (hI : IdeleFub) (hKF : KFub) (hV : VacFixX) (hS : VacS
     · simp
   · have Iadd : ∀ Φ Ψ (c : ℂ) y k l, I (Φ + c • Ψ) y k l = I Φ y k l + c * I Ψ y k l := fun Φ Ψ c y k l => by
       have : M.co.rho B.ψ (U l) (om (k.1, 1) (Φ + c • Ψ)) = M.co.rho B.ψ (U l) (om (k.1, 1) Φ) + c • M.co.rho B.ψ (U l) (om (k.1, 1) Ψ) := by
-        rw [map_add, map_smul]
+        rw [map_add (f := _), map_smul]
         funext x
         simp only [Darboux.rho, schr, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
         ring
       simp only [I]
-      rw [this, map_add, map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      rw [this, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
     let Q : Fn F n d → Prop := fun Φ => ∀ y, (∀ k, Integrable (I Φ y k) μ) ∧ Integrable (fun k => ∫ l, I Φ y k l ∂μ) μK
     have inner : ∀ Φ Ψ (c : ℂ), Q Φ → Q Ψ → ∀ y k, ∫ l, I (Φ + c • Ψ) y k l ∂μ = ∫ l, I Φ y k l ∂μ + c * ∫ l, I Ψ y k l ∂μ :=

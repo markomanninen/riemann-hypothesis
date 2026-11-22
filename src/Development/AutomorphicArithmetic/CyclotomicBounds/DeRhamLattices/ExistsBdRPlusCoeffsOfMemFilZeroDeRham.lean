@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.FilZeroEqRangeCDAndCDInjective
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsPrimePowSmulMemLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.FilZeroEqRangeCDAndCDInjective
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsPrimePowSmulMemLattice
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 set_option maxHeartbeats 2000000
@@ -24,16 +29,17 @@ private theorem span_abs {Q Z O D B V κ : Type} [CommRing Q] [CommRing Z] [Comm
     obtain ⟨d, hd⟩ := ha
     obtain ⟨d', hd'⟩ := ha'
     refine ⟨d + d', ?_⟩
-    rw [map_add, hd, hd', ← Finset.sum_add_distrib]
+    rw [map_add (f := _), hd, hd', ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Pi.add_apply, map_add, AddMonoidHom.add_apply]
+    rw [Pi.add_apply, map_add (f := _), AddMonoidHom.add_apply]
   | tmul v x =>
     obtain ⟨y0, hy0⟩ := hF x x.2
     obtain ⟨q, t, y1, ht, hy⟩ := hT v y0
     refine ⟨fun k => b.repr t k ⊗ₜ[Z] y1, ?_⟩
     have h1 : (t : V) = ∑ k, b.repr t k • ((b k : T) : V) := by
       have h2 := congrArg T.subtype (b.sum_repr t).symm
-      rw [map_sum] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h2
       simpa only [map_smul, Submodule.subtype_apply] using h2
     rw [hf, hy0, hy, ← TensorProduct.smul_tmul, ← ht, h1, TensorProduct.sum_tmul]
     refine Finset.sum_congr rfl fun k _ => ?_

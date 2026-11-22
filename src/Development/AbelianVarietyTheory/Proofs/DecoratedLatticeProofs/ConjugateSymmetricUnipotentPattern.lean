@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPatOne
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPatOne
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
 
 namespace GlobalTheory.SymResCount
 

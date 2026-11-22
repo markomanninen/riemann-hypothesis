@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitOfComm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitOfComm
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.LeviGen
 open GlobalTheory.CompanionTheory.Hypotheses₂.LeviPart
@@ -175,7 +179,7 @@ theorem sigR_sigR (h : IsCMExt F E σ) (a : AF F ⊗[F] E) : sigR (AF F) σ (sig
   induction a using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [sigR, GlobalTheory.SiegelSet.sigma_sigma h]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem cT_adMat {a b : ℕ} (Z : Matrix (Fin a) (Fin b) E) :
     cT (sigR (AF F) σ) (adMat F Z) = adMat F (cT (σ : E →+* E) Z) := rfl

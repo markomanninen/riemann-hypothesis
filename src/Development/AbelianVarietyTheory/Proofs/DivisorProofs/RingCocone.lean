@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct GlobalTheory.EtC
 
 noncomputable section
@@ -14,8 +19,6 @@ instance : IsDirected (FinSub K Ω) (· ≤ ·) :=
   ⟨fun a b => ⟨⟨a.1 ⊔ b.1, by haveI := a.2; haveI := b.2; infer_instance⟩, le_sup_left (a := a.1), le_sup_right (b := b.1)⟩⟩
 
 instance : Nonempty (FinSub K Ω) := ⟨⟨⊥, inferInstance⟩⟩
-
-example : IsCofiltered (FinSub K Ω)ᵒᵖ := inferInstance
 
 def ringDiag : FinSub K Ω ⥤ CommRingCat.{0} where
   obj L := CommRingCat.of L.1
@@ -72,9 +75,6 @@ def arrCone : Cone (arr K Ω) where
             · exact (Category.comp_id _).symm }
 
 def cechCone : Cone (arr K Ω ⋙ SimplicialObject.cechNerve) := SimplicialObject.cechNerve.mapCone (arrCone K Ω)
-
-example : (cechCone K Ω).pt = cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) := rfl
-example (L : (FinSub K Ω)ᵒᵖ) : (arr K Ω ⋙ SimplicialObject.cechNerve).obj L = cech (Spec.map (CommRingCat.ofHom (algebraMap K L.unop.1))) := rfl
 
 end GlobalTheory.SepCech
 end

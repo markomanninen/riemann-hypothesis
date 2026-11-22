@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ChartC
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ChartC
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem chartC_holds : Formalism.L2.SG.NGCut.StabilizerCovolume.ChartC := by
   refine ⟨BX, fun p => BX_measurable p, fun p x x' y y' h => BX_lower p x x' y y' h, fun p x => BX_zero p x,
     ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rw [Formalism.L2.SG.NGPin.stCoord_eq]
-    refine measurable_pi_lambda _ fun v => ?_
+    refine Measurable.of_eval fun v => ?_
     obtain ⟨τ, rfl⟩ := hτ v
     exact (stCoordV_meas C u' w γw τ).comp (measurable_pi_apply _)
   · rw [Formalism.L2.SG.NGPin.stInf_eq_pi]

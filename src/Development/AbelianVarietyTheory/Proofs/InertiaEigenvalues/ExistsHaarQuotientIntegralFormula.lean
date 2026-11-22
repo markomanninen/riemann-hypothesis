@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
+
 open GlobalTheory.JR MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR
 
-open TopologicalGroup in
 
+open TopologicalGroup in
 theorem integral_inducedMeasure_complex {A B C : Type} [Group A] [Group B] [Group C]
     [TopologicalSpace A] [TopologicalSpace B] [TopologicalSpace C] [IsTopologicalGroup A]
     [IsTopologicalGroup B] [IsTopologicalGroup C] [T2Space B] [LocallyCompactSpace B]

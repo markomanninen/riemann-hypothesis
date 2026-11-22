@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponents
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterizationStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsGLConjLatticePairsCovByDvrStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmFieldSplitCompletelyPlaceStructure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeLevelLocalDualQuotientLengthOneStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualOfDualFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitPlaceLatticeComponents
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualLatticeLocalCharacterizationStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsGLConjLatticePairsCovByDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmFieldSplitCompletelyPlaceStructure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeLevelLocalDualQuotientLengthOneStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DualOfDualFrames
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -39,16 +43,18 @@ theorem bidual (B : LinearMap.BilinForm K (Fin n → K)) (hB : B.Nondegenerate)
     (u : Fin n → K)
     (hu : ∀ w, (∀ u' ∈ N, B u' w ∈ (1 : Submodule O K)) → B u w ∈ (1 : Submodule O K)) : u ∈ N := by
   classical
-  haveI : N.IsLattice K := ⟨hfg, hsp⟩
+  haveI : N.IsFullLattice K := { toIsLattice := Submodule.IsLattice.of_fg K hfg, span_eq_top := hsp }
+  have := Submodule.IsLattice.finite K N
+  have := Submodule.IsLattice.free K N
   let b := Module.Free.chooseBasis O N
-  have h : Submodule.span O (Set.range (b.extendOfIsLattice K)) = N := by
-    have h1 : Set.range (b.extendOfIsLattice K) = N.subtype '' Set.range b := by
+  have h : Submodule.span O (Set.range (b.extendOfIsFullLattice K)) = N := by
+    have h1 : Set.range (b.extendOfIsFullLattice K) = N.subtype '' Set.range b := by
       rw [← Set.range_comp]
       congr 1
-      exact funext fun i => b.extendOfIsLattice_apply K i
+      exact funext fun i => b.extendOfIsFullLattice_apply K i
     rw [h1, ← Submodule.map_span, b.span_eq, Submodule.map_subtype_top]
   have e := LinearMap.BilinForm.dualSubmodule_dualSubmodule_flip_of_basis (R := O) B hB
-    (b.extendOfIsLattice K)
+    (b.extendOfIsFullLattice K)
   rw [h] at e
   rw [← e]
   exact fun w hw => hu w hw
@@ -96,7 +102,7 @@ theorem mem_cmp (hπ : ∀ a, π ((1 : E) ⊗ₜ[F] a) = a)
       exact Submodule.subset_span ⟨y, hy, rfl⟩
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
     | add x y _ _ hx hy =>
-      simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+      simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
     | smul c x _ hx =>
       have := (cmp π L).smul_mem ⟨_, hint _ c.2⟩ hx
       convert this using 1
@@ -116,7 +122,7 @@ theorem cmp_fg (hint : ∀ t ∈ intV E v, π t ∈ v.adicCompletionIntegers F)
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
     | add x y _ _ hx hy =>
-      simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+      simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
     | smul c x _ hx =>
       have hc : inclE (F := F) (v.adicCompletion F) (c : E) ∈ intV E v :=
         Subring.subset_closure (Or.inl ⟨⟨c, c, rfl⟩, rfl⟩)
@@ -136,7 +142,7 @@ theorem cmp_span {L : Submodule (𝓞 E) (Fin n → E)} (hL : IsLat L) :
     | mem x hx => exact Submodule.subset_span (Submodule.subset_span ⟨x, hx, rfl⟩)
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
     | add x y _ _ hx hy =>
-      simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+      simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
     | smul c x _ hx =>
       have := Submodule.smul_mem _ (π (inclE (F := F) _ c)) hx
       convert this using 1
@@ -204,9 +210,11 @@ include hsig in
 theorem fst_hR (x y : Fin n → E ⊗[F] v.adicCompletion F) :
     p₁ sp (hR cm.sig J (v.adicCompletion F) x y) =
       pairing sp J (fun b => p₂ sp (x b)) (fun b => p₁ sp (y b)) := by
-  rw [pairing, Matrix.toBilin'_apply, hR, hform, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pairing, Matrix.toBilin'_apply, hR, hform, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, map_mul]
   have : p₁ sp (sigR cm.sig (v.adicCompletion F) (x i)) = p₂ sp (x i) := congrArg Prod.fst (hsig _)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -130,7 +134,7 @@ theorem down (t : ℕ) (hex : ∀ s < t, ∀ p (y : K.X p s), K.dv p s y = 0 →
     obtain ⟨w₂, k1, k2, k3⟩ := ih (fun s hs' => hex s (by omega)) (Submodule.sub_mem _ hx h1.D_mem)
       (by rw [map_sub, hD, DD', sub_zero]) h3
     refine ⟨w₁ + w₂, h1.add k1, (h2.add k2).mono, ?_⟩
-    rw [map_add, k3]
+    rw [map_add (f := _), k3]
     abel
 
 theorem up (a : ℕ) (hex : ∀ s, a < s → ∀ p (y : K.X p s), K.dv p s y = 0 → y ∈ (K.col p).B s) {n : ℕ} (k : ℕ)
@@ -142,7 +146,7 @@ theorem up (a : ℕ) (hex : ∀ s, a < s → ∀ p (y : K.X p s), K.dv p s y = 0
     obtain ⟨w₁, h1, h2, h3⟩ := step (t := a + 1 + k) hx hD hs (hex _ (by omega))
     obtain ⟨x', w₂, k1, k2, k3, k4, k5⟩ := ih (Submodule.sub_mem _ hx h1.D_mem) (by rw [map_sub, hD, DD', sub_zero]) h3
     refine ⟨x', w₁ + w₂, k1, k2, k3, h1.add k4, ?_⟩
-    rw [map_add, ← k5]
+    rw [map_add (f := _), ← k5]
     abel
 
 theorem lift {a p : ℕ} (hex : ∀ s < a, ∀ p (y : K.X p s), K.dv p s y = 0 → y ∈ (K.col p).B s) (x₀ : K.X p a)
@@ -212,7 +216,7 @@ theorem surj {L : DCx.{w'} R} (φ : DCx.Hom K L (RingHom.id R)) (a : ℕ)
     rw [map_zero]
     symm
     rw [(P.cls_surj L.tot n).2.1]
-    exact prevB y (w + w') (t4.add u1) (by rw [map_add, u3, ← t5]; abel)
+    exact prevB y (w + w') (t4.add u1) (by rw [map_add (f := _), u3, ← t5]; abel)
   · obtain ⟨p, rfl⟩ : ∃ p, n = p + a := ⟨n - a, by omega⟩
     obtain ⟨x₀, s1, s2, s3⟩ := S p _ (dv_top t2 t3 p) (dh_bd t2 p a)
     obtain ⟨x, x1, x2, x3, x4⟩ := lift (fun s hs => hK s (by omega)) x₀ s1 s2
@@ -242,7 +246,7 @@ theorem surj {L : DCx.{w'} R} (φ : DCx.Hom K L (RingHom.id R)) (a : ℕ)
     obtain ⟨w', u1, u2, u3⟩ := down a (fun s hs => hL s (by omega)) (Submodule.sub_mem _ hz1 g1.D_mem)
       (by rw [map_sub, hzD, DD', sub_zero]) hv
     refine prevB _ (g + w' - w) ((g1.add u1).sub t4) ?_
-    rw [map_sub, map_add, u3, ← t5]
+    rw [map_sub, map_add (f := _), u3, ← t5]
     change (φ.tot.f _ X).1 - y.1 = _
     have e1 : (φ.tot.f _ X).1 = z + y' := by rw [hz]; abel
     rw [e1]
@@ -282,7 +286,8 @@ def hm {A : Sy.{w} R ι} {B : Sy.{w'} R ι} (m : A.Hom B) : DCx.Hom (cc A).dcx (
   ch p q x := by
     change ((cc B).cos q).d p _ = _
     change _ = (LinearMap.pi fun i => ((m.φ (ent i)).f q).comp (LinearMap.proj i)) (((cc A).cos q).d p x)
-    rw [Cos.d_apply, Cos.d_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Cos.d_apply, Cos.d_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul]
     congr 1
@@ -325,7 +330,8 @@ theorem cls_sum {C : Cx.{w} R} {a : ℕ} {κ : Type} [Fintype κ] (c : κ → �
   unfold Cx.cls
   rw [e]
   change Submodule.mkQ _ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun k _ => map_zsmul _ _ _
 
 def cl (A : Sy.{w} R ι) (a p : ℕ) (x : (colK A p).X a) (hx : ∀ i, (A.K (ent i)).d a (x i) = 0) : (A.coh a).cech.X p :=
@@ -365,7 +371,8 @@ theorem sc_d {A : Sy.{w} R ι} {B : Sy.{w'} R ι} {a : ℕ} (σ : ∀ S : Finset
   funext t
   rw [Cos.d_apply, Cos.d_apply]
   change σ (ent t) (ent_ne t) ((∑ k : Fin (p + 2), (-1 : ℤ) ^ (k : ℕ) • (B.coh a).cech.δ p k g) t) = _
-  rw [Finset.sum_apply, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, Finset.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Pi.smul_apply, Pi.smul_apply, map_zsmul]
   congr 1

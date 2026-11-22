@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+
+@[expose] public section
+
 open GlobalTheory.IsoTriv
 
 namespace GlobalTheory.LimInv
@@ -19,7 +24,7 @@ def limSub (φ : R →+* V) (q : R) : Subring V where
     intro s t hs ht N
     obtain ⟨a, z, ha⟩ := hs N
     obtain ⟨b, w, hb⟩ := ht N
-    exact ⟨a + b, z + w, by rw [map_add, ha, hb]; ring⟩
+    exact ⟨a + b, z + w, by rw [map_add (f := _), ha, hb]; ring⟩
   zero_mem' := fun N => ⟨0, 0, by simp⟩
   neg_mem' := by
     intro s hs N

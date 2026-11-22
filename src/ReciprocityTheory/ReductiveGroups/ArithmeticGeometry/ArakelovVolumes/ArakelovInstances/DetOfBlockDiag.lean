@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PnormInvStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.ArakelovInstances.PnormInvStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,11 +50,11 @@ theorem embF_single (e' : Ent X) (τ : X.Ψ) (x c : Fin r) :
     embF X (Pi.single e' 1) τ x c = if τ = e'.1 ∧ x = e'.2.1.1 ∧ c = e'.2.1.2 then 1 else 0 := by
   unfold embF
   by_cases h1 : c < x
-  · rw [dif_pos h1, Pi.single_apply]
+  · rw [dite_eq_left h1, Pi.single_apply]
     by_cases h2 : τ = e'.1 ∧ x = e'.2.1.1 ∧ c = e'.2.1.2
     · rw [if_pos h2, if_pos ((ent_eq_iff X _ _).2 h2)]
     · rw [if_neg h2, if_neg (fun h => h2 ((ent_eq_iff X _ _).1 h))]
-  · rw [dif_neg h1, if_neg]
+  · rw [dite_eq_right h1, if_neg]
     rintro ⟨rfl, rfl, rfl⟩
     exact h1 e'.2.2
 

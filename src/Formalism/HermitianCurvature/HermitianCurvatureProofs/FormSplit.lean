@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelIntegrandAestronglyMeasurable
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelIntegrandAestronglyMeasurable
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate

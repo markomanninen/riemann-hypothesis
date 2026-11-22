@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.ExistsLth
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaAutomorphy.ExistsLth
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_meanAdm (hS : GlobalTheory.Published.SiegelSetUnitary) (hP : TPar
   let L0 : d.sch →ₗ[ℂ] ℂ :=
     { toFun := fun Ψ => c • ∫ g in d.D, l (d.S g Ψ.1) ∂d.μ
       map_add' := fun Ψ Ψ' => by
-        simp only [Submodule.coe_add, map_add]
+        simp only [Submodule.coe_add, map_add (f := _)]
         rw [integral_add (hint _ Ψ.2) (hint _ Ψ'.2), smul_add]
       map_smul' := fun a Ψ => by
         simp only [SetLike.val_smul, map_smul, RingHom.id_apply, smul_eq_mul]
@@ -52,7 +56,7 @@ theorem exists_meanAdm (hS : GlobalTheory.Published.SiegelSetUnitary) (hP : TPar
     simp [pureA, mul_assoc]
   let Lf : SchwartzMap (d.κ → mixedEmbedding.mixedSpace F) ℂ →ₗ[ℂ] ℂ :=
     { toFun := fun f => Λ (pureA F f gf)
-      map_add' := fun f f' => by rw [hpa, map_add]
+      map_add' := fun f f' => by rw [hpa, map_add (f := _)]
       map_smul' := fun a f => by rw [hps, map_smul]; rfl }
   have hLf : ∀ f, Lf f = c • ∫ g in d.D, Th g f ∂d.μ := fun f => by
     show Λ (pureA F f gf) = _

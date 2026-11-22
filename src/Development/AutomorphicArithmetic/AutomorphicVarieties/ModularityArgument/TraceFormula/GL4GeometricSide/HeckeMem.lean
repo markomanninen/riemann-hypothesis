@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.InnerEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ private theorem integral_eq_sum (μ : Measure G) [μ.IsMulLeftInvariant] {U : Su
         exact ⟨a, ha, hya⟩
       rw [hy0, zero_mul]
       exact (Finset.sum_eq_zero fun a ha => Set.indicator_of_notMem (fun hya => hy ⟨a, ha, hya⟩) _).symm
-  rw [hsum, integral_finset_sum]
+  rw [hsum, integral_finsetSum]
   · refine Finset.sum_congr rfl fun a _ => ?_
     rw [integral_indicator_const _ (isOpen_cos hU a).measurableSet]
     simp only [Measure.real, hmeas a, Complex.real_smul]

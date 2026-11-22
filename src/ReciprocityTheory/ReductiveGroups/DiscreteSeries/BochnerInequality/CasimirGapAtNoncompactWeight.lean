@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,16 +76,6 @@ theorem khw_lowK_mem (hE : IsGlRep E) (hU : IsInfUnitary ε E)
   rw [hsum]
   simp [hz, hw₀]
 
-theorem casValK_lowK_lt (hE : IsGlRep E) (hU : IsInfUnitary ε E)
-    (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
-    (hgap : StdGap ε lam) {μ : Fin n → ℝ} {w : M} (hw : w ∈ genSub E V) (hw0 : w ≠ 0)
-    (hμ : IsKHWVec ε E μ w) (hne : μ ≠ lowK ε lam) :
-    casValK ε (lowK ε lam) < casValK ε μ := by
-  obtain ⟨hmono, h, hh, hbig⟩ := hgap
-  obtain ⟨j, -, hpos, hcas⟩ := casimir_gap_at_noncompact_weight hE hU hV hc hmono hh hbig hw hw0 hμ hne
-  have : (0 : ℝ) < 2 * ((j : ℝ) + 1) * (h - n + 1) := mul_pos (by positivity) hpos
-  linarith
-
 theorem vogan_min (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
     (hgap : StdGap ε lam) {μ : Fin n → ℝ} {w : M} (hw : w ∈ genSub E V) (hw0 : w ≠ 0)
@@ -116,15 +110,6 @@ theorem khw_mem_layer (hE : IsGlRep E) (hU : IsInfUnitary ε E)
       nlinarith
     have := hle.trans (Nat.le_ceil _)
     exact_mod_cast this
-
-theorem admissible (hE : IsGlRep E) (hU : IsInfUnitary ε E)
-    (hV : IsKIrrHW ε E (lowK ε lam) V) (hc : ∀ v ∈ V, casimir E v = (casVal lam : ℂ) • v)
-    (hgap : StdGap ε lam) (μ : Fin n → ℝ) :
-    ∃ S : Submodule ℂ M, FiniteDimensional ℂ S ∧ S ≤ genSub E V ∧ IsKStableSub ε E S ∧
-      ∀ w ∈ genSub E V, IsKHWVec ε E μ w → w ∈ S := by
-  obtain ⟨k, hk⟩ := khw_mem_layer hE hU hV hc hgap μ
-  exact ⟨layer ε E V k, finiteDimensional_layer hV.1 k, layer_le_genSub k,
-    layer_kStable hE hV.2.1 k, hk⟩
 
 theorem re_inner_casimirK_layer_le (hE : IsGlRep E) (hU : IsInfUnitary ε E)
     (hV : IsKIrrHW ε E (lowK ε lam) V) (k : ℕ) {x : M} (hx : x ∈ layer ε E V k) :

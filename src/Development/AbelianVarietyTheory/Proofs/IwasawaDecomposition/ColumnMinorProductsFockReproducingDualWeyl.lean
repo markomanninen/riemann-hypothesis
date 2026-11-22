@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowAct
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CBinet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowAct
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CBinet
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,26 +17,6 @@ noncomputable section
 namespace GlobalTheory.WeylReproducingSym
 
 open Formalism.GradedWeylDivisibility GlobalTheory.WeylMinorDual
-
-def oeEquivCard (h n : ℕ) : {S : Finset (Fin n) // S.card = h} ≃ (Fin h ↪o Fin n) where
-  toFun S := S.1.orderEmbOfFin S.2
-  invFun I := ⟨Finset.univ.map I.toEmbedding, by simp⟩
-  left_inv S := by
-    apply Subtype.ext
-    ext x
-    simp only [Finset.mem_map, Finset.mem_univ, true_and]
-    constructor
-    · rintro ⟨i, rfl⟩
-      exact Finset.orderEmbOfFin_mem _ _ i
-    · intro hx
-      have : x ∈ Set.range (S.1.orderEmbOfFin S.2) := by rw [Finset.range_orderEmbOfFin]; exact hx
-      obtain ⟨i, hi⟩ := this
-      exact ⟨i, hi⟩
-  right_inv I := by
-    apply OrderEmbedding.range_inj.mp
-    rw [Finset.range_orderEmbOfFin]
-    ext x
-    simp
 
 private theorem det_mul_eq_sum_det_submatrix_mul_prod {R : Type} [CommRing R] {h n : ℕ}
     (A : Matrix (Fin h) (Fin n) R) (B : Matrix (Fin n) (Fin h) R) :
@@ -165,7 +149,8 @@ theorem reproducing_left : ∀ (N : ℕ) (Y : YoungDiagram) (hY : Y.colLen 0 ≤
     (hw ℚ le_rfl (fun r : Fin N => Y.rowLen r)) f
   rw [Matrix.transpose_transpose, h1, hev, rowAct_hw_expand N Y hY x, hsum] at h2
   simp only [MvPolynomial.C_mul', hsmul] at h2
-  simp only [map_sum, MvPolynomial.smul_eval]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.smul_eval]
   rw [mul_comm (fockQ _ _) (eval x f), ← h2]
   exact Finset.sum_congr rfl fun J _ => mul_comm _ _
 

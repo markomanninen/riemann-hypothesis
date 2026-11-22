@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieFrame
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.SharpRestriction.Divisibility.HookProducts.RBTieFrame
+
+@[expose] public section
 
 open Matrix NumberField Module
 
@@ -41,7 +45,8 @@ private theorem toMatrix_eq_transpose_mul_mul_of_comp (bN : Basis ιN K VN) (bR 
     LinearEquiv.coe_coe, Finset.sum_mul]
   rw [← hB]
   conv_lhs => rw [← bN.sum_repr (eN (Pi.basisFun K (Fin d) b)), ← bR.sum_repr (eR (Pi.basisFun K (Fin n) a))]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
 

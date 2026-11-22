@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrimePowerNotDvdDifferentStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTer
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.PrimePowerNotDvdDifferentStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

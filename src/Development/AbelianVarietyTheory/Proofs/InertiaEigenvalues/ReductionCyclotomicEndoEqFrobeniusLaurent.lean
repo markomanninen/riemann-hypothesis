@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemOfAssembleMem
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
@@ -30,7 +34,7 @@ theorem ringHom_eq_of_agree {O k : Type} [CommRing O] [CommRing k] (f g : O⟦X�
   have hdiv : PowerSeries.X ^ (n + 1) ∣ f a - g a := by
     have e : f a - g a = f PowerSeries.X ^ (n + 1) * (f b - g b) := by
       conv_lhs => rw [ha]
-      rw [map_add, map_add, hpoly, map_mul, map_mul, map_pow, map_pow, ← hX]
+      rw [map_add (f := _), map_add (f := _), hpoly, map_mul, map_mul, map_pow, map_pow, ← hX]
       ring
     rw [e]
     exact Dvd.dvd.mul_right (pow_dvd_pow_of_dvd hd _) _

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.ExistsQuadraticGaussSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.ConjStableShaFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.ExistsQuadraticGaussSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -198,7 +202,7 @@ private theorem two_mul_mul_sub_trace_eq_rat_of_finrank_two {K : Type} [Field K]
   obtain ⟨r1, h1⟩ := exists_sq_sub_trace_mul_eq_rat_of_finrank_two hK (x + y)
   obtain ⟨r2, h2⟩ := exists_sq_sub_trace_mul_eq_rat_of_finrank_two hK x
   obtain ⟨r3, h3⟩ := exists_sq_sub_trace_mul_eq_rat_of_finrank_two hK y
-  simp only [map_add] at h1
+  simp only [map_add (f := _)] at h1
   have hE : 2 * x * y - algebraMap ℚ K (Algebra.trace ℚ K x) * y
       - algebraMap ℚ K (Algebra.trace ℚ K y) * x = algebraMap ℚ K (r1 - r2 - r3) := by
     rw [map_sub, map_sub, ← h1, ← h2, ← h3]
@@ -250,7 +254,7 @@ private theorem sub_smul_mul_sub_smul_eq_zero_of_quadratic {K : Type} [Field K] 
         _ = x0 * (c0 • x0 + c1 • x1) := by rw [hone]
         _ = _ := by rw [mul_add, mul_smul_comm, mul_smul_comm]
     conv_lhs => rw [h]
-    rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have R1 : Algebra.trace ℚ K x1
       = c0 * Algebra.trace ℚ K (x0 * x1) + c1 * Algebra.trace ℚ K (x1 * x1) := by
     have h : x1 = c0 • (x0 * x1) + c1 • (x1 * x1) := by
@@ -258,10 +262,10 @@ private theorem sub_smul_mul_sub_smul_eq_zero_of_quadratic {K : Type} [Field K] 
         _ = (c0 • x0 + c1 • x1) * x1 := by rw [hone]
         _ = _ := by rw [add_mul, smul_mul_assoc, smul_mul_assoc]
     conv_lhs => rw [h]
-    rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have R2 : 2 = c0 * Algebra.trace ℚ K x0 + c1 * Algebra.trace ℚ K x1 := by
     have := congrArg (Algebra.trace ℚ K) hone
-    rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul, tr1] at this
+    rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul, tr1] at this
     exact this.symm
   have errorNonneg := two_mul_mul_sub_trace_eq_rat_of_finrank_two hK x0 x0
   have E11 := two_mul_mul_sub_trace_eq_rat_of_finrank_two hK x1 x1
@@ -298,7 +302,7 @@ private theorem sub_smul_mul_sub_smul_eq_zero_of_quadratic {K : Type} [Field K] 
     linear_combination (-(T00 * T11 - T01 * T01)) * R2
   have hsq : δ ^ 2 = ((discr K : ℤ) : K) := by
     have hQ' := congrArg (algebraMap ℚ K) hQ
-    simp only [map_add, map_sub, map_mul, map_pow, map_ofNat, map_intCast] at hQ'
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_ofNat, map_intCast] at hQ'
     rw [hδd]
     linear_combination (algebraMap ℚ K t1 ^ 2 / 2) * errorNonneg
       - (algebraMap ℚ K t0 * algebraMap ℚ K t1) * bivariateExponentMonomial + (algebraMap ℚ K t0 ^ 2 / 2) * E11
@@ -324,7 +328,7 @@ private theorem sub_smul_mul_sub_smul_eq_zero_of_quadratic {K : Type} [Field K] 
     linear_combination (1 / 4 : K) * hν - (1 / 4 : K) * hsq
   obtain ⟨q, hq⟩ : ∃ n : ℤ, (n : ℚ) = ((t0 * t1 - T01) ^ 2 - ((discr K : ℤ) : ℚ)) / 4 := by
     have h1 : IsIntegral ℤ (((t0 * t1 - T01) ^ 2 - ((discr K : ℤ) : ℚ)) / 4) :=
-      (isIntegral_algebraMap_iff (algebraMap ℚ K).injective).1 (hνq ▸ hνint)
+      (isIntegral_algebraMap_iff ).1 (hνq ▸ hνint)
     obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.1 h1
     exact ⟨n, by rw [← hn]; simp⟩
   rw [← hn0, ← hn1, ← hm01] at hq
@@ -365,9 +369,9 @@ theorem quadMu (K Ω : Type) [Field K] [NumberField K] [Field Ω] [CharZero Ω] 
   obtain ⟨a, b, hab⟩ := hx x
   have hab' : 2 * algebraMap K Ω x * δ' = (a : Ω) * δ' + (b : Ω) := by
     have := congrArg (algebraMap K Ω) hab
-    simpa [map_mul, map_add, map_ratCast, map_ofNat, hδ'] using this
+    simpa [map_mul, map_add (f := _), map_ratCast, map_ofNat, hδ'] using this
   have hs2 := congrArg s hab'
-  rw [map_mul, map_mul, map_add, map_mul, map_ratCast, map_ratCast, hsδ, map_ofNat] at hs2
+  rw [map_mul, map_mul, map_add (f := _), map_mul, map_ratCast, map_ratCast, hsδ, map_ofNat] at hs2
   have h0 : (2 * δ') * (s (algebraMap K Ω x) - algebraMap K Ω x) = 0 := by
     linear_combination hs2 - hab'
   rcases mul_eq_zero.1 h0 with h0 | h0

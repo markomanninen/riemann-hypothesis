@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.LocFreeProj
 
@@ -110,7 +114,7 @@ theorem exists_dualBasis {r : ℕ} {L : Submodule R E} (h : LocFree R r L.toAddS
       have := R.mul_mem (d i.1).2 (pow_mul_mem _ (hM ⟨(i, j), rfl⟩) (hm i j))
       simpa [mul_assoc] using this
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact R.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact R.add_mem hx hy
     | smul a x _ hx =>
       rw [Subalgebra.smul_def, map_smul]
       exact R.mul_mem a.2 hx

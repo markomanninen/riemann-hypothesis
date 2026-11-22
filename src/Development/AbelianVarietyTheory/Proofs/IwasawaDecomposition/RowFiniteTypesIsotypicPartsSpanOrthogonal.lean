@@ -1,18 +1,22 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RePosOfIsMultIP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PostOnMemGoodPart
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisationPrincipalLevelEqCoreLevelOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCongruenceConjContainsCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongruenceLevelMapsIntoLatticeCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrincipalCongruenceLevelContainedStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLatticeCongruenceInLevelCharacterOneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchurPairingInvariantUnderStandardGroupStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicPartsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelVectorSumOfIsotypicPiecesStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RePosOfIsMultIP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PostOnMemGoodPart
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealisationPrincipalLevelEqCoreLevelOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCongruenceConjContainsCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongruenceLevelMapsIntoLatticeCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrincipalCongruenceLevelContainedStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLatticeCongruenceInLevelCharacterOneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchurPairingInvariantUnderStandardGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicPartsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KernelVectorSumOfIsotypicPiecesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,10 +97,26 @@ theorem minf_stable (P : principalLevelFrame.RowPsi V n) (hc : principalLevelFra
   rw [GlobalTheory.MultMem.mem_mult_iff] at hT
   refine mem_Minf_of P hN' ?_
   rw [GlobalTheory.MultMem.mem_mult_iff]
-  have := GlobalTheory.MultTranslate.isMultMap_rTr (J' := principalLevelFrame.levN P N') (χ' := fun _ => 1) (P.into h) (fun k hk => by
-    obtain ⟨κ, hκ, rfl⟩ := hk
-    refine ⟨⟨h⁻¹ * κ * h, hN'c κ hκ, by simp [map_mul, map_inv]⟩, rfl⟩) hT
-  exact this
+  have htranslate : IsMultMap θ M (principalLevelFrame.levN P N') (fun _ => 1)
+      (principalLevelFrame.actM P M h T) := by
+    refine ⟨fun v => GlobalTheory.FinTranslate.isAutFunSm_rTr θ V (P.ψ h) (P.into h) _ (hT.aut v),
+      fun v => GlobalTheory.MultTranslate.isCuspFun_rTr (hT.cusp v) (P.ψ h), ?_, ?_,
+      fun τ v g => hT.cont τ v (g * P.ψ h)⟩
+    · intro v k hk g
+      obtain ⟨κ, hκ, rfl⟩ := hk
+      have hk' : (P.ψ h)⁻¹ * P.ψ κ * P.ψ h ∈ principalLevelFrame.levN P N :=
+        ⟨h⁻¹ * κ * h, hN'c κ hκ, by simp [map_mul, map_inv]⟩
+      rw [principalLevelFrame.actM_apply, principalLevelFrame.actM_apply, ← hT.lev v _ hk']
+      group
+    · intro τ g hg v w hw
+      classical
+      funext y
+      change T (Function.update v τ w) (y * P.ψ h) = T v (y * atTau θ V τ g * P.ψ h)
+      rw [hT.equiv τ g hg v w hw, mul_assoc,
+        ← GlobalTheory.FinTranslate.comm_fin_real V (P.into h) (GlobalTheory.FinTranslate.atTau_mem θ V τ g),
+        ← mul_assoc]
+      rfl
+  exact htranslate
 
 end Minf
 
@@ -211,7 +231,36 @@ theorem isotL_span_orth : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) 
   obtain ⟨hsesq, hherm, hpos⟩ := minf_sesq (θ := θ) (M := M) μ 𝓕 P hI.schur hV hθ hμ h𝓕
   have hstab : ∀ h, ∀ x ∈ principalLevelFrame.Minf θ P M, principalLevelFrame.actM P M h x ∈ principalLevelFrame.Minf θ P M :=
     fun h x hx => minf_stable P hc h hx
-  have hinv := GlobalTheory.T.schur_pairing_invariant_under_standard_group D V S θ M D.R.r P μ 𝓕 hI.schur hV hθ hμ h𝓕
+  have hinv : ∀ h, ∀ x ∈ principalLevelFrame.Minf θ P M, ∀ y ∈ principalLevelFrame.Minf θ P M,
+      ipM M μ 𝓕 (principalLevelFrame.actM P M h x) (principalLevelFrame.actM P M h y) = ipM M μ 𝓕 x y := by
+    intro h x hx y hy
+    have hleft {z : MMap M} (hz : z ∈ principalLevelFrame.Minf θ P M) (v : M.Vec) :
+        ∀ γ ∈ GQ V, ∀ g, z v (γ * g) = z v g := by
+      obtain ⟨N, -, hz⟩ := (mem_Minf_iff P z).1 hz
+      exact (GlobalTheory.SchurConst.left_cont_of_mem θ M _ _ z hz v).2
+    have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.topGroupHA D.sp.cm.sig V.gram
+    have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.borelHA D.sp.cm.sig V.gram
+    have := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.measurableMulHA D.sp.cm.sig V.gram
+    have : Countable (GQ V) := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.countableGamma D.sp.cm.sig V.gram
+    have := GlobalTheory.AdelicPointsUnimod.isMulRightInvariant_of_isHaarMeasure D V μ hμ
+    have hpair : ∀ c, IsMultIP M μ 𝓕 (principalLevelFrame.actM P M h x) (principalLevelFrame.actM P M h y) c ↔
+        IsMultIP M μ 𝓕 x y c := by
+      intro c
+      have htranslate : ∀ v v' : M.Vec, _ := fun v v' =>
+        GlobalTheory.fundamentalDomain_integral_mul_right μ (GQ V) 𝓕 (fun g => star (x v g) * y v' g) (P.ψ h) h𝓕
+          (fun γ hγ g => by rw [hleft hx v γ hγ g, hleft hy v' γ hγ g])
+      unfold IsMultIP
+      simp only [principalLevelFrame.actM_apply]
+      constructor
+      · intro H v v'
+        obtain ⟨hi, heq⟩ := htranslate v v'
+        exact ⟨hi.2 (H v v').1, heq ▸ (H v v').2⟩
+      · intro H v v'
+        obtain ⟨hi, heq⟩ := htranslate v v'
+        exact ⟨hi.1 (H v v').1, heq.trans (H v v').2⟩
+    unfold ipM
+    rw [show IsMultIP M μ 𝓕 (principalLevelFrame.actM P M h x) (principalLevelFrame.actM P M h y) =
+      IsMultIP M μ 𝓕 x y from funext fun c => propext (hpair c)]
   have hadm := minf_adm (M := M) P hI.hc hV hθ (levN_open P hStd)
   have hsm : ∀ x ∈ principalLevelFrame.Minf θ P M, ∃ N : ℕ, 0 < N ∧ ∀ κ, Formalism.L2.NG.Cong D.host.E D.R.r N κ → principalLevelFrame.actM P M κ x = x :=
     fun x hx => minf_smooth P hx

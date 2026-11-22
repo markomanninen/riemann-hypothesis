@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoBarZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqActStdLat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralHilbert90FiniteIdelesTrivialWhereTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceSymplecticSelfZeroSplitSupported
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftPRouteSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslatesEqPrimFrameLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoBarZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqActStdLat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralHilbert90FiniteIdelesTrivialWhereTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallySelfDualLatticeIndicatorIsVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceSymplecticSelfZeroSplitSupported
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -309,10 +313,14 @@ theorem closure_eq {m n : ℕ} (X : Set (Fin m → k)) (Y : Set (Fin n → k))
     have := hcb _ (subset_closure (prod_mem_span (Submodule.subset_span hx₀) hy)) i₀ j
     rw [vecMulVec_apply] at this
     convert this using 1; ring
-  have hL₁ : Submodule.IsLattice k (Submodule.span 𝒪[k] X) :=
-    ⟨fg_of_bound _ _ (mul_ne_zero hc0' hyj) hb₁, by rw [Submodule.span_span_of_tower]; exact h1⟩
-  have hL₂ : Submodule.IsLattice k (Submodule.span 𝒪[k] Y) :=
-    ⟨fg_of_bound _ _ (mul_ne_zero hc0' hxi) hb₂, by rw [Submodule.span_span_of_tower]; exact h2⟩
+  have hL₁ : Submodule.IsFullLattice k (Submodule.span 𝒪[k] X) :=
+    by
+      letI := Submodule.IsLattice.of_fg k (fg_of_bound _ _ (mul_ne_zero hc0' hyj) hb₁)
+      exact ⟨by rw [Submodule.span_span_of_tower]; exact h1⟩
+  have hL₂ : Submodule.IsFullLattice k (Submodule.span 𝒪[k] Y) :=
+    by
+      letI := Submodule.IsLattice.of_fg k (fg_of_bound _ _ (mul_ne_zero hc0' hxi) hb₂)
+      exact ⟨by rw [Submodule.span_span_of_tower]; exact h2⟩
   obtain ⟨P₀, hP₀⟩ := GlobalTheory.RootEx.UnfoldShape.exists_eq_act_stdLat k (Fin m) _ hL₁
   obtain ⟨Q₀, hQ₀⟩ := GlobalTheory.RootEx.UnfoldShape.exists_eq_act_stdLat k (Fin n) _ hL₂
   have mem₁ : ∀ x, x ∈ Submodule.span 𝒪[k] X ↔ ∀ i, ((P₀⁻¹).val *ᵥ x) i ∈ 𝒪[k] := fun x => by
@@ -402,28 +410,28 @@ theorem mul_vecMulVec_mul {R : Type} [CommRing R] {p q r s : Type} [Fintype q] [
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem mem_int_iff {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (x : Fv F v) : x ∈ 𝒪[Fv F v] ↔ x ∈ v.adicCompletionIntegers F := by
+theorem mem_int_iff {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (x : Fv F v) : x ∈ 𝒪[Fv F v] ↔ x ∈ v.adicCompletionIntegers F := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers]
   haveI : (Valued.v : Valuation (v.adicCompletion F) (WithZero (Multiplicative ℤ))).Compatible :=
     Valuation.Compatible.ofValuation _
   exact (ValuativeRel.isEquiv (ValuativeRel.valuation (Fv F v))
     (Valued.v : Valuation (v.adicCompletion F) (WithZero (Multiplicative ℤ)))).le_one_iff_le_one
 
-theorem piW_smul {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (a : AF F) (z : AE F E) :
+theorem piW_smul {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (a : AF F) (z : AE F E) :
     piW t (a • z) = evFin F v a * piW t z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, mul_add]
   | tmul b e =>
     rw [TensorProduct.smul_tmul', smul_eq_mul]
     show evFin F v (a * b) * t e = evFin F v a * (evFin F v b * t e)
     rw [map_mul, mul_assoc]
 
-theorem map_piW_smul {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (a : AF F) {p q : Type} (u : Matrix p q (AE F E)) :
+theorem map_piW_smul {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (a : AF F) {p q : Type} (u : Matrix p q (AE F E)) :
     (a • u).map (piW t) = evFin F v a • u.map (piW t) := by
   ext i j; simp [piW_smul]
 
-theorem map_piW_smul_incM {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (a : AF F) {p q : Type} (J : Matrix p q E) :
+theorem map_piW_smul_incM {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (a : AF F) {p q : Type} (J : Matrix p q E) :
     (a • incM F J).map (piW t) = evFin F v a • J.map t := by
   ext i j
   simp only [Matrix.map_apply, Matrix.smul_apply, incM, GlobalTheory.VacIndic.smul_inclR_eq, smul_eq_mul]
@@ -446,7 +454,7 @@ theorem isConjOf_sig (D : D7) : Formalism.L2.DIV.IsConjOf D.sp.cm.sig := by
     omega
   · exact (D.sp.cm.fixed e).1 he
 
-theorem exists_unit_diff {D : D7} {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl D.host.F} (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v)
+theorem exists_unit_diff {D : D7} {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := D.host.F)} (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v)
     (hU : Algebra.Unramified (𝓞 D.host.F) (𝓞 D.host.E)) :
     ∃ (b : 𝓞 D.host.E) (α : Fv D.host.F v), α ∈ v.adicCompletionIntegers D.host.F ∧
       α * (τ (D.sp.cm.sig (b : D.host.E)) - τ (b : D.host.E)) = 1 := by
@@ -585,8 +593,8 @@ end Main
 
 end GlobalTheory.VacShapeCl
 
-open GlobalTheory.VacShapeCl in
 
+open GlobalTheory.VacShapeCl in
 theorem GlobalTheory.VacShapeCl.closure_Sa_eq_matLat : ∀ {D : D7} {a a' : ℕ} (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig a a')
     (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chars D.host.F D.host.E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V Γ.W)
     (om' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep D.sp.cm.sig Γ.V' Γ.W) (hTr : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsTriple Bs Γ X om om') (L₁ : Submodule (𝓞 D.host.E) (Fin a' → D.host.E)) (L₂ : Submodule (𝓞 D.host.E) (Fin (a + a') → D.host.E)),

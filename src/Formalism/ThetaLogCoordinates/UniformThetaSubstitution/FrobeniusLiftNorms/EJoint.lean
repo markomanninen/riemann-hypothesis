@@ -1,7 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.EntryDegree
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,11 +31,6 @@ theorem coeff_subst_scale {K ι : Type} [Field K] (ϖ : K) (Th : MvPowerSeries �
 section Lin
 
 variable {K : Type} [Field K] {ν r0 r1 : ℕ}
-
-def Amat (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) → Fin r0 → K) :
-    TpV ν r1 ⊕ ZV ν r0 r1 → ZV ν r0 r1 → K
-  | Sum.inl t, x => if t = (x.1, x.2.2) then (if x.1 ∈ TT then ξ x.1 x.2.1 else 0) else 0
-  | Sum.inr y, x => if y = x then 1 else 0
 
 end Lin
 

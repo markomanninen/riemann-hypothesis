@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricOf
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.BaseChangeIsobaricOf
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,14 +60,14 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 def N3 : Prop := ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (c n : ℕ) (N : Fin c → ℕ)
   (h : ∑ i, N i = n) (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E))) (P : SmIrr (GL (Fin n) (w.adicCompletion E)))
   (ξ : Fin n → ℂˣ), IsSubquotient P.ρ (locProd h w σ) → IsExpN P.ρ ξ → Mono ξ →
-  (∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (N i))) ∧
+  (∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (n := (N i)))) ∧
     ∃ b : Fin c → Multiset ℂˣ, (∀ i, GlobalTheory.LFun.HasSatGL w (σ i).ρ (b i)) ∧ ∑ i, b i = Finset.univ.val.map ξ
 
 def SatLink : Prop := ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (c n : ℕ) (N : Fin c → ℕ)
   (h : ∑ i, N i = n) (σ : ∀ i, SmIrr (GL (Fin (N i)) (w.adicCompletion E))) (P : SmIrr (GL (Fin n) (w.adicCompletion E)))
   (ξ : Fin n → ℂˣ), IsSubquotient P.ρ (locProd h w σ) → IsSpherical P.ρ →
   (∃ f : P.ρ.IntertwiningMap (iP (k := w.adicCompletion E) ξ), f ≠ 0) →
-  (∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (N i))) ∧
+  (∀ i, GlobalTheory.LGrp.IsSpherical (σ i).ρ (GlobalTheory.LFun.KGL w (n := (N i)))) ∧
     ∃ b : Fin c → Multiset ℂˣ, (∀ i, GlobalTheory.LFun.HasSatGL w (σ i).ρ (b i)) ∧ ∑ i, b i = Finset.univ.val.map ξ
 
 end Global

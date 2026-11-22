@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,8 @@ theorem adapted (G : ℤ → Submodule K (Fin d → K)) (hG : Antitone G) (lo hi
   have hQ : ∀ (c : Fin d → K) i, ∑ m, B.repr (Pi.single m 1) i * c m = B.repr c i := by
     intro c i
     conv_rhs => rw [← Finset.univ_sum_single c]
-    rw [map_sum, Finsupp.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun m _ => ?_
     have hs : (Pi.single m (c m) : Fin d → K) = c m • Pi.single m 1 := by
       ext j

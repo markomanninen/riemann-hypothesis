@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.InfSpanNeBot
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HaarPushforwardEqBallDensity
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifEx2
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.InfSpanNeBot
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HaarPushforwardEqBallDensity
+
+@[expose] public section
 
 noncomputable section
 

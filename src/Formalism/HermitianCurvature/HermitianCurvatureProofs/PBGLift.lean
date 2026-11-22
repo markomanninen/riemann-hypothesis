@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementHeads
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWaveMain
+module
+
+public import Formalism.HermitianCurvature.StatementHeads
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGWaveMain
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -53,9 +57,9 @@ theorem sum_pad {V : Type} [AddCommGroup V] [Module ℂ V] {d n : ℕ} (hdn : d 
   · apply Finset.sum_congr rfl
     intro m _
     simp only [Fin.castLEEmb_apply, Fin.val_castLE]
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
   · intro l _ hl
-    rw [dif_neg, smul_zero]
+    rw [dite_eq_right, smul_zero]
     intro hle
     apply hl
     rw [Finset.mem_map]
@@ -129,12 +133,12 @@ theorem reduceJ {k r : ℕ} (T : D.LevTower k r Wp Wq) (F : B.Mat k r → (Wq �
     · rw [show B.JF (T.bs j) (C1 l a') g = _ from hcl']
       by_cases h2 : (l : ℕ) = j - s
       · simp only [hE, if_neg h1, if_pos h2]
-        rw [dif_pos (by omega)]
+        rw [dite_eq_left (by omega)]
         have e3 : (⟨(l : ℕ), by omega⟩ : Fin (j - s + 1)) = Fin.last (j - s) := Fin.ext (by simp [h2])
         rw [e3, hcl]
         exact (Formalism.FourierDecayAlt.P.JCx2.bc_JF_smul _ _ _).symm
       · simp only [hE, if_neg h1, if_neg h2]
-        rw [dif_neg (by omega)]
+        rw [dite_eq_right (by omega)]
         exact (Formalism.FourierDecayAlt.P.JCx2.bc_JF_zero g).symm
 
 theorem nice_lincomb {k ρ : ℕ} {Bs : B.RealPlaceData k ρ Wp Wq} {S ι : Type} [Fintype S] [Fintype ι] [Nonempty ι]

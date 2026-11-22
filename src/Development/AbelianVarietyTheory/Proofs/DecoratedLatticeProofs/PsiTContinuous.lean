@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ContinuousSplitInv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.KJInf Formalism.L2.Forms GlobalTheory.SeeSaw
 open scoped TensorProduct
@@ -46,14 +51,15 @@ theorem back_unitary {G B u : Matrix (Fin V.rank) (Fin V.rank) ℂ} (hB : Bᴴ *
     _ = (Gᴴ * B * Bᴴ) * G := by rw [hu, Matrix.mul_one]
     _ = G := by rw [gB hB, Matrix.one_mul]
 
-open Formalism.IndefR.Eqv in
 
+open Formalism.IndefR.Eqv in
 theorem psiT_continuous (τ : D.what₂.Tau) : Continuous (psiT D τ) := by
   have hsum : ∀ x : AE D, psiT D τ x = ∑ c, psiT D τ (algebraMap (AF D.host.F) (AE D) ((basAF D).repr x c)) *
       psiT D τ (basAF D c) := by
     intro x
     conv_lhs => rw [← (basAF D).sum_repr x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Algebra.smul_def, map_mul]
   have hc : ∀ c, Continuous fun x : AE D => (basAF D).repr x c := fun c =>
@@ -70,7 +76,7 @@ theorem psiT_continuous (τ : D.what₂.Tau) : Continuous (psiT D τ) := by
   have hfun : (⇑(psiT D τ) : AE D → ℂ) = fun x => ∑ c, psiT D τ (algebraMap (AF D.host.F) (AE D)
       ((basAF D).repr x c)) * psiT D τ (basAF D c) := funext hsum
   rw [hfun]
-  exact continuous_finset_sum _ fun c _ => (halg.comp (hc c)).mul continuous_const
+  exact continuous_finsetSum _ fun c _ => (halg.comp (hc c)).mul continuous_const
 
 open Formalism.IndefR.Eqv in
 theorem inB_eq (V : HSp D) (B : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ) (g : GA D V) (τ : D.what₂.Tau) :
@@ -79,8 +85,8 @@ theorem inB_eq (V : HSp D) (B : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.ran
 
 end GlobalTheory.SeeSaw.KUni
 
-open GlobalTheory.SeeSaw.KUni Formalism.IndefR.Eqv in
 
+open GlobalTheory.SeeSaw.KUni Formalism.IndefR.Eqv in
 theorem GlobalTheory.SeeSaw.ontoUni_inB : ∀ (D : D7) (θ : InfFam D) (V : HSp D) (B : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ),
     IsInfFam θ → (∀ τ, (B τ)ᴴ * gramAt D V τ * B τ = 1) → OntoUni fun k : GinfC V => inB θ V B k.1 := by
   intro D θ V B hθ hB

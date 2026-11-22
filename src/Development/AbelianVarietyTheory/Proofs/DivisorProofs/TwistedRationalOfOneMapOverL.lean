@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotOntoOfCharAlone
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TupPrimeEmpty
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneMapOfOfPtIdent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameConstantsOfCharacterisationCoreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspFormClassSumNormalisedDataStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicLiftEqGeometricClassSumAllTuplesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNormalisedTupleDataOverCoefficientFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotOntoOfCharAlone
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TupPrimeEmpty
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneMapOfOfPtIdent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ChartIndependenceUnconditional
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameConstantsOfCharacterisationCoreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspFormClassSumNormalisedDataStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicLiftEqGeometricClassSumAllTuplesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsNormalisedTupleDataOverCoefficientFieldStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +39,7 @@ theorem exists_linear {K X X' Y M : Type} [Field K] [AddCommGroup X] [Module K X
     (s : X' →ₗ[K] X) : ∃ θ : X' →ₗ[K] Y, ∀ x, j (θ x) = c • L (s x) := by
   choose θ hθ using fun x => h (s x)
   refine ⟨{ toFun := θ, map_add' := fun x y => hj ?_, map_smul' := fun a x => hj ?_ }, hθ⟩
-  · rw [j1, hθ, hθ, hθ, map_add, L1, smul_add]
+  · rw [j1, hθ, hθ, hθ, map_add (f := _), L1, smul_add]
   · rw [RingHom.id_apply, j2, hθ, hθ, map_smul, L2, smul_comm]
 
 section Linear
@@ -47,7 +51,7 @@ theorem base_embedding_apply (R : RealDat D A Ks) (a : D.what₂.LL) : sg0 D A a
 
 theorem adForm_add (x y : Fin (R.nW i) → D.what₂.LL) : adForm R i (x + y) = adForm R i x + adForm R i y := by
   unfold adForm
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
 
 theorem adForm_smul (a : D.what₂.LL) (x : Fin (R.nW i) → D.what₂.LL) :
     adForm R i (a • x) = D.what₂.embLL a • adForm R i x := by
@@ -80,27 +84,10 @@ theorem ratio_of_j (hU : R.LUnif) {y y' : Fin (R.nW i) → D.what₂.LL} {ρ : �
     (fun _ : Fin 1 => 1) (fun _ => y) (fun _ : Fin 1 => 1) (fun _ => y') (fun _ => one_mem _)
     (fun _ => one_mem _) ρ (by simpa using h) (by simpa using h0)
 
-variable (R) in
 
+variable (R) in
 def AllRational (ph : Fin D.R.m → ℂ) : Prop :=
   ∀ (i : Fin D.R.m) (t : T0) (x₀ : A.fam.amb.FL i t), ∃ y, adForm R i y = ph i • R.thF i t (jVx R i t x₀)
-
-theorem exists_base_lift {F : Face D A} (hU : R.LUnif) (h5 : R.LTheta F) (hr : R.LRatTh F)
-    (hRk : Formalism.L2.Indef.Tree.RankRows ((R.toCx F).data F.cr false)) (i : Fin D.R.m) :
-    ∃ (x₀ : A.fam.amb.FL i A.μ0) (y : Fin (R.nW i) → D.what₂.LL),
-      (R.FW i).j (sg0 D A) y = R.thG i A.μ0 (R.jV i A.μ0 x₀) ∧ (R.FW i).j (sg0 D A) y ≠ 0 := by
-  refine Classical.byContradiction fun hn => ?_
-  have hd : 0 < Module.finrank D.what₂.LL (R.WL F false i) := hRk.1.trans_eq (hRk.2 i).symm
-  obtain ⟨y, hy⟩ : ∃ y, (GlobalTheory.OntoChain.thetaMat R F i A.μ0).mulVec y = fun _ => 1 :=
-    ((R.toCx F).liftMat_bij F.cr false (RealDat.kForm hU false) (RealDat.ewNorm false) (RealDat.nP_pos false) (h5 false)
-      (hr false) i A.μ0).2 _
-  have h1 := GlobalTheory.OntoChain.j_thetaMat h5 hr i A.μ0 y
-  refine hn ⟨(A.fam.L i A.μ0).toF (GlobalTheory.OntoChain.liftLvl F) (GlobalTheory.OntoChain.liftSub R F i A.μ0) y,
-    GlobalTheory.OntoChain.coordMap R F i ((GlobalTheory.OntoChain.thetaMat R F i A.μ0).mulVec y), h1, fun h0 => ?_⟩
-  have h2 : GlobalTheory.OntoChain.coordMap R F i ((GlobalTheory.OntoChain.thetaMat R F i A.μ0).mulVec y) = 0 :=
-    (injective_iff_map_eq_zero _).1 (j_injective hU i) _ h0
-  have h3 := (injective_iff_map_eq_zero _).1 (GlobalTheory.OntoChain.coordMap_injective (R := R) (F := F) i) _ h2
-  exact one_ne_zero (congrFun (hy.symm.trans h3) ⟨0, hd⟩)
 
 end Linear
 
@@ -118,13 +105,13 @@ theorem evaluates (fw : FWTie T R κ v₀) (hU : R.LUnif) : fw.Evaluates := by
   have h1 : f = 0 := by
     by_contra hf
     have h2 : ((fw.e i f : (R.FW i).WK) : Fin (R.nW i) → D.what₂.LL) ≠ 0 := fun h =>
-      hf ((fw.e i).injective ((Subtype.ext h).trans (map_zero _).symm))
+      hf ((fw.e i).injective ((Subtype.ext h).trans (fw.e i).map_zero.symm))
     exact ((hU i σ).1 1 _ (linearIndependent_unique_iff.2 h2 : LinearIndependent _ fun _ : Fin 1 => _)).ne_zero 0
       (by rw [h0]; rfl)
   have key : ∀ (σ' : T.Q.c.F →+* ℂ) (W : HSp D) (hV : T.V ((i : ℕ) + 1) σ' = W),
       phiC T hV (wtA (κ i)) (0 : T.R ((i : ℕ) + 1)) = 0 := by
     rintro σ' W rfl
-    show (_ : ℂ) • adel _ _ _ (rdU _ 0) = 0
+    show (_ : ℂ) • adel _ _ _ (rdU (T.U ((i : ℕ) + 1) σ') (0 : T.R ((i : ℕ) + 1))) = 0
     rw [map_zero, map_zero, smul_zero]
   subst h1
   refine Eq.trans ?_ (key _ _ hV).symm
@@ -154,7 +141,8 @@ theorem exists_adForm (fw : FWTie T R κ v₀) (hHW : R.models_HW) (hU : R.LUnif
   let y : Fin m → Fin (R.nW i) → D.what₂.LL := fun l => fw.e i (f l)
   have e : adForm R i (∑ l, b l • y l) = ∑ l, D.what₂.embLL (b l) • adForm R i (y l) := by
     unfold adForm
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     exact Finset.sum_congr rfl fun l _ => adForm_smul _ _
   have e' : (R.HW i (sg0 D A)).e (c • (R.FW i).j (sg0 D A) (∑ l, b l • y l)) = c • adForm R i (∑ l, b l • y l) :=
     (R.HW i (sg0 D A)).e.map_smul c _
@@ -319,14 +307,14 @@ theorem ratio_rational (fw : FWTie T R κ v₀) (hHW : R.models_HW) (hU : R.LUni
 
 end Descent
 
-variable (R) in
 
+variable (R) in
 def BaseLiftNeZero : Prop := ∀ i, ∃ x₀ : A.fam.amb.FL i A.μ0, R.thG i A.μ0 (R.jV i A.μ0 x₀) ≠ 0
 
 variable {F : Face D A} {ph : Fin D.R.m → ℂ}
 
-variable (T R κ v₀) in
 
+variable (T R κ v₀) in
 def SeriesIdentity (i : Fin D.R.m) : Prop :=
   ∀ O₀ : OMDat T.toCore R i T0 id, O₀.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O₀.s0) →
     ∃ cc : (T.U ((i : ℕ) + 1) T.σ₀).Comp → ℂ,

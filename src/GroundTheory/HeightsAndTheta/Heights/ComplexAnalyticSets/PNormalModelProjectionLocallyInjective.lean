@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelProjectionLocallyInjective
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.NormalModelGraph
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalModelProper
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCurveProperClosedFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelProjectionLocallyInjective
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.NormalModelGraph
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalModelProper
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCurveProperClosedFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

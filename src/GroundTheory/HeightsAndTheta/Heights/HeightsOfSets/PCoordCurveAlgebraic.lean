@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CoordCurveDegree
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CoordCurveDegree
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

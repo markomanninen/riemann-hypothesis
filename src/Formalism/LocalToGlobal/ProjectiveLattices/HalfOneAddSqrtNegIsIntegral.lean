@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnramBridgeHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ def w0E (D : D7) : 𝓞 D.host.E := ⟨(1 + D.host.sqrtMinusD) / 2, half_one_add
 
 theorem two_w0E (D : D7) : 2 * w0E D = 1 + rtE D := by
   apply IsFractionRing.injective (𝓞 D.host.E) D.host.E
-  rw [map_mul, map_add, map_one, map_ofNat]
+  rw [map_mul, map_add (f := _), map_one, map_ofNat]
   show 2 * ((1 + D.host.sqrtMinusD) / 2) = 1 + D.host.sqrtMinusD
   field_simp
 
@@ -86,7 +90,7 @@ theorem conj_w0E (D : D7) : barE D (w0E D) = 1 - w0E D := by
   apply IsFractionRing.injective (𝓞 D.host.E) D.host.E
   rw [map_sub, map_one]
   show IsCMField.complexConj D.host.E ((1 + D.host.sqrtMinusD) / 2) = 1 - (1 + D.host.sqrtMinusD) / 2
-  rw [map_div₀, map_add, map_one, cc_sqrtMinusD, map_ofNat]
+  rw [map_div₀, map_add (f := _), map_one, cc_sqrtMinusD, map_ofNat]
   ring
 
 def mE (D : D7) : ℕ := (D.host.d + 1) / 4
@@ -119,8 +123,8 @@ theorem unramBridge : UnramBridge := fun K _ _ _ h => unramBridge_holds K h
 
 def hostOfRecord (D : D7) : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E := hostOfB D unramBridge
 
-open Classical in
 
+open Classical in
 def cRoot (D : D7) (p : ℕ) : ℤ :=
   if h : ∃ c : ℤ, (p : ℤ) ∣ c ^ 2 - c + mE D then Classical.choose h else 0
 
@@ -137,13 +141,15 @@ theorem fromK_of_gen {R : Type} [CommRing R] {I : Ideal R} {A : Subalgebra ℤ R
   · exact Ideal.span_le.2 (fun x hx => hx.1)
 
 theorem MbOf_gen (D : D7) : ∀ ps : List ℕ, ∃ G : Set (𝓞 D.host.E),
-    MbOf D ps = Ideal.span G ∧ G ⊆ Algebra.adjoin ℤ {w0E D}
-  | [] => ⟨{1}, by simp [MbOf], by
+    MbOf D ps = Ideal.span G ∧ G ⊆ Algebra.adjoin ℤ {w0E D} := by
+  intro ps
+  induction ps with
+  | nil => exact ⟨{1}, by simp [MbOf], by
       intro x hx; rw [Set.mem_singleton_iff.1 hx]; exact Subalgebra.one_mem _⟩
-  | p :: t => by
-      obtain ⟨G, hG, hGA⟩ := MbOf_gen D t
+  | cons p t ih =>
+      obtain ⟨G, hG, hGA⟩ := ih
       refine ⟨{(p : 𝓞 D.host.E), w0E D - (cRoot D p : 𝓞 D.host.E)} * G, ?_, ?_⟩
-      · rw [MbOf, List.map_cons, List.prod_cons, ← MbOf, hG, pIdeal, Ideal.span_mul_span']
+      · rw [MbOf, List.map_cons, List.prod_cons, ← MbOf, hG, pIdeal, Ideal.span_mul_span]
       · intro x hx
         obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_mul.1 hx
         refine Subalgebra.mul_mem _ ?_ (hGA hb)
@@ -157,10 +163,6 @@ theorem MbOf_fromK (D : D7) (ps : List ℕ) :
   fromK_of_gen (MbOf_gen D ps)
 
 abbrev bH (D : D7) : 𝓞 D.host.E →+* 𝓞 D.host.E := ((barE D : 𝓞 D.host.E ≃+* 𝓞 D.host.E) : 𝓞 D.host.E →+* 𝓞 D.host.E)
-
-def SplitPrimes (D : D7) : Prop :=
-  (∀ i, D.host.g i ≠ 2) ∧
-    ∀ p ∈ [D.host.g 0, D.host.g 1, D.host.pde, D.host.pde'], jacobiSym (-(D.host.d : ℤ)) p = 1
 
 def MbProdLaw (D : D7) (ps : List ℕ) : Prop :=
   MbOf D ps * (MbOf D ps).map (bH D) = Ideal.span {((ps.prod : ℕ) : 𝓞 D.host.E)}
@@ -187,7 +189,7 @@ theorem exists_cRoot (D : D7) {p : ℕ} (hp : SplitOK D p) : ∃ c : ℤ, (p : �
   linear_combination (-h ^ 2) * hr + h ^ 2 * e4 + ((1 + r) * h - (mE D : ZMod p) * (2 * h + 1)) * hh
 
 theorem cRoot_spec (D : D7) {p : ℕ} (hp : SplitOK D p) : (p : ℤ) ∣ cRoot D p ^ 2 - cRoot D p + mE D := by
-  rw [cRoot, dif_pos (exists_cRoot D hp)]; exact Classical.choose_spec (exists_cRoot D hp)
+  rw [cRoot, dite_eq_left (exists_cRoot D hp)]; exact Classical.choose_spec (exists_cRoot D hp)
 
 theorem cRoot_coprime (D : D7) {p : ℕ} (hp : SplitOK D p) : IsCoprime (1 - 2 * cRoot D p) (p : ℤ) := by
   apply IsCoprime.symm
@@ -341,51 +343,18 @@ def levelOfPs (D : D7) {hU} (ps : List ℕ) (hp : ∀ p ∈ ps, p.Prime ∧ p �
   A := 1
   A_pos := Nat.one_pos
 
-theorem splitOK_of (D : D7) (hS : SplitPrimes D) :
-    ∀ p ∈ [D.host.g 0, D.host.g 1, D.host.pde, D.host.pde'], SplitOK D p := by
-  intro p hp
-  have hj := hS.2 p hp
-  simp at hp
-  rcases hp with rfl | rfl | rfl | rfl
-  · exact ⟨D.host.g_prime 0, hS.1 0, hj⟩
-  · exact ⟨D.host.g_prime 1, hS.1 1, hj⟩
-  · exact ⟨D.host.pde_prime, by have := D.host.pde_mod.1; omega, hj⟩
-  · exact ⟨D.host.pde'_prime, by have := D.host.pde_mod.2; omega, hj⟩
-
-def levelOf (D : D7) {hU} (hS : SplitPrimes D) : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level (hostOf D hU) :=
-  have h : ∀ p ∈ [D.host.g 0, D.host.g 1], SplitOK D p := fun p hp =>
-    splitOK_of D hS p (by simp at hp ⊢; tauto)
-  levelOfPs D _ (fun p hp => ⟨(h p hp).1, (h p hp).2.1⟩) (by simp) (MbProd_of D _ h) (MbCop_of D _ h)
-
-def levelDeep (D : D7) {hU} (hS : SplitPrimes D) : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level (hostOf D hU) :=
-  have h := splitOK_of D hS
-  levelOfPs D _ (fun p hp => ⟨(h p hp).1, (h p hp).2.1⟩) (by simp) (MbProd_of D _ h) (MbCop_of D _ h)
-
-theorem levelOf_M (D : D7) (hU) (hS : SplitPrimes D) :
-    (levelOf D (hU := hU) hS).M = D.host.g 0 * D.host.g 1 ∧ (levelOf D (hU := hU) hS).A = 1 := by
-  simp [levelOf, levelOfPs]
-
-theorem levelDeep_M (D : D7) (hU) (hS : SplitPrimes D) :
-    (levelDeep D (hU := hU) hS).M = D.host.g 0 * D.host.g 1 * D.host.pde * D.host.pde' := by
-  simp [levelDeep, levelOfPs, mul_assoc]
-
-theorem hostOf_bar (D : D7) (hU) (a : 𝓞 D.host.E) :
-    (((hostOf D hU).bar a : 𝓞 D.host.E) : D.host.E) = D.host.conj (a : D.host.E) := barE_eq_conj D a
-
 section Dat
 
 open scoped TensorProduct
-
-local instance instStarRingHost (D : D7) : StarRing D.host.E := D.host.cmStar
 
 def latW (D : D7) (j : ℕ) : Submodule (𝓞 D.host.E) (D.sp.W j).V :=
   Submodule.span (𝓞 D.host.E) {v | ∃ a : D.host.E, a ∈ D.host.AA ∧ ∃ x ∈ (D.sp.W j).L0, v = a • x}
 
 def efQ (D : D7) (j : ℕ) : latW D j →ₗ[ℤ] latW D j →ₗ[ℤ] ℚ :=
   LinearMap.mk₂ ℤ (fun x y => Algebra.trace ℚ D.host.E (D.host.xi0 * (D.sp.W j).hT x y))
-    (fun x x' y => by simp [map_add, mul_add])
+    (fun x x' y => by simp [map_add (f := _), mul_add])
     (fun c x y => by simp [map_zsmul]; rw [mul_left_comm, ← zsmul_eq_mul, map_zsmul, zsmul_eq_mul])
-    (fun x y y' => by simp [map_add, mul_add])
+    (fun x y y' => by simp [map_add (f := _), mul_add])
     (fun c x y => by simp [map_zsmul]; rw [mul_left_comm, ← zsmul_eq_mul, map_zsmul, zsmul_eq_mul])
 
 theorem choose_cast {M : Type} [AddCommGroup M] (B : M →ₗ[ℤ] M →ₗ[ℤ] ℚ) (h : ∀ x y, ∃ n : ℤ, B x y = n)
@@ -395,11 +364,11 @@ def intForm {M : Type} [AddCommGroup M] (B : M →ₗ[ℤ] M →ₗ[ℤ] ℚ) (h
     LinearMap.BilinForm ℤ M :=
   LinearMap.mk₂ ℤ (fun x y => (h x y).choose)
     (fun x x' y => Int.cast_injective (α := ℚ) (by
-      rw [Int.cast_add, choose_cast, choose_cast, choose_cast, map_add, LinearMap.add_apply]))
+      rw [Int.cast_add, choose_cast, choose_cast, choose_cast, map_add (f := _), LinearMap.add_apply]))
     (fun c x y => Int.cast_injective (α := ℚ) (by
       rw [smul_eq_mul, Int.cast_mul, choose_cast, choose_cast, LinearMap.map_smul₂, zsmul_eq_mul]))
     (fun x y y' => Int.cast_injective (α := ℚ) (by
-      rw [Int.cast_add, choose_cast, choose_cast, choose_cast, map_add]))
+      rw [Int.cast_add, choose_cast, choose_cast, choose_cast, map_add (f := _)]))
     (fun c x y => Int.cast_injective (α := ℚ) (by
       rw [smul_eq_mul, Int.cast_mul, choose_cast, choose_cast, map_zsmul, zsmul_eq_mul]))
 
@@ -418,8 +387,8 @@ def DomFor (D : D7) (j : ℕ) (EF : LinearMap.BilinForm ℤ (latW D j)) : Prop :
         (((D.R.sigW j).1 : ℂ) * τ (a : D.host.E) + ((D.R.sigW j).2 : ℂ) * starRingEnd ℂ (τ (a : D.host.E))) →
       J ∘ₗ A = A ∘ₗ J ∧ LinearMap.trace ℝ _ A = 2 * t.re ∧ LinearMap.trace ℝ _ (J ∘ₗ A) = -2 * t.im
 
-open Classical in
 
+open Classical in
 def sgnW (D : D7) (j : ℕ) : ℤ := if ∃ hI : DatInt D j, DomFor D j (intForm (efQ D j) hI) then 1 else -1
 
 def efW (D : D7) (j : ℕ) (hI : DatInt D j) : LinearMap.BilinForm ℤ (latW D j) := sgnW D j • intForm (efQ D j) hI

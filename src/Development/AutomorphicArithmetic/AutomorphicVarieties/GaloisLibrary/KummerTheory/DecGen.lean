@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -53,7 +57,7 @@ private theorem alg_residue {Ω : Type} [Field Ω] [CharZero Ω] (A : ValuationS
     · have hdvd : Polynomial.C ((ringChar k : ℕ) : ℤ) ∣ p.primPart := by
         rw [Polynomial.C_dvd_iff_dvd_coeff]
         intro i
-        have := congrArg (fun P => Polynomial.coeff P i) h
+        have := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P i) h
         simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at this
         exact (CharP.intCast_eq_zero_iff k (ringChar k) _).1 this
       have hu := hq _ hdvd

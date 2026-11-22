@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.NeighbourhoodKilling
-import Development.EtaleCohomology.EtaleSheaves.GlueRelPfNat
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.NeighbourhoodKilling
+public import Development.EtaleCohomology.EtaleSheaves.GlueRelPfNat
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.EtC CochainComplex.HomComplex LateralTheory.E.E4 LateralTheory.E.LeafGhostCut in
 theorem UpperTheory.relativeCohomology_connecting_naturality :

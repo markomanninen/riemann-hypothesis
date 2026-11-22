@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.TyCard
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DdSumZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.TyCard
+
+@[expose] public section
+
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 section SlopeTestRemainingChoices
@@ -118,7 +123,11 @@ private theorem key (wi r ri w : Matrix (Fin n) (Fin n) A) (Y K : Fin g → Matr
     rw [mul_epM, epM_mul, ← epM_sub, ← epM_sub, mul_epM, epM_mul]
     congr 1
     funext j
-    simp only [Matrix.map_mul, Matrix.map_sub _ (map_sub (algebraMap A X))]
+    have map_sub_matrix (M N : Matrix (Fin n) (Fin n) A) :
+        (M - N).map (algebraMap A X) = M.map (algebraMap A X) - N.map (algebraMap A X) := by
+      ext i k
+      simp [Matrix.map_apply]
+    simp only [Matrix.map_mul, map_sub_matrix]
   have i1 : w.map (algebraMap A (DD X g)) * wi.map (algebraMap A (DD X g)) = 1 := by
     rw [← Matrix.map_mul, h1]; simp
   have i2 : ri.map (algebraMap A (DD X g)) * r.map (algebraMap A (DD X g)) = 1 := by

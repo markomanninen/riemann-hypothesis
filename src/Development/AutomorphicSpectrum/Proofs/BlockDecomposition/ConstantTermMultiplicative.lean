@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermConvolutionHeckeStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.MatchT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryLevelSubgroupProperties
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HintConstMulSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermConvolutionHeckeStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT PositivityTheory.Rg.BcN.F2
@@ -84,7 +88,7 @@ theorem ordL_neg_one (w : Pl E) : ordL ((-1 : (w.adicCompletion E)ˣ) : w.adicCo
   have h1 : Valued.v ((-1 : (w.adicCompletion E)ˣ) : w.adicCompletion E) = 1 := by
     simp
   unfold ordL
-  rw [dif_neg (by rw [h1]; exact one_ne_zero)]
+  rw [dite_eq_right (by rw [h1]; exact one_ne_zero)]
   simp [h1]
   rfl
 
@@ -110,19 +114,19 @@ theorem mconv_twist {a b : ℕ} {w : Pl E} (c : GLw a w × GLw b w → ℂ) (hc 
 
 theorem toSub_val {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) (x : UL n w) : toSub (UL n w) x.1 = x := by
   unfold toSub
-  rw [dif_pos x.2]
+  rw [dite_eq_left x.2]
 
 theorem toSub_mul {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) (x y : GLw n w) :
     toSub (UL n w) (x * y) = toSub (UL n w) x * toSub (UL n w) y := by
   have hm : ∀ z : GLw n w, z ∈ UL n w := fun z => hU ▸ Subgroup.mem_top z
   unfold toSub
-  rw [dif_pos (hm _), dif_pos (hm _), dif_pos (hm _)]
+  rw [dite_eq_left (hm _), dite_eq_left (hm _), dite_eq_left (hm _)]
   rfl
 
 theorem val_toSub {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) (y : GLw n w) : (toSub (UL n w) y).1 = y := by
   have hm : ∀ z : GLw n w, z ∈ UL n w := fun z => hU ▸ Subgroup.mem_top z
   unfold toSub
-  rw [dif_pos (hm _)]
+  rw [dite_eq_left (hm _)]
 
 def ulEquiv {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) : UL n w ≃* GLw n w where
   toFun x := x.1
@@ -132,7 +136,7 @@ def ulEquiv {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) : UL n w ≃* GLw n w where
   map_mul' _ _ := rfl
 
 theorem isHk_of_isHecke {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) {f : UL n w → ℂ} (hf : IsHecke (KL n w) f) :
-    IsHk (GlobalTheory.LFun.KGL w n) (fun y => f (toSub (UL n w) y)) := by
+    IsHk (GlobalTheory.LFun.KGL w (n := n)) (fun y => f (toSub (UL n w) y)) := by
   refine ⟨?_, GlobalTheory.CompanionTheory.IwLevels.isCompact_KGL w n, ?_, ?_⟩
   · rw [GlobalTheory.CompanionTheory.IwLevels.KGL_eq_KO]
     exact GlobalTheory.SplitFlip.isOpen_KO
@@ -140,7 +144,7 @@ theorem isHk_of_isHecke {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) {f : UL n w →
     by_contra h0
     exact hy ⟨toSub (UL n w) y, subset_tsupport _ h0, val_toSub hU y⟩
   · intro k₁ hk₁ k₂ hk₂ g
-    have hm : ∀ k ∈ GlobalTheory.LFun.KGL w n, toSub (UL n w) k ∈ KL n w := fun k hk => by
+    have hm : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), toSub (UL n w) k ∈ KL n w := fun k hk => by
       rw [KL, Subgroup.mem_subgroupOf, val_toSub hU]
       exact hk
     show f (toSub _ (k₁ * g * k₂)) = f (toSub _ g)
@@ -151,7 +155,7 @@ theorem lconv_eq_gconv {n : ℕ} {w : Pl E} (hU : UL n w = ⊤) (f g : UL n w �
       gconv (fun y => f (toSub (UL n w) y)) (fun y => g (toSub (UL n w) y)) := by
   funext y
   unfold PositivityTheory.Rg.BcB.F.Eig.lconv gconv
-  rw [← hint_comp_equiv (ulEquiv hU) (KL n w) (GlobalTheory.LFun.KGL w n) (fun x => Subgroup.mem_subgroupOf)]
+  rw [← hint_comp_equiv (ulEquiv hU) (KL n w) (GlobalTheory.LFun.KGL w (n := n)) (fun x => Subgroup.mem_subgroupOf)]
   congr 1
   funext z
   show _ = f (toSub _ z.1) * g (toSub _ (z.1⁻¹ * y))
@@ -187,9 +191,9 @@ theorem hint_left {H : Type} [Group H] (K : Subgroup H) (k : H) (u : H → ℂ) 
   simpa using this
 
 theorem gconv_bi {n : ℕ} {w : Pl E} {f₁ f₂ : GLw n w → ℂ}
-    (h₁ : ∀ u ∈ GlobalTheory.LFun.KGL w n, ∀ g, f₁ (u * g) = f₁ g ∧ f₁ (g * u) = f₁ g)
-    (h₂ : ∀ u ∈ GlobalTheory.LFun.KGL w n, ∀ g, f₂ (u * g) = f₂ g ∧ f₂ (g * u) = f₂ g) :
-    ∀ u ∈ GlobalTheory.LFun.KGL w n, ∀ g, gconv f₁ f₂ (u * g) = gconv f₁ f₂ g ∧ gconv f₁ f₂ (g * u) = gconv f₁ f₂ g := by
+    (h₁ : ∀ u ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, f₁ (u * g) = f₁ g ∧ f₁ (g * u) = f₁ g)
+    (h₂ : ∀ u ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, f₂ (u * g) = f₂ g ∧ f₂ (g * u) = f₂ g) :
+    ∀ u ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, gconv f₁ f₂ (u * g) = gconv f₁ f₂ g ∧ gconv f₁ f₂ (g * u) = gconv f₁ f₂ g := by
   intro u hu g
   constructor
   · unfold gconv
@@ -205,17 +209,17 @@ theorem gconv_bi {n : ℕ} {w : Pl E} {f₁ f₂ : GLw n w → ℂ}
     rw [← mul_assoc, (h₂ u hu _).2]
 
 theorem constant_term_eq_mackey_entry {n a b : ℕ} (h : a + b = n) (w : Pl E) {f : GLw n w → ℂ}
-    (hf : ∀ u ∈ GlobalTheory.LFun.KGL w n, ∀ g, f (u * g) = f g ∧ f (g * u) = f g) :
+    (hf : ∀ u ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, f (u * g) = f g ∧ f (g * u) = f g) :
     ct h w f = phi3 h w f 1 1 := by
   funext m
   unfold ct phi3
   congr 2
   funext Z
-  have hX1 : ∀ x ∈ ({1} : Finset (GLw n w)), x ∈ GlobalTheory.LFun.KGL w n := by
+  have hX1 : ∀ x ∈ ({1} : Finset (GLw n w)), x ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro x hx
     rw [Finset.mem_singleton.1 hx]
     exact Subgroup.one_mem _
-  have hX2 : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ ({1} : Finset (GLw n w)), x⁻¹ * k ∈ GlobalTheory.LFun.KGL w n := by
+  have hX2 : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ ({1} : Finset (GLw n w)), x⁻¹ * k ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro k hk
     refine ⟨1, ⟨Finset.mem_singleton_self _, by simpa using hk⟩, ?_⟩
     rintro y ⟨hy, -⟩
@@ -224,23 +228,23 @@ theorem constant_term_eq_mackey_entry {n a b : ℕ} (h : a + b = n) (w : Pl E) {
   simp
 
 theorem ct_gconv {n a b : ℕ} (h : a + b = n) (w : Pl E) {f₁ f₂ : GLw n w → ℂ}
-    (h₁ : IsHk (GlobalTheory.LFun.KGL w n) f₁) (h₂ : IsHk (GlobalTheory.LFun.KGL w n) f₂) (m : GLw a w × GLw b w) :
+    (h₁ : IsHk (GlobalTheory.LFun.KGL w (n := n)) f₁) (h₂ : IsHk (GlobalTheory.LFun.KGL w (n := n)) f₂) (m : GLw a w × GLw b w) :
     ct h w (gconv f₁ f₂) m = mconv (ct h w f₁) (ct h w f₂) m := by
-  have hbi : ∀ {f : GLw n w → ℂ}, IsHk (GlobalTheory.LFun.KGL w n) f →
-      ∀ u ∈ GlobalTheory.LFun.KGL w n, ∀ g, f (u * g) = f g ∧ f (g * u) = f g := fun hf u hu g =>
+  have hbi : ∀ {f : GLw n w → ℂ}, IsHk (GlobalTheory.LFun.KGL w (n := n)) f →
+      ∀ u ∈ GlobalTheory.LFun.KGL w (n := n), ∀ g, f (u * g) = f g ∧ f (g * u) = f g := fun hf u hu g =>
     ⟨by simpa using hf.2.2.2 u hu 1 (Subgroup.one_mem _) g, by simpa using hf.2.2.2 1 (Subgroup.one_mem _) u hu g⟩
-  have hnorm : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∀ k' ∈ GlobalTheory.LFun.KGL w n, k * k' * k⁻¹ ∈ GlobalTheory.LFun.KGL w n :=
+  have hnorm : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∀ k' ∈ GlobalTheory.LFun.KGL w (n := n), k * k' * k⁻¹ ∈ GlobalTheory.LFun.KGL w (n := n) :=
     fun k hk k' hk' => mul_mem (mul_mem hk hk') (inv_mem hk)
-  have hX1 : ∀ x ∈ ({1} : Finset (GLw n w)), x ∈ GlobalTheory.LFun.KGL w n := by
+  have hX1 : ∀ x ∈ ({1} : Finset (GLw n w)), x ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro x hx
     rw [Finset.mem_singleton.1 hx]
     exact Subgroup.one_mem _
-  have hX2 : ∀ k ∈ GlobalTheory.LFun.KGL w n, ∃! x ∈ ({1} : Finset (GLw n w)), x⁻¹ * k ∈ GlobalTheory.LFun.KGL w n := by
+  have hX2 : ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), ∃! x ∈ ({1} : Finset (GLw n w)), x⁻¹ * k ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro k hk
     refine ⟨1, ⟨Finset.mem_singleton_self _, by simpa using hk⟩, ?_⟩
     rintro y ⟨hy, -⟩
     exact Finset.mem_singleton.1 hy
-  have hmul := GlobalTheory.T.constant_term_convolution_hecke E n a b h w (GlobalTheory.LFun.KGL w n) h₁.1 le_rfl hnorm {1} hX1 hX2 f₁ f₂ h₁ h₂ 1
+  have hmul := GlobalTheory.T.constant_term_convolution_hecke E n a b h w (GlobalTheory.LFun.KGL w (n := n)) h₁.1 le_rfl hnorm {1} hX1 hX2 f₁ f₂ h₁ h₂ 1
     (Finset.mem_singleton_self _) 1 (Finset.mem_singleton_self _) m
   rw [constant_term_eq_mackey_entry h w (gconv_bi (hbi h₁) (hbi h₂)), constant_term_eq_mackey_entry h w (hbi h₁), constant_term_eq_mackey_entry h w (hbi h₂), hmul]
   simp

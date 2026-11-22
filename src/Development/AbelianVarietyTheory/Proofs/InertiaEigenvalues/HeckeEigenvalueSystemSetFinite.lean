@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitExEveryDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem eigSet_finite : HeckeStdPlain → ∀ (D : D7) (μ : D.what₂.Tup) (j :
   let op : ι → Module.End ℂ (D.what₂.Mt μ j) := fun i =>
     { toFun := g i
       map_add' := fun y y' => X.real_inj (by
-        rw [hg, map_add, map_add, hg, hg]
+        rw [hg, map_add (f := _), map_add (f := _), hg, hg]
         have h := (hfact i).2.1 _ (hTS y) _ (hTS y') 1
         simpa using h)
       map_smul' := fun c y => X.real_inj (by

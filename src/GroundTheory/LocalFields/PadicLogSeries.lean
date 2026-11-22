@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
-import GroundTheory.LocalFields.ExamplesCharZero
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+public import GroundTheory.LocalFields.ExamplesCharZero
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -11,16 +15,16 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 section Summation
 
-variable (K) in
 
+variable (K) in
 theorem exists_normalizedValuation_eq (n : ℤ) :
     ∃ y : K, normalizedValuation K y = WithZero.exp n := by
   obtain ⟨y, hy⟩ := ValuativeRel.valuation_surjective
     ((IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt K).symm (WithZero.exp n))
   exact ⟨y, by rw [normalizedValuation_apply, hy]; simp⟩
 
-variable (K) in
 
+variable (K) in
 def valBall (n : ℤ) : AddSubgroup K where
   carrier := {x | normalizedValuation K x ≤ WithZero.exp (-n)}
   zero_mem' := by simp
@@ -30,7 +34,8 @@ def valBall (n : ℤ) : AddSubgroup K where
 theorem mem_valBall {n : ℤ} {x : K} :
     x ∈ valBall K n ↔ normalizedValuation K x ≤ WithZero.exp (-n) := Iff.rfl
 
-theorem valBall_antitone {m n : ℤ} (h : m ≤ n) : valBall K n ≤ valBall K m := fun x hx ↦
+theorem valBall_antitone {m n : ℤ} (h : m ≤ n) :
+    valBall K n ≤ valBall K m := fun x hx ↦
   hx.trans (WithZero.exp_le_exp.mpr (by omega))
 
 theorem mul_mem_valBall {m n : ℤ} {x y : K} (hx : x ∈ valBall K m) (hy : y ∈ valBall K n) :
@@ -48,7 +53,7 @@ theorem pow_mem_valBall {n : ℤ} {x : K} (hx : x ∈ valBall K n) (k : ℕ) :
     push_cast; ring
 
 theorem isOpen_valBall (n : ℤ) : IsOpen (valBall K n : Set K) := by
-  obtain ⟨y, hy⟩ := exists_normalizedValuation_eq K (-n)
+  obtain ⟨y, hy⟩ := exists_normalizedValuation_eq (K := K) (-n)
   have hy0 : valuation K y ≠ 0 := by
     intro h
     rw [normalizedValuation_apply, h, map_zero] at hy
@@ -121,7 +126,7 @@ theorem four_mul_padicValNat_le (p : ℕ) [hp : Fact p.Prime] (c : ℕ) {n : ℕ
     4 * c * padicValNat p n ≤ n + 32 * c ^ 2 := by
   set v := padicValNat p n
   have h1 : 2 ^ v ≤ p ^ v := Nat.pow_le_pow_left hp.out.two_le v
-  have h2 : p ^ v ≤ n := Nat.le_of_dvd (Nat.pos_of_ne_zero hn) pow_padicValNat_dvd
+  have h2 : p ^ v ≤ n := Nat.le_of_dvd (Nat.pos_of_ne_zero hn) (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have h3 := mul_self_le_two_pow_succ v
   rw [pow_succ] at h3
   rcases Nat.lt_or_ge v (8 * c) with h | h
@@ -131,23 +136,23 @@ theorem four_mul_padicValNat_le (p : ℕ) [hp : Fact p.Prime] (c : ℕ) {n : ℕ
 theorem sub_one_mul_padicValNat_lt (p : ℕ) [hp : Fact p.Prime] {n : ℕ} (hn : n ≠ 0) :
     (p - 1) * padicValNat p n < n := by
   have h : padicValNat p n ≤ padicValNat p n.factorial := by
-    rw [← padicValNat_dvd_iff_le (Nat.factorial_ne_zero n)]
-    exact pow_padicValNat_dvd.trans (Nat.dvd_factorial (Nat.pos_of_ne_zero hn) le_rfl)
+    rw [Nat.padicValNat_def (n := n.factorial), ← multiplicity_dvd_iff_le (Nat.factorial_ne_zero n)]
+    exact (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)).trans (Nat.dvd_factorial (Nat.pos_of_ne_zero hn) le_rfl)
   exact lt_of_le_of_lt (Nat.mul_le_mul_left _ h)
-    (sub_one_mul_padicValNat_factorial_lt_of_ne_zero p hn)
+    (by simpa only [Nat.padicValNat_def] using sub_one_mul_multiplicity_factorial_lt_of_ne_zero p hn)
 
 end Arithmetic
 
 section CharZero
 
-variable (K) in
 
+variable (K) in
 noncomputable def absRamificationIndex : ℕ := (ord ((ringChar 𝓀[K] : ℕ) : K)).toNat
 
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p] [CharZero K]
 
 theorem normalizedValuation_natCast_prime :
-    normalizedValuation K (p : K) = WithZero.exp (-(absRamificationIndex K : ℤ)) := by
+    normalizedValuation K (p : K) = WithZero.exp (-(absRamificationIndex (K := K) : ℤ)) := by
   have hp0 : (p : K) ≠ 0 := Nat.cast_ne_zero.mpr hp.out.ne_zero
   have hr : ringChar 𝓀[K] = p := ringChar.eq 𝓀[K] p
   have hlt : normalizedValuation K (p : K) < 1 := by
@@ -158,7 +163,7 @@ theorem normalizedValuation_natCast_prime :
   rw [absRamificationIndex, hr, Int.toNat_of_nonneg (by omega)]
 
 include p in
-theorem one_le_absRamificationIndex : 1 ≤ absRamificationIndex K := by
+theorem one_le_absRamificationIndex : 1 ≤ absRamificationIndex (K := K) := by
   have h := normalizedValuation_natCast_prime (K := K) p
   have hlt : normalizedValuation K (p : K) < 1 := by
     rw [← map_one (normalizedValuation K), normalizedValuation_lt_iff, map_one]
@@ -175,11 +180,11 @@ theorem normalizedValuation_natCast_of_not_dvd {m : ℕ} (hm : ¬ p ∣ m) :
 
 theorem normalizedValuation_natCast {n : ℕ} (hn : n ≠ 0) :
     normalizedValuation K (n : K) =
-      WithZero.exp (-(absRamificationIndex K * padicValNat p n : ℤ)) := by
+      WithZero.exp (-(absRamificationIndex (K := K) * padicValNat p n : ℤ)) := by
   obtain ⟨k, m, hm, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hn p hp.out.ne_one
   have hm0 : m ≠ 0 := by rintro rfl; exact hm (dvd_zero p)
-  rw [padicValNat.mul (pow_ne_zero _ hp.out.ne_zero) hm0, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hm]
+  rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.out.ne_zero) hm0,
+    Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hm]
   push_cast
   rw [map_mul, map_pow, normalizedValuation_natCast_prime p,
     normalizedValuation_natCast_of_not_dvd p hm, mul_one, ← WithZero.exp_nsmul]
@@ -187,7 +192,7 @@ theorem normalizedValuation_natCast {n : ℕ} (hn : n ≠ 0) :
   simp; ring
 
 theorem div_natCast_mem_valBall {a : ℤ} {x : K} (hx : x ∈ valBall K a) {n : ℕ} (hn : n ≠ 0) :
-    x / n ∈ valBall K (a - absRamificationIndex K * padicValNat p n) := by
+    x / n ∈ valBall K (a - absRamificationIndex (K := K) * padicValNat p n) := by
   rw [mem_valBall, map_div₀, normalizedValuation_natCast p hn, div_eq_mul_inv,
     ← WithZero.exp_neg, neg_neg, neg_sub, sub_eq_add_neg, WithZero.exp_add, mul_comm]
   exact mul_le_mul_right hx _
@@ -204,7 +209,7 @@ variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p] [CharZero K]
 
 theorem logTerm_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a) (k : ℕ) :
     (-1) ^ k * x ^ (k + 1) / ((k + 1 : ℕ) : K) ∈
-      valBall K ((k + 1) * a - absRamificationIndex K * padicValNat p (k + 1)) := by
+      valBall K ((k + 1) * a - absRamificationIndex (K := K) * padicValNat p (k + 1)) := by
   have h1 : (-1 : K) ^ k * x ^ (k + 1) ∈ valBall K ((k + 1 : ℕ) * a) := by
     rw [mem_valBall, map_mul, map_pow, Valuation.map_neg, map_one, one_pow, one_mul]
     exact pow_mem_valBall hx (k + 1)
@@ -213,21 +218,21 @@ theorem logTerm_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a) (k : ℕ) :
 
 theorem expTerm_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a) (k : ℕ) :
     x ^ k / (k.factorial : K) ∈
-      valBall K (k * a - absRamificationIndex K * padicValNat p k.factorial) :=
+      valBall K (k * a - absRamificationIndex (K := K) * padicValNat p k.factorial) :=
   div_natCast_mem_valBall p (pow_mem_valBall hx k) (Nat.factorial_ne_zero k)
 
 omit [CharP 𝓀[K] p] [CharZero K] in
 theorem sub_one_mul_padicValNat_factorial_le (k : ℕ) :
-    (p - 1) * padicValNat p k.factorial ≤ k :=
-  (sub_one_mul_padicValNat_factorial k).le.trans (Nat.sub_le _ _)
+    (p - 1) * padicValNat p k.factorial ≤ k := by
+  rw [Nat.padicValNat_def, hp.out.sub_one_mul_multiplicity_factorial]
+  exact Nat.sub_le _ _
 
 include p in
-
 theorem summable_logSeries {x : K} (hx : x ∈ valBall K 1) :
     Summable fun k : ℕ ↦ (-1) ^ k * x ^ (k + 1) / ((k + 1 : ℕ) : K) := by
   refine summable_of_tendsto_zero (tendsto_zero_iff_valBall.mpr fun N ↦ ?_)
   rw [eventually_atTop]
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   refine ⟨4 * N.toNat + 32 * e ^ 2, fun k hk ↦ valBall_antitone ?_ (logTerm_mem p hx k)⟩
   have h1 := four_mul_padicValNat_le p e (Nat.succ_ne_zero k)
   have h2 : N ≤ (N.toNat : ℤ) := Int.self_le_toNat N
@@ -238,7 +243,7 @@ theorem summable_logSeries {x : K} (hx : x ∈ valBall K 1) :
     ] at h3 h4
   nlinarith
 
-theorem one_le_of_lt_sub_one_mul {a : ℤ} (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+theorem one_le_of_lt_sub_one_mul {a : ℤ} (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     1 ≤ a := by
   have he := one_le_absRamificationIndex (K := K) p
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
@@ -247,7 +252,7 @@ theorem one_le_of_lt_sub_one_mul {a : ℤ} (ha : (absRamificationIndex K : ℤ) 
   nlinarith
 
 theorem logSeries_sub_self_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     logSeries x - x ∈ valBall K (a + 1) := by
   have ha1 := one_le_of_lt_sub_one_mul p ha
   have hs := summable_logSeries p (valBall_antitone ha1 hx)
@@ -256,7 +261,7 @@ theorem logSeries_sub_self_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a)
   refine tsum_mem_valBall fun k ↦ valBall_antitone ?_ (logTerm_mem p hx (k + 1))
   have h1 := sub_one_mul_padicValNat_lt p (Nat.succ_ne_zero (k + 1))
   set v := padicValNat p (k + 1 + 1)
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
   have h1' : ((p : ℤ) - 1) * v ≤ k + 1 := by
     have : ((p - 1) * v : ℕ) < k + 1 + 1 := h1
@@ -277,13 +282,12 @@ section Exp
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p] [CharZero K]
 
 omit [CharP 𝓀[K] p] [CharZero K] in
-
-theorem expTerm_order_bound {a : ℤ} (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a)
-    (k : ℕ) : (k : ℤ) ≤ (p - 1 : ℤ) * (k * a - absRamificationIndex K * padicValNat p k.factorial)
+theorem expTerm_order_bound {a : ℤ} (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a)
+    (k : ℕ) : (k : ℤ) ≤ (p - 1 : ℤ) * (k * a - absRamificationIndex (K := K) * padicValNat p k.factorial)
     := by
   have h1 := sub_one_mul_padicValNat_factorial_le p k
   set v := padicValNat p k.factorial
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
   have h1' : ((p : ℤ) - 1) * v ≤ k := by
     have hp1 : ((p - 1 : ℕ) : ℤ) = (p : ℤ) - 1 := by
@@ -296,7 +300,7 @@ theorem expTerm_order_bound {a : ℤ} (ha : (absRamificationIndex K : ℤ) < (p 
   nlinarith [mul_le_mul_of_nonneg_left h1' he, mul_le_mul_of_nonneg_left ha.le hk]
 
 theorem summable_expSeries {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     Summable fun k : ℕ ↦ x ^ k / (k.factorial : K) := by
   refine summable_of_tendsto_zero (tendsto_zero_iff_valBall.mpr fun N ↦ ?_)
   rw [eventually_atTop]
@@ -311,7 +315,7 @@ theorem summable_expSeries {a : ℤ} {x : K} (hx : x ∈ valBall K a)
   nlinarith
 
 theorem expSeries_sub_one_sub_self_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     expSeries x - 1 - x ∈ valBall K (a + 1) := by
   have hs := summable_expSeries p hx ha
   rw [expSeries, hs.tsum_eq_zero_add, ((summable_nat_add_iff 1).mpr hs).tsum_eq_zero_add]
@@ -321,13 +325,13 @@ theorem expSeries_sub_one_sub_self_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a
   rw [this]
   refine tsum_mem_valBall fun k ↦ valBall_antitone ?_ (expTerm_mem p hx (k + 1 + 1))
   have h1 := expTerm_order_bound p ha (k + 1 + 1)
-  have h0 := sub_one_mul_padicValNat_factorial_lt_of_ne_zero p (by omega : k + 1 + 1 ≠ 0)
+  have h0 := sub_one_mul_multiplicity_factorial_lt_of_ne_zero p (by omega : k + 1 + 1 ≠ 0)
   set v := padicValNat p (k + 1 + 1).factorial
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
   have hp1 : ((p - 1 : ℕ) : ℤ) = (p : ℤ) - 1 := by
     rw [Nat.cast_sub hp.out.one_le]; simp
-  have h0' : (((p - 1) * v : ℕ) : ℤ) < k + 1 + 1 := by exact_mod_cast h0
+  have h0' : (((p - 1) * v : ℕ) : ℤ) < k + 1 + 1 := by exact_mod_cast (by simpa only [v, Nat.padicValNat_def] using h0)
   push_cast [hp1] at h0' h1
   have he : (0 : ℤ) ≤ e := by positivity
   have h0'' : ((p : ℤ) - 1) * v ≤ k + 1 := by linarith
@@ -337,7 +341,7 @@ theorem expSeries_sub_one_sub_self_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a
   nlinarith [mul_le_mul_of_nonneg_left h0'' he, mul_le_mul_of_nonneg_left ha' hk]
 
 theorem expSeries_add {a : ℤ} {x y : K} (hx : x ∈ valBall K a) (hy : y ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     expSeries (x + y) = expSeries x * expSeries y := by
   let := IsTopologicalAddGroup.rightUniformSpace K
   have := isUniformAddGroup_of_addCommGroup (G := K)
@@ -366,14 +370,14 @@ theorem expSeries_add {a : ℤ} {x y : K} (hx : x ∈ valBall K a) (hy : y ∈ v
   field_simp
 
 theorem expSeries_sub_one_mem {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     expSeries x - 1 ∈ valBall K a := by
   have h := add_mem (valBall_antitone (by omega : a ≤ a + 1)
     (expSeries_sub_one_sub_self_mem p hx ha)) hx
   simpa using h
 
 theorem logSeries_mem_valBall {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     logSeries x ∈ valBall K a := by
   have h := add_mem (valBall_antitone (by omega : a ≤ a + 1) (logSeries_sub_self_mem p hx ha)) hx
   simpa using h

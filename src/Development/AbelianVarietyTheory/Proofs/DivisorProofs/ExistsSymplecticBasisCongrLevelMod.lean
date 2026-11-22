@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticZmodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticZmodLift
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 namespace GlobalTheory.SymplecticLevelLift
@@ -64,7 +69,8 @@ theorem exists_symplectic_equiv_congr : ∀ (h k : ℕ) (M : Type) [AddCommGroup
     simp only [hr, omegaStd]
   · have hla : l a = ∑ j, a j • v j := by
       conv_lhs => rw [← Finset.univ_sum_single a]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hv, ← map_smul, ← Pi.single_smul, smul_eq_mul, mul_one]
     rw [hla, c.equivFun_symm_apply, ← Finset.sum_sub_distrib, Finset.smul_sum]

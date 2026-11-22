@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CompatibleThetaRestrictions
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CompatibleThetaRestrictions
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictIsotropicQuotientWittTowerPropertie
+
+@[expose] public section
 
 open MeasureTheory BoundedContinuousFunction
 open scoped NNReal ENNReal
@@ -17,7 +21,7 @@ variable {G A : Type} [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAddGro
 theorem polish : PolishSpace G := by
   letI : UniformSpace G := IsTopologicalAddGroup.rightUniformSpace G
   haveI : IsUniformAddGroup G := isUniformAddGroup_of_addCommGroup
-  haveI : CompleteSpace G := IsRightUniformAddGroup.completeSpace_of_weaklyLocallyCompactSpace
+  haveI : CompleteSpace G := IsRightUniformAddGroup.completeSpace_of_weaklyLocallyCompactSpace G
   haveI : (uniformity G).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
   haveI : TopologicalSpace.IsCompletelyMetrizableSpace G := inferInstance
   infer_instance
@@ -269,9 +273,9 @@ theorem eq_zero_of_fourier_eq_zero : 鈭� (D : D7) (蠄 : AddChar (AF D.host.F) 鈩
   路 intro y
     exact h蠄.1.1.comp (htr.comp (continuous_const.matrix_mul continuous_id).matrix_trace)
   路 intro y u u'
-    simp only [Matrix.mul_add, Matrix.trace_add, map_add, AddChar.map_add_eq_mul]
+    simp only [Matrix.mul_add, Matrix.trace_add, map_add (f := _), AddChar.map_add_eq_mul]
   路 intro y y' u
-    simp only [Matrix.add_mul, Matrix.trace_add, map_add, AddChar.map_add_eq_mul]
+    simp only [Matrix.add_mul, Matrix.trace_add, map_add (f := _), AddChar.map_add_eq_mul]
   路 intro u
     simp only [Matrix.zero_mul, Matrix.trace_zero, map_zero, AddChar.map_zero_eq_one]
   路 intro y u

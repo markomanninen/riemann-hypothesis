@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ToMatrixRepOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ToMatrixRepOf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon TensorProduct
 open scoped Formalism.Per
 
@@ -34,7 +39,7 @@ theorem coboundary_cols (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : FinExt l)
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, smul_smul]
     | add y z hy hz =>
-      rw [map_add, map_add, hy, hz, ← Matrix.mulVec_add]
+      rw [map_add (f := _), map_add (f := _), hy, hz, ← Matrix.mulVec_add]
       congr 1
       funext x
       simp

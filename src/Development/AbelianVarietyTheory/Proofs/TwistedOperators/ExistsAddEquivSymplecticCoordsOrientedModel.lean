@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaEqB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
@@ -26,7 +30,8 @@ theorem gram_det_ne_zero (S : HSp D) : S.gram.det ≠ 0 := by
     intro i
     have := congrFun hv i
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply] at this
-    rw [hxdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxdef, map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [← this]
     refine Finset.sum_congr rfl fun j _ => ?_

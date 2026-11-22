@@ -1,13 +1,17 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.HasSubstBlock
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.GramFrameCompositionMvExpFact
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.IntOpTwoFreeOf
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.Inertia
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.AgreeOnAdjoin
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenCompatOf
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenFrameEOf
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.Tensor
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenFinal
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementC
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.HasSubstBlock
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.GramFrameCompositionMvExpFact
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.IntOpTwoFreeOf
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.Inertia
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.AgreeOnAdjoin
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenCompatOf
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenFrameEOf
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.Tensor
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.GramFrameComposition.EigenFinal
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -209,7 +213,8 @@ private theorem sum_inverse_mul_sum_eq_ite_frameM {n ν J : Type} [Fintype n] [D
     intro u
     have h : ∑ w, g u w • g.symm (Pi.single w 1) = u := by
       simp_rw [← LinearEquiv.map_smul]
-      rw [← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum]
       have : ∑ w, g u w • (Pi.single w (1 : ℂ) : Fin 4 × n → ℂ) = g u := by
         ext z
         simp [Finset.sum_apply, Pi.single_apply]
@@ -227,7 +232,8 @@ private theorem sum_inverse_mul_sum_eq_ite_frameM {n ν J : Type} [Fintype n] [D
     rw [map_mul]
     field_simp
   rw [Finset.sum_congr rfl (fun w _ => step w), Finset.sum_comm]
-  simp_rw [← Finset.mul_sum, ← map_sum, key]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [← Finset.mul_sum, ← map_sum, key]
   unfold frameM
   split_ifs with hab
   · subst hab
@@ -238,7 +244,8 @@ private theorem jetsIntegral_sum_C_mul {p : ℕ} [Fact p.Prime] {X κ : Type} [F
     (f : κ → MvPowerSeries X ℂ_[p]) (hr : ∀ k, ‖r k‖ ≤ 1) (hf : ∀ k, JetsIntegral (f k)) :
     JetsIntegral (∑ k, MvPowerSeries.C (r k) * f k) := by
   intro e
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one
   intro k _
   rw [MvPowerSeries.coeff_C_mul]
@@ -248,7 +255,7 @@ private theorem jetsIntegral_sum_C_mul {p : ℕ} [Fact p.Prime] {X κ : Type} [F
     _ ≤ 1 * 1 := mul_le_mul (hr k) (hf k e) (norm_nonneg _) zero_le_one
     _ = 1 := one_mul 1
 private theorem norm_jetPair_le_one {p : ℕ} [Fact p.Prime] {X : Type} (P : MvPolynomial X ℂ_[p]) (T : MvPowerSeries X ℂ_[p])
-    (hP : ∀ k, ‖MvPolynomial.coeff k P‖ ≤ 1) (hT : JetsIntegral T) : ‖jetPair P T‖ ≤ 1 := by
+    (hP : ∀ k, ‖AddMonoidAlgebra.coeff P k‖ ≤ 1) (hT : JetsIntegral T) : ‖jetPair P T‖ ≤ 1 := by
   unfold jetPair
   apply IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one
   intro e _

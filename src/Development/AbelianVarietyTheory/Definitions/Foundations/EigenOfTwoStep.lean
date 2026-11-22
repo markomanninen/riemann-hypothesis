@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,6 @@ def SSPotA (N l w : ℕ) (lam : Letter → ℂ) : Prop :=
       (FreeAlgebra.lift ℂ (opL ℂ N l) P F) ∈ Triv ℂ w (Gam N l)
 
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
-
-def Tower.SSBA (X : Tower Ω ε) (N l w : ℕ) [Fact l.Prime] (E : Type) [Field E] [Algebra ℤ_[l] E] (lam : Letter → E) :
-    Prop :=
-  ∃ P ∈ Algebra.adjoin E (FreeAlgebra.ι E '' {T : Letter | admitted N l T}),
-    FreeAlgebra.lift E lam P = 1 ∧ ∀ x ∈ X.VB N l w E, ∀ T : Letter, admitted N l T →
-    (X.opV N l E T - lam T • (1 : Module.End E (E ⊗[ℤ_[l]] X.Fn l))) (FreeAlgebra.lift E (X.opV N l E) P x) = 0
 
 namespace SSAdm
 
@@ -39,12 +37,12 @@ theorem lift_congr {B : Type} [Semiring B] [Algebra R B] {f g : Letter → B} (h
 
 variable {M : Type} [AddCommGroup M] [Module R M]
 
+
 open scoped MatrixGroups TensorProduct in
 open Matrix in
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ} in
 variable {R : Type} [CommRing R] {A : Set _root_.GlobalTheory.KZ.Letter} in
 variable {M : Type} [AddCommGroup M] [Module R M] in
-
 theorem _root_.GlobalTheory.KZ.SSAdm.lift_sub_smul_mem {f : _root_.GlobalTheory.KZ.Letter → Module.End R M}
     {lam : _root_.GlobalTheory.KZ.Letter → R} {W : Submodule R M}
     (hW : ∀ T ∈ A, ∀ x ∈ W, f T x ∈ W) {x : M} (hx : ∀ T ∈ A, f T x - lam T • x ∈ W)
@@ -65,10 +63,10 @@ theorem _root_.GlobalTheory.KZ.SSAdm.lift_sub_smul_mem {f : _root_.GlobalTheory.
       exact ⟨fun y hy => W.smul_mem r hy, W.zero_mem⟩
     | add P Q _ _ hP hQ =>
       refine ⟨fun y hy => ?_, ?_⟩
-      · rw [map_add, LinearMap.add_apply]
+      · rw [map_add (f := _), LinearMap.add_apply]
         exact W.add_mem (hP.1 y hy) (hQ.1 y hy)
       · convert W.add_mem hP.2 hQ.2 using 1
-        simp only [map_add, LinearMap.add_apply, add_smul]
+        simp only [map_add (f := _), LinearMap.add_apply, add_smul]
         abel
     | mul P Q _ _ hP hQ =>
       refine ⟨fun y hy => ?_, ?_⟩
@@ -114,54 +112,5 @@ theorem SSPotA_congr {N l w : ℕ} {lam lam' : Letter → ℂ} (h : ∀ T, admit
     · rw [← SSAdm.lift_congr (A := {T | admitted N l T}) hab hP, h1]
     · rw [← hab T hT]; exact h2 F hF T hT
   exact ⟨key h, key fun T hT => (h T hT).symm⟩
-
-theorem Tower.SSBA.eigen_of_two_step {X : Tower Ω ε} {N l w : ℕ} [Fact l.Prime] {E : Type} [Field E]
-    [Algebra ℤ_[l] E] {lam : Letter → E} (h : X.SSBA N l w E lam) {x : E ⊗[ℤ_[l]] X.Fn l} (hx : x ∈ X.VB N l w E)
-    (h2 : ∀ S, admitted N l S → ∀ T, admitted N l T →
-      (X.opV N l E S - lam S • (1 : Module.End E (E ⊗[ℤ_[l]] X.Fn l)))
-        ((X.opV N l E T - lam T • (1 : Module.End E (E ⊗[ℤ_[l]] X.Fn l))) x) = 0) :
-    ∀ T, admitted N l T → X.opV N l E T x = lam T • x := by
-  obtain ⟨P, hP, h1, hk⟩ := h
-  intro T hT
-  have := SSAdm.eigen_of_two_step (A := {T | admitted N l T}) (Z := ⊥) (f := X.opV N l E) (lam := lam)
-    (fun T _ z hz => by rw [(Submodule.mem_bot E).1 hz, map_zero]; exact Submodule.zero_mem _) hP h1 (x := x)
-    (fun T hT => (Submodule.mem_bot E).2 (hk x hx T hT))
-    (fun S hS T hT => (Submodule.mem_bot E).2 (h2 S hS T hT)) T hT
-  rw [Submodule.mem_bot, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply] at this
-  exact sub_eq_zero.1 this
-
-example (N l : ℕ) : ¬ admitted N l (Letter.T 1) := fun h => Nat.not_prime_one h.1
-
-example : admitted 5 3 (Letter.T 2) ∧ admitted 5 3 Letter.U ∧ admitted 5 3 (Letter.D 2) ∧
-    ¬ admitted 5 3 (Letter.T 3) ∧ ¬ admitted 5 3 (Letter.T 5) ∧ ¬ admitted 5 3 (Letter.D 5) := by
-  simp only [admitted]
-  norm_num
-
-example (N l w : ℕ) (lam : Letter → ℂ) (c : ℂ) :
-    SSPotA N l w lam ↔
-      SSPotA N l w (fun T => match T with | Letter.T 1 => c | T => lam T) := by
-  refine SSPotA_congr fun T hT => ?_
-  split
-  · exact absurd hT.1 Nat.not_prime_one
-  · rfl
-
-example (N l : ℕ) (f : Letter → Module.End ℂ (ℂ × ℂ)) (lam : Letter → ℂ)
-    (hU : f Letter.U = LinearMap.inl ℂ ℂ ℂ ∘ₗ LinearMap.snd ℂ ℂ ℂ)
-    (hf : ∀ T, admitted N l T → T ≠ Letter.U → f T = 0) (hl : ∀ T, admitted N l T → lam T = 0) :
-    ¬ ∃ P ∈ Algebra.adjoin ℂ (FreeAlgebra.ι ℂ '' {T : Letter | admitted N l T}), FreeAlgebra.lift ℂ lam P = 1 ∧
-      ∀ x : ℂ × ℂ, ∀ T, admitted N l T →
-        (f T - lam T • (1 : Module.End ℂ (ℂ × ℂ))) (FreeAlgebra.lift ℂ f P x) = 0 := by
-  rintro ⟨P, hP, h1, hk⟩
-  have hcase : ∀ T, admitted N l T → f T = 0 ∨ f T = LinearMap.inl ℂ ℂ ℂ ∘ₗ LinearMap.snd ℂ ℂ ℂ := fun T hT => by
-    by_cases h : T = Letter.U
-    · exact Or.inr (h ▸ hU)
-    · exact Or.inl (hf T hT h)
-  have := SSAdm.eigen_of_two_step (A := {T | admitted N l T}) (Z := ⊥) (f := f) (lam := lam)
-    (fun T _ z hz => by rw [(Submodule.mem_bot ℂ).1 hz, map_zero]; exact Submodule.zero_mem _) hP h1 (x := (0, 1))
-    (fun T hT => (Submodule.mem_bot ℂ).2 (hk _ T hT))
-    (fun S hS T hT => by
-      rcases hcase S hS with a | a <;> rcases hcase T hT with b | b <;> simp [a, b, hl S hS, hl T hT])
-    Letter.U trivial
-  simp [hU, hl Letter.U trivial] at this
 
 end GlobalTheory.KZ

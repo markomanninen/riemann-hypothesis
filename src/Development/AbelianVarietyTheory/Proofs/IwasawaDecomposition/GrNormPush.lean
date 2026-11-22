@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntOIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntOIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,12 +118,6 @@ theorem Tri.diag (hu : Ind t x u) (hu' : Ind t x u') (h : Tri t x u u') {j : Fin
   obtain ⟨c', h3, h4⟩ := h j
   exact ⟨left_ne_zero_of_mul_eq_one (h2 j c d hc hd), hu.2 _ _ _ hc h4 ▸ h3⟩
 
-theorem Tri.diag_mul (hu : Ind t x u) (hu' : ∀ i, IsTanAtG t x (u' i)) (h : Tri t x u u') {c d e : Fin m → k}
-    {j : Fin m} (hd : ∀ i, j < i → d i = 0) {w : Sp (DualNumber k) ⟶ t.G.left} (hw : IsCombAtG t x u' d w)
-    (hc : IsCombAtG t x u c (u' j)) (he : IsCombAtG t x u e w) : e j = d j * c j := by
-  obtain ⟨c', e', h1, -, h2, h3⟩ := h.comp hu.1 hu' hd hw
-  rw [hu.2 _ _ _ he h3, hu.2 _ _ _ hc h1, h2]
-
 end Tan
 
 section Norm
@@ -127,43 +125,6 @@ section Norm
 variable {t} {C : Type} [NontriviallyNormedField C] [IsUltrametricDist C] {x : Sp C ⟶ X} {m : ℕ}
   {u u' : Fin m → (Sp (DualNumber C) ⟶ t.G.left)}
 
-open Pointwise in
-theorem Tri.grNorm_eq (hu : Ind t x u) (hu' : Ind t x u') (h : Tri t x u u') (Λ : Set (Sp (DualNumber C) ⟶ t.G.left))
-    {j : Fin m} {c : Fin m → C} (hc : IsCombAtG t x u c (u' j)) :
-    grNorm t x Λ u' j = ‖c j‖ * grNorm t x Λ u j := by
-  have h0 := (h.diag hu hu' hc).1
-  obtain ⟨h1, h2⟩ := h.symm hu hu'
-  rw [grNorm, grNorm, ← smul_eq_mul, ← Real.sInf_smul_of_nonneg (norm_nonneg _)]
-  congr 1
-  ext r
-  constructor
-  · rintro ⟨d, d0, d1, ⟨w, hw, d2⟩, rfl⟩
-    obtain ⟨c', e, k1, k2, k3, k4⟩ := h.comp hu.1 hu'.1 d1 d2
-    obtain rfl := hu.2 _ _ _ hc k1
-    refine ⟨_, ⟨e, k3 ▸ mul_ne_zero d0 h0, k2, ⟨w, hw, k4⟩, rfl⟩, ?_⟩
-    have := norm_ne_zero_iff.2 h0
-    simp only [k3, norm_mul, smul_eq_mul]
-    field_simp
-  · rintro ⟨_, ⟨d, d0, d1, ⟨w, hw, d2⟩, rfl⟩, rfl⟩
-    obtain ⟨c', e, k1, k2, k3, k4⟩ := h1.comp hu'.1 hu.1 d1 d2
-    have e1 := h2 j c c' hc k1
-    refine ⟨e, k3 ▸ mul_ne_zero d0 (right_ne_zero_of_mul_eq_one e1), k2, ⟨w, hw, k4⟩, ?_⟩
-    rw [k3, eq_inv_of_mul_eq_one_right e1]
-    simp [mul_comm]
-
-theorem grNorm_push {X' : Scheme.{0}} {t' : SAB H X'} {f : X' ⟶ X} (mu : SABMap t' t f) {x' : Sp C ⟶ X'}
-    (hx : x' ≫ f = x) {Λ' : Set (Sp (DualNumber C) ⟶ t'.G.left)} {Λ : Set (Sp (DualNumber C) ⟶ t.G.left)}
-    (hΛ : ∀ v, IsTanAtG t' x' v → (v ∈ Λ' ↔ v ≫ mu.φ ∈ Λ)) {v : Fin m → (Sp (DualNumber C) ⟶ t'.G.left)}
-    (hv : ∀ i, IsTanAtG t' x' (v i)) (j : Fin m) :
-    grNorm t' x' Λ' v j = grNorm t x Λ (fun i => v i ≫ mu.φ) j := by
-  obtain ⟨U, rfl⟩ := exists_tan hv
-  have e : ∀ c : Fin m → C, (∃ w ∈ Λ', IsCombAtG t' x' (fun i => (tv (U i)).left) c w) ↔
-      ∃ w ∈ Λ, IsCombAtG t x (fun i => (tv (pushL mu x' hx (U i))).left) c w := fun c => by
-    simp only [comb_iff, exists_eq_right]
-    rw [hΛ _ (isTan_tv _), ← left_pushL mu x' hx, map_sum]
-    simp only [map_smul]
-  simp only [grNorm, e]
-  rfl
 
 end Norm
 

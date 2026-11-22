@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.SqPairLocalOfSteps
-import Lemmata.GeneralBFactLeftBis.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.SqPairLocalOfSteps
+public import Lemmata.GeneralBFactLeftBis.Imports
+
+@[expose] public section
 
 noncomputable section
 open NumberField

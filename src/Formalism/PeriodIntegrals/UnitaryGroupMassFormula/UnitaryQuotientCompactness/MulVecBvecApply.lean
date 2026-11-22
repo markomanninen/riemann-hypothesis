@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.NilpotentSubgroup
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.NilpotentSubgroup
+
+@[expose] public section
 
 open Matrix
 
@@ -238,10 +242,5 @@ lemma uw_sub_S {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hh 
   refine ⟨by simp, fun a i _ => ?_, fun i j _ _ _ => ?_⟩
   · rw [Matrix.one_apply]
   · rw [Matrix.one_apply]
-
-lemma n_sub_S {n : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ} (hn : n ∈ Nset k r) :
-    n ∈ Sset k r z := by
-  simp only [Sset, Set.mem_setOf_eq]
-  exact ⟨1, one_mem_UW, n, hn, (Matrix.one_mul n).symm⟩
 
 end PI.QuotSetU.UnitaryGroupMassFormula.SW

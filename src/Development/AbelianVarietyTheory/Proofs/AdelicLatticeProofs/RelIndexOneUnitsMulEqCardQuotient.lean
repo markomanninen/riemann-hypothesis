@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
@@ -39,7 +43,7 @@ theorem relIndex_oneUnits_mul_eq_card_quotient :
       map_mul' := by
         intro u v
         rw [huniq (u * v) (c u + c v + t * (c u * c v)) (by
-          rw [Subgroup.coe_mul, Units.val_mul, hc u, hc v]; ring), ← ofAdd_add, ← map_add]
+          rw [Subgroup.coe_mul, Units.val_mul, hc u, hc v]; ring), ← ofAdd_add, ← map_add (f := _)]
         congr 1
         rw [Ideal.Quotient.eq, Ideal.mem_span_singleton]
         have : c u + c v + t * (c u * c v) - (c u + c v) = t * (c u * c v) := by ring

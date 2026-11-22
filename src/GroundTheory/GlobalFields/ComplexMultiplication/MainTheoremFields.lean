@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
-import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.Supersingular
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
+public import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.Supersingular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -177,7 +182,7 @@ theorem exists_isArithFrobAt (L : IntermediateField K ℂ) [FiniteDimensional K 
   have hC : ∀ σ ∈ C, ∀ ρ : L ≃ₐ[K] L, ρ * σ * ρ⁻¹ ∈ C := fun σ hσ ρ ↦
     IsConj.trans hσ (isConj_iff.2 ⟨ρ, rfl⟩)
   have hdens := hasDirichletDensity_setOf_arithFrobAt_mem C hC
-  rw [← hasDirichletDensity_inter_degreeOnePrimes_iff ℚ] at hdens
+  rw [← hasDirichletDensity_inter_degreeOnePrimes_iff (K := ℚ) _ _] at hdens
   have : Nonempty C := ⟨⟨τ, IsConj.refl τ⟩⟩
   have hpos : (0 : ℝ) < Nat.card C / Nat.card (L ≃ₐ[K] L) :=
     div_pos (Nat.cast_pos.2 Nat.card_pos) (Nat.cast_pos.2 Nat.card_pos)

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem lead_tri_mul {c z c' : Matrix (Fin n) (Fin n) ℂ} (hc : IsLowerTri c) (
     · intro a
       rw [if_pos (by rw [Fin.coe_castLE]; exact a.2)]
   unfold lead
-  rw [dif_pos hi, dif_pos hi, sub_mul_upper hi hc', sub_lower_mul hi hc, Matrix.det_mul, Matrix.det_mul,
+  rw [dite_eq_left hi, dite_eq_left hi, sub_mul_upper hi hc', sub_lower_mul hi hc, Matrix.det_mul, Matrix.det_mul,
     Matrix.det_of_lowerTriangular _ (lowerTri_sub hi hc), Matrix.det_of_upperTriangular (upperTri_sub hi hc'),
     Finset.prod_mul_distrib, ← hp (fun l => c l l), ← hp (fun l => c' l l)]
   simp only [Matrix.submatrix_apply]
@@ -85,7 +89,7 @@ theorem lead_posDef {x : Matrix (Fin n) (Fin n) ℂ} (hx : x.PosDef) (i : ℕ) (
     0 < (lead i x).re ∧ (lead i x).im = 0 := by
   have hp := (hx.submatrix (Fin.castLE_injective hi)).det_pos
   unfold lead
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
   obtain ⟨h1, h2⟩ := Complex.pos_iff.mp hp
   exact ⟨h1, h2.symm⟩
 

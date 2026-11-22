@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwoVarPolySubstMatrixBasicLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHomogeneousPolyCocycleEqOnCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HomogeneousPolyCocycleDiffCoboundaryOfEqOnStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HomogeneousLiftCompatible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwoVarPolySubstMatrixBasicLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHomogeneousPolyCocycleEqOnCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HomogeneousPolyCocycleDiffCoboundaryOfEqOnStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HomogeneousLiftCompatible
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups
 
@@ -52,7 +57,7 @@ theorem step (N l w : ℕ) [Fact l.Prime] (hN : 0 < N) (hl2 : l ≠ 2) (hlN : ¬
   have hr : IsCoc w (Gam N l) r := by
     refine ⟨fun γ hγ => (hz'.1 γ hγ).map c, fun γ hγ δ hδ => ?_⟩
     simp only [r]
-    rw [hz'.2 γ hγ δ hδ, map_add, L'.2.2.2.2.1 _ c]
+    rw [hz'.2 γ hγ δ hδ, map_add (f := _), L'.2.2.2.2.1 _ c]
   have hnear : Near r y := by
     obtain ⟨M1, hM1, h1⟩ := hz'n
     obtain ⟨M2, hM2, h2⟩ := hΦ.2.2.2 n
@@ -105,8 +110,8 @@ end GlobalTheory.KZ.H3.CocLift
 
 namespace GlobalTheory.KZ.H3
 
-open Classical in
 
+open Classical in
 theorem cocycle_lift_of_fam : ∀ (N l w : ℕ) [Fact l.Prime], 0 < N → l ≠ 2 → ¬ l ∣ N → Odd w → ∀ Φ, IsFam l w (Gam N l) Φ →
     ∃ z : SL(2, ℤ) → MvPolynomial (Fin 2) ℤ_[l], IsCoc w (Gam N l) z ∧
       ∀ n, Near (fun δ => MvPolynomial.map (PadicInt.toZModPow n) (z δ)) (Φ n) := by
@@ -141,7 +146,7 @@ theorem cocycle_lift_of_fam : ∀ (N l w : ℕ) [Fact l.Prime], 0 < N → l ≠ 
   refine ⟨q, ⟨fun γ _ => (hq γ).1, fun γ hγ δ hδ => ?_⟩, fun n => ?_⟩
   · refine ((hq (γ * δ)).2.2 _ fun n => ?_).symm
     have hγδ : γ * δ ∈ Gam N l := (Gam N l).mul_mem hγ hδ
-    rw [map_add, L.2.2.2.2.1 _ _, (hq γ).2.1 n, (hq δ).2.1 n, hfam γ hγ, hfam δ hδ, hfam _ hγδ,
+    rw [map_add (f := _), L.2.2.2.2.1 _ _, (hq γ).2.1 n, (hq δ).2.1 n, hfam γ hγ, hfam δ hδ, hfam _ hγδ,
       (seq n).2.1.2 γ hγ δ hδ]
   · obtain ⟨M, hM, hMδ⟩ := (seq n).2.2
     refine ⟨M * (N * l), Nat.mul_pos hM (Nat.mul_pos hN hp.pos), fun δ hδ => ?_⟩

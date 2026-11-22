@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem notMem_span_of_commute {V : Type} [AddCommGroup V] [Module ℂ V] (G : S
       obtain ⟨A, hA, ha⟩ := hx
       obtain ⟨B, hB, hb⟩ := hy
       refine ⟨A * B, mul_mem hA hB, ?_⟩
-      rw [map_add]
+      rw [map_add (f := _)]
       nth_rewrite 1 [(h2 A hA B hB).eq]
       rw [Module.End.mul_apply, Module.End.mul_apply, ha, hb, map_zero, map_zero, add_zero]
     | smul c x _ hx =>
@@ -177,14 +181,16 @@ theorem exists_invariant_form {Λ : AddSubgroup (WO S T)} {e : AE D} (he : IsSpl
         | mul_right B _ g hg ih =>
           obtain ⟨y', N, hy', rfl⟩ := hg
           refine ⟨fun y hy => ?_, ?_⟩
-          · rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
-            refine Finset.sum_nonneg fun k _ => ?_
-            rw [heisL_apply, ← heisO_add_of_orth ψ S T (half_orth he (isHalf_nsmul hy' k) hy)]
-            exact ih.1 _ (isHalf_add (isHalf_nsmul hy' k) hy)
-          · rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
-            refine Finset.sum_pos' (fun k _ => ih.1 _ (isHalf_nsmul hy' k)) ⟨0, Finset.mem_range.2 N.succ_pos, ?_⟩
-            rw [heisL_apply, zero_smul, heisO_zero]
-            exact ih.2
+          set_option synthInstance.maxHeartbeats 100000 in
+            · rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
+              refine Finset.sum_nonneg fun k _ => ?_
+              rw [heisL_apply, ← heisO_add_of_orth ψ S T (half_orth he (isHalf_nsmul hy' k) hy)]
+              exact ih.1 _ (isHalf_add (isHalf_nsmul hy' k) hy)
+          set_option synthInstance.maxHeartbeats 100000 in
+            · rw [Module.End.mul_apply, LinearMap.sum_apply, map_sum, map_sum]
+              refine Finset.sum_pos' (fun k _ => ih.1 _ (isHalf_nsmul hy' k)) ⟨0, Finset.mem_range.2 N.succ_pos, ?_⟩
+              rw [heisL_apply, zero_smul, heisO_zero]
+              exact ih.2
       intro B hB h0
       have := (this B hB).2
       rw [h0, map_zero] at this

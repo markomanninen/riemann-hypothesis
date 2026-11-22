@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.GradedCoef
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.GradedCoef
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ def ColDeriv (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.K
 def LinOp (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) : Prop :=
   ∀ (k : ℕ) (β : Idx D j G.N →₀ ℕ) (r : Op X la G.N) (x : ↥(HK X la G.w wF)),
     x ∈ Jid X la G.w ^ k • (⊤ : Submodule ↥(Frac0 X la G.w) ↥(HK X la G.w wF)) →
-    (β.sum fun _ n => n) ≤ k → rD G la β (algebraMap (Op X la G.N) (Kp X la G.N) r • x) = r • rD G la β x
+    (β.sum fun _ n => n) ≤ k → rD G la β (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ r • x) = r • rD G la β x
 
 def LiftMul (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) (Q : LocalPointData G la) (T : ℕ) : Prop :=
   ∀ (x : ↥(HK X la G.w wF)) (α : Fin (WeightFamilies.dimY D j) → ℕ),

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OmpCoset
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OmpCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace Formalism.L2.SG.NGCut.NormalVectorPairings
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 theorem UUE_eq_Asp {D : D7} {T T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (hΛ : Submodule.IsLattice D.host.E Λ) (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+    (hΛ : Submodule.IsFullLattice D.host.E Λ) (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hL : IsLift Λ F) (hL' : IsLift Λ F') : UUE Λ F F' = Asp F.fl F'.fl := by
   refine le_antisymm ?_ ?_
   · have hX' : F'.fl.X ≤ Asp F.fl F'.fl := by rw [← Asp_symm]; exact X_le_Asp F'.fl F.fl

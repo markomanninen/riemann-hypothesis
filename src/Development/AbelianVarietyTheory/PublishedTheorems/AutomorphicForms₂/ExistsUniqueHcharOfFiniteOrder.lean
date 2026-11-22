@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,8 @@ theorem finite_contEmbInf (w : InfinitePlace E) :
   have hd : DenseRange (algebraMap E w.Completion) := by
     refine Dense.mono ?_ (InfinitePlace.Completion.denseRange_coe w)
     rintro _ ⟨a, rfl⟩
-    exact ⟨WithAbs.equiv w.1 a, rfl⟩
+    refine ⟨WithAbs.equiv w.1 a, ?_⟩
+    simp [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
   refine hd.equalizer a.2 b.2 ?_
   funext k
   exact DFunLike.congr_fun h k
@@ -423,8 +428,9 @@ theorem isAlgPos_zero_of_orderDvd {χ : HChar E} {m : ℕ} (hm : 0 < m) (h : χ.
   have h2 : ∀ w : InfinitePlace E, ∃ y : w.Completion, y ^ m = algebraMap E w.Completion (k : E) := fun w => by
     rcases w.isReal_or_isComplex with hw | hw
     · let e := InfinitePlace.Completion.ringEquivRealOfIsReal hw
-      have he : e (algebraMap E w.Completion (k : E)) = InfinitePlace.embedding_of_isReal hw (k : E) :=
-        InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv w.1).symm (k : E))
+      have he : e (algebraMap E w.Completion (k : E)) = InfinitePlace.embedding_of_isReal hw (k : E) := by
+        simpa [e, AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply] using
+          InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv w.1).symm (k : E))
       refine ⟨e.symm ((InfinitePlace.embedding_of_isReal hw (k : E)) ^ ((m : ℝ)⁻¹)), e.injective ?_⟩
       rw [map_pow, e.apply_symm_apply, he, Real.rpow_inv_natCast_pow (hk _).le hm.ne']
     · let e := InfinitePlace.Completion.ringEquivComplexOfIsComplex hw
@@ -462,33 +468,6 @@ open GlobalTheory.HeckeGal
 theorem HeckeLAdicCharacter.globalArtin (H : HeckeLAdicCharacter) : GlobalArtinReciprocity := fun E Ω _ _ _ _ _ =>
   let ⟨art, ha, _⟩ := H E Ω
   ⟨art, ha⟩
-
-theorem HeckeLAdicCharacter.full (H : HeckeLAdicCharacter) (E Ω : Type) [Field E] [NumberField E] [Field Ω]
-    [Algebra E Ω] [IsAlgClosure E Ω] :
-    ∃ art : Ideles E →* Gab E Ω, IsGlobalArtin art ∧ ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ),
-      (∀ (χ : HChar E) (n : (E →+* ℂ) → ℤ), χ.IsAlg n →
-        ∃ r : G E Ω →* (Qbar l)ˣ, Continuous r ∧ IsLAdicOf art ι χ n r ∧
-          (∀ r', IsLAdicOf art ι χ n r' → r' = r) ∧
-          ∀ v : HeightOneSpectrum (𝓞 E), ((l : ℕ) : 𝓞 E) ∉ v.asIdeal → ∀ A : ValuationSubring Ω, IsPlaceOver A v →
-            (∀ z : Qbar l, (∃ σ ∈ Ine (F := E) A, ((r σ : (Qbar l)ˣ) : Qbar l) = z) ↔
-              ∃ x, IsUnitAt v x ∧ ι.symm ((χ.loc v x : ℂˣ) : ℂ) = z) ∧
-            ((∀ σ ∈ Ine (F := E) A, r σ = 1) ↔ χ.UnrAt v) ∧
-            (χ.UnrAt v → ∀ σ : G E Ω, IsFrob (F := E) A (normV v) σ →
-              ((r σ : (Qbar l)ˣ) : Qbar l) = (ι.symm ((χ.val v : ℂˣ) : ℂ))⁻¹)) ∧
-      (∀ m : ℕ, 0 < m → ∀ χ : HChar E, χ.OrderDvd m →
-        ∃! r : G E Ω →* (Qbar l)ˣ, Continuous r ∧ r ^ m = 1 ∧ IsLAdicOf art ι χ 0 r) ∧
-      (∀ m : ℕ, 0 < m → ∀ r : G E Ω →* (Qbar l)ˣ, Continuous r → r ^ m = 1 →
-        ∃! χ : HChar E, χ.OrderDvd m ∧ IsLAdicOf art ι χ 0 r) := by
-  obtain ⟨art, ha, h⟩ := H E Ω
-  refine ⟨art, ha, fun l _ ι => ⟨fun χ n hn => ?_, fun m hm χ hχ => ?_,
-    fun m hm r hr hrm => exists_unique_hchar_of_finite_order ha ι r hr hm hrm⟩⟩
-  · obtain ⟨r, ⟨hr, hf⟩, -⟩ := h l ι χ n (isAlgPos_of_isAlg hn)
-    exact ⟨r, hr, hf, fun r' h' => h'.unique ha.quot.surjective hf, fun v hv A hA =>
-      ⟨hf.ine_image ha (Or.inl hv) hA, hf.unr_iff ha (Or.inl hv) hA,
-        fun hu σ hσ => hf.frob_unr ha (Or.inl hv) hu hA hσ⟩⟩
-  · obtain ⟨r, ⟨hr, hf⟩, -⟩ := h l ι χ 0 (isAlgPos_zero_of_orderDvd hm hχ)
-    exact ⟨r, ⟨hr, hf.pow_eq_one ha.quot.surjective hχ, hf⟩,
-      fun r' h' => h'.2.2.unique ha.quot.surjective hf⟩
 
 end GlobalTheory.Published
 

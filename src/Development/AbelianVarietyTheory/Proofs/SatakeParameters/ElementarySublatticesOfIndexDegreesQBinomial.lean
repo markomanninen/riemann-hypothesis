@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QBinomialSumCardQuotientSubspacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QBinomialSumCardQuotientSubspacesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,6 +89,11 @@ def toLat (L : Lat O K r) (W : Submodule (ResidueField O) (Red L.1)) : Lat O K r
     { fg := by
         haveI : Module.Finite O L.1 := Module.Finite.iff_fg.2 L.2.fg
         exact (IsNoetherian.noetherian (pull L.1 W)).map _
+      linearIndepOn := by
+        have hfg : ((pull L.1 W).map L.1.subtype).FG := by
+          haveI : Module.Finite O L.1 := Module.Finite.iff_fg.2 L.2.fg
+          exact (IsNoetherian.noetherian (pull L.1 W)).map _
+        exact (Submodule.IsLattice.of_fg K hfg).linearIndepOn
       span_eq_top := by
         have hle : (maximalIdeal O • L.1 : Submodule O (Fin r → K)) ≤ (pull L.1 W).map L.1.subtype := by
           rw [← map_subtype_smul_top]

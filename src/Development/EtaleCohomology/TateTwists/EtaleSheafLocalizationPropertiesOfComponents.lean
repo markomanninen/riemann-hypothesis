@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsEqOfLocallyEq
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsEqOfLocallyEq
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleSheafificationSectionsLocallyFromPresheaf
 theorem etale_sheaf_localization_properties_of_components : LateralTheory.EtaleFoundations.EtaleSheafificationSectionsLocallyFromPresheaf := by

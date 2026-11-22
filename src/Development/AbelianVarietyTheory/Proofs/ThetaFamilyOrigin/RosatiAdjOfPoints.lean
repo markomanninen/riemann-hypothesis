@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RosatiAdjMul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.RosatiAdj
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RosatiAdjMul
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -102,17 +107,14 @@ theorem rosatiAdj_zpow (M : RigLB A) (c : CubicalStr A M) (hs : Out.Sym A M.L) (
 theorem comp_id_zpow {T : Over S} (w : T ⟶ A) (a : ℤ) : w ≫ (𝟙 A) ^ a = w ^ a := by
   rw [GrpObj.comp_zpow, Category.comp_id]
 
-theorem isMonHom_id_zpow (a : ℤ) : IsMonHom ((𝟙 A : A ⟶ A) ^ a) where
-  one_hom := by
-    rw [comp_id_zpow]
-    have o : η[A] = 1 := by simp [Hom.one_def]
-    rw [o, one_zpow]
-  mul_hom := by
-    have o : μ[A] = fst A A * snd A A := by simp [Hom.mul_def]
-    rw [comp_id_zpow, o, mul_zpow, MonObj.comp_mul, tensorHom_fst, tensorHom_snd, comp_id_zpow, comp_id_zpow]
+theorem isMonHom_id_zpow (a : ℤ) : IsMonHom ((𝟙 A : A ⟶ A) ^ a) := by
+  refine ⟨?_, ?_⟩
+  · simp only [comp_id_zpow, MonObj.one_eq_one, one_zpow]
+  · simp only [comp_id_zpow, MonObj.mul_eq_mul, mul_zpow, MonObj.comp_mul,
+      tensorHom_fst, tensorHom_snd]
+
 
 variable (A) in
-
 def intRingAct : RingAct A ℤ where
   act a := (𝟙 A) ^ a
   hom := isMonHom_id_zpow

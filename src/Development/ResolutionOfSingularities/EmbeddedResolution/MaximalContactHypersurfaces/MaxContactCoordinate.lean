@@ -1,19 +1,24 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.JacobianCriterion
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
-import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactIdeal
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.JacobianCriterion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.LocalParameters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheafOrderDecrease
+public import Development.ResolutionOfSingularities.Foundations.Schemes.IdealSheafData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.MaxContactIdeal
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open AlgebraicGeometry CategoryTheory TopologicalSpace
@@ -309,7 +314,8 @@ theorem exists_isMaxContactCoord (I : X.IdealSheafData) {m : ℕ} (hm : 1 ≤ m)
         (algebraMap Γ(X, U) ↑(X.presheaf.stalk x) s)
         = ∑ i, (KaehlerDifferential.map k k Γ(X, U) ↑(X.presheaf.stalk x))
             (a i • (EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, U) i)) := by
-      rw [← KaehlerDifferential.map_D k k Γ(X, U) ↑(X.presheaf.stalk x) s, hrepr, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← KaehlerDifferential.map_D k k Γ(X, U) ↑(X.presheaf.stalk x) s, hrepr, map_sum]
     rw [h0, TensorProduct.tmul_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     have h1 : (KaehlerDifferential.map k k Γ(X, U) ↑(X.presheaf.stalk x))
@@ -369,7 +375,8 @@ theorem exists_isMaxContactCoord (I : X.IdealSheafData) {m : ℕ} (hm : 1 ≤ m)
   have hz : KaehlerDifferential.D k Γ(X, X.basicOpen (a i0))
       (algebraMap Γ(X, U) Γ(X, X.basicOpen (a i0)) s)
       = ∑ i, (algebraMap Γ(X, U) Γ(X, X.basicOpen (a i0)) (a i)) • e i := by
-    rw [← KaehlerDifferential.map_D k k Γ(X, U) Γ(X, X.basicOpen (a i0)) s, hrepr, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← KaehlerDifferential.map_D k k Γ(X, U) Γ(X, X.basicOpen (a i0)) s, hrepr, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, he_apply i, algebraMap_smul]
   obtain ⟨w, hw⟩ : ∃ w : ULift.{u} (Fin n) → Γ(X, X.basicOpen (a i0)),

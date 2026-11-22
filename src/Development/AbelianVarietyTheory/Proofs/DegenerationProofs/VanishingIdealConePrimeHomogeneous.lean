@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
@@ -43,7 +48,8 @@ theorem coneHom_of_isHomogeneous (c : k →+* A) (r : J → A) {f : MvPolynomial
     coneHom c r f = Polynomial.monomial n (MvPolynomial.eval₂Hom c r f) := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hn : d.sum (fun _ e => e) = n := by
     have := hf (MvPolynomial.mem_support_iff.1 hd)
@@ -56,9 +62,10 @@ theorem coneHom_of_isHomogeneous (c : k →+* A) (r : J → A) {f : MvPolynomial
 theorem coeff_coneHom (c : k →+* A) (r : J → A) (f : MvPolynomial J k) (n : ℕ) :
     (coneHom c r f).coeff n = MvPolynomial.eval₂Hom c r (MvPolynomial.homogeneousComponent n f) := by
   conv_lhs => rw [← f.sum_homogeneousComponent]
-  rw [map_sum, Polynomial.finset_sum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   simp only [coneHom_of_isHomogeneous c r (MvPolynomial.homogeneousComponent_isHomogeneous _ f),
-    Polynomial.coeff_monomial]
+    Polynomial.coeff_monomial, Finsupp.single_apply]
   rw [Finset.sum_ite_eq']
   split_ifs with h
   · rfl
@@ -140,7 +147,8 @@ theorem ringKrullDim_quotient_ker {k J A : Type} [Field k] [Fintype J] [CommRing
       exact (hC a).mul ((hT _ hX1).pow n)
   obtain ⟨n, h1, h2⟩ := ReciprocityTheory.CA.exists_dim_trdeg_field (K := k) (A := Polynomial A)
   rw [Polynomial.ringKrullDim_of_isNoetherianRing, hg] at h1
-  rw [← trdeg_add_eq k T, trdeg_eq_zero (R := T) (A := Polynomial A), add_zero] at h2
+  set_option synthInstance.maxHeartbeats 200000 in
+    rw [← trdeg_add_eq k T, trdeg_eq_zero (R := T) (A := Polynomial A), add_zero] at h2
   rw [ReciprocityTheory.CA.ringKrullDim_eq_of_trdeg_eq_field n h2, ← h1]
   simp
 
@@ -187,7 +195,7 @@ theorem exists_generic [IsIntegral X] : ∃ (K : Type) (_ : Field K) (y : Sp K �
 theorem valHom_injective [IsIntegral X] {K : Type} [Field K] (y : Sp K ⟶ X)
     (hy : ∀ U : X.Opens, (U : Set X).Nonempty → ⊤ ≤ y ⁻¹ᵁ U) (U : X.Opens) (h : ⊤ ≤ y ⁻¹ᵁ U) :
     Function.Injective (valHom y U h) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro f hf
   by_contra h0
   have hne : ((X.basicOpen f : X.Opens) : Set X).Nonempty := by

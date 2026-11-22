@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -12,11 +16,11 @@ theorem derivation_aeval_eq {K R ι : Type*} [CommRing K] [CommRing R] [Algebra 
   classical
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp [map_add, hp, hq, add_mul, Finset.sum_add_distrib]
+  | add p q hp hq => simp [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]
   | mul_X p j hp =>
     simp only [map_mul, aeval_X, Derivation.leibniz, hp, smul_eq_mul, pderiv_X, Pi.single_apply,
       add_mul, Finset.sum_add_distrib, Finset.mul_sum]
-    simp only [map_add, map_mul, aeval_X, apply_ite (aeval z), map_zero, map_one, add_mul, mul_ite,
+    simp only [map_add (f := _), map_mul, aeval_X, apply_ite (aeval z), map_zero, map_one, add_mul, mul_ite,
       mul_one, mul_zero, ite_mul, zero_mul, Finset.sum_add_distrib, Finset.sum_ite_eq,
       Finset.mem_univ, if_true]
     ring
@@ -24,11 +28,12 @@ theorem derivation_aeval_eq {K R ι : Type*} [CommRing K] [CommRing R] [Algebra 
 theorem totalDegree_pderiv_lt {K ι : Type*} [CommRing K] (P : MvPolynomial ι K) (i : ι)
     (hP : 0 < P.totalDegree) : (pderiv i P).totalDegree < P.totalDegree := by
   classical
-  have hsum : pderiv i P = ∑ m ∈ P.support, pderiv i (monomial m (coeff m P)) := by
+  have hsum : pderiv i P = ∑ m ∈ P.support, pderiv i (monomial m (AddMonoidAlgebra.coeff P m)) := by
     conv_lhs => rw [P.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   rw [hsum]
-  refine lt_of_le_of_lt (totalDegree_finset_sum _ _) ?_
+  refine lt_of_le_of_lt (MvPolynomial.totalDegree_finsetSum _ _) ?_
   rw [Finset.sup_lt_iff hP]
   intro m hm
   rw [pderiv_monomial]
@@ -62,8 +67,8 @@ theorem eq_C_of_pderiv_eq_zero {K ι : Type*} [Field K] [CharZero K] (P : MvPoly
     by_contra hc
     push_neg at hc
     exact hm0 (Finsupp.ext hc)
-  have hc := congrArg (coeff (m - Finsupp.single i 1)) (h i)
-  rw [coeff_pderiv, coeff_zero] at hc
+  have hc := congrArg (AddMonoidAlgebra.coeff · (m - Finsupp.single i 1)) (h i)
+  rw [coeff_pderiv, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   have hm' : m - Finsupp.single i 1 + Finsupp.single i 1 = m := by
     ext k
     by_cases hk : k = i
@@ -98,7 +103,7 @@ theorem algebraicIndependent_of_derivations {K R ι J : Type*} [Field K] [CharZe
   have h0 := eq_C_of_pderiv_eq_zero P hd
   rw [totalDegree_eq_zero_iff_eq_C] at h0
   rw [h0, aeval_C] at hP
-  have hc : coeff 0 P = 0 := (algebraMap K R).injective (hP.trans (map_zero _).symm)
+  have hc : AddMonoidAlgebra.coeff P 0 = 0 := (algebraMap K R).injective (hP.trans (map_zero _).symm)
   rw [h0, hc, map_zero]
 
 end DerivationAlgebraicIndependence

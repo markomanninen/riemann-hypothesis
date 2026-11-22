@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdZpowAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdZpowAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -88,7 +92,7 @@ theorem resvan : ∀ (k : Type) [Field k] (F : Type) [Field F] [Algebra k F] (d 
       have := hm' i hi
       omega
   | zero => simp
-  | add a b _ _ ha hb => rw [mul_add, map_add, ha, hb, add_zero]
+  | add a b _ _ ha hb => rw [mul_add, map_add (f := _), ha, hb, add_zero]
   | smul c a _ ha => rw [mul_smul_comm, map_smul, ha, smul_zero]
 
 end GlobalTheory.PD.ResVan

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights
 
 namespace GlobalTheory.CompanionTheory.Ar.PB
 
 theorem abs_coeff_prod_X_le_one {σ : Type} {n : ℕ} (w : Fin n → σ) (m : σ →₀ ℕ) :
-    |coeff m (∏ j, X (w j) : MvPolynomial σ ℝ)| ≤ 1 := by
+    |(∏ j, X (w j) : MvPolynomial σ ℝ).coeff m| ≤ 1 := by
   classical
   have h : (∏ j, X (w j) : MvPolynomial σ ℝ) = monomial (∑ j, Finsupp.single (w j) 1) 1 := by
     rw [monomial_sum_one]
@@ -17,7 +21,7 @@ theorem abs_coeff_prod_X_le_one {σ : Type} {n : ℕ} (w : Fin n → σ) (m : σ
 
 theorem formPoly_sub_bound : ∀ (σ : Type) [Fintype σ] (n : ℕ) (a b : (Fin n → σ) → ℝ) (M : ℝ),
     (∀ w, |a w - b w| ≤ M) →
-    (∀ m, |coeff m (formPoly n a) - coeff m (formPoly n b)| ≤ (Fintype.card σ : ℝ) ^ n * M) ∧
+    (∀ m, |(formPoly n a).coeff m - (formPoly n b).coeff m| ≤ (Fintype.card σ : ℝ) ^ n * M) ∧
     ∀ c : σ → ℝ, |eval c (formPoly n a) - eval c (formPoly n b)| ≤ (∑ x, |c x|) ^ n * M := by
   intro σ _ n a b M h
   constructor
@@ -25,8 +29,8 @@ theorem formPoly_sub_bound : ∀ (σ : Type) [Fintype σ] (n : ℕ) (a b : (Fin 
     simp only [formPoly, coeff_sum, coeff_C_mul]
     rw [← Finset.sum_sub_distrib]
     refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
-    calc ∑ w : Fin n → σ, |a w * coeff m (∏ j, X (w j) : MvPolynomial σ ℝ)
-            - b w * coeff m (∏ j, X (w j) : MvPolynomial σ ℝ)|
+    calc ∑ w : Fin n → σ, |a w * (∏ j, X (w j) : MvPolynomial σ ℝ).coeff m
+            - b w * (∏ j, X (w j) : MvPolynomial σ ℝ).coeff m|
         ≤ ∑ _w : Fin n → σ, M := by
           refine Finset.sum_le_sum fun w _ => ?_
           rw [← sub_mul, abs_mul]
@@ -36,7 +40,8 @@ theorem formPoly_sub_bound : ∀ (σ : Type) [Fintype σ] (n : ℕ) (a b : (Fin 
       _ = (Fintype.card σ : ℝ) ^ n * M := by
           simp
   · intro c
-    simp only [formPoly, map_sum, map_mul, eval_C, map_prod, eval_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [formPoly, map_sum, map_mul, eval_C, map_prod, eval_X]
     rw [← Finset.sum_sub_distrib]
     refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
     calc ∑ w : Fin n → σ, |a w * ∏ j, c (w j) - b w * ∏ j, c (w j)|

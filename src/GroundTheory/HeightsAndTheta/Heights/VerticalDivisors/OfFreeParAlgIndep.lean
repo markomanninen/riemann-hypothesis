@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.OfChartPointSecPointSpecChart
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartPointTrdeg
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecPointSeparable
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecChart
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PGenericFormsKer
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PDerivSpanTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.OfChartPointSecPointSpecChart
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChartPointTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSecPointSeparable
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecChart
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PGenericFormsKer
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PDerivSpanTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -29,16 +34,6 @@ theorem GenSecSeparable.of_freeParAlgIndep (h : FreeParAlgIndep.Statement) :
     GenSecSeparable.Statement :=
   GenSecSeparable.proof SecAlgFinite.full GenSecDomain.full ChartPointTrdeg.full
     (SecPointSeparable.of_freeParAlgIndep h)
-
-theorem SpecLength.of_freeParAlgIndep (h : FreeParAlgIndep.Statement) : SpecLength.Statement := by
-  have cnf : ChowNormForm.Statement :=
-    ChowNormForm.proof
-      (ChowNormFormGeneric.proof SecAlgFinite.full GenSecDomain.full (GenSecSeparable.of_freeParAlgIndep h)
-        ChowSecDvd.full NormFormIrreducible.full GenChowIrreducible.full NormFormDvd.full)
-      SecAlgFieldChange.full
-  have nzd : SecLinNZD.Statement := SecLinNZD.proof cnf NormFormEval.full SpecFirstNeField.full
-  exact SpecLength.proof SpecChart.full FiniteOrd.full ParDVRIsDVR.full SecBFinite.full
-    (SecBLinInj.proof SecBGeneric.full SecBTorsionFree.full nzd ParAlgIndep.full)
 
 theorem ChowFormSectionVertical.of_freeParAlgIndep (h : FreeParAlgIndep.Statement) :
     ChowFormSectionVertical.Statement :=

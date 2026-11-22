@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrameZeroStrictMono
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrameZeroStrictMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem eZ_lt_mul_Qc (hX : X.Hyp p K) (la : Fin n' → Fin (r + K) → ℕ) (e :
   have hV := hX.valid
   have hJ : 0 < X.F.J := hV.1
   unfold Dat.eZ
-  rw [dif_pos hJ]
+  rw [dite_eq_left hJ]
   have hmem := Fintype.mem_piFinset.1
     (Fintype.mem_piFinset.1 he ⟨(j % (X.F.J : ℤ)).toNat % X.F.J, Nat.mod_lt _ hJ⟩) i
   rw [Finset.mem_filter, Finset.mem_range] at hmem

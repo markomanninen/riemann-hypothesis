@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsConstOfCover
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsLinearOfMulPeriod
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsConstOfCover
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsLinearOfMulPeriod
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -35,15 +39,15 @@ theorem evalPt_appLE (x : Sp R ⟶ X) (φ : X ⟶ Y) (y : Sp R ⟶ Y) (hy : x �
   congr 1
   rw [← RingHom.comp_apply, ← CommRingCat.hom_comp, Scheme.Hom.appLE_comp_appLE]
 
-open Classical in
 
+open Classical in
 def evalPt' (x : Sp R ⟶ X) (U : X.Opens) (f : Γ(X, U)) : R :=
   if h : ⊤ ≤ x ⁻¹ᵁ U then evalPt x U h f else 0
 
 theorem evalPt'_eq (x : Sp R ⟶ X) {U : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
     evalPt' x U f = evalPt x U h f := by
   unfold evalPt'
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 private theorem preimage_whole_comp_of_preimage_whole {Z W V : Scheme.{0}} (f : Z ⟶ W) (x : W ⟶ V) {U : V.Opens}
     (h : ⊤ ≤ x ⁻¹ᵁ U) : ⊤ ≤ (f ≫ x) ⁻¹ᵁ U := by
@@ -110,8 +114,8 @@ section Family
 
 variable {R : Type} [CommRing R] [Algebra ℂ R]
 
-variable (R) in
 
+variable (R) in
 abbrev spO : Over (Sp ℂ) := Over.mk (spMap (algebraMap ℂ R))
 
 def resPt (ρ : R →ₐ[ℂ] ℂ) : 𝟙_ (Over (Sp ℂ)) ⟶ spO R :=
@@ -230,7 +234,7 @@ theorem differentiableOn_famPt_affine {U : A.left.Opens} (hU : IsAffineOpen U)
         simp only [evalPt'_eq _ (hE z hz), map_one]
       add_mem' := fun {a b} ha hb lam => by
         refine ((ha lam).add (hb lam)).congr fun z hz => ?_
-        simp only [evalPt'_eq _ (hE z hz), map_add, Pi.add_apply]
+        simp only [evalPt'_eq _ (hE z hz), map_add (f := _), Pi.add_apply]
       zero_mem' := fun lam => by
         refine (differentiableOn_const (0 : ℂ)).congr fun z hz => ?_
         simp only [evalPt'_eq _ (hE z hz), map_zero]

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairAlg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HodgeTateFromSandwich
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LocpairAlg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,8 +109,8 @@ theorem mem_K {B : Base F E} {K : Subgroup (G2 σ Y)} (hK : IsStab2 B K) {k : G2
 
 variable (hw : IsInertAt F E v w) (h : w.under (𝓞 F) = v) {β γ : Type} [Fintype β] [DecidableEq β] [Fintype γ] [DecidableEq γ]
 
-variable (β) in
 
+variable (β) in
 def up : Matrix β β (w.adicCompletion E) →* Matrix β β (AE F E) :=
   (liftM E v β).comp (RingHom.mapMatrix (complEquiv hw h).symm.toRingHom).toMonoidHom
 
@@ -127,10 +131,11 @@ theorem continuous_tensAt : Continuous (tensAt E v : Ev E v → AE F E) := by
   let b := Algebra.TensorProduct.basis (Fv F v) (Module.finBasis F E)
   have e : (tensAt E v : Ev E v → AE F E) = fun y => ∑ i, atPlace v (b.coord i y) • tensAt E v (b i) := by
     funext y
-    conv_lhs => rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr y, map_sum]
     exact Finset.sum_congr rfl fun i _ => smul_tensAt v _ _
   rw [e]
-  exact continuous_finset_sum _ fun i _ => ((GlobalTheory.VacAny.continuous_atPlace v).comp
+  exact continuous_finsetSum _ fun i _ => ((GlobalTheory.VacAny.continuous_atPlace v).comp
     (IsModuleTopology.continuous_of_linearMap (b.coord i))).smul continuous_const
 
 theorem continuous_up : Continuous (up hw h β) := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwoChartAtlas.TwoChartSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry
@@ -12,7 +16,7 @@ theorem valSer_germ_fnVal {A : Type} [CommRing A] {Y : Scheme.{0}} (r : Spec (Co
     ((Spec (CommRingCat.of A)).presheaf.germ ⊤ z trivial).hom
       ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom (fnVal r U f)) = gs r z U f := by
   have hz : r z ∈ U := h (show z ∈ (⊤ : (Spec (CommRingCat.of A)).Opens) from trivial)
-  rw [gs_eq r z U hz, fnVal, dif_pos h]
+  rw [gs_eq r z U hz, fnVal, dite_eq_left h]
   have e : ∀ a, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom a) = a :=
     fun a => (Scheme.ΓSpecIso (CommRingCat.of A)).hom_inv_id_apply a
   rw [e]

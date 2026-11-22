@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiDimensional
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MultiDimensional
+
+@[expose] public section
+
 open scoped ENNReal
 
 namespace GlobalTheory.CompanionTheory.Count
@@ -96,7 +101,7 @@ theorem tsum_le_prod_of_injOn {S P : Type} [Fintype P] (m : S → P → ℤ) (b 
     _ ≤ ∑' ξ : {ξ | h ξ ≠ 0}, (fun x : P → ℤ => ∏ p, g p (x p)) (m ξ) :=
         ENNReal.tsum_le_tsum fun ξ => hh ξ
     _ ≤ ∑' x : P → ℤ, ∏ p, g p (x p) :=
-        ENNReal.tsum_comp_le_tsum_of_injective hinj' _
+        (by refine' _root_.le_trans _ (_root_.tsum_comp_le_tsum_of_injective hinj' _); exact _root_.le_rfl)
     _ ≤ ∏ p, ∑' n, g p n := multi_dim g
     _ ≤ ∏ p, ENNReal.ofReal (1 + 2 * b p) :=
         Finset.prod_le_prod' fun p _ => one_dim (b p) (hb p)

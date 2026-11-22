@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAF
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GenericSectionOfAxioms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAF
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -61,7 +65,8 @@ theorem disc_at (hd : d.AxH 𝒜) (h : d.S1) (la : HeightOneSpectrum (𝓞 K)) :
   have hfin : ∀ c, (d.PlOver la c).Finite := fun c => by
     obtain ⟨i1, i2, i3, i4, i5, i6⟩ := hF c
     rw [d.plOver_eq h la c]
-    exact ValPl.placesOver_finite (F := KTf K d.D d.N) (Op d.D d.N la) (OmS (Ω c) d.D d.N)
+    exact ValPl.placesOver_finite (O := Op d.D d.N la) (F := KTf K d.D d.N)
+      (L := OmS (Ω c) d.D d.N)
   refine ⟨nn, t, ∑ c, Nc c, ?_, ?_, ?_⟩
   · change Module.length (Op d.D d.N la)
       (↥(Submodule.span (Op d.D d.N la) (d.AdmissibleOmegaFamiliesAtPrimeOfSection hd.a4.choose la)) ⧸

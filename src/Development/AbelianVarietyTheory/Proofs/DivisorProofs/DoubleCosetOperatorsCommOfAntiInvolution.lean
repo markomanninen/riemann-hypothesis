@@ -1,6 +1,11 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators
+open Classical
 
 namespace GlobalTheory
 
@@ -15,8 +20,8 @@ theorem InDoubleCoset.mul {J : Subgroup G} {a y z j₁ j₂ : G} (h : InDoubleCo
   obtain ⟨k₁, hk₁, k₂, hk₂, rfl⟩ := h
   exact ⟨j₁ * k₁, J.mul_mem h₁ hk₁, k₂ * j₂, J.mul_mem hk₂ h₂, by rw [hz]; group⟩
 
-open Classical in
 
+open Classical in
 theorem card_pairs_le (J : Subgroup G) (τ : G → G) (hmul : ∀ a b, τ (a * b) = τ b * τ a)
     (hinv : ∀ a, τ (τ a) = a) (hdc : ∀ g : G, ∃ k₁ ∈ J, ∃ k₂ ∈ J, τ g = k₁ * g * k₂)
     (hJ : ∀ k ∈ J, τ k ∈ J) (α β : G) (R S : Finset G)
@@ -24,8 +29,8 @@ theorem card_pairs_le (J : Subgroup G) (τ : G → G) (hmul : ∀ a b, τ (a * b
     (hR' : ∀ x : G, InDoubleCoset J α x → ∃! γ, γ ∈ R ∧ γ⁻¹ * x ∈ J)
     (hS : ∀ γ ∈ S, InDoubleCoset J β γ)
     (hS' : ∀ x : G, InDoubleCoset J β x → ∃! γ, γ ∈ S ∧ γ⁻¹ * x ∈ J) (c : G ⧸ J) :
-    ((R ×ˢ S).filter (fun p => ((p.1 * p.2 : G) : G ⧸ J) = c)).card ≤
-      ((S ×ˢ R).filter (fun p => ((p.1 * p.2 : G) : G ⧸ J) = c)).card := by
+    ((R ×ˢ S).filter (fun (p : G × G) => ((p.1 * p.2 : G) : G ⧸ J) = c)).card ≤
+      ((S ×ˢ R).filter (fun (p : G × G) => ((p.1 * p.2 : G) : G ⧸ J) = c)).card := by
   obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective c
   have hone : τ 1 = 1 := by
     have := hmul 1 1
@@ -40,7 +45,7 @@ theorem card_pairs_le (J : Subgroup G) (τ : G → G) (hmul : ∀ a b, τ (a * b
     exact h.mul hk₁ hk₂ e
   obtain ⟨k₁, hk₁, k₂, hk₂, hx⟩ := hdc x
   refine Finset.card_le_card_of_forall_subsingleton
-    (fun p q => q.1⁻¹ * (x * k₂ * (τ p.1)⁻¹) ∈ J) ?_ ?_
+    (fun (p q : G × G) => q.1⁻¹ * (x * k₂ * (τ p.1)⁻¹) ∈ J) ?_ ?_
   · rintro ⟨γ, δ⟩ hp
     simp only [Finset.mem_filter, Finset.mem_product, QuotientGroup.eq] at hp
     obtain ⟨⟨hγ, hδ⟩, hj⟩ := hp

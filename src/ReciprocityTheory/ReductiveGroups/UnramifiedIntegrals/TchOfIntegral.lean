@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormLeOneOfIntegralInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsTeichmullerRepModPrime
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.NormLeOneOfIntegralInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem kur_resClosed : ResClosed (MaximalUnramifiedExtension l) l := by
   have hQeval : ∀ y : ℂ_[l],
       Qc.eval y = y ^ P.natDegree + ∑ i : Fin P.natDegree, g i * y ^ (i : ℕ) := by
     intro y
-    simp [Qc, Q', eval_map, eval₂_finset_sum] <;> rfl
+    simp [Qc, Q', eval_map, Polynomial.eval₂_finsetSum] <;> rfl
   obtain ⟨ξ, hξT, hξd⟩ := tch_of_integral l δ hδint
   have hξ1 : ‖ξ‖ ≤ 1 := tch_norm_le (l := l) hξT
   have hξK : ξ ∈ MaximalUnramifiedExtension l := tch_mem_kur (l := l) hξT
@@ -87,7 +91,7 @@ theorem kur_resClosed : ResClosed (MaximalUnramifiedExtension l) l := by
   have hPx : ((P.eval (⟨ξ, hξK⟩ : MaximalUnramifiedExtension l) : MaximalUnramifiedExtension l) : ℂ_[l]) =
       ξ ^ P.natDegree + ∑ i : Fin P.natDegree, ((P.coeff i : MaximalUnramifiedExtension l) : ℂ_[l]) * ξ ^ (i : ℕ) := by
     conv_lhs => rw [hPm.as_sum]
-    simp [eval_finset_sum, Finset.sum_range]
+    simp [Polynomial.eval_finsetSum, Finset.sum_range]
   have hlK : ((l : MaximalUnramifiedExtension l) : ℂ_[l]) = (l : ℂ_[l]) := by simp
   show ‖((P.eval (⟨ξ, hξK⟩ : MaximalUnramifiedExtension l) : MaximalUnramifiedExtension l) : ℂ_[l])‖ ≤ ‖((l : MaximalUnramifiedExtension l) : ℂ_[l])‖
   rw [hPx, hlK]

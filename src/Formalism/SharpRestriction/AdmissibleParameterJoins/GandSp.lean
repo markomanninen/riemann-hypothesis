@@ -1,5 +1,12 @@
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSo
-import Formalism.SharpRestriction.GrowthBounds.KerTies
+module
+
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSo
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalRingCardinality.DataKerP
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,9 +69,6 @@ theorem mmap_map {ι A B C : Type} [CommRing A] [CommRing B] [CommRing C] (g : B
 theorem cc_logF : PowerSeries.constantCoeff (logF p) = 0 := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply]
   simp [logF]
-
-def PhS (ι : Type) [Fintype ι] (be : MvPowerSeries (Fin 2) (K0 p)) : MvPowerSeries (ι ⊕ ι) (K0 p) :=
-  ∑ e : ι, sub2 p be (X (Sum.inl e)) (X (Sum.inr e))
 
 theorem hs2 {τ R : Type} [CommRing R] {a b : MvPowerSeries τ R} (ha : constantCoeff a = 0) (hb : constantCoeff b = 0) :
     HasSubst (![a, b] : Fin 2 → MvPowerSeries τ R) :=  by

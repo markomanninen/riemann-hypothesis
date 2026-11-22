@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.ArithOfA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolTSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.ArithOfA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolTSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem locDeg_one (l : ℕ) [hl : Fact l.Prime]
       (fun _ => 1) q ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
     intro q _
     exact Nat.one_le_iff_ne_zero.mpr
-      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 ℤ).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
+      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) q.1).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
   have hall := (Finset.sum_eq_sum_iff_of_le hpos).mp (by rw [hsum]; simp [hcard])
   have hw' := hall ⟨w.asIdeal, w.isPrime, liesOver_span_of_natCast_mem' l w.asIdeal hw⟩ (Finset.mem_univ _)
   exact mul_eq_one.mp hw'.symm
@@ -120,13 +124,15 @@ theorem locDeg_one_below (l : ℕ) [hl : Fact l.Prime]
     p.asIdeal.ramificationIdx ℤ = 1 ∧ p.asIdeal.inertiaDeg ℤ = 1 := by
   haveI := p.isPrime
   obtain ⟨Q, -, hQ, hc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 E) p.asIdeal ⊥
-    (by rw [Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)]; exact bot_le)
+    (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _))]; exact bot_le)
   haveI := hQ
   haveI : Q.LiesOver p.asIdeal := ⟨hc.symm⟩
   have hQ0 : Q ≠ ⊥ := by
     intro hb
     apply p.ne_bot
-    rw [← hc, hb, Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)]
+    rw [← hc, hb]
+    change Ideal.comap (algebraMap (𝓞 F) (𝓞 E)) ⊥ = ⊥
+    exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)
   have hw : ((l : ℕ) : 𝓞 E) ∈ Q := by
     rw [← hc] at hp
     simpa using Ideal.mem_comap.mp hp

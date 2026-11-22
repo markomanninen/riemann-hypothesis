@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.ConjugateSelf
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
     {LL0 : IntermediateField ℚ what₂.LL}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure LocNd (L : NLay0 R H what₂ LL0) where
   Loc : Type
   l : Loc → ℕ
@@ -155,8 +159,8 @@ def LocNd.nd {L : NLay0 R H what₂ LL0} (X : LocNd L) : NData R H what₂ :=
     Z := fun _ => ∅
     Zgood := fun _ => ∅ }
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure LocTw {L : NLay0 R H what₂ LL0} (X : LocNd L) where
   twOf : X.nd.Loc → L.ntw.Tw
   twSide : X.nd.Loc → Bool
@@ -191,8 +195,8 @@ def LocTw.ntw {L : NLay0 R H what₂ LL0} {X : LocNd L} (T : LocTw X) : NTw R H 
     psiL_l := T.psiL_l
     chi_tw := T.chi_tw }
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure LocAut {L : NLay0 R H what₂ LL0} (X : LocNd L) where
   iotaQ : ∀ i, FractionRing (X.nd.O i) →+* Qbar (X.nd.l i)
   iotaQC : ∀ i, Qbar (X.nd.l i) ≃+* ℂ
@@ -380,8 +384,8 @@ structure LocAll (L : NLay0 R H what₂ LL0) where
   rbar_tie : Formalism.MainNotions.N.RbarTie X.nd Y.naut Z.ntypes
   mtpar_tie : Formalism.MainNotions.N.MtParTie X.nd Y.naut Z.ntypes
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def LocAll.lay {L : NLay0 R H what₂ LL0} (A : LocAll L) : NLay0 R H what₂ LL0 :=
   { loc := L.loc, locA := L.locA, locT := L.locT, nd := A.X.nd, ntw := A.T.ntw, naut := A.Y.naut, nbc := A.C.nbc
     nexp := { L.nexp with }, ntypes := A.Z.ntypes, nStage_trivialCharacter_compat := L.nStage_trivialCharacter_compat, nStage_trivialCharacter_coeff_eq := L.nStage_trivialCharacter_coeff_eq, nth := { L.nth with }

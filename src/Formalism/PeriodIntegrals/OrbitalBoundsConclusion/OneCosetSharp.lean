@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.OneCosetSharpOfPatClosed
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZeroAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.AllowColLt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.EntryEmbedMatrix
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.OneCosetSharpOfPatClosed
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZeroAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.AllowColLt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.EntryEmbedMatrix
+
+@[expose] public section
 
 theorem support_oneCoset : PI.OneCosetSharp.OneCosetSharp :=
   PI.OneCosetSharp.W.oneCosetSharp_of_patClosed PI.OneCosetSharp.W.patClosed PI.OneCosetSharp.W.kappaZero

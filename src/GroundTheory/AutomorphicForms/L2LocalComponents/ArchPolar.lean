@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
-import GroundTheory.AutomorphicForms.RealGroupsPolar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+public import GroundTheory.AutomorphicForms.RealGroupsPolar
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding NumberField.InfinitePlace Matrix
 open scoped NumberField.AdeleRing
@@ -13,8 +17,8 @@ namespace AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-open Reduction in
 
+open Reduction in
 theorem mem_archCompact_of_unitary (x : archGroup K n)
     (hr : ∀ v : {w : InfinitePlace K // IsReal w},
       realCompM v ((x : (ArchMatrix K n)ˣ) : ArchMatrix K n) ∈ unitaryGroup (Fin n) ℝ)
@@ -35,7 +39,8 @@ theorem mem_archCompact_of_unitary (x : archGroup K n)
           Matrix (Fin n) (Fin n) w.Completion)) i)) =
           (fun i => ψ (y i)) ᵥ* realCompM ⟨w, hw⟩ ((x : (ArchMatrix K n)ˣ) : ArchMatrix K n) := by
         ext j
-        simp only [vecMul, dotProduct, map_sum, map_mul, realCompM_apply, Matrix.map_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [vecMul, dotProduct, map_sum, map_mul, realCompM_apply, Matrix.map_apply,
           realComp_apply]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [infAt_infEmb_apply, extensionEmbeddingOfIsReal_symm]
@@ -51,7 +56,8 @@ theorem mem_archCompact_of_unitary (x : archGroup K n)
           Matrix (Fin n) (Fin n) w.Completion)) i)) =
           (fun i => ψ (y i)) ᵥ* complexCompM ⟨w, hcw⟩ ((x : (ArchMatrix K n)ˣ) : ArchMatrix K n) := by
         ext j
-        simp only [vecMul, dotProduct, map_sum, map_mul, complexCompM_apply, Matrix.map_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [vecMul, dotProduct, map_sum, map_mul, complexCompM_apply, Matrix.map_apply,
           complexComp_apply]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [infAt_infEmb_apply, extensionEmbedding_symm _ hcw]

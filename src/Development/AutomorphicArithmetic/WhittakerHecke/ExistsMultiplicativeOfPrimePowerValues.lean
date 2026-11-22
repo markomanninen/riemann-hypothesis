@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
-import Development.AutomorphicArithmetic.WhittakerHecke.HeightOneSpectrumRatCorrespondPrimes
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+public import Development.AutomorphicArithmetic.WhittakerHecke.HeightOneSpectrumRatCorrespondPrimes
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -21,7 +26,7 @@ theorem UpperTheory.exists_multiplicative_of_prime_power_values :
     have h : ∃ w : H.P ℚ, normV w = normV v := ⟨v, rfl⟩
     have h2 : h.choose = v := hinj _ _ h.choose_spec
     simp only [f]
-    rw [dif_pos h, h2]
+    rw [dite_eq_left h, h2]
   refine ⟨fun n => n.factorization.prod f, by simp, ?_, ?_⟩
   · intro m n hm hn hmn
     show (m * n).factorization.prod f = m.factorization.prod f * n.factorization.prod f

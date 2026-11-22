@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MeasureConditions.Cnd
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensEProd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.MeasureConditions.Cnd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensEProd
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo
@@ -91,7 +96,8 @@ theorem UpperTheory.prodFn_isLocallyConstant_hasCompactSupport :
     exact key Finset.univ
   · have hK : IsCompact (glGlue '' Set.pi Set.univ fun w : PlacesOver E v => tsupport (h w)) :=
       (isCompact_univ_pi fun w => (hh w).2).image glGlue_continuous
-    refine HasCompactSupport.of_support_subset_isCompact hK fun g hg => ?_
+    set_option synthInstance.maxHeartbeats 200000 in
+      refine HasCompactSupport.of_support_subset_isCompact hK fun g hg => ?_
     refine ⟨fun w => UpperTheory.ConvolutionTheory.GM.cmp w g, fun w _ => subset_tsupport _ ?_, glGlue_cmp g⟩
     rw [Function.mem_support, hp] at hg
     intro h0

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.MeanHeightDescent.MuMaxMinkowski
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+module
+
+public import Mathlib
+public import Formalism.MeanHeightDescent.MuMaxMinkowski
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+
+@[expose] public section
 
 open Module NumberField
 

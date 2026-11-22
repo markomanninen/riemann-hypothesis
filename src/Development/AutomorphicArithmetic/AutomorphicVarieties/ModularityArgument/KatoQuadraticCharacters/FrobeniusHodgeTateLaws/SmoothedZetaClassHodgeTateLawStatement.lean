@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiFixAlt
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFR2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiFixAlt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFR2
+
+@[expose] public section
 
 noncomputable section
 

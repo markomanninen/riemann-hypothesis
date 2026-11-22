@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DegOneIffSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DegOneIffSurjective
+
+@[expose] public section
+
 open NumberField IsDedekindDomain HeckeValGen GlobalTheory.HeckeSplit
 
 namespace GlobalTheory.HeckeSplit

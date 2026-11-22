@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Pb.Psi
 
@@ -16,6 +20,6 @@ theorem T_lTensor {W A C₀ : Type} [CommRing W] [CommRing A] [CommRing C₀] [A
   | zero => simp only [map_zero]
   | tmul a y =>
     rw [LinearMap.lTensor_tmul, T_tmul, T_tmul, LinearMap.comp_apply, LinearMap.baseChange_tmul]
-  | add z z' hz hz' => simp only [map_add, hz, hz']
+  | add z z' hz hz' => simp only [map_add (f := _), hz, hz']
 
 end GlobalTheory.CompanionTheory.FrobPsi

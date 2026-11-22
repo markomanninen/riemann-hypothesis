@@ -1,4 +1,8 @@
-import Formalism.PolynomialDimension.EdgeSumGoodRank
+module
+
+public import Formalism.PolynomialDimension.EdgeSumGoodRank
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem one_sub_sum_mul_prod_le_prod {ι : Type} (s : Finset ι) (κ n d : ι �
   calc (1 - ∑ j ∈ s, κ j) * ∏ j ∈ s, d j ≤ (∏ j ∈ s, (1 - κ j)) * ∏ j ∈ s, d j :=
         mul_le_mul_of_nonneg_right (hP s) hd0
     _ = ∏ j ∈ s, ((1 - κ j) * d j) := Finset.prod_mul_distrib.symm
-    _ ≤ ∏ j ∈ s, n j := Finset.prod_le_prod
+    _ ≤ ∏ j ∈ s, n j := Finset.prod_le_prod₀
         (fun j _ => mul_nonneg (by linarith [(hκ j).2]) (hd j)) (fun j _ => h j)
 
 theorem share_product_bound : ShareProd := by

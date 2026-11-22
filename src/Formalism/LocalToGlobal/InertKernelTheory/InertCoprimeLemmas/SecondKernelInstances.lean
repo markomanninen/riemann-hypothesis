@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelNonzeroUnit
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelNonzeroUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem second_kernel_at_place (t : KerEntTied ex) {σ : D.what₂.LL →+* X.G.
     funext c1 y1
     rw [compatible_lift_exists D L hT Gi Gl Kc0 Dx cX ex t u μ j hj _ _ hQ.1 hQ.2 c1 y1]
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, entRec]
-  rw [hCh x y hy, hRd y c' L' hL, hy, hsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hCh x y hy, hRd y c' L' hL, hy, hsum, map_sum]
   rw [← Finset.sum_coe_sort (Y.Rep j)]
   symm
   refine Fintype.sum_bijective _ hbij _ _ fun La => ?_

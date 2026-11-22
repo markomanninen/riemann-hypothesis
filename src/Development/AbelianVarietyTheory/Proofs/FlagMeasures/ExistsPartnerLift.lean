@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardLeOfSpan
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DefiniteLatticeDiscriminantModuleCardDetSq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardLeOfSpan
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 open scoped Classical
@@ -105,14 +109,15 @@ theorem comp_eq_zero (F : FlagG S r T) (F' : FlagG S r T') (hG : Gflag F F' ≠ 
     exact hG) (by
     funext i
     have := h _ (Submodule.mem_sup_left (fvec_mem_Xplus F i))
-    rw [map_add, hT_fvec_sum, neg_add_eq_zero] at this
+    rw [map_add (f := _), hT_fvec_sum, neg_add_eq_zero] at this
     rw [this]
     simp [Matrix.mulVec, dotProduct, Zhat, brS, mul_comm]) (by
     funext i
     have := h _ (Submodule.mem_sup_right (fvec_mem_Xplus F' i))
-    rw [map_add, hT_fvec_sum, add_neg_eq_zero] at this
+    rw [map_add (f := _), hT_fvec_sum, add_neg_eq_zero] at this
     rw [← this]
-    simp only [Matrix.mulVec, dotProduct, Zhat, brS, map_sum, map_smul, Matrix.conjTranspose_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, Zhat, brS, map_sum, map_smul, Matrix.conjTranspose_apply, smul_eq_mul]
     exact Finset.sum_congr rfl fun j _ => by rw [mul_comm, ← S.herm.eq (F.fvec j), starRingEnd_apply])
   simp [this.1, this.2]
 
@@ -285,8 +290,8 @@ theorem idx_le_of_rel {R V W : Type} [CommRing R] [AddCommGroup V] [Module R V] 
   rw [← c.out_eq', ← c'.out_eq', QuotientAddGroup.eq]
   exact h2 _ _ _ _ (hR _ c.out.2) (hR _ c'.out.2) (QuotientAddGroup.eq.1 h)
 
-open GlobalTheory.Mass GlobalTheory.LoopC.DetCard Formalism.HermitianLatticesTheory in
 
+open GlobalTheory.Mass GlobalTheory.LoopC.DetCard Formalism.HermitianLatticesTheory in
 theorem det_sq {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K)
     (hK : IsCMUnram K) (hs : h.IsSymm) (M : Submodule (𝓞 K) V) (hM : M.FG) (hI : IsIntegralLat h M)
@@ -297,8 +302,21 @@ theorem det_sq {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup
   have hnU : (hRes h U).Nondegenerate :=
     ⟨fun x hx => Subtype.ext (hn x x.2 fun y hy => RowPerp.swap_zero hs (hx ⟨y, hy⟩)),
       fun x hx => Subtype.ext (hn x x.2 fun y hy => hx ⟨y, hy⟩)⟩
+  have hlat : Submodule.IsFullLattice K (latIn U M) := by
+    haveI := isLattice_latIn_span hM (U := U) rfl
+    refine ⟨?_⟩
+    apply Submodule.map_injective_of_injective U.injective_subtype
+    rw [Submodule.map_span, Submodule.map_top, Submodule.range_subtype]
+    have he : U.subtype '' (latIn U M : Set U) = (M : Set V) := by
+      ext x
+      constructor
+      · rintro ⟨y, hy, rfl⟩
+        exact hy
+      · intro hx
+        exact ⟨⟨x, Submodule.subset_span hx⟩, hx, rfl⟩
+    rw [he]
   have a : IsIntLat (hRes h U) (latIn U M) :=
-    ⟨isLattice_latIn_span hM rfl, fun x hx y hy => hI x hx y hy⟩
+    ⟨hlat, fun x hx y hy => hI x hx y hy⟩
   have n0 := (DiscOrder.main K U _ hK hsU hnU _ a).1
   rw [← idxN_dualInH h hU.symm] at n0
   refine ⟨n0, ?_⟩
@@ -349,7 +367,7 @@ theorem mem_seen {T : D.host.E} (F : Fg D T) (M : LatV D) (w : (D.sp.X 0).V) :
   · rintro ⟨y, hy, h⟩
     exact Submodule.mem_sup.2 ⟨y, hy, _, h, add_sub_cancel _ _⟩
 
-theorem span_seen {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.host.E Λ)
+theorem span_seen {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsFullLattice D.host.E Λ)
     (H : Submodule D.host.E (hS D).V) :
     Submodule.span D.host.E (seen D F (Λ ⊓ toO (hS D) H) : Set (D.sp.X 0).V) = (H ⊔ Xsp F).comap (D.sp.iXY 0) := by
   refine le_antisymm (Submodule.span_le.2 fun w hw => ?_) fun w hw => ?_
@@ -365,7 +383,7 @@ theorem span_seen {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.host.
     have := Submodule.smul_mem _ (d : D.host.E)⁻¹ (Submodule.subset_span (R := D.host.E) h1)
     rwa [inv_smul_smul₀ hd'] at this
 
-theorem rk_seen {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.host.E Λ) (hW : WHyp D F (Wsp D))
+theorem rk_seen {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsFullLattice D.host.E Λ) (hW : WHyp D F (Wsp D))
     (H : Submodule D.host.E (hS D).V) (hH : H ≤ orth (hS D) (Xplus F)) (hHX : H ⊓ Xsp F = ⊥) :
     rkW D (seen D F (Λ ⊓ toO (hS D) H)) = finrank D.host.E H := by
   have hm : 0 < D.R.m := lt_of_lt_of_le (by norm_num) D.R.two_le_m
@@ -406,6 +424,11 @@ theorem det_seen_le {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.hos
     (hn : spanE (hS D) M ⊓ orth (hS D) (spanE (hS D) M) = ⊥) :
     detW D (seen D F (Λ ⊓ toO (hS D) (orth (hS D) (spanE (hS D) M)))) ≤ latDet (hS D) M := by
   have hm : 0 < D.R.m := lt_of_lt_of_le (by norm_num) D.R.two_le_m
+  have hfull : Submodule.IsFullLattice D.host.E Λ :=
+    { toIsLattice := hΛ
+      span_eq_top := by
+        have he : Formalism.HermitianLatticesTheory.dual (hS D).hT Λ = Λ := hu
+        simpa only [he] using RowPerp.span_dual_eq_top (hS D).nondeg Λ hΛ.fg }
   set U := spanE (hS D) M with hU
   set P := seen D F (Λ ⊓ toO (hS D) (orth (hS D) U)) with hP
   have hH : orth (hS D) U ≤ orth (hS D) (Xplus F) := fun v hv =>
@@ -427,7 +450,7 @@ theorem det_seen_le {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.hos
   refine Real.sqrt_le_sqrt (Nat.cast_le.2 (idx_le_of_rel _ _ _ _
     (fun w v => ∃ θ ∈ orth (hS D) U, D.sp.iXY 0 w - θ ∈ Xsp F ∧ θ - v ∈ Λ) (fun w hw => ?_) ?_ m0))
   · have h1 : w ∈ Submodule.span D.host.E (P : Set (D.sp.X 0).V) := hw.2
-    rw [hP, span_seen F hΛ] at h1
+    rw [hP, span_seen F hfull] at h1
     obtain ⟨θ, hθ, x, hx, e⟩ := Submodule.mem_sup.1 h1
     obtain ⟨l, hl, hlU⟩ := RowPerp.exists_sub_mem (hS D).herm (hS D).nondeg hΛ hu U θ fun y hy hyU => by
       have hyH := (mem_orth_iff _ _).2 hyU
@@ -450,7 +473,7 @@ theorem det_seen_le {T : D.host.E} (F : Fg D T) (hΛ : Submodule.IsLattice D.hos
       rw [e]
       exact Λ.add_mem (Λ.sub_mem b3 a3) (hM h)
     · convert (Xsp F).sub_mem b2 a2 using 1
-      rw [map_add, map_neg]
+      rw [map_add (f := _), map_neg]
       abel
 
 end Rec

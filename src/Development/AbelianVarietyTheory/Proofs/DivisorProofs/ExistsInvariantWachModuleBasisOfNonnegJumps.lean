@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WachRingFactsUnramifiedLevelOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpsOverLettersOfCrysWith
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapLocRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalComparisonHolds
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeightsFromJumpsIff
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WachRingFactsUnramifiedLevelOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemXSmulOfProjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisAddPiSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JumpsOverLettersOfCrysWith
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapLocRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalComparisonHolds
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeightsFromJumpsIff
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeightDescentMinors
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HeckeLFunctionIdealEulerProduct
+
+@[expose] public section
 
 open NumberField PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.CohomologicalDescent Formalism.CohomologicalDescent.HeightDescentMinors Formalism.CohomologicalDescent.FrobeniusPeriodChange IsLocalRing GlobalTheory.WachPlace
 
@@ -38,7 +42,7 @@ theorem γD_smulA (g : W.Gam) (a : LetA O f) (x : W.DD T) :
 theorem coe_eq_sum (b : Module.Basis (Fin n) (LetA O f) ↥(W.N T)) (y : ↥(W.N T)) :
     (y : W.DD T) = ∑ m, b.repr y m • (b m : W.DD T) := by
   have h1 := congrArg Subtype.val (b.sum_repr y)
-  simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at h1
+  simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h1
   exact h1.symm
 
 theorem coord_fixed (b : Module.Basis (Fin n) (LetA O f) ↥(W.N T)) (hb : ∀ k, (b k : W.DD T) ∈ W.NΔ T)
@@ -47,10 +51,11 @@ theorem coord_fixed (b : Module.Basis (Fin n) (LetA O f) ↥(W.N T)) (hb : ∀ k
   have e : ∑ m, W.γA δ (b.repr y m) • b m = y := by
     apply Subtype.ext
     have h1 : W.γD T δ (y : W.DD T) = ∑ m, W.γA δ (b.repr y m) • (b m : W.DD T) := by
-      conv_lhs => rw [coe_eq_sum W b y, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [coe_eq_sum W b y, map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [γD_smulA, (hb m).2 δ hδ]
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul]
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul]
     exact h1.symm.trans hy
   have h2 := congrFun (b.repr_sum_self fun m => W.γA δ (b.repr y m)) m
   rw [e] at h2
@@ -95,7 +100,7 @@ theorem exists_gam_matrix (hI : ∀ a : O⟦X⟧, (∀ δ ∈ W.DelF, W.γ₀ δ
     have e1 : (⟨W.γD T γ (b k : W.DD T), hγ k⟩ : ↥(W.N T)) = b k + (letπ : LetA O f) • (⟨y, hy⟩ : ↥(W.N T)) :=
       Subtype.ext (eq_add_of_sub_eq' e)
     have e2 : constantCoeff (z - (1 : Matrix (Fin n) (Fin n) O⟦X⟧) m k) = 0 := by
-      rw [map_sub, ← (pi0Subst_laws_hold l O).2.2.2.2.2.1 z, hz, e1, map_add, map_smul, b.repr_self]
+      rw [map_sub, ← (pi0Subst_laws_hold l O).2.2.2.2.2.1 z, hz, e1, map_add (f := _), map_smul, b.repr_self]
       by_cases hmk : m = k
       · subst hmk
         simp [letπ]

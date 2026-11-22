@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedDefs
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical
@@ -10,7 +14,7 @@ namespace ReciprocityTheory.ChartRestriction.L1
 variable {K : Type} [Field K] (U : PowerSeries K)
 
 theorem homS_add (m : ℕ) (P Q : K[X]) : homS U m (P + Q) = homS U m P + homS U m Q := by
-  simp only [homS, coeff_add, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [homS, coeff_add, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem homS_sub (m : ℕ) (P Q : K[X]) : homS U m (P - Q) = homS U m P - homS U m Q := by
   simp only [homS, coeff_sub, map_sub, sub_mul, Finset.sum_sub_distrib]
@@ -30,7 +34,7 @@ theorem homS_monomial (m i : ℕ) (hi : i ≤ m) (a : K) :
   rw [Finset.sum_eq_single i]
   · simp
   · intro b _ hb
-    rw [coeff_monomial, if_neg (Ne.symm hb)]
+    rw [coeff_monomial_of_ne a hb]
     simp
   · intro h
     exact absurd (Finset.mem_range.2 (Nat.lt_succ_of_le hi)) h
@@ -64,7 +68,8 @@ theorem homS_eq_zero (hU : PowerSeries.constantCoeff U = 1) (m : ℕ) (P : K[X])
     (h : homS U m P = 0) : P = 0 := by
   have h1 : PowerSeries.coeff (2 * (m - P.natDegree)) (homS U m P) = P.leadingCoeff := by
     unfold homS
-    rw [map_sum, Finset.sum_eq_single P.natDegree]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single P.natDegree]
     · rw [PowerSeries.coeff_mul_X_pow', if_pos le_rfl, Nat.sub_self, PowerSeries.coeff_zero_eq_constantCoeff_apply,
         map_mul, map_pow, hU]
       simp

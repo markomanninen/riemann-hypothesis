@@ -1,16 +1,21 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AbelianVarietyTorsionCardEqPowProof
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FinrankEqCardKernelPointsOfEtale
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardTorsionPointsAbelianVariety
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHighTwistSectionNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EffOfSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionNonzeroChartOfEffectiveClassStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEffectivePicClassAddIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEffectivePicClassPullbackVeryAmpleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulVeryAmpleSubIsEffectivePicClassStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeTheoremPicardGroupStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.AbelianVarietyTorsionCardEqPowProof
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.FinrankEqCardKernelPointsOfEtale
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CardTorsionPointsAbelianVariety
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHighTwistSectionNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EffOfSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionNonzeroChartOfEffectiveClassStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEffectivePicClassAddIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsEffectivePicClassPullbackVeryAmpleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNsmulVeryAmpleSubIsEffectivePicClassStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CubeTheoremPicardGroupStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry NumberField MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.UU
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory CategoryTheory.Hom.group
@@ -149,7 +154,7 @@ theorem exists_effective_bound : ∀ (E : Type) [Field E] [NumberField E] (k : T
   subst hL
   obtain ⟨c0, hc0⟩ : ∃ c0, cls M.L.L M.L.isLB = c0 := ⟨_, rfl⟩
   have hEF : ∀ φ : A ⟶ A, Eff (pull φ.left c0) := fun φ =>
-    hc0 ▸ GlobalTheory.T.isEffectivePicClass_pullback_veryAmple k A.hom M.L.L m s M.L.isLB hs φ.left inferInstance
+    hc0 ▸ GlobalTheory.EffBound.eff_pull_of_veryAmpleBy k A.hom M.L.L m s M.L.isLB hs φ.left inferInstance
   have h1 : pull (1 : A ⟶ A).left c0 = 0 := hc0 ▸ pull_one A M
   have hE0 : Eff (0 : Pic A.left) := h1 ▸ hEF 1
   have hEc : Eff c0 := by
@@ -157,7 +162,7 @@ theorem exists_effective_bound : ∀ (E : Type) [Field E] [NumberField E] (k : T
     rwa [Over.id_left, pull_id] at this
   have hpar : ∀ f g : A ⟶ A, Eff (2 • pull f.left c0 + 2 • pull g.left c0 - pull (f * g).left c0) := by
     intro f g
-    have e := GlobalTheory.T.cube_theorem_picardGroup A M f g g⁻¹
+    have e := GlobalTheory.CubeThm.cube_pic A M f g g⁻¹
     rw [mul_inv_cancel_right, mul_inv_cancel, pull_one, pull_inv A M g, hc0] at e
     have e' : 2 • pull f.left c0 + 2 • pull g.left c0 - pull (f * g).left c0 = pull (f * g⁻¹).left c0 := by
       rw [← sub_eq_zero, ← sub_eq_zero.2 e]
@@ -165,9 +170,23 @@ theorem exists_effective_bound : ∀ (E : Type) [Field E] [NumberField E] (k : T
     rw [e']
     exact hEF _
   have hc : ∀ i, ∃ ci : ℕ, Eff (ci • c0 - pull (act.act (a i)).left c0) := fun i => by
-    obtain ⟨ci, h⟩ := GlobalTheory.T.exists_nsmul_veryAmple_sub_isEffectivePicClass k A.left A.hom M.L.L m s _ M.L.isLB (pull_isLB M.L.isLB (act.act (a i)).left) hs
-    rw [cls_pull M.L.isLB, hc0] at h
-    exact ⟨ci, h⟩
+    let N := M.L.L.pull (act.act (a i)).left
+    have hN : N.IsLB := pull_isLB M.L.isLB _
+    have hD : (dual N).IsLB := isLB_dual hN
+    obtain ⟨t₀, ht⟩ := exists_sec_tw_ne_zero k A.left A.hom M.L.L m s (dual N) M.L.isLB hD hs
+    have hc' : t₀ ≤ ((max t₀ 0).toNat : ℤ) := by
+      rw [Int.toNat_of_nonneg (le_max_right _ _)]; exact le_max_left _ _
+    obtain ⟨σ, j, hσ⟩ := ht _ hc'
+    have h := eff_of_sec _ (isLB_tw hD M.L.isLB _) σ j hσ
+    have e : cls (tw (dual N) M.L.L ((max t₀ 0).toNat : ℤ)) (isLB_tw hD M.L.isLB _) =
+        cls (dual N) hD - cls (pw M.L.L (-((max t₀ 0).toNat : ℤ))) (isLB_pw M.L.isLB _) :=
+      cls_div hD (isLB_pw M.L.isLB _) (isLB_tw hD M.L.isLB _)
+    rw [e, cls_pw M.L.isLB, cls_dual hN hD, neg_zsmul, natCast_zsmul] at h
+    have h' : Eff ((max t₀ 0).toNat • cls M.L.L M.L.isLB - cls N hN) := by
+      convert h using 1 <;> abel
+    change Eff ((max t₀ 0).toNat • cls M.L.L M.L.isLB - cls (M.L.L.pull (act.act (a i)).left) _) at h'
+    rw [cls_pull M.L.isLB, hc0] at h'
+    exact ⟨_, h'⟩
   choose ci hci using hc
   refine ⟨M.L.L, m, s, 2 ^ d * ∑ i, ci i + 1, M.L.isLB, hs, by omega, fun n K _ hn => ?_⟩
   have hterm : ∀ i, Eff ((K ^ 2 * ci i) • c0 - pull (act.act (n i • a i)).left c0) := by

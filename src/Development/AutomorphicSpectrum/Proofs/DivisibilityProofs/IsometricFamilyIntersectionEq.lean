@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MassFormulaConjugationAction
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsometricVerticalIntersectionEqStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberLocalCycleStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MassFormulaConjugationAction
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsometricVerticalIntersectionEqStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberLocalCycleStatement
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
@@ -33,8 +37,8 @@ theorem cycList_perm (Z : Ideal (MRing ι O) → ℤ) {l l' : List (K → ℤ)} 
   funext W
   exact intNumL_perm (IsLocalRing.ResidueField O) (specialIdeal W) h
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem divCycle_mul_finite {R : Type} [CommRing R] [IsNoetherianRing (MRing ι R)] (P : Ideal (MRing ι R))
     (f : MRing ι R) (n : Ideal (MRing ι R) → ℤ) :
     (Function.support fun W => divCycle P f W * n W).Finite := by
@@ -43,7 +47,7 @@ theorem divCycle_mul_finite {R : Type} [CommRing R] [IsNoetherianRing (MRing ι 
   by_contra h
   apply hW
   simp only [divCycle]
-  rw [dif_neg (fun h' => h h'.1), zero_mul]
+  rw [dite_eq_right (fun h' => h h'.1), zero_mul]
 
 theorem cycList_ratDiv [Fintype K] [∀ k, Fintype (ι k)] (P : Ideal (MRing ι O)) (f g : MRing ι O)
     (l : List (K → ℤ)) :
@@ -99,10 +103,10 @@ theorem link_monomial {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [
       rw [List.map_ofFn]
       congr 1
       funext j
-      simp only [L, Function.comp]
-      rcases m.get j with s | s
-      · exact (hiso s).1
-      · exact (hiso s).2.1
+      change (Sum.elim A A' (m.get j)).a = Sum.elim T.x T.x' (m.get j)
+      cases h : m.get j with
+      | inl s => exact (hiso s).1
+      | inr s => exact (hiso s).2.1
     rw [h1, List.append_nil, classList, ← Multiset.coe_eq_coe, Multiset.coe_toList, ← Multiset.map_coe, hm,
       Multiset.coe_toList]
   rw [key, key]
@@ -133,9 +137,9 @@ theorem arNum_eq_sum_log_val : ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : 
     rw [Finsupp.card_toMultiset, ← h, Finsupp.weight_apply]
     simp only [Pi.one_apply, smul_eq_mul, mul_one]
     rfl
-  have hpoly : (X (Sum.inl i) - X (Sum.inr i)) * monomial μ (coeff μ (Gs i)) =
-      monomial (μ + Finsupp.single (Sum.inl i) 1) (coeff μ (Gs i)) +
-        monomial (μ + Finsupp.single (Sum.inr i) 1) (-coeff μ (Gs i)) := by
+  have hpoly : (X (Sum.inl i) - X (Sum.inr i)) * monomial μ (AddMonoidAlgebra.coeff (Gs i) μ) =
+      monomial (μ + Finsupp.single (Sum.inl i) 1) (AddMonoidAlgebra.coeff (Gs i) μ) +
+        monomial (μ + Finsupp.single (Sum.inr i) 1) (-AddMonoidAlgebra.coeff (Gs i) μ) := by
     rw [monomial_add_single, monomial_add_single, map_neg]
     ring
   have hmono := link_monomial hP hI hT hA hA' hiso i μ hcard

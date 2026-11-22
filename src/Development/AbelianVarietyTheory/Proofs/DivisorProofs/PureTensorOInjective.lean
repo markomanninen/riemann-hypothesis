@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRealPlaceSymplecticFormPositiveComplexStru
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsHeisenbergDerivativeLinearOperators
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HeisenbergDerivativeCommutatorRelation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkAd
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRealPlaceSymplecticFormPositiveComplexStru
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsHeisenbergDerivativeLinearOperators
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HeisenbergDerivativeCommutatorRelation
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum
@@ -27,7 +31,7 @@ theorem injective_of_pderiv {ι M : Type} [AddCommGroup M] [Module ℂ M] (E : M
     | succ n ih =>
       intro Q hQ h
       have h2 : ∀ i, MvPolynomial.pderiv i Q = 0 := fun i => ih _ (hd i Q hQ) fun k hk => by
-        rw [MvPolynomial.coeff_pderiv, h _ (by rw [map_add, Finsupp.degree_single]; omega), zero_mul]
+        rw [MvPolynomial.coeff_pderiv, h _ (by rw [map_add (f := _), Finsupp.degree_single]; omega), zero_mul]
       have h3 : Q = Q.coeff 0 • (1 : MvPolynomial ι ℂ) := by
         ext k
         rw [MvPolynomial.coeff_smul, MvPolynomial.coeff_one]
@@ -76,17 +80,17 @@ theorem injective_of_canonicalCommutation {ι X : Type} (M : Submodule ℂ (X �
       rw [MvPolynomial.X, MvPolynomial.monomial_mul, mul_one, hm, hm, map_smul]
       congr 1
       refine List.Perm.foldr_eq (l₂ := v :: (Finsupp.toMultiset k).toList) ?_ f
-      rw [← Multiset.coe_eq_coe, ← Multiset.cons_coe, Multiset.coe_toList, Multiset.coe_toList, map_add,
+      rw [← Multiset.coe_eq_coe, ← Multiset.cons_coe, Multiset.coe_toList, Multiset.coe_toList, map_add (f := _),
         Finsupp.toMultiset_single, one_smul, add_comm, Multiset.singleton_add]
-    | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq, map_add]
+    | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   have hb : ∀ i Q, b i (E Q) = c i • E (MvPolynomial.pderiv i Q) := by
     intro i Q
     induction Q using MvPolynomial.induction_on with
     | C r =>
       rw [MvPolynomial.pderiv_C, map_zero, smul_zero, MvPolynomial.C_eq_smul_one, map_smul, map_smul, h1, hf, smul_zero]
-    | add p q hp hq => simp only [map_add, hp, hq, smul_add]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq, smul_add]
     | mul_X p j hp =>
-      rw [hX, hba, hp, MvPolynomial.pderiv_mul, map_add, hX, map_smul, smul_add]
+      rw [hX, hba, hp, MvPolynomial.pderiv_mul, map_add (f := _), hX, map_smul, smul_add]
       congr 1
       split_ifs with h
       · rw [h, MvPolynomial.pderiv_X_self, mul_one]
@@ -146,7 +150,7 @@ theorem ccr_of_comm {M R : Type} [AddCommGroup M] [Module ℂ M] (Dop : R → Mo
     (Dop u + I • Dop u') ((r' • (Dop v - I • Dop v')) g) =
       (r' • (Dop v - I • Dop v')) ((Dop u + I • Dop u') g) +
         (r' * (w u v + w u' v' + I * (w u' v - w u v'))) • g := by
-  simp only [LinearMap.smul_apply, LinearMap.sub_apply, LinearMap.add_apply, map_smul, map_sub, map_add]
+  simp only [LinearMap.smul_apply, LinearMap.sub_apply, LinearMap.add_apply, map_smul, map_sub, map_add (f := _)]
   rw [h u v, h u v', h u' v, h u' v']
   constructor <;> match_scalars <;> first | ring1 | (ring_nf; simp only [I_sq]; ring1)
 
@@ -199,7 +203,7 @@ theorem pureTensorO_injective : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (�
     (fun _ hg => hg) fun u g hg => (hD_formula_smooth _ _ _ _ _ (h.pi_iota W V) g hg u).2
   have sk : ∀ u v, omO V W v u = -omO V W u v := fun u v => by
     have h1 := omO_self h (S := V) (T := W) (u + v)
-    simp only [LinearMap.map_add, LinearMap.add_apply, omO_self h] at h1
+    simp only [LinearMap.map_add (f := _), LinearMap.add_apply, omO_self h] at h1
     linarith
   have hcomm : ∀ u v g, Dop u (Dop v g) = Dop v (Dop u g) + (-(2 * Real.pi * I) * (omO V W u v : ℝ)) • g := fun u v g => by
     apply Subtype.ext

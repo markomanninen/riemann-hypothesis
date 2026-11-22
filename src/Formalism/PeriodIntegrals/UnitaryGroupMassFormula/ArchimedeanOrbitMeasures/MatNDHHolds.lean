@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.BetaSym
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.BetaSym
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ theorem no_kernel {W : Type} [NormedAddCommGroup W] [InnerProductSpace ℝ W] [F
   have h2 : (R + ‖-z‖) < n * ‖t‖ := by rwa [div_lt_iff₀ htpos] at hn
   linarith
 
-open Classical in
 
+open Classical in
 def MatNDH : Prop := ∀ {D : D7} (X : HidaSetting D) (u' : D.what₂.Word) (ψ : AddChar (AF X.B.I.F) ℂ) hT μinf νinf fibInf,
     PushHyp X u' ψ hT μinf νinf fibInf →
     (matI X).det ≠ 0
@@ -132,7 +136,7 @@ theorem densMu_holds : DensMu := by
   haveI := hν.1
   have hB : ST.IsBichar (fun x y : EuclideanSpace ℝ (KapI X) => ((𝐞 ⟪x, A y⟫ : Circle) : ℂ)) :=
     { addL := fun x x' y => by simp only [inner_add_left, AddChar.map_add_eq_mul, Circle.coe_mul]
-      addR := fun x y y' => by simp only [map_add, inner_add_right, AddChar.map_add_eq_mul, Circle.coe_mul]
+      addR := fun x y y' => by simp only [map_add (f := _), inner_add_right, AddChar.map_add_eq_mul, Circle.coe_mul]
       norm1 := fun x y => Circle.norm_coe _
       contL := fun y => (continuous_subtype_val.comp Real.continuous_fourierChar).comp
         (continuous_id.inner continuous_const)

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,11 +56,13 @@ theorem nil_a (c : Fin r) : nilF e a s (a c) = ∑ d, kap e a s (a c) d • e d 
 theorem nil_nil (v : S.V) :
     nilF e a s (nilF e a s v) = ∑ c, S.hT (e c) v • ∑ d, kap e a s (a c) d • e d := by
   rw [nilF_apply e a s v]
-  simp only [map_sum, map_add, map_smul, nil_e e a s hiso hea, nil_a e a s hiso hea, smul_zero, add_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), map_smul, nil_e e a s hiso hea, nil_a e a s hiso hea, smul_zero, add_zero]
 
 theorem nil3 (v : S.V) : nilF e a s (nilF e a s (nilF e a s v)) = 0 := by
   rw [nil_nil e a s hiso hea v]
-  simp [map_sum, map_smul, nil_e e a s hiso hea]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, nil_e e a s hiso hea]
 
 end Nil
 
@@ -98,7 +104,8 @@ theorem form_nil (x y : S.V) :
   have E1 : S.hT (nilF e a s x) y = ∑ c, (star (S.hT (e c) x) * S.hT (a c) y +
       (-star (S.hT (a c) x) + ∑ d, star (s c d) * star (S.hT (e d) x)) * S.hT (e c) y) := by
     rw [nilF_apply]
-    simp only [map_sum, map_add, map_smulₛₗ, LinearMap.sum_apply, LinearMap.add_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smulₛₗ, LinearMap.sum_apply, LinearMap.add_apply,
       LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
     refine Finset.sum_congr rfl fun c _ => ?_
     simp only [kap, star_add, star_neg, star_sum, star_mul']
@@ -106,7 +113,8 @@ theorem form_nil (x y : S.V) :
   have E2 : S.hT x (nilF e a s y) = ∑ c, (S.hT (e c) y * star (S.hT (a c) x) +
       (-S.hT (a c) y + ∑ d, s c d * S.hT (e d) y) * star (S.hT (e c) x)) := by
     rw [nilF_apply]
-    simp only [map_sum, map_add, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, smul_eq_mul]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hsym, hsym]
     simp only [kap]
@@ -114,7 +122,8 @@ theorem form_nil (x y : S.V) :
   have E3 : S.hT (nilF e a s x) (nilF e a s y) =
       ∑ c, ∑ d, star (S.hT (e c) x) * S.hT (e d) y * S.hT (a c) (a d) := by
     rw [nilF_apply e a s x, nilF_apply e a s y]
-    simp only [map_sum, map_add, map_smulₛₗ, map_smul, LinearMap.sum_apply, LinearMap.add_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smulₛₗ, map_smul, LinearMap.sum_apply, LinearMap.add_apply,
       LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, hiso, hea, hae e a hea, mul_zero, add_zero,
       zero_add, Finset.sum_const_zero, Finset.mul_sum, RingHom.id_apply]
     rw [Finset.sum_comm]
@@ -127,7 +136,7 @@ theorem form_nil (x y : S.V) :
 theorem isom_nil (x y : S.V) :
     S.hT (x + nilF e a s x) (y + nilF e a s y) = S.hT x y := by
   have h := form_nil e a s hiso hea hs x y
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   linear_combination h
 
 end Form

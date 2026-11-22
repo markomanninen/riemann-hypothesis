@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolActs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialDatumActionOfPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActsDIffDOp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchOperatorCompactUnitaryW
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacuaSpanFiniteDimensionalDualPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalArchimedeanSchwartzFockOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactArchOperatorPreservesFockVacuaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanMaximalCompactIntertwinesFockDerivatiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolActs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolynomialDatumActionOfPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigenIntertwinerSkewPlaneUniqueDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DOpMemDStep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActsDIffDOp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchOperatorCompactUnitaryW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockVacuaSpanFiniteDimensionalDualPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalArchimedeanSchwartzFockOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalCompactArchOperatorPreservesFockVacuaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanMaximalCompactIntertwinesFockDerivatiStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -118,7 +122,7 @@ theorem orbit_mem (U : Multiplicative ℝ →* Module.End ℂ (α → ℂ)) (P N
       rw [hcadd]
       exact hcC' _
     | zero => rw [map_zero]; exact C'.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact C'.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact C'.add_mem hx hy
     | smul a x _ hx => rw [map_smul]; exact C'.smul_mem a hx
   have hdiff : ∀ Ψ ∈ C', ∀ x, ∀ t : ℝ, DifferentiableAt ℝ (fun s : ℝ => U (Multiplicative.ofAdd s) Ψ x) t := by
     intro Ψ hΨ x
@@ -137,7 +141,7 @@ theorem orbit_mem (U : Multiplicative ℝ →* Module.End ℂ (α → ℂ)) (P N
       exact differentiableAt_const _
     | add y z _ _ hy hz =>
       intro t
-      simp only [map_add, Pi.add_apply]
+      simp only [map_add (f := _), Pi.add_apply]
       exact (hy t).add (hz t)
     | smul a y _ hy =>
       intro t
@@ -148,7 +152,7 @@ theorem orbit_mem (U : Multiplicative ℝ →* Module.End ℂ (α → ℂ)) (P N
       map_add' := by
         intro a b
         funext x
-        simp only [Submodule.coe_add, map_add, Pi.add_apply]
+        simp only [Submodule.coe_add, map_add (f := _), Pi.add_apply]
         exact deriv_add (hdiff a a.2 x 0) (hdiff b b.2 x 0)
       map_smul' := by
         intro a b
@@ -292,16 +296,16 @@ theorem polData_kfin : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
       intro f hf
       rw [GlobalTheory.FockKFin.polLe_zero] at hf ⊢
       refine Submodule.span_induction (fun g hg => Submodule.subset_span (GlobalTheory.T.maximalCompact_archOperator_preserves_fockVacua F E σ B n d X W M χX χW om r s r' s' hP k hk A hA g hg))
-        (by rw [map_zero]; exact Submodule.zero_mem _) (fun x y _ _ hx hy => by rw [map_add]; exact Submodule.add_mem _ hx hy)
+        (by rw [map_zero]; exact Submodule.zero_mem _) (fun x y _ _ hx hy => by rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy)
         (fun c x _ hx => by rw [map_smul]; exact Submodule.smul_mem _ c hx) hf
     | succ m ih =>
       intro f hf
       rw [GlobalTheory.FockKFin.polLe_succ] at hf ⊢
       obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hf
-      rw [map_add]
+      rw [map_add (f := _)]
       refine Submodule.add_mem _ (Submodule.mem_sup_left (ih y hy)) (Submodule.mem_sup_right ?_)
       refine Submodule.span_induction (fun g hg => ?_)
-        (by rw [map_zero]; exact Submodule.zero_mem _) (fun x y _ _ hx hy => by rw [map_add]; exact Submodule.add_mem _ hx hy)
+        (by rw [map_zero]; exact Submodule.zero_mem _) (fun x y _ _ hx hy => by rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy)
         (fun c x _ hx => by rw [map_smul]; exact Submodule.smul_mem _ c hx) hz
       obtain ⟨a, b, g₀, hg₀, rfl⟩ := hg
       obtain ⟨a', b', hab⟩ := GlobalTheory.T.archimedeanMaximalCompact_intertwines_fockDerivativeOps F E σ B n d X W M χX χW om r s r' s' hP k hk A hA a b
@@ -325,7 +329,7 @@ theorem polData_kfin : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     obtain ⟨S₁, h₁, l₁, k₁⟩ := hx
     obtain ⟨S₂, h₂, l₂, k₂⟩ := hy
     exact ⟨S₁ ⊔ S₂, inferInstance, sup_le l₁ l₂, fun k hk => by
-      rw [map_add]; exact Submodule.add_mem_sup (k₁ k hk) (k₂ k hk)⟩
+      rw [map_add (f := _)]; exact Submodule.add_mem_sup (k₁ k hk) (k₂ k hk)⟩
   | smul c x _ hx =>
     obtain ⟨S, h, l, k₁⟩ := hx
     exact ⟨S, h, l, fun k hk => by rw [map_smul]; exact Submodule.smul_mem _ c (k₁ k hk)⟩
@@ -335,67 +339,6 @@ end GlobalTheory.KExpLineW
 namespace GlobalTheory.KExpLineW
 
 open MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
-
-theorem stab_line : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
-    (B : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base F E) (n d : ℕ) (X : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E n) (W : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E d)
-    (M : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Model σ X W) (χX χW : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Chr F E) (om : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Rep σ X W) (r s r' s' : ℕ),
-    GlobalTheory.ThK.IsPair B M χX χW om r s r' s' →
-    ∀ γ ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Lines σ W, (∀ t, γ t ∈ GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.KInf σ W B.emb) →
-    ∀ N : Submodule ℂ (GlobalTheory.ThK.Fn F n d),
-      (∀ Ψ ∈ N, ∀ Ψ₁ ∈ GlobalTheory.ThK.PolData B M,
-        (∀ x, HasDerivAt (fun t : ℝ => om (1, γ (Multiplicative.ofAdd t)) Ψ x) (Ψ₁ x) 0) → Ψ₁ ∈ N) →
-      ∀ Φ ∈ N, Φ ∈ GlobalTheory.ThK.PolData B M → om (1, γ (Multiplicative.ofAdd (1 : ℝ))) Φ ∈ N := by
-  intro hPr F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hP γ hγL hγK N hN Φ hΦN hΦ
-  obtain ⟨-, -, hDer, hOp⟩ := GlobalTheory.T.polynomial_datum_action_of_pair hPr F E σ B n d X W M χX χW om r s r' s' hP
-  obtain ⟨Dg, hDgP, hDg⟩ := hDer γ hγL
-  choose D hDP hD using fun t : ℝ => hOp (γ (Multiplicative.ofAdd t)) (hγK _)
-  let U : Multiplicative ℝ →* Module.End ℂ (Fn F n d) := om.comp ((MonoidHom.inr (UA σ X.J) (UA σ W.J)).comp γ)
-  have hdiff : ∀ Ψ ∈ PolData B M, ∀ x (t : ℝ),
-      DifferentiableAt ℝ (fun s : ℝ => U (Multiplicative.ofAdd s) Ψ x) t := by
-    intro Ψ hΨ x
-    induction hΨ using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨f, hf, φ, hφ, hvac, rfl⟩ := hy
-      intro t
-      have hstd : ∀ᶠ v in Filter.cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1 :=
-        (hvac.and hP.good.std).mono fun _ h => h.1.trans h.2
-      have hpt : ∀ u : ℝ, U (Multiplicative.ofAdd u) (pure f φ) = pure (D u f) φ := fun u =>
-        map_pure M B.ψ hP.good _ f (D u f) ((hD u f hf (D u f)).2 rfl) φ hφ hvac
-      have hshift : ∀ s', U (Multiplicative.ofAdd (s' + t)) (pure f φ) =
-          U (Multiplicative.ofAdd s') (pure (D t f) φ) := by
-        intro s'
-        rw [ofAdd_add, map_mul, Module.End.mul_apply, hpt t]
-      have h0 := (hDg (D t f) (hDP t f hf) (Dg (D t f))).2 rfl _
-        (GlobalTheory.ThK.EvUniqInf.rest_pure (D t f) φ hφ hstd) x
-      have h0' : DifferentiableAt ℝ (fun s' : ℝ => U (Multiplicative.ofAdd s') (pure (D t f) φ) x) 0 :=
-        h0.differentiableAt
-      have e : (fun s : ℝ => U (Multiplicative.ofAdd s) (pure f φ) x) =
-          (fun s' : ℝ => U (Multiplicative.ofAdd s') (pure (D t f) φ) x) ∘ fun s => s - t := by
-        funext s
-        show _ = U (Multiplicative.ofAdd (s - t)) (pure (D t f) φ) x
-        rw [← hshift, sub_add_cancel]
-      have h4 : DifferentiableAt ℝ (fun s' : ℝ => U (Multiplicative.ofAdd s') (pure (D t f) φ) x)
-          ((fun s : ℝ => s - t) t) := by
-        simp only [sub_self]
-        exact h0'
-      rw [e]
-      exact DifferentiableAt.comp (f := fun s : ℝ => s - t) t h4 (differentiableAt_id.sub_const t)
-    | zero =>
-      intro t
-      simp only [map_zero, Pi.zero_apply]
-      exact differentiableAt_const _
-    | add y z _ _ hy hz =>
-      intro t
-      simp only [map_add, Pi.add_apply]
-      exact (hy t).add (hz t)
-    | smul a y _ hy =>
-      intro t
-      simp only [map_smul, Pi.smul_apply, smul_eq_mul]
-      exact (hy t).const_mul a
-  obtain ⟨C, hCfin, hCP, hCk⟩ := polData_kfin F E σ B n d X W M χX χW om r s r' s' hP Φ hΦ
-  haveI := hCfin
-  exact orbit_mem U (PolData B M) N C hCP (fun Ψ h Ψ₁ h₁ hd => hN Ψ h Ψ₁ h₁ hd) Φ hΦN
-    (fun t => hCk _ (hγK _)) (hdiff Φ hΦ) 1
 
 end GlobalTheory.KExpLineW
 

@@ -1,14 +1,18 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafLocPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafShrinkPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafRankPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafPickPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafSpanPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafEtPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafCoordPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafSecPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafPolyPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafNbhdPf
-import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafLocPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafShrinkPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafRankPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPickPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafSpanPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafEtPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafCoordPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafSecPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPolyPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafNbhdPf
+public import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+
+@[expose] public section
 
 namespace LateralTheory.Fin.LeafChart
 theorem etale_chart_localization_property_holds : LateralTheory.CohomologicalPurity.ChartCut.LeafLoc := by

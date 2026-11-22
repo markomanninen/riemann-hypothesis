@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem UpperTheory.valuation_perm_term {K Γ ι : Type} [Field K] [LinearOrderedCommGroupWithZero Γ]
     (v : Valuation K Γ) [Fintype ι] [DecidableEq ι] (M : Matrix ι ι K) (σ : Equiv.Perm ι) :
@@ -72,7 +76,7 @@ private theorem UpperTheory.prod_lt_of_strictMono {Γ ι : Type} [LinearOrderedC
     calc ∏ i ∈ S \ T, f i ≤ ∏ _i ∈ S \ T, f c :=
           Finset.prod_le_prod' fun i hi => hf.monotone (hcmax i hi)
       _ = ∏ _i ∈ T \ S, f c := by simp [hc']
-      _ < _ := Finset.prod_lt_prod_of_nonempty (fun _ _ => h0 c)
+      _ < _ := Finset.prod_lt_prod_of_nonempty₀ (fun _ _ => h0 c)
           (fun i hi => hf (hT _ _ (Finset.mem_sdiff.1 hcm).2 (Finset.mem_sdiff.1 hi).1)) hT'
   rw [← Finset.prod_inter_mul_prod_diff S T, ← Finset.prod_inter_mul_prod_diff T S,
     Finset.inter_comm T S]

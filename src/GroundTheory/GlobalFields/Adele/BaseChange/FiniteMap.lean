@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.SemilocalAlgebras.NormTrace
-import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SemilocalAlgebras.NormTrace
+public import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -15,8 +19,8 @@ open SemiLocal
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (K) in
 
+variable (K) in
 def below (w : HeightOneSpectrum (𝓞 L)) : HeightOneSpectrum (𝓞 K) where
   asIdeal := w.asIdeal.under (𝓞 K)
   isPrime := Ideal.IsPrime.under (𝓞 K) w.asIdeal
@@ -26,8 +30,8 @@ instance liesOver_below (w : HeightOneSpectrum (𝓞 L)) :
     w.asIdeal.LiesOver (below K w).asIdeal :=
   ⟨rfl⟩
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem below_eq_iff (w : HeightOneSpectrum (𝓞 L)) (v : HeightOneSpectrum (𝓞 K)) :
     below K w = v ↔ w.asIdeal.LiesOver v.asIdeal := by
   constructor
@@ -38,7 +42,7 @@ theorem below_eq_iff (w : HeightOneSpectrum (𝓞 L)) (v : HeightOneSpectrum (�
 
 theorem tendsto_below : Tendsto (below K (L := L)) cofinite cofinite :=
   Filter.Tendsto.cofinite_of_finite_preimage_singleton fun v ↦
-    ((Set.finite_range (Subtype.val : PlacesOver L v → HeightOneSpectrum (𝓞 L))).subset
+    ((Set.finite_range (Subtype.val : PlacesOver (L := L) v → HeightOneSpectrum (𝓞 L))).subset
       fun w hw ↦ ⟨⟨w, (below_eq_iff w v).1 hw⟩, rfl⟩).to_subtype
 
 theorem completionMap_congr {v v' : HeightOneSpectrum (𝓞 K)} (h : v = v')
@@ -56,8 +60,8 @@ theorem mapsTo_completionMap (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpec
   rw [valued_completionMap]
   exact pow_le_one' hx _
 
-variable (K L) in
 
+variable (K L) in
 def finiteAdeleMap : FiniteAdeleRing (𝓞 K) K →+* FiniteAdeleRing (𝓞 L) L :=
   RestrictedProduct.mapAlongRingHom (fun v : HeightOneSpectrum (𝓞 K) ↦ v.adicCompletion K)
     (fun w : HeightOneSpectrum (𝓞 L) ↦ w.adicCompletion L)

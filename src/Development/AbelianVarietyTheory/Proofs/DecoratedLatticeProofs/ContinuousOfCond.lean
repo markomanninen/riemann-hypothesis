@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
-import Formalism.LocalToGlobal.Columns.ChainTw
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeClasses
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjReferenceChartIndex
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ParahoricLevelsCharactersDoubleCosetsAgreeRationStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistParahoricChainLastStepsAgreeColumnsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUniqueCompletionMatrixOfRationalTwistAutStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FirstStepCompletionRepresentativesEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionRepresentativeMemPreviousIndexSetStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqOfSameDoubleCosetCompletionRowRepresentativesStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionRepresentativesNormalFormModUnipotentStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsRationalDoubleCosetRepresentativeBoundsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsTwistIndexRepresentativeOfBoundsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EntryAgree
+public import Formalism.LocalToGlobal.Columns.ChainTw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatticeClasses
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjReferenceChartIndex
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ParahoricLevelsCharactersDoubleCosetsAgreeRationStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.TwistParahoricChainLastStepsAgreeColumnsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUniqueCompletionMatrixOfRationalTwistAutStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FirstStepCompletionRepresentativesEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionRepresentativeMemPreviousIndexSetStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqOfSameDoubleCosetCompletionRowRepresentativesStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CompletionRepresentativesNormalFormModUnipotentStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsRationalDoubleCosetRepresentativeBoundsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsTwistIndexRepresentativeOfBoundsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem exists_system {σ₀ : X.K →+* ℂ} {P : rowSG Pr sel mu} {k : Type} [
     by_cases H' : ∃ g₁, DoubleCoset.mk _ _ g₁ = β ∧ GlobalTheory.IndefiniteRowSideFullHecke.NormalRepresentationLattice.IsNormalRep (W.T s R) W.ϖ j c h g₁
     · obtain ⟨g, h1, h2⟩ := H'
       exact ⟨g, h1, fun _ => h2⟩
-    · exact ⟨_, DoubleCoset.out_eq' _ _ β, fun h' => absurd h' H'⟩
+    · exact ⟨_, DoubleCoset.out_eq' β, fun h' => absurd h' H'⟩
   choose σ σ1 σ2 using ex
   let A : RepFam k s (XIx (Fin R.k) (Fin R.t)) := fun j =>
     Nat.rec (motive := fun j => ∀ c, j + c = s → Set (GL (XIx (Fin R.k) (Fin R.t) j ⊕ Fin (c + 1)) k)) (fun _ _ => {1})
@@ -166,7 +170,7 @@ theorem exists_system {σ₀ : X.K →+* ℂ} {P : rowSG Pr sel mu} {k : Type} [
           obtain ⟨β, -, rfl⟩ := hg
           exact ⟨β, rfl⟩
       obtain ⟨β, rfl⟩ := key s 0 rfl hne g hg
-      exact σ2 _ _ _ β ⟨_, ((DoubleCoset.eq _ _ _ _).2 ⟨r, hr, 1, one_mem _, (mul_one _).symm⟩).symm.trans (σ1 _ _ _ β), hn⟩
+      exact σ2 _ _ _ β ⟨_, ((@DoubleCoset.eq _ _ _ _ _ _).2 ⟨r, hr, 1, one_mem _, (mul_one _).symm⟩).symm.trans (σ1 _ _ _ β), hn⟩
   · obtain ⟨g, hg, h', -, hf⟩ := Set.mem_iUnion₂.1 ((hsys.bij j c h).mapsTo hg')
     rw [hrat _ _ _ hne] at hg
     obtain ⟨al, hg⟩ := hg
@@ -183,13 +187,13 @@ theorem idx_succ (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (hsel : IsSel X sel) (h
   obtain ⟨al⟩ := hne
   have hB := clL_base hL hX hPr hCh hs
   obtain ⟨b, -⟩ := hL.surj j hj (fun P => if hP : P.1 ∈ Pr.vGs then 1 else γ P hP)
-    (fun P hP => by rw [dif_pos hP]; exact one_mem _) (fun P hP => by rw [dif_neg hP]; exact h1 P hP) (fun P => by
+    (fun P hP => by rw [dite_eq_left hP]; exact one_mem _) (fun P hP => by rw [dite_eq_right hP]; exact h1 P hP) (fun P => by
       by_cases hP : P.1 ∈ Pr.vGs
-      · rw [dif_pos hP]
+      · rw [dite_eq_left hP]
         exact ⟨al, (GlobalTheory.T.unfoldedDatum_ne_zero_iff_doubleCoset Ch sel mu cst L G s hX hPr hCh hsel hs hL j hj P hP _ _ (hL.stabG j al P hP) (one_mem _)
           (by rw [hs]; exact GlobalTheory.Mem.Col2.TC.ChTw.Match.IdxMatch.cosetOne hX hPr hCh hsel hs hL j (by omega) al P hP)).2
           (twNonVanG G.σ₀ hB hj P hP)⟩
-      · rw [dif_neg hP]
+      · rw [dite_eq_right hP]
         exact h2 P hP)
   exact ⟨b⟩
 
@@ -239,11 +243,11 @@ theorem exists_bij (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (hsel : IsSel X sel) 
     have h1 : ∀ i, hh (P i) = L.h j (b i) (P i) := fun i => by
       have h : ∃ i', P i' = P i := ⟨i, rfl⟩
       simp only [hh]
-      rw [dif_pos h, hinj h.choose_spec]
+      rw [dite_eq_left h, hinj h.choose_spec]
     obtain ⟨b₀, h2, -⟩ := hprod j hj hh fun Q => by
       by_cases h : ∃ i, P i = Q
-      · exact ⟨b h.choose, by simp only [hh]; rw [dif_pos h]⟩
-      · exact ⟨h0.some, by simp only [hh]; rw [dif_neg h]; exact hone j _ Q (by_contra fun hQ => h (hall Q hQ))⟩
+      · exact ⟨b h.choose, by simp only [hh]; rw [dite_eq_left h]⟩
+      · exact ⟨h0.some, by simp only [hh]; rw [dite_eq_right h]; exact hone j _ Q (by_contra fun hQ => h (hall Q hQ))⟩
     exact ⟨b₀, funext fun i => (hc i j hj _ _ _ _ (hφ b₀ i) (hb' i)).1 ((h2 _).trans (h1 i))⟩
 
 end GlobalTheory.LowJoin

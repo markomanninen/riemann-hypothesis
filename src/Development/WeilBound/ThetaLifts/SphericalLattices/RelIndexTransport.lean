@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.ChartSt
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GlobalUnitScalingHaarProductFormula
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OrdLEqNegLog
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ChartSt
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GlobalUnitScalingHaarProductFormula
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OrdLEqNegLog
+
+@[expose] public section
 
 noncomputable section
 

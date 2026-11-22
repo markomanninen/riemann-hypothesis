@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
-import Development.EtaleCohomology.EtaleSheaves.ChernClassValueFirst
-import Development.EtaleCohomology.TateTwists.ExistsNaturalEtaleKummerDegreeTwoValueOfRootsKum
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassEvaluation
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassValueFirst
+public import Development.EtaleCohomology.TateTwists.ExistsNaturalEtaleKummerDegreeTwoValueOfRootsKum
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

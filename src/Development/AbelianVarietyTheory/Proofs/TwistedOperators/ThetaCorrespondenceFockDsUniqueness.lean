@@ -1,24 +1,29 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryHarishChandraDiscreteSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirstStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMinimalKTypeSecondMemberStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointShapeUniqueAndDegWEqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeightsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelDualPairCasimirApplyStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasimirNumberIdentityDualPairStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestLeastDegreeMirror
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbedsOfLowestTypeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypesJointHarmonicShapeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockKsetPreservesHomogeneousDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialKFiniteBothMembersStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalForallMapMemStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescendsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLinearMapTensorOfPairingStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFockIPOfFockData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryHarishChandraDiscreteSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinFirstStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockMinimalKTypeSecondMemberStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JointShapeUniqueAndDegWEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockPolynomialsLocallyFiniteRationalWeightsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockOperatorsLieRepresentationCommuteStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockModelDualPairCasimirApplyStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CasimirNumberIdentityDualPairStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestLeastDegreeMirror
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EmbedsOfLowestTypeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LowestKTypesJointHarmonicShapeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockKsetPreservesHomogeneousDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FockPolynomialKFiniteBothMembersStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteDimensionalForallMapMemStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescendsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLinearMapTensorOfPairingStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH Formalism.MainNotions.SchurIrreducible GlobalTheory.FockAlg
 open TensorProduct
 
@@ -62,7 +67,8 @@ def quotMod (M : GKMod p q) (N : Submodule ℂ M.V) (hN : ∀ Z, ∀ y ∈ N, M.
       show N.mkQ (M.act (Eab a a) x) = _
       rw [hx a, map_smul]
     · intro x y hx hy
-      rw [map_add]; exact add_mem hx hy
+      rw [N.mkQ.map_add]
+      exact add_mem hx hy
 
 variable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
@@ -78,7 +84,8 @@ theorem map_hwSub {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ
 theorem map_casimir {a : Mat p q →ₗ[ℂ] Module.End ℂ V} {b : Mat p q →ₗ[ℂ] Module.End ℂ W}
     (g : V →ₗ[ℂ] W) (hg : ∀ Z v, g (a Z v) = b Z (g v)) (v : V) :
     g (casimir a v) = casimir b (g v) := by
-  simp [casimir, LinearMap.sum_apply, map_sum, hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [casimir, LinearMap.sum_apply, map_sum, hg]
 
 theorem eq_zero_of_contract {z : V ⊗[ℂ] W}
     (h : ∀ φ : W →ₗ[ℂ] ℂ, TensorProduct.rid ℂ V (LinearMap.lTensor V φ z) = 0) : z = 0 := by
@@ -105,9 +112,8 @@ theorem eq_tmul_of_contract {z : V ⊗[ℂ] W} {L : Submodule ℂ V} (hL : Modul
       φ (TensorProduct.lid ℂ W (LinearMap.rTensor W ψ z)) := by
     intro z
     induction z with
-    | zero => simp
     | tmul x y => simp [mul_comm]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have h2 := key z
   rw [← hc', map_smul, hψ] at h2
   rw [map_sub, map_sub, ← hc']
@@ -117,17 +123,15 @@ theorem rid_lTensor_map (φ : W →ₗ[ℂ] ℂ) (A : Module.End ℂ V) (z : V �
     TensorProduct.rid ℂ V (LinearMap.lTensor V φ (TensorProduct.map A LinearMap.id z)) =
       A (TensorProduct.rid ℂ V (LinearMap.lTensor V φ z)) := by
   induction z with
-  | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem lid_rTensor_map (ψ : V →ₗ[ℂ] ℂ) (B : Module.End ℂ W) (z : V ⊗[ℂ] W) :
     TensorProduct.lid ℂ W (LinearMap.rTensor W ψ (TensorProduct.map LinearMap.id B z)) =
       B (TensorProduct.lid ℂ W (LinearMap.rTensor W ψ z)) := by
   induction z with
-  | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end General
 
@@ -221,9 +225,10 @@ theorem range_eq (M₁ : GKMod p q) (hI : IrrGK M₁) (M₂ B : GKMod r s) (hB :
       · intro y; exact (Submodule.eq_top_iff'.1 h y :)
     rintro _ ⟨z, rfl⟩
     induction z with
-    | zero => simp
     | tmul x y => obtain ⟨_, y, rfl⟩ := y; exact s2 x y
-    | add x y hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y hx hy =>
+      rw [(TensorProduct.map (LinearMap.id : M₁.V →ₗ[ℂ] M₁.V) (LinearMap.range e).subtype).map_add]
+      exact add_mem hx hy
 
 end Core
 

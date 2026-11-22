@@ -1,15 +1,19 @@
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceLastLevel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialMapProper
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionDecomposition
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceLastLevel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialMapProper
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SectionDecomposition
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantEstimate
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormDiagonalEntryDilationGeneratorLeOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralAeConvergenceContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 noncomputable section
 
@@ -369,9 +373,9 @@ private theorem gNc_lemma_3 {X : Type*} [TopologicalSpace X] {f g : X → Mt k r
     (hg : Continuous g) : Continuous fun q => B.gN (Matrix.of (f q) * Matrix.of (g q)) := by
   unfold B.gN
   refine Continuous.sqrt ?_
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
-  exact Complex.continuous_normSq.comp (continuous_finset_sum _ fun l _ =>
+  exact Complex.continuous_normSq.comp (continuous_finsetSum _ fun l _ =>
     ((continuous_apply l).comp ((continuous_apply i).comp hf)).mul
       ((continuous_apply j).comp ((continuous_apply l).comp hg)))
 
@@ -425,7 +429,7 @@ theorem om_shift (hR : B.IsHaarOn (C6.Rset γ) μR) (M : ℝ) {ρ : B.Mat k r} (
   have hmeas : Measurable (B.rmulF ρ) := by
     refine Continuous.measurable (continuous_pi fun i => continuous_pi fun j => ?_)
     simp only [B.rmulF, Matrix.mul_apply, Matrix.of_apply]
-    exact continuous_finset_sum _ fun l _ => by fun_prop
+    exact continuous_finsetSum _ fun l _ => by fun_prop
   unfold Om
   calc ∫ x, B.gN (Matrix.of x * Matrix.of (Matrix.of.symm (ρ * Matrix.of n))) ^ (-M) ∂μR
       = ∫ x, (fun y : Mt k r => B.gN (Matrix.of y * Matrix.of n) ^ (-M)) (B.rmulF ρ x) ∂μR := by
@@ -459,7 +463,7 @@ theorem om_lower (hR : B.IsHaarOn (C6.Rset γ) μR) {M : ℝ} (hM : 0 ≤ M)
 private theorem gNc1_lemma_4 : Continuous fun x : Mt k r => B.gN (Matrix.of x) := by
   unfold B.gN
   refine Continuous.sqrt ?_
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   simp only [Matrix.of_apply]
   exact Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))
 
@@ -608,10 +612,11 @@ theorem d_orbJConv : Formalism.FourierDecayAlt.D.OrbJConv := by
   set μR := Formalism.FourierDecayAlt.D.muR D γ w with hμR
   set cR : ℝ := ∫ x, B.gN (Matrix.of x) ^ (-M) ∂μR with hcRdef
   have hone : Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ B.GV k r := by
-    simpa using (P.unitary_group_closed k r).one_mem
+    rw [Equiv.apply_symm_apply]
+    exact (P.unitary_group_closed k r).one_mem
   have hcR : 0 < cR := by
     have := om_pos hR hM0 hI hone
-    simpa [Om] using this
+    simpa only [Om, Equiv.apply_symm_apply, Matrix.mul_one, ← hcRdef] using this
 
   obtain ⟨sharpFunctionalExponent, hCC⟩ := hF
   set cF := max sharpFunctionalExponent 0 with hcF

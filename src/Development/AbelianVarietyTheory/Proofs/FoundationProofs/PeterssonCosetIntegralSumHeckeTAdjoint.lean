@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixCuspFormGamma1InterGamma0Statement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.CocycleCoefficients.PetAdjQuot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetEqRelIndexMulPetProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondOperatorOfMatrixCuspFormGamma1InterGamma0Statement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeTOperatorExplicitCuspFormStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.CocycleCoefficients.PetAdjQuot
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,9 +54,6 @@ private theorem le_conj [hN : H.Normal] (γ : SL(2, ℤ)) : H ≤ conjGL H (γ :
 
 private theorem Good.slashSL [H.Normal] (hF : Good H k F) (γ : SL(2, ℤ)) : Good H k (F ∣[k] γ) :=
   hF.slash _ (le_conj γ)
-
-private theorem Good.mono {K : Subgroup SL(2, ℤ)} (hF : Good K k F) (h : H ≤ K) : Good H k F :=
-  ⟨hF.hol, hF.bd, fun γ hγ => hF.inv γ (h hγ)⟩
 
 private theorem B_slash [H.FiniteIndex] {α : GL (Fin 2) ℝ} (hα : 0 < α.det.val) (h1 : (conjGL H α).FiniteIndex)
     (h2 : (conjGL H α⁻¹).FiniteIndex) (hF : Good H k F) (hG : Good H k G) (hF' : Good H k (F ∣[k] α))
@@ -138,7 +139,8 @@ private theorem dg_mul (m n : ℕ) (h : m * n ≠ 0) (h' : n * m ≠ 0) (k : ℤ
 
 private theorem B_symm [H.FiniteIndex] : quotInt H (petersson k G F) = conj (quotInt H (petersson k F G)) := by
   haveI : Fintype (SL(2, ℤ) ⧸ H) := Fintype.ofFinite _
-  simp only [quotInt, finsum_eq_sum_of_fintype, map_sum, ← integral_conj, ← petersson_symm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [quotInt, finsum_eq_sum_of_fintype, map_sum, ← integral_conj, ← petersson_symm]
 
 private theorem quotInt_petersson_eq_add_of_hecke_sum [H.FiniteIndex] [H.Normal] {p : ℕ} {c : ℂ} {A B TF : ℍ → ℂ} (hF : Good H k F) (hA : Good H k A)
     (hB : Good H k B) (hT : ∀ u : ℤ, F ∣[k] (ModularGroup.T ^ u) = F)
@@ -152,7 +154,7 @@ private theorem quotInt_petersson_eq_add_of_hecke_sum [H.FiniteIndex] [H.Normal]
   have hb := fun u : ℕ => hF.pbd (hB.slashSL (ModularGroup.T ^ (u : ℤ)))
   choose C hC using hb
   obtain ⟨D, hD⟩ := hF.pbd (hA.smul c)
-  rw [e1, quotInt_add H (hF.cont (hA.smul c)) hD (continuous_finset_sum _ fun u _ => hc u)
+  rw [e1, quotInt_add H (hF.cont (hA.smul c)) hD (continuous_finsetSum _ fun u _ => hc u)
     (C' := ∑ u ∈ Finset.range p, C u) fun z => (norm_sum_le _ _).trans (Finset.sum_le_sum fun u _ => hC u z),
     quotInt_sum H _ hc fun u => ⟨_, hC u⟩, B_smul_right]
   congr 1
@@ -327,7 +329,7 @@ theorem pet_heckeT_adj : ∀ (N l q : ℕ) (k : ℤ) (σ σ' : SL(2, ℤ)), 0 < 
   have e1 := quotInt_petersson_eq_add_of_hecke_sum (G0 gs') (Ga fs) (Gb f) (hT gs') eTf
   have e2 := quotInt_petersson_eq_add_of_hecke_sum (G0 f) (Ga gs) (Gb g) (hT f) eTg
   have e1' := congrArg conj e1
-  rw [map_add, map_mul, map_mul, ← B_symm, ← B_symm, ← B_symm, Complex.conj_natCast, map_one] at e1'
+  rw [map_add (f := _), map_mul, map_mul, ← B_symm, ← B_symm, ← B_symm, Complex.conj_natCast, map_one] at e1'
   have a1 := B_adj (H := H) hq.pos (by rw [dg_det, one_mul]) (dg_fin H 1 q hb) (dg_fin' H 1 q hb) (G0 f) (G0 g)
     (Ga f) (Gb g) (by rw [dg_mul, mul_one])
   have a2 := B_adj (H := H) hq.pos (by rw [dg_det, mul_one]) (dg_fin H q 1 ha) (dg_fin' H q 1 ha) (G0 f) (G0 gs)

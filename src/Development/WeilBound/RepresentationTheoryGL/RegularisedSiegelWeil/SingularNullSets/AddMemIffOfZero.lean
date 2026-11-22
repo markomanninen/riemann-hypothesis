@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.FixMulKer
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.FixMulKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem tR_split {S S' : Finset (HeightOneSpectrum (𝓞 F))} (hSS : S ⊆ S') {
     (U : ∀ v : HeightOneSpectrum (𝓞 F), Set (Fv F v)) (hU : ∀ v, (0 : Fv F v) ∈ U v) {h y : AF F} (hh : ε * h = h)
     (hy : ε * y = 0) : tR ρ S' U (h + y) = tR ρ S' U h * bR S' U y := by
   have hf : fstA F (h + y) = fstA F h := by
-    rw [map_add, fst_eq y, ker_fst hε hy, add_zero]
+    rw [map_add (f := _), fst_eq y, ker_fst hε hy, add_zero]
   have hb := box_split hSS hε U hU hh hy
   unfold tR bR
   rw [hf]

@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset
@@ -214,7 +218,7 @@ theorem lowering_span_weight_scalar (h : KRel ε F) {μ : Fin n → ℝ} {x : V}
     have e1 := height_operator_weight hyw
     have e2 := height_operator_weight hx.1
     rw [← hT, ← hφ0] at e1 e2
-    rw [map_add, map_smul, e2, smul_add, smul_comm c φ0 x] at e1
+    rw [map_add (f := _), map_smul, e2, smul_add, smul_comm c φ0 x] at e1
     exact add_left_cancel e1
   have hdis := (Module.End.eigenspaces_iSupIndep T).disjoint_biSup
     (y := {l : ℂ | l ≠ φ0}) (x := φ0) (by simp)

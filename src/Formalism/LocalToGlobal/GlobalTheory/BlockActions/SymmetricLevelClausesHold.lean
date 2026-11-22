@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundHolds
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FormsExtendHolds
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundHolds
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FormsExtendHolds
+
+@[expose] public section
 
 namespace Formalism.L2.GlobalTheoryTheory.Br
 

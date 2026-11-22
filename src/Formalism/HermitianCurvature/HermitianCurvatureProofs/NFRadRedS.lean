@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -136,7 +140,7 @@ theorem phi_val (hπ : IsCRepOn (UWset k r z) π) (hπ' : IsCRepOn (UWset k r z'
   have hex : ∃ p : Q.Mx k r × Q.Mx k r, p.1 ∈ UWset k r z ∧ p.2 ∈ UWset k r z' ∧
       g = p.1 * muZ k r μsec (zetaL k r z z' (Fin.last r) g) * p.2 := ⟨(a, b), ha, hb, hg⟩
   unfold Phi
-  rw [dif_pos ⟨hx, hex⟩]
+  rw [dite_eq_left ⟨hx, hex⟩]
   obtain ⟨h1, h2, h3⟩ := Classical.choose_spec hex
   exact wd hπ hπ' (hφ _ hq) h1 ha h2 hb (h3.symm.trans hg)
 
@@ -169,7 +173,7 @@ theorem radRedSurj_of (hL : LocSec) (hR : RepSmooth) : NF.RadRedSurj := by
   · intro x hx
     show Phi k r z z' μsec π π' φ x.1 x.2 = 0
     unfold Phi
-    rw [dif_neg]
+    rw [dite_eq_right]
     exact fun h => hx h.1
   · rintro ⟨c₀, g₀⟩ ⟨hc₀, hg₀l, hg₀g⟩
     obtain ⟨V, hV, hg₀V, a, b, ha_s, hb_s, hab⟩ := hL k r z z' μsec hk hz hz' hT hT' hsec g₀ hg₀l hg₀g

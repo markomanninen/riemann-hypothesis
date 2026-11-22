@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf11.expSq :
     ∀ {n : ℕ} (N : Matrix (Fin n) (Fin n) ℂ),

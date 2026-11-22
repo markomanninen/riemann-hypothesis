@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -50,7 +54,7 @@ theorem UpperTheory.V.Cj.S.tauSat :
   change V at v
   have hr := rank_le_aleph0_of_irred hs hi hv
   filter_upwards [LocSph.eventually_mem ((hs v).mem_nhds (by simp))] with w hw
-  have hfix : v ∈ fixed (locOf ρ w) (KGL w a) := by
+  have hfix : v ∈ fixed (locOf ρ w) (KGL w (n := a)) := by
     refine GlobalTheory.LGrp.mem_fixed.2 fun k hk => ?_
     obtain ⟨g, rfl⟩ := hk
     exact hw g

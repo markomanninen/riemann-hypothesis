@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedgeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedgeStatement
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.LogDR
 
 set_option autoImplicit false
@@ -37,10 +42,15 @@ theorem prod_sdiff_ne_zero {n : ℕ} (x : Fin n → Kˣ) (J I : Finset (Fin n)) 
 theorem ιMulti_frame {n : ℕ} (x : Fin n → Kˣ) (J : Finset (Fin n)) :
     ∀ (a : ℕ) (v : Fin a → Ω[K⁄ℤ]), (∀ i, v i ∈ Set.range (frame x J)) →
       ∃ (I : Finset (Fin n)) (m : ℤ), (m ≠ 0 → I.card = a) ∧
-        ExteriorAlgebra.ιMulti K a v = ((m : K) * ∏ j ∈ I \ J, (x j : K)) • logWedge x I
-  | 0, v, _ => ⟨∅, 1, fun _ => rfl, by simp [logWedge]⟩
-  | a + 1, v, hv => by
-    obtain ⟨I, m, hc, he⟩ := ιMulti_frame x J a (Matrix.vecTail v) (fun i => hv _)
+        ExteriorAlgebra.ιMulti K a v = ((m : K) * ∏ j ∈ I \ J, (x j : K)) • logWedge x I := by
+  intro a
+  induction a with
+  | zero =>
+    intro v _
+    exact ⟨∅, 1, fun _ => rfl, by simp [logWedge]⟩
+  | succ a ih =>
+    intro v hv
+    obtain ⟨I, m, hc, he⟩ := ih (Matrix.vecTail v) (fun i => hv i.succ)
     obtain ⟨i0, hi0⟩ := hv 0
     rw [ExteriorAlgebra.ιMulti_succ_apply, he, ← hi0, frame_eq, map_smul, smul_mul_smul_comm]
     by_cases hi : i0 ∈ I
@@ -98,8 +108,8 @@ end GlobalTheory.LogDR.ChartMem
 
 namespace GlobalTheory.LogDR
 
-open ChartMem in
 
+open ChartMem in
 theorem mem_chartForms_iff : ∀ (K : Type) [Field K] (A : Subring K) (n : ℕ) (x : Fin n → Kˣ) (J : Finset (Fin n)) (t : Kˣ) (a : ℕ) (η : abelian₂ K), η ∈ chartForms A x J t a ↔ ∃ c : Finset (Fin n) → K, (∀ I, I.card ≠ a → c I = 0) ∧ (∀ I, c I * t / ∏ j ∈ I \ J, (x j : K) ∈ A) ∧ η = ∑ I, c I • logWedge x I := by
   intro K _ A n x J t a η
   constructor

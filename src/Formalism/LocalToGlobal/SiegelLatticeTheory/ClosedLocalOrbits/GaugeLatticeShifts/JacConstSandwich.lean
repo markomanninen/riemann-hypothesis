@@ -1,11 +1,15 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwSandwichOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwGaussUniq
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwPhiForm
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwBigCellG
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwPhiDeriv
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHR
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHLIso
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHDim
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwSandwichOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwGaussUniq
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwPhiForm
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwBigCellG
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SwPhiDeriv
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHR
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHLIso
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHDim
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.BH
 

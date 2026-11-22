@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KfinCoefMulSplit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CellDataSupportStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HaarEqSmul
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.KfinCoefMulSplit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CellDataSupportStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HaarEqSmul
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
+
+@[expose] public section
+
 open BranchingSupport GlobalTheory.CellAmp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -153,7 +158,7 @@ theorem amp_pieri : Hyps → AmpKF → CellConv → ∀ (k r : ℕ) (ι κ : Typ
         (l v) (l' v')) γ ν := by
     unfold OrbInt
     simp only [← integral_smul]
-    refine Eq.trans (integral_congr_ae ?_) (integral_finset_sum _ (fun I _ => (eI I).1.smul (ep I : ℂ)))
+    refine Eq.trans (integral_congr_ae ?_) (integral_finsetSum _ (fun I _ => (eI I).1.smul (ep I : ℂ)))
     filter_upwards [hae] with p hp
     obtain ⟨hm, he⟩ := herm_cell hρ hom hom' hD.1 hp.1 hp.2.1 hp.2.2.1 hp.2.2.2
     have hs := hsplit _ hm

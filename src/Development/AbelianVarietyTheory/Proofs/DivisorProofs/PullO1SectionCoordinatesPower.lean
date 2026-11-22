@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotSymEOfNe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnifAlong
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH GlobalTheory.UMin GlobalTheory.SiegTh Classical
@@ -131,7 +136,7 @@ theorem lbIso_of_vals (M : RatModel o Ω) {L A : LB M.Z} (cL : L.ι → Ω) (cA 
     intro pq
     by_cases hV : ((A.U pq.1 ⊓ L.U pq.2 : M.Z.Opens) : Set M.Z).Nonempty
     · have h0 : cA pq.1 / cL pq.2 ≠ 0 :=
-        div_ne_zero (hA0 _ (hV.mono fun _ h => h.1)) (hL0 _ (hV.mono fun _ h => h.2))
+        div_ne_zero (hA0 _ (by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.1⟩)) (hL0 _ (by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.2⟩))
       obtain ⟨u, hu⟩ := exists_unit_of_val M hV h0 fun z hz => by
         rw [inv_div]; exact hloc pq.1 pq.2 z hz.1 hz.2
       exact ⟨u, fun _ => hu⟩
@@ -139,13 +144,13 @@ theorem lbIso_of_vals (M : RatModel o Ω) {L A : LB M.Z} (cL : L.ι → Ω) (cA 
   choose u hu using key
   refine ⟨⟨u⟩, fun pq pq' => ?_⟩
   by_cases hV : (((A.U pq.1 ⊓ L.U pq.2) ⊓ (A.U pq'.1 ⊓ L.U pq'.2) : M.Z.Opens) : Set M.Z).Nonempty
-  · have h1 : ((A.U pq.1 ⊓ L.U pq.2 : M.Z.Opens) : Set M.Z).Nonempty := hV.mono fun _ h => h.1
-    have h2 : ((A.U pq'.1 ⊓ L.U pq'.2 : M.Z.Opens) : Set M.Z).Nonempty := hV.mono fun _ h => h.2
-    have hAA : ((A.U pq.1 ⊓ A.U pq'.1 : M.Z.Opens) : Set M.Z).Nonempty := hV.mono fun _ h => ⟨h.1.1, h.2.1⟩
-    have hLL : ((L.U pq.2 ⊓ L.U pq'.2 : M.Z.Opens) : Set M.Z).Nonempty := hV.mono fun _ h => ⟨h.1.2, h.2.2⟩
-    have cA' := hA0 _ (h2.mono fun _ h => h.1)
-    have cL' := hL0 _ (h2.mono fun _ h => h.2)
-    have cL0 := hL0 _ (h1.mono fun _ h => h.2)
+  · have h1 : ((A.U pq.1 ⊓ L.U pq.2 : M.Z.Opens) : Set M.Z).Nonempty := by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.1⟩
+    have h2 : ((A.U pq'.1 ⊓ L.U pq'.2 : M.Z.Opens) : Set M.Z).Nonempty := by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.2⟩
+    have hAA : ((A.U pq.1 ⊓ A.U pq'.1 : M.Z.Opens) : Set M.Z).Nonempty := by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.1.1, hz.2.1⟩
+    have hLL : ((L.U pq.2 ⊓ L.U pq'.2 : M.Z.Opens) : Set M.Z).Nonempty := by obtain ⟨z, hz⟩ := hV; exact ⟨z, hz.1.2, hz.2.2⟩
+    have cA' := hA0 _ (by obtain ⟨z, hz⟩ := h2; exact ⟨z, hz.1⟩)
+    have cL' := hL0 _ (by obtain ⟨z, hz⟩ := h2; exact ⟨z, hz.2⟩)
+    have cL0 := hL0 _ (by obtain ⟨z, hz⟩ := h1; exact ⟨z, hz.2⟩)
     have eA := hAg pq.1 pq'.1 hAA
     have eL := hLg pq.2 pq'.2 hLL
     have gL0 : valF M.pt _ (L.g pq.2 pq'.2 : Γ(M.Z, L.U pq.2 ⊓ L.U pq'.2)) ≠ 0 := valF_pt_ne_zero M hLL _

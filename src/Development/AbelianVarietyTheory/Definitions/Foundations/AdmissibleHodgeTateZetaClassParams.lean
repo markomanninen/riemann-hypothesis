@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,5 @@ def AdmissibleHodgeTateZetaClassParams {l : ℕ} [Fact l.Prime] (e : ℕ) (X : T
     (∀ r₀ : (ZMod l)ˣ, gm r₀ ∈ CongruenceSubgroup.Gamma1 N ∧
       (((gm r₀ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℤ) : ZMod l) = -(r₀ : ZMod l) * (((gm r₀ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 : ℤ) : ZMod l)) ∧
     ‖α‖ = 1 ∧ ∀ b ∈ X.B N l (2 * e - 1), pr (X.heckeU l b) = α • pr b
-
-example {l : ℕ} [Fact l.Prime] (e : ℕ) (X : Tower Ω ε) (pr : X.Fn l → Fin 2 → Qbar l) (gm : (ZMod l)ˣ → SL(2, ℤ)) (α : Qbar l) :
-    ¬ AdmissibleHodgeTateZetaClassParams e X pr 4 gm α := fun h => by have := h.1; omega
 
 end GlobalTheory.LambdaValuationPowers

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowSmulMemRangeOfSurjectiveBaseChange
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPowSmulMemRangeOfSurjectiveBaseChange
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -23,20 +27,20 @@ theorem finrank_tensor_eq_of_retract {A M N : Type} [CommRing A] [IsDomain A]
     Module.finrank K (K ⊗[A] N) =
       Module.finrank (FractionRing A) (FractionRing A ⊗[A] N) := by
   let p : Ideal A := RingHom.ker (algebraMap A K)
-  haveI : p.IsPrime := RingHom.ker_isPrime _
+  have : p.IsPrime := RingHom.ker_isPrime _
   let B := Localization.AtPrime p
-  haveI : Module.Free B (B ⊗[A] M) :=
+  have : Module.Free B (B ⊗[A] M) :=
     ha B (IsLocalization.map_units B (⟨a, hK⟩ : p.primeCompl))
-  haveI : Module.Flat B (B ⊗[A] N) :=
+  have : Module.Flat B (B ⊗[A] N) :=
     Module.Flat.of_retract (i.baseChange B) (r.baseChange B) (by
       rw [← LinearMap.baseChange_comp, hri, LinearMap.baseChange_id])
-  haveI : Module.Free B (B ⊗[A] N) := Module.free_of_flat_of_isLocalRing
+  have : Module.Free B (B ⊗[A] N) := Module.free_of_flat_of_isLocalRing
   have key : ∀ (L : Type) [Field L] [Algebra A L],
       (∀ y : p.primeCompl, IsUnit (algebraMap A L y)) →
       Module.finrank L (L ⊗[A] N) = Module.finrank B (B ⊗[A] N) := by
     intro L _ _ hL
-    letI : Algebra B L := (IsLocalization.lift (M := p.primeCompl) hL).toAlgebra
-    haveI : IsScalarTower A B L :=
+    let : Algebra B L := (IsLocalization.lift (M := p.primeCompl) hL).toAlgebra
+    have : IsScalarTower A B L :=
       .of_algebraMap_eq fun y => (IsLocalization.lift_eq (M := p.primeCompl) hL y).symm
     rw [← Module.finrank_baseChange (R := L) (S := B) (M' := B ⊗[A] N)]
     exact (TensorProduct.AlgebraTensorModule.cancelBaseChange A B L L N).finrank_eq.symm
@@ -67,7 +71,7 @@ theorem exists_retract {A σ : Type} [CommRing A] (I : Ideal (MvPolynomial σ A)
     (Submodule.Quotient.restrictScalarsEquiv A I).symm.toLinearMap, ?_⟩
   ext ⟨_, F, hF, rfl⟩
   change Ideal.Quotient.mk I (homogeneousComponent e F) = Ideal.Quotient.mk I F
-  rw [homogeneousComponent_of_mem hF, if_pos rfl]
+  simp [homogeneousComponent_of_mem hF]
 
 theorem dimDeg_add_finrank {A σ : Type} [CommRing A] [Finite σ] (I : Ideal (MvPolynomial σ A))
     (hI : ∀ F ∈ I, ∀ e, homogeneousComponent e F ∈ I) (e : ℕ)
@@ -110,28 +114,28 @@ theorem dimDeg_add_finrank {A σ : Type} [CommRing A] [Finite σ] (I : Ideal (Mv
   have hrange : (homogeneousSubmodule σ K e).map ψ = (piece I e).baseChange K := by
     apply le_antisymm
     · rintro _ ⟨G, hG, rfl⟩
-      rw [G.as_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [G.as_sum, map_sum]
       refine Submodule.sum_mem _ fun d hd => ?_
       have hd' : d.degree = e := by
         rw [Finsupp.degree_eq_weight_one]
         exact hG (mem_support_iff.1 hd)
-      have : (monomial d (coeff d G) : MvPolynomial σ K) =
-          coeff d G • map (algebraMap A K) (monomial d 1) := by
+      have : (monomial d (AddMonoidAlgebra.coeff G d) : MvPolynomial σ K) =
+          AddMonoidAlgebra.coeff G d • map (algebraMap A K) (monomial d 1) := by
         simp [smul_monomial]
       rw [this, map_smul, hψ]
       exact Submodule.smul_mem _ _ (Submodule.tmul_mem_baseChange_of_mem _
         ⟨_, isHomogeneous_monomial 1 hd', rfl⟩)
     · rintro _ ⟨z, rfl⟩
       induction z with
-      | zero => simp
-      | add z w hz hw => rw [map_add]; exact add_mem hz hw
+      | add z w hz hw => simpa only [map_add] using add_mem hz hw
       | tmul c n =>
         obtain ⟨_, F, hF, rfl⟩ := n
         refine ⟨c • map (algebraMap A K) F,
           Submodule.smul_mem _ _ (IsHomogeneous.map hF _), ?_⟩
         rw [map_smul, hψ, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
         rfl
-  haveI : Module.Finite K (homogeneousSubmodule σ K e) :=
+  have : Module.Finite K (homogeneousSubmodule σ K e) :=
     Module.Finite.iff_fg.2 (homogeneousSubmodule_fg σ K e)
   have h := LinearMap.finrank_range_add_finrank_ker (ψ ∘ₗ (homogeneousSubmodule σ K e).subtype)
   rw [LinearMap.range_comp, Submodule.range_subtype, hrange, Submodule.baseChange,
@@ -152,7 +156,7 @@ theorem exists_const_of_isDomain {A σ : Type} [CommRing A] [IsDomain A] [IsNoet
   obtain ⟨a, ha0, ha⟩ := exists_free_tensor_of_isUnit.{0} A (MvPolynomial σ A)
     (MvPolynomial σ A ⧸ I)
   refine ⟨a, ha0, ZM.dimDeg (I.map (map (algebraMap A (FractionRing A)))), fun K _ x hx => ?_⟩
-  letI : Algebra A K := x.toAlgebra
+  let : Algebra A K := x.toAlgebra
   funext e
   obtain ⟨r, hr⟩ := exists_retract I hI e
   have h1 := finrank_tensor_eq_of_retract _ r hr a ha K hx
@@ -213,8 +217,8 @@ theorem finite_of_le_ker {R σ : Type} [CommRing R] [IsNoetherianRing R] [Finite
 
 end HilbertFamily
 
-open GlobalTheory.ZM in
 
+open GlobalTheory.ZM in
 theorem finite_setOf_dimDeg_map : ∀ (R σ : Type) [CommRing R] [IsNoetherianRing R] [Finite σ] (I : Ideal (MvPolynomial σ R)), (∀ F ∈ I, ∀ e, MvPolynomial.homogeneousComponent e F ∈ I) → {φ : ℕ → ℕ | ∃ (K : Type) (_ : Field K) (x : R →+* K), φ = dimDeg (I.map (MvPolynomial.map x))}.Finite := by
   intro R σ _ _ _ I hI
   refine (HilbertFamily.finite_of_le_ker I hI ⊥).subset ?_

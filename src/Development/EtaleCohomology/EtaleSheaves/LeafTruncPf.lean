@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGhostRelCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGhostRelCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Pretriangulated Triangulated

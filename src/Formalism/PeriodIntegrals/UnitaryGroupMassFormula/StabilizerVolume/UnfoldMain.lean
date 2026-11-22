@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.Unfold
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.Unfold
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,15 +111,18 @@ theorem unfold_of (hW : Witt) (hFT : FinTheta) (hI : InvInv) (hMO : MeasOrb) (hM
     intro h
     have hF := hFT F E σ hE M J hJ ha hc a ha1 ha2 X0 hT hdet (fun X => (φ X : ℂ)) hadm h
     rw [hθS h]
-    refine ENNReal.tsum_coe_ne_top_iff_summable.2 (summable_of_finite_support ?_)
+    refine ENNReal.tsum_coe_ne_top_iff_summable.2 (summable_of_hasFiniteSupport ?_)
     refine (hF.preimage Subtype.val_injective.injOn).subset ?_
     intro X hX
-    simp only [Function.mem_support, ne_eq, Real.toNNReal_eq_zero, not_le] at hX
-    show (φ _ : ℂ) ≠ 0
-    exact Complex.ofReal_ne_zero.2 hX.ne'
+    simp only [Function.mem_support] at hX
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Ne, Complex.ofReal_eq_zero]
+    intro hz
+    apply hX
+    change φ (h⁻¹ • ratTup (AF F) (X : Fin a → Fin M → E)) = 0 at hz
+    simp [hz]
   have hθm : Measurable fun h : HA (AF F) σ J => ∑' x : orbS (GamA σ J)
         (ratTup (F := F) (AF F) X0), ENNReal.ofReal (φ (h⁻¹ • (x : Fin a → Fin M → AF F ⊗[F] E))) := by
-    refine Measurable.ennreal_tsum fun x => ?_
+    refine Measurable.tsum fun x => ?_
     have hx : (fun h : HA (AF F) σ J => ENNReal.ofReal (φ (h⁻¹ • (x : Fin a → Fin M → AF F ⊗[F] E)))) =
         fun h => ENNReal.ofReal (φ ((h⁻¹ * repO _ _ x) • ratTup (F := F) (AF F) X0)) := by
       funext h

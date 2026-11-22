@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.JoinSI
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KerSideCut
-import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfHypotheses
-import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfUnitHypotheses
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.JoinSI
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KerSideCut
+public import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfHypotheses
+public import Formalism.LocalToGlobal.IndefiniteReal.IsometricPeriodsOfUnitHypotheses
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open MeasureTheory Formalism.BasicNotions Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.PackageTie2
@@ -50,7 +54,7 @@ theorem kernelJoin_of_multiplicity (hs : ∀ a, Bs.v0.embedding a = Formalism.In
   let U1 : D.what₂.Mu u →ₗ[ℂ] D.what₂.Mu u :=
     { toFun := fun φ => (cφ u).symm (cjv s (Mu.mulVec (cjv s (cφ u φ))))
       map_add' := fun φ ψ => by
-        simp only [map_add, cjv_add, Matrix.mulVec_add]
+        simp only [map_add (f := _), cjv_add, Matrix.mulVec_add]
       map_smul' := fun r φ => by
         simp only [map_smul, cjv_smul, Matrix.mulVec_smul, Formalism.IndefR.Links.cj_cj, RingHom.id_apply] }
   have hU1 : ∀ φ, cjv s (cφ u (U1 φ)) = Mu.mulVec (cjv s (cφ u φ)) := by
@@ -73,13 +77,13 @@ theorem kernelJoin_of_multiplicity (hs : ∀ a, Bs.v0.embedding a = Formalism.In
   let B2 : (Fin ((fc P.zs).Dc.a (m u)) → ℂ) →ₗ[ℂ] (Fin ((fc P.zs).Df1.nV Bs.μ0) → ℂ) →ₗ[ℂ] ℂ :=
     LinearMap.mk₂ ℂ (fun x y => Formalism.IndefR.Links.cj s (d.a (m u) * lam * ⟪S y, Q x⟫_ℂ))
       (fun x x' y => by
-        simp only [Q, cjv_add, Matrix.mulVec_add, map_add, inner_add_right, mul_add])
+        simp only [Q, cjv_add, Matrix.mulVec_add, map_add (f := _), inner_add_right, mul_add])
       (fun r x y => by
         simp only [Q, cjv_smul, Matrix.mulVec_smul, map_smul, inner_smul_right, smul_eq_mul, map_mul,
           Formalism.IndefR.Links.cj_cj]
         ring)
       (fun x y y' => by
-        simp only [S, map_add, inner_add_left, mul_add])
+        simp only [S, map_add (f := _), inner_add_left, mul_add])
       (fun r x y => by
         simp only [S, map_smul, LinearMap.map_smulₛₗ, inner_smul_left, smul_eq_mul, map_mul,
           Formalism.IndefR.Links.cj_cj, starRingEnd_self_apply]
@@ -160,14 +164,6 @@ section Ties
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {Kc : MainNotions.G.Consts}
   {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} {R : Formalism.L2.RecT ex}
 
-theorem adm13_of_joinAt (S : Formalism.L2.SG.SpectralTiesReal.STiesR R)
-    {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {A : DefAmb Bs}
-    {P' : CxData A} {fc : DefSub A → DefFace Bs}
-    {eV : ∀ t, (Fin ((fc P'.zs).Df1.nV t) → K) →ₗ[K] A.FR t} {sEE : P'.EE →ₗ⋆[ℂ] (fc P'.zs).Sp.HH} {s : Bool} {σ : K →+* ℂ}
-    (hM : P'.MIstar2 eV sEE) (J : JoinAt S.X S.G S.Y (jOf S) S.tr P' fc eV sEE s σ) (hF : FinX S.Y)
-    (hon : (D.what₂.V0 D.what₂.mu0).map (D.what₂.iota D.what₂.mu0) = ⊤) : Formalism.MainNotions.LocalQuadraticParts.adm13 D :=
-  adm13_of_colJoin hM J hF (S.hI hF) (jOf_spec S hF) (colJoinS_of_sTiesR S hF) R.pin.buDef hon
-
 end Ties
 
 section Real
@@ -179,10 +175,6 @@ variable {R : Formalism.L2.RecT ex} {S : Formalism.L2.SG.SpectralTiesReal.STiesR
   {Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)} {Spf : ∀ Zs, SPer (Dcf Zs)}
   {Zscf : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
   {Q : Formalism.IndefR.RealT R P Dcf Spf Zscf S Ks}
-
-theorem adm13_of_joinSI (hM : (cx Q).MIstar2 (Q.F.eV (cx Q).zs) Q.sEE) (J : JoinSI R S Q) (hF : FinX S.Y)
-    (hon : (D.what₂.V0 D.what₂.mu0).map (D.what₂.iota D.what₂.mu0) = ⊤) : Formalism.MainNotions.LocalQuadraticParts.adm13 D :=
-  adm13_of_joinAt S hM J.toJoinAt hF hon
 
 end Real
 

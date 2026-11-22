@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MemPrimitiveTensorsIffIsPrimitiveElem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralOfDivisibleCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSmulLeOneOfPrimitiveBoundedPowersStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MemPrimitiveTensorsIffIsPrimitiveElem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralOfDivisibleCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormSmulLeOneOfPrimitiveBoundedPowersStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem norm_le_of_mem_span (f : M →ₗ[↥(intO C)] C) {s : Set M} {r : ℝ} 
   | mem x hx => exact h x hx
   | zero => simpa using hr
   | add x y _ _ hx hy =>
-    rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+    rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   | smul o x _ hx => rw [map_smul]; exact (norm_smul_le _ _).trans hx
 
 theorem bddAbove_norm [Module.Finite ↥(intO C) M] (f : M →ₗ[↥(intO C)] C) :
@@ -78,10 +82,9 @@ theorem supNorm_le_of_tmul {f : WithConv (M ⊗[↥(intO C)] M →ₗ[↥(intO C
     (hr : 0 ≤ r) (h : ∀ a b, ‖f.ofConv (a ⊗ₜ b)‖ ≤ r) : supNorm f ≤ r := by
   refine supNorm_le fun t => ?_
   induction t with
-  | zero => simpa using hr
   | tmul a b => exact h a b
   | add x y hx hy =>
-    rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+    rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
 
 theorem supNorm_eq_mul [Module.Finite ↥(intO C) M] (f g : WithConv (M →ₗ[↥(intO C)] C))
     (h : WithConv (M ⊗[↥(intO C)] M →ₗ[↥(intO C)] C))
@@ -142,8 +145,8 @@ theorem tensor_ext {f g : WithConv (A ⊗[R] A →ₗ[R] C)}
 theorem extProd_one : extProd (1 : WithConv (A →ₗ[R] C)) 1 = 1 :=
   tensor_ext fun a b => by simp [mul_comm]
 
-variable (R C A) in
 
+variable (R C A) in
 def inlHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C) :=
   AlgHom.ofLinearMap
     { toFun := fun f => extProd f 1
@@ -151,8 +154,8 @@ def inlHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C
       map_smul' := fun c f => tensor_ext fun a b => by simp [mul_assoc] }
     extProd_one fun f g => by simp [extProd_mul]
 
-variable (R C A) in
 
+variable (R C A) in
 def inrHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C) :=
   AlgHom.ofLinearMap
     { toFun := fun f => extProd 1 f
@@ -160,8 +163,8 @@ def inrHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C
       map_smul' := fun c f => tensor_ext fun a b => by simp [mul_left_comm] }
     extProd_one fun f g => by simp [extProd_mul]
 
-variable (R C A) in
 
+variable (R C A) in
 def mulHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C) :=
   AlgHom.ofLinearMap
     { toFun := fun f => toConv (f.ofConv ∘ₗ (Bialgebra.mulCoalgHom R A).toLinearMap)
@@ -170,8 +173,8 @@ def mulHom : WithConv (A →ₗ[R] C) →ₐ[C] WithConv (A ⊗[R] A →ₗ[R] C
     (tensor_ext fun a b => by simp [mul_comm])
     fun f g => congrArg toConv (LinearMap.convMul_comp_coalgHom_distrib f g _)
 
-variable (R C A) in
 
+variable (R C A) in
 def extendHom : WithConv (A →ₗ[R] R) →ₐ[R] WithConv (A →ₗ[R] C) :=
   AlgHom.ofLinearMap
     { toFun := fun f => toConv ((Algebra.ofId R C).toLinearMap ∘ₗ f.ofConv)

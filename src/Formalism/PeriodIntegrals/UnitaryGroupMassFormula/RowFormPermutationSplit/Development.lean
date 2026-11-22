@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.QmRowForm
+module
+
+public import Formalism.PeriodIntegrals.QmRowForm
+
+@[expose] public section
 
 open Finset Formalism.REAL
 

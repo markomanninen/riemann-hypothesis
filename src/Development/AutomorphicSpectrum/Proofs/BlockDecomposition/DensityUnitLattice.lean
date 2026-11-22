@@ -1,9 +1,14 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityBoundNonzero
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RankOneLocalDensityAlmostAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardQuadricUnit
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityBoundNonzero
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RankOneLocalDensityAlmostAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardQuadricUnit
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -34,10 +39,6 @@ theorem real_bound_unit (q N : ℝ) (hq : 0 < q) (M : ℕ) (hM : 1 ≤ M)
 
 variable {F : Type} [Field F] [NumberField F] {v : HeightOneSpectrum (𝓞 F)}
 
-local notation "𝒪" => HeightOneSpectrum.adicCompletionIntegers F v
-local notation "𝓴" => IsLocalRing.ResidueField (HeightOneSpectrum.adicCompletionIntegers F v)
-local notation "res" => IsLocalRing.residue (HeightOneSpectrum.adicCompletionIntegers F v)
-
 theorem core_unit (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v (2 : Fv F v) = 1)
     (ι : Type) [Fintype ι] [DecidableEq ι] (B : Matrix ι ι (Fv F v)) (hBs : B.IsSymm)
     (hBint : ∀ i j, B i j ∈ v.adicCompletionIntegers F) (hBdet : Valued.v B.det = 1)
@@ -48,6 +49,100 @@ theorem core_unit (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v 
         (Measure.pi fun _ : ι => lam) {x | (∀ i, x i ∈ v.adicCompletionIntegers F) ∧
           (∃ i, Valued.v (x i) = 1) ∧ (2 : Fv F v)⁻¹ * (x ⬝ᵥ (B *ᵥ x)) ∈ A} = (D : ℝ≥0∞) * lam A := by
   classical
+  let 𝒪 := v.adicCompletionIntegers F
+  let 𝓴 := IsLocalRing.ResidueField 𝒪
+  let phi := ValuationSubring.subtype 𝒪
+  let res := IsLocalRing.residue 𝒪
+  have res_eq_zero_iff (a : 𝒪) : res a = 0 ↔ Valued.v (a : Fv F v) < 1 := by
+    rw [IsLocalRing.residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
+    constructor
+    · intro h
+      have h1 : Valued.v (a : Fv F v) ≤ 1 := a.2
+      refine lt_of_le_of_ne h1 fun h2 => h ?_
+      have ha0 : (a : Fv F v) ≠ 0 := by
+        intro h0
+        rw [h0, map_zero] at h2
+        exact zero_ne_one h2
+      have hinv : (a : Fv F v)⁻¹ ∈ v.adicCompletionIntegers F := by
+        show Valued.v ((a : Fv F v)⁻¹) ≤ 1
+        rw [map_inv₀, h2, inv_one]
+      refine IsUnit.of_mul_eq_one (⟨(a : Fv F v)⁻¹, hinv⟩ : v.adicCompletionIntegers F) ?_
+      apply Subtype.ext
+      show (a : Fv F v) * (a : Fv F v)⁻¹ = 1
+      exact mul_inv_cancel₀ ha0
+    · intro h hu
+      obtain ⟨b, hb⟩ := hu.exists_right_inv
+      have h3 : Valued.v ((a : Fv F v) * (b : Fv F v)) = 1 := by
+        have : (a : Fv F v) * (b : Fv F v) = 1 := congrArg Subtype.val hb
+        rw [this, map_one]
+      rw [map_mul] at h3
+      have hb1 : Valued.v (b : Fv F v) ≤ 1 := b.2
+      have h4 : Valued.v (a : Fv F v) * Valued.v (b : Fv F v) < 1 := by
+        calc _ ≤ Valued.v (a : Fv F v) * 1 := by gcongr
+          _ < 1 := by simpa using h
+      exact absurd h3 (ne_of_lt h4)
+
+  have res_eq_iff (a b : 𝒪) : res a = res b ↔ Valued.v ((a : Fv F v) - b) < 1 := by
+    rw [← sub_eq_zero, ← map_sub, res_eq_zero_iff]
+    rfl
+
+  let lift (y : 𝓴) : 𝒪 := Function.surjInv IsLocalRing.residue_surjective y
+
+  have res_lift (y : 𝓴) : res (lift y) = y := Function.surjInv_eq _ y
+
+  let lf (y : ι → 𝓴) : ι → Fv F v := fun i => (lift (y i) : 𝒪)
+
+  have cover (x : ι → Fv F v) :
+      ((∀ i, x i ∈ 𝒪) ∧ ∃ i, Valued.v (x i) = 1) ↔
+        ∃ y : ι → 𝓴, y ≠ 0 ∧ ∀ i, Valued.v (x i - lf y i) < 1 := by
+    constructor
+    · rintro ⟨hx, i₀, hi₀⟩
+      refine ⟨fun i => res ⟨x i, hx i⟩, ?_, fun i => ?_⟩
+      · intro h0
+        have h1 := (res_eq_zero_iff (⟨x i₀, hx i₀⟩ : 𝒪)).1 (congrFun h0 i₀)
+        exact absurd hi₀ (ne_of_lt h1)
+      · exact (res_eq_iff (⟨x i, hx i⟩ : 𝒪) (lift _)).1 (res_lift _).symm
+    · rintro ⟨y, hy, h⟩
+      have hx : ∀ i, x i ∈ 𝒪 := by
+        intro i
+        have e : x i = (x i - lf y i) + lf y i := by ring
+        show Valued.v (x i) ≤ 1
+        rw [e]
+        exact Valuation.map_add_le _ (h i).le (lift (y i)).2
+      refine ⟨hx, ?_⟩
+      obtain ⟨i, hi⟩ := Function.ne_iff.1 hy
+      refine ⟨i, le_antisymm (hx i) (not_lt.1 fun hlt => hi ?_)⟩
+      have e : res (⟨x i, hx i⟩ : 𝒪) = y i := by
+        rw [(res_eq_iff (⟨x i, hx i⟩ : 𝒪) (lift (y i))).2 (h i), res_lift]
+      rw [← e]
+      exact (res_eq_zero_iff _).2 hlt
+
+  have eq_of_close (x : ι → Fv F v) (y y' : ι → 𝓴)
+      (h : ∀ i, Valued.v (x i - lf y i) < 1) (h' : ∀ i, Valued.v (x i - lf y' i) < 1) : y = y' := by
+    funext i
+    have h1 := Valuation.map_sub_lt _ (h' i) (h i)
+    have e : (x i - lf y' i) - (x i - lf y i) = lf y i - lf y' i := by ring
+    rw [e] at h1
+    have h2 := (res_eq_iff (lift (y i)) (lift (y' i))).2 h1
+    rwa [res_lift, res_lift] at h2
+
+  have res_Q (c : 𝒪) (hc : (c : Fv F v) = 2⁻¹) (hr : res c = 2⁻¹)
+      (BO : Matrix ι ι 𝒪) (y : ι → 𝓴) :
+      ∃ a : 𝒪, (a : Fv F v) = (2 : Fv F v)⁻¹ * (lf y ⬝ᵥ ((BO.map phi) *ᵥ lf y)) ∧
+        res a = (2 : 𝓴)⁻¹ * (y ⬝ᵥ ((BO.map res) *ᵥ y)) := by
+    refine ⟨c * ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y))), ?_, ?_⟩
+    · have h1 := map_quad phi BO (lift ∘ y)
+      have h2 : (phi : 𝒪 →+* Fv F v) (c * ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y)))) = phi c * phi ((lift ∘ y) ⬝ᵥ (BO *ᵥ (lift ∘ y))) := map_mul _ _ _
+      rw [h1] at h2
+      have h3 : phi c = (2 : Fv F v)⁻¹ := hc
+      rw [h3] at h2
+      exact h2
+    · rw [map_mul, hr, map_quad]
+      have : (⇑res ∘ lift ∘ y) = y := by
+        funext i
+        exact res_lift _
+      rw [this]
+
   have hs : s ∈ v.adicCompletionIntegers F := mem_int.2 hsu.le
   have hLoc := GlobalTheory.T.completion_is_local_ring F v
   haveI : SecondCountableTopology (Fv F v) := hLoc.2.2.1

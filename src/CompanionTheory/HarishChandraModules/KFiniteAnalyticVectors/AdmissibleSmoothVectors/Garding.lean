@@ -1,7 +1,11 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.GardingAvg
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.GardingBump
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.GardingAvg
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.GardingBump
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+
+@[expose] public section
 
 open MeasureTheory Matrix Topology Set Filter
 open scoped ContDiff
@@ -90,9 +94,10 @@ theorem contDiff_avg {H : Type*} [NormedAddCommGroup H] [NormedSpace ℝ H] [Com
 
 end Gard
 
-open Gard in
 
+open Gard in
 theorem garding_finite_smooth_vectors : GardingFin := by
+  open scoped Pointwise in
   intro n ε H _ _ _ σ hσ Y _ hY v hv
   obtain ⟨⟨h1, hm⟩, hiso, hcont⟩ := hσ
   let ρ : UJ ε → H →L[ℂ] H := fun x => σ (toM x)

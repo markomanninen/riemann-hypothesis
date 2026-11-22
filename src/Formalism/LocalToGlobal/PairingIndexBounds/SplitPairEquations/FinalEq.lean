@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.Outright
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.Outright
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+
+@[expose] public section
 
 namespace Formalism.L2.PairingIndexBounds.Eq.SqG
 

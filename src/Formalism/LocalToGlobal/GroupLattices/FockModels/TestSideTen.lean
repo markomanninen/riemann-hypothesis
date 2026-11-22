@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideDef
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSideDef
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -55,7 +59,8 @@ theorem repr_prod (V : S → Submodule Kf (MvPolynomial (Fin k × Fin n) Kf)) {I
       conv_lhs => rw [← (b s).sum_repr (F s)]
       rw [Submodule.coe_sum]
       simp only [Submodule.coe_smul]
-    simp only [hF, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hF, map_sum, map_smul]
     rw [Finset.prod_univ_sum]
     refine Finset.sum_congr (by simp) fun p _ => ?_
     simp only [hc, MvPolynomial.smul_eq_C_mul, Finset.prod_mul_distrib, map_prod]
@@ -112,7 +117,8 @@ theorem psi_exists (V : S → Submodule Kf (MvPolynomial (Fin k × Fin n) Kf))
     intro φ i
     have h1 : (x.dualBasis.equiv x' (Equiv.refl _)) φ = ∑ a, φ (x a) • x' a := by
       conv_lhs => rw [← x.dualBasis.sum_repr φ]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       apply Finset.sum_congr rfl
       intro a _
       rw [map_smul, Module.Basis.equiv_apply, Module.Basis.dualBasis_repr, Equiv.refl_apply]

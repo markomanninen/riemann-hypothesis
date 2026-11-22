@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGeneratorsOfCardHomResidueFieldLeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCompatibleGeneratorsTowerLocalRingStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChainLeIInfSupPowSmulTopOfPrecompleteStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTorsionModuleExtendingResidueMapsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeftExactFunctorRepresentableTorsionModulesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGeneratorsOfCardHomResidueFieldLeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCompatibleGeneratorsTowerLocalRingStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChainLeIInfSupPowSmulTopOfPrecompleteStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTorsionModuleExtendingResidueMapsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeftExactFunctorRepresentableTorsionModulesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem lin_eq_sum {Λ : Type} [CommRing Λ] {a : ℕ} {B : Type} [AddCommGroup 
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hc]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
 
 variable {Λ : Type} [CommRing Λ] [IsLocalRing Λ]
@@ -177,7 +182,7 @@ theorem assemble [IsNoetherianRing Λ] [Finite (ResidueField Λ)] (F : ModuleCat
           exact Finset.sum_eq_zero fun i _ => by
             rw [Pi.smul_apply, smul_eq_mul, mul_comm, mul_smul, hn r hr i, smul_zero]
         have h2 : L c2 = 0 := hsm hc2
-        rw [LinearMap.mem_ker, map_add, h2, add_zero, hL]
+        rw [LinearMap.mem_ker, map_add (f := _), h2, add_zero, hL]
         exact (mem_sol.mp x.2) c1 hc1
       refine ⟨_, n, ModuleCat.ofHom ((LinearMap.ker (p n)).liftQ L hker ∘ₗ
         (LinearMap.quotKerEquivOfSurjective (p n) (hp n)).symm.toLinearMap), fun c => ?_, rfl⟩
@@ -217,7 +222,7 @@ theorem assemble [IsNoetherianRing Λ] [Finite (ResidueField Λ)] (F : ModuleCat
       refine ⟨max n n', ψ + ψ', fun c => ?_, ?_⟩
       · rw [ModuleCat.hom_add, LinearMap.add_apply, g1, g1', ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun i _ => (smul_add _ _ _).symm
-      · rw [F.map_add, ModuleCat.hom_add, LinearMap.add_apply, g2, g2']
+      · rw [F.map_add (f := _), ModuleCat.hom_add, LinearMap.add_apply, g2, g2']
     · rintro r x y ⟨n, φ, h1, h2⟩
       refine ⟨n, r • φ, fun c => ?_, ?_⟩
       · rw [ModuleCat.hom_smul, LinearMap.smul_apply, h1, Finset.smul_sum]
@@ -230,7 +235,8 @@ theorem assemble [IsNoetherianRing Λ] [Finite (ResidueField Λ)] (F : ModuleCat
   have w1 : ∀ c, (φ ≫ f).hom (p n c) = ∑ i, c i • x'.1 i := by
     intro c
     show f.hom (φ.hom (p n c)) = _
-    rw [h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum]
     simp only [map_smul, hx]
   have w2 : (F.map (φ ≫ f)).hom (ξ n) = (F.map f).hom (e B hB x) := by
     rw [F.map_comp, ModuleCat.hom_comp, LinearMap.comp_apply, h2]

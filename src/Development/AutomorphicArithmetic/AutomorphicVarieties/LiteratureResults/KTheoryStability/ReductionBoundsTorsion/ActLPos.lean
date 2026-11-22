@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulStrictMono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulStrictMono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.StabDirectedSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,8 +127,8 @@ instance : MulAction (Gp L N) (Pos L N) where
 
 variable (L N)
 
+open scoped ComplexOrder in
 open ComplexOrder in
-
 def one : Pos L N := ⟨mkHS (fun _ => 1) fun _ => isHermitian_one, fun _ => PosDef.one⟩
 
 variable {L N}

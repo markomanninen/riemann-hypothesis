@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions NumberField IsDedekindDomain Formalism.L2.DIV Formalism.L2.Indef
 

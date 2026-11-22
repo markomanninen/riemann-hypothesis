@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,8 @@ theorem gen_graded {p q r : ℕ} (x : Pol p q r 0) (dx : ℕ) (hx : x ∈ homog 
       rw [act_eq_sum]
       simp only [LinearMap.sum_apply, LinearMap.smul_apply]
       refine Submodule.sum_mem _ fun a _ => Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ ?_
-      rw [← sum_homogeneousComponent z, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← sum_homogeneousComponent z, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       obtain ⟨e, he⟩ := unit_homog a b i _ (homogeneousComponent_mem i z)
       rw [mem']

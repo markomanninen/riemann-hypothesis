@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumEqZeroAddUnits
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdjacentSelfDualLatticesIndexSimple
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumEqZeroAddUnits
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdjacentSelfDualLatticesIndexSimple
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+
+@[expose] public section
 
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
@@ -16,9 +20,9 @@ private lemma submodule_toAddSubgroup_inf {R X : Type} [CommRing R] [AddCommGrou
     (A B : Submodule R X) : (A ⊓ B).toAddSubgroup = A.toAddSubgroup ⊓ B.toAddSubgroup := by
   ext; simp
 
+
 open Classical in
 open scoped BigOperators in
-
 theorem _root_.GlobalTheory.FinWeil.sumOp_comp_of_adj_of_inf_eq : ∀ {R X M : Type} [CommRing R] [AddCommGroup X] [Module R X] [AddCommGroup M] [Module ℂ M] {σ : R →+* R} {w : R} {γ : X → X → ℂ} {W : X → M →ₗ[ℂ] M}, _root_.GlobalTheory.FinWeil.IsHeis σ w γ W → ∀ lam : ℕ →* ℂ, _root_.GlobalTheory.FinWeil.GoodNorm σ lam → ∀ (A B C : Submodule R X), _root_.GlobalTheory.FinWeil.SelfDual γ A → _root_.GlobalTheory.FinWeil.SelfDual γ B → _root_.GlobalTheory.FinWeil.SelfDual γ C → _root_.GlobalTheory.FinWeil.Adj A B → _root_.GlobalTheory.FinWeil.idx A C ≠ 0 → A ⊓ C = B ⊓ C → ∀ v, _root_.GlobalTheory.FinWeil.Fixes W A v → _root_.GlobalTheory.FinWeil.sumOp W B C (_root_.GlobalTheory.FinWeil.sumOp W A B v) = lam (_root_.GlobalTheory.FinWeil.idx A B) • _root_.GlobalTheory.FinWeil.sumOp W A C v := by
   intro R X M _ _ _ _ _ σ w γ W hW lam hlam A B C hA hB hC hAdj hAC hinf v hv
   have hA' : ∀ y, y ∈ A ↔ ∀ a ∈ A, γ y a = 1 := hA
@@ -171,12 +175,14 @@ theorem _root_.GlobalTheory.FinWeil.sumOp_comp_of_adj_of_inf_eq : ∀ {R X M : T
     have h1 : ∀ i, W (f i) (W c v) = W c (W (f i) v) := fun i => by
       rw [hW.comm,
         hW.iso hC (hfC i) hc, one_smul]
-    rw [Finset.sum_congr rfl (fun i _ => h1 i), ← map_sum, ← hACsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl (fun i _ => h1 i), ← map_sum, ← hACsum]
     exact hSfix c hc
   have hstep : ∀ i, W (f i) (∑ q : R ⧸ P, W (Quotient.out q • x) v) =
       ∑ q : R ⧸ P, χ (w * Quotient.out q * σ (Quotient.out q)) •
         W (f i) (W (Quotient.out q • c₀) v) := fun i => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun q _ => ?_)
     rw [hterm, map_smul]
   have hstep' : ∀ q : R ⧸ P, ∑ i, χ (w * Quotient.out q * σ (Quotient.out q)) •

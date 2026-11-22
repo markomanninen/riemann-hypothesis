@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StarMulOfMemKc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StarMulOfMemKc
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CartanInt.UnitLog
@@ -10,7 +14,7 @@ theorem norm_entry_le {n : Type} [Fintype n] [DecidableEq n] (A : Matrix n n ℂ
     ‖A a b‖ ≤ ‖A‖ := by
   have h := A.l2_opNorm_mulVec (EuclideanSpace.single b (1 : ℂ))
   have h2 := PiLp.norm_apply_le ((EuclideanSpace.equiv n ℂ).symm (A *ᵥ (EuclideanSpace.single b (1 : ℂ)))) a
-  simp only [EuclideanSpace.norm_single, norm_one, mul_one] at h
+  simp only [PiLp.norm_single, norm_one, mul_one] at h
   refine le_trans ?_ (h2.trans h)
   simp
 

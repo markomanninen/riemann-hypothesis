@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.QuotientLiftInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.QuotientLiftInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

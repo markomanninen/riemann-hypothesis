@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Bridge
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAToBdRPlusIff
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAIff
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.Assembly
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.Bridge
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAToBdRPlusIff
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAIff
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.Assembly
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
@@ -82,7 +86,8 @@ theorem abs_main (h1 : ∀ c, ∃ e, ε * κ c = ε * ρ e) (h2 : ∀ e, ∃ c, 
   choose cc hcc using h2
   have hexp : ∀ x, ε • J x = ∑ j, cc (b.repr x j) • v j := by
     intro x
-    conv_lhs => rw [← b.sum_repr x, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr x, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hJ, hM, smul_smul, hcc, smul_smul, mul_comm]
   have hmem : ∀ x, ε • J x ∈ Submodule.span F (Set.range v) := fun x => by
@@ -191,7 +196,8 @@ theorem dim_ker : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Typ
     intro y
     choose c hc using fun j => hR.res_surj (y j)
     refine ⟨∑ j, c j • t j, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     funext a
     simp [qb, Finset.sum_apply, Pi.single_apply, Algebra.smul_def, hc]
   have hg : Function.Surjective g := fun y => by
@@ -232,6 +238,6 @@ theorem dim_ker : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Typ
     conv_lhs => rw [← b.sum_repr (x - W.map f y)]
     simp only [Finset.smul_sum, smul_smul, he]
   refine ⟨W.map h (∑ j, e j • b j) + algebraMap (LetA O n) W.EE (letE i) • y, ?_⟩
-  rw [map_add, h3, ← h4, map_smul, ← smul_add, sub_add_cancel, algebraMap_smul]
+  rw [map_add (f := _), h3, ← h4, map_smul, ← smul_add, sub_add_cancel, algebraMap_smul]
 
 end GlobalTheory.RedDim

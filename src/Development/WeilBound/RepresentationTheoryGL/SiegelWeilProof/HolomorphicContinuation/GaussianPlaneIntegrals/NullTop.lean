@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem integrable_evX_gs (P : PX m n) : ∀ {c : ℝ}, 0 < c → Integrable (fu
     intro c hc
     have e : (fun x => evX (p + q) x * gs c x) = fun x => evX p x * gs c x + evX q x * gs c x := by
       funext x
-      simp only [evX, map_add, add_mul]
+      simp only [evX, map_add (f := _), add_mul]
     rw [e]
     exact (hp hc).add (hq hc)
   | mul_X p k hp =>
@@ -130,7 +134,7 @@ theorem mom_add {c : ℝ} (hc : 0 < c) (R1 R2 P : PX m n) :
   unfold mom
   have h : ∀ x, evX ((R1 + R2) * P) x * gs c x = evX (R1 * P) x * gs c x + evX (R2 * P) x * gs c x := by
     intro x
-    simp only [evX, add_mul, map_add]
+    simp only [evX, add_mul, map_add (f := _)]
   simp_rw [h]
   exact integral_add (integrable_evX_gs _ hc) (integrable_evX_gs _ hc)
 
@@ -148,7 +152,8 @@ theorem mom_zero (c : ℝ) (P : PX m n) : mom c (0 * P) = 0 := by
 
 theorem evX_ell (ε : Fin m → Bool) (b : Matrix (Fin n) (Fin n) ℂ) (x : Fin m → Fin n → ℂ) :
     evX (∑ i, ∑ j, C (b i j) * (Qp ε j i : PX m n)) x = (b * gramX ε x).trace := by
-  simp only [evX, map_sum, map_mul, MvPolynomial.eval_C, Matrix.trace, Matrix.diag, Matrix.mul_apply, gramX]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [evX, map_sum, map_mul, MvPolynomial.eval_C, Matrix.trace, Matrix.diag, Matrix.mul_apply, gramX]
 
 theorem ell_mem (ε : Fin m → Bool) (b : Matrix (Fin n) (Fin n) ℂ) :
     (∑ i, ∑ j, C (b i j) * (Qp ε j i : PX m n)) ∈

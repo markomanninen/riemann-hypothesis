@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -87,7 +91,6 @@ def trR (hφ : IsGrpPullback G' G b φ) (T : Over S') :
   lift (liftPt hφ _ (fst G (Over.mk (T.hom ≫ b))).left (trR_w T))
     (Over.homMk (snd G (Over.mk (T.hom ≫ b))).left rfl)
 
-@[reassoc]
 theorem trR_fst (hφ : IsGrpPullback G' G b φ) (T : Over S') :
     (trR hφ T).left ≫ (fst G' T).left ≫ φ = (fst G (Over.mk (T.hom ≫ b))).left := by
   exact (congrArg (· ≫ φ) (lift_left_fst _ _)).trans (liftPt_left _ _ _ _)
@@ -107,7 +110,6 @@ def trL (hφ : IsGrpPullback G' G b φ) (T : Over S') :
   lift (Over.homMk (fst (Over.mk (T.hom ≫ b)) G).left rfl)
     (liftPt hφ _ (snd (Over.mk (T.hom ≫ b)) G).left (trL_w T))
 
-@[reassoc]
 theorem trL_snd (hφ : IsGrpPullback G' G b φ) (T : Over S') :
     (trL hφ T).left ≫ (snd T G').left ≫ φ = (snd (Over.mk (T.hom ≫ b)) G).left := by
   exact (congrArg (· ≫ φ) (lift_left_snd _ _)).trans (liftPt_left _ _ _ _)

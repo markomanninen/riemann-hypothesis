@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerInduction
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerInduction
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ContPf LateralTheory.E.ContStepPf LateralTheory.E.StepKPf

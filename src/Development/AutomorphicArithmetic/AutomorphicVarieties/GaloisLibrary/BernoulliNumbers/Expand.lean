@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern
 
@@ -8,7 +12,7 @@ theorem UpperTheory.V.Bern.b_expand :
   intro N k a hN
   have hN' : (N : ℚ) ≠ 0 := Nat.cast_ne_zero.2 hN.ne'
   simp only [bcoef]
-  rw [Polynomial.bernoulli, Polynomial.eval_finset_sum, Finset.mul_sum]
+  rw [Polynomial.bernoulli, Polynomial.eval_finsetSum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j hj => ?_
   have hjk : j ≤ k := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
   rw [Polynomial.eval_monomial, div_pow]

@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepSchur
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.URepSchur
+
+@[expose] public section
 
 open scoped InnerProductSpace
 
@@ -102,7 +106,8 @@ theorem diag_mem (σ : G →* (H →L[ℂ] H)) (hσ : ∀ g v, ‖σ g v‖ = �
   choose c hc using hs
   have hQ : ∀ (w : PiLp 2 (fun _ : ι => H)) (i : ι), C.starProjection w i = ∑ j, c i j • w j := by
     intro w i
-    conv_lhs => rw [← sum_incl w, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← sum_incl w, map_sum]
     simp [hc]
   have h1 : C.starProjection z = z := Submodule.starProjection_eq_self_iff.mpr hz
   have h2 : C.starProjection (diag T z) = diag T z := by

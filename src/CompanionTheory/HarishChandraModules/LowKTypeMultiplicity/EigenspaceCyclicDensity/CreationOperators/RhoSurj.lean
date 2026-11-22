@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem ev_psi (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) 
     · simp [psi, rho, ev, h]
     · simp [psi, rho, ev, h]
   | mul a b ha hb => intro s; simp [map_mul, Module.End.mul_apply, ha, hb]
-  | add a b ha hb => intro s; simp [map_add, ha, hb]
+  | add a b ha hb => intro s; simp [map_add (f := _), ha, hb]
 
 theorem rho_surj (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ V) (L : Submodule ℂ V) (hL : KStab ε E L)
     [FiniteDimensional ℂ L] {v : V} (hv : v ≠ 0) (hvL : v ∈ L)
@@ -95,7 +99,8 @@ theorem dens : CompanionTheory.D.LK.Dens := by
     refine ⟨∑ i, u i * psi ε (r i), fun s => ?_⟩
     have hu' : ∀ i, ev E (u i) v = φ (b i) := fun i => by simpa using hu i
     conv_rhs => rw [← b.sum_repr s]
-    simp only [map_sum, map_mul, LinearMap.sum_apply, Module.End.mul_apply, ev_psi ε E L hL, hr, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, LinearMap.sum_apply, Module.End.mul_apply, ev_psi ε E L hL, hr, map_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [hu']
 

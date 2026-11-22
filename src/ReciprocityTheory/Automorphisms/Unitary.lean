@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.Aut
 
@@ -63,7 +67,7 @@ theorem conjAL_conjAL (x : AL L) : conjAL L (conjAL L x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [conjAL, hc]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem complexConj_invol (x : L) :
     (IsCMField.complexConj L : L →+* L) ((IsCMField.complexConj L : L →+* L) x) = x := by
@@ -85,8 +89,8 @@ noncomputable def evalAt (v : HeightOneSpectrum (𝓞 L⁺)) : AFplus L →ₐ[L
 noncomputable def compAt (v : HeightOneSpectrum (𝓞 L⁺)) : AL L →+* L ⊗[L⁺] v.adicCompletion L⁺ :=
   (Algebra.TensorProduct.map (AlgHom.id L⁺ L) (evalAt L v)).toRingHom
 
-variable {L} in
 
+variable {L} in
 noncomputable def SplitPlace.proj (s : SplitPlace L) : AL L →+* s.v.adicCompletion L⁺ :=
   (Algebra.TensorProduct.lift s.i (evalAt L s.v) (fun _ _ => Commute.all _ _)).toRingHom
 
@@ -136,24 +140,21 @@ noncomputable def Umax (n : ℕ) : Subgroup (GA L n) where
     simp only [InvMemClass.coe_inv, h1, conjT, Matrix.transpose_apply, Matrix.map_apply]
     exact conjAL_mem_ALint L (ha j i)
 
-variable {L} in
 
+variable {L} in
 noncomputable def SplitPlace.loc (s : SplitPlace L) (n : ℕ) :
     GA L n →* GL (Fin n) (s.v.adicCompletion L⁺) :=
   (Matrix.GeneralLinearGroup.map s.proj).comp (GA L n).subtype
 
-variable {L} in
 
+variable {L} in
 def TrivOutside {n : ℕ} (T : Set (HeightOneSpectrum (𝓞 L⁺))) (x : GA L n) : Prop :=
   ∀ v, v ∉ T → (x.1 : Matrix (Fin n) (Fin n) (AL L)).map (compAt L v) = 1
 
-variable {L} in
 
+variable {L} in
 noncomputable def Level {n : ℕ} {ι : Type*} (s : ι → SplitPlace L)
     (H : ∀ a, Subgroup (GL (Fin n) ((s a).v.adicCompletion L⁺))) : Subgroup (GA L n) :=
-  Umax L n ⊓ ⨅ a, (H a).comap ((s a).loc n)
-
-def IsNeat {n : ℕ} (U : Subgroup (GA L n)) : Prop :=
-  ∀ g : GA L n, ∀ γ ∈ GQ L n, g⁻¹ * γ * g ∈ U → γ = 1
+  Umax L n ⊓ ⨅ a, (H a).comap (SplitPlace.loc (s a) n)
 
 end ReciprocityTheory.Aut

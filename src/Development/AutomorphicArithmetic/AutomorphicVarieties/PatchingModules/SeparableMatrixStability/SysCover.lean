@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.FreeProf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.GenExt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.FreeProf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.GenExt
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 

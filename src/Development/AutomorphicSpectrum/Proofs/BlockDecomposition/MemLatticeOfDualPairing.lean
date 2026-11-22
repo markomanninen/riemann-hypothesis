@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,13 +38,15 @@ theorem exists_extend {K : Type} [Field K] [NumberField K] {m : ℕ}
     simpa using hx
   have h1 : (d : 𝓞 K) * φ x = ∑ i, e i * φ ⟨b i, hb i⟩ := by
     have h := congrArg φ hxL
-    rw [map_smul, map_sum, smul_eq_mul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, smul_eq_mul] at h
     rw [h]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
   have h2 : algebraMap (𝓞 K) K (d : 𝓞 K) * G x = algebraMap (𝓞 K) K ((d : 𝓞 K) * φ x) := by
     have h3 : algebraMap (𝓞 K) K (d : 𝓞 K) * G x = G ((d : 𝓞 K) • (x : Fin m → K)) := by
       rw [← algebraMap_smul K (d : 𝓞 K) (x : Fin m → K), map_smul, smul_eq_mul]
-    rw [h3, hx, h1, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h3, hx, h1, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← algebraMap_smul K (e i) (b i), map_smul, hGb, smul_eq_mul, map_mul]
   have hd0 : algebraMap (𝓞 K) K (d : 𝓞 K) ≠ 0 := by

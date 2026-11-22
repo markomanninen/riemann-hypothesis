@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BRaabe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.MapGenBChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.BernoulliNumbers.BRaabe
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern
 
@@ -30,7 +34,8 @@ theorem UpperTheory.V.Bern.b_comp :
   have hm : 0 < m := Nat.pos_of_ne_zero (by rintro rfl; simp at hM)
   unfold genB
   rw [sum_Icc_mul_eq]
-  simp_rw [b_raabe N m k _ hN hm, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [b_raabe N m k _ hN hm, map_sum, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun j _ => ?_
   congr 2

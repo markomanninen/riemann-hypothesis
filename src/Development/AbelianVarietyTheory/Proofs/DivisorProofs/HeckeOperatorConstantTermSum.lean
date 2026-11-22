@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableAutomorphicSpace
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfIsBaseChange
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.SquareIntegrableSegment
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFundamentalDomainRationalBlockUnipotentGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainUnipotent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableAutomorphicSpace
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.SquareIntegrableSegment
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFundamentalDomainRationalBlockUnipotentGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAutomorphicFormIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralFundamentalDomainUnipotent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.ResW GlobalTheory.Published
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -132,19 +136,19 @@ abbrev rep {n : ℕ} (S : Finset (Fin n)) (c : satakePairs S → Res hu) : GL (F
 variable [Fintype (Res hu)]
 
 theorem finsum_Tj {n j : ℕ} (hj : j ≤ n) (F : GL (Fin n) (v.adicCompletion E) → ℂ)
-    (hF : ∀ g, ∀ k ∈ KGL v n, F (g * k) = F g) :
-    ∑ᶠ c : GL (Fin n) (v.adicCompletion E) ⧸ KGL v n, Tj ℂ n (Ov E v) ϖ j c.out * F c.out =
+    (hF : ∀ g, ∀ k ∈ KGL v (n := n), F (g * k) = F g) :
+    ∑ᶠ c : GL (Fin n) (v.adicCompletion E) ⧸ KGL v (n := n), Tj ℂ n (Ov E v) ϖ j c.out * F c.out =
       ∑ S ∈ (Finset.univ : Finset (Fin n)).powersetCard j, ∑ c : satakePairs S → Res hu, F (rep hu S c) := by
   classical
   have hϖ := mem_Ov_of_isUnifV hu
   have hr := satake_range_eq v hϖ hu Final.TjCosets hj
   rw [finsum_eq_sum_of_support_subset _ (s := Finset.univ.image (fun i : SatakeIdx v hϖ (n := n) j =>
-      ((satakeB v hϖ hu i : GL (Fin n) (v.adicCompletion E)) : GL (Fin n) (v.adicCompletion E) ⧸ KGL v n))) ?_]
+      ((satakeB v hϖ hu i : GL (Fin n) (v.adicCompletion E)) : GL (Fin n) (v.adicCompletion E) ⧸ KGL v (n := n)))) ?_]
   · rw [Finset.sum_image (fun i _ i' _ h => satakeB_inj v hϖ hu h),
       Finset.sum_subtype (Finset.univ.powersetCard j) (p := fun S : Finset (Fin n) => S.card = j)
         (fun S => by simp [Finset.mem_powersetCard]), Fintype.sum_sigma]
     refine Finset.sum_congr rfl fun S _ => Finset.sum_congr rfl fun c _ => ?_
-    obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (KGL v n) (satakeB v hϖ hu ⟨S, c⟩)
+    obtain ⟨κ, hκ⟩ := QuotientGroup.mk_out_eq_mul (KGL v (n := n)) (satakeB v hϖ hu ⟨S, c⟩)
     rw [hκ, satake_Tj_eq, Set.indicator_of_mem (satake_Tset_right v (satakeB_mem v hϖ hu ⟨S, c⟩) κ.2),
       Pi.one_apply, one_mul, hF _ _ κ.2]
     rfl
@@ -166,15 +170,15 @@ theorem sum_rep {r s N : ℕ} (h : r + s = N) {S : Finset (Fin N)} {S₁ : Finse
   rw [← this]
   exact Finset.sum_congr rfl fun c _ => hF _ _ (tri_satakeGL h h1 h2 _ _ _)
 
+
 omit [Fintype (Res hu)] in
 include hu in
-
 theorem finsum_Tj_levi {r s N j : ℕ} (h : r + s = N) (hj : j ≤ N) (F : GL (Fin N) (v.adicCompletion E) → ℂ)
-    (hK : ∀ g, ∀ k ∈ KGL v N, F (g * k) = F g) (hF : ∀ g m, Tri h g m → F g = F (blk h m)) :
-    ∑ᶠ c : GL (Fin N) (v.adicCompletion E) ⧸ KGL v N, Tj ℂ N (Ov E v) ϖ j c.out * F c.out =
+    (hK : ∀ g, ∀ k ∈ KGL v (n := N), F (g * k) = F g) (hF : ∀ g m, Tri h g m → F g = F (blk h m)) :
+    ∑ᶠ c : GL (Fin N) (v.adicCompletion E) ⧸ KGL v (n := N), Tj ℂ N (Ov E v) ϖ j c.out * F c.out =
       ∑ i ∈ (Finset.range (r + 1) ×ˢ Finset.range (s + 1)).filter (fun i : ℕ × ℕ => i.1 + i.2 = j),
-        (qV E v : ℂ) ^ (i.1 * (s - i.2)) * ∑ᶠ c₁ : GL (Fin r) (v.adicCompletion E) ⧸ KGL v r,
-          ∑ᶠ c₂ : GL (Fin s) (v.adicCompletion E) ⧸ KGL v s,
+        (qV E v : ℂ) ^ (i.1 * (s - i.2)) * ∑ᶠ c₁ : GL (Fin r) (v.adicCompletion E) ⧸ KGL v (n := r),
+          ∑ᶠ c₂ : GL (Fin s) (v.adicCompletion E) ⧸ KGL v (n := s),
             Tj ℂ r (Ov E v) ϖ i.1 c₁.out * Tj ℂ s (Ov E v) ϖ i.2 c₂.out * F (blk h (c₁.out, c₂.out)) := by
   classical
   have := satake_res_finite v (mem_Ov_of_isUnifV hu) hu
@@ -195,7 +199,7 @@ theorem finsum_Tj_levi {r s N j : ℕ} (h : r + s = N) (hj : j ≤ N) (F : GL (F
         omega)]
   refine Finset.sum_congr rfl fun i hi => ?_
   simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hi
-  have e1 : ∀ g : GL (Fin r) (v.adicCompletion E), ∑ᶠ c₂ : GL (Fin s) (v.adicCompletion E) ⧸ KGL v s,
+  have e1 : ∀ g : GL (Fin r) (v.adicCompletion E), ∑ᶠ c₂ : GL (Fin s) (v.adicCompletion E) ⧸ KGL v (n := s),
       Tj ℂ r (Ov E v) ϖ i.1 g * Tj ℂ s (Ov E v) ϖ i.2 c₂.out * F (blk h (g, c₂.out)) =
       Tj ℂ r (Ov E v) ϖ i.1 g * ∑ S ∈ (Finset.univ : Finset (Fin s)).powersetCard i.2,
         ∑ c : satakePairs S → Res hu, F (blk h (g, rep hu S c)) := fun g => by
@@ -225,7 +229,7 @@ end Local
 
 section Global
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 end Global
 

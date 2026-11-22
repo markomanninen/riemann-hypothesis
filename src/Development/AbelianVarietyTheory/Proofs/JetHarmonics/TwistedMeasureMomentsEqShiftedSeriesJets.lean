@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffShiftS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffShiftS
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.MomOne
@@ -83,14 +87,21 @@ theorem hasSum_coeff_iter {ζ : ℂ_[q]} (h : ‖ζ - 1‖ < 1) {S : ℂ_[q]⟦X
 
 theorem DT_one_add_pow (c : ℂ_[q]) (j : ℕ) :
     DT (C c * (1 + X) ^ j) = C (c * j) * (1 + X) ^ j := by
+  have hDT (f : ℂ_[q]⟦X⟧) : DT f = (1 + X) * PowerSeries.derivative f := by
+    ext n
+    rw [coeff_DT, add_mul, one_mul, map_add, coeff_derivative]
+    cases n with
+    | zero => simp
+    | succ n => rw [coeff_succ_X_mul, coeff_derivative]; simp
   cases j with
-  | zero => simp [DT]
+  | zero => simp [hDT]
   | succ j =>
-    have hd : derivative ℂ_[q] (1 + X : ℂ_[q]⟦X⟧) = 1 := by
-      rw [map_add, derivative_X, Derivation.map_one_eq_zero, zero_add]
-    rw [DT, ← smul_eq_C_mul, Derivation.map_smul, Derivation.leibniz_pow, hd, smul_eq_C_mul,
-      map_mul, map_natCast]
-    simp only [Nat.add_sub_cancel, smul_eq_mul, nsmul_eq_mul]
+    have hd : PowerSeries.derivative (1 + X : ℂ_[q]⟦X⟧) = 1 := by
+      rw [map_add, derivative_one, derivative_X, zero_add]
+    rw [hDT, Derivation.leibniz]
+    simp only [derivative_C, smul_eq_mul]
+    rw [derivative_pow (1 + X : ℂ_[q]⟦X⟧) (j + 1), hd]
+    simp only [Nat.add_sub_cancel, mul_one, map_mul, map_natCast, pow_succ]
     ring
 
 theorem DT_iter_sum (s : Finset ℕ) (c : ℕ → ℂ_[q]) (k : ℕ) :
@@ -98,11 +109,11 @@ theorem DT_iter_sum (s : Finset ℕ) (c : ℕ → ℂ_[q]) (k : ℕ) :
   induction k with
   | zero => simp
   | succ k ih =>
-    rw [Function.iterate_succ_apply', ih, DT, map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    have := DT_one_add_pow (c j * (j : ℂ_[q]) ^ k) j
-    rw [DT] at this
-    rw [this, pow_succ, mul_assoc]
+    have hsum (f : ℕ → ℂ_[q]⟦X⟧) : DT (∑ j ∈ s, f j) = ∑ j ∈ s, DT (f j) := by
+      ext n
+      simp only [map_sum, coeff_DT, Finset.sum_mul, Finset.sum_add_distrib]
+    rw [Function.iterate_succ_apply', ih, hsum]
+    exact Finset.sum_congr rfl fun j _ => by rw [DT_one_add_pow, pow_succ, mul_assoc]
 
 theorem sS_pow_eq (ζ : ℂ_[q]) (m : ℕ) :
     sS ζ ^ m = ∑ j ∈ Finset.range (m + 1),
@@ -120,7 +131,8 @@ theorem twisted_moments : ∀ (q : ℕ) [Fact q.Prime] (S : ℂ_[q]⟦X⟧) (ζ 
   have := hasSum_coeff_iter hζ hS k 0
   rw [coeff_zero_eq_constantCoeff] at this
   convert this using 3 with m
-  rw [fwdDiff_iter_eq_sum_shift, sS_pow_eq, DT_iter_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fwdDiff_iter_eq_sum_shift, sS_pow_eq, DT_iter_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   have e : (0 : ℤ_[q]) + j • (1 : ℤ_[q]) = (j : ℤ_[q]) := by simp
   rw [e]

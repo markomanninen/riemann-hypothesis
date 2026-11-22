@@ -1,18 +1,22 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyOfDiagWith
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapDcrisEqDdRCrystallineUnramifiedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankSpanImageEqCard
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqFiltrationSumAtLevelStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Saturated
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GradedSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyOfDiagWith
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEqOfExhaustive
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapDcrisEqDdRCrystallineUnramifiedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankSpanImageEqCard
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanIsLinesOfGraded
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsPtPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupIndepDdRE
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqFiltrationSumAtLevelStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem aeval_eq_zero_of_diagWith [Module.Free O Q] (hinj : Function.Injective (
     intro p s
     induction p using Polynomial.induction_on with
     | C a => simp [Algebra.algebraMap_eq_smul_one, LinearMap.baseChange_smul]
-    | add p q hp hq => simp only [map_add, LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
+    | add p q hp hq => simp only [map_add (f := _), LinearMap.baseChange_add, LinearMap.add_apply, hp, hq, add_smul]
     | monomial k a ih =>
       rw [pow_succ, ← mul_assoc, map_mul _ _ Polynomial.X, map_mul _ _ Polynomial.X, Polynomial.aeval_X,
         Polynomial.aeval_X, LinearMap.baseChange_mul, Module.End.mul_apply, he, map_smul, ih, smul_smul, mul_comm]
@@ -83,7 +87,7 @@ theorem aeval_intertwine {Q' : Type} [AddCommGroup Q'] [Module O Q'] (π : Q →
     π (Polynomial.aeval f p x) = Polynomial.aeval f' p (π x) := by
   induction p using Polynomial.induction_on generalizing x with
   | C a => simp
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial k a ih =>
     rw [pow_succ, ← mul_assoc, map_mul _ _ Polynomial.X, map_mul _ _ Polynomial.X, Polynomial.aeval_X,
       Polynomial.aeval_X, Module.End.mul_apply, Module.End.mul_apply, ih, h]
@@ -226,7 +230,8 @@ theorem senOp_at [CharZero LL] (hinj : Function.Injective (algebraMap O LL)) {g 
       refine exists_of_mem_qN W T i 1 ?_
       rw [Nat.cast_one, ← Submodule.subtype_apply, ← Submodule.mem_comap]
       refine (Submodule.Quotient.mk_eq_zero ((qN W T i 1).submoduleOf (qN W T i 0))).1 ?_
-      rw [← Submodule.mkQ_apply, map_sub, map_sub, hpr, map_sum, map_sum, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Submodule.mkQ_apply, map_sub, map_sub, hpr, map_sum, map_sum, sub_eq_zero]
       simp only [map_smul, Submodule.mkQ_apply, ← hβ', LinearMap.toMatrix_apply]
       rw [β.sum_repr, hβ']
       rfl
@@ -242,8 +247,9 @@ theorem senOp_of_diag [CharZero LL] (hinj : Function.Injective (algebraMap O LL)
 
 end Generic
 
-set_option maxHeartbeats 1000000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 1000000 in
 theorem senOp_of_lines {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} {H : LocHW l P}
     {E : LocFon l P AI H} (C : LocCmpT l P AI H E) {K LL : FinExt l} (hA : CaseA K LL)
     (hL : ∀ (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (U : ZMod (Module.finrank ℚ_[l] ↥(K0 K)) → Multiset ℤ),
@@ -258,7 +264,7 @@ theorem senOp_of_lines {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l
   have : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
   have : IsFractionRing ↥(OL LL) ↥LL.1 := integralClosure.isFractionRing_of_finite_extension ℚ_[l] ↥LL.1
   have hχ : algebraMap ↥(OL LL) ↥LL.1 ((H.W K 1 LL hA.2.2).χΓ g : ↥(OL LL)) = 1 + ((P.PD K).p : ↥LL.1) := by
-    rw [hg, map_add, map_one, map_natCast]
+    rw [hg, map_add (f := _), map_one, map_natCast]
   have hl' : ¬ IsUnit (((P.PD K).p : ℕ) : ↥(OL LL)) := hp.symm ▸ hl
   obtain ⟨b₀⟩ := GlobalTheory.WachFree.wach_free P H K 1 LL hA.2.2 T hcr.1
   obtain ⟨b, hb⟩ := GlobalTheory.WachTie.exists_invariant_basis _ T hcard ⟨b₀.reindex (finCongr (finrank_lattice T.L))⟩
@@ -305,7 +311,10 @@ theorem mem_gradedSer_iff {r : ℕ} (u : Fin r → ℤ) (d : Fin r → M) (A : �
       · rw [h0 k hk]; exact zero_mem _
       · have := h1 k
         rw [hA] at this ⊢
-        exact Submodule.span_mono (Set.image_mono fun s (hs : a ≤ u s) => show -k ≤ u s by omega) this
+        exact Submodule.span_mono (Set.image_mono (show {s | a ≤ u s} ⊆ {s | -k ≤ u s} from fun s hs => by
+          change a ≤ u s at hs
+          change -k ≤ u s
+          omega)) this
     · exact ⟨⟨0, fun _ _ => rfl⟩, fun _ => zero_mem _⟩
     · rintro y z ⟨⟨m, hm⟩, hy⟩ ⟨⟨m', hm'⟩, hz⟩
       exact ⟨⟨min m m', fun k hk => by

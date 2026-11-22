@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -177,7 +181,8 @@ theorem fund_pow_inj (p : ℕ) [Fact p.Prime] {C : Type} [Field C]
 theorem addHom_eq_zero (p : ℕ) [Fact p.Prime] {F : Type} [Field F] [Algebra (ZMod p) F]
     {ι : Type} [Fintype ι] (b : Module.Basis ι (ZMod p) F) {A : Type} [AddCommGroup A]
     (ψ : F →+ A) (h : ∀ i, ψ (b i) = 0) (a : F) : ψ a = 0 := by
-  rw [← b.sum_repr a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← b.sum_repr a, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [← ZMod.natCast_zmod_val (b.repr a i), Nat.cast_smul_eq_nsmul, map_nsmul, h, nsmul_zero]
 
@@ -226,7 +231,7 @@ theorem moore : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C
     intro β h a
     let ψ : F →+ R ⧸ Ideal.span {(p : R)} := AddMonoidHom.mk'
       (fun a => Ideal.Quotient.mk _ (l a - ∑ n, β n * (σ ^ p ^ (n : ℕ)) a)) (fun a b => by
-        rw [← map_add, Ideal.Quotient.eq]
+        rw [← map_add (f := _), Ideal.Quotient.eq]
         have h2 : ∑ n, β n * ((σ ^ p ^ (n : ℕ)) (a + b) - (σ ^ p ^ (n : ℕ)) a -
             (σ ^ p ^ (n : ℕ)) b) ∈ Ideal.span {(p : R)} :=
           Ideal.sum_mem _ fun n _ => Ideal.mul_mem_left _ _ (hadd n a b)

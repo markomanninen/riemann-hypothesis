@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ABHNPrep
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants.LocalInf
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ABHNPrep
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleInvariants.LocalInf
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -11,16 +16,14 @@ open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubf
 
 open scoped NumberField.LiesOver DirectSum
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable {K E : FiniteSubfield} [Fact (K ≤ E)] (ι : LocalEmbeddings K) (ιE : LocalEmbeddings E)
 
 section Places
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem placeInv_idelesResField_inr (y : cohomology (limitRep K) 2) (v : HeightOneSpectrum (𝓞 K.1))
     (w : PlacesOver E.1 v) :
     placeInv (.inr w.1) (idelesLimitCohomologyEquiv ιE (by norm_num : 1 ≤ 2) ((idelesResField K E 2).hom y) (.inr w.1)) =
@@ -37,8 +40,8 @@ theorem placeInv_idelesResField_inr (y : cohomology (limitRep K) 2) (v : HeightO
     exact brauerInvZOfIsSepClosure_idelesLocalRes_idelesResField v ι' (ιE.fin _) y
   exact key w hι'
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem placeInv_idelesResField_inl (y : cohomology (limitRep K) 2) (v : InfinitePlace K.1) (w : v.placesOver E.1) :
     placeInv (.inl (w : InfinitePlace E.1))
         (idelesLimitCohomologyEquiv ιE (by norm_num : 1 ≤ 2) ((idelesResField K E 2).hom y) (.inl w)) =
@@ -92,85 +95,88 @@ theorem sumPlaceInv_eq_sum (D : ⨁ w : Place E.1, localGaloisCohomology E 2 w) 
         (fun h => absurd hw h), DirectSum.of_eq_same]
     · rw [hS w hw, Finset.sum_eq_zero fun b hb => DirectSum.of_eq_of_ne _ _ _ (by rintro rfl; exact hw hb)]
   conv_lhs => rw [hD]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun w _ => sumPlaceInv_of w (D w)
+
 
 set_option maxHeartbeats 4000000 in
 open Classical in
-
 theorem idelesSumInv_idelesResField_of (u : Place K.1) (t : localGaloisCohomology K 2 u) :
     idelesSumInv ιE ((idelesResField K E 2).hom
         ((idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)).symm (DirectSum.of _ u t))) =
       Module.finrank K.1 E.1 •
         idelesSumInv ι ((idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)).symm (DirectSum.of _ u t)) := by
-  classical
-  set y := (idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)).symm (DirectSum.of _ u t) with hy_def
-  have hy : idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2) y = DirectSum.of _ u t :=
-    AddEquiv.apply_symm_apply _ _
-  set D := idelesLimitCohomologyEquiv ιE (by norm_num : 1 ≤ 2) ((idelesResField K E 2).hom y) with hD_def
-  rw [idelesSumInv_apply, idelesSumInv_apply, hy, sumPlaceInv_of]
-
-  have hinl : ∀ w : InfinitePlace E.1, placeInv (.inl w) (D (.inl w)) =
-      Module.finrank (w.comap (algebraMap K.1 E.1)).Completion w.Completion •
-        placeInv (.inl (w.comap (algebraMap K.1 E.1)))
-          (DirectSum.of (localGaloisCohomology K 2) u t (.inl (w.comap (algebraMap K.1 E.1)))) := fun w => by
-    rw [← hy]
-    exact placeInv_idelesResField_inl ι ιE y (w.comap (algebraMap K.1 E.1)) ⟨w, ⟨rfl⟩⟩
-  have hinr : ∀ w : HeightOneSpectrum (𝓞 E.1), placeInv (.inr w) (D (.inr w)) =
-      Module.finrank ((AdeleBaseChange.below K.1 w).adicCompletion K.1) (w.adicCompletion E.1) •
-        placeInv (.inr (AdeleBaseChange.below K.1 w))
-          (DirectSum.of (localGaloisCohomology K 2) u t (.inr (AdeleBaseChange.below K.1 w))) := fun w => by
-    rw [← hy]
-    exact placeInv_idelesResField_inr ι ιE y (AdeleBaseChange.below K.1 w) ⟨w, AdeleBaseChange.liesOver_below w⟩
-  rcases u with v | v
-  ·
-    let S : Finset (Place E.1) := Finset.univ.map ⟨fun w : v.placesOver E.1 => (.inl (w : InfinitePlace E.1) :
-      Place E.1), fun a b h => Subtype.ext (Sum.inl_injective h)⟩
-    have hS : ∀ w ∉ S, D w = 0 := by
-      intro w hw
-      apply placeInv_injective w
-      rw [map_zero]
-      rcases w with w | w
-      · rw [hinl]
-        by_cases hv : w.comap (algebraMap K.1 E.1) = v
-        · exact absurd (Finset.mem_map.2 ⟨(⟨w, by subst hv; exact ⟨rfl⟩⟩ : v.placesOver E.1), Finset.mem_univ _, rfl⟩) hw
-        · rw [DirectSum.of_eq_of_ne _ _ _ (fun h => hv (Sum.inl_injective h)), map_zero, smul_zero]
-      · rw [hinr, DirectSum.of_eq_of_ne _ _ _ Sum.inr_ne_inl, map_zero, smul_zero]
-    rw [sumPlaceInv_eq_sum D S hS, Finset.sum_map]
-    change ∑ w : v.placesOver E.1, placeInv (.inl (w : InfinitePlace E.1)) (D (.inl (w : InfinitePlace E.1))) = _
-    have hw : ∀ w : v.placesOver E.1, placeInv (.inl (w : InfinitePlace E.1)) (D (.inl (w : InfinitePlace E.1))) =
-        Module.finrank v.Completion (w : InfinitePlace E.1).Completion • placeInv (.inl v) t := fun w => by
-      rw [hD_def, placeInv_idelesResField_inl ι ιE y v w, hy, DirectSum.of_eq_same]
-    rw [Finset.sum_congr rfl fun w _ => hw w, ← Finset.sum_smul,
-      GroundTheory.Global.InfinitePlace.sum_finrank_completion (L := E.1) v]
-  ·
-    let S : Finset (Place E.1) := Finset.univ.map ⟨fun w : PlacesOver E.1 v => (.inr w.1 : Place E.1),
-      fun a b h => Subtype.ext (Sum.inr_injective h)⟩
-    have hS : ∀ w ∉ S, D w = 0 := by
-      intro w hw
-      apply placeInv_injective w
-      rw [map_zero]
-      rcases w with w | w
-      · rw [hinl, DirectSum.of_eq_of_ne _ _ _ Sum.inl_ne_inr, map_zero, smul_zero]
-      · rw [hinr]
-        by_cases hv : AdeleBaseChange.below K.1 w = v
-        · refine absurd (Finset.mem_map.2 ⟨(⟨w, ?_⟩ : PlacesOver E.1 v), Finset.mem_univ _, rfl⟩) hw
-          rw [← hv]
-          exact AdeleBaseChange.liesOver_below w
-        · rw [DirectSum.of_eq_of_ne _ _ _ (fun h => hv (Sum.inr_injective h)), map_zero, smul_zero]
-    rw [sumPlaceInv_eq_sum D S hS, Finset.sum_map]
-    change ∑ w : PlacesOver E.1 v, placeInv (.inr w.1) (D (.inr w.1)) = _
-    have hw : ∀ w : PlacesOver E.1 v, placeInv (.inr w.1) (D (.inr w.1)) =
-        Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion E.1) • placeInv (.inr v) t := fun w => by
-      rw [hD_def, placeInv_idelesResField_inr ι ιE y v w, hy, DirectSum.of_eq_same]
-    rw [Finset.sum_congr rfl fun w _ => hw w, ← Finset.sum_smul, sum_finrank_eq E.1 v]
+  set_option synthInstance.maxHeartbeats 200000 in
+    classical
+    set y := (idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)).symm (DirectSum.of _ u t) with hy_def
+    have hy : idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2) y = DirectSum.of _ u t :=
+      AddEquiv.apply_symm_apply _ _
+    set D := idelesLimitCohomologyEquiv ιE (by norm_num : 1 ≤ 2) ((idelesResField K E 2).hom y) with hD_def
+    rw [idelesSumInv_apply, idelesSumInv_apply, hy, sumPlaceInv_of]
+  
+    have hinl : ∀ w : InfinitePlace E.1, placeInv (.inl w) (D (.inl w)) =
+        Module.finrank (w.comap (algebraMap K.1 E.1)).Completion w.Completion •
+          placeInv (.inl (w.comap (algebraMap K.1 E.1)))
+            (DirectSum.of (localGaloisCohomology K 2) u t (.inl (w.comap (algebraMap K.1 E.1)))) := fun w => by
+      rw [← hy]
+      exact placeInv_idelesResField_inl ι ιE y (w.comap (algebraMap K.1 E.1)) ⟨w, ⟨rfl⟩⟩
+    have hinr : ∀ w : HeightOneSpectrum (𝓞 E.1), placeInv (.inr w) (D (.inr w)) =
+        Module.finrank ((AdeleBaseChange.below K.1 w).adicCompletion K.1) (w.adicCompletion E.1) •
+          placeInv (.inr (AdeleBaseChange.below K.1 w))
+            (DirectSum.of (localGaloisCohomology K 2) u t (.inr (AdeleBaseChange.below K.1 w))) := fun w => by
+      rw [← hy]
+      exact placeInv_idelesResField_inr ι ιE y (AdeleBaseChange.below K.1 w) ⟨w, AdeleBaseChange.liesOver_below w⟩
+    rcases u with v | v
+    ·
+      let S : Finset (Place E.1) := Finset.univ.map ⟨fun w : v.placesOver E.1 => (.inl (w : InfinitePlace E.1) :
+        Place E.1), fun a b h => Subtype.ext (Sum.inl_injective h)⟩
+      have hS : ∀ w ∉ S, D w = 0 := by
+        intro w hw
+        apply placeInv_injective w
+        rw [map_zero]
+        rcases w with w | w
+        · rw [hinl]
+          by_cases hv : w.comap (algebraMap K.1 E.1) = v
+          · exact absurd (Finset.mem_map.2 ⟨(⟨w, by subst hv; exact ⟨rfl⟩⟩ : v.placesOver E.1), Finset.mem_univ _, rfl⟩) hw
+          · rw [DirectSum.of_eq_of_ne _ _ _ (fun h => hv (Sum.inl_injective h)), map_zero, smul_zero]
+        · rw [hinr, DirectSum.of_eq_of_ne _ _ _ Sum.inr_ne_inl, map_zero, smul_zero]
+      rw [sumPlaceInv_eq_sum D S hS, Finset.sum_map]
+      change ∑ w : v.placesOver E.1, placeInv (.inl (w : InfinitePlace E.1)) (D (.inl (w : InfinitePlace E.1))) = _
+      have hw : ∀ w : v.placesOver E.1, placeInv (.inl (w : InfinitePlace E.1)) (D (.inl (w : InfinitePlace E.1))) =
+          Module.finrank v.Completion (w : InfinitePlace E.1).Completion • placeInv (.inl v) t := fun w => by
+        rw [hD_def, placeInv_idelesResField_inl ι ιE y v w, hy, DirectSum.of_eq_same]
+      rw [Finset.sum_congr rfl fun w _ => hw w, ← Finset.sum_smul,
+        GroundTheory.Global.InfinitePlace.sum_finrank_completion (L := E.1) v]
+    ·
+      let S : Finset (Place E.1) := Finset.univ.map ⟨fun w : PlacesOver E.1 v => (.inr w.1 : Place E.1),
+        fun a b h => Subtype.ext (Sum.inr_injective h)⟩
+      have hS : ∀ w ∉ S, D w = 0 := by
+        intro w hw
+        apply placeInv_injective w
+        rw [map_zero]
+        rcases w with w | w
+        · rw [hinl, DirectSum.of_eq_of_ne _ _ _ Sum.inl_ne_inr, map_zero, smul_zero]
+        · rw [hinr]
+          by_cases hv : AdeleBaseChange.below K.1 w = v
+          · refine absurd (Finset.mem_map.2 ⟨(⟨w, ?_⟩ : PlacesOver E.1 v), Finset.mem_univ _, rfl⟩) hw
+            rw [← hv]
+            exact AdeleBaseChange.liesOver_below w
+          · rw [DirectSum.of_eq_of_ne _ _ _ (fun h => hv (Sum.inr_injective h)), map_zero, smul_zero]
+      rw [sumPlaceInv_eq_sum D S hS, Finset.sum_map]
+      change ∑ w : PlacesOver E.1 v, placeInv (.inr w.1) (D (.inr w.1)) = _
+      have hw : ∀ w : PlacesOver E.1 v, placeInv (.inr w.1) (D (.inr w.1)) =
+          Module.finrank (v.adicCompletion K.1) (w.1.adicCompletion E.1) • placeInv (.inr v) t := fun w => by
+        rw [hD_def, placeInv_idelesResField_inr ι ιE y v w, hy, DirectSum.of_eq_same]
+      rw [Finset.sum_congr rfl fun w _ => hw w, ← Finset.sum_smul, sum_finrank_eq E.1 v]
 
 theorem idelesSumInv_idelesResField (y : cohomology (limitRep K) 2) :
     idelesSumInv ιE ((idelesResField K E 2).hom y) = Module.finrank K.1 E.1 • idelesSumInv ι y := by
   classical
   set Φ := idelesLimitCohomologyEquiv ι (by norm_num : 1 ≤ 2)
   obtain ⟨D, rfl⟩ := Φ.symm.surjective y
-  rw [← DirectSum.sum_support_of D, map_sum, map_sum, map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_of D, map_sum, map_sum, map_sum, map_sum, Finset.smul_sum]
   exact Finset.sum_congr rfl fun u _ => idelesSumInv_idelesResField_of ι ιE u (D u)
 
 end Sum

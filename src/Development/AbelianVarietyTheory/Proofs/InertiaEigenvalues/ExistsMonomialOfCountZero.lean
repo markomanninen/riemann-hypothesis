@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LengthFilterFinRange
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ShuffleCountLinearIndependentClasses
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LengthFilterFinRange
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelCasselmanHolds
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ShuffleCountLinearIndependentClasses
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL
 
@@ -40,7 +44,8 @@ theorem exists_monomial_of_count_zero (I S : Type 1) (A : Type) [DecidableEq A] 
       ∑ m ∈ P.support, P.coeff m • Ψ.symm (MvPolynomial.monomial m 1) := by
     rw [← hPs]
     conv_lhs => rw [P.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [← map_zsmul, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   have hcnt : ∀ (c : I →₀ ℤ) (t : Multiset (List A)), 0 ≤ c →
@@ -77,7 +82,8 @@ theorem exists_monomial_of_count_zero (I S : Type 1) (A : Type) [DecidableEq A] 
     have e2 : ∑ m ∈ P.support, P.coeff m * ((s m).count w : ℤ) =
         Finsupp.linearCombination ℤ (fun x => ((M x w).toNat : ℤ))
           (∑ m ∈ P.support, P.coeff m • Ψ.symm (MvPolynomial.monomial m 1)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [map_zsmul, e1 m, smul_eq_mul]
     rw [e2, ← hdec, Finsupp.linearCombination_single, hy w]
@@ -103,7 +109,8 @@ theorem exists_monomial_of_count_zero (I S : Type 1) (A : Type) [DecidableEq A] 
       push_cast
       simp
     conv_lhs => rw [P.as_sum]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     simp only [MvPolynomial.map_monomial, MvPolynomial.aeval_monomial]
     rw [Finset.sum_congr rfl hterm, Finset.sum_comm]
     refine Finset.sum_eq_zero fun w _ => ?_
@@ -140,7 +147,7 @@ theorem exists_monomial_of_count_zero (I S : Type 1) (A : Type) [DecidableEq A] 
 private theorem hasSupport_segment_class {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)}
     (hS : IsSegmentClass k Z) (Δ : Segment k) :
-    HasSupport (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL k)) Δ.ms := by
+    HasSupport (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) Δ.ms := by
   have hd : ∑ a, (Δ.term a).1 = Δ.len * Δ.d := by
     rw [Segment.sum_term_fst]; rfl
   obtain ⟨φ, hφ⟩ := ((hS Δ Δ.start.rep Δ.start.cl_rep (stdBlocks (fun _ : Fin Δ.len => Δ.d) hd)
@@ -164,14 +171,14 @@ theorem pos_X {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)}
     (hX : ∀ Δ, Ψ (Finsupp.single ⟨Δ.len * Δ.d, Z Δ⟩ 1) = MvPolynomial.X Δ) (Δ : Segment k) :
     Pos Ψ (MvPolynomial.X Δ) ∧ Pos Ψ (pc Ψ Δ.ms - MvPolynomial.X Δ) := by
   classical
-  set x : IrrGL k := ⟨Δ.len * Δ.d, Z Δ⟩ with hx
+  set x : IrrGL (k := k) := ⟨Δ.len * Δ.d, Z Δ⟩ with hx
   have hb : MvPolynomial.X Δ = bas Ψ x := (hX Δ).symm
   have h1 := pos_pc_sub hΨ (hasSupport_segment_class hS Δ) x.2.rep.smooth x.2.rep.irr
   rw [IrrGL.of_rep] at h1
   rw [hb]
   exact ⟨pos_bas _, h1⟩
 
-theorem pc_nsmul {Ψ : GrothGL k ≃+ MvPolynomial (Segment k) ℤ} (t : Multiset (IrrGL k)) (a : ℕ) :
+theorem pc_nsmul {Ψ : GrothGL k ≃+ MvPolynomial (Segment k) ℤ} (t : Multiset (IrrGL (k := k))) (a : ℕ) :
     pc Ψ (a • t) = pc Ψ t ^ a := by
   unfold pc
   rw [Multiset.map_nsmul, Multiset.prod_nsmul]
@@ -207,7 +214,7 @@ theorem hasSupport_of_monomial {Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len *
     have key : Ψ.symm (pc Ψ (∑ Δ ∈ m.support, m Δ • Δ.ms)) y =
         Ψ.symm (MvPolynomial.monomial m 1) y +
           Ψ.symm (pc Ψ (∑ Δ ∈ m.support, m Δ • Δ.ms) - MvPolynomial.monomial m 1) y := by
-      rw [← Finsupp.add_apply, ← map_add, add_sub_cancel]
+      rw [← Finsupp.add_apply, ← map_add (f := _), add_sub_cancel]
     have ha : 0 ≤ Ψ.symm (MvPolynomial.monomial m 1) y := by rw [hmono]; exact h1 y
     have hb : 0 ≤ Ψ.symm (pc Ψ (∑ Δ ∈ m.support, m Δ • Δ.ms) - MvPolynomial.monomial m 1) y := by
       rw [hmono, hpc]; exact h2 y
@@ -262,7 +269,7 @@ theorem fixed_iwahori_ne_bot : GlobalTheory.Published.GeometricLemma → GlobalT
     GlobalTheory.Published.BernsteinZelevinskyFiniteness →
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ)
     (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
-    IsSmooth π → π.IsIrreducible → (∀ s : Multiset (IrrGL k), HasSupport π s → ∀ y ∈ s, y.IsUnramChar) →
+    IsSmooth π → π.IsIrreducible → (∀ s : Multiset (IrrGL (k := k)), HasSupport π s → ∀ y ∈ s, y.IsUnramChar) →
       fixed π (iwahori k (Fin n)) ≠ ⊥ := by
   intro hG hZ hB k _ _ _ _ n V _ _ π hs hi hsupp
   classical
@@ -318,7 +325,7 @@ theorem fixed_iwahori_ne_bot : GlobalTheory.Published.GeometricLemma → GlobalT
       (Realised.monomial (hG k).1 (hG k).2 hΨ hXr m).effective
     have hy : ∀ w, wordMult (IrrGL.of π hs hi).2.rep.ρ w = 0 := fun w =>
       (wordMult_congr (IrrGL.equivOf π hs hi) w).symm.trans (hw0 w)
-    obtain ⟨m, ⟨Δ, hΔm, hΔU⟩, hm⟩ := exists_monomial_of_count_zero (IrrGL k) (Segment k) ℂˣ Ψ
+    obtain ⟨m, ⟨Δ, hΔm, hΔU⟩, hm⟩ := exists_monomial_of_count_zero (IrrGL (k := k)) (Segment k) ℂˣ Ψ
       (fun x w => wordMult x.2.rep.ρ w) U ℓ φ hinj hUl h0 H _ hy
     have hsp := hasSupport_of_monomial hS hΨ hX hs hi m hm
     have hfm : Δ.first ∈ ∑ Δ ∈ m.support, m Δ • Δ.ms := by

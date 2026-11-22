@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.LagrangianStabilizerCharacterTrivial
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.LagrangianStabilizerCharacterTrivial
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem card_lagr [Nontrivial K] {JB : Matrix β β K} {Cy : Matrix β ν K} (h 
       (by rw [← Matrix.toLin'_mul, h1, Matrix.toLin'_one])
   rw [card_eq_of_linearEquiv K f, Fintype.card_sum, two_mul]
 
-omit [Invertible (2 : k)] [Fintype α] [DecidableEq α] in
 
+omit [Invertible (2 : k)] [Fintype α] [DecidableEq α] in
 theorem indep {Cy Cx : Matrix β ν K} {M : Matrix (ν ⊕ ν) β K} (h2 : M * fromCols Cy Cx = 1) {z z' : Matrix ν α K}
     (h : Cy * z + Cx * z' = 0) : z = 0 ∧ z' = 0 := by
   have hrows : fromRows z z' = 0 := by
@@ -92,8 +96,8 @@ theorem lagY_dim [Nontrivial K] {ξ₀ : K} (hq : IsQuad c ξ₀) {ξ : K} {JA :
       rw [Matrix.mul_sub, hz', sub_self, Matrix.mul_zero, add_zero]
     exact sub_eq_zero.1 (indep hM h3).1
 
-omit [Invertible (2 : k)] in
 
+omit [Invertible (2 : k)] in
 theorem exists_coord {ξ₀ : K} (hq : IsQuad c ξ₀) (ν α : Type) [Fintype ν] [Fintype α] [DecidableEq α] :
     ∃ (r : ℕ) (e : (Fin r → k) ≃ₗ[k] Matrix ν α K), ∀ t : GL α K, ∃ g : GL (Fin r) k,
       (∀ x, e (g.val *ᵥ x) = e x * t.valᵀ) ∧ GeneralLinearGroup.det g =
@@ -137,8 +141,8 @@ theorem exists_coord {ξ₀ : K} (hq : IsQuad c ξ₀) (ν α : Type) [Fintype �
     rw [LinearMap.det_toMatrix', LinearMap.det_conj, LinearMap.det_restrictScalars, hdetK, map_pow]
     simp
 
-omit [DecidableEq α] [DecidableEq β] in
 
+omit [DecidableEq α] [DecidableEq β] in
 theorem schr_box (ψ : AddChar k ℂ) {κ' : Type} [Fintype κ'] (w : (κ ⊕ κ' → k) × (κ ⊕ κ' → k)) (φ₁ : (κ → k) → ℂ)
     (φ₂ : (κ' → k) → ℂ) : schr ψ w (boxFun φ₁ φ₂) =
       boxFun (schr ψ (w.1 ∘ Sum.inl, w.2 ∘ Sum.inl) φ₁) (schr ψ (w.1 ∘ Sum.inr, w.2 ∘ Sum.inr) φ₂) := by

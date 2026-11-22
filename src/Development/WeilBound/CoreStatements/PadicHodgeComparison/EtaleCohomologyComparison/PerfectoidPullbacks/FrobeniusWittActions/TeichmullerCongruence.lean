@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.IsUnitWitt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SchFnPtTw
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.IsUnitWitt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SchFnPtTw
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -112,31 +116,38 @@ def ptOut (n : ℕ) (hT : TeichmullerCongruence r N) : F.ptK (κm r n) ⟶ F.ptK
     rw [e]; exact z.2⟩
   naturality _ _ _ := rfl
 
-variable (r) in
 
+variable (r) in
 def mIn (M : Model l K) (n : ℕ) (hT : TeichmullerCongruence r N) :
     Mor (Lm r M n) (B.Lc (B.schFn M.p) (okToOC l K) true n) (RingHom.id _) :=
   B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := B.bs l true n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
     (RingHom.id _) rfl (DPMorphism.id _).isDPMorphism (ptIn (B.schFn M.p) n hT) fun _ _ _ => rfl
 
-variable (r) in
 
+variable (r) in
 def mOut (M : Model l K) (n : ℕ) (hT : TeichmullerCongruence r N) :
     Mor (B.Lc (B.schFn M.p) (okToOC l K) true n) (Lm r M n) (phiP l n N) :=
   B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := B.bs l true n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
     (phiP l n N) rfl (dp_phiP n N) (ptOut (B.schFn M.p) n hT) fun _ _ _ => rfl
 
+
 variable (l) in
+def phiA (N : ℕ) : Acris l →+* Acris l := ACris.phi (K := ℂ_[l]) (p := l) ^ N
 
-def phiA (N : ℕ) : Acris l →+* Acris l := ACris.phi ℂ_[l] l ^ N
-
-theorem phiA_succ (N : ℕ) (a : Acris l) : phiA l (N + 1) a = ACris.phi ℂ_[l] l (phiA l N a) := by
+theorem phiA_succ (N : ℕ) (a : Acris l) :
+    phiA l (N + 1) a = ACris.phi (K := ℂ_[l]) (p := l) (phiA l N a) := by
   rw [phiA, pow_succ']; rfl
 
 theorem phiP_cris (n N : ℕ) (a : Acris l) : phiP l n N ((base l).cris n a) = (base l).cris n (phiA l N a) := by
+  have hφ (x : Acris l) :
+      (base l).phi n ((base l).cris n x) =
+        (base l).cris n (ACris.phi (K := ℂ_[l]) (p := l) x) :=
+    (base l).pdOk_frob.acr_cris (base l).frob_comp_s (ACris.phiZero (K := ℂ_[l]) (p := l))
+      (fun y => RingHom.congr_fun (f := ACris.phiAway (K := ℂ_[l]) (p := l))
+        (awayW_ext fun x => by rw [ACris.phiAway_algebraMap, awayW_algebraMap, wmap_frobenius]) y.1) n x
   induction N with
   | zero => rfl
-  | succ N ih => rw [phiP_succ, ih, phiA_succ, (base l).phi_cris]
+  | succ N ih => rw [phiP_succ, ih, phiA_succ, hφ]
 
 end Mid
 

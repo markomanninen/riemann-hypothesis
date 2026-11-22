@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyDef
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyDef
+
+@[expose] public section
 
 namespace Formalism.L2.FormalSeriesBounds
 

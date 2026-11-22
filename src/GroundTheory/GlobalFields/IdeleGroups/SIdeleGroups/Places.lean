@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
-import GroundTheory.GlobalFields.IdeleGroups.StandardOpenEquiv
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
+public import GroundTheory.GlobalFields.IdeleGroups.StandardOpenEquiv
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -13,8 +17,8 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 namespace AdeleBaseChange
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem finiteCompletionMap_eq_galHom (σ : L ≃ₐ[K] L) (w' : HeightOneSpectrum (𝓞 L))
     (h : w' = σ • comapPrime (σ : L ≃+* L) w') :
     finiteCompletionMap (σ : L ≃+* L) w' = galHom σ (comapPrime (σ : L ≃+* L) w') w' h := by
@@ -25,8 +29,8 @@ theorem finiteCompletionMap_eq_galHom (σ : L ≃ₐ[K] L) (w' : HeightOneSpectr
       rfl)
   exact RingHom.ext (congrFun this)
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem smul_snd_eq_galHom (σ : L ≃ₐ[K] L) (a : 𝔸[L]) (w w' : HeightOneSpectrum (𝓞 L))
     (h : w' = σ • w) : (σ • a).2 w' = galHom σ w w' h (a.2 w) := by
   obtain rfl : w = comapPrime (σ : L ≃+* L) w' := by
@@ -46,8 +50,8 @@ theorem finite_setOf_liesOver :
   (Set.finite_range (Subtype.val : PlacesOver L v → HeightOneSpectrum (𝓞 L))).subset
     fun w hw ↦ ⟨⟨w, hw⟩, rfl⟩
 
-open Classical in
 
+open Classical in
 def finiteAdeleAboveFun (a : (w : PlacesOver L v) → w.1.adicCompletion L)
     (w : HeightOneSpectrum (𝓞 L)) : w.adicCompletion L :=
   if h : w.asIdeal.LiesOver v.asIdeal then a ⟨w, h⟩ else 1
@@ -55,13 +59,13 @@ def finiteAdeleAboveFun (a : (w : PlacesOver L v) → w.1.adicCompletion L)
 omit [NumberField K] in
 theorem finiteAdeleAboveFun_apply (a : (w : PlacesOver L v) → w.1.adicCompletion L)
     (w : PlacesOver L v) : finiteAdeleAboveFun v a w.1 = a w := by
-  rw [finiteAdeleAboveFun, dif_pos w.2]
+  rw [finiteAdeleAboveFun, dite_eq_left w.2]
 
 omit [NumberField K] in
 theorem finiteAdeleAboveFun_apply_of_not (a : (w : PlacesOver L v) → w.1.adicCompletion L)
     {w : HeightOneSpectrum (𝓞 L)} (h : ¬ w.asIdeal.LiesOver v.asIdeal) :
     finiteAdeleAboveFun v a w = 1 := by
-  rw [finiteAdeleAboveFun, dif_neg h]
+  rw [finiteAdeleAboveFun, dite_eq_right h]
 
 theorem finiteAdeleAboveFun_eventually (a : (w : PlacesOver L v) → w.1.adicCompletion L) :
     ∀ᶠ w in Filter.cofinite, finiteAdeleAboveFun v a w ∈ w.adicCompletionIntegers L := by
@@ -149,8 +153,8 @@ theorem comapPrime_liesOver (σ : L ≃ₐ[K] L) (w : PlacesOver L v) :
   rw [comapPrime_eq_inv_smul]
   exact (σ⁻¹ • w).2
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem finiteProjAbove_smul_congr (σ : L ≃ₐ[K] L) {x y : IdeleGroup L}
     (h : finiteProjAbove v x = finiteProjAbove v y) :
     finiteProjAbove v (σ • x) = finiteProjAbove v (σ • y) := by

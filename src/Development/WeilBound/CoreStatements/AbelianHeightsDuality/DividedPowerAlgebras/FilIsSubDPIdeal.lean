@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.LevelCriteria.IsLevOneIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+module
+
+public import Mathlib
+public import Development.WeilBound.LevelCriteria.IsLevOneIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,10 +50,6 @@ theorem nil_of_lev {J : Ideal B} {δ : DividedPowers J} {n : ℕ} (h : IsLev δ 
     have : _ ∈ fil δ n := Ideal.subset_span ⟨l, h1, h2, rfl⟩
     rwa [show fil δ n = ⊥ from h, Ideal.mem_bot] at this⟩
 
-theorem exists_lev {J : Ideal B} {δ : DividedPowers J} (h : IsNilDP δ) : ∃ n, 1 ≤ n ∧ IsLev δ n := by
-  obtain ⟨N, hN⟩ := ExpBij.exists_dpFil_eq_bot h
-  exact ⟨N + 1, Nat.le_add_left _ _, le_bot_iff.1 ((ExpBij.dpFil_anti δ N.le_succ).trans hN.le)⟩
-
 theorem exists_quot {J : Ideal B} (δ : DividedPowers J) (𝔟 : Ideal B) (h𝔟 : δ.IsSubDPIdeal 𝔟) :
     ∃ δ' : DividedPowers (J.map (Ideal.Quotient.mk 𝔟)), IsDPMorphism δ δ' (Ideal.Quotient.mk 𝔟) ∧
       ∀ (C : Type) [CommRing C] (J'' : Ideal C) (δ'' : DividedPowers J'') (g : B ⧸ 𝔟 →+* C),
@@ -64,8 +64,8 @@ theorem exists_quot {J : Ideal B} (δ : DividedPowers J) (𝔟 : Ideal B) (h𝔟
     rw [Quotient.dpow_apply δ hinf ha]
     exact hg.2 a ha
 
-omit [CommRing B] in
 
+omit [CommRing B] in
 theorem map_fil_le {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) {C : Type} [CommRing C]
     {J' : Ideal C} (δ' : DividedPowers J') (f : B →+* C) (hf : IsDPMorphism δ δ' f) (N : ℕ) :
     (fil δ N).map f ≤ fil δ' N := by
@@ -82,8 +82,8 @@ theorem map_fil_le {B : Type} [CommRing B] {J : Ideal B} (δ : DividedPowers J) 
     simp only [Function.comp_apply]
     exact (hf.dpow_comp (n := p.1) p.2 (h1 p hp)).symm
 
-omit [CommRing B] in
 
+omit [CommRing B] in
 theorem fil_le_map_fil : ∀ (B : Type) [CommRing B] (J : Ideal B) (δ : DividedPowers J) (C : Type) [CommRing C]
     (J' : Ideal C) (δ' : DividedPowers J') (f : B →+* C), IsDPMorphism δ δ' f → J' = J.map f →
     ∀ N, fil δ' N ≤ (fil δ N).map f := by

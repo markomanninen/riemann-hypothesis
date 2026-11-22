@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingleMemLocalLatticeCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBoundAbsLocalLatticeCompletionEntriesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingleMemLocalLatticeCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBoundAbsLocalLatticeCompletionEntriesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 
@@ -25,7 +30,7 @@ theorem absNorm_le_one_of_absFin_le_one : ∀ {F E : Type} [Field F] [NumberFiel
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [sigR]
-      | add y z hy hz => simp only [map_add, hy, hz]
+      | add y z hy hz => simp only [map_add (f := _), hy, hz]
     rw [e2]
     exact le_absFin F v _ x
   rw [← e1, hN]
@@ -67,7 +72,7 @@ theorem absFin_det_le (v : HeightOneSpectrum (𝓞 F)) {n : ℕ} (M : Matrix (Fi
   · rw [h, Units.neg_smul, one_smul, absFin_neg]; exact hp
 
 theorem normDet_le_one {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] (v : HeightOneSpectrum (𝓞 F)) (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E))
+    [Submodule.IsFullLattice E L] (v : HeightOneSpectrum (𝓞 F)) (M : Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E))
     (hM : ∀ x ∈ latLoc F L v, M *ᵥ x ∈ latLoc F L v) : ‖Algebra.norm (Fv F v) M.det‖₊ ≤ 1 := by
   obtain ⟨c, hc, hcL⟩ := GlobalTheory.T.exists_single_mem_localLatticeCompletion L v
   obtain ⟨C, hC⟩ := GlobalTheory.T.exists_bound_abs_localLatticeCompletion_entries L v
@@ -111,14 +116,14 @@ theorem levi_mulVec_mem (σ : E →ₐ[F] E) {n : ℕ} {J : Matrix (Fin n) (Fin 
 
 theorem hgtFin_ioH_le_one {σ : E →ₐ[F] E} (hσ : IsCMExt F E σ) {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
     {Q : Matrix (Fin (n + n)) (Fin (n + n)) E} (hQ : Q = dblGram finSumFinEquiv J) (L : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L] (v : HeightOneSpectrum (𝓞 F)) (y : GLoc σ J v) :
+    [Submodule.IsFullLattice E L] (v : HeightOneSpectrum (𝓞 F)) (y : GLoc σ J v) :
     hgtFin σ Q L v (ioH _ σ hQ (y, 1)) ≤ 1 := by
   by_cases h : ∃ p : siegelH (Fv F v) σ Q, ∃ k ∈ KFin σ Q L v, ioH _ σ hQ (y, 1) = p * k
   · obtain ⟨p, k, hk, e⟩ := h
     rw [e, hgtFin_mul p hk, absEv_apply]
     exact normDet_le_one hσ L v _ fun x hx => levi_mulVec_mem σ hQ L v y p hk e hx
   · show iwAbs _ _ _ ≤ 1
-    rw [iwAbs, dif_neg h]
+    rw [iwAbs, dite_eq_right h]
 
 end GlobalTheory.Core.Rk.HgtFin
 
@@ -133,7 +138,7 @@ namespace GlobalTheory.Core.Rk.IP
 
 theorem hgtFin_ioAt_le_one : ∀ (D : D7) (A : HSp D) (L : Lat A), IsSelfDualC A L → ∀ (v : FinPl D) (y : Gv A v), hgtFin D.sp.cm.sig (dblSp A).gram L v (ioAt A v y) ≤ 1 := by
   intro D A L hL v y
-  haveI := hL.1
+  haveI := GlobalTheory.ProjXCols.selfDual_isFullLattice A L hL
   exact GlobalTheory.Core.Rk.HgtFin.hgtFin_ioH_le_one (isCMExt_host D) (gram_hdbl A) L v y
 
 end GlobalTheory.Core.Rk.IP

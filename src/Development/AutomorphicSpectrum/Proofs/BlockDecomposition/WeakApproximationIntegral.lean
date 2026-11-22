@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PlaneSupports.PlaneSupp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianPlaneStrongApprox
-import GroundTheory.GlobalFields.Adele.Compact
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSupported
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianPlaneStrongApprox
+public import GroundTheory.GlobalFields.Adele.Compact
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsSupported
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,10 @@ theorem exists_small (s : Pl F) {d : 𝓞 F} (hd : d ≠ 0) {ε : ℝ} (hε : 0 
       exact v.intValuation_le_one b
 
 theorem norm_algebraMap_inf (w : InfinitePlace F) (a : F) :
-    ‖algebraMap F w.Completion a‖ = w a :=
-  InfinitePlace.Completion.norm_coe w _
+    ‖algebraMap F w.Completion a‖ = w a := by
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+    Algebra.algebraMap_self_apply, AbsoluteValue.Completion.norm_coe, WithAbs.ofAbs_toAbs,
+    InfinitePlace.coe_apply]
 
 theorem exists_radius (c : ∀ w : InfinitePlace F, w.Completion) (U : ∀ w : InfinitePlace F, Set w.Completion)
     (hU : ∀ w, U w ∈ 𝓝 (c w)) :
@@ -194,7 +200,8 @@ theorem exists_approx_core (s : Pl F) (T₁ : Finset (InfinitePlace F))
   classical
   let xF : Af F := ∑ v ∈ T₂, singleV F v (cF v)
   have hev : ∀ v, evalV F v xF = ∑ v' ∈ T₂, evalV F v (singleV F v' (cF v')) := fun v => by
-    simp only [xF, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [xF, map_sum]
   have hxT : ∀ v ∈ T₂, evalV F v xF = cF v := fun v hv => by
     rw [hev, Finset.sum_eq_single v (fun v' _ hne => StrongApprox.evalV_single_ne hne.symm _)
       (fun h => absurd hv h), StrongApprox.evalV_single_same]
@@ -268,35 +275,4 @@ theorem exists_approx_core (s : Pl F) (T₁ : Finset (InfinitePlace F))
     rw [hcompF, hxN v hvT, heq, zero_sub]
     exact neg_mem ((hd v o ho).2 hvT)
 
-theorem exists_approx : ∀ {F : Type} [Field F] [NumberField F] (s : Pl F) (T : Finset (Pl F)), s ∉ T →
-    ∀ O : (u : Pl F) → Set (Kp u), (∀ u ∈ T, IsOpen (O u) ∧ (O u).Nonempty) →
-    ∃ t : F, (∀ u ∈ T, algebraMap F (Kp u) t ∈ O u) ∧
-      ∀ v : HeightOneSpectrum (𝓞 F), (Sum.inr v : Pl F) ∉ T → (Sum.inr v : Pl F) ≠ s →
-        algebraMap F (Kp (Sum.inr v : Pl F)) t ∈ Ov v := by
-  intro F _ _ s T hs O hO
-  classical
-  have hc : ∀ u : Pl F, ∃ c : Kp u, u ∈ T → c ∈ O u := fun u => by
-    by_cases h : u ∈ T
-    · obtain ⟨c, hc⟩ := (hO u h).2
-      exact ⟨c, fun _ => hc⟩
-    · exact ⟨0, fun h' => absurd h' h⟩
-  choose c hc using hc
-  obtain ⟨t, ht₁, ht₂, ht₃⟩ := exists_approx_core s T.toLeft T.toRight
-    (fun w hw h => hs (h ▸ Finset.mem_toLeft.1 hw)) (fun v hv h => hs (h ▸ Finset.mem_toRight.1 hv))
-    (fun w => c (Sum.inl w)) (fun w => O (Sum.inl w))
-    (fun w hw => (hO _ (Finset.mem_toLeft.1 hw)).1.mem_nhds (hc _ (Finset.mem_toLeft.1 hw)))
-    (fun v => c (Sum.inr v)) (fun v => O (Sum.inr v))
-    (fun v hv => ⟨(hO _ (Finset.mem_toRight.1 hv)).1, hc _ (Finset.mem_toRight.1 hv)⟩)
-  refine ⟨t, fun u hu => ?_, fun v hvT hvs => ht₃ v (fun h => hvT (Finset.mem_toRight.1 h)) hvs⟩
-  cases u with
-  | inl w => exact ht₁ w (Finset.mem_toLeft.2 hu)
-  | inr v => exact ht₂ v (Finset.mem_toRight.2 hu)
-
 end GlobalTheory.CompanionTheory.PlaneSA.Additive
-
-theorem GlobalTheory.CompanionTheory.PlaneSA.additive_strong_approx_away : ∀ {F : Type} [Field F] [NumberField F] (s : Pl F) (T : Finset (Pl F)), s ∉ T →
-  ∀ O : (u : Pl F) → Set (Kp u), (∀ u ∈ T, IsOpen (O u) ∧ (O u).Nonempty) →
-  ∃ t : F, (∀ u ∈ T, algebraMap F (Kp u) t ∈ O u) ∧
-    ∀ v : HeightOneSpectrum (𝓞 F), (Sum.inr v : Pl F) ∉ T → (Sum.inr v : Pl F) ≠ s →
-      algebraMap F (Kp (Sum.inr v : Pl F)) t ∈ Ov v :=
-  GlobalTheory.CompanionTheory.PlaneSA.Additive.exists_approx

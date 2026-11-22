@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemPuncturedRingIffPowerSeriesPart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemPuncturedRingIffPowerSeriesPart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+
+@[expose] public section
 
 open scoped PowerSeries LaurentSeries Topology
 open Filter
@@ -184,8 +188,6 @@ theorem eventually_mem_halfRing {s : ℂ⸨X⸩} (hs : s ∈ convLaurent) :
 def halfIncl (T : ℝ) : halfRing T →ₐ[ℂ] convLaurent :=
   Subalgebra.inclusion (halfRing_le_convLaurent T)
 
-@[simp] theorem coe_halfIncl {T : ℝ} (s : halfRing T) : (halfIncl T s : ℂ⸨X⸩) = s := rfl
-
 theorem exists_lsum_eTwoPi_ne_zero {s : ℂ⸨X⸩} (hs : s ∈ convLaurent) (h0 : s ≠ 0) :
     ∃ T : ℝ, ∀ w : ℂ, T < w.im → lsum s (eTwoPi w) ≠ 0 :=
   eventually_iff_eTwoPi.1 (eventually_lsum_ne_zero hs h0)
@@ -278,9 +280,6 @@ theorem coe_mem_locRing {T : ℝ} (s f : halfRing T) : (f : ℂ⸨X⸩) ∈ locR
 
 theorem inv_mem_locRing {T : ℝ} (s : halfRing T) : (s : ℂ⸨X⸩)⁻¹ ∈ locRing T s :=
   Algebra.subset_adjoin (Set.mem_singleton _)
-
-@[simp] theorem coe_algebraMap_locRing {T : ℝ} (s f : halfRing T) :
-    (algebraMap (halfRing T) (locRing T s) f : ℂ⸨X⸩) = f := rfl
 
 theorem locRing_toSubring {T : ℝ} (s : halfRing T) :
     (locRing T s).toSubring = Subring.closure ((halfRing T : Set ℂ⸨X⸩) ∪ {(s : ℂ⸨X⸩)⁻¹}) := by

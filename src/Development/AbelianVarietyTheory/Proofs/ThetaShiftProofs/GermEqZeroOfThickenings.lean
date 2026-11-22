@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.WeightIndep
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PGAppEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtOfSucc
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValueAtUnitSection
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.WeightIndep
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PGAppEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtOfSucc
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpandsAtSub
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValueAtUnitSection
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,8 +200,8 @@ def IsTau (J : Ideal S) (x : Sp S ⟶ G.left) (jL : U.LG.L.ι) (jM : D.toPre.P.L
   ∀ (e : ℕ) (xe : Sp (S ⧸ J ^ (e + 1)) ⟶ (thickObj R I e G).left), xe ≫ (fstG I e G).left = thick S J e ≫ x →
     Ideal.Quotient.mk _ τ * wVal U e xe jL jM = 1
 
-open Classical in
 
+open Classical in
 def tau (J : Ideal S) (x : Sp S ⟶ G.left) (jL : U.LG.L.ι) (jM : D.toPre.P.L.ι) : Sˣ :=
   if h : ∃ τ : Sˣ, IsTau U J x jL jM τ then h.choose else 1
 
@@ -325,14 +329,17 @@ theorem HasCoords.toStkA_wVal {e : ℕ} {T : Type} [CommRing T] {r : Sp T ⟶ Sp
     {xe : Sp T ⟶ (thickObj R I e G).left} (h : HasCoords U g x e r xe) {jL : U.LG.L.ι} {jM : D.toPre.P.L.ι}
     (hL : ⊤ ≤ x ⁻¹ᵁ U.LG.L.U jL) (hM : ⊤ ≤ basePt g ⁻¹ᵁ D.toPre.P.L.U jM) (z : Sp T) :
     toStkA z (wVal U e xe jL jM) = (wv U e xe z jM jL).val :=
-  toStkA_valR xe _ z (h.top_le_chart hL hM) _
+  by
+    change toStkA z (valR xe _ _) = (gm xe z _ _).val
+    erw [toStkA_valR_eq_gs xe _ z (h.top_le_chart hL hM), gs_unit xe z _ (h.top_le_chart hL hM (show z ∈ (⊤ : (Sp T).Opens) from trivial))]
+
 
 theorem top_le_secChart {jL : U.LG.L.ι} (hL : ⊤ ≤ x ⁻¹ᵁ U.LG.L.U jL) :
     ⊤ ≤ x ⁻¹ᵁ LB.wchart U.LG.L (fun _ : Fin 1 => 𝟙 G.left) (fun _ => jL) :=
   fun _ hz => Set.mem_iInter.2 fun _ => hL hz
 
-variable (U) in
 
+variable (U) in
 theorem expandsAt_value {e k : ℕ} {σ : H0 U.LG.L k} {f : ∀ α : D.toPre.X, D.toPre.SecB k α}
     (h : U.ExpandsAt e k σ f) : ∃ F : Finset D.toPre.X, ∀ (S : Type) [CommRing S] (s : Sp S ⟶ Sp R)
       (g : GtPt D.toPre (Over.mk s)) (x : Sp S ⟶ G.left) (T : Type) [CommRing T] [IsLocalRing T] (ρ : S →+* T)
@@ -357,7 +364,8 @@ theorem expandsAt_value {e k : ℕ} {σ : H0 U.LG.L k} {f : ∀ α : D.toPre.X, 
       ((congrArg (fun q => q (cpt T) ∈ U.LG.L.U jL) hx.1).mpr (top_le_comp hL _ trivial))
     rw [show xe ≫ pGl U e = spMap ρ ≫ basePt g from hx.2.1, show xe ≫ fGl I G e = spMap ρ ≫ x from hx.1, eM] at H
     apply toStkA_injective
-    rw [map_mul, map_pow, hx.toStkA_wVal hL hM, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_pow, hx.toStkA_wVal hL hM, map_sum, map_sum]
     refine (congrArg₂ (· * ·) (Units.val_pow_eq_pow_val _ _).symm
       (toStkA_map_valR ρ x _ _ (top_le_secChart hL) _)).trans (H.trans (Finset.sum_congr rfl fun α hα => ?_))
     have hv := hx.val_eq α (𝟙 _) hJ
@@ -468,8 +476,8 @@ theorem isTau_tau (h : IsFormalPt U J g x) (hL : ⊤ ≤ x ⁻¹ᵁ U.LG.L.U jL)
   rw [tau, dif_pos (exists_isTau h hL hM)]
   exact (exists_isTau h hL hM).choose_spec
 
-omit [IsLocalRing S] in
 
+omit [IsLocalRing S] in
 theorem IsTau.unique (h : IsFormalPt U J g x) {a b : S} (ha : IsTau U J x jL jM a) (hb : IsTau U J x jL jM b) :
     a = b :=
   eq_of_forall_mk_eq J fun e => by
@@ -502,8 +510,21 @@ theorem tau_trans (h : IsFormalPt U J g x) (hL : ⊤ ≤ x ⁻¹ᵁ U.LG.L.U jL)
   set z := cpt (S ⧸ J ^ (e + 1))
   have m := hy.top_le_chart hL hM (show z ∈ (⊤ : (Sp (S ⧸ J ^ (e + 1))).Opens) from trivial)
   have m' := hy.top_le_chart hL' hM' (show z ∈ (⊤ : (Sp (S ⧸ J ^ (e + 1))).Opens) from trivial)
-  have w : wv U e y z jM jL = _ * _ * wv U e y z jM' jL' :=
-    gm_isGen (U.w_gen e) y z (fun _ => jM) (fun _ => jM') (fun _ => jL) (fun _ => jL') m.1 m'.1 m.2 m'.2
+  have w : wv U e y z jM jL =
+      gm y z _ ((D.toPre.P.L.pull (U.gt e).pG.left).g (fun _ => jM) (fun _ => jM')) *
+      (gm y z _ ((U.LG.L.pull (fstG I e G).left).g (fun _ => jL) (fun _ => jL')))⁻¹ *
+      wv U e y z jM' jL' := by
+    have hV : y z ∈ (((D.toPre.P.L.pull (U.gt e).pG.left).U (fun _ => jM) ⊓
+        (U.LG.L.pull (fstG I e G).left).U (fun _ => jL)) ⊓
+        ((D.toPre.P.L.pull (U.gt e).pG.left).U (fun _ => jM') ⊓
+        (U.LG.L.pull (fstG I e G).left).U (fun _ => jL'))) := ⟨m, m'⟩
+    have key := congrArg (gm y z _) ((U.w_gen e) ((fun _ => jM), (fun _ => jL)) ((fun _ => jM'), (fun _ => jL')))
+    erw [gm_res _ z _ hV, map_mul, gm_res _ z _ hV] at key
+    change gm y z _ ((U.w e).s (fun _ => jM, fun _ => jL)) = _
+    erw [key]
+    congr 1
+    show gm y z _ (res _ _ * (res _ _)⁻¹) = _
+    erw [map_mul, map_inv, gm_res _ z _ hV, gm_res _ z _ hV]
   rw [gm_pull_g _ _ y z _ _ m.1 m'.1, gm_pull_g _ _ y z _ _ m.2 m'.2, hy.1, hy.2.1] at w
   have t := congrArg (toStkA z) (isTau_tau h hL hM e y hy.1)
   have t' := congrArg (toStkA z) (isTau_tau h hL' hM' e y hy.1)
@@ -590,11 +611,17 @@ theorem exists_isZero (P : DegPre R) (T : Over (Sp R)) : ∃ g : GtPt P T, g.IsZ
   have c := val_cub P.cub (𝟙 T) hJ (P.cT T χ) (P.cT T χ') (P.zeroT T)
   rw [Category.id_comp, Category.id_comp, Category.id_comp] at c
   refine (val_mul hJ _ _ _).trans (Eq.trans ?_ (val_mul hJ _ _ _).symm)
+  have face : cubV P.cub y J (P.cT T χ) (P.cT T χ') (P.zeroT T) = 1 := by
+    have H := val_corr hJ (P.cub.face 2) (lift (P.cT T χ) (P.cT T χ')).left
+    rw [val_one] at H
+    refine Eq.trans ?_ H
+    refine Eq.trans ?_ (val_cub P.cub (lift (P.cT T χ) (P.cT T χ')) hJ (x2 P.P.A 0) (x2 P.P.A 1) (pzero P.P.A _)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def, DegPre.zeroT]
   exact congrArg₂ (· * ·) ((v _ y J hJ).trans (v _ y J hJ).symm)
-    (c.trans (((isCub_cubV P.cub hJ).face₃ _ _).trans (v _ y J hJ).symm))
+    (c.trans (face.trans (v _ y J hJ).symm))
+
 
 variable (U) in
-
 theorem isFormalPt_zero (φ : R →+* S) {g : GtPt D.toPre (Over.mk (spMap φ))} (hg : g.IsZero) :
     IsFormalPt U (I.map φ) g (spMap φ ≫ eSec G) := by
   intro e
@@ -617,8 +644,8 @@ theorem isFormalPt_zero (φ : R →+* S) {g : GtPt D.toPre (Over.mk (spMap φ))}
     refine (val_pull hJ _ _ _).symm.trans ((val_corr hJ ((U.gt e).t_unit χ) r).trans ((val_one _).trans ?_))
     exact ((val_corr hJ (hg.2 χ) _).trans (val_one _)).symm
 
-variable (U) in
 
+variable (U) in
 theorem map_secVal_eq {e k : ℕ} {σ : H0 U.LG.L k} {f : ∀ α : D.toPre.X, D.toPre.SecB k α}
     (h : U.ExpandsAt e k σ f) : ∃ F : Finset D.toPre.X, ∀ (S : Type) [CommRing S] [IsLocalRing S] (J : Ideal S)
       [IsAdicComplete J S] (s : Sp S ⟶ Sp R) (g : GtPt D.toPre (Over.mk s)) (x : Sp S ⟶ G.left),
@@ -640,14 +667,15 @@ theorem map_secVal_eq {e k : ℕ} {σ : H0 U.LG.L k} {f : ∀ α : D.toPre.X, D.
   refine ⟨h₀, fun F' jL jM jf jt hFF hL hM hc => ?_⟩
   have e₁ : ρ (∑ α ∈ F', famVal g (f α) (jf α) * coordVal g α (jt α)) =
       ρ (∑ α ∈ F, famVal g (f α) (jf α) * coordVal g α (jt α)) := by
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine (Finset.sum_subset hFF fun α hα hα' => ?_).symm
     rw [map_mul, h₀ α hα' _ (hc α hα).1, zero_mul]
   rw [map_mul, e₁, ← h₁ jL jM jf jt hL hM fun α hα => hc α (hFF hα), map_pow, ← _root_.mul_assoc, ← mul_pow,
     map_tau_mul_wVal hx hL hM ρ hρ H.1, one_pow, _root_.one_mul]
 
-variable (U) in
 
+variable (U) in
 theorem expansion_unique [IsNoetherianRing R] [IsAdicComplete I R] {k : ℕ} {σ : H0 U.LG.L k}
     {f f' : ∀ α : D.toPre.X, D.toPre.SecB k α} (h : ∀ e, U.ExpandsAt e k σ f) (h' : ∀ e, U.ExpandsAt e k σ f') :
     f = f' := by

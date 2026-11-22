@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsNearRootOfUnityProductDecomposition
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGoodRootOfHenselianSepClosedResidue
-import Development.AutomorphicArithmetic.CommutativeAlgebra.IsAffineIsDomainPullbackStandardOpens
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ClosedFiberAffineSurjectiveKerMaximalIdeal
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFiberPullbackSquareOfOpenImmersions
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SchemeRootsOfUnityEqLocallyConstantPowers
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GoodRoot
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsNearRootOfUnityProductDecomposition
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsGoodRootOfHenselianSepClosedResidue
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.IsAffineIsDomainPullbackStandardOpens
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ClosedFiberAffineSurjectiveKerMaximalIdeal
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsFiberPullbackSquareOfOpenImmersions
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SchemeRootsOfUnityEqLocallyConstantPowers
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry IsLocalRing GlobalTheory.EtC UpperTheory.Et LateralTheory.E.t_E2Cut LateralTheory.E.LineOneCut LateralTheory.E.StandardEtaleChartsMultivariableHensel
@@ -49,7 +53,7 @@ private theorem exists_preimage_map_eq_zero_of_mem_mm {A D E F : Type} [CommRing
     obtain ⟨b₀, rfl⟩ := hb'
     exact ⟨σ a * b₀, by rw [map_mul, ← hσ, Algebra.smul_def], by rw [map_mul, hψ a ha, zero_mul]⟩
   · rintro x y ⟨x₀, rfl, hx0⟩ ⟨y₀, rfl, hy0⟩
-    exact ⟨x₀ + y₀, map_add _ _ _, by rw [map_add, hx0, hy0, add_zero]⟩
+    exact ⟨x₀ + y₀, map_add _ _ _, by rw [map_add (f := _), hx0, hy0, add_zero]⟩
 
 private theorem pow_mod_eq_pow_of_pow_eq_one_commutative_algebra {S : Type} [CommRing S] {ζ : S} {q : ℕ} (h : ζ ^ q = 1) (n : ℕ) :
     ζ ^ (n % q) = ζ ^ n := by
@@ -101,7 +105,7 @@ theorem UpperTheory.cohomology_punctured_affine_line : LateralTheory.E.StandardE
     exact hy
   have hmem : w' ^ q - 1 ∈ mm (⊤ : Subalgebra A Γ(pullback ι₁ ι₂, ⊤)) := by
     have hk : w' ^ q - 1 ∈ RingHom.ker r.appTop.hom := by
-      rw [RingHom.mem_ker, map_sub, map_pow, hwq, map_one, sub_self]
+      rw [RingHom.mem_ker, RingHom.map_sub, map_pow, hwq, map_one, sub_self]
     rw [hrker] at hk
     unfold mm
     rw [Algebra.top_toSubmodule, Ideal.smul_top_eq_map]

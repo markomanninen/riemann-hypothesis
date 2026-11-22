@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.ThinScalesBound
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ThinScalesBound
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumA
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ def hL (y : V) : V →ₗ[E] E where
 theorem h_sum_smul_left {ι : Type} [Fintype ι] (c : ι → E) (v : ι → V) (y : V) :
     H.h (∑ i, c i • v i) y = ∑ i, c i * H.h (v i) y := by
   show hL H y (∑ i, c i • v i) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   rfl
 
@@ -32,7 +37,8 @@ theorem h_sub_left (x x' y : V) : H.h (x - x') y = H.h x y - H.h x' y := (hL H y
 
 theorem h_sum_smul_right {ι : Type} [Fintype ι] (c : ι → E) (v : ι → V) (w : V) :
     H.h w (∑ i, c i • v i) = ∑ i, M.L.cj (c i) * H.h w (v i) := by
-  rw [H.h_herm (∑ i, c i • v i) w, h_sum_smul_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm (∑ i, c i • v i) w, h_sum_smul_left, map_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   rw [map_mul, H.h_herm (v i) w]
 
@@ -148,10 +154,10 @@ theorem gram_det (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNotio
     ∃ s : E, s * s = 1 ∧ (H.gram (Sum.elim f f')).det * s = H.Gdet f f' T T' := by
   classical
   have hdB : H.Dl f f' (r + 1) = (H.Zhat f f').det := by
-    rw [HermSp.Dl, dif_pos le_rfl]
+    rw [HermSp.Dl, dite_eq_left le_rfl]
     exact congrArg Matrix.det (Matrix.ext fun i j => rfl)
   have hdBr : H.Dl f f' r = ((H.Zhat f f').submatrix Fin.castSucc Fin.castSucc).det := by
-    rw [HermSp.Dl, dif_pos (by omega : r ≤ r + 1)]
+    rw [HermSp.Dl, dite_eq_left (by omega : r ≤ r + 1)]
     exact congrArg Matrix.det (Matrix.ext fun i j => rfl)
   haveI hBinv : Invertible (H.Zhat f f') := Matrix.invertibleOfIsUnitDet _ (hdB ▸ hD)
   have hcorner : cornerM (r := r) (-algebraMap F E T') * ⅟(H.Zhat f f') * cornerM (-algebraMap F E T) =

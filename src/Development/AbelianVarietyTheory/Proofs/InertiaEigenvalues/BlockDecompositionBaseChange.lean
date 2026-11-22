@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+
+@[expose] public section
 
 namespace GlobalTheory
 
-open Matrix in
 
+open Matrix in
 theorem blockDecomposition_baseChange {K L : Type} [Field K] [Field L] (φ : K →+* L) {n r t : ℕ}
     (e : (Fin n → K) ≃ₗ[K] ((Fin r → K) × (Fin t → K))) :
     ∃ e' : (Fin n → L) ≃ₗ[L] ((Fin r → L) × (Fin t → L)),
@@ -54,7 +58,7 @@ theorem blockDecomposition_baseChange {K L : Type} [Field K] [Field L] (φ : K �
   have h22' : A₂.map φ * B₂.map φ = 1 := by
     rw [← Matrix.map_mul, h22, Matrix.map_one _ φ.map_zero φ.map_one]
   have hBA' : B₁.map φ * A₁.map φ + B₂.map φ * A₂.map φ = 1 := by
-    rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add _ φ.map_add, hBA,
+    rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add φ φ.map_add, hBA,
       Matrix.map_one _ φ.map_zero φ.map_one]
 
   refine ⟨LinearEquiv.ofLinearMap ((Matrix.toLin' (A₁.map φ)).prod (Matrix.toLin' (A₂.map φ)))

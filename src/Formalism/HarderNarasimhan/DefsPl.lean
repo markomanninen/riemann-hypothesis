@@ -1,5 +1,9 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.DegSupermodZ
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.DegSupermodZ
+
+@[expose] public section
 
 open Module NumberField
 
@@ -12,7 +16,7 @@ def placePart {P ι : Type*} [Fintype P] [Fintype ι] (v : P) :
   ⨅ (p : P × ι × Fin 2) (_ : p.1 ≠ v), LinearMap.ker (EuclideanSpace.proj p : EuclideanSpace ℝ (P × ι × Fin 2) →L[ℝ] ℝ).toLinearMap
 
 def PlaceSplit : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ N : Submodule (𝓞 K) V, N.FG →

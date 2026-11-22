@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeNormOfKummer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalKummerFieldOfPowerIdealRootsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EllipticTorsionPointCoordinatesFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAlgebraicOfEllipticTorsionCoordinatesFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassFieldFinrankPowPrincipalStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassNumberDvdFinrankStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotInjectiveTwoPrimesEqualNormCofiniteStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTwoPrimesSameNormOfTrivialFrobeniusStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClosureFrobeniusElementsEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AbsNormModEqOneOfPrincipalRayClassStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootsOfUnityMemRayClassFieldOfMultipleStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGeneratorPowPrimeOneModModulusStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameHeckeCharacterValueViaPowerGeneratorStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicHeckeCharacterValueMemKummerFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedCoefficientFieldInComplex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeNormOfKummer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalKummerFieldOfPowerIdealRootsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EllipticTorsionPointCoordinatesFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAlgebraicOfEllipticTorsionCoordinatesFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassFieldFinrankPowPrincipalStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassNumberDvdFinrankStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotInjectiveTwoPrimesEqualNormCofiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTwoPrimesSameNormOfTrivialFrobeniusStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClosureFrobeniusElementsEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AbsNormModEqOneOfPrincipalRayClassStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootsOfUnityMemRayClassFieldOfMultipleStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGeneratorPowPrimeOneModModulusStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TameHeckeCharacterValueViaPowerGeneratorStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicHeckeCharacterValueMemKummerFieldStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,108 +50,11 @@ theorem image_comap {E : Type} [Field E] {F K : IntermediateField ℚ ℂ} (h : 
   · rintro ⟨a, ha, hx⟩
     exact ⟨⟨x.1.1, x.2⟩, ⟨a, ha, (congrArg Subtype.val hx).trans (he _)⟩, rfl⟩
 
-theorem kPsi_comap {R : Ranks} (H : Host R) {F K : IntermediateField ℚ ℂ} (hFK : F ≤ K) [FiniteDimensional ℚ F]
-    (hV : kummerField H.φ₀ (classNumber H.E) ≤ F) (e : H.E →+* K) (he : ∀ a, (e a : ℂ) = H.φ₀ a) (p q : ℕ)
-    (𝔞 : Ideal (𝓞 H.E)) (h𝔞 : 𝔞 ≠ ⊥) : ∃ β : F.comap K.val, β ≠ 0 ∧
-    Submodule.span (𝓞 (F.comap K.val)) {β} =
-      ∏ g : Tau R,
-        (Submodule.span (𝓞 (F.comap K.val)) {x : F.comap K.val | ∃ a ∈ 𝔞, (x : K) = e (H.sigmaOf g (a : H.E))} ^ p *
-          Submodule.span (𝓞 (F.comap K.val))
-            {x : F.comap K.val | ∃ a ∈ 𝔞, (x : K) = e (H.sigmaOf g (H.conj (a : H.E)))} ^ q) ∧
-    ∀ σ : F.comap K.val →+* ℂ, ‖σ β‖ ^ 2 = (Ideal.absNorm 𝔞 : ℝ) ^ (p + q) := by
-  have hcm : IsCMField H.E := H.isCMField_hostE
-  have hgal : IsGalois ℚ H.E := H.hostE_isGalois
-  let f := toComap hFK
-  obtain ⟨β, hβ, hsp, hn⟩ := typeNorm_of_kummer _ (typeExp H p q) _ (typeExp_add H _ _) F hV 𝔞 h𝔞
-  refine ⟨f β, (map_ne_zero f).2 hβ, ?_, fun σ => hn (σ.comp f)⟩
-  have h := congrArg (extend f) hsp
-  rw [prod_typeExp, extend_span, Set.image_singleton, map_prod] at h
-  refine h.trans (Finset.prod_congr rfl fun g _ => ?_)
-  have e1 := image_comap hFK 𝔞 (H.emb g) (fun a => e (H.sigmaOf g a)) fun _ => he _
-  have e2 := image_comap hFK 𝔞 (ComplexEmbedding.conjugate (H.emb g)) (fun a => e (H.sigmaOf g (H.conj a)))
-    fun a => (he _).trans (conjugate_emb_apply H g a).symm
-  rw [map_mul, map_pow, map_pow]
-  exact congrArg₂ (· * ·) (congrArg (· ^ p) e1) (congrArg (· ^ q) e2)
-
-theorem capit_comap {E : Type} [Field E] [NumberField E] (φ : E →+* ℂ) {F K : IntermediateField ℚ ℂ} (hFK : F ≤ K)
-    [FiniteDimensional ℚ F] (hV : kummerField φ (classNumber E) ≤ F) (e : E →+* K) (he : ∀ a, (e a : ℂ) = φ a)
-    (𝔞 : Ideal (𝓞 E)) : ∃ β : F.comap K.val, Submodule.span (𝓞 (F.comap K.val)) {β} =
-      Submodule.span (𝓞 (F.comap K.val)) {x : F.comap K.val | ∃ a ∈ 𝔞, (x : K) = e (a : E)} := by
-  obtain ⟨β, hsp⟩ := capit_of_kummer _ F hV 𝔞
-  refine ⟨toComap hFK β, ?_⟩
-  have h := congrArg (extend (toComap hFK)) hsp
-  rw [extend_span, Set.image_singleton] at h
-  exact h.trans (image_comap hFK 𝔞 φ e he)
-
 theorem exists_gens_le (F : IntermediateField ℚ ℂ) [FiniteDimensional ℚ F] : ∃ S : Finset ℂ,
     (∀ z ∈ S, IsAlgebraic ℚ z) ∧ ∀ K : IntermediateField ℚ ℂ, (∀ z ∈ S, z ∈ K) → F ≤ K := by
   have : NumberField F := NumberField.mk
   obtain ⟨S, hS, h⟩ := exists_gens F
   exact ⟨S, hS, fun K hK z hz => h K hK F.val.toRingHom ⟨z, hz⟩⟩
-
-theorem exists_base_ks (B : Pre) (F : IntermediateField ℚ ℂ) [FiniteDimensional ℚ F]
-    (hV : kummerField B.host.φ₀ (classNumber B.host.E) ≤ F) (hr : rootsField B ≤ F)
-    (hp : rootOne B.host.pde ∈ F) (hp' : rootOne B.host.pde' ∈ F) (S : Finset ℂ) (hSa : ∀ z ∈ S, IsAlgebraic ℚ z) :
-    ∃ B' : Base, B'.toPre = B ∧ (∀ z, (∃ x ∈ B'.Ks, B'.embLL x = z) ↔ z ∈ F) ∧
-      ∀ z ∈ S, ∃ x ∈ B'.LL0, B'.embLL x = z := by
-  classical
-  have hcm : IsCMField B.host.E := B.host.isCMField_hostE
-  have hgal : IsGalois ℚ B.host.E := B.host.hostE_isGalois
-  obtain ⟨SF, hSF, hF⟩ := exists_gens_le F
-  let A : Finset ℕ := {B.ramOrder} ∪ Finset.univ.image B.T
-  let SR : Finset ℂ := A.image fun N : ℕ => Complex.exp (2 * Real.pi * Complex.I / N)
-  obtain ⟨K, hfd, hKgal, hS, -, hconj⟩ := GlobalTheory.exists_galois_subfield_conj_stable (S ∪ SF ∪ SR) (by
-      intro z hz
-      simp only [Finset.mem_union] at hz
-      rcases hz with (hz | hz) | hz
-      exacts [hSa z hz, hSF z hz, by
-        obtain ⟨N, -, rfl⟩ := Finset.mem_image.1 hz
-        exact isAlgebraic_exp N])
-  simp only [Finset.mem_union] at hS
-  have hFK : F ≤ K := hF K fun z hz => hS z (by tauto)
-  obtain ⟨hEF, hh, -⟩ := (kummerField_le_iff _).1 hV
-  have hEK : ∀ x, B.host.φ₀ x ∈ K := fun x => hFK (hEF x)
-  have hR : ∀ N ∈ A, Complex.exp (2 * Real.pi * Complex.I / (N : ℕ)) ∈ K := fun N hN => by
-    have hz : Complex.exp (2 * Real.pi * Complex.I / N) ∈ SR := Finset.mem_image.2 ⟨N, hN, rfl⟩
-    exact hS _ (by tauto)
-  have : NumberField K := {}
-  simp only [rootsField, sup_le_iff, cycField_le_iff] at hr
-  obtain ⟨⟨⟨⟨hr1, hr2⟩, hr3⟩, hr4⟩, hr5⟩ := hr
-  refine ⟨{ toPre := B
-            LL := K
-            starLL := starOf K hconj
-            embLL := K.val
-            starLL_cx := fun _ => rfl
-            embE := B.host.φ₀.codRestrict K hEK
-            embE_φ₀ := rfl
-            LL0 := ⊤
-            coeffGaloisSubfield_isGalois := IsGalois.of_algEquiv IntermediateField.topEquiv.symm
-            Ks := F.comap K.val
-            Ks_le := le_top
-            E_le_Ks := hEF
-            roots_Ks := ?_
-            roots_Ks' := ?_
-            capit := capit_comap _ hFK hV _ fun _ => rfl
-            kPsi := fun j _ _ => kPsi_comap B.host hFK hV _ (fun _ => rfl) _ _
-            rootOfUnity_eightQ_mem_coeffGaloisSubfield := ⟨⟨_, hR B.ramOrder (by simp [A])⟩, trivial, rfl⟩
-            roots_LL := fun u => ⟨⟨_, hR (B.T u) (Finset.mem_union_right _
-              (Finset.mem_image_of_mem _ (Finset.mem_univ u)))⟩, rfl⟩ }, rfl, ?_, ?_⟩
-  · intro N hN
-    have h : rootOne N ∈ F := by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hN
-      rcases hN with rfl | rfl | rfl | rfl | rfl <;> assumption
-    exact ⟨⟨_, hFK h⟩, h, rfl⟩
-  · intro N hN
-    have h : rootOne N ∈ F := by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hN
-      rcases hN with rfl | rfl | rfl <;> assumption
-    exact ⟨⟨_, hFK h⟩, h, rfl⟩
-  · intro z
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      exact hx
-    · exact fun hz => ⟨⟨z, hFK hz⟩, hz, rfl⟩
-  · exact fun z hz => ⟨⟨z, hS z (by tauto)⟩, trivial, rfl⟩
 
 end Prescribed
 
@@ -174,7 +81,8 @@ theorem aut_eq_one (S : Set (HeightOneSpectrum (𝓞 E))) (hS : S.Finite) (F : T
   · rintro ⟨v, _ | _⟩
     exacts [nQ v, nP v]
 
-theorem rootOne_mem_ray [IsTotallyComplex E] (φ : E →+* ℂ) {n p : ℕ} (hn : n ≠ 0) (hp : p ∣ n)
+set_option maxHeartbeats 16000000 in
+theorem rootOne_mem_ray [_root_.NumberField.IsTotallyComplex E] (φ : E →+* ℂ) {n p : ℕ} (hn : n ≠ 0) (hp : p ∣ n)
     {M : IntermediateField ℚ ℂ} (hM : IsRayFieldIn φ (natIdeal E n) M) : rootOne p ∈ M := by
   classical
   have hp0 : p ≠ 0 := ne_zero_of_dvd_ne_zero hn hp
@@ -202,7 +110,7 @@ theorem rootOne_mem_ray [IsTotallyComplex E] (φ : E →+* ℂ) {n p : ℕ} (hn 
   have e : (x : ℂ) = rootOne p := congrArg Subtype.val hx
   exact e ▸ x.2
 
-theorem valueField_le [IsGalois ℚ E] [IsTotallyComplex E] (φ₀ : E →+* ℂ) {𝔮 : Ideal (𝓞 E)} (h𝔮 : 𝔮 ≠ ⊥)
+theorem valueField_le [IsGalois ℚ E] [_root_.NumberField.IsTotallyComplex E] (φ₀ : E →+* ℂ) {𝔮 : Ideal (𝓞 E)} (h𝔮 : 𝔮 ≠ ⊥)
     {M : IntermediateField ℚ ℂ} [NumberField M] (hM : IsRayFieldIn φ₀ 𝔮 M) {I : Type} [Fintype I] (φ : I → E →+* ℂ)
     (hφ : Function.Bijective fun i => InfinitePlace.mk (φ i)) (χ : HChar E) (n : I → ℤ) (r : ℤ)
     (hi : χ.HasInf φ n) (he : ∀ i, Even (n i - r)) (hu : ∀ v, ¬ v.asIdeal ∣ 𝔮 → χ.UnrAt v) (ht : ∀ v, χ.TameAt v) :
@@ -336,10 +244,6 @@ theorem delta_le_V {p : ℕ} (hp : p ∣ modulus P) {χ : HChar P.host.E} (h : I
     (fun v hv => h.unr v fun ho => ne_zero_of_dvd_ne_zero (modulus_ne_zero P) hp (hv p hp ho)) h.tame
   simpa using this
 
-theorem chiPsi_le_V : valueField C.chiPsi 0 ≤ D.V := by
-  simpa using value_le_V D C.chiPsi (fun _ => 2) 0 C.isChi.inf (fun _ => by simp) (fun v _ => C.isChi.unr v)
-    fun v => tameAt_of_unrAt (C.isChi.unr v)
-
 theorem pde_dvd (P : Pre) : P.host.pde ∣ modulus P := (dvd_mul_left _ _).mul_right _
 
 theorem pde'_dvd (P : Pre) : P.host.pde' ∣ modulus P := dvd_mul_left _ _
@@ -372,42 +276,6 @@ theorem listField_le_Om : listField D C ≤ D.Om :=
     fun j _ _ => (KPsi_le_V D j).trans D.V_le_Om⟩
 
 end Omega
-
-theorem exists_base_fieldsOK (hR : RayField) (P : Pre) (D : FieldDat P) (C : Chars P) (c M : ℕ) (S₁ S₂ : Finset ℂ)
-    (h₁ : ∀ z ∈ S₁, IsAlgebraic ℚ z) (h₂ : ∀ z ∈ S₂, IsAlgebraic ℚ z) :
-    ∃ (B : Base) (h : B.toPre = P), B.FieldsOK (h ▸ D) (h ▸ C) c M ∧ B.KsC = D.Om ∧
-      (∀ z ∈ S₁, z ∈ B.fixedCoefficientFieldInComplex) ∧ ∀ z ∈ S₂, z ∈ B.LLC := by
-  classical
-  have := host_cplx P
-  have := finite_Om D
-  have hray : ∀ n : ℕ, n ≠ 0 → ∃ S : Finset ℂ, (∀ z ∈ S, IsAlgebraic ℚ z) ∧ ∀ K : IntermediateField ℚ ℂ,
-      (∀ z ∈ S, z ∈ K) → ∃ R, IsRayFieldIn P.host.φ₀ (natIdeal P.host.E n) R ∧ R ≤ K := fun n hn => by
-    obtain ⟨R, h⟩ := exists_isRayFieldIn P.host.φ₀ hR (natIdeal_ne_bot hn)
-    have := h.numberField
-    obtain ⟨S, hS, hle⟩ := exists_gens_le R
-    exact ⟨S, hS, fun K hK => ⟨R, h, hle K hK⟩⟩
-  choose ST hST hT using fun u => hray (P.T u) (P.T_prime u).ne_zero
-  obtain ⟨SG, hSG, hG⟩ := hray _ (mul_ne_zero (P.host.g_prime 0).ne_zero (P.host.g_prime 1).ne_zero)
-  obtain ⟨B, rfl, hK', hS⟩ := exists_base_ks P D.Om ((kummer_le_V D).trans D.V_le_Om) (rootsField_le_Om D)
-    (D.ray_le_Om (rootOne_mem_ray _ (modulus_ne_zero P) (pde_dvd P) D.isRay))
-    (D.ray_le_Om (rootOne_mem_ray _ (modulus_ne_zero P) (pde'_dvd P) D.isRay))
-    (S₁ ∪ S₂ ∪ SG ∪ Finset.univ.biUnion ST ∪
-      ({15 ^ c, P.host.pde ^ (2 * M), P.host.pde' ^ (2 * M)} : Finset ℕ).image rootOne) (by
-      intro z hz
-      simp only [Finset.mem_union, Finset.mem_biUnion, Finset.mem_image] at hz
-      rcases hz with (((hz | hz) | hz) | ⟨u, -, hz⟩) | ⟨N, -, rfl⟩
-      exacts [h₁ z hz, h₂ z hz, hSG z hz, hST u z hz, isAlgebraic_exp N])
-  simp only [Finset.mem_union, Finset.mem_biUnion, Finset.mem_image, ← Base.mem_LL0C] at hS
-  have hK : B.KsC = D.Om := IntermediateField.ext hK'
-  have hN : ∀ N ∈ ({15 ^ c, B.host.pde ^ (2 * M), B.host.pde' ^ (2 * M)} : Finset ℕ), rootOne N ∈ B.fixedCoefficientFieldInComplex :=
-    fun N hN => hS _ (Or.inr ⟨N, hN, rfl⟩)
-  refine ⟨B, rfl, (B.fieldsOK_iff D C c M).2 ⟨⟨hK ▸ listField_le_Om D C, hK.le⟩,
-    ((chiPsi_le_V D C).trans D.V_le_Om).trans (hK.ge.trans B.KsC_le_LL0C),
-    ⟨hN _ (by simp), hN _ (by simp), hN _ (by simp)⟩,
-    fun u => hT u _ fun z hz => B.fixedField_le_coefficientField (hS z (Or.inl (Or.inr ⟨u, Finset.mem_univ _, hz⟩))),
-    hG _ fun z hz => B.fixedField_le_coefficientField (hS z (Or.inl (Or.inl (Or.inr hz))))⟩, hK,
-    fun z hz => hS z (Or.inl (Or.inl (Or.inl (Or.inl hz)))),
-    fun z hz => B.fixedField_le_coefficientField (hS z (Or.inl (Or.inl (Or.inl (Or.inr hz)))))⟩
 
 end GlobalTheory.Mem.FieldsEx
 

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivCycleMapLocalisation
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberZeroOfHorizontalStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberLocalCycleStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PointIdealComapPrimeLiftStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalizationModelOverPlaceStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ResidueModelAtPrimeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.DivCycleMapLocalisation
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberZeroOfHorizontalStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VerticalNumberLocalCycleStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PointIdealComapPrimeLiftStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LocalizationModelOverPlaceStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ResidueModelAtPrimeStatement
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 set_option maxSynthPendingDepth 1
@@ -75,11 +80,11 @@ include m
 theorem eq_of_comap_eq {W₁ W₂ : Ideal (MRing ι O)}
     (h : W₁.comap (MvPolynomial.map (algebraMap A O)) = W₂.comap (MvPolynomial.map (algebraMap A O))) :
     W₁ = W₂ := by
-  haveI : IsLocalization (m.primeCompl.map (C (σ := (Σ k, ι k)) (R := A))) (MRing ι O) :=
+  haveI : IsLocalization (m.primeCompl.map (C (σ := (Σ k, ι k)) (R := A))) (ReciprocityTheory.ChartRestriction.G.Geo.MRingOver O ι) :=
     MvPolynomial.isLocalization m.primeCompl O
   have e : ∀ W : Ideal (MRing ι O), (W.comap (algebraMap (MRing ι A) (MRing ι O))).map
       (algebraMap (MRing ι A) (MRing ι O)) = W :=
-    IsLocalization.map_comap (m.primeCompl.map (C (σ := (Σ k, ι k)) (R := A))) _
+    IsLocalization.map_under (m.primeCompl.map (C (σ := (Σ k, ι k)) (R := A))) _
   have h' : W₁.comap (algebraMap (MRing ι A) (MRing ι O)) =
       W₂.comap (algebraMap (MRing ι A) (MRing ι O)) := h
   rw [← e W₁, ← e W₂, h']
@@ -96,7 +101,7 @@ theorem exists_prime_of_comap_C {W : Ideal (MRing ι A)} (hW : W.IsPrime)
     exact hs (by rw [← hm]; exact hsW)
   exact ⟨W.map (algebraMap (MRing ι A) (MRing ι O)),
     IsLocalization.isPrime_of_isPrime_disjoint _ _ _ hW hdisj,
-    IsLocalization.comap_map_of_isPrime_disjoint _ _ hW hdisj⟩
+    IsLocalization.under_map_of_isPrime_disjoint _ _ hW hdisj⟩
 
 theorem comap_C_comap_eq [IsLocalRing O] {W : Ideal (MRing ι O)} (hW : W.IsPrime)
     (h : (IsLocalRing.maximalIdeal O).map (C : O →+* MRing ι O) ≤ W) :
@@ -109,7 +114,7 @@ theorem comap_C_comap_eq [IsLocalRing O] {W : Ideal (MRing ι O)} (hW : W.IsPrim
     ext a
     simp [Ideal.mem_comap]
   rw [h2, h1]
-  exact IsLocalization.AtPrime.comap_maximalIdeal O m
+  exact IsLocalization.AtPrime.under_maximalIdeal O m
 
 end Loc
 
@@ -159,7 +164,7 @@ theorem GlobalTheory.CompanionTheory.Ar.Num.cycList_zp_eq_sum_places : ∀ (K : 
   have hpm : ∀ l, ((p : ℕ) : A) ∈ m l := fun l => (hm (m l) inferInstance).2 ⟨l, rfl⟩
   have hpmax : ∀ l, ((p : ℕ) : O l) ∈ IsLocalRing.maximalIdeal (O l) := fun l => by
     have e : (IsLocalRing.maximalIdeal (O l)).comap (algebraMap A (O l)) = m l :=
-      IsLocalization.AtPrime.comap_maximalIdeal (O l) (m l)
+      IsLocalization.AtPrime.under_maximalIdeal (O l) (m l)
     have h : ((p : ℕ) : A) ∈ (IsLocalRing.maximalIdeal (O l)).comap (algebraMap A (O l)) := by
       rw [e]
       exact hpm l

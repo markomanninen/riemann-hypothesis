@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+module
+
+public import Mathlib
+public import Lean
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.TwistPlacesOffPrimeQZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ section One
 
 variable {D : D7}
 
-variable (D) in
 
+variable (D) in
 abbrev Raw (S T : HSp D) : Type := Finset (Pl D.host.E) × AE D × (WO S T → ℂ) × GA D S
 
 abbrev Lat (V : HSp D) : Type := Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)
@@ -55,8 +59,8 @@ def datEquiv {T : Type} {L : LevCh D T} {sc : GlobalTheory.ChiGrid.Consts} (G : 
   left_inv _ := rfl
   right_inv _ := rfl
 
-variable (D) in
 
+variable (D) in
 structure Env where
 
   P : Finset (Pl D.host.E)
@@ -330,7 +334,10 @@ theorem jets_congr (hp : X'.B.toPre = X.B.toPre) {E : Env X.toD7} {E' : Env X'.t
   dsimp only at h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13
   cases h1; cases h2; cases h3; cases h4; cases h5; cases h6; cases h7; cases h8; cases h9; cases h10; cases h11; cases h12
   cases h13
-  refine Env.Jets.mono (a := (by with_unfolding_all exact (a :))) (b := (by with_unfolding_all exact (b :))) (by kexactB H) (fun j hj r x y => ?_) fun j hj r x y => ?_
+  refine Env.Jets.mono (a := (by with_unfolding_all exact (a :))) (b := (by with_unfolding_all exact (b :))) (by run_tac do
+    let e ← Lean.Elab.Term.elabTerm (Lean.mkIdent `H) none
+    (← Lean.Elab.Tactic.getMainGoal).assign e
+    Lean.Elab.Tactic.replaceMainGoal []) (fun j hj r x y => ?_) fun j hj r x y => ?_
   · exact (by with_unfolding_all exact (ha j hj r r x x y y HEq.rfl HEq.rfl HEq.rfl :))
   · exact (by with_unfolding_all exact (hb j hj r r x x y y HEq.rfl HEq.rfl HEq.rfl :))
 
@@ -379,8 +386,8 @@ theorem finEmb_congr (hp : X'.B.toPre = X.B.toPre) {A B : HSp X.toD7} {A' B' : H
   cases h
   exact HEq.rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem term_congr (hp : X'.B.toPre = X.B.toPre) {w : Pl X.toD7.host.E} {w' : Pl X'.toD7.host.E} (hw : HEq w' w)
     {Γ : Grid (Kw w)} {Γ' : Grid (Kw w')} (hs : 1 ≤ Γ.s) (hs' : 1 ≤ Γ'.s) {J J' ψ ψ' k k' e e' f f'} (h1 : HEq Γ' Γ) (h2 : HEq J' J)
     (h3 : HEq ψ' ψ) (h4 : k' = k) (h5 : e' = e) (h6 : HEq f' f) : Cosets hs' J' = Cosets hs J ∧ ∀ b b', HEq b' b →

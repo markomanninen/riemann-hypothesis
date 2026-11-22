@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegrableOnFundamentalDomainMulRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVectorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKORatLeftAndEigenRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegrableOnFundamentalDomainMulRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMulRightInvariantHaarAdelicUnitaryGroupHermiti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKORatLeftAndEigenRight
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
@@ -69,7 +73,7 @@ theorem exists_dual (V : HSp D) (P : Pl D.host.E) (d : List ℤ) (R : Finset (GA
   obtain ⟨he, v, hf⟩ := HeckeDual.idem_of_isPrimeIdem hef
   obtain ⟨a, rfl⟩ := (HeckeDual.suppF_iff V hf α).1 hα
   obtain ⟨δ, hδ, hσδ⟩ := HeckeDual.exists_skew D
-  have := HeckeDual.isLattice_frameLat V
+  have := GlobalTheory.AdelicU.SelfDual.isLattice_frameLat V
   have hK : ∀ g, g ∈ {k | k ∈ KsphC V ∅ ∧ SuppF V f k} ↔
       ∃ k ∈ GlobalTheory.AdelicU.stabLoc D.sp.cm.sig V.gram (GlobalTheory.AdelicU.frameLat V) v,
         GlobalTheory.AdelicU.emb D.sp.cm.sig V.gram v k = g := fun g => by
@@ -129,13 +133,13 @@ theorem exists_dual_rep (V : HSp D) (P : Pl D.host.E) (d : List ℤ) :
   by_cases h : IsLab V P d
   · have hs : SphOp V P d (Hk3.rep V P d) := by
       unfold Hk3.rep
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       exact h.choose_spec
     obtain ⟨α, hα, R', h1, h2, h3, h4⟩ := exists_dual V P d _ hs
     refine ⟨α, hα, R', h2, h3, h4, fun M _ _ π u hu => ?_⟩
     rw [((GlobalTheory.T.spherical_label_operators_on_hyperspecial_fixed_vectors V P).1 _ _ h1).2 M π u hu, opOf_single, LinearMap.sum_apply]
-  · have h0 : Hk3.rep V P d = ∅ := dif_neg h
-    have h1 : Hk3.rep V P (dualLab d) = ∅ := dif_neg fun h' => h (((GlobalTheory.T.spherical_label_operators_on_hyperspecial_fixed_vectors V P).2.2.2.1 d).1.2 h')
+  · have h0 : Hk3.rep V P d = ∅ := dite_eq_right h
+    have h1 : Hk3.rep V P (dualLab d) = ∅ := dite_eq_right fun h' => h (((GlobalTheory.T.spherical_label_operators_on_hyperspecial_fixed_vectors V P).2.2.2.1 d).1.2 h')
     exact ⟨1, one_mem _, ∅, by rw [h0], by simp [h0], by simp, fun M _ _ π u _ => by rw [h1]⟩
 
 theorem hk_apply (V : HSp D) (P : Pl D.host.E) (c : List ℤ →₀ ℂ) (F : GA D V → ℂ) (g : GA D V) :
@@ -162,7 +166,7 @@ theorem liftInt_hk : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
       rw [this, sub_self, Matrix.zero_apply, mul_zero]
   have hth : ∀ g h a b, thetaKO om (g * a) (h * b) f = om (g, h) (om (a, b) f) 0 := fun g h a b => by
     unfold thetaKO
-    rw [show ((g * a, h * b) : GA D S × GA D T) = (g, h) * (a, b) from rfl, map_mul, Module.End.mul_apply]
+    rw [show ((g * a, h * b) : GA D S × GA D T) = (g, h) * (a, b) from rfl, map_mul, mul_apply_eq_comp]
   funext g
   have step : ∀ d, IntegrableOn (fun h => thetaKO om g h f * ∑ a ∈ Hk3.rep T P d, Φ (h * a)) 𝓕 ν ∧
       IntegrableOn (fun h => (∑ a ∈ Hk3.rep T P (dualLab d), thetaKO om g (h * a) f) * Φ h) 𝓕 ν ∧
@@ -172,7 +176,8 @@ theorem liftInt_hk : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
     have h5 := h4 _ (om.comp (MonoidHom.inr _ _)) f hfT
     have h6 : ∀ h, ∑ a ∈ Hk3.rep T P (dualLab d), thetaKO om g (h * a) f = ∑ a ∈ R', thetaKO om g (h * a) f := fun h => by
       have h7 := congrArg (fun u => om (g, h) u 0) h5
-      simp only [map_sum, Finset.sum_apply] at h7
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.sum_apply] at h7
       have h8 : ∀ a, thetaKO om g (h * a) f = om (g, h) (om (1, a) f) 0 := fun a => by rw [← hth, mul_one]
       simp only [h8]
       exact h7.symm
@@ -185,7 +190,8 @@ theorem liftInt_hk : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
       ∑ d ∈ cS.support, cS d * ∑ a ∈ Hk3.rep S P d, thetaKO om (g * a) h f := fun h => by
     have h7 := congrArg (fun u => om (g, h) u 0) (hM f hf)
     rw [opOf_dualC] at h7
-    simp only [opOf, Finsupp.sum, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [opOf, Finsupp.sum, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.sum_apply,
       Pi.smul_apply, smul_eq_mul] at h7
     have h8 : ∀ a, thetaKO om g (h * a) f = om (g, h) (om (1, a) f) 0 := fun a => by rw [← hth, mul_one]
     have h9 : ∀ a, thetaKO om (g * a) h f = om (g, h) (om (a, 1) f) 0 := fun a => by rw [← hth, mul_one]
@@ -209,7 +215,7 @@ theorem liftInt_hk : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D)
     _ = ∫ h in 𝓕, ∑ d ∈ cS.support, cS d * ∑ a ∈ Hk3.rep S P d, thetaKO om (g * a) h f * Φ h ∂ν := by
         congr 1
         funext h
-        simp only [← mul_assoc, ← Finset.sum_mul]
+        simp only [← Finset.sum_mul, ← mul_assoc]
         rw [hker]
     _ = _ := by
         rw [integral_finsetSum _ fun d _ => (integrable_finsetSum _ fun a _ => hi1 (g * a)).const_mul _]

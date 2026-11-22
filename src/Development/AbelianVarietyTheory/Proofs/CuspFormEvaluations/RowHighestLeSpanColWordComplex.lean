@@ -1,16 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CommuteRowOpRightMixedOp
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SumSmulMemOfSumZpowSmulMem
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyExistsMulIsLowerTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsMemRowHighestTotalDegreeEqTwo
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CommuteRowOpRightMixedOp
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.Sl2NonnegWeightOfHighestWeightVector
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsJointIntEigenvectorOfStable
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.SumSmulMemOfSumZpowSmulMem
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsEqMulProdMinors
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EventuallyExistsMulIsLowerTriangular
+
+@[expose] public section
 
 open MvPolynomial Matrix TensorProduct
 open GlobalTheory.MvPoly
 
 namespace GlobalTheory.Harm
+
+-- Retain the explicit coefficient-ring argument in the statements below.
+local macro:max "rowHighest" R:term:arg : term =>
+  `(GlobalTheory.Harm.rowHighest (R := $R))
+local macro:max "rowHighest" "(" name:ident " := " value:term ")" R:term:arg : term =>
+  `(GlobalTheory.Harm.rowHighest (R := $R) ($name := $value))
 
 section CoeffForm
 
@@ -31,11 +41,12 @@ theorem coeffForm_monomial (φ : K →ₗ[F] F) (m : σ →₀ ℕ) (r : K) :
   simpa [smul_monomial] using this
 
 theorem coeff_coeffForm (φ : K →ₗ[F] F) (m : σ →₀ ℕ) (P : MvPolynomial σ K) :
-    coeff m (coeffForm φ P) = φ (coeff m P) := by
+    AddMonoidAlgebra.coeff (coeffForm φ P) m = φ (AddMonoidAlgebra.coeff P m) := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial d r => rw [coeffForm_monomial, coeff_monomial, coeff_monomial]; split_ifs <;> simp
-  | add P Q hP hQ => simp only [map_add, coeff_add, hP, hQ]
+  | add P Q hP hQ =>
+    simp only [map_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hP, hQ]
 
 theorem coeffForm_comm (φ : K →ₗ[F] F) (L : MvPolynomial σ F →ₗ[F] MvPolynomial σ F)
     (L' : MvPolynomial σ K →ₗ[K] MvPolynomial σ K)
@@ -46,7 +57,7 @@ theorem coeffForm_comm (φ : K →ₗ[F] F) (L : MvPolynomial σ F →ₗ[F] MvP
     have e : (monomial d r : MvPolynomial σ K) =
         r • MvPolynomial.map (algebraMap F K) (monomial d 1) := by simp [smul_monomial]
     rw [e, map_smul, ← h, coeffForm_smul_map, coeffForm_smul_map, map_smul]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
 
 theorem mem_span_map_of_coeffForm_mem (V : Set (MvPolynomial σ F)) {P : MvPolynomial σ K}
     (h : ∀ φ : K →ₗ[F] F, coeffForm φ P ∈ V) :
@@ -57,7 +68,8 @@ theorem mem_span_map_of_coeffForm_mem (V : Set (MvPolynomial σ F)) {P : MvPolyn
   have hx (i) : x i = coeffForm (b.coord i) P := TensorProduct.equivFinsuppOfBasisLeft_apply b _ i
   have e : P = algebraTensorAlgEquiv F K ((TensorProduct.equivFinsuppOfBasisLeft b).symm x) := by
     simp [x]
-  rw [e, TensorProduct.equivFinsuppOfBasisLeft_symm_apply, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, TensorProduct.equivFinsuppOfBasisLeft_symm_apply, Finsupp.sum, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [algebraTensorAlgEquiv_tmul, hx]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, h _, rfl⟩)
@@ -73,7 +85,7 @@ theorem coeffForm_mem_span (φ : K →ₗ[F] F) (V : Set (MvPolynomial σ F)) {P
     rw [coeffForm_smul_map]
     exact Submodule.smul_mem _ _ (Submodule.subset_span hQ)
   | zero => simp
-  | add P Q _ _ hP hQ => intro r; rw [smul_add, map_add]; exact add_mem (hP r) (hQ r)
+  | add P Q _ _ hP hQ => intro r; rw [smul_add, map_add (f := _)]; exact add_mem (hP r) (hQ r)
   | smul s P _ hP => intro r; rw [smul_smul]; exact hP _
 
 theorem mem_span_of_map_mem_span [Nontrivial K] (V : Set (MvPolynomial σ F))
@@ -126,13 +138,13 @@ theorem colLie_lie [DecidableEq κ] (t : T) (i j k l : κ) :
 theorem fockInner_colLie (t : T) (k l : κ) (P Q : Poly ℂ T p q κ) :
     fockInner (colLie ℂ p q t k l P) Q = fockInner P (colLie ℂ p q t l k Q) := by
   rw [colLie_apply, colLie_apply, ← fockInnerₛₗ_apply, ← fockInnerₛₗ_apply]
-  simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, fockInnerₛₗ_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply, fockInnerₛₗ_apply,
     fockInner_X_mul_left, fockInner_pderiv_left]
 
 variable [Fintype T] (h : p + q ≤ n) (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ)
 
 variable (R) in
-
 noncomputable def colWord (w : List (T × Fin n × Fin n)) : Poly R T p q (Fin n) :=
   w.foldr (fun i P => colLie R p q i.1 i.2.1 i.2.2 P) (basePoly R h c c')
 
@@ -174,9 +186,103 @@ theorem basePoly_mem_of_colLie_stable {K : Type*} [Field K] [CharZero K]
     (hs : ∀ t k l, ∀ w ∈ W, colLie K p q t k l w ∈ W) (hW0 : W ≠ ⊥) : basePoly K h c c' ∈ W := by
   classical
   have := Submodule.finiteDimensional_of_le hW
+  have exists_eq_smul_basePoly {P : Poly K T p q (Fin n)}
+      (hP : P ∈ rowHighest K c c') (κ : T → Fin n → ℤ) (hκ : ∀ t, Antitone (κ t))
+      (hup : ∀ t (k l : Fin n), k < l →
+        ∑ a, X (xVar t a k) * pderiv (xVar t a l) P - ∑ b, X (yVar t b l) * pderiv (yVar t b k) P = 0)
+      (hwt : ∀ t (k : Fin n),
+        ∑ a, X (xVar t a k) * pderiv (xVar t a k) P - ∑ b, X (yVar t b k) * pderiv (yVar t b k) P =
+          (κ t k : K) • P) :
+      ∃ r : K, P = r • basePoly K h c c' := by
+    classical
+    obtain ⟨hh, hrx, hry, hix, hiy⟩ := mem_rowHighest_iff_of_charZero.1 hP
+    simp only [rowAddX_eq_bind₁] at hix
+    simp only [rowAddY_eq_bind₁] at hiy
+    let z : T → Fin p × Fin n → Var T p q (Fin n) := fun t w => xVar t w.1 w.2
+    let y : T → Fin q × Fin n → Var T p q (Fin n) := fun t w => yVar t w.1 w.2
+    have hz : ∀ t, Function.Injective (z t) := fun t u w e => by simpa [z, Prod.ext_iff] using e
+    have hy : ∀ t, Function.Injective (y t) := fun t u w e => by simpa [y, Prod.ext_iff] using e
+    have hzy : ∀ t u w, z t u ≠ y t w := fun t u w => by simp [z, y]
+    have hv := fun t => HighestUnique.notMem_vars h (z t) (hz t) (y t) (hy t) (hzy t) (partOf (c t)) (partOf (c' t))
+      (partOf_antitone _) (partOf_antitone _) (hrx t) (hry t) (hix t) (hiy t)
+      (fun i j => (laplacian_apply t i j P).symm.trans (hh t i j)) (κ t) (hκ t)
+      (fun k l hkl => (GlobalTheory.Capelli.mixedOp_apply _ _ _ _ _).trans (hup t k l hkl))
+      (fun k => (GlobalTheory.Capelli.mixedOp_apply _ _ _ _ _).trans (hwt t k))
+    let e : Fin p → Fin n := Fin.castLE (by omega)
+    let e' : Fin q → Fin n := fun b => Fin.rev (Fin.castLE (by omega) b)
+    have he : ∀ k : Fin n, k ∉ Set.range e → p ≤ k := fun k hk =>
+      not_lt.1 fun h' => hk ⟨⟨k, h'⟩, rfl⟩
+    have he' : ∀ k : Fin n, k ∉ Set.range e' → (k : ℕ) < n - q := fun k hk =>
+      not_le.1 fun h' => hk ⟨⟨n - 1 - k, by have := k.2; omega⟩, by
+        ext; have := k.2; simp only [e', Fin.val_rev, Fin.val_castLE]; omega⟩
+    have hX := fun t => HighestUnique.exists_eq_mul_prod_minors (z t) (hz t) e (Fin.castLE_injective _) (c t)
+      (hrx t) (hix t) (fun i k hk => (hv t).1 i k (he k hk)) fun k l hkl => by
+        have h₁ := hup t (e k) (e l) hkl
+        rw [Finset.sum_eq_zero (f := fun b => X (yVar t b (e l)) * pderiv (yVar t b (e k)) P),
+          sub_zero] at h₁
+        · exact (GlobalTheory.Capelli.colOp_apply _ _ _ _).trans h₁
+        · intro b _
+          rw [pderiv_eq_zero_of_notMem_vars ((hv t).2 b (e k) ?_), mul_zero]
+          have := k.2
+          simp only [e, Fin.val_castLE]; omega
+    have hY := fun t => HighestUnique.exists_eq_mul_prod_minors (y t) (hy t) e'
+      (Fin.rev_injective.comp (Fin.castLE_injective _)) (c' t)
+      (hry t) (hiy t) (fun i k hk => (hv t).2 i k (he' k hk)) fun k l hkl => by
+        have h₁ := hup t (e' l) (e' k) (Fin.rev_lt_rev.2 hkl)
+        rw [Finset.sum_eq_zero (f := fun a => X (xVar t a (e' l)) * pderiv (xVar t a (e' k)) P),
+          zero_sub, neg_eq_zero] at h₁
+        · exact (GlobalTheory.Capelli.colOp_apply _ _ _ _).trans h₁
+        · intro b _
+          rw [pderiv_eq_zero_of_notMem_vars ((hv t).1 b (e' k) ?_), mul_zero]
+          have := k.2
+          simp only [e', Fin.val_rev, Fin.val_castLE]; omega
+    let B : T ⊕ T → Set (Var T p q (Fin n)) := Sum.elim
+      (fun t => Set.range fun w : Fin p × Fin p => z t (w.1, e w.2))
+      (fun t => Set.range fun w : Fin q × Fin q => y t (w.1, e' w.2))
+    let D : T ⊕ T → Poly K T p q (Fin n) := Sum.elim
+      (fun t => ∏ i : Fin p, (Matrix.of fun a b : Fin (i.val + 1) =>
+        (X (z t (lead i a, e (lead i b))) : Poly K T p q (Fin n))).det ^ c t i)
+      (fun t => ∏ i : Fin q, (Matrix.of fun a b : Fin (i.val + 1) =>
+        (X (y t (lead i a, e' (lead i b))) : Poly K T p q (Fin n))).det ^ c' t i)
+    have hD : ∏ j, D j = basePoly K h c c' := by
+      simp only [D, Fintype.prod_sum_type, Sum.elim_inl, Sum.elim_inr, basePoly, minorProd, xMinor,
+        yMinor, baseCovec, baseVec, xForm_single, yForm_single, ← Finset.prod_mul_distrib]
+      rfl
+    let x₀ : Var T p q (Fin n) → K := fun v => Sum.elim (baseCovec K h) (baseVec K h) v.2.1 v.2.2
+    refine ⟨eval x₀ P, MvPolynomial.funext fun x => ?_⟩
+    have key := HighestUnique.eval_mul_prod_eq B ?_ D ?_ P ?_ ?_ x₀ x
+    · rw [← map_prod, ← map_prod, hD, eval_basePoly, mul_one] at key
+      rw [key, smul_eval]
+    · rintro (t | t) (t' | t') hne _ ⟨w, rfl⟩ ⟨w', e⟩
+      · exact hne (congrArg Sum.inl (congrArg Prod.fst e).symm)
+      · simp [z, y] at e
+      · simp [z, y] at e
+      · exact hne (congrArg Sum.inr (congrArg Prod.fst e).symm)
+    · rintro (t | t) x x' hx
+      all_goals
+        simp only [D, Sum.elim_inl, Sum.elim_inr, map_prod, map_pow, RingHom.map_det]
+        refine Finset.prod_congr rfl fun i _ => ?_
+        congr 2
+        ext a b
+        simp only [RingHom.mapMatrix_apply, map_apply, of_apply, eval_X]
+        exact hx _ ⟨(lead i a, lead i b), rfl⟩
+    · rintro (t | t)
+      · obtain ⟨Q, hQ, e⟩ := hX t
+        exact ⟨Q, by rintro _ ⟨w, rfl⟩; exact hQ w, e⟩
+      · obtain ⟨Q, hQ, e⟩ := hY t
+        exact ⟨Q, by rintro _ ⟨w, rfl⟩; exact hQ w, e⟩
+    · rintro ⟨t, a | b, k⟩ hs
+      · by_cases hk : k ∈ Set.range e
+        · obtain ⟨k, rfl⟩ := hk
+          exact ⟨Sum.inl t, (a, k), rfl⟩
+        · exact absurd hs ((hv t).1 a k (he k hk))
+      · by_cases hk : k ∈ Set.range e'
+        · obtain ⟨k, rfl⟩ := hk
+          exact ⟨Sum.inr t, (b, k), rfl⟩
+        · exact absurd hs ((hv t).2 b k (he' k hk))
   obtain ⟨v, hv, hv0, hup, μ, hμ⟩ := exists_highest_vector (colLie K p q) colLie_diag_comm
     (iSup_iInf_eigenspace_colLie K T p q (Fin n)) W hs hW0
-  obtain ⟨r, rfl⟩ := exists_eq_smul_basePoly h c c' (hW hv) μ
+  obtain ⟨r, rfl⟩ := exists_eq_smul_basePoly (hW hv) μ
     (fun t => highest_weight_antitone _ (colLie_lie t) W (hs t) v hv hv0 _ (hup t) (hμ t))
     (fun t k l hkl => (colLie_apply t k l v).symm.trans (hup t k l hkl))
     fun t k => (colLie_apply t k k v).symm.trans (hμ t k)
@@ -241,8 +347,8 @@ theorem rowHighest_eq_orbitSpan [Field K] [CharZero K] :
   rintro _ ⟨w, rfl⟩
   exact colWord_mem_orbitSpan h c c' w
 
-include h in
 
+include h in
 theorem span_map_rowHighest_int [CommRing K] [Algebra ℚ K] :
     Submodule.span K (MvPolynomial.map (Int.castRingHom K) ''
       (rowHighest (κ := Fin n) ℤ c c' : Set (Poly ℤ T p q (Fin n)))) = rowHighest K c c' := by

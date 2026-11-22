@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ theorem fourierInv_besselOp (f : Sch l) : 𝓕⁻ (besselOp l f) = weightOp l (�
   have hF : ∀ g : Sch l, 𝓕⁻ g = F g := fun _ => rfl
   have h := fourierInv_dRho_inl (l := l)
   simp only [hF] at h ⊢
-  simp only [besselOp, weightOp, ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [besselOp, weightOp, ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply,
     ContinuousLinearMap.sum_apply, ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply, map_sub, map_smul,
     map_sum, h, map_neg, neg_neg]
 
@@ -154,7 +159,8 @@ theorem norm_multilinear_le {n : ℕ} (m : ContinuousMultilinearMap ℝ (fun _ :
     funext i
     ext k
     simp [Pi.single_apply]
-  conv_lhs => rw [this, m.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [this, m.map_sum]
   rw [Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun r _ => ?_)
   rw [m.map_smul_univ, norm_smul, mul_comm, norm_prod]
@@ -267,8 +273,8 @@ theorem inner_toLp_rho (w : l ⊕ l → ℝ) (φ f : Sch l) :
     with x h1 h2
   rw [h1, h2]
 
-omit [DecidableEq l] in
 
+omit [DecidableEq l] in
 theorem hasDerivAt_inner_rho (w : l ⊕ l → ℝ) (φ f : Sch l) :
     HasDerivAt (fun t : ℝ => inner ℂ (φ.toLp 2 volume) (rho (t • w) (f.toLp 2 volume)))
       (inner ℂ (φ.toLp 2 volume) ((dRho w f).toLp 2 volume)) 0 := by
@@ -329,7 +335,8 @@ theorem toLp_dRho_omS
       SymplecticGroup.mem_iff.1 (pr g).2, J_squared, neg_neg, one_mulVec]
   rw [ContinuousLinearMap.mul_apply]
   conv_lhs => rw [← h1, ← omS_dRho h3 h4, dRho_eq_sum]
-  simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul]
 
 theorem contDiff_toLp_omS
     (h3 : ∀ (g : G) (w : l ⊕ l → ℝ) (f : L2 l),
@@ -353,7 +360,7 @@ theorem contDiff_toLp_omS
     simp only [ContinuousLinearMap.zero_apply]
     exact contDiff_const
   · intro A B hA hB f
-    simp only [ContinuousLinearMap.add_apply, map_add]
+    simp only [ContinuousLinearMap.add_apply, map_add (f := _)]
     exact (hA f).add (hB f)
   · intro c A hA f
     simp only [ContinuousLinearMap.smul_apply, map_smul]
@@ -401,7 +408,8 @@ theorem hasDerivAt_toLp_omS
       rw [← quad_comm hX, sub_sub_cancel]
     rw [ContinuousLinearMap.mul_apply, ← ContinuousLinearMap.mul_apply (dRho w), e, dRho_eq_sum w,
       dRho_eq_sum (X *ᵥ w)]
-    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum,
       map_smul, ofReal_neg, ofReal_zero, zero_smul, NormedSpace.exp_zero, transpose_one, mul_one, J_squared, neg_neg, one_mulVec,
       h0, map_one, ContinuousLinearMap.one_apply, ContinuousLinearMap.sub_apply, ContinuousLinearMap.mul_apply,
       map_sub, neg_smul, ← sub_eq_add_neg, Finset.sum_sub_distrib]
@@ -411,7 +419,7 @@ theorem hasDerivAt_toLp_omS
     simp only [ContinuousLinearMap.zero_apply, map_zero]
     exact hasDerivAt_const _ _
   · intro A B hA hB f
-    simp only [ContinuousLinearMap.add_apply, map_add]
+    simp only [ContinuousLinearMap.add_apply, map_add (f := _)]
     exact (hA f).add (hB f)
   · intro c A hA f
     simp only [ContinuousLinearMap.smul_apply, map_smul]

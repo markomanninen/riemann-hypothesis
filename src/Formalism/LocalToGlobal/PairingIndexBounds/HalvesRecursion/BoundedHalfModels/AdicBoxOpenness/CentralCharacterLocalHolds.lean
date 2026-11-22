@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfGen
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.EqOffBound
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PHfGen
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators nonZeroDivisors
@@ -13,7 +17,7 @@ theorem phi_injective_holds : PhiInj := by
   intro D cc δ N N' hδ y z h
   have : Nonempty D.what₂.Tau := by
     apply Fintype.card_pos_iff.1
-    rw [FL.card_tau D]; positivity
+    rw [FL.card_tau D]; have := D.R.ord_pos; positivity
   obtain ⟨τ⟩ := (inferInstance : Nonempty D.what₂.Tau)
   funext i j
   have h1 := congrFun (congrFun (congrFun h τ) i) j
@@ -28,7 +32,7 @@ theorem good_duality_holds : GoodDual := by
     rw [hH x y]
     simp
   have hadd : ∀ w y₁ y₂ : V, altE H w (y₁ + y₂) = altE H w y₁ + altE H w y₂ := by
-    intro w y₁ y₂; simp [altE, map_add]
+    intro w y₁ y₂; simp [altE, map_add (f := _)]
   constructor
   · intro a ha h
     apply hsd
@@ -164,8 +168,9 @@ theorem ccE_ne_bot (D : D7) (cc : Ideal (𝓞 D.host.K)) (hcc : IsCurveIdeal D c
   rw [h, Ideal.mem_bot] at this
   apply hc0
   have h2 : ((c : D.host.K) : D.host.E) = 0 := congrArg Subtype.val this
-  have h3 : (c : D.host.K) = 0 := by exact_mod_cast h2
-  exact_mod_cast h3
+  set_option synthInstance.maxHeartbeats 200000 in
+    have h3 : (c : D.host.K) = 0 := by exact_mod_cast h2
+    exact_mod_cast h3
 
 theorem central_character_local_holds : CcLoc := by
   intro D cc hcc P

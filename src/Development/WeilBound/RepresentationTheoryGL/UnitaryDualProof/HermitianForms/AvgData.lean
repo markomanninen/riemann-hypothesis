@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.GlCongr
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.GlCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,13 +12,13 @@ namespace PositivityTheory.RgUd.Form
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 def colEl (m N : ℕ) (h : m + 2 ≤ N) (x : Fin (m + 1) → k) : GL (Fin N) k :=
   blkAt k (m + 2) N h (unip k (m + 1) (Multiplicative.ofAdd x))
 
-variable (k) in
 
+variable (k) in
 def xi0 (m : ℕ) : Fin (m + 1) → k := Pi.single (Fin.last m) 1
 
 def AvgData (ψ : AddChar k Circle) {m N : ℕ} (h : m + 2 ≤ N) {V : Type} [AddCommGroup V] [Module ℂ V]
@@ -23,8 +27,8 @@ def AvgData (ψ : AddChar k Circle) {m N : ℕ} (h : m + 2 ≤ N) {V : Type} [Ad
   p.1 ≤ A ∧ IsOpen (p.1 : Set (Fin (m + 1) → k)) ∧ (∀ a ∈ p.1, π (colEl k m N h a) v = v) ∧ (∀ a ∈ p.1, ψ (ξ ⬝ᵥ a) = 1) ∧
     (∀ t ∈ p.2, t ∈ A) ∧ ∀ a ∈ A, ∃! t, t ∈ p.2 ∧ a - t ∈ p.1
 
-open Classical in
 
+open Classical in
 def avg (ψ : AddChar k Circle) {m N : ℕ} (h : m + 2 ≤ N) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) (ξ : Fin (m + 1) → k) (A : AddSubgroup (Fin (m + 1) → k)) (v : V) : V :=
   if hd : ∃ p, AvgData ψ h π ξ A v p then

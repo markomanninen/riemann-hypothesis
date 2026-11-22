@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ def inv (a d : ℕ) (n : ι → ℕ) : Submodule ℂ (Pol ι d a) where
   add_mem' := by
     intro P Q hP hQ g
     simp only [Set.mem_setOf_eq] at *
-    rw [map_add, hP g, hQ g, smul_add]
+    rw [map_add (f := _), hP g, hQ g, smul_add]
   zero_mem' := by
     intro g
     simp
@@ -75,7 +79,8 @@ theorem colSub_rowSub {d a : ℕ} (g : ι → Matrix (Fin a) (Fin a) ℂ) (κ : 
   have : (colSub g).comp (rowSub κ) = (rowSub κ).comp (colSub g) := by
     apply MvPolynomial.algHom_ext
     intro y
-    simp only [AlgHom.comp_apply, rowSub, colSub, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rowSub, colSub, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
     ring
@@ -96,7 +101,8 @@ variable {ι : Type} [Fintype ι]
 
 theorem fockS_conj {σ : Type} (f g : MvPolynomial σ ℂ) :
     Formalism.L2.DIV.fockS f g = starRingEnd ℂ (Formalism.L2.DIV.fockS g f) := by
-  rw [Formalism.L2.DIV.fockS_eq_sum f g (f.support ∪ g.support) Finset.subset_union_left,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Formalism.L2.DIV.fockS_eq_sum f g (f.support ∪ g.support) Finset.subset_union_left,
     Formalism.L2.DIV.fockS_eq_sum g f (f.support ∪ g.support) Finset.subset_union_right, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp only [map_mul, map_natCast, RCLike.star_def, Complex.conj_conj]

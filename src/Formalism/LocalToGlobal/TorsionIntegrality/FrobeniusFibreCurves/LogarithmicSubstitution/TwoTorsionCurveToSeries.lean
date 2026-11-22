@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalD
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalD
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

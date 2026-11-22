@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.OneScalar
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.OneScalar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -46,9 +50,32 @@ theorem UpperTheory.V.Af.Smo.cenSame :
   obtain ⟨φ, hφ, h0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot π.ne_bot
   obtain ⟨S, B, hB, hk, hk'⟩ := hS E n π π' hs φ hφ φ' hφ'
   have key : ∀ ψ : TR.Sm E n, TR.IsCuspForm ψ → Continuous ψ.1 ∧ IsLeftInvariant ψ.1 := fun ψ hψ => by
-    obtain ⟨x, rfl⟩ := Fb.mem_range_ofCusp.2 hψ
-    exact ⟨x.2.1.continuous, x.2.1.isLeftInvariant⟩
-  have loc : ∀ w ∉ S, ∀ k ∈ GlobalTheory.LFun.KGL w n, InKS S (locGL E n w k) := by
+    refine ⟨?_, hψ.1.left⟩
+    have hp : Continuous (pInf E) := by
+      have hc : Continuous (TR.infEq E).symm :=
+        continuous_pi fun w =>
+          (InfinitePlace.Completion.isometryEquivRealOfIsReal (IsTotallyReal.isReal w)).continuous.comp (continuous_apply w)
+      exact hc.comp continuous_fst
+    refine continuous_iff_continuousAt.2 fun g => ?_
+    have hm : Continuous fun x : GA E n => g⁻¹ * x := continuous_const.mul continuous_id
+    have hI : Continuous (Matrix.GeneralLinearGroup.map (pInf E) : GA E n → GL (Fin n) (Rinf E)) :=
+      Continuous.units_map _ (continuous_id.matrix_map hp)
+    have hFn : Continuous (Matrix.GeneralLinearGroup.map (pFin E) : GA E n → GL (Fin n) (Af E)) :=
+      Continuous.units_map _ (continuous_id.matrix_map continuous_snd)
+    have h1 : Continuous fun x : GA E n => toL (Matrix.GeneralLinearGroup.map (pInf E) (g⁻¹ * x)).val :=
+      (Units.continuous_val (M := Matrix (Fin n) (Fin n) (Rinf E))).comp (hI.comp hm)
+    have h2 : ContinuousAt (fun x : GA E n => chart ψ.1 g (toL (Matrix.GeneralLinearGroup.map (pInf E) (g⁻¹ * x)).val)) g :=
+      ContinuousAt.comp (f := fun x : GA E n => toL (Matrix.GeneralLinearGroup.map (pInf E) (g⁻¹ * x)).val)
+        (TR.contDiffAt_chart ψ.2 g (TR.val_mem_invSet _)).continuousAt h1.continuousAt
+    refine h2.congr ?_
+    have h3 : {x : GA E n | TR.finRep E n (Matrix.GeneralLinearGroup.map (pFin E) (g⁻¹ * x)) ψ = ψ} ∈ 𝓝 g :=
+      (hψ.1.level.preimage (hFn.comp hm)).mem_nhds (by simp)
+    filter_upwards [h3] with x hx
+    rw [TR.chart_val]
+    conv_lhs => rw [← hx]
+    change ψ.1 (g * infGL E n _ * finGL E n _) = _
+    rw [mul_assoc, TR.infGL_mul_finGL, mul_inv_cancel_left]
+  have loc : ∀ w ∉ S, ∀ k ∈ GlobalTheory.LFun.KGL w (n := n), InKS S (locGL E n w k) := by
     intro w hw k hkk
     refine ⟨fun x hx => GlobalTheory.CuspRep.pLoc_locGL_of_ne (show x ≠ w from fun e => hw (e ▸ hx)) _, fun x => ?_⟩
     by_cases e : x = w

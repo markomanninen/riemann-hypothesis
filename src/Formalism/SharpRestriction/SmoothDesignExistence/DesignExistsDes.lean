@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.MuTuOfTuSize
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+module
+
+public import Formalism.SharpRestriction.MuTuOfTuSize
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+
+@[expose] public section
 
 noncomputable section
 

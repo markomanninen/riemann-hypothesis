@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RatInEig
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyPtsOfReading
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LabConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RatInEig
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyPtsOfReading
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LabConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,31 +119,8 @@ structure StC {a : StA hL D cf (repOf Y)} {n : InRat Y cG} {xi : D.what₂.Tup �
   ok : ∀ w, TwistedAt D w → IntegralHeckeForms.TwOK (ch.twI w) (ch.k' w) (ch.Q w) ((ch.psi' w).comp (D.ntw.art (ch.twI w) (ch.Q w)))
   th : EMtTheta Y b.YS ch
 
-structure NMore {nch : NChoice D} {tp : TupTied D cf nch} {a : Top.Bl.NAt hL D cf nch tp} (r : Top.Bl.NRow a R F cG Y)
-    (g : GlobalTheory.RealGeo.GeoHalf C R.toRealDat fun _ => 1) (xd : ThData D) : Type 1 where
-  ad : MtAd Y a.all.gal.mt
-  fi : ∀ i x, HEq ((r.nexp.fi i).e x) x
-  hecke : NExpHeckeRowX R cG _ r.nexp r.hecke fun _ => LinearMap.id
-  cHk : ∀ i b P, ∃ u : (D.ntw.O i)ˣ, r.hecke.cHk i b 1 P = algebraMap (D.ntw.O i) (FractionRing (D.ntw.O i)) u
-  eig : ∃ Sb e, (∀ i, Sb ⊆ D.ntw.S0 i) ∧ HEq a.nt.eig e ∧ EigAd Y Sb e
-  ser : SerAt r.nexp g.v₀ a.all.exp ad.PV cf a.Pq
-  tau : TauTrue a.all.exp
-  geo : Nonempty (GlobalTheory.GeoTie.ThetaTie r.nexp g.fw D.nth)
-  ok : ∀ w, TwistedAt D w → IntegralHeckeForms.TwOK (nch.twI w) (nch.k' w) (nch.Q w) ((nch.psi' w).comp (D.ntw.art (nch.twI w) (nch.Q w)))
-  th : EMtTheta Y r.nexp nch
-  xd : XdAll xd
-  large : GlobalTheory.CoefDuty.Large D
-  labc : LabConj a.nt.D a.nt.A.wdT
-  zeta : ∀ k, haveI : Fact (a.nt.D.host.g k).Prime := ⟨a.nt.D.host.g_prime k⟩
-    a.nt.A.grp.ζ k = (GlobalTheory.Mem.TypePl.labDat (a.nt.D.host.g k)).gen
-  pht : ∃ fr : OmFrame a.nt.D, fr.jE = a.nt.jE ∧ PhtOn a.nt.A.wd fr fun _ _ _ _ => True
-
 end Rows
 
-open GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl in
-
-def NE (hL : GlobalTheory.Published.LocalLanglandsGL) : NExt hL := fun _ _ _ _ w Z _ _ t _ _ xd c =>
-  NMore (D := (w.st Z).toD7) c.row t.r.z.geo xd
 
 end GlobalTheory.HeightCounting
 

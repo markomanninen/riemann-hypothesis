@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ variable {C : Type} [Field C] {V : VF C} {σ τ υ : Type}
 theorem int_zero : IntS V (0 : MvPowerSeries σ C) := fun μ => by rw [map_zero]; exact VF.Ge.zero 0
 
 theorem int_add {f g : MvPowerSeries σ C} (hf : IntS V f) (hg : IntS V g) : IntS V (f + g) :=
-  fun μ => by rw [map_add]; exact (hf μ).add (hg μ)
+  fun μ => by rw [map_add (f := _)]; exact (hf μ).add (hg μ)
 
 theorem int_sub {f g : MvPowerSeries σ C} (hf : IntS V f) (hg : IntS V g) : IntS V (f - g) :=
   fun μ => by rw [map_sub]; exact (hf μ).sub (hg μ)
@@ -76,7 +80,7 @@ theorem int_subst [Finite σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, const
   rw [smul_eq_mul]
   exact (hf e).mul_int (int_prod (fun s _ => int_pow (hi s) _) μ)
 
-theorem int_pderiv {f : MvPowerSeries σ C} (hf : IntS V f) (s : σ) : IntS V (pderiv C s f) := by
+theorem int_pderiv {f : MvPowerSeries σ C} (hf : IntS V f) (s : σ) : IntS V (pderiv s f) := by
   intro μ
   rw [coeff_pderiv, mul_comm]
   refine VF.Ge.mul_int ?_ (hf _)
@@ -89,7 +93,8 @@ theorem subst_subst [Finite σ] [Finite τ] {a : σ → MvPowerSeries τ C} (ha 
 
 theorem subst_sum' [Finite σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0) {ι : Type}
     (s : Finset ι) (f : ι → MvPowerSeries σ C) : subst a (∑ i ∈ s, f i) = ∑ i ∈ s, subst a (f i) := by
-  rw [← coe_substAlgHom (hasSubst_of_constantCoeff_zero ha), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom (hasSubst_of_constantCoeff_zero ha), map_sum]
 
 theorem subst_zero' [Finite σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0) :
     subst a (0 : MvPowerSeries σ C) = 0 := by
@@ -144,27 +149,49 @@ theorem coeff_subst_kill [Finite τ] (e : σ ↪ τ) (f : MvPowerSeries τ C)
       rw [monomial_one_eq, map_finsuppProd]; simp only [map_pow, ha]
     rw [this, coeff_killCompl, coeff_monomial, if_neg (Ne.symm hd), smul_zero]
 
-theorem pderiv_exp [CharZero C] : pderiv C () (PowerSeries.exp C) = PowerSeries.exp C := by
-  refine MvPowerSeries.ext fun μ => ?_
-  rw [coeff_pderiv]
-  have h1 : μ = Finsupp.single () (μ ()) := Finsupp.unique_single μ
-  rw [h1, ← Finsupp.single_add]
-  show PowerSeries.coeff _ _ * _ = PowerSeries.coeff _ _
-  simp only [PowerSeries.coeff_exp, Finsupp.single_eq_same, Nat.factorial_succ]
-  have : ((μ ()).factorial : C) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
-  have h2 : ((μ () : C) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero (μ ())
-  simp
-  field_simp
+theorem pderiv_exp [CharZero C] : pderiv () (PowerSeries.exp C) = PowerSeries.exp C :=
+  PowerSeries.derivative_exp C
 
 def tder [Fintype σ] (p w : σ → MvPowerSeries τ C) (f : MvPowerSeries σ C) : MvPowerSeries τ C :=
-  ∑ s, subst p (pderiv C s f) * w s
+  ∑ s, subst p (pderiv s f) * w s
+
+open MvPowerSeries.WithPiTopology in
+theorem pderiv_subst_eq [Fintype σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0)
+    (f : MvPowerSeries σ C) (t : τ) : pderiv t (subst a f) = tder a (fun s => pderiv t (a s)) f := by
+  classical
+  letI : UniformSpace C := ⊥
+  have hsubst : Continuous (subst a : MvPowerSeries σ C → MvPowerSeries τ C) :=
+    continuous_subst (hasSubst_of_constantCoeff_zero ha)
+  have hpderiv {ι : Type} (i : ι) :
+      Continuous (pderiv i : MvPowerSeries ι C → MvPowerSeries ι C) := by
+    apply continuous_pi
+    intro n
+    change Continuous (fun g : MvPowerSeries ι C => coeff n (pderiv i g))
+    simp only [coeff_pderiv]
+    exact (continuous_coeff C (n + Finsupp.single i 1)).mul continuous_const
+  have htder : Continuous (tder a (fun s => pderiv t (a s))) :=
+    continuous_finsetSum _ fun s _ => (hsubst.comp (hpderiv s)).mul continuous_const
+  apply congrFun (denseRange_toMvPowerSeries.equalizer ((hpderiv t).comp hsubst) htder ?_) f
+  funext p
+  change pderiv t (subst a (p : MvPowerSeries σ C)) = tder a (fun s => pderiv t (a s)) p
+  simp only [tder, subst_coe, pderiv_coe]
+  induction p using MvPolynomial.induction_on
+  next c => simp
+  next p q hp hq =>
+    simp only [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]
+  next p s hp =>
+    rw [map_mul, MvPolynomial.aeval_X, Derivation.leibniz, hp, smul_eq_mul, smul_eq_mul, Finset.mul_sum]
+    simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, map_add (f := _),
+      map_mul, MvPolynomial.aeval_X, add_mul, Finset.sum_add_distrib, mul_ite, mul_one, mul_zero,
+      map_one, map_zero, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp [apply_ite (MvPolynomial.aeval a), mul_assoc, add_comm]
 
 section
 variable [Fintype σ] {p : σ → MvPowerSeries τ C} (hp : ∀ s, constantCoeff (p s) = 0) (w : σ → MvPowerSeries τ C)
 include hp
 
 theorem tder_add (f g : MvPowerSeries σ C) : tder p w (f + g) = tder p w f + tder p w g := by
-  simp only [tder, map_add, subst_add (hasSubst_of_constantCoeff_zero hp), add_mul, Finset.sum_add_distrib]
+  simp only [tder, map_add (f := _), subst_add (hasSubst_of_constantCoeff_zero hp), add_mul, Finset.sum_add_distrib]
 
 theorem tder_sub (f g : MvPowerSeries σ C) : tder p w (f - g) = tder p w f - tder p w g := by
   simp only [tder, map_sub, subst_sub (hasSubst_of_constantCoeff_zero hp), sub_mul, Finset.sum_sub_distrib]
@@ -181,8 +208,7 @@ theorem tder_X (s : σ) : tder p w (X s) = w s := by
 theorem tder_subst [Fintype υ] {a : υ → MvPowerSeries σ C} (ha : ∀ s, constantCoeff (a s) = 0)
     (f : MvPowerSeries υ C) :
     tder p w (subst a f) = tder (fun s => subst p (a s)) (fun s => tder p w (a s)) f := by
-  unfold tder
-  simp only [ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst ha, subst_sum' hp, subst_mul (hasSubst_of_constantCoeff_zero hp),
+  simp only [tder, pderiv_subst_eq ha, subst_sum' hp, subst_mul (hasSubst_of_constantCoeff_zero hp),
     subst_subst ha hp, Finset.sum_mul, Finset.mul_sum, mul_assoc]
   exact Finset.sum_comm
 
@@ -208,10 +234,6 @@ end
 theorem tder_zero [Fintype σ] (p : σ → MvPowerSeries τ C) {w : σ → MvPowerSeries τ C} (hw : ∀ s, w s = 0)
     (f : MvPowerSeries σ C) : tder p w f = 0 := by
   simp [tder, hw]
-
-theorem pderiv_subst_eq [Fintype σ] {a : σ → MvPowerSeries τ C} (ha : ∀ s, constantCoeff (a s) = 0)
-    (f : MvPowerSeries σ C) (t : τ) : pderiv C t (subst a f) = tder a (fun s => pderiv C t (a s)) f :=
-  ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst ha f t
 
 end GlobalTheory.RowLaw.GaugeDeriv
 
@@ -287,7 +309,7 @@ theorem cc_hAt {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i
 
 theorem cc_addP {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0)
     (hb : ∀ i, constantCoeff (b i) = 0) (i : κ) : constantCoeff (addP Y a b i) = 0 :=
-  constantCoeff_subst_zero (fun x => by rw [map_add, cc_slg R ha, cc_slg R hb, add_zero]) (R.exc i)
+  constantCoeff_subst_zero (fun x => by rw [map_add (f := _), cc_slg R ha, cc_slg R hb, add_zero]) (R.exc i)
 
 theorem ex_lg {a : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0) (i : κ) :
     subst (fun x => subst a (Y.lg x)) (Y.ex i) = a i := by
@@ -301,13 +323,13 @@ theorem lg_addP {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a 
     (hb : ∀ i, constantCoeff (b i) = 0) (x : κ) :
     subst (addP Y a b) (Y.lg x) = subst a (Y.lg x) + subst b (Y.lg x) :=
   lg_ex R (a := fun x => subst a (Y.lg x) + subst b (Y.lg x))
-    (fun x => by rw [map_add, cc_slg R ha, cc_slg R hb, add_zero]) x
+    (fun x => by rw [map_add (f := _), cc_slg R ha, cc_slg R hb, add_zero]) x
 
 theorem subst_addP [Finite τ] {a b : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i) = 0)
     (hb : ∀ i, constantCoeff (b i) = 0) {p : τ → MvPowerSeries υ C} (hp : ∀ s, constantCoeff (p s) = 0) (i : κ) :
     subst p (addP Y a b i) = addP Y (fun i => subst p (a i)) (fun i => subst p (b i)) i := by
   unfold addP
-  rw [subst_subst (fun x => by rw [map_add, cc_slg R ha, cc_slg R hb, add_zero]) hp]
+  rw [subst_subst (fun x => by rw [map_add (f := _), cc_slg R ha, cc_slg R hb, add_zero]) hp]
   simp only [subst_add (hasSubst_of_constantCoeff_zero hp), subst_subst ha hp, subst_subst hb hp]
 
 theorem lg_zero (x : κ) : subst (fun _ : κ => (0 : MvPowerSeries τ C)) (Y.lg x) = 0 := by
@@ -341,11 +363,11 @@ theorem hAt_zero_left {a : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff
 theorem tder_lg_zero (v : κ → C) (x : κ) :
     tder (fun _ : κ => (0 : MvPowerSeries τ C)) (fun i => MvPowerSeries.C (v i)) (Y.lg x) = MvPowerSeries.C (v x) := by
   classical
-  have h1 : ∀ s, subst (fun _ : κ => (0 : MvPowerSeries τ C)) (pderiv C s (Y.lg x)) = if s = x then 1 else 0 := by
+  have h1 : ∀ s, subst (fun _ : κ => (0 : MvPowerSeries τ C)) (pderiv s (Y.lg x)) = if s = x then 1 else 0 := by
     intro s
-    have h2 : constantCoeff (pderiv C s (Y.lg x - X x)) = 0 := by
+    have h2 : constantCoeff (pderiv s (Y.lg x - X x)) = 0 := by
       rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, map_sub, R.lin x _ (by simp), sub_self, zero_mul]
-    have h3 : subst (fun _ : κ => (0 : MvPowerSeries τ C)) (pderiv C s (Y.lg x - X x)) = 0 := by
+    have h3 : subst (fun _ : κ => (0 : MvPowerSeries τ C)) (pderiv s (Y.lg x - X x)) = 0 := by
       ext μ
       exact Van.subst (T := ∅) Set.univ (fun _ => map_zero _) (fun _ _ ν _ => by simp) (van_univ h2) μ (by simp)
     have hs : HasSubst (fun _ : κ => (0 : MvPowerSeries τ C)) := hasSubst_of_constantCoeff_zero fun _ => map_zero _
@@ -371,7 +393,7 @@ theorem tder_hAt [Fintype τ] {a b : κ → MvPowerSeries τ C} (ha : ∀ i, con
   rw [hAt_eq, tder_subst hp w (pr_prop (P := fun f => constantCoeff f = 0) ha hb), map_pr, map_pr]
 
 theorem sg_eq (v : κ → C) : Y.sg v = -∑ i, v i • subst (pr (X : κ → MvPowerSeries κ C) fun _ => 0)
-    (pderiv C ((1 : Fin 2), i) Y.h) := by
+    (pderiv ((1 : Fin 2), i) Y.h) := by
   classical
   let e : κ ↪ Fin 2 × κ := ⟨fun x => (0, x), fun x y h => (Prod.mk.inj h).2⟩
   have he : ∀ t, (pr (X : κ → MvPowerSeries κ C) fun _ => 0) t = killCompl e (X t) := by
@@ -383,7 +405,8 @@ theorem sg_eq (v : κ → C) : Y.sg v = -∑ i, v i • subst (pr (X : κ → Mv
       rintro ⟨x, hx⟩
       exact absurd (congrArg Prod.fst hx) (show ¬ (0 : Fin 2) = 1 by decide)
   ext μ
-  rw [map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_neg, map_sum]
   show -∑ i, v i * coeff (μ.mapDomain (fun x : κ => ((0 : Fin 2), x)) + Finsupp.single ((1 : Fin 2), i) 1) Y.h = _
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -398,7 +421,8 @@ theorem tder_sg {a : κ → MvPowerSeries τ C} (ha : ∀ i, constantCoeff (a i)
   have hs := hasSubst_of_constantCoeff_zero ha
   have hX : ∀ p, constantCoeff ((pr (X : κ → MvPowerSeries κ C) fun _ => 0) p) = 0 :=
     pr_prop (P := fun f => constantCoeff f = 0) (fun _ => constantCoeff_X _) fun _ => map_zero _
-  rw [sg_eq, ← coe_substAlgHom hs, map_neg, neg_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sg_eq, ← coe_substAlgHom hs, map_neg, neg_neg, map_sum]
   unfold tder
   rw [Fintype.sum_prod_type, Fin.sum_univ_two, Finset.sum_eq_zero (fun i _ => by simp [pr]), zero_add]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -442,7 +466,7 @@ theorem tder_addP [Fintype τ] {a b : κ → MvPowerSeries τ C} (ha : ∀ i, co
         (fun x => tder (fun i => subst p (a i)) (fun i => tder p w (a i)) (Y.lg x) +
           tder (fun i => subst p (b i)) (fun i => tder p w (b i)) (Y.lg x)) (Y.ex i) := by
   unfold addP
-  rw [tder_subst hp w (fun x => by rw [map_add, cc_slg R ha, cc_slg R hb, add_zero])]
+  rw [tder_subst hp w (fun x => by rw [map_add (f := _), cc_slg R ha, cc_slg R hb, add_zero])]
   simp only [subst_add (hasSubst_of_constantCoeff_zero hp), subst_subst ha hp, subst_subst hb hp, tder_add hp,
     tder_subst hp w ha, tder_subst hp w hb]
 
@@ -470,7 +494,7 @@ theorem int_cocycle : IntS V (subst (addP Y a b) (Y.sg v) - subst a (Y.sg v) - s
     rfl
   have h := int_tder_of_exp hp (tr (fun _ => 0) (fun _ => 0) fun i => MvPowerSeries.C (v i))
     (tr_prop hai hbi fun _ => int_zero) (tr_prop (fun _ => int_zero) (fun _ => int_zero) fun i => int_C (hv i))
-    (by rw [map_sub, map_add, cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R hA (cc_gp _)]; simp)
+    (by rw [map_sub, map_add (f := _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R hA (cc_gp _)]; simp)
     R.ph1 (by
       rw [subst_sub hs, subst_add hs, subst_hAt (cc_gp _) (cc_gp _) hp, subst_hAt (cc_gp _) (cc_gp _) hp,
         subst_hAt hA (cc_gp _) hp, e1]
@@ -507,7 +531,7 @@ theorem int_second : IntS V (subst a (Y.sg v) + tder (pr a b) (pr (fun _ => 0) (
     exact congrFun (addP_zero R hb) i
   have h := int_tder_of_exp hp (tr (fun _ => 0) (fun _ => 0) fun i => MvPowerSeries.C (v i))
     (tr_prop hai hbi fun _ => int_zero) (tr_prop (fun _ => int_zero) (fun _ => int_zero) fun i => int_C (hv i))
-    (by rw [map_sub, map_add, cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) hA]; simp)
+    (by rw [map_sub, map_add (f := _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) hA]; simp)
     R.ph2 (by
       rw [subst_sub hs, subst_add hs, subst_hAt (cc_gp _) (cc_gp _) hp, subst_hAt (cc_gp _) (cc_gp _) hp,
         subst_hAt (cc_gp _) hA hp, e1]
@@ -545,7 +569,7 @@ theorem int_first : IntS V (subst b (Y.sg v) + tder (pr a b) (pr (invF Y v a) fu
     exact congrFun (addP_zero R ha) i
   have h := int_tder_of_exp hp (tr (fun _ => 0) (fun i => MvPowerSeries.C (v i)) fun _ => 0)
     (tr_prop hai (fun _ => int_zero) hbi) (tr_prop (fun _ => int_zero) (fun i => int_C (hv i)) fun _ => int_zero)
-    (by rw [map_sub, map_add, cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R hA (cc_gp _)]; simp)
+    (by rw [map_sub, map_add (f := _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R (cc_gp _) (cc_gp _), cc_hAt R hA (cc_gp _)]; simp)
     R.ph1 (by
       rw [subst_sub hs, subst_add hs, subst_hAt (cc_gp _) (cc_gp _) hp, subst_hAt (cc_gp _) (cc_gp _) hp,
         subst_hAt hA (cc_gp _) hp, e1]
@@ -663,7 +687,8 @@ theorem sum_lie (y : I₁) :
     ∑ c, subst (fun _ : Unit => t c) (tyS V.l fun s => S.cur c s (Sum.inl y)) = (X y : MvPowerSeries I₁ C) := by
   classical
   ext μ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [coeff_subst_tyS V.l_prime.two_le (ht.1 _)]
   rw [Finset.sum_comm, coeff_X]
   convert ht.2 y μ
@@ -673,7 +698,8 @@ theorem sum_fil (q : J₁) :
     ∑ c, subst (fun _ : Unit => t c) (tyS V.l fun s => S.cur c s (Sum.inr q)) = -S.ze t q := by
   classical
   ext μ
-  rw [map_sum, map_neg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_neg]
   simp only [coeff_subst_tyS V.l_prime.two_le (ht.1 _)]
   rw [Finset.sum_comm]
   show _ = -(-(∑ s ∈ Finset.Icc 1 μ.degree, ∑ c, S.be c s q * coeff μ (t c ^ (V.l ^ s))))
@@ -796,7 +822,7 @@ theorem cc_expPt (R : RLaw Y V) (g : Fin 2) (i : κ) : constantCoeff (Y.expPt g 
   (Y.van_expPt R.exc g i).const
 
 theorem pderiv_expPt_self (R : RLaw Y V) (g : Fin 2) (k : I g) :
-    (fun i => pderiv C (⟨g, k⟩ : WV I) (Y.expPt g i)) = invF Y (Y.u g k) (Y.expPt g) := by
+    (fun i => pderiv (⟨g, k⟩ : WV I) (Y.expPt g i)) = invF Y (Y.u g k) (Y.expPt g) := by
   classical
   funext i
   unfold invF
@@ -805,7 +831,8 @@ theorem pderiv_expPt_self (R : RLaw Y V) (g : Fin 2) (k : I g) :
   · funext x
     exact (lg_ex R (cc_lin g) x).symm
   · funext x
-    rw [map_sum, Finset.sum_eq_single k, Derivation.map_smul, pderiv_X_self, smul_eq_C_mul, mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single k, Derivation.map_smul, pderiv_X_self, smul_eq_C_mul, mul_one]
     · intro c _ hc
       rw [Derivation.map_smul, pderiv_X_of_ne, smul_zero]
       intro h
@@ -813,11 +840,12 @@ theorem pderiv_expPt_self (R : RLaw Y V) (g : Fin 2) (k : I g) :
     · simp
 
 theorem pderiv_expPt_ne {g g' : Fin 2} (hg : g ≠ g') (k : I g') :
-    (fun i => pderiv C (⟨g', k⟩ : WV I) (Y.expPt g i)) = fun _ => 0 := by
+    (fun i => pderiv (⟨g', k⟩ : WV I) (Y.expPt g i)) = fun _ => 0 := by
   funext i
   rw [RawChart.expPt, pderiv_subst_eq (cc_lin g)]
   refine tder_zero _ (fun x => ?_) _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun c _ => ?_
   rw [Derivation.map_smul, pderiv_X_of_ne, smul_zero]
   intro h
@@ -834,7 +862,7 @@ theorem subst_invF (R : RLaw Y V) [Finite τ] {a : κ → MvPowerSeries τ C} (h
 theorem pderiv_gauge (R : RLaw Y V) {Θ : WV I → MvPowerSeries (WV I) C} (hΘ0 : ∀ w, constantCoeff (Θ w) = 0)
     {P : Fin 2 → κ → MvPowerSeries (WV I) C} (h0 : ∀ g i, constantCoeff (P g i) = 0) (hi : ∀ g i, IntS V (P g i))
     (hP : ∀ g i, subst Θ (P g i) = Y.expPt g i) {g g' : Fin 2} (hg : g ≠ g') (k : I g') :
-    ∃ J, IntS V J ∧ pderiv C (⟨g', k⟩ : WV I) (subst (fun p : Fin 2 × κ => Y.expPt p.1 p.2) Y.h) =
+    ∃ J, IntS V J ∧ pderiv (⟨g', k⟩ : WV I) (subst (fun p : Fin 2 × κ => Y.expPt p.1 p.2) Y.h) =
       subst Θ J - subst Θ (subst (P g) (Y.sg (Y.u g' k))) := by
   have hsΘ := hasSubst_of_constantCoeff_zero hΘ0
   have e : (fun p : Fin 2 × κ => Y.expPt p.1 p.2) = pr (Y.expPt 0) (Y.expPt 1) := by
@@ -911,7 +939,7 @@ theorem cEqSt_of_rLaw (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : 
     show (if ∀ w ∈ μ.support, OnLeafV (fun g => RawChart.cart (H g)) g a a' w then coeff μ F else 0) = _
     congr
   have hD : coeff μ (dVar (⟨1 - g, k⟩ : WV I) (Y.hLf g a a')) =
-      if ∀ w ∈ μ.support, Y.OnLf g a a' w then coeff μ (pderiv C (⟨1 - g, k⟩ : WV I) Y.hRow) else 0 := by
+      if ∀ w ∈ μ.support, Y.OnLf g a a' w then coeff μ (pderiv (⟨1 - g, k⟩ : WV I) Y.hRow) else 0 := by
     show ((μ ⟨1 - g, k⟩ + 1 : ℕ) : C) * Y.hLf g a a' (μ + Finsupp.single (⟨1 - g, k⟩ : WV I) 1) = _
     unfold RawChart.hLf
     by_cases h : ∀ w ∈ μ.support, Y.OnLf g a a' w
@@ -923,7 +951,8 @@ theorem cEqSt_of_rLaw (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : 
   split_ifs with h
   · have hz : coeff μ (∑ y : I g, (if Y.ty g y = Y.ty (1 - g) k then Y.sg1 (Y.u g y) (Y.u (1 - g) k) else 0) •
         (X (⟨g, y⟩ : WV I) : MvPowerSeries (WV I) C)) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_eq_zero fun y _ => ?_
       rw [coeff_smul, coeff_X]
       split_ifs with h1 h2
@@ -935,7 +964,7 @@ theorem cEqSt_of_rLaw (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d] (I : 
       · exact zero_mul _
       · exact zero_mul _
     rw [RawChart.hRow, Derivation.map_smul, e₁, e₂, subst_smul hsΘ, subst_sub hsΘ]
-    simp only [coeff_smul, map_sub, map_add, map_neg, hz]
+    simp only [coeff_smul, map_sub, map_add (f := _), map_neg, hz]
     ring
   · exact sub_zero _
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -41,7 +45,7 @@ private theorem dn_three_apply {R G M : Type} [CommRing R] [Group G] [AddCommGro
     funext i; fin_cases i <;> simp [Fin.contractNth] <;> rfl
   simp only [dn, LinearMap.coe_mk, AddHom.coe_mk, Fin.sum_univ_succ, Fin.sum_univ_zero, e0, e1]
   norm_num
-  rw [e2, e3, show (Fin.succ 2 : Fin 4) = 3 from rfl, e4]
+  rw [e2, e3, e4]
   abel
 
 theorem UpperTheory.V.Pa.B2.H2_right_exact_mod_l_of_H3_subsingleton :
@@ -79,7 +83,7 @@ theorem UpperTheory.V.Pa.B2.H2_right_exact_mod_l_of_H3_subsingleton :
     intro g
     simp only [N, LinearMap.mem_ker]
     rw [dn_two_apply']
-    simp only [C, c, map_sub, map_add, hu, us]
+    simp only [C, c, map_sub, map_add (f := _), hu, us]
     simpa using c'.2.2 (g 0) (g 1) (g 2)
   let f : (Fin 3 → G) → N := fun g => ⟨dn M.ρ 2 C g, hfN g⟩
   have key : ∀ t : Fin 3 → G, ((f t : N) : M.X) =

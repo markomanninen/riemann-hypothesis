@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChosenSeries
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem exists_locIt (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (M :
     have h4 : (barMat e Z).trace = -Z.trace := by
       rw [barMat, trace_reindex', ← trace_conj hZ]
       simp [Matrix.trace]
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext t
       apply U.injective
       rw [matches_exp h₁ (exp_barMat e) hZ, hA]
@@ -135,11 +139,11 @@ theorem exists_locIt (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (M :
     have h5 : star ((m' : ℂ) * (Z.trace / 2)) = -((aS : ℂ) * Z.trace) := by
       rw [Complex.star_def, map_mul, map_intCast, map_div₀, trace_conj hZ, map_ofNat, hmC']
       ring
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext t
       rw [hA, matches_exp h₂ (exp_plainMat e') hZ, LinearMap.map_smulₛₗ]
       rfl
-    · rw [h5, hA, fr_toFrame, trace_toFrame, h4, map_add, map_smul, plainMat, hκ.2]
+    · rw [h5, hA, fr_toFrame, trace_toFrame, h4, map_add (f := _), map_smul, plainMat, hκ.2]
       simp [T₂.expt_zero]
       abel
 

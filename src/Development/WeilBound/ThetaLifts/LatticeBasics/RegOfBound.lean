@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.SWFull
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SWFull
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,15 +71,15 @@ theorem unif_bound (h1 : ∀ x, 1 ≤ h x) {V : Submodule ℂ (X → ℂ)} (hV :
 
 variable [TopologicalSpace X] {g g' : ℂ → X → ℂ} {S S' : Set ℂ} {s₀ : ℂ}
 
-variable (h g S) in
 
+variable (h g S) in
 structure RegOn : Prop where
   hol : ∀ x, DifferentiableOn ℂ (g · x) S
   cont : ContinuousOn (fun y : ℂ × X => g y.1 y.2) (S ×ˢ Set.univ)
   grow : ∃ (C : ℝ) (N : ℕ), ∀ s ∈ S, ∀ x, ‖g s x‖ ≤ C * h x ^ N
 
-variable (h g s₀) in
 
+variable (h g s₀) in
 def Reg : Prop := ∃ S ∈ 𝓝 s₀, RegOn h g S
 
 theorem RegOn.mono (a : RegOn h g S) (e : S' ⊆ S) : RegOn h g S' :=

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PairFactsAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PairFactsAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,7 +10,7 @@ open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af
 
 namespace UpperTheory.V.Lit.Geo
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def BddDer (φ : Sm E a) : Prop :=
   ∀ (X : Lie E a) (l : List (Lie E a)), ∃ C : ℝ, ∀ g, ‖(((X :: l).map (lie E a)).prod φ).1 g‖ ≤ C
@@ -32,7 +36,7 @@ structure IsStep (U : Subgroup (GL (Fin a) (Af E))) (f : GA E a → ℝ) (Y : GA
     |f (g * infGL E a h) - f g| ≤ C
 
 def StepEx : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ U : Subgroup (GL (Fin a) (Af E)),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ U : Subgroup (GL (Fin a) (Af E)),
     IsCompact (U : Set (GL (Fin a) (Af E))) → ∃ f Y C c f₀, IsStep U f Y C c f₀
 
 end UpperTheory.V.Lit.Geo

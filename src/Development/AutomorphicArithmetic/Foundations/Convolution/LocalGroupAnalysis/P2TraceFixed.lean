@@ -1,11 +1,16 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Development.AutomorphicArithmetic.AdelicQuotients.ExistsCompactConjMemCentralizerMulOfSeparableCha
-import Development.AutomorphicArithmetic.AdelicQuotients.GeneralLinearPiCentralizerCommOfCharpolySeparabl
-import Development.AutomorphicArithmetic.AdelicQuotients.ExistsNatCombinationIsUnitOfIsUnitCombination
-import Development.AutomorphicArithmetic.AdelicQuotients.IsOpenEmbeddingUnitsValGeneralLinearPi
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Development.AutomorphicArithmetic.AdelicQuotients.ExistsCompactConjMemCentralizerMulOfSeparableCha
+public import Development.AutomorphicArithmetic.AdelicQuotients.GeneralLinearPiCentralizerCommOfCharpolySeparabl
+public import Development.AutomorphicArithmetic.AdelicQuotients.ExistsNatCombinationIsUnitOfIsUnitCombination
+public import Development.AutomorphicArithmetic.AdelicQuotients.IsOpenEmbeddingUnitsValGeneralLinearPi
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import GroundTheory.GlobalFields.SemilocalAlgebras.InfiniteAdeleTopology
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo PositivityTheory.Rg.Tf.Loc
 open scoped TensorProduct
 
@@ -63,7 +68,8 @@ private theorem p2_trace_fixed (s : B →+* B) (l : ℕ) (hl : s ^ l = 1) (r : B
   have h1 := Finset.sum_range_succ (fun j => (s ^ j) r) l
   have h2 := Finset.sum_range_succ' (fun j => (s ^ j) r) l
   rw [h1, hl, pow_zero] at h2
-  rw [map_sum, add_right_cancel h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, add_right_cancel h2]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [pow_succ']; rfl
 
@@ -194,7 +200,7 @@ private theorem p2_gal [IsGalois F E] (e : E ⊗[F] A ≃ₐ[E] B) (σ : E ≃�
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rw [hφ, p2_gal_tmul, ← hφ]; rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have h2 : ∀ j z, (galOf e σ ^ j) (φ z) = φ ((τ ^ j) z) := fun j z => by
     induction j with
     | zero => rfl
@@ -213,7 +219,8 @@ private theorem p2_gal [IsGalois F E] (e : E ⊗[F] A ≃ₐ[E] B) (σ : E ≃�
   · rw [h3, h1, τ.commutes]
   · obtain ⟨m, x, y, hxy⟩ := h.sep
     refine ⟨m, fun i => φ (x i), fun i => φ (y i), fun j hj => ?_⟩
-    simp only [h2, ← map_mul, ← map_sum, hxy j hj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h2, ← map_mul, ← map_sum, hxy j hj]
     split_ifs <;> simp
 
 end
@@ -243,7 +250,8 @@ private theorem p2_pi (hP : P1) {A : Type} [CommRing A] (W : Type) [Finite W] (K
   refine ⟨∑ i, (a i : ∀ w, K w) * y i, ?_⟩
   simp only [Finset.smul_sum, smul_smul] at ha
   rw [Finset.sum_comm] at ha
-  simpa only [map_sum, map_mul, map_natCast, Finset.sum_smul] using ha
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, map_mul, map_natCast, Finset.sum_smul] using ha
 
 open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal in
 private theorem p2_cont_fin {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
@@ -266,7 +274,8 @@ private theorem p2_cont_inf {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   have h : ∀ y, galInf σ y =
       ∑ i, algebraMap E (InfiniteAdeleRing E) (σ (b i)) * infiniteAdeleRingMap (adeleCoord b i y) := fun y => by
     conv_lhs => rw [← tensorInfiniteAdeleRingEquiv_sum_adeleCoord b y]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← tensorInfiniteAdeleRingEquiv_tmul']
     exact p2_gal_tmul _ σ _ _

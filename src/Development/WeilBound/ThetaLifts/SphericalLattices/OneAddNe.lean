@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocCommSt
-import Development.WeilBound.ThetaLifts.SphericalLattices.DgPerm
-import Development.WeilBound.ThetaLifts.SphericalLattices.MemIntGL
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocCommSt
+public import Development.WeilBound.ThetaLifts.SphericalLattices.DgPerm
+public import Development.WeilBound.ThetaLifts.SphericalLattices.MemIntGL
+
+@[expose] public section
 
 noncomputable section
 

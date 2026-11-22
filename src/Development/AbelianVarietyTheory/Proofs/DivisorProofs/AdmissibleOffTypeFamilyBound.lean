@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UBoundOffTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VAddNonnegOfIsIntegral
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UBoundOffTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VAddNonnegOfIsIntegral
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField Classical
 
 namespace GlobalTheory.LevelBudget

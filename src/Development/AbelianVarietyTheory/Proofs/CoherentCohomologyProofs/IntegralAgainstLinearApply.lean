@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -22,9 +26,6 @@ noncomputable def integralAgainstLinear (μ : Measure K) [IsFiniteMeasure μ] (p
     simp only [ContinuousMap.smul_apply, smul_assoc, RingHom.id_apply]
     exact integral_smul c _
 
-@[simp] theorem integralAgainstLinear_apply (μ : Measure K) [IsFiniteMeasure μ] (p : C(K, B))
-    (f : C(K, ℂ)) : integralAgainstLinear μ p f = ∫ k, f k • p k ∂μ := rfl
-
 theorem norm_integral_smul_le (μ : Measure K) [IsFiniteMeasure μ] (p : C(K, B)) (f : C(K, ℂ)) :
     ‖∫ k, f k • p k ∂μ‖ ≤ (μ.real Set.univ * ‖p‖) * ‖f‖ := by
   have h : ∀ᵐ k ∂μ, ‖f k • p k‖ ≤ ‖p‖ * ‖f‖ := Filter.Eventually.of_forall fun k => by
@@ -36,8 +37,5 @@ theorem norm_integral_smul_le (μ : Measure K) [IsFiniteMeasure μ] (p : C(K, B)
 noncomputable def integralAgainst (μ : Measure K) [IsFiniteMeasure μ] (p : C(K, B)) :
     C(K, ℂ) →L[ℂ] B :=
   (integralAgainstLinear μ p).mkContinuous (μ.real Set.univ * ‖p‖) (norm_integral_smul_le μ p)
-
-@[simp] theorem integralAgainst_apply (μ : Measure K) [IsFiniteMeasure μ] (p : C(K, B))
-    (f : C(K, ℂ)) : integralAgainst μ p f = ∫ k, f k • p k ∂μ := rfl
 
 end GlobalTheory.IntegralAgainstMeasure

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.CasimirDecomposition.UnitaryDecompositionExists
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.FlipDecomposition.FlipDecAlt
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.CasimirDecomposition.UnitaryDecompositionExists
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.FlipDecomposition.FlipDecAlt
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace Classical
@@ -76,7 +80,8 @@ theorem decomposition_unitary_shift (hk : 1 ≤ k) (lam : Fin (2 * r + k + 1) �
     funext c
     show ∑ d, P⁻¹ d c • (CompanionTheory.Zuck.act (vr k r true, U) (P⁻¹ * um g * P) z d : U.R.H) = ∑ d, (um g)⁻¹ d c • π (um g) (∑ e, P⁻¹ e d • (z e : U.R.H))
     have e0 : U.R.σ (P⁻¹ * um g * P) = π (um g) := congrFun hπe _
-    simp only [act_coe U (mem g), map_sum, map_smul, e0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [act_coe U (mem g), map_sum, map_smul, e0]
     rw [DecB.sum_comp, DecB.sum_comp, Matrix.mul_inv_rev, Matrix.mul_inv_rev, Matrix.nonsing_inv_nonsing_inv _ hPu, Matrix.mul_assoc,
       Matrix.mul_nonsing_inv_cancel_right _ _ hPu]
   have up_act : ∀ (g : UJ ε), ∀ x ∈ SmT ε π, up (actT π (um g) x) = CompanionTheory.Zuck.act (vr k r true, U) (P⁻¹ * um g * P) (up x) :=
@@ -137,7 +142,8 @@ theorem decomposition_unitary_shift (hk : 1 ≤ k) (lam : Fin (2 * r + k + 1) �
     simp only [ContinuousLinearMap.coe_coe] at e
     rw [e, ← hc ⟨s, h⟩ _ (pr ⟨s, h⟩ (up x) ()).2 _ (pr ⟨s, h⟩ (up y) ()).2]
     simp only [extension_one_coe]
-    conv_lhs => rw [← dn_up y hy, ← hsum (up y), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← dn_up y hy, ← hsum (up y), map_sum]
     have e2 : ∀ (f : {s // IsHCParam (shift true lam s)} → Fin (2 * r + k + 1) → U.R.H) z,
         formT ε (∑ s', f s') z = ∑ s', formT ε (f s') z := fun f z => by
       simp only [formT, Finset.sum_apply, sum_inner, Finset.mul_sum]

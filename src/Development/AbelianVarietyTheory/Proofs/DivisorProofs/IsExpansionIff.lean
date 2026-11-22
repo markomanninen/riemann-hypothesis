@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,10 +38,6 @@ def ExpWith (S : GridChoice W U) (t : T) (Φ : G.Datum) (β : CosFam G t) (e : A
       (y : ∀ i : Fin D.R.m, WO (G.pS (.chi i D.R.m : Pair T)) (G.pT (.chi i D.R.m : Pair T))),
       (∀ j, IsHalf e (x j)) → (∀ i, IsHalf e (y i)) →
         (τ.sum fun d c => c * (∏ j, (d.1 j).fn (x j)) * ∏ i, (d.2 i).fn (y i)) = flatProd S t Φ β x y
-
-example (S : GridChoice W U) (t : T) (Φ : G.Datum) (β : CosFam G t) (e : AE D) : DepthOK S t Φ β e 0 :=
-  ⟨fun _ _ _ _ _ => ⟨fun _ => by rw [zero_smul]; exact zero_mem _, fun _ => by rw [zero_smul]; exact zero_mem _⟩,
-    fun x u y v _ _ _ _ => by simp only [zero_smul, add_zero]⟩
 
 end GlobalTheory.DepthUnf
 

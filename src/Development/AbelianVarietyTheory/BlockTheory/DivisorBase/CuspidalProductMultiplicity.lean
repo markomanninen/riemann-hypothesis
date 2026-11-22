@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.LocalToGlobal.Divisibility.GoodPartHermitianSpec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,16 +15,16 @@ open Formalism.L2.DIV NumberField
 
 variable {E : Type} [Field E] [NumberField E]
 
+
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.CuspidalProductMultiplicity.finite_kP (PP : _root_.Formalism.L2.DIV.Pl E) : Finite (_root_.Formalism.L2.DIV.kP PP) := by
   unfold _root_.Formalism.L2.DIV.kP
   exact Ideal.finiteQuotientOfFreeOfNeBot PP.asIdeal PP.ne_bot
 
+
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.CuspidalProductMultiplicity.finite_boundedLevelClassGroupFamily (Pg : Finset (_root_.Formalism.L2.DIV.Pl E)) (r : ℕ) :
     Finite (_root_.Formalism.L2.DIV.G0 Pg r) := by
   haveI : ∀ PP : ↥Pg, Finite (_root_.Formalism.L2.DIV.kP PP.1) := fun PP =>
@@ -55,9 +59,6 @@ def MultSharp : Prop :=
     ∀ χ : G0 Pg r → K, IsProdCuspChar s Pg r χ →
       MultNear (PsharpSym Pg r ρ k ψ) χ (nbar Pg k) (8 * f * r / g) ∧
         MultNear (Psharp Pg r k ψ) χ (nbar Pg k) (8 * f * r / g)
-
-example {κ : Type} [Field κ] [Finite κ] {r d : ℕ} (b : Fin r → ℕ) (σ : Representation ℂ (blockTri (κ := κ) b) (Fin d → ℂ)) :
-    Module.Finite ℂ (Representation.coindV (blockTri (κ := κ) b).subtype σ) := inferInstance
 
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] in

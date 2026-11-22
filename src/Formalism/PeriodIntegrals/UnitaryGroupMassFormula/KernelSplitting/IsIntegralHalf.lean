@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualOfDiff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualOfDiff
+
+@[expose] public section
 
 noncomputable section
 open NumberField Polynomial
@@ -68,15 +72,15 @@ theorem splitsAt_two {K E : Type} [Field K] [NumberField K] [Field E] [NumberFie
   obtain ⟨bO, hbK⟩ : ∃ x : 𝓞 K, algebraMap (𝓞 K) K x = (1 + -s) / 2 :=
     ⟨⟨_, isIntegral_half d (-s) hd (by rw [neg_mul_neg]; exact hs)⟩, rfl⟩
   have hinj := IsFractionRing.injective (𝓞 K) K
-  have hsum : aO + bO = 1 := hinj (by rw [map_add, haK, hbK, map_one]; ring)
+  have hsum : aO + bO = 1 := hinj (by rw [map_add (f := _), haK, hbK, map_one]; ring)
   have hprod : aO * bO = ((2 : ℕ) : 𝓞 K) * (m : 𝓞 K) := hinj (by
     rw [map_mul, haK, hbK, map_mul, map_natCast, map_natCast]
     push_cast
     linear_combination (-1 / 4 : K) * hs + (1 / 4 : K) * hmK)
   have hca : cj (algebraMap K E ((1 + s) / 2)) = algebraMap K E ((1 + -s) / 2) := by
-    simp only [map_div₀, map_add, map_neg, map_one, map_ofNat, hcj]
+    simp only [map_div₀, map_add (f := _), map_neg, map_one, map_ofNat, hcj]
   have hcb : cj (algebraMap K E ((1 + -s) / 2)) = algebraMap K E ((1 + s) / 2) := by
-    simp only [map_div₀, map_add, map_neg, map_one, map_ofNat, hcj, neg_neg]
+    simp only [map_div₀, map_add (f := _), map_neg, map_one, map_ofNat, hcj, neg_neg]
   have hab : aO * bO ∈ P := by
     rw [hprod]
     exact P.mul_mem_right _ h2P
@@ -155,10 +159,10 @@ theorem splitsAt_odd {K E : Type} [Field K] [NumberField K] [Field E] [NumberFie
     exact P.add_mem (P.mul_mem_left _ (P.neg_mem hdP)) (P.mul_mem_left _ hpP)
   have hca : cj (algebraMap K E (algebraMap (𝓞 K) K ((r : 𝓞 K) + sO))) =
       algebraMap K E (algebraMap (𝓞 K) K ((r : 𝓞 K) - sO)) := by
-    simp only [map_add, map_sub, map_neg, map_intCast, hsK, hcj, sub_eq_add_neg]
+    simp only [map_add (f := _), map_sub, map_neg, map_intCast, hsK, hcj, sub_eq_add_neg]
   have hcb : cj (algebraMap K E (algebraMap (𝓞 K) K ((r : 𝓞 K) - sO))) =
       algebraMap K E (algebraMap (𝓞 K) K ((r : 𝓞 K) + sO)) := by
-    simp only [map_add, map_sub, map_neg, map_intCast, hsK, hcj, sub_eq_add_neg, neg_neg]
+    simp only [map_add (f := _), map_sub, map_neg, map_intCast, hsK, hcj, sub_eq_add_neg, neg_neg]
   have hcoe : ∀ z : 𝓞 K, (z : K) = algebraMap (𝓞 K) K z := fun _ => rfl
   rcases hP.mem_or_mem hab with ha | hb
   · refine ⟨P, hP, hpP, (r : 𝓞 K) + sO, (r : 𝓞 K) - sO, ?_, ha, fun hb => hnot ⟨ha, hb⟩⟩

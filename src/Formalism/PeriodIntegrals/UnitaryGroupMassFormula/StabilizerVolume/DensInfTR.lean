@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfSS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfSS
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem exists_coord_pi {X : Type} [AddCommGroup X] [TopologicalSpace X] {k : �
   refine ⟨Module.finrank ℝ (κ → Fin k → ℝ), (Homeomorph.piCongrRight fun _ => e).trans L.toHomeomorph, ?_⟩
   intro x y
   simp only [Homeomorph.trans_apply, Homeomorph.piCongrRight_apply, ContinuousLinearEquiv.coe_toHomeomorph]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   funext i
   simp [he]
@@ -36,13 +40,13 @@ theorem exists_coord_Ainf (F : Type) [Field F] [NumberField F] [IsTotallyReal F]
   refine ⟨Module.finrank ℝ (NumberField.InfinitePlace F → ℝ), e1.trans L.toHomeomorph, ?_⟩
   intro x y
   simp only [Homeomorph.trans_apply, ContinuousLinearEquiv.coe_toHomeomorph]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   funext v
   have hx : e1 (x + y) v = NumberField.InfinitePlace.Completion.ringEquivRealOfIsReal (hreal v) (x v + y v) := rfl
   have hx1 : e1 x v = NumberField.InfinitePlace.Completion.ringEquivRealOfIsReal (hreal v) (x v) := rfl
   have hx2 : e1 y v = NumberField.InfinitePlace.Completion.ringEquivRealOfIsReal (hreal v) (y v) := rfl
-  rw [Pi.add_apply, hx, hx1, hx2, map_add]
+  rw [Pi.add_apply, hx, hx1, hx2, map_add (f := _)]
 
 theorem exists_coord_tens (F E : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E]
     [NumberField E] [Algebra F E] :
@@ -108,7 +112,7 @@ theorem exists_coord_sub {X : Type} [AddCommGroup X] [TopologicalSpace X] {N : �
   refine ⟨Module.finrank ℝ V, eI.trans L.toHomeomorph, ?_⟩
   intro x y
   simp only [Homeomorph.trans_apply, ContinuousLinearEquiv.coe_toHomeomorph]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   apply Subtype.ext
   show e ((x : X) + (y : X)) = e x + e y

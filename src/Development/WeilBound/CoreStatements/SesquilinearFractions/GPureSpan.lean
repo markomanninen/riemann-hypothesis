@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPureVectorsPeriodsSpan
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPureVectorsPeriodsSpan
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -20,7 +24,7 @@ theorem pure_type_periods_span_whole_space {E : Type} [Field E] [NumberField E] 
     have h1 : P a ∈ Submodule.span ℂ S := Submodule.subset_span ⟨true, ⟨a, ha⟩, rfl⟩
     have h2 : P b ∈ Submodule.span ℂ S := Submodule.subset_span ⟨false, ⟨b, hb⟩, rfl⟩
     have h3 : (n : ℂ) • P y = P a + P b := by
-      rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, hab, map_add]
+      rw [Nat.cast_smul_eq_nsmul, ← map_nsmul, hab, map_add (f := _)]
     have hn' : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
     have h4 : P y = (n : ℂ)⁻¹ • (P a + P b) := by
       rw [← h3, smul_smul, inv_mul_cancel₀ hn', one_smul]

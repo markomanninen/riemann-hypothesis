@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 
@@ -9,14 +13,15 @@ theorem UpperTheory.V.Th.Sp.phi :
   have key : ∀ m, lam m = (s m).sum (fun i a => th a * lam i) := by
     intro m
     conv_lhs => rw [← hs m]
-    rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, Finsupp.sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, Finsupp.sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     simp [hlam]
   refine ⟨{ toFun := fun m => (s m).sum (fun i a => lam i • ell a),
             map_zero' := by simp,
             map_add' := ?_ }, ?_⟩
   · intro m n
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact Finsupp.sum_add_index' (fun i => by simp) (fun i a b => by simp [smul_add])
   · intro σ m
     simp only [AddMonoidHom.coe_mk, ZeroHom.coe_mk, map_smul]

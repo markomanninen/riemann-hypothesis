@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yha8.blkA :
     {n : ℕ} → ℕ → Finset (Fin n) :=

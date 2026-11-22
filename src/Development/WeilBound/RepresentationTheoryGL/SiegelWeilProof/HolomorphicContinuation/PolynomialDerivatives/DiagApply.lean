@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.SupPerp
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.SupPerp
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem orbit [FiniteDimensional ℂ V] (h : PosH φ) {ι : Type} (T : ι → Mo
       Submodule.projectionOnto_apply_left hc ⟨m, hm⟩
     have e2 : Submodule.projectionOnto M (h.perp M) hc u = 0 :=
       Submodule.projectionOnto_apply_right hc ⟨u, hu⟩
-    simp only [P, LinearMap.comp_apply, map_add, e1, e2]
+    simp only [P, LinearMap.comp_apply, map_add (f := _), e1, e2]
     simp
   have hdec : ∀ y : V, ∃ m ∈ M, ∃ u ∈ h.perp M, y = m + u := by
     intro y
@@ -98,11 +102,15 @@ theorem diag_apply (d : ℕ) (f : Module.End ℂ V) (w : Fin d → V) (k : Fin d
 
 def amp (φ : V → V → ℂ) (d : ℕ) (v w : Fin d → V) : ℂ := ∑ k, φ (v k) (w k)
 
-theorem amp_posH (h : PosH φ) (d : ℕ) : PosH (amp φ d) where
-  add v w₁ w₂ := by simp only [amp, Pi.add_apply, h.add, Finset.sum_add_distrib]
-  smul v w r := by simp only [amp, Pi.smul_apply, h.smul, Finset.mul_sum]
-  herm v w := by simp only [amp, star_sum, ← h.herm]
-  pos v hv := by
+theorem amp_posH (h : PosH φ) (d : ℕ) : PosH (amp φ d) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro v w₁ w₂
+    simp only [amp, Pi.add_apply, h.add, Finset.sum_add_distrib]
+  · intro v w r
+    simp only [amp, Pi.smul_apply, h.smul, Finset.mul_sum]
+  · intro v w
+    simp only [amp, star_sum, ← h.herm]
+  · intro v hv
     obtain ⟨k, hk⟩ := Function.ne_iff.1 hv
     simp only [amp, Complex.re_sum]
     calc 0 < (φ (v k) (v k)).re := h.pos _ hk
@@ -145,9 +153,11 @@ theorem bicomm : Bicomm := by
     have hsum : ∀ w : Fin d → V, ∀ k, t w k = ∑ l, tt k l (w l) := by
       intro w k
       conv_lhs => rw [← Finset.univ_sum_single w]
-      simp [tt, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [tt, map_sum]
     refine LinearMap.ext fun w => funext fun k => ?_
-    simp only [Module.End.mul_apply, diag_apply, hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.End.mul_apply, diag_apply, hsum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     exact LinearMap.congr_fun (htt k l) (w l)
   obtain ⟨s', hs', hs'E⟩ := orbit (amp_posH h d) T' hT' (diag d x) hx' (fun k => e k)

@@ -1,7 +1,11 @@
-import Formalism.FilteredPoleLength.LocalDescentLevels.LatticeDescent
-import Formalism.FilteredPoleLength.LocalDescentLevels.LinearIndependentOfIsBaseChange
-import Formalism.FilteredPoleLength.LocalDescentLevels.ExistsSmulMemOfMemSpan
-import Formalism.FilteredPoleLength.LocalDescentLevels.LatticeIndexBis
+module
+
+public import Formalism.FilteredPoleLength.LocalDescentLevels.LatticeDescent
+public import Formalism.FilteredPoleLength.LocalDescentLevels.LinearIndependentOfIsBaseChange
+public import Formalism.FilteredPoleLength.LocalDescentLevels.ExistsSmulMemOfMemSpan
+public import Formalism.FilteredPoleLength.LocalDescentLevels.LatticeIndexBis
+
+@[expose] public section
 
 namespace Formalism.LatticeBaseChangeAlt
 

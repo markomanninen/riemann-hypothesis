@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryTrivialOutsideSplitPlaceLocEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDoubleCosetOperatorsStandardFacts
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsParahoricTypeVectorAtConjugatePlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjSplit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdelicUnitaryTrivialOutsideSplitPlaceLocEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDoubleCosetOperatorsStandardFacts
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsParahoricTypeVectorAtConjugatePlace
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -26,7 +31,37 @@ theorem exists_lift {n : ℕ} (s : SplitPlace L)
   set M := Matrix.GeneralLinearGroup.map i.symm.toRingHom
     (Matrix.GeneralLinearGroup.map (algebraMap _ (s.w.adicCompletion L)) u) with hM
   obtain ⟨κ, hκ, hloc⟩ := GlobalTheory.SplitLift.exists_trivOutside_loc_eq n s M
-  refine ⟨κ, GlobalTheory.HeckeStdFacts.mem_Umax_of_loc s κ hκ ?_ ?_, hκ, ?_⟩
+  have mem_Umax_of_loc (s : SplitPlace L) (x : GAf L n) (hx : TrivOutside {s.v} x)
+      (h1 : ∀ i j, Valued.v (((s.loc n x : GL (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) : Matrix (Fin n) (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) i j) ≤ 1)
+      (h2 : ∀ i j, Valued.v (((s.loc n x⁻¹ : GL (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) : Matrix (Fin n) (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) i j) ≤ 1) :
+      x ∈ Umax L n := by
+    obtain ⟨e, he, he'⟩ := GlobalTheory.SplitSep.exists_sep L s
+    intro i j
+    have hconj : conjAL L ((x.1 : Matrix (Fin n) (Fin n) (AL L)) i j) =
+        (((x⁻¹ : GAf L n).1 : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) j i := by
+      rw [GlobalTheory.FinTypCount.inv_val]
+      rfl
+    have hz : (x.1 : Matrix (Fin n) (Fin n) (AL L)) i j - (1 : Matrix (Fin n) (Fin n) (AL L)) i j ∈ ALint L := by
+      apply GlobalTheory.mem_ALint_of_supported_at_split L s e he he'
+      · intro w hw
+        have := congrFun (congrFun (hx w (by simpa using hw)) i) j
+        simp only [Matrix.map_apply] at this
+        rw [map_sub, this]
+        by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
+      · have e1 : s.proj ((x.1 : Matrix (Fin n) (Fin n) (AL L)) i j) =
+            ((s.loc n x : GL (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) : Matrix (Fin n) (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) i j := rfl
+        rw [map_sub, e1]
+        refine (Valuation.map_sub _ _ _).trans (max_le (h1 i j) ?_)
+        by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
+      · have e1 : s.proj ((((x⁻¹ : GAf L n).1 : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) j i) =
+            ((s.loc n x⁻¹ : GL (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) : Matrix (Fin n) (Fin n) (s.v.adicCompletion (maximalRealSubfield L))) j i := rfl
+        rw [map_sub, map_sub, hconj, e1]
+        refine (Valuation.map_sub _ _ _).trans (max_le (h2 j i) ?_)
+        by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
+    have := add_mem hz (show (1 : Matrix (Fin n) (Fin n) (AL L)) i j ∈ ALint L by
+      by_cases hij : i = j <;> simp [Matrix.one_apply, hij, Subring.one_mem, Subring.zero_mem])
+    simpa using this
+  refine ⟨κ, mem_Umax_of_loc s κ hκ ?_ ?_, hκ, ?_⟩
   · intro a b
     rw [hloc]
     exact hle _ (u.val a b).2
@@ -72,7 +107,8 @@ theorem exists_fixed_of_sum {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
   refine ⟨e, fun j => ?_, ?_⟩
   · intro k
     simp only [MonoidHom.one_apply, Units.val_one, one_smul]
-    simp only [e, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_smul, map_sum]
     congr 1
     have hstep : ∀ q : K ⧸ H.subgroupOf K, σ.ρ (k : GL (Fin n) _) (σ.ρ ((q.out : K) : GL (Fin n) _) (u j)) =
         σ.ρ (((k • q).out : K) : GL (Fin n) _) (u j) := by
@@ -97,14 +133,16 @@ theorem exists_fixed_of_sum {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
       intro q
       rw [← hκ q]
       simp_rw [hT _ (κ q) (hκT q)]
-      rw [← map_sum, ← hf, hfix _ (hκU q) (hκT q)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, ← hf, hfix _ (hκU q) (hκT q)]
     calc f = N⁻¹ • ∑ _q : K ⧸ H.subgroupOf K, f := by
           rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, ← hNdef,
             inv_mul_cancel₀ hN, one_smul]
       _ = N⁻¹ • ∑ q : K ⧸ H.subgroupOf K, ∑ j, T j (σ.ρ ((q.out : K) : GL (Fin n) _) (u j)) := by
           simp_rw [key]
       _ = ∑ j, T j (e j) := by
-          simp only [e, map_smul, map_sum, ← Finset.smul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [e, map_smul, map_sum, ← Finset.smul_sum]
           rw [Finset.sum_comm]
 
 end GlobalTheory.SphAvg

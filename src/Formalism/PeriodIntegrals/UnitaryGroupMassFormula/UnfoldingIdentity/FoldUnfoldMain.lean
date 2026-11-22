@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FoldUnfold
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FoldUnfold
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsFlagFrame
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsFlagFrame
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -17,7 +22,8 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Φ : 
 theorem map_sum_minor {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (u : Finset (Fin N) → R)
     (H : Matrix (Fin N) (Fin N) R) (J : Finset (Fin N)) :
     f (∑ I, u I * minorIJ H I J) = ∑ I, f (u I) * minorIJ (H.map f) I J := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun I _ => by rw [map_mul, CPts.minorIJ_map]
 
 theorem frame_colsB {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (hk : M.blk (τ, a) = some k₀)
@@ -68,7 +74,8 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
   have horth : ∀ i k, M.blk (τ, i) = some k → ∀ I I', IsStepRows N j i I → IsStepRows N j i I' →
       ∑ m, u' I ⟨k, m⟩ * u ⟨k, m⟩ I' = if I = I' then 1 else 0 := fun i k hp I I' h1 h2 => Subtype.ext (by
     have := congrArg am (hF.2.2.1 (τ, i) k hp I I' h1 h2)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_mul] at this
     simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul]
     refine this.trans ?_
@@ -113,7 +120,8 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
       obtain rfl := Option.some.inj h
       refine ⟨fun h0 => ?_, h1⟩
       have h4 := congrArg val (hdu i k hp _ (stepCols N j i) fun I hI => minor_stepCols_eq_zero M.j_le H I hH hI)
-      rw [CPts.minorIJ_one, map_one, map_sum] at h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [CPts.minorIJ_one, map_one, map_sum] at h4
       refine zero_ne_one (Eq.trans (Finset.sum_eq_zero fun m _ => ?_).symm h4)
       rw [map_mul, ← h1 m, h0, zero_mul, mul_zero]
   choose ev hev using hev
@@ -121,6 +129,25 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
   let Tm := (F.T τ).map am
   let Nv : Fin N → L := fun i => (if IsProperStep N j i then ev i else υv i) *
     (∏ k', basePart M.blk z ⟨k', F.c k'⟩ ^ M.b (τ, i) k') * chartMono z c (M.dy (τ, i))
+  have chartMono_eq {E : Type} [Field E] (w : (Σ k, ι k) → E) (p : Ψ × Fin N) :
+      chartMono w c (M.dy p) = (∏ k : NonPluckerBlocks M.blk, (w ⟨k.1, c k.1⟩ ^ M.b p k)⁻¹) *
+        (M.blk p).elim 1 (fun k => w ⟨k, c k⟩) := by
+    rw [chartMono, ← Finset.prod_filter_mul_prod_filter_not Finset.univ (fun k => ∀ p', M.blk p' ≠ some k)]
+    congr 1
+    · rw [Finset.prod_subtype (p := fun k => ∀ p', M.blk p' ≠ some k) _ (by simp)]
+      refine Finset.prod_congr rfl fun k _ => ?_
+      rw [FlagModel.dy, dite_eq_left k.2, _root_.zpow_neg]
+    · cases hp : M.blk p with
+      | none =>
+        refine Finset.prod_eq_one fun k hk => ?_
+        rw [FlagModel.dy, dite_eq_right (Finset.mem_filter.1 hk).2, hp, ite_eq_right (by simp), zpow_zero]
+      | some k₁ =>
+        have hk₁ : ¬ ∀ p', M.blk p' ≠ some k₁ := fun h => h p hp
+        rw [Finset.prod_eq_single k₁ (fun k hk h => by
+          rw [FlagModel.dy, dite_eq_right (Finset.mem_filter.1 hk).2, hp, ite_eq_right (by simpa using h.symm), zpow_zero])
+          (fun h => (h (Finset.mem_filter.2 ⟨Finset.mem_univ k₁, hk₁⟩)).elim), FlagModel.dy,
+          dite_eq_right hk₁, ite_eq_left hp, zpow_one]
+        rfl
   have hN : ∀ i, HasVal y z (nI N j lam Tm bb i * chartMono y c (M.dy (τ, i))) (Nv i) ∧ Nv i ≠ 0 := fun i => by
     have hzF : (∏ k', basePart M.blk z ⟨k', F.c k'⟩ ^ M.b (τ, i) k') ≠ 0 :=
       Finset.prod_ne_zero_iff.2 fun k' _ => zpow_ne_zero _ (chart_ne M hG k')
@@ -133,10 +160,10 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
       rw [div_zpow, div_zpow, div_eq_mul_inv, div_eq_mul_inv] at this
       rw [← M.y_base ⟨k, F.c k⟩]
       exact this
-    simp only [Nv, nI, chartMono_dy, Tm, detFac_map]
+    simp only [Nv, nI, chartMono_eq, Tm, detFac_map]
     by_cases hp : IsProperStep N j i
     · obtain ⟨k, hk⟩ := blk_some M τ hp
-      rw [if_pos hp, if_pos hp, hk]
+      rw [ite_eq_left hp, ite_eq_left hp, hk]
       simp only [Option.elim]
       refine ⟨?_, mul_ne_zero (mul_ne_zero (hev i k hk).1 hzF) (mul_ne_zero (Finset.prod_ne_zero_iff.2 fun k' _ =>
         inv_ne_zero (zpow_ne_zero _ (hc _))) (hc k))⟩
@@ -150,7 +177,7 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
         have := (hυ i hk).mul hw
         rw [mul_inv_cancel₀ (hG.2.2 _ hk).1, h0, zero_mul] at this
         exact zero_ne_one (this.unique (isPt_base M hz) hasVal_one)
-      rw [if_neg hp, if_neg hp, hk]
+      rw [ite_eq_right hp, ite_eq_right hp, hk]
       simp only [Option.elim]
       refine ⟨?_, mul_ne_zero (mul_ne_zero hυ0 hzF) (mul_ne_zero (Finset.prod_ne_zero_iff.2 fun k' _ =>
         inv_ne_zero (zpow_ne_zero _ (hc _))) one_ne_zero)⟩
@@ -195,7 +222,24 @@ theorem core {τ : Ψ} {a b ca cb : Fin N} {k₀ : K} (s : Swp N j a b ca cb) (h
       exact (map_ne_zero am).2 (hF.1 τ).2
     have h2 := s.alg τ lam ((hF.1 τ).1.map am) hTd (hH.map O.subtype) hbb hbt hbd e
     have h3 : cFac M τ a = ∏ i, facI N j a lam (M.g τ) i ^ xiCoef τ a (τ, i) := prod_xi_pair τ a _
-    have h4 := chartMono_eDeg M hyc τ a k₀
+    have h4 : chartMono y c (eDeg M τ a k₀) *
+        (y ⟨k₀, c k₀⟩ ^ 2 * ∏ i, chartMono y c (M.dy (τ, i)) ^ xiCoef τ a (τ, i)) = 1 := by
+      rw [← prod_xi_pair τ a fun p => chartMono y c (M.dy p)]
+      have hprod : ∏ p, chartMono y c (M.dy p) ^ xiCoef τ a p =
+          ∏ k, y ⟨k, c k⟩ ^ ∑ p, xiCoef τ a p * M.dy p k := by
+        simp only [chartMono, ← Finset.prod_zpow]
+        rw [Finset.prod_comm]
+        refine Finset.prod_congr rfl fun k _ => ?_
+        rw [zpow_sum' _ (hyc k)]
+        exact Finset.prod_congr rfl fun p _ => by rw [← _root_.zpow_mul, mul_comm]
+      have hsquare : y ⟨k₀, c k₀⟩ ^ 2 = ∏ k, y ⟨k, c k⟩ ^ (if k = k₀ then (2 : ℤ) else 0) := by
+        rw [Finset.prod_eq_single k₀ (fun k _ h => by rw [ite_eq_right h, zpow_zero]) (by simp),
+          ite_eq_left rfl, zpow_ofNat]
+      rw [hprod, hsquare, chartMono, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+      refine Finset.prod_eq_one fun k _ => ?_
+      rw [← zpow_add₀ (hyc k), ← zpow_add₀ (hyc k), eDeg]
+      rw [show -(∑ p, xiCoef τ a p * M.dy p k) - (if k = k₀ then 2 else 0) +
+        ((if k = k₀ then 2 else 0) + ∑ p, xiCoef τ a p * M.dy p k) = 0 by ring, zpow_zero]
     have h5 : γ * bb ca ca = ε * bb cb cb := by simp only [γ, ε]; ring
     rw [← h3] at h2
     simp only [mul_zpow, Finset.prod_mul_distrib]

@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenB
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenB
+
+@[expose] public section
 
 set_option linter.all false
 
@@ -88,7 +92,7 @@ theorem piSeen_holds : PiSeen := by
         map_mul, Complex.conj_ofReal, ← conj_self]
       ring
     simp_rw [hpt]
-    rw [integral_finset_sum]
+    rw [integral_finsetSum]
     · refine Finset.sum_eq_zero fun a _ => ?_
       rw [integral_const_mul, hbv a N k, mul_zero]
     · intro a _

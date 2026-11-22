@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglTriFactor
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.CoeffSubstUpdZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglTriFactor
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupTriangles.CoeffSubstUpdZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem cc_add (hl : PowerSeries.constantCoeff l = 0) (hex : PowerSeries.constan
     {a b : MvPowerSeries σ ℂ_[p]} (ha : MvPowerSeries.constantCoeff a = 0)
     (hb : MvPowerSeries.constantCoeff b = 0) : MvPowerSeries.constantCoeff (add l ex a b) = 0 := by
   have h : MvPowerSeries.constantCoeff (PI.FglTriFactor.lg l a + PI.FglTriFactor.lg l b) = 0 := by
-    rw [map_add, cc_lg hl ha, cc_lg hl hb, add_zero]
+    rw [map_add (f := _), cc_lg hl ha, cc_lg hl hb, add_zero]
   exact cc_pt hex h
 
 theorem subst_lg {b : σ → MvPowerSeries τ ℂ_[p]} (hb : MvPowerSeries.HasSubst b) {a : MvPowerSeries σ ℂ_[p]}
@@ -51,7 +55,7 @@ theorem subst_add (hl : PowerSeries.constantCoeff l = 0) {b : σ → MvPowerSeri
     (hx : MvPowerSeries.constantCoeff x = 0) (hy : MvPowerSeries.constantCoeff y = 0) :
     MvPowerSeries.subst b (add l ex x y) = add l ex (MvPowerSeries.subst b x) (MvPowerSeries.subst b y) := by
   have h0 : MvPowerSeries.constantCoeff (PI.FglTriFactor.lg l x + PI.FglTriFactor.lg l y) = 0 := by
-    rw [map_add, cc_lg hl hx, cc_lg hl hy, add_zero]
+    rw [map_add (f := _), cc_lg hl hx, cc_lg hl hy, add_zero]
   unfold PI.FglTriFactor.add
   rw [subst_pt hb h0, MvPowerSeries.subst_add hb, subst_lg hb hx, subst_lg hb hy]
 

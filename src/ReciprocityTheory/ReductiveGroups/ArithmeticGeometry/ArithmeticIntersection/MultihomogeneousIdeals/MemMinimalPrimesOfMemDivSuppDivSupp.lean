@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -194,7 +198,11 @@ theorem sum_eq_finsum {V Z : Ideal (MRingOver F ι)} [V.IsPrime] [hZp : Z.IsPrim
   push_cast
   rw [← finsum_mem_coe_finset]
   symm
-  refine finsum_mem_eq_of_bijOn (fun p => p.asIdeal.comap (algebraMap (MRingOver F ι) _))
+  refine finsum_mem_eq_of_bijOn
+    (s := {p : PrimeSpectrum (Localization.AtPrime (Z.map (Ideal.Quotient.mk V))) |
+      p.asIdeal.height = 1 ∧ algebraMap (MRingOver F ι) _ f ∈ p.asIdeal})
+    (t := (↑((divSupp_finite V f).toFinset.filter (· ≤ Z)) : Set (Ideal (MRingOver F ι))))
+    (fun p => p.asIdeal.comap (algebraMap (MRingOver F ι) _))
     ⟨?_, ?_, ?_⟩ ?_
   · intro p hp
     have hm := (h.height_eq_one_iff hVZ hex hfV p.asIdeal).mp hp
@@ -266,7 +274,7 @@ theorem swap_cycle {V : Ideal (MRingOver F ι)} {n : ℕ} {f t : MRingOver F ι}
       (ratDiv V t 1).sum fun W m => m • ratDiv W f 1 := by
   ext Z
   have h := swap_coeff hV hf ht hfV htV hft (Z := Z)
-  simp only [Finsupp.sum, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul] at h ⊢
+  simp only [Finsupp.sum, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul] at h ⊢
   exact h
 
 end ReciprocityTheory.ChartRestriction.G.AI.I1

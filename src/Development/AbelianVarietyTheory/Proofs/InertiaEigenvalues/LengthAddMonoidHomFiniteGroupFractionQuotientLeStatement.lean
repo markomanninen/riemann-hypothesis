@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthAddMonoidHomFiniteGroupFractionQuotientLe
-import Mathlib
-import Formalism.CharacterColumnKernels.StatementRho
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthAddMonoidHomFiniteGroupFractionQuotientLe
+public import Formalism.CharacterColumnKernels.StatementRho
+
+@[expose] public section
+
 open Formalism.NG
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.length_addMonoidHom_finite_group_fractionQuotient_le : ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

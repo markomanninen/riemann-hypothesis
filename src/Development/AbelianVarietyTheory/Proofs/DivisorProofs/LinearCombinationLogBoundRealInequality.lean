@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunDen
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassC0PrimeNotExceptional
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.FunDen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassC0PrimeNotExceptional
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ theorem delta_log_le (l : ℕ) (hl : l.Prime) :
   have hpos : (0 : ℝ) < |(discr E : ℝ)| := abs_pos.2 (by exact_mod_cast hd)
   have hn : (0 : ℝ) < Module.finrank ℚ E := by exact_mod_cast Module.finrank_pos
   rw [Real.log_rpow hpos]
-  have hdvd : l ^ padicValNat l (discr E).natAbs ∣ (discr E).natAbs := pow_padicValNat_dvd
+  have hdvd : l ^ padicValNat l (discr E).natAbs ∣ (discr E).natAbs := (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
   have hle : l ^ padicValNat l (discr E).natAbs ≤ (discr E).natAbs := Nat.le_of_dvd (Int.natAbs_pos.2 hd) hdvd
   have hle' : ((l : ℝ)) ^ padicValNat l (discr E).natAbs ≤ |(discr E : ℝ)| := by
     have e : (((discr E).natAbs : ℕ) : ℝ) = |(discr E : ℝ)| := by rw [Nat.cast_natAbs, Int.cast_abs]
@@ -81,7 +85,7 @@ theorem delta_log_le (l : ℕ) (hl : l.Prime) :
     rw [← Real.log_pow]
     exact Real.log_le_log (pow_pos (by exact_mod_cast hl.pos) _) hle'
   unfold delta_vp
-  rw [show padicValInt l (discr E) = padicValNat l (discr E).natAbs from rfl, div_mul_eq_mul_div, one_div_mul_eq_div]
+  rw [show padicValInt l (discr E) = padicValNat l (discr E).natAbs from by rw [padicValInt, Nat.padicValNat_def], div_mul_eq_mul_div, one_div_mul_eq_div]
   exact div_le_div_of_nonneg_right hlog hn.le
 
 end Generic
@@ -261,8 +265,8 @@ namespace GlobalTheory.DenSumPf
 
 open Formalism.BasicNotions Formalism.IndefR.Links GlobalTheory.ChiGrid GlobalTheory.FunObj.SqNum GlobalTheory.SqTop
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem denSum (hZ : GlobalTheory.IndefiniteRowSideFullHecke.ZetaValueIdeals.ZetaDenominators) (_hF : FieldDat) : DenSum := by
   refine ⟨0, fun ε CF _ => ⟨8000, 1, fun C hC D large₂ _ _ hR T Lc μ₀ _ G => ?_⟩⟩
   intro i j s hs1 hs2 n hn S hS

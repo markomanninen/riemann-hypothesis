@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefDTensActPow
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefDTensActPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem coefE_tensGrp_mul (dual : Bool) (hσ : IsURepOn (UJset ε) σ) {g h : Ma
     (hg : g ∈ UJset ε) (hh : h ∈ UJset ε) (w : Fin n → H) :
     coefTG dual σ (g * h) w = coefTG dual σ g (coefTG dual σ h w) := by
   ext c
-  simp only [coefTG, coefE_Am_mul, hσ.1.2 g hg h hh, ContinuousLinearMap.comp_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coefTG, coefE_Am_mul, hσ.1.2 g hg h hh, ContinuousLinearMap.comp_apply, map_sum, map_smul,
     Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
 
@@ -70,7 +75,8 @@ theorem coefE_ι_act (dual : Bool) {V' : Submodule ℂ D} {ι : D →ₗ[ℂ] (F
     (hιE : ∀ a b, ∀ x ∈ genSub E V', ι (E a b x) = tensF dual E a b (ι x))
     (X : Matrix (Fin n) (Fin n) ℂ) {v : D} (hv : v ∈ genSub E V') :
     ι (actM E X v) = actM (tensF dual E) X (ι v) := by
-  simp only [actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
     hιE _ _ v hv]
 
 private theorem actM_pow_apply_mem_genSub {M : Type*} [AddCommGroup M] [Module ℂ M]

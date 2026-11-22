@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
-import Formalism.LocalRingCardinality.DataErr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieIwLevTieOf
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.FullTiedCBase
+public import Formalism.LocalRingCardinality.DataErr
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G NumberField IsDedekindDomain Formalism.UG Formalism.L2.Forms
 attribute [local instance] Formalism.BasicNotions.factResChar Formalism.BasicNotions.Host.cmStar
 
@@ -139,8 +144,8 @@ theorem int_map_eq_zero_iff {F E L : Type} [Field F] [Field E] [Field L] (g : F 
   rw [map_eq_zero_iff f f.injective, map_eq_zero_iff g g.injective]
   exact RingOfIntegers.coe_eq_zero_iff
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem place_of_tie : ∀ (D : D7) (sc : Scale) (Ce : ℝ)
     (Lc : ∀ u, ColLevel D.R D.host.F D.host.E D.sp D.host.g (D.mem u).C (D.mem u).A (D.clsLat u))
     (I : ∀ u (w : D.what₂.places.Pl), GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w) →

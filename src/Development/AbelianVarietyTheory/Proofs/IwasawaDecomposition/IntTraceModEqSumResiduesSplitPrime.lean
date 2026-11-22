@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,8 @@ theorem intTrace_modEq_sum : ∀ {K : Type} [Field K] [NumberField K] (p : ℕ),
   have key : Ideal.Quotient.mk P (Algebra.intTrace ℤ (𝓞 K) x) = Ideal.Quotient.mk P (∑ i, b i) := by
     rw [← Algebra.trace_quotient_eq_of_isDedekindDomain, ← Algebra.trace_eq_of_algEquiv φ, hφ, trace_pi]
     simp_rw [hx1, Algebra.trace_algebraMap, hfr, one_smul]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   rw [Ideal.Quotient.eq, hPdef, Ideal.mem_span_singleton] at key
   rw [← Int.cast_sum, ZMod.intCast_eq_intCast_iff_dvd_sub]
   obtain ⟨m, hm⟩ := key

@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpCStatementPfA
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -22,7 +26,6 @@ instance (X : Data E r) : IsTopologicalGroup (Torus X) :=
   inferInstanceAs (IsTopologicalGroup (X.Ψ → Fin r → Circle))
 instance (X : Data E r) : CompactSpace (Torus X) :=
   inferInstanceAs (CompactSpace (X.Ψ → Fin r → Circle))
-instance (X : Data E r) : T2Space (Torus X) := inferInstanceAs (T2Space (X.Ψ → Fin r → Circle))
 instance (X : Data E r) : MeasurableSpace (Torus X) := borel _
 instance (X : Data E r) : BorelSpace (Torus X) := ⟨rfl⟩
 
@@ -178,7 +181,7 @@ private theorem continuous_cpt_torus_haar_measure (x0 : _root_.ReciprocityTheory
     have h := congrFun (congrFun (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExF.mat_cpt X x0 z τ) a) c
     exact h
   simp_rw [this]
-  refine continuous_finset_sum _ fun k _ => continuous_const.mul ?_
+  refine continuous_finsetSum _ fun k _ => continuous_const.mul ?_
   exact (_root_.ReciprocityTheory.ChartRestriction.G.AR.Up.ExF.cd_nM X τ k c).continuous
 
 open NumberField MeasureTheory Topology in

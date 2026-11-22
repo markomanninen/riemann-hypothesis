@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrdegFunctionFieldEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FgFunctionField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldOneVariableTranscendentalFiniteAndE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrdegFunctionFieldEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FgFunctionField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldOneVariableTranscendentalFiniteAndE
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -25,7 +29,7 @@ theorem isFF_of_trdeg_eq_one {k F : Type} [Field k] [Field F] [Algebra k F] [Alg
   exact ⟨x, hx, finiteDimensional_adjoin_of_trdeg_le_one h.le x hx⟩
 
 theorem isFF_of_stalk (k K : Type) [Field k] [Field K] [Algebra k K] (C : Scheme.{0}) [IsIntegral C]
-    [Algebra k Γ(C, ⊤)] (hp : IsProjOver (strHom k C)) (hd : topologicalKrullDim C = 1)
+    [Algebra k Γ(C, ⊤)] (hp : IsProjOver (strHom k (X := C))) (hd : topologicalKrullDim C = 1)
     (y : C) (hy : y = genericPoint C) (ψ : C.presheaf.stalk y ⟶ CommRingCat.of K)
     (hψ : Function.Surjective ψ.hom)
     (hc : Spec.map ψ ≫ C.fromSpecStalk y ≫ strHom k C = spMap (algebraMap k K)) : IsFF k K := by

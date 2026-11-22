@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvKirB
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvKirB
+
+@[expose] public section
 
 noncomputable section
 set_option linter.unusedSimpArgs false

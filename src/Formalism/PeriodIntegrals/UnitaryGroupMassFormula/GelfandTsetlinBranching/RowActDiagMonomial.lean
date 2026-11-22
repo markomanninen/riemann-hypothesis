@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFEqSumOfSubsetB
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.FockFEqSumOfSubsetB
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem PsiB_wnB (n N : ℕ) (v : Fin N × Fin N) : PsiB n (wnB n N v) = psiB n 
 
 theorem weight_psiB (n N : ℕ) (e : Fin N × Fin N →₀ ℕ) :
     Finsupp.weight (psiB n N) e = PsiB n (Finsupp.weight (wnB n N) e) := by
-  rw [Finsupp.weight_apply, Finsupp.weight_apply, Finsupp.sum, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.weight_apply, Finsupp.weight_apply, Finsupp.sum, Finsupp.sum, map_sum]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [map_nsmul, PsiB_wnB]
 
@@ -86,7 +91,8 @@ theorem rowAct_diag_homog {n N : ℕ} (t : Fin n → ℂ) (g : MvPolynomial (Fin
     Formalism.GradedWeylDivisibility.rowAct ℂ (n := N) (Matrix.diagonal (dB n N t)) g = chiB t m • g := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun e he => ?_
   rw [rowAct_diag_monomial, hg (mem_support_iff.mp he)]
 
@@ -105,7 +111,8 @@ theorem comp_sum_B {σ M : Type*} [AddCommMonoid M] [DecidableEq M] (w : σ → 
 theorem comp_zero_B {σ M : Type*} [AddCommMonoid M] [DecidableEq M] (w : σ → M) (f : MvPolynomial σ ℂ) (m : M)
     (hm : ∀ e ∈ f.support, Finsupp.weight w e ≠ m) : weightedHomogeneousComponent w m f = 0 := by
   ext e
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  rw [coeff_weightedHomogeneousComponent]
+  change (if Finsupp.weight w e = m then f.coeff e else 0) = 0
   split_ifs with h
   · by_contra hne
     exact hm e (mem_support_iff.mpr hne) h
@@ -133,7 +140,8 @@ theorem sep_mem_B {ι T V : Type*} [DecidableEq ι] [AddCommGroup V] [Module ℂ
     let y' : ι → V := fun i => (p i t - p i1 t) • y i
     have hy'1 : y' i1 = 0 := by simp [y']
     have hsum : ∑ i ∈ F.erase i1, y' i = C t (∑ i ∈ F, y i) - p i1 t • ∑ i ∈ F, y i := by
-      rw [Finset.sum_erase _ hy'1, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_erase _ hy'1, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun i hi => ?_
       simp only [y']
       rw [hy i hi t, sub_smul]
@@ -169,7 +177,7 @@ theorem embGL_diag_B {n N : ℕ} (h : n + 1 = N) (t : Fin n → ℂˣ) :
   have hb2 := b.2
   rw [embGL_apply_B, Matrix.diagonal_apply]
   by_cases ha : a.1 < n <;> by_cases hb : b.1 < n
-  · rw [dif_pos ha, dif_pos hb]
+  · rw [dite_eq_left ha, dite_eq_left hb]
     show (Matrix.diagonal fun a => (t a : ℂ)) ⟨a.1, ha⟩ ⟨b.1, hb⟩ = _
     rw [Matrix.diagonal_apply]
     by_cases hab : a = b
@@ -178,12 +186,12 @@ theorem embGL_diag_B {n N : ℕ} (h : n + 1 = N) (t : Fin n → ℂˣ) :
     · have hne : (⟨a.1, ha⟩ : Fin n) ≠ ⟨b.1, hb⟩ := fun e => hab (Fin.ext (Fin.mk.inj_iff.mp e))
       simp [hab, hne]
   · have hab : a ≠ b := fun e => hb (e ▸ ha)
-    rw [dif_pos ha, dif_neg hb, if_neg hab]
+    rw [dite_eq_left ha, dite_eq_right hb, if_neg hab]
   · have hab : a ≠ b := fun e => ha (e ▸ hb)
-    rw [dif_neg ha, if_pos hb, if_neg hab]
+    rw [dite_eq_right ha, if_pos hb, if_neg hab]
   · have hab : a = b := Fin.ext (by omega)
     subst hab
-    rw [dif_neg ha, if_neg hb, if_pos rfl]
+    rw [dite_eq_right ha, if_neg hb, if_pos rfl]
     simp [dB, ha]
 
 theorem torus_mem_B {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (W : Submodule ℂ (MvPolynomial (Fin N × Fin N) ℂ))

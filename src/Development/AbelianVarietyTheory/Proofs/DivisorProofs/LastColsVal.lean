@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FullRk
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,16 +22,6 @@ def lastCols (n d : ℕ) (h : n ≤ d) : Fin n ↪ Fin d :=
   ⟨fun i => ⟨d - n + i, by omega⟩, fun a b hab => Fin.ext (by simpa using congrArg Fin.val hab)⟩
 
 theorem lastCols_val (n d : ℕ) (h : n ≤ d) (i : Fin n) : (lastCols n d h i : ℕ) = d - n + i := rfl
-
-example (n d : ℕ) (h : n ≤ d) : GlobalTheory.FullRankCoinv.Y0 k n d ∈ unitMinorSet k n d := by
-  refine ⟨fun i j => ?_, ⟨lastCols n d h, ?_⟩⟩
-  · simp only [GlobalTheory.FullRankCoinv.Y0, Matrix.of_apply]; split_ifs <;> simp
-  · have : (GlobalTheory.FullRankCoinv.Y0 k n d).submatrix id (lastCols n d h) = 1 := by
-      ext i j
-      simp only [Matrix.submatrix_apply, id, GlobalTheory.FullRankCoinv.Y0, Matrix.of_apply, Matrix.one_apply]
-      split_ifs with h1 h2 h2
-      all_goals first | rfl | (exfalso; simp only [lastCols_val, Fin.ext_iff] at *; omega)
-    rw [this]; simp
 
 section
 open MeasureTheory GlobalTheory.SplitFlip

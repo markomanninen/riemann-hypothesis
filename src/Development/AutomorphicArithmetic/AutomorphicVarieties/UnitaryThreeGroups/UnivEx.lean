@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
@@ -10,11 +14,11 @@ section Emb
 
 variable {m : ℕ} {A B : Type} [CommRing A] [CommRing B]
 
-private theorem emb_def (x : GG m A) : emb x =
+private theorem emb_def (x : GG (m := m) (R := A)) : emb x =
     if x.right = 1 then fromBlocks x.mat 0 0 ((theta x.left : GL (Fin m) A) : Matrix (Fin m) (Fin m) A)
     else fromBlocks 0 x.mat ((theta x.left : GL (Fin m) A) : Matrix (Fin m) (Fin m) A) 0 := rfl
 
-private theorem emb_map (f : A →+* B) (x : GG m A) : emb (GG.map f x) = (emb x).map f := by
+private theorem emb_map (f : A →+* B) (x : GG (m := m) (R := A)) : emb (GG.map f x) = (emb x).map f := by
   have e : ((theta (GG.map f x).left : GL (Fin m) B) : Matrix (Fin m) (Fin m) B) =
       ((theta x.left : GL (Fin m) A) : Matrix (Fin m) (Fin m) A).map f := by
     show ((theta (GeneralLinearGroup.map f x.left) : GL (Fin m) B) : Matrix (Fin m) (Fin m) B) = _
@@ -24,12 +28,12 @@ private theorem emb_map (f : A →+* B) (x : GG m A) : emb (GG.map f x) = (emb x
 
 private def col (s : ℤˣ) (b : Fin m) : Fin m ⊕ Fin m := if s = 1 then .inl b else .inr b
 
-private theorem emb_col (x : GG m A) (a b : Fin m) : emb x (.inl a) (col x.right b) = x.mat a b := by
+private theorem emb_col (x : GG (m := m) (R := A)) (a b : Fin m) : emb x (.inl a) (col x.right b) = x.mat a b := by
   rw [emb_def]
   unfold col
   split_ifs <;> rfl
 
-private theorem emb_inj {x y : GG m A} (h : x.right = y.right) (e : emb x = emb y) : x = y := by
+private theorem emb_inj {x y : GG (m := m) (R := A)} (h : x.right = y.right) (e : emb x = emb y) : x = y := by
   have hm : x.mat = y.mat := by
     ext a b
     rw [← emb_col, ← emb_col, e, h]
@@ -37,8 +41,8 @@ private theorem emb_inj {x y : GG m A} (h : x.right = y.right) (e : emb x = emb 
 
 private def eqs (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) A) :
     Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) A :=
-  if s = 1 then fromBlocks (X.toBlocks₁₁ * (Jmat A m * X.toBlocks₂₂ᵀ * Jmat A m) - 1) X.toBlocks₁₂ X.toBlocks₂₁ 0
-  else fromBlocks (X.toBlocks₁₂ * (Jmat A m * X.toBlocks₂₁ᵀ * Jmat A m) - 1) X.toBlocks₁₁ X.toBlocks₂₂ 0
+  if s = 1 then fromBlocks (X.toBlocks₁₁ * (Jmat (R := A) m * X.toBlocks₂₂ᵀ * Jmat (R := A) m) - 1) X.toBlocks₁₂ X.toBlocks₂₁ 0
+  else fromBlocks (X.toBlocks₁₂ * (Jmat (R := A) m * X.toBlocks₂₁ᵀ * Jmat (R := A) m) - 1) X.toBlocks₁₁ X.toBlocks₂₂ 0
 
 private theorem eqs_map (f : A →+* B) (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) A) :
     eqs s (X.map f) = (eqs s X).map f := by
@@ -51,24 +55,24 @@ private theorem eqs_map (f : A →+* B) (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m
     Matrix.map_sub]
 
 private theorem mul_theta (a : GL (Fin m) A) :
-    (a : Matrix (Fin m) (Fin m) A) * (Jmat A m * ((theta a : GL (Fin m) A) : Matrix (Fin m) (Fin m) A)ᵀ * Jmat A m) = 1 := by
+    (a : Matrix (Fin m) (Fin m) A) * (Jmat (R := A) m * ((theta a : GL (Fin m) A) : Matrix (Fin m) (Fin m) A)ᵀ * Jmat (R := A) m) = 1 := by
   have hv := theta_inv_val (theta a)
   rw [theta_theta] at hv
   rw [← hv]
   exact a.mul_inv
 
-private theorem ex_theta (P Q : Matrix (Fin m) (Fin m) A) (h : P * (Jmat A m * Qᵀ * Jmat A m) = 1) :
+private theorem ex_theta (P Q : Matrix (Fin m) (Fin m) A) (h : P * (Jmat (R := A) m * Qᵀ * Jmat (R := A) m) = 1) :
     ∃ a : GL (Fin m) A, (a : Matrix (Fin m) (Fin m) A) = P ∧ ((theta a : GL (Fin m) A) : Matrix (Fin m) (Fin m) A) = Q := by
-  have h' : Jmat A m * Qᵀ * Jmat A m * P = 1 := mul_eq_one_comm.mp h
-  let a : GL (Fin m) A := ⟨P, Jmat A m * Qᵀ * Jmat A m, h, h'⟩
+  have h' : Jmat (R := A) m * Qᵀ * Jmat (R := A) m * P = 1 := mul_eq_one_comm.mp h
+  let a : GL (Fin m) A := ⟨P, Jmat (R := A) m * Qᵀ * Jmat (R := A) m, h, h'⟩
   refine ⟨a, rfl, ?_⟩
-  show Jmat A m * (Jmat A m * Qᵀ * Jmat A m)ᵀ * Jmat A m = Q
+  show Jmat (R := A) m * (Jmat (R := A) m * Qᵀ * Jmat (R := A) m)ᵀ * Jmat (R := A) m = Q
   rw [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose, Jmat_transpose,
-    ← Matrix.mul_assoc (Jmat A m) (Jmat A m), Jmat_mul_Jmat, Matrix.one_mul, Matrix.mul_assoc, Jmat_mul_Jmat,
+    ← Matrix.mul_assoc (Jmat (R := A) m) (Jmat (R := A) m), Jmat_mul_Jmat, Matrix.one_mul, Matrix.mul_assoc, Jmat_mul_Jmat,
     Matrix.mul_one]
 
 private theorem eqs_iff (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) A) :
-    eqs s X = 0 ↔ ∃ x : GG m A, x.right = s ∧ emb x = X := by
+    eqs s X = 0 ↔ ∃ x : GG (m := m) (R := A), x.right = s ∧ emb x = X := by
   constructor
   · intro h
     unfold eqs at h
@@ -89,7 +93,7 @@ private theorem eqs_iff (s : ℤˣ) (X : Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin
     unfold eqs
     split_ifs <;> simp [GG.mat, mul_theta]
 
-private theorem lc_gg {Γ : Type} [TopologicalSpace Γ] (x : Γ → GG m A) (h1 : IsLocallyConstant fun g => (x g).right)
+private theorem lc_gg {Γ : Type} [TopologicalSpace Γ] (x : Γ → GG (m := m) (R := A)) (h1 : IsLocallyConstant fun g => (x g).right)
     (h2 : ∀ a b, IsLocallyConstant fun g => (x g).mat a b) : IsLocallyConstant x := by
   refine (IsLocallyConstant.iff_eventually_eq _).mpr fun g => ?_
   have hr := h1.eventually_eq g
@@ -156,7 +160,7 @@ private theorem kills_closure (hη : IsLocallyConstant η) {R : Type} [CommRing 
     exact hy n
   refine SemidirectProduct.ext (Units.ext (Matrix.ext fun a b => ?_)) ?_
   · refine sub_eq_zero.mp (hsep _ fun n => ?_)
-    have e := congrArg (fun z : GG 3 (R ⧸ maximalIdeal R ^ n) => z.mat a b)
+    have e := congrArg (fun z : GG (m := 3) (R := R ⧸ maximalIdeal R ^ n) => z.mat a b)
       ((hn n).trans (map_one (GG.map (Ideal.Quotient.mk (maximalIdeal R ^ n)))).symm)
     simp only [GG.map_mat, Matrix.map_apply] at e
     exact Ideal.Quotient.eq.mp e
@@ -184,7 +188,7 @@ private theorem transfer (hη : IsLocallyConstant η) (N : Set Γ) (M : Subgroup
     rw [hid] at h0
     exact h0
   choose x hxr hxe using fun g => (eqs_iff (η g) _).mp (hP g)
-  let hom : Γ →* GG 3 R :=
+  let hom : Γ →* GG (m := 3) (R := R) :=
     { toFun := x
       map_one' := emb_inj ((hxr 1).trans (map_one η)) (by rw [hxe, QuotientGroup.mk_one, map_one, map_one])
       map_mul' := fun g h => emb_inj (by rw [hxr, SemidirectProduct.mul_right, hxr, hxr, map_mul])
@@ -225,12 +229,12 @@ private theorem transfer (hη : IsLocallyConstant η) (N : Set Γ) (M : Subgroup
     show GG.map (f : R →+* R') (hom g) = 1
     rw [hkill g hg, map_one]
   · have hker : M ≤ r'.hom.ker := hM R' r' hr'
-    let φ : Γ ⧸ M →* GG 3 R' := QuotientGroup.lift M r'.hom hker
+    let φ : Γ ⧸ M →* GG (m := 3) (R := R') := QuotientGroup.lift M r'.hom hker
     have Lcont : ∀ i j, AdicCont (maximalIdeal R') fun q => (emb.comp φ) q i j := by
       intro i j n
       apply lc_quot
       have hfun : (fun g : Γ => Ideal.Quotient.mk (maximalIdeal R' ^ n) ((emb.comp φ) (QuotientGroup.mk g) i j)) =
-          (fun y : GG 3 (R' ⧸ maximalIdeal R' ^ n) => emb y i j) ∘
+          (fun y : GG (m := 3) (R := R' ⧸ maximalIdeal R' ^ n) => emb y i j) ∘
             (fun g => GG.map (Ideal.Quotient.mk (maximalIdeal R' ^ n)) (r'.hom g)) := by
         funext g
         show _ = emb (GG.map (Ideal.Quotient.mk (maximalIdeal R' ^ n)) (r'.hom g)) i j
@@ -357,7 +361,7 @@ theorem UpperTheory.V.U3.exists_univ :
   have hrbar_lc : IsLocallyConstant (rbar O η Ψ) := by
     refine (IsLocallyConstant.iff_eventually_eq _).mpr fun g0 => ?_
     filter_upwards [hχ.eventually_eq g0, hη.eventually_eq g0] with g h1 h2
-    show (⟨tor (ResidueField O) (barChar O Ψ g), η g⟩ : GG 3 (ResidueField O)) =
+    show (⟨tor (ResidueField O) (barChar O Ψ g), η g⟩ : GG (m := 3) (R := ResidueField O)) =
       ⟨tor (ResidueField O) (barChar O Ψ g0), η g0⟩
     rw [h1, h2]
   have hηN : ∀ g ∈ N, η g = 1 := fun g hg => by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.QuadAtOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.HenselRoot
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTr
-import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.QuadAtOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.HenselRoot
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.VolUTr
+public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,13 +202,13 @@ theorem isField_quot_iff_not_sq (S : Subring A) {Δ : A} {D ϖ : K} (hsq : Δ * 
           algebraMap K A (-Y / (X * X - Y * Y * D)) * Δ) = 1
       have e1 : algebraMap K A X * algebraMap K A (X / (X * X - Y * Y * D)) +
           algebraMap K A Y * algebraMap K A (-Y / (X * X - Y * Y * D)) * algebraMap K A D = 1 := by
-        rw [← map_mul, ← map_mul, ← map_mul, ← map_add, ← map_one (algebraMap K A)]
+        rw [← map_mul, ← map_mul, ← map_mul, ← map_add (f := _), ← map_one (algebraMap K A)]
         congr 1
         rw [show X * (X / (X * X - Y * Y * D)) + Y * (-Y / (X * X - Y * Y * D)) * D =
           (X * X - Y * Y * D) / (X * X - Y * Y * D) by ring, div_self hn0]
       have e2 : algebraMap K A X * algebraMap K A (-Y / (X * X - Y * Y * D)) +
           algebraMap K A Y * algebraMap K A (X / (X * X - Y * Y * D)) = 0 := by
-        rw [← map_mul, ← map_mul, ← map_add, ← map_zero (algebraMap K A)]
+        rw [← map_mul, ← map_mul, ← map_add (f := _), ← map_zero (algebraMap K A)]
         congr 1
         ring
       linear_combination e1 + Δ * e2 +
@@ -379,7 +383,7 @@ theorem isField_tensor_iff_isField_quot : PositivityTheory.SiegelWeilFormula.Gun
       algebraMap (Fv F v) (Fv F v ⊗[F] E) Y * Δ = 0 → X = 0 ∧ Y = 0 := by
     intro X Y h
     have h' := congrArg (sigR (Fv F v) σ) h
-    rw [map_add, map_mul, sigR_scalar, sigR_scalar, hsΔ, map_zero] at h'
+    rw [map_add (f := _), map_mul, sigR_scalar, sigR_scalar, hsΔ, map_zero] at h'
     have hX : algebraMap (Fv F v) (Fv F v ⊗[F] E) (2 * X) = 0 := by
       rw [map_mul, map_ofNat]
       linear_combination h + h'
@@ -427,7 +431,7 @@ theorem isField_tensor_iff_isField_quot : PositivityTheory.SiegelWeilFormula.Gun
     constructor
     · intro ha
       have hb := hσmem _ ha
-      rw [map_add, map_mul, sigR_scalar, sigR_scalar, hsΔ] at hb
+      rw [map_add (f := _), map_mul, sigR_scalar, sigR_scalar, hsΔ] at hb
       have hX : algebraMap (Fv F v) (Fv F v ⊗[F] E) (2 * X) ∈ S := by
         have := add_mem ha hb
         convert this using 1

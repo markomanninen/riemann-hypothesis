@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalZetaGauss
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalZetaGauss
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 section Identity
 
-omit [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem eq_of_eqOn_reStrip {F G : ℂ → ℂ} (hF : Differentiable ℂ F) (hG : Differentiable ℂ G)
     {a b : ℝ} (hab : a < b) (h : ∀ s : ℂ, a < s.re → s.re < b → F s = G s) : F = G := by
   have hFa : AnalyticOnNhd ℂ F Set.univ := fun z _ => hF.analyticAt z
@@ -22,7 +26,7 @@ theorem eq_of_eqOn_reStrip {F G : ℂ → ℂ} (hF : Differentiable ℂ F) (hG :
     (isOpen_lt continuous_const Complex.continuous_re).inter
       (isOpen_lt Complex.continuous_re continuous_const)
   have hmem : (((a + b) / 2 : ℝ) : ℂ) ∈ {s : ℂ | a < s.re ∧ s.re < b} := by
-    simp only [Set.mem_setOf_eq, Complex.ofReal_re]
+    simp only [Set.mem_ofPred_eq, Complex.ofReal_re]
     constructor <;> linarith
   refine hFa.eq_of_eventuallyEq hGa (z₀ := (((a + b) / 2 : ℝ) : ℂ)) ?_
   filter_upwards [hopen.mem_nhds hmem] with s hs using h s hs.1 hs.2
@@ -49,7 +53,7 @@ theorem quasiCharExt_mul (χ : Kˣ →* ℂˣ) (x y : K) :
   have : Units.mk0 (x * y) (mul_ne_zero hx hy) = Units.mk0 x hx * Units.mk0 y hy := by
     ext
     simp
-  simp only [quasiCharExt, mul_ne_zero hx hy, hx, hy, dif_neg, not_false_eq_true, this, map_mul,
+  simp only [quasiCharExt, mul_ne_zero hx hy, hx, hy, dite_eq_right, not_false_eq_true, this, map_mul,
     Units.val_mul]
 
 theorem mem_shellSet_iff {x : K} (hx : x ≠ 0) {j : ℤ} :

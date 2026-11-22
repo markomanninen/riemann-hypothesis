@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHomOfIff
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformizationEndomorphismCalculus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusHomOfIff
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TwistBaseChangeAndValuationStatements
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformizationEndomorphismCalculus
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -34,7 +38,7 @@ def fsEval {U : Type} [CommGroup U] (h : (T₀.left ⟶ D₁.P.A.left ⨿ D₂.P
 theorem fsEval_add {U : Type} [CommGroup U] (h : (T₀.left ⟶ D₁.P.A.left ⨿ D₂.P.A.left) → U)
     (s s' : FreeAbelianGroup (T₀ ⟶ D₁.P.A) × FreeAbelianGroup (T₀ ⟶ D₂.P.A)) :
     fsEval h (s + s') = fsEval h s * fsEval h s' := by
-  simp only [fsEval, Prod.fst_add, Prod.snd_add, map_add]
+  simp only [fsEval, Prod.fst_add, Prod.snd_add, map_add (f := _)]
   rw [add_add_add_comm]
   rfl
 
@@ -78,7 +82,7 @@ theorem JRep.cub₁ (x x' y : T₀ ⟶ D₁.P.A) :
     fun T ρ z J hJ => ((isPart_inl D₁.P.L D₂.P.L).val_gen _ _ z hJ).trans
       (val_cub D₁.cub ρ ((isPart_inl D₁.P.L D₂.P.L).good hJ) _ _ _)⟩
   refine (prod_cub x x' y (fun q => h (q ≫ coprod.inl))).trans ?_
-  simp only [fsEval, map_add, map_sub, map_zero, lift_apply_of, add_zero, toMul_add, toMul_sub, toMul_ofMul,
+  simp only [fsEval, map_add (f := _), map_sub, map_zero, lift_apply_of, add_zero, toMul_add, toMul_sub, toMul_ofMul,
     div_eq_mul_inv]
 
 theorem JRep.cub₂ (x x' y : T₀ ⟶ D₂.P.A) :
@@ -90,7 +94,7 @@ theorem JRep.cub₂ (x x' y : T₀ ⟶ D₂.P.A) :
     fun T ρ z J hJ => ((isPart_inr D₁.P.L D₂.P.L).val_gen _ _ z hJ).trans
       (val_cub D₂.cub ρ ((isPart_inr D₁.P.L D₂.P.L).good hJ) _ _ _)⟩
   refine (prod_cub x x' y (fun q => h (q ≫ coprod.inr))).trans ?_
-  simp only [fsEval, map_add, map_sub, map_zero, lift_apply_of, zero_add, toMul_add, toMul_sub, toMul_ofMul,
+  simp only [fsEval, map_add (f := _), map_sub, map_zero, lift_apply_of, zero_add, toMul_add, toMul_sub, toMul_ofMul,
     div_eq_mul_inv]
 
 theorem JRep.cmp {b : D₁.P.A ⟶ D₂.P.A} {p : D₁.X} {χ : D₂.X} {u : LB.Gen (CmpLB D₁ D₂ b p χ)} (hu : u.IsGen)
@@ -112,7 +116,7 @@ theorem JRep.cmp {b : D₁.P.A ⟶ D₂.P.A} {p : D₁.X} {χ : D₂.X} {u : LB.
     ((Finset.prod_congr rfl fun k _ => congrArg (fun q => h q ^ Oinvε k) (a₂ k)).trans
       (OLinEnd.prod_Oφ_inv D₂ (x ≫ b) χ (fun q => h (q ≫ coprod.inr))))).trans ?_
   apply Additive.ofMul.injective
-  simp only [fsEval, map_add, map_sub, map_neg, lift_apply_of, ofMul_mul, ofMul_inv, ofMul_toMul]
+  simp only [fsEval, map_add (f := _), map_sub, map_neg, lift_apply_of, ofMul_mul, ofMul_inv, ofMul_toMul]
   abel
 
 end Rep
@@ -261,7 +265,7 @@ theorem jexists_act (hG : GlobalFnsSt) [IsMonHom b] (u : ∀ χ, LB.Gen (CmpLB D
       have e₁ := congrArg Additive.ofMul
         (jcmp_add_char hG (hu χ) (hu χ') (hu (χ + χ')) (map_add _ _ _) hJ g.b)
       have e₂ := charVal_add g ((isPart_inl D₁.P.L D₂.P.L).good hJ) (hh χ) (hh χ')
-      rw [← map_add] at e₂
+      rw [← map_add (f := _)] at e₂
       have e₃ := congrArg Additive.ofMul e₂
       rw [VV _ y J hJ, VV _ y J hJ, VV _ y J hJ]
       apply Additive.ofMul.injective

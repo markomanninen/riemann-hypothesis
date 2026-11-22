@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormPowSubPowLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.RhoFrob
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormPowSubPowLe
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ
 
 private theorem norm_int_eq_one (l : ℕ) [Fact l.Prime] (n : ℤ) (h : ¬ (l : ℤ) ∣ n) : ‖(n : Qbar l)‖ = 1 := by

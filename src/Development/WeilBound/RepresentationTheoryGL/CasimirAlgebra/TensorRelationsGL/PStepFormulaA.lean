@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ namespace PStepFormula
 
 theorem qdet_map {A B : Type*} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (f : A →ₐ[ℂ] B) {n : ℕ}
     (E : Fin n → Fin n → A) (u : ℂ) : f (qdet E u) = qdet (fun a b => f (E a b)) u := by
-  simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, Tm,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, Tm,
     map_add, apply_ite f, AlgHom.commutes, map_zero]
 
 theorem glRel_map {A B : Type*} [Ring A] [Ring B] [Algebra ℂ A] [Algebra ℂ B] (f : A →ₐ[ℂ] B) {n : ℕ}
@@ -36,7 +41,7 @@ theorem lift_PiJ {m : ℕ} {P : Type} (E : Fin n → Fin n → Module.End ℂ M)
     (lift (PiJ m E u) : Module.End ℂ (TV n (TV n M (Fin m)) P)) =
       (List.ofFn fun i => algebraMap ℂ _ u + lift (xJ E i)).prod := by
   rw [← liftA_apply]
-  simp only [PiJ, map_list_prod, List.map_ofFn, Function.comp_def, map_add, AlgHom.commutes, liftA_apply]
+  simp only [PiJ, map_list_prod, List.map_ofFn, Function.comp_def, map_add (f := _), AlgHom.commutes, liftA_apply]
 
 theorem PiJ_one (E : Fin n → Fin n → Module.End ℂ M) (u : ℂ) :
     (PiJ 1 E u : Module.End ℂ (TV n M (Fin 1))) = algebraMap ℂ _ u + Om E 0 := by

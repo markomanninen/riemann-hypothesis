@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.IsImagQuad
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.FieldDefs
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.IsImagQuad
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.FieldDefs
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -14,9 +18,10 @@ noncomputable def fieldChars (N : ℕ) [NeZero N] {K : Type*} [Field K] [NumberF
     Subgroup (DirichletCharacter ℂ N) :=
   annihilator ℂ (fieldUnits N E : Set (ZMod N)ˣ)
 
-open Classical in
 
-noncomputable def rootWeight (l m : ℕ) : ℚ :=
-  if m ≠ 1 ∧ ∃ s, m = l ^ s then 1 / (Nat.totient m : ℚ) else 0
+open Classical in
+noncomputable def rootWeight (l m : ℕ) : ℚ := by
+  classical
+  exact if m ≠ 1 ∧ ∃ s, m = l ^ s then 1 / (Nat.totient m : ℚ) else 0
 
 end KStar.Ram

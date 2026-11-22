@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayHomCompAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AwayHomCompAlgebraMap
+
+@[expose] public section
+
 open GlobalTheory.AffineCurveNbhd
 
 noncomputable section
@@ -106,7 +111,7 @@ theorem exists_dvd_mul_pow : ∀ (B A' : Type) [CommRing B] [IsDedekindDomain B]
         rw [this]; exact M.sub_mem hx (M.mul_mem_left _ hfM)
       have hx' : x = algebraMap B A' b + c * algebraMap B A' f := by rw [hc]; ring
       show algebraMap A' L x ∈ Ideal.span {φ π}
-      rw [hx', map_add, map_mul]
+      rw [hx', map_add (f := _), map_mul]
       exact Ideal.add_mem _ (hmem b hbm) (Ideal.mul_mem_left _ _ (hmem f hfm))
     · rw [Ideal.span_le, Set.singleton_subset_iff]
       exact (IsLocalization.AtPrime.to_map_mem_maximal_iff L M _).2 hπm

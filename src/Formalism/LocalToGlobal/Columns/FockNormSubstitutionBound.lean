@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.CoefficientMapHeightBound
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.CoefficientMapHeightBound
+
+@[expose] public section
 
 open MvPolynomial
 open scoped Matrix ComplexOrder
@@ -24,7 +28,7 @@ theorem fockL_self (f : MvPolynomial σ ℂ) : fockL f f = (fockN f : ℂ) := by
   rfl
 
 theorem fockN_eq_sum (f : MvPolynomial σ ℂ) (S : Finset (σ →₀ ℕ)) (h : f.support ⊆ S) :
-    fockN f = ∑ m ∈ S, ‖coeff m f‖ ^ 2 * (mfact m : ℝ) := by
+    fockN f = ∑ m ∈ S, ‖AddMonoidAlgebra.coeff f m‖ ^ 2 * (mfact m : ℝ) := by
   unfold fockN
   refine Finset.sum_subset h fun m _ hm => ?_
   rw [notMem_support_iff.1 hm]
@@ -41,7 +45,7 @@ theorem fockN_lin_le {β : Type} [Fintype β] (c : β → ℂ) (G : β → MvPol
   classical
   set S : Finset (σ →₀ ℕ) := (∑ b, C (c b) * G b).support ∪ Finset.univ.biUnion fun b => (G b).support with hS
   rw [fockN_eq_sum _ S Finset.subset_union_left]
-  have hG : ∀ b, fockN (G b) = ∑ m ∈ S, ‖coeff m (G b)‖ ^ 2 * (mfact m : ℝ) := fun b =>
+  have hG : ∀ b, fockN (G b) = ∑ m ∈ S, ‖AddMonoidAlgebra.coeff (G b) m‖ ^ 2 * (mfact m : ℝ) := fun b =>
     fockN_eq_sum _ S ((Finset.subset_biUnion_of_mem (fun b => (G b).support) (Finset.mem_univ b)).trans Finset.subset_union_right)
   simp only [hG]
   rw [Finset.sum_comm, Finset.mul_sum]
@@ -50,12 +54,12 @@ theorem fockN_lin_le {β : Type} [Fintype β] (c : β → ℂ) (G : β → MvPol
   refine mul_le_mul_of_nonneg_right ?_ (Nat.cast_nonneg _)
   rw [coeff_sum]
   simp only [coeff_C_mul]
-  exact cauchy_schwarz_finite_sum c fun b => coeff m (G b)
+  exact cauchy_schwarz_finite_sum c fun b => AddMonoidAlgebra.coeff (G b) m
 
 variable [DecidableEq σ]
 
 theorem coeff_X_mul_pderiv_columns (v : σ) (F : MvPolynomial σ ℂ) (m : σ →₀ ℕ) :
-    coeff m (X v * pderiv v F) = (m v : ℂ) * coeff m F := by
+    AddMonoidAlgebra.coeff (X v * pderiv v F) m = (m v : ℂ) * AddMonoidAlgebra.coeff F m := by
   induction F using MvPolynomial.induction_on' with
   | monomial u c =>
     rw [pderiv_monomial, coeff_X_mul', coeff_monomial, coeff_monomial]
@@ -80,10 +84,10 @@ theorem coeff_X_mul_pderiv_columns (v : σ) (F : MvPolynomial σ ℂ) (m : σ �
         · rw [if_neg h2]
     · rw [if_neg hv, Finsupp.notMem_support_iff.1 hv]
       simp
-  | add p q hp hq => rw [map_add, mul_add, coeff_add, coeff_add, hp, hq]; ring
+  | add p q hp hq => rw [map_add (f := _), mul_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq]; ring
 
 theorem coeff_pderiv_eq_coeff_add_single_mul (v : σ) (F : MvPolynomial σ ℂ) (m : σ →₀ ℕ) :
-    coeff m (pderiv v F) = coeff (m + Finsupp.single v 1) F * ((m v : ℂ) + 1) := by
+    AddMonoidAlgebra.coeff (pderiv v F) m = AddMonoidAlgebra.coeff F (m + Finsupp.single v 1) * ((m v : ℂ) + 1) := by
   have h := coeff_X_mul_pderiv_columns v F (m + Finsupp.single v 1)
   rw [coeff_X_mul', if_pos (by simp), add_tsub_cancel_right] at h
   rw [h]
@@ -100,7 +104,7 @@ def blkE (τ : ι) (F : MvPolynomial (ι × Fin n × Fin n) ℂ) : MvPolynomial 
   ∑ a, ∑ t, X (τ, a, t) * pderiv (τ, a, t) F
 
 def BlockHomogeneous (F : MvPolynomial (ι × Fin n × Fin n) ℂ) (d : ι → ℕ) : Prop :=
-  ∀ m, coeff m F ≠ 0 → ∀ τ, ∑ a, ∑ s, m (τ, a, s) = d τ
+  ∀ m, AddMonoidAlgebra.coeff F m ≠ 0 → ∀ τ, ∑ a, ∑ s, m (τ, a, s) = d τ
 
 theorem blkE_of_hom {F : MvPolynomial (ι × Fin n × Fin n) ℂ} {d : ι → ℕ} (h : BlockHomogeneous F d) (τ : ι) : blkE τ F = (d τ : ℂ) • F := by
   classical
@@ -109,7 +113,7 @@ theorem blkE_of_hom {F : MvPolynomial (ι × Fin n × Fin n) ℂ} {d : ι → �
   rw [coeff_sum, coeff_smul, smul_eq_mul]
   simp only [coeff_sum, coeff_X_mul_pderiv_columns]
   simp only [← Finset.sum_mul]
-  by_cases h0 : coeff m F = 0
+  by_cases h0 : AddMonoidAlgebra.coeff F m = 0
   · rw [h0, mul_zero, mul_zero]
   · rw [← h m h0 τ]
     push_cast
@@ -119,7 +123,8 @@ theorem blkE_blockAct (U : ι → Matrix (Fin n) (Fin n) ℂ) (τ : ι) (F : MvP
     blkE τ (Formalism.GradedWeylDivisibility.blockAct ℂ U F) = Formalism.GradedWeylDivisibility.blockAct ℂ U (blkE τ F) := by
   classical
   unfold blkE
-  simp only [map_sum, map_mul, blockAct_X, pderiv_blockAct, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, blockAct_X, pderiv_blockAct, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun t _ => ?_
@@ -135,7 +140,8 @@ theorem fockN_euler (τ : ι) (G : MvPolynomial (ι × Fin n × Fin n) ℂ) (c :
     simp only [← fockL_self, fockL_pderiv_X]
     have e : ∑ a, ∑ t, fockL G (X (τ, a, t) * pderiv (τ, a, t) G) = fockL G (blkE τ G) := by
       unfold blkE
-      simp only [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum]
     rw [e, hE, map_smul, smul_eq_mul]
   exact_mod_cast this
 
@@ -180,7 +186,7 @@ theorem fock_norm_substitution_bound (U : ι → Matrix (Fin n) (Fin n) ℂ) : �
   | zero =>
     intro d hd F hF
     have hd0 : ∀ τ, d τ = 0 := fun τ => (Finset.sum_eq_zero_iff.1 hd) τ (Finset.mem_univ _)
-    have hC : F = C (coeff 0 F) := by
+    have hC : F = C (AddMonoidAlgebra.coeff F 0) := by
       ext m
       rw [coeff_C]
       by_cases hm : 0 = m

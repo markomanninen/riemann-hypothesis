@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFrobSer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane MatrixGroups CongruenceSubgroup Manifold
@@ -63,10 +67,6 @@ theorem Cg.sub {p : ℕ} {f g f' g' : PowerSeries ℂ} (h1 : Cg p f g) (h2 : Cg 
   obtain ⟨hg', w', hw', rfl⟩ := h2
   exact ⟨hg.sub hg', w - w', hw.sub hw', by ring⟩
 
-theorem Cg.neg {p : ℕ} {f g : PowerSeries ℂ} (h1 : Cg p f g) : Cg p (-f) (-g) := by
-  obtain ⟨hg, w, hw, rfl⟩ := h1
-  exact ⟨hg.ksNeg, -w, hw.ksNeg, by ring⟩
-
 theorem Cg.xp {p : ℕ} {f g : PowerSeries ℂ} (h1 : Cg p f g) (k : ℕ) : Cg p (xp k f) (xp k g) := by
   obtain ⟨hg, w, hw, rfl⟩ := h1
   exact ⟨hg.xp k, ReciprocityTheory.ChartRestriction.L1.xp k w, hw.xp k, by rw [xp_add, xp_C_mul]⟩
@@ -87,7 +87,7 @@ theorem Cg.of_int {p : ℕ} (hp : p.Prime) {F G W : PowerSeries ℤ} (h : F = G 
   obtain ⟨r, hr, hpr⟩ := p_mem_span hp
   refine ⟨CoeffIn.map_int _ G, PowerSeries.C r * W.map (Int.castRingHom ℂ),
     (CoeffIn.ksC hr).mul (CoeffIn.map_int _ W), ?_⟩
-  rw [h, map_add, map_mul, PowerSeries.map_C]
+  rw [h, map_add (f := _), map_mul, PowerSeries.map_C]
   have hc : (Int.castRingHom ℂ) (p : ℤ) = (1 - zetaC p) * r := by
     rw [eq_intCast, Int.cast_natCast, hpr]
   rw [hc, map_mul]

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsBlockRatioAlg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalImageZ
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsBlockRatioAlg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsHorizontalImageZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -31,8 +36,8 @@ theorem eval_smul_of_isMultiHomog {s : MRing ι} {a : K → ℕ} (hs : IsMultiHo
   rw [hprod]
   ring
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem eval_map_rename (v : (Σ k, ι k) → (Σ k', ι' k')) (s : MRing ι) (z' : (Σ k', ι' k') → ℂ) :
     eval z' (map (Int.castRingHom ℂ) (rename v s)) = eval (fun p ↦ z' (v p)) (map (Int.castRingHom ℂ) s) := by
   rw [map_rename, eval_rename]
@@ -40,8 +45,8 @@ theorem eval_map_rename (v : (Σ k, ι k) → (Σ k', ι' k')) (s : MRing ι) (z
 
 end BlockGenFinite
 
-open BlockGenFinite in
 
+open BlockGenFinite in
 theorem BlockGenFinite.proof (hR : BlockRatioAlg.Statement) : BlockGenFinite.Statement := by
   classical
   intro K _ ι _ K' _ ι' _ κ v P' n hv hP' hP
@@ -89,7 +94,7 @@ theorem BlockGenFinite.proof (hR : BlockRatioAlg.Statement) : BlockGenFinite.Sta
     intro q
     have hne : pol q ≠ 0 := by
       intro h0
-      have h1 := congrArg (fun f ↦ Polynomial.coeff f (m q)) h0
+      have h1 := congrArg (fun f ↦ _root_.AddMonoidAlgebra.coeff (M := ℕ) f (m q)) h0
       simp only [hpol, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
         Polynomial.coeff_zero] at h1
       rw [Finset.sum_eq_single (Fin.last (m q))] at h1
@@ -102,7 +107,8 @@ theorem BlockGenFinite.proof (hR : BlockRatioAlg.Statement) : BlockGenFinite.Sta
       · simp
     rw [Multiset.mem_toFinset, Polynomial.mem_roots hne, Polynomial.IsRoot.def]
     have hrel0 := hz'.2 _ (hAP q)
-    simp only [map_sum, map_mul, map_pow, map_X, eval_X, eval_map_rename,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, map_X, eval_X, eval_map_rename,
       show (fun p ↦ z' (v p)) = fun p ↦ d p.1 * u p from hzd, eval_smul_of_isMultiHomog (hAh q _)] at hrel0
     have hD : (∏ k, d k ^ a q k) * z' ⟨q.1.1, c q.1⟩ ^ m q ≠ 0 :=
       mul_ne_zero (Finset.prod_ne_zero_iff.mpr fun k _ ↦ pow_ne_zero _ (hd k)) (pow_ne_zero _ (hcz q.1))
@@ -124,16 +130,16 @@ theorem BlockGenFinite.proof (hR : BlockRatioAlg.Statement) : BlockGenFinite.Sta
     · exact hcz ⟨k', h⟩
   · rw [hbuild]
     by_cases h : p'.1 ∈ Set.range κ
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
       dsimp only
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       obtain ⟨p, rfl⟩ := hv.2.2.2 p' h
       rw [show h.choose = p.1 from hv.1 (h.choose_spec.trans (hv.2.2.1 p)),
         show (hv.2.2.2 (v p) h).choose = p from hv.2.1 (hv.2.2.2 (v p) h).choose_spec]
       exact hzd' p
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       dsimp only
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       have hc' := hcz ⟨p'.1, h⟩
       dsimp only at hc'
       field_simp [hc']

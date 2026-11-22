@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfValuationBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfValuationBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,8 @@ theorem hom_chain (a : Fin (N + 1)) (LL : M.Letters N) (y : MvPolynomial (Fin N 
     IsWeightedHomogeneous (wL (r := r) G a) (rename (M.chainEmb N r G.T.t) y) (chDeg LL a) := by
   classical
   have hsupp : ∀ m ∈ y.support, M.MultiDeg LL m := fun m hm => hy hm
-  rw [y.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [y.as_sum, map_sum]
   apply IsWeightedHomogeneous.sum
   intro m hm
   rw [rename_monomial]

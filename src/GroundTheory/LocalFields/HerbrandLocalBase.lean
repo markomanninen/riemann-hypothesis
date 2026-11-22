@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.LocalFields.HerbrandCyclic
-import GroundTheory.LocalFields.HilbertCyclic
-import GroundTheory.LocalFields.UnitsGalois
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
-import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.HerbrandCyclic
+public import GroundTheory.LocalFields.HilbertCyclic
+public import GroundTheory.LocalFields.UnitsGalois
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+public import GroundTheory.GlobalFields.HerbrandQuotients.Cyclic
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ section Ord
 
 variable {L : Type*} [Field L] [ValuativeRel L] [TopologicalSpace L] [IsNonarchimedeanLocalField L]
 
-variable (L) in
 
+variable (L) in
 def unitsOrd : Additive Lˣ →+ ℤ where
   toFun x := ord ((x.toMul : Lˣ) : L)
   map_zero' := by
@@ -75,10 +79,10 @@ def unitsOrd : Additive Lˣ →+ ℤ where
     change ord (((x.toMul * y.toMul : Lˣ)) : L) = _
     rw [Units.val_mul, ord_mul x.toMul.ne_zero y.toMul.ne_zero]
 
-theorem unitsOrd_ofMul (x : Lˣ) : unitsOrd L (Additive.ofMul x) = ord (x : L) :=
+theorem unitsOrd_ofMul (x : Lˣ) : unitsOrd (L := L) (Additive.ofMul x) = ord (x : L) :=
   rfl
 
-theorem unitsOrd_surjective : Function.Surjective (unitsOrd L) := by
+theorem unitsOrd_surjective : Function.Surjective (unitsOrd (L := L)) := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
   intro n
   refine ⟨n • Additive.ofMul (uniformizerUnit hϖ), ?_⟩
@@ -89,7 +93,7 @@ theorem ord_eq_zero_iff_mem_range_unitsIncl (x : Lˣ) :
   rw [ord_eq_zero_iff_mem, unitFiltrationUnits, unitFiltration_zero, ← MonoidHom.range_eq_map]
 
 theorem exact_unitsIncl_unitsOrd :
-    Function.Exact (MonoidHom.toAdditive (unitsIncl L)) (unitsOrd L) := by
+    Function.Exact (MonoidHom.toAdditive (unitsIncl L)) (unitsOrd (L := L)) := by
   intro y
   change ord ((y.toMul : Lˣ) : L) = 0 ↔ _
   rw [ord_eq_zero_iff_mem_range_unitsIncl]
@@ -111,21 +115,22 @@ theorem ord_algEquiv (σ : L ≃ₐ[K] L) (x : L) : ord (σ x) = ord x := by
     valuation_algEquiv_apply K L σ x]
 
 theorem unitsOrd_smul (σ : L ≃ₐ[K] L) (x : Lˣ) :
-    unitsOrd L (Additive.ofMul (σ • x)) = unitsOrd L (Additive.ofMul x) := by
+    unitsOrd (L := L) (Additive.ofMul (σ • x)) = unitsOrd (L := L) (Additive.ofMul x) := by
   rw [unitsOrd_ofMul, unitsOrd_ofMul, AlgEquiv.smul_units_def, Units.coe_map]
   exact ord_algEquiv σ x
 
 theorem unitsOrd_cycSubOne (τ : L ≃ₐ[K] L) (x : Additive Lˣ) :
-    unitsOrd L (cycSubOne (Representation.ofMulDistribMulAction (L ≃ₐ[K] L) Lˣ) τ x) =
-      cycSubOne (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ) τ (unitsOrd L x) := by
+    unitsOrd (L := L) (cycSubOne (Representation.ofMulDistribMulAction (L ≃ₐ[K] L) Lˣ) τ x) =
+      cycSubOne (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ) τ (unitsOrd (L := L) x) := by
   rw [cycSubOne_apply, cycSubOne_apply, map_sub, Representation.ofMulDistribMulAction_apply_apply,
     unitsOrd_smul, Representation.trivial_apply]
   rfl
 
 theorem unitsOrd_cycNorm (x : Additive Lˣ) :
-    unitsOrd L (cycNorm (Representation.ofMulDistribMulAction (L ≃ₐ[K] L) Lˣ) x) =
-      cycNorm (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ) (unitsOrd L x) := by
-  rw [cycNorm_apply, cycNorm_apply, map_sum]
+    unitsOrd (L := L) (cycNorm (Representation.ofMulDistribMulAction (L ≃ₐ[K] L) Lˣ) x) =
+      cycNorm (Representation.trivial ℤ (L ≃ₐ[K] L) ℤ) (unitsOrd (L := L) x) := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cycNorm_apply, cycNorm_apply, map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [Representation.ofMulDistribMulAction_apply_apply, unitsOrd_smul, Representation.trivial_apply]
   rfl

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ private theorem spMap_comp_xi_eq_spMap_lift_comp_y_comp_j (P : ValPt Y) (W : Unr
   simp only [ValPt.ξ, spMap, ← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp, hlift]
 
 private theorem sp_nonempty_of_field (R : Type) [Field R] : Nonempty (Sp R) :=
-  ⟨(⟨⊥, Ideal.bot_prime⟩ : PrimeSpectrum R)⟩
+  ⟨(⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum R)⟩
 
 private theorem jQ_mem_preimage_abLocus (p : Xo.XF c) :
     Y.jQ p ∈ pullback.fst Y.s (spMap β) ⁻¹' abLocus Y.t.G := by

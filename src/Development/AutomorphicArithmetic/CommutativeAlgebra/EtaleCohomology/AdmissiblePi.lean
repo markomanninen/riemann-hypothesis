@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NilToPhiAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleSequenceExact
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.NilToPhiAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.AdmissibleSequenceExact
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,10 @@ private theorem prI_map (i : I) (a : (∀ i, V i) →ₗ[F] (∀ i, V i)) (b : V
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v y => simp [prI, h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
+
 
 open Classical in
-
 private def inI (B : Type) [AddCommGroup B] [Module F B] (i : I) : V i ⊗[F] B →ₗ[F] (∀ i, V i) ⊗[F] B :=
   AlgebraTensorModule.map (LinearMap.single F V i) LinearMap.id
 
@@ -34,21 +38,21 @@ private theorem sum_inI_prI (x : (∀ i, V i) ⊗[F] B) : ∑ i, inI B i (prI B 
   | tmul v y =>
     simp only [prI, inI, AlgebraTensorModule.map_tmul, LinearMap.proj_apply, LinearMap.id_apply, LinearMap.coe_single]
     rw [← TensorProduct.sum_tmul, Finset.univ_sum_single]
-  | add x y hx hy => simp only [map_add, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
 
 private theorem prI_inI_same (i : I) (y : V i ⊗[F] B) : prI B i (inI B i y) = y := by
   classical
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v y => simp [prI, inI]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem prI_inI_ne {i j : I} (h : j ≠ i) (y : V j ⊗[F] B) : prI B i (inI B j y) = 0 := by
   classical
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v y => simp [prI, inI, Pi.single_eq_of_ne (Ne.symm h)]
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 private theorem ext_prI {x y : (∀ i, V i) ⊗[F] B} (h : ∀ i, prI B i x = prI B i y) : x = y := by
   rw [← sum_inI_prI x, ← sum_inI_prI y]; simp only [h]
@@ -77,7 +81,8 @@ private def dinvPi (hρ : ∀ g x i, ρ' g x i = ρ i g (x i)) : Dinv σ ρ' ≃
         classical
         have hc : ∀ i, prI B i (∑ j, inI B j (y j : V j ⊗[F] B)) = y i := by
           intro i
-          rw [map_sum, Finset.sum_eq_single i (fun j _ h => prI_inI_ne h _) (by simp), prI_inI_same]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.sum_eq_single i (fun j _ h => prI_inI_ne h _) (by simp), prI_inI_same]
         refine ⟨⟨∑ j, inI B j (y j : V j ⊗[F] B), (mem_Dinv_pi σ ρ ρ' hρ _).2 fun i => ?_⟩, ?_⟩
         · rw [hc]; exact (y i).2
         · funext i
@@ -110,7 +115,8 @@ private theorem annD_pi (ψ : End F B) (q n : ℕ) (T : ∀ i, ℕ → End F (V 
   intro x hx
   refine ext_prI fun i => ?_
   have := h i _ ((mem_Dinv_pi σ ρ ρ' hρ x).1 hx i)
-  rw [map_zero, map_sum, ← this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum, ← this]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul, prI_map i (T' j) (T i j) (ψ ^ (n - j)) (fun x => hT j x i)]
 

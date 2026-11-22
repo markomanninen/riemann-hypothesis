@@ -1,4 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.UnitHmB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,8 +30,5 @@ variable (X : Data E r) (x : Frame X.Ψ r)
 
 theorem conjEmb_not_mem (τ : X.Ψ) : conjEmb τ.1 ∉ X.Ψ := by
   rw [conjEmb_eq_conjugate]; exact (X.cmType τ.1).1 τ.2
-
-def imc (τ : X.Ψ) (v w : Fin r → E) (a : ℕ) : ℝ :=
-  if h : a < r then (cv X x τ v ⟨a, h⟩ * conj (cv X x τ w ⟨a, h⟩)).im else 0
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections.UH

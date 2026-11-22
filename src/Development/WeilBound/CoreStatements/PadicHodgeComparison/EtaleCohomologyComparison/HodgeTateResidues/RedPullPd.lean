@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.IsFirstChernClassInFamily
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.IsFirstChernClassInFamily
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -95,8 +99,6 @@ theorem red_pull_pd (u : B.Fn.Map F F') (r n j : ℕ) (x : CH.H (B.pdS (B.Lc F' 
 end F
 
 variable {M N : Model l K} {r r' j : ℕ}
-
-theorem fam_add (x y : Fam M r j) (n : ℕ) : (x + y) n = x n + y n := rfl
 
 theorem comp_add {x y : Fam M r j} (hx : Comp x) (hy : Comp y) : Comp (x + y) := fun n =>
   (map_add (redS M r n j) (x (n + 1)) (y (n + 1))).trans (congrArg₂ (· + ·) (hx n) (hy n))

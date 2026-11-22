@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldsAlongGroupHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ConstThickeningFieldStructure
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueInvariantVectorFieldOfTangent
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsInvDer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LeISupInfPreimage
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldsAlongGroupHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ConstThickeningFieldStructure
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueInvariantVectorFieldOfTangent
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -163,7 +168,7 @@ theorem alg_unit (he : e * e = 0) (inj : ∀ a b a' b', r a + e * r b = r a' + e
   obtain ⟨a, b, rfl⟩ := sur F
   obtain ⟨a', b', rfl⟩ := sur F'
   have h := (inj (a * a') (a * b' + b * a') 1 0 (by
-    simp only [map_mul, map_add, map_one, map_zero]
+    simp only [map_mul, map_add (f := _), map_one, map_zero]
     linear_combination hF' - (r b * r b') * he)).1
   refine ⟨a, a' * b, IsUnit.of_mul_eq_one _ h, ?_⟩
   rw [← _root_.mul_assoc, h, _root_.one_mul]
@@ -173,7 +178,7 @@ theorem alg_dlog (he : e * e = 0) (inj : ∀ a b a' b', r a + e * r b = r a' + e
     (h : (r a + e * r (a * β)) * r G * (r H + e * r (H * φ)) =
       (r G + e * r (G * c)) * r H * (r a' + e * r (a' * β'))) : β + φ = c + β' := by
   obtain ⟨h₁, h₂⟩ := inj (a * G * H) (a * G * H * (β + φ)) (a' * G * H) (a' * G * H * (c + β')) (by
-    simp only [map_mul, map_add] at h ⊢
+    simp only [map_mul, map_add (f := _)] at h ⊢
     linear_combination h - (r a * r β * r G * r H * r φ - r G * r c * r H * r a' * r β') * he)
   rw [← h₁] at h₂
   exact ((ha.mul hG).mul hH).mul_left_cancel h₂
@@ -377,8 +382,8 @@ theorem exists_units_thick {X : Scheme.{0}} (m : A.left ⟶ X) {L : LB X} (hL : 
     show psum A x' {0, 1} = _ from p₃'] at r
   exact r
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem pbT_g_transl {X : Scheme.{0}} (m : A.left ⟶ X) (L : LB X) {v : epsR K ⟶ A} (hv : IsTangent v) {dd}
     (hd : IsInvDer v dd) (f : A ⟶ A) (i i' : L.ι) (c : Γ(A.left, m ⁻¹ᵁ L.U i ⊓ m ⁻¹ᵁ L.U i'))
     (hc : pbT m (L.g i i').val (m ⁻¹ᵁ L.U i ⊓ m ⁻¹ᵁ L.U i') * c =

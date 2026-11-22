@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ def mapF (f : A →+* B) (x : W2 l A) : W2 l B := ⟨f x.fst, f x.snd⟩
 theorem mapF_add (f : A →+* B) (x y : W2 l A) : mapF f (x + y) = mapF f x + mapF f y :=
   W2.ext (map_add f _ _) (by
     change f (x.snd + y.snd - cc l x.fst y.fst) = f x.snd + f y.snd - cc l (f x.fst) (f y.fst)
-    rw [map_sub, map_add, map_cc])
+    rw [map_sub, map_add (f := _), map_cc])
 
 theorem mapF_mul (f : A →+* B) (x y : W2 l A) : mapF f (x * y) = mapF f x * mapF f y :=
   W2.ext (map_mul f _ _) (by
@@ -63,8 +67,8 @@ theorem gh_add (x y : W2 l A) : gh (x + y) = gh x + gh y := by
   change (x.fst + y.fst) ^ l + (l : A) * (x.snd + y.snd - cc l x.fst y.fst) = _
   simp only [gh]; linear_combination -l_mul_cc l x.fst y.fst
 
-omit hl in
 
+omit hl in
 theorem gh_mul (x y : W2 l A) : gh (x * y) = gh x * gh y := by
   change (x.fst * y.fst) ^ l + (l : A) * (x.fst ^ l * y.snd + y.fst ^ l * x.snd + (l : A) * x.snd * y.snd) = _
   simp only [gh]; ring
@@ -74,8 +78,8 @@ theorem ext_gh {σ : Type} {x y : W2 l (MvPolynomial σ ℤ)} (h0 : x.fst = y.fs
   simp only [gh, h0] at h1
   exact add_left_cancel h1
 
-omit hl in
 
+omit hl in
 theorem exists_lift (x : W2 l A) :
     ∃ y : W2 l (MvPolynomial A ℤ), mapF (MvPolynomial.eval₂Hom (Int.castRingHom A) id) y = x :=
   ⟨⟨MvPolynomial.X x.fst, MvPolynomial.X x.snd⟩, W2.ext (by simp [mapF]) (by simp [mapF])⟩
@@ -146,7 +150,7 @@ def deltaStructureOfWittLengthTwoSection (s : A →+* W2 l A) (h : ∀ a, (s a).
   δ_one := by rw [map_one]; rfl
   δ_mul a b := by rw [map_mul]; exact (congrArg₂ (fun x y => x ^ l * (s b).snd + y ^ l * (s a).snd +
     (l : A) * (s a).snd * (s b).snd) (h a) (h b))
-  δ_add a b := by rw [map_add]; exact (congrArg₂ (fun x y => (s a).snd + (s b).snd - cc l x y) (h a) (h b))
+  δ_add a b := by rw [map_add (f := _)]; exact (congrArg₂ (fun x y => (s a).snd + (s b).snd - cc l x y) (h a) (h b))
   φ := W2.ghHom.comp s
   φ_eq a := congrArg (fun x => x ^ l + (l : A) * (s a).snd) (h a)
 
@@ -183,9 +187,6 @@ structure IsCompl {L Q : Type} [CommRing L] [CommRing Q] (i : L →+* Q) (J : Id
   complete : IsAdicComplete (J.map i) Q
   surj : ∀ (x : Q) (n : ℕ), ∃ a, x - i a ∈ (J ^ n).map i
   ker : ∀ (a : L) (n : ℕ), i a ∈ (J ^ n).map i → a ∈ J ^ n
-
-theorem IsCompl.self {L : Type} [CommRing L] (J : Ideal L) [h : IsAdicComplete J L] : IsCompl (RingHom.id L) J :=
-  ⟨by rwa [Ideal.map_id], fun x _ => ⟨x, by simp⟩, fun a n ha => by rwa [Ideal.map_id] at ha⟩
 
 variable {l : ℕ}
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RepVVAeval
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcGamLiftCore
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.RepVVAeval
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcGamLiftCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,9 +157,9 @@ theorem LV_add {g g' : Fin d → W.EE} {e : ℕ} (h : LV W A F c b sol g e) (h' 
     rw [hsplit]
     exact TypesA.InFNc_add W (TypesA.InFNc_smul W (TypesA.Ps_mem W hΛ₂) hΛw₁)
       (TypesA.InFNc_smul W (TypesA.Ps_mem W hΛ₁) hΛw₂)
-  · rw [map_add, smul_add]
+  · rw [map_add (f := _), smul_add]
     exact TypesA.inMultiple_add W hP hP'
-  · exact TypesA.RepVV_congr W (TypesA.RepVV_add W hR hR') (by rw [map_add]; abel)
+  · exact TypesA.RepVV_congr W (TypesA.RepVV_add W hR hR') (by rw [map_add (f := _)]; abel)
       fun k => (mul_add _ _ _).symm
 
 theorem LV_zero {e : ℕ}

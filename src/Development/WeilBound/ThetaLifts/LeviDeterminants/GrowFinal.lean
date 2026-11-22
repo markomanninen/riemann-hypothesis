@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowInt
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowInt
+
+@[expose] public section
 
 noncomputable section
 

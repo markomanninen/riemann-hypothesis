@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 set_option synthInstance.maxSize 1000
@@ -22,7 +26,7 @@ theorem map_smul_pi (n : ℕ) (a : IdeleGroup K) :
         Measure.pi fun _ : Fin n ↦ adeleMeasure K := by
   have hsm : Measurable fun y : 𝔸[K] ↦ a • y := (Homeomorph.smul a).continuous.measurable
   have hmeas : Measurable fun x : Fin n → 𝔸[K] ↦ fun i ↦ a • x i :=
-    measurable_pi_lambda _ fun i ↦ hsm.comp (measurable_pi_apply i)
+    Measurable.of_eval fun i ↦ hsm.comp (measurable_pi_apply i)
   set c : ℝ≥0 := Real.toNNReal ((IdeleGroup.ideleModule K a : ℝ))⁻¹ with hcdef
   have hmap : (adeleMeasure K).map (fun y ↦ a • y) = c • adeleMeasure K := by
     rw [map_smul_adeleMeasure]
@@ -76,12 +80,13 @@ theorem ideleModule_ideleEmbedding (x : IdeleGroup K) :
     rfl
   have hsmL : Measurable fun y : 𝔸[L] ↦ X • y := (Homeomorph.smul X).continuous.measurable
   have hsmK : Measurable fun v : Fin n → 𝔸[K] ↦ fun i ↦ x • v i :=
-    measurable_pi_lambda _ fun i ↦
+    Measurable.of_eval fun i ↦
       (Homeomorph.smul x).continuous.measurable.comp (measurable_pi_apply i)
   set c : ℝ≥0 := Real.toNNReal ((IdeleGroup.ideleModule K x : ℝ))⁻¹ with hcdef
   have h1 : ν.map (fun y ↦ X • y) = c ^ n • ν := by
     rw [hν, Measure.map_map hsmL hms, hcomp, ← Measure.map_map hms hsmK, hμ, map_smul_pi,
       Measure.map_smul]
+    exact hms.aemeasurable
   have hc := isAddLeftInvariant_eq_smul ν (adeleMeasure L)
   set C := ν.addHaarScalarFactor (adeleMeasure L)
   have hC0 : (C : ℝ≥0∞) ≠ 0 := by
@@ -92,6 +97,8 @@ theorem ideleModule_ideleEmbedding (x : IdeleGroup K) :
   have hpos : adeleMeasure L S ≠ 0 := (measure_pos_of_mem_nhds _ hS0).ne'
   have htop : adeleMeasure L S ≠ ⊤ := hS.measure_lt_top.ne
   rw [hc, Measure.map_smul, map_smul_adeleMeasure] at h1
+  swap
+  · exact hsmL.aemeasurable
   have h2 := congrArg (fun m : Measure 𝔸[L] ↦ m S) h1
   simp only [Measure.smul_apply, ENNReal.smul_def, smul_eq_mul] at h2
   rw [mul_left_comm] at h2

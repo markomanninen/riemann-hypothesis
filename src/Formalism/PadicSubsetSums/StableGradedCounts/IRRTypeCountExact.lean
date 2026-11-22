@@ -1,11 +1,15 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
+
+@[expose] public section
 
 open Polynomial UniqueFactorizationMonoid
 
 namespace Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem type_count_exact : TypeCountExact := by
   classical
   intro K _ _ N n hN

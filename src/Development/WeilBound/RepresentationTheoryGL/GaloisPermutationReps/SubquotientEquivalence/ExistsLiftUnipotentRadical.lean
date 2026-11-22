@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem unipotent_radical_ne_bot {K : Type} [Field K] (h : ∃ i j, blk e i < bl
     rw [mem_unipotent_radical_iff_alt]
     intro a b hab
     show (1 + Matrix.single i j (1 : K)) a b = _
-    rw [Matrix.add_apply, Matrix.single_apply, if_neg, add_zero]
+    rw [Matrix.add_apply, Matrix.single_apply, ite_eq_right, add_zero]
     rintro ⟨rfl, rfl⟩
     exact hab hij
   intro hb
@@ -91,7 +95,7 @@ theorem exists_lift_unipotent_radical (u : GL (Fin N) 𝓀[k]) (hu : u ∈ unipR
     if blk e a < blk e b then r ((u : Matrix (Fin N) (Fin N) 𝓀[k]) a b)
     else (1 : Matrix (Fin N) (Fin N) 𝒪[k]) a b
   have hM : ∀ a b, ¬ blk e a < blk e b → M a b = (1 : Matrix (Fin N) (Fin N) 𝒪[k]) a b := fun a b h => by
-    simp only [M, if_neg h]
+    simp only [M, ite_eq_right h]
   have hT : M.BlockTriangular (blk e) := fun a b hab => by
     rw [hM a b (not_lt.2 hab.le), Matrix.one_apply_ne]
     rintro rfl
@@ -113,7 +117,7 @@ theorem exists_lift_unipotent_radical (u : GL (Fin N) 𝓀[k]) (hu : u ∈ unipR
     rw [redK_apply]
     show IsLocalRing.residue 𝒪[k] (M a b) = _
     by_cases h : blk e a < blk e b
-    · simp only [M, if_pos h, hr]
+    · simp only [M, ite_eq_left h, hr]
     · rw [hM a b h, (mem_unipotent_radical_iff_alt.1 hu) a b h, Matrix.one_apply, Matrix.one_apply]
       split_ifs <;> simp
   · rw [mem_unipotent_radical_iff_alt]
@@ -136,10 +140,11 @@ theorem lift_mem_twisted_kernel {W V : Type} [AddCommGroup W] [Module ℂ W] [Ad
   have hy : y = 0 := by
     apply hCF
     intro u hu
-    simp only [y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum]
     rw [show (∑ v : unipRad 𝓀[k] e, τ u (τ v x)) =
         ∑ v : unipRad 𝓀[k] e, τ ((⟨u, hu⟩ * v : unipRad 𝓀[k] e) : GL (Fin N) 𝓀[k]) x from
-      Finset.sum_congr rfl fun v _ => by rw [Subgroup.coe_mul, map_mul, Module.End.mul_apply]]
+      Finset.sum_congr rfl fun v _ => by rw [Subgroup.coe_mul, map_mul, mul_apply_eq_comp]]
     exact Fintype.sum_equiv (Equiv.mulLeft (⟨u, hu⟩ : unipRad 𝓀[k] e)) _ _ fun v => rfl
   choose lf hlf using fun u : unipRad 𝓀[k] e => exists_lift_unipotent_radical (e := e) u.1 u.2
   have hsum : ∑ u : unipRad 𝓀[k] e, (j x - ρ ((lf u : KO k (Fin N)) : GL (Fin N) k) (j x)) ∈
@@ -153,7 +158,8 @@ theorem lift_mem_twisted_kernel {W V : Type} [AddCommGroup W] [Module ℂ W] [Ad
       (Fintype.card (unipRad 𝓀[k] e) : ℂ) • j x := by
     rw [Finset.sum_sub_distrib]
     have : ∑ u : unipRad 𝓀[k] e, ρ ((lf u : KO k (Fin N)) : GL (Fin N) k) (j x) = j y := by
-      simp only [y, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [y, map_sum]
       refine Finset.sum_congr rfl fun u _ => ?_
       rw [← hj, (hlf u).1]
     rw [this, hy, map_zero, sub_zero, Finset.sum_const, Finset.card_univ, Nat.cast_smul_eq_nsmul]
@@ -166,8 +172,8 @@ end Local
 
 end L5
 
-open L5 in
 
+open L5 in
 theorem st5 : St5 := by
   intro k W _ _ _ _ _ _ _ n τ hτ π j hj
   refine ⟨π.smooth, fun s d e hne => ?_⟩
@@ -178,7 +184,7 @@ theorem st5 : St5 := by
     induction hv using Submodule.span_induction with
     | mem v hv =>
       obtain ⟨h', x, rfl⟩ := hv
-      exact Submodule.subset_span ⟨h * h', x, by rw [map_mul, Module.End.mul_apply]⟩
+      exact Submodule.subset_span ⟨h * h', x, by rw [map_mul, mul_apply_eq_comp]⟩
     | zero => simp
     | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
     | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
@@ -192,7 +198,7 @@ theorem st5 : St5 := by
     refine Submodule.span_le.2 ?_
     rintro _ ⟨h, x, rfl⟩
     obtain ⟨p, w, hw, rfl⟩ := GlobalTheory.SmGL.MultiIrr.exists_parab_mul e h
-    rw [map_mul, Module.End.mul_apply,
+    rw [map_mul, mul_apply_eq_comp,
       show π.ρ w (j x) = j (τ (redK k (Fin n) ⟨w, hw⟩) x) from (hj.2 ⟨w, hw⟩ x).symm]
     exact twKer_le_comap π.ρ _ p (parab_le_normalizer k e p.2) (lift_mem_twisted_kernel τ π.ρ j hj.2 hCF _)
   have htop : S = ⊤ := by

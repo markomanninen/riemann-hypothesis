@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpOrbOfAmpDD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpOrbOfAmpDD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace

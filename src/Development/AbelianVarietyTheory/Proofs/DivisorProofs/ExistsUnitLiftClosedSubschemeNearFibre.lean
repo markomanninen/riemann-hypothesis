@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsPatch
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.DualCon
 open scoped CategoryTheory.Obj
@@ -15,7 +20,7 @@ theorem unit_lift_near_fibre : ∀ (X X' Z Z' : Scheme.{0}) (p : X' ⟶ X) (i : 
     rw [← Scheme.Hom.comp_apply, h.w, Scheme.Hom.comp_apply]
   by_cases hxr : x ∈ Set.range i
   swap
-  · refine ⟨W ⊓ ⟨(Set.range i)ᶜ, hi.base_closed.isClosed_range.isOpen_compl⟩, 1, inf_le_left, ⟨hx, hxr⟩,
+  · refine ⟨W ⊓ ⟨(Set.range i)ᶜ, i.isClosedEmbedding.isClosed_range.isOpen_compl⟩, 1, inf_le_left, ⟨hx, hxr⟩,
       fun z hz => ?_⟩
     exact absurd ⟨p' z, (hw z).symm⟩ hz.2
   obtain ⟨z0, hz0⟩ := hxr

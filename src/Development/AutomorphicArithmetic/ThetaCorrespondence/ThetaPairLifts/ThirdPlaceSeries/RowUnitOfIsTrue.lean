@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPlaceEq
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPlaceEq
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -42,14 +46,14 @@ theorem rowUnit_of_isTrue_alt : ∀ (hL : _root_.UpperTheory.Zero.LLC.RecTExists
   have hsmul : ∀ x (c : ℂ) y, B' x (c • y) = c * B' x y := fun x c y => by
     simpa [h0] using hlin x 0 y c
   have hadd' : ∀ x y z, B' (x + y) z = B' x z + B' y z := fun x y z => by
-    rw [hherm, hadd, map_add, ← hherm, ← hherm]
+    rw [hherm, hadd, map_add (f := _), ← hherm, ← hherm]
   have hsmul' : ∀ (c : ℂ) x y, B' (c • x) y = starRingEnd ℂ c * B' x y := fun c x y => by
     rw [hherm, hsmul, map_mul, ← hherm]
   let Tm := LinearMap.codRestrict (P.rep σ).S T hTS
   have hTm : ∀ a, ((Tm a : (P.rep σ).S) : GAf D.host.E D.R.r → ℂ) = T a := fun _ => rfl
   refine ⟨LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun v u => B' (Tm u) (Tm v))
-    (fun _ _ _ => by simp only [map_add, hadd]) (fun _ _ _ => by simp only [map_smul, hsmul, smul_eq_mul, RingHom.id_apply])
-    (fun _ _ _ => by simp only [map_add, hadd']) (fun _ _ _ => by simp only [map_smul, hsmul', smul_eq_mul]), ?_, ?_, ?_⟩
+    (fun _ _ _ => by simp only [map_add (f := _), hadd]) (fun _ _ _ => by simp only [map_smul, hsmul, smul_eq_mul, RingHom.id_apply])
+    (fun _ _ _ => by simp only [map_add (f := _), hadd']) (fun _ _ _ => by simp only [map_smul, hsmul', smul_eq_mul]), ?_, ?_, ?_⟩
   · intro v u
     simp only [LinearMap.mk₂'ₛₗ_apply]
     exact hherm _ _

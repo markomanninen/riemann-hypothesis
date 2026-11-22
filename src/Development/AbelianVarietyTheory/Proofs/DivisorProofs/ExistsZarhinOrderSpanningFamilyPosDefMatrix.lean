@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormMulTransposeMulFormInvMem
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsQProjOverCompImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormMulTransposeMulFormInvMem
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 
@@ -123,7 +128,7 @@ theorem span_fam_eq_top {d : ℕ} : Submodule.span ℤ (Set.range (fam d)) = ⊤
     ext p q
     change N p q = ((∑ t, coef d N t.1 t.2 • fam d t : ord d) : Matrix _ _ ℤ) p q
     rw [← sum_coef_famM hN p q]
-    simp only [fam, AddSubmonoidClass.coe_finset_sum, Matrix.sum_apply]
+    simp only [fam, AddSubmonoidClass.coe_finsetSum, Matrix.sum_apply]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [AddSubgroupClass.coe_zsmul, Matrix.smul_apply, smul_eq_mul]
   rw [hx]
@@ -135,7 +140,7 @@ theorem sum_fam_mul_bar {d : ℕ} (hd : 0 < d) :
   have h : ∑ t, famM d t * form d * (famM d t)ᵀ * formInv d = ((8 * d : ℕ) : ℤ) • (1 : Matrix _ _ ℤ) := by
     rw [← Finset.sum_mul, sum_famM hd, Matrix.smul_mul, form_mul_formInv hd]
   simp only [fam, bar_coe, Subring.coe_mul, Matrix.mul_assoc] at h ⊢
-  simp only [AddSubmonoidClass.coe_finset_sum, Subring.coe_mul, bar_coe, Matrix.mul_assoc]
+  simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, bar_coe, Matrix.mul_assoc]
   rw [h]
   simp only [Subring.coe_natCast]
   rw [Nat.cast_smul_eq_nsmul ℤ, nsmul_one]

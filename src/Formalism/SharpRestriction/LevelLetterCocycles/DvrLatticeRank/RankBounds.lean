@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingAll
-import Formalism.SharpRestriction.LevelLetterCocycles.ModelKStep
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.RankInverseBounds
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.RankLinkProof
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FrobPiNPf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingAll
+public import Formalism.SharpRestriction.LevelLetterCocycles.ModelKStep
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.RankInverseBounds
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.RankLinkProof
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FrobPiNPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Flag
 
 variable {O V : Type*} [CommRing O] [IsDomain O] [AddCommGroup V] [Module O V]
 
-open Formalism.MainNotions.N.Ln34.RankInverseBounds in
 
+open Formalism.MainNotions.N.Ln34.RankInverseBounds in
 theorem rank_inv_le_lt (γ : V →ₗ[O] V) (K' : Submodule O V) (hK : ∀ x ∈ K', γ x ∈ K') :
     ∀ (N : ℕ) (F : ℕ → Submodule O V) (c : ℕ → O), (∀ k < N, F (k + 1) ≤ F k) →
       (∀ k < N, ∀ x ∈ F k, γ x - c k • x ∈ F (k + 1)) → F N ≤ K' →
@@ -68,13 +72,13 @@ theorem smulE_smulE (e e' : W.EE) (x : LA W T π' c) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [smulE_tmul, mul_assoc]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem smulE_one (x : LA W T π' c) : smulE W T π' c 1 x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [smulE_tmul]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem smulE_inj {e : W.EE} (he : IsUnit e) : Function.Injective (smulE W T π' c e) := by
   obtain ⟨u, rfl⟩ := he
@@ -90,7 +94,7 @@ theorem γLA_smulE (e : W.EE) (x : LA W T π' c) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp [smulE_tmul, γLA_tmul, map_mul]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem toLA_tmul (S : Submodule O (LcQ W T π' c)) (a : ↥W.AΔ) (s : ↥S) :
     toLA W T π' c S (a ⊗ₜ s) = algebraMap (LetA O n) W.EE ((letE c : LetA O n) * a) ⊗ₜ (s : LcQ W T π' c) := by
@@ -119,7 +123,9 @@ theorem R_smul {b : LetA O n} (hb : b ∈ W.AΔ) {r : LA W T π' c}
     congr 2
     simp only [Subalgebra.coe_mul]
     ring
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy =>
+    simp only [map_add] at ⊢
+    exact add_mem hx hy
 
 theorem R_smul_letE (p : LetA O n) {r : LA W T π' c} (hr : r ∈ LinearMap.range (toLA W T π' c S)) :
     smulLA W T π' c p r = smulLA W T π' c ((letE c : LetA O n) * p) r := by
@@ -133,7 +139,7 @@ theorem R_smul_letE (p : LetA O n) {r : LA W T π' c} (hr : r ∈ LinearMap.rang
       funext j; simp only [letE, Pi.mul_apply, Pi.single_apply]; split_ifs <;> simp
     calc p * ((letE c : LetA O n) * (a : LetA O n)) = p * ((letE c * letE c) * (a : LetA O n)) := by rw [he]
       _ = _ := by ring
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def Fl (Eπ : LetA O n) (h' : ℕ) (f : ℕ → LetA O n) (k : ℕ) : Submodule O (LA W T π' c) :=
   ((LinearMap.range (toLA W T π' c S)).map (smulLA W T π' c (∏ j ∈ Finset.range k, f j))).comap
@@ -197,7 +203,7 @@ theorem Fl_gamma (Eπ : LetA O n) (h' : ℕ) (f : ℕ → LetA O n) (cc : ℕ �
   | add x y hx hy =>
     have := add_mem hx hy
     convert this using 1
-    simp only [map_add, smul_add]
+    simp only [map_add (f := _), smul_add]
     abel
 
 theorem piNL_gamma (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop) (Eπ : LetA O n) (h' M : ℕ)
@@ -262,7 +268,7 @@ theorem Fl_gr_rank (Eπ : LetA O n) (h' : ℕ) (f : ℕ → LetA O n)
         TensorProduct.tmul_smul, TensorProduct.smul_tmul', ← TensorProduct.sub_tmul]
       congr 1
       have h2 := congrArg (algebraMap (LetA O n) W.EE) hab
-      simp only [map_mul, map_add, Subalgebra.coe_one, mul_one] at h2 ⊢
+      simp only [map_mul, map_add (f := _), Subalgebra.coe_one, mul_one] at h2 ⊢
       rw [Algebra.smul_def, IsScalarTower.algebraMap_apply O (LetA O n) W.EE]
       linear_combination -h2
     | add x y hx hy =>
@@ -271,7 +277,7 @@ theorem Fl_gr_rank (Eπ : LetA O n) (h' : ℕ) (f : ℕ → LetA O n)
       refine ⟨s₁ + s₂, ?_⟩
       have := add_mem hs₁ hs₂
       convert this using 1
-      simp only [map_add, TensorProduct.tmul_add]
+      simp only [map_add (f := _), TensorProduct.tmul_add]
       abel
   have hsurj : Function.Surjective θ := by
     intro q
@@ -332,8 +338,8 @@ omit [IsDomain O] in
 theorem mem_DelS (x : W.DD T) : x ∈ DelS W T ↔ ∀ δ ∈ W.DelF, W.γD T δ x = x := by
   simp [DelS, Submodule.mem_iInf, LinearMap.mem_ker, sub_eq_zero]
 
-omit [IsDomain O] in
 
+omit [IsDomain O] in
 theorem lcq_finite_local (hπ0 : ∀ i, PowerSeries.constantCoeff (π' i) = 0)
     (hexp : ∀ a ∈ W.AΔ, ∃ F : ZMod n → PowerSeries O, ∀ i, a i = PowerSeries.subst (π' i) (F i))
     (r : ℕ) (b : Fin r → W.DD T) (hb : ∀ j, b j ∈ W.NΔ T)
@@ -404,7 +410,8 @@ theorem lcq_finite_local (hπ0 : ∀ i, PowerSeries.constantCoeff (π' i) = 0)
     have : Submodule.Quotient.mk x = ∑ j, κ j • g j := by
       have hy : ∑ j, κ j • g j =
           Submodule.Quotient.mk (∑ j, κ j • (⟨e • b j, hgen j⟩ : ↥(NcS W T (c - 1)))) := by
-        rw [← Submodule.mkQ_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Submodule.mkQ_apply, map_sum]
         simp only [map_smul, Submodule.mkQ_apply, g]
       rw [hy, Submodule.Quotient.eq, Submodule.mem_comap, Submodule.coe_subtype, Submodule.coe_sub,
         Submodule.coe_sum]
@@ -415,9 +422,9 @@ theorem lcq_finite_local (hπ0 : ∀ i, PowerSeries.constantCoeff (π' i) = 0)
 
 end Local
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 2000000 in
-
 theorem lcq_finite (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (h1 : adm1 D HW F Cm) (l : ℕ) [Fact l.Prime] (hl : l ≠ 2)
     (K LL : FinExt l) (hG : Good K 1 LL) (π' : LetA ↥(OL LL) (finrank ℚ_[l] ↥(K0 K)))
@@ -443,9 +450,9 @@ theorem lcq_finite (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
       ∀ i, a i = PowerSeries.subst (π' i) (F i) := fun a ha => (hR.2.1 a ha).exists
   exact lcq_finite_local hπ0 hexp r b hbΔ hspan
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem u2rank_of_ring (hR : Formalism.MainNotions.N.Ln34.SecondRingHypothesis) : Formalism.MainNotions.N.Ln34.SecondRankHypothesis := by
   intro D HW F Cm CA CB CK hA hML l _ hl K LL hG π' E hπ T h' hh' hc hj c
   haveI : IsDiscreteValuationRing ↥(OL LL) := GenPf.isDVR (D.loc l) LL

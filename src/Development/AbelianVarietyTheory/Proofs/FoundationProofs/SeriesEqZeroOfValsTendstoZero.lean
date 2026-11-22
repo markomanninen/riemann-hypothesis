@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefficientCongruenceOfTwistedValuesStatement
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotZeroChi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefficientCongruenceOfTwistedValuesStatement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTLawAt
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.Ord2 UpperTheory.V.HV Formalism.ConjugateSelfDual PowerSeries
 
 namespace GlobalTheory

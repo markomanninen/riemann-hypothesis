@@ -1,5 +1,9 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvKirA
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvKirA
+
+@[expose] public section
 
 noncomputable section
 open Matrix GlobalTheory.SmGL GlobalTheory.Whittaker GlobalTheory.LocLanglands

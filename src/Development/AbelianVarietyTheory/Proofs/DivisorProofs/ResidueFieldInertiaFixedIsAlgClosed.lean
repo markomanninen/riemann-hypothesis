@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonicSplitsValuationSubringOfSeparableReductionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MonicSplitsValuationSubringOfSeparableReductionStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj Pointwise
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -59,18 +64,15 @@ theorem residue_algebraic (R K Ω : Type) [CommRing R] [IsDomain R] [IsDiscreteV
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible R
   obtain ⟨w, rfl⟩ := residue_surjective a
   obtain ⟨p, hp0, hpw⟩ := Algebra.IsAlgebraic.isAlgebraic (R := K) ((w : V) : Ω)
-  obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors R) p
+  obtain ⟨b, hbmem, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors R) p
+  let b : nonZeroDivisors R := ⟨b, hbmem⟩
   set q := IsLocalization.integerNormalization (nonZeroDivisors R) p
   have hφinj : Function.Injective (toV R K Ω V hV) := fun x y h =>
     IsFractionRing.injective R K ((algebraMap K Ω).injective (by
       have := congrArg Subtype.val h
       rwa [coe_toV, coe_toV] at this))
-  have hq0 : q ≠ 0 := by
-    intro hq; rw [hq, Polynomial.map_zero] at hb
-    have hb0 : (algebraMap R K (b : R)) ≠ 0 :=
-      IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
-    rw [Algebra.smul_def, Polynomial.algebraMap_apply] at hb
-    exact hp0 ((mul_eq_zero.1 hb.symm).resolve_left (by simpa using hb0))
+  have hq0 : q ≠ 0 :=
+    (IsLocalization.integerNormalization_eq_zero_iff le_rfl p).not.mpr hp0
   have hcomp : V.subtype.comp (toV R K Ω V hV) = (algebraMap K Ω).comp (algebraMap R K) :=
     RingHom.ext fun r => coe_toV R K Ω V hV r
   have hqw : Polynomial.eval₂ (toV R K Ω V hV) w q = 0 := by

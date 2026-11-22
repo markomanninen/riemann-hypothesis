@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGenTransl
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueLevelIso
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SurjectiveCubeOfGeneric
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEvenCubicalTrivialisationLiftNilpotent
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GenericFibreCardTorsionCubicalPairingPerfect
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueBiTriv
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalWeilPairingEqAbelianPartImage
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivOfIsLBSplitTorus
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEvenCubTriv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueOfIsAdicColimit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitClosed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsGenTransl
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueLevelIso
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SurjectiveCubeOfGeneric
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsEvenCubicalTrivialisationLiftNilpotent
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubWeilOneLeft
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GenericFibreCardTorsionCubicalPairingPerfect
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueBiTriv
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CubicalWeilPairingEqAbelianPartImage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivOfIsLBSplitTorus
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEvenCubTriv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueOfIsAdicColimit
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -377,7 +382,6 @@ set_option hygiene false in
 local notation "𝔪" => IsLocalRing.maximalIdeal R
 
 omit [IsDomain R] in
-
 theorem exists_points [IsAdicComplete 𝔪 R] {i₀ : splitTorus (Lv 𝔪 0) X ⟶ thickObj R 𝔪 0 G} (F : FormalTorus 𝔪 i₀) :
     ∃ t : (Multiplicative X →* ℤˣ) →* (𝟙_ (Over (Sp R)) ⟶ G), ∀ φ e,
       (thick R 𝔪 e ≫ (t φ).left : Lv 𝔪 e ⟶ _) = (sgnPt (𝟙_ (Over (Lv 𝔪 e))) φ ≫ F.i e).left ≫ pr 𝔪 e G := by
@@ -410,8 +414,8 @@ theorem exists_points [IsAdicComplete 𝔪 R] {i₀ : splitTorus (Lv 𝔪 0) X �
     rw [MonObj.comp_mul, e₁, e₁, e₁, map_mul, MonObj.mul_comp, map_mul]
   exact congrArg (fun q => q.left) e₂
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem exists_two_ne_zero [IsAdicComplete 𝔪 R] [CharZero R] : ∃ e, (2 : Γ(Lv 𝔪 e, ⊤)) ≠ 0 := by
   by_contra hn
   push Not at hn
@@ -420,8 +424,8 @@ theorem exists_two_ne_zero [IsAdicComplete 𝔪 R] [CharZero R] : ∃ e, (2 : Γ
   have b := congrArg (Scheme.ΓSpecIso (CommRingCat.of R)).hom.hom a
   exact two_ne_zero (α := R) ((map_ofNat _ 2).symm.trans (b.trans (map_zero _)))
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem val_level {I : Ideal R} {P : CP G} {e : ℕ} {Pe : CP (thickObj R I e G)} (h : IsLevelCP I e Pe P) {Z : Scheme.{0}}
     {t : Z ⟶ G.left} {w} (hw : SymVal P t w) {T : Over (Lv I e)} {x : T ⟶ thickObj R I e G} (hx : x⁻¹ = x)
     (r : T.left ⟶ Z) (ht : r ≫ t = x.left ≫ pr I e G) (z : T.left) (J') (hJ' : Good Pe.L.L z J') :

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LocallyConstantH0
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LocallyConstantH0
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E1Cut LateralTheory.E.LocallyConstantH0
@@ -47,7 +51,7 @@ theorem twGenNZ_of (hAC : TwGenNZAC) : TwGenNZ := by
 
 theorem lcInj (hT : TwGenNZ) (q : ℕ) [NeZero q] (i : ℤ) m (hm : IsLCMap q i m) (B : Type) [CommRing B]
     (ζ : Prim q B) : Function.Injective (m B ζ) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro φ hφ
   by_contra hne
   obtain ⟨p, hp⟩ : ∃ p, φ p ≠ 0 := by

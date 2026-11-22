@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.StatementA
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CasimirCommutation
+module
+
+public import Formalism.RealPlaceAnalysis.StatementA
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CasimirCommutation
+
+@[expose] public section
 
 open scoped TensorProduct
 open Finset

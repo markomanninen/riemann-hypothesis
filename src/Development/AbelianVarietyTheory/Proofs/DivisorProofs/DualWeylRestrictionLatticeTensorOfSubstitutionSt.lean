@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NablaSchur
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalC
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility TensorProduct
 
@@ -119,19 +123,17 @@ theorem mul_mem_range_lTensor {A B : Type} [CommRing A] [CommRing B] (N : Submod
     (x : A ⊗[ℤ] B) (hx : x ∈ LinearMap.range (LinearMap.lTensor A N.subtype)) :
     (u ⊗ₜ (1 : B)) * x ∈ LinearMap.range (LinearMap.lTensor A N.subtype) := by
   obtain ⟨w, rfl⟩ := hx
-  induction w using TensorProduct.induction_on with
-  | zero => simp
+  induction w using TensorProduct.inductionOn with
   | tmul a n => exact ⟨(u * a) ⊗ₜ n, by simp⟩
-  | add x y hx hy => rw [map_add, mul_add]; exact add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _), mul_add]; exact add_mem hx hy
 
 theorem mul_mem_range_rTensor {A B : Type} [CommRing A] [CommRing B] (N : Submodule ℤ A) (u : B)
     (x : A ⊗[ℤ] B) (hx : x ∈ LinearMap.range (LinearMap.rTensor B N.subtype)) :
     ((1 : A) ⊗ₜ u) * x ∈ LinearMap.range (LinearMap.rTensor B N.subtype) := by
   obtain ⟨w, rfl⟩ := hx
-  induction w using TensorProduct.induction_on with
-  | zero => simp
+  induction w using TensorProduct.inductionOn with
   | tmul n b => exact ⟨n ⊗ₜ (u * b), by simp⟩
-  | add x y hx hy => rw [map_add, mul_add]; exact add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _), mul_add]; exact add_mem hx hy
 
 theorem resT_mem_lTensor (hS : SubstMem) (p q : ℕ) (ν : Fin (p + q) → ℕ)
     (f : MvPolynomial (Fin (p + q) × Fin (p + q)) ℤ) (hf : f ∈ dualWeyl ℤ (p + q) (p + q) ν) :
@@ -236,11 +238,10 @@ theorem resLat_of_substMem : SubstMem → ResLat := by
     (resT_mem_lTensor hS p q ν f hf) (resT_mem_rTensor hS p q ν f hf)
   rw [← toQ_resT, ← hw]
   clear hw
-  induction w using TensorProduct.induction_on with
-  | zero => simp
+  induction w using TensorProduct.inductionOn with
   | tmul a b =>
     rw [TensorProduct.map_tmul, toQ_tmul]
     exact Submodule.subset_span ⟨a.1, a.2, b.1, b.2, rfl⟩
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy => simp only [map_add]; exact add_mem hx hy
 
 end GlobalTheory.LeviCut

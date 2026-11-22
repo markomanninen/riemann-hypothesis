@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFamilyFiniteCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpLocRingIso
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpLocalChart
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpOverLocInChart
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingIsLocal
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingNoetherian
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingDimLe
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFamilyFiniteCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpLocRingIso
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpLocalChart
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpOverLocInChart
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingIsLocal
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingNoetherian
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingDimLe
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -25,7 +30,7 @@ namespace BlowUpOverLocFibreFinite
 theorem isAlgebraic_div {A L : Type*} [CommRing A] [Field L] [Algebra A L] (a b : A)
     (hb : algebraMap A L b ≠ 0) : IsAlgebraic A (algebraMap A L a / algebraMap A L b) := by
   refine ⟨Polynomial.C b * Polynomial.X - Polynomial.C a, fun h => hb ?_, ?_⟩
-  · have h1 := congrArg (fun p => Polynomial.coeff p 1) h
+  · have h1 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 1) h
     simp at h1
     rw [h1, map_zero]
   · simp only [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X]
@@ -120,8 +125,8 @@ theorem chartVal_of_homog (P : Ideal (MRing ι R)) [P.IsPrime] (u : J → MRing 
 
 variable [∀ k, Fintype (ι k)] [Fintype J]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem eq_of_le_of_mem_fibre (P W : Ideal (MRing ι R)) [P.IsPrime]
     (hN : IsNoetherianRing (homLocRing P W)) (hD : ringKrullDim (homLocRing P W) = 1)
     (hWp : W.IsPrime) (hPW : P ≤ W) (hWrel : IsRelevant W) (N : K → ℕ) (u : J → MRing ι R)
@@ -307,18 +312,62 @@ theorem eq_of_le_of_mem_fibre (P W : Ideal (MRing ι R)) [P.IsPrime]
 
 end BlowUpOverLocFibreFinite
 
-open BlowUpOverLocFibreFinite in
 
+open BlowUpOverLocFibreFinite in
 theorem BlowUpOverLocFibreFinite.proof : BlowUpOverLocFibreFinite.Statement.{u} := by
   intro O _ _ _ K _ _ ι _ J _ P n hP N u hu hu' c x hx hxP W hWmin hWrel
   have hPp : P.IsPrime := hP.multiProj.isPrime
-  obtain ⟨-, hNoeth, hDim⟩ := HomLocRingLocal.proof (HomLocRingIsLocal.proof HomLocRingMem.proof)
-    (HomLocRingNoetherian.proof HomLocRingMem.proof)
-    (HomLocRingDimLe.proof HomLocRingMem.proof (HomLocRingIsLocal.proof HomLocRingMem.proof))
-    O K ι P hP.multiProj c x hx hxP W hWmin hWrel
+  haveI : P.IsPrime := hPp
   have hWp : W.IsPrime := hWmin.1.1
   have hPW : P ≤ W := le_sup_left.trans hWmin.1.2
-  have hxW : x ∈ W := hWmin.1.2 (Ideal.mem_sup_right (Ideal.subset_span rfl))
+  have hxW : x ∈ W := hWmin.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self x))
+  obtain ⟨hlocal, hunit⟩ := HomLocRingIsLocal.proof HomLocRingMem.proof O K ι P W hWp hPW
+  have hNoeth := HomLocRingNoetherian.proof HomLocRingMem.proof O K ι P W hP.multiProj.multiHomog hWp hWrel hPW
+  have hDim : ringKrullDim (homLocRing P W) = 1 := by
+    refine le_antisymm ?_ ?_
+    · refine (HomLocRingDimLe.proof HomLocRingMem.proof (HomLocRingIsLocal.proof HomLocRingMem.proof)
+        O K ι P W hP.multiProj.multiHomog hWp hWrel hPW).trans ?_
+      have h1 := Ideal.map_height_le_one_of_mem_minimalPrimes hWmin
+      exact_mod_cast h1
+    · have hgexist : ∃ g : MRing ι O, IsMultiHomog g c ∧ g ∉ W := by
+        choose i hi using hWrel
+        refine ⟨∏ k, X ⟨k, i k⟩ ^ c k, ?_, ?_⟩
+        · have hc : c = ∑ k, c k • blockWeight ι ⟨k, i k⟩ := by
+            funext j
+            simp [blockWeight, Finset.sum_apply, Pi.single_apply]
+          have h := IsWeightedHomogeneous.prod Finset.univ (fun k => (X ⟨k, i k⟩ : MRing ι O) ^ c k)
+            (fun k => c k • blockWeight ι ⟨k, i k⟩)
+            fun k _ => (isWeightedHomogeneous_X O (blockWeight ι) _).pow _
+          rw [← hc] at h
+          exact h
+        · intro h
+          obtain ⟨k, -, hk⟩ := (Ideal.IsPrime.prod_mem_iff (hp := hWp)).mp h
+          exact hi k (hWp.mem_of_pow_mem _ hk)
+      obtain ⟨g, hg, hgW⟩ := hgexist
+      have hz : algebraMap (MRing ι O ⧸ P) (FractionRing (MRing ι O ⧸ P)) (Ideal.Quotient.mk P x) /
+          algebraMap (MRing ι O ⧸ P) (FractionRing (MRing ι O ⧸ P)) (Ideal.Quotient.mk P g) ∈
+            homLocRing P W :=
+        Subring.subset_closure ⟨c, x, g, hx, hg, hgW, rfl⟩
+      have hnu : ¬ IsUnit (⟨_, hz⟩ : homLocRing P W) :=
+        fun h => (hunit c x g hx hg hgW hz).mp h hxW
+      have hne : (⟨_, hz⟩ : homLocRing P W) ≠ 0 := by
+        intro h0
+        have h1 := congrArg Subtype.val h0
+        simp only [ZeroMemClass.coe_zero, div_eq_zero_iff,
+          IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem] at h1
+        rcases h1 with h1 | h1
+        · exact hxP h1
+        · exact hgW (hPW h1)
+      haveI := hlocal
+      have hlt : (⊥ : Ideal (homLocRing P W)) < IsLocalRing.maximalIdeal (homLocRing P W) := by
+        refine bot_lt_iff_ne_bot.mpr fun h => hne ?_
+        have hm := (IsLocalRing.mem_maximalIdeal _).mpr hnu
+        rwa [h, Ideal.mem_bot] at hm
+      have h2 := Ideal.height_add_one_le_of_lt_of_isPrime hlt
+      rw [← IsLocalRing.maximalIdeal_height_eq_ringKrullDim]
+      have h3 : (1 : ℕ∞) ≤ (IsLocalRing.maximalIdeal (homLocRing P W)).height :=
+        le_trans le_add_self h2
+      exact_mod_cast h3
   have hI : IsMultiHomogIdeal (blowUpOf P u ⊔ Ideal.span {liftForm (J := J) x}) :=
     SupSpanMultiHomog.proof O (Option K) (extIdx ι J) (blowUpOf P u) (liftForm x) (liftMDeg c)
       (isMultiHomogIdeal_blowUpOf hP.multiProj.multiHomog N u hu) (isMultiHomog_liftForm hx)

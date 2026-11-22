@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm MatrixGroups Filter EisensteinSeries
 open scoped Real Topology

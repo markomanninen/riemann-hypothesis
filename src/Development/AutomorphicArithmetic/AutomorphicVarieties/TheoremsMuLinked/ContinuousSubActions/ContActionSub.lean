@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.FreeFlag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MatrixExtendByZeroApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.FreeFlag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MatrixExtendByZeroApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Topology UpperTheory.V UpperTheory.V.Loc
 
@@ -86,7 +90,7 @@ theorem UpperTheory.V.Th.z1fSub :
   have hψ : IsOpenEmbedding (φ.comp H.subtype) := hφ.comp hH.isOpenEmbedding_subtypeVal
   have hc' : (fun g => f (c g)) ∈ Z1 ρ' :=
     ⟨(IsModuleTopology.continuous_of_linearMap (f.restrictScalars ℚ_[l])).comp hc.1,
-      fun g h => by simp only [hc.2 g h, map_add, hf]⟩
+      fun g h => by simp only [hc.2 g h, map_add (f := _), hf]⟩
   have h : CrOn φ ρ H :=
     ((isCrys_isDR_sub_quot (φ.comp H.subtype) hψ _ _ (contAction_sub _ hρ H) (contAction_sub _ hρ' H)
       (f.restrictScalars ℚ_[l]) (fun g x => hf g x)).1 hi).1 h'
@@ -96,5 +100,5 @@ theorem UpperTheory.V.Th.z1fSub :
     (contAction_sub _ (cont_ext l ρ' hρ' _ hc'.2 hc'.1) H)
     ((f.restrictScalars ℚ_[l]).prodMap LinearMap.id) (fun g x => ?_)).1 ?_).1 hE
   · change (f (ρ g x.1 + x.2 • c g), x.2) = (ρ' g (f x.1) + x.2 • f (c g), x.2)
-    rw [map_add, map_smul, hf]
+    rw [map_add (f := _), map_smul, hf]
   · exact hi.prodMap Function.injective_id

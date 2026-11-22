@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -65,7 +69,7 @@ theorem finite_quotient_span_of_birational
     rw [eq_comm, Ideal.Quotient.eq, Ideal.mem_span_singleton] at hwv
     obtain ⟨t, ht⟩ := hwv
     have ht' := congrArg (algebraMap A B) ht
-    rw [map_sub, map_mul, ← hα] at ht'
+    rw [RingHom.map_sub, map_mul, ← hα] at ht'
     refine ⟨u + z, t, mul_left_cancel₀ hα0 ?_⟩
     linear_combination e + ht' + hz
   have hP : ∀ x, P n x := by
@@ -156,7 +160,7 @@ theorem krullAkizuki_of_birational
         exact Ideal.Quotient.eq_zero_iff_mem.mpr hap
       rw [h] at this
       exact ha this
-    have h4 := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := A) (⊥ : Ideal (B ⧸ p)) h3
+    have h4 := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := A) (⊥ : Ideal (B ⧸ p)) h3
     exact Ideal.Quotient.maximal_of_isField _ (Ring.isField_iff_maximal_bot.mpr h4)
 
 end KrullAkizuki
@@ -209,7 +213,7 @@ theorem exists_discreteValuationSubring_of_subring (B : Subring L) [IsNoetherian
       ⟨c * x, LocalSubring.le_ofPrime B p hcx⟩, Subtype.ext rfl⟩
   have hKA := krullAkizuki_of_birational (A := A0) (B := V) hbir
   haveI : IsNoetherianRing V := hKA.1
-  haveI : IsPrincipalIdealRing V := ((IsBezout.TFAE (R := V)).out 0 1).mp hKA.1
+  haveI : IsPrincipalIdealRing V := ((IsBezout.tfae (R := V)).out 1 2).mp hKA.1
   have hVy0 : y ∈ V := hBV hy
   have hne : IsLocalRing.maximalIdeal V ≠ ⊥ := by
     intro h
@@ -496,8 +500,8 @@ instance isDiscreteValuationRing_adicCompletion_of_dvr :
     IsDiscreteValuationRing (AdicCompletion (maximalIdeal V) V) :=
   (adicCompletion_isDVR_irreducible V (IsDiscreteValuationRing.exists_irreducible V).choose_spec).2.1
 
-variable {V} in
 
+variable {V} in
 theorem irreducible_algebraMap_adicCompletion_of_dvr {π : V} (hπ : Irreducible π) :
     Irreducible (algebraMap V (AdicCompletion (maximalIdeal V) V) π) :=
   (adicCompletion_isDVR_irreducible V hπ).2.2
@@ -510,8 +514,9 @@ variable {A : Type*} [CommRing A] [IsDomain A] [IsNoetherianRing A] [Ring.Dimens
   (K : Type*) {L : Type*} [Field K] [Algebra A K] [IsFractionRing A K] [Field L] [Algebra K L]
   [Algebra A L] [IsScalarTower A K L] [FiniteDimensional K L]
 
-include K in
+include K
 
+include K in
 theorem krullAkizuki (B : Subalgebra A L) : IsNoetherianRing B ∧ Ring.DimensionLEOne B := by
   have hinj : Function.Injective (algebraMap A L) := by
     rw [IsScalarTower.algebraMap_eq A K L]
@@ -544,8 +549,8 @@ theorem krullAkizuki (B : Subalgebra A L) : IsNoetherianRing B ∧ Ring.Dimensio
   · change algebraMap A L (d * c) * x = (d : A) • c • (x : L)
     rw [← mul_smul, Algebra.smul_def]
 
-include K in
 
+include K in
 theorem isDedekindDomain_integralClosure_of_dimensionLEOne :
     IsDedekindDomain (integralClosure A L) := by
   obtain ⟨h1, h2⟩ := krullAkizuki K (integralClosure A L)
@@ -583,8 +588,8 @@ theorem range_algebraMap_eq_iInf_discreteValuationSubring [IsIntegrallyClosed R]
   ext x
   exact (IsIntegrallyClosed.isIntegral_iff (R := R) (K := K)).symm
 
-variable {R K} in
 
+variable {R K} in
 theorem exists_algebraMap_eq_of_forall_discreteValuationSubring [IsIntegrallyClosed R] {x : K}
     (hx : ∀ V : ValuationSubring K, IsDiscreteValuationRing V → (∀ r, algebraMap R K r ∈ V) →
       (∀ r ∈ maximalIdeal R, algebraMap R K r ∈ V.nonunits) → x ∈ V) :
@@ -620,24 +625,6 @@ theorem map_maximalIdeal_pow_le {S O : Type*} [CommRing S] [IsLocalRing S] [Comm
   rw [Ideal.map_pow]
   exact Ideal.pow_right_mono (map_maximalIdeal_le φ) n
 
-open TensorProduct in
-
-theorem tensorProduct_mk_one_injective_of_isTorsionFree {S : Type*} [CommRing S] [IsDomain S]
-    (F : Type*) [Field F] [Algebra S F] [FaithfulSMul S F] (M : Type*) [AddCommGroup M]
-    [Module S M] [Module.IsTorsionFree S M] :
-    Function.Injective (TensorProduct.mk S F M 1) := by
-  letI : Algebra (FractionRing S) F := FractionRing.liftAlgebra S F
-  have h1 : Function.Injective (TensorProduct.mk S (FractionRing S) M 1) := by
-    rw [IsLocalizedModule.injective_iff_isRegular (nonZeroDivisors S)]
-    intro c
-    exact IsSMulRegular.of_ne_zero (nonZeroDivisors.coe_ne_zero c)
-  have h2 := Module.FaithfullyFlat.tensorProduct_mk_injective
-    (A := FractionRing S) (B := F) (FractionRing S ⊗[S] M)
-  have h3 := (AlgebraTensorModule.cancelBaseChange S (FractionRing S) F F M).injective.comp
-    (h2.comp h1)
-  intro a b hab
-  apply h3
-  simpa using hab
 
 theorem exists_complete_discreteValuationRing_ker_eq {S : Type u} [CommRing S]
     [IsNoetherianRing S] [IsLocalRing S] (q : Ideal S) [q.IsPrime] (hq : q ≠ maximalIdeal S) :
@@ -665,9 +652,9 @@ theorem exists_complete_discreteValuationRing_of_prime_lt {A : Type u} [CommRing
   have hq' : (q.map (algebraMap A S)).IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint p.primeCompl S q inferInstance hdis
   have hc : (q.map (algebraMap A S)).comap (algebraMap A S) = q :=
-    IsLocalization.comap_map_of_isPrime_disjoint p.primeCompl S inferInstance hdis
+    IsLocalization.under_map_of_isPrime_disjoint p.primeCompl S inferInstance hdis
   have hm : (maximalIdeal S).comap (algebraMap A S) = p :=
-    Localization.AtPrime.comap_maximalIdeal
+    Localization.AtPrime.under_maximalIdeal
   obtain ⟨O, _, _, _, _, φ, h1, h2⟩ := exists_complete_discreteValuationRing_ker_eq
     (q.map (algebraMap A S)) (fun h => hqp.ne (by rw [← hc, h, hm]))
   refine ⟨O, inferInstance, inferInstance, inferInstance, inferInstance,
@@ -675,8 +662,8 @@ theorem exists_complete_discreteValuationRing_of_prime_lt {A : Type u} [CommRing
   · rw [← RingHom.comap_ker, h1, hc]
   · rw [← Ideal.comap_comap, maximalIdeal_comap, hm]
 
-open AlgebraicGeometry CategoryTheory in
 
+open AlgebraicGeometry CategoryTheory in
 theorem exists_complete_discreteValuationRing_of_specializes {X : Scheme.{u}}
     [IsLocallyNoetherian X] {η x : X} (h : η ⤳ x) (hne : η ≠ x) :
     ∃ (O : CommRingCat.{u}) (_ : IsDomain O) (_ : IsDiscreteValuationRing O)
@@ -725,7 +712,7 @@ theorem discreteValuationRing_dominating_noetherian_local (L : Type w) [Field L]
   have hinj : Function.Injective (algebraMap R L) := by
     rw [IsScalarTower.algebraMap_eq R K L]
     exact (algebraMap K L).injective.comp (IsFractionRing.injective R K)
-  exact ⟨inferInstance, inferInstance, fun π => irreducible_algebraMap_adicCompletion_of_dvr, h1,
+  exact ⟨inferInstance, inferInstance, fun _ => irreducible_algebraMap_adicCompletion_of_dvr, h1,
     injective_and_isLocalHom_adicCompletion_comp _
       fun a b hab => hinj (congrArg Subtype.val hab)⟩
 

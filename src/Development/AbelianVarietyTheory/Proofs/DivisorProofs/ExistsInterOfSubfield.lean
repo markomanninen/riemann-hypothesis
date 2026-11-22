@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharExVal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterFiniteIdeleValueMemField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryRationalInfTypeSubgroupAndInfTypeUnique
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharExVal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterFiniteIdeleValueMemField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryRationalInfTypeSubgroupAndInfTypeUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,5 @@ theorem locVals_of_even {I : Type} [Fintype I] {φ : I → E →+* ℂ} {c : I �
     exact ⟨⟨y, le_sup_left (a := C') (hCC y.2)⟩, hy⟩
   exact GlobalTheory.HeckeValField.mem_unitsIn.1
     (GlobalTheory.HeckeValField.loc_mem χ hle (fun k => le_sup_right (a := C') (inf_mem_of_even h k)) v x)
-
-def rootsField (n : ℕ) : IntermediateField ℚ ℂ := IntermediateField.adjoin ℚ {z : ℂ | z ^ n = 1}
 
 end GlobalTheory.HeckeLocVals

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfTwistCoverCocycle
+module
+
+public import Development.EtaleCohomology.EtaleTrace.TorsionH0PointOfTwistCoverCocycle
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry
 

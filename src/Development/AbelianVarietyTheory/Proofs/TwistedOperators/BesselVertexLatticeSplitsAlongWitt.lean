@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualOrthAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualOrthAt
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -73,7 +78,12 @@ theorem monoAt_of_proj {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (L : L
     · exact GlobalTheory.OrthSumLat.rat_mulVec_mem_latV d.q0 h0 hy
   · rintro ⟨h1, h2, h3⟩
     have e : y = d.jX *ᵥ (d.pX *ᵥ y) + d.j0 *ᵥ (d.p0 *ᵥ y) + d.jY *ᵥ (d.pY *ᵥ y) := by
-      have := congrArg (· *ᵥ y) d.sum_eq_one
+      have h : d.jX * d.pX + d.j0 * d.p0 + d.jY * d.pY = 1 := by
+        have h := congrArg rat d.sum_eq_one_rat
+        rw [rat_add, rat_add, rat_one] at h
+        simpa only [HypDec.jX, HypDec.j0, HypDec.jY,
+          HypDec.pX, HypDec.p0, HypDec.pY, rat, Matrix.map_mul] using h
+      have := congrArg (· *ᵥ y) h
       simp only [add_mulVec, one_mulVec, ← mulVec_mulVec] at this
       exact this.symm
     rw [e, mulVec_eq_sum_colMul d.jX, mulVec_eq_sum_colMul d.jY]

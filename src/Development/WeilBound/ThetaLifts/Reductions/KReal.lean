@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.KRealAsm
-import Development.WeilBound.ThetaLifts.Reductions.LieScalar2
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.KRealAsm
+public import Development.WeilBound.ThetaLifts.Reductions.LieScalar2
+
+@[expose] public section
 
 namespace PositivityTheory.ThKR
 

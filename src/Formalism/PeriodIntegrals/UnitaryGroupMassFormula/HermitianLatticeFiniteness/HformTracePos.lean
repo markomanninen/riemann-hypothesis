@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.HermLatFin
+module
+
+public import Formalism.PeriodIntegrals.HermLatFin
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped ComplexOrder
@@ -89,7 +93,8 @@ theorem hform_trace_pos (σ : E →+* E) (hst : ∀ a : E, star a = σ a)
     have e : τ (hform J x x) =
         star (fun i => τ (x i)) ⬝ᵥ (J.map τ) *ᵥ (fun i => τ (x i)) := by
       rw [hform_apply]
-      simp only [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum]
       simp only [dotProduct, Matrix.mulVec, Pi.star_apply, Matrix.map_apply, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, map_mul, hst, hτσ]

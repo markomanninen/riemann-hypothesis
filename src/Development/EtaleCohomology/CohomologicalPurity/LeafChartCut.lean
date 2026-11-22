@@ -1,8 +1,12 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
-import Mathlib.RingTheory.RingHom.StandardSmooth
-import Mathlib.RingTheory.RingHom.Locally
-import Mathlib.RingTheory.Smooth.StandardSmoothOfFree
-import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+public import Mathlib.RingTheory.RingHom.StandardSmooth
+public import Mathlib.RingTheory.RingHom.Locally
+public import Mathlib.RingTheory.Smooth.StandardSmoothOfFree
+public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry Opposite TensorProduct

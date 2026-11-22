@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardKerSubspacesAndHeckePolyOfConvolution
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PeterssonFormProportionalClassSumAllLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuaMatchingConjugatePrimeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplittingCharactersUnramifiedOffLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaAtOfIsEtaConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardKerSubspacesAndHeckePolyOfConvolution
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PeterssonFormProportionalClassSumAllLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuaMatchingConjugatePrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplittingCharactersUnramifiedOffLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaAtOfIsEtaConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,8 @@ theorem match_sum {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {om : GA D S ×
     {P : Pl D.host.E} (I : Finset ℕ) (w : ℕ → ℂ) (a b : ℕ → List ℤ →₀ ℂ) (h : ∀ l ∈ I, Match ψ om P (a l) (b l)) :
     Match ψ om P (∑ l ∈ I, w l • a l) (∑ l ∈ I, w l • b l) := by
   intro f hf
-  simp only [opOf_eq, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opOf_eq, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
   refine Finset.sum_congr rfl fun l hl => ?_
   have := h l hl f hf
   simp only [opOf_eq] at this
@@ -154,7 +159,8 @@ theorem splitC_sum (n : ℕ) (I : Finset ℕ) (w : ℕ → ℂ) (M : ℕ → ℕ
 
 theorem dualC_splitC (n : ℕ) (w : ℕ → ℂ) :
     dualC (splitC n w) = ∑ l ∈ Finset.range (n + 1), w l • dualC (Finsupp.single (splitLab n l) 1) := by
-  simp only [splitC, dualC_eq, map_sum, ← map_smul, Finsupp.smul_single, smul_eq_mul, mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [splitC, dualC_eq, map_sum, ← map_smul, Finsupp.smul_single, smul_eq_mul, mul_one]
 
 theorem splitC_delta {n k : ℕ} (hk : k ≤ n) :
     splitC n (fun i => if i = k then 1 else 0) = Finsupp.single (splitLab n k) 1 := by
@@ -202,8 +208,8 @@ theorem step_match {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE
   · rw [hs, mul_pow ν, ← mul_assoc, mul_assoc _ (ν ^ (l - j)), ← pow_add, Nat.sub_add_cancel hj]
   · rfl
 
-open Formalism.L2.JoinChr in
 
+open Formalism.L2.JoinChr in
 theorem val_conj {χ : (AE D)ˣ →* Circle} {n : ℕ} (hχ : ResEta D χ n) {P : Pl D.host.E} (u : UnrPl P χ)
     {e : AE D} {ϖ : 𝓞 D.host.E} {x : (AE D)ˣ} (he : Formalism.L2.NTheta.IsIdemAt e (conjPl P))
     (h1 : ϖ ∈ (conjPl P).asIdeal) (h2 : ϖ ∉ (conjPl P).asIdeal ^ 2) (hx : (x : AE D) = e * incA D (ϖ : D.host.E) + (1 - e)) :
@@ -252,7 +258,7 @@ theorem val_conj {χ : (AE D)ˣ →* Circle} {n : ℕ} (hχ : ResEta D χ n) {P 
       rw [Units.val_inv_eq_inv_val, map_inv₀, hu, inv_one]
   have h4 : χ x * χ (L k) = 1 := GlobalTheory.SplitDetCharacter.char_norm hχ x (L k) (by
     show locE D _ _ = _
-    rw [hx, map_add, map_mul, map_sub, map_one, GlobalTheory.MovedIdem.cA_incA]
+    rw [hx, map_add (f := _), map_mul, map_sub, map_one, GlobalTheory.MovedIdem.cA_incA]
     unfold locE
     have : (k : D.host.E) = star (ϖ : D.host.E) := rfl
     rw [this]

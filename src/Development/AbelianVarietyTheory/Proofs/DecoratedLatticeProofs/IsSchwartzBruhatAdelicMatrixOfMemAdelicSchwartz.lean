@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SchwartzBruhatMixedFamilies
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixRealSizeBoundsAlongRealParametrisatiStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SchwartzBruhatMixedFamilies
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixRealSizeBoundsAlongRealParametrisatiStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal ENNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -56,37 +61,36 @@ theorem isOpen_periods {M : Type} [AddCommGroup M] [TopologicalSpace M] [IsTopol
     (h1 : IsLocallyConstant Φ) (h2 : HasCompactSupport Φ) : IsOpen (periods Φ : Set M) :=
   AddSubgroup.isOpen_of_mem_nhds _ (eventually_invariant h1 h2)
 
-theorem zero : IsSchwartzBruhat (0 : Mx D m n → ℂ) where
-  level := ⟨⊤, isOpen_univ, fun _ _ _ _ => rfl⟩
-  supp := ⟨∅, isCompact_empty, fun _ h => absurd rfl h⟩
-  schwartz := fun _ _ _ _ _ => ⟨0, fun _ => rfl⟩
+theorem zero : IsSchwartzBruhat (0 : Mx D m n → ℂ) := by
+  exact
+    { level := ⟨⊤, isOpen_univ, fun _ _ _ _ => rfl⟩
+      supp := ⟨∅, isCompact_empty, fun _ h => absurd rfl h⟩
+      schwartz := fun _ _ _ _ _ => ⟨0, fun _ => rfl⟩ }
 
-theorem add {φ ψ : Mx D m n → ℂ} (hφ : IsSchwartzBruhat φ) (hψ : IsSchwartzBruhat ψ) : IsSchwartzBruhat (φ + ψ) where
-  level := by
-    obtain ⟨U, hU, h⟩ := hφ.level
+theorem add {φ ψ : Mx D m n → ℂ} (hφ : IsSchwartzBruhat φ) (hψ : IsSchwartzBruhat ψ) : IsSchwartzBruhat (φ + ψ) := by
+  refine { level := ?_, supp := ?_, schwartz := ?_ }
+  · obtain ⟨U, hU, h⟩ := hφ.level
     obtain ⟨U', hU', h'⟩ := hψ.level
     refine ⟨U ⊓ U', hU.inter hU', fun u hu h0 x => ?_⟩
     simp only [Pi.add_apply, h u hu.1 h0, h' u hu.2 h0]
-  supp := by
-    obtain ⟨K, hK, h⟩ := hφ.supp
+  · obtain ⟨K, hK, h⟩ := hφ.supp
     obtain ⟨K', hK', h'⟩ := hψ.supp
     refine ⟨K ∪ K', hK.union hK', fun x hx => ?_⟩
     by_cases h1 : φ x = 0
     · exact Or.inr (h' x fun h2 => hx (by simp [h1, h2]))
     · exact Or.inl (h x h1)
-  schwartz := fun k L hL hi x => by
+  · intro k L hL hi x
     obtain ⟨g, hg⟩ := hφ.schwartz k L hL hi x
     obtain ⟨g', hg'⟩ := hψ.schwartz k L hL hi x
     exact ⟨g + g', fun t => by simp [hg, hg']⟩
 
-theorem smul (c : ℂ) {φ : Mx D m n → ℂ} (hφ : IsSchwartzBruhat φ) : IsSchwartzBruhat (c • φ) where
-  level := by
-    obtain ⟨U, hU, h⟩ := hφ.level
+theorem smul (c : ℂ) {φ : Mx D m n → ℂ} (hφ : IsSchwartzBruhat φ) : IsSchwartzBruhat (c • φ) := by
+  refine { level := ?_, supp := ?_, schwartz := ?_ }
+  · obtain ⟨U, hU, h⟩ := hφ.level
     exact ⟨U, hU, fun u hu h0 x => by simp only [Pi.smul_apply, h u hu h0]⟩
-  supp := by
-    obtain ⟨K, hK, h⟩ := hφ.supp
+  · obtain ⟨K, hK, h⟩ := hφ.supp
     exact ⟨K, hK, fun x hx => h x fun h1 => hx (by simp [h1])⟩
-  schwartz := fun k L hL hi x => by
+  · intro k L hL hi x
     obtain ⟨g, hg⟩ := hφ.schwartz k L hL hi x
     exact ⟨c • g, fun t => by simp [hg]⟩
 
@@ -94,7 +98,7 @@ theorem compAt_add (θ : InfFam D) (τ : D.what₂.Tau) (x y : Mx D m n) :
     compAt θ τ (x + y) = compAt θ τ x + compAt θ τ y := by
   ext i j
   simp only [compAt, Matrix.map_apply, Matrix.add_apply]
-  rw [(infPart D).map_add, (θ τ).map_add]
+  rw [map_add (infPart D), map_add (θ τ)]
 
 def realVec {k : ℕ} (θ : InfFam D) (L : (Fin k → ℝ) →+ Mx D m n) : (Fin k → ℝ) →+ (D.what₂.Tau → Fin m → Fin n → ℂ) where
   toFun t := fun τ i j => compAt θ τ (L t) i j
@@ -146,11 +150,11 @@ theorem continuous_finVec : Continuous (finVec (D := D) (m := m) (n := n)) :=
 theorem pure (θ : InfFam D) (hθ : IsInfFam θ) (f : SchwartzMap (D.what₂.Tau → Fin m → Fin n → ℂ) ℂ)
     (g : (Fin m → Fin n → Af D.host.F ⊗[D.host.F] D.host.E) → ℂ)
     (hg : g ∈ GlobalTheory.WeilM.SB (Fin m → Fin n → Af D.host.F ⊗[D.host.F] D.host.E)) :
-    IsSchwartzBruhat fun x : Mx D m n => f (fun τ i j => compAt θ τ x i j) * g (fun i j => finPart D (x i j)) where
-  level := by
-    haveI : IsModuleTopology (Af D.host.F) (Af D.host.F ⊗[D.host.F] D.host.E) := ⟨rfl⟩
-    haveI : IsTopologicalAddGroup (Af D.host.F ⊗[D.host.F] D.host.E) :=
-      IsModuleTopology.topologicalAddGroup (Af D.host.F) _
+    IsSchwartzBruhat fun x : Mx D m n => f (fun τ i j => compAt θ τ x i j) * g (fun i j => finPart D (x i j)) := by
+  refine { level := ?_, supp := ?_, schwartz := ?_ }
+  · have : IsModuleTopology (Af D.host.F) (Af D.host.F ⊗[D.host.F] D.host.E) := ⟨rfl⟩
+    have : IsTopologicalAddGroup (Af D.host.F ⊗[D.host.F] D.host.E) :=
+      IsModuleTopology.isTopologicalAddGroup (Af D.host.F) _
     set P := (finVec : Mx D m n →+ (Fin m → Fin n → Af D.host.F ⊗[D.host.F] D.host.E)) with hP
     refine ⟨(periods g).comap P, (isOpen_periods hg.1 hg.2).preimage continuous_finVec, fun u hu h0 x => ?_⟩
     have e1 : ∀ τ, compAt θ τ (x + u) = compAt θ τ x := fun τ => by
@@ -163,8 +167,8 @@ theorem pure (θ : InfFam D) (hθ : IsInfFam θ) (f : SchwartzMap (D.what₂.Tau
       P.map_add x u
     simp only [e1, e2]
     rw [show g ((fun i j => finPart D (x i j)) + P u) = g (fun i j => finPart D (x i j)) from hu _]
-  supp := ⟨tsupport g, hg.2.isCompact, fun x hx => subset_tsupport g (right_ne_zero_of_mul hx)⟩
-  schwartz := fun k L hL hi x => by
+  · exact ⟨tsupport g, hg.2.isCompact, fun x hx => subset_tsupport g (right_ne_zero_of_mul hx)⟩
+  · intro k L hL hi x
     obtain ⟨⟨C₁, hC₁⟩, hlow⟩ := GlobalTheory.T.adelicMatrixRealSize_bounds_along_real_parametrisation D θ hθ m n k L hL
     obtain ⟨C₂, hC₂⟩ := hlow hi
     have hAb : ∀ t, ‖realVec θ L t‖ ≤ C₁ * ‖t‖ := fun t => (norm_vec_le θ (L t)).trans (hC₁ t)
@@ -198,8 +202,8 @@ theorem pure (θ : InfFam D) (hθ : IsInfFam θ) (f : SchwartzMap (D.what₂.Tau
       ext i j
       have h := congrFun (congrFun (hL.2 t) i) j
       simp only [Matrix.map_apply, Matrix.zero_apply] at h
-      rw [Matrix.add_apply, (finPart D).map_add, h, add_zero]
-    simp only [e1, e2, SchwartzMap.smul_apply, SchwartzMap.compCLMOfAntilipschitz_apply, Function.comp_apply, smul_eq_mul]
+      rw [Matrix.add_apply, map_add (finPart D), h, add_zero]
+    simp only [e1, e2, smul_apply, SchwartzMap.compCLMOfAntilipschitz_apply, Function.comp_apply, smul_eq_mul]
     ring
 
 theorem isSchwartzBruhat_of_mem_schwartzA : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (m n : ℕ),

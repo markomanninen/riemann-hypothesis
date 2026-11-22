@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.Continuous
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.Continuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,8 @@ variable {D : D7}
 theorem rect_entry_mul_le {m n p : ℕ} (φ : AE D →+* ℂ) (X : Matrix (Fin m) (Fin n) (AE D))
     (Y : Matrix (Fin n) (Fin p) (AE D)) (i : Fin m) (j : Fin p) {bX bY : ℝ}
     (hX : ∀ i k, ‖φ (X i k)‖ ≤ bX) (hY : ∀ k j, ‖φ (Y k j)‖ ≤ bY) : ‖φ ((X * Y) i j)‖ ≤ n * (bX * bY) := by
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   calc ‖∑ e, φ (X i e * Y e j)‖ ≤ ∑ e : Fin n, ‖φ (X i e * Y e j)‖ := norm_sum_le _ _
     _ ≤ ∑ _e : Fin n, bX * bY := Finset.sum_le_sum fun e _ => by
         rw [map_mul, norm_mul]
@@ -32,8 +37,8 @@ theorem entry_le_sum {m n : ℕ} (f : Fin m → Fin n → ℝ) (hf : ∀ i j, 0 
 
 variable {A T : HSp D} {ι : A.V →ₗ[D.host.E] T.V} {s : GA D A →* GA D T}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem s_entry_le (θ : InfFam D) (hι : HSpace.IsIsomEmb A T ι) (hemb : IsEmbHom ι s) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (h : GA D A) (τ : D.what₂.Tau) (b : ℝ), 0 ≤ b →
       (∀ k l, ‖θ τ (infPart D (mt A h k l))‖ ≤ b) → ∀ i j, ‖θ τ (infPart D (mt T (s h) i j))‖ ≤ C * (b + 1) := by
@@ -65,7 +70,7 @@ theorem s_entry_le (θ : InfFam D) (hι : HSpace.IsIsomEmb A T ι) (hemb : IsEmb
   have hFMP : ‖φ τ ((F * mt A h * P) i j)‖ ≤ A.rank * ((A.rank * (bF τ * b)) * bP τ) :=
     rect_entry_mul_le (φ τ) (F * mt A h) P i j hFM hPe
   have hsum : ‖φ τ ((F * mt A h * P + Q) i j)‖ ≤ A.rank * ((A.rank * (bF τ * b)) * bP τ) + cQ τ := by
-    rw [Matrix.add_apply, map_add]
+    rw [Matrix.add_apply, map_add (f := _)]
     exact (norm_add_le _ _).trans (add_le_add hFMP hQe)
   show ‖φ τ ((F * mt A h * P + Q) i j)‖ ≤ C * (b + 1)
   refine hsum.trans ?_

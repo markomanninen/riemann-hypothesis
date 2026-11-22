@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.FrameEstimates.ContinuousMixedSymm
-import Development.WeilBound.ThetaLifts.FrameEstimates.RankIffRight
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ContinuousMixedSymm
+public import Development.WeilBound.ThetaLifts.FrameEstimates.RankIffRight
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU Filter Topology
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -47,7 +51,7 @@ theorem coef_eigen {ψ : AddChar (AF F) ℂ} (hn : ∀ x, ‖ψ x‖ = 1) (μ : 
   simp only [add_dotProduct, neg_dotProduct]
   linear_combination (-(u.1 ⬝ᵥ u.2)) * h2
 
-variable {v : Pl F}
+variable {v : Pl (F := F)}
 
 theorem indep_of_rest {φ : (κ → Fv F v) → ℂ} {r : (κ → AF F) → ℂ} (h : Rest (evFin F v) φ r) : Indep v r :=
   fun x t => h.1 x _ ((at_iff _).2 (funext fun i => (ep_mul _).trans (by rw [evFin_atPlace])))
@@ -111,7 +115,7 @@ theorem soCut_of : SoCut := by
     exact this.symm
   have e1 : ∀ u : Matrix (Fin n) (Fin d) (AE F E), -((1 : GL (Fin n) (Fv F v)).1ᵀ * X.J.map t * u.map (piW (t.comp σ)) *
       (W.J.map t)ᵀ * (1 : GL (Fin d) (Fv F v)).1) = coB σ X W t u := fun u => by simp [coB]
-  have sy : ∀ (U : Matrix (Fin n) (Fin d) (Fv F v)) z, symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F W.J) z
+  have sy : ∀ (U : Matrix (Fin n) (Fin d) (Fv F v)) z, symp (cA σ) (-1) (incM F X.J) (incM F W.J) z
       (spM h t (-U) 0) = atPlace v (trace (coB σ X W t z * Uᵀ)) := fun U z => by
     have := ev_symp h t hP.herm.herm hP.skew.skew z (spM h t (-U) 0)
     rw [spM_fst, neg_neg, hco (spM h t (-U) 0), spM_snd] at this
@@ -120,8 +124,9 @@ theorem soCut_of : SoCut := by
     conv_lhs => rw [← epU, map_smul]
     simp only [Prod.smul_fst, Prod.smul_snd, smul_dotProduct, dotProduct_smul, smul_eq_mul, mul_sub]
   refine ⟨m, χ, hι.bij.injOn hφ (Submodule.sum_mem _ fun i _ => hχ i) ?_, fun i => ⟨⟨hχ i, ι, hι, fun Y hY => ?_⟩, ?_⟩⟩
-  · rw [map_sum, hsum]
-    exact Finset.sum_congr rfl fun i _ => (hχg i).symm
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, hsum]
+      exact Finset.sum_congr rfl fun i _ => (hχg i).symm
   · rw [hχg]
     exact (hg i).2.1 Y (hz Y hY)
   intro r hr μ hμ z hzr
@@ -144,7 +149,7 @@ theorem soCut_of : SoCut := by
   rw [eig] at hΦ
   have := coef_eigen hψ.2.1 μ (tens (evFin F v) (χ i) r) _ (M.co.e z) (atPlace v (trace (Y₀ * Uᵀ)))
     (hΦ.trans (funext fun x => mul_assoc _ _ _))
-  rw [← neg_sub, ← M.co.form, sy, ← map_add, ← map_neg, ← map_add, ← psv_apply] at this
+  rw [← neg_sub, ← M.co.form, sy, ← map_add (f := _), ← map_neg, ← map_add (f := _), ← psv_apply] at this
   by_contra h0
   apply hU'
   have h1 := (mul_eq_right₀ h0).1 this.symm

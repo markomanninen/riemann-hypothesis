@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.IsotypicSignedParameters
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsBlockOrd
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.RealPar Matrix MeasureTheory
 open scoped TensorProduct
@@ -178,7 +182,8 @@ theorem mono_stable {act : Mat p q →ₗ[ℂ] Module.End ℂ V} (h : IsLieAct a
         conv_lhs => rw [Matrix.matrix_eq_sum_single Z]
         simp [Eab]
       rw [hZ']
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
       refine W.sum_mem fun a _ => W.sum_mem fun b _ => ?_
       by_cases hab : sameBlock a b
       · refine W.smul_mem _ ?_

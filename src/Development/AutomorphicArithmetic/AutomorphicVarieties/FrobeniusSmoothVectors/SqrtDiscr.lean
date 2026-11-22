@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.SubSmulMulSubSmulEqZeroOfQuadratic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.GdFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.SubSmulMulSubSmulEqZeroOfQuadratic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.GdFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 
@@ -13,7 +17,7 @@ private theorem hom_ext {l : ℕ} [Fact l.Prime] {k : Type} [CommRing k] [CharP 
     rwa [PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at hm
   have hx : x = (x.zmodRepr : ℤ_[l]) + l * y := by rw [← hy]; ring
   rw [hx]
-  simp only [map_add, map_mul, map_natCast, CharP.cast_eq_zero k l, zero_mul]
+  simp only [map_add (f := _), map_mul, map_natCast, CharP.cast_eq_zero k l, zero_mul]
 
 private theorem sqrt_discr {K : Type} [Field K] [NumberField K] (hK : Module.finrank ℚ K = 2) :
     ∃ δ : K, δ ^ 2 = (discr K : K) := by
@@ -79,7 +83,7 @@ private theorem quad_ex {Ω : Type} [Field Ω] [CharZero Ω] {K : Type} [Field K
   have hfix : ∀ s : G ℚ Ω, s (algebraMap K Ω δ0) = algebraMap K Ω δ0 → s ∈ galOf ℚ K Ω := by
     intro s hs x
     obtain ⟨a, b, rfl⟩ := hspan x
-    rw [map_add, map_mul, map_ratCast, map_ratCast, map_add, map_mul, hs, map_ratCast, map_ratCast]
+    rw [map_add (f := _), map_mul, map_ratCast, map_ratCast, map_add (f := _), map_mul, hs, map_ratCast, map_ratCast]
   have hsq : (algebraMap K Ω δ0) ^ 2 = -((discr K).natAbs : Ω) := by
     rw [← map_pow, hδ0, map_intCast]
     rw [← Int.cast_natCast, hnd, Int.cast_neg, neg_neg]
@@ -153,11 +157,26 @@ theorem UpperTheory.V.Fr.gen_gd :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (K : Type) [Field K] [NumberField K] [IsCMField K] [Algebra K Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) [CharP (ResidueField c.O) l] (N : ℕ) [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (D : Dat Ω K c e ψ) (B : ValuationSubring Ω), B.valuation (l : Ω) < 1 → Gen l D.η D.Ψ D.cc B (l * N * (discr K).natAbs) ⊤ := by
   intro Ω _ _ _ K _ _ _ _ l _ c _ N _ e ψ D B hB
   have gd := D.gd
-  obtain ⟨hcc2, hηcc, hΨcc, -, -, -, -, -, -, -, hIneL⟩ := dat_facts D
   obtain ⟨hηd, hd1, hψN, -⟩ := eta_killsMu D
   obtain ⟨⟨w, hw, huniq⟩, hwF⟩ := omT Ω l c
   obtain ⟨hwker1, hwcls, -, -, -, -, -, -⟩ := hwF w hw
   obtain ⟨w', η', a, hlit⟩ := (gdIff Ω K l c e N ψ).1.mp gd
+  have hηcc : D.η D.cc = -1 := by
+    obtain ⟨φ, hφ⟩ := D.conj
+    refine (Int.units_eq_one_or _).resolve_left fun h => ?_
+    have h1 : D.cc ∈ galOf ℚ K Ω := D.η_ker ▸ h
+    refine IsTotallyComplex.complexEmbedding_not_isReal (φ.comp (algebraMap K Ω)) ?_
+    rw [ComplexEmbedding.isReal_iff]
+    ext x
+    rw [ComplexEmbedding.conjugate_coe_eq, RingHom.comp_apply, ← hφ, h1 x]
+  have hΨcc : D.Ψ D.cc = 1 := hlit.par D.cc D.conj
+  have hIneL : ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 →
+      Ine (F := ℚ) A ≤ D.η.ker ∧ ∃ s ∈ Ine (F := ℚ) A, IsUnit ((D.Ψ s : c.O) ^ 2 - 1) := by
+    intro A hA
+    obtain ⟨h1, s, hs, h2⟩ := (gdLoc Ω K l c e N ψ w' η' a hlit).1 A hA
+    refine ⟨D.η_ker ▸ h1, s, hs, ?_⟩
+    rw [Units.val_pow_eq_pow_val] at h2
+    exact not_not.1 h2
   have hrel := (gdIff Ω K l c e N ψ).2 w' η' a hlit
   have hww : w' = w := huniq w' hlit.om
   subst hww

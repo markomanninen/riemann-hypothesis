@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColInst
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetStepEqZeroExample
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TwistedStartColumnReading
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaSupportInDivLattice
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumSupportDivLatticeInterior
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumPeriodicMulLatticeInterior
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumSupportDivLatticeFinal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumPeriodicMulLatticeFinal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColInst
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetStepEqZeroExample
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TwistedStartColumnReading
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.BadPrimesPeriodBound
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SubDSharpInDeg
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDivLatticeQuotient
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaSupportInDivLattice
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumSupportDivLatticeInterior
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumPeriodicMulLatticeInterior
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumSupportDivLatticeFinal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumPeriodicMulLatticeFinal
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem locTop_den (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} {y : 
     have e : Loc.eN X.E (R.N (m2 + 1) + cOf R (m2 + 1)) s.1 = Pi.single (Fin.castAdd _ s) 1 := by
       funext t
       simp [Loc.eN, Pi.single_apply, Fin.ext_iff]
-    rw [e, LinearMap.comp_apply, LinearMap.comp_apply, castAdd_single, Loc.atN, dif_pos (show l.1 < R.N R.m - 1 + 0 from hl)] at h3
+    rw [e, LinearMap.comp_apply, LinearMap.comp_apply, castAdd_single, Loc.atN, dite_eq_left (show l.1 < R.N R.m - 1 + 0 from hl)] at h3
     exact (intAt_pow (intAt_nat _) _).mul h3
   · have h3 := GlobalTheory.SuppTop.intAt_of_ftY sel mu cst P _ _ h2 s
     obtain rfl : l = Br.iL (N_m_succ R) := Fin.ext (by have := l.2; show l.1 = R.N R.m - 1; omega)
@@ -93,8 +97,8 @@ theorem locTop_den (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} {y : 
     rw [hk, add_comm, pow_add, mul_assoc]
     exact (intAt_pow (intAt_nat _) _).mul h3
 
-open Classical in
 
+open Classical in
 theorem locTop_add (hm : R.m = m2 + 2) (hc : cst.Ok) {P : rowSG Pr sel mu} (hD : P.1 ∉ Pr.vGs → 2 * cst.M ≤ cst.D P)
     (y : HomE X.E (R.N (m2 + 1)) (R.N R.m)) {z : HomE X.E (R.N (m2 + 1)) (R.N R.m)} {y' : Sp X.E (R.N (m2 + 1))}
     (hz : ∀ s l, IntAt P.1 (((qOf P.1 : X.E) ^ cst.B)⁻¹ * z (Pi.single s 1) l))
@@ -121,8 +125,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} {W : Wts X Pr.Word R} {Ch : Ch
   {A : Amb X} {u : Pr.Word} {m2 : ℕ} {b : L.β (m2 + 1)} {hY : YbHyp (R := R) sel mu cst L u m2 b}
   {P : LevFam X.E X.K R.r Pr.vGs} {c : TopDepth R cst.M} {G : ChGlob X R.m}
 
-variable (A) in
 
+variable (A) in
 def twThPt (i j : ℕ) (e : j = i + 1) (β : (twFam W Ch sel mu cst L u m2 b hY P c i).β) (β' : (twFam W Ch sel mu cst L u m2 b hY P c j).β)
     (d : (twFam W Ch sel mu cst L u m2 b hY P c i).D β) (d' : (twFam W Ch sel mu cst L u m2 b hY P c j).D β') :
     VCx X.Tau (R.N i) (R.N j) → ℂ :=
@@ -162,15 +166,8 @@ def twChain : ColumnChain R X.Tau (W.hc u) := (twSrc chi hX hm hF hK hρ).chainT
 
 end Def
 
-def twChainOf {D : D7} (s : Seam D X) {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ)
-    {e : Fin R.m → X.Tau → ℚ} {eta : Formalism.L2.Host.HChar X.E} (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel)
-    (hS : ∀ i, Pr.g i ∈ S) (ht : Ch.Tied s.σ₀ e G.mu0 eta) (hL : L.Ok Ch sel mu cst G m2) (hG : G.σ₀ = s.σ₀) (hs : s.Ok)
-    (hχ : TaylorLogMetric.IsChi D χ) (hF : ∀ j, (chF W sel mu L u j).Ok) (hK : TwEquiv W Ch sel mu cst L (ambOf s B χ cD) u m2 b hY P c) :
-    ColumnChain R X.Tau (W.hc u) :=
-  twChain (chiLat s χ) hX hL.hm hF hK (rhoUnit_of hX hPr hsel hS ht hL hG hs hχ)
 
 variable (W sel mu cst A u) in
-
 def TwJets : Prop :=
   ∀ i < R.m, JetsRatDeg A (R.N i) (R.N (i + 1)) (Sall sel mu u) (cAof sel mu cst * cBof sel mu cst u) fun τ => ∑ a, (W.nuW u (i + 1) τ).w a
 
@@ -182,7 +179,7 @@ variable {chi : ∀ n : ℕ, Submodule (𝓞 X.E) (Sp X.E n) → ℂ} {hX : X.Ok
 theorem twChain_unf (i : ℕ) (x : (twFam W Ch sel mu cst L u m2 b hY P c i).Cl) (x' : (twFam W Ch sel mu cst L u m2 b hY P c (i + 1)).Cl)
     (Q : Formalism.L2.DIV.Pol ℂ X.Tau (R.N i)) (y' : ChSrc.Fr X A.σ₀ (R.N (i + 1))) :
     (twChain chi hX hm hF hK hρ).unf i x x' (fun y : ChSrc.Fr X A.σ₀ (R.N i) => MvPolynomial.eval (fun v => y.1 v.1 v.2.1 v.2.2) Q) y' =
-      ∑ q ∈ (derPol A.cD Q y'.1).support, MvPolynomial.coeff q (derPol A.cD Q y'.1) * derivAt0 (twTh chi hX hm hF hK hρ i x x') q :=
+      ∑ q ∈ (derPol A.cD Q y'.1).support, AddMonoidAlgebra.coeff (derPol A.cD Q y'.1) q * derivAt0 (twTh chi hX hm hF hK hρ i x x') q :=
   (twSrc chi hX hm hF hK hρ).chainTh_unf A.σ₀ (W.hc u) A.cD _ i x x' Q y'
 
 variable (hT : 0 < Pr.T u) (hχ : ChiSplit chi A) (hs : ∀ i < R.m, A.ESmooth (R.N i) (R.N (i + 1))) (hJ : TwJets W sel mu cst A u)
@@ -206,37 +203,6 @@ variable {D : D7} {s : Seam D X} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} {B : Ba
 
 end Of
 
-example {chi : ∀ n : ℕ, Submodule (𝓞 X.E) (Sp X.E n) → ℂ} {hX : X.Ok} {hm : R.m = m2 + 2} {hF : ∀ j, (chF W sel mu L u j).Ok}
-    {hK : TwEquiv W Ch sel mu cst L A u m2 b hY P c} {hρ : RhoUnit Ch sel mu cst A.σ₀ chi} (i : ℕ)
-    (x : (twFam W Ch sel mu cst L u m2 b hY P c i).Cl) (x' : (twFam W Ch sel mu cst L u m2 b hY P c (i + 1)).Cl)
-    (y' : ChSrc.Fr X A.σ₀ (R.N (i + 1))) :
-    (twChain chi hX hm hF hK hρ).unf i x x' (fun _ => 1) y' = twTh chi hX hm hF hK hρ i x x' 0 := by
-  have h := twChain_unf (chi := chi) (hX := hX) (hm := hm) (hF := hF) (hK := hK) (hρ := hρ) i x x' 1 y'
-  simp only [map_one, derPol] at h
-  refine h.trans ?_
-  rw [MvPolynomial.support_one, Finset.sum_singleton, MvPolynomial.coeff_zero_one, one_mul, derivAt0]
-  have h0 : ∀ n, n = 0 → ∀ v, iteratedFDeriv ℂ n (twTh chi hX hm hF hK hρ i x x') 0 v = twTh chi hX hm hF hK hρ i x x' 0 := by
-    rintro _ rfl v
-    exact iteratedFDeriv_zero_apply v
-  exact h0 _ (by simp) _
-
-example [IsEmpty (rowSG Pr sel mu)] (e : R.m = m2 + 1 + 1) (d : (ybCpl W sel mu cst L u m2 b hY).Pts) (p' : TopPt R sel mu u) :
-    twThPt (Ch := Ch) (P := P) (c := c) A (m2 + 1) R.m e (.cpl rfl) (.top rfl) d p' =
-      A.thDat (Sall sel mu u) 1 (Pr.T u) d.1.1.deco.1.N p'.deco.1.N (phiT X.K d.1.1.deco.1 p'.deco.1) := by
-  rw [twThPt_top, cAof, cBof, Fintype.prod_empty, one_pow, one_pow, mul_one]
-  congr 1
-  funext x
-  unfold XiTop
-  rw [Fintype.prod_empty, mul_one]
-
-example (hm : R.m = m2 + 2) (i : ℕ) (hi : R.m ≤ i) : IsEmpty (twFam W Ch sel mu cst L u m2 b hY P c (i + 1)).Cl :=
-  ⟨fun x => (SpIdx.isEmpty_of_lt (by omega) (by omega)).false x.1⟩
-
 end Chain
-
-example {D : D7} {EX : ErrX D} (sel : HeightOneSpectrum (𝓞 D.host.F) → HeightOneSpectrum (𝓞 D.host.E))
-    (A : Amb (GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.recFields D)) (ξ : GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.Twist D)
-    (cst : LocCst (GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.recFields D) (rowSG (GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.recPrimes EX) sel ξ)) (u : D.what₂.Word) :
-    TwJets (GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.recWts EX) sel ξ cst A u ↔ GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound.FieldTie sel A ξ cst u := Iff.rfl
 
 end GlobalTheory.GO

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.SchurInvariantProjectionTrace
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LatticeTheoremOfTraceFormula
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.SchurInvariantProjectionTrace
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionRangeTrivial
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,8 @@ theorem isotypic_projector_trace_formula (D : Formalism.BasicNotions.D7) (h2 : a
         simp [Module.Basis.coord_apply]
       rw [Finset.sum_congr rfl fun i _ => hterm i]
       conv_rhs => rw [← b.sum_repr l]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ => (map_smul _ _ _).symm
     · intro y hy
       have hWm : IsSubrepresentation E (isoSub E mu) := fun a c => isotypic_stable_under_gl_operator E mu a c
@@ -98,8 +103,5 @@ theorem isotypic_projector_trace_formula (D : Formalism.BasicNotions.D7) (h2 : a
   change ((Fintype.card ι : K) • Θ) m = e m at this
   rw [LinearMap.smul_apply, hΘ] at this
   exact this
-
-theorem isotypicProjectorTheoremField_of_sharp_bound (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (h : InvariantDenominatorEllPBound) : IsotypicProjectorTheoremField D :=
-  lattice_theorem_of_trace_formula D h2 h (isotypic_projector_trace_formula D h2)
 
 end Formalism.MainNotions.G.GLWeightTheory

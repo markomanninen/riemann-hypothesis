@@ -1,4 +1,8 @@
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+module
+
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.CountData
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ theorem oh_zero : (0 : A F) ∈ Oh F := fun _ => zero_mem _
 
 theorem oh_neg {x : A F} (hx : x ∈ Oh F) : -x ∈ Oh F := fun v => neg_mem (hx v)
 
-variable (ι F) in
 
+variable (ι F) in
 def latN (N : ℕ) : AddSubgroup (ι → A F) where
   carrier := {x | ∀ i, ∃ y ∈ Oh F, x i = (N : A F) * y}
   add_mem' := by

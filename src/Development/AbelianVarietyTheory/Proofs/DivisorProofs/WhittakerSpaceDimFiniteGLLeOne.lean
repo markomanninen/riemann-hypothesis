@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+
+@[expose] public section
 
 noncomputable section
 
@@ -255,8 +259,6 @@ section Concrete
 variable {F : Type} [Field F] {r : ℕ}
 
 def refl (M : Matrix (Fin r) (Fin r) F) : Matrix (Fin r) (Fin r) F := M.transpose.submatrix Fin.revPerm Fin.revPerm
-
-theorem refl_apply (M : Matrix (Fin r) (Fin r) F) (a b : Fin r) : refl M a b = M b.rev a.rev := rfl
 
 theorem refl_mul (M N : Matrix (Fin r) (Fin r) F) : refl (M * N) = refl N * refl M := by
   unfold refl

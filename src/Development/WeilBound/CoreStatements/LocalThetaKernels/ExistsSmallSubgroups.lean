@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchrodingerTensorEqLocalOfSupportedAt
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchrodingerTensorEqLocalOfSupportedAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem continuous_evFin' (v : Pl F) : Continuous (evFin F v) :=
   (RestrictedProduct.continuous_eval v).comp continuous_snd
 
-variable (E) in
 
+variable (E) in
 theorem exists_small_lattices (v : Pl F) :
     ∃ Λ : ℕ → AddSubgroup (AE F E), Antitone Λ ∧ (∀ n, ∀ z ∈ Λ n, ∀ z' ∈ Λ n, z * z' ∈ Λ n) ∧
       (∀ V ∈ 𝓝 (0 : AE F E), ∃ n, (Λ n : Set (AE F E)) ⊆ V) ∧ (∀ n, ∀ z ∈ Λ n, At (evFin F v) z) ∧
@@ -56,7 +60,8 @@ theorem exists_small_lattices (v : Pl F) :
         simp only [smul_mul_smul_comm]
       simp only [c]
       rw [e1]
-      simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul, smul_eq_mul]
     rw [e]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (hr0 n).le fun i _ =>
       IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (hr0 n).le fun j _ => ?_

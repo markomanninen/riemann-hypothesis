@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalPrincipal
-import GroundTheory.AutomorphicForms.SphericalLaurent
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalPrincipal
+public import GroundTheory.AutomorphicForms.SphericalLaurent
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,8 +151,8 @@ theorem sphericalFun_unramifiedChar (w : Fin n → ℂˣ) (g : GL (Fin n) F) :
   rw [sphericalFun_mul (isUnramified_unramifiedChar w) b hk, borelChar_unramifiedChar,
     iwasawaExponent_mul_of_mem_integralGL F n _ hk]
 
-variable (F n) in
 
+variable (F n) in
 def integralOpen : OpenSubgroup (GL (Fin n) F) := ⟨integralGL F n, isOpen_integralGL F n⟩
 
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
@@ -187,8 +191,8 @@ theorem sphericalEigen_unramifiedChar (w : Fin n → ℂˣ) (h : SphericalHecke 
     by_contra hxs
     exact hx (by simp [apply_out_eq_zero hxs])
 
-variable (μ) in
 
+variable (μ) in
 def satake (h : SphericalHecke μ (F := F) (n := n)) : LaurentRing n :=
   (μ.real (integralGL F n : Set (GL (Fin n) F)) : ℂ) •
     ∑ x ∈ cosetSupport h, single (iwasawaExponent F n x.out) ((h : HeckeAlgebra μ) x.out)
@@ -207,20 +211,21 @@ theorem satake_eq_sum (h : SphericalHecke μ (F := F) (n := n))
 
 theorem evalAt_satake (w : Fin n → ℂˣ) (h : SphericalHecke μ (F := F) (n := n)) :
     evalAt w (satake μ h) = sphericalCharacter μ (isUnramified_unramifiedChar w) h := by
-  rw [sphericalCharacter_apply, satake, map_smul, map_sum, sphericalEigen_unramifiedChar,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sphericalCharacter_apply, satake, map_smul, map_sum, sphericalEigen_unramifiedChar,
     smul_eq_mul]
   congr 1
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [evalAt_single]
 
-variable (μ) in
 
+variable (μ) in
 def satakeHom : SphericalHecke μ (F := F) (n := n) →ₐ[ℂ] LaurentRing n where
   toFun := satake μ
   map_one' := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, map_one]
   map_mul' a b := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, map_mul]
   map_zero' := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, map_zero]
-  map_add' a b := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, map_add]
+  map_add' a b := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, map_add (f := _)]
   commutes' c := eq_of_forall_evalAt fun w => by simp only [evalAt_satake, AlgHom.commutes]
 
 theorem satakeHom_apply (h : SphericalHecke μ (F := F) (n := n)) : satakeHom μ h = satake μ h := rfl

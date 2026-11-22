@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StSmallGenHeightsNonneg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StSmallGenHeightsNonneg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -43,7 +48,8 @@ theorem killBlocksBelow_of_isMultiHomog (j : ℕ) {f : MRing ι} {a : K → ℕ}
   by_cases h : ∀ k, ((Fintype.equivFin K k : Fin _) : ℕ) < j → a k = 0
   · left
     conv_rhs => rw [f.as_sum]
-    conv_lhs => rw [f.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [f.as_sum, map_sum]
     refine Finset.sum_congr rfl fun m hm ↦ ?_
     rw [killBlocksBelow_monomial, if_pos]
     intro p hp hlt
@@ -53,7 +59,8 @@ theorem killBlocksBelow_of_isMultiHomog (j : ℕ) {f : MRing ι} {a : K → ℕ}
   · right
     push Not at h
     obtain ⟨k, hk, hak⟩ := h
-    conv_lhs => rw [f.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [f.as_sum, map_sum]
     refine Finset.sum_eq_zero fun m hm ↦ ?_
     rw [killBlocksBelow_monomial, if_neg]
     push Not
@@ -189,7 +196,17 @@ theorem not_isHorizontal_of_mem_divSupp {W : Ideal (MRing ι)} {A : HermLine ι}
     (hW : IsArithVar W 1) (hs : IsSectionOn W A s) {V : Ideal (MRing ι)} (hV : V ∈ divSupp W s) :
     ¬ IsHorizontal V := by
   intro hh
-  obtain ⟨-, hVm, hVh, hdim⟩ := (divSuppArith K ι W 0 A s V hW hs hV).1 hh
+  obtain ⟨hK, ⟨hWp, hWh, -⟩, -, hWdim⟩ := hW
+  obtain ⟨a, -, hsa, hsW⟩ := hs
+  obtain ⟨hVmin, hVrel⟩ := hV
+  have hVm : IsMultiProjPrime V := ⟨hVmin.1.1,
+    isMultiHomogIdeal_of_mem_minimalPrimes hWh hsa hVmin, hVrel⟩
+  haveI := hWp
+  have h1 := dim_quot_minimal_add_one W V s hsW hVmin
+  rw [hWdim] at h1
+  have hdim : ringKrullDim (MRing ι ⧸ V) = ((0 + Fintype.card K : ℕ) : WithBot ℕ∞) :=
+    withBot_eq_of_add_one (by simpa [Nat.add_comm] using h1)
+  have hVh := hh
   have key := card_add_one_le_ringKrullDim hVm hVh
   rw [hdim, zero_add] at key
   have : Fintype.card K + 1 ≤ Fintype.card K := by exact_mod_cast key
@@ -228,8 +245,8 @@ theorem arInt_nonpos {W : Ideal (MRing ι)} {A : HermLine ι} {s : MRing ι}
 
 end SmallGenHeightsNonneg
 
-open SmallGenHeightsNonneg in
 
+open SmallGenHeightsNonneg in
 theorem SmallGenHeightsNonneg.proof : SmallGenHeightsNonneg.Statement := by
   intro K _ ι _ P A II q w hII hA hAnn hw hgen hsmall W hW hPW
   obtain ⟨j, hj⟩ := hgen W hW.2.1 hPW

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SummableExpNegAbsSum
 
@@ -33,7 +37,7 @@ theorem summable_exp_neg_sum_abs {ι : Type} [inst : Fintype ι] :
           Finset.prod_nonneg fun i _ => hgpos _
     _ = ∏ i : ι, ∑ n ∈ T i, g n := (Finset.prod_univ_sum T (fun _ n => g n)).symm
     _ ≤ ∏ _i : ι, ∑' n : ℤ, g n := by
-        refine Finset.prod_le_prod (fun i _ => Finset.sum_nonneg fun _ _ => hgpos _)
+        refine Finset.prod_le_prod₀ (fun i _ => Finset.sum_nonneg fun _ _ => hgpos _)
           fun i _ => ?_
         exact hgs.sum_le_tsum _ fun _ _ => hgpos _
 

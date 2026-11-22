@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsNoetherianRingOfIsAdicComplete
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -22,7 +26,7 @@ theorem mem_of_forall_mem_sup_pow (T : Subring S) [IsNoetherianRing T]
       have h1 : T.subtype (y * z) ∈ maximalIdeal S := by
         rw [map_mul]; exact Ideal.mul_mem_right _ _ hy
       have h2 := Ideal.sub_mem _ h h1
-      rw [map_add, add_sub_cancel_left, map_one] at h2
+      rw [map_add (f := _), add_sub_cancel_left, map_one] at h2
       exact (maximalIdeal.isMaximal S).ne_top ((Ideal.eq_top_iff_one _).mpr h2)
     have hunit : IsUnit (T.subtype (y * z + 1)) := by
       by_contra h
@@ -31,7 +35,8 @@ theorem mem_of_forall_mem_sup_pow (T : Subring S) [IsNoetherianRing T]
       rw [← hpure (Ideal.span {y * z + 1}), Ideal.map_span, Set.image_singleton,
         Ideal.span_singleton_eq_top.mpr hunit, Ideal.comap_top]
     exact Ideal.span_singleton_eq_top.mp h2
-  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := T ⧸ A) m hjac
+  have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := T ⧸ A) m
+    (by simpa only [Ideal.jacobson_bot] using hjac)
   have hxn : ∀ n : ℕ, x ∈ A ⊔ m ^ n := by
     intro n
     have h := hx n
@@ -43,7 +48,7 @@ theorem mem_of_forall_mem_sup_pow (T : Subring S) [IsNoetherianRing T]
     intro n
     obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.mp (hxn n)
     have : Ideal.Quotient.mk A x = b • (1 : T ⧸ A) := by
-      rw [← hab, map_add, Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_add, Algebra.smul_def,
+      rw [← hab, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_add, Algebra.smul_def,
         mul_one, Ideal.Quotient.algebraMap_eq]
     rw [this]
     exact Submodule.smul_mem_smul hb trivial
@@ -85,8 +90,8 @@ end GlobalTheory.DirectedNoeth
 
 namespace GlobalTheory
 
-open GlobalTheory.DirectedNoeth in
 
+open GlobalTheory.DirectedNoeth in
 theorem isNoetherianRing_of_directed_pure_union : ∀ (S : Type) [CommRing S] [IsLocalRing S] (ι : Type)
     [Preorder ι] [IsDirected ι (· ≤ ·)] [Nonempty ι] (R : ι → Subring S), Monotone R →
     (∀ x : S, ∃ i, x ∈ R i) → (∀ i, IsNoetherianRing (R i)) →

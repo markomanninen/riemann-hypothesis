@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LatticeSlopes.Statement
+module
+
+public import Mathlib
+public import Formalism.LatticeSlopes.Statement
+
+@[expose] public section
 
 open Module Submodule
 
@@ -116,24 +120,6 @@ def dualZ {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] (L : Subm
     ⨅ x ∈ L, ((Int.castAddHom ℝ).range.toIntSubmodule).comap
       ((innerSL ℝ x : E →L[ℝ] ℝ).toLinearMap.restrictScalars ℤ)
 
-def Duality : Prop :=
-  ∀ (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-    (L : Submodule ℤ E), DiscreteTopology L →
-    DiscreteTopology (dualZ L) ∧ Formalism.F.rk (dualZ L) = Formalism.F.rk L ∧
-    Formalism.F.deg (dualZ L) = - Formalism.F.deg L ∧ dualZ (dualZ L) = L ∧
-    (L ≠ ⊥ → muMax (AddMonoidHom.id E) (dualZ L) = - muMin (AddMonoidHom.id E) L ∧
-      muMin (AddMonoidHom.id E) (dualZ L) = - muMax (AddMonoidHom.id E) L)
-
-def Example : Prop :=
-  let e₀ : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 0 1
-  let e₁ : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 1 1
-  let ρ : EuclideanSpace ℝ (Fin 2) →+ EuclideanSpace ℝ (Fin 2) := AddMonoidHom.id _
-  let L : Submodule ℤ (EuclideanSpace ℝ (Fin 2)) := Submodule.span ℤ {e₀, (2 : ℝ) • e₁}
-  IsLat ρ L ∧ rk ρ L = 2 ∧
-    (∀ j : Fin (rk ρ L), slopeList ρ L j = if (j : ℕ) = 0 then 0 else - Real.log 2) ∧
-    hnStep ρ L 0 = Submodule.span ℤ {e₀} ∧ hnStep ρ L (- Real.log 2) = L ∧
-    muMax ρ L = 0 ∧ muMin ρ L = - Real.log 2
-
 def ShiftInvariance : Prop :=
   ∀ (R V E E₂ : Type*) [Ring R] [AddCommGroup V] [Module R V] [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [NormedAddCommGroup E₂]
@@ -144,23 +130,5 @@ def ShiftInvariance : Prop :=
     (L ≠ ⊥ → muMax ρ₂ L = muMax ρ L + c ∧ muMin ρ₂ L = muMin ρ L + c) ∧
     (∀ θ : ℝ, hnStep ρ₂ L (θ + c) = hnStep ρ L θ) ∧
     (∀ k : ℕ, hnPoly ρ₂ L k = hnPoly ρ L k + c * (min k (rk ρ L) : ℕ))
-
-def piReal {ι : Type*} [Fintype ι] {V : ι → Type*} [∀ i, AddCommGroup (V i)]
-    {E : ι → Type*} [∀ i, NormedAddCommGroup (E i)] [∀ i, InnerProductSpace ℝ (E i)]
-    (ρ : ∀ i, V i →+ E i) : (∀ i, V i) →+ PiLp 2 E :=
-  (WithLp.linearEquiv 2 ℝ (∀ i, E i)).symm.toLinearMap.toAddMonoidHom.comp
-    (AddMonoidHom.pi fun i => (ρ i).comp (Pi.evalAddMonoidHom V i))
-
-def PiSum : Prop :=
-  ∀ (R ι : Type*) [Ring R] [Fintype ι] [DecidableEq ι] (V E : ι → Type*)
-    [∀ i, AddCommGroup (V i)] [∀ i, Module R (V i)] [∀ i, NormedAddCommGroup (E i)]
-    [∀ i, InnerProductSpace ℝ (E i)] [∀ i, FiniteDimensional ℝ (E i)]
-    (ρ : ∀ i, V i →+ E i) (L : ∀ i, Submodule R (V i)), (∀ i, IsLat (ρ i) (L i)) →
-    IsLat (piReal ρ) (Submodule.pi Set.univ L) ∧
-    rk (piReal ρ) (Submodule.pi Set.univ L) = ∑ i, rk (ρ i) (L i) ∧
-    deg (piReal ρ) (Submodule.pi Set.univ L) = ∑ i, deg (ρ i) (L i) ∧
-    ((∃ i, L i ≠ ⊥) → ∀ θ : ℝ,
-      (muMax (piReal ρ) (Submodule.pi Set.univ L) ≤ θ ↔ ∀ i, L i ≠ ⊥ → muMax (ρ i) (L i) ≤ θ) ∧
-      (θ ≤ muMin (piReal ρ) (Submodule.pi Set.univ L) ↔ ∀ i, L i ≠ ⊥ → θ ≤ muMin (ρ i) (L i)))
 
 end Formalism.HN

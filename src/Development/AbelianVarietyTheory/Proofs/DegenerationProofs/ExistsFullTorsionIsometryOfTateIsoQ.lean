@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WithISelf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsNormPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionIsoOfLinearUniformisationTripleStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WithISelf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsNormPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionIsoOfLinearUniformisationTripleStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -86,33 +90,33 @@ theorem exists_fullI_of_tateIsoQ : GlobalTheory.UT.LL → AllD fun {E} _ _ _ {H}
   refine ⟨{ ζ := I'.ζ, ζ_prim := I'.ζ_prim, ζ_pow := I'.ζ_pow, ev := ev, add := ?_, lin := ?_, ker := ?_, onto := ?_, tower := ?_, isom := ?_ }, rfl, ?_⟩
   · intro n a b
     by_cases hn : 0 < n
-    · rw [hev, hev, hev, dif_pos hn, dif_pos hn, dif_pos hn, gAdd, map_mul]
-    · rw [hev, hev, hev, dif_neg hn, dif_neg hn, dif_neg hn]
+    · rw [hev, hev, hev, dite_eq_left hn, dite_eq_left hn, dite_eq_left hn, gAdd, map_mul]
+    · rw [hev, hev, hev, dite_eq_right hn, dite_eq_right hn, dite_eq_right hn]
       exact o.I.add n a b
   · intro n c a
     by_cases hn : 0 < n
-    · rw [hev, hev, dif_pos hn, dif_pos hn, gLin, hComm]
-    · rw [hev, hev, dif_neg hn, dif_neg hn]
+    · rw [hev, hev, dite_eq_left hn, dite_eq_left hn, gLin, hComm]
+    · rw [hev, hev, dite_eq_right hn, dite_eq_right hn]
       exact o.I.lin n c a
   · intro n hn a
-    rw [hev, dif_pos hn, map_eq_one_iff _ e.symm.injective, ← gZero n hn, gEq]
+    rw [hev, dite_eq_left hn, map_eq_one_iff _ e.symm.injective, ← gZero n hn, gEq]
     simp only [zero_add]
   · intro n hn x
     constructor
     · intro hx
       obtain ⟨a, ha⟩ := gOnto n hn (e x) (by rw [← map_pow, hx, map_one])
-      exact ⟨a, by rw [hev, dif_pos hn, ha, e.symm_apply_apply]⟩
+      exact ⟨a, by rw [hev, dite_eq_left hn, ha, e.symm_apply_apply]⟩
     · rintro ⟨a, rfl⟩
-      rw [hev, dif_pos hn, ← map_pow, gPow, map_one]
+      rw [hev, dite_eq_left hn, ← map_pow, gPow, map_one]
   · intro n m hn hm a
-    rw [hev, hev, dif_pos (Nat.mul_pos hn hm), dif_pos hn, ← map_pow, gTower n m hn hm]
+    rw [hev, hev, dite_eq_left (Nat.mul_pos hn hm), dite_eq_left hn, ← map_pow, gTower n m hn hm]
   · intro n hn a b
-    rw [hev, hev, dif_pos hn, dif_pos hn]
+    rw [hev, hev, dite_eq_left hn, dite_eq_left hn]
     exact weilIs_push M.P.A.isLB o.P.isLB M.cart M.lb (baseOver (Sp C)) (jFK (R := M.W) C)
       (by simp) n _ _ _ _ _ (hL _).symm (hL _).symm (gWeil n hn a b)
   · intro j hj x
     refine ⟨f j hj (I'.ev j x), ?_, gA j hj x⟩
     change _ = (ev j x).left ≫ M.φ
-    rw [hev, dif_pos hj, hL]
+    rw [hev, dite_eq_left hj, hL]
 
 end GlobalTheory.Relabel

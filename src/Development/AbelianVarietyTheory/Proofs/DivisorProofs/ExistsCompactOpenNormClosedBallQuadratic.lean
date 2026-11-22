@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
 open GlobalTheory.SplitWeil (SB nabs)
@@ -53,10 +58,10 @@ private lemma valuation_two_le_one : valuation F (2 : F) ≤ 1 := by
   rw [← one_add_one_eq_two]
   exact (valuation F).map_add_le (by simp) (by simp)
 
+
 open MeasureTheory Matrix in
 open ValuativeRel in
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
-
 theorem _root_.GlobalTheory.NormBall.val_trace_sq_le {d : F} (hd : ∀ r : F, r ^ 2 ≠ d) (a b : F) :
     valuation F (2 * a) ^ 2 ≤ valuation F (a ^ 2 - d * b ^ 2) := by
   rcases eq_or_ne (2 * a) 0 with h2a | h2a
@@ -169,10 +174,10 @@ private lemma isCompact_isOpen_normFormBall {d : F} (hd : ∀ r : F, r ^ 2 ≠ d
   · rw [hset]
     exact (_root_.GlobalTheory.SplitWeil.isOpen_cball s).preimage hq
 
+
 open MeasureTheory Matrix in
 open ValuativeRel in
 variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
-
 theorem _root_.GlobalTheory.NormBall.exists_normBall : ∀ (F : Type) [Field F] [CharZero F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] (E : Type) [Field E] [Algebra F E] [TopologicalSpace E] [IsModuleTopology F E] (c : E →ₐ[F] E) (δ : E) (hE : _root_.GlobalTheory.WeilM.IsQuad c δ) (s : Fˣ), ∃ L : AddSubgroup E, (L : Set E) = {z | Algebra.norm F z ∈ _root_.GlobalTheory.SplitWeil.cball s} ∧ IsCompact (L : Set E) ∧ IsOpen (L : Set E) := by
   intro F _ _ _ _ _ E _ _ _ _ c δ hE s
   haveI : Invertible (2 : F) := invertibleOfNonzero two_ne_zero
@@ -211,7 +216,7 @@ theorem _root_.GlobalTheory.NormBall.exists_normBall : ∀ (F : Type) [Field F] 
     intro a b
     apply hinj
     rw [hE.algebraMap_norm]
-    simp only [Algebra.smul_def, mul_one, map_add, map_mul, AlgHom.commutes, hneg, map_sub,
+    simp only [Algebra.smul_def, mul_one, map_add (f := _), map_mul, AlgHom.commutes, hneg, map_sub,
       map_pow]
     linear_combination (-(algebraMap F E b) ^ 2) * hdδ
   obtain ⟨bs, hb0, hb1⟩ := hE.basis

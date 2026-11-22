@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -22,7 +26,7 @@ theorem linearEquiv_descends_of_preserves_image {K : Type} [Field K] {ι : Type}
     intro c v; funext i; simp [F]
   let Gl : (ι → K) →ₗ[K] (ι → K) :=
     { toFun := G
-      map_add' := fun v w => hFinj (by rw [← hG', hFadd, map_add, hG', hG', hFadd])
+      map_add' := fun v w => hFinj (by rw [← hG', hFadd, map_add (f := _), hG', hG', hFadd])
       map_smul' := fun c v => hFinj (by
         simp only [RingHom.id_apply]
         rw [← hG', hFsmul, map_smul, hG', hFsmul]) }

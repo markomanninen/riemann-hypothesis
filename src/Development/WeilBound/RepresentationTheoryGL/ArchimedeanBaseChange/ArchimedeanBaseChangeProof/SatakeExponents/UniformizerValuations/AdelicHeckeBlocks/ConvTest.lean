@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.GlobalTheory
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelRowsColumnsSquareIntegrable
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.TopoThetaRCont
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.EntryLeOfLg
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.GlobalTheory
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelRowsColumnsSquareIntegrable
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.TopoThetaRCont
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.EntryLeOfLg
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,8 @@ theorem levRight (ψ : Matrix κ κ (Hf E a b → ℂ)) {ψ' : Matrix κ κ (Hf 
 
 theorem adjMul (ψ ψ' : Matrix κ κ (Hf E a b → ℂ)) : adjF (mulF ν ψ ψ') = mulF ν (adjF ψ') (adjF ψ) := by
   funext x y g
-  simp only [adjF, mulF, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [adjF, mulF, map_sum]
   refine Finset.sum_congr rfl fun z _ => ?_
   rw [← integral_conj]
   refine Eq.trans ?_ (integral_mul_left_eq_self
@@ -178,8 +183,10 @@ theorem assoc1 {A B' C : Hf E a b → ℂ} (hA : Continuous A ∧ HasCompactSupp
       (hC.1.comp (continuous_fst.inv.mul continuous_const))
   have hK : IsCompact ((tsupport A * tsupport B') ×ˢ tsupport A) :=
     (hA.2.isCompact.mul hB.2.isCompact).prod hA.2.isCompact
-  refine integral_integral_swap (f := fun h k => A k * B' (k⁻¹ * h) * C (h⁻¹ * g)) ?_
-  refine hcont.integrable_of_hasCompactSupport (HasCompactSupport.intro hK fun p hp => ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    refine integral_integral_swap (f := fun h k => A k * B' (k⁻¹ * h) * C (h⁻¹ * g)) ?_
+  set_option synthInstance.maxHeartbeats 100000 in
+    refine hcont.integrable_of_hasCompactSupport (HasCompactSupport.intro hK fun p hp => ?_)
   by_contra hne
   have h1 : A p.2 ≠ 0 := left_ne_zero_of_mul (left_ne_zero_of_mul hne)
   have h2 : B' (p.2⁻¹ * p.1) ≠ 0 := right_ne_zero_of_mul (left_ne_zero_of_mul hne)
@@ -194,14 +201,14 @@ theorem assoc {ψ ψ' ψ'' : Matrix κ κ (Hf E a b → ℂ)} (h1 : IsFinM ψ) (
       ∑ z, ∫ h, (∫ k, ψ x z k * ψ' z w (k⁻¹ * h) ∂ν) * ψ'' w y (h⁻¹ * g) ∂ν := by
     intro w
     simp_rw [Finset.sum_mul]
-    refine integral_finset_sum _ fun z _ => ?_
+    refine integral_finsetSum _ fun z _ => ?_
     obtain ⟨c1, c2⟩ := convTest ν (h1 x z) (h2 z w)
     exact (c1.mul ((h3 w y).1.comp (continuous_inv.mul continuous_const))).integrable_of_hasCompactSupport c2.mul_right
   have R : ∀ z, ∫ k, ψ x z k * (∑ w, ∫ h, ψ' z w h * ψ'' w y (h⁻¹ * (k⁻¹ * g)) ∂ν) ∂ν =
       ∑ w, ∫ k, ψ x z k * ∫ h, ψ' z w h * ψ'' w y (h⁻¹ * (k⁻¹ * g)) ∂ν ∂ν := by
     intro z
     simp_rw [Finset.mul_sum]
-    refine integral_finset_sum _ fun w _ => ?_
+    refine integral_finsetSum _ fun w _ => ?_
     obtain ⟨c1, -⟩ := convTest ν (h2 z w) (h3 w y)
     have c3 : Continuous fun k : Hf E a b => ∫ h, ψ' z w h * ψ'' w y (h⁻¹ * (k⁻¹ * g)) ∂ν :=
       c1.comp (continuous_inv.mul continuous_const)

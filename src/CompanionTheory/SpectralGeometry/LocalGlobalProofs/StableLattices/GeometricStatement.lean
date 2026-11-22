@@ -1,12 +1,19 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HsConjTranspose
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IwasawaParabolicCompactFactorizationStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.UnitaryMaximalCompactIsCompactStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HilbertSchmidtProjectionBoundStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ExistsGradedMatrixEigenBoundStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InverseGramEigenvaluesSumHsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.EigenvalueGapExistsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FiniteNetOfGradedProjectionsStatement
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HsConjTranspose
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HaarExistence
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IwasawaParabolicCompactFactorizationStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.UnitaryMaximalCompactIsCompactStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HilbertSchmidtProjectionBoundStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ExistsGradedMatrixEigenBoundStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.InverseGramEigenvaluesSumHsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.EigenvalueGapExistsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FiniteNetOfGradedProjectionsStatement
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,13 +23,13 @@ open CompanionTheory.RgExh.Dec CompanionTheory.RgExh.Dec.L ReciprocityTheory.Cha
 
 namespace GlobalTheory.CompanionTheory.UGeo
 
-variable {n : ℕ} {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ}
+open Formalism.REAL (hs)
 
-local notation "hs" => Formalism.REAL.hs
+variable {n : ℕ} {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ}
 
 theorem continuous_hs : Continuous (fun M : Matrix (Fin n) (Fin n) ℂ => hs M) := by
   unfold Formalism.REAL.hs
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     ((continuous_id.matrix_elem i j).norm).pow 2
 
 theorem hs_Pm_pos (hA : IsGrad ε A) (x : S7.UJ ε) : 0 < hs (S7.toM x * Pm A) :=
@@ -46,15 +53,20 @@ theorem exp_tau (hA : IsGrad ε A) (x : S7.UJ ε) :
 
 theorem hs_line_Pm (hA : IsGrad ε A) (M : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) :
     hs (M * aT A t * Pm A) = Real.exp (-t) ^ 2 * hs (M * Pm A) := by
-  rw [Matrix.mul_assoc, aT_Pm hA, Matrix.mul_smul, hs_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+  have h : aT A t * Pm A = (Real.exp (-t) : ℂ) • Pm A := aT_Pm hA t
+  rw [Matrix.mul_assoc, h, Matrix.mul_smul, hs_smul,
+    Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
 
 theorem hs_line_Pp (hA : IsGrad ε A) (M : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) :
     hs (M * aT A t * Pp A) = Real.exp t ^ 2 * hs (M * Pp A) := by
-  rw [Matrix.mul_assoc, aT_Pp hA, Matrix.mul_smul, hs_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
+  have h : aT A t * Pp A = (Real.exp t : ℂ) • Pp A := aT_Pp hA t
+  rw [Matrix.mul_assoc, h, Matrix.mul_smul, hs_smul,
+    Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)]
 
 theorem hs_line_Pz (hA : IsGrad ε A) (M : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) :
     hs (M * aT A t * Pz A) = hs (M * Pz A) := by
-  rw [Matrix.mul_assoc, aT_Pz hA]
+  have h : aT A t * Pz A = Pz A := aT_Pz hA t
+  rw [Matrix.mul_assoc, h]
 
 theorem tau_add (hA : IsGrad ε A) (x : S7.UJ ε) (t : ℝ) :
     tauG A (S7.toM x * aT A t) = tauG A (S7.toM x) + t := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -403,7 +407,7 @@ theorem pserRph_holds (u : D.what₂.Word) (hK : X.LevelSubgroupCharacter) : Pse
   have hDc : Dt.Countable :=
     (Set.countable_coe_iff.1 (inferInstance : Countable (rr_GF X.B.I))).mono hD.1
   have := hDc.to_subtype
-  have hFm : Measurable F := Measurable.ennreal_tsum fun δ => hfm.comp (measurable_const_mul _)
+  have hFm : Measurable F := Measurable.tsum fun δ => hfm.comp (measurable_const_mul _)
   have hFinv : ∀ γ ∈ rr_GF X.B.I, ∀ w, F (γ * w) = F w := fun γ hγ w =>
     InHHLeaf.poincE_left_inv (Srat X u) Dt hD f hfinv γ hγ w
 

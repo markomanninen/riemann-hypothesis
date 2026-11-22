@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesNatural
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperFiniteness
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesNatural
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperFiniteness
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -35,7 +40,7 @@ lemma reesMul_zero : reesMul I F 0 = 0 := by
   exact (Scheme.Modules.pushforward (reesPr I X)).map_zero _ _
 
 lemma reesMul_add (r s : reesAlgebra I) : reesMul I F (r + s) = reesMul I F r + reesMul I F s := by
-  rw [reesMul, reesMul, reesMul, map_add, ← smulRingHom_apply, map_add]
+  rw [reesMul, reesMul, reesMul, map_add (f := _), ← smulRingHom_apply, map_add (f := _)]
   exact (Scheme.Modules.pushforward (reesPr I X)).map_add
 
 variable {ι : Type w} (𝔘 : ι → X.Opens) (p : ℕ)
@@ -75,9 +80,9 @@ def reesCechModule : Module (reesAlgebra I) (cechH (reesPre I F) 𝔘 p) :=
 variable [IsNoetherianRing A] [IsProper (X ↘ Spec (.of A))] {F} (hF : IsCoherent F)
   (hU : iSup 𝔘 = ⊤) (hUaff : ∀ (m : ℕ) (t : Fin (m + 1) → ι), IsAffineOpen (⨅ a, 𝔘 (t a)))
 
+
 omit [IsNoetherianRing A] [IsProper (X ↘ Spec (.of A))] in
 include hF hU hUaff in
-
 theorem exists_reesCech_addEquiv :
     ∃ e : cechH (reesPre I F) 𝔘 p ≃+ Sheaf.H.{u} (modulesAb (reesSheaf I F)) p,
       ∀ (r : reesAlgebra I) x, e (cechHMap 𝔘 (modulesAbMap (reesMul I F r)).hom p x) = r • e x := by
@@ -99,8 +104,8 @@ theorem exists_reesCech_addEquiv :
     cechHAddEquivH_naturality]
   rfl
 
-include hF hU hUaff in
 
+include hF hU hUaff in
 theorem finite_reesCech :
     @Module.Finite (reesAlgebra I) (cechH (reesPre I F) 𝔘 p) _ _ (reesCechModule I F 𝔘 p) := by
   let := reesCechModule I F 𝔘 p

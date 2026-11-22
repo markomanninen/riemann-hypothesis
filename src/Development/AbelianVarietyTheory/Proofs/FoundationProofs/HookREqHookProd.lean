@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.PlaceRankTwoOne
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.ThetaLift
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.PlaceRankTwoOne
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.ThetaLift
+
+@[expose] public section
 
 noncomputable section
 

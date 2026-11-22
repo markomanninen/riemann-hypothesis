@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisenbergDerivativeThetaFunctionLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionFundamentalDomainInnerProductBasic
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSumHeisenbergTranslatesDistinctChars
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefiniteUnitaryCocompact
-import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisenbergDerivativeThetaFunctionLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionFundamentalDomainInnerProductBasic
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsInfFamAndStdChar
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaNormSqSumHeisenbergTranslatesDistinctChars
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DifferentiableOneP
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DefiniteUnitaryCocompact
+public import Formalism.LocalToGlobal.BesselHermitianTheta.Lemmas
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,19 +135,6 @@ structure RapidDecSm (φ : GA D V → ℂ) : Prop extends IsAutFun V φ where
   smooth : φ ∈ SmFun θ V
   decay : ∀ l, IsLieWord V l → RapidDec V (rWord θ V l φ)
 
-theorem rWord_const (l : List (D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ)) (c : ℂ) :
-    ∃ c' : ℂ, rWord θ V l (fun _ => c) = fun _ => c' := foldrRder_const θ V l c
-
-open scoped ComplexOrder in
-
-theorem rapidDecSm_const (hV : ∀ τ, (gramAt D V τ).PosDef) (c : ℂ) : RapidDecSm θ V fun _ => c := by
-  refine ⟨(isAutFunSm_const θ V c).toIsAutFun, (isAutFunSm_const θ V c).smooth, fun l _ => ?_⟩
-  obtain ⟨K, hK, h⟩ := GlobalTheory.definite_unitary_cocompact V hV
-  obtain ⟨c', hc⟩ := rWord_const θ V l c
-  rw [hc]
-  refine .of_isCompact (fun _ _ _ => rfl) continuous_const hK fun g => ?_
-  obtain ⟨γ, hγ, k, hk, rfl⟩ := h g
-  exact ⟨γ⁻¹, inv_mem hγ, by simpa using hk⟩
 
 def posSp (D : D7) (n : ℕ) : HSp D := Examples₂.posSpace Examples₂.star_isIntegral n
 
@@ -157,10 +148,6 @@ theorem gramAt_posSp (n : ℕ) (τ : D.what₂.Tau) : gramAt D (posSp D n) τ = 
   rw [hg]
   exact Matrix.map_one _ (map_zero _) (map_one _)
 
-open scoped ComplexOrder in
-
-theorem rapidDecSm_one_posSp (n : ℕ) : RapidDecSm θ (posSp D n) fun _ => 1 :=
-  rapidDecSm_const θ _ (fun τ => by rw [gramAt_posSp]; exact Matrix.PosDef.one) 1
 
 variable {θ V} {φ φ' : GA D V → ℂ} {N : ℕ}
 
@@ -224,8 +211,8 @@ theorem growthSob_add_le (h : φ ∈ SmFun θ V) (h' : φ' ∈ SmFun θ V) (d N 
 theorem growthSob_smul (c : ℂ) (d N : ℕ) : growthSob θ V d N (c • φ) = ‖c‖ₑ * growthSob θ V d N φ :=
   wordSum_eq_mul fun l => by rw [(linOnSm_glWord l).smul, growthSize_smul]
 
-variable (θ V) in
 
+variable (θ V) in
 def allDer (M : Submodule ℂ (GA D V → ℂ)) : Submodule ℂ (GA D V → ℂ) where
   carrier := {φ | φ ∈ SmFun θ V ∧ ∀ l, IsLieWord V l → rWord θ V l φ ∈ M}
   add_mem' h h' := ⟨add_mem h.1 h'.1, fun l hl => by
@@ -261,8 +248,8 @@ theorem exists_growthSob_ne_top (hs : φ ∈ SmFun θ V) (h : UnifModGrowth V θ
   exact (wordAct_rel (A := glDer θ V) (B := glDer θ V) (R := fun f _ => f ∈ allDer θ V M) l
     (fun a _ _ _ hf => RderC_mem_allDer hf a.1 _) (y := φ) ⟨hs, hN⟩).2 [] (fun _ h => by simp at h)
 
-variable (V) in
 
+variable (V) in
 def rapidSub : Submodule ℂ (GA D V → ℂ) where
   carrier := {φ | RapidDec V φ}
   add_mem' := RapidDec.add
@@ -276,9 +263,6 @@ theorem rapidDecSm_iff : RapidDecSm θ V φ ↔ φ ∈ allDer θ V (rapidSub V) 
     ⟨⟨h0.1, h.2, h0.continuous⟩, h.1.1, h.1.2⟩⟩
 
 theorem RapidDecSm.rapidDec (h : RapidDecSm θ V φ) : RapidDec V φ := h.decay [] fun _ e => by simp at e
-
-theorem RapidDecSm.unifModGrowth (h : RapidDecSm θ V φ) : UnifModGrowth V θ φ :=
-  ⟨0, fun l hl => (h.decay l hl).bounded.imp fun _ hC g => (hC g).trans_eq (by simp)⟩
 
 theorem RapidDecSm.add (h : RapidDecSm θ V φ) (h' : RapidDecSm θ V φ') : RapidDecSm θ V (φ + φ') := by
   obtain ⟨a, U, hU, hk⟩ := rapidDecSm_iff.1 h
@@ -335,8 +319,8 @@ def heisDer (a : D.what₂.Tau × Fin W.rank × Fin V.rank × Bool) (f : WO V W 
 
 def sobO (d : ℕ) (f : WO V W → ℂ) : ℝ≥0∞ := wordSum (heisDer ψ θ) (l2O μ 𝓕) d f
 
-variable (V W) in
 
+variable (V W) in
 def thetaLevel (U : AddSubgroup (WO V W)) : Submodule ℂ (WO V W → ℂ) where
   carrier := {f | IsThetaFunO ψ V W f ∧ ∀ u ∈ U, u.map (infPart D) = 0 → heisO ψ V W u f = f}
   add_mem' h h' := ⟨theta_add h.1 h'.1, fun u hu h0 =>
@@ -345,16 +329,16 @@ def thetaLevel (U : AddSubgroup (WO V W)) : Submodule ℂ (WO V W → ℂ) where
   smul_mem' c _ h := ⟨theta_smul c h.1, fun u hu h0 =>
     ((GlobalTheory.FinTranslate.heisL V W ψ u).map_smul _ _).trans (congrArg _ (h.2 u hu h0))⟩
 
-theorem l2O_sq_eq_lintegral (f : WO V W → ℂ) : l2O μ 𝓕 f ^ 2 = ∫⁻ w in 𝓕, ‖f w‖ₑ ^ 2 ∂μ := by
-  have := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ.restrict 𝓕) (p := 2) two_ne_zero
+theorem l2O_sq_eq_lintegral (f : WO V W → ℂ) (hf : Continuous f) : l2O μ 𝓕 f ^ 2 = ∫⁻ w in 𝓕, ‖f w‖ₑ ^ 2 ∂μ := by
+  have : BorelSpace (WO V W) := ⟨rfl⟩
+  have := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ.restrict 𝓕) (p := 2) two_ne_zero hf.measurable.aestronglyMeasurable
   simpa [l2O] using this
 
 theorem l2O_smul (c : ℂ) (f : WO V W → ℂ) : l2O μ 𝓕 (c • f) = ‖c‖ₑ * l2O μ 𝓕 f := eLpNorm_const_smul c f 2 _
 
 theorem l2O_add_le_of_continuous {f f' : WO V W → ℂ} (h : Continuous f) (h' : Continuous f') :
     l2O μ 𝓕 (f + f') ≤ l2O μ 𝓕 f + l2O μ 𝓕 f' :=
-  have : BorelSpace (WO V W) := ⟨rfl⟩
-  eLpNorm_add_le h.measurable.aestronglyMeasurable h'.measurable.aestronglyMeasurable one_le_two
+  eLpNorm_add_le one_le_two
 
 theorem ipO_conj (f f' : WO V W → ℂ) : conj (ipO μ 𝓕 f f') = ipO μ 𝓕 f' f := by
   simp only [ipO, ← integral_conj, map_mul, Complex.conj_conj, mul_comm]
@@ -371,19 +355,10 @@ theorem ipO_self (f : WO V W → ℂ) : ipO μ 𝓕 f f = nrm2 μ 𝓕 f := by
 
 theorem sqNormIntegralFundamentalDomain_eq_l2Norm_sq {f : WO V W → ℂ} (h : Continuous f) : nrm2 μ 𝓕 f = (l2O μ 𝓕 f).toReal ^ 2 := by
   have : BorelSpace (WO V W) := ⟨rfl⟩
-  rw [← ENNReal.toReal_pow, l2O_sq_eq_lintegral, nrm2, GlobalTheory.Ker.ScalarProduct.integral_normSq_eq _ h.measurable]
+  rw [← ENNReal.toReal_pow, l2O_sq_eq_lintegral μ 𝓕 f h, nrm2, GlobalTheory.Ker.ScalarProduct.integral_normSq_eq _ h.measurable]
 
-theorem enorm_ipO_le {f f' : WO V W → ℂ} (h : Continuous f) (h' : Continuous f') :
-    ‖ipO μ 𝓕 f f'‖ₑ ≤ l2O μ 𝓕 f * l2O μ 𝓕 f' := by
-  have : BorelSpace (WO V W) := ⟨rfl⟩
-  refine (enorm_integral_le_lintegral_enorm _).trans ?_
-  rw [← eLpNorm_one_eq_lintegral_enorm]
-  have := eLpNorm_smul_le_mul_eLpNorm (μ := μ.restrict 𝓕) (p := 2) (q := 2) (r := 1) (φ := f) (f := star f')
-    h'.star.measurable.aestronglyMeasurable h.measurable.aestronglyMeasurable
-  rwa [eLpNorm_star] at this
 
 variable (V W) in
-
 theorem exists_isCovolOne : ∃ (μ : Measure (WO V W)) (𝓕 : Set (WO V W)), IsCovolOne (ratL W V) μ 𝓕 := by
   obtain ⟨i1, i2, i3, i4, i5, K, hK, hKc⟩ := GlobalTheory.AdelicMatrixLattice.lattice D W V
   have : BorelSpace (WO V W) := ⟨rfl⟩
@@ -398,19 +373,6 @@ theorem measure_dom (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain 
     continuous_const fun _ _ _ => rfl
   exact ⟨(hN μ 𝓕 hμ h𝓕).1, (hN μ 𝓕 hμ h𝓕).2.1⟩
 
-theorem covolOne_unique {μ' : Measure (WO V W)} {𝓕' : Set (WO V W)} (h : IsCovolOne (ratL W V) μ 𝓕)
-    (h' : IsCovolOne (ratL W V) μ' 𝓕') : μ' = μ := by
-  obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D W V
-  have : BorelSpace (WO V W) := ⟨rfl⟩
-  have : Countable (ratL W V) := TopologicalSpace.separableSpace_iff_countable.1 inferInstance
-  obtain ⟨a1, a2, a3⟩ := h
-  obtain ⟨b1, b2, b3⟩ := h'
-  have e := Measure.isAddLeftInvariant_eq_smul μ' μ
-  have h1 : IsAddFundamentalDomain (ratL W V) 𝓕 μ' := a2.mono (by rw [e]; exact Measure.smul_absolutelyContinuous)
-  have h2 := h1.measure_eq b2
-  rw [b3, e, Measure.smul_apply, a3, ENNReal.smul_def, smul_eq_mul, mul_one, ENNReal.coe_eq_one] at h2
-  rw [e, h2, one_smul]
-
 theorem mul_conj_periodic (hψ : IsStdChar D ψ (-1)) (h : IsThetaFunO ψ V W f) (h' : IsThetaFunO ψ V W f') :
     ∀ γ ∈ ratL W V, ∀ w, f (γ + w) * conj (f' (γ + w)) = f w * conj (f' w) := by
   rintro _ ⟨γ, rfl⟩ w
@@ -421,14 +383,6 @@ theorem mul_conj_periodic (hψ : IsStdChar D ψ (-1)) (h : IsThetaFunO ψ V W f)
   rw [e, e', map_mul]
   linear_combination (f w * conj (f' w)) * this
 
-theorem ipO_dom_eq (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
-    {𝓕' : Set (WO V W)} (h𝓕' : IsAddFundamentalDomain (ratL W V) 𝓕' μ) (h : IsThetaFunO ψ V W f)
-    (h' : IsThetaFunO ψ V W f') : ipO μ 𝓕 f f' = ipO μ 𝓕' f f' := by
-  obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D W V
-  have : BorelSpace (WO V W) := ⟨rfl⟩
-  have : Countable (ratL W V) := TopologicalSpace.separableSpace_iff_countable.1 inferInstance
-  exact h𝓕.setIntegral_eq h𝓕' (f := fun w => f w * conj (f' w)) fun γ w => mul_conj_periodic hψ h h' γ γ.2 w
-
 theorem memLp_theta (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
     (h : IsThetaFunO ψ V W f) : MemLp f 2 (μ.restrict 𝓕) := by
   have : BorelSpace (WO V W) := ⟨rfl⟩
@@ -437,7 +391,7 @@ theorem memLp_theta (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h�
   exact .of_bound h.cont.measurable.aestronglyMeasurable C (.of_forall hC)
 
 theorem l2NormOnFundamentalDomain_thetaFunction_ne_top (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
-    (h : IsThetaFunO ψ V W f) : l2O μ 𝓕 f ≠ ∞ := (memLp_theta hψ hμ h𝓕 h).2.ne
+    (h : IsThetaFunO ψ V W f) : l2O μ 𝓕 f ≠ ∞ := (memLp_theta hψ hμ h𝓕 h).ne
 
 theorem integrableOn_mul_conj (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure)
     (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ) (h : IsThetaFunO ψ V W f) (h' : IsThetaFunO ψ V W f') :
@@ -453,7 +407,7 @@ theorem ipO_add_left (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h�
 theorem ipO_add_right (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
     (h : IsThetaFunO ψ V W f) (h' : IsThetaFunO ψ V W f') (h'' : IsThetaFunO ψ V W f'') :
     ipO μ 𝓕 f (f' + f'') = ipO μ 𝓕 f f' + ipO μ 𝓕 f f'' := by
-  rw [← ipO_conj, ipO_add_left hψ hμ h𝓕 h' h'' h, map_add, ipO_conj, ipO_conj]
+  rw [← ipO_conj, ipO_add_left hψ hμ h𝓕 h' h'' h, map_add (f := _), ipO_conj, ipO_conj]
 
 theorem l2O_eq_zero_iff_of_isThetaFunO (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure)
     (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ) (h : IsThetaFunO ψ V W f) : l2O μ 𝓕 f = 0 ↔ f = 0 := by
@@ -462,20 +416,12 @@ theorem l2O_eq_zero_iff_of_isThetaFunO (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsA
   have : Countable (ratL W V) := TopologicalSpace.separableSpace_iff_countable.1 inferInstance
   refine ⟨fun h0 => eq_zero_of_lintegral_eq_zero (G := WO V W) (ratL W V) μ 𝓕 h𝓕 f h.cont (theta_norm_periodic hψ h) ?_,
     fun h0 => by simp [h0, l2O]⟩
-  rw [← l2O_sq_eq_lintegral, h0, zero_pow two_ne_zero]
+  rw [← l2O_sq_eq_lintegral μ 𝓕 f h.cont, h0, zero_pow two_ne_zero]
 
 theorem ipO_self_eq_zero_iff (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure)
     (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ) (h : IsThetaFunO ψ V W f) : ipO μ 𝓕 f f = 0 ↔ f = 0 := by
   rw [ipO_self, sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 h.cont, ← l2O_eq_zero_iff_of_isThetaFunO hψ hμ h𝓕 h]
   simp [ENNReal.toReal_eq_zero_iff, l2NormOnFundamentalDomain_thetaFunction_ne_top hψ hμ h𝓕 h]
-
-theorem thetaL2_fundamentalDomain_indep (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
-    {𝓕' : Set (WO V W)} (h𝓕' : IsAddFundamentalDomain (ratL W V) 𝓕' μ) (h : IsThetaFunO ψ V W f) :
-    l2O μ 𝓕 f = l2O μ 𝓕' f := by
-  have e := ipO_dom_eq hψ hμ h𝓕 h𝓕' h h
-  rw [ipO_self, ipO_self, sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 h.cont, sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕' h.cont, Complex.ofReal_inj,
-    pow_left_inj₀ ENNReal.toReal_nonneg ENNReal.toReal_nonneg two_ne_zero] at e
-  exact (ENNReal.toReal_eq_toReal_iff' (l2NormOnFundamentalDomain_thetaFunction_ne_top hψ hμ h𝓕 h) (l2NormOnFundamentalDomain_thetaFunction_ne_top hψ hμ h𝓕' h)).1 e
 
 theorem ipO_heisO (hψ : IsStdChar D ψ (-1)) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
     (h : IsThetaFunO ψ V W f) (h' : IsThetaFunO ψ V W f') (u : WO V W) :
@@ -494,7 +440,8 @@ theorem l2O_om_apply_eq_of_isThetaFunO {χS χT : (AE D)ˣ →* Circle} {om : GA
     (h : IsThetaFunO ψ V W f) (p : GA D V × GA D W) : l2O μ 𝓕 (om p f) = l2O μ 𝓕 f :=
   (ENNReal.pow_right_strictMono two_ne_zero).injective (by
     beta_reduce
-    rw [l2O_sq_eq_lintegral, l2O_sq_eq_lintegral, hom.om_unit μ 𝓕 hμ h𝓕 p f h])
+    rw [l2O_sq_eq_lintegral μ 𝓕 _ (hom.om_pres p f h).cont,
+      l2O_sq_eq_lintegral μ 𝓕 f h.cont, hom.om_unit μ 𝓕 hμ h𝓕 p f h])
 
 theorem ipO_om {χS χT : (AE D)ˣ →* Circle} {om : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)}
     (hom : IsWeilDatumO ψ V W χS χT om) (hμ : μ.IsAddHaarMeasure) (h𝓕 : IsAddFundamentalDomain (ratL W V) 𝓕 μ)
@@ -506,7 +453,7 @@ theorem ipO_om {χS χT : (AE D)ˣ →* Circle} {om : GA D V × GA D W →* Modu
     ⟨h.cont.measurable, theta_bounded hom.std h⟩
   have e : ∀ c : ℂ, ∫ w in 𝓕, ‖(om p f + c • om p f') w‖ ^ 2 ∂μ = ∫ w in 𝓕, ‖(f + c • f') w‖ ^ 2 ∂μ := fun c => by
     have hs := theta_add h (theta_smul c h')
-    rw [← map_smul, ← map_add]
+    rw [← map_smul, ← map_add (f := _)]
     exact (sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 (hom.om_pres p _ hs).cont).trans (by
       rw [l2O_om_apply_eq_of_isThetaFunO hom hμ h𝓕 hs]; exact (sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 hs.cont).symm)
   simp only [ipO]
@@ -595,8 +542,8 @@ section Examples
 
 variable {D : D7}
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem exists_theta_posSp (D : D7) (m n : ℕ) : ∃ (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
     (μ : Measure (WO (posSp D m) (posSp D n))) (𝓕 : Set (WO (posSp D m) (posSp D n)))
     (U : AddSubgroup (WO (posSp D m) (posSp D n))) (f : WO (posSp D m) (posSp D n) → ℂ),
@@ -614,17 +561,6 @@ theorem exists_theta_posSp (D : D7) (m n : ℕ) : ∃ (ψ : AddChar (AF D.host.F
   obtain ⟨U, hU, hl⟩ := isTheta_iff_level.1 h
   exact ⟨ψ, θ, μ, 𝓕, U, f, hψ, hθ, hm, hU, hl, mt (ipO_self_eq_zero_iff hψ hm.1 hm.2.1 h).1 f0, fun d =>
     ⟨mt (sobO_eq_zero_iff hψ hm.1 hm.2.1 h d).1 f0, sobO_ne_top hψ hθ hm.1 hm.2.1 h d⟩⟩
-
-example {V W : HSp D} {μ : Measure (WO V W)} {𝓕 : Set (WO V W)} (h : μ 𝓕 = 1) :
-    ipO μ 𝓕 (fun _ => 1) (fun _ => Complex.I) = -Complex.I := by
-  have : μ.real 𝓕 = 1 := by rw [Measure.real, h, ENNReal.toReal_one]
-  rw [ipO, setIntegral_const, this, one_smul, one_mul, Complex.conj_I]
-
-example (V : HSp D) : growthSize V 1 (fun g => (height V g : ℂ)) = 1 := by
-  simp [growthSize, abs_of_pos (height_pos V _), (height_pos V _).ne']
-
-example (θ : InfFam D) (V : HSp D) (N : ℕ) (c : ℂ) : growthSob θ V 1 N (fun _ => c) = ‖c‖ₑ := by
-  simp [growthSob, wordSum_one, glDer, RderC_const, growthSize_const]
 
 end Examples
 

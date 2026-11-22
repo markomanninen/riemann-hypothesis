@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RkLe
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelProjection Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelHermitian GlobalTheory.TwV.DelA
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -103,7 +108,8 @@ theorem evD_blockMats {p : ℕ} [Fact p.Prime] (X : Sys p) (D : D7) (pos : (Σ v
       simp only [Fin.val_rev, Fin.coe_cast, Fin.coe_castLE, shiftI]
       omega
     ext t a
-    simp only [Matrix.mul_apply, Matrix.submatrix_apply, Matrix.map_apply, Matrix.smul_apply, Matrix.transpose_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.submatrix_apply, Matrix.map_apply, Matrix.smul_apply, Matrix.transpose_apply,
       Function.comp_apply, id, smul_eq_mul, dfr, map_mul, map_sum]
     rw [hrev, Finset.mul_sum]
     refine Fintype.sum_equiv (finCongr hN.2.symm) _ _ (fun b => ?_)

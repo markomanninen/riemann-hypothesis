@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MassFormulaConjugationAction
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.MassFormulaConjugationAction
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
@@ -23,7 +27,7 @@ theorem ofFn_monoLines_perm {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fin
     have hn : n < (Finsupp.toMultiset m).toList.length := by rwa [List.length_map] at h₂
     rw [List.getElem_ofFn, List.getElem_map]
     simp only [monoLines]
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
     rfl
   rw [h1, ← Multiset.coe_eq_coe, ← Multiset.map_coe, Multiset.coe_toList, Multiset.coe_toList, hm,
     Multiset.map_map]
@@ -55,7 +59,7 @@ theorem arMono_mapDomain_some {Ψ : Type} [Fintype Ψ] {N : ℕ} (M : RootModel 
     have hj : (j : ℕ) < (Finsupp.toMultiset (Finsupp.mapDomain some μ)).toList.length := by
       rw [hlen]; exact j.2
     simp only [monoLines]
-    rw [dif_pos hj]
+    rw [dite_eq_left hj]
     exact hall _ (List.get_mem _ _)
   have hmain := arNum_linear_arList_symm.2 M.K M.ι M.P (dimFl Ψ N) M.arith (II M.K M.ι) (hII M.K M.ι) _ _ hsm
     (by simpa [Function.comp_def, RootModel.line] using hperm)
@@ -82,8 +86,10 @@ theorem arFun_toA_eq_arNum : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : 
   have hsum : toA F = ∑ μ ∈ F.support, toA (monomial μ (F.coeff μ)) := by
     unfold toA
     conv_lhs => rw [F.as_sum]
-    rw [map_sum]
-  rw [hsum, map_sum, Finset.sum_congr rfl hmono]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum, Finset.sum_congr rfl hmono]
   unfold arNum
   rw [Finset.sum_div]
   refine Finset.sum_congr rfl fun μ _ => ?_

@@ -1,15 +1,19 @@
-import Formalism.HermitianCurvature.StatementG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionCriticalPoints
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdditiveCharacterPsi
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AffineChangeOfVariables
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RemainderNormLeStrictUpper
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralConvergesAbs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardCharacterExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourierUniquenessMirabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeakApproximationGL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WhittakerVanishingImpliesZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CuspidalIrreducibleSubrep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionDerivatives
+module
+
+public import Formalism.HermitianCurvature.StatementG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionCriticalPoints
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdditiveCharacterPsi
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AffineChangeOfVariables
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RemainderNormLeStrictUpper
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralConvergesAbs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardCharacterExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourierUniquenessMirabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeakApproximationGL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WhittakerVanishingImpliesZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CuspidalIrreducibleSubrep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhaseFunctionDerivatives
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.EtaleIntegralityFacts
 
@@ -1369,7 +1373,7 @@ theorem cof_lower (m : ℕ) {δ c ε : ℝ} (hδ : 0 < δ) (hc : 2 ≤ c) (hε0 
   have hprod : δ ^ (m + 1) ≤ ‖∏ k, p.1 k‖ := by
     rw [norm_prod]
     calc δ ^ (m + 1) = ∏ _k : Fin (m + 1), δ := by simp
-      _ ≤ ∏ k, ‖p.1 k‖ := Finset.prod_le_prod (fun _ _ => hδ.le) fun k _ => hxl k
+      _ ≤ ∏ k, ‖p.1 k‖ := Finset.prod_le_prod₀ (fun _ _ => hδ.le) fun k _ => hxl k
   refine ⟨hprod, ?_⟩
   have hR : 1 ≤ c * T := by nlinarith
   have h1 := first_cofactor_norm_le m t p hR ht1 (fun k => (hx k).trans (by nlinarith)) (hy.trans (by nlinarith))

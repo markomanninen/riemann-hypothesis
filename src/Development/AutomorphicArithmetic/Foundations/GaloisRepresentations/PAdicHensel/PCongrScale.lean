@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem pCongrScale : CongrScale := by
     rw [hθ, TensorProduct.tmul_neg]
   have hσc : ∀ x : K, σ (cB x) = cB x := fun x => σ.commutes x
   have hσz : σ z = cB a - cB b * inE K θ := by
-    rw [hzdef, map_add, map_mul, hσc, hσc, hσθ]
+    rw [hzdef, map_add (f := _), map_mul, hσc, hσc, hσθ]
     ring
   have hθθ : inE K θ * inE K θ = cB (D : K) := by
     rw [← hmul, ← pow_two, hD, hint]

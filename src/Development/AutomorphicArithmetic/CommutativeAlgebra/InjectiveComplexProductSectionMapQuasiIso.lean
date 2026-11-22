@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSemiMapOfLocallySurjectiveOnCocycles
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSemiMapOpOfBijectiveCochainPushforward
-import Development.AutomorphicArithmetic.CommutativeAlgebra.InjectiveProductPushforwardOfInjective
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsBijectiveCohomologyClassProductAdjunction
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SubsingletonCohomologyClassChainsOfAcyLocallyExa
-import Development.AutomorphicArithmetic.CommutativeAlgebra.AcyMappingConeSemiMapOfInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyMappingConeSecondVariableExactStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsImageCocycleSemilinearSheafComplexMapStatement
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSemiMapOfLocallySurjectiveOnCocycles
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSemiMapOpOfBijectiveCochainPushforward
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.InjectiveProductPushforwardOfInjective
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsBijectiveCohomologyClassProductAdjunction
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SubsingletonCohomologyClassChainsOfAcyLocallyExa
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.AcyMappingConeSemiMapOfInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyMappingConeSecondVariableExactStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsImageCocycleSemilinearSheafComplexMapStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
@@ -43,7 +47,7 @@ private theorem semi_bij (R : Type) [CommRing R] (L B : Cx R) [L.IsStrictlyGE 0]
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by ring⟩
   constructor
   · have ex := (GlobalTheory.T.hypercohomology_mappingCone_second_variable_exact ℤ ((chains ℤ).obj E) ρ.toZ m).2.2
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := (ex x).1 hx
     rw [Subsingleton.elim y 0, map_zero]

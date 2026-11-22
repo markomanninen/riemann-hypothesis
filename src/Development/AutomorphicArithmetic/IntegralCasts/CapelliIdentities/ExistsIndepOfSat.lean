@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Ud9.exists_indep_of_sat :
     ∀ {R E : Type} [inst : CommRing R] [IsDomain R] [IsNoetherianRing R]

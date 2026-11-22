@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordTieCompEquiv
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.FlagBun
 
@@ -81,7 +85,7 @@ theorem algebraicIndependent_gen (Ω : Type) [Field Ω] {S : Type} (r : S → �
 
 theorem algebraicIndependent_comp {Ω₀ Ω K I : Type} [Field Ω₀] [Field Ω] [Field K] [Algebra Ω K]
     (fn : Ω₀ →+* Ω) {x : I → K} (hx : AlgebraicIndependent Ω x) :
-    letI := ((algebraMap Ω K).comp fn).toAlgebra
+    letI := ((algebraMap Ω K).comp fn).toAlgebra;
     AlgebraicIndependent Ω₀ x := by
   letI a1 : Algebra Ω₀ Ω := fn.toAlgebra
   letI a2 : Algebra Ω₀ K := ((algebraMap Ω K).comp fn).toAlgebra
@@ -89,7 +93,7 @@ theorem algebraicIndependent_comp {Ω₀ Ω K I : Type} [Field Ω₀] [Field Ω]
   exact hx.restrictScalars (R := Ω₀) (K := Ω) fn.injective
 
 theorem adjoin_entries {Ω₀ Ω : Type} [Field Ω₀] [Field Ω] (fn : Ω₀ →+* Ω) {S : Type} (r : S → ℕ) :
-    letI := ((algebraMap Ω (GenField Ω r)).comp fn).toAlgebra
+    letI := ((algebraMap Ω (GenField Ω r)).comp fn).toAlgebra;
     IntermediateField.adjoin Ω₀
         (Set.range fun q : Σ s, Fin (r s) × Fin (r s) => genU Ω r q.1 q.2.1 q.2.2) =
       IntermediateField.adjoin Ω₀ (Set.range fun q : GenIx r =>

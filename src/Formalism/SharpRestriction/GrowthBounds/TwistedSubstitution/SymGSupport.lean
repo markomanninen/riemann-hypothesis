@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Lemma5aGeneratorProducts
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TransportMon
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.Lemma5aGeneratorProducts
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TransportMon
+
+@[expose] public section
 
 noncomputable section
 

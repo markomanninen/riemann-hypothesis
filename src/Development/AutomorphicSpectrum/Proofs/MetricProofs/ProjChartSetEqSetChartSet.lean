@@ -1,29 +1,33 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
-import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDim
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartDim
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartModel
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PConeVanishingHomog
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PConeSliceIdeal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDehomogPrime
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PComponentsGenericCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSheetLift
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsGenericCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsSheetSimpleNull
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.PoincareLelong
+public import Development.AutomorphicSpectrum.PublishedTheorems.Metrics₂.SheetDensityEqSetSheetDensity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDim
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxPosDens
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CxSimple
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartDim
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PGoodChartModel
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PConeVanishingHomog
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PConeSliceIdeal
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDehomogPrime
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PComponentsGenericCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSheetLift
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsGenericCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsSheetSimpleNull
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -94,7 +98,7 @@ theorem eval_liftPolyC [DecidableEq K] {m : ℕ} (σ : Fin m ≃ ((k : K) → ι
   induction f using MvPolynomial.induction_on with
   | C c => simp [liftPolyC]
   | add f g hf hg =>
-    simp only [liftPolyC, map_add] at hf hg ⊢
+    simp only [liftPolyC, map_add (f := _)] at hf hg ⊢
     rw [hf, hg]
   | mul_X f q hf =>
     simp only [liftPolyC, map_mul] at hf ⊢

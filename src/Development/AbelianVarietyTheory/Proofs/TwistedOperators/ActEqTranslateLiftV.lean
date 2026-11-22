@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TranslateRepresentations
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRangeRestrictEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TranslateRepresentations
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRangeRestrictEq
+
+@[expose] public section
 
 noncomputable section
 

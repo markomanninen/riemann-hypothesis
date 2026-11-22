@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.EmbeddingSeparatingGroupStatement
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthOfLengthEigenLengthProduct
+module
+
+public import ReciprocityTheory.DualLattices.EmbeddingSeparatingGroupStatement
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthOfLengthEigenLengthProduct
+
+@[expose] public section
 
 noncomputable section
 

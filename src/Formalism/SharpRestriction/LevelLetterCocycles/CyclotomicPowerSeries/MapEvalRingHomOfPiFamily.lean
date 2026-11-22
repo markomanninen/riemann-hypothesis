@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstantCoeffAeval
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.CycloSimple
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.CycloDist
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PiSeries
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstantCoeffAeval
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.CycloSimple
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.CycloDist
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.PiSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,17 +77,8 @@ theorem cyclotomic_comp_dvd {LL : Type} [Field LL] (n : ℕ) (hn : 0 < n) (ζ₀
   rw [← hback, hc, Polynomial.mul_comp]
 
 private theorem derivative_exp_eq_exp' (A : Type) [Field A] [CharZero A] :
-    derivative A (PowerSeries.exp A) = PowerSeries.exp A := by
-  ext n
-  have key : (1 / ((n + 1).factorial : ℚ)) * ((n : ℚ) + 1) = 1 / (n.factorial : ℚ) := by
-    have h0 : (n.factorial : ℚ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero n
-    rw [Nat.factorial_succ, Nat.cast_mul]
-    push_cast
-    field_simp
-  rw [PowerSeries.coeff_derivative, PowerSeries.coeff_exp, PowerSeries.coeff_exp]
-  have h := congrArg (algebraMap ℚ A) key
-  rw [map_mul] at h
-  simpa using h
+    derivative (PowerSeries.exp A) = PowerSeries.exp A :=
+  PowerSeries.derivative_exp A
 
 private theorem constantCoeff_exp_eq_one (A : Type) [Field A] [CharZero A] :
     constantCoeff (PowerSeries.exp A) = 1 := by
@@ -127,7 +122,7 @@ private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] 
     rw [algHom_coe_eq_aeval, Polynomial.aeval_comp]
     have h1 : Polynomial.aeval (ρ ζ X) (Polynomial.X + 1 : Polynomial O) =
         C ζ * PowerSeries.exp LL := by
-      rw [map_add, Polynomial.aeval_X, map_one, add_comm]
+      rw [map_add (f := _), Polynomial.aeval_X, map_one, add_comm]
       exact hρ ζ hζ
     rw [h1, hcyc]
     exact hw
@@ -150,7 +145,7 @@ private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] 
     rw [constantCoeff_piAlgHom]
     have h : constantCoeff (1 + ρ i.1 X) = constantCoeff (C i.1 * PowerSeries.exp LL) := by
       rw [hρ i.1 i.2]
-    rw [map_add, map_one, map_mul, constantCoeff_C, hexp0, mul_one] at h
+    rw [map_add (f := _), map_one, map_mul, constantCoeff_C, hexp0, mul_one] at h
     linear_combination h
   have hroots : ∀ r : Polynomial LL,
       Polynomial.aeval (constantCoeff (piAlgHom (fun i : {ζ : LL // IsPrimitiveRoot ζ n} => ρ i.1) X)) r = 0 →
@@ -158,7 +153,7 @@ private theorem cyclotomic_comp_pow_dvd_of_X_pow_dvd {O LL : Type} [CommRing O] 
     intro r hr
     have hmap : ((Polynomial.cyclotomic n O).comp (Polynomial.X + 1)).map (algebraMap O LL) =
         (Polynomial.cyclotomic n LL).comp (Polynomial.X + 1) := by
-      rw [Polynomial.map_comp, Polynomial.map_cyclotomic, Polynomial.map_add, Polynomial.map_X,
+      rw [Polynomial.map_comp, Polynomial.map_cyclotomic, Polynomial.map_add (f := _), Polynomial.map_X,
         Polynomial.map_one]
     rw [hmap]
     apply cyclotomic_comp_dvd n hn ζ₀ hζ₀ r

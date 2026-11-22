@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 open Filter Topology
 open scoped ComplexOrder
@@ -299,7 +304,7 @@ theorem compare_right {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ 
     have hc : ((m + 1 : ℕ) : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by exact_mod_cast Nat.succ_le_succ hmn
     refine mul_le_mul ?_ ?_ (wt_nonneg (hw n)) (by positivity)
     · exact Real.rpow_le_rpow_of_nonpos (by positivity) hc (by linarith)
-    · exact wt_antitoneOn (hw m) (hw n) (by gcongr)
+    · exact wt_antitoneOn (hw m) (hw n) (mul_le_mul_of_nonneg_right hc hα.le)
   have hb1 : b 0 ≤ 1 := mul_le_one₀ (hp 0) (wt_nonneg (hw 0)) (wt_le_one (hw 0))
   refine le_of_tendsto' h4.tendsto_sum_nat.norm fun N => ?_
   refine (abel_bound _ b q (char_sum_bound χ hχ) hb hb0 N).trans ?_

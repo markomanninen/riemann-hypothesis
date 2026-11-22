@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleChainCochainExistsOfEvalData
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleChainCochainExistsOfEvalData
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleCochainExistsOfNaturalEvaluation
 theorem etale_evaluation_map_construction_of_components : LateralTheory.EtaleFoundations.EtaleCochainExistsOfNaturalEvaluation := by

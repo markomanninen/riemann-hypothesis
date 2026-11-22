@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AutomorphicArithmetic.DivisorFrames.ExistsIsOpenIsCompactSubgroupFiniteAdelicUnitary
-import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupIrreducibleOfAdmissibleUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AutomorphicArithmetic.DivisorFrames.ExistsIsOpenIsCompactSubgroupFiniteAdelicUnitary
+public import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NontrivialOfNeBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemISupIrreducibleOfAdmissibleUnitary
+
+@[expose] public section
 
 private theorem UpperTheory.Reformulated.B.Gr38.matrix_comm {R₁ R₂ m : Type} [CommRing R₁] [CommRing R₂] [Fintype m]
     [DecidableEq m] (X Y : Matrix m m (R₁ × R₂))
@@ -17,7 +21,7 @@ private theorem UpperTheory.Reformulated.B.Gr38.matrix_comm {R₁ R₂ m : Type}
 
 private theorem UpperTheory.Reformulated.B.Gr38.inf_fin_comm {E : Type} [Field E] [NumberField E]
     [NumberField.IsCMField E] {n : ℕ} (x : ↥(GlobalTheory.UnitaryBC.infU E n))
-    (k : ↥(GlobalTheory.UnitaryBC.finU E n)) :
+    (k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) :
     (x : ↥(GlobalTheory.UnitaryBC.UA E n)) * (k : ↥(GlobalTheory.UnitaryBC.UA E n)) =
       (k : ↥(GlobalTheory.UnitaryBC.UA E n)) * (x : ↥(GlobalTheory.UnitaryBC.UA E n)) := by
   apply Subtype.ext
@@ -40,7 +44,7 @@ private theorem UpperTheory.Reformulated.B.Gr38.inf_fin_comm {E : Type} [Field E
 
 private theorem UpperTheory.Reformulated.B.Gr38.ru_comm {E : Type} [Field E] [NumberField E]
     [NumberField.IsCMField E] {n : ℕ} (x : ↥(GlobalTheory.UnitaryBC.infU E n))
-    (k : ↥(GlobalTheory.UnitaryBC.finU E n)) (φ : ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) :
+    (k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) (φ : ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) :
     GlobalTheory.UnitaryBC.RU E n (x : ↥(GlobalTheory.UnitaryBC.UA E n)) (GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) φ) =
       GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) (GlobalTheory.UnitaryBC.RU E n (x : ↥(GlobalTheory.UnitaryBC.UA E n)) φ) := by
   rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
@@ -63,23 +67,23 @@ private theorem UpperTheory.Reformulated.B.Gr38.conj_fix {G V : Type} [Group G] 
     rw [h, h1]
 
 private theorem UpperTheory.Reformulated.B.Gr38.aut_translate {E : Type} [Field E] [NumberField E]
-    [NumberField.IsCMField E] {n : ℕ} (k : ↥(GlobalTheory.UnitaryBC.finU E n))
+    [NumberField.IsCMField E] {n : ℕ} (k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)))
     {φ : ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ} (h : φ ∈ GlobalTheory.DefU.autU E n) :
     GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) φ ∈ GlobalTheory.DefU.autU E n := by
   obtain ⟨hc, hr, ho, hf⟩ := (h : GlobalTheory.UnitaryBC.IsAutFormU φ)
   refine (GlobalTheory.UnitaryBC.IsAutFormU.mk ?_ ?_ ?_ ?_ :
     GlobalTheory.UnitaryBC.IsAutFormU (GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) φ))
-  · exact hc.comp (continuous_mul_right (k : ↥(GlobalTheory.UnitaryBC.UA E n)))
+  · exact hc.comp (continuous_mul_const (k : ↥(GlobalTheory.UnitaryBC.UA E n)))
   · intro γ hγ g
     have := hr γ hγ (g * k)
     rw [← mul_assoc] at this
     exact this
-  · have hs : {k' : ↥(GlobalTheory.UnitaryBC.finU E n) |
+  · have hs : {k' : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
         GlobalTheory.UnitaryBC.RU E n (k' : ↥(GlobalTheory.UnitaryBC.UA E n))
           (GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) φ) =
             GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) φ} =
-        (fun k' : ↥(GlobalTheory.UnitaryBC.finU E n) => k⁻¹ * k' * k) ⁻¹'
-          {k' : ↥(GlobalTheory.UnitaryBC.finU E n) |
+        (fun k' : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) => k⁻¹ * k' * k) ⁻¹'
+          {k' : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
             GlobalTheory.UnitaryBC.RU E n (k' : ↥(GlobalTheory.UnitaryBC.UA E n)) φ = φ} := by
       ext k'
       exact (UpperTheory.Reformulated.B.Gr38.conj_fix (GlobalTheory.UnitaryBC.RU E n) (k' : ↥(GlobalTheory.UnitaryBC.UA E n))
@@ -134,12 +138,12 @@ private theorem UpperTheory.Reformulated.B.Gr38.stab_open {E : Type} [Field E] [
     [NumberField.IsCMField E] {n : ℕ} {S : Type} [AddCommGroup S] [_root_.Module ℂ S]
     [FiniteDimensional ℂ S] (f : S →ₗ[ℂ] ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ)
     (hf : ∀ v, f v ∈ GlobalTheory.DefU.autU E n) :
-    IsOpen {k : ↥(GlobalTheory.UnitaryBC.finU E n) |
+    IsOpen {k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
       ∀ v, GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) (f v) = f v} := by
   let b := Module.finBasis ℂ S
-  have hs : {k : ↥(GlobalTheory.UnitaryBC.finU E n) |
+  have hs : {k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
       ∀ v, GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) (f v) = f v} =
-      ⋂ i, {k : ↥(GlobalTheory.UnitaryBC.finU E n) |
+      ⋂ i, {k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
         GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) (f (b i)) = f (b i)} := by
     ext k
     simp only [Set.mem_setOf_eq, Set.mem_iInter]
@@ -177,7 +181,7 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqForms :
         add_mem' := (by
           intro f g hf hg
           refine ⟨fun v => (GlobalTheory.DefU.autU E n).add_mem (hf.1 v) (hg.1 v), fun x v => ?_⟩
-          simp only [LinearMap.add_apply, hf.2 x v, hg.2 x v, map_add]),
+          simp only [LinearMap.add_apply, hf.2 x v, hg.2 x v, map_add (f := _)]),
         zero_mem' := (by
           refine ⟨fun v => (GlobalTheory.DefU.autU E n).zero_mem, fun x v => ?_⟩
           simp only [LinearMap.zero_apply, map_zero]),
@@ -196,11 +200,11 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqRep :
                 [inst_3 : AddCommGroup S] →
                   [inst_4 : _root_.Module ℂ S] →
                     (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) →
-                      Representation ℂ ↥(GlobalTheory.UnitaryBC.finU E n) ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) :=
+                      Representation ℂ ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) :=
     fun {E : Type} [Field E] [NumberField E] [NumberField.IsCMField E] {n : ℕ} {S : Type} [AddCommGroup S]
         [_root_.Module ℂ S] (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) ↦
       {
-        toFun := fun (k : ↥(GlobalTheory.UnitaryBC.finU E n)) ↦
+        toFun := fun (k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) ↦
           ((LinearMap.llcomp ℂ S (↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) (↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) :
                   ((↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) →ₗ[ℂ] ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) →
                     (S →ₗ[ℂ] ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ) →ₗ[ℂ] S →ₗ[ℂ] ↥(GlobalTheory.UnitaryBC.UA E n) → ℂ)
@@ -220,7 +224,7 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqRep :
           apply Subtype.ext
           apply LinearMap.ext
           intro v
-          show GlobalTheory.UnitaryBC.RU E n ((1 : ↥(GlobalTheory.UnitaryBC.finU E n)) : ↥(GlobalTheory.UnitaryBC.UA E n)) (g.1 v) = g.1 v
+          show GlobalTheory.UnitaryBC.RU E n ((1 : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) : ↥(GlobalTheory.UnitaryBC.UA E n)) (g.1 v) = g.1 v
           simp),
         map_mul' := (by
           intro k l
@@ -229,20 +233,20 @@ noncomputable def UpperTheory.Reformulated.B.Gr38.eqRep :
           apply Subtype.ext
           apply LinearMap.ext
           intro v
-          show GlobalTheory.UnitaryBC.RU E n ((k * l : ↥(GlobalTheory.UnitaryBC.finU E n)) : ↥(GlobalTheory.UnitaryBC.UA E n)) (g.1 v) =
+          show GlobalTheory.UnitaryBC.RU E n ((k * l : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) : ↥(GlobalTheory.UnitaryBC.UA E n)) (g.1 v) =
             GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n))
               (GlobalTheory.UnitaryBC.RU E n (l : ↥(GlobalTheory.UnitaryBC.UA E n)) (g.1 v))
           rw [Subgroup.coe_mul, map_mul, Module.End.mul_apply]) :
-        ↥(GlobalTheory.UnitaryBC.finU E n) →* ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) }
+        ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) →* ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) }
 
 theorem UpperTheory.Reformulated.B.Gr38.eqRep_adm :
     ∀ {E : Type} [inst : Field E] [inst_1 : NumberField E] [inst_2 : NumberField.IsCMField E] {n : ℕ} {S : Type}
       [inst_3 : AddCommGroup S] [inst_4 : _root_.Module ℂ S] [FiniteDimensional ℂ S]
       (ρ : Representation ℂ (↥(GlobalTheory.UnitaryBC.infU E n)) S) (f : ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ)),
-      ∃ (K : Subgroup ↥(GlobalTheory.UnitaryBC.finU E n)),
+      ∃ (K : Subgroup ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))),
         (∀ k ∈ K,
             ((UpperTheory.Reformulated.B.Gr38.eqRep ρ :
-                            ↥(GlobalTheory.UnitaryBC.finU E n) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
+                            ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
                           k :
                   ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
                 f =
@@ -251,17 +255,17 @@ theorem UpperTheory.Reformulated.B.Gr38.eqRep_adm :
             ∀ (w : ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ)),
               (Set.range fun (k : ↥K) ↦
                   ((UpperTheory.Reformulated.B.Gr38.eqRep ρ :
-                                ↥(GlobalTheory.UnitaryBC.finU E n) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
-                        (↑k : ↥(GlobalTheory.UnitaryBC.finU E n)) :
+                                ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) →ₗ[ℂ] ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
+                        (↑k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) :
                       ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ) → ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ))
                     w).Finite := by
   intro E _ _ _ n S _ _ _ ρ f
   obtain ⟨K0, hK0o, hK0c⟩ := UpperTheory.exists_isOpen_isCompact_subgroup_finiteAdelicUnitary E n
   have hopen : ∀ w : ↥(UpperTheory.Reformulated.B.Gr38.eqForms ρ),
-      IsOpen (UpperTheory.Reformulated.B.Gr38.fixer (UpperTheory.Reformulated.B.Gr38.eqRep ρ) w : Set ↥(GlobalTheory.UnitaryBC.finU E n)) := by
+      IsOpen (UpperTheory.Reformulated.B.Gr38.fixer (UpperTheory.Reformulated.B.Gr38.eqRep ρ) w : Set ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) := by
     intro w
-    have hs : (UpperTheory.Reformulated.B.Gr38.fixer (UpperTheory.Reformulated.B.Gr38.eqRep ρ) w : Set ↥(GlobalTheory.UnitaryBC.finU E n)) =
-        {k : ↥(GlobalTheory.UnitaryBC.finU E n) |
+    have hs : (UpperTheory.Reformulated.B.Gr38.fixer (UpperTheory.Reformulated.B.Gr38.eqRep ρ) w : Set ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) =
+        {k : ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) |
           ∀ v, GlobalTheory.UnitaryBC.RU E n (k : ↥(GlobalTheory.UnitaryBC.UA E n)) (w.1 v) = w.1 v} := by
       ext k
       constructor
@@ -272,10 +276,10 @@ theorem UpperTheory.Reformulated.B.Gr38.eqRep_adm :
         exact Subtype.ext (LinearMap.ext h)
     rw [hs]
     exact UpperTheory.Reformulated.B.Gr38.stab_open w.1 w.2.1
-  let K : Subgroup ↥(GlobalTheory.UnitaryBC.finU E n) :=
+  let K : Subgroup ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n)) :=
     K0 ⊓ UpperTheory.Reformulated.B.Gr38.fixer (UpperTheory.Reformulated.B.Gr38.eqRep ρ) f
-  have hKo : IsOpen (K : Set ↥(GlobalTheory.UnitaryBC.finU E n)) := hK0o.inter (hopen f)
-  have hKc : IsCompact (K : Set ↥(GlobalTheory.UnitaryBC.finU E n)) :=
+  have hKo : IsOpen (K : Set ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) := hK0o.inter (hopen f)
+  have hKc : IsCompact (K : Set ↥(GlobalTheory.UnitaryBC.finU (E := E) (n := n))) :=
     hK0c.of_isClosed_subset (Subgroup.isClosed_of_isOpen K hKo) Set.inter_subset_left
   refine ⟨K, fun k hk => hk.2, ?_, fun w =>
     UpperTheory.Reformulated.B.Gr38.orbit_finite (UpperTheory.Reformulated.B.Gr38.eqRep ρ) K hKc w (hopen w)⟩

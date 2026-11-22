@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.RingKrullDimLocRingEqOfMinimalPrime
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsClosedOfChartIdeal
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.RingKrullDimLocRingEqOfMinimalPrime
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -116,8 +120,8 @@ theorem WData.exists_closed_off (w : WData P D hP) (Q : AffPres (w.π ≫ toSpec
     rw [hco] at this
     exact hyF this
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem WData.ringKrullDim_stalk_off (w : WData P D hP) (e : ℕ)
     (hdim : ∀ (p : (k : K) → ι k) (z : (Σ k, ι k) → ℂ), (∀ h ∈ chartIdeal P p, eval z h = 0) →
       ringKrullDim (chartLocRing P p z) = e)

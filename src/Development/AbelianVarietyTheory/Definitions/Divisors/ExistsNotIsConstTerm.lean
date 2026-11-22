@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonarchimedeanGroupOfIsCompactIsOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonarchimedeanGroupOfIsCompactIsOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,63 +16,6 @@ namespace GlobalTheory.UAut.Model
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E}
-
-theorem foldr_char {φ : GAd σ J → ℂ} (hφ : ∀ g h, φ (g * h) = φ g * φ h) (l : List (ℝ → GAd σ J)) :
-    ∃ c : ℂ, l.foldr lineDer φ = c • φ := by
-  induction l with
-  | nil => exact ⟨1, by simp⟩
-  | cons γ l ih =>
-    obtain ⟨c, h⟩ := ih
-    refine ⟨c * deriv (fun t => φ (γ t)) 0, ?_⟩
-    rw [List.foldr_cons, h]
-    funext g
-    simp only [lineDer, Pi.smul_apply, smul_eq_mul, hφ, ← mul_assoc, deriv_const_mul_field']
-    ring
-
-theorem isAut_char (K : Subgroup (GAd σ J)) {φ : GAd σ J → ℂ} (hφ : ∀ g h, φ (g * h) = φ g * φ h)
-    (hm : IsSmoothModerate σ J φ) : IsAut σ J K φ := by
-  refine ⟨hm, ?_, ?_⟩ <;> refine Submodule.finiteDimensional_of_le (S₂ := Submodule.span ℂ {φ}) (Submodule.span_le.2 ?_)
-  · rintro _ ⟨k, rfl⟩
-    exact Submodule.mem_span_singleton.2 ⟨φ k, funext fun g => by simp [hφ, mul_comm]⟩
-  · rintro _ ⟨z, -, rfl⟩
-    choose c hc using foldr_char hφ
-    exact Submodule.mem_span_singleton.2 ⟨z.sum fun l a => a * c l, funext fun g => by
-      simp [dop, hc, Finsupp.sum, Finset.sum_mul, mul_assoc]⟩
-
-theorem isAut_one (K : Subgroup (GAd σ J)) : IsAut σ J K fun _ => 1 :=
-  isAut_char K (by simp) (isSmoothModerate_const σ J 1)
-
-theorem exists_central_line (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : InfinitePlace F} (τ : EmbOver E w) :
-    ∃ γ : ℝ → GAd σ J, IsCentral σ J (Finsupp.single [γ] 1) ∧
-      ∀ t : ℝ, archMat σ J τ (projArch σ J w (γ t)) = NormedSpace.exp (t • (Complex.I • (1 : Matrix (Fin n) (Fin n) ℂ))) := by
-  have hZ : (Complex.I • (1 : Matrix (Fin n) (Fin n) ℂ))ᴴ * J.map τ.1 + J.map τ.1 * (Complex.I • 1) = 0 := by
-    simp [conjTranspose_smul]
-  obtain ⟨γ, -, hγ⟩ := exists_isRealLine h hJ τ hZ
-  have inj : Function.Injective (archMat σ J τ) := fun a b e => by
-    rw [GlobalTheory.Orb.archMat_eq_archEquiv J h, GlobalTheory.Orb.archMat_eq_archEquiv J h] at e
-    exact (archEquiv J h τ).injective (Subtype.ext (Units.ext e))
-  have hc : ∀ t a, embArch σ J w (projArch σ J w (γ t)) * a = a * embArch σ J w (projArch σ J w (γ t)) := fun t a => by
-    refine GAd_ext σ J (fun u => ?_) fun v => by simp
-    by_cases e : u = w
-    · subst e
-      apply inj
-      simp only [map_mul, projArch_embArch_self, hγ]
-      refine (Commute.exp_left ?_).eq
-      exact ((Commute.one_left _).smul_left _).smul_left _
-    · simp [projArch_embArch_ne σ J e]
-  refine ⟨fun t => embArch σ J w (projArch σ J w (γ t)), ⟨?_, fun f _ a _ g => ?_⟩, fun t => by simp [hγ]⟩
-  · intro l hl δ hδ
-    obtain rfl : l = _ := by simpa using hl
-    obtain rfl : δ = _ := by simpa using hδ
-    exact ⟨w, τ, _, hZ, fun t => ⟨_, rfl, hγ t⟩⟩
-  · simp [dop, lineDer, mul_assoc, hc]
-
-theorem isConstTerm_const {r : ℕ} (C : Matrix (Fin n) (Fin r) E) (c : ℂ) : IsConstTerm σ J C (fun _ => c) fun _ => c :=
-  fun μ 𝓕 _ _ h _ => by simp [Measure.real, h]
-
-theorem isConstTerm_zero {r : ℕ} {C : Matrix (Fin n) (Fin r) E} {φ : GAd σ J → ℂ} (h : IsCuspidal σ J φ)
-    (hC : 0 < r ∧ LinearIndependent E C.transpose ∧ Formalism.UG.cT (σ : E →+* E) C * J * C = 0) :
-    IsConstTerm σ J C φ 0 := fun μ 𝓕 h1 h2 _ g => (h r C hC μ 𝓕 h1 h2 g).symm
 
 theorem exists_not_isConstTerm (h : ¬ IsCuspidal σ J fun _ => 1) :
     ∃ (r : ℕ) (C : Matrix (Fin n) (Fin r) E), 0 < r ∧ Formalism.UG.cT (σ : E →+* E) C * J * C = 0 ∧
@@ -84,28 +31,8 @@ theorem exists_not_isConstTerm (h : ¬ IsCuspidal σ J fun _ => 1) :
     (h2.mono Measure.smul_absolutelyContinuous) h7 g
   exact h4 (by simpa [Measure.real, h6] using this)
 
-example (D : Formalism.BasicNotions.D7) : ∃ (r : ℕ) (C : Matrix _ (Fin r) D.host.E), 0 < r ∧
-    ¬ IsConstTerm D.sp.cm.sig (GlobalTheory.CuspDecay.Model.plane D).gram C (fun _ => 1) 0 := by
-  obtain ⟨r, C, h, -, h'⟩ := exists_not_isConstTerm (σ := D.sp.cm.sig) (J := (GlobalTheory.CuspDecay.Model.plane D).gram)
-    (GlobalTheory.CuspDecay.Model.not_isCuspFun_one_plane D)
-  exact ⟨r, C, h, h'⟩
-
 theorem isMaxCpt_infPts (h : IsCompact (infPts σ J : Set (GAd σ J))) : IsMaxCpt σ J (infPts σ J) :=
   ⟨⟨le_rfl, h⟩, fun _ hK _ => hK.1⟩
-
-theorem isSqInt_of_bounded (hP : GlobalTheory.Published.SiegelSetUnitary) (h : IsCMExt F E σ) (hJ : IsHermND σ J)
-    [Countable (ratPts σ J)] {φ : GAd σ J → ℂ} (hc : Continuous φ) {M : ℝ} (hM : ∀ g, ‖φ g‖ ≤ M) : IsSqInt σ J φ := by
-  intro μ 𝓕 h1 h2
-  obtain ⟨S, hS, hcov, -, hμ, -⟩ := exists_cover hP h hJ
-  have hle : μ 𝓕 ≤ μ S := by
-    rw [h2.measure_eq_tsum S]
-    refine le_trans (measure_mono fun g hg => ?_) (measure_iUnion_le _)
-    obtain ⟨γ, hγ, s, hs, rfl⟩ := hcov g
-    exact Set.mem_iUnion.2 ⟨⟨γ, hγ⟩, ⟨s, hs, rfl⟩, hg⟩
-  refine Measure.integrableOn_of_bounded (M := M ^ 2) (hle.trans_lt (hμ μ h1)).ne
-    (hc.norm.pow 2).aestronglyMeasurable (.of_forall fun g => ?_)
-  rw [Real.norm_of_nonneg (by positivity)]
-  exact pow_le_pow_left₀ (norm_nonneg _) (hM g) 2
 
 theorem exists_exp (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) {γ : ℝ → GAd σ J}
     (hγ : IsRealLine σ J γ) : ∃ Z : Matrix (Fin n) (Fin n) ℂ, ∀ t : ℝ,
@@ -142,28 +69,10 @@ theorem isSm_entry (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w)
       refine ContDiff.mul ?_ ih
       have : ContDiff ℝ ∞ (NormedSpace.exp : Matrix (Fin n) (Fin n) ℂ → _) :=
         contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
-      exact this.comp ((contDiff_apply ℝ ℝ a).smul contDiff_const)
+      exact this.comp ((contDiff_apply ℝ (fun _ => ℝ) a).smul contDiff_const)
   simp only [List.ofFn_eq_map, map_mul]
   exact (LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℂ i j)).contDiff.comp
     (contDiff_const.mul (key _))
-
-theorem commute_of_isCentral (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) {γ : ℝ → GAd σ J}
-    {Z : Matrix (Fin n) (Fin n) ℂ} (hZ : ∀ t : ℝ, archMat σ J τ (projArch σ J w (γ t)) = NormedSpace.exp (t • Z))
-    (hc : IsCentral σ J (Finsupp.single [γ] 1)) (y : GArch σ J w) :
-    Z * archMat σ J τ y = archMat σ J τ y * Z := by
-  haveI : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) := FiniteDimensional.complete ℝ _
-  ext i j
-  have h1 := hc.2 _ (isSm_entry h τ i j) (embArch σ J w y) ((mem_infPts).2 (projFin_embArch σ J w y)) 1
-  have hd : HasDerivAt (fun t : ℝ => NormedSpace.exp (t • Z)) Z 0 := by
-    have := hasDerivAt_exp_smul_const (𝕂 := ℝ) Z 0
-    rw [zero_smul, NormedSpace.exp_zero, one_mul] at this
-    exact this
-  let L := LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℂ i j : Matrix (Fin n) (Fin n) ℂ →ₗ[ℝ] ℂ)
-  have d1 := (L.hasFDerivAt.comp_hasDerivAt 0 (hd.mul_const (archMat σ J τ y))).deriv
-  have d2 := (L.hasFDerivAt.comp_hasDerivAt 0 (hd.const_mul (archMat σ J τ y))).deriv
-  simp only [dop, Finsupp.sum_single_index, zero_mul, one_mul, List.foldr_cons, List.foldr_nil, lineDer, map_mul, hZ,
-    projArch_embArch_self] at h1
-  exact d1.symm.trans (h1.trans d2)
 
 theorem line_mem_infPts {γ : ℝ → GAd σ J} (hγ : IsRealLine σ J γ) (t : ℝ) : γ t ∈ infPts σ J := by
   obtain ⟨w, τ, Z, -, hZ⟩ := hγ
@@ -292,68 +201,8 @@ theorem hasDerivAt_entry {Z : Matrix (Fin n) (Fin n) ℂ} (P A : Matrix (Fin n) 
   let L := LinearMap.toContinuousLinearMap (Matrix.entryLinearMap ℝ ℂ i j : Matrix (Fin n) (Fin n) ℂ →ₗ[ℝ] ℂ)
   exact L.hasFDerivAt.comp_hasDerivAt 0 ((hd.const_mul P).mul_const A)
 
-theorem entry_le_opNorm (A : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) : ‖A i j‖₊ ≤ opNorm A := by
-  unfold opNorm
-  have h1 : (Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℂ) A (EuclideanSpace.single j 1)) i = A i j := by
-    change ∑ d, A i d * (EuclideanSpace.single j (1 : ℂ) : EuclideanSpace ℂ (Fin n)) d = A i j
-    simp [EuclideanSpace.single_apply]
-  have h2 := ContinuousLinearMap.le_opNNNorm (Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℂ) A) (EuclideanSpace.single j 1)
-  rw [PiLp.nnnorm_single, nnnorm_one, mul_one] at h2
-  rw [← h1]
-  exact (PiLp.nnnorm_apply_le _ i).trans h2
-
-theorem isAutOn_entry (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (K : Subgroup (GAd σ J)) (i j : Fin n) :
-    IsAutOn σ J ⊥ K fun g => archMat σ J τ (projArch σ J w g) i j := by
-  let M : GAd σ J →* Matrix (Fin n) (Fin n) ℂ := (archMat σ J τ).comp (projArch σ J w)
-  have key : ∀ l : List (ℝ → GAd σ J), (∀ γ ∈ l, IsRealLine σ J γ) → ∃ A : Matrix (Fin n) (Fin n) ℂ,
-      l.foldr lineDer (fun g => M g i j) = fun g => (M g * A) i j := fun l hl => by
-    induction l with
-    | nil => exact ⟨1, by simp⟩
-    | cons γ l ih =>
-      obtain ⟨A, e⟩ := ih fun δ hδ => hl δ (List.mem_cons_of_mem _ hδ)
-      obtain ⟨Z, hZ⟩ := exists_exp h τ (hl γ List.mem_cons_self)
-      refine ⟨Z * A, ?_⟩
-      rw [List.foldr_cons, e]
-      funext g
-      have : ∀ t, M (γ t) = _ := hZ
-      simp only [lineDer, map_mul, this]
-      rw [(hasDerivAt_entry _ _ i j).deriv, Matrix.mul_assoc]
-  let W : Submodule ℂ (GAd σ J → ℂ) := Submodule.span ℂ (Set.range fun k g => M g i k)
-  have hW : FiniteDimensional ℂ W := FiniteDimensional.span_of_finite _ (Set.finite_range _)
-  have mem : ∀ A : Matrix (Fin n) (Fin n) ℂ, (fun g => (M g * A) i j) ∈ W := fun A => by
-    have : (fun g => (M g * A) i j) = ∑ k, A k j • fun g => M g i k := funext fun g => by
-      simp [Matrix.mul_apply, mul_comm]
-    rw [this]
-    exact sum_mem fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
-  have hb : ∀ g k, ‖M g i k‖ ≤ height σ J g := fun g k =>
-    ((entry_le_opNorm _ i k).trans (((normInf_le_iff F w).1 (le_htOf _ _) τ).trans (htInf_le_height σ J w g)) :)
-  refine ⟨fun γ hγ g => by rw [Subgroup.mem_bot.1 hγ, one_mul], ⟨⊤, isOpen_univ, fun k _ hk g => ?_⟩, ?_,
-    isSm_entry h τ i j, ⟨1, fun l hl => ?_⟩, GlobalTheory.Doubling.isKFinite_iff.2 ⟨W, hW, fun k _ => ?_⟩, ?_⟩
-  · simp [mem_finPts_iff_forall.1 hk w]
-  · have : IsTopologicalRing (w.Completion ⊗[F] E) := GlobalTheory.Doubling.isTopologicalRing_tens
-    exact ((Units.continuous_val.comp ((isEmbedding_matHom _ σ J).continuous.comp
-      (continuous_projArch σ J w))).matrix_map (GlobalTheory.Orb.continuous_infEmb τ)).matrix_elem i j
-  · obtain ⟨A, e⟩ := key l hl
-    refine ⟨∑ k, ‖A k j‖, fun g => ?_⟩
-    change ‖l.foldr lineDer (fun g => M g i j) g‖ ≤ _
-    rw [e, pow_one, Finset.sum_mul]
-    simp only [Matrix.mul_apply]
-    refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)
-    rw [norm_mul, mul_comm]
-    exact mul_le_mul_of_nonneg_left (hb g k) (norm_nonneg _)
-  · simpa only [M, MonoidHom.comp_apply, map_mul] using mem (M k)
-  · refine Submodule.finiteDimensional_of_le (S₂ := W) (Submodule.span_le.2 ?_)
-    rintro _ ⟨z, hz, rfl⟩
-    have : dop z (fun g => M g i j) = ∑ l ∈ z.support, z l • l.foldr lineDer (fun g => M g i j) :=
-      funext fun g => by simp [dop, Finsupp.sum]
-    change dop z (fun g => M g i j) ∈ W
-    rw [this]
-    refine sum_mem fun l hl => Submodule.smul_mem _ _ ?_
-    obtain ⟨A, e⟩ := key l (hz.1 l hl)
-    exact e ▸ mem A
 
 open Polynomial in
-
 theorem not_zfin_exp (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : InfinitePlace F} (τ : EmbOver E w) (i : Fin n) :
     IsSm σ J (fun g => Complex.exp (archMat σ J τ (projArch σ J w g) i i)) ∧
     ¬ FiniteDimensional ℂ (Submodule.span ℂ {f | ∃ z, IsCentral σ J z ∧
@@ -432,14 +281,6 @@ theorem not_zfin_exp (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : InfinitePlac
       exact ⟨_, hcen k, funext fun g => by simpa [dop, M] using (congrFun (h2 k) g).symm⟩))
   haveI : Finite ℕ := Module.Finite.finite_basis (Module.Basis.span h6)
   exact not_finite ℕ
-
-example : haveI : IsCMField (CyclotomicField 4 ℚ) :=
-      IsCyclotomicExtension.Rat.isCMField (CyclotomicField 4 ℚ) (S := {4}) ⟨4, rfl, by norm_num⟩
-    ∃ K φ, IsMaxCpt (IsCMField.complexConj (CyclotomicField 4 ℚ) : CyclotomicField 4 ℚ →ₐ[maximalRealSubfield (CyclotomicField 4 ℚ)] _)
-      (1 : Matrix (Fin 1) (Fin 1) _) K ∧ IsAut _ 1 K φ ∧ ∃ g, φ g ≠ φ 1 :=
-  haveI : IsCMField (CyclotomicField 4 ℚ) :=
-      IsCyclotomicExtension.Rat.isCMField (CyclotomicField 4 ℚ) (S := {4}) ⟨4, rfl, by norm_num⟩
-  exists_nonconst_one (isCMExt_of_isCMField _) one_pos
 
 end GlobalTheory.UAut.Model
 

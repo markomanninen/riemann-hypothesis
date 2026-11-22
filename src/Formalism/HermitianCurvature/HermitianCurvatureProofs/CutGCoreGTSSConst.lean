@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGauge
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSTr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGauge
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -52,7 +56,7 @@ theorem const_of_wirt (P : M.Par) (hTT : 0 < P.TT) {f : ℂ → ℂ}
     refine ContinuousLinearMap.ext fun w => ?_
     have hw : w = w.re • (1 : ℂ) + w.im • Complex.I := by
       apply Complex.ext <;> simp
-    rw [ContinuousLinearMap.zero_apply, hw, map_add, map_smul, map_smul, e1, e2]
+    rw [ContinuousLinearMap.zero_apply, hw, map_add (f := _), map_smul, map_smul, e1, e2]
     simp
   refine ⟨f (((Real.sqrt P.TT + 1 : ℝ)) : ℂ), fun ζ hζ => ?_⟩
   exact hopen.is_const_of_fderiv_eq_zero (ann_preconn P hTT) hdiff hzero hζ (ann_pt P hTT)
@@ -157,10 +161,10 @@ theorem vl_SS (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp Wq)
     vl P Bs e ((star (d.SS l)).1 Φ) ρ' q = ∑ σ, t l ρ' σ q.1.2 * vl P Bs e Φ σ q := by
   obtain ⟨h1, h2⟩ := hSL l hl Φ ρ'
   constructor
-  · simp only [vl, h1, AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, Subalgebra.coe_mul, Pi.mul_apply]
+  · simp only [vl, h1, AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, Subalgebra.coe_mul, Pi.mul_apply]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [fnZ_eq_mk P (hst l ρ' σ).1]
-  · simp only [vl, h2, AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, Subalgebra.coe_mul, Pi.mul_apply]
+  · simp only [vl, h2, AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, Subalgebra.coe_mul, Pi.mul_apply]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [fnZ_eq_mk P (hst l ρ' σ).2]
 

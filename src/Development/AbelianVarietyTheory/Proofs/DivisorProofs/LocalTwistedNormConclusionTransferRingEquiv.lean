@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoordL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntCZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoordL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntCZero
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx GlobalTheory.AwayOrb GlobalTheory.FinClsLoc
 open scoped TensorProduct Classical
 
@@ -37,7 +42,7 @@ theorem localTransfer : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (K K' : Typ
         simp [T, e', Algebra.TensorProduct.congr_apply, Algebra.TensorProduct.map_tmul]
       rw [this, starT_tmul, starT_tmul]
       simp [T, e', Algebra.TensorProduct.congr_apply, Algebra.TensorProduct.map_tmul]
-    | add x y hx hy => simp only [map_add, MulOpposite.unop_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), MulOpposite.unop_add, hx, hy]
   refine ⟨Units.map (e : K →* K') u, Units.map (T : K ⊗[ℚ] G.C →* K' ⊗[ℚ] G.C) z, ?_, ?_⟩
   · have := hc.map T
     rw [hT1] at this

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCriticalImageNull
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCriticalImageNull
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -200,7 +205,7 @@ theorem hausdorffMeasure_image_eq_zero_of_not_injective {f : (ι → ℝ) → F}
   have hA : ∀ ε : ℝ≥0, 0 < ε →
       μH[Fintype.card ι] (f '' (s ∩ closedBall 0 R)) ≤ ε * volume (closedBall (0 : ι → ℝ) R) :=
     fun ε εpos => hausdorffMeasure_image_le_of_not_injective_ball
-      (fun x hx => (hf' x hx.1).mono inter_subset_left) (fun x hx => hinj x hx.1) R
+      (by exact fun x hx => (hf' x hx.1).mono inter_subset_left) (by exact fun x hx => hinj x hx.1) R
       inter_subset_right ε εpos
   have hB : Tendsto (fun ε : ℝ≥0 => (ε : ℝ≥0∞) * volume (closedBall (0 : ι → ℝ) R)) (𝓝[>] 0)
       (𝓝 0) := by

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExpPowSubOne
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.JumpKernelCokernel.JumpShiftProofs.InvConst
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExpPowSubOne
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.JumpKernelCokernel.JumpShiftProofs.InvConst
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -27,7 +31,7 @@ theorem cc_φ₀ (f : PowerSeries O) : constantCoeff (W.φ₀ f) = constantCoeff
     have := W.φ₀.commutes r
     rwa [show (algebraMap O (PowerSeries O) r) = C r from rfl] at this
   conv_lhs => rw [e]
-  rw [map_add, map_mul, W.φ₀_X, hC]
+  rw [map_add (f := _), map_mul, W.φ₀_X, hC]
   simp
 
 theorem gam_q [IsDomain O] (g : W.Gam) :

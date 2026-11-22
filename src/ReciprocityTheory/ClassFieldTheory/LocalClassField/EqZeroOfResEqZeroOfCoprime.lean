@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.SubsingletonHOfSubsingleton
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.SubsingletonHOfSubsingleton
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

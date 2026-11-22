@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PDetAll
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PMuFrames
-import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PDetAll
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PMuFrames
+public import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix
@@ -40,14 +44,15 @@ theorem famOf_sumBasis (coE : V ≃ₗ[K] (Cl → W)) (BK : Basis J0 K W) (φ : 
   rw [Fintype.sum_prod_type]
   simp only [Matrix.blockDiagonal_apply, ite_smul, zero_smul]
   simp only [Finset.sum_ite_eq', Finset.sum_ite_eq, Finset.mem_univ, if_true]
-  rw [hφ, hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hφ, hs, map_sum]
   simp only [Pi.single_smul, map_smul, sumBasis_apply]
 
 end Gen
 
 section Sum
 
-variable {K : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   {ι : Type} [Fintype ι] {W : Type} [AddCommGroup W] [Module K W]
   {Cl : Type} [Fintype Cl] [DecidableEq Cl] {J0 : Type} [Fintype J0] [DecidableEq J0]
 

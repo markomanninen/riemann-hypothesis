@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplication
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDtrSIo
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieBracketMultiplication
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

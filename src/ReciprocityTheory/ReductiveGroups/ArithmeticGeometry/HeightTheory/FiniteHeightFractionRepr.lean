@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SphereMeanSubArchimedean
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SphereMeanSubArchimedean
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -22,7 +26,7 @@ theorem gen_ne_zero_of_mem_htOne {p : Ideal (KTp K d.D d.N)} (hp : p ∈ d.HtOne
   obtain ⟨g, hg, hpg⟩ := ValUFD.heightOne_principal p hh
   have hPr : p.IsPrincipal := ⟨⟨g, hpg⟩⟩
   unfold gen
-  rw [dif_pos hPr]
+  rw [dite_eq_left hPr]
   intro h0
   have hbot : p = ⊥ := (Submodule.IsPrincipal.eq_bot_iff_generator_eq_zero p).2 h0
   rw [hbot] at hpg

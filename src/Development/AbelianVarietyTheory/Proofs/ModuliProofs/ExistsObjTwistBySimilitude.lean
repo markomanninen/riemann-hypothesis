@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -95,7 +99,7 @@ def twist (I : TateIso D k Q act e) (g : Sim D)
     rw [← zpow_natCast, ← zpow_mul, mul_comm (g.ν _), zpow_mul, zpow_natCast, I.ζ_pow n m hn hm]
     exact zeta_zpow_congr I hn (hν n m hn hm).1
   ev n a := I.ev n (g.f n a)
-  add n a b := by rw [map_add, I.add]
+  add n a b := by rw [map_add (f := _), I.add]
   lin n c a := by rw [map_smul, I.lin]
   ker n hn a := by
     rw [I.ker n hn]
@@ -146,10 +150,10 @@ def objTwist (o : Obj D l b s) (g : Sim D)
   ample := o.ample
   ktriv := o.ktriv
   eta a := o.eta (g.f l.M a)
-  eta_add a c := by rw [map_add, o.eta_add]
+  eta_add a c := by rw [map_add (f := _), o.eta_add]
   eta_ker a ha := o.eta_ker _ (map_mem_smul_top _ _ ha)
   etaA a := o.etaA (g.f l.A a)
-  etaA_add a c := by rw [map_add, o.etaA_add]
+  etaA_add a c := by rw [map_add (f := _), o.etaA_add]
   etaA_ker a := by rw [map_nsmul, o.etaA_ker]
   geom k _ _ x β hx := by
     obtain ⟨hd, I, hζ, hA', hM⟩ := o.geom k x β hx

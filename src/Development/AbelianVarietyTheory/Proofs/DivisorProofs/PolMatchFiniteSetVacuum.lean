@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolMatchIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolMatchIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem padFam_update (T S : Finset ι) (hTS : T ⊆ S) (c : ∀ i, M i) [Decida
     simp only [padFam, h, dif_neg, not_false_eq_true, Function.update_of_ne h2]
 
 def padMultilinear (T S : Finset ι) (hTS : T ⊆ S) (c : ∀ i, M i) :
-    MultilinearMap ℂ (fun u : T => M u) (⨂[ℂ] u : S, M u) where
+    (∀ u : T, M u) →ₘₗ[ℂ] (⨂[ℂ] u : S, M u) where
   toFun x := PiTensorProduct.tprod ℂ (padFam T S c x)
   map_update_add' x i y z := by
     simp only [padFam_update T S hTS c]
@@ -53,8 +57,8 @@ theorem padTensor_tprod (T S : Finset ι) (hTS : T ⊆ S) (c : ∀ i, M i) (x : 
 end Extend
 
 theorem polMatchOn_insert : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E)
-    (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (R : RealMaps F a a') (Rf : FinMaps F a a') (v : Pl F),
-    Rf.p v (G.M.vac v) = Rf.p' v (G.M'.vac v) → ∀ (T : Finset (Pl F)) (Φ : (Fin a × Fin (a + a') → AF F) → ℂ)
+    (B : Base F E) (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (R : RealMaps F a a') (Rf : FinMaps F a a') (v : Pl (F := F)),
+    Rf.p v (G.M.vac v) = Rf.p' v (G.M'.vac v) → ∀ (T : Finset (Pl (F := F))) (Φ : (Fin a × Fin (a + a') → AF F) → ℂ)
     (Φ' : (Fin a' × Fin (a + a') → AF F) → ℂ), GlobalTheory.ThK.PolynomialMatching.PolMatchOn B G X R Rf T Φ Φ' →
     GlobalTheory.ThK.PolynomialMatching.PolMatchOn B G X R Rf (insert v T) Φ Φ' := by
   intro F E _ _ _ _ _ σ B a a' G X R Rf v hv T Φ Φ' hM
@@ -65,16 +69,17 @@ theorem polMatchOn_insert : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
     hΦ, hΦ', ?_⟩
   let c : ∀ u, Rf.Pi u := fun u => Rf.p u (G.M.vac u)
   have key := congrArg (LinearMap.lTensor R.Pi (padTensor T (insert v T) (Finset.subset_insert _ _) c)) hsum
-  simp only [map_sum, LinearMap.lTensor_tmul, padTensor_tprod] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.lTensor_tmul, padTensor_tprod] at key
   have e1 : ∀ i, padFam T (insert v T) c (fun u : T => Rf.p u (φ i u)) =
-      fun u : (insert v T : Finset (Pl F)) => Rf.p u (φ i u) := by
+      fun u : (insert v T : Finset (Pl (F := F))) => Rf.p u (φ i u) := by
     intro i
     funext u
     by_cases h : u.1 ∈ T
     · simp [padFam, h]
     · simp [padFam, h, c, (hφ i).2.2 u.1 h]
   have e2 : ∀ j, padFam T (insert v T) c (fun u : T => Rf.p' u (φ' j u)) =
-      fun u : (insert v T : Finset (Pl F)) => Rf.p' u (φ' j u) := by
+      fun u : (insert v T : Finset (Pl (F := F))) => Rf.p' u (φ' j u) := by
     intro j
     funext u
     by_cases h : u.1 ∈ T

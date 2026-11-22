@@ -1,7 +1,11 @@
-import Formalism.PieriBlockIdeals.LastGradedOfGradedAlone
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LastGradedImpliesOneBlock
-import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightShiftEqDetMul
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+module
+
+public import Formalism.PieriBlockIdeals.LastGradedOfGradedAlone
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LastGradedImpliesOneBlock
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.HighestWeightShiftEqDetMul
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -147,47 +151,6 @@ theorem det_weighted_homog_ones (r : ℕ) : IsWeightedHomogeneous (rowW r r) (ge
     funext a
     simp [a.isLt]
   rwa [e] at h
-
-theorem exp_le_shift_by_one_iff (l r : ℕ) (ν μ : Fin r → ℕ) (e : ℕ) (hν : Antitone ν) :
-    ExpLe l r (fun a => ν a + 1) (fun a => μ a + 1) e ↔ ExpLe l r ν μ e := by
-  have e1 : (fun a => μ a + 1) = (fun _ : Fin r => 1) + μ := by
-    funext a
-    simp [add_comm]
-  constructor
-  · intro h x hx
-    have hx' : genericDet ℤ r * x ∈ nablaWt r (fun a => ν a + 1) (fun a => μ a + 1) := by
-      refine ⟨det_mul_mem_dual_weyl_shift ν hx.1, ?_⟩
-      rw [e1]
-      exact (det_weighted_homog_ones r).mul hx.2
-    obtain ⟨m, hm, h1⟩ := h _ hx'
-    refine ⟨m, hm, ?_⟩
-    rw [weyl_shift_eq_map_det_mul] at h1
-    obtain ⟨z, hz, hzz⟩ := h1
-    simp only [LinearMap.mulLeft_apply] at hzz
-    rw [← mul_smul_comm] at hzz
-    rw [← mul_left_cancel₀ (generic_det_ne_zero r) hzz]
-    exact hz
-  · intro h x hx
-    obtain ⟨y, rfl⟩ := det_dvd_of_mem_dual_weyl_shift ν hν hx.1
-    have hy : y ∈ nablaWt r ν μ := by
-      refine ⟨mem_dual_weyl_of_det_mul ν hx.1, ?_⟩
-      have h2 := hx.2
-      rw [e1] at h2
-      exact weighted_homogeneous_cancel _ _ y (fun _ => 1) μ (generic_det_ne_zero r) (det_weighted_homog_ones r) h2
-    obtain ⟨m, hm, h1⟩ := h y hy
-    refine ⟨m, hm, ?_⟩
-    rw [weyl_shift_eq_map_det_mul]
-    refine ⟨_, h1, ?_⟩
-    simp only [LinearMap.mulLeft_apply]
-    rw [mul_smul_comm]
-
-theorem expTwist : ExpTwist := by
-  intro l r c ν μ e hν
-  induction c with
-  | zero => exact Iff.rfl
-  | succ c ih =>
-    have hν' : Antitone (fun a => ν a + c) := fun a b hab => Nat.add_le_add_right (hν hab) c
-    exact (exp_le_shift_by_one_iff l r (fun a => ν a + c) (fun a => μ a + c) e hν').trans ih
 
 theorem exp_le_cast_iff (l : ℕ) {r r' : ℕ} (h : r' = r) (ν μ : Fin r → ℕ) (e : ℕ) :
     ExpLe l r' (fun a => ν (Fin.cast h a)) (fun a => μ (Fin.cast h a)) e ↔ ExpLe l r ν μ e := by
@@ -489,7 +452,7 @@ theorem nablaDual : NablaDual := by
   | add x y _ _ hx hy =>
     obtain ⟨g, hg, hg'⟩ := hx
     obtain ⟨g2, hg2, hg2'⟩ := hy
-    exact ⟨g + g2, Submodule.add_mem _ hg hg2, by rw [mul_add, map_add, mul_add, hg', hg2']⟩
+    exact ⟨g + g2, Submodule.add_mem _ hg hg2, by rw [mul_add, map_add (f := _), mul_add, hg', hg2']⟩
   | smul c x _ hx =>
     obtain ⟨g, hg, hg'⟩ := hx
     exact ⟨c • g, Submodule.smul_mem _ c hg, by rw [mul_smul_comm, map_smul, mul_smul_comm, hg']⟩
@@ -527,7 +490,8 @@ theorem aeval_weighted_homog {σ τ Mo : Type*} [AddCommMonoid Mo] (w : τ → M
     (hφ : ∀ v, IsWeightedHomogeneous w (φ v) (ω v)) (x : MvPolynomial σ ℤ) (κ : Mo)
     (hx : IsWeightedHomogeneous ω x κ) : IsWeightedHomogeneous w (aeval φ x) κ := by
   conv => enter [2, 2]; rw [x.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   rw [aeval_monomial, ← hx (mem_support_iff.mp hd), Finsupp.weight_apply, MvPolynomial.algebraMap_eq]
   refine IsWeightedHomogeneous.C_mul ?_ _
@@ -628,7 +592,8 @@ theorem pow_mul_eval_homogeneous_eq {σ S : Type*} [CommRing S] (φ ψ : MvPolyn
     d ^ N * φ x = e ^ N * ψ x := by
   conv_lhs => rw [x.as_sum]
   conv_rhs => rw [x.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hN : ∑ v ∈ m.support, m v = N := by
     have := hx (mem_support_iff.mp hm)
@@ -679,7 +644,8 @@ theorem divided_power_diag_weight_vector {r : ℕ} (a : Fin r) (k : ℕ) (μ : F
   have h1 : rowDivL ℤ a a k y = ((μ a).choose k : ℤ) • y := by
     conv_lhs => rw [y.as_sum]
     conv_rhs => rw [y.as_sum]
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun d hd => ?_
     rw [rowDivL_apply, rowDiv, generator_diag_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_one_add_X_pow,
       ← lgraded_weight_rowW, hy (mem_support_iff.mp hd), smul_eq_C_mul, mul_comm]
@@ -701,7 +667,7 @@ theorem divided_power_weight_vector {r : ℕ} (a b : Fin r) (k : ℕ) (μ : Fin 
   by_cases h0 : rowDiv ℤ a b k y = 0
   · exact ⟨0, by rw [h0]; exact isWeightedHomogeneous_zero _ _ _⟩
   · obtain ⟨d0, hd0⟩ := MvPolynomial.support_nonempty.mpr h0
-    have key : ∀ c : Fin r, ∀ d, coeff d (rowDiv ℤ a b k y) ≠ 0 →
+    have key : ∀ c : Fin r, ∀ d, AddMonoidAlgebra.coeff (rowDiv ℤ a b k y) d ≠ 0 →
         ((Finsupp.weight (rowW r r) d c : ℕ) : ℤ) =
           (μ c : ℤ) + k * ((if a = c then 1 else 0) - (if b = c then 1 else 0)) := by
       intro c d hd
@@ -761,7 +727,8 @@ theorem weyl_le_of_stable_submodule {r : ℕ} (ν : Fin r → ℕ) (hν : Antito
         ∑ μ' ∈ S, weightedHomogeneousComponent (rowW r r) μ
           (rowDiv ℤ a b k (weightedHomogeneousComponent (rowW r r) μ' f)) := by
       conv_lhs => rw [hS]
-      rw [← rowDivL_apply, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← rowDivL_apply, map_sum, map_sum]
       rfl
     rw [hT]
     refine L.sum_mem fun μ' _ => ?_
@@ -776,7 +743,7 @@ theorem weyl_le_of_stable_submodule {r : ℕ} (ν : Fin r → ℕ) (hν : Antito
 theorem eval_neg_x_coeff {S : Type*} [CommRing S] (φ : S →+* S) (p : Polynomial S) (k : ℕ) :
     (Polynomial.eval₂ (Polynomial.C.comp φ) (-Polynomial.X) p).coeff k = (-1) ^ k * φ (p.coeff k) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.eval₂_add, Polynomial.coeff_add, Polynomial.coeff_add, hp, hq, map_add, mul_add]
+  | add p q hp hq => rw [Polynomial.eval₂_add, Polynomial.coeff_add, Polynomial.coeff_add, hp, hq, map_add (f := _), mul_add]
   | monomial n a =>
     rw [Polynomial.eval₂_monomial, RingHom.comp_apply, Polynomial.coeff_C_mul, neg_pow, Polynomial.coeff_monomial,
       ← Polynomial.C_1, ← Polynomial.C_neg, ← Polynomial.C_pow, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
@@ -1060,18 +1027,6 @@ theorem expDual : ExpDual := expDualOfLattices nablaDual weylDual dualWeight cof
 
 theorem lastGradedOfGradedAlone : LastGradedOfGradedAlone := lastGradedOfGraded expDual
 
-theorem dual_weight_spec : DualWtSpec := dualWtSpec
-theorem block_duality : BlockDual := blockDual
-theorem depth_duality : DepthDual := depthDual
-theorem weight_bound' : WtBound := wtBound
-theorem exponent_twist : ExpTwist := expTwist
-theorem last_graded_of_graded : LastGradedOfGraded := lastGradedOfGraded
-theorem nabla_duality : NablaDual := nablaDual
-theorem weyl_duality : WeylDual := weylDual
-theorem dual_weight' : DualWeight := dualWeight
-theorem cofactor_involution : CofCof := cofCof
-theorem exp_dual_of_lattices : ExpDualOfLattices := expDualOfLattices
-theorem exponent_duality : ExpDual := expDual
 theorem last_graded_of_graded_alone : LastGradedOfGradedAlone := lastGradedOfGradedAlone
 
 end Formalism.CohomologicalDescent.LD

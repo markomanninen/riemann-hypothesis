@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmProd
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugationByInvolution
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AntidiagonalConjugation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SignActionTheta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmProd
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjugationByInvolution
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AntidiagonalConjugation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SignActionTheta
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Topology
 
@@ -13,28 +17,31 @@ section Group
 
 variable {G R S T U : Type} [Group G] [CommRing R] [CommRing S] [CommRing T] [CommRing U] {m : ℕ}
 
-theorem map_conjBy (f : R →+* S) (h : GL (Fin m) R) (r : G →* GG m R) :
+theorem map_conjBy (f : R →+* S) (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) :
     (GG.map f).comp (conjBy h r) = conjBy (Matrix.GeneralLinearGroup.map f h) ((GG.map f).comp r) :=
   _root_.UpperTheory.Reformulated.B.SignActionTheta.map_conjBy f h r
 
-theorem conjBy_one (r : G →* GG m R) : conjBy 1 r = r := by
+theorem conjBy_one (r : G →* GG (m := m) (R := R)) : conjBy 1 r = r := by
   refine MonoidHom.ext fun g => ?_
   simp [conjBy]
 
-theorem conjBy_inv_conjBy (h : GL (Fin m) R) (r : G →* GG m R) : conjBy h⁻¹ (conjBy h r) = r := by
+theorem conjBy_inv_conjBy (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) :
+    conjBy h⁻¹ (conjBy h r) = r := by
   refine MonoidHom.ext fun g => ?_
   change GG.ofGL h⁻¹ * (GG.ofGL h * r g * (GG.ofGL h)⁻¹) * (GG.ofGL h⁻¹)⁻¹ = r g
   rw [map_inv]
   group
 
-theorem conjBy_right (h : GL (Fin m) R) (r : G →* GG m R) (g : G) : (conjBy h r g).right = (r g).right :=
+theorem conjBy_right (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G) :
+    (conjBy h r g).right = (r g).right :=
   _root_.UpperTheory.Reformulated.B.ConjugationByInvolution.conjBy_right h r g
 
-theorem conjBy_left (h : GL (Fin m) R) (r : G →* GG m R) (g : G) :
+theorem conjBy_left (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G) :
     (conjBy h r g).left = h * (r g).left * sgnAct m R (r g).right h⁻¹ :=
   _root_.UpperTheory.Reformulated.B.AntidiagonalConjugation.conjBy_left h r g
 
-theorem gg_ext (f₁ : R →+* S) (f₂ : R →+* T) (hf : ∀ x y, f₁ x = f₁ y → f₂ x = f₂ y → x = y) {x y : GG m R}
+theorem gg_ext (f₁ : R →+* S) (f₂ : R →+* T) (hf : ∀ x y, f₁ x = f₁ y → f₂ x = f₂ y → x = y)
+    {x y : GG (m := m) (R := R)}
     (h₁ : GG.map f₁ x = GG.map f₁ y) (h₂ : GG.map f₂ x = GG.map f₂ y) : x = y :=
   SemidirectProduct.ext (Units.ext (Matrix.ext fun a b => hf _ _
     (congrFun (congrFun (congrArg GG.mat h₁) a) b) (congrFun (congrFun (congrArg GG.mat h₂) a) b)))
@@ -66,13 +73,14 @@ theorem glue_GL (f₁ : R →+* S) (f₂ : R →+* T) (q₁ : S →+* U) (q₂ :
 
 theorem glue_hom (f₁ : R →+* S) (f₂ : R →+* T) (q₁ : S →+* U) (q₂ : T →+* U)
     (hf : ∀ x y, f₁ x = f₁ y → f₂ x = f₂ y → x = y)
-    (hq : ∀ s t, q₁ s = q₂ t → ∃ x, f₁ x = s ∧ f₂ x = t) (r₁ : G →* GG m S) (r₂ : G →* GG m T)
+    (hq : ∀ s t, q₁ s = q₂ t → ∃ x, f₁ x = s ∧ f₂ x = t)
+    (r₁ : G →* GG (m := m) (R := S)) (r₂ : G →* GG (m := m) (R := T))
     (h : (GG.map q₁).comp r₁ = (GG.map q₂).comp r₂) :
-    ∃ r : G →* GG m R, (GG.map f₁).comp r = r₁ ∧ (GG.map f₂).comp r = r₂ := by
+    ∃ r : G →* GG (m := m) (R := R), (GG.map f₁).comp r = r₁ ∧ (GG.map f₂).comp r = r₂ := by
   have hg : ∀ g, GG.map q₁ (r₁ g) = GG.map q₂ (r₂ g) := fun g => DFunLike.congr_fun h g
   choose n h1 h2 using fun g => glue_GL f₁ f₂ q₁ q₂ hf hq (r₁ g).left (r₂ g).left
     (congrArg SemidirectProduct.left (hg g))
-  let x : G → GG m R := fun g => ⟨n g, (r₁ g).right⟩
+  let x : G → GG (m := m) (R := R) := fun g => ⟨n g, (r₁ g).right⟩
   have e1 : ∀ g, GG.map f₁ (x g) = r₁ g := fun g => SemidirectProduct.ext (h1 g) rfl
   have e2 : ∀ g, GG.map f₂ (x g) = r₂ g := fun g =>
     SemidirectProduct.ext (h2 g) (congrArg SemidirectProduct.right (hg g) :)
@@ -123,7 +131,7 @@ theorem lift_lower (f : R →+* S) (hf : Function.Surjective f)
     exact h0 a b h
   · refine Units.ext (Matrix.ext fun a b => ?_)
     change f ((Matrix.of X + 1) a b) = _
-    rw [Matrix.add_apply, map_add, Matrix.of_apply, hX, Matrix.sub_apply, Matrix.one_apply, Matrix.one_apply]
+    rw [Matrix.add_apply, map_add (f := _), Matrix.of_apply, hX, Matrix.sub_apply, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
 
 end Group
@@ -155,7 +163,7 @@ theorem qcont_pair {V W W' : Type} [AddCommGroup V] [Module ℚ_[l] V] [AddCommG
   have h3 := Continuous.add (M := V) h1 h2
   have e : (fun x => (L.comp (LinearMap.inl _ _ _)) (f (c x)) + (L.comp (LinearMap.inr _ _ _)) (f' (c x))) = c := by
     funext x
-    rw [LinearMap.comp_apply, LinearMap.comp_apply, ← map_add]
+    rw [LinearMap.comp_apply, LinearMap.comp_apply, ← map_add (f := _)]
     simpa using LinearMap.congr_fun hL (c x)
   rw [← e]
   exact h3
@@ -166,7 +174,7 @@ theorem cont_col {G B : Type} [Group G] [TopologicalSpace G] [CommRing B] [Topol
   unfold ReciprocityTheory.Gal.ContAction
   refine continuous_pi fun a => ?_
   change Continuous fun p : G × (Fin 3 → B) => ∑ b, (r p.1 : Matrix (Fin 3) (Fin 3) B) a b * p.2 b
-  exact continuous_finset_sum _ fun b _ => ((h a b).comp continuous_fst).mul ((continuous_apply b).comp continuous_snd)
+  exact continuous_finsetSum _ fun b _ => ((h a b).comp continuous_fst).mul ((continuous_apply b).comp continuous_snd)
 
 end Cont
 
@@ -195,10 +203,10 @@ theorem HL_emb : IsOpenEmbedding D.HL.subtype :=
 
 variable {D} {B B' C E : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B]
   [CommRing B'] [Algebra ℚ_[l] B'] [Module.Finite ℚ_[l] B'] [CommRing C] [Algebra ℚ_[l] C] [Module.Finite ℚ_[l] C]
-  [CommRing E] {r₁ : GQ l →* GG 3 E}
+  [CommRing E] {r₁ : GQ l →* GG (m := 3) (R := E)}
 
 theorem dcr_map (f : B →ₐ[ℚ_[l]] B') (hf : Function.Surjective f) {π : B →+* E} {π' : B' →+* E}
-    (hπ : π'.comp (f : B →+* B') = π) {r : GQ l →* GG 3 B} (hr : D.InDcrAt π r₁ r) :
+    (hπ : π'.comp (f : B →+* B') = π) {r : GQ l →* GG (m := 3) (R := B)} (hr : D.InDcrAt π r₁ r) :
     D.InDcrAt π' r₁ ((GG.map (f : B →+* B')).comp r) := by
   have hc : ∀ a b, QCont l fun g => (((GG.map (f : B →+* B')).comp r) g).mat a b := fun a b =>
     qcont_map f.toLinearMap (hr.cont a b)
@@ -224,7 +232,8 @@ theorem dcr_map (f : B →ₐ[ℚ_[l]] B') (hf : Function.Surjective f) {π : B 
     exact ⟨x, funext hx⟩
 
 theorem dcr_pair (f : C →ₐ[ℚ_[l]] B) (f' : C →ₐ[ℚ_[l]] B') (hf : ∀ x y, f x = f y → f' x = f' y → x = y)
-    {π : B →+* E} {π' : B' →+* E} {r : GQ l →* GG 3 C} (hr : D.InDcrAt π r₁ ((GG.map (f : C →+* B)).comp r))
+    {π : B →+* E} {π' : B' →+* E} {r : GQ l →* GG (m := 3) (R := C)}
+    (hr : D.InDcrAt π r₁ ((GG.map (f : C →+* B)).comp r))
     (hr' : D.InDcrAt π' r₁ ((GG.map (f' : C →+* B')).comp r)) : D.InDcrAt (π.comp (f : C →+* B)) r₁ r := by
   have hc : ∀ a b, QCont l fun g => (r g).mat a b := fun a b =>
     qcont_pair f.toLinearMap f'.toLinearMap hf (hr.cont a b) (hr'.cont a b)
@@ -265,7 +274,7 @@ theorem dcr_pair (f : C →ₐ[ℚ_[l]] B) (f' : C →ₐ[ℚ_[l]] B') (hf : ∀
       exact RingHom.map_mulVec (f' : C →+* B') _ x a
   · exact funext fun a => hf _ _ (congrFun (congrArg Prod.fst h) a) (congrFun (congrArg Prod.snd h) a)
 
-theorem dcr_conj {π : B →+* E} {r : GQ l →* GG 3 B} (hr : D.InDcrAt π r₁ r) (n : GL (Fin 3) B)
+theorem dcr_conj {π : B →+* E} {r : GQ l →* GG (m := 3) (R := B)} (hr : D.InDcrAt π r₁ r) (n : GL (Fin 3) B)
     (hn : Matrix.GeneralLinearGroup.map π n = 1) : D.InDcrAt π r₁ (conjBy n r) := by
   letI : TopologicalSpace B := moduleTopology ℚ_[l] B
   haveI : IsModuleTopology ℚ_[l] B := ⟨rfl⟩
@@ -303,12 +312,12 @@ theorem dcr_conj {π : B →+* E} {r : GQ l →* GG 3 B} (hr : D.InDcrAt π r₁
 
 variable [Algebra O E]
 
-theorem dcr_of_dord {π : B →+* E} {r : GQ l →* GG 3 B} (hr : D.InDord π r) : D.InDcr π r := by
+theorem dcr_of_dord {π : B →+* E} {r : GQ l →* GG (m := 3) (R := B)} (hr : D.InDord π r) : D.InDcr π r := by
   obtain ⟨u, n, hu, hn, -, rfl⟩ := hr
   exact dcr_conj hu.toInDcrAt n ((congOne_iff π n).1 hn)
 
 theorem dord_map (f : B →ₐ[ℚ_[l]] B') (hf : Function.Surjective f) {π : B →+* E} {π' : B' →+* E}
-    (hπ : π'.comp (f : B →+* B') = π) {r : GQ l →* GG 3 B} (hr : D.InDord π r) :
+    (hπ : π'.comp (f : B →+* B') = π) {r : GQ l →* GG (m := 3) (R := B)} (hr : D.InDord π r) :
     D.InDord π' ((GG.map (f : B →+* B')).comp r) := by
   obtain ⟨u, n, hu, hn, hn', rfl⟩ := hr
   refine ⟨(GG.map (f : B →+* B')).comp u, Matrix.GeneralLinearGroup.map (f : B →+* B') n,

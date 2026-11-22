@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.FactorNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.FactorNonneg
+
+@[expose] public section
 
 open Finset
 
@@ -64,7 +68,7 @@ theorem inv_sq_le_wP (n : ℕ) (L : Fin (n+1) → ℤ) (M : Fin n → ℤ) (l : 
     rfl
   have hnum : (∏ j : Fin n, d (if j.castSucc < l then j.succ else j.castSucc))
       ≤ ∏ j : Fin n, |(M j : ℝ) - 1 - L l| := by
-    refine Finset.prod_le_prod (fun j _ => (hdpos _).le) fun j _ => ?_
+    refine Finset.prod_le_prod₀ (fun j _ => (hdpos _).le) fun j _ => ?_
     obtain ⟨h1, h2⟩ := hM j
     have h3 := hne j
     have : e (if j.castSucc < l then j.succ else j.castSucc) ≤ |M j - 1 - L l| := by

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsNotCongPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -52,8 +57,8 @@ theorem eq_of_pow_eq_self_of_cong (A : ValuationSubring Ω) {N : ℕ} (hN : A.va
   rw [hS1, map_one] at hS'
   exact lt_irrefl _ hS'
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_pow_eq_self_cong [IsAlgClosed Ω] (A : ValuationSubring Ω) {N : ℕ} (hN : 2 ≤ N)
     {x : Ω} (hx : A.valuation (x ^ N - x) < 1) : ∃ ζ : Ω, ζ ^ N = ζ ∧ A.valuation (x - ζ) < 1 := by
   set P : Polynomial Ω := X ^ N - X with hP
@@ -144,7 +149,7 @@ theorem exists_pow_prime_pow_cong [CharZero Ω] (A : ValuationSubring Ω) {x : �
     have hdvd : Polynomial.C (p : ℤ) ∣ Q := by
       rw [Polynomial.C_dvd_iff_dvd_coeff]
       intro i
-      have := congrArg (fun g => Polynomial.coeff g i) h0
+      have := congrArg (fun g => _root_.AddMonoidAlgebra.coeff (M := ℕ) g i) h0
       simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at this
       exact (CharP.intCast_eq_zero_iff k p _).mp this
     have hu := hQprim (p : ℤ) hdvd

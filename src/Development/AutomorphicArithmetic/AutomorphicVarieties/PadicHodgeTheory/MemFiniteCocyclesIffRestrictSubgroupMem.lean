@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module Topology UpperTheory.V.Loc UpperTheory.V.U3
 
 theorem UpperTheory.mem_finiteCocycles_iff_restrict_subgroup_mem :
@@ -26,5 +31,4 @@ theorem UpperTheory.mem_finiteCocycles_iff_restrict_subgroup_mem :
       (LinearMap.inr ℚ_[l] B B) (fun g x => by rw [hM]; simp) _ h2
     have k := add_mem k1 k2
     convert k using 1
-    funext g
-    simp
+    ext g <;> simp

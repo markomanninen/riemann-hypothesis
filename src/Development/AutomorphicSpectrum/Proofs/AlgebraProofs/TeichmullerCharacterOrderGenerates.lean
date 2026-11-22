@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -37,7 +41,7 @@ def mIdeal {C : Type} [Field C] (v : Valuation C NNReal) (R : Type) [CommRing R]
   carrier := {r | v (algebraMap R C r) < 1}
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact v.map_add_lt ha hb
   zero_mem' := by simp
   smul_mem' := by
@@ -157,7 +161,7 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
       apply toHom_injective v R hv hp F σ hσ
       have h3 := map_add (toHom v R hv hp F (σ ^ m) hτ) a b
       rw [toHom_apply, toHom_apply, toHom_apply, e, e, e] at h3
-      rw [map_add, toHom_apply, toHom_apply, toHom_apply, h3]
+      rw [map_add (f := _), toHom_apply, toHom_apply, toHom_apply, h3]
     let α : F →+* F :=
       { toFun := fun x => x ^ m
         map_one' := one_pow m

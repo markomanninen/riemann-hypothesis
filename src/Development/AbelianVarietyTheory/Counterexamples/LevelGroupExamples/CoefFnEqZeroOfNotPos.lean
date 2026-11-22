@@ -1,12 +1,27 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.TieUpA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ExistsExpoScalar
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsTie
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.NotJInjRdOfConst
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.PoincarePointwiseStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RecordAllSgZeroIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieUpA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HermitianMatrixRealizesCuspCoords
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MaxCuspKilledCoefficientEqZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MaxCuspMemCuspFormsOfKilledCoefZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ArithmeticGroupCuspCentreLattice
+public import Formalism.LocalToGlobal.ProjectiveLattices.SpanRatSmulMem
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HyperbolicFlagDataBasePoint
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.M3bExpHolds
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsTie
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.NotJInjRdOfConst
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightExponentsEmbeddingsDegree
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.PoincarePointwiseStatement
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspidalL2Subspace
+public import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnifDom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,11 +32,6 @@ open NumberField ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj.FJ Form
 section Free
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r ρ : ℕ}
-
-def hermL (X : Data E r) (y : Fin r → E) : (Fin r → E) →ₗ[E] E where
-  toFun x := herm X.Gm x y
-  map_add' x x' := by simp [herm, add_mul, Finset.sum_add_distrib]
-  map_smul' c x := by simp [herm, Finset.mul_sum, mul_assoc]
 
 end Free
 

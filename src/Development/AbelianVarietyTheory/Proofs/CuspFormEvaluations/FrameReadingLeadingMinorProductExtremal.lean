@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.TotalDegreeEqOfMemHarmA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.TotalDegreeEqOfMemHarmA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -247,7 +251,7 @@ theorem cof_X_conj (h : IsEnum H pl) (R : Type) [CommRing R] (t : Ix)
   have hno : ¬ ∃ t', pl t' = ComplexEmbedding.conjugate (pl t) := fun hh => not_inPsi_conj h t ((h.2 _).2 hh)
   have hex : ∃ t', ComplexEmbedding.conjugate (pl t') = ComplexEmbedding.conjugate (pl t) := ⟨t, rfl⟩
   have : hex.choose = t := h.1 ((ComplexEmbedding.involutive_conjugate E).injective hex.choose_spec)
-  rw [cof, aeval_X, dif_pos hi, dif_neg hno, dif_pos hex, this]
+  rw [cof, aeval_X, dif_pos hi, dite_eq_right hno, dif_pos hex, this]
 
 theorem mult_le (hn : Dw.p + Dw.q ≤ n) (σ : E →+* ℂ) : Dw.mult σ ≤ n := by
   rw [Datum.mult]; split_ifs <;> omega

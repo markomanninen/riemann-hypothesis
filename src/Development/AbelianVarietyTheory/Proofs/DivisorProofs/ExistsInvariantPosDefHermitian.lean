@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 noncomputable section
@@ -89,7 +94,7 @@ theorem exists_invariant_posDef_hermitian {n : ℕ} (H : Subgroup (GL (Fin n) �
     rw [e2]
     simp_rw [e3]
     have hgi : Integrable (fun g : H => ∑ i, ‖(m g *ᵥ x) i‖ ^ 2) μ :=
-      (continuous_finset_sum _ fun i _ =>
+      (continuous_finsetSum _ fun i _ =>
         ((continuous_apply i).comp (hm.matrix_mulVec continuous_const)).norm.pow 2).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)
     rw [integral_pos_iff_support_of_nonneg (fun g => (e4 g).le) hgi]

@@ -1,6 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num NumberField
 
 namespace PositivityTheory.HtPt.Gamdel
@@ -37,7 +42,7 @@ def graphLat {Ω V V' : Type} [Field Ω] [AddCommGroup V] [Module Ω V] [AddComm
       simpa [smul_add] using this
     · have := B.add_mem h2 h4
       convert this using 1
-      simp only [Prod.snd_add, Prod.fst_add, map_add]
+      simp only [Prod.snd_add, Prod.fst_add, map_add (f := _)]
       abel
   neg_mem' := by
     rintro p ⟨h1, h2⟩

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+
+@[expose] public section
 
 noncomputable section
 

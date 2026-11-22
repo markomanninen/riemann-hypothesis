@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -22,7 +27,7 @@ theorem lid_smul (c : F ⊗[F] E) (z : F ⊗[F] Fld P) :
     change Algebra.TensorProduct.lid F (Fld P) (Algebra.TensorProduct.map (AlgHom.id F F)
       (IsScalarTower.toAlgHom F E (Fld P)) (a ⊗ₜ e)) = _
     simp [Algebra.smul_def, IsScalarTower.algebraMap_apply F E (Fld P)]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 omit [Field E] in
 theorem inclR_lid {A : Type} [Field A] [Algebra F A] (c : F ⊗[F] A) :
@@ -33,7 +38,7 @@ theorem inclR_lid {A : Type} [Field A] [Algebra F A] (c : F ⊗[F] A) :
     simp only [inclR, Algebra.TensorProduct.lid_tmul]
     change (1 : F) ⊗ₜ[F] (a • e) = a ⊗ₜ e
     rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 omit [Field E] in
 theorem lid_inclR {A : Type} [Field A] [Algebra F A] (a : A) :
@@ -76,7 +81,8 @@ theorem sigR_inclR (e : E) : sigR F σ (inclR F e) = inclR F (σ e) := by
 theorem hform_inclR (J : Matrix (Fin n) (Fin n) E) (a b : Fin n → E) :
     Formalism.UG.hform (sigR F σ) (JR F J) (fun i => inclR F (a i)) (fun i => inclR F (b i)) =
       inclR F (Formalism.UG.hform (σ : E →+* E) J a b) := by
-  simp [Formalism.UG.hform, JR, map_sum, map_mul, sigR_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Formalism.UG.hform, JR, map_sum, map_mul, sigR_inclR]
 
 theorem trBase_tmul (w : Fld P) : trBase P F (1 ⊗ₜ w) = inclR F (Algebra.trace E (Fld P) w) := by
   simp [trBase, inclR]

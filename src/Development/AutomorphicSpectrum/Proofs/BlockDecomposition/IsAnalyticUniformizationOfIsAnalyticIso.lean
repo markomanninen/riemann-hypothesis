@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+
+@[expose] public section
 
 open NumberField
 open scoped nonZeroDivisors
@@ -46,7 +50,175 @@ theorem isAnalyticUniformization_of_isAnalyticIso {K : Type} [Field K] [NumberFi
   have hΛ' : ∀ z, z ∈ idealLattice (algebraMap K ℂ) 𝔞 ↔ α * z ∈ L.lattice := fun z => by
     rw [← hΛ]
     rfl
-  have hf := ((isAnalyticUniformization_toPointHom L).comp_mul hα hΛ').vcPoint C⁻¹ h'
+  open Complex Filter Topology Set in
+  open scoped PeriodPair in
+  have hf0 :
+      IsAnalyticUniformization L.lattice (toPointHom L) := by
+    refine {
+      map_eq_zero_iff := fun z ↦ toPoint_eq_zero_iff
+      surjective := toPoint_surjective
+      analyticAt_affine := ?analyticAt_affine
+      analyticAt_infinity := ?analyticAt_infinity }
+    case analyticAt_affine =>
+      intro z hz
+      have hz' : z ∉ L.lattice := fun h ↦ hz (toPoint_of_mem h)
+      refine ⟨℘[L], fun w ↦ ℘'[L] w / 2, L.analyticOnNhd_weierstrassP z hz',
+        (L.analyticOnNhd_derivWeierstrassP z hz').div_const, ?_⟩
+      filter_upwards [L.isClosed_lattice.isOpen_compl.mem_nhds hz'] with w hw
+      exact ⟨_, toPoint_of_notMem hw⟩
+    case analyticAt_infinity =>
+      intro z hz
+      have hzL : z ∈ L.lattice := toPoint_eq_zero_iff.1 hz
+      set F : ℂ → ℂ := fun w ↦ ℘[L] w / (℘'[L] w / 2)
+      set G : ℂ → ℂ := fun w ↦ 1 / (℘'[L] w / 2)
+      have hP := L.meromorphic_weierstrassP z
+      have hD : MeromorphicAt (fun w ↦ ℘'[L] w / 2) z := (L.meromorphic_derivWeierstrassP z).div
+        (MeromorphicAt.const 2 z)
+      have oD : meromorphicOrderAt (fun w ↦ ℘'[L] w / 2) z = -3 := by
+        have e : (fun w ↦ ℘'[L] w / 2) = (fun _ ↦ (2 : ℂ)⁻¹) * ℘'[L] := by
+          funext w; simp only [Pi.mul_apply]; ring
+        rw [e, meromorphicOrderAt_mul_of_ne_zero analyticAt_const (by norm_num),
+          meromorphicOrderAt_derivWeierstrassP L hzL]
+      have hF : MeromorphicAt F z := hP.div hD
+      have hG : MeromorphicAt G z := (MeromorphicAt.const 1 z).div hD
+      have oF : meromorphicOrderAt F z = 1 := by
+        rw [show F = ℘[L] * (fun w ↦ ℘'[L] w / 2)⁻¹ from funext fun w ↦ div_eq_mul_inv _ _,
+          meromorphicOrderAt_mul hP hD.inv, meromorphicOrderAt_inv, oD,
+          L.order_weierstrassP z hzL]
+        rfl
+      have oG : meromorphicOrderAt G z = 3 := by
+        rw [show G = (fun w ↦ ℘'[L] w / 2)⁻¹ from funext fun w ↦ one_div _,
+          meromorphicOrderAt_inv, oD]
+        rfl
+      have hFz : limPunctured F z = 0 := limPunctured_eq_zero_of_pos (by rw [oF]; exact zero_lt_one)
+      have hGz : limPunctured G z = 0 := limPunctured_eq_zero_of_pos (by rw [oG]; norm_num)
+      refine ⟨limPunctured F, limPunctured G,
+        analyticAt_limPunctured hF (by rw [oF]; exact zero_le_one),
+        analyticAt_limPunctured hG (by rw [oG]; norm_num), ?_⟩
+      have hne : ∀ᶠ w in 𝓝[≠] z, w ∉ L.lattice ∧ ℘'[L] w / 2 ≠ 0 := by
+        refine (eventually_nhdsWithin_iff.2 ?_).and
+          ((meromorphicOrderAt_ne_top_iff_eventually_ne_zero hD).1 (by rw [oD]; decide))
+        filter_upwards [L.compl_lattice_sdiff_singleton_mem_nhds z] with w hw hwz hwL
+        exact hw ⟨hwL, hwz⟩
+      rw [eventually_nhdsWithin_iff] at hne
+      filter_upwards [hne] with w hw
+      by_cases hwz : w = z
+      · subst hwz
+        exact Or.inl ⟨hz, hFz, hGz⟩
+      obtain ⟨hwL, hw0⟩ := hw hwz
+      have hDa : AnalyticAt ℂ (fun w ↦ ℘'[L] w / 2) w :=
+        (L.analyticOnNhd_derivWeierstrassP w hwL).div_const
+      have hFw : limPunctured F w = F w := limPunctured_eq_of_continuousAt
+        ((L.analyticOnNhd_weierstrassP w hwL).div hDa hw0).continuousAt
+      have hGw : limPunctured G w = G w := limPunctured_eq_of_continuousAt
+        (analyticAt_const.div hDa hw0).continuousAt
+      have hGne : G w ≠ 0 := one_div_ne_zero hw0
+      have hw0' : ℘'[L] w ≠ 0 := fun h ↦ hw0 (by rw [h, zero_div])
+      have e1 : F w / G w = ℘[L] w := by
+        simp only [F, G]; field_simp
+      have e2 : 1 / G w = ℘'[L] w / 2 := by
+        simp only [G]; field_simp
+      refine Or.inr ⟨by rw [hGw]; exact hGne, ?_⟩
+      rw [hFw, hGw]
+      refine ⟨by rw [e1, e2]; exact WeierstrassCurve.Affine.equation_iff_nonsingular.1 (equation_weierstrassP L hwL), ?_⟩
+      show toPoint L w = _
+      rw [toPoint_of_notMem hwL]
+      exact point_some_congr e1.symm e2.symm
+  have hvc {Λ : Submodule ℤ ℂ} {E E' : WeierstrassCurve ℂ} {f : ℂ →+ E.toAffine.Point}
+  (hf : IsAnalyticUniformization Λ f) (C : VariableChange ℂ)
+      (h : C • E = E') : IsAnalyticUniformization Λ ((vcPointEquiv C h).toAddMonoidHom.comp f) := by
+    refine {
+      map_eq_zero_iff := ?map_eq_zero_iff
+      surjective := (vcPointEquiv C h).surjective.comp hf.surjective
+      analyticAt_affine := ?analyticAt_affine
+      analyticAt_infinity := ?analyticAt_infinity }
+    case map_eq_zero_iff =>
+      intro z
+      rw [AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, vcPointEquiv_apply, vcPoint_eq_zero_iff,
+        hf.map_eq_zero_iff]
+    case analyticAt_affine =>
+      intro z hz
+      have hz' : f z ≠ 0 := fun h0 ↦ hz (by
+        rw [AddMonoidHom.comp_apply, h0, map_zero])
+      obtain ⟨X, Y, hX, hY, hev⟩ := hf.analyticAt_affine z hz'
+      refine ⟨fun w ↦ vcX C (X w), fun w ↦ vcY C (X w) (Y w), ?_, ?_, ?_⟩
+      · simp only [vcX]; fun_prop
+      · simp only [vcY]; fun_prop
+      filter_upwards [hev] with w ⟨hw, e⟩
+      rw [AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, vcPointEquiv_apply, e, vcPoint_some]
+      exact ⟨_, rfl⟩
+    case analyticAt_infinity =>
+      intro z hz
+      have hz' : f z = 0 := by
+        rw [AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, vcPointEquiv_apply,
+          vcPoint_eq_zero_iff] at hz
+        exact hz
+      obtain ⟨U, V, hU, hV, hev⟩ := hf.analyticAt_infinity z hz'
+      have h0 : U z = 0 ∧ V z = 0 := by
+        rcases hev.self_of_nhds with ⟨-, hU0, hV0⟩ | ⟨-, h1, e⟩
+        · exact ⟨hU0, hV0⟩
+        · exact absurd (e.symm.trans hz') (Affine.Point.some_ne_zero _)
+      set v : ℂ := ((C.u⁻¹ : ℂˣ) : ℂ)
+      have hv : v ≠ 0 := Units.ne_zero _
+      set D : ℂ → ℂ := fun w ↦ 1 - C.s * U w + C.s * C.r * V w - C.t * V w
+      have hD : AnalyticAt ℂ D z := by simp only [D]; fun_prop
+      have hDz : D z = 1 := by simp only [D, h0.1, h0.2]; ring
+      have hDne : ∀ᶠ w in 𝓝 z, D w ≠ 0 :=
+        hD.continuousAt.eventually_ne (by rw [hDz]; exact one_ne_zero)
+      refine ⟨fun w ↦ (U w - C.r * V w) / (v * D w), fun w ↦ V w / (v ^ 3 * D w), ?_, ?_, ?_⟩
+      · exact (hU.sub (analyticAt_const.mul hV)).div (analyticAt_const.mul hD)
+          (mul_ne_zero hv (by rw [hDz]; exact one_ne_zero))
+      · exact hV.div (analyticAt_const.mul hD) (mul_ne_zero (pow_ne_zero 3 hv) (by rw [hDz]; exact one_ne_zero))
+      filter_upwards [hev, hDne] with w hw hDw
+      rw [AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, vcPointEquiv_apply]
+      rcases hw with ⟨hf0, hU0, hV0⟩ | ⟨hV0, hw, e⟩
+      · left
+        rw [hf0]
+        exact ⟨rfl, by rw [hU0, hV0]; simp, by rw [hV0]; simp⟩
+      · right
+        refine ⟨div_ne_zero hV0 (mul_ne_zero (pow_ne_zero 3 hv) hDw), ?_⟩
+        rw [e, vcPoint_some]
+        apply exists_point_some_eq
+        · simp only [vcX]
+          field_simp
+          ring
+        · simp only [vcY, D]
+          field_simp
+          ring
+  have hmul
+  {Λ Λ' : Submodule ℤ ℂ} {E : WeierstrassCurve ℂ}
+      {f : ℂ →+ E.toAffine.Point} (hf : IsAnalyticUniformization Λ f) {c : ℂ} (hc : c ≠ 0)
+      (hΛ : ∀ z, z ∈ Λ' ↔ c * z ∈ Λ) :
+      IsAnalyticUniformization Λ' (f.comp (AddMonoidHom.mulLeft c)) := by
+    refine {
+      map_eq_zero_iff := ?map_eq_zero_iff
+      surjective := ?surjective
+      analyticAt_affine := ?analyticAt_affine
+      analyticAt_infinity := ?analyticAt_infinity }
+    case map_eq_zero_iff =>
+      intro z
+      rw [AddMonoidHom.comp_apply, AddMonoidHom.coe_mulLeft, hf.map_eq_zero_iff, hΛ]
+    case surjective =>
+      intro P
+      obtain ⟨y, rfl⟩ := hf.surjective P
+      exact ⟨c⁻¹ * y, by rw [AddMonoidHom.comp_apply, AddMonoidHom.coe_mulLeft, mul_inv_cancel_left₀ hc]⟩
+    case analyticAt_affine =>
+      intro z hz
+      obtain ⟨X, Y, hX, hY, hev⟩ := hf.analyticAt_affine (c * z) hz
+      have ht : Tendsto (fun w ↦ c * w) (𝓝 z) (𝓝 (c * z)) := (continuous_const_mul c).tendsto z
+      refine ⟨fun w ↦ X (c * w), fun w ↦ Y (c * w), hX.comp_of_eq (by fun_prop) rfl,
+        hY.comp_of_eq (by fun_prop) rfl, ?_⟩
+      filter_upwards [ht.eventually hev] with w hw
+      exact hw
+    case analyticAt_infinity =>
+      intro z hz
+      obtain ⟨U, V, hU, hV, hev⟩ := hf.analyticAt_infinity (c * z) hz
+      have ht : Tendsto (fun w ↦ c * w) (𝓝 z) (𝓝 (c * z)) := (continuous_const_mul c).tendsto z
+      refine ⟨fun w ↦ U (c * w), fun w ↦ V (c * w), hU.comp_of_eq (by fun_prop) rfl,
+        hV.comp_of_eq (by fun_prop) rfl, ?_⟩
+      filter_upwards [ht.eventually hev] with w hw
+      exact hw
+  have hf := hvc (hmul hf0 hα hΛ') C⁻¹ h'
   convert hf using 1
   ext z
   simp only [AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, vcPointEquiv_apply,

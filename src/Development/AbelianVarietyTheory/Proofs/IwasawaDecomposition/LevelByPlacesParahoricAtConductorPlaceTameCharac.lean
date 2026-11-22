@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsHecke
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupWithCharacterAtTypePlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ReadsHecke
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupWithCharacterAtTypePlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl GlobalTheory.Mem.R3 GlobalTheory.Mem.R3.Rw GlobalTheory.HeightCounting GlobalTheory.HeightCounting.Up
 open Formalism.AUTREP (GAf)
 open Neutral.B1 (Ideles)
@@ -23,13 +28,13 @@ theorem locM_eq_one_of_ne {L : Type} [Field L] [NumberField L] [IsCMField L] {n 
 theorem intLift_one {L : Type} [Field L] [NumberField L] [IsCMField L]
     (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) : NX.intLift v 1 = 1 := by
   unfold NX.intLift
-  rw [dif_pos (v.adicCompletionIntegers (maximalRealSubfield L)).one_mem]
+  rw [dite_eq_left (v.adicCompletionIntegers (maximalRealSubfield L)).one_mem]
   rfl
 
 theorem intLift_zero {L : Type} [Field L] [NumberField L] [IsCMField L]
     (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L))) : NX.intLift v 0 = 0 := by
   unfold NX.intLift
-  rw [dif_pos (v.adicCompletionIntegers (maximalRealSubfield L)).zero_mem]
+  rw [dite_eq_left (v.adicCompletionIntegers (maximalRealSubfield L)).zero_mem]
   rfl
 
 end GlobalTheory.LevParaLoc
@@ -58,7 +63,7 @@ theorem gVal_one (D : D7) (i : D.ntw.Tw) (k : ℕ) (b : Bool) (kv : Σ k : Fin 2
     Units.ext (NX.glOf_val _ (by simp))
   have hpsi : NX.psiUTot D i b 1 = 1 := by
     unfold NX.psiUTot
-    rw [dif_pos (one_mem _)]
+    rw [dite_eq_left (one_mem _)]
     have e : (⟨1, one_mem _⟩ : D.nexp.U) = 1 := rfl
     rw [e, map_one, Units.val_one]
   have hd : red (NX.intLift s.v (NX.detT D.R.r

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoefficientMapSurjective
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PColFin
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoefficientMapSurjective
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PColFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,9 +37,6 @@ def actL (lam : ι → DomWeight n) (g : ι → Matrix (Fin n) (Fin n) K) :
   (∏ τ, (g τ).det ^ (lam τ).detShift) •
     (MvPolynomial.aeval (fun v : ι × Fin n × Fin n =>
       ∑ b, MvPolynomial.C (g v.1 b v.2.1) * MvPolynomial.X (v.1, b, v.2.2))).toLinearMap
-
-theorem actL_apply (lam : ι → DomWeight n) (g : ι → Matrix (Fin n) (Fin n) K) (p : MvPolynomial (ι × Fin n × Fin n) K) :
-    actL lam g p = Formalism.MainNotions.flipTwoThree.actAll lam g p := rfl
 
 theorem actAll_inv_cancel (lam : ι → DomWeight n) (g : ι → GL (Fin n) K) (p : MvPolynomial (ι × Fin n × Fin n) K) :
     Formalism.MainNotions.flipTwoThree.actAll lam (fun τ => (((g τ)⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K))

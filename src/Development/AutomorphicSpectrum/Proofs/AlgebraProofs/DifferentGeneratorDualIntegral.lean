@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem different_generator_dualInt :
         obtain ⟨k, rfl⟩ := hy
         exact Submodule.subset_span ⟨k, rfl⟩
       | zero => simp
-      | add a b _ _ ha hb => rw [map_add, mul_add]; exact M.add_mem ha hb
+      | add a b _ _ ha hb => rw [map_add (f := _), mul_add]; exact M.add_mem ha hb
       | smul n a _ ha =>
         rw [map_zsmul, mul_smul_comm]
         exact zsmul_mem ha n
@@ -90,7 +94,7 @@ theorem different_generator_dualInt :
         rw [map_mul, ← ha, smul_mul_assoc]
         exact M.smul_mem a (hy y ((mem_dual_one_iff_span_dualInt E y).1 hy'))
       · intro x y hx hy
-        rw [map_add]; exact M.add_mem hx hy
+        rw [map_add (f := _)]; exact M.add_mem hx hy
     rw [map_one, hM, Submodule.mem_span_range_iff_exists_fun] at h2
     obtain ⟨u, hu⟩ := h2
     exact ⟨u, by simpa only [Algebra.smul_def] using hu⟩

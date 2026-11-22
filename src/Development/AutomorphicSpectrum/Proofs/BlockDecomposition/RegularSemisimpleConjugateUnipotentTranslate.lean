@@ -1,21 +1,25 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.RegularClassTraces.RegClassFin
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointRadical
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ParabolicLeviDecomposition
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.IwahoriSubgroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIsoFrameFirstCols
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularSemisimpleFlagStabilizer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitInclMemExtSubIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CommuteOfWittFrameWeights
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WittIndexAddOfIsWittLower
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.RegularClassTraces.RegClassFin
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelOfCore
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.IwahoriSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KernelLocallyFiniteContinuous
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsIsoFrameFirstCols
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularSemisimpleFlagStabilizer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitInclMemExtSubIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CommuteOfWittFrameWeights
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WittIndexAddOfIsWittLower
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiDiagonalEpsilonGramMulVec
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -92,10 +96,10 @@ theorem Stabs.aeval {f f' : Module.End E M} (hAB : A ≤ B) (hf : Stabs A B f) (
     · simp [zero_mem]
   | add p q hp hq =>
     refine ⟨⟨fun x hx => ?_, fun x hx => ?_⟩, ?_⟩
-    · rw [map_add, LinearMap.add_apply]; exact add_mem (hp.1.1 x hx) (hq.1.1 x hx)
-    · rw [map_add, LinearMap.add_apply]; exact add_mem (hp.1.2 x hx) (hq.1.2 x hx)
+    · rw [map_add (f := _), LinearMap.add_apply]; exact add_mem (hp.1.1 x hx) (hq.1.1 x hx)
+    · rw [map_add (f := _), LinearMap.add_apply]; exact add_mem (hp.1.2 x hx) (hq.1.2 x hx)
     · have := add_mem hp.2 hq.2
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       convert this using 1
       abel
   | monomial k a ih =>
@@ -114,7 +118,7 @@ theorem aeval_intertwine {f f' T : Module.End E M} (h : T * f = f' * T) (r : E[X
     T * Polynomial.aeval f r = Polynomial.aeval f' r * T := by
   induction r using Polynomial.induction_on with
   | C a => rw [aeval_C, aeval_C]; exact (Algebra.commutes a T).symm
-  | add p q hp hq => simp only [map_add, mul_add, add_mul, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), mul_add, add_mul, hp, hq]
   | monomial k a ih =>
     have e : ∀ g : Module.End E M, Polynomial.aeval g (C a * X ^ (k + 1)) = Polynomial.aeval g (C a * X ^ k) * g := fun g => by
       rw [pow_succ, ← mul_assoc, map_mul _ (C a * X ^ k) X, aeval_X]
@@ -160,7 +164,7 @@ theorem exists_intertwiner (hAB : A ≤ B) {f f' : Module.End E M} (hs : (Linear
       map_add' := fun S T => Subtype.ext (by simp only [Submodule.coe_add, add_mul, mul_add]; abel)
       map_smul' := fun c T => Subtype.ext (by simp [smul_sub]) }
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro T hT
     have h1 : T.1 * f - f' * T.1 = 0 := congrArg Subtype.val hT
     exact Subtype.ext (eq_zero_of_intertwine hAB hs hf hd T.2 (sub_eq_zero.1 h1))
@@ -244,7 +248,7 @@ theorem conj_of_isotropic {W : Submodule D.host.E V.V} (hW : GlobalTheory.Indefi
   obtain ⟨Y, hY⟩ := exists_adjoint (1 + T)
   have hTR : ∀ x y, V.hT (T x) y = V.hT x ((Y - 1) y) := fun x y => by
     have := hY x y
-    simp only [LinearMap.add_apply, Module.End.one_apply, map_add, LinearMap.sub_apply, map_sub] at this ⊢
+    simp only [LinearMap.add_apply, Module.End.one_apply, map_add (f := _), LinearMap.sub_apply, map_sub] at this ⊢
     rw [← this]; abel
   have hR : Y - 1 ∈ strictUp A B := by
     refine ⟨fun a ha => ?_, fun b hb => ?_, fun x => ?_⟩

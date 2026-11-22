@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassGeomDegChart
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassLeRoot
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassGeomDegChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassLeRoot
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -213,15 +218,15 @@ theorem ptsIntegralAt_eq {Ψ : (((k : Fin 1) → plBlocks 1 1 n k) → ℂ) →�
 
 end GrassmannianGeometricDegreeChart
 
-open GrassmannianGeometricDegreeChart in
 
+open GrassmannianGeometricDegreeChart in
 theorem GrassGeomDegChart.proof : GrassGeomDegChart.Statement := by
   intro n
   have hex := exists_good n
   obtain ⟨B, hB, hval⟩ := ptsIntegralAt_eq hex.choose_spec
   refine ⟨B, hB, ?_⟩
   unfold geomDeg ptsIntegral
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hval
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LevelKSplit
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LevelKSplit
+
+@[expose] public section
 
 noncomputable section
 

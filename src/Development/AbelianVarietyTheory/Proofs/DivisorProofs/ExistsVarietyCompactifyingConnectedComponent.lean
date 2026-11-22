@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsVarietiesComponentsSmoothGenericFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsVarietiesComponentsSmoothGenericFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,12 +47,12 @@ theorem exists_var : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
   have hred : IsReduced (gen Z) := by
     have := GlobalTheory.isNormalScheme_of_smooth (genStr Z)
     exact GlobalTheory.IsNormalScheme.isReduced
-  have hproj : IsProjOver (genStr Z) := (GlobalTheory.ProjSpace.points_and_stability O 0).2.2.1 c.F β Z.X Z.s Z.proj
+  have hproj : IsProjOver (genStr Z) := (GlobalTheory.ProjSpace.points_and_stability (R := O) (N := 0)).2.2.1 c.F β Z.X Z.s Z.proj
   have : IrreducibleSpace V.toScheme := Subtype.irreducibleSpace (hcc z).1.1
   have hcl : IsClosedImmersion V.ι := IsClosedImmersion.of_isPreimmersion _ (by
     rw [Scheme.Opens.range_ι]; exact isClosed_connectedComponent)
   have hp : IsProjOver (V.ι ≫ genStr Z) :=
-    (GlobalTheory.ProjSpace.points_and_stability c.F 0).2.2.2.1 _ _ _ _ hcl hproj
+    (GlobalTheory.ProjSpace.points_and_stability (R := c.F) (N := 0)).2.2.2.1 _ _ _ _ hcl hproj
   have hsd : SmoothOfRelativeDimension D.dim (V.ι ≫ genStr Z) := by
     have h : SmoothOfRelativeDimension (0 + D.dim) (V.ι ≫ genStr Z) := inferInstance
     simpa using h

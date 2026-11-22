@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
-import GroundTheory.GlobalFields.Adele.Compact
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherExtra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
+public import GroundTheory.GlobalFields.Adele.Compact
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherExtra
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain GlobalTheory.WeilM MeasureTheory
 open scoped TensorProduct Pointwise Classical
@@ -254,13 +258,15 @@ theorem omL_emb (u v : (κ → F) × (κ → F)) : omL R κ (emb R u) (emb R v) 
 omit [Fintype κ] in
 theorem emb_sum {ι : Type} [Fintype ι] (c : ι → F) (b : ι → (κ → F) × (κ → F)) :
     emb R (∑ i, c i • b i) = ∑ i, algebraMap F R (c i) • emb R (b i) := by
-  simp [map_sum, algebraMap_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, algebraMap_smul]
 
 theorem exists_omL_eq (φ : ((κ → F) × (κ → F)) →ₗ[F] F) : ∃ w, ∀ v, omL F κ v w = φ v := by
   refine ⟨(fun i => -φ (0, Pi.single i 1), fun i => φ (Pi.single i 1, 0)), fun v => ?_⟩
   have e : v = ∑ i, v.1 i • ((Pi.single i 1, 0) : (κ → F) × (κ → F)) + ∑ i, v.2 i • ((0, Pi.single i 1) : (κ → F) × (κ → F)) := by
     ext j <;> simp [Prod.fst_sum, Prod.snd_sum, Finset.sum_apply, Pi.single_apply]
-  conv_rhs => rw [e, map_add, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [e, map_add (f := _), map_sum, map_sum]
   simp only [map_smul, smul_eq_mul, omL_apply, dotProduct, neg_mul, Finset.sum_neg_distrib, sub_neg_eq_add]
   congr 1
   exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
@@ -319,20 +325,23 @@ theorem exists_avg {F : Type} [Field F] {A : Type} [CommRing A] [Algebra F A] {�
     rw [show ⇑β = fun t => ∑ i, t i • emb A (b i : (κ → F) × (κ → F)) from funext hβ]
     fun_prop
   have hβom : ∀ t w, omL A κ (β t) (emb A w) = ∑ i, t i * algebraMap F A (omL F κ (b i) w) := fun t w => by
-    simp only [hβ, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, omL_emb, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hβ, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, omL_emb, smul_eq_mul]
   have hiso : ∀ t t', omL A κ (β t) (β t') = 0 := fun t t' => by
-    rw [hβ t', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hβ t', map_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [map_smul, hβom, Finset.sum_eq_zero, smul_zero]
     intro i _
     rw [omL_apply, hL _ (b i).2 _ (b j).2, sub_self, map_zero, mul_zero]
   have hadd : ∀ t t' Φ, schr ψ (β t) (schr ψ (β t') Φ) = schr ψ (β (t + t')) Φ := fun t t' Φ => by
-    rw [schr_schr, hiso, mul_zero, AddChar.map_zero_eq_one, one_smul, map_add]
+    rw [schr_schr, hiso, mul_zero, AddChar.map_zero_eq_one, one_smul, map_add (f := _)]
   have hβL : ∀ w : L, emb A (w : (κ → F) × (κ → F)) = β fun i => algebraMap F A (b.repr w i) := fun w => by
     rw [hβ, ← emb_sum]
     refine congrArg (emb A) ?_
     have h := congrArg L.subtype (b.sum_repr w)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul, Submodule.subtype_apply] at h
     exact h.symm
   let Γ : AddSubgroup (Fin n → A) := AddSubgroup.pi Set.univ fun _ => (algebraMap F A).range.toAddSubgroup
@@ -370,11 +379,12 @@ theorem exists_avg {F : Type} [Field F] {A : Type} [CommRing A] [Algebra F A] {�
     · rintro _ ⟨c, rfl⟩
       refine ⟨hc.comp (by fun_prop), fun γ hγ t => ?_⟩
       obtain ⟨c', rfl⟩ := (hΓ γ).mp hγ
-      simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, ← map_mul, ← map_sum, AddChar.map_add_eq_mul, htriv,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, ← map_mul, ← map_sum, AddChar.map_add_eq_mul, htriv,
         mul_one]
     · rintro _ ⟨c, rfl⟩ _ ⟨c', rfl⟩
       refine ⟨c + c', funext fun t => ?_⟩
-      simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, AddChar.map_add_eq_mul, Pi.mul_apply]
+      simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, AddChar.map_add_eq_mul, Pi.mul_apply]
     · rintro _ ⟨c, rfl⟩
       refine ⟨-c, funext fun t => ?_⟩
       simp only [Pi.neg_apply, map_neg, mul_neg, Finset.sum_neg_distrib, AddChar.map_neg_eq_inv, Pi.star_apply]
@@ -417,8 +427,10 @@ theorem exists_avg {F : Type} [Field F] {A : Type} [CommRing A] [Algebra F A] {�
       have h1 : ∀ j, sA (emb A (b j : (κ → F) × (κ → F))) = β fun i => S i j := fun j => by
         refine (hsA _).trans ((hβL (sL (b j))).trans ?_)
         simp [S, LinearMap.toMatrix_apply]
-      rw [hβ t, map_sum]
-      simp only [map_smul sA, h1, ← map_smul β, ← map_sum β]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hβ t, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_smul sA, h1, ← map_smul β, ← map_sum β]
       refine congrArg β (funext fun i => ?_)
       simp [Matrix.mulVec, dotProduct, Finset.sum_apply, mul_comm]
     have h2 := hMσ (Matrix.mulVecLin S).toAddMonoidHom (continuous_const.matrix_mulVec continuous_id)
@@ -448,7 +460,7 @@ theorem theta_mean : ∀ (F : Type) [Field F] [NumberField F] [LocallyCompactSpa
       obtain ⟨f, g, hg, rfl⟩ := hx
       exact (theta_continuous_pure hc hψ hg f).congr fun w => (hθ _ (hpres w _ (hpure f g hg))).symm
     | zero => simp only [map_zero]; exact continuous_const
-    | add x y _ _ hx hy => simp only [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => simp only [map_smul]; exact hx.const_smul c
   obtain ⟨l, ⟨D, hD, hb⟩, h0, hinv, heig⟩ := exists_avg hc hψ htriv hann (GroundTheory.Global.isClosed_principalSubgroup F)
     hD₀ hC₀' (schA F κ) θ hpres (fun w Φ hΦ => by rw [hθ _ (hpres _ _ hΦ), hθ _ hΦ]; exact hrat w Φ) hcont L
@@ -456,7 +468,7 @@ theorem theta_mean : ∀ (F : Type) [Field F] [NumberField F] [LocallyCompactSpa
   refine ⟨l, fun g hg => ?_, ?_, hinv, fun s sA T a hsA hs hT hTs hTθ => heig s sA T a hsA hs hT hTs fun Φ hΦ => ?_⟩
   · refine ⟨SchwartzMap.mkCLMtoNormedSpace (σ := RingHom.id ℂ) (fun f => l (pureA F f g)) (fun f f' => ?_)
       (fun c f => ?_) ?_, fun f => rfl⟩
-    · rw [← map_add]
+    · rw [← map_add (f := _)]
       refine congrArg l (funext fun x => ?_)
       simp [pureA, add_mul]
     · rw [← map_smul]

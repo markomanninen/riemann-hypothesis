@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksSubOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicIntertwine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharEqAddEquivAddHaarChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzAdelicEqSpanPure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilObjectsInhabited
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnipotentMapsForThetaTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledVacuumTwistedVacuumConditionDoubledLattic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndicatorIntMMemSB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksSubOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicIntertwine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharEqAddEquivAddHaarChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzAdelicEqSpanPure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilObjectsInhabited
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnipotentMapsForThetaTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledVacuumTwistedVacuumConditionDoubledLattic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.KSplit
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -164,8 +169,8 @@ theorem form_comp_invT [Invertible (2 : k)] (ψ : AddChar k ℂ) (hψ : Continuo
     intro X
     funext q
     show ∑ q', G q q' * X q'.1 q'.2 = (X * (T⁻¹).valᵀ) q.1 q.2
-    rw [Fintype.sum_prod_type, mul_apply]
-    simp [G, kroneckerMap_apply, one_apply, mul_comm]
+    rw [Fintype.sum_prod_type, Matrix.mul_apply]
+    simp [G, kroneckerMap_apply, Matrix.one_apply, mul_comm]
   have h1 : (g⁻¹).val * (diagCols β : Matrix (β ⊕ β) β k) = (diagCols β : Matrix (β ⊕ β) β k) * (T⁻¹).val := by
     have := congrArg (fun N => (g⁻¹).val * N * (T⁻¹).val) h
     simp only [← Matrix.mul_assoc, Units.inv_mul, Matrix.one_mul] at this
@@ -198,9 +203,9 @@ open GlobalTheory.SplitGLLift GlobalTheory.SplitIdele GlobalTheory.DblScal
 open GlobalTheory.Div.CoordOpp (piW_cA incM_map_piW)
 open scoped GlobalTheory.VacAny
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl F}
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl (F := F)}
 
-theorem exists_rest_ne (κ : Type) [Fintype κ] (v : Pl F) :
+theorem exists_rest_ne (κ : Type) [Fintype κ] (v : Pl (F := F)) :
     ∃ R : (κ ⊕ κ → AF F) → ℂ, (∀ φ ∈ SB (κ ⊕ κ → Fv F v), Rest (evFin F v) φ R) ∧
       ∃ φ ∈ SB (κ ⊕ κ → Fv F v), GlobalTheory.DiagForm.lDiag F κ (tens (evFin F v) φ R) ≠ 0 := by
   classical
@@ -224,8 +229,8 @@ theorem exists_lift (h : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) {α β : Type}
   ⟨of fun i j => liftPair h t (P₀ i j, P₁ i j), fun a ha => Matrix.ext fun _ _ => at_liftPair h t _ a ha,
     Matrix.ext fun _ _ => piW_liftPair h t _, Matrix.ext fun _ _ => piW_comp_liftPair h t _⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem at_det {β : Type} [Fintype β] [DecidableEq β] {N : Matrix β β (AE F E)} (h : At (evFin F v) (N - 1)) :
     At (evFin F v) (N.det - 1) := by
   intro a ha
@@ -259,11 +264,11 @@ theorem exists_siegel (h : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) {d : ℕ} {J
     simpa only [Matrix.mul_assoc] using this
   have hU : (P.map (piW t))ᵀ * fromBlocks (J.map t) 0 0 (-J.map t) * P.map (piW (t.comp σ)) =
       fromBlocks (J.map t) 0 0 (-J.map t) := by
-    have := congrArg (fun M => M.map (piW t)) (show Pᵀ * dbl (incM F J) * P.map (cA σ) = dbl (incM F J) from p.2)
-    have e1 : (dbl (incM F J)).map (piW t) = fromBlocks (J.map t) 0 0 (-J.map t) := by
+    have := congrArg (fun M => M.map (piW t)) (show Pᵀ * dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) J) * P.map (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) = dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) J) from p.2)
+    have e1 : (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) J)).map (piW t) = fromBlocks (J.map t) 0 0 (-J.map t) := by
       rw [← incM_map_piW]
-      ext (i | i) (j | j) <;> simp [dbl]
-    have e2 : (P.map (cA σ)).map (piW t) = P.map (piW (t.comp σ)) := Matrix.ext fun i j => piW_cA σ t _
+      ext (i | i) (j | j) <;> simp [dbl, incM]
+    have e2 : (P.map (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ)).map (piW t) = P.map (piW (t.comp σ)) := Matrix.ext fun i j => piW_cA σ t _
     simpa only [Matrix.map_mul, Matrix.transpose_map, e1, e2] using this
   have hd : ∀ τ : E →ₐ[F] Fv F v, ∀ {β : Type} [Fintype β] [DecidableEq β] (Z : Matrix β β (AE F E)),
       (Z.map (piW τ)).det = piW τ Z.det := fun τ _ _ _ Z => (RingHom.map_det _ _).symm
@@ -278,7 +283,8 @@ theorem exists_siegel (h : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) {d : ℕ} {J
     fun τ => diagCols_map (τ : E →+* Fv F v)
   have hN := adelic_intertwine h t (g := P) (P := (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) E)) hp hu'
     (by rw [m1, hΔ]; exact h1) (by rw [m2, hΔ]; exact h2)
-  rw [show incM F (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) E) = diagCols (Fin d) from
+  change P * ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) E)) = ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) E)) * (1 + u) at hN
+  rw [show (_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) (diagCols (Fin d) : Matrix (Fin d ⊕ Fin d) (Fin d) E) = diagCols (Fin d) from
     diagCols_map (inclR (F := F) (E := E) (AF F) : E →+* AE F E)] at hN
   have hNu : IsUnit (1 + u).det := by
     have := hN
@@ -306,15 +312,16 @@ theorem exists_siegel (h : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) {d : ℕ} {J
 theorem psi_symp (h : IsCMExt F E σ) (ψ : AddChar (AF F) ℂ) (t : E →ₐ[F] Fv F v) {n d : ℕ} {J : Matrix (Fin n) (Fin n) E}
     {K : Matrix (Fin d) (Fin d) E} (hJ : ∀ i j, σ (J j i) = J i j) (hK : ∀ i j, σ (K j i) = -K i j)
     {x z : Matrix (Fin n) (Fin d) (AE F E)} (hx : At (evFin F v) x) (hz : z.map (piW t) = 0) :
-    ψ (symp (cA σ) (-1) (incM F J) (incM F K) x z) = GlobalTheory.LatVac.psiAt ψ v
+    ψ (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) K) x z) = GlobalTheory.LatVac.psiAt ψ v
       (∑ i, ∑ j, (x.map (piW t)) i j * (-(J.map t * z.map (piW (t.comp σ)) * (K.map t)ᵀ)) i j) := by
-  have hA : At (evFin F v) (symp (R := AF F) (cA σ) (-1) (incM F J) (incM F K) x z) := by
+  have hA : At (evFin F v) (symp (R := AF F) (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) K) x z) := by
     intro a ha
     have h0 : ∀ i j, a • x i j = 0 := fun i j => congrFun (congrFun (hx a ha) i) j
     rw [symp, ← map_smul, ← mul_smul_comm, hTens]
     simp only [Finset.smul_sum, ← smul_mul_assoc, h0, zero_mul, Finset.sum_const_zero, mul_zero, map_zero]
   rw [GlobalTheory.VacAny.eq_atPlace_of_at v _ hA]
   show GlobalTheory.LatVac.psiAt ψ v (evFin F v _) = _
+  change GlobalTheory.LatVac.psiAt ψ v (evFin F v (symp (cA σ) (-1) (incM F J) (incM F K) x z)) = _
   rw [GlobalTheory.LinCoords.splitTrace' h v t J K hJ hK x z hx, hz]
   simp
 
@@ -325,10 +332,10 @@ open scoped GlobalTheory.VacAny
 
 theorem scalar_siegel : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d : ℕ)
     (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ), IsPair B M χX χW om r s r' s' →
-    ∀ (v : Pl F) (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
+    ∀ (v : Pl (F := F)) (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
       (dd : GlobalTheory.DblScal.DblCo σ X W) (omd : GlobalTheory.DblScal.DblRep σ (n := n) W),
-      IsDblCoord (cA σ) (-1) (incM F X.J) (incM F W.J) M.co dd →
-      IsUWeilSplit (cA σ) (adeleClass F) B.ψ (-1) (incM F X.J) (dbl (incM F W.J)) dd χX (diagCols (Fin d)) omd →
+      IsDblCoord (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) X.J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) W.J) M.co dd →
+      IsUWeilSplit (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (adeleClass F) B.ψ (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) X.J) (dbl ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) W.J)) dd χX (diagCols (Fin d)) omd →
       GlobalTheory.DblScal.LocOps omd v →
       ∀ ιd, GlobalTheory.DblScal.IsLinD B.ψ dd t b c ιd → ∀ cd, GlobalTheory.DblScal.IsShapeD omd t c ιd cd →
       ∀ p ∈ GlobalTheory.DblScal.UDAt σ W.J (evFin F v),
@@ -398,8 +405,10 @@ theorem scalar_siegel : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [F
       exacts [congrFun (congrFun (hx₁ a ha) i) j, congrFun (congrFun (hx₂ a ha) i) j]
     have key := hι.mult _ (hat z hz) (by rw [fromCols_map, z1, fromCols_zero]) φ hφ φ₁ hφ₁ ha _ hx
       (by rw [fromCols_map, a2, b2, fromCols_zero])
-    rw [fromCols_map, a1, b1, hco, symp_dbl_diag, psi_symp hcm B.ψ t hP.herm.herm hP.skew.skew
-      (fun a ha => by rw [smul_sub, hx₁ a ha, hx₂ a ha, sub_zero]) z1, Matrix.map_sub _ (map_sub _), a1, b1, z2,
+    rw [fromCols_map, a1, b1, hco, symp_dbl_diag] at key
+    change ιd φ₁ (Y₁.fromCols Y₂) = B.ψ (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) (-1) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) X.J) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) W.J) (x₁ - x₂) z) * _ at key
+    rw [psi_symp hcm B.ψ t hP.herm.herm hP.skew.skew
+      (fun a ha => by simp [smul_sub, hx₁ a ha, hx₂ a ha]) z1, Matrix.map_sub _ (map_sub _), a1, b1, z2,
       ← Matrix.sub_mul, ← Matrix.mul_sub, pairing_mul] at key
     rw [key, toCols₁_fromCols, toCols₂_fromCols]
     have e2 : b.valᵀ * -(X.J.map t * -((X.J.map t)⁻¹ * ((b⁻¹).valᵀ * D * (c⁻¹).val) * ((W.J.map t)⁻¹)ᵀ) * (W.J.map t)ᵀ) *
@@ -414,6 +423,7 @@ theorem scalar_siegel : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [F
   obtain ⟨φ₁, hφ₁, ha⟩ := hloc p hp φ₀ hφ₀
   have k1 := hW.2.2 _ GlobalTheory.DiagForm.lDiag_adm (fun z Φ hΦ => by rw [mul_diagCols]; exact hinv z Φ hΦ) p N hN _
     (hR φ₀ hφ₀).2
+  change (GlobalTheory.DiagForm.lDiag F (Fin n × Fin d)) (omd p (tens (evFin F v) φ₀ R)) = _ at k1
   rw [ha R (hR φ₀ hφ₀), GlobalTheory.ModuNorm.modu_norm_eq_absE F E hcm.1, hdet, Fintype.card_fin,
     char_idl hcm χX hP.resX, ← hlam, ← hlam, ← hm _ hφ₁, hcd p hp φ₀ hφ₀ φ₁ hφ₁ ha, map_smul,
     form_comp_invT _ (GlobalTheory.SchrSB.continuous_psiAt _ hstd.1 v) (GlobalTheory.PsiNontriv.psiAt_ne_one _ hstd v) m htr hmu _ T₀ hT

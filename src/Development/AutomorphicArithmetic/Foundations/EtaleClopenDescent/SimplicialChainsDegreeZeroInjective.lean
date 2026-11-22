@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.FiltrationLevelBase
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.FiltrationLevelBase
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits CochainComplex CochainComplex.HomComplex
@@ -18,7 +22,6 @@ private def top (K : CochainComplex C ℤ) (k : ℤ) (hK : IsZero (K.X (k + 1)))
 private lemma top_f (K : CochainComplex C ℤ) (k : ℤ) (hK : IsZero (K.X (k + 1))) :
     (top K k hK).f k = (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) k (K.X k)).hom := by
   simp only [top, HomologicalComplex.mkHomFromSingle_f, Category.comp_id]
-  rfl
 
 private lemma top_comm {K L : CochainComplex C ℤ} (φ : K ⟶ L) (k : ℤ) (hK : IsZero (K.X (k + 1)))
     (hL : IsZero (L.X (k + 1))) :
@@ -28,7 +31,6 @@ private lemma top_comm {K L : CochainComplex C ℤ} (φ : K ⟶ L) (k : ℤ) (hK
   change ((HomologicalComplex.single C (ComplexShape.up ℤ) k).map (φ.f k)).f k ≫ _ = _
   simp only [HomologicalComplex.single_map_f_self, Category.assoc, Iso.cancel_iso_hom_left]
   simp
-  rfl
 
 private lemma ofHom_top_comp {K I : CochainComplex C ℤ} (k : ℤ) (hK : IsZero (K.X (k + 1))) {m q : ℤ}
     (hq : k + m = q) (x : Cochain K I m) :
@@ -38,7 +40,6 @@ private lemma ofHom_top_comp {K I : CochainComplex C ℤ} (k : ℤ) (hK : IsZero
   · subst hp
     obtain rfl : q' = q := by omega
     rw [Cochain.zero_cochain_comp_v, Cochain.ofHom_v, Cochain.fromSingleMk_v, top_f]
-    rfl
   · exact (HomologicalComplex.isZero_single_obj_X _ _ _ _ hp).eq_of_src _ _
 
 private def coneTop {K L : CochainComplex C ℤ} (φ : K ⟶ L) (k : ℤ) (hK : IsZero (K.X (k + 1)))

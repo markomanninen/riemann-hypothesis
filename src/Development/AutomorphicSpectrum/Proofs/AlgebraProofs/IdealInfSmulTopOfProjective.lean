@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Filter Topology
 open scoped Pointwise ENNReal
@@ -17,7 +21,7 @@ theorem mem_ideal_smul_top_iff_coord {O : Type} [CommRing O] {L : Type} [AddComm
       rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact 𝔠.mul_mem_right _ hr
     · intro a b ha hb i
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact 𝔠.add_mem (ha i) (hb i)
   · intro h
     rw [← hs x, Finsupp.linearCombination_apply, Finsupp.sum]

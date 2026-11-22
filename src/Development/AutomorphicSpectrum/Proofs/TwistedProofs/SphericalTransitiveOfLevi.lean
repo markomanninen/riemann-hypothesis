@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,7 +131,7 @@ theorem sphTrans_of_leviExists : LeviExists → SphTrans := by
   rw [Fin.prod_univ_succ]
   congr 1
   · have h0 : ((0 : Fin (r + 1)) : ℕ) < N + 2 := by simp
-    rw [dif_pos h0]
+    rw [dite_eq_left h0]
     have e0 : (⟨((0 : Fin (r + 1)) : ℕ), h0⟩ : Fin (N + 2)) = 0 := rfl
     rw [e0, d _ _ hmb.2.1, P.fSatake_ord_zpow hU.2.2.2.1]
     push_cast
@@ -138,7 +142,7 @@ theorem sphTrans_of_leviExists : LeviExists → SphTrans := by
   · refine Finset.prod_congr rfl fun i _ => ?_
     have hi : i.val < N := by have := i.2; omega
     have hi' : (i.succ : Fin (r + 1)).val < N + 2 := by simp; omega
-    rw [dif_pos hi, dif_pos hi']
+    rw [dite_eq_left hi, dite_eq_left hi']
     have ei : (⟨(i.succ : Fin (r + 1)).val, hi'⟩ : Fin (N + 2)) = mid ⟨i.val, hi⟩ := by
       ext; simp
     rw [ei, d _ _ (hmb.2.2.2 ⟨i.val, hi⟩ ⟨i.val, hi⟩)]

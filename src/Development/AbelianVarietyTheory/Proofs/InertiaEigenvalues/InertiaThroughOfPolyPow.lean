@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaThroughOfPoly
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CentralIdemCoeff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaThroughOfPoly
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem eigen_of_pow_of_separable {L M : Type} [Field L] [AddCommGroup M] [Modul
   have : (X - C c) = (A * (X - C c)) * (X - C c) ^ m + (B' * s) * r := by
     rw [mul_assoc (B') s r, ← hs]
     linear_combination (-(X - C c)) * hAB
-  rw [this, map_add, LinearMap.add_apply, aeval_mul_apply, h1, map_zero, aeval_mul_apply, h2, map_zero, add_zero]
+  rw [this, map_add (f := _), LinearMap.add_apply, aeval_mul_apply, h1, map_zero, aeval_mul_apply, h2, map_zero, add_zero]
 
 theorem mem_iSup_eigen_pow {L M ι : Type} [Field L] [AddCommGroup M] [Module L M] (f : Module.End L M)
     (D : Submodule L M) (hD : ∀ x ∈ D, f x ∈ D) (r : L[X]) (hr : r.Separable)
@@ -55,7 +59,7 @@ theorem mem_iSup_eigen_pow {L M ι : Type} [Field L] [AddCommGroup M] [Module L 
     obtain ⟨u, v, huv⟩ := hcop
     set Q := (∏ b ∈ t, (X - C (c b))) ^ m with hQ
     have hdec : d = Polynomial.aeval f (u * (X - C (c a)) ^ m) d + Polynomial.aeval f (v * Q) d := by
-      rw [← LinearMap.add_apply, ← map_add, huv, map_one, Module.End.one_apply]
+      rw [← LinearMap.add_apply, ← map_add (f := _), huv, map_one, Module.End.one_apply]
     rw [Finset.iSup_insert, hdec, add_comm]
     refine Submodule.add_mem_sup ?_ ?_
     · have hmem := GlobalTheory.PassPoly.aeval_mem_of_stable f D hD (v * Q) d hd

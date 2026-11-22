@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
-import GroundTheory.ProfiniteCohomology.CyclicCupBrauer
-import GroundTheory.ProfiniteCohomology.CyclicCup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbol
+public import GroundTheory.ProfiniteCohomology.CyclicCupBrauer
+public import GroundTheory.ProfiniteCohomology.CyclicCup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -162,8 +167,8 @@ theorem galCupClass_eq_zero_iff_of_injective (χ : Additive Gal(Ω/F) →ₜ+ QZ
     hinj.eq_iff]
   rfl
 
-open Classical in
 
+open Classical in
 noncomputable def quadraticInvFun (x : cohomology (galUnitsZ F Ω) 2) : QZ :=
   if x = 0 then 0 else QZ.mk (1 / 2)
 
@@ -232,8 +237,8 @@ omit [IsGalois F Ω] in
 theorem card_gal_le_two (h2 : Module.finrank F Ω ≤ 2) : Fintype.card Gal(Ω/F) ≤ 2 := by
   exact (AlgEquiv.card_le (F := F) (K := Ω)).trans h2
 
-open Classical in
 
+open Classical in
 noncomputable def quadraticChar (h2 : Module.finrank F Ω ≤ 2) : Additive Gal(Ω/F) →ₜ+ QZ where
   toFun x := if Additive.toMul x = 1 then 0 else QZ.mk (1 / 2)
   map_zero' := by simp
@@ -289,7 +294,7 @@ noncomputable def quadraticInv (h2 : Module.finrank F Ω ≤ 2)
       hy (galCupClass_eq_zero_of_mem_range_norm F Ω _ h)
     have hab : (cupCharClassProf (galUnitsZ F Ω) (quadraticChar F Ω h2)).hom (unitsInvariant F Ω a) +
         (cupCharClassProf (galUnitsZ F Ω) (quadraticChar F Ω h2)).hom (unitsInvariant F Ω b) = 0 := by
-      rw [← map_add, ← unitsInvariant_mul]
+      rw [← map_add (f := _), ← unitsInvariant_mul]
       exact galCupClass_eq_zero_of_mem_range_norm F Ω _ (hN a b ha hb)
     rw [hab, quadraticInvFun_zero, quadraticInvFun_of_ne_zero F Ω hx,
       quadraticInvFun_of_ne_zero F Ω hy, QZ.mk_half_add_mk_half]

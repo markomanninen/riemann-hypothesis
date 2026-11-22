@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.QuaternionDoubleCosetIndicator
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.QuaternionDoubleCosetIndicator
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,9 +81,6 @@ def OrbitalIntegralGL2Formula : Prop :=
       FinOrb ι (MonoidHom.id _) (V.ZJ 2) (V.twistedCentralTestFunction χ t) (g₀ * dg ![a * b, b] * g₀⁻¹) ∧
       orb ι ((Uo k).comap (p / q)) (MonoidHom.id _) (V.ZJ 2) (V.twistedCentralTestFunction χ t) (g₀ * dg ![a * b, b] * g₀⁻¹) =
         (V.H.relIndex (Uo k) : ℂ) * one (a / t ∈ V.H)
-
-def IndIff : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (V : Lev k) (t a : kˣ), valuation k (t : k) < 1 → valuation k (a : k) < 1 → (Ind V.H ((a : k) + (a⁻¹ : kˣ)) t ↔ a / t ∈ V.H)
 
 def OkLev : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (O : Type) [CommRing O] [Algebra O k], IsInts k O → (2 : k) ≠ 0 → ∀ (Δ s : k) (hs : s * s = Δ), s ≠ 0 → ∀ (V : Lev k) (Ry : Finset kˣ), V.IsSqReps Ry → ∀ χ : kˣ →* ℂˣ, (∀ u ∈ Uo k, χ u = 1) →

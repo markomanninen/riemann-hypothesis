@@ -1,8 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
 noncomputable section
@@ -21,7 +30,8 @@ theorem continuous_act (A : GRep G Qp LL O) : Continuous fun p : G × A.V => A.�
       fun p => ∑ i, (b.repr p.2 i) • A.ρ p.1 (b i) := by
     funext p
     have h := congrArg (A.ρ p.1) (b.sum_repr p.2)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul] at h
     exact h.symm
   rw [e]
@@ -54,8 +64,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {V V' : Type} [AddCommGroup V] [Module LL V] [AddCommGroup V'] [Module LL V']
     {ρ : Representation LL G V} {ρ' : Representation LL G V'} {P : V →ₗ[LL] V' →ₗ[LL] LL}
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem char_pair (hd : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ) : LL) * P x y)
     (g : G) (x : V) (y : V') : charRep (cycLL PD LL) g (P x y) = P (ρ g x) (ρ' g y) := by
   rw [hd]
@@ -69,7 +79,7 @@ theorem d2_cup (hd : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ) :
   show charRep (cycLL PD LL) g (P (a h) (ρ' h (b k))) - P (a (g * h)) (ρ' (g * h) (b k)) +
     P (a g) (ρ' g (b (h * k))) - P (a g) (ρ' g (b h)) = 0
   rw [char_pair PD hd, ha, hb, map_mul, Module.End.mul_apply]
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   ring
 
 theorem d1_pair (hd : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ) : LL) * P x y)
@@ -81,7 +91,7 @@ theorem d1_pair (hd : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LLˣ) 
   show charRep (cycLL PD LL) g (P (a h) (b h)) - P (a (g * h)) (b (g * h)) + P (a g) (b g) =
     -P (a g) (ρ' g (b h)) - P (ρ g (a h)) (b g)
   rw [char_pair PD hd, ha, hb]
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   ring
 
 variable [TopologicalSpace LL]
@@ -105,32 +115,9 @@ theorem cob_of_left (hd : ∀ g x y, P (ρ g x) (ρ' g y) = ((cycLL PD LL g : LL
   show charRep (cycLL PD LL) g (P x (b h)) - P x (b (g * h)) + P x (b g) =
     P (a g) (ρ' g (b h))
   rw [char_pair PD hd, ha, hb]
-  simp only [map_add, map_sub, LinearMap.sub_apply]
+  simp only [map_add (f := _), map_sub, LinearMap.sub_apply]
   ring
 
 end Cup
-
-theorem cup_flip : ∀ (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l), ∀ (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O] [Algebra O LL], GoodO (Qp := ℚ_[l]) LL O → ∀ (A A' : GRep ↥(GK K) ℚ_[l] LL O) (P : A.V →ₗ[LL] A'.V →ₗ[LL] LL), IsDual1 ((D.loc l).PD K) A.ρ A'.ρ P → IsDual1 ((D.loc l).PD K) A'.ρ A.ρ P.flip ∧ ∀ a ∈ continuousCocycles A.ρ, ∀ b ∈ continuousCocycles A'.ρ, Continuous (cupL A'.ρ P a b) ∧ ReciprocityTheory.Def.d2 (charRep (cycLL ((D.loc l).PD K) LL)) (cupL A'.ρ P a b) = 0 ∧ (CobL ((D.loc l).PD K) (cupL A'.ρ P a b) ↔ CobL ((D.loc l).PD K) (cupL A.ρ P.flip b a)) ∧ ((a ∈ B1 A.ρ ∨ b ∈ B1 A'.ρ) → CobL ((D.loc l).PD K) (cupL A'.ρ P a b)) := by
-  intro D l _ K LL _ _ _ O _ _ hO A A' P hP
-  have : IsTopologicalRing LL := hO.2.2.2.1
-  have hd := hP.1
-  have hdf : ∀ g y x, P.flip (A'.ρ g y) (A.ρ g x) =
-      ((cycLL ((D.loc l).PD K) LL g : LLˣ) : LL) * P.flip y x := fun g y x => hd g x y
-  refine ⟨⟨hdf, hP.2.2.1, hP.2.1, hP.2.2.2.symm⟩, fun a ha b hb => ?_⟩
-  obtain ⟨hac, hacoc⟩ := ha
-  obtain ⟨hbc, hbcoc⟩ := hb
-  have hc : Continuous fun g => P (a g) (b g) := (continuous_pair A A' P).comp (hac.prodMk hbc)
-  have hflip : CobL ((D.loc l).PD K) (cupL A.ρ P.flip b a) →
-      CobL ((D.loc l).PD K) (cupL A'.ρ P a b) := cob_of_flip _ hd hacoc hbcoc hc
-  refine ⟨continuous_cup A A' P hac hbc, d2_cup _ hd hacoc hbcoc, ⟨fun h => ?_, hflip⟩, ?_⟩
-  · refine cob_of_flip _ (P := P.flip) hdf hbcoc hacoc hc ?_
-    rwa [LinearMap.flip_flip]
-  · rintro (h | h)
-    · obtain ⟨x, hx⟩ := LinearMap.mem_range.1 h
-      exact cob_of_left _ hd (x := x) (fun g => by rw [← hx]; rfl) hbcoc
-        ((continuous_pair A A' P).comp (continuous_const.prodMk hbc))
-    · obtain ⟨y, hy⟩ := LinearMap.mem_range.1 h
-      exact hflip (cob_of_left _ (P := P.flip) hdf (x := y) (fun g => by rw [← hy]; rfl) hacoc
-        ((continuous_pair A' A P.flip).comp (continuous_const.prodMk hac)))
 
 end GlobalTheory.CompanionTheory.CupFlip

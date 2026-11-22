@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LimitTwistBound
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LimitTwistBound
+
+@[expose] public section
 
 noncomputable section
 

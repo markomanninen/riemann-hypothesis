@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDirOf
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDirOf
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem restDimBC_proved : RestDimBC C0 CE1 CE2 X := by
     induction hx using Submodule.span_induction with
     | mem x hx => exact map_SSZ (ι := iotaX X) (iotaX_int X) Dd x hx
     | zero => rw [map_zero]; exact W.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact W.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact W.add_mem hx hy
     | smul a x _ hx => rw [map_smul_Q]; exact W.smul_mem _ hx
   set bs := Module.finBasis ℚ_[X.p] V0
   have hli : LinearIndependent ℚ_[X.p] (fun i => (bs i : MvPolynomial (Formalism.GM.M.BVar (2 * X.s + 1) X.r (gmB Dd).T.t) ℚ_[X.p])) :=

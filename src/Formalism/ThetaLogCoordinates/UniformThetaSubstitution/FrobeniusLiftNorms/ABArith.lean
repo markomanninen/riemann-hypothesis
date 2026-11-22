@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
-import Formalism.GrowthSums.FactorialBaseGrowth.PathBasisOfCount
-import Formalism.GrowthSums.FactorialBaseGrowth.QuadraticExponentIdentity
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
+public import Formalism.GrowthSums.FactorialBaseGrowth.PathBasisOfCount
+public import Formalism.GrowthSums.FactorialBaseGrowth.QuadraticExponentIdentity
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,11 +39,11 @@ theorem digits_sum_le_lgN (p m : ℕ) (hp : 1 < p) :
 theorem factorialValuationLowerBound : FactorialLg := by
   intro p m hp
   have : Fact p.Prime := ⟨hp⟩
-  have h1 := sub_one_mul_padicValNat_factorial (p := p) m
+  have h1 := hp.sub_one_mul_multiplicity_factorial (n := m)
   have h2 := Nat.digit_sum_le p m
   have h3 := digits_sum_le_lgN p m hp.one_lt
   have h4 : m ≤ (p - 1) * (padicValNat p m.factorial + lgN p m) := by
-    rw [mul_add, h1]
+    rw [Nat.padicValNat_def, mul_add, h1]
     omega
   have hp1 : (0 : ℝ) < (p : ℝ) - 1 := by
     have : (1 : ℝ) < p := by exact_mod_cast hp.one_lt

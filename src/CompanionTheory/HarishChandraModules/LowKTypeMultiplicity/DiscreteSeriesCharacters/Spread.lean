@@ -1,7 +1,11 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovDet
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QnCovLin
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -15,11 +19,12 @@ open Formalism.REAL Formalism.FourierDecayAlt.Q
 theorem map_qminor {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (f : A →ₐ[ℂ] B) {n t : ℕ}
     (E : Fin n → Fin n → A) (a b : Fin t → Fin n) (u : ℂ) :
     f (qminor E a b u) = qminor (fun c d => f (E c d)) a b u := by
-  simp only [qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 3
   funext k
-  simp only [Function.comp, Tm, map_add]
+  simp [Tm]
   split_ifs <;> simp
 
 theorem qminor_mem {A : Type} [Ring A] [Algebra ℂ A] (T : Subalgebra ℂ A) {n t : ℕ}
@@ -129,7 +134,7 @@ theorem capelli_spread : Spread := by
   let c : ℂ → ℂ := fun Y => Formalism.QuantumDeterminants.capP (fun s => (lam s : ℂ)) Y
   let K : Submodule ℂ S :=
     { carrier := {x | ∀ Y : ℂ, qdet E (Y + ((n : ℂ) - 1) / 2) x = c Y • x}
-      add_mem' := fun ha hb Y => by rw [map_add, ha Y, hb Y, smul_add]
+      add_mem' := fun ha hb Y => by rw [map_add (f := _), ha Y, hb Y, smul_add]
       zero_mem' := fun Y => by simp
       smul_mem' := fun s x hx Y => by rw [map_smul, hx Y, smul_comm] }
   have hK : ∀ g ∈ PI.UpqRep.UJset ε, ∀ x ∈ K.map S.subtype, σ g x ∈ K.map S.subtype := by

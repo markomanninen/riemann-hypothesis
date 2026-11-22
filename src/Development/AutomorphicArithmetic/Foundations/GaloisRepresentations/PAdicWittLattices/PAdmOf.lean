@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (Lv IsTrans Integ KS Mem FEt KSEx KSNice)
@@ -11,7 +16,7 @@ private theorem conj_core {V : Type*} [AddCommGroup V] [Module ℚ V] (H U Hi : 
     (hv : H (Hi v) = v) (e : U (k • Hi v) = k • Hi v + (N * k) • w) : H (U (Hi v)) = v + N • H w := by
   have hk' : (k : ℚ) ≠ 0 := by exact_mod_cast hk.ne'
   have h1 := congrArg H e
-  simp only [map_nsmul, map_add, hv] at h1
+  simp only [map_nsmul, map_add (f := _), hv] at h1
   have h2 : k • H (U (Hi v)) = k • (v + N • H w) := by
     rw [h1, smul_add, mul_comm N k, mul_smul]
   rw [← Nat.cast_smul_eq_nsmul ℚ k, ← Nat.cast_smul_eq_nsmul ℚ k] at h2

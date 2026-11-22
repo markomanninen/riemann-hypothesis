@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalA
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalA
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem sW_sq {w : PowerSeries K} (h0 : constantCoeff w = 0) (h1 : coeff 1 w = 0
     (h2 : coeff 2 w = 1) : sW w ^ 2 = w := by
   have hL := constantCoeff_half_log h2
   have hadd : C (1 / 2 : K) * fLog (divByXSq w) + C (1 / 2 : K) * fLog (divByXSq w) = fLog (divByXSq w) := by
-    rw [← add_mul, ← map_add, add_halves, map_one, one_mul]
+    rw [← add_mul, ← map_add (f := _), add_halves, map_one, one_mul]
   have hE := fExp_add (K := K) (ι := Unit) hL hL
   rw [hadd, fExp_fLog (constantCoeff_quotient_X_sq h2)] at hE
   conv_rhs => rw [eq_X_sq_mul_quotient h0 h1, hE]
@@ -163,13 +167,13 @@ theorem sigma_addition_holds : SAdd := by
     intro i
     have := congrArg (at1 i) h5
     rw [← E1]
-    simpa only [Add1.triple_lintegral_eq, map_pow, map_add, map_mul, map_one, Add1.inVarAlgHom_C] using this
+    simpa only [Add1.triple_lintegral_eq, map_pow, map_add (f := _), map_mul, map_one, Add1.inVarAlgHom_C] using this
   have E6 : ∀ i : Fin 2, at1 i (dz (dz (sW w))) =
       (MvPowerSeries.C A + 2 * MvPowerSeries.C kap * at1 i (sW w) ^ 2) * at1 i (sW w) := by
     intro i
     have := congrArg (at1 i) h6
     rw [← E1]
-    simpa only [Add1.triple_lintegral_eq, map_add, map_mul, map_ofNat, Add1.inVarAlgHom_C] using this
+    simpa only [Add1.triple_lintegral_eq, map_add (f := _), map_mul, map_ofNat, Add1.inVarAlgHom_C] using this
   set d : MvPowerSeries (Fin 2) K := 1 - MvPowerSeries.C kap * at1 0 w * at1 1 w with hd
   set n : MvPowerSeries (Fin 2) K :=
     at1 0 (sW w) * at1 1 (dz (sW w)) + at1 1 (sW w) * at1 0 (dz (sW w)) with hn
@@ -185,13 +189,13 @@ theorem sigma_addition_holds : SAdd := by
   have n10 : (0 : Fin 2) ≠ 1 := by decide
   have pn0 : pd 0 n = at1 1 (dz (sW w)) * at1 0 (dz (sW w)) +
       at1 1 (sW w) * at1 0 (dz (dz (sW w))) := by
-    rw [hn, pd, map_add]
+    rw [hn, pd, map_add (f := _)]
     change pd 0 _ + pd 0 _ = _
     rw [Add1.pd_mul, Add1.pd_mul, partialDeriv_inVar_self, partialDeriv_inVar_self, pderiv_at_variable_of_ne n01, pderiv_at_variable_of_ne n01]
     ring
   have pn1 : pd 1 n = at1 0 (sW w) * at1 1 (dz (dz (sW w))) +
       at1 0 (dz (sW w)) * at1 1 (dz (sW w)) := by
-    rw [hn, pd, map_add]
+    rw [hn, pd, map_add (f := _)]
     change pd 1 _ + pd 1 _ = _
     rw [Add1.pd_mul, Add1.pd_mul, partialDeriv_inVar_self, partialDeriv_inVar_self, pderiv_at_variable_of_ne n10, pderiv_at_variable_of_ne n10]
     ring

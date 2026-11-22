@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentredCapelliOperatorFormsAgree
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CentredCapelliOperatorFormsAgree
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.Admissible
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt GlobalTheory.ThA MeasureTheory Formalism.QuantumDeterminants Matrix
 open scoped InnerProductSpace
 set_option maxHeartbeats 1000000 in

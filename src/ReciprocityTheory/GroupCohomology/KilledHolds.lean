@@ -1,9 +1,13 @@
-import ReciprocityTheory.GroupCohomology.CardLenStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.ConnNatHolds
-import ReciprocityTheory.GroupCohomology.PairHomFCoeOfId
-import ReciprocityTheory.GroupCohomology.Shapiro
-import ReciprocityTheory.GroupCohomology.ShiftA
+module
+
+public import ReciprocityTheory.GroupCohomology.CardLenStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.ConnNatHolds
+public import ReciprocityTheory.GroupCohomology.PairHomFCoeOfId
+public import ReciprocityTheory.GroupCohomology.Shapiro
+public import ReciprocityTheory.GroupCohomology.ShiftA
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

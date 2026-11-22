@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo
 

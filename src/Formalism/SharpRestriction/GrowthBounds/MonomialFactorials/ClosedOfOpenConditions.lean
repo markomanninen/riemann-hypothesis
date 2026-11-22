@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SegmentWeightedCountingBoundOfAllRemainingBounds
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RatioConditionOfSegFacts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SegmentWeightedCountingBoundOfAllRemainingBounds
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RatioConditionOfSegFacts
+
+@[expose] public section
 
 noncomputable section
 

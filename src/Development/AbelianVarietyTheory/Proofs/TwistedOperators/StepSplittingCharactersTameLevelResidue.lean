@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceOverTypePrimeDividesOrConjugateStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProductStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceOverTypePrimeDividesOrConjugateStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProductStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.IndefR GlobalTheory.WeilParts GlobalTheory.StepLaw
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -24,7 +29,7 @@ theorem isRes_one_of_unrAt (χ : Formalism.L2.Host.HChar D.host.E) (PP : Pl D.ho
     exact (PP.valuation_eq_one_iff_notMem (K := D.host.E)).2 ha
   exact (h _ hv).symm
 
-theorem natCast_mem_of_isConjPl {PP PP' : Pl D.host.E} (h : IsConjPl PP PP') {n : ℕ}
+theorem natCast_mem_of_isConjPl {PP PP' : Pl D.host.E} (h : Lev.IsConjPl PP PP') {n : ℕ}
     (hn : (n : 𝓞 D.host.E) ∈ PP.asIdeal) : (n : 𝓞 D.host.E) ∈ PP'.asIdeal := by
   obtain ⟨c, hc, hc'⟩ := h _ hn
   have : c = (n : 𝓞 D.host.E) := by
@@ -77,14 +82,14 @@ theorem tameOn_step : ∀ (D : D7) (T0 : Type) (L : LevCh D T0) (μ0 : T0), L.Is
   intro D T0 L μ0 hL t j
 
   have hoff : ∀ (k : Fin 2) (PP : Pl D.host.E), ((D.host.g k : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal →
-      PP ∉ L.Q t ∧ ¬ ∃ PP' ∈ L.Q t, IsConjPl PP' PP := by
+      PP ∉ L.Q t ∧ ¬ ∃ PP' ∈ L.Q t, Lev.IsConjPl PP' PP := by
     intro k PP hk
     refine ⟨fun hQ => ?_, fun ⟨PP', hQ, hc⟩ => ?_⟩
     · obtain ⟨q, hq, hm, hne⟩ := exists_prime_mem_of_isTwistPlaces (hL.Q_pl t) hQ
       exact not_two_primes_mem PP hq (D.host.g_prime k) (hne k) hm hk
     · obtain ⟨q, hq, hm, hne⟩ := exists_prime_mem_of_isTwistPlaces (hL.Q_pl t) hQ
       exact not_two_primes_mem PP hq (D.host.g_prime k) (hne k) (natCast_mem_of_isConjPl hc hm) hk
-  have hPg : ∀ PP ∈ L.Pg, PP ∉ L.Q t ∧ ¬ ∃ PP' ∈ L.Q t, IsConjPl PP' PP := by
+  have hPg : ∀ PP ∈ L.Pg, PP ∉ L.Q t ∧ ¬ ∃ PP' ∈ L.Q t, Lev.IsConjPl PP' PP := by
     intro PP h
     obtain ⟨k, hk⟩ := (hL.Pg PP).1 h
     exact hoff k PP (typePrime_mem_of_div hk)

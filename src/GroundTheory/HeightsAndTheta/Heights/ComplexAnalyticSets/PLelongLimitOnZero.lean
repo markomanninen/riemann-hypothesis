@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOnZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitGoodPoints
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongMassNearSmall
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarIntAdd
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LocalLimitGlueOn
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongLimit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOnZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitGoodPoints
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongMassNearSmall
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarIntAdd
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LocalLimitGlueOn
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PLelongLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -90,9 +95,9 @@ theorem lelongLimit_off_small (hOff : LelongLimitOffZero.Statement) (hAdd : VarI
       rw [finsum_eq_dif]
       by_cases hWm : W ∈ (J ⊔ Ideal.span {linForm u}).minimalPrimes
       · obtain ⟨-, hWJ, hWu⟩ := mem_minimalPrimes_sup_linForm hWm
-        rw [dif_pos hWm, varInt_eq_zero_of_vanish W g' φ fun x hx =>
+        rw [dite_eq_left hWm, varInt_eq_zero_of_vanish W g' φ fun x hx =>
           image_eq_zero_of_notMem_tsupport fun hxs => hg'N hxs ⟨hWJ hx, hWu x hx⟩, mul_zero]
-      · rw [dif_neg hWm]
+      · rw [dite_eq_right hWm]
     simp only [h0]
     exact hOff n d J u g' φ hJ hdim hu hg' hg'c hφ
       (Set.disjoint_left.2 fun x hx hx' => hg'N hx hx')

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,11 +25,6 @@ def colSum {S : Type} [CommRing S] [Algebra c.F S] {n : ℕ} (v : Fin n → (Lt1
     (P : MvPolynomial (LtN Dw n) c.F) : S :=
   ∑ m ∈ P.support, algebraMap c.F S (P.coeff m) * ∏ b : Fin n, v b (colOf m b)
 
-def chartVal [StarRing (𝓞 E)] {S : Type} [CommRing S] [Algebra c.F S] [Algebra ℚ S] {y : FrPt Xo c S}
-    (C : ChartAt Xo c y) (k : ℕ) {n : ℕ} (f : Fin n → MvPowerSeries (Fin 1 × Fin C.d) S)
-    (P : MvPolynomial (LtN Dw n) c.F) : S :=
-  colSum c (fun b α => C.B.nabVal S C.h H.w0 k (f b) C.uvec (MvPolynomial.monomial α 1)) P
-
 def sysVal (nab : NabV Xo c) {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) (k : ℕ) {n : ℕ}
     (F : Fin n → SecAt Xo c y k) (P : MvPolynomial (LtN Dw n) c.F) : S :=
   colSum c (fun b α => nab y (k : ℤ) (F b) α) P
@@ -34,18 +33,5 @@ def IsHarmonic {n : ℕ} (P : MvPolynomial (LtN Dw n) c.F) : Prop :=
   ∀ (τ : E →+* ℂ) (i : Fin (Dw.mult τ)) (i' : Fin (Dw.mult (ComplexEmbedding.conjugate τ))),
     ∑ b : Fin n, MvPolynomial.pderiv (⟨τ, i, b⟩ : LtN Dw n)
       (MvPolynomial.pderiv (⟨ComplexEmbedding.conjugate τ, i', b⟩ : LtN Dw n) P) = 0
-
-def NabUnique : Prop :=
-  ∀ [StarRing (𝓞 E)] (nab nab' : NabV Xo c), IsNab Xo c nab → IsNab Xo c nab' →
-    ∀ (S : Type) [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) (k n : ℕ)
-      (F : Fin n → SecAt Xo c y k) (P : MvPolynomial (LtN Dw n) c.F), IsHarmonic c P →
-        sysVal Xo c nab y k F P = sysVal Xo c nab' y k F P
-
-example {n : ℕ} (x : LtN Dw n) : IsHarmonic c (MvPolynomial.X x : MvPolynomial (LtN Dw n) c.F) := by
-  classical
-  intro τ i i'
-  refine Finset.sum_eq_zero fun b _ => ?_
-  rw [MvPolynomial.pderiv_X, Pi.single_apply]
-  split_ifs <;> simp
 
 end GlobalTheory.IndefiniteRowSideFullHecke.HarmonicSystemChartValues

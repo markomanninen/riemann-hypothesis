@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -90,7 +94,7 @@ private theorem span_of (S : Set R) (hS : S ⊆ maximalIdeal R)
         ext
         · exact map_add (res O R) y z
         · show (f (y + z)).snd - (f' (y + z)).snd = ((f y).snd - (f' y).snd) + ((f z).snd - (f' z).snd)
-          simp only [map_add, TrivSqZeroExt.snd_add]; ring
+          simp only [map_add (f := _), TrivSqZeroExt.snd_add]; ring
       commutes' := fun a => by
         ext
         · exact (res O R).commutes a
@@ -192,7 +196,8 @@ private theorem abstract {S X : Type} (z : S → R) (hz : ∀ s, z s ∈ maximal
     obtain ⟨f, hf, hf'⟩ := hc j x
     have h3 := snd_zero i f hf ∅ (Set.empty_subset _) (by simp) _ (by
       rw [sup_assoc]; exact Ideal.mem_sup_right hcm)
-    rw [map_sum, TrivSqZeroExt.snd_sum, Finset.sum_eq_single ⟨j, t⟩] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, TrivSqZeroExt.snd_sum, Finset.sum_eq_single ⟨j, t⟩] at h3
     · rw [map_smul, TrivSqZeroExt.snd_smul, Function.comp_apply, hf', x1, Algebra.smul_def, mul_one] at h3
       exact (residue_eq_zero_iff _).1 h3
     · rintro ⟨j', t'⟩ - e
@@ -546,9 +551,18 @@ theorem UpperTheory.V.Alg.framed_tangent :
     obtain ⟨a1, a2, a3, a4, a5⟩ := hF
     have hm : ∀ A A' : Matrix ι ι R, (A * A').map f = A.map f * A'.map f := fun A A' =>
       Matrix.map_mul (f := (f : R →+* DualNumber (ResidueField O)))
-    refine ⟨fun s => ?_, fun q => ?_, fun v => (hh_group O ι X w Φ R).2.2.2.1 _ f _ (a3 v), by simp [a4],
+    have map_HH (A : Matrix ι ι R) (hA : Φ.HH A) : Φ.HH (A.map f) := by
+      obtain ⟨hform, hblock, hres⟩ := hA
+      have hJ : Φ.JR (DualNumber (ResidueField O)) = (Φ.JR R).map f :=
+        Matrix.ext fun a b => (f.commutes (Φ.J a b)).symm
+      refine ⟨?_, fun a b hab => by simp [hblock a b hab], ?_⟩
+      · rw [hJ, ← Matrix.transpose_map, ← hm, ← hm, hform]
+      · rw [← hres]
+        ext a b
+        exact res_map f _
+    refine ⟨fun s => ?_, fun q => ?_, fun v => map_HH _ (a3 v), by simp [a4],
       fun v s => ?_⟩
-    · have := (hh_group O ι X w Φ R).2.2.2.1 _ f _ (a1 s)
+    · have := map_HH _ (a1 s)
       rwa [hm, show ((r0.hom s⁻¹).map (algebraMap O R)).map f = (r0.hom s⁻¹).map (algebraMap O _) from
         Matrix.ext fun a b => f.commutes _] at this
     · obtain ⟨I, hI⟩ := (hL q).closed R (r.comap (F.ψ q) (F.hψ q)) fun s => by

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrthNormLogBoundIffOrthBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingListCharacterProduct
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InitMinorNeZeroOfStrictMono
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeightedNormSquareRows
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OrthogonalNormSquareSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OrthNormLogBoundIffOrthBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingListCharacterProduct
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InitMinorNeZeroOfStrictMono
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BranchingDeterminantCap Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col GlobalTheory.BrCompare GlobalTheory.BrCompare.Shift
 
@@ -72,7 +76,7 @@ theorem extremal_eq (lam : DomWeight (n + 1)) (K : Type) [Field K] :
     have h2 := natW_top lam i.succ
     have h3 : nuNext lam.natW i.castSucc = lam.natW i.succ := by
       unfold nuNext
-      rw [dif_pos (by simp)]
+      rw [dite_eq_left (by simp)]
       rfl
     rw [h3]
     have h4 : lamN lam i = lam.natW i.castSucc := rfl
@@ -109,7 +113,7 @@ theorem kap_bounds (h : Br.Interlace rfl lam sg) :
 
 theorem spread_eq (lam : DomWeight (n + 1)) : lam.spread = lam.w 0 - lam.w (Fin.last n) + (n + 1 : ℕ) := by
   unfold DomWeight.spread
-  rw [dif_pos (Nat.succ_pos n)]
+  rw [dite_eq_left (Nat.succ_pos n)]
   rfl
 
 theorem kap_le (h : Br.Interlace rfl lam sg) {A : ℝ} (hA : ((lam.spread : ℤ) : ℝ) ≤ A) :

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescends
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AdjointIntertwinerDiscreteSeriesDescends
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurAndTensorSubmodule
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open Matrix MeasureTheory GlobalTheory.Chain GlobalTheory.Chain.RealIt
@@ -22,7 +26,7 @@ private lemma act_mem_of_forall_upq_act_mem {p q : ℕ} (N : GKMod p q) (W : Sub
   have hZ := GlobalTheory.AdjDescent.decomp Z
   generalize Z + conjR Z = A at hZ hre
   generalize Complex.I • (Z - conjR Z) = B at hZ him
-  rw [hZ, map_add, map_smul, map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.smul_apply]
+  rw [hZ, map_add (f := _), map_smul, map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.smul_apply]
   exact W.add_mem (W.smul_mem _ hre) (W.smul_mem _ him)
 
 private lemma comm_act_of_comm_act_upq {p q : ℕ} (N : GKMod p q) (T : N.V →ₗ[ℂ] N.V)
@@ -33,7 +37,7 @@ private lemma comm_act_of_comm_act_upq {p q : ℕ} (N : GKMod p q) (T : N.V →�
   have hZ := GlobalTheory.AdjDescent.decomp Z
   generalize Z + conjR Z = A at hZ hre
   generalize Complex.I • (Z - conjR Z) = B at hZ him
-  rw [hZ, map_add, map_smul, map_smul, LinearMap.comp_add, LinearMap.add_comp,
+  rw [hZ, map_add (f := _), map_smul, map_smul, LinearMap.comp_add, LinearMap.add_comp,
     LinearMap.comp_smul, LinearMap.smul_comp, LinearMap.comp_smul, LinearMap.smul_comp, hre, him]
 
 theorem absIrr_of_equiv {p q : ℕ} (N : GKMod p q) (hI : Formalism.MainNotions.SchurIrreducible.IrrGK N) (hA : Formalism.MainNotions.SchurIrreducible.AdmGK N)

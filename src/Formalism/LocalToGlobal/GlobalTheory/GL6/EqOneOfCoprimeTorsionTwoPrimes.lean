@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.Statement
-import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.OneAddPowOfSq
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.Statement
+public import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.OneAddPowOfSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ theorem torsion_reduction_trivial (S : StepLevel F E σ J T f bad) (G : GLoc F E
       Ideal.Quotient.mk (IsLocalRing.maximalIdeal (v.adicCompletionIntegers F)) (A p q) := by
     intro p q
     unfold redM
-    rw [dif_pos (show G.mat i v h fr x p q ∈ v.adicCompletionIntegers F from hMi p q)]
+    rw [dite_eq_left (show G.mat i v h fr x p q ∈ v.adicCompletionIntegers F from hMi p q)]
     rfl
   have hup : redGL (n := Fin n) (IsLocalRing.maximalIdeal (v.adicCompletionIntegers F)) aGL ∈
       upperUni n (v.adicCompletionIntegers F ⧸ IsLocalRing.maximalIdeal (v.adicCompletionIntegers F)) := by
@@ -212,18 +216,6 @@ private theorem locmul_lemma_3 (S : StepLevel F E σ J T f bad) (v : HeightOneSp
   refine ⟨mul_mem hx hx', mul_mem hg hg', fun y => ?_⟩
   rw [← hf' y, ← hf ⟨_, (hg' y.1).1 y.2⟩, mul_comm k k', mul_smul]
   simp only [Units.val_mul, ← Matrix.mulVec_mulVec]
-
-theorem is_diamond_one' (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F))
-    (hv : (T : 𝓞 F) ∈ v.asIdeal) : IsDia S v hv 1 1 := by
-  unfold IsDia
-  exact ⟨fun v' _ => by simp, loc1_lemma_2 S v hv _ (by simp)⟩
-
-theorem is_diamond_mul_mult (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F))
-    (hv : (T : 𝓞 F) ∈ v.asIdeal) {k k' : ℤ} {δ δ' : UPts σ J (FiniteAdeleRing (𝓞 F) F)}
-    (h : IsDia S v hv k δ) (h' : IsDia S v hv k' δ') : IsDia S v hv (k * k') (δ * δ') := by
-  unfold IsDia at h h' ⊢
-  refine ⟨fun w hw => ?_, locmul_lemma_3 S v hv _ _ _ (by rw [Subgroup.coe_mul, map_mul]) h.2 h'.2⟩
-  rw [Subgroup.coe_mul, map_mul, h.1 w hw, h'.1 w hw, one_mul]
 
 private theorem mem_stabFun_lemma {A : Type} [CommRing A] {R : Type} [CommRing R] [Algebra R A] {M : Type}
     [AddCommGroup M] [Module R M] {m : ℕ} (Λ : Submodule R (Fin m → A)) (g' : Λ →ₗ[R] M) (g : GL (Fin m) A) :
@@ -283,15 +275,6 @@ theorem pow_mul_mem_of_normalises {G : Type} [Group G] (U : Subgroup G) (d : G) 
   rw [he]
   exact U.mul_mem hN hu
 
-theorem is_diamond_pow (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F))
-    (hv : (T : 𝓞 F) ∈ v.asIdeal) {k : ℤ} {δ : UPts σ J (FiniteAdeleRing (𝓞 F) F)} (h : IsDia S v hv k δ) (j : ℕ) :
-    IsDia S v hv (k ^ j) (δ ^ j) := by
-  induction j with
-  | zero => simpa using is_diamond_one' S v hv
-  | succ j ih =>
-    rw [pow_succ, pow_succ]
-    exact is_diamond_mul_mult S v hv ih h
-
 theorem zsmul_eq_of_dvd_sub_one {M : Type} [AddCommGroup M] (T : ℕ) (m : M) (hT : (T : ℤ) • m = 0) (k : ℤ)
     (hk : (T : ℤ) ∣ k - 1) : k • m = m := by
   obtain ⟨c, hc⟩ := hk
@@ -304,46 +287,6 @@ theorem level_functional_torsion (S : StepLevel F E σ J T f bad) (v : HeightOne
   rw [map_smul, Nat.cast_smul_eq_nsmul] at h
   rw [natCast_zsmul]
   exact h
-
-theorem diamond_mem_level_of_congr_one (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F)) (hv : (T : 𝓞 F) ∈ v.asIdeal)
-    {k : ℤ} {δ : UPts σ J (FiniteAdeleRing (𝓞 F) F)} (h : IsDia S v hv k δ) (hk : (T : ℤ) ∣ k - 1) : δ.1 ∈ S.U := by
-  unfold IsDia at h
-  obtain ⟨h0, hx, hg, hf⟩ := h
-  rw [S.U_eq]
-  refine ⟨δ.2, fun w => ?_⟩
-  by_cases hw : w = v
-  · rw [hw, S.UlocAlt v hv, Subgroup.mem_inf, mem_stabFun_lemma]
-    refine ⟨hx, hg, fun y => ?_⟩
-    rw [← hf y, zsmul_eq_of_dvd_sub_one T _ (level_functional_torsion S v hv _) k hk]
-  · rw [h0 w hw]
-    exact one_mem _
-
-theorem multiplier_congr_one_of_mem (S : StepLevel F E σ J T f bad) (hT : T.Prime) (v : HeightOneSpectrum (𝓞 F))
-    (hv : (T : 𝓞 F) ∈ v.asIdeal) {k : ℤ} {δ : UPts σ J (FiniteAdeleRing (𝓞 F) F)} (h : IsDia S v hv k δ)
-    (hU : δ.1 ∈ S.U) : (T : ℤ) ∣ k - 1 := by
-  unfold IsDia at h
-  obtain ⟨-, -, hg, hf⟩ := h
-  have hl := ((S.U_eq _).mp hU).2 v
-  rw [S.UlocAlt v hv, Subgroup.mem_inf, mem_stabFun_lemma] at hl
-  obtain ⟨-, hg', hf'⟩ := hl
-  obtain ⟨y, hy⟩ : ∃ y, S.fT v hv y ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
-    exact S.fT_ne v hv (LinearMap.ext fun z => by simpa using hcon z)
-  have e1 := hf y
-  rw [hf' y] at e1
-  have e4 : (k - 1) • S.fT v hv y = 0 := by rw [sub_smul, one_smul, e1, sub_self]
-  have hd : addOrderOf (S.fT v hv y) ∣ T := by
-    have h5 := addOrderOf_dvd_natCard (S.fT v hv y)
-    rwa [S.fM_card] at h5
-  have hord : addOrderOf (S.fT v hv y) = T := by
-    rcases (Nat.dvd_prime hT).mp hd with h1 | h1
-    · have h7 := addOrderOf_nsmul_eq_zero (S.fT v hv y)
-      rw [h1, one_nsmul] at h7
-      exact absurd h7 hy
-    · exact h1
-  have h6 := (addOrderOf_dvd_iff_zsmul_eq_zero).mpr e4
-  rwa [hord] at h6
 
 def LocalDiamondCondition (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F)) (hv : (T : 𝓞 F) ∈ v.asIdeal) (k : ℤ)
     (x : GL (Fin n) (E ⊗[F] v.adicCompletion F)) : Prop :=
@@ -368,15 +311,6 @@ theorem local_diamond_cond_mul (S : StepLevel F E σ J T f bad) (v : HeightOneSp
     LocalDiamondCondition S v hv (k * k') (x * x') := by
   unfold LocalDiamondCondition at h h' ⊢
   exact locmul_lemma_3 S v hv _ _ _ rfl h h'
-
-theorem local_diamond_cond_pow (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F)) (hv : (T : 𝓞 F) ∈ v.asIdeal)
-    {k : ℤ} {x : GL (Fin n) (E ⊗[F] v.adicCompletion F)} (h : LocalDiamondCondition S v hv k x) (j : ℕ) :
-    LocalDiamondCondition S v hv (k ^ j) (x ^ j) := by
-  induction j with
-  | zero => simpa using local_diamond_cond_one S v hv
-  | succ j ih =>
-    rw [pow_succ, pow_succ]
-    exact local_diamond_cond_mul S v hv ih h
 
 theorem local_diamond_conj_mem (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F)) (hv : (T : 𝓞 F) ∈ v.asIdeal)
     {k : ℤ} {x : GL (Fin n) (E ⊗[F] v.adicCompletion F)} (h : LocalDiamondCondition S v hv k x) (y : GL (Fin n) (E ⊗[F] v.adicCompletion F))
@@ -503,8 +437,8 @@ theorem class_mul_right_of_normalises (S : StepLevel F E σ J T f bad) (y y' δ'
     (hδ : ∀ κ ∈ S.U, δ.1⁻¹ * κ * δ.1 ∈ S.U)
     (h : (Quotient.mk'' y' : Cls S) = Quotient.mk'' (y * δ')) :
     (Quotient.mk'' (y' * δ) : Cls S) = Quotient.mk'' (y * δ' * δ) := by
-  obtain ⟨g, hg, κ, hκ, he⟩ := (DoubleCoset.eq _ _ _ _).mp h
-  apply (DoubleCoset.eq _ _ _ _).mpr
+  obtain ⟨g, hg, κ, hκ, he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).mp h
+  apply (@DoubleCoset.eq _ _ _ _ _ _).mpr
   refine ⟨g, hg, δ⁻¹ * κ * δ, ?_, ?_⟩
   · rw [Subgroup.mem_subgroupOf] at hκ ⊢
     simpa [mul_assoc] using hδ _ hκ
@@ -572,7 +506,7 @@ theorem fixed_class_mem_level_general (K : ClsTied u 0 (Nat.zero_le _)) (G : GLo
     (hpow : ∀ κ ∈ K.lev.U, (δ.1 * κ) ^ N0 ∈ K.lev.U)
     (hfix : (Quotient.mk'' (K.y c * δ) : Cls K.lev) = Quotient.mk'' (K.y c)) :
     δ.1 ∈ K.lev.U := by
-  obtain ⟨hh, hhH, κ, hκK, e⟩ := (DoubleCoset.eq _ _ (K.y c * δ) (K.y c)).1 hfix
+  obtain ⟨hh, hhH, κ, hκK, e⟩ := (@DoubleCoset.eq _ _ _ _ (K.y c * δ) (K.y c)).1 hfix
   have hκ : κ.1 ∈ K.lev.U := hκK
   obtain ⟨g, hgU, hge⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hhH)
   have e1 : (K.y c).1 = hh.1 * ((K.y c).1 * δ.1) * κ.1 := by
@@ -625,37 +559,6 @@ theorem fixed_class_mem_level (Tf : FormsTied D u) (hS : Formalism.MainNotions.p
   exact fixed_class_mem_level_general (Tf.cls 0 (Nat.zero_le _)) Tf.gl (Tf.glev 0 (Nat.zero_le _)) rank_zero_le_type_level hS c δ hbad N0 hN0
     hpow hfix
 
-theorem dilation_free_on_classes (Tf : FormsTied D u) (hS : Formalism.MainNotions.product_first_zeroth_parts.admS D u) (v : (D.mem u).A.vT)
-    (a : ((D.mem u).A.Fv v)ˣ) (k : ℤ) (hk : (k : (D.mem u).A.Fv v) = a)
-    (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
-    (hδ : IsDia (Tf.cls 0 (Nat.zero_le _)).lev (Tf.atT.eV v).1 (Tf.atT.eV v).2 k δ)
-    (c : (D.mem u).C.cls 0) (hc : (D.fm u).dil 0 v a c = c) : a = 1 := by
-  have hcls := (Tf.val 0 (Nat.zero_le _)).dil v a k hk c δ hδ
-  rw [hc] at hcls
-  have hT := (D.mem u).A.T_prime
-  have hnb := level_places_prime_to_type Tf.atT v
-  have hbad : ∀ w ∈ badG D, bc (prV (E := D.host.E) w) δ.1 = 1 := fun w hw =>
-    hδ.1 w (fun e => hnb (e ▸ hw))
-  have hcard := (D.mem u).A.card_Fv v
-  haveI : Fact (D.mem u).A.T.Prime := ⟨hT⟩
-  haveI : CharP ((D.mem u).A.Fv v) (D.mem u).A.T := charP_of_card_eq_prime hcard
-  have ha0 : (a : (D.mem u).A.Fv v) ≠ 0 := a.ne_zero
-  have hkT : ((D.mem u).A.T : ℤ) ∣ k ^ ((D.mem u).A.T - 1) - 1 := by
-    rw [← CharP.intCast_eq_zero_iff ((D.mem u).A.Fv v) (D.mem u).A.T]
-    push_cast
-    rw [hk, ← hcard, FiniteField.pow_card_sub_one_eq_one _ ha0, sub_self]
-  have hpowU : δ.1 ^ ((D.mem u).A.T - 1) ∈ (Tf.cls 0 (Nat.zero_le _)).lev.U := by
-    have := diamond_mem_level_of_congr_one _ _ _ (is_diamond_pow _ _ _ hδ ((D.mem u).A.T - 1)) hkT
-    simpa using this
-  have hmem := fixed_class_mem_level Tf hS c δ hbad ((D.mem u).A.T - 1) (by have := hT.two_le; omega)
-    (fun κ hκ => pow_mul_mem_of_normalises _ δ.1 (fun κ' hκ' => diamond_conj_mem_level' _ _ _ hδ ⟨κ', hκ'⟩) _ hpowU κ hκ) hcls.symm
-  have hdvd := multiplier_congr_one_of_mem _ hT _ _ hδ hmem
-  apply Units.ext
-  rw [← hk, Units.val_one]
-  have := (CharP.intCast_eq_zero_iff ((D.mem u).A.Fv v) (D.mem u).A.T (k - 1)).2 hdvd
-  push_cast at this
-  exact sub_eq_zero.1 this
-
 theorem diamond_free_on_classes (Tf : FormsTied D u) (hS : Formalism.MainNotions.product_first_zeroth_parts.admS D u) (k : (D.mem u).A.vT → ℤ)
     (hk0 : ∀ v, (k v : (D.mem u).A.Fv v) ≠ 0)
     (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
@@ -701,14 +604,6 @@ theorem diamond_free_on_classes (Tf : FormsTied D u) (hS : Formalism.MainNotions
   push_cast
   rw [hchar v, zero_mul, add_zero]
 
-theorem dilation_mul_of_diamonds (Tf : FormsTied D u) (v : (D.mem u).A.vT) (a b : ((D.mem u).A.Fv v)ˣ)
-    (ka kb : ℤ) (hka : (ka : (D.mem u).A.Fv v) = a) (hkb : (kb : (D.mem u).A.Fv v) = b)
-    (δa δb : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
-    (ha : IsDia (Tf.cls 0 (Nat.zero_le _)).lev (Tf.atT.eV v).1 (Tf.atT.eV v).2 ka δa)
-    (hb : IsDia (Tf.cls 0 (Nat.zero_le _)).lev (Tf.atT.eV v).1 (Tf.atT.eV v).2 kb δb) (c : (D.mem u).C.cls 0) :
-    (D.fm u).dil 0 v a ((D.fm u).dil 0 v b c) = (D.fm u).dil 0 v (b * a) c := by
-  rw [mul_comm b a, (D.fm u).dil_mul]
-
 theorem dilation_commute_distinct (Tf : FormsTied D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (a : ((D.mem u).A.Fv v)ˣ)
     (b : ((D.mem u).A.Fv v')ˣ) (ka kb : ℤ) (hka : (ka : (D.mem u).A.Fv v) = a) (hkb : (kb : (D.mem u).A.Fv v') = b)
     (δa δb : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
@@ -732,7 +627,7 @@ theorem dilation_commute_distinct (Tf : FormsTied D u) (v v' : (D.mem u).A.vT) (
     exact (Subgroup.one_mem _)
   have hmid : (Quotient.mk'' ((Tf.cls 0 (Nat.zero_le _)).y c * δb * δa) : Cls (Tf.cls 0 (Nat.zero_le _)).lev) =
       Quotient.mk'' ((Tf.cls 0 (Nat.zero_le _)).y c * δa * δb) :=
-    (DoubleCoset.eq _ _ _ _).2 ⟨1, Subgroup.one_mem _, (δb * δa)⁻¹ * (δa * δb), hU, by group⟩
+    (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨1, Subgroup.one_mem _, (δb * δa)⁻¹ * (δa * δb), hU, by group⟩
   exact (Tf.cls 0 (Nat.zero_le _)).y_bij.1 ((W.dil v a ka hka _ δa ha).trans (h1.trans (hmid.trans
     (h2.symm.trans (W.dil v' b kb hkb _ δb hb).symm))))
 

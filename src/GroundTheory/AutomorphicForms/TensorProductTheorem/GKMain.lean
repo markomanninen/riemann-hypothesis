@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.GKTensor
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.GKTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,8 +87,8 @@ structure Decomposition where
 attribute [instance] Decomposition.instAddCommGroup₁ Decomposition.instModule₁
   Decomposition.instAddCommGroup₂ Decomposition.instModule₂
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem nonempty_decomposition (hirr : Mx.IsIrreducible) (hadm : Mx.IsAdmissible) :
     Nonempty (Mx.Decomposition) := by
   classical
@@ -263,14 +267,6 @@ theorem nonempty_decomposition (hirr : Mx.IsIrreducible) (hadm : Mx.IsAdmissible
 namespace Decomposition
 
 variable {Mx}
-
-theorem nonempty_equiv_arch (D D' : Mx.Decomposition) : Nonempty (D.π₁.rep.Equiv D'.π₁.rep) :=
-  nonempty_equiv_fst_of_equiv D.isIrreducible₁ D.isIrreducible₂ D'.isIrreducible₁
-    (D.equiv.symm.trans D'.equiv)
-
-theorem nonempty_equiv_fin (D D' : Mx.Decomposition) : Nonempty (D.π₂.Equiv D'.π₂) :=
-  nonempty_equiv_snd_of_equiv D.isIrreducible₁ D.isIrreducible₂ D'.isIrreducible₂
-    (D.equiv.symm.trans D'.equiv)
 
 end Decomposition
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
+
+@[expose] public section
 
 noncomputable section
 
@@ -165,9 +169,9 @@ theorem shortFin_holds : ShortFin := by
     fun q x => rfl
   let B : LinearMap.BilinForm ℚ P := LinearMap.mk₂ ℚ
     (fun x y : P => Algebra.trace ℚ E (S.hT x y) + Algebra.trace ℚ E (S.hT y x))
-    (fun x1 x2 y => by simp only [Submodule.coe_add, map_add, LinearMap.add_apply]; ring)
+    (fun x1 x2 y => by simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply]; ring)
     (fun q x y => by simp only [hcoe, hsl, hsr, htq, smul_eq_mul]; ring)
-    (fun x y1 y2 => by simp only [Submodule.coe_add, map_add, LinearMap.add_apply]; ring)
+    (fun x y1 y2 => by simp only [Submodule.coe_add, map_add (f := _), LinearMap.add_apply]; ring)
     (fun q x y => by simp only [hcoe, hsl, hsr, htq, smul_eq_mul]; ring)
   have hBapp : ∀ x y : P,
       B x y = Algebra.trace ℚ E (S.hT x y) + Algebra.trace ℚ E (S.hT y x) := fun x y => rfl
@@ -192,7 +196,7 @@ theorem shortFin_holds : ShortFin := by
     | zero => intro j; simpa using (isIntegral_zero : IsIntegral ℤ (0 : E))
     | add x y _ _ hx hy =>
       intro j
-      simp only [map_add, Finsupp.add_apply, mul_add]
+      simp only [map_add (f := _), Finsupp.add_apply, mul_add]
       exact (hx j).add (hy j)
     | smul a x _ hx =>
       intro j
@@ -205,7 +209,7 @@ theorem shortFin_holds : ShortFin := by
     intro p
     refine ⟨{ toFun := fun x => Φ x p, map_add' := ?_, map_smul' := ?_ }, fun x => rfl⟩
     · intro x y
-      simp only [Φ, Submodule.coe_add, map_add, Finsupp.add_apply, mul_add]
+      simp only [Φ, Submodule.coe_add, map_add (f := _), Finsupp.add_apply, mul_add]
     · intro q x
       simp only [Φ, hcoe, map_smul, Finsupp.smul_apply, smul_eq_mul, RingHom.id_apply]
       rw [← htq]

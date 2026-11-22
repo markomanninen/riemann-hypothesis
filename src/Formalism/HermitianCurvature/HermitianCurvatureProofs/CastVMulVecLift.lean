@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DwPt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GenCapRepIntertwine
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DwPt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GenCapRepIntertwine
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadCorrespondenceOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -127,7 +131,8 @@ theorem poly_types {P : M.Par} (p : KB.Pl P Wp Wq) (ν'r : Fin (2 * (P.r - P.r) 
     exact (PBI.gen_capRep_intertwine S hbase V hV hB w0 v).symm
   rw [aeval_intertwine V _ _ hint q v]
   conv_lhs => rw [← hex]
-  simp only [ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.comp_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.coe_sum', Finset.sum_apply, ContinuousLinearMap.comp_apply, map_sum]
   refine Finset.sum_congr rfl fun ρ _ => ?_
   refine aeval_eigen _ _ _ ?_ q
   rw [← hglL.2, tp_eigen_lev p ν'r m₀r hLF hB ρ w0 (V v)]

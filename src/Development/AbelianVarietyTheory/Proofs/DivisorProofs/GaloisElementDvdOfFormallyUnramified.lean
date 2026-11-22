@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalMapGalElt
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.GoodEtale
@@ -62,7 +67,8 @@ theorem galElt_dvd_of_unramified : ∀ (R C O : Type) [CommRing R] [CommRing C] 
     rw [this]
     congr 2
     rw [← AlgEquiv.mul_apply, ← map_mul, mul_inv_cancel, map_one, AlgEquiv.one_apply]
-  simp_rw [hterm, ← Finset.sum_mul, ← map_sum, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [hterm, ← Finset.sum_mul, ← map_sum, ← map_mul, ← map_sum]
   have h1 := hxy 1
   simp only [map_one, AlgEquiv.one_apply, if_true] at h1
   rw [h1, AlgHom.commutes, Algebra.smul_def]

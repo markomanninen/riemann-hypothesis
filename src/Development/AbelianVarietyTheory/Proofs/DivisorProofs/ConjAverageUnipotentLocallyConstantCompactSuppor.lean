@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -72,7 +77,7 @@ theorem blk_val (m : GLw a w × GLw b w) (X : Matrix (Fin a) (Fin b) (w.adicComp
       (Matrix.fromBlocks m.1.val (m.1.val * X) 0 m.2.val) := by
   unfold blk
   simp only
-  rw [dif_pos (isUnit_blkMat h w m X)]
+  rw [dite_eq_left (isUnit_blkMat h w m X)]
   rfl
 
 theorem blk_add (m : GLw a w × GLw b w) (x y : Matrix (Fin a) (Fin b) (w.adicCompletion E)) :
@@ -122,12 +127,12 @@ theorem continuous_corner (m : GLw a w × GLw b w) : Continuous (corner h w m) :
 
 end Block
 
-theorem cavg_blk_locConst_compactSupport : ∀ (E : Type) [Field E] [NumberField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (f : GLw n w → ℂ), (∃ K' : Subgroup (GLw n w), IsOpen (K' : Set (GLw n w)) ∧ IsHecke K' f) → ∀ m : GLw a w × GLw b w, (∃ U : AddSubgroup (Matrix (Fin a) (Fin b) (w.adicCompletion E)), IsOpen (U : Set (Matrix (Fin a) (Fin b) (w.adicCompletion E))) ∧ ∀ x, ∀ y ∈ U, GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) f (blk h w m (x + y)) = GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) f (blk h w m x)) ∧ HasCompactSupport (fun X => GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w n) f (blk h w m X)) := by
+theorem cavg_blk_locConst_compactSupport : ∀ (E : Type) [Field E] [NumberField E] (n a b : ℕ) (h : a + b = n) (w : Pl E) (f : GLw n w → ℂ), (∃ K' : Subgroup (GLw n w), IsOpen (K' : Set (GLw n w)) ∧ IsHecke K' f) → ∀ m : GLw a w × GLw b w, (∃ U : AddSubgroup (Matrix (Fin a) (Fin b) (w.adicCompletion E)), IsOpen (U : Set (Matrix (Fin a) (Fin b) (w.adicCompletion E))) ∧ ∀ x, ∀ y ∈ U, GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) f (blk h w m (x + y)) = GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) f (blk h w m x)) ∧ HasCompactSupport (fun X => GlobalTheory.LeviDesc.cavg (GlobalTheory.LFun.KGL w (n := n)) f (blk h w m X)) := by
   intro E _ _ n a b h w f ⟨K', hK'o, hf⟩ m
   obtain ⟨_, hKc⟩ := GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL (E := E) w n
-  have hCo : IsOpen (core (GlobalTheory.LFun.KGL w n) K' : Set (GLw n w)) := isOpen_core _ _ hKc hK'o
+  have hCo : IsOpen (core (GlobalTheory.LFun.KGL w (n := n)) K' : Set (GLw n w)) := isOpen_core _ _ hKc hK'o
   let U : AddSubgroup (Matrix (Fin a) (Fin b) (w.adicCompletion E)) :=
-    { carrier := {y | blk h w 1 y ∈ core (GlobalTheory.LFun.KGL w n) K'}
+    { carrier := {y | blk h w 1 y ∈ core (GlobalTheory.LFun.KGL w (n := n)) K'}
       zero_mem' := by
         simp only [Set.mem_setOf_eq, blk_one_zero]
         exact Subgroup.one_mem _
@@ -145,7 +150,7 @@ theorem cavg_blk_locConst_compactSupport : ∀ (E : Type) [Field E] [NumberField
   · rw [blk_add]
     exact cavg_mul_core _ _ f (fun k hk x => (hf.2 k hk x).2) _ _ hy
   · let S : Set (GLw n w) := (fun p : GLw n w × GLw n w × GLw n w => p.1 * p.2.1 * p.2.2) ''
-      ((GlobalTheory.LFun.KGL w n : Set (GLw n w)) ×ˢ (tsupport f ×ˢ (GlobalTheory.LFun.KGL w n : Set (GLw n w))))
+      ((GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) ×ˢ (tsupport f ×ˢ (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w))))
     have hS : IsCompact S := (hKc.prod (hf.1.isCompact.prod hKc)).image (by fun_prop)
     refine HasCompactSupport.intro (hS.image (continuous_corner h w m)) fun X hX => ?_
     by_contra hne

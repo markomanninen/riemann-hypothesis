@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsCompactOperatorOfIsHilbertSchmidt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IsCompactOperatorOfIsHilbertSchmidt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,18 +16,18 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.Uni
 
 namespace GlobalTheory.CuspRep.CuspidalL2GL
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
   {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
 
-variable (μ) in
 
+variable (μ) in
 def IsKFinL2 (F : L2 (latticeGL E a) μ) : Prop :=
   IsOpen {k : GL (Fin a) (Af E) | R (latticeGL E a) μ (finGL E a k) F = F} ∧
     FiniteDimensional ℂ (Submodule.span ℂ
       (Set.range fun k : Kinf E a => R (latticeGL E a) μ (infGL E a (Unitary.toUnits k)) F))
 
-variable (μ) in
 
+variable (μ) in
 structure IsFinitePartOf (π : CuspSub E a) (H : Submodule ℂ (L2 (latticeGL E a) μ)) : Prop where
   normalised : IsNormalised π
   finitePartMemL2 : ∀ φ ∈ π.V, MemL2Quotient (latticeGL E a) μ φ.1
@@ -61,11 +65,6 @@ theorem mem_classes_iff (h : IsFinitePartOf μ π H) {F : L2 (latticeGL E a) μ}
     F ∈ classes π.V μ ↔ F ∈ H ∧ IsKFinL2 μ F :=
   ⟨fun hF => ⟨h.classes_le hF, isKFinL2_of_mem_classes h.finitePartMemL2 hF⟩, fun hF => h.kfin F hF.1 hF.2⟩
 
-theorem isDiscrete (h : IsFinitePartOf μ π H) : IsDiscrete π.V :=
-  ⟨fun φ hφ => (π.cusp φ hφ).1, fun φ hφ => (memL2_iff_isSqInt
-      (ContAut.continuous_of_isOpen_stab E a φ (π.cusp φ hφ).1.level) (π.cusp φ hφ).1.left (h.normalised φ hφ)).1
-      (h.finitePartMemL2 φ hφ), π.stable, π.ne_bot, π.irred⟩
-
 theorem unique {π' : CuspSub E a} (h : IsFinitePartOf μ π H) (h' : IsFinitePartOf μ π' H) : π = π' := by
   have key : ∀ {π π' : CuspSub E a}, IsFinitePartOf μ π H → IsFinitePartOf μ π' H → π.V ≤ π'.V := by
     intro π π' h h' φ hφ
@@ -88,40 +87,26 @@ theorem isIrredSubrep_map {W : Submodule ℂ (L2cusp μ)} (h : IsIrredSubrep (Rc
     (Submodule.comap_map_eq_of_injective (Submodule.injective_subtype _) W).le)
     (hW.isSubrep_rep_iff.2 (e.symm ▸ hs))).imp (fun h0 => by rw [← e, h0, Submodule.map_bot]) fun h0 => by rw [← e, h0]
 
-theorem bounded_one {φ : Sm E 1} (h : IsCuspForm φ) (h' : ∀ t g, ‖φ.1 (splitCentre E 1 t * g)‖ = ‖φ.1 g‖) :
-    ∃ C : ℝ, ∀ g, ‖φ.1 g‖ ≤ C := by
-  obtain ⟨K, hK, hcov⟩ := GlobalTheory.IdeleCovolume.exists_compact_latticeGL E
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn (ContAut.continuous_of_isOpen_stab E 1 φ h.1.level).continuousOn
-  refine ⟨C, fun g => ?_⟩
-  obtain ⟨γ, hγ, hk⟩ := hcov g
-  exact (leftInv_latticeGL (φ := fun g => ‖φ.1 g‖) (fun γ g => congrArg norm (h.1.left γ g)) h' γ hγ g).symm.trans_le
-    (hC _ hk)
-
 end GlobalTheory.CuspRep.CuspidalL2GL
 
 namespace GlobalTheory.Published
 
 def CuspDiscreteDecompositionGL : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure]
     [μ.IsMulRightInvariant], IsDiscreteSum (Rcusp μ)
 
 def CuspFiniteVectorsGL : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure]
     [μ.IsMulRightInvariant] (H : Submodule ℂ (L2 (latticeGL E a) μ)), H ≤ L2cusp μ →
       IsIrredSubrep (R (latticeGL E a) μ) H → ∃ π : CuspSub E a, IsFinitePartOf μ π H
 
 def CuspFormsBoundedGL : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a), IsCuspForm φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a), IsCuspForm φ →
     (∀ t g, ‖φ.1 (splitCentre E a t * g)‖ = ‖φ.1 g‖) → ∃ C : ℝ, ∀ g, ‖φ.1 g‖ ≤ C
 
 def CuspidalSpectrumGL : Prop := CuspDiscreteDecompositionGL ∧ CuspFiniteVectorsGL ∧ CuspFormsBoundedGL
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
-
-theorem CuspFiniteVectorsGL.of_Rcusp (h : CuspFiniteVectorsGL) {μ : Measure (GA E a)} [μ.IsHaarMeasure]
-    [μ.IsMulRightInvariant] {W : Submodule ℂ (L2cusp μ)} (hW : IsIrredSubrep (Rcusp μ) W) :
-    ∃ π : CuspSub E a, IsFinitePartOf μ π (W.map (L2cusp μ).subtype) :=
-  h E a μ _ (Submodule.map_subtype_le _ _) (isIrredSubrep_map hW)
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem CuspFormsBoundedGL.of_isUnitary (h : CuspFormsBoundedGL) {π : CuspSub E a} (hπ : π.IsUnitary) {φ : Sm E a}
     (hφ : φ ∈ π.V) : ∃ C : ℝ, ∀ g, ‖φ.1 g‖ ≤ C :=

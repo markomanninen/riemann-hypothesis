@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 namespace GlobalTheory.BadShare
@@ -11,7 +15,7 @@ theorem pow_padicVal_eq_one_of_primePow {k : Type} [Field k] {n l : ℕ} (hn : 0
   have d2 : orderOf y ∣ l ^ a := orderOf_dvd_of_pow_eq_one h2
   obtain ⟨i, -, hi⟩ := (Nat.dvd_prime_pow hl).1 d2
   rw [hi] at d1
-  have hle : i ≤ padicValNat l n := (padicValNat_dvd_iff_le hn.ne').1 d1
+  have hle : i ≤ padicValNat l n := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hn.ne').1 d1
   apply orderOf_dvd_iff_pow_eq_one.1
   rw [hi]
   exact pow_dvd_pow l hle

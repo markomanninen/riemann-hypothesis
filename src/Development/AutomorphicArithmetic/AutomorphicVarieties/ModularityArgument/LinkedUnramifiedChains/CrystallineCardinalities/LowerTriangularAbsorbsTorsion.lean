@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.CjFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.DualCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.WtCut
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.CjFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.OkFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.DualCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.WtCut
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -40,7 +44,7 @@ private theorem lower_triangular_absorbs_torsion (l : ℕ) [Fact l.Prime] (D : T
   let Z : AddSubgroup (D → N) :=
     { carrier := Zc ρ
       add_mem' := fun {a b} ha hb => ⟨ha.1.add hb.1, fun s t => by
-        simp only [Pi.add_apply, ha.2 s t, hb.2 s t, map_add]; abel⟩
+        simp only [Pi.add_apply, ha.2 s t, hb.2 s t, map_add (f := _)]; abel⟩
       zero_mem' := h0
       neg_mem' := fun {a} ha => ⟨ha.1.neg, fun s t => by
         simp only [Pi.neg_apply, ha.2 s t, map_neg]; abel⟩ }
@@ -50,7 +54,7 @@ private theorem lower_triangular_absorbs_torsion (l : ℕ) [Fact l.Prime] (D : T
     intro z hz
     have hz' : z ∈ Zc ρ := hz
     refine ⟨hz'.1, fun j s s' => ?_⟩
-    rw [hz'.2 s s', map_add, hp]
+    rw [hz'.2 s s', map_add (f := _), hp]
   have hcut := wtCut l D I d k 2 A N hG hA Z inferInstance p hpZ
   have hZc : Nat.card Z = (Zc ρ).ncard := Nat.card_coe_set_eq (Zc ρ)
   have hApos : 0 < Nat.card A ^ (2 * d) := pow_pos Nat.card_pos _

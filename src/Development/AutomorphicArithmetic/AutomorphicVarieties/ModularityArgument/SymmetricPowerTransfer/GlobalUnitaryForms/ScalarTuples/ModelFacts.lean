@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
 
 open QuadraticAlgebra Matrix Polynomial
 
@@ -134,7 +138,7 @@ private theorem shape (hτ : τ ^ 2 - 4 ≠ 0) (X : Sp Δ τ →ₗ[Lsq K Δ] Sp
   have e : x = x.1 • ((1, 0) : Sp Δ τ) + x.2.re • (0, 1) + x.2.im • (0, ω) := by
     refine Prod.ext (by simp) (QuadraticAlgebra.ext ?_ ?_) <;> simp [QuadraticAlgebra.re_one, QuadraticAlgebra.im_one]
   conv_lhs => rw [e]
-  rw [map_add, map_add, map_smul, map_smul, map_smul, h3]
+  rw [map_add (f := _), map_add (f := _), map_smul, map_smul, map_smul, h3]
   refine Prod.ext ?_ ?_
   · simp [h2, mul_comm]
   · simp only [Prod.snd_add, Prod.smul_snd, h1, smul_zero, zero_add]

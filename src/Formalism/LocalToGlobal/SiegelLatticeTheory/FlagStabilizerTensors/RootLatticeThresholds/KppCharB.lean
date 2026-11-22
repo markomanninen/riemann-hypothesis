@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppCharA
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PsiCondAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppCharA
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PsiCondAll
+
+@[expose] public section
 
 noncomputable section
 

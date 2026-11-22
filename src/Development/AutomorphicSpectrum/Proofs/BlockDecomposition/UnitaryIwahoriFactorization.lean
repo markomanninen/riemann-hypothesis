@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPermWOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIwUIff
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsStrictDom
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPermWOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemIwUIff
+
+@[expose] public section
+
 open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.SphericalProduct GlobalTheory.CompanionTheory.SatPow
 
 noncomputable section
@@ -155,7 +160,8 @@ def tau (σ : L →+* L) (A : Matrix (Fin n) (Fin n) L) : Matrix (Fin n) (Fin n)
 omit [Valued L (WithZero (Multiplicative ℤ))] in
 theorem tau_mul (σ : L →+* L) (A B : Matrix (Fin n) (Fin n) L) : tau σ (A * B) = tau σ B * tau σ A := by
   ext a b
-  simp only [tau, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tau, Matrix.mul_apply, map_sum, map_mul]
   refine Fintype.sum_equiv Fin.revPerm _ _ fun k => ?_
   simp [mul_comm]
 
@@ -200,7 +206,7 @@ theorem v_lt_of_ordL_lt {x y : L} (hx : x ≠ 0) (hy : y ≠ 0) (h : ordL x < or
   have hx0 : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
   have hy0 : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
   unfold ordL at h
-  rw [dif_neg hx0, dif_neg hy0] at h
+  rw [dite_eq_right hx0, dite_eq_right hy0] at h
   rw [← WithZero.coe_unzero hx0, ← WithZero.coe_unzero hy0, WithZero.coe_lt_coe]
   show Multiplicative.toAdd (WithZero.unzero hy0) < Multiplicative.toAdd (WithZero.unzero hx0)
   omega

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoSumBoundOfMapsSplitting
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.EdgeLatRS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoSumBoundOfMapsSplitting
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.EdgeLatRS
+
+@[expose] public section
 
 noncomputable section
 

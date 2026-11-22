@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinLev
-import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
-import Formalism.SharpRestriction.LevelLetterCocycles.EqZeroOfPowDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinLev
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+public import Formalism.SharpRestriction.LevelLetterCocycles.EqZeroOfPowDvd
+
+@[expose] public section
 
 noncomputable section
 

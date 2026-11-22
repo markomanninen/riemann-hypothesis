@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.TopDensNonnegOfKappa
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleRecOfAdmissibleWord
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+module
+
+public import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleRecOfAdmissibleWord
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexOrder ComplexConjugate

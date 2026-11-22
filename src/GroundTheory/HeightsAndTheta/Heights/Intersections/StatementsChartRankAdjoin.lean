@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,9 +21,6 @@ def ChartRankAdjoin.Statement : Prop :=
         Module.finrank Φ (IntermediateField.adjoin Φ (Set.range fun q : Σ k, ι k => z q / z ⟨q.1, j q.1⟩))
 
 section Inhabitants
-
-def genericPointProjLine : (Σ _ : Unit, Fin 2) → FractionRing (MvPolynomial (Σ _ : Unit, Fin 2) ℚ) :=
-  fun q => algebraMap (MvPolynomial (Σ _ : Unit, Fin 2) ℚ) _ (X q)
 
 end Inhabitants
 

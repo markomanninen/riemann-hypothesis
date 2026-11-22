@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialStableContainsComponents
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialStableContainsComponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ def weightEntryPropertySubmodule : Submodule R (MvPolynomial (ι × Fin n) R) wh
   add_mem' := by
     classical
     intro x y hx hy k1 _ φ g0 g0inv h m hm
-    rw [map_add] at hm
+    rw [map_add (f := _)] at hm
     rcases Finset.mem_union.1 (MvPolynomial.support_add hm) with h1 | h1
     · exact hx k1 φ g0 g0inv h m h1
     · exact hy k1 φ g0 g0inv h m h1
@@ -67,7 +71,8 @@ theorem laurent_coefficients_mem_property (y : MvPolynomial (ι × Fin n) R) (K 
   have hinv : (h' * g0.map ψ) * (g0inv.map ψ * h) = 1 := by
     rw [Matrix.mul_assoc, ← Matrix.mul_assoc (g0.map ψ), h2, Matrix.one_mul, hh1]
   apply hy (LaurentPolynomial k1) (ψ.comp φ) (h' * g0.map ψ) (g0inv.map ψ * h) hinv m
-  rw [← matrixSubst_comp, hE, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← matrixSubst_comp, hE, map_sum]
   have hA : ∀ k', matrixSubst LL S (RingHom.id _) (g0inv.map ψ) (g0.map ψ)
       (C (LaurentPolynomial.T k') * MvPolynomial.map (ψ.comp φ) (yk k')) =
       C (LaurentPolynomial.T k') * MvPolynomial.map ψ (matrixSubst LL S φ g0inv g0 (yk k')) := by
@@ -80,7 +85,7 @@ theorem laurent_coefficients_mem_property (y : MvPolynomial (ι × Fin n) R) (K 
   rw [MvPolynomial.coeff_sum] at hz
   simp_rw [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_map] at hz
   have hz2 := congrArg (fun p : LaurentPolynomial k1 => p.coeff k) hz
-  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply] at hz2
+  rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at hz2
   have hT : ∀ k' (c : k1), (LaurentPolynomial.T k' * ψ c).coeff k = if k' = k then c else 0 := by
     intro k' c
     rw [hψ, mul_comm, ← LaurentPolynomial.single_eq_C_mul_T, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]

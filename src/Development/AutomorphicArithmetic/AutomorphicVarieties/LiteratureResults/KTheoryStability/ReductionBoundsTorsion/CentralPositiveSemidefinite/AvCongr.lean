@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.TSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.TSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem step_dC (hA : TAv) {k : ℕ} {ω : Form (HS L N) (k + 1)} (hc : Continuo
   obtain ⟨_, _, _, hcont, hint, _⟩ := hA L N (k+1) v ω hc
   have e : dC (intP (av v ω)) y = ∫ τ in (0:ℝ)..1, dC (intP ω) (fun j => (sc (τ • v) : Gp L N) • y j) := by
     simp only [dC, hint]
-    rw [intervalIntegral.integral_finset_sum]
+    rw [intervalIntegral.integral_finsetSum]
     · congr 1
       funext i
       rw [intervalIntegral.integral_const_mul]
@@ -128,7 +132,7 @@ theorem step_ev (hEv : SEv) (hSc : TScal) (hSi : TSimp) (hA : TAv) {k : ℕ} {ω
   have e : (z.sum fun g r => r * ∫ τ in (0:ℝ)..1, intP ω (fun j => (sc (τ • v) : Gp L N) • (emb L N (Fin.partialProd g j) • one L N)))
       = ∫ τ in (0:ℝ)..1, z.sum fun g r => r * intP ω (fun j => (sc (τ • v) : Gp L N) • (emb L N (Fin.partialProd g j) • one L N)) := by
     simp only [Finsupp.sum]
-    rw [intervalIntegral.integral_finset_sum]
+    rw [intervalIntegral.integral_finsetSum]
     · congr 1
       funext g
       rw [intervalIntegral.integral_const_mul]
@@ -207,9 +211,7 @@ theorem join (hSp : TSpan) (hSc : TScal) (hSi : TSimp) (hA : TAv) (hEv : SEv) : 
     | mem x hx =>
       rcases hx with rfl | ⟨u, hu, rfl⟩
       · intro σ
-        convert hdiag σ using 1
-        funext w
-        simp
+        convert hdiag σ using 1 <;> ext w <;> simp
       · exact hlf u hu
     | zero => intro σ; rw [smul_zero]; exact fix_zero hadd
     | add x y _ _ hx hy => intro σ; rw [smul_add]; exact fix_add hadd (hx σ) (hy σ)

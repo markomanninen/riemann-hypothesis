@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHypersurfacePresentation
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericPrimitive
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGenericPrimitive
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHypersurfacePresentation
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericPrimitive
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGenericPrimitive
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,17 +24,17 @@ variable {R A E L : Type} [CommRing R] [IsDomain R] [CommRing A] [IsDomain A] [A
   [Field L] [Algebra A L] [IsFractionRing A L] [Algebra R L] [IsScalarTower R A L]
   [Algebra E L] [IsScalarTower R E L]
 
-omit [CharZero E] [IsDomain A] in
 
+omit [CharZero E] [IsDomain A] in
 theorem exists_clear_denominators (p : Polynomial E) :
     ∃ b : R, b ≠ 0 ∧ ∃ p' : Polynomial R,
       p'.map (algebraMap R E) = Polynomial.C (algebraMap R E b) * p := by
   obtain ⟨b, hb, h⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors R) p
   exact ⟨b, nonZeroDivisors.ne_zero hb, _, by rw [h, Algebra.smul_def, Polynomial.algebraMap_apply]⟩
 
+
 omit [IsDomain A] in
 include E L in
-
 theorem minpoly_separable_up_to [IsIntegrallyClosed R] {θ : A} (hθ : IsIntegral R θ) :
     ∃ δ : R, δ ≠ 0 ∧ ∃ u v : Polynomial R,
       u * minpoly R θ + v * Polynomial.derivative (minpoly R θ) = Polynomial.C δ := by
@@ -44,11 +49,11 @@ theorem minpoly_separable_up_to [IsIntegrallyClosed R] {θ : A} (hθ : IsIntegra
   obtain ⟨bb, hbb, b', hb'⟩ := exists_clear_denominators (R := R) b
   refine ⟨ba * bb, mul_ne_zero hba hbb, Polynomial.C bb * a', Polynomial.C ba * b', ?_⟩
   apply Polynomial.map_injective (algebraMap R E) (IsFractionRing.injective R E)
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, ha', hb', map_mul]
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, ha', hb', map_mul]
   linear_combination (Polynomial.C (algebraMap R E ba) * Polynomial.C (algebraMap R E bb)) * hab
 
-omit [CharZero E] [IsDomain A] in
 
+omit [CharZero E] [IsDomain A] in
 theorem exists_mul_eq_aeval {θ : A} (hθ : IsIntegral R θ)
     (hgen : IntermediateField.adjoin E {algebraMap A L θ} = ⊤) (x : A) :
     ∃ b : R, b ≠ 0 ∧ ∃ q : Polynomial R, Polynomial.aeval θ q = algebraMap R A b * x := by
@@ -66,8 +71,8 @@ theorem exists_mul_eq_aeval {θ : A} (hθ : IsIntegral R θ)
     IsScalarTower.algebraMap_apply R E L]
   exact congrArg _ hp
 
-omit [IsDomain R] [IsDomain A] in
 
+omit [IsDomain R] [IsDomain A] in
 theorem exists_integral_primitive [FaithfulSMul R A] [Algebra.IsAlgebraic R A] {n : ℕ} (x : Fin n → A)
     (hgen : IntermediateField.adjoin E (Set.range fun j => algebraMap A L (x j)) = ⊤) :
     ∃ θ : A, IsIntegral R θ ∧ IntermediateField.adjoin E {algebraMap A L θ} = ⊤ := by
@@ -95,7 +100,8 @@ theorem exists_integral_primitive [FaithfulSMul R A] [Algebra.IsAlgebraic R A] {
   have hθ₁ : IntermediateField.adjoin E {algebraMap A L θ₁} = ⊤ := by
     have h := hDc c hcD
     have he : ∑ j, c j • algebraMap A L (x j) = algebraMap A L θ₁ := by
-      simp only [hθ₁def, map_sum, map_zsmul, ← hz, Int.cast_smul_eq_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hθ₁def, map_sum, map_zsmul, ← hz, Int.cast_smul_eq_zsmul]
     rwa [he] at h
   obtain ⟨a, ha, hai⟩ := (Algebra.IsAlgebraic.isAlgebraic (R := R) θ₁).exists_integral_multiple
   refine ⟨a • θ₁, hai, eq_top_iff.2 (hθ₁ ▸ IntermediateField.adjoin_simple_le_iff.2 ?_)⟩
@@ -192,11 +198,9 @@ section Main
 
 variable {σ ι : Type} [Finite σ] [Finite ι] (K : Ideal (MvPolynomial ι (MvPolynomial σ ℂ))) [K.IsPrime]
 
-local notation "𝔸" => MvPolynomial ι (MvPolynomial σ ℂ) ⧸ K
 
 omit [Finite σ] in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem hypersurfacePresentation_of (hKS : ∀ s : MvPolynomial σ ℂ, C s ∈ K → s = 0) :
     ∃ (d : ℕ) (y : Fin d → MvPolynomial ι (MvPolynomial σ ℂ)) (θ : MvPolynomial ι (MvPolynomial σ ℂ))
       (m : Polynomial (MvPolynomial (Fin d) (MvPolynomial σ ℂ))) (D : MvPolynomial (Fin d) (MvPolynomial σ ℂ))
@@ -208,9 +212,10 @@ theorem hypersurfacePresentation_of (hKS : ∀ s : MvPolynomial σ ℂ, C s ∈ 
       ∀ i, aeval y D * X i - Polynomial.eval₂ (aeval y).toRingHom θ (q i) ∈ K := by
   classical
   have := Fintype.ofFinite ι
+  let 𝔸 := (MvPolynomial ι (MvPolynomial σ ℂ)) ⧸ K
   have hmkC : ∀ s, Ideal.Quotient.mk K (C s) = algebraMap (MvPolynomial σ ℂ) 𝔸 s := fun s => rfl
   have hSinj : Function.Injective (algebraMap (MvPolynomial σ ℂ) 𝔸) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro s hs
     rw [← hmkC, Ideal.Quotient.eq_zero_iff_mem] at hs
     exact hKS s hs

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.NoetherianLocalChartOverlapFiniteComplement
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.NoetherianLocalChartOverlapFiniteComplement
+
+@[expose] public section
 
 namespace LateralTheory.E.LZARFacts
 

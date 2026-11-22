@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsAntisym
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -12,19 +17,6 @@ abbrev ProjectiveLineBundle.Diag {D : ℕ} (S : ProjectiveLineBundle D) : Ideal 
   T.wwIdeal S.x S.δ S.e S.φ (S.a 0) (S.a 0)
 
 section Statements
-
-def DiagDiv.Statement : Prop :=
-  ∀ (Ω : Type) [Field Ω] (ι ν κ : Type) [Fintype ι] [Fintype ν] [Fintype κ] (E : Type) [AddCommGroup E]
-    [Module Ω E] (Φ : Type) [Field Φ] [Algebra Ω Φ] (x : ι → Ω) (B : ChartBundle ℤ x 2 E)
-    (e : Module.Basis (Fin 2) Ω E) (φ : κ → E →ₗ[Ω] Ω) (δ : ν → Ω),
-    T.DiagDivStatement (Φ := Φ) B e φ δ
-
-def DiagPullI.Statement : Prop :=
-  ∀ (I : AllFam), I.IsFamily → ∀ (D : ℕ) (S : ProjectiveLineBundle D) (X : HermLine S.YIdx) (X₀ X₁ : HermLine S.WIdx)
-    (L : Fin D → HermLine S.WIdx),
-    IsSmoothHerm X → IsPullHerm (diagonalBlockIndex 0) (T.yyEmb 0) X X₀ → IsPullHerm (diagonalBlockIndex 1) (T.yyEmb 1) X X₁ →
-    (∀ j, IsSmoothHerm (L j)) →
-    I T.WBlk S.WIdx S.Diag (D + 1) (Fin.snoc L X₀) = I T.WBlk S.WIdx S.Diag (D + 1) (Fin.snoc L X₁)
 
 def ZeroSetNull.Statement : Prop :=
   ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (P : Ideal (MRing ι)) (e : ℕ) (s : MRing ι)

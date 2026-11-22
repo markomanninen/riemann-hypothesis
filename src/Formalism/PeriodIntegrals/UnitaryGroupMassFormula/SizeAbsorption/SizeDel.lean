@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.ExpPowEq
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SizeAbsorption.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,8 +120,8 @@ private lemma fin_lemma_5 (x n T R C0 V e : ℝ) (hx : 0 < x) (hn0 : 0 ≤ n) (h
   have h5 : x * x ^ 3 * T * (C0 * T * (x / e ^ 2)) = C0 / e ^ 2 * x ^ 5 * (T * T) := by ring
   linarith
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem stepA : StepA := by
   unfold StepA
   intro K eps

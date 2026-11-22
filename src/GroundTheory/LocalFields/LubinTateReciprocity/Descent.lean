@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.LubinTateReciprocity.TwistedPoint
-import GroundTheory.LocalFields.CompletedUnramified
-import GroundTheory.LocalFields.LubinTateTower
-import GroundTheory.LocalFields.UnramifiedExistence
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.DescentPowerSubgroups
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LubinTateReciprocity.TwistedPoint
+public import GroundTheory.LocalFields.CompletedUnramified
+public import GroundTheory.LocalFields.LubinTateTower
+public import GroundTheory.LocalFields.UnramifiedExistence
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.DescentPowerSubgroups
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,13 +78,13 @@ section Weierstrass
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   {π : 𝒪[K]} (hπ : Irreducible π) (m : ℕ)
 
-include hπ in
 
+include hπ in
 theorem isDistinguishedAt_ltEisenstein : (ltEisenstein π m).IsDistinguishedAt 𝓂[K] :=
   ⟨⟨fun hn => (isEisensteinAt_ltEisenstein hπ m).mem hn⟩, (ltEisenstein_monic π m).1⟩
 
-include hπ in
 
+include hπ in
 theorem exists_sub_coe_mem_span_ltEisenstein (G : 𝒪[K]⟦X⟧) :
     ∃ h : Polynomial 𝒪[K], G - (h : 𝒪[K]⟦X⟧) ∈ Ideal.span {((ltEisenstein π m : Polynomial 𝒪[K]) :
       𝒪[K]⟦X⟧)} := by
@@ -91,8 +95,8 @@ theorem exists_sub_coe_mem_span_ltEisenstein (G : 𝒪[K]⟦X⟧) :
 
 variable {L : Type*} [Field L] [Algebra K L]
 
-include hπ in
 
+include hπ in
 theorem ltEisenstein_dvd_of_aeval_eq_zero {x : L}
     (hx : Polynomial.aeval x ((ltEisenstein π m).map (algebraMap 𝒪[K] K)) = 0) {p : Polynomial 𝒪[K]}
     (hp : Polynomial.aeval x (p.map (algebraMap 𝒪[K] K)) = 0) : ltEisenstein π m ∣ p := by
@@ -137,9 +141,9 @@ theorem pow_apply_eq_psEval (σ : Ω ≃ₐ[K] Ω) (a : 𝒪[K]) {x : Ω} (hx : 
         (isLubinTateSeries_ltPoly π), Hom.toPowerSeries_comp, PowerSeries.subst_def,
       psEval_subst' (fun _ => Hom.constantCoeff_eq_zero' _) _ _ fun _ => hx]
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω]
   [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω] in
-
 theorem exists_pow_apply_eq_self (σ : Ω ≃ₐ[K] Ω) {p : Polynomial K} (hp : p ≠ 0) {x : Ω}
     (hx : Polynomial.aeval x p = 0) : ∃ N : ℕ, 0 < N ∧ (σ ^ N) x = x :=
   _root_.GroundTheory.Variant₂.N1.exists_pow_apply_eq_self_of_aeval_eq_zero σ hp hx
@@ -151,8 +155,8 @@ section Maps
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   {B : Type*} [CommRing B] [Algebra 𝒪[K] B]
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem map_sub_coe_mem_span {P h : Polynomial 𝒪[K]} {G : 𝒪[K]⟦X⟧}
     (hG : G - (h : 𝒪[K]⟦X⟧) ∈ Ideal.span {(P : 𝒪[K]⟦X⟧)}) :
     PowerSeries.map (algebraMap 𝒪[K] B) G - ((h.map (algebraMap 𝒪[K] B) : Polynomial B) : B⟦X⟧) ∈
@@ -277,7 +281,7 @@ theorem adjoinRoot_map_injective {S : Type*} [CommRing S] {ι : R →+* S} (hι 
     {p : Polynomial R} (hp : p.Monic) {q : Polynomial S} (hq : q ∣ p.map ι) (hpq : p.map ι = q) :
     Function.Injective (AdjoinRoot.map ι p q hq) := by
   subst hpq
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro w hw
   obtain ⟨g, rfl⟩ := AdjoinRoot.mk_surjective w
   rw [adjoinRoot_map_mk, AdjoinRoot.mk_eq_zero, ← Polynomial.modByMonic_eq_zero_iff_dvd (hp.map ι),
@@ -308,7 +312,8 @@ theorem exists_adjoinRoot_map_eq {S : Type*} [CommRing S] (ι : R →+* S) (p : 
     ∃ y : AdjoinRoot p, AdjoinRoot.map ι p q hq y = z := by
   refine ⟨∑ i, AdjoinRoot.of p (d i) * AdjoinRoot.root p ^ (i : ℕ), ?_⟩
   conv_rhs => rw [← (AdjoinRoot.powerBasis' hqm).basis.sum_repr z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_pow, AdjoinRoot.map_of, AdjoinRoot.map_root, hd, Algebra.smul_def,
     PowerBasis.coe_basis, AdjoinRoot.powerBasis'_gen, AdjoinRoot.algebraMap_eq]
@@ -319,9 +324,9 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   [IsGalois K Ω] [IsSepClosed Ω]
   {π : 𝒪[K]} (hπ : Irreducible π) (u : 𝒪[K]ˣ) (m : ℕ)
 
+
 set_option maxHeartbeats 1000000 in
 include hπ in
-
 theorem exists_fixed_root_ltEisenstein (σ : Ω ≃ₐ[K] Ω)
     (hσ : unramifiedDegree K Ω σ = Multiplicative.ofAdd 1) {l : Ω}
     (hl : Polynomial.aeval l ((ltEisenstein π m).map (algebraMap 𝒪[K] K)) = 0)

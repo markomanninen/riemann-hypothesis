@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMollB
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMollB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -70,7 +74,7 @@ lemma polyMax_exp_usc (hU : IsOpen U) (hφ : UpperSemicontinuousOn φ U) {R : �
   have hsR : closedBall z (Real.exp s) ⊆ U := (closedBall_subset_closedBall hexp).trans hR
   obtain ⟨δ, hδ, -, hδ'⟩ := polyMax_usc hU hφ (Real.exp_pos s).le hsR (sub_pos.2 hy)
   have hev : ∀ᶠ s' in 𝓝 s, Real.exp s' < Real.exp s + δ :=
-    (Real.continuous_exp.tendsto s) (Iio_mem_nhds (by linarith))
+    (Real.continuous_exp.tendsto s) (Iio_mem_nhds (lt_add_of_pos_right _ hδ))
   apply Filter.Eventually.filter_mono nhdsWithin_le_nhds
   filter_upwards [hev] with s' hs'
   have := hδ' _ (Real.exp_pos s').le hs'.le

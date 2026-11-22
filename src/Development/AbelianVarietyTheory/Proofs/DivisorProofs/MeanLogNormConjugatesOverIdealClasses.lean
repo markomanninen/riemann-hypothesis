@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+
+@[expose] public section
+
 open NumberField
 open scoped nonZeroDivisors
 
@@ -30,8 +35,8 @@ theorem exists_field {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (a
   refine ⟨_, inferInstance, {}, fun x => hle (hR ⟨x, rfl⟩), hle (hA (IntermediateField.subset_adjoin ℚ _ (by simp))),
     hle (hA (IntermediateField.subset_adjoin ℚ _ (by simp)))⟩
 
-open IntermediateField in
 
+open IntermediateField in
 theorem sum_log_emb (L : IntermediateField ℚ ℂ) [FiniteDimensional ℚ L] [NumberField L] (β : ℂ) (hβ : β ∈ L)
     (h0 : β ≠ 0) :
     ∃ m : ℕ, 0 < m ∧ Module.finrank ℚ L = m * (minpoly ℚ β).natDegree ∧
@@ -75,8 +80,8 @@ theorem emb_two {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 : 
   rw [h3, NumberField.Embeddings.card, hK2] at this
   omega
 
-open Classical in
 
+open Classical in
 theorem sum_halve {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 : Module.finrank ℚ K = 2)
     (hc : (starRingEnd ℂ).comp φK ≠ φK) (L : IntermediateField ℚ ℂ) [NumberField L] (hK : ∀ x : K, φK x ∈ L)
     (f : (L →+* ℂ) → ℝ) (hf : ∀ τ, f ((starRingEnd ℂ).comp τ) = f τ) :
@@ -109,8 +114,8 @@ theorem sum_halve {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (hK2 
   · intro a _; exact hcc a
   · intro a _; exact (hf a).symm
 
-open Classical in
 
+open Classical in
 theorem cover {K : Type} [Field K] [NumberField K] (φK : K →+* ℂ) (j₀ : ℂ)
     (𝔞 : (ℂ ≃+* ℂ) → (FractionalIdeal (𝓞 K)⁰ K)ˣ) (hE : Equidistributed φK j₀ 𝔞)
     (L : IntermediateField ℚ ℂ) [FiniteDimensional ℚ L] [IsGalois ℚ L] [NumberField L] (hK : ∀ x : K, φK x ∈ L)

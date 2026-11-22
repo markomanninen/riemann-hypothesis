@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
-import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRestrictedProdFinAwayIffIsProdMeasureFinAway
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ContinuousOfMemCcSmooth
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRestrictedProdFinAwayIffIsProdMeasureFinAway
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open MeasureTheory Set Filter GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.SplitWeil NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.AutomorphicL2Unitary (conv starFn IsTopIrreducible)
@@ -32,8 +36,8 @@ def archCoord (w : InfinitePlace F) (g : GArch σ J w) : EmbOver E w → Fin n �
 def infCoord (g : GInf σ J) : ∀ w : InfinitePlace F, EmbOver E w → Fin n → Fin n → ℂ :=
   fun w => archCoord σ J w (projInfArch σ J w g)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem archMat_apply {w : InfinitePlace F} (τ : EmbOver E w) (g : GArch σ J w) :
     archMat σ J τ g = (matHom _ σ J g).1.map (infEmb τ) := rfl
 
@@ -62,8 +66,8 @@ theorem continuous_archCoord (w : InfinitePlace F) : Continuous (archCoord σ J 
 theorem continuous_infCoord : Continuous (infCoord σ J) :=
   continuous_pi fun w => (continuous_archCoord σ J w).comp (continuous_projInfArch σ J w)
 
-variable {σ} in
 
+variable {σ} in
 theorem isEmbedding_archMat (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) :
     Topology.IsEmbedding (matCoord (archMat σ J τ)) := by
   let e := RingEquiv.ofBijective _ (infEmb_bijective h τ)
@@ -128,8 +132,8 @@ theorem ccArch_eq (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) 
     · rw [e]
     · rw [(infEmb_eq_or_conj h τ τ').resolve_left e]; rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem tensor_eq_infFin : tensor σ J fa ff = infFin σ J (tensorInf σ J fa) (tensorFin σ J ff) := by
   funext g
   simp [tensor, infFin, tensorInf, tensorFin]
@@ -158,16 +162,12 @@ theorem tensorInf_mem (h : ∀ w, fa w ∈ CcArch σ J w) : tensorInf σ J fa �
   by_contra hne
   exact hg fun w _ => subset_tsupport _ (Finset.prod_ne_zero_iff.1 hne w (Finset.mem_univ w))
 
-variable [Submodule.IsLattice E L]
+variable [Submodule.IsFullLattice E L]
 
 theorem unitLoc_mem (v : HeightOneSpectrum (𝓞 F)) : unitLoc σ J L v ∈ CcLoc σ J v :=
   indicator_mem_SB (isOpen_stabLoc σ J L v) (isCompact_stabLoc σ J L v)
 
 theorem isFinFamily_unit : IsFinFamily σ J L (unitLoc σ J L) := ⟨unitLoc_mem, .of_forall fun _ => rfl⟩
-
-theorem IsFinFamily.of_lattice (h : IsFinFamily σ J L ff) (L' : Submodule (𝓞 E) (Fin n → E))
-    [Submodule.IsLattice E L'] : IsFinFamily σ J L' ff :=
-  ⟨h.1, (h.2.and (eventually_stabLoc_eq σ J L L')).mono fun v hv => by rw [hv.1, unitLoc, unitLoc, hv.2]⟩
 
 theorem IsFinFamily.finite_mulSupport (h : IsFinFamily σ J L ff) (g : GFin σ J) :
     (Function.mulSupport fun v => ff v (projFinLoc σ J v g)).Finite :=
@@ -207,46 +207,9 @@ theorem IsFinFamily.tensorFin_mem (h : IsFinFamily σ J L ff) : tensorFin σ J f
 theorem tensor_mem_ccAd (ha : ∀ w, fa w ∈ CcArch σ J w) (hf : IsFinFamily σ J L ff) : tensor σ J fa ff ∈ CcAd σ J :=
   by rw [tensor_eq_infFin]; exact infFin_mem_ccAd (tensorInf_mem ha) hf.tensorFin_mem
 
-theorem IsPureTensor.mem_ccAd {f : GAd σ J → ℂ} (h : IsPureTensor σ J L f) : f ∈ CcAd σ J := by
-  obtain ⟨fa, ff, ha, hf, rfl⟩ := h
-  exact tensor_mem_ccAd ha hf
 
-theorem IsFinFamily.starFn_tensor (h : IsFinFamily σ J L ff) :
-    IsFinFamily σ J L (fun v => starFn (ff v)) ∧
-      starFn (tensor σ J fa ff) = tensor σ J (fun w => starFn (fa w)) fun v => starFn (ff v) := by
-  refine ⟨⟨fun v => starFn_mem_SB (h.1 v), h.2.mono fun v hv => funext fun g => ?_⟩, funext fun g => ?_⟩
-  · by_cases hg : g ∈ stabLoc σ J L v <;> simp [hv, starFn, unitLoc, indicator, hg]
-  · have := h.finite_mulSupport (projFin σ J g⁻¹)
-    simp only [projFinLoc_projFin, map_inv] at this
-    simp only [starFn, tensor, map_mul, map_prod, map_inv]
-    rw [map_finprod _ this]
-
-theorem integral_tensor {μa : ∀ w, Measure (GArch σ J w)} {μf : ∀ v, Measure (GLoc σ J v)} {μ : Measure (GAd σ J)}
-    (hμ : IsRestrictedProd σ J L μa μf μ) (ha : ∀ w, fa w ∈ CcArch σ J w) (hf : IsFinFamily σ J L ff) :
-    ∫ g, tensor σ J fa ff g ∂μ = (∏ w, ∫ y, fa w y ∂μa w) * ∏ᶠ v, ∫ y, ff v y ∂μf v := by
-  have := hμ.haar_arch
-  have := hμ.haar_loc
-  let S := (eventually_cofinite.1 (hf.2.and hμ.eventually_eq_one)).toFinset
-  have hS : ∀ v ∉ S, ff v = unitLoc σ J L v ∧ μf v (stabLoc σ J L v) = 1 := fun v hv => by
-    simpa only [S, Finite.mem_toFinset, mem_setOf_eq, not_not] using hv
-  rw [finprod_eq_prod_of_mulSupport_subset (s := S) _ fun v hv => by_contra fun h => hv (by
-    rw [(hS v h).1, unitLoc]
-    refine (integral_indicator_const _ (isOpen_stabLoc σ J L v).measurableSet).trans ?_
-    rw [Measure.real, (hS v h).2, ENNReal.toReal_one, one_smul]; rfl)]
-  exact (((hμ.euler_product S fun v hv => (hS v hv).2).1 fa ff fun w =>
-    (continuous_of_mem_ccSmooth (continuous_archCoord σ J w) (ha w)).integrable_of_hasCompactSupport (ha w).1).2.1
-    (fun v hv => (hS v hv).1) fun v _ => (hf.1 v).1.continuous.integrable_of_hasCompactSupport (hf.1 v).2).2
-
-variable (J L) in
-
-theorem exists_isPureTensor (h : IsCMExt F E σ) : ∃ f, IsPureTensor σ J L f ∧ f 1 = 1 := by
-  choose φ h1 h2 _ _ using fun w => exists_bump (isEmbedding_archMat J h (Classical.arbitrary (EmbOver E w))).isInducing
-    (g := 1) univ_mem
-  refine ⟨_, ⟨fun w x => φ w x, _, fun w => ccArch_eq h _ ▸ h1 w, isFinFamily_unit, rfl⟩, ?_⟩
-  simp [tensor, h2, unitLoc]
 
 variable (σ J L) in
-
 structure SplitAt (v : HeightOneSpectrum (𝓞 F)) where
 
   emb : E →ₐ[F] Fv F v
@@ -273,15 +236,12 @@ def IsUnif {v : HeightOneSpectrum (𝓞 F)} (ϖ : (Fv F v)ˣ) : Prop := Valued.v
 def strictTorus {k : Type} [Field k] (n : ℕ) (ϖ : kˣ) : Set (Fin n → kˣ) :=
   {t | ∃ a : Fin n → ℤ, StrictAnti a ∧ t = fun i => ϖ ^ a i}
 
-theorem strictTorus_nonempty {k : Type} [Field k] (n : ℕ) (ϖ : kˣ) : (strictTorus n ϖ).Nonempty :=
-  ⟨_, fun i => -(i : ℤ), fun _ _ h => neg_lt_neg (by exact_mod_cast h), rfl⟩
-
 theorem exists_isUnif (v : HeightOneSpectrum (𝓞 F)) : ∃ ϖ : (Fv F v)ˣ, IsUnif ϖ := by
   obtain ⟨p, hp⟩ := HeightOneSpectrum.valuedAdicCompletion_surjective F v (WithZero.exp (-1 : ℤ))
   exact ⟨Units.mk0 p fun e => WithZero.exp_ne_zero (hp.symm.trans ((congrArg _ e).trans (map_zero _))), hp⟩
 
-open ValuativeRel in
 
+open ValuativeRel in
 theorem IsUnif.valuation_eq {v : HeightOneSpectrum (𝓞 F)} {ϖ : (Fv F v)ˣ} (h : IsUnif ϖ) :
     letI := GlobalTheory.LocalData.complRel v
     haveI := GlobalTheory.LocalData.isLocalField v
@@ -305,7 +265,7 @@ theorem IsUnif.valuation_eq {v : HeightOneSpectrum (𝓞 F)} {ϖ : (Fv F v)ˣ} (
 
 namespace SplitAt
 
-omit [Submodule.IsLattice E L]
+omit [Submodule.IsFullLattice E L]
 
 variable {v : HeightOneSpectrum (𝓞 F)} (s : SplitAt σ J L v)
 
@@ -378,13 +338,10 @@ theorem isCompact_iwahori : IsCompact (s.iwahori : Set (GLoc σ J v)) :=
 theorem cosetFn_mem (t : Fin n → (Fv F v)ˣ) : s.cosetFn t ∈ CcLoc σ J v :=
   indicator_mem_SB s.isOpen_iwahori.mul_left ((s.isCompact_iwahori.mul isCompact_singleton).mul s.isCompact_iwahori)
 
-theorem cosetFn_diag (t : Fin n → (Fv F v)ˣ) : s.cosetFn t (s.diag t) = 1 :=
-  indicator_of_mem (DoubleCoset.mem_doubleCoset_self _ _ _) _
-
 variable {W : Type} [AddCommGroup W] [Module ℂ W] (μ : Measure (GLoc σ J v))
   (τ : Representation ℂ (GL (Fin n) (ResF v)) W)
 
-theorem idem_mem [Submodule.IsLattice E L] : s.idem μ τ ∈ CcLoc σ J v := by
+theorem idem_mem [Submodule.IsFullLattice E L] : s.idem μ τ ∈ CcLoc σ J v := by
   refine typeIdem_mem_SB μ _ τ (isOpen_stabLoc σ J L v) (isCompact_stabLoc σ J L v) ?_
   rw [show (s.red.ker : Set (stabLoc σ J L v)) = (↑) ⁻¹' (stabLocOne σ J s.emb L : Set (GLoc σ J v)) from
     Set.ext s.red_eq_one_iff]
@@ -394,8 +351,8 @@ theorem starFn_idem [FiniteDimensional ℂ W] : starFn (s.idem μ τ) = s.idem �
 
 end SplitAt
 
-variable (σ J L) in
 
+variable (σ J L) in
 structure TypeData where
 
   S : Finset (HeightOneSpectrum (𝓞 F))
@@ -413,8 +370,8 @@ structure TypeData where
 
 attribute [instance] TypeData.acg TypeData.mod TypeData.fd
 
-variable (σ J L) in
 
+variable (σ J L) in
 structure UnitaryAuxiliaryPlaceData where
 
   u : HeightOneSpectrum (𝓞 F)
@@ -441,13 +398,6 @@ section ArchFamily
 variable {Hs : InfinitePlace F → Type} [∀ w, NormedAddCommGroup (Hs w)] [∀ w, InnerProductSpace ℂ (Hs w)]
   [∀ w, CompleteSpace (Hs w)]
 
-def IsTestArch (Ψ : ∀ w : InfinitePlace F, EmbOver E w) (D : ∀ w, GArch σ J w →* (Hs w →L[ℂ] Hs w)) (μa : ∀ w, Measure (GArch σ J w))
-    (fa : ∀ w, GArch σ J w → ℂ) : Prop := ∀ w, IsPseudoCoeff (archMat σ J (Ψ w)) (μa w) (D w) (fa w)
-
-def IsTestFn (Ψ : ∀ w : InfinitePlace F, EmbOver E w) (D : ∀ w, GArch σ J w →* (Hs w →L[ℂ] Hs w)) (T : TypeData σ J L)
-    (U : UnitaryAuxiliaryPlaceData σ J L) (μa : ∀ w, Measure (GArch σ J w)) (μf : ∀ v, Measure (GLoc σ J v)) (f : GAd σ J → ℂ) : Prop :=
-  ∃ fa ff, IsTestArch Ψ D μa fa ∧ IsTestFin T U μf ff ∧ f = tensor σ J fa ff
-
 variable {Ψ : ∀ w : InfinitePlace F, EmbOver E w} {D : ∀ w, GArch σ J w →* (Hs w →L[ℂ] Hs w)} {T : TypeData σ J L} {U : UnitaryAuxiliaryPlaceData σ J L}
   {μa : ∀ w, Measure (GArch σ J w)} {μf : ∀ v, Measure (GLoc σ J v)}
 
@@ -462,35 +412,14 @@ theorem IsTestFin.isFinFamily (h : IsTestFin T U μf ff) : IsFinFamily σ J L ff
     · subst hu; exact h2 ▸ U.frame.cosetFn_mem t
     · exact h3 v hv hu
 
-theorem IsTestFn.isPureTensor {f : GAd σ J → ℂ} (h : IsTestFn Ψ D T U μa μf f) : IsPureTensor σ J L f := by
-  obtain ⟨fa, ff, ha, hf, rfl⟩ := h
-  exact ⟨fa, ff, fun w => ccArch_eq U.frame.cm (Ψ w) ▸ (ha w).mem, hf.isFinFamily, rfl⟩
-
-open Classical in
-omit [Submodule.IsLattice E L] in
-
-theorem exists_isTestFin (hu : U.u ∉ T.S) (μf : ∀ v, Measure (GLoc σ J v)) (h : ∀ v : T.S, GLoc σ J v → ℂ)
-    (hh : ∀ v : T.S, h v ∈ CcLoc σ J v) {t : Fin n → (Fv F U.u)ˣ} (ht : t ∈ strictTorus n U.ϖ)
-    {rest : ∀ v, GLoc σ J v → ℂ} (hr : IsFinFamily σ J L rest) :
-    ∃ ff, IsTestFin T U μf ff ∧ (∀ v : T.S, ff v = conv (μf v) (conv (μf v) (T.idem μf v) (h v)) (T.idem μf v)) ∧
-      ff U.u = U.frame.cosetFn t ∧ ∀ v ∉ T.S, v ≠ U.u → ff v = rest v := by
-  let ff : ∀ v, GLoc σ J v → ℂ := fun v =>
-    if hv : v ∈ T.S then conv (μf v) (conv (μf v) (T.idem μf ⟨v, hv⟩) (h ⟨v, hv⟩)) (T.idem μf ⟨v, hv⟩)
-    else Function.update rest U.u (U.frame.cosetFn t) v
-  have h1 : ∀ v : T.S, ff v = conv (μf v) (conv (μf v) (T.idem μf v) (h v)) (T.idem μf v) := fun v => dif_pos v.2
-  have h2 : ff U.u = U.frame.cosetFn t := (dif_neg hu).trans (Function.update_self ..)
-  have h3 : ∀ v ∉ T.S, v ≠ U.u → ff v = rest v := fun v hv hv' => (dif_neg hv).trans (Function.update_of_ne hv' ..)
-  refine ⟨ff, ⟨hu, fun v => ⟨_, hh v, h1 v⟩, ⟨t, ht, h2⟩, fun v hv hv' => h3 v hv hv' ▸ hr.1 v, ?_⟩, h1, h2, h3⟩
-  filter_upwards [hr.2, T.S.eventually_cofinite_notMem, eventually_cofinite_ne U.u] with v e hv hv'
-  rw [h3 v hv hv', e]
 
 end ArchFamily
 
 def transfer {n' : ℕ} {J' : Matrix (Fin n') (Fin n') E} (j : ∀ v, GLoc σ J v ≃ₜ* GLoc σ J' v)
     (ff : ∀ v, GLoc σ J v → ℂ) : ∀ v, GLoc σ J' v → ℂ := fun v => ff v ∘ (j v).symm
 
-omit [Submodule.IsLattice E L] in
 
+omit [Submodule.IsFullLattice E L] in
 theorem IsFinFamily.transfer {n' : ℕ} {J' : Matrix (Fin n') (Fin n') E} {L' : Submodule (𝓞 E) (Fin n' → E)}
     (h : IsFinFamily σ J L ff) (j : ∀ v, GLoc σ J v ≃ₜ* GLoc σ J' v)
     (hj : ∀ᶠ v in cofinite, ∀ g, j v g ∈ stabLoc σ J' L' v ↔ g ∈ stabLoc σ J L v) :
@@ -499,8 +428,8 @@ theorem IsFinFamily.transfer {n' : ℕ} {J' : Matrix (Fin n') (Fin n') E} {L' : 
   obtain ⟨g, rfl⟩ := (j v).surjective g
   by_cases hg : g ∈ stabLoc σ J L v <;> simp [Orb.transfer, hv.1, unitLoc, indicator, hv.2 g, hg]
 
-omit [Submodule.IsLattice E L] in
 
+omit [Submodule.IsFullLattice E L] in
 theorem exists_split_place_notMem (h : IsCMExt F E σ) (S : Finset (HeightOneSpectrum (𝓞 F))) :
     ∃ v ∉ S, Nonempty (E →ₐ[F] Fv F v) := by
   obtain ⟨a₀, ha₀, ha₁⟩ := exists_integer_conj_eq_neg h
@@ -549,91 +478,6 @@ theorem exists_auxiliaryPlace_not_mem_finset (h : IsCMExt F E σ) (hJ : IsHermND
   obtain ⟨ϖ, hϖ⟩ := exists_isUnif u
   exact ⟨⟨u, ⟨τ, β, h, hJ, hL u, hβ⟩, ϖ, hϖ⟩, hu⟩
 
-theorem exists_testData (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : ∀ v, IsSelfDualAt σ J L v)
-    (μf : ∀ v, Measure (GLoc σ J v)) :
-    ∃ (T : TypeData σ J L) (U : UnitaryAuxiliaryPlaceData σ J L) (ff : ∀ v, GLoc σ J v → ℂ), T.S.Nonempty ∧ IsTestFin T U μf ff := by
-  obtain ⟨U₀, -⟩ := exists_auxiliaryPlace_not_mem_finset h hJ hL ∅
-  obtain ⟨U, hU⟩ := exists_auxiliaryPlace_not_mem_finset h hJ hL {U₀.u}
-  let T : TypeData σ J L :=
-    { S := {U₀.u}
-      frame := fun v => (Finset.mem_singleton.1 v.2).symm ▸ U₀.frame
-      W := fun _ => ℂ
-      τ := fun _ => GlobalTheory.SmGL.ofChar 1
-      irred := fun _ => GlobalTheory.SmGL.isIrreducible_ofChar 1 }
-  obtain ⟨t, ht⟩ := strictTorus_nonempty n U.ϖ
-  obtain ⟨ff, hff, -⟩ := exists_isTestFin (T := T) hU μf (fun v => unitLoc σ J L v) (fun v => unitLoc_mem v.1) ht isFinFamily_unit
-  exact ⟨T, U, ff, Finset.singleton_nonempty _, hff⟩
-
-theorem exists_isTestFn_ne_zero (h : IsCMExt F E σ) (μa : ∀ w, Measure (GArch σ (1 : Matrix (Fin n) (Fin n) E) w))
-    (μf : ∀ v, Measure (GLoc σ (1 : Matrix (Fin n) (Fin n) E) v)) [∀ w, (μa w).IsHaarMeasure]
-    [∀ v, (μf v).IsHaarMeasure] (Ψ : ∀ w : InfinitePlace F, EmbOver E w) :
-    ∃ (T : TypeData σ 1 (stdLattice E n)) (U : UnitaryAuxiliaryPlaceData σ 1 (stdLattice E n)) (f : GAd σ 1 → ℂ), T.S.Nonempty ∧
-      IsTestFn Ψ (fun _ => charRep 1) T U μa μf f ∧ f ≠ 0 := by
-  have := isLattice_stdLattice (E := E) (n := n)
-  have hJ := isHermND_one σ n
-  have hL := isSelfDualAt_stdLattice_one (n := n) σ
-  obtain ⟨U₀, -⟩ := exists_auxiliaryPlace_not_mem_finset h hJ hL ∅
-  obtain ⟨U, hU⟩ := exists_auxiliaryPlace_not_mem_finset h hJ hL {U₀.u}
-  let T : TypeData σ 1 (stdLattice E n) :=
-    { S := {U₀.u}
-      frame := fun v => (Finset.mem_singleton.1 v.2).symm ▸ U₀.frame
-      W := fun _ => ℂ
-      τ := fun _ => GlobalTheory.SmGL.ofChar 1
-      irred := fun _ => GlobalTheory.SmGL.isIrreducible_ofChar 1 }
-  obtain ⟨t, ht⟩ := strictTorus_nonempty n U.ϖ
-  obtain ⟨ff, hff, h1, h2, h3⟩ := exists_isTestFin (T := T) hU μf (fun v => unitLoc σ 1 (stdLattice E n) v)
-    (fun v => unitLoc_mem v.1) ht isFinFamily_unit
-  have hc : ∀ w, CompactSpace (GArch σ (1 : Matrix (Fin n) (Fin n) E) w) := fun w => ⟨by
-    rw [(isEmbedding_matHom _ σ _).isCompact_iff]
-    convert Frames.isCompact_UJ_one (n := n) h w using 1
-    have e : JR (F := F) w.Completion (1 : Matrix (Fin n) (Fin n) E) = 1 := by simp [JR]
-    ext x
-    exact ⟨fun ⟨g, _, hg⟩ => hg ▸ e ▸ g.2, fun hx => ⟨(⟨x, (e.symm ▸ hx :)⟩ : HR _ σ 1), trivial, rfl⟩⟩⟩
-  refine ⟨T, U, _, Finset.singleton_nonempty _, ⟨_, ff, fun w => isPseudoCoeff_char (χ := 1)
-    (continuous_archMat σ _ _) ⟨(isClosed_tsupport _).isCompact, fun _ => 1, contDiff_const, fun _ => by simp⟩,
-    hff, rfl⟩, fun h0 => ?_⟩
-  have hvol : ∀ v, ((μf v).real (stabLoc σ 1 (stdLattice E n) v) : ℂ) ≠ 0 := fun v => by
-    exact_mod_cast ENNReal.toReal_ne_zero.2 ⟨((isOpen_stabLoc σ 1 _ v).measure_pos _ ⟨1, one_mem _⟩).ne',
-      (isCompact_stabLoc σ 1 _ v).measure_ne_top⟩
-  have hconv : ∀ v (a b : ℂ), conv (μf v) (a • unitLoc σ 1 (stdLattice E n) v) (b • unitLoc σ 1 (stdLattice E n) v) =
-      (a * b * (μf v).real (stabLoc σ 1 (stdLattice E n) v)) • unitLoc σ 1 (stdLattice E n) v := fun v a b => by
-    funext y
-    have : ∀ x, (a • unitLoc σ 1 (stdLattice E n) v) x * (b • unitLoc σ 1 (stdLattice E n) v) (x⁻¹ * y) =
-        (stabLoc σ 1 (stdLattice E n) v : Set _).indicator (fun _ => a * b * unitLoc σ 1 (stdLattice E n) v y) x :=
-      fun x => by
-        by_cases hx : x ∈ stabLoc σ 1 (stdLattice E n) v
-        · by_cases hy : y ∈ stabLoc σ 1 (stdLattice E n) v <;>
-            simp [unitLoc, hx, hy, Subgroup.mul_mem_cancel_left _ (inv_mem hx)]
-        · simp [unitLoc, hx]
-    rw [conv, integral_congr_ae (.of_forall this), integral_indicator_const _ (isOpen_stabLoc σ 1 _ v).measurableSet]
-    simp only [Complex.real_smul, Pi.smul_apply, smul_eq_mul]
-    ring
-  have hid : ∀ v : T.S, T.idem μf v =
-      ((μf v).real (stabLoc σ 1 (stdLattice E n) v) : ℂ)⁻¹ • unitLoc σ 1 (stdLattice E n) v := fun v => by
-    funext g
-    by_cases hg : g ∈ stabLoc σ 1 (stdLattice E n) v
-    · refine (typeIdem_coe _ _ _ ⟨g, hg⟩).trans ?_
-      have : ∀ q, (T.τ v).character q = 1 := fun q => by
-        rw [Representation.character, show T.τ v q = LinearMap.id from LinearMap.ext fun x => one_mul x]
-        simp [T]
-      simp [this, unitLoc, hg, T]
-    · exact (typeIdem_of_notMem _ _ _ hg).trans (by simp [unitLoc, hg])
-  have h4 := congrFun h0 (emb σ 1 U.u (U.frame.diag t))
-  rw [tensor_eq_infFin] at h4
-  refine mul_ne_zero (Finset.prod_ne_zero_iff.2 fun w _ => div_ne_zero (by simp) ?_)
-    ((hff.isFinFamily.tensorFin_ne_zero_iff _).2 fun v => ?_) h4
-  · exact_mod_cast ENNReal.toReal_ne_zero.2 ⟨(isOpen_univ.measure_pos _ univ_nonempty).ne', measure_ne_top _ _⟩
-  · rw [projFinLoc_projFin]
-    by_cases hu : v = U.u
-    · subst hu
-      rw [proj_emb_self, h2, SplitAt.cosetFn_diag]
-      exact one_ne_zero
-    · rw [proj_emb_ne σ 1 hu]
-      by_cases hv : v ∈ T.S
-      · rw [h1 ⟨v, hv⟩, hid, ← one_smul ℂ (unitLoc σ 1 (stdLattice E n) v), smul_smul, hconv, hconv]
-        simp [unitLoc, hvol]
-      · simp [h3 v hv hu, unitLoc]
-
 section Cent
 
 def centMap {H H' : Type} [Group H] [Group H'] (φ : H →* H') (γ : H) : cent γ →* cent (φ γ) :=
@@ -641,15 +485,15 @@ def centMap {H H' : Type} [Group H] [Group H'] (φ : H →* H') (γ : H) : cent 
     change φ t * φ γ = φ γ * φ t
     rw [← map_mul, ← map_mul, mem_cent.1 t.2])
 
-variable (L) in
 
+variable (L) in
 def IsCentProd (γ : GAd σ J) (dta : ∀ w, Measure (cent (projArch σ J w γ))) (dtf : ∀ v, Measure (cent (proj σ J v γ)))
     (dt : Measure (cent γ)) : Prop :=
   GlobalTheory.RestrMeas.IsHaarProd (fun w => centMap (projArch σ J w) γ) (fun v => centMap (proj σ J v) γ)
     (fun v => (stabLoc σ J L v).subgroupOf (cent (proj σ J v γ))) dta dtf dt
 
-variable (L) in
 
+variable (L) in
 theorem restrGroup_cent (γ : GAd σ J) :
     GlobalTheory.RestrMeas.IsRestrGroup (fun w => centMap (projArch σ J w) γ) (fun v => centMap (proj σ J v) γ)
       fun v => (stabLoc σ J L v).subgroupOf (cent (proj σ J v γ)) := by
@@ -717,7 +561,8 @@ variable {D : D7} (V : HSp D)
 theorem isHermND_gram : IsHermND D.sp.cm.sig V.gram :=
   ⟨fun i j => V.herm.eq (V.frame j) (V.frame i), (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit V).ne_zero⟩
 
-instance isLattice_frameLat : Submodule.IsLattice D.host.E (frameLat V) := SelfDual.isLattice_frameLat V
+instance isLattice_frameLat : Submodule.IsFullLattice D.host.E (frameLat V) :=
+  SelfDual.isLattice_frameLat V
 
 abbrev CcGA : Submodule ℂ (GA D V → ℂ) := CcAd D.sp.cm.sig V.gram
 
@@ -727,16 +572,6 @@ abbrev AuxiliaryPlaceHermitianSpace : Type := UnitaryAuxiliaryPlaceData D.sp.cm.
 
 abbrev matAt (ρ : D.what₂.Tau) : GArch D.sp.cm.sig V.gram (placeOf D ρ) →* Matrix (Fin V.rank) (Fin V.rank) ℂ :=
   archMat D.sp.cm.sig V.gram (embOverOf D ρ)
-
-theorem exists_splitAt {v : HeightOneSpectrum (𝓞 D.host.F)} (τ : D.host.E →ₐ[D.host.F] Fv D.host.F v) :
-    ∃ s : SplitAt D.sp.cm.sig V.gram (frameLat V) v, s.emb = τ := by
-  obtain ⟨β, hβ⟩ := exists_isSplitBasis τ (frameLat V) (isCMExt_host D)
-  exact ⟨⟨τ, β, isCMExt_host D, isHermND_gram V, SelfDual.isSelfDualAt_frameLat D V v, hβ⟩, rfl⟩
-
-theorem exists_testDataG (μf : ∀ v, Measure (GLoc D.sp.cm.sig V.gram v)) :
-    ∃ (T : TypeDataG V) (U : AuxiliaryPlaceHermitianSpace V) (ff : ∀ v, GLoc D.sp.cm.sig V.gram v → ℂ),
-      T.S.Nonempty ∧ IsTestFin T U μf ff :=
-  exists_testData (isCMExt_host D) (isHermND_gram V) (SelfDual.isSelfDualAt_frameLat D V) μf
 
 variable {V} {S : D.what₂.Tau → SPar} (M : DSModel V S)
 
@@ -765,9 +600,6 @@ theorem frameMat_mem (ρ : D.what₂.Tau) (g : GArch D.sp.cm.sig V.gram (placeOf
 
 def dsRep (ρ : D.what₂.Tau) : GArch D.sp.cm.sig V.gram (placeOf D ρ) →* (M.H ρ →L[ℂ] M.H ρ) :=
   repVia (M.ds ρ).2.2.1 (frameMat M ρ) (frameMat_mem M ρ)
-
-theorem dsRep_apply (ρ : D.what₂.Tau) (g : GArch D.sp.cm.sig V.gram (placeOf D ρ)) :
-    dsRep M ρ g = M.rep ρ (matAt V ρ g) := rfl
 
 theorem isUnitaryRep_dsRep (ρ : D.what₂.Tau) : IsUnitaryRep (dsRep M ρ) :=
   isUnitaryRep_repVia _ _ ((continuous_const.mul (continuous_archMat _ _ _)).mul continuous_const)
@@ -804,23 +636,5 @@ theorem IsTestFnG.isPureTensor {T : TypeDataG V} {U : AuxiliaryPlaceHermitianSpa
 
 end Record
 
-omit [Submodule.IsLattice E L] in
-
-example {v : HeightOneSpectrum (𝓞 F)} {ϖ : (Fv F v)ˣ} (h : IsUnif ϖ) :
-    ![ϖ, 1] ∈ strictTorus 2 ϖ ∧ ![1, ϖ] ∉ strictTorus 2 ϖ := by
-  refine ⟨⟨![1, 0], Fin.strictAnti_iff_succ_lt.2 fun i => by fin_cases i; simp, funext fun i => by fin_cases i <;> simp⟩,
-    fun ⟨a, ha, e⟩ => ?_⟩
-  have key : ∀ m : ℤ, Valued.v ((ϖ ^ m : (Fv F v)ˣ) : Fv F v) = WithZero.exp (-m) := fun m => by
-    rw [Units.val_zpow_eq_zpow_val, map_zpow₀, h, ← WithZero.exp_zsmul]; simp
-  have h0 := key (a 0)
-  have h1 := key (a 1)
-  rw [← show (1 : (Fv F v)ˣ) = ϖ ^ a 0 from congrFun e 0, Units.val_one, map_one, ← WithZero.exp_zero,
-    WithZero.exp_inj] at h0
-  rw [← show ϖ = ϖ ^ a 1 from congrFun e 1, h, WithZero.exp_inj] at h1
-  have := ha (show (0 : Fin 2) < 1 by decide)
-  omega
-
-example (g : GFin σ J) : tensorFin σ J (unitLoc σ J L) g ≠ 0 ↔ g ∈ levelOffFin σ J L ∅ := by
-  simp [isFinFamily_unit.tensorFin_ne_zero_iff, unitLoc, mem_levelOffFin]
 
 end GlobalTheory.Orb

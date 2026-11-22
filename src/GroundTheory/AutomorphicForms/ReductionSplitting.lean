@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionMahler
-import GroundTheory.PowerSubgroups.CountableNeighbourhoods.GLnPowerSubgroups
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionMahler
+public import GroundTheory.PowerSubgroups.CountableNeighbourhoods.GLnPowerSubgroups
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix MeasureTheory
 open scoped NumberField.AdeleRing RestrictedProduct ENNReal
@@ -22,8 +26,8 @@ def rpowHom (e : ℝ) : {r : ℝ // 0 < r} →* {r : ℝ // 0 < r} where
 theorem continuous_rpowHom (e : ℝ) : Continuous (rpowHom e) :=
   (continuous_subtype_val.rpow_const fun s => Or.inl s.2.ne').subtype_mk _
 
-variable (K) in
 
+variable (K) in
 def posIdeleHom : {r : ℝ // 0 < r} →* IdeleGroup K where
   toFun s := posIdele s.1 s.2
   map_one' := by
@@ -44,8 +48,8 @@ theorem posIdeleHom_apply (s : {r : ℝ // 0 < r}) : posIdeleHom K s = posIdele 
 theorem continuous_posIdeleHom : Continuous (posIdeleHom K) :=
   continuous_posIdele_subtype
 
-variable (K n) in
 
+variable (K n) in
 def scalarUnits : IdeleGroup K →* AdelicGLn.AdelicGL K n :=
   (diagUnits n).comp
     { toFun := fun u _ => u, map_one' := rfl, map_mul' := fun _ _ => rfl }
@@ -62,8 +66,8 @@ theorem scalarUnits_mul_comm (u : IdeleGroup K) (g : AdelicGLn.AdelicGL K n) :
   ext i j
   rw [Matrix.diagonal_mul, Matrix.mul_diagonal, mul_comm]
 
-variable (K) in
 
+variable (K) in
 def centralSection (n : ℕ) : {r : ℝ // 0 < r} →* AdelicGLn.AdelicGL K n :=
   (scalarUnits K n).comp ((posIdeleHom K).comp (rpowHom ((n * Module.finrank ℚ K : ℝ))⁻¹))
 
@@ -74,8 +78,8 @@ theorem centralSection_mul_comm (s : {r : ℝ // 0 < r}) (g : AdelicGLn.AdelicGL
     centralSection K n s * g = g * centralSection K n s :=
   scalarUnits_mul_comm _ g
 
-variable (K n) in
 
+variable (K n) in
 def detModule : AdelicGLn.AdelicGL K n →* {r : ℝ // 0 < r} :=
   (ideleModule K).comp (AdelicGLn.det K n)
 
@@ -83,7 +87,7 @@ theorem continuous_detModule : Continuous (detModule K n) :=
   continuous_ideleModule.comp (AdelicGLn.continuous_det K n)
 
 theorem mem_normOneGL_iff_detModule {g : AdelicGLn.AdelicGL K n} :
-    g ∈ normOneGL K n ↔ detModule K n g = 1 := by
+    g ∈ normOneGL (K := K) (n := n) ↔ detModule K n g = 1 := by
   rw [mem_normOneGL]
   exact ⟨fun h => Subtype.ext (h.trans Positive.val_one.symm),
     fun h => (congrArg Subtype.val h).trans Positive.val_one⟩
@@ -106,37 +110,33 @@ theorem detModule_centralSection (hn : 0 < n) (s : {r : ℝ // 0 < r}) :
     push_cast; field_simp, Real.rpow_one]
 
 def glNormOneSplitting (hn : 0 < n) :
-    AdelicGLn.AdelicGL K n ≃ₜ* normOneGL K n × {r : ℝ // 0 < r} :=
+    AdelicGLn.AdelicGL K n ≃ₜ* normOneGL (K := K) (n := n) × {r : ℝ // 0 < r} :=
   GroundTheory.Variant₂.N1.centralSplitting (detModule K n) continuous_detModule (centralSection K n)
-    continuous_centralSection (detModule_centralSection hn) centralSection_mul_comm (normOneGL K n)
+    continuous_centralSection (detModule_centralSection hn) centralSection_mul_comm (normOneGL (K := K) (n := n))
     (fun _ => mem_normOneGL_iff_detModule)
-
-@[simp] theorem glNormOneSplitting_symm_apply (hn : 0 < n) (p : normOneGL K n × {r : ℝ // 0 < r}) :
-    (glNormOneSplitting (K := K) hn).symm p = (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2 := by
-  rfl
 
 theorem exists_measure_eq_mul_measure_image (hn : 0 < n)
     [SecondCountableTopology (AdelicGLn.AdelicGL K n)] [MeasurableSpace (AdelicGLn.AdelicGL K n)]
     [BorelSpace (AdelicGLn.AdelicGL K n)]
-    (μ₁ : Measure (normOneGL K n)) [μ₁.IsHaarMeasure]
+    (μ₁ : Measure (normOneGL (K := K) (n := n))) [μ₁.IsHaarMeasure]
     (μ : Measure (AdelicGLn.AdelicGL K n)) [μ.IsHaarMeasure] :
-    ∃ c : ℝ≥0∞, c ≠ ⊤ ∧ ∀ E : Set (normOneGL K n), MeasurableSet E →
-      μ₁ E = c * μ ((fun p : normOneGL K n × {r : ℝ // 0 < r} =>
+    ∃ c : ℝ≥0∞, c ≠ ⊤ ∧ ∀ E : Set (normOneGL (K := K) (n := n)), MeasurableSet E →
+      μ₁ E = c * μ ((fun p : normOneGL (K := K) (n := n) × {r : ℝ // 0 < r} =>
         (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2) '' (E ×ˢ posRealUnitInterval)) := by
-  have : SecondCountableTopology (normOneGL K n) :=
+  have : SecondCountableTopology (normOneGL (K := K) (n := n)) :=
     TopologicalSpace.Subtype.secondCountableTopology _
-  set Φ : AdelicGLn.AdelicGL K n ≃ₜ* normOneGL K n × {r : ℝ // 0 < r} :=
+  set Φ : AdelicGLn.AdelicGL K n ≃ₜ* normOneGL (K := K) (n := n) × {r : ℝ // 0 < r} :=
     GroundTheory.Variant₂.N1.centralSplitting (detModule K n) continuous_detModule (centralSection K n)
       continuous_centralSection (detModule_centralSection hn) centralSection_mul_comm
-      (normOneGL K n) (fun _ => mem_normOneGL_iff_detModule) with hΦ
-  have hΦs : ∀ p : normOneGL K n × {r : ℝ // 0 < r},
+      (normOneGL (K := K) (n := n)) (fun _ => mem_normOneGL_iff_detModule) with hΦ
+  have hΦs : ∀ p : normOneGL (K := K) (n := n) × {r : ℝ // 0 < r},
       Φ.symm p = (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2 := fun p => rfl
-  have hΦm : Measurable (Φ : AdelicGLn.AdelicGL K n → normOneGL K n × {r : ℝ // 0 < r}) :=
+  have hΦm : Measurable (Φ : AdelicGLn.AdelicGL K n → normOneGL (K := K) (n := n) × {r : ℝ // 0 < r}) :=
     Φ.continuous.measurable
-  set lam : Measure (normOneGL K n × {r : ℝ // 0 < r}) := μ.map Φ with hlam
+  set lam : Measure (normOneGL (K := K) (n := n) × {r : ℝ // 0 < r}) := μ.map Φ with hlam
   have hlamH : lam.IsHaarMeasure := ContinuousMulEquiv.isHaarMeasure_map μ Φ
   have hν : posRealMeasure posRealUnitInterval = 1 := posRealMeasure_posRealUnitInterval
-  set ρ : Measure (normOneGL K n) :=
+  set ρ : Measure (normOneGL (K := K) (n := n)) :=
     Measure.map Prod.fst (lam.restrict (Set.univ ×ˢ posRealUnitInterval)) with hρ
   have hρH : ρ.IsHaarMeasure := isHaarMeasure_map_fst_restrict lam posRealMeasure hν
   have hμ₁ : μ₁ = Measure.haarScalarFactor μ₁ ρ • ρ := Measure.isMulLeftInvariant_eq_smul μ₁ ρ
@@ -150,7 +150,7 @@ theorem exists_measure_eq_mul_measure_image (hn : 0 < n)
       simp [and_comm]
     · exact (measurable_fst hE).inter (MeasurableSet.univ.prod hS)
   have himg : Φ ⁻¹' (E ×ˢ posRealUnitInterval) =
-      (fun p : normOneGL K n × {r : ℝ // 0 < r} =>
+      (fun p : normOneGL (K := K) (n := n) × {r : ℝ // 0 < r} =>
         (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2) '' (E ×ˢ posRealUnitInterval) := by
     ext g
     constructor
@@ -161,7 +161,7 @@ theorem exists_measure_eq_mul_measure_image (hn : 0 < n)
       rw [← hΦs p, ContinuousMulEquiv.apply_symm_apply]
       exact hp
   have h1 : μ₁ E = (Measure.haarScalarFactor μ₁ ρ • ρ) E :=
-    congrArg (fun m : Measure (normOneGL K n) => m E) hμ₁
+    congrArg (fun m : Measure (normOneGL (K := K) (n := n)) => m E) hμ₁
   rw [h1, Measure.smul_apply, hρE, himg, ENNReal.smul_def, smul_eq_mul]
 
 end Reduction

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Lap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SobolevOperatorFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionNormBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,14 +51,9 @@ theorem Lap_add {f f' : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n)) (hf' : 
 theorem Lap_post (A : V →L[ℂ] V) {f : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n)) :
     Set.EqOn (Lap fun y => A (f y)) (fun y => A (Lap f y)) (GLs n) := by
   intro g hg
-  simp only [Lap_eq, map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Lap_eq, map_neg, map_sum]
   exact congrArg Neg.neg (Finset.sum_congr rfl fun p _ => Rw_post [p, p] A hf hg)
-
-theorem iter_smooth (j : ℕ) {f : Mat n → V} (hf : ContDiffOn ℝ ∞ f (GLs n)) :
-    ContDiffOn ℝ ∞ (Lap^[j] f) (GLs n) := by
-  induction j generalizing f with
-  | zero => exact hf
-  | succ j ih => exact ih (Lap_smooth hf)
 
 theorem iter_congr (j : ℕ) {f f' : Mat n → V} (e : Set.EqOn f f' (GLs n)) :
     Set.EqOn (Lap^[j] f) (Lap^[j] f') (GLs n) := by
@@ -98,7 +97,7 @@ theorem om_mem (hR : RCalc) (E : KMod n) {f : Mat n → E.V} (hf : f ∈ CE E) :
   have h1 := (hR n).2.1 E f hf true 2
   have h2 := (hR n).2.1 E f hf false 2
   refine ⟨Om_smooth hf.1, fun g hg k => ?_⟩
-  simp only [Om, Pi.smul_apply, Pi.add_apply, h1.2 g hg k, h2.2 g hg k, map_add, map_smul]
+  simp only [Om, Pi.smul_apply, Pi.add_apply, h1.2 g hg k, h2.2 g hg k, map_add (f := _), map_smul]
 
 theorem strong [MeasurableSpace (G n)] (μ : Measure (G n)) (E : KMod n) (Q : E.V →L[ℂ] E.V) (hR : RCalc)
     (hL : ∀ f ∈ CE E, ∀ g ∈ GLs n, Lap f g = -Om f g + Q (f g)) (j : ℕ) :

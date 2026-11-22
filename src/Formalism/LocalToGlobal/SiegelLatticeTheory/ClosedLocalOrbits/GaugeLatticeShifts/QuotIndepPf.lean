@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.QuotIndepStmt
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.QuotIndepStmt
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.WeilIndicatorMeasures.MeasurableUnitMulIndicator
+
+@[expose] public section
 
 open MeasureTheory Measure
 open scoped ENNReal
@@ -39,12 +43,12 @@ lemma lintegral_eq_bruhat (S : Subgroup G) (μS : Measure S) (μ ν : Measure G)
 
 end QuotIndepPf
 
-open QuotIndepPf in
 
+open QuotIndepPf in
 theorem quotIndep : QuotIndep := by
   intro G _ _ _ _ _ _ _ _ S hS μS _ _ _ _ _ μ ν₁ ν₂ h₁ h₂ f hf hinv
-  obtain ⟨b, hbm, hb1⟩ := exists_bruhat S hS μS
-  rw [lintegral_eq_bruhat S μS μ ν₁ b hbm hb1 h₁ f hf hinv,
-    lintegral_eq_bruhat S μS μ ν₂ b hbm hb1 h₂ f hf hinv]
+  obtain ⟨b, hbm, hb1⟩ := QuotIndepPf.exists_bruhat S hS μS
+  rw [QuotIndepPf.lintegral_eq_bruhat S μS μ ν₁ b hbm hb1 h₁ f hf hinv,
+    QuotIndepPf.lintegral_eq_bruhat S μS μ ν₂ b hbm hb1 h₂ f hf hinv]
 
 end Formalism.L2.SG.Pf.QuotIndep

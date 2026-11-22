@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffSubstSumLPowPowMvPowerSeriesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TwoMulChainStartIndexAddOneOfOdd
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CoeffSubstSumLPowPowMvPowerSeriesStatement
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds GlobalTheory.MainTerm Classical
 
@@ -17,7 +21,8 @@ theorem linPull_coords : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) (I J : Ty
     intro F; subst hf; rfl
   have hf0 : ∀ x, MvPowerSeries.constantCoeff (f x) = 0 := by
     intro x
-    simp [hf, map_sum, MvPowerSeries.smul_eq_C_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hf, map_sum, MvPowerSeries.smul_eq_C_mul]
   have hsub : MvPowerSeries.HasSubst f := MvPowerSeries.hasSubst_of_constantCoeff_zero hf0
   have hl : 2 ≤ V.l := V.l_prime.two_le
   have hal' : ∀ c s x, S.al c s x = ∑ b', al c s b' * S.tan b' x := by
@@ -43,7 +48,8 @@ theorem linPull_coords : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) (I J : Ty
         (fun μ' => by rw [MvPowerSeries.coeff_X, ht.2 x μ']) μ
       rw [MvPowerSeries.subst_X hsub] at h
       have eL : MvPowerSeries.coeff μ (f x) = ∑ b', Zf b' * S.tan b' x := by
-        simp only [hf, hZ, map_sum, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_C_mul, he,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hf, hZ, map_sum, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_C_mul, he,
           Finset.sum_mul]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun b' _ => Finset.sum_congr rfl fun j _ => ?_

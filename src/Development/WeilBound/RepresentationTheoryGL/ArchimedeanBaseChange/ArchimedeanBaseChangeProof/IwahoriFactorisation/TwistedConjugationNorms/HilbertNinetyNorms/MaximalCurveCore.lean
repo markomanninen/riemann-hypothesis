@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.HilbertNinetyNorms.DiagonalConjDistinctValuationsEq
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemCentIffTwConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.HilbertNinetyNorms.DiagonalConjDistinctValuationsEq
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemCentIffTwConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,14 +107,6 @@ theorem ordL_eq_neg_log' (y : L) : ordL y = -WithZero.log (Valued.v y) := by
     rfl
 
 theorem v_ne_zero' {y : L} (hy : y ≠ 0) : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
-
-theorem log_v_pow_mul (ϖ u : Lˣ) (hϖ : ordL (ϖ : L) = 1) (hu : Valued.v (u : L) = 1) (k : ℤ) :
-    WithZero.log (Valued.v (((ϖ ^ k * u : Lˣ)) : L)) = -k := by
-  have hϖ' : WithZero.log (Valued.v (ϖ : L)) = -1 := by rw [ordL_eq_neg_log'] at hϖ; omega
-  rw [Units.val_mul, Units.val_zpow_eq_zpow_val, map_mul, map_zpow₀,
-    WithZero.log_mul (zpow_ne_zero _ (v_ne_zero' ϖ.ne_zero)) (by rw [hu]; exact one_ne_zero), WithZero.log_zpow, hu,
-    WithZero.log_one, hϖ', smul_eq_mul]
-  ring
 
 end Val
 
@@ -226,12 +222,11 @@ theorem le_and_half_le_prod_one_sub_exp_neg_of_bounds (hU : Unr E) (w : Pl E) (h
     rw [thL_diagT w hw, ← map_mul, ← map_mul]
     congr 1
     funext i
-    simp only [Pi.mul_apply, map_zpow, hϖc, ← _root_.zpow_neg]
     have hki : -k i.rev = k i := by
       have := hη i
       simp only [hk]
       linarith
-    rw [hki, mul_comm]
+    simp only [Pi.mul_apply, map_zpow, hϖc, ← _root_.zpow_neg, hki, mul_comm]
   · refine ⟨fun i j hij => by rw [diagT_val_apply, if_neg hij], fun i => ?_⟩
     rw [diagT_val_apply, if_pos rfl]
     have hl : WithZero.log (Valued.v (((η i * ϖ ^ (-k i)) : (w.adicCompletion E)ˣ) : w.adicCompletion E)) = 0 := by

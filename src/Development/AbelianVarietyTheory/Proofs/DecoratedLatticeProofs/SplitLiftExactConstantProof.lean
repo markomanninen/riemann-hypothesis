@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedThetaLiftCommutesSplitPlaceOperators
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LinearModelSplitPlaceCharacterEquivarianceStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KernelsCommuteExplicitConstStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.DoubleCollapse
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RamifiedThetaLiftCommutesSplitPlaceOperators
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LinearModelSplitPlaceCharacterEquivarianceStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.KernelsCommuteExplicitConstStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil ValuativeRel IsLocalRing MeasureTheory
 
 noncomputable section
@@ -30,8 +35,8 @@ end GlobalTheory.FinPl.LiftExactPf
 
 namespace GlobalTheory.FinPl
 
-open GlobalTheory.FinPl.LiftRam GlobalTheory.FinPl.LiftExactPf in
 
+open GlobalTheory.FinPl.LiftRam GlobalTheory.FinPl.LiftExactPf in
 theorem liftExact : ∀ D : D7, GlobalTheory.FinPl.LiftExact D := by
   intro D k _ _ _ _ p q χ hχ
   refine ⟨-1, Or.inr rfl, ?_⟩
@@ -77,7 +82,7 @@ theorem liftExact : ∀ D : D7, GlobalTheory.FinPl.LiftExact D := by
         exact integral_const_mul a _)
       (fun v Ψ₁ Ψ₂ => by
         funext h
-        simp only [liftT_apply, Pi.add_apply, hFadd, map_add, add_mul]
+        simp only [liftT_apply, Pi.add_apply, hFadd, map_add (f := _), add_mul]
         exact integral_add (hint v Ψ₁ h) (hint v Ψ₂ h))
       (fun a v Ψ => by
         funext h

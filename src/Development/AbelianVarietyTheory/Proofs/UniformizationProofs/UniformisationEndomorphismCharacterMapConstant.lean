@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceThickening
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UnifPreCharacterGroupIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceThickening
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
@@ -54,8 +59,8 @@ theorem acts_unique [IsAdicComplete I R] (g : GtCoord I D e G)
   simp only [Category.id_comp] at k
   exact (k _).symm.trans (((h _ _ z J hJ c x).symm.trans (h' _ _ z J hJ c x)).trans (k _))
 
-omit [IsDomain R] [GrpObj G] [IsCommMonObj G] in
 
+omit [IsDomain R] [GrpObj G] [IsCommMonObj G] in
 theorem thickMap_comm (aG : G ⟶ G) (e : ℕ) :
     thickMap R I e G ≫ ((Over.pullback (thick R I (e + 1))).map aG).left =
       ((Over.pullback (thick R I e)).map aG).left ≫ thickMap R I e G := by
@@ -85,8 +90,8 @@ theorem acts_down {D : DegData R I} {A : PolAV (Spec (CommRingCat.of (FractionRi
 
 end EndConst
 
-open EndConst in
 
+open EndConst in
 theorem unifPre_end_character_const : LL → ∀ (R : Type) [CommRing R] [IsDomain R] (I : Ideal R), AdmBase R I → ∀ (D : DegData R I) (A : PolAV (Spec (CommRingCat.of (FractionRing R)))) (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G] (U : UnifPre I D A G) (aG : G ⟶ G), IsMonHom aG → ∃ h : D.toPre.X →+ D.toPre.X, ∀ e, ∃ t : splitTorus (Spec (CommRingCat.of (R ⧸ I ^ (e + 1)))) D.toPre.X ⟶ splitTorus _ D.toPre.X, TorusEndOf D.toPre.X h t ∧ (U.gt e).i ≫ (Over.pullback (thick R I e)).map aG = t ≫ (U.gt e).i := by
   intro hL R _ _ I hR D A G _ _ U aG haG
   have ex := fun e => (gtCoord_end_torus_abelian hL R I hR D.toPre e G (U.gt e)

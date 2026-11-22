@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCodimOneUniformiser
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppAC
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalCodimOneUniformiser
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppAC
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -35,7 +40,7 @@ theorem isDiscreteValuationRing_localization_of_height_eq_one {A : Type*} [CommR
     exact IsLocalRing.eq_maximalIdeal (this.isMaximal_of_ne_bot hP.1)
   have h3 : IsIntegrallyClosed (Localization.AtPrime q) ∧
       ∃! P : Ideal (Localization.AtPrime q), P ≠ ⊥ ∧ P.IsPrime := And.intro inferInstance huniq
-  exact ((IsDiscreteValuationRing.TFAE (Localization.AtPrime q) hnf).out 0 3).mpr h3
+  exact ((IsDiscreteValuationRing.TFAE (Localization.AtPrime q) hnf).out 1 4).mpr h3
 
 theorem NormalCodimOneUniformiser.proof : NormalCodimOneUniformiser.Statement := by
   intro σ _ P Q e x hP hQ hPQ hnorm hdimP hdimQ hxQ hxP

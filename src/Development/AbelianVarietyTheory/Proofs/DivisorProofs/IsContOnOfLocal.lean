@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ def adeleJoin (x : κ → mixedEmbedding.mixedSpace F) (y : κ → FiniteAdeleRi
 theorem pureA_adeleJoin (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (g : (κ → FiniteAdeleRing (𝓞 F) F) → ℂ)
     (x : κ → mixedEmbedding.mixedSpace F) (y : κ → FiniteAdeleRing (𝓞 F) F) :
     GlobalTheory.WeilM.pureA F f g (adeleJoin F x y) = f x * g y := by
-  simp [GlobalTheory.WeilM.pureA, adeleJoin]
+  simp only [GlobalTheory.WeilM.pureA, adeleJoin, RingEquiv.apply_symm_apply]
 
 theorem exists_slice [Fintype κ] {Φ : (κ → AdeleRing (𝓞 F) F) → ℂ} (hΦ : Φ ∈ GlobalTheory.WeilM.schA F κ)
     (y : κ → FiniteAdeleRing (𝓞 F) F) :
@@ -68,7 +72,8 @@ theorem isContOn_of_local [Fintype κ] [LocallyCompactSpace (AdeleRing (𝓞 F) 
       rw [pureA_adeleJoin, hgy i j, if_neg hij, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ j) h
-  rw [hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, map_sum]
   exact Finset.sum_congr rfl (fun i _ => by rw [hT, hfs])
 
 end GlobalTheory.WeilCont

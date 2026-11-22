@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevInequalityAtOneIndefiniteUnitaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevInequalityAtOneIndefiniteUnitaryStatement
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped InnerProductSpace Topology
@@ -31,19 +35,19 @@ theorem integral_sq_sum {ε : Fin n → Bool} {σ : Mx n → (H →L[ℂ] H)} {�
     rw [← Finset.sum_mul_sum, ← star_sum, Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
     rfl
   have i1 : ∀ p, Integrable (fun g : UJ ε => ∑ q, coefOn σ (y p) (h p) g * star (coefOn σ (y q) (h q) g)) μ :=
-    fun p => integrable_finset_sum _ fun q _ => (hd.2 _ _ _ _).1
+    fun p => integrable_finsetSum _ fun q _ => (hd.2 _ _ _ _).1
   have i2 : Integrable (fun g : UJ ε => ((‖∑ p, ⟪h p, σ (umat g) (y p)⟫_ℂ‖ ^ 2 : ℝ) : ℂ)) μ := by
     simp only [e]
-    exact integrable_finset_sum _ fun p _ => i1 p
+    exact integrable_finsetSum _ fun p _ => i1 p
   refine ⟨by simpa only [RCLike.re_to_complex, Complex.ofReal_re] using i2.re, ?_⟩
   apply Complex.ofReal_injective
   rw [← integral_complex_ofReal]
   simp only [e]
-  rw [integral_finset_sum _ fun p _ => i1 p]
+  rw [integral_finsetSum _ fun p _ => i1 p]
   push_cast
   rw [Finset.sum_div]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [integral_finset_sum _ fun q _ => (hd.2 _ _ _ _).1]
+  rw [integral_finsetSum _ fun q _ => (hd.2 _ _ _ _).1]
   simp only [(hd.2 _ _ _ _).2, orthonormal_iff_ite.1 hh]
   rw [Finset.sum_eq_single p (fun q _ hq => by simp [Ne.symm hq]) (by simp)]
   simp [inner_self_eq_norm_sq_to_K]
@@ -58,14 +62,15 @@ theorem sobolev_hilbertSchmidt : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) 
   let F : List (Mx n) → Mx n → ℂ := fun l g => ∑ j, ⟪f j, σ g (Dw σ l (x j))⟫_ℂ
   have eF : ∀ l g, F l g = ∑ p, ⟪h p, σ g (∑ j, (starRingEnd ℂ) (φ j p) • Dw σ l (x j))⟫_ℂ := by
     intro l g
-    simp only [F, map_sum, map_smul, inner_sum, inner_smul_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sum, map_smul, inner_sum, inner_smul_right]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hf j, sum_inner]
     simp only [inner_smul_left]
   have hI := fun l => integral_sq_sum hd hh fun p => ∑ j, (starRingEnd ℂ) (φ j p) • Dw σ l (x j)
   simp only [← eF] at hI
-  have key := H1 F (fun l _ => continuousOn_finset_sum _ fun j _ =>
+  have key := H1 F (fun l _ => continuousOn_finsetSum _ fun j _ =>
       (innerSL ℂ (f j)).continuous.comp_continuousOn (hσ.1.2.2 _)) ?_ fun l _ => (hI l).1
   · have e1 : F [] 1 = ∑ j, ⟪f j, x j⟫_ℂ := by simp only [F, sigma_one hσ.1]; rfl
     rw [e1] at key

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExponentialGluing.ExpNegGlueHolds
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2Gluing.IntegralLeToReal
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.UnipotentVanishing.InfAtUnipInvEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExponentialGluing.ExpNegGlueHolds
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2Gluing.IntegralLeToReal
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.UnipotentVanishing.InfAtUnipInvEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ theorem re_lt_of_dec {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGr
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mult_of_lat {S : Set (GA E N)} {n : ℕ}
     (h : ∀ x, {γ : An.lat E N | (γ : GA E N) * x ∈ S}.encard ≤ n) : Mult S n := by
   intro x
@@ -166,10 +170,16 @@ end GlobalTheory.CompanionTheory.LocExponent
 
 namespace GlobalTheory.CompanionTheory.LocExponent
 
-open PositivityTheory.Rg.Rs.JExpNegGlue in
 
+open PositivityTheory.Rg.Rs.JExpNegGlue in
 theorem locNonPosGlue_holds : LocNonPosGlue := by
   intro hSize E _ _ _ N φ hA hLoc r hr0 hrN c hc
+  have : LocallyCompactSpace (GA E N) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact inferInstance
+  have : T2Space (GA E N) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact inferInstance
   obtain ⟨haR, -, -, hct⟩ := dict_holds E N
   have hctn := (hct φ hA r hr0 hrN).2
   obtain ⟨F₀, hF₀, F, hFspan, hF0, hFeq⟩ := hc
@@ -183,7 +193,29 @@ theorem locNonPosGlue_holds : LocNonPosGlue := by
   have hlt : ∀ ε : ℝ, 0 < ε → c.re < An.rho E N r + ε := by
     intro ε hε
     have hdec_ctn : Dec μ (An.rho E N r + ε) a (An.ctn r φ.1) := by
-      refine ⟨continuous_ctn r hφc, fun Q hQ => ?_⟩
+      have hctc : Continuous (An.ctn r φ.1) := by
+        have : SecondCountableTopology (GA E N) := by
+          set_option synthInstance.maxHeartbeats 400000 in
+            exact inferInstance
+        have : FirstCountableTopology (GA E N) := by
+          set_option synthInstance.maxHeartbeats 400000 in
+            exact inferInstance
+        obtain ⟨C, hC, hDC⟩ := GroundTheory.Automorphic.AutomorphicForm.exists_isCompact_superset_unipFundamentalDomain (K := E) (n := N) (r := r)
+        have : IsFiniteMeasure ((GroundTheory.Automorphic.AutomorphicForm.unipMeasure E N r).restrict (GroundTheory.Automorphic.AutomorphicForm.unipFundamentalDomain E N r)) :=
+          isFiniteMeasure_restrict.2 (by rw [GroundTheory.Automorphic.AutomorphicForm.unipMeasure_unipFundamentalDomain]; exact ENNReal.one_ne_top)
+        have hf : Continuous (Function.uncurry fun (g : GA E N) (X : GroundTheory.Automorphic.AutomorphicForm.UPos N r → AdeleRing (𝓞 E) E) =>
+            φ.1 (GroundTheory.Automorphic.AutomorphicForm.unipGL X * g)) :=
+          hφc.comp ((GroundTheory.Automorphic.AutomorphicForm.continuous_unipGL.comp continuous_snd).mul continuous_fst)
+        have h := continuous_parametric_integral_of_continuous
+          (μ := (GroundTheory.Automorphic.AutomorphicForm.unipMeasure E N r).restrict (GroundTheory.Automorphic.AutomorphicForm.unipFundamentalDomain E N r)) hf hC
+        have e : ∀ g : GA E N, GroundTheory.Automorphic.AutomorphicForm.constantTerm r φ.1 g = ∫ X in C, φ.1 (GroundTheory.Automorphic.AutomorphicForm.unipGL X * g)
+            ∂((GroundTheory.Automorphic.AutomorphicForm.unipMeasure E N r).restrict (GroundTheory.Automorphic.AutomorphicForm.unipFundamentalDomain E N r)) := by
+          intro g
+          rw [Measure.restrict_restrict' GroundTheory.Automorphic.AutomorphicForm.measurableSet_unipFundamentalDomain, Set.inter_eq_right.2 hDC]
+          rfl
+        unfold An.ctn
+        exact continuous_const.mul (h.congr fun g => (e g).symm)
+      refine ⟨hctc, fun Q hQ => ?_⟩
       have h := tendsto_ctn hSize hφc hLoc hr0 hrN μ hε hQ
       simp only [ha, haR]
       exact h
@@ -192,8 +224,6 @@ theorem locNonPosGlue_holds : LocNonPosGlue := by
         (fun x y _ _ hx hy => dec_add μ _ a hx hy) (fun b x _ hx => dec_smul μ _ a b hx) hFspan
       rintro _ ⟨s, rfl⟩
       convert dec_smul μ _ a c₀ (dec_translate μ _ a hcomm s hdec_ctn) using 1
-      funext g
-      simp only [Pi.smul_apply, smul_eq_mul]
     exact re_lt_of_dec μ _ a hdecF hF0 hFeq
   have hle : c.re ≤ An.rho E N r := le_of_forall_pos_le_add fun ε hε => (hlt ε hε).le
   have hd : (0 : ℝ) < Module.finrank ℚ E := Nat.cast_pos.2 Module.finrank_pos

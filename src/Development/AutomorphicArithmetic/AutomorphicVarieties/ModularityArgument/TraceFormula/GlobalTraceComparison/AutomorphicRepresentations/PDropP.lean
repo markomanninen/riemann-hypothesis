@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiSeenA
+
+@[expose] public section
 
 open UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi DiscreteGroups.T1.G
 open NumberField IsDedekindDomain Matrix MeasureTheory
@@ -23,7 +27,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.dropP_pf :
     have h2 : f - P f ∈ Sᗮ := Submodule.sub_starProjection_mem_orthogonal f
     have hdec : P f + (f - P f) = f := by abel
     calc m.Uπ f = m.Uπ (P f + (f - P f)) := by rw [hdec]
-      _ = m.U (P f) := by rw [map_add, m.pp.1 _ (hmem f), m.pp.2 _ h2, add_zero]
+      _ = m.U (P f) := by rw [map_add (f := _), m.pp.1 _ (hmem f), m.pp.2 _ h2, add_zero]
   have C₁ : ∀ f, P (s.T₁ f) = s.T₁ (P f) := hC E n s.pos s.D s.π s.fix ι s.Φ₁ s.T₁ s.t₁ s.o₁
   have C₂ : ∀ f, P (s.T₂ f) = s.T₂ (P f) := hC E n s.pos s.D s.π s.fix ι s.Φ₂ s.T₂ s.t₂ s.o₂
   have C₃ : ∀ f, P ((s.T₁ * m.U * s.T₂) f) = (s.T₁ * m.U * s.T₂) (P f) := hC E n s.pos s.D s.π s.fix ι m.Φ (s.T₁ * m.U * s.T₂) m.t m.o
@@ -40,7 +44,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.dropP_pf :
     rw [integral_congr_ae (g := fun _ => (0 : ℂ)) (hj.mono fun z hz => by rw [hz]; simp)]
     simp
   set f : H E n 0 → ℂ := fun z => ∑ i, inner ℂ (s.k₁ x i) (Q (s.k₂ (th z) i)) with hf
-  have hfc : Continuous f := continuous_finset_sum _ fun i _ =>
+  have hfc : Continuous f := continuous_finsetSum _ fun i _ =>
     continuous_const.inner (Q.continuous.comp ((s.vecs.cont i).2.comp hthc))
   have hfi : Inv f := fun γ z => by
     have h := (hK E n ι s).2 ⟨th (γ : H E n 0), (hrat γ).2⟩ (th z)
@@ -53,7 +57,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.dropP_pf :
         ∑ i, (v : H E n 0 → ℂ) z * inner ℂ (ContinuousLinearMap.adjoint Q (s.k₁ x i)) (s.k₂ (th z) i) := fun z => by
       simp only [hf, Finset.mul_sum, ContinuousLinearMap.adjoint_inner_left]
     simp only [hpt]
-    rw [integral_finset_sum _ fun i _ => (hw i).1]
+    rw [integral_finsetSum _ fun i _ => (hw i).1]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [(hw i).2, ContinuousLinearMap.adjoint_inner_left]
     exact hz _ i)

@@ -1,16 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HeckeAdj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HasPairingOfHerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.HeckeAdj
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host UpperTheory.V UpperTheory.V.TR UpperTheory.V.Af.Gk
 
 theorem UpperTheory.V.Af.Gk.satConj :
     UpperTheory.V.Af.Gk.SatConj := by
   intro F _ _ a w V W _ _ _ _ ρ ρ' H C hdef hH hC B hB
-  have hK : ∀ k ∈ GlobalTheory.LFun.KGL w a, GlobalTheory.CuspRep.invT a _ k ∈ GlobalTheory.LFun.KGL w a := by
+  have hK : ∀ k ∈ GlobalTheory.LFun.KGL w (n := a), GlobalTheory.CuspRep.invT a _ k ∈ GlobalTheory.LFun.KGL w (n := a) := by
     rintro _ ⟨k, rfl⟩
     exact ⟨GlobalTheory.CuspRep.invT a _ k, InvT.map_invT _ k⟩
   have hB' : GlobalTheory.LFun.HasSatGL w (ρ.comp (GlobalTheory.CuspRep.invT a (w.adicCompletion F))) (B.map (·⁻¹)) :=
     InvT.hasSatGL_invT (ρ := ρ) (LinearEquiv.refl ℂ V) (fun _ _ => rfl) hB
-  have key : ∀ x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w a), x ≠ 0 →
+  have key : ∀ x ∈ GlobalTheory.PRep.fixed ρ (GlobalTheory.LFun.KGL w (n := a)), x ≠ 0 →
       GlobalTheory.LFun.IsSatVecGL w ρ' (C x) (B.map (·⁻¹)) := by
     intro x hx h0
     have hfix := GlobalTheory.LGrp.mem_fixed.1 hx

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.FarLoc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.FarLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ variable {n : ℕ}
 private theorem cd_det_lemma {ι : Type} [Fintype ι] [DecidableEq ι] :
     ContDiff ℂ ∞ (fun x : Matrix ι ι ℂ => x.det) := by
   have he : ∀ i j : ι, ContDiff ℂ ∞ (fun x : Matrix ι ι ℂ => x i j) := fun i j =>
-    contDiff_apply_apply ℂ ℂ i j
+    contDiff_apply_apply ℂ i j
   simp_rw [Matrix.det_apply']
   exact ContDiff.sum (fun σ _ => contDiff_const.mul (contDiff_prod (fun i _ => he _ _)))
 

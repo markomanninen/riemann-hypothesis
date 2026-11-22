@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -255,7 +259,7 @@ theorem closureIneq (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
     rw [← integral_add hig hifg]
     congr 1
     funext x
-    simp only [inner_sub_right]
+    rw [inner_sub_right]
     ring
   have hwT : wint n z (tstar n z (w1 ph ψ) (w2 ph ψ) g) (w1 ph ψ) ≤
       (1 + ENNReal.ofReal δ) * wint n z w (w1 ph ψ) + 2 * ENNReal.ofReal δ := by

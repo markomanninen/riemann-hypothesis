@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -18,19 +23,13 @@ abbrev projBlocks (K : Type) [Field K] [NumberField K] (i : ℕ) : Unit → Type
 
 abbrev ProjField (K : Type) [Field K] (i : ℕ) : Type := FractionRing (MvPolynomial (Fin i) K)
 
-def projSpaceCoord (K : Type) [Field K] [NumberField K] (i : ℕ) :
-    (Σ _ : Unit, ProjIdx K i) → ProjField K i :=
-  fun p => algebraMap (MvPolynomial (Fin i) K) (ProjField K i)
-    (C (integralBasis K p.2.1) * X p.2.2)
-
-def projSpaceIdeal (K : Type) [Field K] [NumberField K] (i : ℕ) : Ideal (MRing (projBlocks K i)) :=
-  mCoordIdeal (projSpaceCoord K i)
 
 open scoped Classical in
-
 def embComp {K : Type} [Field K] [NumberField K] {i : ℕ} (σ : K →+* ℂ) (z : ProjIdx K i → ℂ) :
     Fin i → ℂ :=
-  fun j => ∑ m, (canonicalEmbedding.latticeBasis K).repr (Pi.single σ 1) m * z (m, j)
+  by
+    classical
+    exact fun j => ∑ m, (canonicalEmbedding.latticeBasis K).repr (Pi.single σ 1) m * z (m, j)
 
 def latticeNormSq {K : Type} [Field K] [NumberField K] {i : ℕ} (F : HermLattice K i)
     (z : ProjIdx K i → ℂ) : ℝ :=
@@ -49,11 +48,12 @@ theorem embComp_smul {K : Type} [Field K] [NumberField K] {i : ℕ} (σ : K →+
   simp only [embComp, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
   exact Finset.sum_congr rfl fun m _ => by ring
 
-open scoped Classical in
 
+open scoped Classical in
 theorem sum_emb_embComp {K : Type} [Field K] [NumberField K] {i : ℕ} (z : ProjIdx K i → ℂ)
     (m : Module.Free.ChooseBasisIndex ℤ (𝓞 K)) (j : Fin i) :
     ∑ σ : K →+* ℂ, σ (integralBasis K m) * embComp σ z j = z (m, j) := by
+  classical
   set b := canonicalEmbedding.latticeBasis K
   have hb : b m = ∑ σ : K →+* ℂ, σ (integralBasis K m) • (Pi.single σ 1 : (K →+* ℂ) → ℂ) := by
     funext τ
@@ -62,7 +62,8 @@ theorem sum_emb_embComp {K : Type} [Field K] [NumberField K] {i : ℕ} (z : Proj
       ∑ σ : K →+* ℂ, σ (integralBasis K m) * b.repr (Pi.single σ 1) m' := by
     intro m'
     have := congrArg (fun v => b.repr v m') hb
-    simp only [Module.Basis.repr_self, map_sum, map_smul, Finsupp.coe_finsetSum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.Basis.repr_self, map_sum, map_smul, Finsupp.coe_finsetSum,
       Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul] at this
     rw [← this, Finsupp.single_apply]
   have hs : ∀ m', ∑ σ : K →+* ℂ, σ (integralBasis K m) * (b.repr (Pi.single σ 1) m' * z (m', j)) =
@@ -116,39 +117,6 @@ def latticeLine {K : Type} [Field K] [NumberField K] {i : ℕ} (F : HermLattice 
 
 def LineOfLargeDegreeFromZ.Statement : Prop :=
   SuccessiveMinimaLowerBound → SuccessiveMinimaUpperBound → ReciprocityTheory.ChartRestriction.G.AI.I2.ExistsStatement → LineOfLargeDegree.Statement
-
-def ProjArithVar.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (i : ℕ), 1 ≤ i → IsArithVar (projSpaceIdeal K i) i
-
-def LatticeLineSemipositive.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F : HermLattice K i),
-    IsSemipositiveRel ⊥ (projSpaceIdeal K i) (latticeLine F)
-
-def LatticeLineConj.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F : HermLattice K i),
-    IsConjInvariantH (latticeLine F)
-
-def PointLineDegree.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F : HermLattice K i) (II : IntersectionSystem),
-    IsIntersectionSystem II → ∀ W : Ideal (MRing (projBlocks K i)), IsArithVar W 1 →
-      projSpaceIdeal K i ≤ W → 0 < degC W ∧
-        ∃ (K' : Type) (_ : Field K') (_ : NumberField K') (_ : Algebra K K') (v : Fin i → K'),
-          v ≠ 0 ∧ F.lineDegree K' v = -II Unit (projBlocks K i) W 1 ![latticeLine F] / degC W
-
-def TopLatticeBound.Statement : Prop :=
-  SuccessiveMinimaUpperBound → ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F : HermLattice K i)
-    (II : IntersectionSystem), 1 ≤ i → IsIntersectionSystem II →
-    II Unit (projBlocks K i) (projSpaceIdeal K i) i (fun _ => latticeLine F) ≤
-      (i : ℝ) * (-F.slope + 1 / 2 * Real.log i) *
-        geomDeg (projSpaceIdeal K i) (latticeLine F) (i - 1)
-
-def GeomDegPos.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (i : ℕ) (F : HermLattice K i), 1 ≤ i →
-    0 < geomDeg (projSpaceIdeal K i) (latticeLine F) (i - 1)
-
-example : HermLine (projBlocks ℚ 2) := latticeLine (HermLattice.standard ℚ 2)
-
-example : (latticeLine (HermLattice.standard ℚ 2)).a = fun _ => 1 := rfl
 
 end
 

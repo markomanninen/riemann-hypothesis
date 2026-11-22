@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 open Formalism.L2.Fam.NPC Formalism.L2.Fam.NPC.BaseC GlobalTheory.HeckeLocN
 
@@ -34,7 +39,7 @@ theorem apply_eq_smul (hss : SemisimpleTw B) (i : LocT B) (ψ : hAlg B i →ₐ[
     change a x = _ at iha
     change b x = _ at ihb
     show (a + b) x = _
-    rw [e, LinearMap.add_apply, iha, ihb, map_add, add_smul]
+    rw [e, LinearMap.add_apply, iha, ihb, map_add (f := _), add_smul]
   | mul a b ha hb iha ihb =>
     have e : ψ ⟨a * b, mul_mem ha hb⟩ = ψ ⟨a, ha⟩ * ψ ⟨b, hb⟩ := map_mul ψ ⟨a, ha⟩ ⟨b, hb⟩
     change a x = _ at iha
@@ -91,14 +96,14 @@ theorem projOf_apply (hss : SemisimpleTw B) (hC : PartCompl B) (i : LocT B) (t :
   have e : (t : Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i))) y =
       (t : Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i))) (projOf B hC i y) +
       (t : Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i))) (y - (projOf B hC i y : B.V (jOf B i) (wOf B i))) := by
-    rw [← map_add, add_sub_cancel]
+    rw [← map_add (f := _), add_sub_cancel]
   have h1 : projOf B hC i ((t : Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i))) (projOf B hC i y)) =
       ⟨_, mem_part hss i t (projOf B hC i y).2⟩ :=
     Submodule.projectionOnto_apply_of_mem_left (hC i) _
   have h2 : projOf B hC i ((t : Module.End (FractionRing (OOf B i)) (B.V (jOf B i) (wOf B i)))
       (y - (projOf B hC i y : B.V (jOf B i) (wOf B i)))) = 0 :=
     Submodule.projectionOnto_apply_of_mem_right (hC i) (mem_off hss i t hq)
-  rw [e, map_add, h1, h2, add_zero]
+  rw [e, map_add (f := _), h1, h2, add_zero]
 
 def lat0 (i : LocT B) : Submodule (OOf B i) (B.V (jOf B i) (wOf B i)) :=
   Submodule.span (OOf B i) (B.iV (jOf B i) (wOf B i) '' latL B i)
@@ -110,14 +115,15 @@ theorem heckeGenerator_mapsTo_localisationLatticeSpan (hI : HeckeIntTw B) (i : L
   | mem z hz =>
     obtain ⟨x, hx, rfl⟩ := hz
     obtain ⟨F, c, hF, hc, he⟩ := hI (jOf B i) (wOf B i) i.2.2.2.1 i.2.2.2.2.1 i.2.2.2.2.2 v k hvk x hx
-    rw [B.hK_def, he, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [B.hK_def, he, map_sum]
     refine Submodule.sum_mem _ fun y hy => ?_
     rw [LinearMap.map_smulₛₗ]
     obtain ⟨o, ho⟩ := (B.ec_w (jOf B i) (wOf B i) (c y)).1 (hc y hy)
     rw [← ho, algebraMap_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨y, hF hy, rfl⟩)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul o a _ ha => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ _ ha
 
 theorem heckeAlgebra_mapsTo_localisationLatticeSpan (hI : HeckeIntTw B) (i : LocT B) (t : hAlg B i) {z : B.V (jOf B i) (wOf B i)}
@@ -141,7 +147,7 @@ theorem projOf_mem (hC : PartCompl B) (i : LocT B) {z : B.V (jOf B i) (wOf B i)}
     obtain ⟨x, hx, rfl⟩ := hz
     exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul o a _ ha => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ _ ha
 
 theorem mem_MtSub (hss : SemisimpleTw B) (hI : HeckeIntTw B) (hC : PartCompl B) (i : LocT B) (t : hAlg B i)

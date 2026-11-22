@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerWeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,21 +25,21 @@ theorem tcoef_map_left {M' : Type*} [AddCommGroup M'] [Module ℂ M'] (φ : Modu
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul m f => simp [tcoef_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tcoef_lTensor (φ : Module.Dual ℂ (Fock n)) (S : Module.End ℂ (Fock n))
     (y : TensorProduct ℂ M (Fock n)) : tcoef φ (LinearMap.lTensor M S y) = tcoef (φ ∘ₗ S) y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul m f => simp [tcoef_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tcoef_smul (c : ℂ) (φ : Module.Dual ℂ (Fock n)) (y : TensorProduct ℂ M (Fock n)) :
     tcoef (c • φ) y = c • tcoef φ y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul m f => simp [tcoef_tmul, smul_smul]
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
 
 theorem tcoef_expand (y : TensorProduct ℂ M (Fock n)) :
     y = ∑ s, tcoef ((fockBasis n).coord s) y ⊗ₜ fockBasis n s := by
@@ -45,7 +49,7 @@ theorem tcoef_expand (y : TensorProduct ℂ M (Fock n)) :
     simp only [tcoef_tmul, Module.Basis.coord_apply, TensorProduct.smul_tmul]
     rw [← TensorProduct.tmul_sum, (fockBasis n).sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib]
     rw [← hx, ← hy]
 
 theorem tcoef_mem {L : Submodule ℂ M} {y : TensorProduct ℂ M (Fock n)}
@@ -142,17 +146,18 @@ theorem khw_extract (ε : Fin n → Bool) {lam : Fin n → ℝ} (hlam : StrictAn
       tcoef φ y = ∑ t, φ (fockBasis n t) • tcoef ((fockBasis n).coord t) y := by
     intro φ
     conv_lhs => rw [tcoef_expand y]
-    simp [map_sum, tcoef_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, tcoef_tmul]
   refine ⟨s, hs, ?_⟩
   unfold IsKHWVec
   refine ⟨fun a => ?_, fun a b hab heq => ?_⟩
   · have h1 := congrArg (tcoef ((fockBasis n).coord s)) (hy.1 a)
-    simp only [LinearMap.add_apply, map_add, tcoef_map_left, tcoef_lTensor, coord_comp_sg,
+    simp only [LinearMap.add_apply, map_add (f := _), tcoef_map_left, tcoef_lTensor, coord_comp_sg,
       tcoef_smul, map_smul] at h1
     rw [Pi.sub_apply, Complex.ofReal_sub, sub_smul, ← h1]
     abel
   · have h1 := congrArg (tcoef ((fockBasis n).coord s)) (hy.2 a b hab heq)
-    simp only [LinearMap.add_apply, map_add, tcoef_map_left, tcoef_lTensor, map_zero] at h1
+    simp only [LinearMap.add_apply, map_add (f := _), tcoef_map_left, tcoef_lTensor, map_zero] at h1
     have h2 : tcoef ((fockBasis n).coord s ∘ₗ sgE ε cpFock cmFock a b) y = 0 := by
       rw [htc]
       refine Finset.sum_eq_zero fun t _ => ?_

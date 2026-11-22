@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PureEqPureA
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem exists_Ilin {ψ : AddChar (AF F) ℂ} {M : Model σ X W} {om : Rep σ X 
     { toFun := fun Φ => M.I om Φ
       map_add' := fun Φ Ψ => funext fun h => by
         have e : ∀ g, theta om (Φ.1 + Ψ.1) g h = theta om Φ g h + theta om Ψ g h := fun g => by
-          simp only [theta, map_add]
+          simp only [theta, map_add (f := _)]
           exact thetaSum_add F (hw.isUSplitting.pres _ _ (h1 Φ.2)) (hw.isUSplitting.pres _ _ (h1 Ψ.2))
         simp only [Model.I, Submodule.coe_add, e, Pi.add_apply]
         exact integral_add (h2 _ Φ.2 h) (h2 _ Ψ.2 h)
@@ -50,10 +54,12 @@ theorem vanish {κ : Type} [Fintype κ] {Z P : Type} [AddCommGroup Z] [Module �
       refine h f hf _ (fun v => ?_) (ext_off w T ψ) (hz.imp_right fun ⟨v, hv⟩ => ⟨v, ?_⟩)
       · unfold ext; split_ifs with hv
         exacts [hψ ⟨v, hv⟩, hS v hv]
-      · unfold ext; rw [dif_pos v.2]; exact hv)
+      · unfold ext; rw [dite_eq_left v.2]; exact hv)
   have := congrArg L h0
-  rw [map_sum, map_zero] at this
-  rw [map_sum, ← this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← this]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hL (f i) (hf i) (fun v => φ i v) fun v => hφ i v]
   change _ = J (l (f i) _)
@@ -111,10 +117,12 @@ theorem so_proj {ψ : AddChar (AF F) ℂ} {M : Model σ X W} (hM : M.IsGood ψ) 
     rintro _ ⟨f, φ, -, h4, h5, rfl⟩
     rw [hO f φ ((good_std hM).congr h4), show π (φ v₁) = φ v₁ from h2 _ (Submodule.subset_span h5), Function.update_eq_self]
     rfl
-  rw [← key _ hs, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← key _ hs, map_sum]
   exact Finset.sum_congr rfl fun i _ => hO _ _ (hφ i)
 
 theorem factor_of (hD : KDecay) (hK : Kills) : Factor := by
+  letI : IsEmpty Empty := ⟨Empty.elim⟩
   intro F E _ _ _ _ _ σ B a a' G X om om' R Rf hm
   obtain ⟨dc, dc'⟩ := hD F E σ B a a' G X om om' hm.triple
   obtain ⟨k, k'⟩ := hK F E σ B a a' G X om om' R Rf hm

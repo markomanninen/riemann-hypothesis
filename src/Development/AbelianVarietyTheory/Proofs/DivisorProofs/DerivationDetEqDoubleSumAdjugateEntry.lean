@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -27,7 +31,8 @@ theorem derivation_det_rows {K R : Type} [CommRing K] [CommRing R] [Algebra K R]
     intro N
     rw [← det_transpose, det_apply']
     rfl
-  simp only [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [key, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Derivation.leibniz, δ.map_intCast, smul_zero, add_zero, smul_eq_mul, ← Finset.mul_sum,

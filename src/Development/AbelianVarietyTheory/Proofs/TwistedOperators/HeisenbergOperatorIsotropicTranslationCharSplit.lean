@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitPlaceAdelicMatrixGivenComponentsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTraceSupportedAtSplitPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianSplitSymplecticPairStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSplitPlaceAdelicMatrixGivenComponentsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicTraceSupportedAtSplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianTensorSkewHermitianSplitSymplecticPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -71,7 +75,7 @@ open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (AE cA incM)
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem at_neg_hTens {σ : E →ₐ[F] E} {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} {m n : ℕ} (JA : Matrix (Fin m) (Fin m) E)
+theorem at_neg_hTens {σ : E →ₐ[F] E} {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} {m n : ℕ} (JA : Matrix (Fin m) (Fin m) E)
     (JB : Matrix (Fin n) (Fin n) E) (x u : Matrix (Fin m) (Fin n) (AE F E)) (hx : At (evFin F v) x) :
     At (evFin F v) ((-1 : AE F E) * GlobalTheory.WeilM.hTens (cA σ) (incM F JA) (incM F JB) x u) := by
   intro r hr
@@ -84,7 +88,7 @@ theorem at_neg_hTens {σ : E →ₐ[F] E} {v : GlobalTheory.IndefiniteRowSideFul
 
 theorem symp_bar {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) {n d : ℕ} (X : Spc F E n) (Y : Spc F E d)
     (hX : ∀ r s, σ (X.J s r) = X.J r s) (hY : ∀ r s, σ (Y.J s r) = -Y.J r s) (ψ : AddChar (AF F) ℂ)
-    {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
+    {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
     (x u : Matrix (Fin n) (Fin d) (AE F E)) (hx : At (evFin F v) x) (hx0 : x.map (piW t) = 0)
     (hu1 : u.map (piW (t.comp σ)) = 0) :
     ψ (GlobalTheory.WeilM.symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F Y.J) x u) =
@@ -108,7 +112,7 @@ theorem symp_bar {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) {n d : ℕ} (X : Sp
 
 theorem symp_lin {σ : E →ₐ[F] E} (hcm : IsCMExt F E σ) {n d : ℕ} (X : Spc F E n) (Y : Spc F E d)
     (hX : ∀ r s, σ (X.J s r) = X.J r s) (hY : ∀ r s, σ (Y.J s r) = -Y.J r s) (ψ : AddChar (AF F) ℂ)
-    {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
+    {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
     (x u : Matrix (Fin n) (Fin d) (AE F E)) (hx : At (evFin F v) x) (hx0 : x.map (piW (t.comp σ)) = 0)
     (hu1 : u.map (piW t) = 0) :
     ψ (GlobalTheory.WeilM.symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F Y.J) x u) =
@@ -149,8 +153,8 @@ open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (AE cA incM)
 
 theorem heis_trans_char : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}, IsCMExt F E σ →
     ∀ {n d : ℕ} (X : Spc F E n) (Y : Spc F E d), (∀ r s, σ (X.J s r) = X.J r s) → (∀ r s, σ (Y.J s r) = -Y.J r s) → X.J.det ≠ 0 → Y.J.det ≠ 0 → ∀ (M : Model σ X Y) (ψ : AddChar (AF F) ℂ), GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.IsStd ψ →
-    ∀ {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
-      (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE F E)), At (evFin F v) u → pairM (coX t b c u) (coY σ X Y t b c u) = 0 →
+    ∀ {v : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F)} (t : E →ₐ[F] Fv F v) (b : GL (Fin n) (Fv F v)) (c : GL (Fin d) (Fv F v))
+      (u : Matrix (Fin n) (Fin d) (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))), At (evFin F v) u → pairM (coX t b c u) (coY σ X Y t b c u) = 0 →
     ∀ φ ∈ GlobalTheory.WeilM.SB (Fin n × Fin d → Fv F v), ∀ φ₁ ∈ GlobalTheory.WeilM.SB (Fin n × Fin d → Fv F v), Acts (evFin F v) (M.co.rho ψ u) φ φ₁ →
       (∀ ι, M.IsLinW ψ t b c ι → ∀ Z, ι φ₁ Z = psiLoc ψ v (pairM Z (coY σ X Y t b c u)) * ι φ (Z + coX t b c u)) ∧
       ∀ ι, M.IsLinBar ψ t b c ι → ∀ Z, ι φ₁ Z = psiLoc ψ v (-pairM Z (coX t b c u)) * ι φ (Z + coY σ X Y t b c u) := by
@@ -214,15 +218,20 @@ theorem heis_trans_char : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [
     rw [GlobalTheory.StdVacuum.psi_eq_psiLoc ψ v _ hat', M.co.form u₂ u₁] at hz
     rw [← hz, hψv, GlobalTheory.LatVac.psiAt_apply]
     congr 1
-    simp only [map_mul, map_sub, dotProduct, map_sum, GlobalTheory.VacAny.evFin_invOf_two]
+    have hev : evFin F v (⅟(2 : AF F)) = ⅟(2 : Fv F v) := by
+      refine (invOf_eq_right_inv ?_).symm
+      have h : evFin F v (2 * ⅟(2 : AF F)) = 1 := by rw [mul_invOf_self, map_one]
+      rwa [map_mul, map_ofNat] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sub, dotProduct, map_sum, hev]
     rfl
   have hphase' : ψv (⅟(2 : Fv F v) * ((GlobalTheory.LatVac.locCo M.co v u₁).1 ⬝ᵥ (GlobalTheory.LatVac.locCo M.co v u₂).2 -
       (GlobalTheory.LatVac.locCo M.co v u₂).1 ⬝ᵥ (GlobalTheory.LatVac.locCo M.co v u₁).2)) = 1 := by
     rw [← neg_sub, mul_neg, AddChar.map_neg_eq_inv, hphase, inv_one]
   have h21 : φ₁ = GlobalTheory.WeilM.schr ψv (GlobalTheory.LatVac.locCo M.co v u₂) (GlobalTheory.WeilM.schr ψv (GlobalTheory.LatVac.locCo M.co v u₁) φ) := by
-    rw [schr_schr _ _ _ _ hphase, ← map_add, add_comm, hsum, hφ₁eq]
+    rw [schr_schr _ _ _ _ hphase, ← map_add (f := _), add_comm, hsum, hφ₁eq]
   have h12 : φ₁ = GlobalTheory.WeilM.schr ψv (GlobalTheory.LatVac.locCo M.co v u₁) (GlobalTheory.WeilM.schr ψv (GlobalTheory.LatVac.locCo M.co v u₂) φ) := by
-    rw [schr_schr _ _ _ _ hphase', ← map_add, hsum, hφ₁eq]
+    rw [schr_schr _ _ _ _ hphase', ← map_add (f := _), hsum, hφ₁eq]
 
   have hA : IsUnit (X.J.map t).det := by
     rw [show (X.J.map t).det = (t : E →+* Fv F v) X.J.det from (RingHom.map_det _ _).symm]

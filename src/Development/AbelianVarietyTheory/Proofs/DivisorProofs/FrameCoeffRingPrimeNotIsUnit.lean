@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+
+@[expose] public section
+
 open GlobalTheory.ExpFrame
 
 namespace GlobalTheory.ExpFrame

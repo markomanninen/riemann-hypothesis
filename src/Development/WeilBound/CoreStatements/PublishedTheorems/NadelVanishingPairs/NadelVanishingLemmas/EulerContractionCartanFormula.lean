@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedgeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedgeStatement
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.LogDR
 
@@ -54,7 +58,8 @@ theorem euler_cartan_logWedge : ∀ (K : Type) [Field K] (n : ℕ) (x : Fin n �
   generalize ((I.sort (· ≤ ·)).map (fun j => ExteriorAlgebra.ι K (dlog (x j)))).prod = ω at hd hdθ ⊢
   have hθc : θ (ExteriorAlgebra.ι K (KaehlerDifferential.D ℤ K c)) = e i • 1 := by
     have h : KaehlerDifferential.D ℤ K c = ∑ j, e j • dlog (x j) := hc
-    rw [h, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h, map_sum, map_sum]
     simp only [map_smul, hθ.2.2, smul_ite, smul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   simp only [extD_apply]
   rw [map_smul θ, CechDR.dDR_smul, CechDR.dDR_smul, hd, hdθ]

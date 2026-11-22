@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSemiAbelianExponentialAlongDisc
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.VerticalDerivativeInCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAnalyticParamInverse
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRelativeExpOfParts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsLatBasisZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSemiAbelianExponentialAlongDisc
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.VerticalDerivativeInCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAnalyticParamInverse
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRelativeExpOfParts
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,7 +84,7 @@ theorem exists_analytic_zero_graph {m g g' : ℕ} {F : (Fin m → ℂ) × (Fin g
   let Φ' : ((Fin m → ℂ) × (Fin g → ℂ)) →L[ℂ] ((Fin m → ℂ) × (Fin g' → ℂ)) :=
     (ContinuousLinearMap.fst ℂ _ _).prod D
   have hsplit : ∀ p : (Fin m → ℂ) × (Fin g → ℂ), D p = D (p.1, 0) + fderiv ℂ (fun u => F (b₀, u)) 0 p.2 := fun p => by
-    rw [hTD, ContinuousLinearMap.comp_apply, ← map_add]
+    rw [hTD, ContinuousLinearMap.comp_apply, ← map_add (f := _)]
     simp
   have hbij : Function.Bijective Φ' := by
     constructor

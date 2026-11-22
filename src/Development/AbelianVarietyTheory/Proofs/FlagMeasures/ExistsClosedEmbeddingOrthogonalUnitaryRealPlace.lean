@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDualOfAnisotropicOrthogonal
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryOrthogonalEmbeddingStabilizerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsFinEmb
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDualOfAnisotropicOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnitaryOrthogonalEmbeddingStabilizerStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean GlobalTheory.StabUnfold
 open scoped TensorProduct
@@ -77,7 +81,8 @@ theorem exists_closedEmbedding_unitary_orthogonal (n m : ℕ) (ε : Fin n → Bo
     ext i k
     have hk := congrFun huB k
     simp only [vecMul, dotProduct, Pi.zero_apply] at hk
-    simp only [mul_apply, vecMulVec_apply, Matrix.zero_apply, mul_assoc, ← Finset.mul_sum, hk, mul_zero]
+    change (∑ j, (x₀ i * u j) * B j k) = 0
+    simp only [mul_assoc, ← Finset.mul_sum, hk, mul_zero]
   have hv : vecMulVec x₀ u *ᵥ x₀ = x₀ := by
     ext i
     simp only [mulVec, dotProduct, vecMulVec_apply, mul_assoc, ← Finset.mul_sum]

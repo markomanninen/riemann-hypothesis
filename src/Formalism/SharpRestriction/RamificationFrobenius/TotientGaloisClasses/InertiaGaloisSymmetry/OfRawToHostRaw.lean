@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycAll
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.Imports
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DvdDiscrOfInertia
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycAll
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.Imports
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DvdDiscrOfInertia
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,6 @@ theorem HostRaw.der {φ : Frame} (H : HostRaw φ) : HostDer H :=
     norm_mu := Der.norm_mu H C }
 
 def HostAx.ofRaw {φ : Frame} (H : HostRaw φ) : HostAx φ := ⟨H, H.der⟩
-
-@[simp] theorem HostAx.ofRaw_toHostRaw {φ : Frame} (H : HostRaw φ) : (HostAx.ofRaw H).toHostRaw = H := rfl
 
 end Formalism.HC
 

@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarScalingByRealIdele
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicHaarScalingByRealIdele
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -24,7 +28,7 @@ theorem map_eq_of_conj {G H : Type} [AddCommGroup G] [TopologicalSpace G] [IsTop
     exact hs.comp (hL'.comp he)
   have hν := hH (μ.map e) (e.isAddHaarMeasure_map μ he hs)
   have h1 : (μ.map L).map e = (c • μ).map e := by
-    rw [Measure.map_map he.measurable hL.measurable, Measure.map_smul, ← hν,
+    rw [Measure.map_map he.measurable hL.measurable, Measure.map_smul c he.measurable.aemeasurable, ← hν,
       Measure.map_map hL'.measurable he.measurable]
     congr 1
     funext X

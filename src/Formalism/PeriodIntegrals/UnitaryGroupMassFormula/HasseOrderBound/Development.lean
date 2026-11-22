@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.HasseOrdBd
+module
+
+public import Formalism.PeriodIntegrals.HasseOrdBd
+
+@[expose] public section
 
 noncomputable section
 

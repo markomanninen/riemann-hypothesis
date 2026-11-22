@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.Aut
 open scoped TensorProduct
 
@@ -144,7 +149,7 @@ theorem mem_Umax_of_isLift : ∀ (L : Type) [Field L] [NumberField L] [IsCMField
     have hd := det_sub_lt Valued.v A B hA hB hAB
     have e : A.det = (A.det - B.det) + B.det := by ring
     rw [e, Valuation.map_add_eq_of_lt_right _ (by rw [hvB]; exact hd), hvB]
-  refine GlobalTheory.TSetFin.mem_Umax_of_loc s x htriv hA ?_
+  apply GlobalTheory.TSetFin.mem_Umax_of_loc s x htriv hA
   intro i j
   rw [map_inv, Matrix.coe_units_inv, ← hAdef, Matrix.inv_def, Matrix.smul_apply, smul_eq_mul, map_mul,
     Ring.inverse_eq_inv', map_inv₀, hvA, inv_one, one_mul]

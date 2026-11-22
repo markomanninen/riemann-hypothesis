@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.OverOf4
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.IrrKey
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.IrrAb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ResFacts
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IrreducibleSpans.Burnside
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.OverOf4
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalTwists.IrrKey
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.IrrAb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ResFacts
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IrreducibleSpans.Burnside
+
+@[expose] public section
 
 noncomputable section
 
@@ -210,7 +214,7 @@ theorem UpperTheory.V.Cu.irrOf4_of : AlNe → IrrOf4 := by
         (d.τ h 0 0 - d.τ h 0 1) ^ 2 * i1
     have fm' : f (d.τ h 0 0 + d.τ h 0 1) * f (d.τ h 0 0 - d.τ h 0 1) = 1 := by
       rw [← map_mul, fm, map_one]
-    rw [← map_add, ← map_sub, kp, km, map_pow, map_pow] at heq
+    rw [← map_add (f := _), ← map_sub, kp, km, map_pow, map_pow] at heq
     have hx8 : f (d.τ h 0 0 + d.τ h 0 1) ^ 8 = 1 := by
       linear_combination f (d.τ h 0 0 + d.τ h 0 1) ^ 4 * heq +
         ((f (d.τ h 0 0 + d.τ h 0 1) * f (d.τ h 0 0 - d.τ h 0 1)) ^ 3 +
@@ -248,7 +252,7 @@ theorem UpperTheory.V.Cu.irrOf4_of : AlNe → IrrOf4 := by
   have hkpm : ∀ i : T.G', resQ T.F (i : G T.F Ω) ∈ d.K'.fixingSubgroup →
       (f (d.τ (resQ T.F i) 0 0) + f (d.τ (resQ T.F i) 0 1)) * (f (d.τ (resQ T.F i) 0 0) - f (d.τ (resQ T.F i) 0 1)) = 1 :=
     fun i hi => by
-      rw [← map_add, ← map_sub, ← map_mul, on_form _ (d.tau.form _) (d.tau.on _ hi).2, map_one]
+      rw [← map_add (f := _), ← map_sub, ← map_mul, on_form _ (d.tau.form _) (d.tau.on _ hi).2, map_one]
   apply KStar.Schema.span_eq_top_of_irreducible
   intro W hW
   refine key two_ne_zero {x : T.G' | resQ T.F (x : G T.F Ω) ∈ d.K'.fixingSubgroup}

@@ -1,16 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientJacquetModuleRefineTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientRelativeJacquetBlockLevi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetModuleInStagesRefinedBlocks
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinSigmaFinEquivSymmStrictMonoToLex
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspProdCharTransport
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientJacquetModuleRefineTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientRelativeJacquetBlockLevi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetModuleInStagesRefinedBlocks
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinSigmaFinEquivSymmStrictMonoToLex
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SocleOfMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCuspProdCharTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,14 @@ private theorem sum_castLE_lemma {s : ℕ} (d : Fin s → ℕ) (a : ℕ) (ha : a
     ∑ b : Fin a, d (Fin.castLE ha b) = ∑ i ∈ Finset.range a, (if h : i < s then d ⟨i, h⟩ else 0) := by
   rw [Finset.sum_range]
   refine Finset.sum_congr rfl fun b _ => ?_
-  rw [dif_pos (lt_of_lt_of_le b.2 ha)] <;> rfl
+  rw [dite_eq_left (lt_of_lt_of_le b.2 ha)] <;> rfl
 
 private theorem sum_castLE_add_le_lemma_2 {s : ℕ} (d : Fin s → ℕ) {a b : Fin s} (hab : a < b) :
     ∑ c : Fin a, d (Fin.castLE a.2.le c) + d a ≤ ∑ c : Fin b, d (Fin.castLE b.2.le c) := by
   rw [sum_castLE_lemma d (a : ℕ) a.2.le, sum_castLE_lemma d (b : ℕ) b.2.le]
   have e : (∑ i ∈ Finset.range a, (if h : i < s then d ⟨i, h⟩ else 0)) + d a =
       ∑ i ∈ Finset.range (a + 1), (if h : i < s then d ⟨i, h⟩ else 0) := by
-    rw [Finset.sum_range_succ, dif_pos a.2]
+    rw [Finset.sum_range_succ, dite_eq_left a.2]
   rw [e]
   exact Finset.sum_le_sum_of_subset (Finset.range_mono (Nat.succ_le_of_lt hab))
 
@@ -363,7 +367,7 @@ private theorem isSubquotient_piTensor_lemma_10 {ι : Type} {Γ Y₀ Z₀ : ι �
     rw [e2]
     exact ht
 
-theorem jm_le_jm_concat : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {s N : ℕ} (y : Fin s → IrrGL k) (hy : ∑ a, (y a).1 = N) (c : Fin s → ℕ) (x : ∀ a, Fin (c a) → IrrGL k) (hx : ∀ a, ∑ i, (x a i).1 = (y a).1) (hcat : ∑ i, (concat c x i).1 = N) (hpos : ∀ a, 1 ≤ jm (x a) (hx a) (y a).rep) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hfl : HasFiniteLength π), jm y hy π ≤ jm (concat c x) hcat π := by
+theorem jm_le_jm_concat : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {s N : ℕ} (y : Fin s → IrrGL (k := k)) (hy : ∑ a, (y a).1 = N) (c : Fin s → ℕ) (x : ∀ a, Fin (c a) → IrrGL (k := k)) (hx : ∀ a, ∑ i, (x a i).1 = (y a).1) (hcat : ∑ i, (concat c x i).1 = N) (hpos : ∀ a, 1 ≤ jm (x a) (hx a) (y a).rep) {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hfl : HasFiniteLength π), jm y hy π ≤ jm (concat c x) hcat π := by
   intro k _ _ _ _ hA s N y hy c x hx hcat hpos V _ _ π hs _
   classical
   let e := stdBlocks (fun a => (y a).1) hy

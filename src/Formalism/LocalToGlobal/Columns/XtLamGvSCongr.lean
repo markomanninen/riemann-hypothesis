@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainInstY
-import Formalism.LocalToGlobal.Columns.ChainInstS
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainInstY
+public import Formalism.LocalToGlobal.Columns.ChainInstS
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -64,8 +68,8 @@ theorem xtLamGvS_congr (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → 
     simp only [Matrix.map_apply, Matrix.of_apply]
     exact (h _ _ (hblk i hi s s').1 (hblk i hi s s').2).2.2
 
-open Classical in
 
+open Classical in
 theorem xtPhiGS_congr (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E) ≠ 0) (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K)
     (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ rS r t j c' n' c n : ℕ} (x x' : HomE E (n' + c') (n + c))
     (hk : k₀ ≤ r) (han : r + (j - 1) * t ≤ n + c)
@@ -177,7 +181,7 @@ section Til
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {N n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-theorem xtTilH_mem (hN : N = n + 1) (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
+theorem xtTilH_mem (hN : N = n + 1) (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
     (w : HeightOneSpectrum (𝓞 E)) (v : Sp E N) :
     v ∈ (DecoSet.tilH (ST := ST) hN pi d).1.at w ↔
       (fun i : Fin n => v ⟨i.1, by omega⟩) ∈ d.1.at w ∧ IntAt w (v ⟨n, by omega⟩) := by
@@ -186,15 +190,15 @@ theorem xtTilH_mem (hN : N = n + 1) (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT :
   have htil : DecoSet.tilH (ST := ST) rfl pi d = ⟨d.1.til (ST := ST) pi, hOk⟩ := by
     show DecoSet.til (ST := ST) pi d = _
     unfold DecoSet.til
-    rw [dif_pos hOk]
+    rw [dite_eq_left hOk]
   rw [htil]
   show v ∈ localization₂ w.asIdeal (tilN d.1.N) ↔ _
   rw [mem_localization_tilN]
   rfl
 
-open Classical in
 
-theorem xtTilH_be (hN : N = n + 1) (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
+open Classical in
+theorem xtTilH_be (hN : N = n + 1) (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal)
     (w : SG) (v : Sp E N) (hv : v ∈ (DecoSet.tilH (ST := ST) hN pi d).1.at w.1) (i : Fin N) :
     (DecoSet.tilH (ST := ST) hN pi d).1.be w v i =
       if h : i.1 < n then d.1.be w (fun i : Fin n => v ⟨i.1, by omega⟩) ⟨i.1, h⟩
@@ -204,7 +208,7 @@ theorem xtTilH_be (hN : N = n + 1) (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT : 
   have htil : DecoSet.tilH (ST := ST) rfl pi d = ⟨d.1.til (ST := ST) pi, hOk⟩ := by
     show DecoSet.til (ST := ST) pi d = _
     unfold DecoSet.til
-    rw [dif_pos hOk]
+    rw [dite_eq_left hOk]
   rw [htil] at hv ⊢
   have hv' : v ∈ localization₂ w.1.asIdeal (tilN d.1.N) := hv
   show (if v ∈ localization₂ w.1.asIdeal (tilN d.1.N) then

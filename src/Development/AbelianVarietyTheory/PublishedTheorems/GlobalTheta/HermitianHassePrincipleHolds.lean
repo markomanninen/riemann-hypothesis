@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix TensorProduct ComplexConjugate
@@ -23,18 +27,6 @@ def CongrOver (σ : E ≃ₐ[F] E) (A : Type*) [CommRing A] [Algebra F A] {r : �
 
 variable {σ : E ≃ₐ[F] E} {A : Type*} [CommRing A] [Algebra F A] {r : ℕ}
   {G G' : Matrix (Fin r) (Fin r) E}
-
-theorem CongrOver.of_congr
-    (h : ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map σ) :
-    CongrOver σ A G G' := by
-  obtain ⟨P, hP, rfl⟩ := h
-  let ι : E →+* A ⊗[F] E := Algebra.TensorProduct.includeRight.toRingHom
-  refine ⟨P.map ι, ?_, ?_⟩
-  · rw [show (P.map ι).det = ι P.det from (RingHom.map_det ι P).symm]
-    exact hP.isUnit.map ι
-  · change (Pᵀ * G * P.map σ).map ι = (P.map ι)ᵀ * G.map ι * _
-    rw [Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map]
-    rfl
 
 theorem CongrOver.det_norm (hd' : G'.det ≠ 0) (h : CongrOver σ A G G') :
     ∃ z : A ⊗[F] E, (1 : A) ⊗ₜ[F] (G.det / G'.det) = z * baseConj σ A z := by
@@ -71,7 +63,7 @@ theorem CongrOver.complex (h : CongrOver σ A G G') (τ : E →+* ℂ) (hτ : �
     | tmul a x =>
       rw [Algebra.TensorProduct.map_tmul, hΦ, hΦ, map_mul, hψ, ← hτ]
       rfl
-    | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
   have e : ∀ M : Matrix (Fin r) (Fin r) E, (M.map fun x => (1 : A) ⊗ₜ[F] x).map Φ = M.map τ := by
     intro M
     ext a b
@@ -128,7 +120,7 @@ variable {σ : E ≃ₐ[F] E}
 theorem exists_coord [CharZero E] (hc : ∀ t, σ (σ t) = t)
     (hF : ∀ t : E, σ t = t ↔ ∃ s : F, algebraMap F E s = t) {θ : E} (h0 : θ ≠ 0) (hθ : σ θ = -θ)
     (x : E) : ∃ a b : F, x = algebraMap F E a + algebraMap F E b * θ := by
-  obtain ⟨a, ha⟩ := (hF ((x + σ x) / 2)).1 (by rw [map_div₀, map_add, hc, map_ofNat, add_comm])
+  obtain ⟨a, ha⟩ := (hF ((x + σ x) / 2)).1 (by rw [map_div₀, map_add (f := _), hc, map_ofNat, add_comm])
   obtain ⟨b, hb⟩ := (hF ((x - σ x) / (2 * θ))).1 (by
     rw [map_div₀, map_sub, hc, map_mul, map_ofNat, hθ]
     field_simp
@@ -161,14 +153,14 @@ theorem CongrOver.exists_sq_sub [CharZero E] (hc : ∀ t, σ (σ t) = t)
     | add x y hx hy =>
       obtain ⟨p, q, rfl⟩ := hx
       obtain ⟨p', q', rfl⟩ := hy
-      exact ⟨p + p', q + q', by simp only [map_add]; ring⟩
+      exact ⟨p + p', q + q', by simp only [map_add (f := _)]; ring⟩
   refine ⟨p, q, (algebraMap A (A ⊗[F] E)).injective ?_⟩
   have h1 : baseConj σ A ((1 : A) ⊗ₜ[F] θ) = -((1 : A) ⊗ₜ[F] θ) := by
     rw [Algebra.TensorProduct.map_tmul, ← TensorProduct.tmul_neg, ← hθ]
     rfl
   have h2 : algebraMap A (A ⊗[F] E) (algebraMap F A d) = (1 : A) ⊗ₜ[F] θ * (1 : A) ⊗ₜ[F] θ := by
     rw [← hs, hd, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  rw [← hs, ha, hz, map_add, map_mul, AlgHom.commutes, AlgHom.commutes, h1, map_sub, map_mul,
+  rw [← hs, ha, hz, map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, h1, map_sub, map_mul,
     map_pow, map_pow, h2]
   ring
 
@@ -201,7 +193,7 @@ theorem exists_embedding_conj (hc : ∀ t, σ (σ t) = t)
     apply Complex.ext <;> simp [h4]
   refine ⟨τ, fun x => ?_, hτ⟩
   obtain ⟨a, b, rfl⟩ := exists_coord hc hF h0 hθ x
-  simp only [map_add, map_mul, AlgEquiv.commutes, hθ, map_neg, hτ, Complex.conj_ofReal, h5]
+  simp only [map_add (f := _), map_mul, AlgEquiv.commutes, hθ, map_neg, hτ, Complex.conj_ofReal, h5]
 
 theorem exists_represent (hc : ∀ t, σ (σ t) = t)
     (hF : ∀ t : E, σ t = t ↔ ∃ s : F, algebraMap F E s = t) {θ : E} (h0 : θ ≠ 0) (hθ : σ θ = -θ)
@@ -243,11 +235,12 @@ theorem exists_represent (hc : ∀ t, σ (σ t) = t)
   rw [Fintype.sum_option, Fintype.sum_sum_type] at hw0
   have hw1 := congrArg (algebraMap F E) hw0
   have hw2 : algebraMap F E (w none) ≠ 0 := (map_ne_zero _).2 hw
-  simp only [a, Option.elim, Sum.elim_inl, Sum.elim_inr, map_add, map_mul, map_neg, map_pow, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [a, Option.elim, Sum.elim_inl, Sum.elim_inr, map_add (f := _), map_mul, map_neg, map_pow, map_sum,
     hγ', hκ', hd, map_zero] at hw1
   refine ⟨fun i => (algebraMap F E (w (some (Sum.inl i))) +
     algebraMap F E (w (some (Sum.inr i))) * θ) / algebraMap F E (w none), ?_⟩
-  simp only [dotProduct, Matrix.mulVec_diagonal, Function.comp_apply, map_div₀, map_add, map_mul,
+  simp only [dotProduct, Matrix.mulVec_diagonal, Function.comp_apply, map_div₀, map_add (f := _), map_mul,
     RingHom.coe_coe, AlgEquiv.commutes, hθ]
   have : ∀ i, (algebraMap F E (w (some (Sum.inl i))) + algebraMap F E (w (some (Sum.inr i))) * θ) /
       algebraMap F E (w none) * (g i * ((algebraMap F E (w (some (Sum.inl i))) +
@@ -262,8 +255,8 @@ theorem exists_represent (hc : ∀ t, σ (σ t) = t)
   rw [div_eq_iff (pow_ne_zero 2 hw2)]
   linear_combination hw1
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem posIndex_of_congr {τ : E →+* ℂ} (hτ : ∀ x, τ (σ x) = conj (τ x)) {r : ℕ}
     {G G' : Matrix (Fin r) (Fin r) E} (h : Congr (σ : E →+* E) G G') :
     GlobalTheory.Inertia.posIndex (G'.map τ) = GlobalTheory.Inertia.posIndex (G.map τ) := by
@@ -357,8 +350,8 @@ theorem congr_of_invariants (hσ : σ ≠ 1) (hG : ∀ a b, σ (G a b) = G b a)
     simp only [map_mul, RingHom.coe_coe]
     ring
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem exists_real_extension (ρ : F →+* ℝ) :
     ∃ (v : InfinitePlace F) (φ : v.Completion →+* ℝ), ∀ s : F, φ (algebraMap F _ s) = ρ s := by
   have hρ : ComplexEmbedding.IsReal (Complex.ofRealHom.comp ρ) :=
@@ -370,6 +363,8 @@ theorem exists_real_extension (ρ : F →+* ℝ) :
   have := InfinitePlace.Completion.extensionEmbedding_coe
     (InfinitePlace.mk (Complex.ofRealHom.comp ρ)) ((WithAbs.equiv _).symm s)
   rw [RingEquiv.apply_symm_apply, InfinitePlace.embedding_mk_eq_of_isReal hρ] at this
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+    Algebra.algebraMap_self_apply]
   exact this
 
 theorem congr_of_local_complex (hσ : σ ≠ 1) (hG : ∀ a b, σ (G a b) = G b a)
@@ -405,7 +400,7 @@ theorem congr_of_local_complex (hσ : σ ≠ 1) (hG : ∀ a b, σ (G a b) = G b 
       (fun v => (hf v).exists_sq_sub hc hF h0 hθ hdθ hd' ha)
     refine ⟨algebraMap F E x + algebraMap F E y * θ, ?_⟩
     rw [← ha, hxy]
-    simp only [map_add, map_sub, map_mul, map_pow, AlgEquiv.commutes, hθ, hdθ]
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, AlgEquiv.commutes, hθ, hdθ]
     ring
 
 theorem congr_of_local (hσ : σ ≠ 1) (hG : ∀ a b, σ (G a b) = G b a)
@@ -445,15 +440,5 @@ def HermitianHassePrinciple : Prop :=
 
 theorem hermitianHassePrinciple_holds : HermitianHassePrinciple :=
   fun _ _ _ _ _ _ _ _ _ hσ _ _ _ hG hG' hd hd' hf hi => congr_of_local hσ hG hG' hd hd' hf hi
-
-theorem HermitianHassePrinciple.iff {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E]
-    [Algebra F E] [Algebra.IsQuadraticExtension F E] {σ : E ≃ₐ[F] E} (hσ : σ ≠ 1) {r : ℕ}
-    {G G' : Matrix (Fin r) (Fin r) E} (hG : ∀ a b, σ (G a b) = G b a)
-    (hG' : ∀ a b, σ (G' a b) = G' b a) (hd : G.det ≠ 0) (hd' : G'.det ≠ 0) :
-    (∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map σ) ↔
-      (∀ v : HeightOneSpectrum (𝓞 F), CongrOver σ (v.adicCompletion F) G G') ∧
-        ∀ v : InfinitePlace F, CongrOver σ v.Completion G G' :=
-  ⟨fun h => ⟨fun _ => .of_congr h, fun _ => .of_congr h⟩,
-    fun h => congr_of_local hσ hG hG' hd hd' h.1 h.2⟩
 
 end GlobalTheory.Published

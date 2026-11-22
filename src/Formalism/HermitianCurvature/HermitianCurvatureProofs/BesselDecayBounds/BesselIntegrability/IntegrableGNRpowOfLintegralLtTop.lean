@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+module
+
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal

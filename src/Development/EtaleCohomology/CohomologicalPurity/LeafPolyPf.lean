@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial TensorProduct
@@ -22,6 +26,7 @@ theorem leafPoly : LateralTheory.CohomologicalPurity.ChartCut.LeafPoly := by
   let Cc := MvPolynomial (Fin d) (A ⧸ I)
   letI : Algebra P A := ψ.toAlgebra
   letI : Algebra P S := (kap d e R).toAlgebra
+  letI : Algebra S (S ⊗[P] A) := Algebra.TensorProduct.leftAlgebra (R := P) (A := S) (B := A)
   have hb : (algebraMap S (S ⊗[P] A)).Etale :=
     RingHom.IsStableUnderBaseChange.tensorProduct RingHom.Etale.isStableUnderBaseChange S hψ
   have hx : ∀ j, x j ∈ I := fun j => hI ▸ Ideal.subset_span ⟨j, rfl⟩
@@ -107,7 +112,7 @@ theorem leafPoly : LateralTheory.CohomologicalPurity.ChartCut.LeafPoly := by
         simp [F, G, fS, fA]; erw [MvPolynomial.eval₂Hom_C]; rfl
       have hm : s ⊗ₜ[P] a = (s ⊗ₜ[P] (1 : A)) * ((1 : S) ⊗ₜ[P] a) := by simp
       rw [RingHom.id_apply, RingHom.comp_apply, hm, map_mul, map_mul, hs, ha]
-    | add u v hu hv => simp only [RingHom.comp_apply, RingHom.id_apply, map_add] at hu hv ⊢; rw [hu, hv]
+    | add u v hu hv => simp only [RingHom.comp_apply, RingHom.id_apply, map_add (f := _)] at hu hv ⊢; rw [hu, hv]
   let E : S ⊗[P] A ≃+* Cc := RingEquiv.ofRingHom F G hFG hGF
   let σ : P ≃+* S := (MvPolynomial.sumAlgEquiv R (Fin d) (Fin e)).toRingEquiv
   have s1 : ∀ r, σ (C r) = C (C r) := fun r => MvPolynomial.sumAlgEquiv_C_inl (R := R) (S₁ := Fin d) (S₂ := Fin e) r

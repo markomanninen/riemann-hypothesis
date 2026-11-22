@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionLocalVolume
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.MeasureBoxGLLe
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionLocalVolume
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.MeasureBoxGLLe
+
+@[expose] public section
 
 open MeasureTheory Measure Set Matrix NumberField
 open scoped NNReal ENNReal
@@ -65,7 +69,8 @@ theorem measure_box_ringEquiv_le (φ : E ≃+* 𝕜) (hφ : ∀ x, ‖φ x‖ = 
     have : (fun i => φ (φ.symm (z i))) ᵥ* (k : Matrix (Fin (m + 1)) (Fin (m + 1)) E).map φ =
         fun j => φ.toRingHom (((fun i => φ.symm (z i)) ᵥ* (k : Matrix (Fin (m + 1)) (Fin (m + 1)) E)) j) := by
       ext j
-      simp [vecMul, dotProduct, _root_.map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [vecMul, dotProduct, _root_.map_sum, map_mul]
     rw [this, euclidNorm_map φ.toRingHom hφ, hk, ← euclidNorm_map φ.toRingHom hφ]
     rfl
   refine ⟨Φ b, ⟨b, hbω, rfl⟩, y, hy, ⟨_, hkU⟩, ?_⟩
@@ -117,8 +122,7 @@ theorem measure_boxPlace_le (w : InfinitePlace K)
       rw [coe_diagUnits, diagonal_map (map_zero _)]
       congr 1
       funext i
-      simp only [posRealToUnits, MonoidHom.coe_mk, OneHom.coe_mk, Units.val_mk0, posRealElem,
-        dif_pos hw, RingEquiv.apply_symm_apply, hm, pow_one]
+      simp [posRealToUnits, posRealElem, hw, hm]
     obtain ⟨C, hC, hCb⟩ := measure_box_ringEquiv_le (𝕜 := ℝ)
       (InfinitePlace.Completion.ringEquivRealOfIsReal hw) hφ
       (fun ν _ μK _ μA _ μN _ => lintegral_GLReal_ANK ν μK μA μN) μ D hD hω hωB B
@@ -138,9 +142,7 @@ theorem measure_boxPlace_le (w : InfinitePlace K)
       rw [coe_diagUnits, diagonal_map (map_zero _)]
       congr 1
       funext i
-      simp only [posRealToUnits, MonoidHom.coe_mk, OneHom.coe_mk, Units.val_mk0, posRealElem,
-        dif_neg hw, RingEquiv.apply_symm_apply, hm]
-      rw [Real.sqrt_sq (r.2 i).le]
+      simp [posRealToUnits, posRealElem, hw, hm, Real.sqrt_sq (r.2 i).le]
     obtain ⟨C, hC, hCb⟩ := measure_box_ringEquiv_le (𝕜 := ℂ)
       (InfinitePlace.Completion.ringEquivComplexOfIsComplex hc) hφ
       (fun ν _ μK _ μA _ μN _ => lintegral_GLComplex_ANK ν μK μA μN) μ D hD hω hωB B

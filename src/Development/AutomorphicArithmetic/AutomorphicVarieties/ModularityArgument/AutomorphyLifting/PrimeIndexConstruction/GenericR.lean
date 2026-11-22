@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.MixSeedPAlt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageOfIsCuspForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousOfIsOpenStab
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.MixSeedPAlt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsMirabolicWhittakerStageOfIsCuspForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ContinuousOfIsOpenStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem good_of_isCuspFormR (a : ℕ) (ψ : AddChar (Ad F) ℂ) (φ : TR.Sm F a)
     have hper := per_blk (E := F) (r := r) (m := a - 1) hcont (fun c g => h.1.left _ g) g
     have hper2 : Per (ratN F a r) (fun x => φ.1 (blkU (blkIxHomeo r x) * g)) :=
       ⟨hper.1.comp (blkIxHomeo r).continuous, fun γ hγ x => by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact hper.2 _ ((blkIxHomeo_mem r γ).2 hγ) _⟩
     have key := GlobalTheory.T.quotientAverage_map_lattice_equiv _ _ (ratN F a r) (ratV F _) (isCoLat_ratV F (BlockIx a r))
       (isCoLat_ratV F _) (blkIxHomeo r) (blkIxHomeo_mem r) _ hper
@@ -73,6 +77,7 @@ private theorem locTri_adelicR (a : ℕ) (w : HeightOneSpectrum (𝓞 F)) (u : G
     rw [hoff i j (ne_of_gt h), hlow i j h, map_zero, map_zero]
   · intro j
     exact cornerGL_apply_diag_loctri _ _ (cornerGL_apply_diag_loctri _ _ (hdiag j))
+  set_option synthInstance.maxHeartbeats 100000 in
   · rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun p hp => ?_
     have hp' : (p.2 : ℕ) = p.1 + 1 := (Finset.mem_filter.mp hp).2
@@ -80,8 +85,8 @@ private theorem locTri_adelicR (a : ℕ) (w : HeightOneSpectrum (𝓞 F)) (u : G
       intro h; rw [h] at hp'; omega
     exact hoff p.1 p.2 hne
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem isGeneric_of_isLocCompR (a : ℕ) (P : TR.CuspSub F a) (w : HeightOneSpectrum (𝓞 F))
     (σ : SmIrr (GL (Fin a) (w.adicCompletion F))) (hσ : P.IsLocComp w σ) : GlobalTheory.LocGL.IsGeneric σ.ρ := by
   obtain ⟨f, hf0, hf⟩ := hσ

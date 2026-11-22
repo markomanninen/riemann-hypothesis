@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOfMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TemperateMultiplierPreservesSchwartz
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShAdd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightRightTranslateCompactBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobiMapsExist
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousStandardUnitaryChartAndSymm
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOfMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TemperateMultiplierPreservesSchwartz
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShAdd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HeightRightTranslateCompactBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobiMapsExist
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousStandardUnitaryChartAndSymm
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -184,8 +189,8 @@ theorem exists_real_idele (D : D7) (θ : InfFam D) (hθ : IsInfFam θ) :
   · rw [ha1, map_one, map_one]; simp
   · rw [ha2, map_one]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem dil_exists : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (n ρ p : ℕ) (hn : ρ + p = n) (M : Maps D hn),
     ∃ e : ℝ → G D n, Continuous e ∧ (∀ u v, e (u + v) = e u * e v) ∧
       ∀ (u : ℝ) (y y' : Mx D ρ p), (∀ τ i j, compAt θ τ y' i j = (Real.exp u : ℂ) * compAt θ τ y i j) →
@@ -301,7 +306,7 @@ theorem exists_shear_bound (D : D7) (n ρ p : ℕ) (hn : ρ + p = n) (M : Maps D
   set y₂ := e0.symm (0, f) with hy₂
   have hsum : y = y₁ + y₂ := by
     apply e0.injective
-    rw [map_add, hy₁, hy₂, e0.apply_symm_apply, e0.apply_symm_apply, hey]
+    rw [map_add (f := _), hy₁, hy₂, e0.apply_symm_apply, e0.apply_symm_apply, hey]
     simp
   have hc₀ : ∀ τ i j, compAt θ τ y₀ i j = r⁻¹ • z τ i j := fun τ i j => by
     have := congrArg Prod.fst (he0 y₀)

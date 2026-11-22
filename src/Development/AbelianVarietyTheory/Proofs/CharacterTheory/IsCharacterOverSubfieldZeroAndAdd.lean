@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+
+@[expose] public section
+
 open GlobalTheory.BI
 namespace GlobalTheory.BI
 
@@ -37,6 +42,6 @@ theorem _root_.GlobalTheory.BI.isChar_zero_and_add : ∀ (K L : Type) [Field K] 
     obtain ⟨m, σ, hσ⟩ := hb
     obtain ⟨τ, hτ⟩ := exists_representation_character_eq_add K G n m ρ σ
     refine ⟨n + m, τ, fun g => ?_⟩
-    rw [Pi.add_apply, hρ g, hσ g, hτ g, map_add]
+    rw [Pi.add_apply, hρ g, hσ g, hτ g, map_add (f := _)]
 
 end GlobalTheory.BI

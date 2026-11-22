@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.UnitriangularFrameLift
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.UnitriangularFrameLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem scal_exists_v (U : Submodule E S.V) (f : S.V) (hf : f ∉ U) :
     intro x hx
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hb
-    rw [map_add, LinearMap.add_apply, hv a ha, map_smulₛₗ, LinearMap.smul_apply, p_symm_zero S hvf, smul_zero,
+    rw [map_add (f := _), LinearMap.add_apply, hv a ha, map_smulₛₗ, LinearMap.smul_apply, p_symm_zero S hvf, smul_zero,
       add_zero]
   have h1 := Submodule.finrank_mono hle
   have h2 := c_finrank_orth_ge U
@@ -257,7 +261,7 @@ theorem id_scal : EqualFlagsScalar := by
     have hxx : S.hT x x = 0 := geo_X_X F _ _ hzc hzc
     have hn := F'.z_norm
     rw [hz'] at hn
-    simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hzx, hxz, hxx,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, hzx, hxz, hxx,
       F.z_norm, mul_zero, add_zero, starRingEnd_apply] at hn
     have : (c * star c) * T = 1 * T := by linear_combination -hn
     exact mul_right_cancel₀ hT0 this

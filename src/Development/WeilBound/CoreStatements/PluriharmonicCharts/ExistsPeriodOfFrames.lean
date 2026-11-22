@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsPeriodMatrix
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsContraction
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.OmHeightslockG
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ExistsPeriodMatrix
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsContraction
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.BMx ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P
 open ReciprocityTheory.ChartRestriction.G.Semi
@@ -15,16 +19,10 @@ open GlobalTheory.PeriodChart
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {g : ℕ}
 
-open Classical in
 
+open Classical in
 noncomputable def Pr (ty : Fin g → (E →+* ℂ)) (t : E →+* ℂ) : Matrix (Fin g) (Fin g) ℂ :=
   diagonal fun i => if ty i = t then 1 else 0
-
-theorem Pr_conjT (ty : Fin g → (E →+* ℂ)) (t : E →+* ℂ) : (Pr ty t)ᴴ = Pr ty t := by
-  rw [Pr, diagonal_conjTranspose]
-  congr 1
-  funext i
-  simp [apply_ite]
 
 theorem Pr_map (ty : Fin g → (E →+* ℂ)) (t : E →+* ℂ) : (Pr ty t).map (starRingEnd ℂ) = Pr ty t := by
   ext a b
@@ -82,7 +80,8 @@ theorem exists_coord {X : Type} [NormedAddCommGroup X] [NormedSpace ℂ X] {ty :
     · simp [hit, hs u hu i a hit]
   have hSW : HolM B fun u => S * W u := (HolM.const _ _).mul hW
   refine ⟨{u ∈ B | (S * W u).det ≠ 0}, fun u => (S * W u)⁻¹ * S, hSW.isOpen_det hB, ⟨hu₀, fun h0 => ?_⟩,
-    fun _ h => h.1, ((hSW.mono fun _ h => h.1).inv fun _ h => h.2).mul (HolM.const _ _), fun u hu => ⟨?_, ?_⟩⟩
+    fun _ h => h.1, ((hSW.mono fun u (h : u ∈ {u ∈ B | (S * W u).det ≠ 0}) => h.1).inv
+      fun u (h : u ∈ {u ∈ B | (S * W u).det ≠ 0}) => h.2).mul (HolM.const _ _), fun u hu => ⟨?_, ?_⟩⟩
   · obtain ⟨c, hc, h⟩ := Matrix.exists_mulVec_eq_zero_iff.2 h0
     refine hc (hi c ?_)
     rw [← hP u₀ hu₀, ← Matrix.mulVec_mulVec, h, Matrix.mulVec_zero]
@@ -132,7 +131,8 @@ theorem form_const {D : Datum H} {ty : Fin g → (E →+* ℂ)} {P P' : D.La →
         (Pr ty (ComplexEmbedding.conjugate σ) *ᵥ P x) (Pr ty (ComplexEmbedding.conjugate σ) *ᵥ P y))) =
         ((2 * (D.EF (a • x) y : ℝ) : ℝ) : ℂ) * Complex.I := by
     intro P hP G hE a
-    rw [← hE, ← Complex.sub_conj, (lin_iff P).1 hP.1, herm_dg (herm_block hP hE), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hE, ← Complex.sub_conj, (lin_iff P).1 hP.1, herm_dg (herm_block hP hE), map_sum]
     simp only [mul_sub, Finset.sum_sub_distrib]
     congr 1
     refine Fintype.sum_equiv (ComplexEmbedding.involutive_conjugate E).toPerm _ _ fun σ => ?_

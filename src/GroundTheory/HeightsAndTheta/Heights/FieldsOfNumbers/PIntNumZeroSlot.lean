@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -54,7 +59,7 @@ theorem eventualValue_eq_zero {f : (K → ℤ) → ℤ} (hf : ∀ᶠ m in atTop,
     eventualValue f = 0 := by
   unfold eventualValue
   have hex : ∃ c, ∀ᶠ m in atTop, f m = c := ⟨0, hf⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨m, h1, h2⟩ := (hex.choose_spec.and hf).exists
   rw [← h1, h2]
 

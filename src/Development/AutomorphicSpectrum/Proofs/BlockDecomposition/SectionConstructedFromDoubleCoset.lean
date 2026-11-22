@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EGPgTrueEqLastIff
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideTail
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EGPgTrueEqLastIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideTail
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.BZRes Topology
 open scoped TensorProduct
 

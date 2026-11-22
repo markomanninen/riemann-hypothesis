@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocDensCorank
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocDensCorank
+
+@[expose] public section
 
 open ValuativeRel Classical
 

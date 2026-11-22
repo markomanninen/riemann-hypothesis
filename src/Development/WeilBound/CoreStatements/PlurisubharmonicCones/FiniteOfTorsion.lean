@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.EmbEquivSymmApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.EmbEquivSymmApply
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexConjugate ComplexOrder
@@ -205,7 +209,7 @@ theorem relIndex_matrix {r : ℕ} {v w : Fin r → M} (hv : LinearIndependent (�
 
 private theorem ringOfIntegers_ringHom_complex_injective {E : Type} [Field E] [NumberField E] (s : 𝓞 E →+* ℂ) :
     Function.Injective s := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have hker : RingHom.ker s = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := ℤ)
@@ -358,7 +362,8 @@ theorem nzOf_of_le {σ : Ψ → (𝓞 E →+* ℂ)} (hσ : IsCMFam σ) {I : Subm
     rw [RingHom.map_det, RingHom.mapMatrix_apply]
     apply gram_matrix
     intro b
-    simp only [eigComp_eq, hAw b, map_sum, R.act, proj_act, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [eigComp_eq, hAw b, map_sum, R.act, proj_act, Matrix.map_apply]
   have hN : ((Algebra.norm ℤ A.det).natAbs : ℝ) ≠ 0 := by
     exact_mod_cast Int.natAbs_ne_zero.2 (Algebra.norm_ne_zero_iff.2 hdet)
   unfold RiemLat.nzOf
@@ -393,7 +398,7 @@ theorem nz_eq {σ : Ψ → (𝓞 E →+* ℂ)} (hσ : IsCMFam σ) {I : Submodule
     (hv : IsNzFamily I r v) : R.nz σ I = R.nzOf σ I v := by
   have h : ∃ r v, IsNzFamily I r v := ⟨r, v, hv⟩
   unfold RiemLat.nz
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact nzOf_eq R hσ hv h.choose_spec.choose_spec
 
 theorem nzOf_pos (σ : Ψ → (𝓞 E →+* ℂ)) {I : Submodule (𝓞 E) Λ} (hI : IsIsoSub R.form I) {r : ℕ} {v : Fin r → Λ}

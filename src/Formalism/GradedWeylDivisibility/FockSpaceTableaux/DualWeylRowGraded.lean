@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowstLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowstLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -37,7 +41,7 @@ theorem dualWeylModuleRowGraded : DualWeylRowGraded := by
         rw [weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hm),
           weightedHomogeneousComponent_of_mem ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hm0)]
         split_ifs <;> simp
-      · simp only [map_add, hp, hq]
+      · simp only [map_add (f := _), hp, hq]
     let G : Fin r × Fin n → MvPolynomial (Option (Fin r × Fin n)) R := fun v =>
       if v.2 = j then X (some v) + X none * X (some (v.1, l)) else X (some v)
     have hG : ∀ v, IsWeightedHomogeneous w' (G v) (rowW r n v) := by

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactors
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactors
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsValCharTwist
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+
+@[expose] public section
+
 open GlobalTheory.SqTop
 
 noncomputable section
@@ -40,7 +45,7 @@ theorem exists_rat_repr (D : D7) {w : D.host.E} (hw : w ^ 2 = -(D.host.d : D.hos
       have := congrArg Subtype.val hst
       simpa [Rat.smul_def, wK] using this
     have h1 := congrArg σ h0
-    simp only [map_add, map_mul, map_ratCast, map_zero, hσ] at h1
+    simp only [map_add (f := _), map_mul, map_ratCast, map_zero, hσ] at h1
     have hre := congrArg Complex.re h1
     have him := congrArg Complex.im h1
     simp at hre him
@@ -73,7 +78,7 @@ theorem exists_phiK (D : D7) (hFD : GlobalTheory.IndefiniteRowSideFullHecke.Clas
   have hval : ∀ (τ : D.what₂.Tau) (y : D.host.K) (a b : ℚ), (y : D.host.E) = (a : D.host.E) + (b : D.host.E) * w →
       cmPhi D τ (y : D.host.E) = (a : ℂ) + (b : ℂ) * (Complex.I * (Real.sqrt D.host.d : ℝ)) := by
     intro τ y a b h
-    rw [h, map_add, map_mul, map_ratCast, map_ratCast, hwφ τ]
+    rw [h, map_add (f := _), map_mul, map_ratCast, map_ratCast, hwφ τ]
   have hcomp : ∀ τ, (cmPhi D τ).comp (algebraMap D.host.K D.host.E) = φK := fun τ => by
     ext y
     obtain ⟨a, b, h⟩ := hrep y
@@ -156,5 +161,3 @@ theorem torEx : GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport.Tra
   exact (hk.1 ∅ _ _ ⟨hAux, hV, by simpa [condQ] using hTS Λ hΛ⟩).1
 
 end GlobalTheory.ToricExist
-
-example : GlobalTheory.IndefiniteRowSideFullHecke.LatticeNormTransport.Transport → GlobalTheory.SqTop.FieldDat → GlobalTheory.SqTop.LNe → GlobalTheory.SqTop.TorEx := GlobalTheory.ToricExist.torEx

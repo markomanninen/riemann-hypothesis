@@ -1,21 +1,25 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsCoordOfNotMatIrr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.FreeEtaleSheafZmodExistsHomSendingGenerator
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsCoordOfNotMatIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.FreeEtaleSheafZmodExistsHomSendingGenerator
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ZetaReducibleRepEqSubInvAndIsUnit
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV
 
 private theorem zmat_map {G R S : Type} [Group G] [CommRing R] [CommRing S] (f : R →+* S) (c g₁ : G)
-    (r : G →* GG 3 R) (i j : Fin 3) : zmat c g₁ ((GG.map f).comp r) i j = f (zmat c g₁ r i j) := by
+    (r : G →* GG (m := 3) (R := R)) (i j : Fin 3) : zmat c g₁ ((GG.map f).comp r) i j = f (zmat c g₁ r i j) := by
   simp only [zmat, Matrix.sub_apply, MonoidHom.comp_apply, GG.map_mat, Matrix.map_apply, map_sub]
 
 private theorem normalised_map {G R S : Type} [Group G] [CommRing R] [CommRing S] (f : R →+* S) {c g₁ : G}
-    {r : G →* GG 3 R} (h : Normalised c g₁ r) : Normalised c g₁ ((GG.map f).comp r) where
-  atc := by
-    rw [MonoidHom.comp_apply, GG.map_mat, h.atc]
+    {r : G →* GG (m := 3) (R := R)} (h : Normalised c g₁ r) : Normalised c g₁ ((GG.map f).comp r) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [MonoidHom.comp_apply, GG.map_mat, h.atc]
     exact Matrix.map_one _ (map_zero f) (map_one f)
-  z12 := by rw [zmat_map, h.z12, map_zero]
-  z21 := by rw [zmat_map, h.z21, map_zero]
+  · rw [zmat_map, h.z12, map_zero]
+  · rw [zmat_map, h.z21, map_zero]
 
 private theorem map_reducible_three_dim {G R S : Type} [Group G] [CommRing R] [CommRing S] (f : R →+* S) (η : G →* ℤˣ)
     (Ψ : G →* Rˣ) : (GG.map f).comp (r0 η Ψ) = r0 η ((Units.map f.toMonoidHom).comp Ψ) := by
@@ -56,7 +60,7 @@ private theorem norm_coe_coefO_le_one {l : ℕ} [Fact l.Prime] (c : Coef l) (x :
   obtain ⟨p, hmon, hp⟩ := hint
   by_contra hgt
   push_neg at hgt
-  rw [hmon.as_sum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum] at hp
+  rw [hmon.as_sum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum] at hp
   have hcoef : ∀ i ∈ Finset.range p.natDegree,
       ‖Polynomial.eval₂ (algebraMap ℤ_[l] (PadicAlgCl l)) (x : PadicAlgCl l)
         (Polynomial.C (p.coeff i) * Polynomial.X ^ i)‖ ≤ ‖(x : PadicAlgCl l)‖ ^ i := by
@@ -73,7 +77,7 @@ private theorem norm_coe_coefO_le_one {l : ℕ} [Fact l.Prime] (c : Coef l) (x :
     rcases Nat.eq_zero_or_pos p.natDegree with hn | hn
     · rw [hn]
       simp
-    · obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finset_sum_le_of_nonempty
+    · obtain ⟨i, hi, hle⟩ := IsUltrametricDist.exists_norm_finsetSum_le_of_nonempty
         (Finset.nonempty_range_iff.mpr hn.ne') (fun i => Polynomial.eval₂
           (algebraMap ℤ_[l] (PadicAlgCl l)) (x : PadicAlgCl l) (Polynomial.C (p.coeff i) * Polynomial.X ^ i))
       exact lt_of_le_of_lt (hle.trans (hcoef i hi)) (pow_lt_pow_right₀ hgt (Finset.mem_range.mp hi))
@@ -85,11 +89,12 @@ private theorem norm_coe_coefO_le_one {l : ℕ} [Fact l.Prime] (c : Coef l) (x :
 theorem UpperTheory.V.U3.twoPt_shape :
     ∀ {l : ℕ} [Fact l.Prime] {c : Coef l} {Γ H : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
       {η : Γ →* ℤˣ} {Ψ : Γ →* (c.O)ˣ} {N : Set Γ} {ι : H →* Γ} {hι : Continuous ι}
-      {U : Univ (GCond.noCondition c.O (η.comp ι) (Ψ.comp ι))} {I : Ideal U.R} {cc g₁ : Γ} (S : SRing N hι U I cc g₁), l ≠ 2 → Marks η Ψ cc g₁ →
-      ∀ f : S.R →ₐ[c.O] PadicAlgCl l, TwoPt η S.r.hom f →
+      {U : Univ (GCond.noCondition c.O (η.comp ι) (Ψ.comp ι))} {I : Ideal U.R} {cc g₁ : Γ}
+      (S : SRing (N := N) (hι := hι) (U := U) (I := I) (c := cc) (g₁ := g₁)), l ≠ 2 → Marks η Ψ cc g₁ →
+      ∀ f : S.R →ₐ[c.O] PadicAlgCl l, TwoPt (η := η) S.r.hom f →
         (TypeI η (push f S.r.hom) ∨ TypeII η (push f S.r.hom)) ∧
         ∀ f' : S.R →ₐ[c.O] PadicAlgCl l, IsLocPt f' → MatIso η.ker (mats (push f S.r.hom)) (mats (push f' S.r.hom)) →
-          ∃ t : (PadicAlgCl l)ˣ, push f' S.r.hom = conjBy (tor _ t) (push f S.r.hom) := by
+          ∃ t : (PadicAlgCl l)ˣ, push f' S.r.hom = conjBy (tor (R := PadicAlgCl l) t) (push f S.r.hom) := by
   intro l _ c Γ H _ _ _ _ _ _ η Ψ N ι hι U I cc g₁ S hl2 hmk f htwo
   have hid : (GLift.map (AlgHom.id c.O S.R) S.r).hom = S.r.hom := by
     ext g : 1

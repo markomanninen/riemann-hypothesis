@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -332,12 +337,6 @@ theorem dimC (n : ℕ) :
   rw [← LinearMap.finrank_range_add_finrank_ker (H.delta n), H.ker_delta]
 
 end IsSES
-
-theorem IsSES.ofDegZero :
-    IsSES (F := ℚ) (A := fun _ => ℚ) (B := fun _ => ℚ) (C := fun _ => ℚ) (fun _ => ⊥) degZero degZero
-      (fun _ => 0) (fun _ => 0) (fun _ => 0) (fun _ => 0) (fun _ => LinearMap.id) := by
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, -⟩ := EulerSES.hyps
-  exact ⟨h1, h2, h2, h3, h4, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
 
 end SES
 

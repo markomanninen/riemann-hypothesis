@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ActAtApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.RealLift GlobalTheory.HoweR
 
@@ -23,7 +28,8 @@ theorem qop_quadratic_on_eigenvector : ∀ (ι M : Type) [Fintype ι] [Decidable
         = ∑ c, F a c (∑ b, F c b (y b)) - α • ∑ b, F a b (y b) - β • y a := by
       rw [Finset.sum_congr rfl (fun b _ => pt b), Finset.sum_sub_distrib, Finset.sum_sub_distrib,
         Finset.sum_comm, Finset.sum_ite_eq, ← Finset.smul_sum]
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
     rw [expand, ht a ha] at key
     simp only [hall, map_smul] at key
     rw [← Finset.smul_sum, ht a ha] at key

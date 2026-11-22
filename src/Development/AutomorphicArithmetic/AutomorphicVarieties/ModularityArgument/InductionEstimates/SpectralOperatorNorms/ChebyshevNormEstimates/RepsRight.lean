@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -39,7 +43,7 @@ theorem cosetSum {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G
     · exact (hout h).symm
     · exact h0 h fun hc => hh ⟨h, hc, rfl⟩
   conv_lhs => rw [hF']
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · refine Finset.sum_congr rfl fun q _ => ?_
     rw [integral_indicator_const _ (hmeas q), Measure.real, hval, Measure.real]
   · intro q _
@@ -64,20 +68,23 @@ theorem reps_ext {v w : L2 μ} {φ : G1 K n → ℂ} (hv : Reps μ v φ) (hw : R
 theorem reps_sum {ι : Type} (s : Finset ι) (c : ι → ℂ) {v : ι → L2 μ} {φ : ι → G1 K n → ℂ} (h : ∀ i ∈ s, Reps μ (v i) (φ i)) :
     Reps μ (∑ i ∈ s, c i • v i) fun y => ∑ i ∈ s, c i * φ i y := by
   classical
+  have hq := quasiMeasurePreserving_mk (Gam K n) μ
   induction s using Finset.induction_on with
   | empty =>
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y hy
-    simpa using hy
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae hq
+      (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y hy
+    simpa only [Finset.sum_empty, Pi.zero_apply] using hy
   | insert a s ha ih =>
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_add (c a • v a) (∑ i ∈ s, c i • v i)),
-      (quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_smul (c a) (v a)), h a (Finset.mem_insert_self _ _),
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae hq (Lp.coeFn_add (c a • v a) (∑ i ∈ s, c i • v i)),
+      MeasureTheory.QuasiMeasurePreserving.ae hq (Lp.coeFn_smul (c a) (v a)), h a (Finset.mem_insert_self _ _),
       ih fun i hi => h i (Finset.mem_insert_of_mem hi)] with y h1 h2 h3 h4
     rw [Finset.sum_insert ha, Finset.sum_insert ha, h1, Pi.add_apply, h2, h4, Pi.smul_apply, h3, smul_eq_mul]
 
 theorem reps_right {v : L2 μ} {φ : G1 K n → ℂ} (hv : Reps μ v φ) (g : G1 K n) :
     Reps μ (rightRegularRep (Gam K n) μ g v) fun y => φ (y * g) := by
-  filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (coeFn_rightRegularRep (Gam K n) μ g v),
-    (measurePreserving_mul_right μ g).quasiMeasurePreserving.ae hv] with y h1 h2
+  filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ)
+      (coeFn_rightRegularRep (Gam K n) μ g v),
+    MeasureTheory.QuasiMeasurePreserving.ae (measurePreserving_mul_right μ g).quasiMeasurePreserving hv] with y h1 h2
   rw [h1, rightMul_mk, h2]
 
 end Reps
@@ -247,19 +254,19 @@ theorem lin_fix {D : TypeDat K (2 + 2)} {Kf : Subgroup GF} (hL : D.Level Kf) (hl
     have := (D.cont.mul (hc.comp (continuous_const.mul continuous_id : Continuous fun u => y * u))).continuousOn.integrableOn_compact
       (μ := D.ν) (typeFin D).1
     rwa [IntegrableOn, Measure.restrict_eq_self_of_ae_mem D.supp] at this
-  rw [integral_congr_ae (g := fun u => ∑ h ∈ s, c h * ω (dl g h) * (D.e u * f (g * pf h * u))), integral_finset_sum, lin_apply]
+  rw [integral_congr_ae (g := fun u => ∑ h ∈ s, c h * ω (dl g h) * (D.e u * f (g * pf h * u))), integral_finsetSum, lin_apply]
   · exact Finset.sum_congr rfl fun h _ => by rw [integral_const_mul, hf]
   · exact fun h _ => (hint _).const_mul _
   · filter_upwards [D.supp] with u hu
     rw [key u hu, Finset.mul_sum]
     exact Finset.sum_congr rfl fun h _ => by ring
 
-theorem lin_sec [IsTotallyComplex K] {μ₂ : Measure (G1 K 2)} [μ₂.IsHaarMeasure] {τ₁ τ₂ : Submodule ℂ (L2 μ₂)} {D : TypeDat K (2 + 2)}
+theorem lin_sec [_root_.NumberField.IsTotallyComplex K] {μ₂ : Measure (G1 K 2)} [μ₂.IsHaarMeasure] {τ₁ τ₂ : Submodule ℂ (L2 μ₂)} {D : TypeDat K (2 + 2)}
     (h₁ : CuspIrr μ₂ τ₁) (h₂ : CuspIrr μ₂ τ₂) (s : Finset GF) (c : GF → ℂ) (ω : ℝ → ℂ) {f : G1 K (2 + 2) → ℂ} (hs : IsSec τ₁ τ₂ f)
     (hf : D.Fix f) (hf' : D.Fix (lin s c ω f)) : IsSec τ₁ τ₂ (lin s c ω f) := by
   obtain ⟨hc, ⟨C, hC⟩, hn, hray, hsl⟩ := (secCrit μ₂ τ₁ τ₂ D h₁ h₂ f hf).1 hs
   refine (secCrit μ₂ τ₁ τ₂ D h₁ h₂ _ hf').2 ⟨?_, ?_, fun X g => ?_, fun t g => ?_, fun g => ⟨fun m₂ => ?_, fun m₁ => ?_⟩⟩
-  · exact continuous_finset_sum s fun h _ =>
+  · exact continuous_finsetSum s fun h _ =>
       (continuous_const.mul (dl_cont ω h).1).mul (hc.comp (continuous_id.mul continuous_const))
   · choose B hB using fun h : GF => (dl_cont ω h).2
     refine ⟨∑ h ∈ s, ‖c h‖ * B h * C, fun g => (norm_sum_le _ _).trans (Finset.sum_le_sum fun h _ => ?_)⟩

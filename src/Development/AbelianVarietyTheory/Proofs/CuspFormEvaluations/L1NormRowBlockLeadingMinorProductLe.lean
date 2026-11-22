@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.PerpVecPerpSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.SumFinsuppAntidiagProdPowDivMultiFactorial
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.FormPerpVectorMemOfIntegral
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.PerpVecPerpSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.SumFinsuppAntidiagProdPowDivMultiFactorial
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.FormPerpVectorMemOfIntegral
+
+@[expose] public section
 
 open scoped BigOperators
 open NumberField
@@ -38,7 +42,7 @@ theorem l1Norm_rowBlockLeadingMinorProduct_le [Fintype T] (c : T → Fin p → �
     l1Norm (minorProd c c' ε φ) ≤ (N * √(n : ℝ) * R) ^ typeDegree c c' := by
   have hB : 0 ≤ √(n : ℝ) * R := by positivity
   rw [minorProd, typeDegree, ← Finset.prod_pow_eq_pow_sum, mul_assoc]
-  refine (l1Norm_prod_le _ _).trans (Finset.prod_le_prod (fun _ _ => l1Norm_nonneg _) fun t _ => ?_)
+  refine (l1Norm_prod_le _ _).trans (Finset.prod_le_prod₀ (fun _ _ => l1Norm_nonneg _) fun t _ => ?_)
   rw [pow_add]
   refine (l1Norm_mul_le _ _).trans (mul_le_mul ?_ ?_ (l1Norm_nonneg _) (by positivity))
   · refine (l1Norm_prod_pow_le _ _ _ (fun i => (N * (√(n : ℝ) * R)) ^ (i.val + 1))
@@ -61,30 +65,25 @@ variable {E : Type*} [CommRing E] {κ : Type*} [Fintype κ]
 noncomputable def embSeminorm (τ : E →+* ℂ) : RingSeminorm E where
   toFun x := ‖τ x‖
   map_zero' := by simp
-  add_le' x y := by rw [map_add]; exact norm_add_le _ _
+  add_le' x y := by rw [map_add (f := _)]; exact norm_add_le _ _
   neg' x := by simp
   mul_le' x y := by simp
-
-@[simp] theorem embSeminorm_apply (τ : E →+* ℂ) (x : E) : embSeminorm τ x = ‖τ x‖ := rfl
 
 noncomputable def embVec (τ : E →+* ℂ) : (κ → E) →+ EuclideanSpace ℂ κ where
   toFun v := WithLp.toLp 2 fun k => τ (v k)
   map_zero' := by ext k; simp
   map_add' v w := by ext k; simp
 
-omit [Fintype κ] in
 
-@[simp] theorem embVec_apply (τ : E →+* ℂ) (v : κ → E) (k : κ) : embVec τ v k = τ (v k) := rfl
 
 omit [Fintype κ] in
-
 theorem embVec_smul (τ : E →+* ℂ) (x : E) (v : κ → E) : embVec τ (x • v) = τ x • embVec τ v := by
-  ext k; simp
+  ext k; simp [embVec, Pi.smul_apply]
 
 noncomputable def embLength (τ : E →+* ℂ) : AddGroupSeminorm (κ → E) where
   toFun v := ‖embVec τ v‖
   map_zero' := by simp
-  add_le' x y := by rw [map_add]; exact norm_add_le _ _
+  add_le' x y := by rw [map_add (f := _)]; exact norm_add_le _ _
   neg' x := by simp
 
 theorem embLength_apply (τ : E →+* ℂ) (v : κ → E) : embLength τ v = ‖embVec τ v‖ := rfl
@@ -107,7 +106,8 @@ theorem sum_sq_le_of_embLength_le (τ : E →+* ℂ) {v : κ → E} {R : ℝ} (h
 
 theorem norm_emb_sum_mul_le (τ : E →+* ℂ) (s : E → E) (hs : ∀ x, ‖τ (s x)‖ = ‖τ x‖)
     (x y : κ → E) : ‖τ (∑ k, x k * s (y k))‖ ≤ embLength τ x * embLength τ y := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (norm_sum_le _ _).trans ?_
   simp only [map_mul, norm_mul, hs]
   refine (le_abs_self _).trans (abs_le_of_sq_le_sq ?_
@@ -119,7 +119,8 @@ theorem sum_sq_combination_le (τ : E →+* ℂ) {ι : Type*} [Fintype ι] (v : 
     (hv : ∀ i, ∑ k, ‖τ (v i k)‖ ^ 2 ≤ ρ ^ 2) (A : ι → ℕ) {d : ℕ} (hA : ∀ i, A i ≤ d) :
     ∑ k, ‖τ ((∑ i, (A i : E) • v i) k)‖ ^ 2 ≤ ((Fintype.card ι : ℝ) * d * ρ) ^ 2 := by
   apply sum_sq_le_of_embLength_le
-  rw [embLength_apply, map_sum, abs_mul, abs_mul, Nat.abs_cast, Nat.abs_cast, mul_assoc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [embLength_apply, map_sum, abs_mul, abs_mul, Nat.abs_cast, Nat.abs_cast, mul_assoc,
     ← nsmul_eq_mul, ← Finset.card_univ]
   refine (norm_sum_le _ _).trans (Finset.sum_le_card_nsmul _ _ _ fun i _ => ?_)
   rw [← embLength_apply, embLength_smul, map_natCast, Complex.norm_natCast]
@@ -152,7 +153,7 @@ theorem sum_sq_perpVec_le (τ : E →+* ℂ) (h : (Fin n → E) →ₗ[E] ((Fin 
         (mul_le_mul hu hv (apply_nonneg _ _) (abs_nonneg _))
   apply sum_sq_le_of_embLength_le
   rw [perpVec_eq_perpVector, abs_mul, Nat.abs_cast, abs_pow, pow_succ, pow_mul, ← mul_assoc]
-  exact seminorm_perpVector_le (embSeminorm τ) (by simp) (embLength τ)
+  exact seminorm_perpVector_le (embSeminorm τ) (by change ‖τ 1‖ ≤ 1; simp) (embLength τ)
     (fun x v => (embLength_smul τ x v).le) _ e' g
     (fun a a' => key _ _ (embLength_le_abs τ (he' a')) (embLength_le_abs τ (he a)))
     (fun a => key _ _ (embLength_le_abs τ hg) (embLength_le_abs τ (he a)))

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantsStableLatticeModIrreducibleEqBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantsStableLatticeModIrreducibleEqBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,10 +66,7 @@ theorem tw_crysWith (hC : S.CrysCalc) :
   have h1 := (hC.2.1 S.Γ.T₀ S.D.U S.Γ.χ₁ S.D.w hρ hχ).2
   exact (hC.2.1 S.Γ.T₀ S.D.U S.Γ.χ₁⁻¹ _ hρ h1).1
 
-theorem tw_h0V (hC : S.CrysCalc) (hV : S.Vanish) : H0V (tw S hC).ρ = ⊥ := by
-  obtain ⟨⟨-, -, -, -, -, hlam⟩, -⟩ := S.hyp
-  exact h0V_tw (GlobalTheory.LocalIntegers.good_integers l S.LL).1 S.Γ (cont_inv S hC) hlam hV.1
-
+set_option synthInstance.maxHeartbeats 100000 in
 theorem tw_finrank_h0V (hC : S.CrysCalc) (hV : S.Vanish) : finrank ↥S.LL.1 ↥(H0V (tw S hC).ρ) = 0 := by
   obtain ⟨⟨-, -, -, -, -, hlam⟩, -⟩ := S.hyp
   exact finrank_h0V_tw (GlobalTheory.LocalIntegers.good_integers l S.LL).1 S.Γ (cont_inv S hC) hlam hV.1
@@ -94,6 +95,7 @@ theorem fSummand_of_finrank (hC : S.CrysCalc) (hH : S.FreeH)
     (hd : finrank ↥S.LL.1 (FiniteCohomology (P.PD S.K) (tw S hC).ρ) = S.D.dsum) : S.FSummand :=
   ⟨exists_isCompl S hC hH, (finrank_hf S hC).trans hd⟩
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem fSummand_of_dim (hC : S.CrysCalc) (hV : S.Vanish) (hH : S.FreeH)
     (hd : (finrank ↥S.LL.1 (FiniteCohomology (P.PD S.K) (tw S hC).ρ) : ℤ) = (finrank ↥S.LL.1 ↥(H0V (tw S hC).ρ) : ℤ) +
       ∑ i, (Multiset.card (((S.D.U i).map (· + -S.D.w i)).filter (· < 0)) : ℤ)) : S.FSummand := by
@@ -105,15 +107,5 @@ theorem fSummand_of_dim (hC : S.CrysCalc) (hV : S.Vanish) (hH : S.FreeH)
     intro a b c s h h' h''
     omega
   exact key _ _ _ _ hd h0 h1
-
-theorem fSummand_of_codim (hC : S.CrysCalc) (hV : S.Vanish) (hH : S.FreeH)
-    (hD : Module.Finite ↥S.LL.1 ↥(DdR (P.PD S.K) (tw S hC).ρ))
-    (hd : (finrank ↥S.LL.1 (FiniteCohomology (P.PD S.K) (tw S hC).ρ) : ℤ) = (finrank ↥S.LL.1 ↥(H0V (tw S hC).ρ) : ℤ) +
-      ((finrank ↥S.LL.1 ↥(DdR (P.PD S.K) (tw S hC).ρ) : ℤ) -
-        finrank ↥S.LL.1 ↥(DdR (P.PD S.K) (tw S hC).ρ ⊓
-          FilV (P.PD S.K) (LL := ↥S.LL.1) (V := (tw S hC).V) 0))) : S.FSummand := by
-  obtain ⟨⟨-, -, hn, hemb, -⟩, -⟩ := S.hyp
-  exact fSummand_of_dim S hC hV hH (hd.trans (congrArg _
-    (codim_fil_zero (P.PD S.K) S.emb hemb (bijective_maxUnramifiedSubfield_algebraMap S) hn _ (tw_crysWith S hC).2)))
 
 end GlobalTheory.TopSteps.FinSummandDim

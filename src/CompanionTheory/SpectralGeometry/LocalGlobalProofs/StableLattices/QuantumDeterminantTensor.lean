@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OmegaMinorStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeRankOneStatement
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.OmegaMinorStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeRankOneStatement
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem commute_compLeft_om {n : ℕ} (X : GMod n) (u : ℂ) :
   have hc := Formalism.REAL.qDetCentral (Module.End ℂ X.V) n X.E X.gl u
   unfold Commute SemiconjBy
   refine LinearMap.ext fun f => funext fun b => ?_
-  simp only [Module.End.mul_apply, LinearMap.compLeft_apply, Function.comp_apply, om, LinearMap.coe_mk,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, LinearMap.compLeft_apply, Function.comp_apply, om, LinearMap.coe_mk,
     AddHom.coe_mk, map_sum]
   exact Finset.sum_congr rfl fun a _ => LinearMap.congr_fun (hc a b) (f a)
 
@@ -50,7 +55,8 @@ theorem qdetTens : QdetTens := by
         have h1 := LinearMap.congr_fun (X.gl a b d c) (f d)
         rw [LinearMap.sub_apply, Module.End.mul_apply, Module.End.mul_apply, sub_eq_iff_eq_add] at h1
         exact h1
-      simp only [Module.End.mul_apply, tensE, eOp, om, LinearMap.add_apply, LinearMap.compLeft_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Module.End.mul_apply, tensE, eOp, om, LinearMap.add_apply, LinearMap.compLeft_apply,
         Function.comp_apply, LinearMap.coe_mk, AddHom.coe_mk, Pi.add_apply, map_sum, map_add]
       rw [Finset.sum_congr rfl fun d _ => key d]
       by_cases hca : c = a

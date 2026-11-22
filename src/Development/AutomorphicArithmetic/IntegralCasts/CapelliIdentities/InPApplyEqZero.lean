@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qh16.Jm :
     {n : ℕ} → (Fin n → Bool) → Matrix (Fin n) (Fin n) ℂ :=

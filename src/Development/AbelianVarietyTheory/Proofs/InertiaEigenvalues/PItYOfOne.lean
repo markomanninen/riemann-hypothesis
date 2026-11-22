@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksW
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpOfOrder
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntertwinerOfIndexEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniformRealThetaIntertwinerChainStepStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealThetaIntertwinersProportionalOfDiscreteSerieStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksW
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpOfOrder
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntertwinerOfIndexEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUniformRealThetaIntertwinerChainStepStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealThetaIntertwinersProportionalOfDiscreteSerieStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -20,10 +25,9 @@ variable {D : D7}
 theorem isItW_smul {V W : HSp D} {S S' : D.what₂.Tau → SPar} {θ : InfFam D} {M : DSModel V S} {M' : DSModel W S'}
     {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {pt : PolF D W.rank V.rank → (WO V W → ℂ)}
     {It : PolF D W.rank V.rank →ₗ[ℂ] SmT M' →ₗ[ℂ] SmT M} (h : IsItW θ M M' ω pt It) {c : ℂ} (hc : c ≠ 0) :
-    IsItW θ M M' ω pt (c • It) where
-  ne := smul_ne_zero hc h.ne
-  bdd := by
-    intro φ w
+    IsItW θ M M' ω pt (c • It) := by
+  refine { ne := smul_ne_zero hc h.ne, bdd := ?_, eqK := ?_, eqg := ?_, invK := ?_, invg := ?_ }
+  · intro φ w
     obtain ⟨b, hb⟩ := h.bdd φ w
     refine ⟨‖c‖ * b, fun v => ?_⟩
     have e : ellT M w (inclT M ((c • It) φ (PiTensorProduct.tprod ℂ v))) =
@@ -31,21 +35,17 @@ theorem isItW_smul {V W : HSp D} {S S' : D.what₂.Tau → SPar} {θ : InfFam D}
       rw [LinearMap.smul_apply, LinearMap.smul_apply, map_smul, map_smul, smul_eq_mul]
     rw [e, norm_mul, mul_assoc]
     exact mul_le_mul_of_nonneg_left (hb v) (norm_nonneg _)
-  eqK := by
-    intro τ g hg φ φ' hφ v
+  · intro τ g hg φ φ' hφ v
     rw [LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, map_smul, map_smul,
       map_smul, h.eqK τ g hg φ φ' hφ v]
-  eqg := by
-    intro τ X hX φ φ' hφ v w
+  · intro τ X hX φ φ' hφ v w
     have := (h.eqg τ X hX φ φ' hφ v w).const_mul c
     simp only [LinearMap.smul_apply, map_smul, smul_eq_mul]
     exact this
-  invK := by
-    intro τ g hg φ φ' v v' hφ hv
+  · intro τ g hg φ φ' v v' hφ hv
     rw [LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply,
       h.invK τ g hg φ φ' v v' hφ hv]
-  invg := by
-    intro τ X hX φ φ' v v' hφ hv
+  · intro τ X hX φ φ' v v' hφ hv
     rw [LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, LinearMap.smul_apply, ← smul_add,
       h.invg τ X hX φ φ' v v' hφ hv, smul_zero]
 

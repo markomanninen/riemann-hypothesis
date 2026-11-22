@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementD
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementD
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.SelfDualCovolume
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -104,7 +108,7 @@ theorem scalar_constant_value : ScalarConst := by
       have e2 : (δ : (n → ℂ) →ₗ[ℂ] (n → ℂ)).toAddMonoidHom x' = δ x' := rfl
       have e3 : altE (matH h) (δ x) (δ x') = altE (matH h) x x' := by
         simp only [altE, hisomxy]
-      rw [e1, e2, ← map_add, hαinv, hαinv, hαinv, e3]
+      rw [e1, e2, ← map_add (f := _), hαinv, hαinv, hαinv, e3]
       exact hSC.2 x hx x' hx'
 
   have hπle : cLat π Λ ≤ Λ := fun y hy => by

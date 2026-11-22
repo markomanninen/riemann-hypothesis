@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.UT
 

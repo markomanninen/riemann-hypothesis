@@ -1,27 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMonomialsSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducibleStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfResidueSpanEqTopStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOrthogonalIdempotentsHeckeSpanRepStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetGenericSumMemHeckeAlgebraStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDetMemHeckeAlgebraOfHeckeSpanStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetPencilMemHeckeAlgebraStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentRankConstOfCharpolyInLocalFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentBlockCharPolyEqCharpolyImageStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsHeckeSpanCorrectionDistinctEigenvaluesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankIdempotentBlockCharPolyOfProjectionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankEqOfActsThroughFirstBlockStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixRankMapFieldStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDecompositionBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInjectiveRootsOfNcardRootSetStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDvrExtensionForMonicFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentBlockRootFactorsRankOneDomainStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProdOtherRootFactorsActionFirstCoordinateStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjOnCharValuesAndLengthQuotientStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBlockActionStatement
-import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanMapRepEqTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMonomialsSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfAbsIrreducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanRepMatrixEqTopOfResidueSpanEqTopStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsOrthogonalIdempotentsHeckeSpanRepStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetGenericSumMemHeckeAlgebraStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDetMemHeckeAlgebraOfHeckeSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetPencilMemHeckeAlgebraStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentRankConstOfCharpolyInLocalFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentBlockCharPolyEqCharpolyImageStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsHeckeSpanCorrectionDistinctEigenvaluesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankIdempotentBlockCharPolyOfProjectionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RankEqOfActsThroughFirstBlockStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixRankMapFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlockDecompositionBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInjectiveRootsOfNcardRootSetStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDvrExtensionForMonicFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdempotentBlockRootFactorsRankOneDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ProdOtherRootFactorsActionFirstCoordinateStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjOnCharValuesAndLengthQuotientStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBlockActionStatement
+public import Development.AutomorphicArithmetic.CyclotomicBounds.FactorizationConductorLeLocalLevel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanMapRepEqTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem charZero_of_finite (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsD
     by_contra h
     have hp : (RingHom.ker (algebraMap ℤ_[l] O)).IsPrime := RingHom.ker_isPrime _
     have hm : (Ideal.comap (algebraMap ℤ_[l] O) ⊥).IsMaximal := Ideal.IsPrime.isMaximal hp h
-    have := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := ℤ_[l]) (⊥ : Ideal O) hm
+    have := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := ℤ_[l]) (⊥ : Ideal O) hm
     exact IsDiscreteValuationRing.not_isField O (Ring.isField_iff_maximal_bot.2 this)
   exact charZero_of_injective_algebraMap hinj
 
@@ -59,11 +63,13 @@ theorem blockPol_coeff_mem {T : Subalgebra A (X → A)} {rep : X → (Γ →* GL
     (hT : CharPolyIn T rep) {e M : X → Matrix (Fin n) (Fin n) A} (he : InRing T rep e)
     (hM : InRing T rep M) (j : ℕ) : (fun x => (blockPol (e x) (M x)).coeff j) ∈ T := by
   have := GlobalTheory.T.coeff_det_pencil_mem_heckeAlgebra T rep hT e (1 - e - M) he (inRing_sub (inRing_sub inRing_one he) hM) j
-  convert this using 4 with x
+  convert this using 1
+  funext x
   unfold blockPol
-  congr 1
+  apply congrArg (fun p : Polynomial A => p.coeff j)
+  apply congrArg Matrix.det
   ext a b : 2
-  by_cases h : a = b <;> simp [h, Matrix.one_apply] <;> ring
+  by_cases h : a = b <;> simp [h, Matrix.one_apply] <;> abel
 
 theorem rank_const [IsDomain A] [IsLocalRing A] {T : Subalgebra A (X → A)}
     {rep : X → (Γ →* GL (Fin n) A)} (hl : IsLocalRing T)
@@ -71,9 +77,11 @@ theorem rank_const [IsDomain A] [IsLocalRing A] {T : Subalgebra A (X → A)}
     (x y : X) : ((e x).map (toFr A)).rank = ((e y).map (toFr A)).rank := by
   refine GlobalTheory.T.idempotent_rank_const_of_charpoly_in_local_functions T e hl hee (fun j => ?_) x y
   have := blockPol_coeff_mem hT inRing_one he j
-  convert this using 3 with x
+  convert this using 1
+  funext x
   unfold blockPol Matrix.charpoly Matrix.charmatrix
-  congr 1
+  apply congrArg (fun p : Polynomial A => p.coeff j)
+  apply congrArg Matrix.det
   ext a b : 2
   by_cases h : a = b <;> simp [h, Matrix.one_apply]
 
@@ -166,10 +174,11 @@ theorem charPolyIn_map {T : Subalgebra A (X → A)} {T' : Subalgebra B (X → B)
     {rep : X → (Γ →* GL (Fin n) A)} (hT : ∀ f ∈ T, (fun x => algebraMap A B (f x)) ∈ T')
     (h : CharPolyIn T rep) : CharPolyIn T' (fun x => mapRep (algebraMap A B) (rep x)) := by
   intro g d
-  convert hT _ (h g d) using 2 with x
+  convert hT _ (h g d) using 1
+  funext x
   rw [← Polynomial.coeff_map]
-  congr 1
   unfold Matrix.charpolyRev
+  congr 2
   rw [← Polynomial.coe_mapRingHom, RingHom.map_det]
   congr 1
   ext a b : 2

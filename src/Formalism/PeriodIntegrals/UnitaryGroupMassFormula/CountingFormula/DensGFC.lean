@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGF
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DensInert
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGF
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DensInert
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing 
   {V : Type} [AddCommGroup V] [Module E V]
 
 theorem h_add_right (H : Loc.HermSp M V) (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm y x, ← H.h_herm y' x]
+  rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm y x, ← H.h_herm y' x]
 
 theorem h_smul_right (H : Loc.HermSp M V) (a : E) (x y : V) : H.h x (a • y) = M.L.cj a * H.h x y := by
   rw [H.h_herm (a • y) x, H.h_smul_left, map_mul, ← H.h_herm y x]
@@ -104,7 +108,7 @@ theorem cO_mem (hR : RedData ϖ k r n b Λ) (x : V) (j : Fin n) : cO hR x j ∈ 
 
 theorem cO_sum (hR : RedData ϖ k r n b Λ) {x : V} (hx : x ∈ Λ) : x = ∑ j, cO hR x j • b j := by
   unfold cO
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
   exact (Classical.choose_spec (hR.crd x hx)).2
 
 theorem cO_eq (hR : RedData ϖ k r n b Λ) {x : V} (hx : x ∈ Λ) (c : Fin n → E)
@@ -137,7 +141,8 @@ theorem red_lincomb (hR : RedData ϖ k r n b Λ) {ι : Type} [Fintype ι] (h : �
     push_cast
     rfl
   simp only [red, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
-  rw [h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum]
   simp only [map_mul]
 
 end FC
@@ -224,41 +229,6 @@ theorem algO (c : 𝒪[F]) : algebraMap F E (c : F) ∈ M.L.O :=
 theorem pi_unit (hϖ : Irreducible ϖ) : IsUnit (algebraMap F E (ϖ : F)) := by
   have h0 : (ϖ : F) ≠ 0 := fun h => hϖ.ne_zero (Subtype.ext h)
   exact (IsUnit.mk0 _ h0).map _
-
-theorem pi_pow_mem (j : ℕ) : algebraMap F E (ϖ : F) ^ j ∈ M.L.O := M.L.O.pow_mem (algO ϖ) j
-
-theorem clear_den (o2 : ∀ x : E, ∃ c : 𝒪[F], c ≠ 0 ∧ algebraMap F E c * x ∈ M.L.O)
-    (o3 : ∀ x ∈ M.L.O, x ≠ 0 → ∃ j : ℕ, ∃ u ∈ M.L.O, (∃ w ∈ M.L.O, u * w = 1) ∧
-      x = algebraMap F E ϖ ^ j * u) (x : E) :
-    ∃ j : ℕ, algebraMap F E (ϖ : F) ^ j * x ∈ M.L.O := by
-  obtain ⟨c, hc, hcx⟩ := o2 x
-  by_cases h0 : algebraMap F E (c : F) = 0
-  · refine ⟨0, ?_⟩
-    have hc' : (c : F) ≠ 0 := fun h => hc (Subtype.ext h)
-    have h1 : (1 : E) = 0 := by
-      rw [← map_one (algebraMap F E), ← inv_mul_cancel₀ hc', map_mul, h0, mul_zero]
-    have hx : x = 0 := by rw [← one_mul x, h1, zero_mul]
-    rw [hx, mul_zero]
-    exact M.L.O.zero_mem
-  · obtain ⟨j, u, _, ⟨w, hw, huw⟩, hcu⟩ := o3 _ (algO c) h0
-    refine ⟨j, ?_⟩
-    have : algebraMap F E (ϖ : F) ^ j * x = w * (algebraMap F E (c : F) * x) := by
-      calc algebraMap F E (ϖ : F) ^ j * x = (u * w) * (algebraMap F E (ϖ : F) ^ j * x) := by
-            rw [huw, one_mul]
-        _ = w * (algebraMap F E (ϖ : F) ^ j * u * x) := by ring
-        _ = w * (algebraMap F E (c : F) * x) := by rw [← hcu]
-    rw [this]
-    exact M.L.O.mul_mem hw hcx
-
-theorem clear_den_fam (o2 : ∀ x : E, ∃ c : 𝒪[F], c ≠ 0 ∧ algebraMap F E c * x ∈ M.L.O)
-    (o3 : ∀ x ∈ M.L.O, x ≠ 0 → ∃ j : ℕ, ∃ u ∈ M.L.O, (∃ w ∈ M.L.O, u * w = 1) ∧
-      x = algebraMap F E ϖ ^ j * u) {ι : Type} [Fintype ι] (g : ι → E) :
-    ∃ N : ℕ, ∀ a, algebraMap F E (ϖ : F) ^ N * g a ∈ M.L.O := by
-  choose j hj using fun a => clear_den o2 o3 (g a)
-  refine ⟨∑ a, j a, fun a => ?_⟩
-  have hle : j a ≤ ∑ a, j a := Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ a)
-  rw [← Nat.sub_add_cancel hle, pow_add, mul_assoc]
-  exact M.L.O.mul_mem (pi_pow_mem _) (hj a)
 
 theorem red_zero (hR : RedData ϖ k r n b Λ) : red hR 0 = 0 := by
   have hc : cO hR (0 : V) = 0 := cO_eq hR Λ.zero_mem 0 (by simp)

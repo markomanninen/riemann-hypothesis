@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -19,7 +23,11 @@ theorem lA_le_pow_seven {C : FC} {cD ch : ℝ} {D : D7} {L : SizeData₂ D} (hV 
     linarith
   have hm : (2 : ℝ) ≤ D.R.m := by exact_mod_cast D.R.two_le_m
   have hn : (0 : ℝ) < D.R.n := by
-    have : 0 < D.R.n := by unfold Ranks.n; positivity
+    have : 0 < D.R.n := by
+      have := D.R.two_le_m
+      have := D.R.m_le_f
+      unfold Ranks.n
+      omega
     exact_mod_cast this
   have hd : L.sc.x ^ (-L.sc.eps) ≤ L.de2 := by
     rw [L.typeDensity_eq_card_div, le_div_iff₀ hn]
@@ -104,7 +112,11 @@ theorem szRow_windowLength : SzRow (fun C D L => (∀ l : ℕ, 11 ≤ l → ∃ 
     have hm2 := D.R.two_le_m
     have hm : (0 : ℝ) < D.R.m := by exact_mod_cast (by omega : 0 < D.R.m)
     have hn : (0 : ℝ) < D.R.n := by
-      have : 0 < D.R.n := by unfold Ranks.n; positivity
+      have : 0 < D.R.n := by
+        have := D.R.two_le_m
+        have := D.R.m_le_f
+        unfold Ranks.n
+        omega
       exact_mod_cast this
     have hN : (0 : ℝ) < D.R.N D.R.m := by
       have h := D.R.m_add_three_le_k

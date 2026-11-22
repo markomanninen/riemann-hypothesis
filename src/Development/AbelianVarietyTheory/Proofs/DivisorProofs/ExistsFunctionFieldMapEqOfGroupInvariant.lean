@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -43,26 +48,26 @@ theorem exists_functionFieldMap_eq_of_invariant (X W : Scheme.{0}) [IsIntegral X
   obtain ⟨x, hx⟩ := q.denseRange.exists_mem_open V.isOpen ⟨_, hyV⟩
   haveI : Nonempty (q ⁻¹ᵁ V) := ⟨⟨x, hx⟩⟩
   have hst := h.preimage_le V
-  haveI (γ : Γ) : IsIso (ρ γ).hom := Iso.isIso_hom (ρ γ)
+  haveI (γ : Γ) : IsIso (ρ γ).asIso.hom := Iso.isIso_hom (ρ γ).asIso
   haveI := functionField_isFractionRing_of_isAffineOpen X _ hU
-  let σ : Γ → Γ(X, q ⁻¹ᵁ V) →+* Γ(X, q ⁻¹ᵁ V) := fun γ ↦ ((ρ γ).hom.appLE _ _ (hst γ)).hom
+  let σ : Γ → Γ(X, q ⁻¹ᵁ V) →+* Γ(X, q ⁻¹ᵁ V) := fun γ ↦ ((ρ γ).asIso.hom.appLE _ _ (hst γ)).hom
   have hσ (γ : Γ) (s : Γ(X, q ⁻¹ᵁ V)) :
-      functionFieldMap (ρ γ).hom (algebraMap Γ(X, q ⁻¹ᵁ V) X.functionField s) =
+      functionFieldMap (ρ γ).asIso.hom (algebraMap Γ(X, q ⁻¹ᵁ V) X.functionField s) =
         algebraMap Γ(X, q ⁻¹ᵁ V) X.functionField (σ γ s) :=
     functionFieldMap_germToFunctionField _ _ _ (hst γ) s
   have hσ1 (s : Γ(X, q ⁻¹ᵁ V)) : σ 1 s = s := by
-    have e1 : (ρ 1).hom = 𝟙 X := by rw [map_one]; rfl
-    change (ρ 1).hom.appLE _ _ (hst 1) s = s
+    have e1 : (ρ 1).asIso.hom = 𝟙 X := by rw [map_one]; rfl
+    change (ρ 1).asIso.hom.appLE _ _ (hst 1) s = s
     simp only [e1]
     exact congr($(X.presheaf.map_id (Opposite.op (q ⁻¹ᵁ V))) s)
   have hσmul (γ δ : Γ) (s : Γ(X, q ⁻¹ᵁ V)) : σ δ (σ γ s) = σ (γ * δ) s := by
-    have e2 : (ρ (γ * δ)).hom = (ρ δ).hom ≫ (ρ γ).hom := by rw [map_mul]; rfl
-    change (ρ δ).hom.appLE _ _ (hst δ) ((ρ γ).hom.appLE _ _ (hst γ) s) =
-      (ρ (γ * δ)).hom.appLE _ _ (hst (γ * δ)) s
+    have e2 : (ρ (γ * δ)).asIso.hom = (ρ δ).asIso.hom ≫ (ρ γ).asIso.hom := by rw [map_mul]; rfl
+    change (ρ δ).asIso.hom.appLE _ _ (hst δ) ((ρ γ).asIso.hom.appLE _ _ (hst γ) s) =
+      (ρ (γ * δ)).asIso.hom.appLE _ _ (hst (γ * δ)) s
     simp only [← CommRingCat.comp_apply, Scheme.Hom.appLE_comp_appLE, e2]
   set e := algebraMap Γ(X, q ⁻¹ᵁ V) X.functionField with he_def
   have einj : Function.Injective e := IsFractionRing.injective _ _
-  have hfu (δ : Γ) : functionFieldMap (ρ δ).hom (u : X.functionField) = u :=
+  have hfu (δ : Γ) : functionFieldMap (ρ δ).asIso.hom (u : X.functionField) = u :=
     congrArg Units.val (hu δ)
   obtain ⟨a, t, ht, hat⟩ := IsFractionRing.div_surjective (A := Γ(X, q ⁻¹ᵁ V)) (u : X.functionField)
   have ht0 : e t ≠ 0 := by

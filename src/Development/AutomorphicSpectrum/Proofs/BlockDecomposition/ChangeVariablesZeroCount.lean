@@ -1,6 +1,11 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegrableMonomialMulConjComplexGaussian
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinCol
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegrableMonomialMulConjComplexGaussian
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PAreaMultiplicityWeight
+
+@[expose] public section
+
 open MeasureTheory ReciprocityTheory.L2DbarEstimates GlobalTheory.CompanionTheory.FSCrofton
 open scoped ENNReal ComplexConjugate
 
@@ -11,7 +16,8 @@ namespace GlobalTheory.CompanionTheory.FSCrofton
 theorem clm_apply_eq_sum {d : ℕ} (T : V d →L[ℂ] ℂ) (v : V d) :
     T v = ∑ a, v a * T (EuclideanSpace.single a 1) := by
   conv_lhs => rw [← (EuclideanSpace.basisFun (Fin d) ℂ).sum_repr v]
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem abs_det_restrictScalars_toEuclideanCLM {d : ℕ} (M : Matrix (Fin d) (Fin d) ℂ) :
     |((Matrix.toEuclideanCLM (𝕜 := ℂ) M : V d →L[ℂ] V d).restrictScalars ℝ).det| =
@@ -20,7 +26,7 @@ theorem abs_det_restrictScalars_toEuclideanCLM {d : ℕ} (M : Matrix (Fin d) (Fi
       Algebra.norm ℝ (LinearMap.det (Matrix.toEuclideanLin M : V d →ₗ[ℂ] V d)) := by
     rw [← LinearMap.det_restrictScalars]
     rfl
-  rw [h1, Matrix.toEuclideanLin_eq_toLin, LinearMap.det_toLin, Algebra.norm_complex_eq]
+  rw [h1, Matrix.toEuclideanLin_eq_toLin_orthonormal, LinearMap.det_toLin, Algebra.norm_complex_eq]
   simp [Complex.normSq_eq_norm_sq]
 
 theorem area_formula_neg_comb (d : ℕ) (β : Type) [Fintype β] (U A : Set (V d)) (f : β → V d → ℂ)

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinitePointExtendsSectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinitePointExtendsSectionStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace GlobalTheory.CompanionTheory.Ar.BT.Transl
 
@@ -13,7 +17,7 @@ theorem translates_cover : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrall
   intro R _ _ _ T _ _ Γ U U' hU hU' _ g hg
   haveI := Γ.flat
   haveI := Γ.separated
-  let p0 : Spec (CommRingCat.of R) := ⟨⊥, Ideal.bot_prime⟩
+  let p0 : Spec (CommRingCat.of R) := ⟨⊥, Ideal.isPrime_bot⟩
   have hp0 : p0 ⤳ Γ.G.hom g := (PrimeSpectrum.le_iff_specializes _ _).1 bot_le
   obtain ⟨g', hg'g, hg'⟩ := Flat.generalizingMap Γ.G.hom hp0
   obtain ⟨s, x, hx⟩ := Γ.pt_onto g' (by rw [hg'])
@@ -27,7 +31,8 @@ theorem translates_cover : ∀ (R : Type) [CommRing R] [IsDomain R] [IsIntegrall
   have hsall : ∀ z, (Γ.pt s).left z ∈ U := fun z => hsub x z ▸ hsU
   have hinvU : ∀ z, (Γ.pt s⁻¹).left z ∈ U := by
     rw [map_inv]; exact hU.inv _ _ hsall
-  obtain ⟨σ, -, hσ⟩ := GlobalTheory.T.finite_point_extends_section R T Γ U hU.finite s⁻¹ (fun z _ => hinvU z)
+  obtain ⟨σ, -, hσ⟩ := GlobalTheory.CompanionTheory.Ar.BT.exists_section_of_generic_point
+    R T Γ U hU.finite s⁻¹ (fun z _ => hinvU z)
   refine ⟨σ, s⁻¹, hσ, ?_⟩
   set τ := (toUnit Γ.G ≫ σ) * 𝟙 Γ.G with hτ
   have hτpt : Γ.pt s ≫ τ = 1 := by

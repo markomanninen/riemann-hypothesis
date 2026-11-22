@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ def ring (hN : GradedFam c₀ N) : Subring F[X] where
 
 theorem monomial_mem (hN : GradedFam c₀ N) {k : ℕ} {b : F} (hb : b ∈ N k) : monomial k b ∈ ring hN := by
   intro j
-  rw [coeff_monomial]
+  rw [coeff_monomial_apply]
   split_ifs with h
   · subst h; exact hb
   · exact hN.zero j
@@ -50,12 +54,12 @@ theorem mem_piece_iff (hN : GradedFam c₀ N) {k : ℕ} {p : ring hN} :
   constructor
   · intro hp
     ext j
-    rw [coeff_monomial]
+    rw [coeff_monomial_apply]
     split_ifs with h
     · rw [h]
     · exact hp j (Ne.symm h)
   · intro hp j hj
-    rw [hp, coeff_monomial, if_neg (Ne.symm hj)]
+    rw [hp, coeff_monomial_of_ne _ hj]
 
 def hel (hN : GradedFam c₀ N) (k : ℕ) (b : F) (hb : b ∈ N k) : ring hN := ⟨monomial k b, monomial_mem hN hb⟩
 
@@ -63,17 +67,17 @@ def hel (hN : GradedFam c₀ N) (k : ℕ) (b : F) (hb : b ∈ N k) : ring hN := 
     (hel hN k b hb : F[X]) = monomial k b := rfl
 
 theorem hel_mem (hN : GradedFam c₀ N) (k : ℕ) (b : F) (hb : b ∈ N k) : hel hN k b hb ∈ piece hN k := by
-  rw [mem_piece_iff, coe_hel, coeff_monomial, if_pos rfl]
+  rw [mem_piece_iff, coe_hel, coeff_monomial_same]
 
 theorem hel_ne_zero (hN : GradedFam c₀ N) {k : ℕ} {b : F} (hb : b ∈ N k) (h : b ≠ 0) : hel hN k b hb ≠ 0 := by
   intro e
   have := congrArg (fun p : ring hN => (p : F[X]).coeff k) e
-  simp [coeff_monomial] at this
+  simp at this
   exact h this
 
 def comp (hN : GradedFam c₀ N) (k : ℕ) : ring hN →+ piece hN k where
   toFun p := ⟨⟨monomial k ((p : F[X]).coeff k), monomial_mem hN (p.2 k)⟩, by
-    intro j hj; simp [coeff_monomial, Ne.symm hj]⟩
+    intro j hj; exact coeff_monomial_of_ne _ hj⟩
   map_zero' := by ext; simp
   map_add' p q := by ext; simp
 
@@ -101,7 +105,7 @@ def decHom (hN : GradedFam c₀ N) : ring hN →+ DirectSum ℕ (fun k => piece 
       dec_eq hN p S (fun x hx => Finset.mem_union_left _ (Finset.mem_union_left _ hx)),
       dec_eq hN q S (fun x hx => Finset.mem_union_left _ (Finset.mem_union_right _ hx)), ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
 
 instance gradedMonoid (hN : GradedFam c₀ N) : SetLike.GradedMonoid (piece hN) where
   one_mem j hj := by
@@ -110,7 +114,7 @@ instance gradedMonoid (hN : GradedFam c₀ N) : SetLike.GradedMonoid (piece hN) 
   mul_mem i j a b ha hb := by
     rw [mem_piece_iff] at ha hb
     intro l hl
-    rw [Subring.coe_mul, ha, hb, monomial_mul_monomial, coeff_monomial, if_neg (Ne.symm hl)]
+    rw [Subring.coe_mul, ha, hb, monomial_mul_monomial, coeff_monomial_of_ne _ hl]
 
 instance gradedRing (hN : GradedFam c₀ N) : GradedRing (piece hN) :=
   { gradedMonoid hN with
@@ -118,9 +122,10 @@ instance gradedRing (hN : GradedFam c₀ N) : GradedRing (piece hN) :=
       (by
         refine AddMonoidHom.ext fun p => Subtype.ext ?_
         change (((DirectSum.coeAddMonoidHom (piece hN)) (dec hN p) : ring hN) : F[X]) = p
-        rw [dec, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [dec, map_sum]
         simp only [DirectSum.coeAddMonoidHom_of]
-        rw [AddSubmonoidClass.coe_finset_sum]
+        rw [AddSubmonoidClass.coe_finsetSum]
         exact (as_sum_support _).symm)
       (by
         refine DirectSum.addHom_ext fun k y => ?_
@@ -135,8 +140,8 @@ instance gradedRing (hN : GradedFam c₀ N) : GradedRing (piece hN) :=
 
 section Frac
 
-variable (F) in
 
+variable (F) in
 def cL : F →+* FractionRing F[X] := (algebraMap F[X] (FractionRing F[X])).comp C
 
 theorem cL_injective : Function.Injective (cL F) :=
@@ -172,10 +177,10 @@ theorem valL_mk (g : NumDenSameDeg (piece hN) P.primeCompl) :
     algebraMap F[X] _ ((g.den : ring hN) : F[X]) * algebraMap F[X] _ (C _)
   rw [← map_mul]
   congr 1
-  rw [hnum, hden, coeff_monomial, if_pos rfl, coeff_monomial, if_pos rfl, monomial_mul_C, mul_div_cancel₀ _ hs]
+  rw [hnum, hden, coeff_monomial_same, coeff_monomial_same, monomial_mul_C, mul_div_cancel₀ _ hs]
+
 
 variable (F) in
-
 def eqR : F ≃+* (cL F).range :=
   RingEquiv.ofBijective (cL F).rangeRestrict
     ⟨fun a b h => cL_injective (congrArg Subtype.val h), RingHom.rangeRestrict_surjective _⟩
@@ -242,13 +247,11 @@ def toZero : R →+* piece hN 0 where
   map_zero' := by ext1; ext1; simp
   map_add' a b := by ext1; ext1; simp
 
-def pmap : Proj (piece hN) ⟶ Sp R := Proj.toSpecZero (piece hN) ≫ Spec.map (CommRingCat.ofHom (toZero hN))
-
 def Dp (k : ℕ) (b : F) : (Proj (piece hN)).Opens := by
   classical exact if hb : b ∈ N k then Proj.basicOpen (piece hN) (hel hN k b hb) else ⊥
 
 theorem Dp_of_mem {k : ℕ} {b : F} (hb : b ∈ N k) : Dp hN k b = Proj.basicOpen (piece hN) (hel hN k b hb) := by
-  rw [Dp, dif_pos hb]
+  rw [Dp, dite_eq_left hb]
 
 def psi [IsIntegral (Proj (piece hN))] : (Proj (piece hN)).functionField →+* F :=
   (psiAt hN _).comp (Proj.stalkIso' (piece hN) (genericPoint (Proj (piece hN)))).toRingHom

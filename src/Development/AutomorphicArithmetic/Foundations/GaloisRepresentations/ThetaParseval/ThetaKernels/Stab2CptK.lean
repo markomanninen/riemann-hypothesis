@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBaseKPair
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBaseKPair
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -17,7 +21,7 @@ open scoped Pointwise
 attribute [local instance] ae_ring ae_t2 ae_smul
 theorem stab2Cpt_k : _root_.GlobalTheory.ThK.Dbl.Stab2Cpt_k := by
   intro F E _ _ _ _ _ σ B n Y r s hB hY K hK
-  obtain ⟨hL, c, c0, hc⟩ : Y.L.IsLattice E ∧ ∃ c : ℂ, c ≠ 0 ∧ ∀ w, IsCartan (c • Y.J.map (B.emb w).1) (Y.θ w) :=
+  obtain ⟨hL, c, c0, hc⟩ : Y.L.IsFullLattice E ∧ ∃ c : ℂ, c ≠ 0 ∧ ∀ w, IsCartan (c • Y.J.map (B.emb w).1) (Y.θ w) :=
     hY.elim (fun h => ⟨h.lat, 1, one_ne_zero, fun w => by simpa using h.cartan w⟩) fun h => ⟨h.lat, _, Complex.I_ne_zero, h.cartan⟩
   obtain ⟨Φ, hΦ, eΦ⟩ := exists_section hB.cm B.emb
   choose C hC h using fin_bound (F := F) Y hL

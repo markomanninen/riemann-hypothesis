@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.IsCPPullback
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.IsCPPullback
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -47,8 +51,28 @@ theorem isGrpPullback_unit' {S S' : Scheme.{0}} (f : S' ⟶ S) : IsGrpPullback (
     rw [toUnit_unique (x₀ * y₀) x₀, toUnit_unique (x * y) x, hx]⟩
 
 theorem isCPPullback_unit {S S' : Scheme.{0}} (f : S' ⟶ S) :
-    IsCPPullback (CP.triv (𝟙_ (Over S'))) (CP.triv (𝟙_ (Over S))) f f :=
-  ⟨isGrpPullback_unit' f, _, IsCPMap.triv fun _ _ _ => toUnit_unique _ _⟩
+    IsCPPullback (CP.triv (𝟙_ (Over S'))) (CP.triv (𝟙_ (Over S))) f f := by
+  refine ⟨isGrpPullback_unit' f, ⟨fun _ => 1⟩, ⟨fun _ _ _ => toUnit_unique _ _, ?_, ?_⟩⟩
+  · rw [isGen_iff]
+    intro Y r y j j' k k' _ _ _ _
+    let w : LB.Iso (CP.triv (𝟙_ (Over S'))).L.L ((CP.triv (𝟙_ (Over S))).L.L.pull f) :=
+      ⟨fun _ => 1⟩
+    have h : ∀ a b, gw w r y a b = 1 := fun _ _ => map_one _
+    have hj : gm (r ≫ f) y _ ((CP.triv (𝟙_ (Over S))).L.L.g j j') = 1 := map_one _
+    have hk : gm r y _ ((CP.triv (𝟙_ (Over S'))).L.L.g k k') = 1 := map_one _
+    rw [h j k, h j' k', hj, hk, inv_one, _root_.mul_one, _root_.mul_one]
+  · intro T z J' J _ _ W hW
+    have hW1 : ∀ x, W x = 1 := fun x => (hW x).trans (map_one _)
+    refine ⟨?_, fun x => ?_, fun x y u => ?_⟩
+    · rw [hW1, _root_.one_mul]
+      exact (val_unitGen _ _ _ _ _).trans (val_unitGen _ _ _ _ _).symm
+    · rw [hW1, hW1, _root_.mul_one, _root_.one_mul]
+      exact (val_unitGen _ _ _ _ _).trans (val_unitGen _ _ _ _ _).symm
+    · simp only [id_eq, hW1, _root_.mul_one, _root_.one_mul]
+      trans 1
+      · apply cubV_trivCub
+      · symm
+        apply cubV_trivCub
 
 def torusTQ {S S' : Scheme.{0}} (f : S' ⟶ S) (X : Type) [AddCommGroup X] :
     TQ ((Over.pullback f).obj (splitTorus S X)) X where
@@ -77,7 +101,35 @@ def torusTQ {S S' : Scheme.{0}} (f : S' ⟶ S) (X : Type) [AddCommGroup X] :
 
 def torusTower (I : Ideal R) (X : Type) [AddCommGroup X] :
     TowerR I (CP.triv (splitTorus (Spec (CommRingCat.of R)) X)) X where
-  l e := ⟨torusTQ (thick R I e) X, CP.triv _, isLevelCP_triv I e _, TQ.Desc.triv _⟩
+  l e :=
+    let Q := torusTQ (thick R I e) X
+    ⟨Q, CP.triv _, isLevelCP_triv I e _,
+      { M := CP.triv Q.B
+        w := ⟨fun _ => 1⟩
+        map := by
+          have := Q.q_hom
+          refine ⟨toBase_mul_of_isMonHom Q.q _, ?_, ?_⟩
+          · rw [isGen_iff]
+            intro Y r y j j' k k' _ _ _ _
+            let w : LB.Iso (CP.triv (thickObj R I e (splitTorus (Spec (CommRingCat.of R)) X))).L.L
+                ((CP.triv Q.B).L.L.pull Q.q.left) := ⟨fun _ => 1⟩
+            have h : ∀ a b, gw w r y a b = 1 := fun _ _ => map_one _
+            have hj : gm (r ≫ Q.q.left) y _ ((CP.triv Q.B).L.L.g j j') = 1 := map_one _
+            have hk : gm r y _ ((CP.triv (thickObj R I e (splitTorus (Spec (CommRingCat.of R)) X))).L.L.g k k') = 1 :=
+              map_one _
+            rw [h j k, h j' k', hj, hk, inv_one, _root_.mul_one, _root_.mul_one]
+          · intro T z J' J _ _ W hW
+            have hW1 : ∀ x, W x = 1 := fun x => (hW x).trans (map_one _)
+            refine ⟨?_, fun x => ?_, fun x y u => ?_⟩
+            · rw [hW1, _root_.one_mul]
+              exact (val_unitGen _ _ _ _ _).trans (val_unitGen _ _ _ _ _).symm
+            · rw [hW1, hW1, _root_.mul_one, _root_.one_mul]
+              exact (val_unitGen _ _ _ _ _).trans (val_unitGen _ _ _ _ _).symm
+            · simp only [id_eq, hW1, _root_.mul_one, _root_.one_mul]
+              trans 1
+              · apply cubV_trivCub
+              · symm
+                apply cubV_trivCub }⟩
   tor e := by
     rw [torusCompat_iff]
     refine pullback.hom_ext ?_ ?_
@@ -110,7 +162,7 @@ def torusAlg (I : Ideal R) (X : Type) [AddCommGroup X] : (torusTower I X).Alg wh
   M := CP.triv _
   ample := (Inh.zeroPolAV _).ample
   b e := thick R I e
-  b_pb e := isCPPullback_unit _
+  b_pb e := isCPPullback_unit (thick R I e)
   b_β e := thickTrans_comp R I e
 
 theorem exists_gen_pull_triv {Y Z : Scheme.{0}} (φ : Fin 2 → (Y ⟶ Y)) (ε : Fin 2 → ℤ) (r : Z ⟶ Y) (u : Γ(Z, ⊤)ˣ) :
@@ -127,8 +179,8 @@ theorem exists_gen_pull_triv {Y Z : Scheme.{0}} (φ : Fin 2 → (Y ⟶ Y)) (ε :
     exact (map_one _).trans (map_one _).symm
   exact ⟨scaleGen u o, scaleGen_isGen u ho, fun j => _root_.mul_one _⟩
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem torusAlg_repWt (I : Ideal R) (X : Type) [AddCommGroup X] (χ : X) (e : ℕ) :
     (torusAlg I X).RepWt 1 χ e := by
   have hu := isWt_of_retraction (i := (bcIso (thick R I e) X).hom) (bcIso (thick R I e) X).inv
@@ -138,17 +190,5 @@ theorem torusAlg_repWt (I : Ideal R) (X : Type) [AddCommGroup X] (χ : X) (e : �
     (((torusTower I X).l e).Q.q.left ≫ (torusAlg I X).b e) (chV (bcIso (thick R I e) X).inv χ)
   exact ⟨t, ht, fun j => (congrArg (fun a => IsWt _ _ (Units.val a) χ) (hs j)).mpr (hu.res le_top)⟩
 
-example : Nonempty (torusTower (Ideal.span {(PowerSeries.X : PowerSeries ℚ)}) ℤ).Alg := ⟨torusAlg _ _⟩
-
-example (e : ℕ) : (torusAlg (Ideal.span {(PowerSeries.X : PowerSeries ℚ)}) ℤ).RepWt 1 (1 : ℤ) e :=
-  torusAlg_repWt _ _ _ _
-
-example {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] {A : PolAV (Spec (CommRingCat.of (FractionRing V)))}
-    {H : Over (Spec (CommRingCat.of V))} [GrpObj H] [IsCommMonObj H] (s : HidaSetting V A H) :
-    Tower s ≃ TowerR (IsLocalRing.maximalIdeal V) s.P s.X where
-  toFun t := ⟨t.l, t.tor, t.β, t.β_pb, t.β_q⟩
-  invFun t := ⟨t.l, t.tor, t.β, t.β_pb, t.β_q⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
 end GlobalTheory.LN
 end

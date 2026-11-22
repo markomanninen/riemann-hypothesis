@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import Development.AutomorphicArithmetic.TwistedTraces.CuspDecayArchConvFinAvg
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsContDiffArchMatrixExtensionOfSmooth
-import Development.AutomorphicArithmetic.TwistedTraces.TensConvEqArchConv
-import Development.AutomorphicArithmetic.TwistedTraces.FinAvgTensOfLeftInvariant
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.TensApply
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DecayUniform
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import Development.AutomorphicArithmetic.TwistedTraces.CuspDecayArchConvFinAvg
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsContDiffArchMatrixExtensionOfSmooth
+public import Development.AutomorphicArithmetic.TwistedTraces.TensConvEqArchConv
+public import Development.AutomorphicArithmetic.TwistedTraces.FinAvgTensOfLeftInvariant
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C
@@ -34,7 +38,7 @@ theorem UpperTheory.cuspDecay_tens_conv_real_smoothT :
       continuous_toFun := continuous_subtype_val
       continuous_invFun := continuous_id.subtype_mk _ }
   let m : archGroup K n ≃ᵐ ArchUnits K n := φ.toHomeomorph.toMeasurableEquiv
-  have hmφ : (m : archGroup K n → ArchUnits K n) = φ := rfl
+  have hmφ : (m : archGroup K n → ArchUnits K n) = φ.toFun := rfl
   haveI hH : (Measure.map m ν).IsHaarMeasure := by
     rw [hmφ]
     exact φ.isHaarMeasure_map ν

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHeightsirationalHilb
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbFnValueSpan
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHeightsirationalHilb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbFnValueSpan
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -43,8 +48,8 @@ theorem isMultiHomog_prod {J : Type} (s : Finset J) (f : J → MRing ι) (d : J 
     exact isMultiHomog_mul (h j (Finset.mem_insert_self j s))
       (ih fun j' hj' => h j' (Finset.mem_insert_of_mem hj')) rfl
 
-open Classical in
 
+open Classical in
 def monoSet (a : K → ℕ) : Finset ((Σ k, ι k) →₀ ℕ) :=
   (Finset.Icc 0 (Finsupp.equivFunOnFinite.symm fun p : (Σ k, ι k) => a p.1)).filter (blockSum · = a)
 
@@ -61,14 +66,15 @@ theorem aeval_monomial_int (y : (Σ k, ι k) → Ω) (γ : (Σ k, ι k) →₀ �
     aeval y (monomial γ r : MRing ι) = ((r : ℚ) : Ω) * aeval y (monomial γ (1 : ℤ) : MRing ι) := by
   simp [aeval_monomial]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem valueSpan_le (y : (Σ k, ι k) → Ω) (a : K → ℕ) (W : Submodule ℚ Ω)
     (hW : ∀ γ : (Σ k, ι k) →₀ ℕ, blockSum γ = a → aeval y (monomial γ (1 : ℤ) : MRing ι) ∈ W) :
     valueSpan y a ≤ W := by
   refine Submodule.span_le.mpr ?_
   rintro _ ⟨g, hg, rfl⟩
-  rw [g.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum]
   refine Submodule.sum_mem _ fun γ hγ => ?_
   rw [aeval_monomial_int, ← Rat.smul_def]
   exact W.smul_mem _ (hW γ (funext fun k => hg γ hγ k))
@@ -82,8 +88,8 @@ theorem finiteDimensional_valueSpan (y : (Σ k, ι k) → Ω) (a : K → ℕ) :
   simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe]
   exact ⟨γ, mem_monoSet.mpr hγ, rfl⟩
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [CharZero Ω] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [CharZero Ω] in
 theorem finrank_le_of_mul [CharZero Ω] {V W : Submodule ℚ Ω} [FiniteDimensional ℚ W] {t : Ω} (ht : t ≠ 0)
     (h : V ≤ W.comap (LinearMap.mulLeft ℚ t)) : Module.finrank ℚ V ≤ Module.finrank ℚ W := by
   have hinj : Function.Injective (LinearMap.mulLeft ℚ t) := fun a b hab => mul_left_cancel₀ ht hab
@@ -92,8 +98,8 @@ theorem finrank_le_of_mul [CharZero Ω] {V W : Submodule ℚ Ω} [FiniteDimensio
 
 end BlockBirationalHilbert
 
-open BlockBirationalHilbert in
 
+open BlockBirationalHilbert in
 theorem BlockBirationalHilbert.proof (hV : HilbFnValueSpan.Statement) : BlockBirationalHilbert.Statement := by
   intro K _ _ ι _ Ω _ _ y k₀ hy hbir m
   classical

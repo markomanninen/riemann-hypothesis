@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEquivStdSymp
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfMemChart
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEquivStdSymp
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfMemChart
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueWeilIs
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.WeilIsAlternatingSkewNatural
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -33,7 +37,8 @@ theorem prod_ev {M Q : Type} [AddCommGroup M] [Group Q] {m : ℕ} (ev : M → Q)
   show ev _ = _
   congr 1
   rw [toAdd_prod]
-  simp only [toAdd_pow, toAdd_ofAdd, ← map_nsmul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [toAdd_pow, toAdd_ofAdd, ← map_nsmul, ← map_sum]
   congr 1
   funext j
   simp [Finset.sum_apply, Pi.single_apply]
@@ -49,7 +54,7 @@ theorem existsUnique_label {M Q : Type} [AddCommGroup M] [Group Q] {m n : ℕ} (
   have : NeZero n := ⟨hn.ne'⟩
   have key : ∀ u v : Fin m → ℤ, ev (bas u) = ev (bas v) ↔ ∀ i, (u i : ZMod n) = v i := by
     intro u v
-    have e : ev (bas u) = ev (bas (u - v)) * ev (bas v) := by rw [← add, ← map_add, sub_add_cancel]
+    have e : ev (bas u) = ev (bas (u - v)) * ev (bas v) := by rw [← add, ← map_add (f := _), sub_add_cancel]
     rw [e, mul_eq_right, ker]
     constructor
     · rintro ⟨b, hb⟩ i
@@ -98,7 +103,8 @@ theorem root_ext {S : Scheme.{0}} {n : ℕ} (hn : IsUnit (n : Γ(S, ⊤))) {u v 
         rw [map_mul, map_inv, h K x, mul_inv_cancel]
       exact congrArg Units.val this
     have h2 : IsUnit (x.appTop.hom (∑ i ∈ Finset.range n, w ^ i)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_pow, h1, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, _root_.mul_one]
       simpa using hn.map x.appTop.hom
     have h3 : x ⁻¹ᵁ S.basicOpen (∑ i ∈ Finset.range n, w ^ i) = ⊤ := by
@@ -156,8 +162,37 @@ theorem exists_tObj : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [Numbe
     rw [← MonObj.comp_pow, ev_pow ob.etaA ob.etaA_add, ob.etaA_ker, MonObj.comp_one]
   have hβ : ∀ (K : Type) [Field K] (x : Sp K ⟶ S), x ≫ s = spMap (Spec.preimage (x ≫ s)).hom :=
     fun K _ x => (Spec.map_preimage (x ≫ s)).symm
-  have hiso : LBIso ob.t.PP.L (ob.t.PP.L.pull (𝟙 ob.t.G.left)) :=
-    (PolBaseChange.lbIso_refl ob.t.PP.isLB).chartPull (chartPullId _) (chartPullPull _ _ _ rfl)
+  have hiso : LBIso ob.t.PP.L (ob.t.PP.L.pull (𝟙 ob.t.G.left)) := by
+    let X := ob.t.G.left
+    let L : LB X := ob.t.PP.L
+    let M := L.pull (𝟙 X)
+    have chart_le (i : M.ι) : M.U i ≤ L.U (i PUnit.unit) := fun _ hi => mem_pull.1 hi
+    have transition (i j : M.ι) {W : X.Opens} (h : W ≤ M.U i ⊓ M.U j) :
+        res h (M.g i j) =
+          res (h.trans (inf_le_inf (chart_le i) (chart_le j))) (L.g (i PUnit.unit) (j PUnit.unit)) := by
+      refine (LB.res_lcg L (fun _ : PUnit => 𝟙 X) (fun _ => 1) i j h).trans ?_
+      rw [Fintype.prod_unique, zpow_one] <;> exact Units.ext rfl
+    let N := M.div L
+    have overlap_le (p : N.ι) : N.U p ≤ L.U (p.1 PUnit.unit) ⊓ L.U p.2 :=
+      inf_le_inf (chart_le p.1) le_rfl
+    refine ⟨⟨fun p => res (overlap_le p) (L.g (p.1 PUnit.unit) p.2)⟩, ?_⟩
+    intro p q
+    let W := N.U p ⊓ N.U q
+    have hp₁ : W ≤ L.U (p.1 PUnit.unit) := inf_le_left.trans ((overlap_le p).trans inf_le_left)
+    have hp₂ : W ≤ L.U p.2 := inf_le_left.trans inf_le_right
+    have hq₁ : W ≤ L.U (q.1 PUnit.unit) := inf_le_right.trans ((overlap_le q).trans inf_le_left)
+    have hq₂ : W ≤ L.U q.2 := inf_le_right.trans inf_le_right
+    have hM : W ≤ M.U p.1 ⊓ M.U q.1 :=
+      le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left)
+    change res (show W ≤ N.U p from inf_le_left) (res (overlap_le p) (L.g (p.1 PUnit.unit) p.2)) =
+      (res hM (M.g p.1 q.1) * (res (le_inf hp₂ hq₂) (L.g p.2 q.2))⁻¹) *
+        res (show W ≤ N.U q from inf_le_right) (res (overlap_le q) (L.g (q.1 PUnit.unit) q.2))
+    have hL : L.IsLB := ob.t.PP.isLB
+    have hc₁ := LB.res_cocycle hL (p.1 PUnit.unit) (q.1 PUnit.unit) q.2
+      (le_inf hp₁ hq₁) (le_inf hq₁ hq₂) (le_inf hp₁ hq₂)
+    have hc₂ := LB.res_cocycle hL (p.1 PUnit.unit) p.2 q.2
+      (le_inf hp₁ hp₂) (le_inf hp₂ hq₂) (le_inf hp₁ hq₂)
+    rw [LB.res_res, LB.res_res, transition, mul_right_comm, hc₁, ← hc₂, mul_inv_cancel_right]
   refine ⟨{ A := ob.t.G
             ab := ObjDim.isAbelianScheme ob
             dim := hg ▸ ObjDim.smoothOfRelativeDimension ob

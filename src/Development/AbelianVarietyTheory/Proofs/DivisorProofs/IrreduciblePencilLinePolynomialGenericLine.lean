@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapLine
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -99,8 +104,8 @@ private theorem irreducible_rename_of_injective' {σ τ K : Type} [Field K] (g :
     · exact Or.inl (h.map _)
     · exact Or.inr (h.map _)
 
-open GlobalTheory.PencilDisc.GenericLine in
 
+open GlobalTheory.PencilDisc.GenericLine in
 theorem GlobalTheory.PencilDisc.irreducible_line_generic (F : Type) [Field F] (D N : ℕ)
     (f : MvPolynomial (Fin (D + 1) × Fin N) F) (hf : Irreducible f) :
     Irreducible (GlobalTheory.PencilDisc.line

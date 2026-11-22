@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Formalism.SharpRestriction.ParConsts
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Formalism.SharpRestriction.ParConsts
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,8 +82,5 @@ def degBd (k r j q : ℕ) (H₁ De D sg : ℝ) : ℝ :=
   16 * (4 * r + 4 : ℝ) * (4 * r : ℝ) ^ (4 * r ^ 2) * (2 * H₁) ^ (16 * r ^ 3 + 4 * r) * De ^ (8 * r ^ 2 + 2) *
     (8 * Real.pi * Real.exp 1 / ((k - 1 - j : ℕ) : ℝ)) ^ (j * (k - 1 - j)) * (D ^ (k - 1 - j))⁻¹ *
     sg ^ (-(((q : ℝ) - 16 * r ^ 3 - 4 * r - 1) / r))
-
-example (k : ℕ) (z : Fin (2 * 0 + k + 1) → ℂ) (x : Mat k 0) : 1 ≤ Sg2 k 0 z x := by
-  unfold Sg2; exact (Finset.le_fold_max _).2 (Or.inl le_rfl)
 
 end GlobalTheory.Amp

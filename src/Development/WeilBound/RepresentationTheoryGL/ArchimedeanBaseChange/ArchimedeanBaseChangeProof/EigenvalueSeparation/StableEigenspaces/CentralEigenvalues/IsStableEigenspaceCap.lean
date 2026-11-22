@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteLeOfClosureClasses
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PPrAut
-import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteSpectrumOfResidual
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.StableEigenspaces.InterpolationL2Bound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteLeOfClosureClasses
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PPrAut
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.LieInvariants.InvariantOfLieOneLEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteSpectrumOfResidual
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,14 +16,14 @@ namespace PositivityTheory.Rg.BcB.E.E3
 
 namespace centeig
 
-theorem isStable_eigenspace_cap {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ} (τ : E →+* ℂ)
-    (u c : ℂ) : IsStable (Module.End.eigenspace (cap (a := N) τ u) c) := by
+theorem isStable_eigenspace_cap {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ} (τ : E →+* ℂ)
+    (u c : ℂ) : _root_.GlobalTheory.CuspRep.IsStable (Module.End.eigenspace (cap (a := N) τ u) c) := by
   intro o φ hφ
   rw [Module.End.mem_eigenspace_iff] at hφ ⊢
   rw [← Module.End.mul_apply, (GlobalTheory.SpehInfChar.cap_commute_act τ u o).eq, Module.End.mul_apply, hφ, map_smul]
 
-theorem isStable_autSub {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ} :
-    IsStable (GlobalTheory.DiscClosure.autSub E N) := by
+theorem isStable_autSub {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ} :
+    _root_.GlobalTheory.CuspRep.IsStable (GlobalTheory.DiscClosure.autSub E N) := by
   intro o φ hφ
   exact PositivityTheory.Rg.Rs.PrAut.isAutForm_act PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL o hφ
 

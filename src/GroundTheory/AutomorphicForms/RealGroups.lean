@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroupsLie
-import GroundTheory.AutomorphicForms.RealGroupsPolar
-import GroundTheory.AutomorphicForms.RealGroupsKAK
-import GroundTheory.AutomorphicForms.RealGroupsIwasawa
-import GroundTheory.AutomorphicForms.RealGroupsHaar
-import GroundTheory.AutomorphicForms.RealGroupsIwasawaHaar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroupsLie
+public import GroundTheory.AutomorphicForms.RealGroupsPolar
+public import GroundTheory.AutomorphicForms.RealGroupsKAK
+public import GroundTheory.AutomorphicForms.RealGroupsIwasawa
+public import GroundTheory.AutomorphicForms.RealGroupsHaar
+public import GroundTheory.AutomorphicForms.RealGroupsIwasawaHaar
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -106,7 +110,7 @@ theorem haarGLComplex_eq_smul_map_kbHomeomorph (μ₀ : Measure (Matrix n n ℂ)
     rw [hc, zero_smul] at key
     have h0 : H Set.univ = 0 := by rw [hH, key, Measure.map_zero, Measure.coe_zero, Pi.zero_apply]
     exact (IsOpenPosMeasure.open_pos Set.univ isOpen_univ Set.univ_nonempty) h0
-  · rw [hH, key, Measure.map_smul]
+  · rw [hH, key, Measure.map_smul c f.symm.measurable.aemeasurable]
     congr 1
     have e3 : ⇑f.symm = kbHomeomorph ∘ Prod.map id (fun b : upperPosSubgroup n ℂ => b⁻¹) := by
       funext p; rfl

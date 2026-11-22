@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCN
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCN
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,13 +14,6 @@ namespace Formalism.L2.Fam.ThC
 open Formalism.L2.Theta
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-def RapidInt (D : D7) : Prop := ∀ (V : HSp D) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)), μ.IsHaarMeasure →
-  IsFundamentalDomain (GQ V) 𝓕 μ → ∀ f F : GA D V → ℂ, IsAutFun V f →
-    (∃ N : ℕ, ∀ x, ∃ C : ℝ, ∀ g ∈ GinfC V, ‖f (x * g)‖ ≤ C * (1 + normInf (th0 D) V g) ^ N) →
-    IsAutFunSm (th0 D) V F → IsCuspFun V F → IntegrableOn (fun h => f h * F h) 𝓕 μ
-
-def CuspBdd (D : D7) : Prop := ∀ (V : HSp D) (F : GA D V → ℂ), IsAutFunSm (th0 D) V F → IsCuspFun V F → ∃ C, ∀ g, ‖F g‖ ≤ C
 
 variable {D : D7}
 

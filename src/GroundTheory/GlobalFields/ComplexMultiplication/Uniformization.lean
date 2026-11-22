@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticRational
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticDegree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticRational
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticDegree
+
+@[expose] public section
 
 open Complex Filter Topology Set
 open scoped PeriodPair
@@ -78,12 +82,17 @@ lemma meromorphicOrderAt_weierstrassP_sub_ne_top (c z : ℂ) :
 
 lemma le_toNat_torusOrder_weierstrassP_sub {z c : ℂ} (hz : z ∉ L.lattice) {n : ℕ}
     (h : ∀ i < n, iteratedDeriv i (fun w ↦ ℘[L] w - c) z = 0) :
-    n ≤ (torusOrder L (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat := by
+    n ≤ (torusOrder (L := L) (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat := by
   have ha : AnalyticAt ℂ (fun w ↦ ℘[L] w - c) z :=
     (L.analyticOnNhd_weierstrassP z hz).sub analyticAt_const
   have hne := meromorphicOrderAt_weierstrassP_sub_ne_top (L := L) c z
   have hle := (natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero ha).2 h
-  rw [torusOrder_mk (isEllipticFunction_weierstrassP_sub c), ha.meromorphicOrderAt_eq]
+  have hrep : Torus.mk L (Torus.mk L z).out = Torus.mk L z :=
+    QuotientAddGroup.out_eq' (Torus.mk L z)
+  have hperiod := (Torus.mk_eq_mk_iff L).1 hrep
+  have horder := (isEllipticFunction_weierstrassP_sub c).2.meromorphicOrderAt_add hperiod z
+  rw [add_sub_cancel] at horder
+  rw [torusOrder, horder, ha.meromorphicOrderAt_eq]
   rw [ha.meromorphicOrderAt_eq] at hne
   obtain ⟨m, hm⟩ : ∃ m : ℕ, (m : ℕ∞) = analyticOrderAt (fun w ↦ ℘[L] w - c) z :=
     ENat.ne_top_iff_exists.1 (fun h ↦ hne (by simp [h]))
@@ -92,14 +101,14 @@ lemma le_toNat_torusOrder_weierstrassP_sub {z c : ℂ} (hz : z ∉ L.lattice) {n
   exact_mod_cast hle
 
 lemma one_le_toNat_torusOrder_weierstrassP_sub {z c : ℂ} (hz : z ∉ L.lattice) (hc : ℘[L] z = c) :
-    1 ≤ (torusOrder L (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat :=
+    1 ≤ (torusOrder (L := L) (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat :=
   le_toNat_torusOrder_weierstrassP_sub hz fun i hi ↦ by
     obtain rfl : i = 0 := by omega
     simp [hc]
 
 lemma two_le_toNat_torusOrder_weierstrassP_sub {z c : ℂ} (hz : z ∉ L.lattice) (hc : ℘[L] z = c)
     (h' : ℘'[L] z = 0) :
-    2 ≤ (torusOrder L (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat :=
+    2 ≤ (torusOrder (L := L) (fun w ↦ ℘[L] w - c) (Torus.mk L z)).toNat :=
   le_toNat_torusOrder_weierstrassP_sub hz fun i hi ↦ by
     interval_cases i
     · simp [hc]
@@ -107,14 +116,57 @@ lemma two_le_toNat_torusOrder_weierstrassP_sub {z c : ℂ} (hz : z ∉ L.lattice
       exact h'
 
 lemma finsum_toNat_torusOrder_weierstrassP_sub (c : ℂ) :
-    ∑ᶠ x : Torus L, (torusOrder L (fun w ↦ ℘[L] w - c) x).toNat = 2 := by
-  rw [finsum_toNat_torusOrder_sub_const isEllipticFunction_weierstrassP c, degree_weierstrassP]
+    ∑ᶠ x : Torus L, (torusOrder (L := L) (fun w ↦ ℘[L] w - c) x).toNat = 2 := by
+  let f : ℂ → ℂ := fun w ↦ ℘[L] w - c
+  let order : Torus L → ℤ := torusOrder (L := L) f
+  change ∑ᶠ x, (order x).toNat = 2
+  have hf : IsEllipticFunction L f := isEllipticFunction_weierstrassP_sub c
+  have hlog := isEllipticFunction_logDeriv hf
+  have hres (x : Torus L) : torusResidue L (logDeriv f) x = (order x : ℂ) :=
+    residue_logDeriv_eq_untopD (hf.1 x.out)
+  have hfin : order.HasFiniteSupport :=
+    (finite_support_torusResidue hlog).subset fun x hx ↦ by
+      simp only [Function.mem_support, hres] at hx ⊢
+      exact_mod_cast hx
+  have hsum : ∑ᶠ x, order x = 0 := by
+    have h := finsum_torusResidue_eq_zero hlog
+    simp_rw [hres] at h
+    have hc := (Int.castAddHom ℂ).map_finsum hfin
+    simp only [Int.coe_castAddHom] at hc
+    rw [← hc] at h
+    exact_mod_cast h
+  have hpos := hfin.fun_comp (g := Int.toNat) rfl
+  have hneg := hfin.fun_comp (g := fun n ↦ (-n).toNat) rfl
+  have hbalance :
+      (∑ᶠ x, ((order x).toNat : ℤ)) - (∑ᶠ x, ((-order x).toNat : ℤ)) = 0 := by
+    rw [← finsum_sub_distrib (hpos.fun_comp (g := fun n : ℕ ↦ (n : ℤ)) rfl)
+      (hneg.fun_comp (g := fun n : ℕ ↦ (n : ℤ)) rfl)]
+    simp only [Int.toNat_sub_toNat_neg, hsum]
+  have hcounts : (∑ᶠ x, (order x).toNat) = ∑ᶠ x, (-order x).toNat := by
+    have hcastPos := (Nat.castAddMonoidHom ℤ).map_finsum hpos
+    have hcastNeg := (Nat.castAddMonoidHom ℤ).map_finsum hneg
+    exact Int.ofNat_injective (hcastPos.trans ((sub_eq_zero.mp hbalance).trans hcastNeg.symm))
+  have hpole (x : Torus L) :
+      (-order x).toNat = (-(meromorphicOrderAt ℘[L] x.out).untopD 0).toNat :=
+    toNat_neg_untopD_sub_const (L.meromorphic_weierstrassP x.out) c
+  have hrep (x : Torus L) : x.out ∈ L.lattice ↔ x = 0 := by
+    have hx : Torus.mk L x.out = x := QuotientAddGroup.out_eq' x
+    have hzero : Torus.mk L 0 = (0 : Torus L) := QuotientAddGroup.mk_zero _
+    rw [← sub_zero x.out, ← Torus.mk_eq_mk_iff L, hx, hzero]
+  rw [hcounts, finsum_eq_single _ (0 : Torus L) ?_]
+  · have horder : meromorphicOrderAt ℘[L] (0 : Torus L).out = ((-2 : ℤ) : WithTop ℤ) := by
+      rw [L.order_weierstrassP _ ((hrep 0).2 rfl)]
+      norm_num
+    rw [hpole, horder, WithTop.untopD_coe]
+    rfl
+  · intro x hx
+    rw [hpole]
+    exact toNat_neg_untopD_eq_zero_of_nonneg
+      (L.analyticOnNhd_weierstrassP x.out (fun h ↦ hx ((hrep x).1 h))).meromorphicOrderAt_nonneg
 
 lemma finite_support_toNat_torusOrder_weierstrassP_sub (c : ℂ) :
-    (Function.support fun x ↦ (torusOrder L (fun w ↦ ℘[L] w - c) x).toNat).Finite :=
-  (finite_support_torusOrder (isEllipticFunction_weierstrassP_sub c)).subset fun x hx ↦ by
-    simp only [Function.mem_support] at hx ⊢
-    omega
+    (Function.support fun x ↦ (torusOrder (L := L) (fun w ↦ ℘[L] w - c) x).toNat).Finite :=
+  hasFiniteSupport_of_finsum_ne_zero (by rw [finsum_toNat_torusOrder_weierstrassP_sub]; decide)
 
 lemma torus_mk_ne {z w : ℂ} (h : z - w ∉ L.lattice) : Torus.mk L z ≠ Torus.mk L w :=
   fun e ↦ h ((Torus.mk_eq_mk_iff L).1 e)

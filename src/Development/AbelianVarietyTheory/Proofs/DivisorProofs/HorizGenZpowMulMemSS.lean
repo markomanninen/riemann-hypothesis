@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BddSecMulAndConstTermMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HtValOnSubset
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.BddSecMulAndConstTermMul
+
+@[expose] public section
 
 set_option autoImplicit false
 

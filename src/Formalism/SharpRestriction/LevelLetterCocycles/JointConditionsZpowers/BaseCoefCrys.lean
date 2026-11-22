@@ -1,4 +1,8 @@
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 noncomputable section
 

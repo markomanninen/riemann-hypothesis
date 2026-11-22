@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,9 +135,9 @@ theorem IsVal.unique (hw : w ∈ Small.ptsOver ℂ (mCoordIdeal y)) {a : Ω} {v 
       have := homog_neg (homog_mul hg' hh)
       rwa [add_comm d' d] at this)
   have h0 := aeval_eq_zero_of hw hF (by
-    simp only [map_add, map_neg, map_mul, hy, hy']
+    simp only [map_add (f := _), map_neg, map_mul, hy, hy']
     ring)
-  simp only [map_add, map_neg, map_mul, hv, hv'] at h0
+  simp only [map_add (f := _), map_neg, map_mul, hv, hv'] at h0
   have : (v - v') * (aeval w h * aeval w h') = 0 := by linear_combination h0
   rcases mul_eq_zero.mp this with h | h
   · exact sub_eq_zero.mp h
@@ -148,8 +152,8 @@ theorem IsVal.add {a b : Ω} {v u : ℂ} (h1 : IsVal y w a v) (h2 : IsVal y w b 
   · have := homog_mul hg' hh
     rwa [add_comm d' d] at this
   · rw [map_mul]; exact mul_ne_zero hn hn'
-  · simp only [map_add, map_mul, hy, hy']; ring
-  · simp only [map_add, map_mul, hv, hv']; ring
+  · simp only [map_add (f := _), map_mul, hy, hy']; ring
+  · simp only [map_add (f := _), map_mul, hv, hv']; ring
 
 theorem IsVal.mul {a b : Ω} {v u : ℂ} (h1 : IsVal y w a v) (h2 : IsVal y w b u) :
     IsVal y w (a * b) (v * u) := by

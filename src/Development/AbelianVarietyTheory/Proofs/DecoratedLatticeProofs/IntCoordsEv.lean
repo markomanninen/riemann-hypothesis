@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticesAgreeAlmostEverywhere
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticesConjugateAtFinitePlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticesAgreeAlmostEverywhere
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticesConjugateAtFinitePlaceStatement
+
+@[expose] public section
+
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel IsLocalRing GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw GlobalTheory.FinPl
 open scoped TensorProduct
@@ -53,12 +58,13 @@ theorem int_coords_ev : ∀ᶠ w in Filter.cofinite, ∀ z ∈ intAE D, ∀ i,
       conv_lhs => rw [← B.sum_repr o]
       push_cast
       rfl
-    rw [ho, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ho, map_sum, Finset.sum_apply', map_sum]
     refine sum_mem fun j _ => ?_
     rw [map_zsmul, Finsupp.smul_apply, map_zsmul]
     exact zsmul_mem (hw i j) _
   | zero => intro i; simp
-  | add x y _ _ hx hy => intro i; rw [map_add, map_add, Finsupp.add_apply]; exact add_mem (hx i) (hy i)
+  | add x y _ _ hx hy => intro i; rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]; exact add_mem (hx i) (hy i)
   | neg x _ hx => intro i; rw [map_neg, map_neg, Finsupp.neg_apply]; exact neg_mem (hx i)
 
 end GlobalTheory.FinPlLoc
@@ -90,12 +96,14 @@ theorem glue : ∀ (D : D7) (a : Pl D → AE D), (∀ x, a x ∈ idAt D (· = x)
     exact hw _ (hT w hwT).2 i
   let C : Fin (Module.finrank D.host.F D.host.E) → Af D.host.F := fun i => RestrictedProduct.mk (c i) (hc i)
   refine ⟨∑ i, pairA D.host.F 0 (C i) ⊗ₜ[D.host.F] b i, ?_, fun x => ?_⟩
-  · rw [map_sum]
-    exact Finset.sum_eq_zero fun i _ => infPart_pair _ _
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum]
+      simp only [infPart_pair, Finset.sum_const_zero]
   · unfold idOff
     refine (Submodule.mem_iInf _).2 fun w => RingHom.mem_ker.2 ?_
     obtain ⟨w, rfl⟩ := w
-    rw [map_sub, map_sum, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, sub_eq_zero]
     simp only [compAt_pair]
     exact sum_repr_tmul w (compAt D w (a w))
 

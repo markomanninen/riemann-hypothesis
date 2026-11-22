@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEval
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolEval
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Classical
 
 noncomputable section
@@ -15,8 +20,8 @@ theorem polMap_index_injective (W Λ : Type) [Fintype W] :
   have key : ∀ (f : W → (Λ →₀ ℕ)) (w : W) (l : Λ),
       (∑ w, Finsupp.mapDomain (Prod.mk w) (f w)) (w, l) = f w l := by
     intro f w l
-    rw [Finsupp.finset_sum_apply, Finset.sum_eq_single w]
-    · exact Finsupp.mapDomain_apply (Prod.mk_right_injective w) _ _
+    rw [Finsupp.finsetSum_apply, Finset.sum_eq_single w]
+    · exact Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective w) _ _
     · intro v _ hv
       apply Finsupp.mapDomain_notin_range
       rintro ⟨x, hx⟩

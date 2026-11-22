@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChoiceOfTops
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ChoiceOfTops
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 

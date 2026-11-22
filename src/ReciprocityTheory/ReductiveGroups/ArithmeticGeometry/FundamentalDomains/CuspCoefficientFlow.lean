@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowCoefficientBounds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.CuspCoefficientFlow
 
@@ -179,7 +183,7 @@ lemma continuousAt_nfac (la : Wt X.Ψ r) {x0 : Frame X.Ψ r} (hx0 : x0 ∈ X.dom
     have hne2 := FlowCoefficientBounds.dmin_ne X hx0 τ i.castSucc
     exact (hd1.div hd2 hne2).norm.rpow_const (Or.inl (norm_ne_zero_iff.mpr (div_ne_zero hne1 hne2)))
   unfold Data.nfac
-  exact tendsto_finset_prod _ fun τ _ => tendsto_finset_prod _ fun i _ => h τ i
+  exact tendsto_finsetProd _ fun τ _ => tendsto_finsetProd _ fun i _ => h τ i
 
 private theorem isOpen_dom_upper_bounds : IsOpen X.dom := by
   have hset : X.dom = ⋂ τ : X.Ψ, ({x : Frame X.Ψ r | (mat x τ).det ≠ 0} ∩

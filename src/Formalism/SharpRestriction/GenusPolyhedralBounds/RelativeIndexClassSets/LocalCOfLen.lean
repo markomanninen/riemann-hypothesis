@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.JWMggWMem
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.JWMggWMem
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.TheoremZeroSplitOfLocalAndSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem localC_of_len
     rw [← hTW.1]
     exact Submodule.subset_span ⟨k, rfl⟩
   have hth'M : ∀ i, G.th' i ∈ B.Mlat j wF := fun i => hH2.2.1 (hTTh i).1
-  exact localBound G la Q S K.CRm (cc D large₂ C2 A2 CR wL) e (nus la) hka hLat hΘ hspK hT0 hDT hw hTW.2.1
+  exact localBound G la Q S K.CRm (cc D large₂ C2 A2 CR wL) e (nus la) hka hLat.toIsLattice hΘ hspK hT0 hDT hw hTW.2.1
     (fun i => (hTTh i).1) hth'M
     (fun k => (hTZ.1 k).1) (fun k => (hTZ.1 k).2.1) (fun k => (hTZ.1 k).2.2.2) hTZ.2.1 hTZ.2.2
     hTQ.2.1 hTQ.2.2.1 hB hC hTie hCM

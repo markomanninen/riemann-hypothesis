@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,8 +18,8 @@ lemma rpow_neg_half_sq {d : ℝ} (hd : 0 < d) : (d ^ (-(1 / 2 : ℝ))) ^ 2 = d�
 
 end PGaussDetFactor
 
-open PGaussDetFactor in
 
+open PGaussDetFactor in
 theorem GaussDetFactor.proof : GaussDetFactor.Statement := by
   intro g Y B hY hBY
   have hd : 0 < Y.det := hY.det_pos

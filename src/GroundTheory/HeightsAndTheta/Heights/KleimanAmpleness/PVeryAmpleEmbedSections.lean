@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleEmbedSectionsSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PNefPlusAmple
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountTop
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistSections
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleEmbedSectionsSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PNefPlusAmple
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSectionCountTop
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistSections
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

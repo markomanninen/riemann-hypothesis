@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemSpanOverOfMem
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XDotdualBc
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XGraphRestrictBc
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeFiniteProjectiveBaseChange
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.MemSpanOverOfMem
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XDotdualBc
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.XGraphRestrictBc
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 namespace PositivityTheory.Xgn.LocallyFreeLatticeSpans
@@ -62,7 +67,8 @@ theorem exists_lift {E : Type} [AddCommGroup E] [Module Ω E] (Δ : AddSubgroup 
   choose z hz hz' using hz
   refine ⟨∑ i, (φ i).smulRight (z i), fun x => ?_, fun x hx => ?_⟩
   · conv_rhs => rw [← hv x]
-    simp [map_sum, hz']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hz']
   · simp only [LinearMap.sum_apply, LinearMap.smulRight_apply]
     exact AddSubgroup.sum_mem _ fun i _ => hΔ _ (hφ i x hx) _ (hz i)
 

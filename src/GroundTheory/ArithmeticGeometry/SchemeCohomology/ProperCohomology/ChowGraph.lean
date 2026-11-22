@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SchemeImage
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowProduct
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.SchemeImage
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -25,11 +30,9 @@ def gP : (W U).toScheme ⟶ ProjSpace.MP A k n :=
     (fun i => X.homOfLE (iInf_le U i) ≫ c i ≫ (ProjSpace.stdOpen A (n i) 0).ι) (fun i => by
       rw [Category.assoc, Category.assoc, hc i, ← Category.assoc, Scheme.homOfLE_ι])
 
-@[reassoc (attr := simp)]
 lemma gP_mpStr : gP s n U c hc ≫ ProjSpace.mpStr A k n = (W U).ι ≫ s :=
   ProjSpace.lift_mpStr _ _ _ _ _
 
-@[reassoc (attr := simp)]
 lemma gP_pr (i : Fin (k + 1)) : gP s n U c hc ≫ ProjSpace.pr A k n i =
     X.homOfLE (iInf_le U i) ≫ c i ≫ (ProjSpace.stdOpen A (n i) 0).ι :=
   ProjSpace.lift_pr _ _ _ _ _ i
@@ -39,7 +42,6 @@ abbrev G : Scheme.{u} := pullback s (ProjSpace.mpStr A k n)
 def g : (W U).toScheme ⟶ G s n :=
   pullback.lift (W U).ι (gP s n U c hc) (gP_mpStr s n U c hc).symm
 
-@[reassoc (attr := simp)]
 lemma g_fst : g s n U c hc ≫ pullback.fst _ _ = (W U).ι := pullback.lift_fst _ _ _
 
 @[reassoc (attr := simp)]
@@ -55,8 +57,8 @@ lemma isIso_morphismRestrict_of_eq_ι {T : Scheme.{u}} (V : T.Opens) (h : V.toSc
 
 variable [IsProper (ProjSpace.mpStr A k n)]
 
-omit [IsProper (ProjSpace.mpStr A k n)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] in
 lemma isIso_g_restrict_comp : IsIso ((g s n U c hc ∣_ (pullback.fst s (ProjSpace.mpStr A k n) ⁻¹ᵁ W U)) ≫
       (pullback.fst s (ProjSpace.mpStr A k n) ∣_ W U)) := by
   rw [← morphismRestrict_comp]
@@ -103,8 +105,8 @@ lemma αU_βU_over (i : Fin (k + 1)) :
   rw [αU, βU, Category.assoc, Category.assoc, ProjSpace.pr_toSpecBase, Category.assoc,
     Category.assoc, hc i, morphismRestrict_ι_assoc, ← pullback.condition]
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 lemma g_restrict_αU (i : Fin (k + 1)) :
     (g s n U c hc ∣_ (pullback.fst s (ProjSpace.mpStr A k n) ⁻¹ᵁ U i)) ≫ αU s n U i =
       (g s n U c hc ∣_ (pullback.fst s (ProjSpace.mpStr A k n) ⁻¹ᵁ U i)) ≫ βU s n U c i := by
@@ -116,8 +118,8 @@ lemma g_restrict_αU (i : Fin (k + 1)) :
       g_fst, Category.assoc, Scheme.homOfLE_ι]
   rw [αU, βU, morphismRestrict_ι_assoc, reassoc_of% hinc, g_snd_assoc, gP_pr]
 
-omit [IsProper (ProjSpace.mpStr A k n)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] in
 theorem q_mem_V (i : Fin (k + 1)) (y : X' s n U c hc) (hy : π s n U c hc y ∈ U i) :
     q s n U c hc y ∈ V n i := by
   obtain ⟨κ, hκ⟩ := SchemeImage.exists_lift_imageι_morphismRestrict (g s n U c hc)
@@ -183,9 +185,9 @@ abbrev Qo : Q s n U c hc i ⟶ (O s n i).toScheme := eqLocusι _ _ _ _ ≫ pullb
 
 abbrev Qφ : Q s n U c hc i ⟶ F n U c i := eqLocusι _ _ _ _ ≫ pullback.fst _ _
 
+
 omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
 include hc in
-
 lemma F_over : pullback.fst (c i) (ρ (A := A) n i) ≫ (U i).ι ≫ s =
     pullback.snd (c i) (ρ (A := A) n i) ≫ (V (A := A) n i).ι ≫ ProjSpace.mpStr A k n := by
   have h1 : pullback.fst (c i) (ρ (A := A) n i) ≫ c i ≫ (ProjSpace.stdOpen A (n i) 0).ι =
@@ -194,34 +196,33 @@ lemma F_over : pullback.fst (c i) (ρ (A := A) n i) ≫ (U i).ι ≫ s =
   have h2 := congrArg (· ≫ ProjSpace.toSpecBase A (n i)) h1
   simpa only [Category.assoc, hc i, ProjSpace.pr_toSpecBase] using h2
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
 def gF : (g s n U c hc ⁻¹ᵁ O s n i).toScheme ⟶ F n U c i :=
   pullback.lift ((g s n U c hc ⁻¹ᵁ O s n i).ι ≫ X.homOfLE (iInf_le U i))
     ((g s n U c hc ∣_ O s n i) ≫ τ s n i) (by
       rw [← cancel_mono (ProjSpace.stdOpen A (n i) 0).ι]
       simp only [Category.assoc, morphismRestrict_ι, morphismRestrict_ι_assoc, g_snd_assoc, gP_pr])
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
 def gE : (g s n U c hc ⁻¹ᵁ O s n i).toScheme ⟶ E s n U c i :=
   pullback.lift (gF s n U c hc i) (g s n U c hc ∣_ O s n i) (pullback.lift_snd _ _ _)
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 def gQ : (g s n U c hc ⁻¹ᵁ O s n i).toScheme ⟶ Q s n U c hc i :=
   eqLocusLift _ _ _ _ (gE s n U c hc i) (by
     simp only [gE, gF, eX, eX', pullback.lift_fst_assoc, pullback.lift_snd_assoc,
       Category.assoc, Scheme.homOfLE_ι, morphismRestrict_ι_assoc, g_fst])
 
 omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparated s] in
-@[reassoc]
 lemma gQ_Qo : gQ s n U c hc i ≫ Qo s n U c hc i = g s n U c hc ∣_ O s n i := by
   simp only [gQ, Qo, eqLocusLift_ι_assoc, gE]
   exact pullback.lift_snd _ _ _
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 def σG : F n U c i ⟶ G s n :=
   pullback.lift (pullback.fst _ _ ≫ (U i).ι) (pullback.snd _ _ ≫ (V (A := A) n i).ι)
     (by simpa only [Category.assoc] using F_over s n U c hc i)
@@ -238,8 +239,8 @@ lemma range_σG : Set.range (σG s n U c hc i).base ⊆ Set.range (O s n i).ι.b
     exact Subtype.prop ((pullback.snd (c i) (ρ (A := A) n i)).base x)
   exact h2
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 def σO : F n U c i ⟶ (O s n i).toScheme :=
   IsOpenImmersion.lift (O s n i).ι (σG s n U c hc i) (range_σG s n U c hc i)
 
@@ -247,23 +248,23 @@ omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] [IsSeparat
 @[reassoc (attr := simp)]
 lemma σO_ι : σO s n U c hc i ≫ (O s n i).ι = σG s n U c hc i := IsOpenImmersion.lift_fac _ _ _
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 def σE : F n U c i ⟶ E s n U c i :=
   pullback.lift (𝟙 _) (σO s n U c hc i) (by
     rw [← cancel_mono (V (A := A) n i).ι]
     simp only [Category.assoc, Category.id_comp, τ, morphismRestrict_ι, σO_ι_assoc, σG]
     exact (pullback.lift_snd _ _ _).symm)
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 def σ : F n U c i ⟶ Q s n U c hc i :=
   eqLocusLift _ _ _ _ (σE s n U c hc i) (by
     simp only [σE, eX, eX', pullback.lift_fst_assoc, pullback.lift_snd_assoc, σO_ι_assoc, σG,
       Category.id_comp, pullback.lift_fst])
 
-omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] [QuasiCompact (g s n U c hc)] in
 instance isIso_Qφ [IsClosedImmersion (c i)] : IsIso (Qφ s n U c hc i) := by
   refine ⟨⟨σ s n U c hc i, ?_, ?_⟩⟩
   · have hmono : Mono (Qo s n U c hc i) := by unfold Qo; infer_instance
@@ -278,8 +279,8 @@ instance isIso_Qφ [IsClosedImmersion (c i)] : IsIso (Qφ s n U c hc i) := by
       rw [← morphismRestrict_ι, pullback.condition_assoc]
   · simp only [Qφ, σ, eqLocusLift_ι_assoc, σE, pullback.lift_fst]
 
-omit [IsProper (ProjSpace.mpStr A k n)] in
 
+omit [IsProper (ProjSpace.mpStr A k n)] in
 theorem isClosedImmersion_q_restrict [IsClosedImmersion (c i)] :
     IsClosedImmersion (q s n U c hc ∣_ V (A := A) n i) := by
   have hQo : IsClosedImmersion (Qo s n U c hc i) := by unfold Qo; infer_instance

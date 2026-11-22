@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcBase
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.KcBase
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise nonZeroDivisors
@@ -26,7 +30,8 @@ theorem kc_comm_symm (σ : H.E ≃ₐ[ℚ] H.E)
 theorem kc_sum_comm (σ : H.E ≃ₐ[ℚ] H.E)
     (hc : ∀ (τ : H.E ≃ₐ[H.K] H.E) (x : H.E), σ (τ x) = τ (σ x)) (w : H.E) :
     σ (∑ τ : H.E ≃ₐ[H.K] H.E, τ w) = ∑ τ : H.E ≃ₐ[H.K] H.E, τ (σ w) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun τ _ => hc τ w
 
 theorem kc_one_ne : (1 : FractionalIdeal (𝓞 H.E)⁰ H.E) ≠ 0 := one_ne_zero
@@ -50,7 +55,7 @@ theorem kc_mem_dual_iff (y : H.E) :
   have key : ∀ w : H.E, Algebra.trace H.K H.E w ∈ (algebraMap (𝓞 H.K) H.K).range ↔
       IsIntegral ℤ (∑ τ : H.E ≃ₐ[H.K] H.E, τ w) := by
     intro w
-    rw [← trace_eq_sum_automorphisms, isIntegral_algebraMap_iff (algebraMap H.K H.E).injective]
+    rw [← trace_eq_sum_automorphisms, isIntegral_algebraMap_iff ]
     constructor
     · rintro ⟨a, ha⟩
       rw [← ha]

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ContinuousTrESymm
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ContinuousTrESymm
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiffProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,6 @@ theorem one_mem : (1 : Fv F v ⊗[F] E) ∈ OEv (E := E) v := by
 theorem int_mem (r : 𝓞 F) : algebraMap F (Fv F v) (r : F) ∈ v.adicCompletionIntegers F := by
   have h := v.coe_mem_adicCompletionIntegers (K := F) r
   convert h using 1
-  exact (IsScalarTower.algebraMap_apply (𝓞 F) F (Fv F v) r).symm
 
 theorem inclR_alg (a : F) : inclR (F := F) (Fv F v) (algebraMap F E a) =
     algebraMap (Fv F v) (Fv F v ⊗[F] E) (algebraMap F (Fv F v) a) := by
@@ -151,7 +154,7 @@ theorem trace_mem {x : Fv F v ⊗[F] E} (hx : x ∈ OEv (E := E) v) :
     rw [map_zero]
     exact (v.adicCompletionIntegers F).zero_mem
   | add y z _ _ hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hy hz
   | smul c y _ hy =>
     rw [show c • y = (c : Fv F v) • y from rfl, map_smul, smul_eq_mul]
@@ -174,7 +177,7 @@ theorem trace_v (σ : E →ₐ[F] E) (hinv : ∀ y, σ (σ y) = y) (hnt : ∃ x,
         ext k
         simp
       rw [h, LinearMap.trace_baseChange]
-    rw [ht, ← inclR_alg v, trace_eq_add σ hinv hnt hfin e, map_add]
+    rw [ht, ← inclR_alg v, trace_eq_add σ hinv hnt hfin e, map_add (f := _)]
     rfl
   have hL : (Algebra.linearMap (Fv F v) (Fv F v ⊗[F] E)) ∘ₗ
         (Algebra.trace (Fv F v) (Fv F v ⊗[F] E)) =
@@ -233,8 +236,8 @@ end Gen
 
 end TrW
 
-open TrW in
 
+open TrW in
 theorem annX_of {D : D7} (X : HidaSetting D) (ψ : AddChar (AF X.B.I.F) ℂ) (hC : Formalism.L2.SG.Pf.NcVal.CondAll) : AnnX X ψ := by
   intro hψ hs v y
   have hmax : v.asIdeal.IsMaximal := v.isMaximal

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamHelp
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamHelp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ theorem dual_int {E : Type} [Field E] [NumberField E] (δ : 𝓞 E) (hδ : δ �
   have h := _root_.dual_difference E _ bq (fun i => by rw [hbqω]; exact RingOfIntegers.isIntegral_coe _) (fun x => by
       refine ⟨fun i => ω.repr x i, ?_⟩
       have h1 := congrArg (algebraMap (𝓞 E) E) (ω.sum_repr x)
-      rw [map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at h1
       show algebraMap (𝓞 E) E x = _
       rw [← h1]
       refine Finset.sum_congr rfl fun i _ => ?_

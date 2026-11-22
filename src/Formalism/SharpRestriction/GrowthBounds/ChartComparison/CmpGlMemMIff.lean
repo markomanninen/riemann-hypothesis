@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemMIff
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CompFintype
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IsUnitDetBlockPreimage
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemMIff
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CompFintype
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IsUnitDetBlockPreimage
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,9 +102,6 @@ def cmpGlL (tE : Tau → E →+* LL) (hc : ∀ τ x, emb τ (σ x) = starRingEnd
   map_smul' a x := by
     funext i L
     exact congrFun (congrFun (cmpB_smul (H (X.eC.symm i).1) hc a x) (X.eC.symm i).2) L
-
-theorem cmpGlL_apply (tE : Tau → E →+* LL) (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x)) (H : ∀ β, X.Hyp e pos tE β)
-    (x : V) : cmpGlL tE hc H x = X.cmpGl e pos x := rfl
 
 theorem cmpGl_rat (x : V) : RatFn G e (X.cmpGl e pos x) := fun i L =>
   cmpC_rat (S := X.S (X.eC.symm i).1) (G := X.gat (X.eC.symm i).1) (e := e) (A := X.A (X.eC.symm i).1) (pos := pos)

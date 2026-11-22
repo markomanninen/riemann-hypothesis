@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
-import Formalism.LocalRingCardinality.DataGatTies
-import Formalism.LocalRingCardinality.DataLevelD
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.FiniteClassSetOfLe
+public import Formalism.LocalRingCardinality.DataGatTies
+public import Formalism.LocalRingCardinality.DataLevelD
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,25 +46,8 @@ variable (D : D7) (u : D.what₂.Word) (h : D.R.MA)
     (I : LocId L p (nOrb (zPsi D.R.toFrame h)) W Qq) (ψ : Formalism.L2.Herm.awayFrom₂ L p →* Oˣ)
     (y : compL L p → UPts D.sp.cm.sig D.sp.gram0 (Formalism.L2.Herm.Af D.host.F)) (e : ℕ)
 
-theorem gatRec_k : (gatRec D u h hS r L I ψ y e).P.m + 1 = D.R.k := k_pred D.R
-
-theorem gatRec_n (v : Fin (gatRec D u h hS r L I ψ y e).P.nV) : (gatRec D u h hS r L I ψ y e).P.n' v = orderOf h := orderOf_zPsi D.R.toFrame h
-
 def gatRec_pos : (Σ v : Fin (gatRec D u h hS r L I ψ y e).P.nV, Fin ((gatRec D u h hS r L I ψ y e).P.n' v)) ≃ D.what₂.Tau :=
   (posG (zPsi D.R.toFrame h)).trans D.eTau.symm
-
-theorem gatRec_step (v : Fin (gatRec D u h hS r L I ψ y e).P.nV) (s : Fin ((gatRec D u h hS r L I ψ y e).P.n' v)) :
-    ((D.eTau (gatRec_pos D u h hS r L I ψ y e ⟨v, posAdd s 1⟩) : D.R.Psi) : D.R.GG) =
-      ((D.eTau (gatRec_pos D u h hS r L I ψ y e ⟨v, s⟩) : D.R.Psi) : D.R.GG) * ((c0, h) : D.R.GG) * D.R.cc := by
-  have hs := posG_step (zPsi D.R.toFrame h) v s
-  simp only [gatRec_pos, Equiv.trans_apply, Equiv.apply_symm_apply]
-  rw [hs, Subgroup.coe_mul, zPsi_eq, mul_assoc]
-
-theorem gatRec_lam (v : Fin (gatRec D u h hS r L I ψ y e).P.nV) (s : Fin ((gatRec D u h hS r L I ψ y e).P.n' v))
-    (i : Fin ((gatRec D u h hS r L I ψ y e).P.m + 1)) :
-    (gatRec D u h hS r L I ψ y e).P.lam0 v s i =
-      ((D.fm u).lam 0 (gatRec_pos D u h hS r L I ψ y e ⟨v, s⟩)).w
-        ⟨i.1, by have h1 := k_pred D.R; have h2 : i.1 < D.R.k - 1 + 1 := i.2; simp only [Ranks.N]; omega⟩ := rfl
 
 def gatRec_lev (hy : ∀ i, (Quotient.mk'' (y i) : compL L p) = i)
     (hyp : ∀ i (w' : HeightOneSpectrum (𝓞 D.host.F)), ((p : ℕ) : 𝓞 D.host.F) ∈ w'.asIdeal →

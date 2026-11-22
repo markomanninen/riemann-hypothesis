@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDefs
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoHostA
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoDefs
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KftwoHostA
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem J_sq : B.J * B.J = -1 := RingOfIntegers.ext (by
 
 theorem coe_mk_quad (v : ℤ × ℤ × ℤ × ℤ) : algebraMap (𝓞 F) F (B.mk4 v) =
     v.1 + v.2.1 * B.w + v.2.2.1 * B.i + v.2.2.2 * (B.w * B.i) := by
-  simp only [mk4, map_add, map_mul, map_intCast, coe_W, coe_J]
+  simp only [mk4, map_add (f := _), map_mul, map_intCast, coe_W, coe_J]
 
 theorem mk_quad_injective : Function.Injective B.mk4 := fun v v' h => by
   have h' := congrArg (algebraMap (𝓞 F) F) h
@@ -49,7 +53,7 @@ theorem mk_quad_surjective {d : ℕ} (hd : d + 1 = 4 * m) (hp : d.Prime) : Funct
 
 theorem σ_σ (x : F) : B.σ (B.σ x) = x := by
   obtain ⟨a, b, c, e, rfl⟩ := B.span x
-  simp only [map_add, map_mul, map_ratCast, B.σw, B.σi, map_neg, neg_neg]
+  simp only [map_add (f := _), map_mul, map_ratCast, B.σw, B.σi, map_neg, neg_neg]
 
 def σO : 𝓞 F ≃+* 𝓞 F :=
   RingOfIntegers.mapRingEquiv (RingEquiv.ofRingHom B.σ B.σ (RingHom.ext B.σ_σ) (RingHom.ext B.σ_σ))
@@ -83,11 +87,11 @@ theorem unramified {d : ℕ} (hd : d + 1 = 4 * m) (hp : d.Prime) :
     obtain ⟨r, hr⟩ := (IsCMField.ringOfIntegersComplexConj_eq_self_iff F (B.J * (B.W + B.W - 1))).1
       (RingOfIntegers.ext (by
         rw [IsCMField.coe_ringOfIntegersComplexConj, B.complexConj_eq hm]
-        simp only [RingOfIntegers.coe_eq_algebraMap, map_mul, map_sub, map_add, map_one, coe_W, coe_J, B.τi, B.τw,
+        simp only [RingOfIntegers.coe_eq_algebraMap, map_mul, map_sub, map_add (f := _), map_one, coe_W, coe_J, B.τi, B.τw,
           B.σi, B.σw]
         ring))
     rw [← hr, Derivation.map_algebraMap]
-  rw [Derivation.leibniz, map_sub, map_add, Derivation.map_one_eq_zero, sub_zero] at h3
+  rw [Derivation.leibniz, map_sub, map_add (f := _), Derivation.map_one_eq_zero, sub_zero] at h3
   have hJ : δ B.J = 0 := by
     have e : (1 : 𝓞 F) = -(2 * m * B.J) * (2 * B.J) + (2 * B.W - 1) * (B.W + B.W - 1) := by
       linear_combination (4 * m : 𝓞 F) * B.J_sq - 4 * B.W_sq
@@ -101,7 +105,7 @@ theorem unramified {d : ℕ} (hd : d + 1 = 4 * m) (hp : d.Prime) :
     rw [← one_smul (𝓞 F) (δ B.W), e, add_smul, mul_smul, mul_smul (2 * B.W - 1), h3, h2, smul_zero, smul_zero, add_zero]
   have hall : ∀ x, δ x = 0 := fun x => by
     obtain ⟨v, rfl⟩ := B.mk_quad_surjective hd hp x
-    simp only [mk4, map_add, Derivation.leibniz, hW, hJ, Derivation.map_intCast, smul_zero, add_zero]
+    simp only [mk4, map_add (f := _), Derivation.leibniz, hW, hJ, Derivation.map_intCast, smul_zero, add_zero]
   have hs : Subsingleton (Ω[𝓞 F⁄R]) := by
     rw [← Submodule.subsingleton_iff (𝓞 F), ← subsingleton_iff_bot_eq_top, eq_comm,
       ← KaehlerDifferential.span_range_derivation, Submodule.span_eq_bot]
@@ -118,8 +122,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 def mat (w : 𝓞 E) (v : ℤ × ℤ × ℤ × ℤ) : Matrix (Fin 2) (Fin 2) (𝓞 E) :=
   !![v.1 + v.2.1 * w, -(v.2.2.1 + v.2.2.2 * w); v.2.2.1 + v.2.2.2 * w, v.1 + v.2.1 * w]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_pairHost {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) :
     ∃ (E' : Type) (_ : Field E') (_ : NumberField E') (_ : IsCMField E') (H' : Host E'), Nonempty (PairHost H H') := by
   obtain ⟨m, hd⟩ : ∃ m, H.d + 1 = 4 * m := ⟨(H.d + 1) / 4, by have := H.d_mod; omega⟩
@@ -185,13 +189,13 @@ theorem exists_pairHost {E : Type} [Field E] [NumberField E] [IsCMField E] (H : 
     fun k _ _ τ τ' h => ?_⟩⟩⟩
   · obtain ⟨⟨a, b, c, f⟩, rfl⟩ := B.mk_quad_surjective hd H.d_prime x
     rw [hψ _ _ rfl, hψ _ (a + b, -b, -c - f, f) (by
-      simp only [Biq.mk4, map_add, map_mul, map_intCast, hbW, hbJ]; push_cast; ring)]
+      simp only [Biq.mk4, map_add (f := _), map_mul, map_intCast, hbW, hbJ]; push_cast; ring)]
     fin_cases i <;> fin_cases j <;> simp [mat] <;> ring
   · rw [hψ _ (0, 1, 0, 0) (by simp [Biq.mk4, H'])]
     ext1 i j; fin_cases i <;> fin_cases j <;> simp [mat]
   · obtain ⟨⟨a, b, c, f⟩, rfl⟩ := B.mk_quad_surjective hd H.d_prime x
     rw [hψ _ _ rfl, hψ _ (a, b, -c, -f) (by
-      simp only [Biq.mk4, map_add, map_mul, map_intCast, B.sigma_W, B.σO_J]; push_cast; ring)]
+      simp only [Biq.mk4, map_add (f := _), map_mul, map_intCast, B.sigma_W, B.σO_J]; push_cast; ring)]
     ext1 i j
     fin_cases i <;> fin_cases j <;> simp [mat, Matrix.mul_diagonal, Matrix.diagonal_mul] <;> ring
   · show B.σO (2 * B.W - 1) = 2 * B.W - 1
@@ -207,10 +211,10 @@ theorem exists_pairHost {E : Type} [Field E] [NumberField E] [IsCMField E] (H : 
     rcases mul_eq_zero.1 this with h3 | h3
     · refine Or.inl (RingHom.ext fun x => ?_)
       obtain ⟨v, rfl⟩ := B.mk_quad_surjective hd H.d_prime x
-      simp only [Biq.mk4, map_add, map_mul, map_intCast, hW, sub_eq_zero.1 h3]
+      simp only [Biq.mk4, map_add (f := _), map_mul, map_intCast, hW, sub_eq_zero.1 h3]
     · refine Or.inr (RingHom.ext fun x => ?_)
       obtain ⟨v, rfl⟩ := B.mk_quad_surjective hd H.d_prime x
       show _ = τ (B.σO _)
-      simp only [Biq.mk4, map_add, map_mul, map_intCast, hW, eq_neg_of_add_eq_zero_left h3, B.sigma_W, B.σO_J, map_neg]
+      simp only [Biq.mk4, map_add (f := _), map_mul, map_intCast, hW, eq_neg_of_add_eq_zero_left h3, B.sigma_W, B.σO_J, map_neg]
 
 end PositivityTheory.HtPt.Kftwo

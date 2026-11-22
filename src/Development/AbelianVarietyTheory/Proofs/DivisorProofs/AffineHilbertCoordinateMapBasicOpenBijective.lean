@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BasicIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BasicIff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits Opposite
 
@@ -22,7 +26,8 @@ theorem bijective_linearCombination_iff_localizedModule_map {R R' S S' : Type} [
     (Fintype.linearCombination R' (fun k => algebraMap S S' (v k))).restrictScalars R
   have hcomm : φ ∘ₗ gM = gS ∘ₗ Fintype.linearCombination R v := by
     ext c
-    simp [φ, gM, gS, Fintype.linearCombination_apply, Algebra.smul_def, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [φ, gM, gS, Fintype.linearCombination_apply, Algebra.smul_def, map_sum, map_mul,
       ← IsScalarTower.algebraMap_apply]
   have hmap : IsLocalizedModule.map (Submonoid.powers f) gM gS (Fintype.linearCombination R v) = φ := by
     apply IsLocalizedModule.linearMap_ext (Submonoid.powers f) gM gS

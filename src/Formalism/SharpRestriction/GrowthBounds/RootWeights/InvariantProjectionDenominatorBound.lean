@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionKillsNonzeroWeight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.InvariantProjectionKillsNonzeroWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,8 @@ theorem denominator_chain_bound (D : Formalism.BasicNotions.D7) (h2 : adm2 D) (p
         have h0 := hA3
         simp only [weightSp, Submodule.mem_iInf, LinearMap.mem_ker] at h0
         simpa using h0 cf
-    · rw [hw, map_add, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [hw, map_add (f := _), map_sum]
       simp only [invariant_projection_kills_operator D h2 E hE Inv hInv, Finset.sum_const_zero, add_zero]
       exact hyI
     · have hM2 := hB cf _ hyM

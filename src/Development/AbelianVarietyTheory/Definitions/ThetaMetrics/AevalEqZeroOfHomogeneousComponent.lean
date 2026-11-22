@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.WeightedHomogeneousComponentMemElimIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.WeightedHomogeneousComponentMemElimIdeal
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -75,8 +79,8 @@ theorem exists_C_mul_X_pow_mem {R Ω σ : Type*} [CommRing R] [Field Ω] [IsAlgC
   let T := Submodule.span Ω ((fun v : n → R => φ ∘ v) '' S)
   have h1 : ∀ g ∈ I, π (map φ g) ∈ T := by
     intro g hg
-    refine Submodule.subset_span ⟨fun a => coeff a.1 g, ?_, ?_⟩
-    · have : L (fun a => coeff a.1 g) = homogeneousComponent d g := by
+    refine Submodule.subset_span ⟨fun a => AddMonoidAlgebra.coeff g a.1, ?_, ?_⟩
+    · have : L (fun a => AddMonoidAlgebra.coeff g a.1) = homogeneousComponent d g := by
         ext c
         rw [hL, coeff_sum, coeff_homogeneousComponent]
         split_ifs with hc
@@ -101,7 +105,7 @@ theorem exists_C_mul_X_pow_mem {R Ω σ : Type*} [CommRing R] [Field Ω] [IsAlgC
       have := h1 _ (I.mul_mem_left (monomial c 1) hg)
       rwa [map_mul, map_monomial, map_one] at this
     | zero => simp
-    | add x y _ _ hx hy => intro c; rw [mul_add, map_add]; exact T.add_mem (hx c) (hy c)
+    | add x y _ _ hx hy => intro c; rw [mul_add, map_add (f := _)]; exact T.add_mem (hx c) (hy c)
     | smul a x _ hx =>
       intro c
       induction a using MvPolynomial.induction_on' with
@@ -111,7 +115,7 @@ theorem exists_C_mul_X_pow_mem {R Ω σ : Type*} [CommRing R] [Field Ω] [IsAlgC
           simp
         rw [this, map_smul]
         exact T.smul_mem _ (hx _)
-      | add p q hp hq => rw [add_smul, mul_add, map_add]; exact T.add_mem hp hq
+      | add p q hp hq => rw [add_smul, mul_add, map_add (f := _)]; exact T.add_mem hp hq
   have hT : T = ⊤ := by
     rw [eq_top_iff, ← (Pi.basisFun Ω n).span_eq, Submodule.span_le]
     rintro _ ⟨a, rfl⟩
@@ -151,7 +155,8 @@ theorem aeval_smul_of_isHomogeneous {G : Type*} [CommRing G] [Algebra K G]
 theorem aeval_eq_zero_of_homogeneousComponent {G : Type*} [CommRing G] [Algebra K G]
     {g : MvPolynomial σ K} {ξ : σ → G} (h : ∀ n, aeval ξ (homogeneousComponent n g) = 0) :
     aeval ξ g = 0 := by
-  rw [← sum_homogeneousComponent g, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent g, map_sum]
   exact Finset.sum_eq_zero fun n _ => h n
 
 theorem aeval_smul_eq_zero {G : Type*} [CommRing G] [Algebra K G]
@@ -165,7 +170,7 @@ theorem aeval_smul_eq_zero {G : Type*} [CommRing G] [Algebra K G]
 theorem forall_aeval_eq_zero_iff [Fintype σ] {Ω : Type*} [Field Ω] [IsAlgClosed Ω] [Algebra K Ω]
     {p : Ideal (MvPolynomial σ K)} (hp : p.IsHomogeneous (homogeneousSubmodule σ K))
     (t : β × σ → Ω) :
-    (∀ f ∈ elimIdeal β p, aeval t f = 0) ↔
+    (∀ f ∈ elimIdeal (β := β) p, aeval t f = 0) ↔
       ∃ x : σ → Ω, x ≠ 0 ∧ (∀ g ∈ p, aeval x g = 0) ∧ ∀ i, ∑ j, t (i, j) * x j = 0 := by
   refine ⟨fun h => ?_, fun ⟨x, hx, hp, ht⟩ f hf => aeval_eq_zero_of_mem_elimIdeal hp hx ht hf⟩
   by_contra hc
@@ -193,7 +198,7 @@ theorem forall_aeval_eq_zero_iff [Fintype σ] {Ω : Type*} [Field Ω] [IsAlgClos
     eval₂Hom (map C) fun j => C (X j)
   have hs : s.comp (map C) = C := by
     ext1 <;> [ext1; skip] <;> simp [s, R]
-  have hle : I ≤ (incidenceIdeal β p).comap s := by
+  have hle : I ≤ (incidenceIdeal (β := β) p).comap s := by
     rw [Ideal.span_le]
     rintro _ (⟨g, hg, n, rfl⟩ | ⟨i, rfl⟩)
     · rw [SetLike.mem_coe, Ideal.mem_comap, ← RingHom.comp_apply, hs]

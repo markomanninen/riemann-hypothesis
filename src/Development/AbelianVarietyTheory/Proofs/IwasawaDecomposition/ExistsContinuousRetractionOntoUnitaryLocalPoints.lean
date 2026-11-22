@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
 noncomputable section
@@ -23,8 +28,8 @@ theorem under_conjSrc (v : HeightOneSpectrum (𝓞 E)) :
 
 variable (w : HeightOneSpectrum (𝓞 E))
 
-open Classical in
 
+open Classical in
 def idemF : Af E :=
   ⟨fun v => if v.under (𝓞 (maximalRealSubfield E)) = w.under (𝓞 (maximalRealSubfield E)) then 1 else 0,
     Filter.Eventually.of_forall fun v => by
@@ -103,7 +108,7 @@ theorem cT_corner (M : Matrix (Fin n) (Fin n) (Ad E)) :
   change conjAd E ((1 : Matrix (Fin n) (Fin n) (Ad E)) j i - idem w * (1 : Matrix (Fin n) (Fin n) (Ad E)) j i +
       idem w * M j i) = (1 : Matrix (Fin n) (Fin n) (Ad E)) i j - idem w * (1 : Matrix (Fin n) (Fin n) (Ad E)) i j +
       idem w * conjAd E (M j i)
-  rw [map_add, map_sub, map_mul, map_mul, conjAd_idem, Matrix.one_apply, Matrix.one_apply]
+  rw [map_add (f := _), map_sub, map_mul, map_mul, conjAd_idem, Matrix.one_apply, Matrix.one_apply]
   by_cases h : j = i
   · subst h; simp
   · simp [h, Ne.symm h]
@@ -113,8 +118,8 @@ theorem corner_mem (g : UA E n) : cornerGL n (sIdem w) g.1 ∈ UA E n := by
   change cT (conjAd E) (corner (matN n (sIdem w)) g.1.1) * 1 * corner (matN n (sIdem w)) g.1.1 = 1
   rw [cT_corner, Matrix.mul_one, ← map_mul, ← Matrix.mul_one (cT (conjAd E) _), hg, map_one]
 
-variable (n w) in
 
+variable (n w) in
 def ret0 : UA E n →* UA E n := ((cornerGL n (sIdem w)).comp (UA E n).subtype).codRestrict (UA E n) corner_mem
 
 theorem infiniteProj_unitaryAdelicLocalRetractionEnd_eq_one (g : UA E n) : GeneralLinearGroup.map (pInf E) (ret0 w n g).1 = 1 :=
@@ -142,8 +147,8 @@ theorem mem_locU_ne {x : UA E n} (hx : x ∈ locU n w) {v : HeightOneSpectrum (�
     GeneralLinearGroup.map ((pLoc E v).comp (pFin E)) x.1 = 1 :=
   MonoidHom.mem_ker.1 (Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 (Subgroup.mem_inf.1 hx).2 v) hv)
 
-variable (n w) in
 
+variable (n w) in
 def ret : UA E n →* locU n w := (ret0 w n).codRestrict (locU n w) unitaryAdelicLocalRetractionEnd_mem_localPoints
 
 theorem continuous_ret : Continuous (ret w n) := by

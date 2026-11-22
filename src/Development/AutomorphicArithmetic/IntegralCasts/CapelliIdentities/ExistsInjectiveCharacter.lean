@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ExistsInjectiveCharacter.exists_injective_char :
     ∀ (p : ℕ) [inst : Fact (Nat.Prime p)],

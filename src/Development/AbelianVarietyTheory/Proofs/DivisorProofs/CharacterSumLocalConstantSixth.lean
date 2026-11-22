@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFrLifts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterSumLocalConstantSecondStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterSumLocalConstantFifth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftFrLifts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterSumLocalConstantSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterSumLocalConstantFifth
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ theorem smallDatum_prod {ST SG SG' SB S : Finset (HeightOneSpectrum (𝓞 E))} (
   · show ‖σ (phiT K d d' x * _)‖ ≤ _
     rw [map_mul, norm_mul, map_prod, norm_prod]
     have h1 : ∏ P : SB, ‖σ (Φ P (inFr (fr P) (fr' P) x))‖ ≤ ∏ P : SB, β P :=
-      Finset.prod_le_prod (fun P _ => norm_nonneg _) fun P _ => (hΦ P).2.2 σ _
+      Finset.prod_le_prod₀ (fun P _ => norm_nonneg _) fun P _ => (hΦ P).2.2 σ _
     have h0 : 0 ≤ ∏ P : SB, ‖σ (Φ P (inFr (fr P) (fr' P) x))‖ := Finset.prod_nonneg fun P _ => norm_nonneg _
     exact (mul_le_of_le_one_left h0 (norm_phiT_le d d' σ x)).trans h1
 

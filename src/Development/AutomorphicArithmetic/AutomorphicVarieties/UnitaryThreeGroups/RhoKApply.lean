@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Rigid0
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.Counts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CongruenceNumberRankThree
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,13 +71,13 @@ abbrev Ring (U : D.ULoc) (g₁ : G ℚ Ω) : Type 1 := SRing D.Kill D.ι_cont U 
 
 abbrev Marked (g₁ : G ℚ Ω) : Prop := Marks D.η D.Ψ D.cc g₁
 
-def rhoK {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG 3 κ) (hr : HasMult D.η r) : G K Ω →* GL (Fin 3) κ :=
+def rhoK {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG (m := 3) (R := κ)) (hr : HasMult D.η r) : G K Ω →* GL (Fin 3) κ :=
   (glPart D.η r hr).comp ((galEmb ℚ K Ω).codRestrict D.η.ker fun s => D.η_ker ▸ galEmb_mem ℚ K Ω s)
 
-theorem rhoK_apply {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG 3 κ) (hr : HasMult D.η r) (s : G K Ω) :
+theorem rhoK_apply {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG (m := 3) (R := κ)) (hr : HasMult D.η r) (s : G K Ω) :
     D.rhoK r hr s = (r (galEmb ℚ K Ω s)).left := rfl
 
-structure IsPt (U : D.ULoc) (g₁ : G ℚ Ω) (r : G ℚ Ω →* GG 3 (PadicAlgCl l)) : Prop where
+structure IsPt (U : D.ULoc) (g₁ : G ℚ Ω) (r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)) : Prop where
   mult : HasMult D.η r
   cont : Continuous (mats r)
   int : ∀ g a b, ‖(r g).mat a b‖ ≤ 1
@@ -82,10 +86,10 @@ structure IsPt (U : D.ULoc) (g₁ : G ℚ Ω) (r : G ℚ Ω →* GG 3 (PadicAlgC
   kill : ∀ g ∈ D.Kill, r g = 1
   loc : ∃ f : U.R →ₐ[c.O] PadicAlgCl l, IsLocPt f ∧ D.loc.It U ≤ RingHom.ker f ∧ push f U.r.hom = r.comp D.ι
 
-def IsExt {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG 3 κ) (W : G ℚ Ω →* GL (Fin 2) κ) : Prop :=
+def IsExt {κ : Type} [CommRing κ] (r : G ℚ Ω →* GG (m := 3) (R := κ)) (W : G ℚ Ω →* GL (Fin 2) κ) : Prop :=
   (∀ g ∈ D.η.ker, (W g : Matrix (Fin 2) (Fin 2) κ) = corner (r g).mat) ∧ (W D.cc : Matrix (Fin 2) (Fin 2) κ).trace = 0
 
-def IsAutI [IsCMField K] (ι : Qbar l ≃+* ℂ) (r : G ℚ Ω →* GG 3 (PadicAlgCl l)) (hr : HasMult D.η r) : Prop :=
+def IsAutI [IsCMField K] (ι : Qbar l ≃+* ℂ) (r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)) (hr : HasMult D.η r) : Prop :=
   Af.IsAutCsd ι (Af.tw (D.rhoK r hr) (cycBar K Ω l)⁻¹)
 
 def IsModular (_ : Dat Ω K c e ψ) (ι : Qbar l ≃+* ℂ) (W : G ℚ Ω →* GL (Fin 2) (PadicAlgCl l)) : Prop :=

@@ -1,18 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.HeightBoundOfQuasiHeightLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.GeometricSideQuadraticFormIdentity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.HeightBoundOfQuasiHeightLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.GeometricSideQuadraticFormIdentity
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af GlobalTheory.UnitaryBC UpperTheory.V.Lit.Dr UpperTheory.V.Lit.Bor
 open GroundTheory.Automorphic GroundTheory.Automorphic.CuspidalSpectrum GroundTheory.Automorphic.Reduction
 
-private theorem cont_pInf {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] : Continuous (pInf E) := by
+private theorem cont_pInf {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] : Continuous (pInf E) := by
   have c2 : Continuous (infEq E).symm := by
     refine continuous_pi fun w => ?_
     exact (InfinitePlace.Completion.isometryEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).continuous.comp
       (continuous_apply w)
   exact c2.comp continuous_fst
 
-private theorem pInf_pos {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (s : ℝ) (hs : 0 < s) :
+private theorem pInf_pos {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (s : ℝ) (hs : 0 < s) :
     pInf E ((posIdele (K := E) s hs : GroundTheory.Global.IdeleGroup E) : Ad E) = fun _ => (s : ℂ) := by
   funext w
   have hw : ¬ w.IsReal := InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w)
@@ -21,7 +26,7 @@ private theorem pInf_pos {E : Type} [Field E] [NumberField E] [IsTotallyComplex 
     rw [← GroundTheory.Global.IdeleGroup.coe_infiniteProj, infiniteProj_posIdele]
     change GroundTheory.Global.posRealElem w _ = _
     unfold GroundTheory.Global.posRealElem
-    rw [dif_neg hw]
+    rw [dite_eq_right hw]
     simp [InfinitePlace.mult, hw, Real.sqrt_sq hs.le]
   change (InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w))
     (((posIdele s hs : GroundTheory.Global.IdeleGroup E) : AdeleRing (𝓞 E) E).1 w) = _
@@ -65,8 +70,8 @@ theorem UpperTheory.positivity_at_all_places :
     continuous_snd.comp ((continuous_apply i).comp hf)
   have hI : Continuous fun p => qf (fun i => pInf E (f p i)) := by
     unfold qf
-    refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun w _ => ?_
-    exact (((continuous_apply w).comp (cont_pInf.comp ((continuous_apply i).comp hf))).norm).pow 2
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun w _ =>
+      (((continuous_apply w).comp (cont_pInf.comp ((continuous_apply i).comp hf))).norm).pow 2
   obtain ⟨M, hM⟩ := hc.bddAbove_image hI.continuousOn
   refine ⟨_, |C| * M ^ N, N, hc.image hF, fun g => ?_⟩
   obtain ⟨γ, b, k, ρ, hρ, hb, hk, he, hh⟩ := hS g

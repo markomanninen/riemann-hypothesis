@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsIntegrallyClosedQuotientOfMemMinimalPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.IsIntegrallyClosedQuotientOfMemMinimalPrimes
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -56,7 +60,7 @@ theorem isLocalization_incl (R : Subalgebra K Ω)
         obtain ⟨⟨x₁, s₁⟩, h₁⟩ := hx
         obtain ⟨⟨x₂, s₂⟩, h₂⟩ := hy
         refine ⟨(x₁ * s₂ + x₂ * s₁, s₁ * s₂), ?_⟩
-        simp only [Submonoid.coe_mul, map_mul, map_add] at h₁ h₂ ⊢
+        simp only [Submonoid.coe_mul, map_mul, map_add (f := _)] at h₁ h₂ ⊢
         linear_combination (algebraMap (F ⊗[K] R) (F ⊗[K] Ω) s₂) * h₁ +
           (algebraMap (F ⊗[K] R) (F ⊗[K] Ω) s₁) * h₂
     · intro x y h
@@ -101,7 +105,7 @@ theorem range_comp_incl {E : Type} [CommRing E] (R : Subalgebra K Ω) (g : F ⊗
         rw [hsplit]
         exact Subring.mul_mem _ (Subring.subset_closure (Or.inr ⟨a, rfl⟩))
           (Subring.subset_closure (Or.inl ⟨r, r.2, rfl⟩))
-      | add x y hx hy => rw [map_add]; exact Subring.add_mem _ hx hy
+      | add x y hx hy => rw [map_add (f := _)]; exact Subring.add_mem _ hx hy
     · rw [Subring.closure_le]
       rintro _ (⟨w, hw, rfl⟩ | ⟨a, rfl⟩)
       · exact ⟨(1 : F) ⊗ₜ ⟨w, hw⟩, by rw [RingHom.comp_apply, incl_tmul]; rfl⟩
@@ -122,7 +126,7 @@ private theorem closure_range_tensor_quotient_fraction (P : Ideal (F ⊗[K] Ω))
       rw [hsplit]
       exact Subfield.mul_mem _ (Subfield.subset_closure (Or.inr ⟨a, rfl⟩))
         (Subfield.subset_closure (Or.inl ⟨w, rfl⟩))
-    | add x y hx hy => rw [map_add]; exact Subfield.add_mem _ hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact Subfield.add_mem _ hx hy
   refine eq_top_iff.2 fun z _ => ?_
   obtain ⟨x, y, -, rfl⟩ := IsFractionRing.div_surjective (A := (F ⊗[K] Ω) ⧸ P) z
   obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective x

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.IntegralMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.IntegralMonomial
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegLelongAnnulus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegLelongAnnulus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -44,10 +49,6 @@ def RegRadialWeight.Statement : Prop :=
       ∫ y, chartDens J A (fun z => a (euclPot (z - x))) (vecCons (logReg u ε) fun _ => euclPot) y =
         ∫ y, chartDens J A (fun z => radialTransform d a (euclPot (z - x)))
           (vecCons (logReg u ε) fun _ => logDistSq x) y
-
-def RegRadialWeight.bump : ContDiffBump (0 : ℝ) := ⟨1 / 2, 1, by norm_num, by norm_num⟩
-
-def RegRadialWeight.weight (t : ℝ) : ℝ := RegRadialWeight.bump (t / 4) - 4 * RegRadialWeight.bump t
 
 end
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusAff
-import Mathlib.AlgebraicGeometry.Morphisms.Proper
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.SplitTori.SplitTorusAff
+public import Mathlib.AlgebraicGeometry.Morphisms.Proper
+
+@[expose] public section
 
 universe u
 

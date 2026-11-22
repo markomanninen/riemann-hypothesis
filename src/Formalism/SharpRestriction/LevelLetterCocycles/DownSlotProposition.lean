@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MixedPositionHypothesis
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MixedPositionHypothesis
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     (W : LocWach PD LL O v n)
 
-open Classical in
 
+open Classical in
 def valAt (T : LocLat G Qp LL O) (c : ZMod n) (ζ : LL) (x : W.DD T) : T.V ⊗[Qp] BdR :=
   if h : ∃ k : ℕ, W.Q ^ k • W.φD T x ∈ W.N T then
     ((PowerSeries.coeff 1 (W.lev c ζ W.Q)) ^ Nat.find h)⁻¹ •
@@ -169,8 +173,8 @@ def IsCoord (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop) (π' Eπ : LetA 
     ∃ g ∈ W.AΔ, algebraMap (LetA O n) W.EE (Eπ ^ h') * (W.γE W.gamK f - f) =
       algebraMap (LetA O n) W.EE (π' * g)
 
-open Classical in
 
+open Classical in
 def OmF (c : ZMod n) (S h' : ℕ) (up : (K →ₐ[Qp] LL) → Bool) (b : (K →ₐ[Qp] LL) → ℕ) : Finset ℤ :=
   (Finset.Icc (-(h' : ℤ)) h').filter fun i => ∃ τ, Formalism.MainNotions.DeltaInvariantLattices.OverLetter W τ c ∧
     ((up τ = true ∧ -((b τ : ℤ) + S) ≤ i ∧ i < -(b τ : ℤ)) ∨ (up τ = false ∧ (b τ : ℤ) ≤ i ∧ i < b τ + S))

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.LatticeLeSpanPsiImage
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ZeroOfMultideg
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreDef
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.LatticeLeSpanPsiImage
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ZeroOfMultideg
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreDef
+
+@[expose] public section
 
 noncomputable section
 

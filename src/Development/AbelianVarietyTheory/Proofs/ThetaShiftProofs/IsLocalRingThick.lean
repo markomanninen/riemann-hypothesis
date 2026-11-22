@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsAtTransport
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ModelChartLiftCoordsGeneratorIndep
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueThetaOfStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueSecPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsAtTransport
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ModelChartLiftCoordsGeneratorIndep
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueThetaOfStatement
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -50,7 +54,7 @@ theorem gm_comp (r : Z ⟶ Y) (g : Y ⟶ X) (z : Z) (U : X.Opens) (a : Γ(X, U)�
       (congrArg (r.stalkMap z).hom (gs_unit g (r z) U h a))))
     rw [← gs_pull r g z U h, gs_stalkMap r z _ h, gs_pull (𝟙 Y) g (r z) U h, Category.id_comp]
   · have h' : (r ≫ g) z ∉ U := h
-    rw [gm, dif_neg h', gm, dif_neg h]
+    rw [gm, dite_eq_right h', gm, dite_eq_right h]
     exact (map_one _).symm
 
 end Local
@@ -67,6 +71,71 @@ theorem pmaps_of_genRelR (T : Tri w' w₁ w) (hw : PGen w) (hM : M.IsLB) (hM₀ 
     (H : ∀ (A : Type) [CommRing A] [IsLocalRing A] (v : Sp A ⟶ Y) (pt₀ : K → (Sp A ⟶ B₀))
       (t₀ : LB.Gen (LB.LinComb M₀ pt₀ ε)), t₀.IsGen → GenRelR w (LB.pullGen _ _ _ t v) t₀ →
       GenRelR w' (LB.pullGen _ _ _ t' (v ≫ h)) t₀) : PMaps w₁ ψ ψ' ε t t' h := by
+  have toStkA_valR_local {A : Type} [CommRing A] {X : Scheme.{0}} (x : Sp A ⟶ X) (U : X.Opens) (z : Sp A) (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+      toStkA z (valR x U a.val) = (gm x z U a).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
+    rw [valR, dif_pos ht, gm, dif_pos hz]
+    show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
+      ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp A).presheaf (homOfLE ht) z trivial ((x.app U).hom a.val)
+
+  have genRelR_iff_local {A : Type} [CommRing A] [IsLocalRing A] {B B₀ : Scheme.{0}}
+      {M : LB B} {M₀ : LB B₀} {φ : B ⟶ B₀} (w : LB.Iso M (M₀.pull φ))
+      {pt : K → (Sp A ⟶ B)} {pt₀ : K → (Sp A ⟶ B₀)}
+      (t : LB.Gen (LB.LinComb M pt ε)) (t₀ : LB.Gen (LB.LinComb M₀ pt₀ ε)) : GenRelR w t t₀ ↔ (∀ k, pt k ≫ φ = pt₀ k) ∧ ∀ (j : K → M.ι) (j₀ : K → M₀.ι),
+      (∀ k, φ (pt k (cpt A)) ∈ M₀.U (j₀ k)) → (∀ k, pt k (cpt A) ∈ M.U (j k)) →
+      ((∏ k, gw w (pt k) (cpt A) (j₀ k) (j k) ^ ε k) * gm (𝟙 _) (cpt A) (LB.wchart M pt j) (t.s j)).val =
+        (gm (𝟙 _) (cpt A) (LB.wchart M₀ pt₀ j₀) (t₀.s j₀)).val := by
+    unfold GenRelR
+    refine and_congr_right fun hpt => forall_congr' fun j => forall_congr' fun j₀ => ?_
+    have hP_iff : (∀ k, ⊤ ≤ pt k ⁻¹ᵁ (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k)) ↔
+        (∀ k, φ (pt k (cpt A)) ∈ M₀.U (j₀ k)) ∧ (∀ k, pt k (cpt A) ∈ M.U (j k)) := by
+      simp only [top_le_iff_cpt]
+      exact ⟨fun h => ⟨fun k => Set.mem_iInter.1 (h k).1 PUnit.unit, fun k => (h k).2⟩,
+        fun h k => ⟨Set.mem_iInter.2 fun _ => h.1 k, h.2 k⟩⟩
+    rw [hP_iff, and_imp]
+    refine forall_congr' fun h1 => forall_congr' fun h2 => ?_
+    have hP : ∀ k, ⊤ ≤ pt k ⁻¹ᵁ (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k) := hP_iff.2 ⟨h1, h2⟩
+    have hT : ⊤ ≤ (𝟙 (Sp A)) ⁻¹ᵁ (LB.LinComb M pt ε).U j :=
+      (top_le_iff_cpt _ _).2 (Set.mem_iInter.2 fun k => h2 k)
+    have hT₀ : ⊤ ≤ (𝟙 (Sp A)) ⁻¹ᵁ (LB.LinComb M₀ pt₀ ε).U j₀ := by
+      refine (top_le_iff_cpt _ _).2 (Set.mem_iInter.2 fun k => ?_)
+      show pt₀ k ((𝟙 (Sp A)) (cpt A)) ∈ M₀.U (j₀ k)
+      rw [← hpt k]
+      exact h1 k
+    have hW : ∀ k (u : Γ(B, (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k))ˣ),
+        toStkA (cpt A) (valR (pt k) _ u.val) = (gm (pt k) (cpt A) _ u).val :=
+      fun k u => toStkA_valR_local _ _ _ (hP k) u
+    rw [← (toStkA_injective (A := A)).eq_iff, map_mul, map_prod, toStkA_valR_local _ _ _ hT, toStkA_valR_local _ _ _ hT₀]
+    simp only [hW, map_zpow]
+    rw [← Units.coe_prod, ← Units.val_mul, Units.val_inj, Units.val_inj]
+    simp only [zpow_neg, Finset.prod_inv_distrib]
+    exact eq_inv_mul_iff_mul_eq
+
+  have gm_pullU_eq_gm_comp {S T W : Scheme.{0}} (h : T ⟶ S) (r : W ⟶ T) (z : W) (V : S.Opens)
+      (a : Γ(S, V)ˣ) : gm r z (h ⁻¹ᵁ V) (pullU h V a) = gm (r ≫ h) z V a := by
+    by_cases hz : r z ∈ h ⁻¹ᵁ V
+    · have hz' : (r ≫ h) z ∈ V := hz
+      simp only [gm, dif_pos hz, dif_pos hz']
+      all_goals first
+      | rfl
+      | (ext; simp [pullU, Scheme.comp_app])
+    · have hz' : (r ≫ h) z ∉ V := hz
+      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+
+  have gm_pullGen' {X Y : Scheme.{0}} (L : LB X) {K : Type} [Fintype K] (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : LB.Gen (LB.LinComb L φ ε))
+      {Z Z' : Scheme.{0}} (h : Z ⟶ Y) (r : Z' ⟶ Z) (z : Z') (j : K → L.ι) :
+      gm r z (LB.wchart L (fun k => h ≫ φ k) j) ((LB.pullGen L φ ε t h).s j) = gm (r ≫ h) z (LB.wchart L φ j) (t.s j) := by
+    by_cases hz : r z ∈ LB.wchart L (fun k => h ≫ φ k) j
+    · exact (gm_res r z _ hz (pullU h _ (t.s j))).trans (gm_pullU_eq_gm_comp h r z _ _)
+    · have hz' : (r ≫ h) z ∉ LB.wchart L φ j := fun H => hz (Set.mem_iInter.2 fun k => Set.mem_iInter.1 H k)
+      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+      rfl
+
   intro Z r z p q hp hq
   obtain ⟨A, _, _, i, rfl, inj⟩ := exists_local Z z
   apply stU_injective i _ inj
@@ -74,7 +143,7 @@ theorem pmaps_of_genRelR (T : Tri w' w₁ w) (hw : PGen w) (hM : M.IsLB) (hM₀ 
     (Finset.prod_congr rfl fun k _ => (map_zpow _ _ _).trans (congrArg (· ^ ε k) (gm_comp i _ _ _ _))))
     (gm_comp i _ _ _ _))).symm)
   obtain ⟨t₀, g₀, hv⟩ := exists_up hw hM₀ hM (LB.pullGen _ _ _ t (i ≫ r)) (pullGen_isGen _ _ _ _ ht _)
-  have G := (genRelR_iff _ _ _).1 (H A (i ≫ r) _ t₀ g₀ ((genRelR_iff _ _ _).2 ⟨fun _ => rfl, fun j j₀ h₀ h₁ => by
+  have G := (genRelR_iff_local _ _ _).1 (H A (i ≫ r) _ t₀ g₀ ((genRelR_iff_local _ _ _).2 ⟨fun _ => rfl, fun j j₀ h₀ h₁ => by
     have := hv _ (𝟙 _) (cpt A) j₀ j (Set.mem_iInter.2 h₀) (Set.mem_iInter.2 h₁)
     simp only [pw, Category.id_comp] at this
     exact congrArg Units.val this.symm⟩))
@@ -205,8 +274,8 @@ section Move
 variable {R R₀ : Type} [CommRing R] [IsDomain R] [CommRing R₀] [IsDomain R₀] {I : Ideal R} {D D' : DegData R I}
   {A A' : PolAV (Sp (FractionRing R))} {G G' : Over (Sp R)} [GrpObj G] [IsCommMonObj G] [GrpObj G'] [IsCommMonObj G']
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem theta_move (U : UnifPre I D A G) (U' : UnifPre I D' A' G') {D₀ : DegPre R₀} {f : Sp R ⟶ Sp R₀}
     {φ : D.toPre.P.A.left ⟶ D₀.P.A.left} {φ' : D'.toPre.P.A.left ⟶ D₀.P.A.left}
     (gp : IsGrpPullback D.toPre.P.A D₀.P.A f φ) (gp' : IsGrpPullback D'.toPre.P.A D₀.P.A f φ')
@@ -237,6 +306,18 @@ theorem theta_move (U : UnifPre I D A G) (U' : UnifPre I D' A' G') {D₀ : DegPr
       ZeroTerm D.toPre w th 0 (fam 0) ∧ SectionOfLineBundleOne σ θ ∧
       ∀ (Z : Scheme.{0}) (r : Z ⟶ G.left) (z : Z) j k, ψ.left (r z) ∈ U'.LG.L.U j → r z ∈ U.LG.L.U k →
         gs (r ≫ ψ.left) z _ (θ'.f j) = (gw wL r z j k).val * gs r z _ (θ.f k) := by
+  have toStkA_valR_local {A : Type} [CommRing A] {X : Scheme.{0}} (x : Sp A ⟶ X) (U : X.Opens) (z : Sp A) (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+      toStkA z (valR x U a.val) = (gm x z U a).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
+    rw [valR, dif_pos ht, gm, dif_pos hz]
+    show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
+      ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp A).presheaf (homOfLE ht) z trivial ((x.app U).hom a.val)
+
   have hM := D.toPre.P.isLB
   have hM' := D'.toPre.P.isLB
   have hM₀ := D₀.P.isLB
@@ -304,8 +385,8 @@ theorem theta_move (U : UnifPre I D A G) (U' : UnifPre I D' A' G') {D₀ : DegPr
       have H5 := (top_le_iff_cpt ((i ≫ r) ≫ h) ((LB.div (D'.toPre.P.L.pull (U'.gt n).pG.left)
         (U'.LG.L.pull (fstG I n G').left)).U (fun _ => jM', fun _ => jL'))).2 ⟨mem_pull.2 m₁', mem_pull.2 m₃'⟩
       have a := congrArg (toStkA (cpt A)) ((l₂ A (i ≫ r)).2 j₀ jM jM' jL jL' H1 H2 H3)
-      rw [map_mul, map_mul, map_mul, toStkA_valR _ _ _ H1, toStkA_valR _ _ _ H2, toStkA_valR _ _ _ H3,
-        toStkA_valR _ _ _ H4, toStkA_valR _ _ _ H5, ← Units.val_mul, ← Units.val_mul, ← Units.val_mul] at a
+      rw [map_mul, map_mul, map_mul, toStkA_valR_local _ _ _ H1, toStkA_valR_local _ _ _ H2, toStkA_valR_local _ _ _ H3,
+        toStkA_valR_local _ _ _ H4, toStkA_valR_local _ _ _ H5, ← Units.val_mul, ← Units.val_mul, ← Units.val_mul] at a
       have b := T _ ((i ≫ r) ≫ (U.gt n).pG.left) (cpt A) j₀ jM' jM m₀ m₁ m₂
       rw [Category.assoc (i ≫ r), hq] at b
       have c := (congrArg (· * _) b).symm.trans (Units.ext a)

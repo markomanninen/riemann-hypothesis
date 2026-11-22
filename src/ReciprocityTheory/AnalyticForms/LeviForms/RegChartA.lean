@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMoll
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExt
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshMoll
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PshExt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P.RegularChartScaling
 
@@ -105,8 +109,8 @@ lemma mem_closure_off (S : Finset (Fin D)) {R : ℝ} {y : Fin D → ℂ} (hy : y
     have := min_le_left ε (R - ‖y‖)
     linarith
 
-open Classical in
 
+open Classical in
 def extT (S : Finset (Fin D)) (R : ℝ) (v : (Fin D → ℂ) → ℝ) (κ : ℝ) (x : Fin D → ℂ) : ℝ :=
   limsupExt (ball (0 : Fin D → ℂ) 1) (coordDiv S) (fun y => max (v (R • y)) (-κ)) (R⁻¹ • x)
 
@@ -151,7 +155,8 @@ lemma ext_exists (S : Finset (Fin D)) {R : ℝ} (hR : 0 < R) {u : (Fin D → ℂ
       rw [Real.le_log_iff_exp_le (by positivity)]
       linarith
     nlinarith [mul_le_mul_of_nonneg_left hlog hB]
-  have hext := (pshExtension_thm D S (ball 0 1) v B isOpen_ball subset_rfl hvc hvp hvb).2 κ
+  have hext := (ReciprocityTheory.AnForm.A.pshExtension_thm D S (ball 0 1) v B
+    isOpen_ball subset_rfl hvc hvp hvb).2 κ
   refine ⟨extT S R u κ, rfl, ?_, ?_, ?_⟩
   · have h4 := isPsh_scale hext R⁻¹
     have hset2 : {x : Fin D → ℂ | R⁻¹ • x ∈ ball (0 : Fin D → ℂ) 1} = ball 0 R := by

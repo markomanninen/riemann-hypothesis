@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepLocal
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelLatticeFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSpanStepLocal
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelLatticeFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -34,8 +39,8 @@ theorem pow_twist {K : Type*} [Fintype K] {ι : K → Type*} {Ω : Type*} [Field
 
 end SpanStepLocal
 
-open SpanStepLocal in
 
+open SpanStepLocal in
 theorem SpanStepLocal.proof (hR : RelLatticeFinite.Statement) : SpanStepLocal.Statement := by
   intro K _ ι _ Ω _ y a q w hy hw hgen j hj
   classical

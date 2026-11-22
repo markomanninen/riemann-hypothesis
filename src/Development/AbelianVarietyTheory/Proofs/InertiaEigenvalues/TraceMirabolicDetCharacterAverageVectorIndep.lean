@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesKillsAvg
+
+@[expose] public section
+
 open GlobalTheory.GLq GlobalTheory.MirAvg Polynomial
 
 noncomputable section
@@ -95,8 +100,8 @@ theorem tr_mirEl_conj {r : ℕ} (ψ : Gn g r → ℂ) (hψ : IsClass ψ) (θ : (
 
 end GlobalTheory.MirAvg
 
-open GlobalTheory.GLq GlobalTheory.MirAvg Matrix in
 
+open GlobalTheory.GLq GlobalTheory.MirAvg Matrix in
 theorem GlobalTheory.MirAvg.tr_mirEl_indep : ∀ (g : ℕ) [Fact g.Prime] (n : ℕ) (ψ : Gn g (n + 1) → ℂ), IsClass ψ → ∀ (θ : (ZMod g)ˣ →* ℂˣ)
     (a : Fin (n + 1) → ZMod g), a ≠ 0 → ∀ b : Bool,
       tr (mirEl θ a b) ψ = tr (mirEl θ (if b then Pi.single 0 1 else Pi.single (Fin.last n) 1) b) ψ := by

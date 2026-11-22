@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HZeroPullbackFieldConstant
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsBasisOfIsField
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HZeroPullbackFieldConstant
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.ExistsBasisOfIsField
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemNonzeroLocusIffPowFn
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,10 +42,13 @@ theorem exists_values_line_fibre (hT : Out.GlobalSectionsRankAlgClosed) {E : Typ
         valAt' x ((o.t.PP.L.pull (pullback.fst o.t.G.hom z)).U i) (s.f i) = a * v i x := by
   have h := isGrpPullback_pullback o.t.G z
   obtain ⟨hL, hr, ⟨c', w, g, -⟩, hs⟩ := Out.CubePf.cubePull S _ o.t.G _ (cubeMapOf h) o.t.PP o.t.cub
-  have semi := IsSemiAbelian.pullback z o.t.G o.t.semi
-  have := semi.smooth
+  have := o.t.semi.smooth
+  have : Smooth ((Over.pullback z).obj o.t.G).hom :=
+    MorphismProperty.of_isPullback (P := @Smooth) h.1 o.t.semi.smooth
   obtain ⟨am, kt⟩ := amplePt _ _ z _ _ _ h _ _ o.t.PP.isLB hL ⟨w, g⟩ o.ample o.ktriv
-  have := semi.geomConnected
+  have := o.t.semi.geomConnected
+  have : GeometricallyConnected ((Over.pullback z).obj o.t.G).hom :=
+    MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 o.t.semi.geomConnected
   have : ConnectedSpace ((Over.pullback z).obj o.t.G).left :=
     GeometricallyConnected.geometrically_connectedSpace (f := ((Over.pullback z).obj o.t.G).hom) (𝟙 _) (𝟙 _)
       ((Over.pullback z).obj o.t.G).hom

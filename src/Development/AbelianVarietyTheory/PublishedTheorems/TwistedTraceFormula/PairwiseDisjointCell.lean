@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemSiegelOfIffRightAct
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemSiegelOfIffRightAct
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Cartan
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,15 +38,6 @@ theorem coe_absRatio (p : siegel k n) : (absRatio k n p : ℝ) =
       nabs k (GeneralLinearGroup.det (p : GL (n ⊕ n) k)) := by
   simp [absRatio, nabs]
 
-theorem absRatio_eq (p : siegel k n) {a d : kˣ} (ha : (a : k) = (leviMat (Equiv.refl (n ⊕ n)) p.1.1).det)
-    (hd : (d : k) = (quotMat (Equiv.refl (n ⊕ n)) p.1.1).det) : (absRatio k n p : ℝ) = nabs k a / nabs k d := by
-  have h1 : GeneralLinearGroup.det (leviGL (Equiv.refl (n ⊕ n)) p) = a := Units.ext ha.symm
-  have h2 : GeneralLinearGroup.det (p : GL (n ⊕ n) k) = a * d :=
-    Units.ext (by rw [Units.val_mul, ha, hd]; exact (mem_stabGL_diagSub.1 p.2).det_eq)
-  have := (nabs_pos' k a).ne'
-  rw [coe_absRatio, h1, h2, nabs_mul']
-  field_simp
-
 theorem nabs_det_of_mem_KO {m : Type} [Fintype m] [DecidableEq m] {g : GL m k} (hg : g ∈ KO k m) :
     nabs k (GeneralLinearGroup.det g) = 1 := by
   obtain ⟨g, rfl⟩ := hg
@@ -60,7 +55,7 @@ theorem fromBlocks_int {A B C D : Matrix n n k} (hA : ∀ i j, A i j ∈ 𝒪[k]
 
 omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype n] in
 theorem one_int (i j : n) : (1 : Matrix n n k) i j ∈ 𝒪[k] := by
-  rw [one_apply]; split_ifs
+  rw [Matrix.one_apply]; split_ifs
   exacts [one_mem _, zero_mem _]
 
 def shear (B C : Matrix n n k) (h : B * C = 0) (h' : C * B = 0) : GL (n ⊕ n) k :=
@@ -113,15 +108,6 @@ theorem sphSection_right (s : ℂ) (h : GL (n ⊕ n) k) {κ : GL (n ⊕ n) k} (h
     sphSection k n s (h * κ) = sphSection k n s h := by
   rw [sphSection, isIwasawa.iwAbs_right _ hκ, sphSection]
 
-theorem sphSection_one (s : ℂ) : sphSection k n s 1 = 1 := by
-  rw [sphSection, isIwasawa.iwAbs_of_mem (one_mem _), one_npow]
-
-theorem eq_sphSection {s : ℂ} {Φ : GL (n ⊕ n) k → ℂ} (h1 : Φ 1 = 1)
-    (hl : ∀ (p : siegel k n) h, Φ (p * h) = npow (absRatio k n p) (s + (Fintype.card n : ℂ) / 2) * Φ h)
-    (hr : ∀ h, ∀ κ ∈ KO k (n ⊕ n), Φ (h * κ) = Φ h) : Φ = sphSection k n s := funext fun g => by
-  obtain ⟨p, κ, hκ, rfl⟩ := isIwasawa.1 g
-  rw [hr _ _ hκ, sphSection_right _ _ hκ, ← mul_one (p : GL (n ⊕ n) k), hl, sphSection_left, h1, sphSection_one]
-
 theorem sphSection_io_biinv (s : ℂ) (g : GL n k) {x y : GL n k} (hx : x ∈ KO k n) (hy : y ∈ KO k n) :
     sphSection k n s (io k n (x * g * y, 1)) = sphSection k n s (io k n (g, 1)) := by
   let p : siegel k n := ⟨io k n (x, x), mem_stabGL_diagSub.2 ((keepsDiag_blkMat _).2 rfl)⟩
@@ -141,8 +127,8 @@ theorem nabs_unif {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) : nabs
     Ideal.mem_span_singleton, (Valuation.integer.integers (valuation k)).dvd_iff_le, ← le_uniformizer_iff, ← hϖ]
   rfl
 
-variable (k n) in
 
+variable (k n) in
 def torusElt (ϖ : kˣ) (e : n → ℤ) : GL n k := diagT k n fun i => ϖ ^ e i
 
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
@@ -222,8 +208,8 @@ theorem sphSection_torusElt {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer
   congr 1
   ring
 
-variable (k n) in
 
+variable (k n) in
 def cell (ϖ : kˣ) (e : n → ℤ) : Set (GL n k) :=
   DoubleCoset.doubleCoset (torusElt k n ϖ e) (KO k n) (KO k n)
 
@@ -246,10 +232,10 @@ theorem iUnion_cell {N : ℕ} {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformiz
           let o : kˣ →* Multiplicative ℤ := MonoidHom.mk' (fun x => .ofAdd (ord k x)) fun x y => by
             rw [ord_mul, ofAdd_add]
           have := map_zpow o ϖ m
-          rw [show o ϖ = .ofAdd 1 from congrArg Multiplicative.ofAdd (ord_eq_one hϖ), ← ofAdd_zsmul,
+          rw [show o ϖ = .ofAdd 1 from congrArg Multiplicative.ofAdd (SmGL.ord_eq_one hϖ), ← ofAdd_zsmul,
             smul_eq_mul, mul_one] at this
           exact this
-        have h2 := ord_eq_zero_iff.1 (show ord k (Units.mk0 x hx * ϖ ^ (-ord k (Units.mk0 x hx))) = 0 by
+        have h2 := SmGL.ord_eq_zero_iff.1 (show ord k (Units.mk0 x hx * ϖ ^ (-ord k (Units.mk0 x hx))) = 0 by
           rw [ord_mul, h1, add_neg_cancel])
         rw [Units.val_mul, map_mul, Units.val_zpow_eq_zpow_val, map_zpow₀, _root_.zpow_neg,
           mul_inv_eq_one₀ (zpow_ne_zero _ (by simp))] at h2
@@ -297,7 +283,7 @@ theorem zonal_biinv {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] {π :
   obtain ⟨v, hv, l, hl, -, e⟩ := h
   have h1 : π y v = v := by simpa using hv ⟨y, hy⟩
   have h2 : π.dual x⁻¹ l = l := by simpa using hl ⟨x⁻¹, inv_mem hx⟩
-  rw [e, e, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, h1]
+  rw [e, e, map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, h1]
   conv_rhs => rw [← h2]
   simp [Module.Dual.transpose_apply]
 
@@ -341,16 +327,5 @@ theorem UnramifiedDoublingGL.hasSum (H : UnramifiedDoublingGL)
     rw [sphSection_io_biinv s g hx hy, zonal_biinv hω g hx hy]
   simp only [sphSection_torusElt hϖ, Fintype.card_fin] at this
   rwa [(h s hs).2] at this
-
-example {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
-    {χ : kˣ →* ℂˣ} (h : IsUnram χ) {ϖ : kˣ} (hϖ : valuation k (ϖ : k) = uniformizer k) :
-    ∃ α, HasSatake (detRep (Fin n) χ) α ∧
-      IsZonal (detRep (Fin n) χ) (KO k (Fin n)) fun g => (χ (GeneralLinearGroup.det g) : ℂ) := by
-  have key : ∀ g ∈ KO k (Fin n), χ (GeneralLinearGroup.det g) = 1 := fun g hg =>
-    h _ ((nabs_eq_one_iff _).1 (nabs_det_of_mem_KO hg))
-  refine ⟨_, hasSatake_detRep h hϖ, 1, fun g => ?_, LinearMap.id, fun g => ?_, rfl, fun g => by simp [detRep]⟩
-  · simp [detRep, key _ g.2]
-  · ext
-    simp [detRep, Module.Dual.transpose_apply, key _ g.2]
 
 end GlobalTheory.Published

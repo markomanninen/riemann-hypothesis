@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RankOneEmbeddings
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -290,8 +294,7 @@ lemma Hb_herm : (Hb k)ᴴ = Hb k := by
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext j
-  simp only [Pi.star_apply]
-  split_ifs <;> simp
+  by_cases h : j = Fin.last k <;> simp [h]
 
 lemma Hb_sq : Hb k * Hb k = 1 := by
   unfold Hb
@@ -1468,17 +1471,27 @@ theorem hypInv : HypInv := by
       (((volume : Measure ℂ).withDensity fun ζ => ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ)).prod μW).map
         (fun p : ℂ × Mt k r => act p.2 (embWb k r (μsec p.1) *ᵥ z')) := rfl
   rw [hdef]
-  by_cases hf : AEMeasurable (fun p : ℂ × Mt k r => act p.2 (embWb k r (μsec p.1) *ᵥ z'))
-      (((volume : Measure ℂ).withDensity fun ζ => ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ)).prod μW)
-  swap
-  · rw [Measure.map_of_not_aemeasurable hf, Measure.map_zero]
   have : IsFiniteMeasureOnCompacts μW := ⟨fun K hK => hW.finite_compact K hK⟩
   have : SigmaFinite μW := inferInstance
+  have hf : AEMeasurable (fun p : ℂ × Mt k r => act p.2 (embWb k r (μsec p.1) *ᵥ z'))
+      (((volume : Measure ℂ).withDensity fun ζ => ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ)).prod μW) := by
+    have hs := RankOneEmbeddings.R1.secF_meas hsec
+    have hm := RankOneEmbeddings.R1.measurable_inv_mulVec_embWb_of_measSec (r := r) hs z'
+    refine hm.aemeasurable.congr ?_
+    have hae : ∀ᵐ p ∂(((volume : Measure ℂ).withDensity fun ζ => ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ)).prod μW),
+        Tz k r z * Tz k r z' < Complex.normSq p.1 := by
+      apply (Measure.ae_prod_iff_ae_ae ((isOpen_lt continuous_const Complex.continuous_normSq).measurableSet.preimage measurable_fst)).2
+      filter_upwards [ae_weight k (Tz k r z) (Tz k r z')] with ζ hζ
+      exact Filter.Eventually.of_forall fun _ => hζ
+    filter_upwards [hae] with p hp
+    rw [RankOneEmbeddings.R1.secF_on (show p.1 ∈ RankOneEmbeddings.R1.Om k r z z' from hp)]
+    rfl
   obtain ⟨c, hc0, hc1, hkey⟩ := key hk hz hz' hT hT' hsec hW hf
   have hν : (((volume : Measure ℂ).withDensity fun ζ => ENNReal.ofReal (zWeight k (Tz k r z) (Tz k r z') ζ)).prod μW).map
         (fun p : ℂ × Mt k r => act p.2 (embWb k r (μsec p.1) *ᵥ z')) = c⁻¹ • ((μW Set.univ) • σV k r (Tz k r z')) := by
     rw [← hkey, smul_smul, ENNReal.inv_mul_cancel hc0 hc1, one_smul]
-  rw [hν, Measure.map_smul, Measure.map_smul, σV_inv _ hm]
+  rw [hν, Measure.map_smul _ ((mulVec_meas m).aemeasurable.smul_measure _),
+    Measure.map_smul _ (mulVec_meas m).aemeasurable, σV_inv _ hm]
 
 end PartE
 

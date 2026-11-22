@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PLocPrjGOfNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PLocPrjGOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem cjv_apply (hC : CjEx) (hU : Unr E) {w : Pl E} (hw : ¬ IsSplitAt w)
     obtain rfl := eq_aw hw u
     exact hp
   have hs : cjv (w.under (𝓞 (maximalRealSubfield E))) = h.choose := by
-    rw [cjv, dif_pos h]
+    rw [cjv, dite_eq_left h]
   rw [← hx, hs, ← h.choose_spec.2 X]
   rw [evR_apply, evR_apply]
   exact hc' X

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassSk
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -28,14 +32,6 @@ theorem cv_injective (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) : Function.Inje
   intro x y h
   exact (subspace_image_spec K _ (B.Z0 ℓ Z)).1
     ((image_idempotent_spec K B.S.dim (B.S.gaMat B.r (goodAt ℓ.X ℓ.P ℓ.ψ))).1 h)
-
-theorem cv_add (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) (x y : Fin (B.dZ ℓ Z) → K) :
-    cv B ℓ Z (x + y) = cv B ℓ Z x + cv B ℓ Z y := by
-  simp only [cv, Matrix.mulVec_add]
-
-theorem cv_mulVec (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) {n : ℕ} (M : Matrix (Fin (B.dZ ℓ Z)) (Fin n) K)
-    (x : Fin n → K) : cv B ℓ Z (M.mulVec x) = (B.vE ℓ * B.zE ℓ Z * M).mulVec x := by
-  simp only [cv, Matrix.mulVec_mulVec, Matrix.mul_assoc]
 
 theorem mem_coord (Z : Submodule K B.S.Forms) (w : Fin B.S.dim → K) :
     w ∈ B.coord Z ↔ B.S.basis.equivFun.symm w ∈ Z := by
@@ -166,7 +162,8 @@ theorem iC_cpt {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A) {fc : DefSub A �
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, CxData.iC, lin_apply, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, CxData.iC, lin_apply, cpt]
 
 theorem key_row' {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A) {fc : DefSub A → DefFace Bs} (cr : Crd A fc)
     (b : Bool) (hr : ∀ t, LinearMap.range (X.iC cr b t) = LinearMap.range (X.iC cr b Bs.μ0)) (hq : X.RATmu cr b)
@@ -191,10 +188,6 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] 
 theorem cv_eq (ℓ : Lvl K G) (Z : Submodule K B.S.Forms) (y : Fin (B.dZ ℓ Z) → K) :
     cv B ℓ Z y = (B.vE ℓ * B.zE ℓ Z).mulVec y := by
   simp only [cv, Matrix.mulVec_mulVec]
-
-theorem cv_of_toF {ℓ ℓ' : Lvl K G} {Z : Submodule K B.S.Forms} {x : Fin (B.dZ ℓ Z) → K} {y : Fin (B.dZ ℓ' Z) → K}
-    (h : B.toF ℓ Z x = B.toF ℓ' Z y) : cv B ℓ Z x = cv B ℓ' Z y :=
-  B.S.basis.equivFun.symm.injective h
 
 theorem range_eq_block (X : Finset (G → K)) (hX : ∀ χ ∈ X, IsAbsIrrChar χ) (P : Subgroup G) (ψ : P →* Kˣ)
     (Z : Submodule K B.S.Forms)
@@ -335,50 +328,6 @@ open Formalism.IndefR.CxPass.PassRep
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {m : ℕ}
   (I : In K G Pl0 T m)
-
-theorem pJt : I.PJt := by
-  intro s H b t
-  obtain ⟨h1, h2⟩ := jt_spec I H.h2g b t
-  refine ⟨h1, h2, fun x => ?_⟩
-  apply cpt_injective I.A.fam.base.v0.embedding
-  apply H.h2g.1
-  exact ((jt_spec I H.h2g b I.A.fam.base.μ0).1 _).trans
-    ((CxData.key_row I.X I.cr b (H.h2 b) (H.ratMu b) t x).trans
-      ((h1 x).symm.trans (key_row' I.X I.cg false (fun t => (H.h2g.2 t).2) H.ratMug t _).symm))
-
-theorem pRho : I.PRho := by
-  intro s H
-  have hinj : ∀ y y' : Fin I.Sg.D → K, I.iCg (cpt I.A.fam.base.v0.embedding y) =
-      I.iCg (cpt I.A.fam.base.v0.embedding y') → y = y' :=
-    fun y y' h => cpt_injective _ (H.h2g.1 h)
-  refine ⟨mat_ext _ _ fun x => hinj _ _ ?_, fun g h => mat_ext _ _ fun x => hinj _ _ ?_, rho_spec I H⟩
-  · exact (rho_spec I H 1 x).trans (by rw [Matrix.one_mulVec, map_one]; rfl)
-  · calc I.iCg (cpt I.A.fam.base.v0.embedding ((I.ρf (g * h)).mulVec x))
-        = I.gE (g * h) (I.iCg (cpt I.A.fam.base.v0.embedding x)) := rho_spec I H (g * h) x
-      _ = I.gE g (I.gE h (I.iCg (cpt I.A.fam.base.v0.embedding x))) := by rw [map_mul]; rfl
-      _ = I.gE g (I.iCg (cpt I.A.fam.base.v0.embedding ((I.ρf h).mulVec x))) :=
-          congrArg (I.gE g) (rho_spec I H h x).symm
-      _ = I.iCg (cpt I.A.fam.base.v0.embedding ((I.ρf g).mulVec ((I.ρf h).mulVec x))) :=
-          (rho_spec I H g _).symm
-      _ = I.iCg (cpt I.A.fam.base.v0.embedding ((I.ρf g * I.ρf h).mulVec x)) := by rw [Matrix.mulVec_mulVec]
-
-theorem pJ : I.PJ := by
-  intro s H b
-  have h := (jt_spec I H.h2g b I.A.fam.base.μ0).1
-  refine ⟨fun x => h x, fun x y hxy => ?_⟩
-  apply cpt_injective I.A.fam.base.v0.embedding
-  apply (H.h2 b).1
-  exact (h x).symm.trans ((congrArg (fun v : Fin I.Sg.D → K => I.iCg (cpt I.A.fam.base.v0.embedding v)) hxy).trans (h y))
-
-theorem pRange : I.PRange := by
-  intro s H b
-  cases b
-  · exact range_eq_block (I.A.fam.R I.A.fam.base.μ0) I.A.fam.X H.ok.irr I.P0 I.ψ0 (I.X.zs.Z I.A.fam.base.μ0)
-      (I.Jm false) (fun x => cv_of_toF _ ((jt_spec I H.h2g false I.A.fam.base.μ0).2 x))
-      (I.epM I.P0 I.ψ0) (cv_epM I H I.P0 I.ψ0)
-  · exact range_eq_block (I.A.fam.R I.A.fam.base.μ0) I.A.fam.X H.ok.irr I.P1 I.ψ1 (I.X.zs.Z I.A.fam.base.μ0)
-      (I.Jm true) (fun x => cv_of_toF _ ((jt_spec I H.h2g true I.A.fam.base.μ0).2 x))
-      (I.epM I.P1 I.ψ1) (cv_epM I H I.P1 I.ψ1)
 
 end In
 

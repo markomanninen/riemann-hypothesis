@@ -1,14 +1,19 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Beyond44OfRestRawTail
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OPlusAtOf
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFFinal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.SegFormZeroRight
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TestFlat
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Lemma44IdentityOfRawTail
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PolyUpperBoundDelta
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PairedLiftAtOfIdentity
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.GTheta
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.OPlusAtOf
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.PsiRes0Ne
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFFinal
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +34,5 @@ def RawTailReduction : Prop := RestAsmRT
 
 theorem stmtEExt_of_15c {D : Formalism.BasicNotions.D7} (h : admitted D → RawTailReduction) : ExtendedClosedForm D :=
   stmtEExt_of_rawTail1 fun hA => restRawTail1_of (third_key_of_order key3Ord) (local_fourth_of_order (loc4Ord_of (loc4Div_of loc4Res))) (h hA)
-
-theorem stmtE_of_15c {D : Formalism.BasicNotions.D7} (h : admitted D → RawTailReduction) : ClosedFormOfAdmitted D := (stmtEExt_of_15c h).closed_of_extended_closed
 
 end Formalism.MainNotions.ColumnSystems.Pf

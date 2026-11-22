@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.DiscriminantColengthStatement
+module
+
+public import ReciprocityTheory.DualLattices.DiscriminantColengthStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,12 +24,6 @@ lemma sumLat_apply {n s : ℕ} (Mτ : Fin n → Lat v (Fin s)) (x y : Fin n × F
     (sumLat Mτ).B x y = if x.1 = y.1 then (Mτ x.1).B x.2 y.2 else 0 := by
   simp only [sumLat, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.prodComm_symm,
     Equiv.prodComm_apply, Prod.fst_swap, Prod.snd_swap, Matrix.blockDiagonal_apply]
-
-lemma sumLat_det {n s : ℕ} (Mτ : Fin n → Lat v (Fin s)) :
-    (sumLat Mτ).B.det = ∏ τ, (Mτ τ).B.det := by
-  show (Matrix.reindex (Equiv.prodComm (Fin s) (Fin n)) (Equiv.prodComm (Fin s) (Fin n))
-      (Matrix.blockDiagonal fun τ => (Mτ τ).B)).det = _
-  rw [Matrix.det_reindex_self, Matrix.det_blockDiagonal]
 
 lemma sumLat_mulVec {n s : ℕ} (Mτ : Fin n → Lat v (Fin s)) (c : Fin n × Fin s → C) (τ : Fin n)
     (i : Fin s) : ((sumLat Mτ).B *ᵥ c) (τ, i) = ((Mτ τ).B *ᵥ fun j => c (τ, j)) i := by
@@ -97,14 +95,5 @@ lemma v_det_vandermonde_sq {n : ℕ} (a : Fin n → C) :
 lemma v_det_freeMat_sq {n : ℕ} (a : Fin n → C) (s : ℕ) :
     v (freeMat a s).det ^ 2 = v (discr a) ^ s := by
   rw [det_freeMat, map_pow, pow_right_comm, v_det_vandermonde_sq]
-
-theorem colength_sq_blockVandermonde {n : ℕ} (a : Fin n → C) (s : ℕ) (F S : Lat v (Fin n × Fin s))
-    (hF : F.B = freeMat a s) (hS : S.pts = sumPts (fun _ => Lat.std v (Fin s))) :
-    colen F S ^ 2 = v (discr a) ^ s := by
-  rw [colen_congr (L₂' := F) (L₂ := sumLat fun _ => Lat.std v (Fin s)) rfl
-    (hS.trans (sumLat_pts _).symm)]
-  rw [colen, sumLat_det]
-  simp only [Lat.std, Matrix.det_one, map_one, Finset.prod_const_one, div_one, hF]
-  exact v_det_freeMat_sq a s
 
 end ReciprocityTheory.PGsh.Up

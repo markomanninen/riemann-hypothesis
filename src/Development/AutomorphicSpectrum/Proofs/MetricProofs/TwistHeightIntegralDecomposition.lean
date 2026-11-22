@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFS
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsHorizontalTwist
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFS
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
 
 noncomputable section
 
@@ -212,7 +216,7 @@ theorem density_twist : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
     have hg1 := glue_isSheet hvq (by rw [hv1]; exact one_ne_zero) hg
     have hex : ∃ γ', IsSheet (twist p Q) Ψ y (embL v w) γ' := ⟨_, hg1⟩
     unfold sheetDensity
-    rw [dif_pos hex, dif_pos hγ, hind _ _ _ hex.choose_spec hg1]
+    rw [dite_eq_left hex, dite_eq_left hγ, hind _ _ _ hex.choose_spec hg1]
     have hlog : logNorm A' (inc s) (glue (hγ.choose y) v) = logNorm A s (hγ.choose y) := by
       rw [logNorm, logNorm, eval_inc, hAh _ hg.2.self_of_nhds.2.1]
     have hma : maDensity (fun j y' => pot L' j (glue (hγ.choose y') v)) y =
@@ -224,6 +228,6 @@ theorem density_twist : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
   · have hno : ¬ ∃ γ', IsSheet (twist p Q) Ψ y (embL v w) γ' := fun ⟨γ', h⟩ =>
       hγ (sheet_of_twist_sheet hp hQh k0 hvq hv1 h)
     unfold sheetDensity
-    rw [dif_neg hno, dif_neg hγ]
+    rw [dite_eq_right hno, dite_eq_right hγ]
 
 end GlobalTheory.CompanionTheory.Ar.Tw.SheetD

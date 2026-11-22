@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+
+@[expose] public section
 
 noncomputable section
 

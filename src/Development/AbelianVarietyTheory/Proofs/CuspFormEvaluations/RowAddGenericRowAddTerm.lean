@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -38,7 +42,8 @@ theorem rowAddGeneric_rowAddTerm (u w : ι → σ) (huw : ∀ k l, u k ≠ w l) 
     simp [rowAddTerm, huw k]
   conv_lhs => rw [rowAddTerm]
   conv_rhs => rw [rowAddTerm]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   split_ifs
   · simp [rowAddGeneric, h0]
@@ -58,7 +63,7 @@ theorem derivative_rowAddGeneric (u w : ι → σ) (huw : ∀ k l, u k ≠ w l)
   induction P using MvPolynomial.induction_on with
   | C a => simp [rowAddGeneric, Polynomial.algebraMap_apply]
   | add p q hp hq =>
-    simp only [map_add, mul_add, Finset.sum_add_distrib, hp, hq]
+    simp only [map_add (f := _), mul_add, Finset.sum_add_distrib, hp, hq]
   | mul_X p s hp =>
     have h : ∑ k, X (u k) * pderiv (w k) (p * X s) =
         (∑ k, X (u k) * pderiv (w k) p) * X s + p * rowAddTerm K u w s := by
@@ -66,7 +71,7 @@ theorem derivative_rowAddGeneric (u w : ι → σ) (huw : ∀ k l, u k ≠ w l)
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
       ring
-    rw [h, map_add, map_mul (rowAddGeneric u w), map_mul (rowAddGeneric u w),
+    rw [h, map_add (f := _), map_mul (rowAddGeneric u w), map_mul (rowAddGeneric u w),
       map_mul (rowAddGeneric u w), Polynomial.derivative_mul, hp,
       rowAddGeneric_rowAddTerm u w huw]
     have hX : Polynomial.derivative (rowAddGeneric u w (X s : MvPolynomial σ K)) =
@@ -76,8 +81,8 @@ theorem derivative_rowAddGeneric (u w : ι → σ) (huw : ∀ k l, u k ≠ w l)
 
 end RowAdd
 
-set_option linter.unusedVariables false in
 
+set_option linter.unusedVariables false in
 theorem rowAdd_invariant_iff {K σ ι : Type*} [Field K] [CharZero K] [DecidableEq σ] [Fintype ι]
     (u w : ι → σ) (hw : Function.Injective w)
     (huw : ∀ k l, u k ≠ w l) (P : MvPolynomial σ K) :

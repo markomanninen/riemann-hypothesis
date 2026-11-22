@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.FrobeniusTorusMinpolyDegreeRootPowerSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.FrobeniusTorusMinpolyDegreeRootPowerSum
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
@@ -12,7 +16,7 @@ theorem map_range_mul_of_periodic {β : Type} (g : ℕ → β) (e : ℕ) (hg : �
   induction m with
   | zero => simp
   | succ m ih =>
-    rw [Nat.mul_succ, add_comm (e * m), Multiset.range_add, Multiset.map_add, Multiset.map_map,
+    rw [Nat.mul_succ, add_comm (e * m), Multiset.range_add, Multiset.map_add (f := _), Multiset.map_map,
       succ_nsmul', ← ih]
     congr 1
     exact Multiset.map_congr rfl fun i _ => hg i

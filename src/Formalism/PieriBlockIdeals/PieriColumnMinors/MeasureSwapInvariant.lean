@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLC
-import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+module
+
+public import Formalism.PieriBlockIdeals.StatementLC
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.BinaryFormsExample
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LC
 
@@ -20,7 +24,8 @@ theorem no_bad_tuple : NoTuple := by
     have h1 : (t0 j - tt e0 j) • v = ∑ a ∈ t', (f a * (tt a j - tt e0 j)) • a := by
       have h3 : T j v - tt e0 j • v = ∑ a ∈ insert e0 t', f a • (T j a - tt e0 j • a) := by
         rw [← hsum]
-        simp only [map_sum, map_smul, Finset.smul_sum, smul_sub, Finset.sum_sub_distrib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, Finset.smul_sum, smul_sub, Finset.sum_sub_distrib]
         congr 1
         apply Finset.sum_congr rfl
         intros
@@ -91,10 +96,5 @@ theorem ColumnsFromPieri_of (hSwap : SwapPath) (hSame : SameCol) (hMeas : MeasSw
     rintro y ⟨κ, ρ, hpath, hy⟩
     exact LinearMap.mem_ker.2 (key _ κ ρ hpath rfl y ((hWt K P M q EM n lam2 κ ρ hpath.start hpath.step y).1 hy))
   exact LinearMap.mem_ker.1 (hle hz)
-
-theorem LemmaDSkeleton4_of (h : ColumnsFromPieri) : LemmaDSkeleton4 := by
-  intro O K V P q _ _ _ _ _ _ _ _ _ _ S B n w lam2 DelL xi lam l e i' hl hu h1 h2 h3 h4 h5 h6 h7 h8 h9
-  exact depth_skeleton_third_form_holds O K V P q S B n w lam2 DelL xi lam l e i' hl hu
-    ⟨h1, h2, h3, h4, h5, h6, h7, h K P S.W q S.EW n lam2 h7, h8, h9⟩
 
 end Formalism.CohomologicalDescent.LC

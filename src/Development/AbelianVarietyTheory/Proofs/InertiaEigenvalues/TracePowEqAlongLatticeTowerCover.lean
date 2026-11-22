@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong Matrix
 open scoped Formalism.Per NNReal
 noncomputable section
@@ -138,7 +143,8 @@ theorem trace_sum_smul_map {a : ℕ} {ι : Type} [Fintype ι] (w : ι → ℂ_[l
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Matrix.trace_smul, smul_eq_mul]
   congr 1
-  simp [Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.trace, map_sum]
 
 end Concrete
 
@@ -160,7 +166,8 @@ theorem trace_pow_eq : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [Topo
   have hX0 : (U ^ 0 *ᵥ v) ⬝ᵥ t = a := by
     rw [pow_zero, Matrix.one_mulVec]
     have h1 := congrArg (fun M => f M.trace) Cv.reads.one
-    simp only [Matrix.trace_sum, Matrix.trace_smul, map_sum, smul_eq_mul, map_mul, hfZ, Matrix.trace_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace_sum, Matrix.trace_smul, map_sum, smul_eq_mul, map_mul, hfZ, Matrix.trace_one,
       Fintype.card_fin, map_natCast] at h1
     simpa [dotProduct, v, t] using h1
   have hl1 : (1 : ℝ) < l := by exact_mod_cast (Fact.out : l.Prime).one_lt
@@ -190,7 +197,8 @@ theorem trace_pow_eq : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [Topo
     have hv : ∀ i, ‖(v - P *ᵥ v') i‖ ≤ ((l : ℝ) ^ N)⁻¹ := by
       intro i
       have e : (P *ᵥ v') i = Z ((Cv.tw.Pi m *ᵥ (Cv.lay m).e) i) := by
-        simp [P, v', Matrix.mulVec, dotProduct, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [P, v', Matrix.mulVec, dotProduct, map_sum, map_mul]
       rw [Pi.sub_apply, e, norm_sub_rev, ← map_sub]
       have hd := Cv.unit m i
       rw [Pi.sub_apply] at hd
@@ -202,7 +210,8 @@ theorem trace_pow_eq : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [Topo
       have h := Cv.trace m s
       have e : (t ᵥ* P - T') s = f ((∑ i, zOm l (Cv.tw.Pi m i s) • Cv.b i).trace -
           ∑ k, (Cv.lay m).c k * ((Cv.lay m).b s k).trace) := by
-        rw [map_sub, Matrix.trace_sum, map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, Matrix.trace_sum, map_sum, map_sum]
         simp only [Pi.sub_apply, Matrix.vecMul, dotProduct, T', t', t, P, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
           Matrix.trace_smul, map_mul, hfZ, Matrix.map_apply]
         congr 1

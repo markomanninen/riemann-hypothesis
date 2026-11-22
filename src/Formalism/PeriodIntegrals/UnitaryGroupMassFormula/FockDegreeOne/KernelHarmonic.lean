@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.RedOps
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.ExistsMonomialWeight
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.RedOps
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.ExistsMonomialWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem lowOp_Xd (c d : Ix r s) (l l' : Ln p q r s) (P : Pol p q r s) :
         ((if ((a, d) : Ln p q r s) = l then pderiv ((a, c) : Ln p q r s) (pderiv l' P) else 0) +
          (if ((a, c) : Ln p q r s) = l then pderiv ((a, d) : Ln p q r s) (pderiv l' P) else 0))
         else 0) := by
-  rw [lowOp_apply, lowOp_apply, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lowOp_apply, lowOp_apply, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   by_cases h : linePos ((a, d) : Ln p q r s) = true
   · simp only [h, ↓reduceIte]
@@ -55,7 +60,8 @@ theorem lowOp_posOp (c d : Ix r s) (hcd : ¬ sameBlock c d) (a b : Ix p q) (P : 
         pderiv ((a, c) : Ln p q r s) (pderiv ((b, d) : Ln p q r s) P) else 0) := by
   have hcd' : c ≠ d := by
     rintro rfl; exact hcd (by rcases c with c | c <;> simp [sameBlock])
-  rw [posOp_apply, posOp_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [posOp_apply, posOp_apply, map_sum]
   have hterm : ∀ e : Ix r s,
       lowOp (p := p) (q := q) c d (if linePos ((a, e) : Ln p q r s) = true then
         X ((a, e) : Ln p q r s) * pderiv ((b, e) : Ln p q r s) P else 0) =
@@ -99,7 +105,8 @@ theorem lowOp_negOp (c d : Ix r s) (hcd : ¬ sameBlock c d) (a b : Ix p q) (hab 
     rintro rfl; exact hcd (by rcases c with c | c <;> simp [sameBlock])
   have hba : linePos ((b, d) : Ln p q r s) = linePos ((a, d) : Ln p q r s) :=
     (FockRL.linePos_left b a d).2 (FockRL.sameBlock_symm hab)
-  rw [negOp_apply, negOp_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [negOp_apply, negOp_apply, map_sum]
   have hterm : ∀ e : Ix r s,
       lowOp (p := p) (q := q) c d (if linePos ((b, e) : Ln p q r s) = true then 0 else
         X ((b, e) : Ln p q r s) * pderiv ((a, e) : Ln p q r s) P) =
@@ -150,7 +157,7 @@ theorem kernel_harmonic : KHarm := by
   rw [harmIff] at hP ⊢
   intro c d hcd
   rw [fock_operators_kernel p q r s a b hab]
-  simp only [LinearMap.add_apply, LinearMap.sub_apply, map_add, map_sub, lowOp_posOp c d hcd,
+  simp only [LinearMap.add_apply, LinearMap.sub_apply, map_add (f := _), map_sub, lowOp_posOp c d hcd,
     lowOp_negOp c d hcd a b hab, hP c d hcd, map_zero, zero_add, sub_self]
   split_ifs <;> simp [hP c d hcd]
 

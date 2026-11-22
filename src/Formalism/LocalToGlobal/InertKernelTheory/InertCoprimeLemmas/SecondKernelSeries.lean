@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.TieSerPin
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelNonzeroUnit
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.TieSerPin
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelNonzeroUnit
+
+@[expose] public section
 
 noncomputable section
 

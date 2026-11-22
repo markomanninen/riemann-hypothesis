@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppRedW
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRho
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppRedW
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRho
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem hhat_sum_right (u : Fin I.n → I.E ⊗[I.F] Af I.F) {ι : Type*} (s : F
 theorem iv_sum_int (b : Fin m → Fin I.n → I.E) (c : Fin m → ℤ) :
     iv I (∑ j, ((c j : ℤ) : I.E) • b j) = ∑ j, ((c j : ℤ) : I.E ⊗[I.F] Af I.F) • iv I (b j) := by
   funext k
-  simp [iv, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [iv, Finset.sum_apply, map_sum]
 
 def GramW (w : HeightOneSpectrum (𝓞 I.E)) {r : ℕ} (fr frd : Fin r → Fin I.n → I.E ⊗[I.F] Af I.F) : Prop :=
   ∀ i j, hhat I (frd i) (fr j) - (if i = j then 1 else 0) ∈ Wq I w
@@ -71,7 +76,8 @@ theorem isRedBasis_of_gram (hp : p.Prime) (hcard : Nat.card (𝓞 I.E ⧸ w.asId
       simp [b']
     have hiv : iv I (∑ j, ((α j : 𝓞 I.E) : I.E) • c j) = ∑ j, iE I (α j) • iv I (c j) := by
       funext k
-      simp only [iv, iE, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [iv, iE, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
     have h2 := hhat_Lq_right (hfrd i) h1
     rw [hiv, hhat_sum_right] at h2
     have h3 : ∑ j, iE I (α j) * (hhat I (frd i) (iv I (c j)) - (if i = j then 1 else 0)) ∈ Wq I w :=

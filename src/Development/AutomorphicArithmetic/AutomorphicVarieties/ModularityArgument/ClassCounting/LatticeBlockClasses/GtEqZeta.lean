@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.MemPowEqv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlockValAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.MemPowEqv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LatticeBlockClasses.CBlock
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Cl
 
@@ -18,7 +22,7 @@ private theorem gtEq_ord {l c ν : ℕ} [hl : Fact l.Prime] {ζ : (𝓞 F)ˣ} {�
     · have := h.c_two h3.symm
       rw [← h3]; omega
     · nlinarith
-  have ho := ZMod.orderOf_one_add_mul_prime_pow hl.out c (by omega) hpm 1
+  have ho := ZMod.orderOf_one_add_mul_prime_pow hl.out c hpm 1
     (by exact_mod_cast hl.out.not_dvd_one) n
   simp only [Int.cast_one, mul_one] at ho
   have hf : IsOfFinOrder (1 + (l : ZMod (l ^ (n + c))) ^ c) := by
@@ -78,7 +82,8 @@ theorem UpperTheory.V.ZK.Cl.cGtEq :
       ordP P (if x = 1 then β else 1) := by
     intro x P
     have e := congrArg (Finsupp.linearCombination ℤ fun y => if B y = x then 𝔡 (actP (T y) P) else 0) hη
-    rw [Finsupp.linearCombination_mapDomain, map_sum, Finsupp.linearCombination_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_mapDomain, map_sum, Finsupp.linearCombination_apply,
       Finsupp.sum_fintype _ _ (by simp)] at e
     simp only [Finsupp.linearCombination_single, hT, hB, smul_eq_mul, Function.comp, mul_ite, mul_zero] at e
     rw [← Finset.sum_filter] at e

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.LGDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,11 +110,6 @@ theorem algMap_mem_O (D : Formalism.BasicNotions.D7) (p : PlF D) (c : (D.s.atP p
       algebraMap 𝒪[(D.s.atP p).Fp] (D.s.atP p).Ep ⟨c, hc⟩ := rfl
   rw [e]
   exact isIntegral_algebraMap
-
-theorem ringInverse_algebraMap {A B : Type*} [Field A] [CommRing B] [Algebra A B] (y : A) (hy : y ≠ 0) :
-    Ring.inverse (algebraMap A B y) = algebraMap A B y⁻¹ := by
-  have h := Ring.inverse_unit (Units.map (algebraMap A B : A →* B) (Units.mk0 y hy))
-  simpa using h
 
 theorem locGen_of (hD : LocDiff) (hP : DualPow) : LocGen := by
   intro D δ M hag p m

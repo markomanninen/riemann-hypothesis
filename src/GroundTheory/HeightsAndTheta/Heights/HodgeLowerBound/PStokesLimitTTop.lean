@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTTop
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTopNMixed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsStokesLimitTTop
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsTopNMixed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.LowerBoundFree

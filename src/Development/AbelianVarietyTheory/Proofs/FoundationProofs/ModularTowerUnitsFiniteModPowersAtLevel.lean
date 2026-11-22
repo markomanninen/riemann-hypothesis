@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMeromorphicRootOfMemModularFunctionTowerUnStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UpperHalfPlaneCodiscreteGermIdentityAndUnitsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoMobCodiscreteWithinStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusUpperHalfPlanePropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMeromorphicRootOfMemModularFunctionTowerUnStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UpperHalfPlaneCodiscreteGermIdentityAndUnitsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TendstoMobCodiscreteWithinStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusUpperHalfPlanePropertiesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -273,9 +277,9 @@ theorem finite_mod_powers : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgCl
   haveI : NeZero M := ⟨hM.ne'⟩
   haveI : Nontrivial Mero := GlobalTheory.T.upperHalfPlaneCodiscreteGerm_identity_and_units.1
   haveI : Group.FG SL(2, ℤ) :=
-    ⟨⟨{ModularGroup.S, ModularGroup.T}, by simpa using SpecialLinearGroup.SL2Z_generators⟩⟩
-  obtain ⟨S, hS⟩ := (Group.fg_iff_subgroup_fg (CongruenceSubgroup.Gamma M)).1 (Subgroup.fg_of_index_ne_zero _)
-  have hSmem : ∀ s ∈ S, s ∈ CongruenceSubgroup.Gamma M := fun s hs => hS ▸ Subgroup.subset_closure hs
+    Group.fg_iff.mpr ⟨{ModularGroup.S, ModularGroup.T}, SpecialLinearGroup.SL2Z_generators, (Set.finite_singleton _).insert _⟩
+  obtain ⟨_, S, _, hS⟩ := (Group.fg_iff' (G := CongruenceSubgroup.Gamma M)).1 ((Group.fg_iff_subgroup_fg (CongruenceSubgroup.Gamma M)).2 (Subgroup.fg_of_index_ne_zero _))
+  have hSmem : ∀ s ∈ S, (s : SL(2, ℤ)) ∈ CongruenceSubgroup.Gamma M := fun s _ => s.property
   let Sset := {f : X.Kˣ // f ∈ X.Un m ∧ ∀ γ ∈ CongruenceSubgroup.Gamma M, X.sl (ofSL γ) (f : X.K) = f}
   have hroot : ∀ f : Sset, ∃ a b : ℂ → ℂ, DifferentiableOn ℂ a Hs ∧ DifferentiableOn ℂ b Hs ∧ (b : Mero) ≠ 0 ∧
       X.an (f.1 : X.K) * (b : Mero) ^ m = (a : Mero) ^ m :=
@@ -323,12 +327,15 @@ theorem finite_mod_powers : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgCl
           exact zero_ne_one hζ
         exact ⟨ζ⁻¹, by rw [inv_pow, hζ, inv_one], rel_inv hζ0 h1, rel_inv hζ0 h2⟩ }
   have hle : CongruenceSubgroup.Gamma M ≤ H := by
-    rw [← hS, Subgroup.closure_le]
-    intro s hs
-    have h := hZrel r ⟨s, hs⟩
-    rw [hsame] at h
-    show ∃ ζ : ℂ, ζ ^ m = 1 ∧ RootRel (A f') (B f') s ζ ∧ RootRel (A r) (B r) s ζ
-    exact ⟨Z f' ⟨s, hs⟩, hZ f' ⟨s, hs⟩, hZrel f' ⟨s, hs⟩, h⟩
+    have htop : (⊤ : Subgroup (CongruenceSubgroup.Gamma M)) ≤ H.comap (CongruenceSubgroup.Gamma M).subtype := by
+      rw [← hS, Subgroup.closure_le]
+      intro s hs
+      have h := hZrel r ⟨s, hs⟩
+      rw [hsame] at h
+      show ∃ ζ : ℂ, ζ ^ m = 1 ∧ RootRel (A f') (B f') s ζ ∧ RootRel (A r) (B r) s ζ
+      exact ⟨Z f' ⟨s, hs⟩, hZ f' ⟨s, hs⟩, hZrel f' ⟨s, hs⟩, h⟩
+    intro γ hγ
+    exact htop (x := ⟨γ, hγ⟩) trivial
   obtain ⟨g, hg, hfg⟩ := quot_pow X hM hm f r.1 (hA f') (hB f') (hA r) (hB r) (hAB f') (hAB r) (hzB f') (hzA r)
     (hBz f') (hAz r) (fun γ hγ => by
       have h : ∃ ζ : ℂ, ζ ^ m = 1 ∧ RootRel (A f') (B f') γ ζ ∧ RootRel (A r) (B r) γ ζ := hle hγ

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactUnipFlag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactUnipFlag
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct NNReal ENNReal Matrix

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurChain
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.PurChain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem translate_pairs {R : Type*} [CommRing R] {κ : Type*} [Fintype κ] [Deci
   · intro v _
     have hz : ∀ k, (∑ k', if w k' = u k then (Polynomial.C (y (u k')) : Polynomial K) else 0) = 0 :=
       fun k => Finset.sum_eq_zero (fun k' _ => by simp [Ne.symm (huw k k')])
-    simp only [map_sum, apply_ite (aeval _), aeval_X, map_zero, apply_ite Polynomial.C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, apply_ite (aeval _), aeval_X, map_zero, apply_ite Polynomial.C]
     simp only [hz, mul_zero, add_zero]
 
 def fill {K : Type*} {m n : ℕ} (ι : Fin m × Fin n → σ) (M : Fin m → Fin n → K) (p : σ → K) : σ → K :=

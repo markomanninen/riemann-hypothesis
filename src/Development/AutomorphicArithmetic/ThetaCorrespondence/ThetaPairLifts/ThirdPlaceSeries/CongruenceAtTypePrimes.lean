@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CongruenceSingleEndomorphism
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.TrivialLocalCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CongruenceSingleEndomorphism
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.TrivialLocalCondition
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

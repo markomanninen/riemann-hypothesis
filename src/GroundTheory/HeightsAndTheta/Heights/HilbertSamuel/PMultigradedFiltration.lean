@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.LengthLocalizedQuotientEqZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.LengthLocalizedQuotientEqZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -41,9 +46,11 @@ theorem X_pow_smul_mem (hM : IsMultigrading ι M piece) (v : Σ k, ι k) (n : �
     rw [pow_succ, mul_smul]
     have h := ih _ _ (hM.smul_mem v m x hx)
     convert h using 2
-    funext k
-    simp only [degZ, unitDeg, blockWeight, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
-    split_ifs <;> push_cast <;> ring
+    have hdeg : degZ (blockWeight ι v) = unitDeg v.1 := by
+      funext k
+      simp only [degZ, blockWeight, unitDeg, Pi.single_apply]
+      split_ifs <;> simp
+    rw [add_nsmul, one_nsmul, degZ_add, hdeg, add_comm (degZ (n • blockWeight ι v)), ← add_assoc]
 
 theorem monomial_smul_mem (hM : IsMultigrading ι M piece) (d : (Σ k, ι k) →₀ ℕ) :
     ∀ (m : K → ℤ) (x : M), x ∈ piece m →
@@ -58,7 +65,7 @@ theorem monomial_smul_mem (hM : IsMultigrading ι M piece) (d : (Σ k, ι k) →
     rw [e, mul_smul]
     have h := X_pow_smul_mem hM v n _ _ (ih m x hx)
     convert h using 2
-    rw [map_add, Finsupp.weight_single, degZ_add, add_assoc, add_comm (degZ _)]
+    rw [map_add (f := _), Finsupp.weight_single, degZ_add, add_assoc, add_comm (degZ _)]
 
 theorem homog_smul_mem (hM : IsMultigrading ι M piece) {f : MRing ι F} {b : K → ℕ}
     (hf : IsWeightedHomogeneous (blockWeight ι) f b) {m : K → ℤ} {x : M} (hx : x ∈ piece m) :
@@ -68,7 +75,7 @@ theorem homog_smul_mem (hM : IsMultigrading ι M piece) {f : MRing ι F} {b : K 
   rw [Finset.sum_smul]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hw : Finsupp.weight (blockWeight ι) d = b := hf (mem_support_iff.mp hd)
-  have e : (monomial d (coeff d f) : MRing ι F) = coeff d f • monomial d (1 : F) := by
+  have e : (monomial d (AddMonoidAlgebra.coeff f d) : MRing ι F) = AddMonoidAlgebra.coeff f d • monomial d (1 : F) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [e, smul_assoc]
   exact Submodule.smul_mem _ _ (hw ▸ monomial_smul_mem hM d m x hx)
@@ -81,13 +88,13 @@ theorem decompose_smul (hM : IsMultigrading ι M piece) (f : MRing ι F) {c : K 
     (hx : x ∈ piece c) (m : K → ℤ) :
     (DirectSum.decompose piece (f • x) m : M) =
       (∑ d ∈ f.support with c + degZ (Finsupp.weight (blockWeight ι) d) = m,
-        monomial d (coeff d f)) • x := by
+        monomial d (AddMonoidAlgebra.coeff f d)) • x := by
   have ef := f.as_sum
   conv_lhs => rw [ef]
   rw [Finset.sum_smul, DirectSum.decompose_sum, DFinsupp.finsetSum_apply,
     AddSubmonoidClass.coe_finsetSum, Finset.sum_filter, Finset.sum_smul]
   refine Finset.sum_congr rfl fun d _ => ?_
-  have hd : (monomial d (coeff d f) : MRing ι F) • x ∈
+  have hd : (monomial d (AddMonoidAlgebra.coeff f d) : MRing ι F) • x ∈
       piece (c + degZ (Finsupp.weight (blockWeight ι) d)) :=
     homog_smul_mem hM (isWeightedHomogeneous_monomial _ _ _ rfl) hx
   split_ifs with h
@@ -170,7 +177,7 @@ theorem isPrime_of_forms (q : Ideal (MRing ι F)) (hq : IsMultiHomogIdeal q) (hn
     induction d using Finsupp.induction with
     | zero => simp
     | single_add v n d _ _ ih =>
-      rw [map_add, map_add, ih, Finsupp.weight_single, Finsupp.weight_single, toLex_add, toLex_smul]
+      rw [map_add (f := _), map_add (f := _), ih, Finsupp.weight_single, Finsupp.weight_single, toLex_add, toLex_smul]
       rfl
   have hc : ∀ (i : Lex (K → ℕ)) (r : MRing ι F),
       weightedHomogeneousComponent (fun v => toLex (blockWeight ι v)) i r =

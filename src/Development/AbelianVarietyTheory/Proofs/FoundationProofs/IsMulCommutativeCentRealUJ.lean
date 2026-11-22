@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SecondCountableAndT2LocalField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 open MeasureTheory Set Filter Matrix Polynomial GlobalTheory.AdelicU NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.ClassParam (krylov exists_cyclic)
@@ -53,7 +57,8 @@ theorem exists_aeval_of_commute_fin [IsArtinianRing A] {M N : Matrix (Fin r) (Fi
     have : krylov M v *ᵥ c = N *ᵥ v := by rw [mulVec_mulVec, mul_nonsing_inv _ hv, one_mulVec]
     rw [← this]
     ext i
-    simp [p, krylov, map_sum, aeval_monomial, Matrix.sum_mulVec, Algebra.algebraMap_eq_smul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [p, krylov, map_sum, aeval_monomial, Matrix.sum_mulVec, Algebra.algebraMap_eq_smul_one,
       Matrix.smul_mulVec, Matrix.mulVec.eq_def (Matrix.of _), dotProduct, mul_comm]
   have hc : Commute (aeval M p) M := by
     have := congrArg (aeval M) (mul_comm p X)
@@ -171,8 +176,8 @@ theorem eventually_exists_sq {V : Type} [AddCommGroup V] [Module k V] [Topologic
 variable (k) {R : Type} [Ring R] [Algebra k R] [TopologicalSpace R] [IsTopologicalRing R] [ContinuousSMul k R] [T2Space R]
   [FiniteDimensional k R]
 
-include k in
 
+include k in
 theorem eventually_isUnit : ∀ᶠ x in 𝓝 (1 : R), IsUnit x := by
   let b := Module.finBasis k R
   have hc : Continuous fun x : R => (Algebra.leftMulMatrix b x).det :=
@@ -181,18 +186,18 @@ theorem eventually_isUnit : ∀ᶠ x in 𝓝 (1 : R), IsUnit x := by
   rw [← Algebra.lmul_isUnit_iff (R := k), LinearMap.isUnit_iff_isUnit_det, ← LinearMap.det_toMatrix b]
   exact hx.isUnit
 
-variable {k} in
 
+variable {k} in
 theorem eventually_exists_unitary (h2 : (2 : k) ≠ 0) (s : R →ₗ[k] R) (hm : ∀ a b, s (a * b) = s b * s a)
     (hs : ∀ a, s (s a) = a) {g : R} (hg : g * s g = 1) :
     ∀ᶠ y in 𝓝 (1 : R), ∀ h, s h * h = 1 → h * y = y * g → ∃ u : Rˣ, s u * u = 1 ∧ h * u = u * g := by
   have h1 : s 1 = 1 := by simpa [hs] using (hm (s 1) 1).symm
   let V : Submodule k R :=
     { carrier := {l | s l = l ∧ l * g = g * l}
-      add_mem' := fun ha hb => ⟨by rw [map_add, ha.1, hb.1], by rw [add_mul, mul_add, ha.2, hb.2]⟩
+      add_mem' := fun ha hb => ⟨by rw [map_add (f := _), ha.1, hb.1], by rw [add_mul, mul_add, ha.2, hb.2]⟩
       zero_mem' := ⟨map_zero _, by simp⟩
       smul_mem' := fun c _ ha => ⟨by rw [map_smul, ha.1], by rw [smul_mul_assoc, mul_smul_comm, ha.2]⟩ }
-  let f : V → V → V := fun a b => (2 : k)⁻¹ • ⟨a.1 * b.1 + b.1 * a.1, by rw [map_add, hm, hm, a.2.1, b.2.1, add_comm],
+  let f : V → V → V := fun a b => (2 : k)⁻¹ • ⟨a.1 * b.1 + b.1 * a.1, by rw [map_add (f := _), hm, hm, a.2.1, b.2.1, add_comm],
       (Commute.add_left (Commute.mul_left a.2.2 b.2.2) (Commute.mul_left b.2.2 a.2.2)).eq⟩
   let B : V →ₗ[k] V →ₗ[k] V := LinearMap.mk₂ k f
     (fun a b c => Subtype.ext (by simp [f, add_mul, mul_add]; abel))
@@ -259,8 +264,8 @@ section Classes
 
 variable {A n : Type} [CommRing A] [IsArtinianRing A] [Fintype n] [DecidableEq n]
 
-omit [IsArtinianRing A] in
 
+omit [IsArtinianRing A] in
 theorem charpoly_conj_GL (g x : GL n A) : (x⁻¹ * g * x).1.charpoly = g.1.charpoly := by
   rw [Units.val_mul, Units.val_mul, Matrix.charpoly_mul_comm, ← mul_assoc, Units.mul_inv, one_mul]
 
@@ -363,9 +368,8 @@ theorem isClosed_class_HA (h : IsCMExt F E σ) (hJ : IsHermND σ J) (k : Type) [
   refine isClosed_class_UJ k (σ := sigR k σ) (J := JR k J) two_ne_zero (fun c a => ?_) (fun a => ?_) ?_ ?_ hg
   · exact map_smul (Algebra.TensorProduct.map (AlgHom.id k k) σ) c a
   · induction a with
-    | zero => simp
     | tmul a b => simp [sigR, hσ]
-    | add a b ha hb => rw [map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   · ext i j
     simp [cT, JR, sigR, inclR, hJ.1]
   · rw [JR, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
@@ -403,10 +407,6 @@ theorem isProperOrbit_realUJ {ε : Fin m → Bool} {g : Formalism.REAL.UJ ε} (h
     IsProperOrbit (cent g) g :=
   isProperOrbit_of_isClosed (isClosed_class_realUJ hg)
 
-theorem isMulCommutative_cent_realUJ {ε : Fin m → Bool} {g : Formalism.REAL.UJ ε} (hg : IsRegSS (ujMat ε g)) :
-    IsMulCommutative (cent g) :=
-  isMulCommutative_cent (ι := ujMat ε) (Units.val_injective.comp Subtype.val_injective) hg
-
 theorem isRegSS_archMat_iff (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) {g : GArch σ J w} :
     IsRegSS (archMat σ J τ g) ↔ IsRegSS (matHom _ σ J g).1 := by
   refine ⟨fun hg => ?_, fun hg => (archMat_apply σ J τ g).symm ▸ hg.map (infEmb τ)⟩
@@ -415,14 +415,5 @@ theorem isRegSS_archMat_iff (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : Emb
   exact Matrix.ext fun i j => (e.symm_apply_apply _).symm
 
 end Points
-
-def IsRegClosed {H : Type} [Group H] [TopologicalSpace H] (g : H) : Prop :=
-  IsMulCommutative (cent g) ∧
-    (∀ [MeasurableSpace H] (dt : Measure (cent g)) [dt.IsMulLeftInvariant], dt.IsMulRightInvariant) ∧
-    IsClosed (range fun x : H => x⁻¹ * g * x) ∧ IsProperOrbit (cent g) g
-
-theorem IsRegClosed.of {H : Type} [Group H] [TopologicalSpace H] {g : H} (h1 : IsMulCommutative (cent g))
-    (h2 : IsClosed (range fun x : H => x⁻¹ * g * x)) (h3 : IsProperOrbit (cent g) g) : IsRegClosed g :=
-  ⟨h1, fun dt _ => isMulRightInvariant_cent h1 dt, h2, h3⟩
 
 end GlobalTheory.Orb

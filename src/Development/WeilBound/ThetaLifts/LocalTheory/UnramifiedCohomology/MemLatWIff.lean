@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.MemLineStab
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddConjEqOneOfFormallyUnramified
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.MemLineStab
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Inertof
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddConjEqOneOfFormallyUnramified
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,14 +33,14 @@ theorem compFin_smul (u : Pl F) (a : AF F) (z : AE F E) : compFin F E u (a • z
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b x => exact congrArg (· ⊗ₜ[F] x) (map_mul (evFin F u) a b)
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 omit [NumberField E] in
 theorem compInf_smul (u : InfinitePlace F) (a : AF F) (z : AE F E) : compInf F E u (a • z) = evInf F u a • compInf F E u z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b x => exact congrArg (· ⊗ₜ[F] x) (map_mul (evInf F u) a b)
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem at_emb {J : Matrix (Fin n) (Fin n) E} (z : GLoc σ J v) : At (evFin F v) ((matHom _ σ J (emb σ J v z)).1 - 1) := by
   intro a ha
@@ -70,7 +74,7 @@ theorem mem_latW_iff' (W : Spc F E n) (y : Fin n → AE F E) :
         change evFin F v a • (evFin F v 1 ⊗ₜ[F] x i) = _
         rw [map_one, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     | zero => exact ⟨at_zero, by simp only [Pi.zero_apply, map_zero]; exact zero_mem _⟩
-    | add a b _ _ ha hb => exact ⟨at_add ha.1 hb.1, by simp only [Pi.add_apply, map_add]; exact add_mem ha.2 hb.2⟩
+    | add a b _ _ ha hb => exact ⟨at_add ha.1 hb.1, by simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha.2 hb.2⟩
     | neg a _ ha => exact ⟨by simpa using at_sub at_zero ha.1, by simp only [Pi.neg_apply, map_neg]; exact neg_mem ha.2⟩
   · rintro ⟨h1, h2⟩
     have key : ∀ z ∈ latLoc F W.L v, (fun i => sgE E v (z i)) ∈ latW W v := fun z hz => by
@@ -81,7 +85,7 @@ theorem mem_latW_iff' (W : Spc F E n) (y : Fin n → AE F E) :
         change sg v a ⊗ₜ[F] x i = (sg v a * 1) ⊗ₜ[F] x i
         rw [mul_one]
       | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-      | add a b _ _ ha hb => simp only [Pi.add_apply, map_add]; exact add_mem ha hb
+      | add a b _ _ ha hb => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha hb
       | neg a _ ha => simp only [Pi.neg_apply, map_neg]; exact neg_mem ha
     convert key _ h2 using 1
     funext i
@@ -116,7 +120,7 @@ theorem iwaLoc {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s : ℕ} (hY
   obtain ⟨ξ, hξ, hJ, hL⟩ := exists_selfDual hB hY v
   haveI := hB.unram
   obtain ⟨θ, hθ⟩ := GlobalTheory.exists_integer_add_conj_eq_one_of_formallyUnramified F E σ hB.cm inferInstance
-  haveI : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨g', rfl⟩ := bk_surj hξ Y.J g
   obtain ⟨q, k, ⟨t, ht⟩, hk, e⟩ := core hB.cm hθ hJ Y.L (unramAt hB v)
     ((isEmpty_or_nonempty _).symm.imp_right (inert_of_local F E σ B hB v)) hL hx (by

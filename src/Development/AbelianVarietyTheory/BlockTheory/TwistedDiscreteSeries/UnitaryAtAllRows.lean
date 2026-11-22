@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem csumAt_smul (a b : K) (f f' : S.Cl → S.V) :
 
 theorem pairAt_eq (h : ∀ a, σ (star a) = starRingEnd ℂ (σ a)) (x y : S.V) : pairAt S σ x y = σ (S.pair x y) := by
   conv_rhs => rw [← S.bV.sum_repr x, ← S.bV.sum_repr y]
-  simp only [pairAt, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pairAt, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, map_mul,
     CSD.gramV, Matrix.of_apply, RingHom.id_apply, starRingEnd_apply, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -51,36 +56,12 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-def RowsUnitary (R : RealDat D A Ks) : Prop := IsUnitaryRep R.gE
-
-def LiftsUnitary (R : RealDat D A Ks) : Prop := ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), IsUnitaryRep (R.gW i σ)
 
 variable (A) in
-
 def DefiniteUnitary : Prop :=
   (∀ t : T, IsUnitaryAtAll (A.MtildeCSD t) (A.leftGroupActionRight t)) ∧
     ∀ (i : Fin D.R.m) (t : T), IsUnitaryAtAll (A.MtCSD i t) (A.leftGroupActionLift i t)
 
-def GroupUnitary (R : RealDat D A Ks) : Prop := RowsUnitary R ∧ LiftsUnitary R ∧ DefiniteUnitary A
-
 end Statement
-
-def FiniteGroupActsUnitarily : Prop :=
-  ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m)
-    (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A),
-    R.Char F → GroupUnitary R
-
-example : ¬ IsUnitaryRep (G := ℂˣ) (H := ℂ) (Representation.ofDistribMulAction ℂ ℂˣ ℂ) := by
-  intro h
-  have := h (Units.mk0 2 two_ne_zero) 1 1
-  simp [Units.smul_def] at this
-  norm_num [map_ofNat] at this
-
-example {G H : Type} [Group G] [NormedAddCommGroup H] [InnerProductSpace ℂ H] (ρ : Representation ℂ G H)
-    (h : IsUnitaryRep ρ) (g : G) (x : H) : ‖ρ g x‖ = ‖x‖ := by
-  have := h g x x
-  rw [inner_self_eq_norm_sq_to_K, inner_self_eq_norm_sq_to_K] at this
-  have h2 : ‖ρ g x‖ ^ 2 = ‖x‖ ^ 2 := by exact_mod_cast this
-  exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).1 h2
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UnitaryAtAllPlaces

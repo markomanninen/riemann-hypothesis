@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+
+@[expose] public section
+
 open MeasureTheory Topology Filter GlobalTheory.CompanionTheory.NullFr
 open scoped NNReal ENNReal Matrix
 
@@ -80,7 +85,8 @@ theorem alt_of_field {K : Type} [Field K] (π : A →+* K) (hs : Function.Surjec
         simpa [Matrix.col_apply, Finset.sum_apply] using this
       have hz : π (v p i - ∑ k, l (b k) * v p k) = 0 := by
         have hw' : ∀ k, π (v p k) = w p k := fun k => rfl
-        rw [map_sub, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum]
         simp only [map_mul, hl, hw']
         have hsum : ∑ k, b k * w p k = w p i := by
           have hsplit : ∀ k, b k * w p k = -(g i)⁻¹ * (g k * w p k) +

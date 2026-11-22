@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,14 +24,15 @@ def lowU (ν : Matrix D A k) : GL (A ⊕ D) k where
 
 theorem val_lowU (ν : Matrix D A k) : (lowU ν).1 = fromBlocks 1 0 ν 1 := rfl
 
-open Classical in
 
+open Classical in
 def blockDet (j : GL (A ⊕ D) k) : kˣ :=
   if h : j.1.toBlocks₂₂.det ≠ 0 then Units.mk0 _ h else 1
 
 theorem val_emb_one (m : GL D k) :
     (emb₂ k (Equiv.refl (A ⊕ D)) (1, m)).1 = fromBlocks 1 0 0 m.1 := by
-  rw [val_emb₂]; simp
+  classical
+  ext (i | i) (j | j) <;> simp [emb₂, leviEmb, leviTwo, two, Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.blockDiagonal'_apply]
 
 theorem blockDet_lowU_emb (ν : Matrix D A k) (m : GL D k) :
     blockDet (lowU ν * emb₂ k (Equiv.refl (A ⊕ D)) (1, m)) = GeneralLinearGroup.det m := by
@@ -35,7 +40,7 @@ theorem blockDet_lowU_emb (ν : Matrix D A k) (m : GL D k) :
     rw [Units.val_mul, val_emb_one, val_lowU, fromBlocks_multiply]; simp
   have h0 : (lowU ν * emb₂ k (Equiv.refl (A ⊕ D)) (1, m)).1.toBlocks₂₂.det ≠ 0 := by
     rw [h]; exact (GeneralLinearGroup.det m).ne_zero
-  rw [blockDet, dif_pos h0]; ext; rw [Units.val_mk0, h, GeneralLinearGroup.val_det_apply]
+  rw [blockDet, dite_eq_left h0]; ext; rw [Units.val_mk0, h, GeneralLinearGroup.val_det_apply]
 
 theorem emb_mul_lowU (m : GL D k) (ν : Matrix D A k) :
     emb₂ k (Equiv.refl (A ⊕ D)) (1, m) * lowU ν = lowU (m.1 * ν) * emb₂ k (Equiv.refl (A ⊕ D)) (1, m) := by
@@ -93,8 +98,8 @@ theorem emb_mem {κ : GL D k} (h : κ ∈ KO k D) : emb₂ k (Equiv.refl (A ⊕ 
     · exact zero_mem _
     · exact h2 i j
 
-variable (k D) in
 
+variable (k D) in
 def mLat : AddSubgroup (D → k) where
   carrier := {v | ∀ i, valuation k (v i) < 1}
   add_mem' ha hb i := by simpa using Valuation.map_add_lt _ (ha i) (hb i)

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrBase
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ExistsEqEllMul
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrBase
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.ExistsEqEllMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ lemma valuation_natCast_le_one' {K : Type*} [Field K] [ValuativeRel K] (n : ℕ)
 
 private theorem isClosed_setOf_valuation_le_one {K : Type} [Field K] [ValuativeRel K] [TopologicalSpace K]
     [IsNonarchimedeanLocalField K] : IsClosed {x : K | valuation K x ≤ 1} := by
-  have h := IsValuativeTopology.isClosed_closedBall (R := K) (v := valuation K) 1
+  have h := Valuation.isClosed_closedBall (R := K) (v := valuation K) 1
   first
   | (convert h using 3 with x; simp)
   | simpa [Valuation.restrict_le_one_iff] using h
@@ -109,7 +113,8 @@ theorem LocFam.linearIndependent [Fintype ι] (D : LocFam F ℓ ι) (hD : D.Over
       ring
     have hιX : D.ιF i (X : F) =
         -((ℓ : D.K i) * ∑ k, algebraMap ℚ_[ℓ] (D.K i) (d k) * D.ιF i (b k)) := by
-      rw [hXF, map_sum, Finset.sum_congr rfl fun k _ => hterm k, Finset.sum_sub_distrib, hrel i,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hXF, map_sum, Finset.sum_congr rfl fun k _ => hterm k, Finset.sum_sub_distrib, hrel i,
         Finset.mul_sum]
       ring
     have hsum : valuation (D.K i) (∑ k, algebraMap ℚ_[ℓ] (D.K i) (d k) * D.ιF i (b k)) ≤ 1 := by
@@ -151,7 +156,8 @@ theorem LocFam.injective_of_linearIndependent [Fintype ι] (D : LocFam F ℓ ι)
   have hb : ∀ k, bb k = 1 ⊗ₜ integralBasis F k := fun k => Algebra.TensorProduct.basis_apply _ _
   refine (injective_iff_map_eq_zero D.Φ).2 fun x hx => ?_
   rw [← bb.sum_repr x] at hx ⊢
-  simp only [map_sum, map_smul, hb] at hx
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hb] at hx
   have h0 := (Fintype.linearIndependent_iff.1 hl) (fun k => bb.repr x k) hx
   simp [h0]
 

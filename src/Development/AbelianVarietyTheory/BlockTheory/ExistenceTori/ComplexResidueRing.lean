@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,12 +49,6 @@ def ptUp (h : c.F ≤ c'.F) {S : Type} [CommRing S] [Algebra c'.F S] (y : FrPt X
   s := y.s
   gen := y.gen
 
-def ptEquiv (h : c.F ≤ c'.F) (S : Type) [CommRing S] [Algebra c'.F S] : FrPt Xo c' S ≃ FrPt Xo c (Res h S) where
-  toFun := ptDown h
-  invFun := ptUp h
-  left_inv _ := rfl
-  right_inv _ := rfl
-
 def embRes (h : c.F ≤ c'.F) (σ' : c'.F →+* ℂ) : c.F →+* ℂ := σ'.comp (incl h)
 
 variable {r : ℕ}
@@ -79,39 +77,8 @@ def IsComb (h : c.F ≤ c'.F) {m : ℕ} (b : Fin m → c'.F) (f : Fin m → Rul 
   ∀ (p : TRing c'.F) (y : FrPt Xo c' p.R),
     f' p y = ∑ i, algebraMap c'.F p.R (b i) * unRes (evR Xo c (f i) (ptDown h y))
 
-set_option synthInstance.maxHeartbeats 200000 in
-theorem isComb_iff (h : c.F ≤ c'.F) {m : ℕ} (b : Fin m → c'.F) (f : Fin m → Rul Xo c) (f' : Rul Xo c') :
-    IsComb h b f f' ↔ f' = ∑ i, b i • ruleUp h (f i) := by
-  have key : ∀ (p : TRing c'.F) (y : FrPt Xo c' p.R), (∑ i, b i • ruleUp h (f i)) p y =
-      ∑ i, algebraMap c'.F p.R (b i) * unRes (evR Xo c (f i) (ptDown h y)) := by
-    intro p y
-    rw [Finset.sum_apply, Finset.sum_apply]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [Pi.smul_apply, Pi.smul_apply, Algebra.smul_def]
-    rfl
-  constructor
-  · intro hf
-    funext p y
-    rw [key, hf p y]
-  · intro hf p y
-    rw [hf, key]
 
 variable (Xo)
-
-def CuspIsComb (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  ∀ f' ∈ cusp Xo c' (unfFamUp h U) a n, ∃ (m : ℕ) (b : Fin m → c'.F) (f : Fin m → Rul Xo c),
-    (∀ i, f i ∈ cusp Xo c U a n) ∧ IsComb h b f f'
-
-def CombIsCusp (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  ∀ (m : ℕ) (b : Fin m → c'.F) (f : Fin m → Rul Xo c) (f' : Rul Xo c'),
-    (∀ i, f i ∈ cusp Xo c U a n) → IsComb h b f f' → f' ∈ cusp Xo c' (unfFamUp h U) a n
-
-def CuspIndep (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  ∀ (m : ℕ) (b : Fin m → c'.F) (f : Fin m → Rul Xo c),
-    (∀ i, f i ∈ cusp Xo c U a n) → LinearIndependent c.F f → IsComb h b f 0 → b = 0
-
-def CuspBaseChange (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) : Prop :=
-  CuspIsComb Xo h U a n ∧ CombIsCusp Xo h U a n ∧ CuspIndep Xo h U a n
 
 def ActionExtends (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ)
     {G : Type} [Group G] (ρ : G →* Module.End c.F (cusp Xo c U a n))
@@ -119,9 +86,5 @@ def ActionExtends (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r)
   ∀ (g : G) (m : ℕ) (b : Fin m → c'.F) (f : Fin m → cusp Xo c U a n) (f' : cusp Xo c' (unfFamUp h U) a n),
     IsComb h b (fun i => (f i : Rul Xo c)) (f' : Rul Xo c') →
       IsComb h b (fun i => (ρ g (f i) : Rul Xo c)) (ρ' g f' : Rul Xo c')
-
-example (h : c.F ≤ c'.F) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ)
-    {G : Type} [Group G] : ActionExtends Xo h U a n (G := G) 1 1 :=
-  fun _ _ _ _ _ hf => hf
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ComplexResidueRing

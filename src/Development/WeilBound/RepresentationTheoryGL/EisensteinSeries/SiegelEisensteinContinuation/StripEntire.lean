@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,14 +55,17 @@ structure IsPar (Γ K P : Subgroup G) (c : G → ℂ) : Prop where
 
 def secSp (K P : Subgroup G) (c : G → ℂ) (ρ : K →* (W →L[ℂ] W)) : Submodule ℂ W where
   carrier := {w | ∀ r : K, (r : G) ∈ P → c r • ρ r w = w}
-  add_mem' := fun {a b} ha hb r hr => by rw [map_add, smul_add, ha r hr, hb r hr]
+  add_mem' := fun {a b} ha hb r hr => by rw [map_add (f := _), smul_add, ha r hr, hb r hr]
   zero_mem' := fun r _ => by simp
   smul_mem' := fun a w hw r hr => by rw [map_smul, smul_comm, hw r hr]
 
-open Classical in
 
+open Classical in
 def sec (K P : Subgroup G) (c : G → ℂ) (ρ : K →* (W →L[ℂ] W)) (g : G) : W →L[ℂ] W :=
-  if h : ∃ k : K, g * (k : G)⁻¹ ∈ P then c (g * (h.choose : G)⁻¹) • ρ h.choose⁻¹ else 0
+  by
+    classical
+    exact if h : ∃ k : K, g * (k : G)⁻¹ ∈ P then
+      c (g * (h.choose : G)⁻¹) • ρ h.choose⁻¹ else 0
 
 abbrev Cos (P Γ : Subgroup G) : Type := Quotient (QuotientGroup.rightRel (P.subgroupOf Γ))
 

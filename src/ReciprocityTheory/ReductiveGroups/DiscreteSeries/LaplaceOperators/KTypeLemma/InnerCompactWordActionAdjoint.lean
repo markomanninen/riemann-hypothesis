@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.IsKRelationCompactWordAction
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.IsKRelationCompactWordAction
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,13 +28,13 @@ theorem klw_cons_cons (a b : Fin n) (p q : Fin n × Fin n) (w w' : List (Fin n �
   congr 1
   · split_ifs with h
     · subst h
-      exact Finsupp.mapDomain_apply (f := fun x => x :: w') (fun x y hxy => (List.cons.inj hxy).1) _ _
+      exact Finsupp.mapDomain_apply_of_injective (f := fun x => x :: w') (fun x y hxy => (List.cons.inj hxy).1) _ _
     · rw [Finsupp.mapDomain_of_notMem_range]
       rintro ⟨x, hx⟩
       exact h (List.cons.inj hx).2.symm
   · split_ifs with h
     · subst h
-      exact Finsupp.mapDomain_apply (f := fun x => q :: x) List.cons_injective _ _
+      exact Finsupp.mapDomain_apply_of_injective (f := fun x => q :: x) List.cons_injective _ _
     · rw [Finsupp.mapDomain_of_notMem_range]
       rintro ⟨x, hx⟩
       exact h (List.cons.inj hx).1.symm
@@ -71,7 +75,7 @@ theorem klw_symm (a b : Fin n) (w w' : List (Fin n × Fin n)) :
     cases w' with
     | nil => rw [klw_cons_nil]; simp [adLW]
     | cons q w' =>
-      rw [klw_cons_cons, klw_cons_cons, map_add, apply_ite (starRingEnd ℂ), apply_ite (starRingEnd ℂ)]
+      rw [klw_cons_cons, klw_cons_cons, map_add (f := _), apply_ite (starRingEnd ℂ), apply_ite (starRingEnd ℂ)]
       simp only [map_zero, kl_adL_symm, ih]
       by_cases h1 : w' = w
       · subst h1
@@ -88,7 +92,7 @@ variable {M : Type*} [NormedAddCommGroup M] [InnerProductSpace ℂ M] {ε : Fin 
 def ipK (V : Submodule ℂ M) : KS (n := n) V →ₗ⋆[ℂ] KS (n := n) V →ₗ[ℂ] ℂ where
   toFun x := x.sum fun p v => (innerₛₗ ℂ v) ∘ₗ Finsupp.lapply p
   map_add' x y := Finsupp.sum_add_index' (fun p => by simp) (fun p v v' => by
-    rw [map_add, LinearMap.add_comp])
+    rw [map_add (f := _), LinearMap.add_comp])
   map_smul' c x := by
     rw [Finsupp.sum_smul_index' (fun p => by simp), Finsupp.smul_sum]
     exact Finsupp.sum_congr fun p _ => by rw [map_smulₛₗ, LinearMap.smul_comp]
@@ -99,18 +103,19 @@ theorem ipK_single (p : List (Fin n × Fin n) × Fin n) (v : V) (y : KS (n := n)
   rw [Finsupp.sum_single_index (by simp)]; rfl
 
 theorem ipK_apply (x y : KS (n := n) V) : ipK V x y = ∑ p ∈ x.support, ⟪x p, y p⟫_ℂ := by
-  conv_lhs => rw [← Finsupp.sum_single x, Finsupp.sum, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← Finsupp.sum_single x, Finsupp.sum, map_sum, LinearMap.sum_apply]
   simp only [ipK_single]
 
 theorem ipK_symm (x y : KS (n := n) V) : conj (ipK V y x) = ipK V x y := by
   classical
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
   | single p v =>
     induction y using Finsupp.induction_linear with
     | zero => simp
-    | add y y' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+    | add y y' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
     | single q u =>
       rw [ipK_single, ipK_single, Finsupp.single_apply, Finsupp.single_apply]
       by_cases h : p = q
@@ -122,7 +127,7 @@ theorem compactWordAction_single_apply (hV : IsKStableSub ε E V) {a b : Fin n} 
     compactWordAction ε E V hV a b (Finsupp.single p v) q = (if p.2 = q.2 then adLW a b p.1 q.1 • v else 0) +
       (if p = q then (⟨E a b v, hV a b hab v v.2⟩ : V) else 0) := by
   classical
-  rw [compactWordAction_single, dif_pos hab, Finsupp.add_apply, Finsupp.single_apply, Finsupp.finsetSum_apply]
+  rw [compactWordAction_single, dite_eq_left hab, Finsupp.add_apply, Finsupp.single_apply, Finsupp.finsetSum_apply]
   congr 1
   simp only [Finsupp.smul_apply, Finsupp.single_apply, Prod.ext_iff]
   by_cases h : p.2 = q.2
@@ -137,11 +142,11 @@ theorem inner_compactWordAction_adjoint (hV : IsKStableSub ε E V) (hU : IsKUnit
   classical
   induction x using Finsupp.induction_linear with
   | zero => simp
-  | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h']
+  | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h']
   | single p v =>
     induction y using Finsupp.induction_linear with
     | zero => simp
-    | add y y' h h' => simp only [map_add, h, h']
+    | add y y' h h' => simp only [map_add (f := _), h, h']
     | single q u =>
       rw [← ipK_symm, ipK_single, ipK_single, compactWordAction_single_apply hV hab, compactWordAction_single_apply hV hab.symm,
         inner_conj_symm, inner_add_left, inner_add_right]
@@ -166,7 +171,8 @@ theorem lift0 (hV : IsKStableSub ε E V) [FiniteDimensional ℂ V] (hE : IsGlRep
     Module.Finite.equiv (Finsupp.supportedEquivFinsupp (M := V) (R := ℂ) S).symm
   have hS : IsKStableSub ε (compactWordAction ε E V hV) (Finsupp.supported V ℂ S) := by
     intro a b hab y hy
-    rw [← Finsupp.sum_single y, Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finsupp.sum_single y, Finsupp.sum, map_sum]
     refine Submodule.sum_mem _ fun p hp => ?_
     have hpS : p.1.length ≤ R := hy hp
     rw [compactWordAction_single]
@@ -174,18 +180,20 @@ theorem lift0 (hV : IsKStableSub ε E V) [FiniteDimensional ℂ V] (hE : IsGlRep
       Submodule.smul_mem _ _ (Finsupp.single_mem_supported ℂ _ ?_)) ?_
     · show w'.length ≤ R
       rw [TRA.adLW_length a b _ _ hw']; exact hpS
-    · rw [dif_pos hab]
+    · rw [dite_eq_left hab]
       exact Finsupp.single_mem_supported ℂ _ hpS
   let cr : InnerProductSpace.Core ℂ (KS (n := n) V) :=
     { inner := fun x y => ipK V x y
       conj_inner_symm := fun x y => ipK_symm x y
       re_inner_nonneg := fun x => by
-        rw [ipK_apply, map_sum]; exact sum_nonneg fun p _ => inner_self_nonneg
-      add_left := fun x y z => by rw [map_add, LinearMap.add_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [ipK_apply, map_sum]; exact sum_nonneg fun p _ => inner_self_nonneg
+      add_left := fun x y z => by rw [map_add (f := _), LinearMap.add_apply]
       smul_left := fun x y r => by rw [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
       definite := fun x hx => by
         have h1 := congrArg RCLike.re hx
-        rw [ipK_apply, map_sum, map_zero,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [ipK_apply, map_sum, map_zero,
           sum_eq_zero_iff_of_nonneg fun p _ => inner_self_nonneg] at h1
         ext1 p
         by_cases hp : p ∈ x.support

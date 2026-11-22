@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetOpIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,5 @@ def JetOpWeyl : Prop :=
       ∀ (c : K) (J : (DVar ι a b →₀ ℕ) → K), (∀ m, InDeg lam s' m → w.valuation K (c * J m) ≤ 1) →
         ∀ F ∈ localization₂ w.asIdeal (delK lam fun τ => dualFr (M τ)),
           c • jetOp lam lam' J n F ∈ localization₂ w.asIdeal (delK lam' fun τ => dualFr (MW τ))
-
-def LatticeFactsAt {X : Fields} (A : Amb X) : Prop := ∀ a b : ℕ, Even a → Even b → A.LaHyp a b ∅ ∧ A.ESmooth a b
-
-def FamilyFacts (D : D7) (EX : ErrX D) {δ : ℂ} (B : Base D D.host.ccK δ) (χ : TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ) : Prop :=
-  HostTie EX → AnTie D δ χ cD → B.VecP χ ∧ B.IntP χ ∧ LatticeFactsAt (ambOf (recSeam D) B χ cD)
 
 end GlobalTheory.ColPeriod

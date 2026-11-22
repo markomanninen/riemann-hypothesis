@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CupProductVanishing.H2MapInjective
+module
+
+public import Formalism.WachLatticeTwists.CupProductVanishing.H2MapInjective
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

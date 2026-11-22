@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
-import Development.AbelianVarietyTheory.Definitions.Foundations.FrobLiftWittClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FrobLiftWittClosure
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.Col PowerSeries
@@ -28,8 +32,8 @@ private theorem subsingleton_of_isUnit_natCast_of_isAdicComplete {R : Type} [Com
     rw [htop, Ideal.top_pow, Submodule.top_smul]; exact SModEq.top)
   exact sub_eq_zero.1 h
 
-open PowerSeries in
 
+open PowerSeries in
 theorem _root_.GlobalTheory.Col.exists_basis_one_add_X_pow (R : Type) [CommRing R] (p : ℕ) [hp : Fact p.Prime]
     (hR : IsAdicComplete (Ideal.span {(p : R)}) R) :
     ∃ b : @Module.Basis (Fin p) (PowerSeries R) (PowerSeries R) _ _

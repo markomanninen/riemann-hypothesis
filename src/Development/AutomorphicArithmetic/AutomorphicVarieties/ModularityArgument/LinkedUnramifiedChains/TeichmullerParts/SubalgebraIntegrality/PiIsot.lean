@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+
+@[expose] public section
+
 open UpperTheory.V.Z.J.D
 open scoped TensorProduct
 
@@ -106,7 +111,7 @@ private def split (Wi : I → Type) [∀ i, AddCommGroup (Wi i)] [∀ i, Module 
         intro _ m i c x
         by_cases h : i = i₀
         · subst h
-          simp only [Function.update_self, res_update_self, TensorProduct.smul_tmul']
+          simp only [Function.update_self, res_update_self, TensorProduct.smul_tmul', RingHom.id_apply]
         · classical
           simp only [Function.update_of_ne (Ne.symm h), res_update i₀ i h,
             MultilinearMap.map_update_smul, TensorProduct.tmul_smul] }
@@ -137,7 +142,7 @@ private lemma split_range (Wi : I → Type) [∀ i, AddCommGroup (Wi i)] [∀ i,
     | add a b ha hb =>
       obtain ⟨x, hx⟩ := ha
       obtain ⟨y, hy⟩ := hb
-      exact ⟨x + y, by rw [map_add, hx, hy, TensorProduct.tmul_add]⟩
+      exact ⟨x + y, by rw [map_add (f := _), hx, hy, TensorProduct.tmul_add]⟩
 
 private lemma piRep_tprod {Gi Wi : I → Type} [∀ i, Group (Gi i)] [∀ i, AddCommGroup (Wi i)]
     [∀ i, Module ℂ (Wi i)] (τ : ∀ i, Representation ℂ (Gi i) (Wi i)) (g : ∀ i, Gi i) (m : ∀ i, Wi i) :
@@ -155,7 +160,7 @@ private lemma split_intw [Fintype I] {Gi Wi : I → Type} [∀ i, Group (Gi i)] 
     rw [map_smul, map_smul, map_smul, map_smul, piRep_tprod, split_tprod, split_tprod]
     simp only [box, Representation.tprod_apply, TensorProduct.map_tmul, MonoidHom.comp_apply,
       MonoidHom.coe_fst, MonoidHom.coe_snd, piRep_tprod]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end Ins
 

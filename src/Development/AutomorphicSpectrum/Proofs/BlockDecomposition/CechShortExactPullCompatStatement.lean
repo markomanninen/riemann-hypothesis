@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechShortExactPullCompat
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.Bridge
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechShortExactPullCompat
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.CechDifferentialPullback.Bridge
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TopologicalSpace Opposite Limits GroundTheory.Arith.SchemeCoh GlobalTheory.SheafPull CrystallineSemistableComparison CrystallineSemistableComparison.Om CrystallineSemistableComparison.Om.Cech
 set_option maxHeartbeats 1000000 in
@@ -13,4 +18,17 @@ theorem _root_.GlobalTheory.T.cech_short_exact_pull_compat : ∀ {X Y : TopCat.{
     (h₂₃ : ∀ W x, φ₃.app W (g₂.app W x) = g₂'.app _ (φ₂.app W x)) (n : ℕ) (σ : cocycles Q V n),
     cechPullH f φ₁ V U τ hτ (n + 1) (hC.delta n σ) =
       hC'.delta n ⟨pullCoch f φ₃ V U τ hτ n σ.1, pullCoch_mem_cocycles f φ₃ V U τ hτ σ.2⟩ := by
-  first | exact @GlobalTheory.CompanionTheory.OmCechDelta.cechPullH_delta | exact GlobalTheory.CompanionTheory.OmCechDelta.cechPullH_delta | (intros; apply GlobalTheory.CompanionTheory.OmCechDelta.cechPullH_delta <;> assumption)
+  intro X Y f κ ι V U τ hτ F I Q F' I' Q' g₁ g₂ g₁' g₂' hC hC' φ₁ φ₂ φ₃ h₁₂ h₂₃ n σ
+  obtain ⟨t, ρ, hρ, ht, hρt, hc⟩ := hC.delta_spec n σ
+  have ht' : push U g₂' n (pullCoch f φ₂ V U τ hτ n t) = pullCoch f φ₃ V U τ hτ n σ.1 := by
+    rw [GlobalTheory.CompanionTheory.OmCechDelta.push_pullCoch f V U τ hτ g₂ g₂' φ₂ φ₃ h₂₃ n t, ht]
+  have hρt' : push U g₁' (n + 1) (pullCoch f φ₁ V U τ hτ (n + 1) ρ) =
+      d I' U n (pullCoch f φ₂ V U τ hτ n t) := by
+    rw [GlobalTheory.CompanionTheory.OmCechDelta.push_pullCoch f V U τ hτ g₁ g₁' φ₁ φ₂ h₁₂ (n + 1) ρ,
+      hρt, pullCoch_d]
+  have hρ' : d F' U (n + 1) (pullCoch f φ₁ V U τ hτ (n + 1) ρ) = 0 := by
+    rw [← pullCoch_d, hρ, map_zero]
+  rw [hc, cechPullH_cls]
+  exact hC'.deltaRel_unique
+    ⟨pullCoch f φ₂ V U τ hτ n t, pullCoch f φ₁ V U τ hτ (n + 1) ρ, hρ', ht', hρt', rfl⟩
+    (hC'.delta_spec n ⟨pullCoch f φ₃ V U τ hτ n σ.1, pullCoch_mem_cocycles f φ₃ V U τ hτ σ.2⟩)

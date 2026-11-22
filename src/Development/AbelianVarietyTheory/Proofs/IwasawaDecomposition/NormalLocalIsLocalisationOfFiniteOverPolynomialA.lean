@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsQuasiFinitePolynomialMapStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsQuasiFinitePolynomialMapStatement
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -52,7 +56,7 @@ theorem integralClosure_of_fractions (P A : Type) [CommRing P] [IsDomain P] [IsN
         constructor
         · intro hx
           obtain ⟨a, rfl⟩ := IsIntegrallyClosed.isIntegral_iff.mp (hx.tower_top (A := A))
-          have ha : IsIntegral P a := (isIntegral_algebraMap_iff hιinj).mp hx
+          have ha : IsIntegral P a := (isIntegral_algebraMap_iff (A := A) (B := K)).mp hx
           exact ⟨⟨a, ha⟩, rfl⟩
         · rintro ⟨y, rfl⟩
           exact (y.2.algebraMap (B := K)) }

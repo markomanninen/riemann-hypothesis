@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionPoints
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionPoints
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -18,7 +23,6 @@ local notation "ι" => algebraMap 𝒪 K
 local notation "ρ" => residue 𝒪
 
 omit [DecidableEq (ResidueField 𝒪)] in
-
 theorem add_notMem_of_notMem_range {X₁ Y₁ X₂ Y₂ : K} (h₁ : (curveK K W).Nonsingular X₁ Y₁)
     (hX₁ : X₁ ∉ Set.range ι) (h₂ : (curveK K W).Nonsingular X₂ Y₂) (hX₂ : X₂ ∉ Set.range ι)
     {x y : 𝒪} (h : (curveK K W).Nonsingular (ι x) (ι y)) :
@@ -78,7 +82,7 @@ theorem add_mem_E0Set_and_reducePoint_add {P Q : (curveK K W).Point} (hP : P ∈
             · exact absurd h hy
           have hD : ρ (y₁ + y₂ + W.a₁ * x₁ + W.a₃) ≠ 0 := by
             intro h0; apply hy
-            rw [map_add, map_add, map_add, map_mul] at h0
+            rw [map_add (f := _), map_add (f := _), map_add (f := _), map_mul] at h0
             simp only [WeierstrassCurve.Affine.negY, WeierstrassCurve.map_a₁,
               WeierstrassCurve.map_a₃, ← hx]
             linear_combination h0
@@ -94,9 +98,6 @@ def E0Subgroup : AddSubgroup (curveK K W).Point where
   zero_mem' := zero_mem_E0Set K W
   add_mem' hP hQ := (add_mem_E0Set_and_reducePoint_add K W hP hQ).1
   neg_mem' hP := (neg_mem_and_reduce K W hP).1
-
-theorem mem_E0Subgroup_iff (P : (curveK K W).Point) : P ∈ E0Subgroup K W ↔ P ∈ E0Set K W :=
-  Iff.rfl
 
 def reduceE0Hom : E0Subgroup K W →+ (curveRed W).Point where
   toFun P := reducePoint K W P

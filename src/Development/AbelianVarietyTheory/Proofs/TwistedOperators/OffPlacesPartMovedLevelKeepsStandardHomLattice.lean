@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulMtCutPartCompl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeStabilizerOfLocalIntegralInBasis
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmulMtCutPartCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeStabilizerOfLocalIntegralInBasis
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatSelfDualOfUnimod
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -17,26 +22,28 @@ open GlobalTheory.StdFrames
 
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 theorem cpt_idemSum {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) (Q : Pl D.host.E) :
     cpt Q (toEAf D e) = if Q ∈ P then 1 else 0 := by
   classical
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   have h : ∀ PP ∈ P, cpt Q (toEAf D (es PP)) = if Q = PP then 1 else 0 := fun PP hP => by
     by_cases hq : Q = PP
     · subst hq; rw [if_pos rfl]; exact (cpt_of_isIdemAt (hes _ hP)).1
     · rw [if_neg hq]; exact (cpt_of_isIdemAt (hes PP hP)).2 Q hq
   rw [Finset.sum_congr rfl h, Finset.sum_ite_eq]
 
-open Classical in
 
+open Classical in
 theorem cpt_cA_idemSum (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) (Q : Pl D.host.E) :
     cpt Q (toEAf D (cA D e)) = if GlobalTheory.IdemSupport.cP Q ∈ P then 1 else 0 := by
   classical
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := he
-  rw [map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum]
   have hc := (GlobalTheory.IdemSupport.supported_group_and_prime_idempotents V).2.2.2
   have h : ∀ PP ∈ P, cpt Q (toEAf D (cA D (es PP))) = if GlobalTheory.IdemSupport.cP Q = PP then 1 else 0 := fun PP hP => by
     have hi := hc PP (GlobalTheory.IdemSupport.cP PP) (es PP) (hes PP hP) ((GlobalTheory.IdemSupport.isConjPl_iff PP _).2 rfl)
@@ -50,7 +57,7 @@ theorem cpt_cA_idemSum (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : I
 
 theorem cpt_pair_zero (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) (Q : Pl D.host.E)
     (hQ : ∀ w ∈ P, Q.under (𝓞 D.host.F) ≠ w.under (𝓞 D.host.F)) : cpt Q (toEAf D (e + cA D e)) = 0 := by
-  rw [map_add, map_add, cpt_idemSum he, cpt_cA_idemSum V he, if_neg, if_neg, add_zero]
+  rw [map_add (f := _), map_add (f := _), cpt_idemSum he, cpt_cA_idemSum V he, if_neg, if_neg, add_zero]
   · exact fun h => hQ _ h (GlobalTheory.IdemSupport.under_cP Q).symm
   · exact fun h => hQ Q h rfl
 
@@ -59,7 +66,7 @@ theorem cpt_pair_one (V : HSp D) {e : AE D} {P : Finset (Pl D.host.E)} (he : IsI
   have h0 : cpt Q (toEAf D e) * cpt Q (toEAf D (cA D e)) = 0 := by
     rw [← map_mul, ← map_mul, he.2, map_zero, map_zero]
   rw [cpt_idemSum he, cpt_cA_idemSum V he] at h0
-  rw [map_add, map_add, cpt_idemSum he, cpt_cA_idemSum V he]
+  rw [map_add (f := _), map_add (f := _), cpt_idemSum he, cpt_cA_idemSum V he]
   obtain ⟨w, hw, hu⟩ := hQ
   rcases GlobalTheory.IdemSupport.eq_or_eq_cP hu with rfl | rfl
   · rw [if_pos hw, one_mul] at h0
@@ -106,12 +113,12 @@ theorem inBasis_mix {n : ℕ} (β X Y : GL (Fin n) (Lev.EAf D)) (c : Lev.EAf D)
     rw [← map_one (inBasis rfl β Q)]
     refine Units.ext (Matrix.ext fun i j => ?_)
     rw [inBasis_apply, inBasis_apply, hM, h1]
-    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, map_sub, map_one, h0, zero_mul,
+    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_sub, map_one, h0, zero_mul,
       zero_add, sub_zero, one_mul, Units.val_one]
   · intro h0
     refine Units.ext (Matrix.ext fun i j => ?_)
     rw [inBasis_apply, inBasis_apply, hM]
-    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul, map_sub, map_one, h0, one_mul,
+    simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_sub, map_one, h0, one_mul,
       sub_self, zero_mul, add_zero]
 
 theorem mulVec_mem_hatL_of_St {n : ℕ} {β : GL (Fin n) (Lev.EAf D)} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)}
@@ -191,8 +198,8 @@ theorem finE_cut_mem_St (V : HSp D) (β Uf K : GL (Fin V.rank) (Lev.EAf D)) (g :
 
 end GlobalTheory.OffPartLattice
 
-open GlobalTheory.OffPartLattice Matrix in
 
+open GlobalTheory.OffPartLattice Matrix in
 theorem GlobalTheory.OffPartLattice.offPart_keeps_stdLatO : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T} (S : GridChoice W U) {t : T},
     t ∈ U → ∀ {Φ : G.Datum} {β : CosFam G t} (j : ℕ) (hj : j + 1 < D.R.m) (k : FinPt G (.top (j + 1))),
     finG (G.V (.top (j + 1))) k ∈ S.levTop t Φ β (j + 1) hj → ∀ e : AE D, IsIdemSum e (locPl G t) →

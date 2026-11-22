@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,21 +15,21 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.Inde
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-variable (F E) in
 
+variable (F E) in
 abbrev Ten (n d : ℕ) : Type := Matrix (Fin n) (Fin d) (AE F E)
 
-variable (σ) in
 
+variable (σ) in
 def EpsHerm {n : ℕ} (J : Matrix (Fin n) (Fin n) E) : Prop :=
   ((∀ i j, σ (J j i) = J i j) ∨ ∀ i j, σ (J j i) = -J i j) ∧ J.det ≠ 0
 
-variable (F) in
 
+variable (F) in
 def rId (t : ℝ) : AF F := 1 + realAd F (Real.exp t - 1)
 
-variable (σ) in
 
+variable (σ) in
 structure Frame {n : ℕ} (J : Matrix (Fin n) (Fin n) E) where
 
   r : ℕ
@@ -78,8 +82,8 @@ variable {n d : ℕ}
 
 def sz (τ : ∀ w : InfinitePlace F, EmbOver E w) (z : Ten F E n d) : ℝ := ∑ w, ∑ i, ∑ j, ‖piInf (τ w) (z i j)‖
 
-open Classical in
 
+open Classical in
 def maj (τ : ∀ w : InfinitePlace F, EmbOver E w) (C : Set (Ten F E n d)) (N : ℕ) (z : Ten F E n d) : ℝ :=
   if ∃ c ∈ C, At (evI F) (z - c) then ((1 + sz τ z) ^ N)⁻¹ else 0
 
@@ -91,8 +95,8 @@ def fullRank (E : Type) [Field E] (n d : ℕ) : Set (Matrix (Fin n) (Fin d) E) :
 
 scoped instance measAdPi {κ : Type} : MeasurableSpace (κ → AF F) := borel _
 
-variable (F) in
 
+variable (F) in
 def coef {κ : Type} [Fintype κ] (ψ : AddChar (AF F) ℂ) (μ : Measure (κ → AF F)) (Φ₁ Φ₂ : (κ → AF F) → ℂ)
     (w : (κ → AF F) × (κ → AF F)) : ℂ := ∫ u, schr ψ w Φ₁ u * (starRingEnd ℂ) (Φ₂ u) ∂μ
 
@@ -133,9 +137,6 @@ def ConeExp : Prop :=
 
 def PosWt : Prop :=
   ∀ (n d q y : ℕ) (s : Fin q → ℝ) (t : Fin y → ℝ), s ∈ Cone q → t ∈ Cone y → posWt n d s t ≤ d * ∑ i, s i + n * ∑ j, t j ∧ 0 ≤ viol s t ∧ ∀ i ≤ q, psum s i ≤ psum t i + viol s t
-
-def Major : Prop :=
-  ∀ (q : ℕ) (s t : Fin q → ℝ), s ∈ Cone q → t ∈ Cone q → (∀ i ≤ q, psum s i ≤ psum t i) → ∑ i, ∑ j, min (s i) (s j) - ∑ i, ∑ j, min (s i) (t j) ≤ ∑ j : Fin q, ((q : ℝ) - 1 - j.val) * t j
 
 def ExpSo : Prop :=
   ∀ (n d q y Y : ℕ), q ≤ Y → y ≤ Y → 2 * Y + 1 < n → 2 * n ≤ d → ∃ m : ℝ, ∀ s ∈ Cone q, ∀ t ∈ Cone y, posWt n d s t / 2 - rho2 n s - m * viol s t ≤ rho2 d t / 2 - (∑ j, t j) / 4 - (∑ i, s i) / (4 * (q + 1))

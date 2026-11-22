@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -196,8 +200,8 @@ section Cusp
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   {Xo : Moduli Dw l} {c c' : Coeff l} (hle : c.F ≤ c'.F) {r : ℕ}
 
-variable (Xo) in
 
+variable (Xo) in
 def SecBC : Prop :=
   ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), ∀ f' ∈ sec Xo c' a n,
     ∃ (m : ℕ) (as : Fin m → c'.F) (fs : Fin m → Rul Xo c), (∀ i, fs i ∈ sec Xo c a n) ∧ IsBC hle f' as fs
@@ -208,7 +212,8 @@ theorem evR_sum_smul {S : Type} [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) {
   unfold evR
   by_cases h : FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) y
   · simp only [evalAt, dif_pos h]
-    simp [Finset.sum_apply, map_sum, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, Algebra.smul_def]
   · simp only [evalAt, dif_neg h]
     simp
 
@@ -223,7 +228,8 @@ theorem isBC_regroup [Algebra c.F c'.F] (halg : algebraMap c.F c'.F = incF c c' 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
   conv_lhs => rw [← B.sum_repr (as i)]
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Algebra.smul_def, halg, map_mul]
   ring

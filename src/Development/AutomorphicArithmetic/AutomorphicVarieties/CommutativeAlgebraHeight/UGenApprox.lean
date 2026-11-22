@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LayerApproximation
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LayerApproximation
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -71,7 +75,7 @@ private theorem u_gen_span (O : Type) [CommRing O] [IsLocalRing O] (R : Type) [C
     have h2 : y * z = (y - algebraMap O R a) * (z - algebraMap O R b) + a • z + b • y
         - algebraMap O R (a * b) := by
       simp only [Algebra.smul_def, map_mul]; ring
-    rw [h2, map_sub, map_add, map_add, h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
+    rw [h2, map_sub, map_add (f := _), map_add (f := _), h1, hD _ (hON _), map_smul, map_smul, hres y a ha, hres z b hb]
     simp only [Algebra.smul_def]; ring
   let f : R →ₐ[O] DualNumber (ResidueField O) :=
     { toFun := fun y => (res O R y, D y)

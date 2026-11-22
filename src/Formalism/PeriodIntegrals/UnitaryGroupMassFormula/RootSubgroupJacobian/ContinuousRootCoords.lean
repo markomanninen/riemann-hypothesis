@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.AmpRoot
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.SUpPowEqZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.BlkLt
+module
+
+public import Formalism.PeriodIntegrals.AmpRoot
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.SUpPowEqZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupJacobian.BlkLt
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ENNReal
@@ -21,7 +25,16 @@ theorem mem_rootPat {p : Point ℂ (r + 1)} {i j : Fin (r + 1)} :
     (i, j) ∈ rootPat p ↔ i < j ∧ blockIdx p.1 i.val = blockIdx p.1 j.val := by
   simp only [rootPat, Finset.mem_filter, Finset.mem_univ, true_and]
 
-theorem sum_pt (p : Point ℂ (r + 1)) : (p.1.map Prod.snd).sum = r + 1 := p.2.2
+private theorem pv_cons_eq (t : ℂ) (s : ℕ) (bs : List (ℂ × ℕ)) (i : ℕ) :
+    pv ((t, s) :: bs) i = if i < s then s - 1 - i else s + pv bs (i - s) := rfl
+
+private theorem blockIdx_cons_eq (t : ℂ) (s : ℕ) (bs : List (ℂ × ℕ)) (i : ℕ) :
+    blockIdx ((t, s) :: bs) i = if i < s then 0 else 1 + blockIdx bs (i - s) := rfl
+
+private theorem ptEntry_cons_eq (t : ℂ) (s : ℕ) (bs : List (ℂ × ℕ)) (i j : ℕ) :
+    ptEntry ((t, s) :: bs) i j =
+      if i < s ∧ j < s then (if i + j + 1 = s then t else 0)
+      else if s ≤ i ∧ s ≤ j then ptEntry bs (i - s) (j - s) else 0 := rfl
 
 private theorem blockIdx_pv_eq : ∀ (bs : List (ℂ × ℕ)) (i : ℕ), i < (bs.map Prod.snd).sum →
     blockIdx bs (pv bs i) = blockIdx bs i
@@ -30,10 +43,10 @@ private theorem blockIdx_pv_eq : ∀ (bs : List (ℂ × ℕ)) (i : ℕ), i < (bs
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hi : i < s
     · have h1 : s - 1 - i < s := by omega
-      simp only [pv, blockIdx, hi, h1, ↓reduceIte]
+      simp only [pv_cons_eq, blockIdx_cons_eq, hi, h1, ↓reduceIte]
     · have ih := blockIdx_pv_eq bs (i - s) (by omega)
       have h1 : ¬ (s + pv bs (i - s) < s) := by omega
-      simp only [pv, blockIdx, hi, h1, ↓reduceIte, Nat.add_sub_cancel_left, ih]
+      simp only [pv_cons_eq, blockIdx_cons_eq, hi, h1, ↓reduceIte, Nat.add_sub_cancel_left, ih]
 
 private theorem pv_lt_pv_of_lt_of_blockIdx_eq : ∀ (bs : List (ℂ × ℕ)) (i j : ℕ), i < j → blockIdx bs i = blockIdx bs j →
     j < (bs.map Prod.snd).sum → pv bs j < pv bs i
@@ -42,16 +55,16 @@ private theorem pv_lt_pv_of_lt_of_blockIdx_eq : ∀ (bs : List (ℂ × ℕ)) (i 
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hj : j < s
     · have hi : i < s := by omega
-      simp only [pv, hi, hj, ↓reduceIte]
+      simp only [pv_cons_eq, hi, hj, ↓reduceIte]
       omega
     · by_cases hi : i < s
-      · simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+      · simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
         omega
       · have hb' : blockIdx bs (i - s) = blockIdx bs (j - s) := by
-          simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+          simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
           omega
         have ih := pv_lt_pv_of_lt_of_blockIdx_eq bs (i - s) (j - s) (by omega) hb' (by omega)
-        simp only [pv, hi, hj, ↓reduceIte]
+        simp only [pv_cons_eq, hi, hj, ↓reduceIte]
         omega
 
 theorem tau_mem {p : Point ℂ (r + 1)} (q : rootPat p) : (ptσ p q.1.2, ptσ p q.1.1) ∈ rootPat p := by
@@ -94,20 +107,20 @@ private theorem ptEntry_pv_eq_of_blockIdx_eq : ∀ (bs : List (ℂ × ℕ)) (i j
       have e2 : j + (s - 1 - j) + 1 = s := by omega
       have l1 : s - 1 - i < s := by omega
       have l2 : s - 1 - j < s := by omega
-      simp only [pv, ptEntry, hi, hj, l1, l2, e1, e2, and_self, ↓reduceIte]
-    · simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+      simp only [pv_cons_eq, ptEntry_cons_eq, hi, hj, l1, l2, e1, e2, and_self, ↓reduceIte]
+    · simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
       omega
-    · simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+    · simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
       omega
     · have hb' : blockIdx bs (i - s) = blockIdx bs (j - s) := by
-        simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+        simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
         omega
       have ih := ptEntry_pv_eq_of_blockIdx_eq bs (i - s) (j - s) hb' (by omega) (by omega)
       have g1 : s ≤ i := by omega
       have g2 : s ≤ j := by omega
       have g3 : s ≤ s + pv bs (i - s) := Nat.le_add_right _ _
       have g4 : s ≤ s + pv bs (j - s) := Nat.le_add_right _ _
-      simp only [pv, ptEntry, hi, hj, g1, g2, g3, g4, false_and, and_self, ↓reduceIte,
+      simp only [pv_cons_eq, ptEntry_cons_eq, hi, hj, g1, g2, g3, g4, false_and, and_self, ↓reduceIte,
         Nat.add_sub_cancel_left, ih]
 
 theorem norm_cU (p : Point ℂ (r + 1)) (q : rootPat p) : ‖cU p q‖ = 1 := by
@@ -150,17 +163,17 @@ private theorem pv_lt_pv_of_lt_of_blockIdx_ne : ∀ (bs : List (ℂ × ℕ)) (i 
     simp only [List.map_cons, List.sum_cons] at h
     by_cases hj : j < s
     · have hi : i < s := by omega
-      simp only [blockIdx, hi, hj, ↓reduceIte] at hb
+      simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte] at hb
       exact absurd rfl hb
     · by_cases hi : i < s
-      · simp only [pv, hi, hj, ↓reduceIte]
+      · simp only [pv_cons_eq, hi, hj, ↓reduceIte]
         omega
       · have hb' : blockIdx bs (i - s) ≠ blockIdx bs (j - s) := by
           intro he
           apply hb
-          simp only [blockIdx, hi, hj, ↓reduceIte, he]
+          simp only [blockIdx_cons_eq, hi, hj, ↓reduceIte, he]
         have ih := pv_lt_pv_of_lt_of_blockIdx_ne bs (i - s) (j - s) (by omega) hb' (by omega)
-        simp only [pv, hi, hj, ↓reduceIte]
+        simp only [pv_cons_eq, hi, hj, ↓reduceIte]
         omega
 
 theorem flag_eq_one_add {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hz' : inWb k r z')
@@ -174,11 +187,11 @@ theorem flag_eq_one_add {z z' : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (
   ext i j
   simp only [Matrix.add_apply, vM]
   by_cases hm : (i, j) ∈ rootPat p
-  · rw [dif_pos hm]
+  · rw [dite_eq_left hm]
     have hij : i ≠ j := ne_of_lt ((mem_rootPat.mp hm).1)
     rw [Matrix.one_apply_ne hij, zero_add]
     rfl
-  · rw [dif_neg hm, add_zero]
+  · rw [dite_eq_right hm, add_zero]
     by_cases hji : j ≤ i
     · rw [flagMat_lower hN i j hji, Matrix.one_apply]
     · have hij : i < j := not_le.mp hji
@@ -244,7 +257,7 @@ theorem cont_of : Continuous (fun x : Mt k r => (Matrix.of x : Matrix (Fin (2 * 
 theorem isClosed_N : IsClosed {x : Mt k r | Matrix.of x ∈ Nset k r} := by
   have hc : Continuous (fun x : Mt k r => (Matrix.of x : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)) :=
     cont_of
-  simp only [Nset, UH, Set.mem_setOf_eq, Set.setOf_and, Set.setOf_forall]
+  simp only [Nset, UH, Set.mem_ofPred_eq, Set.ofPred_and, Set.ofPred_forall]
   refine IsClosed.inter ?_ (IsClosed.inter ?_ ?_)
   · exact isClosed_eq ((hc.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul hc) continuous_const
   · exact isClosed_iInter fun a => isClosed_iInter fun i => isClosed_iInter fun _ =>
@@ -271,7 +284,7 @@ theorem rootJac : PI.AmpRoot.RootJac := by
     rw [Measure.map_apply hf hs]
     refine measure_mono_null ?_ hnull
     intro x hx
-    simp only [Set.mem_preimage, Set.mem_setOf_eq] at hx ⊢
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq] at hx ⊢
     intro hR
     exact hx ⟨hR.2, (show g₀⁻¹ * (g₀ * Matrix.of x * g₀⁻¹) * g₀ ∈ Nset k r by rw [conj_back hg]; exact hR.1)⟩
   · rw [Measure.map_map (continuous_rootCoords L.z p).measurable hf]
@@ -281,6 +294,6 @@ theorem rootJac : PI.AmpRoot.RootJac := by
       exact rootCoords_conj hz hz' hg hP hx
     rw [Measure.map_congr hcongr,
       ← Measure.map_map (phiR_mp p).measurable (continuous_rootCoords L.z' p).measurable, hmap,
-      Measure.map_smul, (phiR_mp p).map_eq]
+      Measure.map_smul _ (phiR_mp p).measurable.aemeasurable, (phiR_mp p).map_eq]
 
 end PI.AmpRootJacW

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import GroundTheory.AutomorphicForms.ReductionIwasawa
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import GroundTheory.AutomorphicForms.ReductionIwasawa
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem mem_unitary_of_euclid (U : Matrix (Fin n) (Fin n) 𝕜)
   classical
   let f : EuclideanSpace 𝕜 (Fin n) →ₗ[𝕜] EuclideanSpace 𝕜 (Fin n) := Matrix.toEuclideanLin Uᵀ
   have hf : ∀ x : EuclideanSpace 𝕜 (Fin n), (f x).ofLp = x.ofLp ᵥ* U := fun x => by
-    simp [f, Matrix.toEuclideanLin_apply, Matrix.mulVec_transpose]
+    simp [f, Matrix.toLpLin_apply, Matrix.mulVec_transpose]
   have hn : ∀ x, ‖f x‖ = ‖x‖ := fun x => by
     have := h x.ofLp
     rw [EuclideanSpace.norm_eq, EuclideanSpace.norm_eq, hf]
@@ -45,7 +49,8 @@ theorem map_mem_unitary_of_ringEquiv (φ : E ≃+* 𝕜) (hφ : ∀ x, ‖φ x�
   have hφ' : ∀ x, ‖φ.symm x‖ = ‖x‖ := fun x => by rw [← hφ, RingEquiv.apply_symm_apply]
   have e1 : z ᵥ* k.map φ = fun j => φ.toRingHom (((fun i => φ.symm (z i)) ᵥ* k) j) := by
     ext j
-    simp [vecMul, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [vecMul, dotProduct, map_sum, map_mul]
   rw [e1, euclidNorm_map φ.toRingHom hφ, hk]
   exact euclidNorm_map φ.symm.toRingHom hφ' z
 
@@ -99,7 +104,8 @@ theorem mem_archCompact_of_map_mem_unitary (w : InfinitePlace K) {k : GL (Fin n)
         (k : Matrix (Fin n) (Fin n) w.Completion).map
           (InfinitePlace.Completion.extensionEmbedding w) := by
     ext j
-    simp [vecMul, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [vecMul, dotProduct, map_sum, map_mul]
   rw [e1, euclidNorm_vecMul_unitary hk]
 
 end Place

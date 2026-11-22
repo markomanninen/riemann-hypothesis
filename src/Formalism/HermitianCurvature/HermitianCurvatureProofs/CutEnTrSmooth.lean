@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFibMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFibMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants
@@ -30,7 +34,7 @@ theorem wq_contDiff (k r : ℕ) (TT : ℝ) : ContDiff ℝ ∞ (fun x : MA.E r =>
   apply ContDiff.mul
   · apply contDiff_prod
     intro l _
-    exact (hn.comp ((contDiff_apply ℝ ℂ l).comp contDiff_fst)).pow _
+    exact (hn.comp ((contDiff_apply ℝ (fun _ => ℂ) l).comp contDiff_fst)).pow _
   · exact ((hn.comp contDiff_snd).sub contDiff_const).pow _
 
 theorem wq_pos {k r : ℕ} {TT : ℝ} {x : MA.E r} (hx : x ∈ MA.Qset r TT) : 0 < MA.wq k x TT := by
@@ -88,6 +92,6 @@ theorem trace_smoothness : TrSmooth := by
   show ContDiffOn ℝ MA.sm (MA.ext _) (MA.Qset (D.parOf S v).r (D.parOf S v).TT)
   refine hF.congr ?_
   intro x hx
-  rw [MA.ext, dif_pos hx]
+  rw [MA.ext, dite_eq_left hx]
 
 end Formalism.FourierDecayAlt.P.CutMP.En

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -83,7 +88,7 @@ def quotDecomposition (hI : ∀ (n : ι) (a : A), a ∈ I → (decompose 𝒜 a 
       obtain ⟨q, a, ha, rfl⟩ := q
       rw [DirectSum.coeAddMonoidHom_of]
       exact quotientDecomposition_of_mem_piece ha
-    | add d e hd he => rw [map_add, map_add, hd, he]
+    | add d e hd he => rw [map_add (f := _), map_add (f := _), hd, he]
 
 theorem quotPieces_isInternal (hI : ∀ (n : ι) (a : A), a ∈ I → (decompose 𝒜 a n : A) ∈ I) :
     IsInternal (quotPieces 𝒜 I) :=
@@ -127,7 +132,7 @@ theorem weightedHomogeneousComponent_one_mem {p : Ideal (Poly S N)}
     exact hp f hf k
   · have : weightedHomogeneousComponent (fun _ => (1 : ℤ)) c f = 0 := by
       ext d
-      rw [coeff_weightedHomogeneousComponent, weight_one_int, coeff_zero]
+      rw [coeff_weightedHomogeneousComponent, weight_one_int, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       split_ifs with h
       · omega
       · rfl

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ theorem diagI_inK (ε : Fin n → Bool) (θ : Fin n → ℝ) :
       Matrix.diagonal_add, ← Matrix.diagonal_zero]
     congr 1
     funext a
-    simp only [Pi.star_apply, star_mul', Complex.star_def, Complex.conj_ofReal, Complex.conj_I]
-    ring
+    simp [star_mul]
+    split_ifs <;> ring
   · rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
     congr 1
     funext a
@@ -78,7 +82,8 @@ private theorem diagonal_mul_I_eq_sum_single (θ : Fin n → ℝ) :
 theorem dtau_diag_w {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : KType ε Λ) (θ : Fin n → ℝ) :
     T.dτ (Matrix.diagonal fun a => (θ a : ℂ) * Complex.I) T.w =
       (((∑ a, Λ a * θ a : ℝ) : ℂ) * Complex.I) • T.w := by
-  rw [diagonal_mul_I_eq_sum_single, map_sum, ContinuousLinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [diagonal_mul_I_eq_sum_single, map_sum, ContinuousLinearMap.sum_apply]
   simp_rw [map_smul, ContinuousLinearMap.smul_apply, T.13, smul_smul]
   rw [← Finset.sum_smul]
   congr 1

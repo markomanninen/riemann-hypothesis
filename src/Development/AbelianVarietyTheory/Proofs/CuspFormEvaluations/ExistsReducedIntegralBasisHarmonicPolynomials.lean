@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsReducedBasisIntegralPartOfLinearIndependen
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortIndependentIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsReducedBasisIntegralPartOfLinearIndependen
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsShortIndependentIntegers
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.RunIn
 
@@ -22,7 +26,7 @@ theorem mem_HHa_of_mem_span {T : Type} {r : T → ℕ} {n : ℕ} {k : Type} [Fie
   | zero => exact ⟨zero_mem _, fun _ _ _ _ _ => map_zero _, fun m hm => by simp at hm⟩
   | add y z _ _ hy hz =>
     refine ⟨add_mem hy.1 hz.1, fun σ i i' h t => ?_, fun m hm => ?_⟩
-    · rw [map_add, hy.2.1 σ i i' h t, hz.2.1 σ i i' h t]
+    · rw [map_add (f := _), hy.2.1 σ i i' h t, hz.2.1 σ i i' h t]
     · rcases Finset.mem_union.1 (support_add hm) with h | h
       exacts [hy.2.2 m h, hz.2.2 m h]
   | smul q y _ hy =>
@@ -131,7 +135,7 @@ theorem exists_reduced_basis_harmA : ∀ (E : Type) [Field E] [NumberField E] [I
   set S : Set (MvPolynomial (LtN Dw n) c.F) := {Q | Q ∈ harmA c a n ∧
     ∀ σ' : c.F →+* ℂ, Real.log (∑ m ∈ Q.support, ‖σ' (Q.coeff m)‖) ≤ x} with hS
   have hW : ∀ P ∈ Submodule.span c.F S, P ∈ HHa Dw.mult n c.F ComplexEmbedding.conjugate (InPsi H)
-      fun τ i => a (τ, i) := fun P hP => mem_HHa_of_mem_span (fun Q hQ => hQ.1.1) hP
+      fun τ i => a (τ, i) := fun P hP => mem_HHa_of_mem_span (S := S) (fun Q hQ => hQ.1.1) hP
   have hI : ∀ P, P ∈ MvPoly.integralPart (Submodule.span c.F S) ↔ P ∈ harmA (Dw := Dw) c a n := fun P =>
     ⟨fun h => ⟨hW P h.1, h.2⟩, fun h => ⟨hsp P h, h.2⟩⟩
   obtain ⟨ω, hω, hA⟩ := GlobalTheory.exists_short_independent_integers c.F
@@ -146,7 +150,7 @@ theorem exists_reduced_basis_harmA : ∀ (E : Type) [Field E] [NumberField E] [I
   · refine ⟨b.repr ⟨P, (hI P).2 hP⟩, ?_⟩
     have h := congrArg Subtype.val (b.sum_repr ⟨P, (hI P).2 hP⟩)
     simp only [Int.cast_smul_eq_zsmul]
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at h
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h
     exact h.symm
   · rw [l1At_eq_l1Norm_map]
     refine (hb i σ).trans ((bound_le_exp (L := L) i.pos Module.finrank_pos

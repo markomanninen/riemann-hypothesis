@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,8 +18,8 @@ variable {F : Type} [Field F] [NumberField F]
 
 def conePt {r : ℕ} (y : 𝓞 F) (v : Fin r → 𝓞 F) (m : Fin r → ℕ) : 𝓞 F := y + ∑ i, (m i : 𝓞 F) * v i
 
-open Classical in
 
+open Classical in
 def coneWeight {r : ℕ} (l : ℕ) (A : Ideal (𝓞 F)) (y : 𝓞 F) (v : Fin r → 𝓞 F) (m : Fin r → ℕ) : ℚ :=
   if conePt y v m ∈ A then (l : ℚ) - 1 else -1
 
@@ -133,8 +137,10 @@ theorem embedding_conePt {r : ℕ} (σ : F →+* ℝ) (y : 𝓞 F) (v : Fin r �
     σ (conePt y v m : F) = σ (y : F) + ∑ i, σ (v i : F) * (m i : ℝ) := by
   have : ((conePt y v m : 𝓞 F) : F) = (y : F) + ∑ i, (m i : F) * (v i : F) := by
     change algebraMap (𝓞 F) F (conePt y v m) = _
-    simp [conePt, map_add, map_sum, map_mul, map_natCast]
-  rw [this, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [conePt, map_add (f := _), map_sum, map_mul, map_natCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_add (f := _), map_sum]
   simp [mul_comm]
 
 theorem totPos_conePt {r : ℕ} {y : 𝓞 F} {v : Fin r → 𝓞 F} (hy : TotPos F (y : F)) (hv : ∀ i, TotPos F (v i : F))

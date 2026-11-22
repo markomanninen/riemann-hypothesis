@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,9 +34,21 @@ theorem pt_w (T : TT s) : pt T ≫ s = algStr R T.obj.B := by
   ext r
   exact (πe T).symm_apply_apply (algebraMap R T.obj.B r)
 
-abbrev affF (s : X ⟶ Sp R) : AffOp X ⥤ TT s :=
-  ptFunctor (F := OAff s) (fun U ↦ affPt s U.unop) (fun U ↦ affPt_w s U.unop)
-    fun _ _ a ↦ affPt_res s (leOfHom a.unop)
+abbrev affF (s : X ⟶ Sp R) : AffOp X ⥤ TT s where
+  obj U := ⟨Thick.triv (Sec s U.unop.1) (affPt s U.unop) (affPt_w s U.unop), rfl⟩
+  map {U V} a := ⟨Thick.trivHom (hx := affPt_w s U.unop)
+    (T := Thick.triv (Sec s V.unop.1) (affPt s V.unop) (affPt_w s V.unop))
+    (Sec.res s (leOfHom a.unop)) (affPt_res s (leOfHom a.unop))⟩
+  map_id U := by
+    apply ObjectProperty.hom_ext (IsTriv s)
+    apply Thick.Hom.ext'
+    ext b
+    exact congrArg (fun q ↦ q.hom b) (X.presheaf.map_id (op U.unop.1))
+  map_comp a b := by
+    apply ObjectProperty.hom_ext (IsTriv s)
+    apply Thick.Hom.ext'
+    ext c
+    exact Sec.res_res s (leOfHom a.unop) (leOfHom b.unop) c
 
 abbrev thk (T : TT s) (p : Pair (pt T)) : TT s :=
   ⟨Thick.triv (Sec (algStr R T.obj.B) p.1.1.1) (affPt _ p.1.1 ≫ pt T)
@@ -44,7 +60,7 @@ def secPullA (T : TT s) (p : Pair (pt T)) : Sec s p.1.2.1 →ₐ[R] Sec (algStr 
       (by rw [spMap_id, Category.comp_id, pt_w]) p).map_algebraMap }
 
 def aM (T : TT s) (p : Pair (pt T)) : (affF s).obj (op p.1.2) ⟶ thk T p :=
-  ⟨Thick.trivHom (T := (thk T p).obj) (secPullA T p) (secPull_affPt s _ p)⟩
+  ⟨Thick.trivHom (hx := affPt_w s p.1.2) (T := (thk T p).obj) (secPullA T p) (secPull_affPt s _ p)⟩
 
 theorem bM_pt (T : TT s) (p : Pair (pt T)) :
     spMap ((toSec R T.obj.B p.1.1).toRingHom.comp ((πe T).symm : T.obj.B₀ →+* T.obj.B)) =

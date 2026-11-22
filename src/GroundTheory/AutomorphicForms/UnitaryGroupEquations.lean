@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.UnitaryGroupScheme
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.UnitaryGroupScheme
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -28,30 +32,27 @@ omit [Algebra.IsQuadraticExtension F E] [Fintype ι] [DecidableEq ι] in
 theorem matrixCoords_apply (g : Matrix ι ι (R ⊗[F] E)) (i j : ι) (k : κ) :
     matrixCoords b R g (i, j, k) = (Algebra.TensorProduct.basis R b).repr (g i j) k := rfl
 
-omit [Algebra.IsQuadraticExtension F E] [Fintype ι] [DecidableEq ι] in
-@[simp]
-theorem matrixCoords_zero : matrixCoords b R (0 : Matrix ι ι (R ⊗[F] E)) = 0 := by
-  funext ⟨i, j, k⟩
-  rw [matrixCoords_apply]
-  simp
 
 variable {R}
 
-omit [Algebra.IsQuadraticExtension F E] [Fintype κ] in
 
+omit [Algebra.IsQuadraticExtension F E] [Fintype κ] in
 theorem repr_tensorMap (f : R →ₐ[F] S) (z : R ⊗[F] E) (k : κ) :
-    (Algebra.TensorProduct.basis S b).repr (tensorMap E f z) k =
+    (Algebra.TensorProduct.basis S b).repr
+        (TensorProduct.map f.toLinearMap (LinearMap.id : E →ₗ[F] E) z) k =
       f ((Algebra.TensorProduct.basis R b).repr z k) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul r e =>
     simp [Algebra.TensorProduct.basis_repr_tmul, Finsupp.mapRange_apply]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
+
 
 omit [Algebra.IsQuadraticExtension F E] [Fintype ι] [DecidableEq ι] in
-
 theorem matrixCoords_map (f : R →ₐ[F] S) (g : Matrix ι ι (R ⊗[F] E)) :
-    matrixCoords b S (g.map (tensorMap E f)) = f ∘ matrixCoords b R g := by
+    matrixCoords b S (g.map (TensorProduct.map f.toLinearMap
+      (LinearMap.id : E →ₗ[F] E))) =
+      f ∘ matrixCoords b R g := by
   funext ⟨i, j, k⟩
   rw [Function.comp_apply, matrixCoords_apply, matrixCoords_apply, Matrix.map_apply, repr_tensorMap]
 

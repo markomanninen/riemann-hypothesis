@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActQdRPeriodTEqCyclotomicBottom
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentOfInvariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActQdRPeriodTEqCyclotomicBottom
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvFilD
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,14 +79,14 @@ theorem span_of_isField [FiniteDimensional Qp LL] [FiniteDimensional LL V] (hF :
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   have hc : ∀ g x, σ g (TensorProduct.comm Qp V BdR x) =
       TensorProduct.comm Qp V BdR (actVdR PD ρ g x) := by
     intro g x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ, actVdR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   obtain ⟨b, hb⟩ := span_of_invariant (M := BdR ⊗[Qp] V) hF (n := finrank Qp V)
     Module.finrank_baseChange.symm
     (fun g => (PD.actdR g : BdR →+* BdR)) (fun g => (σ g).toAddMonoidHom) hσ
@@ -101,7 +105,8 @@ theorem span_of_isField [FiniteDimensional Qp LL] [FiniteDimensional LL V] (hF :
     (TensorProduct.comm Qp V BdR y)
   refine ⟨_, b, fun k => (TensorProduct.comm Qp V BdR).symm (e k), fun k => (e k).2, ?_⟩
   apply (TensorProduct.comm Qp V BdR).injective
-  simp only [map_sum, comm_mp, LinearEquiv.apply_symm_apply, hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, comm_mp, LinearEquiv.apply_symm_apply, hb]
 
 end General
 

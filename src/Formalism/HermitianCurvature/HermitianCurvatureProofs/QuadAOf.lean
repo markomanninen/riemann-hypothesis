@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnfoldIint
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnfoldIint
+
+@[expose] public section
 
 noncomputable section
 

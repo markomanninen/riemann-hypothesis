@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExistsIsSheetFinZero
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGood
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -107,8 +112,8 @@ theorem sum_ringHom_restrict (κ : IntermediateField ℚ K') (H : (κ →ₐ[ℚ
 
 end PointArithIntersection
 
-open PointArithIntersection IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree in
 
+open PointArithIntersection IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree in
 theorem PointArInt.proof : PointArInt.Statement := by
   intro T _ K' _ _ y A s hP hs
   classical

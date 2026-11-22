@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbAlg
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FlagbAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem exists_lead {r : ℕ} (b₀ b : Fin r → L) (hF : ∀ i, flagStep Ω b 
     rw [← Set.image_insert_eq]
     congr 1
     ext k
-    simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Fin.ext_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Fin.ext_iff]
     omega
   unfold flagStep at h1
   rw [h2, Submodule.mem_span_insert] at h1
@@ -103,7 +107,7 @@ theorem exists_nat_diff {E : Type} [Field E] [NumberField E] (x : E) :
   have : ((y.natAbs ^ 2 : ℕ) : E) = (y : E) * y := by
     rw [← Int.cast_natCast, Nat.cast_pow, Int.natAbs_sq, Int.cast_pow, sq]
   rw [Nat.cast_mul, this]
-  simp only [RingOfIntegers.coe_eq_algebraMap, map_mul, map_natCast, map_intCast]
+  simp only [map_mul, map_natCast, map_intCast]
   rw [hz]; ring
 
 end PositivityTheory.HtPt.Flagb

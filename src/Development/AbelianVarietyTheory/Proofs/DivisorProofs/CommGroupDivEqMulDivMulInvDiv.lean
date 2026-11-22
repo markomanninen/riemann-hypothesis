@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalIdeleMemNsUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalIdeleMemNsUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryCharOfOpenSubgroupAndHom
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitOpenAndCongrOpen
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -34,7 +39,7 @@ theorem norm_unitDir (z : ℂˣ) : ‖((unitDir z : ℂˣ) : ℂ)‖ = 1 := by
   rw [norm_div, Complex.norm_real, norm_norm, div_self (norm_ne_zero_iff.2 z.ne_zero)]
 
 theorem norm_infSign (x : Neutral.B1.Ideles E) : ‖((infSign E x : ℂˣ) : ℂ)‖ = 1 := by
-  rw [infSign, MonoidHom.finset_prod_apply, Units.coe_prod, norm_prod]
+  rw [infSign, MonoidHom.finsetProd_apply, Units.coe_prod, norm_prod]
   exact Finset.prod_eq_one fun w _ => norm_unitDir _
 
 end GlobalTheory.ConsEta
@@ -52,7 +57,7 @@ theorem nsUnits_le_unitIdl : GlobalTheory.MuExist.nsUnits E ≤ GlobalTheory.Mem
 
 theorem infSign_localIdele (w : HeightOneSpectrum (𝓞 E)) (u : (w.adicCompletion E)ˣ) :
     infSign E (Neutral.B1.localIdele E w u) = 1 := by
-  rw [infSign, MonoidHom.finset_prod_apply]
+  rw [infSign, MonoidHom.finsetProd_apply]
   refine Finset.prod_eq_one fun v _ => ?_
   have : Units.map (GlobalTheory.IdeleNormChar.infEval v) (Neutral.B1.localIdele E w u) = 1 := Units.ext rfl
   simp only [MonoidHom.comp_apply, this, map_one]
@@ -88,9 +93,9 @@ theorem continuous_infSign : Continuous (infSign E) := by
       (Units.map (GlobalTheory.IdeleNormChar.infEval w)))) = fun x => ∏ w : InfinitePlace E, unitDir
         (Units.map (InfinitePlace.Completion.extensionEmbedding w).toMonoidHom
           (Units.map (GlobalTheory.IdeleNormChar.infEval (K := E) w) x)) := by
-    funext x; rw [MonoidHom.finset_prod_apply]; rfl
+    funext x; rw [MonoidHom.finsetProd_apply]; rfl
   rw [this]
-  refine continuous_finset_prod _ fun w _ => continuous_unitDir.comp ?_
+  refine continuous_finsetProd _ fun w _ => continuous_unitDir.comp ?_
   refine Continuous.units_map _ ?_ |>.comp (Continuous.units_map _ ?_)
   · exact (InfinitePlace.Completion.isometry_extensionEmbedding w).continuous
   · exact (continuous_apply w).comp continuous_fst

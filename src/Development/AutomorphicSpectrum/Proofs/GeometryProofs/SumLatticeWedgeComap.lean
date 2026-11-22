@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatDegree
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -60,7 +65,7 @@ theorem frame_of_sum_frame : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : S
       obtain ⟨t, ht, hxt⟩ := hx
       obtain ⟨t', ht', hyt⟩ := hy
       refine ⟨t + t', add_mem ht ht', ?_⟩
-      have h : i (x + y) - (t + t') = (i x - t) + (i y - t') := by rw [map_add]; abel
+      have h : i (x + y) - (t + t') = (i x - t) + (i y - t') := by rw [map_add (f := _)]; abel
       rw [h]
       exact Va.add_mem hxt hyt
     | smul r x _ hx =>
@@ -98,7 +103,8 @@ theorem frame_of_sum_frame : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : S
     refine Fintype.linearIndependent_iff.2 fun g hg => ?_
     have hx1 : (∑ k, g k • b (tailIdx hj k)) ∈ Va.comap i := by
       have h : i (∑ k, g k • b (tailIdx hj k)) = ∑ k, g k • (i (b (tailIdx hj k)) - s k) := by
-        simp only [map_sum, map_smul, smul_sub, Finset.sum_sub_distrib, hg, sub_zero]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_sub, Finset.sum_sub_distrib, hg, sub_zero]
       show i _ ∈ Va
       rw [h]
       exact Va.sum_mem fun k _ => Va.smul_mem _ (hs k).2

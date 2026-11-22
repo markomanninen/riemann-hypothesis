@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.CokernelLengthComparisonOf
+module
+
+public import ReciprocityTheory.DualLattices.CokernelLengthComparisonOf
+
+@[expose] public section
 
 noncomputable section
 

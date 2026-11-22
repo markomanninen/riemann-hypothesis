@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContractionLieDerivativeDivPowerCompatFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PdPolynomialCompatibleFormsGeneratedInductionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationHomotopyOperatorFiltrationPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerHomotopyOperatorValuesGeneratorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivPowerCompatRelFiltrationTwoSidedRelEqBotOfBasStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContractionLieDerivativeDivPowerCompatFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PdPolynomialCompatibleFormsGeneratedInductionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationHomotopyOperatorFiltrationPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerHomotopyOperatorValuesGeneratorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivPowerCompatRelFiltrationTwoSidedRelEqBotOfBasStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ theorem homotopy_identity : ∀ (R B : Type) [CommRing R] [CommRing B] [Algebra 
     | h b => rw [g.mDR_algebraMap, hε.mDR_algebraMap, hεb]
     | hd b => rw [g.mDR_ι, hε.mDR_ι, g.m1_D, hε.m1_D, hεb]
     | hm x y hx hy => rw [map_mul, map_mul, hx, hy]
-    | ha x y hx hy => rw [map_add, map_add, hx, hy]
+    | ha x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hεD1 : hε.mDR (ι1 (D R Q.P (Q.e 1))) = 0 := by
     rw [hε.mDR_ι, hε.m1_D, hε1, Derivation.map_zero, map_zero]
 
@@ -68,7 +72,7 @@ theorem homotopy_identity : ∀ (R B : Type) [CommRing R] [CommRing B] [Algebra 
     intro x y hx hy
     have := add_mem hx hy
     convert this using 1
-    simp only [map_add, hot_add]
+    simp only [map_add (f := _), hot_add]
     abel
   ·
     intro n α

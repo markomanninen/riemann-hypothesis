@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumGl2FirstColumnUnitSetSuccFibre
-import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumGl2FirstColumnUnitSetSuccFibre
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PieceEqPieceT
+
+@[expose] public section
+
 open GlobalTheory.KummerEisensteinGalois Finset
 open scoped Classical
 set_option maxHeartbeats 1000000 in

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace
 
@@ -8,9 +13,10 @@ namespace GlobalTheory.SgInf
 
 theorem ballMean_eLpNorm_two_le {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
     {ν : Measure α} {f : α → E} {C a : ℝ} (hC : 0 ≤ C) (ha : 0 ≤ a)
+    (hf : AEStronglyMeasurable f ν)
     (h : ∫⁻ x, (‖f x‖₊ : ENNReal) ^ 2 ∂ν ≤ ENNReal.ofReal (C * a ^ 2)) :
     eLpNorm f 2 ν ≤ ENNReal.ofReal (Real.sqrt C * a) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   have h2 : (∫⁻ x, ‖f x‖ₑ ^ (ENNReal.toReal 2) ∂ν) = ∫⁻ x, (‖f x‖₊ : ENNReal) ^ 2 ∂ν := by
     congr 1; funext x
     rw [show ENNReal.toReal 2 = ((2 : ℕ) : ℝ) by norm_num, ENNReal.rpow_natCast]
@@ -28,12 +34,12 @@ theorem ballMean_norm_integral_le {α E : Type*} [MeasurableSpace α] [NormedAdd
     (ha : 0 ≤ a) (hf : AEStronglyMeasurable f ν)
     (h : ∫⁻ x, (‖f x‖₊ : ENNReal) ^ 2 ∂ν ≤ ENNReal.ofReal (C * a ^ 2)) :
     Integrable f ν ∧ ‖∫ x, f x ∂ν‖ ≤ Real.sqrt C * (ν Set.univ).toReal ^ (1 / 2 : ℝ) * a := by
-  have h2 := ballMean_eLpNorm_two_le hC ha h
-  have hL2 : MemLp f 2 ν := ⟨hf, lt_of_le_of_lt h2 ENNReal.ofReal_lt_top⟩
+  have h2 := ballMean_eLpNorm_two_le hC ha hf h
+  have hL2 : MemLp f 2 ν := lt_of_le_of_lt h2 ENNReal.ofReal_lt_top
   refine ⟨hL2.integrable (by norm_num), ?_⟩
   have h1 : eLpNorm f 1 ν ≤ eLpNorm f 2 ν * ν Set.univ ^ (1 / (1 : ENNReal).toReal - 1 / (2 : ENNReal).toReal) :=
     eLpNorm_le_eLpNorm_mul_rpow_measure_univ (by norm_num) hf
-  rw [eLpNorm_one_eq_lintegral_enorm] at h1
+  rw [eLpNorm_one_eq_lintegral_eNorm hf] at h1
   have hexp : (1 / (1 : ENNReal).toReal - 1 / (2 : ENNReal).toReal : ℝ) = 1 / 2 := by norm_num
   rw [hexp] at h1
   have hmu : ν Set.univ ^ (1 / 2 : ℝ) = ENNReal.ofReal ((ν Set.univ).toReal ^ (1 / 2 : ℝ)) := by

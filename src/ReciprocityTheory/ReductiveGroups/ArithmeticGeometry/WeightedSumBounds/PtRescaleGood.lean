@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtSolveMapFixedIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtSolveMapFixedIff
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh
 
@@ -118,34 +122,6 @@ private theorem sp_lemma_13 {σ τ : Type*} {a : σ → MvPowerSeries τ C} {m :
     (fun _ _ _ => pow_add _ _ _), Finsupp.prod_single_index (h := fun s n => a s ^ n) (pow_zero _),
     pow_one]
 
-private theorem ml_lemma_10 {τ : Type*} {f g : MvPowerSeries τ C} (hf : constantCoeff f = 0)
-    (hg : constantCoeff g = 0) (t : τ) : coeff (Finsupp.single t 1) (f * g) = 0 := by
-  rw [coeff_mul]
-  apply Finset.sum_eq_zero
-  intro p hp
-  rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have key : ∀ i, p.1 i + p.2 i = if t = i then 1 else 0 := fun i => by
-    rw [← Finsupp.add_apply, hp, Finsupp.single_apply]
-  by_cases h1 : p.1 t = 0
-  · have hp1 : p.1 = 0 := by
-      ext i
-      have hi := key i
-      show p.1 i = 0
-      split_ifs at hi with hti
-      · subst hti
-        omega
-      · omega
-    rw [hp1, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf, zero_mul]
-  · have hp2 : p.2 = 0 := by
-      ext i
-      have hi := key i
-      show p.2 i = 0
-      split_ifs at hi with hti
-      · subst hti
-        omega
-      · omega
-    rw [hp2, MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hg, mul_zero]
-
 theorem ptAdd_lin (G : LogFGL v d) {τ : Type*} {x y : Fin d → MvPowerSeries τ C}
     (hx : ∀ a, constantCoeff (x a) = 0) (hy : ∀ a, constantCoeff (y a) = 0) (a : Fin d)
     (t : τ) :
@@ -171,43 +147,33 @@ theorem ptSumL_good (G : LogFGL v d) {τ : Type*} :
   | [], _ => ptGood_zero
   | x :: l, h => ptAdd_good G (h x (by simp)) (ptSumL_good G l fun x' hx' => h x' (by simp [hx']))
 
-private theorem zs_lemma_5 {τ : Type*} (f : MvPowerSeries (Fin d) C) (hf : constantCoeff f = 0) :
-    subst (0 : Fin d → MvPowerSeries τ C) f = 0 := by
-  ext e
-  rw [coeff_subst (hs_lemma (fun _ => by simp)), map_zero]
-  apply finsum_eq_zero_of_forall_eq_zero
-  intro m
-  by_cases hm : m = 0
-  · rw [hm]
-    simp [hf, MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
-  · obtain ⟨s, hs⟩ : ∃ s, m s ≠ 0 := by
-      by_contra hc
-      push_neg at hc
-      exact hm (Finsupp.ext hc)
-    have h0 : (m.prod fun s n => (0 : Fin d → MvPowerSeries τ C) s ^ n) = 0 :=
-      Finset.prod_eq_zero (Finsupp.mem_support_iff.mpr hs) (by simp [hs])
-    rw [h0, map_zero, smul_zero]
-
 theorem ptSumL_lg (G : LogFGL v d) {τ : Type*} :
     ∀ l : List (Fin d → MvPowerSeries τ C), (∀ x ∈ l, ∀ a, constantCoeff (x a) = 0) →
-      ∀ b, subst (ptSumL G l) (G.lg b) = (l.map fun x => subst x (G.lg b)).sum
-  | [], _, b => by
+      ∀ b, subst (ptSumL G l) (G.lg b) = (l.map fun x => subst x (G.lg b)).sum := by
+  intro l
+  induction l with
+  | nil =>
+    intro _ b
     simp only [ptSumL, List.map_nil, List.sum_nil]
     exact subst_zero_of_constantCoeff_zero (G.lg_const b)
-  | x :: l, h, b => by
+  | cons x l ih =>
+    intro h b
     have hl : ∀ x' ∈ l, ∀ a, constantCoeff (x' a) = 0 := fun x' hx' => h x' (by simp [hx'])
-    rw [ptSumL, ptAdd_lg G (h x (by simp)) (ptSumL_const G l hl), ptSumL_lg G l hl b]
-    simp
+    rw [ptSumL, ptAdd_lg G (h x (by simp)) (ptSumL_const G l hl), ih hl b,
+      List.map_cons, List.sum_cons]
 
 theorem ptSumL_lin (G : LogFGL v d) {τ : Type*} :
     ∀ l : List (Fin d → MvPowerSeries τ C), (∀ x ∈ l, ∀ a, constantCoeff (x a) = 0) →
       ∀ a t, coeff (Finsupp.single t 1) (ptSumL G l a) =
-        (l.map fun x => coeff (Finsupp.single t 1) (x a)).sum
-  | [], _, a, t => by simp [ptSumL]
-  | x :: l, h, a, t => by
+        (l.map fun x => coeff (Finsupp.single t 1) (x a)).sum := by
+  intro l
+  induction l with
+  | nil => simp [ptSumL]
+  | cons x l ih =>
+    intro h a t
     have hl : ∀ x' ∈ l, ∀ a, constantCoeff (x' a) = 0 := fun x' hx' => h x' (by simp [hx'])
-    rw [ptSumL, ptAdd_lin G (h x (by simp)) (ptSumL_const G l hl), ptSumL_lin G l hl a t]
-    simp
+    rw [ptSumL, ptAdd_lin G (h x (by simp)) (ptSumL_const G l hl), ih hl a t,
+      List.map_cons, List.sum_cons]
 
 private theorem mu_lemma_16 {τ : Type*} {f f' g g' : MvPowerSeries τ C} (n : ℕ)
     (hf : ∀ e : τ →₀ ℕ, e.degree < n → coeff e f = coeff e f')
@@ -218,7 +184,7 @@ private theorem mu_lemma_16 {τ : Type*} {f f' g g' : MvPowerSeries τ C} (n : �
   apply Finset.sum_congr rfl
   intro p hp
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have hd : p.1.degree + p.2.degree = e.degree := by rw [← hp, map_add]
+  have hd : p.1.degree + p.2.degree = e.degree := by rw [← hp, map_add (f := _)]
   rw [hf p.1 (by omega), hg p.2 (by omega)]
 
 private theorem m1_lemma_17 {τ : Type*} {f f' g g' : MvPowerSeries τ C} (n : ℕ)
@@ -232,7 +198,7 @@ private theorem m1_lemma_17 {τ : Type*} {f f' g g' : MvPowerSeries τ C} (n : �
   apply Finset.sum_congr rfl
   intro p hp
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have hd : p.1.degree + p.2.degree = e.degree := by rw [← hp, map_add]
+  have hd : p.1.degree + p.2.degree = e.degree := by rw [← hp, map_add (f := _)]
   by_cases h1 : p.1 = 0
   · rw [h1, MvPowerSeries.coeff_zero_eq_constantCoeff_apply,
       MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hf0, hf0', zero_mul, zero_mul]
@@ -315,7 +281,7 @@ theorem pt_agree_of_lg (G : LogFGL v d) {τ : Type*} {x y : Fin d → MvPowerSer
         fun s e' he' => ih _ he' s e' rfl (by omega)
       have h1 := h i e (by omega)
       have hlg : G.lg i = X i + (G.lg i - X i) := by ring
-      rw [hlg, subst_add hsx, subst_add hsy, subst_X hsx, subst_X hsy, map_add, map_add,
+      rw [hlg, subst_add hsx, subst_add hsy, subst_X hsx, subst_X hsy, map_add (f := _), map_add (f := _),
         ag_lemma_15 hx hy n hlow _ (hr0 i) (hr1 i) e (le_of_eq hen)] at h1
       exact add_right_cancel h1
   intro i e he

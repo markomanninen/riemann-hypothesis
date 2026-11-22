@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.FrobStep
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.FrobStep
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -13,7 +17,7 @@ theorem im_mul_conj_lattice (L : PeriodPair) {z w : ℂ} (hz : z ∈ L.lattice) 
   obtain ⟨a, b, rfl⟩ := Submodule.mem_span_pair.mp hz'
   obtain ⟨c, e, rfl⟩ := Submodule.mem_span_pair.mp hw'
   refine ⟨a * e - b * c, ?_⟩
-  simp only [zsmul_eq_mul, map_add, map_mul, map_intCast, Complex.add_im, Complex.mul_im,
+  simp only [zsmul_eq_mul, map_add (f := _), map_mul, map_intCast, Complex.add_im, Complex.mul_im,
     Complex.add_re, Complex.mul_re, Complex.intCast_re, Complex.intCast_im, Complex.conj_re,
     Complex.conj_im]
   push_cast

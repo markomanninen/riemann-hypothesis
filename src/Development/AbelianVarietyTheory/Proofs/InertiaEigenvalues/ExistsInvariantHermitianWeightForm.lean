@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEvalLeSumNormCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWildInertiaCyclotomicElement
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SemisimpleOfInjective
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEvalLeSumNormCoeff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 NumberField IsDedekindDomain Polynomial GlobalTheory.EtaJoin GlobalTheory.CoefDuty
 
 noncomputable section
@@ -64,7 +69,8 @@ theorem exists_form_of_bounded {ι : Type} [Fintype ι] [DecidableEq ι]
   · show ∫ k, φ k x y ∂μ = starRingEnd ℂ (∫ k, φ k y x ∂μ)
     rw [← integral_conj]
     congr 1; funext k
-    simp [φ, dotProduct, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [φ, dotProduct, map_sum, mul_comm]
   · show 0 < (∫ k, φ k x x ∂μ).re
     have e := integral_re (hφi x x)
     simp only [RCLike.re_to_complex] at e
@@ -101,7 +107,7 @@ open MeasureTheory Topology Matrix
 namespace GlobalTheory.InvFormBdd
 
 theorem norm_eval_le {σ : Type} (P : MvPolynomial σ ℂ) (v : σ → ℂ) (hv : ∀ s, ‖v s‖ ≤ 1) :
-    ‖MvPolynomial.eval v P‖ ≤ ∑ d ∈ P.support, ‖MvPolynomial.coeff d P‖ := by
+    ‖MvPolynomial.eval v P‖ ≤ ∑ d ∈ P.support, ‖AddMonoidAlgebra.coeff P d‖ := by
   first
   | exact @_root_.GlobalTheory.EvalNormCoefficientBound.norm_eval_le_sum_norm_coeff
   | exact _root_.GlobalTheory.EvalNormCoefficientBound.norm_eval_le_sum_norm_coeff
@@ -117,7 +123,8 @@ theorem norm_emb_le_one {L : Type} [Field L] [NumberField L] [IsCMField L] {n : 
   have h2 := congrFun (congrFun h1 i) i
   simp only [Matrix.mul_apply, conjT, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply_eq] at h2
   have h3 := congrArg τ h2
-  simp only [map_sum, map_mul, map_one] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_one] at h3
   have h4 : ∑ k, (‖τ ((g : Matrix (Fin n) (Fin n) L) i k)‖ ^ 2 : ℝ) = 1 := by
     have : ∑ k, ((‖τ ((g : Matrix (Fin n) (Fin n) L) i k)‖ ^ 2 : ℝ) : ℂ) = 1 := by
       rw [← h3]
@@ -132,8 +139,8 @@ theorem norm_emb_le_one {L : Type} [Field L] [NumberField L] [IsCMField L] {n : 
 
 end GlobalTheory.InvFormBdd
 
-open GlobalTheory.InvFormBdd in
 
+open GlobalTheory.InvFormBdd in
 theorem GlobalTheory.InvFormBdd.exists_isInvForm : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : NG.AlgWt L n),
     ∃ β, IsInvForm a β := by
   intro L _ _ _ n a
@@ -143,7 +150,7 @@ theorem GlobalTheory.InvFormBdd.exists_isInvForm : ∀ (L : Type) [Field L] [Num
     (Units.map (LinearMap.toMatrixAlgEquiv b).toMonoidHom).comp a.ρ.asGroupHom
   have hf : ∀ γ, ((f γ : Matrix.GeneralLinearGroup ι ℂ) : Matrix ι ι ℂ) = LinearMap.toMatrix b b (a.ρ γ) := by
     intro γ; ext i j; simp [f, LinearMap.toMatrixAlgEquiv_apply, LinearMap.toMatrix_apply, Representation.asGroupHom_apply]
-  let C : ℝ := ∑ i, ∑ j, ∑ d ∈ (P i j).support, ‖MvPolynomial.coeff d (P i j)‖
+  let C : ℝ := ∑ i, ∑ j, ∑ d ∈ (P i j).support, ‖AddMonoidAlgebra.coeff (P i j) d‖
   have hC : ∀ h ∈ f.range, ∀ i j, ‖(h : Matrix ι ι ℂ) i j‖ ≤ C := by
     rintro _ ⟨γ, rfl⟩ i j
     have hγ := γ.2
@@ -155,9 +162,9 @@ theorem GlobalTheory.InvFormBdd.exists_isInvForm : ∀ (L : Type) [Field L] [Num
       rw [← e]; rfl
     rw [hf, hP γ g e']
     refine (norm_eval_le _ _ fun p => norm_emb_le_one g hg _ _ _).trans ?_
-    refine le_trans ?_ (Finset.single_le_sum (f := fun i => ∑ j, ∑ d ∈ (P i j).support, ‖MvPolynomial.coeff d (P i j)‖)
+    refine le_trans ?_ (Finset.single_le_sum (f := fun i => ∑ j, ∑ d ∈ (P i j).support, ‖AddMonoidAlgebra.coeff (P i j) d‖)
       (fun i _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => norm_nonneg _) (Finset.mem_univ i))
-    exact Finset.single_le_sum (f := fun j => ∑ d ∈ (P i j).support, ‖MvPolynomial.coeff d (P i j)‖)
+    exact Finset.single_le_sum (f := fun j => ∑ d ∈ (P i j).support, ‖AddMonoidAlgebra.coeff (P i j) d‖)
       (fun _ _ => Finset.sum_nonneg fun _ _ => norm_nonneg _) (Finset.mem_univ j)
   obtain ⟨β₀, h1, h2, h3⟩ := exists_form_of_bounded f.range C hC
   let e : a.W →ₗ[ℂ] (ι → ℂ) := b.equivFun.toLinearMap

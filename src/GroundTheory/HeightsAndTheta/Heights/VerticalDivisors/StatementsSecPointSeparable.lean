@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -20,8 +25,6 @@ def SecPointSeparable.Statement : Prop :=
       Algebra.IsSeparable (GenParField k e n) L
 
 section Inhabitants
-
-abbrev chartPointInv : Fin 1 → GenParField ℚ 0 1 := fun _ => (genPar ℚ 0 1 (.inr 0))⁻¹
 
 end Inhabitants
 

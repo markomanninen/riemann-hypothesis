@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.ContinuousContractNth
-import ReciprocityTheory.GroupCohomology.HomogExistsStatement
+module
+
+public import ReciprocityTheory.GroupCohomology.ContinuousContractNth
+public import ReciprocityTheory.GroupCohomology.HomogExistsStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh.CCA
 
@@ -29,10 +33,6 @@ theorem rep_mul (x : U) (g : G) : rep U ((x : G) * g) = rep U g := by
   rw [mkR_eq]
   simpa [mul_inv_rev] using U.inv_mem x.2
 
-theorem mk_rep (g : G) : (Quotient.mk (QuotientGroup.rightRel U) (rep U g)) = Quotient.mk _ g := by
-  unfold rep
-  exact Quotient.out_eq _
-
 theorem retr_mul (x : U) (g : G) : retr U ((x : G) * g) = x * retr U g := by
   apply Subtype.ext
   simp only [retr, rep_mul, Subgroup.coe_mul, mul_assoc]
@@ -43,7 +43,7 @@ theorem continuous_rep (hU : IsOpen (U : Set G)) : Continuous (rep U) := by
   rw [continuous_iff_continuousAt]
   intro g
   have hmem : (fun y => y * g⁻¹) ⁻¹' (U : Set G) ∈ nhds g := by
-    apply (hU.preimage (continuous_mul_right g⁻¹)).mem_nhds
+    apply (hU.preimage (continuous_mul_const g⁻¹)).mem_nhds
     simp [U.one_mem]
   apply (continuousAt_const (y := rep U g)).congr
   filter_upwards [hmem] with y hy
@@ -102,76 +102,40 @@ theorem normF_mem (n : ℕ) (F : (Fin (n + 1) → G) → M.V) (hF : F ∈ hcoch 
   · have : normF M U n F = fun x => ∑ c : Quotient (QuotientGroup.rightRel U),
         M.rho c.out⁻¹ (F fun i => c.out * x i) := funext (normF_eq M U n F)
     rw [this]
-    refine continuous_finset_sum _ fun c _ => (continuous_rho M _).comp (hF.1.comp ?_)
+    refine continuous_finsetSum _ fun c _ => (continuous_rho M _).comp (hF.1.comp ?_)
     exact continuous_pi fun i => continuous_const.mul (continuous_apply i)
-  · rw [normF_eq, normF_eq, map_sum]
-    have key : ∀ c : Quotient (QuotientGroup.rightRel U),
-        M.rho c.out⁻¹ (F fun i => c.out * (g • x i)) =
-        M.rho g (M.rho (cosetMul U g c).out⁻¹ (F fun i => (cosetMul U g c).out * x i)) := by
-      intro c
-      have e := out_mul U g c
-      have h1 : (fun i => c.out * (g • x i)) =
-          fun i => retr U (c.out * g) • ((cosetMul U g c).out * x i) := by
-        funext i
-        show c.out * (g * x i) = (retr U (c.out * g) : G) * ((cosetMul U g c).out * x i)
-        rw [← mul_assoc, ← mul_assoc, ← e]
-      rw [h1, hF.2]
-      show M.rho c.out⁻¹ (M.rho (retr U (c.out * g) : G) _) = _
-      rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
-      congr 2
-      rw [show (retr U (c.out * g) : G) = c.out * g * ((cosetMul U g c).out)⁻¹ by
-        rw [eq_mul_inv_iff_mul_eq]; exact e.symm]
-      group
-    simp only [key]
-    exact Fintype.sum_bijective _ (cosetMul_bij U g) _ _ fun _ => rfl
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [normF_eq, normF_eq, map_sum]
+      have key : ∀ c : Quotient (QuotientGroup.rightRel U),
+          M.rho c.out⁻¹ (F fun i => c.out * (g • x i)) =
+          M.rho g (M.rho (cosetMul U g c).out⁻¹ (F fun i => (cosetMul U g c).out * x i)) := by
+        intro c
+        have e := out_mul U g c
+        have h1 : (fun i => c.out * (g • x i)) =
+            fun i => retr U (c.out * g) • ((cosetMul U g c).out * x i) := by
+          funext i
+          show c.out * (g * x i) = (retr U (c.out * g) : G) * ((cosetMul U g c).out * x i)
+          rw [← mul_assoc, ← mul_assoc, ← e]
+        rw [h1, hF.2]
+        show M.rho c.out⁻¹ (M.rho (retr U (c.out * g) : G) _) = _
+        rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
+        congr 2
+        rw [show (retr U (c.out * g) : G) = c.out * g * ((cosetMul U g c).out)⁻¹ by
+          rw [eq_mul_inv_iff_mul_eq]; exact e.symm]
+        group
+      simp only [key]
+      exact Fintype.sum_bijective _ (cosetMul_bij U g) _ _ fun _ => rfl
 
 theorem normF_hd (n : ℕ) (F : (Fin (n + 1) → G) → M.V) :
     normF M U (n + 1) (hd n F) = hd n (normF M U n F) := by
   classical
   haveI : Fintype (Quotient (QuotientGroup.rightRel U)) := Fintype.ofFinite _
   funext x
-  simp only [normF_eq, hd, map_sum, map_zsmul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [normF_eq, hd, map_sum, map_zsmul, Finset.smul_sum]
   exact Finset.sum_comm
 
-theorem normF_add (n : ℕ) (F F' : (Fin (n + 1) → G) → M.V) :
-    normF M U n (F + F') = normF M U n F + normF M U n F' := by
-  classical
-  haveI : Fintype (Quotient (QuotientGroup.rightRel U)) := Fintype.ofFinite _
-  funext x
-  simp only [Pi.add_apply, normF_eq, map_add, Finset.sum_add_distrib]
-
-theorem normF_smul (n : ℕ) (r : R) (F : (Fin (n + 1) → G) → M.V) :
-    normF M U n (r • F) = r • normF M U n F := by
-  classical
-  haveI : Fintype (Quotient (QuotientGroup.rightRel U)) := Fintype.ofFinite _
-  funext x
-  simp only [Pi.smul_apply, normF_eq, map_smul, Finset.smul_sum]
-
-def normL (n : ℕ) : hcoch (M.resSub U) G n →ₗ[R] hcoch M G n where
-  toFun F := ⟨normF M U n F.1, normF_mem M U n F.1 F.2⟩
-  map_add' F F' := by
-    classical
-    haveI : Fintype (Quotient (QuotientGroup.rightRel U)) := Fintype.ofFinite _
-    refine Subtype.ext (funext fun x => ?_)
-    exact congrFun (normF_add M U n F.1 F'.1) x
-  map_smul' r F := by
-    classical
-    haveI : Fintype (Quotient (QuotientGroup.rightRel U)) := Fintype.ofFinite _
-    refine Subtype.ext (funext fun x => ?_)
-    exact congrFun (normF_smul M U n r F.1) x
-
 variable {M U}
-
-def normCx (A : Cx R) (eA : ∀ n, A.X n ≃ₗ[R] hcoch (M.resSub U) G n) (hA : IsHomog (M.resSub U) G A eA)
-    (eG : ∀ n, M.coch.X n ≃ₗ[R] hcoch M G n) (hG : IsHomog M G M.coch eG) : Hom A M.coch where
-  f n := ((eG n).symm.toLinearMap.comp (normL M U n)).comp (eA n).toLinearMap
-  comm n F := by
-    apply (eG (n + 1)).injective
-    apply Subtype.ext
-    rw [hG]
-    simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply]
-    show normF M U (n + 1) (eA (n + 1) (A.d n F)).1 = hd n (normF M U n (eA n F).1)
-    rw [hA]; exact normF_hd M U n _
 
 end Norm
 

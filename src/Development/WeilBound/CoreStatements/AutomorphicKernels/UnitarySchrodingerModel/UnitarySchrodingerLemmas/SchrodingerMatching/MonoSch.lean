@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerAdditivity
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerAdditivity
+
+@[expose] public section
 
 noncomputable section
 

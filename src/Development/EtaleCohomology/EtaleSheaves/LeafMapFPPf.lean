@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafPairFPPf
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafPairFPPf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendChainPf
@@ -10,7 +14,6 @@ namespace LateralTheory.E.LeafMapFPPf
 section
 variable {k Ω : Type} [Field k] [Field Ω] [Algebra k Ω]
 
-@[reassoc]
 theorem incl_comp {R S T : Subalgebra k Ω} (h1 : R ≤ S) (h2 : S ≤ T) :
     incl h2 ≫ incl h1 = incl (h1.trans h2) := by
   simp only [incl, ← Spec.map_comp]
@@ -90,9 +93,9 @@ theorem morphismDescent_of_isLimit (hL : LeafLimFP) (hI : LeafStagesFP) : LeafMa
   obtain ⟨S, g, hg1, hg2⟩ := Scheme.exists_π_app_comp_eq_of_locallyOfFinitePresentation (D := dg q1)
     (t := dgT q1) (f := q) (c := dgCone (γ1 ≫ c0) q1 v1 hs1) hc (γ1 ≫ v0) (by
       ext S
-      simp only [dgCone, dgT, NatTrans.comp_app, Functor.const_map_app]
-      erw [pullback.lift_fst_assoc]
-      rw [hs1.w]; simp only [Category.assoc, hs0.w])
+      dsimp [dgCone, dgT, dg]
+      rw [← Category.assoc, pullback.lift_fst, hs1.w]
+      simp only [Category.assoc, hs0.w])
   let P := pullback q1 (incl S.unop.2.2)
   let g' : P ⟶ D0 := g
   let w1 : C1 ⟶ P := pullback.lift v1 ((γ1 ≫ c0) ≫ toR S.unop.1) (by rw [Category.assoc, toR_incl, hs1.w])

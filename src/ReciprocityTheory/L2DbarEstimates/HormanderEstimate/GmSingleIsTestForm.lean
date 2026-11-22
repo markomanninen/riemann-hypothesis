@@ -1,6 +1,13 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.HilbertLemmas
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.CvxOfConvex
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.MinimalSolution
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.HormanderLemma
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.OntoWithBoundTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -111,7 +118,7 @@ private lemma continuous_d_of_ck_two {n : ℕ} {z : M → V n} (hz : IsLocalHome
     intro x hx
     unfold d
     have hex : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source := ⟨e0, hc0, hx⟩
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     set e := Classical.choose hex with he_def
     have he : IsChart n z e ∧ x ∈ e.source := Classical.choose_spec hex
     have hzx : z x = e x := he.1 he.2
@@ -163,7 +170,7 @@ theorem gm_tstar_cont (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z) (ph :
     simpa [neg_one_mul] using gm_exp_ck n z ph hph (-1) 2
   have hph' := gm_cont_of_smoothR n z hz ph hph
   have hsum : Continuous (fun x => ∑ j, d n z j (fun y => (Real.exp (-ph y) : ℂ) * f y j) x) :=
-    continuous_finset_sum _ fun j _ => continuous_d_of_ck_two hz (Ck.mul n z 2 _ _ hE1 (hf j).1) j
+    continuous_finsetSum _ fun j _ => continuous_d_of_ck_two hz (Ck.mul n z 2 _ _ hE1 (hf j).1) j
   have hE : Continuous (fun x => (Real.exp (ph x) : ℂ)) :=
     Complex.continuous_ofReal.comp (Real.continuous_exp.comp hph')
   exact (hE.mul hsum).neg
@@ -274,18 +281,14 @@ theorem gm_lintegral_wvol {E : Type*} [NormedAddCommGroup E] (n : ℕ) (z : M �
 theorem gm_memLp_two_iff {E : Type*} [NormedAddCommGroup E] {μ : Measure M} (g : M → E)
     (hg : AEStronglyMeasurable g μ) :
     MemLp g 2 μ ↔ ∫⁻ x, ‖g x‖ₑ ^ (2:ℝ) ∂μ < ⊤ := by
-  first
-    | (simp only [MemLp, hg, true_and]
-       rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero ENNReal.ofNat_ne_top]
-       simp)
-    | (rw [MemLp, and_iff_right hg, eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top]
-       simp only [ENNReal.toReal_ofNat]
-       rw [ENNReal.rpow_lt_top_iff_of_pos (by norm_num)])
+  rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top two_ne_zero ENNReal.ofNat_ne_top hg]
+  simp only [ENNReal.toReal_ofNat]
 
 theorem gm_norm_sq {E : Type*} [NormedAddCommGroup E] {μ : Measure M} (u : Lp E 2 μ) :
     ENNReal.ofReal (‖u‖ ^ 2) = ∫⁻ x, ‖u x‖ₑ ^ (2:ℝ) ∂μ := by
   rw [Lp.norm_def, ENNReal.ofReal_pow ENNReal.toReal_nonneg, ENNReal.ofReal_toReal (Lp.eLpNorm_ne_top u),
-    eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top, ← ENNReal.rpow_natCast,
+    MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      (Lp.aestronglyMeasurable u), ← ENNReal.rpow_natCast,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -464,7 +467,7 @@ theorem gm_tstar_single (n : ℕ) (z : M → V n) (ph : M → ℝ) (φ : M → �
     · subst hk
       have hE : (Real.exp (-ph y) : ℂ) * (Real.exp (ph y) : ℂ) = 1 := by
         rw [← Complex.ofReal_mul, ← Real.exp_add, neg_add_cancel, Real.exp_zero, Complex.ofReal_one]
-      simp only [gmSingle, EuclideanSpace.single_apply, eq_self_iff_true, if_true, ← mul_assoc, hE,
+      simp only [gmSingle, PiLp.single_apply, eq_self_iff_true, if_true, ← mul_assoc, hE,
         one_mul]
     · simp [gmSingle, hk]
   have hd : ∀ k, d n z k (fun y => (Real.exp (-ph y) : ℂ) * gmSingle ph φ j y k) x =
@@ -567,7 +570,7 @@ theorem locL2_sub_weightedL2 (n : ℕ) (z : M → V n) (hz : IsLocalHomeomorph z
           rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, hw]
       _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top hfin
   have hsub := hF0C.sub huC
-  rw [gm_memLp_two_iff _ hsub.1] at hsub
+  rw [gm_memLp_two_iff _ hsub.aestronglyMeasurable] at hsub
   have e2 : ∀ x, ‖F0 x - u x‖ₑ ^ (2:ℝ) = ‖F0 x - u x‖ₑ ^ 2 := by
     intro x
     first

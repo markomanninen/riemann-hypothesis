@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.GoodSet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.WeightKernels.GoodSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem UpperTheory.V.Z.Sym.Ga.conjEx :
       left_inv := fun x => inj (by rw [hσ, hσ, Complex.conj_conj])
       right_inv := fun x => inj (by rw [hσ, hσ, Complex.conj_conj])
       map_mul' := fun x y => inj (by simp only [hσ, map_mul])
-      map_add' := fun x y => inj (by simp only [hσ, map_add])
+      map_add' := fun x y => inj (by simp only [hσ, map_add (f := _)])
       commutes' := fun r => inj (by
         rw [hσ]
         exact conj_real (j.comp (algebraMap (maximalRealSubfield L) Ω)) r) }

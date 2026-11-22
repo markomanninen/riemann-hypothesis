@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiObjects
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolyGermPointPow
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalSmulOfIsHomogeneous
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZariskiObjects
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolyGermPointPow
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GradientAtPoint
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EvalSmulOfIsHomogeneous
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -99,7 +104,7 @@ theorem mem_pow_ker_of_isBigO {k : ℕ} {q : MvPolynomial σ ℂ}
     rw [hq'def, show (eval y : MvPolynomial σ ℂ →+* ℂ) = eval₂Hom (RingHom.id ℂ) y from rfl, eval₂Hom_bind₁]
     have hfun : (fun i => eval₂Hom (RingHom.id ℂ) y (X i + C (w i))) = y + w := by
       ext i
-      simp only [map_add, eval₂Hom_X', eval₂Hom_C, RingHom.id_apply, Pi.add_apply]
+      simp only [map_add (f := _), eval₂Hom_X', eval₂Hom_C, RingHom.id_apply, Pi.add_apply]
     rw [hfun]
     rfl
 
@@ -115,7 +120,8 @@ theorem mem_pow_ker_of_isBigO {k : ℕ} {q : MvPolynomial σ ℂ}
       intro t
       rw [← hev]
       conv_rhs => rw [← sum_homogeneousComponent q']
-      simp only [P, Polynomial.eval_finsetSum, Polynomial.eval_monomial, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, Polynomial.eval_finsetSum, Polynomial.eval_monomial, map_sum]
       refine Finset.sum_congr rfl fun e _ => ?_
       rw [eval_smul_of_isHomogeneous (homogeneousComponent_isHomogeneous e q'), mul_comm]
     have hT : Tendsto (fun t : ℂ => t • v + w) (𝓝 0) (𝓝 w) := by
@@ -126,12 +132,13 @@ theorem mem_pow_ker_of_isBigO {k : ℕ} {q : MvPolynomial σ ℂ}
       refine (hq.comp_tendsto hT).trans (IsBigO.of_bound (‖v‖ ^ k) (Eventually.of_forall fun t => ?_))
       simp [norm_smul, mul_pow, mul_comm]
     have hc := coeff_eq_zero_of_isBigO hPO d hd
-    simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq', if_pos hdT] at hc
+    simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
+      Finsupp.single_apply, Finset.sum_ite_eq', if_pos hdT] at hc
     simpa using hc
   have hmem : q' ∈ idealOfVars σ ℂ ^ k := by
     refine (mem_pow_idealOfVars_iff' k q').mpr fun x hx => ?_
-    have := congrArg (coeff x) (hcomp _ hx)
-    rwa [coeff_homogeneousComponent, if_pos rfl, coeff_zero] at this
+    have := congrArg (AddMonoidAlgebra.coeff · x) (hcomp _ hx)
+    simpa [coeff_homogeneousComponent, AddMonoidAlgebra.coeff] using this
   have hback : bind₁ (fun i => X i - C (w i)) q' = q := by
     rw [hq'def, bind₁_bind₁]
     simp [bind₁_X_right]

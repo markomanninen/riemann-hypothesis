@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem sc_of_le {a : K⟦X⟧} (n : ℕ) (h : ∀ k, ‖coeff k a‖ ≤ ((k : 
 theorem SC.add {a b : K⟦X⟧} (ha : SC a) (hb : SC b) : SC (a + b) := by
   intro r hr0 hr1
   refine Summable.of_nonneg_of_le (fun k => by positivity) (fun k => ?_) ((ha r hr0 hr1).add (hb r hr0 hr1))
-  rw [← add_mul, map_add]
+  rw [← add_mul, map_add (f := _)]
   exact mul_le_mul_of_nonneg_right (norm_add_le _ _) (by positivity)
 
 theorem SC.mul {a b : K⟦X⟧} (ha : SC a) (hb : SC b) : SC (a * b) := by
@@ -65,20 +69,22 @@ theorem Ev.unique {y a e f : K⟦X⟧} (he : Ev y a e) (hf : Ev y a f) : e = f :
   PowerSeries.ext fun k => (he k).unique (hf k)
 
 theorem Ev.add {y a b e f : K⟦X⟧} (he : Ev y a e) (hf : Ev y b f) : Ev y (a + b) (e + f) := fun k => by
-  simpa only [map_add, add_mul] using (he k).add (hf k)
+  simpa only [map_add (f := _), add_mul] using (he k).add (hf k)
 
 theorem Ev.smul {y a e : K⟦X⟧} (c : K) (he : Ev y a e) : Ev y (c • a) (c • e) := fun k => by
   simpa only [map_smul, smul_eq_mul, mul_assoc] using (he k).mul_left c
 
 theorem coeff_aeval_trunc (y a : K⟦X⟧) (k m : ℕ) :
     coeff k (Polynomial.aeval y (trunc m a)) = ∑ i ∈ range m, coeff i a * coeff k (y ^ i) := by
-  rw [Polynomial.aeval_def, eval₂_trunc_eq_sum_range, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Polynomial.aeval_def, eval₂_trunc_eq_sum_range, map_sum]
   refine sum_congr rfl fun i _ => ?_
   rw [← Algebra.smul_def, map_smul, smul_eq_mul]
 
 theorem ev_coe (y : K⟦X⟧) (p : Polynomial K) : Ev y (p : K⟦X⟧) (Polynomial.aeval y p) := fun k => by
   have h : coeff k (Polynomial.aeval y p) = ∑ m ∈ p.support, coeff m (p : K⟦X⟧) * coeff k (y ^ m) := by
-    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum, Polynomial.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum, Polynomial.sum, map_sum]
     refine sum_congr rfl fun i _ => ?_
     rw [← Algebra.smul_def, map_smul, smul_eq_mul, Polynomial.coeff_coe]
   rw [h]
@@ -177,7 +183,7 @@ theorem sc_lg (hn : ∀ m : ℕ, ‖(m : K)⁻¹‖ ≤ m) : SC (lg K) := sc_of_
 variable [CharZero K]
 
 omit [IsUltrametricDist K] [CompleteSpace K] in
-theorem derivative_lg : derivative K (lg K) = geo K := by
+theorem derivative_lg : PowerSeries.derivative (lg K) = geo K := by
   ext n
   have : ((n : K) + 1) ≠ 0 := by exact_mod_cast n.succ_ne_zero
   simp only [coeff_derivative, lg, geo, coeff_mk]
@@ -186,18 +192,19 @@ theorem derivative_lg : derivative K (lg K) = geo K := by
   ring
 
 theorem Ev.derivative_log {y e : K⟦X⟧} (hy : ‖constantCoeff y‖ < 1) (he : Ev y (lg K) e) :
-    derivative K e * (1 + y) = derivative K y := by
+    PowerSeries.derivative e * (1 + y) = PowerSeries.derivative y := by
   obtain ⟨g, hg⟩ := exists_ev hy (sc_geo (K := K))
   have h1 : g * (1 + y) = 1 := by
     have h := Ev.mul hy sc_geo (sc_coe (1 + Polynomial.X)) hg (ev_coe y (1 + Polynomial.X))
     have h' := ev_coe y 1
-    simp only [Polynomial.coe_add, Polynomial.coe_one, Polynomial.coe_X, geo_mul, map_add, map_one,
+    simp only [Polynomial.coe_add, Polynomial.coe_one, Polynomial.coe_X, geo_mul, map_add (f := _), map_one,
       Polynomial.aeval_X] at h h'
     exact h.unique h'
-  have h2 : derivative K e = g * derivative K y := by
+  have h2 : PowerSeries.derivative e = g * PowerSeries.derivative y := by
     ext k
     have h3 := (hasSum_nat_add_iff' 1).2 ((he (k + 1)).mul_right ((k : K) + 1))
-    have h4 := hasSum_sum fun p (_ : p ∈ antidiagonal k) => (hg p.1).mul_right (coeff p.2 (derivative K y))
+    have h4 := hasSum_sum fun p (_ : p ∈ antidiagonal k) =>
+      (hg p.1).mul_right (coeff p.2 (PowerSeries.derivative y))
     rw [← coeff_mul] at h4
     rw [← coeff_derivative] at h3
     simp only [range_one, sum_singleton, lg, coeff_mk, Nat.cast_zero, div_zero, zero_mul, sub_zero] at h3
@@ -235,7 +242,7 @@ theorem exists_log_factor (hn : ∀ m : ℕ, ‖(m : K)⁻¹‖ ≤ m) (n : ℕ)
   · have hone : ∀ i ≤ k, ‖coeff i (1 : K⟦X⟧)‖ ≤ 1 := fun i _ => by
       rw [coeff_one]; split_ifs <;> simp
     have hb : ∀ i ≤ k, ‖coeff i (1 + X : K⟦X⟧)‖ ≤ 1 * 1 ^ i := fun i hi => by
-      rw [map_add, one_pow, one_mul]
+      rw [map_add (f := _), one_pow, one_mul]
       refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hone i hi) ?_)
       rw [coeff_X]; split_ifs <;> simp
     have hb2 : ∀ i ≤ k, ‖coeff i y‖ ≤ 1 * 1 ^ i := fun i hi => by
@@ -322,7 +329,7 @@ theorem norm_natCast_inv_le (LL : FinExt l) (m : ℕ) : ‖(m : ↥LL.1)⁻¹‖
     rw [← norm_algebraMap' ↥LL.1 (m : ℚ_[l]), map_natCast]
   rw [norm_inv, h1, Padic.norm_eq_zpow_neg_valuation (by exact_mod_cast hm.ne'), Padic.valuation_natCast,
     zpow_neg, inv_inv, zpow_natCast]
-  exact_mod_cast Nat.le_of_dvd hm pow_padicValNat_dvd
+  exact_mod_cast Nat.le_of_dvd hm (pow_multiplicity_dvd l m)
 
 theorem norm_integer_le_one (x : ↥(OL LL)) : ‖algebraMap ↥(OL LL) ↥LL.1 x‖ ≤ 1 := by
   have h : IsIntegral ℤ_[l] ((x : ↥LL.1) : Om l) :=

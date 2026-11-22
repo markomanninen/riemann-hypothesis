@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnimodGenus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnimodGenus
+
+@[expose] public section
 
 open NumberField
 

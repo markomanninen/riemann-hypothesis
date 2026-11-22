@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertSplitAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertSplitAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.V.Published GlobalTheory.RealGal GlobalTheory.UnitaryBC
 open UpperTheory.Gal.UnramifiedFromSplittingCriterion
@@ -57,7 +61,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.mkQ :
     · rw [h, map_neg]; congr 1; exact g.commutes b
   have hmin : minpoly Y x = X ^ 2 - C (a : Y) :=
     (minpoly.eq_of_irreducible_of_monic hirr heval (monic_X_pow_sub_C _ two_ne_zero)).symm
-  have hdeg : (minpoly Y x).natDegree = 2 := by rw [hmin, natDegree_X_pow_sub_C]
+  have hdeg : (minpoly Y x).natDegree = 2 := by rw [hmin, natDegree_X_pow_sub_C _]
   have hfin : Module.finrank Y Y⟮x⟯ = 2 := by
     rw [IntermediateField.adjoin.finrank hint, hdeg]
   haveI := IntermediateField.adjoin.finiteDimensional hint
@@ -81,7 +85,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.mkQ :
     rw [IntermediateField.adjoin.powerBasis_dim, hdeg] at hf
     refine ⟨f.coeff 0, f.coeff 1, ?_⟩
     have hf' : f = C (f.coeff 1) * X + C (f.coeff 0) := Polynomial.eq_X_add_C_of_natDegree_le_one (by omega)
-    rw [hf', map_add, map_mul, aeval_C, aeval_C, aeval_X, IntermediateField.adjoin.powerBasis_gen, add_comm]
+    rw [hf', map_add (f := _), map_mul, aeval_C, aeval_C, aeval_X, IntermediateField.adjoin.powerBasis_gen, add_comm]
     simp only [coeff_add, coeff_C_mul, coeff_X_zero, coeff_X_one, coeff_C_zero, coeff_C_succ, mul_zero, mul_one, zero_add, add_zero]
     rfl
   refine ⟨⟨Y⟮x⟯, nf, cm, hfin⟩, hxK, hspan, ?_⟩
@@ -89,4 +93,4 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.mkQ :
   obtain ⟨b, c, rfl⟩ := hspan y
   have hb : ∀ e : Y, h (algebraMap Y Ω e) = algebraMap Y Ω e := hY
   show h ((algebraMap Y Ω b) + (algebraMap Y Ω c) * x) = (algebraMap Y Ω b) + (algebraMap Y Ω c) * x
-  rw [map_add, map_mul, hb, hb, hhx]
+  rw [map_add (f := _), map_mul, hb, hb, hhx]

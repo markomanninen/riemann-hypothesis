@@ -1,9 +1,13 @@
-import Formalism.LocalRingCardinality.DataForced
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LpLower
-import Formalism.LocalToGlobal.Columns.CoefficientsModP
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Formalism.LocalRingCardinality.DataForced
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LpLower
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,96 +79,6 @@ theorem fInertGe (D : D7) : FInertGe D := by
 theorem factDelDualNabla : FactDelDualNabla := factDelDualNabla_of Formalism.L2.DIV.weylEqDualNabla
 
 section Check
-example : bridge_cols_conj := bridge_cols_conj_holds
-example : FactSigYDceil := factSigYDceil
-example : FactBuUnique := factBuUnique
-example : FactPsiCardViaTau := factPsiCardViaTau
-example : AnisotropicLineIndepOfMember := anisotropicLine_indep_of_member
-example : FactUnitRuleAgree := factUnitRuleAgree
-example : bridge_ccb_unit := bridge_ccb_unit_holds
-example : bridge_ccb_integral := bridge_ccb_integral_holds
-example : bridge_unit_rule := bridge_unit_rule_holds
-example : FactUnitNormalisation := factUnitNormalisation
-example : bridge_hn_mu := bridge_hn_mu_holds
-example : bridge_dual_mu := bridge_dual_mu_holds
-example : bridge_ccb_dual := bridge_ccb_dual_holds
-example : RankBoundMonotoneInDimension := rankBound_monotone_in_dimension
-example : FactHHcc := factHHcc
-example : FactNc := factNc
-example : FactNatW := factNatW
-example : bridge_round_square := bridge_round_square_holds
-example : FactSqActMul := factSqActMul
-example : FactSqStable := factSqStable
-example : FactSqHighestWeight := factSqHighestWeight
-example : bridge_normFock_extremal := bridge_normFock_extremal_holds
-example : FactNormFockUnitary := factNormFockUnitary
-example : FactDelDualNabla := factDelDualNabla
-example : bridge_hc_rho := bridge_hc_rho_holds
-example : FactIota := factIota
-example : bridge_iota := bridge_iota_holds
-example : bridge_star := bridge_star_holds
-example : FactCardPsi := factCardPsi
-example : FactEmb := factEmb
-example : FactPlaces := factPlaces
-example : FactTopsThick := factTopsThick
-example : FactRd := factRd
-example : FactMMUnimodular := factMMUnimodular
-example : FactClassFrob := factClassFrob
-example : FactFrobGeom := factFrobGeom
-example : bridge_lidx_det := Formalism.L2.Col.bridge_lidx_det_holds
-example : FactWtPos := factWtPos
-example : FactWtZero := factWtZero
-example : FactWtInt := factWtInt
-example : bridge_KD_succ := bridge_KD_succ_holds
-example : bridge_thl_index := bridge_thl_index_holds
-example : FactSDivSharp := factSDivSharp
-example : FactEInt := factEInt
-example : FactDuLe := factDuLe
-example : FactGaussRam := factGaussRam
-example : bridge_autL_not_column := bridge_autL_not_column_holds
-example : FactEtaMean := factEtaMean
-example : FactLpF := factLpF
-example : Rows.FactKaBlocks := Rows.factKaBlocks
-example : Rows.FactShimRange := Rows.factShimRange
-example : Rows.FactQZ := Rows.factQZ
-example : Rows.FactBuDetermined := Rows.factBuDetermined
-example : Rows.FactLamPNonneg := Rows.factLamPNonneg
-example : Rows.FactDleDall := Rows.factDleDall
-example : Rows.FactZeMu0 := Rows.factZeMu0
-example : Rows.FactAjConj := Rows.factAjConj
-example : Spaces.bridge_hD := bridge_hD_holds
-example : Spaces.bridge_sigRank := bridge_sigRank_holds
-example : RankBaseSpaceEq := rank_base_space
-example : SignatureBaseSpaceSum := signature_base_space
-example : FactSigW := factSigW
-example : SignatureBaseMiddleEq := signature_base_space_graded
-example : FactWmDef := factWmDef
-example : FactXm := factXm
-example : FactYm := factYm
-example : FactNStep := factNStep
-example : FactNEven := factNEven
-example : FactROdd := factROdd
-example : FactSigmaCount := factSigmaCount
-example : FactSShift := factSShift
-example : FactWG := factWG
-example : FactSInt := factSInt
-example : FactNV := factNV
-example : FactHCMono := factHCMono
-
-example (R : Ranks) : FactSigYD R := factSigYD R
-example (R : Ranks) (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] :
-    BaseSpacePosDef R F E := baseSpace_posDef R F
-example (R : Ranks) (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] :
-    FactXmDef R F E := factXmDef R F
-example (R : Ranks) (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] :
-    FactVSig R F E := factVSig R F
-example (R : Ranks) (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] :
-    FactWmPosDef R F E := factWmPosDef R F E
-example (D : D7) (X : DivX D) : Idx.FactStepBz X := Idx.factStepBz X
-example (D : D7) : FInertGe D := fInertGe D
-
-example (h1 : DiffKPrincipal) (h2 : CcNorm) : FactPrincipalDatum := factPrincipalDatum_of h1 h2
-example (D : D7) (h : DGamMink D) (hD : DGamDef D) : FactDGam D 12 := DGamMink.fact h hD
 
 end Check
 

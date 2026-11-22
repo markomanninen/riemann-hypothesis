@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivCompM
+
+@[expose] public section
 
 open GlobalTheory.Nef
 
@@ -38,7 +42,7 @@ noncomputable def quotRingHom {A B R : Type} [CommRing A] [CommRing B] [CommRing
     have := hφ.2.1 0 0
     simp only [add_zero] at this
     simpa using this
-  map_add' f g := by rw [← map_add, mk_eq_iff_X_pow_dvd]; exact hφ.2.1 f g
+  map_add' f g := by rw [← map_add (f := _), mk_eq_iff_X_pow_dvd]; exact hφ.2.1 f g
 
 theorem ker_factor_sq {R : Type} [CommRing R] (n : ℕ) (hn : 1 ≤ n)
     (hle : Ideal.span {(X : PowerSeries R) ^ (n + 1)} ≤ Ideal.span {(X : PowerSeries R) ^ n}) :
@@ -78,7 +82,7 @@ theorem exists_lift_succ : ∀ (A B R : Type) [CommRing A] [CommRing B] [CommRin
   choose ψ hψ using fun f => Ideal.Quotient.mk_surjective (χ' f)
   refine ⟨ψ, ⟨fun f g => ?_, fun f g => ?_, ?_, fun b => ?_⟩, fun f => ?_⟩
   · rw [← mk_eq_iff_X_pow_dvd, map_mul, hψ, hψ, hψ, map_mul]
-  · rw [← mk_eq_iff_X_pow_dvd, map_add, hψ, hψ, hψ, map_add]
+  · rw [← mk_eq_iff_X_pow_dvd, map_add (f := _), hψ, hψ, hψ, map_add (f := _)]
   · rw [← mk_eq_iff_X_pow_dvd, map_one, hψ, map_one]
   · rw [← mk_eq_iff_X_pow_dvd, hψ, ← RingHom.comp_apply χ' π, h₂]; rfl
   · rw [← mk_eq_iff_X_pow_dvd, ← Ideal.Quotient.factor_mk hle, hψ, ← RingHom.comp_apply, h₁]; rfl

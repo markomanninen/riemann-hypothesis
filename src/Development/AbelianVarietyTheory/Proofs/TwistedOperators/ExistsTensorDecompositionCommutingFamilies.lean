@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PiTensorSubmoduleEqTopOfAbsolutelyIrreducibleSta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PiTensorSubmoduleEqTopOfAbsolutelyIrreducibleSta
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -205,21 +209,22 @@ theorem prodAt_base (S : Finset ι) :
   · intro j S hj ih
     rw [prodAt_insert hc s _ hj, Module.End.mul_apply, ih, hs]
 
-omit hs in
 
+omit hs in
 def res (a : ∀ i, G i → Module.End ℂ W) (i : ι) (w₀ : W) (g : G i) : Module.End ℂ (cyc a i w₀) :=
   (a i g).restrict (fun _ hx => apply_mem_cyc hx (gen_mem_alg i g))
 
 omit hs in
 theorem res_apply (i : ι) (g : G i) (y : cyc a i w₀) : ((res a i w₀ g y : cyc a i w₀) : W) = a i g y := rfl
 
-def mu : MultilinearMap ℂ (fun i => cyc a i w₀) W where
+def mu : (∀ i, cyc a i w₀) →ₘₗ[ℂ] W where
   toFun x := prodAt hc s x Finset.univ w₀
   map_update_add' x i u v := by
     rw [prodAt_univ_update hc s hs, prodAt_univ_update hc s hs, prodAt_univ_update hc s hs,
       Submodule.coe_add, map_add]
   map_update_smul' x i c u := by
-    rw [prodAt_univ_update hc s hs, prodAt_univ_update hc s hs, Submodule.coe_smul, map_smul]
+    rw [prodAt_univ_update hc s hs, prodAt_univ_update hc s hs, Submodule.coe_smul,
+      RingHom.id_apply, map_smul]
 
 theorem mu_apply (x : ∀ i, cyc a i w₀) : mu hc s hs x = prodAt hc s x Finset.univ w₀ := rfl
 

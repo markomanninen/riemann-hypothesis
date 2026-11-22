@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ShearMp
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ShearMp
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,40 +11,46 @@ open MeasureTheory Matrix
 
 namespace Formalism.L2.SG.lowerTriangularModel
 
-variable {m : ℕ} (w : Equiv.Perm (Fin m))
+open Formalism.FourierDecayAlt.P.Dx2.Rad (low low_apply low_coord)
 
-local notation "L" => Formalism.FourierDecayAlt.P.Dx2.Rad.low w
+variable {m : ℕ} (w : Equiv.Perm (Fin m))
 
 def ht (q : Formalism.FourierDecayAlt.C2.Lstidx w) : ℕ := q.1.1.val - q.1.2.val
 
-theorem low_upper (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i j : Fin m) (h : i < j) : L y i j = 0 := by
-  rw [Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply, Matrix.one_apply_ne (ne_of_lt h), zero_add, dif_neg]
+theorem low_upper (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i j : Fin m) (h : i < j) :
+    low w y i j = 0 := by
+  rw [low_apply, Matrix.one_apply_ne (ne_of_lt h), zero_add, dite_eq_right]
   rintro ⟨h1, -⟩
   exact absurd (lt_trans h1 h) (lt_irrefl _)
 
-theorem low_diag (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i : Fin m) : L y i i = 1 := by
-  rw [Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply, Matrix.one_apply_eq, dif_neg (fun h => lt_irrefl _ h.1), add_zero]
+theorem low_diag (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i : Fin m) : low w y i i = 1 := by
+  rw [low_apply, Matrix.one_apply_eq, dite_eq_right (fun h => lt_irrefl _ h.1), add_zero]
 
-theorem low_bt (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : (L y).BlockTriangular OrderDual.toDual := by
+theorem low_bt (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) :
+    (low w y).BlockTriangular OrderDual.toDual := by
   intro i j hij
   exact low_upper w y i j hij
 
-theorem low_det (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : (L y).det = 1 := by
-  rw [Matrix.det_of_lowerTriangular _ (low_bt w y)]
+theorem low_det (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : (low w y).det = 1 := by
+  rw [Matrix.det_of_isLowerTriangular _ (low_bt w y)]
   exact Finset.prod_eq_one fun i _ => low_diag w y i
 
-abbrev M (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : Matrix (Fin m) (Fin m) ℂ := (L y)⁻¹
+abbrev M (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : Matrix (Fin m) (Fin m) ℂ := (low w y)⁻¹
 
-theorem isUnit_low (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : IsUnit (L y).det := by rw [low_det]; exact isUnit_one
+theorem isUnit_low (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : IsUnit (low w y).det := by
+  rw [low_det]
+  exact isUnit_one
 
 theorem M_upper (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i j : Fin m) (h : i < j) : M w y i j = 0 := by
-  haveI := Matrix.invertibleOfIsUnitDet (L y) (isUnit_low w y)
+  haveI := Matrix.invertibleOfIsUnitDet (low w y) (isUnit_low w y)
   exact Matrix.blockTriangular_inv_of_blockTriangular (low_bt w y) h
 
-theorem mul_M (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : L y * M w y = 1 := Matrix.mul_nonsing_inv _ (isUnit_low w y)
+theorem mul_M (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : low w y * M w y = 1 :=
+  Matrix.mul_nonsing_inv _ (isUnit_low w y)
 
 theorem sum_split (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i j : Fin m) :
-    ∑ c, L y i c * M w y c j = ∑ c ∈ Finset.univ.filter (fun c => j ≤ c ∧ c ≤ i), L y i c * M w y c j := by
+    ∑ c, low w y i c * M w y c j =
+      ∑ c ∈ Finset.univ.filter (fun c => j ≤ c ∧ c ≤ i), low w y i c * M w y c j := by
   rw [Finset.sum_filter]
   refine Finset.sum_congr rfl fun c _ => ?_
   split_ifs with h
@@ -59,7 +69,8 @@ theorem M_diag (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i : Fin m) :
   exact h
 
 theorem M_rec (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) (i j : Fin m) (hji : j < i) :
-    M w y i j + L y i j = -∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), L y i c * M w y c j := by
+    M w y i j + low w y i j =
+      -∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), low w y i c * M w y c j := by
   have h := congrFun (congrFun (mul_M w y) i) j
   rw [Matrix.mul_apply, sum_split, Matrix.one_apply_ne (ne_of_gt hji)] at h
   have e : Finset.univ.filter (fun c => j ≤ c ∧ c ≤ i) =
@@ -94,17 +105,17 @@ theorem M_dep (n : ℕ) : ∀ (y y' : Formalism.FourierDecayAlt.C2.Lstidx w → 
   rcases lt_trichotomy i j with h | h | h
   · rw [M_upper w y i j h, M_upper w y' i j h]
   · subst h; rw [M_diag, M_diag]
-  · have hL : ∀ a b : Fin m, a.val - b.val ≤ n → L y a b = L y' a b := by
+  · have hL : ∀ a b : Fin m, a.val - b.val ≤ n → low w y a b = low w y' a b := by
       intro a b hab
-      rw [Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply, Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply]
+      rw [low_apply, low_apply]
       congr 1
       split_ifs with hq
       · exact hy _ hab
       · rfl
     have e1 := M_rec w y i j h
     have e2 := M_rec w y' i j h
-    have hsum : ∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), L y i c * M w y c j =
-        ∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), L y' i c * M w y' c j := by
+    have hsum : ∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), low w y i c * M w y c j =
+        ∑ c ∈ Finset.univ.filter (fun c => j < c ∧ c < i), low w y' i c * M w y' c j := by
       refine Finset.sum_congr rfl fun c hc => ?_
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hc
       have hc1 := Fin.lt_def.1 hc.1
@@ -117,10 +128,10 @@ theorem M_dep (n : ℕ) : ∀ (y y' : Formalism.FourierDecayAlt.C2.Lstidx w → 
 
 def linv (y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ) : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ := fun q => M w y q.1.1 q.1.2
 
-theorem low_cont : Continuous (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => L y) := by
-  have e : (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => L y) = fun y => Matrix.of fun i j =>
+theorem low_cont : Continuous (low w) := by
+  have e : low w = fun y => Matrix.of fun i j =>
       (1 : Matrix (Fin m) (Fin m) ℂ) i j + if h : j < i ∧ w.symm i < w.symm j then y ⟨(i, j), h⟩ else 0 := by
-    funext y; ext i j; exact Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply w y i j
+    funext y; ext i j; exact low_apply w y i j
   rw [e]
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [Matrix.of_apply]
@@ -129,9 +140,9 @@ theorem low_cont : Continuous (fun y : Formalism.FourierDecayAlt.C2.Lstidx w →
   · exact continuous_const
 
 theorem M_cont : Continuous (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => M w y) := by
-  have e : (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => M w y) = fun y => (L y).adjugate := by
+  have e : (fun y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ => M w y) = fun y => (low w y).adjugate := by
     funext y
-    show (L y)⁻¹ = _
+    show (low w y)⁻¹ = _
     rw [Matrix.inv_def, low_det, Ring.inverse_one, one_smul]
   rw [e]
   exact (low_cont w).matrix_adjugate
@@ -149,8 +160,8 @@ theorem linv_mp : MeasurePreserving (linv w) volume volume := by
     congr 1
     have e1 := M_rec w x q.1.1 q.1.2 hq
     have e2 := M_rec w x' q.1.1 q.1.2 hq
-    have hLq : ∀ y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ, L y q.1.1 q.1.2 = y q := fun y => by
-      rw [Formalism.FourierDecayAlt.P.Dx2.Rad.low_coord]
+    have hLq : ∀ y : Formalism.FourierDecayAlt.C2.Lstidx w → ℂ, low w y q.1.1 q.1.2 = y q :=
+      fun y => low_coord w y q
     rw [hLq] at e1 e2
     rw [e1, e2]
     congr 1
@@ -158,8 +169,8 @@ theorem linv_mp : MeasurePreserving (linv w) volume volume := by
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hc
     have hc1 := Fin.lt_def.1 hc.1
     have hc2 := Fin.lt_def.1 hc.2
-    have hL : L x q.1.1 c = L x' q.1.1 c := by
-      rw [Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply, Formalism.FourierDecayAlt.P.Dx2.Rad.low_apply]
+    have hL : low w x q.1.1 c = low w x' q.1.1 c := by
+      rw [low_apply, low_apply]
       congr 1
       split_ifs with h
       · exact hx _ (by simp only [ht]; omega)

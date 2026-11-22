@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -176,12 +180,6 @@ theorem isOpen_integers : IsOpen (v.adicCompletionIntegers K : Set (v.adicComple
 
 instance locallyCompact_completion : LocallyCompactSpace (v.adicCompletion K) :=
   (isCompact_integers v).locallyCompactSpace_of_mem_nhds_of_addGroup ((isOpen_integers v).mem_nhds (zero_mem _))
-
-instance locallyCompact_finiteAdeles : LocallyCompactSpace (FiniteAdeleRing (𝓞 K) K) := by
-  haveI : Fact (∀ v : HeightOneSpectrum (𝓞 K), IsOpen (v.adicCompletionIntegers K : Set (v.adicCompletion K))) :=
-    ⟨fun v => isOpen_integers v⟩
-  exact RestrictedProduct.locallyCompactSpace_of_addGroup (fun v : HeightOneSpectrum (𝓞 K) => v.adicCompletion K)
-    (B := fun v => v.adicCompletionIntegers K) (Filter.Eventually.of_forall fun v => isCompact_integers v)
 
 end Formalism.L2.S.S7.AdeleLC
 

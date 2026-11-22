@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreHarm
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreHarm
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem th_plus1 (c : ℂ) {Z : Mat p q} (hZ : IsPC Z) (g : Pol p q r s) :
   have h0 : thMkC p q r s c (fockAct1 p q r s Z g) = 0 := by
     refine (Submodule.Quotient.mk_eq_zero _).2 (Submodule.mem_iSup_of_mem Z ⟨g, ?_⟩)
     simp [chiTr, htr, act1]
-  rw [h, map_add] at h0
+  rw [h, map_add (f := _)] at h0
   exact eq_neg_of_add_eq_zero_left h0
 
 theorem th_next (c : ℂ) (c0 : ℚ) (hc : c = c0) (d0 : ℕ)

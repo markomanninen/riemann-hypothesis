@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
-private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)) (y : GG 3 R)
+private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)) (y : GG (m := 3) (R := R))
     (hy : y * y = 1) (hr : y.right = -1) :
-    {X : Matrix (Fin 3) (Fin 3) R | GG.ad 3 R y X = X}.ncard ≤ Nat.card R ^ 3 := by
+    {X : Matrix (Fin 3) (Fin 3) R | GG.ad (m := 3) (R := R) y X = X}.ncard ≤ Nat.card R ^ 3 := by
   obtain ⟨a, s⟩ := y
   obtain rfl : s = -1 := hr
   have h : ((-1 : ℤˣ) = 1) = False := by decide
@@ -22,7 +26,7 @@ private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)
   have hB : (A * Jmat R 3)ᵀ = A * Jmat R 3 := by
     rw [Matrix.transpose_mul, Jmat_transpose]
     conv_rhs => rw [h4, Matrix.mul_assoc, hJ, Matrix.mul_one]
-  have key : ∀ X : Matrix (Fin 3) (Fin 3) R, GG.ad 3 R ⟨a, -1⟩ X = X →
+  have key : ∀ X : Matrix (Fin 3) (Fin 3) R, GG.ad (m := 3) (R := R) ⟨a, -1⟩ X = X →
       (X * (A * Jmat R 3))ᵀ = -(X * (A * Jmat R 3)) := by
     intro X hX
     have hX' : A * (-(Jmat R 3 * Xᵀ * Jmat R 3)) * A' = X := by
@@ -42,7 +46,7 @@ private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)
     fin_cases i <;> fin_cases j <;> simp [hd, e1, e2, e3, hs 0 1, hs 0 2, hs 1 2]
   let f : Matrix (Fin 3) (Fin 3) R → R × R × R := fun X =>
     ((X * (A * Jmat R 3)) 0 1, (X * (A * Jmat R 3)) 0 2, (X * (A * Jmat R 3)) 1 2)
-  have hinj : Set.InjOn f {X : Matrix (Fin 3) (Fin 3) R | GG.ad 3 R ⟨a, -1⟩ X = X} := by
+  have hinj : Set.InjOn f {X : Matrix (Fin 3) (Fin 3) R | GG.ad (m := 3) (R := R) ⟨a, -1⟩ X = X} := by
     intro X hX X' hX' hf
     simp only [f, Prod.mk.injEq] at hf
     have h0 : X * (A * Jmat R 3) - X' * (A * Jmat R 3) = 0 := by
@@ -59,7 +63,12 @@ private theorem arch_gen {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 : R)
     _ = Nat.card R ^ 3 := by rw [Set.ncard_univ, Nat.card_prod, Nat.card_prod]; ring
 
 theorem UpperTheory.V.Z.J.archUp :
-    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsCoef l O] [Algebra ℤ_[l] O], (l : O) ≠ 0 → l ≠ 2 → ∀ (x : GG 3 O), x * x = 1 → x.right = -1 → ∀ k, 0 < k → {X : Matrix (Fin 3) (Fin 3) (Ok l O k) | GG.ad 3 (Ok l O k) (GG.map (Ideal.Quotient.mk _) x) X = X}.ncard ≤ Nat.card (Ok l O k) ^ 3 := by
+    ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
+    [IsCoef l O] [Algebra ℤ_[l] O], (l : O) ≠ 0 → l ≠ 2 →
+    ∀ (x : GG (m := 3) (R := O)), x * x = 1 → x.right = -1 → ∀ k, 0 < k →
+    {X : Matrix (Fin 3) (Fin 3) (Ok l O k) |
+      GG.ad (m := 3) (R := Ok l O k) (GG.map (Ideal.Quotient.mk _) x) X = X}.ncard ≤
+    Nat.card (Ok l O k) ^ 3 := by
   intro l hl O _ _ _ _ _ hl0 hl2 x hx hr k _
   have hfin : Finite (Ok l O k) := by
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O

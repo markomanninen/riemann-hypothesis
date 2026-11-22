@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRingHomRhoK
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric GlobalTheory.KerStd GlobalTheory.KerStd.HypCoord Classical
 open Formalism.L2.Th1.CM (MaximalUnramifiedExtension)
 open Formalism.L2.Th1.D (F1 F2 OwOK TrDual phFF)
@@ -22,7 +27,7 @@ theorem conj_conj (D : D7) (x : D.host.E) : D.host.conj (D.host.conj x) = x :=
 
 theorem frob_moves_coords : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p), UnrOK (MaximalUnramifiedExtension p) p σ → (IsResidueClassZero D p ∨ IsSg D p) → ∀ (N N' : ℕ) (L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)) (L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)) (P : D.what₂.Tau → Matrix (Fin N) (Fin N) D.host.E) (P' : D.what₂.Tau → Matrix (Fin N') (Fin N') D.host.E), StdBases D lam L P → StdBases D lam L' P' → ∀ (r : ℕ) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E), (∀ z a b₀ i, σ (gK D lam P P' b z a b₀ i) = hK D lam P P' b (posPl D p z 1) a b₀ i) ∧ (∀ w a b₀ i, σ (hK D lam P P' b w a b₀ i) = gK D lam P P' b (posPl D p w 1) a b₀ i) := by
   intro D p _ lam σ hσ hcl N N' L L' P P' hP hP' r b
-  choose ρ hρ using exists_ringHom_rhoK D lam σ hσ hcl
+  choose ρ hρ using fun z => exists_ringHom_rhoK D lam σ hσ hcl z
   have hfun : ∀ z, rhoK D lam z = ⇑(ρ z) := fun z => funext fun y => (hρ z y).1
   have hs : ∀ z y, σ (ρ z y) = ρ (posPl D p z 1) (D.host.conj y) := fun z y => by
     rw [← (hρ z y).1, ← (hρ _ _).1]; exact sigma_rhoK D lam σ hσ hcl z y
@@ -60,17 +65,19 @@ theorem frob_moves_coords : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar �
   have hPc := hP.2.1 hcl
   have hP'c := hP'.2.1 hcl
   refine ⟨fun z a b₀ i => ?_, fun w a b₀ i => ?_⟩
-  · simp only [gK, hK, hfun, map_sum, map_mul]
-    refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
-    rw [hs, hs, conj_conj, hinv, K1 P hPc z]
-    have e2 := congrFun (congrFun (K2 P' hP'c z) b₁) b₀
-    simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
-    rw [e2]; ring
-  · simp only [gK, hK, hfun, map_sum, map_mul]
-    refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
-    rw [hs, hs, hinv, K1 P' hP'c w]
-    have e2 := congrFun (congrFun (K2 P hPc w) a₁) a
-    simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
-    rw [e2]; ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [gK, hK, hfun, map_sum, map_mul]
+      refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
+      rw [hs, hs, conj_conj, hinv, K1 P hPc z]
+      have e2 := congrFun (congrFun (K2 P' hP'c z) b₁) b₀
+      simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
+      rw [e2]; ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [gK, hK, hfun, map_sum, map_mul]
+      refine Finset.sum_congr rfl fun b₁ _ => Finset.sum_congr rfl fun a₁ _ => ?_
+      rw [hs, hs, hinv, K1 P' hP'c w]
+      have e2 := congrFun (congrFun (K2 P hPc w) a₁) a
+      simp only [Matrix.map_apply, Matrix.transpose_apply] at e2 ⊢
+      rw [e2]; ring
 
 end GlobalTheory.KerStd.HypCoord.FrobMove

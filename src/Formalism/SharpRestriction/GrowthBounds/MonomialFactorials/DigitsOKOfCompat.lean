@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CoarseCLower
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CoarseCLower
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem segChain_deg_even (x : Fin (2 * s + 1)) (u : Fin s) (hx : (x : ℕ) = 2 
   have hne : (x : ℕ) ≠ 2 * s := by omega
   have ht : topOf x hne = u := Fin.ext (by simp [topOf]; omega)
   simp only [segChain]
-  rw [dif_neg hne, if_pos (by omega), ht, if_neg (by omega)]
+  rw [dite_eq_right hne, if_pos (by omega), ht, if_neg (by omega)]
 
 theorem segChain_deg_odd (x : Fin (2 * s + 1)) (u : Fin s) (hx : (x : ℕ) = 2 * (u : ℕ) + 1)
     (hu : S.sigma ≤ (u : ℕ)) : (segChain p S aTop b).deg x = coarseC p S aTop b u := by
@@ -24,11 +28,11 @@ theorem segChain_deg_odd (x : Fin (2 * s + 1)) (u : Fin s) (hx : (x : ℕ) = 2 *
   have hne : (x : ℕ) ≠ 2 * s := by omega
   have ht : topOf x hne = u := Fin.ext (by simp [topOf]; omega)
   simp only [segChain]
-  rw [dif_neg hne, if_neg (by omega), ht, if_neg (by omega)]
+  rw [dite_eq_right hne, if_neg (by omega), ht, if_neg (by omega)]
 
 theorem segChain_deg_last (x : Fin (2 * s + 1)) (hx : (x : ℕ) = 2 * s) : (segChain p S aTop b).deg x = b.oPlus := by
   simp only [segChain]
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
 
 end Chain
 

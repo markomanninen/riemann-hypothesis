@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.FilteredHomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -62,40 +67,6 @@ section GroupCohomology
 
 variable {k G : Type u} [CommRing k] [Group G] {ι : Type*} {P : Rep.{u} k G}
   {A : ι → Rep.{u} k G}
-
-theorem cochainsMap_pi_bijective (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (m : ℕ) :
-    Function.Bijective fun (f : (groupCohomology.inhomogeneousCochains P).X m) (i : ι) =>
-      ((groupCohomology.cochainsMap (MonoidHom.id G) (p i)).f m).hom f := by
-  constructor
-  · intro f f' h
-    funext g
-    apply hp.1
-    funext i
-    exact congrFun (congrFun h i) g
-  · intro F
-    refine ⟨fun g => Function.surjInv hp.2 (fun i => F i g), funext fun i => funext fun g => ?_⟩
-    exact congrFun (Function.surjInv_eq hp.2 (fun i => F i g)) i
-
-theorem groupCohomology_pi_bijective (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (n : ℕ) :
-    Function.Bijective fun (x : groupCohomology P n) (i : ι) =>
-      (groupCohomology.map (MonoidHom.id G) (p i) n).hom x :=
-  homologyMap_pi_bijective (fun i => groupCohomology.cochainsMap (MonoidHom.id G) (p i))
-    (cochainsMap_pi_bijective p hp) n
-
-noncomputable def groupCohomologyPiEquiv (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (n : ℕ) :
-    groupCohomology P n ≃ₗ[k] ∀ i, groupCohomology (A i) n :=
-  LinearEquiv.ofBijective (LinearMap.pi fun i => (groupCohomology.map (MonoidHom.id G) (p i) n).hom)
-    (groupCohomology_pi_bijective p hp n)
-
-@[simp]
-theorem groupCohomologyPiEquiv_apply (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (n : ℕ)
-    (x : groupCohomology P n) (i : ι) :
-    groupCohomologyPiEquiv p hp n x i = (groupCohomology.map (MonoidHom.id G) (p i) n).hom x :=
-  rfl
 
 end GroupCohomology
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LinearIdentityHeadDifference
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LinearIdentityHeadDifference
+
+@[expose] public section
 
 noncomputable section
 

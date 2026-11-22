@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptAwayFromPrimesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeHermitianFormExistsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPointStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ContDiffUncentre
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptAwayFromPrimesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeHermitianFormExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeRegularAtLocalPointStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GroundTheory.Heights₂.Heights.LowerBoundFree
@@ -42,7 +46,8 @@ theorem posDef_of_dual {V : Type} [AddCommGroup V] [Module ℂ V] (h : V →ₗ�
     simp
   · set u : V := ∑ k, c k • x k with hu
     have e : star c ⬝ᵥ (Matrix.of fun p q => h (x p) (x q)).mulVec c = h u u := by
-      simp only [hu, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, dotProduct, Matrix.mulVec,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hu, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, dotProduct, Matrix.mulVec,
         Matrix.of_apply, Finset.mul_sum, Pi.star_apply, smul_eq_mul, RingHom.id_apply]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -50,7 +55,8 @@ theorem posDef_of_dual {V : Type} [AddCommGroup V] [Module ℂ V] (h : V →ₗ�
       ring
     have hu0 : u ≠ 0 := fun h0 => hc (funext fun j => by
       have := congrArg (g j) h0
-      simpa [hu, map_sum, hg, Finset.sum_ite_eq] using this)
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [hu, map_sum, hg, Finset.sum_ite_eq] using this)
     rw [e, Complex.pos_iff]
     refine ⟨hp u hu0, ?_⟩
     have := (Complex.conj_eq_iff_im.1 (hh u u).symm)
@@ -73,7 +79,7 @@ theorem exists_dual_sum (𝔐 : HodgeCpt Y S y) (hind : iSupIndep 𝔐.Vgen) (q 
     (hind.disjoint_biSup_biSup (s := {a, b}) (t := {a, b}ᶜ) disjoint_compl_right).mono_left
       (sup_le (le_biSup 𝔐.Vgen (by simp)) (le_biSup 𝔐.Vgen (by simp)))
   obtain ⟨C, hC, hc⟩ := hdis.symm.exists_isCompl
-  let pr : 𝔐.Li →ₗ[Ω] ↥(𝔐.Vgen a ⊔ 𝔐.Vgen b) := Submodule.linearProjOfIsCompl _ _ hc.symm
+  let pr : 𝔐.Li →ₗ[Ω] ↥(𝔐.Vgen a ⊔ 𝔐.Vgen b) := Submodule.projectionOnto _ _ hc.symm
   have hker : LinearMap.ker (Fintype.linearCombination Ω bb) = ⊥ := by
     refine LinearMap.ker_eq_bot'.2 fun m hm => funext fun k => ?_
     exact Fintype.linearIndependent_iff.1 hli m (by rwa [Fintype.linearCombination_apply] at hm) k
@@ -82,7 +88,7 @@ theorem exists_dual_sum (𝔐 : HodgeCpt Y S y) (hind : iSupIndep 𝔐.Vgen) (q 
     have := LinearMap.congr_fun hg (Pi.single l 1)
     simpa [Fintype.linearCombination_apply_single] using this
   have hpr : ∀ w : ↥(𝔐.Vgen a ⊔ 𝔐.Vgen b), pr (w : 𝔐.Li) = w := fun w =>
-    Submodule.linearProjOfIsCompl_apply_left hc.symm w
+    Submodule.projectionOnto_apply_left hc.symm w
   refine ⟨fun j => (LinearMap.proj j).comp (g.comp pr), fun j k => ?_, fun j e he => ?_⟩
   · simp only [LinearMap.comp_apply, hpr, hgb, LinearMap.proj_apply]
     simp [Pi.single_apply]
@@ -106,15 +112,16 @@ theorem exists_dual_sum (𝔐 : HodgeCpt Y S y) (hind : iSupIndep 𝔐.Vgen) (q 
         have e2 : pr x = ∑ k, ((c' k : regAt 𝔐.ξ q) : Ω) • bb k := by
           rw [show x = ((⟨x, hxW⟩ : ↥(𝔐.Vgen a ⊔ 𝔐.Vgen b)) : 𝔐.Li) from rfl, hpr, ← hc']
           exact Finset.sum_congr rfl fun k _ => e1 k
-        simp only [LinearMap.comp_apply, e2, map_sum, map_smul, hgb, LinearMap.proj_apply]
-        simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.comp_apply, e2, map_sum, map_smul, hgb, LinearMap.proj_apply]
+        simp only [Pi.smul_apply, smul_eq_mul]
         refine sum_mem fun k _ => mul_mem (c' k).2 ?_
         rw [Pi.single_apply]
         split_ifs
         · exact one_mem _
         · exact zero_mem _
       · have hxC : x ∈ C := hC (Submodule.mem_iSup_of_mem s' (Submodule.mem_iSup_of_mem hs hx.2))
-        have : pr x = 0 := Submodule.linearProjOfIsCompl_apply_right' hc.symm hxC
+        have : pr x = 0 := Submodule.projectionOnto_apply_of_mem_right hc.symm hxC
         simp [this]
     | zero => simp
     | add x y _ _ hx hy => simpa using add_mem hx hy

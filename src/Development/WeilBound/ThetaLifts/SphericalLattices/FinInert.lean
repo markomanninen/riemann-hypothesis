@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsEigenLift
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.ExistsEigenLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open NumberField IsDedekindDomain Topology GlobalTheory.WeilM GlobalTheory.Adeli
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n d : ℕ}
   {X : Spc F E n} {W : Spc F E d}
 
-open scoped Classical in
 
+open scoped Classical in
 def coef {v : Pl F} (ω : UA σ X.J × UA σ W.J → Module.End ℂ (Fn F n d v)) (l : Fn F n d v →ₗ[ℂ] ℂ) :
     Fn F n d v →ₗ[ℂ] (UA σ W.J → ℂ) where
   toFun φ h := if h ∈ UAt σ W (evFin F v) then l (ω (1, h) φ) else 0
@@ -106,7 +110,8 @@ theorem reach_vac (L : IsLocRep M ψ om v ω ρ) (V : IsVacSph M om v ω) (hl : 
   refine ⟨h, hU, m, k, c, ?_, hk, hsum⟩
   intro hc0
   have := hl.aug hsum
-  rw [LinearMap.mem_ker, map_sub, map_sum, hc0, zero_smul, map_zero, sub_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.mem_ker, map_sub, map_sum, hc0, zero_smul, map_zero, sub_zero] at this
   have e : ∀ i, l (ω (1, k i) (ω (1, h) φ)) = l (ω (1, h) φ) := fun i => hl.inv _ (hk i) _ hψ
   simp only [e, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at this
   rcases mul_eq_zero.1 this with h1 | h1
@@ -190,7 +195,8 @@ theorem finAt_sph {ω ρ ω' ρ'} (L : IsLocRep G.M B.ψ om v ω ρ) (L' : IsLoc
     have h1 : π (c (ω (1, h) φ)) ∈ N := step h hU φ hφ hyφ
     have h2 : ∀ i, π (c (ω (1, k i) (ω (1, h) φ))) ∈ N := fun i => step _ (hk i).1 _ hψ h1
     have h3 : π (c (∑ i, ω (1, k i) (ω (1, h) φ))) ∈ N := by
-      rw [map_sum, map_sum]; exact Submodule.sum_mem _ fun i _ => h2 i
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum]; exact Submodule.sum_mem _ fun i _ => h2 i
     have h4 : c (∑ i, ω (1, k i) (ω (1, h) φ)) = cc • c (G.M.vac v) := by
       have := (LinearMap.mem_ker).1 (coef_aug L hl.aug hsum)
       rw [map_sub, sub_eq_zero, map_smul] at this

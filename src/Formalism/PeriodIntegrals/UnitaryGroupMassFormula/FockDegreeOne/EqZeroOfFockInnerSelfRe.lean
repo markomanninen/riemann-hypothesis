@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.FockInnerEqSumRight
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OneDegOfHalves
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockRaisingLowering.FockInnerEqSumRight
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.OneDegOfHalves
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem wt_eq_wtN (α : σ →₀ ℕ) : wt α = (wtN α : ℂ) := by
   simp only [wt, wtN, Finsupp.prod, Nat.cast_prod]
 
 theorem fockInner_self_eq (F : MvPolynomial σ ℂ) :
-    fockInner F F = ((∑ α ∈ F.support, Complex.normSq (coeff α F) * (wtN α : ℝ) : ℝ) : ℂ) := by
+    fockInner F F = ((∑ α ∈ F.support, Complex.normSq (AddMonoidAlgebra.coeff F α) * (wtN α : ℝ) : ℝ) : ℂ) := by
   rw [fockInner_eq_support, Complex.ofReal_sum]
   refine Finset.sum_congr rfl fun α _ ↦ ?_
   rw [Complex.ofReal_mul, Complex.normSq_eq_conj_mul_self, Complex.ofReal_natCast, wt_eq_wtN]
@@ -42,11 +46,11 @@ theorem eq_zero_of_fockInner_self_re (F : MvPolynomial σ ℂ) (h : (fockInner F
     F = 0 := by
   rw [fockInner_self_eq, Complex.ofReal_re] at h
   have hall := (Finset.sum_eq_zero_iff_of_nonneg
-    (fun α _ ↦ mul_nonneg (Complex.normSq_nonneg (coeff α F)) (Nat.cast_nonneg (wtN α)))).1 h
+    (fun α _ ↦ mul_nonneg (Complex.normSq_nonneg (AddMonoidAlgebra.coeff F α)) (Nat.cast_nonneg (wtN α)))).1 h
   by_contra hF
   obtain ⟨α, hα⟩ := Finset.nonempty_of_ne_empty (mt MvPolynomial.support_eq_empty.1 hF)
-  have hc : coeff α F ≠ 0 := MvPolynomial.mem_support_iff.1 hα
-  have hne : Complex.normSq (coeff α F) * (wtN α : ℝ) ≠ 0 :=
+  have hc : AddMonoidAlgebra.coeff F α ≠ 0 := MvPolynomial.mem_support_iff.1 hα
+  have hne : Complex.normSq (AddMonoidAlgebra.coeff F α) * (wtN α : ℝ) ≠ 0 :=
     mul_ne_zero (Complex.normSq_pos.2 hc).ne' (by exact_mod_cast (wtN_pos α).ne')
   exact hne (hall α hα)
 

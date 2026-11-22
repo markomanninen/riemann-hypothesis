@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.Lev UpperTheory.V.AlgebraTools UpperTheory.V.Th
 open scoped TensorProduct
@@ -18,7 +22,7 @@ theorem UpperTheory.V.Th.Sp.trans :
         simp
     | add p r hp hr =>
         intro m
-        simp [map_add, hp, hr]
+        simp [map_add (f := _), hp, hr]
     | mul_X p s hp =>
         intro m
         rcases s with ⟨j, i⟩ | ⟨j, i⟩

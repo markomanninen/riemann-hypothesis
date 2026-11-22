@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -122,7 +127,7 @@ theorem lead_le {F : FlagD H r} {s : V ≃ₗ[K] V} (h : Keeps F s) (Λ : Submod
   refine Submodule.mem_sup.2 ⟨s l, apply_mem_smul s hl, s x - t • (s (F.e a) - F.e a),
     sub_mem ((h.flag _ _).2 hx) (Submodule.smul_mem (F.Xa a.val) t (h.vec a)), ?_⟩
   show _ = t • F.e a
-  rw [smul_sub, ← map_smul, ← he', map_add]
+  rw [smul_sub, ← map_smul, ← he', map_add (f := _)]
   abel
 
 theorem lead_eq {F : FlagD H r} {s : V ≃ₗ[K] V} (h : Keeps F s) (Λ : Submodule (𝓞 K) V)
@@ -161,17 +166,17 @@ theorem isUnimod_smul {s : V ≃ₗ[K] V} (h : ∀ x y, H.B (s x) (s y) = H.B x 
     rw [eq_top_iff]
     intro x _
     obtain ⟨y, rfl⟩ := s.surjective x
-    have hy : y ∈ Submodule.span K (Λ : Set V) := by rw [hL.span_eq_top]; trivial
+    have hy : y ∈ Submodule.span K (Λ : Set V) := by rw [h1.2]; trivial
     induction hy using Submodule.span_induction with
     | mem y hy => exact Submodule.subset_span (apply_mem_smul s hy)
     | zero => simp
     | add a b _ _ ha hb => rw [map_add]; exact add_mem (ha trivial) (hb trivial)
     | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c (ha trivial)
-  refine ⟨(isLatMod_top_bot_iff _).2 ⟨Submodule.FG.map _ hL.fg, hspan⟩, ?_⟩
+  refine ⟨⟨⟨s • Λ, Submodule.FG.map _ hL.1, by simp [rs]⟩, hspan⟩, ?_⟩
   ext x
   obtain ⟨y, rfl⟩ := s.surjective x
   rw [apply_mem_smul_iff, mem_dual_iff, hspan]
-  conv_rhs => rw [← h2, mem_dual_iff, hL.span_eq_top]
+  conv_rhs => rw [← h2, mem_dual_iff, h1.2]
   refine and_congr (by simp) ⟨fun hh x hx => ?_, fun hh x hx => ?_⟩
   · rw [← h]; exact hh _ (apply_mem_smul s hx)
   · obtain ⟨z, hz, rfl⟩ := exists_of_mem_smul hx
@@ -189,7 +194,7 @@ theorem sub_mem_right {F F' : FlagD H r} {s : V ≃ₗ[K] V} (h : Keeps F' s) {y
 
 omit [NumberField K] [StarRing K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem shift (s : V ≃ₗ[K] V) {l x y : V} (h : l + x = y) : s l + (s x - (s y - y)) = y := by
-  rw [← h, map_add]; abel
+  rw [← h, map_add (f := _)]; abel
 
 theorem latL_le {F : FlagD H r} (F' : FlagD H r) {s : V ≃ₗ[K] V} (h : Keeps F s)
     (Λ : Submodule (𝓞 K) V) : latL F F' Λ ≤ latL F F' (s • Λ) := by
@@ -220,7 +225,7 @@ theorem iotaGraph_le {F F' : FlagD H r} {s : V ≃ₗ[K] V} (h : Keeps F s) (h' 
   refine Submodule.mem_sup.2 ⟨s a, apply_mem_smulLat s g ha, s b,
     ⟨apply_mem_smul s hb.1, (h.flagX _).2 hb.2⟩, ?_⟩
   show _ = s l - s l'
-  rw [← map_add, hab', map_sub]
+  rw [← map_add (f := _), hab', map_sub]
 
 theorem iotaGraph_eq {F F' : FlagD H r} {s : V ≃ₗ[K] V} (h : Keeps F s) (h' : Keeps F' s)
     (Λ : Submodule (𝓞 K) V) (g : 𝓞 K) : iotaGraph F F' (s • Λ) g = iotaGraph F F' Λ g := by

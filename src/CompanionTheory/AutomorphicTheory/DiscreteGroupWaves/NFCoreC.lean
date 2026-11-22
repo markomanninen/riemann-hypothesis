@@ -1,5 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFDomS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibMain
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHypS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomPtwAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DominatedL2TruncationBoundHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomEmpty
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomVMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFCutSup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DominatedL2OperatorBoundHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeibMain
+
+@[expose] public section
 
 namespace CompanionTheory.NFCpt
 
@@ -237,7 +247,7 @@ theorem nFCoreNC_of_cut (hL : NFLeibV) (hT : NFTieHatC) (hH : NFHatProdKBS) (hN 
       rw [hcong (fun g => (((fun _ : ℝ => (0 : ℝ)) (Gf P.k P.r p.T.base.z p.T.base.z' g) : ℝ) : ℂ) • f g)]
       · rw [vector_multiplication_holds Wp Wq P p (fun _ : ℝ => (0 : ℝ)) f γ hl hG]; simp
       · intro g hg
-        rw [nf_scoef_unique p w e hS hS' _ hF' g (hdom g hg) qq, dif_neg hqQ]
+        rw [nf_scoef_unique p w e hS hS' _ hF' g (hdom g hg) qq, dite_eq_right hqQ]
         simp
     have hz : B.hsVec (0 : Wq →L[ℂ] Wp) = 0 := by unfold B.hsVec; ext i; simp
     rw [h0, ContinuousLinearMap.comp_zero, hz, norm_zero]
@@ -249,7 +259,7 @@ theorem nFCoreNC_of_cut (hL : NFLeibV) (hT : NFTieHatC) (hH : NFHatProdKBS) (hN 
     · rw [nf_vExtract p w e L' CcL hLe f A₀ p₀ hf hcc0 hthrL γ hl hG qq']
       congr 1
     · intro g hg
-      rw [nf_scoef_unique p w e hS hS' _ hF' g (hdom g hg) qq, dif_pos hqQ]
+      rw [nf_scoef_unique p w e hS hS' _ hF' g (hdom g hg) qq, dite_eq_left hqQ]
 
   let Λ : (Wq →L[ℂ] Wp) →ₗ[ℂ] PiLp 2 (fun _ : Fin (Module.finrank ℂ Wq) => Wp) :=
     { toFun := fun Y => B.hsVec ((p.TP.E ρ).comp Y)
@@ -261,7 +271,8 @@ theorem nFCoreNC_of_cut (hL : NFLeibV) (hT : NFTieHatC) (hH : NFHatProdKBS) (hN 
   set Y : Fin (Q' + 1) → (Wq →L[ℂ] Wp) := fun j => p.V (B.opApply (L' j) f) γ with hY
   have hnorm : ‖B.hsVec ((p.TP.E ρ).comp (((G ^ p₀ : ℝ) : ℂ) • ∑ j, ((cc qq' j : ℝ) : ℂ) • Y j))‖ ≤
       G ^ p₀ * ∑ j, cc qq' j * ‖Λ (Y j)‖ := by
-    rw [← hΛ, map_smul, map_sum, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (pow_nonneg hG0 _)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hΛ, map_smul, map_sum, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (pow_nonneg hG0 _)]
     refine mul_le_mul_of_nonneg_left (le_trans (norm_sum_le _ _) (le_of_eq (Finset.sum_congr rfl fun j _ => ?_)))
       (pow_nonneg hG0 _)
     rw [map_smul, norm_smul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (Nat.cast_nonneg _)]

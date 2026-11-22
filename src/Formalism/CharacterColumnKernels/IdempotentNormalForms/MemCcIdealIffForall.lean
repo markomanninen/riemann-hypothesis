@@ -1,4 +1,8 @@
-import Formalism.CharacterColumnKernels.StatementBC
+module
+
+public import Formalism.CharacterColumnKernels.StatementBC
+
+@[expose] public section
 
 open Finset
 
@@ -54,7 +58,8 @@ theorem vccBaseChange : StatVccBaseChange := by
       obtain ⟨g, hg, rfl⟩ := hf
       refine ⟨fun k => ∑ j, b.repr (o * b j) k • g j, fun k => T.sum_mem fun j _ => T.smul_mem (hg j) _, ?_⟩
       funext x'
-      simp only [hφ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Function.comp_apply, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hφ, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Function.comp_apply, map_sum, map_mul]
       calc o * ∑ j, b j * algebraMap O O' (g j x') = ∑ j, (o * b j) * algebraMap O O' (g j x') := by
             rw [Finset.mul_sum]
             exact Finset.sum_congr rfl fun j _ => by ring

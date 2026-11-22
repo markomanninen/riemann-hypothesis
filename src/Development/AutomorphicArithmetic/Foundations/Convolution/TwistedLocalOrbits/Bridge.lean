@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SgIterateEqSelf
-import GroundTheory.LocalFields.Unramified
-import GroundTheory.LocalFields.UnramifiedGalois
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.SgIterateEqSelf
+public import GroundTheory.LocalFields.Unramified
+public import GroundTheory.LocalFields.UnramifiedGalois
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc
 
@@ -61,7 +65,7 @@ private theorem closedEmb_incl (n : ℕ) :
   refine isClosed_iInter fun i => isClosed_iInter fun j => h.isClosed_range.preimage ?_
   exact Units.continuous_val.matrix_elem i j
 
-private theorem ram_one (h : IsUnramifiedLoc k E) : GroundTheory.LocalField.ramificationIndex k E = 1 := by
+private theorem ram_one (h : IsUnramifiedLoc k E) : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) = 1 := by
   obtain ⟨π, hπ, hmax⟩ := h
   have key : ∀ x : 𝒪[E], x ∈ IsLocalRing.maximalIdeal 𝒪[E] ↔ valuation E (x : E) < 1 := by
     intro x

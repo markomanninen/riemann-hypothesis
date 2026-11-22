@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartSpec
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRPrimeToPartSpec
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.GaloisIrreducibility
 

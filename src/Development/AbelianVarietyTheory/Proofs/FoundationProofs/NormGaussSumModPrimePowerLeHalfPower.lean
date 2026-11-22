@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ChSumSubCMul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSubOnePowThreeLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem norm_gSum_le : ∀ (l : ℕ) [Fact l.Prime] (m : ℕ) (z : Qbar l) (ψ :
               zero_mul, sub_zero, mul_one] at ha ⊢
             exact ha
           · intro a ha
-            simp only [Finset.mem_filter, Finset.mem_univ, true_and, map_mul, map_add, map_one, hπq,
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and, map_mul, map_add (f := _), map_one, hπq,
               zero_mul, add_zero, mul_one] at ha ⊢
             exact ha
           · intro a _
@@ -112,7 +116,7 @@ theorem norm_gSum_le : ∀ (l : ℕ) [Fact l.Prime] (m : ℕ) (z : Qbar l) (ψ :
       rw [map_sub, ha, sub_self]
     · intro a ha
       simp only [Finset.coe_filter, Finset.mem_filter, Finset.mem_univ, true_and, Set.mem_setOf_eq] at ha ⊢
-      rw [map_add, ha, zero_add]
+      rw [map_add (f := _), ha, zero_add]
     · intro a _; simp
     · intro a _; simp
   have htot : l ^ m = l ^ s * (Finset.univ.filter (fun x => π x = 0)).card := by

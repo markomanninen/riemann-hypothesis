@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 
@@ -194,8 +198,8 @@ theorem scEI_mem (hκ : 0 < κ) (hτ : 0 < τ) :
   refine ⟨cjI k r κ τ X, ?_, (scEI_realify X).symm⟩
   rw [← cj_mem_lieOf_iff hκ hτ, cj_cjI hκ hτ]; exact hX
 
-open Classical in
 
+open Classical in
 def deltaN (k r : ℕ) (κ τ : ℝ) : ℝ :=
   if h : ∀ x ∈ lieE (Nset k r), scE k r κ τ x ∈ lieE (Nset k r) then
     |(LinearMap.det ((scE k r κ τ).restrict h))⁻¹|
@@ -213,7 +217,7 @@ theorem det_scE_ne (hκ : 0 < κ) (hτ : 0 < τ) :
   exact left_ne_zero_of_mul_eq_one this
 
 theorem deltaN_pos (hκ : 0 < κ) (hτ : 0 < τ) : 0 < deltaN k r κ τ := by
-  rw [deltaN, dif_pos (scE_mem hκ hτ)]
+  rw [deltaN, dite_eq_left (scE_mem hκ hτ)]
   exact abs_pos.mpr (inv_ne_zero (det_scE_ne hκ hτ))
 
 theorem unrealify_add' (x y : EuclideanSpace ℝ (IxE k r)) : unrealify (x + y) = unrealify x + unrealify y := by
@@ -266,7 +270,8 @@ theorem map_haarLie_N (hκ : 0 < κ) (hτ : 0 < τ) (κN : ENNReal) :
     ← Measure.map_map (continuous_expL _).measurable
       ((scE k r κ τ).restrict (scE_mem hκ hτ)).continuous_of_finiteDimensional.measurable,
     Measure.map_linearMap_addHaar_eq_smul_addHaar volume hA, Measure.map_smul, smul_smul, deltaN,
-    dif_pos (scE_mem hκ hτ)]
+    dite_eq_left (scE_mem hκ hτ)]
+  all_goals first | exact (continuous_expL _).measurable.aemeasurable | exact measurable_cjT.aemeasurable
 
 theorem pairMeas_trD (hκ : 0 < κ) (hτ : 0 < τ) (L : LocBessel k r)
     (hz : inWb k r ((τ : ℂ) • L.z) ∧ 0 < Tz k r ((τ : ℂ) • L.z))

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.BottomMinor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.BottomMinor
+
+@[expose] public section
 
 open MvPolynomial Matrix Finset
 
@@ -31,7 +35,8 @@ theorem deriv_det {m : ℕ} (D : Derivation ℂ R R) (M : Matrix (Fin m) (Fin m)
     intro N
     rw [← det_transpose, det_apply']
     rfl
-  simp only [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [key, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Derivation.leibniz, D.map_intCast, smul_zero, add_zero, smul_eq_mul, ← Finset.mul_sum,
@@ -267,7 +272,8 @@ theorem capelli_step (hd : ∀ r j s c, d r j (x s c) = if r = s ∧ j = c then 
     rw [e1]
     simp only [e2]
     rw [Finset.sum_comm]
-    simp only [Finset.sum_add_distrib, ← Finset.mul_sum, ← map_sum, ih', hcst, hv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_add_distrib, ← Finset.mul_sum, ← map_sum, ih', hcst, hv]
     rw [Fin.prod_univ_succ, Nat.cast_mul, ← hj, h0, e3]
     change _ = _ * c * _ * _
     have hz' : ∑ s : Fin (m + 1), (-1) ^ (s : ℕ) *
@@ -300,7 +306,7 @@ theorem cast_eps (ρ : Fin k → Fin k) :
 theorem det_eq_sum_eps (x : Fin k → Fin k → R) :
     (Matrix.of x).det = ∑ ρ : Fin k → Fin k, (eps ρ : R) * ∏ t, x (ρ t) t := by
   conv_lhs => rw [← Matrix.one_mul (Matrix.of x)]
-  simp only [det_apply', mul_apply, Finset.prod_univ_sum, Finset.mul_sum, Fintype.piFinset_univ]
+  simp only [det_apply', Matrix.mul_apply, Finset.prod_univ_sum, Finset.mul_sum, Fintype.piFinset_univ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun ρ _ => ?_
   rw [cast_eps, ← det_transpose, det_apply', Finset.sum_mul]
@@ -387,7 +393,7 @@ theorem fock_add_left (P P' Q : MvPolynomial σ ℂ) :
     fock_eq_sum P Q (P.support ∪ P'.support) Finset.subset_union_left,
     fock_eq_sum P' Q (P.support ∪ P'.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]; ring
+  rw [MvPolynomial.coeff_add]; ring
 
 theorem fock_sum_left {ι : Type} (s : Finset ι) (P : ι → MvPolynomial σ ℂ) (Q : MvPolynomial σ ℂ) :
     Formalism.E.fock (∑ i ∈ s, P i) Q = ∑ i ∈ s, Formalism.E.fock (P i) Q := by
@@ -444,7 +450,7 @@ theorem coeff_pderiv' (v : σ) (m : σ →₀ ℕ) (Q : MvPolynomial σ ℂ) :
     (pderiv v Q).coeff m = Q.coeff (m + Finsupp.single v 1) * (m v + 1) := by
   classical
   induction Q using MvPolynomial.induction_on' with
-  | add P₁ P₂ h₁ h₂ => simp only [map_add, coeff_add, h₁, h₂, add_mul]
+  | add P₁ P₂ h₁ h₂ => simp only [map_add (f := _), MvPolynomial.coeff_add, h₁, h₂, add_mul]
   | monomial b c =>
     rw [pderiv_monomial, coeff_monomial, coeff_monomial]
     by_cases h : b = m + Finsupp.single v 1

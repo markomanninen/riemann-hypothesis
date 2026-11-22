@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACR
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACR
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,10 +63,8 @@ theorem cond_second_of_iso (g₁ g₁' g₂ g₂' : Fin (r + 1) → V) (T₁ T�
   · exact Submodule.add_mem _ (Submodule.smul_mem _ _ (Submodule.subset_span ⟨Sum.inl (Fin.last r), rfl⟩))
       (Submodule.smul_mem _ _ (om'_mem_U H g₂ g₂'))
   · rw [h1]
-    simp only [map_add, map_smul]
+    simp only [map_add (f := _), map_smul]
     rw [show χ (H.mkW g₁ zP₁) = H.mkW g₂ zP₂ from hz, show χ (H.mkW g₁ oP₁) = κ • H.mkW g₂ oP₂ from ho, smul_smul]
-    show _ = H.mkW g₂ (β • zP₂ + (γ * κ) • oP₂)
-    rw [map_add, map_smul, map_smul]
 
 end CR2
 

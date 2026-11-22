@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TiedColumnData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LowerTieTwAt
-import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeIdempotentCoeffAcrossLayers
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BrgStdR
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TiedColumnData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LowerTieTwAt
+public import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TypeIdempotentCoeffAcrossLayers
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Fo
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open Classical in
 
+open Classical in
 def FK (s : Scale) (D : D7) (j p : ℕ) : ℝ :=
   if ∃ i, p = D.host.g i then FTypeG D j
   else if D.host.cls p = PrimeClass.ramD then FRamD D j
@@ -80,28 +84,9 @@ structure Coh (B : Base) (T : TwDat B) : Prop where
 
 def Start : WP := fun K B f T w => Pinned K B f T w ∧ Supp K B f T w ∧ Coh B T
 
-def DatEx : Prop := StepW Pinned fun _ B f T w => ∀ (Z : w.Lt) (hX : B.fields.Ok), GrpTrue Z.N f → R3.GrpAt (w.st Z) w.I →
-  ∃ z : R3.Dat (w.st Z) w.I hX T {v | B.places.resChar v ∈ T.pl}, z.R.toRealDat.ExAt ∧ GlobalTheory.RealGeo.InGeo z.geo
-
-def UnitaryCaseCondition : Prop := StepW Pinned fun _ B f T w => ∀ (Z : w.Lt) (hX : B.fields.Ok) (Wt : Set B.places.Pl)
-  (z : R3.Dat (w.st Z) w.I hX T Wt), GrpTrue Z.N f → R3.GrpAt (w.st Z) w.I → z.R.toRealDat.ExAt →
-    GlobalTheory.RealGeo.InGeo z.geo → R3.Holds z.R z.F
-
-def NonzeroPlacesOverPrimes : Prop := StepW Pinned fun K B f T w => ∀ (Z : w.Lt) (hX : B.fields.Ok) (Wt : Set B.places.Pl)
-  (z : R3.Dat (w.st Z) w.I hX T Wt), GrpTrue Z.N f → R3.GrpAt (w.st Z) w.I → DV.KapDef (w.D Z) →
-    R3.Holds z.R z.F → ∀ v ∈ z.W1 (F0K K.s (w.D Z)), B.places.resChar v ∈ T.pl
-
 def Below (D D' : D7) (v : D.what₂.places.Pl) (v' : D'.what₂.places.Pl) : Prop :=
   ∀ (x : 𝓞 D.what₂.LL) (x' : 𝓞 D'.what₂.LL), D.what₂.embLL (x : D.what₂.LL) = D'.what₂.embLL (x' : D'.what₂.LL) →
     (x ∈ (D.plEq v).asIdeal ↔ x' ∈ (D'.plEq v').asIdeal)
-
-def NonzeroPlacesInvariant : Prop := StepW Pinned fun K B f T w => ∀ (B' : Base) (f' : Fr B'.toPre) (T' : TwDat B') (w' : ColW B' f' T'), Enl B B' →
-  HEq f' f → Pinned K B' f' T' w' → HEq w'.px w.px → HEq w'.I.sel w.I.sel → HEq w'.I.J w.I.J → HEq w'.δ w.δ →
-  ∀ (Z : w.Lt) (Z' : w'.Lt) (hX : B.fields.Ok) (hX' : B'.fields.Ok) (Wt : Set B.places.Pl) (Wt' : Set B'.places.Pl)
-    (z : R3.Dat (w.st Z) w.I hX T Wt) (z' : R3.Dat (w'.st Z') w'.I hX' T' Wt'),
-    GrpTrue Z.N f → R3.GrpAt (w.st Z) w.I → DV.KapDef (w.D Z) → GrpTrue Z'.N f' → R3.GrpAt (w'.st Z') w'.I → DV.KapDef (w'.D Z') →
-    R3.Holds z.R z.F → R3.Holds z'.R z'.F →
-    ∀ v v', Below (w.D Z) (w'.D Z') v v' → (v ∈ z.W1 (F0K K.s (w.D Z)) ↔ v' ∈ z'.W1 (F0K K.s (w'.D Z')))
 
 abbrev NCondition : Type 2 := ∀ (K : Ctx) (B : Base) (f : Fr B.toPre) (T : TwDat B) (w : ColW B f T) (Z : w.Lt) (Wt : Set B.places.Pl)
   (p0 : BaseLevelRowSide (w.D Z)) (_ : RowsT K w Z Wt p0) (nch : NChoice (w.D Z)) (_ : NchT w Z Wt nch) (_ : ThData (w.D Z)), Type 1
@@ -170,8 +155,6 @@ def BuiltC (𝒮 : Slots) : CP := fun K _ _ _ w Z c => Nonempty (Built 𝒮 K w 
 
 def IsBuilt (𝒮 : Slots) : V4.Slot := positionOf (BuiltC 𝒮)
 
-def Has2 (𝒮 : Slots) : WP := HasZ fun K _ _ _ w Z => Nonempty (Lv2 𝒮 K w Z)
-
 def Has3 (𝒮 : Slots) : WP := HasZ fun K _ _ _ w Z => Nonempty (Lv3 𝒮 K w Z)
 
 def Has4 (𝒮 : Slots) : WP := HasZ fun K _ _ _ w Z => Nonempty (Lv4 𝒮 K w Z)
@@ -185,12 +168,6 @@ def DivEx (𝒮 : Slots) : Prop := StepW Pinned fun K B f T w => ∀ (Z : w.Lt) 
     ∀ (O : Obj2 (w.D Z)) (t : RowsT K w Z l.Wt O.p0), O.X = Y → O.p0 = l.p0 → HEq t l.what₂ → Nonempty (𝒮.Ox K B f T w Z l.Wt O t)
 
 def ThEx (𝒮 : Slots) : Prop := StepW Pinned fun K _ _ _ w => ∀ (Z : w.Lt) (l : Lv4 𝒮 K w Z), ∃ th : ThetaX (w.D Z), Nonempty (ThT l.n th)
-
-theorem stepW_built {𝒮 : Slots} (h2 : StepW Start (Has2 𝒮)) (h3 : StepW (pinAnd (Has2 𝒮)) (Has3 𝒮))
-    (h4 : StepW (pinAnd (Has3 𝒮)) (Has4 𝒮)) (h5 : StepW (pinAnd (Has4 𝒮)) (HasC (BuiltC 𝒮))) :
-    StepW Start (HasC (BuiltC 𝒮)) :=
-  have p : StepW Start Pinned := StepW.of_all fun _ _ _ _ _ _ _ h => h.1
-  (p.and ((p.and ((p.and h2).trans h3)).trans h4)).trans h5
 
 theorem supp_of_untw (w : ColW B f T) (h : T = TwDat.untw B T.pl) : Supp K B f T w := Or.inl h
 

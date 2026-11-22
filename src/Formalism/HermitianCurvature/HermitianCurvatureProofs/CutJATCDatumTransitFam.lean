@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCDatumTransitCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -49,12 +53,12 @@ theorem herm_w_bvec {i : Fin (2 * r + k + 1)} (hi : i.val < r ∨ r + k < i.val)
 theorem fam_in {e : Fin (k + 1) → Fin (2 * r + k + 1) → ℂ} {i : Fin (2 * r + k + 1)} (h : r ≤ i.val ∧ i.val ≤ r + k) :
     fam k r e i = e ⟨i.val - r, by omega⟩ := by
   simp only [fam]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem fam_out {e : Fin (k + 1) → Fin (2 * r + k + 1) → ℂ} {i : Fin (2 * r + k + 1)} (h : i.val < r ∨ r + k < i.val) :
     fam k r e i = bvec i := by
   simp only [fam]
-  rw [dif_neg]
+  rw [dite_eq_right]
   omega
 
 theorem famGram {e : Fin (k + 1) → Fin (2 * r + k + 1) → ℂ} (he : ONb k r e) (i j : Fin (2 * r + k + 1)) :
@@ -68,28 +72,6 @@ theorem famGram {e : Fin (k + 1) → Fin (2 * r + k + 1) → ℂ} (he : ONb k r 
   · rw [fam_out (i := i) (by omega), fam_in hj, herm_bvec_w (i := i) (by omega) (he.1 _),
       (hpk_out_in (i := i) (j := j) (by omega) hj).2]
   · rw [fam_out (i := i) (by omega), fam_out (i := j) (by omega), herm_bvec_bvec]
-
-theorem out_cases {i : Fin (2 * r + k + 1)} (hi : i.val < r ∨ r + k < i.val) :
-    (∃ a : Fin r, i = eI k r a) ∨ (∃ a : Fin r, i = esI k r a) := by
-  have := i.isLt
-  rcases hi with hi | hi
-  · left
-    exact ⟨⟨i.val, hi⟩, Fin.ext rfl⟩
-  · right
-    refine ⟨⟨2 * r + k - i.val, by omega⟩, Fin.ext ?_⟩
-    show i.val = 2 * r + k - (2 * r + k - i.val)
-    omega
-
-theorem glev_fix {g : Q.Mx k r} (hg : g ∈ Q.Glev k r (Fin.last r)) {i : Fin (2 * r + k + 1)}
-    (hi : i.val < r ∨ r + k < i.val) : g *ᵥ bvec i = bvec i := by
-  obtain ⟨_, h2⟩ := hg
-  rcases out_cases hi with ⟨a, rfl⟩ | ⟨a, rfl⟩
-  · exact (h2 a (by rw [Fin.val_last]; exact a.isLt)).1
-  · exact (h2 a (by rw [Fin.val_last]; exact a.isLt)).2
-
-theorem uw_glev {z : Fin (2 * r + k + 1) → ℂ} {g : Q.Mx k r} (hg : g ∈ UWset k r z) : g ∈ Q.Glev k r (Fin.last r) := by
-  obtain ⟨h1, h2, -⟩ := hg
-  exact ⟨h1, fun a _ => h2 a⟩
 
 end
 

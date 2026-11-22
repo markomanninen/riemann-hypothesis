@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TminusLinApply
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.WeightUpdateAtPlace
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TminusLinApply
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NatCastInvMemRp
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,8 +90,8 @@ def TT (b0 : A) (hfin : Finite {γ : Γ // sm γ b0 = b0}) (B : Finset A) : Fins
 theorem mem_TT (b0 : A) (hfin : Finite {γ : Γ // sm γ b0 = b0}) (B : Finset A) (γ : Γ) :
     γ ∈ TT sm h1 hm b0 hfin B ↔ sm γ b0 ∈ B := Set.Finite.mem_toFinset _
 
-include h1 hm in
 
+include h1 hm in
 theorem sum_unfold (S : A → Prop) (Rp : Finset A) (hRp : ∀ a ∈ Rp, S a)
     (hex : ∀ a, S a → ∃! a0, a0 ∈ Rp ∧ ∃ γ, a = sm γ a0)
     (hst : ∀ a, S a → 0 < Nat.card {γ : Γ // sm γ a = a}) (B : Finset A) (hB : ∀ b ∈ B, S b) (f : A → K) :
@@ -98,8 +102,8 @@ theorem sum_unfold (S : A → Prop) (Rp : Finset A) (hRp : ∀ a ∈ Rp, S a)
   rw [orbit_sum_stabilizer sm h1 hm b0.1 B f _ (mem_TT sm h1 hm b0.1 _ B), ← mul_assoc, inv_mul_cancel₀, one_mul]
   exact Nat.cast_ne_zero.2 (hst b0.1 (hRp b0.1 b0.2)).ne'
 
-include h1 hm in
 
+include h1 hm in
 theorem adj (S : A → Prop) (Rp : Finset A) (hRp : ∀ a ∈ Rp, S a)
     (hex : ∀ a, S a → ∃! a0, a0 ∈ Rp ∧ ∃ γ, a = sm γ a0)
     (hst : ∀ a, S a → 0 < Nat.card {γ : Γ // sm γ a = a})

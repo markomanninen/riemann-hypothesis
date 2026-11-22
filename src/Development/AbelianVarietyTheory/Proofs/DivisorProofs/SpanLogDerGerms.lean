@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapCompStalkAlg
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -35,7 +40,8 @@ namespace GlobalTheory.LogKSDiv.LocSpan
 
 theorem sum_apply {k R M : Type} [CommRing k] [CommRing R] [AddCommGroup M] [Algebra k R] [Module R M] [Module k M]
     {n : ℕ} (f : Fin n → Derivation k R M) (x : R) : (∑ j, f j) x = ∑ j, f j x := by
-  rw [← Derivation.coeFnAddMonoidHom_apply, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Derivation.coeFnAddMonoidHom_apply, map_sum, Finset.sum_apply]
   rfl
 
 theorem span_eq_top {k R A : Type} [Field k] [CommRing R] [CommRing A] [Algebra k R] [Algebra k A]
@@ -67,7 +73,8 @@ theorem span_eq_top {k R A : Type} [Field k] [CommRing R] [CommRing A] [Algebra 
   have key : (φ a * φ s) • d = ∑ j, φ (cf j) • δ j := by
     refine deriv_ext φ M hloc _ _ fun r => ?_
     have e1 := congrArg (fun D : Derivation ℤ R R => φ (D r)) hcf
-    simp only [sum_apply, Derivation.coe_smul, Pi.smul_apply, smul_eq_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [sum_apply, Derivation.coe_smul, Pi.smul_apply, smul_eq_mul, map_sum,
       map_mul, Derivation.coe_restrictScalars] at e1
     simp only [sum_apply, Derivation.coe_smul, Pi.smul_apply, smul_eq_mul, hδ]
     rw [e1, hD']

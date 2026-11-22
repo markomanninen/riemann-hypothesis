@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 
 noncomputable section
@@ -77,7 +82,7 @@ theorem wClauses (S : LocalSituation.Sit) (E : S.Comparison₂) (h1 : DeltaInvar
       exact hp.1 (j + 1) y (by simpa using hy)
     · simp
     · intro y z hy hz
-      simp only [map_add, smul_add]
+      simp only [map_add (f := _), smul_add]
       exact add_mem hy hz
   · intro y hy
     rw [hf.1] at hy

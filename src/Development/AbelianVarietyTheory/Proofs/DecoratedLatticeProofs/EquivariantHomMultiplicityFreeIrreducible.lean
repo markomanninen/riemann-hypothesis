@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.L2.Forms Formalism.L2.Ker GlobalTheory.KJInf MeasureTheory
 open scoped TensorProduct
 
@@ -16,7 +21,7 @@ theorem tensor_eq_of_coord_contract {A B ι : Type} [AddCommGroup A] [Module ℂ
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul v w => simp
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   apply (TensorProduct.equivFinsuppOfBasisRight b).injective
   ext i
   rw [key, key, h]
@@ -28,7 +33,7 @@ theorem contract_map_left {A B : Type} [AddCommGroup A] [Module ℂ A]
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v w => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem intertwining_eq_zero_of_isEmpty {G V A : Type} [Group G] [AddCommGroup V] [Module ℂ V]
     [AddCommGroup A] [Module ℂ A] (ρ : Representation ℂ G V) (α : Representation ℂ G A)
@@ -137,7 +142,7 @@ theorem equivariantHom_mem_of_stable : ∀ (G H J : Type) [Group G] [Group H] [D
       simp only [con, LinearMap.comp_apply, LinearEquiv.coe_coe] at h3
       rw [h3]
       simp
-    · rw [DirectSum.component.of, dif_neg (Ne.symm hj), hzero T hT j (honly j hj) v]
+    · rw [DirectSum.component.of, dite_eq_right (Ne.symm hj), hzero T hT j (honly j hj) v]
   let S' : Subrepresentation (β j0) :=
     { toSubmodule := S.comap Φ
       apply_mem_toSubmodule := by

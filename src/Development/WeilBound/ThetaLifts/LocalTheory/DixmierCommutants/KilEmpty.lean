@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.ExistsInvar
-import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.SlopeTestRemainingChoices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilObjectsInhabited
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.ExistsInvar
+public import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.SlopeTestRemainingChoices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilObjectsInhabited
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem fix_col (hL : Inv e ν L) {l : kˣ} (hl : valuation k (l : k) = 1) (hν 
     exact (continuous_id.matrix_elem i _).continuousAt.mul (continuousAt_pi.1 cc j)
   · refine continuousAt_pi.2 fun i => continuousAt_pi.2 fun j => continuousAt_const.mul ?_
     change ContinuousAt (fun y : Matrix (Fin n) (Fin d) k => ∑ r, c y r * y r j) X₀
-    exact tendsto_finset_sum Finset.univ fun r _ => (continuousAt_pi.1 cc r).mul (continuous_id.matrix_elem r j).continuousAt
+    exact tendsto_finsetSum Finset.univ fun r _ => (continuousAt_pi.1 cc r).mul (continuous_id.matrix_elem r j).continuousAt
   · rw [vecMulVec_mul, mul_vecMulVec, mulVec_single_one]
     rfl
 
@@ -155,7 +159,7 @@ theorem kil_full (hL : Inv e ν L) {l : kˣ} (hl : valuation k (l : k) = 1) (hν
     rw [← smul_vecMul, ← e1, r, ← Pi.single_smul, smul_eq_mul, mul_one]
   by_cases h0 : cl e false X₀ ≠ 0 ∨ RI (mid e X₀)
   · obtain ⟨B, hB, hk⟩ : ∃ B ∈ 𝓝 X₀, B ⊆ {Y | cl e false Y ≠ 0 ∨ RI (mid e Y)} := by
-      refine h0.elim (fun h => ⟨_, ?_, fun _ => Or.inl⟩) fun ⟨R, h⟩ => ⟨_, ?_, fun _ => Or.inr⟩
+      refine h0.elim (fun h => ⟨{Y | cl e false Y ≠ 0}, ?_, fun _ => Or.inl⟩) fun ⟨R, h⟩ => ⟨{Y | RI (mid e Y)}, ?_, fun _ => Or.inr⟩
       · exact (isOpen_ne_fun (continuous_pi fun i => continuous_id.matrix_elem i _) continuous_const).mem_nhds h
       · have cm : Continuous (mid e : Matrix (Fin n) (Fin d) k → _) := continuous_id.matrix_submatrix _ _
         exact mem_of_superset (cm.continuousAt.preimage_mem_nhds (det_nhds h)) fun Y hY => ri_of_det hY

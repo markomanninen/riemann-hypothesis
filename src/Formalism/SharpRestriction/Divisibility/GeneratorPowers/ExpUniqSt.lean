@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+
+@[expose] public section
 
 set_option autoImplicit false
 

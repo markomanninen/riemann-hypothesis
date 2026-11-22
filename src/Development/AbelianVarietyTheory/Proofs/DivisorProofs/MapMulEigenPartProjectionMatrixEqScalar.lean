@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitTwoMulRhoSubTr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitTwoMulRhoSubTr
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.UPel.HT GlobalTheory.UPel.HT.LieLin GlobalTheory.UPel.HT.LieLin.RankIdeal
 
 namespace GlobalTheory.UPel.HT.LieLin.RankIdeal
@@ -15,9 +20,8 @@ theorem prod_mul_eq_zero_of_mem_span {S X ι : Type} [CommRing S] [Fintype ι] (
     exact Ideal.prod_mem_prod fun j _ => hf j
   refine Submodule.span_induction (p := fun x _ => x * W = 0) ?_ ?_ ?_ ?_ hmem
   · intro x hx
-    obtain ⟨e, he, rfl⟩ := (Set.mem_finset_prod _ _ _).1 hx
-    have : ∀ j, ∃ y, N j y = e j := fun j => he (Finset.mem_univ j)
-    choose c hc using this
+    obtain ⟨e, he, rfl⟩ := (Set.mem_fintype_prod (fun j => Set.range (N j)) x).1 hx
+    choose c hc using he
     simpa [hc] using h c
   · simp
   · intro x y _ _ hx hy; rw [add_mul, hx, hy, add_zero]
@@ -44,7 +48,9 @@ theorem map_mul_projMat_eq_smul (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type
   have hcomm : ∀ a ∈ Set.range M', ∀ a' ∈ Set.range M', a * a' = a' * a := by
     rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩; rw [← map_mul, ← map_mul, mul_comm]
   let S := Algebra.adjoin K (Set.range M')
-  letI : CommRing S := Algebra.adjoinCommRingOfComm K hcomm
+  let : IsMulCommutative S := Algebra.isMulCommutative_adjoin K fun a ha a' ha' _ =>
+    hcomm a ha a' ha'
+  let : CommRing S := open scoped IsMulCommutative in inferInstance
   let m : 𝓞 D.F → S := fun x => ⟨M' x, Algebra.subset_adjoin ⟨x, rfl⟩⟩
   let sc : R → S := fun r => algebraMap K S (g (βB r))
   let N : Fin D.a → 𝓞 D.F → S := fun j x => m x - sc (b.t j x)
@@ -62,14 +68,11 @@ theorem map_mul_projMat_eq_smul (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type
   have hα : ∀ j, S.val (α j) = g.mapMatrix (alphaMat b βB M i j) := by
     intro j; simp only [α, alphaMat, Finsupp.sum, map_sum, map_mul, hsc, hN]
   have hP : S.val PS = g.mapMatrix (projMat b βB M i) := by
-    simp only [PS, projMat, map_mul, map_list_prod, List.map_ofFn, hsc, hW]
-    congr 2
-    congr 1
-    funext j
-    simp only [Function.comp_apply]
-    split_ifs
-    · rw [map_one, map_one]
-    · exact hα j
+    have hfactor (j : Fin D.a) : S.val (if j = i then 1 else α j) =
+        g.mapMatrix (if j = i then 1 else alphaMat b βB M i j) := by
+      by_cases hj : j = i <;> simp [hj, hα]
+    simp only [PS, projMat, map_mul, map_list_prod, List.map_ofFn, Function.comp_def, hsc, hW,
+      hfactor]
   have hlie : ∀ c' : Fin D.a → 𝓞 D.F, (∏ j, N j (c' j)) * WS = 0 := by
     intro c'
     have h0 : g.mapMatrix (lieMat b βB M c') = 0 := by
@@ -78,11 +81,8 @@ theorem map_mul_projMat_eq_smul (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type
       exact hI (Ideal.subset_span ⟨c', k, l, rfl⟩)
     rw [← List.prod_ofFn]
     refine (map_eq_zero_iff S.val Subtype.val_injective).1 ?_
-    rw [← h0, lieMat, map_mul, map_mul, map_list_prod, map_list_prod, List.map_ofFn, List.map_ofFn, hW]
-    congr 2
-    congr 1
-    funext j
-    simp only [Function.comp_apply, hN]
+    rw [← h0]
+    simp only [lieMat, map_mul, map_list_prod, List.map_ofFn, Function.comp_def, hN, hW]
   have hkey : N i c * PS = 0 := by
     have hf : ∀ j, (if j = i then N i c else α j) ∈ Ideal.span (Set.range (N j)) := by
       intro j; split_ifs with hj

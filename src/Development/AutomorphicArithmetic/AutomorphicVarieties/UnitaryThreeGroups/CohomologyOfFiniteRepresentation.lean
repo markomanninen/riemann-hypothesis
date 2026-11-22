@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
 
@@ -34,7 +39,8 @@ private theorem cocycle_coboundary_averaging {k G M : Type} [Field k] [Group G] 
       have : (QuotientGroup.mk (t * x.out) : G ⧸ N) = t • x := MulAction.Quotient.mk_smul_out N t x
       simp only [this, MulAction.toPerm_apply]
     conv_lhs => rw [e1]
-    simp only [hf, A, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hf, A, map_sum]
     rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Subgroup.index, Nat.card_eq_fintype_card,
       Nat.cast_smul_eq_nsmul]
   refine ⟨-((N.index : k)⁻¹ • A), fun g => ?_⟩
@@ -54,7 +60,7 @@ private theorem unipotent_cochain_add {k Γ M : Type} [Field k] [Group Γ] [AddC
   | zero => simp [powerCocycleSum]
   | succ i ih =>
     rw [show i + 1 + j = (i + j) + 1 by ring]
-    simp only [powerCocycleSum, ih, map_add, pow_succ', map_mul, Module.End.mul_apply, pow_add]
+    simp only [powerCocycleSum, ih, map_add (f := _), pow_succ', map_mul, Module.End.mul_apply, pow_add]
     abel
 
 private theorem unipotent_cochain_periodic {l : ℕ} {k Γ M : Type} [Field k] [CharP k l] [Group Γ] [AddCommGroup M] [Module k M]
@@ -117,7 +123,7 @@ private theorem unipotent_restriction_surjective (l : ℕ) [hl : Fact l.Prime] {
     intro n
     induction n with
     | zero => intro i _; simp [powerCocycleSum]
-    | succ n ih => intro i hi; simp only [powerCocycleSum, map_add, hm i hi, invariants_of_normal_stable ρ I _ ih fr i hi]
+    | succ n ih => intro i hi; simp only [powerCocycleSum, map_add (f := _), hm i hi, invariants_of_normal_stable ρ I _ ih fr i hi]
   let V1 : Subgroup Γ := I ⊔ ρ.ker
   have hV1 : IsOpen (V1 : Set Γ) := Subgroup.isOpen_mono le_sup_right hker
   have hV1b : ∀ v ∈ V1, ∀ n, ρ v (powerCocycleSum ρ fr m n) = powerCocycleSum ρ fr m n := by
@@ -192,7 +198,7 @@ theorem UpperTheory.cohomology_of_finite_representation :
       simp only [ReciprocityTheory.Gal.amitsur_d0_apply, map_mul, map_sub, Module.End.mul_apply]; abel⟩
   let P : Submodule k M :=
     { carrier := {m | ∀ i ∈ I, ρ i m = m}
-      add_mem' := fun {a b} ha hb i hi => by rw [map_add, ha i hi, hb i hi]
+      add_mem' := fun {a b} ha hb i hi => by rw [map_add (f := _), ha i hi, hb i hi]
       zero_mem' := fun i _ => map_zero _
       smul_mem' := fun c a ha i hi => by rw [map_smul, ha i hi] }
   let Z : Submodule k (ReciprocityTheory.Gal.Z1 ρ) :=

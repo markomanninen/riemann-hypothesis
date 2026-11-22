@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantFieldStatement
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.NonemptyTorusExtensionOfIsGt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AwayToAwayRightEqOfComp
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.NonemptyTorusExtensionOfIsGt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
@@ -48,7 +52,8 @@ theorem exists_isLieBasis (v : Module.Basis (Fin n) R (TanM (𝟙 (Sp R)) G)) :
   have h := isGrpPullback_self G
   choose u e using fun i => PullbackSections.push_surj h (tv (v i))
   have ts : ∀ f : Fin n → TanM (𝟙 (Sp R)) G, tv (∑ i, f i) = ∏ i, tv (f i) := fun f => by
-    simp only [tv, toMul_sum, Subgroup.val_finset_prod]
+    simp only [tv, toMul_sum]
+    exact map_prod (Subgroup.subtype _) _ _
   have key : ∀ a p m, pushHom h (epsR R) p = tv m → (IsLieComb a u p ↔ m = ∑ k, a k • v k) := fun a p m hp => by
     rw [PullbackSections.isLieComb_iff h, hp]
     simp only [e]
@@ -329,7 +334,8 @@ theorem isWt_coeff : ∀ (R : Type) [CommRing R] [IsDomain R] (Q : DegPre R) (O 
     refine ⟨a₁, a₂, fun α f hf => a₃ f ?_⟩
     have ev : ∀ b : Sp S ⟶ Y.H.left, ⊤ ≤ b ⁻¹ᵁ (Y.q.left ⁻¹ᵁ V') →
         valR b _ (δ _ f) = ∑ i, valR b _ (cf i) * valR b _ (dd i _ f) := fun b hb => by
-      rw [hcf _ hle', GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcf _ hle', GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, ← GlobalTheory.ZH.CrdCalc.valR_eq _ _ hb, rsT, dif_pos hle', valR_res _ _ hb]
     have t := hδ α V' hle f hf S φ x x' c _ _ rfl rfl m m' hq hc

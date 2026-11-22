@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CountLoc
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FormValuationGeNegDegree
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CountLoc
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FormValuationGeNegDegree
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,10 +69,9 @@ theorem up_fin_gen (p n' r k : ℕ) (hfin : Finite (W ⧸ Ideal.span {(p : W)}))
       exact hA1.2.2.2.1 x hx
     · intro x hx
       exact ⟨x, hA1.2.2.1 hx, rfl⟩
-  · convert Set.finite_empty
-    ext A1
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-    exact fun h => hA h.1
+  · apply Set.Finite.subset Set.finite_empty
+    intro A1 h
+    exact (hA h.1).elim
 
 theorem count_fun (hC : CountLoc) (p n' : ℕ) [IsDomain W] [IsDiscreteValuationRing W] (h1 : IsFractionRing W Qq)
     (h2 : Irreducible (p : W)) (h3 : Nat.card (W ⧸ Ideal.span {(p : W)}) = p ^ n') (N N' g i : ℕ) (hN : N' = N + g)

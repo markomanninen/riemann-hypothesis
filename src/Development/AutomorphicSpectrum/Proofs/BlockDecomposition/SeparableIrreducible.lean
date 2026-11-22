@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+
+@[expose] public section
 
 open CategoryTheory ReciprocityTheory.Ty.Fin
 
@@ -31,7 +35,7 @@ theorem asAlgebraHom_leftRep (N : Submodule (MonoidAlgebra ℂ Γ) (MonoidAlgebr
     (x : MonoidAlgebra ℂ Γ) (n : N) : Representation.asAlgebraHom (leftRep N) x n = x • n := by
   induction x using MonoidAlgebra.induction_on with
   | of g => simp [Representation.asAlgebraHom_of, leftRep_apply]
-  | add a b ha hb => simp [map_add, add_smul, ha, hb]
+  | add a b ha hb => simp [map_add (f := _), add_smul, ha, hb]
   | smul c a ha => simp [map_smul, ha]
 
 instance finiteDimensional_leftIdeal (N : Submodule (MonoidAlgebra ℂ Γ) (MonoidAlgebra ℂ Γ)) :
@@ -46,7 +50,7 @@ theorem isIrr_leftRep (N : Submodule (MonoidAlgebra ℂ Γ) (MonoidAlgebra ℂ �
     rw [← asAlgebraHom_leftRep]
     induction x using MonoidAlgebra.induction_on with
     | of g => simpa [Representation.asAlgebraHom_of] using hW g w hw
-    | add a b ha hb => simpa [map_add] using W.add_mem ha hb
+    | add a b ha hb => simpa [map_add (f := _)] using W.add_mem ha hb
     | smul c a ha => simpa [map_smul] using W.smul_mem c ha
   let W' : Submodule (MonoidAlgebra ℂ Γ) N :=
     { carrier := W

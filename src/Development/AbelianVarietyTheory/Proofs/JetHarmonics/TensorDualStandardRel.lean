@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL
 
 namespace GlobalTheory
@@ -35,7 +40,8 @@ theorem _root_.GlobalTheory.tensor_dual_standard_rel : ∀ (V : Type) [NormedAdd
     exact Finset.sum_comm
   · intro a b
     ext y e
-    simp only [Module.End.mul_apply, hOm, hEt, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.End.mul_apply, hOm, hEt, map_sub, map_sum]
     have key : ∀ i, E e i (E a b (y.ofLp i)) = E a b (E e i (y.ofLp i)) + (if i = a then E e b (y.ofLp i) else 0) - (if b = e then E a i (y.ofLp i) else 0) := by
       intro i; have h := hE' e i a b (y.ofLp i); rw [sub_eq_iff_eq_add] at h; rw [h]; abel
     have h3 : ∀ i, E e i (if i = b then y.ofLp a else 0) = if i = b then E e b (y.ofLp a) else 0 := by

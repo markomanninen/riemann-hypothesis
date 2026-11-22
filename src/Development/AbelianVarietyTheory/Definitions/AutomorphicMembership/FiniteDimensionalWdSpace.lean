@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalLetter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalLetter
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,16 +34,13 @@ def wdMap (T : End ↥LL.1 ↥(Dpst P ρ)) (hT : ∀ c, T * mulD P ρ c = mulD P
     End ℂ (WDSpace P ι ρ) :=
   @letterMap ↥LL.1 ↥(MaximalUnramifiedExtension l) ↥(Dpst P ρ) _ _ _ _ (mulD P ρ) ℂ _ (algC ι LL) (urC ι) T hT
 
-@[simp] theorem wdMap_mk (T : End ↥LL.1 ↥(Dpst P ρ)) (hT : ∀ c, T * mulD P ρ c = mulD P ρ c * T)
-    (x : ↥(Dpst P ρ)) : wdMap P ι ρ T hT (wdMk P ι ρ x) = wdMk P ι ρ (T x) := rfl
-
 @[simp] theorem wdMk_zero : wdMk P ι ρ 0 = 0 := letI := algC ι LL; letterMk_zero _ _ _
 
 theorem wdMk_add (x y : ↥(Dpst P ρ)) : wdMk P ι ρ (x + y) = wdMk P ι ρ x + wdMk P ι ρ y :=
   letI := algC ι LL; letterMk_add _ _ _ x y
 
 theorem wdMk_smul (a : ↥LL.1) (x : ↥(Dpst P ρ)) :
-    wdMk P ι ρ (a • x) = ι (a : Om l) • wdMk P ι ρ x :=
+    wdMk P ι ρ ((Dpst P ρ).module.toSMul.smul a x) = ι (a : Om l) • wdMk P ι ρ x :=
   letI := algC ι LL; letterMk_smul _ _ _ a x
 
 theorem wdMk_mul (c : ↥(MaximalUnramifiedExtension l)) (x : ↥(Dpst P ρ)) :
@@ -72,8 +73,8 @@ theorem isNilpotent_wdN [FiniteDimensional ↥(MaximalUnramifiedExtension l) (Dp
     | succ k ih => intro x; rw [pow_succ, pow_succ, End.mul_apply, End.mul_apply, wdN_mk, ih]
   exact ⟨n, wd_ext P ι ρ fun x => by rw [hp, hn]; simp⟩
 
-variable {P ρ} in
 
+variable {P ρ} in
 theorem IsPst.finite [FiniteDimensional ↥LL.1 V] (hV : IsPst P ρ) :
     FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ) :=
   haveI := LL.2
@@ -102,8 +103,13 @@ variable [FiniteDimensional ↥(MaximalUnramifiedExtension l) (DpstUr P ρ)]
 
 def wdRho : Representation ℂ ↥(Weil h) (WDSpace P ι ρ) where
   toFun σ := wdMap P ι ρ (weilD Bw h P ρ σ) (weilD_mulD Bw h P ρ hj σ)
-  map_one' := wd_ext P ι ρ fun x => by simp
-  map_mul' σ τ := wd_ext P ι ρ fun x => by simp
+  map_one' := wd_ext P ι ρ fun x => by
+    change wdMk P ι ρ (weilD Bw h P ρ 1 x) = wdMk P ι ρ x
+    rw [map_one, one_apply_eq_self]
+  map_mul' σ τ := wd_ext P ι ρ fun x => by
+    change wdMk P ι ρ (weilD Bw h P ρ (σ * τ) x) =
+      wdMk P ι ρ (weilD Bw h P ρ σ (weilD Bw h P ρ τ x))
+    rw [map_mul, mul_apply_eq_comp]
 
 @[simp] theorem wdRho_mk (σ : ↥(Weil h)) (x : ↥(Dpst P ρ)) :
     wdRho P ι Bw h hj ρ σ (wdMk P ι ρ x) = wdMk P ι ρ (weilD Bw h P ρ σ x) := rfl
@@ -114,13 +120,15 @@ theorem isSmooth_wdRho : IsSmooth (wdRho P ι Bw h hj ρ) :=
 theorem wdRho_wdN (σ : ↥(Weil h)) : wdRho P ι Bw h hj ρ σ * wdN P ι ρ =
     ((normV w : ℕ) : ℂ) ^ deg σ • (wdN P ι ρ * wdRho P ι Bw h hj ρ σ) :=
   wd_ext P ι ρ fun x => by
+    let a : ↥LL.1 := (normV w : ℕ) ^ deg σ
+    let y := monD P ρ (weilD Bw h P ρ σ x)
     have h1 := LinearMap.congr_fun (weilD_monD Bw h P ρ hj σ) x
-    rw [End.mul_apply, LinearMap.smul_apply, End.mul_apply] at h1
-    have e : ι (((((normV w : ℕ) : ↥LL.1) ^ deg σ : ↥LL.1)) : Om l) = ((normV w : ℕ) : ℂ) ^ deg σ :=
+    change weilD Bw h P ρ σ (monD P ρ x) = (Dpst P ρ).module.toSMul.smul a y at h1
+    have e : ι (a : Om l) = ((normV w : ℕ) : ℂ) ^ deg σ :=
       (map_zpow₀ (ι.toRingHom.comp (algebraMap ↥LL.1 (Om l))) ((normV w : ℕ) : ↥LL.1) (deg σ)).trans
         (by rw [map_natCast])
-    have h2 := congrArg (wdMk P ι ρ) h1
-    rw [wdMk_smul, e] at h2
+    have h2 := (congrArg (wdMk P ι ρ) h1).trans (wdMk_smul P ι ρ a y)
+    rw [e] at h2
     exact h2
 
 def wdRep : WDRep h (WDSpace P ι ρ) :=
@@ -147,8 +155,8 @@ end Fin
 
 variable [FiniteDimensional ↥LL.1 V]
 
-open Classical in
 
+open Classical in
 def wdPst : WD h :=
   if hV : IsPst P ρ then haveI := hV.finite; WD.mk (wdRep P ι Bw h hj ρ) else trivWD h (finrank ↥LL.1 V)
 
@@ -202,24 +210,20 @@ def IsJumpsAt (τ : E →+* Om l) (J : Multiset ℤ) : Prop :=
   ∃ LL' r', IsModel Bw r LL' r' ∧ Bw.IsdRE P LL' r' ∧ ∃ τ' : ↥Bw.Kw.1 →ₐ[ℚ_[l]] ↥LL'.1,
     IsInduced Bw τ τ' ∧ ∀ n : ℤ, (J.count n : ℤ) = Bw.multE P LL' r' τ' n
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsCrysAt.isPotCrysAt (hr : IsCrysAt P Bw r) : IsPotCrysAt P Bw r := by
   obtain ⟨LL', r', h1, h2⟩ := hr
   exact ⟨LL', r', h1, Bw.Kw, le_rfl, h2⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsModel.unique {LL' : FinExt l} {r₁ r₂ : ↥Gw →* GL (Fin a) ↥LL'.1} (h₁ : IsModel Bw r LL' r₁)
     (h₂ : IsModel Bw r LL' r₂) : r₁ = r₂ := by
   ext g i j
   exact congrArg (fun f : ↥Gw →* GL (Fin a) (Om l) => (f g : Matrix (Fin a) (Fin a) (Om l)) i j)
     (h₁.2.trans h₂.2.symm)
 
-omit [NumberField E] in
-
-theorem isModel_one : IsModel Bw (1 : ↥Gw →* GL (Fin a) (Om l)) Bw.LL 1 :=
-  ⟨le_rfl, MonoidHom.ext fun _ => by simp [Formalism.MainNotions.N.mapRep]⟩
 
 end Model
 
@@ -229,8 +233,8 @@ variable [IsAlgClosure E Ω] {A : ValuationSubring Ω} {w : HeightOneSpectrum (�
   (Bw : LocBridge l E Ω (Dec (F := E) A) O) (h : IsPlaceOver A w) (hj : Induces Bw) {a : ℕ}
   (r : ↥(Dec (F := E) A) →* GL (Fin a) (Om l))
 
-open Classical in
 
+open Classical in
 def wdAt : WD h :=
   if hr : IsPstAt P Bw r then wdPst P ι Bw h hj (Bw.repE hr.choose hr.choose_spec.choose) else trivWD h a
 
@@ -262,8 +266,8 @@ def IsdRW (w : HeightOneSpectrum (𝓞 E)) : Prop := ∃ hw, IsdRAt P (br w hw) 
 def IsJumpsW (τ : E →+* Om l) (J : Multiset ℤ) : Prop :=
   ∃ w hw, IsJumpsAt P (br w hw) (resDec pl r w) τ J
 
-open Classical in
 
+open Classical in
 def jumpsW (τ : E →+* Om l) : Multiset ℤ :=
   if hJ : ∃ J, IsJumpsW P pl br r τ J then hJ.choose else 0
 
@@ -303,20 +307,6 @@ theorem smul_phiB_tInv : (l : ℚ_[l]) • P.φB (tInv P) = tInv P := by
   have h := congrArg P.φB (tInv_mul P)
   rw [map_mul, map_one, localPrime_frobenius_periodT, mul_smul_comm, ← smul_mul_assoc] at h
   exact (isUnit_tB P).mul_right_cancel (h.trans (tInv_mul P).symm)
-
-def tateRep : Representation ℚ_[l] ↥(GK K) (ℚ_[l] × ℚ_[l]) where
-  toFun g := LinearMap.prod ((P.χQ (g : GQ l) : ℚ_[l]) • LinearMap.fst ℚ_[l] ℚ_[l] ℚ_[l] +
-    (kummer P (g : GQ l) : ℚ_[l]) • LinearMap.snd ℚ_[l] ℚ_[l] ℚ_[l]) (LinearMap.snd ℚ_[l] ℚ_[l] ℚ_[l])
-  map_one' := by ext <;> simp
-  map_mul' g h := by ext <;> simp [kummer_mul, add_comm]
-
-def tateX : (ℚ_[l] × ℚ_[l]) ⊗[ℚ_[l]] Bst P := (1, 0) ⊗ₜ C (tInv P)
-
-def tateY : (ℚ_[l] × ℚ_[l]) ⊗[ℚ_[l]] Bst P := (0, 1) ⊗ₜ 1 - (1, 0) ⊗ₜ (C (tInv P) * X)
-
-example (ρ : Representation ℚ_[l] ↥(GK K) (Fin 0 → ℚ_[l])) : IsPst P ρ := by
-  have : Subsingleton (DpstUr P ρ) := inferInstanceAs (Subsingleton ↥(Dpst P ρ))
-  rw [IsPst, rank_subsingleton', rank_subsingleton']
 
 end Examples
 

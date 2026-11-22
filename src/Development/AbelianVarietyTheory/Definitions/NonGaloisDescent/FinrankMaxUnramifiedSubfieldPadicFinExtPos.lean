@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Development.AutomorphicArithmetic.PrimeDiscriminants.CycImage
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.CycImage
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,11 +23,6 @@ def SqrtKur (l : ℕ) [Fact l.Prime] : Prop :=
 section Local
 
 open Formalism.BasicNotions.Loc Polynomial
-
-theorem dickson_hom {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (x : A) (N : ℕ) :
-    (dickson 1 (1 : B) N).eval (f x) = f ((dickson 1 (1 : A) N).eval x) := by
-  have h : dickson 1 (1 : B) N = (dickson 1 (1 : A) N).map f := by rw [map_dickson, map_one]
-  rw [h, eval_map, eval₂_hom]
 
 variable {l : ℕ} [Fact l.Prime] {R : Ranks} (H : Host R) (J : H.E →+* Om l)
 
@@ -74,7 +73,7 @@ theorem image_le (hlS : ¬ l ∣ H.QS) (M : IntermediateField ℚ_[l] (Om l)) (h
   | algebraMap r =>
     rw [eq_ratCast, map_ratCast]
     exact SubfieldClass.ratCast_mem M r
-  | add a b _ _ ha hb => rw [map_add]; exact M.add_mem ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact M.add_mem ha hb
   | inv a _ ha => rw [map_inv₀]; exact M.inv_mem ha
   | mul a b _ _ ha hb => rw [map_mul]; exact M.mul_mem ha hb
 
@@ -178,13 +177,13 @@ theorem mu_mul (c d : K) (x : V ⊗[Qp] BdR) : μ (c * d) x = μ c (μ d x) := b
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [mulVdR, mul_assoc]
-  | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
 
 theorem mu_add (c d : K) (x : V ⊗[Qp] BdR) : μ (c + d) x = μ c x + μ d x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [mulVdR, add_mul, tmul_add]
-  | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]; abel
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]; abel
 
 theorem mu_alg (q : Qp) (x : V ⊗[Qp] BdR) : μ (algebraMap Qp K q) x = algebraMap Qp LL q • x := by
   induction x using TensorProduct.induction_on with
@@ -192,7 +191,7 @@ theorem mu_alg (q : Qp) (x : V ⊗[Qp] BdR) : μ (algebraMap Qp K q) x = algebra
   | tmul a b =>
     simp only [mulVdR, AlgebraTensorModule.map_tmul, LinearMap.id_apply, LinearMap.mulLeft_apply]
     rw [← IsScalarTower.algebraMap_apply, ← Algebra.smul_def, smul_tmul', algebraMap_smul, smul_tmul]
-  | add a b ha hb => rw [map_add, smul_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), smul_add, ha, hb]
 
 theorem mu_pow (c : K) (n : ℕ) (x : V ⊗[Qp] BdR) : μ (c ^ n) x = ((μ c) ^ n) x := by
   induction n generalizing x with
@@ -204,7 +203,7 @@ theorem mu_pow (c : K) (n : ℕ) (x : V ⊗[Qp] BdR) : μ (c ^ n) x = ((μ c) ^ 
 theorem mu_aeval (c : K) (p : Qp[X]) (x : V ⊗[Qp] BdR) :
     aeval (μ c) (p.map (algebraMap Qp LL)) x = μ (aeval c p) x := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [Polynomial.map_add, map_add, LinearMap.add_apply, hp, hq, map_add, mu_add]
+  | add p q hp hq => rw [Polynomial.map_add (f := _), map_add (f := _), LinearMap.add_apply, hp, hq, map_add (f := _), mu_add]
   | monomial n a =>
     rw [Polynomial.map_monomial, aeval_monomial, aeval_monomial, mu_mul, mu_alg, mu_pow, Module.End.mul_apply,
       Module.algebraMap_end_apply]
@@ -217,7 +216,7 @@ theorem mu_mem (c : K) (a : ℤ) (x : V ⊗[Qp] BdR) (hx : x ∈ DdR PD ρ ⊓ F
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [mulVdR, actVdR]
-      | add a b ha hb => rw [map_add, map_add, map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
     have h1 := hx.1
     simp only [DdR, SetLike.mem_coe, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply,
       sub_eq_zero] at h1 ⊢
@@ -230,7 +229,7 @@ theorem mu_mem (c : K) (a : ℤ) (x : V ⊗[Qp] BdR) (hx : x ∈ DdR PD ρ ⊓ F
     | tmul v b =>
       refine ⟨v ⊗ₜ ⟨c • (b : BdR), (PD.Fil a).smul_mem c b.2⟩, ?_⟩
       simp [mulVdR, Algebra.smul_def]
-    | add a b ha hb => rw [map_add, map_add]; exact Submodule.add_mem _ ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ ha hb
 
 theorem aeval_mem {W : Type} [AddCommGroup W] [Module LL W] (M : Module.End LL W) (U : Submodule LL W)
     (h : ∀ x ∈ U, M x ∈ U) (q : LL[X]) (x : W) (hx : x ∈ U) : aeval M q x ∈ U := by
@@ -240,7 +239,7 @@ theorem aeval_mem {W : Type} [AddCommGroup W] [Module LL W] (M : Module.End LL W
     | zero => simpa using hx
     | succ n ih => rw [pow_succ', Module.End.mul_apply]; exact h _ ih
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, LinearMap.add_apply]; exact U.add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _), LinearMap.add_apply]; exact U.add_mem hp hq
   | monomial n a =>
     rw [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
     exact U.smul_mem _ (hp n)
@@ -276,7 +275,8 @@ theorem jump_of_total [CharZero Qp] [FiniteDimensional Qp K] (hs : Nat.card (K �
     have := mu_alg (K := K) (LL := LL) (0 : Qp) y
     simpa using this
   have hsum : x = ∑ τ, aeval (μ pb.gen) (Lagrange.basis Finset.univ v τ) x := by
-    rw [← LinearMap.sum_apply, ← map_sum, Lagrange.sum_basis hv.injOn hne, map_one, Module.End.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, Lagrange.sum_basis hv.injOn hne, map_one, Module.End.one_apply]
   rw [hsum]
   refine Submodule.sum_mem _ fun τ _ => ?_
   set y := aeval (μ pb.gen) (Lagrange.basis Finset.univ v τ) x with hy
@@ -298,7 +298,7 @@ theorem jump_of_total [CharZero Qp] [FiniteDimensional Qp K] (hs : Nat.card (K �
     induction hc using Algebra.adjoin_induction with
     | mem z hz => rw [Set.mem_singleton_iff.1 hz]; exact hy2
     | algebraMap q => rw [mu_alg, AlgHom.commutes]
-    | add c d _ _ hc hd => rw [mu_add, hc, hd, map_add, add_smul]
+    | add c d _ _ hc hd => rw [mu_add, hc, hd, map_add (f := _), add_smul]
     | mul c d _ _ hc hd => rw [mu_mul, hd, map_smul, hc, map_mul, smul_smul, mul_comm]
   have hy4 : y ∈ FildR PD ρ τ a := by
     refine ⟨⟨hy1.1, ?_⟩, hy1.2⟩
@@ -350,17 +350,6 @@ theorem finrank_sup_adjoin (F : IntermediateField ℚ_[l] (Om l)) (y : Om l) :
   rw [← IntermediateField.restrictScalars_adjoin_eq_sup, ← IntermediateField.adjoin.finrank hint]
   exact (Module.finrank_mul_finrank ℚ_[l] ↥F ↥(IntermediateField.adjoin F {y})).symm
 
-theorem Ks_eq (K : FinExt l) (s : ℕ) {z : Om l} (hz : IsPrimitiveRoot z (l ^ s)) :
-    Ks K s = K0 K ⊔ IntermediateField.adjoin ℚ_[l] {z} := by
-  have : NeZero (l ^ s) := ⟨(pow_pos (Fact.out : l.Prime).pos _).ne'⟩
-  unfold Ks
-  congr 1
-  apply le_antisymm
-  · refine IntermediateField.adjoin_le_iff.2 fun x hx => ?_
-    obtain ⟨i, -, rfl⟩ := hz.eq_pow_of_pow_eq_one (show x ^ (l ^ s) = 1 from hx)
-    exact pow_mem (IntermediateField.mem_adjoin_simple_self _ _) _
-  · exact IntermediateField.adjoin.mono _ _ _ (by rintro x rfl; exact hz.pow_eq_one)
-
 theorem finrank_maxUnramifiedSubfield_padicFinExt_pos (K : FinExt l) : 0 < finrank ℚ_[l] ↥(K0 K) := by
   have := K.2
   have : FiniteDimensional ℚ_[l] ↥(K0 K) := FiniteDimensional.of_injective
@@ -409,7 +398,7 @@ theorem cTB_le (l h t N e : ℕ) (hl : l.Prime) (U : Finset ℤ) (U' : Set ℤ) 
     have h1 := hb u (hU hu'.1)
     have h2 : LocalSituation.vZ l (u - i) ≤ lam := by
       unfold LocalSituation.vZ padicValInt
-      refine (padicValNat_le_nat_log _).trans (Nat.log_mono_right ?_)
+      refine (multiplicity_le_nat_log _).trans (Nat.log_mono_right ?_)
       omega
     omega
   have hs : ∑ i ∈ Finset.Ico (0 : ℤ) ((e : ℤ) + 1), (2 + max 1 (LocalSituation.rI l m U' i)) ≤ t * (3 + N * (4 + 2 * lam)) := by
@@ -418,8 +407,12 @@ theorem cTB_le (l h t N e : ℕ) (hl : l.Prime) (U : Finset ℤ) (U' : Set ℤ) 
       omega
     · rw [Int.card_Ico, smul_eq_mul]
       exact Nat.mul_le_mul_right _ (by omega)
-  have v1 : padicValNat l e ≤ e := (padicValNat_le_nat_log _).trans (Nat.log_le_self _ _)
-  have v2 : padicValNat l (e + 1) ≤ e + 1 := (padicValNat_le_nat_log _).trans (Nat.log_le_self _ _)
+  have v1 : padicValNat l e ≤ e := by
+    rw [Nat.padicValNat_def]
+    exact (multiplicity_le_nat_log e).trans (Nat.log_le_self _ _)
+  have v2 : padicValNat l (e + 1) ≤ e + 1 := by
+    rw [Nat.padicValNat_def]
+    exact (multiplicity_le_nat_log (e + 1)).trans (Nat.log_le_self _ _)
   have v3 : e / (l - 1) ≤ e := Nat.div_le_self _ _
   unfold LocalSituation.cTB LocalSituation.cLL cBnum
   rw [← hlam]
@@ -427,7 +420,7 @@ theorem cTB_le (l h t N e : ℕ) (hl : l.Prime) (U : Finset ℤ) (U' : Set ℤ) 
 
 theorem vZ_le_log (l : ℕ) [Fact l.Prime] (h : ℕ) (u : ℤ) (hu : -(h : ℤ) ≤ u ∧ u ≤ h) : LocalSituation.vZ l u ≤ Nat.log l h := by
   unfold LocalSituation.vZ padicValInt
-  refine (padicValNat_le_nat_log _).trans (Nat.log_mono_right ?_)
+  refine (multiplicity_le_nat_log _).trans (Nat.log_mono_right ?_)
   omega
 
 end D

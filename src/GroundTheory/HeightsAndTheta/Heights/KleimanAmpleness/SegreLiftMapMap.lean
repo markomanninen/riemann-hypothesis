@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideSide
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideSide
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -103,7 +108,7 @@ theorem SegreFibreIdeal.proof : SegreFibreIdeal.Statement := by
     apply hW
     apply Ideal.mem_map_of_mem
     rw [mIdealOver, RingHom.mem_ker]
-    have := congrArg (fun p => Polynomial.coeff p n) h2
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p n) h2
     simpa [Polynomial.coeff_map] using this
 
 end

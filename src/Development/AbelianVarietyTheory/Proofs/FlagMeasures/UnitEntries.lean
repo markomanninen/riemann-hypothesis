@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetFrameClassProperties
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetFrameClassProperties
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
@@ -202,31 +206,44 @@ theorem unitIn_prod (O : Subring E) {ι : Type} (s : Finset ι) (g : ι → E) (
     UnitIn O (∏ i ∈ s, g i) :=
   Finset.prod_induction g (UnitIn O) (fun _ _ => UnitIn.mul) ⟨O.one_mem, 1, O.one_mem, one_mul 1⟩ h
 
-theorem sig_mono : ∀ (bs : List (Eˣ × ℕ+)) (a b : ℕ), a ≤ b → a + sig bs a ≤ b + sig bs b
-  | [], a, b, h => by change a + a ≤ b + b; omega
-  | (t, s) :: bs, a, b, h => by
-    have := sig_mono bs (a - s) (b - s) (by omega)
+theorem sig_mono : ∀ (bs : List (Eˣ × ℕ+)) (a b : ℕ), a ≤ b → a + sig bs a ≤ b + sig bs b := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro a b h
+    change a + a ≤ b + b
+    omega
+  | cons p bs ih =>
+    obtain ⟨t, s⟩ := p
+    intro a b h
+    have := ih (a - (s : ℕ)) (b - (s : ℕ)) (Nat.sub_le_sub_right h _)
     simp only [sig_cons]
     split_ifs <;> omega
 
 theorem unit_entries (O : Subring E) (hO : ∀ (x : E) (s : ℕ), 0 < s → x ^ s ∈ O → x ∈ O) :
     ∀ bs : List (Eˣ × ℕ+), (∀ l ≤ (bs.map (fun b => (b.2 : ℕ))).sum, (∀ a < l, sig bs a < l) →
       UnitIn O (∏ a ∈ Finset.range l, ptEntryL bs a (sig bs a))) →
-      ∀ a < (bs.map (fun b => (b.2 : ℕ))).sum, UnitIn O (ptEntryL bs a (sig bs a))
-  | [], _, a, h => by simp at h
-  | (t, s) :: bs, H, a, h => by
+      ∀ a < (bs.map (fun b => (b.2 : ℕ))).sum, UnitIn O (ptEntryL bs a (sig bs a)) := by
+  intro bs
+  induction bs with
+  | nil =>
+    intro _ a h
+    simp at h
+  | cons p bs ih =>
+    obtain ⟨t, s⟩ := p
+    intro H a h
     simp only [List.map_cons, List.sum_cons] at h H
     have e1 : ∀ c < (s : ℕ), ptEntryL ((t, s) :: bs) c (sig ((t, s) :: bs) c) = t := by
       intro c hc
-      simp only [sig_cons, ptEntryL, hc, if_true]
-      rw [if_pos ⟨trivial, by omega⟩, if_pos (by omega)]
-    have e2 : ∀ c, ptEntryL ((t, s) :: bs) (s + c) (sig ((t, s) :: bs) (s + c)) =
+      simp only [sig_cons, ptEntryL, hc, ite_true]
+      rw [ite_eq_left ⟨trivial, by omega⟩, ite_eq_left (by omega)]
+    have e2 : ∀ c : ℕ, ptEntryL ((t, s) :: bs) ((s : ℕ) + c) (sig ((t, s) :: bs) ((s : ℕ) + c)) =
         ptEntryL bs c (sig bs c) := by
       intro c
       have hc : ¬ ((s : ℕ) + c < s) := by omega
-      simp only [sig_cons, ptEntryL, hc, if_false, false_and, Nat.add_sub_cancel_left]
-      rw [if_pos ⟨by omega, by omega⟩]
-    have h1 := H s (by omega) (fun c hc => by simp only [sig_cons, hc, if_true]; omega)
+      simp only [sig_cons, ptEntryL, hc, ite_false, false_and, Nat.add_sub_cancel_left]
+      rw [ite_eq_left ⟨by omega, by omega⟩]
+    have h1 := H s (by omega) (fun c hc => by simp only [sig_cons, hc, ite_true]; omega)
     by_cases ha : a < s
     · rw [Finset.prod_congr rfl (fun c hc => e1 c (Finset.mem_range.1 hc)), Finset.prod_const,
         Finset.card_range] at h1
@@ -238,7 +255,7 @@ theorem unit_entries (O : Subring E) (hO : ∀ (x : E) (s : ℕ), 0 < s → x ^ 
       rwa [this]
     · obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.1 ha)
       rw [e2]
-      refine unit_entries O hO bs (fun l hl hs => ?_) c (by omega)
+      refine ih (fun l hl hs => ?_) c (by omega)
       have h2 := H (s + l) (by omega) (fun c hc => by
         simp only [sig_cons]
         split_ifs with h3
@@ -253,10 +270,46 @@ theorem unit_of_lead [Nontrivial E] (O : Subring E) (hO : ∀ (x : E) (s : ℕ),
     (hZ : ∀ a b, Z a b = w.mat a b * (-1) ^ ε b) (h : ∀ l, lead Z l ≠ 0 → UnitIn O (lead Z l)) :
     ∃ σ : Fin n → Fin n, (∀ a, σ (σ a) = a) ∧ (∀ a b : Fin n, a ≤ b → (a : ℕ) + σ a ≤ b + σ b) ∧
       (∀ a b, b ≠ σ a → Z a b = 0) ∧ ∀ a, UnitIn O (Z a (σ a)) := by
+  have sigInvolutive : ∀ (bs : List (Eˣ × ℕ+)), Function.Involutive (sig bs) := by
+    intro bs
+    induction bs with
+    | nil => intro a; rfl
+    | cons p bs ih =>
+      obtain ⟨t, s⟩ := p
+      intro a
+      by_cases ha : a < (s : ℕ)
+      · have ha' : (s : ℕ) - 1 - a < s := by omega
+        rw [sig_cons t s bs a, ite_eq_left ha, sig_cons, ite_eq_left ha']
+        omega
+      · have ha' : ¬ ((s : ℕ) + sig bs (a - s) < s) := by omega
+        rw [sig_cons t s bs a, ite_eq_right ha, sig_cons, ite_eq_right ha',
+          Nat.add_sub_cancel_left, ih]
+        omega
+  have blockEntry : ∀ (bs : List (Eˣ × ℕ+)) (a : ℕ), a < (bs.map (fun b => (b.2 : ℕ))).sum →
+      sig bs a < (bs.map (fun b => (b.2 : ℕ))).sum ∧ IsUnit (ptEntryL bs a (sig bs a)) := by
+    intro bs
+    induction bs with
+    | nil => intro a ha; simp at ha
+    | cons p bs ih =>
+      obtain ⟨t, s⟩ := p
+      intro a ha
+      simp only [List.map_cons, List.sum_cons] at ha ⊢
+      rw [sig_cons t s bs a]
+      by_cases hs : a < (s : ℕ)
+      · rw [ite_eq_left hs]
+        refine ⟨by omega, ?_⟩
+        rw [ptEntryL, ite_eq_left ⟨hs, by omega⟩, ite_eq_left (by omega)]
+        exact t.isUnit
+      · obtain ⟨hbound, hunit⟩ := ih (a - (s : ℕ)) (by omega)
+        rw [ite_eq_right hs]
+        refine ⟨by omega, ?_⟩
+        rw [ptEntryL, ite_eq_right (fun h => hs h.1), ite_eq_left ⟨by omega, by omega⟩,
+          Nat.add_sub_cancel_left]
+        exact hunit
   have hs : ∀ a : Fin n, sig w.blocks a < n := fun a => by
-    have := (entry_unit w.blocks a (by rw [w.size]; omega)).1
+    have := (blockEntry w.blocks a (by rw [w.size]; exact a.2)).1
     rwa [w.size] at this
-  refine ⟨fun a => ⟨_, hs a⟩, fun a => Fin.ext (sig_sig _ _), fun a b hab => sig_mono _ _ _ hab,
+  refine ⟨fun a => ⟨_, hs a⟩, fun a => Fin.ext (sigInvolutive _ _), fun a b hab => sig_mono _ _ _ hab,
     fun a b hb => ?_, fun a => ?_⟩
   · rw [hZ, Pt.mat, entry_zero, zero_mul]
     exact fun h => hb (Fin.ext h)
@@ -269,7 +322,7 @@ theorem unit_of_lead [Nontrivial E] (O : Subring E) (hO : ∀ (x : E) (s : ℕ),
       intro a b hab
       have h1 : sig w.blocks a = sig w.blocks b := congrArg Fin.val hab
       apply Fin.ext
-      rw [← sig_sig w.blocks a, h1, sig_sig]
+      exact (sigInvolutive w.blocks).injective h1
     have h1 : lead Z ⟨l, Nat.lt_succ_of_le hl⟩ = _ :=
       det_mono (Z.submatrix (Fin.castLE hl) (Fin.castLE hl)) τ (fun a b hb => by
         rw [Matrix.submatrix_apply, hZ, Pt.mat, entry_zero, zero_mul]
@@ -299,7 +352,7 @@ theorem unit_of_lead [Nontrivial E] (O : Subring E) (hO : ∀ (x : E) (s : ℕ),
       exact IsUnit.of_mul_eq_one y hy
     · rw [IsUnit.prod_iff]
       intro a ha
-      exact (entry_unit w.blocks a (by rw [w.size]; have := Finset.mem_range.1 ha; omega)).2
+      exact (blockEntry w.blocks a (by rw [w.size]; have := Finset.mem_range.1 ha; omega)).2
 
 end Blocks
 
@@ -313,12 +366,14 @@ theorem pair_comb {L : LocE F E} {r k : ℕ} (S : Frames L r k)
   have key : ∀ (α : Fin (r + 1) → E) (g : Fin (r + 1) → S.V) (y : S.V),
       hf L S.Hm (∑ i, α i • g i) y = ∑ i, α i * hf L S.Hm (g i) y := fun α g y => by
     change GlobalTheory.FrameBasic.hfL L S.Hm y _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul]; rfl
   simp only [Frames.h, Matrix.mul_apply, Frames.Zh, Matrix.of_apply, cT]
   rw [key]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [GlobalTheory.FrameBasic.hf_conj L S.herm.1, key, map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [GlobalTheory.FrameBasic.hf_conj L S.herm.1, key, map_sum, mul_comm]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, ← GlobalTheory.FrameBasic.hf_conj L S.herm.1]

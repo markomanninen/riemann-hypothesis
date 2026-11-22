@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SxProdIsoHomSnd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaOfUnitOnEtalePoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrivV
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CotDComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZeroChains
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SxProdIsoHomSnd
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -35,14 +40,32 @@ theorem snd_map {U Y W : Scheme.{0}} {E : Spc} {p : ℕ} (y : Sx (sch.obj Y ⨯ 
 theorem sx_res_res {E : Spc} {p : ℕ} {U V W : Scheme.{0}} (x : Sx E p U) (f : V ⟶ U) (g : W ⟶ V) :
     (x.res f).res g = x.res (g ≫ f) := by
   change _ = (E.obj (op (SimplexCategory.mk p))).map (g ≫ f).op x
-  rw [op_comp, FunctorToTypes.map_comp_apply]; rfl
+  rw [op_comp, Functor.map_comp_apply]; rfl
 
 theorem ev_res_pair {U W W' : Scheme.{0}} (α : Cochain ((chains R).obj (sch.obj U ⨯ fibQ q N)) I n) (p : ℕ) (s : ℤ)
     (h : -(p : ℤ) + n = s) (y : Sx (sch.obj U ⨯ fibQ q N) p W) (w : W' ⟶ W) :
-    Sec.res w (ev α p s h W y) =
-      ev (I := I) (E := sch.obj W' ⨯ fibQ q N) (((cotPre R q N I n).map (w ≫ fstHom y).op).hom α) p s h W'
+    Sec.res w (ev (R := R) α p s h W y) =
+      ev (R := R) (I := I) (E := sch.obj W' ⨯ fibQ q N) (((cotPre R q N I n).map (w ≫ fstHom y).op).hom α) p s h W'
         (sxPair (schSx (𝟙 W') p) ((y.map prod.snd).res w)) := by
-  rw [ev_res, cotPre_ev]
+  have hres : Sec.res w (ev (R := R) α p s h W y) = ev (R := R) α p s h W' (y.res w) := by
+    change Sec.res w (Sec.map ((chainsXIso R _ p).inv ≫ α.v _ _ h) (freeGen R _ W y)) = _
+    rw [map_res, freeGen_res]
+    rfl
+  rw [hres]
+  let f : sch.obj W' ⨯ fibQ q N ⟶ sch.obj U ⨯ fibQ q N :=
+    prod.map (sch.map (w ≫ fstHom y)) (𝟙 _)
+  let x := sxPair (schSx (𝟙 W') p) ((y.map prod.snd).res w)
+  have hmap : ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h W' x =
+      ev (R := R) α p s h W' (x.map f) := by
+    unfold ev
+    rw [Cochain.zero_cochain_comp_v, Cochain.ofHom_v, ← Category.assoc, chains_map, Category.assoc]
+    change Sec.map ((chainsXIso R _ p).inv ≫ α.v _ _ h)
+      (Sec.map ((free R).map (f.app (op (SimplexCategory.mk p)))) (freeGen R _ W' x)) = _
+    rw [freeGen_map]
+    rfl
+  change _ = ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h W' x
+  rw [hmap]
+  dsimp only [f, x]
   congr 1
   apply sx_prod_ext
   · rw [sxPair_map, sxPair_fst, sxMap_res, schSx_map, Category.id_comp]
@@ -60,7 +83,7 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
     Presheaf.IsSheaf Scheme.etaleTopology.{0} (cotPre R q N I n) := by
   rw [Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget (ModuleCat.{1} (ULift.{1} R))), isSheaf_iff_isSheaf_of_type]
   have hI : ∀ s : ℤ, Presieve.IsSheaf Scheme.etaleTopology.{0} ((I.X s).obj ⋙ forget (ModuleCat.{1} (ULift.{1} R))) :=
-    fun s => (isSheaf_iff_isSheaf_of_type _ _).1 ((Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget _)).1 (I.X s).cond)
+    fun s => (isSheaf_iff_isSheaf_of_type _ _).1 ((Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget _)).1 (I.X s).property)
   have sep : ∀ (s : ℤ) (W : Scheme.{0}) (T : Sieve W), T ∈ Scheme.etaleTopology.{0} W → ∀ t t' : Sec (I.X s) W,
       (∀ (W' : Scheme.{0}) (w : W' ⟶ W), T w → Sec.res w t = Sec.res w t') → t = t' :=
     fun s W T hT t t' ht => (hI s T hT).isSeparatedFor.ext fun _ w hw => ht _ w hw
@@ -71,14 +94,14 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
 
   have hcong : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) {W : Scheme.{0}} (g g' : W ⟶ U) (hg : S g) (hg' : S g')
       (x x' : Sx (fibQ q N) p W), g = g' → x = x' →
-      ev (I := I) (E := sch.obj W ⨯ fibQ q N) (c g hg) p s h W (sxPair (schSx (𝟙 W) p) x) =
-        ev (I := I) (E := sch.obj W ⨯ fibQ q N) (c g' hg') p s h W (sxPair (schSx (𝟙 W) p) x') := by
+      ev (R := R) (I := I) (E := sch.obj W ⨯ fibQ q N) (c g hg) p s h W (sxPair (schSx (𝟙 W) p) x) =
+        ev (R := R) (I := I) (E := sch.obj W ⨯ fibQ q N) (c g' hg') p s h W (sxPair (schSx (𝟙 W) p) x') := by
     rintro p s h W g _ hg hg' x _ rfl rfl; rfl
 
   have hL : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) {W W' : Scheme.{0}} (g : W ⟶ U) (hg : S g)
       (x : Sx (fibQ q N) p W) (t : W' ⟶ W),
-      Sec.res t (ev (I := I) (E := sch.obj W ⨯ fibQ q N) (c g hg) p s h W (sxPair (schSx (𝟙 W) p) x)) =
-        ev (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (t ≫ g) (S.downward_closed hg t)) p s h W'
+      Sec.res t (ev (R := R) (I := I) (E := sch.obj W ⨯ fibQ q N) (c g hg) p s h W (sxPair (schSx (𝟙 W) p) x)) =
+        ev (R := R) (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (t ≫ g) (S.downward_closed hg t)) p s h W'
           (sxPair (schSx (𝟙 W') p) (x.res t)) := by
     intro p s h W W' g hg x t
     refine (ev_res_pair (c g hg) p s h _ t).trans ?_
@@ -88,7 +111,7 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
       (∀ {Y : Scheme.{0}} (g : Y ⟶ U) (hg : S g), ((cotPre R q N I n).map g.op).hom γ = c g hg) →
       ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) {W W' : Scheme.{0}} (y : Sx (sch.obj U ⨯ fibQ q N) p W) (w : W' ⟶ W)
         (hw : S (w ≫ fstHom y)),
-      Sec.res w (ev γ p s h W y) = ev (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
+      Sec.res w (ev (R := R) γ p s h W y) = ev (R := R) (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
           (sxPair (schSx (𝟙 W') p) ((y.map prod.snd).res w)) := by
     intro γ hγ p s h W W' y w hw
     refine (ev_res_pair γ p s h y w).trans ?_
@@ -96,12 +119,12 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
 
   have key : ∀ (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (W : Scheme.{0}) (y : Sx (sch.obj U ⨯ fibQ q N) p W),
       ∃ t : Sec (I.X s) W, ∀ (W' : Scheme.{0}) (w : W' ⟶ W) (hw : S (w ≫ fstHom y)),
-        Sec.res w t = ev (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
+        Sec.res w t = ev (R := R) (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
           (sxPair (schSx (𝟙 W') p) ((y.map prod.snd).res w)) := by
     intro p s h W y
     let fam : Presieve.FamilyOfElements ((I.X s).obj ⋙ forget (ModuleCat.{1} (ULift.{1} R)))
         (S.pullback (fstHom y)).arrows := fun W' w hw =>
-      ev (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
+      ev (R := R) (I := I) (E := sch.obj W' ⨯ fibQ q N) (c (w ≫ fstHom y) hw) p s h W'
           (sxPair (schSx (𝟙 W') p) ((y.map prod.snd).res w))
     have hfam : fam.Compatible := by
       rw [Presieve.compatible_iff_sieveCompatible]
@@ -122,12 +145,50 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
     refine hcong _ _ _ _ _ _ _ _ _ ?_ ?_
     · rw [fstHom_res, Category.assoc]
     · rw [sxMap_res, sx_res_res]
-  obtain ⟨α, hα⟩ := ev_exists (R := R) (E := sch.obj U ⨯ fibQ q N) (I := I) (n := n) a hnat
+  let E := sch.obj U ⨯ fibQ q N
+  have components : ∀ (i j : ℤ) (hij : i + n = j),
+      ∃ φ : ((chains R).obj E).X i ⟶ I.X j, ∀ (p : ℕ) (hp : i = -(p : ℤ)) W y,
+        Sec.map ((chainsXIso R E p).inv ≫ eqToHom (congrArg ((chains R).obj E).X hp.symm) ≫ φ)
+          (freeGen R _ W y) = a p j (hp ▸ hij) W y := by
+    intro i j hij
+    by_cases hi : i ≤ 0
+    · obtain ⟨p, rfl⟩ : ∃ p : ℕ, i = -(p : ℤ) := ⟨(-i).toNat, by omega⟩
+      obtain ⟨φ, hφ⟩ := free_exists (R := R) _ _ (a p j hij) (hnat p j hij)
+      refine ⟨(chainsXIso R E p).hom ≫ φ, fun p' hp W y => ?_⟩
+      obtain rfl : p = p' := by omega
+      rw [eqToHom_refl, Category.id_comp, Iso.inv_hom_id_assoc]
+      exact hφ W y
+    · exact ⟨0, fun p hp => by omega⟩
+  choose φ hφ using components
+  let α : Cochain ((chains R).obj E) I n := Cochain.mk φ
+  have hα : ∀ p s h W y, ev (R := R) α p s h W y = a p s h W y := by
+    intro p s h W y
+    have heval := hφ _ _ h p rfl W y
+    rw [eqToHom_refl, Category.id_comp] at heval
+    exact heval
+  have hext {E' : Spc} (β γ : Cochain ((chains R).obj E') I n)
+      (heval : ∀ p s h W y, ev (R := R) β p s h W y = ev (R := R) γ p s h W y) : β = γ := by
+    ext i j hij : 1
+    by_cases hi : i ≤ 0
+    · obtain ⟨p, rfl⟩ : ∃ p : ℕ, i = -(p : ℤ) := ⟨(-i).toNat, by omega⟩
+      rw [← cancel_epi (chainsXIso R E' p).inv]
+      exact free_ext _ _ (fun W y => heval p j hij W y)
+    · exact (isZero_chains E' i (by omega)).eq_of_src _ _
   have hαam : ∀ {Y : Scheme.{0}} (g : Y ⟶ U) (hg : S g), ((cotPre R q N I n).map g.op).hom α = c g hg := by
     intro Y g hg
-    apply ev_ext
+    apply hext
     intro p s h W y
-    rw [cotPre_ev, hα]
+    let f : sch.obj Y ⨯ fibQ q N ⟶ E := prod.map (sch.map g) (𝟙 _)
+    have hmap : ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h W y =
+        ev (R := R) α p s h W (y.map f) := by
+      unfold ev
+      rw [Cochain.zero_cochain_comp_v, Cochain.ofHom_v, ← Category.assoc, chains_map, Category.assoc]
+      change Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h)
+        (Sec.map ((free R).map (f.app (op (SimplexCategory.mk p)))) (freeGen R _ W y)) = _
+      rw [freeGen_map]
+      rfl
+    change ev (R := R) ((Cochain.ofHom ((chains R).map f)).comp α (zero_add n)) p s h W y = _
+    rw [hmap, hα]
     apply sep s W _ (Scheme.etaleTopology.{0}.pullback_stable (fstHom (y.map (prod.map (sch.map g) (𝟙 _)))) hS)
     intro W' w hw
     rw [ha p s h W _ W' w hw]
@@ -136,7 +197,7 @@ theorem cotPre_isSheaf (R : Type) [CommRing R] (q N : ℕ) (I : Cx R) (n : ℤ) 
     refine hcong _ _ _ _ _ _ _ _ _ ?_ rfl
     rw [fstHom_map, Category.assoc]
   refine ⟨α, fun Y g hg => hαam g hg, fun β hβ => ?_⟩
-  apply ev_ext
+  apply hext
   intro p s h W y
   apply sep s W _ (Scheme.etaleTopology.{0}.pullback_stable (fstHom y) hS)
   intro W' w hw

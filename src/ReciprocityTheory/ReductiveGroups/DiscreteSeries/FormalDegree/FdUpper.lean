@@ -1,12 +1,16 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HsEighthLeOfSmall
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PBridge
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpperA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpperB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HsEighthLeOfSmall
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ProdSubLtEqFactorial
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PolarBasic
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PBridge
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpperA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdUpperB
+
+@[expose] public section
 
 noncomputable section
 

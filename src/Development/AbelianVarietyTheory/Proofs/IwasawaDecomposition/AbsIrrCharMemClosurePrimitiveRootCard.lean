@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.GoodXgFin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.GoodXgFin
+
+@[expose] public section
+
 open Formalism.L2.DIV
 
 namespace GlobalTheory
@@ -43,7 +48,7 @@ theorem absIrrChar_mem_closure_primitiveRoot {G : Type} [Group G] [Fintype G] {K
       obtain ⟨y, hy, hy'⟩ := ih (fun μ hμ => h μ (Multiset.mem_cons_of_mem hμ))
       obtain ⟨k, hk⟩ := h a (Multiset.mem_cons_self a m)
       refine ⟨z ^ k + y, add_mem (pow_mem (Subring.subset_closure (Set.mem_singleton z)) k) hy, ?_⟩
-      rw [Multiset.sum_cons, map_add, hy', hk]
+      rw [Multiset.sum_cons, map_add (f := _), hy', hk]
   obtain ⟨y, hy, hy'⟩ := hsum _ hroot
   have hχg : algebraMap K (AlgebraicClosure K) (χ g) = algebraMap K (AlgebraicClosure K) y := by
     rw [← hch g, hy', ← htr]; rfl

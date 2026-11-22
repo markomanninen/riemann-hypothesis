@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FamMod
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,8 @@ theorem nonempty_cubical_pull (gp : IsGrpPullback G' G f F) {L : RigLB G} (c : C
   refine nonempty_cubical L' t ht fun T z J' hJ' => ?_
   obtain ⟨J, hJ⟩ := exists_good' L.isLB z
   refine isCub_of_rel (isCub_cubV c (T := Over.mk (T.hom ≫ f)) hJ) (pushHom gp T)
-    (fun x => gw w x.left z (J (x.left ≫ F)) (J' x.left)) _ fun a b c' => ?_
+    (fun x => gw w x.left z (J (x.left ≫ F)) (J' x.left))
+    (fun x x' y => val t (lift x (lift x' y)).left z J') fun a b c' => ?_
   have e := pmaps_val hψ H (lift a (lift b c')).left z hJ hJ'
   have q : (lift a (lift b c')).left ≫ (cubeMapOf gp).F3 =
       (lift (pushHom gp T a) (lift (pushHom gp T b) (pushHom gp T c'))).left := hom_ext_triple _ fun i => by

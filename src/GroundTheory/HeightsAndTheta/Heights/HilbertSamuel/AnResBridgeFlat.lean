@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeE
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeK
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridgeAnalytic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeE
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeK
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridgeAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -90,7 +95,8 @@ theorem not_flat (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) →
   obtain ⟨y, hy⟩ := exists_infinite_fibre hO' hne' (han.mono inter_subset_left)
     (fun u hu => hdet u hu.1)
   refine (brFib_finite' R Ψ hP hΨ y).not_infinite ((Set.Infinite.image
-    ((R.A.chart j).symm.injOn.mono fun u hu => hOt hu.1.1) hy).mono ?_)
+    (((R.A.chart j).symm.injOn.mono (show O' ⊆ (R.A.chart j).target from
+      fun u hu => hOt hu.1)).mono inter_subset_left) hy).mono ?_)
   rintro _ ⟨u, ⟨huO, hqu⟩, rfl⟩
   exact ⟨hqu, huO.2.2, h0 u huO.1⟩
 

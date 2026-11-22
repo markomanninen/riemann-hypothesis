@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.InstIsZLatticeDualLat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeTransference.InstIsZLatticeDualLat
+
+@[expose] public section
 
 open Module
 open scoped Real
@@ -59,7 +63,7 @@ private theorem summable_exp_neg_mul_norm_add_sq {E : Type} [NormedAddCommGroup 
       simp only [hz, if_false, add_zero, sub_neg_eq_add]
       exact key _ hu
   · refine (hs.mul_left C).add ?_
-    apply summable_of_finite_support
+    apply summable_of_hasFiniteSupport
     apply Set.Subsingleton.finite
     intro z1 h1 z2 h2
     simp only [Function.mem_support, ne_eq, ite_eq_right_iff, one_ne_zero, imp_false,
@@ -196,9 +200,14 @@ private theorem mFourierCoeff_periodization_eq_integral {ι : Type} [Fintype ι]
       ∑' k : ι → ℤ, ψ (s + fun i => (k i : ℝ)) * h (s + fun i => (k i : ℝ)) := by
     intro s
     rw [hF, smul_eq_mul, ← tsum_mul_left]
-    congr 1
-    funext k
-    simp only [ψ, hqper]
+    apply tsum_congr
+    intro k
+    change ψ s * h (s + fun i => (k i : ℝ)) =
+      ψ (s + fun i => (k i : ℝ)) * h (s + fun i => (k i : ℝ))
+    have hψk : ψ (s + fun i => (k i : ℝ)) = ψ s := by
+      rw [hψ]
+      exact congrArg (UnitAddTorus.mFourier (-m)) (hqper s k)
+    rw [hψk]
   rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall hint)]
   rw [MeasureTheory.integral_tsum]
   · have hEach : ∀ k : ι → ℤ, ∫ s in S 0, ψ (s + fun i => (k i : ℝ)) * h (s + fun i => (k i : ℝ)) =
@@ -211,7 +220,7 @@ private theorem mFourierCoeff_periodization_eq_integral {ι : Type} [Fintype ι]
     rw [hSunion, MeasureTheory.Measure.restrict_univ] at hsum
     exact hsum.tsum_eq
   · intro k
-    exact ((hψcont.mul hcont).comp (continuous_add_right _)).aestronglyMeasurable
+    exact ((hψcont.mul hcont).comp (continuous_add_const _)).aestronglyMeasurable
   · have hEach : ∀ k : ι → ℤ, ∫⁻ s in S 0,
         ‖ψ (s + fun i => (k i : ℝ)) * h (s + fun i => (k i : ℝ))‖ₑ = ∫⁻ s in S k, ‖ψ s * h s‖ₑ := by
       intro k
@@ -416,6 +425,7 @@ theorem poissonGauss : PoissonGauss := by
     ring_nf
   have sum2 : ∀ t : ℝ, 0 < t →
       Summable fun y : dualLat Λ => Real.exp (-π * ‖(y : E)‖ ^ 2 / t) := by
+    letI : DiscreteTopology (dualLat Λ) := instDiscreteDualLat Λ
     intro t ht
     refine (summable_exp_neg_mul_norm_add_sq (dualLat Λ) (a := π / t) (by positivity) 0).congr fun z => ?_
     rw [add_zero]
@@ -433,16 +443,18 @@ theorem poissonGauss : PoissonGauss := by
     have e0 := (Equiv.addRight z).tsum_eq (fun x : Λ => Real.exp (-π * t * ‖(x : E) + w‖ ^ 2))
     simp only [hP]
     rw [← e0]
-    congr 1
-    funext x
-    simp only [Equiv.coe_addRight, Submodule.coe_add]
-    congr 3
-    abel_nf
+    apply tsum_congr
+    intro c
+    apply congrArg Real.exp
+    congr 2
+    change ‖(c : E) + (w + (z : E))‖ = ‖((c + z : Λ) : E) + w‖
+    rw [Submodule.coe_add]
+    abel
   set G : (ι → ℝ) → ℂ := fun s => ((P (φ.symm s) : ℝ) : ℂ) with hGdef
   have hGcont : Continuous G := Complex.continuous_ofReal.comp (hPcont.comp φ.symm.continuous)
   have hGper : ∀ (s : ι → ℝ) (k : ι → ℤ), G (s + fun i => (k i : ℝ)) = G s := by
     intro s k
-    simp only [hGdef, map_add, ← hB k]
+    simp only [hGdef, map_add (f := _), ← hB k]
     rw [hPper]
   obtain ⟨F, hF⟩ := exists_continuous_torus_lift_of_periodic G hGcont hGper
   set h : (ι → ℝ) → ℂ := fun s => (Real.exp (-π * t * ‖φ.symm s‖ ^ 2) : ℂ) with hhdef
@@ -455,9 +467,15 @@ theorem poissonGauss : PoissonGauss := by
     rw [hF]
     simp only [hGdef, hP]
     rw [Complex.ofReal_tsum, ← B.tsum_eq]
-    congr 1
-    funext k
-    simp only [hhdef, map_add, hB k, add_comm]
+    apply tsum_congr
+    intro c
+    change (Real.exp (-π * t * ‖(B c : E) + φ.symm s‖ ^ 2) : ℂ) =
+      h (s + fun i => (c i : ℝ))
+    change (Real.exp (-π * t * ‖(B c : E) + φ.symm s‖ ^ 2) : ℂ) =
+      (Real.exp (-π * t * ‖φ.symm (s + fun i => (c i : ℝ))‖ ^ 2) : ℂ)
+    rw [map_add, ← hB c]
+    congr 2
+    abel
   have hcoef : ∀ m : ι → ℤ, UnitAddTorus.mFourierCoeff F m =
       ((κ * t ^ (-(finrank ℝ E : ℝ) / 2) *
         Real.exp (-π * ‖((D m : dualLat Λ) : E)‖ ^ 2 / t) : ℝ) : ℂ) := by

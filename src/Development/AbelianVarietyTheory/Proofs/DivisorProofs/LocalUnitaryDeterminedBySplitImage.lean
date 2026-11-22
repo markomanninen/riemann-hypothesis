@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalUnitaryGroupSurjectsGeneralLinearRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalUnitaryGroupSurjectsGeneralLinearRight
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun
 open scoped Matrix
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -15,30 +20,30 @@ open GlobalTheory.EmbChart GlobalTheory.LeviAtPlace
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem compFin_cA (σ : E →ₐ[F] E) (v : Pl F) (x : AE F E) :
+theorem compFin_cA (σ : E →ₐ[F] E) (v : Pl (F := F)) (x : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     compFin F E v (cA σ x) = sigR (Fv F v) σ (compFin F E v x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x => rfl
 
-theorem compFin_inclR (v : Pl F) (x : E) :
+theorem compFin_inclR (v : Pl (F := F)) (x : E) :
     compFin F E v (inclR (F := F) (AF F) x) = inclR (Fv F v) x := by
   change evFin F v 1 ⊗ₜ[F] x = (1 : Fv F v) ⊗ₜ[F] x
   rw [map_one]
 
-theorem eq_tensAt_of_at (v : Pl F) (x : AE F E) (hx : At (evFin F v) x) :
+theorem eq_tensAt_of_at (v : Pl (F := F)) (x : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (hx : At (evFin F v) x) :
     x = tensAt E v (compFin F E v x) := by
   have h0 : evFin F v (1 - atPlace v 1) = 0 := by rw [map_sub, map_one, evFin_atPlace, sub_self]
   have h1 := hx _ h0
   rw [sub_smul, one_smul, sub_eq_zero] at h1
-  have h2 : tensAt E v 1 = algebraMap (AF F) (AE F E) (atPlace v 1) := by
+  have h2 : tensAt E v 1 = algebraMap (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (atPlace v 1) := by
     rw [Algebra.TensorProduct.one_def, tensAt_tmul, Algebra.TensorProduct.algebraMap_apply]
     rfl
   rw [← one_mul (compFin F E v x), ← tensAt_mul_right, h2, ← Algebra.smul_def]
   exact h1
 
-theorem mat_eq_zero_of_at {n : ℕ} (v : Pl F) (z : Matrix (Fin n) (Fin n) (AE F E)) (hz : At (evFin F v) z)
+theorem mat_eq_zero_of_at {n : ℕ} (v : Pl (F := F)) (z : Matrix (Fin n) (Fin n) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) (hz : At (evFin F v) z)
     (h0 : z.map (compFin F E v) = 0) : z = 0 := by
   ext i j
   have hij : At (evFin F v) (z i j) := fun u hu => by
@@ -49,7 +54,7 @@ theorem mat_eq_zero_of_at {n : ℕ} (v : Pl F) (z : Matrix (Fin n) (Fin n) (AE F
   simp only [Matrix.map_apply, Matrix.zero_apply] at this
   rw [this, map_zero, Matrix.zero_apply]
 
-theorem unitary_at_components {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (v : Pl F)
+theorem unitary_at_components {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (v : Pl (F := F))
     (t : E →ₐ[F] Fv F v) (h : UA σ J) :
     ((mat h).map (piW t))ᵀ * J.map t * (mat h).map (piW (t.comp σ)) = J.map t := by
   have hm : (mat h)ᵀ * incM F J * (mat h).map (cA σ) = incM F J := h.2

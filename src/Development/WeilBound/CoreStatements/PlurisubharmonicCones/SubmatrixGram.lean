@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PGramDetSandwich
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LoewnerDetBound
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PGramDetSandwich
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LoewnerDetBound
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+
+@[expose] public section
 
 open Matrix Filter Topology Asymptotics
 open GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.NineStatements
@@ -108,22 +112,22 @@ theorem Gr.of_contDiffAt {t₀ : V} (hl : l ≤ 𝓝 t₀) (hL : (fun _ => (1 : 
 
 end Gen
 
-local notation "𝟙" => (fun _ => (1 : ℝ))
-
-theorem Gr.const (c : ℂ) : Gr l 𝟙 E (fun _ => c) :=
+theorem Gr.const (c : ℂ) : Gr l (fun _ => (1 : ℝ)) E (fun _ => c) :=
   ⟨Eventually.of_forall fun _ => differentiableAt_const _, isBigO_const_const _ one_ne_zero _, by
     rw [fderiv_fun_const]; exact isBigO_zero _ _⟩
 
-theorem Gr.mul {f g : V → ℂ} (hf : Gr l 𝟙 E f) (hg : Gr l 𝟙 E g) : Gr l 𝟙 E fun t => f t * g t := by
-  refine ⟨(hf.diff.and hg.diff).mono fun t h => h.1.fun_mul h.2, by simpa using hf.bdd.mul hg.bdd, ?_⟩
+theorem Gr.mul {f g : V → ℂ} (hf : Gr l (fun _ => (1 : ℝ)) E f)
+    (hg : Gr l (fun _ => (1 : ℝ)) E g) : Gr l (fun _ => (1 : ℝ)) E fun t => f t * g t := by
+  refine ⟨(hf.diff.and hg.diff).mono fun t h => h.1.fun_mul h.2, ?_, ?_⟩
+  · simpa only [mul_one] using hf.bdd.mul hg.bdd
   have h1 : (fun t => f t • fderiv ℝ g t) =O[l] E := by simpa using hf.bdd.smul hg.der
   have h2 : (fun t => g t • fderiv ℝ f t) =O[l] E := by simpa using hg.bdd.smul hf.der
   refine (h1.add h2).congr' ?_ EventuallyEq.rfl
   filter_upwards [hf.diff, hg.diff] with t h1 h2
   rw [fderiv_fun_mul h1 h2]
 
-theorem Gr.prod {σ : Type} (s : Finset σ) {f : σ → V → ℂ} (h : ∀ i ∈ s, Gr l 𝟙 E (f i)) :
-    Gr l 𝟙 E fun t => ∏ i ∈ s, f i t := by
+theorem Gr.prod {σ : Type} (s : Finset σ) {f : σ → V → ℂ} (h : ∀ i ∈ s, Gr l (fun _ => (1 : ℝ)) E (f i)) :
+    Gr l (fun _ => (1 : ℝ)) E fun t => ∏ i ∈ s, f i t := by
   classical
   induction s using Finset.induction_on with
   | empty => simpa using Gr.const 1
@@ -131,19 +135,21 @@ theorem Gr.prod {σ : Type} (s : Finset σ) {f : σ → V → ℂ} (h : ∀ i �
     simp only [Finset.prod_insert hi]
     exact (h i (Finset.mem_insert_self _ _)).mul (ih fun k hk => h k (Finset.mem_insert_of_mem hk))
 
-theorem Gr.det {n : ℕ} {M : V → Matrix (Fin n) (Fin n) ℂ} (h : ∀ p q, Gr l 𝟙 E fun t => M t p q) :
-    Gr l 𝟙 E fun t => (M t).det := by
+theorem Gr.det {n : ℕ} {M : V → Matrix (Fin n) (Fin n) ℂ} (h : ∀ p q, Gr l (fun _ => (1 : ℝ)) E fun t => M t p q) :
+    Gr l (fun _ => (1 : ℝ)) E fun t => (M t).det := by
   simp only [det_apply']
   exact Gr.sum _ fun σ _ => (Gr.const _).mul (Gr.prod _ fun i _ => h _ _)
 
-theorem Gr.sandwich {n : ℕ} {A B : V → Matrix (Fin n) (Fin n) ℂ} (hA : ∀ p q, Gr l 𝟙 E fun t => A t p q)
-    (hB : ∀ p q, Gr l 𝟙 E fun t => B t p q) (p q : Fin n) : Gr l 𝟙 E fun t => ((A t)ᴴ * B t * A t) p q := by
+theorem Gr.sandwich {n : ℕ} {A B : V → Matrix (Fin n) (Fin n) ℂ}
+    (hA : ∀ p q, Gr l (fun _ => (1 : ℝ)) E fun t => A t p q)
+    (hB : ∀ p q, Gr l (fun _ => (1 : ℝ)) E fun t => B t p q) (p q : Fin n) :
+    Gr l (fun _ => (1 : ℝ)) E fun t => ((A t)ᴴ * B t * A t) p q := by
   simp only [Matrix.mul_apply, Matrix.conjTranspose_apply]
   exact Gr.sum _ fun k _ => (Gr.sum _ fun i _ =>
     (Gr.clm (Complex.conjCLE : ℂ →L[ℝ] ℂ) (hA i p)).mul (hB i k)).mul (hA k q)
 
-theorem Gr.log {g R : V → ℝ} (hg : Gr l 𝟙 E g) (hR : ∀ᶠ t in l, Real.exp 1 ≤ R t) {c : ℝ} (hc : 0 < c) {m : ℕ}
-    (hlo : ∀ᶠ t in l, c / R t ^ m ≤ g t) :
+theorem Gr.log {g R : V → ℝ} (hg : Gr l (fun _ => (1 : ℝ)) E g)
+    (hR : ∀ᶠ t in l, Real.exp 1 ≤ R t) {c : ℝ} (hc : 0 < c) {m : ℕ} (hlo : ∀ᶠ t in l, c / R t ^ m ≤ g t) :
     Gr l (fun t => Real.log (R t)) (fun t => R t ^ m * E t) fun t => Real.log (g t) := by
   have hpos : ∀ᶠ t in l, 0 < R t ∧ 0 < g t := by
     filter_upwards [hR, hlo] with t h1 h2
@@ -205,7 +211,7 @@ theorem det_lower {N k : ℕ} (hk : k ≤ N) {t₀ : V} (hl : l ≤ 𝓝 t₀) {
     _ ≤ _ := mul_le_mul_of_nonneg_left h3.le (by positivity)
 
 theorem quot_bounds {j N : ℕ} (hj : j ≤ N) (hN : 0 < N) {t₀ : V} (hl : l ≤ 𝓝 t₀) {R : V → ℝ}
-    (hR : ∀ᶠ t in l, Real.exp 1 ≤ R t) (hE : 𝟙 =O[l] E)
+    (hR : ∀ᶠ t in l, Real.exp 1 ≤ R t) (hE : (fun _ => (1 : ℝ)) =O[l] E)
     {S : V → Matrix (Fin N) (Fin N) ℂ} (hS : ∀ p q, ContDiffAt ℝ 1 (fun t => S t p q) t₀)
     (h0 : Function.Injective (S t₀).mulVec)
     {H : V → Matrix (Fin N) (Fin N) ℂ} {c C : ℝ} (hc : 0 < c) (hC : 0 < C)
@@ -218,10 +224,12 @@ theorem quot_bounds {j N : ℕ} (hj : j ≤ N) (hN : 0 < N) {t₀ : V} (hl : l �
       (Real.log ((S t)ᴴ * H t * S t).det.re -
         Real.log (((S t)ᴴ * H t * S t).submatrix (headIdx hj) (headIdx hj)).det.re) / 2) ∧
     ∃ B : ℝ, ∀ᶠ t in l, quotNormSq hj ((S t)ᴴ * H t * S t) ≤ B := by
-  have hSg : ∀ p q, Gr l 𝟙 E fun t => S t p q := fun p q => Gr.of_contDiffAt hl (isBigO_refl _ _) hE (hS p q)
-  have hHg : ∀ p q, Gr l 𝟙 E fun t => H t p q := fun p q => ⟨hd p q, IsBigO.of_bound c⁻¹ (hH.mono fun t h => by
-    rw [norm_one, mul_one]
-    exact norm_entry_le h.1.posSemidef (GramDetSandwich.loewner_inv hN _ _ _ hc h.1 h.2.1 h.2.2).2.2 p q), hD p q⟩
+  have hSg : ∀ p q, Gr l (fun _ => (1 : ℝ)) E fun t => S t p q :=
+    fun p q => Gr.of_contDiffAt hl (isBigO_refl _ _) hE (hS p q)
+  have hHg : ∀ p q, Gr l (fun _ => (1 : ℝ)) E fun t => H t p q := fun p q =>
+    ⟨hd p q, IsBigO.of_bound c⁻¹ (hH.mono fun t h => by
+      rw [norm_one, mul_one]
+      exact norm_entry_le h.1.posSemidef (GramDetSandwich.loewner_inv hN _ _ _ hc h.1 h.2.1 h.2.2).2.2 p q), hD p q⟩
   have hGg := Gr.sandwich hSg hHg
   have hSc : ContinuousAt S t₀ := continuousAt_pi.2 fun p => continuousAt_pi.2 fun q => (hS p q).continuousAt
   have hPD : ((S t₀)ᴴ * 1 * S t₀).PosDef := Matrix.PosDef.one.conjTranspose_mul_mul_same h0

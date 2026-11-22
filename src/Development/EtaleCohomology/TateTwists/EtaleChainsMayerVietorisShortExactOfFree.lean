@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleMayerVietorisChainsShortExact
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleMayerVietorisChainsShortExact
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -88,8 +92,7 @@ theorem etale_chains_mayer_vietoris_short_exact_of_free (hfree : EtaleFreePreshe
   · have h1 := chains_isZero R (pullback f g) n hn
     have h3 := chains_isZero R E n hn
     have h2 : IsZero ((HomologicalComplex.eval (Shv R) (ComplexShape.up ℤ) n).obj
-        ((chains R).obj U ⊞ (chains R).obj V)) :=
-by
+        ((chains R).obj U ⊞ (chains R).obj V)) := by
       have hU := chains_isZero R U n hn
       have hV := chains_isZero R V n hn
       refine IsZero.of_iso ?_ (HomologicalComplex.biprodXIso _ _ n)

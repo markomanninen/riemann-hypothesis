@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProperNormalCompactificationStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HermitianSignatureBasisStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLinePAdicBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeLatticeValuationAgreeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLinePAdicFrameStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProperNormalCompactificationStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HermitianSignatureBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLinePAdicBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeLatticeValuationAgreeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLinePAdicFrameStatement
+
+@[expose] public section
 
 noncomputable section
 

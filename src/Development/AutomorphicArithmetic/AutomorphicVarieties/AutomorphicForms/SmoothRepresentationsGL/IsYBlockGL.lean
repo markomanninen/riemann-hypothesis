@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
-import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+public import GroundTheory.AutomorphicForms.MultiplicityOne.Injective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -9,19 +13,19 @@ open UpperTheory.V UpperTheory.V.Af.Smo
 open UpperTheory.V.TR (Rinf Lie chart infGL pInf sInf toL lmul oneL invSet CuspSub)
 open scoped SchwartzMap FourierTransform RealInnerProductSpace ContDiff Topology
 
-open GroundTheory.Automorphic.FourierWhittaker in
 
+open GroundTheory.Automorphic.FourierWhittaker in
 private theorem isY_blockGL {K : Type} [Field K] {n k : ℕ} (hk : k < n) (γ : GL (Fin k) K) :
     IsY (n - 1) (blockGL hk.le γ : GL (Fin n) K).val := by
   intro i hi
   have hik : ¬ i.val < k := by omega
   refine ⟨?_, fun j hj => ?_⟩
-  · rw [coe_blockGL, blockMat_apply, dif_neg hik, if_pos rfl]
-  · rw [coe_blockGL, blockMat_apply, dif_neg hik, if_neg hj.ne']
+  · rw [coe_blockGL, blockMat_apply, dite_eq_right hik, if_pos rfl]
+  · rw [coe_blockGL, blockMat_apply, dite_eq_right hik, if_neg hj.ne']
+
 
 open GroundTheory.Automorphic.FourierWhittaker in
 open scoped NumberField.AdeleRing in
-
 private theorem step {K : Type} [Field K] [NumberField K] {n : ℕ} {ϕ : AdelicGLn.AdelicGL K n → ℂ}
     (hc : Continuous ϕ) (hl : IsLeftInvariant ϕ) (hcusp : AutomorphicForm.IsCuspidal ϕ)
     {V : OpenSubgroup (AdelicGLn.FiniteAdelicGL K n)}

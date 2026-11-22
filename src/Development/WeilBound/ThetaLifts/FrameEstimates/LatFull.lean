@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.IntMvPolynomialCoeffAbsSumMulLe
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.IntMvPolynomialCoeffAbsSumMulLe
+
+@[expose] public section
 
 noncomputable section
 

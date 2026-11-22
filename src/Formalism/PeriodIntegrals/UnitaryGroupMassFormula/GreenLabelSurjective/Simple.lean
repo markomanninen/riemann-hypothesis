@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PadicSubsetSums.CentralIdempotents.IsConstituent
+module
+
+public import Mathlib
+public import Formalism.PadicSubsetSums.CentralIdempotents.IsConstituent
+
+@[expose] public section
 
 open CategoryTheory Formalism.IrreducibleCountingLemmas.TYPES
 

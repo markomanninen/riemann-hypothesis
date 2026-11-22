@@ -1,16 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.ProdList
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarisableOfSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandKazhdanContragredientStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverseStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutiveStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGLStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.GrothendieckRingPolynomial.ProdList
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmoothContragredientIrreducibleAndReflexive
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarisableOfSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GelfandKazhdanContragredientStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverseStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassInvolutiveStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParabolicProductHasFiniteLengthGLStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.BernsteinZelevinskyGL.TopAdm
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,17 +204,17 @@ section Pairs
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem prodIrr_congr {h N : ℕ} {z z' : Fin h → IrrGL k} (e : z = z') (hd : ∑ a, (z a).1 = N)
+theorem prodIrr_congr {h N : ℕ} {z z' : Fin h → IrrGL (k := k)} (e : z = z') (hd : ∑ a, (z a).1 = N)
     (hd' : ∑ a, (z' a).1 = N) : Nonempty ((prodIrr z hd).Equiv (prodIrr z' hd')) := by
   subst e
   exact ⟨.refl _⟩
 
-theorem class_product_irreducible_cast {h N M : ℕ} (e : N = M) (z : Fin h → IrrGL k) (hd : ∑ a, (z a).1 = N)
+theorem class_product_irreducible_cast {h N M : ℕ} (e : N = M) (z : Fin h → IrrGL (k := k)) (hd : ∑ a, (z a).1 = N)
     (hd' : ∑ a, (z a).1 = M) : cl0 (prodIrr z hd) = cl0 (prodIrr z hd') := by
   subst e
   rfl
 
-theorem hasFiniteLength_prodIrr_cast {h N M : ℕ} (e : N = M) (z : Fin h → IrrGL k) (hd : ∑ a, (z a).1 = N)
+theorem hasFiniteLength_prodIrr_cast {h N M : ℕ} (e : N = M) (z : Fin h → IrrGL (k := k)) (hd : ∑ a, (z a).1 = N)
     (hd' : ∑ a, (z a).1 = M) (hf : HasFiniteLength (prodIrr z hd)) : HasFiniteLength (prodIrr z hd') := by
   subst e
   exact hf
@@ -233,9 +237,9 @@ theorem class_eq_of_jordan_holder_mult {N : ℕ} {V W : Type} [AddCommGroup V] [
   ext c
   rw [cls_apply, cls_apply, h c.rep]
 
-set_option maxHeartbeats 1000000 in
 
-theorem jhMult_pair_le (x y : IrrGL k) {N : ℕ} (h1 : ∑ a, (![x, y] a).1 = N) (h2 : ∑ a, (![y, x] a).1 = N)
+set_option maxHeartbeats 1000000 in
+theorem jhMult_pair_le (x y : IrrGL (k := k)) {N : ℕ} (h1 : ∑ a, (![x, y] a).1 = N) (h2 : ∑ a, (![y, x] a).1 = N)
     (σ : IrrRep (GL (Fin N) k)) : jhMult σ.ρ (prodIrr ![x, y] h1) ≤ jhMult σ.ρ (prodIrr ![y, x] h2) := by
   have hA := PositivityTheory.Tls2.BZGL.irreducibleAdmissibleGL_top
   have hGK : GKLocal k := GlobalTheory.T.local_langlands_of_irreducible_admissible hA
@@ -268,8 +272,8 @@ namespace PositivityTheory.Groth
 
 open PositivityTheory.Groth.GrothendieckCommutativity
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem comm (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] : Comm k := by
   intro x y
   have hxy : ∑ a, (![x, y] a).1 = x.1 + y.1 := by simp [Fin.sum_univ_two]

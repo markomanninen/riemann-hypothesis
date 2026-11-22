@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixOneZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixOneZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Formalism.FourierDecayAlt
 

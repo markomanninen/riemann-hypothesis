@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.ValuationProductsComponents
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementA
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementE
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +44,6 @@ def LemmaA2indep : Prop :=
 
 def CountP (n N : ℕ) (isVec : ℕ → Bool) (B : ℕ → ℕ) : Prop :=
   Nat.card (PathIdx n N isVec B) = ∏ i ∈ range N, (n + B i - 1).choose (B i)
-
-def CountPle : Prop :=
-  ∀ (n N : ℕ) (isVec : ℕ → Bool) (B : ℕ → ℕ),
-    Nat.card (PathIdx n N isVec B) ≤ ∏ i ∈ range N, (n + B i - 1).choose (B i)
 
 def PathBasisOfCount : Prop :=
   ∀ (n N : ℕ) (isVec : ℕ → Bool) (B : ℕ → ℕ), CountP n N isVec B →

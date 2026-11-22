@@ -1,8 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.CuspGenericWhittaker.CoinvZeroOn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
-import GroundTheory.AutomorphicForms.SmoothRepContragredient
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.ColMatMulGlEmbMat
+public import GroundTheory.AutomorphicForms.LocallyConstantCompact
+public import GroundTheory.AutomorphicForms.WhittakerGroups
+public import GroundTheory.AutomorphicForms.WhittakerCells
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+public import GroundTheory.AutomorphicForms.SmoothRepContragredient
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,15 +23,6 @@ def WhitLeOne : Prop :=
   ∀ (n : ℕ) (ψ : AddChar k Circle) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
     IsSmooth π → π.IsIrreducible → Continuous ψ → ψ ≠ 1 →
       Module.rank ℂ (TwJacquet π (unipB k (Fin n)) (whitChar ψ n)) ≤ 1
-
-def WhitCusp : Prop :=
-  ∀ (n : ℕ) (ψ : AddChar k Circle) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
-    IsSmooth π → π.IsIrreducible → IsCuspidal π → 0 < n → Continuous ψ → ψ ≠ 1 →
-      Module.rank ℂ (TwJacquet π (unipB k (Fin n)) (whitChar ψ n)) = 1
-
-def CuspGeneric : Prop :=
-  ∀ (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin n) k) V),
-    IsSmooth π → π.IsIrreducible → IsCuspidal π → 0 < n → IsGeneric π
 
 end GlobalTheory.BZMir.Whit
 

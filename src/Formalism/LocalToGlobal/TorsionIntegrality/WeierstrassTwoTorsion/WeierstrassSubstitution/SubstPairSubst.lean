@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CompInv
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CurveSer
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FlowBasic
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.EqWSerSubst
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.LogExp
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FormalGroupEqWSeries
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementG
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CompInv
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.CurveSer
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FlowBasic
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.EqWSerSubst
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.LogExp
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.WeierstrassSubstitution.FormalGroupEqWSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -15,9 +19,6 @@ noncomputable section
 namespace Formalism.L2.Th1.A
 
 namespace ZSer
-
-local notation "FF[" W "](" a ", " b ")" =>
-  MvPowerSeries.subst (![a, b] : Fin 2 → PowerSeries _) (fgl W)
 
 section Tools
 
@@ -59,10 +60,6 @@ theorem map_subst_pair {S : Type v} [CommRing S] (φ : R →+* S) {a b : R⟦X�
   funext s
   fin_cases s <;> rfl
 
-theorem map_cc {S : Type v} [CommRing S] (φ : R →+* S) {a : R⟦X⟧} (ha : constantCoeff a = 0) :
-    constantCoeff (PowerSeries.map φ a) = 0 := by
-  rw [← coeff_zero_eq_constantCoeff_apply, coeff_map, coeff_zero_eq_constantCoeff_apply, ha, map_zero]
-
 theorem subst_C_mul {s : R⟦X⟧} (hs : HasSubst s) (r : R) (f : R⟦X⟧) :
     (C r * f).subst s = C r * f.subst s := by
   rw [← smul_eq_C_mul, ← smul_eq_C_mul, PowerSeries.subst_smul hs]
@@ -96,13 +93,30 @@ section Ring
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
 theorem FF_cc {a b : R⟦X⟧} (ha : constantCoeff a = 0) (hb : constantCoeff b = 0) :
-    constantCoeff (FF[W](a, b)) = 0 := by
+    constantCoeff (MvPowerSeries.subst (![a, b] : Fin 2 → R⟦X⟧) (fgl W)) = 0 := by
   exact MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_pair ha hb)
-    (fun i => by fin_cases i; exacts [ha, hb]) (Fgl1.fgl_cc W)
+    (fun i => by fin_cases i; exacts [ha, hb]) (by
+      have hl : MvPowerSeries.constantCoeff (lam W) = 0 := by
+        rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, Fgl1.coeff_lam]
+        simpa using (Fgl1.wSer_low W).2.1
+      have hw : MvPowerSeries.constantCoeff
+          ((wSer W).subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) R)) = 0 := by
+        exact MvPowerSeries.constantCoeff_subst_eq_zero (PowerSeries.HasSubst.const (PowerSeries.HasSubst.X 0))
+          (fun _ => MvPowerSeries.constantCoeff_X 0) (Fgl1.wSer_fixed W).1
+      have hn : MvPowerSeries.constantCoeff (nu W) = 0 := by
+        simp only [nu, map_sub, map_mul, hl, hw, zero_mul, sub_zero]
+      have ht : MvPowerSeries.constantCoeff (cTwo W) = 0 := by
+        simp only [cTwo, map_add, map_mul, map_pow, hl, hn, pow_two, mul_zero, zero_mul, add_zero, zero_add]
+      have hu : MvPowerSeries.constantCoeff (uThird W) = 0 := by
+        simp only [uThird, map_sub, map_neg, map_mul, MvPowerSeries.constantCoeff_X, ht,
+          neg_zero, zero_mul, sub_zero]
+      simp only [fgl, map_mul, hu, zero_mul])
 
 theorem FF_map {S : Type v} [CommRing S] (φ : R →+* S) {a b : R⟦X⟧}
     (ha : constantCoeff a = 0) (hb : constantCoeff b = 0) :
-    PowerSeries.map φ (FF[W](a, b)) = FF[W.map φ](PowerSeries.map φ a, PowerSeries.map φ b) := by
+    PowerSeries.map φ (MvPowerSeries.subst (![a, b] : Fin 2 → R⟦X⟧) (fgl W)) =
+      MvPowerSeries.subst (![PowerSeries.map φ a, PowerSeries.map φ b] : Fin 2 → S⟦X⟧)
+        (fgl (W.map φ)) := by
   rw [map_subst_pair φ ha hb, Fgl1.fgl_map W φ]
 
 theorem iSer_cc : constantCoeff (iSer W) = 0 := by
@@ -110,7 +124,8 @@ theorem iSer_cc : constantCoeff (iSer W) = 0 := by
 
 theorem nSer_zero : nSer W 0 = 0 := rfl
 
-theorem nSer_succ (n : ℕ) : nSer W (n + 1) = FF[W](X, nSer W n) := rfl
+theorem nSer_succ (n : ℕ) :
+    nSer W (n + 1) = MvPowerSeries.subst (![X, nSer W n] : Fin 2 → R⟦X⟧) (fgl W) := rfl
 
 theorem nSer_cc (n : ℕ) : constantCoeff (nSer W n) = 0 := by
   induction n with
@@ -176,10 +191,26 @@ theorem log_inj {a b : K⟦X⟧} (ha : constantCoeff a = 0) (hb : constantCoeff 
 
 theorem log_FF (hL : FglLog.{u}) {a b : K⟦X⟧} (ha : constantCoeff a = 0)
     (hb : constantCoeff b = 0) :
-    (logSer W).subst (FF[W](a, b)) = (logSer W).subst a + (logSer W).subst b := by
+    (logSer W).subst (MvPowerSeries.subst (![a, b] : Fin 2 → K⟦X⟧) (fgl W)) =
+      (logSer W).subst a + (logSer W).subst b := by
   have hab := hasSubst_pair ha hb
   have e := congrArg (MvPowerSeries.subst (![a, b] : Fin 2 → K⟦X⟧)) (hL K W).1
-  rw [subst_pair_subst ha hb (Fgl1.fgl_cc W), MvPowerSeries.subst_add hab,
+  rw [subst_pair_subst ha hb (by
+      have hl : MvPowerSeries.constantCoeff (lam W) = 0 := by
+        rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, Fgl1.coeff_lam]
+        simpa using (Fgl1.wSer_low W).2.1
+      have hw : MvPowerSeries.constantCoeff
+          ((wSer W).subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) K)) = 0 := by
+        exact MvPowerSeries.constantCoeff_subst_eq_zero (PowerSeries.HasSubst.const (PowerSeries.HasSubst.X 0))
+          (fun _ => MvPowerSeries.constantCoeff_X 0) (Fgl1.wSer_fixed W).1
+      have hn : MvPowerSeries.constantCoeff (nu W) = 0 := by
+        simp only [nu, map_sub, map_mul, hl, hw, zero_mul, sub_zero]
+      have ht : MvPowerSeries.constantCoeff (cTwo W) = 0 := by
+        simp only [cTwo, map_add, map_mul, map_pow, hl, hn, pow_two, mul_zero, zero_mul, add_zero, zero_add]
+      have hu : MvPowerSeries.constantCoeff (uThird W) = 0 := by
+        simp only [uThird, map_sub, map_neg, map_mul, MvPowerSeries.constantCoeff_X, ht,
+          neg_zero, zero_mul, sub_zero]
+      simp only [fgl, map_mul, hu, zero_mul]), MvPowerSeries.subst_add hab,
     subst_pair_subst ha hb (MvPowerSeries.constantCoeff_X 0),
     subst_pair_subst ha hb (MvPowerSeries.constantCoeff_X 1),
     MvPowerSeries.subst_X hab, MvPowerSeries.subst_X hab] at e
@@ -195,7 +226,7 @@ theorem log_nSer (hL : FglLog.{u}) (n : ℕ) :
     rw [nSer_zero, Nat.cast_zero, map_zero, zero_mul]
     exact PowerSeries.subst_zero_of_constantCoeff_zero (log_cc W)
   | succ n ih =>
-    rw [nSer_succ, log_FF W hL constantCoeff_X (nSer_cc W n), ih, hX, Nat.cast_succ, map_add, map_one,
+    rw [nSer_succ, log_FF W hL constantCoeff_X (nSer_cc W n), ih, hX, Nat.cast_succ, map_add (f := _), map_one,
       add_mul, one_mul, add_comm]
 
 theorem log_zSer (hL : FglLog.{u}) (n : ℤ) :
@@ -211,7 +242,7 @@ theorem log_zSer (hL : FglLog.{u}) (n : ℤ) :
       log_nSer W hL (n + 1), Int.cast_negSucc, map_neg, neg_mul]
 
 theorem field_add (hL : FglLog.{u}) (m n : ℤ) :
-    FF[W](zSer W m, zSer W n) = zSer W (m + n) := by
+    MvPowerSeries.subst (![zSer W m, zSer W n] : Fin 2 → K⟦X⟧) (fgl W) = zSer W (m + n) := by
   apply log_inj W (FF_cc W (zSer_cc W m) (zSer_cc W n)) (zSer_cc W (m + n))
   rw [log_FF W hL (zSer_cc W m) (zSer_cc W n), log_zSer W hL m, log_zSer W hL n, log_zSer W hL (m + n),
     Int.cast_add, map_add, add_mul]
@@ -257,8 +288,9 @@ theorem zSer_univ (n : ℤ) : PowerSeries.map (φ_of W) (zSer W₀ n) = zSer W n
   ext <;> simp [W₀, φ_of]
 
 theorem ring_add (hL : FglLog.{0}) (m n : ℤ) :
-    FF[W](zSer W m, zSer W n) = zSer W (m + n) := by
-  have h : PowerSeries.map Univ.ι (FF[W₀](zSer W₀ m, zSer W₀ n))
+    MvPowerSeries.subst (![zSer W m, zSer W n] : Fin 2 → R⟦X⟧) (fgl W) = zSer W (m + n) := by
+  have h : PowerSeries.map Univ.ι
+      (MvPowerSeries.subst (![zSer W₀ m, zSer W₀ n] : Fin 2 → Univ.Z⟦X⟧) (fgl W₀))
       = PowerSeries.map Univ.ι (zSer W₀ (m + n)) := by
     rw [FF_map W₀ Univ.ι (zSer_cc W₀ m) (zSer_cc W₀ n), zSer_map, zSer_map, zSer_map]
     exact field_add Univ.WK hL m n
@@ -302,7 +334,8 @@ theorem nSer_one (hL : FglLog.{0}) : nSer W 1 = X := by
   have h := ring_one W hL
   rwa [show (1 : ℤ) = ((1 : ℕ) : ℤ) from rfl, zSer_ofNat] at h
 
-theorem nSer_two (hL : FglLog.{0}) : nSer W 2 = FF[W](X, X) := by
+theorem nSer_two (hL : FglLog.{0}) :
+    nSer W 2 = MvPowerSeries.subst (![X, X] : Fin 2 → R⟦X⟧) (fgl W) := by
   rw [show (2 : ℕ) = 1 + 1 from rfl, nSer_succ, nSer_one W hL]
 
 end Transfer

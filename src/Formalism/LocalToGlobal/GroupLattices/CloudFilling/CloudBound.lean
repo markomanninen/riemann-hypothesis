@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.LamMEqLamZero
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.LamMEqLamZero
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotProd
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotMap
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.NormEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotProd
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.QuotMap
+
+@[expose] public section
+
 open UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open MeasureTheory Topology
 open scoped ENNReal

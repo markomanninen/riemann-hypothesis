@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CstSApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CstSApply
+
+@[expose] public section
 
 noncomputable section
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism
@@ -7,10 +11,12 @@ open scoped Formalism.Per
 
 namespace GlobalTheory.CrysPrism.DpGood
 
-theorem factorial_pow_mul (q : ℕ) : ∀ j : ℕ, ∃ D : ℕ, (j * q).factorial = q.factorial ^ j * D
-  | 0 => ⟨1, by simp⟩
-  | j + 1 => by
-    obtain ⟨D, hD⟩ := factorial_pow_mul q j
+theorem factorial_pow_mul (q : ℕ) : ∀ j : ℕ, ∃ D : ℕ, (j * q).factorial = q.factorial ^ j * D := by
+  intro j
+  induction j with
+  | zero => exact ⟨1, by simp⟩
+  | succ j ih =>
+    obtain ⟨D, hD⟩ := ih
     refine ⟨((j + 1) * q).choose q * D, ?_⟩
     have h := Nat.choose_mul_factorial_mul_factorial (show q ≤ (j + 1) * q by nlinarith)
     have h2 : (j + 1) * q - q = j * q := by rw [add_mul, one_mul, Nat.add_sub_cancel]
@@ -90,8 +96,8 @@ end GlobalTheory.CrysPrism.DpGood
 
 namespace GlobalTheory.CrysPrism
 
-open DpGood in
 
+open DpGood in
 theorem dpS_frob_good : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZero e] (O K : Type) [CommRing O]
     [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K]
     [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] (t : Wq l a →ₐ[ℤ_[l]] O), ∀ n : ℕ,
@@ -108,9 +114,10 @@ theorem dpS_frob_good : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZ
   obtain ⟨c', k, hc, hk⟩ := key K l hl (n / e) (l * n / e) hM
   refine ⟨fun _ => monomial (l * n) c', mono_mem t e (l * n) c' k hk, ?_⟩
   funext τ
-  rw [frobTot_apply, Pi.add_apply, Pi.pow_apply, Pi.mul_apply, Pi.natCast_apply]
+  have hfrob : frobTot K a l (dpS a e n) τ = frob K l ((dpS a e n) (τ - 1)) := rfl
+  rw [hfrob, Pi.add_apply, Pi.pow_apply, Pi.mul_apply, Pi.natCast_apply]
   simp only [dpS]
   rw [frob, expand_monomial, monomial_pow, ← map_natCast (C : K →+* K⟦X⟧), ← smul_eq_C_mul,
-    ← LinearMap.map_smul, ← map_add, mul_comm l n, smul_eq_mul, ← hc]
+    ← LinearMap.map_smul, ← map_add, smul_eq_mul, ← hc]
 
 end GlobalTheory.CrysPrism

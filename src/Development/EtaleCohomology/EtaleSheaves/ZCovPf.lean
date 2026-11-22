@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LineHighPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LineHighPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.LineHighPf
@@ -60,12 +64,12 @@ theorem D_cover : D 0 ⊔ D 1 = ⊤ := by
     · exact le_sup_right
   · intro x hx
     have h0 := (HomogeneousIdeal.mem_irrelevant_iff _ _).mp hx
-    have hc : MvPolynomial.coeff 0 x = 0 := by
+    have hc : AddMonoidAlgebra.coeff x 0 = 0 := by
       rw [GradedRing.proj_apply] at h0
       have e : ((DirectSum.decompose (MvPolynomial.homogeneousSubmodule (Fin 2) ℤ) x) 0 : MvPolynomial (Fin 2) ℤ) =
           MvPolynomial.homogeneousComponent 0 x := MvPolynomial.decomposition.decompose'_apply x 0
       rw [e] at h0
-      have := congrArg (MvPolynomial.coeff 0) h0
+      have := congrArg (AddMonoidAlgebra.coeff · 0) h0
       rw [MvPolynomial.coeff_homogeneousComponent, MvPolynomial.coeff_zero] at this
       simpa using this
     rw [← Set.image_univ, MvPolynomial.mem_ideal_span_X_image]

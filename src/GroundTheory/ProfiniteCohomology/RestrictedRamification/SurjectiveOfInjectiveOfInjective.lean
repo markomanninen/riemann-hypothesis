@@ -1,18 +1,23 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteSetOfNsmulEqZeroQZ
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.CohomologyMapAlongInvariantsGsKernelMorCompGsBra
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModuleSupport
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerFrob
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteSetOfNsmulEqZeroQZ
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.CohomologyMapAlongInvariantsGsKernelMorCompGsBra
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModuleSupport
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerFrob
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem surjective_of_injective_of_injective {α β : Type*} [Finite α] {f : α → β} {g : β → α}
     (hf : Function.Injective f) (hg : Function.Injective g) : Function.Surjective f := by
@@ -114,9 +119,9 @@ def evalChar {G : Type} [Group G] [TopologicalSpace G] (g : G) : (Additive G →
   map_zero' := rfl
   map_add' _ _ := rfl
 
+
 set_option maxHeartbeats 2000000 in
 include hℓ hS in
-
 theorem exists_gsVal_eq (v : HeightOneSpectrum (𝓞 K.1)) (hv : v ∉ S) (hF : FrobData K S ιs v) (n : ℕ)
     {A : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)} [IsDiscreteRep A] (y : cohomology A 2)
     (f : Rep.res (decompHomS (v.adicCompletion K.1) S (ιs.fin v)) A ⟶
@@ -152,9 +157,9 @@ section H3
 variable (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1))) (ℓ : ℕ) (hℓ : ℓ.Prime)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) (ιs : LocalEmbeddings K)
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem exists_sUnitsQuotDiv_gsQuotMor_eq (hF : ∀ v : HeightOneSpectrum (𝓞 K.1), v ∉ S → FrobData K S ιs v)
     (d : cohomology (gsDiv K S ιs ℤ) 2) (n : ℕ) (hd : ℓ ^ n • d = 0) :
     ∃ x : cohomology (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2,
@@ -178,7 +183,8 @@ theorem exists_sUnitsQuotDiv_gsQuotMor_eq (hF : ∀ v : HeightOneSpectrum (𝓞 
   have e2 : gsVal K S ιs u.1 u.2 (∑ u ∈ hfin.toFinset, x u) =
       (cohomologyMapAlong (gsDecomp K S ιs u) (continuous_gsDecomp K S ιs u)
         (divFunEval (gsDecomp K S ιs) ℤ u) 2).hom d := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hne : ∀ w ∈ hfin.toFinset, w ≠ u → gsVal K S ιs u.1 u.2 (x w) = 0 := fun w _ hw =>
       (gsLoc_eq_zero_iff K S ιs u.1 u.2 _).1 (hx' w u.1 u.2 fun h => hw (Subtype.ext h).symm)
     by_cases hu : u ∈ hfin.toFinset
@@ -212,15 +218,94 @@ def gsDivH2 (ιs : LocalEmbeddings K) :
   (cohomologyMap (sUnitsQuotDiv K S ιs) 2).hom.toAddMonoidHom.comp
     (cohomologyMap (gsQuotMor K S) 2).hom.toAddMonoidHom
 
-set_option maxHeartbeats 4000000 in
-include hℓ hS in
 
+set_option maxHeartbeats 8000000 in
+include hℓ hS in
 theorem eq_zero_of_h3_sUnits_of_frob (ιs : LocalEmbeddings K)
     (hF : ∀ v : HeightOneSpectrum (𝓞 K.1), v ∉ S → FrobData K S ιs v)
     (z : cohomology (galSUnitsMax K.1 ℚ̄ S) 3) (k : ℕ) (hz : ℓ ^ k • z = 0) : z = 0 := by
-  have hf : (cohomologyMap (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S)) 3).hom z = 0 :=
-    eq_zero_of_h3_gsUnits K S ℓ hℓ hS _ k
-      ((map_nsmul _ _ _).symm.trans ((congrArg _ hz).trans (map_zero _)))
+  have hf : (cohomologyMap (sUnitsToUnits S (maxUnramifiedOutside K.1 ℚ̄ S)) 3).hom z = 0 := by
+    let E := maxUnramifiedOutside K.1 ℚ̄ S
+    let e : galUnramifiedOutside K.1 ℚ̄ S ≃* K.1.fixingSubgroup ⧸ gsKernel K S :=
+      (QuotientGroup.quotientKerEquivOfSurjective (gsRestrict K S) (gsRestrict_surjective K S)).symm
+    have he_mk (σ : K.1.fixingSubgroup) : e.symm (QuotientGroup.mk σ) = gsRestrict K S σ := rfl
+    have he_restrict (σ : K.1.fixingSubgroup) : e (gsRestrict K S σ) = QuotientGroup.mk σ :=
+      e.symm.injective ((e.symm_apply_apply _).trans (he_mk σ).symm)
+    have he : Continuous e.toMonoidHom := by
+      rw [(isQuotientMap_gsRestrict K S).continuous_iff]
+      have h : e.toMonoidHom ∘ gsRestrict K S = QuotientGroup.mk' (gsKernel K S) := funext he_restrict
+      rw [h]
+      exact continuous_quotientGroup_mk' _
+    have he' : Continuous e.symm.toMonoidHom := by
+      rw [(QuotientGroup.isQuotientMap_mk (gsKernel K S)).continuous_iff]
+      have h : e.symm.toMonoidHom ∘ (QuotientGroup.mk : K.1.fixingSubgroup → _) = gsRestrict K S :=
+        funext he_mk
+      rw [h]
+      exact continuous_gsRestrict K S
+    have hmem (a : unitsInvariantsGsKernel K S) : (Additive.toMul a.1).val ∈ E := by
+      have : IsGalois ℚ ℚ̄ := IsAlgClosure.isGalois ℚ ℚ̄
+      let E' : IntermediateField ℚ ℚ̄ := E.restrictScalars ℚ
+      change (Additive.toMul a.1).val ∈ E'
+      rw [← InfiniteGalois.fixedField_fixingSubgroup E', IntermediateField.mem_fixedField_iff]
+      intro g hg
+      have hK : g ∈ K.1.fixingSubgroup := by
+        rw [IntermediateField.mem_fixingSubgroup_iff]
+        intro y hy
+        exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg _ (E.algebraMap_mem (⟨y, hy⟩ : K.1))
+      have hN : (⟨g, hK⟩ : K.1.fixingSubgroup) ∈ gsKernel K S := by
+        rw [MonoidHom.mem_ker]
+        refine AlgEquiv.ext fun y => Subtype.ext ?_
+        rw [gsRestrict_apply]
+        exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg y y.2
+      exact congrArg (fun u : Additive ℚ̄ˣ => (Additive.toMul u).val) (a.2 ⟨⟨g, hK⟩, hN⟩)
+    let f : unitsInvariantsGsKernel K S →+ Additive Eˣ :=
+      { toFun := fun a => Additive.ofMul (Units.mk0 ⟨(Additive.toMul a.1).val, hmem a⟩
+          (fun h => (Additive.toMul a.1).ne_zero (congrArg Subtype.val h)))
+        map_zero' := Additive.toMul.injective (Units.ext (Subtype.ext rfl))
+        map_add' := fun _ _ => Additive.toMul.injective (Units.ext (Subtype.ext rfl)) }
+    have hf_bij : Function.Bijective f := by
+      refine ⟨fun a b h => ?_, fun y => ?_⟩
+      · apply Subtype.ext
+        apply Additive.toMul.injective
+        apply Units.ext
+        exact congrArg (fun u : Additive Eˣ => ((Additive.toMul u).val : ℚ̄)) h
+      · refine ⟨⟨Additive.ofMul (Units.map E.val.toRingHom.toMonoidHom (Additive.toMul y)), fun σ => ?_⟩, ?_⟩
+        · apply Additive.toMul.injective
+          apply Units.ext
+          have hσ : gsRestrict K S σ.1 = 1 := MonoidHom.mem_ker.mp σ.2
+          have hy := congrArg (fun τ : galUnramifiedOutside K.1 ℚ̄ S => (τ (Additive.toMul y).val : ℚ̄)) hσ
+          rw [gsRestrict_apply] at hy
+          exact hy
+        · exact Additive.toMul.injective (Units.ext (Subtype.ext rfl))
+    let B := uliftIntToIntRep (galUnits K.1 E)
+    let F : Rep.res e.toMonoidHom ((unitsLimitRep K).quotientToInvariants (gsKernel K S)) ⟶ B :=
+      Rep.ofHom ⟨f.toIntLinearMap, fun τ => LinearMap.ext fun a => by
+        change f (((unitsLimitRep K).quotientToInvariants (gsKernel K S)).ρ (e τ) a) = B.ρ τ (f a)
+        have hτ := gsRestrict_gsLift K S τ
+        have heτ := (congrArg e hτ).symm.trans (he_restrict (gsLift K S τ))
+        rw [heτ]
+        apply Additive.toMul.injective
+        apply Units.ext
+        apply Subtype.ext
+        have h := gsRestrict_apply K S (gsLift K S τ) ⟨_, hmem a⟩
+        rw [hτ] at h
+        exact h.symm⟩
+    let m := cohomologyMapAlong e.toMonoidHom he F 3
+    have : IsIso m := isIso_cohomologyMapAlong_of_mulEquiv e he he' F hf_bij 3
+    let liftInt := cohomologyULiftIntAddEquiv (galUnits K.1 E) 3
+    let x := (cohomologyMap (sUnitsToUnits S E) 3).hom z
+    obtain ⟨x₀, hx₀⟩ := (ModuleCat.epi_iff_surjective m).1 inferInstance (liftInt x)
+    have hn : ℓ ^ k • x = 0 := by rw [← map_nsmul, hz, map_zero]
+    have hk₀ : ℓ ^ k • x₀ = 0 := (ModuleCat.mono_iff_injective m).1 inferInstance (by
+      rw [map_nsmul, hx₀, ← map_nsmul, hn, map_zero, map_zero])
+    have hinfl : (cohomologyInfl (unitsLimitRep K) (gsKernel K S) 3).hom x₀ = 0 := by
+      have := subsingleton_cohomology_three_unitsLimitRep K
+      exact Subsingleton.elim _ _
+    have h₀ := eq_zero_of_cohomologyInfl_three_eq_zero (unitsLimitRep K) (gsKernel K S)
+      (isClosed_gsKernel K S) (isZero_cohomology_one_gsKernel K S) ℓ
+      (exists_coprime_smul_cohomology_two_gsKernel K S hℓ hS) x₀ hinfl k hk₀
+    apply liftInt.injective
+    rw [← hx₀, h₀, map_zero, map_zero]
   refine (exists_sUnitsδ_eq K S z hf).elim fun p hp => ?_
   have hpk : ℓ ^ k • sUnitsδ K S p = 0 := hp.symm ▸ hz
   refine (exists_primary_map_eq (sUnitsδ K S) hℓ (isTorsion_cohomology _ (by norm_num) p) hpk).elim
@@ -244,9 +329,17 @@ theorem eq_zero_of_h3_sUnits_of_frob (ιs : LocalEmbeddings K)
     have h2 : ℓ ^ (i + j) • (cohomologyMap (gsQuotMor K S) 2).hom x' = 0 := by
       rw [← map_nsmul, pow_add, mul_comm, mul_smul, hi, smul_zero, map_zero]
     rw [smul_sub, h1, h2, sub_zero]
-  have hq0 : p' - (cohomologyMap (gsQuotMor K S) 2).hom x' = 0 :=
-    eq_zero_of_mem_range_δ_of_coprime (picSequence_shortExact K S ιs) 1 2 rfl
-      (exists_δ_pic_eq K S ιs _ hq) ℓ
+  have hq0 : p' - (cohomologyMap (gsQuotMor K S) 2).hom x' = 0 := by
+    have hP : (picSequence K S ιs).ShortExact := by
+      refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+      · apply shortComplex_exact_of_forall_exists
+        intro d hd
+        obtain ⟨p, hp⟩ := (Submodule.Quotient.mk_eq_zero _).1 hd
+        exact ⟨p, hp⟩
+      · exact (Rep.mono_iff_injective _).2 (sUnitsQuotDiv_injective K S ιs)
+      · exact (Rep.epi_iff_surjective _).2 (picQuot_surjective K S ιs)
+    exact eq_zero_of_mem_range_δ_of_coprime hP 1 2 rfl
+      (exists_δ_eq_of_cohomologyMap_f_eq_zero hP 1 2 rfl _ hq) ℓ
       (fun r => exists_coprime_smul_cohomology_eq_zero (picInfRep K S ιs) ℓ
         (exists_coprime_smul_picInfRep K S ιs ℓ hℓ hS) 1 r) (i + j) hqk
   rw [← hp, ← hp'.2, sub_eq_zero.1 hq0]

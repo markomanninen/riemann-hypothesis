@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem ef_pos (hp : p.Prime) (P : Ideal (𝓞 K)) (hP : P ∈ IsDedekindDomain.
   obtain ⟨hPp, hPl⟩ := (IsDedekindDomain.mem_primesOverFinset_iff (pI_ne_bot p hp) (𝓞 K)).mp hP
   have he : 0 < (span {(p : ℤ)}).ramificationIdx' P := by
     rw [Ideal.ramificationIdx'_eq_ramificationIdx _ _ (pI_ne_bot p hp)]
-    exact Ideal.ramificationIdx_pos P ℤ
+    exact Ideal.ramificationIdx_pos (R := ℤ) P
   have hf : 0 < (span {(p : ℤ)}).inertiaDeg' P := Ideal.inertiaDeg'_pos _ _
   exact Nat.mul_pos he hf
 
@@ -137,7 +141,7 @@ theorem splits_sub (hp : p.Prime)
   have hefK := ef_one_sub K p L hp (ef_one_of_card L p hp hL)
   refine ⟨?_, ?_⟩
   · rw [← card_of_ef_one K p hp hefK, ← ncard_places K p hp]
-    exact Nat.card_coe_set_eq _
+    exact Nat.card_coe_set_eq {v : HeightOneSpectrum (𝓞 K) | ((p : ℕ) : 𝓞 K) ∈ v.asIdeal}
   · intro v hv
     have hmem : v.asIdeal ∈ IsDedekindDomain.primesOverFinset (span {(p : ℤ)}) (𝓞 K) := by
       rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset (pI_ne_bot p hp), ← img_places K p hp]

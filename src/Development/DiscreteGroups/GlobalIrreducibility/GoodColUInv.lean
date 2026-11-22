@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.MulRowOfGood
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.MulRowOfGood
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.WeilConjectures.AcycPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.WeilConjectures.AcycPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite

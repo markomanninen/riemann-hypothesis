@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh55.mem_real_of_sq :
     ∀ {Y : Type} [inst : Field Y] {δ : Y}

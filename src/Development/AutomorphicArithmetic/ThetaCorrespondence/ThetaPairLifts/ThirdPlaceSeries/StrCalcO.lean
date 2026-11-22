@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.StrCalcO
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TieAutAndSplit
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.AllCuspidalOpenBound
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BaseChangeTwistedCuspParts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.RankOneOfLong
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CharacterChoiceData
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TieAutAndSplit
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.StringRepresentations.AllCuspidalOpenBound
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -39,7 +44,7 @@ theorem is_split_of_cusp_iso_bcv : GlobalTheory.Published.AutomorphicFormsFinite
   have hθ := unr_of_speh D.naut _ D.R.t ht w hb
   obtain ⟨-, hblk⟩ := GlobalTheory.RowModelRoad.frobEig_block D.naut _ D.R.t w z⁻¹ hθ hz
   refine ⟨(D.naut.frobEig (D.naut.locG (D.naut.tw π D.naut.etaTinv) w)).map (fun a : ℂ => a⁻¹), ?_, ?_⟩
-  · rw [eV, D.naut.frobEig_sum _ _ ha hb, Multiset.map_add, hblk, ← normV_eq_absNorm, inv_block]
+  · rw [eV, D.naut.frobEig_sum _ _ ha hb, Multiset.map_add (f := _), hblk, ← normV_eq_absNorm, inv_block]
   ·
     obtain ⟨hTie, -⟩ := _root_.GlobalTheory.AutomorphismSplitting.tieAut_and_split_alt hAF hL D P
     have hEta : GlobalTheory.LocalInv.EtaType D.nd D.naut := by
@@ -54,7 +59,7 @@ theorem is_split_of_cusp_iso_bcv : GlobalTheory.Published.AutomorphicFormsFinite
       (odd_rank D.R) odd_one
     intro a haB
     obtain ⟨α, hα, rfl⟩ := Multiset.mem_map.mp haB
-    exact (((_root_.UpperTheory.GalN.tempo' h7 D.R.r _ (odd_rank D.R).pos hcsd hralg w).part_tw hTie ha α hα).1.inv
+    simpa only [normV_eq_absNorm] using (((_root_.UpperTheory.GalN.tempo' h7 D.R.r _ (odd_rank D.R).pos hcsd hralg w).part_tw hTie ha α hα).1.inv
       (UpperTheory.GalN.one_lt_q w)).le_rpow (UpperTheory.GalN.one_lt_q w) (UpperTheory.GalN.half_le_r D.R)
 end GlobalTheory.EigStrCalc
 end

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -86,7 +91,8 @@ private theorem leib {ι E E' E'' : Type} [LinearOrder ι] [AddCommGroup E] [Mod
     have hA : ∑ i ∈ t.filter (· < j), GlobalTheory.cubeSign t i •
         μ (a ((t.erase i).filter (· ≤ j))) (b ((t.erase i).filter (j ≤ ·))) =
         μ (∑ i ∈ t.filter (· < j), GlobalTheory.cubeSign v i • a (v.erase i)) (b u) := by
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun i hi => ?_
       have hi' : i < j := (Finset.mem_filter.1 hi).2
       have c1 : (t.erase i).filter (· ≤ j) = v.erase i := by ext y; grind
@@ -107,7 +113,8 @@ private theorem leib {ι E E' E'' : Type} [LinearOrder ι] [AddCommGroup E] [Mod
       rw [c0, c00, one_smul] at hd
       have hb2 := eq_neg_of_add_eq_zero_right hd
       calc _ = GlobalTheory.cubeSign t j • μ (a v) (∑ i ∈ t.filter (j < ·), GlobalTheory.cubeSign u i • b (u.erase i)) := by
-            rw [map_sum, Finset.smul_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum, Finset.smul_sum]
             refine Finset.sum_congr rfl fun i hi => ?_
             have hi' : j < i := (Finset.mem_filter.1 hi).2
             have d1 : (t.erase i).filter (· ≤ j) = v := by ext y; grind
@@ -124,7 +131,7 @@ private theorem leib {ι E E' E'' : Type} [LinearOrder ι] [AddCommGroup E] [Mod
     have c5 : GlobalTheory.cubeSign v j = GlobalTheory.cubeSign t j := by
       have : v.filter (· < j) = t.filter (· < j) := by ext y; grind
       simp only [GlobalTheory.cubeSign, this]
-    rw [← hs, hA, hB, ev, map_add, LinearMap.add_apply, c4, c5, map_zsmul, LinearMap.smul_apply, smul_add]
+    rw [← hs, hA, hB, ev, map_add (f := _), LinearMap.add_apply, c4, c5, map_zsmul, LinearMap.smul_apply, smul_add]
     abel
   have lhs : ∑ i ∈ t, GlobalTheory.cubeSign t i • cupE μ a b (t.erase i) =
       ∑ j ∈ t, ∑ i ∈ t.erase j, GlobalTheory.cubeSign t i •
@@ -154,7 +161,8 @@ private theorem wd_cup {ν ρ E E' E'' : Type} [LinearOrder ν] [AddCommGroup E]
     [AddCommGroup E''] [Module ℂ E''] (μ : E →ₗ[ℂ] E' →ₗ[ℂ] E'') (w : ν → Module.End ℂ E) (w' : ν → Module.End ℂ E'')
     (hw : ∀ l m y, μ (w l m) y = w' l (μ m y)) (I : Finset ρ) (g : ρ → Finset ν → E) (y : ρ → E') (t : Finset ν) :
     wd w' (fun t' => ∑ i ∈ I, μ (g i t') (y i)) t = ∑ i ∈ I, μ (wd w (g i) t) (y i) := by
-  simp only [wd_app, map_sum, LinearMap.sum_apply, Finset.smul_sum, map_zsmul, LinearMap.smul_apply, hw]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [wd_app, map_sum, LinearMap.sum_apply, Finset.smul_sum, map_zsmul, LinearMap.smul_apply, hw]
   exact Finset.sum_comm
 
 private theorem tri (hW : WdUni) {d : ℕ} {S E : Type} [CommRing S] [Algebra ℂ S] [AddCommGroup E] [Module ℂ E]
@@ -253,7 +261,7 @@ theorem UpperTheory.Gal.productCup_of_system.rCup_of :
       rw [pow_add, pow_add _ n, mul_right_comm, hs1]
       ring
     have hz := congrArg (fun m => ((-1 : ℤ) ^ (p * (J.card + L.card))) • μ m (x (I.filter (i ≤ ·)))) h0
-    simp only [Pi.zero_apply, map_zero, LinearMap.zero_apply, smul_zero, map_add, LinearMap.add_apply, map_zsmul,
+    simp only [Pi.zero_apply, map_zero, LinearMap.zero_apply, smul_zero, map_add (f := _), LinearMap.add_apply, map_zsmul,
       LinearMap.smul_apply, smul_add, smul_smul] at hz
     simp only [smul_smul, hs1, hs2]
     exact hz.symm

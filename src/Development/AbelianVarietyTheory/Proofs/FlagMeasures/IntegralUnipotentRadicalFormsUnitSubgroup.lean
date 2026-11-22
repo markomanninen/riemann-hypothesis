@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgAlg GlobalTheory.SgGlob GlobalTheory.SnMass GlobalTheory.SnMass.VolN
 open scoped TensorProduct ENNReal nonZeroDivisors
 
@@ -9,18 +14,16 @@ namespace GlobalTheory.SnMass.VolN.GNGroup
 
 variable {E : Type} [Field E]
 
-local notation:70 A:70 " ⬝ " B:71 => @HMul.hMul _ _ _ Matrix.instHMulOfFintypeOfMulOfAddCommMonoid A B
-
 theorem cT_mul (σ : E →+* E) {n : ℕ} (A B : Matrix (Fin n) (Fin n) E) :
     cT σ (A * B) = cT σ B * cT σ A := by
   simp only [cT, Matrix.map_mul, Matrix.transpose_mul]
 
 theorem cT_mul' (σ : E →+* E) {n a : ℕ} (A : Matrix (Fin n) (Fin n) E) (B : Matrix (Fin n) (Fin a) E) :
-    cT σ (A ⬝ B) = cT σ B ⬝ cT σ A := by
+    cT σ (A * B) = cT σ B * cT σ A := by
   simp only [cT, Matrix.map_mul, Matrix.transpose_mul]
 
 theorem cT_mul'' (σ : E →+* E) {n a : ℕ} (A : Matrix (Fin n) (Fin a) E) (B : Matrix (Fin a) (Fin a) E) :
-    cT σ (A ⬝ B) = cT σ B ⬝ cT σ A := by
+    cT σ (A * B) = cT σ B * cT σ A := by
   simp only [cT, Matrix.map_mul, Matrix.transpose_mul]
 
 theorem cT_one (σ : E →+* E) {n : ℕ} : cT σ (1 : Matrix (Fin n) (Fin n) E) = 1 := by
@@ -110,7 +113,7 @@ theorem inN_one (σ : E →+* E) {n r : ℕ} (J : Matrix (Fin n) (Fin n) E) (P :
   refine ⟨by simp [IsUn, cT_one], ⟨1, ?_, ?_⟩, fun v _ => ⟨0, by simp⟩⟩
   · intro i j
     exact ⟨fun h => Matrix.one_apply_ne (ne_of_lt h).symm, fun h => by subst h; exact Matrix.one_apply_eq i⟩
-  · have key : (1 : Matrix (Fin n) (Fin n) E) ⬝ eOf P = eOf P ⬝ (1 : Matrix (Fin r) (Fin r) E) := by
+  · have key : (1 : Matrix (Fin n) (Fin n) E) * eOf P = eOf P * (1 : Matrix (Fin r) (Fin r) E) := by
       rw [Matrix.one_mul, Matrix.mul_one]
     exact key
 
@@ -119,10 +122,10 @@ theorem inN_mul (σ : E →+* E) {n r : ℕ} {J : Matrix (Fin n) (Fin n) E} {P :
     {g g' : Matrix (Fin n) (Fin n) E} (h : InN σ J P g) (h' : InN σ J P g') : InN σ J P (g * g') := by
   obtain ⟨hu, ⟨ν, hν, he⟩, hp⟩ := h
   obtain ⟨hu', ⟨ν', hν', he'⟩, hp'⟩ := h'
-  replace he : g ⬝ eOf P = eOf P ⬝ ν := he
-  replace he' : g' ⬝ eOf P = eOf P ⬝ ν' := he'
+  replace he : g * eOf P = eOf P * ν := he
+  replace he' : g' * eOf P = eOf P * ν' := he'
   refine ⟨isUn_mul σ hu hu', ⟨ν * ν', isUp_mul hν hν', ?_⟩, fun v hv => ?_⟩
-  · have key : (g * g') ⬝ eOf P = eOf P ⬝ (ν * ν') := by
+  · have key : (g * g') * eOf P = eOf P * (ν * ν') := by
       rw [Matrix.mul_assoc, he', ← Matrix.mul_assoc, he, Matrix.mul_assoc]
     exact key
   · obtain ⟨c, hc⟩ := hp v hv
@@ -137,23 +140,23 @@ theorem inN_inv (σ : E →+* E) {n r : ℕ} {J : Matrix (Fin n) (Fin n) E} {P :
     {a b : Matrix (Fin n) (Fin n) E} (h : InN σ J P a) (hab : a * b = 1) (hba : b * a = 1) :
     InN σ J P b := by
   obtain ⟨hu, ⟨ν, hν, he⟩, hp⟩ := h
-  replace he : a ⬝ eOf P = eOf P ⬝ ν := he
+  replace he : a * eOf P = eOf P * ν := he
   obtain ⟨hνi, hνν⟩ := isUp_inv hν
   have hJ : cT σ a * J = J * b := by
     calc cT σ a * J = cT σ a * J * (a * b) := by rw [hab, Matrix.mul_one]
       _ = J * b := by rw [← Matrix.mul_assoc, hu]
   refine ⟨isUn_inv σ hu hab, ⟨ν⁻¹, hνi, ?_⟩, fun v hv => ?_⟩
-  · have key : b ⬝ eOf P = eOf P ⬝ ν⁻¹ := by
-      calc b ⬝ eOf P = (b ⬝ (eOf P ⬝ ν)) ⬝ ν⁻¹ := by
+  · have key : b * eOf P = eOf P * ν⁻¹ := by
+      calc b * eOf P = (b * (eOf P * ν)) * ν⁻¹ := by
             rw [Matrix.mul_assoc b, Matrix.mul_assoc, hνν, Matrix.mul_one]
-        _ = (b ⬝ (a ⬝ eOf P)) ⬝ ν⁻¹ := by rw [he]
-        _ = eOf P ⬝ ν⁻¹ := by rw [← Matrix.mul_assoc b, hba, Matrix.one_mul]
+        _ = (b * (a * eOf P)) * ν⁻¹ := by rw [he]
+        _ = eOf P * ν⁻¹ := by rw [← Matrix.mul_assoc b, hba, Matrix.one_mul]
     exact key
-  · have e2 : cT σ (eOf P) ⬝ J ⬝ b = cT σ ν ⬝ (cT σ (eOf P) ⬝ J) := by
+  · have e2 : cT σ (eOf P) * J * b = cT σ ν * (cT σ (eOf P) * J) := by
       rw [Matrix.mul_assoc, ← hJ, ← Matrix.mul_assoc, ← cT_mul', he, cT_mul'', Matrix.mul_assoc]
-    have hw : (cT σ (eOf P) ⬝ J) *ᵥ (b *ᵥ v) = 0 := by
+    have hw : (cT σ (eOf P) * J) *ᵥ (b *ᵥ v) = 0 := by
       rw [Matrix.mulVec_mulVec, e2, ← Matrix.mulVec_mulVec]
-      have hv' : (cT σ (eOf P) ⬝ J) *ᵥ v = 0 := hv
+      have hv' : (cT σ (eOf P) * J) *ᵥ v = 0 := hv
       rw [hv', Matrix.mulVec_zero]
     obtain ⟨c, hc⟩ := hp _ hw
     refine ⟨-c, ?_⟩

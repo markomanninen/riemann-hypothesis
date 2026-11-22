@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiagHermitianTrivialOfSumFourSquares
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolynomialMoveDefiniteSimilitudePairMarkedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzTermEqDefinitePairOfLocalIsometryStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsOrbitalTermEqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzPairScalarIsomorphicEquivalence
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MkEqIffRelAndOutRel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsSamePolarization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkIffOfRel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TermEqOfSimilitudeRelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiagHermitianTrivialOfSumFourSquares
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolynomialMoveDefiniteSimilitudePairMarkedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzTermEqDefinitePairOfLocalIsometryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsOrbitalTermEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzPairScalarIsomorphicEquivalence
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MkEqIffRelAndOutRel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelatedPairsSamePolarization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MarkIffOfRel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TermEqOfSimilitudeRelStatement
+
+@[expose] public section
 
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.LKCount
 open scoped TensorProduct Classical
@@ -28,7 +32,7 @@ theorem aeval_conj (y : G.Cˣ) (x : G.C) (A : Polynomial G.F) :
       rw [pow_succ, ih, pow_succ]
       simp only [mul_assoc, Units.inv_mul_cancel_left]
   induction A using Polynomial.induction_on' with
-  | add f g hf hg => rw [map_add, map_add, hf, hg, mul_add, add_mul]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), hf, hg, mul_add, add_mul]
   | monomial n a =>
     rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, hp n, ← mul_assoc, ← mul_assoc,
       Algebra.commutes a (y : G.C)]

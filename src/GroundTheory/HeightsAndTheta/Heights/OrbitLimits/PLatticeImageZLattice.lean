@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLatticeImageZLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsLatticeImageZLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -13,19 +18,21 @@ theorem LatticeImageZLattice.exists_int_mul_integral {F : Type} [Field F] [Numbe
     ((IsFractionRing.isAlgebraic_iff ℤ ℚ F).mpr (Algebra.IsAlgebraic.isAlgebraic s)).exists_integral_multiple
   choose y hy0 hyint using halg
   refine ⟨∏ s ∈ S, y s, Finset.prod_ne_zero_iff.mpr fun s _ => hy0 s, ?_⟩
+  have h : ∀ z : L, z ∈ AddSubsemigroup.closure (↑S : Set L) →
+      IsIntegral ℤ ((∏ s ∈ S, y s) • (z : F)) := by
+    intro z hz
+    induction hz using AddSubsemigroup.closure_induction with
+    | mem s hs =>
+      obtain ⟨c, hc⟩ := Finset.dvd_prod_of_mem (fun t : L => y t) (show s ∈ S from hs)
+      rw [hc, mul_comm, mul_smul]
+      exact (hyint s).zsmul c
+    | add a b _ _ ha hb => simpa [smul_add] using ha.add hb
   intro x hx
-  rw [← hS] at hx
-  induction hx using AddSubgroup.closure_induction with
-  | mem s hs =>
-    obtain ⟨c, hc⟩ := Finset.dvd_prod_of_mem y hs
-    rw [hc, mul_comm, mul_smul]
-    exact (hyint s).zsmul c
-  | zero => simpa using isIntegral_zero
-  | add a b _ _ ha hb => simpa [smul_add] using ha.add hb
-  | neg a _ ha => simpa [smul_neg] using ha.neg
+  exact h ⟨x, hx⟩ (hS ▸ AddSubsemigroup.mem_top _)
+
+
 
 open scoped Classical in
-
 theorem LatticeImageZLattice.proof : LatticeImageZLattice.Statement := by
   intro F _ _ L hfg hfull
   obtain ⟨N, hN0, hLint⟩ := LatticeImageZLattice.exists_int_mul_integral L hfg

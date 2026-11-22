@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRAddRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FockRAddRight
+
+@[expose] public section
 
 noncomputable section
 

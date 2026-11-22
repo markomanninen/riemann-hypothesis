@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzLinearChangeStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzLinearChangeStatement
+
+@[expose] public section
 
 noncomputable section
 

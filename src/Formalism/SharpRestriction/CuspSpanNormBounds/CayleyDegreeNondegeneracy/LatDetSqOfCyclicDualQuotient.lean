@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ForPrimeFlagLattice
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ForPrimeFlagLattice
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,7 +144,23 @@ theorem latDet_sq_of_cyclic_dual_quotient (M : Submodule (𝓞 E) S.V) (hl : Sub
     latDetH S.hT M = Real.sqrt ((T : ℝ) ^ finrank ℚ E) := by
   have hA : Formalism.HermitianLatticesTheory.dual S.hT M ⊓ Submodule.restrictScalars (𝓞 E) (Submodule.span E (M : Set S.V)) =
       Formalism.HermitianLatticesTheory.dual S.hT M := by
-    rw [hl.span_eq_top, Submodule.restrictScalars_top, inf_top_eq]
+    apply inf_eq_left.mpr
+    intro w hw'
+    change w ∈ Submodule.span E (M : Set S.V)
+    have hw₁ : w₁ ∈ Submodule.span E (M : Set S.V) := by
+      have hm : ((T : ℕ) : 𝓞 E) • w₁ ∈ M := (hker _).2 (dvd_refl _)
+      have hs : ((T : ℕ) : E) • w₁ ∈ Submodule.span E (M : Set S.V) := by
+        have hm' : ((T : ℕ) : 𝓞 E) • w₁ ∈ Submodule.span E (M : Set S.V) := Submodule.subset_span hm
+        simpa only [Nat.cast_smul_eq_nsmul] using hm'
+      have hn : ((T : ℕ) : E) ≠ 0 := Nat.cast_ne_zero.mpr hT.ne_zero
+      simpa only [inv_smul_smul₀ hn] using
+        (Submodule.span E (M : Set S.V)).smul_mem (((T : ℕ) : E)⁻¹) hs
+    obtain ⟨a, ha⟩ := hgen w hw'
+    have ha' : w + a • w₁ ∈ Submodule.span E (M : Set S.V) := Submodule.subset_span ha
+    have hs : a • w₁ ∈ Submodule.span E (M : Set S.V) := by
+      simpa only [IsScalarTower.algebraMap_smul] using
+        (Submodule.span E (M : Set S.V)).smul_mem (algebraMap (𝓞 E) E a) hw₁
+    simpa only [add_sub_cancel_right] using (Submodule.span E (M : Set S.V)).sub_mem ha' hs
   have hφ : ∀ a : 𝓞 E, LinearMap.toSpanSingleton (𝓞 E) _
       (Submodule.Quotient.mk (p := M.comap (Formalism.HermitianLatticesTheory.dual S.hT M).subtype) ⟨w₁, hw⟩) a =
       Submodule.Quotient.mk ⟨a • w₁, (Formalism.HermitianLatticesTheory.dual S.hT M).smul_mem a hw⟩ := by

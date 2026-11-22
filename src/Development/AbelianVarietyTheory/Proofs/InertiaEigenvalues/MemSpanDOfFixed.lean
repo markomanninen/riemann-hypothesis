@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeRhamJumpDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeRhamJumpDescent
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,21 +23,21 @@ private theorem mulR_mulR (a b : P.R.BdR) (x : V ⊗[ℚ_[l]] P.R.BdR) :
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v c => simp [mul_assoc]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 private theorem mulR_neg (a : P.R.BdR) (x : V ⊗[ℚ_[l]] P.R.BdR) :
     mulR ℚ_[l] P.R.BdR LL V (-a) x = -mulR ℚ_[l] P.R.BdR LL V a x := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero, neg_zero]
   | tmul v c => simp [tmul_neg]
-  | add y z hy hz => simp only [map_add, hy, hz, neg_add]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz, neg_add]
 
 private theorem mulR_one (x : V ⊗[ℚ_[l]] P.R.BdR) :
     mulR ℚ_[l] P.R.BdR LL V 1 x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v c => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 private theorem act_mulR (K : FinExt l) (ρ : Representation LL ↥(GK K) V) (g : ↥(GK K))
     (a : P.R.BdR) (x : V ⊗[ℚ_[l]] P.R.BdR) :
@@ -42,7 +46,7 @@ private theorem act_mulR (K : FinExt l) (ρ : Representation LL ↥(GK K) V) (g 
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v c => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 private def spanD (K : FinExt l) (ρ : Representation LL ↥(GK K) V) :
     AddSubgroup (V ⊗[ℚ_[l]] P.R.BdR) where
@@ -66,14 +70,16 @@ private theorem mulR_mem_spanD (K : FinExt l) (ρ : Representation LL ↥(GK K) 
     mulR ℚ_[l] P.R.BdR LL V a x ∈ spanD P K ρ := by
   obtain ⟨m, b, d, hd, rfl⟩ := hx
   refine ⟨m, fun i => a * b i, d, hd, ?_⟩
-  simp only [map_sum, mulR_mulR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, mulR_mulR]
 
 private theorem act_mem_spanD (K : FinExt l) (ρ : Representation LL ↥(GK K) V) (g : ↥(GK K))
     (x : V ⊗[ℚ_[l]] P.R.BdR) (hx : x ∈ spanD P K ρ) :
     actVdR (P.PD K) ρ g x ∈ spanD P K ρ := by
   obtain ⟨m, b, d, hd, rfl⟩ := hx
   refine ⟨m, fun i => (P.PD K).actdR g (b i), d, hd, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [act_mulR, (mem_DdR (P.PD K) ρ _).1 (hd i)]
 
@@ -98,12 +104,12 @@ private theorem mem_spanD_of_fixed {K K' : FinExt l} (h : K.1 ≤ K'.1)
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro g g' x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro x
     simp only [map_one, LinearMap.toAddMonoidHom_coe, mulR_one]
   · intro g g' x
@@ -112,7 +118,7 @@ private theorem mem_spanD_of_fixed {K K' : FinExt l} (h : K.1 ≤ K'.1)
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero, add_zero]
     | tmul v b => simp [add_mul, tmul_add]
-    | add y z hy hz => simp only [map_add] at hy hz ⊢; rw [hy, hz]; abel
+    | add y z hy hz => simp only [map_add (f := _)] at hy hz ⊢; rw [hy, hz]; abel
   · intro g c x
     simp only [LinearMap.toAddMonoidHom_coe]
     rw [act_mulR, P.PD_actdR, P.actQdR_Om]

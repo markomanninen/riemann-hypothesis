@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EisValueAtIffEisPoleLE
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OneMemEntries
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLinearIndependentOfRatIndependent
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdeleCoverModFieldShrunkCompactStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SkewHermitianAdelicCoverOfAdeleCoverStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompactAdelesRationalPointsFiniteEventuallyZeroStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TensorIdeleNormalizedAbsIdeleHalfAtInfinityStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableRpowOfFibreCardLeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntGeneratorsCardEqOfIsLatticePiStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LinearIndependentVecMulOfSpanRatStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GramDetIndexSublatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MatrixInvEntriesBoundedStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeAdelicMatrixIntegralTranslateStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmAdeleSplitComplexFiniteAdelesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TotallyComplexSpanEmbeddingsAndFinrankStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EisValueAtIffEisPoleLE
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OneMemEntries
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLinearIndependentOfRatIndependent
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdeleCoverModFieldShrunkCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SkewHermitianAdelicCoverOfAdeleCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompactAdelesRationalPointsFiniteEventuallyZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TensorIdeleNormalizedAbsIdeleHalfAtInfinityStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SummableRpowOfFibreCardLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntGeneratorsCardEqOfIsLatticePiStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LinearIndependentVecMulOfSpanRatStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GramDetIndexSublatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MatrixInvEntriesBoundedStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeAdelicMatrixIntegralTranslateStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmAdeleSplitComplexFiniteAdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TotallyComplexSpanEmbeddingsAndFinrankStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem det_gram_smul {V κ : Type} [NormedAddCommGroup V] [InnerProductSpace �
 
 theorem red_inf (E : Type) [Field E] [NumberField E] (R : Type) [NormedCommRing R] [NormedAlgebra ℝ R]
     [FiniteDimensional ℝ R] (τ : E →+* R) (hτ : Submodule.span ℝ (Set.range τ) = ⊤) (hd : finrank ℝ R = finrank ℚ E)
-    (n : ℕ) : ∃ (M : ℕ) (C : ℝ), 0 < M ∧ ∀ (Λ : Submodule (𝓞 E) (Fin n → E)), Submodule.IsLattice E Λ →
+    (n : ℕ) : ∃ (M : ℕ) (C : ℝ), 0 < M ∧ ∀ (Λ : Submodule (𝓞 E) (Fin n → E)), Submodule.IsFullLattice E Λ →
       ∀ g : GL (Fin n) R, ∃ (δ : GL (Fin n) E) (l : Fin n → ℤ) (c : GL (Fin n) R), (∀ i, δ.1 i ∈ Λ) ∧
         (∀ x ∈ Λ, ∃ y : Fin n → 𝓞 E, (M : E) • x = (fun i => (y i : E)) ᵥ* δ.1) ∧
         (∀ i j, ‖c.1 i j‖ ≤ C ∧ ‖c⁻¹.1 i j‖ ≤ C) ∧
@@ -79,7 +83,7 @@ theorem red_inf (E : Type) [Field E] [NumberField E] (R : Type) [NormedCommRing 
   let φ : (Fin n → E) →ₗ[ℤ] EuclideanSpace ℝ (Fin (finrank ℝ (Fin n → R))) := AddMonoidHom.toIntLinearMap
     { toFun := fun x => ε ((fun i => τ (x i)) ᵥ* g.1)
       map_zero' := by simp [← Pi.zero_def]
-      map_add' := fun x y => by rw [← map_add, ← add_vecMul]; simp [← Pi.add_def] }
+      map_add' := fun x y => by rw [← map_add (f := _), ← add_vecMul]; simp [← Pi.add_def] }
   have hφ : ∀ x, φ x = ε ((fun i => τ (x i)) ᵥ* g.1) := fun _ => rfl
   have hφu : LinearIndependent ℝ fun k => φ (u k) :=
     (GlobalTheory.T.linearIndependent_vecMul_of_span_rat' E R τ hτ hd n _ u (Fintype.card_fin _) hu' g).map' ε.toLinearEquiv.toLinearMap ε.toLinearEquiv.ker
@@ -119,7 +123,7 @@ theorem red_inf (E : Type) [Field E] [NumberField E] (R : Type) [NormedCommRing 
   have h6 : ∏ p : κ, (2 : ℝ) ^ (l p.1 + 1) ≤ (2 ^ finrank ℚ E) ^ n * ∏ i, ‖φ (w i)‖ ^ finrank ℚ E := by
     rw [Fintype.prod_sigma]
     simp only [Finset.prod_const, Finset.card_univ, ← finrank_eq_card_chooseBasisIndex, RingOfIntegers.rank]
-    calc _ ≤ ∏ i, (2 * ‖φ (w i)‖) ^ finrank ℚ E := Finset.prod_le_prod (fun _ _ => by positivity) fun i _ =>
+    calc _ ≤ ∏ i, (2 * ‖φ (w i)‖) ^ finrank ℚ E := Finset.prod_le_prod₀ (fun _ _ => by positivity) fun i _ =>
           pow_le_pow_left₀ (by positivity) (by rw [zpow_add_one₀ two_ne_zero]; linarith [(hl i).1]) _
       _ = _ := by simp [mul_pow, Finset.prod_mul_distrib]
   have h7 : (∏ p : κ, (2 : ℝ) ^ (l p.1 + 1)) ^ 2 ≤ c₁ * (gram ℝ fun k => φ (u k)).det := by

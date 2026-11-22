@@ -1,18 +1,22 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupProjectionsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleCompactSetsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryActionPreservesHaarLocalStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasureStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyRealStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleHaarEqProductLocalMeasures
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsLocalApproximateIdentity
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
+public import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupProjectionsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleCompactSetsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryActionPreservesHaarLocalStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasureStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyRealStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleHaarEqProductLocalMeasures
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsLocalApproximateIdentity
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountableStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -466,6 +470,7 @@ theorem dom_box : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFi
         algebraMap F (Fv F v) ((N : F) * b.repr (X p.1 p.2.1) p.2.2) ∈ v.adicCompletionIntegers F) ∧
       ∀ (p : Fin 1 × Fin 2 × Fin d) (w : InfinitePlace F),
         ‖(θ ε * algebraMap F (Ainf F) ((N : F) * b.repr (X p.1 p.2.1) p.2.2)) w‖ ≤ r := by
+  open scoped Pointwise in
   intro F E _ _ _ _ _ σ hcm J hJ d b θ S φ A hT C hC
   obtain ⟨hφc, hφs, hφ0, -, hAS, hAoff⟩ := hT
   obtain ⟨⟨_, _, _⟩, -⟩ := GlobalTheory.T.adeles_locally_compact_second_countable F
@@ -705,6 +710,7 @@ theorem term_eq {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {
   simp only [Phi, term, Set.indicator, Set.mem_setOf_eq, (hp h _).1, (hp h _).2, e1, e2]
 
 theorem lside : Equi → CoCpt → LSide := by
+  open scoped Pointwise in
   intro hEq hCo F E _ _ _ _ _ σ J d b li lam μ 𝓕 mi m hcm hJ hAn hli hlam hμ h𝓕 hmi hm θ hθ S φ A hT
   obtain ⟨⟨C, hC, hcov⟩, hμ0, hμt⟩ := hCo F E σ J d b li lam μ 𝓕 mi m hcm hJ hAn hli hlam hμ h𝓕 hmi hm
   obtain ⟨⟨_, _, _⟩, -⟩ := GlobalTheory.T.adeles_locally_compact_second_countable F
@@ -751,7 +757,7 @@ theorem lside : Equi → CoCpt → LSide := by
         Phi θ ε φ A (actW (AF F) σ J h⁻¹ (ratTup (AF F) X.1)) with hf
   have : Countable E := Countable.of_equiv _ (Module.finBasis ℚ E).equivFun.symm.toEquiv
   have hfm : ∀ ε, Measurable (f ε) := fun ε => by
-    refine Measurable.const_mul (Measurable.ennreal_tsum fun X => (hΦm ε).comp ?_) _
+    refine Measurable.const_mul (Measurable.tsum fun X => (hΦm ε).comp ?_) _
     exact (ac.comp (continuous_inv.prodMk continuous_const)).measurable
   obtain ⟨Bd, hBd⟩ := domination hEq F E σ hcm J hJ d b li lam hli hlam θ hθ S φ A hT C⁻¹ hC.inv
   have hbd : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ h, f ε h ≤ Bd := hBd.mono fun ε hε h => by
@@ -790,7 +796,7 @@ theorem lside : Equi → CoCpt → LSide := by
   simp only [hf]
   have hgm : Measurable fun h : HA (AF F) σ J => ∑' X : ({X : Fin 1 → Fin 2 → E | X ≠ 0} : Set _),
       Phi θ ε φ A (actW (AF F) σ J h⁻¹ (ratTup (AF F) X.1)) :=
-    Measurable.ennreal_tsum fun X => (hΦm ε).comp (ac.comp (continuous_inv.prodMk continuous_const)).measurable
+    Measurable.tsum fun X => (hΦm ε).comp (ac.comp (continuous_inv.prodMk continuous_const)).measurable
   rw [lintegral_const_mul (c ε) hgm]
   simp only [hc]
   ring

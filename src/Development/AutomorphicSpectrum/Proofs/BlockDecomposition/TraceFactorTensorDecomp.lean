@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalOfHom
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalOfHom
+
+@[expose] public section
+
 open Matrix Finset
 open scoped InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.RealCount GlobalTheory.CompanionTheory.RealCountG
@@ -23,7 +28,8 @@ theorem trace_pi_blocks {ι : Type} [Fintype ι] [DecidableEq ι] (P : ι → Ty
     · intro i _ hij
       simp [Pi.single_eq_of_ne hij.symm]
     · simp
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.trace_comp_comm']
   have h2 : (S i ∘ₗ LinearMap.proj i) ∘ₗ LinearMap.single ℂ P i = S i := by
@@ -44,7 +50,7 @@ theorem trace_of_block_sandwich : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] 
     rw [LinearEquiv.conj_apply]
     refine LinearMap.ext fun f => funext fun i => ?_
     have := hF (R.symm f) i
-    simpa using this
+    simpa [sandwich] using this
   rw [← LinearMap.trace_conj' F R, hconj, trace_pi_blocks]
   exact Finset.sum_congr rfl fun i _ => trace_sandwich (a i) (b i)
 

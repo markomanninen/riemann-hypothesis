@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BasisBlock0
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BasisBlock0
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.NormFactorizationClause
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -21,7 +25,7 @@ theorem x4v4_ratio_spec {Ω' V : Type*} [Field Ω'] [AddCommGroup V] [Module Ω'
     (hg : g ≠ 0) {a : Ω'} (hf : f = a • g) : ratio (Ω := Ω') f g = a := by
   have hex : ∃ b : Ω', f = b • g := ⟨a, hf⟩
   unfold ratio
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have h2 : hex.choose • g = a • g := hex.choose_spec.symm.trans hf
   exact smul_left_injective Ω' hg h2
 
@@ -60,7 +64,7 @@ theorem x4v4_gen_ne {p : Ideal (KTp K d.D d.N)} (hp : p ∈ d.HtOne) :
   obtain ⟨hprime, hh⟩ := hp
   have hpr := UniqueFactorizationMonoid.isPrincipal_of_height_eq_one hh
   unfold gen
-  rw [dif_pos hpr]
+  rw [dite_eq_left hpr]
   intro h0
   exact p.ne_bot_of_height_eq_one hh ((Submodule.IsPrincipal.eq_bot_iff_generator_eq_zero p).mpr h0)
 
@@ -119,7 +123,7 @@ theorem norm_ratio_pi (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (x : Fin (d.N + 1) �
   classical
   have hmem := d.x4v4_wx_mem hd x c
   have hg0 := d.x4v4_ratio_ne hd c hmem hx
-  obtain ⟨κ, hκ, hN⟩ := d.norm_factorization_clause hd h c _ hg0
+  obtain ⟨κ, hκ, hN⟩ := (d.norm_factorization hd h).1 c _ hg0
   refine ⟨κ, hκ, ?_⟩
   rw [hN, mul_assoc]
   congr 1

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.UnitaryDensity.Cayley
-import Development.WeilBound.ThetaLifts.LatticeBasics.ConstOfGood
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.UniqPlugPl
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflectionsStatement
+module
+
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.UnitaryDensity.Cayley
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ConstOfGood
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.UniqPlugPl
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.UnitaryMatrixEqProdQuasiReflectionsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,7 @@ theorem exists_line {R : Matrix (Fin n) (Fin n) E} (hR : R * R = R) (ha : Rᵀ *
         (cA σ (z.1 : AE F E) - 1) * ((z.1 : AE F E) - 1)) = 0 by linear_combination hz, zero_smul, add_zero]
   · change i ((1 : Matrix _ _ E) a b + (k - 1) * R a b) =
       (1 : Matrix _ _ (AE F E)) a b + (((z.1 : (AE F E)ˣ) : AE F E) - 1) * i (R a b)
-    rw [hk, map_add, map_mul, map_sub, map_one, Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero]
+    rw [hk, map_add (f := _), map_mul, map_sub, map_one, Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero]
 
 def HasLines (L : Subgroup (UA σ J)) : Prop :=
   ∀ R : Matrix (Fin n) (Fin n) E, R * R = R → Rᵀ * J = J * R.map σ → ∀ z : normOne (cA σ),
@@ -118,9 +122,11 @@ theorem cut_rat (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (UA 
     let w : Fin n → E := J *ᵥ fun b => c (p.1 b)
     have hw : w ⬝ᵥ p.1 = h := by rw [hh0, hform, dotProduct_comm]; simp only [w, hcσ]
     have hw' : ∀ b, σ (w b) = (p.1 ᵥ* J) b := fun b => by
-      simp only [w, Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul, hcσ, hh, show ∀ x, σ (σ x) = x from hσ, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w, Matrix.mulVec, Matrix.vecMul, dotProduct, map_sum, map_mul, hcσ, hh, show ∀ x, σ (σ x) = x from hσ, mul_comm]
     have hσh : σ h = h := by
-      rw [← hw, dotProduct, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hw, dotProduct, map_sum]
       simp only [map_mul, hw']
       rw [show ∑ x, (p.1 ᵥ* J) x * σ (p.1 x) = (p.1 ᵥ* J) ⬝ᵥ fun b => σ (p.1 b) from rfl, ← Matrix.dotProduct_mulVec,
         ← hform, ← hh0, ← hw, dotProduct]
@@ -143,7 +149,7 @@ theorem cut_rat (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (UA 
         exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring)
       ⟨⟨_, _, hz _ _ h1', hz _ _ ((mul_comm _ _).trans h1')⟩, mem_normOne.2 (by
         change (1 + a • (i p.2 - 1)) * cA σ (1 + a • (i p.2 - 1)) = 1
-        rw [map_add, map_one, map_smul, map_sub, map_one]
+        rw [map_add (f := _), map_one, map_smul, map_sub, map_one]
         exact hz _ _ h1')⟩
     refine ⟨v * u, mul_mem hv hu, ?_⟩
     have hm : ∀ A B : Matrix (Fin n) (Fin n) E, incM F (A * B) = incM F A * incM F B := fun A B => Matrix.map_mul
@@ -152,7 +158,7 @@ theorem cut_rat (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (UA 
     ext s t
     change (1 : Matrix _ _ (AE F E)) s t + (1 + a • (i p.2 - 1) - 1) * i (h⁻¹ * (p.1 s * w t)) =
       (1 : Matrix _ _ (AE F E)) s t + a • (i ((1 : Matrix _ _ E) s t + (p.2 - 1) / h * (p.1 s * w t)) - (1 : Matrix _ _ (AE F E)) s t)
-    rw [add_sub_cancel_left, map_add, Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero, add_sub_cancel_left,
+    rw [add_sub_cancel_left, map_add (f := _), Matrix.one_apply, Matrix.one_apply, apply_ite i, map_one, map_zero, add_sub_cancel_left,
       smul_mul_assoc, div_eq_mul_inv, mul_assoc, map_mul i (p.2 - 1), map_sub, map_one]
 
 theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (UA σ J)} (hL : HasLines L)
@@ -168,7 +174,7 @@ theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (U
   have j1 : ∀ y, j y * j 1 = j y := fun y => by rw [mj, πj, mul_one]
   let jl : k →ₗ[F] AF F :=
     { toFun := j
-      map_add' := fun x y => by rw [← j1 x, ← j1 y, ← add_mul, ← jπ, map_add, πj, πj]
+      map_add' := fun x y => by rw [← j1 x, ← j1 y, ← add_mul, ← jπ, map_add (f := _), πj, πj]
       map_smul' := fun q x => by rw [RingHom.id_apply, Algebra.smul_def, Algebra.smul_def, mj]; rfl }
   let πa : AF F →ₐ[F] k := ⟨π, fun _ => rfl⟩
   let p : AE F E →+* k ⊗[F] E := (Algebra.TensorProduct.map πa (AlgHom.id F E)).toRingHom
@@ -177,7 +183,7 @@ theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (U
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => exact (congrArg (· ⊗ₜ[F] x) ((jπ a).trans (mul_comm _ _)))
-    | add x y hx hy => rw [map_add, map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, smul_add]
   letI : TopologicalSpace (k ⊗[F] E) := moduleTopology k _
   have : IsModuleTopology k (k ⊗[F] E) := ⟨rfl⟩
   have : IsTopologicalRing (k ⊗[F] E) := IsModuleTopology.isTopologicalRing k _
@@ -188,7 +194,8 @@ theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (U
     simp only [b', Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
   have cq : Continuous q := by
     have : ⇑q = fun x => ∑ i, j (b'.repr x i) • ((1 : AF F) ⊗ₜ[F] b i) := funext fun x => by
-      conv_lhs => rw [← b'.sum_repr x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b'.sum_repr x, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [hb, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
       rfl
@@ -201,7 +208,7 @@ theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (U
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   let i : E →+* AE F E := inclR (F := F) (AF F)
   have hι : ∀ x, (p.comp i) x = (1 : k) ⊗ₜ[F] x := fun x => congrArg (· ⊗ₜ[F] x) (map_one π)
   have hD : DenseRange (p.comp i) := by
@@ -231,7 +238,7 @@ theorem cut_place (hc : IsCMExt F E σ) (hJ : IsHermND σ Jᵀ) {L : Subgroup (U
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (hσ x)
-      | add x y hx hy => rw [map_add, map_add, hx, hy])
+      | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy])
     (IsModuleTopology.continuous_of_linearMap s.toLinearMap) (units_fd k _) J
     (Matrix.ext fun a b => hJ.1 b a) (by simpa using hJ.2) ((mat g).map p) (by
       have := congrArg (·.map p) hg

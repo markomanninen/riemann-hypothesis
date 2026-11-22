@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.PAdicHodge.SenTateCharUnits
-import GroundTheory.PAdicHodge.NormalizedTraceClosure
-import GroundTheory.PAdicHodge.NormalizedTrace
-import GroundTheory.PAdicHodge.AxLemma
-import GroundTheory.PAdicHodge.TateCpTwist
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.SenTateCharUnits
+public import GroundTheory.PAdicHodge.NormalizedTraceClosure
+public import GroundTheory.PAdicHodge.NormalizedTrace
+public import GroundTheory.PAdicHodge.AxLemma
+public import GroundTheory.PAdicHodge.TateCpTwist
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

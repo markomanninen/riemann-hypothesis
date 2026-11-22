@@ -1,13 +1,18 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.ThetaIsometryFactsHold
-import Formalism.LocalRingCardinality.FactDelDualNabla
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DominantWeightPolynomialFunctionalMinorsStatement
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FixedVectorEqOfStandardData
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.DiagramFitsSourceRank
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.ThetaIsometryFactsHold
+public import Formalism.LocalRingCardinality.FactDelDualNabla
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DominantWeightPolynomialFunctionalMinorsStatement
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 open Classical
@@ -20,14 +25,14 @@ noncomputable section
 namespace GlobalTheory.JetChain
 
 def fpair {σ K : Type} [CommRing K] (Q : MvPolynomial σ K) (F : MvPowerSeries σ K) : K :=
-  ∑ α ∈ Q.support, MvPolynomial.coeff α Q * (α.prod fun _ n => (n.factorial : K)) * MvPowerSeries.coeff α F
+  ∑ α ∈ Q.support, AddMonoidAlgebra.coeff Q α * (α.prod fun _ n => (n.factorial : K)) * MvPowerSeries.coeff α F
 
 section Pair
 
 variable {σ K : Type} [CommRing K]
 
 theorem fpair_eq_of_subset (Q : MvPolynomial σ K) (F : MvPowerSeries σ K) (s : Finset (σ →₀ ℕ)) (hs : Q.support ⊆ s) :
-    fpair Q F = ∑ α ∈ s, MvPolynomial.coeff α Q * (α.prod fun _ n => (n.factorial : K)) * MvPowerSeries.coeff α F := by
+    fpair Q F = ∑ α ∈ s, AddMonoidAlgebra.coeff Q α * (α.prod fun _ n => (n.factorial : K)) * MvPowerSeries.coeff α F := by
   refine Finset.sum_subset hs fun α _ hα => ?_
   rw [MvPolynomial.mem_support_iff, not_not] at hα
   rw [hα, zero_mul, zero_mul]
@@ -70,7 +75,8 @@ theorem fpair_sum_left {ι : Type} (s : Finset ι) (Q : ι → MvPolynomial σ K
 
 theorem fpair_sum_right {ι : Type} (s : Finset ι) (Q : MvPolynomial σ K) (F : ι → MvPowerSeries σ K) :
     fpair Q (∑ i ∈ s, F i) = ∑ i ∈ s, fpair Q (F i) := by
-  simp only [fpair, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [fpair, map_sum, Finset.mul_sum]
   exact Finset.sum_comm
 
 theorem fpair_mul_C_right (Q : MvPolynomial σ K) (F : MvPowerSeries σ K) (r : K) :
@@ -99,7 +105,7 @@ theorem prod_factorial_add_single [Fintype σ] [DecidableEq σ] (α : σ →₀ 
   simp
 
 theorem fpair_mul_X [Fintype σ] [DecidableEq σ] (Q : MvPolynomial σ K) (j : σ) (F : MvPowerSeries σ K) :
-    fpair (Q * MvPolynomial.X j) F = fpair Q (MvPowerSeries.pderiv K j F) := by
+    fpair (Q * MvPolynomial.X j) F = fpair Q (MvPowerSeries.pderiv (R := K) j F) := by
   induction Q using MvPolynomial.induction_on' with
   | monomial α c =>
     rw [MvPolynomial.X, MvPolynomial.monomial_mul, mul_one, fpair_monomial, fpair_monomial,
@@ -117,15 +123,17 @@ def linS (c : σ → κ → K) (k : σ) : MvPowerSeries κ K :=
   ∑ j : κ, algebraMap K (MvPowerSeries κ K) (c k j) * MvPowerSeries.X j
 
 theorem constantCoeff_linS (c : σ → κ → K) (k : σ) : MvPowerSeries.constantCoeff (linS c k) = 0 := by
-  simp [linS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linS, map_sum]
 
 theorem hasSubst_linS (c : σ → κ → K) : MvPowerSeries.HasSubst (linS c) :=
   MvPowerSeries.hasSubst_of_constantCoeff_zero (constantCoeff_linS c)
 
 theorem pderiv_linS (c : σ → κ → K) (k : σ) (j : κ) :
-    MvPowerSeries.pderiv K j (linS c k) = MvPowerSeries.C (c k j) := by
+    MvPowerSeries.pderiv (R := K) j (linS c k) = MvPowerSeries.C (c k j) := by
   unfold linS
-  rw [map_sum, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single j]
   · rw [Derivation.leibniz, MvPowerSeries.pderiv_X_self, Derivation.map_algebraMap, smul_zero, add_zero, smul_eq_mul,
       mul_one, MvPowerSeries.c_eq_algebraMap]
   · intro i _ hi
@@ -142,15 +150,15 @@ theorem constantCoeff_subst_linS (c : σ → κ → K) (F : MvPowerSeries σ K) 
     rw [← MvPowerSeries.c_eq_algebraMap, map_sub, MvPowerSeries.constantCoeff_C, sub_self]
   have h1 := MvPowerSeries.constantCoeff_subst_eq_zero hs (constantCoeff_linS c) h0
   rw [← MvPowerSeries.coe_substAlgHom hs] at h1 ⊢
-  conv_lhs => rw [e, map_add, AlgHom.commutes]
-  rw [map_add, h1, add_zero, ← MvPowerSeries.c_eq_algebraMap, MvPowerSeries.constantCoeff_C]
+  conv_lhs => rw [e, map_add (f := _), AlgHom.commutes]
+  rw [map_add (f := _), h1, add_zero, ← MvPowerSeries.c_eq_algebraMap, MvPowerSeries.constantCoeff_C]
 
 theorem fpair_subst_linS (c : σ → κ → K) (Q : MvPolynomial κ K) (F : MvPowerSeries σ K) :
     fpair Q (MvPowerSeries.subst (linS c) F) =
       fpair (MvPolynomial.aeval (fun j : κ => ∑ k : σ, MvPolynomial.C (c k j) * MvPolynomial.X k) Q) F := by
   induction Q using MvPolynomial.induction_on generalizing F with
   | C r => rw [MvPolynomial.aeval_C, fpair_C, MvPolynomial.algebraMap_eq, fpair_C, constantCoeff_subst_linS]
-  | add p q hp hq => rw [fpair_add_left, hp, hq, map_add, fpair_add_left]
+  | add p q hp hq => rw [fpair_add_left, hp, hq, map_add (f := _), fpair_add_left]
   | mul_X p j ih =>
     rw [fpair_mul_X, Formalism.MainNotions.ModuliIntegralCharts.H1.ExpTieAlg.pderiv_subst (hasSubst_linS c), fpair_sum_right]
     simp_rw [pderiv_linS, fpair_mul_C_right, ih, ← fpair_mul_X]
@@ -176,7 +184,7 @@ theorem eval_jetLin {K ι : Type} [Field K] [Fintype ι] [DecidableEq ι] {a b :
       fpair (MvPolynomial.aeval (Sum.elim (fun v => MvPolynomial.C (y v))
         (fun d => MvPolynomial.C (sc d.1) * MvPolynomial.X d)) R) T := by
   induction R using MvPolynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, fpair_add_left]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), fpair_add_left]
   | monomial m c =>
     have hb : MvPolynomial.monomial m c = c • (MvPolynomial.basisMonomials ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) m := by
       rw [MvPolynomial.coe_basisMonomials, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
@@ -259,7 +267,8 @@ theorem jetMap_frame_eq_applyQ : ∀ (D : D7) {p : ℕ} [Fact p.Prime] (N0 N1 : 
   have ht : (t : ℕ) < N1 := lt_of_lt_of_le t.2 hN
   have he : tauPl D ((Equiv.ofBijective (tauPl D) (tauPl_bij D)).symm τ) = τ :=
     (Equiv.ofBijective (tauPl D) (tauPl_bij D)).apply_symm_apply τ
-  simp only [dif_pos ht, map_sum, map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dif_pos ht, map_sum, map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq,
     Sum.elim_inl, Sum.elim_inr, he, GL3Columns.colsOf]
   have hC : ∀ (c : Prop) [Decidable c] (x : ℂ_[p]) (k : D.what₂.Tau × Fin N1 × Fin N0),
       MvPolynomial.C (if c then x else 0) * MvPolynomial.X k = if c then MvPolynomial.C x * MvPolynomial.X k else 0 := by
@@ -282,7 +291,8 @@ theorem jetMap_frame_eq_applyQ : ∀ (D : D7) {p : ℕ} [Fact p.Prime] (N0 N1 : 
       intro b a
       simp only [map_mul]
       ring
-    simp only [e1, ← Finset.sum_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e1, ← Finset.sum_mul, ← map_sum]
     congr 2
     rw [Matrix.mul_apply, ← hBB α']
     simp only [Finset.mul_sum, Finset.sum_mul]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+module
+
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+
+@[expose] public section
 
 noncomputable section
 

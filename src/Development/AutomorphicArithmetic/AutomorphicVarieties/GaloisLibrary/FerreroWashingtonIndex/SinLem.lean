@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Nzd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.Nzd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.SinMap
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -43,7 +47,7 @@ theorem UpperTheory.V.FW.sinLem :
       · exact absurd h hN
     have hcoef := congrArg (fun f : AddMonoidAlgebra k (A ⧸ H) => f.coeff (s • φ (η i0))) hF
     simp only [AddMonoidAlgebra.coeff_sum, AddMonoidAlgebra.coeff_single, AddMonoidAlgebra.coeff_zero,
-      Finsupp.finset_sum_apply, Finsupp.coe_zero, Pi.zero_apply] at hcoef
+      Finsupp.finsetSum_apply, Finsupp.coe_zero, Pi.zero_apply] at hcoef
     rw [Finset.sum_eq_single s] at hcoef
     · simpa using hcoef
     · intro t ht hts

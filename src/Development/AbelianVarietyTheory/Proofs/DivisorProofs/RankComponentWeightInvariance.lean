@@ -1,40 +1,62 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HypothesesX
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GrothendieckDeformation
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
-import Formalism.LocalRingCardinality.DataParamsT
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.MeanLogLeOfBounds
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomWeightHomWeight
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeImageBirationalLinearSystemEqSelfInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NeBotOfNotMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeometricallyConnectedStr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AsIdealSpMapClosedPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanBdLeSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalFlagNonemptyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsExtendVanishCompactifiedFlagSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalIntegralWeightSectionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefLineBundleWeightGapStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StrongerPublishedHypothesesImplyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProportionalPositiveVolumesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPrincipalisationBoundStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivLeSubMulDiv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommonRestrIsoTens
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralBaseChangeRationalFunctionFieldFiniteVStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimFieldBaseChangeLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopSelfIntersectionNefLeCuspFormGrowthStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOrIsEmptyGenericMemberLinearSystemStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HypothesesX
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GrothendieckDeformation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
+public import Formalism.LocalRingCardinality.DataParamsT
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsCoordAtPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedPointHeightLatticeSmul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.VolMeasureOfAdd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeImageBirationalLinearSystemEqSelfInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NeBotOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GeometricallyConnectedStr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnected
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AsIdealSpMapClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanBdLeSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalFlagNonempty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormsExtendVanishCompactifiedFlagSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalIntegralWeightSection
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ToroidalChartsForFan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqLastAddGaps
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommonRestrIsoTens
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagSpaceComponentSmoothProjectiveConnectedStatement
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeadWeightLineNef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefPullLLStepEx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusFlagUnitWeightBundlesNef
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ToroidalFlagProportionalityOfGoodChernWeilStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEffCartierCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMulEqOfGenericUniqueComplexPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPositivityPrincipalisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPositivityPrincipalisationDeep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivLeSubMulDiv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralBaseChangeRationalFunctionFieldFiniteVStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimFieldBaseChangeLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModificationLineBundleGlobalSectionsDimPullEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopSelfIntersectionNefLeCuspFormGrowthStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOrIsEmptyGenericMemberLinearSystemStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,8 +72,8 @@ open Limits
 
 namespace GlobalTheory.JetRank
 
-theorem isProjOver_along {k : Type} [Field k] {X Z : Scheme.{0}} [Algebra k Γ(X, ⊤)] (hp : IsProjOver (strHom k X))
-    (i : Z ⟶ X) [IsClosedImmersion i] : letI := algebraΓAlong k i; IsProjOver (strHom k Z) := by
+theorem isProjOver_along {k : Type} [Field k] {X Z : Scheme.{0}} [Algebra k Γ(X, ⊤)] (hp : IsProjOver (strHom k (X := X)))
+    (i : Z ⟶ X) [IsClosedImmersion i] : letI := algebraΓAlong k i; IsProjOver (strHom k (X := Z)) := by
   letI := algebraΓAlong k i
   obtain ⟨n, e, he, hs⟩ := hp
   exact ⟨n, i ≫ e, inferInstance, by rw [Category.assoc, hs, comp_strHom (appTop_algebraMap_along k i)]⟩
@@ -68,24 +90,25 @@ theorem dim_zeroScheme_le [IsIntegral X] [IsLocallyNoetherian X] {L : LB X} (hL 
   exact (topologicalKrullDim_eq_of_isEmbedding (secIdeal hL t).subschemeι.isClosedEmbedding.isEmbedding
     (secIdeal hL t).range_subschemeι).symm
 
-theorem globalSections_dim_le_div_add_restriction [IsIntegral X] (hp : IsProjOver (strHom k X)) {L B : LB X} (hL : L.IsLB) (hB : B.IsLB) {t : L.Sec}
+theorem globalSections_dim_le_div_add_restriction [IsIntegral X] (hp : IsProjOver (strHom k (X := X))) {L B : LB X} (hL : L.IsLB) (hB : B.IsLB) {t : L.Sec}
     (ht : t ≠ 0) : letI := algebraΓAlong k (secIdeal hL t).subschemeι
     lbH0 k B ≤ lbH0 k (LB.div B L) + lbH0 k (B.pull (secIdeal hL t).subschemeι) := by
-  letI := algebraΓAlong k (secIdeal hL t).subschemeι
-  have := isNoetherian_of_isProjOver hp
-  have := (mono_cutHom_structureModule_iff hL t).2 ((sec_ne_zero_iff t).1 ht)
-  have hF := finiteCohTwists_of_isProjOver (algebraMap_eq_strHom k X) (structureModule X) hp
-  have h := hdim₂_le k (Twist.shortExact_map hB (shortExact_cutComplex (structureModule X) hL t)) 0
-    ((hF.twist (Twist.isLB_lbZPow hL (-1)) _ hB).finite 0) ((hF.cut hL t _ hB).finite 0)
-  obtain ⟨e₁⟩ := nonempty_twist_twist_iso_of_cls_eq (structureModule X) (Twist.isLB_lbZPow hL (-1)) hB
-    (LB.isLB_div hB hL) (by rw [cls_div hB hL, cls_lbZPow hL]; abel)
-  obtain ⟨e₂, -⟩ := exists_cut_structureModule_iso hL t
-  have := Twist.isQuasicoherent_twist (F := structureModule _) (LB.isLB_pull hB (secIdeal hL t).subschemeι)
-  refine h.trans_eq (congrArg₂ (· + ·) (hdim_congr k 0 e₁) ((hdim_congr k 0 ((twistFunctor B).mapIso e₂)).trans
-    ((hdim_congr k 0 (Twist.projIso B _ _)).symm.trans ?_)))
-  exact hdim_pushforward k (appTop_algebraMap_along k _) _ 0
+  set_option maxHeartbeats 16000000 in
+    letI := algebraΓAlong k (secIdeal hL t).subschemeι
+    have := isNoetherian_of_isProjOver hp
+    have := (mono_cutHom_structureModule_iff hL t).2 ((sec_ne_zero_iff t).1 ht)
+    have hF := finiteCohTwists_of_isProjOver (algebraMap_eq_strHom k X) (structureModule X) hp
+    have h := hdim₂_le k (Twist.shortExact_map hB (shortExact_cutComplex (structureModule X) hL t)) 0
+      ((hF.twist (Twist.isLB_lbZPow hL (-1)) _ hB).finite 0) ((hF.cut hL t _ hB).finite 0)
+    obtain ⟨e₁⟩ := nonempty_twist_twist_iso_of_cls_eq (structureModule X) (Twist.isLB_lbZPow hL (-1)) hB
+      (LB.isLB_div hB hL) (by rw [cls_div hB hL, cls_lbZPow hL]; abel)
+    obtain ⟨e₂, -⟩ := exists_cut_structureModule_iso hL t
+    have := Twist.isQuasicoherent_twist (F := structureModule _) (LB.isLB_pull hB (secIdeal hL t).subschemeι)
+    refine h.trans_eq (congrArg₂ (· + ·) (hdim_congr k 0 e₁) ((hdim_congr k 0 ((twistFunctor B).mapIso e₂)).trans
+      ((hdim_congr k 0 (Twist.projIso B _ _)).symm.trans ?_)))
+    exact hdim_pushforward k (appTop_algebraMap_along k _) _ 0
 
-theorem interNum_nonneg (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k X)) {d : ℕ}
+theorem interNum_nonneg (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k (X := X))) {d : ℕ}
     (hd : topologicalKrullDim X ≤ d) {P : Fin d → LB X} (hP : ∀ i, IsNef k (P i)) :
     0 ≤ interNum k (structureModule X) P := by
   rcases hd.eq_or_lt with h | h
@@ -93,7 +116,7 @@ theorem interNum_nonneg (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOv
   · exact (interNum_eq_zero_of_isProjOver (algebraMap_eq_strHom k X) _ hp
       (by rwa [QCoh.suppDim_structureModule, Fintype.card_fin]) fun i => (hP i).isLB).ge
 
-theorem interNum_cons_nonneg [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k X)) {d : ℕ}
+theorem interNum_cons_nonneg [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k (X := X))) {d : ℕ}
     (hd : topologicalKrullDim X ≤ (d + 1 : ℕ)) {B : LB X} {P : Fin d → LB X} (hB : B.IsLB) (hs : HasNonzeroSec B)
     (hP : ∀ i, IsNef k (P i)) : 0 ≤ interNum k (structureModule X) (Fin.cons B P : Fin (d + 1) → LB X) := by
   obtain ⟨t, ht⟩ := hs
@@ -107,7 +130,7 @@ theorem interNum_cons_nonneg [IsIntegral X] (hN : GlobalTheory.Published.NefNume
   exact interNum_nonneg hN (isProjOver_along hp _) (dim_zeroScheme_le hB ht hd)
     fun i => (hP i).pull_of_isClosedImmersion _ hi
 
-theorem interNum_mono [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k X)) {d : ℕ}
+theorem interNum_mono [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k (X := X))) {d : ℕ}
     (hd : topologicalKrullDim X ≤ (d + 1 : ℕ)) {P Q R : Fin (d + 1) → LB X} (hP : ∀ i, IsNef k (P i))
     (hQ : ∀ i, IsNef k (Q i)) (hR : ∀ i, (R i).IsLB) (hR' : ∀ i, IsNef k (R i) ∨ HasNonzeroSec (R i))
     (e : ∀ i, cls (Q i) (hQ i).isLB = cls (P i) (hP i).isLB + cls (R i) (hR i)) :
@@ -141,7 +164,7 @@ theorem interNum_mono [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (
 theorem cons_const {α : Type*} (a : α) (d : ℕ) : (Fin.cons a (fun _ : Fin d => a) : Fin (d + 1) → α) = fun _ => a :=
   funext fun i => Fin.cases rfl (fun _ => rfl) i
 
-theorem interNum_cons_le [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k X)) {d : ℕ}
+theorem interNum_cons_le [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics) (hp : IsProjOver (strHom k (X := X))) {d : ℕ}
     (hd : topologicalKrullDim X ≤ (d + 1 : ℕ)) {B L L' P Q : LB X} (hB : IsNef k B) (hL : IsNef k L) (hL' : IsNef k L')
     (hP : P.IsLB) (hQ : IsNef k Q) (n : ℕ) (hs : HasNonzeroSec P) (e₁ : cls L' hL'.isLB = cls L hL.isLB + cls P hP)
     (e₂ : n • cls L' hL'.isLB = cls B hB.isLB + cls Q hQ.isLB) :
@@ -160,9 +183,9 @@ theorem interNum_cons_le [IsIntegral X] (hN : GlobalTheory.Published.NefNumerics
 end Nef
 
 theorem exists_step {k : Type} [Field k] {X : Scheme.{0}} [IsIntegral X] [a : Algebra k Γ(X, ⊤)]
-    (hp : IsProjOver (strHom k X)) {d : ℕ} (hd : topologicalKrullDim X ≤ (d + 1 : ℕ)) {L : LB X} (hL : IsGenerated L) :
+    (hp : IsProjOver (strHom k (X := X))) {d : ℕ} (hd : topologicalKrullDim X ≤ (d + 1 : ℕ)) {L : LB X} (hL : IsGenerated L) :
     ∃ (K : Type) (_ : Field K) (H : Scheme.{0}) (_ : Algebra K Γ(H, ⊤)) (ρ : H ⟶ X),
-      IsProjOver (strHom K H) ∧ topologicalKrullDim H ≤ d ∧ (IsIntegral H ∨ IsEmpty H) ∧
+      IsProjOver (strHom K (X := H)) ∧ topologicalKrullDim H ≤ d ∧ (IsIntegral H ∨ IsEmpty H) ∧
       (∀ B : LB X, B.IsLB → lbH0 k B ≤ lbH0 k (LB.div B L) + lbH0 K (B.pull ρ)) ∧
       ∀ (e : ℕ) (P : Fin e → LB X), (∀ i, (P i).IsLB) →
         interNum K (structureModule H) (fun i => (P i).pull ρ) =
@@ -181,7 +204,7 @@ theorem exists_step {k : Type} [Field k] {X : Scheme.{0}} [IsIntegral X] [a : Al
   obtain ⟨hpr, -⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB f).1 hp
   have := GlobalTheory.T.isIntegral_baseChange_rationalFunctionField_finiteVars k N X _ f f' π H
   obtain ⟨t, ht, hH⟩ := GlobalTheory.T.isIntegral_or_isEmpty_generic_member_linearSystem k N X _ f f' π H L hLB b hb
-  have hp' : IsProjOver (strHom K (pullback f (spMap (algebraMap k K)))) := by
+  have hp' : IsProjOver (strHom K (X := (pullback f (spMap (algebraMap k K))))) := by
     rw [strHom_eq (f := f') fun _ => rfl]
     exact PosBaseChange.isProjOver_of_isPullback H hp
   have hL' := LB.isLB_pull hLB π
@@ -209,7 +232,7 @@ theorem exists_step {k : Type} [Field k] {X : Scheme.{0}} [IsIntegral X] [a : Al
     · exact Fin.cases rfl (fun _ => rfl) i
 
 theorem globalSections_dim_le_of_intersection_bound (hN : GlobalTheory.Published.NefNumerics) (d : ℕ) : ∀ (k : Type) [Field k] (X : Scheme.{0}) [IsIntegral X]
-    [Algebra k Γ(X, ⊤)], IsProjOver (strHom k X) → topologicalKrullDim X ≤ d → ∀ {L : LB X}, IsGenerated L →
+    [Algebra k Γ(X, ⊤)], IsProjOver (strHom k (X := X)) → topologicalKrullDim X ≤ d → ∀ {L : LB X}, IsGenerated L →
     ∀ (a : ℕ) {B : LB X}, B.IsLB → (∀ e, d = e + 1 →
       interNum k (structureModule X) (Fin.cons B (fun _ : Fin e => L) : Fin (e + 1) → LB X) < (a + 1) * topSelfIntersection k L d) →
     (lbH0 k B : ℤ) ≤ (a + d).choose d * topSelfIntersection k L d := by
@@ -313,7 +336,8 @@ theorem imageDeg_eq_del (hQ : GlobalTheory.HSCore.Quoted) {F : Type} [Field F] [
       have hF : ∀ r, algebraMap F Ω r ∈ S.ratioField x.1 := fun r =>
         Subfield.subset_closure (Or.inl ⟨r, by rw [LinSys.baseHom_ptOver]⟩)
       have h₃ : ∀ v, a * ev v / S.coords x.1 j ∈ S.ratioField x.1 := fun v => by
-        rw [← b.sum_repr v, map_sum, Finset.mul_sum, Finset.sum_div]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← b.sum_repr v, map_sum, Finset.mul_sum, Finset.sum_div]
         refine sum_mem fun i _ => ?_
         rw [map_smul, Algebra.smul_def, mul_left_comm, mul_div_assoc]
         exact mul_mem (hF _) (Subfield.subset_closure (Or.inr ⟨i, j, by rw [congrFun hc i]; rfl⟩))
@@ -443,7 +467,7 @@ theorem topSelf_pull (hN : GlobalTheory.Published.NefNumerics) {k : Type} [Field
     (M : Modif p U D) (hc' : GeometricallyConnected M.str) :
     letI := algebraΓOfHom p
     letI := algebraΓOfHom M.str
-    IsIntegral M.X ∧ IsProjOver (strHom k M.X) ∧ topologicalKrullDim M.X = D ∧
+    IsIntegral M.X ∧ IsProjOver (strHom k (X := M.X)) ∧ topologicalKrullDim M.X = D ∧
       (∀ B : LB Y, B.IsLB → lbH0 k (B.pull M.σ) = lbH0 k B) ∧
       ∀ B : LB Y, IsNef k B → IsNef k (B.pull M.σ) ∧ topSelfIntersection k (B.pull M.σ) D = topSelfIntersection k B D := by
   letI := algebraΓOfHom p
@@ -459,10 +483,10 @@ theorem topSelf_pull (hN : GlobalTheory.Published.NefNumerics) {k : Type} [Field
   obtain ⟨hpr, A, hA⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB p).1 hp
   obtain ⟨hpr', A', hA'⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB M.str).1 M.proj
   have : IsProper M.σ := IsProper.of_comp M.σ p
-  have : IsProper (strHom k Y) := e ▸ hpr
+  have : IsProper (strHom k (X := Y)) := e ▸ hpr
   have h0 := GlobalTheory.T.modification_globalSectionsDim_pull_eq k Y p U D hs hp M
-  have hp₁ : IsProjOver (strHom k Y) := by rw [e]; exact hp
-  have hp₂ : IsProjOver (strHom k M.X) := by rw [e']; exact M.proj
+  have hp₁ : IsProjOver (strHom k (X := Y)) := by rw [e]; exact hp
+  have hp₂ : IsProjOver (strHom k (X := M.X)) := by rw [e']; exact M.proj
   refine ⟨inferInstance, hp₂, hd', h0, fun B hB => ?_⟩
   have hB' : IsNef k (B.pull M.σ) := PosBaseChange.isNef_pull hB hA hA' M.σ M.σ.isClosedMap
   refine ⟨hB', ?_⟩
@@ -534,7 +558,7 @@ end Comp
 
 theorem gapGe_zero_of_antitone {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
     {Dw : Datum H} {la : AllWt.Weight Dw} (h : ∀ τ, Antitone (la τ)) : GapGe 0 la := fun τ k hk => by
-  rw [gap, dif_pos hk, sub_nonneg]
+  rw [gap, dite_eq_left hk, sub_nonneg]
   exact h τ (Fin.mk_le_mk.2 k.le_succ)
 
 end
@@ -549,55 +573,6 @@ open GlobalTheory.LevDesc (TypeFrame grpHR grpGHR latN levDet secRing transl pul
 open GlobalTheory.IndefiniteRowSideFullHecke.LevelStructureAutomorphisms (LevelAut)
 open GlobalTheory.BadCount
 open scoped TensorProduct
-
-theorem rkC_le : GlobalTheory.CovTop.HypothesesX → Hypotheses2 → GlobalTheory.Published.SiegelToroidalIntegral → GlobalTheory.Published.ToroidalForFanKS → GlobalTheory.Published.GrothendieckDeformation → GlobalTheory.HSCore.Quoted → GlobalTheory.Published.SemiAbelianLieSeminegative → ∀ (D : D7) (T : CoreJ D), LawsJ T → ∀ j : ℕ, 1 ≤ (T.Q.Dw j).p → 1 ≤ (T.Q.Dw j).q → 2 < Module.finrank ℚ D.host.E / 2 → InR D j → ∀ (Y : Deep T.toCore j) (e : ℕ) (o : ℝ), Y.Good e o → ∀ (Z : Comp Y.d.Xo₂ Y.d.c₂) (u la : AllWt.Weight (T.Q.Dw j)) (n a : ℕ), GapGe (((CompHt.dimFlag (T.Q.Dw j) + 3) * ((CompHt.dimFlag (T.Q.Dw j) + 1).choose 2 + 4 * ((T.Q.Dw j).p + (T.Q.Dw j).q) + CompHt.dimFlag (T.Q.Dw j) + 3) : ℕ) : ℤ) u → (∀ τ, Antitone (la τ)) → (∀ τ, Antitone ((n : ℤ) • u τ - la τ)) → (n : ℝ) * CompHt.topDeg Y.U Z u < (a + 1) * Y.dg u Z → Y.rkC la Z ≤ ((a + CompHt.dimFlag (T.Q.Dw j)).choose (CompHt.dimFlag (T.Q.Dw j)) : ℕ) * Y.dg u Z := by
-  intro hX hP2 hSi hTo hGD hQ hSe D T hT j hp hq hf hj Y e o hY Z u la n a hu hla hnu hlt
-  have hP := GlobalTheory.T.stronger_published_hypotheses_imply hP2
-  have hDe := dimFlag_eq (T.Q.Dw j)
-  have hD : 1 ≤ FlagTan.dimFlag (T.Q.Dw j) :=
-    Nat.mul_pos (by omega) (Nat.choose_pos (by omega))
-  obtain ⟨TF⟩ := GlobalTheory.T.toroidal_flag_nonempty hP _ _ _ _ Y.d.Xo₂ Y.d.c₂ hD
-  have hV := GlobalTheory.VarFlag.isVariety₀_flag _ _ _ _ _ _ TF Z hY.geo
-  have hC : ∀ la, CuspIso TF.X Z Y.U la := fun la =>
-    ⟨GlobalTheory.T.cuspForms_extend_vanish_compactifiedFlagSpace D T.toCore j Y e o hY hf Z TF la, GlobalTheory.HSApp.vanBd_le_space D T.toCore j Y e o hY hf Z TF la⟩
-  have hC0 : (0 : ℤ) ≤ (((CompHt.dimFlag (T.Q.Dw j) + 1).choose 2 : ℕ) : ℤ) := Int.natCast_nonneg _
-  have hD0 : (0 : ℤ) ≤ (CompHt.dimFlag (T.Q.Dw j) : ℤ) := Int.natCast_nonneg _
-  have hp0 : (0 : ℤ) ≤ ((T.Q.Dw j).p : ℤ) := Int.natCast_nonneg _
-  have hq0 : (0 : ℤ) ≤ ((T.Q.Dw j).q : ℤ) := Int.natCast_nonneg _
-  have hF : FreeOnOpen TF.X Z Y.U u := by
-    refine GlobalTheory.T.toroidal_integral_weight_section hP hGD hQ hP2.q15 hP2.q16 hSi hTo.toroidalChartsForFan hSe _ _ _ _ _ _ TF Z _ Y.U hY.geo hD _ (fun τ k hk => ?_) (hC _)
-    have h₁ := hu τ k hk
-    have h₂ := gap_kap_le (Dw := T.Q.Dw j) τ hk
-    rw [Pi.sub_apply, gap_sub, ← hDe]
-    push_cast at h₁ h₂ ⊢
-    nlinarith
-  have hB : BirOn Y.U Z (wtOf (T.Q.Dw j) u 0) := by
-    refine GlobalTheory.T.weight_principalisation_bound hX hGD hQ hSi hP hP2.q15 hP2.q16 D T hT j hp hq Y e o hY u (fun τ a b hab => ?_) Z
-    have h₁ := hu τ a (hab ▸ b.2)
-    rw [gap_eq _ hab] at h₁
-    push_cast at h₁ ⊢
-    nlinarith
-  have hu1 : GapGe 1 u := hu.mono (by push_cast; nlinarith)
-  have hsa : ∀ τ, StrictAnti (u τ) := fun τ => by
-    have key : ∀ (m : ℕ) (w : Fin m → ℤ), (∀ k, k + 1 < m → 1 ≤ gap w k) → StrictAnti w := fun m w hw => by
-      cases m with
-      | zero => exact fun a => a.elim0
-      | succ m =>
-        refine Fin.strictAnti_iff_succ_lt.2 fun i => ?_
-        have := hw i (by omega)
-        rw [show (i : ℕ) = (i.castSucc : ℕ) from rfl, gap_eq w (j := i.succ) rfl] at this
-        omega
-    exact key _ _ (hu1 τ)
-  obtain ⟨hPr, hv⟩ := GlobalTheory.T.proportional_positive_volumes hP2 hSi hTo hSe D T hT j hp hq hf hj Y e o hY
-  have hnef := GlobalTheory.T.nef_line_bundle_weight_gap hP hQ.nef hSe _ _ _ _ _ _ TF Z hY.geo
-  have key := finrank_cusp_le (n := n) (a := a) (la := la) hQ hP2.q16 hV hD hC hF hB
-    (mul_nonneg (hv Z).le (Int.cast_pos.2 (CompHt.vdm_pos hsa)).le) (hPr Z u hsa)
-    ⟨hnef _ (hu1.mono zero_le_one), hnef _ (gapGe_zero_of_antitone hla), hnef _ (gapGe_zero_of_antitone fun τ => by
-      simpa using hnu τ)⟩ hlt
-  rw [← hDe] at key
-  have := Vanishing.finite_top hV.2.1 (isLB_L₀ TF.X Z la)
-  have : Module.Finite Y.d.c₂.F (Cusp Z Y.U la) := .equiv (hC la).1.equiv.symm
-  exact_mod_cast (Submodule.finrank_le _).trans key
 
 end
 

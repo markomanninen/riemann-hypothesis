@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -11,7 +15,7 @@ theorem UpperTheory.V.FW.pushDiff :
     apply Finset.sum_nbij' (fun s : ZMod M => s + (N : ZMod M)) (fun s : ZMod M => s - (N : ZMod M))
     · intro s hs
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hs ⊢
-      rw [map_add, hs, map_natCast]
+      rw [map_add (f := _), hs, map_natCast]
       ring
     · intro s hs
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hs ⊢

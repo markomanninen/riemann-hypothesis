@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.PSmooth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.PSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,9 +149,10 @@ theorem claim {U : Set V} {A : Γ →* (V →L[ℝ] V)} {φ : V → ℝ} (hL : P
         ((fderiv ℝ (psi A φ γ) h).smulRight (eta A φ c j (cons γ σ) h)) := by
       rw [show eta A φ c (j + 1) σ = extDeriv (Kf A φ (eta A φ c j) σ) from eta.eq_2 A φ c σ j]
       show ContinuousAlternatingMap.alternatizeUncurryFin (fderiv ℝ (Kf A φ (eta A φ c j) σ) h) = _
-      rw [hder, ← ContinuousAlternatingMap.alternatizeUncurryFinCLM_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hder, ← ContinuousAlternatingMap.alternatizeUncurryFinCLM_apply, map_sum]
       refine Finset.sum_congr rfl fun γ _ => ?_
-      rw [map_add, map_smul, ContinuousAlternatingMap.alternatizeUncurryFinCLM_apply,
+      rw [map_add (f := _), map_smul, ContinuousAlternatingMap.alternatizeUncurryFinCLM_apply,
         ContinuousAlternatingMap.alternatizeUncurryFinCLM_apply]
       have hz : ContinuousAlternatingMap.alternatizeUncurryFin
           (fderiv ℝ (eta A φ c j (cons γ σ)) h) = 0 := hCl H k c j (cons γ σ) h hh

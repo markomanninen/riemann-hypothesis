@@ -1,19 +1,23 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TLChoiceChk
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinusId
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatrixUnitZeroZeroEqInsert
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IdentityOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftZeroOrder
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfXOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMulVecOfFixedVector
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorEquivariance
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.XFibreOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TLChoiceChk
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinusId
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LetterLiftOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MatrixUnitZeroZeroEqInsert
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IdentityOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAlgebraFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftCapelliOperators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftZeroOrder
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfFunctions
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftOfXOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InvMulVecOfFixedVector
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapelliVectorEquivariance
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.XFibreOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 
@@ -21,8 +25,8 @@ theorem lift_of_x : Formalism.FourierDecayAlt.TL.LiftX :=
   lift_of_x_of_parts lift_zero_order lift_closed_under_operations
     (x_fibre_of_parts big_cell_values omega_polynomial_facts capelli_vector_frame capelli_vector_equivariance)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem top_lift_exists : Formalism.FourierDecayAlt.TL.TopLiftExists3 := by
   classical
   refine ⟨11, by norm_num, ?_⟩
@@ -120,7 +124,8 @@ theorem top_lift_exists : Formalism.FourierDecayAlt.TL.TopLiftExists3 := by
         simp [D.positionted, Fr.ofWord, P5.bTall, P5.bTl, Wd.bT, Fr.Start.frame]
       have he : e = Wd.e1 := funext fun i => (Nat.not_lt_zero _ i.2).elim
       rw [h1, he]
-      simpa using hΦ
+      change Top.IsRadOf P Bs Φ F
+      exact hΦ
     · rw [if_neg hne]
       obtain ⟨nf, fib, -, -, hR⟩ := hDw w e hw
       exact hR F hFc Φ hΦ

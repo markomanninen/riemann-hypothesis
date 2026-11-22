@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.UnipotentLeDiagonalStabiliser
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.UnipotentLeDiagonalStabiliser
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldB
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,10 @@ theorem incM_mul' {α β γ : Type} [Fintype β] (A : Matrix α β E) (C : Matri
 theorem incM_transpose' {α β : Type} (A : Matrix α β E) : incM F Aᵀ = (incM F A)ᵀ := rfl
 
 theorem incM_map_cA {α β : Type} (A : Matrix α β E) : (incM F A).map (cA σ) = incM F (A.map σ) := by
-  ext i j; exact GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR σ (A i j)
+  ext i j
+  show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
+    ((1 : AF F) ⊗ₜ[F] A i j) = (1 : AF F) ⊗ₜ[F] σ (A i j)
+  rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
 
 theorem map_cA_mul {α β γ : Type} [Fintype β] (A : Matrix α β (AE F E)) (C : Matrix β γ (AE F E)) :
     (A * C).map (cA σ) = A.map (cA σ) * C.map (cA σ) := Matrix.map_mul (f := (cA σ).toRingHom)

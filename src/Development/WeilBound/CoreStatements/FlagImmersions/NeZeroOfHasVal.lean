@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosedStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosedStatement
+
+@[expose] public section
 
 noncomputable section
 

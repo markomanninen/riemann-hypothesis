@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RallisInnerProduct.GraphRelationExtendsFromFockVectorsToKFinite
-import Development.WeilBound.RepresentationTheoryGL.EisensteinResidues.AnisotropicGlobalForms.DmOfHyp
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RallisInnerProduct.GraphRelationExtendsFromFockVectorsToKFinite
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinResidues.AnisotropicGlobalForms.DmOfHyp
+
+@[expose] public section
 
 section
 open scoped ComplexConjugate Matrix NNReal ENNReal TensorProduct Classical

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.YmDerivSt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseJidPow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.YmDeriv
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.YmDerivSt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseJidPow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.YmDeriv
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,7 +146,7 @@ theorem taylorHasse_of (hY : YmDeriv) : TaylorHasse := by
       rw [h0, add_zero] at hq
       exact Prod.ext hq h0
     have hdeg : Finsupp.degree q.1 + Finsupp.degree q.2 = k := by
-      rw [← map_add, hq, ← size_eq_degree, hβs]
+      rw [← map_add (f := _), hq, ← size_eq_degree, hβs]
     have hpos : Finsupp.degree q.2 ≠ 0 := fun h0 => hq2 ((Finsupp.degree_eq_zero_iff _).1 h0)
     have hA := hasse_mem_pow_smul_HK G la (wt0 D j) q.1 (∑ i, γ i) _ (ym_mem G la γ)
     rw [hγk, size_eq_degree] at hA

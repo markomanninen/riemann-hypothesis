@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qj6.ex_lift :
     ∀ {M Ω C : Type} [inst : Field M] [NumberField M] [inst_2 : Field Ω]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftSemiTmul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -81,7 +85,7 @@ theorem comparison_degree_one_coboundary (m : BC F F') (x : S ⊗[R] C0 F) :
     th1 m ((d0 F).baseChange S x) = d0 F' (th0 m x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul s g =>
     rw [LinearMap.baseChange_tmul, th1, th0, liftSemi_tmul, liftSemi_tmul, map_smul]
     congr 1
@@ -93,14 +97,14 @@ theorem comparison_degree_two_coboundary (m : BC F F') (x : S ⊗[R] C1 F) :
     th2 m ((d1 F).baseChange S x) = d1 F' (th1 m x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul s g =>
     rw [LinearMap.baseChange_tmul, th2, th1, liftSemi_tmul, liftSemi_tmul, map_smul]
     congr 1
     funext T T' T'' φ ψ
     change m.α T'' (mp F ψ (g T T' φ) - g T T'' (φ ≫ ψ) + g T' T'' ψ) =
       mp F' ψ (m.α T' (g T T' φ)) - m.α T'' (g T T'' (φ ≫ ψ)) + m.α T'' (g T' T'' ψ)
-    rw [map_add, map_sub, m.naturality]
+    rw [map_add (f := _), map_sub, m.naturality]
 
 theorem model_comparison_degree_zero_bijective (R S C P₀ P₁ P₂ : Type) [CommRing R] [CommRing S] [Algebra R S] [Category.{0} C]
     (F : C ⥤ CommAlgCat.{0} R) (F' : C ⥤ CommAlgCat.{0} S) [AddCommGroup P₀] [AddCommGroup P₁]

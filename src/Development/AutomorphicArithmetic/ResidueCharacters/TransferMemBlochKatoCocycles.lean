@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictionCorestrictionH1f
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictionCorestrictionH1f
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct
 
@@ -110,10 +114,11 @@ theorem index_smul_mem [IsTopologicalGroup G'] (PD : PeriodData G Qp K₀ K B Bd
         (c ((Quotient.out (g • q))⁻¹ * g * Quotient.out q))) =
         T.L.T.mkQ (trCochain ι T z g) + ∑ q : G' ⧸ ι.range, repD T.L (Quotient.out (g • q))
           (actD T.L ((Quotient.out (g • q))⁻¹ * g * Quotient.out q) w - w) := by
-      rw [trCochain_apply, map_sum, ← Finset.sum_add_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [trCochain_apply, map_sum, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun q _ => ?_
       obtain ⟨a, ha⟩ := MonoidHom.mem_range.mp (hD.1 g q)
-      rw [← ha, hcsplit a, hinv, map_add]
+      rw [← ha, hcsplit a, hinv, map_add (f := _)]
       rfl
     rw [Nat.cast_smul_eq_nsmul]
     have hh : ι.range.index • c g = (∑ q : G' ⧸ ι.range, repD T.L (Quotient.out (g • q))

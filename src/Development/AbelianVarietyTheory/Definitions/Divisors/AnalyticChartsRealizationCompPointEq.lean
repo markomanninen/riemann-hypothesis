@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ValAtLem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,8 +56,8 @@ variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam
 @[reducible] def Charts.Obj.ratAlg {K : Charts F} (T : K.Obj) : Algebra ℚ T.C :=
   ((algebraMap (Hol F.V) T.C).comp ((algebraMap ℂ (Hol F.V)).comp (algebraMap ℚ ℂ))).toAlgebra
 
-open Classical in
 
+open Classical in
 def Charts.Obj.δ {K : Charts F} (T : K.Obj) : DividedPowers T.J :=
   letI := T.ratAlg
   RatAlgebra.dividedPowers T.J
@@ -115,6 +119,8 @@ def functor : K.Obj ⥤ Thick (dp0 B) s where
       comm := fun _ ↦ rfl
       dp := letI := T'.ratAlg; isDPMorphism_of_rat T.δ T'.δ (f.φ : T.C →+* T'.C) f.mem
       pt := r.analyticChartsRealization_comp_point_eq f }
+  map_id _ := Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
+  map_comp _ _ := Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
 
 def coef : CoefMap σ (O (dp0 B) s) K.Oc where
   G := r.functor
@@ -173,7 +179,7 @@ theorem isHolTo_affine {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {T 
 theorem valAt'_spMap {R : Type} [CommRing R] (ψ : R →+* ℂ) (t : R) :
     valAt' (spMap ψ) ⊤ ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom t) = ψ t := by
   have h : ⊤ ≤ (spMap ψ) ⁻¹ᵁ ⊤ := le_top
-  rw [valAt', dif_pos h, valAt]
+  rw [valAt', dite_eq_left h, valAt]
   have e : (spMap ψ).appLE ⊤ ⊤ h = (spMap ψ).appTop := (spMap ψ).appLE_eq_app
   have n := congrArg (fun φ ↦ φ.hom t) (Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom ψ))
   simp only [CommRingCat.hom_comp, RingHom.comp_apply, CommRingCat.hom_ofHom] at n
@@ -214,8 +220,8 @@ theorem perCl_injective (F : Fam I g Λ) : Function.Injective F.allCharts.perCl 
   rw [Charts.fn_sh _ _ hp, Fam.shift, hc z hz 0 (0 + F.τ l z), sub_self] at h4
   exact sub_eq_zero.1 h4.symm
 
-variable (I) in
 
+variable (I) in
 def fam : Fam I 1 ℤ where
   V := ⊤
   τ := { toFun l := fun _ _ ↦ l * (2 * Real.pi * Complex.I)
@@ -223,16 +229,16 @@ def fam : Fam I 1 ℤ where
          map_add' l m := by funext _ _; simp [add_mul] }
   hol _ := analyticOnNhd_const
 
-variable (B) in
 
+variable (B) in
 abbrev Ring : Type := Localization.Away (Polynomial.X : B[X])
 
-variable (B) in
 
+variable (B) in
 abbrev str : Sp (Ring B) ⟶ Sp B := spMap (algebraMap B (Ring B))
 
-variable (B) in
 
+variable (B) in
 def coord : Ring B := algebraMap B[X] (Ring B) Polynomial.X
 
 def pt {C : Type} [CommRing C] (σ : B →+* C) (e : C) (h : IsUnit e) : Ring B →+* C :=
@@ -321,14 +327,5 @@ theorem isPeriod_zero_zero {s : X ⟶ Sp B} {σ : B →+* Hol F.V} (u : Unif F s
   rw [map_zero]
   funext T T' f
   exact (@map_zero _ _ _ _ _ _ _ (@algebraMap _ T'.C _ _ T'.alg)).symm
-
-example (σ : B →+* Hol (MulGrp.fam I).V) (per : ℤ →+ Hol (MulGrp.fam I).V) :
-    IsPeriod (MulGrp.unif σ) 0 per ↔ per = 0 :=
-  ⟨fun h ↦ MulGrp.isPeriod_unique σ h (isPeriod_zero_zero _), fun e ↦ e ▸ isPeriod_zero_zero _⟩
-
-example : ∃ (u : Unif (MulGrp.fam Unit) (MulGrp.str ℂ) (algebraMap ℂ _)) (K : Charts (MulGrp.fam Unit))
-    (r : Real K (MulGrp.str ℂ) (algebraMap ℂ _)), u.Based ∧ K.Rich ∧ K.Based ∧ r.IsFor u ∧ ∃ p q, u.E p ≠ u.E q :=
-  ⟨MulGrp.unif _, _, MulGrp.real _ _, MulGrp.based _, Fam.allCharts_rich _, Fam.allCharts_based _, MulGrp.isFor _ _,
-    _, _, MulGrp.unif_ne _ 0⟩
 
 end GlobalTheory.AnPer

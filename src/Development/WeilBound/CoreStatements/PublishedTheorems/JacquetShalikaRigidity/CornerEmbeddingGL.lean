@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem embM_castLE (h : k ≤ m) (A : Matrix (Fin k) (Fin k) R) (i c : Fin k) :
 
 theorem embM_out (A : Matrix (Fin k) (Fin k) R) (i c : Fin m) (h : ¬ ((i : ℕ) < k ∧ (c : ℕ) < k)) :
     embM m A i c = (1 : Matrix (Fin m) (Fin m) R) i c := by
-  rw [embM_apply, dif_neg h]
+  rw [embM_apply, dite_eq_right h]
 
 theorem one_corner (i c : Fin m) (h : (i : ℕ) < k ∧ (c : ℕ) < k) :
     (1 : Matrix (Fin k) (Fin k) R) ⟨i, h.1⟩ ⟨c, h.2⟩ = (1 : Matrix (Fin m) (Fin m) R) i c := by
@@ -283,7 +287,7 @@ theorem torus_emb (hι : IsEmb ι) (l : Fin k → ℤ) :
   · rw [Matrix.diagonal_apply, Matrix.one_apply]
     split_ifs with hic
     · subst hic
-      rw [pad, dif_neg (fun hi => h ⟨hi, hi⟩), zpow_zero]
+      rw [pad, dite_eq_right (fun hi => h ⟨hi, hi⟩), zpow_zero]
     · rfl
 
 end Loc

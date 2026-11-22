@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+
+@[expose] public section
+
 open DividedPowers GlobalTheory.Cris GlobalTheory.PDA
 
 namespace GlobalTheory.DerFil
@@ -65,8 +70,8 @@ theorem smul_deriv_prod_mem {R B M : Type} [CommRing R] [CommRing B] [Algebra R 
 
 end GlobalTheory.DerFil
 
-open GlobalTheory.DerFil in
 
+open GlobalTheory.DerFil in
 theorem GlobalTheory.DerFil.deriv_fil_succ_le : ∀ (R B M : Type) [CommRing R] [CommRing B] [Algebra R B] [AddCommGroup M]
     [Module B M] [Module R M] [IsScalarTower R B M] (J : Ideal B) (δ : DividedPowers J) (D : Derivation R B M)
     (N₀ : Submodule B M), (∀ n, ∀ a ∈ J, D (δ.dpow (n + 1) a) - δ.dpow n a • D a ∈ N₀) →

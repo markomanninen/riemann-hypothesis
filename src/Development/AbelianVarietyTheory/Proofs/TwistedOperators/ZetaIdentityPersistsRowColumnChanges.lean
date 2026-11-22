@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocIsoRefl
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -20,8 +24,8 @@ attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL Formalism.DoubleC
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   [MeasurableSpace k] [BorelSpace k]
 
-omit [MeasurableSpace k] [BorelSpace k] in
 
+omit [MeasurableSpace k] [BorelSpace k] in
 theorem preimage_shellSet {A : Type} [Fintype A] [DecidableEq A] (ϖ : kˣ) (n : A → ℤ) {g₀ : GL A k}
     (hg : g₀ ∈ KO k A) : (fun g => g₀ * g) ⁻¹' shellSet ϖ n = shellSet ϖ n := by
   ext g
@@ -65,8 +69,8 @@ theorem shellSum_mul_left {a : ℕ} (μ : Measure (GL (Fin a) k)) [μ.IsHaarMeas
     simp only [shellSum, key]
   rw [hsum, shellSum_smul, ← mul_assoc, mul_inv_cancel₀ hν, one_mul]
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 def renum {A A₁ : Type} [Fintype A] [DecidableEq A] [Fintype A₁] [DecidableEq A₁] (e : A ≃ A₁) :
     GL A k ≃ₜ* GL A₁ k where
   toMulEquiv := Units.mapEquiv (reindexAlgEquiv k k e).toMulEquiv
@@ -133,8 +137,8 @@ theorem exists_smallF_rows {A A₁ C C₁ : Type} [Fintype A] [DecidableEq A] [F
   rw [integral_const_mul, integral_mul_left_eq_self (fun g => F (renum e g)) g₀, h2]
   ring
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] in
 theorem exists_reindex_unit {C C₁ : Type} [Fintype C] [DecidableEq C] [Fintype C₁] [DecidableEq C₁] (τ eC : C ≃ C₁) :
     ∃ s : kˣ, ∀ u : GL C k, ∃ u₁ : GL C₁ k, u₁.val = reindex τ eC u.val ∧
       (invT u₁).val = reindex τ eC (invT u).val ∧ gdet u₁ = s * gdet u := by

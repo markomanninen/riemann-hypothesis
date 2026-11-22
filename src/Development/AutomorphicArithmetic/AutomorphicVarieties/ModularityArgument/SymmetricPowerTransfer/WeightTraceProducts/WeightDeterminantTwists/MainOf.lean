@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
+
+@[expose] public section
 
 open Polynomial
 namespace UpperTheory.V.Z.Sym.Wt
@@ -73,7 +77,7 @@ theorem wtMain_of (h1 : FinMH) (h2 : ThFacts) (h3 : TwineC) (h4 : TrDC) (h5 : Sc
     refine h3 I j hj (fun w => Matrix.GeneralLinearGroup.map (em w) δ) (fun w => em w τ) ?_
     intro v
     rw [← map_invT, ← map_mul, val_map, Matrix.charpoly_map, hch]
-    simp [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add]
+    simp [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_add (f := _)]
   · intro e γ hγ
     rw [hWD, h4]
     show _ = ∏ w, hq (em w (γ : Matrix (Fin 2) (Fin 2) R).trace) 1 j
@@ -88,8 +92,8 @@ theorem wtMain_of (h1 : FinMH) (h2 : ThFacts) (h3 : TwineC) (h4 : TrDC) (h5 : Sc
         rw [← Matrix.GeneralLinearGroup.val_det_apply]
         exact Units.isUnit _
       exact (hz.map (em w)).ne_zero
-    rw [hdet, htr, htz, hdz, map_add, map_ofNat, h6 j (em w τ)]
-    rw [hdz, map_add, map_ofNat] at hu
+    rw [hdet, htr, htz, hdz, map_add (f := _), map_ofNat, h6 j (em w τ)]
+    rw [hdz, map_add (f := _), map_ofNat] at hu
     rw [zpow_neg, show ((j : ℤ) + 1) = ((j + 1 : ℕ) : ℤ) by push_cast; ring, zpow_natCast,
       inv_mul_cancel_left₀ (pow_ne_zero _ hu)]
 

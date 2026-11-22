@@ -1,9 +1,15 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTorusUOne
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
-open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThKSoDecay
+open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 
 noncomputable section
 
@@ -16,7 +22,7 @@ theorem opNorm_le_of_shape {n q : ℕ} (X Y' : Matrix (Fin n) (Fin q) ℂ) (Y X'
     (opNorm (1 + X * Matrix.diagonal d * Y + Y' * Matrix.diagonal d' * X') : ℝ) ≤
       1 + (‖X‖ * ‖Y‖ + ‖Y'‖ * ‖X'‖) * s := by
   have e : ∀ M : Matrix (Fin n) (Fin n) ℂ, (opNorm M : ℝ) = ‖M‖ := fun M => by
-    rw [opNorm, coe_nnnorm]; exact (Matrix.l2_opNorm_def M).symm
+    rw [opNorm, coe_nnNorm]; exact (Matrix.l2_opNorm_def M).symm
   rw [e]
   have h1 : ‖(1 : Matrix (Fin n) (Fin n) ℂ)‖ ≤ 1 := by
     rw [← Matrix.diagonal_one, Matrix.l2_opNorm_diagonal]
@@ -42,7 +48,7 @@ theorem le_prod_of_forall_le {q : ℕ} {c : ℝ} (hc : 0 < c) (t : Fin q → ℝ
   rw [← Finset.mul_prod_erase Finset.univ t (Finset.mem_univ k)]
   have hk : 0 ≤ t k := hc.le.trans (ht k)
   refine mul_le_mul_of_nonneg_left ?_ hk
-  have := Finset.prod_le_prod (s := Finset.univ.erase k) (f := fun _ => min 1 c) (g := t) (fun _ _ => hm.le)
+  have := Finset.prod_le_prod₀ (s := Finset.univ.erase k) (f := fun _ => min 1 c) (g := t) (fun _ _ => hm.le)
     (fun i _ => (min_le_right _ _).trans (ht i))
   simpa [Finset.prod_const, Finset.card_erase_of_mem, Finset.card_univ, Fintype.card_fin] using this
 
@@ -136,7 +142,7 @@ theorem height_torus_le : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
     simp only [hfin, finprod_one, mul_one, NNReal.coe_prod]
   rw [hh]
   calc _ ≤ ∏ w, ((1 + K w * c0) * (1 + P)) :=
-        Finset.prod_le_prod (fun _ _ => NNReal.coe_nonneg _) (fun w _ => hinf w)
+        Finset.prod_le_prod₀ (fun _ _ => NNReal.coe_nonneg _) (fun w _ => hinf w)
     _ = _ := by rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
 
 end GlobalTheory.TorusHeight

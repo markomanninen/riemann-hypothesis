@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectPlusWordLe
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectPlusWordLe
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

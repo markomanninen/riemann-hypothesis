@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 
@@ -28,7 +32,7 @@ theorem norm_le_of_recurrence_growth : ∀ (β : Multiset ℂ) (a : ℕ → ℂ)
     simp [hp, hes k (by omega)]
   have hpsum : ∑ k ∈ Finset.range (d + 1), p k = 0 := by
     have h1 := congrArg (Polynomial.eval b) (Multiset.prod_X_sub_X_eq_sum_esymm β)
-    rw [Polynomial.eval_multiset_prod, Polynomial.eval_finset_sum] at h1
+    rw [Polynomial.eval_multiset_prod, Polynomial.eval_finsetSum] at h1
     have hz : (Multiset.map (Polynomial.eval b)
         (Multiset.map (fun t => Polynomial.X - Polynomial.C t) β)).prod = 0 := by
       apply Multiset.prod_eq_zero

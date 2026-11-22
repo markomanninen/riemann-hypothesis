@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StabFiniteOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassUnfoldHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.ContinuousSplitA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.CountableRatOf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StabFiniteOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.MassUnfoldHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.ContinuousSplitA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.CountableRatOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,10 +29,25 @@ theorem massAll_of (hH : HinfCompact) (hK : KCompactOpen) (hC : ClassFinite) : M
   have hfin : MassFinite (G := ↥(Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X u))) (GamH X u) (KH X u) :=
     ⟨hC X u, stabFinite_of hH hK X u⟩
   obtain ⟨𝓕, h𝓕⟩ := fdExistsH_holds X u
-  have hU := massUnfold_holds X u hN hcs (hK X).1 (hK X).2 hfin 𝓕 h𝓕
+  have hKU : MeasurableSet ((KH X u : Subgroup ↥(Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X u))) :
+      Set ↥(Hsub (Af X.B.I.F) X.B.I.cm.sig X.B.I.J (frameOf X u))) :=
+    ((hK X).2.preimage continuous_subtype_val).measurableSet
+  have hU := massUnfold_gen X.B.I.cm.sig X.B.I.J (frameOf X u) (isCMExt_of_cmData X.B.I.cm)
+    (isHermND_of_setting X) (X.measW u) hN (KH X u) hKU hfin 𝓕 h𝓕
   have hcov : covol (X.measW u).μH = ((X.measW u).μH 𝓕).toReal :=
     covol_eq_of_fd X.B.I.cm.sig X.B.I.J _ (X.measW u).μH hN.1.toIsMulLeftInvariant 𝓕 h𝓕
-  have hV := volHTie_holds X hb u hT
+  have hV : X.muH u Set.univ = (X.measW u).μHinf Set.univ := by
+    have h := (hT.2.2.2 u).2
+    have h1 := congrArg (fun m => m Set.univ) h
+    have hm : Measurable (X.toInf hb) := by
+      haveI : BorelSpace (HA (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J) := ⟨rfl⟩
+      unfold Formalism.L2.SG.HidaSetting.HidaSetting.toInf
+      exact (continuous_fst.comp ((continuous_splitA _ _).comp
+        ((Formalism.L2.SG.AdBridge.toHA X.B.I hb).continuous.comp (continuous_id.prodMk continuous_const)))).measurable
+    rw [Measure.map_apply hm MeasurableSet.univ, Set.preimage_univ] at h1
+    rw [← h1]
+    unfold Formalism.L2.SG.Measures.amb
+    rw [Measure.map_apply measurable_subtype_coe MeasurableSet.univ, Set.preimage_univ]
 
   have h1 := hN.2.1
   have h2 := hN.2.2.1
@@ -51,7 +70,14 @@ theorem massAll_of (hH : HinfCompact) (hK : KCompactOpen) (hC : ClassFinite) : M
   have hb' : 0 < ((X.measW u).μHf (Subtype.val ⁻¹' (KX X : Set (HA (Af X.B.I.F) X.B.I.cm.sig X.B.I.J)))).toReal :=
     ENNReal.toReal_pos hb0 hbT
   unfold MassAt
-  rw [hcov, hU, hV, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_ofReal (massH_nonneg X u)]
+  rw [hcov]
+  unfold frameOf at hU ⊢
+  rw [hU, hV, ENNReal.toReal_mul, ENNReal.toReal_mul]
+  change massH _ _ _ (frameOf X u) =
+    ((X.measW u).μHinf Set.univ).toReal *
+      ((X.measW u).μHf (Subtype.val ⁻¹' (KX X : Set _))).toReal *
+      (ENNReal.ofReal (massH _ _ _ (frameOf X u))).toReal / _
+  rw [ENNReal.toReal_ofReal (massH_nonneg X u)]
   field_simp
 
 end MassDataMassesW

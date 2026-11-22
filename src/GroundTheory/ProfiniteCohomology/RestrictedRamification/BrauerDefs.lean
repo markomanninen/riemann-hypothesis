@@ -1,16 +1,21 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.EqZeroOfBrauerLocalApplyEqZero
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
@@ -69,12 +74,6 @@ def gsUnitsMor :
   Rep.ofHom ⟨(MonoidHom.toAdditive
       (Units.map (maxUnramifiedOutside K.1 ℚ̄ S).val.toRingHom.toMonoidHom)).toIntLinearMap,
     fun σ => LinearMap.ext fun _ => congrArg Additive.ofMul (Units.ext (gsRestrict_apply K S σ _))⟩
-
-@[simp]
-theorem gsUnitsMor_hom_apply (x : Additive (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) :
-    ((Additive.toMul ((gsUnitsMor K S).hom x) : ℚ̄ˣ) : ℚ̄) =
-      ((x.toMul : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) : ℚ̄) :=
-  rfl
 
 def gsBrauerInfl (n : ℕ) :
     cohomology (uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))) n ⟶

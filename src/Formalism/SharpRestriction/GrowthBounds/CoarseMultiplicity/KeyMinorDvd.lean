@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.SelfDualLatticesOneOrbit
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyOne
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.SelfDualLatticesOneOrbit
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,21 +28,25 @@ theorem key_pow_dvd {A : Type} [CommRing A] (p : ℕ) (hp : p.Prime) (w : A) (hw
   have hrow : ∀ a, φ (∑ b, u b * M b a) = φ (u 0) * φ (M 0 a) := by
     intro a
     have hz : ∀ i : Fin k, φ (u i.succ) = 0 := fun i => hu0 _ (Fin.succ_ne_zero _)
-    rw [map_sum, Fin.sum_univ_succ, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Fin.sum_univ_succ, map_mul]
     simp [hz]
   have hpow : ∀ a, φ (M 0 a) ^ (p ^ e) = φ (N' 0 a) := by
     intro a
     obtain ⟨T, hT⟩ := hMN 0 a
-    rw [← map_pow, hT, map_add, map_mul, hp0, zero_mul, add_zero]
+    rw [← map_pow, hT, map_add (f := _), map_mul, hp0, zero_mul, add_zero]
   have hδ : ∀ b', ∑ a, φ (N' 0 a) * φ (N a b') = if (0 : Fin (k + 1)) = b' then 1 else 0 := by
     intro b'
     have h := congrArg φ (hinv 0 b')
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp_rw [map_mul] at h
     rw [h]
     split_ifs <;> simp
-  rw [map_sum]
-  simp_rw [map_mul, map_pow, hrow, mul_pow, hpow, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_mul, map_pow, hrow, mul_pow, hpow, map_sum, map_mul]
   have e : ∑ a, φ (u 0) ^ (p ^ e) * φ (N' 0 a) * ∑ b', φ (v b') * φ (N a b') =
       φ (u 0) ^ (p ^ e) * ∑ b', φ (v b') * ∑ a, φ (N' 0 a) * φ (N a b') := by
     simp_rw [Finset.mul_sum]
@@ -82,11 +90,13 @@ theorem kS_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
   have hlift : liftSubst X.p X.n' O S.w 1 (hhLetters X.TT) g (kSkey O X j i) =
       MvPolynomial.map (algebraMap O (KK O)) (∑ a, (∑ b, u b * M b a) ^ (X.p ^ d) * (∑ b', v b' * N a b')) := by
     unfold kSkey
-    simp only [map_sum, map_mul, map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [liftSubst_X_vec X.p X.n' O S.w (hhLetters X.TT) 1 g hg xs a rfl,
       liftSubst_X_cov X.p X.n' O S.w (hhLetters X.TT) 1 g y a rfl]
-    simp only [u, v, M, N, map_sum, map_mul, map_C, map_X, sigMat_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [u, v, M, N, map_sum, map_mul, map_C, map_X, sigMat_apply]
     rfl
 
   have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T := by
@@ -109,7 +119,8 @@ theorem kS_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
   have hinv : ∀ b b', ∑ a, N' b a * N a b' = if b = b' then 1 else 0 := by
     intro b b'
     have h1 : ∑ a, N' b a * N a b' = C (psiO X.p X.n' O s1 ((g⁻¹ * g) b b')) := by
-      simp only [N', N, ← map_mul, ← map_sum, Matrix.mul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [N', N, ← map_mul, ← map_sum, Matrix.mul_apply]
     rw [h1, Matrix.nonsing_inv_mul g hg, Matrix.one_apply]
     split_ifs <;> simp
   have hw : (C S.w : A) ^ 2 = (X.p : A) := by rw [← map_pow, hsq, map_natCast]
@@ -144,12 +155,13 @@ theorem key_minor_dvd {A : Type} [CommRing A] (p : ℕ) (hp : p.Prime) (w : A) (
     intro x Q hx a
     have hz : ∀ i : Fin k, φ (x i.succ) = 0 := fun i =>
       (Ideal.Quotient.eq_zero_iff_dvd w _).mpr (hx _ (Fin.succ_ne_zero _))
-    rw [map_sum, Fin.sum_univ_succ, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Fin.sum_univ_succ, map_mul]
     simp [hz]
   have hpow : ∀ a, φ (M 0 a) ^ (p ^ e) = φ (N' 0 a) := by
     intro a
     obtain ⟨T, hT⟩ := hMN 0 a
-    rw [← map_pow, hT, map_add, map_mul, hp0, zero_mul, add_zero]
+    rw [← map_pow, hT, map_add (f := _), map_mul, hp0, zero_mul, add_zero]
   rw [map_sub, map_mul, map_mul, map_pow, map_pow, hrow u' N' hu' c, hrow u M hu 0, hrow u' N' hu' 0,
     hrow u M hu c, mul_pow, mul_pow, hpow 0, hpow c]
   ring
@@ -181,7 +193,8 @@ theorem kW_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
       liftSubst_X_vec X.p X.n' O S.w (hhLetters X.TT) 1 g hg xs 0 rfl,
       liftSubst_X_vec X.p X.n' O S.w (hhLetters X.TT) 1 g hg z 0 rfl,
       liftSubst_X_vec X.p X.n' O S.w (hhLetters X.TT) 1 g hg xs c rfl]
-    simp only [u, u', M, N', map_sum, map_mul, map_C, map_X, sigMat_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [u, u', M, N', map_sum, map_mul, map_C, map_X, sigMat_apply]
     rfl
   have hMN : ∀ b a, ∃ T, M b a ^ (X.p ^ d) = N' b a + X.p * T := by
     intro b a
@@ -222,7 +235,5 @@ theorem kW_ord (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [
 theorem key3Ord : CoarseMultiplicityOrderBound := by
   intro X _ O _ _ _ _ S hsq hD j i g hg
   exact ⟨kS_ord X O S hsq hD j i g hg, fun c => kW_ord X O S hsq hD j i g hg c.succ⟩
-
-theorem key3At : CoarseMultiplicityBoundAtIdentity := third_key_of_order key3Ord
 
 end Formalism.MainNotions.ColumnSystems.Pf

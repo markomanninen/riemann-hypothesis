@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDeRhamFreeHodgeSequenceBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointWithZeroSecondCoordLeftCompSnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorContractionTwoCochainProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContrCupFormEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffPointwiseCoboundary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorEqZeroOfForallDualPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDeRhamFreeHodgeSequenceBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointWithZeroSecondCoordLeftCompSnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTangentVectorContractionTwoCochainProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContrCupFormEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHodgeFiltrationIffPointwiseCoboundary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorEqZeroOfForallDualPairing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,8 +35,8 @@ theorem isContr_add {z z' : C2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _))} {v : epsR
   unfold IsContr at h h' ⊢
   intro D _ _ D' _ _ φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ
   simp only [Fn1.add, Pi.add_apply, h D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ,
-    h' D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ, ← TrivSqZeroExt.snd_add]
-  congr 1
+    h' D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ,
+    TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_sub]
   abel
 
 theorem isContr_sum {n : ℕ} {z : Fin n → C2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _))} {v : epsR R ⟶ B}
@@ -52,7 +57,8 @@ theorem isContr_eq {z : C2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _))} {v : epsR R �
     κ D D' φ x = κ' D D' φ x := by
   obtain ⟨s, i, s', i', a, b, τ, hs, hi, hs', hi', ha, hb, hτ⟩ :=
     (GlobalTheory.PtExt.ContrMor.exists_contr R A B v hv).1 D D' φ x
-  rw [h D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ, h' D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ]
+  exact (h D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ).trans
+    (h' D D' φ x s i s' i' a b τ hs hi hs' hi' ha hb hτ).symm
 
 theorem sum_split {M N P : Type*} [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N]
     [AddCommGroup P] [Module R P] (Φ : M →ₗ[R] N →ₗ[R] P) {n : ℕ} (a a₁ : Fin n → M) (b b₁ : Fin n → N)
@@ -60,7 +66,8 @@ theorem sum_split {M N P : Type*} [AddCommGroup M] [Module R M] [AddCommGroup N]
     ∑ k, Φ (a k) (b k) = ∑ k, Φ (a₁ k) (b k) + ∑ k, Φ (a k - a₁ k) (b₁ k) := by
   have h0 : ∑ k, Φ (a k - a₁ k) (b k - b₁ k) = 0 := by
     have := congrArg (TensorProduct.lift Φ) h
-    simpa only [map_sum, TensorProduct.lift.tmul, map_zero] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, TensorProduct.lift.tmul, map_zero] using this
   rw [← Finset.sum_add_distrib, ← sub_eq_zero, ← Finset.sum_sub_distrib, ← h0]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   simp only [map_sub, LinearMap.sub_apply]
@@ -84,14 +91,14 @@ section Rep
 variable (m₁ : IsMor (dp0 R) (A.hom ≫ 𝟙 _) (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _) (RingHom.id R) (fst A B).left)
   (m₂ : IsMor (dp0 R) (B.hom ≫ 𝟙 _) (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _) (RingHom.id R) (snd A B).left)
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 def cupPr (a : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))) (b : Z1 (O (dp0 R) (B.hom ≫ 𝟙 _))) :
     Z2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)) :=
   cupZ _ (m₁.coef.pullbackOneCocycle a) (m₂.coef.pullbackOneCocycle b)
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem mk_cupPr (a : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))) (b : Z1 (O (dp0 R) (B.hom ≫ 𝟙 _))) :
     CatCoh.H2.mk _ (cupPr m₁ m₂ a b) = cup _ (pullOver (dp0 R) (𝟙 _) (fst A B) (CatCoh.H1.mk _ a))
       (pullOver (dp0 R) (𝟙 _) (snd A B) (CatCoh.H1.mk _ b)) := rfl
@@ -112,25 +119,25 @@ theorem mk_cupPr_prim {a : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))} {b : Z1 (O (dp0 R)
 variable {n : ℕ} (α : Fin n → Form (A.hom ≫ 𝟙 _)) (β : Fin n → Form (B.hom ≫ 𝟙 _))
   (a' : Fin n → Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))) (b' : Fin n → Z1 (O (dp0 R) (B.hom ≫ 𝟙 _)))
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 def rep : Z2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)) :=
   ∑ k, cupPr m₁ m₂ (α k).1 (b' k) + ∑ k, cupPr m₁ m₂ (a' k) (β k).1
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem rep_val : (rep m₁ m₂ α β a' b').1 =
     ∑ k, (cupPr m₁ m₂ (α k).1 (b' k)).1 + ∑ k, (cupPr m₁ m₂ (a' k) (β k).1).1 := by
   rw [rep, Submodule.coe_add, Submodule.coe_sum, Submodule.coe_sum]
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem mk_rep : CatCoh.H2.mk _ (rep m₁ m₂ α β a' b') =
     ∑ k, CatCoh.H2.mk _ (cupPr m₁ m₂ (α k).1 (b' k)) + ∑ k, CatCoh.H2.mk _ (cupPr m₁ m₂ (a' k) (β k).1) :=
   ((CatCoh.H2.mk _).map_add _ _).trans (congrArg₂ (· + ·) (map_sum _ _ _) (map_sum _ _ _))
 
-omit [GrpObj A] [GrpObj B] in
 
+omit [GrpObj A] [GrpObj B] in
 theorem rep_triv (T T' T'' : Thick (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)) (p : T ⟶ T') (q : T' ⟶ T'') (hT : T.J = ⊥)
     (hT' : T'.J = ⊥) (hT'' : T''.J = ⊥) : (rep m₁ m₂ α β a' b').1 T T' T'' p q = 0 := by
   have h1 : ∀ k, (cupPr m₁ m₂ (α k).1 (b' k)).1 T T' T'' p q = 0 := fun k ↦ by
@@ -166,7 +173,8 @@ theorem rep_contr {v : epsR R ⟶ B} (hv : IsTangent v) (f : Z1 (O (dp0 R) (A.ho
     linear_combination h3
   rw [fv_sub_sum] at e2
   simp only [Fn1.add, Fn1.neg, hX0, Finset.sum_const_zero, zero_add] at e1 ⊢
-  rw [e1, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, map_add (f := _), map_sum]
   simp only [e3, Finset.sum_sub_distrib]
   linear_combination e2
 
@@ -179,21 +187,23 @@ theorem apply_sub_sum {M N : Type*} [AddCommGroup M] [Module R M] [AddCommGroup 
   have e := sum_split ((LinearMap.mul R R).compl₁₂ x y) a a₁ b b₁ h
   simp only [LinearMap.compl₁₂_apply, LinearMap.mul_apply'] at e
   simp only [map_sub, hx, sub_zero, zero_mul, Finset.sum_const_zero, zero_add] at e
-  rw [map_sub, map_sum, hc, e]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, hc, e]
   simp only [map_smul, map_sub, hx, sub_zero, smul_eq_mul, mul_comm, sub_self]
 
 theorem mk_sub_sum {n : ℕ} {f : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))} {c : primDR A} (hf : CatCoh.H1.mk _ f = c.1)
     {a' : Fin n → Z1 (O (dp0 R) (A.hom ≫ 𝟙 _))} {a : Fin n → primDR A} (ha : ∀ k, CatCoh.H1.mk _ (a' k) = (a k).1)
     (t : Fin n → R) : CatCoh.H1.mk _ (f - ∑ k, t k • a' k) = (c - ∑ k, t k • a k : primDR A).1 := by
-  rw [map_sub, map_sum, hf, Submodule.coe_sub, Submodule.coe_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum, hf, Submodule.coe_sub, Submodule.coe_sum]
   congr 1
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   rw [map_smul, ha k, Submodule.coe_smul]
 
 end GlobalTheory.PtExt.ChernRep
 
-open GlobalTheory.PtExt.ChernRep in
 
+open GlobalTheory.PtExt.ChernRep in
 theorem GlobalTheory.PtExt.exists_chernRep_contr_of_orth : GlobalTheory.Published.AbelianHodgeDeRham → ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) [GrpObj A] [GrpObj B] (g : ℕ), IsAbelianScheme A → IsAbelianScheme B → SmoothOfRelativeDimension g A.hom → SmoothOfRelativeDimension g B.hom → ∀ P : LB (A ⊗ B).left, P.IsLB → ∀ φ : HdR A →ₗ[R] HdR B →ₗ[R] R, AbDual.IsCorrForm (dp0 R) (𝟙 _) A B P φ → (∀ x ∈ Fil A, ∀ y ∈ Fil B, φ x y = 0) → ∀ (h' : HdR B) (v : epsR R ⟶ B), IsLieImage h' v → ∀ c : primDR A, (∀ h ∈ Fil A, φ h h' = h c) → ∀ f : Z1 (O (dp0 R) (A.hom ≫ 𝟙 _)), CatCoh.H1.mk _ f = c.1 → ∃ w : Z2 (O (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)), IsChern (dp0 R) _ P (CatCoh.H2.mk _ w) ∧ (∀ (T T' T'' : Thick (dp0 R) ((A ⊗ B).hom ≫ 𝟙 _)) (a : T ⟶ T') (b : T' ⟶ T''), T.J = ⊥ → T'.J = ⊥ → T''.J = ⊥ → w.1 T T' T'' a b = 0) ∧ ∀ κ : Fn1 A, IsContr w.1 v κ → Cohom (whole A) κ (fv f).neg := by
   intro hHDR R _ A B _ _ g hA hB hgA hgB P hP pf hpf horth h' v hv c hc f hf
   obtain ⟨hFree, hHodge, -⟩ := GlobalTheory.abelianDeRham_free_hodge_baseChange hHDR

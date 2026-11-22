@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LinearIndependentE
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsHyperbolicCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LinearIndependentE
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsHyperbolicCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,24 +92,22 @@ theorem exists_lattice {F E : Type} [Field F] [NumberField F] [Field E] [NumberF
   have dec : ∀ x, ∃ c, x = ι c + (∑ i, V.hT (f i) x • e i + ∑ i, V.hT (e i) x • f i) := fun x => by
     obtain ⟨_, ⟨c, rfl⟩, y, hy, rfl⟩ := Submodule.mem_sup.1 (ht.ge (Submodule.mem_top (x := x)))
     refine ⟨c, ?_⟩
-    simp only [map_add, he', hf', zero_add, add_right_inj]
+    simp only [map_add (f := _), he', hf', zero_add, add_right_inj]
     induction hy using Submodule.span_induction with
     | mem y hy => rcases hy with ⟨a, rfl⟩ | ⟨a, rfl⟩ <;> simp [ee, ff, ef, fe]
     | zero => simp
     | add y z _ _ h1 h2 =>
-      simp only [map_add, add_smul, Finset.sum_add_distrib]
+      simp only [map_add (f := _), add_smul, Finset.sum_add_distrib]
       rw [add_add_add_comm, ← h1, ← h2]
     | smul a y _ h1 =>
       simp only [map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum, ← smul_add, ← h1]
   have lin : ∀ x, (∀ y ∈ G, V.hT x y ∈ (1 : Submodule (𝓞 E) E)) → ∀ y ∈ Submodule.span (𝓞 E) G,
       V.hT x y ∈ (1 : Submodule (𝓞 E) E) := fun x h y hy =>
     (Submodule.span_le (p := (1 : Submodule (𝓞 E) E).comap ((V.hT x).restrictScalars (𝓞 E)))).2 h hy
-  refine ⟨Submodule.span (𝓞 E) G, ⟨?_, ?_⟩, Submodule.ext fun x => (hd _ x).trans ⟨fun h => ?_, fun hx y hy => ?_⟩,
+  refine ⟨Submodule.span (𝓞 E) G, Submodule.IsLattice.of_fg E ?_, Submodule.ext fun x => (hd _ x).trans ⟨fun h => ?_, fun hx y hy => ?_⟩,
     fun i => ⟨hE i, hF i⟩⟩
   · rw [hG]
     exact (Submodule.fg_span ((Set.finite_range e).union (Set.finite_range f))).sup (V'.standardTuple_isLattice.fg.map _)
-  · rw [Submodule.span_span_of_tower, Submodule.span_union, Submodule.span_image, V'.standardTuple_isLattice.span_eq_top,
-      Submodule.map_top, sup_comm, ht]
   · obtain ⟨c, hx⟩ := dec x
     have sm : ∀ z ∈ (1 : Submodule (𝓞 E) E), ∀ y ∈ Submodule.span (𝓞 E) G, z • y ∈ Submodule.span (𝓞 E) G := by
       intro z hz y hy
@@ -192,103 +194,7 @@ theorem unitary_extension {A n m : Type} [CommRing A] [Fintype n] [DecidableEq n
     Matrix.mul_assoc, h3, h4] at h5 ⊢
   rw [h5]; abel
 
-theorem sign_unit (ε : SignTypeˣ) (h : ε ≠ 1) : (ε : SignType) = -1 := by
-  have h0 := ε.ne_zero
-  have h1 : (ε : SignType) ≠ 1 := fun e => h (Units.ext e)
-  generalize (ε : SignType) = s at h0 h1
-  revert s; decide
-
-theorem WittFrame.exists_isWeylRep (Φ : WittFrame V) (π : Equiv.Perm (Fin (wittIndex V)))
-    (ε : Fin (wittIndex V) → SignTypeˣ) : ∃ w, Φ.IsWeylRep hc π ε w := by
-  let b : Fin (wittIndex V) × Bool → V.V := fun a => if a.2 then Φ.e a.1 else Φ.f a.1
-  let τ : Equiv.Perm (Fin (wittIndex V) × Bool) :=
-    (Equiv.prodCongrRight fun i => if ε i = 1 then Equiv.refl Bool else Equiv.boolNot).trans (π.prodCongr (.refl _))
-  have hτ : ∀ i s, τ (i, s) = (π i, if ε i = 1 then s else !s) := fun i s => by
-    by_cases h : ε i = 1 <;> simp [τ, h]
-  clear_value τ
-  let σ : E →+* E := hc.sig
-  let S : Matrix (Fin (wittIndex V) × Bool) (Fin (wittIndex V) × Bool) E :=
-    (1 : Matrix _ _ E).submatrix id ((Equiv.refl _).prodCongr Equiv.boolNot)
-  have fe : ∀ i j, V.hT (Φ.f i) (Φ.e j) = if i = j then 1 else 0 := fun i j => (Φ.ef j i).trans (by simp only [eq_comm])
-  have ef : ∀ i j, V.hT (Φ.e i) (Φ.f j) = if i = j then 1 else 0 := fun i j => by
-    rw [← V.herm.eq, fe]; by_cases h : i = j <;> simp [h, eq_comm]
-  have ee : ∀ i j, V.hT (Φ.e i) (Φ.e j) = 0 := fun i j => Φ.ee j i
-  have ff : ∀ i j, V.hT (Φ.f i) (Φ.f j) = 0 := fun i j => Φ.ff j i
-  have hB : cT σ (cols V b) * V.gram * cols V b = S := by
-    rw [gram_cols]
-    ext ⟨i, _ | _⟩ ⟨j, _ | _⟩ <;> simp [b, S, ee, ff, ef, fe, Matrix.one_apply]
-  have hSS : S * S = 1 := by
-    refine (Matrix.mul_submatrix_one (Equiv.refl _) _ S).trans ?_
-    ext ⟨i, s⟩ ⟨j, t⟩
-    simp [S, Matrix.one_apply]
-  have hS : cT σ S = S := by
-    ext ⟨i, _ | _⟩ ⟨j, _ | _⟩ <;> simp [cT, S, Matrix.one_apply, eq_comm, apply_ite σ]
-  let P : Matrix (Fin (wittIndex V) × Bool) (Fin (wittIndex V) × Bool) E := (1 : Matrix _ _ E).submatrix id τ
-  have hBP : cols V b * P = cols V (b ∘ τ) := Matrix.mul_submatrix_one (Equiv.refl _) τ _
-  have hP : cT σ P * S * P = S := by
-    rw [← hB, ← Matrix.mul_assoc, ← Matrix.mul_assoc, ← cT_mul, Matrix.mul_assoc, hBP, gram_cols, gram_cols]
-    ext ⟨i, _ | _⟩ ⟨j, _ | _⟩ <;> by_cases h1 : ε i = 1 <;> by_cases h2 : ε j = 1 <;>
-      simp [hτ, b, ee, ff, ef, fe, h1, h2] <;> (rintro rfl; contradiction)
-  obtain ⟨Q, hQ⟩ : ∃ Q, Q = S * (cT σ (cols V b) * V.gram) := ⟨_, rfl⟩
-  have hQB : Q * cols V b = 1 := by rw [hQ, Matrix.mul_assoc, hB, hSS]
-  have h1 : cT σ (cols V b) * V.gram = S * Q := by rw [hQ, ← Matrix.mul_assoc S S, hSS, Matrix.one_mul]
-  have h2 : V.gram * cols V b = cT σ Q * S := by
-    have := congrArg (cT σ) h1
-    rwa [cT_mul, cT_mul, AutFunCompare.cT_cT', IndefiniteRowSideFullHecke.AdelicUnitaryGroups.cT_gram, hS] at this
-  have hw := unitary_extension σ h1 h2 hQB hP
-  have hi : V.gram⁻¹ * (cT σ (1 + cols V b * (P - 1) * Q) * V.gram) * (1 + cols V b * (P - 1) * Q) = 1 := by
-    rw [Matrix.mul_assoc, hw, Matrix.nonsing_inv_mul _ (IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit V)]
-  let w : GRat hc.sig V.gram := ⟨⟨_, _, mul_eq_one_comm.1 hi, hi⟩, hw⟩
-  have hwb : ∀ a, ratAct hc V w (b a) = b (τ a) := fun a => by
-    have : (1 + cols V b * (P - 1) * Q) * cols V b = cols V (b ∘ τ) := by
-      rw [Matrix.add_mul, Matrix.mul_assoc, hQB, Matrix.mul_one, Matrix.one_mul, Matrix.mul_sub, Matrix.mul_one, hBP,
-        add_sub_cancel]
-    refine V.frame.repr.injective (DFunLike.coe_injective ?_)
-    rw [ratAct, Matrix.repr_toLin]
-    exact funext fun i => congrFun (congrFun this i) a
-  refine ⟨w, fun u x hx => (Submodule.span_le (p := (Φ.sub u).comap (ratAct hc V w))).2 ?_ hx⟩
-  have hε : ∀ i, ε i ≠ 1 → (ε i : SignType) = -1 := fun i => sign_unit (ε i)
-  rintro _ (⟨i, hi, rfl⟩ | ⟨i, hi, rfl⟩)
-  · refine Submodule.subset_span ((hwb (i, true)).symm ▸ ?_)
-    by_cases h : ε i = 1
-    · exact .inl ⟨π i, by simpa [invSV, h] using hi, by simp [b, hτ, h]⟩
-    · exact .inr ⟨π i, by simpa [invSV, hε i h, neg_eq_iff_eq_neg] using hi, by simp [b, hτ, h]⟩
-  · refine Submodule.subset_span ((hwb (i, false)).symm ▸ ?_)
-    by_cases h : ε i = 1
-    · exact .inr ⟨π i, by simpa [invSV, h] using hi, by simp [b, hτ, h]⟩
-    · exact .inl ⟨π i, by simpa [invSV, hε i h] using hi, by simp [b, hτ, h]⟩
-
 end Arch
-
-theorem exists_subset_weylPar {k : ℕ} {Q : Finset (SV k)} (h : IsPar Q) : ∃ π ε, Q ⊆ weylPar π ε := by
-  let ρ : Fin k → ℕ := fun i => (Q.filter (· i = 0)).card
-  refine ⟨(Tuple.sort ρ).symm, fun i => if ∃ u ∈ Q, u i = -1 then -1 else 1, fun u hu => ?_⟩
-  have hne : (Finset.univ.filter (u · ≠ 0)).Nonempty := by
-    by_contra e
-    exact h.1 ((funext fun i => by_contra fun hi => e ⟨i, by simpa using hi⟩ : u = 0) ▸ hu)
-  obtain ⟨i₀, h0, hm⟩ := Finset.exists_max_image _ (Tuple.sort ρ).symm hne
-  have h0 : u i₀ ≠ 0 := by simpa using h0
-  refine Finset.mem_image.2 ⟨stdVec ((Tuple.sort ρ).symm i₀), Finset.mem_image_of_mem _ (Finset.mem_univ _),
-    funext fun i => ?_⟩
-  by_cases hi : u i = 0
-  · have : ρ i₀ < ρ i := Finset.card_lt_card ⟨fun v hv => Finset.mem_filter.2 ⟨(Finset.mem_filter.1 hv).1, by
-      rcases h.2 u hu v (Finset.mem_filter.1 hv).1 with e | e
-      · exact (h0 ((e i₀ h0).symm.trans (Finset.mem_filter.1 hv).2)).elim
-      · by_contra e'; exact e' ((e i e').symm.trans hi)⟩,
-      fun e => h0 (Finset.mem_filter.1 (e (Finset.mem_filter.2 ⟨hu, hi⟩))).2⟩
-    have h2 : ¬(Tuple.sort ρ).symm i ≤ (Tuple.sort ρ).symm i₀ := fun e =>
-      this.not_ge (by simpa using Tuple.monotone_sort ρ e)
-    simp [invSV, stdVec, h2, hi]
-  · have h2 := hm i (by simpa using hi)
-    simp only [invSV, stdVec, h2, if_true, mul_one]
-    split_ifs with e
-    · obtain ⟨v, hv, e⟩ := e
-      rcases h.2 u hu v hv with e' | e'
-      · exact e.symm.trans (e' i hi)
-      · exact ((e' i (by simp [e])).trans e).symm
-    · have : u i ≠ -1 := fun e' => e ⟨u, hu, e'⟩
-      generalize u i = s at hi this
-      cases s <;> simp_all
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -307,7 +213,8 @@ theorem exists_isGood {D : D7} (V : HSp D) : ∃ (Φ : WittFrame V) (L : _) (a :
     have : ∀ i, V.hT (ι (V'.frame i)) (e a) = 0 := fun i =>
       (key (fun i => ι (V'.frame i)) e i a).symm.trans (by rw [eC, eM, hM]; rfl)
     rw [← V'.frame.sum_repr x]
-    simp only [map_sum, map_smul, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, this, smul_zero, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, this, smul_zero, Finset.sum_const_zero]
   obtain ⟨f, ff, fe, hf, ht⟩ := GlobalTheory.exists_hyperbolic_completion _ _ V.hT V.herm V.nondeg (LinearMap.range ι)
     (by rintro _ ⟨x, rfl⟩ h; rw [V'.nondeg.1 x fun y => (hι x y).symm.trans (h _ ⟨y, rfl⟩), map_zero]) _ e
     (linearIndependent_vecOf hC.1) ee (by rintro a _ ⟨x, rfl⟩; exact he a x)
@@ -327,7 +234,7 @@ theorem exists_isGood {D : D7} (V : HSp D) : ∃ (Φ : WittFrame V) (L : _) (a :
   choose b ε hb hb' using fun w : InfinitePlace D.host.F =>
     exists_majorant_of_frame D.sp.cm V V' ι hι e f ee ff fe he hf' hr w.Completion (ρ w) (hρ w) _ _ (hc w)
   obtain ⟨a, -, ha⟩ := Frames.exists_GL_of_components ∅ (fun _ => 1) (fun _ _ => rfl) b
-  refine ⟨Φ, frameLat V₂, a, SelfDual.isLattice_frameLat V₂, SelfDual.isSelfDualAt_frameLat D V₂, fun i => ?_,
+  refine ⟨Φ, frameLat V₂, a, (SelfDual.isLattice_frameLat V₂).toIsLattice, SelfDual.isSelfDualAt_frameLat D V₂, fun i => ?_,
     fun w => ⟨ε w, ha w ▸ hb w⟩, fun w i => ?_⟩
   · have : ∀ x ∈ L, V.frame.equivFun x ∈ frameLat V₂ := fun x hx =>
       show V.frame.equivFun.symm (V.frame.equivFun x) ∈ L by rwa [LinearEquiv.symm_apply_apply]
@@ -336,37 +243,6 @@ theorem exists_isGood {D : D7} (V : HSp D) : ∃ (Φ : WittFrame V) (L : _) (a :
     exact funext fun a => congrFun (congrFun (hb' w) a) i
 
 variable {D : D7} {V : HSp D} {Φ : WittFrame V} {K : Subgroup (GA D V)}
-
-theorem exists_Yfam_eq {Q : Finset (SV (wittIndex V))} (h : IsPar Q) : ∃ π ε w, Φ.IsWeylRep D.sp.cm π ε w ∧
-    Q ⊆ weylPar π ε ∧ ∀ x T, Yfam Φ K x T Q = pr Q (Ys Φ K π ε w x T) := by
-  obtain ⟨π, ε, e⟩ := exists_subset_weylPar h
-  obtain ⟨w, hw⟩ := Φ.exists_isWeylRep D.sp.cm V π ε
-  have : ∃ s : Equiv.Perm (Fin (wittIndex V)) × (Fin (wittIndex V) → SignTypeˣ) × GF V,
-      Φ.IsWeylRep D.sp.cm s.1 s.2.1 s.2.2 ∧ Q ⊆ weylPar s.1 s.2.1 := ⟨(π, ε, w), hw, e⟩
-  exact ⟨_, _, _, this.choose_spec.1, this.choose_spec.2, fun x T => dif_pos this⟩
-
-theorem continuous_absChi (i : Fin (wittIndex V)) : Continuous (absChi Φ i) := by
-  have : IsModuleTopology (AF D.host.F) (AF D.host.F ⊗[D.host.F] D.host.E) := ⟨rfl⟩
-  have : IsTopologicalRing (AF D.host.F ⊗[D.host.F] D.host.E) := IsModuleTopology.isTopologicalRing (AF D.host.F) _
-  have hm : Continuous fun g : PA Φ.flag0 => (HA.mat _ D.sp.cm.sig V.gram g.1).1 :=
-    (Units.continuous_val.comp continuous_subtype_val).comp continuous_subtype_val
-  have h : Continuous (Φ.chi D.sp.cm (AF D.host.F) i) := by
-    change Continuous fun p : PA Φ.flag0 => hR _ D.sp.cm.sig V.gram _ (act D.sp.cm V p.1 _)
-    simp only [hR_eq, act]
-    exact continuous_const.dotProduct (continuous_const.matrix_mulVec (hm.matrix_mulVec continuous_const))
-  exact Doubling.continuous_absE.comp (Units.continuous_iff.2 ⟨h, h.comp continuous_inv⟩)
-
-theorem mul_mem_riemannRochSpace_add (hK : IsCompact (K : Set (GA D V))) (p : PA Φ.flag0) {k : GA D V} (hk : k ∈ K) (i : Fin (wittIndex V)) :
-    H0 Φ K (p * k) i = Real.log (absChi Φ i p) := by
-  have := Doubling.t2Space_adeleRing' (F := D.host.F)
-  exact congrArg (fun r : ℝ≥0 => Real.log r) (Doubling.iwAbs_mul_of_triv
-    (Doubling.triv_of_isCompact (Φ.flag0.isClosed_par _ _) (continuous_absChi i) hK) p hk)
-
-theorem WittFrame.IsGood.isCompact {L : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)}
-    {a : GL (Fin V.rank) (AF D.host.F ⊗[D.host.F] D.host.E)} (h : Φ.IsGood D.sp.cm L a) :
-    IsCompact (levelAll D.sp.cm.sig V.gram L a : Set (GA D V)) :=
-  have := h.1
-  Doubling.isCompact_levelAll (isCMExt_host D) _ _ _
 
 end GlobalTheory.TruncKer
 

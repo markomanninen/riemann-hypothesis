@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.InertKernelTheory.StatementCurve
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDedekindZeta.LocOdd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementCurve
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuadraticDedekindZeta.LocOdd
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical
@@ -48,7 +52,7 @@ theorem bw_repr (hq : PI.ClassNumImQ.QuadData d K b) (u v : ℤ) :
     (bw hq).repr ((u : 𝓞 K) + (v : 𝓞 K) * om hq) 0 = u ∧ (bw hq).repr ((u : 𝓞 K) + (v : 𝓞 K) * om hq) 1 = v := by
   have hx : ((u : 𝓞 K) + (v : 𝓞 K) * om hq) = u • (bw hq) 0 + v • (bw hq) 1 := by
     simp [bw, Module.Basis.mk_apply, zsmul_eq_mul]
-  rw [hx, map_add, map_zsmul, map_zsmul, Module.Basis.repr_self, Module.Basis.repr_self]
+  rw [hx, map_add (f := _), map_zsmul, map_zsmul, Module.Basis.repr_self, Module.Basis.repr_self]
   simp [Finsupp.single_apply]
 
 theorem hnf (hq : PI.ClassNumImQ.QuadData d K b) (m : ℤ) (hm : (d : ℤ) + 1 = 4 * m) (cc : Ideal (𝓞 K)) (hcc : cc ≠ ⊥) :
@@ -229,12 +233,12 @@ theorem lat_eq (hq : PI.ClassNumImQ.QuadData d K b) (φ : K →+* ℂ) (hφ : φ
   have ho' : algebraMap (𝓞 K) K (om hq) = (1 + b) / 2 := om_coe hq
   have hψ : ∀ y : 𝓞 K, φ (y : K) = (φ.comp (algebraMap (𝓞 K) K)) y := fun _ => rfl
   have hω : (φ.comp (algebraMap (𝓞 K) K)) (om hq) = (1 + Complex.I * (Real.sqrt d : ℂ)) / 2 := by
-    rw [RingHom.comp_apply, ho', map_div₀, map_add, map_one, hφ, map_ofNat]
+    rw [RingHom.comp_apply, ho', map_div₀, map_add (f := _), map_one, hφ, map_ofNat]
   have key : ∀ u v : ℤ, δ * φ ((((g : 𝓞 K) * ((u : 𝓞 K) * a + (v : 𝓞 K) * ((k : 𝓞 K) + om hq))) : 𝓞 K) : K) =
       (u : ℂ) * ((g : ℂ) * δ * a) + (v : ℂ) * ((g : ℂ) * δ * Formalism.L2.Th1.F.cmTheta (2 * k + 1) d) := by
     intro u v
     rw [hψ]
-    simp only [map_mul, map_add, map_intCast, map_natCast, hω, Formalism.L2.Th1.F.cmTheta]
+    simp only [map_mul, map_add (f := _), map_intCast, map_natCast, hω, Formalism.L2.Th1.F.cmTheta]
     push_cast
     ring
   apply le_antisymm

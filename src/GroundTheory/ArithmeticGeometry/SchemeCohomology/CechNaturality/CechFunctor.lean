@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.Linear
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -70,29 +75,29 @@ lemma cechHMap_add (φ ψ : P ⟶ P') (n : ℕ) (x : cechH P U n) :
   obtain ⟨σ, hσ, rfl⟩ := exists_cls x
   rw [cechHMap_cls, cechHMap_cls, cechHMap_cls]
   refine (cls_congr U (push_add U φ ψ n σ) _ ?_).trans (cls_add _ _ _ _ _)
-  rw [map_add, ← push_d, ← push_d, hσ, map_zero, map_zero, add_zero]
+  rw [map_add (f := _), ← push_d, ← push_d, hσ, map_zero, map_zero, add_zero]
 
 lemma cechHMap_zero (n : ℕ) (x : cechH P U n) : cechHMap U (0 : P ⟶ P') n x = 0 := by
   obtain ⟨σ, hσ, rfl⟩ := exists_cls x
   rw [cechHMap_cls]
   exact (cls_congr U (push_zero' U n σ) _ (map_zero _)).trans cls_zero
 
-variable (P) in
 
+variable (P) in
 def cechH.endRingHom (n : ℕ) : End P →+* AddMonoid.End (cechH P U n) where
-  toFun φ := cechHMap U φ n
+  toFun φ := cechHMap U φ.asHom n
   map_one' := by
     ext x
     exact cechHMap_id U n x
   map_mul' φ ψ := by
     ext x
-    exact cechHMap_comp U ψ φ n x
+    exact cechHMap_comp U ψ.asHom φ.asHom n x
   map_zero' := by
     ext x
     exact cechHMap_zero U n x
   map_add' φ ψ := by
     ext x
-    exact cechHMap_add U φ ψ n x
+    exact cechHMap_add U φ.asHom ψ.asHom n x
 
 end Map
 
@@ -108,7 +113,8 @@ lemma IsCechShortExact.delta_naturality (n : ℕ) (σ : cocycles Q U n) :
     hS'.delta n (cocyclesMap U α₃ n σ) = cechHMap U α₁ (n + 1) (hS.delta n σ) := by
   obtain ⟨τ, ρ, hρ, hτ, hρτ, hc⟩ := hS.delta_spec n σ
   rw [hc, cechHMap_cls]
-  refine hS'.deltaRel_unique (hS'.delta_spec n _) ⟨push U α₂ n τ, push U α₁ (n + 1) ρ, _, ?_, ?_, rfl⟩
+  refine hS'.deltaRel_unique (hS'.delta_spec n _)
+    ⟨push U α₂ n τ, push U α₁ (n + 1) ρ, _, ?_, ?_, rfl⟩
   · change push U g' n (push U α₂ n τ) = push U α₃ n σ.1
     rw [push_comp, ← h₂₃, ← push_comp, hτ]
   · rw [push_comp, ← h₁₂, ← push_comp, hρτ, push_d]
@@ -180,7 +186,7 @@ variable {X : Scheme.{u}} {ι : Type w} (U : ι → X.Opens) (A : Type*) [CommRi
 
 def sheafEndRingHom (G : Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{u}) :
     End G →+* End G.obj where
-  toFun φ := φ.hom
+  toFun φ := End.of φ.asHom.hom
   map_one' := rfl
   map_mul' _ _ := rfl
   map_zero' := rfl
@@ -195,7 +201,7 @@ instance cechH.instModule (F : X.Modules) (n : ℕ) : Module A (cechH (modulesAb
   Module.compHom _ (cechH.actRingHom U A F n)
 
 lemma cechH.smul_def (F : X.Modules) (n : ℕ) (a : A) (x : cechH (modulesAb F).obj U n) :
-    a • x = cechHMap U (smulAbRingHom F (algebraMap A Γ(X, ⊤) a)).hom n x := rfl
+    a • x = cechHMap U (smulAbRingHom F (algebraMap A Γ(X, ⊤) a)).asHom.hom n x := rfl
 
 def cechH.linearMap {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
     cechH (modulesAb F).obj U n →ₗ[A] cechH (modulesAb G).obj U n where
@@ -206,10 +212,6 @@ def cechH.linearMap {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
     have h := congrArg (fun f => f.hom) (smulAbRingHom_comp φ (algebraMap A Γ(X, ⊤) a))
     rw [← cechHMap_comp, ← cechHMap_comp]
     exact congrArg (fun f => cechHMap U f n x) h
-
-lemma cechH.linearMap_apply {F G : X.Modules} (φ : F ⟶ G) (n : ℕ)
-    (x : cechH (modulesAb F).obj U n) :
-    cechH.linearMap U A φ n x = cechHMap U (modulesAbMap φ).hom n x := rfl
 
 end Module
 

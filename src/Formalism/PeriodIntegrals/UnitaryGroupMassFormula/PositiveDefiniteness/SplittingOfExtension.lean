@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PositiveDefiniteness.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PositiveDefiniteness.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,10 +123,10 @@ theorem splitting_of_extension : Step1 := by
   have hs : x + (q : E) ≠ 0 := by
     intro h0
     apply hq
-    rw [← map_ratCast φ q, ← map_add, h0, map_zero]
+    rw [← map_ratCast φ q, ← map_add (f := _), h0, map_zero]
   obtain ⟨c, hc, he⟩ := pos_pair σ J hk hD φ r (fun a => hr a) (x + q) hs
   refine ⟨c, hc, ?_⟩
   rw [← he]
-  simp only [map_add, map_ratCast]
+  simp only [map_add (f := _), map_ratCast]
 
 end PI.DefPosDefWork

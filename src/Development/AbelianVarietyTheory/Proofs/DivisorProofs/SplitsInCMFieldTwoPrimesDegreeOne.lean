@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValIotaLeOfMem
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValIotaLeOfMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.CMVal.Euler
 
@@ -61,7 +65,8 @@ theorem split_place : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (v 
     exact Nat.eq_one_of_mul_eq_one_left hef
   refine ⟨?_, fun a k => ?_, fun b => ?_⟩
   · rw [Ideal.absNorm_eq_pow_inertiaDeg'_of_liesOver P.asIdeal v.asIdeal v.isPrime v.ne_bot, hf, pow_one]
-  · rw [← HeightOneSpectrum.intValuation_le_pow_iff_mem, ← HeightOneSpectrum.intValuation_le_pow_iff_mem,
+  · rw [Ideal.ramificationIdx'_eq_ramificationIdx _ _ v.ne_bot] at he
+    rw [← HeightOneSpectrum.intValuation_le_pow_iff_mem, ← HeightOneSpectrum.intValuation_le_pow_iff_mem,
       ← HeightOneSpectrum.intValuation_liesOver v P a, he, pow_one]
   · rw [Ideal.inertiaDeg'_algebraMap] at hf
     let _ := Ideal.Quotient.field v.asIdeal

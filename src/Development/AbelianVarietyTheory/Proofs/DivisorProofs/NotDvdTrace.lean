@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LevelLossDegreeBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LevelLossDegreeBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions Formalism.MainNotions.G NumberField GlobalTheory.IndefiniteRowSideFullHecke.LevelLossDegreeBounds
 
 namespace GlobalTheory.LevelCoprime
@@ -39,7 +44,7 @@ theorem agree_on_K (σ τ : H.E ≃ₐ[ℚ] H.E) (h : σ H.sqrtMinusD = τ H.sqr
   induction hx' using IntermediateField.adjoin_induction with
   | mem y hy => rw [Set.mem_singleton_iff.1 hy]; exact h
   | algebraMap r => simp
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | inv a _ ha => rw [map_inv₀, map_inv₀, ha]
   | mul a b _ _ ha hb => rw [map_mul, map_mul, ha, hb]
 
@@ -51,7 +56,7 @@ theorem trace_rat (x : H.E) (hx : x ∈ H.K) : ∃ r : ℚ, algebraMap ℚ H.E r
     have hb : σ H.sqrtMinusD = H.sqrtMinusD ∨ σ H.sqrtMinusD = -H.sqrtMinusD := by
       apply sq_eq_sq_iff_eq_or_eq_neg.1
       rw [← map_pow, b_sq, map_neg, map_natCast]
-    rw [map_add, sigma_conj]
+    rw [map_add (f := _), sigma_conj]
     rcases hb with hb | hb
     · have := agree_on_K H σ 1 hb x hx
       rw [this]; rfl
@@ -64,7 +69,7 @@ theorem trace_int (x : 𝓞 H.E) (hx : (x : H.E) ∈ H.K) : ∃ a : ℤ, (a : H.
   have h1 : IsIntegral ℤ (H.conj (x : H.E)) :=
     IsIntegral.map (H.conj : H.E →+* H.E).toIntAlgHom x.isIntegral_coe
   have h2 : IsIntegral ℤ (algebraMap ℚ H.E r) := hr ▸ x.isIntegral_coe.add h1
-  have h3 : IsIntegral ℤ r := (isIntegral_algebraMap_iff (algebraMap ℚ H.E).injective).1 h2
+  have h3 : IsIntegral ℤ r := (isIntegral_algebraMap_iff ).1 h2
   obtain ⟨a, ha⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral h3
   refine ⟨a, ?_⟩
   rw [← hr, ← ha]
@@ -74,7 +79,7 @@ theorem trace_sq_le (x : H.E) (a : ℤ) (T : ℕ) (ha : (a : H.E) = x + H.conj x
     a ^ 2 ≤ 4 * T := by
   have h1 := congrArg H.φ₀ ha
   have h2 := congrArg H.φ₀ hT
-  rw [map_add, phi_conj, map_intCast, Complex.add_conj] at h1
+  rw [map_add (f := _), phi_conj, map_intCast, Complex.add_conj] at h1
   rw [map_mul, phi_conj, map_natCast, Complex.mul_conj, Complex.normSq_apply] at h2
   have h3 : (a : ℝ) = 2 * (H.φ₀ x).re := by exact_mod_cast h1
   have h4 : (H.φ₀ x).re * (H.φ₀ x).re + (H.φ₀ x).im * (H.φ₀ x).im = (T : ℝ) := by exact_mod_cast h2
@@ -91,7 +96,7 @@ theorem four_dvd {E : Type} [Field E] [NumberField E] (n : ℤ) (y : E) (hy : Is
     rw [map_div₀, map_intCast, h]
     simp
   rw [h1] at hy
-  have h3 := (isIntegral_algebraMap_iff (algebraMap ℚ E).injective).1 hy
+  have h3 := (isIntegral_algebraMap_iff ).1 hy
   obtain ⟨a, ha⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral h3
   refine ⟨a, ?_⟩
   have h4 : (a : ℚ) = (n : ℚ) / 4 := by simpa using ha
@@ -119,7 +124,7 @@ theorem not_dvd_trace {D : D7} (X : ErrX D) (u : D.what₂.Word) (a : ℤ)
     IsIntegral.map (D.host.conj : D.host.E →+* D.host.E).toIntAlgHom b.isIntegral_coe
   have hb0 := b.isIntegral_coe
   rw [hb'] at ha hn
-  simp only [map_add, map_mul, map_one, map_ofNat] at ha hn
+  simp only [map_add (f := _), map_mul, map_one, map_ofNat] at ha hn
   have h1 : (4 : ℤ) ∣ a - 2 := four_dvd _ _ (hb0.add hbi) (by push_cast; linear_combination ha)
   have h4 : IsIntegral ℤ (4 : D.host.E) := by
     simpa using (isIntegral_algebraMap (R := ℤ) (A := D.host.E) (x := 4))
@@ -160,9 +165,9 @@ theorem coprime_conj {D : D7} (X : ErrX D) (u : D.what₂.Word) (w : D.what₂.p
   have m2 := (GlobalTheory.TypeLoss.mem_heightOneIdeal_iff_additiveValuation_pos (D.plEq w) z hz).2 h2
   have e : ((a : ℤ) : 𝓞 D.what₂.LL) = y + z := by
     apply RingOfIntegers.coe_injective
-    rw [map_intCast, map_add]
+    rw [map_intCast, map_add (f := _)]
     change _ = D.embE _ + D.embE _
-    rw [← map_add, ← ha, map_intCast]
+    rw [← map_add (f := _), ← ha, map_intCast]
   have m3 : ((a : ℤ) : 𝓞 D.what₂.LL) ∈ (D.plEq w).asIdeal := e ▸ Ideal.add_mem _ m1 m2
   have m4 : (((D.mem u).A.T : ℕ) : 𝓞 D.what₂.LL) ∈ (D.plEq w).asIdeal := hw ▸ resChar_mem D w
   have hc : IsCoprime (((D.mem u).A.T : ℕ) : ℤ) a :=

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,11 @@ variable {R : Type*} [CommRing R] [TopologicalSpace R] [DiscreteTopology R]
 theorem twDual_comp_apply (h : χ.comp φ = χ') (g : D) (y : TDual R M) :
     ((twDual χ ρ).comp φ) g y = ((twDual χ' (ρ.comp φ)).comp (MonoidHom.id D)) g y := by
   subst h
-  ext m
-  simp only [MonoidHom.comp_apply, MonoidHom.id_apply, twDual_apply, map_inv]
+  apply LinearMap.ext
+  intro m
+  change ((χ (φ g) : Rˣ) : R) * y (ρ (φ g)⁻¹ m) =
+    ((χ (φ g) : Rˣ) : R) * y (ρ (φ g⁻¹) m)
+  rw [map_inv φ]
 
 def dualMap (h : χ.comp φ = χ') :
     H1 ((twDual χ ρ).comp φ) →ₗ[R] H1 ((twDual χ' (ρ.comp φ)).comp (MonoidHom.id D)) :=

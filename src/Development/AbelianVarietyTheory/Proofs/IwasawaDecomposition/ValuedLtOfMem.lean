@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFiniteAdelicPointLatticeEqSelfDual
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFiniteAdelicPointLatticeEqSelfDual
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 ReciprocityTheory.Neutral.Bridge.HCFR Neutral.B1
 open Formalism.L2.Host (HChar atFin)
@@ -13,7 +17,7 @@ namespace GlobalTheory.Mem.Col2.PtExist
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-local notation "ι" => Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F)
+local notation "ι" => Formalism.UG.inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
 
 theorem ad_ext {a b : AfE F E} (h : ∀ P, adAt F P a = adAt F P b) : a = b :=
   (afIso F E).injective (FiniteAdeleRing.ext _ h)
@@ -21,8 +25,8 @@ theorem ad_ext {a b : AfE F E} (h : ∀ P, adAt F P a = adAt F P b) : a = b :=
 def idem (F : Type) [Field F] [NumberField F] [Algebra F E] (P : HeightOneSpectrum (𝓞 E)) : AfE F E :=
   (finAf F E (localIdele E P (atFin P (Units.mk0 2 two_ne_zero))) : AfE F E) - 1
 
-open Classical in
 
+open Classical in
 theorem adAt_idem (P w : HeightOneSpectrum (𝓞 E)) : adAt F w (idem F P) = if w = P then 1 else 0 := by
   unfold idem
   rw [map_sub, adAt_finAf, map_one]
@@ -44,7 +48,7 @@ theorem valued_lt_of_mem {P : HeightOneSpectrum (𝓞 E)} {w : Formalism.L2.Herm
     exact (HeightOneSpectrum.valuation_lt_one_iff_mem _ _).2 hb
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [Subring.coe_add, map_add]
+    rw [Subring.coe_add, map_add (f := _)]
     exact Valuation.map_add_lt _ hx hy
   | smul a x _ hx =>
     rw [smul_eq_mul, Subring.coe_mul, map_mul, map_mul]
@@ -62,12 +66,12 @@ theorem hasRes_redA [StarRing E] (P : HeightOneSpectrum (𝓞 E)) {a : AfE F E} 
 
 variable [StarRing E] (hc : CMData F E)
 
-local notation "σ" => Formalism.UG.sigR (CMData.sig hc) (FiniteAdeleRing (𝓞 F) F)
+local notation "σ" => Formalism.UG.sigR hc.sig (FiniteAdeleRing (𝓞 F) F)
 
 theorem sig_sig (z : AfE F E) : σ (σ z) = z := DetClass.sigR_sigR (fun x => star_star x) z
 
-open Classical in
 
+open Classical in
 theorem adAt_sig_idem (P w : HeightOneSpectrum (𝓞 E)) : adAt F w (σ (idem F P)) = if conjPrime₂ w = P then 1 else 0 := by
   split_ifs with h
   · have e := valued_sigR hc w (idem F P - 1)
@@ -84,16 +88,17 @@ def glue (z : AfE F E) (a b : HeightOneSpectrum (𝓞 E) → E) : AfE F E :=
 
 theorem sig_glue (z : AfE F E) (a b : HeightOneSpectrum (𝓞 E) → E) : σ (glue hc Q z a b) = glue hc Q (σ z) b a := by
   unfold glue
-  rw [map_add, map_add, map_mul, map_sub, map_sub, sig_sig, sig_sig, map_one]
+  rw [map_add (f := _), map_add (f := _), map_mul, map_sub, map_sub, sig_sig, sig_sig, map_one]
   ring
 
-open Classical in
 
+open Classical in
 theorem adAt_glue (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) (z : AfE F E) (a b : HeightOneSpectrum (𝓞 E) → E)
     (w : HeightOneSpectrum (𝓞 E)) : adAt F w (glue hc Q z a b) =
       if w ∈ Q then algebraMap E _ (a w) else if conjPrime₂ w ∈ Q then algebraMap E _ (star (b (conjPrime₂ w))) else adAt F w z := by
   unfold glue
-  simp only [map_add, map_mul, map_sub, map_sum, map_one, adAt_idem, adAt_sig_idem, sigR_inclE, adAt_inclE, ite_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_mul, map_sub, map_sum, map_one, adAt_idem, adAt_sig_idem, sigR_inclE, adAt_inclE, ite_mul,
     one_mul, zero_mul, Finset.sum_ite_eq]
   by_cases h : w ∈ Q
   · simp [h, hQ w h]
@@ -119,7 +124,15 @@ theorem unimodGenus (n : ℕ) [NeZero n] : UnimodGenus hc n := by
     rwa [he, hStd_single_left] at this
   have hn : h.Nondegenerate := ⟨fun x hx => hr x fun y => by rw [← hsym.eq, hx, map_zero], hr⟩
   exact GlobalTheory.Mass.Genus.exists_globLat_eq (J := 1) hs hfix (Module.Finite.iff_fg.2 stdLat_lattice.fg)
-    stdLat_lattice.span_eq_top N (GlobalTheory.SelfDualPoint.mem_genus h hc.cmUnram hsym hn stdLat_lattice hN
+    (by
+      apply top_unique
+      intro v _
+      have hv : v = ∑ i, v i • (Pi.single i (1 : E) : Fin n → E) := by
+        funext j
+        simp [Finset.sum_apply, Pi.single_apply]
+      rw [hv]
+      exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+        (Submodule.subset_span (by simpa using single_mem_stdLat (E := E) i 1))) N (GlobalTheory.SelfDualPoint.mem_genus h hc.cmUnram hsym hn stdLat_lattice hN
       (he ▸ stdLat_unimodular) (he ▸ hU))
 
 variable {hc Q} {n : ℕ}
@@ -151,18 +164,19 @@ theorem int_of_uni (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {k : GL (Fin n) (AfE
 
 def mat (f : Sp E n ≃ₗ[E] Sp E n) : Matrix (Fin n) (Fin n) E := Matrix.of fun i j => f (Pi.single j 1) i
 
-omit [NumberField E] [StarRing E] in
 
+omit [NumberField E] [StarRing E] in
 theorem mat_mulVec (f : Sp E n ≃ₗ[E] Sp E n) (v : Sp E n) (i : Fin n) : ∑ j, mat f i j * v j = f v i := by
-  conv_rhs => rw [← Finset.univ_sum_single v, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← Finset.univ_sum_single v, map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   have : (Pi.single j (v j) : Sp E n) = v j • (Pi.single j 1 : Sp E n) := by
     rw [← Pi.single_smul', smul_eq_mul, mul_one]
   rw [this, map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
   rfl
 
-omit [NumberField E] [StarRing E] in
 
+omit [NumberField E] [StarRing E] in
 theorem mat_symm_mul (f : Sp E n ≃ₗ[E] Sp E n) : mat f.symm * mat f = 1 := by
   ext i j
   rw [Matrix.mul_apply]
@@ -183,7 +197,8 @@ theorem valued_symm_le {N : Submodule (𝓞 E) (Sp E n)} {P : HeightOneSpectrum 
   induction hu using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨v, hv, rfl⟩ := hx
-    simp only [adAt_inclE, ← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [adAt_inclE, ← map_mul, ← map_sum]
     rw [mat_mulVec, valued_algebraMap]
     have h1 : f.symm v ∈ stdAt E n P := (hf _).1 (by rw [f.apply_symm_apply]; exact le_locP P _ hv)
     obtain ⟨s, hs, h⟩ := (mem_locP _ _ _).1 h1
@@ -192,7 +207,7 @@ theorem valued_symm_le {N : Submodule (𝓞 E) (Sp E n)} {P : HeightOneSpectrum 
     rwa [hr, Pi.smul_apply, Algebra.smul_def, map_mul, CharValCompare.val_of_notMem hs, one_mul] at h2
   | zero => simp
   | add x y _ _ hx hy =>
-    simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
     exact Valuation.map_add_le _ hx hy
   | smul a x _ hx =>
     have e : ∀ j, algebraMap E (P.adicCompletion E) (mat f.symm i j) * adAt F P ((a • x) j) =
@@ -207,10 +222,18 @@ theorem valued_symm_le {N : Submodule (𝓞 E) (Sp E n)} {P : HeightOneSpectrum 
 theorem carries_globLat (x : GL (Fin n) (AfE F E)) :
     Formalism.L2.Herm.Carries x (stdLat E n) (Formalism.UG.CS.globLat x (stdLat E n)) :=
   Formalism.UG.P.span_recovery_of_integral_adelic_approx Formalism.UG.P.integral_adele_approximation_holds F E (Fin n) (stdLat E n)
-    (Module.Finite.iff_fg.2 stdLat_lattice.fg) stdLat_lattice.span_eq_top x
+    (Module.Finite.iff_fg.2 stdLat_lattice.fg) (by
+      apply top_unique
+      intro v _
+      have hv : v = ∑ i, v i • (Pi.single i (1 : E) : Fin n → E) := by
+        funext j
+        simp [Finset.sum_apply, Pi.single_apply]
+      rw [hv]
+      exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+        (Submodule.subset_span (by simpa using single_mem_stdLat (E := E) i 1))) x
+
 
 omit [StarRing E] in
-
 theorem mulVec_int {k : Matrix (Fin n) (Fin n) (AfE F E)} (hk : ∀ i j, k i j ∈ RInt F E) {z : Fin n → AfE F E}
     (hz : ∀ i, z i ∈ RInt F E) (i : Fin n) : k.mulVec z i ∈ RInt F E := by
   simp only [Matrix.mulVec, dotProduct]
@@ -237,16 +260,20 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
   have h1 : G' * G = 1 := by
     ext i j
     refine ad_ext fun w => ?_
-    rw [Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum]
     simp only [map_mul, hG, hG']
     split_ifs with h h'
-    · simp only [← map_mul, ← map_sum]
-      rw [← Matrix.mul_apply, mat_symm_mul, hone]
-    · simp only [← map_mul, ← map_sum, ← star_mul, ← star_sum]
-      rw [← Matrix.mul_apply, mat_symm_mul, hone, Matrix.one_apply, Matrix.one_apply]
-      by_cases e : i = j <;> simp [e, eq_comm]
-    · simp only [← map_mul, ← map_sum]
-      rw [← Matrix.mul_apply, Units.inv_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [← map_mul, ← map_sum]
+        rw [← Matrix.mul_apply, mat_symm_mul, hone]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [← map_mul, ← map_sum, ← star_mul, ← star_sum]
+        rw [← Matrix.mul_apply, mat_symm_mul, hone, Matrix.one_apply, Matrix.one_apply]
+        by_cases e : i = j <;> simp [e, eq_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [← map_mul, ← map_sum]
+        rw [← Matrix.mul_apply, Units.inv_mul]
   let g : GL (Fin n) (AfE F E) := ⟨G, G', mul_eq_one_comm.1 h1, h1⟩
   have hg : g ∈ UAd hc n := by
     rw [mem_uad_iff, ← h1]
@@ -258,19 +285,23 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
   have k1 : ∀ w, conjPrime₂ w ∉ Q → ∀ i j,
       Valued.v (adAt F w (((x⁻¹ * g : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) i j)) ≤ 1 := by
     intro w hw i j
-    rw [Units.val_mul, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Units.val_mul, Matrix.mul_apply, map_sum]
     simp only [g, map_mul, hG, if_neg hw]
     split_ifs with h
     · have := valued_pullV_le x ((hfr w h (Pi.single j 1)).2 (le_locP w _ (by simpa using single_mem_stdLat (E := E) j 1))) i
-      simp only [Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, adAt_inclE] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, adAt_inclE] at this
       exact this
-    · simp only [← map_mul, ← map_sum]
-      rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
-      split_ifs <;> simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [← map_mul, ← map_sum]
+        rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
+        split_ifs <;> simp
   have k2 : ∀ w, conjPrime₂ w ∉ Q → ∀ i j,
       Valued.v (adAt F w ((((x⁻¹ * g)⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) i j)) ≤ 1 := by
     intro w hw i j
-    rw [mul_inv_rev, inv_inv, Units.val_mul, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_inv_rev, inv_inv, Units.val_mul, Matrix.mul_apply, map_sum]
     simp only [g, Units.inv_mk, map_mul, hG', if_neg hw]
     split_ifs with h
     · refine valued_symm_le (u := fun l => (x : Matrix (Fin n) (Fin n) (AfE F E)) l j) (hfr w h)
@@ -279,9 +310,10 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
       rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
       split_ifs
       exacts [one_mem _, zero_mem _]
-    · simp only [← map_mul, ← map_sum]
-      rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
-      split_ifs <;> simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [← map_mul, ← map_sum]
+        rw [← Matrix.mul_apply, Units.inv_mul, Matrix.one_apply]
+        split_ifs <;> simp
   have i1 := int_of_uni hQ hk k1 k2
   have i2 := int_of_uni hQ (inv_mem hk) k2 (by rw [inv_inv]; exact k1)
   refine ⟨g, hg, fun z => (carries_globLat x z).trans ?_, fun P hP i j => ?_, fun w h h' v i => ?_⟩
@@ -291,11 +323,12 @@ theorem exists_modify (hQ : ∀ P ∈ Q, conjPrime₂ P ∉ Q) {x : GL (Fin n) (
     · have := mulVec_int i1 h i
       rwa [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel_right] at this
   · exact (hG P i j).trans (if_pos hP)
-  · simp only [pullV, Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, g, Units.inv_mk, hG', if_neg h,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [pullV, Formalism.L2.Col.pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, g, Units.inv_mk, hG', if_neg h,
       if_neg h']
 
-variable (hc) in
 
+variable (hc) in
 theorem exists_isPtOf_cm (n : ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E))) (p : DecoF E n ST SG Q)
     (h1 : Disjoint ST SG) (h2 : Disjoint ST Q) (h3 : Disjoint SG Q)
     (h4 : ∀ P ∈ uSG ST (uSG SG Q), conjPrime₂ P ∉ uSG ST (uSG SG Q)) : ∃ g : GL (Fin n) (AfE F E), IsPtOf hc g p := by
@@ -317,7 +350,7 @@ theorem exists_isPtOf_cm (n : ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E)
     tauto) h1 p.deco
   obtain ⟨x, hx, hd⟩ : ∃ x ∈ UAd hc n, decoRaw ST SG x = p.deco.1 := by
     refine ⟨_, (Quotient.out q).2, ?_⟩
-    rw [← hq, decoPt, decoOf, dif_pos (decorated_lattice_exists hc n ST SG _ (Quotient.out q).2)]
+    rw [← hq, decoPt, decoOf, dite_eq_left (decorated_lattice_exists hc n ST SG _ (Quotient.out q).2)]
   have hN : Formalism.UG.CS.globLat x (stdLat E n) = p.deco.1.N := congrArg Deco.N hd
   obtain ⟨g, hg, c1, c2, c3⟩ := exists_modify (fun P hP => (h4 P (Or.inr (Or.inr hP))).2.2) hx (ptFr p)
     fun P _ => hN ▸ isFr_ptFr p P
@@ -337,8 +370,5 @@ theorem exists_isPtOf_cm (n : ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 E)
     rfl
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem exists_isPtOf : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (n : ℕ) (ST SG Q : Finset (HeightOneSpectrum (𝓞 H.E))) (p : DecoF H.E n ST SG Q), Disjoint ST SG → Disjoint ST Q → Disjoint SG Q → (∀ P ∈ uSG ST (uSG SG Q), conjPrime₂ P ∉ uSG ST (uSG SG Q)) → ∃ g : GL (Fin n) (AfE H.F H.E), IsPtOf (host_cmData R H) g p :=
-  fun R H n ST SG Q p => exists_isPtOf_cm (host_cmData R H) n ST SG Q p
 
 end GlobalTheory.Mem.Col2.PtExist

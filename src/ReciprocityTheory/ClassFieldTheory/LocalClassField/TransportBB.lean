@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.TransportBA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.TransportBA
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -22,11 +26,13 @@ theorem continuous_gal_of_fix {k F k' F' : Type*} [Field k] [Field F] [Algebra k
   intro x hx
   have hx' : x = ∑ i, b.repr ⟨x, hx⟩ i • (b i : F') := by
     have := congrArg E.val (b.sum_repr ⟨x, hx⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     exact this.symm
   rw [hx']
   show φ σ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Algebra.smul_def, map_mul, AlgEquiv.commutes]
   exact congrArg _ (hc _ σ (Set.mem_iInter.1 hσ i))

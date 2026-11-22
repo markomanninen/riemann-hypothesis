@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsoSumOfInjectiveEquivariantFamily
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsoSumRestrictionOfLocalComponentUnitary
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnderChosenPlaceAndIsSplitAtOfDecompLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsoSumOfInjectiveEquivariantFamily
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsoSumRestrictionOfLocalComponentUnitary
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.UnderChosenPlaceAndIsSplitAtOfDecompLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ private theorem l_mem (u : Plc L) :
 private theorem SectionSplitPlaces (s : HidaSetting l L Ω) : ((l : ℕ) : 𝓞 (Lp L)) ∉ s.v0.asIdeal := fun h => by
   have hp : ((s.p : ℕ) : 𝓞 (Lp L)) ∈ s.v0.asIdeal := by
     rw [← s.norm_v0_eq_one]
-    exact Ideal.absNorm_mem s.v0.asIdeal
+    simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      Ideal.absNorm_mem s.v0.asIdeal
   obtain ⟨a, b, hab⟩ : IsCoprime (s.p : 𝓞 (Lp L)) (l : 𝓞 (Lp L)) :=
     ((Nat.coprime_primes s.p_prime Fact.out).2 s.p_ne).cast
   exact s.v0.isPrime.ne_top ((Ideal.eq_top_iff_one _).2
@@ -73,13 +78,13 @@ private theorem SectionSplitPlaces (s : HidaSetting l L Ω) : ((l : ℕ) : 𝓞 
 private theorem cmp_at {w : Plc L} (hl : ((l : ℕ) : 𝓞 L) ∉ w.asIdeal) (x : UA L n) :
     UpperTheory.V.Hi.CaseU.cmp n w ((away l L n).rangeRestrict x) = cLoc w x := by
   unfold UpperTheory.V.Hi.CaseU.cmp
-  rw [dif_pos hl]
+  rw [dite_eq_left hl]
   rfl
 
 private theorem sec_val (hb : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) {a : Ga l L n} (ha : a ∈ GaS n s) :
     secS n s (toGS n s a) = a := by
   unfold secS
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
   have h : (MulEquiv.ofBijective _ hb).symm (toGS n s a) = ⟨a, ha⟩ := (MulEquiv.symm_apply_eq _).2 rfl
   change ((MulEquiv.ofBijective _ hb).symm (toGS n s a) : GaS n s).1 = a
   rw [h]
@@ -87,7 +92,7 @@ private theorem sec_val (hb : Function.Bijective ((toGS n s).comp (GaS n s).subt
 private abbrev JJ (V : s.Lev) (x : UA L n) : Ga l L n × GL' n V :=
   ((away l L n).rangeRestrict x, fun v => cLoc (s.w v.1) x)
 
-private theorem infRep_one (V : s.Lev) (ι : Qbar l ≃+* ℂ) (lam : Wt L l n) {k : UA L n} (hk : k ∈ finU L n) :
+private theorem infRep_one (V : s.Lev) (ι : Qbar l ≃+* ℂ) (lam : Wt L l n) {k : UA L n} (hk : k ∈ finU (E := L) (n := n)) :
     infRep (V := V) ι lam k = 1 := by
   have h1 : ∀ τ : L →+* ℂ, cEmb τ k = 1 := fun τ => by
     change Matrix.GeneralLinearGroup.map (coord τ) (cInf k) = 1
@@ -102,11 +107,11 @@ variable {V : s.Lev} {ι : Qbar l ≃+* ℂ} {lam : Wt L l n} {d : ℕ}
   {ξ : GV n (fun v : V.frame.Vl => s.w v.1) →* GL (Fin d) ℂ}
 
 private theorem form_fin (hn : 1 ≤ n) (Q : QData V) (c : Coef l) {m : ℕ} (τ₀ : KT n (wt s) →* GL (Fin m) c.O)
-    (hξ : IsBasis ι e ξ) {k : UA L n} (hk : k ∈ finU L n) (F : Ga l L n × GL' n V → Fin d → ℂ)
+    (hξ : IsBasis ι e ξ) {k : UA L n} (hk : k ∈ finU (E := L) (n := n)) (F : Ga l L n × GL' n V → Fin d → ℂ)
     (ℓ : Module.Dual ℂ (⨂[ℂ] e : Emb l (fun v : V.frame.Vl => s.w v.1), nablaSq ℂ n (lam e.res))) :
     toForm ι e (fun g => F (g * JJ V k)) ℓ = RU L n k (toForm ι e F ℓ) := by
   have h := (formU l L Ω s n hn V Q c m τ₀ ι lam d e ξ hξ _ fun _ => rfl).2.2.1 F ℓ k
-  rw [infRep_one V ι lam ((finU L n).inv_mem hk)] at h
+  rw [infRep_one V ι lam ((finU (E := L) (n := n)).inv_mem hk)] at h
   exact h.symm
 
 private def formLin (ι : Qbar l ≃+* ℂ)
@@ -114,7 +119,7 @@ private def formLin (ι : Qbar l ≃+* ℂ)
     (Ga l L n × GL' n V → Fin d → ℂ) →ₗ[ℂ]
       Module.Dual ℂ (⨂[ℂ] e : Emb l (fun v : V.frame.Vl => s.w v.1), nablaSq ℂ n (lam e.res)) →ₗ[ℂ] (UA L n → ℂ) :=
   LinearMap.mk₂ ℂ (toForm ι e)
-    (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add])
+    (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add (f := _)])
     (fun a F ℓ => funext fun g => by simp only [toForm, Pi.smul_apply, map_smul])
     (fun _ _ _ => rfl) (fun _ _ _ => rfl)
 
@@ -179,7 +184,7 @@ private theorem loc_J (V : s.Lev) (hb : Function.Bijective ((toGS n s).comp (GaS
     refine Subgroup.mem_iInf.2 fun u => Subgroup.mem_iInf.2 fun hu' => MonoidHom.mem_ker.2 ?_
     by_cases h : ((l : ℕ) : 𝓞 L) ∈ u.asIdeal
     · unfold UpperTheory.V.Hi.CaseU.cmp
-      rw [dif_neg (not_not.2 h)]
+      rw [dite_eq_right (not_not.2 h)]
       rfl
     · rw [cmp_at h]
       refine GlobalTheory.DefU.LocRet.mem_locU_ne hx fun e => ?_

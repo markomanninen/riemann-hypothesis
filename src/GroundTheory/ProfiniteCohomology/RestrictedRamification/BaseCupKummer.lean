@@ -1,27 +1,32 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupNat
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.Bockstein
-import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupLocal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupNat
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.Bockstein
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.IsDiscreteRepResHomCoindRes
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
 
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) (n : ℕ)
   [NeZero n]
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem nsmul_galRootsOfUnity_eq_zero' {F L : Type} [Field F] [Field L] [Algebra F L]
     (ζ : galRootsOfUnity.{0} F L n) : n • ζ = 0 := by
   apply Additive.toMul.injective
@@ -34,7 +39,7 @@ section ActPairings
 variable {H : Type} [Group H]
 
 def intActBiadd (A Z' : Rep.{0} (ULift.{0} ℤ) H) (e : Z' →+ ℤ) : A →+ Z' →+ A :=
-  AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun z => e z • a) (fun z z' => by rw [map_add, add_smul]))
+  AddMonoidHom.mk' (fun a => AddMonoidHom.mk' (fun z => e z • a) (fun z z' => by rw [map_add (f := _), add_smul]))
     (fun a a' => by
       ext z
       change e z • (a + a') = e z • a + e z • a'
@@ -72,7 +77,7 @@ def zmodActBiadd (D Z' : Rep.{0} (ULift.{0} ℤ) H) (hD : ∀ d : D, n • d = 0
   AddMonoidHom.mk' (fun d => AddMonoidHom.mk' (fun z => zmodMulAddHom n hD (e z) d)
       (fun z z' => by
         change zmodMulAddHom n hD (e (z + z')) d = zmodMulAddHom n hD (e z) d + zmodMulAddHom n hD (e z') d
-        rw [map_add, map_add, AddMonoidHom.add_apply]))
+        rw [map_add (f := _), map_add (f := _), AddMonoidHom.add_apply]))
     (fun d d' => by
       ext z
       change zmodMulAddHom n hD (e z) (d + d') = zmodMulAddHom n hD (e z) d + zmodMulAddHom n hD (e z) d'
@@ -110,8 +115,8 @@ theorem zmodActPairing_tmul (D Z' : Rep.{0} (ULift.{0} ℤ) H) (hD : ∀ d : D, 
 
 end ActPairings
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem zsmul_eq_cast_zsmul {M : Type*} [AddCommGroup M] [NeZero n] {x : M} (hx : n • x = 0) (z : ℤ) :
     z • x = (ZMod.cast (z : ZMod n) : ℤ) • x := by
   rw [ZMod.coe_intCast]
@@ -291,8 +296,8 @@ theorem eq_of_add_neg_one_pow_one_smul_eq_zero {R M : Type*} [Ring R] [AddCommGr
   rw [pow_one, neg_one_smul, add_neg_eq_zero] at h
   exact h
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem gsKummerCompactδ_cup (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal) (x : gsUnitsCompact S ιs 1)
     (y : cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
     compactCup (gsFinFamily S ιs) (gsPairingμ S n) (gsPairingμᵥ S ιs n) (gsPairingμ_hμ S ιs n)

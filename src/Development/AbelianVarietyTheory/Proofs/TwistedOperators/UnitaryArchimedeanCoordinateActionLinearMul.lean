@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ArchActOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open GlobalTheory.ArchUniq GlobalTheory.ArchUniq.Coord GlobalTheory.ArchLine
@@ -20,7 +24,7 @@ theorem archAct_linear_mul : ∀ {F E : Type} [Field F] [NumberField F] [Field E
   intro F E _ _ _ _ _ σ n d X W M
   refine ⟨fun h v v' => ?_, fun h c v => ?_, fun h h' v => ?_⟩
   · unfold archAct
-    rw [Prod.fst_add, Prod.snd_add, lift_add, lift_add, ← Prod.mk_add_mk, map_add]
+    rw [Prod.fst_add, Prod.snd_add, lift_add, lift_add, ← Prod.mk_add_mk, map_add (f := _)]
     simp only [actAB, Matrix.mul_add, Matrix.add_mul]
     rw [coordI_add]
   · unfold archAct

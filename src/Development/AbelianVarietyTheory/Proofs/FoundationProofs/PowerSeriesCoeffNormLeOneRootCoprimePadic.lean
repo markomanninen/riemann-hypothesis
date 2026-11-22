@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+
+@[expose] public section
+
 open scoped BigOperators
 
 noncomputable section
@@ -47,7 +52,8 @@ theorem intSer_of_pow {N : ℕ} (hN : ‖(N : K)‖ = 1) {s : PowerSeries K}
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, hca, if_pos hn,
       PowerSeries.coeff_zero_eq_constantCoeff_apply, hs0]
   have hG0 : PowerSeries.coeff 0 G = N := by
-    rw [PowerSeries.coeff_zero_eq_constantCoeff_apply, hG, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [PowerSeries.coeff_zero_eq_constantCoeff_apply, hG, map_sum]
     simp [hs0, ha0]
   have key : PowerSeries.coeff n (G * (s - a)) = (N : K) * PowerSeries.coeff n s := by
     rw [PowerSeries.coeff_mul, Finset.sum_eq_single (0, n)]

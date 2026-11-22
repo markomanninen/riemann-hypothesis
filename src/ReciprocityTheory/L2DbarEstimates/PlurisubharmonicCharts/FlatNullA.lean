@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContinuousOnSec
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ContinuousOnSec
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ImportsAlt
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -16,7 +20,7 @@ section Hom
 variable {n : ℕ} (De : MvPolynomial (Fin n) ℂ)
 
 def fnHom (a : ℂ) (b : Fin n → ℂ) : ℂ :=
-  ∑ m ∈ De.support, MvPolynomial.coeff m De *
+  ∑ m ∈ De.support, AddMonoidAlgebra.coeff De m *
     (a ^ (De.totalDegree + 1 - ∑ k, m k) * ∏ k, b k ^ m k)
 
 theorem fn_sum_le_totalDegree {m : Fin n →₀ ℕ} (hm : m ∈ De.support) :
@@ -68,15 +72,15 @@ theorem fn_diffOn_hom {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {S 
     (hb : ∀ k, DifferentiableOn ℂ (b k) S) :
     DifferentiableOn ℂ (fun x => fnHom De (a x) (fun k => b k x)) S := by
   unfold fnHom
-  have hterm : ∀ m ∈ De.support, DifferentiableOn ℂ (fun x => MvPolynomial.coeff m De *
+  have hterm : ∀ m ∈ De.support, DifferentiableOn ℂ (fun x => AddMonoidAlgebra.coeff De m *
       (a x ^ (De.totalDegree + 1 - ∑ k, m k) * ∏ k, (fun k => b k x) k ^ m k)) S := fun m _ =>
     ((ha.pow _).mul (fn_diffOn_prod Finset.univ (fun k x => b k x ^ m k) (fun k => (hb k).pow _))).const_mul _
   first
     | exact DifferentiableOn.fun_sum hterm
     | exact DifferentiableOn.sum hterm
-    | (have e : (fun x => ∑ m ∈ De.support, MvPolynomial.coeff m De *
+    | (have e : (fun x => ∑ m ∈ De.support, AddMonoidAlgebra.coeff De m *
           (a x ^ (De.totalDegree + 1 - ∑ k, m k) * ∏ k, (fun k => b k x) k ^ m k)) =
-          ∑ m ∈ De.support, fun x => MvPolynomial.coeff m De *
+          ∑ m ∈ De.support, fun x => AddMonoidAlgebra.coeff De m *
           (a x ^ (De.totalDegree + 1 - ∑ k, m k) * ∏ k, (fun k => b k x) k ^ m k) := by
          ext x; simp [Finset.sum_apply]
        rw [e]
@@ -92,7 +96,7 @@ theorem fn_eq_zero_of_eval {v0 : V n}
       simp only [MvPolynomial.eval_C]
       exact differentiable_const a
     next p q hp hq =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact hp.add hq
     next p i hp =>
       simp only [map_mul, MvPolynomial.eval_X]
@@ -209,11 +213,8 @@ theorem fn_not_ev (hD : A.D0 L w w0 s) (hF : A.Flat w0 s De) {P : Y} (hP : P ∈
       simpa only [div_eq_mul_inv] using h3
     exact contDiffOn_of_differentiableOn n _ U hUo hk
   have hcda : ContDiffAt ℂ ∞ (A.zLoc w0 s i) c := hcd.contDiffAt (hUo.mem_nhds hcU)
-  have hstr : HasStrictFDerivAt (A.zLoc w0 s i) (fderiv ℂ (A.zLoc w0 s i) c) c := by
-    first
-    | exact hcda.hasStrictFDerivAt (by simp)
-    | exact hcda.hasStrictFDerivAt (by norm_num)
-    | exact hcda.hasStrictFDerivAt (by exact_mod_cast le_top)
+  have hstr : HasStrictFDerivAt (A.zLoc w0 s i) (fderiv ℂ (A.zLoc w0 s i) c) c :=
+    hcda.hasStrictFDerivAt_fderiv (by simp)
   have hdet : LinearMap.det (fderiv ℂ (A.zLoc w0 s i) c : V n →ₗ[ℂ] V n) ≠ 0 := hD.coord P hP
   let e : V n ≃L[ℂ] V n :=
     (LinearMap.equivOfDetNeZero (fderiv ℂ (A.zLoc w0 s i) c : V n →ₗ[ℂ] V n) hdet).toContinuousLinearEquiv
@@ -248,7 +249,7 @@ theorem fn_dense (hD : A.D0 L w w0 s) (hF : A.Flat w0 s De) : Dense (A.Mset w0 s
           Metric.ball (A.chart (A.pick y) y) r) :=
         (A.chart _).continuousOn.isOpen_inter_preimage (A.chart _).open_source Metric.isOpen_ball
       have hyN : y ∈ (A.chart (A.pick y)).source ∩ A.chart (A.pick y) ⁻¹'
-          Metric.ball (A.chart (A.pick y) y) r := ⟨hys, Metric.mem_ball_self hr⟩
+          Metric.ball (A.chart (A.pick y) y) r := ⟨hys, Set.mem_preimage.mpr (Metric.mem_ball_self hr)⟩
       obtain ⟨y', hy'N, hy'W⟩ := mem_closure_iff.1 hy _ hNo hyN
       have hv'B := hy'N.2
       have hev : fnG A w0 s De (A.pick y) =ᶠ[𝓝 (A.chart (A.pick y) y')] 0 := by

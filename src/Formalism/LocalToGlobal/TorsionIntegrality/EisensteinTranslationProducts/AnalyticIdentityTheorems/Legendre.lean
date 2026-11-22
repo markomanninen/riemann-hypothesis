@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.Legendre
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.Legendre
+
+@[expose] public section
 
 noncomputable section
 open UpperHalfPlane hiding I
@@ -108,9 +112,8 @@ lemma sumA (u v : ℂ) (h : 0 < (v / u).im) :
   funext n
   unfold EisensteinSeries.e2Summand
   rw [← tsum_mul_left]
-  congr 1
-  funext m
-  simp only [eisSummand, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, hc]
+  refine tsum_congr fun m => ?_
+  simp only [eisSummand, Matrix.cons_val, hc]
   apply one_div_sq_eq_of_eq_mul
   field_simp
   ring
@@ -135,9 +138,8 @@ lemma sumB (u v : ℂ) (h : 0 < (v / u).im) :
   rw [← he]
   unfold EisensteinSeries.e2Summand
   rw [← tsum_mul_left]
-  congr 1
-  funext n
-  simp only [eisSummand, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, hw]
+  refine tsum_congr fun n => ?_
+  simp only [eisSummand, Matrix.cons_val, hw]
   apply one_div_sq_eq_of_eq_mul
   field_simp
   push_cast

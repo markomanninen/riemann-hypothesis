@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.NormWfLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.NormWfLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -230,7 +234,7 @@ private theorem merge {α β : Type} {c : α → β → ℂ} {n m : ℕ} (f : Fi
     ∑ i, c (Fin.append f f' i) (Fin.append q q' i) = ∑ i, c (f i) (q i) + ∑ i, c (f' i) (q' i) := by
   simp [Fin.sum_univ_add, Fin.append_left, Fin.append_right]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 private theorem main (D : Dat ℚ E) {P : CuspSub E 2} {ω χ : HChar ℚ} (hA : ∀ φ ∈ Tr P, admitted D ω φ)
     (hχ : ∀ a, ‖((χ.1 a : ℂˣ) : ℂ)‖ = 1) {L N : ℕ}

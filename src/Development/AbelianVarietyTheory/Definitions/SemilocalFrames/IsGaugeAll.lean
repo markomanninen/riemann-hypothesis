@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DefClassNum
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset
 

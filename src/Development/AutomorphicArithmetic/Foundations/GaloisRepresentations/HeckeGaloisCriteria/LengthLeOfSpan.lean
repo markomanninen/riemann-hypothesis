@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.ActEqZeroOfQK
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.ActEqZeroOfQK
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem length_le_of_span {O Q C : Type} [CommRing O] [AddCommGroup Q] [Module O
     have hq : q ∈ Submodule.span O (Set.range b) := hb ▸ Submodule.mem_top
     obtain ⟨r, hr⟩ := (Submodule.mem_span_range_iff_exists_fun O).mp hq
     refine ⟨fun i => Submodule.Quotient.mk (r i), ?_⟩
-    simp [g, ← hr, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [g, ← hr, map_sum, map_smul]
     exact Finset.sum_congr rfl fun i _ => rfl
   calc Module.length O C ≤ Module.length O (Fin m → O ⧸ Ideal.span {A}) := Module.length_le_of_surjective g hg
     _ = m * Module.length O (O ⧸ Ideal.span {A}) := by simp
@@ -45,7 +50,7 @@ theorem decomp : ∃ (f : X → T) (d : O), d ≠ 0 ∧ (∀ x y, y ≠ x → (f
   have hsum : (∑ x, g x) = d • (1 : T) := by
     apply Subtype.ext
     funext z
-    simp only [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, SetLike.val_smul, Pi.smul_apply, smul_eq_mul,
+    simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, SetLike.val_smul, Pi.smul_apply, smul_eq_mul,
       OneMemClass.coe_one, Pi.one_apply, mul_one]
     rw [Finset.sum_eq_single z]
     · simp only [g, SetLike.val_smul, Pi.smul_apply, smul_eq_mul]
@@ -62,12 +67,12 @@ theorem decomp : ∃ (f : X → T) (d : O), d ≠ 0 ∧ (∀ x y, y ≠ x → (f
       intro s
       refine Finset.induction_on s (by simp) ?_
       intro a s ha ih
-      rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, map_add, LinearMap.baseChange_add, LinearMap.add_apply]
+      rw [Finset.sum_insert ha, Finset.sum_insert ha, ih, map_add (f := _), LinearMap.baseChange_add, LinearMap.add_apply]
     rw [hlin, hsum, map_smul, map_one, LinearMap.baseChange_smul, LinearMap.smul_apply]
     simp
 
-include hs in
 
+include hs in
 theorem qK_eq_zero_iff {v : FractionRing O ⊗[O] M} : qK T act S v = 0 ↔ v ∈ ⨆ x ∈ Sᶜ, heckeEig T act x := by
   constructor
   · intro hv
@@ -143,7 +148,7 @@ private theorem exists_ne_zero_smul_upL_mem_lowL (hs' : ∀ x y : X, x ≠ y →
   by_cases hx : x ∈ Y
   · have hw0 : (act (g x)).baseChange (FractionRing O) w = 0 := hkill Yᶜ x (fun h => h hx) w hw
     have hux : (act (g x)).baseChange (FractionRing O) u = (1 : FractionRing O) ⊗ₜ[O] (act (g x) m) := by
-      rw [← hlw, map_add, hw0, add_zero, TensorProduct.mk_apply, LinearMap.baseChange_tmul]
+      rw [← hlw, map_add (f := _), hw0, add_zero, TensorProduct.mk_apply, LinearMap.baseChange_tmul]
     refine Submodule.mem_inf.mpr ⟨?_, ?_⟩
     · rw [hux]
       exact LinearMap.mem_range.mpr ⟨act (g x) m, rfl⟩
@@ -204,7 +209,7 @@ theorem length_le [IsPrincipalIdealRing O] [Module.Finite O M] (Z : Finset X) (Y
     obtain ⟨hu1, hu2⟩ := Submodule.mem_inf.mp hu
     refine Submodule.mem_inf.mpr ⟨map_sum_le T act S hs (Z : Set X) Y' hY1 hu1, ?_⟩
     obtain ⟨l, hl, w, hw, rfl⟩ := Submodule.mem_sup.mp hu2
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hqL l hl) (map_sum_le T act S hs (Z : Set X)ᶜ Y'ᶜ hY2 hw)
   have hlow : ∀ u ∈ lowL T act (Z : Set X), qK T act S u ∈ lowL (cutT T S) (cutAct T act S) Y' := by
     intro u hu

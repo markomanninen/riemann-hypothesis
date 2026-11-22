@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.DetPolyMulCayleyOmegaPow
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuation
+
+@[expose] public section
+
 open ReciprocityTheory.PGsh MvPolynomial
 
 namespace GlobalTheory.DetPowDegree
@@ -9,16 +14,16 @@ namespace GlobalTheory.DetPowDegree
 variable {α : Type} [Fintype α]
 
 def Good (l : ℤ) (L E n d s : ℕ) (p : MvPolynomial (α ⊕ α) ℤ) : Prop :=
-  ∀ m : (α ⊕ α) →₀ ℕ, coeff m p ≠ 0 → (∑ q, m (Sum.inr q)) ≤ n ∧
+  ∀ m : (α ⊕ α) →₀ ℕ, AddMonoidAlgebra.coeff p m ≠ 0 → (∑ q, m (Sum.inr q)) ≤ n ∧
     (∑ q, m (Sum.inl q)) + L * ∑ q, m (Sum.inr q) = d ∧
-    l ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ coeff m p
+    l ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ AddMonoidAlgebra.coeff p m
 
 variable {l : ℤ} {L E : ℕ}
 
 theorem Good.dvd {n d s : ℕ} {p : MvPolynomial (α ⊕ α) ℤ} (h : Good l L E n d s p)
     (m : (α ⊕ α) →₀ ℕ) :
-    l ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ coeff m p := by
-  by_cases hm : coeff m p = 0
+    l ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ AddMonoidAlgebra.coeff p m := by
+  by_cases hm : AddMonoidAlgebra.coeff p m = 0
   · rw [hm]; exact dvd_zero _
   · exact (h m hm).2.2
 
@@ -31,10 +36,10 @@ theorem Good.mono {n n' d s : ℕ} {p : MvPolynomial (α ⊕ α) ℤ} (h : Good 
 theorem Good.add {n d s : ℕ} {p q : MvPolynomial (α ⊕ α) ℤ} (hp : Good l L E n d s p)
     (hq : Good l L E n d s q) : Good l L E n d s (p + q) := by
   intro m hm
-  rw [coeff_add] at hm ⊢
+  rw [MvPolynomial.coeff_add] at hm ⊢
   have h3 := dvd_add (hp.dvd m) (hq.dvd m)
-  by_cases h : coeff m p = 0
-  · have h' : coeff m q ≠ 0 := by simpa [h] using hm
+  by_cases h : AddMonoidAlgebra.coeff p m = 0
+  · have h' : AddMonoidAlgebra.coeff q m ≠ 0 := by simpa [h] using hm
     exact ⟨(hq m h').1, (hq m h').2.1, h3⟩
   · exact ⟨(hp m h).1, (hp m h).2.1, h3⟩
 
@@ -42,7 +47,7 @@ theorem Good.neg {n d s : ℕ} {p : MvPolynomial (α ⊕ α) ℤ} (hp : Good l L
     Good l L E n d s (-p) := by
   intro m hm
   rw [coeff_neg] at hm ⊢
-  have h : coeff m p ≠ 0 := by simpa using hm
+  have h : AddMonoidAlgebra.coeff p m ≠ 0 := by simpa using hm
   exact ⟨(hp m h).1, (hp m h).2.1, (hp m h).2.2.neg_right⟩
 
 theorem Good.sub {n d s : ℕ} {p q : MvPolynomial (α ⊕ α) ℤ} (hp : Good l L E n d s p)
@@ -136,9 +141,9 @@ theorem Good.C_mul_X_inr (a : α) :
   simp [Finsupp.single_apply]
 
 def freeIdeal (α : Type) [Fintype α] (l : ℤ) : Ideal (MvPolynomial (α ⊕ α) ℤ) where
-  carrier := {p | ∀ m : (α ⊕ α) →₀ ℕ, (∑ q, m (Sum.inr q)) = 0 → l ∣ coeff m p}
+  carrier := {p | ∀ m : (α ⊕ α) →₀ ℕ, (∑ q, m (Sum.inr q)) = 0 → l ∣ AddMonoidAlgebra.coeff p m}
   add_mem' := fun {p q} hp hq m hm => by
-    rw [coeff_add]; exact dvd_add (hp m hm) (hq m hm)
+    rw [MvPolynomial.coeff_add]; exact dvd_add (hp m hm) (hq m hm)
   zero_mem' := fun m _ => by simp
   smul_mem' := fun c p hp m hm => by
     classical
@@ -187,14 +192,14 @@ end GlobalTheory.DetPowDegree
 
 namespace GlobalTheory
 
-open DetPowDegree in
 
+open DetPowDegree in
 theorem det_frobenius_sub_pow_support :
   (∀ (l i E n₀ s : ℕ), l.Prime → 1 ≤ i → ∀ ψ : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) ℤ,
     ψ = (Matrix.of fun b c : Fin n₀ => (MvPolynomial.X (Sum.inl (b, c)) ^ (l ^ i) - MvPolynomial.C ((l : ℤ) ^ E) * MvPolynomial.X (Sum.inr (b, c)) : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) ℤ)).det -
       MvPolynomial.rename Sum.inl (cayDet n₀ ℤ) ^ (l ^ i) →
     ∀ m ∈ (ψ ^ s).support, (∑ q, m (Sum.inr q)) ≤ n₀ * s ∧ (∑ q, m (Sum.inl q)) + l ^ i * ∑ q, m (Sum.inr q) = n₀ * l ^ i * s ∧
-      (l : ℤ) ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ MvPolynomial.coeff m (ψ ^ s)) := by
+      (l : ℤ) ^ (E * (∑ q, m (Sum.inr q)) + (s - ∑ q, m (Sum.inr q))) ∣ AddMonoidAlgebra.coeff (ψ ^ s) m) := by
   intro l i E n₀ s hl _ ψ hψ
   set f : MvPolynomial ((Fin n₀ × Fin n₀) ⊕ (Fin n₀ × Fin n₀)) ℤ :=
     MvPolynomial.rename Sum.inl (cayDet n₀ ℤ) with hf

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPhi
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.InvLiftPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapStep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPhi
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.InvLiftPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.ClassMapStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem framepf_map_φspan (i : ZMod n) {x : W.DD T₁} (hx : x ∈ Formalism.Ma
     rw [W.map_φ]
     exact Submodule.subset_span ⟨_, ⟨W.map f z, hfN z hz, (map_letA_smul W T₁ f _ z).symm⟩, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul s x _ hx => rw [map_letA_smul]; exact Submodule.smul_mem _ _ hx
 
 include hfN in
@@ -71,13 +75,11 @@ def framepf_Lmap : LcQ W T₁ π' c →ₗ[O] LcQ W T₂ π' c :=
       fun _ hx => framepf_map_NcS f hfN (c - 1) hx)
     fun _ hx => framepf_map_PiNS f hfN π' 1 hx
 
-theorem framepf_Lmap_mkL (z : W.DD T₁) (h₁ : z ∈ NcS W T₁ (c - 1)) (h₂ : W.map f z ∈ NcS W T₂ (c - 1)) :
-    framepf_Lmap f hfN π' c (mkL W T₁ π' c z h₁) = mkL W T₂ π' c (W.map f z) h₂ := rfl
-
 theorem framepf_LAover {x₁ : LA W T₁ π' c} {x₂ : LA W T₂ π' c} (h : LAover W f π' c x₁ x₂) :
     x₂ = (framepf_Lmap f hfN π' c).lTensor W.EE x₁ := by
   obtain ⟨m, e, y, h₁, h₂, rfl, rfl⟩ := h
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 theorem framepf_Lmap_smulLA (a : LetA O n) (x : LA W T₁ π' c) :
@@ -86,7 +88,7 @@ theorem framepf_Lmap_smulLA (a : LetA O n) (x : LA W T₁ π' c) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul e ℓ => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem framepf_Lmap_toLA {x : LA W T₁ π' c} (hx : x ∈ LinearMap.range (toLA W T₁ π' c ⊤)) :
     (framepf_Lmap f hfN π' c).lTensor W.EE x ∈ LinearMap.range (toLA W T₂ π' c ⊤) := by
@@ -94,7 +96,9 @@ theorem framepf_Lmap_toLA {x : LA W T₁ π' c} (hx : x ∈ LinearMap.range (toL
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a s => exact ⟨a ⊗ₜ ⟨framepf_Lmap f hfN π' c s, trivial⟩, rfl⟩
-  | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy =>
+    simp only [map_add (f := _)] at hx hy ⊢
+    exact Submodule.add_mem _ hx hy
 
 theorem framepf_Lmap_LamLA (Eπ : LetA O n) (h' : ℕ) {x : LA W T₁ π' c}
     (hx : x ∈ LamLA W T₁ π' Eπ h' c ⊤) :
@@ -143,7 +147,7 @@ theorem framepf_Ψ_smulLA {T' : LocLat G Qp LL O} (Ψ : W.EE ⊗[O] LcQ W T π' 
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul e ℓ => rfl
-    | add x y hx hy => rw [map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
   rw [this, map_smul, algebraMap_smul]
 
 theorem framepf_smulLA_alg (b : LetA O n) (t : LA W T π' c) :
@@ -151,7 +155,7 @@ theorem framepf_smulLA_alg (b : LetA O n) (t : LA W T π' c) :
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul e ℓ => rfl
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
 
 theorem framepf_mem_toLA {r : ℕ} (bL : Module.Basis (Fin r) O (LcQ W T π' c)) (x : LA W T π' c) :
     x ∈ LinearMap.range (toLA W T π' c ⊤) ↔ ∀ k, ∃ a ∈ W.AΔ,
@@ -172,11 +176,12 @@ theorem framepf_mem_toLA {r : ℕ} (bL : Module.Basis (Fin r) O (LcQ W T π' c))
       obtain ⟨a, ha, hae⟩ := hx
       obtain ⟨b, hb, hbe⟩ := hy
       refine ⟨a + b, W.AΔ.add_mem ha hb, ?_⟩
-      rw [map_add, map_add, Finsupp.add_apply, hae, hbe, mul_add, map_add]
+      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply, hae, hbe, mul_add, map_add (f := _)]
   · intro h
     choose a ha hae using h
     refine ⟨∑ k, (⟨a k, ha k⟩ : ↥W.AΔ) ⊗ₜ ⟨bL k, trivial⟩, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← (Algebra.TensorProduct.basis W.EE bL).sum_repr x]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hae, Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -298,7 +303,7 @@ theorem framepf_Ψα_nat (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
       obtain ⟨q, hq, hqe⟩ := hy
       refine ⟨p + q, Submodule.add_mem _ hp hq, ?_⟩
       rw [smul_add, ← hpe, ← hqe]
-      simp only [map_add]
+      simp only [map_add (f := _)]
       abel
   obtain ⟨p, hp, hpe⟩ := key t
   refine ⟨p, hp, ?_⟩
@@ -313,8 +318,8 @@ variable (Ψ₁ : W.EE ⊗[O] LcQ W T₁ π' c →ₗ[W.EE] W.DD T₁) (Ψ₂ : 
     (hnat : ∀ x ∈ LamLA W T₁ π' Eπ h' c ⊤,
       Ψ₂ ((framepf_Lmap f hfN π' c).lTensor W.EE x) - W.map f (Ψ₁ x) ∈ JP W T₂ π' Eπ h' M c)
 
-include hnat in
 
+include hnat in
 theorem framepf_α_nat (x₁ : LA W T₁ π' c) (hx₁ : x₁ ∈ LamLA W T₁ π' Eπ h' c ⊤) (x₂ : LA W T₂ π' c)
     (y₁ : W.DD T₁) (hov : LAover W f π' c x₁ x₂) (hxy : Ψ₁ x₁ - y₁ ∈ JP W T₁ π' Eπ h' M c) :
     Ψ₂ x₂ - W.map f y₁ ∈ JP W T₂ π' Eπ h' M c := by
@@ -323,8 +328,8 @@ theorem framepf_α_nat (x₁ : LA W T₁ π' c) (hx₁ : x₁ ∈ LamLA W T₁ �
   rw [framepf_LAover f hfN π' c hov]
   exact h
 
-include hnat in
 
+include hnat in
 theorem framepf_β_nat (Φ₁ : W.DD T₁ →ₗ[W.EE] W.EE ⊗[O] LcQ W T₁ π' c)
     (Φ₂ : W.DD T₂ →ₗ[W.EE] W.EE ⊗[O] LcQ W T₂ π' c) (lam : O)
     (hΦ₁ : ∀ y ∈ LamPS W T₁ Eπ h' c, Φ₁ y ∈ LamLA W T₁ π' Eπ h' c ⊤)

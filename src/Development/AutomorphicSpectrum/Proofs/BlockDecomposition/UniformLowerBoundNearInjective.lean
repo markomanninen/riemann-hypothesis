@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal NNReal Topology
 
@@ -60,7 +65,8 @@ theorem eventually_lower_bound_of_tendsto_injective
   have hdiff : ‖L s (e x) - L c (e x)‖ ≤ δ * ‖e x‖ := by
     have hy : L s (e x) - L c (e x) = ∑ i, (e x) i • (L s (b i) - L c (b i)) := by
       conv_lhs => rw [pi_eq_sum_univ (e x)]
-      simp only [map_sum, map_smul, smul_sub, Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_sub, Finset.sum_sub_distrib]
       rfl
     rw [hy]
     calc ‖∑ i, (e x) i • (L s (b i) - L c (b i))‖

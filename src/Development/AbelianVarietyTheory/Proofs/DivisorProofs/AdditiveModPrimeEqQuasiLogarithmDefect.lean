@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricCocycleModIdealEqCoboundaryQuasiLogStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralCoboundaryRepresentativeCocycleRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefectCompatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffsInIdealOfPowerSeriesIffImage
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesLiftQuotient
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffMemIdealOfFormalGroupCoboundaryOneCoeffMemAStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormalSeriesOfCoboundaryDvdPStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricCocycleModIdealEqCoboundaryQuasiLogStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralCoboundaryRepresentativeCocycleRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefectCompatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffsInIdealOfPowerSeriesIffImage
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesLiftQuotient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffMemIdealOfFormalGroupCoboundaryOneCoeffMemAStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormalSeriesOfCoboundaryDvdPStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,7 +59,7 @@ theorem additive_mod_p_is_defect : ∀ (p : ℕ) [Fact p.Prime] (O E : Type) [Co
   obtain ⟨h, rfl⟩ := ((GlobalTheory.mvPowerSeries_lift_quotient O _ ⊤).2.2 (p : O) t).1
     (fun α => Ideal.mem_span_singleton.1 (ht α))
   have hκ : map (algebraMap O E) (κ + (p : O) • h) = cob1 (up E c.μ) f := by
-    rw [map_add, hmt]; abel
+    rw [map_add (f := _), hmt]; abel
   obtain ⟨s, hs, -⟩ := (GlobalTheory.T.defect_ev_succ_eq_mulP_add_p_pow_smul p O E hF G d c f hf).1 p
   have hc := ((GlobalTheory.T.integral_coboundary_representative_cocycle_rules O E d c.μ c.isLaw hF.inj f _ hκ).2.2 p s hs).1
   rw [DefectSurj.powerSeriesPullbackTwoGroups_add_smul (DefectSurj.nmul_const c.isLaw.const p)] at hc
@@ -70,7 +74,7 @@ theorem additive_mod_p_is_defect : ∀ (p : ℕ) [Fact p.Prime] (O E : Type) [Co
     (fun α => Ideal.mem_span_singleton.1 (hdiv α))
   refine ⟨f, s, c.ev 1 w - y, hf, hs, ?_⟩
   have := congrArg (c.ev 1) hw
-  rw [map_add, map_smul, hev] at this
+  rw [map_add (f := _), map_smul, hev] at this
   rw [smul_sub, ← this]; abel
 
 end GlobalTheory.QLog

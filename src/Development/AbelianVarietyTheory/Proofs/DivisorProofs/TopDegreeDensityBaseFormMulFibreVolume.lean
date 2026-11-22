@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DensMulPullHeadL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DensMulPullHeadL
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.L2DbarEstimates (V)
@@ -19,7 +24,7 @@ variable {n d : ℕ} {J : Type}
 theorem pull_bsL_dz (ε : Fin n ≃ Fin d ⊕ J) (a : Fin d) :
     pull (bsL ε) (dz a) = dz (ε.symm (.inl a)) ∧ pull (bsL ε) (dzb a) = dzb (ε.symm (.inl a)) := by
   rw [(pull_dz _ a).1, (pull_dz _ a).2]
-  simp [bsL_apply, coordVec, EuclideanSpace.single_apply]
+  simp [bsL_apply, coordVec, PiLp.single_apply]
 
 theorem pull_bsL_prod (ε : Fin n ≃ Fin d ⊕ J) (s : Finset (Fin d)) :
     pull (bsL ε) ((∏ a ∈ s, (Complex.I / 2) • sym (a, a) : Ev d) : Alt d) =
@@ -34,7 +39,7 @@ theorem pull_bsL_prod (ε : Fin n ≃ Fin d ⊕ J) (s : Finset (Fin d)) :
 theorem prod_mem (g : J → Fin n) (s : Finset J) :
     ((∏ j ∈ s, (Complex.I / 2) • sym (g j, g j) : Ev n) : Alt n) ∈ ⋀[ℂ]^(2 * s.card) (Fin n ⊕ Fin n → ℂ) := by
   induction s using Finset.induction_on with
-  | empty => simpa using SetLike.one_mem_graded (fun i => ⋀[ℂ]^i (Fin n ⊕ Fin n → ℂ))
+  | empty => simp
   | insert a s ha ih =>
     rw [Finset.prod_insert ha, Subalgebra.coe_mul, Finset.card_insert_of_notMem ha,
       show 2 * (s.card + 1) = 1 + 1 + 2 * s.card by ring]
@@ -82,7 +87,7 @@ theorem dens_pull_mul_vol : ∀ (n d : ℕ) (J : Type) [Fintype J] (ε : Fin n �
     · rw [dens_pull_bas ε hT]
       simp [dens, hT]
   | zero => simp [dens_zero]
-  | add x y _ _ hx hy => rw [map_add, add_mul, dens_add, dens_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), add_mul, dens_add, dens_add, hx, hy]
   | smul c x _ hx => rw [map_smul, smul_mul_assoc, dens_smul, dens_smul, hx]
 
 end GlobalTheory.FlagCell2.BaseVol

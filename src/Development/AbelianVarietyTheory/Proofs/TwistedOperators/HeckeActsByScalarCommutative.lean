@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,13 +65,15 @@ theorem exists_fixed_preimage {τ : Representation ℂ G M} (π : M →ₗ[ℂ] 
   refine ⟨(O.card : ℂ)⁻¹ • ∑ o ∈ O, o, ?_, ?_⟩
   · rw [mem_fixed_iff_twisted_operators]
     intro a
-    rw [map_smul, map_sum, hperm a]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, hperm a]
   · have hconst : ∀ o ∈ O, π o = π m := by
       intro o ho
       obtain ⟨k, rfl⟩ := (hO o).1 ho
       rw [hπ]
       exact (mem_fixed_iff_twisted_operators ρ K (π m)).1 hy k
-    rw [map_smul, map_sum, Finset.sum_congr rfl hconst, Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, Finset.sum_congr rfl hconst, Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ,
       smul_smul, inv_mul_cancel₀ hne, one_smul]
 
 def permRep (K : Subgroup G) : Representation ℂ G (G ⧸ K →₀ ℂ) where
@@ -86,7 +92,7 @@ private theorem permRep_apply_eq_mapDomain (g : G) (φ : G ⧸ K →₀ ℂ) :
 
 theorem permRep_apply (g : G) (φ : G ⧸ K →₀ ℂ) (c : G ⧸ K) : permRep K g φ (g • c) = φ c := by
   rw [permRep_apply_eq_mapDomain]
-  exact Finsupp.mapDomain_apply (MulAction.injective g) φ c
+  exact Finsupp.mapDomain_apply_of_injective (MulAction.injective g) φ c
 
 theorem mem_finOrbit (hK : IsCommensurated K) (φ : G ⧸ K →₀ ℂ) : φ ∈ finOrbit (permRep K) K := by
   classical
@@ -120,7 +126,7 @@ theorem orbitMap_permRep (hx : x ∈ fixed ρ K) (g : G) (φ : G ⧸ K →₀ �
     orbitMap ρ K x (permRep K g φ) = ρ g (orbitMap ρ K x φ) := by
   induction φ using Finsupp.induction_linear with
   | zero => simp only [map_zero]
-  | add φ₁ φ₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add φ₁ φ₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | single c a =>
     obtain ⟨h, rfl⟩ := QuotientGroup.mk_surjective c
     rw [permRep_single, MulAction.Quotient.smul_mk, smul_eq_mul, orbitMap_single hx, orbitMap_single hx, map_smul,
@@ -146,72 +152,6 @@ theorem orbitMap_surjective (hρ : ρ.IsIrreducible) (hx : x ∈ fixed ρ K) (h0
       rw [h]
       exact Submodule.mem_top
     exact LinearMap.mem_range.1 hy
-
-theorem exists_heckeVec_eq (hK : IsCommensurated K) (hρ : ρ.IsIrreducible) (hx : x ∈ fixed ρ K) (h0 : x ≠ 0)
-    {y : V} (hy : y ∈ fixed ρ K) : ∃ f ∈ Hecke ℂ K, heckeVec ρ K f x = y := by
-  classical
-  obtain ⟨φ, hφ⟩ := orbitMap_surjective hρ hx h0 y
-  obtain ⟨ψ, hψ, hψφ⟩ := exists_fixed_preimage (orbitMap ρ K x) (fun g m => orbitMap_permRep hx g m)
-    (mem_finOrbit hK φ) (by rw [hφ]; exact hy)
-
-  have hψ' : ∀ (a : K) (c : G ⧸ K), ψ ((a : G) • c) = ψ c := by
-    intro a c
-    have h1 := (mem_fixed_iff_twisted_operators (permRep K) K ψ).1 hψ a
-    calc ψ ((a : G) • c) = permRep K (a : G) ψ ((a : G) • c) := by rw [h1]
-      _ = ψ c := permRep_apply _ _ _
-  refine ⟨fun g => ψ (g : G ⧸ K), ?_, ?_⟩
-  · rw [Formalism.UG.P.mem_hecke_iff]
-    unfold Formalism.UG.IsBiInv Formalism.UG.FinDosetSupp
-    refine ⟨?_, ?_⟩
-    · intro a b g
-      show ψ (((a : G) * g * b : G) : G ⧸ K) = ψ (g : G ⧸ K)
-      have hab : (((a : G) * g * b : G) : G ⧸ K) = (a : G) • (g : G ⧸ K) := by
-        rw [MulAction.Quotient.smul_mk, smul_eq_mul, QuotientGroup.eq]
-        have e : ((a : G) * g * b)⁻¹ * ((a : G) * g) = (b : G)⁻¹ := by group
-        rw [e]
-        exact inv_mem b.2
-      rw [hab, hψ']
-    · refine ⟨ψ.support.image (fun c : G ⧸ K => c.out), fun g hg => ?_⟩
-      obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul (s := K) g
-      refine ⟨(g : G ⧸ K).out, Finset.mem_image_of_mem _ (Finsupp.mem_support_iff.2 hg), 1, k⁻¹, ?_⟩
-      rw [hk]
-      simp
-  · unfold heckeVec
-    simp only [QuotientGroup.out_eq']
-    rw [finsum_eq_sum_of_support_subset (s := ψ.support), ← hφ, ← hψφ]
-    · simp only [orbitMap, Finsupp.linearCombination_apply, Finsupp.sum]
-    · intro c hc
-      rw [Function.mem_support] at hc
-      rw [Finset.mem_coe, Finsupp.mem_support_iff]
-      intro h
-      exact hc (by simp [h])
-
-theorem heckeVec_scalar (G : Type) [Group G] (K : Subgroup G) (hK : IsCommensurated K)
-    (hc : ∀ f₁ ∈ Hecke ℂ K, ∀ f₂ ∈ Hecke ℂ K, conv K f₁ f₂ = conv K f₂ f₁) (V : Type) [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ G V) (hρ : ρ.IsIrreducible) (hf : FiniteDimensional ℂ (fixed ρ K)) :
-    ∀ h ∈ Hecke ℂ K, ∃ c : ℂ, ∀ x ∈ fixed ρ K, heckeVec ρ K h x = c • x := by
-  intro h hh
-  by_cases hz : ∃ v ∈ fixed ρ K, v ≠ 0
-  · obtain ⟨v, hv, hv0⟩ := hz
-
-    let T : Module.End ℂ (fixed ρ K) := (heckeLin hK hh ρ).restrict (fun y hy => by
-      rw [heckeLin_apply]
-      exact heckeVec_mem_fixed hK hh hy)
-    haveI : Nontrivial (fixed ρ K) := ⟨⟨⟨v, hv⟩, 0, fun e => hv0 (congrArg Subtype.val e)⟩⟩
-    obtain ⟨c, hev⟩ := Module.End.exists_eigenvalue T
-    obtain ⟨w, hw⟩ := hev.exists_hasEigenvector
-    have hw0 : (w : V) ≠ 0 := fun e => hw.2 (Subtype.ext e)
-    have hTw : heckeVec ρ K h w = c • (w : V) := by
-      have := congrArg Subtype.val hw.apply_eq_smul
-      simpa [T] using this
-    refine ⟨c, fun y hy => ?_⟩
-    obtain ⟨f, hf, rfl⟩ := exists_heckeVec_eq hK hρ w.2 hw0 hy
-    rw [← heckeVec_conv hK hh hf w.2, hc h hh f hf, heckeVec_conv hK hf hh w.2, hTw, heckeVec_smul hK hf]
-  · push_neg at hz
-    refine ⟨0, fun y hy => ?_⟩
-    rw [hz y hy, zero_smul]
-    have := heckeVec_smul (ρ := ρ) hK hh (0 : ℂ) (0 : V)
-    simpa using this
 
 end GlobalTheory.LFun.HeckeScalar
 

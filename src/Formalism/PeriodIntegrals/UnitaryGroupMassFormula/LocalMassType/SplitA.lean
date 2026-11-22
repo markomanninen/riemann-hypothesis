@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SatSplit
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SatSplit
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.UnitaryLocalMassIdentity
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitIntLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,10 +95,6 @@ def p2 : A →+* K where
   map_add' x y := uniq2 h1 (by
     rw [← mul_ce h2 he h0 h1, add_mul, mul_ce h2 he h0 h1 x, mul_ce h2 he h0 h1 y, add_smul])
 
-theorem adeleInfiniteComponent_apply (x : A) : p1 h2 he h0 h1 x = c1 h2 he h0 h1 x := rfl
-
-theorem adele_ext_components (x : A) : p2 h2 he h0 h1 x = c2 h2 he h0 h1 x := rfl
-
 theorem idem_cases {a : K} (h : a * a = a) : a = 0 ∨ a = 1 := by
   have : a * (a - 1) = 0 := by rw [mul_sub, mul_one, h, sub_self]
   rcases mul_eq_zero.1 this with h' | h'
@@ -133,7 +133,7 @@ theorem sigR_sigR (hσ : ∀ y, σ (σ y) = y) (x : Fv F v ⊗[F] E) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul c y => simp [sigR, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem inclR_injective : Function.Injective (inclR (F := F) (Fv F v) : E → Fv F v ⊗[F] E) :=
   Algebra.TensorProduct.includeRight_injective (algebraMap F (Fv F v)).injective
@@ -217,7 +217,7 @@ theorem oev_iff_tensInt (x : Fv F v ⊗[F] E) :
       rw [e]
       exact Subring.subset_closure (Or.inl ⟨⟨(a : E), ⟨a, rfl⟩⟩, rfl⟩)
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact T.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact T.add_mem hy hz
     | smul c y _ hy =>
       have e : c • y = sc (E := E) v (c : Fv F v) * y := by
         rw [PI.LocMassTypU.sc_mul_eq_smul]

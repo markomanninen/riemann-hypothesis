@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.I2
 
@@ -61,7 +65,8 @@ lemma exists_real_combination (Ψ : Finset (E →+* ℂ))
     exact Subtype.ext (conjugate_conjugate τ.1).symm
   have h5 : y τ = ∑ i, (starRingEnd ℂ) (B.repr z i) * τ.1 (integralBasis E i) := by
     have := congrArg (starRingEnd ℂ) h2
-    simpa [map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum] using this
   have h6 : y τ = (y τ + y τ) / 2 := by ring
   rw [h6]
   nth_rewrite 1 [h1]
@@ -115,7 +120,7 @@ lemma embAll_mem_of_span (Ψ : Finset (E →+* ℂ)) (r : ℕ) (Λ : Submodule (
       rw [this]
       exact S.sum_mem fun i _ => S.smul_mem _ (hS _ (Λ.smul_mem _ hx))
     | zero => intro e; simp
-    | add x y _ _ hx hy => intro e; rw [smul_add, map_add]; exact S.add_mem (hx e) (hy e)
+    | add x y _ _ hx hy => intro e; rw [smul_add, map_add (f := _)]; exact S.add_mem (hx e) (hy e)
     | smul a x _ hx => intro e; rw [smul_smul]; exact hx _
   simpa using key 1
 

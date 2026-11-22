@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockPieceIndex
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqSumMultihomogeneousComponents
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockPieceIndex
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqSumMultihomogeneousComponents
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.NatCardEqPowLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SectionModuleEqSpanPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -28,7 +33,8 @@ theorem mConeMap_of_homog (y : (Σ k, ι k) → Ω) {g : MRing ι} {d : K → �
   rw [← prod_X_pow_eq]
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hdeg := hg m hm
   simp only [mConeMap, aeval_monomial, map_mul]
@@ -44,7 +50,7 @@ theorem mConeMap_of_homog (y : (Σ k, ι k) → Ω) {g : MRing ι} {d : K → �
   ring
 
 theorem aeval_i2comp (y : (Σ k, ι k) → Ω) (m : K → ℕ) (q : MRing ι) :
-    aeval y (i2comp m q) = coeff (Finsupp.equivFunOnFinite.symm m) (mConeMap y q) := by
+    aeval y (i2comp m q) = AddMonoidAlgebra.coeff (mConeMap y q) (Finsupp.equivFunOnFinite.symm m) := by
   classical
   induction q using MvPolynomial.induction_on' with
   | monomial μ c =>
@@ -53,11 +59,12 @@ theorem aeval_i2comp (y : (Σ k, ι k) → Ω) (m : K → ℕ) (q : MRing ι) :
     by_cases h : (fun k => ∑ i, μ ⟨k, i⟩) = m
     · rw [if_pos h, if_pos (by rw [h]), mul_one]
     · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h')), mul_zero, map_zero]
-  | add p q hp hq => rw [i2comp_add, map_add, hp, hq, map_add, coeff_add]
+  | add p q hp hq => rw [i2comp_add, map_add (f := _), hp, hq, map_add (f := _), MvPolynomial.coeff_add]
 
 theorem aeval_i2comp_of_mem (y : (Σ k, ι k) → Ω) {p : MRing ι} (hp : p ∈ mCoordIdeal y) (m : K → ℕ) :
     aeval y (i2comp m p) = 0 := by
-  rw [aeval_i2comp, show mConeMap y p = 0 from RingHom.mem_ker.mp hp, coeff_zero]
+  rw [aeval_i2comp, show mConeMap y p = 0 from RingHom.mem_ker.mp hp]
+  rfl
 
 theorem mem_mCoordIdeal_of_homog (y : (Σ k, ι k) → Ω) {f : MRing ι} {d : K → ℕ} (hf : IsMultiHomog f d)
     (h0 : aeval y f = 0) : f ∈ mCoordIdeal y := by
@@ -103,11 +110,13 @@ theorem map_piece [DecidableEq K] (y : (Σ k, ι k) → Ω) {g : MRing ι} {e : 
         i2comp (m + (e + Pi.single k 1)) p + ∑ j, i2comp m (c j) * (g * X ⟨k, j⟩) := by
       rw [i2comp_add]
       congr 1
-      rw [show i2comp (m + (e + Pi.single k 1)) (∑ j, c j * (g * X ⟨k, j⟩)) =
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [show i2comp (m + (e + Pi.single k 1)) (∑ j, c j * (g * X ⟨k, j⟩)) =
           ∑ j, i2comp (m + (e + Pi.single k 1)) (c j * (g * X ⟨k, j⟩)) from map_sum (i2compHom _) _ _]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [i2comp_mul_right (hgX j), if_pos le_add_self, add_tsub_cancel_right]
-    rw [AlgHom.toLinearMap_apply, ← i2comp_self hf, e1, map_add, aeval_i2comp_of_mem y hp, zero_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AlgHom.toLinearMap_apply, ← i2comp_self hf, e1, map_add (f := _), aeval_i2comp_of_mem y hp, zero_add, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     refine ⟨y ⟨k, j⟩ * aeval y (i2comp m (c j)), Submodule.mul_mem_mul (Submodule.subset_span ⟨j, rfl⟩)
       ⟨_, (mem_mHom_iff _ _).mpr (isMultiHomog_i2comp _ _), rfl⟩, ?_⟩
@@ -122,11 +131,12 @@ theorem map_piece [DecidableEq K] (y : (Σ k, ι k) → Ω) {g : MRing ι} {e : 
         (Ideal.mul_mem_left _ _ (Ideal.mem_sup_right (Ideal.subset_span ⟨j, rfl⟩)))
     · refine Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ ?_
       exact (mem_mHom_iff _ _).mpr (isMultiHomog_mul' ((mem_mHom_iff _ _).mp hh) (hgX j))
-    · simp only [LinearMap.mulLeft_apply, AlgHom.toLinearMap_apply, map_sum, map_zsmul,
-        map_mul, aeval_X, Finset.sum_mul]
-      refine Finset.sum_congr rfl fun j _ => ?_
-      simp only [zsmul_eq_mul]
-      ring
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.mulLeft_apply, AlgHom.toLinearMap_apply, map_sum, map_zsmul,
+        map_mul, aeval_X, Finset.sum_mul, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    simp only [zsmul_eq_mul]
+    ring
 
 theorem relIndex_eq_map {M : Type*} [AddCommGroup M] (f : M →ₗ[ℤ] Ω) {A B H : Submodule ℤ M} (hA : A ≤ H)
     (hB : B ≤ H) (hker : ∀ u ∈ H, f u = 0 → u ∈ A) :
@@ -152,8 +162,8 @@ section TwoBlock
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] {κ : Type} [Fintype κ]
 
-omit [CharZero Ω] in
 
+omit [CharZero Ω] in
 theorem relIndex_map_mulLeft {γ : Ω} (hγ : γ ≠ 0) (A B : Submodule ℤ Ω) :
     (A.map (LinearMap.mulLeft ℤ γ)).toAddSubgroup.relIndex (B.map (LinearMap.mulLeft ℤ γ)).toAddSubgroup =
       A.toAddSubgroup.relIndex B.toAddSubgroup := by
@@ -182,7 +192,8 @@ theorem evPiece_pair (x x' : Ix κ → Ω) (a b : ℕ) :
   · rw [evPiece, Submodule.map_le_iff_le_comap]
     intro s hs
     have hs' := (mem_mHom_iff _ _).mp hs
-    rw [Submodule.mem_comap, AlgHom.toLinearMap_apply, s.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submodule.mem_comap, AlgHom.toLinearMap_apply, s.as_sum, map_sum]
     refine Submodule.sum_mem _ fun μ hμ => ?_
     rw [aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_sigma, Fin.prod_univ_two,
       algebraMap_int_eq, eq_intCast, ← zsmul_eq_mul]
@@ -213,8 +224,8 @@ end TwoBlock
 
 end TwoBlockPieceIndex
 
-open TwoBlockPieceIndex in
 
+open TwoBlockPieceIndex in
 theorem TwoBlockPieceIndex.proof : TwoBlockPieceIndex.Statement := by
   intro D Ω _ _ κ _ x B c l hX hx hB hsp hl a b
   have hxc : x ⟨(), c⟩ ≠ 0 := hx.ne_zero _

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.TcAnti
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.TcAnti
+
+@[expose] public section
+
 open Matrix UpperTheory.V.Hi
 
 private theorem piRel {σ : Type} [Finite σ] {G : σ → Type} [∀ v, Group (G v)] (H K : ∀ v, Subgroup (G v))

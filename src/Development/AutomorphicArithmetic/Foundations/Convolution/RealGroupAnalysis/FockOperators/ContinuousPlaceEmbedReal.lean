@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -13,7 +17,7 @@ private theorem infPartPi_add' {F : Type} [Field F] [NumberField F] (x y : V4 F)
 
 private theorem placeEmbedReal_add {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (w : InfinitePlace F) (s t : ℝ) :
     at1 w (s + t) = at1 w s + at1 w t := by
-  simp only [at1, Pi.single_add, map_add]
+  simp only [at1, Pi.single_add, map_add (f := _)]
 
 private theorem continuous_placeEmbedReal {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (w : InfinitePlace F) :
     Continuous (at1 w : ℝ → A F) := by
@@ -59,8 +63,8 @@ private theorem fin_line {F : Type} [Field F] [NumberField F] [IsTotallyReal F] 
   · simp [finPartPi, Pi.single_eq_of_ne hj]
 
 theorem UpperTheory.ConvolutionTheory.R2.Fo.dEx :
-    ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (w : InfinitePlace F) (i : Fin 4) (φ : V4 F → ℂ), φ ∈ schwartzBruhatPi F (Fin 4) →
-    ∃ φ' ∈ schwartzBruhatPi F (Fin 4), ∀ v, HasDerivAt (fun t : ℝ => φ (v + Pi.single i (at1 w t))) (φ' v) 0 := by
+    ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (w : InfinitePlace F) (i : Fin 4) (φ : V4 F → ℂ), φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4) →
+    ∃ φ' ∈ schwartzBruhatPi (K := F) (ι := Fin 4), ∀ v, HasDerivAt (fun t : ℝ => φ (v + Pi.single i (at1 w t))) (φ' v) 0 := by
   intro F _ _ _ w i φ hφ
   induction hφ using Submodule.span_induction with
   | mem G hG =>

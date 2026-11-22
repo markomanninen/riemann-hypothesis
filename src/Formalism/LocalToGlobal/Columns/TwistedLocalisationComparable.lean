@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.StandardDeltaIntegralCoeffs
-import Formalism.LocalToGlobal.Columns.BrpColLatOneSpan
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.StandardDeltaIntegralCoeffs
+public import Formalism.LocalToGlobal.Columns.BrpColLatOneSpan
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.LatticeBasisExistsHolds
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open scoped Matrix
@@ -47,8 +51,6 @@ theorem det_change_of_basis_mem_locRing (w : HeightOneSpectrum (𝓞 K)) {M : Su
     ((B'⁻¹ * B : GL (Fin n) K) : Matrix (Fin n) (Fin n) K).det ∈ locRing w :=
   det_mem_subring_of_entries_mem _ _ fun a b => (mem_locRing w _).2 (lc_entries_same w hB hB' a b)
 
-theorem standard_basis_at_place (w : HeightOneSpectrum (𝓞 K)) : IsBasisAt w (colLat (1 : GL (Fin n) K)) 1 := rfl
-
 theorem det_bound_common_denominator (w : HeightOneSpectrum (𝓞 K)) {M : Submodule (𝓞 K) (Fin n → K)} {B : GL (Fin n) K} (hB : IsBasisAt w M B) (d : 𝓞 K)
     (h1 : ∀ x ∈ M, d • x ∈ colLat (1 : GL (Fin n) K)) (h2 : ∀ x ∈ colLat (1 : GL (Fin n) K), d • x ∈ M) :
     algebraMap (𝓞 K) K (d ^ n) * (B : Matrix (Fin n) (Fin n) K).det ∈ locRing w ∧
@@ -91,7 +93,7 @@ theorem det_twist_inv_mul_det_twist_mem_locRing (lam : ι → DomWeight n) (w : 
   · rw [← Units.val_inv_eq_inv_val, ← map_inv, mul_inv_rev, inv_inv, Matrix.GeneralLinearGroup.val_det_apply]
     exact det_change_of_basis_mem_locRing w (hB' τ) (hB τ)
 
-theorem det_twist_uniform_bound (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem det_twist_uniform_bound (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     ∃ dd : 𝓞 K, dd ≠ 0 ∧ ∀ (w : HeightOneSpectrum (𝓞 K)) (B : ι → GL (Fin n) K), (∀ τ, IsBasisAt w (M τ) (B τ)) →
       algebraMap (𝓞 K) K dd * detTwK lam B ∈ locRing w ∧ algebraMap (𝓞 K) K dd * detTwK lam B⁻¹ ∈ locRing w := by
   obtain ⟨d, hd, hdM⟩ := Formalism.L2.DIV.nb_sandwich_fam M hM
@@ -136,7 +138,7 @@ theorem mem_twLoc_iff (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) 
     rw [e]
     exact (locRing w).mul_mem (det_twist_inv_mul_det_twist_mem_locRing lam w hB hB') h
 
-theorem localisation_twisted_ideal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ))
+theorem localisation_twisted_ideal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ))
     (w : HeightOneSpectrum (𝓞 K)) : localization₂ w.asIdeal (twId lam M) = twLoc lam M w := by
   obtain ⟨dd, hdd, hb⟩ := det_twist_uniform_bound lam M hM
   choose Bw hBw using fun (w : HeightOneSpectrum (𝓞 K)) (τ : ι) => basisAtEx K n (M τ) (hM τ) w
@@ -173,7 +175,7 @@ section Ideal
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ} {ι : Type} [Fintype ι]
 
-theorem twisted_localisation_comparable (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem twisted_localisation_comparable (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     ∃ dd : 𝓞 K, dd ≠ 0 ∧ (∀ w, ∀ x ∈ twLoc lam M w, dd • x ∈ localization₂ w.asIdeal (1 : Submodule (𝓞 K) K)) ∧
       (∀ w, ∀ x ∈ (1 : Submodule (𝓞 K) K), dd • x ∈ twLoc lam M w) := by
   obtain ⟨dd, hdd, hb⟩ := det_twist_uniform_bound lam M hM
@@ -198,7 +200,7 @@ theorem twisted_localisation_comparable (lam : ι → DomWeight n) (M : ι → S
     rw [e]
     exact (locRing w).mul_mem (hb w B hB).2 (integer_mem_local_ring w r)
 
-theorem twisted_ideal_fractional (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem twisted_ideal_fractional (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     IsFractional (nonZeroDivisors (𝓞 K)) (twId lam M) := by
   obtain ⟨dd, hdd, h1, -⟩ := twisted_localisation_comparable lam M hM
   refine ⟨dd, mem_nonZeroDivisors_of_ne_zero hdd, fun b hb => ?_⟩
@@ -216,13 +218,13 @@ theorem twisted_ideal_fractional (lam : ι → DomWeight n) (M : ι → Submodul
   obtain ⟨y, hy⟩ := HeightOneSpectrum.mem_integers_of_valuation_le_one (K := K) (x := dd • b) hw
   exact ⟨y, hy⟩
 
-def twIdeal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+def twIdeal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     FractionalIdeal (nonZeroDivisors (𝓞 K)) K := ⟨twId lam M, twisted_ideal_fractional lam M hM⟩
 
-theorem twIdeal_coe (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem twIdeal_coe (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     (twIdeal lam M hM : Submodule (𝓞 K) K) = twId lam M := rfl
 
-theorem twIdeal_ne_zero (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem twIdeal_ne_zero (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     twIdeal lam M hM ≠ 0 := by
   intro h
   obtain ⟨dd, hdd, -, h2⟩ := twisted_localisation_comparable lam M hM
@@ -247,7 +249,7 @@ theorem valuation_finset_prod (w : HeightOneSpectrum (𝓞 K)) (f : ι → K) (h
     simp only [vAdd, map_mul, WithZero.log_mul h1 h2]
     ring
 
-variable [StarRing K] [IsTotallyComplex K]
+variable [StarRing K] [_root_.NumberField.IsTotallyComplex K]
 
 theorem valuation_det_twist (lam : ι → DomWeight n) (w : HeightOneSpectrum (𝓞 K)) (B : ι → GL (Fin n) K) :
     vAdd w (detTwK lam B) = ∑ τ, (lam τ).detShift * vAdd w (B τ : Matrix (Fin n) (Fin n) K).det := by
@@ -258,14 +260,21 @@ theorem valuation_det_twist (lam : ι → DomWeight n) (w : HeightOneSpectrum (�
     WithZero.log_zpow]
   ring
 
-theorem local_index_twisted_ideal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ))
+theorem local_index_twisted_ideal (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ))
     (w : HeightOneSpectrum (𝓞 K)) (B : ι → GL (Fin n) K) (hB : ∀ τ, IsBasisAt w (M τ) (B τ)) :
     lidx w.asIdeal (Submodule.span (𝓞 K) (Set.range fun _ : Fin 1 => (1 : K))) (twId lam M) = vAdd w (detTwK lam B) := by
   have hA : Submodule.span (𝓞 K) (Set.range fun _ : Fin 1 => (1 : K)) = (1 : Submodule (𝓞 K) K) := by
     rw [Set.range_const, Submodule.one_eq_span]
   have hlat : Submodule.IsLattice K (Submodule.span (𝓞 K) (Set.range fun _ : Fin 1 => (1 : K))) :=
     brp_span_lattice K _ (by rw [Set.range_const]; exact Ideal.span_singleton_one)
-  rw [bridge_lidx_det_holds K K w _ (twId lam M) (LinearEquiv.smulOfNeZero K K (detTwK lam B) (det_twist_ne_zero lam B)) hlat ?_]
+  have hfull : Submodule.IsFullLattice K (Submodule.span (𝓞 K) (Set.range fun _ : Fin 1 => (1 : K))) := by
+    refine { toIsLattice := hlat, span_eq_top := ?_ }
+    apply eq_top_iff.mpr
+    intro x _
+    have h1 : (1 : K) ∈ Submodule.span K (↑(Submodule.span (𝓞 K) (Set.range fun _ : Fin 1 => (1 : K))) : Set K) :=
+      Submodule.subset_span (Submodule.subset_span ⟨0, rfl⟩)
+    simpa using Submodule.smul_mem _ x h1
+  rw [bridge_lidx_det_holds K K w _ (twId lam M) (LinearEquiv.smulOfNeZero K K (detTwK lam B) (det_twist_ne_zero lam B)) hfull ?_]
   · have e : ((LinearEquiv.smulOfNeZero K K (detTwK lam B) (det_twist_ne_zero lam B) : K ≃ₗ[K] K) : K →ₗ[K] K) =
         detTwK lam B • LinearMap.id := by
       ext; simp
@@ -289,9 +298,9 @@ end Ideal
 
 section Norm
 
-variable (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] {n : ℕ} {ι : Type} [Fintype ι]
+variable (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] {n : ℕ} {ι : Type} [Fintype ι]
 
-theorem lattice_slope_degree_formula (hn : 0 < n) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsLattice K M) :
+theorem lattice_slope_degree_formula (hn : 0 < n) (M : Submodule (𝓞 K) (Fin n → K)) (hM : Submodule.IsFullLattice K M) :
     (Function.support fun p : {p : Ideal (𝓞 K) // p.IsMaximal} =>
       (haveI := p.2.isPrime; lidx p.1 (Submodule.span (𝓞 K) (Set.range fun i : Fin n => (Pi.single i 1 : Fin n → K))) M)).Finite ∧
     (n : ℝ) * (latK K M).mu = -(2 * ∑ᶠ p : {p : Ideal (𝓞 K) // p.IsMaximal},
@@ -304,7 +313,11 @@ theorem lattice_slope_degree_formula (hn : 0 < n) (M : Submodule (𝓞 K) (Fin n
   have hes : LinearIndependent K es := by rw [hesb]; exact (Pi.basisFun K (Fin n)).linearIndependent
   have hspS : Submodule.span K (Set.range es) = ⊤ := by rw [hesb]; exact (Pi.basisFun K (Fin n)).span_eq
   obtain ⟨hrk2, -, -, hfin2, hmu2⟩ := Formalism.LFunctionChainParameters.LLcv.log_covolume_slope_mu K (Fin n → K) (Fin n) (Pi.basisFun K (Fin n))
-    (fun _ => 1) (fun _ => by simp) n es M hes hM.fg (isLattice_ne_bot hM) (by rw [hM.span_eq_top, hspS])
+    (fun _ => 1) (fun _ => by simp) n es M hes hM.fg (by
+      intro h
+      have hs := hM.span_eq_top
+      rw [h, Submodule.bot_coe, Submodule.span_zero_singleton] at hs
+      exact bot_ne_top hs) (by rw [hM.span_eq_top, hspS])
   refine ⟨hfin2, ?_⟩
   rw [brp_latK_mu K M hM.fg]
   show (n : ℝ) * muDef (Pi.basisFun K (Fin n)) (fun _ => 1) M = _
@@ -315,7 +328,7 @@ theorem lattice_slope_degree_formula (hn : 0 < n) (M : Submodule (𝓞 K) (Fin n
   field_simp
   ring
 
-theorem twisted_ideal_norm_formula (hn : 0 < n) (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsLattice K (M τ)) :
+theorem twisted_ideal_norm_formula (hn : 0 < n) (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K)) (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) :
     -(2 * Real.log (FractionalIdeal.absNorm (twIdeal lam M hM) : ℝ) / (Module.finrank ℚ K : ℝ)) =
       ∑ τ, ((lam τ).detShift : ℝ) * ((n : ℝ) * (latK K (M τ)).mu) := by
   classical

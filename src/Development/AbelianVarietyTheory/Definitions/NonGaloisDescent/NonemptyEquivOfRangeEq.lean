@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NotInSupportOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCuspidalIffCompositions
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,9 +98,6 @@ def IsSocle (σ : Representation ℂ G W) (π : Representation ℂ G V) : Prop :
 def IsCosocle (σ : Representation ℂ G W) (π : Representation ℂ G V) : Prop :=
   σ.IsIrreducible ∧ ∃ f : π.IntertwiningMap σ, Function.Surjective f ∧
     ∀ S : Subrepresentation π, IsCoatom S → S = f.ker
-
-theorem IsSocle.embeds {σ : Representation ℂ G W} {π : Representation ℂ G V} (h : IsSocle σ π) : Embeds σ π :=
-  let ⟨_, f, hf, _⟩ := h; ⟨f, hf⟩
 
 theorem IsSocle.isSubquotient {σ : Representation ℂ G W} {π : Representation ℂ G V} (h : IsSocle σ π) :
     IsSubquotient σ π :=
@@ -236,9 +237,6 @@ theorem IsCosocle.equiv_of_surjective {σ : Representation ℂ G W} {τ : Repres
   obtain ⟨-, f, hf, hS⟩ := h
   exact nonempty_equiv_of_ker_eq g hg f hf (hS _ (isCoatom_ker hτ g hg))
 
-theorem IsSocle.unique {σ : Representation ℂ G W} {τ : Representation ℂ G X} {π : Representation ℂ G V}
-    (h : IsSocle σ π) (h' : IsSocle τ π) : Nonempty (τ.Equiv σ) := h.equiv_of_embeds h'.1 h'.embeds
-
 theorem IsCosocle.unique {σ : Representation ℂ G W} {τ : Representation ℂ G X} {π : Representation ℂ G V}
     (h : IsCosocle σ π) (h' : IsCosocle τ π) : Nonempty (τ.Equiv σ) :=
   let ⟨hi, g, hg, _⟩ := h'; h.equiv_of_surjective hi g hg
@@ -247,9 +245,12 @@ def isotypic (σ : Representation ℂ G V) (τ : Representation ℂ G W) : Subre
   toSubmodule := ⨆ f : τ.IntertwiningMap σ, LinearMap.range f.toLinearMap
   apply_mem_toSubmodule g v hv := by
     refine Submodule.iSup_induction _ (motive := fun v => σ g v ∈ ⨆ f : τ.IntertwiningMap σ, LinearMap.range f.toLinearMap)
-      hv ?_ (by simp) fun x y hx hy => by rw [map_add]; exact add_mem hx hy
-    rintro f _ ⟨w, rfl⟩
-    exact Submodule.mem_iSup_of_mem f ⟨τ g w, f.isIntertwining _ _ g w⟩
+      hv ?_ (by simp) ?_
+    · rintro f _ ⟨w, rfl⟩
+      exact Submodule.mem_iSup_of_mem f ⟨τ g w, f.isIntertwining _ _ g w⟩
+    · intro x y hx hy
+      rw [(σ g).map_add]
+      exact add_mem hx hy
 
 theorem apply_mem_isotypic {σ : Representation ℂ G V} {τ : Representation ℂ G W} (f : τ.IntertwiningMap σ) (w : W) :
     f w ∈ isotypic σ τ := Submodule.mem_iSup_of_mem f ⟨w, rfl⟩
@@ -288,23 +289,6 @@ theorem isotypic_ne_bot_iff_embeds {σ : Representation ℂ G V} {τ : Represent
     obtain ⟨w, hw⟩ := exists_ne (0 : W)
     exact ⟨f, fun e => hw (hf (by rw [e, map_zero]; rfl))⟩
 
-theorem map_mem_isotypic {σ : Representation ℂ G V} {σ' : Representation ℂ G X} (φ : σ.IntertwiningMap σ')
-    (τ : Representation ℂ G W) {v : V} (hv : v ∈ isotypic σ τ) : φ v ∈ isotypic σ' τ := by
-  refine Submodule.iSup_induction _ (motive := fun v => φ v ∈ isotypic σ' τ) hv ?_ ?_ fun x y hx hy => ?_
-  · rintro f _ ⟨w, rfl⟩
-    exact apply_mem_isotypic (φ.comp f) w
-  · rw [map_zero]; exact (isotypic σ' τ).toSubmodule.zero_mem
-  · rw [map_add]; exact (isotypic σ' τ).toSubmodule.add_mem hx hy
-
-def isotypicMap {σ : Representation ℂ G V} {σ' : Representation ℂ G X} (φ : σ.IntertwiningMap σ')
-    (τ : Representation ℂ G W) :
-    (isotypic σ τ).toRepresentation.IntertwiningMap (isotypic σ' τ).toRepresentation where
-  toLinearMap := φ.toLinearMap.restrict fun _ hv => map_mem_isotypic φ τ hv
-  isIntertwining' g := LinearMap.ext fun v => Subtype.ext (φ.isIntertwining _ _ g v)
-
-@[simp] theorem isotypicMap_apply {σ : Representation ℂ G V} {σ' : Representation ℂ G X} (φ : σ.IntertwiningMap σ')
-    (τ : Representation ℂ G W) (v : (isotypic σ τ).toSubmodule) : (isotypicMap φ τ v : X) = φ v := rfl
-
 def charIdem [Fintype G] (σ : Representation ℂ G V) (τ : Representation ℂ G W) [FiniteDimensional ℂ W] : V →ₗ[ℂ] V :=
   ((Module.finrank ℂ W : ℂ) / Fintype.card G) • ∑ g : G, LinearMap.trace ℂ W (τ g⁻¹) • σ g
 
@@ -318,8 +302,8 @@ variable {G V W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [A
 def cosetSum (π : Representation ℂ G V) {H : Subgroup G} (U : Subgroup H) [Fintype (H ⧸ U)] : V →ₗ[ℂ] V :=
   ∑ q : H ⧸ U, π (q.out : H)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem out_apply (π : Representation ℂ G V) {H : Subgroup G} {U : Subgroup H} {v : V} (hv : ∀ u ∈ U, π (u : H) v = v)
     (h : H) : π ((h : H ⧸ U).out : H) v = π h v := by
   obtain ⟨u, hu⟩ := QuotientGroup.mk_out_eq_mul U h
@@ -364,7 +348,7 @@ theorem isCompl_fixed_twKer {π : Representation ℂ G V} (hπ : IsSmooth π) {H
         obtain ⟨A, _, hA⟩ := hx
         obtain ⟨B, _, hB⟩ := hy
         exact ⟨A ⊓ B, inferInstance, fun U _ _ hU => by
-          rw [map_add, hA U (hU.trans inf_le_left), hB U (hU.trans inf_le_right), add_zero]⟩
+          rw [map_add (f := _), hA U (hU.trans inf_le_left), hB U (hU.trans inf_le_right), add_zero]⟩
       | smul c x _ hx =>
         obtain ⟨A, h0, hA⟩ := hx
         exact ⟨A, h0, fun U _ _ hU => by rw [map_smul, hA U hU, smul_zero]⟩
@@ -380,7 +364,8 @@ theorem isCompl_fixed_twKer {π : Representation ℂ G V} (hπ : IsSmooth π) {H
     letI := Fintype.ofFinite (H ⧸ U)
     have hc : (Fintype.card (H ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
     have h1 : cosetSum π U v ∈ fixed π H := mem_fixed.2 fun h hh => by
-      simp only [cosetSum, LinearMap.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [cosetSum, LinearMap.sum_apply, map_sum]
       refine Fintype.sum_equiv (MulAction.toPerm (⟨h, hh⟩ : H)) _ _ fun q => ?_
       conv_rhs => rw [MulAction.toPerm_apply, ← q.out_eq, MulAction.Quotient.smul_mk]
       rw [out_apply π hU, smul_eq_mul, Subgroup.coe_mul, map_mul, Module.End.mul_apply]
@@ -414,11 +399,13 @@ theorem idem_eq_cosetSum (U : Subgroup H) [Fintype (H ⧸ U)] {v : V} (hv : ∀ 
     idem hπ hH v = (Fintype.card (H ⧸ U) : ℂ)⁻¹ • ∑ q : H ⧸ U, π (q.out : H) v := by
   have hc : (Fintype.card (H ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   have h1 : ∑ q : H ⧸ U, π (q.out : H) v ∈ fixed π H := mem_fixed.2 fun h hh => by
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Fintype.sum_equiv (MulAction.toPerm (⟨h, hh⟩ : H)) _ _ fun q => ?_
     conv_rhs => rw [MulAction.toPerm_apply, ← q.out_eq, MulAction.Quotient.smul_mk]
     rw [out_apply π hv, smul_eq_mul, Subgroup.coe_mul, map_mul, Module.End.mul_apply]
-  rw [← idem_of_mem hπ hH h1, map_sum, Finset.sum_congr rfl fun q _ => idem_apply_mem hπ hH (q.out : H).2 v,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← idem_of_mem hπ hH h1, map_sum, Finset.sum_congr rfl fun q _ => idem_apply_mem hπ hH (q.out : H).2 v,
     Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hc, one_smul]
 
 end Idem
@@ -427,8 +414,8 @@ section Classes
 
 variable {G : Type} [Group G] [TopologicalSpace G]
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 def orbitMap {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (v : V) :
     (Representation.leftRegular ℂ G).IntertwiningMap ρ where
   toLinearMap := (LinearMap.applyₗ v ∘ₗ ρ.asAlgebraHom.toLinearMap : MonoidAlgebra ℂ G →ₗ[ℂ] V)
@@ -436,8 +423,8 @@ def orbitMap {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ
     ext h
     simp
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem orbitMap_surjective {V : Type} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V} (h : ρ.IsIrreducible)
     {v : V} (hv : v ≠ 0) : Function.Surjective (orbitMap ρ v) := by
   have h1 : v ∈ (orbitMap ρ v).range := ⟨MonoidAlgebra.single 1 1, by
@@ -449,17 +436,6 @@ theorem orbitMap_surjective {V : Type} [AddCommGroup V] [Module ℂ V] {ρ : Rep
     have : w ∈ (orbitMap ρ v).range := e ▸ trivial
     exact this
 
-variable (G) in
-
-instance small_irrCl : Small.{0} (IrrCl G) := by
-  have hv : ∀ c : IrrCl G, ∃ v : c.rep.V, v ≠ 0 := fun c =>
-    haveI := Model.nontrivial_of_isIrreducible c.rep.irr
-    exists_ne 0
-  choose v hv using hv
-  refine small_of_injective (f := fun c => (orbitMap c.rep.ρ (v c)).ker) fun c d h => ?_
-  rw [← c.cl_rep, ← d.cl_rep]
-  exact IrrRep.cl_eq_iff.2 (nonempty_equiv_of_ker_eq _ (orbitMap_surjective c.rep.irr (hv c)) _
-    (orbitMap_surjective d.rep.irr (hv d)) h)
 
 variable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
@@ -505,15 +481,5 @@ theorem clTwist_ofChar (χ ψ : G →* ℂˣ) (hχ : IsSmoothChar χ) (hψ : IsS
   exact .refl _
 
 end Classes
-
-example {G W : Type} [Group G] [AddCommGroup W] [Module ℂ W] {χ ψ : G →* ℂˣ} (h : χ ≠ ψ) (σ : Representation ℂ G W) :
-    ¬ IsSocle σ ((ofChar χ).prod (ofChar ψ)) := fun hs => by
-  obtain ⟨a⟩ := hs.equiv_of_embeds (isIrreducible_ofChar χ)
-    ⟨.inl ℂ (ofChar χ) (ofChar ψ), fun _ _ e => congrArg Prod.fst e⟩
-  obtain ⟨b⟩ := hs.equiv_of_embeds (isIrreducible_ofChar ψ)
-    ⟨.inr ℂ (ofChar χ) (ofChar ψ), fun _ _ e => congrArg Prod.snd e⟩
-  have h1 := Model.jhMult_ofChar_ne h
-  rw [jhMult_congr_left (a.trans b.symm), jhMult_self (isIrreducible_ofChar ψ)] at h1
-  exact one_ne_zero h1
 
 end GlobalTheory.LocGL

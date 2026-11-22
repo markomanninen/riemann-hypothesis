@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial ValuativeRel IsLocalRing Filter
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC
@@ -21,12 +25,12 @@ variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMF
 private theorem cmp_of {w : Plc L} (h : ((l : ℕ) : 𝓞 L) ∉ w.asIdeal) (x : UA L n) :
     cmp n w ((away l L n).rangeRestrict x) = cLoc w x := by
   unfold CaseU.cmp
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 private theorem cmp_over_l {w : Plc L} (h : ((l : ℕ) : 𝓞 L) ∈ w.asIdeal) (x : Ga l L n) : cmp n w x = 1 := by
   unfold CaseU.cmp
-  rw [dif_neg (not_not.2 h)]
+  rw [dite_eq_right (not_not.2 h)]
   rfl
 
 private theorem ext_cmp {x y : Ga l L n} (h : ∀ w, cmp n w x = cmp n w y) : x = y := by
@@ -162,7 +166,7 @@ private theorem bij (hn : 1 ≤ n) : Function.Bijective ((toGS n s).comp (GaS n 
       · rw [cmp_of hl, map_mul, hx' w hw.1, hloc w hw.2, one_mul]
     refine ⟨⟨_, hS⟩, Prod.ext (funext fun u => ?_) ?_⟩
     · change cmp n (s.w u) ((away l L n).rangeRestrict (x * j g.2)) = g.1 u
-      rw [cmp_of (away_of s (Or.inl u.2)), map_mul, hx _ u.2, dif_pos u.2,
+      rw [cmp_of (away_of s (Or.inl u.2)), map_mul, hx _ u.2, dite_eq_left u.2,
         hloc _ (by rw [under_w]; exact fun e => s.v0_St (e ▸ u.2)), mul_one]
     · change cmp n (s.w s.v0) ((away l L n).rangeRestrict (x * j g.2)) = g.2
       rw [cmp_of (away_of s (Or.inr rfl)), map_mul, hx' _ (by rw [under_w]; exact s.v0_St), hj', one_mul]
@@ -170,7 +174,7 @@ private theorem bij (hn : 1 ≤ n) : Function.Bijective ((toGS n s).comp (GaS n 
 private theorem secS_spec (h : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) (g : GS n s) :
     toGS n s (secS n s g) = g ∧ secS n s g ∈ GaS n s := by
   unfold secS
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact ⟨(MulEquiv.ofBijective _ h).apply_symm_apply g, ((MulEquiv.ofBijective _ h).symm g).2⟩
 
 private theorem mem_KS {k : Ga l L n} : k ∈ KS n s ↔ toGS n s k = 1 ∧

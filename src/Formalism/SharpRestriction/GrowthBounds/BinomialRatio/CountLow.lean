@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountUp
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FirstCoefficientFacts
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.LeAndHalfLeProdOneSubExpNegOfBounds
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.CountUp
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ def KeptPair (p : ℕ) (La : ℝ) {s r : ℕ} [NeZero r] (Ai Ci : Fin s → ℕ)
         La * max ((pairC mu i : ℤ) : ℝ) (Ai i : ℝ) / ((r : ℝ) + 1) ∧
       (Ci i : ℝ) * (1 - La / ((r : ℝ) + 1)) ≤ ((pairN (s := s) lam i : ℤ) : ℝ)
 
-open Classical in
 
+open Classical in
 def keptPairSum (p : ℕ) (La : ℝ) {s r : ℕ} [NeZero r] (A : ℕ) (Ai Ci : Fin s → ℕ) : ℚ :=
   ∑ᶠ x : (Fin (2 * s + 1 + 1) → Fin (r + 1) → ℤ) × (Fin r → ℤ),
     if IsPair A Ai Ci x.1 x.2 ∧ KeptPair p La Ai Ci x.1 x.2 then wdim x.2 else 0
@@ -544,7 +548,7 @@ theorem cl_Fs_finite {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hCD : ChainDimAt)
     rw [if_neg hn]
   exact (finsum_le_of_inj (Fs C0 CE1 CE2 X j m rz ry)
     (Gt (r := X.m) (mmLetters C0 CE1 CE2 X j rz ry) (X.seg C0 CE1 CE2 j).bPlus) Φ
-    (Gt_nonneg _ _) (Gt_support_finite hCD _ _) (hinj.mono hsupp) (by
+    (Gt_nonneg _ _) (Gt_support_finite hCD _ _) (hinj.mono (fun _ hz => hsupp _ hz)) (by
       intro z hz
       have hz' := hsupp z hz
       obtain ⟨h1, h2, h3, h4⟩ := hΦ z hz'

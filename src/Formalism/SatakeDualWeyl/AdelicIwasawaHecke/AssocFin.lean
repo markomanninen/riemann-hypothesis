@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,9 +33,12 @@ theorem stabilizer_coset_eq (s : G) :
 
 theorem orbit_coset_finite (hK : IsCommensurated K) (s : G) :
     (MulAction.orbit K ((s : G ⧸ K))).Finite := by
-  have h1 : ((K.map (MulAut.conj s).toMonoidHom).subgroupOf K).index ≠ 0 := hK s
-  rw [← stabilizer_coset_eq] at h1
-  haveI : Finite (K ⧸ MulAction.stabilizer K ((s : G ⧸ K))) := Nat.finite_of_card_ne_zero h1
+  unfold IsCommensurated at hK
+  let H := (K.map (MulAut.conj s).toMonoidHom).subgroupOf K
+  haveI : H.FiniteIndex := ⟨hK s⟩
+  haveI : Finite (K ⧸ MulAction.stabilizer K ((s : G ⧸ K))) := by
+    rw [stabilizer_coset_eq K s]
+    exact Subgroup.finite_quotient_of_finiteIndex
   exact Set.finite_coe_iff.mp ((MulAction.orbitEquivQuotientStabilizer K _).finite_iff.mpr this)
 
 theorem finite_supp_translate (hK : IsCommensurated K) {k : Type} [Zero k] (f : G → k)

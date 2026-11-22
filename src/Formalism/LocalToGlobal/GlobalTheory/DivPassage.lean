@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
-import Formalism.LocalToGlobal.Divisibility.RowLat
-import Formalism.LocalToGlobal.Divisibility.DefGroup
-import Formalism.BranchSandwichDivisors.StatementL
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+public import Formalism.LocalToGlobal.Divisibility.RowLat
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+public import Formalism.BranchSandwichDivisors.StatementL
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -65,7 +69,7 @@ def img {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D) K) (L : Submodule (𝓞 K) (Fi
 
 def FramesG : Prop := ∀ v, IsUnit (A.Xg v).det
 
-def LatG : Prop := Submodule.IsLattice K A.Rg
+def LatG : Prop := Submodule.IsFullLattice K A.Rg
 
 def EmbAt {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D) K) (ep : Matrix (Fin A.Dg) (Fin A.Dg) K) (h : ℕ)
     (XE : InfinitePlace K → Matrix (Fin D) (Fin D) ℂ) : Prop :=
@@ -105,21 +109,8 @@ def RowsG : Prop := A.latticeAtBaseLevel ≠ ⊥ ∧ A.latticeAtSharpLevel ≠ �
 end LevelAmb
 
 def PassageFromLevels : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (Bs : DefBase K) (Df0 Df1 : DefSide Bs)
+  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (Bs : DefBase K) (Df0 Df1 : DefSide Bs)
     (N : IndefNum Bs) (S0 : IndefData Df0) (S1 : IndefData Df1) (A : LevelAmb K S0.D S1.D),
-    A.FramesG → A.LatG → A.EmbAt A.ι0 A.ep0 A.h0 S0.XE → A.EmbAt A.ι1 A.ep1 A.h1 S1.XE →
-    A.SandAt A.ι0 A.ep0 A.h0 S0.RR → A.SandAt A.ι1 A.ep1 A.h1 S1.RR → A.Sizes N.la →
-    A.Ranks → A.Deg0 → A.Deg1 → A.MaxT → A.Mult N.de → A.RowsG →
-      Passage N S0 S1
-
-def PassageAtBaseSharpLevels : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (E : Type) [Field E] [NumberField E]
-    (Pg : Finset (Formalism.L2.DIV.Pl E)) (r k : ℕ) [Fintype (Formalism.L2.DIV.G0 Pg r)] (Pl0 T J : Type) [Fintype J]
-    (F : Formalism.L2.DIV.DefFam K (Formalism.L2.DIV.G0 Pg r) Pl0 T J) (ψ : ∀ PP : Formalism.L2.DIV.Pl E, AddChar (Formalism.L2.DIV.kP PP) K)
-    (Zs : DefSub F.amb) (N : IndefNum F.base)
-    (S0 : IndefData (F.side (Formalism.L2.DIV.P0 Pg r ψ).H (Formalism.L2.DIV.P0 Pg r ψ).chi Zs))
-    (S1 : IndefData (F.side (Formalism.L2.DIV.Psharp Pg r k ψ).H (Formalism.L2.DIV.Psharp Pg r k ψ).chi Zs))
-    (A : LevelAmb K S0.D S1.D),
     A.FramesG → A.LatG → A.EmbAt A.ι0 A.ep0 A.h0 S0.XE → A.EmbAt A.ι1 A.ep1 A.h1 S1.XE →
     A.SandAt A.ι0 A.ep0 A.h0 S0.RR → A.SandAt A.ι1 A.ep1 A.h1 S1.RR → A.Sizes N.la →
     A.Ranks → A.Deg0 → A.Deg1 → A.MaxT → A.Mult N.de → A.RowsG →

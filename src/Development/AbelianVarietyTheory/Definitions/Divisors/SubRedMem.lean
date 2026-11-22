@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,8 +42,8 @@ def Charts.Hom.ten {T T' : K.Obj} (f : T ⟶ T') : T.ten D →ₐ[D] T'.ten D :=
 theorem Charts.Hom.ten_tmul {T T' : K.Obj} (f : T ⟶ T') (d : D) (c : T.C) :
     Charts.Hom.ten D f (d ⊗ₜ c) = d ⊗ₜ f.φ c := rfl
 
-variable (K) in
 
+variable (K) in
 @[reducible] def Charts.Ten : K.Obj ⥤ CommAlgCat.{0} D where
   obj T := CommAlgCat.of D (T.ten D)
   map f := CommAlgCat.ofHom (Charts.Hom.ten D f)
@@ -48,13 +52,13 @@ variable (K) in
 
 variable {D}
 
-variable (K) in
 
+variable (K) in
 def Charts.tenZ (p : Λ →+ D) : Z1 (K.Ten D) :=
   ⟨fun _ T' f ↦ algebraMap D (T'.ten D) (p f.deg), fun T T' T'' f f' ↦ by
     change algebraMap D (T''.ten D) (p (f.deg + f'.deg)) =
       Charts.Hom.ten D f' (algebraMap D _ _) + algebraMap D (T''.ten D) _
-    rw [AlgHom.commutes, map_add, map_add]⟩
+    rw [AlgHom.commutes, map_add (f := _), map_add (f := _)]⟩
 
 variable (π : D →ₐ[ℂ] ℂ)
 
@@ -65,6 +69,7 @@ theorem Charts.Obj.red_tmul (T : K.Obj) (d : D) (c : T.C) : T.red π (d ⊗ₜ c
 
 def Charts.Obj.tenJ (T : K.Obj) : Ideal (T.ten D) := T.J.comap (T.red π)
 
+
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology TensorProduct in
 open CategoryTheory AlgebraicGeometry DividedPowers in
@@ -74,7 +79,6 @@ attribute [local instance] _root_.GlobalTheory.AnPer.Charts.Obj.cAlg in
 variable (D : Type) [CommRing D] [Algebra ℂ D] in
 variable {D} in
 variable (π : D →ₐ[ℂ] ℂ) in
-
 theorem _root_.GlobalTheory.AnPer.Charts.Hom.red_ten
     {T T' : K.Obj} (f : T ⟶ T') (x : T.ten D) :
     T'.red π
@@ -89,7 +93,8 @@ theorem _root_.GlobalTheory.AnPer.Charts.Hom.red_ten
     congr 1
     exact ((_root_.GlobalTheory.AnPer.Charts.Hom.φc f).commutes
       (π d)).symm
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
+
 
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology TensorProduct in
@@ -100,7 +105,6 @@ attribute [local instance] _root_.GlobalTheory.AnPer.Charts.Obj.cAlg in
 variable (D : Type) [CommRing D] [Algebra ℂ D] in
 variable {D} in
 variable (π : D →ₐ[ℂ] ℂ) in
-
 theorem _root_.GlobalTheory.AnPer.Charts.Hom.ten_mem {T T' : K.Obj}
     (f : T ⟶ T') {x : T.ten D} (h : x ∈ T.tenJ π) :
     _root_.GlobalTheory.AnPer.Charts.Hom.ten D f x ∈
@@ -135,8 +139,9 @@ private theorem sub_one_tmul_red_mem_map_ker (T : K.Obj) (x : T.ten D) :
     refine Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ ?_)
     rw [RingHom.mem_ker, map_sub, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, sub_self]
   | add x y hx hy =>
-    rw [map_add, tmul_add, add_sub_add_comm]
+    rw [map_add (f := _), tmul_add, add_sub_add_comm]
     exact add_mem hx hy
+
 
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology TensorProduct in
@@ -147,7 +152,6 @@ attribute [local instance] _root_.GlobalTheory.AnPer.Charts.Obj.cAlg in
 variable (D : Type) [CommRing D] [Algebra ℂ D] in
 variable {D} in
 variable (π : D →ₐ[ℂ] ℂ) in
-
 theorem _root_.GlobalTheory.AnPer.Charts.Obj.tenJ_nil
     (hπ : IsNilpotent (RingHom.ker π)) (T : K.Obj) : IsNilpotent (T.tenJ π) := by
   obtain ⟨m, hm⟩ := hπ
@@ -179,8 +183,8 @@ theorem _root_.GlobalTheory.AnPer.Charts.Obj.tenJ_nil
 @[reducible] def Charts.Obj.tenRat (T : K.Obj) : Algebra ℚ (T.ten D) :=
   ((algebraMap ℂ (T.ten D)).comp (algebraMap ℚ ℂ)).toAlgebra
 
-open Classical in
 
+open Classical in
 def Charts.Obj.tenδ (T : K.Obj) : DividedPowers (T.tenJ π) :=
   letI := T.tenRat (D := D)
   RatAlgebra.dividedPowers (T.tenJ π)
@@ -225,8 +229,8 @@ def Real.tenFunctor : K.Obj ⥤ Thick κ s' where
       dp := letI := T'.tenRat (D := D); isDPMorphism_of_rat (T.tenδ π) (T'.tenδ π)
         (Charts.Hom.ten D f : T.ten D →+* T'.ten D) fun _ h ↦ Charts.Hom.ten_mem π f h
       pt := r.analyticChartsRealization_comp_point_eq f }
-  map_id T := Thick.hom_ext fun b ↦ mp_id (K.Ten D) T b
-  map_comp f f' := Thick.hom_ext fun b ↦ mp_comp (K.Ten D) f f' b
+  map_id T := Thick.Hom.ext' (AlgHom.ext fun b ↦ mp_id (K.Ten D) T b)
+  map_comp f f' := Thick.Hom.ext' (AlgHom.ext fun b ↦ mp_comp (K.Ten D) f f' b)
 
 def Real.tenCoef : CoefMap ι (O κ s') (K.Ten D) where
   G := r.tenFunctor π hσ κ hs ι hι hπ

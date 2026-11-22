@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpCongrStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpFrobStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ColemanNormOperatorPowerSeriesCoeffAutMapCommStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpCongrStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpFrobStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ColemanNormOperatorPowerSeriesCoeffAutMapCommStatement
+
+@[expose] public section
+
 open GlobalTheory.Col PowerSeries
 
 namespace GlobalTheory

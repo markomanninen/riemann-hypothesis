@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RealInducedCharacters.Induced
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RealInducedCharacters.Induced
+
+@[expose] public section
+
 open GlobalTheory.Published
 
 noncomputable section
@@ -50,10 +55,10 @@ theorem inducedRep_cyclic_trace (G : Type) [Group G] [Fintype G] (H : Subgroup G
     · subst hk
       rw [Pi.single_eq_same, mul_one, dot_conj H χ hti0 (σ : G)]
       unfold dot
-      rw [dif_pos σ.2]
+      rw [dite_eq_left σ.2]
     · rw [Pi.single_eq_of_ne hk, mul_zero]
       unfold dot
-      rw [dif_neg]
+      rw [dite_eq_right]
       rw [memiff k i0 _ hσ]
       exact hk
   · rw [eq_top_iff]
@@ -70,12 +75,12 @@ theorem inducedRep_cyclic_trace (G : Type) [Group G] [Fintype G] (H : Subgroup G
           rw [Pi.single_eq_same, mul_one, inv_mul_cancel, one_mul]
         · rw [Pi.single_eq_of_ne hk, mul_zero]
           unfold dot
-          rw [dif_neg]
+          rw [dite_eq_right]
           rw [memiff k i _ hti]
           exact hk
       have hne : dot H χ (t i0) ≠ 0 := by
         unfold dot
-        rw [dif_pos hti0]
+        rw [dite_eq_left hti0]
         exact Units.ne_zero _
       have : Pi.single i (1 : ℂ) = (dot H χ (t i0))⁻¹ • indRep H χ t ht hc (t i) (Pi.single i0 1) := by
         rw [hval, smul_smul, inv_mul_cancel₀ hne, one_smul]

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleB
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleF
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleB
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftTupleF
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem Mlift_rowW {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (sg : DomWeig
     Finset.sum_add_distrib, liftWt]
   by_cases ha : av < n
   · have hn : 0 < n := by omega
-    rw [dif_pos ha, dif_pos (by omega), dif_pos hn, if_pos ha, if_neg (by omega)]
+    rw [dite_eq_left ha, dite_eq_left (by omega), dite_eq_left hn, if_pos ha, if_neg (by omega)]
     have hS2 : (∑ k : Fin K, if k ∈ L then (if (⟨av, hav⟩ : Fin N) = ⟨N - 1, by omega⟩ then 1 else 0) else 0) = 0 := by
       apply Finset.sum_eq_zero
       intro k _

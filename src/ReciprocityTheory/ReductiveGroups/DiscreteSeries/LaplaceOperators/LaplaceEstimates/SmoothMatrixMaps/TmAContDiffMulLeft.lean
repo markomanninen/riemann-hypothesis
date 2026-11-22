@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TmASmSum
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IntegrableComplexContinuousBoundedSupport
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LholClmEventually
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TmASmSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem tmA_contDiff_mulLeft (x : Matrix (Fin n) (Fin n) ℂ) :
     ContDiff ℝ ∞ (fun g : Matrix (Fin n) (Fin n) ℂ => x * g) := by
   refine contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => ?_
   simp only [Matrix.mul_apply]
-  exact ContDiff.sum fun k _ => contDiff_const.mul (contDiff_apply_apply ℝ ℂ k j)
+  exact ContDiff.sum fun k _ => contDiff_const.mul (contDiff_apply_apply (𝕜 := ℝ) (n := ∞) k j)
 
 theorem tmA_sm_left {f : Matrix (Fin n) (Fin n) ℂ → ℂ} (hf : Formalism.REAL.SmoothOnG ε f)
     {x : Matrix (Fin n) (Fin n) ℂ} (hx : Formalism.REAL.inUJ ε x) : Formalism.REAL.SmoothOnG ε (fun g => f (x * g)) := by

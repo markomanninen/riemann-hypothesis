@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHZeroRight
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHZeroRight
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory Matrix
 open GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -13,7 +18,7 @@ theorem heisO_resS_symm_zero {V₀ A L : HSp D} (ψ : AddChar (AF D.host.F) ℂ)
     heisO ψ V₀ S ((o.resS S).symm (a, 0)) f ((o.resS S).symm (u, x)) =
       ψ (symplOH A S u a) * f ((o.resS S).symm (u + a, x)) := by
   have h1 : (o.resS S).symm (u, x) + (o.resS S).symm (a, 0) = (o.resS S).symm (u + a, x) := by
-    rw [← map_add]; simp
+    rw [← map_add (f := _)]; simp
   simp only [heisO]
   rw [o.symplOH_resS, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply, symplOH_zero_right, add_zero, h1]
 
@@ -22,7 +27,7 @@ theorem heisO_resT_symm_zero {T A L : HSp D} (ψ : AddChar (AF D.host.F) ℂ) (o
     heisO ψ S T ((o.resT S).symm (b, 0)) f ((o.resT S).symm (v, x)) =
       ψ (symplOH S A v b) * f ((o.resT S).symm (v + b, x)) := by
   have h1 : (o.resT S).symm (v, x) + (o.resT S).symm (b, 0) = (o.resT S).symm (v + b, x) := by
-    rw [← map_add]; simp
+    rw [← map_add (f := _)]; simp
   simp only [heisO]
   rw [o.symplOH_resT, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply, symplOH_zero_right, add_zero, h1]
 
@@ -63,9 +68,9 @@ theorem contr_comb_ext : ∀ (D : D7) (ρ σ : ℕ) (B : BesLev D ρ) (B' : BesL
         exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
     _ = ∑ a ∈ c.support, ∑ b ∈ c'.support, (c a * ψ (symplOH B.A S u a) * (c' b * ψ (symplOH S B'.A v b))) *
           contr l S vL f₁ f₂ (u + a) (v + b) := by
-        rw [integral_finset_sum _ fun a _ => integrable_finset_sum _ fun b _ => (hI a b).const_mul _]
+        rw [integral_finsetSum _ fun a _ => integrable_finsetSum _ fun b _ => (hI a b).const_mul _]
         refine Finset.sum_congr rfl fun a _ => ?_
-        rw [integral_finset_sum _ fun b _ => (hI a b).const_mul _]
+        rw [integral_finsetSum _ fun b _ => (hI a b).const_mul _]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [integral_const_mul]
         rfl

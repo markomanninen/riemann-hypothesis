@@ -1,6 +1,10 @@
-import Formalism.MonomialMeanResidues.FilteredDegree
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+module
+
+public import Formalism.MonomialMeanResidues.FilteredDegree
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+
+@[expose] public section
 
 open Module NumberField Finset
 
@@ -13,13 +17,6 @@ open Formalism.HN
 section GammaDefs
 
 variable {K : Type} [Field K] [NumberField K]
-
-def stepLat {n δ : ℕ} (w : Fin n → Fin δ → K) (Λ : Submodule (𝓞 K) (Fin δ → K)) :
-    Submodule (𝓞 K) (Fin δ → K) :=
-  ⨆ k, Λ.map (LinearMap.mulLeft (𝓞 K) (w k))
-
-def ptLat {n δ : ℕ} (w : Fin n → Fin δ → K) (y : Fin δ) : Submodule (𝓞 K) (Fin 1 → K) :=
-  Submodule.span (𝓞 K) (Set.range fun k => (fun _ : Fin 1 => w k y))
 
 end GammaDefs
 
@@ -40,9 +37,6 @@ open IsDedekindDomain
 section W1
 
 variable {K : Type} [Field K] [NumberField K]
-
-def w1I {n δ : ℕ} (w : Fin n → Fin δ → K) (y : Fin δ) : FractionalIdeal (𝓞 K)⁰ K :=
-  FractionalIdeal.spanFinset (𝓞 K) Finset.univ (fun k => w k y)
 
 end W1
 
@@ -67,7 +61,7 @@ theorem infinitePlace_liesOver_comap (w : InfinitePlace E) : w.LiesOver (w.comap
     | exact inferInstance
     | exact ⟨rfl⟩
 
-theorem ncard_places_over_eq_finrank [IsTotallyComplex F] (v : InfinitePlace F) :
+theorem ncard_places_over_eq_finrank [_root_.NumberField.IsTotallyComplex F] (v : InfinitePlace F) :
     {w : InfinitePlace E | w.comap (algebraMap F E) = v}.ncard = finrank F E := by
   have h := InfinitePlace.unramifedPlacesOver_ncard_add_eq_finrank E v
   have hr : InfinitePlace.ramifiedPlacesOver E v = ∅ := by
@@ -91,7 +85,7 @@ theorem ncard_places_over_eq_finrank [IsTotallyComplex F] (v : InfinitePlace F) 
   rw [hr, hu] at h
   simpa using h
 
-theorem bc_prod [IsTotallyComplex F] [IsTotallyComplex E] (g : InfinitePlace F → ℝ) :
+theorem bc_prod [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] (g : InfinitePlace F → ℝ) :
     ∏ w : InfinitePlace E, g (w.comap (algebraMap F E)) = (∏ v, g v) ^ finrank F E := by
   classical
   have hfib : ∀ v : InfinitePlace F,
@@ -106,7 +100,7 @@ theorem bc_prod [IsTotallyComplex F] [IsTotallyComplex E] (g : InfinitePlace F �
   refine Finset.prod_congr rfl fun v _ => ?_
   rw [Finset.prod_congr rfl (fun w hw => by rw [(Finset.mem_filter.1 hw).2]), Finset.prod_const, hfib v]
 
-theorem bc_nPl [IsTotallyComplex F] [IsTotallyComplex E] :
+theorem bc_nPl [_root_.NumberField.IsTotallyComplex F] [_root_.NumberField.IsTotallyComplex E] :
     nPl E = finrank F E * nPl F := by
   classical
   have hfib : ∀ v : InfinitePlace F,
@@ -150,7 +144,8 @@ theorem bc_linIndep {j : ℕ} (e : Fin j → ι → F) (he : LinearIndependent F
       simp [Finset.sum_apply, Pi.single_apply]
     have h4 : π (e c) a = ∑ i, π (Pi.single i 1) a * e c i := by
       conv_lhs => rw [h3]
-      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
       exact Finset.sum_congr rfl fun i _ => mul_comm _ _
     rw [← h4, h1]
     simp [Pi.single_apply, eq_comm]
@@ -160,7 +155,8 @@ theorem bc_linIndep {j : ℕ} (e : Fin j → ι → F) (he : LinearIndependent F
     rw [hg]; simp
   have h1 : ∑ i, algebraMap F E (π (Pi.single i 1) a) * (∑ c, g c • bcMap (E := E) (e c)) i
       = ∑ c, g c * algebraMap F E (∑ i, π (Pi.single i 1) a * e c i) := by
-    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, bcMap, Finset.mul_sum, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, bcMap, Finset.mul_sum, map_sum, map_mul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun i _ => by ring
   rw [h1] at h0
@@ -274,7 +270,7 @@ theorem baseChangeMap_smul_scalar (s : F) (x : ι → F) :
 
 variable [StarRing F] [StarRing E]
 
-theorem bc_gram_det [IsTotallyComplex F]
+theorem bc_gram_det [_root_.NumberField.IsTotallyComplex F]
     (XF : InfinitePlace F → Matrix ι ι ℂ) (XE : InfinitePlace E → Matrix ι ι ℂ)
     (hn : ∀ (w : InfinitePlace E) (x : ι → F),
       Formalism.HermitianLatticesTheory.normAt (Pi.basisFun E ι) XE w (fun i => algebraMap F E (x i)) =

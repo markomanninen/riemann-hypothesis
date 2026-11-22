@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBTup
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PairValPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AtPtRel
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumBTup
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PairValPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.GenericRatioOfBoundHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocModel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AtPtRel
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,6 @@ def tupZ (u u' : D.what₂.Word) (Z : PairVal.MatR D) (p : PlF D) : Set (MatP D 
   kkOrb M p (CntLocal.ZZP (M := M) δ u u' p Z * LsDatumB.sgnP p)
 
 variable {M δ}
-
-theorem locT_eq_tupZ {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
-    {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (γ : TermDef.Term D u u' F0 what₂) :
-    locT M δ γ = tupZ M δ u u' (zT γ) := rfl
 
 variable {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -416,7 +416,7 @@ section FrCut
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-def repF (γ : TermDef.Term D u u' F0 what₂) : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) :=
+def repF (γ : TermDef.Term D u u' F0 what₂) : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) :=
   match nrep γ with
   | some x => x.2.1
   | none => (Quot.out γ.cls).1
@@ -424,7 +424,7 @@ def repF (γ : TermDef.Term D u u' F0 what₂) : LFlag (VS D) D.R.rS ((Tu D u' :
 def tLoc (p : PlF D) (γ : TermDef.Term D u u' F0 what₂) : Loc.Term (Vp D p) (Zd.M p) D.R.rS :=
   locTerm Zd p γ.lam (lf D F0) (repF γ) (Tu D u) (Tu D u')
 
-def locF' (p : PlF D) {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T') : Fin (D.R.rS + 1) → Vp D p :=
+def locF' (p : PlF D) {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T') : Fin (D.R.rS + 1) → Vp D p :=
   fun b => (TermLoc.sgnP' D p b * frFac Zd.δ p b) • baseChange₂ D p (frame F' b)
 
 def locSet (p : PlF D) (t₁ : Loc.Term (Vp D p) (Zd.M p) D.R.rS) (f₂' : Fin (D.R.rS + 1) → Vp D p)
@@ -439,7 +439,7 @@ def FrGlob : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1)), EligAt γ w →
   ∀ w' : Point D.host.E (D.R.rS + 1), Gpt (D.mem u).A.T (D.mem u').A.T w' ≠ 0 → kind w' = kind w →
   ∀ Z : PairVal.MatR D, AtMat w' Z →
-  ∃ (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+  ∃ (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (φ : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂)),
     ZhatL (lf D F0) F'₂ = Z ∧
@@ -450,7 +450,7 @@ def FrLoc : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1)), EligAt γ w →
   ∀ w' : Point D.host.E (D.R.rS + 1), Gpt (D.mem u).A.T (D.mem u').A.T w' ≠ 0 → kind w' = kind w →
   ∀ Z : PairVal.MatR D, AtMat w' Z →
-  ∀ (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (p : PlF D)
+  ∀ (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (p : PlF D)
     (φ : (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂)),
     ZhatL (lf D F0) F'₂ = Z →
@@ -479,8 +479,8 @@ variable {D : Formalism.BasicNotions.D7} {M : ∀ p : PlF D, Loc.Model (D.s.atP 
   {δ : ∀ p : PlF D, (D.s.atP p).Fp} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-variable (u u' F0 what₂) in
 
+variable (u u' F0 what₂) in
 def EligRel : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1)), EligAt γ w → γ.relevant
 
@@ -501,7 +501,7 @@ section SgnLoc
 variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
 theorem zhat_locF' (p : PlF D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' T'' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (F'₂ : LFlag (VS D) D.R.rS T'') (Tn T'n : ℕ)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (F'₂ : LFlag (D.sp.Y 0) D.R.rS T'') (Tn T'n : ℕ)
     (a b : Fin (D.R.rS + 1)) :
     (locH Zd p).Zhat (locTerm Zd p Λ F F' Tn T'n).f (locF' Zd p F'₂) a b =
       (TermLoc.sgnP' D p b * frFac Zd.δ p b) * (D.s.atP p).cj (TermLoc.sgnP D p a * frFac Zd.δ p a) *
@@ -511,7 +511,7 @@ theorem zhat_locF' (p : PlF D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' T
   rfl
 
 theorem zzplus_locF' (u u' : D.what₂.Word) (p : PlF D) (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' T'' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (F'₂ : LFlag (VS D) D.R.rS T'')
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (F'₂ : LFlag (D.sp.Y 0) D.R.rS T'')
     (Λ₂ : Submodule (Zd.M p).L.O (Vp D p)) :
     (locH Zd p).ZZplus ⟨Λ₂, (locTerm Zd p Λ F F' (Tu D u) (Tu D u')).f, locF' Zd p F'₂,
         ((Tu D u : ℕ) : (D.s.atP p).Fp), ((Tu D u' : ℕ) : (D.s.atP p).Fp)⟩ =
@@ -706,7 +706,7 @@ theorem clsOf_orb {p : PlF D} {Y Y' l ρ l' ρ' : MatP D p} (hl : TieN.IntLow (M
     congr 1
   · have hc' : ¬ ((∀ a b, (Y' + cornE p s) a b ∈ (M p).R) ∧ IsUnit (Y' + cornE p s).det) := by
       rintro ⟨h1', h2'⟩; exact hc ⟨hint.1 h1', hdet ▸ h2'⟩
-    rw [dif_neg hc, dif_neg hc']
+    rw [dite_eq_right hc, dite_eq_right hc']
 
 end ClsOrb
 
@@ -792,7 +792,7 @@ theorem repF_cell (hN : PairVal.NormRepExists D u u' F0 what₂) (hrows : IsRowR
   have hex : ∃ x : Point D.host.E (D.R.rS + 1) × LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) × PairVal.MatR D ×
       PairVal.MatR D, PairVal.NormRep γ x.1 x.2.1 x.2.2.1 x.2.2.2 := ⟨(w, y), hy⟩
   have hn : nrep γ = some hex.choose := dif_pos hex
-  have hz : zT γ = ZhatL (lf D F0) (repF γ) := by unfold zT repF; rw [hn]
+  have hz : zT γ = ZhatL (lf D F0) (repF γ) := by unfold zT repF; rw [hn]; rfl
   have hA := atMat_zT hN hrows ⟨⟨hgen, hG⟩, hat⟩ (eligRel_holds γ w ⟨⟨hgen, hG⟩, hat⟩)
   rw [hz] at hA
   exact ⟨hz, hA⟩

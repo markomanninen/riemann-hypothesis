@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.Components
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.IsDiscreteRepResGlobalDecompLimitRep
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.Components
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleRestriction.IsDiscreteRepResGlobalDecompLimitRep
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.Splitting
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -42,8 +47,8 @@ variable {K E : FiniteSubfield} [Fact (K ≤ E)]
   (hf : ∀ z : IdeleLimit, e ((Additive.toMul (fE.hom (Additive.ofMul z)) : Ωwˣ) : Ωw) =
     ((Additive.toMul (fK.hom (Additive.ofMul z)) : Ωvˣ) : Ωv))
 
-include hι hf in
 
+include hι hf in
 theorem cohomologyMapAlong_globalDecomp_idelesResField (n : ℕ) (y : cohomology (limitRep K) n) :
     (cohomologyMapAlong (globalDecomp Ew ιE) (continuous_globalDecomp Ew ιE) fE n).hom
         ((idelesResField K E n).hom y) =
@@ -83,8 +88,8 @@ section Finite
 
 variable {v : HeightOneSpectrum (𝓞 K.1)}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem idelesProj_eq_of_algebraMap (w : PlacesOver E.1 v) (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
     (ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure (w.1.adicCompletion E.1))
     (e : AlgebraicClosure (w.1.adicCompletion E.1) ≃+* AlgebraicClosure (v.adicCompletion K.1))
@@ -122,8 +127,8 @@ section Infinite
 
 variable {v : InfinitePlace K.1}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem infIdelesProj_eq_of_algebraMap (w : v.placesOver E.1) (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion)
     (ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure (w : InfinitePlace E.1).Completion)
     (e : AlgebraicClosure (w : InfinitePlace E.1).Completion ≃+* AlgebraicClosure v.Completion)
@@ -153,8 +158,8 @@ theorem infIdelesProj_eq_of_algebraMap (w : v.placesOver E.1) (ι : ℚ̄ →ₐ
         change e (infCompletionEmbedding ιE (joinField E F) (algebraMap v.Completion _ a)) = _
         rw [← completionMap_algebraMap_completion (F := E) (E := joinField E F) (w : InfinitePlace E.1)
           (u : InfinitePlace (joinField E F).1) a]
-        change e (infCompletionEmbedding ιE (joinField E F)
-          (algebraMap (w : InfinitePlace E.1).Completion _ (algebraMap v.Completion _ a))) = _
+        rw [← AbsoluteValue.Completion.algebraMap_eq_of_liesOver (w : InfinitePlace E.1).1
+          (u : InfinitePlace (joinField E F).1).1]
         rw [AlgHom.commutes]
         exact he a }
   have hj : ∀ t : (joinField E F).1, j (algebraMap _ _ t) = ι t := fun t => by
@@ -166,9 +171,9 @@ end Infinite
 
 section Places
 
+
 set_option maxHeartbeats 4000000 in
 variable (v) in
-
 theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : HeightOneSpectrum (𝓞 K.1))
     (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)) (y : cohomology (limitRep K) 2)
     (hy : Module.finrank (v.adicCompletion K.1) ((placeOfEmbedding ι E).1.adicCompletion E.1) •
@@ -232,8 +237,8 @@ theorem exists_idelesLocalRes_idelesResField_eq_zero_of_placeOfEmbedding (v : He
       ((idelesLocalRes ι 2).hom y)) = 0
   rw [h0, map_zero]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_infIdelesLocalRes_idelesResField_eq_zero_of_infPlaceOfEmbedding {v : InfinitePlace K.1}
     (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion) (y : cohomology (limitRep K) 2)
     (hy : (infIdelesLocalRes ι 2).hom y = 0) :
@@ -289,8 +294,8 @@ end Places
 
 section Main
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem idelesResField_eq_zero (ι : LocalEmbeddings K) (y : cohomology (limitRep K) 2)
     (hinf : ∀ v : InfinitePlace K.1, idelesLimitCohomologyEquiv ι (by norm_num) y (.inl v) = 0)
     (hfin : ∀ (v : HeightOneSpectrum (𝓞 K.1)) (w : PlacesOver E.1 v),
@@ -314,6 +319,8 @@ theorem idelesResField_eq_zero (ι : LocalEmbeddings K) (y : cohomology (limitRe
   have Hinf : ∀ w : InfinitePlace E.1, ∃ ιE : ℚ̄ →ₐ[E.1] AlgebraicClosure w.Completion,
       (infIdelesLocalRes ιE 2).hom ((idelesResField K E 2).hom y) = 0 := by
     intro w
+    letI : FaithfulSMul K.1 E.1 :=
+      (faithfulSMul_iff_algebraMap_injective K.1 E.1).2 (RingHom.injective _)
     let v : InfinitePlace K.1 := w.comap (algebraMap K.1 E.1)
     let w' : v.placesOver E.1 := ⟨w, ⟨rfl⟩⟩
     obtain ⟨ι', hι'⟩ := exists_infPlaceOfEmbedding_eq w'

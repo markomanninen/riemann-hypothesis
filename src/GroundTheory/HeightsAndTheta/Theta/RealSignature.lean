@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Theta.Cartan
-import GroundTheory.AutomorphicForms.HermitianSpaces
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Theta.Cartan
+public import GroundTheory.AutomorphicForms.HermitianSpaces
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Theta
 
@@ -8,8 +12,8 @@ open Matrix GroundTheory.Automorphic
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {H : Matrix ι ι ℂ}
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem map_starRingEnd_transpose (M : Matrix ι ι ℂ) : (M.map (starRingEnd ℂ))ᵀ = Mᴴ := by
   ext i j
   simp
@@ -108,10 +112,9 @@ theorem exists_congr_indefJ (hu : IsUnit H.det) :
           rw [star_eigenvectorUnitary_mul_mul, diagonal_mul_diagonal, diagonal_mul_diagonal]
           congr 1
           funext i
-          simp only [d]
           have hsq : Real.sqrt |lam i| * Real.sqrt |lam i| = |lam i| :=
             Real.mul_self_sqrt (abs_nonneg _)
-          rw [← Complex.ofReal_mul, ← Complex.ofReal_mul]
+          simp only [d, ← Complex.ofReal_mul]
           congr 1
           calc (Real.sqrt |lam i|)⁻¹ * lam i * (Real.sqrt |lam i|)⁻¹
               = lam i * ((Real.sqrt |lam i|)⁻¹ * (Real.sqrt |lam i|)⁻¹) := by ring
@@ -127,7 +130,7 @@ theorem exists_congr_indefJ (hu : IsUnit H.det) :
       submatrix_diagonal_equiv, indefJ]
     congr 1
     funext k
-    simp only [Function.comp_apply]
+    simp only [Function.comp_apply, lam, e]
     rw [sign_eigenvalues_signEquiv_symm hu k]
     rcases k with a | b <;> simp
 

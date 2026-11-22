@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShearGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem tendsto_shearGL_zero (n : ℕ) :
       ⟨⟨_, _, hmul, mul_eq_one_comm.mp hmul⟩, rfl⟩
     have hcoe : ((GlobalTheory.CompanionTheory.MirPair.shearGL n b : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) =
         1 + vecMulVec (GlobalTheory.BZMir.eLast k n) b := by
-      rw [GlobalTheory.CompanionTheory.MirPair.shearGL, dif_pos hu]
+      rw [GlobalTheory.CompanionTheory.MirPair.shearGL, dite_eq_left hu]
       exact hu.unit_spec
     refine ⟨hcoe, Units.inv_eq_of_mul_eq_one_right ?_⟩
     rw [hcoe]

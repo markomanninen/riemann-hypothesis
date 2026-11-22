@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
-import Formalism.LocalRingCardinality.DataCD
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriDens
+public import Formalism.LocalRingCardinality.DataCD
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,19 +143,6 @@ instance instHaarUCoOm : (volume : Measure (UCo N)).IsAddHaarMeasure := by
 instance instHaarUCo2Om : (volume : Measure (UCo N × UCo N)).IsAddHaarMeasure := by
   rw [Measure.volume_eq_prod]; exact Measure.prod.instIsAddHaarMeasure _ _
 
-theorem isClosed_unitaryLie :
-    IsClosed (Formalism.BasicNotions.lieU N 0 : Set (Matrix (Fin N ⊕ Fin 0) (Fin N ⊕ Fin 0) ℂ)) := by
-  have hc : Continuous (fun X : Matrix (Fin N ⊕ Fin 0) (Fin N ⊕ Fin 0) ℂ =>
-      Xᴴ * Formalism.UG.Jpq N 0 + Formalism.UG.Jpq N 0 * X) :=
-    (continuous_id.matrix_conjTranspose.matrix_mul continuous_const).add
-      (continuous_const.matrix_mul continuous_id)
-  exact isClosed_eq hc continuous_const
-
-instance instLocallyCompactSpaceUnitaryLie : LocallyCompactSpace (Formalism.BasicNotions.lieU N 0) :=
-  haveI : LocallyCompactSpace (Matrix (Fin N ⊕ Fin 0) (Fin N ⊕ Fin 0) ℂ) :=
-    inferInstanceAs (LocallyCompactSpace (Fin N ⊕ Fin 0 → Fin N ⊕ Fin 0 → ℂ))
-  isClosed_unitaryLie.isClosedEmbedding_subtypeVal.locallyCompactSpace
-
 instance instSecondCountableTopologyUnitaryLie : SecondCountableTopology (Formalism.BasicNotions.lieU N 0) :=
   haveI : SecondCountableTopology (Matrix (Fin N ⊕ Fin 0) (Fin N ⊕ Fin 0) ℂ) :=
     inferInstanceAs (SecondCountableTopology (Fin N ⊕ Fin 0 → Fin N ⊕ Fin 0 → ℂ))
@@ -234,7 +225,7 @@ def gaussEOm (Z : (Fin N ⊕ Fin 0) × (Fin N ⊕ Fin 0) → ℂ) : ℝ := ∏ p
 
 theorem continuous_gaussEOm : Continuous (gaussEOm (N := N)) := by
   unfold gaussEOm
-  exact continuous_finset_prod _ fun p _ => Real.continuous_exp.comp
+  exact continuous_finsetProd _ fun p _ => Real.continuous_exp.comp
     (continuous_const.mul (Complex.continuous_normSq.comp (continuous_apply p)))
 
 theorem integral_gaussEOm : ∫ Z, gaussEOm (N := N) Z = Real.pi ^ (N * N) := by

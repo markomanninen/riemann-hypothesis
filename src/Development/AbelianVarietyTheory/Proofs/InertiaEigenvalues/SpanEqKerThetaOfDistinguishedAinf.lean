@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem span_eq_ker_theta_of_distinguished : ∀ (l : ℕ) [Fact l.Prime] (x : A
     rw [hc, map_mul]
   rw [hφ', hfx] at hφ
   have h3 := congrArg (Per.θ l) hφ
-  rw [map_mul, h1, map_add, map_pow, map_mul, map_natCast, hx,
+  rw [map_mul, h1, map_add (f := _), map_pow, map_mul, map_natCast, hx,
     zero_pow hl.out.ne_zero, zero_add] at h3
   obtain ⟨v, hv⟩ := hu.exists_left_inv
   have h4 : v * WittVector.frobenius c - 1 ∈ Ideal.span {ξ} := by

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.BaseCase
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.BaseCase
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def Lbl.Apart (a : Lbl) : Prop :=
     a.L.Pairwise fun p r => p.1 = r.1 → ∀ i : ℕ, ¬ r.2 ≡ p.2 * a.q ^ i [MOD a.q ^ p.1 - 1]
 
 def MixType : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
     ∀ (π : CuspSub E n) (Y : Pt E Ω n), Lifts (Pt.base Ω π) Y →
     ∀ (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E)) (w : HeightOneSpectrum (𝓞 Y.K)), IsPlaceOver A v →
       IsPlaceOver A w → ∀ (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
@@ -31,7 +35,7 @@ def MixType : Prop :=
         Function.Injective θ ∧ UpperTheory.Gal.TypesAndIwahori.HasTypeVec τ'.ρ (stdBlocks d hd) θ
 
 def MixUnlinked : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (n : ℕ), 0 < n →
     ∀ (π : CuspSub E n) (Y : Pt E Ω n), Lifts (Pt.base Ω π) Y →
     ∀ (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E)) (w : HeightOneSpectrum (𝓞 Y.K)), IsPlaceOver A v →
       IsPlaceOver A w → ∀ (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
@@ -104,13 +108,13 @@ def TensInc : Prop :=
 
 def UnlFull : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V)
-    (s : ℕ) (x : Fin s → IrrGL k) (hd : ∑ a, (x a).1 = N), HasSupport π (Finset.univ.val.map x) →
+    (s : ℕ) (x : Fin s → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N), HasSupport π (Finset.univ.val.map x) →
     GlobalTheory.RoadU.Unlinked (Finset.univ.val.map x) → Nonempty (π.Equiv (prodIrr x hd))
 
 def LblFull : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (θ : AlgebraicClosure 𝓀[k] →* ℂ) (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → π.IsIrreducible →
-    ∀ (s : ℕ) (x : Fin s → IrrGL k) (c : Fin s → ℕ) (hd : ∑ a, (x a).1 = N), Nonempty (π.Equiv (prodIrr x hd)) →
+    ∀ (s : ℕ) (x : Fin s → IrrGL (k := k)) (c : Fin s → ℕ) (hd : ∑ a, (x a).1 = N), Nonempty (π.Equiv (prodIrr x hd)) →
     (∀ a γ, LinearMap.trace ℂ _ (levelZero (x a).rep γ) = cusp θ (x a).1 (c a) γ) →
     ∀ T : GL (Fin N) 𝓀[k] → ℂ, GlobalTheory.BI.IsChar ℂ ℂ T → Pairs (J θ (List.ofFn fun a => ((x a).1, c a)) N) T → Meets (levelZero π) T
 
@@ -127,29 +131,7 @@ def LblMixed : Prop :=
     (v : HeightOneSpectrum (𝓞 E)), IsPlaceOver A v → ∀ (g : ℕ) [Fact g.Prime] (i : ℚ_[g] ≃+* v.adicCompletion E), Continuous i →
     ∀ (θ : AlgebraicClosure 𝓀[v.adicCompletion E] →* ℂ), Inj θ → ∀ (n : ℕ) (τ : SmIrr (GL (Fin n) (v.adicCompletion E))),
       Mixed (IrrGL.of τ.ρ τ.smooth τ.irred) →
-      ∃ (a : Lbl) (s : Multiset (IrrGL (v.adicCompletion E))), HasLbl θ τ.ρ a ∧ a.Apart ∧ HasSupport τ.ρ s ∧
+      ∃ (a : Lbl) (s : Multiset (IrrGL (k := v.adicCompletion E))), HasLbl θ τ.ρ a ∧ a.Apart ∧ HasSupport τ.ρ s ∧
         ∀ p ∈ a.L, ∃ y ∈ s, y.1 = p.1
-
-def LblOfType : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (θ : AlgebraicClosure 𝓀[k] →* ℂ), Inj θ → ∀ (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
-    (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → π.IsIrreducible →
-    ∀ (s : ℕ) (d : Fin s → ℕ) (hd : ∑ a, d a = N) (ω : Fin s → 𝓀[k]ˣ →* ℂˣ), (∀ a, 0 < d a) →
-    UpperTheory.Gal.TypesAndIwahori.HasTypeVec π (stdBlocks d hd) ω →
-    ∃ c : Fin s → ℕ, (∀ a u, (ω a u : ℂ) = θ (algebraMap _ _ (u : 𝓀[k])) ^ c a) ∧
-      HasLbl θ π ⟨Nat.card 𝓀[k], List.ofFn fun a => (d a, c a), []⟩
-
-def LeDet : Prop :=
-  ∀ a b : Lbl, 2 ≤ a.q → a.L = [] → a.Le b → ∃ f : ℕ, 0 < f ∧ b.q = a.q ^ f ∧ b.L = [] ∧
-    b.D = a.D.map fun p => (p.1, p.2 * ∑ i ∈ Finset.range f, a.q ^ i)
-
-def NormRes : Prop :=
-  ∀ (E M Ω : Type) [Field E] [NumberField E] [Field M] [NumberField M] [Field Ω] [Algebra E M] [Algebra E Ω] [Algebra M Ω]
-    [IsScalarTower E M Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E))
-    (w : HeightOneSpectrum (𝓞 M)) [w.asIdeal.LiesOver v.asIdeal], IsPlaceOver A v → IsPlaceOver A w →
-    (∀ t ∈ Ine (F := E) A, UpperTheory.Gal.UnramifiedFromSplittingCriterion.Fixes M t) → ∀ e e', ResEmb A v e → ResEmb A w e' →
-    ∀ f : ℕ, normV w = normV v ^ f → ∀ u : 𝒪[w.adicCompletion M]ˣ, ∃ u₀ : 𝒪[v.adicCompletion E]ˣ,
-      unitIncl _ u₀ = GlobalTheory.BCChar.normU v w (unitIncl _ u) ∧
-      e (algebraMap _ _ ((unitRes _ u₀ : 𝓀[v.adicCompletion E]ˣ) : 𝓀[v.adicCompletion E])) =
-        e' (algebraMap _ _ ((unitRes _ u : 𝓀[w.adicCompletion M]ˣ) : 𝓀[w.adicCompletion M])) ^ ∑ i ∈ Finset.range f, normV v ^ i
 
 end UpperTheory.Gal.InertialTypesAlt

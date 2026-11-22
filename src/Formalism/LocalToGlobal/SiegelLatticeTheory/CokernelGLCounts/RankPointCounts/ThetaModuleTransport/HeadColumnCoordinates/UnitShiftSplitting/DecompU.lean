@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.OmPMemSpan
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.SharpSpanCounting.OmPMemSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -214,7 +218,7 @@ theorem mkW_decompU (f f' : Fin (r + 1) → V) (T T' : F) (hF : Formalism.MainNo
       (H.h u (f (Fin.last r)) + algebraMap F E T * α) • H.mkW f ⟨omP H f f', omP_mem H f f' hD⟩ := by
   have hmem := decompU H f f' T T' hF hF' hD hG (u : V) hu u.2 α
     (H.h u (f (Fin.last r)) + algebraMap F E T * α) hα rfl
-  rw [← map_smul, ← map_smul, ← map_add]
+  rw [← map_smul, ← map_smul, ← map_add (f := _)]
   simp only [HermSp.mkW, Submodule.mkQ_apply]
   rw [Submodule.Quotient.eq, Submodule.mem_comap]
   simpa using hmem

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRealThetaParameterPairThetaPartnerSignedParameStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.LeastSplitAuxiliaryPrimeThetaChainSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRealThetaParameterPairThetaPartnerSignedParameStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LeastSplitAuxiliaryPrimeThetaChainSpec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open MeasureTheory Matrix GlobalTheory.Chain GlobalTheory.ChainFr GlobalTheory.Grid
 open scoped TensorProduct InnerProductSpace
@@ -15,30 +20,28 @@ open GlobalTheory.SignedHC Finset
 
 variable (D : D7) (τ : D.what₂.Tau)
 
-local notation "Γ" => grid D τ
-
-theorem grid_e {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((Γ).e l : ℤ) : ℚ) = (D.hc τ).e ⟨l - 1, by omega⟩ := by
+theorem grid_e {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((grid D τ).e l : ℤ) : ℚ) = (D.hc τ).e ⟨l - 1, by omega⟩ := by
   obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
   exact GridData.extend_cast 1 (D.hc τ).e_int ⟨l, by omega⟩
 
-theorem grid_b {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((Γ).b l : ℤ) : ℚ) = (D.hc τ).b ⟨l - 1, by omega⟩ := by
+theorem grid_b {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : (((grid D τ).b l : ℤ) : ℚ) = (D.hc τ).b ⟨l - 1, by omega⟩ := by
   obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
   exact GridData.extend_cast 1 (D.hc τ).b_int ⟨l, by omega⟩
 
-theorem grid_v {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : (((Γ).v i : ℤ) : ℚ) = (D.hc τ).v ⟨i - 2, by omega⟩ := by
+theorem grid_v {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : (((grid D τ).v i : ℤ) : ℚ) = (D.hc τ).v ⟨i - 2, by omega⟩ := by
   obtain ⟨i, rfl⟩ : ∃ i', i = i' + 2 := ⟨i - 2, by omega⟩
   exact GridData.extend_cast 2 (D.hc τ).v_int ⟨i, by omega⟩
 
-theorem grid_be {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((Γ).e l : ℚ) - (Γ).b l := by
+theorem grid_be {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((grid D τ).e l : ℚ) - (grid D τ).b l := by
   rw [grid_e D τ h1 h2, grid_b D τ h1 h2]
   exact (D.hc τ).gap_be _
 
-theorem grid_eb {l : ℕ} (h1 : 1 ≤ l) (h2 : l + 1 ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((Γ).b (l + 1) : ℚ) - (Γ).e l := by
+theorem grid_eb {l : ℕ} (h1 : 1 ≤ l) (h2 : l + 1 ≤ D.R.m) : ((D.R.t : ℚ) + 3) / 2 ≤ ((grid D τ).b (l + 1) : ℚ) - (grid D τ).e l := by
   rw [grid_e D τ h1 (by omega), grid_b D τ (by omega) h2]
   obtain ⟨l, rfl⟩ : ∃ l', l = l' + 1 := ⟨l - 1, by omega⟩
   exact (D.hc τ).gap_eb ⟨l, by omega⟩ (by simpa using (by omega : l + 1 < D.R.m))
 
-theorem grid_e_lt {l l' : ℕ} (h1 : 1 ≤ l) (h : l < l') (h2 : l' ≤ D.R.m) : (D.R.t : ℚ) + 3 + (Γ).e l ≤ (Γ).e l' := by
+theorem grid_e_lt {l l' : ℕ} (h1 : 1 ≤ l) (h : l < l') (h2 : l' ≤ D.R.m) : (D.R.t : ℚ) + 3 + (grid D τ).e l ≤ (grid D τ).e l' := by
   induction l', h using Nat.le_induction with
   | base =>
     linarith [grid_be D τ (l := l + 1) (by omega) h2, grid_eb D τ h1 h2]
@@ -49,59 +52,59 @@ theorem grid_e_lt {l l' : ℕ} (h1 : 1 ≤ l) (h : l < l') (h2 : l' ≤ D.R.m) :
     have : (0 : ℚ) ≤ D.R.t := by positivity
     linarith
 
-theorem grid_cloud {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : -((Γ).b 1 : ℚ) + 1 ≤ (Γ).v i := by
+theorem grid_cloud {i : ℕ} (h1 : 2 ≤ i) (h2 : i ≤ D.R.k) : -((grid D τ).b 1 : ℚ) + 1 ≤ (grid D τ).v i := by
   have hm : 1 ≤ D.R.m := by have := D.R.two_le_m; omega
   have hk : 2 ≤ D.R.k := by have := D.R.m_add_three_le_k; omega
-  have base : -((Γ).b 1 : ℚ) < (Γ).v D.R.k := by
+  have base : -((grid D τ).b 1 : ℚ) < (grid D τ).v D.R.k := by
     rw [grid_v D τ hk le_rfl, grid_b D τ le_rfl hm]
     have e1 := (D.hc τ).u_last_gt (by omega) (by omega)
     have e2 := (D.hc τ).v_gt_u ⟨D.R.k - 2, by omega⟩
     have e3 : (⟨D.R.k - 2 + 1, by omega⟩ : Fin D.R.k) = ⟨D.R.k - 1, by omega⟩ := Fin.ext (by simp only; omega)
     simp only [e3] at e2
     exact e1.trans e2
-  have base' : -((Γ).b 1) < (Γ).v D.R.k := by exact_mod_cast base
-  have step : (Γ).v D.R.k ≤ (Γ).v i := by
+  have base' : -((grid D τ).b 1) < (grid D τ).v D.R.k := by exact_mod_cast base
+  have step : (grid D τ).v D.R.k ≤ (grid D τ).v i := by
     rcases h2.eq_or_lt with rfl | h
     · exact le_rfl
-    · exact ((Γ).v_anti i D.R.k h1 h le_rfl).le
-  have : -((Γ).b 1) + 1 ≤ (Γ).v i := by omega
+    · exact ((grid D τ).v_anti i D.R.k h1 h le_rfl).le
+  have : -((grid D τ).b 1) + 1 ≤ (grid D τ).v i := by omega
   exact_mod_cast this
 
-theorem grid_a_le {i j : ℕ} (h : i ≤ j) : (Γ).a j ≤ (Γ).a i := by
+theorem grid_a_le {i j : ℕ} (h : i ≤ j) : (grid D τ).a j ≤ (grid D τ).a i := by
   rcases h.eq_or_lt with rfl | h
   · exact le_rfl
-  · have : (0 : ℚ) ≤ (Γ).ga := by positivity
-    linarith [GlobalTheory.ChiGrid.a_add_le (G := Γ) h]
+  · have : (0 : ℚ) ≤ (grid D τ).ga := by positivity
+    linarith [GlobalTheory.ChiGrid.a_add_le (G := grid D τ) h]
 
-theorem grid_blockMPlus_bd {l : ℕ} {x : ℚ} (h : x ∈ (Γ).blockMPlus l) :
-    -((Γ).e l : ℚ) - (D.R.t : ℚ) / 2 ≤ x ∧ x ≤ -((Γ).e l : ℚ) + (D.R.t : ℚ) / 2 := by
+theorem grid_blockMPlus_bd {l : ℕ} {x : ℚ} (h : x ∈ (grid D τ).blockMPlus l) :
+    -((grid D τ).e l : ℚ) - (D.R.t : ℚ) / 2 ≤ x ∧ x ≤ -((grid D τ).e l : ℚ) + (D.R.t : ℚ) / 2 := by
   have := abs_le.1 (abs_sub_le_of_mem_block h)
-  have e : (((Γ).t + 1 : ℕ) : ℚ) = D.R.t + 1 := by push_cast; rfl
+  have e : (((grid D τ).t + 1 : ℕ) : ℚ) = D.R.t + 1 := by push_cast; rfl
   rw [e] at this
   constructor <;> linarith [this.1, this.2]
 
-theorem grid_s_lt_gap : (Γ).s < (Γ).ga := by
+theorem grid_s_lt_gap : (grid D τ).s < (grid D τ).ga := by
   have := (isLeast_gap D).1.2.1
   show sLen D < gap D
   omega
 
-theorem grid_length_odd : Odd (Γ).s := GlobalTheory.ChiGrid.odd_sLen D
+theorem grid_length_odd : Odd (grid D τ).s := GlobalTheory.ChiGrid.odd_sLen D
 
-theorem grid_weightX_above {j : ℕ} (hj : j + 1 ≤ D.R.m) {x y : ℚ} (hx : x ∈ (Γ).weightX j)
-    (hy : y ∈ (Γ).blockMPlus (j + 1)) : y < x := by
+theorem grid_weightX_above {j : ℕ} (hj : j + 1 ≤ D.R.m) {x y : ℚ} (hx : x ∈ (grid D τ).weightX j)
+    (hy : y ∈ (grid D τ).blockMPlus (j + 1)) : y < x := by
   have hm : 1 ≤ D.R.m := by omega
   have hk : 2 ≤ D.R.k := by have := D.R.m_add_three_le_k; omega
   have ht : (0 : ℚ) ≤ D.R.t := by positivity
-  have hg : (0 : ℚ) ≤ (Γ).ga := by positivity
+  have hg : (0 : ℚ) ≤ (grid D τ).ga := by positivity
   obtain ⟨y1, y2⟩ := grid_blockMPlus_bd D τ hy
   have hbe := grid_be D τ (l := 1) le_rfl hm
-  have he1 : ((Γ).e 1 : ℚ) ≤ (Γ).e (j + 1) := by
+  have he1 : ((grid D τ).e 1 : ℚ) ≤ (grid D τ).e (j + 1) := by
     rcases Nat.eq_zero_or_pos j with rfl | h
     · exact le_rfl
     · linarith [grid_e_lt D τ (l := 1) (l' := j + 1) le_rfl (by omega) hj]
-  have hlow : y < -((Γ).b 1 : ℚ) := by linarith
+  have hlow : y < -((grid D τ).b 1 : ℚ) := by linarith
   have hc2 := grid_cloud D τ (i := 2) le_rfl hk
-  have ham : (Γ).a (Γ).m = (Γ).v 2 + (Γ).ga + 1 / 2 := (Γ).a_m
+  have ham : (grid D τ).a (grid D τ).m = (grid D τ).v 2 + (grid D τ).ga + 1 / 2 := (grid D τ).a_m
   rcases GridData.mem_weightX.1 hx with h | h | ⟨i, h1, h2, h⟩ | ⟨l, h1, h2, h⟩
   · obtain ⟨i, hi, rfl⟩ := GridData.mem_tops.1 h
     linarith [grid_a_le D τ hi]
@@ -115,40 +118,40 @@ theorem grid_weightX_above {j : ℕ} (hj : j + 1 ≤ D.R.m) {x y : ℚ} (hx : x 
     have := (grid_blockMPlus_bd D τ h).1
     linarith
 
-theorem grid_inCoset_weightX {j : ℕ} : InCoset (1 / 2) ((Γ).weightX j) := by
+theorem grid_inCoset_weightX {j : ℕ} : InCoset (1 / 2) ((grid D τ).weightX j) := by
   induction j with
   | zero => exact GlobalTheory.ChiGrid.inCoset_weightX_zero (grid_length_odd D τ)
   | succ j ih =>
-    rw [(Γ).weightX_succ]
+    rw [(grid D τ).weightX_succ]
     intro x hx
     rcases mem_union.1 hx with h | h
     · exact ih x h
     · obtain ⟨a, -, rfl⟩ := mem_block.1 h
       obtain ⟨u, hu⟩ := D.R.t_odd
-      have e : ((Γ).t : ℚ) = 2 * u + 1 := by
-        have : ((Γ).t : ℚ) = D.R.t := rfl
+      have e : ((grid D τ).t : ℚ) = 2 * u + 1 := by
+        have : ((grid D τ).t : ℚ) = D.R.t := rfl
         rw [this, hu]; push_cast; ring
-      refine ⟨-(Γ).e (j + 1) + u - a, ?_⟩
+      refine ⟨-(grid D τ).e (j + 1) + u - a, ?_⟩
       push_cast
       rw [e]
       ring
 
-theorem grid_card_weightX_le (j : ℕ) : ((Γ).weightX j).card ≤ D.R.k + D.R.m * sLen D + j * (D.R.t + 1) := by
-  have c1 : (Γ).tops.card ≤ D.R.m + 1 := by
+theorem grid_card_weightX_le (j : ℕ) : ((grid D τ).weightX j).card ≤ D.R.k + D.R.m * sLen D + j * (D.R.t + 1) := by
+  have c1 : (grid D τ).tops.card ≤ D.R.m + 1 := by
     unfold GridData.tops
     exact card_image_le.trans (by simp; rfl)
-  have c2 : (Γ).cloudHalf.card ≤ D.R.k - 1 := by
+  have c2 : (grid D τ).cloudHalf.card ≤ D.R.k - 1 := by
     unfold GridData.cloudHalf
     refine card_image_le.trans ?_
     rw [Nat.card_Icc]
     show D.R.k + 1 - 2 ≤ D.R.k - 1
     omega
-  have c3 : ((Icc 1 (Γ).m).biUnion (Γ).blockC').card ≤ D.R.m * (sLen D - 1) := by
+  have c3 : ((Icc 1 (grid D τ).m).biUnion (grid D τ).blockC').card ≤ D.R.m * (sLen D - 1) := by
     refine card_biUnion_le.trans ?_
     simp only [GridData.blockC', card_block, sum_const, Nat.card_Icc, smul_eq_mul]
     show (D.R.m + 1 - 1) * (sLen D - 1) ≤ _
     simp
-  have c4 : ((Icc 1 j).biUnion (Γ).blockMPlus).card ≤ j * (D.R.t + 1) := by
+  have c4 : ((Icc 1 j).biUnion (grid D τ).blockMPlus).card ≤ j * (D.R.t + 1) := by
     refine card_biUnion_le.trans ?_
     simp only [GridData.blockMPlus, card_block, sum_const, Nat.card_Icc, smul_eq_mul]
     show (j + 1 - 1) * (D.R.t + 1) ≤ _

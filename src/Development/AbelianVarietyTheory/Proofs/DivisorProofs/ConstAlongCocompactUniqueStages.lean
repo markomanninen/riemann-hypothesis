@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsConstAlongSingleton
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasurePreservingConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAlongSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardParabolicUnipotentMono
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsConstAlongSingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSquareIntegrableIffMemL2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasurePreservingConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermAlongSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardParabolicUnipotentMono
+
+@[expose] public section
 
 noncomputable section
 

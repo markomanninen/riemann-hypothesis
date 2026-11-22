@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
+
+@[expose] public section
 
 open Finset Filter Topology MeasureTheory
 

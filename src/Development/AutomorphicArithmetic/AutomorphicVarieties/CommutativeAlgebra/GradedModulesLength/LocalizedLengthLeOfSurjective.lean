@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.OzTwoMulEqPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.OzTwoMulEqPow
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -99,7 +103,7 @@ private def u4K (F : A) (b : 𝒜 0) (J : Ideal (rees (mN 𝒜 F))) (μ : Fin 3 
     refine ⟨n + n', b ^ n' • p + b ^ n • p',
       J.add_mem (Submodule.smul_of_tower_mem _ _ hp) (Submodule.smul_of_tower_mem _ _ hp'), ?_⟩
     show b ^ n' • p.1 + b ^ n • p'.1 = _
-    rw [e, e', MvPolynomial.smul_monomial, MvPolynomial.smul_monomial, ← map_add]
+    rw [e, e', MvPolynomial.smul_monomial, MvPolynomial.smul_monomial, ← map_add (f := _)]
     congr 1
     show ((b ^ n' : 𝒜 0) : A) * _ + ((b ^ n : 𝒜 0) : A) * _ = _
     simp only [SetLike.GradeZero.coe_pow]
@@ -185,12 +189,12 @@ theorem UpperTheory.V.Alg.M.locLen_mQ_gr_le_locLen_aPiece :
       ⟨h.1, lattice_le_weight_submodule 𝒜 (Q.hF (Fin.last r)) μ h.2, rfl⟩
   refine localized_length_le_of_surjective σ φ ψ ?_ ?_
   · rintro ⟨_, p, hp', rfl⟩
-    refine ⟨⟨MvPolynomial.coeff μ p.1, p.2 μ⟩, Subtype.ext ?_⟩
+    refine ⟨⟨AddMonoidAlgebra.coeff p.1 μ, p.2 μ⟩, Subtype.ext ?_⟩
     show J.mkQ (mono _ μ _ (p.2 μ)) = J.mkQ p
     congr 1
     apply Subtype.ext
     ext ν
-    show MvPolynomial.coeff ν (MvPolynomial.monomial μ _) = _
+    show AddMonoidAlgebra.coeff (MvPolynomial.monomial μ _) ν = _
     rw [MvPolynomial.coeff_monomial]
     split_ifs with h
     · rw [h]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -34,7 +38,7 @@ theorem tendsto_slope_omS_schwartz :
     have e1 : omS (γ 0) f = f := by rw [h0, omS.map_one]; rfl
     rw [zero_add, e1]
     exact congrArg norm (e ((schwartzToL2 l).comp (A r)) _ _ _ _).symm
-  have hs := tendsto_finset_sum Finset.univ fun r _ => key r
+  have hs := tendsto_finsetSum Finset.univ fun r _ => key r
   rw [Finset.sum_const_zero] at hs
   filter_upwards [hs.eventually (gt_mem_nhds hε)] with t ht
   rw [SchwartzMap.schwartzSeminormFamily_apply]

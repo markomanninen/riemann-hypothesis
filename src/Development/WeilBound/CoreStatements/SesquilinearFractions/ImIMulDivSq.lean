@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.HermSplit
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.HermSplit
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -51,7 +55,8 @@ def blkB (y y' : D.La) : E := ∑ a : Fin q, ∑ b : Fin q,
 theorem Q_per_inl (σ : E →+* ℂ) (h : σ (H.rt : E) = H.rt0) (y y' : D.La) :
     Q hty G σ (per hty c n y) (per hty c n y') = Complex.I * (2 * σ (blkA G c y y') / ((n : ℂ) * n)) := by
   rw [Q_inl hty G σ h]
-  simp only [per_at_inl, blkA, map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_div₀, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [per_at_inl, blkA, map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_div₀, map_natCast,
     Finset.mul_sum, Finset.sum_div]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -59,7 +64,8 @@ theorem Q_per_inl (σ : E →+* ℂ) (h : σ (H.rt : E) = H.rt0) (y y' : D.La) :
 theorem Q_per_inr (σ : E →+* ℂ) (h : σ (H.rt : E) ≠ H.rt0) (y y' : D.La) :
     Q hty G σ (per hty c n y) (per hty c n y') = Complex.I * (2 * σ (blkB G c y y') / ((n : ℂ) * n)) := by
   rw [Q_inr hty G σ h]
-  simp only [per_at_inr, blkB, map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_div₀, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [per_at_inr, blkB, map_sum, map_mul, IsCMField.complexEmbedding_complexConj, map_div₀, map_natCast,
     Finset.mul_sum, Finset.sum_div]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -95,10 +101,12 @@ theorem sesq_blocks (x : Fin p ⊕ Fin q → D.La) (hc : ∀ y, ∑ m, c y m •
   rw [← key, ← hc y, ← hc y']
   have e3 : sesq D (∑ m, c y m • x m) (∑ m, c y' m • x m) = ∑ m, ∑ m', ((c y m : 𝓞 E) : E) *
       sesq D (x m) (x m') * IsCMField.complexConj E ((c y' m' : 𝓞 E) : E) := by
-    rw [show sesq D (∑ m, c y m • x m) (∑ m, c y' m • x m) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show sesq D (∑ m, c y m • x m) (∑ m, c y' m • x m) =
       L (∑ m, c y' m • x m) (∑ m, c y m • x m) from rfl, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
-    rw [show L (∑ m, c y' m • x m) (c y m • x m) = sesq D (c y m • x m) (∑ m, c y' m • x m) from rfl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show L (∑ m, c y' m • x m) (c y m • x m) = sesq D (c y m • x m) (∑ m, c y' m • x m) from rfl,
       hsl, show sesq D (x m) (∑ m', c y' m' • x m') = R (x m) (∑ m', c y' m' • x m') from rfl,
       map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun m' _ => ?_

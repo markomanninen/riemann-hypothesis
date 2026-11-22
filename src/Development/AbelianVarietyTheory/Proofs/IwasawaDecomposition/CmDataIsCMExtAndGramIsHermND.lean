@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.Mem.Vol
 open scoped TensorProduct
@@ -15,12 +19,14 @@ theorem hspace_gram_det_ne_zero {E : Type} [Field E] [NumberField E] [StarRing E
     intro i
     have := congrFun hmul i
     simp only [Matrix.mulVec, dotProduct, HSpace.gram, Pi.zero_apply] at this
-    rw [map_sum, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← this]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul, mul_comm]
   have hz : (∑ j, v j • W.frame j) = 0 := by
     refine W.nondeg.2 _ fun x => ?_
-    rw [← W.frame.sum_repr x, map_sum W.hT, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← W.frame.sum_repr x, map_sum W.hT, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hb, smul_zero]
   apply hv

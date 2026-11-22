@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ theorem extract : Extract := by
         exact h2
       rw [hφv] at h1
       rw [← h1]
-      simp only [Q, map_sum, eval_monomial]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Q, map_sum, eval_monomial]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [Finsupp.prod_fintype _ _ (fun i => pow_zero _), mul_comm]
       rfl
@@ -42,8 +47,8 @@ theorem extract : Extract := by
     refine LinearMap.ext fun u => ?_
     rw [hφv, LinearMap.zero_apply]
     refine Finset.sum_eq_zero fun m _ => ?_
-    have hc := congrArg (coeff (E m)) hQ
-    simp only [Q, coeff_sum, coeff_monomial, coeff_zero, hE.eq_iff] at hc
+    have hc := congrArg (AddMonoidAlgebra.coeff · (E m)) hQ
+    simp only [Q, coeff_sum, coeff_monomial, AddMonoidAlgebra.coeff_zero, hE.eq_iff] at hc
     simp at hc
     rw [hc, mul_zero]
   have hw : w ∈ Submodule.span K (Set.range v) := by rw [htop]; exact Submodule.mem_top

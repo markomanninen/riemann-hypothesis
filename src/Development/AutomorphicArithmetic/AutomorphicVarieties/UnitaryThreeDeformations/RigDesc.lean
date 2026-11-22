@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
+
+@[expose] public section
 
 open NumberField Matrix IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
 
@@ -50,7 +54,7 @@ private theorem gl_desc (K : IntermediateField F E) (u : GL (Fin 3) (DualNumber 
     exact h1 (by rw [h0]; rfl)
   exact ⟨((Matrix.isUnit_iff_isUnit_det _).2 hd).unit, Units.ext hA⟩
 
-private theorem gg_range_iff (K : IntermediateField F E) (x : GG 3 (DualNumber E)) :
+private theorem gg_range_iff (K : IntermediateField F E) (x : GG (m := 3) (R := DualNumber E)) :
     x ∈ (GG.map (m := 3) (dualIncl K)).range ↔
       ∀ a b, (x.mat a b).fst ∈ K ∧ (x.mat a b).snd ∈ K := by
   constructor
@@ -81,7 +85,16 @@ private theorem of_ents {A : Matrix (Fin 3) (Fin 3) (DualNumber E)} {K : Interme
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.V.UnitaryThreeInertia.rig_desc :
-    ∀ {l : ℕ} [Fact l.Prime] {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] (r' : Γ →* GG 3 (DualNumber (PadicAlgCl l))) (h : GL (Fin 3) (DualNumber (PadicAlgCl l))), (∀ a b, Continuous fun g => ((r' g).mat a b).fst) → (∀ a b, Continuous fun g => ((r' g).mat a b).snd) → ∃ (L : Formalism.BasicNotions.Loc.FinExt l) (f : DualNumber ↥L.1 →+* DualNumber (PadicAlgCl l)) (r₁ : Γ →* GG 3 (DualNumber ↥L.1)) (h₁ : GL (Fin 3) (DualNumber ↥L.1)), (∀ x, (f x).fst = ((x.fst : ↥L.1) : PadicAlgCl l) ∧ (f x).snd = ((x.snd : ↥L.1) : PadicAlgCl l)) ∧ (GG.map f).comp r₁ = r' ∧ Matrix.GeneralLinearGroup.map f h₁ = h := by
+    ∀ {l : ℕ} [Fact l.Prime] {Γ : Type} [Group Γ] [TopologicalSpace Γ]
+      [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ]
+      (r' : Γ →* GG (m := 3) (R := DualNumber (PadicAlgCl l)))
+      (h : GL (Fin 3) (DualNumber (PadicAlgCl l))),
+      (∀ a b, Continuous fun g => ((r' g).mat a b).fst) →
+      (∀ a b, Continuous fun g => ((r' g).mat a b).snd) →
+      ∃ (L : Formalism.BasicNotions.Loc.FinExt l) (f : DualNumber ↥L.1 →+* DualNumber (PadicAlgCl l))
+        (r₁ : Γ →* GG (m := 3) (R := DualNumber ↥L.1)) (h₁ : GL (Fin 3) (DualNumber ↥L.1)),
+        (∀ x, (f x).fst = ((x.fst : ↥L.1) : PadicAlgCl l) ∧ (f x).snd = ((x.snd : ↥L.1) : PadicAlgCl l)) ∧
+        (GG.map f).comp r₁ = r' ∧ Matrix.GeneralLinearGroup.map f h₁ = h := by
   intro l _ Γ _ _ _ _ _ r' h hc1 hc2
   obtain ⟨ι, _, K, hK, hcov⟩ := GlobalTheory.CompactRepField.exists_countable_family l
   let S : IntermediateField ℚ_[l] (PadicAlgCl l) → Subgroup Γ := fun M =>

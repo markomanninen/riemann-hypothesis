@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
-import Formalism.LFunctionBounds.LFunctionBoundsProofs.RectResidue
+module
+
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+public import Formalism.LFunctionBounds.LFunctionBoundsProofs.RectResidue
+
+@[expose] public section
 
 open Complex Filter Topology
 

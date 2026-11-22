@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ArcDictExpZeroSection
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFShiftZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ConstOfNormPeriodic
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ArcPts
@@ -21,7 +25,7 @@ theorem fn_ext_val {U : (Sp ℂ).Opens} {a b : Γ(Sp ℂ, U)}
   by_cases hU : ⊤ ≤ (𝟙 (Sp ℂ)) ⁻¹ᵁ U
   · have e := h hU
     obtain rfl : U = ⊤ := top_le_iff.1 hU
-    rw [valAt', valAt', dif_pos hU, dif_pos hU, valAt, valAt] at e
+    rw [valAt', valAt', dite_eq_left hU, dite_eq_left hU, valAt, valAt] at e
     have e' := (ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom).1 e
     have r : ∀ a : Γ(Sp ℂ, ⊤), ((𝟙 (Sp ℂ) : Sp ℂ ⟶ Sp ℂ).appLE ⊤ ⊤ hU).hom a = a := fun a =>
       congrArg (fun q => q.hom a) ((Sp ℂ).presheaf.map_id (Opposite.op ⊤))
@@ -213,7 +217,7 @@ theorem mult_iff {Hm : Matrix (Fin g) (Fin g) ℂ} {χ : u.Λ → ℂ} (h : u.Is
       genVal u D.P.isLB (Y := Sp ℂ) (s x) (𝟙 _) ![ct x + z, ct x, z, 0] *
         genVal u D.P.isLB (Y := Sp ℂ) (s x') (𝟙 _) ![ct x' + z, ct x', z, 0] := genVal_mul D.P.isLB _ _ _ _
   have p := prod_mult (ct x) (ct x') z
-  rw [← map_add] at p
+  rw [← map_add (f := _)] at p
   have g₁ := DVR.mulGen_isGen _ _ _ _ _ _ _ (hs (x + x')) (DVR.pullGen_isGen D.P.L (thφ D.P.A (x3 D.P.A)) thε D.cub.t
     D.cub.isGen (lift (Out.DegPre.cF D ℂ x) (lift (Out.DegPre.cF D ℂ x') (pt u z))).left)
   have g₂ := DVR.mulGen_isGen _ _ _ _ _ _ _ (hs x) (hs x')

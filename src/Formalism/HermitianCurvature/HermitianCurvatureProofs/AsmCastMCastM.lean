@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentRankOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableSliceAppendSingle
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentRankOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableSliceAppendSingle
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -54,7 +58,7 @@ theorem asm_lowV_lift (a ρ m r : ℕ) (hm : 1 + ρ = m) (h1 : a + m = r) (h5 : 
   subst hm; subst h1
   funext i
   simp only [U.lowV, D.castV, liftVec, Fin.val_cast]
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   congr 1; ext; simp
 
 theorem asm_phiFun_lev {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {a r ρa ρb : ℕ} (e : ρa = ρb)
@@ -151,6 +155,6 @@ theorem asm_pointStepT (hPS : PointStep) : PointStepT := by
   congr 1
   show _ = D.sliceAt P.k P.r p.T.base.z p.T.base.z' F h (D.castM _ _)
   unfold D.sliceAt
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
 
 end Formalism.FourierDecayAlt.P.PBH

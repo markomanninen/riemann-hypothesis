@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
-import Development.AutomorphicArithmetic.DivisorFrames.ShellSumEqConstOfTwistEqIndicatorDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardPairFrameBlocksDetAndNegTranspose
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.FinMatchDefs
+public import Development.AutomorphicArithmetic.DivisorFrames.ShellSumEqConstOfTwistEqIndicatorDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardPairFrameBlocksDetAndNegTranspose
+
+@[expose] public section
 
 namespace UpperTheory.StandardFormChange
 open GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdPairLoc GlobalTheory.StdPairCone MeasureTheory
@@ -73,7 +77,7 @@ private theorem bigF_change (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c a a' : ℕ) (hϖ
   by_cases h0 : (blk₁ (X * M)).det = 0
   · rw [hA0 _ h0, mul_zero]
     have h1 : ∀ y : GL (Fin a) k, stdA ν ϖ c a a' (g.1 * (y.1 * X) * M) = 0 := fun y => by
-      rw [has, stdA, dif_neg]
+      rw [has, stdA, dite_eq_right]
       rintro ⟨h, -⟩
       exact h (by rw [blk₁_mul, Matrix.det_mul, h0, mul_zero])
     simp [bigF, shellSum, shell, h1]
@@ -102,9 +106,9 @@ private theorem bigF_change (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c a a' : ℕ) (hϖ
     · have h' : (blk₁ ((g * y).val * (X * M))).det ≠ 0 ∧ IsGLO (blk₁ ((g * y).val * (X * M))) ∧
           ∀ i j, blk₂ ((g * y).val * (X * M)) i j ∈ cball (ϖ ^ c) := by
         rw [blk₁_mul, blk₂_mul, ← hg]; exact h
-      rw [stdA, dif_pos h']
+      rw [stdA, dite_eq_left h']
       congr 3
-    · rw [stdA, dif_neg]
+    · rw [stdA, dite_eq_right]
       rwa [blk₁_mul, blk₂_mul, ← hg]
 
 private theorem smallF_change (ν : kˣ →* ℂˣ) (a' d : ℕ) (Ψ : Matrix (Fin a') (Fin d) k → ℂ) (l : ℂ) (g : GL (Fin a') k)
@@ -118,12 +122,11 @@ private theorem smallF_change (ν : kˣ →* ℂˣ) (a' d : ℕ) (Ψ : Matrix (F
   rw [← integral_mul_left_eq_self (fun y : GL (Fin a') k =>
     Ψ (y.val * (Y * M)) * (ν (gdet y) : ℂ) * apow (gdet y) ((Fintype.card (Fin d) : ℂ) / 2)) g, ← integral_const_mul]
   congr 1
-  funext y
-  simp only [Pi.smul_apply, smul_eq_mul, Units.val_mul, map_mul, apow_mul, Matrix.mul_assoc]
-  rw [mul_assoc l, mul_assoc l, mul_assoc l]
-  congr 1
-  rw [eq_inv_mul_iff_mul_eq₀ hne]
-  ring
+  funext a
+  simp only [Pi.smul_apply, smul_eq_mul, gdet_mul, map_mul, Units.val_mul, apow_mul,
+    Matrix.mul_assoc]
+  field_simp [apow_ne_zero]
+  <;> ring
 
 private theorem main (ϖ : kˣ) (hϖ : IsUnif ϖ) (α β ν : kˣ →* ℂˣ) (hν : ν = α / β) (c a a' : ℕ) (g : GL (Fin a) k)
     (g' : GL (Fin a') k) (κ : GL (Fin (a + a')) k) :

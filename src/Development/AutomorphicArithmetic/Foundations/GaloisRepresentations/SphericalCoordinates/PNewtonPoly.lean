@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -27,13 +31,15 @@ private lemma newton_step (n k : ℕ) (r : Fin n → ℂ) :
         (-1) ^ a.1 * ((Finset.univ : Finset (Fin n)).val.map r).esymm a.1 *
           (((Finset.univ : Finset (Fin n)).val.map r).map fun x => x ^ a.2).sum := by
   have h := congrArg (MvPolynomial.aeval (R := ℂ) r) (MvPolynomial.mul_esymm_eq_sum (Fin n) ℂ k)
-  simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
     MvPolynomial.aeval_esymm_eq_multiset_esymm] at h
   rw [h]
   congr 1
   refine Finset.sum_congr rfl fun a _ => ?_
   congr 1
-  simp only [MvPolynomial.psum, map_sum, map_pow, MvPolynomial.aeval_X, Multiset.map_map,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [MvPolynomial.psum, map_sum, map_pow, MvPolynomial.aeval_X, Multiset.map_map,
     Function.comp_def]
   rfl
 
@@ -54,7 +60,8 @@ private lemma esymm_descends (F : Type) [Field F] [NumberField F] (n : ℕ)
     have hs := newton_step n k r
     rw [hr] at hs
     have hk' : (k : ℂ) ≠ 0 := by exact_mod_cast hk.ne'
-    simp only [map_mul, map_inv₀, map_natCast, map_pow, map_neg, map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_inv₀, map_natCast, map_pow, map_neg, map_one, map_sum]
     rw [eq_inv_mul_iff_mul_eq₀ hk', hs]
     congr 1
     refine Finset.sum_congr rfl fun a ha => ?_
@@ -69,7 +76,8 @@ theorem UpperTheory.Gal.W2.newtonPoly_of :
       (∑ j ∈ Finset.range (n + 1), (-1) ^ j * (C (b j) * X ^ (n - j))) =
       ((m τ).map fun r => X - C r).prod := by
     intro τ
-    rw [Multiset.prod_X_sub_X_eq_sum_esymm, hc τ, Polynomial.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Multiset.prod_X_sub_X_eq_sum_esymm, hc τ, Polynomial.map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp [hb j τ]
   obtain ⟨τ⟩ : Nonempty (F →+* ℂ) := inferInstance

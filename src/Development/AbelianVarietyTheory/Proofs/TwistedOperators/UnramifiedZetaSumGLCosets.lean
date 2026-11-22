@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GradedSeriesContinuationDominatedStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumHeckeEigenvalueGeneratingSeriesGLStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSatakeParamTrivialBoundUnitaryGLStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeVectorHeckeEigenvalueStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumCardCosetsDiagonalDoubleCosetGLStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GradedSeriesContinuationDominatedStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumHeckeEigenvalueGeneratingSeriesGLStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSatakeParamTrivialBoundUnitaryGLStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeVectorHeckeEigenvalueStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasSumCardCosetsDiagonalDoubleCosetGLStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
 open Formalism.IndefR.Lev (levG levChi IsBaseFrame)
@@ -22,7 +27,7 @@ theorem cartan_existsUnique (E : Type) [Field E] [NumberField E] (w : HeightOneS
     {ϖ : w.adicCompletion E} (hϖ : IsUnifV E w ϖ) (T : (Fin r → ℤ) → GL (Fin r) (w.adicCompletion E))
     (hT : ∀ d, (T d).1 = Matrix.diagonal fun i => ϖ ^ d i) (g : GL (Fin r) (w.adicCompletion E)) :
     ∃! d : {d : Fin r → ℤ // Antitone d},
-      g ∈ DoubleCoset.doubleCoset (T d.1) (KGL w r : Set (GL (Fin r) (w.adicCompletion E))) (KGL w r) := by
+      g ∈ DoubleCoset.doubleCoset (T d.1) (KGL w (n := r) : Set (GL (Fin r) (w.adicCompletion E))) (KGL w (n := r)) := by
   have hm := mem_Ov_of_isUnifV hϖ
   obtain ⟨a, ha, k₁, hk₁, k₂, hk₂, e⟩ := Formalism.UG.Final.CartanDecomp E w r ϖ hm hϖ g
   have hg : g = k₁ * T a * k₂ := Units.ext (by rw [e, Units.val_mul, Units.val_mul, hT]; rfl)
@@ -40,7 +45,7 @@ theorem cartan_existsUnique (E : Type) [Field E] [NumberField E] (w : HeightOneS
 
 theorem differentiable_eulerPoly (B : Multiset ℂˣ) (a : ℂ) : Differentiable ℂ fun X : ℂ => eulerPoly B (a * X) := by
   induction B using Multiset.induction_on with
-  | empty => simp
+  | empty => simp [eulerPoly]
   | cons b B ih =>
     simp only [eulerPoly_cons]
     exact (by fun_prop : Differentiable ℂ fun X : ℂ => 1 - (b : ℂ) * (a * X)).mul ih
@@ -55,18 +60,18 @@ end GlobalTheory.ZetaGL
 
 namespace GlobalTheory.ZetaGL
 
-theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (r t : ℕ), r ≤ t → ∀ (z : ℂˣ) (φ : GL (Fin r) (w.adicCompletion E) → ℂ), ‖(z : ℂ)‖ = 1 → KerGL w (r + t) z φ → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin r) (w.adicCompletion E)) V) (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → (∀ β ∈ B, ‖(β : ℂ)‖ ≤ (qV E w : ℝ) ^ (((r : ℝ) - 1) / 2) ∧ ‖((β⁻¹ : ℂˣ) : ℂ)‖ ≤ (qV E w : ℝ) ^ (((r : ℝ) - 1) / 2)) → ∀ ℓ : V →ₗ[ℂ] ℂ, (∃ C : ℝ, ∀ g, ‖ℓ (ρ g x)‖ ≤ C) → HasSum (fun a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r => φ a.out * ℓ (ρ a.out x)) (eulerFac (B.map (z * ·)) (npow w (-((1 + (t : ℂ)) / 2))) * eulerFac (B.map fun β => (z * β)⁻¹) (npow w (-((1 + (t : ℂ)) / 2))) * (∏ i ∈ Finset.Ioc t (r + t), (1 - ((qV E w : ℂ) ^ i)⁻¹)) * ℓ x) := by
+theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : Type) [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (r t : ℕ), r ≤ t → ∀ (z : ℂˣ) (φ : GL (Fin r) (w.adicCompletion E) → ℂ), ‖(z : ℂ)‖ = 1 → KerGL w (r + t) z φ → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin r) (w.adicCompletion E)) V) (x : V) (B : Multiset ℂˣ), IsSatVecGL w ρ x B → (∀ β ∈ B, ‖(β : ℂ)‖ ≤ (qV E w : ℝ) ^ (((r : ℝ) - 1) / 2) ∧ ‖((β⁻¹ : ℂˣ) : ℂ)‖ ≤ (qV E w : ℝ) ^ (((r : ℝ) - 1) / 2)) → ∀ ℓ : V →ₗ[ℂ] ℂ, (∃ C : ℝ, ∀ g, ‖ℓ (ρ g x)‖ ≤ C) → HasSum (fun a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r) => φ a.out * ℓ (ρ a.out x)) (eulerFac (B.map (z * ·)) (npow w (-((1 + (t : ℂ)) / 2))) * eulerFac (B.map fun β => (z * β)⁻¹) (npow w (-((1 + (t : ℂ)) / 2))) * (∏ i ∈ Finset.Ioc t (r + t), (1 - ((qV E w : ℂ) ^ i)⁻¹)) * ℓ x) := by
   intro H E _ _ w r t hrt z φ hz hφ V _ _ ρ x B hx hB ℓ hℓ
   obtain ⟨Cℓ, hC⟩ := hℓ
   obtain ⟨ϖ, hϖ⟩ := exists_isUnifV w
   have h0 : ϖ ≠ 0 := SatCompare.ne_zero_of_isUnifV hϖ
   let T : (Fin r → ℤ) → GL (Fin r) (w.adicCompletion E) := fun d => GlobalTheory.WeylGL.tor h0 d
   have hTv : ∀ d, (T d).1 = Matrix.diagonal fun i => ϖ ^ d i := fun d => rfl
-  have hK : IsCommensurated (KGL w r) := Formalism.UG.Final.GLintComm E w r
-  have hmem : ∀ g, dosetInd ℂ (KGL w r) g ∈ Hecke ℂ (KGL w r) := fun g => Formalism.UG.Final.DosetIndMem _ _ ℂ g
+  have hK : IsCommensurated (KGL w (n := r)) := Formalism.UG.Final.GLintComm E w r
+  have hmem : ∀ g, dosetInd ℂ (KGL w (n := r)) g ∈ Hecke ℂ (KGL w (n := r)) := fun g => Formalism.UG.Final.DosetIndMem _ _ ℂ g
   choose c hc using fun d => SatCompare.exists_eigenvalue_GL hx hx _ (hmem (T d))
-  let S : (Fin r → ℤ) → Set (GL (Fin r) (w.adicCompletion E) ⧸ KGL w r) := fun d =>
-    {a | a.out ∈ DoubleCoset.doubleCoset (T d) (KGL w r : Set (GL (Fin r) (w.adicCompletion E))) (KGL w r)}
+  let S : (Fin r → ℤ) → Set (GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)) := fun d =>
+    {a | a.out ∈ DoubleCoset.doubleCoset (T d) (KGL w (n := r) : Set (GL (Fin r) (w.adicCompletion E))) (KGL w (n := r))}
   have hSfin : ∀ d, (S d).Finite := fun d =>
     (Formalism.UG.P.finite_support_cosets hK (hmem (T d)).2).subset fun a ha => by
       simp only [Set.mem_setOf_eq, dosetInd]; rw [Set.indicator_of_mem (s := DoubleCoset.doubleCoset _ _ _) ha]; exact one_ne_zero
@@ -77,11 +82,11 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
     · rw [Set.indicator_of_mem ha, dosetInd, Set.indicator_of_mem (s := DoubleCoset.doubleCoset _ _ _) ha]; simp
     · rw [Set.indicator_of_notMem ha, dosetInd, Set.indicator_of_notMem (s := DoubleCoset.doubleCoset _ _ _) ha]; simp
 
-  have hU := fun a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r => cartan_existsUnique E w r hϖ T hTv a.out
+  have hU := fun a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r) => cartan_existsUnique E w r hϖ T hTv a.out
   choose D hD using fun a => (hU a).exists
-  have hDu : ∀ (d : {d : Fin r → ℤ // Antitone d}) (a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r), a ∈ S d.1 → D a = d :=
+  have hDu : ∀ (d : {d : Fin r → ℤ // Antitone d}) (a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)), a ∈ S d.1 → D a = d :=
     fun d a ha => (hU a).unique (hD a) ha
-  let e : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r ≃ Σ d : {d : Fin r → ℤ // Antitone d}, S d.1 :=
+  let e : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r) ≃ Σ d : {d : Fin r → ℤ // Antitone d}, S d.1 :=
     { toFun := fun a => ⟨D a, a, hD a⟩
       invFun := fun p => p.2.1
       left_inv := fun a => rfl
@@ -90,7 +95,7 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
         subst h1
         rfl }
   haveI : ∀ d, Fintype (S d) := fun d => (hSfin d).fintype
-  have hsumF : ∀ d, ∑ a : S d, ρ (a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r).out x = c d • x := fun d => by
+  have hsumF : ∀ d, ∑ a : S d, ρ (a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)).out x = c d • x := fun d => by
     rw [← hsumS d, ← finsum_set_coe_eq_finsum_mem, finsum_eq_sum_of_fintype]
 
   set q : ℝ := (qV E w : ℝ) with hqdef
@@ -144,8 +149,9 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
     ∏ i ∈ Finset.range r, (1 - (qV E w : ℂ) ^ i * X ^ 2)
   have hC0 : 0 ≤ Cℓ := (norm_nonneg _).trans (hC 1)
   have hab : ∀ d, ‖a d‖ ≤ Cℓ * b d := fun d => by
-    have e1 : c d.1 * ℓ x = ∑ y : S d.1, ℓ (ρ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r).out x) := by
-      rw [← map_sum, hsumF, map_smul, smul_eq_mul]
+    have e1 : c d.1 * ℓ x = ∑ y : S d.1, ℓ (ρ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)).out x) := by
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hsumF, map_smul, smul_eq_mul]
     have hz' : ‖(z : ℂ) ^ (∑ i, d.1 i)‖ = 1 := by rw [norm_zpow, hz, _root_.one_zpow]
     simp only [a, b]
     rw [mul_assoc, norm_mul, hz', one_mul, e1]
@@ -186,7 +192,7 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
   obtain ⟨hA, hBs⟩ := GlobalTheory.T.hasSum_and_summable_on_ball_of_hasSum_on_interval deg hdeg a b Cℓ (min δ₁ δ₂) ρ₀ P P' (lt_min hδ₁ hδ₂) (fun d => Nat.cast_nonneg _)
     hab hP hP' hser (X₀ : ℂ) (by rw [Complex.norm_real, Real.norm_of_nonneg hX₀pos.le]; exact hX₀ρ)
 
-  have hφv : ∀ a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r,
+  have hφv : ∀ a : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r),
       φ a.out = (z : ℂ) ^ (∑ i, (D a).1 i) * (X₀ : ℂ) ^ deg (D a) := fun a => by
     obtain ⟨k₁, hk₁, k₂, hk₂, e1⟩ := DoubleCoset.mem_doubleCoset.1 (hD a)
     rw [e1, hφ ϖ hϖ (D a).1 (T (D a).1) (hTv _) k₁ hk₁ k₂ hk₂]
@@ -199,8 +205,8 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
     push_cast
     ring
 
-  let f : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r → ℂ := fun a => φ a.out * ℓ (ρ a.out x)
-  let u : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r → ℝ := fun a => Cℓ * X₀ ^ deg (D a)
+  let f : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r) → ℂ := fun a => φ a.out * ℓ (ρ a.out x)
+  let u : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r) → ℝ := fun a => Cℓ * X₀ ^ deg (D a)
   have hfu : ∀ a, ‖f a‖ ≤ u a := fun a => by
     simp only [f, u]
     rw [hφv, norm_mul, norm_mul, norm_zpow, hz, _root_.one_zpow, one_mul, norm_pow, Complex.norm_real,
@@ -224,13 +230,14 @@ theorem zeta_sum_GL : GlobalTheory.Published.UnramifiedDoublingGL → ∀ (E : T
   have hfib : ∀ d : {d : Fin r → ℤ // Antitone d},
       HasSum (fun y : S d.1 => (f ∘ e.symm) ⟨d, y⟩) (a d * (X₀ : ℂ) ^ deg d) := fun d => by
     have h2 : ∀ y : S d.1, (f ∘ e.symm) ⟨d, y⟩ =
-        (z : ℂ) ^ (∑ i, d.1 i) * (X₀ : ℂ) ^ deg d * ℓ (ρ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r).out x) :=
+        (z : ℂ) ^ (∑ i, d.1 i) * (X₀ : ℂ) ^ deg d * ℓ (ρ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)).out x) :=
       fun y => by
-        show φ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w r).out * _ = _
+        show φ (y : GL (Fin r) (w.adicCompletion E) ⧸ KGL w (n := r)).out * _ = _
         rw [hφv, hDu d y.1 y.2]
         rfl
     have h3 : ∑ y : S d.1, (f ∘ e.symm) ⟨d, y⟩ = a d * (X₀ : ℂ) ^ deg d := by
-      rw [Finset.sum_congr rfl fun y _ => h2 y, ← Finset.mul_sum, ← map_sum, hsumF, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl fun y _ => h2 y, ← Finset.mul_sum, ← map_sum, hsumF, map_smul, smul_eq_mul]
       simp only [a]
       ring
     exact h3 ▸ hasSum_fintype _

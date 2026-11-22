@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCrystallineJumpsOfIsIsoMatrixGaloisRepresentat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsCrystallineJumpsOfIsIsoMatrixGaloisRepresentat
+
+@[expose] public section
+
 open NumberField PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.CohomologicalDescent Formalism.CohomologicalDescent.HeightDescentMinors Formalism.CohomologicalDescent.FrobeniusPeriodChange IsLocalRing GlobalTheory.WachPlace
 
 set_option autoImplicit false
@@ -40,8 +45,8 @@ theorem matGood_of_tw {l : ℕ} [Fact l.Prime] (P : LocPrime l) (K LL : FinExt l
       simp only [Matrix.map_apply, Matrix.mul_apply] at this
       exact this
     rw [hform]
-    refine continuous_finset_sum _ fun k _ => continuous_const.mul ?_
-    exact continuous_finset_sum _ fun m _ => (hc k m).mul continuous_const
+    refine continuous_finsetSum _ fun k _ => continuous_const.mul ?_
+    exact continuous_finsetSum _ fun m _ => (hc k m).mul continuous_const
   · rw [GlobalTheory.HTW.Rec.multV_eq_of_equiv _ e he]
     exact hj i τ hτ u
 

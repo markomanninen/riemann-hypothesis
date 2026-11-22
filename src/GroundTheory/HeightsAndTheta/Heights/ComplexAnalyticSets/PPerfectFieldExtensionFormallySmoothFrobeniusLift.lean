@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -41,7 +46,7 @@ noncomputable def sqZeroFrobeniusLift (N : Ideal C) (hp : p.Prime) (hpC : (p : C
         (Ideal.Quotient.mk_surjective x).choose ^ p + (Ideal.Quotient.mk_surjective y).choose ^ p := by
       rw [add_pow_prime_eq hp, hpC]; simp
     rw [← hadd]
-    exact pow_prime_eq_of_mk_eq hp hpC hN (by simp only [map_add, (Ideal.Quotient.mk_surjective _).choose_spec])
+    exact pow_prime_eq_of_mk_eq hp hpC hN (by simp only [map_add (f := _), (Ideal.Quotient.mk_surjective _).choose_spec])
 
 theorem sqZeroFrobeniusLift_mk (hp : p.Prime) (hpC : (p : C) = 0) (hN : N ^ 2 = ⊥) (c : C) :
     sqZeroFrobeniusLift N hp hpC hN (Ideal.Quotient.mk N c) = c ^ p :=

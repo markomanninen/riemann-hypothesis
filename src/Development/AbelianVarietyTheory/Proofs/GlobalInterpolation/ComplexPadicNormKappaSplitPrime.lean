@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.L2.Ker

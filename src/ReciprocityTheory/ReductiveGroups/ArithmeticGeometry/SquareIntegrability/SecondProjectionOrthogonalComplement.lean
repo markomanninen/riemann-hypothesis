@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -21,7 +25,7 @@ theorem Hf_smul_l (c : ℂ) (v w : EuclideanSpace ℂ ι) : Hf (c • v) w = c *
   simp only [Hf, PiLp.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
 
 theorem Hf_add_r (v w w' : EuclideanSpace ℂ ι) : Hf v (w + w') = Hf v w + Hf v w' := by
-  simp only [Hf, PiLp.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Hf, PiLp.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem Hf_sub_r (v w w' : EuclideanSpace ℂ ι) : Hf v (w - w') = Hf v w - Hf v w' := by
   simp only [Hf, PiLp.sub_apply, map_sub, mul_sub, Finset.sum_sub_distrib]
@@ -55,7 +59,8 @@ theorem Hf_sum_r {κ : Type} (s : Finset κ) (v : EuclideanSpace ℂ ι) (f : κ
     rw [Finset.sum_insert ha, Finset.sum_insert ha, Hf_add_r, ih]
 
 theorem Hf_swap (v w : EuclideanSpace ℂ ι) : Hf w v = (starRingEnd ℂ) (Hf v w) := by
-  simp only [Hf, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, map_sum, map_mul, Complex.conj_conj]
   exact Finset.sum_congr rfl fun i _ => mul_comm _ _
 
 theorem Hf_self_re (v : EuclideanSpace ℂ ι) : (Hf v v).re = ‖v‖ ^ 2 := by

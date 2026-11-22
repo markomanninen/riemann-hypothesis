@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.HomMu
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.HomMu
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+
+@[expose] public section
+
 open IsLocalRing Matrix NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th UpperTheory.V.Th.Nm GlobalTheory.GalOfCusp
 
 namespace UpperTheory.V.Th.Nm
@@ -12,7 +17,7 @@ variable {G R : Type} [TopologicalSpace G] [CommRing R] {I : Ideal R} {n : ℕ}
 private theorem ac_const (a : R) : AdicCont I fun _ : G => a := fun _ => IsLocallyConstant.const _
 
 private theorem ac_add {f g : G → R} (hf : AdicCont I f) (hg : AdicCont I g) : AdicCont I fun x => f x + g x := fun N => by
-  simp only [map_add]; exact (hf N).add (hg N)
+  simp only [map_add (f := _)]; exact (hf N).add (hg N)
 
 private theorem ac_sub {f g : G → R} (hf : AdicCont I f) (hg : AdicCont I g) : AdicCont I fun x => f x - g x := fun N => by
   simp only [map_sub]; exact (hf N).sub (hg N)

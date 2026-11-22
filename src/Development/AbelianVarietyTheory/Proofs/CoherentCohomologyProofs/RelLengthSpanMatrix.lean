@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.LengthCommensurableMapIffOfInjective
+module
+
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.LengthCommensurableMapIffOfInjective
+
+@[expose] public section
+
 universe u_1 u_2 u_3 u_4
 
 namespace GlobalTheory.SignedLengthTower
@@ -75,12 +80,12 @@ theorem relLength_span_matrix {R V ι : Type*} [CommRing R] [IsDomain R] [IsPrin
       Ring.ord R M.det := by
   let φ := Fintype.linearCombination R a
   have hφ : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     funext i
     exact Fintype.linearIndependent_iff.mp ha x (by simpa [φ, Fintype.linearCombination_apply] using hx) i
   have hf : Function.Injective (Matrix.toLin' M) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     exact Matrix.eq_zero_of_mulVec_eq_zero hM (by simpa using hx)
   have hA : Submodule.span R (Set.range a) = Submodule.map φ ⊤ := by

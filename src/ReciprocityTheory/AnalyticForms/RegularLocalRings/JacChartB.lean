@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChartA
-import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChartA
+public import ReciprocityTheory.CommutativeAlgebra.MaximalIdealSquares.RingKrullDimQuotientSpanSingletonAddOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.JacobianCriterionAlt
 
@@ -41,13 +45,15 @@ theorem toCot_psi {a : MvPolynomial (Fin n) ℂ} (ha : a ∈ ptI p)
         ∑ i, psi p K (C (gradP p a i)) • (⟨psi p K (X i - C (p i)), lin_mem_max p K i⟩ :
           maximalIdeal (locR K p)) := by
       apply Subtype.ext
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, smul_eq_mul]
-    rw [e2, map_sum]
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, map_sum]
     simp only [Phi, LinearMap.coe_mk, AddHom.coe_mk]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, ← algebraMap_eq_psi, algebraMap_smul]
   rw [e, Ideal.toCotangent_eq]
-  simpa [map_sub, map_sum, map_mul] using hsq
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sub, map_sum, map_mul] using hsq
 
 theorem ker_Phi : LinearMap.ker (Phi p K) = jacS K p := by
   have hK : K ≤ ptI p := le_ptIdeal_of_nontrivial (K := K) (p := p)
@@ -131,7 +137,7 @@ theorem finrank_residueField : Module.finrank ℂ (ResidueField (locR K p)) = 1 
   obtain ⟨x, rfl⟩ := IsLocalRing.residue_surjective w
   refine ⟨evRing K hK x, ?_⟩
   rw [Algebra.smul_def, mul_one, IsScalarTower.algebraMap_apply ℂ (locR K p) (ResidueField (locR K p)),
-    IsLocalRing.ResidueField.algebraMap_eq, ← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff,
+    IsLocalRing.ResidueField.algebraMap_eq, ← sub_eq_zero, ← (IsLocalRing.residue (locR K p)).map_sub, IsLocalRing.residue_eq_zero_iff,
     ← ker_evRing (K := K) (p := p) hK, RingHom.mem_ker, map_sub, algebraMap_eq_psi, evRing_psi, eval_C,
     sub_self]
 
@@ -142,7 +148,7 @@ theorem finrank_cot_eq :
   haveI : Module.Free ℂ (ResidueField (locR K p)) := Module.Free.of_divisionRing ℂ _
   haveI : Module.Free (ResidueField (locR K p)) (CotangentSpace (locR K p)) :=
     Module.Free.of_divisionRing (ResidueField (locR K p)) _
-  rw [← Module.finrank_mul_finrank ℂ (ResidueField (locR K p)) (CotangentSpace (locR K p)),
+  rw [← (letI : Module.Free (ResidueField (locR K p)) (CotangentSpace (locR K p)) := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℂ (ResidueField (locR K p)) (CotangentSpace (locR K p))),
     finrank_residueField, one_mul] at h
   exact h
 

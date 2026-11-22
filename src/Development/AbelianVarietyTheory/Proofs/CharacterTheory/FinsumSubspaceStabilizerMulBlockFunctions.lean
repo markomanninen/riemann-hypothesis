@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL
 
 namespace GlobalTheory.CuspGL
@@ -44,13 +49,13 @@ theorem finsum_stabiliser_mul_blocks (F : Type) [Field F] [Finite F] (V : Type) 
     apply Submodule.linearMap_qext
     ext x
     simp only [LinearMap.comp_apply]
-    rw [Submodule.mkQ_apply, Submodule.mapQ_apply, ← Submodule.mkQ_apply, hG, map_add, map_add,
+    rw [Submodule.mkQ_apply, Submodule.mapQ_apply, ← Submodule.mkQ_apply, hG, map_add (f := _), map_add (f := _),
       hπ, hπ, hs', zero_add, add_zero, Submodule.mkQ_apply]
   have h3 : ∀ t, p ∘ₗ G t ∘ₗ s = t.2.2 := by
     intro t
     refine LinearMap.ext fun y => ?_
     simp only [LinearMap.comp_apply]
-    rw [hG, hps, hs', map_add, map_add, hps, hpι, hpι, map_zero, zero_add, zero_add]
+    rw [hG, hps, hs', map_add (f := _), map_add (f := _), hps, hpι, hpι, map_zero, zero_add, zero_add]
   let e : (Module.End F W × Module.End F (V ⧸ W) × ((V ⧸ W) →ₗ[F] W)) ≃
       {g : Module.End F V // ∀ x ∈ W, g x ∈ W} :=
     { toFun := fun t => ⟨G t, hGW t⟩

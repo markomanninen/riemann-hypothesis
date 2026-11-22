@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedTanFlow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedTanFlow
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -209,7 +213,7 @@ private theorem rank_of_oneOdd : ∀ {O Γ : Type} [CommRing O] [Group Γ] [Topo
       map_add' := fun x y => Prod.ext rfl (funext fun z => by simp [mul_add, add_mul])
       map_smul' := fun t x => Prod.ext rfl (funext fun z => by simp) }
   have hF : Function.Injective F := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hx1 : ∀ g i j, i ≤ j.rev → x.1.1.1 g i j = 0 := fun g i j h =>
       congrFun (congrArg Subtype.val (congrFun (congrArg Prod.fst hx) ⟨(i, j), h⟩)) g
@@ -302,7 +306,7 @@ private theorem gsp_one {k : Type} [Field k] : IsGSp 1 (1 : M4 k) := by
   simpa using gsp_ps (0 : k)
 
 private theorem residual_chars_zero_two_eq {O Γ : Type} [CommRing O] [Group Γ] {Φ : Fr O Γ} {k : Type} [Field k] {a : O →+* k} {c : PD Φ.ι Γ k}
-    (hp : Φ.IsPair a c) (h : Φ.Res a c) (hV : Fr.InV c) (v : Φ.ι) (s : Γ) (hs : s ∈ Φ.Gv v) :
+    (hp : Φ.IsPair a c) (h : Φ.Res a c) (hV : Fr.InV (Φ := Φ) c) (v : Φ.ι) (s : Γ) (hs : s ∈ Φ.Gv v) :
     a (Φ.χ 0 s) = a (Φ.χ 2 s) := by
   obtain ⟨h1, h2, h3⟩ := hp.low v
   have h1' : c.n v * adj (c.n v) = 1 := mul_eq_one_comm.1 (by simpa [IsGSp] using h1)
@@ -337,7 +341,7 @@ theorem UpperTheory.V.Ws.redTan :
       have hq : ∀ i j : Fin 4, i ≠ j → (![0, 1, 2, 3] : Fin 4 → ℤ) i ≤ ![0, 1, 2, 3] j → i < j := by decide
       exact tan_flow Φ S c _ ![0, 1, 2, 3] (by unfold Symp; decide) (limR hc.res h1 hm) fun v =>
         limN (hc.pair.low v).2.1 fun i j h3 h4 => (hc.pair.low v).2.2 i j (hq i j h3 h4)
-  have B : Fr.InV c → (-wAl ∈ S ∨ (wBe ∈ S ∧ -wTh ∈ S)) → Module.rank k (Φ.TanS S c) ≤ d + 20 * C := by
+  have B : Fr.InV (Φ := Φ) c → (-wAl ∈ S ∨ (wBe ∈ S ∧ -wTh ∈ S)) → Module.rank k (Φ.TanS S c) ≤ d + 20 * C := by
     intro hV h
     refine le_trans ?_ (rank_of_oneOdd Φ a hok d C hb S (Φ.splitPs a fun v => c.n v 2 0) rfl (fun _ => gsp_ps _)
       (oneOdd_splitPs Φ a hok _ (fun v => (hV.2 v).2) (residual_chars_zero_two_eq hc.pair hc.res hV) S hS h))

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -125,8 +129,8 @@ theorem isClosed_leviMin (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittF
 
 end GlobalTheory.CompanionTheory.ParCocompact.LeviOne
 
-open GlobalTheory.CompanionTheory.ParCocompact.LeviOne in
 
+open GlobalTheory.CompanionTheory.ParCocompact.LeviOne in
 theorem GlobalTheory.CompanionTheory.ParCocompact.exists_leviOne_subgroup : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J → ∀ (r : ℕ) (X Y : Matrix (Fin n) (Fin r) E), IsWittFrame σ J X Y → ∃ L : Subgroup (GAd σ J), (L : Set (GAd σ J)) = leviMin σ J X Y ∩ minParOne σ J X ∧ IsClosed (L : Set (GAd σ J)) := by
   intro F E _ _ _ _ _ σ h n J hJ r X Y hW
   refine ⟨{ carrier := leviMin σ J X Y ∩ minParOne σ J X

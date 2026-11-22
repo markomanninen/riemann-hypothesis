@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.GSteps
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ExistsUnitShift
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.GSteps
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.ExistsUnitShift
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ def cmp1 : (Ix r → M.L.O) →+ (Fin (r + 1) → M.R) where
     rw [e_rOf]; simp [c1]
   map_add' Y W := by
     funext a; apply Subtype.ext; apply g.e.injective
-    simp only [Pi.add_apply, Subring.coe_add, map_add, e_rOf, c1, Prod.fst_add]
+    simp only [Pi.add_apply, Subring.coe_add, map_add (f := _), e_rOf, c1, Prod.fst_add]
     refine Prod.ext ?_ ?_ <;> simp; ring
 
 def cmp2 : (Ix r → M.L.O) →+ (Fin (r + 1) → M.R) where
@@ -46,7 +50,7 @@ def cmp2 : (Ix r → M.L.O) →+ (Fin (r + 1) → M.R) where
     rw [e_rOf]; simp [c2]
   map_add' Y W := by
     funext a; apply Subtype.ext; apply g.e.injective
-    simp only [Pi.add_apply, Subring.coe_add, map_add, e_rOf, c2, Prod.snd_add]
+    simp only [Pi.add_apply, Subring.coe_add, map_add (f := _), e_rOf, c2, Prod.snd_add]
     refine Prod.ext ?_ ?_ <;> simp; ring
 
 theorem embedding_firstComponent (Y : Ix r → M.L.O) (a : Fin (r + 1)) :
@@ -124,7 +128,7 @@ theorem iota_cmp (Y : Ix r → M.L.O) : iota1 hs (cmp1 hs Y) + iota2 hs (cmp2 hs
   funext i
   apply Subtype.ext
   apply g.e.injective
-  rw [Pi.add_apply, Subring.coe_add, map_add, e_iota2]
+  rw [Pi.add_apply, Subring.coe_add, map_add (f := _), e_iota2]
   rcases i with a | a
   · rw [e_iota1_inl, e_iota1_inl, embedding_firstComponent, embedding_secondComponent]
     ext <;> simp
@@ -135,28 +139,20 @@ theorem iotaOne_add (l w : Fin (r + 1) → M.R) : iota1 hs (l + w) = iota1 hs l 
   funext i
   apply Subtype.ext
   apply g.e.injective
-  rw [Pi.add_apply, Subring.coe_add, map_add]
+  rw [Pi.add_apply, Subring.coe_add, map_add (f := _)]
   rcases i with a | a
-  · rw [e_iota1_inl, e_iota1_inl, e_iota1_inl, Pi.add_apply, Subring.coe_add, map_add]
+  · rw [e_iota1_inl, e_iota1_inl, e_iota1_inl, Pi.add_apply, Subring.coe_add, map_add (f := _)]
     ext <;> simp
-  · rw [e_iota1_inr, e_iota1_inr, e_iota1_inr, Pi.add_apply, Subring.coe_add, map_add]
+  · rw [e_iota1_inr, e_iota1_inr, e_iota1_inr, Pi.add_apply, Subring.coe_add, map_add (f := _)]
     ext <;> simp <;> ring
 
 theorem iotaTwo_add (l w : Fin (r + 1) → M.R) : iota2 hs (l + w) = iota2 hs l + iota2 hs w := by
   funext i
   apply Subtype.ext
   apply g.e.injective
-  rw [Pi.add_apply, Subring.coe_add, map_add, e_iota2, e_iota2, e_iota2, iotaOne_add, Pi.add_apply,
+  rw [Pi.add_apply, Subring.coe_add, map_add (f := _), e_iota2, e_iota2, e_iota2, iotaOne_add, Pi.add_apply,
     Subring.coe_add, map_add]
   ext <;> simp
-
-def splitE : (Ix r → M.L.O) ≃+ (Fin (r + 1) → M.R) × (Fin (r + 1) → M.R) where
-  toFun Y := (cmp1 hs Y, cmp2 hs Y)
-  invFun p := iota1 hs p.1 + iota2 hs p.2
-  left_inv Y := iota_cmp hs Y
-  right_inv p := by
-    simp only [map_add, firstComponent_iotaOne, secondComponent_iotaOne, firstComponent_iotaTwo, secondComponent_iotaTwo, add_zero, zero_add]
-  map_add' Y W := by simp only [map_add, Prod.mk_add_mk]
 
 theorem firstComponent_smul (c : M.L.O) (Y : Ix r → M.L.O) : cmp1 hs (c • Y) = dgR hs (c1 g c) • cmp1 hs Y := by
   funext a

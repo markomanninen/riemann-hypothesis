@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJStandardLTensor
-import GroundTheory.AutomorphicForms.RestrictedAddHaarProduct
-import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
-import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
-import GroundTheory.LocalFields.LocalZetaEpsilon
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLTensor
+public import GroundTheory.AutomorphicForms.RestrictedAddHaarProduct
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixLocal
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+public import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
+public import GroundTheory.LocalFields.LocalZetaEpsilon
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology IsDedekindDomain NumberField NumberField.mixedEmbedding Matrix
 open scoped NumberField.AdeleRing RestrictedProduct SchwartzMap Classical ENNReal NNReal ValuativeRel nonZeroDivisors
@@ -71,8 +75,8 @@ theorem localMatrixFourier_integralIndicator_of_conductor {F : Type*} [Field F] 
       Set.indicator_of_notMem (show y ∉ integralMatrixSet F n from
         fun h ↦ hy (mem_integralMatrixSet.1 h))]
 
-variable (K) in
 
+variable (K) in
 def ramifiedPlaces : Finset (HeightOneSpectrum (𝓞 K)) :=
   (Filter.eventually_cofinite.1 (FractionalIdeal.finite_factors (K := K)
     ((differentIdeal ℤ (𝓞 K) : Ideal (𝓞 K)) : FractionalIdeal (𝓞 K)⁰ K))).toFinset
@@ -108,8 +112,8 @@ instance borelSpace_finMatRes : BorelSpace (Πʳ v : HeightOneSpectrum (𝓞 K),
       (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))]) :=
   ⟨rfl⟩
 
-variable (K n) in
 
+variable (K n) in
 def finMatHomeomorph : (Fin n × Fin n → FiniteAdeleRing (𝓞 K) K) ≃ₜ
     Πʳ v : HeightOneSpectrum (𝓞 K), [Matrix (Fin n) (Fin n) (v.adicCompletion K),
       (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))] :=
@@ -117,8 +121,8 @@ def finMatHomeomorph : (Fin n × Fin n → FiniteAdeleRing (𝓞 K) K) ≃ₜ
     (RestrictedProduct.matrixHomeomorph (Fin n) (AdelicGLn.mem_integralMatrices_adicCompletion K n)
       (fun _ ↦ Valued.isOpen_valuationSubring _))
 
-variable (K n) in
 
+variable (K n) in
 def finMatEquiv : (Fin n × Fin n → FiniteAdeleRing (𝓞 K) K) ≃ₜ+
     Πʳ v : HeightOneSpectrum (𝓞 K), [Matrix (Fin n) (Fin n) (v.adicCompletion K),
       (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))] :=
@@ -129,8 +133,8 @@ def finMatEquiv : (Fin n × Fin n → FiniteAdeleRing (𝓞 K) K) ≃ₜ+
     continuous_toFun := (finMatHomeomorph K n).continuous
     continuous_invFun := (finMatHomeomorph K n).symm.continuous }
 
-variable (K n) in
 
+variable (K n) in
 def finMatHaar : Measure (Πʳ v : HeightOneSpectrum (𝓞 K), [Matrix (Fin n) (Fin n) (v.adicCompletion K),
       (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))]) :=
   (finiteMeasurePi K (ι := Fin n × Fin n)).map (finMatEquiv K n)
@@ -146,8 +150,8 @@ theorem coe_integralMatrices_eq_pi {F : Type*} [Field F] [ValuativeRel F] :
   Set.ext fun _ ↦ ⟨fun h i _ j _ ↦ (mem_integralMatrices F n).1 h i j,
     fun h ↦ (mem_integralMatrices F n).2 fun i j ↦ h i (Set.mem_univ i) j (Set.mem_univ j)⟩
 
-variable (K n) in
 
+variable (K n) in
 def matVol (v : HeightOneSpectrum (𝓞 K)) : ℝ≥0∞ :=
   matrixMeasure (selfDualMeasure (localAdelicChar K v))
     (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))
@@ -172,8 +176,8 @@ theorem matVol_of_notMem {v : HeightOneSpectrum (𝓞 K)} (hv : v ∉ ramifiedPl
   rw [matVol_eq, selfDualMeasure_integers, addCharConductor_eq_zero hv]
   simp
 
-variable (K n) in
 
+variable (K n) in
 def locMeas (v : HeightOneSpectrum (𝓞 K)) : Measure (Matrix (Fin n) (Fin n) (v.adicCompletion K)) :=
   (matVol K n v)⁻¹ • matrixMeasure (selfDualMeasure (localAdelicChar K v))
 
@@ -222,8 +226,8 @@ theorem sum_mul_apply_eq_trace (x z : Fin n × Fin n → FiniteAdeleRing (𝓞 K
   rw [h, Matrix.trace, Fintype.sum_prod_type]
   rfl
 
-variable (K n) in
 
+variable (K n) in
 def finConstF : ℝ :=
   (finMatHaar K n).real {X | ∀ v, X v ∈
       (integralMatrices (v.adicCompletion K) n : Set (Matrix (Fin n) (Fin n) (v.adicCompletion K)))} *
@@ -399,8 +403,8 @@ theorem finiteFourierPi_tensorFin (S : Finset (HeightOneSpectrum (𝓞 K)))
   change (?a : ℂ) * ((?p : ℂ) * (?l : ℂ)) = ?a * ?p * ?l
   ring
 
-variable (K n) in
 
+variable (K n) in
 def swapCLE : (Fin n × Fin n → mixedSpace K) ≃L[ℝ] (Fin n × Fin n → mixedSpace K) :=
   (LinearEquiv.funCongrLeft ℝ (mixedSpace K) (Equiv.prodComm (Fin n) (Fin n))).toContinuousLinearEquiv
 

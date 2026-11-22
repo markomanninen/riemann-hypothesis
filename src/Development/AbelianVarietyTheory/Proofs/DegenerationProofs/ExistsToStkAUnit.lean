@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLevelPoint
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFrameRatio
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLevelPoint
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFrameRatio
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -69,7 +74,8 @@ theorem exists_valF_secLin {F : Type} [Field F] {X Y : Scheme.{0}} {L : LB X} (h
     (fun _ => (k : ℤ)) r z (fun _ => l) (fun _ => l'))
   refine ⟨τ, τ0, fun σ' n cc σ hσ => (toStkA z).injective ?_⟩
   refine (toStkA_valR_eq_gs r _ z hl₁ _).trans ((sec_trans σ' r z (hl₁ trivial) hl₂).trans ?_)
-  rw [map_mul, hτ, map_sum, ← sval_of σ' r z J (fun _ => l') (fun _ => eJ), ExpGTrans.secLin_val hσ r z hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, hτ, map_sum, ← sval_of σ' r z J (fun _ => l') (fun _ => eJ), ExpGTrans.secLin_val hσ r z hJ]
   refine congrArg (_ * ·) (Finset.sum_congr rfl fun i _ => ?_)
   rw [map_mul, sval_of (σ i) _ z J (fun _ => l') (fun _ => by rw [Category.comp_id, eJ])]
   exact congrArg₂ (· * ·) (gs_scal _ r hq z _)
@@ -97,7 +103,8 @@ theorem exists_coef_secLin {R : Type} [CommRing R] [IsDomain R] (D : DegPre R) (
     (((CoefBasic.coef_basic R D F k g).2.2 w hw).1 χ (s.s χ)).exists
   have e := hcf z J hJ
   have a₁ : sval (s.s χ) rb z J = toStkA z (∑ i, cc i * valR b _ ((f i).f jf)) := by
-    rw [ExpGTrans.secLin_val hs rb z hJ, hrb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ExpGTrans.secLin_val hs rb z hJ, hrb, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, sval_of (f i) _ z J jf hjf]
     refine congrArg₂ (· * ·) (gs_scal _ rb hrb' z _) (toStkA_valR_eq_gs b _ z (top_le_of_mem _ _ z ?_) _).symm
@@ -108,6 +115,15 @@ theorem exists_coef_secLin {R : Type} [CommRing R] [IsDomain R] (D : DegPre R) (
       (congrArg J ((Category.id_comp _).trans ((gtφ_eq D F g.b χ i).trans
         (congrArg (· ≫ D.Oφ (𝟙 _) χ i) hb.symm)))).trans (hjt i)
     refine (congrArg Units.val (val_of (g.s χ) (𝟙 _) z J jt c)).trans ?_
+    have toStkA_valR {X : Scheme.{0}} (x : Sp F ⟶ X) (U : X.Opens) (z : Sp F)
+        (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+        toStkA z (valF x U a.val) = (gm x z U a).val := by
+      have hz : x z ∈ U := ht trivial
+      rw [valF, dif_pos ht, gm, dif_pos hz]
+      show ((Sp F).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom
+          ((Scheme.ΓSpecIso (CommRingCat.of F)).hom.hom _)) = _
+      rw [Iso.hom_inv_id_apply]
+      exact TopCat.Presheaf.germ_res_apply (Sp F).presheaf (homOfLE ht) z trivial _
     refine (toStkA_valR (𝟙 (Sp F)) _ z (top_le_of_mem _ _ z ?_) _).symm
     have := hJ.mem (DegPre.gtφ D F g.b χ) (𝟙 (Sp F))
     rwa [funext c] at this

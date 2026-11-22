@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.LemmaWAssembled
-import Formalism.PieriBlockIdeals.PieriColumnMinors.MinorValuationBoundHolds
-import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeChainHolds
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.LemmaWAssembled
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.MinorValuationBoundHolds
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.WeightExchangeChainHolds
+
+@[expose] public section
 
 noncomputable section
 

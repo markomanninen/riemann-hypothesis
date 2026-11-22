@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -33,7 +37,7 @@ theorem xv_supp (v : HeightOneSpectrum (𝓞 F)) (w : Eˣ) : locId E v w ∈ sup
   rw [MonoidHom.mem_ker]
   apply Units.ext
   show (Algebra.TensorProduct.map (AlgHom.id F E) (evalV F v')) ((w : E) ⊗ₜ[F] Formalism.L2.G.sgl F v 1 + (1 : E) ⊗ₜ[F] (1 - Formalism.L2.G.sgl F v 1)) = 1
-  rw [map_add, Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, map_sub, Formalism.L2.G.sgl_apply_ne F v 1 hne,
+  rw [map_add (f := _), Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, map_sub, Formalism.L2.G.sgl_apply_ne F v 1 hne,
     TensorProduct.tmul_zero, zero_add, sub_zero, map_one (evalV F v')]
   rfl
 
@@ -153,7 +157,7 @@ theorem twist_residue_character : XiRes := by
     · rw [hP']
       obtain ⟨b', i, hi, hbi⟩ := P.isMaximal.exists_inv hbP
       have e3 := congrArg (toRInt F E) hbi
-      simp only [map_add, map_mul, map_one] at e3
+      simp only [map_add (f := _), map_mul, map_one] at e3
       have e : (1 : RInt F E) = (toRInt F E i - (xvY (F := F) v b - toRInt F E b) * toRInt F E b') + xvY (F := F) v b * toRInt F E b' := by
         linear_combination -e3
       rw [e]
@@ -186,7 +190,7 @@ theorem twist_value_at_uniformizer : XiUnif := by
     exact xv_same (ξ : Chr F E L) v' hin P b' b hb1' hb2' hb1 hb2 y (locId E v' w) y₀ (xvY v' b) hy (xv_coe v' w b hw) hs (xv_supp v' w) h1 hY1 h2 hY2
   have hsp : IsUnifVal (ξ : Chr F E L) P (unifVal (ξ : Chr F E L) P) := by
     unfold unifVal
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   exact hsp v hv (locId E v w) (xvY v b) b (xv_coe v w b hw) hb1 hb2 (xv_supp v w) hY1 hY2
 

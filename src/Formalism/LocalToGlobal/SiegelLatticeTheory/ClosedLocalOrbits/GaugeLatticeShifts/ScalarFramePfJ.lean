@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfI
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfI
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,25 +20,25 @@ section Scal
 
 variable {D : D7} (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
 
-theorem span_left_le (F : LFlag (VS D) D.R.rS T) (F₁ : LFlag (VS D) D.R.rS T') :
+theorem span_left_le (F : LFlag (D.sp.Y 0) D.R.rS T) (F₁ : LFlag (D.sp.Y 0) D.R.rS T') :
     Submodule.span D.host.E (Set.range F.fl.fvec) ≤
       Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec F₁.fl.fvec)) :=
   Submodule.span_mono (by rintro _ ⟨a, rfl⟩; exact ⟨Sum.inl a, rfl⟩)
 
-theorem span_right_le (F : LFlag (VS D) D.R.rS T) (F₁ : LFlag (VS D) D.R.rS T') :
+theorem span_right_le (F : LFlag (D.sp.Y 0) D.R.rS T) (F₁ : LFlag (D.sp.Y 0) D.R.rS T') :
     Submodule.span D.host.E (Set.range F₁.fl.fvec) ≤
       Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec F₁.fl.fvec)) :=
   Submodule.span_mono (by rintro _ ⟨a, rfl⟩; exact ⟨Sum.inr a, rfl⟩)
 
-theorem Xsp_le_span (F : LFlag (VS D) D.R.rS T) :
+theorem Xsp_le_span (F : LFlag (D.sp.Y 0) D.R.rS T) :
     Xsp F ≤ Submodule.span D.host.E (Set.range F.fl.fvec) := by
   rw [Xsp, FlagG.X, Submodule.span_le]
   rintro _ ⟨a, rfl⟩
   exact Submodule.subset_span ⟨a.castSucc, fvec_castSucc _ _⟩
 
-theorem Xsp_eq_Xs (F : LFlag (VS D) D.R.rS T) : Xsp F = Xs (S := VS D) F.fl.fvec := (Xs_fvec F.fl).symm
+theorem Xsp_eq_Xs (F : LFlag (D.sp.Y 0) D.R.rS T) : Xsp F = Xs (S := VS D) F.fl.fvec := (Xs_fvec F.fl).symm
 
-theorem z_mem_span (F : LFlag (VS D) D.R.rS T) :
+theorem z_mem_span (F : LFlag (D.sp.Y 0) D.R.rS T) :
     F.fl.z ∈ Submodule.span D.host.E (Set.range F.fl.fvec) :=
   Submodule.subset_span ⟨Fin.last _, fvec_last _⟩
 
@@ -44,7 +48,7 @@ theorem Gom'_mem (u v : Fin (D.R.rS + 1) → (VS D).V) : Gom' u v ∈ Submodule.
 theorem Gom_mem (u v : Fin (D.R.rS + 1) → (VS D).V) : Gom u v ∈ Submodule.span D.host.E (Set.range u) :=
   Submodule.sum_mem _ fun b _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨b, rfl⟩)
 
-theorem scal_dir (F : LFlag (VS D) D.R.rS T) (F₁ F₂ : LFlag (VS D) D.R.rS T')
+theorem scal_dir (F : LFlag (D.sp.Y 0) D.R.rS T) (F₁ F₂ : LFlag (D.sp.Y 0) D.R.rS T')
     (hz : F.zt = F.fl.z) (hz₁ : F₁.zt = F₁.fl.z) (hz₂ : F₂.zt = F₂.fl.z) (hT0 : T ≠ 0)
     (hU2 : UUE Λ F F₂ = Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec F₂.fl.fvec)))
     (htr : ∀ y ∈ UUE Λ F F₂, y ∈ orth (VS D) (Xplus F) → y ∈ UUE Λ F F₁)
@@ -79,10 +83,10 @@ theorem scal_dir (F : LFlag (VS D) D.R.rS T) (F₁ F₂ : LFlag (VS D) D.R.rS T'
     refine ⟨fun a => ?_, ?_⟩
     · have h1 := p2 a.castSucc
       rw [if_neg (Fin.castSucc_ne_last a), hfc] at h1
-      rw [hu2, map_add, map_smul, h1, F.fl.z_orth a, smul_zero, add_zero]
+      rw [hu2, map_add (f := _), map_smul, h1, F.fl.z_orth a, smul_zero, add_zero]
     · have h1 := p2 (Fin.last _)
       rw [if_pos rfl, hfl] at h1
-      rw [hu2, map_add, map_smul, h1, hzz, smul_eq_mul]
+      rw [hu2, map_add (f := _), map_smul, h1, hzz, smul_eq_mul]
       field_simp
       ring
   have hu2U1 := htr u2 hu2U hu2o

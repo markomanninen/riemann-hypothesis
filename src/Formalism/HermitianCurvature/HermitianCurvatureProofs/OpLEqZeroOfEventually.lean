@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HerAnalyticFOfCls
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StepFormCptAllOfStepFormAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HerAnalyticFOfCls
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -25,8 +29,8 @@ def LCptAt (Φ : RadSp k r z z' π π') (c : Fin r → ℂ) : Prop :=
   ∃ U : Set (Fin r → ℂ), IsOpen U ∧ c ∈ U ∧ ∃ K : Set (Mx k r), IsCompact K ∧ K ⊆ {g | 0 < GGl k r z z' g} ∧
     ∀ c' ∈ U, VanOut Φ c' K
 
-variable (k r z z' π π') in
 
+variable (k r z z' π π') in
 def lcSub : Submodule ℂ (RadSp k r z z' π π') where
   carrier := {Φ | ∀ c ∈ OmX r, LCptAt Φ c}
   zero_mem' := fun c _ => ⟨Set.univ, isOpen_univ, trivial, ∅, isCompact_empty, Set.empty_subset _,
@@ -50,13 +54,6 @@ theorem lcSub_le_cptSub : lcSub k r z z' π π' ≤ cptSub k r z z' π π' := by
   intro Φ hΦ c hc
   obtain ⟨U, hU, hcU, K, hKc, hKG, hK0⟩ := hΦ c hc
   exact ⟨K, hKc, hKG, hK0 c hcU⟩
-
-theorem fn_van (X : ActualOps k r z z' π π') (j : Fin 6) (Φ : RadSp k r z z' π π') (c : Fin r → ℂ)
-    (K : Set (Mx k r)) (h : VanOut Φ c K) : VanOut (X.fn j Φ) c K := by
-  intro g hg hgK
-  by_cases hx : ((c, g) : (Fin r → ℂ) × Mx k r) ∈ DomR k r z z'
-  · rw [X.fn_apply j Φ (c, g) hx, h g hg hgK, smul_zero]
-  · exact (X.fn j Φ).2.1 (c, g) hx
 
 theorem mul_van {W : Module.End ℂ (RadSp k r z z' π π')} {m : (Fin r → ℂ) → Mx k r → ℂ} (hW : multiplicationOperator W m)
     (Φ : RadSp k r z z' π π') (c : Fin r → ℂ) (K : Set (Mx k r)) (h : VanOut Φ c K) : VanOut (W Φ) c K := by
@@ -111,12 +108,6 @@ theorem op_van (X : ActualOps k r z z' π π') (l : Fin r) (i : Fin 6) (Φ : Rad
   apply opL_eq_zero_of_eventually
   filter_upwards [hU.mem_nhds hc] with c' hc'
   exact h c' hc' g hg hgK
-
-theorem fn_lc (X : ActualOps k r z z' π π') (j : Fin 6) :
-    ∀ Φ ∈ lcSub k r z z' π π', X.fn j Φ ∈ lcSub k r z z' π π' := by
-  intro Φ hΦ c hc
-  obtain ⟨U, hU, hcU, K, hKc, hKG, hK0⟩ := hΦ c hc
-  exact ⟨U, hU, hcU, K, hKc, hKG, fun c' hc' => fn_van X j Φ c' K (hK0 c' hc')⟩
 
 theorem t_lc (X : ActualOps k r z z' π π') (Y : ℂ) (a b : Fin 2) :
     ∀ Φ ∈ lcSub k r z z' π π', X.t Y a b Φ ∈ lcSub k r z z' π π' := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+
+@[expose] public section
+
 open Formalism.MainNotions.N
 
 namespace GlobalTheory
@@ -14,7 +19,7 @@ theorem isSSRep_of_isSemisimpleRing_range :
     induction x using MonoidAlgebra.induction_on with
     | of g => intro v hv; exact hW g v hv
     | add x y hx hy =>
-      intro v hv; rw [map_add, Matrix.add_mulVec]; exact W.add_mem (hx v hv) (hy v hv)
+      intro v hv; rw [map_add (f := _), Matrix.add_mulVec]; exact W.add_mem (hx v hv) (hy v hv)
     | smul c x hx =>
       intro v hv; rw [map_smul, Matrix.smul_mulVec]; exact W.smul_mem c (hx v hv)
   let WB : Submodule ρ.range (Fin d → k) :=

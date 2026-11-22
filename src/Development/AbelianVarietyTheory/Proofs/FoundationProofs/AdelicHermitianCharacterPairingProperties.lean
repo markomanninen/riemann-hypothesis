@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ActAApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.FinWeil
 open scoped BigOperators
@@ -18,7 +22,7 @@ theorem sgA_sgA (D : D7) (y : AE D) : sgA D (sgA D y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sgA, Formalism.UG.sigR, conj_conj]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sum_eq_trace {R : Type} [CommRing R] (s : R →+* R) {a b : ℕ} (x y : Matrix (Fin a) (Fin b) R) :
     ∑ i, ∑ j, x i j * s (y i j) = Matrix.trace (x * (y.map s).transpose) := by
@@ -37,8 +41,8 @@ theorem trace_inv {R : Type} [CommRing R] (s : R →+* R) {a b : ℕ} (x y : Mat
 
 end GlobalTheory.FinWeil.GamAlg
 
-open GlobalTheory.FinWeil.GamAlg GlobalTheory.NormSum.PtsMem in
 
+open GlobalTheory.FinWeil.GamAlg GlobalTheory.NormSum.PtsMem in
 theorem GlobalTheory.FinWeil.gamA_alg : ∀ (D : D7), admG1 D → ∀ (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Crv D cc δ → ∀ ψ : AE D → ℂ, IsPsi D cc δ ψ → ∀ (N N' : ℕ), (∀ u ζ η, gamA ψ (actA D N N' u ζ) (actA D N N' u η) = gamA ψ ζ η) ∧ (∀ ζ : XA D N N', gamA ψ ζ ζ = 1) ∧ (∀ (r : 𝓞 D.host.E) (ζ η : XA D N N'), gamA ψ (r • ζ) η = gamA ψ ζ (sgO D r • η)) ∧ (∀ ζ η ξ : XA D N N', gamA ψ (ζ + η) ξ = gamA ψ ζ ξ * gamA ψ η ξ) ∧ (∀ ζ η ξ : XA D N N', gamA ψ ζ (η + ξ) = gamA ψ ζ η * gamA ψ ζ ξ) := by
   intro D _ cc δ _ ψ hψ N N'
   obtain ⟨hadd, -, -, hsg, -⟩ := hψ
@@ -50,10 +54,11 @@ theorem GlobalTheory.FinWeil.gamA_alg : ∀ (D : D7), admG1 D → ∀ (cc : Idea
   · unfold gamA
     set t := ∑ i, ∑ j, ζ i j * sgA D (ζ i j) with ht
     have h1 : sgA D t = t := by
-      simp only [ht, map_sum, map_mul, sgA_sgA]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ht, map_sum, map_mul, sgA_sgA]
       simp only [mul_comm]
     have h2 : t = inc D (1 / 2) * t + sgA D (inc D (1 / 2) * t) := by
-      rw [map_mul, sgA_inc, h1, ← add_mul, ← map_add, map_div₀, map_one, map_ofNat, add_halves, map_one, one_mul]
+      rw [map_mul, sgA_inc, h1, ← add_mul, ← map_add (f := _), map_div₀, map_one, map_ofNat, add_halves, map_one, one_mul]
     rw [h2]
     exact hsg _
   · unfold gamA
@@ -66,4 +71,4 @@ theorem GlobalTheory.FinWeil.gamA_alg : ∀ (D : D7), admG1 D → ∀ (cc : Idea
     simp only [Matrix.add_apply, add_mul, Finset.sum_add_distrib]
   · unfold gamA
     rw [← hadd]
-    simp only [Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+    simp only [Matrix.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]

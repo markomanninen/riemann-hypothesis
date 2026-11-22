@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+
+@[expose] public section
 
 namespace PI.CompDegEF
 
@@ -48,10 +52,5 @@ def LocDegOf : Prop :=
     ∀ v : HeightOneSpectrum (𝓞 E), v ∈ placesOver E l →
     (∀ x : 𝓞 E, ‖φ (x : E)‖ ≤ 1 ∧ (‖φ (x : E)‖ < 1 ↔ x ∈ v.asIdeal)) →
     finrank ℚ_[l] ↥K.1 = Formalism.MainNotions.N.locDeg E v
-
-def GalConst : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsGalois ℚ E] (l : ℕ) [Fact l.Prime]
-    (v w : HeightOneSpectrum (𝓞 E)), v ∈ placesOver E l → w ∈ placesOver E l →
-    Formalism.MainNotions.N.locDeg E v = Formalism.MainNotions.N.locDeg E w
 
 end PI.CompDegEF

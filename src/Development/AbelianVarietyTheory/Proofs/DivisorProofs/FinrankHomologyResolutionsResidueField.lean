@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PartialFreeResolutionsHomotopyEquivalentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PartialFreeResolutionsHomotopyEquivalentStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.AbLaw GlobalTheory.CatCoh GlobalTheory.CechDR GlobalTheory.AbCoh
@@ -36,7 +41,7 @@ theorem finrank_add_le_of_image_mem {K V W : Type} [Field K] [AddCommGroup V] [M
         have : A x = -(r : W) := eq_neg_of_add_eq_zero_left hx
         rw [this]; exact R'.neg_mem r.2)
     refine LinearMap.finrank_le_finrank_of_injective (f := φ) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨⟨x, r⟩, hx⟩ h0
     simp only [LinearMap.mem_ker, g, LinearMap.coprod_apply, LinearMap.comp_apply,
       Submodule.subtype_apply] at hx
@@ -98,7 +103,7 @@ theorem finrank_homology_base_change_resolutions : ∀ (O : Type) [CommRing O] (
       refine ⟨b₂.baseChange K y + h₁.baseChange K x, ?_⟩
       have := q5 x
       rw [hx, map_zero, add_zero, ← hy, ← q4] at this
-      rw [map_add, ← this]; abel
+      rw [map_add (f := _), ← this]; abel
   · refine finrank_add_le_of_image_mem (b₁.baseChange K) _ _ _ _ ?_ ?_ ?_
     · rintro _ ⟨y, rfl⟩; exact z12 y
     · intro x hx; rw [LinearMap.mem_ker] at hx ⊢; rw [q3, hx, map_zero]
@@ -107,7 +112,7 @@ theorem finrank_homology_base_change_resolutions : ∀ (O : Type) [CommRing O] (
       refine ⟨a₂.baseChange K y + k₁.baseChange K x, ?_⟩
       have := q7 x
       rw [hx, map_zero, add_zero, ← hy, ← q2] at this
-      rw [map_add, ← this]; abel
+      rw [map_add (f := _), ← this]; abel
   · have := finrank_add_le_of_image_mem (a₂.baseChange K) (LinearMap.ker (d₂.baseChange K))
       (LinearMap.range (d₃.baseChange K)) ⊤ ⊥ bot_le (fun _ _ => Submodule.mem_top) (by
         intro x hx h0

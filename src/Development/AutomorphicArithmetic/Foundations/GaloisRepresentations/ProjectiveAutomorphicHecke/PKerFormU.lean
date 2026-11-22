@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open scoped Classical
 
@@ -40,8 +45,8 @@ private theorem coord_emb (v : InfinitePlace E) (x : E) :
   simp [h]
 
 private theorem val_rat (W : Wt E n) (j : ℤ) (f : algForms W) (γ : Gam0 E n) (h1 : γ.1.2 = 1) :
-    ∃ a : finU E n, ofU a = rat γ ∧
-      ∀ u : finU E n, algForms.val f (a.1 * u.1) = xi0 W j γ (algForms.val f u.1) := by
+    ∃ a : finU (E := E) (n := n), ofU a = rat γ ∧
+      ∀ u : finU (E := E) (n := n), algForms.val f (a.1 * u.1) = xi0 W j γ (algForms.val f u.1) := by
   have hy : (γ.1.1.val.map (GlobalTheory.SplitPts.conjE E).toRingHom)ᵀ * γ.1.1.val = 1 := by
     have h : (γ.1.1.val.map (GlobalTheory.SplitPts.conjE E).toRingHom)ᵀ * γ.1.1.val =
       algebraMap ℚ E γ.1.2 • (1 : Matrix (Fin n) (Fin n) E) := γ.2.1
@@ -95,10 +100,10 @@ theorem pKerFormU_of :
   intro hB E _ _ _ n W j f hf K hK hfix
   obtain ⟨hinj, hsurj⟩ := hB E n
   let φ : GUf E n → Module.Dual ℂ W.Sp := fun g => if h : ∃ u, ofU u = g then algForms.val f h.choose.1 else 0
-  have hφ : ∀ u : finU E n, φ (ofU u) = algForms.val f u.1 := fun u => by
+  have hφ : ∀ u : finU (E := E) (n := n), φ (ofU u) = algForms.val f u.1 := fun u => by
     have h : ∃ u', ofU u' = ofU u := ⟨u, rfl⟩
     show (if h : ∃ u', ofU u' = ofU u then algForms.val f h.choose.1 else 0) = _
-    rw [dif_pos h, hinj h.choose_spec]
+    rw [dite_eq_left h, hinj h.choose_spec]
   have hone : ∀ γ : Gam0 E n, sim (rat γ) ∈ ZU → γ.1.2 = 1 := fun γ h => rat_eq_one_of_ZU γ.1.2 γ.2.2 h
   refine ⟨φ, ⟨?_, ?_, ?_⟩, hφ, ?_⟩
   · intro γ k hk he

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Num
 open scoped Matrix
@@ -50,7 +54,8 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
       funext j
       simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Matrix.map_apply]
       exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     simp only [map_smul, smul_eq_mul]
   have key : ∀ x : I → C, (∀ m, w * x m ∈ RC) → ∃ u : Fin g → RC, ∀ k,
       q (Pm.map (algebraMap RC C) *ᵥ x) k = evs k (Hm.map (algebraMap RC C) *ᵥ x) - (t : C) * evs k fun j => (u j : C) := by
@@ -63,8 +68,9 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
       exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
     have e2 : (fun j => (((∑ m, (⟨_, hx m⟩ : RC) • U m) j : RC) : C)) = ∑ m, (w * x m) • fun j => (U m j : C) := by
       funext j
-      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul]
-    rw [hev, e1, e2, map_sum, map_sum, Finset.sum_apply, Finset.mul_sum, ← Finset.sum_sub_distrib]
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hev, e1, e2, map_sum, map_sum, Finset.sum_apply, Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_smul, map_smul, Pi.smul_apply, smul_eq_mul, smul_eq_mul]
     have e3 : (t : C) * w = p := div_mul_cancel₀ p hw0
@@ -73,7 +79,7 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
     rw [Matrix.mulVec_mulVec, ← Matrix.map_mul, hPJ, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mulVec]
   have hdot : ∀ {K : Type} [Fintype K] (l : I → RC) (M : Matrix I K RC) (x : K → C),
       ∑ j, (l j : C) * (M.map (algebraMap RC C) *ᵥ x) j = ∑ j, ((l ᵥ* M) j : C) * x j := fun l M x => by
-    simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul,
+    simp only [Matrix.mulVec, Matrix.vecMul, dotProduct, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul,
       Finset.mul_sum, Finset.sum_mul, Matrix.map_apply, mul_assoc]
     exact Finset.sum_comm
   refine ⟨le_antisymm ?_ ?_, ?_⟩
@@ -89,7 +95,7 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
         add_mem' := by
           rintro a b ⟨x, hx, ha⟩ ⟨y, hy, hb⟩
           refine ⟨x + y, hh.add_mem hx hy, fun k => ?_⟩
-          rw [map_add, Pi.add_apply, ha, hb, ← map_add]
+          rw [map_add (f := _), Pi.add_apply, ha, hb, ← map_add (f := _)]
           rfl
         zero_mem' := ⟨0, hh.zero_mem, fun k => by rw [map_zero]; exact (map_zero (evs k)).symm⟩
         smul_mem' := by
@@ -150,7 +156,7 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
             ∑ k, (w • a) k * evr k fun j => (Hm j m : C)) := by
         have : (fun j => ((Hm *ᵥ y) j : C)) = Hm.map (algebraMap RC C) *ᵥ fun m => (y m : C) := by
           funext j
-          simp only [Matrix.mulVec, dotProduct, AddSubmonoidClass.coe_finset_sum, MulMemClass.coe_mul, Matrix.map_apply]
+          simp only [Matrix.mulVec, dotProduct, AddSubmonoidClass.coe_finsetSum, MulMemClass.coe_mul, Matrix.map_apply]
           rfl
         rw [this, ← hdot]
         simp only [hev, mul_add, Finset.sum_add_distrib]
@@ -203,7 +209,7 @@ theorem typed {O C : Type} [CommRing O] [Field C] [Algebra O C] (RC : Subalgebra
             (p / w) * ∑ k, (w • w • a) k * evr k (fun j => (u' j : C)) := by
         have : (fun j => ((c • u + P • u') j : C)) = (fun j => ((c • u) j : C)) + fun j => ((P • u') j : C) := rfl
         rw [e, this]
-        simp only [map_add, mul_add, Finset.sum_add_distrib, hlin, hP]
+        simp only [map_add (f := _), mul_add, Finset.sum_add_distrib, hlin, hP]
         congr 1
         simp only [Pi.smul_apply, smul_eq_mul, mul_assoc w, ← Finset.mul_sum]
         field_simp

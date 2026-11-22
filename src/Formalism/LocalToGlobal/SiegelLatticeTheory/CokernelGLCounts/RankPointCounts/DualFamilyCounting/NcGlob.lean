@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcArithG
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HasProdFiniteSupport
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcArithG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.HasProdFiniteSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,8 +90,8 @@ theorem absV_nonneg (v : PlX X) : 0 ≤ absV v (dV v) := by
 
 end Loc
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
+variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem normalizing_arithmetic_holds : NcArith := by
   intro D X hb hK FdN FdN' u u' X0 ψ τ Rw I H H₁ i1 i2 i3 i4 i5 T sd C Th F0 what₂ vR Q M δ i0 i0' νq a'
     ha hRR hS hR hχ hstd hcong hVo hVt hIx hOm hDP hRMp hFD hPC hP
@@ -116,7 +120,7 @@ theorem normalizing_arithmetic_holds : NcArith := by
     have h1 := hasProd_inv₀' (hEul i hi2) (hLpos i hi2).ne'
     convert h1 using 1
     funext v
-    simp only [fac, inv_inv]
+    simp [fac]
 
   set PT : ℝ := ∏' 𝔭 : {𝔭 : Ideal (𝓞 D.host.F) // 𝔭.IsMaximal},
       (if (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ 𝔭.1 then
@@ -125,8 +129,8 @@ theorem normalizing_arithmetic_holds : NcArith := by
   have hTHP : HasProd (tf X D.R.k (Tw u)) PT := by
     convert hTfac using 1
     funext v
-    simp only [tf, fac, Tw]
-    by_cases hv : (((D.mem u).A.T : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal <;> simp [hv]
+    by_cases hv : (((D.mem u).A.T : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal <;>
+      simp [tf, fac, Tw, hv]
   have hT0 : (Tw u) ≠ 0 := (D.mem u).A.T_prime.ne_zero
   have hT0' : (Tw u') ≠ 0 := (D.mem u').A.T_prime.ne_zero
   have hSf := finite_dvd X (Tw u) hT0

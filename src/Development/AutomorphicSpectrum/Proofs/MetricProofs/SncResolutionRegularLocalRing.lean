@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPCProof
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPCProof
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.Cmp.SncRes.Reg
@@ -43,7 +47,7 @@ theorem exists_homogenised (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
       fun d => by rw [map_C]; simp
     refine ⟨d₁ * d₂, MvPolynomial.C d₂ * H₁ * E₂ + MvPolynomial.C d₁ * H₂ * E₁, E₁ * E₂,
       mul_ne_zero hd₁ hd₂, ?_, ?_, ?_⟩
-    · simp only [map_add, map_mul, ha₁, ha₂, hC, Int.cast_mul, mul_add]
+    · simp only [map_add (f := _), map_mul, ha₁, ha₂, hC, Int.cast_mul, mul_add]
       ring
     · have e : map (Int.castRingHom ℂ) (MvPolynomial.C d₂ * H₁ * E₂ + MvPolynomial.C d₁ * H₂ * E₁ : MRing ι) -
           MvPolynomial.C ((d₁ * d₂ : ℤ) : ℂ) * map (algebraMap ℚ ℂ) (p + q) =
@@ -55,7 +59,7 @@ theorem exists_homogenised (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fint
               (map (Int.castRingHom ℂ) E₂ - 1) +
             (MvPolynomial.C (d₁ : ℂ) * MvPolynomial.C (d₂ : ℂ) * map (algebraMap ℚ ℂ) q) *
               (map (Int.castRingHom ℂ) E₁ - 1) := by
-        simp only [map_add, map_mul, hZ, Int.cast_mul]
+        simp only [map_add (f := _), map_mul, hZ, Int.cast_mul]
         ring
       rw [e]
       exact I.add_mem (I.add_mem (I.add_mem (I.mul_mem_left _ hb₁) (I.mul_mem_left _ hb₂))
@@ -120,8 +124,8 @@ theorem exists_clear {σ Ω C : Type} [Field Ω] [CharZero Ω] [CommRing C] [Alg
     obtain ⟨n₁, g₁, h₁, h₁'⟩ := hp
     obtain ⟨n₂, g₂, h₂, h₂'⟩ := hq
     refine ⟨n₁ + n₂, F ^ n₂ * g₁ + F ^ n₁ * g₂, ?_, ?_⟩
-    · simp only [map_add, map_mul, map_pow, ← h₁, ← h₂]; ring
-    · simp only [map_add, map_mul, map_pow, ← h₁', ← h₂']; ring
+    · simp only [map_add (f := _), map_mul, map_pow, ← h₁, ← h₂]; ring
+    · simp only [map_add (f := _), map_mul, map_pow, ← h₁', ← h₂']; ring
   | mul_X p o hp =>
     obtain ⟨n, g, h₁, h₁'⟩ := hp
     cases o with
@@ -249,7 +253,8 @@ theorem exists_span_of_derivations (S : Type) [CommRing S] [Algebra ℚ S] (σ :
   have key : ∀ q, (Φ (u q)).snd = ∑ i, ψ (c q i) * (Φ (z i)).snd := by
     intro q
     have h := congrArg d.liftKaehlerDifferential (hc q)
-    rw [Derivation.liftKaehlerDifferential_comp_D, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Derivation.liftKaehlerDifferential_comp_D, map_sum] at h
     rw [← hd, ← h]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Derivation.liftKaehlerDifferential_comp_D, hsm, hd]
@@ -275,8 +280,8 @@ theorem aeval_dual (σ : Type) [Fintype σ] (w v : σ → ℂ) (g : MvPolynomial
       simp
   | add p q hp hq =>
     constructor
-    · simp only [map_add, TrivSqZeroExt.fst_add, hp.1, hq.1]
-    · simp only [map_add, TrivSqZeroExt.snd_add, hp.2, hq.2, add_mul, Finset.sum_add_distrib]
+    · simp only [map_add (f := _), TrivSqZeroExt.fst_add, hp.1, hq.1]
+    · simp only [map_add (f := _), TrivSqZeroExt.snd_add, hp.2, hq.2, add_mul, Finset.sum_add_distrib]
   | mul_X p s hp =>
     constructor
     · rw [map_mul, aeval_X, TrivSqZeroExt.fst_mul, hp.1]
@@ -388,7 +393,8 @@ theorem card_le_finrank_jacSpanAt (K : Type) [Fintype K] (ι : K → Type) [∀ 
     by_contra hcon
     push Not at hcon
     have h0 := hkerw (∑ l, A l * F l - 1) (by
-      simp only [map_sub, map_sum, map_mul, map_one, hF, hA]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_mul, map_one, hF, hA]
       rw [hsum, sub_self])
     simp [hcon] at h0
   have hfl : f l ≠ 0 := fun h0 => hl (hkerw _ (by rw [hF, h0]))

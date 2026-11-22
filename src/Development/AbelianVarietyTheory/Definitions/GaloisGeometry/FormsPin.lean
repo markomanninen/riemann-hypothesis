@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,10 @@ abbrev XB (E : Type) [Field E] [NumberField E] (a : ℕ) : Type := GA E a →ᵇ
 
 variable {E : Type} [Field E] [NumberField E] {a : ℕ}
 
-def rtFun (h : GA E a) (φ : XB E a) : XB E a := φ.compContinuous ⟨fun g => g * h, continuous_mul_right h⟩
+def rtFun (h : GA E a) (φ : XB E a) : XB E a := φ.compContinuous ⟨fun g => g * h, continuous_mul_const h⟩
+
 
 variable (E a) in
-
 def Rt : GA E a →* (XB E a →L[ℂ] XB E a) where
   toFun h := LinearMap.mkContinuous
     { toFun := rtFun h, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl } 1
@@ -64,12 +68,12 @@ structure YOK (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E)) (Y : Submodule ℂ (
   stable : ∀ g, InS S g → ∀ φ ∈ Y, Rt E a g φ ∈ Y
   good : ∀ φ ∈ Y, Good ψ (a - 1) φ
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def cInf : GA E a →* GL (Fin a) (Cinf E) := GeneralLinearGroup.map (pInf E)
 
-variable (E a) in
 
+variable (E a) in
 def repI : GL (Fin a) (Cinf E) →* (XB E a →L[ℂ] XB E a) := (Rt E a).comp (infGL E a)
 
 def Om (n : ℕ) (m : Pl E → ℕ) (g : GA E a) : Prop := Mir n (cInf g) ∧ ∀ w, Mir (m w) (cLoc w g)
@@ -80,8 +84,8 @@ def St (ψ : AddChar (Ad E) ℂ) (S : Finset (Pl E)) (Y Y' : Submodule ℂ (XB E
   ∃ φ ∈ Y, ∃ φ' ∈ Y', SmV (repI E a) φ ∧ SmV (repI E a) φ' ∧ Lev S φ ∧ Lev S φ' ∧ Wh ψ φ 1 ≠ 0 ∧
     ∀ g, Om n m g → Wh ψ φ g = Wh ψ φ' g
 
-def ForE (P : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], ℕ → Prop) : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), P E a
+def ForE (P : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], ℕ → Prop) : Prop :=
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), P E a
 
 def G0 : Prop := ForE fun E _ _ _ a =>
   (∀ y, cInf (infGL E a y) = y) ∧ (∀ w y, cLoc w (infGL E a y) = 1) ∧ (∀ w u, cInf (fl a w u : GA E a) = 1) ∧
@@ -129,14 +133,14 @@ def G5b : Prop := ForE fun E _ _ _ a => ∀ S : Finset (Pl E),
 def G6 : Prop := ForE fun E _ _ _ a => ∀ ψ, StdPsi ψ → ∀ (S : Finset (Pl E)) (Y Y' : Submodule ℂ (XB E a)),
   YOK ψ S Y → YOK ψ S Y' → ∀ n m, n + 1 < a → St ψ S Y Y' n m → St ψ S Y Y' (n + 1) m
 
-open Classical in
 
+open Classical in
 def G7 : Prop := ForE fun E _ _ _ a => ∀ ψ, StdPsi ψ → ∀ (S : Finset (Pl E)) (Y Y' : Submodule ℂ (XB E a)),
   YOK ψ S Y → YOK ψ S Y' → ∀ n m, ∀ w ∈ S, m w + 1 < a → St ψ S Y Y' n m →
     St ψ S Y Y' n (Function.update m w (m w + 1))
 
-open Classical in
 
+open Classical in
 def FourierInductionSteps : Prop := ForE fun E _ _ _ a => ∀ ψ, StdPsi ψ → ∀ (S : Finset (Pl E)) (Y Y' : Submodule ℂ (XB E a)),
   YOK ψ S Y → YOK ψ S Y' → St ψ S Y Y' 0 (fun _ => 0) → St ψ S Y Y' (a - 1) fun w => if w ∈ S then a - 1 else 0
 
@@ -151,7 +155,7 @@ def G8 : Prop := ForE fun E _ _ _ a => ∀ ψ, StdPsi ψ → ∀ (S : Finset (Pl
   ∀ Y : Submodule ℂ (XB E a), YOK ψ S Y → ∀ φ ∈ Y, φ ≠ 0 → SmV (repI E a) φ → Lev S φ →
     (∀ w, w ∉ S → ∃ B, SatFn w B φ) → ∃ φ₁ ∈ Y, SmV (repI E a) φ₁ ∧ Lev S φ₁ ∧ Wh ψ φ₁ 1 = 1
 
-def StandardCharacterExists : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E],
+def StandardCharacterExists : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E],
   ∃ ψ : AddChar (Ad E) ℂ, StdPsi ψ ∧ ∀ᶠ w in cofinite, Cond ψ w
 
 def FourierUniquenessMirabolic : Prop := ForE fun E _ _ _ a => ∀ ψ, StdPsi ψ → ∀ (m : ℕ) (f : GA E a → ℂ), (m < a ∨ m = 0) → Good ψ m f →
@@ -180,7 +184,7 @@ def CuspidalIrreducibleSubrep : Prop := ForE fun E _ _ _ a => ∀ (μ : Measure 
 def SmoNorm : Prop := ForE fun E _ _ _ a => ∀ π π' : CuspSub E a, IsNormalised π → IsNormalised π' →
   SameSat π π' → π = π'
 
-def HeckeCharacterRigidity : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (ω ω' : HChar E),
+def HeckeCharacterRigidity : Prop := ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (ω ω' : HChar E),
   (∀ᶠ w in cofinite, ω.val w = ω'.val w) → ω = ω'
 
 def Smo : Prop := ForE fun E _ _ _ a => ∀ π π' : CuspSub E a, SameSat π π' → π = π'

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ open GroundTheory.PAdicHodge
 
 variable {l : ℕ} [Fact l.Prime]
 
-open Classical in
 
+open Classical in
 def thetaExt (x : Per6.BdR l) : ℂ_[l] :=
   if h : ∃ y : Per6.BdRp l, x = algebraMap (Per6.BdRp l) (Per6.BdR l) y then Per6.θD l h.choose else 0
 
@@ -26,7 +30,7 @@ theorem thetaExt_of_eq {x : Per6.BdR l} {y : Per6.BdRp l}
   have h1 : h0.choose = y :=
     IsPerfectoidField.algebraMap_bDeRham_injective (K := ℂ_[l]) (p := l)
       (h0.choose_spec.symm.trans h)
-  rw [thetaExt, dif_pos h0, h1]
+  rw [thetaExt, dite_eq_left h0, h1]
 
 theorem theta_gal (g : GQ l) (y : Per6.BdRp l) :
     Per6.θD l (Per6.toBot g • y) = actC l g (Per6.θD l y) := by
@@ -82,7 +86,7 @@ def thetaL : ThetaL P AI where
     obtain ⟨a, ha⟩ := (tie_fil_zero T _ x).1 hx
     obtain ⟨b, hb⟩ := (tie_fil_zero T _ y).1 hy
     rw [thetaExt_of_eq ha, thetaExt_of_eq hb,
-      thetaExt_of_eq (y := a + b) (by rw [map_add, map_add, ha, hb]), map_add]
+      thetaExt_of_eq (y := a + b) (by rw [map_add (f := _), map_add (f := _), ha, hb]), map_add (f := _)]
   θ_mul x hx y hy := by
     obtain ⟨a, ha⟩ := (tie_fil_zero T _ x).1 hx
     obtain ⟨b, hb⟩ := (tie_fil_zero T _ y).1 hy
@@ -123,13 +127,5 @@ def thetaL : ThetaL P AI where
     exact (fil_nat _ 2).2 (mu_sub_t_mem AI.ε (untilt_ε AI))
 
 end SlopeTestRemainingChoices
-
-theorem nonempty_thetaL_of_tied (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P)
-    (T : LocTied6 l P AI) : Nonempty (ThetaL P AI) :=
-  ⟨thetaL T⟩
-
-theorem nonempty_thetaL :
-    ∀ (D : Formalism.BasicNotions.D7) (l : ℕ) [Fact l.Prime], Nonempty (ThetaL (D.loc l) (D.locA l)) :=
-  fun D l _ => GlobalTheory.MemLoc.TiedTheta.nonempty_thetaL l _ _ (D.locT l)
 
 end PositivityTheory.LocInh

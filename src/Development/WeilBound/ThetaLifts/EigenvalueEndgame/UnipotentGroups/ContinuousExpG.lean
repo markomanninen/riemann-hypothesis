@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.UnipUGood
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.KerCocompact
-import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicGroupTopology
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.UnipUGood
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.KerCocompact
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.Unimod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAdelicGroupTopology
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,8 @@ theorem exists_proj (U : Submodule E (Fin d → E)) : ∃ e : Matrix (Fin d) (Fi
   · exact (p z).2
   · exact congrArg Subtype.val (LinearMap.congr_fun hp ⟨u, hu⟩)
 
-variable (σ) in
 
+variable (σ) in
 def perp (J : Matrix (Fin d) (Fin d) E) (U : Submodule E (Fin d → E)) : Submodule E (Fin d → E) where
   carrier := {z | ∀ u ∈ U, form σ J z u = 0}
   zero_mem' := fun _ _ => zero_dotProduct _
@@ -141,8 +145,8 @@ theorem gen_iff (e1 : ∀ z, e *ᵥ z ∈ U) (e2 : ∀ u ∈ U, e *ᵥ u = u) (f
       rw [op_smul_eq_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, e1 (Pi.single j 1), (col_eq e j).symm⟩)
 
-variable (σ W e f) in
 
+variable (σ W e f) in
 def triG : Subgroup (UA σ W.J) where
   carrier := {m | Tri (incM F e) (incM F f) (mat m - 1)}
   one_mem' := ⟨by simp [mat_one], by simp [mat_one], by simp [mat_one]⟩
@@ -159,8 +163,8 @@ theorem triG_closed : IsClosed (triG σ W e f : Set (UA σ W.J)) := by
     ((isClosed_eq (continuous_const.matrix_mul (c.matrix_mul continuous_const)) (c.matrix_mul continuous_const)).inter
       (isClosed_eq (continuous_const.matrix_mul c) c))
 
-variable (F E) in
 
+variable (F E) in
 def incL : Matrix (Fin d) (Fin d) E →ₗ[F] Matrix (Fin d) (Fin d) (AE F E) :=
   ((TensorProduct.mk F (AF F) E 1).compLeft (Fin d)).compLeft (Fin d)
 
@@ -178,7 +182,7 @@ theorem lie_cocompact (p : Matrix (Fin d) (Fin d) E) : ∃ C : Set (Matrix (Fin 
   have comm : ∀ v, eqs (cA σ) (incM F W.J) (incM F e) (incM F f) (incM F p) (incL F E v) =
       (incL F E).prodMap ((incL F E).prodMap ((incL F E).prodMap ((incL F E).prodMap (incL F E)))) (eqs σ W.J e f p v) := fun v => by
     have h : ∀ y, incL F E (d := d) y = incM F y := fun _ => rfl
-    simp only [eqs, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.prodMap_apply, map_add, map_sub]
+    simp only [eqs, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.prodMap_apply, map_add (f := _), map_sub]
     simp only [h, incM_mul, incM_conj]
     rfl
   obtain ⟨C, h1, h2, h3⟩ := ker_cocompact hK hc b (IsBaseChange.prodMap _ _ b (IsBaseChange.prodMap _ _ b
@@ -187,8 +191,8 @@ theorem lie_cocompact (p : Matrix (Fin d) (Fin d) E) : ∃ C : Set (Matrix (Fin 
   obtain ⟨v, hv, h⟩ := h3 x hx
   exact ⟨v, (eqs_zero.1 hv).2.1, (comm v).trans (by rw [hv, map_zero]), h⟩
 
-variable (σ W e f) in
 
+variable (σ W e f) in
 def lie : Set (Matrix (Fin d) (Fin d) (AE F E)) :=
   {x | xᵀ * incM F W.J + incM F W.J * x.map (cA σ) = 0 ∧ Tri (incM F e) (incM F f) x}
 
@@ -209,7 +213,7 @@ theorem expG_rat {v : Matrix (Fin d) (Fin d) E} (hv : Tri e f v) (h : incM F v �
   refine Subgroup.mem_subgroupOf.2 ⟨⟨ex F v, ex F (-v), ex_neg (hv.three hv hv), by
     simpa using ex_neg (A := F) (hv.neg.three hv.neg hv.neg)⟩, Units.ext ?_⟩
   change incL F E (ex F v) = ex (AF F) (incM F v)
-  rw [ex, map_add, map_add, map_smul, ex, ← incM_mul, ← incM_one (F := F) (E := E), ← algebraMap_smul (AF F)]
+  rw [ex, map_add (f := _), map_add (f := _), map_smul, ex, ← incM_mul, ← incM_one (F := F) (E := E), ← algebraMap_smul (AF F)]
   congr 2
 
 theorem triG_cov : ∃ C : Set (triG σ W e f), IsCompact C ∧ ∀ u : triG σ W e f, ∃ γ : triG σ W e f, γ.1 ∈ ratU σ W.J ∧ γ * u ∈ C := by

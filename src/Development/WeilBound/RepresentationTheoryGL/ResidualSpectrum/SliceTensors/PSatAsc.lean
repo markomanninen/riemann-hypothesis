@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCore
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatTw
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.EventuallySatV
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasSatGLLocRep
-import GroundTheory.PAdicHodge.AInfGalois
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatCore
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatTw
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.EventuallySatV
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasSatGLLocRep
+public import GroundTheory.PAdicHodge.AInfGalois
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,11 +17,11 @@ namespace PositivityTheory.Rg.Rs
 
 namespace satakeAscent
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem eventually_spherical {a : ℕ} (π : CuspSub E a) :
     ∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite,
-      GlobalTheory.LGrp.IsSpherical (π.locRep w) (GlobalTheory.LFun.KGL w a) := by
+      GlobalTheory.LGrp.IsSpherical (π.locRep w) (GlobalTheory.LFun.KGL w (n := a)) := by
   obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 π.ne_bot
   filter_upwards [LocSph.eventually_mem ((π.cusp φ hφ).1.level.mem_nhds (by simp))] with w hw
   refine (Submodule.ne_bot_iff _).2 ⟨⟨φ, hφ⟩, GlobalTheory.LGrp.mem_fixed.2 fun k hk => ?_, fun e => h0 (congrArg Subtype.val e)⟩
@@ -63,8 +67,8 @@ theorem term_eq {a d : ℕ} (w : HeightOneSpectrum (𝓞 E)) (B₀ : Multiset �
   push_cast
   ring
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem sum_rev {d : ℕ} (w : HeightOneSpectrum (𝓞 E)) (B₀ : Multiset ℂˣ) :
     ∑ i : Fin d, satTw w (-(spehExp d i : ℂ)) B₀ = ∑ i : Fin d, satTw w (spehExp d i : ℂ) B₀ := by
   refine Fintype.sum_equiv Fin.revPerm _ _ fun i => ?_
@@ -84,7 +88,7 @@ theorem satAsc_holds : SatAsc := by
   obtain ⟨φ, hφV, hφ⟩ := hB.1
   have hF := hfP φ hφV
   have hF0 : f φ ≠ 0 := fun e => hφ.1 (hfi φ hφV e)
-  have hFK : ∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) (f φ) = f φ := fun k hk => by
+  have hFK : ∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) (f φ) = f φ := fun k hk => by
     have e := hfe (.fin (locGL E N w k)) φ hφV
     have e2 : finRep E N (locGL E N w k) φ = φ := GlobalTheory.LGrp.mem_fixed.1 hφ.2.1 k hk
     exact e.symm.trans (congrArg f e2)

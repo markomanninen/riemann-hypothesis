@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.BiadditiveFirstVariable
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.BiadditiveFirstVariable
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem biadditive_second_variable {F be : MvPowerSeries (Fin 2) (K0 p)} (hF : I
   have h1 := integralExp_param_of_equiv_zero p h.add2
   rw [th_inParam_sub, th_inParam_sub,
     param_substitution_pair be _ _ (MvPowerSeries.X 0) (MvPowerSeries.subst ![MvPowerSeries.X 1, MvPowerSeries.X 2] F) (sx_cX 0)
-      (by rw [map_add, sx_cX, sx_cX, add_zero]) (sx_cX 0) (sx_law_const hF _ _ (sx_cX 1) (sx_cX 2)) (sx_eX 0)
+      (by rw [map_add (f := _), sx_cX, sx_cX, add_zero]) (sx_cX 0) (sx_law_const hF _ _ (sx_cX 1) (sx_cX 2)) (sx_eX 0)
       (by rw [sx_log_law hF _ _ (sx_cX 1) (sx_cX 2), sx_inParam_add, sx_eX, sx_eX]),
     param_substitution_pair be _ _ (MvPowerSeries.X 0) (MvPowerSeries.X 1) (sx_cX 0) (sx_cX 1) (sx_cX 0) (sx_cX 1) (sx_eX 0) (sx_eX 1),
     param_substitution_pair be _ _ (MvPowerSeries.X 0) (MvPowerSeries.X 2) (sx_cX 0) (sx_cX 2) (sx_cX 0) (sx_cX 2) (sx_eX 0) (sx_eX 2)]
@@ -91,11 +95,6 @@ theorem sx_root (ζ : K0 p) (hζ : ζ ^ (p ^ 2 - 1) = 1) :
   · rw [hfr, map_pow]
     show algebraMap (WW p) (K0 p) (((WittVector.teichmuller p ξ) ^ k) ^ p) = ζ ^ p
     rw [map_pow, map_pow, ← hk]
-
-def sx_j : Fin 2 → ℕ := ![0, 1]
-
-def sx_rho (p : ℕ) [Fact p.Prime] : ℕ → MvPowerSeries (Fin 2) (K0 p) :=
-  fun k => if k = 0 then MvPowerSeries.X 0 else if k = 1 then MvPowerSeries.X 1 else 0
 
 theorem sx_conj {be : MvPowerSeries (Fin 2) (K0 p)} (h : BeProp p be) (ζ : K0 p) (hζ : ζ ^ (p ^ 2 - 1) = 1) :
     Formalism.InvariantFactorPaths.G7.Simeq (MvPowerSeries.subst ![MvPowerSeries.C ζ * (MvPowerSeries.X 0 :

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.MemChartFormsIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogFrobeniusLiftSmulLogCoordinateWedgeStatement
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierProjectionPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSubringOfPthPowerTwistedMonomialMemStatement
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ChartFormsDifferentialClosed
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EulerContractionChartForms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCoordinateWedgeLinearIndependentSpanEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.MemChartFormsIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogFrobeniusLiftSmulLogCoordinateWedgeStatement
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.CartierProjectionPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSubringOfPthPowerTwistedMonomialMemStatement
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.ChartFormsDifferentialClosed
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.EulerContractionChartForms
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCoordinateWedgeLinearIndependentSpanEqTopStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,8 @@ theorem logCartier_rounding_family : ∀ (K : Type) [Field K] (p : ℕ) [Fact p.
     (Submodule.mem_span_range_iff_exists_fun K).mp (hsp ▸ Submodule.mem_top)
   choose g hg using fun I => hπ (c I)
   have hQη : Q η = ∑ I, g I ^ p • logWedge x I := by
-    rw [← hcη, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hcη, map_sum]
     refine Finset.sum_congr rfl fun I _ => ?_
     rw [hQw, hg]
   refine ⟨∑ I, g I • logWedge x I, h η, ?_, ?_, ?_, ?_⟩
@@ -70,7 +75,8 @@ theorem logCartier_rounding_family : ∀ (K : Type) [Field K] (p : ℕ) [Fact p.
   · intro ha
     subst ha
     exact (hT y0).2.1 η (hη y0)
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [GlobalTheory.T.logFrobeniusLift_smul_logCoordinateWedge K p n x γ hγ]
     rw [← hQη]
     have h2 := hhom η

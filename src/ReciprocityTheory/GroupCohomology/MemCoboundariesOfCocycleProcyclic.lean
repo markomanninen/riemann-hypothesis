@@ -1,4 +1,8 @@
-import ReciprocityTheory.GroupCohomology.ModelComparisonDegreeZeroBijective
+module
+
+public import ReciprocityTheory.GroupCohomology.ModelComparisonDegreeZeroBijective
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

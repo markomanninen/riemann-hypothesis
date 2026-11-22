@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+module
+
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarCompactLtTop
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace
 
@@ -25,7 +30,7 @@ theorem exists_continuous_limit : ∀ (k r : ℕ) (μ : Measure (Mt k r)), IsHaa
     refine Metric.uniformCauchySeqOn_iff.2 fun ε hε => ?_
     obtain ⟨N, hN⟩ := hC Q hQ (ε / 2) (half_pos hε)
     refine ⟨N, fun m hm n hn y hy => ?_⟩
-    have := hN m hm n hn (Matrix.of.symm y) hy.2 (by simpa using hy.1)
+    have := hN m hm n hn (Matrix.of.symm y) hy.2 (by rw [Matrix.of.apply_symm_apply]; exact hy.1)
     simp only [Equiv.apply_symm_apply] at this
     rw [dist_eq_norm]; linarith
   set F : Mat k r → Wp := fun y => Filter.limUnder Filter.atTop (fun j => f j y) with hFdef

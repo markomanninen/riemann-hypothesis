@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CompPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CompPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits MvPolynomial
@@ -25,8 +29,6 @@ variable {R A}
 
 instance : Preorder (Idx R A) := Preorder.lift (fun i => (i.s, i.T))
 
-theorem Idx.le_iff {i j : Idx R A} : i ≤ j ↔ i.s ⊆ j.s ∧ i.T ⊆ j.T := Iff.rfl
-
 def Idx.join (i j : Idx R A) : Idx R A where
   s := i.s ∪ j.s
   T := i.T ∪ j.T
@@ -44,8 +46,6 @@ instance : IsDirected (Idx R A) (· ≤ ·) :=
     ⟨Finset.subset_union_right, Finset.subset_union_right⟩⟩⟩
 
 instance : Nonempty (Idx R A) := ⟨⟨∅, ∅, by simp, by simp⟩⟩
-
-example : IsFiltered (Idx R A) := inferInstance
 
 def rel (i : Idx R A) : Ideal (MvPolynomial i.s R) :=
   Ideal.comap (rename (R := R) (Subtype.val : i.s → A)) (Ideal.span (i.T : Set (MvPolynomial A R)))
@@ -154,9 +154,6 @@ def cocone : Cocone (diag (X := X) A) where
            simp only [Functor.const_obj_obj, Functor.const_obj_map]
            show uHom (trans i j f.le) ≫ uHom (toA j) = uHom (toA i)
            rw [← uHom_comp, toA_trans] }
-
-theorem cocone_app (i : Idx X A) (x : D i) :
-    ((Under.forget X ⋙ forget CommRingCat).mapCocone (cocone A)).ι.app i x = toA i x := rfl
 
 def isColimitCocone : IsColimit (cocone (X := X) A) := by
   have : ReflectsColimitsOfShape (Idx X A) (Under.forget X ⋙ forget CommRingCat) :=

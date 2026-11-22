@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def descHom {O X M B : Type} [CommRing O] [IsDomain O] [AddCommGroup M] [Module 
     rw [desc_mk, map_zero]; rfl
   map_add' a b := LinearMap.ext fun u => by
     obtain ⟨m, rfl⟩ := (outM T act S).mkQ_surjective u
-    rw [LinearMap.add_apply, desc_mk, desc_mk, desc_mk, map_add, LinearMap.add_apply, map_add]
+    rw [LinearMap.add_apply, desc_mk, desc_mk, desc_mk, map_add (f := _), LinearMap.add_apply, map_add (f := _)]
   commutes' a := LinearMap.ext fun u => by
     obtain ⟨m, rfl⟩ := (outM T act S).mkQ_surjective u
     rw [desc_mk, AlgHom.commutes, Module.algebraMap_end_apply, Module.algebraMap_end_apply, map_smul]
@@ -33,8 +37,8 @@ def zCut (Q : PairedCharacterCondition.Pend D) (i : D.nd.Loc) (S : Set (D.nd.X i
       Module.End (D.nd.O i) (cutM (D.nd.T i) (D.nd.act i) S) :=
   descHom (D.nd.T i) (D.nd.act i) S (Q.zO i) (Q.zO_comm i)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def pendCut (Q : PairedCharacterCondition.Pend D) : PairedCharacterCondition.Pend (cut D c) where
   lz := Q.lz
   eSer_eq := Q.eSer_eq

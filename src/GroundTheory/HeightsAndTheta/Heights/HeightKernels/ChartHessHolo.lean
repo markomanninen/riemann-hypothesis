@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ChartMassAffine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -38,8 +43,8 @@ theorem fderiv_fderiv_I_right {F : (Fin D → ℂ) → E'} {y : Fin D → ℂ} (
   have := congrArg (fun L => L u) (h1.unique h3)
   simpa using this
 
-omit [NormedSpace ℂ E'] [IsScalarTower ℝ ℂ E'] in
 
+omit [NormedSpace ℂ E'] [IsScalarTower ℝ ℂ E'] in
 theorem fderiv_fderiv_symm {F : (Fin D → ℂ) → E'} {y : Fin D → ℂ} (hF : ContDiffAt ℝ 2 F y)
     (u v : Fin D → ℂ) : fderiv ℝ (fderiv ℝ F) y u v = fderiv ℝ (fderiv ℝ F) y v u :=
   hF.isSymmSndFDerivAt (by simp [minSmoothness_of_isRCLikeNormedField]) u v

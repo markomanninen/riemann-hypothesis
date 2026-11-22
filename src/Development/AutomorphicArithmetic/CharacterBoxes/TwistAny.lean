@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.AnyLevel
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.AnyLevel
+
+@[expose] public section
 
 open Formalism.HC Formalism.FrobeniusOrbits UpperTheory.Top
 

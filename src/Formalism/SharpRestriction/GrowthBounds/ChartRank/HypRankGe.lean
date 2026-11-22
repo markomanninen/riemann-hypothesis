@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypCard
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.CompInjLocJ
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypCard
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.CompInjLocJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ def InvK (a : H.comp) (L : H.P.Tup) : Submodule H.Kf H.P.Xsp where
     ∀ γ : (H.lev a).Γ, (H.lev a).smul γ L = L → ((H.lev a).χ γ : H.O) • (H.lev a).actX γ X = X}
   zero_mem' := ⟨Submodule.zero_mem _, fun γ _ => by rw [map_zero, smul_zero]⟩
   add_mem' := fun {x y} hx hy => ⟨Submodule.add_mem _ hx.1 hy.1, fun γ hγ => by
-    rw [map_add, smul_add, hx.2 γ hγ, hy.2 γ hγ]⟩
+    rw [map_add (f := _), smul_add, hx.2 γ hγ, hy.2 γ hγ]⟩
   smul_mem' := fun c x hx => ⟨Submodule.smul_mem _ c hx.1, fun γ hγ => by
     rw [map_smul, ← algebraMap_smul H.Kf, smul_smul, mul_comm, ← smul_smul, algebraMap_smul, hx.2 γ hγ]⟩
 
@@ -51,7 +55,7 @@ def Eqv : Submodule H.Kf H.Fn where
       show F a _ + F' a _ = _
       rw [(hF a).2.2 γ L, (hF' a).2.2 γ L]
       show _ = ((H.lev a).χ γ : H.O) • (H.lev a).actX γ (F a L + F' a L)
-      rw [map_add, smul_add]⟩
+      rw [map_add (f := _), smul_add]⟩
   smul_mem' := fun c F hF a => ⟨fun L hL => Submodule.smul_mem _ c ((hF a).1 L hL),
     fun L hL => by
       show c • F a L = 0
@@ -173,9 +177,6 @@ def RepOk (S : StepIn M i hi G) (β : S.Ch) (rep : {c // S.chOf c = β} → S.cm
     (∀ v, (rep c).2 v = colSpan ((Hc S β).P.W v) (g v : Matrix (Fin ((Hc S β).P.m + 1)) (Fin ((Hc S β).P.m + 1)) ((Hc S β).P.Qq v))) ∧
     (S.loc β).IsPt (rep c).1 g (bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ₀ * ((S.K β).y c).1 * κ₀.1)
 
-theorem rankTie_of_chX {S : StepIn M i hi G} (X : KAat.ChX S) (β : S.Ch) : RankTie S β :=
-  ⟨X.cinj β, X.onto β, X.hypC β⟩
-
 theorem coverOf {S : StepIn M i hi G} {e : D.what₂.LL →+* G.Kf} (H : ∀ β, S.Core e β) (X : KAat.ChX S) (β : S.Ch) :
     ∃ rep, RepOk S β rep ∧ Cover (Hc S β) rep := by
   have hex : ∀ c : {c // S.chOf c = β}, ∃ (a0 : S.cmpt β) (L : G.P.Tup) (γ₀ : GL (Fin (D.R.N i)) D.host.E),
@@ -203,20 +204,18 @@ def InvLeOf (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Prop :=
     FiniteDimensional G.Kf (InvK (Hc S β) (rep c).1 (rep c).2) ∧
       finrank G.Kf (InvK (Hc S β) (rep c).1 (rep c).2) ≤ finrank ℂ (FiBc S β c)
 
-def FiBPiAll (S : StepIn M i hi G) : Prop := ∀ β, FiBPi S β
-
 theorem mk_eq_of (S : StepIn M i hi G) (β : S.Ch) {γ : GL (Fin (D.R.N i)) D.host.E}
     (hγ : γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
     {x x' : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)} {κ : (S.K β).lev.U}
     (hx : x'.1 = bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * x.1 * κ.1) :
     (Quotient.mk'' x' : Cls (S.K β).lev) = Quotient.mk'' x := by
   symm
-  refine (DoubleCoset.eq _ _ _ _).2 ⟨⟨_, PStabEq.bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ, hγ, rfl⟩, ⟨_, PStabEq.U_le κ.2⟩,
+  refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨⟨_, PStabEq.bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ, hγ, rfl⟩, ⟨_, PStabEq.U_le κ.2⟩,
     Subgroup.mem_subgroupOf.2 κ.2, Subtype.ext ?_⟩
   exact hx
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem fiBPi (S : StepIn M i hi G) (β : S.Ch) : FiBPi S β := by
   intro f hf
   have hφ : ∀ c, ∃ φ ∈ AdForms (S.K β).lev (embT D) (lamTG M i), φ ((S.K β).y c) = f c := by
@@ -265,8 +264,6 @@ theorem fiBPi (S : StepIn M i hi G) (β : S.Ch) : FiBPi S β := by
   rw [hsum]
   exact Submodule.sum_mem _ fun c _ => Submodule.mem_map_of_mem (hg c)
 
-theorem fiBPiAll (S : StepIn M i hi G) : FiBPiAll S := fun β => fiBPi S β
-
 theorem chartRankGe_of [IsFractionRing G.O G.Kf] (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (H : ∀ β, S.Core e β)
     (hS : BlockRationalityField) (X : KAat.ChX S) (hI : InvLeOf S e) : ChartRankGe S := by
   intro β
@@ -285,13 +282,6 @@ variable {D : D7} {X : Formalism.L2.Herm.Herm0 D} {u : D.what₂.Word} {w : D.wh
   {hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)} {Fl : Fills (D.gat u w hg)} {Lv : Levels Fl} {i : ℕ}
   (hi : i + 1 ≤ D.R.m) {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P}
-
-theorem chartRankGe_stepInOf [IsFractionRing (gatJ Lv (i + 1)).O (gatJ Lv (i + 1)).Kf] (Fo : FormsIn M (i + 1) hi)
-    (Lc : LocIn X u w hg Lv i Fo.Ch) (pos : (Σ v : Fin (Fl.Pj (i + 1)).nV, Fin ((Fl.Pj (i + 1)).n' v)) ≃ D.what₂.Tau)
-    (hU : ∀ β, SameUlocJ hi (Fo.K β).lev (Lc.Uloc β)) (hB : ∀ β, FrRatJ (Lc.t β) Lc.B) (hTc : ∀ β, PStabEq.HypTJC (Lc.t β))
-    (e : D.what₂.LL →+* (gatJ Lv (i + 1)).Kf) (H : ∀ β, (stepInOf hi Fo Lc pos).Core e β) (hS : BlockRationalityField)
-    (hI : InvLeOf (stepInOf hi Fo Lc pos) e) : ChartRankGe (stepInOf hi Fo Lc pos) :=
-  chartRankGe_of _ e H hS (KAat.chX_stepInOf hi Fo Lc pos hU hB hTc) hI
 
 end LocJ
 

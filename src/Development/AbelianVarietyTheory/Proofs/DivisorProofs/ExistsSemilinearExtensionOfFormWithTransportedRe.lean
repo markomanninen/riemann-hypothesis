@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -30,7 +34,8 @@ theorem exists_semilinear_extension_rep :
     intro F
     have hF : F ∈ Submodule.span K (Set.range b) := by rw [hbs]; trivial
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hF
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, map_smulₛₗ R, ← hB, ← algebraMap_smul LL (a k) (B k), map_smulₛₗ f, hσ, hfB]
   have hsp : ⊤ ≤ Submodule.span ℂ (Set.range fun k => R (b k)) := by
@@ -47,7 +52,8 @@ theorem exists_semilinear_extension_rep :
     intro g w
     conv_lhs => rw [← B.sum_repr w]
     conv_rhs => rw [← B.sum_repr w]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smulₛₗ f, map_smul, map_smul, map_smulₛₗ f, ← hC]
     simp [r]
@@ -64,7 +70,8 @@ theorem exists_semilinear_extension_rep :
       rw [Submodule.span_le]
       rintro _ ⟨k, rfl⟩
       change R (b k) ∈ _
-      rw [← hfB, ← (Pi.basisFun LL (Fin n)).sum_repr (B k), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hfB, ← (Pi.basisFun LL (Fin n)).sum_repr (B k), map_sum]
       refine Submodule.sum_mem _ fun j _ => ?_
       rw [map_smulₛₗ f, Pi.basisFun_apply]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)

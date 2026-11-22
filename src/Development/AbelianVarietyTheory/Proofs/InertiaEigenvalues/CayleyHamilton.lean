@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+
+@[expose] public section
 
 open Formalism.MainNotions.N GlobalTheory.PsChar
 
@@ -159,8 +163,8 @@ private theorem pseudo_character_sum_comp_perm {M A : Type*} [Monoid M] [CommRin
     intro f x y _ hf v
     rw [Equiv.Perm.coe_mul, ← Function.comp_assoc, hf, hswap]
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.PsChar.cayleyHamilton (k R : Type) [Field k] [CharZero k] [Ring R] [Algebra k R]
     (d : ℕ) (T : R →ₗ[k] k) (h : _root_.GlobalTheory.PsChar.IsPsChar d (fun x => T x)) (x : R) :
     ∃ p : Polynomial k, p.Monic ∧ p.natDegree = d ∧ ∀ y : R, T (Polynomial.aeval x p * y) = 0 := by
@@ -227,7 +231,8 @@ theorem _root_.GlobalTheory.PsChar.cayleyHamilton (k R : Type) [Field k] [CharZe
       Polynomial.natDegree_X_pow]
   · have e := hzero y
     rw [Finset.sum_range_succ] at e
-    simp only [map_add, map_pow, Polynomial.aeval_X, map_sum, map_mul, Polynomial.aeval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_pow, Polynomial.aeval_X, map_sum, map_mul, Polynomial.aeval_C,
       add_mul, Finset.sum_mul, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
       map_smul, smul_eq_mul]
     rw [Fin.sum_univ_eq_sum_range (fun i => c i / c d * T (x ^ i * y)) d, hc]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsCuspFunIffConstTerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem cay_unitary (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st
     have := congrArg st a2
     rwa [hm, map_sub, h1, hy, sub_neg_eq_add] at this
   have c1 : st ((1 + y) * G) * ((1 + y) * G) = 1 := by
-    rw [hm, map_add, h1, hy]
+    rw [hm, map_add (f := _), h1, hy]
     calc st G * (1 + -y) * ((1 + y) * G) = (st G * (1 + y)) * ((1 - y) * G) := by noncomm_ring
       _ = 1 := by rw [a1, b1, one_mul]
   have c2 : ((1 + y) * G) * ((1 - y) * st G) = 1 := by
@@ -64,7 +68,7 @@ theorem compact_mod_of_filtration [TopologicalSpace S] [IsTopologicalRing S] (S�
   have hhx : ∀ x, h * x + h * x = x := fun x => by rw [← add_mul, hh, one_mul]
   have hhN : ∀ i, ∀ x ∈ N i, h * x ∈ N i := fun i x hx => by
     have : h * x = p i (h * x) := by
-      conv_lhs => rw [← hpf i x hx, ← hhx x, map_add, mul_add, hhx]
+      conv_lhs => rw [← hpf i x hx, ← hhx x, map_add (f := _), mul_add, hhx]
     rw [this]; exact hpN _ _
   have hle0 : ∀ i, N i ≤ N 0 := fun i => by
     induction i with
@@ -305,7 +309,8 @@ theorem mem_raise_fam (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (
       rw [mul_sub, mul_one, Finset.mul_sum, sub_eq_self]
       exact Finset.sum_eq_zero fun j _ => he.ortho (ha j)
     have l3 : ∀ b, (∀ j, some (.inr j) ≠ b) → (1 - st (∑ j, u j)) * fam st u b = fam st u b := fun b hb => by
-      rw [sub_mul, one_mul, map_sum, Finset.sum_mul, sub_eq_self]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [sub_mul, one_mul, map_sum, Finset.sum_mul, sub_eq_self]
       exact Finset.sum_eq_zero fun j _ => he.ortho (hb j)
     have l : ∀ a b, (∀ j, a ≠ some (.inl j)) → (∀ j, some (.inr j) ≠ b) → fam st u a * x * fam st u b = 0 :=
       fun a b ha hb => by
@@ -420,8 +425,8 @@ theorem exists_dual {r : ℕ} (C : Matrix (Fin n) (Fin r) E) (hC : LinearIndepen
       Matrix.smul_mul, Matrix.smul_mul, Matrix.mul_smul, e3, Matrix.mul_assoc s, hcd1, ← hs, Matrix.mul_one]
     module
 
-variable (σ J) in
 
+variable (σ J) in
 def adj : Matrix (Fin n) (Fin n) (AF F ⊗[F] E) →+ Matrix (Fin n) (Fin n) (AF F ⊗[F] E) where
   toFun X := J⁻¹.map (inclR (F := F) (AF F)) * cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ) X *
     J.map (inclR (F := F) (AF F))
@@ -457,7 +462,7 @@ theorem adj_adj (X : Matrix (Fin n) (Fin n) (AF F ⊗[F] E)) : adj σ J (adj σ 
     induction X i j using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (hσ x)
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   simp only [adj_apply, cT_mul, GlobalTheory.AutFunCounterexample.cT_map_gen, cT_gram hJ, cT_gram_inv hσ hJ, h, Matrix.mul_assoc]
   rw [inv_mul_gram hσ hJ, Matrix.mul_one, ← Matrix.mul_assoc, inv_mul_gram hσ hJ, Matrix.one_mul]
 
@@ -517,8 +522,8 @@ theorem perp_iff_idem {r : ℕ} (C : Matrix (Fin n) (Fin r) E) (L : Matrix (Fin 
       Matrix.sub_mulVec, sub_eq_zero, Matrix.map_mul, Matrix.mul_assoc] at h2
     rw [h2, Matrix.mulVec_mulVec]
 
-variable (σ J) in
 
+variable (σ J) in
 def radSet {r : ℕ} (C : Matrix (Fin n) (Fin r) E) (d : Fin r → ℕ) : Set (HA (AF F) σ J) :=
   {g | (∀ i, ∃ a : Fin r → AF F ⊗[F] E, (∀ j, d i ≤ d j → a j = 0) ∧
       ((HA.mat _ σ J g).1 - 1) *ᵥ (fun k => inclR (F := F) (AF F) (C k i)) = C.map (inclR (F := F) (AF F)) *ᵥ a) ∧
@@ -654,7 +659,7 @@ theorem closure_radSet_cocompact {r : ℕ} (C : Matrix (Fin n) (Fin r) E) (hC : 
     (Matrix.scalar _ (φ (1 / 2))) (Set.pi Set.univ fun _ => Set.pi Set.univ fun _ => K) hcont
     (adj_mul hσ hJ) (adj_adj hσ hJ) hst0
     ⟨Matrix.scalar _ (1 / 2), by ext i j; by_cases h : i = j <;> simp [h]⟩
-    (by rw [← map_add, ← map_add, add_halves, map_one, map_one])
+    (by rw [← map_add (f := _), ← map_add (f := _), add_halves, map_one, map_one])
     (fun x => (Matrix.scalar_commute _ (fun _ => Commute.all _ _) x).eq)
     (isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => hK)
     (fun X => by
@@ -773,14 +778,14 @@ theorem cocompact_of_mem_iff_adelic {r : ℕ} (e : Fin r → Fin n → E) (he : 
     ∃ K : Set N, IsCompact K ∧ ∀ m : N, ∃ γ : N, HA.mat _ σ J γ.1 ∈ HFin (AF F) σ J ∧ ∃ k ∈ K, m = γ * k :=
   cocompact_of_mem_iff hσ hJ e he h0 N fun g => by rw [hN, perp_adelic_iff hσ hJ e he]
 
-omit hσ hJ in
 
+omit hσ hJ in
 theorem conj_invol (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
   obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
   exact τ.injective (by rw [h.2.2.2, h.2.2.2, star_star])
 
-omit hσ hJ in
 
+omit hσ hJ in
 theorem linearIndependent_of_dual {r : ℕ} (e f : Fin r → Fin n → E) (h : ∀ a b, hE σ J (f a) (e b) = if a = b then 1 else 0) :
     LinearIndependent E e := by
   have h1 : cT (σ : E →+* E) (Matrix.of f)ᵀ * J * (Matrix.of e)ᵀ = 1 := by

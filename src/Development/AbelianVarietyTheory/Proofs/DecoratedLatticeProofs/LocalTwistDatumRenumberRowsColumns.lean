@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -124,7 +129,7 @@ theorem datum_eq_of_near (ξ : kˣ →* ℂˣ) (hξ : GlobalTheory.SplitWeil.IsT
     (hx : InSupp x) (h : ∀ i j, valuation k (y i j - x i j) < 1) : datum ξ y = datum ξ x := by
   obtain ⟨hy, hd⟩ := inSupp_of_near hx h
   unfold datum
-  rw [dif_pos hy, dif_pos hx]
+  rw [dite_eq_left hy, dite_eq_left hx]
   have hq : Units.mk0 _ hy.det_ne = Units.mk0 _ hx.det_ne *
       Units.mk0 (y.toBlocks₁₁.det / x.toBlocks₁₁.det) (div_ne_zero hy.det_ne hx.det_ne) := by
     ext
@@ -160,7 +165,7 @@ theorem datum_isLocallyConstant (ξ : (p.adicCompletion F)ˣ →* ℂˣ) (hξ : 
     · have hyn : ¬ InSupp y := fun hy0 => hx (inSupp_of_near hy0 (fun i j => by
         rw [← neg_sub, Valuation.map_neg]; exact hy' i j)).1
       unfold datum
-      rw [dif_neg hx, dif_neg hyn]
+      rw [dite_eq_right hx, dite_eq_right hyn]
 
 theorem datum_hasCompactSupport (ξ : (p.adicCompletion F)ˣ →* ℂˣ) :
     HasCompactSupport (datum (k := p.adicCompletion F) (A := A) (D := D) (D' := D') ξ) := by
@@ -169,7 +174,7 @@ theorem datum_hasCompactSupport (ξ : (p.adicCompletion F)ˣ →* ℂˣ) :
   · exact isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_le_one p
   · intro x hx
     unfold datum
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hs
     apply hx
     simp only [Set.mem_pi, Set.mem_univ, true_implies, Set.mem_ofPred_eq]
@@ -216,7 +221,7 @@ theorem topL_eq (z : Matrix (Fin b) (Fin a) κ) : Formalism.IndefR.Datum.topL r 
   have hbi := (ε' (.inl i)).isLt
   have haj := (ε (.inl j)).isLt
   simp only [Formalism.IndefR.Datum.topL, toBlocks₁₁, submatrix_apply, Matrix.of_apply]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
   congr 1 <;> exact Fin.ext (by simp [hi, hj])
 
 end TopL
@@ -257,10 +262,10 @@ theorem phiQ_eq (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) {r a b : ℕ} {
   unfold phiQ datum
   by_cases hs : InSupp (z.submatrix ε' ε)
   · have hc := hiff.2 hs
-    rw [dif_pos hc, dif_pos hs]
+    rw [dite_eq_left hc, dite_eq_left hs]
     have hu : hc.1.unit = Units.mk0 _ hs.det_ne := Units.ext (by simp [hT])
     rw [hu, Units.val_inv_eq_inv_val]
-  · rw [dif_neg (fun hc => hs (hiff.1 hc)), dif_neg hs]
+  · rw [dite_eq_right (fun hc => hs (hiff.1 hc)), dite_eq_right hs]
 
 end GlobalTheory.Reidx
 

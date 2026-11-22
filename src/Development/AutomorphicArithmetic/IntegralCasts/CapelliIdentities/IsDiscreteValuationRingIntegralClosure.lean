@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -58,7 +62,7 @@ private theorem isDiscreteValuationRing_integralClosure (l : ℕ) [Fact l.Prime]
     exact IsFractionRing.injective ℤ_[l] ℚ_[l] ((algebraMap ℚ_[l] L).injective h)
   have hnf : ¬ IsField (integralClosure ℤ_[l] L) := fun h =>
     IsDiscreteValuationRing.not_isField ℤ_[l] (isField_of_isIntegral_of_isField hinj h)
-  exact ((IsDiscreteValuationRing.TFAE (integralClosure ℤ_[l] L) hnf).out 0 1).mpr hV
+  exact ((IsDiscreteValuationRing.TFAE (integralClosure ℤ_[l] L) hnf).out 1 2).mpr hV
 
 theorem UpperTheory.integralClosure_isDVR :
     ∀ {l : ℕ} [Fact (Nat.Prime l)] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] ↥K], IsDiscreteValuationRing ↥(integralClosure ℤ_[l] ↥K) := by

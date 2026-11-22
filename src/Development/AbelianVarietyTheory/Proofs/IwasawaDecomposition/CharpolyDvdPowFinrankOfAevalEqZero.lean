@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+
+@[expose] public section
+
 open CategoryTheory Polynomial GlobalTheory.NormalDescent
 
 namespace GlobalTheory.CharpolyDvd

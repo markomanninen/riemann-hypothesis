@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteOfIsClosedTorusZariskiOfPowEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteOfIsClosedTorusZariskiOfPowEqOne
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -87,8 +91,8 @@ theorem pt_mem_image_iff {X Y : Over (Sp k)} [LocallyOfFiniteType X.hom]
   · rintro ⟨x, hx, rfl⟩
     exact ⟨pt x, hx, rfl⟩
 
-omit [IsAlgClosed k] in
 
+omit [IsAlgClosed k] in
 theorem isConstructible_image_of_isClosed {X Y : Over (Sp k)} [LocallyOfFiniteType X.hom]
     [QuasiCompact X.hom] [LocallyOfFiniteType Y.hom] [QuasiCompact Y.hom] (f : X ⟶ Y)
     {Z : Set X.left} (hZ : IsClosed Z) : IsConstructible (f.left '' Z) := by
@@ -107,26 +111,26 @@ theorem isConstructible_image_of_isClosed {X Y : Over (Sp k)} [LocallyOfFiniteTy
 
 end RationalPoint
 
-open RationalPoint in
 
+open RationalPoint in
 theorem exists_isClosed_image_of_isClosed_subgroup :
     ∀ (k : Type) [Field k] [IsAlgClosed k] (G B : Over (Sp k)) [GrpObj G] [GrpObj B] (q : G ⟶ B), IsMonHom q → LocallyOfFiniteType G.hom → QuasiCompact G.hom → LocallyOfFiniteType B.hom → QuasiCompact B.hom → ∀ (C : Subgroup (𝟙_ (Over (Sp k)) ⟶ G)) (Z : Set G.left), IsClosed Z → (∀ x, x ∈ C ↔ Set.range x.left ⊆ Z) → ∃ Z' : Set B.left, IsClosed Z' ∧ ∀ y : (𝟙_ (Over (Sp k)) ⟶ B), (∃ x ∈ C, x ≫ q = y) ↔ Set.range y.left ⊆ Z' := by
   intro k _ _ G B _ _ q _ _ _ _ _ C Z hZ hC
-  letI := zariski B
-  haveI := separatelyContinuousMul B
-  haveI := continuousInv B
+  letI := RationalPoint.zariski B
+  haveI := RationalPoint.separatelyContinuousMul B
+  haveI := RationalPoint.continuousInv B
   let φ : (𝟙_ (Over (Sp k)) ⟶ G) →* (𝟙_ (Over (Sp k)) ⟶ B) :=
     MonoidHom.mk' (fun x => x ≫ q) fun x y => MonObj.mul_comp x y q
   have hcl : IsClosed (C.map φ : Set (𝟙_ (Over (Sp k)) ⟶ B)) := by
-    refine isClosed_subgroup_of_eq_preimage_isConstructible _ (f := pt) continuous_induced_dom
-      (isConstructible_image_of_isClosed q hZ) ?_
+    refine isClosed_subgroup_of_eq_preimage_isConstructible _ (f := RationalPoint.pt)
+      continuous_induced_dom (RationalPoint.isConstructible_image_of_isClosed q hZ) ?_
     ext y
-    rw [Set.mem_preimage, pt_mem_image_iff q hZ]
-    simp only [← range_left_subset_iff, ← hC]
+    rw [Set.mem_preimage, RationalPoint.pt_mem_image_iff q hZ]
+    simp only [← RationalPoint.range_left_subset_iff, ← hC]
     rfl
   obtain ⟨Z', hZ', h⟩ := isClosed_induced_iff.1 hcl
   refine ⟨Z', hZ', fun y => ?_⟩
-  rw [range_left_subset_iff, ← Set.mem_preimage, h]
+  rw [RationalPoint.range_left_subset_iff, ← Set.mem_preimage, h]
   rfl
 
 end GlobalTheory

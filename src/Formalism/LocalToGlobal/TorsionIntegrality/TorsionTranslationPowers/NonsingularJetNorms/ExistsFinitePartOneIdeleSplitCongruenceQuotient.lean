@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,14 +20,14 @@ variable (L : PeriodPair)
 theorem hasDerivAt_P (z : ℂ) (hz : z ∉ L.lattice) :
     HasDerivAt L.weierstrassP (L.derivWeierstrassP z) z := by
   haveI : DiscreteTopology L.lattice.toAddSubgroup := inferInstanceAs (DiscreteTopology L.lattice)
-  have ho := (AddSubgroup.isClosed_of_discrete (H := L.lattice.toAddSubgroup)).isOpen_compl.mem_nhds hz
+  have ho := ((L.lattice.toAddSubgroup).isClosed_of_discreteTopology).isOpen_compl.mem_nhds hz
   have hd := (L.differentiableOn_weierstrassP z hz).differentiableAt ho
   rw [← L.deriv_weierstrassP]
   exact hd.hasDerivAt
 
 theorem notMem_nhds (z : ℂ) (hz : z ∉ L.lattice) : ∀ᶠ w in nhds z, w ∉ L.lattice := by
   haveI : DiscreteTopology L.lattice.toAddSubgroup := inferInstanceAs (DiscreteTopology L.lattice)
-  exact (AddSubgroup.isClosed_of_discrete (H := L.lattice.toAddSubgroup)).isOpen_compl.mem_nhds hz
+  exact ((L.lattice.toAddSubgroup).isClosed_of_discreteTopology).isOpen_compl.mem_nhds hz
 
 theorem P_sub_ne (z w : ℂ) (hz : z ∉ L.lattice) (hw : w ∉ L.lattice) (hp : z + w ∉ L.lattice)
     (hm : z - w ∉ L.lattice) : L.weierstrassP z - L.weierstrassP w ≠ 0 := by
@@ -41,7 +45,7 @@ private theorem weierstrassP_addition_identity (a b : ℂ) (ha : a ∉ L.lattice
   have hne : L.weierstrassP a - L.weierstrassP b ≠ 0 := P_sub_ne L a b ha hb hab hmab
   have hD : 2 * (L.weierstrassP a - L.weierstrassP b) ≠ 0 := mul_ne_zero two_ne_zero hne
   have h2 : ∀ᶠ u in nhds a, u + b ∉ L.lattice :=
-    ((continuous_add_right b).tendsto a).eventually (notMem_nhds L (a + b) hab)
+    ((continuous_add_const b).tendsto a).eventually (notMem_nhds L (a + b) hab)
   have h3 : ∀ᶠ u in nhds a, u - b ∉ L.lattice :=
     ((continuous_sub_right b).tendsto a).eventually (notMem_nhds L (a - b) hmab)
   have hev : (fun u => Formalism.L2.Th1.F.wZeta L (u + b)) =ᶠ[nhds a]
@@ -88,7 +92,7 @@ theorem collinear (z w : ℂ) (hz : z ∉ L.lattice) (hw : w ∉ L.lattice) (hp 
     ((hasDerivAt_P L z hz).sub_const (L.weierstrassP w)) hne
   have hg := (((hf.mul hf).div_const 4).sub (hasDerivAt_P L z hz)).sub_const (L.weierstrassP w)
   have h2 : ∀ᶠ u in nhds z, u + w ∉ L.lattice :=
-    ((continuous_add_right w).tendsto z).eventually (notMem_nhds L (z + w) hp)
+    ((continuous_add_const w).tendsto z).eventually (notMem_nhds L (z + w) hp)
   have h3 : ∀ᶠ u in nhds z, u - w ∉ L.lattice :=
     ((continuous_sub_right w).tendsto z).eventually (notMem_nhds L (z - w) hm)
   have hev : (fun u => L.weierstrassP (u + w)) =ᶠ[nhds z]
@@ -147,7 +151,7 @@ theorem nonsing (t : ℂ) (ht : t ∉ L.lattice) :
   haveI : (curveL l L ι).IsElliptic := ⟨(disc_ne l L ι).isUnit⟩
   rw [← WeierstrassCurve.Affine.equation_iff_nonsingular, WeierstrassCurve.Affine.equation_iff]
   have h := congrArg ι (L.derivWeierstrassP_sq t ht)
-  simp only [map_sub, map_mul, map_pow, map_ofNat, map_add] at h
+  simp only [map_sub, map_mul, map_pow, map_ofNat, map_add (f := _)] at h
   simp only [curveL, Formalism.L2.Th1.A.shortW]
   linear_combination (1 / 4 : ℂ_[l]) * h
 
@@ -158,7 +162,7 @@ variable (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l])
 theorem ptOf_some (t : ℂ) (ht : t ∉ L.lattice) :
     ptOf l L ι t = .some _ _ (AddThm.nonsing l L ι t ht) := by
   unfold ptOf
-  rw [dif_pos ⟨ht, AddThm.nonsing l L ι t ht⟩]
+  rw [dite_eq_left ⟨ht, AddThm.nonsing l L ι t ht⟩]
 
 theorem ptOf_lattice (t : ℂ) (ht : t ∈ L.lattice) : ptOf l L ι t = 0 := by
   unfold ptOf
@@ -195,7 +199,7 @@ theorem ptOf_add_generic (s t : ℂ) (hs : s ∉ L.lattice) (ht : t ∉ L.lattic
   have hx : ι (L.weierstrassP s) ≠ ι (L.weierstrassP t) := sub_ne_zero.1 hne'
   have hX := congrArg ι (AddThm.P_add L s t hs ht hp hm)
   have hY := congrArg ι (AddThm.collinear L s t hs ht hp)
-  simp only [map_pow, map_sub, map_mul, map_add, map_neg, map_div₀, map_ofNat] at hX hY
+  simp only [map_pow, map_sub, map_mul, map_add (f := _), map_neg, map_div₀, map_ofNat] at hX hY
   rw [ptOf_some l L ι s hs, ptOf_some l L ι t ht, ptOf_some l L ι _ hp,
     WeierstrassCurve.Affine.Point.add_of_X_ne hx]
   have e1 : ι (L.weierstrassP (s + t)) =
@@ -262,8 +266,8 @@ theorem ptOf_add (s t : ℂ) : ptOf l L ι (s + t) = ptOf l L ι s + ptOf l L ι
 
 end Law
 
-open Classical in
 
+open Classical in
 theorem PtOfAdd_of : PtOfAdd := by
   intro l _ L ι s t
   exact ptOf_add l L ι s t

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc
 open scoped Pointwise ENNReal Classical
 
@@ -19,7 +24,7 @@ theorem perpX_of (Fr : FrameD H r) {k : V} (h : ∀ a : Fin r, H.h k (Fr.f a.cas
   induction hx using Submodule.span_induction with
   | mem x hx => obtain ⟨a, rfl⟩ := hx; exact h a
   | zero => rw [H.h_herm 0 _, H.h_zero_left, map_zero]
-  | add x y _ _ hx hy => rw [H.h_herm (x + y) _, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [H.h_herm (x + y) _, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm, hx, hy, add_zero]
   | smul c x _ hx => rw [H.h_herm (c • x) _, H.h_smul_left, map_mul, ← H.h_herm, hx, mul_zero]
 
 theorem e_mem_X (Fr : FrameD H r) (a : Fin r) : Fr.e a ∈ H.X Fr.f :=
@@ -61,7 +66,7 @@ theorem prF_mem_LamStd (Fr : FrameD H r) {L : Submodule M.L.O (H.Wb Fr.f)} {y : 
 variable {P : FPair H r}
 
 theorem h_add_right' (k u y : V) : H.h k (u + y) = H.h k u + H.h k y := by
-  rw [H.h_herm (u + y) k, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (u + y) k, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 theorem cls_mem {d : Datum P} {t : Term V M r} (ht : IsTermOver P d t) {k : V} (hk : k ∈ t.abelian₂)
     (hkp : k ∈ H.perp (H.X P.A.f)) : H.mkW P.A.f ⟨k, hkp⟩ ∈ d.L := by
@@ -162,7 +167,7 @@ theorem img_le (hP : P.PrimeTo) {d : Datum P} {t : Term V M r} (ht : IsTermOver 
       · exact (hfix b).1
       · exact (hfix b).2
     | zero => exact map_zero g
-    | add x y _ _ hx hy => rw [map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
     | smul c x _ hx => rw [map_smul, hx]
   rintro _ ⟨v, hv, rfl⟩
   obtain ⟨m0, hm0, hk, hko⟩ := ng_term_split hP ht hv

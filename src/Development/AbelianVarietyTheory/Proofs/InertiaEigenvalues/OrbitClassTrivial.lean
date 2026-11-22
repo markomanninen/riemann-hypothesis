@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+
+@[expose] public section
+
 open GlobalTheory.PMon.Gauss
 open scoped Formalism.Per
 

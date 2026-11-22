@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Statements
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitiveElementFibres
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PrimitiveLinearForm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitiveElementFibres
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PrimitiveLinearForm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -21,10 +26,10 @@ theorem algebraMap_C_eq (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin 
   rfl
 
 theorem adjoin_eq_top (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin d) (Fin n) ℂ) :
-    letI : Algebra (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J) :=
+    (letI : Algebra (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J) :=
       (projHom J A).toRingHom.toAlgebra
     Algebra.adjoin (MvPolynomial (Fin d) ℂ)
-      (Set.range fun j : Fin n => Ideal.Quotient.mk J (X j)) = ⊤ := by
+      (Set.range fun j : Fin n => Ideal.Quotient.mk J (X j)) = ⊤) := by
   let _ : Algebra (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J) :=
     (projHom J A).toRingHom.toAlgebra
   rw [eq_top_iff]
@@ -36,7 +41,9 @@ theorem adjoin_eq_top (J : Ideal (MvPolynomial (Fin n) ℂ)) (A : Matrix (Fin d)
       (algebraMap_C_eq J A a).symm
     rw [h]
     exact Subalgebra.algebraMap_mem _ _
-  | add p q hp hq => rw [map_add]; exact add_mem hp hq
+  | add p q hp hq =>
+    rw [map_add]
+    exact add_mem hp hq
   | mul_X p i hp => rw [map_mul]; exact mul_mem hp (Algebra.subset_adjoin ⟨i, rfl⟩)
 
 def evalAt (J : Ideal (MvPolynomial (Fin n) ℂ)) (x : Fin n → ℂ) (hx : x ∈ zeroSet J) :
@@ -61,7 +68,8 @@ theorem proof : PrimitiveElementFibres.Statement := by
       (fun j : Fin n => Ideal.Quotient.mk J (X j)) (adjoin_eq_top J A)
   set ℓ : (MvPolynomial (Fin n) ℂ ⧸ J) := ∑ j, algebraMap (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J) (C (c j)) * Ideal.Quotient.mk J (X j) with hℓ
   have hℓmk : ℓ = Ideal.Quotient.mk J (∑ j, C (c j) * X j) := by
-    rw [hℓ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hℓ, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul]
     congr 1
@@ -80,7 +88,7 @@ theorem proof : PrimitiveElementFibres.Statement := by
   refine ⟨c, m, D, Q, hmon, hdeg, hD, fun y hy => ⟨?_, ?_, ?_⟩⟩
   ·
     have h := congrArg (Polynomial.map (eval y)) hab
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C,
       ← Polynomial.derivative_map] at h
     have hu : Polynomial.C (eval y D)⁻¹ * Polynomial.C (eval y D) = (1 : Polynomial ℂ) := by
       rw [← Polynomial.C_mul, inv_mul_cancel₀ hy, Polynomial.C_1]
@@ -100,8 +108,9 @@ theorem proof : PrimitiveElementFibres.Statement := by
   ·
     intro τ hτ
     let _ : Algebra (Polynomial (MvPolynomial (Fin d) ℂ)) (MvPolynomial (Fin n) ℂ ⧸ J) := (Polynomial.aeval ℓ).toRingHom.toAlgebra
-    have : IsScalarTower (MvPolynomial (Fin d) ℂ) (Polynomial (MvPolynomial (Fin d) ℂ)) (MvPolynomial (Fin n) ℂ ⧸ J) :=
-      IsScalarTower.of_algebraMap_eq fun r => (Polynomial.aeval_C ℓ r).symm
+    set_option synthInstance.maxHeartbeats 100000 in
+      have : IsScalarTower (MvPolynomial (Fin d) ℂ) (Polynomial (MvPolynomial (Fin d) ℂ)) (MvPolynomial (Fin n) ℂ ⧸ J) :=
+        IsScalarTower.of_algebraMap_eq fun r => (Polynomial.aeval_C ℓ r).symm
     have : Algebra.IsIntegral (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J) := Algebra.IsIntegral.of_finite (MvPolynomial (Fin d) ℂ) (MvPolynomial (Fin n) ℂ ⧸ J)
     have : Algebra.IsIntegral (Polynomial (MvPolynomial (Fin d) ℂ)) (MvPolynomial (Fin n) ℂ ⧸ J) :=
       ⟨fun s => (Algebra.IsIntegral.isIntegral (R := MvPolynomial (Fin d) ℂ) s).tower_top⟩

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.WRWeyl
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,13 +105,6 @@ theorem rep_id : Rep H (fun x => x) 1 := And.intro good_id hat_id
 
 theorem rep_zero : Rep H (fun _ => (0 : X)) 0 := And.intro good_zero hat_zero
 
-theorem Rep.sum {ι : Type*} (s : Finset ι) {T : ι → X → X} {b : ι → Module.End ℂ H.V}
-    (h : ∀ j ∈ s, Rep H (T j) (b j)) : Rep H (fun x => ∑ j ∈ s, T j x) (∑ j ∈ s, b j) := by
-  have hg : ∀ j ∈ s, H.Good (T j) := fun j hj => (h j hj).1
-  refine And.intro (good_sum s hg) ?_
-  rw [hat_sum s hg]
-  exact Finset.sum_congr rfl (fun j hj => (h j hj).2)
-
 theorem Rep.apply {T : X → X} {b : Module.End ℂ H.V} (h : Rep H T b) {x : X} (hx : x ∈ H.G) :
     H.N (T x) = ((b (H.toV x hx) : H.V) : X) := by
   obtain ⟨h1, h2⟩ := h
@@ -122,8 +119,8 @@ variable {k r : ℕ}
 section Lev
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {i : Fin (r + 1)} {D : Set (Mx k r)}
 
-open Classical in
 
+open Classical in
 def cut0 (i : Fin (r + 1)) (D : Set (Mx k r)) : (Mx k r → E) →ₗ[ℂ] (Mx k r → E) where
   toFun := fun f g => if g ∈ Glev k r i ∩ D then f g else 0
   map_add' := fun f f' => by
@@ -164,12 +161,13 @@ def levData (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E] (i : Fin (r +
   N_idem := fun f => (level_restriction_eq_iff _ _).2 (fun _ hg => level_restriction_apply_on f hg)
 
 theorem good0 (hD : IsOpen D) {T : (Mx k r → E) → Mx k r → E} (h : Qx2.Good k r i D T) :
-    (levData E i hD).Good T where
-  mem := fun f hf => h.sm f hf
-  congr := fun f _ f' _ he => (level_restriction_eq_iff _ _).2 (h.loc f f' ((level_restriction_eq_iff _ _).1 he))
-  lin := fun f hf f' hf' s => by
+    (levData E i hD).Good T := by
+  refine ⟨fun f hf => h.sm f hf, ?_, ?_⟩
+  · intro f _ f' _ he
+    exact (level_restriction_eq_iff _ _).2 (h.loc f f' ((level_restriction_eq_iff _ _).1 he))
+  · intro f hf f' hf' s
     show cut0 i D _ = cut0 i D _ + s • cut0 i D _
-    rw [← map_smul, ← map_add]
+    rw [← map_smul, ← map_add (f := _)]
     exact (level_restriction_eq_iff _ _).2 (h.lin f f' s hf hf')
 
 def E0 (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E] (i : Fin (r + 1)) {D : Set (Mx k r)} (hD : IsOpen D)
@@ -395,12 +393,13 @@ theorem sf_good_of (ho : IsOpen (UU Dc)) {T : Fn k r E → Fn k r E}
       ∀ c ∈ OmX r, ∀ g ∈ Glev k r L, g ∈ Dc c → T Φ c g = T Ψ c g)
     (h3 : ∀ Φ Ψ, SmoothFam k r L (UU Dc) Φ → SmoothFam k r L (UU Dc) Ψ → ∀ s : ℂ,
       ∀ c ∈ OmX r, ∀ g ∈ Glev k r L, g ∈ Dc c → T (Φ + s • Ψ) c g = T Φ c g + s • T Ψ c g) :
-    (sfData E L ho).Good T where
-  mem := h1
-  congr := fun Φ h Ψ h' he => (cutP_eq_iff _ _).2 (h2 Φ Ψ h h' ((cutP_eq_iff _ _).1 he))
-  lin := fun Φ h Ψ h' s => by
+    (sfData E L ho).Good T := by
+  refine ⟨h1, ?_, ?_⟩
+  · intro Φ h Ψ h' he
+    exact (cutP_eq_iff _ _).2 (h2 Φ Ψ h h' ((cutP_eq_iff _ _).1 he))
+  · intro Φ h Ψ h' s
     show cutP L Dc _ = cutP L Dc _ + s • cutP L Dc _
-    rw [← map_smul, ← map_add]
+    rw [← map_smul, ← map_add (f := _)]
     exact (cutP_eq_iff _ _).2 (h3 Φ Ψ h h' s)
 
 theorem sf_diff {Φ : Fn k r E} (h : SmoothFam k r L (UU Dc) Φ) {c : Fin r → ℂ} (hc : c ∈ OmX r)
@@ -408,7 +407,7 @@ theorem sf_diff {Φ : Fn k r E} (h : SmoothFam k r L (UU Dc) Φ) {c : Fin r → 
   Qx3.fam_differentiableAt h (x := (c, g)) ⟨hc, hgD⟩ hg
 
 theorem sf_good_crd (ho : IsOpen (UU Dc)) (a : Fin r) (q : Fin 6) : (sfData E L ho).Good (crd (opL a q)) :=
-  sf_good_of ho (fun _ h => Qx3.sf_opL (fun _ hx => hx.1) a q h)
+  sf_good_of ho (fun _ h => Qx3.sf_opL (by exact fun _ hx => hx.1) a q h)
     (fun Φ Ψ _ _ he c hc g hg hgD => by
       apply opL_germ
       filter_upwards [near_pt ho hc hgD] with c' hc'
@@ -481,13 +480,6 @@ theorem mulB_smul (ho : IsOpen (UU Dc)) {a : Fn k r ℂ} (ha : SmoothFam k r L (
   congr 1
   funext Φ c g
   simp only [mulF, Pi.smul_apply, mul_smul]
-
-theorem mulB_zero (ho : IsOpen (UU Dc)) : mulB E L ho (fun _ _ => 0) = 0 := by
-  show (sfData E L ho).hat (mulF (fun _ _ => 0)) = 0
-  rw [← HatData.hat_zero (H := sfData E L ho)]
-  congr 1
-  funext Φ c g
-  simp [mulF]
 
 theorem mulB_grp_comm (ho : IsOpen (UU Dc)) {α : (Fin r → ℂ) → ℂ} (hα : SmoothFam k r L (UU Dc) (fun c _ => α c))
     {T : (Mx k r → E) → Mx k r → E} (hP : Qx3.Pres L (UU Dc) T) (hLL : ∀ c ∈ OmX r, Qx2.LL k r L (Dc c) T) :
@@ -680,7 +672,7 @@ def opB (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E] (L : Fin (r + 1))
 
 theorem P_mulB (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothFam k r L (UU Dc) a) :
     opB E L ho l 0 * mulB E L ho a = mulB E L ho a * opB E L ho l 0 + mulB E L ho (crd (opL l 0) a) := by
-  have ha' : SmoothFam k r L (UU Dc) (crd (opL l 0) a) := Qx3.sf_opL (fun _ hx => hx.1) l 0 ha
+  have ha' : SmoothFam k r L (UU Dc) (crd (opL l 0) a) := Qx3.sf_opL (by exact fun _ hx => hx.1) l 0 ha
   have g1 := sf_good_crd (E := E) (L := L) ho l 0
   have g2 := sf_good_mul (E := E) ho ha
   have g3 := sf_good_mul (E := E) ho ha'
@@ -692,7 +684,7 @@ theorem P_mulB (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothFa
 
 theorem Pb_mulB (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothFam k r L (UU Dc) a) :
     opB E L ho l 3 * mulB E L ho a = mulB E L ho a * opB E L ho l 3 + mulB E L ho (crd (opL l 3) a) := by
-  have ha' : SmoothFam k r L (UU Dc) (crd (opL l 3) a) := Qx3.sf_opL (fun _ hx => hx.1) l 3 ha
+  have ha' : SmoothFam k r L (UU Dc) (crd (opL l 3) a) := Qx3.sf_opL (by exact fun _ hx => hx.1) l 3 ha
   have g1 := sf_good_crd (E := E) (L := L) ho l 3
   have g2 := sf_good_mul (E := E) ho ha
   have g3 := sf_good_mul (E := E) ho ha'
@@ -705,7 +697,7 @@ theorem Pb_mulB (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothF
 theorem P_mulB_of (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothFam k r L (UU Dc) a) (s : ℂ)
     (h : ∀ c ∈ OmX r, ∀ g, pOp l (fun c' => a c' g) c = s * a c g) :
     opB E L ho l 0 * mulB E L ho a = mulB E L ho a * (opB E L ho l 0 + s • 1) := by
-  rw [P_mulB ho l ha, mulB_congr ho (Qx3.sf_opL (fun _ hx => hx.1) l 0 ha) (Qx3.sf_csmul s ha)
+  rw [P_mulB ho l ha, mulB_congr ho (Qx3.sf_opL (by exact fun _ hx => hx.1) l 0 ha) (Qx3.sf_csmul s ha)
     (fun c hc g _ _ => h c hc g)]
   have : mulB E L ho (fun c g => s • a c g) = s • mulB E L ho a := mulB_smul ho ha s
   rw [this, mul_add, mul_smul_comm, mul_one]
@@ -713,7 +705,7 @@ theorem P_mulB_of (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : Smoot
 theorem Pb_mulB_of (ho : IsOpen (UU Dc)) (l : Fin r) {a : Fn k r ℂ} (ha : SmoothFam k r L (UU Dc) a) (s : ℂ)
     (h : ∀ c ∈ OmX r, ∀ g, pbOp l (fun c' => a c' g) c = s * a c g) :
     opB E L ho l 3 * mulB E L ho a = mulB E L ho a * (opB E L ho l 3 + s • 1) := by
-  rw [Pb_mulB ho l ha, mulB_congr ho (Qx3.sf_opL (fun _ hx => hx.1) l 3 ha) (Qx3.sf_csmul s ha)
+  rw [Pb_mulB ho l ha, mulB_congr ho (Qx3.sf_opL (by exact fun _ hx => hx.1) l 3 ha) (Qx3.sf_csmul s ha)
     (fun c hc g _ _ => h c hc g)]
   have : mulB E L ho (fun c g => s • a c g) = s • mulB E L ho a := mulB_smul ho ha s
   rw [this, mul_add, mul_smul_comm, mul_one]
@@ -760,7 +752,7 @@ theorem IntQ.add {T S : Module.End ℂ V₀} {T' S' : Module.End ℂ V₁} (h : 
   obtain ⟨h1', h2'⟩ := h'
   refine And.intro (fun F hF => VL.add_mem (h1 F hF) (h1' F hF)) (fun F hF => ?_)
   show ρ (T F + S F) = T' (ρ F) + S' (ρ F)
-  rw [map_add, h2 F hF, h2' F hF]
+  rw [map_add (f := _), h2 F hF, h2' F hF]
 
 theorem IntQ.smul {T : Module.End ℂ V₀} {T' : Module.End ℂ V₁} (h : IntQ ρ VL T T') (s : ℂ) :
     IntQ ρ VL (s • T) (s • T') := by
@@ -787,30 +779,9 @@ theorem int_one : IntQ ρ VL 1 1 := by
   refine And.intro (fun F hF => hF) (fun F _ => ?_)
   rfl
 
-theorem int_zero : IntQ ρ VL 0 0 := by
-  refine And.intro (fun F _ => VL.zero_mem) (fun F _ => ?_)
-  show ρ 0 = 0
-  exact map_zero ρ
-
 theorem int_algebraMap (s : ℂ) : IntQ ρ VL (algebraMap ℂ _ s) (algebraMap ℂ _ s) := by
   rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one]
   exact IntQ.smul int_one s
-
-theorem int_intCast (n : ℤ) : IntQ ρ VL (n : Module.End ℂ V₀) (n : Module.End ℂ V₁) := by
-  rw [← map_intCast (algebraMap ℂ (Module.End ℂ V₀)) n, ← map_intCast (algebraMap ℂ (Module.End ℂ V₁)) n]
-  exact int_algebraMap _
-
-theorem IntQ.sum {ι : Type*} (s : Finset ι) {T : ι → Module.End ℂ V₀} {T' : ι → Module.End ℂ V₁}
-    (h : ∀ j ∈ s, IntQ ρ VL (T j) (T' j)) : IntQ ρ VL (∑ j ∈ s, T j) (∑ j ∈ s, T' j) := by
-  classical
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro _
-    simp only [Finset.sum_empty]
-    exact int_zero
-  · intro j s hj ih h
-    simp only [Finset.sum_insert hj]
-    exact (h j (Finset.mem_insert_self j s)).add (ih fun i hi => h i (Finset.mem_insert_of_mem hi))
 
 end IntGen
 
@@ -971,7 +942,7 @@ def rho (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E] (hW : WeylLevelEl
   toFun := fun F => (sfData E l.succ (ho1 l hD)).toV (rr l F) (sf_rr hW l F.2.1)
   map_add' := fun F F' => Subtype.ext (by
     show cutP _ _ (rr l ((F : Mx k r → E) + (F' : Mx k r → E))) = cutP _ _ _ + cutP _ _ _
-    rw [← map_add]
+    rw [← map_add (f := _)]
     rfl)
   map_smul' := fun s F => Subtype.ext (by
     show cutP _ _ (rr l (s • (F : Mx k r → E))) = s • cutP _ _ _
@@ -1226,7 +1197,7 @@ theorem IntJ.add {T S : Module.End ℂ V₀} {T' S' : Module.End ℂ V₁} (h : 
   obtain ⟨h1', h2'⟩ := h'
   refine And.intro (VL.add_mem h1 h1') ?_
   show ρ (T J₀ + S J₀) = T' (ρ J₀) + S' (ρ J₀)
-  rw [map_add, h2, h2']
+  rw [map_add (f := _), h2, h2']
 
 theorem IntJ.neg {T : Module.End ℂ V₀} {T' : Module.End ℂ V₁} (h : IntJ ρ VL J₀ T T') :
     IntJ ρ VL J₀ (-T) (-T') := by
@@ -1458,22 +1429,22 @@ theorem int_C (hW : WeylLevelElementFacts) (hEP : EabPres) (hQ : QMinorLeftH) (h
     IntQ (rho E hW l hD.1) (VLeft z l.castSucc hD.1) (qminor (E0 E l.castSucc hD.1) (v0 k l) (v0 k l) u)
       (mB E l.succ (ho1 l hD.1) id id u) := int_minor hW hEP hQ hD id id u
 
-variable (E l) in
 
+variable (E l) in
 def bE1 (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (u : ℂ) : Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   mB E l.succ (ho1 l hD) id id (u - 1) * bTee E l hD u -
     ∑ w : Fin (mdim k r l.succ), ∑ x : Fin (mdim k r l.succ), ((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) •
       (scaledRowVectorOperator E l hD z w * mB E l.succ (ho1 l hD) (skip1 w) (skip1 x) (u - 2) * (xv k r z' l.succ x • 1))
 
-variable (E l) in
 
+variable (E l) in
 def borderedMinorLastColumn (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (u : ℂ) : Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   bTss E l hD (u - (mdim k r l.succ : ℂ)) * mB E l.succ (ho1 l hD) id id u -
     ∑ w : Fin (mdim k r l.succ), ∑ x : Fin (mdim k r l.succ), ((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) •
       (scaledColumnVectorOperator E l hD z x * mB E l.succ (ho1 l hD) (skip1 w) (skip1 x) u * (xbv k r z' l.succ w • 1))
 
-variable (E l) in
 
+variable (E l) in
 def doubleRemovedMinorTerm (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (u : ℂ) : Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   ∑ w : Fin (mdim k r l.succ), ∑ w' : Fin (mdim k r l.succ), ∑ x : Fin (mdim k r l.succ),
     ∑ x' : Fin (mdim k r l.succ), if w ≠ w' ∧ x ≠ x' then ((sg2 w w' * sg2 x x' : ℤ) : ℂ) •
@@ -1481,8 +1452,8 @@ def doubleRemovedMinorTerm (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) 
         mB E l.succ (ho1 l hD) (skip2 (min w w') (max w w')) (skip2 (min x x') (max x x')) (u - 2) *
         ((xv k r z' l.succ x' * xbv k r z' l.succ w') • 1)) else 0
 
-variable (E l) in
 
+variable (E l) in
 def capelliDetFirstFactorOrder (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (u : ℂ) : Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   bTee E l hD u * mB E l.succ (ho1 l hD) id id (u - 1) * bTss E l hD (u - (mdim k r l.succ : ℂ) - 1)
   - (∑ w : Fin (mdim k r l.succ), ∑ x : Fin (mdim k r l.succ), ((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) •
@@ -1493,8 +1464,8 @@ def capelliDetFirstFactorOrder (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → �
         bTss E l hD (u - (mdim k r l.succ : ℂ) - 1) * (xv k r z' l.succ x • 1)))
   - doubleRemovedMinorTerm E l hD z z' u
 
-variable (E l) in
 
+variable (E l) in
 def capelliDetSecondFactorOrder (hD : IsOpen D) (z z' : Fin (2 * r + k + 1) → ℂ) (u : ℂ) : Module.End ℂ (sfData E l.succ (ho1 l hD)).V :=
   bTss E l hD (u - (mdim k r l.succ : ℂ) - 1) * mB E l.succ (ho1 l hD) id id (u - 1) * bTee E l hD u
   - (∑ w : Fin (mdim k r l.succ), ∑ x : Fin (mdim k r l.succ), ((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) •
@@ -1657,13 +1628,8 @@ theorem cell_mulVec_bvec (g : Mx k r) (p q : Fin (2 * r + k + 1)) : (g *ᵥ bvec
 
 theorem cell_fvec (z : Fin (2 * r + k + 1) → ℂ) (l : Fin r) : fvec k r z l.castSucc = bvec (eI k r l) := by
   unfold fvec
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   rfl
-
-theorem cell_posL_inj {i : Fin (r + 1)} {j j' : Fin (mdim k r i)} (h : posL k r i j = posL k r i j') : j = j' := by
-  have h' := congrArg Fin.val h
-  simp only [posL] at h'
-  exact Fin.ext (by omega)
 
 theorem cell_posL_e (l : Fin r) (j : Fin (mdim k r l.castSucc)) :
     posL k r l.castSucc j = eI k r l ↔ j = e0 k l := by
@@ -1940,7 +1906,7 @@ theorem double_sign_sum_reindex_ordered {R M : Type*} [CommRing R] [AddCommGroup
       obtain ⟨sj1, sj2⟩ := sign_pair_of_lt hj
       simp only [hT, min_eq_left hi.le, max_eq_right hi.le, min_eq_right hi.le, max_eq_left hi.le,
         min_eq_left hj.le, max_eq_right hj.le, min_eq_right hj.le, max_eq_left hj.le, si1, si2, sj1, sj2]
-      simp only [← map_add]
+      simp only [← map_add (f := _)]
       congr 1
       push_cast
       ring
@@ -2011,7 +1977,8 @@ theorem signed_first_column_expansion_block01 (ho : IsOpen (UU Dc)) (z z' : Fin 
     (∑ w : Fin (mdim k r L), ∑ x : Fin (mdim k r L), (((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) * xv k r z' L x) •
       (mulB E L ho (aYb z L w) * mB E L ho (skip1 w) (skip1 x) (uC k r L Y - 1))) = -tB E L ho z z' Y 0 1 := by
   refine stp_end_ext ho (fun Ψ c hc g hg hgD => ?_)
-  simp only [map_sum, map_smul, map_neg, stp_ev_mul ho (sf_aYb z _) Ψ hc hg hgD]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_neg, stp_ev_mul ho (sf_aYb z _) Ψ hc hg hgD]
   show _ = -(((tB E L ho z z' Y 0 1 Ψ : (sfData E L ho).V) : Fn k r E) c g)
   rw [stp_tB_apply ho z z' Y 0 1 Ψ hc hg hgD]
   show _ = -(-(chatL (EH k r) (posL k r L) (uC k r L Y - 1) (fun _ => xv k r z' L) (ybv k r z L) ((Ψ : Fn k r E) c) g))
@@ -2028,7 +1995,8 @@ theorem signed_expansion_block10 (ho : IsOpen (UU Dc)) (z z' : Fin (2 * r + k + 
     (∑ w : Fin (mdim k r L), ∑ x : Fin (mdim k r L), (((((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ)) : ℂ) * xbv k r z' L w) •
       (mulB E L ho (aY z L x) * mB E L ho (skip1 w) (skip1 x) (uC k r L Y))) = -tB E L ho z z' Y 1 0 := by
   refine stp_end_ext ho (fun Ψ c hc g hg hgD => ?_)
-  simp only [map_sum, map_smul, map_neg, stp_ev_mul ho (sf_aY z _) Ψ hc hg hgD]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_neg, stp_ev_mul ho (sf_aY z _) Ψ hc hg hgD]
   show _ = -(((tB E L ho z z' Y 1 0 Ψ : (sfData E L ho).V) : Fn k r E) c g)
   rw [stp_tB_apply ho z z' Y 1 0 Ψ hc hg hgD]
   show _ = -(-(chatL (EH k r) (posL k r L) (uC k r L Y) (yv k r z L) (fun _ => xbv k r z' L) ((Ψ : Fn k r E) c) g))
@@ -2052,7 +2020,8 @@ theorem signed_double_expansion_block11 (ho : IsOpen (UU Dc)) (z z' : Fin (2 * r
     (fun i i' j j' => (LinearMap.toSpanSingleton ℂ E (qminorOp (EH k r) (posL k r L ∘ skip2 i i')
       (posL k r L ∘ skip2 j j') (uC k r L Y - 1) ((Ψ : Fn k r E) c) g)).toAddMonoidHom)
   simp only [LinearMap.toAddMonoidHom_coe, LinearMap.toSpanSingleton_apply] at key
-  simp only [map_sum, map_neg, apply_ite (evP ho Ψ c g), map_zero, map_smul, stp_ev_mul ho (sf_aYb z _) Ψ hc hg hgD,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_neg, apply_ite (evP ho Ψ c g), map_zero, map_smul, stp_ev_mul ho (sf_aYb z _) Ψ hc hg hgD,
     stp_ev_mul ho (sf_aY z _) Ψ hc hg hgD]
   show _ = -(((tB E L ho z z' Y 1 1 Ψ : (sfData E L ho).V) : Fn k r E) c g)
   rw [stp_tB_apply ho z z' Y 1 1 Ψ hc hg hgD]
@@ -2535,8 +2504,6 @@ theorem chain_descent_from_rules : Formalism.FourierDecayAlt.Q.ChainStepFromRule
 theorem qx_chainStepBoth : Formalism.FourierDecayAlt.Q.ChainStepRaw ∧ Formalism.FourierDecayAlt.Q.ChainStep :=
   chain_descent_from_rules border_first_expansion border_last_expansion border_full_expansion generator_gl_level
     generator_action_preserved quantum_minor_left_hermitian right_action_rule left_action_rule torus_action_rule weyl_level_element_properties
-
-theorem chain_descent_relation_raw : Formalism.FourierDecayAlt.Q.ChainStepRaw := qx_chainStepBoth.1
 
 theorem chain_descent_relation : Formalism.FourierDecayAlt.Q.ChainStep := qx_chainStepBoth.2
 

@@ -1,12 +1,16 @@
-import GroundTheory.AutomorphicForms.TraceClass
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrdStronglyMeasurable
+module
+
+public import GroundTheory.AutomorphicForms.TraceClass
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrdStronglyMeasurable
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic
 open scoped InnerProductSpace
 
 private theorem lintegral_sq_ne_top {X H : Type} [MeasurableSpace X] {ν : Measure X}
     [NormedAddCommGroup H] {u : X → H} (hu : MemLp u 2 ν) : ∫⁻ x, ‖u x‖ₑ ^ 2 ∂ν ≠ ⊤ := by
-  have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (by norm_num) (by norm_num) hu.2
+  have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (by norm_num) (by norm_num) hu
   simpa using h.ne
 
 private theorem parseval_integral {X H ι : Type} [MeasurableSpace X] {ν : Measure X}
@@ -14,12 +18,13 @@ private theorem parseval_integral {X H ι : Type} [MeasurableSpace X] {ν : Meas
     (b : HilbertBasis ι ℂ H) {u v : X → H} (hu : MemLp u 2 ν) (hv : MemLp v 2 ν) :
     ∑' i, ∫ x, ⟪u x, b i⟫_ℂ * ⟪b i, v x⟫_ℂ ∂ν = ∫ x, ⟪u x, v x⟫_ℂ ∂ν := by
   have hm : ∀ i, AEStronglyMeasurable (fun x => ⟪u x, b i⟫_ℂ * ⟪b i, v x⟫_ℂ) ν := fun i =>
-    (hu.1.inner aestronglyMeasurable_const).mul (aestronglyMeasurable_const.inner hv.1)
+    (hu.aestronglyMeasurable.inner aestronglyMeasurable_const).mul
+      (aestronglyMeasurable_const.inner hv.aestronglyMeasurable)
   rw [← integral_tsum hm]
   · simp only [b.tsum_inner_mul_inner]
   · rw [← lintegral_tsum fun i => (hm i).enorm]
     refine ne_top_of_le_ne_top (b := ∫⁻ x, (‖u x‖ₑ ^ 2 + ‖v x‖ₑ ^ 2) ∂ν) ?_ (lintegral_mono fun x => ?_)
-    · rw [lintegral_add_left' (hu.1.enorm.pow_const 2)]
+    · rw [lintegral_add_left' (hu.aestronglyMeasurable.enorm.pow_const 2)]
       exact ENNReal.add_ne_top.2 ⟨lintegral_sq_ne_top hu, lintegral_sq_ne_top hv⟩
     · rw [enorm_sq_eq_tsum b (u x), enorm_sq_eq_tsum b (v x), ← ENNReal.tsum_add]
       refine ENNReal.tsum_le_tsum fun i => ?_

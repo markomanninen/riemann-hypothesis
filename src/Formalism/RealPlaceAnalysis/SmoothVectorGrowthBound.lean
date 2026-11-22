@@ -1,6 +1,10 @@
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
-import Formalism.RealPlaceAnalysis.SmoothOnG
-import Formalism.RealPlaceAnalysis.StatementA
+module
+
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+public import Formalism.RealPlaceAnalysis.SmoothOnG
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TwTransAlt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReduction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TwTransAlt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem val_lt_of_mem_idS_of_forall (p : SplitPt D k) {PP : Formalism.L2.DIV.Pl 
     exact hI a ha
   · simpa using hγ
   · intro x y _ _ hx hy
-    rw [Subring.coe_add, map_add]
+    rw [Subring.coe_add, map_add (f := _)]
     exact Valuation.map_add_lt _ hx hy
   · intro c x _ hx
     rw [smul_eq_mul, Subring.coe_mul, map_mul, Valuation.map_mul]
@@ -95,13 +99,13 @@ theorem val_eq_unif_and_unit : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k
       calc _ ≤ valuation k (f x) * γ := mul_le_mul_of_nonneg_left (val_le_unif q ((hlt _).1 hy)) zero_le'
         _ < 1 * γ := mul_lt_mul_of_pos_right ((hlt _).1 hx) hγ0
         _ = γ := one_mul _
-    · rw [map_add]; exact Valuation.map_add_lt _ hx hy
+    · rw [map_add (f := _)]; exact Valuation.map_add_lt _ hx hy
   have hall : ∀ a ∈ PP.asIdeal, valuation k (f a) < γ := by
     intro a ha
     rw [← hPP] at ha
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 ha
     obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1 hx
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Valuation.map_add_lt _ ?_ (hsq y hy)
     rw [map_mul, Valuation.map_mul]
     exact (mul_le_mul_of_nonneg_right (hle c) zero_le').trans_lt (by rwa [one_mul])

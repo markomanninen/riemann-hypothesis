@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTrivialOnUnitsModConductorUnitCharacterValuePr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OrderedConst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTrivialOnUnitsModConductorUnitCharacterValuePr
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel GlobalTheory.PsType
 
@@ -65,7 +69,7 @@ theorem inv_val_mem_adjoin {R : Type} [CommRing R] {m : ℕ} (g : GL (Fin m) R) 
   obtain ⟨u, hu⟩ := hu
   have h1 : Polynomial.aeval A p.divX * A = -algebraMap R _ (p.coeff 0) := by
     rw [← hdec] at hCH
-    simp only [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at hCH
+    simp only [map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at hCH
     exact eq_neg_of_add_eq_zero_left hCH
   have key : ((-(↑u⁻¹ : R)) • Polynomial.aeval A p.divX) * A = 1 := by
     rw [smul_mul_assoc, h1, Algebra.algebraMap_eq_smul_one, ← hu, neg_smul_neg, smul_smul,
@@ -77,8 +81,8 @@ theorem inv_val_mem_adjoin {R : Type} [CommRing R] {m : ℕ} (g : GL (Fin m) R) 
 
 end GlobalTheory.PsType
 
-open GlobalTheory.PsType in
 
+open GlobalTheory.PsType in
 theorem GlobalTheory.PsType.grp_inv_mem : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (n : ℕ) (ψ : Fin n → kˣ →* ℂˣ), Ordered ψ → ∀ a ∈ grp ψ, a⁻¹ ∈ grp ψ := by
   intro k _ _ _ _ n ψ hψ a ha

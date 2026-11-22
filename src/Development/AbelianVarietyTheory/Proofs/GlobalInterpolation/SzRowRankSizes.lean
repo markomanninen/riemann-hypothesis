@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -38,7 +42,7 @@ theorem szRow_rankSizes : SzRow (fun _ _ L => SizeN L ∧ SizeM L ∧ SizeK L �
     rw [Real.rpow_add hx0, mul_comm]
     exact mul_le_mul_of_nonneg_left h2 (by positivity)
   have hn : (0 : ℝ) < D.R.n := by
-    have : 0 < D.R.n := by unfold Ranks.n; positivity
+    have : 0 < D.R.n := D.R.ord_pos
     exact_mod_cast this
   have n2 : (D.R.n : ℝ) ≤ L.sc.x ^ (2 + 8 * L.sc.eps + szTh L) := by
     refine (hV.ranks.n_le_of_o hV.host.o_le).trans ?_

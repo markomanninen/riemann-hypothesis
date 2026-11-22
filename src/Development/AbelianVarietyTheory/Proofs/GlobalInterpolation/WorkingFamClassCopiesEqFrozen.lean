@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CountsIrreducibilityConstants
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WorkingClassesFrozen
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DutySevenLibrary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CountsIrreducibilityConstants
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WorkingClassesFrozen
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DutySevenLibrary
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Pk Formalism.MainNotions.Lnk Formalism.MainNotions.GlobalTheoryTheory Formalism.L2.GlobalTheoryTheory Formalism.MainNotions.RT GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Fc
 
 namespace GlobalTheory.Fc

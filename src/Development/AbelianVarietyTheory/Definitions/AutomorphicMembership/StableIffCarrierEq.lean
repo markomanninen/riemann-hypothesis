@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.WeakCharacterisationWithError
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
-import Formalism.LocalToGlobal.IndefiniteReal.ThetaFireRow
-import Formalism.LocalToGlobal.IndefiniteReal.PartsRow
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
-import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
-import ReciprocityTheory.Automorphisms.Unitary
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.WeakCharacterisationWithError
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.NormalFrameClauses
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
+public import Formalism.LocalToGlobal.IndefiniteReal.ThetaFireRow
+public import Formalism.LocalToGlobal.IndefiniteReal.PartsRow
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
+public import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
+public import ReciprocityTheory.Automorphisms.Unitary
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,15 +94,6 @@ structure Holds (R : RealDat3 D A3 Ks) (F : Face3 D A3) : Prop where
   ok : A3.fam3.Ok3 1
   sep : A3.fam3.TypesSep3
 
-def GeoEx (A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m) (C : Formalism.L2.Pj.CoreJ D) [Algebra C.Q.c.F D.what₂.LL]
-    (F : Face D A3.A) : Prop :=
-  ∀ (R : RealDat D A3.A C.Q.c.F) (cG : G0 R.Pg D.R.r ≃* G0g D.nd), GlobalTheory.RealGeo.PreChar R → R.grp_levels F → C.pb = R.C.P.pb →
-    Keep (A3 := A3) R F cG → ∃ dict mu chiW x₀ cE nW FW,
-      (R.upd5 nW FW R.mu R.twPl R.err0).grp_chiW ∧
-      Nonempty (@GlobalTheory.RealGeo.GeoHalf D G _ _ Pl0 T A3.A (GlobalTheory.RealGeo.reCore C dict mu chiW x₀ cE)
-        (inferInstanceAs (Algebra C.Q.c.F D.what₂.LL)) (R.upd5 nW FW R.mu R.twPl R.err0) fun _ => 1) ∧
-      ∀ i x, ∃ y, (FW i).j (sg0 D A3.A) y = R.thG i A3.A.μ0 (R.jV i A3.A.μ0 x)
-
 def rowForm (A : FamIn D.what₂.LL G Pl0 T D.R.m) (P : Subgroup G) (ψ : P →* D.what₂.LLˣ) (t : T)
     (x : Fin (rDim D A P ψ t) → D.what₂.LL) : A.fam.amb.FR t :=
   (A.fam.R t).S.basis.equivFun.symm
@@ -109,10 +104,10 @@ def liftForm (A : FamIn D.what₂.LL G Pl0 T D.R.m) (P : Subgroup G) (ψ : P →
   (A.fam.L i t).S.basis.equivFun.symm
     (((A.fam.L i t).S.lvlE (A.fam.L i t).r (A.fam.lvlA P ψ).P (A.fam.lvlA P ψ).ψ).mulVec x)
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure Read (R : RealDat D A3.A Ks) (F : Face D A3.A) (X0 : BaseLevelRowSide D) : Type 1 where
   tup : T → D.what₂.Tup
   tupT : D.what₂.Tup → T
@@ -192,11 +187,11 @@ structure Read (R : RealDat D A3.A Ks) (F : Face D A3.A) (X0 : BaseLevelRowSide 
     (∃ (φ : D.what₂.Mu u) (x : D.what₂.Amb μ), x ∈ D.what₂.V0 μ ∧ D.what₂.perCol u μ φ x ≠ 0) → (∃ z : D.what₂.LL, D.what₂.embLL z = c) →
     D.what₂.zeC u μ = c
 
+
 open Classical in
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 4000000 in
-
 structure ReadL (R : RealDat3 D A3 Ks) (F : Face3 D A3) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) : Type where
   eRR : (Fin ((R.toCx3 F).data F.cr true).D → D.what₂.LL) ≃ₗ[D.what₂.LL] D.div.RR.V
   eRR0 : (Fin ((R.toCx3 F).data F.cr false).D → D.what₂.LL) ≃ₗ[D.what₂.LL] X0.s.RR.V
@@ -216,9 +211,9 @@ structure ReadL (R : RealDat3 D A3 Ks) (F : Face3 D A3) (X0 : BaseLevelRowSide D
   etaJ : ∀ (i : Fin D.R.m) w, D.what₂.etaJ ((i : ℕ) + 1) w =
     if D.plEq w ∈ R.twPl then A3.A.fam.etaJ F.P0 F.ψ0 (A3.fam3.toSub2 (R.toCx3 F).zs) i (R.mu (D.plEq w)) (D.plEq w) else 0
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure ReadC (R : RealDat3 D A3 Ks) (F : Face3 D A3) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) : Type where
   wU : D.what₂.Word → (F.Dc (R.toCx3 F).zs).Mem
   bij : Function.Bijective wU
@@ -257,8 +252,8 @@ def idsOf (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (Z : ReadL R F X0 Y) (C : ReadC R F
   wU := C.wU
   eNu := C.eNu
 
-open Classical in
 
+open Classical in
 def Lam3 (Z : ReadL R F X0 Y) : Prop :=
   ∃ cOf : D.what₂.FT → A3.fam3.base3.Ix,
     (∀ (i : Fin D.R.m) (c : A3.fam3.base3.Ix),
@@ -275,8 +270,6 @@ end Ids
 
 namespace DatApi
 
-theorem sepWith_trI : SepWith A3 A3.trI ↔ A3.fam3.TrISep := Iff.rfl
-
 section Err
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
@@ -286,8 +279,6 @@ end Err
 theorem swapCast_one_tmul {E : Type} [Field E] [NumberField E] {F1 F2 : Subfield E} (h : F1 = F2) (x : E) :
     swapCast h (1 ⊗ₜ[F1] x) = x ⊗ₜ[F2] 1 := by
   subst h; rfl
-
-theorem toCx3_reFace (R : RealDat3 D A3 Ks) (F : Face3 D A3) (Dc Sp Zsc) : R.toCx3 (reFace F Dc Sp Zsc) = R.toCx3 F := rfl
 
 theorem rowForm_add (A : FamIn D.what₂.LL G Pl0 T D.R.m) (P : Subgroup G) (ψ : P →* D.what₂.LLˣ) (t : T) (x y) :
     rowForm A P ψ t (x + y) = rowForm A P ψ t x + rowForm A P ψ t y := by
@@ -313,12 +304,6 @@ section Lat
 
 variable {K : Type} [Field K] [NumberField K] {O : Type} [CommRing O] {φ : O →+* ℂ} {σ : K →+* ℂ}
   {W : Type} [AddCommGroup W] [Module ℂ W] {n : ℕ}
-
-theorem sum_mem (M : Rows.OLat O φ W) {ι : Type} (s : Finset ι) (f : ι → W) (h : ∀ i ∈ s, f i ∈ M.carrier) :
-    ∑ i ∈ s, f i ∈ M.carrier := by
-  refine Finset.sum_induction f (· ∈ M.carrier) ?_ ⟨0, by simp⟩ h
-  rintro x y ⟨c, rfl⟩ ⟨c', rfl⟩
-  exact ⟨c + c', by rw [← Finset.sum_add_distrib]; simp [add_smul]⟩
 
 end Lat
 

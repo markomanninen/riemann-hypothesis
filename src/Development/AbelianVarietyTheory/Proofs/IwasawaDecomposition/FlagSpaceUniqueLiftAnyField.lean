@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenFrameBasePointLiftsUniqueFlagSpace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CarriesFlagsIffAdaptedFrameAtImageStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpecMapFieldCancel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLieBase
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenFrameBasePointLiftsUniqueFlagSpace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CarriesFlagsIffAdaptedFrameAtImageStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpecMapFieldCancel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -292,11 +296,25 @@ theorem lifts_of_closed : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       rw [← e1]
       exact (GlobalTheory.FieldPts.bears_spMap_iff E' φ A (σ : AlgebraicClosure K →+* AlgebraicClosure K) _ q).2 hq2
   obtain ⟨p, hp⟩ := GlobalTheory.FieldPts.exists_of_fixed q hfix
-  refine ⟨p, ⟨GlobalTheory.spec_map_field_cancel (algebraMap K (AlgebraicClosure K)) _ _ ?_,
+  have cancel {Y : Scheme.{0}} {u v : Sp K ⟶ Y}
+      (huv : spMap (algebraMap K (AlgebraicClosure K)) ≫ u =
+        spMap (algebraMap K (AlgebraicClosure K)) ≫ v) : u = v := by
+    obtain ⟨⟨y, ψ⟩, rfl⟩ := (Scheme.SpecToEquivOfField K Y).symm.surjective u
+    obtain ⟨⟨y', ψ'⟩, rfl⟩ := (Scheme.SpecToEquivOfField K Y).symm.surjective v
+    rw [GlobalTheory.FieldPts.spMap_comp_ofField, GlobalTheory.FieldPts.spMap_comp_ofField] at huv
+    have hpair := (Scheme.SpecToEquivOfField (AlgebraicClosure K) Y).symm.injective huv
+    obtain ⟨rfl, hψ⟩ := Sigma.mk.inj_iff.mp hpair
+    have hcomp := eq_of_heq hψ
+    have heq : ψ = ψ' := by
+      ext a
+      apply (algebraMap K (AlgebraicClosure K)).injective
+      exact congrArg (fun g => g.hom a) hcomp
+    rw [heq]
+  refine ⟨p, ⟨cancel ?_,
     (GlobalTheory.FieldPts.bears_spMap_iff E' φ A (algebraMap K (AlgebraicClosure K)) h p).1 (hp ▸ hq2)⟩, ?_⟩
   · rw [← Category.assoc, hp, hq1]
   · rintro p' ⟨h1, h2⟩
-    refine GlobalTheory.spec_map_field_cancel (algebraMap K (AlgebraicClosure K)) _ _ ?_
+    refine cancel ?_
     rw [hp]
     exact hqu _ ⟨by rw [Category.assoc, h1], (GlobalTheory.FieldPts.bears_spMap_iff E' φ A _ h p').2 h2⟩
 

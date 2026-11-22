@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PartialBesselSmoothCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PartialBesselSmoothCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocOfSmoothOnH
+
+@[expose] public section
 
 open Matrix
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentOfInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentOfInvariant
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.DRFil
 
@@ -41,7 +45,8 @@ private theorem eq_zero_of_sum_smul_invariant_eq_zero_of_card_support_le {G E M 
       obtain ⟨d, hd⟩ : ∃ d : ι → E, ∀ i, d i = σ g (c' i) - c' i := ⟨fun i => σ g (c' i) - c' i, fun _ => rfl⟩
       have h1 : ∑ i, σ g (c' i) • v i = 0 := by
         have hmap : ρ g (∑ i, c' i • v i) = ∑ i, σ g (c' i) • v i := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           exact Finset.sum_congr rfl fun i _ => by rw [hρ, hv]
         rw [← hmap, hsum', map_zero]
       have hdsum : ∑ i, d i • v i = 0 := by
@@ -138,15 +143,15 @@ private theorem sm_mul_inertia_eigenvalues {Qp LL V F : Type} [Field Qp] [CommRi
     sm Qp F LL V (x * x') y = sm Qp F LL V x (sm Qp F LL V x' y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add, LinearMap.add_apply, h₁, h₂]
+  | add x₁ x₂ h₁ h₂ => simp only [add_mul, map_add (f := _), LinearMap.add_apply, h₁, h₂]
   | tmul a f =>
     induction x' using TensorProduct.induction_on with
     | zero => simp
-    | add x₁ x₂ h₁ h₂ => simp only [mul_add, map_add, LinearMap.add_apply, h₁, h₂]
+    | add x₁ x₂ h₁ h₂ => simp only [mul_add, map_add (f := _), LinearMap.add_apply, h₁, h₂]
     | tmul a' f' =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y₁ y₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+      | add y₁ y₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
       | tmul v f'' =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, sm_tmul_tmul, sm_tmul_tmul, sm_tmul_tmul, mul_smul,
           mul_assoc]
@@ -182,14 +187,14 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
     intro c y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y₁ y₂ h₁ h₂ => rw [map_add, map_add, h₁, h₂]
+    | add y₁ y₂ h₁ h₂ => rw [map_add (f := _), map_add (f := _), h₁, h₂]
     | tmul v f => simp [sm_tmul_tmul, mulVdR]
   have hleft : ∀ (a : LL) (f : F) (y : V ⊗[Qp] F),
       sm Qp F LL V (a ⊗ₜ[Qp] f) y = a • sm Qp F LL V ((1 : LL) ⊗ₜ[Qp] f) y := by
     intro a f y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y₁ y₂ h₁ h₂ => rw [map_add, map_add, h₁, h₂, smul_add]
+    | add y₁ y₂ h₁ h₂ => rw [map_add (f := _), map_add (f := _), h₁, h₂, smul_add]
     | tmul v f' => rw [sm_tmul_tmul, sm_tmul_tmul, one_smul, TensorProduct.smul_tmul']
 
   have hfix : ∀ i, sm Qp F LL V (idem F τ) (d i) = d i := by
@@ -204,7 +209,7 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
       intro e'
       induction e' using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy, add_smul]
+      | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy, add_smul]
       | tmul a k =>
         simp only [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply,
           IsScalarTower.toAlgHom_apply]
@@ -236,13 +241,13 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
   let w : ι × Fin n → F ⊗[Qp] V := fun p => TensorProduct.comm Qp V F (l p.2 • d p.1)
   let ρ' : G → (F ⊗[Qp] V →+ F ⊗[Qp] V) := fun g => AddMonoidHom.mk'
     (fun m => TensorProduct.comm Qp V F (actVdR PD ρ g ((TensorProduct.comm Qp V F).symm m)))
-    (fun x y => by simp only [map_add])
+    (fun x y => by simp only [map_add (f := _)])
   let σ' : G → (F →+* F) := fun g => (PD.actdR g).toAlgHom.toRingHom
   have hρ' : ∀ g (e : F) (m : F ⊗[Qp] V), ρ' g (e • m) = σ' g e • ρ' g m := by
     intro g e m
     induction m using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
     | tmul f v => simp [ρ', σ', actVdR, TensorProduct.smul_tmul', smul_eq_mul, map_mul]
   have hv' : ∀ g p, ρ' g (w p) = w p := by
     intro g p
@@ -252,7 +257,7 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
     intro k y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, smul_add, hx, hy, map_add, map_add]
+    | add x y hx hy => rw [map_add (f := _), smul_add, hx, hy, map_add (f := _), map_add (f := _)]
     | tmul v f =>
       simp only [mulVdR, AlgebraTensorModule.map_tmul, LinearMap.id_apply, LinearMap.mulLeft_apply,
         TensorProduct.comm_tmul, TensorProduct.smul_tmul', smul_eq_mul]
@@ -267,7 +272,8 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
     have hzero : ∑ i, (∑ j, τ (k (i, j)) * l j) • d i = 0 := by
       have h2 : TensorProduct.comm Qp V F (∑ i, (∑ j, τ (k (i, j)) * l j) • d i) = 0 := by
         rw [← hcsum, Fintype.sum_prod_type]
-        simp only [hterm, map_sum, Finset.sum_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hterm, map_sum, Finset.sum_smul]
       exact (TensorProduct.comm Qp V F).map_eq_zero_iff.mp h2
     have hcoef := Fintype.linearIndependent_iff.mp hind (fun i => ∑ j, τ (k (i, j)) * l j) hzero
     rintro ⟨i, j⟩
@@ -278,13 +284,14 @@ theorem indep_of_linearIndependent_DdRE {G : Type} [Group G] {Qp K₀ K : Type} 
     intro a f y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
     | tmul v f' => simp [sm_tmul_tmul, TensorProduct.smul_tmul', smul_eq_mul]
   have hcomb : ∑ p, b p.1 p.2 • w p = 0 := by
     have h2 := congrArg (TensorProduct.comm Qp V F) hrel
     rw [map_zero] at h2
     rw [← h2, Fintype.sum_prod_type]
-    simp only [w, map_sum, LinearMap.sum_apply, hL2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [w, map_sum, LinearMap.sum_apply, hL2]
   have hb0 := indep_of_invariant_isField hF σ' ρ' hρ' w hv' hind' (fun p => b p.1 p.2) hcomb
   intro i
   have hbij : ∀ j, b i j = 0 := fun j => hb0 (i, j)

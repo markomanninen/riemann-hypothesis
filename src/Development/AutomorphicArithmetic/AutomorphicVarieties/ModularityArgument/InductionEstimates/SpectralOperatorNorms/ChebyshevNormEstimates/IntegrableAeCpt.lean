@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LactConv
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AmpComm
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DiracSep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.TypeFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.NormIntLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LactConv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AmpComm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DiracSep
+
+@[expose] public section
 
 section General
 
@@ -169,7 +173,7 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 
 section Amp
 
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 private theorem star_test (β : TI K n) (hβ : SmoothT β) :
     ∃ β' : TI K n, SmoothT β' ∧ ∀ x, β x = starRingEnd ℂ (β' x⁻¹) := by
@@ -195,7 +199,7 @@ private theorem sep_right (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (m :
     rw [← (UpperTheory.ConvolutionTheory.Tf.opAlg K n μ ν m).2.2.2.1 β' β h2, ← ContinuousLinearMap.adjoint_comp, h β' h1, map_zero]
   simpa using congrArg ContinuousLinearMap.adjoint this
 
-private theorem amp_move [IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (AdelicGLn.FiniteAdelicGL K n))
+private theorem amp_move [_root_.NumberField.IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (AdelicGLn.FiniteAdelicGL K n))
     [m.IsHaarMeasure] (y : Ix K n) (β : TI K n) (hβ : SmoothT β) :
     𝔞.Z y * Oinf μ 𝔞.ν β = 𝔞.A * Oinf μ 𝔞.ν (lact (zc y.1 y.2) β) ∧
       Oinf μ 𝔞.ν β * 𝔞.Z y = Oinf μ 𝔞.ν (lact (zc y.1 y.2) β) * 𝔞.A := by
@@ -213,7 +217,7 @@ private theorem amp_move [IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (Adel
   · change _ * (Oinf μ 𝔞.ν _ * prj _) = _ * (Oinf μ 𝔞.ν _ * prj _)
     rw [← mul_assoc, ← h2, mul_assoc]
 
-private theorem amp_fix [IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (AdelicGLn.FiniteAdelicGL K n))
+private theorem amp_fix [_root_.NumberField.IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (AdelicGLn.FiniteAdelicGL K n))
     [m.IsHaarMeasure] (y : Ix K n) (P : LL μ →L[ℂ] LL μ) (h1 : P * 𝔞.A = 𝔞.A) (h2 : 𝔞.A * P = 𝔞.A) :
     P * (𝔞.Z y * P) = 𝔞.Z y := by
   have e1 : P * 𝔞.Z y - 𝔞.Z y = 0 := sep_right 𝔞.ν m _ fun β hβ => by
@@ -227,7 +231,7 @@ private theorem amp_fix [IsTotallyComplex K] (𝔞 : Amp μ) (m : Measure (Adeli
 end Amp
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.genZk :
-    ∀ {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {μ : Measure (normOneGL E (2 + 2))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : Fam 𝔢) (y : Ix E (2 + 2)), ∃ f : CC E (2 + 2), 𝔵.D.Hecke f ∧ Rop μ f = 𝔢.toAmp.Z y := by
+    ∀ {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {μ : Measure (normOneGL (K := E) (n := (2 + 2)))} [μ.IsHaarMeasure] {θ : Twist μ} {𝔢 : Side θ 2} (𝔵 : _root_.UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.Fam 𝔢) (y : Ix E (2 + 2)), ∃ f : CC E (2 + 2), 𝔵.D.Hecke f ∧ Rop μ f = 𝔢.toAmp.Z y := by
   intro E _ _ _ μ _ θ 𝔢 𝔵 y
   haveI := 𝔵.D.prob
   obtain ⟨P, hP, hf⟩ := two_sided (rightRegularRep (Gam E (2 + 2)) μ) μ (typeFin 𝔵.D).1 𝔵.D.supp 𝔵.D.inv 𝔵.D.cont 𝔵.D.idem

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -21,13 +26,13 @@ theorem invariant_derivation_exists :
       | zero => simp
       | tmul c d =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, hF, hF, hF, hE, hE, hl]
-        simp only [Algebra.smul_def, map_add, map_mul]
+        simp only [Algebra.smul_def, map_add (f := _), map_mul]
         ring
       | add y₁ y₂ ih₁ ih₂ =>
-        rw [mul_add, map_add, ih₁, ih₂, map_add, map_add]
+        rw [mul_add, map_add (f := _), ih₁, ih₂, map_add (f := _), map_add (f := _)]
         ring
     | add x₁ x₂ ih₁ ih₂ =>
-      rw [add_mul, map_add, ih₁, ih₂, map_add, map_add]
+      rw [add_mul, map_add (f := _), ih₁, ih₂, map_add (f := _), map_add (f := _)]
       ring
   have hEΔ : ∀ a, E (Δ a) = a := fun a => h2 a
   have hεF : ∀ x : A ⊗[k] A,
@@ -38,7 +43,7 @@ theorem invariant_derivation_exists :
     | tmul a b =>
       rw [hF]
       simp [mul_comm]
-    | add x₁ x₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, map_add, map_add, map_add]
+    | add x₁ x₂ ih₁ ih₂ => rw [map_add (f := _), map_add (f := _), ih₁, ih₂, map_add (f := _), map_add (f := _), map_add (f := _)]
   refine ⟨Derivation.mk' (F ∘ₗ Δ.toLinearMap) (fun a b => ?_), fun a => ?_⟩
   · simp only [LinearMap.coe_comp, Function.comp_apply, AlgHom.toLinearMap_apply, map_mul,
       key, hEΔ, smul_eq_mul]

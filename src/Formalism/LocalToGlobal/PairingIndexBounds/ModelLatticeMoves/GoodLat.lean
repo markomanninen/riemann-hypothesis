@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.IsBichar
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.IsSemiChar
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.IsBichar
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.IsSemiChar
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -13,21 +18,6 @@ variable {E : Type} [Field E] [NumberField E] (Ψ : Finset (E →+* ℂ)) {n N :
 def cons0 (x : Matrix (Fin n) (Fin N) E) : Matrix (Fin n) (Fin (N + 1)) E :=
   Matrix.of fun k => Fin.cons 0 (x k)
 
-omit [NumberField E] in
-theorem pushZ_mem {Z : CM Ψ N N} (h : Z ∈ Hn Ψ N) (v : Fin N → E) {t : ℝ} (ht : 0 ≤ t) :
-    pushZ Ψ Z v t ∈ Hn Ψ N := by
-  intro τ
-  have e : imH (pushZ Ψ Z v t τ) = imH (Z τ) +
-      (t : ℂ) • vecMulVec (fun a => τ.1 (v a)) (star fun a => τ.1 (v a)) := by
-    ext a b
-    simp only [imH, pushZ, Matrix.smul_apply, Matrix.sub_apply, Matrix.add_apply,
-      conjTranspose_apply, vecMulVec_apply, smul_eq_mul, star_add, star_mul', Pi.star_apply,
-      RCLike.star_def, conj_I, conj_ofReal, conj_conj]
-    field_simp
-    ring
-  rw [e]
-  exact (h τ).add_posSemidef
-    ((posSemidef_vecMulVec_self_star _).smul (Complex.zero_le_real.2 ht))
 
 noncomputable def col (x : Matrix (Fin n) (Fin (N + 1)) E) : ℝ :=
   ∑ τ : Ψ, ∑ k, normSq (τ.1 (x k 0))
@@ -196,9 +186,9 @@ private lemma expo_cons0' (y : Matrix (Fin n) (Fin N) E)
   unfold _root_.GlobalTheory.SW.expo _root_.GlobalTheory.SW.dropZ _root_.GlobalTheory.SW.SiegelOp.cons0
   simp [dotProduct, mulVec, Fin.sum_univ_succ]
 
+
 open Matrix Complex NumberField Filter Topology in
 open scoped ComplexConjugate ComplexOrder Real Classical in
-
 theorem _root_.GlobalTheory.SW.thH_siegel_operator : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     (Ψ : Finset (E →+* ℂ)), _root_.GlobalTheory.SW.IsType Ψ → ∀ (n N : ℕ)
     (φ : Matrix (Fin n) (Fin (N + 1)) E → ℂ), _root_.GlobalTheory.SW.IsSB φ →

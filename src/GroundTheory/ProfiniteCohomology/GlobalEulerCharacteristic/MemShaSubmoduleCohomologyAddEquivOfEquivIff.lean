@@ -1,17 +1,20 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShaTwist
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerShaOpen
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Kummer
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Coprime
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
-import GroundTheory.ProfiniteCohomology.PoitouTate.ZmodToQZCompactCohomologyResMapOfLocalInv
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShaTwist
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerShaOpen
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.Kummer
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Coprime
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+public import GroundTheory.ProfiniteCohomology.PoitouTate.ZmodToQZCompactCohomologyResMapOfLocalInv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain GroundTheory.Global Representation
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 universe u
 
@@ -47,18 +50,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {ι : Type} {Hv : ι → Type} [∀ v, Group (Hv v)] [∀ v, TopologicalSpace (Hv v)]
   [∀ v, IsTopologicalGroup (Hv v)] (φ : ∀ v, Hv v →ₜ* G) (ℓ : ℕ) [Fact ℓ.Prime]
   (M : Rep.{0} (ULift.{0} ℤ) G) [IsDiscreteRep M] (hM : ∀ m : M, ℓ • m = 0)
-
-theorem natCard_ptSha_eq_pow_finrank (r : ℕ) [Finite (cohomology M r)] :
-    Nat.card (ptSha φ M r) = ℓ ^ Module.finrank (ZMod ℓ) (shaSubmodule φ (zmodRepOfTorsion ℓ M hM) r) := by
-  let E := cohomologyZModEquiv ℓ M hM r
-  have hmem : ∀ x, x ∈ ptSha φ M r ↔ E x ∈ shaSubmodule φ (zmodRepOfTorsion ℓ M hM) r := fun x => by
-    rw [mem_ptSha_iff_mem_shaSubmodule]
-    exact (mem_shaSubmodule_cohomologyAddEquivOfEquiv_iff φ (zmodRepOfTorsionEquiv ℓ M hM) (fun _ _ => rfl)
-      r x).symm
-  have hc : Nat.card (ptSha φ M r) = Nat.card (shaSubmodule φ (zmodRepOfTorsion ℓ M hM) r) :=
-    Nat.card_congr (E.toEquiv.subtypeEquiv hmem)
-  have : Finite (cohomology (zmodRepOfTorsion ℓ M hM) r) := Finite.of_equiv _ E.toEquiv
-  rw [hc, natCard_eq_pow_finrank_zmod ℓ]
 
 end Card
 
@@ -106,8 +97,8 @@ theorem isIntertwiningMap_kummerModNZMod (i : ℕ) :
       exact cohomologyAddEquivOfEquiv_cohomologyConj (A := T) (A' := zmodRepOfTorsion ℓ T hT)
         (zmodRepOfTorsionEquiv ℓ T hT) (fun _ _ => rfl) N (i + 1) g _
 
-omit [N.Normal] [CompactSpace N] in
 
+omit [N.Normal] [CompactSpace N] in
 theorem mem_shaSubmodule_iff_mem_range_kummerModNZMod {ι : Type} {Hv : ι → Type} [∀ v, Group (Hv v)]
     [∀ v, TopologicalSpace (Hv v)] [∀ v, IsTopologicalGroup (Hv v)] (ψ : ∀ v, Hv v →ₜ* N) (i : ℕ)
     (hsha : ∀ x : cohomology (Rep.res N.subtype T) (i + 1),
@@ -133,6 +124,8 @@ section GS
 
 attribute [local instance 2000] Rep.hV2
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable {K L : FiniteSubfield} [Fact (K ≤ L)] (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ℓ : ℕ) [Fact ℓ.Prime]
 
@@ -143,11 +136,10 @@ theorem finrank_gsRootsZMod {S} (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) �
     Module.finrank (ZMod ℓ) (gsRootsZMod S ℓ) = 1 := by
   have hℓ : ℓ.Prime := Fact.out
   have : NeZero ℓ := ⟨hℓ.ne_zero⟩
-  obtain ⟨f⟩ := nonempty_addEquiv_gsRoots_of_mem S (n := ℓ) fun v hv => by
-    by_contra h
-    exact hℓS v h hv
   have hcard : Nat.card (gsRootsZMod S ℓ) = ℓ ^ 1 := by
     rw [pow_one]
+    obtain ⟨f⟩ := nonempty_addEquiv_gsRoots_of_mem S (n := ℓ) (fun v hv =>
+      by_contra fun h => hℓS v h hv)
     exact (Nat.card_congr f.toEquiv).trans (Nat.card_zmod ℓ)
   have : Finite (gsRootsZMod S ℓ) := Nat.finite_of_card_ne_zero (by rw [hcard]; exact pow_ne_zero _ hℓ.ne_zero)
   exact finrank_eq_of_natCard_zmod ℓ hcard
@@ -183,31 +175,18 @@ theorem finrank_shaSubmodule_two_eq_finrank_invariants (hℓS : ∀ v ∉ S, ((�
   have hP : (((gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).index : ℕ) : ZMod ℓ) ≠ 0 := by
     rw [Ne, ZMod.natCast_eq_zero_iff]
     exact (Nat.Prime.coprime_iff_not_dvd hℓ).1 hcop.symm
-  exact finrank_shaSubmodule_eq_finrank_invariants (gsFinFamily S ιs) (gsOpenSubgroup S hL) (gsRootsZMod S ℓ) M
+  let P := gsOpenSubgroup S hL
+  let N : Subgroup (galUnramifiedOutside K.1 ℚ̄ S) := P
+  have hS := gsKummer_shortExact S ℓ hℓS
+  have hTorsion := nsmul_gsRoots S ℓ
+  refine finrank_shaSubmodule_eq_finrank_invariants (gsFinFamily S ιs) P (gsRootsZMod S ℓ) M
     hT hM (finrank_gsRootsZMod ℓ hℓS) hP 2 (gsH1SUnitsModRep ℓ hL)
-    (kummerModNZMod _ (gsKummer_shortExact S ℓ hℓS) (nsmul_galRootsOfUnity_eq_zero ℓ) 1)
-    (isIntertwiningMap_kummerModNZMod _ (gsKummer_shortExact S ℓ hℓS) (nsmul_galRootsOfUnity_eq_zero ℓ) 1)
-    (kummerModNZMod_injective _ (gsKummer_shortExact S ℓ hℓS) (nsmul_galRootsOfUnity_eq_zero ℓ) 1)
-    (mem_shaSubmodule_iff_mem_range_kummerModNZMod _ (gsKummer_shortExact S ℓ hℓS) (nsmul_galRootsOfUnity_eq_zero ℓ)
-      (mackeyFamily (gsOpenSubgroup S hL) (gsFinFamily S ιs)) 1
-      (mem_ptSha_mackey_iff_exists_kummerModN hL ιs hℓ hℓS hK))
-
-theorem natCard_ptSha_two_gs [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
-    (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
-    (hMℓ : ∀ m : M, ℓ • m = 0) :
-    Nat.card (ptSha (gsFinFamily S ιs) M 2) =
-      ℓ ^ Module.finrank (ZMod ℓ) (shaSubmodule (gsFinFamily S ιs) (zmodRepOfTorsion ℓ M hMℓ) 2) := by
-  have : Finite (zmodRepOfTorsion ℓ M hMℓ) := inferInstanceAs (Finite M)
-  have hS' : ∀ v : HeightOneSpectrum (𝓞 K.1), ((Nat.card M : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S := by
-    intro v hv
-    by_contra h
-    apply hℓS v h
-    have hc : Nat.card M = ℓ ^ Module.finrank (ZMod ℓ) (zmodRepOfTorsion ℓ M hMℓ) :=
-      natCard_eq_pow_finrank_zmod ℓ (zmodRepOfTorsion ℓ M hMℓ)
-    rw [hc, Nat.cast_pow] at hv
-    exact v.isPrime.mem_of_pow_mem _ hv
-  have := finite_cohomology_gs K S M hS' 2 le_rfl
-  exact natCard_ptSha_eq_pow_finrank (gsFinFamily S ιs) ℓ M hMℓ 2
+    (kummerModNZMod N hS hTorsion 1) ?_ ?_ ?_
+  · exact isIntertwiningMap_kummerModNZMod N hS hTorsion 1
+  · exact kummerModNZMod_injective N hS hTorsion 1
+  · exact mem_shaSubmodule_iff_mem_range_kummerModNZMod N hS hTorsion
+      (mackeyFamily P (gsFinFamily S ιs)) 1
+      (mem_ptSha_mackey_iff_exists_kummerModN hL ιs hℓ hℓS hK)
 
 end GS
 

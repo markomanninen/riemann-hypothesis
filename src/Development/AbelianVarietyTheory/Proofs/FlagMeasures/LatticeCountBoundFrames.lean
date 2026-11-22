@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardSubmoduleAndHomLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardSubmoduleAndHomLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
@@ -127,7 +131,7 @@ theorem card_coker [IsNonarchimedeanLocalField F] [CharZero F] (L : LocE F E) {�
     intro a b h
     rw [Algebra.smul_def, Algebra.smul_def, mul_one] at h
     have h' := congrArg c h
-    rw [map_add, map_mul, hbase, hbase, map_zero] at h'
+    rw [map_add (f := _), map_mul, hbase, hbase, map_zero] at h'
     have hb : algebraMap 𝒪[F] L.O b = 0 :=
       hu.mul_left_eq_zero.1 (by linear_combination h - h')
     have ha : algebraMap 𝒪[F] L.O a = 0 := by rw [hb] at h; simpa using h
@@ -228,12 +232,14 @@ theorem hf_comb (L : LocE F E) {n : ℕ} {H : Matrix (Fin n) (Fin n) E} (h : IsH
   have key : ∀ (α : ι → E) (g : ι → Fin n → E) (y : Fin n → E),
       hf L H (∑ i, α i • g i) y = ∑ i, α i * hf L H (g i) y := fun α g y => by
     change GlobalTheory.FrameBasic.hfL L H y _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul]; rfl
   ext i j
   simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply,
     Finset.sum_mul]
-  rw [GlobalTheory.FrameBasic.hf_conj L h, key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [GlobalTheory.FrameBasic.hf_conj L h, key, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_mul, ← GlobalTheory.FrameBasic.hf_conj L h, key, Finset.mul_sum]
   exact Finset.sum_congr rfl fun m _ => by ring

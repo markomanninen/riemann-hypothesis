@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.Models.FiniteGeneration.FiniteGenerationProofs.SolveV
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.Models.FiniteGeneration.FiniteGenerationProofs.SolveV
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,12 +15,12 @@ namespace ReciprocityTheory.ChartRestriction.G.TB.LogPf
 
 variable {k : Type} [CommRing k] {σ τ : Type}
 
-theorem low_pderiv {N : ℕ} {g : MvPowerSeries τ k} (hg : Low (N + 1) g) (t : τ) : Low N (pderiv k t g) := by
+theorem low_pderiv {N : ℕ} {g : MvPowerSeries τ k} (hg : Low (N + 1) g) (t : τ) : Low N (pderiv t g) := by
   intro d hd
   rw [MvPowerSeries.coeff_pderiv, hg, zero_mul]
   have e : Finsupp.degree (d + Finsupp.single t 1) = Finsupp.degree d + 1 := by
     first
-    | rw [map_add, Finsupp.degree_single]
+    | rw [map_add (f := _), Finsupp.degree_single]
     | simp [Finsupp.degree, Finsupp.sum_add_index']
     | (unfold Finsupp.degree; rw [Finsupp.sum_add_index' (by simp) (by simp)]; simp)
   omega
@@ -87,17 +91,17 @@ theorem low_subst_of_low [Finite σ] {a : σ → MvPowerSeries τ k} (ha : ∀ s
     exact smul_eq_zero_of_right _ (hl d (by omega))
 
 theorem pderiv_aeval [Fintype σ] (a : σ → MvPowerSeries τ k) (p : MvPolynomial σ k) (t : τ) :
-    pderiv k t (MvPolynomial.aeval a p) =
-      ∑ s, MvPolynomial.aeval a (MvPolynomial.pderiv s p) * pderiv k t (a s) := by
+    pderiv t (MvPolynomial.aeval a p) =
+      ∑ s, MvPolynomial.aeval a (MvPolynomial.pderiv s p) * pderiv t (a s) := by
   classical
   induction p using MvPolynomial.induction_on
   next c =>
     simp
   next p q hp hq =>
-    simp only [map_add, hp, hq, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hp, hq, add_mul, Finset.sum_add_distrib]
   next p s0 hp =>
     rw [map_mul, MvPolynomial.aeval_X, Derivation.leibniz, hp, smul_eq_mul, smul_eq_mul, Finset.mul_sum]
-    simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, map_add, map_mul,
+    simp only [Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, smul_eq_mul, map_add (f := _), map_mul,
       MvPolynomial.aeval_X, add_mul, Finset.sum_add_distrib, mul_ite, mul_one, mul_zero, map_one, map_zero,
       ite_mul, zero_mul, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     simp only [apply_ite (MvPolynomial.aeval a), map_zero, ite_mul, zero_mul, Finset.sum_ite_eq,
@@ -105,19 +109,19 @@ theorem pderiv_aeval [Fintype σ] (a : σ → MvPowerSeries τ k) (p : MvPolynom
     try ring
 
 private theorem pderiv_coe_mvPolynomial (s : σ) (p : MvPolynomial σ k) :
-    pderiv k s (p : MvPowerSeries σ k) = ((MvPolynomial.pderiv s p : MvPolynomial σ k) : MvPowerSeries σ k) := by
-  ext m
-  rw [MvPowerSeries.coeff_pderiv, MvPolynomial.coeff_coe, MvPolynomial.coeff_coe, MvPolynomial.coeff_pderiv]
+    pderiv s (p : MvPowerSeries σ k) = ((MvPolynomial.pderiv s p : MvPolynomial σ k) : MvPowerSeries σ k) := by
+  exact MvPowerSeries.pderiv_coe p
 
 private theorem Low_finset_sum {N : ℕ} {ι : Type} (S : Finset ι) (F : ι → MvPowerSeries τ k)
     (h : ∀ i ∈ S, Low N (F i)) : Low N (∑ i ∈ S, F i) := by
   intro d hd
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun i hi => h i hi d hd
 
 theorem pderiv_subst [Fintype σ] {a : σ → MvPowerSeries τ k} (ha : ∀ s, constantCoeff (a s) = 0)
     (f : MvPowerSeries σ k) (t : τ) :
-    pderiv k t (subst a f) = ∑ s, subst a (pderiv k s f) * pderiv k t (a s) := by
+    pderiv t (subst a f) = ∑ s, subst a (pderiv s f) * pderiv t (a s) := by
   classical
   have hS : HasSubst a := MvPowerSeries.hasSubst_of_constantCoeff_zero ha
   have ha1 : ∀ s, Low 1 (a s) := by
@@ -145,15 +149,15 @@ theorem pderiv_subst [Fintype σ] {a : σ → MvPowerSeries τ k} (ha : ∀ s, c
   generalize f - (p : MvPowerSeries σ k) = g at hp hf
   subst hf
   have hpol := pderiv_aeval a p t
-  simp only [map_add, MvPowerSeries.subst_add hS, MvPowerSeries.subst_coe, pderiv_coe_mvPolynomial, add_mul,
+  simp only [map_add (f := _), MvPowerSeries.subst_add hS, MvPowerSeries.subst_coe, pderiv_coe_mvPolynomial, add_mul,
     Finset.sum_add_distrib, hpol]
   congr 1
-  have h1 : Low (d.degree + 1) (pderiv k t (subst a g)) := low_pderiv (low_subst_of_low ha1 hp) t
-  have h2 : Low (d.degree + 1 + 0) (∑ s, subst a (pderiv k s g) * pderiv k t (a s)) :=
+  have h1 : Low (d.degree + 1) (pderiv t (subst a g)) := low_pderiv (low_subst_of_low ha1 hp) t
+  have h2 : Low (d.degree + 1 + 0) (∑ s, subst a (pderiv s g) * pderiv t (a s)) :=
     Low_finset_sum _ _ fun s _ => low_mul_lemma (low_subst_of_low ha1 (low_pderiv hp s)) (fun e he => by omega)
   rw [h1 d (by omega), h2 d (by omega)]
 
-theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv k u (pderiv k v g) = pderiv k v (pderiv k u g) := by
+theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv u (pderiv v g) = pderiv v (pderiv u g) := by
   ext n
   simp only [MvPowerSeries.coeff_pderiv]
   by_cases huv : u = v
@@ -164,7 +168,7 @@ theorem pderiv_comm (u v : τ) (g : MvPowerSeries τ k) : pderiv k u (pderiv k v
     rw [h1, h2, add_right_comm n]
     ring
 
-theorem eq_C_of_pderiv_zero [Algebra ℚ k] {g : MvPowerSeries τ k} (h : ∀ v, pderiv k v g = 0) :
+theorem eq_C_of_pderiv_zero [Algebra ℚ k] {g : MvPowerSeries τ k} (h : ∀ v, pderiv v g = 0) :
     g = C (constantCoeff g) := by
   classical
   ext n

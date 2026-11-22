@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin GlobalTheory.LFun Formalism.UG Formalism.UG.P
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW
 
@@ -95,7 +100,7 @@ theorem UpperTheory.exists_satakeTset_sum_eigenvector :
       satEig (qV E w) r B j • f := fun j hj => by
     rw [← UpperTheory.V.Cj.S.hkSum E w r V ρ ϖ hϖ hu j hj f hfix, hT ϖ hu j hj]
   set z := zGL r hπ with hzdef
-  have hfx : ∀ k ∈ KGL w r, ρ k f = f := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hfix _ hk
+  have hfx : ∀ k ∈ KGL w (n := r), ρ k f = f := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hfix _ hk
   have hB : ∀ i : SatakeIdx w hϖ (n := r) r, ρ (satakeB w hϖ hu i) f = ρ z f := by
     intro i
     obtain ⟨k₁, hk₁, k₂, hk₂, e⟩ := satakeB_mem w hϖ hu i
@@ -104,11 +109,11 @@ theorem UpperTheory.exists_satakeTset_sum_eigenvector :
       unfold diagJ
       congr 1
       funext i
-      simp
+      simp [i.isLt]
     have : satakeB w hϖ hu i = z * (k₁ * k₂) := by
       apply Units.ext
       rw [e, hdz, ← Units.val_mul, ← Units.val_mul, hzdef, ← zGL_comm, mul_assoc]
-    rw [this, map_mul, Module.End.mul_apply, hfx _ ((KGL w r).mul_mem hk₁ hk₂)]
+    rw [this, map_mul, Module.End.mul_apply, hfx _ ((KGL w (n := r)).mul_mem hk₁ hk₂)]
   obtain ⟨i₀⟩ := hne r le_rfl
   have hcard : (Fintype.card (SatakeIdx w hϖ (n := r) r) : ℂ) ≠ 0 := by
     have : Fintype.card (SatakeIdx w hϖ (n := r) r) ≠ 0 := by
@@ -141,4 +146,5 @@ theorem UpperTheory.exists_satakeTset_sum_eigenvector :
     exact inv_mem w har hπ (satakeB_mem w hϖ hu _)
   · rw [Equiv.sum_comp e.symm (fun i => ρ (z⁻¹ * satakeB w hϖ hu i) f)]
     simp only [map_mul, Module.End.mul_apply]
-    rw [← map_sum, hsum _ (Nat.sub_le _ _), map_smul, hzi, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hsum _ (Nat.sub_le _ _), map_smul, hzi, smul_smul]

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsPresOfRealD
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LatticeMembershipByPowerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GmultTransport
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantsReductionIsLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsPresOfRealD
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LatticeMembershipByPowerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GmultTransport
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantsReductionIsLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GammaActionReductionStatement
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
@@ -124,7 +128,7 @@ theorem exists_c {O k : Type} [CommRing O] [CommRing k] (f : O →+* k) (p : O) 
     · have : u ^ (-(i : ℤ)) = u ^ (-(i : ℤ) - 1) * u := by rw [← zpow_add_one]; simp
       rw [this, Units.val_mul, hu] at h1
       rw [mul_add, h1]; ring
-    · rw [map_add, h2, hf]; push_cast; ring
+    · rw [map_add (f := _), h2, hf]; push_cast; ring
 
 theorem rootMult_prod {k : Type} [Field k] (U : Multiset ℤ) (x : k) :
     ((U.map fun u : ℤ => Polynomial.X - Polynomial.C (u : k)).prod).rootMultiplicity x = resCount U 0 x := by
@@ -146,7 +150,8 @@ theorem rank_eq {O k M : Type} [CommRing O] [Nontrivial O] [Field k] [Algebra O 
     intro c hc j
     choose a ha using fun j => hs (c j)
     have h1 : q (∑ j, a j • b j) = 0 := by
-      rw [← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum]
       exact Finset.sum_congr rfl fun j _ => by rw [map_smul, ← ha, algebraMap_smul]
     obtain ⟨y, hy⟩ := (hk _).1 h1
     have h2 := congrArg (fun z => b.repr z j) hy
@@ -176,7 +181,8 @@ theorem γD_smulA (T : LocLat G Qp LL O) (g : W.Gam) (a : LetA O n₀) (x : W.DD
 theorem γ₀_π₀ {δ : W.Gam} (hδ : δ ∈ W.DelF) : W.γ₀ δ W.π₀₁ = W.π₀₁ := by
   classical
   have hm : ∀ g, g ∈ W.DelF ↔ IsOfFinOrder g := fun g => by rw [W.DelF_def, isOfFinOrder_iff_pow_eq_one]
-  rw [LocWach.π₀₁, map_add, map_sub, map_one, map_natCast, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LocWach.π₀₁, map_add (f := _), map_sub, map_one, map_natCast, map_sum]
   congr 1
   refine Finset.sum_bijective (δ * ·) (Group.mulLeft_bijective δ) (fun g => ?_) (fun g _ => ?_)
   · rw [hm, hm]
@@ -192,7 +198,8 @@ theorem coord_inv (T : LocLat G Qp LL O) {m : ℕ} (b : Fin m → W.DD T) (hb : 
     ∀ δ ∈ W.DelF, W.γA δ (a j) = a j := by
   intro δ hδ
   have h := hx δ hδ
-  rw [map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h
   simp only [γD_smulA, hb _ δ hδ] at h
   have := Fintype.linearIndependent_iff.1 hli (fun j => W.γA δ (a j) - a j) (by
     simp only [sub_smul, Finset.sum_sub_distrib, h, sub_self]) j
@@ -251,7 +258,8 @@ theorem sen_gen [IsDomain O] (p : Pres W F ι τ γ) (hp : ((PD.p : ℕ) : k) = 
     have hai := coord_inv W T _ (fun j => (b j).2.2) hli a (by rw [ha]; exact x.2.2)
     have hx : x = ∑ j, (⟨a j • (b j : W.DD T), (W.N T).smul_mem _ (b j).2.1,
         smul_mem W T (hai j) (b j).2.2⟩ : ↥(W.NΔ T)) := Subtype.ext (by rw [← ha]; simp)
-    rw [hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     obtain ⟨c, hc⟩ := hinv (a j (τ i)) fun δ hδ => congrFun (hai j δ hδ) (τ i)
     rw [hs (a j) c (b j) _ hc rfl]
@@ -267,7 +275,7 @@ theorem sen_gen [IsDomain O] (p : Pres W F ι τ γ) (hp : ((PD.p : ℕ) : k) = 
     obtain ⟨x, rfl⟩ := hsur y hy
     rw [hnab]; exact hJN _
   have hq : PowerSeries.map (algebraMap O k) (W.π₀₁ + (PD.p : O⟦X⟧)) = PowerSeries.map (algebraMap O k) W.π₀₁ := by
-    rw [map_add, map_natCast, ← map_natCast (PowerSeries.C (R := k)), hp, map_zero, add_zero]
+    rw [map_add (f := _), map_natCast, ← map_natCast (PowerSeries.C (R := k)), hp, map_zero, add_zero]
   have hq0 : W.π₀₁ + (PD.p : O⟦X⟧) ≠ 0 := by
     intro h
     rw [h, map_zero] at hq
@@ -275,7 +283,7 @@ theorem sen_gen [IsDomain O] (p : Pres W F ι τ γ) (hp : ((PD.p : ℕ) : k) = 
     rw [← hq, map_zero, map_eq_zero] at h1
     exact vv_ne_zero k h1
   have hqi : ∀ δ ∈ W.DelF, W.γA δ (W.π₀ + (PD.p : LetA O n₀)) = W.π₀ + (PD.p : LetA O n₀) := fun δ hδ => by
-    rw [map_add, map_natCast]
+    rw [map_add (f := _), map_natCast]
     congr 1
     exact funext fun _ => γ₀_π₀ W hδ
   have hei : ∀ δ ∈ W.DelF, W.γA δ (letE (τ i) : LetA O n₀) = letE (τ i) := fun δ _ => by
@@ -304,17 +312,18 @@ theorem sen_gen [IsDomain O] (p : Pres W F ι τ γ) (hp : ((PD.p : ℕ) : k) = 
   have h2 : J ⟨_, hwi⟩ = (PowerSeries.X : k⟦X⟧) • J ⟨_, hzi⟩ :=
     hs (W.π₀ + (PD.p : LetA O n₀)) PowerSeries.X _ _ (by rw [hιX, ← hq]; rfl) hzz
   refine mem_sh_iff_exists.2 ⟨_, hJN ⟨_, hzi⟩, ?_⟩
-  rw [← X_smul_eq, ← h2, h1, one_smul, hw, map_sub, map_sum, hnab]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← X_smul_eq, ← h2, h1, one_smul, hw, map_sub, map_sum, hnab]
   simp only [hO', Matrix.map_apply]
 
-omit [TopologicalSpace G] [TopologicalSpace LL] in
 
+omit [TopologicalSpace G] [TopologicalSpace LL] in
 theorem exists_isC (hp : ((PD.p : ℕ) : k) = 0) (u : Oˣ) (hu : (u : O) = 1 + ((PD.p : ℕ) : O)) :
     ∃ c : ℤ → O, GlobalTheory.WachUse.IsC PD LL c ∧ ∀ a : ℤ, algebraMap O k (c a) = -(a : k) := by
   choose c hc1 hc2 using exists_c (algebraMap O k) ((PD.p : ℕ) : O) (by rw [map_natCast, hp]) _ hu
   refine ⟨c, fun a => ?_, hc2⟩
   have h1 := congrArg (algebraMap O LL) (hc1 a)
-  rw [map_mul, map_natCast, map_sub, map_one, map_units_zpow, hu, map_add, map_one, map_natCast] at h1
+  rw [map_mul, map_natCast, RingHom.map_sub, map_one, map_units_zpow, hu, map_add (f := _), map_one, map_natCast] at h1
   exact h1
 
 theorem map_prod_c (c : ℤ → O) (hc : ∀ a : ℤ, algebraMap O k (c a) = -(a : k)) (U : Multiset ℤ) (x : k) :
@@ -327,8 +336,8 @@ theorem map_prod_c (c : ℤ → O) (hc : ∀ a : ℤ, algebraMap O k (c a) = -(a
 
 end Gen
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem sen_base : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (H : LocHW l P) (S : TopSit P) (k : Type) [Field k] [Algebra S.O k] [CharP k l], S.IsRes k → ∀ {R : RingPG k l} (ι : k⸨X⸩ →ₐ[k] k⸨X⸩) (F : DFun R S.n S.G) (τ : ZMod S.n → ZMod (Module.finrank ℚ_[l] ↥(K0 S.K))) (γ : (S.W H).Gam) (p : Pres (S.W H) F ι τ γ), GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.IsCyclotomic R ι → (∀ i, (S.W H).emb (τ i) = S.emb i) → ((S.W H).χΓ γ : S.O) = 1 + (l : S.O) → GlobalTheory.WachUse.QN (S.W H) → ∀ (T : LocLat S.G ℚ_[l] ↥S.LL.1 S.O) (A : Ob k S.G) q (U : ZMod S.n → Multiset ℤ), Onto T A q → KerIs S.Γ.lam q → CrysWith (P.PD S.K) S.emb T.ρ U → ∀ N : Lats k S.n A.m, (∀ i y, y ∈ N i ↔ ∃ x : ↥(DΔ (S.W H) T), (x : (S.W H).DD T) ∈ (S.W H).N T ∧ p.j T A q i x = y) → ∀ i x, sen ((F.D A).γ i) (N i) x = resCount (U i) 0 x := by
   intro l _ P H S k _ _ _ hk R ι F τ γ p hι hτ hγ hQ T A q U hO hK hU N hN i x
   obtain ⟨N', hN', hL⟩ := GlobalTheory.T.wachDeltaInvariants_reduction_isLattice H S k hk ι F τ γ p hι hτ hγ hQ T A q U hO hK hU

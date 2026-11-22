@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsB
-import Development.WeilBound.ThetaLifts.LatticeBasics.PolFin
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsB
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PolFin
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

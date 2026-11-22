@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+
+@[expose] public section
 
 namespace GlobalTheory.TruncationIsometry
 

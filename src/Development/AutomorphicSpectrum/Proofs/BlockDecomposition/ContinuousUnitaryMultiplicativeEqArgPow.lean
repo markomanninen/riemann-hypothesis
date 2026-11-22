@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.KlocOp
 

@@ -1,9 +1,13 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwinLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.ClosedEqNabla
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowDivAdj
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwinLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.ClosedEqNabla
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowDivAdj
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LFocksLemmas
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.REAL
 
@@ -37,7 +41,7 @@ theorem bC_rowGen_monomial {r n : ℕ} (a : Fin r) (m : Fin r × Fin n →₀ �
     rw [MvPolynomial.monomial_single_add, map_mul, map_pow, bC_rowGen_X, ih]
     have hw : Finsupp.weight (lgraded_wa a) (Finsupp.single v e + m) =
         e * lgraded_wa a v + Finsupp.weight (lgraded_wa a) m := by
-      simp [map_add, Finsupp.weight_apply, Finsupp.sum_single_index]
+      simp [map_add (f := _), Finsupp.weight_apply, Finsupp.sum_single_index]
     rw [hw]
     simp only [map_mul, map_pow]
     ring
@@ -54,11 +58,11 @@ theorem bC_euler_monomial {r n : ℕ} (a : Fin r) (m : Fin r × Fin n →₀ ℕ
 
 theorem bC_coeff_euler {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin n) ℂ)
     (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (rowDiv ℂ a a 1 f) = ((Finsupp.weight (lgraded_wa a) m : ℕ) : ℂ) * coeff m f := by
+    AddMonoidAlgebra.coeff (rowDiv ℂ a a 1 f) m = ((Finsupp.weight (lgraded_wa a) m : ℕ) : ℂ) * AddMonoidAlgebra.coeff f m := by
   have hadd : ∀ p q : MvPolynomial (Fin r × Fin n) ℂ,
       rowDiv ℂ a a 1 (p + q) = rowDiv ℂ a a 1 p + rowDiv ℂ a a 1 q := by
     intro p q
-    simp [rowDiv, map_add]
+    simp [rowDiv, map_add (f := _)]
   induction f using MvPolynomial.induction_on'
   next m' c =>
     rw [bC_euler_monomial, MvPolynomial.coeff_smul, MvPolynomial.coeff_monomial]
@@ -88,15 +92,15 @@ theorem bC_sep {r n : ℕ} (M : Submodule ℂ (MvPolynomial (Fin r × Fin n) ℂ
     intro f hf hV t
     set g := rowDiv ℂ a a 1 f - (s : ℂ) • f with hg
     have hgM : g ∈ M := M.sub_mem (hM a a 1 f hf) (M.smul_mem _ hf)
-    have hcg : ∀ m, MvPolynomial.coeff m g =
-        ((Finsupp.weight (lgraded_wa a) m : ℂ) - s) * MvPolynomial.coeff m f := by
+    have hcg : ∀ m, AddMonoidAlgebra.coeff g m =
+        ((Finsupp.weight (lgraded_wa a) m : ℂ) - s) * AddMonoidAlgebra.coeff f m := by
       intro m
       rw [hg, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul, bC_coeff_euler, smul_eq_mul]
       ring
     have hgV : ∀ m ∈ g.support, Finsupp.weight (lgraded_wa a) m ∈ V := by
       intro m hm
       rw [MvPolynomial.mem_support_iff, hcg] at hm
-      have hfm : MvPolynomial.coeff m f ≠ 0 := right_ne_zero_of_mul hm
+      have hfm : AddMonoidAlgebra.coeff f m ≠ 0 := right_ne_zero_of_mul hm
       have hws : (Finsupp.weight (lgraded_wa a) m : ℂ) - s ≠ 0 := left_ne_zero_of_mul hm
       rcases Finset.mem_insert.mp (hV m (MvPolynomial.mem_support_iff.mpr hfm)) with h | h
       · exact (hws (by rw [h, sub_self])).elim
@@ -123,7 +127,7 @@ theorem bC_sep {r n : ℕ} (M : Submodule ℂ (MvPolynomial (Fin r × Fin n) ℂ
         rw [MvPolynomial.coeff_sub, MvPolynomial.coeff_sum]
         simp only [MvPolynomial.coeff_weightedHomogeneousComponent]
         rw [Finset.sum_ite_eq]
-        by_cases hm : MvPolynomial.coeff m f = 0
+        by_cases hm : AddMonoidAlgebra.coeff f m = 0
         · simp [hm]
         · rcases Finset.mem_insert.mp (hV m (MvPolynomial.mem_support_iff.mpr hm)) with h | h
           · simp [h, hs]
@@ -135,8 +139,8 @@ theorem bC_sep {r n : ℕ} (M : Submodule ℂ (MvPolynomial (Fin r × Fin n) ℂ
 
 theorem bC_multi {r n : ℕ} (M : Submodule ℂ (MvPolynomial (Fin r × Fin n) ℂ)) (hM : RowDivClosed M)
     (μ : Fin r → ℕ) (A : Finset (Fin r)) :
-    ∀ f ∈ M, ∃ h ∈ M, ∀ m, coeff m h =
-      if (∀ a ∈ A, Finsupp.weight (lgraded_wa a) m = μ a) then coeff m f else 0 := by
+    ∀ f ∈ M, ∃ h ∈ M, ∀ m, AddMonoidAlgebra.coeff h m =
+      if (∀ a ∈ A, Finsupp.weight (lgraded_wa a) m = μ a) then AddMonoidAlgebra.coeff f m else 0 := by
   classical
   induction A using Finset.induction_on
   next =>
@@ -209,7 +213,7 @@ private theorem isWeightedHomogeneous_coeff_rowGen_X_fst_weight {r n : ℕ} (a b
           ring
         rw [e]
         simpa using hX (a, v.2)
-      · rw [if_neg hk0, if_neg (Ne.symm hk1), add_zero]
+      · rw [if_neg hk0, Finsupp.single_eq_of_ne hk1, add_zero]
         exact h0 _
   · rw [if_neg hb, add_zero, Polynomial.coeff_C]
     by_cases hk0 : k = 0
@@ -269,7 +273,7 @@ private theorem isWeightedHomogeneous_coeff_rowGen_monomial {r n : ℕ} (a b : F
     rw [MvPolynomial.monomial_single_add, map_mul, map_pow]
     have hw : Finsupp.weight (fun v : Fin r × Fin n => ((v.1 : ℕ) : ℤ)) (Finsupp.single v e + m) =
         (e : ℤ) * ((v.1 : ℕ) : ℤ) + Finsupp.weight (fun v : Fin r × Fin n => ((v.1 : ℕ) : ℤ)) m := by
-      simp [map_add, Finsupp.weight_apply, Finsupp.sum_single_index, nsmul_eq_mul]
+      simp [map_add (f := _), Finsupp.weight_apply, Finsupp.sum_single_index, nsmul_eq_mul]
     rw [hw]
     have hpow : ∀ j : ℕ, ∀ k : ℕ, IsWeightedHomogeneous (fun v : Fin r × Fin n => ((v.1 : ℕ) : ℤ))
         (((rowGen ℂ a b (X v)) ^ j).coeff k) ((j : ℤ) * ((v.1 : ℕ) : ℤ) + (k : ℤ) * (((a : ℕ) : ℤ) - ((b : ℕ) : ℤ))) := by
@@ -299,7 +303,8 @@ private theorem isWeightedHomogeneous_rowDiv {r n : ℕ} (a b : Fin r) (p : MvPo
   classical
   rw [MvPolynomial.as_sum p]
   unfold rowDiv
-  rw [map_sum, Polynomial.finset_sum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   first
     | (apply MvPolynomial.IsWeightedHomogeneous.sum
        intro x hx
@@ -360,13 +365,13 @@ theorem bC_exists_killed {r n : ℕ}
   obtain ⟨m0, hm0⟩ := MvPolynomial.ne_zero_iff.mp hf0
   have hg0M : weightedHomogeneousComponent (rowW r n) (Finsupp.weight (rowW r n) m0) f ∈ M :=
     bC_graded M hM f hfM _
-  have hg0c : coeff m0 (weightedHomogeneousComponent (rowW r n) (Finsupp.weight (rowW r n) m0) f) =
-      coeff m0 f := by
+  have hg0c : AddMonoidAlgebra.coeff (weightedHomogeneousComponent (rowW r n) (Finsupp.weight (rowW r n) m0) f) m0 =
+      AddMonoidAlgebra.coeff f m0 := by
     rw [MvPolynomial.coeff_weightedHomogeneousComponent, if_pos rfl]
   have hg0ne : weightedHomogeneousComponent (rowW r n) (Finsupp.weight (rowW r n) m0) f ≠ 0 := by
     intro h
     apply hm0
-    rw [← hg0c, h, MvPolynomial.coeff_zero]
+    rw [← hg0c, h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   have hg0h : IsWeightedHomogeneous (fun v : Fin r × Fin n => ((v.1 : ℕ) : ℤ))
       (weightedHomogeneousComponent (rowW r n) (Finsupp.weight (rowW r n) m0) f)
       (Finsupp.weight (fun v : Fin r × Fin n => ((v.1 : ℕ) : ℤ)) m0) := by

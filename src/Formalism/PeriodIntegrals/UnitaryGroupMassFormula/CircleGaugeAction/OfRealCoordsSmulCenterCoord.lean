@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.DglApplyOff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CircleGaugeAction.DglApplyOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ lemma realify_dz (s : ℝ) :
     (WithLp.equiv 2 _).symm (realifyFun (dz r ((s : ℂ) * Complex.I))) = s • v0 r := by
   ext ⟨i, j, b⟩
   simp only [WithLp.equiv_symm_apply, realifyFun, v0, dz, diagonal_apply, PiLp.smul_apply,
-    EuclideanSpace.single_apply, smul_eq_mul]
+    PiLp.single_apply, smul_eq_mul]
   by_cases hij : i = j
   · subst hij
     by_cases hi : i = cI r
@@ -108,7 +112,7 @@ lemma realify_dz (s : ℝ) :
 lemma ofRealCoords_smul_centerCoord (s : ℝ) : unrealify (s • v0 r) = dz r ((s : ℂ) * Complex.I) := by
   ext i j
   apply Complex.ext
-  · simp only [unrealify, v0, dz, diagonal_apply, PiLp.smul_apply, EuclideanSpace.single_apply,
+  · simp only [unrealify, v0, dz, diagonal_apply, PiLp.smul_apply, PiLp.single_apply,
       smul_eq_mul]
     by_cases hij : i = j
     · subst hij
@@ -117,7 +121,7 @@ lemma ofRealCoords_smul_centerCoord (s : ℝ) : unrealify (s • v0 r) = dz r ((
         simp
       · simp [hi]
     · simp [hij]
-  · simp only [unrealify, v0, dz, diagonal_apply, PiLp.smul_apply, EuclideanSpace.single_apply,
+  · simp only [unrealify, v0, dz, diagonal_apply, PiLp.smul_apply, PiLp.single_apply,
       smul_eq_mul]
     by_cases hij : i = j
     · subst hij

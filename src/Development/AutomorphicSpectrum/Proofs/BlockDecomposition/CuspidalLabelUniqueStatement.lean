@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalLabelUnique
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalLabelUnique
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+
+@[expose] public section
+
 open ReciprocityTheory.Ty.Fin
 open Formalism.IrreducibleCountingLemmas.TYPES hiding zIdem IsCuspidal
 open Polynomial CategoryTheory

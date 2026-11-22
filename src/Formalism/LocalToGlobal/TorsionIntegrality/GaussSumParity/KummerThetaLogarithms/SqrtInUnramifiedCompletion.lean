@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionRelation
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.HomotheticLatticeIntegralS2
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -79,7 +83,7 @@ lemma exists_root_close (r : ℂ_[l]) (h : ‖r ^ (l ^ 2 - 1) - 1‖ < 1) :
   have h1 : (1 : ℝ) ≤ ‖∏ η ∈ Polynomial.nthRootsFinset (l ^ 2 - 1) (1 : ℂ_[l]), (r - η)‖ := by
     rw [norm_prod]
     calc (1 : ℝ) = ∏ _η ∈ Polynomial.nthRootsFinset (l ^ 2 - 1) (1 : ℂ_[l]), (1 : ℝ) := by simp
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun η hη =>
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun η hη =>
           hcon η ((Polynomial.mem_nthRootsFinset hpos 1).1 hη))
   rw [← hev] at h1
   exact absurd h (not_lt.2 h1)
@@ -255,7 +259,7 @@ theorem sqrt_in_unramified_completion : SqrtKur := by
     have hin' : ¬ ∃ a : ZMod l, a ^ 2 = ((-(dK : ℤ) : ℤ) : ZMod l) := by
       push_cast; exact hin
     have h := sigma_neg σ hσ _ hin' _ hR
-    simp only [map_sub, map_add, map_one] at h
+    simp only [map_sub, map_add (f := _), map_one] at h
     have h20 : (2 : MaximalUnramifiedExtension l) ≠ 0 := two_ne_zero
     apply mul_left_cancel₀ h20
     linear_combination h
@@ -278,7 +282,7 @@ theorem dense_criterion : DenseOK := by
     rw [h0, ← map_pow, rt_sq]; simp
   set R : MaximalUnramifiedExtension l := w + w - 1 with hRdef
   have hσR : σ R = -R := by
-    rw [hRdef]; simp only [map_sub, map_add, map_one, hw]; ring
+    rw [hRdef]; simp only [map_sub, map_add (f := _), map_one, hw]; ring
   have hR1 : ‖R‖ = 1 := by
     have h1 : ‖R‖ ^ 2 = 1 := by rw [← norm_pow, hR2, normKZ_one (not_dvd_of_inert hin)]
     exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) (by norm_num)).1 h1
@@ -330,7 +334,7 @@ theorem dense_criterion : DenseOK := by
   have hβ1 : ‖β‖ = 1 :=
     norm_one_of_close (lt_of_le_of_lt hβα (lt_of_lt_of_le hk (min_le_right _ _))) hα
   have hσβ : σ β = (m : MaximalUnramifiedExtension l) + (n : MaximalUnramifiedExtension l) * (1 - w) := by
-    rw [hβ, map_add, map_mul, map_natCast, map_natCast, hw]
+    rw [hβ, map_add (f := _), map_mul, map_natCast, map_natCast, hw]
   obtain ⟨q, hq⟩ : ∃ q : ℤ, (dK : ℤ) + 1 = 4 * q := ⟨((dK : ℤ) + 1) / 4, by omega⟩
   have hq' : ((dK : ℤ) + 1) / 4 = q := by omega
   have hwq : w * (1 - w) = (q : MaximalUnramifiedExtension l) := by

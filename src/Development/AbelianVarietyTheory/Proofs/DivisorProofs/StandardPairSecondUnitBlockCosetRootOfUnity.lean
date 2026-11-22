@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BottomTriangleLevelFixesVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BottomTriangleLevelFixesVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatLConjIIffHform
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open Formalism.DivisionValues (vw)
@@ -80,7 +85,7 @@ theorem exists_one_add {e : Formalism.L2.Theta.AE D} {P : Finset (Pl D.host.E)} 
   refine ⟨∏ w ∈ P, GlobalTheory.LFun.locIdele D.host.F w (u w), ?_, cpt_ext fun Q => ?_, ?_, ?_⟩
   · rw [Units.coe_prod, hom_prod]
     exact Finset.prod_eq_one fun w _ => GlobalTheory.LFun.infTens_locIdele w (u w)
-  · rw [Units.coe_prod, hom_prod, hom_prod, Finset.prod_congr rfl fun w _ => cpt_locIdele Q w (u w), RingHom.map_add,
+  · rw [Units.coe_prod, hom_prod, hom_prod, Finset.prod_congr rfl fun w _ => cpt_locIdele Q w (u w), RingHom.map_add (f := _),
       RingHom.map_one]
     by_cases hQ : Q ∈ P
     · rw [Finset.prod_eq_single Q (fun w _ hne => GlobalTheory.LFun.finSingle_ne hne.symm _) (fun h' => absurd hQ h'),
@@ -153,7 +158,7 @@ theorem det_sub_mem {R : Type} [CommRing R] (A : Subring R) (J : Ideal A) {k : �
   have e3 : (Ideal.Quotient.mk J).mapMatrix M' = (Ideal.Quotient.mk J).mapMatrix N' := by
     ext i j
     change Ideal.Quotient.mk J (N' i j + s i j) = Ideal.Quotient.mk J (N' i j)
-    rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 (hs i j), add_zero]
+    rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 (hs i j), add_zero]
   refine ⟨M'.det - N'.det, Ideal.Quotient.eq.1 (by rw [RingHom.map_det, RingHom.map_det, e3]), ?_⟩
   rw [e1, e2, ← RingHom.map_det, ← RingHom.map_det]
   rfl
@@ -172,7 +177,7 @@ theorem cA_cA (z : Formalism.L2.Theta.AE D) : cA D (cA D z) = z := by
   | tmul a x =>
     change a ⊗ₜ[D.host.F] star (star x) = _
     rw [star_star]
-  | add a b ha hb => simp only [RingHom.map_add, ha, hb]
+  | add a b ha hb => simp only [RingHom.map_add (f := _), ha, hb]
 
 theorem inId_of {I : Ideal (𝓞 D.host.E)} {z : Lev.EAf D} (h : GlobalTheory.FrameIdeal.InId (F := D.host.F) I z) : InId I z := by
   obtain ⟨s, hs, rfl⟩ := h
@@ -213,7 +218,7 @@ theorem unitChar_eq (ν : (Formalism.L2.Theta.AE D)ˣ →* Circle) {e : Formalis
     unitChar ν e N = (((ν x)⁻¹ : Circle) : ℂ) := by
   have h : ∃ x, IsUnitDet e N x := ⟨x, hx⟩
   unfold unitChar
-  rw [dif_pos h, GlobalTheory.BotFinLevel.isUnitDet_unique h.choose_spec hx]
+  rw [dite_eq_left h, GlobalTheory.BotFinLevel.isUnitDet_unique h.choose_spec hx]
 
 theorem unitChar_congr {e : Formalism.L2.Theta.AE D} {P : Finset (Pl D.host.E)} (he : IsIdemSum e P) {c : Pl D.host.E → ℕ}
     (hc : ∀ w ∈ P, 1 ≤ c w) {ν : (Formalism.L2.Theta.AE D)ˣ →* Circle} {νH : Formalism.L2.Host.HChar D.host.E} (hν : ChrEq ν νH)
@@ -293,7 +298,7 @@ theorem stdSnd_coset_value : ∀ {D : D7} (S T : HSp D), S.gram = 1 → T.gram =
         rw [if_neg fun h => hne (Fin.ext (Nat.add_left_cancel h).symm), mul_zero, mul_zero])
         (fun h => absurd (Finset.mem_univ _) h), if_pos rfl, mul_right_comm, hee, mul_comm] at h1
       unfold rightBlock
-      rw [dif_pos hj]
+      rw [dite_eq_left hj]
       exact h1
     · have h1 := GlobalTheory.FrameIdeal.inId_int (key i j)
       refine (sub_add_cancel (dualCoord S T β 1 y i j) _) ▸ add_mem h1 (Subring.sum_mem _ fun l _ =>

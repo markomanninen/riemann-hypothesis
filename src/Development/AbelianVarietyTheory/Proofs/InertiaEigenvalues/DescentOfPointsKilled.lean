@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdAllPowOfFrobeniusEqKilledByPerfectPointsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdAllPowOfFrobeniusEqKilledByPerfectPointsStatement
+
+@[expose] public section
+
 open scoped NNReal TensorProduct
 
 namespace GlobalTheory
@@ -30,7 +35,7 @@ theorem descent_of_points_killed : ∀ (l : ℕ) [Fact l.Prime] (A B : Type) [Co
       | zero => simp
       | tmul b b' =>
         simp [U, Algebra.TensorProduct.algebraMap_apply, mul_comm]
-      | add y z hy hz => rw [add_mul, hy, hz, map_add]
+      | add y z hy hz => rw [add_mul, hy, hz, map_add (f := _)]
     rw [mem_nonZeroDivisors_iff_right]
     intro y hy
     rw [hmul] at hy
@@ -55,7 +60,8 @@ theorem descent_of_points_killed : ∀ (l : ℕ) [Fact l.Prime] (A B : Type) [Co
     have hD : ∀ i, algebraMap (B ⊗[A] B) T (D i) = i₁ (x i) - i₂ (x i) := by
       intro i; simp [D, i₁, i₂]
     apply IsLocalization.injective T (M := Submonoid.powers U) (Submonoid.powers_le.mpr hUreg)
-    rw [map_mul, map_sum, hD, hc j, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_sum, hD, hc j, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [map_mul, map_pow, hD]
     rw [hc'' (i, j)]

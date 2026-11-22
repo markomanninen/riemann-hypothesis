@@ -1,10 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridLatticesCompactSelfDualSplittingStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualOrthAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemLatticeOfRationalMemCompletionAllPlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridLatticesCompactSelfDualSplittingStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicPointComponentsAtPlacesLatticesVacua
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualOrthAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemLatticeOfRationalMemCompletionAllPlacesStatement
+
+import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacewiseToAdelicDecompositionForall
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -34,8 +41,9 @@ theorem finV_mem {S : HSp D} {L : Lat S} {z : Fin S.rank → D.host.E} (hz : z �
   AddSubgroup.subset_closure ⟨1, fun v => by rw [map_one]; exact one_mem _, fun v hv => absurd trivial hv, 1, rfl, z, hz,
     by funext i; simp [finV]⟩
 
-theorem mem_of_finV (S : HSp D) (L : Lat S) (hL : Submodule.IsLattice D.host.E L) (z : Fin S.rank → D.host.E)
-    (hz : finV z ∈ latV S L (fun _ => True)) : z ∈ L := GlobalTheory.T.mem_lattice_of_rational_mem_completion_all_places D S L hL z hz
+theorem mem_of_finV (S : HSp D) (L : Lat S) (hL : Submodule.IsFullLattice D.host.E L) (z : Fin S.rank → D.host.E)
+    (hz : finV z ∈ latV S L (fun _ => True)) : z ∈ L :=
+  GlobalTheory.RatLat.mem_of_mem_latV D S L hL z hz
 
 theorem loc_iff {S : HSp D} {L : Lat S} (hL : Submodule.IsLattice D.host.E L) (y : Fin S.rank → AE D) :
     y ∈ latV S L (fun _ => True) ↔ (∀ i, y i ∈ idAt D (fun _ => True)) ∧
@@ -53,12 +61,12 @@ theorem mulVec_mem_idAt {m n : ℕ} (M : Mx D m n) {y : Fin n → AE D} (hy : �
     (M *ᵥ y) i ∈ idAt D (fun _ => True) := mulVec_idAt M hy i
 
 theorem witt_core_inclusion_maps_split_lattices {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {L : Lat S} {L₀ : Lat S₀}
-    (hL : Submodule.IsLattice D.host.E L) (hL₀ : Submodule.IsLattice D.host.E L₀) (hM : ∀ v, MonoAt d L L₀ v)
+    (hL : Submodule.IsFullLattice D.host.E L) (hL₀ : Submodule.IsLattice D.host.E L₀) (hM : ∀ v, MonoAt d L L₀ v)
     {z : Fin S₀.rank → D.host.E} (hz : z ∈ L₀) : d.i₀ *ᵥ z ∈ L := by
   apply mem_of_finV S L hL
   rw [← rat_mulVec_finV]
   have hz' := (loc_iff hL₀ _).1 (finV_mem hz)
-  refine (loc_iff hL _).2 ⟨mulVec_mem_idAt _ hz'.1, fun v e he => ?_⟩
+  refine (loc_iff hL.toIsLattice _).2 ⟨mulVec_mem_idAt _ hz'.1, fun v e he => ?_⟩
   have h1 := hz'.2 v e he
   rw [← Matrix.mulVec_smul]
   refine (hM v _).2 ⟨fun i => ?_, fun i => ?_, ?_⟩
@@ -76,22 +84,22 @@ theorem witt_core_inclusion_maps_split_lattices {S S₀ : HSp D} {ρ : ℕ} (d :
     exact h1
 
 theorem witt_core_projection_maps_split_lattices {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) {L : Lat S} {L₀ : Lat S₀}
-    (hL : Submodule.IsLattice D.host.E L) (hL₀ : Submodule.IsLattice D.host.E L₀) (hM : ∀ v, MonoAt d L L₀ v)
+    (hL : Submodule.IsLattice D.host.E L) (hL₀ : Submodule.IsFullLattice D.host.E L₀) (hM : ∀ v, MonoAt d L L₀ v)
     {y : Fin S.rank → D.host.E} (hy : y ∈ L) : d.q0 *ᵥ y ∈ L₀ := by
   apply mem_of_finV S₀ L₀ hL₀
   rw [← rat_mulVec_finV]
   have hy' := (loc_iff hL _).1 (finV_mem hy)
-  refine (loc_iff hL₀ _).2 ⟨mulVec_mem_idAt _ hy'.1, fun v e he => ?_⟩
+  refine (loc_iff hL₀.toIsLattice _).2 ⟨mulVec_mem_idAt _ hy'.1, fun v e he => ?_⟩
   rw [← Matrix.mulVec_smul]
   exact ((hM v _).1 (hy'.2 v e he)).2.2
 
 theorem qA_maps {S A B : HSp D} (o : OrthDec S A B) {L : Lat S} {LA : Lat A} {LB : Lat B}
-    (hL : Submodule.IsLattice D.host.E L) (hLA : Submodule.IsLattice D.host.E LA) (hO : ∀ v, OrthAt o L LA LB v)
+    (hL : Submodule.IsLattice D.host.E L) (hLA : Submodule.IsFullLattice D.host.E LA) (hO : ∀ v, OrthAt o L LA LB v)
     {y : Fin S.rank → D.host.E} (hy : y ∈ L) : o.qA *ᵥ y ∈ LA := by
   apply mem_of_finV A LA hLA
   rw [← rat_mulVec_finV]
   have hy' := (loc_iff hL _).1 (finV_mem hy)
-  refine (loc_iff hLA _).2 ⟨mulVec_mem_idAt _ hy'.1, fun v e he => ?_⟩
+  refine (loc_iff hLA.toIsLattice _).2 ⟨mulVec_mem_idAt _ hy'.1, fun v e he => ?_⟩
   rw [← Matrix.mulVec_smul]
   exact ((hO v _).1 (hy'.2 v e he)).1
 
@@ -178,12 +186,16 @@ theorem core_mem_latCore : OnStd fun {D} _ _ {sc} {G} W F => ∀ σ (h : 2 * (σ
   have hMB : ∀ v, MonoAt (F.dB σ h') (G.Λ (.grid (2 * σ + 2) 0)) (lat0 F σ h') v := fun v => ((I.2.1 σ h').2.1 v).1
   have hOB := (I.2.1 σ h').2.2.2
 
+  have fullG3 := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ sdG3
+  have fullC2 := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ sdC2
+  have full0 := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ sd0
   have hN : ∀ y ∈ G.Λ (.core (2 * σ + 2 + 1)), (F.dJ (σ + 1) h).i₀ *ᵥ y ∈ G.Λ (.grid (2 * σ + 2 + 1) 0) :=
-    fun y hy => witt_core_inclusion_maps_split_lattices (F.dJ (σ + 1) h) sdG3.1 sdC3.1 hMJ hy
+    fun y hy => witt_core_inclusion_maps_split_lattices (F.dJ (σ + 1) h) fullG3 sdC3.1 hMJ hy
   have hMm : ∀ y ∈ G.Λ (.grid (2 * σ + 2) 0),
       ((F.oB σ h').qA * (F.dB σ h').q0) *ᵥ y ∈ G.Λ (.core (2 * σ + 2)) := fun y hy => by
     rw [← Matrix.mulVec_mulVec]
-    exact qA_maps (F.oB σ h') sd0.1 sdC2.1 hOB (witt_core_projection_maps_split_lattices (F.dB σ h') sdG2.1 sd0.1 hMB hy)
+    exact qA_maps (F.oB σ h') sd0.1 fullC2 hOB
+      (witt_core_projection_maps_split_lattices (F.dB σ h') sdG2.1 full0 hMB hy)
   have hx := AddSubgroup.mem_comap.1 hu
   set x := ((F.dJ (σ + 1) h).ext0 _).comp ((F.dB σ h').inc0 _) u with hxdef
   have hc : ((F.oB σ h').resT _ u).1 =

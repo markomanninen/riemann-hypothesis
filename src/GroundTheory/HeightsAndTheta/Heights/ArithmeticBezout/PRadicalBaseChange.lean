@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ReducedTensorPerfect
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ReducedTensorPerfect
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

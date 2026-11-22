@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Higher
-import GroundTheory.ProfiniteCohomology.InflationRestriction.FiveTerm
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Higher
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.FiveTerm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -42,8 +47,8 @@ theorem fiveTerm_exact :
     · intro ht
       exact exists_transgression_eq A N hN t ht
 
-include hN in
 
+include hN in
 theorem infRes_exact {q : ℕ} (hq : q ≠ 0)
     (hA : ∀ i, 0 < i → i < q → IsZero (cohomology (Rep.res N.subtype A) i)) :
     Function.Injective (cohomologyInfl A N q).hom ∧

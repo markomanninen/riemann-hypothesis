@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversal
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversal
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -36,7 +40,7 @@ def simpleRing (j : B →+* R) (ev : X → R →+* B) (E : Clopens X → R)
     obtain ⟨V, hV, h⟩ := hx z
     obtain ⟨W, hW, h'⟩ := hy z
     refine ⟨V ⊓ W, ⟨hV, hW⟩, ?_⟩
-    rw [hmul, map_add, map_add]
+    rw [hmul, map_add (f := _), map_add (f := _)]
     linear_combination E W * h + E V * h'
   zero_mem' := fun z => ⟨⊤, trivial, by rw [map_zero, map_zero]⟩
   neg_mem' := by
@@ -89,7 +93,7 @@ theorem exists_of_lc [CompactSpace X] (hcompl : ∀ V, E V + E Vᶜ = 1) (hj : �
   classical
   have h0 : ∀ z (V : Clopens X), z ∉ V → ev z (E V) = 0 := fun z V hz => by
     have h := congrArg (ev z) (hcompl V)
-    rw [map_add, h1 z Vᶜ (by rw [← SetLike.mem_coe, Clopens.coe_compl]; exact hz), map_one] at h
+    rw [map_add (f := _), h1 z Vᶜ (by rw [← SetLike.mem_coe, Clopens.coe_compl]; exact hz), map_one] at h
     simpa using h
   let F : B → Clopens X := fun b => ⟨f ⁻¹' {b}, hf.isClopen_fiber b⟩
   have hF : ∀ z b, z ∈ F b ↔ f z = b := fun z b => Iff.rfl
@@ -97,7 +101,8 @@ theorem exists_of_lc [CompactSpace X] (hcompl : ∀ V, E V + E Vᶜ = 1) (hj : �
   · refine Ideal.sum_mem _ fun b hb => ?_
     obtain ⟨z, rfl⟩ := hf.range_finite.mem_toFinset.1 hb
     exact Ideal.mul_mem_left _ _ (hI z)
-  · rw [map_sum, Finset.sum_eq_single (f z)]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single (f z)]
     · rw [map_mul, h1 z _ ((hF z _).2 rfl), hj, one_mul]
     · intro b _ hb
       rw [map_mul, h0 z _ (fun h => hb ((hF z b).1 h).symm), zero_mul]
@@ -144,15 +149,14 @@ theorem acr_top (D : PAlg l) (n : ℕ) (S : Subring (D.Acr n)) (h1 : ∀ a, D.cr
     (h2 : ∀ g, D.toAcr n (WittVector.teichmuller l g) ∈ S) (x : D.Acr n) : x ∈ S := by
   have hW : ∀ w : D.W, D.toAcr n w ∈ S := fun w => by
     obtain ⟨t, ht, r, rfl⟩ := witt_mem D (S.comap (D.toAcr n)) h2 n w
-    rw [map_add, map_mul, map_pow, map_natCast, D.pow_l_acr, zero_mul, add_zero]
+    rw [map_add (f := _), map_mul, map_pow, map_natCast, D.pow_l_acr, zero_mul, add_zero]
     exact ht
   obtain ⟨z, rfl⟩ := (RL.tens D n).1 x
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero]; exact S.zero_mem
+  induction z using TensorProduct.inductionOn with
   | tmul a w =>
     rw [Algebra.TensorProduct.lift_tmul]
     exact S.mul_mem (h1 a) (hW w)
-  | add a b ha hb => rw [map_add]; exact S.add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact S.add_mem ha hb
 
 variable {A D : PAlg l} {Γ : Type} [TopologicalSpace Γ]
 
@@ -165,7 +169,7 @@ theorem EE_compl (e : Γ → (D ⟶ A)) (ind : Clopens Γ → D.A)
   have key : WittVector.teichmuller l (ind V) + WittVector.teichmuller l (ind Vᶜ) = (1 : D.W) := by
     ext i
     refine hinj _ _ fun z => ?_
-    rw [← WittVector.map_coeff, ← WittVector.map_coeff, map_add, map_one, WittVector.map_teichmuller,
+    rw [← WittVector.map_coeff, ← WittVector.map_coeff, map_add (f := _), map_one, WittVector.map_teichmuller,
       WittVector.map_teichmuller]
     congr 1
     by_cases hz : z ∈ V
@@ -177,7 +181,7 @@ theorem EE_compl (e : Γ → (D ⟶ A)) (ind : Clopens Γ → D.A)
         rw [← SetLike.mem_coe, Clopens.coe_compl]
         exact hz
       rw [h0 z V hz, h1 z _ hz', map_one, WittVector.teichmuller_zero, zero_add]
-  rw [EE, EE, ← map_add, key, map_one]
+  rw [EE, EE, ← map_add (f := _), key, map_one]
 
 theorem simple_all (j : A ⟶ D) (e : Γ → (D ⟶ A)) (ind : Clopens Γ → D.A)
     (hmul : ∀ V W, ind (V ⊓ W) = ind V * ind W)

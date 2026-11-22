@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.TableLineDegreeTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem mem_intPts {A : Set ℚ} (hA : A.Finite) (z : ℤ) : z ∈ intPts A ↔ 
   have h : ((fun z : ℤ => (z : ℚ)) ⁻¹' A).Finite :=
     hA.preimage (Set.injOn_of_injective Int.cast_injective)
   unfold intPts
-  rw [dif_pos h, Set.Finite.mem_toFinset]
+  rw [dite_eq_left h, Set.Finite.mem_toFinset]
   rfl
 
 def mnLo (Fl : Finset ℤ) : ℤ := (insert 0 Fl).min' (Finset.insert_nonempty _ _)

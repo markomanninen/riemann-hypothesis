@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe17.norm_sum_lt :
     ∀ {F ι : Type} [inst : NormedField F] [IsUltrametricDist F]

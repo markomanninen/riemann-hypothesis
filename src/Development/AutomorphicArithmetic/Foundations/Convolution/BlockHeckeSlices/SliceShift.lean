@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.Summand
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.Summand
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.HeightLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ def AbsKill : Prop :=
       pieceK k F) →
     ∀ φ x, HasSum (fun k => c (MvPolynomial.eval₂ (MvPolynomial.aeval Z).toRingHom H (G k) • φ) x) 0
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 abbrev Pl : Type := HeightOneSpectrum (𝓞 E)
 
@@ -60,14 +64,14 @@ def BandOps : Prop := ∀ (n : ℕ) (C : ℝ), 0 ≤ C → Band C (0 : Sm E n) �
   (∀ c : ℂ, Band C (c • φ)) ∧ (∀ u, Band C (uC E n u φ)) ∧ (∀ g, Band C (rt E n g φ)) ∧ ∀ w j, Band C (hk n w j φ)
 
 def HkOps : Prop := ∀ (n : ℕ) (w : Pl E) (j : ℕ),
-  (∀ φ : Sm E n, hk n w j φ = (qc w ^ (((j : ℂ) * ((n : ℂ) - j)) / 2))⁻¹ • GlobalTheory.LFun.heckeVec (rw n w) (GlobalTheory.LFun.KGL w n)
+  (∀ φ : Sm E n, hk n w j φ = (qc w ^ (((j : ℂ) * ((n : ℂ) - j)) / 2))⁻¹ • GlobalTheory.LFun.heckeVec (rw n w) (GlobalTheory.LFun.KGL w (n := n))
     (Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) (GlobalTheory.LFun.exists_isUnifV w).choose j) φ) ∧
   (∀ u, Commute (uC E n u) (hk n w j)) ∧ (∀ y, Commute (rt E n (infGL E n y)) (hk n w j)) ∧
   ∀ (S : Set (Pl E)) (φ : Sm E n), w ∉ S → Sph S φ → Sph S (hk n w j φ) ∧ hk n w 0 φ = φ ∧
     (∀ k : KA E n, Sph S (rt E n k φ) ∧ rt E n k (hk n w j φ) = hk n w j (rt E n k φ)) ∧
     ∀ w' ∉ S, ∀ j', hk n w j (hk n w' j' φ) = hk n w' j' (hk n w j φ)
 
-def RapidDecay : Prop := ∀ (n : ℕ) (φ : Sm E n), Umg φ → Cusp φ.1 → ∀ N : ℕ, ∃ C : ℝ, ∀ x : normOneGL E n,
+def RapidDecay : Prop := ∀ (n : ℕ) (φ : Sm E n), Umg φ → Cusp φ.1 → ∀ N : ℕ, ∃ C : ℝ, ∀ x : normOneGL (K := E) (n := n),
   ‖φ.1 (x : GA E n)‖ * PositivityTheory.Rg.Tf.Core.qht x ^ N ≤ C
 
 def CuspUmg : Prop := ∀ (n : ℕ) (f : Sm E n), f.1 ∈ AutomorphicForm.cuspForms E n → Umg f ∧ Cusp f.1
@@ -141,9 +145,9 @@ def KilledOps : Prop := ∀ (n : ℕ) (ρ : Typ E n) (φ : Sm E n), Killed ρ.ρ
   AutomorphicForm.IsKFinite φ.1
 
 def EigComp : Prop := ∀ (S : Set (Pl E)) (r : ℕ) (ρ : Typ E r) (ψ : Sm E r), 0 < r → Umg ψ → Cusp ψ.1 → Killed ρ.ρ ψ.1 → Sph S ψ →
-  (∃ x : normOneGL E r, ψ.1 (x : GA E r) ≠ 0) → ∃ b : Blo S r, Killed ρ.ρ b.f.1 ∧
-    ∫ y, ψ.1 ((Quotient.out y : normOneGL E r) : GA E r) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL E r) : GA E r))
-      ∂quotientMeasure (rationalGLOne E r) (mu1 E r) ≠ 0
+  (∃ x : normOneGL (K := E) (n := r), ψ.1 (x : GA E r) ≠ 0) → ∃ b : Blo S r, Killed ρ.ρ b.f.1 ∧
+    ∫ y, ψ.1 ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r) * starRingEnd ℂ (b.f.1 ((Quotient.out y : normOneGL (K := E) (n := r)) : GA E r))
+      ∂quotientMeasure (rationalGLOne (K := E) (n := r)) (mu1 E r) ≠ 0
 
 def LangStep : Prop := ∀ (S : Set (Pl E)) (r s : ℕ) (ρ : Typ E (r + s)) (φ : Sm E (r + s)), 0 < r → Umg φ → Killed ρ.ρ φ.1 → Sph S φ →
   (∀ r', 0 < r' → r' < r → ∀ g, AutomorphicForm.constantTerm r' φ.1 g = 0) →
@@ -154,8 +158,8 @@ def Langlands : Prop := ∀ (S : Set (Pl E)) (n : ℕ) (ρ : Typ E n) (φ : Sm E
   ((∀ (k : KA E n) (d : Dat S n), d.HasTyp ρ.ρ → d.comp (rt E n k φ).1 = 0) → φ = 0) ∧
   ((∀ (k : KA E n) (d : Dat S n), d.HasTyp ρ.ρ → 2 ≤ d.len → d.comp (rt E n k φ).1 = 0) → Cusp φ.1)
 
-open Classical in
 
+open Classical in
 def NearBlo : Prop := ∀ (S : Set (Pl E)) (r : ℕ) (ρ : Typ E r) (B : ℝ),
   {p : ((E →+* ℂ) → Fin r → ℂ) × (Pl E → Multiset ℂˣ) | ∃ b : Blo S r, Killed ρ.ρ b.f.1 ∧ (∀ τ i, ‖b.Λ τ i‖ ≤ B) ∧
     p.1 = b.Λ ∧ ∀ w, p.2 w = if w ∈ S then 0 else b.sat w}.Finite
@@ -176,7 +180,7 @@ def KillOne : Prop := ∀ (S : Set (Pl E)) (n : ℕ) (C : ℝ) (d : Dat S n) (φ
   0 ≤ C → Band C φ → Sph S φ → (∀ x ∈ F.vars, x.1 ∉ S) → d.Kills F → Gen F G →
   ∀ t, HasSum (fun k => d.comp (app (G k) φ).1 t) 0
 
-def IsSum {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+def IsSum {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
     (G : ℕ → MvPolynomial (Pl E × Fin n) (MvPolynomial ((E →+* ℂ) × Fin n) ℂ)) (φ w : Sm E n) : Prop :=
   ∃ N : ℕ, ∀ ε > (0 : ℝ), ∀ᶠ e : ℕ in Filter.atTop, ∀ g,
     ‖(w - ∑ k ∈ Finset.range e, app (G k) φ).1 g‖ ≤ ε * AutomorphicForm.height g ^ N

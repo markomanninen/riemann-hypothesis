@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HermitianCodeWordWeilElementMemQuadraticField
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90USurjective
-import Formalism.LocalToGlobal.Columns.RowFormsSym
-import Formalism.LocalRingCardinality.DataKerP
-import Formalism.LocalToGlobal.HermitianForms.BothSym
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TrueColumnChoicesHeckeCharReferenceEqOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RightTranslationActionApply
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.HermitianCodeWordWeilElementMemQuadraticField
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H90USurjective
+public import Formalism.LocalToGlobal.Columns.RowFormsSym
+public import Formalism.LocalRingCardinality.DataKerP
+public import Formalism.LocalToGlobal.HermitianForms.BothSym
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +30,8 @@ def GStep.act {E K : Type} [Field E] [NumberField E] [Field K] {n : ℕ} (S : GS
     GStep E K n :=
   { S with rp := fun b => prefRep (pref b), rp_spec := fun b => prefRep_spec (pref b) }
 
-open Classical in
 
+open Classical in
 def cosetIn {X : Fields} {Pr : Primes X} {R : Ranks} {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
     {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ} (q : PtAt R sel mu cst u j)
     (P : rowSG Pr sel mu) : Set (Sp X.E (R.N j)) :=
@@ -81,8 +86,8 @@ def th (u : B.Word) (a : I.ι) (i : ℕ) (b : Idx I.sel (I.tup a) (I.idx a) i) (
   Dstar := B.Dstar
   GamP := B.GamP
 
-open Classical in
 
+open Classical in
 def fmIn (hPr : (B.primes X).Ok) (u : B.Word) (a : I.ι) : FmIn (I.atIn u a) B.places where
   tauOf w := tauAt hPr u w
   seenP w := decide (seenC (B.primes X) u w)
@@ -132,8 +137,8 @@ def crd (B : Base) (i : ℕ) (hi : i ≤ B.R.m) :
   letI := B.host.cmStar
   (B.sp.X i).frame.equivFun.trans (LinearEquiv.funCongrLeft B.host.E B.host.E (finCongr (B.sp.X_rank i hi)).symm)
 
-open Classical in
 
+open Classical in
 def latAt (u : B.Word) (a : I.ι) (i : ℕ) (c : (I.stp u a i).Cl) :
     letI := B.host.cmStar; Submodule (𝓞 B.host.E) (B.sp.X i).V :=
   letI := B.host.cmStar
@@ -164,16 +169,34 @@ def eCls0 (u : B.Word) (a : I.ι) : (I.stp u I.mu0 0).Cl ≃ (I.stp u a 0).Cl :=
 
 include l in
 theorem latAt_lattice (u : B.Word) (a : I.ι) (i : ℕ) (c : (I.stp u a i).Cl) :
-    letI := B.host.cmStar; Submodule.IsLattice B.host.E (I.latAt u a i c) := by
+    letI := B.host.cmStar; Submodule.IsFullLattice B.host.E (I.latAt u a i c) := by
   letI := B.host.cmStar
   unfold latAt
   split_ifs with hi
-  · have h := l.lat u a i c
-    refine ⟨h.fg.map _, ?_⟩
-    have h2 := congrArg (Submodule.map ((crd B i hi).symm : (Fin (B.R.N i) → B.host.E) →ₗ[B.host.E] (B.sp.X i).V)) h.span_eq_top
-    rw [Submodule.map_span, Submodule.map_top, LinearEquiv.range] at h2
-    exact h2
-  · exact (B.sp.X i).standardTuple_isLattice
+  · let d := ((I.stp u a i).rep c).1.1.deco
+    have hsymm : (hStd B.host.E (B.R.N i)).IsSymm := by
+      constructor
+      intro x y
+      simp only [hStd, LinearMap.mk₂'ₛₗ_apply, map_sum, map_mul, starRingEnd_apply, star_star]
+      exact Finset.sum_congr rfl fun j _ => mul_comm _ _
+    have hN := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular _ hsymm
+      hStd_nondeg d.2.lat d.2.uni
+    have hL : Submodule.span B.host.E (d.1.L : Set (Sp B.host.E (B.R.N i))) = ⊤ := by
+      rw [eq_top_iff, ← hN, Submodule.span_le]
+      intro x hx
+      have hTx := d.2.smul_N_mem_L (T_mem_vT l.pr u) hx
+      have hT : algebraMap (𝓞 B.host.E) B.host.E (B.T u : 𝓞 B.host.E) ≠ 0 := by
+        show ((B.T u : 𝓞 B.host.E) : B.host.E) ≠ 0
+        exact_mod_cast (B.T_prime u).ne_zero
+      rw [← algebraMap_smul B.host.E] at hTx
+      exact (Submodule.smul_mem_iff _ hT).mp (Submodule.subset_span hTx)
+    refine { toIsLattice := Submodule.IsLattice.of_fg _ ((l.lat u a i c).fg.map _)
+             span_eq_top := ?_ }
+    rw [Submodule.map_coe, LinearMap.coe_restrictScalars, ← Submodule.map_span,
+      show Submodule.span B.host.E (((I.stp u a i).rep c).1.1.deco.1.L :
+        Set (Sp B.host.E (B.R.N i))) = ⊤ from hL,
+      Submodule.map_top, LinearEquiv.range]
+  · exact baseLattice_full (B.sp.X i)
 
 def cols : Cols B where
   mem u := ⟨I.chain l u I.mu0, I.atT l u I.mu0, I.per l u I.mu0⟩

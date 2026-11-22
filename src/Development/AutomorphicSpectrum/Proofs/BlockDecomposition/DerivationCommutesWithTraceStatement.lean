@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivationCommutesWithTrace
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivationCommutesWithTrace
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open MvPolynomial
 set_option maxHeartbeats 1000000 in

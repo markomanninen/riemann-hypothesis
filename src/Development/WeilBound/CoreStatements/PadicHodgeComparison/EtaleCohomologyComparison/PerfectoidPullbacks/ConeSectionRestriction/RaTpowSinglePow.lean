@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -24,10 +28,6 @@ theorem ra_tpow_single {d : ℕ} (t : Fin d → Rˣ) (k : Fin d) (z : ℤ) : tpo
   unfold tpow
   rw [Finset.prod_eq_single k (fun j _ hj => by simp [Pi.single_apply, hj]) (by simp)]
   simp
-
-theorem ra_unit_pow_eq {d : ℕ} (t : Fin d → Rˣ) (k : Fin d) (N : ℕ) :
-    (t k : R) ^ N = tpow t (Pi.single k (N : ℤ)) := by
-  rw [ra_tpow_single, zpow_natCast, Units.val_pow_eq_pow_val]
 
 theorem ra_expS_add {d : ℕ} (S : Finset (Fin (d + 1))) (m m' : Fin d → ℤ) (hm : m ∈ expS S) (hm' : m' ∈ expS S) :
     m + m' ∈ expS S := by
@@ -88,7 +88,7 @@ theorem torusS_loc (t : Fin (n + 1) → Rˣ) (ht : AlgebraicIndependent K fun k 
       ((MvPolynomial.aeval u p : torusS K t S) : R) = MvPolynomial.aeval (fun k => (t k : R)) p := fun p => by
     induction p using MvPolynomial.induction_on with
     | C c => simp
-    | add p q hp hq => simp only [map_add, Subalgebra.coe_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), Subalgebra.coe_add, hp, hq]
     | mul_X p k hp => simp only [map_mul, Subalgebra.coe_mul, hp, MvPolynomial.aeval_X]; rfl
   have hinj := algebraicIndependent_iff_injective_aeval.mp ht
   refine ⟨fun p q h => hinj (by rw [← hval, ← hval, h]), fun a => ?_⟩
@@ -125,7 +125,7 @@ theorem torusS_loc (t : Fin (n + 1) → Rˣ) (ht : AlgebraicIndependent K fun k 
       obtain ⟨f1, g1, hg1, h1⟩ := hx
       obtain ⟨f2, g2, hg2, h2⟩ := hy
       refine ⟨f1 * g2 + f2 * g1, g1 * g2, by rw [map_mul]; exact hg1.mul hg2, ?_⟩
-      simp only [map_add, map_mul]
+      simp only [map_add (f := _), map_mul]
       linear_combination (MvPolynomial.aeval (fun k => (t k : R)) g2) * h1 +
         (MvPolynomial.aeval (fun k => (t k : R)) g1) * h2
     | mul x y _ _ hx hy =>
@@ -164,10 +164,12 @@ theorem torusS_frac [IsDomain R] (t : Fin (n + 1) → Rˣ) (S : Finset (Fin (n +
 theorem torusS_succ_span (t : Fin (n + 1) → Rˣ) (k : Fin (n + 1)) :
     ∀ x ∈ torusS K t (Finset.univ.erase k.succ), x ∈ Submodule.span K (tpow t '' {m | m ≠ fun _ => -1}) := by
   intro x hx
-  refine Submodule.span_mono (Set.image_mono fun m hm h => ?_) (ra_torusS_le_span t _ x hx)
-  have := hm.1 k (by simp)
-  rw [h] at this
-  norm_num at this
+  have hsub : expS (Finset.univ.erase k.succ) ⊆ {m | m ≠ fun _ => -1} := by
+    intro m hm h
+    have := hm.1 k (by simp)
+    rw [h] at this
+    norm_num at this
+  exact Submodule.span_mono (Set.image_mono hsub) (ra_torusS_le_span t _ x hx)
 
 theorem torus_scale [IsDomain R] (t : Fin (n + 1) → Rˣ) (i : Fin (n + 2)) :
     ∃ w ∈ torusS K t (Finset.univ.erase i), w ≠ 0 ∧

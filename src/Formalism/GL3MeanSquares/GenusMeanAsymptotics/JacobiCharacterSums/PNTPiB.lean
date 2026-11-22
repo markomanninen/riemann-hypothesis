@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqCount
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqTwistC
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqCount
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MSqTwistC
+
+@[expose] public section
 
 open Finset Classical
 
@@ -52,9 +56,8 @@ theorem intervalIntegrable_sum_div (c : ℕ → ℝ) {a b : ℝ} (ha : 2 ≤ a) 
   have hc : ContinuousOn (fun t : ℝ => 1 / (t * Real.log t ^ 2)) (Set.uIcc a b) := by
     have hpos : ∀ t ∈ Set.uIcc a b, 2 ≤ t := fun t ht => le_trans (le_trans ha (le_min le_rfl hab)) ht.1
     apply ContinuousOn.div continuousOn_const
-    · apply ContinuousOn.mul continuousOn_id
-      apply ContinuousOn.pow
-      exact Real.continuousOn_log.mono (fun t ht => by simp; linarith [hpos t ht])
+    · exact continuousOn_id.mul ((Real.continuousOn_log.mono
+        (fun t ht => by simp; linarith [hpos t ht])).pow 2)
     · intro t ht
       have h2 := hpos t ht
       exact mul_ne_zero (by linarith) (pow_ne_zero 2 (Real.log_pos (by linarith)).ne')
@@ -112,15 +115,12 @@ theorem continuousOn_Fm_div_mul_log_sq (K θ β : ℝ) {a b : ℝ} (ha : 2 ≤ a
     ContinuousOn (fun t => Fm K θ β t / (t * Real.log t ^ 2)) (Set.Icc a b) := by
   have hpos : ∀ t ∈ Set.Icc a b, 2 ≤ t := fun t ht => le_trans ha ht.1
   apply ContinuousOn.div
-  · unfold Fm
-    apply ContinuousOn.mul continuousOn_const
-    apply ContinuousOn.sub continuousOn_id
-    apply ContinuousOn.div_const
-    apply ContinuousOn.mul continuousOn_const
-    exact ContinuousOn.rpow_const continuousOn_id (fun t ht => Or.inl (by simp; linarith [hpos t ht]))
-  · apply ContinuousOn.mul continuousOn_id
-    apply ContinuousOn.pow
-    exact Real.continuousOn_log.mono (fun t ht => by simp; linarith [hpos t ht])
+  · change ContinuousOn (fun t : ℝ => K * (t - θ * t ^ β / β)) (Set.Icc a b)
+    exact continuousOn_const.mul (continuousOn_id.sub
+      ((continuousOn_const.mul (ContinuousOn.rpow_const continuousOn_id
+        (fun t ht => Or.inl (by simp; linarith [hpos t ht])))).div_const β))
+  · exact continuousOn_id.mul ((Real.continuousOn_log.mono
+      (fun t ht => by simp; linarith [hpos t ht])).pow 2)
   · intro t ht
     have h2 := hpos t ht
     exact mul_ne_zero (by linarith) (pow_ne_zero 2 (Real.log_pos (by linarith)).ne')

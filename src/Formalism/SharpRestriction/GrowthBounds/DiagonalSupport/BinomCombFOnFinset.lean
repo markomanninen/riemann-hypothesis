@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DigAbs
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DigAbs
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 noncomputable section
 

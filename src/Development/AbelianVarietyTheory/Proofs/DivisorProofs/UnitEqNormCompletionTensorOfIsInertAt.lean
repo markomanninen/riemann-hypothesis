@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweDualityGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ComplementaryThetaInert
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldAdicCompletionTensorOfInert
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweDualityGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ComplementaryThetaInert
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAdicCompleteAndCardQuotientAdicCompletionInteg
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldAdicCompletionTensorOfInert
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 namespace GlobalTheory.InertUnitNorm
@@ -79,7 +84,7 @@ theorem exists_integral_gen {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     simpa using this
   have hq : (a : E) ^ 2 + algebraMap F E (b : F) * a + algebraMap F E (c : F) = 0 := by
     have := congrArg (algebraMap (𝓞 E) E) hq0
-    simp only [map_add, map_mul, map_pow, map_zero] at this
+    simp only [map_add (f := _), map_mul, map_pow, map_zero] at this
     exact this
   have hli : LinearIndependent F ![(1 : E), a] := by
     rw [LinearIndependent.pair_iff' one_ne_zero]
@@ -99,7 +104,7 @@ theorem exists_integral_gen {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     exact congrArg (fun f : E →ₗ[F] E => f x) this
   have hqσ : σ (a : E) ^ 2 + algebraMap F E (b : F) * σ a + algebraMap F E (c : F) = 0 := by
     have := congrArg σ hq
-    simpa only [map_add, map_mul, map_pow, AlgHom.commutes, map_zero] using this
+    simpa only [map_add (f := _), map_mul, map_pow, AlgHom.commutes, map_zero] using this
   have hconj : σ (a : E) = -algebraMap F E (b : F) - a := by
     have hm : (σ (a : E) - a) * (σ a + a + algebraMap F E (b : F)) = 0 := by
       linear_combination hqσ - hq
@@ -110,7 +115,7 @@ theorem exists_integral_gen {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   have h1 := neg_mem (Ideal.mem_map_of_mem (algebraMap (𝓞 F) (𝓞 E)) hr)
   have e : -algebraMap (𝓞 F) (𝓞 E) (r ^ 2 + b * r + c) =
       (a - algebraMap _ _ r) * (a - algebraMap _ _ (-b - r)) := by
-    simp only [map_add, map_mul, map_pow, map_sub, map_neg]
+    simp only [map_add (f := _), map_mul, map_pow, map_sub, map_neg]
     linear_combination -hq0
   rw [e] at h1
   exact (hp.mem_or_mem h1).elim (ha _) (ha _)
@@ -161,7 +166,7 @@ theorem exists_approx_mod {F : Type} [Field F] [NumberField F] (v : HeightOneSpe
   have hr' : π r = h * (s + π b * ρ) := hr
   have ht' : π t = ρ := ht
   have hQ : π (r ^ 2 - b * r * t + c * t ^ 2 - u₀) = 0 := by
-    simp only [map_sub, map_add, map_mul, map_pow, hr', ht']
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, hr', ht']
     linear_combination h ^ 2 * hsρ' + (h * s * π b * ρ + h * π b ^ 2 * ρ ^ 2 - (π c * ρ ^ 2 - π u₀) * (1 + 2 * h)) * hh
   refine ⟨r, t, (hz _).1 hQ, ?_⟩
   by_contra hboth
@@ -171,7 +176,7 @@ theorem exists_approx_mod {F : Type} [Field F] [NumberField F] (v : HeightOneSpe
   simp only [map_sub, map_mul, map_ofNat] at e1 e2
   have hu' : π u₀ ≠ 0 := fun h0 => hu ((hz _).1 h0)
   apply mul_ne_zero h2k hu'
-  simp only [map_sub, map_add, map_mul, map_pow] at hQ
+  simp only [map_sub, map_add (f := _), map_mul, map_pow] at hQ
   linear_combination π r * e1 + π t * e2 - 2 * hQ
 
 end GlobalTheory.InertUnitNorm
@@ -240,7 +245,7 @@ theorem exists_int_sol {F : Type} [Field F] [NumberField F] (v : HeightOneSpectr
     rwa [sub_add_cancel] at this
   obtain ⟨r, s, hQ, hder⟩ := exists_approx_mod v b c u₀ h2 hroot hu₀v
   have hQm := (hιm _).2 hQ
-  simp only [map_sub, map_add, map_mul, map_pow, map_ofNat] at hQm
+  simp only [map_sub, map_add (f := _), map_mul, map_pow, map_ofNat] at hQm
   rcases hder with hA | hB
   · obtain ⟨a, ha⟩ := exists_root_quadratic_of_approx v (-(ι b * ι s)) (ι c * ι s ^ 2 - U) (ι r)
       (by
@@ -280,7 +285,7 @@ namespace GlobalTheory.InertUnitNorm
 open IsDedekindDomain.HeightOneSpectrum Polynomial
 
 theorem unit_eq_mul_conj : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
-    B.IsGood σ → ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → IsField (Fv F v ⊗[F] E) →
+    B.IsGood σ → ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → IsField (Fv F v ⊗[F] E) →
     ∀ u : Fv F v, Valued.v u = 1 →
       ∃ z : Fv F v ⊗[F] E, algebraMap (Fv F v) (Fv F v ⊗[F] E) u = z * Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ z := by
   intro F E _ _ _ _ _ σ B hB v w hvw _hfield u hu
@@ -302,7 +307,7 @@ theorem unit_eq_mul_conj : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
   set α : Fv F v ⊗[F] E := (1 : Fv F v) ⊗ₜ[F] (a : E) with hα
   have hq' : α ^ 2 + ι (algebraMap F (Fv F v) (b : F)) * α + ι (algebraMap F (Fv F v) (c : F)) = 0 := by
     have := congrArg (Algebra.TensorProduct.includeRight : E →ₐ[F] Fv F v ⊗[F] E) hq
-    rw [map_add, map_add, map_mul, map_pow, map_zero] at this
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero] at this
     rw [hιF, hιF]
     exact this
   have hσα : Algebra.TensorProduct.map (AlgHom.id (Fv F v) (Fv F v)) σ α =
@@ -310,9 +315,9 @@ theorem unit_eq_mul_conj : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     rw [hα, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, hconj, hιF,
       TensorProduct.tmul_sub, TensorProduct.tmul_neg]
   refine ⟨ι x + ι y * α, ?_⟩
-  rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσα]
+  rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσα]
   have hKι := congrArg ι hK
-  simp only [map_add, map_sub, map_mul, map_pow] at hKι
+  simp only [map_add (f := _), map_sub, map_mul, map_pow] at hKι
   linear_combination (-1 : Fv F v ⊗[F] E) * hKι + ι y ^ 2 * hq'
 
 end GlobalTheory.InertUnitNorm

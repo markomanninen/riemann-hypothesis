@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.EigenLiftsFrobeniusStatement
+module
+
+public import ReciprocityTheory.DualLattices.EigenLiftsFrobeniusStatement
+
+@[expose] public section
 
 noncomputable section
 

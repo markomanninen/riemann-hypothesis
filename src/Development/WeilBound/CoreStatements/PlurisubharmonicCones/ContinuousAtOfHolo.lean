@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParametricCircleIntegralAnalytic
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviChartRegularityStatementHolds
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParametricCircleIntegralAnalytic
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LeviChartRegularityStatementHolds
+
+@[expose] public section
 
 open Filter Topology Metric Set
 open ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar.Cusp
@@ -233,11 +237,70 @@ theorem Good.exists_chart (h : Good (mCoordIdeal D.y) γ) :
     obtain ⟨U, hU, hxU, hsub, -⟩ := hloc x hx
     exact mem_of_superset (hU.mem_nhds hxU) hsub
   · have ht1 : t ∈ ball (0 : Fin D.n → ℂ) 1 := ht.1
-    obtain ⟨V, hV, hz, F, hF, hFe⟩ := GlobalTheory.CompanionTheory.Ar.Giv.projHoloLocal II Ψ K J Ω W D M (M.atlas.chart j)
-      (fun k => ⟨M.atlas.holo k j, M.atlas.holo j k⟩) (γ t) (h.mem t ht1) ht.2
-    refine (((an_of_diff hV hF) _ hz).comp (h.an t ht1)).congr ?_
-    filter_upwards [isOpen_ball.mem_nhds ht1, (h.an t ht1).continuousAt.preimage_mem_nhds (hV.mem_nhds hz)]
+    let e := M.atlas.chart j
+    let z := γ t
+    have hz : z ∈ mcPts (mCoordIdeal D.y) := h.mem t ht1
+    have hze : M.proj z ∈ e.source := ht.2
+    have hproj : ∃ V : Set ((Σ k, J k) → ℂ), IsOpen V ∧ z ∈ V ∧
+        ∃ F : ((Σ k, J k) → ℂ) → Fin D.n → ℂ, DifferentiableOn ℂ F V ∧
+          ∀ w ∈ V ∩ mcPts (mCoordIdeal D.y), e (M.proj w) = F w := by
+      obtain ⟨N, hNo, hzN, κ, hκ, hκt, hκs⟩ :=
+        GlobalTheory.CompanionTheory.Ar.Giv.localOrbitChart K J Ω D.y D.n D.arith D.smoothGeneric z hz
+      obtain ⟨U, hUo, hxU, s, hs, hsh⟩ := M.sections (M.proj z)
+      obtain ⟨c, hc, hcz⟩ := (M.fibre z hz _ (hs _ hxU).1).1 (hs _ hxU).2.symm
+      have hsxN : s (M.proj z) ∈ N := by rw [hcz]; exact (hκt z hzN c hc).1
+      have hκsx : κ (s (M.proj z)) = κ z := by rw [hcz]; exact (hκt z hzN c hc).2
+      let T := e.target ∩ e.symm ⁻¹' U ∩ (s ∘ e.symm) ⁻¹' N
+      have hsAn : AnalyticOnNhd ℂ (s ∘ e.symm) (e.target ∩ e.symm ⁻¹' U) :=
+        fun u hu => analyticAt_pi_iff.2 fun p => hsh p j u hu
+      have hTo : IsOpen T := hsAn.continuousOn.isOpen_inter_preimage
+        (e.isOpen_inter_preimage_symm hUo) hNo
+      have hxT : e (M.proj z) ∈ T := by
+        refine ⟨⟨e.map_source hze, ?_⟩, ?_⟩
+        · simpa only [mem_preimage, e.left_inv hze] using hxU
+        · simpa only [mem_preimage, Function.comp_apply, e.left_inv hze] using hsxN
+      have hψd : DifferentiableOn ℂ (κ ∘ s ∘ e.symm) T := fun u hu =>
+        ((hκ _ hu.2).comp (hsAn u hu.1)).differentiableAt.differentiableWithinAt
+      have hψi : InjOn (κ ∘ s ∘ e.symm) T := by
+        intro u hu v hv huv
+        have hsu := hs _ hu.1.2
+        have hsv := hs _ hv.1.2
+        obtain ⟨c', hc', hcc⟩ := hκs _ ⟨hu.2, hsu.1⟩ _ ⟨hv.2, hsv.1⟩ huv
+        have hp := (M.fibre _ hsu.1 _ hsv.1).2 ⟨c', hc', hcc⟩
+        rw [hsu.2, hsv.2] at hp
+        exact e.symm.injOn hu.1.1 hv.1.1 hp
+      have hInv := open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets in
+        InjectiveHolomorphicInverse.proof
+          (InjectiveHolomorphicJacobianNeZero.proof HolomorphicKernelFibre.proof CriticalFlatNotInjective.proof)
+      obtain ⟨hψo, F, hF, hFψ⟩ := hInv D.n T (κ ∘ s ∘ e.symm) hTo hψd hψi
+      obtain ⟨O, hOo, hOeq⟩ :=
+        continuousOn_iff'.1 M.cont (e.source ∩ e ⁻¹' T) (e.isOpen_inter_preimage hTo)
+      refine ⟨O ∩ (N ∩ κ ⁻¹' ((κ ∘ s ∘ e.symm) '' T)),
+        hOo.inter (hκ.continuousOn.isOpen_inter_preimage hNo hψo), ?_, F ∘ κ, ?_, ?_⟩
+      · have hz' : z ∈ M.proj ⁻¹' (e.source ∩ e ⁻¹' T) ∩ mcPts (mCoordIdeal D.y) :=
+          ⟨⟨hze, hxT⟩, hz⟩
+        rw [hOeq] at hz'
+        exact ⟨hz'.1, hzN, e (M.proj z), hxT, by simpa only [Function.comp_apply, e.left_inv hze] using hκsx⟩
+      · intro w hw
+        exact ((hF.differentiableAt (hψo.mem_nhds hw.2.2)).comp w
+          (hκ w hw.2.1).differentiableAt).differentiableWithinAt
+      · rintro w ⟨⟨hwO, hwN, -⟩, hw⟩
+        have hp : w ∈ M.proj ⁻¹' (e.source ∩ e ⁻¹' T) ∩ mcPts (mCoordIdeal D.y) := by
+          rw [hOeq]
+          exact ⟨hwO, hw⟩
+        obtain ⟨⟨hwe, hwT⟩, -⟩ := hp
+        have hwU : M.proj w ∈ U := by
+          have hw' := hwT.1.2
+          rwa [mem_preimage, e.left_inv hwe] at hw'
+        obtain ⟨c', hc', hcc⟩ := (M.fibre w hw _ (hs _ hwU).1).1 (hs _ hwU).2.symm
+        have hκw : κ (s (M.proj w)) = κ w := by rw [hcc]; exact (hκt w hwN c' hc').2
+        have hψw : (κ ∘ s ∘ e.symm) (e (M.proj w)) = κ w := by
+          simpa only [Function.comp_apply, e.left_inv hwe] using hκw
+        exact (hFψ _ hwT).symm.trans (congrArg F hψw)
+    obtain ⟨V, hV, hzV, F, hF, hFe⟩ := hproj
+    refine (((an_of_diff hV hF) _ hzV).comp (h.an t ht1)).congr ?_
+    filter_upwards [isOpen_ball.mem_nhds ht1, (h.an t ht1).continuousAt.preimage_mem_nhds (hV.mem_nhds hzV)]
       with t' h1 h2
-    exact ((hFe _ ⟨h2, h.mem t' h1⟩).2).symm
+    exact (hFe _ ⟨h2, h.mem t' h1⟩).symm
 
 end LevelTowerAlt.Charts

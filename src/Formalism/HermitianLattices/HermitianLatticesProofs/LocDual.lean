@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem locDual_dualAt_le (h : V →ₗ⋆[K] V →ₗ[K] K)
     exact locDual_one_mul (locDual_alg_mem _) (hsy y hy)
   | zero => simp
   | add y z _ _ hy hz =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact Submodule.add_mem _ hy hz
   | smul r y _ hy =>
     rw [locDual_h_smul_left]

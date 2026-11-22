@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,18 +128,5 @@ def GradedLineNormsDualOmega : Prop :=
     DualGramAt 𝔐.M 𝔐.t.PP.L (z ≫ pr) (𝔐.Vgen (.inr τ)) (tie.omFrame F τ) (omBlock G) → ∀ k : Fin D.q,
       𝔐'.M.IsGrNorm 𝔐'.t.PP.L (𝔐'.V (.inr τ)) (Fl.b (.inr τ)) k z (B (omEmb D.p D.q k.rev) (omEmb D.p D.q k.rev))⁻¹
         (grN (revDual (omBlock (hᴴ * G * h))) k)
-
-def GramFramesOverModel : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l)
-    (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (Ω Ω' : Type) [Field Ω] [Field Ω']
-    (K K' : Type) [Fintype K] [Fintype K'] (J : K → Type) (J' : K' → Type) [∀ k, Fintype (J k)] [∀ k, Fintype (J' k)]
-    (x : (Σ k, J k) → Ω) (x' : (Σ k, J' k) → Ω') (A : HodgeCpt Y S x) (A' : HodgeCpt Y S x') (pr : A'.X ⟶ A.X)
-    (i : Ω →+* Ω') (j : A.Li →+ A'.Li) (z : Spec (CommRingCat.of ℂ) ⟶ A'.X) (r : ℕ) (b : Fin r → A.Li)
-    (X : Matrix (Fin r) (Fin r) Ω') (h : Matrix (Fin r) (Fin r) ℂ),
-    HodgeOver A' A pr i j → (∀ p q, ValAt A'.ξ z (X p q) (h p q)) →
-    (A'.Interior z → ∀ Γ, A.M.GramAt A.t.PP.L (z ≫ pr) b Γ →
-      A'.M.GramAt A'.t.PP.L z (colFrame (fun a => j (b a)) X) (hᴴ * Γ * h)) ∧
-    ∀ L : Lat A.ξ A.Li, h.det ≠ 0 → L.IsFrameAt b ⟨centre (z ≫ pr), A.all _⟩ →
-      (L.pull A'.ξ pr j).IsFrameAt (colFrame (fun a => j (b a)) X) ⟨centre z, A'.all _⟩
 
 end SquareStatements.Sing

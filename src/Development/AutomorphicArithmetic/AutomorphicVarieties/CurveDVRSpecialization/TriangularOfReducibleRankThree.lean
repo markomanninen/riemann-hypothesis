@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ValuationRingClearLastRowEntry
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ValuationRingClearLastRowEntry
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
+
+@[expose] public section
 
 open NumberField IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Aut UpperTheory.V.Pr UpperTheory.V
 
@@ -51,7 +55,7 @@ private theorem go_conj {K : Type} [Field K] (m : GL (Fin 3) K) (hm : m.val.Bloc
   rw [go_diag (hi.mul hY) hm, go_diag hi hY, mul_right_comm, ← go_diag hi hm, Units.inv_mul, Matrix.one_apply_eq,
     one_mul]
 
-private theorem go_mat {D C : Type} [Group D] [CommRing C] (r : D →* GG 3 C) (h : GL (Fin 3) C) (g : D)
+private theorem go_mat {D C : Type} [Group D] [CommRing C] (r : D →* GG (m := 3) (R := C)) (h : GL (Fin 3) C) (g : D)
     (hg : (r g).right = 1) : (conjBy h⁻¹ r g).mat = (h⁻¹).val * (r g).mat * h.val := by
   simp [conjBy, GG.mat, hg]
 
@@ -87,7 +91,7 @@ private theorem go_uadd {A : Type} [CommRing A] [IsLocalRing A] {u v : A} (hu : 
 
 private theorem triangular_of_reducible_rank_three {O A K D : Type} [CommRing O] [IsLocalRing O] [CommRing A] [IsLocalRing A]
     [IsAdicComplete (maximalIdeal A) A] [Algebra O A] [Field K] [Algebra O K] [Group D]
-    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 A) (hr : UnitaryThreeInertia.Red η Ψ r) (j : A →ₐ[O] K)
+    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := A)) (hr : UnitaryThreeInertia.Red η Ψ r) (j : A →ₐ[O] K)
     (hj : Function.Injective j) (x : D) (hx : x ∈ I) (hη : η x = 1) (hu : IsUnit ((Ψ x : O) ^ 2 - 1))
     (k : GL (Fin 3) K) (hk : UnitaryThreeInertia.TriIn η Ψ I (push j r) k) : UnitaryThreeInertia.CondT η Ψ I r := by
   have hw : ∀ a b : Fin 3, wt a b < 0 ↔ b < a := by decide
@@ -143,7 +147,7 @@ private theorem triangular_of_reducible_rank_three {O A K D : Type} [CommRing O]
   · rw [key g hg', (go_conj _ hup _ (hT g hg')).2, hI g hg hg', j.commutes]
 
 private theorem go_tr {O A H G : Type} [CommRing O] [CommRing A] [Algebra O A] [Group H] [Group G]
-    (η : G →* ℤˣ) (Ψ : G →* Oˣ) (r : G →* GG 3 A) (ι : H →* G) (J : Subgroup H) (Dc In : Subgroup G)
+    (η : G →* ℤˣ) (Ψ : G →* Oˣ) (r : G →* GG (m := 3) (R := A)) (ι : H →* G) (J : Subgroup H) (Dc In : Subgroup G)
     (hD : ι.range = Dc) (hI : J.map ι = In) (k : GL (Fin 3) A)
     (hk : UnitaryThreeInertia.TriIn (η.comp ι) (Ψ.comp ι) J (r.comp ι) k) :
     UnitaryThreeInertia.TriIn (η.comp Dc.subtype) (Ψ.comp Dc.subtype) (In.subgroupOf Dc) (r.comp Dc.subtype) k := by
@@ -175,7 +179,7 @@ private theorem go_push {O R A Γ : Type} [CommRing O] [IsLocalRing O] [CommRing
     rw [← f.commutes, ← map_sub]
     refine hm _ ((Alg.res_eq_zero_iff O R _).1 ?_)
     have h2 : Alg.res O R ((r.hom g).mat a b) = (rbar O η Ψ g).mat a b :=
-      congrArg (fun x : GG 3 (ResidueField O) => x.mat a b) (r.red g)
+      congrArg (fun x : GG (m := 3) (R := ResidueField O) => x.mat a b) (r.red g)
     have h3 : (rbar O η Ψ g).mat a b = residue O ((r0 η Ψ g).mat a b) := go_r0map _ _ _ _ _ _
     rw [map_sub, AlgHom.commutes, h2, h3]
     exact sub_self _
@@ -188,7 +192,7 @@ private theorem go_push {O R A Γ : Type} [CommRing O] [IsLocalRing O] [CommRing
     exact Matrix.ext fun a b => hg' (a, b)
 
 theorem UpperTheory.V.Pr.ordPt_of_gd :
-    Loc.LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (g₁ : G ℚ Ω), D.Marked g₁ → ∀ (U : D.ULoc) (S : D.Ring U g₁),
+    Loc.LocalPublishedTheorems → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) (g₁ : G ℚ Ω), D.Marked g₁ → ∀ (U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))) (S : D.Ring U g₁),
     ∀ (B : ValuationSubring Ω), (∀ x, x ∈ B ↔ ‖D.j x‖ ≤ 1) → ∀ (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [IsAdicComplete (maximalIdeal A) A] [Algebra c.O A] (f : S.R →ₐ[c.O] A), IsLocalHom f →
       OrdPt l D.η D.Ψ D.cc g₁ B (U3.push f S.r.hom) := by
   intro hP Ω _ _ _ K _ _ _ l _ c N _ e ψ D g₁ _ U S B hB A _ _ _ _ _ f hf

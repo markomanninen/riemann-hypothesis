@@ -1,25 +1,32 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsDominantPullbackFstOfFlatOfInjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionModelOfExt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoprimeLevelStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelChangeExtendsBaseModelStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleSurjectiveLevelMapStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliLevelQuotientByFiniteGroupStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushforwardPolarisationBundleInvertibleOnModelStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsQuotientModelByTameFiniteGroupStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientInclusionsEtaleOpenImmersionStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IterateEqIdOfTrivialOnFixedFibreStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteOrderAutomorphismFixingLevelTrivialOnFixedStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsCompactModelAboveFullLevelStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientSubringDedekindCompatibleEmbed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsDominantPullbackFstOfFlatOfInjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsActionModelOfExt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoprimeLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelChangeExtendsBaseModelStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleSurjectiveLevelMapStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliLevelQuotientByFiniteGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushforwardPolarisationBundleInvertibleOnModelStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsQuotientModelByTameFiniteGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModelCoefficientInclusionsEtaleOpenImmersionStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IterateEqIdOfTrivialOnFixedFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteOrderAutomorphismFixingLevelTrivialOnFixedStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsCompactModelAboveFullLevelStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -67,35 +74,35 @@ theorem exists_restrict {Z : Scheme.{0}} {R R' : Type} [CommRing R] [CommRing R'
   simpa using this
 
 theorem pow_hom_eq_iterate {X : Scheme.{0}} (r : Aut X) (m : ℕ) :
-    (r ^ m).hom = (fun f : X ⟶ X => f ≫ r.hom)^[m] (𝟙 _) := by
+    (r ^ m).asIso.hom = (fun f : X ⟶ X => f ≫ r.asIso.hom)^[m] (𝟙 _) := by
   induction m with
   | zero => rfl
   | succ m ih => rw [Function.iterate_succ_apply', ← ih, pow_succ']; rfl
 
 theorem card_stab_ne_zero {X Y : Scheme.{0}} {Γ : Type} [Group Γ] [Finite Γ] (ρ : Γ →* Aut X) (x : Y ⟶ X) {n J : ℕ}
-    (hn : n.Prime) (h : ∀ g, x ≫ (ρ g).hom = x → g ^ n ^ J = 1) {k : Type} [Field k] (hk : (n : k) ≠ 0) :
-    (Nat.card {g // x ≫ (ρ g).hom = x} : k) ≠ 0 := by
+    (hn : n.Prime) (h : ∀ g, x ≫ (ρ g).asIso.hom = x → g ^ n ^ J = 1) {k : Type} [Field k] (hk : (n : k) ≠ 0) :
+    (Nat.card {g // x ≫ (ρ g).asIso.hom = x} : k) ≠ 0 := by
   let P : Subgroup Γ :=
-    { carrier := {g | x ≫ (ρ g).hom = x}
+    { carrier := {g | x ≫ (ρ g).asIso.hom = x}
       one_mem' := by
-        show x ≫ (ρ 1).hom = x
+        show x ≫ (ρ 1).asIso.hom = x
         rw [map_one]; exact Category.comp_id x
       mul_mem' := by
         intro a b ha hb
-        show x ≫ (ρ (a * b)).hom = x
+        show x ≫ (ρ (a * b)).asIso.hom = x
         rw [map_mul]
-        show x ≫ (ρ b).hom ≫ (ρ a).hom = x
-        rw [← Category.assoc, show x ≫ (ρ b).hom = x from hb]; exact ha
+        show x ≫ (ρ b).asIso.hom ≫ (ρ a).asIso.hom = x
+        rw [← Category.assoc, show x ≫ (ρ b).asIso.hom = x from hb]; exact ha
       inv_mem' := by
         intro a ha
-        show x ≫ (ρ a⁻¹).hom = x
+        show x ≫ (ρ a⁻¹).asIso.hom = x
         rw [map_inv]
-        show x ≫ (ρ a).inv = x
-        exact (Iso.comp_inv_eq (ρ a : X ≅ X)).mpr (show x ≫ (ρ a).hom = x from ha).symm }
+        show x ≫ (ρ a).asIso.inv = x
+        exact (Iso.comp_inv_eq (ρ a).asIso).mpr (show x ≫ (ρ a).asIso.hom = x from ha).symm }
   haveI : Fact n.Prime := ⟨hn⟩
   have hP : IsPGroup n P := fun g => ⟨J, Subtype.ext (h g.1 g.2)⟩
   obtain ⟨m, hm⟩ := IsPGroup.iff_card.mp hP
-  have : Nat.card {g // x ≫ (ρ g).hom = x} = n ^ m := hm
+  have : Nat.card {g // x ≫ (ρ g).asIso.hom = x} = n ^ m := hm
   rw [this, Nat.cast_pow]
   exact pow_ne_zero _ hk
 
@@ -126,39 +133,39 @@ theorem exists_baseModel : (∀ (T K : Type) [CommRing T] [IsDomain T] [IsDiscre
     (pullback.lift q C₁.s hq) Γ ρ₀ τ₀ ν₀ (ded₁ β₁ hβ₁) ft₁ (Xo l₁).univ.proper inferInstance (fun g => (hω g).1) (by
       intro ω
       obtain ⟨h1, -, -, g, σ, h4, h5, h6⟩ := hω ω
-      obtain ⟨ρZ, hρZ⟩ := T.sym l₁ h₁ (ρ₀ ω) (ν₀ ω) g σ h4 h5 (by rw [h1]; exact h6)
+      obtain ⟨ρZ, hρZ⟩ := T.sym l₁ h₁ (ρ₀ ω).asIso (ν₀ ω) g σ h4 h5 (by rw [h1]; exact h6)
       obtain ⟨ρ', hρ'⟩ := exists_restrict T.s b' hU brange ρZ.hom
       refine ⟨ρ', ?_⟩
       rw [← cancel_mono (pullback.fst T.s (spMap b'))]
       simp only [Category.assoc, hρ', pullback.lift_fst, pullback.lift_fst_assoc]
       rw [← Category.assoc, qj, hρZ])
-  have hover : ∀ (κ : Type) [Field κ] (x : Sp κ ⟶ C₁.X) (ω : Γ), x ≫ (ρ ω).hom = x →
-      (ρ₀ ω).hom ≫ (Xo l₁).s = (Xo l₁).s := by
+  have hover : ∀ (κ : Type) [Field κ] (x : Sp κ ⟶ C₁.X) (ω : Γ), x ≫ (ρ ω).asIso.hom = x →
+      (ρ₀ ω).asIso.hom ≫ (Xo l₁).s = (Xo l₁).s := by
     intro κ _ x ω hx
     obtain ⟨-, -, -, g, σ, h4, h5, -⟩ := hω ω
-    have := GlobalTheory.galoisPart_eq_refl_of_fixes_point E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω) (ρ ω) σ hβ₁ hS ⟨J, hdiv⟩
+    have := GlobalTheory.galoisPart_eq_refl_of_fixes_point E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω).asIso (ρ ω).asIso σ hβ₁ hS ⟨J, hdiv⟩
       (hact ω).2.1 h4 h5 κ x hx
     subst this
     rw [h5]
     exact (congrArg _ (Spec.map_id _)).trans (Category.comp_id _)
   have hφ : ∀ ω, C₁.m.φ ≫ (mu ω).φ = (ν₀ ω).φ ≫ C₁.m.φ := fun ω => by
     rw [(hact ω).1, (hω ω).1]; exact (hact ω).2.2
-  have htriv : ∀ (κ : Type) [Field κ] [IsAlgClosed κ] (x : Sp κ ⟶ C₁.X) (ω : Γ), x ≫ (ρ ω).hom = x →
+  have htriv : ∀ (κ : Type) [Field κ] [IsAlgClosed κ] (x : Sp κ ⟶ C₁.X) (ω : Γ), x ≫ (ρ ω).asIso.hom = x →
       pullback.fst C₁.t.G.hom x ≫ (mu ω).φ = pullback.fst C₁.t.G.hom x := by
     intro κ _ _ x ω hx
-    exact GlobalTheory.T.finiteOrderAutomorphism_fixing_level_trivial_on_fixedFibre L1 L2 L3 E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω) (ν₀ ω) (ρ ω) (mu ω) hβ₁ hS ⟨J, hdiv⟩
+    exact GlobalTheory.T.finiteOrderAutomorphism_fixing_level_trivial_on_fixedFibre L1 L2 L3 E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω).asIso (ν₀ ω) (ρ ω).asIso (mu ω) hβ₁ hS ⟨J, hdiv⟩
       (hact ω).2.1 (hφ ω) (dvd_mul_left _ _) (hover κ x ω hx) (by rw [(hω ω).1]; exact (hω ω).2.2.1)
       ⟨τ ω, Nat.card Γ, Nat.card_pos, by rw [← map_pow, pow_card_eq_one', map_one], (hact ω).1.symm⟩ κ x hx
   have hcard : ∀ (κ : Type) [Field κ] [IsAlgClosed κ] (x : Sp κ ⟶ C₁.X),
-      (Nat.card {g // x ≫ (ρ g).hom = x} : κ) ≠ 0 := by
+      (Nat.card {g // x ≫ (ρ g).asIso.hom = x} : κ) ≠ 0 := by
     intro κ _ _ x
     refine card_stab_ne_zero ρ x (J := J) hnp (fun ω hx => ?_) ?_
     · obtain ⟨h1, -, h3, g, σ, -, -, h6⟩ := hω ω
-      have := GlobalTheory.T.iterate_eq_id_of_trivial_on_fixed_fibre L1 L2 L3 E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω) (ν₀ ω) (ρ ω) (mu ω) hβ₁ hS ⟨J, hdiv⟩
+      have := GlobalTheory.T.iterate_eq_id_of_trivial_on_fixed_fibre L1 L2 L3 E H D l₁ (Xo l₁) (n * l₀.M) β₁ C₁ (ρ₀ ω).asIso (ν₀ ω) (ρ ω).asIso (mu ω) hβ₁ hS ⟨J, hdiv⟩
         (hact ω).2.1 (hφ ω) (hover κ x ω hx) (by rw [h1]; exact h3) g (by rw [h1]; exact h6) κ x hx (htriv κ x ω hx)
       apply inj
       rw [map_pow, map_one]
-      exact Iso.ext ((pow_hom_eq_iterate _ _).trans this)
+      exact Aut.ext (Iso.ext ((pow_hom_eq_iterate _ _).trans this))
     · have := natCast_ne_zero_of_pt (x ≫ C₁.s) hU
       rw [Nat.cast_mul] at this
       exact left_ne_zero_of_mul this

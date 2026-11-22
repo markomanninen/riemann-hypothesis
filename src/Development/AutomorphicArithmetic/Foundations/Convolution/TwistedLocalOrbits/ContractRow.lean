@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+
+@[expose] public section
 
 open ValuativeRel Matrix UpperTheory.ConvolutionTheory.Loc
 
@@ -149,14 +153,14 @@ theorem exists_row {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ
   let F : (Fin n → E) → Fin n → E := fun x j =>
     if j < i then σ.symm (∑ l, w x l * b l j) else if i < j then (t i : E) / t j * (y x j * (y x i)⁻¹) else 1
   have he1 : ∀ l, valuation E (e l) ≤ 1 := fun l => by
-    simp only [he, one_apply]; split_ifs <;> simp
+    simp only [he, Matrix.one_apply]; split_ifs <;> simp
   have hx1 : ∀ x : Fin n → E, (∀ l, valuation E (x l - e l) ≤ r) → ∀ l, valuation E (x l) ≤ 1 := fun x hx l => by
     rw [← sub_add_cancel (x l) (e l)]
     exact Valuation.map_add_le _ ((hx l).trans hr1.le) (he1 l)
   have hy : ∀ (x x' : Fin n → E) γ, (∀ l, Nr γ (x l) (x' l)) → ∀ j, Nr γ (y x j) (y x' j) := fun x x' γ h j =>
     Nr.sum fun l => ((h l).map hσ).mul (.const (hc1 l j))
   have hye : ∀ j, y e j = c i j := fun j => by
-    simp [y, he, one_apply, apply_ite σ]
+    simp [y, he, Matrix.one_apply, apply_ite σ]
   have hyc : ∀ x : Fin n → E, (∀ l, valuation E (x l - e l) ≤ r) → ∀ j, Nr r (y x j) (c i j) := fun x hx j =>
     hye j ▸ hy x e r (fun l => ⟨hx1 x hx l, he1 l, hx l⟩) j
   have hμ : ∀ x : Fin n → E, (∀ l, valuation E (x l - e l) ≤ r) → valuation E (y x i) = 1 := fun x hx => by
@@ -219,8 +223,8 @@ theorem exists_row {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ
     rw [← h1]
     field_simp
 
-open GlobalTheory.PRep GlobalTheory.SmGL in
 
+open GlobalTheory.PRep GlobalTheory.SmGL in
 theorem exists_conj {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → Eˣ) {r ρ : ValueGroupWithZero E} (hr : r ≤ ρ)
     (hρ : ρ < 1) (ht : ∀ j l, j < l → valuation E ((t j : E) / t l) ≤ ρ) (b : GL (Fin n) E)
     (hb1 : ∀ j l, valuation E (b.val j l) ≤ 1) (hc1 : ∀ j l, valuation E (b⁻¹.val j l) ≤ 1)
@@ -259,11 +263,11 @@ theorem exists_conj {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) (t : Fin n → E�
   refine ⟨k, fun i j => by rw [hk]; exact hx i j, fun i j => ?_, fun i => (Units.mk0 _ (hμ0 i))⁻¹,
     fun i => by simpa using hμ i, ?_⟩
   · refine hbd (fun l => k⁻¹.val i l) 1 (fun l hl => absurd l.2 (not_lt.2 hl)) (fun j _ => ?_) j
-    rw [← hk, ← mul_apply, k.inv_mul, one_apply]
+    rw [← hk, ← Matrix.mul_apply, k.inv_mul, Matrix.one_apply]
     split_ifs <;> simp
   · rw [mul_assoc, eq_inv_mul_iff_mul_eq, ← mul_assoc, ← eq_mul_inv_iff_mul_eq, mul_assoc]
     ext i j
-    rw [Units.val_mul, Units.val_mul, Units.val_mul, val_diagT, val_diagT, mul_diagonal, diagonal_mul, mul_apply]
+    rw [Units.val_mul, Units.val_mul, Units.val_mul, val_diagT, val_diagT, mul_diagonal, diagonal_mul, Matrix.mul_apply]
     have h2 : ∀ l, (sg σ k).val i l = σ (x i l) := fun l => by
       show σ (k.val i l) = _
       rw [hk]; rfl

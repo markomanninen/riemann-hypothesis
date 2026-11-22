@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
-import GroundTheory.AutomorphicForms.GL2Classical.GrowthReduction
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.GJGlobalModulus
+public import GroundTheory.AutomorphicForms.GL2Classical.GrowthReduction
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -62,8 +66,8 @@ private theorem dM_mem (t : (A F)ˣ) (h1 : ∀ w : InfinitePlace F, ‖((t : A F
     exact (sq_eq_sq₀ (Reduction.euclidNorm_nonneg _) (Reduction.euclidNorm_nonneg _)).1 key
   · rw [GLnLocal.mem_integralGL_iff, ← Reduction.finAt_inv]
     refine ⟨fun i j => ?_, fun i j => ?_⟩
-    · fin_cases i <;> fin_cases j <;> simp [dM, Subring.zero_mem, Subring.one_mem, h2 v]
-    · fin_cases i <;> fin_cases j <;> simp [dM, h3 v]
+    · fin_cases i <;> fin_cases j <;> simp [dM, h2 v] <;> change (0 : v.adicCompletion F) ∈ _ <;> exact Subring.zero_mem _
+    · fin_cases i <;> fin_cases j <;> simp [dM, h3 v] <;> change (0 : v.adicCompletion F) ∈ _ <;> exact Subring.zero_mem _
 
 end UpperTheory.ConvolutionTheory.R2.M
 

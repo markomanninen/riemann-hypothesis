@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutingMonicOperatorPolynomials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyMapOfSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalSpanAdjoinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkEquivInl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutingMonicOperatorPolynomials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyMapOfSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDimensionalSpanAdjoinStatement
+
+@[expose] public section
 
 open NumberField MeasureTheory GlobalTheory.CuspRep
 
@@ -96,12 +100,14 @@ theorem exists_poly {V : Type} [AddCommGroup V] [Module ℂ V] (K : Submodule �
   obtain ⟨s, c, hs, i, hi, hci⟩ := not_linearIndependent_iff.1 hnli
   refine ⟨∑ k ∈ s, Polynomial.monomial k (c k), fun h0 => hci ?_, ?_⟩
   · have := congrArg (fun p : Polynomial ℂ => p.coeff i) h0
-    simpa [Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, hi] using this
+    simpa [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply, hi] using this
   · have ev : (Polynomial.aeval T (∑ k ∈ s, Polynomial.monomial k (c k))) w = ∑ k ∈ s, c k • (T ^ k) w := by
-      simp [map_sum, Polynomial.aeval_monomial, Module.algebraMap_end_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, Polynomial.aeval_monomial, Module.algebraMap_end_apply]
     have := congrArg Subtype.val hs
     simp only [Submodule.coe_sum, Submodule.coe_smul, f, ZeroMemClass.coe_zero] at this
-    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, ev, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, ev, map_sum]
     simpa using this
 
 def liftHom (I : Type) (M : Type) [AddCommGroup M] [Module ℂ M] : Module.End ℂ M →ₐ[ℂ] Module.End ℂ (I → M) where

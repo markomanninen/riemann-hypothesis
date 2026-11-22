@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
 namespace GlobalTheory.Shin
 
+
 open Polynomial SemidirectProduct in
 open scoped Classical in
-
 theorem _root_.GlobalTheory.Shin.rootSum_map_frobeniusPow : ∀ (F : Type) [Field F] [Finite F] (θ : AlgebraicClosure F →* ℂ) (t : F →+* F) (j : ℕ), (∀ x, t x = x ^ (ringChar F ^ j)) → ∀ (k : ℕ) (P : F[X]), _root_.GlobalTheory.CuspGL.rootSum θ k (P.map t) = _root_.GlobalTheory.CuspGL.rootSum θ (k * ringChar F ^ j) P := by
   intro F _ _ θ t j ht k P
   haveI : Fact (ringChar F).Prime := ⟨CharP.char_is_prime F (ringChar F)⟩

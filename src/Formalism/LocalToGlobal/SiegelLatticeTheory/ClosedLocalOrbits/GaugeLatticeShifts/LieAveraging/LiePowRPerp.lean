@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,8 @@ theorem hT_eq_coefX (f : S.V) (a : Fin r) (hf : ∀ b, S.hT f (F.e b) = if b = a
     rw [Finsupp.linearCombination_apply, Finsupp.sum_fintype _ _ (by simp)] at h1
     exact h1.symm
   conv_lhs => rw [hsum]
-  simp [map_sum, map_smul, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, hf]
 
 end Xa
 
@@ -155,7 +160,8 @@ theorem star_alg_rat (q : ℚ) : star (algebraMap ℚ E q) = algebraMap ℚ E q 
 
 theorem nexp_adj (hY : Y ∈ F.LieN) (hs : star s = s) (x y : S.V) :
     S.hT (nexp Y s x) y = S.hT x (nexp Y (-s) y) := by
-  rw [nexp_apply s hY, nexp_apply (-s) hY, map_sum, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [nexp_apply s hY, nexp_apply (-s) hY, map_sum, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have hsk := lie_skew_pow hY i x y
   have hsk' : S.hT ((Y ^ i) x) y = (-1) ^ i * S.hT x ((Y ^ i) y) := by
@@ -241,7 +247,8 @@ theorem nexp_root (hY : Y ∈ F.LieN) (f : S.V) (a : Fin r)
       have hr : a.1 + 1 = r := by omega
       rw [he, hr, Xa_ge F le_rfl]
       exact ⟨hY.2.2 _ hzperp, hfz⟩
-  rw [nexp_apply s hY, map_sum, Finset.sum_eq_single 1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [nexp_apply s hY, map_sum, Finset.sum_eq_single 1]
   · simp only [pow_one, map_smul, smul_eq_mul, Nat.factorial_one, Nat.cast_one, inv_one, map_one,
       one_mul]
     rw [hT_eq_coefX F f a hf (hXa1 hw)]

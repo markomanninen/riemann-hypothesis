@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.KummerTheory.PlaceExPf
-import Mathlib.RingTheory.Valuation.LocalSubring
+module
+
+public import Development.EtaleCohomology.KummerTheory.PlaceExPf
+public import Mathlib.RingTheory.Valuation.LocalSubring
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem PlaceStep_of (hR : PlaceResGood) : PlaceStep := by
       (maximalIdeal A.toSubring).map (Subring.inclusion hAS) ≤ Q → S ≤ A.toSubring := by
     intro y S hAS hS Q _ hQ
     have hle : A ≤ LocalSubring.ofPrime S Q := by
-      refine ⟨hAS.trans (LocalSubring.le_ofPrime ..), ((local_hom_TFAE _).out 2 0).mp ?_⟩
+      refine ⟨hAS.trans (LocalSubring.le_ofPrime ..), ((local_hom_tfae _).out 3 1).mp ?_⟩
       conv_rhs => rw [← IsLocalization.AtPrime.map_eq_maximalIdeal Q]
       refine .trans ?_ (Ideal.map_mono hQ)
       rw [Ideal.map_map]; rfl

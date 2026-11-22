@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.EisCellsDefs
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryUnnSubgroupEqTopOfLeviUnipotentWeyl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.EisCellsDefs
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryUnnSubgroupEqTopOfLeviUnipotentWeyl
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,9 +33,6 @@ theorem rm_neg (x : Matrix (Fin n) (Fin n) D.host.E) : rm (-x) = -rm x := by
   ext i j; simp [rm]
 
 theorem rm_one : rm (1 : Matrix (Fin n) (Fin n) D.host.E) = 1 := by
-  simp [rm]
-
-theorem rm_zero : rm (0 : Matrix (Fin n) (Fin n) D.host.E) = 0 := by
   simp [rm]
 
 theorem blockMatrix_map (a b c d : Matrix (Fin n) (Fin n) D.host.E) :

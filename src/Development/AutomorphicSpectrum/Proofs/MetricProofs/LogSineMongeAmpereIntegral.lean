@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContDiffAtFrameEntry
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogSineMongeAmpereNormalizedStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsHolomorphicNormalFrameStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalUnitaryNormalFrame2x2Statement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralNormSqMobDMulCompMobStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MobiusChangeOfVariablesPairStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticAtMobiusDetJacobianEqStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MobiusPairAnalyticDetJacobianEqStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CompRightEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContDiffAtFrameEntry
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogSineMongeAmpereNormalizedStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsHolomorphicNormalFrameStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalUnitaryNormalFrame2x2Statement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralNormSqMobDMulCompMobStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MobiusChangeOfVariablesPairStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticAtMobiusDetJacobianEqStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MobiusPairAnalyticDetJacobianEqStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights
 open scoped ComplexOrder
 
@@ -25,7 +30,7 @@ namespace GlobalTheory.CompanionTheory.Ar.PB.FibPt
 theorem analyticAt_entry {D d : ℕ} (g : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2) ℂ)
     (hg : ∀ p q, Differentiable ℂ fun y' => g y' p q) {T : (Fin D → ℂ) → (Fin d → ℂ)} {z₀ : Fin D → ℂ}
     (hT : AnalyticAt ℂ T z₀) (p q : Fin 2) : AnalyticAt ℂ (fun z => g (T z) p q) z₀ :=
-  AnalyticAt.comp' (ReciprocityTheory.AnForm.Osgood.osgood d Set.univ _ isOpen_univ (hg p q).differentiableOn (T z₀) (Set.mem_univ _)) hT
+  AnalyticAt.comp (ReciprocityTheory.AnForm.Osgood.osgood d Set.univ _ isOpen_univ (hg p q).differentiableOn (T z₀) (Set.mem_univ _)) hT
 
 theorem analyticAt_coord {D : ℕ} (i : Fin D) (z₀ : Fin D → ℂ) : AnalyticAt ℂ (fun z : Fin D → ℂ => z i) z₀ :=
   (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin D => ℂ) i).analyticAt z₀
@@ -107,7 +112,7 @@ theorem analyticAt_tail {d : ℕ} (z₀ : Fin (d + 1) → ℂ) : AnalyticAt ℂ 
 
 theorem analyticAt_tail2 {d : ℕ} (z₀ : Fin (d + 2) → ℂ) :
     AnalyticAt ℂ (fun z : Fin (d + 2) → ℂ => Fin.tail (Fin.tail z)) z₀ :=
-  AnalyticAt.comp' (analyticAt_tail (Fin.tail z₀)) (analyticAt_tail z₀)
+  AnalyticAt.comp (analyticAt_tail (Fin.tail z₀)) (analyticAt_tail z₀)
 
 end GlobalTheory.CompanionTheory.Ar.PB.FibPt
 
@@ -148,9 +153,9 @@ theorem dens1 : ∀ (d m : ℕ) (G g : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2
     intro r
     rw [hτ]
     by_cases h : (r : ℕ) < m
-    · simp only [φ, h, if_true]
+    · simp only [φ, h, ite_true]
       exact contDiffAt_xi_coord G (hTa _) 0 (by rw [hTc]; exact hG.self_of_nhds) (by rw [hTc]; exact hC)
-    · simp only [φ, h, if_false]
+    · simp only [φ, h, ite_false]
       exact contDiffAt_base α (T := T) (hTa _) (by rw [hTc]; exact hα)
   have step := ReciprocityTheory.AnForm.A.maDens_comp φ (mob1 g) _ han hφ
   rw [hjac, hτ] at step
@@ -162,14 +167,14 @@ theorem dens1 : ∀ (d m : ℕ) (G g : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2
       funext z
       simp [φ, h, mob1, T]
     rw [e]
-    simp only [h, if_true]
+    simp only [h, ite_true]
     exact (hess_xi G g (hTa _) 0 (by rw [hTc]; exact hG) (by rw [hTc]; exact hC) hg (by rw [hTc]; exact hu)
       (by simpa [hTc] using ha)).2.2
   · have e : φ r ∘ mob1 g = fun z => α (Fin.tail z) := by
       funext z
       simp [φ, h, mob1]
     rw [e]
-    simp only [h, if_false]
+    simp only [h, ite_false]
 
 theorem dens2 : ∀ (d m : ℕ) (u : ℕ → Fin 2 → ℝ) (G g : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2) ℂ) (α : (Fin d → ℂ) → ℝ) (y : Fin d → ℂ), (∀ᶠ y' in 𝓝 y, (G y').PosDef) → (∀ p q, ContDiffAt ℝ 2 (fun y' => G y' p q) y) → ContDiffAt ℝ 2 α y → (∀ p q, Differentiable ℂ fun y' => g y' p q) → IsUnit (g y).det → ∀ a₀ a₁ : ℂ, GlobalTheory.CompanionTheory.Ar.PB.FibPt.den (g y) a₀ ≠ 0 → GlobalTheory.CompanionTheory.Ar.PB.FibPt.den (g y) a₁ ≠ 0 → maDens (fun (r : Fin (d + 2)) (z : Fin (d + 2) → ℂ) => if (r : ℕ) < m then u r 0 * xiPot ((g (Fin.tail (Fin.tail z)))ᴴ * G (Fin.tail (Fin.tail z)) * g (Fin.tail (Fin.tail z))) (z 0) + u r 1 * xiPot ((g (Fin.tail (Fin.tail z)))ᴴ * G (Fin.tail (Fin.tail z)) * g (Fin.tail (Fin.tail z))) (z 1) else α (Fin.tail (Fin.tail z))) (Fin.cons a₀ (Fin.cons a₁ y)) = (Complex.normSq (GlobalTheory.CompanionTheory.Ar.PB.FibPt.mobD (g y) a₀) * Complex.normSq (GlobalTheory.CompanionTheory.Ar.PB.FibPt.mobD (g y) a₁)) * maDens (fun (r : Fin (d + 2)) (z : Fin (d + 2) → ℂ) => if (r : ℕ) < m then u r 0 * xiPot (G (Fin.tail (Fin.tail z))) (z 0) + u r 1 * xiPot (G (Fin.tail (Fin.tail z))) (z 1) else α (Fin.tail (Fin.tail z))) (Fin.cons (GlobalTheory.CompanionTheory.Ar.PB.FibPt.mob (g y) a₀) (Fin.cons (GlobalTheory.CompanionTheory.Ar.PB.FibPt.mob (g y) a₁) y)) := by
   intro d m u G g α y hG hC hα hg hu a₀ a₁ h₀ h₁
@@ -189,11 +194,11 @@ theorem dens2 : ∀ (d m : ℕ) (u : ℕ → Fin 2 → ℝ) (G g : (Fin d → �
     intro r
     rw [hτ]
     by_cases h : (r : ℕ) < m
-    · simp only [φ, h, if_true]
+    · simp only [φ, h, ite_true]
       exact (contDiffAt_const.mul (contDiffAt_xi_coord G (hTa _) 0 (by rw [hTc]; exact hG.self_of_nhds)
         (by rw [hTc]; exact hC))).add (contDiffAt_const.mul (contDiffAt_xi_coord G (hTa _) 1
           (by rw [hTc]; exact hG.self_of_nhds) (by rw [hTc]; exact hC)))
-    · simp only [φ, h, if_false]
+    · simp only [φ, h, ite_false]
       exact contDiffAt_base α (T := T) (hTa _) (by rw [hTc]; exact hα)
   have step := ReciprocityTheory.AnForm.A.maDens_comp φ (mob2 g) _ han hφ
   rw [hjac, hτ, Complex.normSq_mul] at step
@@ -207,9 +212,9 @@ theorem dens2 : ∀ (d m : ℕ) (u : ℕ → Fin 2 → ℝ) (G g : (Fin d → �
       have e0 : mob2 g z 0 = mob (g (T z)) (z 0) := rfl
       have e1 : mob2 g z 1 = mob (g (T z)) (z 1) := rfl
       have e2 : Fin.tail (Fin.tail (mob2 g z)) = T z := by simp [mob2, T]
-      simp only [Function.comp, φ, h, if_true, e0, e1, e2, T]
+      simp only [Function.comp, φ, h, ite_true, e0, e1, e2, T]
     rw [e]
-    simp only [h, if_true]
+    simp only [h, ite_true]
     have x0 := hess_xi G g (hTa (Fin.cons a₀ (Fin.cons a₁ y))) 0 (by rw [hTc]; exact hG) (by rw [hTc]; exact hC) hg
       (by rw [hTc]; exact hu) (by rw [hTc, c0]; exact h₀)
     have x1 := hess_xi G g (hTa (Fin.cons a₀ (Fin.cons a₁ y))) 1 (by rw [hTc]; exact hG) (by rw [hTc]; exact hC) hg
@@ -218,14 +223,14 @@ theorem dens2 : ∀ (d m : ℕ) (u : ℕ → Fin 2 → ℝ) (G g : (Fin d → �
   · have e : φ r ∘ mob2 g = fun z => α (Fin.tail (Fin.tail z)) := by
       funext z
       have e2 : Fin.tail (Fin.tail (mob2 g z)) = Fin.tail (Fin.tail z) := by simp [mob2]
-      simp only [Function.comp, φ, h, if_false, e2]
+      simp only [Function.comp, φ, h, ite_false, e2]
     rw [e]
-    simp only [h, if_false]
+    simp only [h, ite_false]
 
 end GlobalTheory.CompanionTheory.Ar.PB.FibPt
 
-open GlobalTheory.CompanionTheory.Ar.PB.FibPt in
 
+open GlobalTheory.CompanionTheory.Ar.PB.FibPt in
 theorem GlobalTheory.CompanionTheory.Ar.PB.FibPt.ae_den_ne (g : Matrix (Fin 2) (Fin 2) ℂ) (hg : IsUnit g.det) : ∀ᵐ a : ℂ, den g a ≠ 0 := by
   have hdet : g 0 0 * g 1 1 - g 0 1 * g 1 0 ≠ 0 := by
     have := hg.ne_zero
@@ -246,8 +251,8 @@ theorem GlobalTheory.CompanionTheory.Ar.PB.FibPt.ae_den_ne (g : Matrix (Fin 2) (
       linear_combination ha'
     exact measure_mono_null hsub (by simp)
 
-open GlobalTheory.CompanionTheory.Ar.PB.FibPt in
 
+open GlobalTheory.CompanionTheory.Ar.PB.FibPt in
 theorem GlobalTheory.CompanionTheory.Ar.PB.FibPt.fibre_integral_any_frame : GroundTheory.Heights₂.Heights.Inter.FibreLocal.Statement → ∀ (d k : ℕ), 1 ≤ k → 2 * k ≤ d + 2 → ∀ (G : (Fin d → ℂ) → Matrix (Fin 2) (Fin 2) ℂ) (α : (Fin d → ℂ) → ℝ) (y : Fin d → ℂ), (∀ᶠ y' in 𝓝 y, (G y').PosDef) → (∀ p q, ContDiffAt ℝ 2 (fun y' => G y' p q) y) → ContDiffAt ℝ 2 α y → (∑ i ∈ Finset.range k, ∫ p : ℂ × ℂ, logSin (G y) p.1 p.2 * maDens (let u : ℕ → Fin 2 → ℝ := (fun (i : ℕ) (r : ℕ) (c : Fin 2) => if r = 0 then (![1, -1] : Fin 2 → ℝ) c else if r = 1 then (![0, 1] : Fin 2 → ℝ) c else if r < 2 + 2 * i then (![1, 0] : Fin 2 → ℝ) c else (![0, 1] : Fin 2 → ℝ) c) i; (fun (r : Fin (d + 2)) (z : Fin (d + 2) → ℂ) => if (r : ℕ) < 2 * k then u r 0 * xiPot (G (Fin.tail (Fin.tail z))) (z 0) + u r 1 * xiPot (G (Fin.tail (Fin.tail z))) (z 1) else α (Fin.tail (Fin.tail z)))) (Fin.cons p.1 (Fin.cons p.2 y))) = 2 * ReciprocityTheory.ChartRestriction.G.AI.kappa k * ∫ a : ℂ, maDens (fun (r : Fin (d + 1)) (z : Fin (d + 1) → ℂ) => if (r : ℕ) < 2 * k - 1 then xiPot (G (Fin.tail z)) (z 0) else α (Fin.tail z)) (Fin.cons a y) := by
   intro hF d k hk hkd G α y hG hC hα
   obtain ⟨g, hgd, hgu, hpd, hc2, h1, hf0⟩ := GlobalTheory.T.local_unitary_normal_frame_2x2 d G y hG hC

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CoefMemDual
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CoefMemDual
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct Filter
 
@@ -235,7 +239,7 @@ theorem overlap [CharZero Ω] [Fact p.Prime] [IsFractionRing B Ω] (hc : ∀ x, 
       have hYeq : ((⟨_, hYA a l'⟩ : DA.omHT (σ.comp c.toRingHom)) : V) =
           eigProj DB.ρΩ (σ.comp c.toRingHom) (DB.h (Pi.single l' 1)) + ((p : Ω) ^ m) • wc l' := by
         rw [← hwce l', ← hρ]
-      rw [hYeq, map_add, map_smul, smul_eq_mul] at eA
+      rw [hYeq, map_add (f := _), map_smul, smul_eq_mul] at eA
       have eB : ∀ b, ∑ l, (gB l (Sum.inl b) : Ω) * DB.gram σ dB l l' =
           φB b (eigProj DB.ρΩ (σ.comp c.toRingHom) (DB.h (Pi.single l' 1))) + (p : Ω) ^ m * zB b l' +
             (p : Ω) ^ m * ∑ l, (xB b l' l : Ω) * DB.gram σ dB l l' := by

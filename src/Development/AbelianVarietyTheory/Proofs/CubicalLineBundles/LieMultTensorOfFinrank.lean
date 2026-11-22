@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DetCondTensorDefinite
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TensorLieBasisExists
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EllPullExistsOAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.DetCondTensorDefinite
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TensorLieBasisExists
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.EllPullExistsOAct
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -13,8 +17,8 @@ open GlobalTheory GlobalTheory.CM
 
 namespace GlobalTheory.CM
 
-open GlobalTheory.TensorDet GlobalTheory.Serre in
 
+open GlobalTheory.TensorDet GlobalTheory.Serre in
 theorem lieMult_tensor_of_finrank {O O' M R k : Type} [CommRing O] [CommRing O'] [Algebra O O'] [AddCommGroup M]
     [Module O M] [Module O' M] [IsScalarTower O O' M] [Module.Finite O M] [Module.Projective O M] [CommRing R]
     [Field k] [Algebra O k] {G A : Over (Sp R)} [GrpObj G] [IsCommMonObj G] [GrpObj A] [IsCommMonObj A]
@@ -59,43 +63,44 @@ theorem lieMult_tensor_of_finrank {O O' M R k : Type} [CommRing O] [CommRing O']
     (isLinearPullback_pullback b₀ (spMap β)).2 k (𝟙 _) χ n).1 this
   rwa [Category.id_comp] at h2
 
-open GlobalTheory.TensorDet GlobalTheory.Serre in
 
+open GlobalTheory.TensorDet GlobalTheory.Serre in
 theorem hasType_of_isTen : Out.PolBaseChangeSt → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (R : Type) [CommRing R] [CharZero R] (ω : R) (C : Ell H R ω) (D : Datum H) (h : D.La → D.La → OK H) (T : PAT H (Sp R)), Nonempty (IsTen C D h T) → HasType H T.t.act (2 * ω - 1) (D.p + D.q) 0 := by
-  rintro - E _ _ _ H R _ _ ω C D h T ⟨t⟩ k _ _ β hβ χ
-  have : CharZero k := β.charZero_iff hβ |>.1 inferInstance
-  obtain ⟨κ, hκw, hκ⟩ := LieChar.ell_char E H R ω C
-  obtain ⟨-, hgen, -, -, -, hM⟩ := OK_isDedekindDomain_and_projective E H
-  obtain ⟨_, _, -⟩ := hM D.La D.fin D.proj
-  let _ : Algebra (OK H) k := (β.comp κ).toAlgebra
-  have := C.P.smoothDim
-  have key := lieMult_tensor_of_finrank (SmoothOfRelativeDimension.smooth C.P.g C.P.A.hom) C.v C.basis C.act κ
-    T.t.act t.ten hκ t.lin β (fun _ => rfl) χ
-  have hw : algebraMap (OK H) (𝓞 E) (wK H) = H.w0 := rfl
-  have hrt : algebraMap (OK H) (𝓞 E) (2 * wK H - 1) = H.rt := by
-    rw [map_sub, map_mul, hw, map_ofNat, H.two_weight_eq_one_add_root, map_one, add_sub_cancel_left]
-  have hr : β (2 * ω - 1) = algebraMap (OK H) k (2 * wK H - 1) := by
-    change _ = β (κ _)
-    simp only [map_sub, map_mul, map_ofNat, map_one, hκw]
-  rw [hr]
-  refine ⟨fun h => key _ ((finrank_eigenSub χ (RingHom.ext fun c => ?_)).trans D.rank), fun h => ?_⟩
-  · have hw' : χ (algebraMap (OK H) (𝓞 E) (wK H)) = algebraMap (OK H) k (wK H) := by
-      rw [← hrt] at h
-      simp only [map_sub, map_mul, map_ofNat, map_one] at h
-      linear_combination h / 2
-    obtain ⟨m, rfl, -⟩ := hgen c
-    simp only [RingHom.comp_apply, map_add, map_mul, map_intCast, hw']
-  · refine key _ (Submodule.finrank_eq_zero.2 ((Submodule.eq_bot_iff _).2 fun y hy => ?_))
-    have h1 := EigenSplit.mem_eigenSub.1 hy H.rt
-    have h2 : rightAction k (OK H) (𝓞 E) D.La H.rt = algebraMap (OK H) k (2 * wK H - 1) • LinearMap.id := by
-      ext m
-      simp only [TensorProduct.AlgebraTensorModule.curry_apply,
-        TensorProduct.curry_apply, LinearMap.coe_restrictScalars, rightAction_tmul, LinearMap.smul_apply,
-        LinearMap.id_apply]
-      rw [← hrt, algebraMap_smul, TensorProduct.tmul_smul, ← algebraMap_smul k]
-    rw [h2] at h1
-    have h3 : (χ H.rt - algebraMap (OK H) k (2 * wK H - 1)) • y = 0 := by
-      rw [sub_smul, ← h1]; exact sub_self _
-    exact (smul_eq_zero.1 h3).resolve_left (sub_ne_zero.2 h)
+  set_option synthInstance.maxHeartbeats 400000 in
+    rintro - E _ _ _ H R _ _ ω C D h T ⟨t⟩ k _ _ β hβ χ
+    have : CharZero k := β.charZero_iff hβ |>.1 inferInstance
+    obtain ⟨κ, hκw, hκ⟩ := LieChar.ell_char E H R ω C
+    obtain ⟨-, hgen, -, -, -, hM⟩ := OK_isDedekindDomain_and_projective E H
+    obtain ⟨_, _, -⟩ := hM D.La D.fin D.proj
+    let _ : Algebra (OK H) k := (β.comp κ).toAlgebra
+    have := C.P.smoothDim
+    have key := lieMult_tensor_of_finrank (SmoothOfRelativeDimension.smooth C.P.g C.P.A.hom) C.v C.basis C.act κ
+      T.t.act t.ten hκ t.lin β (fun _ => rfl) χ
+    have hw : algebraMap (OK H) (𝓞 E) (wK H) = H.w0 := rfl
+    have hrt : algebraMap (OK H) (𝓞 E) (2 * wK H - 1) = H.rt := by
+      rw [map_sub, map_mul, hw, map_ofNat, H.two_weight_eq_one_add_root, map_one, add_sub_cancel_left]
+    have hr : β (2 * ω - 1) = algebraMap (OK H) k (2 * wK H - 1) := by
+      change _ = β (κ _)
+      simp only [map_sub, map_mul, map_ofNat, map_one, hκw]
+    rw [hr]
+    refine ⟨fun h => key _ ((finrank_eigenSub χ (RingHom.ext fun c => ?_)).trans D.rank), fun h => ?_⟩
+    · have hw' : χ (algebraMap (OK H) (𝓞 E) (wK H)) = algebraMap (OK H) k (wK H) := by
+        rw [← hrt] at h
+        simp only [map_sub, map_mul, map_ofNat, map_one] at h
+        linear_combination h / 2
+      obtain ⟨m, rfl, -⟩ := hgen c
+      simp only [RingHom.comp_apply, map_add (f := _), map_mul, map_intCast, hw']
+    · refine key _ (Submodule.finrank_eq_zero.2 ((Submodule.eq_bot_iff _).2 fun y hy => ?_))
+      have h1 := EigenSplit.mem_eigenSub.1 hy H.rt
+      have h2 : rightAction k (OK H) (𝓞 E) D.La H.rt = algebraMap (OK H) k (2 * wK H - 1) • LinearMap.id := by
+        ext m
+        simp only [TensorProduct.AlgebraTensorModule.curry_apply,
+          TensorProduct.curry_apply, LinearMap.coe_restrictScalars, rightAction_tmul, LinearMap.smul_apply,
+          LinearMap.id_apply]
+        rw [← hrt, algebraMap_smul, TensorProduct.tmul_smul, ← algebraMap_smul k]
+      rw [h2] at h1
+      have h3 : (χ H.rt - algebraMap (OK H) k (2 * wK H - 1)) • y = 0 := by
+        rw [sub_smul, ← h1]; exact sub_self _
+      exact (smul_eq_zero.1 h3).resolve_left (sub_ne_zero.2 h)
 
 end GlobalTheory.CM

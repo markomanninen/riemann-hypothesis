@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFIntZero
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.LeviOfRealSmulRight
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PFIntZeroMixed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFIntZero
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.LeviOfRealSmulRight
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PFIntZeroMixed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -19,7 +24,7 @@ def eulerDirs {n : ℕ} (F : (Fin n → ℂ) → (Σ k, ι k) → ℂ) (y : Fin 
   carrier := {x | ∃ c : K → ℂ, fderiv ℂ F y x = bsmul c (F y)}
   add_mem' := by
     rintro x x' ⟨c, hc⟩ ⟨c', hc'⟩
-    exact ⟨c + c', by rw [map_add, hc, hc']; funext p; simp [bsmul, add_mul]⟩
+    exact ⟨c + c', by rw [map_add (f := _), hc, hc']; funext p; simp [bsmul, add_mul]⟩
   zero_mem' := ⟨0, by rw [map_zero]; funext p; simp [bsmul]⟩
   smul_mem' := by
     rintro a x ⟨c, hc⟩

@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedSectionStep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionMixed
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsIntegralAgainstPositive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombExpand
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionMixed
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftNefBig
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZCombLimit
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMixedSectionStep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionMixed
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsIntegralAgainstPositive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZCombExpand
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionMixed
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftNefBig
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PZCombLimit
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -22,8 +27,8 @@ namespace MixedSectionInduction
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 theorem cycR_eq_finsum (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι) → ℝ) (P : Ideal (MRing ι)) {n : ℕ}
     (L : Fin n → ReciprocityTheory.ChartRestriction.G.Geo.HermLine ι) (s : MRing ι) :
     cycR I P L s = ∑ᶠ W : Ideal (MRing ι), (ReciprocityTheory.ChartRestriction.G.Geo.divCycle P s W : ℝ) *
@@ -39,8 +44,8 @@ theorem cycR_eq_finsum (I : Ideal (MRing ι) → (n : ℕ) → (Fin n → Recipr
 
 end MixedSectionInduction
 
-open MixedSectionInduction in
 
+open MixedSectionInduction in
 theorem MixedSectionStep.proof (hS : SmallSectionMixed.Statement) (hR : GroundTheory.Heights₂.Heights.Inter.RatR.Statement)
     (hI : IntegralAgainstPositive.Statement) (hK : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.KleimanNefIntersectionNonneg)
     (hE : ZCombExpand.Statement) : MixedSectionStep.Statement := by
@@ -104,7 +109,7 @@ theorem MixedSectionStep.proof (hS : SmallSectionMixed.Statement) (hR : GroundTh
       else (geoNum n W (fun j => (L j).a) : ℝ) * Real.log (charOf W)) := by
     intro W hW
     obtain ⟨hH, hV⟩ := divSuppArith K ι P n
-      (HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun k => (α k : ℤ))) f W hP ⟨α, fun _ => rfl, hfα, hfP⟩ hW
+      (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun k => (α k : ℤ))) f W hP ⟨α, fun _ => rfl, hfα, hfP⟩ hW
     have hPW : P ≤ W := le_trans le_sup_left hW.1.1.2
     split_ifs with hWh
     ·

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataForms
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataForms
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain
 open scoped nonZeroDivisors

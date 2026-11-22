@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.MemEigSpOfMemHtDual
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFullLevelAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TateIsoBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TateIsoPullbackEquivStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.MemEigSpOfMemHtDual
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFullLevelAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TateIsoBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TateIsoPullbackEquivStatement
+
+@[expose] public section
 
 noncomputable section
 

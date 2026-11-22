@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.QuotientEigenDifference
+
+@[expose] public section
 
 open scoped NNReal
 
@@ -34,7 +38,8 @@ theorem exists_eq_sum_of_mem {p q : ℕ} (F : Submodule C (Fin (p + q) → C))
     have hf0 : F.mkQ f = 0 := by simpa using hf
     have hm : ∑ k, γ (Fin.natAdd p k) • F.mkQ (m0 k) = 0 :=
       Finset.sum_eq_zero fun k _ => by simp [hm0 k]
-    rw [hf0, map_add, map_sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hf0, map_add (f := _), map_sum, map_sum] at h1
     simp only [map_smul] at h1
     rw [hm, add_zero] at h1
     exact h1.symm
@@ -52,7 +57,8 @@ theorem det_append_eq {p q : ℕ} (F : Submodule C (Fin (p + q) → C))
   have hmem : ∀ i, u i - ∑ j, A i j • u0 j ∈ F := by
     intro i
     have : F.mkQ (u i - ∑ j, A i j • u0 j) = 0 := by
-      rw [map_sub, map_sum, hu i]; simp only [map_smul]; exact sub_self _
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, hu i]; simp only [map_smul]; exact sub_self _
     rwa [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at this
   choose β hβ using fun i => exists_eq_sum_of_mem F u0 m0 hli hm0 hN _ (hmem i)
   have key : (Matrix.of (Fin.append u m)).submatrix finSumFinEquiv finSumFinEquiv =

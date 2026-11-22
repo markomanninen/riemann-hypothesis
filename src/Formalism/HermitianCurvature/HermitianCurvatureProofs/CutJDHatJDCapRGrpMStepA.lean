@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMRad
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianInvariantCellAction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDCapRGrpMRad
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QxChain
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianInvariantCellAction
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 
@@ -317,7 +321,7 @@ theorem coef_ybv (l : Fin r) (hl : l.val + 1 = r) {z : Fin (2 * r + k + 1) → �
   unfold ybv
   have e1 : fvec k r z l.succ = z := by
     unfold fvec
-    rw [dif_neg (by simp only [Fin.val_succ]; omega)]
+    rw [dite_eq_right (by simp only [Fin.val_succ]; omega)]
   have e2 : posL k r l.succ (Fin.cast (mdim_lastL l hl) s) = wI k r s := by
     apply Fin.ext
     simp only [posL, wI, Fin.val_cast, Fin.val_succ]
@@ -329,7 +333,7 @@ theorem coef_xv (l : Fin r) (hl : l.val + 1 = r) (z' : Fin (2 * r + k + 1) → �
   unfold xv
   have e1 : fvec k r z' l.succ = z' := by
     unfold fvec
-    rw [dif_neg (by simp only [Fin.val_succ]; omega)]
+    rw [dite_eq_right (by simp only [Fin.val_succ]; omega)]
   have e2 : posL k r l.succ (Fin.cast (mdim_lastL l hl) t) = wI k r t := by
     apply Fin.ext
     simp only [posL, wI, Fin.val_cast, Fin.val_succ]
@@ -375,7 +379,8 @@ theorem lvlA (hz : inWb k r z) (hz' : inWb k r z') (l : Fin r) (hl : l.val + 1 =
                   (mulB E l.succ (ho1 l hD.1) (aCbi k l) * mulB E l.succ (ho1 l hD.1) (aY z l.succ (skip1 t x)) *
                     mB E l.succ (ho1 l hD.1) (skip1 s ∘ skip1 w) (skip1 t ∘ skip1 x) (uC k r l.succ Y - 1) *
                     (xbv k r z' l.succ (skip1 s w) • (1 : Module.End ℂ (sfData E l.succ (ho1 l hD.1)).V)))))) := by
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
     unfold Formalism.FourierDecayAlt.P.CutMP.NLv
     refine Fintype.sum_equiv (finCongr (mdim_lastL (k := k) l hl)) _ _ (fun s => ?_)
     refine Fintype.sum_equiv (finCongr (mdim_lastL (k := k) l hl)) _ _ (fun t => ?_)

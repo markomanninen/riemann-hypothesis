@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CovolumeIntegerLatticeEq
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CovolumeIntegerLatticeEq
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSqAbsNormOfInert
+
+@[expose] public section
 
 open NumberField Module Polynomial
 
@@ -90,7 +94,7 @@ theorem exists_int_of_star_eq (hF : ∀ a : K, star a = a ↔ a ∈ Set.range (a
   have hint : IsIntegral ℤ u := by
     have h1 : IsIntegral ℤ (algebraMap F K u) := by
       rw [hu]; exact RingOfIntegers.isIntegral_coe y
-    exact (isIntegral_algebraMap_iff (algebraMap F K).injective).mp h1
+    exact (isIntegral_algebraMap_iff ).mp h1
   refine ⟨⟨u, hint⟩, ?_⟩
   apply RingOfIntegers.ext
   exact (coe_algebraMap (F := F) (K := K) ⟨u, hint⟩).trans hu
@@ -113,14 +117,14 @@ theorem minpoly_eq (hF : ∀ a : K, star a = a ↔ a ∈ Set.range (algebraMap F
     (ht : algebraMap (𝓞 K) K t = star (algebraMap (𝓞 K) K θ)) (hne : θ ≠ t) :
     aeval θ (derivative (minpoly (𝓞 F) θ)) = θ - t := by
   have ht' : star (algebraMap (𝓞 K) K t) = algebraMap (𝓞 K) K θ := by rw [ht, star_star]
-  obtain ⟨s, hs⟩ := exists_int_of_star_eq hF (θ + t) (by rw [map_add, star_add, ht', ← ht, add_comm])
+  obtain ⟨s, hs⟩ := exists_int_of_star_eq hF (θ + t) (by rw [map_add (f := _), star_add, ht', ← ht, add_comm])
   obtain ⟨p, hp⟩ := exists_int_of_star_eq hF (θ * t) (by rw [map_mul, star_mul', ht', ← ht, mul_comm])
   obtain ⟨q, hq⟩ : ∃ q : Polynomial (𝓞 F), q = X ^ 2 - C s * X + C p := ⟨_, rfl⟩
   have hqdeg : q.natDegree = 2 := by rw [hq]; compute_degree!
   have hqm : q.Monic := by rw [hq]; monicity!
   have hroot : aeval θ q = 0 := by
     rw [hq]
-    simp only [map_add, map_sub, map_mul, map_pow, aeval_X, aeval_C, hs, hp]
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, aeval_X, aeval_C, hs, hp]
     ring
   have hint : IsIntegral (𝓞 F) θ := by
     first

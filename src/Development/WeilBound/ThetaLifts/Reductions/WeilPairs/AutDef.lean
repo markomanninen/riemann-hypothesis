@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.EtaDef
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsBis
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHalfIdem
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.EtaDef
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsBis
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHalfIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ structure Ctx (σ : E →ₐ[F] E) (B : Base F E) {nS nT : ℕ} (JS : Matrix (Fi
   inf : IsInfFamF (fun w : InfinitePlace F => (B.emb w).1) θ
   chart : IsChartF θ ι
 
-variable (F E) in
 
+variable (F E) in
 def finIdem : AEF F E := algebraMap (AF F) (AEF F E) (pairA F 0 1)
 
 theorem infPartF_finIdem : infPartF F E (finIdem F E) = 0 := by
@@ -40,8 +44,8 @@ theorem finIdem_smul_fin {nS nT : ℕ} (x : WOF F E nS nT) : (finIdem F E • x)
   show infPartF F E (finIdem F E * x i j) = 0
   rw [map_mul, infPartF_finIdem, zero_mul]
 
-variable (F) in
 
+variable (F) in
 def finRatF {nS nT : ℕ} : Matrix (Fin nT) (Fin nS) E →ₗ[𝓞 E] XFF F E nS nT where
   toFun y := XFF.mk (finIdem F E • ratWF (F := F) y) (finIdem_smul_fin _)
   map_add' x y := XFF.ext (by

@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.Statement
-import Lemmata.NearbyExistence.ExistsNear
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+public import Lemmata.NearbyExistence.ExistsNear
+
+@[expose] public section
 
 namespace Formalism.UG.P
 

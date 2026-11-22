@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BetaInfCoefNZ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.SchurDecayBounds.SchurH
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BetaInfCoefNZ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BesselDecayBounds.SchurDecayBounds.SchurH
+
+@[expose] public section
 
 namespace Formalism.MainNotions.S.Pv.BetaCut
 

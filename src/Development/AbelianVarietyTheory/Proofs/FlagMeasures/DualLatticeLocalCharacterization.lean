@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SelfDualLoc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicSpanOfLatticeIffForallPlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SelfDualLoc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemAdelicSpanOfLatticeIffForallPlaceStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -167,7 +171,7 @@ theorem exists_dual_basis (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → 
     congr 1
     exact σ.commutes _
   rw [smul_right, ← hsz, ha, sum_left]
-  simp only [smul_left, hdu', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [smul_left, hdu', mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   exact PI.SelfDualLoc.W.intOE_map σ ⟨a j, rfl⟩
 
 theorem isLat_dual (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → E)) (hL : IsLat L) : IsLat (dualL σ J L) := by
@@ -222,7 +226,8 @@ theorem bwd_loc (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → E)) (hL : 
         y k * inclE (F := F) (v.adicCompletion F) ((Pi.single k 1 : Fin n → E) i) := by
       intro k
       rw [hc k]
-      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul, Finset.mul_sum,
         mul_assoc]
     simp only [h2]
     simp [Pi.single_apply, apply_ite (inclE (F := F) (v.adicCompletion F))]
@@ -235,7 +240,7 @@ theorem bwd_loc (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → E)) (hL : 
       unfold hR at h4 ⊢
       rw [sum_right]
       simp only [smul_right, h4, hdu, apply_ite (inclE (F := F) (v.adicCompletion F)),
-        map_one, map_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        map_one, map_zero, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     rw [h3] at h1
     exact h1
   rw [hyC]
@@ -250,9 +255,6 @@ theorem bwd_loc (hJ : J.det ≠ 0) (L : Submodule (𝓞 E) (Fin n → E)) (hL : 
   simp only [Pi.smul_apply, smul_eq_mul, map_mul]
   linear_combination (-(C j * inclE (F := F) (v.adicCompletion F) (yb j i))) * hus'
 
-omit [NumberField E] in
-theorem prV_tmul (v : HeightOneSpectrum (𝓞 F)) (e : E) (a : Ad F) :
-    prV (E := E) v (e ⊗ₜ[F] a) = e ⊗ₜ[F] (a v) := rfl
 
 theorem prV_int (v : HeightOneSpectrum (𝓞 F)) (c : E ⊗[F] Ad F) (hc : c ∈ OAd F E) :
     prV (E := E) v c ∈ intV E v := by
@@ -273,7 +275,8 @@ theorem prV_hR (v : HeightOneSpectrum (𝓞 F)) (a : Fin n → E) (x : Fin n →
     prV (E := E) v (hR σ J (Ad F) (fun i => inclE (F := F) (Ad F) (a i)) x) =
       hR σ J (v.adicCompletion F) (fun i => inclE (F := F) (v.adicCompletion F) (a i)) (prVec v x) := by
   unfold hR hform prVec
-  simp only [map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Matrix.map_apply]
   rfl
 
 end GlobalTheory.St.G.Dual

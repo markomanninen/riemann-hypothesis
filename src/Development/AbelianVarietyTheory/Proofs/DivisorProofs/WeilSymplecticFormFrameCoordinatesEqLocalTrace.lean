@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -32,8 +37,8 @@ theorem trace_coords {L : Type} [CommRing L] (σL : L →+* L) {n d : ℕ}
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem mul_inclR {L : Type} [Field L] (ι : L →+ AE F E) (v : Pl F)
-    (hAt : ∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z) (hmul : ∀ x y, ι (x * y) = ι x * ι y) (a : L) (e : E) :
+theorem mul_inclR {L : Type} [Field L] (ι : L →+ _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (v : Pl (F := F))
+    (hAt : ∀ z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E), At (evFin F v) z ↔ ∃ x, ι x = z) (hmul : ∀ x y, ι (x * y) = ι x * ι y) (a : L) (e : E) :
     ι a * inclR (F := F) (AF F) e = ι (a * GlobalTheory.InertLocFrame.pre ι (ι 1 * inclR (F := F) (AF F) e)) := by
   have hat : ∃ z, ι z = ι 1 * inclR (F := F) (AF F) e := by
     refine (hAt _).1 fun u hu => ?_
@@ -43,10 +48,10 @@ theorem mul_inclR {L : Type} [Field L] (ι : L →+ AE F E) (v : Pl F)
 
 end GlobalTheory.InertLocSymp
 
-open GlobalTheory.InertLocSymp in
 
+open GlobalTheory.InertLocSymp in
 theorem GlobalTheory.InertLocSymp.psi_symp_eq :
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (v : Pl F) (n d : ℕ) (X : Spc F E n) (W : Spc F E d)
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (v : Pl (F := F)) (n d : ℕ) (X : Spc F E n) (W : Spc F E d)
     (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L) (σL : L →+* L) (q : ℕ) (δ : L) (ψL : AddChar L ℂ) (ι : L →+ AE F E),
       Formalism.UG.IsUnramInv ϖ σL q → (Valued.v δ = 1 ∧ σL δ = -δ) → Function.Injective ι → (∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z) → (∀ x y, ι (x * y) = ι x * ι y) → (∀ x, ι (σL x) = cA σ (ι x)) →
       (∀ x, B.ψ (Algebra.trace (AF F) (AE F E) (ι x)) = ψL (x + σL x)) →
@@ -64,7 +69,8 @@ theorem GlobalTheory.InertLocSymp.psi_symp_eq :
       ι (∑ i, ∑ j, ∑ k, ∑ l, ((PV : Matrix (Fin n) (Fin n) L) * xᵀ * (PW : Matrix (Fin d) (Fin d) L)ᵀ) i j *
         GlobalTheory.InertLocFrame.tJ ι X.J i k * GlobalTheory.InertLocFrame.tJ ι W.J j l *
         σL (((PV : Matrix (Fin n) (Fin n) L) * yᵀ * (PW : Matrix (Fin d) (Fin d) L)ᵀ) k l)) := by
-    simp only [hTens, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hTens, map_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ =>
       Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
     simp only [GlobalTheory.InertLocFrame.xm_apply, incM, Matrix.map_apply, ← hσ]
@@ -87,7 +93,7 @@ theorem GlobalTheory.InertLocSymp.psi_symp_eq :
   have h2 : (2 : L) ≠ 0 := by
     intro h
     have h1 : (2 : AF F) • ι 1 = 0 := by
-      rw [two_smul, ← map_add, one_add_one_eq_two, h, map_zero]
+      rw [two_smul, ← map_add (f := _), one_add_one_eq_two, h, map_zero]
     have : ι 1 = 0 := by
       rw [← one_smul (AF F) (ι 1), ← invOf_mul_self (2 : AF F), mul_smul, h1, smul_zero]
     exact one_ne_zero (hinj (this.trans (map_zero ι).symm))
@@ -95,7 +101,7 @@ theorem GlobalTheory.InertLocSymp.psi_symp_eq :
   set z := GlobalTheory.Hk3.locH σL δ JS JT x y
   have hhalf : ⅟(2 : AF F) • ι z = ι (z / 2) := by
     have : ι z = (2 : AF F) • ι (z / 2) := by
-      rw [two_smul, ← map_add, add_halves]
+      rw [two_smul, ← map_add (f := _), add_halves]
     rw [this, smul_smul, invOf_mul_self, one_smul]
   have hsymp : ⅟(2 : AF F) * symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F W.J)
       (GlobalTheory.InertLocFrame.xm ι PV PW x) (GlobalTheory.InertLocFrame.xm ι PV PW y) =

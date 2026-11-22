@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SecOnBasicOpenLocalization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SecOnBasicOpenLocalization
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw GlobalTheory.UU
@@ -44,7 +48,7 @@ theorem nm_of_isPushout {φ : A →+* B} {α : A →+* A'} {β : B →+* B'} {φ
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul r x => simp [IsBaseChange.equiv_tmul]; rfl
-  | add s t hs ht => simp only [map_add, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), hs, ht]
 
 theorem isUnit_of_nm {φ : A →+* B} (h : FinFree φ) {b : B} (hb : IsUnit (nm φ b)) : IsUnit b := by
   letI := φ.toAlgebra
@@ -178,7 +182,8 @@ theorem exists_sec_of_finite (hL : L.IsLB) {W : Z.Opens} (hW : IsAffineOpen W) {
   refine ⟨∑ y, a y • t y, fun y hy => ⟨i y, ?_⟩⟩
   have hy' : y ∈ W ⊓ L.U (i y) := ⟨hFW hy, hi y⟩
   refine (isUnit_gs_iff (𝟙 Z) y _ hy' _).1 (show IsUnit (germAt (i y) y hy' _) from ?_)
-  rw [map_sum, ← Finset.add_sum_erase _ _ (Finset.mem_univ (⟨y, hy⟩ : F))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.add_sum_erase _ _ (Finset.mem_univ (⟨y, hy⟩ : F))]
   have u : IsUnit (germAt (i y) y hy' (a ⟨y, hy⟩ • t ⟨y, hy⟩)) := by
     rw [germAt_smul]
     exact ((isUnit_gs_iff (𝟙 Z) y W (hFW hy) _).2 (h₁ ⟨y, hy⟩)).mul (h₃ ⟨y, hy⟩)
@@ -230,8 +235,8 @@ theorem Generates.exists_unit_smul (hL : L.IsLB) {O : Z.Opens} {t t' : SecOn L O
 
 end Generators
 
-omit [Flat π] [IsLocallyNoetherian X] in
 
+omit [Flat π] [IsLocallyNoetherian X] in
 theorem exists_generates {L : LB Y} (hL : L.IsLB) (x : X) :
     ∃ (V : X.Opens) (t : SecOn L (π ⁻¹ᵁ V)), x ∈ V ∧ Generates t := by
   obtain ⟨W, hW, hx, -⟩ := exists_isAffineOpen_mem_and_subset (U := ⊤) (x := x) trivial

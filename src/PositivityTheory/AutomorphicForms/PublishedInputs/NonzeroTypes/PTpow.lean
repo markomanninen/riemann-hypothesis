@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -276,7 +280,8 @@ theorem tz_succ {ϖ : kˣ} (hϖ : IsUnif ϖ) (x : V) (hfix : ∀ h ∈ G.NO, π 
   rw [finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype,
     ← Equiv.sum_comp (psiEquiv G hϖ m), Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun c1 _ => ?_
-  rw [pow_one, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pow_one, map_sum, map_sum]
   refine Finset.sum_congr rfl fun c2 _ => ?_
   show π ((Quotient.out (psi G hϖ m (c1, c2)) : ↥G.NO) : GL (Fin n) k) (π (G.zEl ϖ ^ (m + 1)) x) = _
   unfold psi

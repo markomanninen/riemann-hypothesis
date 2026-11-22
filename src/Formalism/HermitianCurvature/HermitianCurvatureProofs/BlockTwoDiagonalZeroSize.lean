@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostDensOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnitaryInvariantGaussian
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostDensOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnitaryInvariantGaussian
+
+@[expose] public section
 
 noncomputable section
 
@@ -385,12 +389,6 @@ variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 instance haar1 (p : ℕ) : (volume : Measure (Fin 1 → Fin p → ℂ)).IsAddHaarMeasure :=
   Measure.pi.isAddHaarMeasure (fun _ : Fin 1 => (volume : Measure (Fin p → ℂ)))
-
-instance haar2 (p : ℕ) : (volume : Measure (Fin p → Fin 1 → ℂ)).IsAddHaarMeasure :=
-  Measure.pi.isAddHaarMeasure (fun _ : Fin p => (volume : Measure (Fin 1 → ℂ)))
-
-instance haarAB (p : ℕ) : (volume : Measure (AB p)).IsAddHaarMeasure := by
-  rw [Measure.volume_eq_prod]; exact Measure.prod.instIsAddHaarMeasure _ _
 
 instance lfAB (p : ℕ) : IsLocallyFiniteMeasure (volume : Measure (AB p)) :=
   isLocallyFiniteMeasure_of_isFiniteMeasureOnCompacts

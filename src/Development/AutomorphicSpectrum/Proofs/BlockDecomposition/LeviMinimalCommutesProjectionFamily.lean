@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
-import Development.WeilBound.ThetaLifts.Reductions.SiegelAbs
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelAbs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.SecWLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.SecWLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem measurable_Mv (i0 : Fin k) :
     exact Complex.measurable_ofReal.comp (Real.continuous_sqrt.measurable.comp
       ((((measurable_pi_apply _).norm.pow_const 2).div_const _).sub_const _))
   have hcal : Measurable (fun c : Fin (r + 1) → ℂ => conj (alv T c)) := Complex.continuous_conj.measurable.comp hal
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [Mv, frameChangeMatrix_entry, syn, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   refine ((Finset.measurable_sum _ fun a _ => ?_).add (Finset.measurable_sum _ fun a _ => ?_)).add ?_ |>.add
     (Finset.measurable_sum _ fun l _ => ?_)

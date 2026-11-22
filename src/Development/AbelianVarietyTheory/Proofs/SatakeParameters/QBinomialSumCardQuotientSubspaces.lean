@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
+
+@[expose] public section
 
 namespace GlobalTheory
 

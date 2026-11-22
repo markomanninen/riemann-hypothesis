@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -51,7 +55,7 @@ theorem exists_stab_compl {A : Set (Module.End ℂ W)}
   have hsup : ∀ N N' : Submodule ℂ W, Stab A N → Stab A N' → Stab A (N ⊔ N') := by
     intro N N' hN hN' a ha x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hN a ha y hy) (hN' a ha z hz)
   let S : Set (Submodule ℂ W) := {C | Stab A C ∧ C ⊓ K = ⊥}
   obtain ⟨C, hCmax⟩ : ∃ C, Maximal (· ∈ S) C := by

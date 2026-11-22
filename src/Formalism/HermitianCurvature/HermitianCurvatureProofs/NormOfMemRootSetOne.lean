@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootPushforwardDensity
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootPushforwardDensity
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 

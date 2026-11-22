@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 open MvPolynomial

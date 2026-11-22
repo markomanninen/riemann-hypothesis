@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -39,7 +44,7 @@ theorem tensor_fractionRing_of_tensor
       refine ⟨x₁ * ((s₂ : R) ⊗ₜ[k] (t₂ : B)) + x₂ * ((s₁ : R) ⊗ₜ[k] (t₁ : B)), s₁ * s₂, t₁ * t₂, ?_⟩
       have hm : ∀ (s : R) (t : B), f (s ⊗ₜ[k] t) = algebraMap R K s ⊗ₜ[k] algebraMap B κ t := by
         intro s t; rw [hfdef, Algebra.TensorProduct.map_tmul]; rfl
-      rw [map_add, map_mul, map_mul, hm, hm, ← e₁, ← e₂]
+      rw [map_add (f := _), map_mul, map_mul, hm, hm, ← e₁, ← e₂]
       simp only [Submonoid.coe_mul, map_mul, ← Algebra.TensorProduct.tmul_mul_tmul]
       ring
 

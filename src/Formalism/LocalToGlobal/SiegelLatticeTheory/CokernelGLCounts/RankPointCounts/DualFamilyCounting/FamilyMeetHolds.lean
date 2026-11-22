@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GlueLocalOfFam
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFSubspace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GlueLocalOfFam
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFSubspace
+
+@[expose] public section
 
 open NumberField Module
 
@@ -68,7 +72,8 @@ theorem family_meet_holds : FamMeet := by
     have hint : ∀ i, vF 𝔭 (a i) ≠ 0 → ∃ r : 𝓞 K, algebraMap (𝓞 K) K r = cf i := by
       intro i hi
       have h0 := congrArg (h (w (τ i))) (hz.symm.trans hz0)
-      rw [map_zero, map_add, map_sum, map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, map_add (f := _), map_sum, map_sum] at h0
       simp only [LinearMap.map_smul, smul_eq_mul] at h0
       rw [Finset.sum_eq_single i, Finset.sum_eq_single (τ i)] at h0
       · have hc := hwc (τ i)

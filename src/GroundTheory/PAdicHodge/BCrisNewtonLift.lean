@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.TiltField
-import GroundTheory.PAdicHodge.ExtRobbaBounded
-import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.TiltField
+public import GroundTheory.PAdicHodge.ExtRobbaBounded
+public import GroundTheory.PAdicHodge.KerFontaineThetaCompFrobeniusEquivSymmPow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,11 +21,10 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "K♭" => Tilt K NormedField.valuation (normInteger K) normInteger_integers p
+local notation "K♭" => FractionRing 𝒪♭
 local notation "𝔸" => Localization.Away (p : AInf K p)
 
 variable (K p) in
-
 def incl : AInf K p →+* WittVector p K♭ := WittVector.map (algebraMap 𝒪♭ K♭)
 
 theorem incl_coeff (x : AInf K p) (n : ℕ) :
@@ -48,11 +52,9 @@ theorem p_mem_nonZeroDivisors : (p : WittVector p K♭) ∈ nonZeroDivisors (Wit
   mem_nonZeroDivisors_of_ne_zero natCast_p_ne_zero
 
 variable (K p) in
-
 def intSubring : Subring (WittVector p K♭) := (incl K p).range
 
 variable (K p) in
-
 def teichLift : TeichLift p K♭ (WittVector p K♭) where
   π := p
   red := WittVector.constantCoeff
@@ -93,7 +95,6 @@ def teichLift : TeichLift p K♭ (WittVector p K♭) where
     refine ⟨WittVector.mk p b, ?_⟩
     ext n
     rw [incl_coeff, ← hb n]
-    rfl
 
 @[simp] theorem teichLift_π : (teichLift K p).π = (p : WittVector p K♭) := rfl
 
@@ -121,7 +122,8 @@ theorem coeff_incl (x : AInf K p) (n : ℕ) :
   have hx := (WittVector.eq_teichmullerSeries_iff (tcoeff x) x).1
     (WittVector.teichmullerSeries_coeff_eq x).symm n
   have h2 := map_dvd (incl K p) hx
-  rw [map_pow, map_natCast, map_sub, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_pow, map_natCast, map_sub, map_sum] at h2
   rw [Ideal.mem_span_singleton, teichLift_π]
   convert h2 using 2
   rw [TeichLift.finSum, show Finset.range (n + 1) = Finset.Iic n by ext; simp [Nat.lt_succ_iff]]
@@ -139,7 +141,6 @@ theorem isUnit_incl_p : IsUnit (algebraMap (WittVector p K♭) (teichLift K p).B
   exact IsLocalization.Away.algebraMap_isUnit (teichLift K p).π
 
 variable (K p) in
-
 def toB : 𝔸 →+* (teichLift K p).B :=
   Localization.awayLift ((algebraMap (WittVector p K♭) (teichLift K p).B).comp (incl K p))
     (p : AInf K p) isUnit_incl_p
@@ -149,7 +150,7 @@ theorem toB_algebraMap (x : AInf K p) :
   IsLocalization.lift_eq _ x
 
 theorem toB_injective : Function.Injective (toB K p) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨⟨y, s⟩, hs⟩ := IsLocalization.surj (Submonoid.powers (p : AInf K p)) z
   simp only at hs

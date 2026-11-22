@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrVGA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefOp
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrVGA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.CoefOp
+
+@[expose] public section
 
 noncomputable section
 

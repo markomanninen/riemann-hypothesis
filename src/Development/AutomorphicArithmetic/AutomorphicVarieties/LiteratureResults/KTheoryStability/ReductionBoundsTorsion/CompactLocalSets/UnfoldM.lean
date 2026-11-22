@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ theorem fac_exists {n : Type} [Fintype n] [DecidableEq n] {Q : Matrix n n ℂ} (
     simp only [D, diagonal_conjTranspose, diagonal_mul_diagonal]
     congr 1
     funext i
-    simp only [Pi.star_apply, Function.comp, RCLike.star_def, Complex.conj_ofReal]
-    rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hQ.eigenvalues_pos i).le]
+    simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal, Function.comp_apply,
+      ← Complex.ofReal_mul, Real.mul_self_sqrt (hQ.eigenvalues_pos i).le]
     rfl
   rw [conjTranspose_mul, hU, Matrix.mul_assoc, ← Matrix.mul_assoc Dᴴ, hD, ← Matrix.mul_assoc]
 
@@ -39,7 +43,7 @@ theorem gl_fac_exists {n : Type} [Fintype n] [DecidableEq n] {Q : Matrix n n ℂ
 theorem norm_sq_le_diag {n : Type} [Fintype n] (Y : Matrix n n ℂ) (i j : n) :
     ‖Y i j‖ ^ 2 ≤ ‖(Y * Yᴴ) i i‖ := by
   have h : (Y * Yᴴ) i i = ((∑ k, ‖Y i k‖ ^ 2 : ℝ) : ℂ) := by
-    rw [mul_apply, Complex.ofReal_sum]
+    rw [Matrix.mul_apply, Complex.ofReal_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [conjTranspose_apply, RCLike.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq]
   rw [h, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (Finset.sum_nonneg fun k _ => by positivity)]

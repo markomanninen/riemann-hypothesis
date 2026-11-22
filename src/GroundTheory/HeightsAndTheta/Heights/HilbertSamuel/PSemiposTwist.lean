@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturb
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineLevi
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

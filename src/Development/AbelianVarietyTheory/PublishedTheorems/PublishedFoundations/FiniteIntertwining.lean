@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.SharpRestriction.Divisibility.PrimeDegreeVariant
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions
 open Formalism.MainNotions.PrimeDegreeVariant (embGL Interlace)
@@ -107,12 +111,6 @@ def sumRep (lam : DomWeight N) : Representation ℂ H (⨁ mu : Below h lam, nab
 
 def mult (lam : DomWeight N) (mu : DomWeight n) : ℕ :=
   Module.finrank ℂ ((smallRep ι mu).IntertwiningMap (resRep ι h lam))
-
-instance finite_intertwining (lam : DomWeight N) (mu : DomWeight n) :
-    FiniteDimensional ℂ ((smallRep ι mu).IntertwiningMap (resRep ι h lam)) := by
-  let L : (smallRep ι mu).IntertwiningMap (resRep ι h lam) →ₗ[ℂ] (nablaSq ℂ n mu →ₗ[ℂ] nablaSq ℂ N lam) :=
-    { toFun := fun f => f.toLinearMap, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
-  exact FiniteDimensional.of_injective L fun _ _ e => Representation.IntertwiningMap.ext e
 
 def BranchesAlong (lam : DomWeight N) : Prop :=
   Nonempty ((sumRep ι h lam).Equiv (resRep ι h lam)) ∧

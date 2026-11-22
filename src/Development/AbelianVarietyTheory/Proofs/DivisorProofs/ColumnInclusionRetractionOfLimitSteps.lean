@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,11 +35,13 @@ theorem subst_expPt_sum_mv {C : Type} [Field C] {v : AddValuation C (WithTop ℝ
   have hl : ∀ b e, constantCoeff
       (lgPt G (fun e => (MvPowerSeries.X (r b, e) : MvPowerSeries (Fin n × Fin d) C)) e) = 0 :=
     fun b => cc_lgPt G (by simp)
-  rw [subst_expPt G ht (fun e => by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [subst_expPt G ht (fun e => by
     rw [Finset.sum_apply, map_sum]; exact Finset.sum_eq_zero fun b _ => cc_mv _ (hl b) e)]
   congr 1
   funext e
-  rw [Finset.sum_apply, ← coe_substAlgHom ht, map_sum, coe_substAlgHom]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, ← coe_substAlgHom ht, map_sum, coe_substAlgHom]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [subst_mv ht]
   congr 1
@@ -92,12 +98,13 @@ theorem retrSt_of : LimActSt → LimPtSt → InvSt → RetrSt := by
       (MvPowerSeries.X ⟨⟨f, β⟩, a⟩ : MvPowerSeries (Let cx) X.C)) i
     congr 1
     funext e
-    simp only [mv_sum_smul_X]
+    simp_rw [mv_sum_smul_X]
     have hc : ∀ (b : Fin (rk f.1)) (a : Fin (rk f.1)),
         ∑ β', jX X (B f.1 b (r β')) * (A β' β).mulVec (frame Ch X f.1 a) e =
           if b = β then frame Ch X f.1 a e else 0 := fun b a => by
       have h1 := congrArg (jX X) (congrFun (congrFun hMM' b) β)
-      rw [Matrix.mul_apply, map_sum, Matrix.one_apply] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum, Matrix.one_apply] at h1
       simp only [frame, hA2, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← Finset.sum_mul, ← map_mul]
       rw [show ∑ β', jX X (B f.1 b (r β') * M' β' β) = _ from h1]
       split_ifs <;> simp

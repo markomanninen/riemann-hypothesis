@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
-import Development.AutomorphicArithmetic.CommutativeAlgebra.SubsingletonHypercohomologyFreeOfSuppOfSectionsV
-import Development.AutomorphicArithmetic.CommutativeAlgebra.AcyAndLiftOfLocallySurjectiveExact
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.SubsingletonHypercohomologyFreeOfSuppOfSectionsV
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.AcyAndLiftOfLocallySurjectiveExact
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Bc
 
@@ -74,18 +78,13 @@ theorem UpperTheory.exists_primitive_free_of_acy_locally_exact :
     exact UpperTheory.acy_and_lift_of_locally_surjective_exact Q @hQ _ _ _ _ _ w inferInstance hex hloc hi (hacy i)
   have hAcy : ∀ i : ℤ, Acy Q (kernel (C.d i (i + 1))) := by
     intro i
-    rcases lt_or_ge i a with hi | hi
-    · exact UpperTheory.acy_of_isZero Q _ (IsZero.of_mono (kernel.ι _) (isZero_of_isStrictlyGE C a i hi))
-    · have hi' : a - 1 ≤ i := by omega
-      induction i, hi' using Int.le_induction with
-      | base =>
-        exact UpperTheory.acy_of_isZero Q _
-          (IsZero.of_mono (kernel.ι _) (isZero_of_isStrictlyGE C a (a - 1) (by omega)))
-      | succ n hn ih =>
-        rcases lt_or_ge n a with hn' | hn'
-        · exact (step n (UpperTheory.acy_of_isZero Q _
-            (IsZero.of_mono (kernel.ι _) (isZero_of_isStrictlyGE C a n hn')))).1
-        · exact (step n (ih hn')).1
+    have below (n : ℤ) (hn : n < a) : Acy Q (kernel (C.d n (n + 1))) :=
+      UpperTheory.acy_of_isZero Q _
+        (IsZero.of_mono (kernel.ι _) (isZero_of_isStrictlyGE C a n hn))
+    refine Int.inductionOn' (motive := fun n => Acy Q (kernel (C.d n (n + 1)))) i (a - 1)
+      (below (a - 1) (by omega)) (fun n _ ih => (step n ih).1) ?_
+    intro n hn _
+    exact below (n - 1) (by omega)
   obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 := ⟨j - 1, by omega⟩
   rw [show i + 1 - 1 = i by omega]
   obtain ⟨h, hh⟩ := (step i (hAcy i)).2 P hP (kernel.lift _ f hf)

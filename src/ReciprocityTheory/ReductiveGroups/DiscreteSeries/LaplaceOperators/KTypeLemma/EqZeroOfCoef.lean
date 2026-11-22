@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.DerivEntries
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.IndicatorRholMem
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.DerivEntries
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.IndicatorRholMem
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem coef_deriv (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E)
 theorem act_cpart (E : Fin n → Fin n → Module.End ℂ D) (Z : Matrix (Fin n) (Fin n) ℂ) (m : D) :
     actM E Z m = actM E (cpart1 ε Z) m + Complex.I • actM E (cpart2 ε Z) m := by
   have h : actL E Z = actL E (cpart1 ε Z) + Complex.I • actL E (cpart2 ε Z) := by
-    rw [← map_smul, ← map_add, ta_cpart_sum]
+    rw [← map_smul, ← map_add (f := _), ta_cpart_sum]
   exact congrArg (fun A : Module.End ℂ D => A m) h
 
 theorem eq_zero_of_coef (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E) {V : Submodule ℂ D}
@@ -46,7 +50,7 @@ theorem eq_zero_of_coef (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D
         fun _ => 0 := funext fun t => hm _ (ta_inUJ_mul_exp ε hg hX t) v'
     rw [this]; exact hasDerivAt_const _ _
   have hN : ∀ a b, ∀ m ∈ N, E a b m ∈ N := fun a b m hm g hg v' => by
-    rw [← actM_single E a b, act_cpart (ε := ε), Submodule.coe_add, Submodule.coe_smul, map_add,
+    rw [← actM_single E a b, act_cpart (ε := ε), Submodule.coe_add, Submodule.coe_smul, map_add (f := _),
       map_smul, inner_add_right, inner_smul_right, hNr _ (ta_inG_cpart1 ε _) m hm g hg v',
       hNr _ (ta_inG_cpart2 ε _) m hm g hg v']
     simp
@@ -75,7 +79,8 @@ theorem inner_deriv {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℂ U]
     funext t
     ext x
     conv_lhs => rw [← e.sum_repr' (f t x), ← e.sum_repr' x]
-    simp only [map_sum, map_smul, inner_sum, inner_smul_right, sum_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, inner_sum, inner_smul_right, sum_smul,
       _root_.sum_apply, _root_.smul_apply,
       ContinuousLinearMap.smulRight_apply, innerSL_apply_apply, smul_smul]
     exact sum_congr rfl fun i _ => sum_congr rfl fun j _ => by rw [mul_comm]
@@ -146,6 +151,7 @@ theorem evZ_word (μ : Fin n → ℤ) (L : List (Matrix (Fin n) (Fin n) ℂ)) : 
       conv_lhs => rw [Matrix.matrix_eq_sum_single Z]
       simp only [Matrix.mul_sum, ← Matrix.mul_smul, Matrix.smul_single, smul_eq_mul, mul_one]
     rw [hZ]
-    simp only [actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h1]
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.LemK.TRA

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -57,7 +61,7 @@ private lemma false_of_trace_pow_eq_card_add_one_sub {L ι : Type} [Field L] [Ch
   have hpoly : ∀ f : Polynomial L, (Polynomial.aeval M f).trace = D * f.eval 1 - f.eval 0 := by
     intro f
     induction f using Polynomial.induction_on' with
-    | add f g hf hg => simp only [map_add, Matrix.trace_add, hf, hg, Polynomial.eval_add]; ring
+    | add f g hf hg => simp only [map_add (f := _), Matrix.trace_add, hf, hg, Polynomial.eval_add]; ring
     | monomial n a =>
       rw [Polynomial.aeval_monomial, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
         Matrix.trace_smul, h n, Polynomial.eval_monomial, Polynomial.eval_monomial, one_pow,
@@ -128,7 +132,7 @@ theorem _root_.GlobalTheory.exists_eigenvector_of_trace_eq_add_character :
     refine MonoidAlgebra.induction_linear z ?_ ?_ ?_
     · simp
     · intro f g hf hg
-      simp only [map_add, Matrix.trace_add, hf, hg]; ring
+      simp only [map_add (f := _), Matrix.trace_add, hf, hg]; ring
     · intro g r
       rw [Representation.asAlgebraHom_single, map_smul, smul_eq_mul, map_mul, htr g]
       have hS : S (MonoidAlgebra.single g r) = Matrix.scalar ι (φ r) * σ g := by

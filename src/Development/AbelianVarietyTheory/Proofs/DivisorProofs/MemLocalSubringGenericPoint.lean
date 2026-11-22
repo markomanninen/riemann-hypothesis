@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsLineBundleExtension
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsionFreeOfForallExists
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsLineBundleExtension
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -152,7 +156,7 @@ theorem exists_polynomial [Algebra.IsAlgebraic k[X] K] {a : K} (ha : a ≠ 0) :
     ∃ p : k[X], p ≠ 0 ∧ ∀ q : k[X], p ∣ q → q.natDegree ≠ 0 → ∀ V : ValuationSubring K,
       (∀ c : k, algebraMap k[X] K (C c) ∈ V) → V.valuation a < 1 →
         V.valuation (algebraMap k[X] K q) ≠ 1 := by
-  obtain ⟨b, hb, p, hp, e⟩ := (Algebra.IsAlgebraic.isAlgebraic (R := k[X]) a).exists_nonzero_eq_adjoin_mul
+  obtain ⟨b, hb, p, hp, e⟩ := (Algebra.IsAlgebraic.isAlgebraic (R := k[X]) a).exists_ne_zero_eq_adjoin_mul
     (mem_nonZeroDivisors_of_ne_zero ha)
   refine ⟨p, hp, ?_⟩
   rintro _ ⟨r, rfl⟩ hq V hV h h1
@@ -168,8 +172,8 @@ theorem exists_polynomial [Algebra.IsAlgebraic k[X] K] {a : K} (ha : a ≠ 0) :
   rw [map_mul, ← e, mul_assoc, map_mul] at h1
   exact (mul_lt_one_of_lt_of_le h ((V.valuation_le_one_iff _).2 (mul_mem hbV (hp r)))).ne h1
 
-omit [Algebra k[X] K] in
 
+omit [Algebra k[X] K] in
 theorem exists_polynomial_integral (A : Type) [CommRing A] [IsDomain A] [Algebra k A]
     [Algebra.FiniteType k A] (h : ringKrullDim A = 1) :
     ∃ g : k[X] →ₐ[k] A, Function.Injective g ∧ g.toRingHom.IsIntegral := by
@@ -200,8 +204,8 @@ theorem mem_localSubring_genericPoint (t : C.functionField) : t ∈ localSubring
   obtain ⟨U, hU, s, rfl⟩ := C.presheaf.exists_germ_eq t
   exact germ_mem hU hU s
 
-omit [IsIntegral C] in
 
+omit [IsIntegral C] in
 theorem krullDim_eq : Order.krullDim C = topologicalKrullDim C :=
   (Order.krullDim_eq_of_orderIso (irreducibleSetEquivPoints (α := C))).symm
 
@@ -228,6 +232,7 @@ theorem finite_of_isClosed [NoetherianSpace C] (hd : topologicalKrullDim C = 1) 
   rw [← hg.def, (isClosed_singleton hd this).closure_eq]
   exact Set.finite_singleton _
 
+omit [IsIntegral C] in
 theorem krullDimLE_stalk (hd : topologicalKrullDim C = 1) (x : C) :
     Ring.KrullDimLE 1 (C.presheaf.stalk x) := by
   refine krullDimLE_of_coheight_le ?_
@@ -314,7 +319,7 @@ theorem exists_function {k : Type} [Field k] (f : C ⟶ Sp k) [LocallyOfFiniteTy
   set c := algebraMap k[X] C.functionField q with hc
   have hc0 : c ≠ 0 := (map_ne_zero_iff _ hinj).2 hq0
   have hc1 : 1 + c ^ 2 ≠ 0 := by
-    rw [hc, ← map_pow, ← map_one (algebraMap k[X] C.functionField), ← map_add, map_ne_zero_iff _ hinj]
+    rw [hc, ← map_pow, ← map_one (algebraMap k[X] C.functionField), ← map_add (f := _), map_ne_zero_iff _ hinj]
     intro h
     simpa [q] using congrArg (eval 0) h
   have ht := div_ne_zero hc0 hc1
@@ -347,7 +352,7 @@ theorem exists_function {k : Type} [Field k] (f : C ⟶ Sp k) [LocallyOfFiniteTy
           refine (IsLocalRing.isUnit_or_isUnit_of_add_one (a := 1 + r ^ 2) (b := -r ^ 2)
             (by ring)).resolve_right fun h => hu ?_
           exact (isUnit_pow_iff two_ne_zero).1 ((IsUnit.neg_iff _).1 h)
-        simpa only [map_add, map_one, map_pow, hr] using key r (1 + r ^ 2) hu'
+        simpa only [map_add (f := _), map_one, map_pow, hr] using key r (1 + r ^ 2) hu'
     · obtain ⟨r, -, e⟩ := hN' ⟨x, Set.mem_insert_of_mem _ hx⟩
       exact .inl ⟨r, e⟩
 

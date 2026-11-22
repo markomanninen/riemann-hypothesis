@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TCoefMInMMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,5 @@ theorem stProfile_holds : StProfile := by
       exact h3 x
     · rw [iteratedDeriv_succ', hd]
       exact h4
-
-example : GlobalTheory.PsCo.Pc1.StProfile := stProfile_holds
 
 end GlobalTheory.PsCo.Pc1

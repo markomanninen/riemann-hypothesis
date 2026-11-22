@@ -1,11 +1,15 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.SmoothMorphisms.LineBundleSpreadsOut
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LineBundleIsoDescendsToSubringOfFinset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TheoremOfCubeTwoProjectiveFactors
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.SmoothMorphisms.LineBundleSpreadsOut
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.LineBundleIsoDescendsToSubringOfFinset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.TheoremOfCubeTwoProjectiveFactors
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -154,7 +158,7 @@ theorem exists_additive_level (hA : IsAbelianScheme A) {C D : Type} [CommRing C]
     exact Over.w y)
   have hg : g ≫ c₁ = y := Over.OverMorphism.ext (pullback.lift_fst _ _ _)
   have K' := congrArg (CechPic.pull g.left) K
-  rw [map_add, pull_evc, pull_evc, pull_evc, MonObj.comp_mul, ← Category.assoc g, ← Category.assoc g,
+  rw [map_add (f := _), pull_evc, pull_evc, pull_evc, MonObj.comp_mul, ← Category.assoc g, ← Category.assoc g,
     ← Category.assoc g, hg, y₁, y₂, y₃] at K'
   exact K'
 

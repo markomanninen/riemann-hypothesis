@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRetractionMulP
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,7 +28,7 @@ theorem s_res_j (m : ℕ) (b : τ.B m) : τ.s m (G.res m (τ.j m b)) = mulBy O _
   apply j_injective τ m
   rw [τ.j_s, G.mulP_res, map_mulBy]
 
-theorem ker_le (m : ℕ) : torsionIdeal O (τ.B m) (p ^ m) ≤
+theorem ker_le (m : ℕ) : torsionIdeal (R := O) (A := τ.B m) (p ^ m) ≤
     RingHom.ker (((G.res m).comp (τ.j m) : τ.B m →ₐc[O] G.A m) : τ.B m →ₐ[O] G.A m) := by
   refine (kerIdeal_le_ker_iff _ _).2 fun c => ?_
   change ((G.res m).comp (τ.j m)) (mulBy O _ (p ^ m) c) = _
@@ -33,7 +37,7 @@ theorem ker_le (m : ℕ) : torsionIdeal O (τ.B m) (p ^ m) ≤
 variable [Fact p.Prime]
 
 def toQuot (q : ∀ m, τ.B m →ₐc[O] H.A m) (hs : ∀ m, Function.Surjective (q m))
-    (hk : ∀ m, RingHom.ker (q m) = torsionIdeal O (τ.B m) (p ^ m))
+    (hk : ∀ m, RingHom.ker (q m) = torsionIdeal (R := O) (A := τ.B m) (p ^ m))
     (hc : ∀ m b, H.res m (q (m + 1) b) = q m (τ.r m b)) : G ⟶ H where
   app m := liftSurj (q m) (hs m) ((G.res m).comp (τ.j m)) ((hk m).le.trans (ker_le τ m))
   comm n := BialgHom.ext fun c => by
@@ -42,7 +46,7 @@ def toQuot (q : ∀ m, τ.B m →ₐc[O] H.A m) (hs : ∀ m, Function.Surjective
       BialgHom.comp_apply, BialgHom.comp_apply, ← τ.j_r]
 
 theorem toQuot_app_q (q : ∀ m, τ.B m →ₐc[O] H.A m) (hs : ∀ m, Function.Surjective (q m))
-    (hk : ∀ m, RingHom.ker (q m) = torsionIdeal O (τ.B m) (p ^ m))
+    (hk : ∀ m, RingHom.ker (q m) = torsionIdeal (R := O) (A := τ.B m) (p ^ m))
     (hc : ∀ m b, H.res m (q (m + 1) b) = q m (τ.r m b)) (m : ℕ) (b : τ.B m) :
     (toQuot τ q hs hk hc).app m (q m b) = G.res m (τ.j m b) :=
   liftSurj_apply ..

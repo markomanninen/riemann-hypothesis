@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumEmbeddingMemHlam
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumInj
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumIrr
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RregRep
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IsInLieAlgebraISmulAddConjTranspose
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumEmbeddingMemHlam
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumInj
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumIrr
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RregRep
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.KSchur
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.RigidityTheorems.IsInLieAlgebraISmulAddConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,8 +139,8 @@ theorem ffa_cont_rreg (x : L2 ε) : Continuous fun k : S7.KG ε => rreg ε (S7.t
 
 theorem ffa_intK {E : Type*} [NormedAddCommGroup E] {f : S7.KG ε → E} (hf : Continuous f) :
     Integrable f (dk ε) := by
-  exact hf.integrable_of_hasCompactSupport
-    (isCompact_univ.of_isClosed_subset (isClosed_tsupport f) (Set.subset_univ _))
+  letI := (dk_props ε).1
+  exact integrableOn_univ.mp (hf.continuousOn.integrableOn_compact isCompact_univ)
 
 theorem ffa_inner_int (c : S7.KG ε → ℂ) (hc : Continuous c) (x z : L2 ε) :
     inner ℂ z (∫ k, c k • rreg ε (S7.toMK k) x ∂(dk ε)) =
@@ -151,6 +155,7 @@ theorem ffa_eval {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : ContinuousOn F (
     (c : S7.KG ε → ℂ) (hc : Continuous c) (h0 : ∫ k, c k • rreg ε (S7.toMK k) x ∂(dk ε) = 0) :
     ∫ k, c k * F (S7.toMK k) ∂(dk ε) = 0 := by
   classical
+  letI := (dk_props ε).1
   have hmem : ∀ (g : Formalism.REAL.UJ ε) (k : S7.KG ε), Formalism.MainNotions.S.umat g * S7.toMK k ∈ UJset ε :=
     fun g k => (g * (@id (Formalism.REAL.UJ ε) k.1)).2
   have hcu : Continuous fun g : Formalism.REAL.UJ ε => Formalism.MainNotions.S.umat g :=
@@ -312,7 +317,7 @@ theorem ffa_memLp (hP : IsPsiFor ε lam T Ψ) (u v : T.V) :
 theorem uniformisationL2_ae_eq_jfun (hP : IsPsiFor ε lam T Ψ) (u v : T.V) :
     (uniformisationL2 ε Ψ u v : Formalism.REAL.UJ ε → ℂ) =ᵐ[Formalism.REAL.muG ε] fun y => jfun Ψ u v (Formalism.MainNotions.S.umat y) := by
   unfold uniformisationL2 toL2
-  rw [dif_pos (ffa_memLp hP u v)]
+  rw [dite_eq_left (ffa_memLp hP u v)]
   exact (ffa_memLp hP u v).coeFn_toLp
 
 theorem ffa_jfun_cont (hP : IsPsiFor ε lam T Ψ) (u v : T.V) : ContinuousOn (jfun Ψ u v) (UJset ε) := by
@@ -429,7 +434,7 @@ theorem ffa_kmap_zero (hgap : StdGap ε lam) (hP : IsPsiFor ε lam T Ψ) (hv₀ 
       | exact ffa_Kset (by simpa [Kset, Formalism.REAL.Kset] using hg)
     apply Subtype.ext
     simp only [Submodule.coe_subtype] at h1 h2
-    rw [h2, hφ, hφ, h1, ← hk, hJdk, hB, map_add]
+    rw [h2, hφ, hφ, h1, ← hk, hJdk, hB, map_add (f := _)]
   have hK := sigLam_lowK hgap hP hv₀
   have hmap : Formalism.MainNotions.S.IsKTypeOf ε (sigLam ε Ψ v₀) (Formalism.QuantumDeterminants.lowK ε lam) ((lowKSubLam ε Ψ v₀).map φ) :=
     (isKTypeOf_map_iff φ hinj hint _ _).1 hK.1

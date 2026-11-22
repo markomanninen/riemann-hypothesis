@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalRingCardinality.DataSpaces
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemIntegersLocalisationIffSumCmDataStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemIntegersLocalisationIffSumCmDataStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.S.Loc ValuativeRel
 open scoped nonZeroDivisors
 
@@ -132,9 +137,10 @@ theorem locAt_topology : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [N
       · intro i _
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
         exact Subring.sum_mem _ fun j _ => Subring.mul_mem _ (c j).2 (intCast_mem _ _)
-      · rw [map_sum]
-        refine Finset.sum_congr rfl fun j _ => ?_
-        rw [map_smul, ← hint, Algebra.smul_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [map_sum]
+          refine Finset.sum_congr rfl fun j _ => ?_
+          rw [map_smul, ← hint, Algebra.smul_def]
     · rintro ⟨c, hc, rfl⟩
       rw [hL]
       refine Subring.sum_mem _ fun i _ => (hO _).2 ⟨1, fun _ => ⟨c i, hc i trivial⟩, fun _ => w i, ?_⟩

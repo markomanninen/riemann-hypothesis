@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,8 +25,8 @@ abbrev twAlg (p : ℕ) [Fact p.Prime] [CharP K p] : Algebra K (Tw K V) :=
 
 end FrobTwist
 
-open FrobTwist in
 
+open FrobTwist in
 theorem exists_isGamma {K : Type} [CommRing K] {V : Type} [AddCommGroup V] [Module K V] (p : ℕ)
     [Fact p.Prime] [CharP K p] (f : V →+ V) (hf : ∀ (c : K) v, f (c • v) = c ^ p • f v) :
     ∃ γ : ExteriorAlgebra K V →+* ExteriorAlgebra K V, IsGamma p f γ := by
@@ -31,7 +35,7 @@ theorem exists_isGamma {K : Type} [CommRing K] {V : Type} [AddCommGroup V] [Modu
     { toFun := fun v => (ExteriorAlgebra.ι K (f v) : ExteriorAlgebra K V)
       map_add' := fun v w => by
         show ExteriorAlgebra.ι K (f (v + w)) = ExteriorAlgebra.ι K (f v) + ExteriorAlgebra.ι K (f w)
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun c v => by
         have h1 : ExteriorAlgebra.ι K (f (c • v)) =
             algebraMap K (ExteriorAlgebra K V) (c ^ p) * ExteriorAlgebra.ι K (f v) := by

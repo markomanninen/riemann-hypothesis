@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailMore
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailMore
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -33,7 +37,7 @@ theorem isIntegral_of_homogeneous_relation {K R S ι : Type*} [Field K] [CommRin
     simpa [Finsupp.degree_eq_sum, Finsupp.weight_apply, Finsupp.sum_fintype] using this
   let p : Polynomial R := aeval g F
   have hp : p = ∑ d ∈ F.support,
-      Polynomial.C (algebraMap K R (coeff d F)) * ∏ i, g i ^ d i := by
+      Polynomial.C (algebraMap K R (AddMonoidAlgebra.coeff F d)) * ∏ i, g i ^ d i := by
     simp only [p, aeval_def, eval₂_eq']
     rfl
   have hpd : p.natDegree ≤ n := by
@@ -43,7 +47,8 @@ theorem isIntegral_of_homogeneous_relation {K R S ι : Type*} [Field K] [CommRin
     have := (prod_pow_lead Finset.univ d g _ hgd hgc).1
     rwa [hdeg d hd] at this
   have hpc : p.coeff n = algebraMap K R (eval a F) := by
-    rw [hp, eval_eq', map_sum, Polynomial.finset_sum_coeff]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp, eval_eq', map_sum, Polynomial.finsetSum_coeff]
     refine Finset.sum_congr rfl fun d hd => ?_
     have := (prod_pow_lead Finset.univ d g _ hgd hgc).2
     rw [hdeg d hd] at this
@@ -77,7 +82,8 @@ theorem homogeneousComponent_aeval {K σ ι : Type*} [Field K] (l : ι → MvPol
     rw [one_mul] at h
     exact homogeneousComponent_of_mem h
   conv_lhs => rw [← sum_homogeneousComponent F]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   simp only [key, Finset.sum_ite_eq, Finset.mem_range]
   split_ifs with h
   · rfl
@@ -111,9 +117,11 @@ theorem isIntegral_trans_subalgebra {K S : Type*} [Field K] [CommRing S] [Algebr
       map_mul' := fun _ _ => rfl
       map_zero' := rfl
       map_add' := fun _ _ => rfl }
-  have h1 : IsIntegral (integralClosure R S) s :=
-    IsIntegral.map_of_comp_eq φ (RingHom.id S) (by ext; rfl) hs
-  exact isIntegral_trans s h1
+  have h1 : IsIntegral (integralClosure R S) s := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact IsIntegral.map_of_comp_eq φ (RingHom.id S) (by ext; rfl) hs
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact isIntegral_trans s h1
 
 theorem exists_linear_of_integral {K σ : Type} [Field K] [Infinite K]
     (I : Ideal (MvPolynomial σ K)) (hI : ∀ f ∈ I, ∀ n : ℕ, homogeneousComponent n f ∈ I)
@@ -178,14 +186,15 @@ theorem exists_linear_of_integral {K σ : Type} [Field K] [Infinite K]
     have hmem : ∀ i, Ideal.Quotient.mk I (v i) ∈ R := fun i => by
       by_cases h : i = j
       · subst h
-        rw [hvj, map_zero]
+        set_option synthInstance.maxHeartbeats 200000 in
+          rw [hvj, map_zero]
         exact zero_mem _
       · exact Algebra.subset_adjoin ⟨⟨i, h⟩, rfl⟩
     have hdec : ∀ i, Ideal.Quotient.mk I (v i) +
         algebraMap K (MvPolynomial σ K ⧸ I) (a i) * Ideal.Quotient.mk I u =
         Ideal.Quotient.mk I (l i) := fun i => by
       have : algebraMap K (MvPolynomial σ K ⧸ I) (a i) = Ideal.Quotient.mk I (C (a i)) := rfl
-      rw [this, ← map_mul, ← map_add]
+      rw [this, ← (Ideal.Quotient.mk I).map_mul, ← (Ideal.Quotient.mk I).map_add]
       simp only [v, sub_add_cancel]
     have hu : IsIntegral R (Ideal.Quotient.mk I u) := by
       refine isIntegral_of_homogeneous_relation (X j * F) hGd a ha
@@ -230,7 +239,7 @@ theorem main : ∀ (K : Type) [Field K] [Infinite K] (N : ℕ)
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective s
     induction f using MvPolynomial.induction_on with
     | C a => exact Subalgebra.algebraMap_mem _ a
-    | add p q hp hq => rw [map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [RingHom.map_add (Ideal.Quotient.mk I)]; exact add_mem hp hq
     | mul_X p i hp => rw [map_mul]; exact mul_mem hp (Algebra.subset_adjoin ⟨i, rfl⟩)
   obtain ⟨m, y, hy, hind, hint⟩ := exists_linear_of_integral I hI hne _ (Fin (N + 1)) X rfl
     (fun i => isHomogeneous_X K i)

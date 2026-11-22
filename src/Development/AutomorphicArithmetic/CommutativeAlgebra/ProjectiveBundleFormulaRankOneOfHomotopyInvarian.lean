@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiIsoHypercohomologyBijectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiIsoHypercohomologyBijectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf Simplicial
 
@@ -58,14 +62,14 @@ private theorem pa_val {n : ℕ} (i : Fin (n + 1)) (k : Fin (n + 2)) :
 private theorem hT_val {A : Type} [One A] {n : ℕ} (i : Fin (n + 1)) (v : Fin (n + 1) → A) (k : Fin (n + 2)) (a : Fin (n + 1))
     (h : (k : ℕ) ≤ i) (ha : (a : ℕ) = k) : hT i v k = v a := by
   unfold hT
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
   exact Fin.ext ha.symm
 
 private theorem hT_one {A : Type} [One A] {n : ℕ} (i : Fin (n + 1)) (v : Fin (n + 1) → A) (k : Fin (n + 2))
     (h : (i : ℕ) < k) : hT i v k = 1 := by
   unfold hT
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 private theorem hT_a {A : Type} [One A] {n : ℕ} (v : Fin (n + 1) → A) (j : Fin (n + 1)) :
     hT 0 v ((0 : Fin (n + 2)).succAbove j) = 1 :=
@@ -81,9 +85,9 @@ private theorem hT_eq_hT_of_le_iff_of_apply_eq {A : Type} [One A] {n m : ℕ} (a
     hT a v x = hT b w y := by
   unfold hT
   by_cases hx : (x : ℕ) ≤ a
-  · rw [dif_pos hx, dif_pos (h1.mp hx)]
+  · rw [dite_eq_left hx, dite_eq_left (h1.mp hx)]
     exact h2 hx (h1.mp hx)
-  · rw [dif_neg hx, dif_neg (fun hy => hx (h1.mpr hy))]
+  · rw [dite_eq_right hx, dite_eq_right (fun hy => hx (h1.mpr hy))]
 
 private theorem hT_c {A : Type} [One A] {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) (hij : i ≤ j.castSucc) (v : Fin (n + 2) → A)
     (k : Fin (n + 2)) : hT j.succ v (i.castSucc.succAbove k) = hT j (v ∘ i.succAbove) k := by

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ private lemma split_step [Module.Finite R A] [Algebra.Etale R A] {e : A} (σ : A
     refine Fin.cases ?_ (fun i => ?_) i
     · simp [h1]
     · have h2 : π (a * (1 - e) + algebraMap R A (v 0) * e) = π a := by
-        simp only [map_add, map_mul, map_sub, map_one, hπe, sub_zero, mul_one, mul_zero, add_zero]
+        simp only [map_add (f := _), map_mul, map_sub, map_one, hπe, sub_zero, mul_one, mul_zero, add_zero]
       change z i (π _) = v i.succ
       rw [h2]
       exact congrFun hb i
@@ -296,8 +300,8 @@ end Sch
 
 end UpperTheory.Ru.crystallineComparison
 
-open CategoryTheory Limits AlgebraicGeometry UpperTheory.Gal.crystallineComparison in
 
+open CategoryTheory Limits AlgebraicGeometry UpperTheory.Gal.crystallineComparison in
 theorem UpperTheory.Ru.crystallineComparison.splitEx :
     UpperTheory.Ru.crystallineComparison.SplitEx := by
   intro l hl Y T U _ hnz hcl hsec y

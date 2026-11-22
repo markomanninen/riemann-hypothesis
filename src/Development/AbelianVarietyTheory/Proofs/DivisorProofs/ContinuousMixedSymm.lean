@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 open scoped TensorProduct NNReal Matrix
@@ -38,12 +43,13 @@ theorem continuous_infAd : Continuous (infAd F) :=
 theorem continuous_evI_arch : Continuous (evI F) := (continuous_mixed F).comp continuous_fst
 
 @[simp] theorem evI_infAd (a : mixedEmbedding.mixedSpace F) : evI F (infAd F a) = a := by
-  simp [evI, infAd]
+  change (InfiniteAdeleRing.ringEquiv_mixedSpace F) ((InfiniteAdeleRing.ringEquiv_mixedSpace F).symm a) = a
+  exact (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply a
 
 theorem infAd_add (a b : mixedEmbedding.mixedSpace F) : infAd F (a + b) = infAd F a + infAd F b := by
-  unfold infAd; rw [map_add, map_add]; rfl
+  unfold infAd; rw [map_add (f := _), map_add (f := _)]
 
-theorem infAd_zero : infAd F 0 = 0 := by unfold infAd; rw [map_zero, map_zero]; rfl
+theorem infAd_zero : infAd F 0 = 0 := by unfold infAd; rw [map_zero, map_zero]
 
 theorem evI_add' (a b : AF F) : evI F (a + b) = evI F a + evI F b := by
   exact map_add ((InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp
@@ -67,7 +73,7 @@ theorem norm_ubasis (j : Fin (dimA F κ)) : ‖ubasis F κ j‖ = 1 := by
 def archIn : (Fin (dimA F κ) → ℝ) →+ (κ → AF F) where
   toFun t := fun i => infAd F ((ubasis F κ).equivFun.symm t i)
   map_zero' := by funext i; rw [map_zero]; exact infAd_zero F
-  map_add' s t := by funext i; rw [map_add]; exact infAd_add F _ _
+  map_add' s t := by funext i; rw [map_add (f := _)]; exact infAd_add F _ _
 
 def archOut : (κ → AF F) →+ (Fin (dimA F κ) → ℝ) where
   toFun x := (ubasis F κ).equivFun (arch F x)
@@ -76,7 +82,7 @@ def archOut : (κ → AF F) →+ (Fin (dimA F κ) → ℝ) where
     rw [this, map_zero]
   map_add' x y := by
     have : arch F (x + y) = arch F x + arch F y := by funext i; exact evI_add' F _ _
-    rw [this, map_add]
+    rw [this, map_add (f := _)]
 
 theorem archIn_apply (t : Fin (dimA F κ) → ℝ) (i : κ) :
     archIn F κ t i = infAd F ((ubasis F κ).equivFun.symm t i) := rfl
@@ -100,9 +106,6 @@ theorem continuous_archOut : Continuous (archOut F κ) := by
 
 def perSet (m : ℕ) : Set (κ → AF F) :=
   {z | ∀ i, ∃ a : AF F, evI F a = 0 ∧ (∀ v, evFin F v a ∈ v.adicCompletionIntegers F) ∧ z i = (m : AF F) * a}
-
-theorem per_iff (m : ℕ) (f : (κ → AF F) → ℂ) : Per F m f ↔ ∀ x, ∀ z ∈ perSet F κ m, f (x + z) = f x :=
-  ⟨fun h x z hz => h x z hz, fun h x z hz => h x z hz⟩
 
 def slab (m : ℕ) : Set (κ → AF F) := {w | w - archIn F κ (archOut F κ w) ∈ perSet F κ m}
 

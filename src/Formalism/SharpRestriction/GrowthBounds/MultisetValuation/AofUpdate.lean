@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RamifiedLatticeOfChainEstimates
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrimeCastNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RamifiedLatticeOfChainEstimates
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PrimeCastNeZero
+
+@[expose] public section
 
 noncomputable section
 

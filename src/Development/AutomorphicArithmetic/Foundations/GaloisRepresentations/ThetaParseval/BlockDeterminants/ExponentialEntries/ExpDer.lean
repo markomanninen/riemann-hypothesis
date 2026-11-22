@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 open GlobalTheory.RealLift
 
@@ -36,7 +40,8 @@ theorem der_pow_mul (D : Derivation ℂ R R) (k : ℕ) (P Q : R) :
   induction k with
   | zero => simp
   | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply, ih,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pow_succ', Module.End.mul_apply, ih,
       Finset.sum_antidiagonal_choose_succ_mul (fun i j => (D.toLinearMap ^ i) P * (D.toLinearMap ^ j) Q) k,
       map_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun p hp => ?_
@@ -75,7 +80,7 @@ theorem Good.add {D : Derivation ℂ R R} {P Q u v : R} (hP : Good D P u) (hQ : 
   refine ⟨⟨N₁ ⊔ N₂, inferInstance, add_mem (Submodule.mem_sup_left m₁) (Submodule.mem_sup_right m₂), ?_⟩, fun l => ?_⟩
   · intro y hy
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem (Submodule.mem_sup_left (s₁ a ha)) (Submodule.mem_sup_right (s₂ b hb))
   · simpa [mul_add] using (h₁ l).add (h₂ l)
 
@@ -103,7 +108,7 @@ theorem Good.mul {D : Derivation ℂ R R} {P Q u v : R} (hP : Good D P u) (hQ : 
     | mem_mul_mem a ha b hb =>
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, mul_comm b]
       exact add_mem (Submodule.mul_mem_mul ha (s₂ b hb)) (Submodule.mul_mem_mul (s₁ a ha) hb)
-    | add x _ y _ hx hy => rw [map_add]; exact add_mem hx hy
+    | add x _ y _ hx hy => rw [map_add (f := D)]; exact add_mem hx hy
   · have hv : v ∈ N₂ := mem_of_sum h₂ m₂ s₂
     obtain ⟨π, hπ⟩ := LinearMap.exists_leftInverse_of_injective N₂.subtype (Submodule.ker_subtype N₂)
     let b := Module.finBasis ℂ N₂
@@ -117,7 +122,8 @@ theorem Good.mul {D : Derivation ℂ R R} {P Q u v : R} (hP : Good D P u) (hQ : 
           exact Finset.sum_congr rfl fun i _ => by simp [Module.Basis.coord_apply]
     have key : ∀ (a y : R), y ∈ N₂ → l (a * y) = ∑ i, l (a * b i) * b.coord i (π y) := fun a y hy => by
       conv_lhs => rw [dec y hy]
-      rw [Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [mul_smul_comm, map_smul, smul_eq_mul, mul_comm]
     have S := fun i => hasSum_cauchy (h₁ (l ∘ₗ LinearMap.mulRight ℂ (b i : R))) (h₂ (b.coord i ∘ₗ π))
@@ -125,7 +131,8 @@ theorem Good.mul {D : Derivation ℂ R R} {P Q u v : R} (hP : Good D P u) (hQ : 
     simp only [LinearMap.comp_apply, LinearMap.mulRight_apply] at T
     rw [key u v hv]
     convert T using 2 with k
-    rw [der_pow_mul, map_sum, Finset.mul_sum, Finset.sum_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [der_pow_mul, map_sum, Finset.mul_sum, Finset.sum_comm]
     refine Finset.sum_congr rfl fun p hp => ?_
     obtain rfl : p.1 + p.2 = k := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
     rw [← nsmul_eq_mul, map_nsmul, nsmul_eq_mul, key _ _ (pow_mem m₂ s₂ _), ← mul_assoc, fact_choose, Finset.mul_sum]
@@ -141,7 +148,7 @@ theorem isExp_of_gens {σ : Type} (D : Derivation ℂ (MvPolynomial σ ℂ) (MvP
       have := Good.const D a
       rwa [show algebraMap ℂ (MvPolynomial σ ℂ) a = MvPolynomial.C a from rfl, ← MvPolynomial.algebraMap_eq,
         AlgHom.commutes] at *
-    | add p q hp hq => rw [map_add]; exact hp.add hq
+    | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
     | mul_X p i hp => rw [map_mul]; exact hp.mul (h i)
   exact fun v l => (g v).2 l
 
@@ -158,7 +165,8 @@ theorem isExp_shift {V : Type} [AddCommGroup V] [Module ℂ V] {L U : Module.End
     simp [mul_comm]
   rw [e]
   convert T using 2 with k
-  rw [hc.add_pow', LinearMap.sum_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc.add_pow', LinearMap.sum_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun p hp => ?_
   obtain rfl : p.1 + p.2 = k := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
   have : (s • (1 : Module.End ℂ V)) ^ p.2 = s ^ p.2 • 1 := by rw [smul_pow, one_pow]
@@ -187,7 +195,8 @@ theorem good_lin (D : Derivation ℂ R R) {τ : Type} [Fintype τ] [DecidableEq 
     | zero => intro c; simp [Matrix.one_apply, ite_smul]
     | succ k ih =>
       intro c
-      rw [pow_succ, Module.End.mul_apply, show D.toLinearMap (v c) = _ from hD c, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [pow_succ, Module.End.mul_apply, show D.toLinearMap (v c) = _ from hD c, map_sum]
       simp only [map_smul, ih, pow_succ, Matrix.mul_apply, Finset.smul_sum, Finset.sum_smul, smul_smul]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun e _ => by rw [mul_comm]
@@ -204,11 +213,13 @@ theorem good_lin (D : Derivation ℂ R R) {τ : Type} [Fintype τ] [DecidableEq 
     have e1 : (fun n : ℕ => ((n.factorial : ℂ))⁻¹ * l ((D.toLinearMap ^ n) (v c))) =
         fun n : ℕ => ∑ a, ((n.factorial : ℂ))⁻¹ * (Y ^ n) a c * l (v a) := by
       funext n
-      rw [hp, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hp, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_smul, smul_eq_mul, mul_assoc]
     have e2 : l (∑ a, NormedSpace.exp Y a c • v a) = ∑ a, NormedSpace.exp Y a c * l (v a) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun a _ => by rw [map_smul, smul_eq_mul]
     rw [e1, e2]
     exact T

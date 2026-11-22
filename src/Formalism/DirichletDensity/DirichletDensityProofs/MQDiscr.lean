@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DirichletDensity.Statement
-import Formalism.CMTypeGalois.HalfTypesFromGeneral
+module
+
+public import Mathlib
+public import Formalism.DirichletDensity.Statement
+public import Formalism.CMTypeGalois.HalfTypesFromGeneral
+
+@[expose] public section
 
 open NumberField IntermediateField NumberField.InfinitePlace Formalism.Q3
 
@@ -35,7 +39,7 @@ theorem not_isSquare_prod {k : ℕ} (q : Fin k → ℕ) (hq : ∀ i, (q i).Prime
     have : (q j : ℤ) * (∏ i ∈ S.erase j, (-(q i : ℤ))) = (q j : ℤ) * ((q j : ℤ) * -c) := by
       linear_combination (-1 : ℤ) * hc
     exact mul_left_cancel₀ hne this
-  obtain ⟨i, hi, hdi⟩ := (Prime.dvd_finset_prod_iff hp _).mp hP
+  obtain ⟨i, hi, hdi⟩ := (Prime.dvd_finsetProd_iff hp _).mp hP
   have hdi' : q j ∣ q i := by
     have := (dvd_neg.mp hdi)
     exact_mod_cast this
@@ -169,13 +173,5 @@ theorem mqDiscr_of (hQ : QuadDiscr) : MQDiscr := by
   have hs : (discr E).sign = (-1) ^ (2 ^ m) := by rw [sign_discr, hc]
   rw [← Int.sign_mul_natAbs (discr E), hs, hnat]
   simp
-
-theorem hostDiscr_of (h : MQDiscr) : HostDiscr := by
-  intro q hq E _ _ α hα
-  unfold Formalism.Q3.Hyp3 at hq
-  obtain ⟨hq1, hinj⟩ := hq
-  rw [h 3 q (by norm_num) hq1 hinj E α hα, Fin.prod_univ_three]
-  push_cast
-  ring
 
 end Formalism.HF

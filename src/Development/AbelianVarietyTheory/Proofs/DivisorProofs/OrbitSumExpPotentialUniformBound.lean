@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralInvariantChartSetLeMulFundamentalSet
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasurableSetSatFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MulSgnMatMulConjTranspose
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.UpperBounds.FreeBallIffOfDimXEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralInvariantChartSetLeMulFundamentalSet
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MeasurableSetSatFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MulSgnMatMulConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.ExistsMixedProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.MeasInvStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfC
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory
 open scoped ENNReal Matrix
 
@@ -144,9 +149,9 @@ theorem harnack (X : Data E r) {x0 : Frame X.Ψ r} (h0 : IsOrth X x0) :
   set b : X.Ψ → ℝ := fun τ =>
     ‖dmin X.Gm (cpt X x1 z) τ i0‖ / ‖lminor ((mat x τ)⁻¹ * mat (cpt X x1 z) τ) i0‖ ^ 2 with hb
   have hapos : ∀ τ, 0 < a τ := fun τ => by
-    have := norm_pos_iff.2 (det_block_ne_zero X.p0_le (isometry_of_orth X hx hx1 τ))
+    have hL := norm_pos_iff.2 (det_block_ne_zero X.p0_le (isometry_of_orth X hx hx1 τ))
     simp only [ha, IC.norm_dmin_orth X hx1]
-    positivity
+    exact div_pos zero_lt_one (pow_pos hL 2)
   have hab : ∀ τ, 1 / 8 * a τ ≤ b τ := fun τ => by
     have hiso := isometry_of_orth X hx hx1 τ
     have hL : 0 < ‖lminor ((mat x τ)⁻¹ * mat x1 τ) i0‖ :=
@@ -170,7 +175,7 @@ theorem harnack (X : Data E r) {x0 : Frame X.Ψ r} (h0 : IsOrth X x0) :
     have hc8 : (∏ _τ : X.Ψ, (1 / 8 : ℝ)) = (1 / 8) ^ X.Ψ.card := by
       rw [Finset.prod_const, Finset.card_univ, Fintype.card_coe]
     rw [← hc8, ← Finset.prod_mul_distrib]
-    exact Finset.prod_le_prod (fun τ _ => by have := hapos τ; positivity) fun τ _ => hab τ
+    exact Finset.prod_le_prod₀ (fun τ _ => by have := hapos τ; positivity) fun τ _ => hab τ
   have hA : 0 < ∏ τ, a τ := Finset.prod_pos fun τ _ => hapos τ
   have hl := Real.log_le_log (by positivity) hprod
   rw [Real.log_mul (by positivity) hA.ne', Real.log_pow] at hl
@@ -252,7 +257,7 @@ theorem orbitSum_le : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r 
   have hφB : ∀ y ∈ X.dom, ∀ b ∈ Bor X.Ψ r, φ (rmul y b) = φ y := fun y _ b hb => by
     simp only [hφdef, GlobalTheory.Up.rhX_rmul x y hb]
   set G : Frame X.Ψ r → ℝ≥0∞ := fun y => ∑' δ : X.Γ, φ (lact δ.1 y) with hGdef
-  have hGm : Measurable G := Measurable.ennreal_tsum fun δ =>
+  have hGm : Measurable G := Measurable.tsum fun δ =>
     hφm.comp (GlobalTheory.Unfold.continuous_lact X δ.1).measurable
   have hGB : ∀ b ∈ Bor X.Ψ r, ∀ y ∈ X.dom, G (rmul y b) = G y := fun b hb y _ => by
     simp only [hGdef, hφdef, FundSetPf.lact_rmul, GlobalTheory.Up.rhX_rmul x _ hb]

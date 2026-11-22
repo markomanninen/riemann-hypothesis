@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -10,9 +15,12 @@ theorem finrank_dvd_of_ringOfIntegers_to_matrix (E : Type) [Field E] [NumberFiel
     IsIntegralClosure.isLocalization ℤ ℚ E (𝓞 E)
   let g : 𝓞 E →+* Matrix (Fin r) (Fin r) ℚ := (Int.castRingHom ℚ).mapMatrix.comp ρ
   let S : Subalgebra ℚ (Matrix (Fin r) (Fin r) ℚ) := Algebra.adjoin ℚ (Set.range g)
-  letI : CommRing S := Algebra.adjoinCommRingOfComm ℚ (by
-    rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩
+  letI : IsMulCommutative S := Algebra.isMulCommutative_adjoin ℚ (by
+    rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩ _
+    change g a * g b = g b * g a
     rw [← map_mul, mul_comm, map_mul])
+  open scoped IsMulCommutative in
+  letI : CommRing S := inferInstance
   let g₁ : 𝓞 E →+* S := g.codRestrict S (fun a => Algebra.subset_adjoin ⟨a, rfl⟩)
   have hg : ∀ y : Algebra.algebraMapSubmonoid (𝓞 E) (nonZeroDivisors ℤ), IsUnit (g₁ y) := by
     rintro ⟨_, m, hm, rfl⟩

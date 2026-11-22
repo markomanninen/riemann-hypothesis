@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.HermitianLattices.StatementLat
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
-import Formalism.SharpRestriction.CuspSpanNormBounds.SArith
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SArith
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,8 @@ def idx (A B : Submodule (𝓞 E) S.V) : ℕ := Nat.card (A ⧸ B.comap A.subtyp
 
 def nrm (τ : E →+* ℂ) (x : S.V) : ℝ := (τ (S.hT x x)).re
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 def placeProd (X : (E →+* ℂ) → ℝ) : ℝ := Real.sqrt (∏ τ : E →+* ℂ, X τ)
 
 def NE (g : ℕ) : ℝ := (g : ℝ) ^ (Module.finrank ℚ E)
@@ -273,11 +277,8 @@ def NLam {T : E} (F : LFlag S r T) : Set (S.V ≃ₗ[E] S.V) :=
   {n | IsAutLam S Λ n ∧ (∀ j, ∀ x ∈ Xflag F (j + 1), n x - x ∈ Xflag F j) ∧
     (∀ x ∈ orth S (Xsp F), n x - x ∈ Xsp F)}
 
-def NEquiv {T T' : E} (F : LFlag S r T) (F' F'₂ : LFlag S r T') : Prop :=
-  ∃ n ∈ NLam Λ F, (∀ a, n (F'.fl.e a) = F'₂.fl.e a) ∧ n F'.fl.z = F'₂.fl.z
 
 omit [NumberField E] [StarRing E] in
-
 def ZEquiv {n : ℕ} (Z Z₂ : Matrix (Fin n) (Fin n) E) : Prop :=
   ∃ A B : Matrix (Fin n) (Fin n) (𝓞 E),
     (∀ a b, a < b → A a b = 0) ∧ (∀ a, A a a = 1) ∧ (∀ a b, b < a → B a b = 0) ∧ (∀ a, B a a = 1) ∧

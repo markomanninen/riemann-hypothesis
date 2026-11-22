@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+
+@[expose] public section
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.So
 
@@ -47,7 +51,7 @@ theorem add_conj_mem (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (e : E) :
     Submodule.eq_of_le_of_finrank_le h1 (by omega)
   have hmem : e + σ e ∈ S := by
     change σ (e + σ e) = e + σ e
-    rw [map_add, conj_conj σ h, add_comm]
+    rw [map_add (f := _), conj_conj σ h, add_comm]
   rw [← heq, Submodule.mem_span_singleton] at hmem
   obtain ⟨c, hc⟩ := hmem
   exact ⟨c, by rw [← hc, Algebra.algebraMap_eq_smul_one]⟩
@@ -93,7 +97,7 @@ theorem nu_rr (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (z : AE F E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    rw [map_add, map_add, hx, hy, map_add, ← smul_add]
+    rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), ← smul_add]
     congr 1
     abel
   | tmul a e =>

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompL
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ParIndSingle
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FMultOne
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FSocle
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FCount
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FDecompL
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.ParIndSingle
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FMultOne
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FSocle
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FCount
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -70,18 +74,18 @@ private theorem eq_of_conv {A : Type u} [DecidableEq A] (a : A) (U : Set A) (c f
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-private theorem nu_inj {ρ : IrrGL k} (hρ : ρ.IsCusp) {a b : ℕ} (h : ρ.nu (a : ℂ) = ρ.nu (b : ℂ)) : a = b := by
+private theorem nu_inj {ρ : IrrGL (k := k)} (hρ : ρ.IsCusp) {a b : ℕ} (h : ρ.nu (a : ℂ) = ρ.nu (b : ℂ)) : a = b := by
   have := (IrrGL.nu_intCast_inj hρ.1 (a := (a : ℤ)) (b := (b : ℤ))).1 (by simpa using h)
   exact_mod_cast this
 
 private theorem first_mem (Δ : Segment k) : Δ.first ∈ Δ.ms :=
   Segment.mem_ms.2 (Segment.mem_carrier.2 ⟨0, Δ.len_pos, by simp⟩)
 
-private theorem mem_msupp {𝔪 : Multiset (Segment k)} {x : IrrGL k} : x ∈ msupp 𝔪 ↔ ∃ Δ ∈ 𝔪, x ∈ Δ.ms :=
+private theorem mem_msupp {𝔪 : Multiset (Segment k)} {x : IrrGL (k := k)} : x ∈ msupp 𝔪 ↔ ∃ Δ ∈ 𝔪, x ∈ Δ.ms :=
   Multiset.mem_bind
 
 open Classical in
-private theorem count_ms {ρ : IrrGL k} (hρ : ρ.IsCusp) {Δ : Segment k} (h : Δ.first = ρ) (n : ℕ) :
+private theorem count_ms {ρ : IrrGL (k := k)} (hρ : ρ.IsCusp) {Δ : Segment k} (h : Δ.first = ρ) (n : ℕ) :
     Δ.ms.count (ρ.nu (n : ℂ)) = if n < Δ.len then 1 else 0 := by
   have hnd : Δ.ms.Nodup := by
     refine Multiset.Nodup.map (fun a b e => Fin.ext (nu_inj hρ ?_)) Finset.univ.nodup
@@ -92,7 +96,7 @@ private theorem count_ms {ρ : IrrGL k} (hρ : ρ.IsCusp) {Δ : Segment k} (h : 
   exact ⟨fun ⟨a, ha, e⟩ => nu_inj hρ e ▸ ha, fun hn => ⟨n, hn, rfl⟩⟩
 
 open Classical in
-private theorem count_msupp {ρ : IrrGL k} (hρ : ρ.IsCusp) {Δ : Segment k} (h : Δ.first = ρ)
+private theorem count_msupp {ρ : IrrGL (k := k)} (hρ : ρ.IsCusp) {Δ : Segment k} (h : Δ.first = ρ)
     (𝔪 : Multiset (Segment k)) (hm : ∀ D ∈ 𝔪, D.first = ρ) :
     (msupp 𝔪).count (ρ.nu ((Δ.len - 1 : ℕ) : ℂ)) = (msupp 𝔪).count (ρ.nu ((Δ.len : ℕ) : ℂ)) + 𝔪.count Δ := by
   induction 𝔪 using Multiset.induction_on with
@@ -115,7 +119,7 @@ private theorem count_msupp {ρ : IrrGL k} (hρ : ρ.IsCusp) {Δ : Segment k} (h
       · rw [if_neg (by omega), if_neg e2]
         omega
 
-private theorem start_unique {ρ : IrrGL k} (hρ : ρ.IsCusp) {𝔪 𝔫 : Multiset (Segment k)}
+private theorem start_unique {ρ : IrrGL (k := k)} (hρ : ρ.IsCusp) {𝔪 𝔫 : Multiset (Segment k)}
     (hm : ∀ D ∈ 𝔪, D.first = ρ) (hn : ∀ D ∈ 𝔫, D.first = ρ) (h : msupp 𝔪 = msupp 𝔫) : 𝔪 = 𝔫 := by
   classical
   ext Δ
@@ -127,7 +131,7 @@ private theorem start_unique {ρ : IrrGL k} (hρ : ρ.IsCusp) {𝔪 𝔫 : Multi
     convert Nat.add_left_cancel h3
   · rw [Multiset.count_eq_zero.2 fun hh => e (hm _ hh), Multiset.count_eq_zero.2 fun hh => e (hn _ hh)]
 
-private theorem seg_pairs {ρ : IrrGL k} (hρ : ρ.IsCusp) (S : Multiset (IrrGL k)) (hS : ∀ y ∈ S, y ∈ up ρ) :
+private theorem seg_pairs {ρ : IrrGL (k := k)} (hρ : ρ.IsCusp) (S : Multiset (IrrGL (k := k))) (hS : ∀ y ∈ S, y ∈ up ρ) :
     {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.ncard =
       {p : Multiset (Segment k) × Multiset (Segment k) |
         ρ ∉ msupp p.1 ∧ (∀ D ∈ p.2, D.first = ρ) ∧ msupp p.1 + msupp p.2 = S}.ncard := by
@@ -164,7 +168,7 @@ private theorem seg_pairs {ρ : IrrGL k} (hρ : ρ.IsCusp) (S : Multiset (IrrGL 
     · exact fun D hD => (Multiset.mem_filter.1 hD).2
     · rw [← msupp_add, hs, hm']
 
-private theorem supp_emb {x y z : IrrGL k} (h : Emb x y z) {A B : Multiset (IrrGL k)}
+private theorem supp_emb {x y z : IrrGL (k := k)} (h : Emb x y z) {A B : Multiset (IrrGL (k := k))}
     (hA : HasSupport y.rep A) (hB : HasSupport z.rep B) : HasSupport x.rep (A + B) := by
   obtain ⟨hd, f, hf⟩ := h
   have := GlobalTheory.CompanionTheory.Hypotheses₂.TD.hasSupport_of_isSubquotient_prodIrr (y := ![y, z]) (hd := hd) (t := ![A, B])
@@ -172,11 +176,11 @@ private theorem supp_emb {x y z : IrrGL k} (h : Emb x y z) {A B : Multiset (IrrG
   simpa using this
 
 private theorem cls_pairs (hG : GlobalTheory.Published.GeometricLemma) (hB : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
-    (s : IrrGL k → Multiset (IrrGL k)) (hs : ∀ x A, HasSupport x.rep A ↔ s x = A) (ρ : IrrGL k)
-    (S : Multiset (IrrGL k)) :
-    {x : IrrGL k | s x = S}.ncard =
-      {p : IrrGL k × IrrGL k | ρ ∉ s p.1 ∧ FirstIn p.2 {ρ} ∧ s p.1 + s p.2 = S}.ncard := by
-  choose φ hφ using fun y z : IrrGL k => (socle hB k y z).1
+    (s : IrrGL (k := k) → Multiset (IrrGL (k := k))) (hs : ∀ x A, HasSupport x.rep A ↔ s x = A) (ρ : IrrGL (k := k))
+    (S : Multiset (IrrGL (k := k))) :
+    {x : IrrGL (k := k) | s x = S}.ncard =
+      {p : IrrGL (k := k) × IrrGL (k := k) | ρ ∉ s p.1 ∧ FirstIn p.2 {ρ} ∧ s p.1 + s p.2 = S}.ncard := by
+  choose φ hφ using fun y z : IrrGL (k := k) => (socle hB k y z).1
   have hP : ∀ y, SuppIn y {ρ}ᶜ ↔ ρ ∉ s y := fun y =>
     ⟨fun ⟨A, hA, h⟩ hm => h ρ ((hs y A).1 hA ▸ hm) rfl,
       fun h => ⟨s y, (hs _ _).2 rfl, fun w hw e => h ((Set.mem_singleton_iff.1 e) ▸ hw)⟩⟩
@@ -200,11 +204,11 @@ end UpperTheory.Lit.Full.RedU
 
 open UpperTheory.Lit.Full.RedU in
 theorem UpperTheory.Lit.Full.redUnique :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ρ : IrrGL k), ρ.IsCusp → ∀ (T : Multiset (IrrGL k)), (∀ y ∈ T, y ∈ up ρ) → ∀ x : IrrGL k, HasSupport x.rep T → FirstIn x {ρ} → (∃ 𝔪 : Multiset (Segment k), msupp 𝔪 = T ∧ ∀ Δ ∈ 𝔪, Δ.first = ρ) ∧ ∀ x' : IrrGL k, HasSupport x'.rep T → FirstIn x' {ρ} → x' = x := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (ρ : IrrGL (k := k)), ρ.IsCusp → ∀ (T : Multiset (IrrGL (k := k))), (∀ y ∈ T, y ∈ up ρ) → ∀ x : IrrGL (k := k), HasSupport x.rep T → FirstIn x {ρ} → (∃ 𝔪 : Multiset (Segment k), msupp 𝔪 = T ∧ ∀ Δ ∈ 𝔪, Δ.first = ρ) ∧ ∀ x' : IrrGL (k := k), HasSupport x'.rep T → FirstIn x' {ρ} → x' = x := by
   classical
   intro hG hB hZ k _ _ _ _ ρ hρ T hT x hx hxF
-  choose s hs0 using fun x : IrrGL k => GlobalTheory.CompanionTheory.Hypotheses₂.TD.exists_hasSupport hB hG x
-  have hs : ∀ (x : IrrGL k) A, HasSupport x.rep A ↔ s x = A := fun x A =>
+  choose s hs0 using fun x : IrrGL (k := k) => GlobalTheory.CompanionTheory.Hypotheses₂.TD.exists_hasSupport hB hG x
+  have hs : ∀ (x : IrrGL (k := k)) A, HasSupport x.rep A ↔ s x = A := fun x A =>
     ⟨fun h => GlobalTheory.CompanionTheory.Hypotheses₂.TD.hasSupport_unique hG hB (hs0 x) h, fun h => h ▸ hs0 x⟩
   have hc := count hG hB hZ k
   simp only [hs] at hc
@@ -216,18 +220,20 @@ theorem UpperTheory.Lit.Full.redUnique :
     have : D.first ∈ msupp 𝔪 := mem_msupp.2 ⟨D, hD, first_mem D⟩
     simp [h] at this
   have key := eq_of_conv ρ (up ρ) (fun S => {𝔪 : Multiset (Segment k) | msupp 𝔪 = S}.ncard)
-    (fun S => {x : IrrGL k | FirstIn x {ρ} ∧ s x = S}.ncard)
+    (fun S => {x : IrrGL (k := k) | FirstIn x {ρ} ∧ s x = S}.ncard)
     (fun S => {𝔪 : Multiset (Segment k) | (∀ D ∈ 𝔪, D.first = ρ) ∧ msupp 𝔪 = S}.ncard) h0
     (fun S hS => by
       have e1 := ncard_pairs s (fun S => (hc S).1) ρ (fun x => FirstIn x {ρ}) S
       have e2 := ncard_pairs (msupp (k := k)) (fun S => (hc S).2.1) ρ (fun 𝔪 => ∀ D ∈ 𝔪, D.first = ρ) S
       rw [← e2, ← seg_pairs hρ S hS, ← (hc S).2.2, cls_pairs hG hB s hs ρ S, e1]
       exact Finset.sum_congr rfl fun q _ => by rw [(hc q.1).2.2]) _ T rfl hT
-  have hfin : {x : IrrGL k | FirstIn x {ρ} ∧ s x = T}.Finite := (hc T).1.subset fun x hx => hx.2
-  have hxm : x ∈ {x : IrrGL k | FirstIn x {ρ} ∧ s x = T} := ⟨hxF, (hs _ _).1 hx⟩
+  have hfin : {x : IrrGL (k := k) | FirstIn x {ρ} ∧ s x = T}.Finite := (hc T).1.subset fun x hx => hx.2
+  have hxm : x ∈ {x : IrrGL (k := k) | FirstIn x {ρ} ∧ s x = T} := ⟨hxF, (hs _ _).1 hx⟩
   have hpos := (Set.ncard_pos hfin).2 ⟨x, hxm⟩
+  have hfinm : {𝔪 : Multiset (Segment k) | (∀ D ∈ 𝔪, D.first = ρ) ∧ msupp 𝔪 = T}.Finite :=
+    (hc T).2.1.subset fun x hx => hx.2
   have hle : {𝔪 : Multiset (Segment k) | (∀ D ∈ 𝔪, D.first = ρ) ∧ msupp 𝔪 = T}.ncard ≤ 1 :=
-    (Set.ncard_le_one ((hc T).2.1.subset fun x hx => hx.2)).2 fun a ha b hb =>
+    (Set.ncard_le_one hfinm).2 fun a ha b hb =>
       start_unique hρ ha.1 hb.1 (ha.2.trans hb.2.symm)
   refine ⟨?_, fun x' hx' hF' => ?_⟩
   · obtain ⟨𝔪, h1, h2⟩ := Set.nonempty_of_ncard_ne_zero (key ▸ hpos.ne' :

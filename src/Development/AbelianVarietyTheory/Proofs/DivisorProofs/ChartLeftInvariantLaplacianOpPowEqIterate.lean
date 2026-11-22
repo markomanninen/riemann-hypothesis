@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CasKOp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfMemWeakIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CasKOp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfMemWeakIn
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,10 @@ open scoped ContDiff
 
 namespace GlobalTheory.HCAlpha
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem vecF_eqOn_invSet (X : Lie E a) {f f' : Lie E a → ℂ} (h : Set.EqOn f f' (invSet E a)) :
     Set.EqOn (vecF E a X f) (vecF E a X f') (invSet E a) := fun y hy => by
   have e : f =ᶠ[nhds y] f' := Filter.eventually_of_mem (isOpen_invSet.mem_nhds hy) h
@@ -38,15 +42,15 @@ theorem chart_lapOp_eqOn_invSet (φ : Sm E a) (g : GA E a) :
   have hy' : IsUnit (Matrix.of y) := hy
   have key : ∀ X : Lie E a, ((lie E a X ^ 2) φ).1 (g * infGL E a hy'.unit) =
       vecF E a X (vecF E a X (chart φ.1 g)) y := fun X => by
-    rw [← chart_lie_sq_eqOn_invSet X φ g hy, chart, dif_pos hy']
-  rw [chart, dif_pos hy']
+    rw [← chart_lie_sq_eqOn_invSet X φ g hy, chart, dite_eq_left hy']
+  rw [chart, dite_eq_left hy']
   simp only [lapOp, lapF, LinearMap.sum_apply, LinearMap.add_apply, Submodule.coe_sum, Submodule.coe_add,
     Finset.sum_apply, Pi.add_apply]
   refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← key, ← key]
   rfl
 
-theorem chart_lapOp_pow (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a)
+theorem chart_lapOp_pow (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a)
     (g : GA E a) (n : ℕ) :
     ∀ y ∈ invSet E a, chart ((lapOp E a ^ n) φ).1 g y = (lapF E a)^[n] (chart φ.1 g) y := by
   induction n with

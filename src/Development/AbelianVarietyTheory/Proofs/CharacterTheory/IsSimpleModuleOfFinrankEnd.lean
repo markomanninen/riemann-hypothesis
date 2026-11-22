@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.CuspEllipticValues
-import Development.AbelianVarietyTheory.BlockTheory.IrreducibleCharacters.CuspidalCharacters
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CentralIdempotentIrreducibleCharacterProps
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.CuspEllipticValues
+public import Development.AbelianVarietyTheory.BlockTheory.IrreducibleCharacters.CuspidalCharacters
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CentralIdempotentIrreducibleCharacterProps
+
+@[expose] public section
 
 namespace GlobalTheory.CuspCharCompare
 

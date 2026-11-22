@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviEqISupParts
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitOfComm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviEqISupParts
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsUnitOfComm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -60,8 +65,8 @@ section Field
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {r : ℕ} {X Y : Matrix (Fin n) (Fin r) E}
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 def P (I : Set (Fin r)) : Matrix (Fin n) (Fin n) E := prj (σ : E →+* E) J X Y (ind I)
 
 theorem proj_eq_frameProj (I : Set (Fin r)) : P σ J X Y I = GlobalTheory.CompanionTheory.Hypotheses₂.LeviPart.Comm.frameProj σ J X Y I := by

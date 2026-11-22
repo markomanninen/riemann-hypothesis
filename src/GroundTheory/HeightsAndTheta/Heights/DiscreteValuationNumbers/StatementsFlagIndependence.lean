@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -50,13 +55,6 @@ def SymmetricSpanHsymm.Statement : Prop :=
     G ∈ Submodule.span ℤ (Set.range fun μ : m.Partition => hsymmPart (Fin N) ℤ μ)
 
 section Examples
-
-def psumExpansionKoszul : Fin 2 → MvPolynomial (Fin 2 ⊕ Fin 2) ℤ :=
-  ![psumExpansion 2 2 0 + (X (Sum.inl 1) - X (Sum.inr 1)),
-    psumExpansion 2 2 1 - (X (Sum.inl 0) - X (Sum.inr 0))]
-
-def hsymmOneExpansion : Fin (2 + 1) → MvPolynomial (Fin (2 + 1) ⊕ Fin (2 + 1)) ℤ :=
-  fun i => if (i : ℕ) < 2 then 1 else 0
 
 end Examples
 

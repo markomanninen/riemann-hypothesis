@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.WeilBound.CoreStatements.IdealCycleValues.ProdMapToMultiset
-import Development.WeilBound.CoreStatements.IdealCycleValues.IntersectionNumbersPermInvariant
-import Development.WeilBound.CoreStatements.IdealCycleValues.IntNumLCons
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.WeilBound.CoreStatements.IdealCycleValues.ProdMapToMultiset
+public import Development.WeilBound.CoreStatements.IdealCycleValues.IntersectionNumbersPermInvariant
+public import Development.WeilBound.CoreStatements.IdealCycleValues.IntNumLCons
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 

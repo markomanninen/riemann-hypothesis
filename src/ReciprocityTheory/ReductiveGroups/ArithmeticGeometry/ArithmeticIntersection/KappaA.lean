@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaSt
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped Pointwise
@@ -48,6 +52,6 @@ theorem sphereInv_thm : SphereInvStatement := by
     rw [sphereMeasure, Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel h1 h2]
   · have hL := toSphere_measurePreserving L
     refine ⟨hL.measurable, ?_⟩
-    rw [sphereMeasure, Measure.map_smul, hL.map_eq]
+    rw [sphereMeasure, Measure.map_smul _ hL.measurable.aemeasurable, hL.map_eq]
 
 end ReciprocityTheory.ChartRestriction.G.AI

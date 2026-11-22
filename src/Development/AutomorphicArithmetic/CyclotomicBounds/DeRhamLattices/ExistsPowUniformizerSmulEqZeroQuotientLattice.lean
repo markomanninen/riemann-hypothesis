@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.HasPres
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations TensorProduct UpperTheory.KN
 
@@ -43,5 +47,5 @@ theorem _root_.UpperTheory.KN.exists_pow_uniformizer_smul_eq_zero_quotient_latti
     rw [← pow_sub_mul_pow lam (Finset.single_le_sum (fun j _ => Nat.zero_le (a j)) hx), mul_smul, ha x,
       smul_zero]
   | zero => rw [map_zero, smul_zero]
-  | add x z _ _ h1 h2 => rw [map_add, smul_add, h1, h2, add_zero]
+  | add x z _ _ h1 h2 => rw [map_add (f := _), smul_add, h1, h2, add_zero]
   | smul c x _ h => rw [map_smul, smul_comm, h, smul_zero]

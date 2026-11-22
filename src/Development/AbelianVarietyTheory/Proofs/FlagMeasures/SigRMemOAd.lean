@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
-import Formalism.LocalToGlobal.HermitianForms.TiedStep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SelfDualAt
+public import Formalism.LocalToGlobal.HermitianForms.TiedStep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralExtensionFiniteAdelesBasicPropertiesStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.UG Formalism.L2.Forms NumberField IsDedekindDomain Matrix GlobalTheory.St.G
 open scoped TensorProduct
@@ -43,7 +47,7 @@ theorem iota_sigR (F E F' E' : Type) [Field F] [NumberField F] [Field E] [Number
   set D : E ⊗[F] Ad F → E' ⊗[F'] Ad F' :=
     fun b => ι (sigR σ (Ad F) b) - sigR σ' (Ad F') (ι b) with hD
   have Dadd : ∀ b c, D (b + c) = D b + D c := by
-    intro b c; simp only [hD, map_add]; abel
+    intro b c; simp only [hD, map_add (f := _)]; abel
   have Dmul : ∀ (m : ℕ) b, D ((m : E ⊗[F] Ad F) * b) = (m : E' ⊗[F'] Ad F') * D b := by
     intro m b; simp only [hD, map_mul, map_natCast]; ring
   have Dincl : ∀ x : E, D (inclE (F := F) (Ad F) x) = 0 := by

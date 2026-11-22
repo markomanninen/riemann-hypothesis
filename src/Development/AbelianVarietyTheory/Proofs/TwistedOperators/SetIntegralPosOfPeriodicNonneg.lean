@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierCoeffMulCharConvAndHasDerivAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierCoeffMulCharConvAndHasDerivAt
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -111,9 +116,9 @@ private lemma exists_charSum_approx {Q : Type} [TopologicalSpace Q] [CompactSpac
     _ ≤ ‖f - g‖ := (f - g).norm_coe_le_norm q
     _ ≤ δ := by rw [← dist_eq_norm]; exact hfg.le
 
+
 open MeasureTheory in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.exists_summation_kernel_periodic : ∀ (G : Type) [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAddGroup G] [T2Space G] [LocallyCompactSpace G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] (Γ : AddSubgroup G) [DiscreteTopology Γ] (K : Set G), IsCompact K → (∀ x, ∃ γ ∈ Γ, γ + x ∈ K) → ∀ (A : Type) [AddCommGroup A] (χ : A → G → ℂ), (∀ a, Continuous (χ a)) → (∀ a x y, χ a (x + y) = χ a x * χ a y) → (∀ a b x, χ (a + b) x = χ a x * χ b x) → (∀ x, χ 0 x = 1) → (∀ a x, ‖χ a x‖ = 1) → (∀ x, (∀ a, χ a x = 1) ↔ x ∈ Γ) → ∀ (μ : Measure G) (𝓕 : Set G), μ.IsAddHaarMeasure → IsAddFundamentalDomain Γ 𝓕 μ → ∀ l : List (G → ℂ), (∀ Φ ∈ l, Continuous Φ ∧ ∀ γ ∈ Γ, ∀ x, Φ (γ + x) = Φ x) → ∀ ε : ℝ, 0 < ε → ∃ (s : Finset A) (c : A → ℂ), ∀ Φ ∈ l, ∀ x, ‖Φ x - ∑ a ∈ s, c a * ((∫ y in 𝓕, Φ y * starRingEnd ℂ (χ a y) ∂μ) * χ a x)‖ ≤ ε := by
   intro G _ _ _ _ _ _ _ _ Γ _ K hK hcov A _ χ hχc hχmul hχadd hχ0 hχnorm hχΓ μ 𝓕 hμ h𝓕 l hl ε hε
   classical
@@ -249,10 +254,11 @@ theorem _root_.GlobalTheory.exists_summation_kernel_periodic : ∀ (G : Type) [A
   have hsum : ∑ a ∈ s, starRingEnd ℂ (d a) * ((∫ y in 𝓕, Φ y * starRingEnd ℂ (χ a y) ∂μ) * χ a x)
       = ∫ y in 𝓕, Φ (x + y) * starRingEnd ℂ (k y) ∂μ := by
     simp_rw [hconv, ← integral_const_mul]
-    rw [← integral_finset_sum]
+    rw [← MeasureTheory.integral_finsetSum]
     · congr 1
       funext y
-      simp only [hkdef, map_sum, map_mul, Complex.conj_conj, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hkdef, map_sum, map_mul, Complex.conj_conj, Finset.mul_sum]
       exact Finset.sum_congr rfl fun a _ => by ring
     · intro a _
       exact Integrable.of_bound (by fun_prop) (‖starRingEnd ℂ (d a)‖ * M)

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MapFstConjTranspose
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MapFstConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem continuous_first_orbit_map : Continuous (p1 (F := F) (E := E) R1 R2) := 
     | zero => simp
     | tmul a m =>
       simp [crd, p1, Algebra.TensorProduct.basis_repr_tmul]
-    | add x y hx hy => simp only [map_add, Pi.add_apply, Prod.fst_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, Prod.fst_add, hx, hy]
   rw [show p1 (F := F) (E := E) R1 R2 = fun x =>
       (crd (F := F) (E := E) R1).symm (fun i => (crd (F := F) (E := E) (R1 × R2) x i).1) from funext key]
   exact (continuous_crd_symm R1).comp
@@ -70,7 +74,7 @@ theorem continuous_p2 : Continuous (p2 (F := F) (E := E) R1 R2) := by
     | zero => simp
     | tmul a m =>
       simp [crd, p2, Algebra.TensorProduct.basis_repr_tmul]
-    | add x y hx hy => simp only [map_add, Pi.add_apply, Prod.snd_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, Prod.snd_add, hx, hy]
   rw [show p2 (F := F) (E := E) R1 R2 = fun x =>
       (crd (F := F) (E := E) R2).symm (fun i => (crd (F := F) (E := E) (R1 × R2) x i).2) from funext key]
   exact (continuous_crd_symm R2).comp
@@ -91,8 +95,8 @@ theorem continuous_psiE : Continuous (psiE (F := F) (E := E) (M := M) R1 R2) := 
   exact (continuous_pi fun i => (continuous_first_orbit_map R1 R2).comp (continuous_apply i)).prodMk
     (continuous_pi fun i => (continuous_p2 R1 R2).comp (continuous_apply i))
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem continuous_qqv :
     Continuous (fun y : (Fin M → R1 ⊗[F] E) × (Fin M → R2 ⊗[F] E) => fun i => qq R1 R2 (y.1 i) (y.2 i)) := by
   refine continuous_pi fun i => ?_

@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.One
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.IntegralThetaRowZeroEqZeroOfIwahoriInvariant
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.RightInv
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.JExExists
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.FixTr
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.One
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.IntegralThetaRowZeroEqZeroOfIwahoriInvariant
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.RightInv
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.JExExists
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.FixTr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -16,7 +20,7 @@ open scoped Classical
 
 private theorem memK {K : Type} [Field K] [NumberField K] (v : P K)
     (x : Matrix.SpecialLinearGroup (Fin 2) (Kv v)) (h : ∀ i j, IsInt (x i j)) :
-    Matrix.SpecialLinearGroup.toGL x ∈ GlobalTheory.LFun.KGL v 2 := by
+    Matrix.SpecialLinearGroup.toGL x ∈ GlobalTheory.LFun.KGL v (n := 2) := by
   let a : Matrix (Fin 2) (Fin 2) (Formalism.UG.Ov K v) := fun i j => ⟨x i j, h i j⟩
   have ha : a.det = 1 := by
     apply Subtype.ext
@@ -42,7 +46,7 @@ private theorem int_one {K : Type} [Field K] [NumberField K] (v : P K) : IsInt (
 private theorem int_zero {K : Type} [Field K] [NumberField K] (v : P K) : IsInt (0 : Kv v) := by
   unfold IsInt
   rw [map_zero]
-  exact zero_le'
+  exact zero_le
 private theorem int_neg_one {K : Type} [Field K] [NumberField K] (v : P K) : IsInt (-1 : Kv v) := by
   unfold IsInt
   rw [Valuation.map_neg, map_one]
@@ -102,7 +106,7 @@ private theorem w_conj {K : Type} [Field K] [NumberField K] {v : P K} (ϖ : (Kv 
     ring
 
 theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_eq_zero_of_anisotropic :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2) (v : P F), Gd D.δ v → Aniso D.δ v →
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (M : Meas F) (π : TR.CuspSub F 2) (v : P F), Gd D.δ v → Aniso D.δ v →
       ∀ f ∈ π.V, ∀ φ ∈ Fock D.δ, ∀ (h : GL (Fin 2) (A E)) (α β : ℂˣ), EigAt v {α, β} f.1 → KAt v (dM (nu F h)) →
       (∀ g, At v g → IntAt v g → W.Om g (W.L h φ) = W.L h φ) → ((α : ℂ) + β) * T0 W M f.1 φ h = 0 := by
   intro F E _ _ _ _ _ _ _ D W M π v hG hA f hf φ hφ h α β hE hK hL
@@ -111,7 +115,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_
   obtain ⟨R, -, hRi, hR⟩ := heckeExpl F v ϖ hϖ
   obtain ⟨⟨j, hj⟩, hjj⟩ := jEx F v
   obtain ⟨-, hAt, hInt, -⟩ := hjj j hj
-  have hFix : ∀ (G : GL (Fin 2) (A F)), ∀ z ∈ GlobalTheory.LFun.KGL v 2, f.1 (G * lc v z * dM (nu F h)) = f.1 (G * dM (nu F h)) := by
+  have hFix : ∀ (G : GL (Fin 2) (A F)), ∀ z ∈ GlobalTheory.LFun.KGL v (n := 2), f.1 (G * lc v z * dM (nu F h)) = f.1 (G * dM (nu F h)) := by
     intro G z hz
     have h1 : f.1 (G * lc v (1 * z) * dM (nu F h)) = f.1 (G * lc v 1 * dM (nu F h)) := (hE₁ G).inv 1 z hz
     rwa [one_mul, map_one, mul_one] at h1
@@ -119,7 +123,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_
     (map_mul Matrix.SpecialLinearGroup.toGL g (j x)).trans (congrArg (fun t => gl g * t) (hj x))
   have hOm : ∀ (g : G1 F) x, (∀ i k, IsInt (x i k)) → W.Om (g * j x) (W.L h φ) = W.Om g (W.L h φ) := by
     intro g x hx
-    rw [map_mul, Module.End.mul_apply, hL _ (hAt x) (hInt x hx)]
+    rw [map_mul, mul_apply_eq_comp, hL _ (hAt x) (hInt x hx)]
   have hrow : ∀ γ (φ' : S4 F), ThRow 0 0 (W.Om (ratS F γ) φ').1 = ThRow 0 0 φ'.1 := by
     intro γ φ'
     simpa using (hatSt F E D W).row γ 0 φ'
@@ -133,7 +137,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_
     intro γ g
     show f.1 (gl (ratS F γ * g) * lc v (dL ϖ 1) * dM (nu F h)) * ThRow 0 0 (W.Om (ratS F γ * g) (W.L h φ)).1 =
       f.1 (gl g * lc v (dL ϖ 1) * dM (nu F h)) * ThRow 0 0 (W.Om g (W.L h φ)).1
-    rw [hl1, map_mul, Module.End.mul_apply, hrow]
+    rw [hl1, map_mul, mul_apply_eq_comp, hrow]
   have hlaw := (lcLaws F v).2.2.2.2.2.2 (dM (nu F h)) (dL ϖ 1)
   have hUi : IntegrableOn U M.D M.μ := by
     have hc := (conv F E D W M π _ (π.stable (.fin (locGL F 2 v ((Matrix.GeneralLinearGroup.map (cp v) (dM (nu F h)))⁻¹ * dL ϖ 1 * Matrix.GeneralLinearGroup.map (cp v) (dM (nu F h))))) f hf) φ hφ h).2.1
@@ -145,7 +149,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_
   have hI : ∫ g in M.D, U g ∂M.μ = 0 := by
     refine integral_thetaRowZero_eq_zero_of_iwahori_invariant F E D W M v ϖ hϖ hG hA j hj (fun g => f.1 (gl g * lc v (dL ϖ 1) * dM (nu F h))) (W.L h φ) hl1 ?_ hUi
     intro g x h00 h11 h01 h10
-    have hz : Matrix.SpecialLinearGroup.toGL (xC ϖ x) ∈ GlobalTheory.LFun.KGL v 2 := by
+    have hz : Matrix.SpecialLinearGroup.toGL (xC ϖ x) ∈ GlobalTheory.LFun.KGL v (n := 2) := by
       refine memK v _ fun i k => ?_
       fin_cases i <;> fin_cases k
       exacts [h00, h01, h10, h11]
@@ -188,6 +192,6 @@ theorem UpperTheory.ConvolutionTheory.R2.H.eigenvalue_sum_mul_thetaConstantTerm_
     unfold T0
     rw [← integral_const_mul]
     simp only [hpt]
-    rw [integral_add (integrable_finset_sum _ fun b _ => hki _) (hki _), integral_finset_sum _ fun b _ => hki _]
+    rw [integral_add (integrable_finsetSum _ fun b _ => hki _) (hki _), integral_finsetSum _ fun b _ => hki _]
     simp [hk]
   exact (mul_eq_zero.1 key).resolve_left hq

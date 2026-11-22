@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 open Filter
 open scoped BigOperators Topology
@@ -104,7 +108,7 @@ theorem binomC_natCast (k n : ℕ) : binomC k (n : ℤ_[q]) = (n.choose k : ℂ_
 
 theorem fwdDiff_binomC (k m : ℕ) :
     (fwdDiff (1 : ℤ_[q]))^[m] (binomC (q := q) k) 0 = if m = k then 1 else 0 := by
-  have h := fwdDiff_iter_choose_zero k m
+  have h := fwdDiff_iter_choose_zero (R := ℤ) k m
   rw [fwdDiff_iter_eq_sum_shift] at h ⊢
   have h' := congrArg (Int.cast : ℤ → ℂ_[q]) h
   simp only [zero_add, nsmul_one, binomC_natCast] at h' ⊢
@@ -130,7 +134,7 @@ theorem exists_measure_of_bounded_moments :
   let L : C(Fin g → ℤ_[q], ℂ_[q]) →ₗ[ℂ_[q]] ℂ_[q] :=
     { toFun := fun F => ∑' n, c n * D n F
       map_add' := fun F G => by
-        simp only [map_add, mul_add]
+        simp only [map_add (f := _), mul_add]
         exact (hs F).tsum_add (hs G)
       map_smul' := fun r F => by
         simp only [map_smul, smul_eq_mul, RingHom.id_apply]
@@ -155,7 +159,7 @@ theorem exists_measure_of_bounded_moments :
       intro a
       change ‖∏ i, binomC (n i) (a i)‖ ≤ 1
       rw [norm_prod]
-      exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun _ _ => norm_binomC_le _ _
+      exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun _ _ => norm_binomC_le _ _
     have hv : L P = c n := by
       refine (hsum (fun i => binomC (n i)) P fun _ => rfl).unique ?_
       convert hasSum_single (f := fun m : Fin g → ℕ =>

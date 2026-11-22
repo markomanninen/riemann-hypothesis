@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -19,7 +23,7 @@ private theorem isY_map {R R' : Type} [CommRing R] [CommRing R'] {n m : ℕ} (f 
   · change f (p.val i j) = 0
     rw [h2 j hj, map_zero]
 
-private theorem chart_smul {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} (f f' : GA E n → ℂ)
+private theorem chart_smul {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} (f f' : GA E n → ℂ)
     (g g' : GA E n) (a : ℂ) (h : ∀ y, f (g * infGL E n y) = a * f' (g' * infGL E n y)) (x : Lie E n) :
     chart f g x = a * chart f' g' x := by
   unfold chart

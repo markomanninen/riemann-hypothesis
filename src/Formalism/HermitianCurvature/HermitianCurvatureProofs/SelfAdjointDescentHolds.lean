@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecDesc
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASASecDesc
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q
 open scoped ContDiff ComplexConjugate
@@ -33,18 +37,18 @@ termination_by r - i
 
 theorem Dn_lt (z z' : Fin (2 * r + k + 1) → ℂ) {i : ℕ} (h : i < r) :
     Dn z z' i = D0 k r ⟨i, h⟩ (Dn z z' (i + 1)) := by
-  rw [Dn, dif_pos h]
+  rw [Dn, dite_eq_left h]
 
 theorem Dn_ge (z z' : Fin (2 * r + k + 1) → ℂ) {i : ℕ} (h : ¬ i < r) : Dn z z' i = Qx8.Dp k r z z' := by
-  rw [Dn, dif_neg h]
+  rw [Dn, dite_eq_right h]
 
 theorem Kn_lt (z z' : Fin (2 * r + k + 1) → ℂ) (Φ : Fn k r (Wq →L[ℂ] Wp)) {i : ℕ} (h : i < r) :
     Kn z z' Φ i = JxF ⟨i, h⟩ z z' (Kn z z' Φ (i + 1)) := by
-  rw [Kn, dif_pos h]
+  rw [Kn, dite_eq_left h]
 
 theorem Kn_ge (z z' : Fin (2 * r + k + 1) → ℂ) (Φ : Fn k r (Wq →L[ℂ] Wp)) {i : ℕ} (h : ¬ i < r) :
     Kn z z' Φ i = Φ := by
-  rw [Kn, dif_neg h]
+  rw [Kn, dite_eq_right h]
 
 theorem famR {z z' : Fin (2 * r + k + 1) → ℂ} {π : Mx k r → (Wp →L[ℂ] Wp)} {π' : Mx k r → (Wq →L[ℂ] Wq)}
     (hz : inWb k r z) (hz' : inWb k r z') {Φ : Fn k r (Wq →L[ℂ] Wp)} (hΦ : Φ ∈ RadSp k r z z' π π') :

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QuadraticNormHeckeCharRamifiedBelowRamifiedPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.QuadraticNormHeckeCharRamifiedBelowRamifiedPrime
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.V.Published UpperTheory.V.Af.Bc
 open UpperTheory.Gal.UnramifiedFromSplittingCriterion
@@ -16,12 +20,12 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normRam :
   have halg : IsAlgPos η 0 := isAlgPos_zero_of_orderDvd hp.pos hηp
   obtain ⟨r, hrc, hr⟩ := hart.exists_isLAdicOf (ι : Qbar 2 ≃+* ℂ) halg
   have hrI : ∀ s ∈ Ine A, r s = 1 := (hr.unr_iff hart (Or.inr rfl) hA).2 hunr
-  have hres : ∀ g : G M Ω, r (res K Ω M g) = 1 := by
+  have hres : ∀ g : G M Ω, r (UpperTheory.V.Af.Bc.res K Ω M g) = 1 := by
     haveI : IsAlgClosure M Ω := by
       haveI : Algebra.IsAlgebraic K Ω := IsAlgClosure.isAlgebraic
       exact ⟨IsAlgClosure.isAlgClosed K, Algebra.IsAlgebraic.tower_top (K := K) M⟩
     obtain ⟨artM, hartM⟩ := GlobalTheory.globalArtinReciprocity_holds M Ω
-    have hφc : Continuous (r.comp (res K Ω M)) :=
+    have hφc : Continuous (r.comp (UpperTheory.V.Af.Bc.res K Ω M)) :=
       hrc.comp (UpperTheory.V.Af.continuous_restrictScalarsHom K M Ω)
     have hbad : {w : HeightOneSpectrum (𝓞 M) | ¬ (η.UnrAt (HeightOneSpectrum.under (𝓞 K) w) ∧
         ∀ f : ℕ, normV w = normV (HeightOneSpectrum.under (𝓞 K) w) ^ f →
@@ -30,7 +34,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normRam :
       have h2 : ∀ᶠ w in Filter.cofinite, η.UnrAt (HeightOneSpectrum.under (𝓞 K) w) :=
         h1.eventually (Filter.eventually_cofinite.2 (GlobalTheory.Mem.UnrAe.finite_ramified η))
       exact Filter.eventually_cofinite.1 (h2.and hηev)
-    have hone := GlobalTheory.FrobDense.eq_one_of_frob M Ω artM hartM (Qbar 2)ˣ (r.comp (res K Ω M)) hφc
+    have hone := GlobalTheory.FrobDense.eq_one_of_frob M Ω artM hartM (Qbar 2)ˣ (r.comp (UpperTheory.V.Af.Bc.res K Ω M)) hφc
       hbad.toFinset ?_
     · intro g
       exact DFunLike.congr_fun hone g
@@ -54,10 +58,10 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normRam :
         rw [← Units.val_pow_eq_pow_val, hwn _ (GlobalTheory.QuadNormChar.normV_under w)]
         rfl
       rw [h7] at h6
-      have h8 : (((r.comp (res K Ω M)) σ⁻¹ : (Qbar 2)ˣ) : Qbar 2) = 1 := by
+      have h8 : (((r.comp (UpperTheory.V.Af.Bc.res K Ω M)) σ⁻¹ : (Qbar 2)ˣ) : Qbar 2) = 1 := by
         have h9 := congrArg ι.symm h6
         simpa using h9
-      have h10 : (r.comp (res K Ω M)) σ⁻¹ = 1 := Units.ext h8
+      have h10 : (r.comp (UpperTheory.V.Af.Bc.res K Ω M)) σ⁻¹ = 1 := Units.ext h8
       rw [map_inv, inv_eq_one] at h10
       exact h10
   have hr1 : ∀ g : G K Ω, r g = 1 := by
@@ -70,7 +74,7 @@ theorem UpperTheory.Gal.UnramifiedFromSplittingCriterion.normRam :
         have h2 : g.restrictNormal M = 1 := hg
         rw [h2] at h1
         simpa using h1.symm)
-      have hg' : res K Ω M g' = g := by
+      have hg' : UpperTheory.V.Af.Bc.res K Ω M g' = g := by
         ext x
         rfl
       rw [← hg']

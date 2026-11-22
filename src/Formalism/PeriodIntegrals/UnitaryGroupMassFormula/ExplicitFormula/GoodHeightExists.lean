@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExplicitFormula
-import Formalism.PeriodIntegrals.ZerosWindow
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExplicitFormula
+public import Formalism.PeriodIntegrals.ZerosWindow
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,14 @@ variable {N : ℕ} [NeZero N]
 abbrev mult (χ : DirichletCharacter ℂ N) (ρ : ℂ) : ℕ :=
   analyticOrderNatAt (DirichletCharacter.LFunction χ) ρ
 
-open Classical in
-
-def eps0 (χ : DirichletCharacter ℂ N) : ℂ := if χ.Even ∧ χ ≠ 1 then 1 else 0
 
 open Classical in
+def eps0 (χ : DirichletCharacter ℂ N) : ℂ := by
+  classical
+  exact if χ.Even ∧ χ ≠ 1 then 1 else 0
 
+
+open Classical in
 def del1 (χ : DirichletCharacter ℂ N) : ℂ := if χ = 1 then 1 else 0
 
 def psiRaw (χ : DirichletCharacter ℂ N) (u : ℝ) : ℂ :=
@@ -99,11 +105,6 @@ def PerronTrunc (C : ℝ) : Prop :=
         LSeries a ((cLine u : ℂ) + t * I) *
           ((u : ℂ) ^ ((cLine u : ℂ) + t * I) / ((cLine u : ℂ) + t * I))‖ ≤
       C * (u * Real.log u ^ 2 / T + Real.log u)
-
-def RectCauchy : Prop :=
-  ∀ (x₀ x₁ y₀ y₁ : ℝ) (h : ℂ → ℂ) (w : ℂ), x₀ < w.re → w.re < x₁ → y₀ < w.im → w.im < y₁ →
-    DifferentiableOn ℂ h (rect x₀ x₁ y₀ y₁) →
-    rectInt (fun s => h s / (s - w)) x₀ x₁ y₀ y₁ = 2 * Real.pi * I * h w
 
 def RectResidue : Prop :=
   ∀ (x₀ x₁ y₀ y₁ : ℝ) (H : ℂ → ℂ) (Z : Finset ℂ) (wt : ℂ → ℂ) (e : ℂ) (u : ℝ), 0 < u →

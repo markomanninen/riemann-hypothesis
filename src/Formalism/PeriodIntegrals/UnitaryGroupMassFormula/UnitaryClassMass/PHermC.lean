@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PHermSk
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PHermSk
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory IsDedekindDomain
 open scoped TensorProduct
@@ -44,14 +48,16 @@ theorem gramOK : GramOK := by
       intro i
       have hi := congrFun hc i
       simp only [Matrix.mulVec, dotProduct, gramOf, Pi.zero_apply] at hi
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
       rw [← hi]
       exact Finset.sum_congr rfl fun j _ => mul_comm _ _
     have hw : ∀ x, h x (∑ j, c j • b j) = 0 := by
       intro x
       generalize hwd : (∑ j, c j • b j) = w at hbw ⊢
       rw [← b.sum_repr x]
-      simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, hbw, smul_zero,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, hbw, smul_zero,
         Finset.sum_const_zero]
     have hw0 := hnd.2 _ hw
     funext j

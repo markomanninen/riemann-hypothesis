@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJumpProof
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJumpProof
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ abbrev extLat {LL LL' : FinExt l} (h : LL.1 ≤ LL'.1) (T : LocLat G ℚ_[l] ↥
   cont x := by
     refine continuous_pi fun i => ?_
     simp only [rep_apply, Matrix.mulVec, dotProduct]
-    refine continuous_finset_sum _ fun j _ => Continuous.mul ?_ continuous_const
+    refine continuous_finsetSum _ fun j _ => Continuous.mul ?_ continuous_const
     have h1 : Continuous fun g => b.coord i (T.ρ g (b j)) :=
       (IsModuleTopology.continuous_of_linearMap (b.coord i)).comp (T.cont (b j))
     have h2 : Continuous (incl h) := continuous_subtype_val.subtype_mk _
@@ -121,7 +125,8 @@ theorem extMat_comm {LL LL' : FinExt l} (h : LL.1 ≤ LL'.1) {T₁ T₂ : LocLat
     rw [← c1, ← c2, hc]
   refine Matrix.ext fun i j => ?_
   have := congrArg (fun M => incl h (M i j)) key
-  simp only [Matrix.mul_apply, map_sum, map_mul] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, map_sum, map_mul] at this
   simpa only [e1, e2, Matrix.mul_apply, extMat, Matrix.map_apply] using this
 
 def extHom {LL LL' : FinExt l} (h : LL.1 ≤ LL'.1) {T₁ T₂ : LocLat G ℚ_[l] ↥LL.1 ↥(OL LL)} {k₁ k₂ : ℕ}

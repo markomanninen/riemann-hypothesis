@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk54.tensor_hom_ext :
     ∀ {A A' C Ω : Type}
@@ -15,4 +19,4 @@ theorem UpperTheory.Reformulated.B.Qk54.tensor_hom_ext :
     have e : c ⊗ₜ[A] b = (c ⊗ₜ[A] (1 : A')) * ((1 : C) ⊗ₜ[A] b) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
     rw [e, map_mul, map_mul, h₁, h₂]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]

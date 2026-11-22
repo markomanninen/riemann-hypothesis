@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -33,13 +38,6 @@ theorem LinearNoetherNormalization.exists_nat_of_le {x : WithBot ℕ∞} {d : �
       have h1 : ((⊤ : ℕ∞) : WithBot ℕ∞) ≤ ((d : ℕ∞) : WithBot ℕ∞) := by exact_mod_cast hd
       exact absurd (WithBot.coe_le_coe.mp h1) (by simp)
     | coe e => exact ⟨e, by exact_mod_cast hd, rfl⟩
-
-theorem LinearNoetherNormalization.pullback_comp_rename {d e n : ℕ} (h : e ≤ d)
-    (A : Matrix (Fin d) (Fin n) ℂ) :
-    (pullback A).comp (rename (Fin.castLE h)) = pullback (A.submatrix (Fin.castLE h) id) := by
-  apply MvPolynomial.algHom_ext
-  intro i
-  simp [pullback, linPoly, Matrix.submatrix]
 
 theorem LinearNoetherNormalization.exists_monic_of_prefix {d e n : ℕ} (h : e ≤ d)
     (A : Matrix (Fin d) (Fin n) ℂ) (P : Ideal (MvPolynomial (Fin n) ℂ))
@@ -162,7 +160,7 @@ theorem LinearNoetherNormalization.proof : LinearNoetherNormalization.Statement 
           rfl
         rw [this]
         exact (projHom J A).toRingHom.isIntegralElem_map
-      | add p q hp hq => rw [map_add]; exact RingHom.IsIntegralElem.add _ hp hq
+      | add p q hp hq => rw [map_add (f := _)]; exact RingHom.IsIntegralElem.add _ hp hq
       | mul_X p i hp => rw [map_mul]; exact RingHom.IsIntegralElem.mul _ hp (hint i)
     refine hI.to_finite ?_
     apply RingHom.FiniteType.of_comp_finiteType (f := algebraMap ℂ (MvPolynomial (Fin d) ℂ))

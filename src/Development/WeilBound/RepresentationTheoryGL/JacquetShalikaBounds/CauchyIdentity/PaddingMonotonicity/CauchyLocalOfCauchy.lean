@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ def cU (z : ℂˣ) : ℂˣ := Units.map (starRingEnd ℂ).toMonoidHom z
 theorem cU_coe (z : ℂˣ) : ((cU z : ℂˣ) : ℂ) = conj (z : ℂ) := rfl
 
 theorem hN_conj {m : ℕ} (p : ℕ) (α : Fin m → ℂ) : hN p (fun i => conj (α i)) = conj (hN p α) := by
-  simp [hN, map_sum, map_prod, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [hN, map_sum, map_prod, map_pow]
 
 theorem hZ_conj {m : ℕ} (z : ℤ) (α : Fin m → ℂ) : hZ z (fun i => conj (α i)) = conj (hZ z α) := by
   unfold hZ
@@ -63,9 +68,9 @@ theorem padN_antitone {m k : ℕ} (hk : k ≤ m) {l : Fin k → ℕ} (hl : Antit
   simp only [padN]
   by_cases hj : (j : ℕ) < k
   · have hi : (i : ℕ) < k := lt_of_le_of_lt hij' hj
-    rw [dif_pos hj, dif_pos hi]
+    rw [dite_eq_left hj, dite_eq_left hi]
     exact hl (show (⟨i, hi⟩ : Fin k) ≤ ⟨j, hj⟩ from hij')
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     exact Nat.zero_le _
 
 theorem padN_inj {m k : ℕ} (hk : k ≤ m) {l l' : Fin k → ℕ} (h : padN m l = padN m l') : l = l' := by
@@ -142,7 +147,7 @@ theorem diag (hC : Cauchy) (hS : SchurJT) {n q : ℕ} (hq : 2 ≤ q) {s : ℂ} (
   set P : ℂ := ∏ a, ∏ b, (1 - (z a : ℂ) * conj (z b : ℂ) * (x : ℂ))⁻¹ with hP
   have h' : HasSum (fun L : {l : Fin n → ℕ // Antitone l} =>
       (((‖evalAt z (schur fun i => (L.1 i : ℤ))‖ ^ 2 * x ^ (∑ i, L.1 i) : ℝ)) : ℂ)) P := by
-    convert h using 1
+    convert (preTransparency := .reducible) h using 1
     · funext L
       rw [padN_self, schur_conj hS, Complex.mul_conj, Complex.normSq_eq_norm_sq]
       push_cast
@@ -185,12 +190,12 @@ theorem diag_le {n q : ℕ} (hq : 2 ≤ q) {s : ℂ} (hs : 1 < s.re) (z : Fin n 
   rw [norm_prod]
   calc ∏ a, ‖∏ b, (1 - (z a : ℂ) * conj (z b : ℂ) * (((q : ℝ) ^ (-s.re) : ℝ) : ℂ))⁻¹‖
       ≤ ∏ _a : Fin n, ((1 - (q : ℝ) ^ (1 - s.re))⁻¹) ^ n := by
-        apply Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+        apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
         intro a _
         rw [norm_prod]
         calc ∏ b, ‖(1 - (z a : ℂ) * conj (z b : ℂ) * (((q : ℝ) ^ (-s.re) : ℝ) : ℂ))⁻¹‖
             ≤ ∏ _b : Fin n, (1 - (q : ℝ) ^ (1 - s.re))⁻¹ :=
-              Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun b _ => hfac a b)
+              Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun b _ => hfac a b)
           _ = ((1 - (q : ℝ) ^ (1 - s.re))⁻¹) ^ n := by simp
     _ = ((1 - (q : ℝ) ^ (1 - s.re))⁻¹) ^ (n * n) := by simp [pow_mul]
 

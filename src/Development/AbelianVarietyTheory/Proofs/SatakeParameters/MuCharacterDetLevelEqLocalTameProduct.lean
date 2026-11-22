@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpan
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DetIntOfLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.XiEntryInvariant
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsOfStarEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpan
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DetIntOfLevel
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker Formalism.L2.DIV GlobalTheory.TwU GlobalTheory.TwV
 
 open scoped TensorProduct
@@ -98,8 +103,8 @@ theorem prV_eq_one {v : HeightOneSpectrum (𝓞 F)} {z : AfE F E}
   have e2 := congrArg (Formalism.UG.prV (E := E) v) e
   rwa [map_mul, Formalism.UG.P.afsplit_prV_eps, one_mul, map_zero, map_sub, map_one, sub_eq_zero] at e2
 
-omit [NumberField F] [Algebra F E] [Field F] in
 
+omit [NumberField F] [Algebra F E] [Field F] in
 theorem exists_int_congr {P : HeightOneSpectrum (𝓞 E)} {a : E} (ha : P.valuation E a = 1) :
     ∃ b : 𝓞 E, b ∉ P.asIdeal ∧ redP P a = Ideal.Quotient.mk P.asIdeal b ∧ P.valuation E (a - b) < 1 := by
   obtain ⟨r, s, hrs⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer P a ha.le
@@ -157,7 +162,7 @@ theorem h90_mem_U1_of_involutive (σ : E →ₐ[F] E) (hσ : ∀ a, σ (σ a) = 
     induction (k : AfE F E) using TensorProduct.induction_on with
     | zero => simp
     | tmul e c => simp [Formalism.UG.sigR, hσ]
-    | add s t hs ht => rw [map_add, map_add, hs, ht]
+    | add s t hs ht => rw [map_add (f := _), map_add (f := _), hs, ht]
   show k / conjId σ k * conjId σ (k / conjId σ k) = 1
   rw [map_div, h, div_mul_div_cancel, div_self']
 
@@ -174,8 +179,8 @@ theorem evP_div_h90_eq_one (σ : E →ₐ[F] E) (a b : (AfE F E)ˣ) (Q : HeightO
   rw [map_mul, map_mul, key] at e2
   exact (mul_eq_right₀ (b.isUnit.map (evP F Q)).ne_zero).1 e2
 
-variable (F) in
 
+variable (F) in
 def partAf (y : (AfE F E)ˣ) (S : Finset (HeightOneSpectrum (𝓞 E))) : (AfE F E)ˣ := finAf F E (part (toIdl F E y) S)
 
 theorem component_mulIndicator_of_mem (y : (AfE F E)ˣ) {S : Finset (HeightOneSpectrum (𝓞 E))} {P : HeightOneSpectrum (𝓞 E)} (h : P ∈ S) :
@@ -235,7 +240,7 @@ theorem conjP_notMem_rowSG (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : 
 
 theorem rhoT_mul_rhoS (i : ℕ) (P : rowSG Pr sel mu) {a : X.E} (h : IsUnit (redP P.1 a)) :
     rhoT Ch sel mu i P a * rhoS Ch sel mu i P a = 1 := by
-  rw [rhoT, rhoS, LocE.unitV, LocE.unitV, dif_pos h, dif_pos h, ← Units.val_mul]
+  rw [rhoT, rhoS, LocE.unitV, LocE.unitV, dite_eq_left h, dite_eq_left h, ← Units.val_mul]
   split_ifs <;> simp
 
 theorem value_part (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : ∀ i, Pr.g i ∈ S) {σ₀ : X.K →+* ℂ} {ee : X.Tau → ℚ} {j : Fin R.m}
@@ -281,15 +286,15 @@ theorem value_part (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : ∀ i, Pr.g i ∈ S)
   rw [partAf, ← hξ, map_part hμ.tame y _ _ hk hx, map_part hξt y _ _ hk hx, ← Units.val_mul, ← Finset.prod_mul_distrib,
     Units.coe_prod, map_prod]
   refine Finset.prod_congr rfl fun P _ => ?_
-  rw [rhoT, LocE.unitV, dif_pos (hun P), Units.val_mul]
+  rw [rhoT, LocE.unitV, dite_eq_left (hun P), Units.val_mul]
   by_cases hP : P.1 ∈ Pr.vGs
   · have hu : ξ.UnrAt P.1 := by
       by_contra hn
       obtain ⟨i, hi⟩ := g_mem_of_vGs hPr hP
       refine g_notMem_of_goodPl hPr hS (by_contra fun hg => ?_) i hi
       exact (GlobalTheory.Mem.ReadTwist.mem_qprime_iff hξ _).2 ⟨P.1, rfl, hn⟩ (Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 mu.2.2 _) hg)
-    rw [if_pos hP, locK_unr hu (hk P), Units.val_one, mul_one, hμ.atg ⟨P.1, hP⟩ _ (b P) (hun P).unit rfl (hr P), chiP, dif_pos hP,
-      chiAt, extChi, dif_pos j.2]
+    rw [if_pos hP, locK_unr hu (hk P), Units.val_one, mul_one, hμ.atg ⟨P.1, hP⟩ _ (b P) (hun P).unit rfl (hr P), chiP, dite_eq_left hP,
+      chiAt, extChi, dite_eq_left j.2]
     rfl
   · have hQ := (Finset.mem_union.1 P.2).resolve_left hP
     rw [if_neg hP, locK_unr (hμ.unr P.1 (g_notMem_of_goodPl hPr hS (mem_QE mu hsel hQ).2)) (hk P), Units.val_one, one_mul,
@@ -380,8 +385,8 @@ theorem valued_lt_of_intAtA {P : HeightOneSpectrum (𝓞 X.E)} {z : AfE X.F X.E}
   rw [← map_natCast (algebraMap (𝓞 X.E) X.E)]
   exact (HeightOneSpectrum.valuation_lt_one_iff_mem _ _).2 hqP
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem normOne_idele_eq_hilbert90_part_at_primes (hs : s.Ok) {S : Finset (HeightOneSpectrum (𝓞 X.E))} (hS : ∀ P ∈ S, conjPrime₂ P ∉ S) {y : (AfE X.F X.E)ˣ}
     (hy : Units.map ι.toRingHom.toMonoidHom y ∈ U1 (sigD D)) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∈ S)
     {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : IsOver v (seamP s P)) :
@@ -410,9 +415,9 @@ end Host
 
 end GlobalTheory.LevMuDet
 
+
 open GlobalTheory.LevMuDet GlobalTheory.Mem.Col2 GlobalTheory.Mem.ReadEx GlobalTheory.Mem.LocTriv Formalism.L2.Forms in
 set_option maxHeartbeats 1000000 in
-
 theorem GlobalTheory.LevMuDet.muOf_det_lev : UnderTie (fun {D L hT Gi Gl Kc Y cX ex t u μ St} A dtU a =>
     MuLaw t u μ dtU → ∀ i, i < D.R.m → ∀ j (hj : j ≤ D.R.m) (β : (St j hj).Ch) (κ : ((St j hj).K β).lev.U) (e : SB t μ → t.X.E),
       (∀ P : SB t μ, IntAtA (F := D.host.F) (seamP t.seam P.1)

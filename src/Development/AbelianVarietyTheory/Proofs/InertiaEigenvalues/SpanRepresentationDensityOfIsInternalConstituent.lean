@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,7 @@ theorem _root_.GlobalTheory.BlockDensity.density : ∀ {K Γ V : Type} [Field K]
         rfl
       · simp
     · intro x y hx hy
-      simp only [map_add, Submodule.coe_add, Finset.sum_add_distrib, hx, hy]
+      simp only [map_add (f := _), Submodule.coe_add, Finset.sum_add_distrib, hx, hy]
   have hp_rho : ∀ k g y, p k (ρ g y) = (ρ g).restrict (hs k g) (p k y) := by
     intro k g y
     refine Submodule.iSup_induction Vs
@@ -121,7 +125,7 @@ theorem _root_.GlobalTheory.BlockDensity.density : ∀ {K Γ V : Type} [Field K]
         rfl
       · rw [hp_ne i k hik _ (hs i g y hy), hp_ne i k hik y hy, map_zero]
     · intro x y hx hy
-      simp only [map_add, hx, hy]
+      simp only [map_add (f := _), hx, hy]
   have hcomm : ∀ φ : Module.End (_root_.GlobalTheory.BlockDensity.spanAlg ρ) V, ∀ v, f (φ v) = φ (f v) := by
     intro φ
     have hφρ : ∀ g v, φ (ρ g v) = ρ g (φ v) := fun g v =>
@@ -171,7 +175,7 @@ theorem _root_.GlobalTheory.BlockDensity.density : ∀ {K Γ V : Type} [Field K]
       rw [hφv j v hv, hφv j (f v) (hf j v hv)]
       exact congrArg Subtype.val (LinearMap.congr_fun (hcj j) ⟨v, hv⟩)
     · intro x y hx hy
-      simp only [map_add, hx, hy]
+      simp only [map_add (f := _), hx, hy]
   have hlift : ∀ j (E : Module.End K (Vs j)), ∃ a ∈ Submodule.span K (Set.range ρ),
       ∀ x : Vs j, a x = E x := by
     intro j E

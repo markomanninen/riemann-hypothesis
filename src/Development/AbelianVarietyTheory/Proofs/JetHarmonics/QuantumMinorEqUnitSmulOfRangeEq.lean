@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementKT
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementKT
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -13,7 +18,7 @@ namespace GlobalTheory
 theorem exists_perm_of_range_eq {t : ℕ} {β : Type} (a a₂ : Fin t → β)
     (ha : Function.Injective a) (ha₂ : Function.Injective a₂) (h : Set.range a = Set.range a₂) :
     ∃ τ : Equiv.Perm (Fin t), a = a₂ ∘ τ := by
-  refine ⟨(Equiv.ofInjective a ha).trans ((Equiv.setCongr h).trans (Equiv.ofInjective a₂ ha₂).symm), ?_⟩
+  refine ⟨(Equiv.ofInjective a ha).trans ((Set.equivOfEq h).trans (Equiv.ofInjective a₂ ha₂).symm), ?_⟩
   funext i
   simp [Equiv.apply_ofInjective_symm]
 

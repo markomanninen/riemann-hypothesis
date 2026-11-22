@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ActEMemSpanOmega
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ActEMemSpanOmega
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -22,24 +26,24 @@ private lemma act_zero_square_integrability {dim : (E →+* ℂ) → ℕ} (α : 
   | simp [act]
   | (unfold act; ext i; simp)
 
-theorem Good.bot (X : PT E) (c : ℝ) : Good X c ⊥ where
-  le := bot_le
-  sat := by
+theorem Good.bot (X : PT E) (c : ℝ) : Good X c ⊥ := by
+  refine { le := bot_le, sat := ?_, stable := ?_, iso := ?_, sep := ?_ }
+  ·
     intro x _ hx
     have : IR (⊥ : Submodule ℤ (Vsp X.dim)) = ⊥ := by simp [IR]
     rw [this] at hx
     simpa using hx
-  stable := by
+  ·
     intro α x hx
     rw [Submodule.mem_bot] at hx ⊢
     subst hx
     rw [act_eq_actE, actE_zero_right]
-  iso := by
+  ·
     intro x hx y _
     rw [Submodule.mem_bot] at hx
     subst hx
     exact Hf_im_zero_left y
-  sep := by
+  ·
     intro x _ u hu hne
     exfalso
     have : IR (⊥ : Submodule ℤ (Vsp X.dim)) = ⊥ := by simp [IR]

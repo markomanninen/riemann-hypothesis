@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RosIdSt
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGenRosati
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsIndexOfLocal
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPowMulEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.RosIdSt
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsGenRosati
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsUniqueNormPrim
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsIndexOfLocal
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RigidifiedIsoRespectsCubeAndSymmetry
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsPowMulEqOne
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
@@ -66,21 +70,6 @@ theorem Pt1.exists_frameSer : ∃ r : PS V 1 y.d, JetSer.IsSer1 y.x _ (y.ρ.s (f
       simp [Hom.one_def]
   have : (η[y.t.G].left ≫ JetSer.primφ (y.t.act.act H.w0) i) z ∈ y.P.U.LG.L.U y.j := by rw [key]; exact hj
   exact this
-
-theorem Pt1.Transl.smul {y : Pt1 E H V F} {q : ℕ} (hq : 1 ≤ q) {c : 𝓞 E} {s h : Fam y.P.D.toPre F q}
-    (ht : y.Transl q c s h) {ξ : F} {n : ℕ} (hn : 1 ≤ n) (hξ : ξ ^ n = 1) : y.Transl q c s (ξ • h) := by
-  obtain ⟨p, x, w, ζ, t', h₁, h₂, hw, hζ, hf, hΦ', hs⟩ := ht
-  obtain ⟨Φ, hΦ⟩ := phiFun_of_globalFns GlobalTheory.globalFns_holds V _ y.P.D F q hq p w hw
-  obtain ⟨M, hM, hU⟩ := (ThetaFinOrd.finOrd_iff p w ζ Φ hΦ).1 hf
-  have hξ0 : ξ ≠ 0 := by
-    rintro rfl
-    rw [zero_pow (by omega)] at hξ
-    exact zero_ne_one hξ
-  refine ⟨p, x, w, ξ * ζ, t', h₁, h₂, hw, mul_ne_zero hξ0 hζ,
-    (ThetaFinOrd.finOrd_iff p w _ Φ hΦ).2 ⟨M * n, Nat.mul_pos hM hn, ?_⟩, hΦ', ?_⟩
-  · rw [mul_smul, smul_pow, pow_mul' ξ, hξ, pow_mul _ M n, hU, one_pow, one_pow, one_smul]
-  · rw [isSmul_iff] at hs ⊢
-    rw [hs, mul_smul]
 
 end Inhabitant
 

@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.SmulYGenEqZero
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.SmulYGenEqZero
+
+@[expose] public section
 
 open Finset
 
@@ -52,7 +56,8 @@ theorem c3 : SelmerFInjective := by
   have hY : ∀ g, (d * c) • z g = (Y : D → L) g := by
     intro g
     apply hi
-    rw [hYg g, map_smul, hz g, map_sub, map_sub, map_sum, hiρ, hw, smul_sub, smul_sub, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hYg g, map_smul, hz g, map_sub, map_sub, map_sum, hiρ, hw, smul_sub, smul_sub, Finset.smul_sum]
     congr 1
     · refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_smul, mul_smul, mul_smul, ← smul_assoc c (x a), ← hy a, algebraMap_smul]
@@ -66,7 +71,8 @@ theorem c3 : SelmerFInjective := by
     exact Y.2 g h
   have hZY : (d * c) • (⟨z, hzc⟩ : coZ1s ρL) = Y := Subtype.ext (funext hY)
   have hYcl : (Submodule.mkQ _ Y : H1z ρL) = ∑ a, (d * y a) • (Submodule.mkQ _ (κ a) : H1z ρL) := by
-    rw [hYdef, map_sub, mkQ_cobZ, sub_zero, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hYdef, map_sub, mkQ_cobZ, sub_zero, map_sum]
     simp only [map_smul]
   have h2 : (d * c) • (Submodule.mkQ _ ⟨z, hzc⟩ : H1z ρL) =
       ∑ a, (d * y a) • (Submodule.mkQ _ (κ a) : H1z ρL) := by

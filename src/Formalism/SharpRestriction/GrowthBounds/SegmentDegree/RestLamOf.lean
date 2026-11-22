@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LamMZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LamMZero
+
+@[expose] public section
 
 namespace Formalism.MainNotions.SelectionLemmas.Pf
 

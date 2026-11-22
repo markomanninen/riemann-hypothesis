@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorInvolutionAlgebraPropertiesStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorInvolutionAlgebraPropertiesStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -112,7 +116,8 @@ theorem gram_split (hτι : ∀ r, τ (ι r) = ι r) {n : ℕ} (d : Fin (n + 1) 
 theorem gram_mem (hττ : ∀ x, τ (τ x) = x) (hτι : ∀ r, τ (ι r) = ι r) {n : ℕ} (d : Fin n → Rˣ)
     (u : Up n → K) : gram ι τ d u ∈ Hm τ n := by
   intro a b
-  simp only [gram, map_sum, map_mul, hττ, hτι]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gram, map_sum, map_mul, hττ, hτι]
   exact Finset.sum_congr rfl fun k _ => by ring
 
 theorem blk_mem (hττ : ∀ x, τ (τ x) = x) {n : ℕ} {A : K} (hA : τ A = A) (c : Fin n → K)
@@ -180,7 +185,7 @@ def shear (hι : Continuous ι) (hτ : Continuous τ) (hττ : ∀ x, τ (τ x) 
   toFun x := (x.1, fun j => ι x.1 * x.2.1 j,
     ⟨fun a b => x.2.2.1 a b + τ (x.2.1 a) * ι x.1 * x.2.1 b, by
       intro a b
-      simp only [map_add, map_mul, hττ, hτι]
+      simp only [map_add (f := _), map_mul, hττ, hτι]
       rw [x.2.2.2 a b]
       ring⟩)
   invFun x := (x.1, fun j => ι ((x.1⁻¹ : Rˣ) : R) * x.2.1 j,

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoreStepOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.RetractionReduction
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SesquilinearRepresentation
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.DualFamilyExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.CoreStepOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.RetractionReduction
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.SesquilinearRepresentation
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SesquilinearRowSplitting.DualFamilyExists
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
@@ -151,7 +155,7 @@ theorem frame_reduction : FrameStep := by
     intro b n hn
     obtain ⟨n1, hn1, n2, hn2, rfl⟩ := Submodule.mem_sup.1 hn
     obtain ⟨t, rfl⟩ := Submodule.mem_span_singleton.1 hn2
-    rw [map_add, osmul t, map_smul, hcfz, smul_zero, add_zero]
+    rw [map_add (f := _), osmul t, map_smul, hcfz, smul_zero, add_zero]
     clear hn
     induction hn1 using Submodule.span_induction with
     | mem y hy =>
@@ -161,7 +165,7 @@ theorem frame_reduction : FrameStep := by
       · subst hba; rw [mul_one]; exact hx
       · rw [mul_zero]; exact fi_zero _
     | zero => rw [map_zero]; exact fi_zero _
-    | add y y' _ _ h1 h2 => rw [map_add]; exact fi_add h1 h2
+    | add y y' _ _ h1 h2 => rw [map_add (f := _)]; exact fi_add h1 h2
     | smul o y _ h1 =>
       rw [osmul o, map_smul, smul_eq_mul, ← Algebra.smul_def]
       exact fi_smul o h1

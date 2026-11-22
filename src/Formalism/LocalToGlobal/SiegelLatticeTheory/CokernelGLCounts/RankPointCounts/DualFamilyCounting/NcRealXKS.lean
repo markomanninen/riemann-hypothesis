@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CMeasSbox
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.CMeasSbox
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem LyM_dYInv {T : ℝ} (hT : 0 < T) (y : LsNc5.CIdx r k → ℝ) : LyM T (d
 
 theorem measurable_dYInv (T : ℝ) : Measurable (dYInv (r := r) (k := k) T) := by
   unfold dYInv
-  exact measurable_pi_lambda _ fun i => (measurable_pi_apply i).div_const _
+  exact Measurable.of_eval fun i => (measurable_pi_apply i).div_const _
 
 end Inv
 
@@ -114,8 +118,8 @@ theorem kapSurj_holds : KapSurj := by
     (fX_fw X u v) (fX_ez X u v) (fX_fz X u v) (frame_real_z_z_eq_neg X u v) (fX_zw X u v)
   choose σL hσm hσ using hloc
   refine ⟨fun t v => σL v (fun i => Φc t (v, i)), ?_, fun t => ⟨fun v => (hσ v _).1, ?_⟩⟩
-  · exact measurable_pi_lambda _ fun v => (hσm v).comp
-      (measurable_pi_lambda _ fun i => (measurable_pi_apply (v, i)).comp measurable_Φc)
+  · exact Measurable.of_eval fun v => (hσm v).comp
+      (Measurable.of_eval fun i => (measurable_pi_apply (v, i)).comp measurable_Φc)
   · have hk : Φc (blk X u (fun v => σL v (fun i => Φc t (v, i)))) = Φc t := by
       rw [← kap_eq_Φc]
       funext p

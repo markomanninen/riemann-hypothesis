@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LemmaL
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.IsTanZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LemmaL
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Eb GlobalTheory.GalOfCusp
 
@@ -26,7 +30,7 @@ private theorem UpperTheory.V.Ws.Eb.charpoly_lift {A K H : Type} [CommRing A] [C
     induction y using MonoidAlgebra.induction_linear with
     | zero => simp
     | add x y hx hy =>
-      simp only [map_add, mul_add, add_mul, Matrix.add_apply]
+      simp only [map_add (f := _), mul_add, add_mul, Matrix.add_apply]
       exact ⟨fun i j hij => by rw [hx.1 i j hij, hy.1 i j hij, add_zero], fun i => by rw [hx.2, hy.2]⟩
     | single s a =>
       have e : (g : Matrix (Fin n) (Fin n) K) * f.mapMatrix (MonoidAlgebra.lift A (Matrix (Fin n) (Fin n) A) H ((Units.coeHom _).comp r) (MonoidAlgebra.single s a)) * ((g⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) = f a • ((g * ((GeneralLinearGroup.map f).comp r) s * g⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K) := by
@@ -54,13 +58,13 @@ theorem UpperTheory.V.Ws.Eb.flagDual :
   have hres : residue (DualNumber K) = φ.comp (dF K) := RingHom.ext fun x => UpperTheory.V.Ws.Eb.residue_dual x
   have hcard : (n : Cardinal) ≤ Cardinal.mk (ResidueField (DualNumber K)) := by
     haveI : Infinite (ResidueField (DualNumber K)) := Infinite.of_injective φ φ.injective
-    exact (Cardinal.nat_lt_aleph0 n).le.trans (Cardinal.infinite_iff.mp inferInstance)
+    exact (Cardinal.natCast_lt_aleph0 (n := n)).le.trans (Cardinal.infinite_iff.mp inferInstance)
   have hinj' : Function.Injective fun i => ((residue (DualNumber K) : DualNumber K →* ResidueField (DualNumber K))).comp ((Units.coeHom (DualNumber K)).comp (κ i)) := by
     intro i j hij
     apply hinj
     ext s
     have hs := DFunLike.congr_fun hij s
-    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.coe_coe] at hs
+    simp only [MonoidHom.comp_apply, Units.coeHom_apply, MonoidHom.coe_ofClass] at hs
     rw [hres, RingHom.comp_apply, RingHom.comp_apply] at hs
     have := φ.injective hs
     simpa [W.pushCh] using this

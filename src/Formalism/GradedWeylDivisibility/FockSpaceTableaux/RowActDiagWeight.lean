@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementD
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementD
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -13,7 +17,6 @@ theorem row_action_diagonal_weight : RowActDiagWeight := by
     unfold rowAct
     congr 1
     funext v
-    simp only [Matrix.diagonal_apply]
     rw [Finset.sum_eq_single v.1]
     · simp
     · intro b _ hb
@@ -27,11 +30,12 @@ theorem row_action_diagonal_weight : RowActDiagWeight := by
     rw [Finset.sum_eq_single a]
     · simp
     · intro b _ hb
-      simp [hb, Ne.symm hb]
+      simp [Ne.symm hb]
     · simp
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hw : Finsupp.weight (rowW k n) d = μ := hf (mem_support_iff.mp hd)
   have hp : (d.prod fun v e => t v.1 ^ e) = ∏ a, t a ^ μ a := by

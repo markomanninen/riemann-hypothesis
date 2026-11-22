@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GrNoeth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GrNoeth
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement
 
@@ -35,7 +39,7 @@ private theorem ext_graded {O A X K : Type} [CommRing O] [CommRing A] [Algebra O
     exact this
   let ρ : A →ₗ[𝒜 0] K :=
     { toFun := fun a => y (DirectSum.decompose 𝒜 a 0)
-      map_add' := fun a b => by rw [DirectSum.decompose_add, DirectSum.add_apply, map_add]
+      map_add' := fun a b => by rw [DirectSum.decompose_add, DirectSum.add_apply, map_add (f := _)]
       map_smul' := fun r a => by
         show y (DirectSum.decompose 𝒜 ((r : A) * a) 0) = y r * y (DirectSum.decompose 𝒜 a 0)
         rw [key, map_mul] }

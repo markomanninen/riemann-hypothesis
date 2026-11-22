@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LocrepSB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchrodingerTensorEqLocalOfSupportedAt
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivariance
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LocrepSB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchrodingerTensorEqLocalOfSupportedAt
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivariance
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissible
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibility
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,29 +18,29 @@ open GlobalTheory.EmbChart (atPlace evFin_atPlace atPlace_mul_right)
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} (v : Pl F)
 
-variable (κ) in
 
+variable (κ) in
 def evA : (κ → AF F) →+ (κ → Fv F v) where
   toFun x i := evFin F v (x i)
   map_zero' := by funext i; simp
   map_add' x y := by funext i; simp
 
-variable (κ) in
 
+variable (κ) in
 def inA : (κ → Fv F v) →+ (κ → AF F) where
   toFun y i := atPlace v (y i)
   map_zero' := by funext i; simp
   map_add' x y := by funext i; simp
 
-variable (κ) in
 
+variable (κ) in
 def evF : (κ → Af F) →+ (κ → Fv F v) where
   toFun x i := evalV F v (x i)
   map_zero' := by funext i; simp
   map_add' x y := by funext i; simp
 
-variable (κ) in
 
+variable (κ) in
 def inF : (κ → Fv F v) →+ (κ → Af F) where
   toFun y i := singleFin v (y i)
   map_zero' := by funext i; simp
@@ -70,14 +74,16 @@ theorem PA_pureA (φ : (κ → Fv F v) → ℂ) (y : κ → Fv F v) (f : (κ →
   exact mul_left_comm _ _ _
 
 theorem at_inA (y : κ → Fv F v) : At (evFin F v) (inA κ v y) :=
-  GlobalTheory.VacAny.at_pi fun i => GlobalTheory.VacAny.at_atPlace (y i)
+  fun u hu => funext fun i => by
+    change u * atPlace v (y i) = 0
+    rw [mul_comm, atPlace_mul_right, hu, mul_zero, map_zero]
 
 theorem inA_evA {z : κ → AF F} (hz : At (evFin F v) z) : inA κ v (evA κ v z) = z :=
   funext fun i => (GlobalTheory.SchrLoc.eq_atPlace_of_at (fun u hu => congrFun (hz u hu) i)).symm
 
 theorem putA_add {z : κ → AF F} (hz : At (evFin F v) z) (x : κ → AF F) (y : κ → Fv F v) :
     putA v (x + z) y = putA v x y := by
-  rw [putA, put, map_add, map_add, inA_evA v hz, putA, put]; abel
+  rw [putA, put, map_add (f := _), map_add (f := _), inA_evA v hz, putA, put]; abel
 
 theorem inv_putA {r : (κ → AF F) → ℂ} (hr : ∀ x z, At (evFin F v) z → r (x + z) = r x) (x : κ → AF F)
     (y : κ → Fv F v) : r (putA v x y) = r x := by
@@ -200,7 +206,7 @@ theorem eq_of_acts {r₀ : (κ → AF F) → ℂ} {x₀ : κ → AF F} (h₁ : r
 def Sop (T : Module.End ℂ ((κ → AF F) → ℂ)) (φ : (κ → Fv F v) → ℂ) (y : κ → Fv F v) :
     Module.End ℂ ((κ → AF F) → ℂ) where
   toFun Φ x := T (PA v φ (evA κ v x) Φ) (putA v x y)
-  map_add' a b := by funext x; rw [map_add, map_add]; rfl
+  map_add' a b := by funext x; rw [map_add (f := _), map_add (f := _)]; rfl
   map_smul' c a := by funext x; rw [map_smul, map_smul]; rfl
 
 omit [Fintype κ] in
@@ -238,9 +244,9 @@ theorem PA_schr (ψ : AddChar (AF F) ℂ) (φ : (κ → Fv F v) → ℂ) (a : κ
       ψ (inA κ v a ⬝ᵥ w.2 + ⅟(2 : AF F) * (w.1 ⬝ᵥ w.2 - putA v w.1 0 ⬝ᵥ putA v w.2 0)) •
         schr ψ (putA v w.1 0, putA v w.2 0) (PA v φ (a + evA κ v w.1) Φ) := by
   funext z
-  have e1 : evA κ v (z + putA v w.1 0) = evA κ v z := by rw [map_add, ev_put (evA_inA v), add_zero]
+  have e1 : evA κ v (z + putA v w.1 0) = evA κ v z := by rw [map_add (f := _), ev_put (evA_inA v), add_zero]
   have e2 : putA v (z + putA v w.1 0) (a + evA κ v w.1) = putA v z a + w.1 := by
-    rw [putA, put, e1, putA, putA, put, put, map_add, map_zero]; abel
+    rw [putA, put, e1, putA, putA, put, put, map_add (f := _), map_zero]; abel
   change φ (evA κ v z) * (ψ (putA v z a ⬝ᵥ w.2 + _) * Φ (putA v z a + w.1)) =
     ψ _ * (ψ (z ⬝ᵥ putA v w.2 0 + ⅟(2 : AF F) * (putA v w.1 0 ⬝ᵥ putA v w.2 0)) *
       (φ (evA κ v (z + putA v w.1 0)) * Φ (putA v (z + putA v w.1 0) (a + evA κ v w.1))))
@@ -258,7 +264,7 @@ theorem Sop_schr (hc : ∀ w : (κ → AF F) × (κ → AF F), evA κ v w.1 = 0 
     Sop v T φ y (schr ψ w Φ) = schr ψ w (Sop v T φ y Φ) := by
   funext x
   have e2 : putA v (x + w.1) y = putA v x y + putA v w.1 0 := by
-    simp only [putA, put, map_add, map_zero]; abel
+    simp only [putA, put, map_add (f := _), map_zero]; abel
   change T (PA v φ (evA κ v x) (schr ψ w Φ)) (putA v x y) =
     ψ (x ⬝ᵥ w.2 + _) * T (PA v φ (evA κ v (x + w.1)) Φ) (putA v (x + w.1) y)
   rw [PA_schr, map_smul, hc _ (ev_put (evA_inA v) _ _) (ev_put (evA_inA v) _ _) _ (PA_mem v hφ _ hΦ), e2,

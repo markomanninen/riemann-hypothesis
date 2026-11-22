@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PsiBar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcCycKFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.PsiBar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.CompCond
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcCycKFacts
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 
@@ -16,8 +20,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω]
 private theorem gh_not_both (A : ValuationSubring Ω) {a b : ℕ} (hab : a.Coprime b) (ha : A.valuation (a : Ω) < 1) :
     ¬ A.valuation (b : Ω) < 1 := fun hb => by
   obtain ⟨x, y, h⟩ : IsCoprime (a : A) (b : A) := hab.cast
-  have ha' : (a : A) ∈ maximalIdeal A := (A.valuation_lt_one_iff _).2 (by simpa using ha)
-  have hb' : (b : A) ∈ maximalIdeal A := (A.valuation_lt_one_iff _).2 (by simpa using hb)
+  have ha' : (a : A) ∈ maximalIdeal A := (A.valuation_lt_one_iff _).2 (by change A.valuation (((a : A.toSubring) : Ω)) < 1; rw [Subring.coe_natCast]; exact ha)
+  have hb' : (b : A) ∈ maximalIdeal A := (A.valuation_lt_one_iff _).2 (by change A.valuation (((b : A.toSubring) : Ω)) < 1; rw [Subring.coe_natCast]; exact hb)
   exact (maximalIdeal.isMaximal A).ne_top ((Ideal.eq_top_iff_one _).2
     (h ▸ Ideal.add_mem _ (Ideal.mul_mem_left _ _ ha') (Ideal.mul_mem_left _ _ hb')))
 
@@ -153,7 +157,7 @@ private theorem exists_decomposition_nonquadratic (l : ℕ) [hl : Fact l.Prime] 
     ∃ s ∈ Dec (F := ℚ) B, UnitaryThreeInertia.eta4 Ω s = 1 ∧ barChar c.O (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) s ^ 2 ≠ 1 := by
   obtain ⟨S, A, F, hF⟩ := UnitaryThreeInertia.exists_hostFrame Ω c e ψ o₁ hd
   obtain ⟨x, h1, h2, -⟩ := UnitaryThreeInertia.exists_sigma Ω c e ψ o₁ hd S A F hF F.vl (Or.inl rfl)
-  have hA : (A F.vl).valuation (l : Ω) < 1 := by simpa using (hF.isOver F.vl _).2 hF.vl
+  have hA : (A F.vl).valuation (l : Ω) < 1 := by simpa only [map_natCast] using (hF.isOver F.vl _).2 hF.vl
   obtain ⟨u, hu, -⟩ := (Chr.placesQ Ω).2.2 l _ B hl.out hA hB
   have h3 : UnitaryThreeInertia.eta4 Ω x.1 = 1 := hF.η ▸ h1
   have h4 : IsUnit ((Chr.Psi l e (Chr.dirG ℚ Ω ψ) x.1 : c.O) ^ 2 - 1) := hF.Ψ ▸ h2

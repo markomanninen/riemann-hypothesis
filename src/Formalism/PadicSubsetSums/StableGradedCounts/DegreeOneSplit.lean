@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.SchurOrthogonalityCompact
+
+@[expose] public section
 
 open scoped NumberField
 
@@ -23,7 +27,7 @@ theorem degree_one_split : DegreeOneSplit := by
   have hpos : ∀ q : p.primesOver (𝓞 E), 1 ≤ q.1.ramificationIdx (𝓞 F) * q.1.inertiaDeg (𝓞 F) := by
     intro q
     have : q.1.IsPrime := q.2.1
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos q.1 (𝓞 F)) (Ideal.inertiaDeg_pos q.1 (𝓞 F))
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := 𝓞 F) q.1) (Ideal.inertiaDeg_pos q.1 (𝓞 F))
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (⟨P, hPmem⟩ : p.primesOver (𝓞 E)))] at hsum
   simp only [he, hf1, mul_one] at hsum
   have hrest : ∑ q ∈ Finset.univ.erase (⟨P, hPmem⟩ : p.primesOver (𝓞 E)),

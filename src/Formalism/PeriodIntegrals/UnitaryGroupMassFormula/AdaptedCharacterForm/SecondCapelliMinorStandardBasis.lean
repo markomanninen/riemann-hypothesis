@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -90,7 +94,5 @@ theorem chat2Adapted_of (hcov : ContractionsCovariant) : Chat2Adapted := by
   have h := (hcov A (n + 2) E P Q hE hQP hPQ u (fun p => P p 0) (fun p => P p 1) β β').2.2
   rw [← h, mulVec_col P Q hQP 0, mulVec_col P Q hQP 1]
   exact second_capelli_minor_standard_basis _ u (β ᵥ* P) (β' ᵥ* P) hβ
-
-theorem main : ContractionsCovariant → ChatAdapted ∧ Chat2Adapted := fun h => ⟨chatAdapted_of h, chat2Adapted_of h⟩
 
 end Formalism.FourierDecayAlt.Q.Adapted

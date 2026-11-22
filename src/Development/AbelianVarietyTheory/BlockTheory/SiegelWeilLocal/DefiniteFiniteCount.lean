@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+
+@[expose] public section
 
 open NumberField MeasureTheory
 
@@ -10,15 +14,6 @@ open Formalism.MainNotions.S GlobalTheory.Count
 def DefiniteHyp (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (p : ℕ) : Prop :=
   IsDSData B d ∧ SigIs B p 0 ∧ 1 ≤ p ∧ 1 ≤ B.g ∧ B.g₀.Prime ∧ 4 * B.I.n < B.g₀ ∧
     (Ideal.primesOver (Ideal.span {(B.g₀ : ℤ)}) (𝓞 B.I.E)).ncard = Module.finrank ℚ B.I.E
-
-def DefiniteCount : Prop :=
-  ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (p : ℕ), DefiniteHyp B d p →
-    (B.D : ℝ) = mainTerm B d
-
-def DefiniteCountFin : Prop :=
-  ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (p : ℕ), DefiniteHyp B d p →
-    FiniteDimensional ℂ (B.I.eHom B.σs B.μf B.fund B.R B.Re) ∧
-      B.I.muA B.μf B.fund ≠ ⊤ ∧ (B.D : ℝ) = mainTerm B d
 
 theorem DefiniteHyp.rank_eq {B : RowsAut} {d : InfinitePlace B.I.F → ℝ} {p : ℕ}
     (h : DefiniteHyp B d p) : B.I.n = p := by

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsChartPtChartPt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineHomOfField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsChartPtChartPt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineHomOfField
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory GlobalTheory.CechPic GlobalTheory.Vanishing GlobalTheory.CompHS
@@ -32,8 +37,6 @@ def FR (ε : B) : Subring (B × DualNumber (B ⧸ Ideal.span {ε})) :=
   RingHom.eqLocus ((mkE ε).comp (RingHom.fst _ _))
     ((TrivSqZeroExt.fstHom (B ⧸ Ideal.span {ε}) _ _).toRingHom.comp (RingHom.snd _ _))
 
-theorem mem_FR {ε : B} {r : B × DualNumber (B ⧸ Ideal.span {ε})} : r ∈ FR ε ↔ mkE ε r.1 = r.2.fst := Iff.rfl
-
 def p1 (ε : B) : FR ε →+* B := (RingHom.fst _ _).comp (FR ε).subtype
 
 def p2 (ε : B) : FR ε →+* DualNumber (B ⧸ Ideal.span {ε}) := (RingHom.snd _ _).comp (FR ε).subtype
@@ -45,12 +48,6 @@ theorem epsFibreProduct_quotient_fst_eq_dual_fst {ε : B} (r : FR ε) : mkE ε (
 
 def liftFR {ε : B} {C : Type} [CommRing C] (a : C →+* B) (b : C →+* DualNumber (B ⧸ Ideal.span {ε}))
     (h : ∀ c, mkE ε (a c) = (b c).fst) : C →+* FR ε := (a.prod b).codRestrict (FR ε) h
-
-theorem fst_comp_liftFR {ε : B} {C : Type} [CommRing C] (a : C →+* B) (b : C →+* DualNumber (B ⧸ Ideal.span {ε}))
-    (h : ∀ c, mkE ε (a c) = (b c).fst) : (p1 ε).comp (liftFR a b h) = a := rfl
-
-theorem snd_comp_liftFR {ε : B} {C : Type} [CommRing C] (a : C →+* B) (b : C →+* DualNumber (B ⧸ Ideal.span {ε}))
-    (h : ∀ c, mkE ε (a c) = (b c).fst) : (p2 ε).comp (liftFR a b h) = b := rfl
 
 theorem exists_liftFR {ε : B} {C : Type} [CommRing C] (a : C →+* B) (b : C →+* DualNumber (B ⧸ Ideal.span {ε}))
     (h : ∀ c, mkE ε (a c) = (b c).fst) : ∃ q : C →+* FR ε, (p1 ε).comp q = a ∧ (p2 ε).comp q = b :=
@@ -70,13 +67,13 @@ def sg {ε : B} (hε : ε * ε = 0) : FR ε →+* B where
   map_one' := by simp
   map_zero' := by simp
   map_add' r s := by
-    simp only [map_add, TrivSqZeroExt.snd_add]
+    rw [(p1 ε).map_add, (p2 ε).map_add, TrivSqZeroExt.snd_add, (mulE hε).map_add]
     ring
   map_mul' r s := by
     obtain ⟨c, hc⟩ : ∃ c, mkE ε c = (p2 ε r).snd := Ideal.Quotient.mk_surjective _
     obtain ⟨d, hd⟩ : ∃ d, mkE ε d = (p2 ε s).snd := Ideal.Quotient.mk_surjective _
     have e : (p2 ε (r * s)).snd = mkE ε (p1 ε r * d + c * p1 ε s) := by
-      rw [map_mul, DualNumber.snd_mul, map_add, map_mul, map_mul, hc, hd, epsFibreProduct_quotient_fst_eq_dual_fst, epsFibreProduct_quotient_fst_eq_dual_fst]
+      rw [map_mul, DualNumber.snd_mul, map_add (f := _), map_mul, map_mul, hc, hd, epsFibreProduct_quotient_fst_eq_dual_fst, epsFibreProduct_quotient_fst_eq_dual_fst]
     rw [e, ← hc, ← hd, map_mul, mulE_mk, mulE_mk, mulE_mk]
     linear_combination (-(c * d)) * hε
 
@@ -145,7 +142,7 @@ theorem valR_sub_eq_eps_mul_of_affine : ∀ {K : Type} [Field K] {A : Over (Sp K
     (fun g => by
       obtain ⟨c, hc⟩ := h₂ g
       rw [valR_eq_ev _ _ hΩ₂, valR_eq_ev _ _ hxm] at hc
-      rw [hc, map_add, map_mul, hmkε, MulZeroClass.zero_mul, add_zero, ← hfst]
+      rw [hc, map_add (f := _), map_mul, hmkε, MulZeroClass.zero_mul, add_zero, ← hfst]
       simp [dualMap])
   let j2 : DualNumber K →+* DualNumber (B ⧸ Ideal.span {ε}) :=
     ((dualMap (mkE ε)).comp ((algebraMap B (DualNumber B)).comp (baseMap K B))).comp
@@ -157,7 +154,7 @@ theorem valR_sub_eq_eps_mul_of_affine : ∀ {K : Type} [Field K] {A : Over (Sp K
       ext <;> simp [TrivSqZeroExt.algebraMap_eq_inl]
     rw [hj2, TrivSqZeroExt.fst_inl]
     conv_lhs => rw [ha]
-    rw [map_add, map_mul, ← hεd, map_add, map_mul, hmkε, MulZeroClass.zero_mul, add_zero]
+    rw [map_add (f := _), map_mul, ← hεd, map_add (f := _), map_mul, hmkε, MulZeroClass.zero_mul, add_zero]
     rfl)
   have b1 : spMap (p1 ε) ≫ spMap j = l₂ ≫ A'.hom := by rw [spc, hl₂, hja]
   have b2 : spMap (p2 ε) ≫ spMap j = (spMap (dualMap (mkE ε)) ≫ S ≫ i) ≫ A'.hom := by

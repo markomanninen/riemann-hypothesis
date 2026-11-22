@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStep
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.SetLIntegralBiUnionLe
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.BStep
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.SetLIntegralBiUnionLe
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -44,15 +48,12 @@ theorem b (n : ℕ) (Y : Type u) [TopologicalSpace Y] [T2Space Y] [SecondCountab
         exact ⟨h1, h2⟩
       · intro i y hy
         rw [hsum i y hy, ← (Fin.consEquiv (fun _ => Fin n)).sum_comp, Fintype.sum_prod_type]
-        simp only [Fin.consEquiv_apply, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ,
-]
+        simp only [Fin.consEquiv_apply, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl (fun q _ => ?_)
         rw [hHsum q i y hy, Finset.mul_sum]
         refine Finset.sum_congr rfl (fun k _ => ?_)
-        have et : Fin.tail ((Fin.consEquiv fun _ => Fin n) (k, q)) = q :=
-          Fin.tail_cons (α := fun _ => Fin n) k q
-        rw [et]
+        rw [Fin.tail_cons]
         ring
   obtain ⟨hh, hhP, hsum⟩ := key (T - n) le_rfl
   have eT : T - (T - n) = n := by omega

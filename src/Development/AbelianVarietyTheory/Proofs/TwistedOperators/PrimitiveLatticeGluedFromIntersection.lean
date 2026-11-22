@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ImportsTer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ImportsTer
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Matrix
 open Formalism.L2.DIV (Pl)
@@ -46,12 +50,12 @@ theorem exists_smul_mem {E : Type} [Field E] [NumberField E] {V : Type} [AddComm
 
 theorem isLattice_capX_and_exists_glue (D : D7) (u : D.what₂.Word) (Y X : HSp D) (ι : X.V →ₗ[D.host.E] Y.V) (z : Y.V)
     (hl : IsLine Y X ι z u) (L : Submodule (𝓞 D.host.E) Y.V) (hL : IsSDIn Y (flatSp Y X ι z) L) (hp : IsPrim Y z L) :
-    Submodule.IsLattice D.host.E (capX Y X ι L) ∧ ∃ x₀ : X.V, L = glueLat Y X ι z u (capX Y X ι L) x₀ := by
+    Submodule.IsFullLattice D.host.E (capX Y X ι L) ∧ ∃ x₀ : X.V, L = glueLat Y X ι z u (capX Y X ι L) x₀ := by
   obtain ⟨hi, ho, hz⟩ := hl
   obtain ⟨hfg, hsp, hsd⟩ := hL
   have hT := Tu_ne_zero u
   have hinj : Function.Injective ι := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine X.nondeg.1 x fun y => ?_
     rw [← hi, hx, map_zero, LinearMap.zero_apply]
@@ -69,24 +73,36 @@ theorem isLattice_capX_and_exists_glue (D : D7) (u : D.what₂.Word) (Y X : HSp 
     have : Y.hD (ι x + s • z) z = -(s * Tu D u) := by
       have h1 := ho x
       simp only [HSpace.hD] at h1 hz ⊢
-      rw [map_add, map_smul, h1, hz, smul_eq_mul]; ring
+      rw [map_add (f := _), map_smul, h1, hz, smul_eq_mul]; ring
     rw [this]
     congr 2
     field_simp
-  refine ⟨GlobalTheory.StdFrames.isLattice_crdLat X ⟨?_, ?_⟩, ?_⟩
-  · refine Submodule.fg_of_fg_map_injective (ι.restrictScalars (𝓞 D.host.E)) hinj (hfg.of_le ?_)
-    exact Submodule.map_comap_le _ _
-  · rw [eq_top_iff]
-    intro x _
-    obtain ⟨c, hc, hx⟩ := exists_smul_mem L (y := ι x) (hsp ▸ Submodule.mem_sup_left ⟨x, rfl⟩)
-    have hc1 : algebraMap (𝓞 D.host.E) D.host.E c ≠ 0 := by simpa using hc
-    have : x = (algebraMap (𝓞 D.host.E) D.host.E c)⁻¹ • (c • x) := by
-      rw [← algebraMap_smul D.host.E c, smul_smul, inv_mul_cancel₀ hc1, one_smul]
-    rw [this]
-    refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
-    change (ι.restrictScalars (𝓞 D.host.E)) (c • x) ∈ L
-    rw [map_smul]
-    exact hx
+  have hlat : Submodule.IsLattice D.host.E (capX Y X ι L) := by
+    refine GlobalTheory.StdFrames.isLattice_crdLat X ⟨?_, ?_⟩
+    · refine Submodule.fg_of_fg_map_injective (ι.restrictScalars (𝓞 D.host.E)) hinj (hfg.of_le ?_)
+      exact Submodule.map_comap_le _ _
+    · intro s hs hli
+      exact (LinearIndependent.iff_fractionRing _ _).mp hli
+  refine ⟨{ toIsLattice := hlat, span_eq_top := ?_ }, ?_⟩
+  · apply Submodule.eq_top_iff'.2
+    intro y
+    let x := (Formalism.L2.Herm.crd X).symm y
+    have hx : ι x ∈ Submodule.span D.host.E (L : Set Y.V) := by
+      rw [hsp]
+      exact Submodule.mem_sup_left (LinearMap.mem_range_self ι x)
+    obtain ⟨c, hc, hcx⟩ := exists_smul_mem L hx
+    have hcy : c • y ∈ capX Y X ι L := by
+      change c • y ∈ Formalism.L2.Herm.crdLat X (L.comap (ι.restrictScalars (𝓞 D.host.E)))
+      refine ⟨c • x, ?_, ?_⟩
+      · change ι (c • x) ∈ L
+        simpa using hcx
+      · simp [x]
+    have hcy' : c • y ∈ Submodule.span D.host.E (capX Y X ι L : Set (Fin X.rank → D.host.E)) :=
+      Submodule.subset_span hcy
+    rw [← algebraMap_smul D.host.E c] at hcy'
+    have := (Submodule.span D.host.E (capX Y X ι L : Set (Fin X.rank → D.host.E))).smul_mem
+      (c : D.host.E)⁻¹ hcy'
+    simpa only [smul_smul, inv_mul_cancel₀ (RingOfIntegers.coe_ne_zero_iff.2 hc), one_smul] using this
   · let I : Ideal (𝓞 D.host.E) :=
       (L.map ((Y.hT z).restrictScalars (𝓞 D.host.E))).comap (Algebra.linearMap (𝓞 D.host.E) D.host.E)
     have hI : ∀ i : 𝓞 D.host.E, i ∈ I ↔ ∃ y ∈ L, Y.hD y z = (i : D.host.E) := fun i => Iff.rfl
@@ -127,7 +143,7 @@ theorem isLattice_capX_and_exists_glue (D : D7) (u : D.what₂.Word) (Y X : HSp 
     obtain ⟨x, hx⟩ := hdec y hy
     obtain ⟨b, hb⟩ := hint y hy
     have e : y + b • l = ι (x + b • x₀) := by
-      rw [← algebraMap_smul D.host.E b, ← algebraMap_smul D.host.E b x₀, hb, map_add, map_smul, hl2]
+      rw [← algebraMap_smul D.host.E b, ← algebraMap_smul D.host.E b x₀, hb, map_add (f := _), map_smul, hl2]
       generalize Y.hD y z = t at hx ⊢
       rw [hx]
       module

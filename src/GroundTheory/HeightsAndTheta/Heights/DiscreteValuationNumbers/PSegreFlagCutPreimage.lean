@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutPreimage
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutLiesOver
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionTools
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwistedDualGensExpress
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutPreimage
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutLiesOver
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionTools
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGenericProjClosureDivisor
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwistedDualGensExpress
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -23,11 +28,12 @@ theorem alg_eq_of_support {σ R A : Type*} [CommSemiring R] [CommSemiring A] [Al
     (h : ∀ m ∈ G.support, ∀ p ∈ m.support, α (X p) = β (X p)) : α G = β G := by
   conv_lhs => rw [G.as_sum]
   conv_rhs => rw [G.as_sum]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [monomial_eq, Finsupp.prod, map_mul, map_mul, map_prod, map_prod]
   congr 1
-  · show α (algebraMap R _ (coeff m G)) = β (algebraMap R _ (coeff m G))
+  · show α (algebraMap R _ (AddMonoidAlgebra.coeff G m)) = β (algebraMap R _ (AddMonoidAlgebra.coeff G m))
     rw [α.commutes, β.commutes]
   · refine Finset.prod_congr rfl fun p hp => ?_
     rw [map_pow, map_pow, h m hm p hp]
@@ -287,8 +293,8 @@ end Subst
 
 end SegreFlagCutPreimage
 
-open SegreFlagCutPreimage in
 
+open SegreFlagCutPreimage in
 theorem SegreFlagCutPreimage.proof : SegreFlagCutPreimage.Statement := by
   intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N E _ _ B B' hB w w' x x' f₀ g₀ hfl M M' a₀ a₀' φ φ' hφ hφ'
     Φ _ _ _ _ e t ht k hk W hW hWr hPW hϖW
@@ -344,7 +350,8 @@ theorem SegreFlagCutPreimage.proof : SegreFlagCutPreimage.Statement := by
   have hLval : ∀ (s : Fin N → Φ) i, aeval (pairProjCoord y w φ φ' s) (L i) =
       aeval (pairProjCoord y w φ φ' s) (C (ϖ ^ n) * chartMonoZ O M M' c bH) * genVal w s (φ i) := by
     intro s i
-    rw [hval s i, hLdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hval s i, hLdef, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_mul, aeval_X, mul_comm]
     rfl
@@ -380,7 +387,8 @@ theorem SegreFlagCutPreimage.proof : SegreFlagCutPreimage.Statement := by
         intro i
         rw [map_mul, hLval]
         ring
-      rw [map_sum, Finset.sum_congr rfl fun i _ => hterm i, ← Finset.mul_sum, ← hval']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_congr rfl fun i _ => hterm i, ← Finset.mul_sum, ← hval']
       simp only [map_mul, aeval_X]
       change _ = genVal w (flagCoord w e t (k + 1)) (φ' l₀) * (_ * _) * (_ * _)
       ring

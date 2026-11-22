@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveValueOfRingElementPsiRelation
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimitiveValueOfRingElementPsiRelation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsActIffIsDiagEnd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorMatch
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowCompMonHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,7 @@ theorem torMatch_of_onTorus : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalR
         GlobalTheory.TorusPart.thickLift hr hp' ≫ ((Over.pullback (thick R (maximalIdeal R) 0)).map p).left := by
       apply pullback.hom_ext
       · rw [Category.assoc, GlobalTheory.TorusPart.thickLift_fst, e, Category.assoc]
-        simp only [GlobalTheory.TorusPart.thickLift, Over.pullback_map_left]
-        rw [pullback.lift_fst, pullback.lift_fst_assoc]
+        simp only [GlobalTheory.TorusPart.thickLift, Over.pullback_map_left, ← Category.assoc, pullback.lift_fst]
       · have w := Over.w ((Over.pullback (spMap (residue R))).map p)
         simp only [GlobalTheory.TorusPart.thickLift]
         rw [Category.assoc, pullback.lift_snd, Category.assoc, ← Category.assoc _ _ (GlobalTheory.TorusPart.thickPt 0 hr), w]

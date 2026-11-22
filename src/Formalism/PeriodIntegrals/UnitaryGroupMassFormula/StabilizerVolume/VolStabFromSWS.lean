@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.VolFromSW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.VolFromSW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.SiegelWeilNarrowOfWide
+
+@[expose] public section
 
 noncomputable section
 

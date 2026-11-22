@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapMulLeft
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,26 +34,26 @@ theorem mulVR_mulVR (T : LocLat G Qp LL O) (b b' : BdR) (z : T.V ⊗[Qp] BdR) :
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul x c => rw [mulVR_tmul, mulVR_tmul, mulVR_tmul, mul_assoc]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem mulVR_one (T : LocLat G Qp LL O) (z : T.V ⊗[Qp] BdR) : mulVR T 1 z = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul x c => rw [mulVR_tmul, one_mul]
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 theorem mulVR_add (T : LocLat G Qp LL O) (b b' : BdR) (z : T.V ⊗[Qp] BdR) :
     mulVR T (b + b') z = mulVR T b z + mulVR T b' z := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero, add_zero]
   | tmul x c => rw [mulVR_tmul, mulVR_tmul, mulVR_tmul, add_mul, TensorProduct.tmul_add]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]; abel
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]; abel
 
 theorem mulVR_zero (T : LocLat G Qp LL O) (z : T.V ⊗[Qp] BdR) : mulVR T 0 z = 0 := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul x c => rw [mulVR_tmul, zero_mul, TensorProduct.tmul_zero]
-  | add x y hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, add_zero]
 
 theorem mulVR_comm (T : LocLat G Qp LL O) (b b' : BdR) (z : T.V ⊗[Qp] BdR) :
     mulVR T b (mulVR T b' z) = mulVR T b' (mulVR T b z) := by
@@ -84,7 +88,7 @@ theorem mulVR_sup (T : LocLat G Qp LL O) (ι : LL →ₐ[Qp] BdR) {a : ℤ} {b :
     {z : T.V ⊗[Qp] BdR} (hz : z ∈ compKer T ι ⊔ FilV PD (LL := LL) (V := T.V) a) :
     mulVR T b z ∈ compKer T ι ⊔ FilV PD (LL := LL) (V := T.V) a := by
   obtain ⟨y, hy, w, hw, rfl⟩ := Submodule.mem_sup.1 hz
-  rw [map_add]
+  rw [map_add (f := _)]
   refine Submodule.add_mem_sup (mulVR_compKer T ι b hy) ?_
   simpa using mulVR_FilV T hb hw
 
@@ -100,8 +104,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {PD : PeriodData G Qp K₀ K B BdR} {LL O : Type} [Field LL] [Algebra Qp LL]
     [CommRing O] [Algebra O LL] [TopologicalSpace LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
 
-variable (PD) in
 
+variable (PD) in
 def Gen (T : LocLat G Qp LL O) (ι : LL →ₐ[Qp] BdR) {N : Type} (Ψ : N → T.V ⊗[Qp] BdR) :
     Submodule LL (T.V ⊗[Qp] BdR) :=
   compKer T ι ⊔ Submodule.span LL {z | ∃ b ∈ PD.Fil 0, ∃ x, z = mulVR T b (Ψ x)}
@@ -115,7 +119,7 @@ theorem mulVR_gen (T : LocLat G Qp LL O) (ι : LL →ₐ[Qp] BdR) {N : Type} (Ψ
     mulVR T b z ∈ Gen PD T ι Ψ := by
   obtain ⟨y, hy, w, hw, rfl⟩ := Submodule.mem_sup.1 hz
   clear hz
-  rw [map_add]
+  rw [map_add (f := _)]
   refine add_mem (Submodule.mem_sup_left (mulVR_compKer T ι b hy)) ?_
   induction hw using Submodule.span_induction with
   | mem x hx =>
@@ -182,7 +186,7 @@ theorem act_βdR {W : LocWach PD LL O v n} {RW : Type} [CommRing RW] [Algebra O 
     obtain ⟨β, hβ, h⟩ := ha
     obtain ⟨β', hβ', h'⟩ := ha'
     refine ⟨β + β', add_mem hβ hβ', fun Y => ?_⟩
-    rw [add_smul, map_add, mulVR_add]
+    rw [add_smul, map_add (f := _), mulVR_add]
     convert add_mem (h Y) (h' Y) using 1
     abel
   | tmul o w =>
@@ -190,14 +194,14 @@ theorem act_βdR {W : LocWach PD LL O v n} {RW : Type} [CommRing RW] [Algebra O 
     induction Y using TensorProduct.induction_on with
     | zero => rw [smul_zero, map_zero, map_zero, sub_zero]; exact zero_mem _
     | add Y Y' h h' =>
-      rw [smul_add, map_add, map_add, map_add]
+      rw [smul_add, map_add (f := _), map_add (f := _), map_add (f := _)]
       convert add_mem h h' using 1
       abel
     | tmul r t =>
       induction r using TensorProduct.induction_on with
       | zero => rw [TensorProduct.zero_tmul, smul_zero, map_zero, map_zero, sub_zero]; exact zero_mem _
       | add r r' h h' =>
-        rw [TensorProduct.add_tmul, smul_add, map_add, map_add, map_add]
+        rw [TensorProduct.add_tmul, smul_add, map_add (f := _), map_add (f := _), map_add (f := _)]
         convert add_mem h h' using 1
         abel
       | tmul o' w' =>
@@ -242,13 +246,13 @@ theorem βdR_mem_FilV (Ct : CmpTie W E ιdR p1 tS zS) (T : LocLat G Qp LL O) (hA
   | tmul r t =>
     induction r using TensorProduct.induction_on with
     | zero => rw [TensorProduct.zero_tmul, map_zero]; exact zero_mem _
-    | add r r' hr hr' => rw [TensorProduct.add_tmul, map_add]; exact add_mem hr hr'
+    | add r r' hr hr' => rw [TensorProduct.add_tmul, map_add (f := _)]; exact add_mem hr hr'
     | tmul o w =>
       rw [Ct.βdR_tmul]
       exact tmul_mem_FilV T _ (hA w)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem core_gen (Ct : CmpTie W E ιdR p1 tS zS) (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) (i : ZMod n)
     (ζ : LL) (ι : LL →ₐ[Qp] BdR) (hιK : ∀ c : K₀, ι (W.emb i c) = algebraMap K₀ BdR c) (hζ : ι ζ = zS)
     (hι : ∀ c, ι c ∈ PD.Fil 0) (hA : ∀ w, ιdR w ∈ PD.Fil 0) (u : BdR) (hu0 : u ∈ PD.Fil 0)
@@ -295,7 +299,7 @@ theorem core_gen (Ct : CmpTie W E ιdR p1 tS zS) (T : LocLat G Qp LL O) (hT : Is
       | add Z Z' _ _ h h' =>
         obtain ⟨Yv, hYv, e⟩ := h
         obtain ⟨Yv', hYv', e'⟩ := h'
-        exact ⟨Yv + Yv', add_mem hYv hYv', by rw [map_add, e, e', smul_add]⟩
+        exact ⟨Yv + Yv', add_mem hYv hYv', by rw [map_add (f := _), e, e', smul_add]⟩
       | smul o Z _ h =>
         obtain ⟨Yv, hYv, e⟩ := h
         refine ⟨o • Yv, Submodule.smul_mem _ o hYv, ?_⟩
@@ -319,7 +323,7 @@ theorem core_gen (Ct : CmpTie W E ιdR p1 tS zS) (T : LocLat G Qp LL O) (hT : Is
         have h2 := PD.Fil_mul _ _ _ _ hb h1
         simpa using h2
       | zero => intro b hb; rw [map_zero, map_zero]; exact zero_mem _
-      | add Yv Yv' _ _ h h' => intro b hb; rw [map_add, map_add]; exact add_mem (h b hb) (h' b hb)
+      | add Yv Yv' _ _ h h' => intro b hb; rw [map_add (f := _), map_add (f := _)]; exact add_mem (h b hb) (h' b hb)
       | smul o Yv _ h =>
         intro b hb
         obtain ⟨β, hβ, hβY⟩ := act_βdR Ct T ι hι hA (algebraMap O (O ⊗[Zl] Ai) o)
@@ -384,8 +388,9 @@ section Concrete
 variable {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} {H : LocHW l P} {F : LocFon l P AI H}
   {K : FinExt l} {s : ℕ} {LL : FinExt l}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
+set_option synthInstance.maxHeartbeats 200000 in
 theorem core (C : LocCmpT l P AI H F) (h : Good K s LL) (T : Lt K LL) (hT : IsCrys (P.PD K) T.ρ)
     (i : Let K) (ζ : ↥LL.1) (τ : ↥K.1 →ₐ[ℚ_[l]] ↥LL.1) (ι : ↥LL.1 →ₐ[ℚ_[l]] P.R.BdR)
     (hcomp : Comp H h i ζ τ ι) (hι : ∀ c, ι c ∈ (P.PD K).Fil 0) (m : ℕ)
@@ -403,17 +408,28 @@ theorem core (C : LocCmpT l P AI H F) (h : Good K s LL) (T : Lt K LL) (hT : IsCr
 
 end Concrete
 
+
+open scoped Formalism.Per in
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem image : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let W := (HW l).W K s LL h; let E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1) τ ι, Comp (HW l) h i ζ τ ι → ∃ Ψ : ↥(W.N T) → T.V ⊗[ℚ_[l]] (D.loc l).R.BdR, (∀ x, Ψ x ∈ FilV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) 0) ∧ (∀ z ∈ FilV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) 0, ∃ (m : ℕ) (b : Fin m → (D.loc l).R.BdR) (x : Fin m → ↥(W.N T)), (∀ j, b j ∈ ((D.loc l).PD K).Fil 0) ∧ z - ∑ j, mulVR T (b j) (Ψ (x j)) ∈ compKer T ι) ∧ ∀ (x : ↥(W.N T)) (a : ℕ), (∀ r : ℤ, r < -(a : ℤ) → ex C h T i ζ x r = 0) → ∃ c : ℤ, ∀ M : ℕ, mulVR T (tS (D.loc l) s ^ a) (Ψ x) - ∑ r ∈ Finset.range M, mulVR T (tS (D.loc l) s ^ r) (ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) (ex C h T i ζ x ((r : ℤ) - (a : ℤ)))) ∈ compKer T ι ⊔ FilV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) ((M : ℤ) - c) := by
   intro D HW F Cm l _ K s LL h W E C T hT i ζ τ ι hcomp
   obtain ⟨m, hS1, hS2⟩ := GlobalTheory.NL.SandArb.sandwich D HW F l K s LL h T hT
   obtain ⟨hX, -, hinj, -⟩ := GlobalTheory.NL.IoXQ.main D HW F l K s LL h
-  have hι0 : ∀ c, ι c ∈ ((D.loc l).PD (Formalism.MainNotions.LocalSituation.botExt l)).Fil 0 := fun c =>
-    GlobalTheory.ExpImage.EmbFil.emb_mem_fil_zero l (D.loc l) (D.locA l) (D.locT l) LL ι c
-  have hι : ∀ c, ι c ∈ ((D.loc l).PD K).Fil 0 := fun c =>
-    (Set.ext_iff.1 ((D.loc l).PD_Fil (Formalism.MainNotions.LocalSituation.botExt l) K 0) (ι c)).1 (hι0 c)
+  have hι : ∀ c, ι c ∈ ((D.loc l).PD K).Fil 0 := by
+    intro c
+    let tied := D.locT l
+    haveI : IsDomain (D.loc l).R.BdR :=
+      (GlobalTheory.Per.TiedField.tied_field l (D.loc l) (D.locA l) tied).1.isDomain
+    haveI : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
+    obtain ⟨a, ha⟩ := GlobalTheory.ExpImage.EmbFil.mem_range_of_isIntegral
+      (Ω := Om l) ι (IsIntegral.of_finite ℚ_[l] c)
+    obtain ⟨y, hy, -⟩ := tied.om a
+    obtain ⟨-, hone, -⟩ := GlobalTheory.MemLoc.filD_laws l
+    rw [← ha]
+    apply (tied.fil K 0 _).2
+    have hy_mem := Submodule.smul_mem _ y hone
+    rwa [Algebra.smul_def, mul_one, ← hy] at hy_mem
   exact core (Cm l) h T hT i ζ τ ι hcomp hι m hinj _ (congrArg (fun z => inclR LL z ^ m) hX) hS1 hS2
 
 end GlobalTheory.NL.PerS

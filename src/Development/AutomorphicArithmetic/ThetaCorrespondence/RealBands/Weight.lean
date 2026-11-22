@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.DecaysZero
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsCompactBall
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FrobeniusBoundOfMulNearOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.DecaysZero
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsCompactBall
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FrobeniusBoundOfMulNearOne
+
+@[expose] public section
 
 open MeasureTheory Filter Matrix Formalism.REAL Formalism.MainNotions.S GlobalTheory.FlagMeas GlobalTheory.RealInd UpperTheory.Lit.Cusp
 open GlobalTheory.Dec (IsHaarSub IsIsoC NW IsSqIntIrr)
@@ -53,7 +57,7 @@ private lemma slice_le {n : ℕ} {ε : Fin n → Bool} (S : Subgroup (UJ ε)) (�
             determinant_character_mul_inv, Matrix.mul_one]
       _ = ν.map (fun g => h⁻¹ * g) W := (Measure.map_apply (measurable_const_mul _) hWm).symm
       _ = ν W := by rw [hinv h⁻¹ (S.inv_mem hS)]
-  · have : ν A = 0 := measure_mono_null (fun g hg hS => hne ⟨g, hg, hS⟩) h0
+  · have : ν A = 0 := measure_mono_null (show A ⊆ (S : Set (UJ ε))ᶜ from fun g hg hS => hne ⟨g, hg, hS⟩) h0
     rw [this]
     exact bot_le
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MfacMapDomainAdd
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfLatticeInclusion
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MfacMapDomainAdd
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfLatticeInclusion
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem bePhi_sum_left (j : Fin G.T.t → ℕ) (jp : ℕ) {ι : Type} (s : Finse
     (v : MvPolynomial (Formalism.GM.M.BVar N r G.T.t) ℚ_[p]) :
     bePhi p (r := r) G j jp (∑ i ∈ s, f i) v = ∑ i ∈ s, bePhi p (r := r) G j jp (f i) v := by
   unfold bePhi
-  rw [map_sum, fockK_sum_left, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, fockK_sum_left, Finset.sum_div]
 
 theorem bePhi_smul_right (j : Fin G.T.t → ℕ) (jp : ℕ) (c : ℚ_[p]) (u v : MvPolynomial (Formalism.GM.M.BVar N r G.T.t) ℚ_[p]) :
     bePhi p (r := r) G j jp u (c • v) = c * bePhi p (r := r) G j jp u v := by

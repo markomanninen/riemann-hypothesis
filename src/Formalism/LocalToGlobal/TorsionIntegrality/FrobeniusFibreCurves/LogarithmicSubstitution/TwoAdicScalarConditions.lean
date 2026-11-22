@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalD
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.BiextensionFormalMulMul
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.FinalD
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.BiextensionFormalMulMul
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.CurveJetsUnitBall
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementI
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,6 @@ variable {K : Type} [NormedField K] [NormedAlgebra ℚ_[2] K]
 
 def phi (K : Type) [NormedField K] [NormedAlgebra ℚ_[2] K] : ℤ_[2] →+* K :=
   (algebraMap ℚ_[2] K).comp PadicInt.Coe.ringHom
-
-theorem phi_apply (x : ℤ_[2]) : phi K x = algebraMap ℚ_[2] K (x : ℚ_[2]) := rfl
 
 theorem continuous_phi : Continuous (phi K) := by
   exact (continuous_algebraMap ℚ_[2] K).comp continuous_subtype_val

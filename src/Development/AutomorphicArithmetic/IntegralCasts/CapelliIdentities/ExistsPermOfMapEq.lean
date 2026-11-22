@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh57.exists_perm_of_map_eq :
     ∀ {n : ℕ} (a b : Fin n → ℂ),

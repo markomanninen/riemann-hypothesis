@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondEmbedMulFirstEmbedApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondEmbedMulFirstEmbedApply
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Wd9
 
@@ -50,7 +54,7 @@ theorem freeOf_diagScalar {a : S} {b : SlopeTestRemainingChoices S A} (h : FreeO
   · simpa [d0, hij] using free_zero (A := A) a
 
 theorem J_mul_J : JJ * JJ = -1 := by
-  ext i j
+  refine Matrix.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> simp [Formalism.YangianSpanCharacter.T.J, Matrix.mul_apply, Fin.sum_univ_two]
 
 theorem J_transpose : JJᵀ = -JJ := by

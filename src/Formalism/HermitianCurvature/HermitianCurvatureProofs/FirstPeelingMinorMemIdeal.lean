@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThirdPolynomialExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -56,27 +60,13 @@ theorem peel_col {n m : ℕ} (I : Ideal A) (E : Fin n → Fin n → A) {ι : Typ
   have := peel_core I η (fun l => qminor E (a ∘ l.succAbove) b0 u) (fun l w => Tm E (u - (m : ℂ)) (a l) (bw w)) κ hT
   simpa [Fin.succAbove_last] using this
 
-theorem peel_row {n m : ℕ} (I : Ideal A) (E : Fin n → Fin n → A) (hG : GlRel E) {ι : Type} [Fintype ι] (η : ι → ℂ)
-    (a0 : Fin m → Fin n) (aw : ι → Fin n) (b : Fin (m + 1) → Fin n) (u κ : ℂ)
-    (hT : ∀ l, (∑ w, η w • Tm E u (aw w) (b l)) - algebraMap ℂ A (if l = Fin.last m then κ else 0) ∈ I) :
-    (∑ w, η w • qminor E (Fin.snoc (α := fun _ => Fin n) a0 (aw w)) b u) - κ • qminor E a0 (b ∘ Fin.castSucc) (u - 1) ∈ I := by
-  have e : ∀ w, qminor E (Fin.snoc (α := fun _ => Fin n) a0 (aw w)) b u =
-      ∑ l : Fin (m + 1), ((((-1 : ℤ) ^ (m + (l : ℕ)) : ℤ) : A)) *
-        (qminor E a0 (b ∘ l.succAbove) (u - 1) * Tm E u (aw w) (b l)) := by
-    intro w
-    rw [Formalism.FourierDecayAlt.P.expansion_last_line A n m E hG _ b u]
-    simp only [Fin.snoc_comp_castSucc, Fin.snoc_last]
-  have hc := peel_core I η (fun l : Fin (m + 1) => qminor E a0 (b ∘ l.succAbove) (u - 1))
-    (fun l w => Tm E u (aw w) (b l)) κ hT
-  simp only [e]
-  simpa only [Fin.succAbove_last] using hc
-
 theorem hT_of (I : Ideal A) {ι : Type} [Fintype ι] (η : ι → ℂ) (X : ι → A) (d : ι → ℂ) (c : ℂ)
     (hX : ∀ w, X w - algebraMap ℂ A (d w) ∈ I) (hc : ∑ w, η w * d w = c) :
     (∑ w, η w • X w) - algebraMap ℂ A c ∈ I := by
   have e : (∑ w, η w • X w) - algebraMap ℂ A c = ∑ w, η w • (X w - algebraMap ℂ A (d w)) := by
     rw [← hc]
-    simp only [smul_sub, Finset.sum_sub_distrib, map_sum, map_mul, Algebra.smul_def, mul_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [smul_sub, Finset.sum_sub_distrib, map_sum, map_mul, Algebra.smul_def, mul_sub]
   rw [e]
   exact Submodule.sum_mem _ fun w _ => smul_mem' I _ (hX w)
 

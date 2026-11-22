@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

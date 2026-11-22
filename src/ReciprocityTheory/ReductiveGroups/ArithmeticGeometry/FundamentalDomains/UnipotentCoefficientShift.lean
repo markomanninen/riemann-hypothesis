@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -25,7 +29,8 @@ theorem eq_zero_of_conj_lt_one {a : E} (ha : IsIntegral ℤ a) (h : ∀ σ : E �
     rw [Finset.univ_nonempty_iff, ← Fintype.card_pos_iff, AlgHom.card]
     exact Module.finrank_pos
   have hlt : ∏ σ : E →ₐ[ℚ] ℂ, ‖σ a‖ < ∏ _σ : E →ₐ[ℚ] ℂ, (1 : ℝ) :=
-    Finset.prod_lt_prod_of_nonempty (fun σ _ => norm_pos_iff.mpr ((map_ne_zero σ).mpr ha0))
+    Finset.prod_lt_prod_of_nonempty₀
+      (fun σ _ => norm_pos_iff.mpr ((map_ne_zero σ).mpr ha0))
       (fun σ _ => h (σ : E →+* ℂ)) hne
   rw [Finset.prod_const_one, ← norm_prod, ← Algebra.norm_eq_prod_embeddings ℚ ℂ a, ← hn] at hlt
   have h1 : ‖((n : ℚ) : ℂ)‖ < 1 := by simpa using hlt

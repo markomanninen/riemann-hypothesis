@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMemInvariantSubmodule
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.QuotientHighestWeightTensorStandard
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalMemInvariantSubmodule
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ theorem euler_tensor_dual_commute_gl_action (hE : IsGlRep E) (a b : Fin n) :
     rw [sub_eq_iff_eq_add] at this
     rw [this]
     by_cases h1 : c = a <;> by_cases h2 : b = d <;> simp [h1, h2] <;> abel
-  simp only [Module.End.mul_apply, euler_tensor_dual_apply, tensor_dual_action_apply_component, map_sub, map_neg, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, euler_tensor_dual_apply, tensor_dual_action_apply_component, map_sub, map_neg, map_sum,
     sum_sub_distrib, hc, sum_add_distrib]
   by_cases hbd : b = d
   · subst hbd
@@ -104,7 +109,7 @@ theorem aeval_mem_invariant_submodule (A : Module.End ℂ Y) (p : Submodule ℂ 
 theorem aeval_commute_of_commute (A T : Module.End ℂ Y) (h : Commute A T) (q : ℂ[X]) :
     Commute (aeval A q) T := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_left hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_left hq
   | monomial k c =>
     rw [aeval_monomial]
     exact (Algebra.commute_algebraMap_left c T).mul_left (h.pow_left k)

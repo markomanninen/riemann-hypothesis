@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,14 +79,6 @@ def ModelLStep : Prop :=
 def ModelQStep : Prop :=
   ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CA CB CK : ℝ),
     Adm1 D HW F Cm CA CB CK → modelQR D HW
-
-def ModelFStep : Prop :=
-  ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CA CB CK : ℝ),
-    Adm1 D HW F Cm CA CB CK → modelFR D HW
-
-def ModelKStep : Prop :=
-  ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CA CB CK : ℝ),
-    Adm1 D HW F Cm CA CB CK → modelKR D HW
 
 end Formalism.MainNotions.N.Ln34
 

@@ -1,8 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.EqOfRes
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.EqOfRes
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Z.Bc
-
-open private card_bad irr_inf from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CentralResidueGroups.EqOfRes
 
 namespace UpperTheory.V.Z.Win
 
@@ -20,7 +22,7 @@ private theorem fix_root {Ω : Type} [Field Ω] [Algebra ℚ Ω] (A : ValuationS
   exfalso
   set u : Ω := (1 + δ) / 2 with hu
   have hgu : g u = 1 - u := by
-    rw [hu, map_div₀, map_add, map_one, h, map_ofNat]
+    rw [hu, map_div₀, map_add (f := _), map_one, h, map_ofNat]
     ring
   have hg1u : g (1 - u) = u := by
     rw [map_sub, map_one, hgu]
@@ -147,7 +149,11 @@ theorem thirdSplit (K K' Ω : Type) [Field K] [NumberField K] [IsCMField K] [Fie
   obtain ⟨Kf, hF, hN, hC, h2f, hcop, hsplit⟩ := quadFamSplit l (4 * n ^ 2 + 1)
   have hemb : ∀ i, ∃ (_ : Algebra (Kf i) Ω), IsScalarTower ℚ (Kf i) Ω := by
     intro i
-    let f : Kf i →ₐ[ℚ] Ω := IsAlgClosed.lift
+    let f : Kf i →ₐ[ℚ] Ω := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     letI : Algebra (Kf i) Ω := f.toRingHom.toAlgebra
     exact ⟨inferInstance, IsScalarTower.of_algebraMap_eq (fun x => (f.commutes x).symm)⟩
   choose algI towI using hemb
@@ -167,8 +173,40 @@ theorem thirdSplit (K K' Ω : Type) [Field K] [NumberField K] [IsCMField K] [Fie
     apply UpperTheory.V.Br.signNe (Kf i) (Kf j) Ω (h2f i) (hcop i j hne)
     ext s
     rw [← (hδs i).1 s, ← (hδs j).1 s, hij]
-  have hbadK := card_bad (resG ℚ K Ω) ε hεs.1 hεs.2 hεne δf hinj (fun i => (hδs i).2) (r.comp (resG ℚ K Ω)) hr
-  have hbadK' := card_bad (resG ℚ K' Ω) ε' hεs'.1 hεs'.2 hεne' δf hinj (fun i => (hδs i).2) (r.comp (resG ℚ K' Ω)) hr'
+  have card_bad {Γ' : Type} [Group Γ'] (φ : Γ' →* G ℚ Ω) (η : G ℚ Ω →* (Qbar l)ˣ)
+      (hker : ∀ s, η s = 1 ↔ s ∈ φ.range) (hsign : ∀ s, η s = 1 ∨ η s = -1)
+      (hne : η ≠ 1) (hirr : IsIrr (r.comp φ)) :
+      (Finset.univ.filter fun i => RepIso (r.comp φ) (tw (r.comp φ) ((δf i).comp φ))).card ≤ 2 * n ^ 2 := by
+    obtain ⟨t, ht⟩ : ∃ t, η t ≠ 1 := by
+      by_contra h
+      exact hne (MonoidHom.ext fun s => by_contra fun hs => h ⟨s, hs⟩)
+    let bad := Finset.univ.filter fun i => RepIso (r.comp φ) (tw (r.comp φ) ((δf i).comp φ))
+    have key (c : (Qbar l)ˣ) : (bad.filter fun i => δf i t = c).card ≤ n ^ 2 := by
+      rw [← Finset.card_image_of_injOn (f := fun i => (δf i).comp φ)]
+      · refine Br.twCard _ _ n (r.comp φ) hirr _ fun d hd => ?_
+        obtain ⟨i, hi, rfl⟩ := Finset.mem_image.1 hd
+        exact (Finset.mem_filter.1 (Finset.mem_filter.1 hi).1).2
+      · intro i hi j hj hij
+        have hat : δf i t = δf j t :=
+          (Finset.mem_filter.1 hi).2.trans (Finset.mem_filter.1 hj).2.symm
+        have hagree (s : G ℚ Ω) (hs : η s = 1) : δf i s = δf j s := by
+          obtain ⟨x, rfl⟩ := (hker s).1 hs
+          exact DFunLike.congr_fun hij x
+        apply hinj
+        refine MonoidHom.ext fun s => ?_
+        rcases hsign s with hs | hs
+        · exact hagree s hs
+        · have h := hagree (t⁻¹ * s) (by simp [hs, (hsign t).resolve_left ht])
+          rw [map_mul, map_mul, map_inv, map_inv, hat] at h
+          exact mul_left_cancel h
+    change bad.card ≤ _
+    refine (Finset.card_le_card (t := _ ∪ _) ?_).trans ((Finset.card_union_le _ _).trans
+      ((add_le_add (key 1) (key (-1))).trans (two_mul _).ge))
+    intro i hi
+    exact Finset.mem_union.2 ((hδs i).2 t |>.imp
+      (fun h => Finset.mem_filter.2 ⟨hi, h⟩) (fun h => Finset.mem_filter.2 ⟨hi, h⟩))
+  have hbadK := card_bad (resG ℚ K Ω) ε hεs.1 hεs.2 hεne hr
+  have hbadK' := card_bad (resG ℚ K' Ω) ε' hεs'.1 hεs'.2 hεne' hr'
   obtain ⟨i, hi⟩ : ∃ i, i ∉ (Finset.univ.filter fun i => RepIso (r.comp (resG ℚ K Ω))
       (tw (r.comp (resG ℚ K Ω)) ((δf i).comp (resG ℚ K Ω)))) ∪
       (Finset.univ.filter fun i => RepIso (r.comp (resG ℚ K' Ω))
@@ -180,13 +218,20 @@ theorem thirdSplit (K K' Ω : Type) [Field K] [NumberField K] [IsCMField K] [Fie
     simp at h2
     linarith
   simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and, not_or] at hi
+  have irr_inf {Γ' : Type} [Group Γ'] (φ : Γ' →* G ℚ Ω) (hirr : IsIrr (r.comp φ))
+      (hn : ¬ RepIso (r.comp φ) (tw (r.comp φ) ((δf i).comp φ))) :
+      IsIrr (r.comp (φ.range ⊓ (resG ℚ (Kf i) Ω).range).subtype) := by
+    have h := (Br.resTwo _ _ (Qbar l) n ((δf i).comp φ).ker.subtype ((δf i).comp φ)
+      (fun s => by rw [Subgroup.range_subtype]; rfl) (fun s => (hδs i).2 (φ s)) (r.comp φ)).1 hirr hn
+    refine ⟨h.1, fun _ _ _ => trivial, fun W hW hst => h.2.2 W hW fun s v hv => ?_⟩
+    exact hst ⟨φ s, ⟨s, rfl⟩, ((hδs i).1 _).1 s.2⟩ v hv
   refine ⟨Kf i, hF i, hN i, hC i, algI i, towI i, h2f i, ?_, ?_, ?_⟩
   · intro A hA g hg x
     obtain ⟨p, c, δ, hp, hpc, hδ⟩ := hsplit i
     have hδΩ : (algebraMap (Kf i) Ω δ) ^ 2 = -(p : Ω) := by
       rw [← map_pow, hδ, map_neg, map_natCast]
     exact fix_field (h2f i) hp hδ g (fix_root A hpc hA hg hδΩ) x
-  · exact irr_inf (resG ℚ K Ω) (resG ℚ (Kf i) Ω).range (δf i) (hδs i).1 (hδs i).2 r hr hi.1
-  · exact irr_inf (resG ℚ K' Ω) (resG ℚ (Kf i) Ω).range (δf i) (hδs i).1 (hδs i).2 r hr' hi.2
+  · exact irr_inf (resG ℚ K Ω) hr hi.1
+  · exact irr_inf (resG ℚ K' Ω) hr' hi.2
 
 end UpperTheory.V.Z.Win

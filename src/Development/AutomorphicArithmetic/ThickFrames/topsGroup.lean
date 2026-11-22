@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Development.AutomorphicArithmetic.ThickFrames.select
-import Development.AutomorphicArithmetic.ThickFrames.orbitSum
-import Development.AutomorphicArithmetic.ThickFrames.SharesOfCounts
-import Development.AutomorphicArithmetic.ThickFrames.orbitTerms
-import Development.AutomorphicArithmetic.ThickFrames.NotGoodLe
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Development.AutomorphicArithmetic.ThickFrames.select
+public import Development.AutomorphicArithmetic.ThickFrames.orbitSum
+public import Development.AutomorphicArithmetic.ThickFrames.SharesOfCounts
+public import Development.AutomorphicArithmetic.ThickFrames.orbitTerms
+public import Development.AutomorphicArithmetic.ThickFrames.NotGoodLe
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 open Classical

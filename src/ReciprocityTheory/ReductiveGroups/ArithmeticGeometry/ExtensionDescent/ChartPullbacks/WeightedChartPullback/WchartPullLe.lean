@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegUnif
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,16 +68,5 @@ end ReciprocityTheory.ChartRestriction.G.Semi.LBVal
 namespace ReciprocityTheory.ChartRestriction.G.Out.LBVal
 
 open Semi
-
-lemma charGen_val {S : Scheme.{0}} (X : Type) [AddCommGroup X] (G : Over S) {Z : Scheme.{0}}
-    (L : LB Z) (χ : X) (j : PEmpty → L.ι) (W : (splitTorus S X ⊗ G).left.Opens)
-    (hW : W ≤ LB.wchart L (Y := (splitTorus S X ⊗ G).left) (K := PEmpty) PEmpty.elim j) :
-    ((splitTorus S X ⊗ G).left.presheaf.map (homOfLE hW).op).hom ((charGen X G L χ).s j).val =
-      ((splitTorus S X ⊗ G).left.presheaf.map (homOfLE le_top).op).hom
-        (Semi.TorusInj.chiP X G χ) := by
-  have p : LB.wchart L (Y := (splitTorus S X ⊗ G).left) (K := PEmpty) PEmpty.elim j ≤
-      (fst (splitTorus S X) G).left ⁻¹ᵁ ⊤ := fun _ _ => trivial
-  refine (Semi.LBVal.rres p hW _).trans ?_
-  all_goals rfl
 
 end ReciprocityTheory.ChartRestriction.G.Out.LBVal

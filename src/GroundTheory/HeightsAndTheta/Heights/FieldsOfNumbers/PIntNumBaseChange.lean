@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -14,10 +19,10 @@ section Descent
 variable {σ : Type*} {F : Type*} [Field F] {F' : Type*} [Field F'] [Algebra F F']
 
 def coeffFormFun (φ : F' →ₗ[F] F) (f : MvPolynomial σ F') : MvPolynomial σ F :=
-  ∑ μ ∈ f.support, monomial μ (φ (coeff μ f))
+  ∑ μ ∈ f.support, monomial μ (φ (AddMonoidAlgebra.coeff f μ))
 
 theorem coeff_coeffFormFun (φ : F' →ₗ[F] F) (f : MvPolynomial σ F') (ν : σ →₀ ℕ) :
-    coeff ν (coeffFormFun φ f) = φ (coeff ν f) := by
+    AddMonoidAlgebra.coeff (coeffFormFun φ f) ν = φ (AddMonoidAlgebra.coeff f ν) := by
   classical
   simp only [coeffFormFun, coeff_sum, coeff_monomial, Finset.sum_ite_eq']
   split_ifs with h
@@ -31,7 +36,7 @@ def coeffForm (φ : F' →ₗ[F] F) : MvPolynomial σ F' →+ MvPolynomial σ F 
 
 @[simp]
 theorem coeff_coeffForm (φ : F' →ₗ[F] F) (f : MvPolynomial σ F') (ν : σ →₀ ℕ) :
-    coeff ν (coeffForm φ f) = φ (coeff ν f) :=
+    AddMonoidAlgebra.coeff (coeffForm φ f) ν = φ (AddMonoidAlgebra.coeff f ν) :=
   coeff_coeffFormFun φ f ν
 
 theorem coeffForm_monomial (φ : F' →ₗ[F] F) (μ : σ →₀ ℕ) (a : F') :
@@ -49,7 +54,8 @@ theorem coeffForm_map_mul (φ : F' →ₗ[F] F) (g : MvPolynomial σ F) (f : MvP
     coeffForm φ (map (algebraMap F F') g * f) = g * coeffForm φ f := by
   classical
   ext ν
-  simp only [coeff_coeffForm, coeff_mul, map_sum, coeff_map, form_algebraMap_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coeff_coeffForm, coeff_mul, map_sum, coeff_map, form_algebraMap_mul]
 
 theorem coeffForm_map (φ : F' →ₗ[F] F) (hφ : φ 1 = 1) (g : MvPolynomial σ F) :
     coeffForm φ (map (algebraMap F F') g) = g := by
@@ -78,7 +84,7 @@ theorem coeffForm_mem (φ : F' →ₗ[F] F) {I : Ideal (MvPolynomial σ F)} {f :
     · intro c
       simp
     · intro x y _ _ hx hy c
-      rw [mul_add, map_add]
+      rw [mul_add, map_add (f := _)]
       exact I.add_mem (hx c) (hy c)
     · intro a x _ hx c
       rw [smul_eq_mul, ← mul_assoc]
@@ -112,17 +118,17 @@ theorem mem_map_of_coeffForm {I : Ideal (MvPolynomial σ F)} {f : MvPolynomial �
     (h : ∀ φ : F' →ₗ[F] F, coeffForm φ f ∈ I) : f ∈ I.map (map (algebraMap F F')) := by
   classical
   let b := Module.Basis.ofVectorSpace F F'
-  let J := f.support.biUnion (fun μ => (b.repr (coeff μ f)).support)
+  let J := f.support.biUnion (fun μ => (b.repr (AddMonoidAlgebra.coeff f μ)).support)
   have hf : f = ∑ j ∈ J, C (b j) * map (algebraMap F F') (coeffForm (b.coord j) f) := by
     ext ν
     rw [coeff_sum]
     simp only [coeff_C_mul, coeff_map, coeff_coeffForm, Module.Basis.coord_apply]
-    have hsub : (b.repr (coeff ν f)).support ⊆ J := by
+    have hsub : (b.repr (AddMonoidAlgebra.coeff f ν)).support ⊆ J := by
       by_cases hν : ν ∈ f.support
-      · exact Finset.subset_biUnion_of_mem (fun μ => (b.repr (coeff μ f)).support) hν
+      · exact Finset.subset_biUnion_of_mem (fun μ => (b.repr (AddMonoidAlgebra.coeff f μ)).support) hν
       · rw [MvPolynomial.notMem_support_iff.mp hν, map_zero, Finsupp.support_zero]
         exact Finset.empty_subset _
-    conv_lhs => rw [← b.linearCombination_repr (coeff ν f)]
+    conv_lhs => rw [← b.linearCombination_repr (AddMonoidAlgebra.coeff f ν)]
     rw [Finsupp.linearCombination_apply,
       Finsupp.sum_of_support_subset _ hsub (fun i a => a • b i) (fun j _ => zero_smul _ _)]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -153,8 +159,8 @@ section Hilbert
 
 variable {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem gradedPiece_eq_span (E : Type*) [Field E] (J : Ideal (MRing ι E)) (m : K → ℕ) :
     gradedPiece J m = Submodule.span E ((fun d => Ideal.Quotient.mk J (monomial d (1 : E))) ''
       {d : (Σ k, ι k) →₀ ℕ | Finsupp.weight (blockWeight ι) d = m}) := by
@@ -165,7 +171,7 @@ theorem gradedPiece_eq_span (E : Type*) [Field E] (J : Ideal (MRing ι E)) (m : 
       rw [mem_weightedHomogeneousSubmodule] at hf
       rw [← f.support_sum_monomial_coeff]
       refine Submodule.sum_mem _ fun d hd => ?_
-      have h1 : monomial d (coeff d f) = coeff d f • monomial d (1 : E) := by
+      have h1 : monomial d (AddMonoidAlgebra.coeff f d) = AddMonoidAlgebra.coeff f d • monomial d (1 : E) := by
         rw [smul_monomial, smul_eq_mul, mul_one]
       rw [h1]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨d, hf (mem_support_iff.mp hd), rfl⟩)
@@ -188,7 +194,8 @@ theorem sum_smul_mk_monomial (E : Type*) [Field E] (J : Ideal (MRing ι E)) {B :
     (lift : B → (Σ k, ι k) →₀ ℕ) (c : B → E) :
     ∑ x, c x • Ideal.Quotient.mk J (monomial (lift x) (1 : E)) =
       Ideal.Quotient.mk J (∑ x, monomial (lift x) (c x)) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun x _ => smul_mk_monomial E J _ _
 
 variable {F : Type*} [Field F] {F' : Type*} [Field F'] [Algebra F F']
@@ -223,7 +230,8 @@ theorem finrank_gradedPiece_map (I : Ideal (MRing ι F)) (m : K → ℕ) :
     rw [← Module.forall_dual_apply_eq_zero_iff F (g x)]
     intro φ
     have hmem := coeffForm_mem φ hg'
-    rw [map_sum] at hmem
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hmem
     simp only [coeffForm_monomial] at hmem
     rw [← Ideal.Quotient.eq_zero_iff_mem, ← sum_smul_mk_monomial] at hmem
     simp only [hlift_v] at hmem
@@ -248,7 +256,8 @@ theorem finrank_gradedPiece_map (I : Ideal (MRing ι F)) (m : K → ℕ) :
         simpa only [hlift_v] using hc
       rw [sum_smul_mk_monomial, Ideal.Quotient.eq] at hc'
       have h' := Ideal.mem_map_of_mem (map (algebraMap F F')) hc'
-      rw [map_sub, map_sum] at h'
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum] at h'
       simp only [map_monomial, map_one] at h'
       rw [← Ideal.Quotient.eq, ← sum_smul_mk_monomial] at h'
       rw [SetLike.mem_coe]
@@ -288,8 +297,8 @@ theorem isPrime_map_polynomial (P : Ideal (MvPolynomial σ F)) [P.IsPrime] :
   rw [← he, ← Ideal.map_map]
   exact Ideal.map_isPrime_of_equiv e
 
-attribute [local instance] MvPolynomial.algebraMvPolynomial in
 
+attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem isPrime_map_ratFunc (P : Ideal (MvPolynomial σ F)) [hP : P.IsPrime] :
     (P.map (map (algebraMap F (RatFunc F)) : MvPolynomial σ F →+* _)).IsPrime := by
   have hcomp : Ideal.map (algebraMap (MvPolynomial σ (Polynomial F)) (MvPolynomial σ (RatFunc F)))
@@ -329,9 +338,6 @@ theorem IntNumBaseChange.intersectionNumber_baseChange : IntNumBaseChange.Statem
     have := hP.isPrime
     exact ⟨isPrime_map_ratFunc P, isMultiHomogIdeal_map hP.multiHomog,
       isRelevant_map hP.relevant⟩
-
-theorem IntNumBaseChange.proof (_h1 : MixedDiffConst.Statement) : IntNumBaseChange.Statement :=
-  IntNumBaseChange.intersectionNumber_baseChange
 
 end
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.TB
 
@@ -38,7 +42,8 @@ theorem rel_zero {K F C Pt : Type} [Field K] [Field F] [Algebra K F] [IsGalois K
       intro y
       obtain ⟨x, rfl⟩ := (hbij g).2 y
       have h1 := congrArg g (ha'rel x)
-      rw [map_sum, map_zero] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h1
       simp only [map_mul, ← heq] at h1
       exact h1
     have hdiff : ∀ y, ∑ j ∈ s.erase i0, (g (a' j) - a' j) * v (b j) y = 0 := by
@@ -56,7 +61,8 @@ theorem rel_zero {K F C Pt : Type} [Field K] [Field F] [Algebra K F] [IsGalois K
   choose! c hc using hK
   have hv0 : v (∑ i ∈ s, c i • b i) = 0 := by
     funext y
-    rw [map_sum, Finset.sum_apply, Pi.zero_apply, ← ha'rel y]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply, Pi.zero_apply, ← ha'rel y]
     refine Finset.sum_congr rfl fun i hi => ?_
     rw [map_smul, Pi.smul_apply, Algebra.smul_def, hc i hi]
   have hsum0 : ∑ i ∈ s, c i • b i = 0 := hinj (by rw [hv0, map_zero])
@@ -122,15 +128,5 @@ theorem indepDescent_holds : IndepDescentSt := by
     linearIndependent_algebraMap_comp_iff.mpr hS
   apply LinearIndependent.of_comp (LinearMap.funLeft ℂ ℂ (fun y : S => (y : Pt)))
   exact hC
-
-example (h : IndepDescentSt) :
-    LinearIndependent ℂ (fun _ : Fin 1 => (fun _ => ((1 : ℚ) : ℂ) : Unit → ℂ)) := by
-  have hv : Function.Injective (LinearMap.pi (fun _ : Unit => LinearMap.id) : ℚ →ₗ[ℚ] (Unit → ℚ)) := by
-    intro x y hxy
-    simpa using congrFun hxy ()
-  have := h ℚ ℚ (Rat.castHom ℂ) ℚ Unit (LinearMap.pi fun _ => LinearMap.id) (fun _ y => y)
-    (fun _ => Function.bijective_id) (fun g f y => by simp) hv 1 (fun _ => 1)
-    (linearIndependent_unique_iff.mpr one_ne_zero)
-  simpa using this
 
 end ReciprocityTheory.ChartRestriction.G.TB

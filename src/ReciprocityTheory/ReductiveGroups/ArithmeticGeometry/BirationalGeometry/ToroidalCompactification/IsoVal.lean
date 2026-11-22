@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubicalLawRight
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,11 +74,18 @@ theorem cub_w₀ {T' : Over S'} {z : T'.left} {J J'} (hJ : Good L.L z J) (hJ' : 
         ⟨fun ψ => Classical.choose (hcov (ψ q)), fun ψ => Classical.choose_spec (hcov (ψ q))⟩
       obtain ⟨hh, hhd⟩ : ∃ hh : ((A' ⊗ A').left ⟶ A'.left) → ((A' ⊗ A').left.presheaf.stalk q)ˣ,
           ∀ ψ, hh ψ = gw w ψ q (Jq (ψ ≫ Φ)) (J'q ψ) := ⟨_, fun _ => rfl⟩
-      have f1 := (isCub_cubV c (T := Over.mk ((A' ⊗ A').hom ≫ f)) hJq).face
-        (pushPt gp.1.w (fst A' A')) (pushPt gp.1.w (snd A' A'))
+      have f1 : cubV c (T := Over.mk ((A' ⊗ A').hom ≫ f)) q Jq 1
+          (pushPt gp.1.w (fst A' A')) (pushPt gp.1.w (snd A' A')) = 1 := by
+        have e := val_corr hJq (c.face 0) (lift (pushPt gp.1.w (fst A' A')) (pushPt gp.1.w (snd A' A'))).left
+        rw [val_one] at e
+        refine (Eq.trans ?_ (val_cub c (lift (pushPt gp.1.w (fst A' A')) (pushPt gp.1.w (snd A' A'))) hJq (pzero A _) (x2 A 0) (x2 A 1)).symm).trans e
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
       have f2 : val (L := L'.L) (φ := thφ A' (x3 A')) (ε := thε) c'.t
-          (lift (1 : A' ⊗ A' ⟶ A') (lift (fst A' A') (snd A' A'))).left q J'q = 1 :=
-        (isCub_cubV c' (T := A' ⊗ A') hJ'q).face (fst A' A') (snd A' A')
+          (lift (1 : A' ⊗ A' ⟶ A') (lift (fst A' A') (snd A' A'))).left q J'q = 1 := by
+        have e := val_corr hJ'q (c'.face 0) (lift (fst A' A') (snd A' A')).left
+        rw [val_one] at e
+        refine (Eq.trans ?_ (val_cub c' (lift (fst A' A') (snd A' A')) hJ'q (pzero A' _) (x2 A' 0) (x2 A' 1)).symm).trans e
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
       have f3 := prod_cub (T := A' ⊗ A') (1 : A' ⊗ A' ⟶ A') (fst A' A') (snd A' A') hh
       erw [val_pull]
       rw [hE]
@@ -92,22 +103,17 @@ theorem cub_w₀ {T' : Over S'} {z : T'.left} {J J'} (hJ : Good L.L z J) (hJ' : 
   rfl
   all_goals exact hJ
 
-omit hG hA hwg [GrpObj A] [GrpObj A'] [IsCommMonObj A] [IsCommMonObj A'] in
 
+omit hG hA hwg [GrpObj A] [GrpObj A'] [IsCommMonObj A] [IsCommMonObj A'] in
 def Om {M : LB A.left} {M' : LB A'.left} (w : LB.Iso M' (M.pull Φ)) {Z : Scheme.{0}} {s' : Z ⟶ S'} (z : Z)
     (J : (Z ⟶ A.left) → M.ι) (J' : (Z ⟶ A'.left) → M'.ι) (x : Over.mk s' ⟶ A') : (Z.presheaf.stalk z)ˣ :=
   gw w (show Z ⟶ _ from x.left) z (J (x.left ≫ Φ)) (J' x.left)
 
-omit hG hA hwg in
 
+omit hG hA hwg in
 def cubZ {Z : Scheme.{0}} {s : Z ⟶ S} (z : Z) (J : (Z ⟶ A.left) → L.L.ι) (a b d : Over.mk s ⟶ A) : (Z.presheaf.stalk z)ˣ :=
   cubV c (T := Over.mk s) z J a b d
 
-omit hG hA hwg [GrpObj A] [IsCommMonObj A] in
-
-def valZ {M : LB A.left} {K : Type} [Fintype K] {ε : K → ℤ} {φ : K → ((A ⊗ A).left ⟶ A.left)} (W : LB.Gen (LB.LinComb M φ ε))
-    {Z : Scheme.{0}} {s : Z ⟶ S} (z : Z) (J : (Z ⟶ A.left) → M.ι) (a b : Over.mk s ⟶ A) : (Z.presheaf.stalk z)ˣ :=
-  val W (show Z ⟶ _ from (lift a b).left) z J
 
 include gp in
 theorem cub_w {Z : Scheme.{0}} {s' : Z ⟶ S'} {s : Z ⟶ S} {z : Z} {J J'} (hJ : Good L.L z J) (hJ' : Good L'.L z J')

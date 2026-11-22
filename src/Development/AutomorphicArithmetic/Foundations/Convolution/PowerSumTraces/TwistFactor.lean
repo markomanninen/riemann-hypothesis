@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TermEDefs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TermEDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ structure FitsV {σ : E ≃ₐ[F] E} {q : Pl F} {w₀ : PlacesOver E q} (T : Ty 
 end
 
 def TwistFactor : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (V Z : Submodule ℂ (LL μ))
+  ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (V Z : Submodule ℂ (LL μ))
     (r : ℕ) (w : Fin r → Pl K) [∀ i, MeasurableSpace (Gw n (w i))] [∀ i, BorelSpace (Gw n (w i))]
     (τ : ∀ i, SmIrr (Gw n (w i))) (s : ∀ i, Gw n (w i) ≃ₜ* Gw n (w i)) (I : ∀ i, (τ i).V ≃ₗ[ℂ] (τ i).V) (R : LL μ →L[ℂ] LL μ),
     IsSummand μ V → Function.Injective w → (∀ i, Occurs μ V (w i) (τ i)) →
@@ -52,7 +56,7 @@ def LocGalEx : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] (σ : E ≃ₐ[F] E),
     (Module.finrank F E).Prime → ∀ (n : ℕ) (v : Pl F) (w : PlacesOver E v), ¬ GM.Split E v →
     (∀ u : PlacesOver E v, u = w) ∧ ∃ s : Gw n w.1 ≃ₜ* Gw n w.1, IsLocGal σ w (s : Gw n w.1 →* Gw n w.1) ∧
-      ∀ (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ →
+      ∀ (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ →
         (∀ g x, θ.U (rhoL μ w.1 g x) = rhoL μ w.1 (s g) (θ.U x)) ∧
         ∀ (V : Submodule ℂ (LL μ)) (τ : SmIrr (Gw n w.1)), IsSummand μ V → V.map (θ.U : LL μ →ₗ[ℂ] LL μ) = V →
           Occurs μ V w.1 τ → ∃ I : τ.V ≃ₗ[ℂ] τ.V, ∀ g x, I (τ.ρ g x) = τ.ρ (s g) (I x)
@@ -60,7 +64,7 @@ def LocGalEx : Prop :=
 def TermEV : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] (σ : E ≃ₐ[F] E),
     (∀ τ, τ ∈ Subgroup.zpowers σ) → ∀ k n : ℕ, Module.finrank F E = k + 1 → (k + 1).Prime → 0 < n →
-    ∀ (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ →
+    ∀ (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure] (θ : Twist μ), IsGalTwist σ θ →
     ∀ (D : InfD σ k) (s : Fin (k + 1) → archGroup F n →* archGroup E n) (hs : ∀ i, Continuous (s i)), IsBlockElement D n s →
     ∀ (νE : Measure (archGroup E n)) [νE.IsHaarMeasure] (νF : Measure (archGroup F n)) [νF.IsHaarMeasure] (b a : TI F n)
       (aE : TI E n) (aF : TI F n), ArchSlot D νE νF b a aE aF →

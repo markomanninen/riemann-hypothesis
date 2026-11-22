@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction Formalism.MainNotions.BlochKatoReduction.Gen GlobalTheory.TwSys GlobalTheory.SelFun GlobalTheory.Published GlobalTheory.ResSel GlobalTheory.StepTwo GlobalTheory.TwistDet GlobalTheory.NewPrime GlobalTheory.Published.PoitouTate
 
 noncomputable section
@@ -12,12 +17,14 @@ variable {A : Type} [CommRing A] {a r : ℕ}
 theorem rect_map {B B' : Type} [AddCommGroup B] [Module A B] [AddCommGroup B'] [Module A B'] (p : B →ₗ[A] B')
     (Z : Matrix (Fin r) (Fin a) A) (x : Fin a → B) : p.compLeft (Fin r) (rect Z x) = rect Z (p ∘ x) := by
   funext c
-  simp [rect, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [rect, map_sum]
 
 theorem matAct_map {B B' : Type} [AddCommGroup B] [Module A B] [AddCommGroup B'] [Module A B'] (p : B →ₗ[A] B')
     (Φ : Matrix (Fin a) (Fin a) A) (x : Fin a → B) : p ∘ matAct Φ x = matAct Φ (p ∘ x) := by
   funext c
-  simp [matAct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [matAct, map_sum]
 
 end
 
@@ -33,7 +40,8 @@ theorem comparison_cocycles : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R
       funext c
       simp [Finset.sum_apply, Pi.single_apply]
     conv_rhs => rw [this]
-    simp [gens, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [gens, map_sum]
   have hrect : ∀ g c, rect (Z' g) gens c = W.mkQ (Z' g c) := fun g c => hsum _
   have hgens : matAct Φ' gens = 0 := by
     funext b
@@ -53,7 +61,8 @@ theorem comparison_cocycles : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R
   obtain ⟨E, hE⟩ : ∃ E : Matrix (Fin a) (Fin a') A, ∀ b, W.mkQ (E b) = x b :=
     ⟨fun b => (Submodule.mkQ_surjective W (x b)).choose, fun b => (Submodule.mkQ_surjective W (x b)).choose_spec⟩
   have hvm : ∀ v : Fin a → A, W.mkQ (∑ k, v k • E k) = ∑ k, v k • x k := fun v => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [map_smul, hE]
   refine ⟨E, ?_, ?_, ?_⟩
   · let S : Submodule A ((Fin a' → A) ⧸ W) := Submodule.span A (Set.range x)

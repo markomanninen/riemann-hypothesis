@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SupLatticeIsLatInStable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaSpansIsLatIn
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ScaledSpanClauses
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevActMemMlat
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RunWeightsSum
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaStableOfAlgHom
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProductsShortRec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SupLatticeIsLatInStable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaSpansIsLatIn
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ScaledSpanClauses
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevActMemMlat
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.RunWeightsSum
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaStableOfAlgHom
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProductsShortRec
+
+@[expose] public section
 
 open NumberField IsDedekindDomain AlgebraicGeometry CategoryTheory Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff SABMap)
@@ -31,11 +35,11 @@ theorem leaves_sup_span_lemmaS_of_formTieK : Formalism.MainNotions.ModuliIntegra
     intro v i
     obtain ⟨T, h, j, hj, p, inst, z, act, ℓ, hFK, hA, hFull, hxi, hO, hp, hLat, hSp, hH⟩ := H v i
     obtain ⟨h1, h2, h3, h4⟩ := GlobalTheory.RunDepth.run_weights_sum D L Pm Tp hK j hj
-    have hF := hFK.toFormTie (shortTh_fg _ hinj EX hp _ _ _ _ hLat hH)
+    have hF := hFK.toFormTie (shortTh_fg _ hinj EX hp _ _ _ _ hLat.toIsLattice hH)
       (productsShort_rec hCI D T.toTop h j hj hFull.sh hO (hFull.lvA j hj 0) _ _ _ _ h1 h2 h3 h4 (kaWt_n _ _ _ _))
     exact ⟨supLattice_isLatIn_stable D _ _ j _ hinj EX p _ _ _ _ K Bs Df S P oc O v i z act hF hLat
         (levAct_mem_Mlat D T.toTop h j hj _ P ℓ act hA),
-      theta_spans_isLatIn D _ _ j _ hinj EX p _ _ _ _ K Bs Df S P oc O v i z act hF hp h1 h2 h3 hLat hSp hH,
+      theta_spans_isLatIn D _ _ j _ hinj EX p _ _ _ _ K Bs Df S P oc O v i z act hF hp h1 h2 h3 hLat.toIsLattice hSp hH,
       GlobalTheory.scaledSpan_clauses D _ _ j _ hinj EX p _ _ _ _ K Bs Df S P oc O v i z act hF h1 h2 h3 hH
         (levAct_theta hCI D T h j hj hFull hxi _ _ _ _ _ h1 h2 h3 h4 P ℓ act hA)⟩
   obtain ⟨v₀, -⟩ := exists_place3 K

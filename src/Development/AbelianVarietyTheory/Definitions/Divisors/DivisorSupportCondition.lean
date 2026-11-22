@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CupProducts
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
-import Development.AbelianVarietyTheory.Definitions.Divisors.BlockGLMap
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CupProducts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BlockGLMap
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex

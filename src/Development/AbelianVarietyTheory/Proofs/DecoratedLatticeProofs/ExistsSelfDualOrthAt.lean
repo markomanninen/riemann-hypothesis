@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.FinPl NumberField
 open scoped TensorProduct
@@ -56,22 +60,9 @@ theorem exists_selfDual_orthAt : ∀ (D : D7) (S A B : HSp D) (o : OrthDec S A B
       simp only [mulVec_add, mulVec_mulVec, o.qA_iA, o.qA_iB, o.qB_iA, o.qB_iB, one_mulVec, zero_mulVec, add_zero, zero_add]
       exact ⟨ha, hb⟩
     · rw [hsum y]; exact add_mem (hiA _ h.1) (hiB _ h.2)
-  refine ⟨LA.map fA ⊔ LB.map fB, ⟨⟨(hA.1.fg.map _).sup (hB.1.fg.map _), ?_⟩, fun y => ⟨fun hy x hx => ?_, fun h => ?_⟩⟩,
+  refine ⟨LA.map fA ⊔ LB.map fB, ⟨Submodule.IsLattice.of_fg D.host.E ((hA.1.fg.map _).sup (hB.1.fg.map _)), fun y => ⟨fun hy x hx => ?_, fun h => ?_⟩⟩,
     fun v y => ⟨fun hy => ⟨rat_mulVec_mem_latV _ (fun x hx => ((hmem x).1 hx).1) hy,
       rat_mulVec_mem_latV _ (fun x hx => ((hmem x).1 hx).2) hy⟩, fun h => ?_⟩⟩
-  · rw [eq_top_iff]
-    intro y _
-    have key : ∀ {C : HSp D} (m : Matrix (Fin S.rank) (Fin C.rank) D.host.E) (LC : Lat C), IsSelfDualC C LC →
-        (∀ x ∈ LC, m *ᵥ x ∈ LA.map fA ⊔ LB.map fB) → ∀ z, m *ᵥ z ∈ Submodule.span D.host.E
-          ((LA.map fA ⊔ LB.map fB : Lat S) : Set (Fin S.rank → D.host.E)) := by
-      intro C m LC hC hm z
-      have hz : z ∈ Submodule.span D.host.E (LC : Set (Fin C.rank → D.host.E)) := by rw [hC.1.span_eq_top]; trivial
-      have : Submodule.span D.host.E (LC : Set (Fin C.rank → D.host.E)) ≤ Submodule.comap (mulVecLin m)
-          (Submodule.span D.host.E ((LA.map fA ⊔ LB.map fB : Lat S) : Set (Fin S.rank → D.host.E))) :=
-        Submodule.span_le.2 fun x hx => Submodule.subset_span (hm x hx)
-      exact this hz
-    rw [hsum y]
-    exact add_mem (key _ LA hA hiA _) (key _ LB hB hiB _)
   · obtain ⟨_, ⟨a, ha, rfl⟩, _, ⟨b, hb, rfl⟩, rfl⟩ := Submodule.mem_sup.1 hx
     obtain ⟨c, hc⟩ := (hA.2 _).1 ((hmem y).1 hy).1 a ha
     obtain ⟨d, hd⟩ := (hB.2 _).1 ((hmem y).1 hy).2 b hb
@@ -88,7 +79,10 @@ theorem exists_selfDual_orthAt : ∀ (D : D7) (S A B : HSp D) (o : OrthDec S A B
       have e2 : star (o.iB *ᵥ b) ⬝ᵥ S.gram *ᵥ y = star b ⬝ᵥ B.gram *ᵥ (o.qB *ᵥ y) := pair_iA' o.symm b y
       rwa [dsum_eq', e2, ← dsum_eq'] at this
   · have e : y = o.jA *ᵥ (o.pA *ᵥ y) + o.jB *ᵥ (o.pB *ᵥ y) := by
-      rw [mulVec_mulVec, mulVec_mulVec, ← add_mulVec, o.sum_eq_one, one_mulVec]
+      have hs : o.jA * o.pA + o.jB * o.pB = 1 := by
+        change (o.iA.map (incA D)) * (o.qA.map (incA D)) + (o.iB.map (incA D)) * (o.qB.map (incA D)) = 1
+        rw [← Matrix.map_mul, ← Matrix.map_mul, ← Matrix.map_add _ (map_add (incA D)), o.iA_qA_add, Matrix.map_one _ (map_zero (incA D)) (map_one (incA D))]
+      rw [mulVec_mulVec, mulVec_mulVec, ← add_mulVec, hs, one_mulVec]
     rw [e]
     exact add_mem (rat_mulVec_mem_latV _ hiA h.1) (rat_mulVec_mem_latV _ hiB h.2)
 

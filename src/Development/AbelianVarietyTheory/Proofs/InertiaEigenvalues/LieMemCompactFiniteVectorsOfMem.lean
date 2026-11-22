@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DiscreteSpectrumResidual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Host
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DiscSpec
 
 namespace GlobalTheory.LieFin
 
-theorem lie_mem_finVec : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ} (X : Lie E N) (φ : Sm E N),
+theorem lie_mem_finVec : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ} (X : Lie E N) (φ : Sm E N),
     φ ∈ finVec (cptRep E N) → lie E N X φ ∈ finVec (cptRep E N) := by
   intro E _ _ _ N X φ hφ
   let S : Submodule ℂ (Sm E N) := Submodule.span ℂ (Set.range fun k => cptRep E N k φ)
@@ -18,7 +23,8 @@ theorem lie_mem_finVec : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComp
     exact Submodule.finiteDimensional_iSup _
   have key : ∀ (Z : Lie E N) (ψ : Sm E N), ψ ∈ S → lie E N Z ψ ∈ T := by
     intro Z ψ hψ
-    rw [← b.sum_repr Z, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr Z, map_sum, LinearMap.sum_apply]
     refine Submodule.sum_mem _ fun s _ => ?_
     rw [map_smul, LinearMap.smul_apply]
     have h1 : lie E N (b s) ψ ∈ T :=

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory MvPolynomial
 
@@ -44,9 +48,6 @@ theorem phiH_bijective : Function.Bijective (phiH V K iso) := by
 
 def phiE : (MvPolynomial (Fin n) ℂ ⧸ K) ≃+* Γ(W, V) :=
   RingEquiv.ofBijective _ (phiH_bijective V K iso)
-
-theorem phiE_mk (f : MvPolynomial (Fin n) ℂ) :
-    phiE V K iso (Ideal.Quotient.mk K f) = secH V K iso f := rfl
 
 theorem isUnit_germ_secH_iff (v : V) (f : MvPolynomial (Fin n) ℂ) :
     IsUnit (W.presheaf.germ V v.1 v.2 (secH V K iso f)) ↔
@@ -113,8 +114,8 @@ theorem germ_secH_C (s : W ⟶ Spec (.of ℂ))
       W.presheaf.germ ⊤ x trivial (s.appTop ((Scheme.ΓSpecIso (.of ℂ)).inv c)) := by
   rw [secH_C V s hover c, TopCat.Presheaf.germ_res_apply]
 
-variable {K iso} in
 
+variable {K iso} in
 theorem isClosed_of_comap_eq (s : W ⟶ Spec (.of ℂ))
     (hover : iso.hom ≫ Spec.map (CommRingCat.ofHom (algebraMap ℂ (MvPolynomial (Fin n) ℂ ⧸ K))) =
       V.ι ≫ s) (v : V) (p : Fin n → ℂ)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BochnerTheorem.RMKComplex
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BochnerTheorem.RMKComplex
+
+@[expose] public section
 
 noncomputable section
 

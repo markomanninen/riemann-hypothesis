@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
-import Development.AutomorphicArithmetic.UnitaryInvolutions.ExistsMulInvolutionEqFixedUnitOfComplete
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.IsHerm
+public import Development.AutomorphicArithmetic.UnitaryInvolutions.ExistsMulInvolutionEqFixedUnitOfComplete
+
+@[expose] public section
+
 open Matrix Polynomial
 open scoped TensorProduct
 
@@ -108,7 +113,7 @@ theorem UpperTheory.normIn_of_free_algebra_of_complete_quadratic :
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul r a => simp only [hιa, hio, hc2]
-    | add s t hs ht => simp only [map_add, hs, ht]
+    | add s t hs ht => simp only [map_add (f := _), hs, ht]
   have B := Algebra.TensorProduct.basis R b
   obtain ⟨z, hz⟩ := UpperTheory.exists_mul_involution_eq_fixed_unit_of_complete (R ⊗[k] A) ι (algebraMap R _ ϖ) (algebraMap R _ ω) hinv
     (by rw [hιa, hioalg, hcϖ]) (coord_reg B ϖ hϖ) (coord_complete B ϖ hcomp) (coord_sep B ϖ hsep)

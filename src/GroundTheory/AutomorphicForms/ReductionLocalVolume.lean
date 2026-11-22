@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionLocalVolumeGL
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.RestrictedProductMatrix
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionLocalVolumeGL
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.RestrictedProductMatrix
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureNormOne
+
+@[expose] public section
 
 open MeasureTheory Measure Set Matrix NumberField
 open scoped NNReal ENNReal
@@ -32,7 +36,8 @@ theorem mem_unitaryGroup_of_euclidNorm {M : Matrix (Fin n) (Fin n) 𝕜}
   have h := L.inner_map_map (WithLp.toLp 2 (Pi.single j (1 : 𝕜))) (WithLp.toLp 2 (Pi.single i (1 : 𝕜)))
   simp only [L, LinearIsometry.coe_mk, LinearMap.coe_mk, AddHom.coe_mk,
     EuclideanSpace.inner_toLp_toLp, single_one_vecMul] at h
-  rw [Matrix.mul_apply, one_apply]
+  rw [Matrix.mul_apply]
+  change (∑ k, M i k * star M k j) = if i = j then 1 else 0
   have h2 : ∑ k, M i k * star M k j = M.row i ⬝ᵥ star (M.row j) := by
     simp [dotProduct, Matrix.row, Matrix.star_apply]
   rw [h2, h, single_one_dotProduct, Pi.star_apply, Pi.single_apply]
@@ -109,7 +114,8 @@ theorem measure_lt_top_of_ringEquiv (φ : E ≃+* 𝕜) (hφ : ∀ x, ‖φ x‖
     have : (fun i => φ (φ.symm (y i))) ᵥ* (k : Matrix (Fin (m + 1)) (Fin (m + 1)) E).map φ =
         fun j => φ.toRingHom (((fun i => φ.symm (y i)) ᵥ* (k : Matrix (Fin (m + 1)) (Fin (m + 1)) E)) j) := by
       ext j
-      simp [vecMul, dotProduct, _root_.map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [vecMul, dotProduct, _root_.map_sum, map_mul]
     rw [this, euclidNorm_map φ.toRingHom hφ, hk, ← euclidNorm_map φ.toRingHom hφ]
     rfl
   refine ⟨hd1.trans_eq hdet.symm, hdet.trans_le hd2, Φ b, ⟨b, hbω, rfl⟩, r, hr,

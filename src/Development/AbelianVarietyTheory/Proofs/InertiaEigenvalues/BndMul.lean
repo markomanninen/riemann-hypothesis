@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -17,7 +21,8 @@ theorem bnd_mul (p n : ℕ) (A B : Matrix (Fin n) (Fin n) (FiniteAdeleRing (𝓞
   refine ⟨a * b, Nat.Coprime.mul_left ha hb, fun i j Q => ?_⟩
   let φ : FiniteAdeleRing (𝓞 E) E →+* _ := RestrictedProduct.evalRingHom _ Q
   have hφ : ∀ x : FiniteAdeleRing (𝓞 E) E, x Q = φ x := fun _ => rfl
-  rw [hφ, Matrix.mul_apply, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hφ, Matrix.mul_apply, Finset.mul_sum, map_sum]
   apply Valuation.map_sum_le
   intro k _
   have hsplit : ((a * b : ℕ) : FiniteAdeleRing (𝓞 E) E) * (A i k * B k j) =

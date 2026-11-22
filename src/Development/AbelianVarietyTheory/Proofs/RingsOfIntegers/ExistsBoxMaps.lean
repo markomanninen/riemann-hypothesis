@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxPullGen
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RatioTrans
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxPullGen
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RatioTrans
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -91,12 +95,12 @@ section Values
 variable {y : (TF (R := R) F).left} {J : ((TF (R := R) F).left ⟶ D.P.A.left) → D.P.L.ι}
   {J' : ((TF (R := R) F).left ⟶ D'.P.A.left) → D'.P.L.ι}
 
-variable (y J J') in
 
+variable (y J J') in
 def omP (x : TF (R := R) F ⟶ D'.P.A) : ((TF (R := R) F).left.presheaf.stalk y)ˣ := om pD.w y J J' x.left
 
-variable (y J J') in
 
+variable (y J J') in
 def omL (x b : TF (R := R) F ⟶ D'.P.A) : ((TF (R := R) F).left.presheaf.stalk y)ˣ :=
   (omP pD y J J' (x * b))⁻¹ * omP pD y J J' x * omP pD y J J' b * (omP pD y J J' 1)⁻¹
 
@@ -165,7 +169,7 @@ theorem tau_box (a b : D'.X) :
     (rig_val pD hJ hJ' (𝟙 (TF (R := R) F).left ≫ jFK (R := R) F))
   have b₃ := (b₁ (a + b)).trans (Finset.prod_congr rfl fun i _ => congrArg
     (fun χ => val (D.psi χ) (𝟙 (TF (R := R) F).left ≫ jFK (R := R) F) y J)
-    (show pD.xe (a + b) i = pD.xe a i + pD.xe b i by rw [map_add]; rfl))
+    (show pD.xe (a + b) i = pD.xe a i + pD.xe b i by rw [map_add (f := _)]; rfl))
   have e : ∀ (E : DegPre R) (I), Good E.P.L y I → ∀ a b : E.X,
       val (E.tau a b) (𝟙 (TF (R := R) F).left ≫ jFK (R := R) F) y I =
       val (E.psi (a + b)) (𝟙 (TF (R := R) F).left ≫ jFK (R := R) F) y I *
@@ -220,7 +224,7 @@ theorem exists_boxGt (hG : GlobalFnsSt) (g : Fin j → GtPtF D F) : ∃ g' : GtP
       (maps_val pD hJ hJ' _ _ _ (hm (χ + χ'))) e ?_
     rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun i _ => ?_
-    have z : pD.xe (χ + χ') i = pD.xe χ i + pD.xe χ' i := by rw [map_add]; rfl
+    have z : pD.xe (χ + χ') i = pD.xe χ i + pD.xe χ' i := by rw [map_add (f := _)]; rfl
     have e₂ := gt_mul (𝟙 (TF (R := R) F)) hJ (g i) (pD.xe χ i) (pD.xe χ' i)
     rw [Category.id_comp, Over.id_left] at e₂
     rw [cPoint_pr, cPoint_pr, hb]

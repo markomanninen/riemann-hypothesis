@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+
+@[expose] public section
+
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
 
@@ -17,7 +22,7 @@ private lemma map_val_injective (R : Subalgebra k L) :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul r a => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   intro x y hxy
   apply h
   rw [e, e, hxy]
@@ -26,7 +31,7 @@ private lemma spz_add {R : Subalgebra k L} {φ : R →ₐ[k] k} {y y' : L ⊗[k]
     (h : Spz R φ y a) (h' : Spz R φ y' a') : Spz R φ (y + y') (a + a') := by
   obtain ⟨u, hu, rfl⟩ := h
   obtain ⟨v, hv, rfl⟩ := h'
-  exact ⟨u + v, by rw [map_add, hu, hv], by simp only [map_add]⟩
+  exact ⟨u + v, by rw [map_add (f := _), hu, hv], by simp only [map_add (f := _)]⟩
 
 private lemma spz_tmul (R : Subalgebra k L) (φ : R →ₐ[k] k) (r : R) (a : A) :
     Spz R φ ((r : L) ⊗ₜ[k] a) (φ r • a) :=
@@ -53,7 +58,7 @@ private lemma exists_contr_ne_zero {y : L ⊗[k] A} (hy : y ≠ 0) :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul m n => simp [contr_tmul, E, TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply]
-    | add x y hx hy => simp only [map_add, hx, hy, Finsupp.add_apply]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, Finsupp.add_apply]
   rw [key]
   simpa using hi
 end
@@ -77,11 +82,11 @@ theorem UpperTheory.specialization_tensor_ring_hom_properties :
     · induction u using TensorProduct.induction_on with
       | zero => simp
       | tmul r b => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     · induction u using TensorProduct.induction_on with
       | zero => simp
       | tmul r b => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · intro y
     induction y using TensorProduct.induction_on with
     | zero =>
@@ -113,14 +118,14 @@ theorem UpperTheory.specialization_tensor_ring_hom_properties :
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul r b => simp [contr_tmul]
-      | add x y hx hy => simp only [map_add, hx, hy, Subalgebra.coe_add]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy, Subalgebra.coe_add]
     have e2 : ∀ z : R ⊗[k] A, φ (contr l R z) =
         l (Algebra.TensorProduct.lid k A (Algebra.TensorProduct.map φ (AlgHom.id k A) z)) := by
       intro z
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul r b => simp [contr_tmul, mul_comm]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     have h1 : contr l R u = ⟨c, hcR⟩ := Subtype.ext (by rw [e1, hu])
     have h2 : φ ⟨c, hcR⟩ = 0 := by rw [← h1, e2, hua, h0, map_zero]
     have h3 : (⟨c, hcR⟩ : R) * ⟨c⁻¹, hcR'⟩ = 1 := Subtype.ext (mul_inv_cancel₀ hl)

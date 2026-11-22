@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UnimodularSymplecticCoordinatesAndLatticeRank
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSiegelForm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.UnimodularSymplecticCoordinatesAndLatticeRank
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSiegelForm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -20,7 +25,8 @@ theorem exists_equiv_pi_range_of_matrixUnits {R M n : Type} [CommRing R] [AddCom
   have hmem : ∀ u x, p u x ∈ LinearMap.range P := fun u x => by
     refine ⟨p u x, ?_⟩
     conv_rhs => rw [← hs x]
-    simp [map_sum, hpq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hpq]
   let f : M →ₗ[R] (n → LinearMap.range P) :=
     LinearMap.pi fun u => (p u).codRestrict _ (hmem u)
   have hf : ∀ x u, (f x u : M) = p u x := fun _ _ => rfl
@@ -33,7 +39,8 @@ theorem exists_equiv_pi_range_of_matrixUnits {R M n : Type} [CommRing R] [AddCom
       apply Subtype.ext
       rw [hf]
       obtain ⟨z, hz⟩ := (y u).2
-      simp only [map_sum, hpq, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, hpq, Finset.sum_ite_eq, Finset.mem_univ, if_true]
       rw [← hz, hP]
   exact ⟨LinearEquiv.ofBijective f hb, hf, fun x => (hs x).symm⟩
 
@@ -57,7 +64,8 @@ theorem matrixUnits_apply {La : Type} [AddCommGroup La]
         refine Finset.sum_eq_zero fun u _ => if_neg ?_
         rintro ⟨rfl, rfl⟩; exact hij rfl
     simp only [← Module.End.mul_apply, ← map_mul]
-    rw [← LinearMap.sum_apply, ← map_sum, this]; simp
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, this]; simp
   · rw [← Module.End.mul_apply, ← map_mul]; simp
 
 theorem form_matrixUnits_eq {La : Type} [AddCommGroup La] (G : Matrix (Fin 8) (Fin 8) ℤ)
@@ -103,7 +111,8 @@ theorem exists_form_range_matrixUnit {La : Type} [AddCommGroup La] (G : Matrix (
   have hE : ∀ x y, E x y = EF x (r (G⁻¹ * Matrix.single 0 0 1) y) := fun _ _ => rfl
   have hsum : ∀ x y, EF x y = ∑ u, ∑ v, G u v * E (φ x u) (φ y v) := fun x y => by
     conv_lhs => rw [hφ' x, hφ' y]
-    simp only [map_sum, LinearMap.sum_apply, form_matrixUnits_eq G EF r hdet hadj, hE]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, form_matrixUnits_eq G EF r hdet hadj, hE]
     rw [Finset.sum_comm]
   have hfix : ∀ x : LinearMap.range (r (Matrix.single 0 0 1)), r (Matrix.single 0 0 1) x = x := by
     rintro ⟨_, z, rfl⟩; exact h3 z
@@ -179,7 +188,8 @@ theorem polarised_lattice_eighth_power :
     (fun z => by
       have : ∑ u, F (Matrix.single u 0 1) ∘ₗ F (Matrix.single 0 u 1) = LinearMap.id := by
         refine LinearMap.ext_on_range hspanC fun x => ?_
-        simp only [LinearMap.sum_apply, LinearMap.comp_apply, hF, ← map_sum, h2, LinearMap.id_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.sum_apply, LinearMap.comp_apply, hF, ← map_sum, h2, LinearMap.id_apply]
       simpa using LinearMap.congr_fun this z)
     (fun z => by
       have : F (Matrix.single 0 0 1) ∘ₗ F (Matrix.single 0 0 1) = F (Matrix.single 0 0 1) := by
@@ -266,14 +276,16 @@ theorem polarised_lattice_eighth_power :
     change G u v * E (φ x u) (φ y v) = G u v * omegaStd (bas.symm (φ x u)) (bas.symm (φ y v))
     rw [← hbas, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
   · change bas.symm (φ (r a x) u) = ∑ v, a u v • bas.symm (φ x v)
-    simp only [← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum]
     refine congrArg bas.symm (Subtype.ext ?_)
     have : Matrix.single (0 : Fin 8) u (1 : ℤ) * a = ∑ v, a u v • Matrix.single (0 : Fin 8) v (1 : ℤ) := by
       ext i k
       by_cases hi : i = 0
       · subst hi; simp [Matrix.sum_apply, Matrix.single_apply]
       · simp [Matrix.sum_apply, Matrix.single_apply, hi, Ne.symm hi]
-    rw [hφ, ← Module.End.mul_apply, ← map_mul, this, map_sum, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφ, ← Module.End.mul_apply, ← map_mul, this, map_sum, LinearMap.sum_apply,
       Submodule.coe_sum]
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [map_zsmul, LinearMap.smul_apply, Submodule.coe_smul, hφ]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.XSmulMemWeightedHomogeneousSubmodule
+
+@[expose] public section
 
 open Polynomial Filter Module
 
@@ -27,7 +31,7 @@ theorem leadingCoeff_nonneg_of_eventually_eval_nat {P : ℚ[X]}
     rw [eq_C_of_degree_le_zero h0] at hn hneg
     simp only [eval_C, leadingCoeff_C] at hn hneg
     exact absurd hn (not_le.2 hneg)
-  · have := ((tendsto_atBot_of_leadingCoeff_nonpos P h0 hneg.le).comp
+  · have := ((tendsto_atBot_of_leadingCoeff_nonpos h0 hneg.le).comp
       (tendsto_natCast_atTop_atTop (R := ℚ))).eventually (eventually_lt_atBot 0)
     obtain ⟨n, h1, h2⟩ := (h.and this).exists
     exact absurd h1 (not_le.2 h2)
@@ -106,7 +110,8 @@ theorem weightedHomogeneousComponent_one_mem {I : Ideal (MvPolynomial ι k)}
     (hI : I.IsHomogeneous (homogeneousSubmodule ι k)) (n : ℤ) {p : MvPolynomial ι k}
     (hp : p ∈ I) : weightedHomogeneousComponent (fun _ : ι => (1 : ℤ)) n p ∈ I := by
   classical
-  rw [← sum_homogeneousComponent p, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_homogeneousComponent p, map_sum]
   refine I.sum_mem fun i _ => ?_
   have h1 : homogeneousComponent i p ∈ weightedHomogeneousSubmodule k (fun _ : ι => (1 : ℤ))
       (i : ℤ) := by
@@ -152,10 +157,11 @@ theorem exists_isHilbertPoly_quotPiece [Fintype ι] {I : Ideal (MvPolynomial ι 
     push_cast
     ring
 
-open Classical in
 
-noncomputable def idealHilbertPoly (I : Ideal (MvPolynomial ι k)) : ℚ[X] :=
-  if h : ∃ P, IsHilbertPoly (quotPiece I) P then h.choose else 0
+open Classical in
+noncomputable def idealHilbertPoly (I : Ideal (MvPolynomial ι k)) : ℚ[X] := by
+  classical
+  exact if h : ∃ P, IsHilbertPoly (quotPiece I) P then h.choose else 0
 
 theorem isHilbertPoly_idealHilbertPoly [Finite ι] {I : Ideal (MvPolynomial ι k)}
     (hI : I.IsHomogeneous (homogeneousSubmodule ι k)) :
@@ -163,14 +169,8 @@ theorem isHilbertPoly_idealHilbertPoly [Finite ι] {I : Ideal (MvPolynomial ι k
   cases nonempty_fintype ι
   have h : ∃ P, IsHilbertPoly (quotPiece I) P :=
     (exists_isHilbertPoly_quotPiece hI).imp fun _ h => h.1
-  rw [idealHilbertPoly, dif_pos h]
+  rw [idealHilbertPoly, dite_eq_left h]
   exact h.choose_spec
-
-theorem IsHilbertPoly.idealHilbertPoly_eq {I : Ideal (MvPolynomial ι k)} {P : ℚ[X]}
-    (hP : IsHilbertPoly (quotPiece I) P) : idealHilbertPoly I = P := by
-  have h : ∃ P, IsHilbertPoly (quotPiece I) P := ⟨P, hP⟩
-  rw [idealHilbertPoly, dif_pos h]
-  exact h.choose_spec.unique hP
 
 theorem eventually_finrank_quotPiece [Finite ι] {I : Ideal (MvPolynomial ι k)}
     (hI : I.IsHomogeneous (homogeneousSubmodule ι k)) :

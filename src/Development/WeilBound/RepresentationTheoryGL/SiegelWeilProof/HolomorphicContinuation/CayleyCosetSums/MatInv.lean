@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IILeft
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.IILeft
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {n : ℕ}
 
 theorem contDiff_entry (a b : Fin n ⊕ Fin n) : ContDiff ℝ ∞ (fun x : M2 n => x a b) := by
   have h1 : ContDiff ℝ ∞ (fun x : (Fin n ⊕ Fin n) → (Fin n ⊕ Fin n) → ℂ => x a) := contDiff_apply ℝ _ a
-  have h2 : ContDiff ℝ ∞ (fun y : (Fin n ⊕ Fin n) → ℂ => y b) := contDiff_apply ℝ ℂ b
+  have h2 : ContDiff ℝ ∞ (fun y : (Fin n ⊕ Fin n) → ℂ => y b) := contDiff_apply ℝ (fun _ => ℂ) b
   exact h2.comp h1
 
 theorem contDiff_of_entries {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {f : E → M2 n}

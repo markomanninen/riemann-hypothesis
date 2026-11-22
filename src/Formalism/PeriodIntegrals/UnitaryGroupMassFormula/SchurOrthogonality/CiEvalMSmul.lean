@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SchurOrthogonality.CrRowActRowAct
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SchurOrthogonality.CrRowActRowAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,7 +106,7 @@ private theorem evalM_rowAct {N : ℕ} (u x : Matrix (Fin N) (Fin N) ℂ)
   next a =>
     simp [evalM, Formalism.GradedWeylDivisibility.rowAct]
   next p q hp hq =>
-    rw [map_add, ci_evalM_add, ci_evalM_add, hp, hq]
+    rw [map_add (f := _), ci_evalM_add, ci_evalM_add, hp, hq]
   next p v hp =>
     simp only [evalM, map_mul] at hp ⊢
     rw [hp]

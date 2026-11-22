@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -178,7 +182,7 @@ def cb (χ : E.X) (r : Z ⟶ E.B.left) (z : Z) (j j' : E.ChartIdx) : (Z.presheaf
 
 theorem cb_add (χ χ' : E.X) (r : Z ⟶ E.B.left) (z : Z) (j j' : E.ChartIdx) :
     cb E (χ + χ') r z j j' = cb E χ r z j j' * cb E χ' r z j j' := by
-  simp only [cb, map_add, Finsupp.add_apply, zpow_add, Finset.prod_mul_distrib]
+  simp only [cb, map_add (f := _), Finsupp.add_apply, zpow_add, Finset.prod_mul_distrib]
 
 theorem cb_zero (r : Z ⟶ E.B.left) (z : Z) (j j' : E.ChartIdx) : cb E 0 r z j j' = 1 := by
   simp only [cb, map_zero, Finsupp.zero_apply, zpow_zero, Finset.prod_const_one]

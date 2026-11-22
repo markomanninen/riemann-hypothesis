@@ -1,5 +1,9 @@
-import Formalism.CharacterColumnKernels.StatementColKer
-import Formalism.CharacterColumnKernels.StatementN
+module
+
+public import Formalism.CharacterColumnKernels.StatementColKer
+public import Formalism.CharacterColumnKernels.StatementN
+
+@[expose] public section
 
 open Finset Classical
 
@@ -63,7 +67,7 @@ def colPsi (r : G →* A) (χ : G →* T'ˣ) (E e₁ : A) (δ : T') {ι : Type*}
     (D : ι → Subgroup G) (j : ι → ℕ) (Kc : ∀ l, Fin (j l) → G → A) (k0 : ι → G → A) :
     (ColNNJ r χ E e₁ δ D j Kc k0 →ₗ[A] M) →ₗ[O] coZ1s (uRep O (M := M) r χ) where
   toFun φ := ⟨fun g => φ (yGen r χ E e₁ δ D j Kc k0 g), fun g h => by
-    simp only [yGen_mul, map_add, map_smul]
+    simp only [yGen_mul, map_add (f := _), map_smul]
     rfl⟩
   map_add' φ ψ := rfl
   map_smul' c φ := rfl

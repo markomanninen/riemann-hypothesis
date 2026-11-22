@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsLowerMulUpperOfLeadingMinors
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.Reframe
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsLowerMulUpperOfLeadingMinors
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 namespace GlobalTheory.Reg.CellChange
 
@@ -68,7 +72,7 @@ theorem upper_inv {R : Type} [CommRing R] {n : ℕ} (b : Matrix (Fin n) (Fin n) 
     exact Matrix.blockTriangular_inv_of_blockTriangular hb
   refine ⟨hbi, fun i => ?_, Matrix.mul_nonsing_inv _ hd⟩
   have h1 : IsUnit b⁻¹.det := Matrix.isUnit_nonsing_inv_det _ hd
-  rw [Matrix.det_of_upperTriangular hbi] at h1
+  rw [Matrix.det_of_isUpperTriangular hbi] at h1
   exact IsUnit.prod_iff.1 h1 i (Finset.mem_univ _)
 
 theorem upper_mul_diag {R : Type} [CommRing R] {n : ℕ} (b c : Matrix (Fin n) (Fin n) R) (hb : b.BlockTriangular id)
@@ -77,7 +81,7 @@ theorem upper_mul_diag {R : Type} [CommRing R] {n : ℕ} (b c : Matrix (Fin n) (
   have h1 : IsUnit (b * c).det := by
     rw [Matrix.det_mul]
     exact (GlobalTheory.isUnit_det_of_upper_of_isUnit_diag b hb hu).mul (GlobalTheory.isUnit_det_of_upper_of_isUnit_diag c hc hv)
-  rw [Matrix.det_of_upperTriangular (hb.mul hc)] at h1
+  rw [Matrix.det_of_isUpperTriangular (hb.mul hc)] at h1
   exact IsUnit.prod_iff.1 h1 i (Finset.mem_univ _)
 
 theorem lower_mem_range {F K : Type} [Field F] [Field K] (φ : F →+* K) {n : ℕ} (M : Matrix (Fin n) (Fin n) F)
@@ -152,7 +156,7 @@ theorem lowM_diag (x : (Σ τ : T, {p : Fin (r τ) × Fin (r τ) // p.1 < p.2}) 
 theorem lowM_entry (x : (Σ τ : T, {p : Fin (r τ) × Fin (r τ) // p.1 < p.2}) → S)
     (v : Σ τ : T, {p : Fin (r τ) × Fin (r τ) // p.1 < p.2}) : lowM x v.1 v.2.1.2 v.2.1.1 = x v := by
   obtain ⟨τ, ⟨i, j⟩, h⟩ := v
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem lowM_map (f : S →+* S') (x : (Σ τ : T, {p : Fin (r τ) × Fin (r τ) // p.1 < p.2}) → S) (τ : T) :
     (lowM x τ).map f = lowM (fun v => f (x v)) τ := by

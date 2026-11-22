@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FlatMapMaximalIdealIsSeparable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FlatMapMaximalIdealIsSeparable
+
+@[expose] public section
+
 open GlobalTheory.EtC
 
 namespace GlobalTheory.LocalIndEtAIC
@@ -71,7 +76,8 @@ theorem isDomain_aic_of_indEt : ∀ (T O : Type) [CommRing T] [CommRing O] [IsLo
   have hp'm : p'.Monic := Polynomial.monic_X_pow_add (Polynomial.degree_sum_fin_lt _)
   have hp' : p'.map (v : W →+* O) = p := by
     conv_rhs => rw [hpm.as_sum]
-    simp only [p', Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p', Polynomial.map_add (f := _), Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
       Polynomial.map_mul, Polynomial.map_C]
     rw [← Fin.sum_univ_eq_sum_range (fun i => C (p.coeff i) * X ^ i)]
     simp [hc]

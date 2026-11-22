@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCF
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.ThetaCF
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,9 @@ theorem aniso_ex (W : Submodule E V.V) (hW : ∀ y ∈ W, (∀ z ∈ W, V.hT y z
     push_neg at h
     exact hy0 (hW y hy h)
   have q0 : V.hT (y + z) (y + z) = V.hT y y + V.hT y z + V.hT z y + V.hT z z := by
-    simp only [map_add, LinearMap.add_apply]; ring
+    simp only [map_add (f := _), LinearMap.add_apply]; ring
   have q1 : V.hT (y + δ • z) (y + δ • z) = V.hT y y + δ * V.hT y z + star δ * V.hT z y + star δ * δ * V.hT z z := by
-    simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul, starRingEnd_apply,
+    simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, smul_eq_mul, starRingEnd_apply,
       RingHom.id_apply]
     ring
   have s : V.hT z y = star (V.hT y z) := (V.herm.eq y z).symm
@@ -76,7 +80,7 @@ theorem orth_ex : ∀ (n : ℕ) (W : Submodule E V.V), Module.finrank E W = n �
     obtain ⟨v, a, b, c⟩ := ih W' hr fun y hy hz => hW y hy.1 fun w hw => by
       obtain ⟨c, hc⟩ := hdec w hw
       have e : w = c • x + (w - c • x) := by abel
-      rw [e, map_add, map_smul, hz _ hc, add_zero, smul_eq_mul]
+      rw [e, map_add (f := _), map_smul, hz _ hc, add_zero, smul_eq_mul]
       have : V.hT y x = 0 := by rw [← V.herm.eq]; rw [show V.hT x y = 0 from hy.2, map_zero]
       rw [this, mul_zero]
     refine ⟨Fin.cons x v, fun i => Fin.cases hx (fun i => (a i).1) i, fun i j hij => ?_, fun i => Fin.cases hxx (fun i => c i) i⟩
@@ -91,7 +95,8 @@ theorem orth_indep {n : ℕ} (v : Fin n → V.V) (h1 : ∀ i j, i ≠ j → V.hT
   rw [Fintype.linearIndependent_iff]
   intro g hg j
   have e := congrArg (V.hT (v j)) hg
-  rw [map_sum, map_zero, Finset.sum_eq_single j (fun i _ h => by rw [map_smul, h1 j i (Ne.symm h), smul_zero])
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_eq_single j (fun i _ h => by rw [map_smul, h1 j i (Ne.symm h), smul_zero])
     (fun h => absurd (Finset.mem_univ j) h), map_smul, smul_eq_mul] at e
   exact (mul_eq_zero.1 e).resolve_right (h2 j)
 
@@ -102,7 +107,7 @@ theorem sig_of_diag {n : ℕ} (J : Matrix (Fin n) (Fin n) ℂ) (ε : Fin n → B
   let e1 : Fin (Finset.univ.filter fun i => ε i = true).card ≃ {a // ε a = true} :=
     (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype])).symm
   let e2 : Fin (Finset.univ.filter fun i => ε i = false).card ≃ {a // ¬ ε a = true} :=
-    (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype]; congr 1; ext a; simp)).symm
+    (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype]; congr 1)).symm
   let e : Fin _ ⊕ Fin _ ≃ Fin n := (Equiv.sumCongr e1 e2).trans (Equiv.sumCompl fun a => ε a = true)
   have hJm : (Matrix.diagonal fun i => if ε i then (1 : ℂ) else -1).submatrix e e =
       Formalism.UG.Jpq (Finset.univ.filter fun i => ε i = true).card (Finset.univ.filter fun i => ε i = false).card := by
@@ -183,7 +188,8 @@ theorem basC_unit (V : HSp D) : IsUnit (basC V).det := by
 theorem ob_coord (V : HSp D) (x y : V.V) :
     V.hT x y = ∑ i, ∑ j, star (V.frame.repr x i) * V.gram i j * V.frame.repr y j := by
   conv_lhs => rw [← V.frame.sum_repr x, ← V.frame.sum_repr y]
-  simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply,
     RingHom.id_apply, HSpace.gram, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
@@ -270,7 +276,7 @@ theorem diag_sig {n p q : ℕ} (ε : Fin n → Bool) (hp : (Finset.univ.filter f
   classical
   let e1 : Fin p ≃ {a // ε a = true} := (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype, hp])).symm
   let e2 : Fin q ≃ {a // ¬ ε a = true} :=
-    (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype, ← hq]; congr 1; ext a; simp)).symm
+    (Fintype.equivFinOfCardEq (by rw [Fintype.card_subtype, ← hq]; congr 1)).symm
   let e : Fin p ⊕ Fin q ≃ Fin n := (Equiv.sumCongr e1 e2).trans (Equiv.sumCompl fun a => ε a = true)
   refine ⟨e, ?_⟩
   rw [Matrix.submatrix_diagonal_equiv]
@@ -293,7 +299,7 @@ theorem cpt_bas_ex (V : HSp D) (hV : V.SigOK) (τ : D.what₂.Tau) :
   let ε : Fin V.rank → Bool := fun i => decide (0 < lenAt V τ i)
   obtain ⟨c1, c2⟩ := sig_count V hV τ
   obtain ⟨e, he⟩ := diag_sig (p := (V.sig (tauE D τ)).1) (q := (V.sig (tauE D τ)).2) ε
-    (by rw [← c1]; congr 1; ext i; simp [ε]) (by rw [← c2]; congr 1; ext i; simp [ε])
+    (by rw [← c1]; congr 1) (by rw [← c2]; congr 1)
   let P := (basC V).map (tauE D τ)
   have hP : IsUnit P.det := by
     have : P.det = tauE D τ (basC V).det := ((tauE D τ).map_det _).symm

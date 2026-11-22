@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ManyEdges
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+
+@[expose] public section
 
 noncomputable section
 

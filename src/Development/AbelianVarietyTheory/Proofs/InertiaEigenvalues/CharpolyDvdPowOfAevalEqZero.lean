@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+
+@[expose] public section
 
 open Polynomial
 
@@ -17,7 +21,7 @@ theorem charpoly_dvd_pow_of_aeval_eq_zero {R : Type*} [CommRing R] {n : Type*} [
     | add p q hp hq =>
       obtain ⟨H1, h1⟩ := hp
       obtain ⟨H2, h2⟩ := hq
-      exact ⟨H1 + H2, by rw [mul_add, h1, h2, map_add, map_add]; abel⟩
+      exact ⟨H1 + H2, by rw [mul_add, h1, h2, map_add (f := _), map_add (f := _)]; abel⟩
     | monomial k c =>
       refine ⟨algebraMap R (Matrix n n R[X]) c * ∑ i ∈ Finset.range k, a ^ i * b ^ (k - 1 - i), ?_⟩
       rw [aeval_monomial, aeval_monomial, ← mul_assoc, ← Algebra.commutes, mul_assoc, hab.mul_geom_sum₂,
@@ -62,7 +66,7 @@ theorem exists_aeval_eq {K : UQ} (B : InvAlg K) (hsep : B.P.Separable) (y : B.A)
     rw [pb.finrank, AdjoinRoot.powerBasis'_dim]
     exact LinearMap.charpoly_natDegree _
   have hinj : Function.Injective φ.toLinearMap := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective z
     rw [AdjoinRoot.mk_eq_zero]

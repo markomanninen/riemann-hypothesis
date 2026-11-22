@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.SatDefs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MonomialFrameSpan.SatDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,22 +40,23 @@ theorem stepSat_of (hP : ProjZ) : StepSat := by
       rw [hk]
       simp only [map_zsmul]
       rw [MvPolynomial.map_monomial, map_one, hS1]
-    | add p q hp hq => rw [map_add, map_add, hp, hq, map_add, map_add]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _), map_add (f := _)]
   have hle : Submodule.span ℂ_[l] (Set.range fun J : ColChoice N0 nu =>
       MvPolynomial.map (Int.castRingHom ℂ_[l]) (nablaX N0 nu J)) ≤ LinearMap.eqLocus S LinearMap.id := by
     rw [Submodule.span_le]
     rintro _ ⟨J, rfl⟩
     exact (LinearMap.mem_eqLocus).mpr (by rw [hSφ, hTfix]; rfl)
   have hSP : S P = P := (LinearMap.mem_eqLocus).mp (hle hPmem)
-  have hSexp : S P = ∑ m ∈ P.support, MvPolynomial.coeff m P •
+  have hSexp : S P = ∑ m ∈ P.support, AddMonoidAlgebra.coeff P m •
       MvPolynomial.map (Int.castRingHom ℂ_[l]) (T (MvPolynomial.monomial m 1)) := by
     conv_lhs => rw [MvPolynomial.as_sum P]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [← hS1, ← map_smul, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   let c : ColChoice N0 nu →₀ ℂ_[l] := ∑ m ∈ P.support,
-    MvPolynomial.coeff m P • Finsupp.mapRange (Int.cast : ℤ → ℂ_[l]) Int.cast_zero (a m)
-  have hc : ∀ J, c J = ∑ m ∈ P.support, MvPolynomial.coeff m P * (a m J : ℂ_[l]) := by
+    AddMonoidAlgebra.coeff P m • Finsupp.mapRange (Int.cast : ℤ → ℂ_[l]) Int.cast_zero (a m)
+  have hc : ∀ J, c J = ∑ m ∈ P.support, AddMonoidAlgebra.coeff P m * (a m J : ℂ_[l]) := by
     intro J
     simp [c, Finsupp.finsetSum_apply]
   refine ⟨c, fun J => ?_, ?_⟩
@@ -59,7 +64,7 @@ theorem stepSat_of (hP : ProjZ) : StepSat := by
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg
       (Real.rpow_nonneg (Nat.cast_nonneg l) _) fun m _ => ?_
     rw [norm_mul]
-    calc ‖MvPolynomial.coeff m P‖ * ‖(a m J : ℂ_[l])‖ ≤ ‖MvPolynomial.coeff m P‖ * 1 :=
+    calc ‖AddMonoidAlgebra.coeff P m‖ * ‖(a m J : ℂ_[l])‖ ≤ ‖AddMonoidAlgebra.coeff P m‖ * 1 :=
           mul_le_mul_of_nonneg_left (IsUltrametricDist.norm_intCast_le_one _ _) (norm_nonneg _)
       _ ≤ (l : ℝ) ^ (-B) := by rw [mul_one]; exact hPc m
   · rw [← Finsupp.linearCombination_apply]
@@ -72,7 +77,8 @@ theorem stepSat_of (hP : ProjZ) : StepSat := by
       rw [Finsupp.sum_mapRange_index (by intro; exact zero_smul _ _)]
       refine Finsupp.sum_congr fun J _ => ?_
       rw [map_zsmul, Int.cast_smul_eq_zsmul]
-    simp only [c, map_sum, map_smul, hΦ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [c, map_sum, map_smul, hΦ]
     rw [← hSexp, hSP]
 
 end GenFrameSpan

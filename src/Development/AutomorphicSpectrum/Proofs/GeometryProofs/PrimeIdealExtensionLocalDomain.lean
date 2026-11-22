@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ggeo.RegularDvd
 
@@ -161,7 +165,7 @@ theorem dvd_of_local : ∀ (R B : Type) [CommRing R] [IsDedekindDomain R] [CommR
     { carrier := {r | ∃ a, u r * f = u d * a}
       add_mem' := by
         rintro x y ⟨a, ha⟩ ⟨b, hb⟩
-        exact ⟨a + b, by rw [map_add]; linear_combination ha + hb⟩
+        exact ⟨a + b, by rw [map_add (f := _)]; linear_combination ha + hb⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro c x ⟨a, ha⟩

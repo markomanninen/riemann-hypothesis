@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.HasDerivAtRmOne
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.HasDerivAtRmOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem updateRow_smooth (j : Fin n) (v : Fin n → ℂ) : ContDiff ℝ ∞ (fun
     rw [e]; exact contDiff_const
   · have e : (fun x : Mat n => x.updateRow j v k) = fun x : Mat n => (x : Fin n → Fin n → ℂ) k := by
       funext x; simp [Matrix.updateRow_apply, hk]
-    rw [e]; exact contDiff_apply ℝ (Fin n → ℂ) k
+    rw [e]; exact contDiff_apply ℝ (fun _ => (Fin n → ℂ)) k
 
 theorem adjugate_smooth : ContDiff ℝ ∞ (fun x : Mat n => x.adjugate) := by
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
@@ -33,7 +37,7 @@ theorem adjugate_smooth : ContDiff ℝ ∞ (fun x : Mat n => x.adjugate) := by
 theorem inv_smooth : ContDiffOn ℝ ∞ (fun x : Mat n => x⁻¹) (GLs n) := by
   have h : ContDiffOn ℝ ∞ (fun x : Mat n => Matrix.of fun i j => x.det ^ (-1 : ℤ) * x.adjugate i j) (GLs n) := by
     refine contDiffOn_pi.2 fun i => contDiffOn_pi.2 fun j => ?_
-    exact (Cxc.detPow_smooth (-1)).mul ((contDiff_apply_apply ℝ ℂ i j).comp adjugate_smooth).contDiffOn
+    exact (Cxc.detPow_smooth (-1)).mul ((contDiff_apply_apply ℝ i j).comp adjugate_smooth).contDiffOn
   refine h.congr fun x hx => ?_
   ext i j
   rw [Matrix.inv_def, Ring.inverse_eq_inv]

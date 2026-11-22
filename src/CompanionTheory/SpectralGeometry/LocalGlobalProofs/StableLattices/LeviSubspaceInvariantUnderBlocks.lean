@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,12 +30,22 @@ theorem commute_E_Qd {n : ℕ} (P : GMod n) {c : ℕ} (d : Fin c → ℕ) (h : �
     subst hi
     subst hab
     exact (qDetCentral _ _ (bops P d h i₁) (glRel_bops P d h i₁) _ p q).symm
-  · refine GlobalTheory.CentreFin.commute_qdet (fun p q => ?_) _
-    have h1 : b ≠ stdBlocks d h ⟨i, p⟩ := fun e => hi (by rw [hab, e, blk_apply])
-    have h2 : stdBlocks d h ⟨i, q⟩ ≠ a := fun e => hi (by rw [← e, blk_apply])
-    have e := P.gl a b (stdBlocks d h ⟨i, p⟩) (stdBlocks d h ⟨i, q⟩)
-    rw [if_neg h1, if_neg h2, sub_zero] at e
-    exact sub_eq_zero.mp e
+  · have hc : ∀ p q, Commute (P.E a b) (bops P d h i p q) := by
+      intro p q
+      have h1 : b ≠ stdBlocks d h ⟨i, p⟩ := fun e => hi (by rw [hab, e, blk_apply])
+      have h2 : stdBlocks d h ⟨i, q⟩ ≠ a := fun e => hi (by rw [← e, blk_apply])
+      have e := P.gl a b (stdBlocks d h ⟨i, p⟩) (stdBlocks d h ⟨i, q⟩)
+      rw [if_neg h1, if_neg h2, sub_zero] at e
+      exact sub_eq_zero.mp e
+    unfold Qd qdet qminor
+    refine Commute.sum_right _ _ _ fun σ _ => ?_
+    refine (Int.cast_commute _ _).symm.mul_right (Commute.list_prod_right _ _ fun T hT => ?_)
+    obtain ⟨k, rfl⟩ := (List.mem_ofFn' _ _).1 hT
+    unfold Tm
+    refine Commute.add_right ?_ (hc _ _)
+    split_ifs
+    · exact (Algebra.commutes _ _).symm
+    · exact Commute.zero_right _
 
 theorem leviSub_stable {n : ℕ} (P : GMod n) (d : Fin 3 → ℕ) (h : ∑ i, d i = n) (χ : Fin n → ℂ) (L : Fin n → Fin 3)
     (a b : Fin n) (hab : blk (stdBlocks d h) a = blk (stdBlocks d h) b) :

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRationalPair
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LinearUniformisationTorsionIsomorphism
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QValPullbackMulRamificationCompleteDvrStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCdvrExtensionQkPointsRationalStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenericLieMultiplicitiesUniformisedGroupStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsGrpPullbackGenericFibre
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PsiUnitOnRescaleUniformizerOfQValStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialOfNotRangeSubsetAbLocusStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRationalPair
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LinearUniformisationTorsionIsomorphism
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QValPullbackMulRamificationCompleteDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCdvrExtensionQkPointsRationalStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenericLieMultiplicitiesUniformisedGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsGrpPullbackGenericFibre
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PsiUnitOnRescaleUniformizerOfQValStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialOfNotRangeSubsetAbLocusStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem genRel_psi (q : D.X → (FractionRing R)ˣ) (y : D.X) {v : F}
     GenRel (idW D.P.L) (LB.pullGen _ _ _ (D.psi y) (jFK (R := R) F))
       (LB.pullGen _ _ _ ((rescale D q).psi y) (jFK (R := R) F)) v := by
   subst h
-  refine genRel_id_of_val D.P.isLB (DVR.pullGen_isGen _ _ _ _ (D.psi_gen y) _) fun w J hJ => ?_
+  apply genRel_id_of_val D.P.isLB (DVR.pullGen_isGen _ _ _ _ (D.psi_gen y) _)
+  intro w J hJ
   refine (val_pull hJ _ _ _).trans (Eq.trans ?_ (congrArg _ ((val_pull hJ _ _ _).trans
     (val_psi_rescale q y _ hJ))).symm)
   have e := unitAt_spMap (𝟙 (Sp F)) (algebraMap (FractionRing R) F) w (q y)
@@ -52,7 +57,8 @@ theorem genRel_psi (q : D.X → (FractionRing R)ˣ) (y : D.X) {v : F}
 
 theorem gtRel_of_genRel {ψ : PsiFam D} {hψ : ∀ χ, (ψ χ).IsGen} (g : GtPtF D F) (g' : GtPtF (withPsi D ψ hψ) F)
     (a : D.X → Fˣ) (h : ∀ z, GenRel (idW D.P.L) (g.s z) (g'.s z) ((a z)⁻¹ : Fˣ)) : TauTwist.GtRel g g' a := by
-  refine gtRel_of_val (Over.OverMorphism.ext (((h 0).1 2).symm.trans (Category.comp_id _))) fun z w J hJ => ?_
+  apply gtRel_of_val (Over.OverMorphism.ext (((h 0).1 2).symm.trans (Category.comp_id _)))
+  intro z w J hJ
   have e := val_of_genRel_id D.P.isLB (g.isGen z) (h z) w hJ
   rw [map_inv] at e
   exact (inv_mul_eq_iff_eq_mul.1 e.symm)
@@ -62,8 +68,8 @@ end Rel
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem exists_arcIn_of_unif {V : ValuationSubring c.F} (Y : Model Xo c V.subtype) (T : CDVR) (io : c.F →+* T.Fr)
     (b : V →+* T.V) (χ : Sp T.V ⟶ Y.X) (z : Sp T.Fr ⟶ Xo.XF c)
     (hb : (algebraMap T.V T.Fr).comp b = io.comp V.subtype) (hz : z ≫ pullback.snd _ _ = spMap io)
@@ -95,7 +101,7 @@ theorem exists_arcIn_of_unif {V : ValuationSubring c.F} (Y : Model Xo c V.subtyp
   have two : ∀ y, 2 * Q y = be y y := DVR.QForm.two_Q_eq hϖ P.D hQ
   have bdvd : ∀ y x, (2 * l.M' : ℤ) ∣ be y x := fun y x => dvd_sub (dvd_sub (dvd _) (dvd _)) (dvd _)
   have half : ∀ y, be y (H.w0 • y) = Q y := fun y => by
-    have e₁ : be y (H.w0 • y) + be y (star H.w0 • y) = be y y := by rw [← map_add, ← add_smul, hw, one_smul]
+    have e₁ : be y (H.w0 • y) + be y (star H.w0 • y) = be y y := by rw [← map_add (f := _), ← add_smul, hw, one_smul]
     rw [← bal, symm (H.w0 • y), ← two] at e₁
     omega
   let u : (FractionRing T.V)ˣ := Units.mk0 (algebraMap T.V _ ϖ)
@@ -107,7 +113,7 @@ theorem exists_arcIn_of_unif {V : ValuationSubring c.F} (Y : Model Xo c V.subtyp
   have htf : ∀ y, tf y (H.w0 • y) = (u ^ Q y)⁻¹ := fun y => by
     have e := hsk 1 one_pos (one_dvd _) y (H.w0 • y)
     rwa [Nat.div_one, Nat.cast_one, Int.ediv_one, half] at e
-  have hr : ∀ {k : ℕ}, k ∣ l.M' → IsRootForm (𝓞 E) k tf fun y x => s y x ^ (l.M' / k) := fun hd =>
+  have hr : ∀ {k : ℕ}, k ∣ l.M' → IsRootForm (O := 𝓞 E) k tf fun y x => s y x ^ (l.M' / k) := fun hd =>
     ⟨hs.pow _, fun y x => by rw [← pow_mul, Nat.div_mul_cancel hd]; exact Units.ext rfl⟩
   have hq := psiRel_rescale P.D.toPre fun y => tf y (H.w0 • y)
 
@@ -198,7 +204,27 @@ theorem exists_arcIn_of_unif {V : ValuationSubring c.F} (Y : Model Xo c V.subtyp
     fun F _ _ i₁ i₂ uF hi hu => ?_⟩
   · have : IsMonHom (Iso.refl P.D.toPre.P.A).hom := inferInstanceAs (IsMonHom (𝟙 P.D.toPre.P.A))
     exact (isGrpPullback_of_iso (Iso.refl P.D.toPre.P.A)).congr hid.symm rfl
-  · exact (isGen_iff _).2 (isoPullId_pgen (idIso_isGen hLB) rfl)
+  · apply (isGen_iff _).2
+    change PGen (isoPullId (Geo.Tor.idIso P.D.toPre.P.L) rfl)
+    intro Y f y j j' k k' hj hj' hk hk'
+    have hgw : ∀ a b, f y ∈ P.D.toPre.P.L.U a → f y ∈ P.D.toPre.P.L.U b →
+        gw (isoPullId (Geo.Tor.idIso P.D.toPre.P.L) rfl) f y a b =
+          gm f y _ (P.D.toPre.P.L.g a b) := by
+      intro a b ha hb
+      have hm : f y ∈ (P.D.toPre.P.L.pull (𝟙 _)).U (fun _ => a) ⊓ P.D.toPre.P.L.U b := ⟨mem_pull.2 ha, hb⟩
+      exact gm_res f y _ hm _
+    rw [hgw j k hj hk, hgw j' k' hj' hk', Category.comp_id]
+    have hV : f y ∈ (P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') := ⟨⟨hj, hk⟩, ⟨hj', hk'⟩⟩
+    have hw' : res (inf_le_left : (P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') ≤ P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) (P.D.toPre.P.L.g j k) =
+      res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left) :
+        (P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') ≤ P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U j') (P.D.toPre.P.L.g j j') *
+      (res (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right) :
+        (P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') ≤ P.D.toPre.P.L.U k ⊓ P.D.toPre.P.L.U k') (P.D.toPre.P.L.g k k'))⁻¹ *
+      res (inf_le_right : (P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') ≤ P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k') (P.D.toPre.P.L.g j' k') :=
+      (idIso_isGen P.D.toPre.P.isLB) (j, k) (j', k')
+    have key := congrArg (gm f y ((P.D.toPre.P.L.U j ⊓ P.D.toPre.P.L.U k) ⊓ (P.D.toPre.P.L.U j' ⊓ P.D.toPre.P.L.U k'))) hw'
+    simp only [map_mul, map_inv, gm_res f y _ hV] at key
+    exact key
   · exact maps_rig_id P.D.toPre he
   · exact (Category.comp_id _).trans (Category.id_comp _).symm
   · exact (Category.comp_id _).trans ((Category.id_comp (P.D.toPre.c y).left).symm.trans (congrArg (· ≫ _) hid.symm))

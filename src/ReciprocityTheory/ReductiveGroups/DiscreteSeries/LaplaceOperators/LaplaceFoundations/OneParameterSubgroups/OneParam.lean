@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Complex Filter Topology
 open scoped InnerProductSpace
@@ -107,7 +111,7 @@ theorem one_param {V H : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   set X := ρ τ - Ym with hX
   have hXe : X = (τ : ℂ) • ρ1 + e₂ := by rw [he₂_def]; abel
   have hstρ : st (ρ τ) = st Ym + st X := by rw [← hstadd, hX]; congr 1; abel
-  have hdX : d X = (τ : ℂ) * d ρ1 + d e₂ := by rw [hXe, map_add, map_smul, smul_eq_mul]
+  have hdX : d X = (τ : ℂ) * d ρ1 + d e₂ := by rw [hXe, map_add (f := _), map_smul, smul_eq_mul]
   have e1 : φ Yl = ((T : ℂ) * d Yl) • w + (φ Yl - ((T : ℂ) * d Yl) • w) := by abel
   have e3 : φ (st X) = ((T : ℂ) * d (st X)) • w + (φ (st X) - ((T : ℂ) * d (st X)) • w) := by abel
   have he3 := hall (st X)
@@ -127,9 +131,9 @@ theorem one_param {V H : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
       - ((Real.sqrt T : ℂ) * d Yl + (s : ℂ) * d ρ1) * ⟪w, u s w⟫_ℂ
       = (c : ℂ) * ⟪w, u s E1⟫_ℂ + (c : ℂ) * ⟪w, u s (φ Yp)⟫_ℂ + (c : ℂ) * ⟪φ (st Ym), u s w⟫_ℂ
         + (c : ℂ) * T * d e₂ * ⟪w, u s w⟫_ℂ + (c : ℂ) * ⟪E3, u s w⟫_ℂ := by
-    simp only [map_smul, map_add, inner_smul_right, inner_add_right]
-    rw [hm, hstρ, map_add, inner_add_left, e1, e3]
-    simp only [map_add, map_smul, inner_add_right, inner_smul_right, inner_add_left, inner_smul_left,
+    simp only [map_smul, map_add (f := _), inner_smul_right, inner_add_right]
+    rw [hm, hstρ, map_add (f := _), inner_add_left, e1, e3]
+    simp only [map_add (f := _), map_smul, inner_add_right, inner_smul_right, inner_add_left, inner_smul_left,
       hdst, map_mul, Complex.conj_ofReal, Complex.conj_conj, RCLike.conj_conj, hdX]
     linear_combination (d Yl * ⟪w, u s w⟫_ℂ) * h1 + (d ρ1 * ⟪w, u s w⟫_ℂ) * h2
   rw [hmain]

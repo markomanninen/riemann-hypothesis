@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -76,7 +80,7 @@ theorem exists_const {S₀ : Scheme.{0}} (hL : L.IsLB) {K : Type} [Fintype K] {�
           else 1))
       refine Finset.prod_congr rfl fun k _ => ?_
       show _ = (dite _ _ _) ^ ε k
-      rw [dif_pos (show ∃ k', φ k' = φ k from ⟨k, rfl⟩)]
+      rw [dite_eq_left (show ∃ k', φ k' = φ k from ⟨k, rfl⟩)]
       rfl
     rw [h1, one_mul] at hg
     exact hg

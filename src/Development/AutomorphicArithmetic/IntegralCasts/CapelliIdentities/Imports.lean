@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.DYda8.main :
     ∀ (E : Type) [inst : Field E] [inst_1 : NumberField E] [IsGalois ℚ E],

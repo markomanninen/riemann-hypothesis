@@ -1,7 +1,13 @@
-import Formalism.LogFactorialIndices.SubspaceIndexSigned
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxBase
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxDet
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.SubspaceLatticeIndex
+module
+
+public import Mathlib
+public import Formalism.LogFactorialIndices.StatementSize
+public import Formalism.LogFactorialIndices.StatementIdx
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxBase
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.IdxDet
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.SubspaceLatticeIndex
+
+@[expose] public section
 
 noncomputable section
 

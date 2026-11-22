@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.VaddInvBotProd
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalCoordinates.RationalCoordinateCountability.VaddInvBotProd
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -19,11 +23,6 @@ instance countable_prodSub {X Y : Type} [AddGroup X] [AddGroup Y] (Γ : AddSubgr
 
 instance mcv_sub {X : Type} [AddGroup X] [MeasurableSpace X] [MeasurableAdd X] (Γ : AddSubgroup X) :
     MeasurableConstVAdd Γ X := ⟨fun g => measurable_const_add (g : X)⟩
-
-instance mv_sub {X : Type} [AddGroup X] [MeasurableSpace X] [MeasurableAdd X] (Γ : AddSubgroup X) :
-    MeasurableVAdd Γ X where
-  measurable_const_vadd g := measurable_const_add (g : X)
-  measurable_vadd_const x := measurable_subtype_coe.add_const x
 
 instance mAdd_prod {X Y : Type} [Add X] [Add Y] [MeasurableSpace X] [MeasurableSpace Y] [MeasurableAdd X] [MeasurableAdd Y] :
     MeasurableAdd (X × Y) where
@@ -106,7 +105,7 @@ theorem phi_map (hPc : lam.map P = c • (μZ.prod lam')) :
         rw [Measure.map_map h23.measurable h1.measurable]; rfl
     _ = (c • (νu.prod (μZ.prod lam'))).map (Prod.swap ∘ (MeasurableEquiv.prodAssoc (α := U) (β := Z) (γ := N')).symm) := by
         rw [h1.map_eq]
-    _ = c • (lam'.prod (νu.prod μZ)) := by rw [Measure.map_smul, h23.map_eq]
+    _ = c • (lam'.prod (νu.prod μZ)) := by rw [Measure.map_smul c h23.measurable.aemeasurable, h23.map_eq]
 
 theorem chainC (hPc : lam.map P = c • (μZ.prod lam')) (hPadd : ∀ a b, P (a + b) = P a + P b)
     (hΓ : ∀ β, β ∈ ΓN ↔ (P β).1 ∈ ΓZ ∧ (P β).2 ∈ ΓN')
@@ -145,7 +144,7 @@ theorem chainC (hPc : lam.map P = c • (μZ.prod lam')) (hPadd : ∀ a b, P (a 
     rw [MeasurableEquiv.apply_symm_apply]
     exact ⟨hg2.2, hg.1⟩
   have hT1 : IsAddFundamentalDomain Γ₀ (Φ ⁻¹' S3) (νu.prod lam) := by
-    refine hS3.preimage_of_equiv (f := Φ) ⟨Φ.measurable, ?_⟩ (e := fun g => ⟨Φ.symm g, hmemt g⟩) ?_ ?_
+    refine hS3.preimage_of_equiv (f := Φ) ⟨Φ.measurable.aemeasurable, ?_⟩ (e := fun g => ⟨Φ.symm g, hmemt g⟩) ?_ ?_
     · rw [phi_map hPc]; exact Measure.smul_absolutelyContinuous
     · refine ⟨fun g g' h => Subtype.ext (Φ.symm.injective (congrArg Subtype.val h)), fun g => ?_⟩
       refine ⟨⟨Φ g, ?_⟩, Subtype.ext (Φ.symm_apply_apply _)⟩
@@ -247,7 +246,7 @@ theorem chainE (hPc : lam.map P = c • (μZ.prod lam')) (hPadd : ∀ a b, P (a 
     rw [MeasurableEquiv.apply_symm_apply]
     exact ⟨hg2.2, hg.1⟩
   have hT1 : IsAddFundamentalDomain Γ₀ (Φ ⁻¹' S3) (νu.prod lam) := by
-    refine hS3.preimage_of_equiv (f := Φ) ⟨Φ.measurable, ?_⟩ (e := fun g => ⟨Φ.symm g, hmemt g⟩) ?_ ?_
+    refine hS3.preimage_of_equiv (f := Φ) ⟨Φ.measurable.aemeasurable, ?_⟩ (e := fun g => ⟨Φ.symm g, hmemt g⟩) ?_ ?_
     · rw [phi_map hPc]; exact Measure.smul_absolutelyContinuous
     · refine ⟨fun g g' h => Subtype.ext (Φ.symm.injective (congrArg Subtype.val h)), fun g => ?_⟩
       refine ⟨⟨Φ g, ?_⟩, Subtype.ext (Φ.symm_apply_apply _)⟩

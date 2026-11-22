@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.StatementJCCpt
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.StatementJCCpt
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.KB
 

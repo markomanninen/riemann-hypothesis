@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfRadialExhaustion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadWeightAt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfRadialExhaustion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadWeightAt
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

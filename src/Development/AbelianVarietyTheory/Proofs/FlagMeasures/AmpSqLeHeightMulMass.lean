@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBound
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GluingImageCardPowLeDefectGroupCard
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasicInequality
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmpSqLeCardMulSum
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassDefectOrderLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetMassLeAndFiniteStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermExponentsNonnegAndDefectGroupBound
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GluingImageCardPowLeDefectGroupCard
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasicInequality
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AmpSqLeCardMulSum
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MassDefectOrderLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetMassLeAndFiniteStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -19,8 +23,8 @@ variable {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchim
   [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] {L : LocE F E}
   {r k : ℕ} (S : Frames L r k)
 
-omit [IsNonarchimedeanLocalField F] [CharZero F] in
 
+omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem mass_le_sum {ι : Type} (s : Finset ι) (d : S.Datum) (P : Submodule L.O S.V → Prop)
     (Q : ι → Submodule L.O S.V → Prop) (h : ∀ Λ, S.IsTerm d Λ → P Λ → ∃ i ∈ s, Q i Λ) :
     S.mass d P ≤ ∑ i ∈ s, S.mass d (Q i) := by
@@ -36,14 +40,14 @@ theorem mass_le_sum {ι : Type} (s : Finset ι) (d : S.Datum) (P : Submodule L.O
   · rw [if_neg hP]
     exact zero_le
 
-omit [IsNonarchimedeanLocalField F] [CharZero F] in
 
+omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem mass_mono (d : S.Datum) (P Q : Submodule L.O S.V → Prop)
     (h : ∀ Λ, S.IsTerm d Λ → P Λ → Q Λ) : S.mass d P ≤ S.mass d Q := by
   simpa using mass_le_sum S {()} d P (fun _ => Q) (fun Λ h1 h2 => ⟨(), by simp, h Λ h1 h2⟩)
 
-omit [IsNonarchimedeanLocalField F] [CharZero F] in
 
+omit [IsNonarchimedeanLocalField F] [CharZero F] in
 theorem sumData_mass_le (P : S.Datum → Submodule L.O S.V → Prop) :
     (S.sumData fun d => S.mass d (P d)) ≤ S.nn := by
   unfold Frames.nn Frames.sumData

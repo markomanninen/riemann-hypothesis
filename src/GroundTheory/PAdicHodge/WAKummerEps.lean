@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BStPeriod
-import GroundTheory.PAdicHodge.BdRTGalois
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BStPeriod
+public import GroundTheory.PAdicHodge.BdRTGalois
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,8 +19,11 @@ section Cp
 variable {p : ℕ} [hp : Fact p.Prime]
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝒪♭" => PreTilt (normInteger ℂ_[p]) p
-local notation "φi" => RingEquiv.symm (_root_.frobeniusEquiv (PreTilt (normInteger ℂ_[p]) p) p)
+local notation "𝒪♭" => PreTilt 𝒪 p
+local notation "𝕎𝒪♭" => WittVector p 𝒪♭
+local notation "𝔹" => BDeRhamPlus 𝒪 p
+local notation "𝔪" => maximalIdeal 𝔹
+local notation "φi" => RingEquiv.symm (_root_.frobeniusEquiv 𝒪♭ p)
 
 local instance instNeZeroPowPrime (n : ℕ) : NeZero (p ^ n) := ⟨pow_ne_zero n hp.out.ne_zero⟩
 
@@ -34,8 +42,8 @@ theorem untilt_iterate_ofCompatible (y : ℕ → 𝒪) (hy : ∀ n, y (n + 1) ^ 
       IsPerfectoidField.coeff_ofCompatible]
   rw [e, IsPerfectoidField.untilt_ofCompatible, zero_add]
 
-omit hp in
 
+omit hp in
 theorem pow_eq_pow_of_mod_eq {M : Type*} [Monoid M] {ζ : M} {N u v : ℕ} (hζ : ζ ^ N = 1)
     (h : u % N = v % N) : ζ ^ u = ζ ^ v := by
   rw [← Nat.mod_add_div u N, ← Nat.mod_add_div v N, pow_add, pow_add, pow_mul, pow_mul, hζ, one_pow,
@@ -86,18 +94,6 @@ theorem epsPow_add {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) (a b : ℤ_[p]) 
     untilt_iterate_epsPow, ← pow_add, map_add]
   refine pow_eq_pow_of_mod_eq (untilt_iterate_pow_eq_one hε n) ?_
   rw [ZMod.val_add, Nat.mod_mod]
-
-theorem epsPow_natCast {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) (m : ℕ) : epsPow hε (m : ℤ_[p]) = ε ^ m := by
-  refine tilt_ext_untilt fun n => ?_
-  rw [untilt_iterate_epsPow, iterate_frobSymm_pow, map_pow, map_natCast]
-  refine pow_eq_pow_of_mod_eq (untilt_iterate_pow_eq_one hε n) ?_
-  rw [ZMod.val_natCast, Nat.mod_mod]
-
-theorem epsPow_one {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) : epsPow hε 1 = ε := by
-  simpa using epsPow_natCast hε 1
-
-theorem epsPow_zero {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) : epsPow hε 0 = 1 := by
-  simpa using epsPow_natCast hε 0
 
 theorem isPrimitiveRoot_untilt_iterate {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
     (hζ : PreTilt.untilt (φi ε) ≠ 1) (n : ℕ) :
@@ -249,10 +245,6 @@ theorem kummerC_mul {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) (hζ : PreTilt.
     kummerC hε hζ (σ * τ) = kummerC hε hζ σ + (cycloChar K σ : ℤ_[p]) * kummerC hε hζ τ :=
   kummerCocycle_mul hε hζ pFlat_ne_zero gal_smul_coe_untilt_pFlat σ τ
 
-local notation "𝕎𝒪♭" => WittVector p (PreTilt (normInteger ℂ_[p]) p)
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔪" => maximalIdeal (BDeRhamPlus (normInteger ℂ_[p]) p)
-
 theorem fontaineT_congr {η η' : 𝒪♭} (h : η = η') (hη : PreTilt.untilt η = 1)
     (hη' : PreTilt.untilt η' = 1) : fontaineT η hη = fontaineT η' hη' := by
   subst h; rfl
@@ -288,7 +280,7 @@ theorem fontaineT_eq_of_forall_untilt {ε ε' : 𝒪♭} (hε : PreTilt.untilt �
   set ξ := IsPerfectoidField.kerThetaGenerator ℂ_[p] p
   obtain ⟨c, hc⟩ : ξ ∣ teichmuller p ν - 1 := by
     have h' : teichmuller p ν - 1 ∈ RingHom.ker (fontaineTheta 𝒪 p) := by
-      rw [RingHom.mem_ker, map_sub, map_one, fontaineTheta_teichmuller, hν, sub_self]
+      rw [RingHom.mem_ker, RingHom.map_sub, map_one, fontaineTheta_teichmuller, hν, sub_self]
     rwa [hξ, mem_span_singleton] at h'
   have hT : (teichmuller p ε' : 𝕎𝒪♭) = teichmuller p ε ^ aN * (1 + ξ * c) ^ p ^ (M + k) := by
     rw [hη, ← hνη, map_mul, map_pow, map_pow, ← hc]
@@ -341,7 +333,7 @@ theorem fontaineT_eq_of_forall_untilt {ε ε' : 𝒪♭} (hε : PreTilt.untilt �
   have E_Pμ : logPoly k μ = W (logPoly k Zμ) := by rw [hμ, map_logPoly]
   have E_αβ : W (logPoly k Z1) - W (logPoly k Z0) =
       (p : 𝔹) ^ M * W α' + W ξ ^ k * W β' := by
-    rw [← map_sub, ← hαβ, map_add, map_mul, map_mul, map_pow, map_pow, map_natCast]
+    rw [← map_sub, ← hαβ, map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast]
   have E_a : algebraMap ℚ_[p] 𝔹 (a : ℚ_[p]) =
       (aN : 𝔹) - (p : 𝔹) ^ (M + k) * W (IsPerfectoidField.padicIntToWitt (K := ℂ_[p]) p γ) := by
     have h' : a = (aN : ℤ_[p]) - (p : ℤ_[p]) ^ (M + k) * γ := by rw [← hγ]; ring
@@ -361,7 +353,7 @@ theorem fontaineT_eq_of_forall_untilt {ε ε' : 𝒪♭} (hε : PreTilt.untilt �
         ((k.factorial : 𝔹) * tN - logPoly k ((1 + μ) ^ aN - 1)) + W ξ ^ k * W β' +
         (p : 𝔹) ^ (M + k) * W (IsPerfectoidField.padicIntToWitt (K := ℂ_[p]) p γ) *
           ((k.factorial : 𝔹) * t - logPoly k μ) := by
-    rw [map_add, map_mul, map_mul, map_pow, map_natCast]
+    rw [map_add (f := _), map_mul, map_mul, map_pow, map_natCast]
     linear_combination (k.factorial : 𝔹) * E_σ + (k.factorial : 𝔹) * E_N -
       (k.factorial : 𝔹) * t * E_a + E_P1 - E_P0 + E_αβ +
       (p : 𝔹) ^ (M + k) * W (IsPerfectoidField.padicIntToWitt (K := ℂ_[p]) p γ) * E_Pμ

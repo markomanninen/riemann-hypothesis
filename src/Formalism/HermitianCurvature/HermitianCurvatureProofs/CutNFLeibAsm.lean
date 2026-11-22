@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjointLeibnizExpansion
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -78,7 +82,7 @@ theorem nfLeib_opApply_contOn (Bs : B.RealPlaceData k r Wp Wq) (L : B.DiffOp k r
     refine ContinuousOn.add ?_ (ih fun T' hT' => hL T' (List.mem_cons_of_mem _ hT'))
     have h1 : ContinuousOn T.coef (B.GPos Bs) := by
       rw [← nfLeib_domL_eq Bs]
-      exact nfLeib_ckOn_contOn (fun g hg => hg.1) (hL T List.mem_cons_self).1
+      exact nfLeib_ckOn_contOn (fun g (hg : g ∈ C6.domL Bs ∅) => hg.1) (hL T List.mem_cons_self).1
     have h2 : ContinuousOn (B.Rw T.word F) (B.GPos Bs) :=
       (nfLeib_ckOn_contOn le_rfl (JFxI.ckOn_Rw_top' hF T.word T.word_lie)).mono fun g hg => hg.1
     exact h1.clm_apply h2

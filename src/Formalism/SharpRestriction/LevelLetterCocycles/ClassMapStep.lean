@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+
+@[expose] public section
 
 noncomputable section
 

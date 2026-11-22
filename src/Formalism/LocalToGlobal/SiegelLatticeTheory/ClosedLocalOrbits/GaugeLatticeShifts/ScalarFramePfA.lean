@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def hl (y : V) : V →ₗ[E] E where
   map_smul' a x := by simp only [H.h_smul_left, smul_eq_mul, RingHom.id_apply]
 
 theorem h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [h_swap H x (y + y'), H.h_add_left, map_add, ← h_swap H x y, ← h_swap H x y']
+  rw [h_swap H x (y + y'), H.h_add_left, map_add (f := _), ← h_swap H x y, ← h_swap H x y']
 
 theorem h_smul_right (a : E) (x y : V) : H.h x (a • y) = M.L.cj a * H.h x y := by
   rw [h_swap H x (a • y), H.h_smul_left, map_mul, ← h_swap H x y]
@@ -156,7 +160,8 @@ variable (Z : LocDat D) (p : PlF D)
 private theorem brS_eq_double_sum_repr_gramV (x y : (VS D).V) :
     brS (VS D) x y = ∑ i, ∑ j, (VS D).frame.repr x i * star ((VS D).frame.repr y j) * gramV D i j := by
   conv_lhs => rw [← (VS D).frame.sum_repr x, ← (VS D).frame.sum_repr y]
-  simp only [brS, gramV, map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [brS, gramV, map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
     smul_eq_mul, starRingEnd_apply, RingHom.id_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -167,11 +172,13 @@ theorem h_bcP (a b : (D.s.atP p).Ep) (x y : (VS D).V) :
   rw [(locH Z p).h_smul_left, h_smul_right (locH Z p), ← mul_assoc]
   congr 1
   rw [brS_eq_double_sum_repr_gramV]
-  simp only [locH, locHerm, LocFacts₂, baseChange₂, AddMonoidHom.coe_mk, ZeroHom.coe_mk, cj_iota (Z.hcj p), map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [locH, locHerm, LocFacts₂, baseChange₂, AddMonoidHom.coe_mk, ZeroHom.coe_mk, cj_iota (Z.hcj p), map_sum, map_mul]
 
 theorem baseChangeAt_sum {ι : Type} (s : Finset ι) (c : ι → D.host.E) (v : ι → (VS D).V) :
     baseChange₂ D p (∑ i ∈ s, c i • v i) = ∑ i ∈ s, (D.s.atP p).ιE (c i) • baseChange₂ D p (v i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   funext j
   simp [baseChange₂, map_mul]
@@ -189,7 +196,7 @@ theorem dl_loc (u v : Fin (D.R.rS + 1) → (VS D).V) (c c' : Fin (D.R.rS + 1) �
     (locH Z p).Dl (fun a => c a • baseChange₂ D p (u a)) (fun b => c' b • baseChange₂ D p (v b)) l =
       (∏ i : Fin l, (Z.M p).L.cj (c (Fin.castLE hl i))) * (∏ i : Fin l, c' (Fin.castLE hl i)) *
         (D.s.atP p).ιE (GDl u v l) := by
-  rw [Loc.HermSp.Dl, dif_pos hl, zhat_loc, GDl, dif_pos hl]
+  rw [Loc.HermSp.Dl, dite_eq_left hl, zhat_loc, GDl, dite_eq_left hl]
   have e : (Matrix.diagonal (fun a => (Z.M p).L.cj (c a)) * (GZ u v).map (D.s.atP p).ιE *
       Matrix.diagonal c').submatrix (Fin.castLE hl) (Fin.castLE hl) =
       Matrix.diagonal (fun i => (Z.M p).L.cj (c (Fin.castLE hl i))) *

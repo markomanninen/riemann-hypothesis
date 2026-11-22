@@ -1,12 +1,17 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
-import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleRankR
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+public import Formalism.SharpRestriction.LevelLetterCocycles.TypePrimeCongruences
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleRankR
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass Formalism.MainNotions.PairedCharacterCondition Formalism.MainNotions.PairedCharacterCondition.CongruenceModules
 
 noncomputable section
@@ -54,12 +59,15 @@ theorem exists_ne_zero {O X : Type} [CommRing O] [IsDomain O] [Fintype X] (T : S
   refine ⟨∏ x : {x // x ∉ Z}, (g x - algebraMap O T ((g x : X → O) x.1)), ?_, ?_⟩
   · rw [mem_ccIdeal_iff]
     intro y hy
-    rw [SubmonoidClass.coe_finset_prod, Finset.prod_apply]
+    change (T.val.toMonoidHom (∏ x : {x // x ∉ Z}, (g x - algebraMap O T ((g x : X → O) x.1)))) _ = _
+    rw [map_prod, Finset.prod_apply]
     refine Finset.prod_eq_zero (Finset.mem_univ ⟨y, hy⟩) ?_
     simp
-  · rw [SubmonoidClass.coe_finset_prod, Finset.prod_apply]
+  · change (T.val.toMonoidHom (∏ x : {x // x ∉ Z}, (g x - algebraMap O T ((g x : X → O) x.1)))) _ ≠ _
+    rw [map_prod, Finset.prod_apply]
     refine Finset.prod_ne_zero_iff.mpr fun x _ => ?_
     have e : ∀ c : O, ((algebraMap O T c : T) : X → O) π = c := fun c => by simp
+    change ((g x - algebraMap O T ((g x : X → O) x.1) : T) : X → O) π ≠ 0
     rw [AddSubgroupClass.coe_sub, Pi.sub_apply, e]
     exact sub_ne_zero.mpr (hg x).symm
 

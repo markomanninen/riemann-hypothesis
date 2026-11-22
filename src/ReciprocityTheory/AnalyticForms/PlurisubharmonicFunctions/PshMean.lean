@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+
+@[expose] public section
 
 open MeasureTheory Metric Set Filter Topology Real
 
@@ -178,7 +182,7 @@ def b0 : ContDiffBump (0 : ℝ) := ⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩
 def g0 (D : ℕ) (w : Fin D → ℂ) : ℝ := b0 (∑ i, ‖w i‖ ^ 2)
 
 lemma radialBump_contDiff (D : ℕ) : ContDiff ℝ ∞ (g0 D) :=
-  b0.contDiff.comp (ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ i))
+  b0.contDiff.comp (ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) i))
 
 lemma radialBump_nonneg (D : ℕ) (w : Fin D → ℂ) : 0 ≤ g0 D w := b0.nonneg
 

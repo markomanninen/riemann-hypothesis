@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbPowDescendsOfIsotropic
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawRigidifiedLineBundleDenseFibresStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SymmetricLiftOddOrderExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbPowDescendsOfIsotropic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawRigidifiedLineBundleDenseFibresStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -337,8 +341,8 @@ end GlobalTheory.OddLinearisation
 
 namespace GlobalTheory
 
-open KerPow ThetaSplit OddLinearisation in
 
+open KerPow ThetaSplit OddLinearisation in
 theorem sym_and_linearisation_odd : Out.Laws → ∀ (R : Type) [CommRing R] [IsNoetherianRing R] [IsReduced R] (A : Over (Sp R)) [GrpObj A] (m : ℕ) (M : LB A.left) (Sg : Set (Sp R)) (C : Type) [CommGroup C] (i : C →* (𝟙_ (Over (Sp R)) ⟶ A)), IsAbelianScheme A → Odd m → IsUnit (m : R) → M.IsLB → Out.Rigidified A M → Out.RelAmple A M → Dense Sg → (∀ c, i c ^ m = 1) → (∀ p ∈ Sg, ∃ (K : Type) (_ : Field K) (_ : IsAlgClosed K) (x : Sp K ⟶ Sp R) (Pl : Out.PolAV (Sp K)) (φ : Pl.A.left ⟶ A.left), p ∈ Set.range x ∧ IsGrpPullback Pl.A A x φ ∧ LBIso (lbPow Pl.L (m ^ 2)) (M.pull φ)) → Out.Sym A M ∧ ∃ u : ∀ c, LB.Gen (LB.LinComb M (K := Fin 2) ![𝟙 A.left, ((toUnit A ≫ i c) * 𝟙 A).left] ![1, -1]), (∀ c, (u c).IsGen) ∧ ∀ c c', LB.Gen.Corr M _ _ _ _ (u (c * c')) (LB.mulGen M _ _ _ _ (u c) (LB.pullGen M _ _ (u c') ((toUnit A ≫ i c) * 𝟙 A).left)) := by
   intro hlaw R _ _ _ A _ m M Sg C _ i hA hm _ hM _ hample hd htor hfib
   have := hA.comm

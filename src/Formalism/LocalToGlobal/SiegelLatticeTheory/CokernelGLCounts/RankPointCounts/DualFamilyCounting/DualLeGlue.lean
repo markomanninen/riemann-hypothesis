@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FormMemOfDual
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FormMemOfDual
+
+@[expose] public section
 
 open NumberField Module
 
@@ -43,8 +47,8 @@ theorem mem_glue_of (hG₀ : Good hc M T 𝔭 Λ₀) {y : V} (hy : y ∈ Λ₀)
     | (rw [prO_apply]; simp [hyU])
     | (unfold prO; simp [hyU])
   refine ⟨x', ?_, y, hy, ⟨prO hc.symm y, hG₀.iW y hy⟩, rfl, ?_, hx'⟩
-  · rw [map_add, orth_projection_symm_of_mem (hc' := hc) hx'W, h0, zero_add]
-  · rw [map_add, prO_of_mem_U (hc' := hc) hyU, orth_projection_of_mem_compl (hc' := hc) hx'W, add_zero]
+  · rw [map_add (f := _), orth_projection_symm_of_mem (hc' := hc) hx'W, h0, zero_add]
+  · rw [map_add (f := _), prO_of_mem_U (hc' := hc) hyU, orth_projection_of_mem_compl (hc' := hc) hx'W, add_zero]
 
 theorem glue_inf_U (hG₀ : Good hc M T 𝔭 Λ₀) (hd₀ : dualF h 𝔭 Λ₀ = Λ₀) (hP : FP P) :
     glue hc T 𝔭 Λ₀ P ⊓ U.restrictScalars (𝓞 K) = locF 𝔭 M := by
@@ -78,7 +82,7 @@ theorem glue_inf_U (hG₀ : Good hc M T 𝔭 Λ₀) (hd₀ : dualF h 𝔭 Λ₀ 
           -(h (d : V) (((0 : ↥(locF 𝔭 (dualIn h (orthK h U) T))) : V)) - h (prO hc.symm z) (c : V)) := by
         have e1 : h z (c : V) = h (prO hc z) (c : V) + h (prO hc.symm z) (c : V) := by
           conv_lhs => rw [← prO_add hc z]
-          rw [map_add, LinearMap.add_apply]
+          rw [map_add (f := _), LinearMap.add_apply]
         rw [e1, hcO (prO hc z) ?_]
         · simp
         · first
@@ -195,7 +199,7 @@ theorem dual_le_glue (hs : h.IsSymm) (hG₀ : Good hc M T 𝔭 Λ₀) (hd₀ : d
     apply mem_locF_dualIn hM.1 𝔭 (prO_mem hc x)
     intro m hm
     have hmU := le_of_isLatIn hM m hm
-    have e : h m x = h m (prO hc x) + h m (prO hc.symm x) := by rw [← map_add, prO_add]
+    have e : h m x = h m (prO hc x) + h m (prO hc.symm x) := by rw [← map_add (f := _), prO_add]
     rw [h_UW hmU (prO_symm_mem hc x), add_zero] at e
     rw [← e]
     exact hx' m (hLM (LocF.le_locF 𝔭 M hm))
@@ -203,7 +207,7 @@ theorem dual_le_glue (hs : h.IsSymm) (hG₀ : Good hc M T 𝔭 Λ₀) (hd₀ : d
     apply mem_locF_dualIn hT.1 𝔭 (prO_symm_mem hc x)
     intro m hm
     have hmW := le_of_isLatIn hT m hm
-    have e : h m x = h m (prO hc x) + h m (prO hc.symm x) := by rw [← map_add, prO_add]
+    have e : h m x = h m (prO hc x) + h m (prO hc.symm x) := by rw [← map_add (f := _), prO_add]
     rw [h_WU hs hmW (prO_mem hc x), zero_add] at e
     rw [← e]
     exact hx' m (hLT (LocF.le_locF 𝔭 T hm))
@@ -231,7 +235,7 @@ theorem dual_le_glue (hs : h.IsSymm) (hG₀ : Good hc M T 𝔭 Λ₀) (hd₀ : d
       have h1 := hx' _ hz₁
       have h2 := glue_int hs hd₀ hP hz₁ hz
       have := sub_mem h1 h2
-      rw [← map_sub, ← hdx, map_add, LinearMap.add_apply, h_UW (prO_mem hc y₁) hdW, zero_add] at this
+      rw [← map_sub, ← hdx, map_add (f := _), LinearMap.add_apply, h_UW (prO_mem hc y₁) hdW, zero_add] at this
       exact this
   refine ⟨⟨prO hc.symm x, hxW⟩, rfl, y, hy, ⟨prO hc.symm y, hG₀.iW y hy⟩, rfl, hyU, ?_⟩
   rw [← hx'']

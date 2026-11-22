@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRelAlgClosureFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRelAlgClosureFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -23,18 +28,19 @@ theorem RelAlgClosureFinite.linearIndependent_adjoin {K L : Type*} [Field K] [Fi
   have hP : (∑ j ∈ s, C (m j) * map (algebraMap K M) (p j) : MvPolynomial σ M) = 0 := by
     apply hx.eq_zero_of_aeval_eq_zero
     rw [← hg]
-    simp only [map_sum, map_mul, aeval_C, aeval_map_algebraMap, hp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, aeval_C, aeval_map_algebraMap, hp]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Subalgebra.smul_def, smul_eq_mul, mul_comm]
     rfl
-  have hcoeff : ∀ d, ∀ j ∈ s, coeff d (p j) = 0 := fun d => by
-    apply hm s (fun j => coeff d (p j))
-    have := congrArg (coeff d) hP
-    simp only [coeff_sum, coeff_C_mul, coeff_map, coeff_zero] at this
+  have hcoeff : ∀ d, ∀ j ∈ s, AddMonoidAlgebra.coeff (p j) d = 0 := fun d => by
+    apply hm s (fun j => AddMonoidAlgebra.coeff (p j) d)
+    have := congrArg (AddMonoidAlgebra.coeff · d) hP
+    simp only [coeff_sum, coeff_C_mul, coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this
     rw [← this]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def, mul_comm]
-  have hpi : p i = 0 := MvPolynomial.ext _ _ fun d => by rw [hcoeff d i hi, coeff_zero]
+  have hpi : p i = 0 := MvPolynomial.ext _ _ fun d => by simp [hcoeff d i hi, AddMonoidAlgebra.coeff_zero]
   apply Subtype.ext
   rw [← hp i, hpi, map_zero]
   rfl

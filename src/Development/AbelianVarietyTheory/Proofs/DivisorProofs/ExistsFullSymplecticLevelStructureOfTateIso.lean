@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSympLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSympLevel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,7 +30,7 @@ theorem exists_twist (l : Level H) (L : ℤ) (hL : (l.A : ℤ) ∣ L - 1) :
   have hbm : H.bar m ∈ l.Mb := by
     obtain ⟨m0, hm0, rfl⟩ := (Ideal.mem_map_iff_of_surjective _ H.bar.surjective).1 hm
     simpa [bar_bar] using hm0
-  have hbar1 : H.bar n + H.bar m = 1 := by rw [← map_add, hnm, map_one]
+  have hbar1 : H.bar n + H.bar m = 1 := by rw [← map_add (f := _), hnm, map_one]
   have hxN : H.bar n - m ∈ l.Mb := by
     have e : H.bar n - m = n - H.bar m := by linear_combination hbar1 - hnm
     rw [e]; exact sub_mem hn hbm
@@ -49,7 +53,7 @@ theorem exists_twist (l : Level H) (L : ℤ) (hL : (l.A : ℤ) ∣ L - 1) :
     (q : 𝓞 E) * n, Ideal.mul_mem_left _ _ hn, ?_, ?_⟩
   · rw [hq']; ring
   · have hb : H.bar (1 + ((L : 𝓞 E) - 1) * n) = 1 + ((L : 𝓞 E) - 1) * H.bar n := by
-      simp [map_add, map_mul, map_sub, map_one, map_intCast]
+      simp [map_add (f := _), map_mul, map_sub, map_one, map_intCast]
     rw [hb]
     linear_combination ((L : 𝓞 E) - 1) * hnm - ((L : 𝓞 E) - 1) * hy1 - ((L : 𝓞 E) - 1) ^ 2 * hy2
       + (l.M : 𝓞 E) * (y1 + ((L : 𝓞 E) - 1) * y2) * hq' + (q : 𝓞 E) * (y1 + ((L : 𝓞 E) - 1) * y2) * hg
@@ -106,7 +110,7 @@ theorem exists_sympLevel_of_tate : ∀ {E : Type} [Field E] [NumberField E] [IsC
   have hEF : ∀ a b : D.La, D.EF (u • a) (u • b) = L * D.EF a b + l.M' * D.EF a (w • b) := by
     intro a b
     rw [D.adj, ← mul_smul, hw, add_smul, mul_smul, Nat.cast_smul_eq_nsmul]
-    simp only [Int.cast_natCast, Nat.cast_smul_eq_nsmul, map_add, map_zsmul, map_nsmul, smul_eq_mul, nsmul_eq_mul]
+    simp only [Int.cast_natCast, Nat.cast_smul_eq_nsmul, map_add (f := _), map_zsmul, map_nsmul, smul_eq_mul, nsmul_eq_mul]
   refine ⟨fun a => I.ev l.M' (u • a), ⟨?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩
   · intro a b; simp only [smul_add, I.add]
   · intro c a; try simp only

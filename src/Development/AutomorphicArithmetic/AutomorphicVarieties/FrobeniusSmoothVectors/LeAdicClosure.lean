@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ContinuousCoboundaries2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ContinuousCoboundaries2
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,12 @@ theorem ordProd_map {H K K' : Type} [CommRing K] [CommRing K'] {n : ℕ} (f : K 
   simp only [Function.comp_apply, map_sub]
   congr 1
   ext a b
-  by_cases h : a = b <;> simp [h, Matrix.one_apply]
+  by_cases h : a = b <;> simp [h]
 
 @[ext] structure NRep (K : Type) [CommRing K] where
   r : F.G0 →* Matrix (Fin n) (Fin n) K
   ψ : ∀ v, Fin n → F.Gv v →* Kˣ
-  pol : ∀ g, r (F.star g) = Jmat K n * (r g)ᵀ * Jmat K n
+  pol : ∀ g, r (F.star g) = Jmat (R := K) n * (r g)ᵀ * Jmat (R := K) n
   diag : ∀ i j, i ≠ j → (r F.g0 - r (F.star F.g0)) i j = 0
   ord : ∀ v g, ordProd (fun s => r (F.loc0 v s)) (fun i s => (ψ v i s : K)) g = 0
 
@@ -39,7 +43,8 @@ def map (f : K →+* K') (ρ : NRep F n K) : NRep F n K' where
   r := (f.mapMatrix : Matrix (Fin n) (Fin n) K →+* _).toMonoidHom.comp ρ.r
   ψ v i := (Units.map f.toMonoidHom).comp (ρ.ψ v i)
   pol g := by
-    show f.mapMatrix (ρ.r (F.star g)) = Jmat K' n * (f.mapMatrix (ρ.r g))ᵀ * Jmat K' n
+    show f.mapMatrix (ρ.r (F.star g)) =
+      Jmat (R := K') n * (f.mapMatrix (ρ.r g))ᵀ * Jmat (R := K') n
     rw [ρ.pol, map_mul, map_mul]
     simp only [RingHom.mapMatrix_apply, Jmat_map, Matrix.transpose_map]
   diag i j h := by
@@ -113,9 +118,6 @@ def mon (ρ : NRep F n K) (j : ℤ) : Set K :=
 
 end NRep
 
-def Irr {H K : Type} [Field K] {ι : Type} [Fintype ι] (r : H → Matrix ι ι K) : Prop :=
-  ∀ U : Submodule K (ι → K), (∀ g, ∀ u ∈ U, r g *ᵥ u ∈ U) → U = ⊥ ∨ U = ⊤
-
 def adicClosure {O R : Type} [CommRing O] [CommRing R] [IsLocalRing R] [Algebra O R] (S : Subalgebra O R) :
     Subalgebra O R where
   carrier := {x | ∀ N : ℕ, ∃ y ∈ S, x - y ∈ maximalIdeal R ^ N}
@@ -149,7 +151,6 @@ section Space
 variable {l : ℕ} [Fact l.Prime] (O : Type) [CommRing O] [IsLocalRing O] (F : Frame l (ResidueField O)) (n : ℕ)
 
 variable {F n} in
-
 def IsLift {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (ρ : NRep F n R) : Prop :=
   ρ.Cont (maximalIdeal R) ∧ (ρ.map (res O R : R →+* ResidueField O)).IsBar (RingHom.id _) ∧
     (ρ.map (res O R : R →+* ResidueField O)).IsDiag

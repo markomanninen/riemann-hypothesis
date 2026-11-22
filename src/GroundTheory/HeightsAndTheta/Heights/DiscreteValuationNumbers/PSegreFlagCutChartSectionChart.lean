@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionTools
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutChartSectionTools
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -33,13 +38,9 @@ theorem flagClosurePt_eq_aeval (y : (Σ k, ι k) → Ω) (w e : Module.Basis (Fi
     (p : Σ o, bundleIdx (bundleIdx ι M) M' o) :
     flagClosurePt y w e φ φ' t k p = aeval t (genPoly y w e φ φ' k p) := by
   rcases p with ⟨_ | _ | kk, i⟩
-  · simp only [genPoly, flagClosurePt, pairProjCoord, flagCoord, map_sum, map_mul, aeval_C]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    split_ifs <;> simp [map_sum, aeval_X]
-  · simp only [genPoly, flagClosurePt, pairProjCoord, projCoord, flagCoord, map_sum, map_mul, aeval_C]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    split_ifs <;> simp [map_sum, aeval_X]
-  · simp [genPoly, flagClosurePt, pairProjCoord, projCoord]
+  all_goals
+    simp only [genPoly, flagClosurePt, pairProjCoord, projCoord, flagCoord, map_sum, map_mul, aeval_C]
+    try (refine Finset.sum_congr rfl fun j _ => ?_; split_ifs <;> simp [map_sum, aeval_X])
 
 theorem aeval_flagProjPt_eq_zero {K' : Type} (j : K' ↪ Option (Option K)) (y : (Σ k, ι k) → Ω)
     (w e : Module.Basis (Fin N) Ω E) (φ : Fin M → Module.Dual Ω E) (φ' : Fin M' → Module.Dual Ω E)
@@ -67,13 +68,15 @@ theorem exists_flagCoord_eq (w e : Module.Basis (Fin N) Ω E) (k : ℕ) (c : Fin
   have hid : ∀ i' : Fin N, ∑ m, e.repr (w i') m * w.repr (e m) i = w.repr (w i') i := by
     intro i'
     conv_rhs => rw [← e.sum_repr (w i')]
-    rw [map_sum, Finsupp.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply]
     simp [smul_eq_mul]
   unfold flagCoord
   split_ifs with h
   · calc ∑ m, (∑ i', c i' * algebraMap Ω Φ (e.repr (w i') m)) * algebraMap Ω Φ (w.repr (e m) i)
         = ∑ i', c i' * algebraMap Ω Φ (∑ m, e.repr (w i') m * w.repr (e m) i) := by
-          simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum]
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
       _ = c i := by
@@ -104,7 +107,8 @@ theorem chartMonoZ_dvd (c : ∀ k, ι k) (δ : K → ℕ) :
 theorem repr_eq_sum (w w₁ : Module.Basis (Fin N) Ω E) (v : E) (i : Fin N) :
     w.repr v i = ∑ m, w₁.repr v m * w.repr (w₁ m) i := by
   conv_lhs => rw [← w₁.sum_repr v]
-  rw [map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   simp [smul_eq_mul]
 
 end Generic
@@ -201,7 +205,8 @@ theorem chart_data (y : (Σ k, ι k) → Ω) (B₁ : ChartBundle O (segreVec y) 
     have hs : aeval (pairProjCoord y w φ φ' (flagCoord w e t (k + 1))) (∑ l, Xv l * G l) =
         ∑ l, aeval (pairProjCoord y w φ φ' (flagCoord w e t (k + 1))) (G l) *
           genVal w (flagCoord w e t (k + 1)) (ψ l) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [map_mul, hXval l, mul_comm]
     rw [hlam, show β = bH + ρ from rfl, chartMonoZ_add, map_mul, map_mul, hs, ← hval]
     ring
@@ -232,14 +237,14 @@ theorem chart_data (y : (Σ k, ι k) → Ω) (B₁ : ChartBundle O (segreVec y) 
     simp only [← FlagBundleSectionForms.chartPow_add hY]
     congr 1
     funext j
-    simp only [Pi.add_apply, δ, β, γ₁, ρ]
-    push_cast
+    simp only [δ, γ₁, ρ, Pi.add_apply, Nat.cast_add]
     omega
   have hψv : ∀ l, ∑ i, algebraMap Ω Φ (w.repr v₁ i) * algebraMap Ω Φ (ψ l (w i)) =
       algebraMap Ω Φ (ψ l v₁) := by
     intro l
     conv_rhs => rw [← w.sum_repr v₁]
-    simp only [map_sum, map_smul, smul_eq_mul, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_mul]
   have hΩ : ∀ l, r l * segreVec y c ^ n₂ * (∏ j, y ⟨j, c j⟩ ^ ρ j) * (∏ j, y ⟨j, c j⟩ ^ β j) =
       A * (chartPow y c (x₁ ⟨k, hk⟩))⁻¹ * (r l * chartPow y c a₁) := by
     intro l

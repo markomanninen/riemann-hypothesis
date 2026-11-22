@@ -1,4 +1,8 @@
-import Formalism.GaussValuationBounds.GaussUnit
+module
+
+public import Formalism.GaussValuationBounds.GaussUnit
+
+@[expose] public section
 
 noncomputable section
 

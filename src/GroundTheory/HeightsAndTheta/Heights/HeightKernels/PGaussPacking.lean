@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -31,8 +36,8 @@ theorem biUnion_balls_subset {n : ℕ} (s : Finset (EuclideanSpace ℝ (Fin n)))
 
 end PGaussPacking
 
-open PGaussPacking in
 
+open PGaussPacking in
 theorem GaussPacking.proof : GaussPacking.Statement := by
   intro n s δ r hδ hr hsep hs
   rcases Nat.eq_zero_or_pos n with rfl | hn

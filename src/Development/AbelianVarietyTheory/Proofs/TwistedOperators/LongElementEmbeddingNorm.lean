@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSqUnitaryEmbeddingOrthogonalStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompSmulLatticeEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SqrtAbsNormLeProdNormCmTypeEmbeddingsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeNormRationalTranslateStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.DepthPays
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSqUnitaryEmbeddingOrthogonalStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDecompSmulLatticeEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SqrtAbsNormLeProdNormCmTypeEmbeddingsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OneLeNormRationalTranslateStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem long_sum : ∀ (D : D7) (θ : InfFam D), IsInfFam θ → ∀ (Y V : HSp 
       have h2 : 0 ≤ Real.sqrt (Ideal.absNorm 𝔪) := Real.sqrt_nonneg _
       nlinarith
     · refine le_trans (hL 𝔪 h𝔪 y hy hy0) ?_
-      exact Finset.prod_le_prod (fun τ _ => Real.sqrt_nonneg _) fun τ _ => hge τ y u
+      exact Finset.prod_le_prod₀ (fun τ _ => Real.sqrt_nonneg _) fun τ _ => hge τ y u
   · have h := hz τ 1
     rw [one_smul, map_one, norm_one] at h
     exact h

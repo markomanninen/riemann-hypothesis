@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.DivPassage
-import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Transfer
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
-import Lemmata.GeneralBFactThirdAlt.Imports
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.DivPassage
+public import Formalism.LocalToGlobal.GlobalTheory.HLatOpsP
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Transfer
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
+public import Lemmata.GeneralBFactThirdAlt.Imports
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -30,18 +34,18 @@ variable [StarRing K] {D0 D1 : ℕ} (A : LevelAmb K D0 D1)
 
 theorem partLat_le (e : Matrix (Fin A.Dg) (Fin A.Dg) K) : A.partLat e ≤ A.Rg := inf_le_left
 
-theorem mem_range_of_partLat {e : Matrix (Fin A.Dg) (Fin A.Dg) K} {y : Fin A.Dg → K} (hy : y ∈ A.partLat e) :
-    y ∈ LinearMap.range e.mulVecLin := hy.2
-
 theorem span_partLat (hL : A.LatG) (e : Matrix (Fin A.Dg) (Fin A.Dg) K) :
     Submodule.span K (A.partLat e : Set (Fin A.Dg → K)) = LinearMap.range e.mulVecLin := by
+  unfold LatG at hL
   apply le_antisymm
   · rw [Submodule.span_le]
     intro y hy
     exact hy.2
   · intro w hw
     have hw' : w ∈ Submodule.span K (A.Rg : Set (Fin A.Dg → K)) := by
-      rw [hL.span_eq_top]; exact Submodule.mem_top
+      letI : Submodule.IsFullLattice K A.Rg := hL
+      rw [Submodule.IsFullLattice.span_eq_top (A := K) (M := A.Rg)]
+      exact Submodule.mem_top
     obtain ⟨d, hd, hm⟩ := exists_smul_mem A.Rg w hw'
     have hdK : algebraMap (𝓞 K) K d ≠ 0 := by
       rw [Ne, map_eq_zero_iff _ (IsFractionRing.injective (𝓞 K) K)]; exact hd
@@ -56,8 +60,9 @@ theorem span_partLat (hL : A.LatG) (e : Matrix (Fin A.Dg) (Fin A.Dg) K) :
     exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
 
 theorem partLat_fg (hL : A.LatG) (e : Matrix (Fin A.Dg) (Fin A.Dg) K) : (A.partLat e).FG := by
-  have : IsNoetherian (𝓞 K) A.Rg := isNoetherian_of_fg_of_noetherian A.Rg hL.fg
-  exact Submodule.FG.of_le_of_isNoetherian (A.partLat_le e)
+  unfold LatG at hL
+  letI := hL
+  exact (Submodule.IsLattice.fg K A.Rg).of_le (A.partLat_le e)
 
 theorem nat_smul_ne_zero {n : ℕ} {h : ℕ} (hh : 0 < h) {y : Fin n → K} (hy : y ≠ 0) : (h : 𝓞 K) • y ≠ 0 := by
   rw [Nat.cast_smul_eq_nsmul]
@@ -72,7 +77,7 @@ theorem frame_scale_unit (h : ℕ) (hh : 0 < h) (hF : A.FramesG) (v : InfinitePl
   have : (0 : ℝ) < Real.sqrt h := Real.sqrt_pos.mpr (by exact_mod_cast hh)
   exact_mod_cast this.ne'
 
-theorem levelFacts [IsTotallyComplex K] {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D) K) (ep : Matrix (Fin A.Dg) (Fin A.Dg) K)
+theorem levelFacts [_root_.NumberField.IsTotallyComplex K] {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D) K) (ep : Matrix (Fin A.Dg) (Fin A.Dg) K)
     (h : ℕ) (XE : InfinitePlace K → Matrix (Fin D) (Fin D) ℂ) (RR : Submodule (𝓞 K) (Fin D → K))
     (hF : A.FramesG) (hL : A.LatG) (hE : A.EmbAt ι ep h XE) (hS : A.SandAt ι ep h RR) (hh : 0 < h)
     (hne : A.partLat ep ≠ ⊥) :
@@ -93,9 +98,7 @@ theorem levelFacts [IsTotallyComplex K] {D : ℕ} (ι : Matrix (Fin A.Dg) (Fin D
     rw [hb, Submodule.mem_bot] at this
     exact nat_smul_ne_zero hh hy0 this
 
-  have hfgI : (A.img ι RR).FG := by
-    have : IsNoetherian (𝓞 K) A.Rg := isNoetherian_of_fg_of_noetherian A.Rg hL.fg
-    exact Submodule.FG.of_le_of_isNoetherian (le_trans hle (A.partLat_le ep))
+  have hfgI : (A.img ι RR).FG := (A.partLat_fg hL ep).of_le hle
   have hinj' : Function.Injective (ι.mulVecLin.restrictScalars (𝓞 K)) := hinj
   have hfg : RR.FG := Submodule.fg_of_fg_map_injective _ hinj' hfgI
 
@@ -227,109 +230,9 @@ theorem passage_from_levels : PassageFromLevels := by
       linarith
     nlinarith
 
-theorem passage_base_sharp_levels : PassageAtBaseSharpLevels := by
-  intro K _ _ _ _ E _ _ Pg r k _ Pl0 T J _ F ψ Zs N S0 S1 A
-  exact passage_from_levels K F.base _ _ N S0 S1 A
-
 section Trivial
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
-
-def trivAmb (S : IndefData Df) : LevelAmb K S.D S.D where
-  Dg := S.D
-  Xg := S.XE
-  Rg := S.RR
-  ep0 := 1
-  ep1 := 1
-  S := Unit
-  fS := inferInstance
-  es := fun _ => 1
-  nS := fun _ => 1
-  nbar := 1
-  G := 1
-  h0 := 1
-  h1 := 1
-  ι0 := 1
-  ι1 := 1
-
-theorem trivAmb_partLat (S : IndefData Df) : (trivAmb S).partLat (trivAmb S).ep0 = S.RR := by
-  apply le_antisymm inf_le_left
-  intro y hy
-  refine ⟨hy, y, ?_⟩
-  show (1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ y = y
-  exact Matrix.one_mulVec y
-
-theorem trivAmb_img (S : IndefData Df) : (trivAmb S).img (trivAmb S).ι0 S.RR = S.RR := by
-  unfold LevelAmb.img
-  ext y
-  constructor
-  · intro h
-    obtain ⟨x, hx, hxy⟩ := Submodule.mem_map.mp h
-    rw [← hxy]
-    show (1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ x ∈ S.RR
-    rwa [Matrix.one_mulVec]
-  · intro hy
-    refine Submodule.mem_map.mpr ⟨y, hy, ?_⟩
-    show (1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ y = y
-    exact Matrix.one_mulVec y
-
-theorem trivAmb_hyps (S : IndefData Df) (N : IndefNum Bs) (hX : ∀ v, IsUnit (S.XE v).det)
-    (hL : Submodule.IsLattice K S.RR) (hne : S.RR ≠ ⊥) (hla : 0 ≤ N.la) (hde : 0 ≤ N.de) :
-    (trivAmb S).FramesG ∧ (trivAmb S).LatG ∧
-    (trivAmb S).EmbAt (trivAmb S).ι0 (trivAmb S).ep0 (trivAmb S).h0 S.XE ∧
-    (trivAmb S).EmbAt (trivAmb S).ι1 (trivAmb S).ep1 (trivAmb S).h1 S.XE ∧
-    (trivAmb S).SandAt (trivAmb S).ι0 (trivAmb S).ep0 (trivAmb S).h0 S.RR ∧
-    (trivAmb S).SandAt (trivAmb S).ι1 (trivAmb S).ep1 (trivAmb S).h1 S.RR ∧
-    (trivAmb S).Sizes N.la ∧ (trivAmb S).Ranks ∧ (trivAmb S).Deg0 ∧ (trivAmb S).Deg1 ∧ (trivAmb S).MaxT ∧
-    (trivAmb S).Mult N.de ∧ (trivAmb S).RowsG := by
-  letI : Unique (trivAmb S).S := inferInstanceAs (Unique Unit)
-  have hP1 : (trivAmb S).partLat (trivAmb S).ep0 = S.RR := trivAmb_partLat S
-  have hRP0 : (trivAmb S).latticeAtBaseLevel = S.RR := hP1
-  have hRP1 : (trivAmb S).latticeAtSharpLevel = S.RR := hP1
-  have hRs : ∀ s, (trivAmb S).Rs s = S.RR := by
-    intro s
-    have : (trivAmb S).ep0 * (trivAmb S).es s = (trivAmb S).ep0 := by
-      exact mul_one _
-    unfold LevelAmb.Rs; rw [this]; exact hP1
-  have hsc : Formalism.BranchingDeterminantCap.scaleFrame (Real.sqrt (((trivAmb S).h0 : ℕ) : ℝ)) (trivAmb S).Xg = S.XE := by
-    funext v
-    show ((Real.sqrt ((1 : ℕ) : ℝ) : ℝ) : ℂ) • S.XE v = S.XE v
-    rw [Nat.cast_one, Real.sqrt_one, Complex.ofReal_one, one_smul]
-  have hemb : (trivAmb S).EmbAt (trivAmb S).ι0 (trivAmb S).ep0 (trivAmb S).h0 S.XE := by
-    refine ⟨fun x y h => ?_, rfl, fun v x y => ?_⟩
-    · change (1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ x = (1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ y at h
-      rwa [Matrix.one_mulVec, Matrix.one_mulVec] at h
-    · rw [hsc]
-      show _ = Formalism.HermitianLatticesTheory.majAt (Pi.basisFun K (Fin S.D)) S.XE v ((1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ x)
-        ((1 : Matrix (Fin S.D) (Fin S.D) K) *ᵥ y)
-      rw [Matrix.one_mulVec, Matrix.one_mulVec]
-  have hsand : (trivAmb S).SandAt (trivAmb S).ι0 (trivAmb S).ep0 (trivAmb S).h0 S.RR := by
-    refine ⟨?_, fun y hy => ?_⟩
-    · rw [trivAmb_img, hP1]
-      exact le_rfl
-    · rw [trivAmb_img]; rw [hP1] at hy
-      show ((1 : ℕ) : 𝓞 K) • y ∈ S.RR
-      rwa [Nat.cast_one, one_smul]
-  have hG : Real.log ((trivAmb S).G : ℝ) = 0 := by
-    show Real.log ((1 : ℕ) : ℝ) = 0
-    rw [Nat.cast_one, Real.log_one]
-  refine ⟨hX, hL, hemb, hemb, hsand, hsand, ⟨one_pos, le_rfl, one_pos, le_rfl, by rw [hG]; exact hla⟩,
-    ⟨?_, ?_⟩, ?_, ?_, ?_, ⟨one_pos, fun _ => ⟨?_, ?_⟩⟩, ⟨?_, ?_⟩⟩
-  · rw [hRP0, Fintype.sum_unique, hRs]
-  · rw [hRP1, Fintype.sum_unique, hRs]
-    show Formalism.HN.rkK S.RR = 1 * Formalism.HN.rkK S.RR
-    rw [one_mul]
-  · unfold LevelAmb.Deg0; rw [hRP0, Fintype.sum_unique, hRs, hG]; simp
-  · unfold LevelAmb.Deg1; rw [hRP1, Fintype.sum_unique, hRs, hG]
-    show ((1 : ℕ) : ℝ) * _ - _ ≤ _
-    simp
-  · unfold LevelAmb.MaxT; rw [hRP0, hRP1, hG]; simp
-  · show (1 - N.de) * (1 : ℝ) ≤ ((1 : ℕ) : ℝ)
-    push_cast; linarith
-  · show ((1 : ℕ) : ℝ) ≤ (1 + N.de) * (1 : ℝ)
-    push_cast; linarith
-  · rw [hRP0]; exact hne
-  · rw [hRP1]; exact hne
 
 end Trivial
 

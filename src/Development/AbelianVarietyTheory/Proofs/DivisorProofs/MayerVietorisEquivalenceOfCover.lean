@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMayerVietorisConnectingExactStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMayerVietorisConnectingExactStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 namespace GlobalTheory.MayerVietorisEqv
@@ -59,7 +64,7 @@ theorem a4 : GlobalTheory.EtC.A4 := by
     obtain ⟨c, hc0⟩ := ((hex f g hc m).2.2 _).1 ⟨k1, k2⟩
     obtain ⟨c', rfl⟩ := (hW m).2 c
     refine ⟨y + d f' g' hc' m c', ?_⟩
-    rw [map_add, hnat f g f' g' p u v hu hv hc hc' m c', hc0]
+    rw [map_add (f := _), hnat f g f' g' p u v hu hv hc hc' m c', hc0]
     abel
 
 end GlobalTheory.MayerVietorisEqv

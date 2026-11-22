@@ -1,6 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.L2LocalComponents.LocalComponents
-import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmpty
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CuspSmooth
+public import GroundTheory.AutomorphicForms.L2LocalComponents.Summand
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+public import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmpty
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -16,15 +24,11 @@ variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
 namespace CuspidalAutomorphicRepresentation
 
-variable {μ : Measure (Reduction.normOneGL K n)} [μ.IsHaarMeasure]
+variable {μ : Measure (Reduction.normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 def ofL2Summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V] (hV : (cuspRepT μ).IsInvariant V)
     (hirr : ((cuspRepT μ).restrict V hV).IsIrreducible) : CuspidalAutomorphicRepresentation K n :=
   ofSummand V hV hirr (summandCuspForms_ne_bot μ V hV hirr)
-
-@[simp] theorem carrier_ofL2Summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V]
-    (hV : (cuspRepT μ).IsInvariant V) (hirr : ((cuspRepT μ).restrict V hV).IsIrreducible) :
-    (ofL2Summand V hV hirr).carrier = summandCuspForms V := rfl
 
 theorem topologicalClosure_map_ofL2Summand (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V]
     (hV : (cuspRepT μ).IsInvariant V) (hirr : ((cuspRepT μ).restrict V hV).IsIrreducible) :
@@ -40,12 +44,7 @@ end CuspidalAutomorphicRepresentation
 
 open CuspidalAutomorphicRepresentation
 
-variable {μ : Measure (Reduction.normOneGL K n)} [μ.IsHaarMeasure]
-
-def L2SummandIsSupercuspidalAt (V : Submodule ℂ (CuspL2 μ)) [CompleteSpace V] (hV : (cuspRepT μ).IsInvariant V)
-    (hirr : ((cuspRepT μ).restrict V hV).IsIrreducible)
-    (v : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers K)) : Prop :=
-  (ofL2Summand V hV hirr).IsSupercuspidalAt v
+variable {μ : Measure (Reduction.normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
 end AutomorphicForm
 
@@ -55,7 +54,7 @@ open AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (μ : Measure (Reduction.normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (Reduction.normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 theorem exists_cuspForm_mem_of_ne_bot {W : Submodule ℂ (CuspL2 μ)} (hWc : IsClosed (W : Set (CuspL2 μ)))
     (hW : (cuspRepT μ).IsInvariant W) (hW0 : W ≠ ⊥) :

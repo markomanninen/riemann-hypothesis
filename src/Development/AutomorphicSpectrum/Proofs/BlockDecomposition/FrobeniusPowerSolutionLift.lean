@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -34,13 +38,15 @@ theorem solv_pow : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](S : Type
   have he : ∀ t, i (∑ j, a t j ^ p ^ K • s j - algebraMap A S (c t ^ p ^ K)) = 0 := by
     intro t
     have h1 := congrArg fB (hy t)
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     have h2 : ∀ j, fB (a t j • y j) = a t j ^ p ^ K • i (s j) := by
       intro j
       rw [hfB, smul_pow, hs]
     simp only [h2] at h1
     rw [hfB, ← map_pow] at h1
-    rw [map_sub, map_sum, AlgHom.commutes, sub_eq_zero, ← h1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, AlgHom.commutes, sub_eq_zero, ← h1]
     exact Finset.sum_congr rfl fun j _ => map_smul i _ _
   choose k₁ hk₁ using fun t => (hPQ.ker _).1 (he t)
   obtain ⟨L, hL⟩ : ∃ L, L = Finset.univ.sup k₁ := ⟨_, rfl⟩
@@ -52,7 +58,8 @@ theorem solv_pow : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](S : Type
   have hmem : (∑ j, a t j ^ p ^ K • s j - algebraMap A S (c t ^ p ^ K)) ^ p ^ L ∈ I := by
     rw [hpow, pow_mul]
     exact I.pow_mem_of_mem (hk₁ t) _ (pow_pos (Fact.out : p.Prime).pos _)
-  rw [← hfS, map_sub, map_sum] at hmem
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hfS, map_sub, map_sum] at hmem
   have h3 : ∀ j, fS (a t j ^ p ^ K • s j) = a t j ^ p ^ (K + L) • s j ^ p ^ L := by
     intro j
     rw [hfS, smul_pow, ← pow_mul, ← pow_add]

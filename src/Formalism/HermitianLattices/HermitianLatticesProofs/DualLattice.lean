@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+
+@[expose] public section
 
 open Module
 noncomputable section
@@ -37,7 +41,8 @@ theorem finitely_generated_projective_coords (L : Submodule R V) (hL : L.FG) (hK
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [← e1, e2]
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem dualLattice_basis [FiniteDimensional K V] (L : Submodule R V)
     (hsp : Submodule.span K (L : Set V) = ⊤) :
@@ -100,7 +105,8 @@ theorem dualLattice_expand {ι : Type*} [Fintype ι] [DecidableEq ι] (h : V →
   set z := x - ∑ j, h (b j) x • bs j with hzdef
   have hz : ∀ i, h (b i) z = 0 := by
     intro i
-    simp [z, map_sub, map_sum, map_smul, hbs, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [z, map_sub, map_sum, map_smul, hbs, smul_eq_mul]
   have hflip : h.flip z = 0 := b.ext fun i => by simp [hz i]
   have hz0 : z = 0 := hnd.2 z fun y => by simpa using LinearMap.congr_fun hflip y
   exact sub_eq_zero.mp hz0
@@ -119,7 +125,8 @@ theorem dualLattice_repr {ι : Type*} [Fintype ι] [DecidableEq ι] (h : V →�
     split_ifs <;> simp
   have hwb : ∀ i, h w (b i) = algebraMap R K (f ⟨b i, hb i⟩) := by
     intro i
-    simp [w, map_sum, LinearMap.map_smulₛₗ₂, hsym, starRingEnd_apply, star_star, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [w, map_sum, LinearMap.map_smulₛₗ₂, hsym, starRingEnd_apply, star_star, Algebra.smul_def]
   have hspL : Submodule.span R (Set.range b) ≤ L :=
     Submodule.span_le.mpr (by rintro _ ⟨i, rfl⟩; exact hb i)
   have hspan : ∀ z ∈ Submodule.span R (Set.range b), ∀ hz : z ∈ L,
@@ -137,7 +144,7 @@ theorem dualLattice_repr {ι : Type*} [Fintype ι] [DecidableEq ι] (h : V →�
     | add x y hx hy ihx ihy =>
       intro hxy
       have e : (⟨x + y, hxy⟩ : L) = ⟨x, hspL hx⟩ + ⟨y, hspL hy⟩ := rfl
-      rw [e, map_add, map_add, map_add, ihx (hspL hx), ihy (hspL hy)]
+      rw [e, map_add (f := _), map_add (f := _), map_add (f := _), ihx (hspL hx), ihy (hspL hy)]
     | smul r x hx ih =>
       intro hrx
       have e1 : h w (r • x) = algebraMap R K r * h w x := by
@@ -157,7 +164,15 @@ theorem dualLattice_repr {ι : Type*} [Fintype ι] [DecidableEq ι] (h : V →�
 
 end
 
-theorem dualLattice : DualLattice := by
+theorem dualLattice :
+    ∀ (R K V : Type) [CommRing R] [IsDedekindDomain R] [Field K] [StarRing K] [Algebra R K]
+    [IsFractionRing R K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module R V]
+    [IsScalarTower R K V] (h : V →ₗ⋆[K] V →ₗ[K] K), h.IsSymm → h.Nondegenerate →
+    (∀ r : R, star (algebraMap R K r) ∈ Set.range (algebraMap R K)) →
+    ∀ L : Submodule R V, Submodule.IsFullLattice K L →
+      Submodule.IsFullLattice K (dual h L) ∧ dual h (dual h L) = L ∧
+      ∀ a : K, a ≠ 0 → dual h (L.map ((LinearMap.lsmul K V a).restrictScalars R)) =
+        (dual h L).map ((LinearMap.lsmul K V (star a)⁻¹).restrictScalars R) := by
   intro R K V _ _ _ _ _ _ _ _ _ _ _ h hs hnd hst L hL
   classical
   have mem_dual : ∀ (M : Submodule R V) (x : V),
@@ -165,8 +180,8 @@ theorem dualLattice : DualLattice := by
     intro M x
     simp only [dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
       LinearMap.restrictScalars_apply, Submodule.mem_one]
-  have hLfg := hL.fg
-  have hLsp := hL.span_eq_top
+  have hLfg := Submodule.IsLattice.fg K L
+  have hLsp := Submodule.IsFullLattice.span_eq_top (A := K) (M := L)
   obtain ⟨s, hfs, b, hbi, hsL⟩ := dualLattice_basis (R := R) L hLsp
   have hbL : ∀ i, b i ∈ L := fun i => hsL (by rw [hbi]; exact i.2)
   obtain ⟨bs, hbs⟩ := dualLattice_dualBasis h hnd b
@@ -190,7 +205,7 @@ theorem dualLattice : DualLattice := by
       intro j
       obtain ⟨r1, hr1⟩ := ihx j
       obtain ⟨r2, hr2⟩ := ihy j
-      exact ⟨r1 + r2, by rw [map_add, hr1, hr2, map_add, LinearMap.add_apply]⟩
+      exact ⟨r1 + r2, by rw [map_add (f := _), hr1, hr2, map_add (f := _), LinearMap.add_apply]⟩
     | smul r x _ ih =>
       intro j
       obtain ⟨r1, hr1⟩ := ih j
@@ -233,7 +248,7 @@ theorem dualLattice : DualLattice := by
     intro x _
     rw [hexp x]
     exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hbsK j)
-  refine ⟨⟨hfg, hspd⟩, ?_, ?_⟩
+  refine ⟨{ toIsLattice := Submodule.IsLattice.of_fg K hfg, span_eq_top := hspd }, ?_, ?_⟩
   ·
     refine le_antisymm ?_ ((dualBasic R K V h hs hst).2.1 L)
     obtain ⟨n, g, f, hgf⟩ := finitely_generated_projective_coords L hLfg (IsFractionRing.injective R K)

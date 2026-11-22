@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSum
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSum
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -6,17 +10,6 @@ open MeasureTheory Filter Topology
 open scoped ComplexConjugate
 
 noncomputable section
-
-def FOURMulStatement (f : ℕ) : Prop :=
-  ∀ (Ω : Set (Fin f → ℝ)) (h1 h2 : (Fin f → ℂ) → ℂ),
-    IsOpen Ω → DifferentiableOn ℂ h1 (tube f Ω) → DifferentiableOn ℂ h2 (tube f Ω) →
-    (∀ s ∈ tube f Ω, ∀ m : Fin f → ℤ, h1 (s + fun k => (m k : ℂ)) = h1 s) →
-    (∀ s ∈ tube f Ω, ∀ m : Fin f → ℤ, h2 (s + fun k => (m k : ℂ)) = h2 s) →
-    ∀ b ∈ Ω,
-    Summable (fun ν : Fin f → ℤ => ‖fourCoeff h1 b ν‖) →
-    Summable (fun ν : Fin f → ℤ => ‖fourCoeff h2 b ν‖) →
-    ∀ ν : Fin f → ℤ,
-      fourCoeff (h1 * h2) b ν = ∑' ν' : Fin f → ℤ, fourCoeff h1 b ν' * fourCoeff h2 b (ν - ν')
 
 def FOURMulStatement' (f : ℕ) : Prop :=
   ∀ (Ω : Set (Fin f → ℝ)) (h1 h2 : (Fin f → ℂ) → ℂ),
@@ -26,14 +19,6 @@ def FOURMulStatement' (f : ℕ) : Prop :=
     ∀ b ∈ Ω, ∀ ν : Fin f → ℤ,
       HasSum (fun ν' : Fin f → ℤ => fourCoeff h1 b ν' * fourCoeff h2 b (ν - ν'))
         (fourCoeff (h1 * h2) b ν)
-
-def FOURMulSuppStatement (f : ℕ) : Prop :=
-  ∀ (Ω : Set (Fin f → ℝ)) (h1 h2 : (Fin f → ℂ) → ℂ),
-    IsOpen Ω → DifferentiableOn ℂ h1 (tube f Ω) → DifferentiableOn ℂ h2 (tube f Ω) →
-    (∀ s ∈ tube f Ω, ∀ m : Fin f → ℤ, h1 (s + fun k => (m k : ℂ)) = h1 s) →
-    (∀ s ∈ tube f Ω, ∀ m : Fin f → ℤ, h2 (s + fun k => (m k : ℂ)) = h2 s) →
-    ∀ b ∈ Ω, ∀ ν : Fin f → ℤ, fourCoeff (h1 * h2) b ν ≠ 0 →
-      ∃ ν1 ν2, ν1 + ν2 = ν ∧ fourCoeff h1 b ν1 ≠ 0 ∧ fourCoeff h2 b ν2 ≠ 0
 
 local instance : MeasureSpace UnitAddCircle := ⟨AddCircle.haarAddCircle⟩
 
@@ -67,7 +52,7 @@ theorem fm_conv {f : ℕ} (F1 F2 : C(UnitAddTorus (Fin f), ℂ)) (ν : Fin f →
     ((UnitAddTorus.mFourier (-ν) * F2).toLp 2 volume ℂ)
   have H2 : HasSum (fun i => UnitAddTorus.mFourierCoeff (⇑F1) (-i) *
       UnitAddTorus.mFourierCoeff (⇑F2) (i + ν)) (UnitAddTorus.mFourierCoeff (⇑F1 * ⇑F2) ν) := by
-    convert H using 1
+    convert (preTransparency := .reducible) H using 1
     · funext i
       rw [UnitAddTorus.mFourierCoeff_toLp, UnitAddTorus.mFourierCoeff_toLp, fm_coeff_star,
         fm_coeff_shift]
@@ -112,8 +97,8 @@ theorem four_mul' (f : ℕ) : FOURMulStatement' f := by
     intro x
     show (fun k => ((x k : ℂ) + (b k : ℂ) * Complex.I).im) ∈ Ω
     convert hb using 1
-    funext k
-    simp
+    ext k
+    simp [Complex.add_im]
   have hc : ∀ hh : (Fin f → ℂ) → ℂ, DifferentiableOn ℂ hh (tube f Ω) →
       Continuous (fmLine hh b) := by
     intro hh hd
@@ -129,9 +114,10 @@ theorem four_mul' (f : ℕ) : FOURMulStatement' f := by
     have := hp _ (hmem x) n
     simp only [fmLine]
     convert this using 2
-    funext k
-    simp only [Pi.add_apply]
-    push_cast
+    ext k
+    simp only [Pi.add_apply, Complex.ofReal_add]
+    have hn : ((n k : ℝ) : ℂ) = (n k : ℂ) := by norm_cast
+    rw [hn]
     ring
   have hper12 : ∀ x (n : Fin f → ℤ),
       fmLine (h1 * h2) b (x + fun i => (n i : ℝ)) = fmLine (h1 * h2) b x := by
@@ -152,30 +138,12 @@ theorem four_mul' (f : ℕ) : FOURMulStatement' f := by
         Complex.exp (2 * Real.pi * ∑ k, ((ν - ν') k : ℂ) * (b k : ℂ)) := by
     rw [← Complex.exp_add, ← mul_add, ← Finset.sum_add_distrib]
     congr 3
-    funext k
+    ext k
     simp only [Pi.sub_apply, Int.cast_sub]
     ring
   rw [hE]
   simp only [F1, F2, ContinuousMap.coe_mk]
   ring
-
-theorem four_mul (f : ℕ) : FOURMulStatement f := by
-  intro Ω h1 h2 hΩ hd1 hd2 hp1 hp2 b hb _ _ ν
-  exact (four_mul' f Ω h1 h2 hΩ hd1 hd2 hp1 hp2 b hb ν).tsum_eq.symm
-
-theorem four_mul_supp (f : ℕ) : FOURMulSuppStatement f := by
-  intro Ω h1 h2 hΩ hd1 hd2 hp1 hp2 b hb ν hne
-  by_contra hno
-  push Not at hno
-  have H := four_mul' f Ω h1 h2 hΩ hd1 hd2 hp1 hp2 b hb ν
-  have hz : ∀ ν' : Fin f → ℤ, fourCoeff h1 b ν' * fourCoeff h2 b (ν - ν') = 0 := by
-    intro ν'
-    by_cases h0 : fourCoeff h1 b ν' = 0
-    · rw [h0, zero_mul]
-    · rw [hno ν' (ν - ν') (by abel) h0, mul_zero]
-  have H0 : HasSum (fun ν' : Fin f → ℤ => fourCoeff h1 b ν' * fourCoeff h2 b (ν - ν')) 0 := by
-    simp [hz]
-  exact hne (H.unique H0)
 
 end
 

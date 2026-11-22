@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ variable {D : D7}
 theorem cA_cA (z : AE D) : cA D (cA D z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => rw [RingHom.map_zero, RingHom.map_zero]
-  | add x y hx hy => rw [RingHom.map_add, RingHom.map_add, hx, hy]
+  | add x y hx hy => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), hx, hy]
   | tmul a x =>
     change a ⊗ₜ[D.host.F] star (star x) = _
     rw [star_star]
@@ -62,7 +66,7 @@ theorem idem_facts : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolog
         q.v ≠ q'.v → (q.e + cA D q.e) * (q'.e + cA D q'.e) = 0 := by
   intro D k _ _ _ _ q
   obtain ⟨ε, hε, heq⟩ := q.above
-  refine ⟨by rw [map_add, cA_cA, add_comm], fun P hP m n w hw => ⟨fun i j => ?_, ?_⟩,
+  refine ⟨by rw [map_add (f := _), cA_cA, add_comm], fun P hP m n w hw => ⟨fun i j => ?_, ?_⟩,
     fun k' _ _ _ _ q' hv => ?_⟩
   · rw [← hw i j, heq]
     exact Ideal.mul_mem_right _ _ (placeIdem_mem_idAt hε hP)

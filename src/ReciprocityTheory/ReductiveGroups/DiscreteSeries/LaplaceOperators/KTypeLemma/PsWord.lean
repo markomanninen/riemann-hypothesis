@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TransferStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousOnFderivPhiP
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ variable {n : ℕ}
 
 local notation "𝕄" => Fin n → Fin n → ℂ
 local notation "MM" => Matrix (Fin n) (Fin n) ℂ
-local notation "WW" => ((Fin n → Fin n → ℂ) × (Fin n → Fin n → ℂ)) × (Fin n → Fin n → ℂ)
+local notation "WW" => (𝕄 × 𝕄) × 𝕄
 
 def mmul (A B : 𝕄) : 𝕄 := Matrix.of A * Matrix.of B
 
@@ -33,7 +37,7 @@ lemma continuous_mmul {X : Type*} [TopologicalSpace X] {f g : X → 𝕄} (hf : 
     (hg : Continuous g) : Continuous fun x => mmul (f x) (g x) := by
   refine continuous_pi fun a => continuous_pi fun b => ?_
   simp only [mmul, Matrix.mul_apply, Matrix.of_apply]
-  exact continuous_finset_sum _ fun c _ =>
+  exact continuous_finsetSum _ fun c _ =>
     ((continuous_apply c).comp ((continuous_apply a).comp hf)).mul
       ((continuous_apply b).comp ((continuous_apply c).comp hg))
 
@@ -41,14 +45,6 @@ lemma diffAt {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [NormedAdd
     [NormedSpace ℂ F] {f : E → F} {s : Set E} {x : E} (h : ContDiffOn ℂ ω f s) (hs : IsOpen s)
     (hx : x ∈ s) : DifferentiableAt ℂ f x := by
   exact (h.contDiffAt (hs.mem_nhds hx)).differentiableAt (by simp)
-
-lemma contDiffAt_zpow {X : Type*} [NormedAddCommGroup X] [NormedSpace ℂ X] {f : X → ℂ} {x : X}
-    (hf : ContDiffAt ℂ ω f x) (hx : f x ≠ 0) (m : ℤ) : ContDiffAt ℂ ω (fun y => f y ^ m) x := by
-  rcases Int.eq_nat_or_neg m with ⟨k, rfl | rfl⟩
-  · simp only [zpow_natCast]
-    exact hf.pow k
-  · simp only [_root_.zpow_neg, zpow_natCast]
-    exact (hf.pow k).inv (pow_ne_zero _ hx)
 
 private theorem contDiff_det_k_type {m : ℕ} {k : WithTop ℕ∞} :
     ContDiff ℂ k (fun z : Fin m → Fin m → ℂ => Matrix.det z) := by
@@ -166,14 +162,6 @@ lemma hasFDerivAt_G (T : KType ε Λ) (μ : Fin n → ℤ) (D : List MM) (k : KG
     (hx : psi k x ∈ (Om : Set WW)) : HasFDerivAt (fun y => G T μ D y k) (G' T μ D x k) x := by
   exact ((diffAt (contDiffOn_Fw μ D) isOpen_Om hx).hasFDerivAt.comp x
     (hasFDerivAt_psi k x)).smul_const _
-
-lemma continuousOn_G (T : KType ε Λ) (μ : Fin n → ℤ) (D : List MM) :
-    ContinuousOn (fun p : 𝕄 × KG ε => G T μ D p.1 p.2) (Ps1.Uset ε ×ˢ Set.univ) := by
-  have hop : Continuous fun k : KG ε => T.op k := continuous_subtype_val.comp T.cont
-  have hC : Continuous fun k : KG ε => T.op k * projW T * T.op k⁻¹ :=
-    (hop.mul continuous_const).mul (hop.comp continuous_inv)
-  exact ((contDiffOn_Fw μ D).continuousOn.comp continuous_psi.continuousOn
-    (fun ⦃p⦄ hp => hp.1 p.2)).smul (hC.comp continuous_snd).continuousOn
 
 lemma continuousOn_G' (T : KType ε Λ) (μ : Fin n → ℤ) (D : List MM) :
     ContinuousOn (fun p : 𝕄 × KG ε => G' T μ D p.1 p.2) (Ps1.Uset ε ×ˢ Set.univ) := by

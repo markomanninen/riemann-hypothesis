@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ namespace GlobalTheory.JSW
 
 open GlobalTheory.CuspRep
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def rsTerm {a b : ℕ} (σ : CG E a) (σ' : CG E b) (x : ℝ) (w : HeightOneSpectrum (𝓞 E)) (r : ℕ) : ℂ :=
   ((sat σ w).map fun α => (α : ℂ) ^ (r + 1)).sum * ((sat σ' w).map fun β => (starRingEnd ℂ (β : ℂ)) ^ (r + 1)).sum *

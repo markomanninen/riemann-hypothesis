@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiscreteSeriesModelOfDualParameter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ComplexConjugationMapsMultiplicitySpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,19 +31,20 @@ theorem comp_update [DecidableEq ι] (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd �
     (fun j => c j (Function.update v i x j)) = Function.update (fun j => c j (v j)) i (c i x) :=
   funext fun j => Function.apply_update (fun j => (c j : X₁ j → X j)) v i x j
 
-def cmul (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd ℂ] X i) : MultilinearMap ℂ X₁ (Tw (⨂[ℂ] i, X i)) where
+def cmul (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd ℂ] X i) :
+    MultilinearMap (RingHom.id ℂ) X₁ (Tw (⨂[ℂ] i, X i)) where
   toFun v := (PiTensorProduct.tprod ℂ (fun i => c i (v i)) : ⨂[ℂ] i, X i)
   map_update_add' v i x y := by
     classical
     show PiTensorProduct.tprod ℂ (fun j => c j (Function.update v i (x + y) j)) =
       PiTensorProduct.tprod ℂ (fun j => c j (Function.update v i x j)) +
         PiTensorProduct.tprod ℂ (fun j => c j (Function.update v i y j))
-    rw [comp_update, comp_update, comp_update, map_add, MultilinearMap.map_update_add]
+    rw [comp_update, comp_update, comp_update, map_add (f := _), MultilinearMap.map_update_add]
   map_update_smul' v i a x := by
     classical
     show PiTensorProduct.tprod ℂ (fun j => c j (Function.update v i (a • x) j)) =
       (starRingEnd ℂ a) • PiTensorProduct.tprod ℂ (fun j => c j (Function.update v i x j))
-    rw [comp_update, comp_update, map_smulₛₗ, MultilinearMap.map_update_smul]
+    rw [comp_update, comp_update, map_smulₛₗ, MultilinearMap.map_update_smul, RingHom.id_apply]
 
 def kapF (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd ℂ] X i) : (⨂[ℂ] i, X₁ i) →+ ⨂[ℂ] i, X i where
   toFun x := (PiTensorProduct.lift (cmul c) x : Tw (⨂[ℂ] i, X i))
@@ -62,7 +67,7 @@ theorem kapF_symm (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd ℂ] X i) (x : ⨂[�
     kapF (fun i => (c i).symm) (kapF c x) = x := by
   induction x using PiTensorProduct.induction_on with
   | smul_tprod r f => rw [kapF_smul, kapF_smul, kapF_tprod, kapF_tprod]; simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 def kap (c : ∀ i, X₁ i ≃ₛₗ[starRingEnd ℂ] X i) : (⨂[ℂ] i, X₁ i) ≃+ ⨂[ℂ] i, X i where
   toFun := kapF c
@@ -127,7 +132,7 @@ theorem incl_kap (θ : InfFam D) (M : DSModel V S) (x : SmT (conjModel M)) :
     rw [kap_smul, map_smul, map_smul, kap_smul, kap_tprod, inclT, inclT, PiTensorProduct.map_tprod,
       PiTensorProduct.map_tprod, kap_tprod]
     rfl
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem act_kap (M : DSModel V S) (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) (Fin V.rank) ℂ)
     (z : ⨂[ℂ] ρ, (conjModel M).H ρ) :
@@ -145,7 +150,7 @@ theorem act_kap (M : DSModel V S) (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) 
       exact rep_conjModel M ρ g (f ρ)
     · simp only [Function.update_of_ne h]
       rfl
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem ell_kap (M : DSModel V S) (w₁ : ∀ τ, (conjModel M).H τ) (z : ⨂[ℂ] ρ, (conjModel M).H ρ) :
     ellT (conjModel M) w₁ z = starRingEnd ℂ (ellT M (fun τ => cM M τ (w₁ τ)) (kap (chs M) z)) := by
@@ -158,7 +163,7 @@ theorem ell_kap (M : DSModel V S) (w₁ : ∀ τ, (conjModel M).H τ) (z : ⨂[�
     refine Finset.prod_congr rfl fun ρ _ => ?_
     change ⟪(cM M ρ (f ρ) : M.H ρ), cM M ρ (w₁ ρ)⟫_ℂ = starRingEnd ℂ ⟪(cM M ρ (w₁ ρ) : M.H ρ), cM M ρ (f ρ)⟫_ℂ
     exact (inner_conj_symm (𝕜 := ℂ) _ _).symm
-  | add x y hx hy => rw [map_add, map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 end Model
 
@@ -240,8 +245,8 @@ theorem mult_fw (θ : InfFam D) (M : DSModel V S) : ∀ F ∈ MultT θ M ∅ 1, 
     rw [hv f (fun i => csm θ M i (f i)) (fun τ => rfl) g]
     rfl
   | add x y hx hy =>
-    rw [map_add, map_add, map_add]
-    simp only [Pi.add_apply, LinearMap.add_apply, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]
+    simp only [Pi.add_apply, LinearMap.add_apply, map_add (f := _), hx, hy]
 
 theorem mult_bw (θ : InfFam D) (M : DSModel V S) : ∀ F₁ ∈ MultT θ (conjModel M) ∅ 1, ∃ F ∈ MultT θ M ∅ 1,
     ∀ x g, F₁ x g = starRingEnd ℂ (F (kap (csm θ M) x) g) := by
@@ -264,19 +269,19 @@ theorem mult_bw (θ : InfFam D) (M : DSModel V S) : ∀ F₁ ∈ MultT θ (conjM
     rw [hv (fun i => csm θ M i (f i)) f (fun τ => by simp [csm_val]) g]
     simp [PiTensorProduct.lift_symm]
   | add x y hx hy =>
-    rw [map_add, map_add, map_add]
-    simp only [Pi.add_apply, LinearMap.add_apply, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]
+    simp only [Pi.add_apply, LinearMap.add_apply, map_add (f := _), hx, hy]
 
 theorem modelTr_conjModel (θ : InfFam D) (M : DSModel V S) :
-    ModelTr (starRingEnd ℂ) false θ (V := V) (conjModel M) M (kap (csm θ M)) where
-  smul c x := kap_smul _ c x
-  cart τ := cart_conjModel M τ
-  act τ g _ x y := act_iff θ M τ g x y
-  der τ Y _ x y := der_iff θ M τ Y x y
-  ell w₁ := ell_field θ M w₁
-  vec v₁ := ⟨fun τ => csm θ M τ (v₁ τ), kap_tprod _ _, fun τ => rfl⟩
-  mult := mult_fw θ M
-  mult' := mult_bw θ M
+    ModelTr (starRingEnd ℂ) false θ (V := V) (conjModel M) M (kap (csm θ M)) :=
+  { smul := fun c x => kap_smul _ c x,
+    cart := cart_conjModel M,
+    act := fun τ g _ x y => act_iff θ M τ g x y,
+    der := fun τ Y _ x y => der_iff θ M τ Y x y,
+    ell := ell_field θ M,
+    vec := fun v₁ => ⟨fun τ => csm θ M τ (v₁ τ), kap_tprod _ _, fun _ => rfl⟩,
+    mult := mult_fw θ M,
+    mult' := mult_bw θ M }
 
 end Main
 

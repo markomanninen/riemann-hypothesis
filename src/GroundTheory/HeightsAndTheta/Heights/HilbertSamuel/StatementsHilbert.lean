@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
 
-open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR
+open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR Classical
 
 noncomputable section
 
@@ -28,8 +33,8 @@ def modMultAt {R : Type*} [CommRing R] (M : Type*) [AddCommGroup M] [Module (MRi
     (W : Ideal (MRing ι R)) [W.IsPrime] : ℕ∞ :=
   Module.length (Localization.AtPrime W) (LocalizedModule W.primeCompl M)
 
-open Classical in
 
+open Classical in
 def topCycleNum (F : Type*) [Field F] (ι : K → Type*) (M : Type*) [AddCommGroup M] [Module (MRing ι F) M] (d : ℕ) (bs : Fin d → K → ℤ) :
     ℤ :=
   ∑ᶠ W : Ideal (MRing ι F),
@@ -88,8 +93,6 @@ def HilbertModule.AtDim (d : ℕ) : Prop :=
           (topCycleNum F ι M d (fun _ : Fin d => fun k => (a k : ℤ)) : ℝ) / d.factorial| ≤
         C * ((∑ k, (a k : ℝ)) + 1) ^ ((d : ℝ) - 1)
 
-def HilbertModule.Statement : Prop := ∀ d : ℕ, HilbertModule.AtDim.{u, v} d
-
 def ModulesFromPrimes.Statement : Prop :=
   ∀ d : ℕ, (∀ e ≤ d, HilbertPrime.AtDim.{u} e) → HilbertModule.AtDim.{u, v} d
 
@@ -104,8 +107,8 @@ def HilbertIncrement.Statement : Prop :=
             d.factorial| ≤
         C * ((∑ k, (a k : ℝ)) + 1) ^ ((d : ℝ) - 1)
 
-open Classical in
 
+open Classical in
 def IntersectionRecursion.Statement : Prop :=
   ∀ (F : Type u) [Field F] (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type)
     [∀ k, Fintype (ι k)] (q : Ideal (MRing ι F)) (d : ℕ), IsMultiProjPrime q →
@@ -155,19 +158,16 @@ def intWeight : (Σ k, ι k) → K → ℤ := fun v => unitDeg v.1
 def ringPiece (m : K → ℤ) : Submodule F (MRing ι F) :=
   weightedHomogeneousSubmodule F (intWeight (ι := ι)) m
 
-omit [∀ k, Fintype (ι k)] in
 
-theorem isMultigrading_ring : IsMultigrading ι (MRing ι F) (ringPiece (F := F) (ι := ι)) where
-  internal := (weightedDecomposition F (intWeight (ι := ι))).isInternal
-  smul_mem := by
-    intro v m x hx
-    rw [smul_eq_mul]
-    have hX : IsWeightedHomogeneous (intWeight (ι := ι)) (X v : MRing ι F) (unitDeg v.1) :=
-      isWeightedHomogeneous_X F _ v
-    have := hX.mul hx
-    change X v * x ∈ weightedHomogeneousSubmodule F intWeight (m + unitDeg v.1)
-    rw [mem_weightedHomogeneousSubmodule, add_comm]
-    exact this
+omit [∀ k, Fintype (ι k)] in
+theorem isMultigrading_ring : IsMultigrading ι (MRing ι F) (ringPiece (F := F) (ι := ι)) := by
+  refine ⟨(weightedDecomposition F (intWeight (ι := ι))).isInternal, ?_⟩
+  intro v m x hx
+  change IsWeightedHomogeneous (intWeight (ι := ι)) x m at hx
+  rw [smul_eq_mul]
+  change IsWeightedHomogeneous (intWeight (ι := ι)) (X v * x) (m + unitDeg v.1)
+  rw [add_comm m (unitDeg v.1)]
+  exact (isWeightedHomogeneous_X F (intWeight (ι := ι)) v).mul hx
 
 end Examples
 

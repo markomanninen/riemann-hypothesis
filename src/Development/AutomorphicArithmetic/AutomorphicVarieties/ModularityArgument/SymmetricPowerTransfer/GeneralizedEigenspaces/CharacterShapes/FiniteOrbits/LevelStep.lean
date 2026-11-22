@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinToAF
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinToAF
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ private theorem finOrb_sub {G : Type} [Group G] (U H : Subgroup G) (x : H)
 section
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-private theorem fin_uniq (f f' : finU L 3) (k k' : UA L 3) (hk : k ∈ infU L 3) (hk' : k' ∈ infU L 3)
+private theorem fin_uniq (f f' : finU (E := L) (n := 3)) (k k' : UA L 3) (hk : k ∈ infU L 3) (hk' : k' ∈ infU L 3)
     (he : (f : UA L 3) * k = (f' : UA L 3) * k') : f = f' ∧ k = k' := by
   obtain ⟨-, -, -, -, hext, hfi, -, -⟩ := Br.uaFacts L 3
   have hff : (f : UA L 3) = f' := by
@@ -62,7 +66,7 @@ private theorem inf_eq (B : Bridge L) (j : ℕ) (γ : U3 B.Δ) (k : UA L 3)
 private theorem left_step (B : Bridge L) (hB : B.Ok) (A : SD B.Δ) (j : ℕ) (ch : Lp L → ℂ)
     (C : Base (U3 B.Δ) (GA B.Δ) (Wt.VG (InfinitePlace L) j)) (s : C.Tw) (hBG : A.dat.IsBG ch C s)
     (hW : C.W = Wt.cG (em B) j) (ψ : GA B.Δ → Wt.VG (InfinitePlace L) j) (hψ : ψ ∈ C.Forms)
-    (f : finU L 3) (k : UA L 3) (hk : k ∈ infU L 3) (hfk : (f : UA L 3) * k ∈ ratU L 3) (g : finU L 3) :
+    (f : finU (E := L) (n := 3)) (k : UA L 3) (hk : k ∈ infU L 3) (hfk : (f : UA L 3) * k ∈ ratU L 3) (g : finU (E := L) (n := 3)) :
     ψ (B.bG.symm (f * g)) = Wt.repG _ j (infC L 3 k) (ψ (B.bG.symm g)) := by
   obtain ⟨γ, hγ⟩ : ∃ γ : U3 B.Δ, (B.rG γ : UA L 3) = f * k :=
     ⟨B.rG.symm ⟨_, hfk⟩, by rw [MulEquiv.apply_symm_apply]⟩
@@ -74,10 +78,10 @@ private theorem left_step (B : Bridge L) (hB : B.Ok) (A : SD B.Δ) (j : ℕ) (ch
   rw [h1, map_mul, MulEquiv.symm_apply_apply, hg0, hψ.1, hW, inf_eq B j γ k hτ]
 
 private theorem level_step (B : Bridge L) (A : SD B.Δ) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w))
-    (hlG : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall L 3) S VL) (j : ℕ) (ch : Lp L → ℂ)
+    (hlG : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall (L := L) 3) S VL) (j : ℕ) (ch : Lp L → ℂ)
     (C : Base (U3 B.Δ) (GA B.Δ) (Wt.VG (InfinitePlace L) j)) (s : C.Tw) (hBG : A.dat.IsBG ch C s)
     (ψ : GA B.Δ → Wt.VG (InfinitePlace L) j) (hψ : ψ ∈ C.Forms)
-    (u : finU L 3) (hu : (u : UA L 3) ∈ lev (Kall L 3) S VL) (g : finU L 3) :
+    (u : finU (E := L) (n := 3)) (hu : (u : UA L 3) ∈ lev (Kall (L := L) 3) S VL) (g : finU (E := L) (n := 3)) :
     ψ (B.bG.symm (g * u)) = ψ (B.bG.symm g) := by
   have hm : B.bG.symm u ∈ C.U := by
     rw [hBG.U, hlG, MulEquiv.apply_symm_apply]
@@ -111,7 +115,7 @@ private theorem ddf_ne {B : Bridge L} (T : Spl B) (w : Plc L) (h : IsSplitAt w) 
 private theorem is_el {B : Bridge L} (T : Spl B) (S : Finset (Plc L)) (A : SD B.Δ)
     (hEl : ∀ (g : GA B.Δ) d, A.IsElG g d ↔ OnS S (B.bG g : UA L 3) ∧ ∀ w ∈ S, ∀ h, cLoc w (B.bG g : UA L 3) = Sig.dg fun i => iu T w h (d (un w) i))
     (hpl : Places (S : Set (Plc L))) (w : Plc L) (hw : w ∈ S) (h : IsSplitAt w) (d : Fin 3 → (Kw w)ˣ)
-    (x : finU L 3) (hx : (x : UA L 3) = secW 3 w (Sig.dg d)) : A.IsElG (B.bG.symm x) (ddf T w h d) := by
+    (x : finU (E := L) (n := 3)) (hx : (x : UA L 3) = secW 3 w (Sig.dg d)) : A.IsElG (B.bG.symm x) (ddf T w h d) := by
   obtain ⟨hsec, -⟩ := Br.uaFacts L 3
   have hloc := (hsec w h).1 (Sig.dg d)
   have hc := (hsec w h).2.1 (Sig.dg d)
@@ -184,7 +188,7 @@ private theorem dc_step {G G' V : Type} [Group G] [Group G'] [AddCommGroup V] [M
   simpa using this.symm
 
 private theorem lev_G (B : Bridge L) (hB : B.Ok) (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ)
-    (hA : A.Ok) (hF : Fit T S VL A) : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall L 3) S VL :=
+    (hA : A.Ok) (hF : Fit T S VL A) : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall (L := L) 3) S VL :=
   (So.levG L B hB T S VL A hA hF).1
 
 private theorem lev_El (B : Bridge L) (hB : B.Ok) (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ)
@@ -198,7 +202,7 @@ private theorem lev_Ex (B : Bridge L) (hB : B.Ok) (T : Spl B) (S : Finset (Plc L
 
 private theorem eig_fin (B : Bridge L) (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ)
     (hF : Fit T S VL A)
-    (hlG : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall L 3) S VL)
+    (hlG : ∀ g : GA B.Δ, g ∈ A.dat.UG ↔ (B.bG g : UA L 3) ∈ lev (Kall (L := L) 3) S VL)
     (hEl : ∀ (g : GA B.Δ) d, A.IsElG g d ↔ OnS S (B.bG g : UA L 3) ∧ ∀ w ∈ S, ∀ h, cLoc w (B.bG g : UA L 3) = Sig.dg fun i => iu T w h (d (un w) i))
     (hEx : ∀ w (h : IsSplitAt w) (n : ℕ) (ψ : Fin n → (Kw w)ˣ →* ℂˣ) (d : Fin n → (Kv (un w))ˣ), n = 2 ∨ n = 3 →
       expo ψ (fun i => iu T w h (d i)) = expo (fun i => (ψ i).comp (iu T w h)) d)
@@ -206,21 +210,21 @@ private theorem eig_fin (B : Bridge L) (T : Spl B) (S : Finset (Plc L)) (VL : �
     (ψ : GA B.Δ → Wt.VG (InfinitePlace L) j) (hψ : ψ ∈ C.Forms)
     (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)) (hab : FitCh T S a b) (hE : A.EigG ψ b)
     (w : Plc L) (hw : w ∈ S) (h : IsSplitAt w) (d : Fin 3 → (Kw w)ˣ) (hd : Sig.SDom d)
-    (x : finU L 3) (hx : (x : UA L 3) = secW 3 w (Sig.dg d))
-    (hfo : UpperTheory.V.AlgebraTools.FinOrb ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) x) :
-    dcF ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) x (fun y => ψ (B.bG.symm y)) =
+    (x : finU (E := L) (n := 3)) (hx : (x : UA L 3) = secW 3 w (Sig.dg d))
+    (hfo : UpperTheory.V.AlgebraTools.FinOrb ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) x) :
+    dcF ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) x (fun y => ψ (B.bG.symm y)) =
       expo ![a w, 1, (a w)⁻¹] d • (fun y => ψ (B.bG.symm y)) := by
   have hg := is_el T S A hEl hF.pl w hw h d x hx
-  have hcomap : ((lev (Kall L 3) S VL).subgroupOf (finU L 3)).comap B.bG.toMonoidHom = A.dat.UG := by
+  have hcomap : ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))).comap B.bG.toMonoidHom = A.dat.UG := by
     ext g
     rw [Subgroup.mem_comap, Subgroup.mem_subgroupOf, hlG]
     rfl
   have hE' := hE _ _ (dom_ddf T A w h d hd) hg
   rw [ex_ddf T S VL A hF a b hab hEx w hw h d] at hE'
-  have hfo2 : UpperTheory.V.AlgebraTools.FinOrb ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) (B.bG (B.bG.symm x)) := by
+  have hfo2 : UpperTheory.V.AlgebraTools.FinOrb ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) (B.bG (B.bG.symm x)) := by
     rw [MulEquiv.apply_symm_apply]
     exact hfo
-  have hstep := dc_step B.bG ((lev (Kall L 3) S VL).subgroupOf (finU L 3)) A.dat.UG hcomap ψ (B.bG.symm x) _ hfo2
+  have hstep := dc_step B.bG ((lev (Kall (L := L) 3) S VL).subgroupOf (finU (E := L) (n := 3))) A.dat.UG hcomap ψ (B.bG.symm x) _ hfo2
     (fun u hu g => level_step B A S VL hlG j ch C s hBG ψ hψ u (Subgroup.mem_subgroupOf.1 hu) g) hE'
   rw [MulEquiv.apply_symm_apply] at hstep
   exact hstep
@@ -234,7 +238,7 @@ theorem UpperTheory.V.Z.Sym.So.outG :
   have hlG := lev_G B hB T S VL A hA hF
   have hEl := lev_El B hB T S VL A hA hF
   have hExpo := lev_Ex B hB T S VL A hA hF
-  have hU : lev (Kall L 3) S VL ≤ finU L 3 := inf_le_left.trans inf_le_left
+  have hU : lev (Kall (L := L) 3) S VL ≤ finU (E := L) (n := 3) := inf_le_left.trans inf_le_left
   have hf := So.finToAF L 3 (Wt.VG (InfinitePlace L) j) (Wt.repG _ j) _ hU (fun x => ψ (B.bG.symm x))
     (fun f k hk hfk g => left_step B hB A j ch C s hBG hW ψ hψ f k hk hfk g)
     (fun u hu g => level_step B A S VL hlG j ch C s hBG ψ hψ u hu g)
@@ -247,11 +251,11 @@ theorem UpperTheory.V.Z.Sym.So.outG :
     simpa using h1.symm
   · intro w hw d hd
     have h := hF.pl.split w hw
-    have hx0 : secW 3 w (Sig.dg d) ∈ finU L 3 := ((hsec w h).1 _).1
-    have hat := So.dcAt L 3 (Kall L 3) S VL hF.pl w hw ⟨le_rfl, fun _ _ => inf_le_right⟩ d
+    have hx0 : secW 3 w (Sig.dg d) ∈ finU (E := L) (n := 3) := ((hsec w h).1 _).1
+    have hat := So.dcAt L 3 (Kall (L := L) 3) S VL hF.pl w hw ⟨le_rfl, fun _ _ => inf_le_right⟩ d
     have hfo := hat.1
     refine (hat.2 _ φ hAF.level _).2 ?_
     exact hdc ⟨_, hx0⟩ _ hfo (eig_fin B T S VL A hF hlG hEl hExpo j ch C s hBG ψ hψ a b hab hE w hw h d hd ⟨_, hx0⟩ rfl
-      (finOrb_sub _ _ (⟨_, hx0⟩ : finU L 3) hfo))
+      (finOrb_sub _ _ (⟨_, hx0⟩ : finU (E := L) (n := 3)) hfo))
 
 end

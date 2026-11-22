@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsBase
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open scoped ENNReal NNReal
@@ -16,14 +20,14 @@ open AutomorphicForm Reduction GroundTheory.Global
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (K n) in
 
+variable (K n) in
 def infPart : AdelicGLn.AdelicGL K n →* archGroup K n :=
   (archEquiv K n).toMulEquiv.toMonoidHom.comp
     ((MonoidHom.fst _ _).comp (AdelicGLn.prodEquiv K n).toMulEquiv.toMonoidHom)
 
-variable (K n) in
 
+variable (K n) in
 def finPart : AdelicGLn.AdelicGL K n →* AdelicGLn.FiniteAdelicGL K n :=
   (MonoidHom.snd _ _).comp (AdelicGLn.prodEquiv K n).toMulEquiv.toMonoidHom
 
@@ -64,8 +68,8 @@ theorem ext_parts {g g' : AdelicGLn.AdelicGL K n} (h1 : infPart K n g = infPart 
   exact prodEquiv_diagUnits_posIdele_snd (K := K) (n := n)
     (fun _ => ((rpowHom ((n * Module.finrank ℚ K : ℝ))⁻¹ s : {r : ℝ // 0 < r}) : ℝ)) (fun _ => (rpowHom _ s).2)
 
-variable (K n) in
 
+variable (K n) in
 def zInf : {r : ℝ // 0 < r} →* archGroup K n := (infPart K n).comp (centralSection K n)
 
 theorem continuous_zInf : Continuous (zInf K n) :=
@@ -80,8 +84,8 @@ theorem zInf_mul_comm (s : {r : ℝ // 0 < r}) (a : archGroup K n) : zInf K n s 
   apply infEmb_injective
   rw [map_mul, map_mul, infEmb_zInf, centralSection_mul_comm]
 
-variable (K n) in
 
+variable (K n) in
 def detA : archGroup K n →* {r : ℝ // 0 < r} := (detModule K n).comp (infEmb K n)
 
 theorem continuous_detA : Continuous (detA K n) :=
@@ -92,10 +96,10 @@ theorem detA_zInf (hn : 0 < n) (s : {r : ℝ // 0 < r}) : detA K n (zInf K n s) 
 
 theorem detModule_finEmb {h : AdelicGLn.FiniteAdelicGL K n} (hh : h ∈ AdelicGLn.integralFiniteGL K n) :
     detModule K n (finEmb K n h) = 1 :=
-  (mem_normOneGL_iff_detModule).1 (finOne K n ⟨h, hh⟩).2
+  (mem_normOneGL_iff_detModule).1 (finOne (K := K) (n := n) ⟨h, hh⟩).2
 
 theorem mul_centralSection_detModule_inv_mem (g : AdelicGLn.AdelicGL K n) :
-    g * (centralSection K n (detModule K n g))⁻¹ ∈ normOneGL K n := by
+    g * (centralSection K n (detModule K n g))⁻¹ ∈ normOneGL (K := K) (n := n) := by
   rw [mem_normOneGL_iff_detModule, map_mul, map_inv]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have : Subsingleton (AdelicGLn.AdelicGL K 0) :=
@@ -104,7 +108,7 @@ theorem mul_centralSection_detModule_inv_mem (g : AdelicGLn.AdelicGL K n) :
     simp
   · rw [detModule_centralSection hn, mul_inv_cancel]
 
-def retractOne (g : AdelicGLn.AdelicGL K n) : normOneGL K n :=
+def retractOne (g : AdelicGLn.AdelicGL K n) : normOneGL (K := K) (n := n) :=
   ⟨g * (centralSection K n (detModule K n g))⁻¹, mul_centralSection_detModule_inv_mem g⟩
 
 theorem coe_retractOne (g : AdelicGLn.AdelicGL K n) :
@@ -116,9 +120,9 @@ theorem continuous_retractOne : Continuous (retractOne (K := K) (n := n)) :=
 
 theorem retractOne_mul_finEmb (g : AdelicGLn.AdelicGL K n) {u : AdelicGLn.FiniteAdelicGL K n}
     (hu : u ∈ AdelicGLn.integralFiniteGL K n) :
-    retractOne (g * finEmb K n u) = retractOne g * finOne K n ⟨u, hu⟩ := by
+    retractOne (g * finEmb K n u) = retractOne g * finOne (K := K) (n := n) ⟨u, hu⟩ := by
   have h1 : detModule K n (finEmb K n u) = 1 :=
-    (mem_normOneGL_iff_detModule).1 (finOne K n ⟨u, hu⟩).2
+    (mem_normOneGL_iff_detModule).1 (finOne (K := K) (n := n) ⟨u, hu⟩).2
   ext1
   rw [coe_retractOne, Subgroup.coe_mul, coe_retractOne, coe_finOne, map_mul, h1, mul_one, mul_assoc,
     ← centralSection_inv_mul_comm, ← mul_assoc]
@@ -365,7 +369,7 @@ section F0
 variable (U : Subgroup (AdelicGLn.integralFiniteGL K n))
   (hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)))
 
-def finUSet : Set (normOneGL K n) :=
+def finUSet : Set (normOneGL (K := K) (n := n)) :=
   {x | finPart K n x ∈ (finOpenSubgroup U hU : Set (AdelicGLn.FiniteAdelicGL K n))}
 
 theorem isClopen_finUSet : IsClopen (finUSet U hU) :=
@@ -396,15 +400,15 @@ theorem coe_mem_openSubgroupOf {u : AdelicGLn.integralFiniteGL K n} (hu : u ∈ 
   rw [coe_openSubgroupOf]
   exact ⟨u, hu, rfl⟩
 
-def F0fun (κ : archGroup K n → ℂ) (x : normOneGL K n) : ℂ :=
-  (finUSet U hU).indicator (fun x : normOneGL K n => kbar κ (infPart K n x)) x
+def F0fun (κ : archGroup K n → ℂ) (x : normOneGL (K := K) (n := n)) : ℂ :=
+  (finUSet U hU).indicator (fun x : normOneGL (K := K) (n := n) => kbar κ (infPart K n x)) x
 
 theorem continuous_F0fun (hn : 0 < n) {κ : archGroup K n → ℂ} (hκ : Continuous κ)
     (hκc : HasCompactSupport κ) : Continuous (F0fun U hU κ) :=
   (isClopen_finUSet U hU).continuous_indicator
     ((continuous_kbar hn hκ hκc).comp (continuous_infPart.comp continuous_subtype_val))
 
-theorem detA_infPart {x : normOneGL K n} (hx : finPart K n x ∈ AdelicGLn.integralFiniteGL K n) :
+theorem detA_infPart {x : normOneGL (K := K) (n := n)} (hx : finPart K n x ∈ AdelicGLn.integralFiniteGL K n) :
     detA K n (infPart K n x) = 1 := by
   have h1 := (mem_normOneGL_iff_detModule).1 x.2
   rw [← infEmb_infPart_mul_finEmb_finPart (x : AdelicGLn.AdelicGL K n), map_mul,
@@ -420,10 +424,10 @@ theorem hasCompactSupport_F0fun (hn : 0 < n) {κ : archGroup K n → ℂ} (hκc 
     (Cinf ×ˢ (finOpenSubgroup U hU : Set (AdelicGLn.FiniteAdelicGL K n))) with hK₀
   have hK₀c : IsCompact K₀ := (hCinfc.prod (isCompact_openSubgroupOf U hU)).image
     ((continuous_infEmb.comp continuous_fst).mul (continuous_finEmb.comp continuous_snd))
-  have hKc : IsCompact ((Subtype.val : normOneGL K n → AdelicGLn.AdelicGL K n) ⁻¹' K₀) :=
+  have hKc : IsCompact ((Subtype.val : normOneGL (K := K) (n := n) → AdelicGLn.AdelicGL K n) ⁻¹' K₀) :=
     Topology.IsInducing.subtypeVal.isCompact_preimage (by rw [Subtype.range_coe]; exact isClosed_normOneGL)
       hK₀c
-  refine HasCompactSupport.intro hKc fun x hx => ?_
+  refine HasCompactSupport.intro' hKc (hK₀c.isClosed.preimage continuous_subtype_val) fun x hx => ?_
   by_contra hne
   apply hx
   have hxU : x ∈ finUSet U hU := by
@@ -442,11 +446,11 @@ theorem hasCompactSupport_F0fun (hn : 0 < n) {κ : archGroup K n → ℂ} (hκc 
   simp only [map_mul, hdet, one_mul, detA_zInf hn, mul_inv_cancel_right]
 
 theorem F0fun_finOne_mul (κ : archGroup K n → ℂ) {u : AdelicGLn.integralFiniteGL K n} (hu : u ∈ U)
-    (x : normOneGL K n) : F0fun U hU κ (finOne K n u * x) = F0fun U hU κ x := by
-  have h1 : infPart K n ((finOne K n u * x : normOneGL K n) : AdelicGLn.AdelicGL K n) =
+    (x : normOneGL (K := K) (n := n)) : F0fun U hU κ (finOne K n u * x) = F0fun U hU κ x := by
+  have h1 : infPart K n ((finOne K n u * x : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n) =
       infPart K n x := by
     rw [Subgroup.coe_mul, coe_finOne, map_mul, infPart_finEmb, one_mul]
-  have h2 : finPart K n ((finOne K n u * x : normOneGL K n) : AdelicGLn.AdelicGL K n) =
+  have h2 : finPart K n ((finOne K n u * x : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n) =
       (u : AdelicGLn.FiniteAdelicGL K n) * finPart K n x := by
     rw [Subgroup.coe_mul, coe_finOne, map_mul, finPart_finEmb]
   have hmem : finOne K n u * x ∈ finUSet U hU ↔ x ∈ finUSet U hU := by
@@ -467,8 +471,8 @@ theorem F0fun_archP (κ : archGroup K n → ℂ) (a : archGroup K n) :
 
 end F0
 
-variable (K n) in
 
+variable (K n) in
 def infFinEquiv : archGroup K n × AdelicGLn.FiniteAdelicGL K n ≃ₜ* AdelicGLn.AdelicGL K n where
   toFun p := infEmb K n p.1 * finEmb K n p.2
   invFun g := (infPart K n g, finPart K n g)
@@ -486,8 +490,8 @@ def infFinEquiv : archGroup K n × AdelicGLn.FiniteAdelicGL K n ≃ₜ* AdelicGL
 theorem infFinEquiv_apply (p : archGroup K n × AdelicGLn.FiniteAdelicGL K n) :
     infFinEquiv K n p = infEmb K n p.1 * finEmb K n p.2 := rfl
 
-theorem image_mul_centralSection_eq (hn : 0 < n) (E : Set (normOneGL K n)) :
-    (fun p : normOneGL K n × {r : ℝ // 0 < r} => (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2) ''
+theorem image_mul_centralSection_eq (hn : 0 < n) (E : Set (normOneGL (K := K) (n := n))) :
+    (fun p : normOneGL (K := K) (n := n) × {r : ℝ // 0 < r} => (p.1 : AdelicGLn.AdelicGL K n) * centralSection K n p.2) ''
         (E ×ˢ posRealUnitInterval) =
       retractOne ⁻¹' E ∩ detModule K n ⁻¹' posRealUnitInterval := by
   ext g
@@ -510,28 +514,28 @@ theorem image_mul_centralSection_eq (hn : 0 < n) (E : Set (normOneGL K n)) :
     show (retractOne g : AdelicGLn.AdelicGL K n) * centralSection K n (detModule K n g) = g
     rw [coe_retractOne, inv_mul_cancel_right]
 
-theorem exists_eq_smul_map_retract (hn : 0 < n) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem exists_eq_smul_map_retract (hn : 0 < n) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (μA : Measure (AdelicGLn.AdelicGL K n)) [μA.IsHaarMeasure] :
     ∃ c : ℝ≥0∞, c ≠ 0 ∧ c ≠ ⊤ ∧
       μ = c • Measure.map retractOne (μA.restrict (detModule K n ⁻¹' posRealUnitInterval)) := by
   obtain ⟨c, hc, hμ⟩ := exists_measure_eq_mul_measure_image hn μ μA
   have heq : μ = c • Measure.map retractOne (μA.restrict (detModule K n ⁻¹' posRealUnitInterval)) := by
     ext E hE
-    rw [hμ E hE, image_mul_centralSection_eq hn, Measure.smul_apply,
+    rw [hμ E hE, image_mul_centralSection_eq hn, smul_apply,
       Measure.map_apply continuous_retractOne.measurable hE,
       Measure.restrict_apply (continuous_retractOne.measurable hE), smul_eq_mul]
   refine ⟨c, ?_, hc, heq⟩
   rintro rfl
   apply isOpen_univ.measure_ne_zero μ univ_nonempty
-  rw [heq, zero_smul, Measure.coe_zero, Pi.zero_apply]
+  rw [heq, zero_smul, FunLike.coe_zero, Pi.zero_apply]
 
-theorem exists_cc_integral_mul_eq_of_pos (hn : 0 < n) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem exists_cc_integral_mul_eq_of_pos (hn : 0 < n) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (ν : Measure (archGroup K n)) [ν.IsHaarMeasure]
     (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)))
     (κ : archGroup K n → ℂ) (hκ : Continuous κ) (hκc : HasCompactSupport κ) :
-    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL K n) ℂ) (c : ℝ), 0 < c ∧
+    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) (c : ℝ), 0 < c ∧
       (∀ u ∈ U, ∀ x, F₀ (finOne K n u * x) = F₀ x) ∧
-      ∀ Θ : normOneGL K n → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
+      ∀ Θ : normOneGL (K := K) (n := n) → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
         ∫ x, F₀ x * Θ x ∂μ = c * ∫ a, κ a * Θ (archP K n a) ∂ν := by
   set μf : Measure (AdelicGLn.FiniteAdelicGL K n) := Measure.haar with hμf
   set m : Measure (archGroup K n × AdelicGLn.FiniteAdelicGL K n) := ν.prod μf with hmdef
@@ -545,7 +549,7 @@ theorem exists_cc_integral_mul_eq_of_pos (hn : 0 < n) (μ : Measure (normOneGL K
   have hU'm : MeasurableSet U' := hU'o.measurableSet
   have hU'0 : μf U' ≠ 0 := hU'o.measure_ne_zero μf ⟨1, (finOpenSubgroup U hU).one_mem⟩
   have hU'top : μf U' ≠ ⊤ := (isCompact_openSubgroupOf U hU).measure_lt_top.ne
-  set F₀ : CompactlySupportedContinuousMap (normOneGL K n) ℂ :=
+  set F₀ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ :=
     ⟨⟨F0fun U hU κ, continuous_F0fun U hU hn hκ hκc⟩, hasCompactSupport_F0fun U hU hn hκc⟩ with hF₀
   have hF₀apply : ∀ x, F₀ x = F0fun U hU κ x := fun x => rfl
   refine ⟨F₀, c₁.toReal * (μf U').toReal,
@@ -554,7 +558,7 @@ theorem exists_cc_integral_mul_eq_of_pos (hn : 0 < n) (μ : Measure (normOneGL K
   set I := posRealUnitInterval
   set S := detModule K n ⁻¹' I with hSdef
   have hS : MeasurableSet S := continuous_detModule.measurable measurableSet_posRealUnitInterval
-  set Ξ : normOneGL K n → ℂ := fun x => F₀ x * Θ x with hΞdef
+  set Ξ : normOneGL (K := K) (n := n) → ℂ := fun x => F₀ x * Θ x with hΞdef
   have hΞ : Continuous Ξ := F₀.continuous.mul hΘ
   have hΞc : HasCompactSupport Ξ := F₀.hasCompactSupport.mul_right
   set Fp : archGroup K n × AdelicGLn.FiniteAdelicGL K n → ℂ :=
@@ -643,22 +647,22 @@ theorem exists_cc_integral_mul_eq_of_pos (hn : 0 < n) (μ : Measure (normOneGL K
     _ = ((c₁.toReal * (μf U').toReal : ℝ) : ℂ) * ∫ a, κ a * Θ (archP K n a) ∂ν := by
         rw [integral_smul, step4, smul_smul, Complex.real_smul]
 
-theorem exists_cc_integral_mul_eq_zero (μ : Measure (normOneGL K 0)) [μ.IsHaarMeasure]
+theorem exists_cc_integral_mul_eq_zero (μ : Measure (normOneGL (K := K) (n := 0))) [μ.IsHaarMeasure]
     (ν : Measure (archGroup K 0)) [ν.IsHaarMeasure]
     (U : Subgroup (AdelicGLn.integralFiniteGL K 0)) (κ : archGroup K 0 → ℂ) :
-    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL K 0) ℂ) (c : ℝ), 0 < c ∧
+    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := 0)) ℂ) (c : ℝ), 0 < c ∧
       (∀ u ∈ U, ∀ x, F₀ (finOne K 0 u * x) = F₀ x) ∧
-      ∀ Θ : normOneGL K 0 → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K 0 u) = Θ x) →
+      ∀ Θ : normOneGL (K := K) (n := 0) → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K 0 u) = Θ x) →
         ∫ x, F₀ x * Θ x ∂μ = c * ∫ a, κ a * Θ (archP K 0 a) ∂ν := by
   have h1 : Subsingleton (AdelicGLn.AdelicGL K 0) := ⟨fun x y => Units.ext (Subsingleton.elim _ _)⟩
-  have h2 : Subsingleton (normOneGL K 0) := ⟨fun x y => Subtype.ext (Subsingleton.elim _ _)⟩
+  have h2 : Subsingleton (normOneGL (K := K) (n := 0)) := ⟨fun x y => Subtype.ext (Subsingleton.elim _ _)⟩
   have h3 : Subsingleton (ArchMatrix K 0) :=
     inferInstanceAs (Subsingleton (Matrix (Fin 0) (Fin 0) (NumberField.mixedEmbedding.mixedSpace K)))
   have h4 : Subsingleton (archGroup K 0) :=
     ⟨fun x y => Subtype.ext (Units.ext (Subsingleton.elim _ _))⟩
-  let _ : Unique (normOneGL K 0) := uniqueOfSubsingleton 1
+  let _ : Unique (normOneGL (K := K) (n := 0)) := uniqueOfSubsingleton 1
   let _ : Unique (archGroup K 0) := uniqueOfSubsingleton 1
-  have : CompactSpace (normOneGL K 0) := Finite.compactSpace
+  have : CompactSpace (normOneGL (K := K) (n := 0)) := Finite.compactSpace
   have hμ0 : μ univ ≠ 0 := isOpen_univ.measure_ne_zero μ univ_nonempty
   have hμt : μ univ ≠ ⊤ := isCompact_univ.measure_lt_top.ne
   have hμr : μ.real univ ≠ 0 := (ENNReal.toReal_pos hμ0 hμt).ne'
@@ -673,13 +677,13 @@ theorem exists_cc_integral_mul_eq_zero (μ : Measure (normOneGL K 0)) [μ.IsHaar
     have hμc : (μ.real univ : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 hμr
     field_simp
 
-theorem exists_cc_integral_mul_eq (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem exists_cc_integral_mul_eq (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (ν : Measure (archGroup K n)) [ν.IsHaarMeasure]
     (U : Subgroup (AdelicGLn.integralFiniteGL K n)) (hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n)))
     (κ : archGroup K n → ℂ) (hκ : Continuous κ) (hκc : HasCompactSupport κ) :
-    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL K n) ℂ) (c : ℝ), 0 < c ∧
+    ∃ (F₀ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) (c : ℝ), 0 < c ∧
       (∀ u ∈ U, ∀ x, F₀ (finOne K n u * x) = F₀ x) ∧
-      ∀ Θ : normOneGL K n → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
+      ∀ Θ : normOneGL (K := K) (n := n) → ℂ, Continuous Θ → (∀ u ∈ U, ∀ x, Θ (x * finOne K n u) = Θ x) →
         ∫ x, F₀ x * Θ x ∂μ = c * ∫ a, κ a * Θ (archP K n a) ∂ν := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · exact exists_cc_integral_mul_eq_zero μ ν U κ

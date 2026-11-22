@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -199,7 +203,7 @@ theorem gam_L (h0 : ∀ i, g i 0 = 1) (hm : ∀ i m n, g i m * g i n = ((m + n).
     gam x g n (L x c) = coeff n (E g c) := by
   have h : ∃ c', L x c' = L x c := ⟨c, rfl⟩
   unfold gam
-  rw [dif_pos h, E_eq x g h0 hm hE h.choose_spec]
+  rw [dite_eq_left h, E_eq x g h0 hm hE h.choose_spec]
 
 end Gen
 
@@ -207,8 +211,8 @@ end GlobalTheory.PDA.Gen
 
 namespace GlobalTheory.PDA
 
-open Gen in
 
+open Gen in
 theorem exists_isPreDividedPowers_of_generators₂ : ∀ (B ι : Type) [CommRing B] (x : ι → B) (g : ι → ℕ → B), (∀ i, g i 0 = 1) →
     (∀ i, g i 1 = x i) → (∀ i n, n ≠ 0 → g i n ∈ Ideal.span (Set.range x)) →
     (∀ i m n, g i m * g i n = ((m + n).choose m : B) * g i (m + n)) →
@@ -221,7 +225,7 @@ theorem exists_isPreDividedPowers_of_generators₂ : ∀ (B ι : Type) [CommRing
   refine ⟨gam x g, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_⟩
   · intro n y hy
     unfold gam
-    rw [dif_neg fun h ↦ hy (mem_span_iff.2 h)]
+    rw [dite_eq_right fun h ↦ hy (mem_span_iff.2 h)]
   · intro y hy
     obtain ⟨c, rfl⟩ := mem_span_iff.1 hy
     rw [G]; exact (P c).1

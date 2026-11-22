@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import GroundTheory.GlobalFields.TateThesis.AdelicChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import GroundTheory.GlobalFields.TateThesis.AdelicChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,11 +48,11 @@ theorem blkU_eq_unip {R : Type} [CommRing R] {a r : ℕ} (x : UnipotentBlockColu
   congr 1
   have hj := j.2
   by_cases h : (i : ℕ) < r ∧ r ≤ (j : ℕ)
-  · rw [dif_pos h, dif_pos ⟨h.1, h.2, by omega⟩]
+  · rw [dite_eq_left h, dite_eq_left ⟨h.1, h.2, by omega⟩]
     rfl
-  · rw [dif_neg h, dif_neg (fun h' => h ⟨h'.1, h'.2.1⟩)]
+  · rw [dite_eq_right h, dite_eq_right (fun h' => h ⟨h'.1, h'.2.1⟩)]
 
-theorem avg_blk_last_eq_zero : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (F : GA E a → ℂ),
+theorem avg_blk_last_eq_zero : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (F : GA E a → ℂ),
     Continuous F → (∀ (γ : GL (Fin a) E) (g : GA E a), F (ratGL E a γ * g) = F g) → GlobalTheory.CuspRep.IsCuspidal F →
     ∀ r : ℕ, 0 < r → r ≤ a - 1 → ∀ g : GA E a,
       GlobalTheory.CuspGeneric.avg (GlobalTheory.CuspGeneric.ratV E (GlobalTheory.CuspGeneric.UnipotentBlockColumnIndex a r (a - 1)))
@@ -88,7 +92,7 @@ theorem avg_blk_last_eq_zero : ∀ (E : Type) [Field E] [NumberField E] [IsTotal
   have h2 := hF r hr0 hra (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (h𝓕.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving q fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) g
+      rw [map_add (f := _), β.apply_symm_apply]) g
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1

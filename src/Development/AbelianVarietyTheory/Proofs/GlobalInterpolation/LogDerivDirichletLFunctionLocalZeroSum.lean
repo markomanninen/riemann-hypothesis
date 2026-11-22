@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableAtMellinSummatory
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TsumOneDivRpowLe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormOneSubConjMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableAtMellinSummatory
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TsumOneDivRpowLe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormOneSubConjMul
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory.LLocal

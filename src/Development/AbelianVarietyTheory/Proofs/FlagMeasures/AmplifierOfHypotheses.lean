@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CellDataSupport
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HaarEqSmul
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsHaarOnIffGroupsUnitaryUnipotent
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GrowthUnitaryGroupRpowNegIntegrable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselCharacterUnipotentRadicalProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalInterConjugateClosedUnimodular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumNormSqEqTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CellDataSupport
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HaarEqSmul
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesUnitarySmoothBasic
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsHaarOnIffGroupsUnitaryUnipotent
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GrowthUnitaryGroupRpowNegIntegrable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselCharacterUnipotentRadicalProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalInterConjugateClosedUnimodular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumNormSqEqTrace
+
+@[expose] public section
 
 open BranchingSupport GlobalTheory.CellAmp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -154,20 +158,24 @@ theorem mp_inv_haarLie (S : Set (MatKR k r)) (κ : ℝ≥0∞) :
   have hm : Measurable (Formalism.FourierDecayAlt.B2.invM (k := k) (r := r)) := Formalism.FourierDecayAlt.P.B7.measurable_invM
   refine ⟨hm, ?_⟩
   unfold haarLie
-  rw [Measure.map_smul]
+  rw [Measure.map_smul _ hm.aemeasurable]
   congr 1
   set e : lieE S → Mt k r := fun x i j => NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)) i j with he
-  by_cases h : AEMeasurable e volume
-  · rw [AEMeasurable.map_map_of_aemeasurable hm.aemeasurable h]
-    have : Formalism.FourierDecayAlt.B2.invM ∘ e = e ∘ Neg.neg := by
-      funext x
-      show (NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)))⁻¹ =
-        NormedSpace.exp (unrealify (-x.1))
-      rw [← Matrix.exp_neg]
-      exact congrArg NormedSpace.exp (by ext i j; simp [unrealify, Complex.ext_iff])
-    rw [this, ← AEMeasurable.map_map_of_aemeasurable (by rwa [Measure.map_neg_eq_self]) measurable_neg.aemeasurable,
-      Measure.map_neg_eq_self]
-  · simp [Measure.map_of_not_aemeasurable h]
+  have hu : Continuous fun x : lieE S => unrealify (m := 2 * r + k + 1) x.1 := by
+    refine continuous_pi fun i => continuous_pi fun j => ?_
+    simp only [unrealify, Complex.mk_eq_add_mul_I]
+    fun_prop
+  have h : AEMeasurable e volume :=
+    (GlobalTheory.Amp.NLie.cont_exp.comp hu).measurable.aemeasurable
+  rw [AEMeasurable.map_map_of_aemeasurable hm.aemeasurable h]
+  have : Formalism.FourierDecayAlt.B2.invM ∘ e = e ∘ Neg.neg := by
+    funext x
+    show (NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)))⁻¹ =
+      NormedSpace.exp (unrealify (-x.1))
+    rw [← Matrix.exp_neg]
+    exact congrArg NormedSpace.exp (by ext i j; simp [unrealify, Complex.ext_iff])
+  rw [this, ← AEMeasurable.map_map_of_aemeasurable (by rwa [Measure.map_neg_eq_self]) measurable_neg.aemeasurable,
+    Measure.map_neg_eq_self]
 
 def side {H W : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedAddCommGroup W] [InnerProductSpace ℂ W]
     (z : Fin (2 * r + k + 1) → ℂ) (c : ℂ) (π : MatKR k r → (W →L[ℂ] W)) (σ : MatKR k r → (H →L[ℂ] H)) (u v : H)

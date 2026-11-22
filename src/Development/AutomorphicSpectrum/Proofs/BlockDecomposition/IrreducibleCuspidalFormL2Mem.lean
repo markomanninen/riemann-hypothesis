@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalKTypeFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalKTypeFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,8 +108,9 @@ theorem exists_average [TopologicalSpace K] [IsTopologicalGroup K] (π : K →* 
   refine ⟨(O.card : ℂ)⁻¹ • ∑ f ∈ O, f, A.smul_mem _ (A.sum_mem fun f hf => ?_), fun u hu => ?_, fun m hm => ?_⟩
   · obtain ⟨u, -, rfl⟩ := (hOm f).1 hf
     exact hA u F hFA
-  · rw [map_smul, map_sum]
-    congr 1
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
+    apply congrArg ((O.card : ℂ)⁻¹ • ·)
     refine Finset.sum_nbij' (π u) (π u⁻¹) ?_ ?_ ?_ ?_ fun _ _ => rfl
     · intro f hf
       obtain ⟨s, hs, rfl⟩ := (hOm f).1 hf
@@ -149,16 +154,16 @@ end Orbit
 
 section Adelic
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
   {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
 
-variable (E a μ) in
 
+variable (E a μ) in
 def piInf : Kinf E a →* (L2 (latticeGL E a) μ →L[ℂ] L2 (latticeGL E a) μ) :=
   (R (latticeGL E a) μ).comp ((infGL E a).comp Unitary.toUnits)
 
-variable (E a μ) in
 
+variable (E a μ) in
 def piFin : GL (Fin a) (Af E) →* (L2 (latticeGL E a) μ →L[ℂ] L2 (latticeGL E a) μ) :=
   (R (latticeGL E a) μ).comp (finGL E a)
 
@@ -189,7 +194,7 @@ def fixedBy (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] 
     Submodule ℂ (L2 (latticeGL E a) μ) where
   carrier := {v | ∀ u ∈ U, R (latticeGL E a) μ (finGL E a u) v = v}
   zero_mem' := fun _ _ => map_zero _
-  add_mem' := fun {x y} hx hy u hu => by rw [map_add, hx u hu, hy u hu]
+  add_mem' := fun {x y} hx hy u hu => by rw [map_add (f := _), hx u hu, hy u hu]
   smul_mem' := fun c x hx u hu => by rw [map_smul, hx u hu]
 
 theorem span_inf_le {H : Submodule ℂ (L2 (latticeGL E a) μ)} (hH : ∀ g, ∀ v ∈ H, R (latticeGL E a) μ g v ∈ H)
@@ -202,7 +207,7 @@ theorem span_inf_le {H : Submodule ℂ (L2 (latticeGL E a) μ)} (hH : ∀ g, ∀
 
 end Adelic
 
-theorem mem_of_toL2_mem : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (H : Submodule ℂ (L2 (latticeGL E a) μ)), H ≤ L2cusp μ → IsIrredSubrep (R (latticeGL E a) μ) H → ∀ W : Submodule ℂ (Sm E a), IsStable W → (∀ φ ∈ W, IsAutForm φ ∧ ∃ h : MemL2Quotient (latticeGL E a) μ φ.1, h.toL2 ∈ H) → (classes W μ).topologicalClosure = H → ∀ φ : Sm E a, IsAutForm φ → ∀ h : MemL2Quotient (latticeGL E a) μ φ.1, h.toL2 ∈ H → φ ∈ W := by
+theorem mem_of_toL2_mem : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (H : Submodule ℂ (L2 (latticeGL E a) μ)), H ≤ L2cusp μ → IsIrredSubrep (R (latticeGL E a) μ) H → ∀ W : Submodule ℂ (Sm E a), _root_.GlobalTheory.CuspRep.IsStable W → (∀ φ ∈ W, IsAutForm φ ∧ ∃ h : MemL2Quotient (latticeGL E a) μ φ.1, h.toL2 ∈ H) → (classes W μ).topologicalClosure = H → ∀ φ : Sm E a, IsAutForm φ → ∀ h : MemL2Quotient (latticeGL E a) μ φ.1, h.toL2 ∈ H → φ ∈ W := by
   intro E _ _ _ a μ _ _ H hcusp hirr W hW hWH hcl φ hφ h hH
   have hn : ∀ k v, ‖piInf E a μ k v‖ = ‖v‖ := fun k v => norm_R _ v
   have hnF : ∀ k v, ‖piFin E a μ k v‖ = ‖v‖ := fun k v => norm_R _ v

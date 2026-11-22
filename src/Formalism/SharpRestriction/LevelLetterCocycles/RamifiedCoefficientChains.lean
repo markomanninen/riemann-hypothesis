@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Formalism.SharpRestriction.LevelLetterCocycles.GammaSemisimpleLocalOfConsequences
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Formalism.SharpRestriction.LevelLetterCocycles.GammaSemisimpleLocalOfConsequences
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheory
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,6 @@ def hpar (n : ℕ) [NeZero n] (b : ZMod n → ℕ) (S : ℕ) : ℕ := Finset.uni
 def JumpWinS {n : ℕ} (d : ℕ) (b : ZMod n → ℕ) (S η : ℕ) (i : ZMod n) : Set ℤ :=
   (if (i.val + d) % 2 = 0 then Set.Icc (-((b i + S : ℕ) : ℤ)) (-((b i : ℕ) : ℤ))
     else Set.Icc ((b i : ℕ) : ℤ) ((b i + S : ℕ) : ℤ)) ∪ Set.Icc (-(η : ℤ)) (η : ℤ)
-
-def JumpWin {n : ℕ} (b : ZMod n → ℕ) (S η : ℕ) (i : ZMod n) : Set ℤ := JumpWinS 0 b S η i
 
 def MiW {n : ℕ} (d : ℕ) (b : ZMod n → ℕ) (S η : ℕ) (i : ZMod n) : ℕ :=
   if (i.val + d) % 2 = 0 then b i + S else η
@@ -70,9 +72,6 @@ def SetCS [NeZero n] (W : LocWach PD LL O v n) (d : ℕ) (T₁ T₂ : LocLat G Q
     (∀ i, 2 * aR PD.p (hpar n b S + η) + (η : ℝ) + 1 ≤ (b i : ℝ)) ∧
     (∀ i, ((hpar n b S : ℕ) : ℝ) / 2 ≤ (b i : ℝ))
 
-def SetC [NeZero n] (W : LocWach PD LL O v n) (T₁ T₂ : LocLat G Qp LL O)
-    (F : LatHom T₁.L T₂.L) (b : ZMod n → ℕ) (S η m : ℕ) : Prop := SetCS W 0 T₁ T₂ F b S η m
-
 def ConclC [NeZero n] (W : LocWach PD LL O v n) (d : ℕ) (k₁ k₂ k₃ k₄ k₅ C : ℝ)
     {T₁ T₂ : LocLat G Qp LL O} (F : LatHom T₁.L T₂.L) (b : ZMod n → ℕ) (S η m : ℕ) : Prop :=
   ∃ e : ℕ, (e : ℝ) ≤ eBd k₁ k₂ k₃ C PD.p (hpar n b S + η) S η ∧
@@ -87,11 +86,6 @@ def ThmCK [NeZero n] (W : LocWach PD LL O v n) (k₁ k₂ k₃ k₄ k₅ C : ℝ
   ThmCKR W (fun _ => True) k₁ k₂ k₃ k₄ k₅ C
 
 def ThmC [NeZero n] (W : LocWach PD LL O v n) (C : ℝ) : Prop := ThmCK W 32 4 10 4 (3 / 2) C
-
-def LocalBoundDegreeZero [NeZero n] (W : LocWach PD LL O v n) (C : ℝ) : Prop :=
-  ∀ (d : ℕ) (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L) (b : ZMod n → ℕ) (S η m : ℕ),
-    SetCS W d T₁ T₂ F b S η m → m = 0 →
-      ∃ e : ℕ, (e : ℝ) ≤ eBd 32 4 10 C PD.p (hpar n b S + η) S η ∧ F.LiftF PD (e + 3 * S)
 
 theorem jumpsLet_win [NeZero n] (W : LocWach PD LL O v n) {d : ℕ} {T₁ T₂ : LocLat G Qp LL O}
     {F : LatHom T₁.L T₂.L} {b : ZMod n → ℕ} {S η m : ℕ} (hS : SetCS W d T₁ T₂ F b S η m) :
@@ -137,10 +131,6 @@ def LocalBoundRange (LT : LocTheory) (A : ∀ (l : ℕ) [Fact l.Prime], LocAinf 
     ThmCKR ((HW l).W K 1 LL hg) R k₁ k₂ k₃ k₄ k₅ C
 
 def ConclusionL (LT : LocTheory) (A : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l)) (HW : HWOf LT) (F : FonOf LT A HW) (C : ℝ) : Prop := LocalBoundRange LT A HW F (fun _ => True) 32 4 10 4 (3 / 2) C
-
-def CorollaryALocal (LT : LocTheory) (A : ∀ (l : ℕ) [Fact l.Prime], LocAinf l (LT l)) (HW : HWOf LT) (F : FonOf LT A HW) (C : ℝ) : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K LL : Loc.FinExt l) (hg : Loc.Good K 1 LL)
-    [NeZero (Module.finrank ℚ_[l] ↥(Loc.K0 K))], LocalBoundDegreeZero ((HW l).W K 1 LL hg) C
 
 section Lit
 
@@ -313,32 +303,29 @@ def DssLet : Prop :=
 
 end Ties
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def TheoremCConstantsRange (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (R : ℕ → Prop) (k₁ k₂ k₃ k₄ k₅ C : ℝ) : Prop := LocalBoundRange D.loc D.locA HW F R k₁ k₂ k₃ k₄ k₅ C
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def aux₃ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : ℝ) : Prop := ConclusionL D.loc D.locA HW F C
 
-open Formalism.BasicNotions in
 
-def Conclusion2 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : ℝ) : Prop := CorollaryALocal D.loc D.locA HW F C
 
 open Formalism.BasicNotions in
-
 def adm1 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) : Prop := Formalism.MainNotions.DeltaInvariantLattices.deltaInvariantLatticeGlobal D HW F Cm
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm2 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.gammaSemisimpleQuotientGlobal D HW F
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm3 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.prop2 D HW F
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def ArchimedeanSignatureMatching (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.lem3 D HW F
 
 def adm5 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.LiftingTheory.ConclusionL D HW F
@@ -353,24 +340,24 @@ def adm9 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formal
 
 def adm10 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (CA CB CK : ℝ) : Prop := Formalism.MainNotions.LiftingTheory.LiftTheoremAllCases D HW F CA CB CK
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm11 (D : D7) : Prop := DcrisExactStrictAll D.loc
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm12 (D : D7) : Prop := admBK D.loc
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm13 (D : D7) : Prop := H1fGeneratorCount D.loc
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm14 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop := Formalism.MainNotions.DeltaInvariantLattices.adm2 D HW F
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm15 (D : D7) : Prop := BlochKatoExtensionCriterion D.loc
 
 def adm16 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
@@ -385,8 +372,8 @@ def adm18 (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : Loc.FinExt l) (s : ℕ) (LL : Loc.FinExt l) (h : Loc.Good K s LL),
     DssLet ((HW l).W K s LL h)
 
-open Formalism.BasicNotions in
 
+open Formalism.BasicNotions in
 def adm19 (D : D7) : Prop := H1fGeneratorBoundAll D.loc
 
 def admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (CR CA CB CK : ℝ) : Prop :=
@@ -395,26 +382,6 @@ def admitted (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf 
     adm18 D HW F ∧ adm19 D
 
 def Stmt (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (C CR CA CB CK : ℝ) : Prop := admitted D HW F Cm CR CA CB CK → aux₃ D HW F C
-
-def RealisationStatementAll : Prop := ∀ CR CA CB CK : ℝ, ∃ C : ℝ, ∀ D : D7, ∀ HW : HWOf D.loc, ∀ F : FonOf D.loc D.locA HW,
-    ∀ Cm : CmpOf D.loc D.locA HW F, Stmt D HW F Cm C CR CA CB CK
-
-def RealisationConstantSixteen : Prop := ∀ CR CA CB CK : ℝ, ∀ D : D7, ∀ HW : HWOf D.loc, ∀ F : FonOf D.loc D.locA HW,
-    ∀ Cm : CmpOf D.loc D.locA HW F, Stmt D HW F Cm 16 CR CA CB CK
-
-theorem realisation_all_of_constant_sixteen (h : RealisationConstantSixteen) : RealisationStatementAll := fun CR CA CB CK => ⟨16, h CR CA CB CK⟩
-
-def LiftingBoundSomeConstants : Prop :=
-  ∀ CR CA CB CK : ℝ, ∃ k₁ k₂ k₃ k₄ k₅ C : ℝ, ∀ D : D7, ∀ HW : HWOf D.loc, ∀ F : FonOf D.loc D.locA HW, ∀ Cm : CmpOf D.loc D.locA HW F,
-    admitted D HW F Cm CR CA CB CK → TheoremCConstantsRange D HW F (fun _ => True) k₁ k₂ k₃ k₄ k₅ C
-
-theorem first_hypothesis_of_lifting (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : Formalism.MainNotions.DeltaInvariantLattices.aux₃ D HW F Cm) : adm1 D HW F Cm := Formalism.MainNotions.DeltaInvariantLattices.thm1used_of h.1
-
-theorem second_hypothesis_of_lifting (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : Formalism.MainNotions.DeltaInvariantLattices.aux₃ D HW F Cm) : adm2 D HW F := Formalism.MainNotions.DeltaInvariantLattices.gamma_semisimple_local_of_consequences h.2.1
-
-theorem integrality_of_commutation (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : Formalism.MainNotions.DeltaInvariantLattices.aux₃ D HW F Cm) : adm3 D HW F := h.2.2.1
-
-theorem fourth_hypothesis_of_lifting (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (h : Formalism.MainNotions.DeltaInvariantLattices.aux₃ D HW F Cm) : ArchimedeanSignatureMatching D HW F := h.2.2.2
 
 theorem sizes_bound_of_log_estimates (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) {C CA CB CK : ℝ} (h : Formalism.MainNotions.LiftingTheory.aux₃ D HW F C CA CB CK) : adm5 D HW F := h.1
 
@@ -431,16 +398,5 @@ theorem crystalline_lift_of_theorem_c (D : D7) (HW : HWOf D.loc) (F : FonOf D.lo
 
 theorem lifting_bounds_of_theorem_c (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) {C CA CB CK : ℝ} (h : Formalism.MainNotions.LiftingTheory.aux₃ D HW F C CA CB CK) :
     adm10 D HW F CA CB CK := h.2.2.2.2.2.2.2
-
-theorem crystalline_image_of_prop_two_a (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (h : adm3 D HW F) : adm14 D HW F :=
-  fun l _ K s LL hg T hT _ => (h l K s LL hg).1 T hT
-
-theorem stmtAllK_of (h : RealisationStatementAll) : LiftingBoundSomeConstants := fun CR CA CB CK =>
-  (h CR CA CB CK).elim fun C hC => ⟨32, 4, 10, 4, 3 / 2, C, fun D HW F Cm hA => hC D HW F Cm hA⟩
-
-theorem theorem_c_last_of_theorem_c (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (C : ℝ) (h : aux₃ D HW F C) : Conclusion2 D HW F C := by
-  intro l _ K LL hg _ d T₁ T₂ F b S η m hS hm
-  obtain ⟨e, he, _, h0⟩ := h l K LL hg d T₁ T₂ F b S η m hS trivial
-  exact ⟨e, he, h0 hm⟩
 
 end Formalism.MainNotions.RamifiedCoefficientChains

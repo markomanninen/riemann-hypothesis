@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLatti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfVectorMultiplicationsMemFiltrationLatti
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ theorem mul_eq_sum {K A : Type} [Field K] [AddCommGroup A] [Module K A] {N : ℕ
     (mul : (Fin N → K) →ₗ[K] Module.End K A) (v : Fin N → K) :
     mul v = ∑ k, v k • mul (Pi.single k 1) := by
   conv_lhs => rw [← Finset.univ_sum_single v]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [← map_smul]
   congr 1
@@ -46,7 +51,8 @@ theorem word_ι_expand (Φ : S.Flat E A' s δ) : ∀ (t : ℕ) (U : Fin t → Fi
       ∑ e : Fin t → Fin S.N, (∏ q, U q (e q)) • Φ.ι (word S.mul (fun q => Pi.single (e q) (1 : F)) z)
   | 0, U, z => by simp [word]
   | t + 1, U, z => by
-    rw [word_succ, Module.End.mul_apply, word_ι_expand Φ t, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [word_succ, Module.End.mul_apply, word_ι_expand Φ t, map_sum]
     rw [← (Fin.consEquiv fun _ : Fin (t + 1) => Fin S.N).sum_comp, Fintype.sum_prod_type]
     simp only [Fin.consEquiv_apply, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ, word_succ,
       Module.End.mul_apply, map_smul, mul_eq_sum Φ.mul (U 0), LinearMap.sum_apply, LinearMap.smul_apply,
@@ -66,7 +72,8 @@ theorem columns_eval : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup 
   have hιV : ∀ (y : A) (hy : y ∈ S.V S.T), Φ.ι y = ∑ i, algebraMap F E (b.repr ⟨y, hy⟩ i) • Φ.ι (b i) := by
     intro y hy
     conv_lhs => rw [show y = ((⟨y, hy⟩ : S.V S.T) : A) from rfl, ← b.sum_repr ⟨y, hy⟩]
-    rw [Submodule.coe_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Submodule.coe_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Submodule.coe_smul, LinearMap.map_smulₛₗ]
   have hWspan : W = Submodule.span E (Set.range fun i => Φ.ι (b i)) := by
@@ -107,7 +114,8 @@ theorem columns_eval : ∀ (F A : Type) [Field F] [NumberField F] [AddCommGroup 
     rwa [κ.add] at this
   rw [word_ι_expand Φ κ.t]
   refine ⟨Submodule.sum_mem _ fun e _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, hmem e, rfl⟩), fun i => ?_⟩
-  simp only [coordP, map_sum, map_mul, aeval_C, map_prod, aeval_X, LinearMap.coe_comp, Function.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordP, map_sum, map_mul, aeval_C, map_prod, aeval_X, LinearMap.coe_comp, Function.comp_apply,
     LinearMap.map_smul, LinearMap.coe_proj, Function.eval, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [h3 _ (hmem e) i, mul_comm]

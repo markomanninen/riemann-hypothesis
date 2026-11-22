@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingEquivSplitPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingEquivSplitPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem toCompl_eq (h1 : ∀ a, ψ a = complMap h a) (h2 : ∀ x : E, ψ (τ x) 
     (y : Fv F v ⊗[F] E) : toCompl h y = ψ (splitProj τ y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x => rw [toCompl_tmul, splitProj_tmul, map_mul, h1, h2]
 
 omit [Algebra F E] in
@@ -112,7 +116,7 @@ theorem isFrameAt_bc (h2 : ∀ x : E, ψ (τ x) = algebraMap E _ x) (h3 : ∀ a,
 
 omit [Algebra F E] in
 theorem bc_mem_KGL_iff (h3 : ∀ a, Valued.v (ψ a) = Valued.v a) {x : GL (Fin n) (Fv F v)} :
-    bc ψ.toRingHom x ∈ KGL w n ↔ x ∈ GLint (Fin n) (v.adicCompletionIntegers F).toSubring := by
+    bc ψ.toRingHom x ∈ KGL w (n := n) ↔ x ∈ GLint (Fin n) (v.adicCompletionIntegers F).toSubring := by
   rw [mem_GLint_iff, mem_GLint_iff]
   exact and_congr (forall₂_congr fun _ _ => map_mem_Ov_iff h3) (forall₂_congr fun _ _ => map_mem_Ov_iff h3)
 
@@ -127,7 +131,8 @@ theorem exists_isSplitChart (hc : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : L.F
     (hd : IsSelfDualAt σ J L v) : ∃ e, IsSplitChart σ J L h e ∧ Continuous e ∧ Continuous e.symm := by
   obtain ⟨τ, rfl⟩ := exists_splitPrime_eq hc hv h
   obtain ⟨ψ, h1, h2, h3, h4, h5⟩ := exists_equiv_complMap τ h
-  have : Submodule.IsLattice E L := ⟨hL, hL'⟩
+  letI : Submodule.IsFullLattice E L :=
+    { toIsLattice := Submodule.IsLattice.of_fg E hL, span_eq_top := hL' }
   obtain ⟨β, hβ⟩ := exists_isSplitBasis τ L hc
   refine ⟨(splitEquivIn hc hJ τ β).toMulEquiv.trans (Units.mapEquiv ψ.mapMatrix.toMulEquiv),
     ⟨⟨_, isFrameAt_bc h2 h3 hβ, fun g => ?_⟩, fun g => ?_⟩,
@@ -173,14 +178,6 @@ theorem split_chart_and_places (hc : IsCMExt F E σ) (hJ : IsHermND σ J) (hL : 
 theorem isSplit_of_algHom (hc : IsCMExt F E σ) (τ : E →ₐ[F] Fv F v) : IsSplit (E := E) v :=
   ⟨splitPrime (τ.comp σ), splitPrime τ, splitPrime_comp_ne hc τ, Ideal.ext (algebraMap_mem_splitPrime _),
     Ideal.ext (algebraMap_mem_splitPrime _)⟩
-
-theorem exists_isSplitChart_one (hc : IsCMExt F E σ) (n : ℕ) :
-    ∃ (v : HeightOneSpectrum (𝓞 F)) (w : HeightOneSpectrum (𝓞 E)) (h : w.under (𝓞 F) = v), IsSplit (E := E) v ∧
-      ∃ e, IsSplitChart σ (1 : Matrix (Fin n) (Fin n) E) (stdLattice E n) h e ∧ Continuous e ∧ Continuous e.symm := by
-  obtain ⟨v, ⟨τ⟩⟩ := exists_split_place hc
-  have hL : Submodule.IsLattice E (stdLattice E n) := isLattice_stdLattice
-  exact ⟨v, _, splitPrime_under τ, isSplit_of_algHom hc τ, exists_isSplitChart hc (isHermND_one σ n) hL.fg
-    hL.span_eq_top _ (isSplit_of_algHom hc τ) (isSelfDualAt_stdLattice_one σ v)⟩
 
 end GlobalTheory.LFun.SplitChart
 

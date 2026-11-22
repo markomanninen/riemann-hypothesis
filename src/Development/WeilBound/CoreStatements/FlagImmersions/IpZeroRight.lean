@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HermitianRestrictionOrthonormalCoordsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenusEqCardMulSignatureStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HermitianRestrictionOrthonormalCoordsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GenusEqCardMulSignatureStatement
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 
@@ -51,7 +55,8 @@ theorem exists_onb (R : RiemLat E g Λ) (W : Submodule ℂ (Fin g → ℂ)) {m :
     simp [Pi.single_apply, eq_comm]
   · have h : (⟨z, hz⟩ : W) = ∑ i, c z i • e i := by
       apply hinj
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, he]
       ext k
       simp [Pi.single_apply]
@@ -73,14 +78,16 @@ theorem star_io (a : Λ) : star (io b a) = io b a := by
 
 theorem Pc_io (R : RiemLat E g Λ) (a : Λ) : Pc b R (io b a) = R.P a := by
   conv_rhs => rw [← b.sum_repr a]
-  rw [Pc_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pc_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, io, Int.cast_smul_eq_zsmul]
 
 def act (a : 𝓞 E) (ξ : Fin (2 * g) → ℂ) : Fin (2 * g) → ℂ := ∑ k, ξ k • io b (a • b k)
 
 theorem Pc_act (R : RiemLat E g Λ) (a : 𝓞 E) (ξ : Fin (2 * g) → ℂ) : Pc b R (act b a ξ) = R.B a (Pc b R ξ) := by
-  rw [act, map_sum, Pc_apply b R ξ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [act, map_sum, Pc_apply b R ξ, map_sum]
   simp only [map_smul, Pc_io, R.act]
 
 theorem star_act (a : 𝓞 E) (ξ : Fin (2 * g) → ℂ) : star (act b a ξ) = act b a (star ξ) := by
@@ -96,7 +103,7 @@ theorem exists_real (R : RiemLat E g Λ) (e : Fin g → ℂ) : ∃ ξ, star ξ =
   | add x y _ _ hx hy =>
     obtain ⟨ξ, h1, h2⟩ := hx
     obtain ⟨ξ', h1', h2'⟩ := hy
-    exact ⟨ξ + ξ', by rw [star_add, h1, h1'], by rw [map_add, h2, h2']⟩
+    exact ⟨ξ + ξ', by rw [star_add, h1, h1'], by rw [map_add (f := _), h2, h2']⟩
   | smul r x _ hx =>
     obtain ⟨ξ, h1, h2⟩ := hx
     exact ⟨(r : ℂ) • ξ, by rw [star_smul, h1]; simp, by rw [map_smul, h2]; rfl⟩
@@ -105,11 +112,11 @@ theorem exists_pair (R : RiemLat E g Λ) (e e' : Fin g → ℂ) : ∃ η, Pc b R
   obtain ⟨ξ, h1, h2⟩ := exists_real b R ((2⁻¹ : ℂ) • (e + e'))
   obtain ⟨ξ', h1', h2'⟩ := exists_real b R ((2⁻¹ * Complex.I : ℂ) • (e' - e))
   refine ⟨ξ + Complex.I • ξ', ?_, ?_⟩
-  · rw [map_add, map_smul, h2, h2', smul_smul]
+  · rw [map_add (f := _), map_smul, h2, h2', smul_smul]
     ext k
     simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul]
     linear_combination (2⁻¹ * (e' k - e k)) * Complex.I_mul_I
-  · rw [star_add, star_smul, h1, h1', map_add, map_smul, h2, h2', smul_smul]
+  · rw [star_add, star_smul, h1, h1', map_add (f := _), map_smul, h2, h2', smul_smul]
     ext k
     simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, Complex.star_def, Complex.conj_I]
     linear_combination (-2⁻¹ * (e' k - e k)) * Complex.I_mul_I

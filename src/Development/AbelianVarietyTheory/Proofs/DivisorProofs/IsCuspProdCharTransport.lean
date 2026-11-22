@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalProductMultiplicity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CuspidalProductMultiplicity
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,11 +86,12 @@ theorem triMap_eq_one_iff (e : κ' →+* κ) (b : Fin r → ℕ) (p : blockTri (
 
 theorem isCuspDatum_comp {V : Type} [AddCommGroup V] [Module ℂ V] (e : κ' ≃+* κ) (b : Fin r → ℕ)
     (σ : Representation ℂ (blockTri (κ := κ) b) V) (h : IsCuspDatum b σ) :
-    IsCuspDatum b (σ.comp (triMap (e : κ' →+* κ) b) : Representation ℂ (blockTri (κ := κ') b) V) where
-  mono := h.mono
-  irr := isIrreducible_comp σ _ (triMap_surjective e b) h.irr
-  infl := fun p hp => h.infl _ fun i j hij => (triMap_eq_one_iff _ b p i j).2 (hp i j hij)
-  cusp := fun S hS y hy => h.cusp S hS y fun u hu => by
+    IsCuspDatum b (σ.comp (triMap (e : κ' →+* κ) b) : Representation ℂ (blockTri (κ := κ') b) V) := by
+  refine ⟨h.mono, isIrreducible_comp σ _ (triMap_surjective e b) h.irr, ?_, ?_⟩
+  · intro p hp
+    exact h.infl _ fun i j hij => (triMap_eq_one_iff _ b p i j).2 (hp i j hij)
+  · intro S hS y hy
+    refine h.cusp S hS y fun u hu => ?_
     obtain ⟨u', rfl⟩ := triMap_surjective e b u
     exact hy u' fun i j hij => hu i j fun h' => hij ((triMap_eq_one_iff _ b u' i j).1 h')
 

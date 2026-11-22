@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayInA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.AwayInA
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,11 +87,15 @@ def eL (hfr : IsUnit fr.det) : (T → Fin m → Fin n → ℂ) ≃ₗ[ℝ] ((Fin
     funext τ'
     by_cases h : τ' = τ
     · subst h
-      simp [Matrix.mul_nonsing_inv_cancel_left _ _ hfr]
+      simp
+      change (fr * (fr⁻¹ * of (z τ'))).row = (of (z τ')).row
+      rw [Matrix.mul_nonsing_inv_cancel_left fr _ hfr]
     · simp [h]
   right_inv ab := by
     ext1
-    · simp [Matrix.nonsing_inv_mul_cancel_left _ _ hfr]
+    · simp
+      change (fr⁻¹ * (fr * of ab.1)).row = (of ab.1).row
+      rw [Matrix.nonsing_inv_mul_cancel_left fr _ hfr]
     · funext τ'
       simp [τ'.2]
 

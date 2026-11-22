@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CauchyProductPartialSumsDvdPowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DescEqXPowSmulNablaPowStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NablaPowApplySmulLeibnizStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DescNEqXPowMulIterateDerivativeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CauchyProductPartialSumsDvdPowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DescEqXPowSmulNablaPowStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NablaPowApplySmulLeibnizStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DescNEqXPowMulIterateDerivativeStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -27,11 +31,11 @@ theorem desc_eq {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] 
 theorem nabla_pow_smul {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K]
     {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] {P : PhiMod O K l e a ι} (C : Conn P) (k : ℕ)
     (f : ZMod a → K⟦X⟧) (v : Vec K a ι) : (C.nabla ^ k) (f • v) = ∑ p ∈ Finset.range (k + 1),
-      (k.choose p : K⟦X⟧) • ((fun τ => (⇑(derivative K))^[p] (f τ)) • (C.nabla ^ (k - p)) v) :=
+      (k.choose p : K⟦X⟧) • ((fun τ => (⇑(derivative (R := K)))^[p] (f τ)) • (C.nabla ^ (k - p)) v) :=
   GlobalTheory.T.nabla_pow_apply_smul_leibniz C k f v
 
 theorem descN_eq (K : Type) [NormedField K] (p : ℕ) (f : K⟦X⟧) :
-    descN K p f = X ^ p * (⇑(derivative K))^[p] f :=
+    descN K p f = X ^ p * (⇑(derivative (R := K)))^[p] f :=
   GlobalTheory.T.descN_eq_X_pow_mul_iterate_derivative' K p f
 
 theorem muDiv_mul_choose {l : ℕ} [Fact l.Prime] (a : ℕ) [NeZero a] {e : ℕ} [NeZero e] (O : Type) [CommRing O]
@@ -64,7 +68,8 @@ theorem galOCr_iC_taylor {l : ℕ} [Fact l.Prime] {a : ℕ} [NeZero a] {e : ℕ}
   refine ⟨Finset.univ.sup N, fun n hn => ?_⟩
   choose z hz using fun τ => hN τ n ((Finset.le_sup (Finset.mem_univ τ)).trans hn)
   refine ⟨∑ τ, idem (constC t) τ * z τ, ?_⟩
-  simp only [PiSys.iC, glue_apply, map_sum, map_mul, galOCr_idem, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PiSys.iC, glue_apply, map_sum, map_mul, galOCr_idem, Finset.mul_sum]
   rw [Finset.sum_comm, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun τ _ => ?_
   rw [mul_left_comm, ← hz τ, mul_sub, Finset.mul_sum]
@@ -85,7 +90,8 @@ theorem coord_desc {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist 
       (P.mxInv τ *ᵥ (∑ x ∈ s, w x) τ) i = ∑ x ∈ s, (P.mxInv τ *ᵥ w x τ) i := fun s w => by
     rw [Finset.sum_apply, Matrix.mulVec_sum, Finset.sum_apply]
   conv_lhs => rw [desc_eq, P.eq_sum_phi_bas m]
-  rw [hΦs, map_sum, hΦsum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΦs, map_sum, hΦsum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [nabla_pow_smul, hΦsum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun p hp => ?_
@@ -122,10 +128,11 @@ theorem taylor_of_basis {l : ℕ} [Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero 
       funext τ
       apply Subtype.ext
       refine (coord_desc C m k τ i).trans ?_
-      simp only [Finset.sum_apply, Pi.mul_apply, Pi.natCast_apply, AddSubmonoidClass.coe_finset_sum,
+      simp only [Finset.sum_apply, Pi.mul_apply, Pi.natCast_apply, AddSubmonoidClass.coe_finsetSum,
         MulMemClass.coe_mul, SubringClass.coe_natCast, hcj]
     rw [toCris_apply, h1]
-    simp only [map_sum, map_mul, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_natCast]
   have key : ∀ p : ι × ι, ∃ n₀, ∀ n ≥ n₀, (l : OCr l O) ^ r ∣
       galOCr O (g : GQ l) (ϖ.iC t K (c p.2)) * toOCr l O (Γ p.1 p.2) -
         ∑ k ∈ Finset.range n, ∑ q ∈ Finset.range (k + 1),

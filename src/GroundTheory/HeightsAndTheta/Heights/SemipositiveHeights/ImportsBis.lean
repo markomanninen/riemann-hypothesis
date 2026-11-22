@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsSmallOfArVolPPos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTopConstantTwist
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionPointHeight
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionOrderAtPoint
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCurvePointsFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefOnGenericOfSemipos
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsSmallOfArVolPPos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTopConstantTwist
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionPointHeight
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionOrderAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCurvePointsFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefOnGenericOfSemipos
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ForSecondHalf

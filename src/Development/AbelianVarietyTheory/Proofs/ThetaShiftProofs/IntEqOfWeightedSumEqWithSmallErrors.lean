@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.BetaPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.BetaPf
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
 open scoped LaurentSeries
@@ -24,7 +29,8 @@ theorem eq_zero_of_trace (z : E) (h : ∀ a : 𝓞 E, Algebra.trace ℚ E (z * a
   apply (traceForm_nondegenerate ℚ E).1
   intro y
   rw [← (integralBasis E).sum_repr y]
-  simp only [map_sum, map_smul, Algebra.traceForm_apply, integralBasis_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Algebra.traceForm_apply, integralBasis_apply]
   refine Finset.sum_eq_zero fun i _ => ?_
   have := h (RingOfIntegers.basis E i)
   rw [show (algebraMap (𝓞 E) E) (RingOfIntegers.basis E i) = (RingOfIntegers.basis E i : E) from rfl, this, smul_zero]
@@ -63,7 +69,8 @@ theorem trace_pairE (x : X) (a : 𝓞 E) :
       (ξ ((RingOfIntegers.basis E j) • x) : ℤ) := by
     intro j
     unfold GlobalTheory.ArcQ.pairE
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     have : ∀ i, Algebra.trace ℚ E ((Algebra.traceForm ℚ E).dualBasis (traceForm_nondegenerate ℚ E)
         (NumberField.integralBasis E) i * ((ξ ((NumberField.RingOfIntegers.basis E i) • x) : ℤ) : E) *
         (RingOfIntegers.basis E j : E)) = if j = i then ((ξ ((NumberField.RingOfIntegers.basis E i) • x) : ℤ) : ℚ) else 0 := by
@@ -77,7 +84,8 @@ theorem trace_pairE (x : X) (a : 𝓞 E) :
     simp [this]
   conv => enter [1]; rw [← (RingOfIntegers.basis E).sum_repr a]
   conv => enter [2]; rw [← (RingOfIntegers.basis E).sum_repr a]
-  simp only [Finset.sum_smul, map_sum, smul_assoc, map_zsmul, Finset.mul_sum, mul_smul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_smul, map_sum, smul_assoc, map_zsmul, Finset.mul_sum, mul_smul_comm]
   push_cast
   refine Finset.sum_congr rfl fun j _ => ?_
   erw [hb]
@@ -138,7 +146,7 @@ theorem pairE_ne_zero [Module.Finite ℤ X] [Module.Free ℤ X] (hξ : ξ ≠ 0)
   have : (c * a) • x + n • y = 0 := by
     rw [← Int.cast_smul_eq_zsmul (𝓞 E), ← hc, mul_smul, mul_smul, ← smul_add, hab, smul_zero]
   have h2 := congrArg ξ this
-  rw [map_add, hz, map_zsmul, map_zero, zero_add, smul_eq_mul] at h2
+  rw [map_add (f := _), hz, map_zsmul, map_zero, zero_add, smul_eq_mul] at h2
   simpa [hn] using h2
 
 end Tr
@@ -170,7 +178,7 @@ theorem exists_sym (a : 𝓞 E) : ∃ t : 𝓞 E, cc (t : E) = t ∧ ∀ μ : E,
   · change cc ((a : E) + cc (a : E)) = (a : E) + cc (a : E)
     rw [cc_add', cc_cc', add_comm]
   · change Algebra.trace ℚ E (μ * ((a : E) + cc (a : E))) = _
-    rw [mul_add, map_add, ← trace_cc (μ * cc (a : E)), cc_mul', hμ, cc_cc']; ring
+    rw [mul_add, map_add (f := _), ← trace_cc (μ * cc (a : E)), cc_mul', hμ, cc_cc']; ring
 
 theorem exists_sep (S : Finset E) (hS : ∀ μ ∈ S, μ ≠ 0 ∧ cc μ = μ) :
     ∃ t : 𝓞 E, cc (t : E) = t ∧ ∀ μ ∈ S, Algebra.trace ℚ E (μ * t) ≠ 0 := by
@@ -183,7 +191,8 @@ theorem exists_sep (S : Finset E) (hS : ∀ μ ∈ S, μ ≠ 0 ∧ cc μ = μ) :
       ∑ j, w μ j * n j := by
     intro μ n
     have : ((∑ j, n j • b j : 𝓞 E) : E) = ∑ j, n j • (b j : E) := by simp
-    rw [this, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, Finset.mul_sum, map_sum]
     push_cast
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_smul_comm, map_zsmul]
@@ -216,7 +225,7 @@ theorem slice_finite (J : ℚ) : {ν : E | Freq ν ∧ Algebra.trace ℚ E ν = 
     · obtain ⟨t, ht, ht'⟩ := exists_sym a
       obtain ⟨m, hm⟩ := h3 t ht
       refine ⟨m, ?_⟩
-      rw [← hm, ht' ν h1, mul_assoc, two_mul, map_add, two_mul]
+      rw [← hm, ht' ν h1, mul_assoc, two_mul, map_add (f := _), two_mul]
     · have e1 : ‖φ ν‖ = (φ ν).re := by
         rw [← Complex.abs_re_eq_norm.mpr (im_zero h1 φ), abs_of_nonneg (h2 φ)]
       have e2 : (φ ν).re ≤ J := by
@@ -286,10 +295,10 @@ theorem exists_isolating (ν₀ : E) (h₀ : Freq ν₀) : ∃ u : 𝓞 E, cc (u
   have hu : (((R : 𝓞 E) + t : 𝓞 E) : E) = R + (t : E) := by simp
   have htr : ∀ ν : E, Algebra.trace ℚ E (ν * (R + (t : E))) = R * Algebra.trace ℚ E ν + Algebra.trace ℚ E (ν * t) := by
     intro ν
-    rw [mul_add, map_add, mul_comm ν R, ← nsmul_eq_mul, map_nsmul, nsmul_eq_mul]
+    rw [mul_add, map_add (f := _), mul_comm ν R, ← nsmul_eq_mul, map_nsmul, nsmul_eq_mul]
   refine ⟨R + t, ?_, fun τ => ?_, fun ν hν h => ?_⟩
   · rw [hu, cc_add', cc_nat, ht]
-  · rw [hu, map_add, map_natCast, Complex.add_re, Complex.natCast_re]
+  · rw [hu, map_add (f := _), map_natCast, Complex.add_re, Complex.natCast_re]
     have h1 := (abs_le.mp (hle τ)).1
     nlinarith [mul_nonneg hM0 hj0]
   · rw [hu, htr, htr] at h
@@ -349,14 +358,14 @@ theorem exists_form_isolating : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   let be : LinearMap.BilinForm ℤ X := LinearMap.mk₂ ℤ f
     (fun x x' y => by
       apply Int.cast_injective (α := ℚ)
-      rw [Int.cast_add, ← hf, ← hf, ← hf, hp, pairE_add, ← map_add]; congr 1; ring)
+      rw [Int.cast_add, ← hf, ← hf, ← hf, hp, pairE_add, ← map_add (f := _)]; congr 1; ring)
     (fun n x y => by
       apply Int.cast_injective (α := ℚ)
       rw [smul_eq_mul, Int.cast_mul n, ← hf, ← hf, hp, pairE_zsmul, ← zsmul_eq_mul (Algebra.trace ℚ E _) n, ← map_zsmul]
       congr 1; rw [zsmul_eq_mul]; ring)
     (fun x y y' => by
       apply Int.cast_injective (α := ℚ)
-      rw [Int.cast_add, ← hf, ← hf, ← hf, hp, pairE_add, cc_add', ← map_add]; congr 1; ring)
+      rw [Int.cast_add, ← hf, ← hf, ← hf, hp, pairE_add, cc_add', ← map_add (f := _)]; congr 1; ring)
     (fun n x y => by
       apply Int.cast_injective (α := ℚ)
       rw [smul_eq_mul, Int.cast_mul n, ← hf, ← hf, hp, pairE_zsmul, cc_mul', cc_int,

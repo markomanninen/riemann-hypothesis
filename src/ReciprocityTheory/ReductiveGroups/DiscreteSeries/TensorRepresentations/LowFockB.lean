@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockA
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockA
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,11 +100,13 @@ theorem lfMatFull_eq_zero (ε : Fin n → Bool) (a b : Fin n) {S T : Finset (Fin
   rw [lfMatFull, LinearMap.toMatrix_apply]
   unfold sgE
   split_ifs with h1 h2
-  · simp only [LinearMap.sum_apply, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, map_sum, Finsupp.coe_finsetSum, Finset.sum_apply]
     refine Finset.sum_eq_zero fun x hx => ?_
     exact lf_cpcm_repr b x ⟨h1.1, by simpa [minusIdx] using hx⟩ hS hT
-  · simp only [LinearMap.neg_apply, LinearMap.sum_apply, map_neg, map_sum, Finsupp.coe_neg, Pi.neg_apply,
-      Finsupp.coe_finset_sum, Finset.sum_apply, neg_eq_zero]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.neg_apply, LinearMap.sum_apply, map_neg, map_sum, Finsupp.coe_neg, Pi.neg_apply,
+      Finsupp.coe_finsetSum, Finset.sum_apply, neg_eq_zero]
     refine Finset.sum_eq_zero fun i hi => ?_
     exact lf_cpcm_repr i a ⟨by simpa [plusIdx] using hi, h2.2⟩ hS hT
   · simp

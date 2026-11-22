@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCechDSq
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsDegLocExact
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCechDSq
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsDegLocExact
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -198,8 +203,8 @@ theorem longExact (hφ : ∀ I J h m, φ J (ρA I J h m) = ρB I J h (φ I m))
       map_add' := fun a b => by
         rw [← Hdeg_mk_add]
         exact key (a + b) (lift a + lift b) (Submodule.add_mem _ (hlift_mem a) (hlift_mem b))
-          (by rw [map_add, hlift, hlift]; rfl) (⟨w a, hw_cocy a⟩ + ⟨w b, hw_cocy b⟩)
-          (by change mapC φ (i + 1) (w a + w b) = _; rw [map_add, map_add, hw, hw])
+          (by rw [map_add (f := _), hlift, hlift]; rfl) (⟨w a, hw_cocy a⟩ + ⟨w b, hw_cocy b⟩)
+          (by change mapC φ (i + 1) (w a + w b) = _; rw [map_add (f := _), map_add (f := _), hw, hw])
       map_smul' := fun r a => by
         rw [RingHom.id_apply, ← Hdeg_mk_smul]
         exact key (r • a) (r • lift a) (Submodule.smul_mem _ r (hlift_mem a))
@@ -299,8 +304,8 @@ theorem locMap_comp_locResS (f : M →ₗ[Poly S N] M') (I J : StdCell N) (h : I
     change locMap f J.1 (locRes h _) = locRes h (locMap f I.1 _)
     rw [locRes_mk, locMap_mk, locMap_mk, locRes_mk]
 
-omit [Module S M] [IsScalarTower S (Poly S N) M] [Module S M'] [IsScalarTower S (Poly S N) M'] in
 
+omit [Module S M] [IsScalarTower S (Poly S N) M] [Module S M'] [IsScalarTower S (Poly S N) M'] in
 theorem locMap_injective (f : M →ₗ[Poly S N] M') (hf : Function.Injective f)
     (I : Finset (Fin (N + 1))) : Function.Injective (locMap f I) :=
   by

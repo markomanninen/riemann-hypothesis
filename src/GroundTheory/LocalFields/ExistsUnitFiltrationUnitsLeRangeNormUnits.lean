@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.UnitsBasic
-import GroundTheory.LocalFields.UnitsPowers
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.UnitsBasic
+public import GroundTheory.LocalFields.UnitsPowers
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeAndRangePowLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,8 @@ theorem ord_unitsOfIntProd {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) (n : Multiplica
     (u : 𝒪[K]ˣ) : ord ((unitsOfIntProd hϖ (n, u) : Kˣ) : K) = n.toAdd := by
   simp [ord, normalizedValuation_unitsOfIntProd]
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem unitsOfIntProd_eq {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) (n : Multiplicative ℤ)
     (u : 𝒪[K]ˣ) : unitsOfIntProd hϖ (n, u) = uniformizerUnit hϖ ^ n.toAdd * unitsIncl K u := by
   simp [unitsOfIntProd, zpowersHom_apply]
@@ -63,28 +67,8 @@ theorem ord_eq_zero_iff_mem {x : Kˣ} : ord (x : K) = 0 ↔ x ∈ unitFiltration
     normalizedValuation_eq_exp_ord x.ne_zero, map_one, ← WithZero.exp_zero, WithZero.exp_inj,
     neg_eq_zero]
 
-theorem setOf_ord_eq {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) (m : ℤ) :
-    {y : Kˣ | ord (y : K) = m} =
-      (Homeomorph.mulLeft (uniformizerUnit hϖ ^ (-m))) ⁻¹' (unitFiltrationUnits K 0 : Set Kˣ) := by
-  ext y
-  simp only [Set.mem_ofPred_eq, Set.mem_preimage, Homeomorph.coe_mulLeft, SetLike.mem_coe,
-    ← ord_eq_zero_iff_mem, Units.val_mul, Units.val_zpow_eq_zpow_val, coe_uniformizerUnit]
-  have hϖ0 : (ϖ : K) ≠ 0 := by exact_mod_cast hϖ.ne_zero
-  rw [ord_mul (zpow_ne_zero _ hϖ0) y.ne_zero, ord_zpow hϖ0, ord_uniformizer hϖ]
-  omega
-
-theorem isOpen_setOf_ord_eq (m : ℤ) : IsOpen {y : Kˣ | ord (y : K) = m} := by
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  rw [setOf_ord_eq hϖ]
-  exact (isOpen_unitFiltrationUnits 0).preimage (Homeomorph.continuous _)
-
-theorem isCompact_setOf_ord_eq (m : ℤ) : IsCompact {y : Kˣ | ord (y : K) = m} := by
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  rw [setOf_ord_eq hϖ, Homeomorph.isCompact_preimage]
-  exact isCompact_unitFiltrationUnits 0
 
 variable (K) in
-
 instance locallyCompactSpace_units : LocallyCompactSpace Kˣ :=
   (isCompact_unitFiltrationUnits 0).locallyCompactSpace_of_mem_nhds_of_group
     ((isOpen_unitFiltrationUnits 0).mem_nhds (Subgroup.one_mem _))
@@ -118,8 +102,8 @@ theorem norm_mem_integer {x : L} (hx : x ∈ 𝒪[L]) : Algebra.norm K x ∈ �
   rw [← h]
   exact (Algebra.norm 𝒪[K] (⟨x, hx⟩ : 𝒪[L])).2
 
-variable (K L) in
 
+variable (K L) in
 def normIntegerUnits : 𝒪[L]ˣ →* 𝒪[K]ˣ :=
   Units.map (Algebra.norm 𝒪[K] : 𝒪[L] →* 𝒪[K])
 
@@ -132,21 +116,16 @@ theorem normUnits_unitsIncl (u : 𝒪[L]ˣ) :
   ext
   simp [coe_normIntegerUnits]
 
-theorem map_normUnits_unitFiltrationUnits_zero_le :
-    (unitFiltrationUnits L 0).map (normUnits K L) ≤ unitFiltrationUnits K 0 := by
-  rintro _ ⟨_, ⟨u, -, rfl⟩, rfl⟩
-  exact ⟨normIntegerUnits K L u, by simp, (normUnits_unitsIncl u).symm⟩
-
 section Valuation
 
 theorem ord_algebraMap_uniformizer {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) :
-    ord (algebraMap K L (ϖ : K)) = ramificationIndex K L := by
+    ord (algebraMap K L (ϖ : K)) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) := by
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
   have h := map_maximalIdeal K L
   rw [hϖ.maximalIdeal_eq, hπ.maximalIdeal_eq, Ideal.map_span, Set.image_singleton,
     Ideal.span_singleton_pow, Ideal.span_singleton_eq_span_singleton] at h
   obtain ⟨u, hu⟩ := h.symm
-  have h2 : algebraMap K L (ϖ : K) = (π : L) ^ ramificationIndex K L * ((u : 𝒪[L]) : L) := by
+  have h2 : algebraMap K L (ϖ : K) = (π : L) ^ (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) * ((u : 𝒪[L]) : L) := by
     rw [← coe_algebraMap_integer, ← hu]
     push_cast
     rfl
@@ -154,7 +133,7 @@ theorem ord_algebraMap_uniformizer {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) :
   rw [h2, ord_mul (pow_ne_zero _ hπ0) (by simp), ord_pow hπ0, ord_uniformizer hπ, ord_unit]
   simp
 
-theorem ord_algebraMap (a : K) : ord (algebraMap K L a) = ramificationIndex K L * ord a := by
+theorem ord_algebraMap (a : K) : ord (algebraMap K L a) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) * ord a := by
   rcases eq_or_ne a 0 with rfl | ha
   · simp
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
@@ -180,31 +159,25 @@ theorem ord_norm_units {π : 𝒪[L]} (hπ : Irreducible π) (x : Lˣ) :
   ring
 
 theorem ord_norm_uniformizer {π : 𝒪[L]} (hπ : Irreducible π) :
-    ord (Algebra.norm K (π : L)) = residueDegree K L := by
+    ord (Algebra.norm K (π : L)) = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
   have hϖ0 : (ϖ : K) ≠ 0 := by exact_mod_cast hϖ.ne_zero
   have hϖL : algebraMap K L (ϖ : K) ≠ 0 := by simpa using hϖ0
   have h := ord_norm_units (K := K) hπ (Units.mk0 _ hϖL)
   rw [Units.val_mk0, Algebra.norm_algebraMap, ord_pow hϖ0, ord_uniformizer hϖ,
     ord_algebraMap_uniformizer hϖ, ← ramificationIndex_mul_residueDegree K L] at h
-  have he : (ramificationIndex K L : ℤ) ≠ 0 := by
+  have he : ((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℤ) ≠ 0 := by
     exact_mod_cast (ramificationIndex_pos K L).ne'
   push_cast at h
   exact (mul_left_cancel₀ he (by linear_combination h)).symm
 
-theorem ord_norm (x : L) : ord (Algebra.norm K x) = residueDegree K L * ord x := by
+theorem ord_norm (x : L) : ord (Algebra.norm K x) = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) * ord x := by
   rcases eq_or_ne x 0 with rfl | hx
   · simp
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[L]
   have := ord_norm_units (K := K) hπ (Units.mk0 x hx)
   rw [Units.val_mk0, ord_norm_uniformizer hπ] at this
   rw [this, mul_comm]
-
-theorem ord_algebraMap_norm (x : L) :
-    ord (algebraMap K L (Algebra.norm K x)) = Module.finrank K L * ord x := by
-  rw [ord_algebraMap, ord_norm, ← ramificationIndex_mul_residueDegree K L]
-  push_cast
-  ring
 
 end Valuation
 
@@ -234,25 +207,6 @@ theorem continuous_normUnits : Continuous (normUnits K L) := by
   rw [h]
   exact (continuous_algebraNorm K L).comp Units.continuous_coe_inv
 
-theorem isProperMap_normUnits : IsProperMap (normUnits K L) := by
-  rw [isProperMap_iff_isCompact_preimage]
-  refine ⟨continuous_normUnits K L, fun C hC ↦ ?_⟩
-  obtain ⟨t, ht⟩ := hC.elim_finite_subcover (fun m : ℤ ↦ {y : Kˣ | ord (y : K) = m})
-    isOpen_setOf_ord_eq (fun y _ ↦ Set.mem_iUnion.2 ⟨_, rfl⟩)
-  refine IsCompact.of_isClosed_subset
-    (t.isCompact_biUnion fun m _ ↦ isCompact_setOf_ord_eq (m / residueDegree K L))
-    (hC.isClosed.preimage (continuous_normUnits K L)) ?_
-  intro x hx
-  obtain ⟨m, hm, hxm⟩ := Set.mem_iUnion₂.1 (ht hx)
-  refine Set.mem_iUnion₂.2 ⟨m, hm, ?_⟩
-  simp only [Set.mem_ofPred_eq, coe_normUnits, ord_norm] at hxm ⊢
-  have hf : (residueDegree K L : ℤ) ≠ 0 := by exact_mod_cast (residueDegree_pos K L).ne'
-  rw [← hxm, Int.mul_ediv_cancel_left _ hf]
-
-theorem isClosed_range_normUnits : IsClosed ((normUnits K L).range : Set Kˣ) := by
-  rw [MonoidHom.coe_range]
-  exact (isProperMap_normUnits K L).isClosedMap.isClosed_range
-
 end Topology
 
 theorem exists_norm_one_add_smul_eq (z : 𝒪[L]) {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) (k : ℕ)
@@ -265,7 +219,7 @@ theorem exists_norm_one_add_smul_eq (z : 𝒪[L]) {ϖ : 𝒪[K]} (hϖ : Irreduci
   let f : 𝒪[K][X] := C (1 - a) + C M.trace * X + Q * X ^ 2
   have hnorm : ∀ r : 𝒪[K], Algebra.norm 𝒪[K] (1 + r • z) = 1 + M.trace * r + Q.eval r * r ^ 2 := by
     intro r
-    rw [Algebra.norm_eq_matrix_det b, map_add, map_one, map_smul, Matrix.det_one_add_smul]
+    rw [Algebra.norm_eq_matrix_det b, map_add (f := _), map_one, map_smul, Matrix.det_one_add_smul]
   have htr : M.trace = ϖ ^ k * ε := by
     rw [← hz, Algebra.trace_eq_matrix_trace b]
   have hd : f.derivative.eval 0 = ϖ ^ k * ε := by
@@ -281,9 +235,8 @@ theorem exists_norm_one_add_smul_eq (z : 𝒪[L]) {ϖ : 𝒪[K]} (hϖ : Irreduci
 
 section Separable
 
-variable [Algebra.IsSeparable K L]
+variable (K L) [Algebra.IsSeparable K L]
 
-variable (K L) in
 
 theorem exists_trace_integer_ne_zero : ∃ z : 𝒪[L], Algebra.trace 𝒪[K] 𝒪[L] z ≠ 0 := by
   obtain ⟨w, hw⟩ : ∃ w : L, Algebra.trace K L w ≠ 0 := by
@@ -314,7 +267,6 @@ theorem exists_trace_integer_ne_zero : ∃ z : 𝒪[L], Algebra.trace 𝒪[K] �
   have hϖ0 : (ϖ : K) ≠ 0 := by exact_mod_cast hϖ.ne_zero
   exact mul_ne_zero (pow_ne_zero _ hϖ0) hw h2
 
-variable (K L) in
 
 theorem exists_unitFiltrationUnits_le_range_normUnits :
     ∃ n, unitFiltrationUnits K n ≤ (normUnits K L).range := by
@@ -338,13 +290,11 @@ theorem exists_unitFiltrationUnits_le_range_normUnits :
   ext
   rw [coe_normUnits, Units.val_mk0, ← hN, coe_unitsIncl]
 
-variable (K L) in
 
 theorem isOpen_range_normUnits : IsOpen ((normUnits K L).range : Set Kˣ) := by
   obtain ⟨n, hn⟩ := exists_unitFiltrationUnits_le_range_normUnits K L
   exact Subgroup.isOpen_mono hn (isOpen_unitFiltrationUnits n)
 
-variable (K L) in
 
 theorem finiteIndex_range_normUnits : (normUnits K L).range.FiniteIndex := by
   obtain ⟨n, hn⟩ := exists_unitFiltrationUnits_le_range_normUnits K L

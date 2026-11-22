@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderMinorRotation.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BorderMinorRotation.Development
+
+@[expose] public section
 
 open Finset Formalism.REAL
 

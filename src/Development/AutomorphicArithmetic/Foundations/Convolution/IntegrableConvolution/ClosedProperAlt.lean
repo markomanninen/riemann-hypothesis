@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ def glue (D : Split ι s m) (n : ℕ) (g : Fin (m + 1) → GL (Fin n) R) : GL (F
     apply D.e.injective
     funext i
     have h := congrFun (congrFun (g i).val_inv a) b
-    simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.sum_apply,
       Pi.mul_apply] at h ⊢
     rw [show ((g i)⁻¹ : GL (Fin n) R).val = (g i).inv from rfl, h]
     by_cases hab : a = b <;> simp [Matrix.one_apply, hab]
@@ -61,7 +66,8 @@ def glue (D : Split ι s m) (n : ℕ) (g : Fin (m + 1) → GL (Fin n) R) : GL (F
     apply D.e.injective
     funext i
     have h := congrFun (congrFun (g i).inv_val a) b
-    simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.sum_apply,
       Pi.mul_apply] at h ⊢
     rw [show ((g i)⁻¹ : GL (Fin n) R).val = (g i).inv from rfl, h]
     by_cases hab : a = b <;> simp [Matrix.one_apply, hab]
@@ -73,10 +79,6 @@ def tens (D : Split ι s m) (n : ℕ) (φ : Fin (m + 1) → GL (Fin n) R → ℂ
   fun g => ∏ i, φ i (D.comp n i g)
 
 end Split
-
-example (R : Type) [CommRing R] [TopologicalSpace R] :
-    Split (Pi.constRingHom (Fin 1) R) (RingHom.id (Fin 1 → R)) 0 :=
-  ⟨RingEquiv.refl _, continuous_id, continuous_id, fun _ _ => rfl, fun x i => congrArg x (Subsingleton.elim _ _)⟩
 
 def ChangeVar : Prop :=
   ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G]

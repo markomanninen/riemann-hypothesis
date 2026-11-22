@@ -1,6 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.RankOneEisenstein.Theta2Integral
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GodementSection
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.EisRk1Bound
@@ -31,19 +37,6 @@ theorem continuous_inv_entry (i j : Fin 2) :
     Continuous fun h : GL (Fin 2) 𝔸[K] ↦
       ((h⁻¹ : GL (Fin 2) 𝔸[K]) : Matrix (Fin 2) (Fin 2) 𝔸[K]) i j := by
   exact Units.continuous_coe_inv.matrix_elem i j
-
-theorem norm_vecMul_le (u : Fin 2 → mixedSpace K) (M : Matrix (Fin 2) (Fin 2) (mixedSpace K)) :
-    ‖u ᵥ* M‖ ≤ (∑ i, ∑ j, ‖M i j‖) * ‖u‖ := by
-  refine (pi_norm_le_iff_of_nonneg (by positivity)).2 fun j => ?_
-  simp only [Matrix.vecMul, dotProduct]
-  calc ‖∑ i, u i * M i j‖ ≤ ∑ i, ‖u i * M i j‖ := norm_sum_le _ _
-    _ ≤ ∑ i, ‖u‖ * ‖M i j‖ := Finset.sum_le_sum fun i _ =>
-        (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right (norm_le_pi_norm u i) (norm_nonneg _))
-    _ = ‖u‖ * ∑ i, ‖M i j‖ := by rw [Finset.mul_sum]
-    _ ≤ ‖u‖ * ∑ i, ∑ j', ‖M i j'‖ := mul_le_mul_of_nonneg_left
-        (Finset.sum_le_sum fun i _ => Finset.single_le_sum (f := fun j' => ‖M i j'‖)
-          (fun _ _ => norm_nonneg _) (Finset.mem_univ j)) (norm_nonneg _)
-    _ = (∑ i, ∑ j', ‖M i j'‖) * ‖u‖ := mul_comm _ _
 
 private theorem mul_mem_idealFiniteAdeles_of_mem_integral {I : (FractionalIdeal (𝓞 K)⁰ K)ˣ} {x a : 𝔸ᶠ[K]}
     (hx : x ∈ idealFiniteAdeles I) (ha : a ∈ integralFiniteAdeles (𝓞 K) K) :
@@ -137,132 +130,6 @@ theorem latticeWeight_nonneg (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (k : ℕ) (
     0 ≤ latticeWeight J k x := by
   unfold latticeWeight
   split_ifs <;> positivity
-
-theorem summable_latticeWeight_mul (J : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
-    Summable fun ξ : Fin 2 → K ↦
-      latticeWeight J (Module.finrank ℤ (idealLattice K J) + 1) (ξ 0) *
-        latticeWeight J (Module.finrank ℤ (idealLattice K J) + 1) (ξ 1) := by
-  have hs : Summable (latticeWeight J (Module.finrank ℤ (idealLattice K J) + 1)) := by
-    have := summable_ite_mem_of_summable_idealLattice J
-      (h := fun z => ((1 + ‖z‖) ^ (Module.finrank ℤ (idealLattice K J) + 1))⁻¹)
-      (summable_inv_one_add_norm_pow_idealLattice J)
-    unfold latticeWeight
-    exact this
-  have h2 := Summable.mul_of_nonneg hs hs (fun x => latticeWeight_nonneg J _ x)
-    (fun x => latticeWeight_nonneg J _ x)
-  exact (finTwoArrowEquiv K).summable_iff.mpr h2
-
-theorem exists_summable_bound_tensor_cosetIndicator2 (φ : 𝓢(Fin 2 → mixedSpace K, ℂ))
-    (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (b : Fin 2 → 𝔸ᶠ[K]) {C : Set (GL (Fin 2) 𝔸[K])}
-    (hC : IsCompact C) :
-    ∃ u : (Fin 2 → K) → ℝ, Summable u ∧ ∀ h ∈ C, ∀ ξ : Fin 2 → K,
-      ‖schwartzBruhatTensor2 φ (finiteTensor2 fun i ↦ cosetIndicator I (b i))
-        ((fun i ↦ algebraMap K 𝔸[K] (ξ i)) ᵥ* (h : Matrix (Fin 2) (Fin 2) 𝔸[K]))‖ ≤ u ξ := by
-  obtain ⟨J, hJ⟩ := exists_fractionalIdeal_of_isCompact I b hC
-  set N := Module.finrank ℤ (idealLattice K J) + 1 with hN
-  have hcont : Continuous fun h : GL (Fin 2) 𝔸[K] => ∑ i, ∑ j,
-      ‖infRingHom (((h⁻¹ : GL (Fin 2) 𝔸[K]) : Matrix (Fin 2) (Fin 2) 𝔸[K]) i j)‖ :=
-    continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
-      (continuous_infRingHom.comp (continuous_inv_entry i j)).norm
-  obtain ⟨M, hM⟩ := hC.exists_bound_of_continuousOn hcont.continuousOn
-  set A : ℝ := 2 ^ (2 * N) *
-    (Finset.Iic (2 * N, 0)).sup (fun m => SchwartzMap.seminorm ℝ m.1 m.2) φ with hAdef
-  have hA : ∀ w, (1 + ‖w‖) ^ (2 * N) * ‖φ w‖ ≤ A := fun w => by
-    have := SchwartzMap.one_add_le_sup_seminorm_apply (𝕜 := ℝ) (m := (2 * N, 0)) le_rfl le_rfl φ w
-    rwa [norm_iteratedFDeriv_zero] at this
-  have hA0 : 0 ≤ A := le_trans (by positivity) (hA 0)
-  set M' : ℝ := max 1 M with hM'
-  have hM'1 : 1 ≤ M' := le_max_left _ _
-  refine ⟨fun ξ => A * M' ^ (2 * N) * (latticeWeight J N (ξ 0) * latticeWeight J N (ξ 1)),
-    (summable_latticeWeight_mul J).mul_left _, ?_⟩
-  intro h hh ξ
-  have hl0 := latticeWeight_nonneg J N (ξ 0)
-  have hl1 := latticeWeight_nonneg J N (ξ 1)
-  have hu0 : 0 ≤ A * M' ^ (2 * N) * (latticeWeight J N (ξ 0) * latticeWeight J N (ξ 1)) := by
-    positivity
-  set x := (fun i ↦ algebraMap K 𝔸[K] (ξ i)) ᵥ* (h : Matrix (Fin 2) (Fin 2) 𝔸[K]) with hx
-  show ‖φ (infPart x) * finiteTensor2 (fun i ↦ cosetIndicator I (b i)) (finPart x)‖ ≤ _
-  by_cases hmem : ∀ i, finPart x i - b i ∈ idealFiniteAdeles I
-  · have hJξ := hJ h hh ξ hmem
-    have hind : ‖finiteTensor2 (fun i ↦ cosetIndicator I (b i)) (finPart x)‖ ≤ 1 := by
-      simp only [finiteTensor2, norm_prod]
-      refine Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => ?_)
-      simp only [cosetIndicator]
-      refine (norm_indicator_le_norm_self _ _).trans ?_
-      simp
-    have hinv : emb2 K ξ = infPart x ᵥ*
-        ((((h⁻¹ : GL (Fin 2) 𝔸[K]) : Matrix (Fin 2) (Fin 2) 𝔸[K])).map infRingHom) := by
-      rw [hx, ← infPart_vecMul, vecMul_vecMul_inv, infPart_algebraMap]
-    have hE : ‖emb2 K ξ‖ ≤ M * ‖infPart x‖ := by
-      rw [hinv]
-      refine (norm_vecMul_le _ _).trans (mul_le_mul_of_nonneg_right ?_ (norm_nonneg _))
-      simp only [Matrix.map_apply]
-      exact (Real.le_norm_self _).trans (hM h hh)
-    have hE' : ‖emb2 K ξ‖ ≤ M' * ‖infPart x‖ :=
-      hE.trans (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg _))
-    have hcomp : ∀ i, 1 + ‖mixedEmbedding K (ξ i)‖ ≤ M' * (1 + ‖infPart x‖) := fun i => by
-      have h1 : ‖mixedEmbedding K (ξ i)‖ ≤ ‖emb2 K ξ‖ := norm_le_pi_norm (emb2 K ξ) i
-      nlinarith [norm_nonneg (infPart x)]
-    have hP : (1 + ‖mixedEmbedding K (ξ 0)‖) ^ N * (1 + ‖mixedEmbedding K (ξ 1)‖) ^ N ≤
-        M' ^ (2 * N) * (1 + ‖infPart x‖) ^ (2 * N) := by
-      calc (1 + ‖mixedEmbedding K (ξ 0)‖) ^ N * (1 + ‖mixedEmbedding K (ξ 1)‖) ^ N
-          ≤ (M' * (1 + ‖infPart x‖)) ^ N * (M' * (1 + ‖infPart x‖)) ^ N := by
-            gcongr
-            · exact hcomp 0
-            · exact hcomp 1
-        _ = M' ^ (2 * N) * (1 + ‖infPart x‖) ^ (2 * N) := by
-          rw [← pow_add, ← two_mul, mul_pow]
-    have hφ := hA (infPart x)
-    beta_reduce
-    unfold latticeWeight
-    rw [if_pos (hJξ 0), if_pos (hJξ 1), norm_mul]
-    have hpos0 : 0 < (1 + ‖mixedEmbedding K (ξ 0)‖) ^ N := by positivity
-    have hpos1 : 0 < (1 + ‖mixedEmbedding K (ξ 1)‖) ^ N := by positivity
-    calc ‖φ (infPart x)‖ * ‖finiteTensor2 (fun i ↦ cosetIndicator I (b i)) (finPart x)‖
-        ≤ ‖φ (infPart x)‖ * 1 := mul_le_mul_of_nonneg_left hind (norm_nonneg _)
-      _ = ‖φ (infPart x)‖ := mul_one _
-      _ ≤ A * M' ^ (2 * N) * (((1 + ‖mixedEmbedding K (ξ 0)‖) ^ N)⁻¹ *
-            ((1 + ‖mixedEmbedding K (ξ 1)‖) ^ N)⁻¹) := by
-        rw [← mul_inv, ← div_eq_mul_inv, le_div_iff₀ (mul_pos hpos0 hpos1)]
-        calc ‖φ (infPart x)‖ * ((1 + ‖mixedEmbedding K (ξ 0)‖) ^ N *
-              (1 + ‖mixedEmbedding K (ξ 1)‖) ^ N)
-            ≤ ‖φ (infPart x)‖ * (M' ^ (2 * N) * (1 + ‖infPart x‖) ^ (2 * N)) :=
-              mul_le_mul_of_nonneg_left hP (norm_nonneg _)
-          _ = M' ^ (2 * N) * ((1 + ‖infPart x‖) ^ (2 * N) * ‖φ (infPart x)‖) := by ring
-          _ ≤ M' ^ (2 * N) * A := mul_le_mul_of_nonneg_left hφ (by positivity)
-          _ = A * M' ^ (2 * N) := mul_comm _ _
-  · push Not at hmem
-    obtain ⟨i, hi⟩ := hmem
-    have h0 : finiteTensor2 (fun i ↦ cosetIndicator I (b i)) (finPart x) = 0 := by
-      simp only [finiteTensor2]
-      apply Finset.prod_eq_zero (Finset.mem_univ i)
-      simp only [cosetIndicator]
-      apply Set.indicator_of_notMem
-      rw [Set.mem_vadd_set_iff_neg_vadd_mem, vadd_eq_add, neg_add_eq_sub]
-      exact hi
-    rw [h0, mul_zero, norm_zero]
-    exact hu0
-
-theorem exists_summable_bound_theta2 {F : (Fin 2 → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhat2 K)
-    {C : Set (GL (Fin 2) 𝔸[K])} (hC : IsCompact C) :
-    ∃ u : (Fin 2 → K) → ℝ, Summable u ∧ ∀ h ∈ C, ∀ ξ : Fin 2 → K,
-      ‖F ((fun i ↦ algebraMap K 𝔸[K] (ξ i)) ᵥ* (h : Matrix (Fin 2) (Fin 2) 𝔸[K]))‖ ≤ u ξ := by
-  rw [schwartzBruhat2_eq_cosetSpan2] at hF
-  induction hF using Submodule.span_induction with
-  | mem F hF =>
-    obtain ⟨φ, I, b, rfl⟩ := hF
-    exact exists_summable_bound_tensor_cosetIndicator2 φ I b hC
-  | zero => exact ⟨0, summable_zero, fun h _ ξ => by simp⟩
-  | add F G _ _ hF hG =>
-    obtain ⟨u, hu, hFu⟩ := hF
-    obtain ⟨v, hv, hGv⟩ := hG
-    exact ⟨u + v, hu.add hv, fun h hh ξ =>
-      (norm_add_le _ _).trans (add_le_add (hFu h hh ξ) (hGv h hh ξ))⟩
-  | smul c F _ hF =>
-    obtain ⟨u, hu, hFu⟩ := hF
-    exact ⟨fun ξ => ‖c‖ * u ξ, hu.mul_left _, fun h hh ξ => by
-      rw [Pi.smul_apply, smul_eq_mul, norm_mul]
-      exact mul_le_mul_of_nonneg_left (hFu h hh ξ) (norm_nonneg _)⟩
 
 end
 

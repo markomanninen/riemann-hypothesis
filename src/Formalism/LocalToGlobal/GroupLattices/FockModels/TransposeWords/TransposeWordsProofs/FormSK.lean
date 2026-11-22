@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormSK
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormSK
+
+@[expose] public section
 
 open MvPolynomial
 

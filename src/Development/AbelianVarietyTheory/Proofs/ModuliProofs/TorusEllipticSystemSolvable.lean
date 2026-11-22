@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRapidFourierSeriesOfIntPeriodic
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ContDiffAndFderivTsumFourierOfRapid
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FourierCoeffEqZeroOfTsumEqZeroFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRapidFourierSeriesOfIntPeriodic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ContDiffAndFderivTsumFourierOfRapid
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FourierCoeffEqZeroOfTsumEqZeroFin
+
+@[expose] public section
+
 open Complex Matrix
 open scoped ContDiff BigOperators Real
 
@@ -52,7 +57,7 @@ lemma summable_pi_weight (n : ℕ) :
         exact (Finset.prod_univ_sum (fun k => (s.image (fun ν => ν k) : Finset ℤ))
           (fun _ j => 1 / (1 + |(j : ℝ)|) ^ 2)).symm
     _ ≤ _ := by
-        refine Finset.prod_le_prod (fun k _ => by positivity) fun k _ => ?_
+        refine Finset.prod_le_prod₀ (fun k _ => by positivity) fun k _ => ?_
         exact summable_int_weight.sum_le_tsum _ (fun _ _ => by positivity)
 
 lemma Rapid.summable {n : ℕ} {c : (Fin n → ℤ) → ℂ} (h : Rapid c) :
@@ -62,7 +67,7 @@ lemma Rapid.summable {n : ℕ} {c : (Fin n → ℤ) → ℂ} (h : Rapid c) :
     ((summable_pi_weight n).mul_left C)
   have h1 : ∏ k, (1 + |(ν k : ℝ)|) ^ 2 ≤ (1 + ∑ k, |(ν k : ℝ)|) ^ (2 * n) := by
     calc ∏ k, (1 + |(ν k : ℝ)|) ^ 2 ≤ ∏ _k : Fin n, (1 + ∑ k, |(ν k : ℝ)|) ^ 2 := by
-          refine Finset.prod_le_prod (fun k _ => by positivity) fun k _ => ?_
+          refine Finset.prod_le_prod₀ (fun k _ => by positivity) fun k _ => ?_
           gcongr
           exact Finset.single_le_sum (f := fun k => |(ν k : ℝ)|) (fun _ _ => abs_nonneg _)
             (Finset.mem_univ k)
@@ -153,8 +158,8 @@ lemma symbol_lower {n m : ℕ} (p : Fin m → Fin n → ℂ)
 
 end TorusElliptic
 
-open TorusElliptic in
 
+open TorusElliptic in
 theorem torus_elliptic_system_solvable : ∀ (n m : ℕ) (p : Fin m → Fin n → ℂ), (∀ ξ : Fin n → ℝ, (∀ a, ∑ k, p a k * (ξ k : ℂ) = 0) → ξ = 0) → ∀ w : Fin m → (Fin n → ℝ) → ℂ, (∀ a, ContDiff ℝ ∞ (w a) ∧ (∀ (ν : Fin n → ℤ) x, w a (x + fun k => (ν k : ℝ)) = w a x)) → (∀ a b x, ∑ k, p a k * fderiv ℝ (w b) x (Pi.single k 1) = ∑ k, p b k * fderiv ℝ (w a) x (Pi.single k 1)) → ∃ (t : Fin m → ℂ) (f : (Fin n → ℝ) → ℂ), ContDiff ℝ ∞ f ∧ (∀ (ν : Fin n → ℤ) x, f (x + fun k => (ν k : ℝ)) = f x) ∧ ∀ a x, ∑ k, p a k * fderiv ℝ f x (Pi.single k 1) = w a x - t a := by
   classical
   intro n m p hp w hw hcomp

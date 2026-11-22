@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.JetBounds.JetCounting.PlaceSeriesJetsOneLetterOrbits
+module
+
+public import Formalism.LocalToGlobal.Divisibility.JetBounds.JetCounting.PlaceSeriesJetsOneLetterOrbits
+
+@[expose] public section
 
 open scoped BigOperators
 

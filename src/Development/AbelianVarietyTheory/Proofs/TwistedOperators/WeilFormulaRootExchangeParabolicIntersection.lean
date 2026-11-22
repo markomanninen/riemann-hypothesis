@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurePreservingTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open scoped Pointwise
@@ -79,7 +83,7 @@ theorem exists_average {G X U : Type} [Group G] [TopologicalSpace G] [IsTopologi
     intro w hw
     let a : X × U → ℝ := fun t => δ t.1 * χ (ι t * w)
     have ha : Continuous a := (hδ.comp continuous_fst).mul (hχ.continuous.comp (hι.mul continuous_const))
-    obtain ⟨D, hD, hD'⟩ := hprop _ (hCc.image (continuous_mul_right w⁻¹))
+    obtain ⟨D, hD, hD'⟩ := hprop _ (hCc.image (continuous_mul_const w⁻¹))
     have hs : HasCompactSupport a := by
       refine HasCompactSupport.of_support_subset_isCompact hD fun t ht => hD' t ?_
       by_contra hn
@@ -118,8 +122,9 @@ end Abstract
 section Pattern
 variable {k : Type} [Field k] {ι : Type} [Fintype ι] [DecidableEq ι]
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def ext (S : ι × ι → Prop) (e : {rs // S rs} → k) : Matrix ι ι k :=
   Matrix.of fun r s => if h : S (r, s) then e ⟨(r, s), h⟩ else 0
 
@@ -188,7 +193,7 @@ theorem integral_chart_mul_right [Fintype {rs // S rs}] (m : GL ι k)
   haveI := t2Space k
   have hT := GlobalTheory.SgLoc.TriShift.measurePreserving_triangular ν (fun i : {rs // S rs} => b i.1.2)
     (fun i e => (m.val - 1) i.1.1 i.1.2 + ∑ t, ext S e i.1.1 t * (m.val - 1) t i.1.2)
-    (fun i => (continuous_const.add (continuous_finset_sum _ fun t _ =>
+    (fun i => (continuous_const.add (continuous_finsetSum _ fun t _ =>
       (continuous_ext S _ _).mul continuous_const)).measurable)
     (fun i x y hxy => by
       congr 1
@@ -238,7 +243,7 @@ theorem measurePreserving_mul {n : Type} [Fintype n] [Fintype {rs // S rs}]
   have hT := GlobalTheory.SgLoc.TriShift.measurePreserving_triangular ν (fun i : {rs // S' rs} => b i.1.2 - b i.1.1)
     (fun i e => ∑ t, (if S (i.1.1, t) then ext S' e i.1.1 t else 0) *
       (if S (t, i.1.2) then 0 else ext S' e t i.1.2))
-    (fun i => (continuous_finset_sum _ fun t _ => by
+    (fun i => (continuous_finsetSum _ fun t _ => by
       refine Continuous.mul ?_ ?_ <;> split_ifs <;>
         first | exact continuous_const | exact continuous_ext S' _ _).measurable)
     (fun i x y hxy => by
@@ -459,7 +464,7 @@ theorem average_step {p q : ℕ} {E : (n → k) → GL (n ⊕ Fin c) k} (hE : Is
   have ha : Continuous a := hF.1.continuous.comp (((continuous_embX.comp continuous_fst).mul
     ((continuous_chart _).comp continuous_snd)).mul continuous_const)
   obtain ⟨D, hD, hD'⟩ := proper_chart _ (chartN_mem (k := k) (n := n) (c := c) q) _
-    (hF.2.isCompact.image (continuous_mul_right h⁻¹))
+    (hF.2.isCompact.image (continuous_mul_const h⁻¹))
   have hs : HasCompactSupport a :=
     HasCompactSupport.of_support_subset_isCompact hD fun t ht => hD' t ⟨_, subset_tsupport _ ht, by simp⟩
   have hi := ((MeasurePreserving.id μX).prod hT).integrable_comp_of_integrable

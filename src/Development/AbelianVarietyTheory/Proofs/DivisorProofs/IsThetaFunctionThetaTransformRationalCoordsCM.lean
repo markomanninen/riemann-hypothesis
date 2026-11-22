@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PairAMulEqZeroIffSnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFixedBySchroedingerOpenFiniteSubgrStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAdelicThetaTransformSymplecticOfDecayStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtHeisenbergOperatorThetaTransformRealLiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtOfContinuousRealToComplexExponentialStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BicharDerivContDiffStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SobolevBoundedThetaFormMatrixCoeffSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PairAMulEqZeroIffSnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzFixedBySchroedingerOpenFiniteSubgrStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAdelicThetaTransformSymplecticOfDecayStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicRapidDecayOfMemAdelicSchwartzSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtHeisenbergOperatorThetaTransformRealLiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasDerivAtOfContinuousRealToComplexExponentialStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BicharDerivContDiffStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SobolevBoundedThetaFormMatrixCoeffSmooth
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -47,7 +52,7 @@ theorem continuous_symV : Continuous fun p : VA F N × VA F N => symV p.1 p.2 :=
 
 theorem phase_add (M : ℝ →+ VA F N) (w : VA F N) (s s' : ℝ) :
     phase ψ M w (s + s') = phase ψ M w s * phase ψ M w s' := by
-  simp only [phase, map_add, symV_add_right, mul_add, AddChar.map_add_eq_mul]
+  simp only [phase, map_add (f := _), symV_add_right, mul_add, AddChar.map_add_eq_mul]
 
 theorem phase_add_left (M : ℝ →+ VA F N) (w w' : VA F N) (s : ℝ) :
     phase ψ M (w + w') s = phase ψ M w s * phase ψ M w' s := by
@@ -108,7 +113,7 @@ theorem contDiff_phase_deriv (hψ : Continuous ψ) {M : ℝ →+ VA F N} (hM : C
     exact Continuous.comp (g := fun p : VA F N × ℝ => phase ψ M p.1 p.2)
       (f := fun p : (Fin k → ℝ) × ℝ => ((L p.1, p.2) : VA F N × ℝ)) (continuous_phase hψ hM) h
   exact contDiff_const.add (biChar_contDiff k (fun t s => phase ψ M (L t) s) hQ
-    (fun t s s' => phase_add M (L t) s s') (fun t t' s => by simp only [map_add]; exact phase_add_left M _ _ s)
+    (fun t s s' => phase_add M (L t) s s') (fun t t' s => by simp only [map_add (f := _)]; exact phase_add_left M _ _ s)
     (fun t => phase_zero M (L t)))
 
 theorem hasDerivAt_lineV (hψ : Continuous ψ) {M : ℝ →+ VA F N} (hM : Continuous M) {f : VA F N → ℂ}
@@ -161,7 +166,7 @@ theorem contDiff_of_heisV_closed (ψ : AddChar (AF F) ℂ) (hψ : Continuous ψ)
     · have e : (fun s : ℝ => f (u + L (t + s • Pi.single i 1))) = fun s => f ((u + L t) + M s) := by
         funext s
         have : E s = s • Pi.single i 1 := rfl
-        rw [map_add, add_assoc, ← this]
+        rw [map_add (f := _), add_assoc, ← this]
         rfl
       rw [e]
       convert hasDerivAt_lineV hψ hM (hD (u + L t)) using 1
@@ -193,12 +198,12 @@ theorem symplOHF_eq (he : ∀ w w', symplOF σ JS JT ξ₀ w w' = symV (e w) (e 
 theorem heisOF_comp (he : ∀ w w', symplOF σ JS JT ξ₀ w w' = symV (e w) (e w')) (u : WOF F E nS nT)
     (f : VA F N → ℂ) : heisOF σ JS JT ξ₀ ψ u (f ∘ e) = heisV ψ (e u) f ∘ e := by
   funext w
-  simp only [heisOF, heisV, Function.comp_apply, symplOHF_eq he, map_add]
+  simp only [heisOF, heisV, Function.comp_apply, symplOHF_eq he, map_add (f := _)]
 
 end Main
 
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels in
 theorem isThetaFunOF_thV : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
     B.IsGood σ → ∀ (nS nT : ℕ) (JS : Matrix (Fin nS) (Fin nS) E) (JT : Matrix (Fin nT) (Fin nT) E),
       IsHermND σ JS → IsHermND σ JT → ∀ ξ₀ : E, ξ₀ ≠ 0 → σ ξ₀ = -ξ₀ →
@@ -217,7 +222,7 @@ theorem isThetaFunOF_thV : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     GlobalTheory.T.continuous_adelicThetaTransformSymplectic_of_decay F N B.ψ hR hψ Φ (GlobalTheory.T.adelicRapidDecay_of_mem_adelicSchwartzSpace F N Φ hΦ)
   refine ⟨fun γ w => ?_, ?_, (hcont Φ hΦ).comp hc, ?_⟩
   · obtain ⟨y, z, h⟩ := hrat γ
-    simp only [Function.comp_apply, map_add, symplOHF_eq he, h]
+    simp only [Function.comp_apply, map_add (f := _), symplOHF_eq he, h]
     exact quasiV_thV B.ψ hψ.2.2.1 Φ y z (e w)
   · obtain ⟨U, hUo, hU⟩ := GlobalTheory.T.adelicSchwartz_fixed_by_schroedinger_open_finite_subgroup F N B.ψ hR hψ Φ hΦ
     refine ⟨U.comap e.toLinearMap.toAddMonoidHom, hUo.preimage hc, fun u hu h0 => ?_⟩

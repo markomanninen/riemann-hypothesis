@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SmoothLinear
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.SmoothLinear
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -178,7 +182,7 @@ lemma ana_Phi_add (hH : HInvol H) (L : Matrix (Fin n) (Fin n) ℂ →L[ℝ] E) (
     L (g * hpart1 H (Z + W)) + Complex.I • L (g * hpart2 H (Z + W)) =
       (L (g * hpart1 H Z) + Complex.I • L (g * hpart2 H Z)) +
         (L (g * hpart1 H W) + Complex.I • L (g * hpart2 H W)) := by
-  rw [ana_hpart1_add hH, ana_hpart2_add hH, Matrix.mul_add, Matrix.mul_add, map_add, map_add, smul_add]
+  rw [ana_hpart1_add hH, ana_hpart2_add hH, Matrix.mul_add, Matrix.mul_add, map_add (f := _), map_add (f := _), smul_add]
   abel
 
 lemma ana_Phi_smul (hH : HInvol H) (L : Matrix (Fin n) (Fin n) ℂ →L[ℝ] E) (g Z : Matrix (Fin n) (Fin n) ℂ)
@@ -222,7 +226,9 @@ theorem eab_h_right : EabHRight := by
   simp only [ana_EcH_ext hH hU hgU hgs hF hfF]
   change anaPhi hH (fderiv ℝ F (g * s)) (g * s) (s⁻¹ * Matrix.single a b 1 * s) =
     ∑ c, ∑ d, (s⁻¹ c a * s b d) • anaPhi hH (fderiv ℝ F (g * s)) (g * s) (Matrix.single c d 1)
-  rw [ana_conj_single, map_sum]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ana_conj_single, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
 
 end AAInvW

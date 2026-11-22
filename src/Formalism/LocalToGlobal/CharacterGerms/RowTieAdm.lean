@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.BlockMembershipSelfConjugate
+
+@[expose] public section
 
 noncomputable section
 

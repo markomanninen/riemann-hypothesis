@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial IsLocalRing
 
@@ -28,7 +32,7 @@ theorem kummer_residue_mem_adjoin (T V : Type) [CommRing T] [IsDomain T] [IsDisc
           algebraMap (ResidueField T) (ResidueField V) (residue T a) :=
         (ResidueField.map_residue _ a).symm
       rw [this]; exact K.algebraMap_mem _
-    | add p q hp hq => rw [map_add, map_add]; exact K.add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact K.add_mem hp hq
     | monomial n a ih =>
       rw [pow_succ, ← mul_assoc, map_mul, aeval_X, map_mul]
       exact K.mul_mem ih hγK
@@ -49,7 +53,7 @@ theorem kummer_residue_mem_adjoin (T V : Type) [CommRing T] [IsDomain T] [IsDisc
   have hcomb : ∀ (u u' : V) (k : ℕ), 0 < k → IsUnit u → residue V u ∈ K →
       IsUnit (u + α ^ k * u') ∧ residue V (u + α ^ k * u') ∈ K := by
     intro u u' k hk hu huK
-    have e : residue V (u + α ^ k * u') = residue V u := by rw [map_add, hsmall k hk, add_zero]
+    have e : residue V (u + α ^ k * u') = residue V u := by rw [map_add (f := _), hsmall k hk, add_zero]
     refine ⟨?_, e ▸ huK⟩
     rw [← residue_ne_zero_iff_isUnit, e, residue_ne_zero_iff_isUnit]; exact hu
   let Good : Finset ℕ → V → Prop := fun s x =>
@@ -60,7 +64,7 @@ theorem kummer_residue_mem_adjoin (T V : Type) [CommRing T] [IsDomain T] [IsDisc
     induction p using Polynomial.induction_on' with
     | add p q hp hq =>
       obtain ⟨a, ha⟩ := hp; obtain ⟨b, hb⟩ := hq
-      exact ⟨a + b, by simp only [map_add, ha, hb, Pi.add_apply, add_mul, Finset.sum_add_distrib]⟩
+      exact ⟨a + b, by simp only [map_add (f := _), ha, hb, Pi.add_apply, add_mul, Finset.sum_add_distrib]⟩
     | monomial n t =>
       refine ⟨fun j => if j = n % m then C t * (C ϖ * X) ^ (n / m) else 0, ?_⟩
       simp only [apply_ite (aeval γ), ite_mul, map_zero, zero_mul, Finset.sum_ite_eq',

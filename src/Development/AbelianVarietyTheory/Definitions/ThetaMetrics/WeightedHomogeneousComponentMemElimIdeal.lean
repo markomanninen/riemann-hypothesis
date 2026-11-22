@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularMapCAppendMapLinForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularMapCAppendMapLinForm
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -11,38 +15,38 @@ section Defs
 
 variable {K : Type*} [CommRing K] {σ β β' : Type*} [Fintype σ]
 
-variable (K σ) in
 
+variable (K σ) in
 def genericForm (i : β) : MvPolynomial (β × σ) (MvPolynomial σ K) :=
   linForm (X : σ → MvPolynomial σ K) i
 
 theorem genericForm_eq (i : β) :
-    genericForm K σ i = ∑ j, C (X j) * X (i, j) := rfl
+    genericForm (K := K) (σ := σ) i = ∑ j, C (X j) * X (i, j) := rfl
+
 
 variable (β) in
-
 def incidenceIdeal (p : Ideal (MvPolynomial σ K)) :
     Ideal (MvPolynomial (β × σ) (MvPolynomial σ K)) :=
-  p.map C ⊔ Ideal.span (Set.range (genericForm K σ : β → _))
+  p.map C ⊔ Ideal.span (Set.range (genericForm (K := K) (σ := σ) : β → _))
 
 theorem C_mem_incidenceIdeal {p : Ideal (MvPolynomial σ K)} {g : MvPolynomial σ K} (hg : g ∈ p) :
-    C g ∈ incidenceIdeal β p :=
+    C g ∈ incidenceIdeal (β := β) p :=
   Ideal.mem_sup_left (Ideal.mem_map_of_mem _ hg)
 
 theorem genericForm_mem_incidenceIdeal (p : Ideal (MvPolynomial σ K)) (i : β) :
-    genericForm K σ i ∈ incidenceIdeal β p :=
+    genericForm (K := K) (σ := σ) i ∈ incidenceIdeal (β := β) p :=
   Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩)
 
 theorem incidenceIdeal_le {p : Ideal (MvPolynomial σ K)}
     {J : Ideal (MvPolynomial (β × σ) (MvPolynomial σ K))} :
-    incidenceIdeal β p ≤ J ↔ (∀ g ∈ p, C g ∈ J) ∧ ∀ i, genericForm K σ i ∈ J := by
+    incidenceIdeal (β := β) p ≤ J ↔ (∀ g ∈ p, C g ∈ J) ∧ ∀ i, genericForm (K := K) (σ := σ) i ∈ J := by
   rw [incidenceIdeal, sup_le_iff, Ideal.map_le_iff_le_comap, Ideal.span_le, Set.range_subset_iff]
   rfl
 
-variable (β) in
 
+variable (β) in
 def elimIdeal (p : Ideal (MvPolynomial σ K)) : Ideal (MvPolynomial (β × σ) K) where
-  carrier := {f | ∃ m : ℕ, ∀ j, map C f * C (X j ^ m) ∈ incidenceIdeal β p}
+  carrier := {f | ∃ m : ℕ, ∀ j, map C f * C (X j ^ m) ∈ incidenceIdeal (β := β) p}
   zero_mem' := ⟨0, fun _ => by simp⟩
   add_mem' := by
     rintro f g ⟨m, hm⟩ ⟨n, hn⟩
@@ -50,7 +54,7 @@ def elimIdeal (p : Ideal (MvPolynomial σ K)) : Ideal (MvPolynomial (β × σ) K
     have := Ideal.add_mem _ (Ideal.mul_mem_right (C (X j ^ n)) _ (hm j))
       (Ideal.mul_mem_right (C (X j ^ m)) _ (hn j))
     convert this using 1
-    simp only [map_add, map_pow]
+    simp only [map_add (f := _), map_pow]
     ring
   smul_mem' := by
     rintro c f ⟨m, hm⟩
@@ -59,7 +63,7 @@ def elimIdeal (p : Ideal (MvPolynomial σ K)) : Ideal (MvPolynomial (β × σ) K
     exact Ideal.mul_mem_left _ _ (hm j)
 
 theorem mem_elimIdeal_iff_forall {p : Ideal (MvPolynomial σ K)} {f : MvPolynomial (β × σ) K} :
-    f ∈ elimIdeal β p ↔ ∀ j, ∃ m : ℕ, map C f * C (X j ^ m) ∈ incidenceIdeal β p := by
+    f ∈ elimIdeal (β := β) p ↔ ∀ j, ∃ m : ℕ, map C f * C (X j ^ m) ∈ incidenceIdeal (β := β) p := by
   refine ⟨fun ⟨m, hm⟩ j => ⟨m, hm j⟩, fun h => ?_⟩
   choose m hm using h
   refine ⟨∑ j, m j, fun j => ?_⟩
@@ -71,16 +75,17 @@ theorem mem_elimIdeal_iff_forall {p : Ideal (MvPolynomial σ K)} {f : MvPolynomi
 theorem aeval_eq_zero_of_mem_elimIdeal {G : Type*} [CommRing G] [IsDomain G] [Algebra K G]
     {p : Ideal (MvPolynomial σ K)} {ξ : σ → G} (hξ : ∀ g ∈ p, aeval ξ g = 0) (hne : ξ ≠ 0)
     {t : β × σ → G} (ht : ∀ i, ∑ j, t (i, j) * ξ j = 0)
-    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal β p) : aeval t f = 0 := by
+    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal (β := β) p) : aeval t f = 0 := by
   obtain ⟨m, hm⟩ := hf
   obtain ⟨j, hj⟩ := Function.ne_iff.1 hne
   let ev : MvPolynomial (β × σ) (MvPolynomial σ K) →+* G :=
     eval₂Hom (aeval ξ : MvPolynomial σ K →ₐ[K] G).toRingHom t
-  have hle : incidenceIdeal β p ≤ RingHom.ker ev := by
+  have hle : incidenceIdeal (β := β) p ≤ RingHom.ker ev := by
     refine incidenceIdeal_le.2 ⟨fun g hg => ?_, fun i => ?_⟩
     · simpa [ev, RingHom.mem_ker] using hξ g hg
-    · rw [RingHom.mem_ker, genericForm_eq, map_sum, ← ht i]
-      exact Finset.sum_congr rfl fun j _ => by simp [ev, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [RingHom.mem_ker, genericForm_eq, map_sum]
+        simpa [ev, mul_comm] using ht i
   have h := hle (hm j)
   have h2 : ev (map C f) = aeval t f := by
     have : ev.comp (map C) = (aeval t : _ →ₐ[K] G).toRingHom := by
@@ -91,11 +96,11 @@ theorem aeval_eq_zero_of_mem_elimIdeal {G : Type*} [CommRing G] [IsDomain G] [Al
   simpa [ev] using fun h0 => absurd h0 hj
 
 theorem rename_mem_elimIdeal (e : β → β') {p : Ideal (MvPolynomial σ K)}
-    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal β p) :
-    rename (Prod.map e id) f ∈ elimIdeal β' p := by
+    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal (β := β) p) :
+    rename (Prod.map e id) f ∈ elimIdeal (β := β') p := by
   obtain ⟨m, hm⟩ := hf
   refine ⟨m, fun j => ?_⟩
-  have hle : incidenceIdeal β p ≤ (incidenceIdeal β' p).comap
+  have hle : incidenceIdeal (β := β) p ≤ (incidenceIdeal (β := β') p).comap
       (rename (Prod.map e id : β × σ → β' × σ) : _ →ₐ[MvPolynomial σ K] _) := by
     refine incidenceIdeal_le.2 ⟨fun g hg => ?_, fun i => ?_⟩
     · simpa [Ideal.mem_comap] using C_mem_incidenceIdeal hg
@@ -105,7 +110,7 @@ theorem rename_mem_elimIdeal (e : β → β') {p : Ideal (MvPolynomial σ K)}
   rwa [Ideal.mem_comap, map_mul, rename_C, ← map_rename] at this
 
 theorem map_rename_elimIdeal (e : β ≃ β') (p : Ideal (MvPolynomial σ K)) :
-    (elimIdeal β p).map (rename (Prod.map e id) : _ →ₐ[K] _) = elimIdeal β' p := by
+    (elimIdeal (β := β) p).map (rename (Prod.map e id) : _ →ₐ[K] _) = elimIdeal (β := β') p := by
   refine le_antisymm (Ideal.map_le_iff_le_comap.2 fun f hf => rename_mem_elimIdeal e hf) ?_
   intro f hf
   have := Ideal.mem_map_of_mem (rename (Prod.map e id : β × σ → β' × σ) : _ →ₐ[K] _)
@@ -133,7 +138,7 @@ theorem exists_pow_mul_sub_rename_mem {R : Type*} [CommRing R] (u : σ → R) (j
     have := Ideal.add_mem _ (Ideal.mul_mem_right (C (u j ^ n)) _ hf)
       (Ideal.mul_mem_right (C (u j ^ m)) _ hg)
     convert this using 1
-    simp only [map_add, map_mul, map_pow, rename_C]
+    simp only [map_add (f := _), map_mul, map_pow, rename_C]
     ring
   | mul_X f v hf =>
     obtain ⟨m, f', hf⟩ := hf
@@ -177,7 +182,7 @@ variable {K : Type*} [CommRing K]
 theorem mem_elimIdeal_iff_of_generic {F : Type*} [Field F] [Algebra K F]
     {p : Ideal (MvPolynomial σ K)} {ξ : σ → F} (hξ : ∀ g, aeval ξ g = 0 ↔ g ∈ p) (hne : ξ ≠ 0)
     {f : MvPolynomial (β × σ) K} :
-    f ∈ elimIdeal β p ↔
+    f ∈ elimIdeal (β := β) p ↔
       map (algebraMap K F) f ∈ Ideal.span (Set.range (linForm ξ : β → _)) := by
   let φ : MvPolynomial σ K →+* F := (aeval ξ : MvPolynomial σ K →ₐ[K] F).toRingHom
   have hφ : (fun j => φ (X j)) = ξ := by ext j; simp [φ]
@@ -186,7 +191,7 @@ theorem mem_elimIdeal_iff_of_generic {F : Type*} [Field F] [Algebra K F]
   constructor
   · rintro ⟨m, hm⟩
     obtain ⟨j, hj⟩ := Function.ne_iff.1 hne
-    have hle : incidenceIdeal β p ≤
+    have hle : incidenceIdeal (β := β) p ≤
         (Ideal.span (Set.range (linForm ξ : β → _))).comap (map φ) := by
       refine incidenceIdeal_le.2 ⟨fun g hg => ?_, fun i => ?_⟩
       · have : φ g = 0 := (hξ g).2 hg
@@ -243,12 +248,12 @@ theorem genericPoint_ne_zero {p : Ideal (MvPolynomial σ K)} (hp : ∃ j, X j �
   exact hj ((aeval_genericPoint_eq_zero_iff p _).1 (by rw [aeval_X, h]; rfl))
 
 theorem isPrime_elimIdeal {p : Ideal (MvPolynomial σ K)} [p.IsPrime] (hp : ∃ j, X j ∉ p) :
-    (elimIdeal β p).IsPrime := by
+    (elimIdeal (β := β) p).IsPrime := by
   have hne := genericPoint_ne_zero hp
   obtain ⟨j, hj⟩ := Function.ne_iff.1 hne
   have h := isPrime_span_linForm (ι := β) (genericPoint p) (Ne.isUnit hj) Set.univ
   rw [Set.image_univ] at h
-  have : elimIdeal β p = (Ideal.span (Set.range (linForm (genericPoint p) : β → _))).comap
+  have : elimIdeal (β := β) p = (Ideal.span (Set.range (linForm (genericPoint p) : β → _))).comap
       (map (algebraMap K _)) :=
     Ideal.ext fun f => mem_elimIdeal_iff_of_generic (aeval_genericPoint_eq_zero_iff p) hne
   rw [this]
@@ -285,10 +290,6 @@ theorem isBlockHomogeneous_iff [Fintype σ] {f : MvPolynomial (β × σ) K} {a :
   simp only [IsBlockHomogeneous, IsWeightedHomogeneous, mem_support_iff, funext_iff,
     weight_blockWeight]
 
-theorem IsBlockHomogeneous.mul {f g : MvPolynomial (β × σ) K} {a b : β → ℕ}
-    (hf : IsBlockHomogeneous f a) (hg : IsBlockHomogeneous g b) :
-    IsBlockHomogeneous (f * g) (a + b) := IsWeightedHomogeneous.mul hf hg
-
 theorem IsBlockHomogeneous.unique {f : MvPolynomial (β × σ) K} {a b : β → ℕ} (h : f ≠ 0)
     (ha : IsBlockHomogeneous f a) (hb : IsBlockHomogeneous f b) : a = b :=
   IsWeightedHomogeneous.inj_right h ha hb
@@ -313,7 +314,7 @@ theorem IsBlockHomogeneous.rename [Fintype σ] (e : β ≃ β') {f : MvPolynomia
   obtain ⟨c, hc, rfl⟩ := hd
   rw [Function.comp_apply, ← h c hc]
   refine Finset.sum_congr rfl fun j _ => ?_
-  have := Finsupp.mapDomain_apply hinj c (e.symm i, j)
+  have := Finsupp.mapDomain_apply_of_injective hinj c (e.symm i, j)
   simpa using this
 
 theorem IsBlockHomogeneous.aeval_smul [Fintype σ] [Fintype β] {G : Type*} [CommRing G]
@@ -342,11 +343,11 @@ theorem map_weightedHomogeneousComponent {S τ M : Type*} [CommRing S] [AddCommM
 
 theorem weightedHomogeneousComponent_mem_elimIdeal [Fintype σ] [Finite β]
     {p : Ideal (MvPolynomial σ K)}
-    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal β p) (a : β → ℕ) :
-    weightedHomogeneousComponent blockWeight a f ∈ elimIdeal β p := by
+    {f : MvPolynomial (β × σ) K} (hf : f ∈ elimIdeal (β := β) p) (a : β → ℕ) :
+    weightedHomogeneousComponent blockWeight a f ∈ elimIdeal (β := β) p := by
   classical
   letI := weightedGradedAlgebra (MvPolynomial σ K) (blockWeight : β × σ → β → ℕ)
-  have hI : (incidenceIdeal β p).IsHomogeneous
+  have hI : (incidenceIdeal (β := β) p).IsHomogeneous
       (weightedHomogeneousSubmodule (MvPolynomial σ K) (blockWeight : β × σ → β → ℕ)) := by
     refine Ideal.IsHomogeneous.sup (Ideal.homogeneous_span _ _ ?_) (Ideal.homogeneous_span _ _ ?_)
     · rintro _ ⟨g, -, rfl⟩
@@ -373,7 +374,7 @@ theorem exists_eq_C_mul_of_dvd {f g : MvPolynomial τ K} (hg : g ≠ 0) (h : f �
   rw [totalDegree_mul_of_isDomain hf hq] at hd
   have h0 : q.totalDegree = 0 := by omega
   rw [totalDegree_eq_zero_iff_eq_C] at h0
-  refine ⟨coeff 0 q, fun hc => hq ?_, ?_⟩
+  refine ⟨AddMonoidAlgebra.coeff q 0, fun hc => hq ?_, ?_⟩
   · rw [h0, hc, C_0]
   · rw [← h0, mul_comm]
 
@@ -386,7 +387,7 @@ theorem exists_isWeightedHomogeneous_of_dvd (w : τ → M) {f : MvPolynomial τ 
   have hne : weightedHomogeneousComponent w (Finsupp.weight w d) f ≠ 0 := by
     intro h0
     have := coeff_weightedHomogeneousComponent (w := w) (Finsupp.weight w d) f d
-    rw [h0, if_pos rfl, coeff_zero] at this
+    rw [h0, if_pos rfl, AddMonoidAlgebra.coeff_zero] at this
     exact hd this.symm
   have hle : (weightedHomogeneousComponent w (Finsupp.weight w d) f).totalDegree ≤
       f.totalDegree := by

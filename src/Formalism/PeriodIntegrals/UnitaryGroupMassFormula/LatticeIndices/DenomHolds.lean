@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatBasisAllOfParts
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatBasisAllOfParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem denom_holds (hθ : IsSplitEquiv X p θ) : DenomP X p θ := by
   have hi : ∀ x : X.B.I.E, iota2 X p θ (star x) = iota1 X p θ x := fun x => by
     rw [secondEmbedding_eq_star X p θ hθ, star_star]
   have hvt : p.1.valuation X.B.I.F tf ≤ 1 :=
-    val_le X p θ tf (by rw [htf, map_add, hi]; exact add_mem h2 h1)
+    val_le X p θ tf (by rw [htf, map_add (f := _), hi]; exact add_mem h2 h1)
   have hvn : p.1.valuation X.B.I.F nf ≤ 1 :=
     val_le X p θ nf (by rw [hnf, map_mul, hi]; exact mul_mem h2 h1)
   obtain ⟨s1, hs1, t1, ht1⟩ := key tf hvt

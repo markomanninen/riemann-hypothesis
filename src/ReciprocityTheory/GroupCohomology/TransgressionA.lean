@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.Section
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.Section
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh.InflationTransgression
 
@@ -117,7 +121,7 @@ theorem exists_ext_cochain [CompactSpace G] [T2Space G] [TotallyDisconnectedSpac
   have hσn : ∀ (n : N) g, σ (n * g) = σ g := fun n g => by
     simp only [hσ, hr n g, Subgroup.coe_mul, mul_inv_rev]; group
   have h3 : ∀ (n : N) g, y (n * g) = f n + M.rho n (y g) := fun n g => by
-    simp only [hy, hσn, hr n g, hfc, Subgroup.coe_mul, map_mul, Module.End.mul_apply, map_add,
+    simp only [hy, hσn, hr n g, hfc, Subgroup.coe_mul, map_mul, Module.End.mul_apply, map_add (f := _),
       map_sub, hψ1]
     abel
   have h2 : ∀ g (n : N), y (g * n) = y g + M.rho g (f n) := fun g n => by
@@ -142,9 +146,9 @@ theorem exists_ext_cochain [CompactSpace G] [T2Space G] [TotallyDisconnectedSpac
     show f (r (g * n)) + M.rho (r (g * n)) (ψ (σ (g * n))) - ψ 1 = y g + M.rho g (f n)
     rw [hrgn, hσgn, hfc]
     calc _ = f (r g) + M.rho (r g) (f n'' + M.rho n'' (ψ t)) - ψ 1 := by
-          rw [Subgroup.coe_mul, map_mul, Module.End.mul_apply, map_add]; abel
+          rw [Subgroup.coe_mul, map_mul, Module.End.mul_apply, map_add (f := _)]; abel
       _ = f (r g) + M.rho (r g) (M.rho t (f n) + ψ t) - ψ 1 := by rw [e3]
-      _ = _ := by rw [map_add, hrg, Module.End.mul_apply, hy]; simp only [← ht]; abel
+      _ = _ := by rw [map_add (f := _), hrg, Module.End.mul_apply, hy]; simp only [← ht]; abel
   have hy1 : y 1 = 0 := by simp [hy, hr1, hf1, hσ]
   refine ⟨y, ?_, fun n => by simpa [hy1] using h3 n 1, h2, h3⟩
   have hr' : Continuous fun g => (r g : G) := continuous_subtype_val.comp hrc
@@ -171,7 +175,7 @@ theorem inflD_of_ext (M : TRep R G) (N : Subgroup G) [N.Normal] (f : N → M.V) 
   · intro a b n
     simp only [D1]
     rw [h2 b n, ← mul_assoc, h2 (a * b) n]
-    simp only [map_add, map_sub, map_mul, Module.End.mul_apply]
+    simp only [map_add (f := _), map_sub, map_mul, Module.End.mul_apply]
     abel
   · intro a b n
     simp only [D1]
@@ -179,10 +183,10 @@ theorem inflD_of_ext (M : TRep R G) (N : Subgroup G) [N.Normal] (f : N → M.V) 
     rw [e, h2 (a * b), h2 a n]
     simp only [map_mul, Module.End.mul_apply]
     rw [hc b n]
-    simp only [map_add, map_sub, map_mul, Module.End.mul_apply]
+    simp only [map_add (f := _), map_sub, map_mul, Module.End.mul_apply]
     abel
   · intro a b n
-    simp only [D1, map_add, map_sub]
+    simp only [D1, map_add (f := _), map_sub]
     rw [hc (a * b) n, hc a n]
     have e : (n : G) * a = a * (cj N a n : G) := by rw [cj_coe]; group
     have e2 : M.rho n (M.rho a (y b)) = M.rho a (M.rho (cj N a n) (y b)) := by
@@ -192,7 +196,7 @@ theorem inflD_of_ext (M : TRep R G) (N : Subgroup G) [N.Normal] (f : N → M.V) 
       simp only [cj_coe]
       group
     rw [e2, hc b (cj N a n), e3]
-    simp only [map_add, map_sub, map_mul, Module.End.mul_apply]
+    simp only [map_add (f := _), map_sub, map_mul, Module.End.mul_apply]
     abel
 
 section

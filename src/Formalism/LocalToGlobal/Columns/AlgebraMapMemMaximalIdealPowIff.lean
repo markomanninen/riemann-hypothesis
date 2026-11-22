@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
-import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.SizeWindowBrackets.SlopesHypothesisFinitePlaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -18,17 +22,9 @@ def plEquiv (K : Type) [Field K] [NumberField K] :
   left_inv _ := rfl
   right_inv _ := rfl
 
-@[simp] theorem plEquiv_val (w : HeightOneSpectrum (𝓞 K)) : (plEquiv K w).1 = w.asIdeal := rfl
-
-@[simp] theorem plEquiv_symm_asIdeal (p : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K) :
-    ((plEquiv K).symm p).asIdeal = p.1 := rfl
-
 def prW (w : HeightOneSpectrum (𝓞 K)) : ℕ := Ideal.absNorm (w.asIdeal.under ℤ)
 
 def eW (w : HeightOneSpectrum (𝓞 K)) : ℕ := w.asIdeal.ramificationIdx ℤ
-
-def lW (w : HeightOneSpectrum (𝓞 K)) : ℝ :=
-  Real.log (Ideal.absNorm w.asIdeal : ℝ) / (Module.finrank ℚ K : ℝ)
 
 def IsUnifW (w : HeightOneSpectrum (𝓞 K)) (ϖ : 𝓞 K) : Prop := ϖ ∈ w.asIdeal ∧ ϖ ∉ w.asIdeal ^ 2
 
@@ -82,9 +78,6 @@ variable {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarT
 def atW (w : HeightOneSpectrum (𝓞 K)) (L : Submodule (𝓞 K) V) : Submodule (Ow w) V :=
   Submodule.span (Ow w) (L : Set V)
 
-def scalW (w : HeightOneSpectrum (𝓞 K)) (c : K) (L : Submodule (𝓞 K) V) : Submodule (Ow w) V :=
-  (atW w L).map ((c • (LinearMap.id : V →ₗ[K] V)).restrictScalars (Ow w))
-
 def lenW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) : ℕ∞ :=
   Module.length (Ow w) (atW w A ⧸ (atW w B).comap (atW w A).subtype)
 
@@ -93,9 +86,6 @@ def lidxW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) : ℤ :=
 
 def lenUW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) : ℚ :=
   ((lenW w A B).toNat : ℚ) / (eW w : ℚ)
-
-def lidxUW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) : ℚ :=
-  (lidxW w A B : ℚ) / (eW w : ℚ)
 
 theorem mk'_smul (w : HeightOneSpectrum (𝓞 K)) (a : 𝓞 K) (t : w.asIdeal.primeCompl) (x : V) :
     (t : 𝓞 K) • ((IsLocalization.mk' (Ow w) a t) • x) = a • x := by
@@ -143,12 +133,6 @@ theorem le_atW (w : HeightOneSpectrum (𝓞 K)) (L : Submodule (𝓞 K) V) :
 theorem atW_mono (w : HeightOneSpectrum (𝓞 K)) {A B : Submodule (𝓞 K) V} (h : A ≤ B) :
     atW w A ≤ atW w B := Submodule.span_mono h
 
-@[simp] theorem atW_bot (w : HeightOneSpectrum (𝓞 K)) : atW w (⊥ : Submodule (𝓞 K) V) = ⊥ := by
-  simp [atW]
-
-@[simp] theorem atW_top (w : HeightOneSpectrum (𝓞 K)) : atW w (⊤ : Submodule (𝓞 K) V) = ⊤ := by
-  simp [atW]
-
 theorem atW_inf (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) :
     atW w (A ⊓ B) = atW w A ⊓ atW w B := by
   apply le_antisymm (le_inf (atW_mono w inf_le_left) (atW_mono w inf_le_right))
@@ -172,37 +156,6 @@ theorem atW_fg (w : HeightOneSpectrum (𝓞 K)) {L : Submodule (𝓞 K) V} (h : 
   refine ⟨s, ?_⟩
   unfold atW
   exact (Submodule.span_span_of_tower (𝓞 K) (Ow w) (s : Set V)).symm
-
-theorem scalW_one (w : HeightOneSpectrum (𝓞 K)) (L : Submodule (𝓞 K) V) : scalW w 1 L = atW w L := by
-  unfold scalW
-  rw [one_smul]
-  exact Submodule.map_id _
-
-theorem mem_scalW_iff {w : HeightOneSpectrum (𝓞 K)} {c : K} {L : Submodule (𝓞 K) V} {x : V} :
-    x ∈ scalW w c L ↔ ∃ y ∈ atW w L, c • y = x := Iff.rfl
-
-theorem scalW_eq_locScal (w : HeightOneSpectrum (𝓞 K)) (c : K) (L : Submodule (𝓞 K) V) :
-    scalW w c L = @Formalism.LFunctionChainParameters.slopeLatticeData.locScal K V _ _ _ _ _ (plEquiv K w) (owModule w V) c L := by
-  unfold scalW atW Formalism.LFunctionChainParameters.slopeLatticeData.locScal
-  rw [Submodule.map_span]
-  rfl
-
-@[reducible] def rlocModule (V : Type) [AddCommGroup V] [Module K V] (p : Formalism.LFunctionChainParameters.slopeLatticeData.FinPl K) :
-    Module (Formalism.LFunctionChainParameters.slopeLatticeData.Rloc p) V := owModule ((plEquiv K).symm p) V
-
-theorem le_of_atW_le {A B : Submodule (𝓞 K) V}
-    (h : ∀ w : HeightOneSpectrum (𝓞 K), atW w A ≤ atW w B) : A ≤ B := by
-  intro x hx
-  let I : Ideal (𝓞 K) := B.colon {x}
-  by_contra hxB
-  have hI : I ≠ ⊤ := by
-    intro hI
-    have h1 : (1 : 𝓞 K) ∈ I := by rw [hI]; trivial
-    rw [Submodule.mem_colon_singleton] at h1
-    exact hxB (by simpa using h1)
-  obtain ⟨m, hm, hIm⟩ := Ideal.exists_le_maximal I hI
-  obtain ⟨s, hs, hsx⟩ := mem_atW_iff.1 (h ((plEquiv K).symm ⟨m, hm⟩) (Submodule.subset_span hx))
-  exact hs (hIm (Submodule.mem_colon_singleton.2 hsx))
 
 theorem algebraMap_ow_injective (w : HeightOneSpectrum (𝓞 K)) :
     Function.Injective (algebraMap (Ow w) K) := IsFractionRing.injective (Ow w) K
@@ -506,13 +459,6 @@ theorem lenW_inf (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) :
     simp
   rw [this]
 
-theorem lenW_eq_zero (w : HeightOneSpectrum (𝓞 K)) {A B : Submodule (𝓞 K) V} (h : atW w A ≤ atW w B) :
-    lenW w A B = 0 := by
-  unfold lenW
-  rw [Module.length_eq_zero_iff, Submodule.Quotient.subsingleton_iff, eq_top_iff]
-  intro x _
-  exact h x.2
-
 abbrev idLat (I : Ideal (𝓞 K)) : Submodule (𝓞 K) K := IsLocalization.coeSubmodule K I
 
 theorem mem_atW_idLat_pow_iff (w : HeightOneSpectrum (𝓞 K)) (n : ℕ) (r : Ow w) :
@@ -565,8 +511,8 @@ theorem lenW_one_pow (w : HeightOneSpectrum (𝓞 K)) (n : ℕ) :
 theorem eW_ne_zero_rat (w : HeightOneSpectrum (𝓞 K)) : (eW w : ℚ) ≠ 0 :=
   Nat.cast_ne_zero.2 (eW_pos w).ne'
 
-omit [IsScalarTower (𝓞 K) K V] in
 
+omit [IsScalarTower (𝓞 K) K V] in
 theorem lenUW_mul_eW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) V) :
     lenUW w A B * (eW w : ℚ) = ((lenW w A B).toNat : ℚ) :=
   div_mul_cancel₀ _ (eW_ne_zero_rat w)
@@ -574,9 +520,5 @@ theorem lenUW_mul_eW (w : HeightOneSpectrum (𝓞 K)) (A B : Submodule (𝓞 K) 
 theorem nonempty_places (K : Type) [Field K] [NumberField K] : Nonempty (HeightOneSpectrum (𝓞 K)) := by
   obtain ⟨m, hm⟩ := Ideal.exists_maximal (𝓞 K)
   exact ⟨(plEquiv K).symm ⟨m, hm⟩⟩
-
-example : ∃ w : HeightOneSpectrum (𝓞 ℚ), lenW w (1 : Submodule (𝓞 ℚ) ℚ) (idLat (w.asIdeal ^ 3)) = 3 := by
-  obtain ⟨w⟩ := nonempty_places ℚ
-  exact ⟨w, lenW_one_pow w 3⟩
 
 end Formalism.L2.Col

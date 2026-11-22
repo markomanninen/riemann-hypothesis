@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLP
-import Formalism.PieriBlockIdeals.PieriColumnMinors.Symmetrization
+module
+
+public import Formalism.PieriBlockIdeals.StatementLP
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.Symmetrization
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.LP
 
@@ -102,7 +106,7 @@ theorem lp_stab_iSup {ι : Sort*} {T : Fin q → Fin q → Module.End K N} (S : 
   intro a b x hx
   exact Submodule.iSup_induction S (motive := fun x => T a b x ∈ ⨆ i, S i) hx
     (fun i y hy => Submodule.mem_iSup_of_mem i (h i a b y hy)) (by simp)
-    (fun y z hy hz => by rw [map_add]; exact Submodule.add_mem _ hy hz)
+    (fun y z hy hz => by rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz)
 
 def PathTo (lam2 : Fin q → ℕ) (j : ℕ) (κ : ℕ → Fin q → ℕ) : Prop :=
   κ 0 = lam2 ∧ (∀ i < j, ∃ ρ, κ (i + 1) = κ i + Pi.single ρ 1) ∧ ∀ i ≤ j, Antitone (κ i)

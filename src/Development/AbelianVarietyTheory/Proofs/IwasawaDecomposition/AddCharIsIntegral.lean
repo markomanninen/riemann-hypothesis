@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePsi
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.ChiMemSubfield
-import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWRec
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePsi
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.ChiMemSubfield
+public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWRec
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,8 +158,8 @@ end Gen
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_psi : ∀ (D : D7) (L0 : LevelData D) (T : ∀ u : D.what₂.Word, Forms0 D u), (∀ u, Joint0 L0 u (T u)) → (∀ u, LevelZeroCharacterRational T u) →
     ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
     ∃ ψ : Formalism.L2.Herm.awayFrom₂ (L0 u) (D.what₂.places.resChar w) →*

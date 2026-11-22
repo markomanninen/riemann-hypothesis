@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+
+@[expose] public section
 
 open Formalism.L2.DIV Formalism.BasicNotions NumberField
 
@@ -16,7 +20,7 @@ private lemma blockAct_map_mem_range_map_of_entries_mem {K : Type} [Field K] (K�
     refine ⟨MvPolynomial.C a, ?_⟩
     rw [MvPolynomial.map_C, ← MvPolynomial.algebraMap_eq, AlgHom.commutes]
   | add p q hp hq =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact add_mem hp hq
   | mul_X p v hp =>
     rw [map_mul, map_mul, MvPolynomial.map_X, _root_.Formalism.L2.DIV.blockAct_X]
@@ -48,8 +52,8 @@ private lemma actP_mem_range_map_of_entries_mem {K : Type} [Field K] (K₀ : Sub
   intro τ a b
   exact hg τ b a
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.coefAction_repr_mem_subfield : ∀ {E K ι : Type} [Field E] [NumberField E] [Field K] [NumberField K] [Fintype ι] {n : ℕ} (emb : ι → E →+* K) (K₀ : Subfield K) (lam : ι → _root_.Formalism.BasicNotions.DomWeight n), (∀ τ x, emb τ x ∈ K₀) → ∀ (g : GL (Fin n) E) i j, (_root_.Formalism.L2.DIV.bVV K lam).repr (_root_.Formalism.L2.DIV.rhoV emb lam g (_root_.Formalism.L2.DIV.bVV K lam j)) i ∈ K₀ ∧ (_root_.Formalism.L2.DIV.bVV K lam).repr (_root_.Formalism.L2.DIV.rhoVr emb lam g (_root_.Formalism.L2.DIV.bVV K lam j)) i ∈ K₀ := by
   intro E K ι _ _ _ _ _ n emb K₀ lam hemb γ i j
   classical

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisEigenFrob
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisEigenFrob
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -69,9 +74,6 @@ def galRes {L : IntermediateField ℚ_[p] (PadicAlgCl p)} (hKL : K ≤ L) :
 theorem galRes_apply {L : IntermediateField ℚ_[p] (PadicAlgCl p)} (hKL : K ≤ L)
     (σ : Gal(PadicAlgCl p/L)) (y : PadicAlgCl p) : galRes hKL σ y = σ y := rfl
 
-theorem galRes_smul {L : IntermediateField ℚ_[p] (PadicAlgCl p)} (hKL : K ≤ L)
-    (σ : Gal(PadicAlgCl p/L)) (x : ℂ_[p]) : galRes hKL σ • x = σ • x := rfl
-
 theorem exists_fixingSubgroup_of_finite_image (ψ : Gal(PadicAlgCl p/K) →* ℚ_[p]ˣ) (hψ : Continuous ψ)
     (S : Set Gal(PadicAlgCl p/K)) (hfin : (ψ '' S).Finite) :
     ∃ E : IntermediateField K (PadicAlgCl p), FiniteDimensional K E ∧
@@ -104,7 +106,7 @@ theorem mem_inertia_of_degree {L : IntermediateField ℚ_[p] (PadicAlgCl p)} [Fi
   | mem x hx => exact hroot x hx
   | algebraMap q =>
     exact σ.commutes (algebraMap ℚ_[p] L q)
-  | add x y _ _ hx hy => rw [map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
   | inv x _ hx => rw [map_inv₀, hx]
   | mul x y _ _ hx hy => rw [map_mul, hx, hy]
 

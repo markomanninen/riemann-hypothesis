@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaAtEqProdAhG
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaAtEqProdAhG
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.FWT Formalism.L2.Pj Formalism.IndefR.Datum ReciprocityTheory.ChartRestriction.G.PullbackSections ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -46,7 +51,7 @@ theorem denseRange_rat_add_real : DenseRange (fun p : D.host.E × D.host.E =>
   set b := Module.finBasis D.host.F D.host.E
   set Bt := Algebra.TensorProduct.basis (AF D.host.F) b
   let Φ : (Fin (Module.finrank D.host.F D.host.E) → AF D.host.F) → AE D := fun α => ∑ k, α k • Bt k
-  have hΦc : Continuous Φ := continuous_finset_sum _ fun k _ => (continuous_apply k).smul continuous_const
+  have hΦc : Continuous Φ := by fun_prop
   have hΦs : Function.Surjective Φ := fun x => ⟨Bt.repr x, Bt.sum_repr x⟩
   have hd := hΦs.denseRange.comp (DenseRange.piMap fun _ => denseRange_hostField_infinite_finite_adelePair (D := D)) hΦc
   refine hd.mono ?_
@@ -55,8 +60,9 @@ theorem denseRange_rat_add_real : DenseRange (fun p : D.host.E × D.host.E =>
   simp only [Function.comp_apply, Pi.map_apply, Φ, Bt, Algebra.TensorProduct.basis_apply, pairA_alg, add_smul,
     Finset.sum_add_distrib, alg_smul_tmul, alg_smul_tmul_one]
   congr 1
-  · simp only [incA, inclR, map_sum]
-    exact Finset.sum_congr rfl fun k _ => rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [incA, inclR, map_sum]
+      exact Finset.sum_congr rfl fun k _ => rfl
   · rw [TensorProduct.tmul_sum]
 
 end GlobalTheory.ThetaUniqReal

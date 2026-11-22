@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -49,12 +54,13 @@ theorem exists_sum_eigen {E : Type} [Field E] [NumberField E] {V : Type} [AddCom
       · subst h; simp [canonicalEmbedding.apply_at]
       · simp [Pi.single_eq_of_ne h]
     rw [← Module.End.mul_apply, ← h2, this, map_smul, LinearMap.smul_apply]
-  · rw [← LinearMap.sum_apply, ← map_sum, Finset.univ_sum_single]
-    have := h1 1
-    have e : Φ 1 = 1 := by simpa using this
-    change v = Φ 1 v
-    rw [e]
-    rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← LinearMap.sum_apply, ← map_sum, Finset.univ_sum_single]
+      have := h1 1
+      have e : Φ 1 = 1 := by simpa using this
+      change v = Φ 1 v
+      rw [e]
+      rfl
 
 theorem conj_eq_neg {z : ℂ} {d : ℕ} (h : z ^ 2 = -(d : ℂ)) (hd : 0 < d) : starRingEnd ℂ z = -z := by
   have hre := congrArg Complex.re h
@@ -147,7 +153,7 @@ theorem finrank_symm_comm_le (E : Type) [Field E] [NumberField E] [IsCMField E] 
         apply Subtype.ext
         simp [Matrix.smul_mulVec] }
   have hinj : Function.Injective Ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro Θ hΘ
     obtain ⟨hs, hc⟩ := hS Θ.1 Θ.2
     have k1 : ∀ τ : E →+* ℂ, τ (H.rt : E) = ρ₀ → ∀ v ∈ Eig F τ, Θ.1.mulVec (star v) = 0 := by
@@ -155,7 +161,7 @@ theorem finrank_symm_comm_le (E : Type) [Field E] [NumberField E] [IsCMField E] 
       have hb : ∀ i, Θ.1.mulVec (star (b ⟨τ, hτ⟩ i : Fin g → ℂ)) = 0 := fun i =>
         congrArg Subtype.val (congrFun (congrFun hΘ ⟨τ, hτ⟩) i)
       have e := congrArg Subtype.val ((b ⟨τ, hτ⟩).sum_repr ⟨v, hv⟩)
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at e
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at e
       rw [← e, star_sum, Matrix.mulVec_sum]
       refine Finset.sum_eq_zero fun i _ => ?_
       rw [star_smul, Matrix.mulVec_smul, hb, smul_zero]

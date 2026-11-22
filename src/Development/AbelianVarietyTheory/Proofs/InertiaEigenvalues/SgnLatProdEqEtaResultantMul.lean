@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyLeftMulBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SgnLatSpanBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyDvdPowOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DltEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyLeftMulBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SgnLatSpanBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyDvdPowOfAevalEqZero
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma GlobalTheory.UnitLemma.Desc Polynomial Filter Topology
 
@@ -35,15 +39,14 @@ theorem eta_of_sq_one (K : UQ) {ε : K.E} (h : ε * ε = 1) (a : K.E) : K.eta (�
 theorem exists_basis_lat (K : UQ) {V : Type} [AddCommGroup V] [Module K.E V] [Module K.O V]
     [IsScalarTower K.O K.E V] [Module.Finite K.E V] (L : Submodule K.O V) (hfg : L.FG) (hsp : Submodule.span K.E (L : Set V) = ⊤) :
     ∃ e : Module.Basis (Fin (Module.finrank K.E V)) K.E V, Submodule.span K.O (Set.range e) = L := by
-  haveI : Submodule.IsLattice K.E L := ⟨hfg, hsp⟩
-  let b := Module.Free.chooseBasis K.O L
-  let e' := b.extendOfIsLattice K.E
-  have hc : Fintype.card (Module.Free.ChooseBasisIndex K.O L) = Module.finrank K.E V :=
-    (Module.finrank_eq_card_basis e').symm
-  refine ⟨e'.reindex (Fintype.equivFinOfCardEq hc), ?_⟩
-  rw [Module.Basis.range_reindex]
-  have : Set.range e' = L.subtype '' Set.range b := by
-    ext x; simp [e', Set.range_comp]
+  have : Submodule.IsLattice K.E L := Submodule.IsLattice.of_fg K.E hfg
+  have : Submodule.IsFullLattice K.E L := ⟨hsp⟩
+  have : Module.Finite K.O L := Submodule.IsLattice.finite K.E L
+  have : Module.Free K.O L := Submodule.IsLattice.free K.E L
+  let b := Module.finBasisOfFinrankEq K.O L (Submodule.IsFullLattice.finrank_eq K.E L)
+  refine ⟨b.extendOfIsFullLattice K.E, ?_⟩
+  have : Set.range (b.extendOfIsFullLattice K.E) = L.subtype '' Set.range b := by
+    ext x; simp
   rw [this, Submodule.span_image, b.span_eq, Submodule.map_top, Submodule.range_subtype]
 
 theorem exists_smul_mem (K : UQ) {V : Type} [AddCommGroup V] [Module K.E V] [Module K.O V]
@@ -77,7 +80,8 @@ theorem det_trace_ne_zero {K : UQ} (B : InvAlg K) (hsep : B.P.Separable)
     intro l
     have := congrFun hvm l
     simp only [Matrix.vecMul, dotProduct, Matrix.of_apply, Pi.zero_apply] at this
-    rw [← this, hq, map_sum, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, hq, map_sum, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     have ha : aeval B.g (C (c k) * X ^ (k : ℕ)) = c k • B.g ^ (k : ℕ) := by
       rw [← smul_eq_C_mul, map_smul, aeval_X_pow]
@@ -85,7 +89,8 @@ theorem det_trace_ne_zero {K : UQ} (B : InvAlg K) (hsep : B.P.Separable)
   have hz' : aeval B.g q = 0 := by
     apply GlobalTheory.UnitLemma.Centraliser.eq_zero_of_trace_mul B hsep
     intro y
-    rw [← e.sum_repr y, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr y, Finset.mul_sum, map_sum]
     refine Finset.sum_eq_zero fun l _ => ?_
     rw [mul_smul_comm, map_smul, hz l, smul_zero]
   have hdvd := GlobalTheory.UnitLemma.Centraliser.P_dvd_of_aeval_eq_zero B hsep q hz'
@@ -98,7 +103,7 @@ theorem det_trace_ne_zero {K : UQ} (B : InvAlg K) (hsep : B.P.Separable)
   apply hc
   funext k
   have := congrArg (fun p : K.E[X] => p.coeff k) hq0
-  simp only [hq, finset_sum_coeff, coeff_C_mul_X_pow, coeff_zero] at this
+  simp only [hq, Polynomial.finsetSum_coeff, coeff_C_mul_X_pow, coeff_zero] at this
   rw [Finset.sum_eq_single k (fun b _ hb => if_neg (fun h => hb (Fin.ext h.symm))) (by simp)] at this
   simpa using this
 
@@ -107,7 +112,8 @@ theorem trace_mat_toMatrix {E A : Type} [Field E] [CommRing A] [Algebra E A] {ι
     (Matrix.of fun k l => Algebra.trace E A (x k * f l)) =
       (Matrix.of fun k i => Algebra.trace E A (x k * b i)) * b.toMatrix f := by
   ext k l
-  rw [Matrix.of_apply, Matrix.mul_apply, ← b.sum_toMatrix_smul_self f l, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.of_apply, Matrix.mul_apply, ← b.sum_toMatrix_smul_self f l, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_smul_comm, map_smul, smul_eq_mul, Matrix.of_apply, mul_comm]
 

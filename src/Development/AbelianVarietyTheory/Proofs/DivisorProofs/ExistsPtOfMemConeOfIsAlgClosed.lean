@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FramedLatticeZeroCycleHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeOfRingKrullDimConeIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralRelation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullstellensatzPointOfSystem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeOfRingKrullDimConeIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralRelation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NullstellensatzPointOfSystem
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -98,7 +103,8 @@ theorem exists_pt_of_mem_cone_of_isAlgClosed : ∀ (F : Type) [Field F] (S : Lin
     have h' : cg i₀ ^ m + ∑ k : Fin m, aeval (fun i : Fin S.N => ∑ j : Fin S.N, algebraMap K Ω (u i j) * cg j) (A k) *
         cg i₀ ^ (k : ℕ) = 0 := h
     show aeval cg G = 0
-    simp only [G, σ, map_add, map_pow, map_sum, map_mul, aeval_X, aeval_bind₁, aeval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, σ, map_add (f := _), map_pow, map_sum, map_mul, aeval_X, aeval_bind₁, aeval_C]
     exact h'
 
   rw [← HeightExists.map_imageIdeal hS K] at hmem
@@ -111,14 +117,16 @@ theorem exists_pt_of_mem_cone_of_isAlgClosed : ∀ (F : Type) [Field F] (S : Lin
     show aeval y (bind₁ σ (A k)) = 0
     rw [aeval_bind₁]
     have e : (fun i => aeval y (σ i)) = 0 := funext fun i => by
-      simp only [σ, map_sum, map_mul, aeval_C, aeval_X, Algebra.algebraMap_self, RingHom.id_apply, Pi.zero_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [σ, map_sum, map_mul, aeval_C, aeval_X, Algebra.algebraMap_self, RingHom.id_apply, Pi.zero_apply]
       rw [hu i y]
       ring
     rw [e, aeval_zero, Algebra.algebraMap_self, RingHom.id_apply, constantCoeff, RingHom.coe_mk, MonoidHom.coe_mk,
       OneHom.coe_mk]
     exact (hA k).coeff_eq_zero (d := 0) (by simp; omega)
   have h3 : eval y G = y i₀ ^ m := by
-    simp only [G, map_add, map_pow, map_sum, map_mul, eval_X, hA0, zero_mul, Finset.sum_const_zero, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_add (f := _), map_pow, map_sum, map_mul, eval_X, hA0, zero_mul, Finset.sum_const_zero, add_zero]
   exact pow_ne_zero m hi₀ (h3.symm.trans h0)
 
 end GlobalTheory.ConeOnto

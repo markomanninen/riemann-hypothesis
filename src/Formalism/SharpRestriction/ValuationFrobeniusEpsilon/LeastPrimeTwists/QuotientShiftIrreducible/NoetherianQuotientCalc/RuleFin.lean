@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+module
+
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -302,7 +306,7 @@ theorem GMod.IsGr.exists_gens_deg {F : GMod B R k} (hF : F.IsGr 𝒜) :
   obtain ⟨T, hT, hspan⟩ := hF.exists_gens
   refine ⟨T, fun x => if h : ∃ m, x ∈ F.gr m then h.choose else 0, fun x hx => ?_, hspan⟩
   beta_reduce
-  rw [dif_pos (hT x hx)]
+  rw [dite_eq_left (hT x hx)]
   exact (hT x hx).choose_spec
 
 theorem GMod.IsGr.finite_gr [IsLocalRing B] (h : Std 𝒜) (h𝒜 : ⨆ d, 𝒜 d = ⊤) {F : GMod B R k}

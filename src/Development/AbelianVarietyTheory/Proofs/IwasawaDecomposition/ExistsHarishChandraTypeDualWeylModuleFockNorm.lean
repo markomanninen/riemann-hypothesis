@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalRingCardinality.DataCoeff
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasModelOfAntitone
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUnitaryMulTriangular
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasModelOfAntitone
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.MainNotions.S GlobalTheory.DualWeyl GlobalTheory.CompactDS
 open Formalism.GradedWeylDivisibility (rowAct rowDeg)
@@ -71,7 +75,7 @@ theorem cdom_of_partial_sums (μ ν : Fin n → ℕ)
     · simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
 
 theorem cdom_of_coeff_ne_zero {la : Fin n → ℕ} {f : Pol n ℂ} (hf : f ∈ nabla la ℂ) (m : Fin n × Fin n →₀ ℕ)
-    (hm : coeff m f ≠ 0) : CDom (allPos n) (fun a => (rowDeg m a : ℝ)) (fun a => (la a : ℝ)) := by
+    (hm : AddMonoidAlgebra.coeff f m ≠ 0) : CDom (allPos n) (fun a => (rowDeg m a : ℝ)) (fun a => (la a : ℝ)) := by
   unfold nabla at hf
   rw [Formalism.GradedWeylDivisibility.standardMonomialSpanDomain ℂ n n la] at hf
   by_contra hc
@@ -84,7 +88,7 @@ theorem cdom_of_coeff_ne_zero {la : Fin n → ℕ} {f : Pol n ℂ} (hf : f ∈ n
     obtain ⟨h1, h2⟩ := Formalism.GradedWeylDivisibility.bidetDominance ℂ n n K sz hsz I m (mem_support_iff.2 h0)
     exact hc (cdom_of_partial_sums _ _ h1 h2)
   | zero => simp
-  | add x y _ _ hx hy => rw [coeff_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [MvPolynomial.coeff_add, hx, hy, add_zero]
   | smul c x _ hx => rw [coeff_smul, hx, smul_zero]
 
 def act (lam : DomWeight n) (g : Matrix (Fin n) (Fin n) ℂ) : Space lam.natW →L[ℂ] Space lam.natW :=
@@ -129,8 +133,8 @@ theorem isURepOn_act (lam : DomWeight n) : IsURepOn (UJset (allPos n)) (act lam)
     exact h1.smul (continuous_rhoSpace v)
 
 theorem coeff_torus (lam : DomWeight n) (θ : Fin n → ℝ) (x : Space lam.natW) (m : Fin n × Fin n →₀ ℕ) :
-    coeff m (incl lam (act lam (torus θ) x)) =
-      chr (fun a => (rowDeg m a : ℝ) + lam.detShift) θ * coeff m (incl lam x) := by
+    AddMonoidAlgebra.coeff (incl lam (act lam (torus θ) x)) m =
+      chr (fun a => (rowDeg m a : ℝ) + lam.detShift) θ * AddMonoidAlgebra.coeff (incl lam x) m := by
   rw [incl_act, torus, Matrix.diagonal_transpose, coeff_smul, Formalism.GradedWeylDivisibility.ldrow_coeff_rowAct_diag, Matrix.det_diagonal,
     smul_eq_mul, mul_left_comm, mul_comm]
   congr 1
@@ -171,7 +175,7 @@ theorem isKTypeOf_act (lam : DomWeight n) : IsKTypeOf (allPos n) (act lam) (fun 
       have h1 := coeff_torus lam θ (toSpace _ ⟨_, extremal_mem ha⟩) m
       refine h1.trans ?_
       rw [map_smul, coeff_smul, smul_eq_mul]
-      by_cases hm : coeff m (incl lam (toSpace _ ⟨_, extremal_mem ha⟩)) = 0
+      by_cases hm : AddMonoidAlgebra.coeff (incl lam (toSpace _ ⟨_, extremal_mem ha⟩)) m = 0
       · rw [hm, mul_zero, mul_zero]
       have h2 := Formalism.GradedWeylDivisibility.hwRowWeight ℂ n n le_rfl lam.natW ha hm
       have h3 : (fun a => (rowDeg m a : ℝ) + lam.detShift) = fun a => (lam.w a : ℝ) := by

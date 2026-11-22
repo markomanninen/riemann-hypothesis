@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.SplitA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -24,7 +28,7 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.atLaws :
     · intro h
       exact absurd (Finset.mem_univ w) h
   · refine TR.ad_ext ?_ ?_
-    · rw [map_add, hp, hp, hp, Pi.single_add]
+    · rw [map_add (f := _), hp, hp, hp, Pi.single_add]
     · change (at1 w (s + t)).2 = (at1 w s + at1 w t).2
       rw [hfin, h2, h2, h2, add_zero]
   · refine TR.ad_ext ?_ ?_
@@ -42,10 +46,11 @@ theorem UpperTheory.ConvolutionTheory.R2.Fo.atLaws :
     · change (at1 w t * a).2 = (at1 w (t * TR.pInf F a w)).2
       rw [h2, hmul, h2, zero_mul]
   · refine TR.ad_ext ?_ ?_
-    · rw [map_sum]
-      simp_rw [hp]
-      ext w'
-      simp [Finset.sum_apply, Pi.single_apply]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+        simp_rw [hp]
+        ext w'
+        simp [Finset.sum_apply, Pi.single_apply]
     · change a.2 = (∑ w', at1 w' (TR.pInf F a w')).2
       rw [ha]
       have : ∀ s : Finset (InfinitePlace F), (∑ w' ∈ s, at1 w' (TR.pInf F a w')).2 = 0 := by

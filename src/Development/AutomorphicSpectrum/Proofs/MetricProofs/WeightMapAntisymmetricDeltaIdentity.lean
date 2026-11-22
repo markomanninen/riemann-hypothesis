@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.XPolyDelta
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.PairRelationOfScaledRatio
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.XPolyDelta
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights
 

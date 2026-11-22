@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PresheafCubeExactAtSuccOfSurjective
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CohomologyPresheafFunctorMapAppApply
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsAddEquivOfSurjectiveOfKerIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PresheafCubeExactAtSuccOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CohomologyPresheafFunctorMapAppApply
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SumNegOnePowFinrankEqZero
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsAddEquivOfSurjectiveOfKerIff
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace Opposite
 
@@ -115,11 +119,6 @@ theorem CechAcyclic.of_shortExact₃
     (h₁ : CechAcyclic V U S.X₁) (h₂ : CechAcyclic V U S.X₂) : CechAcyclic V U S.X₃ :=
   fun s hs q => SheafLES.subsingleton₃ hS _ _ (h₂ s hs q) (h₁ s hs (q + 1))
 
-theorem CechAcyclic.of_shortExact₂
-    {S : ShortComplex (Sheaf (Opens.grothendieckTopology T) AddCommGrpCat.{u})} (hS : S.ShortExact)
-    (h₁ : CechAcyclic V U S.X₁) (h₃ : CechAcyclic V U S.X₃) : CechAcyclic V U S.X₂ :=
-  fun s hs q => SheafLES.subsingleton₂ hS _ _ (h₁ s hs q) (h₃ s hs q)
-
 theorem sections_shortExact_of_subsingleton
     {S : ShortComplex (Sheaf (Opens.grothendieckTopology T) AddCommGrpCat.{u})} (hS : S.ShortExact)
     (W : Opens T) (h : Subsingleton (Sheaf.H'.{u} S.X₁ 1 W)) :
@@ -144,7 +143,6 @@ theorem sections_shortExact_of_subsingleton
 variable [LinearOrder ι]
 
 variable (V U) in
-
 abbrev cechAbSheafFunctor : Sheaf (Opens.grothendieckTopology T) AddCommGrpCat.{u} ⥤
     CochainComplex (ModuleCat.{u} ℤ) ℕ :=
   sheafToPresheaf _ _ ⋙ cechAbFunctor V U
@@ -155,7 +153,6 @@ variable {S S' : ShortComplex (Sheaf (Opens.grothendieckTopology T) AddCommGrpCa
   (hS : S.ShortExact) (h₁ : CechAcyclic V U S.X₁)
 
 include hS h₁ in
-
 theorem cechAbSheafFunctor_shortExact : (S.map (cechAbSheafFunctor V U)).ShortExact :=
   cechAbFunctor_shortExact V U (S.map (sheafToPresheaf _ _)) fun s hs =>
     sections_shortExact_of_subsingleton hS _ (h₁ s hs 0)
@@ -190,7 +187,6 @@ theorem cechAbδ_surjective [Finite ι] [Injective S.X₂] (n : ℕ) :
 end Delta
 
 variable (V U) in
-
 def CechComparison (n : ℕ) : Type (u + 1) :=
   {e : ∀ F : Sheaf (Opens.grothendieckTopology T) AddCommGrpCat.{u}, CechAcyclic V U F →
       (cechAbH F.obj V U n ≃+ Sheaf.H'.{u} F n V) //
@@ -295,7 +291,7 @@ def CechAcyclicMod (V : X.Opens) (U : ι → X.Opens) (F : X.Modules) : Prop :=
 variable {V : X.Opens} {U : ι → X.Opens} {F G : X.Modules}
 
 theorem cechAcyclicMod_iff : CechAcyclicMod V U F ↔
-    CechAcyclic (T := X.toPresheafedSpace.carrier) V U ((toAbSheaf X).obj F) := Iff.rfl
+    CechAcyclic (T := X.toPresheafedSpace.carrier) V U ((toAbSheaf (X := X)).obj F) := Iff.rfl
 
 theorem cechAcyclicMod_iff_of_le (h : ∀ i, U i ≤ V) : CechAcyclicMod V U F ↔
     ∀ s : Finset ι, s.Nonempty → ∀ q, 0 < q → Subsingleton (cohOn F (⨅ i ∈ s, U i) q) := by
@@ -305,14 +301,6 @@ theorem cechAcyclicMod_iff_of_le (h : ∀ i, U i ≤ V) : CechAcyclicMod V U F �
     obtain ⟨q, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero hq.ne'
     exact H q, fun H q => H _ q.succ_pos⟩
 
-theorem CechAcyclicMod.of_shortExact₃ {S : ShortComplex X.Modules} (hS : S.ShortExact)
-    (h₁ : CechAcyclicMod V U S.X₁) (h₂ : CechAcyclicMod V U S.X₂) : CechAcyclicMod V U S.X₃ :=
-  fun s hs q => cohOn.subsingleton₃ hS _ _ (h₂ s hs q) (h₁ s hs (q + 1))
-
-theorem CechAcyclicMod.of_shortExact₂ {S : ShortComplex X.Modules} (hS : S.ShortExact)
-    (h₁ : CechAcyclicMod V U S.X₁) (h₃ : CechAcyclicMod V U S.X₃) : CechAcyclicMod V U S.X₂ :=
-  fun s hs q => cohOn.subsingleton₂ hS _ _ (h₁ s hs q) (h₃ s hs q)
-
 variable [LinearOrder ι] (R : Type v) [CommRing R] [Algebra R Γ(X, ⊤)]
 
 section Delta
@@ -320,7 +308,6 @@ section Delta
 variable {S S' : ShortComplex X.Modules} (hS : S.ShortExact) (h₁ : CechAcyclicMod V U S.X₁)
 
 include hS h₁ in
-
 theorem cechModulesFunctor_shortExact_of_acyclic :
     (S.map (cechModulesFunctor R V U)).ShortExact :=
   cechModulesFunctor_shortExact R V U S fun s hs =>
@@ -330,15 +317,12 @@ theorem cechModulesFunctor_shortExact_of_acyclic :
 def cechδ (n : ℕ) : cechH R S.X₃ V U n →ₗ[R] cechH R S.X₁ V U (n + 1) :=
   ((cechModulesFunctor_shortExact_of_acyclic R hS h₁).δ n (n + 1) rfl).hom
 
-theorem cechδ_def (h : (S.map (cechModulesFunctor R V U)).ShortExact) (n : ℕ) :
-    cechδ R hS h₁ n = (h.δ n (n + 1) rfl).hom := rfl
-
 theorem cechAbHEquiv_δ (n : ℕ) (x : cechAbH S.X₃.presheaf V U n) :
     cechAbHEquiv R S.X₁ V U (n + 1) (cechAbδ (T := X.toPresheafedSpace.carrier)
         (shortExact_toAbSheaf hS) (cechAcyclicMod_iff.1 h₁) n x) =
       cechδ R hS h₁ n (cechAbHEquiv R S.X₃ V U n x) :=
   Cube.SemiHom.homology_δ
-    (S := (S.map (toAbSheaf X)).map (sheafToPresheaf _ _ ⋙ cechAbCubeFunctor V U))
+    (S := (S.map (toAbSheaf (X := X))).map (sheafToPresheaf _ _ ⋙ cechAbCubeFunctor V U))
     (S' := S.map (cechCubeFunctor R V U))
     (cechAbSheafFunctor_shortExact (T := X.toPresheafedSpace.carrier)
       (shortExact_toAbSheaf hS) (cechAcyclicMod_iff.1 h₁))
@@ -370,7 +354,7 @@ theorem cechHAddEquivCohOn_map (hF : CechAcyclicMod V U F) (hG : CechAcyclicMod 
   apply (cohOn.toH' G V n).injective
   rw [← cechAbHEquiv_map, toH'_cechHAddEquivCohOn, cohOn.toH'_map, toH'_cechHAddEquivCohOn]
   exact cechAbHEquivH'_map (T := X.toPresheafedSpace.carrier) hc (cechAcyclicMod_iff.1 hF)
-    (cechAcyclicMod_iff.1 hG) ((toAbSheaf X).map φ) n y
+    (cechAcyclicMod_iff.1 hG) ((toAbSheaf (X := X)).map φ) n y
 
 def cechHEquivCohOn (hF : CechAcyclicMod V U F) (n : ℕ) : cechH R F V U n ≃ₗ[R] cohOn F V n :=
   { cechHAddEquivCohOn R hc hF n with
@@ -415,7 +399,6 @@ theorem cechHEquivCohOn_zero (hF : CechAcyclicMod V U F) :
 
 omit [LinearOrder ι] [Finite ι] in
 include hc in
-
 theorem subsingleton_cohOn_of_cechAcyclic [Fintype ι] (hF : CechAcyclicMod V U F) {n : ℕ}
     (hn : Fintype.card ι ≤ n) : Subsingleton (cohOn F V n) :=
   letI : LinearOrder ι := LinearOrder.lift' _ (Fintype.equivFin ι).injective

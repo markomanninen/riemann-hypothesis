@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PosSemidefSubMulConjTranspose
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLinearIndependentOfRatIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PosSemidefSubMulConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsLinearIndependentOfRatIndependent
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -30,7 +35,7 @@ theorem summable_embAll (E m : Type) [Field E] [NumberField E] [Fintype m] (k : 
     (hk : Fintype.card m * Module.finrank ℚ E < k) :
     Summable fun w : m → 𝓞 E => ‖embAll E m w‖⁻¹ ^ k := by
   have hinj : Function.Injective (embAll E m) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     by_contra h
     have := one_le_norm_embAll h
@@ -77,7 +82,7 @@ theorem det_gram_bot {γ : M2 E N} (h : γ ∈ UU E N) (τ : E →+* ℂ) :
   have e : (γ.submatrix Sum.inr id).map τ * ((γ.submatrix Sum.inr id).map τ)ᴴ =
       γ.toBlocks₂₁.map τ * (γ.toBlocks₂₁.map τ)ᴴ + γ.toBlocks₂₂.map τ * (γ.toBlocks₂₂.map τ)ᴴ := by
     ext i j
-    simp [mul_apply, Fintype.sum_sum_type, toBlocks₂₁, toBlocks₂₂]
+    simp [Matrix.mul_apply, Fintype.sum_sum_type, toBlocks₂₁, toBlocks₂₂]
   have h1 := HAct.map_mem τ (HAct.group_part h).2.2.1
   rw [HAct.map_ccT, HAct.map_blocks τ γ, fromBlocks_conjTranspose] at h1
   have h2 := (HAct.blocks h1).2.2.2
@@ -110,8 +115,8 @@ theorem norm_embAll_sq_le {m : Type} [Fintype m] {Ψ : Finset (E →+* ℂ)} (h�
   exact Finset.single_le_sum (f := fun j => ‖τ.1 (w j : E)‖ ^ 2)
     (fun _ _ => by positivity) (Finset.mem_univ j)
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem span_rows_mul {m : Type} (a : Matrix (Fin N) (Fin N) E) (ha : a.det ≠ 0)
     (W : Matrix (Fin N) m E) :
     Submodule.span E (Set.range fun i => (a * W) i) = Submodule.span E (Set.range fun i => W i) := by
@@ -121,7 +126,7 @@ theorem span_rows_mul {m : Type} (a : Matrix (Fin N) (Fin N) E) (ha : a.det ≠ 
     intro b X
     rw [Submodule.span_le]
     rintro _ ⟨i, rfl⟩
-    have : (b * X) i = ∑ k, b i k • X k := by ext j; simp [mul_apply]
+    have : (b * X) i = ∑ k, b i k • X k := by ext j; simp [Matrix.mul_apply]
     simp only [this]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
   refine le_antisymm (key a W) ?_
@@ -140,7 +145,8 @@ theorem exists_short_generators {Ψ : Finset (E →+* ℂ)} (hΨ : IsType Ψ) (N
   have hca : ((c : E) • a).det ≠ 0 := by
     rw [det_smul]; exact mul_ne_zero (pow_ne_zero _ hcE) ha
   have hint : ∀ i j, IsIntegral ℤ ((((c : E) • a) * γ.submatrix Sum.inr id) i j) := fun i j => by
-    rw [Matrix.smul_mul, ← Matrix.mul_smul, mul_apply]
+    rw [Matrix.smul_mul, ← Matrix.mul_smul]
+    change IsIntegral ℤ (∑ k, a i k * ((c : E) * γ (Sum.inr k) j))
     exact IsIntegral.sum _ fun k _ => (hai i k).mul (hd (Sum.inr k) j)
   set w : Fin N → (Fin N ⊕ Fin N → 𝓞 E) := fun i j => ⟨_, hint i j⟩ with hw
   have hwe : ∀ i j, (w i j : E) = (((c : E) • a) * γ.submatrix Sum.inr id) i j := fun _ _ => rfl
@@ -160,9 +166,9 @@ theorem exists_short_generators {Ψ : Finset (E →+* ℂ)} (hΨ : IsType Ψ) (N
       rw [← pow_mul, mul_comm, pow_mul, ← mul_pow]
       refine pow_le_pow_left₀ (by positivity) ((norm_embAll_sq_le hΨ _).trans (le_of_eq ?_)) _
       simp only [hwe, Finset.mul_sum, Matrix.smul_mul, Matrix.smul_apply, smul_eq_mul, map_mul,
-        map_natCast, norm_mul, norm_natCast, mul_pow]
+        map_natCast, norm_mul, Complex.norm_natCast, mul_pow]
     rw [← Finset.prod_pow]
-    refine (Finset.prod_le_prod (fun _ _ => by positivity) fun i _ => h1 i).trans ?_
+    refine (Finset.prod_le_prod₀ (fun _ _ => by positivity) fun i _ => h1 i).trans ?_
     rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     refine (mul_le_mul_of_nonneg_left hle (by positivity)).trans (le_of_eq ?_)
     rw [mul_pow, mul_pow, Real.sq_sqrt hC.le, Finset.prod_pow]
@@ -171,8 +177,8 @@ theorem exists_short_generators {Ψ : Finset (E →+* ℂ)} (hΨ : IsType Ψ) (N
 
 end GlobalTheory.SW.EisConv
 
-open GlobalTheory.SW.EisConv in
 
+open GlobalTheory.SW.EisConv in
 theorem GlobalTheory.SW.summable_eis_majorant : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Finset (E →+* ℂ)), IsType Ψ → ∀ (n N : ℕ), 4 * N < n → ∀ (c : ℕ) (rep : Lag E N → M2 E N), 0 < c → (∀ U, rep U ∈ UU E N ∧ Den c (rep U) ∧ botSpan (rep U) = U.1) → Summable fun U : Lag E N => ∏ τ : Ψ, (‖(hDen Ψ (rep U) (fun _ => I • (1 : Matrix (Fin N) (Fin N) ℂ)) τ).det‖ ^ n)⁻¹ := by
   intro E _ _ _ Ψ hΨ n N hn c rep hc hrep
   obtain ⟨K, hK, H⟩ := exists_short_generators hΨ N c hc

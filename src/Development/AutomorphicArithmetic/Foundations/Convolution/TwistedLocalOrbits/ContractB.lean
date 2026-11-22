@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.HoweSpace
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Matrix GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets UpperTheory.ConvolutionTheory.Loc
 
@@ -59,8 +63,8 @@ private theorem fixB {ι : Type} [Fintype ι] (r c : ValueGroupWithZero E) (hc :
     exact Valuation.map_sub_lt _ (Valuation.map_add_lt _ h3 (hm1 j)) h2
   exact lt_irrefl _ this
 
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] in
 
+omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] in
 private theorem boundB {n : ℕ} {r : ValueGroupWithZero E} (hr : r < 1) (M : Matrix (Fin n) (Fin n) E)
     (hM : ∀ i j, valuation E (M i j - (1 : Matrix (Fin n) (Fin n) E) i j) ≤ r) (y : Fin n → E)
     (ρ : ValueGroupWithZero E) (h : ∀ i, valuation E ((M *ᵥ y) i) ≤ ρ) (i : Fin n) : valuation E (y i) ≤ ρ := by
@@ -70,7 +74,7 @@ private theorem boundB {n : ℕ} {r : ValueGroupWithZero E} (hr : r < 1) (M : Ma
   push Not at hlt
   have h0 : 0 < valuation E (y i₀) := zero_le.trans_lt hlt
   have e : y i₀ = (M *ᵥ y) i₀ - ∑ l, (M i₀ l - (1 : Matrix (Fin n) (Fin n) E) i₀ l) * y l := by
-    simp [sub_mul, Finset.sum_sub_distrib, mulVec, dotProduct, one_apply]
+    simp [sub_mul, Finset.sum_sub_distrib, mulVec, dotProduct, Matrix.one_apply]
   have h2 : valuation E (∑ l, (M i₀ l - (1 : Matrix (Fin n) (Fin n) E) i₀ l) * y l) ≤ r * valuation E (y i₀) :=
     Valuation.map_sum_le _ fun l _ => by
       rw [map_mul]; exact mul_le_mul' (hM _ _) (hi₀ l (Finset.mem_univ l))
@@ -111,7 +115,7 @@ private theorem ball_sgB {n : ℕ} {r : ValueGroupWithZero E} {σ : E ≃+* E} (
   have := ha i j
   rw [← hσ, map_sub] at this
   have e : σ ((1 : Matrix (Fin n) (Fin n) E) i j) = (1 : Matrix (Fin n) (Fin n) E) i j := by
-    simp [one_apply, apply_ite σ]
+    simp [Matrix.one_apply, apply_ite σ]
   rw [e] at this
   exact this
 
@@ -219,7 +223,7 @@ private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → E
     simp
   obtain ⟨u, w, hu, hw, hw', h1, h2⟩ := gridInteriorVertexDecompTransport hσ uniformizer_lt_one (le_uniformizer_iff.2 hr) (b - 1) hb
     (fun j => (1 : Matrix (Fin n) (Fin n) E) i j) α β
-    (fun j => by rw [one_apply]; split_ifs <;> simp) i (· < i) hα hβ hβ1
+    (fun j => by rw [Matrix.one_apply]; split_ifs <;> simp) i (· < i) hα hβ hβ1
   refine ⟨fun j => (1 : Matrix (Fin n) (Fin n) E) i j + α j * u j, 1 + w i, fun j => ?_, by simpa using hw i,
     fun j => ?_⟩
   · rw [add_sub_cancel_left, map_mul]
@@ -234,7 +238,7 @@ private theorem rowB {n : ℕ} {σ : E ≃+* E} (hσ : Isom σ) {t : Fin n → E
     have e2 : ∑ l, ((1 : Matrix (Fin n) (Fin n) E) i l + β l * u l) * b l j =
         (1 : Matrix (Fin n) (Fin n) E) i j + β j * u j + w j := by
       rw [hw' j]
-      simp only [Matrix.sub_apply, mul_sub, Finset.sum_sub_distrib, one_apply (i := _) (j := j), mul_ite, mul_one,
+      simp only [Matrix.sub_apply, mul_sub, Finset.sum_sub_distrib, Matrix.one_apply (i := _) (j := j), mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
       ring
     simp only [e1, mul_assoc]

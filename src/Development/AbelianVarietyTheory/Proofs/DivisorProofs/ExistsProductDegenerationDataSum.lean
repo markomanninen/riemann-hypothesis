@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSumPolAV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProductPrincipallyPolarisedAbelianSchemeStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PsiInOfComponent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSumPolAV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsProductPrincipallyPolarisedAbelianSchemeStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PsiInOfComponent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -399,14 +403,11 @@ def sumPre : DegPre R where
   psi_gen := fun x => isGen_extAt _ _ _ _ _ _ _ _ _ _ _ _ (D₁.psi_gen x.1) (D₂.psi_gen x.2)
 
 theorem isSumDeg_sumPre : IsSumDeg (sumPre D₁ D₂ P a₁ a₂ h) D₁ D₂ a₁ a₂ (AddMonoidHom.fst D₁.X D₂.X)
-    (AddMonoidHom.snd D₁.X D₂.X) where
-  hom₁ := inferInstanceAs (IsMonHom a₁)
-  hom₂ := inferInstanceAs (IsMonHom a₂)
-  lim := inferInstanceAs (IsIso (lift a₁ a₂))
-  xsum := Function.bijective_id
-  c_pr₁ := fun _ => pairPt_fst a₁ a₂ _ _
-  c_pr₂ := fun _ => pairPt_snd a₁ a₂ _ _
-  w := ⟨CubePf.idIsoL (sL D₁ D₂ P a₁ a₂), CubePf.idIsoL_isGen (withL P _ h).isLB,
+    (AddMonoidHom.snd D₁.X D₂.X) := by
+  refine ⟨inferInstanceAs (IsMonHom a₁), inferInstanceAs (IsMonHom a₂),
+    inferInstanceAs (IsIso (lift a₁ a₂)), Function.bijective_id,
+    fun _ => pairPt_fst a₁ a₂ _ _, fun _ => pairPt_snd a₁ a₂ _ _, ?_⟩
+  exact ⟨CubePf.idIsoL (sL D₁ D₂ P a₁ a₂), CubePf.idIsoL_isGen (withL P _ h).isLB,
     mapsAt_extAt D₁.P.L D₂.P.L a₁.left a₂.left (eSec P.A) 1 _ (eSec_comp a₁) D₁.rig _ (eSec_comp a₂) D₂.rig
       D₁.rig_gen D₂.rig_gen,
     fun x => mapsAt_extAt D₁.P.L D₂.P.L a₁.left a₂.left _ (-1) _ (ptK_fst D₁ D₂ P a₁ a₂ x) (D₁.psi x.1)

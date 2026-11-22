@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDegree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDegree
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -53,7 +57,11 @@ theorem exists_free_compositum :
   haveI : IsScalarTower k R L' := IsScalarTower.of_algebraMap_eq (fun a => (f₀.commutes a).symm)
   haveI : Module.IsTorsionFree R L' := Module.isTorsionFree_iff_algebraMap_injective.mpr hf₀inj
   haveI : Algebra.IsAlgebraic R M := hB.isAlgebraic
-  let j₀ : M →ₐ[R] L' := IsAlgClosed.lift
+  let j₀ : M →ₐ[R] L' := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let j : M →ₐ[k] L' := j₀.restrictScalars k
   let ι : L →ₐ[k] L' := IsScalarTower.toAlgHom k L L'
   refine ⟨L', inferInstance, ι.toRingHom, j.toRingHom, ?_, fun u hu => ?_⟩
@@ -200,14 +208,14 @@ theorem respectsAdd_of_map (ψ : Isogeny (E.map σ) (E'.map σ))
   have hpm' : Function.Injective pm' := fun _ _ h => h
   apply Point.map_injective (W' := E') ιA
   apply hpm'
-  rw [map_add, map_add, key _ h₃, key _ h₁, key _ h₂]
+  rw [map_add (f := _), map_add (f := _), key _ h₃, key _ h₁, key _ h₂]
   have h₃' : IsGenPt (E.map σ) (pm P₁ + pm P₂) := by
-    rw [← map_add]; exact hgen _ h₃
+    rw [← map_add (f := _)]; exact hgen _ h₃
   rw [← ψ.app_add (hgen P₁ h₁) (hgen P₂ h₂) h₃']
   exact happ (map_add _ _ _) _ _
 
-omit [E.IsElliptic] in
 
+omit [E.IsElliptic] in
 theorem transcendental_of_ffMap {z : E.toAffine.FunctionField}
     (h : Transcendental F' (ffMap σ E z)) : Transcendental F z := by
   intro halg
@@ -215,8 +223,8 @@ theorem transcendental_of_ffMap {z : E.toAffine.FunctionField}
   ext a
   exact (ffMap_algebraMap σ E a).symm
 
-omit [E.IsElliptic] [E'.IsElliptic] in
 
+omit [E.IsElliptic] [E'.IsElliptic] in
 theorem baseChange_map_ffMap :
     (E'.baseChange E.toAffine.FunctionField).map (ffMap σ E) =
       (E'.map σ).baseChange (E.map σ).toAffine.FunctionField := by
@@ -225,8 +233,8 @@ theorem baseChange_map_ffMap :
   rw [WeierstrassCurve.baseChange, WeierstrassCurve.baseChange, WeierstrassCurve.map_map,
     WeierstrassCurve.map_map, hc]
 
-omit [E.IsElliptic] [E'.IsElliptic] in
 
+omit [E.IsElliptic] [E'.IsElliptic] in
 theorem nonsingular_of_ffMap {x y : E.toAffine.FunctionField}
     (h : ((E'.map σ).baseChange (E.map σ).toAffine.FunctionField).toAffine.Nonsingular
       (ffMap σ E x) (ffMap σ E y)) :
@@ -243,14 +251,6 @@ noncomputable def _root_.GroundTheory.Arith.Abelian.Isogeny.ofMap (ψ : Isogeny 
   ⟨.some x y (nonsingular_of_ffMap σ (hx ▸ hy ▸ ψ.nonsingular)),
     (isIsogeny_iff _).mpr ⟨transcendental_of_ffMap σ (hx ▸ ψ.transcendental_alt),
       respectsAdd_of_map σ ψ (by simp) hx hy⟩⟩
-
-theorem _root_.GroundTheory.Arith.Abelian.Isogeny.ofMap_alt (ψ : Isogeny (E.map σ) (E'.map σ))
-    (x y : E.toAffine.FunctionField) (hx : ffMap σ E x = ψ.x) (hy : ffMap σ E y = ψ.y) :
-    (Isogeny.ofMap σ ψ x y hx hy).x = x := rfl
-
-theorem _root_.GroundTheory.Arith.Abelian.Isogeny.ofMap_y (ψ : Isogeny (E.map σ) (E'.map σ))
-    (x y : E.toAffine.FunctionField) (hx : ffMap σ E x = ψ.x) (hy : ffMap σ E y = ψ.y) :
-    (Isogeny.ofMap σ ψ x y hx hy).y = y := rfl
 
 theorem _root_.GroundTheory.Arith.Abelian.Isogeny.map_ofMap (ψ : Isogeny (E.map σ) (E'.map σ))
     (x y : E.toAffine.FunctionField) (hx : ffMap σ E x = ψ.x) (hy : ffMap σ E y = ψ.y) :

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrPtOfClosedPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartStatementHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPointFactorsOpenImmersion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelChangeMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulipointLiftToFinerLevelCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodLevelMultipleSameAdelicPart
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompactifiedModuliPartOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
-import Formalism.LocalToGlobal.ProjectiveLattices.ExtPtUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrPtOfClosedPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartStatementHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPointFactorsOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelChangeMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulipointLiftToFinerLevelCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGoodLevelMultipleSameAdelicPart
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IntegralFramedPointBaseChangeStable
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompactifiedModuliPartOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExtPtUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain
@@ -34,8 +38,8 @@ def IsCoord {R : Type} [CommRing R] (ξ : Sp R ⟶ Y.X) {g : ℕ}
       IsCombAtG Y.t (spMap φ ≫ ξ) (bcV Y.t φ e) (M i) (w ≫ Y.m.φ)) ∧
   C * M = U.map φ ∧ M * C = ((discr E : ℤ) : k) • (1 : Matrix (Fin (Dw.mult σ)) (Fin (Dw.mult σ)) k)
 
-omit Y ν in
 
+omit Y ν in
 theorem fst_eq {k : Type} [CommRing k] [Algebra c.F k] {yy : Sp k ⟶ Xo'.XF c'} {y : FrPt Xo c k}
     (h : yy ≫ r = GlobalTheory.AllWt.ptF y) : yy ≫ r ≫ pullback.fst _ _ = y.x := by
   rw [← Category.assoc, h]
@@ -55,8 +59,8 @@ theorem openImmersion_comp_structure_eq_generic : Y.j ≫ Y.s = pullback.snd _ _
 def inclO (hle : c.F ≤ c'.F) : 𝓞 c.F →+* 𝓞 c'.F :=
   RingOfIntegers.mapRingHom (IntermediateField.inclusion hle).toRingHom
 
-omit ν in
 
+omit ν in
 theorem comp_eq_of_lift {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullback.snd _ _ ≫
       spMap (IntermediateField.inclusion hle).toRingHom) {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X}
     {b : 𝓞 c'.F →+* R} (hb : ξ ≫ Y.s = spMap b) {k : Type} [CommRing k] [Algebra c.F k] {φ : R →+* k}
@@ -73,9 +77,9 @@ theorem comp_eq_of_lift {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pull
   rw [← RingHom.comp_assoc, e1, e2]
   rfl
 
+
 open GlobalTheory.LocM.BaseMdl in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_isCoord {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ} {e : Fin g → (Sp (DualNumber R) ⟶ Y.t.G.left)}
     (he : IsTanBasis Y.t ξ e) (σ : E →+* ℂ) {σR : 𝓞 E →+* R} {U : Matrix (Fin g) (Fin g) R}
     (hU : IsProjMat Y.t ξ σR e U) {k : Type} [CommRing k] [Algebra c.F k] {φ : R →+* k} {yy : Sp k ⟶ Xo'.XF c'}
@@ -137,8 +141,8 @@ theorem exists_isCoord {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ} {e 
   funext j
   simp [Matrix.vecMul, dotProduct, Matrix.one_apply]
 
-omit ν in
 
+omit ν in
 theorem exists_lift_frPt {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullback.snd _ _ ≫
       spMap (IntermediateField.inclusion hle).toRingHom) (Z : Comp Xo c) {L : Type} [CommRing L] [IsLocalRing L]
     [Algebra c.F L] (z : Sp L ⟶ Y.X) {b : 𝓞 c'.F →+* L} (hz : z ≫ Y.s = spMap b) (hu : ∀ a, a ≠ 0 → IsUnit (b a))
@@ -186,9 +190,9 @@ theorem exists_lift_frPt {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pul
     rw [Scheme.Hom.comp_apply, h6]
     exact hqZ
 
+
 include ν in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_intFr_lift (T : CDVR) (io : c.F →+* T.Fr) (yt : Sp T.V ⟶ Y.X) (yy : Sp T.Fr ⟶ Xo'.XF c')
     (z : letI := io.toAlgebra; FrPt Xo c T.Fr) (hz : yy ≫ Y.j = spMap (algebraMap T.V T.Fr) ≫ yt)
     (hzr : letI := io.toAlgebra; yy ≫ r = GlobalTheory.AllWt.ptF z) :
@@ -218,9 +222,9 @@ theorem exists_intFr_lift (T : CDVR) (io : c.F →+* T.Fr) (yt : Sp T.V ⟶ Y.X)
   · rw [GlobalTheory.AllWt.ptF, GlobalTheory.AllWt.ptF, pullback.lift_fst, pullback.lift_fst, hy, hx0]
   · rw [GlobalTheory.AllWt.ptF, GlobalTheory.AllWt.ptF, pullback.lift_snd, pullback.lift_snd]
 
+
 open GlobalTheory.LocM.BaseMdl in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_change {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ}
     {e : Fin g → (Sp (DualNumber R) ⟶ Y.t.G.left)} (he : IsTanBasis Y.t ξ e) {σ : E →+* ℂ}
     {U : Matrix (Fin g) (Fin g) R} {L : Type} [CommRing L] [Algebra c.F L] {φ : R →+* L} {yy : Sp L ⟶ Xo'.XF c'}
@@ -324,9 +328,9 @@ theorem value_map {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ}
   rw [map_mul, map_mul, k2, k3]
   linear_combination (ι (M₁.submatrix id I).det * (C₂'.submatrix J id).det) * k1
 
+
 open GlobalTheory.ModelFrameCompare MonObj in
 set_option maxHeartbeats 1000000 in
-
 theorem images_eigenBasis (σ : E →+* ℂ) (T : CDVR) (io : c.F →+* T.Fr) (y₀ : IntFr Xo c T io) (xV : Sp T.V ⟶ Y.X)
     (yy : Sp T.Fr ⟶ Xo'.XF c') (hxV : yy ≫ Y.j = spMap (algebraMap T.V T.Fr) ≫ xV)
     (hpt : letI := io.toAlgebra; GlobalTheory.AllWt.ptF y₀.1 = yy ≫ r) :
@@ -411,9 +415,9 @@ theorem images_eigenBasis (σ : E →+* ℂ) (T : CDVR) (io : c.F →+* T.Fr) (y
     rw [hv5, hn₁, ← Category.assoc w₂, hw₂', Category.id_comp, ← hx] at h5
     exact h5
 
+
 open GlobalTheory.LocM.BaseMdl in
 set_option maxHeartbeats 1000000 in
-
 theorem coord_integral {R : Type} [CommRing R] {ξ : Sp R ⟶ Y.X} {g : ℕ}
     {e : Fin g → (Sp (DualNumber R) ⟶ Y.t.G.left)} (he : IsTanBasis Y.t ξ e) (σ : E →+* ℂ) {σR : 𝓞 E →+* R}
     {U : Matrix (Fin g) (Fin g) R} (hU : IsProjMat Y.t ξ σR e U) (T : CDVR) (io : c.F →+* T.Fr)
@@ -530,8 +534,8 @@ theorem inclO_ne_zero (hle : c.F ≤ c'.F) {a : 𝓞 c.F} (ha : a ≠ 0) : inclO
   have h1 : IntermediateField.inclusion hle (algebraMap (𝓞 c.F) c.F a) = 0 := congrArg (algebraMap (𝓞 c'.F) c'.F) h
   exact RingOfIntegers.coe_eq_zero_iff.1 ((map_eq_zero _).1 h1))
 
-omit ν in
 
+omit ν in
 theorem exists_local {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullback.snd _ _ ≫
       spMap (IntermediateField.inclusion hle).toRingHom) (Z : Comp Xo c) {R : Type} [CommRing R]
     {ξ : Sp R ⟶ Y.X} {b : 𝓞 c'.F →+* R} (hb : ξ ≫ Y.s = spMap b) {k : Type} [Field k] [Algebra c.F k] (ψ : R →+* k)
@@ -568,9 +572,9 @@ theorem exists_local {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullbac
     rw [halg, ← RingHom.comp_assoc, ← RingHom.comp_assoc, hι₀, RingHom.comp_assoc, hc]), fun a => ?_, hy, hyr, hyZ⟩
   exact (DFunLike.congr_fun hι₀ a).symm
 
+
 include ν in
 set_option maxHeartbeats 1000000 in
-
 theorem chart_bound {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullback.snd _ _ ≫
       spMap (IntermediateField.inclusion hle).toRingHom) (Z : Comp Xo c) {f : Rul Xo c} {σ₁ σ₂ : E →+* ℂ}
     (hL : DetLaw Z f σ₁ σ₂)
@@ -723,9 +727,9 @@ theorem chart_bound {hle : c.F ≤ c'.F} (hr : r ≫ pullback.snd _ _ = pullback
   simp only [map_mul, map_pow, map_intCast, map_natCast, k4, hm', Nat.cast_mul, Nat.cast_pow, e3, mul_pow, pow_add, e1, e2]
   ring
 
+
 omit Y r ν in
 set_option maxHeartbeats 1000000 in
-
 theorem exists_denom (hpq : 1 ≤ Dw.p + Dw.q) (hA : l.A = 1) (Z : Comp Xo c)
     {f : Rul Xo c} {σ₁ σ₂ : E →+* ℂ} (hL : DetLaw Z f σ₁ σ₂)
     (hbd : ∀ (T : CDVR) (io : c.F →+* T.Fr) (y₀ : IntFr Xo c T io), (∀ a, a ≠ 0 → vV T.V (io a) = 0) →

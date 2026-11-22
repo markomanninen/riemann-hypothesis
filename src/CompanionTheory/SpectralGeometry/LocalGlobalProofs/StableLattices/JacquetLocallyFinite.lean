@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.PolynomialNilpotentPath
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem aeval_mul_of_intertwine (T Y : Module.End ℂ V) (c : ℂ)
   | C a =>
     simp only [aeval_C]
     exact (Algebra.commutes a Y)
-  | add p q hp hq => simp only [map_add, add_mul, mul_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), add_mul, mul_add, hp, hq]
   | monomial m a ih =>
     have e : ∀ S : Module.End ℂ V, aeval S (C a * X ^ (m + 1)) = aeval S (C a * X ^ m) * S := by
       intro S
@@ -34,12 +38,13 @@ theorem actM_intertwine {E : Fin n → Fin n → Module.End ℂ V} (hE : Formali
   have hs : actM E (c • Y) = c • actM E Y :=
     (GlobalTheory.CompanionTheory.PolyNilGrad.actL E).map_smul c Y
   rw [h, hs] at hb
-  rw [mul_add, ← sub_eq_iff_eq_add', hb, Algebra.algebraMap_eq_smul_one, mul_smul_comm, mul_one]
+  rw [mul_add, Algebra.algebraMap_eq_smul_one, mul_smul_comm, mul_one]
+  exact sub_eq_iff_eq_add'.mp hb
 
 theorem aeval_shift (T : Module.End ℂ V) (c d : ℂ) (h : c + d = 0) (f : ℂ[X]) :
     aeval (T + algebraMap ℂ _ c) (f.comp (X + C d)) = aeval T f := by
   have e : aeval (T + algebraMap ℂ _ c) (X + C d : ℂ[X]) = T := by
-    rw [map_add, aeval_X, aeval_C, add_assoc, ← map_add, h, map_zero, add_zero]
+    rw [map_add (f := _), aeval_X, aeval_C, add_assoc, ← map_add (f := _), h, map_zero, add_zero]
   rw [aeval_comp, e]
 
 theorem step_down {M : GMod n} {A : Matrix (Fin n) (Fin n) ℂ} (F : Filt M A) (p q : ℂ[X])
@@ -51,21 +56,22 @@ theorem step_down {M : GMod n} {A : Matrix (Fin n) (Fin n) ℂ} (F : Filt M A) (
   set g : ℂ[X] := q.comp (X + C 1) * q.comp (X + C 2) with hg
   obtain ⟨m, Y, v, hY, hu⟩ := hnil u
   have key : aeval T (g * p) u = ∑ k, aeval T g (actM M.E (Y k) (v k)) := by
-    rw [map_mul, Module.End.mul_apply, hu, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, mul_apply_eq_comp, hu, map_sum]
   rw [key]
   refine Submodule.sum_mem _ fun k _ => ?_
   obtain ⟨Y₁, Y₂, hk, h₁, h₂⟩ := hY k
   have hadd : actM M.E (Y k) = actM M.E Y₁ + actM M.E Y₂ := by
     rw [hk]; exact (GlobalTheory.CompanionTheory.PolyNilGrad.actL M.E).map_add Y₁ Y₂
-  rw [hadd, LinearMap.add_apply, map_add]
+  rw [hadd, LinearMap.add_apply, map_add (f := _)]
   refine Submodule.add_mem _ ?_ ?_
   · have h₁' : A * Y₁ - Y₁ * A = (-1 : ℂ) • Y₁ := by rw [h₁, neg_smul, one_smul]
     have hc := aeval_mul_of_intertwine T (actM M.E Y₁) (-1) (actM_intertwine M.gl h₁') g
     have e : aeval T g (actM M.E Y₁ (v k)) =
         actM M.E Y₁ (aeval T q (aeval (T + algebraMap ℂ _ (-1)) (q.comp (X + C 2)) (v k))) := by
       have := congrArg (fun f : Module.End ℂ M.V => f (v k)) hc
-      simp only [Module.End.mul_apply] at this
-      rw [this, hg, map_mul, aeval_shift T (-1) 1 (by norm_num), Module.End.mul_apply]
+      simp only [mul_apply_eq_comp] at this
+      rw [this, hg, map_mul, aeval_shift T (-1) 1 (by norm_num), mul_apply_eq_comp]
     rw [e]
     have := F.shift Y₁ (-1) (by simpa using h₁') s _ (hq (aeval (T + algebraMap ℂ _ (-1)) (q.comp (X + C 2)) (v k)))
     simpa [sub_eq_add_neg] using this
@@ -74,8 +80,8 @@ theorem step_down {M : GMod n} {A : Matrix (Fin n) (Fin n) ℂ} (F : Filt M A) (
     have e : aeval T g (actM M.E Y₂ (v k)) =
         actM M.E Y₂ (aeval T q (aeval (T + algebraMap ℂ _ (-2)) (q.comp (X + C 1)) (v k))) := by
       have := congrArg (fun f : Module.End ℂ M.V => f (v k)) hc
-      simp only [Module.End.mul_apply] at this
-      rw [this, hg, mul_comm, map_mul, aeval_shift T (-2) 2 (by norm_num), Module.End.mul_apply]
+      simp only [mul_apply_eq_comp] at this
+      rw [this, hg, mul_comm, map_mul, aeval_shift T (-2) 2 (by norm_num), mul_apply_eq_comp]
     rw [e]
     have := F.shift Y₂ (-2) (by simpa using h₂') s _ (hq (aeval (T + algebraMap ℂ _ (-2)) (q.comp (X + C 1)) (v k)))
     refine F.mono _ _ ?_ this

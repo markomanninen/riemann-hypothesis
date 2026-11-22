@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -44,7 +49,7 @@ theorem exists_rational_orthogonal_projection_of_finrank_le (K : Type) [Field K]
       obtain ⟨y', hy'N, hy'⟩ := ih N' hN' (x - (b / a) • v)
       refine ⟨(b / a) • v + y', N.add_mem (N.smul_mem _ hvN) (inf_le_left (a := N) hy'N), ?_⟩
       have key : j x - j ((b / a) • v + y') = j (x - (b / a) • v) - j y' := by
-        simp only [map_add, map_sub]; abel
+        simp only [map_add (f := _), map_sub]; abel
       rw [key]
       have hy'k : ⟪j v, j y'⟫_ℂ = 0 := by
         have : f y' = 0 := hy'N.2

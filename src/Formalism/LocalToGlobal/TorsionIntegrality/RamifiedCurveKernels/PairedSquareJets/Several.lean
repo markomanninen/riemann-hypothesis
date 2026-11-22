@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementS
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementS
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.Hurwitz
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.PairedSquareJets.HurwitzB
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -43,7 +47,8 @@ theorem mvSubst_subst {σ τ : Type} {a : σ → MvPowerSeries τ K} (ha : MvPow
 theorem cc_linForm {m : Type} [Fintype m] (v : m → K) :
     MvPowerSeries.constantCoeff (∑ x, MvPowerSeries.C (v x) * MvPowerSeries.X x :
       MvPowerSeries m K) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun x _ => by rw [map_mul, MvPowerSeries.constantCoeff_X, mul_zero]
 
 theorem hasSubst_lin {n m : Type} [Finite n] [Fintype m] (A : n → m → K) :
@@ -71,14 +76,16 @@ theorem linSub_sqSum {n m : Type} [Fintype n] [Fintype m] (A : n → m → K) (c
     linSub A (sqSum c) =
       ∑ i, MvPowerSeries.C (c i) * (∑ x, MvPowerSeries.C (A i x) * MvPowerSeries.X x) ^ 2 := by
   unfold sqSum
-  rw [← linSubHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← linSubHom_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, map_pow, linSubHom_apply, linSubHom_apply, linSub_C, linSub_X]
 
 theorem cc_sqSum {n : Type} [Fintype n] (c : n → K) :
     MvPowerSeries.constantCoeff (sqSum c) = 0 := by
   unfold sqSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun x _ => by
     rw [map_mul, map_pow, MvPowerSeries.constantCoeff_X, zero_pow two_ne_zero, mul_zero]
 
@@ -121,14 +128,16 @@ theorem toZ_phSum {n : Type} [Fintype n] {linv : PowerSeries K}
     (h0 : PowerSeries.constantCoeff linv = 0) (c : n → K) (ph : PowerSeries K) :
     toZ linv (phSum c ph) = phSum c (PowerSeries.subst linv ph) := by
   unfold phSum
-  rw [← toZHom_apply h0, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← toZHom_apply h0, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, toZHom_apply, toZ_subst_X h0]
 
 theorem cc_phSum {n : Type} [Fintype n] (c : n → K) {ph : PowerSeries K}
     (h0 : PowerSeries.constantCoeff ph = 0) : MvPowerSeries.constantCoeff (phSum c ph) = 0 := by
   unfold phSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [MvPowerSeries.smul_eq_C_mul, map_mul,
     PowerSeries.constantCoeff_subst_eq_zero (MvPowerSeries.constantCoeff_X i) ph h0, mul_zero]
@@ -218,7 +227,7 @@ theorem jetsIn_phSum {K : Type} [Field K] [CharZero K] {R : Subring K} {n : Type
     (jetsIn_subst_one hf (MvPowerSeries.constantCoeff_X i) (jetsIn_X i))
 
 theorem jetsIn_toZ {K : Type} [Field K] [CharZero K] {R : Subring K} {l linv : PowerSeries K}
-    (h : IsLogPair l linv) (hl : IsOneUnit R (PowerSeries.derivative K l)) {n : Type} [Fintype n]
+    (h : IsLogPair l linv) (hl : IsOneUnit R (PowerSeries.derivative (R := K) l)) {n : Type} [Fintype n]
     {G : MvPowerSeries n K} (hG : IntMv R G) : JetsIn R (toZ linv G) :=
   IntMvZ_of (JetsSubst_of jets_ring_holds jets_div_pow_holds) integral_jets_holds jets_subst_one_holds
     jets_ring_holds K R l linv h hl n G hG

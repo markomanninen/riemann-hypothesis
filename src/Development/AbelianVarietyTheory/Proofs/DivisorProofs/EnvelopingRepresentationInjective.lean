@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceRep
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FaithfulOfDerivationsDualFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyFunMemSmoothVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RightLieDerivativeRealEntryPolynomialFunctionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPlaceRep
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.UnitaryLieGeneratorsRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FaithfulOfDerivationsDualFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyFunMemSmoothVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RightLieDerivativeRealEntryPolynomialFunctionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem lieDer_polyFun (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.hos
     (R : RealPoints θ V) (τ : D.what₂.Tau) (X : LieAt V τ) (P : PolyE V) :
     lieDer V (expInf θ V) (atPlace V τ X) (polyFun θ V P) = polyFun θ V (matDer τ X.1 P) := GlobalTheory.T.rightLieDerivative_realEntryPolynomialFunction D θ V R τ X P
 
-open Classical in
 
+open Classical in
 theorem aeval_matDer_single {T : Type} {n : ℕ} (τ τ' : T) (a b c d : Fin n) :
     MvPolynomial.aeval (fun p : T × Fin n × Fin n => if p.2.1 = p.2.2 then (1 : ℂ) else 0)
       (matDer τ (Matrix.single a b (1 : ℂ)) (MvPolynomial.X (τ', c, d) -
@@ -31,11 +35,12 @@ theorem aeval_matDer_single {T : Type} {n : ℕ} (τ τ' : T) (a b c d : Fin n) 
   rw [map_sub, MvPolynomial.derivation_C, sub_zero, matDer_X]
   by_cases h : τ' = τ
   · subst h
-    simp only [if_true, map_sum, map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C, Matrix.single_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ite_true, map_sum, map_mul, MvPolynomial.aeval_X, MvPolynomial.aeval_C, Matrix.single_apply,
       Algebra.algebraMap_self, RingHom.id_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-      if_true, Prod.mk.injEq, true_and]
-  · simp only [h, if_false, map_zero]
-    rw [if_neg]; intro h'; exact h (congrArg Prod.fst h').symm
+      ite_true, Prod.mk.injEq, true_and]
+  · simp only [h, ite_false, map_zero]
+    rw [ite_eq_right]; intro h'; exact h (congrArg Prod.fst h').symm
 
 variable {D : D7} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} {V : HSp D}
 
@@ -57,11 +62,11 @@ theorem envRepAll_polyFun (R : RealPoints θ V) (u : GlobalTheory.AutFinLit.Env 
   let S : Subalgebra ℂ (GlobalTheory.AutFinLit.Env V) :=
     { carrier := {u | ∀ P, (envRepAll R u ⟨polyFun θ V P, polyFun_mem D θ V R P⟩).1 = polyFun θ V (polyRep V u P)}
       mul_mem' := fun {u v} hu hv P => by
-        rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, ← hu]
+        rw [map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, ← hu]
         congr 2
         exact Subtype.ext (hv P)
       add_mem' := fun {u v} hu hv P => by
-        rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, hu, hv, polyFun_add]
+        rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, hu, hv, polyFun_add]
       algebraMap_mem' := fun c P => by
         rw [AlgHom.commutes, AlgHom.commutes, Module.algebraMap_end_apply, Module.algebraMap_end_apply,
           Submodule.coe_smul, polyFun_smul] }
@@ -69,11 +74,10 @@ theorem envRepAll_polyFun (R : RealPoints θ V) (u : GlobalTheory.AutFinLit.Env 
     intro x
     induction x using DirectSum.induction_on with
     | zero => rw [map_zero]; exact S.zero_mem
-    | add x y hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
     | of τ y =>
-      induction y using TensorProduct.induction_on with
-      | zero => rw [map_zero, map_zero]; exact S.zero_mem
-      | add y y' hy hy' => rw [map_add, map_add]; exact S.add_mem hy hy'
+      induction y using TensorProduct.inductionOn with
+      | add y y' hy hy' => rw [map_add (f := _), map_add (f := _)]; exact S.add_mem hy hy'
       | tmul c X =>
         intro P
         rw [envRepAll_ι_of, polyRep_ι_of, placeRep_tmul,
@@ -88,17 +92,17 @@ theorem realEntries_one (R : RealPoints θ V) :
   funext p
   simp only [realEntries, R.2.2.2.2.1 1 (one_mem _) p.1, Matrix.one_apply]
 
+
 set_option maxHeartbeats 1000000 in
 open Classical in
-
 theorem envRepAll_injective (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (_hθ : IsInfFam θ)
     (V : HSp D) (R : RealPoints θ V) : Function.Injective (envRepAll R) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro u hu
   let ρ : ∀ τ, LieAt V τ → GlobalTheory.AutFinLit.Env V := fun τ X =>
     UniversalEnvelopingAlgebra.ι ℂ (DirectSum.of (fun τ => ℂ ⊗[ℝ] LieAt V τ) τ ((1 : ℂ) ⊗ₜ[ℝ] X))
   have hadd : ∀ τ (X Y : LieAt V τ), ρ τ (X + Y) = ρ τ X + ρ τ Y := fun τ X Y => by
-    simp only [ρ, TensorProduct.tmul_add, map_add]
+    simp only [ρ, TensorProduct.tmul_add, map_add (f := _)]
   have hsmul : ∀ τ (c : ℝ) (X : LieAt V τ), ρ τ (c • X) = (c : ℂ) • ρ τ X := fun τ c X => by
     have e1 : (1 : ℂ) ⊗ₜ[ℝ] (c • X) = (c : ℂ) • ((1 : ℂ) ⊗ₜ[ℝ] X) := by
       rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', TensorProduct.smul_tmul', smul_eq_mul, mul_one,
@@ -125,11 +129,10 @@ theorem envRepAll_injective (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[
     refine Algebra.span_le_adjoin ℂ _ ?_
     induction x using DirectSum.induction_on with
     | zero => rw [map_zero]; exact zero_mem _
-    | add x y hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact add_mem hx hy
     | of τ y =>
-      induction y using TensorProduct.induction_on with
-      | zero => rw [map_zero, map_zero]; exact zero_mem _
-      | add y y' hy hy' => rw [map_add, map_add]; exact add_mem hy hy'
+      induction y using TensorProduct.inductionOn with
+      | add y y' hy hy' => rw [map_add (f := _), map_add (f := _)]; exact add_mem hy hy'
       | tmul c X =>
         rw [show c ⊗ₜ[ℝ] X = c • ((1 : ℂ) ⊗ₜ[ℝ] X) by rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one],
           ← DirectSum.lof_eq_of ℂ, map_smul, map_smul]
@@ -137,7 +140,7 @@ theorem envRepAll_injective (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[
 
   have hcomm : ∀ τ τ', τ ≠ τ' → ∀ X Y, Commute (ρ τ X) (ρ τ' Y) := fun τ τ' h X Y => by
     have h1 : ρ τ X * ρ τ' Y - ρ τ' Y * ρ τ X = 0 := by
-      simp only [ρ]; rw [← Ring.lie_def, ← LieHom.map_lie, DirectSum.lie_of, dif_neg h, map_zero]
+      simp only [ρ]; rw [← Ring.lie_def, ← LieHom.map_lie, DirectSum.lie_of, dite_eq_right h, map_zero]
     exact sub_eq_zero.1 h1
   have hbr : ∀ p q, e p * e q - e q * e p ∈ Submodule.span ℂ (Set.range e) := by
     rintro ⟨τ, a, b⟩ ⟨τ', c, d⟩
@@ -174,7 +177,7 @@ theorem envRepAll_injective (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[
   have hπe : ∀ p, polyRep V (e p) = (matDer p.1 (Matrix.single p.2.1 p.2.2 (1 : ℂ)) : Module.End ℂ (PolyE V)) :=
     fun p => by
       simp only [e]
-      rw [map_add, map_smul, hπρ, hπρ, ← hE, matDer_add, matDer_smul]
+      rw [map_add (f := _), map_smul, hπρ, hπρ, ← hE, matDer_add, matDer_smul]
       rfl
   have hder : ∀ p (x y : PolyE V), polyRep V (e p) (x * y) = polyRep V (e p) x * y + x * polyRep V (e p) y :=
     fun p x y => by

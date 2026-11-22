@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -25,13 +29,13 @@ theorem UpperTheory.V.Alg.M.deh_holds :
     have h1 := hcomp j
     rw [DirectSum.decompose_of_mem_ne 𝒜 hh (Ne.symm hj)] at h1
     have h2 := (Ideal.Quotient.eq_zero_iff_mem).mpr h1
-    simp only [map_add, map_sub, map_mul, map_zero] at h2
+    simp only [map_add (f := _), map_sub, map_mul, map_zero] at h2
     linear_combination h2
   have heq : q (c w) = q (c (w - d)) * q f - q h := by
     have h1 := hcomp (w - d)
     rw [sub_add_cancel, DirectSum.decompose_of_mem_same 𝒜 hh] at h1
     have h2 := (Ideal.Quotient.eq_zero_iff_mem).mpr h1
-    simp only [map_add, map_sub, map_mul] at h2
+    simp only [map_add (f := _), map_sub, map_mul] at h2
     linear_combination h2
   have hfin : ∀ e : ℤ, e ≠ 0 → ∀ a : ℤ, ∃ n : ℕ, c (a + n * e) = 0 := by
     intro e he a

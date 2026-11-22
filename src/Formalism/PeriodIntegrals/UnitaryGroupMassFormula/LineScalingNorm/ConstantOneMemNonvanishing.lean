@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCModConst
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSPointwise
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJATCModConst
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSPointwise
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

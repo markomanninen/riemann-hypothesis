@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.SectionLineAnyField
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -8,8 +13,8 @@ open MvPolynomial
 
 noncomputable section
 
-open Classical in
 
+open Classical in
 def ChartLengthAlgClosed.Statement : Prop :=
   ∀ (F : Type) [Field F] [IsAlgClosed F] (n e : ℕ) (I : Ideal (MvPolynomial (Fin n) F))
     (f : MvPolynomial (Fin (e + 1) × Fin n) F) (t u : Fin n → F)

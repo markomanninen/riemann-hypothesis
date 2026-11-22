@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfC
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfC
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 
@@ -54,8 +58,8 @@ theorem LeafNoetherDim_of : LeafNoetherDim := by
     have x1P2 : (X i1 : A) ∈ P2 := X_mem_ker_killFirst k s 2 i1 (by simp [i1])
     have x1P1 : (X i1 : A) ∉ P1 := X_not_mem_ker_killFirst k s 1 i1 (by simp [i1])
     have : (⊥ : Ideal B).IsPrime := Ideal.isPrime_bot
-    have hc0 : Ideal.comap (algebraMap A B) (⊥ : Ideal B) = ⊥ :=
-      Ideal.comap_bot_of_injective _ hinj
+    have hc0 : Ideal.under A (⊥ : Ideal B) = ⊥ := by
+      exact Ideal.comap_bot_of_injective _ hinj
     obtain ⟨Q1, -, hQ1, hcQ1⟩ :=
       Ideal.exists_ideal_over_prime_of_isIntegral_of_isPrime P1 (⊥ : Ideal B) (by rw [hc0]; exact bot_le)
     obtain ⟨Q2, hQ12, hQ2, hcQ2⟩ :=

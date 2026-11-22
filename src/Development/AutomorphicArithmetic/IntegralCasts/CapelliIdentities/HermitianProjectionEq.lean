@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.hermitian_projection_eq :
     ∀ {S : Type} [CommRing S] {n r : ℕ}

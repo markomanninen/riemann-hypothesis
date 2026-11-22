@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDoubleCosetOperatorsStandardFacts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvariantHermitianWeightForm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumEqConstMulPetersson
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDoubleCosetOperatorsStandardFacts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvariantHermitianWeightForm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumEqConstMulPetersson
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 open Formalism.L2.Fam.NPC Formalism.L2.Fam.NPC.BaseC GlobalTheory.HeckeLocN
 
@@ -35,7 +40,7 @@ theorem eq_smul_of_normal {M : Type} [AddCommGroup M] [Module ℂ M] (B : M →�
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
-local notation3 "L⁺" => maximalRealSubfield L
+local notation3 "L⁺" => NumberField.maximalRealSubfield L
 
 theorem rt_mem_all {a : NG.AlgWt L n} (h : GAf L n) {f : GAf L n → a.W} (hf : f ∈ NG.AFall L n a.ρ) :
     NG.rt L n h f ∈ NG.AFall L n a.ρ := by
@@ -47,7 +52,7 @@ theorem rt_mem_all {a : NG.AlgWt L n} (h : GAf L n) {f : GAf L n → a.W} (hf : 
 def sph (a : NG.AlgWt L n) (v : HeightOneSpectrum (𝓞 L⁺)) : Submodule ℂ (GAf L n → a.W) where
   carrier := {f | f ∈ NG.AFall L n a.ρ ∧ ∀ κ ∈ locK n v, NG.rt L n κ f = f}
   zero_mem' := ⟨zero_mem _, fun _ _ => map_zero _⟩
-  add_mem' := fun hf hg => ⟨add_mem hf.1 hg.1, fun κ hκ => by rw [map_add, hf.2 κ hκ, hg.2 κ hκ]⟩
+  add_mem' := fun hf hg => ⟨add_mem hf.1 hg.1, fun κ hκ => by rw [map_add (f := _), hf.2 κ hκ, hg.2 κ hκ]⟩
   smul_mem' := fun c f hf => ⟨Submodule.smul_mem _ c hf.1, fun κ hκ => by rw [map_smul, hf.2 κ hκ]⟩
 
 def IsReps (v : HeightOneSpectrum (𝓞 L⁺)) (α : GAf L n) (R : Finset (GAf L n)) : Prop :=
@@ -88,13 +93,15 @@ theorem sum_mem_sph {a : NG.AlgWt L n} {v : HeightOneSpectrum (𝓞 L⁺)} {α :
         group) hfix
   rw [Finset.sum_image (mul_right_injective κ).injOn, e1] at e2
   conv_rhs => rw [e2]
-  simp only [map_sum, rt_rt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, rt_rt]
 
 theorem form_sum {a : NG.AlgWt L n} {B : (GAf L n → a.W) →ₗ⋆[ℂ] (GAf L n → a.W) →ₗ[ℂ] ℂ} (hB : IsPetersson a B)
     {v : HeightOneSpectrum (𝓞 L⁺)} {α : GAf L n} {R : Finset (GAf L n)} (h : IsReps v α R)
     {f g : GAf L n → a.W} (hf : f ∈ sph a v) (hg : g ∈ sph a v) :
     B f (∑ γ ∈ R, NG.rt L n γ g) = R.card * B f (NG.rt L n α g) := by
-  rw [map_sum, ← nsmul_eq_mul, ← Finset.sum_const]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← nsmul_eq_mul, ← Finset.sum_const]
   refine Finset.sum_congr rfl fun γ hγ => ?_
   obtain ⟨k₁, h₁, k₂, h₂, rfl⟩ := h.1 γ hγ
   rw [← rt_rt, hg.2 k₂ h₂, ← rt_rt]
@@ -105,7 +112,8 @@ theorem form_sum_left {a : NG.AlgWt L n} {B : (GAf L n → a.W) →ₗ⋆[ℂ] (
     {v : HeightOneSpectrum (𝓞 L⁺)} {α : GAf L n} {R : Finset (GAf L n)} (h : IsReps v α R)
     {f g : GAf L n → a.W} (hf : f ∈ sph a v) (hg : g ∈ sph a v) :
     B (∑ γ ∈ R, NG.rt L n γ f) g = R.card * B f (NG.rt L n α⁻¹ g) := by
-  rw [map_sum, LinearMap.sum_apply, ← nsmul_eq_mul, ← Finset.sum_const]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply, ← nsmul_eq_mul, ← Finset.sum_const]
   refine Finset.sum_congr rfl fun γ hγ => ?_
   obtain ⟨k₁, h₁, k₂, h₂, rfl⟩ := h.1 γ hγ
   have e : g = NG.rt L n (k₁ * α) (NG.rt L n α⁻¹ g) := by

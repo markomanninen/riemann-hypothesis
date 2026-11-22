@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInterpolation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInterpolation
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -18,7 +22,7 @@ theorem exists_finite_reproducing_of_submodule {X : Type} (V : Submodule ℂ (X 
 
 theorem finsupp_sum_multilinear_eq_of_prod_eq {ι : Type} [Fintype ι] [DecidableEq ι]
     {X : ι → Type} (V : ∀ k, Submodule ℂ (X k → ℂ)) {R : Type} [AddCommGroup R] [Module ℂ R]
-    (M : MultilinearMap ℂ (fun k => ↥(V k)) R) {A : Type} (τ τ' : A →₀ ℂ)
+    (M : (∀ k, ↥(V k)) →ₘₗ[ℂ] R) {A : Type} (τ τ' : A →₀ ℂ)
     (φ φ' : A → ∀ k, ↥(V k))
     (h : ∀ z : ∀ k, X k, (τ.sum fun a c => c * ∏ k, (φ a k : X k → ℂ) (z k)) =
       τ'.sum fun a c => c * ∏ k, (φ' a k : X k → ℂ) (z k)) :
@@ -35,7 +39,7 @@ theorem finsupp_sum_multilinear_eq_of_prod_eq {ι : Type} [Fintype ι] [Decidabl
     conv_lhs => rw [hw']
     rw [MultilinearMap.map_sum_finset]
     refine Finset.sum_congr rfl fun z _ => ?_
-    rw [MultilinearMap.map_smul_univ]
+    simp only [MultilinearMap.map_smul_univ, RingHom.id_apply]
   have expand : ∀ (σ : A →₀ ℂ) (ψ : A → ∀ k, ↥(V k)), σ.support ⊆ T →
       (∀ a ∈ T, ∀ k, ψ a k ∈ F k) →
       (σ.sum fun a c => c • M (ψ a)) = ∑ z ∈ Fintype.piFinset S,

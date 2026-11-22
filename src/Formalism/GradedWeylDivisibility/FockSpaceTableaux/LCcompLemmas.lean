@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -52,9 +56,10 @@ theorem lccomp_colAddGen_homog {B : Type*} [CommRing B] {r n : ℕ} (l j : Fin n
     (hf : IsWeightedHomogeneous (pairW l j) f ω) :
     IsWeightedHomogeneous (lccompW l j) (colAddGen B l j f) ω := by
   classical
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have h := lccomp_colAddGen_monomial_homog (B := B) l j d (coeff d f)
+  have h := lccomp_colAddGen_monomial_homog (B := B) l j d (AddMonoidAlgebra.coeff f d)
   rwa [hf (mem_support_iff.mp hd)] at h
 
 theorem lccomp_sum_components {R : Type*} [CommRing R] {σ M : Type*} [AddCommMonoid M] [DecidableEq M]
@@ -87,7 +92,8 @@ private lemma weightedHomogeneousComponent_eq_zero_of_ne_isWH {σ M R : Type*} [
     weightedHomogeneousComponent w n p = 0 := by
   classical
   ext d
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  rw [coeff_weightedHomogeneousComponent]
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with hd
   · by_contra hne
     exact hn (hd.symm.trans (h hne))
@@ -101,7 +107,8 @@ theorem lccomp_component_colAddGen {B : Type*} [CommRing B] {r n : ℕ} (l j : F
   have hf := lccomp_sum_components (pairW l j) f (f.support.image (Finsupp.weight (pairW l j)))
     (fun d hd => Finset.mem_image_of_mem _ hd)
   conv_lhs => rw [hf]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   by_cases hω : ω ∈ f.support.image (Finsupp.weight (pairW l j))
   · rw [Finset.sum_eq_single ω]
     · exact weightedHomogeneousComponent_self_of_isWH_ring
@@ -115,7 +122,8 @@ theorem lccomp_component_colAddGen {B : Type*} [CommRing B] {r n : ℕ} (l j : F
   · rw [Finset.sum_eq_zero]
     · have h0 : weightedHomogeneousComponent (pairW l j) ω f = 0 := by
         ext d
-        rw [coeff_weightedHomogeneousComponent, coeff_zero]
+        rw [coeff_weightedHomogeneousComponent]
+        simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
         split_ifs with h
         · by_contra hne
           exact hω (h ▸ Finset.mem_image_of_mem _ (mem_support_iff.mpr hne))

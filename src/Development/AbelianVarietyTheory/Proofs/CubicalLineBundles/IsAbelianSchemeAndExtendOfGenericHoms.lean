@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeOfGenericallySurjective
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeOfGenericallySurjective
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,12 +22,18 @@ theorem isIso_toUnit_splitTorus_punit (S : Scheme.{0}) : IsIso (toUnit (splitTor
   exact ⟨η, h.symm, toUnit_unique _ _⟩
 
 theorem isAbelianScheme_pullback_obj {S S' : Scheme.{0}} (f : S' ⟶ S) (A : Over S) [GrpObj A]
-    (h : IsAbelianScheme A) : IsAbelianScheme ((Over.pullback f).obj A) where
-  comm := by have := h.comm; infer_instance
-  smooth := by have := h.smooth; change Smooth (pullback.snd A.hom f); infer_instance
-  proper := by have := h.proper; change IsProper (pullback.snd A.hom f); infer_instance
-  geomConnected := by
-    have := h.geomConnected; change GeometricallyConnected (pullback.snd A.hom f); infer_instance
+    (h : IsAbelianScheme A) : IsAbelianScheme ((Over.pullback f).obj A) := by
+  have := h.comm
+  have := h.smooth
+  have := h.proper
+  have := h.geomConnected
+  refine ⟨inferInstance, ?_, ?_, ?_⟩
+  · change Smooth (pullback.snd A.hom f)
+    infer_instance
+  · change IsProper (pullback.snd A.hom f)
+    infer_instance
+  · change GeometricallyConnected (pullback.snd A.hom f)
+    infer_instance
 
 noncomputable def torusExtensionOfAbelian {K : Type} [Field K] (A : Over (Spec (.of K))) [GrpObj A]
     (h : IsAbelianScheme A) : TorusExtension A where
@@ -42,13 +52,11 @@ noncomputable def torusExtensionOfAbelian {K : Type} [Field K] (A : Over (Spec (
     exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
 
 theorem isSemiAbelian_of_isAbelianScheme {S : Scheme.{0}} (A : Over S) [GrpObj A]
-    (h : IsAbelianScheme A) : IsSemiAbelian A where
-  comm := h.comm
-  smooth := h.smooth
-  separated := by have := h.proper; infer_instance
-  quasiCompact := by have := h.proper; infer_instance
-  geomConnected := h.geomConnected
-  fibres := fun _ _ _ p => ⟨torusExtensionOfAbelian _ (isAbelianScheme_pullback_obj p A h)⟩
+    (h : IsAbelianScheme A) : IsSemiAbelian A := by
+  have := h.proper
+  refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
+  intro Ω _ _ p
+  exact ⟨torusExtensionOfAbelian _ (isAbelianScheme_pullback_obj p A h)⟩
 
 theorem isAbelianScheme_powObj_of_isAbelianScheme {S : Scheme.{0}} (A : Over S) [GrpObj A]
     (h : IsAbelianScheme A) : ∀ n, IsAbelianScheme (Out.powObj A n)

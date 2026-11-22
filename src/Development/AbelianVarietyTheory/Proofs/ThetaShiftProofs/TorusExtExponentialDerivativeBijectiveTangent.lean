@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRepresents
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsDerivAtOfSurjective
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRepresents
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsDerivAtOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,9 +139,9 @@ theorem IsJet.unique {ex : (Fin g → ℂ) → GtPt D (Over.mk y)} {ν ν' : GtP
       obtain ⟨p, rfl⟩ := TangentOrigin.spMap_fst_surjective p
       exact congrArg _ (Subsingleton.elim (α := PrimeSpectrum ℂ) _ _)
     have hj : ⊤ ≤ 𝟙 (Sp (DualNumber ℂ)) ⁻¹ᵁ LB.wchart D.P.L (DegPre.gtφT D (epsR ℂ) b χ) j := fun q _ => (hp' q).symm ▸ hp
-    refine Units.ext ((toStkA_valR (A := DualNumber ℂ) (𝟙 _) _ p hj _).symm.trans (Eq.trans ?_
+    exact Units.ext ((toStkA_valR (A := DualNumber ℂ) (𝟙 _) _ p hj _).symm.trans (Eq.trans
+      (congrArg _ ((h.2 χ j hj).trans (h'.2 χ j hj).symm))
       (toStkA_valR (A := DualNumber ℂ) (𝟙 _) _ p hj _)))
-    exact congrArg _ ((h.2 χ j hj).trans (h'.2 χ j hj).symm)
   obtain rfl : s = s' := funext fun χ => congrArg LB.Gen.mk (funext (hs χ))
   rfl
 

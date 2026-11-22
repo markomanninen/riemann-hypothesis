@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviNormalizesUnipotentVariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IteratedDerivOneP
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsAdaptedEmpty
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LeviNormalizesUnipotentVariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousAdelicUnitaryEmbedding
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IteratedDerivOneP
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct ContDiff
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -40,7 +45,8 @@ theorem symm_of_skew {M H : Type} [AddCommGroup M] [Module ℂ M] [NormedAddComm
     rw [hP, hP, neg_neg]
   have h2 : ∀ b x y, ⟪ι (Q b (Q b x)), ι y⟫_ℂ = ⟪ι x, ι (Q b (Q b y))⟫_ℂ := fun b x y => by
     rw [hQ, hQ, neg_neg]
-  simp only [LinearMap.sub_apply, LinearMap.sum_apply, Module.End.mul_apply, map_sub, map_sum, inner_sub_left,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sub_apply, LinearMap.sum_apply, Module.End.mul_apply, map_sub, map_sum, inner_sub_left,
     inner_sub_right, sum_inner, inner_sum, h1, h2]
 
 theorem quad_symm (μ : Measure (GA D V)) [μ.IsHaarMeasure] (hθ : IsInfFam θ) {τ : D.what₂.Tau} {n₁ n₂ : ℕ}
@@ -61,7 +67,8 @@ theorem bd_of_quad (μ : Measure (GA D V)) [μ.IsHaarMeasure] (hθ : IsInfFam θ
   have hB0 : 0 ≤ B := add_nonneg hΛ0 (Finset.sum_nonneg fun b _ => sq_nonneg _)
   refine ⟨Real.sqrt B, Real.sqrt_nonneg _, fun φ hφ => ?_⟩
   have h2 := congrArg (fun w => ⟪io μ hθ φ, io μ hθ w⟫_ℂ) (quad_apply hθ hX hY φ)
-  simp only [map_sub, map_sum, inner_sub_right, inner_sum, inner_der_der] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, inner_sub_right, inner_sum, inner_der_der] at h2
   have h3 := congrArg Complex.re h2
   simp only [Complex.sub_re, Complex.re_sum, Complex.neg_re, Complex.ofReal_re,
     Finset.sum_neg_distrib, sub_neg_eq_add, Complex.add_re] at h3
@@ -137,7 +144,7 @@ theorem exists_gelfOp (hθ : IsInfFam θ) {τ : D.what₂.Tau} {e : Fin V.rank �
   have hYl : ∀ b, P⁻¹ * y b * P ∈ lieAt V τ := fun b => lie_conj hP hg (hy b)
   refine ⟨quad hθ hX hYl, fun φ => ?_, fun μ _ φ ψ => quad_symm μ hθ hX hYl φ ψ⟩
   rw [hq φ.1 (smooth_of_mem φ), quad_apply]
-  simp [Submodule.coe_sum]
+  simp [Submodule.coe_sum, der]
 
 theorem bd_der (μ : Measure (GA D V)) [μ.IsHaarMeasure] (hθ : IsInfFam θ) {τ : D.what₂.Tau} {e : Fin V.rank → Bool}
     {P : Matrix (Fin V.rank) (Fin V.rank) ℂ} (hP : IsUnit P) (hg : Pᴴ * Formalism.REAL.Jm e * P = gramAt D V τ)
@@ -151,7 +158,7 @@ theorem bd_der (μ : Measure (GA D V)) [μ.IsHaarMeasure] (hθ : IsInfFam θ) {�
     (bd_ktype μ hθ hP ρ hρ (hy b) (hYl b)).mono fun φ hφ => hE φ hφ
   have hCq : C = quad hθ hX hYl := LinearMap.ext fun φ => Subtype.ext (by
     rw [← hC, hq φ.1 (smooth_of_mem φ), quad_apply]
-    simp [Submodule.coe_sum])
+    simp [Submodule.coe_sum, der])
   have bX := bd_of_quad μ hθ E hX hYl (hCq ▸ hb) bK
   obtain ⟨_, b'⟩ := bd_span μ hθ E (Set.range X ∪ Set.range fun b => P⁻¹ * y b * P) (by
     rintro _ (⟨a, rfl⟩ | ⟨b, rfl⟩)
@@ -174,7 +181,7 @@ theorem finite_of_polyGelf : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F
         refine ⟨fun u hu hu' x => ?_, fun τ x => ?_, fun τ => ?_⟩
         · simp only [Submodule.coe_add, Pi.add_apply, hf.1 u hu hu' x, hg.1 u hu hu' x]
         · exact (coeffSpan (ρ τ)).add_mem (hf.2.1 τ x) (hg.2.1 τ x)
-        · rw [map_add, hf.2.2, hg.2.2, add_zero]
+        · rw [map_add (f := _), hf.2.2, hg.2.2, add_zero]
       zero_mem' := ⟨fun _ _ _ _ => rfl, fun τ x => (coeffSpan (ρ τ)).zero_mem, fun τ => map_zero _⟩
       smul_mem' := by
         intro a f hf

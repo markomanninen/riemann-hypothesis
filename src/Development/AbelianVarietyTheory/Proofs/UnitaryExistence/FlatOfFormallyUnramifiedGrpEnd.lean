@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -27,7 +31,7 @@ theorem flat_of_map_maximalIdeal_self {A : Type*} [CommRing A] [IsLocalRing A] [
     obtain ⟨a, ha, hay⟩ := hy
     obtain ⟨b, hb, hbz⟩ := hz
     refine ⟨a + b, add_mem ha hb, ?_⟩
-    rw [show φ (a + b) - (y + z) = (φ a - y) + (φ b - z) by rw [map_add]; ring]
+    rw [show φ (a + b) - (y + z) = (φ a - y) + (φ b - z) by rw [map_add (f := _)]; ring]
     exact add_mem hay hbz
   | smul c y _ hy =>
     obtain ⟨a, ha, hay⟩ := hy
@@ -127,20 +131,20 @@ theorem flat_stalkMap_of_fixed {k : Type} [Field k] [IsAlgClosed k] {X : Scheme.
 
 end UnramifiedEndFlat
 
-open UnramifiedEndFlat in
 
+open UnramifiedEndFlat in
 theorem flat_of_formallyUnramified_grpEnd (k : Type) [Field k] [IsAlgClosed k] (G : Over (Sp k))
     [GrpObj G] (φ : G ⟶ G) (hG : LocallyOfFiniteType G.hom) (hφ : IsMonHom φ)
     (hu : FormallyUnramified φ.left) : Flat φ.left := by
   have := LocallyOfFiniteType.jacobsonSpace G.hom
-  refine flat_of_closedPoints _ fun x hx => ?_
+  refine UnramifiedEndFlat.flat_of_closedPoints _ fun x hx => ?_
   let x' : 𝟙_ _ ⟶ G := Over.homMk _ ((pointEquivClosedPoint G.hom).symm ⟨x, hx⟩).2
   let o : G.left := η[G].left (IsLocalRing.closedPoint k)
   have ho : IsClosed {o} := (pointEquivClosedPoint G.hom ⟨η[G].left, η[G].w⟩).2
   have hfo : φ.left o = o := by
     have : η[G] ≫ φ = η[G] := IsMonHom.one_hom φ
     exact congr(($this).left (IsLocalRing.closedPoint k))
-  have h0 := flat_stalkMap_of_fixed φ.left G.hom φ.w o ho hfo
+  have h0 := UnramifiedEndFlat.flat_stalkMap_of_fixed φ.left G.hom φ.w o ho hfo
   let α := GrpObj.mulRight (A := G) x'
   let β := GrpObj.mulRight (A := G) (x' ≫ φ)
   have hαβ : α.hom ≫ φ = φ ≫ β.hom := by

@@ -1,18 +1,22 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators
 
 namespace GlobalTheory
 
-open scoped BigOperators in
 
+open scoped BigOperators in
 theorem _root_.GlobalTheory.exists_exponent_strictly_least_weight :
     ∀ (ρ : ℕ) (S : Set (Fin ρ → ℕ)), S.Nonempty → ∃ m ∈ S, ∀ c : Fin ρ → ℕ,
       (∀ i, ∑ i' ∈ Finset.Iio i, m i' * c i' < c i) →
         ∀ a ∈ S, a ≠ m → ∑ i, m i * c i < ∑ i, a i * c i := by
   intro ρ S hS
   have hwf : WellFounded (Pi.Lex (fun i j : Fin ρ => j < i) (fun {_} (x y : ℕ) => x < y)) :=
-    Pi.Lex.wellFounded _ (fun _ => wellFounded_lt)
+    Pi.Lex.wellFounded _
   refine ⟨hwf.min S hS, hwf.min_mem S hS, ?_⟩
   set m := hwf.min S hS with hm
   intro c hc a ha hne

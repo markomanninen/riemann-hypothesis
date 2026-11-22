@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DTrCoeff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDet
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Th
 
@@ -16,7 +20,7 @@ private theorem tp_tr {R G : Type} [CommRing R] [Group G] {n : ℕ} (hn : 1 ≤ 
       simp [GDet.repAlg, Matrix.one_apply, Matrix.diagonal_apply]
     · induction z using MonoidAlgebra.induction_linear with
       | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | single g r => ext i j : 2; simp [GDet.repAlg]
   haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
   rw [GDet.tr, GDet.lam, h, Matrix.trace_eq_neg_charpoly_coeff, Fintype.card_fin]
@@ -34,7 +38,7 @@ private theorem tp_lin {R A G : Type} [CommRing R] [CommRing A] [Group G] {n : �
   simp only [ht'] at hM ⊢
   induction z using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb, Matrix.trace_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, Matrix.trace_add]
   | single g r =>
     have e : MonoidAlgebra.single g r = r • MonoidAlgebra.single g (1 : R) := by simp
     rw [MonoidAlgebra.mapRingHom_single, tp_single, Matrix.trace_smul, ← hM, e, map_smul, smul_eq_mul, map_mul, smul_eq_mul]

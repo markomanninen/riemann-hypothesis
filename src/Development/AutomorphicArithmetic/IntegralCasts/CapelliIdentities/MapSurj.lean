@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk2.map_surj :
     ∀ {A E : Type} [inst : CommRing A] [inst_1 : Ring E]

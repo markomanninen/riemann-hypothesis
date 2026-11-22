@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+
+@[expose] public section
 
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
@@ -27,7 +31,8 @@ private lemma span_range_eval_embeddings_eq_whole (F D : Type) [Field F] [Fintyp
     have hdecomp : (fun d : D => σ d c) = ∑ d, σ d c • Pi.single d (1 : F) := by
       ext e
       simp [Finset.sum_apply, Pi.single_apply]
-    rw [hdecomp, map_sum] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdecomp, map_sum] at hc
     simp only [map_smul, smul_eq_mul] at hc
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
     rw [← hc]

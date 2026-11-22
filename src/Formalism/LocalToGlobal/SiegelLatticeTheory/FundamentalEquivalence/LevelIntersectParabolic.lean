@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,7 +186,7 @@ variable {R σ J}
 
 theorem hR_add_left (x x' y : Fin n → R ⊗[F] E) :
     hR R σ J (x + x') y = hR R σ J x y + hR R σ J x' y := by
-  simp only [hR, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hR, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hR_smul_left (c : R ⊗[F] E) (x y : Fin n → R ⊗[F] E) :
     hR R σ J (c • x) y = sigR R σ c * hR R σ J x y := by
@@ -205,7 +209,8 @@ theorem hR_lin (g : HA R σ J) (x y : Fin n → R ⊗[F] E) :
   have hσ : (fun i => sigR R σ ((M.mulVec x) i)) =
       (M.map (sigR R σ)).mulVec (fun i => sigR R σ (x i)) := by
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum]
   rw [hσ, ← Matrix.vecMul_transpose, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
     Matrix.mulVec_mulVec, hg]
 
@@ -252,8 +257,6 @@ def Nsub {r : ℕ} (P : Frame E n r) : Subgroup (HA R σ J) where
     rw [lin_lin_inv] at this
     simpa using this
 
-def FrameUnipotentSubgroup {r : ℕ} (P : Frame E n r) : Subgroup (HA R σ J) := Nsub R σ J P ⊓ S0 R σ J P
-
 end Frames
 
 section Level
@@ -296,9 +299,6 @@ def KH {r : ℕ} (P : Frame E n r) (Λ : Set (Fin n → E)) : Subgroup (HA (Af F
 
 def NO {r : ℕ} (P : Frame E n r) (Λ : Set (Fin n → E)) : Subgroup (HA (Af F) σ J) :=
   Nsub (Af F) σ J P ⊓ Kf σ J Λ
-
-def levelIntersectParabolic {r : ℕ} (P : Frame E n r) (Λ : Set (Fin n → E)) : Subgroup (HA (Af F) σ J) :=
-  S0 (Af F) σ J P ⊓ Kf σ J Λ
 
 end Level
 

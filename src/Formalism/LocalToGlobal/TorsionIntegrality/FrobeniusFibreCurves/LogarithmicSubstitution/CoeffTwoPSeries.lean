@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.GoodModelLattice
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementK
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -27,7 +31,7 @@ theorem coeff_two_shift (L : PeriodPair) (P : ℂ) (hP : P ∉ L.lattice) :
       | exact L.isClosed_lattice
       | exact PeriodPair.isClosed_lattice L
       | (haveI : DiscreteTopology L.lattice.toAddSubgroup := inferInstanceAs (DiscreteTopology L.lattice)
-         exact AddSubgroup.isClosed_of_discrete (H := L.lattice.toAddSubgroup))
+         exact (L.lattice.toAddSubgroup).isClosed_of_discreteTopology)
   have hopen : ∀ᶠ w in nhds P, w ∉ L.lattice := hc.isOpen_compl.mem_nhds hP
   have hev : deriv L.weierstrassP =ᶠ[nhds P] L.derivWeierstrassP := by
     filter_upwards [hopen] with w hw
@@ -52,7 +56,8 @@ theorem kappa_sum_holds : KappaSum := by
   intro L α S hα hst hS
   obtain ⟨neg, -, -, -, h3⟩ := Formalism.L2.Th1.F.endoZInstance L α S hα hst hS
   have h4 := congrArg (PowerSeries.coeff 2) h3
-  rw [PowerSeries.coeff_C_mul, PowerSeries.coeff_rescale, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PowerSeries.coeff_C_mul, PowerSeries.coeff_rescale, map_add (f := _), map_sum,
     coeff_two_pSeries] at h4
   have h5 : ∀ P : S, PowerSeries.coeff 2
       (taylor0 (fun z => L.weierstrassP (z + (P : ℂ))) - PowerSeries.C (L.weierstrassP (P : ℂ)))

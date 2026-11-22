@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -69,10 +73,10 @@ theorem UpperTheory.ConvolutionTheory.H.defBridge :
   have hfac : PositivityTheory.Rg.Tf.Loc.diagPow ϖ a = torusPow F n a * diagGL F n (fun i => u ^ a i) := by
     have : PositivityTheory.Rg.Tf.Loc.diagPow ϖ a = diagGL F n (fun i => ϖ ^ a i) := Units.ext rfl
     rw [this, torusPow, ← map_mul]
-    congr 1
+    apply congrArg (diagGL F n)
     funext i
-    simp only [Pi.mul_apply, hu, ← mul_zpow]
-    simp
+    change ϖ ^ a i = uniformizerUnit F ^ a i * u ^ a i
+    rw [← mul_zpow, hu, mul_left_comm, mul_inv_cancel, mul_one]
   unfold PositivityTheory.Rg.Tf.Loc.iwahoriFn uFn dco
   congr 1
   ext g

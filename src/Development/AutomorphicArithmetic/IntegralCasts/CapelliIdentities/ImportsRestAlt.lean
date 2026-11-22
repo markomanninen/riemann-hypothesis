@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace AevalSpecializationAlgHom
 
@@ -16,8 +20,8 @@ private theorem key {Ω : Type} [Field Ω] [Algebra ℚ Ω] {σ : Type} (τ : σ
     obtain ⟨N1, G1, h1, h1'⟩ := hp
     obtain ⟨N2, G2, h2, h2'⟩ := hq
     refine ⟨N1 + N2, G1 * F ^ N2 + G2 * F ^ N1, ?_, ?_⟩
-    · simp only [map_add, map_mul, map_pow, ← h1, ← h2]; ring
-    · simp only [map_add, map_mul, map_pow, ← h1', ← h2']; ring
+    · simp only [map_add (f := _), map_mul, map_pow, ← h1, ← h2]; ring
+    · simp only [map_add (f := _), map_mul, map_pow, ← h1', ← h2']; ring
   | mul_X p o hp =>
     obtain ⟨N, G, h1, h1'⟩ := hp
     cases o with

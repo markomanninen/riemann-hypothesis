@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
-import GroundTheory.GlobalFields.LocalAtPlace
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnramifiedWhittaker.AlmostGoodOf
+public import GroundTheory.GlobalFields.LocalAtPlace
+
+@[expose] public section
 
 noncomputable section
 

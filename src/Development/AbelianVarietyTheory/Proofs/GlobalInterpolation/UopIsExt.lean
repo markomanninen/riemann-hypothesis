@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeIncidenceFiniteFibresStableStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeIncidenceFiniteFibresStableStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem uext_ker {Λ : Submodule Lc.O (Fin n → Lc.K)} {h : GL (Fin n) Lc.K} (h
       ext c
       simp [Finset.sum_apply, Pi.single_apply]
     have e4 : π x = π' ⟨x, hx⟩ := rfl
-    rw [e4, e3, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e4, e3, map_sum]
     exact Finset.sum_congr rfl fun a _ => hsmul (z a) _ (b a).2
   have hli : LinearIndependent F (fun a => π (b a)) := by
     apply linearIndependent_of_top_le_span_of_card_eq_finrank
@@ -185,6 +190,7 @@ theorem uop_isExt : ∀ (D : D7) (u : D.what₂.Word) (X : Ch D u) (i : ℕ) (M 
       rw [smul_inv_smul]; exact h
     have e1 := finsum_mem_eq_of_bijOn (f := fun p₁ => M.act g (Φ p₁)) (g := Φ) _ hbij (fun a _ => (hΦ.2 g a).symm)
     beta_reduce
-    rw [← e1, finsum_mem_eq_finite_toFinset_sum _ (hfin p).1, finsum_mem_eq_finite_toFinset_sum _ (hfin p).1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e1, finsum_mem_eq_finite_toFinset_sum _ (hfin p).1, finsum_mem_eq_finite_toFinset_sum _ (hfin p).1, map_sum]
 
 end GlobalTheory.LvT

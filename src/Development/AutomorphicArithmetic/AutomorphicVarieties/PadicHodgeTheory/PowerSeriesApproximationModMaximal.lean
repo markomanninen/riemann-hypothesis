@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg
 
 open MvPowerSeries in
@@ -24,7 +29,7 @@ private theorem appr_add {φ : R →ₐ[O] A} {J : Ideal A} {f g : A} (hf : Appr
   refine ⟨d • a + e • b, e * d, mul_ne_zero he hd, ?_⟩
   have : (e * d) • (f + g) - φ (d • a + e • b) =
       algebraMap O A d * (e • f - φ a) + algebraMap O A e * (d • g - φ b) := by
-    rw [map_add, map_smul, map_smul]
+    rw [map_add (f := _), map_smul, map_smul]
     simp only [Algebra.smul_def, map_mul]
     ring
   rw [this]
@@ -70,7 +75,7 @@ private theorem appr_all {φ : R →ₐ[O] A} {m : Ideal A} (h : ∀ N, ∀ f �
     obtain ⟨b, d, hd, hb⟩ := h N _ ha
     refine ⟨d • a + b, d * e, mul_ne_zero hd he, ?_⟩
     have : (d * e) • f - φ (d • a + b) = d • (e • f - φ a) - φ b := by
-      rw [map_add, map_smul]
+      rw [map_add (f := _), map_smul]
       simp only [Algebra.smul_def, map_mul]
       ring
     rw [this]

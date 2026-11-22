@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.ExistsGap
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.WdValAppend
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.ExistsGap
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.WdValAppend
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem peakAlg : PeakAlg := by
   obtain ⟨J, hJ, c, w, L, -, hgw, -⟩ := PositivityTheory.Rg.BcB.F.adjWords _ _ gen (g : 𝔄.B) g.2
   refine ⟨J, hJ, c, w, ?_, ?_⟩
   · have hp : 𝔄.P (g : 𝔄.B) = 1 := hg
-    rw [hgw, map_sum] at hp
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hgw, map_sum] at hp
     rw [← hp]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, wdVal_map, smul_eq_mul]
@@ -62,7 +67,8 @@ theorem peakAlg : PeakAlg := by
     exact (𝔄.hP γ).symm
   · have hF : op x * ((∑ j, c j • wdVal (fun γ : {γ // arch γ} => op γ) (w j)) * op a₀) =
         𝔄.F (𝔄.ι x * ((g : 𝔄.B) * 𝔄.ι a₀)) := by
-      rw [map_mul, map_mul, 𝔄.hF, 𝔄.hF, hgw, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, map_mul, 𝔄.hF, 𝔄.hF, hgw, map_sum]
       congr 2
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, wdVal_map]

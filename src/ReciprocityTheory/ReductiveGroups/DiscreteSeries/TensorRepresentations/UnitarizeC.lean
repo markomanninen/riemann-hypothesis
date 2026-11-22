@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeB
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,6 @@ variable {n : ℕ} {ε : Fin n → Bool}
 def toG (g : Matrix (Fin n) (Fin n) ℂ) (hg : g ∈ UJset ε) : Formalism.REAL.UJ ε :=
   ⟨⟨g, Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε, (Formalism.REAL.indefinite_unitary_inv_closed n ε g hg).1,
     (Formalism.REAL.indefinite_unitary_inv_closed n ε g hg).2⟩, hg⟩
-
-theorem umat_toG (g : Matrix (Fin n) (Fin n) ℂ) (hg : g ∈ UJset ε) : Formalism.MainNotions.S.umat (toG g hg) = g := rfl
 
 theorem umat_mul (a b : Formalism.REAL.UJ ε) :
     Formalism.MainNotions.S.umat (a * b) = Formalism.MainNotions.S.umat a * Formalism.MainNotions.S.umat b := rfl
@@ -174,7 +176,8 @@ theorem cf_kDiag (hσ : IsURepOn (UJset ε) σ) (dual : Bool) (y : H) (ξ : Fin 
     cf dual ε σ y ξ (kDiag dual σ (Formalism.MainNotions.S.umat κ) F) g = cf dual ε σ y ξ F (g * κ) := by
   unfold cf kDiag
   rw [sig_mul hσ g κ, umat_mul]
-  simp only [ContinuousLinearMap.comp_apply, map_sum, map_smul, inner_sum, inner_smul_right, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.comp_apply, map_sum, map_smul, inner_sum, inner_smul_right, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [← wt_K dual ξ _ _ hk d, Finset.sum_mul]
@@ -217,15 +220,17 @@ theorem hasDerivAt_matrixCoeff_flow (hσ : IsURepOn (UJset ε) σ) (hD : IsDeriv
       ∑ c, (wt dual ε ξ (Formalism.MainNotions.S.umat z * X) c * inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((f c : D) : H)) +
         wt dual ε ξ (Formalism.MainNotions.S.umat z) c * inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((actM E X (f c) : D) : H))) := by
     unfold cf
-    simp only [mx_apply_tensF, Submodule.coe_add, map_add, inner_add_right, mul_add, Finset.sum_add_distrib]
+    simp only [mx_apply_tensF, Submodule.coe_add, map_add (f := _), inner_add_right, mul_add, Finset.sum_add_distrib]
     rw [add_comm]
     congr 1
     rw [wt_deriv_id dual hX ξ (Formalism.MainNotions.S.umat z) (fun c => inner ℂ y (σ (Formalism.MainNotions.S.umat z) ((f c : D) : H)))]
     refine Finset.sum_congr rfl fun c _ => ?_
     congr 1
     cases dual
-    · simp [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, inner_sum, inner_smul_right]
-    · simp [Submodule.coe_sum, Submodule.coe_smul, Submodule.coe_neg, map_sum, map_smul, map_neg, inner_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul, inner_sum, inner_smul_right]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [Submodule.coe_sum, Submodule.coe_smul, Submodule.coe_neg, map_sum, map_smul, map_neg, inner_sum,
         inner_smul_right, inner_neg_right]
   rw [hv]
   exact hs

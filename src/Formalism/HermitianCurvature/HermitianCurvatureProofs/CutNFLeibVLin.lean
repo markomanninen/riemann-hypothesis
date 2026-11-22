@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFLeib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -12,7 +16,8 @@ theorem nfVLin_comp_sum {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpac
     (f : ι → Wq →L[ℂ] Wp) :
     a.comp ((∑ i ∈ s, c i • f i).comp b) = ∑ i ∈ s, c i • a.comp ((f i).comp b) := by
   ext x
-  simp [ContinuousLinearMap.sum_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ContinuousLinearMap.sum_apply, map_sum, map_smul]
 
 theorem vector_linearity_holds : NFVLin := by
   obtain ⟨c₃, hc₃⟩ := Formalism.FourierDecayAlt.P.PBE.orbJ_dom

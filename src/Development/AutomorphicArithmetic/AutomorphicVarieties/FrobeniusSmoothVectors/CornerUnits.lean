@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,6 @@ namespace UpperTheory.V.Fr
 variable {l : ℕ} [Fact l.Prime] {k : Type} [Field k] {F : Frame l k} {K : Type} [CommRing K]
 
 def cor : Fin 2 → Fin 3 := ![0, 2]
-
-@[simp] theorem cor_zero : cor 0 = 0 := rfl
-
-@[simp] theorem cor_one : cor 1 = 2 := rfl
 
 theorem w_cor (i : Fin 2) : w 3 (cor i) = w 2 i := by
   fin_cases i <;> rfl

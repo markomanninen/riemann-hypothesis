@@ -1,8 +1,12 @@
-import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+module
+
+public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASAPairLACCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+
+@[expose] public section
 
 open MeasureTheory Topology
 open Formalism.FourierDecayAlt

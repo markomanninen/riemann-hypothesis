@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
 
 noncomputable section
 

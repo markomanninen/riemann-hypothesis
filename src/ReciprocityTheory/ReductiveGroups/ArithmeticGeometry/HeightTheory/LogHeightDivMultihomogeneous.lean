@@ -1,12 +1,16 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HintIntOfBounds
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
-import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
-import ReciprocityTheory.SemistableReduction.LagrangeIdealLiftsFact
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HHINDA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HintIntOfBounds
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+public import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
+public import ReciprocityTheory.SemistableReduction.LagrangeIdealLiftsFact
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -35,7 +39,8 @@ theorem uniformizer_abs_eq_inv_norm (la : HeightOneSpectrum (𝓞 K)) :
   have := FinitePlace.norm_embedding_int (K := K) (v := la) (Data.unif la)
   simp only [RingOfIntegers.coe_eq_algebraMap] at this ⊢
   rw [this, hv]
-  simp [WithZeroMulInt.toNNReal_neg_apply, WithZero.exp]
+  rw [WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero, WithZero.log_exp]
+  simp
 
 theorem logHeight_div_multihomogeneous {B n : ℕ} {P Q R : MvPolynomial (Fin B × Fin n) K}
     (eQ eR : Fin B → ℕ) (hP : P ≠ 0) (hQ : Q ≠ 0) (hQm : IsMultiHomogeneous eQ Q)
@@ -101,7 +106,32 @@ theorem log_gaussAbs_sub_of_fraction (la : HeightOneSpectrum (𝓞 K)) (a b : KT
       -((d.gOrd la q : ℝ) * logNorm la) := by
   classical
   let _ := algOpKT (K := K) d.D d.N la
-  have := isFractionRing_Op (K := K) d.D d.N la
+  have : IsFractionRing (Op d.D d.N la) (KTf K d.D d.N) := by
+    let _ := algOTKT (K := K) d.D d.N
+    let _ : Algebra (OT K d.D d.N) (KTp K d.D d.N) := MvPolynomial.algebraMvPolynomial
+    have := IsScalarTower.of_algebraMap_eq' (R := OT K d.D d.N) (S := KTp K d.D d.N)
+      (A := KTf K d.D d.N) rfl
+    have := IsScalarTower.of_algebraMap_eq (R := OT K d.D d.N) (S := Op d.D d.N la)
+      (A := KTf K d.D d.N) fun x => by
+        change _ = OpToKT d.D d.N la (algebraMap _ _ x)
+        rw [OpToKT, IsLocalization.lift_eq]
+        rfl
+    have := MvPolynomial.isLocalization (σ := TVar d.D d.N) (nonZeroDivisors (𝓞 K)) K
+    have hinj : Function.Injective (algebraMap (OT K d.D d.N) (KTp K d.D d.N)) :=
+      MvPolynomial.map_injective _ (IsFractionRing.injective (𝓞 K) K)
+    have hmonoid : (nonZeroDivisors (KTp K d.D d.N)).comap
+        (algebraMap (OT K d.D d.N) (KTp K d.D d.N)) = nonZeroDivisors (OT K d.D d.N) := by
+      ext p
+      simp only [Submonoid.mem_comap, mem_nonZeroDivisors_iff_ne_zero]
+      exact map_ne_zero_iff _ hinj
+    have : IsFractionRing (OT K d.D d.N) (KTf K d.D d.N) := by
+      rw [IsFractionRing, ← hmonoid]
+      exact IsLocalization.localization_localization_isLocalization_of_has_all_units
+        ((nonZeroDivisors (𝓞 K)).map (C (σ := TVar d.D d.N)))
+        (nonZeroDivisors (KTp K d.D d.N)) (KTf K d.D d.N)
+        (fun _ hu => hu.mem_nonZeroDivisors)
+    exact IsFractionRing.isFractionRing_of_isDomain_of_isLocalization (laT d.D d.N la).primeCompl
+      (Op d.D d.N la) (KTf K d.D d.N)
   have := Op_isDVR (K := K) d.D d.N la
   have hinj := IsFractionRing.injective (KTp K d.D d.N) (KTf K d.D d.N)
   have hq0 : q ≠ 0 := by

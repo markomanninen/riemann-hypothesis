@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Definitions.Divisors.OmAUnipFourierInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OmAUnipFourierInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnderMemAndPlaceAboveEqOfMem
+
+@[expose] public section
 
 open Matrix MeasureTheory GlobalTheory.SplitFlip GlobalTheory.SplitWeil ValuativeRel
 open scoped Pointwise
@@ -20,7 +24,7 @@ theorem exists_rightInverse {X : Matrix A D k} (hX : IsPrimFrame (SplitFlip.stdL
   have hf : ∀ v j, ((f v j : 𝒪[k]) : k) = (∑ i, (v i : k) • X.row i) j := fun v j => by
     simp [f, X', vecMul, dotProduct, Finset.sum_apply]
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     have h1 : ∑ i, (v i : k) • X.row i = 0 := by
       funext j; rw [← hf, hv]; rfl
@@ -54,14 +58,15 @@ theorem exists_rightInverse {X : Matrix A D k} (hX : IsPrimFrame (SplitFlip.stdL
     (Submodule.mkQ_surjective _)
   obtain ⟨l, hl⟩ : ∃ l : (D → 𝒪[k]) →ₗ[𝒪[k]] (A → 𝒪[k]), l ∘ₗ f = LinearMap.id := by
     have hs' : ∃ s : _ →ₗ[𝒪[k]] _, (LinearMap.range f).mkQ ∘ₗ s = LinearMap.id := ⟨s, hs⟩
-    have H := ((LinearMap.exact_map_mkQ_range f).split_tfae hinj (Submodule.mkQ_surjective _)).out 0 1
+    have H := ((LinearMap.exact_map_mkQ_range f).split_tfae hinj (Submodule.mkQ_surjective _)).out 1 2
     exact H.1 hs'
   refine ⟨Matrix.of fun j i => (l (Pi.single j 1) i : k), fun j i => (l (Pi.single j 1) i).2, ?_⟩
   ext i i'
   have h1 : l (f (Pi.single i 1)) = Pi.single i 1 := LinearMap.congr_fun hl _
   have h2 : f (Pi.single i 1) = ∑ j, X' i j • Pi.single j 1 := by
     funext j; simp [f, Finset.sum_apply, Pi.single_apply]
-  rw [h2, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum] at h1
   have h3 := congrArg Subtype.val (congrFun h1 i')
   simp only [map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at h3
   push_cast at h3
@@ -84,17 +89,17 @@ theorem exists_mem_glLatCong {u : kˣ} (hu : valuation k (u : k) < 1) {M : Matri
       rw [IsLocalRing.residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
         Valuation.Integer.not_isUnit_iff_valuation_lt_one]
       exact (hM r j).trans_lt hu
-    rw [map_add, this]; simp
+    rw [map_add (f := _), this]; simp
   obtain ⟨w, hw⟩ := hK
   have hv : (Matrix.GeneralLinearGroup.map (algebraMap 𝒪[k] k) w).val = 1 + M := by
     show (algebraMap 𝒪[k] k).mapMatrix w.val = _
-    rw [hw, map_add, map_one]; rfl
+    rw [hw, map_add (f := _), map_one]; rfl
   refine ⟨_, GlobalTheory.FunObj.GivenAdm.mem_glLatCong.2 ⟨⟨w, rfl⟩, ?_⟩, hv⟩
   rw [hv, add_sub_cancel_left]
   exact hM
 
-omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem vecMul_diagGL_mem (a b c : D → kˣ) (h : ∀ j, b j = a j * c j) (x : D → k) :
     x ᵥ* (diagGL c).val ∈ diagLat b ↔ x ∈ diagLat a := by
   refine forall_congr' fun j => ?_

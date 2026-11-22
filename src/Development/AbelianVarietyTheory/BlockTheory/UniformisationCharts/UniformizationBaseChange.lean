@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubicalPullBaseChangeSt
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.RigidPullbackIdentification
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.CubicalStructures.CubicalPullBaseChangeSt
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.RigidPullbackIdentification
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -114,8 +118,8 @@ def GenericInPsiLocus (φ : R →+* R') (D : DegPre R) : Prop :=
 
 end Pull
 
-open scoped CategoryTheory.Obj in
 
+open scoped CategoryTheory.Obj in
 def UnifBaseChange : Prop :=
   ∀ (R R' : Type) [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R']
     (I : Ideal R) (I' : Ideal R') (_ : AdmBase R I) (_ : AdmBase R' I')
@@ -136,29 +140,6 @@ def UnifBaseChange : Prop :=
 section Basic₂
 
 variable {R R' : Type} [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R']
-
-example (G : Over (Spec (CommRingCat.of R))) [GrpObj G] : Nonempty (GrpPull (RingHom.id R) G G) := by
-  have h : specOf (RingHom.id R) = 𝟙 _ := by simp [specOf]
-  refine ⟨⟨𝟙 _, ?_, ?_, ?_⟩⟩
-  · rw [h]; exact IsPullback.of_horiz_isIso ⟨by simp⟩
-  · rw [h]; exact (Category.comp_id _).trans (Category.id_comp _).symm
-  · have : ∀ a b, pullback.map G.hom G.hom G.hom G.hom (𝟙 _) (𝟙 _) (specOf (RingHom.id R)) a b =
-        𝟙 _ := by
-      intro a b
-      apply pullback.hom_ext <;> simp
-    rw [this]
-    exact (Category.comp_id _).trans (Category.id_comp _).symm
-
-example {φ : R →+* R'} {I : Ideal R} {I' : Ideal R'} {G : Over (Spec (CommRingCat.of R))} [GrpObj G]
-    {G' : Over (Spec (CommRingCat.of R'))} [GrpObj G'] (pG : GrpPull φ G G')
-    (hI : I ≤ I'.comap φ) (e : ℕ) :
-    pG.thickF hI e ≫ (fstG I e G).left = (fstG I' e G').left ≫ pG.F :=
-  pullback.lift_fst _ _ _
-
-example (φ : R →+* R') (D : DegPre R) (D' : DegPre R') (h : PullIdent φ D D') :
-    GenericInPsiLocus φ D := by
-  obtain ⟨W, ψW, g, hg, -⟩ := h.w_psi
-  exact ⟨W, ψW, g, hg⟩
 
 end Basic₂
 

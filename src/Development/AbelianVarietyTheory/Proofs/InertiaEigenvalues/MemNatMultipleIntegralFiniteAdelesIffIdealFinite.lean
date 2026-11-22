@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
-import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
+public import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 

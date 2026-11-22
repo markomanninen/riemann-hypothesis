@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+
+@[expose] public section
 
 open UpperTheory.ConvolutionTheory.Ci
 
@@ -9,7 +13,7 @@ open Polynomial
 private theorem semiconj_aeval {A : Type} [Ring A] [Algebra ℂ A] {a x y : A} (h : SemiconjBy a x y) (p : ℂ[X]) :
     SemiconjBy a (aeval x p) (aeval y p) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simpa only [map_add] using hp.add_right hq
+  | add p q hp hq => simpa only [map_add (f := _)] using hp.add_right hq
   | monomial n c =>
     simp only [aeval_monomial, ← Algebra.smul_def]
     have := (h.pow_right n).eq
@@ -97,7 +101,8 @@ private theorem trace_eq {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimen
   have h2 : LinearMap.trace ℂ W (aeval (U 0) (r * q) * B) = 0 :=
     (LinearMap.isNilpotent_trace_of_isNilpotent h1).eq_zero
   have h3 : U 0 ^ j = aeval (U 0) (X ^ j : ℂ[X]) := by simp
-  rw [h3, hq, map_add, add_mul, map_add, h2, zero_add, map_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h3, hq, map_add (f := _), add_mul, map_add (f := _), h2, zero_add, map_sum, Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun z _ => ?_
   rw [map_mul (aeval (U 0)), aeval_C, ← Algebra.smul_def, smul_mul_assoc, map_smul, smul_eq_mul, mul_comm]
 

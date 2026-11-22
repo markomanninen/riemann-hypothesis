@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial Module Matrix UpperTheory.V.W UpperTheory.V.Hi
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -28,7 +33,8 @@ private theorem UpperTheory.fixed_vector_descends_weil_group {Γ I K D W : Type}
   let E : Module.End K D := ∑ q : I ⧸ (a.comp j).ker, a (j q.out)
   let E' : Module.End ℂ W := ∑ q : I ⧸ (a.comp j).ker, b (j q.out)
   have hE : ∀ x s, a (j s) (E x) = E x := fun x s => by
-    simp only [E, LinearMap.sum_apply, map_sum, ha]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, LinearMap.sum_apply, map_sum, ha]
     refine Fintype.sum_equiv (Equiv.mulLeft (s : I ⧸ (a.comp j).ker)) _ _ fun q => ?_
     rw [Equiv.coe_mulLeft, map_mul, Module.End.mul_apply]
     rfl
@@ -37,7 +43,8 @@ private theorem UpperTheory.fixed_vector_descends_weil_group {Γ I K D W : Type}
   have hE2 : E' y = n • y := by
     simp only [E', LinearMap.sum_apply, hi, Finset.sum_const, Finset.card_univ, n]
   have hEE : ∀ x, E' (mk x) = mk (E x) := fun x => by
-    simp only [E, E', LinearMap.sum_apply, hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, E', LinearMap.sum_apply, hc, map_sum]
   have hcan : ∀ z : D, n • z = 0 → z = 0 := fun z hz => by
     rw [← Nat.cast_smul_eq_nsmul K] at hz
     exact (smul_eq_zero.mp hz).resolve_left hn0
@@ -46,13 +53,13 @@ private theorem UpperTheory.fixed_vector_descends_weil_group {Γ I K D W : Type}
   have hS : ∀ x, S x = a φ (E x) - E x + n • x - E x := fun x => rfl
   have hS' : ∀ x, S' x = b φ (E' x) - E' x + n • x - E' x := fun x => rfl
   have hinj : Function.Injective S := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have h1 : ∀ s, a (j s) (a φ (E x)) = a φ (E x) := fun s => by
       obtain ⟨t, ht⟩ := hn s
       rw [← Module.End.mul_apply, ← map_mul, ht, map_mul, Module.End.mul_apply, hE]
     have h2 := congrArg E hx
-    rw [hS, map_sub, map_add, map_sub, map_nsmul, hE1 _ h1, hE1 _ (hE x), map_zero, add_sub_cancel_right,
+    rw [hS, map_sub, map_add (f := _), map_sub, map_nsmul, hE1 _ h1, hE1 _ (hE x), map_zero, add_sub_cancel_right,
       ← smul_sub] at h2
     have h3 : a φ (E x) = E x := sub_eq_zero.mp (hcan _ h2)
     have h4 : E x = 0 := by
@@ -69,7 +76,7 @@ private theorem UpperTheory.fixed_vector_descends_weil_group {Γ I K D W : Type}
     rintro _ ⟨x, rfl⟩
     obtain ⟨z, rfl⟩ := hsur x
     refine ⟨mk z, ?_⟩
-    rw [hS, hS', hEE, hc, map_sub, map_add, map_sub, map_nsmul]
+    rw [hS, hS', hEE, hc, map_sub, map_add (f := _), map_sub, map_nsmul]
   refine hy (LinearMap.injective_iff_surjective.mpr hsur' ?_)
   rw [hS', hE2, map_nsmul, hi, map_zero, sub_self, zero_add, sub_self]
 

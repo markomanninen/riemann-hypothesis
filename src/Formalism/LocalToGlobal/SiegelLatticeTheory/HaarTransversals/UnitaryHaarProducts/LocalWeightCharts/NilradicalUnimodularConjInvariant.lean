@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.StarOfInv
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ProductDecompositionHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.DDMulApply
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.StarOfInv
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.ProductDecompositionHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.DDMulApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,8 +85,9 @@ lemma mod_auto (e : GN k r ≃* GN k r) (he : Continuous e) (hs : Continuous e.s
       Measure.map_map he.measurable (measurable_mul_const _)]
     congr 1
     funext x
-    simp only [Function.comp_apply, map_mul]
-  rw [hE, Measure.map_smul, map_rmul, map_rmul, Measure.map_smul, hE, smul_smul, smul_smul] at key
+    exact (map_mul e x g).symm
+  rw [hE, Measure.map_smul s (measurable_mul_const (e g)).aemeasurable,
+    map_rmul, map_rmul, Measure.map_smul _ he.measurable.aemeasurable, hE, smul_smul, smul_smul] at key
   have := smul_cancel key
   rw [mul_comm] at this
   exact mul_right_cancel₀ hs0 this
@@ -362,7 +367,8 @@ theorem nUnimod_core (hB : NWtUpper) (k r : ℕ) (z : Fin (2 * r + k + 1) → �
     he.measurable.mul_const _
   have hsplit : (fun g : GN k r => conjW z hz hT h hh g * Grp.mk m₀ hm₀) =
       (· * Grp.mk m₀ hm₀) ∘ conjW z hz hT h hh := rfl
-  rw [hμ, haarNm_eq, Measure.map_smul, Measure.map_map hΦ Grp.embt.continuous.measurable, hcomp,
+  rw [hμ, haarNm_eq, Measure.map_smul c hΦ.aemeasurable,
+    Measure.map_map hΦ Grp.embt.continuous.measurable, hcomp,
     ← Measure.map_map Grp.embt.continuous.measurable hψ, hsplit,
     ← Measure.map_map (measurable_mul_const _) he.measurable, haar_conj z hz hT h hh, haar_right hB]
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -54,11 +58,12 @@ private theorem act_onePlus (s : ℤˣ) (X : Matrix (Fin m) (Fin m) C) (h : X * 
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.V.U3.exists_isDeform :
-    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C) (r : G →* GG m C) (γ : G → Matrix (Fin m) (Fin m) C), I * I = ⊥ →
-      (∀ g, EntIn I (γ g)) → IsCoc r γ → ∃ r' : G →* GG m C, IsDeform r γ r' := by
+    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C)
+      (r : G →* GG (m := m) (R := C)) (γ : G → Matrix (Fin m) (Fin m) C), I * I = ⊥ →
+      (∀ g, EntIn I (γ g)) → IsCoc r γ → ∃ r' : G →* GG (m := m) (R := C), IsDeform r γ r' := by
   intro G C _ _ m I r γ hI hγ hc
   have hsq : ∀ g, γ g * γ g = 0 := fun g => entIn_mul_zero hI (hγ g) (hγ g)
-  let P : G → GG m C := fun g => SemidirectProduct.inl (onePlus (γ g) (hsq g)) * r g
+  let P : G → GG (m := m) (R := C) := fun g => SemidirectProduct.inl (onePlus (γ g) (hsq g)) * r g
   have hPr : ∀ g, (P g).right = (r g).right := fun g => by simp [P]
   have hPlG : ∀ g, (P g).left = onePlus (γ g) (hsq g) * (r g).left := fun g => by
     simp [P, SemidirectProduct.mul_left]

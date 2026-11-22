@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SGaugeDensB
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SGaugeDensB
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal
@@ -51,7 +55,8 @@ theorem mul_dPart {Θ : EuclideanSpace ℝ (Fin N) → MP n} {U : Set (Euclidean
   rw [h1, h2] at h3
   have h4 := congrArg (fun L => L (EuclideanSpace.single i 1)) h3
   simp only [ContinuousLinearMap.comp_apply, lmulP_apply] at h4
-  rw [sum_single (fderiv ℝ φ t (EuclideanSpace.single i 1)), map_sum] at h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sum_single (fderiv ℝ φ t (EuclideanSpace.single i 1)), map_sum] at h4
   simp only [map_smul] at h4
   have h5 := congrArg Matrix.of h4
   rw [Equiv.apply_symm_apply] at h5
@@ -85,7 +90,8 @@ theorem chartJac_mul_det {Θ : EuclideanSpace ℝ (Fin N) → MP n} {U : Set (Eu
     rw [e1, mul_dPart hΘ hU hφ h ht i, Matrix.mul_sum]
     simp only [Matrix.mul_smul]
     change realL n (∑ k, _) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
     rfl
   have hG : (Matrix.of fun i j : Fin N => @inner ℝ _ _ (w t i) (w t j)) =

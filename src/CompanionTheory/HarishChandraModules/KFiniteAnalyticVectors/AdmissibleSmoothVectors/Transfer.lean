@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped Kronecker Pointwise
@@ -260,7 +264,8 @@ theorem apply_stdPoly {G V : Type} [AddCommGroup V] [Module ℂ V] (τ : G → M
     {M : ℕ} (g : Fin M → G) (ℓ : V →ₗ[ℂ] ℂ) (u : V) :
     ℓ (stdPoly E (fun i => τ (g i)) u) = ∑ π : Equiv.Perm (Fin M),
       ((Equiv.Perm.sign π : ℤ) : ℂ) * ℓ (word E ((List.ofFn fun i => g (π i)).map τ) u) := by
-  simp only [stdPoly, LinearMap.sum_apply, map_sum, List.map_ofFn, Function.comp_def, Module.End.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [stdPoly, LinearMap.sum_apply, map_sum, List.map_ofFn, Function.comp_def, Module.End.mul_apply,
     Module.End.intCast_apply, map_zsmul, zsmul_eq_mul]
 
 end PrismTransfer

@@ -1,4 +1,8 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HCFFromRecipA
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -10,10 +14,11 @@ namespace ReciprocityTheory.Neutral.Bridge.HCFR
 
 variable (K : Type) [Field K] [NumberField K]
 
-open Classical in
 
-def infIdele (w : InfinitePlace K) : (w.Completion)ˣ →* Ideles K :=
-  Units.map
+open Classical in
+def infIdele (w : InfinitePlace K) : (w.Completion)ˣ →* Ideles K := by
+  classical
+  exact Units.map
     { toFun := fun x => ((Pi.mulSingle w x : InfiniteAdeleRing K), (1 : FiniteAdeleRing (𝓞 K) K))
       map_one' := Prod.ext (Pi.mulSingle_one w) rfl
       map_mul' := fun x y => Prod.ext (Pi.mulSingle_mul w x y) (mul_one 1).symm }
@@ -30,47 +35,6 @@ theorem infIdele_fst_ne (w w' : InfinitePlace K) (h : w' ≠ w) (x : (w.Completi
 
 theorem infIdele_snd (w : InfinitePlace K) (x : (w.Completion)ˣ) (v : HeightOneSpectrum (𝓞 K)) :
     (infIdele K w x : AdeleRing (𝓞 K) K).2 v = 1 := rfl
-
-theorem infIdele_mem_rayUnits (w : InfinitePlace K) (x : (w.Completion)ˣ) :
-    infIdele K w x ∈ rayUnits K ⊤ ∅ := by
-  refine ⟨fun w' hw' => by simp at hw', fun v => ⟨?_, 0, Submodule.mem_top, ?_⟩⟩
-  · rw [infIdele_snd]
-    exact map_one _
-  · rw [infIdele_snd, sub_self]
-    simp
-
-theorem isOpen_ker (Art : IdeleClassGroup K →* Field.absoluteGaloisGroupAbelianization K)
-    (hc : Continuous Art) (E : IntermediateField K (AlgebraicClosure K)) (h : IsFiniteAbelian K E) :
-    IsOpen ((((abRestrict K E h).comp Art).comp (QuotientGroup.mk' (diagUnits K).range)).ker :
-      Set (Ideles K)) := by
-  haveI := h.finiteDimensional
-  haveI := h.isGalois
-  have hk : ∀ g' : Field.absoluteGaloisGroup K,
-      abRestrict K E h (QuotientGroup.mk g') = AlgEquiv.restrictNormalHom E g' :=
-    fun g' => abRestrict_mk K E h g'
-
-  have hS : ((abRestrict K E h).ker : Set (Field.absoluteGaloisGroupAbelianization K)) =
-      (QuotientGroup.mk : Field.absoluteGaloisGroup K → Field.absoluteGaloisGroupAbelianization K) ''
-        (SetLike.coe E.fixingSubgroup) := by
-    ext y
-    obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective y
-    simp only [SetLike.mem_coe, MonoidHom.mem_ker, Set.mem_image]
-    constructor
-    · intro hy
-      refine ⟨g, ?_, rfl⟩
-      have hg : g ∈ (AlgEquiv.restrictNormalHom E).ker := MonoidHom.mem_ker.mpr ((hk g).symm.trans hy)
-      rw [IntermediateField.restrictNormalHom_ker E] at hg
-      exact hg
-    · rintro ⟨g', hg', he⟩
-      rw [← he, hk]
-      have hg : g' ∈ (AlgEquiv.restrictNormalHom E).ker := by
-        rw [IntermediateField.restrictNormalHom_ker E]
-        exact hg'
-      exact MonoidHom.mem_ker.mp hg
-  have hopen : IsOpen ((abRestrict K E h).ker : Set (Field.absoluteGaloisGroupAbelianization K)) := by
-    rw [hS]
-    exact QuotientGroup.isOpenMap_coe _ (IntermediateField.fixingSubgroup_isOpen E)
-  exact hopen.preimage (hc.comp continuous_quot_mk)
 
 def infPart : AdeleRing (𝓞 K) K →* AdeleRing (𝓞 K) K where
   toFun x := (x.1, 1)

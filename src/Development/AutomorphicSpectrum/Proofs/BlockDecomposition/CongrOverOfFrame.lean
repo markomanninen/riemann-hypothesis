@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.ExistsGlIsometryCompEqOfNondegenerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -252,7 +256,7 @@ theorem congrOver_of_frame {N r t : ℕ} (hs : ∀ x, σ (σ x) = x) (ε : (Fin 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a y => simp [hcdef, hs]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   set T' := T.submatrix id ε.symm with hT'
   have hst : st c T' = (st c T).submatrix ε.symm id := by
     ext i j; simp [st, hT']
@@ -285,7 +289,7 @@ theorem baseConj_baseConj (hs : ∀ x, σ (σ x) = x) (x : A ⊗[F] E) :
   | tmul a y =>
     change (GlobalTheory.HermGlobal.baseConj σ A) ((GlobalTheory.HermGlobal.baseConj σ A) (a ⊗ₜ y)) = _
     simp [hs]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem map_baseConj {A' : Type*} [CommRing A'] [Algebra F A'] (s : E →ₐ[F] E) (hs : ∀ x, s x = σ x)
     (ev : A' →ₐ[F] A) (x : A' ⊗[F] E) :
@@ -295,7 +299,7 @@ theorem map_baseConj {A' : Type*} [CommRing A'] [Algebra F A'] (s : E →ₐ[F] 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a y => simp [hs]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem map_one_tmul {A' : Type*} [CommRing A'] [Algebra F A'] {A : Type*} [CommRing A] [Algebra F A]
     (ev : A' →ₐ[F] A) (x : E) :

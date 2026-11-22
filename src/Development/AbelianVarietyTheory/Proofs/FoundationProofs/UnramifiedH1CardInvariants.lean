@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
@@ -71,7 +75,7 @@ variable {R D M : Type} [CommRing R] [Group D] [TopologicalSpace D] [IsTopologic
 def invI (ρ : Representation R D M) (I : Subgroup D) : Submodule R M where
   carrier := {m | ∀ s ∈ I, ρ s m = m}
   zero_mem' := fun s _ => by simp
-  add_mem' := fun {a b} ha hb s hs => by simp [map_add, ha s hs, hb s hs]
+  add_mem' := fun {a b} ha hb s hs => by simp [map_add (f := _), ha s hs, hb s hs]
   smul_mem' := fun c a ha s hs => by simp [map_smul, ha s hs]
 
 def vanI (ρ : Representation R D M) (I : Subgroup D) : Submodule R (D → M) where
@@ -183,7 +187,7 @@ theorem card_vanI (ρ : Representation R D M) (I : Subgroup D) [hI : I.Normal] (
       intro x y
       apply Subtype.ext
       show ρ φ (x + y : M) + m = ρ φ x + (ρ φ y + m)
-      rw [map_add, add_assoc]
+      rw [map_add (f := _), add_assoc]
     have hw1 : ∀ g, (w g).1 = a g := fun g => DFunLike.congr_fun hq g
     refine ⟨⟨fun g => ((w g).2 0 : M), (hW _).2 ⟨⟨?_, ?_⟩, ?_⟩⟩, ?_⟩
     · exact (hwl.comp (fun p : Equiv.Perm N × Equiv.Perm N => (p.2 0 : M))).continuous

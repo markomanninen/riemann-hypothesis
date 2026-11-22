@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -41,9 +45,9 @@ private theorem UpperTheory.V.UnitaryThreeInertia.residual_cocycle_is_coboundary
     (hκ : ∀ g h l, adRep (r0 η Ψ) g (κ (h, l)) - κ (g * h, l) + κ (g, h * l) - κ (g, h) = 0) :
     ∃ b : D → Matrix (Fin 3) (Fin 3) k, IsLocallyConstant b ∧ (∀ g, b g ∈ gw k j) ∧
       ∀ g h, κ (g, h) = adRep (r0 η Ψ) g (b h) - b (g * h) + b g := by
-  let f : D × D → Gb k j := fun z => (⟨κ z, hw z⟩ : ↥(gw k j))
+  let f : D × D → Gb (k := k) j := fun z => (⟨κ z, hw z⟩ : ↥(gw k j))
   have hfl : IsLocallyConstant f :=
-    IsLocallyConstant.desc f (fun x : Gb k j => (x.val : Matrix (Fin 3) (Fin 3) k)) hc
+    IsLocallyConstant.desc f (fun x : Gb (k := k) j => (x.val : Matrix (Fin 3) (Fin 3) k)) hc
       (fun x y hxy => Subtype.ext hxy)
   have hf : f ∈ Z2 (gRep η Ψ j) := by
     refine (mem_cocycles2 _ _).2 ⟨hfl.continuous, fun g h l => ?_⟩
@@ -57,7 +61,7 @@ private theorem UpperTheory.V.UnitaryThreeInertia.residual_cocycle_is_coboundary
   obtain ⟨c, hcc, hd⟩ := (separated_dvr_second_cohomology_mem _ _).1 hB
   refine ⟨fun g => (c g).val, ((IsLocallyConstant.iff_continuous c).2 hcc).comp _,
     fun g => (c g).2, fun g h => ?_⟩
-  have e := congrArg (fun x : Gb k j => x.val) (congrFun hd (g, h))
+  have e := congrArg (fun x : Gb (k := k) j => x.val) (congrFun hd (g, h))
   rw [d1_apply] at e
   exact e.symm
 
@@ -152,4 +156,4 @@ theorem UpperTheory.V.UnitaryThreeInertia.lifting_obstruction_second_cohomology 
     have hx : κ (g, h) a c = ((κK (g, h) a c : KO) : R) := rfl
     rw [hx, ← hpq (κK (g, h) a c)]
     simp_rw [e]
-    split_ifs <;> simp [map_add, map_sub, map_neg, map_smul, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.smul_sum]
+    split_ifs <;> simp [map_add (f := _), map_sub, map_neg, map_smul, Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.smul_sum]

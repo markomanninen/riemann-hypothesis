@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatAtConstOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivLocProdTriv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatAtConstOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivLocProdTriv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
 noncomputable section
@@ -38,7 +43,7 @@ theorem finAdEquiv_smul (a : FiniteAdeleRing (𝓞 F) F) (y : FiniteAdeleRing (�
     rw [TensorProduct.smul_tmul', smul_eq_mul]
     change GlobalTheory.LFun.toFinAd F E ((a * b) ⊗ₜ[F] x) = GlobalTheory.AdeleBaseChange.adMap F E a * GlobalTheory.LFun.toFinAd F E (b ⊗ₜ[F] x)
     rw [GlobalTheory.LFun.toFinAd_tmul, GlobalTheory.LFun.toFinAd_tmul, map_mul, mul_assoc]
-  | add y z hy hz => rw [smul_add, map_add, map_add, hy, hz, mul_add]
+  | add y z hy hz => rw [smul_add, map_add (f := _), map_add (f := _), hy, hz, mul_add]
 
 theorem continuous_finAdEquiv : Continuous (GlobalTheory.LFun.finAdEquiv F E) := by
   haveI : IsModuleTopology (FiniteAdeleRing (𝓞 F) F) (FiniteAdeleRing (𝓞 F) F ⊗[F] E) := ⟨rfl⟩
@@ -63,7 +68,7 @@ section CM
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-local notation "F₀" => maximalRealSubfield E
+local notation3 "F₀" => maximalRealSubfield E
 
 theorem conjFin_adMap (a : FiniteAdeleRing (𝓞 F₀) F₀) :
     conjFin (IsCMField.complexConj E).toRingEquiv (GlobalTheory.AdeleBaseChange.adMap F₀ E a) =
@@ -86,7 +91,7 @@ theorem finAdEquiv_sigR (y : FiniteAdeleRing (𝓞 F₀) F₀ ⊗[F₀] E) :
       conjFin (IsCMField.complexConj E).toRingEquiv (GlobalTheory.LFun.toFinAd F₀ E (a ⊗ₜ[F₀] x))
     rw [GlobalTheory.LFun.toFinAd_tmul, GlobalTheory.LFun.toFinAd_tmul, map_mul, conjFin_adMap, conjFin_algebraMap]
     rfl
-  | add y z hy hz => rw [map_add, map_add, map_add, hy, hz, map_add]
+  | add y z hy hz => rw [map_add (f := _), map_add (f := _), map_add (f := _), hy, hz, map_add (f := _)]
 
 theorem finGL_mem_UA {n : ℕ} (x : GL (Fin n) (FiniteAdeleRing (𝓞 E) E))
     (hx : Formalism.UG.cT (conjFin (IsCMField.complexConj E).toRingEquiv) x.val * x.val = 1) : finGL E n x ∈ UA E n := by
@@ -118,8 +123,8 @@ theorem finGL_mem_UA {n : ℕ} (x : GL (Fin n) (FiniteAdeleRing (𝓞 E) E))
   · simp only [Matrix.one_apply]
     split_ifs <;> simp
 
-variable (E) in
 
+variable (E) in
 def psi (n : ℕ) : HA (FiniteAdeleRing (𝓞 F₀) F₀) (IsCMField.complexConj E : E →ₐ[F₀] E) (1 : Matrix (Fin n) (Fin n) E) →*
     GL (Fin n) (FiniteAdeleRing (𝓞 E) E) :=
   (Matrix.GeneralLinearGroup.map (GlobalTheory.LFun.finAdEquiv F₀ E).toRingHom).comp
@@ -140,7 +145,7 @@ section CM
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-local notation "F₀" => maximalRealSubfield E
+local notation3 "F₀" => maximalRealSubfield E
 
 theorem psi_mem {n : ℕ}
     (x : HA (FiniteAdeleRing (𝓞 F₀) F₀) (IsCMField.complexConj E : E →ₐ[F₀] E) (1 : Matrix (Fin n) (Fin n) E)) :
@@ -162,17 +167,17 @@ theorem psi_mem {n : ℕ}
       (HA.mat _ _ _ x).val.map (GlobalTheory.LFun.finAdEquiv F₀ E).toRingHom = 1
   rw [← e, ← Matrix.map_mul, hx, Matrix.map_one _ (map_zero _) (map_one _)]
 
-variable (E) in
 
+variable (E) in
 def jU (n : ℕ) : HA (FiniteAdeleRing (𝓞 F₀) F₀) (IsCMField.complexConj E : E →ₐ[F₀] E) (1 : Matrix (Fin n) (Fin n) E) →*
     UA E n :=
   ((finGL E n).comp (psi E n)).codRestrict (UA E n) fun x => finGL_mem_UA _ (psi_mem x)
 
-variable (E) in
 
+variable (E) in
 def jF (n : ℕ) : HA (FiniteAdeleRing (𝓞 F₀) F₀) (IsCMField.complexConj E : E →ₐ[F₀] E) (1 : Matrix (Fin n) (Fin n) E) →*
-    finU E n :=
-  (jU E n).codRestrict (finU E n) fun x => MonoidHom.mem_ker.2 (pInf_finGL (psi E n x))
+    finU (E := E) (n := n) :=
+  (jU E n).codRestrict (finU (E := E) (n := n)) fun x => MonoidHom.mem_ker.2 (pInf_finGL (psi E n x))
 
 theorem continuous_finGL (n : ℕ) : Continuous (finGL E n) := by
   have hs : Continuous (sFin E) :=
@@ -199,7 +204,7 @@ open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 namespace GlobalTheory.UnitaryBC.ClassTransport
 
 theorem exists_finset_double_cosets : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ),
-    ∀ L : Subgroup (finU E n), IsOpen (L : Set (finU E n)) → ∃ S : Finset (UA E n), ∀ g : UA E n,
+    ∀ L : Subgroup (finU (E := E) (n := n)), IsOpen (L : Set (finU (E := E) (n := n))) → ∃ S : Finset (UA E n), ∀ g : UA E n,
       ∃ γ ∈ ratU E n, ∃ s ∈ S, ∃ k ∈ L, ∃ y ∈ infU E n, g = γ * s * (k : UA E n) * y := by
   classical
   intro E _ _ _ n L hL

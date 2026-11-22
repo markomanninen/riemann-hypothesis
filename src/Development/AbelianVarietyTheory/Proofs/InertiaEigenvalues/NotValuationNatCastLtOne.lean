@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsIdealsPrimeToEqSpan
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsCoprimePowOfMemIneKer
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsNumberFieldFg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsIdealsPrimeToEqSpan
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ExistsCoprimePowOfMemIneKer
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsNumberFieldFg
+
+@[expose] public section
 
 noncomputable section
 
@@ -133,8 +137,8 @@ theorem valuation_root {A : ValuationSubring Ω} {N : ℕ} (hN : N ≠ 0) {y : �
   · exact h1
   · exact absurd h (one_lt_pow₀ h1 hN).ne'
 
-variable (Ω) in
 
+variable (Ω) in
 def rootSet (N : ℕ) (U : Set Eˣ) : Set Ω := {y | ∃ u ∈ U, y ^ N = algebraMap E Ω (u : E)}
 
 omit [NumberField E] in
@@ -144,8 +148,8 @@ theorem finite_rootSet {N : ℕ} (hN : N ≠ 0) {U : Set Eˣ} (hU : U.Finite) : 
   rintro y ⟨u, hu, e⟩
   exact Set.mem_biUnion hu (by simpa [Polynomial.mem_nthRoots (Nat.pos_of_ne_zero hN)] using e)
 
-variable (Ω) in
 
+variable (Ω) in
 def kummerGroup (N : ℕ) (U : Set Eˣ) : Subgroup (G E Ω) := fixingSubgroup (G E Ω) (rootSet Ω N U)
 
 omit [NumberField E] in
@@ -182,8 +186,8 @@ theorem ine_le_kummerGroup {N : ℕ} {U : Set Eˣ} {v : HeightOneSpectrum (𝓞 
   · rw [div_sub_one h0, map_div₀, h1, div_one]
     exact hσ.2 y h1.le
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_kummer_char [IsAlgClosure E Ω] {N : ℕ} [NeZero N] (σ : G E Ω) (hσ : ∀ y : Ω, y ^ N = 1 → σ y = y) :
     ∃ ω : Eˣ →* rootsOfUnity N Ω, ∀ (α : Eˣ) (y : Ω), y ^ N = algebraMap E Ω (α : E) →
       (((ω α : rootsOfUnity N Ω) : Ωˣ) : Ω) = σ y / y := by
@@ -324,8 +328,8 @@ theorem dec_le_ker {B : Type} [Group B] {φ : G E Ω →* B} (ho : IsOpen (φ.ke
   rw [h] at h2
   exact h2 (Subgroup.mem_top (⟨σ, hσ⟩ : Dec (F := E) A))
 
-variable (E Ω) in
 
+variable (E Ω) in
 theorem exists_ray_chars (hArt : GlobalTheory.Published.RayCharacterArtin) {N : ℕ} (hN0 : N ≠ 0)
     (T : Finset (HeightOneSpectrum (𝓞 E))) (hT : ∀ v ∈ T, (N : 𝓞 E) ∉ v.asIdeal) :
     ∃ (H : Subgroup (G E Ω)) (S : Finset (HeightOneSpectrum (𝓞 E))), IsOpen (H : Set (G E Ω)) ∧ H.Normal ∧

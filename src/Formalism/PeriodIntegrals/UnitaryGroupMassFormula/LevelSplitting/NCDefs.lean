@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemidirectExistsOfParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ConjDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.FiniteAdelesSecondCountable
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MeasAll
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemidirectExistsOfParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ConjDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.FiniteAdelesSecondCountable
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MeasAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,6 @@ def FixXp : Subgroup (HA R σ J) where
 def LevelUnipotentSubgroup : Subgroup (HA R σ J) := Nsub R σ J P ⊓ stabT R σ J P.e
 
 def Zsub : Subgroup (HA R σ J) := Nsub R σ J P ⊓ FixXp R σ J P
-
-def WpInv : Prop := ∀ h ∈ Hsub R σ J P, ∀ w ∈ Wp R σ J P, lin R σ J h w ∈ Wp R σ J P
 
 end Gen
 

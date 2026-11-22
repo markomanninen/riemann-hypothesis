@@ -1,22 +1,26 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PolFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SuppTw
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.EulerdShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormCnt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GlobTw
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.RegroupBC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.PairGOps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SecDiff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.CrossGOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpIndep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharLocalComponentExistsUniqueUnitary
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.PolFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.NormVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.SuppTw
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.PrincipalSeriesMatching.EulerdShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormCnt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.GlobTw
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.RegroupBC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.PairGOps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SecDiff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.CrossGOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpIndep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharLocalComponentExistsUniqueUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,37 +45,37 @@ private theorem unr_cancel {a b : kˣ →* ℂˣ} (ha : IsUnram a) (hab : IsUnra
   have h := hab x hx
   rwa [MonoidHom.mul_apply, ha x hx, one_mul] at h
 
-private theorem cnt_zero (s : Multiset (IrrGL k)) (a : kˣ →* ℂˣ)
+private theorem cnt_zero (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ)
     (h : ∀ ξ hξ, IrrGL.ofChar ξ hξ ∈ s → ¬ IsUnram (ξ * a)) : cnt s a = 0 := by
   unfold cnt
   rw [Multiset.card_eq_zero, Multiset.filter_eq_nil]
   rintro y hy ⟨ξ, hξ, rfl, hu⟩
   exact h ξ hξ hy hu
 
-private theorem cnt_zero_of_unr (s : Multiset (IrrGL k)) (a : kˣ →* ℂˣ) (hs : ∀ y ∈ s, y.IsUnramChar)
+private theorem cnt_zero_of_unr (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ) (hs : ∀ y ∈ s, y.IsUnramChar)
     (ha : ¬ IsUnram a) : cnt s a = 0 := by
   refine cnt_zero s a fun ξ hξ hy hu => ?_
   obtain ⟨μ, hμ, e⟩ := hs _ hy
   rw [IrrGL.ofChar_inj.1 e] at hu
   exact ha (unr_cancel hμ hu)
 
-private theorem exists_bad (s : Multiset (IrrGL k)) :
+private theorem exists_bad (s : Multiset (IrrGL (k := k))) :
     ∃ T : Finset (kˣ →* ℂˣ), ∀ ξ hξ, IrrGL.ofChar ξ hξ ∈ s → ξ ∈ T := by
-  let g : IrrGL k → (kˣ →* ℂˣ) := fun y => if h : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ then h.choose else 1
+  let g : IrrGL (k := k) → (kˣ →* ℂˣ) := fun y => if h : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ then h.choose else 1
   refine ⟨s.toFinset.image g, fun ξ hξ hy => Finset.mem_image.2 ⟨_, Multiset.mem_toFinset.2 hy, ?_⟩⟩
   have h : ∃ ξ' hξ', IrrGL.ofChar ξ hξ = IrrGL.ofChar ξ' hξ' := ⟨ξ, hξ, rfl⟩
   change (if h : ∃ ξ' hξ', IrrGL.ofChar ξ hξ = IrrGL.ofChar ξ' hξ' then h.choose else 1) = ξ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨h1, h2⟩ := h.choose_spec
   exact (IrrGL.ofChar_inj.1 h2).symm
 
-private theorem pol_one (s : Multiset (IrrGL k)) (h : cnt s 1 = 0) : pol s 1 = 1 := by
+private theorem pol_one (s : Multiset (IrrGL (k := k))) (h : cnt s 1 = 0) : pol s 1 = 1 := by
   obtain ⟨e0, ed, -, -⟩ := (polFacts k).2.2.2 s 1
   have e := eq_C_of_natDegree_eq_zero (ed.trans h)
   rw [← coeff_zero_eq_eval_zero] at e0
   rw [e, e0, C_1]
 
-private theorem cnt_of_pol {s s' : Multiset (IrrGL k)} {a b : kˣ →* ℂˣ} (h : pol s a = pol s' b) : cnt s a = cnt s' b := by
+private theorem cnt_of_pol {s s' : Multiset (IrrGL (k := k))} {a b : kˣ →* ℂˣ} (h : pol s a = pol s' b) : cnt s a = cnt s' b := by
   rw [← ((polFacts k).2.2.2 s a).2.1, h, ((polFacts k).2.2.2 s' b).2.1]
 
 end Loc
@@ -92,22 +96,22 @@ private theorem pair_prod (hO : PairGOps) (q : ℝ) (J : Finset ℕ) (A A' : ℕ
     exact hO.2.1 _ _ _ _ _ _ _ _ _ (h a (Finset.mem_insert_self _ _))
       (ih fun j hj => h j (Finset.mem_insert_of_mem hj))
 
-open Classical in
 
+open Classical in
 private def pick {X : Type} (sat : X → Multiset ℂˣ → Prop) (w : X) : Multiset ℂˣ :=
   if h : ∃ B, sat w B then h.choose else 0
 
 private theorem pick_spec {X : Type} {sat : X → Multiset ℂˣ → Prop} {w : X} {B : Multiset ℂˣ} (h : sat w B) :
     sat w (pick sat w) := by
   have h' : ∃ B, sat w B := ⟨B, h⟩
-  rw [pick, dif_pos h']
+  rw [pick, dite_eq_left h']
   exact h'.choose_spec
 
-private theorem sat_unique {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
+private theorem sat_unique {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
     {w : HeightOneSpectrum (𝓞 F)} {B B' : Multiset ℂˣ} (h : (CG.mk σ).HasSat w B) (h' : (CG.mk σ).HasSat w B') : B = B' :=
   GlobalTheory.LFun.HasSatGL.unique ((CG.hasSat_mk σ w B).1 h) ((CG.hasSat_mk σ w B').1 h')
 
-private theorem sat_card {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
+private theorem sat_card {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
     {w : HeightOneSpectrum (𝓞 F)} {B : Multiset ℂˣ} (h : (CG.mk σ).HasSat w B) : Multiset.card B = n :=
   GlobalTheory.LFun.HasSatGL.card ((CG.hasSat_mk σ w B).1 h)
 
@@ -164,7 +168,7 @@ private theorem mem_above (S : Finset (HeightOneSpectrum (𝓞 K))) (w : HeightO
     rwa [under_eq]
   · exact fun h => ⟨_, h, ⟨w, ⟨rfl⟩⟩, rfl⟩
 
-variable [IsTotallyComplex K] [IsTotallyComplex L] [IsGalois K L]
+variable [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex L] [IsGalois K L]
 
 private theorem core (hd : (Module.finrank K L).Prime) {n : ℕ} (hn : 2 ≤ n) (σ : CuspSub K n) (τ : CuspSub L n) (η : HChar K)
     (S : Finset (HeightOneSpectrum (𝓞 K))) (hK : GroundTheory.Automorphic.GJStandardL.ramifiedPlaces K ⊆ S)
@@ -173,8 +177,8 @@ private theorem core (hd : (Module.finrank K L).Prime) {n : ℕ} (hn : 2 ≤ n) 
       IsPrimitiveRoot (η.val p) (fdeg w) ∧ Fintype.card (PlacesOver L p) * fdeg w = Module.finrank K L)
     (hkey : ∀ p ∉ S, ∀ w : PlacesOver L p, ∃ B, (CG.mk σ).HasSat p B ∧ (CG.mk τ).HasSat w.1 (B.map (· ^ fdeg w)))
     (v : HeightOneSpectrum (𝓞 K)) (hv : v ∈ S)
-    (r : ℕ → ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (u.adicCompletion K)))
-    (sM : ∀ w : HeightOneSpectrum (𝓞 L), Multiset (IrrGL (w.adicCompletion L)))
+    (r : ℕ → ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (k := u.adicCompletion K)))
+    (sM : ∀ w : HeightOneSpectrum (𝓞 L), Multiset (IrrGL (k := w.adicCompletion L)))
     (hr : ∀ j u, SuppAt (σ.twist (η ^ j)) u (r j u)) (hsM : ∀ w, SuppAt τ w (sM w))
     (zK : ∀ j ∈ Finset.range (Module.finrank K L), ∀ u ∈ S, u ≠ v → cnt (r j u) 1 = 0)
     (zM : ∀ w : HeightOneSpectrum (𝓞 L), w.under (𝓞 K) ∈ S → w.under (𝓞 K) ≠ v → cnt (sM w) 1 = 0) :

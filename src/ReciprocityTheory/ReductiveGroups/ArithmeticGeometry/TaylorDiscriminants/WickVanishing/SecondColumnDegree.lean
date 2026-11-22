@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HarmSecond
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HarmSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ theorem so_zero (c : σ → σ → k) : secondOrder k c (0 : MvPolynomial σ k) 
 
 theorem so_add (c : σ → σ → k) (P Q : MvPolynomial σ k) :
     secondOrder k c (P + Q) = secondOrder k c P + secondOrder k c Q := by
-  simp only [so_def, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [so_def, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem so_smul (c : σ → σ → k) (r : k) (P : MvPolynomial σ k) :
     secondOrder k c (r • P) = r • secondOrder k c P := by
@@ -41,7 +45,7 @@ private theorem mvPolynomial_pderiv_comm (a b : σ) (P : MvPolynomial σ k) :
   · simp
   · simp [*]
   · rename_i p m hp
-    simp only [Derivation.leibniz, smul_eq_mul, map_add, hp, pderiv_X]
+    simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), hp, pderiv_X]
     by_cases ha : a = m <;> by_cases hb : b = m <;> simp [Pi.single_apply, ha, hb] <;> ring
 
 theorem pd4 (P : MvPolynomial σ k) (a b c d : σ) :
@@ -59,7 +63,8 @@ private theorem sum4_lemma {M : Type} [AddCommMonoid M] (f : σ → σ → σ �
 
 theorem so_comm (c1 c2 : σ → σ → k) (P : MvPolynomial σ k) :
     secondOrder k c1 (secondOrder k c2 P) = secondOrder k c2 (secondOrder k c1 P) := by
-  simp only [so_def, map_sum, Finset.mul_sum, Derivation.leibniz, smul_eq_mul, pderiv_C, mul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [so_def, map_sum, Finset.mul_sum, Derivation.leibniz, smul_eq_mul, pderiv_C, mul_zero,
     add_zero]
   rw [sum4_lemma]
   refine Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun m' _ =>
@@ -71,8 +76,9 @@ theorem totalDegree_pderiv_le (i : σ) (Q : MvPolynomial σ k) :
     (pderiv i Q).totalDegree ≤ Q.totalDegree - 1 := by
   classical
   conv_lhs => rw [Q.as_sum]
-  rw [map_sum]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun s hs => ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun s hs => ?_)
   rw [pderiv_monomial]
   by_cases h0 : s i = 0
   · simp [h0]
@@ -95,8 +101,8 @@ theorem pderiv_eq_zero_of_deg (i : σ) (Q : MvPolynomial σ k) (h : Q.totalDegre
 theorem totalDegree_so_le (c : σ → σ → k) (Q : MvPolynomial σ k) :
     (secondOrder k c Q).totalDegree ≤ Q.totalDegree - 2 := by
   rw [so_def]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun l _ => ?_)
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun l' _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l' _ => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   rw [MvPolynomial.totalDegree_C, zero_add]
   have h1 := totalDegree_pderiv_le l (pderiv l' Q)
@@ -119,7 +125,8 @@ theorem so_iter_eq_zero (c : σ → σ → k) :
     · rw [so_eq_zero_of_le_one c Q h1]
       exact Function.iterate_fixed (so_zero c) i
     · apply so_iter_eq_zero c i
-      have := totalDegree_so_le c Q
+      have hdeg : (secondOrder k c Q).totalDegree ≤ Q.totalDegree - 2 :=
+        totalDegree_so_le c Q
       omega
 
 theorem so_iter_deg_le (c : σ → σ → k) :
@@ -127,9 +134,7 @@ theorem so_iter_deg_le (c : σ → σ → k) :
   | 0, _ => le_rfl
   | i + 1, Q => by
     rw [Function.iterate_succ_apply]
-    refine (so_iter_deg_le c i _).trans ?_
-    have := totalDegree_so_le c Q
-    omega
+    exact (so_iter_deg_le c i _).trans ((totalDegree_so_le c Q).trans (Nat.sub_le _ _))
 
 end General
 
@@ -186,7 +191,8 @@ theorem so_colB (c : ι → ι → k) (b : Fin n) (Q : MvPolynomial ι k) (R : M
       rw [hd]
     · simp
   rw [so_def, so_def]
-  simp only [key, map_sum, Finset.sum_mul, map_mul, MvPolynomial.rename_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [key, map_sum, Finset.sum_mul, map_mul, MvPolynomial.rename_C]
   rw [Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [Finset.sum_eq_single b]

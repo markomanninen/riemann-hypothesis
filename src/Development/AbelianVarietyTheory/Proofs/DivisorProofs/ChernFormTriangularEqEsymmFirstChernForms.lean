@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernCurvatureLowerTriangularPositiveDiagonalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernCurvatureLowerTriangularPositiveDiagonalStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MvPolynomial MeasureTheory Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,7 +25,7 @@ theorem coeff_charpolyRev_neg_of_tri {R : Type} [CommRing R] {s : ℕ} (F : Matr
       rw [Matrix.sub_apply, Matrix.one_apply_eq, Matrix.smul_apply, Matrix.map_apply, Matrix.neg_apply, map_neg, smul_eq_mul,
         mul_neg, sub_neg_eq_add, mul_comm]
     simp only [e]
-    rw [Finset.prod_one_add, Polynomial.finset_sum_coeff]
+    rw [Finset.prod_one_add, Polynomial.finsetSum_coeff]
     simp only [Finset.prod_mul_distrib, Finset.prod_const, ← map_prod, Polynomial.coeff_C_mul_X_pow]
     rw [← Finset.sum_filter]
     refine Finset.sum_congr ?_ fun _ _ => rfl
@@ -36,11 +40,13 @@ theorem chernAt_tri : ∀ (n s : ℕ) (T : V n → Matrix (Fin s) (Fin s) ℂ) (
   have key := GlobalTheory.T.chernCurvature_lowerTriangular_positive_diagonal n s T d v hT hd htri
   rw [chernAt, chernPoly, coeff_charpolyRev_neg_of_tri _ (fun a b hab => by
     simp [curvPoly, fun ξ η => (key ξ η).1 a b hab]), esymm]
-  simp only [map_sum, map_prod, aeval_X, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_prod, aeval_X, Finset.smul_sum]
   refine Finset.sum_congr rfl fun t ht => ?_
   have e (i : Fin s) : ofValues (ddc (fun x => -Real.log (d i x)) v) =
       kappa • (aeval sym (curvPoly T v i i) : Ev n) := by
-    simp only [ofValues, ddc, curvPoly, Matrix.of_apply, map_sum, map_mul, aeval_C, aeval_X, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ofValues, ddc, curvPoly, Matrix.of_apply, map_sum, map_mul, aeval_C, aeval_X, Finset.smul_sum,
       fun ξ η => (key ξ η).2 i, leviForm_neg, ← Algebra.smul_def, smul_smul, ContinuousLinearMap.neg_apply]
   simp only [e]
   rw [Finset.prod_smul, Finset.prod_const, (Finset.mem_powersetCard.1 ht).2]

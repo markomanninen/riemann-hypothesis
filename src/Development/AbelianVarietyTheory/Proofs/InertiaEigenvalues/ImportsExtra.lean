@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SimpStatement
 
@@ -30,7 +34,8 @@ theorem main {K B W G ι : Type} [Field K] [CommRing B] [IsDomain B] [Algebra K 
         have hsum : ∑ i ∈ T, f' i • v i = 0 := by
           have h1 : ∑ i ∈ T, a g (f i) • v i = 0 := by
             have := congrArg (σ g : W → W) hf
-            rw [map_sum, map_zero] at this
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum, map_zero] at this
             rw [← this]
             refine Finset.sum_congr rfl fun i _ => ?_
             rw [hσ, hv]

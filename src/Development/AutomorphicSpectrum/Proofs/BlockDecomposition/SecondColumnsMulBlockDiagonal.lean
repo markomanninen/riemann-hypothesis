@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SigmaFiniteParameterProductMeasure
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientLeviEquivariance
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralShiftHerm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SigmaFiniteParameterProductMeasure
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientLeviEquivariance
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralShiftHerm
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -57,8 +61,8 @@ theorem map_char {A : Type} [AddCommGroup A] [TopologicalSpace A] [IsTopological
   conv_rhs => rw [← h4]
   rw [smul_smul, inv_mul_cancel₀ hc0, one_smul]
 
-set_option maxHeartbeats 1200000 in
 
+set_option maxHeartbeats 1200000 in
 theorem map_right (a b : ℕ) (μ : Measure (Mx D a b)) (hμ : μ.IsAddHaarMeasure) (g : GL (Fin b) (AE D)) :
     μ.map (fun y => mm y g.1) =
       ((absA D (Matrix.GeneralLinearGroup.det g))⁻¹ ^ a : ℝ≥0) • μ := by

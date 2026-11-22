@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TotalTensorThetaLiftEqOfSchwartzEqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SandwichedFlipRouteThroughSmallEqInvConstRouteBiStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsClassSumSchwartzProductsGridPathStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TotalTensorThetaLiftEqOfSchwartzEqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SandwichedFlipRouteThroughSmallEqInvConstRouteBiStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsClassSumSchwartzProductsGridPathStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
@@ -19,8 +23,8 @@ open GlobalTheory.SplitFlip Matrix
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {Γ : Grid k}
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem update_two_add (x z : Γ.Args) (b₁ b₂ : Edge) (u u' : Matrix (Fin (Γ.rank b₁.tgt)) (Fin (Γ.rank b₁.src)) k)
     (v v' : Matrix (Fin (Γ.rank b₂.tgt)) (Fin (Γ.rank b₂.src)) k) :
     (Function.update (Function.update (x + z) b₁ (u + u')) b₂ (v + v') : Γ.Args) =
@@ -45,8 +49,8 @@ theorem mem_update_two {c : kˣ} {z : Γ.Args} (hz : ∀ b, z b ∈ matLat _ (c 
 def setA (i j : ℕ) (x : Γ.Args) (Z : Matrix (Fin (Γ.rank (i + 1, j + 1))) (Γ.Cols i j) k) : Γ.Args :=
   Function.update (Function.update x (.ex i (j + 1)) Z.toCols₁) (.theta (i + 1) j) Z.toCols₂ᵀ
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem joinA_setA (i j : ℕ) (x : Γ.Args) (Z : Matrix (Fin (Γ.rank (i + 1, j + 1))) (Γ.Cols i j) k) :
     Γ.joinA i j (setA i j x Z) = Z := by
   rw [Grid.joinA, setA, Function.update_self, Function.update_of_ne (by simp), Function.update_self, transpose_transpose,
@@ -66,7 +70,7 @@ theorem isNatDatum_two (hS : Γ.IsTensor ϖ e γ S) {b₁ b₂ : Edge} (h1 : b�
     · exact hS.2.1 _ _ h1 (by rwa [Function.update_of_ne hne, Function.update_self])
     · exact hS.2.1 _ _ h2 (by rwa [Function.update_self])
   · beta_reduce
-    rw [map_add, map_add, ← hS.2.2 (Function.update (Function.update x b₁ (f₁ Z)) b₂ (f₂ Z)) _
+    rw [map_add (f := _), map_add (f := _), ← hS.2.2 (Function.update (Function.update x b₁ (f₁ Z)) b₂ (f₂ Z)) _
       (mem_update_two (z := 0) (fun _ => zero_mem _) ((hf _ _).1 hZ₀).1 ((hf _ _).1 hZ₀).2), ← update_two_add, add_zero]
 
 theorem mem_matLat_cols {A B₁ B₂ : Type} (c : kˣ) (Z : Matrix A (B₁ ⊕ B₂) k) :
@@ -75,12 +79,12 @@ theorem mem_matLat_cols {A B₁ B₂ : Type} (c : kˣ) (Z : Matrix A (B₁ ⊕ B
     Pi.one_apply, forall_and]
   exact and_congr_right fun _ => forall_comm
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def colsL (A B₁ B₂ : Type) : Matrix A (B₁ ⊕ B₂) k →+ Matrix A B₁ k := ⟨⟨toCols₁, rfl⟩, fun _ _ => rfl⟩
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def colsR (A B₁ B₂ : Type) : Matrix A (B₁ ⊕ B₂) k →+ Matrix B₂ A k := ⟨⟨fun Z => Z.toCols₂ᵀ, rfl⟩, fun _ _ => rfl⟩
 
 theorem isNatDatum_small (hS : Γ.IsTensor ϖ e γ S) {i j : ℕ} (h1 : Edge.theta i j ∈ γ) (h2 : Edge.ex i j ∈ γ) (x : Γ.Args) :
@@ -117,8 +121,8 @@ theorem mem_of_update_two (hS : Γ.IsTensor ϖ e γ S) {b₁ b₂ : Edge} {x : �
   by_contra h'
   exact h (hS.2.1 _ b hb (by rwa [Function.update_of_ne h2, Function.update_of_ne h1]))
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem add_update_two {x y : Γ.Args} {b₁ b₂ : Edge} (h1 : x b₁ = 0) (h2 : x b₂ = 0) (h1' : y b₁ = 0) (h2' : y b₂ = 0) (u v) :
     x + Function.update (Function.update (0 : Γ.Args) b₁ u) b₂ v + y = Function.update (Function.update (x + y) b₁ u) b₂ v := by
   funext b
@@ -144,6 +148,23 @@ theorem exists_rep_sandwich {W : G.Weil} (ρ : RealMatch W) {μ₀ : T} (hL : L.
       (∀ d ∈ (∑ κ ∈ s, sandwich (α κ) (σ κ) (β κ)).support, VecAll ρ e _ (φ d) d) ∧
       ∀ x, HalfAll e _ x → ((∑ κ ∈ s, sandwich (α κ) (σ κ) (β κ)).sum fun d c => c * famProd _ (φ d) x) = H x := by
   classical
+  let rec vecAll_unique {W : G.Weil} (ρ : RealMatch W) {μ₀ : T} (hL : L.Is μ₀) {t : T} {e : AE D}
+      (he : IsIdemSum e (locPl G t)) {X : Node} : ∀ {Y : Node} (p : Path T X Y), OnGrid D.R.m t p → ∀ (φ φ' d : PureT G p),
+        VecAll ρ e p φ d → VecAll ρ e p φ' d → φ = φ'
+    | _, .nil, _, _, _, _, _, _ => rfl
+    | _, .snoc a p, hg, φ, φ', d, h, h' => by
+      obtain ⟨Tm, h1, h2, -⟩ := exists_arrowModel ρ hL he hg.last
+      obtain ⟨a1, a2⟩ := (h1 _ _).1 h.2
+      obtain ⟨b1, b2⟩ := (h1 _ _).1 h'.2
+      refine Prod.ext (vecAll_unique ρ hL he p hg.init φ.1 φ'.1 d.1 h.1 h'.1) (sub_eq_zero.1 (h2 _ ?_ ?_))
+      · exact (LocTensor.sbSpace e (latA G a)).sub_mem a1 b1
+      · rw [map_sub, ← a2, ← b2, sub_self]
+  let rec exists_append {S : Arrow T → Type} {X Y : Node} (p : Path T X Y) :
+      ∀ {Z : Node} (q : Path T Y Z) (z : (p.comp q).Fam S), ∃ (x : p.Fam S) (y : q.Fam S), z = x.append y
+    | _, .nil, z => ⟨z, (), rfl⟩
+    | _, .snoc a q, z => by
+      obtain ⟨x, y, h⟩ := exists_append p q z.1
+      exact ⟨x, (y, z.2), Prod.ext h rfl⟩
   have hv : ∀ κ ∈ s, ∀ d ∈ (σ κ).support, VecAll ρ e _ (((φA κ).append (ψ κ d)).append (φB κ)) (((α κ).append d).append (β κ)) :=
     fun κ hκ d hd => (vecAll_append ρ e _ _ _ _ _ _).2 ⟨(vecAll_append ρ e _ _ _ _ _ _).2 ⟨hA κ hκ, hσ κ hκ d hd⟩, hB κ hκ⟩
   let φ : PureT G ((A.comp r).comp B') → PureT G ((A.comp r).comp B') := fun d =>
@@ -153,7 +174,11 @@ theorem exists_rep_sandwich {W : G.Weil} (ρ : RealMatch W) {μ₀ : T} (hL : L.
     simp only [φ, dif_pos h']
     exact vecAll_unique ρ hL he _ hg _ _ d h'.choose_spec h
   refine ⟨φ, fun d hd => ?_, fun x hx => ?_⟩
-  · obtain ⟨κ, hκ, hd⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hd)
+  · have hd0 : (∑ κ ∈ s, sandwich (α κ) (σ κ) (β κ)) d ≠ 0 := Finsupp.mem_support_iff.mp hd
+    rw [Finset.sum_apply'] at hd0
+    obtain ⟨κ, hκ, hd⟩ := Finset.exists_ne_zero_of_sum_ne_zero hd0
+    have hd : d ∈ (sandwich (α κ) (σ κ) (β κ)).support := Finsupp.mem_support_iff.mpr hd
+    unfold sandwich at hd
     obtain ⟨d', hd', hd⟩ := Finset.mem_biUnion.1 (Finsupp.support_sum hd)
     obtain rfl := Finset.mem_singleton.1 (Finsupp.support_single_subset hd)
     rw [hφ _ _ (hv κ hκ d' hd')]
@@ -164,7 +189,8 @@ theorem exists_rep_sandwich {W : G.Weil} (ρ : RealMatch W) {μ₀ : T} (hL : L.
     rw [hH x y z hx.1.1 hx.1.2 hx.2]
     have e1 : ∀ τ : TotT G ((A.comp r).comp B'), (τ.sum fun d c => c * famProd _ (φ d) ((x.append y).append z)) =
       Finsupp.linearCombination ℂ (fun d => famProd _ (φ d) ((x.append y).append z)) τ := fun τ => rfl
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     refine Finset.sum_congr rfl fun κ hκ => ?_
     rw [sandwich, map_finsuppSum, Finsupp.mul_sum]
     refine Finsupp.sum_congr fun d hd => ?_
@@ -177,6 +203,34 @@ theorem edges_routes (t : T) (i j : ℕ) : edges (routeSmall t i j) = [.theta i 
 theorem edges_outer {m : ℕ} {t : T} {i j : ℕ} {A : Path T (.grid 0 m) (.grid i (j + 1))} {Bp : Path T (.grid (i + 1) j) (.grid m 0)}
     (hA : OnGrid m t A) (hB : OnGrid m t Bp) : (edges A).Nodup ∧ (edges Bp).Nodup ∧ (∀ b ∈ edges Bp, b ∉ edges A) ∧
       ∀ b, b ∈ edges A ∨ b ∈ edges Bp → b ≠ .theta i j ∧ b ≠ .ex i j ∧ b ≠ .ex i (j + 1) ∧ b ≠ .theta (i + 1) j := by
+  let rec edges_bound {m : ℕ} {t : T} {i j : ℕ} : ∀ {Y : Node} (p : Path T (.grid i j) Y), OnGrid m t p →
+      ∃ i' j', Y = .grid i' j' ∧ i ≤ i' ∧ j' ≤ j ∧ (edges p).Nodup ∧
+        ∀ b ∈ edges p, i ≤ b.src.1 ∧ b.tgt.1 ≤ i' ∧ j' ≤ b.tgt.2 ∧ b.src.2 ≤ j
+    | _, .nil, _ => ⟨i, j, rfl, le_rfl, le_rfl, List.nodup_nil, fun _ h => absurd h List.not_mem_nil⟩
+    | _, .snoc a p, hg => by
+      obtain ⟨i', j', h1, h2, h3, h4, h5⟩ := edges_bound p hg.init
+      rw [edges_snoc]
+      rcases hg.last with ⟨k, l, -, -, rfl⟩ | ⟨k, l, -, -, rfl⟩
+      · obtain ⟨rfl, rfl⟩ : k = i' ∧ l = j' := Node.grid.inj h1
+        refine ⟨k + 1, l, rfl, by omega, h3, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
+        · obtain rfl := List.mem_singleton.1 hc
+          subst e
+          have := (h5 _ hb).2.1
+          simp [edgeOf] at this
+        · rcases List.mem_append.1 hb with hb | hb
+          · have := h5 b hb; omega
+          · obtain rfl := List.mem_singleton.1 hb
+            simp only [edgeOf]; omega
+      · obtain ⟨rfl, rfl⟩ : k = i' ∧ l + 1 = j' := Node.grid.inj h1
+        refine ⟨k, l, rfl, h2, by omega, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
+        · obtain rfl := List.mem_singleton.1 hc
+          subst e
+          have := (h5 _ hb).2.2.1
+          simp [edgeOf] at this
+        · rcases List.mem_append.1 hb with hb | hb
+          · have := h5 b hb; omega
+          · obtain rfl := List.mem_singleton.1 hb
+            simp only [edgeOf]; omega
   obtain ⟨_, _, h1, -, -, a1, a2⟩ := edges_bound A hA
   obtain ⟨rfl, rfl⟩ := Node.grid.inj h1
   obtain ⟨_, _, -, -, -, b1, b2⟩ := edges_bound Bp hB

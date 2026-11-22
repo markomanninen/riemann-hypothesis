@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafTubeCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -13,7 +17,7 @@ theorem prd_sub_C_mem {σ R : Type} [CommRing R] (p : MvPolynomial σ R) :
   | add p r hp hr =>
     have e : p + r - MvPolynomial.C (MvPolynomial.constantCoeff (p + r)) =
         (p - MvPolynomial.C (MvPolynomial.constantCoeff p)) + (r - MvPolynomial.C (MvPolynomial.constantCoeff r)) := by
-      simp only [map_add]; ring
+      simp only [map_add (f := _)]; ring
     rw [e]; exact Ideal.add_mem _ hp hr
   | mul_X p i _ =>
     have e : p * MvPolynomial.X i - MvPolynomial.C (MvPolynomial.constantCoeff (p * MvPolynomial.X i)) =
@@ -32,7 +36,8 @@ theorem prd_nbhd_psi {d : ℕ} {A B : Type} [CommRing A] [CommRing B] (I : Ideal
       (Ideal.span (Set.range (MvPolynomial.X : Fin d → MvPolynomial (Fin d) (A ⧸ I)))).map ψ := by
     intro a; rw [hQ, ← neg_sub]; exact (Ideal.neg_mem_iff _).2 (hl a)
   constructor
-  · rw [injective_iff_map_eq_zero]
+  · set_option synthInstance.maxHeartbeats 200000 in
+      rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨p, rfl⟩ := Ideal.Quotient.mk_surjective x
     obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (MvPolynomial.constantCoeff p)

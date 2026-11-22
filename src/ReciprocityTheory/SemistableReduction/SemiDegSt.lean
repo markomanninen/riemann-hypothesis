@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.LatSemiSt
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CutSub
+module
+
+public import ReciprocityTheory.SemistableReduction.LatSemiSt
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CutSub
+
+@[expose] public section
 
 noncomputable section
 

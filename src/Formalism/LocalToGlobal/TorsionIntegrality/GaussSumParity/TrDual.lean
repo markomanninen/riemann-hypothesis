@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GaussJetBounds.StatementP
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
-import Formalism.FormalGroupWitt.ShiftSOneLetter
+module
+
+public import Mathlib
+public import Formalism.GaussJetBounds.StatementP
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
+public import Formalism.FormalGroupWitt.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -15,8 +19,8 @@ section Alg
 
 variable {K : Type} [Field K]
 
-open Classical in
 
+open Classical in
 def expF (K : Type) [Field K] (l : ℕ) : PowerSeries K :=
   if h : IsUnit (PowerSeries.coeff 1 (lgF K l)) then PowerSeries.substInvOfIsUnit (lgF K l) h else 0
 

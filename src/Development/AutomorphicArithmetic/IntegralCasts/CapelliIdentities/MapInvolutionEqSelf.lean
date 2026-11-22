@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.map_involution_eq_self :
     ∀ (X : Type) [MeasurableSpace X] (μ : MeasureTheory.Measure X) [MeasureTheory.SigmaFinite μ] (ι : X → X) (c : NNReal), Measurable ι → (∀ᵐ x ∂μ, ι (ι x) = x) → μ.map ι = c • μ → μ.map ι = μ := by
@@ -13,7 +17,7 @@ theorem UpperTheory.map_involution_eq_self :
   have h2 : (c * c) • μ = μ := by
     calc (c * c) • μ = c • (c • μ) := mul_smul c c μ
       _ = c • μ.map ι := by rw [hc]
-      _ = (c • μ).map ι := (MeasureTheory.Measure.map_smul c μ ι).symm
+      _ = (c • μ).map ι := (MeasureTheory.Measure.map_smul c hι.aemeasurable).symm
       _ = (μ.map ι).map ι := by rw [hc]
       _ = μ := h1
   obtain ⟨s, -, -, hs0, hs1⟩ :=

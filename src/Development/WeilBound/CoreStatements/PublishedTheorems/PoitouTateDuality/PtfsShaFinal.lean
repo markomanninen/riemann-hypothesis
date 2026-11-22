@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaDict
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsGsEquiv
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsLocal
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsRep
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsBidual
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SelmerGroupDualExact
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaDict
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsGsEquiv
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsLocal
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsRep
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsBidual
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SelmerGroupDualExact
+
+@[expose] public section
 
 noncomputable section
 

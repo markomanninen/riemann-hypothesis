@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FourierExtractionTsumClass
+
+@[expose] public section
 
 open Module
 

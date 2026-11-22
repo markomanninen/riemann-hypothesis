@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr GlobalTheory.HSAmp
@@ -39,7 +44,7 @@ theorem exists_open_lt_top [SecondCountableTopology (CxPts p σ)] (ω : VolDens 
   have h2 : ∀ᶠ v in 𝓝 (c.e y), v ∈ c.e.target := c.e.open_target.mem_nhds hv0
   obtain ⟨ε, hε, hball⟩ := Metric.eventually_nhds_iff_ball.1 (h1.and h2)
   refine ⟨c.e.source ∩ c.e ⁻¹' Metric.ball (c.e y) ε,
-    c.e.isOpen_inter_preimage Metric.isOpen_ball, ⟨hy, Metric.mem_ball_self hε⟩, ?_⟩
+    c.e.isOpen_inter_preimage Metric.isOpen_ball, ⟨hy, Set.mem_preimage.mpr (Metric.mem_ball_self hε)⟩, ?_⟩
   have hO : MeasurableSet (c.e.source ∩ c.e ⁻¹' Metric.ball (c.e y) ε) :=
     (c.e.isOpen_inter_preimage Metric.isOpen_ball).measurableSet
   rw [meas_eq ω c hO Set.inter_subset_left]
@@ -85,8 +90,8 @@ theorem meas_pos [SecondCountableTopology (CxPts p σ)] (ω : VolDens p σ D)
 
 end GlobalTheory.HSAmp.VolFin
 
-open GlobalTheory.HSAmp.VolFin in
 
+open GlobalTheory.HSAmp.VolFin in
 theorem GlobalTheory.HSAmp.volDens_meas_finite_openPos : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsIntegral X]
     (p : X ⟶ Sp k) (D : ℕ), IsArithVar p D → GenSmooth p D → ∀ (σ : k →+* ℂ) (ω : VolDens p σ D),
     IsFiniteMeasure ω.meas ∧ ω.meas.IsOpenPosMeasure := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AevalDopMap
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AevalDopMap
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDenominatorOfFg
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.AbsoluteAmplitudeSecondOfSource
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsDenominatorOfFg
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfPerpPerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearFormsBoundedRepresentatives
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -100,7 +105,7 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace
     intro x hx
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hb
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     refine (Xplus A).add_mem (Submodule.mem_sup_left (hδX a ha)) ?_
     have e : c • δ A.fl.z = c • (δ A.fl.z - A.fl.z) + c • A.fl.z := by rw [← smul_add]; congr 1; abel
     rw [e]
@@ -134,7 +139,7 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace
         obtain ⟨l, hlΛ, rfl⟩ := exists_of_mem_gsmul ha
         obtain ⟨t, ht⟩ := Submodule.mem_one.1 (hint x hxΛ l hlΛ)
         refine Submodule.mem_one.2 ⟨t, ?_⟩
-        rw [LinearMap.map_smulₛₗ S.hT, LinearMap.smul_apply, map_add, map_smul,
+        rw [LinearMap.map_smulₛₗ S.hT, LinearMap.smul_apply, map_add (f := _), map_smul,
           hrad' x hxU b (Submodule.mem_inf.1 hb).2, add_zero, starRingEnd_apply, star_inv₀, star_natCast,
           smul_eq_mul, smul_eq_mul, ht, inv_mul_cancel_left₀ hg0])
     set l : S.V := x - (g : E) • l' with hl_def
@@ -180,7 +185,9 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace
     intro x hx
     obtain ⟨a, hy⟩ := exists_sub_smul_mem_orth A hT' x hx
     set y := x - a • A.fl.z with hy_def
-    obtain ⟨d, hd0, hd⟩ := GlobalTheory.Mass.RowPerp.exists_smul_mem hΛ y
+    have hfull : Submodule.IsFullLattice E Λ :=
+      { toIsLattice := hΛ, span_eq_top := GlobalTheory.LoopC.FunIdx.span_eq_top_of_unimodular Λ hΛ hu }
+    obtain ⟨d, hd0, hd⟩ := GlobalTheory.Mass.RowPerp.exists_smul_mem hfull y
     have hdM : d • y ∈ M := (hM _).2 ⟨hd, by
       rw [← algebraMap_smul E d y]; exact U.smul_mem _ hy⟩
     have h1 := hmain _ hdM

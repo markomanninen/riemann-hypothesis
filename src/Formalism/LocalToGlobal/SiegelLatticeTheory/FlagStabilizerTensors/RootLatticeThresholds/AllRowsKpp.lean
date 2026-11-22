@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsFin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.DstarIdxPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsFin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.DstarIdxPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem jPred_iff (kk s : ℕ) {N g : ℕ} (hN : N = kk + 2 * s + 1) (M : Matrix
         split_ifs at hbi with h1 h2 <;> omega
       have h5 := hz i.val hi1.1 hi1.2
       unfold entN at h5
-      rw [dif_pos ⟨i.isLt, by omega⟩] at h5
+      rw [dite_eq_left ⟨i.isLt, by omega⟩] at h5
       have hj' : j = ⟨s + kk, by omega⟩ := Fin.ext hj
       rw [hj']
       exact h5
@@ -65,7 +69,7 @@ theorem jPred_iff (kk s : ℕ) {N g : ℕ} (hN : N = kk + 2 * s + 1) (M : Matrix
       · exact h1 a b h
       · exact h3 a b h.symm hba
     · unfold entN
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       refine h4 _ _ rfl ?_ ?_
       · intro h
         have := congrArg Fin.val h
@@ -82,8 +86,8 @@ theorem r_eq (D : D7) : D.R.r = D.R.k + 2 * (D.R.m / 2 - 1) + 1 := by
   show D.R.k + D.R.m - 1 = _
   omega
 
-open Classical in
 
+open Classical in
 def JJ (P : G0g D.nd) : Finset (G0g D.nd) :=
   Finset.univ.filter fun γ => ∀ kv, JPred D.R.k (D.R.m / 2 - 1) (cjM P γ kv)
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumPosOfPer
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumPosOfPer
+
+@[expose] public section
 
 noncomputable section
 
@@ -292,7 +296,7 @@ theorem sum_compW (hX : X.Hyp p K) (hLa : (1088 : ℝ) ≤ X.CLa) (hk : (1088 : 
       _ = 1 / X.Y := by rw [hθ]; field_simp
   linarith
 
-theorem sum_facts (hX : X.Hyp p K) (hLa : (1088 : ℝ) ≤ X.CLa) (hk : (1088 : ℝ) ≤ X.Ck) : SumFacts X p K where
+theorem sum_facts (hX : X.Hyp p K) (hLa : (1088 : ℝ) ≤ X.CLa) (hk : (1088 : ℝ) ≤ X.Ck) : SumFacts X p K := {
   tiling := prod_tiling X hX.valid
   split := sum_split X hX.valid
   LLsub := sum_LLsub X hX.valid
@@ -304,7 +308,7 @@ theorem sum_facts (hX : X.Hyp p K) (hLa : (1088 : ℝ) ≤ X.CLa) (hk : (1088 : 
   prodQ := sum_prodQ hX
   perW := sum_perW X p K hX.valid
   JN := J_le_card_TT_of_valid X hX.valid
-  a32 := thirty_two_Y_le_a hX
+  a32 := thirty_two_Y_le_a hX }
 
 end Num
 

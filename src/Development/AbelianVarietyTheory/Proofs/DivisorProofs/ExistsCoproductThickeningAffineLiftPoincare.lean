@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourTermComplexQuasiIsoAtFormalProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothSectionsMonoReductionAffineInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomSpecPointsLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoproductThickeningQuotientFreeThickeningStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourTermComplexQuasiIsoAtFormalProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothSectionsMonoReductionAffineInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomSpecPointsLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoproductThickeningQuotientFreeThickeningStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -72,9 +76,21 @@ theorem exists_cop_qAt : ∀ (D : Data) (Λ : Lift D) (n : ℕ) (U : AffOp D.X) 
     exact (q.comm _).trans (congrArg G.π (hy' a))
   obtain ⟨b', hb'⟩ := (h1 U F y').1 hpt
   obtain ⟨s, ⟨hs1, hs2⟩, -⟩ := hc.2 F hF u b'
-  have hbq : b' ≫ q = r := Thick.hom_ext fun b ↦ by
-    obtain ⟨a, rfl⟩ := (Λ.e U).surjective b
-    rw [Thick.comp_φ, hb', hy']; rfl
+  have hbq : b' ≫ q = r := by
+    have hφ : (b' ≫ q).φ = r.φ := AlgHom.ext fun b ↦ by
+      obtain ⟨a, rfl⟩ := (Λ.e U).surjective b
+      change q.φ (b'.φ ((Λ.e U) a)) = r.φ ((Λ.e U) a)
+      rw [hb', hy']; rfl
+    have extHom : ∀ {f g : Thick.Hom (Λ.L.obj U) G}, f.φ = g.φ → f = g := by
+      intro f g h
+      rcases f with ⟨φ, φ₀, comm, dp, pt⟩
+      rcases g with ⟨ψ, ψ₀, comm', dp', pt'⟩
+      obtain rfl : φ = ψ := h
+      obtain rfl : φ₀ = ψ₀ := RingHom.ext fun c ↦ by
+        obtain ⟨b, rfl⟩ := (Λ.L.obj U).surj c
+        rw [comm, comm']
+      rfl
+    exact extHom hφ
   have hsq : s ≫ q = 𝟙 G := by
     obtain ⟨c, -, huniq⟩ := hc.2 G hc.1 (u ≫ q) r
     refine (huniq _ ⟨?_, ?_⟩).trans (huniq _ ⟨Category.comp_id _, Category.comp_id _⟩).symm

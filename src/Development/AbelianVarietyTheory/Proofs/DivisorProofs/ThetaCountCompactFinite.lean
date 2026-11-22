@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.StrictlyHenselianIsColimit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIndEtaleOfEtaleOfIsIndEtale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PullSpMapComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyTwistedFilteredColimitContinuityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupChernKummerPullbackNaturalityStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.StrictlyHenselianIsColimit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIndEtaleOfEtaleOfIsIndEtale
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 open scoped TensorProduct
 
@@ -62,7 +67,7 @@ def isColimit_laurent {J : Type} [SmallCategory J] [IsFiltered J] {D : J ⥤ Com
       obtain ⟨j', y', rfl⟩ := hp'
       refine ⟨IsFiltered.max j j', laurentMap (D.map (IsFiltered.leftToMax j j')).hom y +
         laurentMap (D.map (IsFiltered.rightToMax j j')).hom y', ?_⟩
-      rw [map_add, hw, hw]
+      rw [map_add (f := _), hw, hw]
     | C_mul_T n a =>
       obtain ⟨j, b, rfl⟩ := hsurj a
       refine ⟨j, LaurentPolynomial.C b * LaurentPolynomial.T n, ?_⟩
@@ -106,8 +111,8 @@ def isColimit_laurent {J : Type} [SmallCategory J] [IsFiltered J] {D : J ⥤ Com
 
 end GlobalTheory.EtC.GmPhiNoeth
 
-open GlobalTheory.EtC.GmPhiNoeth in
 
+open GlobalTheory.EtC.GmPhiNoeth in
 theorem GlobalTheory.EtC.gmPhi_surjective_of_noetherian : ∀ (q : ℕ) [NeZero q],
     (∀ (A : Type) [CommRing A] [IsNoetherianRing A], SH A → IsUnit (q : A) → ∀ i : ℤ,
       Function.Surjective (gmPhi q A i)) →

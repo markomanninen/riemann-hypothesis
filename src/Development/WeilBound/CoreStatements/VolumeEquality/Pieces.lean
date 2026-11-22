@@ -1,14 +1,18 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.RootBr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUnique
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalSchemeCoordsInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RingOfIntegersHomInjective
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConstantsValueOverPointStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicCoordsOfGenericPointStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeBaseChangeConjStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeLimitStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MultiprojectivePointsNonemptyStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsGroupDictionaryStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsFundamentalSetStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.RootBr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUnique
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.NormalSchemeCoordsInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RingOfIntegersHomInjective
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConstantsValueOverPointStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicCoordsOfGenericPointStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FibreLatticeBaseChangeConjStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CuspVolumeLimitStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MultiprojectivePointsNonemptyStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsGroupDictionaryStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsFundamentalSetStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,8 +125,8 @@ structure Sheets (FF : Fin B.np → Set (Fin Dc.n → ℂ)) (d : Fin B.np → �
   z_coords : ∀ m, ∀ t ∈ V m, CoordsAt Or.𝔐.ξ Dc.y (z m t) (γ m t)
   z_over : ∀ m, ∀ t ∈ V m, z m t ≫ Or.𝔐.f = B.pt (pc m) t
 
-open Classical in
 
+open Classical in
 def nSheets (U : Y.X.Opens) (k : Fin B.np) : ℕ := if ∃ t ∈ GlobalTheory.CompanionTheory.Ar.Cusp.ballDom (B.F k).q, ⊤ ≤ B.pt k t ⁻¹ᵁ U then Or.deg else 0
 
 set_option maxHeartbeats 1600000 in

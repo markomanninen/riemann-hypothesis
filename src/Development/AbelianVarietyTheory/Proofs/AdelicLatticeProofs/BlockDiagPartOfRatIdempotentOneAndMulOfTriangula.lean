@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -49,6 +54,6 @@ theorem blk_mul_of_triangular : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (e
   change _ = (algebraMap ℚ R).mapMatrix (blk e γ)
   unfold blk
   rw [hid]
-  simp only [map_add, map_mul, map_sub, map_one, RingHom.mapMatrix_apply]
+  simp only [map_add (f := _), map_mul, map_sub, map_one, RingHom.mapMatrix_apply]
 
 end GlobalTheory.ClassFin

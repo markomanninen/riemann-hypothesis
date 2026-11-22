@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JCount
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.JCount
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCountE
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableComb
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalTransitionDetMulConjEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RatOfImEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableComb
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthonormalTransitionDetMulConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RatOfImEqZero
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.GalTheta
 open scoped BigOperators
 
@@ -26,7 +31,8 @@ theorem exists_orthogonal_family {K V : Type} [Field K] [AddCommGroup V] [Module
     have hx : ∀ j, h (v j) (x - p) = 0 := by
       intro j
       have hj : h (v j) (v j) ≠ 0 := fun e => h0 j (hdef _ e)
-      rw [map_sub, hp, map_sum, Finset.sum_eq_single j]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, hp, map_sum, Finset.sum_eq_single j]
       · rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hj, sub_self]
       · intro i _ hij
         rw [map_smul, ho i j hij, smul_zero]
@@ -86,7 +92,8 @@ theorem exists_rat_pos {N N' : ℕ} (x : Matrix (Fin N') (Fin N) D.host.E) (hx :
       ((∑ τ, ∑ i, ∑ j, Complex.normSq (embT D τ (x i j)) : ℝ) : ℂ) := by
     unfold hYY
     rw [← (GlobalTheory.InducedType.induced_type D).1.2]
-    simp only [map_sum, map_mul, hc, Complex.mul_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hc, Complex.mul_conj]
     push_cast
     rfl
   obtain ⟨a, ha⟩ := exists_rat_of_real D (hYY D x x) (by rw [h, Complex.ofReal_im])

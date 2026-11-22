@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TNM
 
@@ -29,7 +33,7 @@ theorem vDecomp (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (d
       (D.muR p.T.base h'.choose (hl.2 ▸ D.ptPerm (Formalism.FourierDecayAlt.P.PBJ.bigPt d))) F := by
     show D.vecV p.T.base p.ν' p.m₀ F (Formalism.FourierDecayAlt.P.PBJ.bigPt d) = _
     unfold D.vecV
-    rw [dif_pos ⟨hl, hG'⟩, dif_pos h']
+    rw [dite_eq_left ⟨hl, hG'⟩, dite_eq_left h']
   obtain ⟨hγ, hZγ, hDγ⟩ := h'.choose_spec
   have hζ : Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z' < Complex.normSq (d (Fin.last P.r)) :=
     Formalism.FourierDecayAlt.P.PBM.zeta_big _ d hG'

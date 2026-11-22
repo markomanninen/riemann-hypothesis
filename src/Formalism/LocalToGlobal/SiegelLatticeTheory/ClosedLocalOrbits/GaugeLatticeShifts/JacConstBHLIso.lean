@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHSwA
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHLie
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHSwA
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHLie
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -20,7 +24,7 @@ theorem long_weyl_element_apply (i j : Fin (2 * r + k + 1)) : w0B k r i j = if i
   have hj := j.isLt
   unfold w0B bigCell
   by_cases h1 : j.val < r
-  · rw [dif_pos h1]
+  · rw [dite_eq_left h1]
     have e : (esI k r ⟨j.val, h1⟩ = i) ↔ (i = tau k r j) := by
       constructor
       · intro h; apply Fin.ext; rw [← h]; simp [esI, tau, h1]
@@ -28,18 +32,18 @@ theorem long_weyl_element_apply (i j : Fin (2 * r + k + 1)) : w0B k r i j = if i
     by_cases h : i = tau k r j
     · rw [if_pos (e.2 h).symm, if_pos h]; rfl
     · rw [if_neg (fun h' => h (e.1 h'.symm)), if_neg h]
-  · rw [dif_neg h1]
+  · rw [dite_eq_right h1]
     by_cases h2 : j.val ≤ r + k
-    · rw [dif_pos h2]
+    · rw [dite_eq_left h2]
       have htj : tau k r j = j := by apply Fin.ext; simp [tau]; omega
       by_cases hi2 : r ≤ i.val ∧ i.val ≤ r + k
-      · rw [dif_pos hi2, htj, Matrix.one_apply]
+      · rw [dite_eq_left hi2, htj, Matrix.one_apply]
         by_cases h : i = j
         · rw [if_pos (by subst h; rfl), if_pos h]
         · rw [if_neg (fun h' => h (Fin.ext (by have := congrArg Fin.val h'; simp at this; omega))), if_neg h]
-      · rw [dif_neg hi2, htj, if_neg]
+      · rw [dite_eq_right hi2, htj, if_neg]
         intro h; apply hi2; rw [h]; exact ⟨by omega, h2⟩
-    · rw [dif_neg h2]
+    · rw [dite_eq_right h2]
       have htj : (tau k r j).val = 2 * r + k - j.val := by simp [tau]; omega
       by_cases h : i.val = 2 * r + k - j.val
       · rw [if_pos h, if_pos (Fin.ext (by rw [htj]; exact h))]; simp
@@ -146,16 +150,16 @@ theorem dv_tau (x : Fin r → ℂ) (i : Fin (2 * r + k + 1)) : star (dv k r x (t
   · have hv : (tau k r i).val = 2 * r + k - i.val := by rw [tau_val, if_pos (Or.inl h1)]
     have ht : ¬ (tau k r i).val < r := by omega
     have ht2 : ¬ (tau k r i).val ≤ r + k := by omega
-    rw [dif_neg ht, dif_neg ht2, dif_pos h1, star_neg, star_star]
+    rw [dite_eq_right ht, dite_eq_right ht2, dite_eq_left h1, star_neg, star_star]
     congr 2; apply Fin.ext; simp only; omega
   · by_cases h2 : i.val ≤ r + k
     · have hv : (tau k r i).val = i.val := by rw [tau_val, if_neg (by omega)]
       have ht : ¬ (tau k r i).val < r := by omega
       have ht2 : (tau k r i).val ≤ r + k := by omega
-      rw [dif_neg ht, dif_pos ht2, dif_neg h1, dif_pos h2, star_zero, neg_zero]
+      rw [dite_eq_right ht, dite_eq_left ht2, dite_eq_right h1, dite_eq_left h2, star_zero, neg_zero]
     · have hv : (tau k r i).val = 2 * r + k - i.val := by rw [tau_val, if_pos (Or.inr (by omega))]
       have ht : (tau k r i).val < r := by omega
-      rw [dif_pos ht, dif_neg h1, dif_neg h2, neg_neg]
+      rw [dite_eq_left ht, dite_eq_right h1, dite_eq_right h2, neg_neg]
       congr 2; apply Fin.ext; simp only; omega
 
 theorem adjH_tD (x : Fin r → ℂ) : adjH (tD k r x) = -tD k r x := by
@@ -230,7 +234,7 @@ theorem decomp {Y : Mat k r} (hadj : adjH Y = -Y) : negP Y + tD k r (xOf Y) + mi
         have h0 : dv k r (xOf Y) i = 0 := by
           have hm2 : r ≤ i.val ∧ i.val ≤ r + k := hm
           unfold dv
-          rw [dif_neg (by omega), dif_pos hm2.2]
+          rw [dite_eq_right (by omega), dite_eq_left hm2.2]
         rw [if_neg (lt_irrefl _), if_pos rfl, if_pos ⟨hm, hm⟩, h0]; ring
       · rw [if_neg (by omega), if_neg hij, if_pos ⟨hm, hmj⟩, if_neg (by omega)]; ring
     · have hij : i = j := dg_inj h hm
@@ -240,11 +244,11 @@ theorem decomp {Y : Mat k r} (hadj : adjH Y = -Y) : negP Y + tD k r (xOf Y) + mi
       have hm' : ¬ (r ≤ i.val ∧ i.val ≤ r + k) := hm
       unfold dv xOf
       by_cases h1 : i.val < r
-      · rw [dif_pos h1]
+      · rw [dite_eq_left h1]
         have : eI k r ⟨i.val, h1⟩ = i := Fin.ext rfl
         rw [this]; ring
       · have h2 : ¬ i.val ≤ r + k := fun h2 => hm' ⟨by omega, h2⟩
-        rw [dif_neg h1, dif_neg h2]
+        rw [dite_eq_right h1, dite_eq_right h2]
         have e : eI k r ⟨2 * r + k - i.val, by omega⟩ = tau k r i := by
           apply Fin.ext; rw [eI_val', tau_val, if_pos (Or.inr (by omega))]
         rw [e, ← diag_star hadj]; ring
@@ -322,16 +326,16 @@ theorem dv_sq_sum (x : Fin r → ℂ) : ∑ i, ‖dv k r x i‖ ^ 2 = 2 * ∑ a,
     have h2 : i.val ≤ r + k := by
       by_contra h
       exact hi.2 ⟨2 * r + k - i.val, by have := i.isLt; omega⟩ (Fin.ext (by simp [f]; have := i.isLt; omega))
-    unfold dv; rw [dif_neg h1, dif_pos h2]; simp
+    unfold dv; rw [dite_eq_right h1, dite_eq_left h2]; simp
   rw [← Finset.sum_subset (Finset.subset_univ _) hsupp, Finset.sum_union hdisj, Finset.sum_image (fun a _ b _ h => he h),
     Finset.sum_image (fun a _ b _ h => hf h), two_mul]
   congr 1
   · refine Finset.sum_congr rfl fun a _ => ?_
-    unfold dv; rw [dif_pos (show (e a).val < r from a.isLt)]
+    unfold dv; rw [dite_eq_left (show (e a).val < r from a.isLt)]
   · refine Finset.sum_congr rfl fun a _ => ?_
     have h1 : ¬ (f a).val < r := by simp [f]; omega
     have h2 : ¬ (f a).val ≤ r + k := by simp [f]; have := a.isLt; omega
-    unfold dv; rw [dif_neg h1, dif_neg h2, norm_neg, norm_star]
+    unfold dv; rw [dite_eq_right h1, dite_eq_right h2, norm_neg, norm_star]
     congr 2; congr 1; apply Fin.ext; simp [f]; omega
 
 theorem tD_sq_sum (x : Fin r → ℂ) : ∑ i, ∑ j, ‖tD k r x i j‖ ^ 2 = 2 * ∑ a, ‖x a‖ ^ 2 := by
@@ -380,7 +384,7 @@ theorem lm_norm {v : Mat k r × (Fin r → ℂ) × Mat k r × Mat k r} (hv : v �
         · subst hij
           have h0 : dv k r v.2.1 i = 0 := by
             have hm2 : r ≤ i.val ∧ i.val ≤ r + k := hm
-            unfold dv; rw [dif_neg (by omega), dif_pos hm2.2]
+            unfold dv; rw [dite_eq_right (by omega), dite_eq_left hm2.2]
           rw [if_pos rfl, h0]; simp
         · rw [if_neg hij]; simp
       · have hij : i = j := dg_inj h hm

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.BasicNotions Filter
 

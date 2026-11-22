@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.MOne
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IdemCore
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OLiftUnit
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.Bezout
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.MOne
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IdemCore
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.OLiftUnit
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.Bezout
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,7 @@ private theorem dvd_left (EF : LinearMap.BilinForm ℤ M) {N : ℕ} {c : A} (hc 
 private theorem skew (EF : LinearMap.BilinForm ℤ M) (alt : ∀ x, EF x x = 0) (x y : M) :
     EF x y = - EF y x := by
   have := alt (x + y)
-  simp only [map_add, LinearMap.add_apply, alt] at this
+  simp only [map_add (f := _), LinearMap.add_apply, alt] at this
   linarith
 
 variable (bar : A ≃+* A) (EF : LinearMap.BilinForm ℤ M)
@@ -65,7 +69,7 @@ private theorem iso_step (hbb : ∀ c, bar (bar c) = c) (alt : ∀ x, EF x x = 0
       module
     obtain ⟨b, hb⟩ := dvd_left EF hsq x y
     rw [e2] at ha
-    simp only [map_add, LinearMap.add_apply, ef_nsmul] at ha
+    simp only [map_add (f := _), LinearMap.add_apply, ef_nsmul] at ha
     rw [e1]
     exact ⟨EF (ε • z) y + b - a, by linear_combination hb - ha⟩
   obtain ⟨a₁, h₁⟩ := dvd_left EF hee (g x) (g y)
@@ -83,8 +87,8 @@ private theorem iso_step (hbb : ∀ c, bar (bar c) = c) (alt : ∀ x, EF x x = 0
     exact skew EF alt _ _
   have f₅ : EF ((ε + bar ε - 1) • x) y = EF (ε • x) y + EF (bar ε • x) y - EF x y := by
     rw [sub_smul, add_smul, one_smul]
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
-  simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   rw [f₁, f₂, f₃, h₁, h₂]
   exact ⟨a₁ + a₂ + a₃ - a₄ + a₅, by linear_combination h₃ - h₄ + h₅ - f₅ - f₄⟩
 
@@ -103,7 +107,7 @@ private theorem smul_le (I : Ideal A) (h : M →ₗ[A] M) {v : M} (hv : v ∈ (I
     rw [map_smul]
     exact Submodule.smul_mem_smul hc Submodule.mem_top
   · intro x y hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
 
 private theorem diff_mem (u : Ideal A) (g h h' : M →ₗ[A] M)
@@ -235,7 +239,7 @@ theorem qSys : QSys := by
   choose k hk hkl using fun e => (adj q D e).2.1 (hO e)
   have hcast : ∀ e : ℕ, ((q ^ e : ℕ) : 𝓞 D.F) = (q : 𝓞 D.F) ^ e := fun e => by push_cast; rfl
   refine ⟨fun e => AddMonoidHom.mk' (fun x => ε e • g x + D.bar (ε e) • k e x) fun x y => by
-    simp only [map_add, smul_add]; abel, fun e => ?_⟩
+    simp only [map_add (f := _), smul_add]; abel, fun e => ?_⟩
   obtain ⟨h1, h2, h3, h4, h5, h6⟩ := hε e
   rw [← hcast] at h4 h5
   have h3' : ∀ x ∈ ES.uIdeal D r ^ e, ((q ^ e : ℕ) : 𝓞 D.F) ∣ ε e * x := fun x hx => by

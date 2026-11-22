@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.LimAlg
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BcrisRegularPeriodRing
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsPhi
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.IsFirstChernClassOfLineBundle
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.RedGalBase
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.LimAlg
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.BcrisRegularPeriodRing
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.AbsPhi
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.IsFirstChernClassOfLineBundle
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.RedGalBase
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -28,7 +32,7 @@ def galH (M : Model l K) (k : Bool) (j : ℕ) (σ : Gal(PadicAlgCl l/K)) : Sys.H
   f n := B.galHc _ _ σ (galOC_okToOC σ) k n j
   comm n x := SH.red_gal _ _ σ _ k n j x
 
-def phiH (M : Model l K) (j : ℕ) : Sys.Hom (M.HS true j) (M.HS true j) (ACris.phi ℂ_[l] l) where
+def phiH (M : Model l K) (j : ℕ) : Sys.Hom (M.HS true j) (M.HS true j) (ACris.phi (K := ℂ_[l]) (p := l)) where
   f n := B.phiHc _ _ n j
   comm n x := SH.red_phi _ _ n j x
 

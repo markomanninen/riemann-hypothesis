@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartBergman
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexTaylor
-import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartBergman
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsComplexTaylor
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -132,8 +137,8 @@ lemma det_smul_re {D : ℕ} {H : Matrix (Fin D) (Fin D) ℂ} {lam : Fin D → �
 
 end ChartBergmanBound
 
-open ChartBergmanBound in
 
+open ChartBergmanBound in
 theorem ChartBergmanBound.proof (hP : PolydiscSubmean.Statement) (hT : ComplexTaylorTwo.Statement) :
     ChartBergmanBound.Statement := by
   intro D U ψ ρ y₀ hU hy₀ hψ hρ hρ0 hlevi ε hε

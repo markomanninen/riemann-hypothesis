@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointStep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceCompactSupportCoefficient
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate

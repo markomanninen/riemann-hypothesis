@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain Matrix
 open Formalism.L2.DIV (Pl)
@@ -50,11 +54,12 @@ theorem hA_idem {X : HSp D} {e : EAf D} {y : Fin X.rank → EAf D} (hy : cjA D e
   rw [hA_smul_right, hA_smul_left, cjA_cjA]
 
 theorem isBasePair_of_isGlueVec (D : D7) (u : D.what₂.Word) (π : 𝓞 D.host.E) (hπ : IsPi u π) (X : HSp D) (L₀ : Lat X)
-    (f : Fin X.rank → EAf D) (hL : Submodule.IsLattice D.host.E L₀) (hf : IsGlueVec X u L₀ f) :
+    (f : Fin X.rank → EAf D) (hL : Submodule.IsFullLattice D.host.E L₀) (hf : IsGlueVec X u L₀ f) :
     IsBasePair X u π L₀ fun w => idem w • f := by
   have ht : inc D (Tu D u)⁻¹ * inc D (Tu D u) = 1 := inc_inv_mul u
+  have := hL
   unfold IsBasePair
-  refine ⟨hL, fun w e he hT y => ?_, fun w e he hπw => ?_⟩
+  refine ⟨by infer_instance, fun w e he hT y => ?_, fun w e he hπw => ?_⟩
   ·
     obtain rfl := eq_idem he
     have hinv : idem w * inc D (Tu D u)⁻¹ ∈ OA D := (idem_mul_inv_mem_iff u w).2 hT

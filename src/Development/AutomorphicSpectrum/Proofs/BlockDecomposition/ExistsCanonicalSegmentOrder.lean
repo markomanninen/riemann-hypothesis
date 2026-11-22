@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,7 @@ namespace GlobalTheory.CompanionTheory.CanonOrder
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
 variable (k) in
-
-def lineSetoid : Setoid (IrrGL k) where
+def lineSetoid : Setoid (IrrGL (k := k)) where
   r x y := ∃ m : ℤ, y = x.nu m
   iseqv :=
     { refl := fun x => ⟨0, by simp⟩
@@ -26,24 +29,23 @@ def lineSetoid : Setoid (IrrGL k) where
         exact ⟨m + n, by simp⟩ }
 
 variable (k) in
-
 def Line : Type 1 := Quotient (lineSetoid k)
 
-instance lineLinearOrder : LinearOrder (Line k) := (exists_wellOrder (Line k)).choose
+instance lineLinearOrder : LinearOrder (Line k) := (exists_wellFoundedLT (Line k)).choose
 
-def lineOf (x : IrrGL k) : Line k := Quotient.mk (lineSetoid k) x
+def lineOf (x : IrrGL (k := k)) : Line k := Quotient.mk (lineSetoid k) x
 
-def lineRep (x : IrrGL k) : IrrGL k := Quotient.out (s := lineSetoid k) (Quotient.mk (lineSetoid k) x)
+def lineRep (x : IrrGL (k := k)) : IrrGL (k := k) := Quotient.out (s := lineSetoid k) (Quotient.mk (lineSetoid k) x)
 
-theorem exists_height (x : IrrGL k) : ∃ m : ℤ, x = (lineRep x).nu m := by
+theorem exists_height (x : IrrGL (k := k)) : ∃ m : ℤ, x = (lineRep x).nu m := by
   exact @Quotient.mk_out _ (lineSetoid k) x
 
-def height (x : IrrGL k) : ℤ := (exists_height x).choose
+def height (x : IrrGL (k := k)) : ℤ := (exists_height x).choose
 
-theorem nu_height (x : IrrGL k) : (lineRep x).nu (height x) = x := by
+theorem nu_height (x : IrrGL (k := k)) : (lineRep x).nu (height x) = x := by
   exact (exists_height x).choose_spec.symm
 
-theorem lineRep_eq {x y : IrrGL k} (h : lineOf x = lineOf y) : lineRep x = lineRep y := by
+theorem lineRep_eq {x y : IrrGL (k := k)} (h : lineOf x = lineOf y) : lineRep x = lineRep y := by
   unfold lineRep
   unfold lineOf at h
   rw [h]
@@ -58,7 +60,7 @@ theorem key_injective : Function.Injective (key (k := k)) := by
   refine Segment.ext_first ?_ h3
   rw [← nu_height Δ.first, ← nu_height Δ'.first, lineRep_eq h1, h2]
 
-private theorem lineOf_eq_height_eq_add_of_eq_nu {x y : IrrGL k} (hy : 0 < y.fst) {n : ℤ} (h : x = y.nu n) :
+private theorem lineOf_eq_height_eq_add_of_eq_nu {x y : IrrGL (k := k)} (hy : 0 < y.fst) {n : ℤ} (h : x = y.nu n) :
     lineOf x = lineOf y ∧ height x = height y + n := by
   have hl : lineOf x = lineOf y := by
     unfold lineOf

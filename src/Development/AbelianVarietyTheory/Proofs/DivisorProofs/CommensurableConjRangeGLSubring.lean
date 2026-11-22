@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -50,7 +55,7 @@ theorem glcong_entries (c : R) (h : GL (Fin n) R)
       ext i j
       change ((c * c * X i j : R) : B) = (c : B) * c * (X i j : B)
       push_cast; ring
-    rw [map_add, map_one, map_mul, map_mul, hP', hQ', hh', map_add, map_one, hs]
+    rw [map_add (f := _), map_one, map_mul, map_mul, hP', hQ', hh', map_add (f := _), map_one, hs]
     simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_one, hPQ, Matrix.smul_mul, Matrix.mul_smul, smul_smul, Matrix.mul_assoc]
   intro i j
   rw [key]
@@ -102,7 +107,8 @@ theorem commensurable_conj_range_GL_subring {B : Type} [CommRing B] (R : Subring
     Subgroup.Commensurable ((GeneralLinearGroup.map R.subtype).range.map (MulAut.conj g).toMonoidHom)
       (GeneralLinearGroup.map R.subtype).range := by
   set K := (GeneralLinearGroup.map (n := Fin n) R.subtype).range
-  refine ⟨glcong_relIndex_ne_zero R c hfin g hg hg', ?_⟩
+  refine ⟨⟨glcong_relIndex_ne_zero R c hfin g hg hg'⟩, ?_⟩
+  rw [Subgroup.isFiniteRelIndex_iff_relIndex_ne_zero]
   have e := Subgroup.relIndex_map_map_of_injective (f := (MulAut.conj g).toMonoidHom)
     (K.map (MulAut.conj g⁻¹).toMonoidHom) K (MulEquiv.injective _)
   have hK : (K.map (MulAut.conj g⁻¹).toMonoidHom).map (MulAut.conj g).toMonoidHom = K := by

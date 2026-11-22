@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset

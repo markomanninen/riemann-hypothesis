@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FderivDecomp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FderivDecomp
+
+@[expose] public section
 
 open Set Filter Topology Complex
 
@@ -52,7 +56,7 @@ theorem fderiv_bet_apply (hα : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞)
       have hu : u.re • (1 : ℂ) + u.im • Complex.I = u := by
         rw [Complex.real_smul, Complex.real_smul, mul_one, Complex.re_add_im]
       conv_lhs => rw [← hu]
-      rw [map_add, map_smul, map_smul, Complex.real_smul, Complex.real_smul]
+      rw [map_add (f := _), map_smul, map_smul, Complex.real_smul, Complex.real_smul]
     have h1 := Complex.add_conj u
     have h2 := Complex.sub_conj u
     push_cast at h1 h2

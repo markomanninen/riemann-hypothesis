@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpanNormOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsPowEqSpanNormOne
+
+@[expose] public section
 
 namespace GlobalTheory.KerJ.CharVal
 
@@ -8,7 +12,7 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLo
 
 theorem lamC_mem' {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) {x : ℂ} (h : x ∈ Qbar) :
     lamC lam x = lam ⟨x, h⟩ := by
-  unfold lamC; rw [dif_pos h]
+  unfold lamC; rw [dite_eq_left h]
 
 theorem embT_mem (D : D7) (τ : D.what₂.Tau) (x : D.host.E) : embT D τ x ∈ Qbar := by
   have hx : IsAlgebraic ℚ x := Algebra.IsAlgebraic.isAlgebraic x
@@ -104,17 +108,21 @@ theorem psi_int (a : 𝓞 E) : ‖ψ (a : E)‖ ≤ 1 :=
   norm_le_one_of_int _ ((RingOfIntegers.isIntegral_coe a).map (ψ : E →+* K).toIntAlgHom)
 
 theorem pow_bound (𝔞 : Submodule (𝓞 E) E) (B : ℝ) (hB : ∀ x ∈ 𝔞, ‖ψ x‖ ≤ B) (hB0 : 0 ≤ B) :
-    ∀ (n : ℕ), ∀ y ∈ 𝔞 ^ n, ‖ψ y‖ ≤ B ^ n
-  | 0, y, hy => by
-    rw [pow_zero, Submodule.mem_one] at hy
-    obtain ⟨a, rfl⟩ := hy
+    ∀ (n : ℕ), ∀ y ∈ 𝔞 ^ n, ‖ψ y‖ ≤ B ^ n := by
+  intro n
+  induction n with
+  | zero =>
+    intro y hy
+    rw [pow_zero] at hy
+    obtain ⟨a, rfl⟩ := Submodule.mem_one.mp hy
     rw [pow_zero]
     exact psi_int ψ a
-  | n + 1, y, hy => by
+  | succ n ih =>
+    intro y hy
     rw [pow_succ] at hy
     refine Submodule.mul_induction_on hy (fun m hm k hk => ?_) (fun x y hx hy => ?_)
     · rw [map_mul, norm_mul, pow_succ]
-      exact mul_le_mul (pow_bound 𝔞 B hB hB0 n m hm) (hB k hk) (norm_nonneg _) (pow_nonneg hB0 n)
+      exact mul_le_mul (ih m hm) (hB k hk) (norm_nonneg _) (pow_nonneg hB0 n)
     · rw [map_add]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
 

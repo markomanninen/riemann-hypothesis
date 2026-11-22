@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainOneOkL
-import Formalism.LocalToGlobal.Columns.RecLevelSym
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainOneOkL
+public import Formalism.LocalToGlobal.Columns.RecLevelSym
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -22,7 +26,7 @@ theorem ookC {m2 i : ℕ} (hm : R.m = m2 + 2) (hi : i < m2) : cOf R i = cOf R (i
 theorem ookJat (j : ℕ) {w : HeightOneSpectrum (𝓞 X.E)} (hw : w ∈ Pr.vGs) :
     Jat (Pr := Pr) (R := R) true j w = LocE.JGsym w (qOf w) R.k R.rS R.r R.t (R.N j) (cOf R j) := by
   unfold Jat
-  rw [if_pos hw]
+  rw [ite_eq_left hw]
   rfl
 
 def ookKap (c : LocCst X (rowSG Pr sel mu)) (i : ℕ) (P : rowSG Pr sel mu) : X.K :=
@@ -37,7 +41,7 @@ theorem ookOmPhi_eq (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) (i : 
   unfold omPhi
   rw [ciOm_one]
   unfold PhiAt
-  rw [if_pos hP, hs, if_pos rfl]
+  rw [ite_eq_left hP, hs, ite_eq_left rfl]
   rfl
 
 theorem ookSupp (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 i : ℕ} (hm : R.m = m2 + 2) (hi : i < m2)
@@ -46,7 +50,24 @@ theorem ookSupp (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 i : �
       IntAt P.1 (ocbBEnt (R.N i) (R.N (i + 1)) (qOf P.1) y l s) := by
   intro y hy
   rw [ookOmPhi_eq Ch sel mu c hs i P hP] at hy
-  exact ocbPhiGS_supp (psi0P Ch P.1) (chiP Ch P.1) (ocbRanks_step hm hi) (ookC hm hi) y (right_ne_zero_of_mul hy)
+  have hPhiSupp {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K]
+      {P : HeightOneSpectrum (𝓞 E)} {q : ℕ} (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ m t j n' c' c n : ℕ}
+      (hr : ocbRanks k₀ m t j n' c n) (hc' : c' = c + 1) (y : HomE E (n' + c') (n + c))
+      (h : LocE.PhiGS q ψ₀ χ k₀ (m / 2 - 1) (k₀ + m - 1) t j c' n' c n y ≠ 0) :
+      ∀ l s, l < n + c → s < n' + c' → IntAt P (ocbBEnt n' n q y l s) := by
+    intro l s hl hs
+    obtain ⟨hk', hk, -, hsrc, -, -⟩ := ocbPhi_ranks hr
+    subst hc'
+    unfold LocE.PhiGS at h
+    dsimp only at h
+    split_ifs at h with hc
+    · have hp := ocbPhi_fPos_lt hk hl
+      have hp' := ocbPhi_fPos_lt hk' hs
+      have e := hc.1 (LocE.fPos k₀ c n l) (LocE.fPos k₀ (c + 1) n' s) hp (by omega)
+      rw [ocbBEnt_entB, ocbPhi_fIdx_fPos hk hl, ocbPhi_fIdx_fPos hk' hs] at e
+      exact e
+    · exact absurd rfl h
+  exact hPhiSupp (psi0P Ch P.1) (chiP Ch P.1) (ocbRanks_step hm hi) (ookC hm hi) y (right_ne_zero_of_mul hy)
 
 theorem ookRedPsi (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 i : ℕ} (hm : R.m = m2 + 2)
     (hi : i < m2) (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs) (σ : X.K →+* ℂ) :
@@ -60,8 +81,175 @@ theorem ookRedPsi (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (hs
       (fun s => (Units.map (σ : X.K →* ℂ)).comp (chiP Ch P.1 s)) R.k R.m R.t (i + 1) (R.N i) (cOf R (i + 1)) (R.N (i + 1)) ybar, ?_⟩
   intro y ybar hint hred
   rw [ookOmPhi_eq Ch sel mu c hs i P hP, map_mul]
+  have hPhiRed {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K]
+      {P : HeightOneSpectrum (𝓞 E)} {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) (σ : K →+* ℂ)
+      (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ m t j n' c' c n : ℕ}
+      (hr : ocbRanks k₀ m t j n' c n) (hc' : c' = c + 1) (y : HomE E (n' + c') (n + c))
+      (ybar : (Fin (n' + (c + 1)) → 𝓞 E ⧸ P.asIdeal) →ₗ[𝓞 E ⧸ P.asIdeal] (Fin (n + c) → 𝓞 E ⧸ P.asIdeal))
+      (hint : ∀ l s, l < n + c → s < n' + c' → IntAt P (ocbBEnt n' n q y l s))
+      (hred : ∀ l s, l < n + c → s < n' + c' → Loc.atN (ybar (Loc.eN _ _ s)) l = redP P (ocbBEnt n' n q y l s)) :
+      σ (LocE.PhiGS q ψ₀ χ k₀ (m / 2 - 1) (k₀ + m - 1) t j c' n' c n y) =
+        @ocbPhiS (𝓞 E ⧸ P.asIdeal) (resField P) ((σ : K →* ℂ).compAddChar ψ₀) (fun i => (Units.map (σ : K →* ℂ)).comp (χ i))
+          k₀ m t j n' c n ybar := by
+    obtain ⟨hk', hk, haN, hsrc, hk1, hm4⟩ := ocbPhi_ranks hr
+    subst hc'
+    let _ := resField P
+    have hqn : q ≠ 0 := by
+      rintro rfl
+      exact hu (by simp)
+    have hq0 : ((q : ℕ) : E) ≠ 0 := Nat.cast_ne_zero.mpr hqn
+    have hF : ∀ p p', p < n + c → p' < n' + (c + 1) →
+        ocbEnt k₀ (c + 1) n' c n ybar p p' =
+          redP P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y p p') := by
+      intro p p' hp hp'
+      rw [ocbBEnt_entB]
+      exact hred _ _ (ocbPhi_fIdx_lt hk hp) (ocbPhi_fIdx_lt hk' hp')
+    have hI : ∀ p p', p < n + c → p' < n' + (c + 1) →
+        IntAt P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y p p') := by
+      intro p p' hp hp'
+      rw [ocbBEnt_entB]
+      exact hint _ _ (ocbPhi_fIdx_lt hk hp) (ocbPhi_fIdx_lt hk' hp')
+    have hz : ∀ x : E, IntAt P x → (redP P x = 0 ↔ IntAt P (x / (q : E))) := by
+      intro x hx
+      constructor
+      · intro h0
+        exact ciIntAt_div hq hu hx h0
+      · intro hb
+        have e : x = (q : E) * (x / (q : E)) := by
+          field_simp
+        rw [e, reduction_mul ciIntAt_q hb, redP_natCast_eq_zero hq, zero_mul]
+    have hUnitV (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) :
+        σ (LocE.unitV χ a) = @ocbChiV (𝓞 E ⧸ P.asIdeal) (resField P) ((Units.map (σ : K →* ℂ)).comp χ) (redP P a) := by
+      unfold LocE.unitV ocbChiV
+      by_cases hx : redP P a = 0
+      · have hnu : ¬ IsUnit (redP P a) := by
+          rw [hx]
+          exact not_isUnit_zero
+        rw [dite_eq_right hnu, dite_eq_left hx, map_zero]
+      · have hu : IsUnit (redP P a) := isUnit_iff_ne_zero.mpr hx
+        rw [dite_eq_left hu, dite_eq_right hx]
+        rw [show hu.unit = Units.mk0 _ hx from Units.ext rfl]
+        rfl
+    unfold LocE.PhiGS ocbPhiS
+    dsimp only
+    split_ifs with h1 h2 h2
+    · rw [map_mul, map_inv₀, hUnitV]
+      unfold LocE.lamGvS
+      rw [map_mul, map_prod]
+      simp_rw [hUnitV]
+      have h0 : ocbEnt k₀ (c + 1) n' c n ybar (k₀ - 1) k₀ = 0 := by
+        by_contra hnz
+        have ha := h2.2 (k₀ - 1) k₀ (by omega) (by omega) (by omega) hnz
+        unfold ocbAllow at ha
+        split_ifs at ha <;> omega
+      have e1 : ∑ i ∈ Finset.range (k₀ - 1),
+          redP P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y i (i + 1)) =
+          ∑ i ∈ Finset.range (k₀ - 1), ocbEnt k₀ (c + 1) n' c n ybar i (i + 1) := by
+        refine Finset.sum_congr rfl (fun i hi => ?_)
+        have := Finset.mem_range.mp hi
+        exact (hF _ _ (by omega) (by omega)).symm
+      have e2 : ∑ i ∈ Finset.range (k₀ + m - 1 - k₀ - 1),
+          redP P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y (k₀ + i) (k₀ + i + 1)) =
+          ∑ i ∈ Finset.range (k₀ + m - 1 - k₀ - 1), ocbEnt k₀ (c + 1) n' c n ybar (k₀ + i) (k₀ + i + 1) := by
+        refine Finset.sum_congr rfl (fun i hi => ?_)
+        have := Finset.mem_range.mp hi
+        exact (hF _ _ (by omega) (by omega)).symm
+      have hS : redP P (∑ i ∈ Finset.range (k₀ - 1),
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y i (i + 1) +
+          ∑ i ∈ Finset.range (k₀ + m - 1 - k₀ - 1),
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y (k₀ + i) (k₀ + i + 1)) =
+          ∑ i ∈ Finset.range (k₀ + m - 1 - 1), ocbEnt k₀ (c + 1) n' c n ybar i (i + 1) := by
+        have i1 : ∀ i ∈ Finset.range (k₀ - 1),
+            IntAt P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y i (i + 1)) := by
+          intro i hi
+          have := Finset.mem_range.mp hi
+          exact hI _ _ (by omega) (by omega)
+        have i2 : ∀ i ∈ Finset.range (k₀ + m - 1 - k₀ - 1),
+            IntAt P (LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y (k₀ + i) (k₀ + i + 1)) := by
+          intro i hi
+          have := Finset.mem_range.mp hi
+          exact hI _ _ (by omega) (by omega)
+        rw [reduction_add (ciIntAt_sum _ _ i1) (ciIntAt_sum _ _ i2), redP_sum _ _ i1, redP_sum _ _ i2, e1, e2,
+          ocbPhi_sum_split k₀ (k₀ + m - 1) hk1 (by omega), h0, add_zero]
+      have hB : ∀ i ∈ Finset.range (j - 1),
+          redP P (Matrix.of fun (s s' : Fin t) =>
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y
+              (k₀ + m - 1 + i * t + ↑s) (k₀ + m - 1 + i * t + ↑s')).det =
+          (Matrix.of fun (s s' : Fin t) =>
+            ocbEnt k₀ (c + 1) n' c n ybar (k₀ + m - 1 + i * t + ↑s) (k₀ + m - 1 + i * t + ↑s')).det := by
+        intro i hi
+        have hi' := Finset.mem_range.mp hi
+        have hmul : (i + 1) * t ≤ (j - 1) * t := Nat.mul_le_mul_right t hi'
+        rw [Nat.add_mul, one_mul] at hmul
+        have hlt : ∀ s : Fin t, k₀ + m - 1 + i * t + ↑s < k₀ + m - 1 + (j - 1) * t := fun s => by
+          have := s.isLt
+          omega
+        rw [redP_det (Matrix.of fun (s s' : Fin t) =>
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y
+              (k₀ + m - 1 + i * t + ↑s) (k₀ + m - 1 + i * t + ↑s'))
+          (fun (s s' : Fin t) => hI (k₀ + m - 1 + i * t + ↑s) (k₀ + m - 1 + i * t + ↑s')
+            (by have := hlt s; omega) (by have := hlt s'; omega))]
+        congr 1
+        ext s s'
+        simp only [Matrix.map_apply, Matrix.of_apply]
+        exact (hF _ _ (by have := hlt s; omega) (by have := hlt s'; omega)).symm
+      have hT : redP P (Matrix.of fun (s s' : Fin (k₀ + m - 1 + (j - 1) * t)) =>
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y ↑s ↑s').det =
+          (Matrix.of fun (s s' : Fin (k₀ + m - 1 + (j - 1) * t)) => ocbEnt k₀ (c + 1) n' c n ybar ↑s ↑s').det := by
+        rw [redP_det (Matrix.of fun (s s' : Fin (k₀ + m - 1 + (j - 1) * t)) =>
+            LocE.entB q k₀ (c + 1) n' c n (fun i => i + 1) (fun i => i + 1) y ↑s ↑s')
+          (fun (s s' : Fin (k₀ + m - 1 + (j - 1) * t)) => hI (↑s) (↑s')
+            (by have := s.isLt; omega) (by have := s'.isLt; omega))]
+        congr 1
+        ext s s'
+        simp only [Matrix.map_apply, Matrix.of_apply]
+        exact (hF _ _ (by have := s.isLt; omega) (by have := s'.isLt; omega)).symm
+      rw [hS, hT, Finset.prod_congr rfl (fun i hi => by rw [hB i hi])]
+      rfl
+    · exfalso
+      apply h2
+      constructor
+      · intro p' hp'
+        rw [hF p' p' (by omega) (by omega)]
+        exact (h1.2.2.1 p' hp').1
+      · intro p p' hp hp' hne hnz
+        by_contra hna
+        apply hnz
+        rw [hF p p' hp (by omega)]
+        have hd := (ocbPhi_forb_iff (a := k₀ + m - 1 + (j - 1) * t) (t := t) hk1 hm4 (by omega) hne hp').mpr hna
+        rcases hd with hd | ⟨h3, h4, h5⟩ | ⟨h3, h4, h5⟩
+        · exact (hz _ (hI p p' hp (by omega))).mpr (h1.2.1 p p' hd hp hp')
+        · exact (h1.2.2.1 p' h3).2 p h4 hne h5
+        · exact h1.2.2.2 p p' h3 hp' h4 h5
+    · exfalso
+      apply h1
+      refine ⟨fun p p' hp hp' => hI p p' hp (by omega), ?_, ?_, ?_⟩
+      · intro p p' hap hp hp'
+        apply (hz _ (hI p p' hp (by omega))).mp
+        rw [← hF p p' hp (by omega)]
+        by_contra hnz
+        exact (ocbPhi_forb_iff (a := k₀ + m - 1 + (j - 1) * t) (t := t) hk1 hm4 (by omega) (by omega) hp').mp
+          (Or.inl hap) (h2.2 p p' hp hp' (by omega) hnz)
+      · intro p' hp'
+        refine ⟨?_, ?_⟩
+        · rw [← hF p' p' (by omega) (by omega)]
+          exact h2.1 p' hp'
+        · intro p hp hne h5
+          rw [← hF p p' (by omega) (by omega)]
+          by_contra hnz
+          exact (ocbPhi_forb_iff (a := k₀ + m - 1 + (j - 1) * t) (t := t) hk1 hm4 (by omega) hne (by omega)).mp
+            (Or.inr (Or.inl ⟨hp', hp, h5⟩)) (h2.2 p p' (by omega) (by omega) hne hnz)
+      · intro p p' h3 hp' hp h5
+        rw [← hF p p' (by omega) (by omega)]
+        by_contra hnz
+        have hne : p ≠ p' := by
+          rintro rfl
+          exact lt_irrefl _ h5
+        exact (ocbPhi_forb_iff (a := k₀ + m - 1 + (j - 1) * t) (t := t) hk1 hm4 (by omega) hne hp').mp
+          (Or.inr (Or.inr ⟨h3, hp, h5⟩)) (h2.2 p p' (by omega) hp' hne hnz)
+    · exact map_zero σ
   exact congrArg (σ (ookKap Ch sel mu c i P) * ·)
-    (ocbPhiGS_red (ciQ_mem P.1) (ciQ_notMem_sq hX hPr hP) σ (psi0P Ch P.1) (chiP Ch P.1) (ocbRanks_step hm hi) (ookC hm hi) y ybar hint hred)
+    (hPhiRed (ciQ_mem P.1) (ciQ_notMem_sq hX hPr hP) σ (psi0P Ch P.1) (chiP Ch P.1) (ocbRanks_step hm hi) (ookC hm hi) y ybar hint hred)
 
 theorem ookE1at_indep (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 i : ℕ} (hm : R.m = m2 + 2)
     (hi : i < m2) (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs)
@@ -142,6 +330,97 @@ theorem ookPsiSuppX (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 :
   rw [← Nat.cast_pow]
   exact ocbS_intAt_natCast _
 
+local macro "have_phiGS_congr " congrLemma:ident : tactic => `(tactic|
+  have $congrLemma:ident {E K : Type} [Field E] [NumberField E] [StarRing E] [Field K]
+      {P : HeightOneSpectrum (𝓞 E)} {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hq0 : (q : E) ≠ 0) (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K)
+      (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ rS r t j c' n' c n : ℕ} (x x' : HomE E (n' + c') (n + c))
+      (hkr : k₀ ≤ r) (han : r + (j - 1) * t ≤ n + c)
+      (hD : ∀ p p', p < n + c → p' < r + (j - 1) * t → ∃ d, IntAt P d ∧
+        LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x' p p' =
+          LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x p p' + q * d) :
+      LocE.PhiGS (P := P) q ψ₀ χ k₀ rS r t j c' n' c n x' = LocE.PhiGS (P := P) q ψ₀ χ k₀ rS r t j c' n' c n x := by
+    classical
+    have hLamCongr (ψ₀ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {k₀ r t j a : ℕ} (M M' : ℕ → ℕ → E)
+        (hkr : k₀ ≤ r) (hra : r ≤ a) (hja : r + j * t ≤ a)
+        (h : ∀ p p', p < a → p' < a → IntAt P (M p p') ∧ IntAt P (M' p p') ∧ redP P (M' p p') = redP P (M p p')) :
+        LocE.lamGvS ψ₀ χ k₀ r t j M' = LocE.lamGvS ψ₀ χ k₀ r t j M := by
+      unfold LocE.lamGvS
+      congr 1
+      · congr 1
+        have hb1 : ∀ i ∈ Finset.range (k₀ - 1), i < a ∧ i + 1 < a := fun i hi => by simp at hi; omega
+        have hb2 : ∀ i ∈ Finset.range (r - k₀ - 1), k₀ + i < a ∧ k₀ + i + 1 < a := fun i hi => by simp at hi; omega
+        rw [reduction_add (ciIntAt_sum _ _ fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.1)
+            (ciIntAt_sum _ _ fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.1),
+          reduction_add (ciIntAt_sum _ _ fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).1)
+            (ciIntAt_sum _ _ fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).1),
+          redP_sum _ _ (fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.1),
+          redP_sum _ _ (fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.1),
+          redP_sum _ _ (fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).1),
+          redP_sum _ _ (fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).1)]
+        exact congrArg₂ (· + ·) (Finset.sum_congr rfl fun i hi => (h i (i + 1) (hb1 i hi).1 (hb1 i hi).2).2.2)
+          (Finset.sum_congr rfl fun i hi => (h (k₀ + i) (k₀ + i + 1) (hb2 i hi).1 (hb2 i hi).2).2.2)
+      · refine Finset.prod_congr rfl fun i hi => ?_
+        have hi' : i < j := by simpa using hi
+        have hb : ∀ s : Fin t, r + i * t + s.1 < a := fun s => by
+          have h1 := s.2
+          have h2 : (i + 1) * t ≤ j * t := Nat.mul_le_mul_right _ hi'
+          nlinarith
+        apply ciUnitV_congr
+        rw [redP_det (Matrix.of fun s s' : Fin t => M' (r + i * t + s.1) (r + i * t + s'.1)) (fun s s' => (h _ _ (hb s) (hb s')).2.1),
+          redP_det (Matrix.of fun s s' : Fin t => M (r + i * t + s.1) (r + i * t + s'.1)) (fun s s' => (h _ _ (hb s) (hb s')).1)]
+        congr 1
+        ext s s'
+        exact (h _ _ (hb s) (hb s')).2.2
+    rw [phiGS_eq, phiGS_eq]
+    set M := LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x with hM
+    set M' := LocE.entB q k₀ c' n' c n (fun i => i + 1) (fun i => i + 1) x' with hM'
+    set a := r + (j - 1) * t with ha
+    have hra : r ≤ a := Nat.le_add_right _ _
+    have k1 : ∀ p p', p < n + c → p' < a → (IntAt P (M' p p') ↔ IntAt P (M p p')) := by
+      intro p p' hp hp'
+      obtain ⟨d, hd, he⟩ := hD p p' hp hp'
+      rw [he]
+      exact ciIntAt_add_iff ((ciIntAt_q (q := q)).mul hd)
+    have k2 : ∀ p p', p < n + c → p' < a → (IntAt P (M' p p' / q) ↔ IntAt P (M p p' / q)) := by
+      intro p p' hp hp'
+      obtain ⟨d, hd, he⟩ := hD p p' hp hp'
+      rw [he, add_div, mul_div_cancel_left₀ _ hq0]
+      exact ciIntAt_add_iff hd
+    have k3 : ∀ p p', p < n + c → p' < a → redP P (M' p p') = redP P (M p p') := by
+      intro p p' hp hp'
+      obtain ⟨d, hd, he⟩ := hD p p' hp hp'
+      rw [he]
+      exact redP_add_natCast_mul hq hd
+    have hc : symPhiCond P q k₀ rS r t j c n M' ↔ symPhiCond P q k₀ rS r t j c n M := by
+      unfold symPhiCond
+      constructor
+      · rintro ⟨h1, h2, h3, h4⟩
+        refine ⟨fun p p' hp hp' => (k1 p p' hp hp').1 (h1 p p' hp hp'), fun p p' h0 hp hp' => (k2 p p' hp hp').1 (h2 p p' h0 hp hp'),
+          fun p' hp' => ⟨?_, fun p hp hne hc => ?_⟩, fun p p' h0 hp' hp hpp => ?_⟩
+        · rw [← k3 p' p' (by omega) (by omega)]; exact (h3 p' hp').1
+        · rw [← k3 p p' (by omega) (by omega)]; exact (h3 p' hp').2 p hp hne hc
+        · rw [← k3 p p' (by omega) hp']; exact h4 p p' h0 hp' hp hpp
+      · rintro ⟨h1, h2, h3, h4⟩
+        refine ⟨fun p p' hp hp' => (k1 p p' hp hp').2 (h1 p p' hp hp'), fun p p' h0 hp hp' => (k2 p p' hp hp').2 (h2 p p' h0 hp hp'),
+          fun p' hp' => ⟨?_, fun p hp hne hc => ?_⟩, fun p p' h0 hp' hp hpp => ?_⟩
+        · rw [k3 p' p' (by omega) (by omega)]; exact (h3 p' hp').1
+        · rw [k3 p p' (by omega) (by omega)]; exact (h3 p' hp').2 p hp hne hc
+        · rw [k3 p p' (by omega) hp']; exact h4 p p' h0 hp' hp hpp
+    by_cases hC : symPhiCond P q k₀ rS r t j c n M
+    · rw [ite_eq_left (hc.2 hC), ite_eq_left hC]
+      have htrip : ∀ p p', p < a → p' < a → IntAt P (M p p') ∧ IntAt P (M' p p') ∧ redP P (M' p p') = redP P (M p p') :=
+        fun p p' hp hp' => ⟨hC.1 p p' (by omega) hp', (hc.2 hC).1 p p' (by omega) hp', k3 p p' (by omega) hp'⟩
+      congr 1
+      · exact hLamCongr ψ₀ χ M M' hkr hra (le_refl _) htrip
+      · congr 1
+        apply ciUnitV_congr
+        rw [redP_det (Matrix.of fun s s' : Fin a => M' s.1 s'.1) (fun s s' => (htrip s.1 s'.1 s.2 s'.2).2.1),
+          redP_det (Matrix.of fun s s' : Fin a => M s.1 s'.1) (fun s s' => (htrip s.1 s'.1 s.2 s'.2).1)]
+        congr 1
+        ext s s'
+        exact (htrip s.1 s'.1 s.2 s'.2).2.2
+    · rw [ite_eq_right (fun h => hC (hc.1 h)), ite_eq_right hC])
+
 theorem ookPsiInv (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (hs : c.sharp = true) {m2 : ℕ} (hm : R.m = m2 + 2)
     (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs) (x₀ : HomE X.E (R.N m2) (R.N (m2 + 1))) (y' z : Sp X.E (R.N (m2 + 1)))
     (hz : ∀ i, IntAt P.1 (z i)) : PsiAt Ch sel mu c m2 P 1 x₀ (y' + z) = PsiAt Ch sel mu c m2 P 1 x₀ y' := by
@@ -149,7 +428,8 @@ theorem ookPsiInv (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (hs
   unfold PsiAt
   rw [ookOmPhi_eq Ch sel mu c hs m2 P hP, ookOmPhi_eq Ch sel mu c hs m2 P hP]
   congr 1
-  refine ookPhiGS_congr (ciQ_mem P.1) (ciQ_ne_zero (ciQ_notMem_sq hX hPr hP)) _ _ _ _ hkr han fun p p' hp hp' => ?_
+  have_phiGS_congr hPhiCongr
+  refine hPhiCongr (ciQ_mem P.1) (ciQ_ne_zero (ciQ_notMem_sq hX hPr hP)) _ _ _ _ hkr han fun p p' hp hp' => ?_
   have hp0 : p < R.N (m2 + 1) := by omega
   by_cases hpk : p' = R.k
   · rw [hpk, symEntB_join_col _ hc' hc x₀ (y' + z) hp0, symEntB_join_col _ hc' hc x₀ y' hp0]
@@ -167,7 +447,8 @@ theorem ookPsiInvX (hX : X.Ok) (hPr : Pr.Ok) (c : LocCst X (rowSG Pr sel mu)) (h
   unfold PsiAt
   rw [ookOmPhi_eq Ch sel mu c hs m2 P hP, ookOmPhi_eq Ch sel mu c hs m2 P hP]
   congr 1
-  refine ookPhiGS_congr (ciQ_mem P.1) hq0 _ _ _ _ hkr han fun p p' hp hp' => ?_
+  have_phiGS_congr hPhiCongr
+  refine hPhiCongr (ciQ_mem P.1) hq0 _ _ _ _ hkr han fun p p' hp hp' => ?_
   have hp0 : p < R.N (m2 + 1) := by omega
   by_cases hpk : p' = R.k
   · rw [hpk, symEntB_join_col _ hc' hc (x₀ + z) y' hp0, symEntB_join_col _ hc' hc x₀ y' hp0]
@@ -185,22 +466,7 @@ section Cst
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
 
-def ookCst (SB : Finset (HeightOneSpectrum (𝓞 X.E))) (mq : ℕ → SB → X.K) (A : ℕ) : LocCst X SB :=
-  { ciCst Ch SB mq with A := A, sharp := true }
-
 variable {Ch}
-
-theorem ookCst_ok (hPr : Pr.Ok) (hCh : Ch.Ok) {SB : Finset (HeightOneSpectrum (𝓞 X.E))} (hSB : ∀ P ∈ SB, P ∈ Pr.vGs)
-    (h4 : ∀ P ∈ SB, qOf P % 4 = 1) {mq : ℕ → SB → X.K} {A : ℕ} (hA : 1 ≤ A) : (ookCst Ch SB mq A).Ok where
-  psi_add := (ciCst_ok hPr hCh hSB h4 (mq := mq)).psi_add
-  psi_int := (ciCst_ok hPr hCh hSB h4 (mq := mq)).psi_int
-  psi_ne := (ciCst_ok hPr hCh hSB h4 (mq := mq)).psi_ne
-  D_pos _ := le_refl 1
-  sq_sq := (ciCst_ok hPr hCh hSB h4 (mq := mq)).sq_sq
-  M_pos := le_refl 1
-  M_le_A := hA
-  M_le_B := le_refl 1
-  B_pos := le_refl 1
 
 theorem ookXiUnit (hCh : Ch.Ok) {σ₀ : X.K →+* ℂ} {xi0 : X.E} (hW : Ch.WeilTied σ₀ xi0) (w : HeightOneSpectrum (𝓞 X.E))
     (hw : w ∈ Pr.vGs) : IntAt w xi0 ∧ redP w xi0 ≠ 0 := by
@@ -209,7 +475,7 @@ theorem ookXiUnit (hCh : Ch.Ok) {σ₀ : X.K →+* ℂ} {xi0 : X.E} (hW : Ch.Wei
     apply hCh.psi_zero_nontrivial_character ⟨w, hw⟩
     ext c
     apply σ₀.injective
-    rw [hW ⟨w, hw⟩ c 0 (by rw [h0, zero_mul, Int.cast_zero]), AddChar.one_apply, map_one]
+    rw [hW ⟨w, hw⟩ c 0 (by rw [h0, zero_mul, Int.cast_zero]), one_apply, map_one]
     simp
   exact ⟨intAt_of_redP_ne_zero₂ hne, hne⟩
 
@@ -220,92 +486,7 @@ section Ok
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ)
 
-def ookCstR (G : ChGlob X R.m) : LocCst X (rowSG Pr sel (mu0 X.F X.E X.K S)) :=
-  ookCst Ch (rowSG Pr sel (mu0 X.F X.E X.K S)) (ciMuq G ((mu0 X.F X.E X.K S : Tup X.F X.E X.K S) : Chr X.F X.E X.K)) R.m
-
 variable {Ch}
-
-theorem referenceConstants_psi_depth_one (hPr : Pr.Ok) (G : ChGlob X R.m) (P : rowSG Pr sel (mu0 X.F X.E X.K S)) (a : X.E) (ha : IntAt P.1 a) :
-    (ookCstR Ch sel S G).psi P (a / (qOf P.1 : X.E)) = psi0P Ch P.1 (redP P.1 a) := by
-  show ciPsi Ch P _ = _
-  have hq0 : (qOf P.1 : X.E) ≠ 0 := by exact_mod_cast (ciQOf_prime hPr (ciMemG sel S P)).ne_zero
-  unfold ciPsi
-  rw [mul_div_cancel₀ _ hq0, if_pos ha]
-
-theorem ookCstR_base (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (h4 : ∀ w ∈ Pr.vGs, qOf w % 4 = 1) (G : ChGlob X R.m) {m2 : ℕ}
-    (hm : R.m = m2 + 2) : OcbBase Ch sel (mu0 X.F X.E X.K S) (ookCstR Ch sel S G) m2 where
-  hX := hX
-  hPr := hPr
-  hCh := hCh
-  hm := hm
-  cst_ok := ookCst_ok hPr hCh (fun P hP => ciMemG sel S ⟨P, hP⟩) (fun P hP => h4 P (ciMemG sel S ⟨P, hP⟩)) (by have := R.two_le_m; omega)
-  sharp := rfl
-  psi0 P a _ ha := referenceConstants_psi_depth_one sel S hPr G P a ha
-  depthG _ _ := rfl
-
-theorem oneIdx_ok (hX : X.Ok) (hPr : Pr.Ok) (hCh : Ch.Ok) (h4 : ∀ w ∈ Pr.vGs, qOf w % 4 = 1) (G : ChGlob X R.m)
-    {e : Fin R.m → X.Tau → ℚ} {eta : Formalism.L2.Host.HChar X.E} (hT : Ch.Tied G.σ₀ e G.mu0 eta) (hW : Ch.WeilTied G.σ₀ G.xi0)
-    (hval : ∀ (j : Fin R.m) (w : HeightOneSpectrum (𝓞 X.E)), w ∈ Pr.vGs →
-      ∃ y : X.K, G.σ₀ y = ((((G.mu0 j).locK w (ciQU w)) : ℂˣ) : ℂ)⁻¹)
-    {m2 : ℕ} (hm : R.m = m2 + 2)
-    (hO : OneCosetSym Ch sel (mu0 X.F X.E X.K S) (ookCstR Ch sel S G) (colLevSym Ch) m2)
-    (hN : NonVanSym Ch sel (mu0 X.F X.E X.K S) (ookCstR Ch sel S G) m2) :
-    (oneIdx (colLevSym Ch) (QE sel ((mu0 X.F X.E X.K S : Tup X.F X.E X.K S) : Chr X.F X.E X.K)) m2).Ok Ch sel (mu0 X.F X.E X.K S)
-      (ookCstR Ch sel S G) G m2 := by
-  have hG : ∀ P : rowSG Pr sel (mu0 X.F X.E X.K S), P.1 ∈ Pr.vGs := ciMemG sel S
-  have hSB : ∀ P ∈ rowSG Pr sel (mu0 X.F X.E X.K S), P ∈ Pr.vGs := fun P hP => ciMemG sel S ⟨P, hP⟩
-  have hψ : ∀ (P : rowSG Pr sel (mu0 X.F X.E X.K S)) (a : X.E), IntAt P.1 a →
-      (ookCstR Ch sel S G).psi P (a / (qOf P.1 : X.E)) = psi0P Ch P.1 (redP P.1 a) :=
-    fun P a ha => referenceConstants_psi_depth_one sel S hPr G P a ha
-  have hs : (ookCstR Ch sel S G).sharp = true := rfl
-  have hA : R.m ≤ (ookCstR Ch sel S G).A := le_refl _
-  have hB : (ookCstR Ch sel S G).B = 1 := rfl
-  obtain ⟨hc', hc, -, -, -, -⟩ := ookLast (R := R) hm
-  obtain ⟨hn, hinj, hsurj⟩ := oneIdx_clauses hO hN
-  exact
-    { hm := hm
-      cst_ok := ookCst_ok hPr hCh hSB (fun P hP => h4 P (hSB P hP)) (by have := R.two_le_m; omega)
-      xiUnitAtPrime := fun P => ookXiUnit hCh hW P.1 (hG P)
-      weil := ciCst_weil Ch hX hPr hSB (ciMuq G ((mu0 X.F X.E X.K S : Tup X.F X.E X.K S) : Chr X.F X.E X.K)) hW (fun P hP => (ookXiUnit hCh hW P (hSB P hP)).1)
-      muqQ := fun _ _ P hP => absurd (hG P) hP
-      muqG := fun i h P hP qu hqu => ciMuq_tie G _ hval i h P hP qu hqu
-      mu0G := fun j => (hT.mu0 j).atg
-      psi0 := fun P a _ ha => hψ P a ha
-      deep := fun A' B' hA' hB' i hi _ _ P =>
-        ookE1at_indep Ch sel _ hX hPr _ hs hm hi P (hG P) (hψ P) G.σ₀ hA (le_refl 1) (le_trans hA hA') (le_trans (le_refl 1) hB')
-      zero_uniq := ⟨⟨(), Nat.zero_le _⟩, fun _ => Subtype.ext rfl⟩
-      zero_h := fun _ _ => rfl
-      zero_G := fun _ => colLevSym_zero Ch
-      zero_Q := fun _ => rfl
-      last_uniq := ⟨⟨(), le_refl _⟩, fun _ => Subtype.ext rfl⟩
-      last_h := fun _ _ => rfl
-      nonvan := hn
-      inj := fun i hi b b' _ => hinj i hi b b'
-      surj := hsurj
-      stabG := fun _ _ _ _ => Subgroup.one_mem _
-      depthG := fun _ _ => rfl
-      depthQ := fun P hP => absurd (hG P) hP
-      depthQ' := fun P hP => absurd (hG P) hP
-      boundQ := fun _ _ P hP => absurd (hG P) hP
-      psiSupp := fun _ P x₀ y' h i => by
-        rw [if_pos (hG P), pow_one]
-        exact (psiAt_sym Ch sel _ _ hc' hc hs P (hG P) x₀ y' h i).1
-      psiInv := fun _ P x₀ y' z hz =>
-        ookPsiInv Ch sel _ hX hPr _ hs hm P (hG P) x₀ y' z fun i => by
-          have h1 := hz i
-          rwa [if_pos (hG P), pow_zero, inv_one, one_mul] at h1
-      xiSupp := fun i hi _ _ P x h s l => ookXiSupp Ch sel _ _ hs hm hi P (hG P) x h s l
-      xiInv := fun i hi _ _ P x z hz => ookXiInv Ch sel _ hX hPr _ hs hm hi P (hG P) (hψ P) G.σ₀ hA hB x z hz
-      psiSuppX := fun _ P x₀ y' h s l => ookPsiSuppX Ch sel _ _ hs hm P (hG P) x₀ y' h s l
-      psiInvX := fun _ P x₀ z y' hz => ookPsiInvX Ch sel _ hX hPr _ hs hm P (hG P) hB x₀ z y' hz
-      int := fun j _ P => by
-        show Loc.prX (Loc.Cbe (Jat (Pr := Pr) true j P.1) 1) ≤ _
-        rw [ookJat j (hG P)]
-        exact ookPrX_le
-      grpQ := fun _ _ P => absurd P.2 (ciNotQ sel S P.1)
-      chrQ := fun _ _ P => absurd P.2 (ciNotQ sel S P.1)
-      grpG := fun j b w hbar => hO.grpG j b.2 w hbar
-      chrG := fun j b w hbar g r hr hrg hred => hO.chrG j b.2 w hbar g r hr hrg hred }
 
 end Ok
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IwasawaDecompositionFiniteAdelesGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCompactIntegralGLFiniteAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicGLIwasawaDecompositionStandardParabolic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IwasawaDecompositionFiniteAdelesGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsCompactIntegralGLFiniteAdeles
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep
 
 namespace GlobalTheory.IwaParab
@@ -129,7 +134,7 @@ theorem exists_finset_cover (E : Type) [Field E] [NumberField E] (a : ℕ) (L : 
   obtain ⟨l, hl, hlk⟩ := hkt
   exact ⟨t, Finset.mem_image_of_mem _ ht, l, hl, hlk.symm⟩
 
-theorem upper_infGL_mul_finGL {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+theorem upper_infGL_mul_finGL {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     (b : GL (Fin a) (Cinf E)) (hb : (b : Matrix (Fin a) (Fin a) (Cinf E)).BlockTriangular id)
     (c : GL (Fin a) (Af E)) (hc : (c : Matrix (Fin a) (Fin a) (Af E)).BlockTriangular id) :
     ((infGL E a b * finGL E a c : GA E a) : Matrix (Fin a) (Fin a) (Ad E)).BlockTriangular id := by
@@ -144,7 +149,7 @@ theorem upper_infGL_mul_finGL {E : Type} [Field E] [NumberField E] [IsTotallyCom
     change (cornerGL a (sFin E) c).val i j = 0
     rw [GlobalTheory.IwasawaAdelic.cornerGL_entry_ne _ _ (ne_of_gt h), hc h, map_zero]
 
-theorem iwasawa_parab : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a r : ℕ)
+theorem iwasawa_parab : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a r : ℕ)
     (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) →
     ∃ T : Finset (GL (Fin a) (Af E)), ∀ g : GA E a, ∃ (y : BlockIx a r → Ad E) (m : GA E a),
       (∀ i j : Fin a, ((i : ℕ) < r ↔ (j : ℕ) < r) ∨ m.1 i j = 0) ∧

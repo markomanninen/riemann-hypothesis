@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsFrONB
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SqrtInUnramifiedCompletion
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TestVectorMemSchwartzBruhat
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.LeadingConstantNeZero
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsFrONB
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.PowerSeriesEmbedding
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SqrtInUnramifiedCompletion
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.TransportFirstLevel
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TestVectorMemSchwartzBruhat
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.LeadingConstantNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem conjugation_fixed_closure : FixConj := by
   have h2 : (2 : MaximalUnramifiedExtension p) ≠ 0 := two_ne_zero
   obtain ⟨u, hu⟩ : ∃ u : MaximalUnramifiedExtension p, u = (y + σ y) / 2 := ⟨_, rfl⟩
   obtain ⟨v, hv⟩ : ∃ v : MaximalUnramifiedExtension p, v = (y - σ y) / (2 * rK) := ⟨_, rfl⟩
-  have hσu : σ u = u := by rw [hu, map_div₀, map_add, hy, map_ofNat]; ring
+  have hσu : σ u = u := by rw [hu, map_div₀, map_add (f := _), hy, map_ofNat]; ring
   have hσv : σ v = v := by
     rw [hv, map_div₀, map_sub, map_mul, hy, hσr, map_ofNat]
     field_simp
@@ -125,7 +129,7 @@ theorem conjugation_fixed_closure : FixConj := by
           (a : D.host.E) + (b : D.host.E) * D.host.sqrtMinusD := by
         push_cast; rfl
       simp only
-      rw [e, hlc, hrK, map_add, map_mul, map_ratCast, map_ratCast, map_add, map_mul, map_ratCast, map_ratCast]
+      rw [e, hlc, hrK, map_add (f := _), map_mul, map_ratCast, map_ratCast, map_add (f := _), map_mul, map_ratCast, map_ratCast]
     have hh := map_mem_closure hcont hmem hmaps
     rw [hyc]
     exact hh
@@ -143,7 +147,7 @@ theorem conjugation_fixed_closure : FixConj := by
         lamC lam (D.host.φ₀ (D.host.conj D.host.sqrtMinusD)) at h
       rw [hc, hlc, hlc, map_neg, map_neg, ← hrK] at h
       exact h
-    rw [hyc, map_add, map_mul, hu', hv', hr', hyuv, map_add, map_mul, hσu, hσv, hσr]
+    rw [hyc, map_add (f := _), map_mul, hu', hv', hr', hyuv, map_add (f := _), map_mul, hσu, hσv, hσr]
     push_cast
     ring
 

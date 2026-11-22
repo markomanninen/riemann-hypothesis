@@ -1,4 +1,8 @@
-import Formalism.UnipotentAdelicQuotients.EllRegStep
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegStep
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 
@@ -74,7 +78,7 @@ lemma continuous_trOp (m : ℕ) (b : (n : ℕ) → (Fin n → Fin d) → E d →
     (hb : ∀ n w, ContDiff ℝ ∞ (b n w)) (hφ : ContDiff ℝ ∞ φ) : Continuous (trOp m b φ) := by
   show Continuous (fun x => ∑ n ∈ Finset.range (m + 1), ∑ w : Fin n → Fin d,
     (-1 : ℂ) ^ n * dw (List.ofFn w) (fun y => b n w y * φ y) x)
-  refine continuous_finset_sum _ fun n _ => continuous_finset_sum _ fun w _ => continuous_const.mul ?_
+  refine continuous_finsetSum _ fun n _ => continuous_finsetSum _ fun w _ => continuous_const.mul ?_
   exact (contDiff_dw ((hb n w).mul hφ) _).continuous
 
 lemma contDiff_eF (ξ : E d) : ContDiff ℝ ∞ (eF ξ) := by

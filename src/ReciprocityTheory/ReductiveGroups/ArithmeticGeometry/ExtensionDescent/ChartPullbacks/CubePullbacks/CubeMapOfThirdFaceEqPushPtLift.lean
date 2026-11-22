@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -130,10 +134,6 @@ lemma cubeMapOver_eq_productMap : cubeMapOverAlt m = L3 m := by
 lemma cubeMapOf_thirdFace_eq_pushPt_lift : m.F3 = (L3 m).left := by
   rw [← cubeMapOver_eq_productMap]
   rfl
-
-lemma tb_psum3 (I : Finset (Fin 3)) : tb m (psum G' (x3 G') I) = L3 m ≫ psum G (x3 G) I := by
-  ext
-  rw [tb_left, m.psum_comm, Over.comp_left, ← cubeMapOf_thirdFace_eq_pushPt_lift]
 
 lemma tb_lift3 {T : Over S'} (a b c : T ⟶ G') :
     (Over.map m.e).map (lift a (lift b c)) ≫ L3 m = lift (tb m a) (lift (tb m b) (tb m c)) := by

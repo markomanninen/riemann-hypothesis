@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HeckeTraceSemi
+
+@[expose] public section
 
 open UpperTheory.Gal.LocalSmoothExtension
 
@@ -52,7 +56,8 @@ theorem UpperTheory.Gal.LocalSmoothExtension.traceSemi_of :
       · subst hjk
         simp
       · simp [Finsupp.single_apply, hjk]
-    rw [LinearMap.trace_eq_matrix_trace ℂ b, LinearMap.trace_eq_matrix_trace ℂ b', Matrix.trace,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.trace_eq_matrix_trace ℂ b, LinearMap.trace_eq_matrix_trace ℂ b', Matrix.trace,
       Matrix.trace, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp only [Matrix.diag_apply, LinearMap.toMatrix_apply, hbj, hb', ← hT,

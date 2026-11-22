@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PTConclAt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NineTermExactIff
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PTConclAt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NineTermExactIff
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,11 +89,6 @@ def piE {I I' : Type*} {A : I' → Type*} {B : I → Type*} [∀ i, AddCommGroup
     (eI : I ≃ I') (e : ∀ i, A (eI i) ≃ₗ[R] B i) : (∀ i', A i') ≃ₗ[R] ∀ i, B i :=
   (LinearEquiv.piCongrLeft R A eI).symm ≪≫ₗ LinearEquiv.piCongrRight e
 
-@[simp] theorem piE_apply {I I' : Type*} {A : I' → Type*} {B : I → Type*}
-    [∀ i, AddCommGroup (A i)] [∀ i, Module R (A i)] [∀ i, AddCommGroup (B i)]
-    [∀ i, Module R (B i)] (eI : I ≃ I') (e : ∀ i, A (eI i) ≃ₗ[R] B i) (x : ∀ i', A i') (i : I) :
-    piE eI e x i = e i (x (eI i)) := rfl
-
 end Ladder
 
 section Main
@@ -108,15 +107,16 @@ variable {R : Type} [CommRing R] [TopologicalSpace R] [DiscreteTopology R] {Γ �
   (hd : ∀ g f, twDual χ' ρ' (eG g) f = twDual χ ρ g f)
   (hl : ∀ i d m, (ρ'.comp (φ' (eI i))) (eD i d) m = (ρ.comp (φ i)) d m)
 
-include hχ hc in
 
+include hχ hc in
 theorem twDual_transfer : ∀ g f, twDual χ' ρ' (eG g) f = twDual χ ρ g f := by
   intro g f
-  ext m
+  apply DFunLike.ext
+  intro m
   rw [twDual_apply, twDual_apply, hχ, ← map_inv eG, hc]
 
-include hD hc in
 
+include hD hc in
 theorem loc_transfer :
     ∀ i d m, (ρ'.comp (φ' (eI i))) (eD i d) m = (ρ.comp (φ i)) d m := by
   intro i d m

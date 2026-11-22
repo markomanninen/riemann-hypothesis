@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ForallGeometricallyIntegralOfSmoothOfGeometrical
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomFromSpecResidueField
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FlatAndSurjectiveOfIsFiniteAbelianEnd
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulAFiniteFlatSurjectiveEtale
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ForallGeometricallyIntegralOfSmoothOfGeometrical
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomFromSpecResidueField
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FlatAndSurjectiveOfIsFiniteAbelianEnd
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulAFiniteFlatSurjectiveEtale
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -249,7 +253,8 @@ theorem functional_mem_of_span {R R' M M' I κ : Type} [CommRing R] [CommRing R'
   have key : ∀ x, l' (φ x) = σ (l x) := fun x => by
     have := Fintype.ofFinite κ
     rw [← b.sum_repr x]
-    simp only [map_sum, LinearMap.map_smulₛₗ, ← hb, l', Module.Basis.constr_basis, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, ← hb, l', Module.Basis.constr_basis, smul_eq_mul,
       RingHom.id_apply, map_mul]
   have h0 : l' = 0 := LinearMap.ext_on_range ht fun c => (key _).trans (hl c)
   rw [← key, h0, LinearMap.zero_apply]
@@ -290,14 +295,16 @@ theorem exists_basis (P : PolAV S) (n : ℕ) {V : S.Opens} {κ : Type} [Fintype 
   · rw [Fintype.linearIndependent_iff] at h₁ ⊢
     intro g hg i
     have := congrArg (pullM P.A P.L n u) hg
-    simp only [map_sum, LinearMap.map_smulₛₗ, map_zero, e] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, map_zero, e] at this
     exact hσ.1 ((h₁ _ this i).trans (map_zero _).symm)
   · intro x _
     obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun _).1
       (h₂.ge (Submodule.mem_top (x := pullM P.A P.L n u x)))
     choose g' hg' using fun i => hσ.2 (g i)
     refine (Submodule.mem_span_range_iff_exists_fun _).2 ⟨g', hφ ?_⟩
-    simp only [map_sum, LinearMap.map_smulₛₗ, e, hg', hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, e, hg', hg]
 
 theorem surjective_mulA (P : PolAV S) (n : ℕ) (hn : n ≠ 0)
     (α : LB.Gen (LB.LinComb P.L (K := Fin 2) ![𝟙 P.A.left, (mulA P.A n).left] ![((n ^ 2 : ℕ) : ℤ), -1]))

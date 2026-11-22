@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LinIndepOneDelta
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LinIndepOneDelta
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,19 +40,12 @@ abbrev pt (a b : AF D.host.F) : AE D := mkE (F := D.host.F) δ (AF D.host.F) a b
 
 abbrev DA (Δ : D.host.F) : AF D.host.F := algebraMap D.host.F (AF D.host.F) Δ
 
-include hδ in
-theorem cA_pt (a b : AF D.host.F) : cA D (pt δ a b) = pt δ a (-b) :=
-  conj_mkE D.sp.cm.sig δ hδ (AF D.host.F) a b
 
 include hΔ in
 theorem pt_mul (a b a' b' : AF D.host.F) :
     pt δ a b * pt δ a' b' = pt δ (a * a' + DA Δ * (b * b')) (a * b' + b * a') :=
   mkE_mul δ Δ hΔ (AF D.host.F) a b a' b'
 
-include hΔ in
-theorem pt_norm (a b : AF D.host.F) :
-    pt δ a b * pt δ a (-b) = pt δ (a * a - DA Δ * (b * b)) 0 :=
-  mkE_norm δ Δ hΔ (AF D.host.F) a b
 
 theorem pt_one : pt (D := D) δ 1 0 = 1 := mkE_one δ (AF D.host.F)
 
@@ -83,44 +80,8 @@ section Unit
 variable (δ : D.host.E) (hδ : D.sp.cm.sig δ = -δ) (hδ0 : δ ≠ 0) (Δ : D.host.F)
   (hΔ : algebraMap D.host.F D.host.E Δ = δ * δ)
 
-def Con (D : D7) (Δ : D.host.F) : Set (AF D.host.F × AF D.host.F) :=
-  {p | p.1 * p.1 - DA Δ * (p.2 * p.2) = 1}
 
-include hΔ in
-theorem pt_mul_conj {a b : AF D.host.F} (h : a * a - DA Δ * (b * b) = 1) :
-    pt (D := D) δ a b * pt δ a (-b) = 1 := by
-  rw [pt_norm δ Δ hΔ, h, pt_one]
 
-def mkUnit {a b : AF D.host.F} (h : a * a - DA Δ * (b * b) = 1) : (AE D)ˣ :=
-  ⟨pt δ a b, pt δ a (-b), pt_mul_conj δ Δ hΔ h, by rw [mul_comm]; exact pt_mul_conj δ Δ hΔ h⟩
-
-include hδ in
-theorem mkUnit_mem {a b : AF D.host.F} (h : a * a - DA Δ * (b * b) = 1) : mkUnit δ Δ hΔ h ∈ FirstPropositionFrame D := by
-  show pt δ a b * cA D (pt δ a b) = 1
-  rw [cA_pt δ hδ]; exact pt_mul_conj δ Δ hΔ h
-
-def mkU {a b : AF D.host.F} (h : a * a - DA Δ * (b * b) = 1) : FirstPropositionFrame D :=
-  ⟨mkUnit δ Δ hΔ h, mkUnit_mem δ hδ Δ hΔ h⟩
-
-@[simp] theorem mkU_val {a b : AF D.host.F} (h : a * a - DA Δ * (b * b) = 1) :
-    (((mkU δ hδ Δ hΔ h : FirstPropositionFrame D) : (AE D)ˣ) : AE D) = pt δ a b := rfl
-
-include hδ hδ0 hΔ in
-theorem con_of_U1A (x : FirstPropositionFrame D) :
-    coA δ hδ hδ0 ((x : (AE D)ˣ) : AE D) * coA δ hδ hδ0 ((x : (AE D)ˣ) : AE D) -
-      DA Δ * (coB δ hδ hδ0 ((x : (AE D)ˣ) : AE D) * coB δ hδ hδ0 ((x : (AE D)ˣ) : AE D)) = 1 := by
-  have hx : ((x : (AE D)ˣ) : AE D) * cA D ((x : (AE D)ˣ) : AE D) = 1 := x.2
-  have e := pt_co δ hδ hδ0 ((x : (AE D)ˣ) : AE D)
-  set a := coA δ hδ hδ0 ((x : (AE D)ˣ) : AE D)
-  set b := coB δ hδ hδ0 ((x : (AE D)ˣ) : AE D)
-  rw [← e, cA_pt δ hδ, pt_norm δ Δ hΔ, ← pt_one δ] at hx
-  exact (pt_inj δ hδ hδ0 hx).1
-
-theorem continuous_mkU :
-    Continuous fun p : Con D Δ => (mkU δ hδ Δ hΔ (a := p.1.1) (b := p.1.2) p.2 : FirstPropositionFrame D) := by
-  refine Continuous.subtype_mk (Units.continuous_iff.mpr ⟨?_, ?_⟩) _
-  · exact (continuous_pt δ).comp continuous_subtype_val
-  · exact (continuous_pt δ).comp ((continuous_fst.prodMk continuous_snd.neg).comp continuous_subtype_val)
 
 theorem incA_eq_pt (α β : D.host.F) :
     incA D (algebraMap D.host.F D.host.E α + algebraMap D.host.F D.host.E β * δ) =

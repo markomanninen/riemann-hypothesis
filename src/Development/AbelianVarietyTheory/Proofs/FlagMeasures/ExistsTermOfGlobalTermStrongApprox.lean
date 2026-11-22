@@ -1,19 +1,24 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdmissibleIntegralFrameOfLocalTermsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermRowEqIffMovedLatticeInnerDataEqStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnipotentGroupsLatticesGlobalCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MovedTermLatticeIsGlobalTermPhaseStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RatLinkPoints
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLattices
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalHermitianFramesRationalWitnessesPhaseStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDatumEquivariantFlagIsometries
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.FibreCountOfPositions
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAdmissibleIntegralFrameOfLocalTermsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermRowEqIffMovedLatticeInnerDataEqStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnipotentGroupsLatticesGlobalCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MovedTermLatticeIsGlobalTermPhaseStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RatLinkPoints
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLattices
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalHermitianFramesRationalWitnessesPhaseStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianLatticeDatumEquivariantFlagIsometries
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.FibreCountOfPositions
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -38,7 +43,7 @@ theorem ext_inv (A : Places F E sig) {n : ℕ} {p} {a : (Fin n → E) ≃ₗ[E] 
   rw [← h, LinearEquiv.symm_apply_apply]
 
 theorem eq_map_of_local (A : Places F E sig) {n : ℕ} {Λ Γ : Submodule (𝓞 E) (Fin n → E)}
-    (hΛ : Submodule.IsLattice E Λ) (hΓ : Submodule.IsLattice E Γ) (x : (Fin n → E) ≃ₗ[E] (Fin n → E))
+    (hΛ : Submodule.IsFullLattice E Λ) (hΓ : Submodule.IsFullLattice E Γ) (x : (Fin n → E) ≃ₗ[E] (Fin n → E))
     (h : ∀ p, ∃ g, A.Ext p x g ∧ A.lat p Γ = g • A.lat p Λ) :
     Γ = Λ.map ((x : (Fin n → E) →ₗ[E] (Fin n → E)).restrictScalars (𝓞 E)) := by
   ext y
@@ -62,14 +67,54 @@ theorem eq_map_of_local (A : Places F E sig) {n : ℕ} {Λ Γ : Submodule (𝓞 
     rw [← hg z]
     exact Submodule.smul_mem_pointwise_smul _ g _ hz'
 
+private theorem full_lattice_of_term {A : Places F E sig} {r k : ℕ} (G : GFrames A r k)
+    {d : G.Dat} {Λ : G.Lt} (hΛ : G.IsTerm d Λ) : Submodule.IsFullLattice E Λ := by
+  refine { toIsLattice := hΛ.1, span_eq_top := ?_ }
+  by_contra hne
+  obtain ⟨φ, hφ, hzero⟩ :=
+    Submodule.exists_dual_map_eq_bot_of_lt_top (lt_top_iff_ne_top.mpr hne) inferInstance
+  obtain ⟨P, hP⟩ := Ideal.exists_maximal (𝓞 F)
+  let p : IsDedekindDomain.HeightOneSpectrum (𝓞 F) :=
+    ⟨P, hP.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hP (RingOfIntegers.not_isField F)⟩
+  have := (A.loc p).lf
+  have := (A.loc p).char0
+  have := PlacesInt.nontrivial_Ep (A.loc p)
+  have hspan := (TermBasic.term_basic (A.L p) r k (G.S p) (d p) (A.lat p Λ) (hΛ.2 p)).1.1.2
+  let ψ : (Fin (k + 2 * r + 1) → (A.loc p).Ep) →ₗ[(A.loc p).Ep] (A.loc p).Ep :=
+    ∑ i : Fin (k + 2 * r + 1), (A.loc p).ιE (φ fun j => if i = j then 1 else 0) • LinearMap.proj i
+  have hψ (z : G.V) : ψ (A.bc p z) = (A.loc p).ιE (φ z) := by
+    rw [φ.pi_apply_eq_sum_univ z, map_sum]
+    simp only [ψ, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply,
+      smul_eq_mul, map_mul, Places.bc]
+    exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
+  have hlat : A.lat p Λ ≤ (LinearMap.ker ψ).restrictScalars (A.L p).O := by
+    apply Submodule.span_le.mpr
+    rintro _ ⟨z, hz, rfl⟩
+    have hz' : φ z ∈ (⊥ : Submodule E E) := by
+      rw [← hzero]
+      exact Submodule.mem_map_of_mem (Submodule.subset_span hz)
+    change ψ (A.bc p z) = 0
+    rw [hψ, (Submodule.mem_bot E).mp hz', map_zero]
+  have hker : Submodule.span (A.loc p).Ep (A.lat p Λ : Set _) ≤ LinearMap.ker ψ :=
+    Submodule.span_le.mpr hlat
+  rw [hspan] at hker
+  apply hφ
+  apply LinearMap.ext
+  intro z
+  have hz := LinearMap.mem_ker.mp (hker (Submodule.mem_top (x := A.bc p z)))
+  rw [hψ] at hz
+  exact (map_eq_zero_iff _ (A.loc p).ιE.injective).mp hz
+
 theorem term_eq_map {A : Places F E sig} {r k : ℕ} (G : GFrames A r k) (hk : 4 * r + 7 ≤ k) {d : G.Dat}
     {Λ Γ : G.Lt} (hΛ : G.IsTerm d Λ) (hΓ : G.IsTerm d Γ) :
     (∃ x ∈ G.N, Γ = Λ.map ((x : G.V →ₗ[E] G.V).restrictScalars (𝓞 E))) ∧
       ∃ x ∈ G.N', Γ = Λ.map ((x : G.V →ₗ[E] G.V).restrictScalars (𝓞 E)) := by
   obtain ⟨⟨n0, hn0, n0', hn0', h0⟩, -⟩ := GlobalTheory.T.globalHermitianFrames_rational_witnesses_phase A r k G hk d Λ hΛ
   obtain ⟨⟨n1, hn1, n1', hn1', h1⟩, -⟩ := GlobalTheory.T.globalHermitianFrames_rational_witnesses_phase A r k G hk d Γ hΓ
-  refine ⟨⟨n1 * n0⁻¹, G.N.mul_mem hn1 (G.N.inv_mem hn0), eq_map_of_local A hΛ.1 hΓ.1 _ fun p => ?_⟩,
-    ⟨n1' * n0'⁻¹, G.N'.mul_mem hn1' (G.N'.inv_mem hn0'), eq_map_of_local A hΛ.1 hΓ.1 _ fun p => ?_⟩⟩
+  have hΛfull := full_lattice_of_term G hΛ
+  have hΓfull := full_lattice_of_term G hΓ
+  refine ⟨⟨n1 * n0⁻¹, G.N.mul_mem hn1 (G.N.inv_mem hn0), eq_map_of_local A hΛfull hΓfull _ fun p => ?_⟩,
+    ⟨n1' * n0'⁻¹, G.N'.mul_mem hn1' (G.N'.inv_mem hn0'), eq_map_of_local A hΛfull hΓfull _ fun p => ?_⟩⟩
   · obtain ⟨m0, -, e0⟩ := hn0 p
     obtain ⟨m0', -, e0'⟩ := hn0' p
     obtain ⟨m1, -, e1⟩ := hn1 p
@@ -92,21 +137,21 @@ end Places
 section Glob
 variable {D : D7}
 
-theorem nlam_one' {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (VS D) D.R.rS T) :
+theorem nlam_one' {T : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F : LFlag (D.sp.Y 0) D.R.rS T) :
     (1 : (VS D).V ≃ₗ[D.host.E] (VS D).V) ∈ NLam Λ F := by
   refine ⟨⟨(Formalism.HermitianLatticesTheory.isom _).one_mem, ?_⟩, fun j x _ => by simp, fun x _ => by simp⟩
   ext x
   simp [Formalism.HermitianLatticesTheory.gmap]
 
-theorem nlam_mul' {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (VS D) D.R.rS T}
+theorem nlam_mul' {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (D.sp.Y 0) D.R.rS T}
     {a b : (VS D).V ≃ₗ[D.host.E] (VS D).V} (ha : a ∈ NLam Λ F) (hb : b ∈ NLam Λ F) : a * b ∈ NLam Λ F :=
   Formalism.MainNotions.BridgeLemma₂.c3eqv_NLam_trans hb ha
 
-theorem nlam_inv' {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (VS D) D.R.rS T}
+theorem nlam_inv' {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (D.sp.Y 0) D.R.rS T}
     {a : (VS D).V ≃ₗ[D.host.E] (VS D).V} (ha : a ∈ NLam Λ F) : a⁻¹ ∈ NLam Λ F :=
   Formalism.MainNotions.BridgeLemma₂.c3eqv_NLam_symm ha
 
-theorem nlam_rat {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (VS D) D.R.rS T}
+theorem nlam_rat {T : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {F : LFlag (D.sp.Y 0) D.R.rS T}
     {a : (VS D).V ≃ₗ[D.host.E] (VS D).V} (ha : a ∈ NLam Λ F) : a ∈ NRat F :=
   ⟨ha.1.1, ha.2.1, ha.2.2⟩
 
@@ -130,7 +175,7 @@ theorem rel_of_eqv {X : HidaSetting D} {u u' : D.what₂.Word} {F0 : FlagG (VS D
     refine ⟨a * a', nlam_mul' ha ha', b' * b, nlam_mul' hb' hb, ?_⟩
     rw [e1, e2]; group
 
-variable {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (VS D) D.R.rS T} {F0' : LFlag (VS D) D.R.rS T'}
+variable {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (D.sp.Y 0) D.R.rS T} {F0' : LFlag (D.sp.Y 0) D.R.rS T'}
   {FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS} {G : GFrames (placesOf Z) D.R.rS D.R.k}
 
 theorem grp_mul (c : GCoord Z F0 F0' FP G) (σ a b : (VS D).V ≃ₗ[D.host.E] (VS D).V) :
@@ -167,7 +212,7 @@ end GlobalTheory.HL.TermSurj
 
 namespace GlobalTheory.HL.TermSurj
 
-theorem exists_term_of_global : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), Formalism.MainNotions.S.Cnt.Stand D u u' → 4 * D.R.rS + 7 ≤ D.R.k → ∀ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (F'0 : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (FP : ∀ p : PlF D, LocNG.FPair (locH (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p) D.R.rS), ZhatOM (ZhatL F00 F'0) = ptMat w → Gval F00 F'0 ≠ 0 → (∀ p, AtBase (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p F00 F'0 (Tu D u) (Tu D u') (FP p) ∧ (FP p).RelG (LocNG.theta (Y.M p))) → ∀ (G : GFrames (placesOf (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D)) D.R.rS D.R.k) (c : GCoord (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) F00 F'0 FP G), ∀ (t₀ : TauC Y u u') (ρ : ((VS D).V ≃ₗ[D.host.E] (VS D).V)) (U U' : Formalism.L2.SG.PairVal.MatR D), MovesTo F00 F'0 (lf D (X.Fu u)) t₀.frame ρ U U' → ∀ Γ, G.IsTerm (G.datOf (c.lat ρ t₀.lam)) Γ → ∃ (t : TauC Y u u') (n m : ((VS D).V ≃ₗ[D.host.E] (VS D).V)), (Y.tO u u').rowOf t = (Y.tO u u').rowOf t₀ ∧ (n ∈ NRat (lf D (X.Fu u)) ∧ m ∈ NRat (lf D (X.Fu u')) ∧ t.lin = n⁻¹ * t₀.lin * m) ∧ Γ = c.lat (ρ * n) t.lam := by
+theorem exists_term_of_global : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), Formalism.MainNotions.S.Cnt.Stand D u u' → 4 * D.R.rS + 7 ≤ D.R.k → ∀ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F'0 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (FP : ∀ p : PlF D, LocNG.FPair (locH (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p) D.R.rS), ZhatOM (ZhatL F00 F'0) = ptMat w → Gval F00 F'0 ≠ 0 → (∀ p, AtBase (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p F00 F'0 (Tu D u) (Tu D u') (FP p) ∧ (FP p).RelG (LocNG.theta (Y.M p))) → ∀ (G : GFrames (placesOf (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D)) D.R.rS D.R.k) (c : GCoord (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) F00 F'0 FP G), ∀ (t₀ : TauC Y u u') (ρ : ((VS D).V ≃ₗ[D.host.E] (VS D).V)) (U U' : Formalism.L2.SG.PairVal.MatR D), MovesTo F00 F'0 (lf D (X.Fu u)) t₀.frame ρ U U' → ∀ Γ, G.IsTerm (G.datOf (c.lat ρ t₀.lam)) Γ → ∃ (t : TauC Y u u') (n m : ((VS D).V ≃ₗ[D.host.E] (VS D).V)), (Y.tO u u').rowOf t = (Y.tO u u').rowOf t₀ ∧ (n ∈ NRat (lf D (X.Fu u)) ∧ m ∈ NRat (lf D (X.Fu u')) ∧ t.lin = n⁻¹ * t₀.lin * m) ∧ Γ = c.lat (ρ * n) t.lam := by
   intro D X Y u u' hSt hk w F00 F'0 FP hZ hG hAt G c t₀ ρ U U' hMv Γ hΓ
   obtain ⟨hNiff, hN'iff, hlat, hsurj, -, -⟩ :=
     GlobalTheory.T.rational_unipotent_groups_lattices_global_coordinates D X Y u u' hSt hk w F00 F'0 FP hZ hG hAt G c t₀ ρ U U' hMv

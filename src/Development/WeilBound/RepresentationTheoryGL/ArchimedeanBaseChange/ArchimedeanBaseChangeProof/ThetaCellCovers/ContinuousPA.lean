@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem degCell_of (h1 : DegBasis) (h2 : DegAdelic) (h3 : DegBdd) (h4 : TorNorm)
       rw [transpose_one, ← (Pi.basisFun E (Fin n)).span_eq]
       congr 2
       funext i j
-      simp [one_apply, Pi.single_apply, eq_comm]
+      simp [Matrix.one_apply, Pi.single_apply, eq_comm]
     have hl : LinearIndependent E (1 : Matrix (Fin n) (Fin n) E)ᵀ :=
       Matrix.linearIndependent_cols_iff_isUnit.2 isUnit_one
     have e := h2 E n n o (An.tor E x) (An.tor E x) 1 hl (by
@@ -102,9 +106,9 @@ theorem redCell_of (h1 : SizeBasic) (h2 : DegBdd) (h3 : DegRat) (h4 : DegRight) 
 
 section Tor
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
-def pA (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (s : ℝ) : Ad E := 1 - sInf E 1 + sInf E fun _ => (s : ℂ)
+def pA (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (s : ℝ) : Ad E := 1 - sInf E 1 + sInf E fun _ => (s : ℂ)
 
 theorem posIdele_val (t : ℝ) : ((posIdele (K := E) (Real.exp t) (Real.exp_pos t) : (Ad E)ˣ) : Ad E) = pA E (Real.exp t) := by
   rw [GlobalTheory.CuspBoundSiegel.posIdele_exp, pA, Complex.ofReal_exp]
@@ -113,12 +117,12 @@ theorem posIdele_val (t : ℝ) : ((posIdele (K := E) (Real.exp t) (Real.exp_pos 
 theorem cV_pA (v : InfinitePlace E) (s : ℝ) : cV v (pA E s) = s := by
   have h : ∀ x, pInf E (sInf E x) = x := fun x => (infEq E).symm_apply_apply x
   change pInf E (pA E s) v = s
-  simp only [pA, map_add, map_sub, map_one, h, sub_self, zero_add]
+  simp only [pA, map_add (f := _), map_sub, map_one, h, sub_self, zero_add]
 
 theorem cW_pA (w : HeightOneSpectrum (𝓞 E)) (s : ℝ) : cW w (pA E s) = 1 := by
   have h : ∀ x, pFin E (sInf E x) = 0 := fun x => rfl
   change pLoc E w (pFin E (pA E s)) = 1
-  simp only [pA, map_add, map_sub, map_one, h, sub_zero, add_zero]
+  simp only [pA, map_add (f := _), map_sub, map_one, h, sub_zero, add_zero]
 
 theorem continuous_pA : Continuous (pA E) := by
   refine continuous_const.add ?_
@@ -154,7 +158,7 @@ theorem logSizeM_tor {n : ℕ} (x : Fin n → ℝ) : logSizeM (An.tor E x : GA E
         have := (le_abs_self _).trans (norm_le_pi_norm x p.1)
         exact Real.exp_le_exp.2 (by push_cast; linarith)
       · simp [(Real.exp_pos _).le]
-    refine (Real.posLog_le_posLog (Real.iSup_nonneg fun _ => by positivity) this).trans ?_
+    refine (Real.posLog_le_posLog (le_trans (by norm_num : (-1 : ℝ) ≤ 0) (Real.iSup_nonneg fun _ => sq_nonneg _)) this).trans ?_
     rw [Real.posLog_def]
     exact max_le (by positivity) (Real.log_exp _).le
   have a2 : ∀ w, Real.posLog (⨆ p : Fin n × Fin n, ‖cW w ((An.tor E x : GA E n).val p.1 p.2)‖) = 0 := fun w => by

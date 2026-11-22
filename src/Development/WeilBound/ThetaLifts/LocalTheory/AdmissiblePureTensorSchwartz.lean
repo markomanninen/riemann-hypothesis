@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.Cross
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedMultiplicityOneProportional
-import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv2
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.Cross
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedMultiplicityOneProportional
+public import Development.WeilBound.ThetaLifts.LocalTheory.SplitInv2
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,8 @@ theorem vac_ne (h : M.IsGood B.ψ) (v) : M.vac v ≠ 0 := (h.vac v).2.1
 
 theorem vac_sb (h : M.IsGood B.ψ) (v) : M.vac v ∈ SB _ := (h.vac v).1
 
-variable (B M) in
 
+variable (B M) in
 def SS : ∀ v : Pl F, Submodule ℂ (Fl F v n d) := Function.update (fun _ => SB _) B.v₁ (Submodule.span ℂ (M.SoLoc B.ψ B.τ₁))
 
 theorem SS_self : SS B M B.v₁ = Submodule.span ℂ (M.SoLoc B.ψ B.τ₁) := Function.update_self ..
@@ -138,7 +142,7 @@ theorem so_slice (h : M.IsGood B.ψ) {f : SInf F _} (hf : f ≠ 0) {x} (hx : pur
 theorem I_add₂ {o : Rep σ Y W} {χ χ' : Chr F E} (hw : M.IsWeil B.ψ χ χ' o) {Φ Ψ : Fn F n d} (hΦ : Φ ∈ schA F _) (hΨ : Ψ ∈ schA F _)
     (c : M.Conv o Φ) (c' : M.Conv o Ψ) (h : UA σ W.J) : M.I o (Φ + Ψ) h = M.I o Φ h + M.I o Ψ h := by
   have e : ∀ g, theta o (Φ + Ψ) g h = theta o Φ g h + theta o Ψ g h := fun g => by
-    simp only [theta, map_add]
+    simp only [theta, map_add (f := _)]
     exact thetaSum_add F (hw.isUSplitting.pres _ _ hΦ) (hw.isUSplitting.pres _ _ hΨ)
   simp only [Model.I, e]
   exact integral_add (c h) (c' h)

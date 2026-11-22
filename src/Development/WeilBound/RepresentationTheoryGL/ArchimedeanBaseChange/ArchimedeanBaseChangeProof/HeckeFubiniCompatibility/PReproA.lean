@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,9 +53,10 @@ theorem integral_fin_repro : ∀ (n : ℕ) (a : Fin n → G → ℂ), (∀ i, Co
     rw [Measure.pi_of_empty (fun _ : Fin 0 => μ) 1, integral_dirac]
     simp
   | n + 1, a, ha, ha', f, hf, s, h => by
-    set e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => G) 0 with he
+    set e : (Fin (n + 1) → G) ≃ᵐ G × (Fin n → G) :=
+      MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => G) 0 with he
     have hmp : MeasurePreserving e (Measure.pi fun _ => μ) (μ.prod (Measure.pi fun _ : Fin n => μ)) :=
-      measurePreserving_piFinSuccAbove (fun _ : Fin (n + 1) => μ) 0
+      measurePreserving_piFinSuccAbove (α := fun _ : Fin (n + 1) => G) (fun _ => μ) 0
     set F : (Fin (n + 1) → G) → ℂ := fun y => (∏ i, a i (y i)) * f y with hF
     have hFi : Integrable F (Measure.pi fun _ => μ) :=
       (continuous_prod_mul a ha f hf).integrable_of_hasCompactSupport (hasCompactSupport_prod a ha' f)

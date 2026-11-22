@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.CupProduct
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CupProduct
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

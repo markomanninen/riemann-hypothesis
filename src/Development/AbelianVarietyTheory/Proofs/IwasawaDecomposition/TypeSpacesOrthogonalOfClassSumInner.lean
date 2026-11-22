@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TypeOrthOfAvTied
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCongruenceConjContainsCongruence
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicParts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumEqConstMulPeterssonStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgWtExistsInvFormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TypeOrthOfAvTied
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryCongruenceConjContainsCongruence
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAdmissibleUnitaryMemSupIsotypicParts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ClassSumEqConstMulPeterssonStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgWtExistsInvFormStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 
 noncomputable section
@@ -105,7 +110,7 @@ theorem rt_mem_AFall {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ
     {ρ : Representation ℂ (GQ L n) W} (h : GAf L n) {f : GAf L n → W} (hf : f ∈ NG.AFall L n ρ) :
     NG.rt L n h f ∈ NG.AFall L n ρ := by
   obtain ⟨h1, N, hN, h2⟩ := hf
-  obtain ⟨N', hN', hc⟩ := GlobalTheory.CongConjugate.congConj L n h N hN
+  obtain ⟨N', hN', hc⟩ := Formalism.IndefR.principalLevelFrame.congConj_holds L n h N hN
   refine ⟨fun γ g => ?_, N', hN', fun κ hκ g => ?_⟩
   · show f ((γ : GAf L n) * g * h) = ρ γ (f (g * h))
     rw [mul_assoc]; exact h1 γ _
@@ -142,7 +147,7 @@ theorem mem_sSup_irrRep : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L]
   let F : Submodule ℂ C :=
     { carrier := {v | ∀ k ∈ GlobalTheory.IsotOrth.congSub L n N, ρC k v = v}
       zero_mem' := fun k _ => map_zero _
-      add_mem' := fun ha hb k hk => by rw [map_add, ha k hk, hb k hk]
+      add_mem' := fun ha hb k hk => by rw [map_add (f := _), ha k hk, hb k hk]
       smul_mem' := fun c v hv k hk => by rw [map_smul, hv k hk] }
   haveI := hfin N hN
   let ι : F →ₗ[ℂ] ↥(Submodule.span ℂ {f | f ∈ NG.AFall L n a.ρ ∧ ∀ κ, NG.Cong L n N κ → ∀ g, f (g * κ) = f g}) :=
@@ -290,7 +295,8 @@ theorem typeSp_decomp : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (
   have hy1 : ∀ i : P, ∀ w ∈ NG.isoTyp a.ρ (S i), B y w = 0 := by
     intro i w hw
     have e : B y w = B (x - p i) w - ∑ j ∈ Finset.univ.erase i, B (p j) w := by
-      simp only [hy, map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hy, map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply]
       rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
       ring
     rw [e, hpo i w hw, Finset.sum_eq_zero fun j hj => horth j i (Finset.ne_of_mem_erase hj) _ (hpmem j) w hw,

@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScale
-import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
-import Development.AutomorphicArithmetic.CoprimeRanks.SecondSetNoRelation
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScale
+public import Development.AutomorphicArithmetic.CharacterBoxes.ExistsPageN
+public import Development.AutomorphicArithmetic.CoprimeRanks.SecondSetNoRelation
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.HC GlobalTheory.EX UpperTheory.Top HostParam.Seam
 

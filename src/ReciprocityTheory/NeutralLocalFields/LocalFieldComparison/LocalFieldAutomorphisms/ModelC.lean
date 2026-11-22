@@ -1,5 +1,9 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ModelA
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ModelA
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,5 @@ theorem norm_le_one_of_monic_root (P : Polynomial (PadicAlgCl p)) (hP : P.Monic)
     rw [← norm_neg, ← e2, norm_pow] at this
     have h3 : ‖x‖ ^ m < ‖x‖ ^ (m + 1) := pow_lt_pow_right₀ hlt (Nat.lt_succ_self m)
     linarith
-
-example (ι : Ω →+* PadicAlgCl p) : algebraMap 𝒪[Kloc F ι] (AlgebraicClosure (Kloc F ι)) =
-    (algebraMap (Kloc F ι) (AlgebraicClosure (Kloc F ι))).comp (algebraMap 𝒪[Kloc F ι] (Kloc F ι)) := rfl
 
 end ReciprocityTheory.Neutral.Cmp

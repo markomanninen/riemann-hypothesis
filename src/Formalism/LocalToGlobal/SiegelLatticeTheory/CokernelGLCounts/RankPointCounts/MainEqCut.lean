@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGram
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentBlockMeasure
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictK
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLocPfA
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLocPfB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGram
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentBlockMeasure
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictK
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLocPfA
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SatGramLocPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ def GenInputs {E : Type} [Field E] [NumberField E] {r : ℕ} (X : PB.Terms τ Rw
 end Abs
 
 def RowGenAbstract : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (τ Rw I H H₁ : Type) [Fintype I]
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (τ Rw I H H₁ : Type) [Fintype I]
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁]
     [CompleteSpace H₁] (X : PB.Terms τ Rw I H H₁) (r : ℕ) (Cl Nu : Type) (N : PN.NGData τ E r Cl Nu)
     (C1 C0 Aexp : ℕ) (Pc gf cSt AAre e1 TB : ℝ),
@@ -95,7 +99,7 @@ def RowGenAbstract : Prop :=
 def RowGenJoint : Prop :=
   ∀ (C1 C0 A : ℕ) (CB CSt Cg CT : ℝ), 0 ≤ CB → 0 ≤ CSt → 0 ≤ Cg → 0 ≤ CT →
     C1 + C0 + 38 ≤ A → ∃ Cn : ℝ, 0 ≤ Cn ∧
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (τ Rw I H H₁ : Type) [Fintype I]
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (τ Rw I H H₁ : Type) [Fintype I]
       [NormedAddCommGroup H] [InnerProductSpace ℂ H] [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁]
       [CompleteSpace H₁] (X : PB.Terms τ Rw I H H₁) (r k : ℕ) (Cl Nu : Type) (N : PN.NGData τ E r Cl Nu)
       (P : Type) [Fintype P] (B : S3.MassData P) (b rd g TT cSt e1 Irat Ire : ℝ),
@@ -139,23 +143,8 @@ def NOfG (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R
 
 end Conc
 
-def GenCutC : Prop :=
-  ∀ Cg cb Cw cT CT C0 A : ℝ, ∃ (C1 C0n Aexp : ℕ) (CB CSt Cgs CTs : ℝ), 0 ≤ CB ∧ 0 ≤ CSt ∧ 0 ≤ Cgs ∧ 0 ≤ CTs ∧
-    C1 + C0n + 38 ≤ Aexp ∧ ∃ C'₀ Cl₀ : ℝ, ∀ C' Cl : ℝ, C'₀ ≤ C' → Cl₀ ≤ Cl →
-    ∀ (D : D7) (large₂ : SizeData₂ D) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word),
-      Formalism.MainNotions.S.Cnt.Hyp D large₂ u u C' Cl Cg cb Cw cT CT C0 A → ConcTie X Y →
-      ∃ (P : Type) (_ : Fintype P) (B : S3.MassData P) (cSt e1 Irat Ire : ℝ)
-        (νL νB : X.B.I.Ginf → Measure X.B.I.Ginf) (ng : PN.Pts D.host.E D.R.rS → ℝ),
-        Formalism.L2.SG.RealObj.NuQOK X u u νL ∧ Formalism.L2.SG.RealObj.NuQOK X u u νB ∧
-        (Y.tO u u).Gam1 = B.Gam1 ∧ B.d * B.d' / B.Dstar = ddC X Y u u ∧ PN.NormInputs B ∧
-        PN.FrameInputs B (2 * D.host.v) (X.B.g : ℝ) D.R.rS D.R.k D.R.f Irat Ire ∧
-        PN.NGSizes Cgs CTs CSt D.R.rS D.R.f large₂.sc.b (2 * D.host.v) (X.B.g : ℝ)
-          (((Tu D u : ℕ) : ℝ) * ((Tu D u : ℕ) : ℝ)) cSt e1 ∧
-        GenInputs (Y.tO u u) (NOfG Y u νL νB ng) D.R.f C1 C0n Aexp CB large₂.sc.b (2 * D.host.v) (X.B.g : ℝ)
-          (((Tu D u : ℕ) : ℝ) * ((Tu D u : ℕ) : ℝ)) cSt (PN.abelian₂ (2 * D.host.v) D.R.rS D.R.k D.R.f * B.AA) e1 Ire
 
 open Formalism.L2.SG.NormCut in
-
 def DegLeftActC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), ConcTie X Y →
     OOIntAll X u u (X.Fu u) (X.Fu u) (Y.what₂ u) (Y.what₂ u) → AmpWellDef (X.Fu u) (X.Fu u) (Y.cs u) (Y.cs u) →
@@ -163,8 +152,8 @@ def DegLeftActC : Prop :=
     Formalism.L2.SG.Pf.SatGram.LeftAct (X.Fu u) (X.Fu u) Y.TR (Y.cs u) (Y.cs u) (Y.FN u) (Y.FN u) (Y.tO u u).degSet
       (Aset Y.TR (Y.cs u))
 
-open Formalism.L2.SG.NormCut in
 
+open Formalism.L2.SG.NormCut in
 def DegRightActC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), ConcTie X Y →
     OOIntAll X u u (X.Fu u) (X.Fu u) (Y.what₂ u) (Y.what₂ u) → AmpWellDef (X.Fu u) (X.Fu u) (Y.cs u) (Y.cs u) →
@@ -172,12 +161,12 @@ def DegRightActC : Prop :=
     Formalism.L2.SG.Pf.SatGram.RightAct (X.Fu u) (X.Fu u) Y.TR (Y.cs u) (Y.cs u) (Y.FN u) (Y.FN u) (Y.tO u u).degSet
       (Aset Y.TR (Y.cs u))
 
-open Formalism.L2.SG.NormCut in
 
+open Formalism.L2.SG.NormCut in
 def ChiNBiC : Prop := ∀ (D : D7) (X : HidaSetting D), ChiNBi X
 
-open Formalism.L2.SG.NormCut in
 
+open Formalism.L2.SG.NormCut in
 def ColFreeC : Prop :=
   ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u : D.what₂.Word), ConcTie X Y →
     ColFree (X.Fu u) Y.TR (Y.cs u) (Aset Y.TR (Y.cs u)) (scOf Y.TR (Y.cs u))
@@ -303,24 +292,8 @@ namespace Formalism.L2.SG.Pf
 
 open Formalism.L2.SG.Pf.MainEqCut
 
-theorem rowMainEqC_of_cut (hCh : PN.NGChain) (hMG : MeanAmpGen) (hc : GenCutC) : RowMainEqC := by
-  intro Cg cb Cw cT CT C0 A
-  obtain ⟨C1, C0n, Aexp, CB, CSt, Cgs, CTs, h1, h2, h3, h4, hA, C'₀, Cl₀, h⟩ := hc Cg cb Cw cT CT C0 A
-  obtain ⟨Cn, hCn, hK⟩ := rowGenJoint_of hCh hMG C1 C0n Aexp CB CSt Cgs CTs h1 h2 h3 h4 hA
-  refine ⟨Cn, hCn, C'₀, Cl₀, fun C' Cl a b D large₂ X Y u hH hT ha => ?_⟩
-  obtain ⟨P, iP, B, cSt, e1, Irat, Ire, νL, νB, ng, _, _, hG, hdd, hN, hF, hS, hIn⟩ :=
-    h C' Cl a b D large₂ X Y u hH hT
-  have hcard := Formalism.MainNotions.LatticeGluingRadicals.d_card D
-  have key := hK D.host.E (TauC Y u u) _ _ _ _ (Y.tO u u) D.R.rS D.R.k (Set (TauC Y u u)) (NuC D)
-    (NOfG Y u νL νB ng) P B large₂.sc.b (2 * D.host.v) (X.B.g : ℝ) (((Tu D u : ℕ) : ℝ) * ((Tu D u : ℕ) : ℝ))
-    cSt e1 Irat Ire
-  rw [hcard] at key
-  have r := key ha hG hN hF hS hIn
-  rw [hdd] at r
-  exact r
 
 open Formalism.L2.SG.NormCut in
-
 theorem normExpDegC_of (hHS : HSBlocks) (hFo : FoldOKC) (hO : OOIntAllC) (hA : AbsConvC) (hAW : AmpWellDefC)
     (hOF : OOFundIndepC) (hB : ChiNBiC) (hF : ColFreeC) (hLA : DegLeftActC) (hRA : DegRightActC) : NormExpDegC := by
   intro D X Y u hT
@@ -411,7 +384,7 @@ theorem meanAmplitudeGeneric_holds : MeanAmpGen := by
     exact mul_le_mul_of_nonneg_left (h3 p) (by have := hH p; positivity)
   have hprod : ∏ p, ∑ d, L.wt p d * ‖L.aZ p d‖ ^ 2 ≤ ∏ p, (L.H p ^ (C1 * (r + 1) ^ 2) *
       (if p ∈ L.Om then 8 * L.H p ^ (C0 * (r + 1) ^ 2 + 2 * (2 * r + 2)) else 1)) * L.ngen p :=
-    Finset.prod_le_prod (fun p _ => Finset.sum_nonneg (fun d _ => mul_nonneg (hb.1 p d) (by positivity)))
+    Finset.prod_le_prod₀ (fun p _ => Finset.sum_nonneg (fun d _ => mul_nonneg (hb.1 p d) (by positivity)))
       (fun p _ => hloc p)
   have hfin := Formalism.FourierDecayAlt.P.HermitianFormNormLemmas.B.finish L (fun p => L.H p ^ (C1 * (r + 1) ^ 2))
     (fun p => if p ∈ L.Om then 8 * L.H p ^ (C0 * (r + 1) ^ 2 + 2 * (2 * r + 2)) else 1)

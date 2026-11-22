@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifRiem
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
 open scoped ComplexOrder
@@ -31,7 +36,7 @@ theorem ip_smul_right' (R : RiemLat E g Λ) (c : ℂ) (x y : Fin g → ℂ) : R.
   simp [RiemLat.ip, smul_dotProduct]
 
 theorem ip_add_left' (R : RiemLat E g Λ) (x x' y : Fin g → ℂ) : R.ip (x + x') y = R.ip x y + R.ip x' y := by
-  rw [← ip_conj' R y, ip_add_right', map_add, ip_conj', ip_conj']
+  rw [← ip_conj' R y, ip_add_right', map_add (f := _), ip_conj', ip_conj']
 
 theorem ip_smul_left' (R : RiemLat E g Λ) (c : ℂ) (x y : Fin g → ℂ) :
     R.ip (c • x) y = starRingEnd ℂ c * R.ip x y := by

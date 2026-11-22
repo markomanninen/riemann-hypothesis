@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.OffRange
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+
+@[expose] public section
 
 noncomputable section
 

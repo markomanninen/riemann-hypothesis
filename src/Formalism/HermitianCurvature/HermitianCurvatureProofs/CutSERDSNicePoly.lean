@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpRGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPolyProp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpRGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPolyProp
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.P.BetaSesquilinearity
 
@@ -32,8 +36,5 @@ theorem spectral_nice_polynomial : RDSNicePoly := by
   · intro g hg hne
     by_contra hlt
     exact hne (rdsp_opAdj_vanish Θ hO hz g hg (not_le.1 hlt))
-
-theorem rDSPolyProp_of_nice : RDSPolyProp := fun k r Wp Wq _ _ _ _ _ _ D _ _ Θ hΘ hC =>
-  opProp1_of_poly spectral_nice_polynomial D hΘ hC
 
 end Formalism.FourierDecayAlt.P.CutSE

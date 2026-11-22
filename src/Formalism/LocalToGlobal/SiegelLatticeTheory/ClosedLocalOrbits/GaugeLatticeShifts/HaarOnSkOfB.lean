@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacExGoodOfN
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarUniquenessConjugation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem coordSc_qOf (r : ℕ) {sc : ℝ} (hsc : 0 < sc) (c : Fin (r + 1) → ℂ
   unfold coordSc qOf
   congr 1
   funext a
-  simp only [Fin.init]
+  dsimp only [Fin.init]
   rw [inv_pow, ← mul_assoc, inv_mul_cancel₀ (pow_ne_zero _ (hs _)), one_mul]
 
 theorem qOf_coordSc (r : ℕ) {sc : ℝ} (hsc : 0 < sc) (q : (Fin r → ℂ) × ℂ) : qOf r sc (coordSc r sc q) = q := by

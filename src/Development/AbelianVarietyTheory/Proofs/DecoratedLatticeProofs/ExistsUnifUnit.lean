@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair ValuativeRel NumberField Filter
 open scoped TensorProduct
@@ -18,7 +22,7 @@ theorem cA_cA (z : AE D) : cA D (cA D z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [cA_tmul, cA_tmul, star_star]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem finPart_tmul (a : AF D.host.F) (x : D.host.E) :
     finPart D (a ⊗ₜ[D.host.F] x) = sndA D.host.F a ⊗ₜ[D.host.F] x := rfl
@@ -36,7 +40,7 @@ theorem approx_gen {F A B E : Type} [Field F] [CharZero F] [CommRing A] [CommRin
     obtain ⟨d, a, ha, a', ha', h, h'⟩ := hx
     obtain ⟨e, b, hb, b', hb', g, g'⟩ := hy
     refine ⟨d + e, a + b, add_mem ha hb, a' + b', add_mem ha' hb', ?_, ?_⟩
-    · rw [mul_add, ← h, ← g, ← map_add, TensorProduct.tmul_add]; congr 1; ring
+    · rw [mul_add, ← h, ← g, ← map_add (f := _), TensorProduct.tmul_add]; congr 1; ring
     · rw [mul_add, ← h', ← g', ← map_add fp, TensorProduct.tmul_add, map_add c, map_add c]; congr 1; ring
   | tmul a x =>
     obtain ⟨m, hm, hx⟩ := hE x
@@ -155,8 +159,8 @@ theorem exists_unif_unit : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [T
   obtain ⟨c, A, hA, A', hA', h, h'⟩ := approx N hN (p.sec (q.1 : k) + cA D p.e)
   have v1 := val_le p N hN _ A hA h
   have v2 := val_le p N hN _ A' hA' h'
-  rw [map_sub, map_add, p.pr_sec, hce, add_zero] at v1
-  rw [map_sub, map_add, map_add, hcq, cA_cA, he, zero_add] at v2
+  rw [map_sub, map_add (f := _), p.pr_sec, hce, add_zero] at v1
+  rw [map_sub, map_add (f := _), map_add (f := _), hcq, cA_cA, he, zero_add] at v2
   refine ⟨c, ?_, ?_⟩
   · exact Valuation.map_eq_of_sub_lt _ (by rw [Valuation.map_sub_swap]; exact v1.trans_lt hNq)
   · rw [← map_one (valuation k)]

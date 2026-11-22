@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportOfSeparating
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QAllQConjOfDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModularGroupRowVecAndConjRightActions
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VactVmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QConjTorsion
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VmulNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModQPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportOfSeparating
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QAllQConjOfDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModularGroupRowVecAndConjRightActions
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VactVmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QConjTorsion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VmulNeZero
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups ModularForm Manifold BigOperators
 open GlobalTheory.QFam
 open ReciprocityTheory.ChartRestriction.L1 (DD jT IsMF IsTauOf)

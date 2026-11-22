@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.TopLeftXAInv
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.TopLeftXAInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem rowMul_elem_inv (ξ : Fin n → k) :
       (if i = i0 j hj hj1 then ξ (i0 j hj hj1) else 0) + (if i = p then ξ p else 0) := by
     intro i
     show (if i.val < j then ξ i * (1 - Matrix.single p (i0 j hj hj1) (-1 : k)) i (i0 j hj hj1) else 0) = _
-    rw [Matrix.sub_apply, Matrix.single_apply, one_apply]
+    rw [Matrix.sub_apply, Matrix.single_apply, Matrix.one_apply]
     by_cases hi : i.val < j
     · rw [if_pos hi]
       by_cases h1 : i = i0 j hj hj1

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilGramSignature
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ theorem inner_of_unitary {X : Type} [NormedAddCommGroup X] [InnerProductSpace �
     RCLike.conj_mul, hκ] at key
   simpa using key
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem gram_of_conjAt {ph : ℂ} {c₀ : VsV D i D.what₂.LL →ₛₗ[D.what₂.embLL] (R.cV i).W} (h : ConjAt R i σ ph c₀)
     {μ' η' : (AE D)ˣ →* Circle} {c : CoefA (Vc D i)} {c₁ : VsV D i D.what₂.LL →ₛₗ[σ] c.W}
     {H : HMod (Bridge.Gf (Vc D i) → c.W)} {j : A.fam.amb.FL i A.μ0 →ₛₗ[σ] H.H} {th : H.H →ₗ[ℂ] (R.HW i σ).H}

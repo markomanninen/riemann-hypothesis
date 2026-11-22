@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.GL3MeanSquares.RationalMatrixPrimeOrderBound
-import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
-import Formalism.HermitianLattices.StatementLat
-import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Formalism.LocalToGlobal.Columns.GenericUnipotentCharacter
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.RationalMatrixPrimeOrderBound
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.HermitianLattices.HermitianLatticesProofs.AutFinite
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+public import Formalism.LocalToGlobal.Columns.StdLatUnimodular
+public import Formalism.LocalToGlobal.Columns.GenericUnipotentCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,10 +111,6 @@ theorem MapsI.mul {N : Submodule O V} {I J : Ideal O} {X Y : Module.End E V}
 theorem MapsI.mul_stab {N : Submodule O V} {I : Ideal O} {X Y : Module.End E V}
     (hX : MapsI N I X) (hY : Y ∈ stabEnd N) : MapsI N I (X * Y) :=
   fun x hx => hX _ (hY x hx)
-
-theorem MapsI.mono {N : Submodule O V} {I J : Ideal O} {X : Module.End E V} (h : I ≤ J)
-    (hX : MapsI N I X) : MapsI N J X :=
-  fun x hx => Submodule.smul_mono_left h (hX x hx)
 
 theorem UnipMod.exists_pow_mem_princLev {w : Ideal O} {N : Submodule O V} {γ : V ≃ₗ[E] V}
     {g : ℕ} (hg : g.Prime) (hgw : (g : O) ∈ w) (h : UnipMod w N γ) :
@@ -256,29 +256,6 @@ structure IsFrameMod (w : Ideal O) (N : Submodule O V) {n : ℕ} (be : V → Fin
   ker : ∀ x ∈ N, be x = 0 → x ∈ w • N
   onto : ∀ v : Fin n → O ⧸ w, ∃ x ∈ N, be x = v
 
-def levOf {w : Ideal O} (N : Submodule O V) {n : ℕ} (be : V → Fin n → O ⧸ w)
-    (H : Subgroup (GL (Fin n) (O ⧸ w))) : Subgroup (V ≃ₗ[E] V) where
-  carrier := {γ | γ ∈ autLat N ∧ ∃ h ∈ H, ∀ x ∈ N,
-    be (γ x) = (h : Matrix (Fin n) (Fin n) (O ⧸ w)).mulVec (be x)}
-  one_mem' := ⟨one_mem _, 1, one_mem _, fun x _ => by simp⟩
-  mul_mem' := by
-    rintro a b ⟨ha, h, hh, hah⟩ ⟨hb, k, hk, hbk⟩
-    refine ⟨mul_mem ha hb, h * k, mul_mem hh hk, fun x hx => ?_⟩
-    change be (a (b x)) = _
-    rw [hah _ (autLat_apply hb hx), hbk x hx, Matrix.mulVec_mulVec]
-    rfl
-  inv_mem' := by
-    rintro a ⟨ha, h, hh, hah⟩
-    refine ⟨inv_mem ha, h⁻¹, inv_mem hh, fun x hx => ?_⟩
-    have hy : a⁻¹ x ∈ N := autLat_apply (inv_mem ha) hx
-    have e : a (a⁻¹ x) = x := by
-      change (a * a⁻¹) x = x
-      simp
-    have := hah _ hy
-    rw [e] at this
-    rw [this, Matrix.mulVec_mulVec, ← Matrix.GeneralLinearGroup.coe_mul, inv_mul_cancel]
-    simp
-
 def IsUpperUni {k : Type} [CommRing k] {n : ℕ} (h : Matrix (Fin n) (Fin n) k) : Prop :=
   (∀ i j, j < i → h i j = 0) ∧ ∀ i, h i i = 1
 
@@ -299,20 +276,6 @@ theorem IsFrameMod.sub {w : Ideal O} {N : Submodule O V} {n : ℕ} {be : V → F
   have := hbe.add (x - y) (sub_mem hx hy) y hy
   rw [sub_add_cancel] at this
   rw [this]; abel
-
-theorem IsFrameMod.eq_zero {w : Ideal O} {N : Submodule O V} {n : ℕ} {be : V → Fin n → O ⧸ w}
-    (hbe : IsFrameMod w N be) {x : V} (hx : x ∈ w • N) : be x = 0 := by
-  have key : x ∈ N ∧ be x = 0 := by
-    refine Submodule.smul_induction_on hx ?_ ?_
-    · intro r hr y hy
-      refine ⟨N.smul_mem r hy, ?_⟩
-      rw [hbe.smul r y hy]
-      ext i
-      have : (Ideal.Quotient.mk w r) = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr hr
-      simp [this]
-    · rintro a b ⟨ha, ha0⟩ ⟨hb, hb0⟩
-      exact ⟨add_mem ha hb, by rw [hbe.add a ha b hb, ha0, hb0, add_zero]⟩
-  exact key.2
 
 theorem unipMod_of_frame {w : Ideal O} {N : Submodule O V} {n : ℕ} {be : V → Fin n → O ⧸ w}
     (hbe : IsFrameMod w N be) {γ : V ≃ₗ[E] V} (hγ : γ ∈ autLat N)
@@ -427,7 +390,7 @@ variable {E V : Type} [Field E] [NumberField E] [StarRing E]
 
 theorem isOfFinOrder_of_isom (h : V →ₗ⋆[E] V →ₗ[E] E) (hsymm : h.IsSymm)
     (hpos : ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ E (h x x))
-    {N : Submodule (𝓞 E) V} (hN : Submodule.IsLattice E N) {γ : V ≃ₗ[E] V}
+    {N : Submodule (𝓞 E) V} (hN : Submodule.IsFullLattice E N) {γ : V ≃ₗ[E] V}
     (hγ : γ ∈ HermitianLatticesTheory.isom h) (hγN : γ ∈ autLat N) : IsOfFinOrder γ := by
   have hfin := Formalism.HermitianLatticesTheory.autFinite E V h hsymm hpos N hN
   have : Finite (HermitianLatticesTheory.isom h ⊓ autLat N : Subgroup (V ≃ₗ[E] V)) := hfin.to_subtype
@@ -436,19 +399,19 @@ theorem isOfFinOrder_of_isom (h : V →ₗ⋆[E] V →ₗ[E] E) (hsymm : h.IsSym
 
 theorem isometry_unipotent_mod_eq_one (h : V →ₗ⋆[E] V →ₗ[E] E) (hsymm : h.IsSymm)
     (hpos : ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ E (h x x))
-    {N : Submodule (𝓞 E) V} (hN : Submodule.IsLattice E N)
+    {N : Submodule (𝓞 E) V} (hN : Submodule.IsFullLattice E N)
     {w : Ideal (𝓞 E)} (hw : w ≠ ⊤) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w)
     (hbig : finrank ℚ E * finrank E V + 1 < g) {γ : V ≃ₗ[E] V}
     (hγ : γ ∈ HermitianLatticesTheory.isom h) (hu : UnipMod w N γ) : γ = 1 := by
   have : Module.IsTorsionFree (𝓞 E) V := Module.IsTorsionFree.trans_faithfulSMul (𝓞 E) E V
-  exact stab0 hw hN.fg hN.span_eq_top hg hgw hbig hu
+  exact stab0 hw hN.toIsLattice.fg hN.span_eq_top hg hgw hbig hu
     (isOfFinOrder_of_isom h hsymm hpos hN hγ hu.1)
 
 end Definite
 
 section DecoInst
 
-open NumberField IsDedekindDomain
+open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
   {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
@@ -470,14 +433,19 @@ theorem trace_star_mul_self_pos (hconj : ∀ (φ : E →+* ℂ) (x : E), φ (sta
     push_cast
     rfl
   have hpos : 0 < ∑ σ : E →ₐ[ℚ] ℂ, Complex.normSq (σ a) := by
-    let σ0 : E →ₐ[ℚ] ℂ := IsAlgClosed.lift
+    let σ0 : E →ₐ[ℚ] ℂ := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     refine Finset.sum_pos' (fun σ _ => Complex.normSq_nonneg _) ⟨σ0, Finset.mem_univ _, ?_⟩
     exact Complex.normSq_pos.mpr ((map_ne_zero σ0).mpr ha)
   exact_mod_cast key' ▸ hpos
 
 theorem hStd_trace_pos (hconj : ∀ (φ : E →+* ℂ) (x : E), φ (star x) = starRingEnd ℂ (φ x))
     (x : Sp E n) (hx : x ≠ 0) : 0 < Algebra.trace ℚ E (hStd E n x x) := by
-  rw [hStd_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hStd_apply, map_sum]
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
     by_contra hh
     push Not at hh
@@ -497,9 +465,48 @@ theorem Deco.Ok.isFrameMod {d : Deco E n ST SG} (hd : d.Ok) (w : SG) :
       ker := hd.be_ker w
       onto := hd.be_surj w }
 
+private theorem isFullLattice_of_unimodular {L : Submodule (𝓞 E) (Sp E n)}
+    (hL : Submodule.IsLattice E L) (hu : IsUnimodular (hStd E n) L) :
+    Submodule.IsFullLattice E L := by
+  let := hL
+  refine { span_eq_top := ?_ }
+  let W := Submodule.span E (L : Set (Sp E n))
+  change W = ⊤
+  by_contra h
+  let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+  let g : Sp E n →ₗ[E] Module.Dual E W :=
+    (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+  have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  -- Every multiple of the orthogonal vector lies in the self-dual lattice.
+  have hsmul (a : E) : a • e x ∈ L := by
+    rw [← hu]
+    simp only [dual, Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap,
+      LinearMap.restrictScalars_apply]
+    intro y hy
+    have hs : hStd E n y (a • e x) = star (hStd E n (a • e x) y) := by
+      simp only [hStd, LinearMap.mk₂'ₛₗ_apply, star_sum, star_mul', star_star]
+      exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+    rw [hs]
+    apply Submodule.mem_one.mpr
+    refine ⟨0, ?_⟩
+    have hxy : hStd E n (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+  let i : E →ₗ[𝓞 E] L :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict L hsmul
+  let : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.mpr hL.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 theorem Deco.stab0 (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (hStd E n x x))
     {d : Deco E n ST SG} (hd : d.Ok) {ga : Sp E n ≃ₗ[E] Sp E n} (hga : ga ∈ UF E n)
-    {h : GLG E n SG} (hN : (d.act ga h).N = d.N) (hbe : (d.act ga h).be = d.be)
+    {h : GLG (E := E) (n := n) (SG := SG)} (hN : (d.act ga h).N = d.N) (hbe : (d.act ga h).be = d.be)
     (w : SG) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w.1.asIdeal)
     (hbig : finrank ℚ E * n + 1 < g)
     (hu : IsNilpotent (((h w : GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :
@@ -510,7 +517,7 @@ theorem Deco.stab0 (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (
     simp only [Deco.act, LinearEquiv.symm_apply_apply] at this
     exact this.symm
   have h1 : ga = 1 := by
-    refine isometry_unipotent_mod_eq_one (hStd E n) hStd_isSymm hpos hd.lat
+    refine isometry_unipotent_mod_eq_one (hStd E n) hStd_isSymm hpos (isFullLattice_of_unimodular hd.lat hd.uni)
       (w := w.1.asIdeal) w.1.isPrime.ne_top hg hgw (by rwa [Module.finrank_fin_fun]) hga ?_
     exact unipMod_of_frame (hd.isFrameMod w) hN hu (fun y _ => hb w y)
   refine ⟨h1, ?_⟩
@@ -525,34 +532,16 @@ theorem Deco.stab0 (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (
 
 theorem Deco.stab_trivial (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (hStd E n x x))
     {d : Deco E n ST SG} (hd : d.Ok) {ga : Sp E n ≃ₗ[E] Sp E n} (hga : ga ∈ UF E n)
-    {h : GLG E n SG} (hfix : d.act ga h = d)
+    {h : GLG (E := E) (n := n) (SG := SG)} (hfix : d.act ga h = d)
     (w : SG) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w.1.asIdeal)
     (hbig : finrank ℚ E * n + 1 < g)
     (hu : IsNilpotent (((h w : GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :
       Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal)) - 1)) : ga = 1 ∧ h = 1 :=
   Deco.stab0 hpos hd hga (by rw [hfix]) (by rw [hfix]) w hg hgw hbig hu
 
-theorem Deco.dia_free (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (hStd E n x x))
-    {d : Deco E n ST SG} (hd : d.Ok) {ga : Sp E n ≃ₗ[E] Sp E n} (hga : ga ∈ UF E n)
-    {h : GLG E n SG} {c : DiaG E ST} (hfix : d.act ga h = d.dia c)
-    (w : SG) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w.1.asIdeal)
-    (hbig : finrank ℚ E * n + 1 < g)
-    (hu : IsNilpotent (((h w : GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :
-      Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal)) - 1)) : ga = 1 ∧ h = 1 ∧ c = 1 := by
-  obtain ⟨h1, h2⟩ := Deco.stab0 hpos hd hga (by rw [hfix]; rfl) (by rw [hfix]; rfl) w hg hgw hbig hu
-  refine ⟨h1, h2, ?_⟩
-  funext P
-  obtain ⟨x, -, hx⟩ := hd.f_ne P
-  have := congrFun (congrFun (congrArg Deco.f hfix) P) x
-  rw [h1] at this
-  have e : d.f P x = (c P).1 * d.f P x := this
-  have : ((c P).1 - 1) * d.f P x = 0 := by rw [sub_mul, one_mul, ← e, sub_self]
-  have hP : (c P).1 - 1 = 0 := (mul_eq_zero.mp this).resolve_right hx
-  exact Units.ext (sub_eq_zero.mp hP)
-
 theorem DecoSet.eq_one_of_smul_eq
     (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (hStd E n x x))
-    (d : DecoSet E n ST SG) {a : UF E n × GLG E n SG} (ha : a • d = d)
+    (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) {a : UF E n × GLG (E := E) (n := n) (SG := SG)} (ha : a • d = d)
     (w : SG) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w.1.asIdeal)
     (hbig : finrank ℚ E * n + 1 < g)
     (hu : IsNilpotent (((a.2 w : GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :
@@ -561,17 +550,7 @@ theorem DecoSet.eq_one_of_smul_eq
   obtain ⟨h1, h2⟩ := Deco.stab_trivial hpos d.2 a.1.2 hfix w hg hgw hbig hu
   exact Prod.ext (Subtype.ext h1) h2
 
-theorem DecoSet.dia_free
-    (hpos : ∀ x : Sp E n, x ≠ 0 → 0 < Algebra.trace ℚ E (hStd E n x x))
-    (d : DecoSet E n ST SG) {a : UF E n × GLG E n SG} {c : DiaG E ST} (ha : a • d = d.dia c)
-    (w : SG) {g : ℕ} (hg : g.Prime) (hgw : (g : 𝓞 E) ∈ w.1.asIdeal)
-    (hbig : finrank ℚ E * n + 1 < g)
-    (hu : IsNilpotent (((a.2 w : GL (Fin n) (𝓞 E ⧸ w.1.asIdeal)) :
-      Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal)) - 1)) : c = 1 := by
-  have hfix : d.1.act a.1.1 a.2 = d.1.dia c := by rw [← DecoSet.smul_val, ha]; rfl
-  exact (Deco.dia_free hpos d.2 a.1.2 hfix w hg hgw hbig hu).2.2
-
-theorem DecoSet.eq_one_of_fst_eq_one (d : DecoSet E n ST SG) {a : UF E n × GLG E n SG}
+theorem DecoSet.eq_one_of_fst_eq_one (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) {a : UF E n × GLG (E := E) (n := n) (SG := SG)}
     (ha : a • d = d) (h1 : a.1 = 1) : a = 1 := by
   refine Prod.ext h1 ?_
   funext w'
@@ -585,21 +564,21 @@ theorem DecoSet.eq_one_of_fst_eq_one (d : DecoSet E n ST SG) {a : UF E n × GLG 
   have e : (a.2 w').1.mulVec (d.1.be w' x) = d.1.be w' x := this
   simpa using e
 
-theorem DecoSet.prime_le_of_dvd_card (d : DecoSet E n ST SG) (Γ : Subgroup (UF E n × GLG E n SG))
-    (hΓ : Γ ≤ MulAction.stabilizer (UF E n × GLG E n SG) d) [Finite Γ] {p : ℕ} (hp : p.Prime)
+theorem DecoSet.prime_le_of_dvd_card (d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (Γ : Subgroup (UF E n × GLG (E := E) (n := n) (SG := SG)))
+    (hΓ : Γ ≤ MulAction.stabilizer (UF E n × GLG (E := E) (n := n) (SG := SG)) d) [Finite Γ] {p : ℕ} (hp : p.Prime)
     (hdvd : p ∣ Nat.card Γ) : p ≤ finrank ℚ E * n + 1 := by
   have : Fact p.Prime := ⟨hp⟩
   obtain ⟨x, hx⟩ := exists_prime_orderOf_dvd_card' p hdvd
-  have h0 : (x : UF E n × GLG E n SG) ^ p = 1 := by
+  have h0 : (x : UF E n × GLG (E := E) (n := n) (SG := SG)) ^ p = 1 := by
     have := pow_orderOf_eq_one x
     rw [hx] at this
     exact_mod_cast congrArg Subtype.val this
-  have h1 : ((x : UF E n × GLG E n SG).1 : Sp E n ≃ₗ[E] Sp E n) ^ p = 1 := by
-    have := congrArg (fun a : UF E n × GLG E n SG => (a.1 : Sp E n ≃ₗ[E] Sp E n)) h0
+  have h1 : ((x : UF E n × GLG (E := E) (n := n) (SG := SG)).1 : Sp E n ≃ₗ[E] Sp E n) ^ p = 1 := by
+    have := congrArg (fun a : UF E n × GLG (E := E) (n := n) (SG := SG) => (a.1 : Sp E n ≃ₗ[E] Sp E n)) h0
     simpa using this
-  have h2 : ((x : UF E n × GLG E n SG).1 : Sp E n ≃ₗ[E] Sp E n) ≠ 1 := by
+  have h2 : ((x : UF E n × GLG (E := E) (n := n) (SG := SG)).1 : Sp E n ≃ₗ[E] Sp E n) ≠ 1 := by
     intro h
-    have h3 : (x : UF E n × GLG E n SG) = 1 :=
+    have h3 : (x : UF E n × GLG (E := E) (n := n) (SG := SG)) = 1 :=
       DecoSet.eq_one_of_fst_eq_one d (hΓ x.2) (Subtype.ext h)
     have : x = 1 := Subtype.ext h3
     rw [this, orderOf_one] at hx
@@ -611,7 +590,7 @@ end DecoInst
 
 section BaseInst
 
-open NumberField IsDedekindDomain
+open NumberField IsDedekindDomain Formalism.HermitianLatticesTheory
 
 theorem Fields.Ok.finrank_E {X : Fields} (hX : X.Ok) : finrank ℚ X.E = 2 * X.f := by
   rw [← Module.finrank_mul_finrank ℚ X.F X.E, hX.rankE, Fields.f, hX.card_Tau, mul_comm]
@@ -629,21 +608,12 @@ theorem Primes.Ok.g_mem {X : Fields} {Pr : Primes X} (hPr : Pr.Ok) {i : Fin 2}
   exact Ideal.mul_mem_left _ _ (mem_of_mem_divs hw)
 
 theorem DecoSet.decoration_stabilizer_trivial_unipotent {X : Fields} (hX : X.Ok) {Pr : Primes X} (hPr : Pr.Ok)
-    {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet X.E n ST SG)
-    {a : UF X.E n × GLG X.E n SG} (ha : a • d = d) (i : Fin 2) (w : SG) (hw : w.1 ∈ Pr.vG i)
+    {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))
+    {a : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)} (ha : a • d = d) (i : Fin 2) (w : SG) (hw : w.1 ∈ Pr.vG i)
     (hbig : 2 * X.f * n < Pr.g i - 1)
     (hu : IsNilpotent (((a.2 w : GL (Fin n) (𝓞 X.E ⧸ w.1.asIdeal)) :
       Matrix (Fin n) (Fin n) (𝓞 X.E ⧸ w.1.asIdeal)) - 1)) : a = 1 :=
   DecoSet.eq_one_of_smul_eq (hStd_trace_pos hX.conjE) d ha w (hPr.g_prime i) (hPr.g_mem hw)
-    (by rw [hX.finrank_E]; omega) hu
-
-theorem DecoSet.dia_free_cols {X : Fields} (hX : X.Ok) {Pr : Primes X}
-    (hPr : Pr.Ok) {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))} (d : DecoSet X.E n ST SG)
-    {a : UF X.E n × GLG X.E n SG} {c : DiaG X.E ST} (ha : a • d = d.dia c)
-    (i : Fin 2) (w : SG) (hw : w.1 ∈ Pr.vG i) (hbig : 2 * X.f * n < Pr.g i - 1)
-    (hu : IsNilpotent (((a.2 w : GL (Fin n) (𝓞 X.E ⧸ w.1.asIdeal)) :
-      Matrix (Fin n) (Fin n) (𝓞 X.E ⧸ w.1.asIdeal)) - 1)) : c = 1 :=
-  DecoSet.dia_free (hStd_trace_pos hX.conjE) d ha w (hPr.g_prime i) (hPr.g_mem hw)
     (by rw [hX.finrank_E]; omega) hu
 
 theorem isUpperUni_of_mem_uniUT {κ : Type} [CommRing κ] {n a : ℕ} {bl : List ℕ} (hn : n ≤ a)

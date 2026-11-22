@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnif
-import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamily
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnif
+public import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamily
+
+@[expose] public section
 
 noncomputable section
 

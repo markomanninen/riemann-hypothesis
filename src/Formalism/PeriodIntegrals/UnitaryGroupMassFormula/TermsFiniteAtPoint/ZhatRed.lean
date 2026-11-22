@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermAttrConst
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermCarrierStable
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.CarrierRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermAttrConst
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TermCarrierStable
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.Saturated
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 def ZhatIntegral : Prop :=
   ∀ (D : D7) (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
     (Λ : Submodule (𝓞 D.host.E) (VS D).V), IsRowLat D F0 Λ →
-    ∀ F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E), PD D Λ (lf D F0) u' F' →
+    ∀ F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E), PD D Λ (lf D F0) u' F' →
       ∀ a b, ∃ o : 𝓞 D.host.E, (o : D.host.E) = ZhatL (lf D F0) F' a b
 
 theorem star_int (D : D7) (o : 𝓞 D.host.E) : ∃ o' : 𝓞 D.host.E, (o' : D.host.E) = star (o : D.host.E) := by
@@ -99,13 +103,14 @@ theorem zhatReduce_of (hC : CellReduce) (hF : FrameOp) (hR : CarrierRow) (hI : Z
   have hBo : UpB ((b2 : ℕ) : 𝓞 D.host.E) Bo := upB_sgn D D.R.rS b1 b2 B hB
   obtain ⟨hrow, hlf⟩ := hR D u u' F0 Λ hΛ x.1 x.2
   obtain ⟨m, hm, hmact⟩ := hF2 x.1.fl Λ hrow Bo hBo
-  rw [hlf] at hm hmact
+  set_option backward.isDefEq.respectTransparency false in
+    rw [hlf] at hm hmact
   choose st hst using fun i j => star_int D (A j i)
   have hAo := starO_upB D b1 b2 A hA st hst
   obtain ⟨n0, hn0, hn0act⟩ := hF1 F0 Λ hΛ st hAo
   have hn := PI.DCRelEquiv.UnitaryGroupMassFormula.nlam_inv hn0
   have hiso : n0⁻¹ * m ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT := mul_mem hn.1.1 hm.1.1
-  let y : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) := Formalism.L2.SG.Saturated.mapL (n0⁻¹ * m) hiso x.1
+  let y : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E) := Formalism.L2.SG.Saturated.mapL (n0⁻¹ * m) hiso x.1
   have hdc : DCRel Λ (lf D F0) x.1 y :=
     ⟨n0⁻¹, hn, m, hm, fun a => by simp [y, Formalism.L2.SG.Saturated.frame_mapL],
       by simp [y, Formalism.L2.SG.Saturated.mapL]⟩
@@ -113,7 +118,7 @@ theorem zhatReduce_of (hC : CellReduce) (hF : FrameOp) (hR : CarrierRow) (hI : Z
   have hGy : Gval (lf D F0) x.1 = Gval (lf D F0) y :=
     (term_function_const D u u' F0 Λ hΛ).1 x ⟨y, hy⟩ hdc
   refine ⟨⟨y, hy⟩, Quot.sound hdc, hGy ▸ hG, ?_⟩
-  have key : ∀ {T1 T2 : D.host.E} (F1 : LFlag (VS D) D.R.rS T1) (F2 : LFlag (VS D) D.R.rS T2) a b,
+  have key : ∀ {T1 T2 : D.host.E} (F1 : LFlag (D.sp.Y 0) D.R.rS T1) (F2 : LFlag (D.sp.Y 0) D.R.rS T2) a b,
       ZhatL F1 F2 a b = (VS D).hT (frame F1 a) (frame F2 b) := fun _ _ _ _ => rfl
   have hfy : ∀ b, frame y b = n0⁻¹ (m (frame x.1 b)) := fun b => by
     simp [y, Formalism.L2.SG.Saturated.frame_mapL]
@@ -127,14 +132,17 @@ theorem zhatReduce_of (hC : CellReduce) (hF : FrameOp) (hR : CarrierRow) (hI : Z
       rw [← hiso0 (frame (lf D F0) a) (n0⁻¹ (m (frame x.1 b)))]
       congr 1
       exact n0.apply_symm_apply _
-    rw [h1, hn0act a, hmact b]
-    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
-      Matrix.mul_apply, Matrix.map_apply, Finset.sum_mul, ← key]
+    set_option backward.isDefEq.respectTransparency false in
+      rw [h1, hn0act a, hmact b]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+      Matrix.mul_apply, Matrix.map_apply, Finset.sum_mul]
     refine Finset.sum_congr rfl fun d _ => ?_
     simp only [RingHom.id_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
-    rw [hst, starRingEnd_apply, star_star]
-    ring
+    rw [hst, starRingEnd_apply, star_star, key]
+    set_option backward.isDefEq.respectTransparency false in
+      ring
   have hBo' : (Bo.map fun x => (x : D.host.E)) = Sg * (B.map fun x => (x : D.host.E)) * Sg := by
     ext i j
     simp only [Bo, Sg, Matrix.map_apply, sgn_conj_entry]

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinEvWIsUnitInjectiveDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfDivisibilityBreuilKisinFacts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinOEModPrimeLaurentField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityWittTiltAinf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SmodEqIffDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinEvWIsUnitInjectiveDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AinfDivisibilityBreuilKisinFacts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinOEModPrimeLaurentField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityWittTiltAinf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SmodEqIffDvd
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 open Matrix
@@ -31,8 +36,8 @@ theorem approx {S A : Type} [CommRing S] [CommRing A] (l : ℕ) (ev : S →+* A)
     refine ⟨c, ⟨y', hsat _ ?_⟩, fun i => by simp only; linear_combination hy' i⟩
     have := hadd _ _ hy (hsm (-1) _ (hY c))
     convert this using 1
-    funext i
-    simp only [Pi.add_apply, map_neg, map_one]
+    ext i
+    simp only [Pi.add_apply, map_neg, map_one, neg_mul, one_mul]
     linear_combination - hy' i
   choose c nx hnx using step
   let ys : ℕ → {y // mem y} := fun k => nx^[k] ⟨y, hy⟩
@@ -47,7 +52,7 @@ theorem approx {S A : Type} [CommRing S] [CommRing A] (l : ℕ) (ev : S →+* A)
       have h2 : ys (k + 1) = nx (ys k) := Function.iterate_succ_apply' _ _ _
       have h3 : (Y *ᵥ fun a => ev (f (k + 1) a)) i =
           (Y *ᵥ fun a => ev (f k a)) i + (l : A) ^ k * (Y *ᵥ fun a => ev (c (ys k) a)) i := by
-        simp only [f, Finset.sum_range_succ, map_add, map_mul, map_pow, map_natCast, mulVec, dotProduct,
+        simp only [f, Finset.sum_range_succ, map_add (f := _), map_mul, map_pow, map_natCast, mulVec, dotProduct,
           Finset.mul_sum, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun a _ => by ring
       rw [h3, h2]
@@ -96,7 +101,7 @@ theorem abstract {S R A F : Type} [CommRing S] [CommRing A] [IsDomain A] [CommRi
         refine ⟨y + y', hadd _ _ hy hy', funext fun i => ?_⟩
         have e := congrFun h i
         have e' := congrFun h' i
-        simp only [mulVec, dotProduct, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib] at e e' ⊢
+        simp only [mulVec, dotProduct, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib] at e e' ⊢
         rw [e, e']
       smul_mem' := by
         rintro t r ⟨y, hy, h⟩
@@ -132,7 +137,7 @@ theorem abstract {S R A F : Type} [CommRing S] [CommRing A] [IsDomain A] [CommRi
       have := congrArg (fun x : L => (x : Fin d → R)) (b.sum_repr ⟨r, y, hy, hr⟩)
       funext i
       have := congrFun this i
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, Finset.sum_apply, Pi.smul_apply,
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, Finset.sum_apply, Pi.smul_apply,
         smul_eq_mul] at this
       rw [← this]
       simp [mulVec, dotProduct, B, hc', mul_comm]
@@ -214,7 +219,7 @@ theorem eo_X : eo bk X = bk.flat := by
   rw [← bk.evRed_X, ← eo_red, red, PowerSeries.map_X]
 
 theorem eo_injective : Function.Injective (eo bk) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro r hr
   obtain ⟨s, rfl⟩ := red_surj bk r
   rw [eo_red] at hr
@@ -254,8 +259,8 @@ theorem exists_pow_mul (x : Cb l) : ∃ (c : ℕ) (o : OCb l),
 
 end GlobalTheory.BSP.SatMod
 
-open GlobalTheory.BSP.SatMod in
 
+open GlobalTheory.BSP.SatMod in
 theorem GlobalTheory.BSP.saturated_module_free : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk : BK K) (d : ℕ) (mem : (Fin d → Ainf l) → Prop), mem 0 → (∀ y z, mem y → mem z → mem (y + z)) → (∀ (c : bk.S) y, mem y → mem (fun a => bk.ev c * y a)) → (∀ y, mem (fun a => (l : Ainf l) * y a) → mem y) → (∀ y : ℕ → Fin d → Ainf l, (∀ n, mem (y n)) → (∀ n a, (l : Ainf l) ^ n ∣ y (n + 1) a - y n a) → ∀ z : Fin d → Ainf l, (∀ n a, (l : Ainf l) ^ n ∣ z a - y n a) → mem z) → ∀ (Y1 : Matrix (Fin d) (Fin d) (Ainf l)) (Y' : Matrix (Fin d) (Fin d) (WCb l)), (Y1.map (inclW l)).det ≠ 0 → IsUnit Y' → (∀ c : Fin d → bk.S, mem (Y1 *ᵥ fun a => bk.ev (c a))) → (∀ y, mem y → ∃ w : Fin d → WCb l, (∀ i, w i ∈ bk.OE) ∧ (fun a => inclW l (y a)) = Y' *ᵥ w) → ∃ Y : Matrix (Fin d) (Fin d) (Ainf l), IsUnit (Y.map (inclW l)) ∧ ∀ y, mem y ↔ ∃ c : Fin d → bk.S, y = Y *ᵥ fun a => bk.ev (c a) := by
   intro l _ K bk d mem h0 hadd hsm hsat _ Y1 Y' hY1 hY' hm1 hOE
   classical

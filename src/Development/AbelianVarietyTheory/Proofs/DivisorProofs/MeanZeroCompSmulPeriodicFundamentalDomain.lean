@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MeanFundamentalDomainEqOfPeriodic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MeanFundamentalDomainEqOfPeriodic
+
+@[expose] public section
+
 open MeasureTheory
 open scoped Pointwise
 
@@ -10,7 +15,7 @@ theorem mean_zero_comp_smul_of_periodic :
   intro n _ L _ D k q hq hD hDpos hDfin hk hb hper h0 L₁ _ D₁ hD₁ hD₁fin hper₁
   have hq0 : q ≠ 0 := hq.ne'
   have hqi : q⁻¹ ≠ 0 := inv_ne_zero hq0
-  let φ : (n → ℝ) →+ (n → ℝ) := DistribMulAction.toAddMonoidHom (n → ℝ) q⁻¹
+  let φ : (n → ℝ) →+ (n → ℝ) := DistribSMul.toAddMonoidHom (n → ℝ) q⁻¹
   have hφ : Function.Injective φ := fun x y h => by
     simpa [φ, smul_right_inj hqi] using h
   let L' : AddSubgroup (n → ℝ) := L.map φ

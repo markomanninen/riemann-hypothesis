@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
 open Formalism.MainNotions.SchurIrreducible (AdmGK ARi ARiiiUp ARiiiDown ARiiiLine DiscreteSeriesBlattner admQ5)
@@ -126,7 +131,7 @@ theorem isInv_iff (h : KTie R M τ l c b true e u) (hs : Side A pt κ (phiFr (M.
   have key : ∀ Y ∈ upq p q, ∀ P v, B (a Y P + ((c : ℂ) * Y.trace) • P) v +
       B P (R.HK.act Y v + ((c : ℂ) * Y.trace) • v) = B (a Y P) v + B P (R.HK.act Y v) := by
     intro Y hY P v
-    rw [map_add, map_add, map_smul, LinearMap.map_smulₛₗ, star_shift hY, LinearMap.add_apply, LinearMap.smul_apply,
+    rw [map_add (f := _), map_add (f := _), map_smul, LinearMap.map_smulₛₗ, star_shift hY, LinearMap.add_apply, LinearMap.smul_apply,
       neg_smul]
     abel
   constructor
@@ -166,12 +171,12 @@ theorem equiv_iff (h : KTie R M τ l c b true e u) {r s n : ℕ} {A' : Mn n → 
     obtain ⟨v, rfl⟩ := h.bij.2 v
     obtain ⟨P', hP'⟩ := κ.surjective (a' Y (κ P) + ((c' : ℂ) * Y.trace) • κ P)
     have := (hR Y hY _ _).1 (hi _ (hL ▸ Set.mem_image_of_mem _ hY) P P' ((hs.der Y hY P P').2 hP') v)
-    rw [← hB, ← hB, hP', map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply] at this
+    rw [← hB, ← hB, hP', map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply] at this
     exact add_right_cancel this
   · intro hi X hX P P' hP v
     rw [← hL] at hX
     obtain ⟨Y, hY, rfl⟩ := hX
-    rw [hR Y hY, ← hB, ← hB, (hs.der Y hY P P').1 hP, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+    rw [hR Y hY, ← hB, ← hB, (hs.der Y hY P P').1 hP, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
       hi Y hY]
 
 end Tr
@@ -205,7 +210,7 @@ theorem liftLaw_of_pairLaw : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPa
       obtain ⟨Y, hY, rfl⟩ := hX
       have := (h₂.der Y hY x x').1 hx
       simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, linEquiv_apply]
-      rw [this, map_add, map_smul, hei Y hY]
+      rw [this, map_add (f := _), map_smul, hei Y hY]
       simp
     · rw [LinearMap.range_comp_of_range_eq_top _ (LinearEquiv.range _), her]
       congr 1
@@ -236,7 +241,7 @@ theorem liftLaw_of_pairLaw : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPa
       refine Iff.trans ?_ (isInv_iff h₁ s₁ (f := g.compr₂ (linEquiv h₂).toLinearMap) hC)
       refine forall₂_congr fun X _ => forall₄_congr fun P P' v v' => forall₂_congr fun _ _ => ?_
       simp only [LinearMap.compr₂_apply, LinearEquiv.coe_coe]
-      rw [← map_add, LinearEquiv.map_eq_zero_iff]
+      rw [← map_add (f := _), LinearEquiv.map_eq_zero_iff]
     obtain ⟨g, hg⟩ := ex_map κ h₁ C₀
     have hg' : ∀ P v, C₀ (κ P) (u₁ v) = u₂ (g.compr₂ (linEquiv h₂).symm.toLinearMap P v) := by
       intro P v

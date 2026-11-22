@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -21,7 +26,7 @@ theorem adelic_norm_move : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (β : G.
       rw [Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
       congr 1
       exact hβ m
-    | add x y hx hy => rw [map_add, map_add, map_add, MulOpposite.unop_add, mul_add, hx, hy, map_add, add_mul]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), MulOpposite.unop_add, mul_add, hx, hy, map_add (f := _), add_mul]
   refine ⟨Units.map J.toMonoidHom u, ?_, ?_⟩
   · show J u * inC G (AfP p) β * (starT G.star (AfP p) (J u)).unop = _
     rw [mul_assoc, key, ← mul_assoc, ← map_mul, hu, hJ]
@@ -36,6 +41,6 @@ theorem adelic_norm_move : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (β : G.
       rw [hJ]
       show ((1 : AfP p) ⊗ₜ y) * (r ⊗ₜ j m) = (r ⊗ₜ j m) * ((1 : AfP p) ⊗ₜ y)
       rw [Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one, hy m]
-    | add x z hx hz => rw [map_add, mul_add, add_mul, hx, hz]
+    | add x z hx hz => rw [map_add (f := _), mul_add, add_mul, hx, hz]
 
 end GlobalTheory

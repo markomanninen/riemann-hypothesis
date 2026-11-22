@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -66,18 +70,22 @@ theorem weyl_cell_mulVec_basis (l : Fin r) (c : ℂ) (q : Fin (2 * r + k + 1)) :
     Finset.sum_ite_eq', Finset.mem_univ, if_true, Pi.smul_apply, smul_eq_mul, w1_apply]
 
 theorem head_comm (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = n →
-    wCell k r i c ∈ Glev k r 0 ∧ ∀ j : Fin (r + 1), i ≤ j → ∀ x ∈ Glev k r j, wCell k r i c * x = x * wCell k r i c
-  | 0, i, hi => by
+    wCell k r i c ∈ Glev k r 0 ∧ ∀ j : Fin (r + 1), i ≤ j → ∀ x ∈ Glev k r j, wCell k r i c * x = x * wCell k r i c := by
+  intro n
+  induction n with
+  | zero =>
+    intro i hi
     have : i = 0 := Fin.ext (by simp [hi])
     subst this
     rw [Formalism.FourierDecayAlt.P.Qx6.wCell_zero]
     exact ⟨glev_one _, fun _ _ x _ => by simp⟩
-  | n + 1, i, hi => by
+  | succ n ih =>
+    intro i hi
     have hl : n < r := by have := i.isLt; omega
     set l : Fin r := ⟨n, hl⟩ with hldef
     have hil : i = l.succ := Fin.ext (by simp [l, hi])
     subst hil
-    obtain ⟨ih0, ihc⟩ := head_comm c hc n l.castSucc (by simp [l])
+    obtain ⟨ih0, ihc⟩ := ih l.castSucc (by simp [l])
     have hw := Formalism.FourierDecayAlt.P.weyl_level_element_properties k r l (c l) (hc l)
     rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ]
     refine ⟨glev_mul ih0 (glev_mono (zero_le' _) hw.1), fun j hj x hx => ?_⟩
@@ -91,19 +99,23 @@ theorem tail (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : �
       (∀ a : Fin r, b.val < a.val →
         T *ᵥ bvec (eI k r a) = if a.val < i.val then c a • bvec (esI k r a) else bvec (eI k r a)) ∧
       (∀ a : Fin r, i.val ≤ a.val → T *ᵥ bvec (esI k r a) = bvec (esI k r a)) ∧
-      (∀ c' : Fin r → ℂ, (∀ a : Fin r, b.val < a.val → c' a = c a) → wCell k r i c' = wCell k r b.succ c' * T)
-  | 0, i, hi => by
+      (∀ c' : Fin r → ℂ, (∀ a : Fin r, b.val < a.val → c' a = c a) → wCell k r i c' = wCell k r b.succ c' * T) := by
+  intro n
+  induction n with
+  | zero =>
+    intro i hi
     have : i = b.succ := Fin.ext (by simp [hi])
     subst this
     refine ⟨1, by simp, glev_one _, fun a ha => ?_, fun a _ => by simp, fun c' _ => by simp⟩
     rw [if_neg (by simp; omega)]
     simp
-  | n + 1, i, hi => by
+  | succ n ih =>
+    intro i hi
     have hl : b.val + 1 + n < r := by have := i.isLt; omega
     set l : Fin r := ⟨b.val + 1 + n, hl⟩ with hldef
     have hil : i = l.succ := Fin.ext (by simp [l, hi]; omega)
     subst hil
-    obtain ⟨T, hT, hTG, hTe, hTs, hTc⟩ := tail c hc b n l.castSucc (by simp [l])
+    obtain ⟨T, hT, hTG, hTe, hTs, hTc⟩ := ih l.castSucc (by simp [l])
     have hw := (Formalism.FourierDecayAlt.P.weyl_level_element_properties k r l (c l) (hc l)).1
     refine ⟨T * w1 k r l (c l), ?_, ?_, ?_, ?_, ?_⟩
     · rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ, hT, Matrix.mul_assoc]

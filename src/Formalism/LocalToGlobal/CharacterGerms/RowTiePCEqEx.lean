@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePCEqM2
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePCEqM2
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace RowTiePCEqEx
 variable {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
 
 theorem pderiv_eval_single {n : ℕ} {a : Fin 1 → Pt C n dd} (ha : Z0 a) (f : PS C 1 dd) (q : Fin n × Fin dd) :
-    pderiv C q (ev a f) = ∑ j, ev a (pderiv C ((0 : Fin 1), j) f) * pderiv C q (a 0 j) := by
+    pderiv (R := C) q (ev a f) = ∑ j, ev a (pderiv (R := C) ((0 : Fin 1), j) f) * pderiv (R := C) q (a 0 j) := by
   unfold ev
   rw [Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 1 × Fin dd => a p.1 p.2) (fun p => ha p.1 p.2) f q,
     Fintype.sum_prod_type, Fin.sum_univ_one]
@@ -29,7 +33,7 @@ theorem germEval_oneStandardPoint_self (f : PS C 1 dd) : ev (n := 1) ![pt C dd 0
   rfl
 
 theorem constantCoeff_pderiv {σ : Type} (q : σ) (f : MvPowerSeries σ C) :
-    constantCoeff (pderiv C q f) = coeff (Finsupp.single q 1) f := by
+    constantCoeff (pderiv (R := C) q f) = coeff (Finsupp.single q 1) f := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add]
   simp
 
@@ -51,13 +55,14 @@ theorem ev_zero_pt {n : ℕ} (f : PS C 1 dd) : ev (n := n) (![0] : Fin 1 → Pt 
   rw [h2, add_zero]
 
 theorem ex_lin (Y : FBChart C V O dd) (i m : Fin dd) :
-    constantCoeff (pderiv C ((0 : Fin 1), i) (Y.ex m)) = if i = m then 1 else 0 := by
+    constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.ex m)) = if i = m then 1 else 0 := by
   have hZ : Z0 (![Y.ex] : Fin 1 → Pt C 1 dd) := z0_1 _ Y.ex_const
-  have h : constantCoeff (pderiv C ((0 : Fin 1), i) (comp1 Y.lg Y.ex m)) =
-      constantCoeff (pderiv C ((0 : Fin 1), i) (pt C (n := 1) dd 0 m)) := by
+  have h : constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (comp1 Y.lg Y.ex m)) =
+      constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (pt C (n := 1) dd 0 m)) := by
     rw [Y.lg_ex]
   unfold comp1 at h
-  rw [pderiv_eval_single hZ, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pderiv_eval_single hZ, map_sum] at h
   simp only [map_mul, constantCoeff_ev hZ, constantCoeff_pderiv] at h
   have hl : ∀ k, coeff (Finsupp.single ((0 : Fin 1), k) 1) (Y.lg m) = if k = m then 1 else 0 := by
     intro k
@@ -69,7 +74,7 @@ theorem ex_lin (Y : FBChart C V O dd) (i m : Fin dd) :
       exact hk (Prod.mk.inj (Finsupp.single_left_injective one_ne_zero e)).2
   simp only [hl, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at h
   rw [← constantCoeff_pderiv] at h
-  change constantCoeff (pderiv C ((0 : Fin 1), i) (Y.ex m)) =
+  change constantCoeff (pderiv (R := C) ((0 : Fin 1), i) (Y.ex m)) =
     coeff (Finsupp.single ((0 : Fin 1), i) 1) (X ((0 : Fin 1), m) : PS C 1 dd) at h
   rw [h, coeff_X]
   by_cases him : i = m
@@ -151,15 +156,15 @@ theorem ex_add (Y : FBChart C V O dd) (j : Fin dd) :
 
 end RowTiePCEqEx
 
-open RowTiePCEqEx in
 
+open RowTiePCEqEx in
 theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
     (Y : FBChart C V O dd) : ExDerSt Y := by
   intro v j
   have hZex : Z0 (![Y.ex] : Fin 1 → Pt C 1 dd) := z0_1 _ Y.ex_const
   have hQ : Z0 ((![pt C dd 0, 0] : Fin 2 → Pt C 1 dd)) := z0_p0 _ (z0_pt 0)
   have hS0 : ∀ m, constantCoeff (pt C (n := 2) dd 0 m + pt C dd 1 m) = 0 := fun m => by
-    rw [map_add, z0_pt, z0_pt, add_zero]
+    rw [map_add (f := _), z0_pt, z0_pt, add_zero]
   have hZS : Z0 (![fun m => pt C (n := 2) dd 0 m + pt C dd 1 m] : Fin 1 → Pt C 2 dd) := z0_1 _ hS0
   have hA0 : ∀ m, constantCoeff (comp1 Y.ex (pt C (n := 2) dd 0) m) = 0 := fun m =>
     const_ev (z0_1 _ (z0_pt 0)) (Y.ex_const m)
@@ -169,14 +174,26 @@ theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
     intro k i; fin_cases k
     · exact hA0 i
     · exact hB0 i
-  have hdk : ∀ (k : Fin 2) (i m : Fin dd), pderiv C ((1 : Fin 2), i) (comp1 Y.ex (pt C (n := 2) dd k) m) =
-      if k = 1 then ev (n := 2) ![pt C dd 1] (pderiv C ((0 : Fin 1), i) (Y.ex m)) else 0 := by
+  have pderiv_pt_ne {k : Fin 2} (hk : k ≠ 1) (i m : Fin dd) :
+      pderiv (R := C) ((1 : Fin 2), i) (pt C dd k m) = 0 :=
+    pderiv_X_of_ne (fun e => hk (Prod.mk.inj e).1)
+  have sum_pderiv_pt (i : Fin dd) (a : Fin dd → PS C 2 dd) :
+      ∑ m, a m * pderiv (R := C) ((1 : Fin 2), i) (pt C dd 1 m) = a i := by
+    rw [Finset.sum_eq_single i]
+    · rw [show pt C dd 1 i = X ((1 : Fin 2), i) from rfl, pderiv_X_self, mul_one]
+    · intro m _ hm
+      rw [show pt C dd 1 m = X ((1 : Fin 2), m) from rfl,
+        pderiv_X_of_ne (fun e => hm (Prod.mk.inj e).2), mul_zero]
+    · intro hi
+      exact (hi (Finset.mem_univ i)).elim
+  have hdk : ∀ (k : Fin 2) (i m : Fin dd), pderiv (R := C) ((1 : Fin 2), i) (comp1 Y.ex (pt C (n := 2) dd k) m) =
+      if k = 1 then ev (n := 2) ![pt C dd 1] (pderiv (R := C) ((0 : Fin 1), i) (Y.ex m)) else 0 := by
     intro k i m
-    show pderiv C _ (ev (n := 2) ![pt C (n := 2) dd k] (Y.ex m)) = _
+    show pderiv (R := C) _ (ev (n := 2) ![pt C (n := 2) dd k] (Y.ex m)) = _
     rw [pderiv_eval_single (z0_1 _ (z0_pt k))]
     split_ifs with hk
     · subst hk
-      exact sum_pderiv_pt 1 i _
+      exact sum_pderiv_pt i _
     · exact Finset.sum_eq_zero fun l _ => by
         rw [show ((![pt C (n := 2) dd k] : Fin 1 → Pt C 2 dd) 0 l) = pt C dd k l from rfl, pderiv_pt_ne hk i l,
           mul_zero]
@@ -186,17 +203,17 @@ theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
     funext k' l
     fin_cases k'
     exact ev_X hQ k l
-  have hL : ∀ i, ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (pderiv C ((1 : Fin 2), i)
-      (ev (n := 2) ![fun m => pt C (n := 2) dd 0 m + pt C dd 1 m] (Y.ex j))) = pderiv C ((0 : Fin 1), i) (Y.ex j) := by
+  have hL : ∀ i, ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (pderiv (R := C) ((1 : Fin 2), i)
+      (ev (n := 2) ![fun m => pt C (n := 2) dd 0 m + pt C dd 1 m] (Y.ex j))) = pderiv (R := C) ((0 : Fin 1), i) (Y.ex j) := by
     intro i
     rw [pderiv_eval_single hZS]
-    have e0 : ∀ m, pderiv C ((1 : Fin 2), i)
+    have e0 : ∀ m, pderiv (R := C) ((1 : Fin 2), i)
         ((![fun m => pt C (n := 2) dd 0 m + pt C dd 1 m] : Fin 1 → Pt C 2 dd) 0 m) =
-        pderiv C ((1 : Fin 2), i) (pt C (n := 2) dd 1 m) := fun m => by
-      show pderiv C _ (pt C (n := 2) dd 0 m + pt C dd 1 m) = _
-      rw [map_add, pderiv_pt_ne (by decide) i m, zero_add]
+        pderiv (R := C) ((1 : Fin 2), i) (pt C (n := 2) dd 1 m) := fun m => by
+      show pderiv (R := C) _ (pt C (n := 2) dd 0 m + pt C dd 1 m) = _
+      rw [map_add (f := _), pderiv_pt_ne (by decide) i m, zero_add]
     simp only [e0]
-    rw [sum_pderiv_pt 1 i, ev_ev hZS hQ]
+    rw [sum_pderiv_pt i, ev_ev hZS hQ]
     have e : (fun k m => ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd)
         ((![fun m => pt C (n := 2) dd 0 m + pt C dd 1 m] : Fin 1 → Pt C 2 dd) k m)) = ![pt C (n := 1) dd 0] := by
       funext k m
@@ -223,12 +240,14 @@ theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
       exact germEval_oneStandardPoint_self _
     · show ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (ev (n := 2) ![pt C dd 1] (Y.ex m)) = 0
       rw [eB, Y.ex_const, map_zero]
-  have hR : ∀ i, ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (pderiv C ((1 : Fin 2), i)
+  have hR : ∀ i, ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (pderiv (R := C) ((1 : Fin 2), i)
       (ev (n := 2) ![comp1 Y.ex (pt C (n := 2) dd 0), comp1 Y.ex (pt C (n := 2) dd 1)] (Y.B.G.F j))) =
-      ev (n := 1) ![Y.ex] (ev (n := 1) ![pt C dd 0, 0] (pderiv C ((1 : Fin 2), i) (Y.B.G.F j))) := by
+      ev (n := 1) ![Y.ex] (ev (n := 1) ![pt C dd 0, 0] (pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F j))) := by
     intro i
-    rw [pderiv_ev_snd _ _ hA0 hB0 _ (fun m => by rw [hdk 0 i m, if_neg (by decide)]) _]
-    simp only [hdk 1 i, if_pos]
+    rw [pderiv_eval_pair hAB]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, hdk,
+      ite_eq_right (by decide : (0 : Fin 2) ≠ 1), ite_true,
+      mul_zero, Finset.sum_const_zero, zero_add]
     rw [ev_sum hQ]
     simp only [ev_mul hQ, eAB, eB, ex_lin]
     rw [Finset.sum_eq_single i]
@@ -242,8 +261,8 @@ theorem exDer_holds {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [Com
       rw [if_neg (Ne.symm hm), map_zero, mul_zero]
     · intro h
       exact absurd (Finset.mem_univ i) h
-  have key : ∀ i, pderiv C ((0 : Fin 1), i) (Y.ex j) =
-      ev (n := 1) ![Y.ex] (ev (n := 1) ![pt C dd 0, 0] (pderiv C ((1 : Fin 2), i) (Y.B.G.F j))) := by
+  have key : ∀ i, pderiv (R := C) ((0 : Fin 1), i) (Y.ex j) =
+      ev (n := 1) ![Y.ex] (ev (n := 1) ![pt C dd 0, 0] (pderiv (R := C) ((1 : Fin 2), i) (Y.B.G.F j))) := by
     intro i
     rw [← hL i, ex_add Y j, hR i]
   unfold FBChart.dF

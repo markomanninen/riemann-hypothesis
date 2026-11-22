@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeNormGamma1PrimePowInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsRootOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeNormGamma1PrimePowInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ private lemma toGQ_mul_ofSL_eq_ofSL_mul_toGQ (γ γ' : SL(2, ℤ)) (l : ℕ) (hl
     simp only [Matrix.det_fin_two_of, one_mul, mul_zero, sub_zero]
     exact_mod_cast hl
   unfold _root_.GlobalTheory.KZ.toGQ _root_.GlobalTheory.KZ.ofSL
-  rw [dif_pos (hdet j), dif_pos (hdet k)]
+  rw [dite_eq_left (hdet j), dite_eq_left (hdet k)]
   apply Subtype.ext
   apply Matrix.GeneralLinearGroup.ext
   intro i i'
@@ -45,8 +49,8 @@ private lemma toGQ_mul_ofSL_eq_ofSL_mul_toGQ (γ γ' : SL(2, ℤ)) (l : ℕ) (hl
       Matrix.GeneralLinearGroup.mkOfDetNeZero, h00, h01, h10, h11] <;>
     first | ring1 | linear_combination -hBq
 
-open scoped MatrixGroups in
 
+open scoped MatrixGroups in
 theorem _root_.GlobalTheory.NormDelta.norm_delta (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ) (X : _root_.GlobalTheory.KZ.Tower Ω ε) (N l : ℕ) [Fact l.Prime] (n : ℕ)
     (hn : 0 < n) (hlN : ¬ l ∣ N) (f : X.K) (hf : _root_.GlobalTheory.Glue.Inv X (CongruenceSubgroup.Gamma1 (N * l ^ n)) f)
     (hδ : ∀ δ ∈ CongruenceSubgroup.Gamma1 N, -δ ∈ CongruenceSubgroup.Gamma (l ^ n) →

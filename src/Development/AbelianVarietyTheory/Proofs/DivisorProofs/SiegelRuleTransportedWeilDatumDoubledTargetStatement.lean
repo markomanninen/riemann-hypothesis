@@ -1,10 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelRuleTransportedWeilDatumDoubledTarget
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUgReindex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelRuleTransportedWeilDatumDoubledTarget
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUgReindex
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -35,4 +38,5 @@ theorem _root_.GlobalTheory.T.siegelRule_transported_weilDatum_doubledTarget : â
               ((GlobalTheory.WeilM.diagCols (Fin T.rank) : Matrix (Fin T.rank âŠ• Fin T.rank) (Fin T.rank) (AE D)).submatrix
                 finSumFinEquiv.symm id)
               (omp.comp (MonoidHom.inl _ _)) := by
-  first | exact @GlobalTheory.DblTargetSiegel.siegelRule_dblTarget | exact GlobalTheory.DblTargetSiegel.siegelRule_dblTarget | (intros; apply GlobalTheory.DblTargetSiegel.siegelRule_dblTarget <;> assumption)
+  set_option maxHeartbeats 10000000 in
+    exact @GlobalTheory.DblTargetSiegel.siegelRule_dblTarget

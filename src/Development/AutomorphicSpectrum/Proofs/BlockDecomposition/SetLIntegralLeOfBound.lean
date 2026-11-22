@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem sr_part {n : ℕ} (c : Fin (n - 1) → ℝ) (j : Fin (n - 1)) :
     sr (part n c) ((j : ℕ) + 1) = c j := by
   have hj := j.2
   unfold sr
-  rw [dif_pos (by omega : 0 < (j : ℕ) + 1 ∧ (j : ℕ) + 1 < n)]
+  rw [dite_eq_left (by omega : 0 < (j : ℕ) + 1 ∧ (j : ℕ) + 1 < n)]
   simp only [part, ← Finset.sum_sub_distrib, Nat.add_sub_cancel]
   rw [Finset.sum_eq_single j]
   · simp
@@ -85,7 +89,7 @@ theorem y_bound {n : ℕ} (y : Fin n → ℝ) (hl : ∀ i : Fin n, (i : ℕ) + 1
     obtain ⟨h3, h4⟩ := hd ⟨(i : ℕ), by omega⟩
     have e : sr y ((i : ℕ) + 1) = y i - y ⟨(i : ℕ) + 1, hi'⟩ := by
       unfold sr
-      rw [dif_pos (by omega : 0 < (i : ℕ) + 1 ∧ (i : ℕ) + 1 < n)]
+      rw [dite_eq_left (by omega : 0 < (i : ℕ) + 1 ∧ (i : ℕ) + 1 < n)]
       simp
     simp only at h3 h4
     rw [e] at h3 h4

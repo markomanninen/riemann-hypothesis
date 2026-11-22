@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,14 +13,14 @@ namespace PositivityTheory.RgJS
 
 namespace RigidityLemmas
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def twS (χ : HChar E) (p : Σ a, CG E a) : Σ a, CG E a := ⟨p.1, p.2.twist χ⟩
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem unrAt_inv {χ : HChar E} {w : HeightOneSpectrum (𝓞 E)} (h : χ.UnrAt w) : (χ⁻¹).UnrAt w := fun x hx => by
-  show (χ⁻¹).loc w x = 1
-  rw [HChar.loc_inv, h x hx, inv_one]
+  change (χ.1 (GlobalTheory.Mem.Chr.localIdele E w x))⁻¹ = 1
+  rw [show χ.1 (GlobalTheory.Mem.Chr.localIdele E w x) = 1 from h x hx, inv_one]
 
 theorem exists_fin {d : ℕ} (B : Multiset ℂˣ) (hB : Multiset.card B = d) :
     ∃ f : Fin d → ℂˣ, Finset.univ.val.map f = B := by
@@ -115,7 +119,8 @@ theorem jacquet_shalika_rigidity_of_bound : AbsRig → UnitEx → SatTw → DetO
     let φ : Multiset ℂˣ →+ ℂ := Multiset.sumAddMonoidHom.comp (Multiset.mapAddMonoidHom fun z : ℂˣ => (z : ℂ) ^ k)
     have hφ : ∀ M : Multiset ℂˣ, φ M = (M.map fun z : ℂˣ => (z : ℂ) ^ k).sum := fun M => rfl
     have h := congrArg φ (hsum w)
-    rw [map_sum, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum] at h
     simp only [hφ, hBi, hBj, sum_pow] at h
     have ev : ∀ τ : ℝ, (((ν τ).val w.1 : ℂˣ) : ℂ) = (nq w : ℂ) ^ (-(τ : ℂ)) := fun τ => (hν τ).2.1 w.1
     simp only [ev] at h

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFiltered
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 open scoped Formalism.Per
@@ -45,7 +49,7 @@ theorem const_of_invariant_mod : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (
   have key : ∀ m, a ≤ m → m ≤ b → ∃ c : ↥K.1, algebraMap ↥K.1 P.R.BdR c ∈ (P.PD K).Fil a ∧
       x - algebraMap ↥K.1 P.R.BdR c ∈ (P.PD K).Fil m := by
     intro m hm
-    induction m, hm using Int.le_induction with
+    induction m, hm using Int.leInduction with
     | base => exact fun _ => h0 a le_rfl
     | succ m hm ih =>
       intro hmb
@@ -54,7 +58,7 @@ theorem const_of_invariant_mod : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (
         rw [map_sub, AlgEquiv.commutes, sub_sub_sub_cancel_right]
         exact hFa hmb (hg g))
       refine ⟨c + d, ?_, ?_⟩
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact Submodule.add_mem _ hc (hFa hm hd)
       · rwa [map_add, ← sub_sub]
   exact key b hab le_rfl

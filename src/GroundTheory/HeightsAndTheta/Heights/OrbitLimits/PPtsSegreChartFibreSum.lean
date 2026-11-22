@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSegreChartFibreSum
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartProjFinite
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PDiscriminantSheetCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterOsgood
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSegreChartFibreSum
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartZeroSet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartProjFinite
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartDim
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PDiscriminantSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFibreBound
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterOsgood
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -84,8 +89,8 @@ section Chart
 
 variable {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem bsmul_mem_mcPts {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {c : K → ℂ} (hc : ∀ k, c k ≠ 0)
     {z : (Σ k, ι k) → ℂ} (hz : z ∈ mcPts P) : bsmul c z ∈ mcPts P := by
   refine ⟨fun k => ?_, fun f hf => ?_⟩
@@ -102,8 +107,8 @@ theorem bsmul_mem_mcPts {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {c : K
         hz.2 s (by rw [hPS]; exact Ideal.subset_span hs), mul_zero]
     exact hle hf
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem mem_fibre_of_chart {e m : ℕ} {P : Ideal (MRing ι)} {σ : Fin m ≃ ((k : K) → ι k)}
     {i : (k : K) → ι k} {Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)} (hΨ0 : ∀ w, Ψ w 0 = w i)
     {x : Fin m → ℂ} (hx : x ∈ segreChartSet P σ i) :
@@ -119,8 +124,8 @@ theorem mem_fibre_of_chart {e m : ℕ} {P : Ideal (MRing ι)} {σ : Fin m ≃ ((
   · rw [hΨ0, hzi, Fin.cons_zero]
   · rw [Fin.cons_succ, chartProjMatrix_mulVec, hw]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem chart_of_mem_fibre {e m : ℕ} {P : Ideal (MRing ι)} {σ : Fin m ≃ ((k : K) → ι k)}
     {i : (k : K) → ι k} {Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)} (hΨ0 : ∀ w, Ψ w 0 = w i)
     {y : Fin e → ℂ} {w : ((k : K) → ι k) → ℂ} (hw : w ∈ ReciprocityTheory.ChartRestriction.G.Geo.fibre P Ψ y) :
@@ -164,15 +169,15 @@ section Term
 
 variable {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} [∀ k, Fintype (ι k)]
 
-omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 
+omit [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem logNorm_ofWeight_one (g : ((Σ k, ι k) → ℂ) → ℝ)
     (hg : ∀ (c : K → ℂ) z, (∀ k, c k ≠ 0) → g (fun p => c p.1 * z p) = g z) (z : (Σ k, ι k) → ℂ) :
     logNorm (HermLine.ofWeight g hg) 1 z = g z := by
   simp [logNorm, HermLine.ofWeight, Real.exp_neg]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem isSectionOn_ofWeight_one {P : Ideal (MRing ι)} (hP : P.IsPrime) (g : ((Σ k, ι k) → ℂ) → ℝ)
     (hg : ∀ (c : K → ℂ) z, (∀ k, c k ≠ 0) → g (fun p => c p.1 * z p) = g z) :
     IsSectionOn P (HermLine.ofWeight g hg) 1 := by
@@ -226,7 +231,7 @@ theorem term_eq {e m : ℕ} {P : Ideal (MRing ι)} {σ : Fin m ≃ ((k : K) → 
         exact h
   have hex : ∃ γ, IsSheet P Ψ y w γ := ⟨_, hγ'⟩
   unfold sheetDensity
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   set γ := hex.choose with hγ_def
   have hγ : IsSheet P Ψ y w γ := hex.choose_spec
   have hγan := ReciprocityTheory.ChartRestriction.G.Geo.sheet_analyticAt ReciprocityTheory.ChartRestriction.G.Geo.osgood hγ
@@ -280,8 +285,8 @@ end Term
 
 end PtsSegreChartFibreSum
 
-open PtsSegreChartFibreSum in
 
+open PtsSegreChartFibreSum in
 theorem PtsSegreChartFibreSum.proof (h₁ : SegreChartZeroSet.Statement) (h₂ : SegreChartProjFinite.Statement) :
     PtsSegreChartFibreSum.Statement := by
   intro K _ _ ι _ P e m σ i L g Ψ hP hL hg hΨ hΨ0
@@ -368,7 +373,7 @@ theorem PtsSegreChartFibreSum.proof (h₁ : SegreChartZeroSet.Statement) (h₂ :
         refine Finset.sum_congr rfl fun J hJ => ?_
         simp only [chartDens, sheetSum]
         refine finsum_mem_congr rfl fun x hx => ?_
-        rw [dif_pos (hy1 J hJ x hx)]
+        rw [dite_eq_left (hy1 J hJ x hx)]
         exact (term_eq hMH hPp hL hg hΨ0 hsub hcov hJ hx (fun J' hJ' h => hy2 J hJ J' hJ' h x hx)
           (hy1 J hJ x hx)).symm
 

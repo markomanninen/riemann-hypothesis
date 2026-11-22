@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw
-import Formalism.PeriodIntegrals.HwIrred
-import Formalism.PeriodIntegrals.GTBranch
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoXiHw
+public import Formalism.PeriodIntegrals.HwIrred
+public import Formalism.PeriodIntegrals.GTBranch
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftPOfBounds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RedTrans
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftPOfBounds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RedTrans
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false

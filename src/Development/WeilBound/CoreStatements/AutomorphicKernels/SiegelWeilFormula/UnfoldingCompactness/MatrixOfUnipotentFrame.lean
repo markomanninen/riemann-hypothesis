@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.IsHaarMeasureDoubledGroup
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.CountableRationalPointsDoubled
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.G2HaarMeasure.ContinuousInFrame
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.UnitsBorelSpace.BorelSpaceDoubledGroup
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactOfUnits
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnfoldingCompactness.IncMTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,17 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 instance aeBorel : BorelSpace (AE F E) := ⟨rfl⟩
 
-instance matSC : SecondCountableTopology (Matrix (Fin n) (Fin n) (AE F E)) :=
-  inferInstanceAs (SecondCountableTopology (Fin n → Fin n → AE F E))
-instance matBorel : BorelSpace (Matrix (Fin n) (Fin n) (AE F E)) := inferInstanceAs (BorelSpace (Fin n → Fin n → AE F E))
-instance nATop : IsTopologicalAddGroup (nA σ Y b) := inferInstance
+instance matSC : SecondCountableTopology (Matrix (Fin n) (Fin n) (AE F E)) := by
+  have : SecondCountableTopology (AE F E) := GlobalTheory.EisBL.AETop.secondCountableAE
+  exact inferInstanceAs (SecondCountableTopology (Fin n → Fin n → AE F E))
+instance matBorel : BorelSpace (Matrix (Fin n) (Fin n) (AE F E)) := by
+  have : SecondCountableTopology (AE F E) := GlobalTheory.EisBL.AETop.secondCountableAE
+  exact inferInstanceAs (BorelSpace (Fin n → Fin n → AE F E))
+instance nATop : IsTopologicalAddGroup (nA σ Y b) := by
+  have : IsTopologicalRing (AE F E) := GlobalTheory.EisBL.AETop.ringAE
+  infer_instance
 instance nASC : SecondCountableTopology (nA σ Y b) := TopologicalSpace.Subtype.secondCountableTopology _
 instance nABorel : BorelSpace (nA σ Y b) := Subtype.borelSpace _
-instance borelSpaceDoubledGroup : BorelSpace (G2 σ Y) := GlobalTheory.EisBL.DoubledGroupTopology.borelSpace_doubled_group_eq σ Y
 
 theorem matrix_eq_inFrame_conj (b : GL (Fin n ⊕ Fin n) E) (x : G2 σ Y) :
     mat2 x = incM F b.1 * inFrame b x * incM F (b⁻¹).1 := by
@@ -59,6 +67,7 @@ theorem matrix_of_unipotent_frame (h : IsNMap b nb) (β : nA σ Y b) :
   rw [matrix_eq_inFrame_conj b, h]
 
 theorem continuous_nb (h : IsNMap b nb) : Continuous nb := by
+  have : IsTopologicalRing (AE F E) := GlobalTheory.EisBL.AETop.ringAE
   have hc : Continuous fun β : nA σ Y b => incM F b.1 * Matrix.fromBlocks 1 β.1 0 1 * incM F (b⁻¹).1 :=
     (continuous_const.matrix_mul (Continuous.matrix_fromBlocks continuous_const continuous_subtype_val
       continuous_const continuous_const)).matrix_mul continuous_const
@@ -109,7 +118,7 @@ theorem mem_nF_iff {ν : nA σ Y b} : ν ∈ nF σ Y b ↔ ∃ T : Matrix (Fin n
   | add _ _ _ _ h h' =>
     obtain ⟨T, hT⟩ := h
     obtain ⟨T', hT'⟩ := h'
-    exact ⟨T + T', by rw [AddSubgroup.coe_add, hT, hT']; simp [incM, Matrix.map_add]⟩
+    exact ⟨T + T', by rw [AddSubgroup.coe_add, hT, hT']; simp [incM, Matrix.map_add (f := _)]⟩
   | neg _ _ h =>
     obtain ⟨T, hT⟩ := h
     exact ⟨-T, by rw [AddSubgroup.coe_neg, hT]; simp [incM, Matrix.map_neg]⟩
@@ -156,7 +165,8 @@ theorem tt_rat (M : Matrix (Fin n) (Fin n) E) :
     Algebra.trace (AF F) (AE F E) (incM F M).trace = algebraMap F (AF F) (Algebra.trace F E M.trace) := by
   rw [← trace_inclR]
   congr 1
-  simp [incM, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [incM, Matrix.trace, map_sum]
 
 theorem psi_rat {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (T ν : nF σ Y b) :
     ψ (Algebra.trace (AF F) (AE F E) (T.1.1 * ν.1.1).trace) = 1 := by

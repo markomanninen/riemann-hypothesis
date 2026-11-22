@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.MemSpanOfSmulMem
-import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.MemSpanOfSmulMem
+public import Formalism.BranchSandwichDivisors.DivFromPassageAndNorm
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

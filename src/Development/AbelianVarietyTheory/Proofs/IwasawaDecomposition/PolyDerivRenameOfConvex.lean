@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPermOfOfFnPerm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPermOfOfFnPerm
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.I2 (polyDeriv)
 
 namespace GlobalTheory.ConvexCutOff
@@ -69,7 +74,7 @@ theorem uniqueDiffWithinAt_compl {V : Type} [NormedAddCommGroup V] [NormedSpace 
     refine mem_closure_of_tendsto ht ?_
     filter_upwards [self_mem_nhdsWithin] with t ht
     have ht' : (0 : ℝ) < t := ht
-    simp only [Set.mem_setOf_eq, map_add, map_smul, smul_eq_mul]
+    simp only [Set.mem_setOf_eq, map_add (f := _), map_smul, smul_eq_mul]
     nlinarith [mul_pos ht' hv]
   have hU := uniqueDiffWithinAt_convex hH (by
     rw [hO.interior_eq]

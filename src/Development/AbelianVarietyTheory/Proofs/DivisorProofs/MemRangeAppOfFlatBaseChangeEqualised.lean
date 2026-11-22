@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -96,7 +101,7 @@ theorem mem_range_app_of_flat : ∀ (R : Type) [CommRing R] (S Y Z : Scheme.{0})
       (congrArg (fun φ => CommRingCat.Hom.hom φ x) (appLE_eq_of_eq (pullback.condition (f := π) (g := π)).symm _ _ _ _))
   let d : Γ(S, ⊤) →ₗ[Γ(Sp R, ⊤)] Γ(pullback π π, ⊤) :=
     { toFun := fun x => (pullback.fst π π).appLE ⊤ ⊤ le_top x - (pullback.snd π π).appLE ⊤ ⊤ le_top x
-      map_add' := fun x x' => by simp only [map_add]; abel
+      map_add' := fun x x' => by simp only [map_add (f := _)]; abel
       map_smul' := fun c x => by
         simp only [Algebra.smul_def, RingHom.algebraMap_toAlgebra, map_mul, k1, k2, RingHom.id_apply]
         ring }
@@ -149,7 +154,7 @@ theorem mem_range_app_of_flat : ∀ (R : Type) [CommRing R] (S Y Z : Scheme.{0})
       change (r.appLE _ _ _).hom ((pullback.fst π π).appLE ⊤ ⊤ le_top b - (pullback.snd π π).appLE ⊤ ⊤ le_top b) * _ = _
       rw [map_sub, sub_mul]
     | add t t' ht ht' =>
-      rw [map_add, map_add, ht, ht', map_add, map_add, map_add]
+      rw [map_add (f := _), map_add (f := _), ht, ht', map_add (f := _), map_add (f := _), map_add (f := _)]
       abel
   obtain ⟨t, rfl⟩ := hB f
   have hz : d.rTensor Γ(Y, V) t = 0 := hC (by rw [key, map_zero, hf hEq, sub_self])
@@ -166,6 +171,6 @@ theorem mem_range_app_of_flat : ∀ (R : Type) [CommRing R] (S Y Z : Scheme.{0})
   | add s s' hs hs' =>
     obtain ⟨u, hu⟩ := hs
     obtain ⟨u', hu'⟩ := hs'
-    exact ⟨u + u', by rw [map_add, hu, hu', map_add, map_add]⟩
+    exact ⟨u + u', by rw [map_add (f := _), hu, hu', map_add (f := _), map_add (f := _)]⟩
 
 end GlobalTheory.Mum.AffDesc

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum NumberField
 
@@ -73,12 +77,6 @@ noncomputable def residueFieldEquiv :
   (Ideal.quotEquivOfEq (ker_toResidueFieldAdicCompletionIntegers v).symm).trans
     (RingHom.quotientKerEquivOfSurjective (toResidueFieldAdicCompletionIntegers_surjective v))
 
-@[simp]
-theorem residueFieldEquiv_mk (r : R) :
-    residueFieldEquiv (K := K) v (Ideal.Quotient.mk v.asIdeal r) =
-      IsLocalRing.residue _ (algebraMap R (v.adicCompletionIntegers K) r) :=
-  rfl
-
 end Residue
 
 section NumberField
@@ -128,9 +126,6 @@ instance : CompactSpace (v.adicCompletionIntegers K) :=
 instance : LocallyCompactSpace (v.adicCompletion K) :=
   (isCompact_adicCompletionIntegers v).locallyCompactSpace_of_mem_nhds_of_addGroup
     ((isOpen_adicCompletionIntegers v).mem_nhds (v.adicCompletionIntegers K).zero_mem)
-
-instance : CompleteSpace (v.adicCompletionIntegers K) :=
-  (isClosed_adicCompletionIntegers v).completeSpace_coe
 
 end Topology
 

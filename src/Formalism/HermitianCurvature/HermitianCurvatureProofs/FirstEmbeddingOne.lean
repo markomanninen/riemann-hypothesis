@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementW
+module
+
+public import Formalism.HermitianCurvature.StatementW
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.W
 
@@ -119,8 +123,8 @@ theorem entriesCommute_prod (M : R → Matrix (Fin 2) (Fin 2) B)
       fun y hy => h y (by simp [hy])
     exact (Commute.sum_right _ _ _ (fun m _ => Commute.mul_right (hx Y Y' i j k m) (ih ht m l))).eq
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem wordFusion_list (L : List ((R → Matrix (Fin 2) (Fin 2) B) × (R → R)))
     (h : ∀ x ∈ L, IsRTT x.1 ∧ IsDet x.1 x.2)
     (hp : L.Pairwise (fun x y => EntriesCommute x.1 y.1)) :
@@ -156,48 +160,6 @@ end Words
 
 section Norm
 
-theorem absNorm_le_norm {E : Type} [Field E] [NumberField E]
-    (b : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (hb : b ≠ 0) (l : E) (hl : l ∈ b) (hl0 : l ≠ 0) :
-    (FractionalIdeal.absNorm b : ℝ) ≤ |(Algebra.norm ℚ l : ℝ)| := by
-  have hsp : FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l ≤ b :=
-    FractionalIdeal.spanSingleton_le_iff_mem.mpr hl
-  have hs0 : FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l ≠ 0 := by
-    rw [Ne, FractionalIdeal.spanSingleton_eq_zero_iff]
-    exact hl0
-  have hbc : b * (b⁻¹ * FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l) =
-      FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l := by
-    rw [← mul_assoc, mul_inv_cancel₀ hb, one_mul]
-  have hc1 : b⁻¹ * FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l ≤ 1 := by
-    calc b⁻¹ * FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l ≤ b⁻¹ * b := by
-          first
-          | exact FractionalIdeal.mul_left_mono _ hsp
-          | exact mul_le_mul_left' hsp _
-          | exact mul_le_mul' le_rfl hsp
-          | exact mul_le_mul_left hsp _
-          | (rw [← FractionalIdeal.coe_le_coe, FractionalIdeal.coe_mul, FractionalIdeal.coe_mul]
-             exact Submodule.mul_le_mul_right (FractionalIdeal.coe_le_coe.mpr hsp))
-      _ = 1 := inv_mul_cancel₀ hb
-  obtain ⟨I, hI⟩ := FractionalIdeal.le_one_iff_exists_coeIdeal.mp hc1
-  have hI0 : I ≠ ⊥ := by
-    rintro rfl
-    apply hs0
-    rw [← hbc, ← hI]
-    simp
-  have key : FractionalIdeal.absNorm b * FractionalIdeal.absNorm
-      (b⁻¹ * FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l) = |Algebra.norm ℚ l| := by
-    rw [← map_mul, hbc, FractionalIdeal.absNorm_span_singleton]
-  have hx : (1 : ℚ) ≤ FractionalIdeal.absNorm
-      (b⁻¹ * FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 E)) l) := by
-    rw [← hI, FractionalIdeal.coeIdeal_absNorm]
-    have : Ideal.absNorm I ≠ 0 := fun h0 => hI0 (Ideal.absNorm_eq_zero_iff.mp h0)
-    exact_mod_cast Nat.one_le_iff_ne_zero.mpr this
-  have ha : (0 : ℚ) ≤ FractionalIdeal.absNorm b := FractionalIdeal.absNorm_nonneg b
-  have hq : (FractionalIdeal.absNorm b : ℚ) ≤ |Algebra.norm ℚ l| := by
-    calc (FractionalIdeal.absNorm b : ℚ) = FractionalIdeal.absNorm b * 1 := (mul_one _).symm
-      _ ≤ _ := mul_le_mul_of_nonneg_left hx ha
-      _ = _ := key
-  exact_mod_cast hq
-
 end Norm
 
 end Formalism.FourierDecayAlt.P.W
@@ -205,44 +167,5 @@ end Formalism.FourierDecayAlt.P.W
 namespace Formalism.FourierDecayAlt.P
 
 open NumberField
-
-theorem word_fusion : Formalism.FourierDecayAlt.W.WordFusion := by
-  unfold Formalism.FourierDecayAlt.W.WordFusion
-  intro R B _ _ _ L h hp
-  exact Formalism.FourierDecayAlt.P.W.wordFusion_list L h hp
-
-theorem norm_lower_bound : Formalism.FourierDecayAlt.W.NormLower := by
-  unfold Formalism.FourierDecayAlt.W.NormLower
-  intro E _ _ _ aa l hl hl0
-  have hb : aa ≠ 0 := by
-    rintro rfl
-    first
-    | exact hl0 ((FractionalIdeal.mem_zero_iff _).mp hl)
-    | exact hl0 (FractionalIdeal.mem_zero_iff.mp hl)
-    | (simp at hl; exact hl0 hl)
-  have h1 := Formalism.FourierDecayAlt.P.W.absNorm_le_norm aa hb l hl hl0
-  have hsq : (∏ w : NumberField.InfinitePlace E, w l) ^ 2 =
-      ∏ w : NumberField.InfinitePlace E, w l ^ w.mult := by
-    rw [← Finset.prod_pow]
-    refine Finset.prod_congr rfl (fun w _ => ?_)
-    have hc : ¬ w.IsReal :=
-      NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr (NumberField.IsTotallyComplex.isComplex w)
-    first
-    | rw [NumberField.InfinitePlace.mult, if_neg hc]
-    | simp [NumberField.InfinitePlace.mult, hc]
-  have hprod : (∏ w : NumberField.InfinitePlace E, w l) ^ 2 = |(Algebra.norm ℚ l : ℝ)| := by
-    rw [hsq, NumberField.InfinitePlace.prod_eq_abs_norm]
-    first
-    | rfl
-    | simp
-    | (push_cast; rfl)
-  have hnn : 0 ≤ ∏ w : NumberField.InfinitePlace E, w l := by
-    refine Finset.prod_nonneg (fun w _ => ?_)
-    first
-    | positivity
-    | exact w.nonneg l
-    | exact AbsoluteValue.nonneg _ _
-  rw [← Real.sqrt_sq hnn, hprod]
-  exact Real.sqrt_le_sqrt h1
 
 end Formalism.FourierDecayAlt.P

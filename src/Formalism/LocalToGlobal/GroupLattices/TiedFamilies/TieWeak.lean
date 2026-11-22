@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.WeakApproxPI
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.WeakApproxPI
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem weak_of_locAt (G : GAtP p) (A : LocAt F E n G)
     obtain ⟨a, z, hz, e⟩ := adic_dense (A.pl v).1 (A.eQ v x) _ hc
     obtain ⟨c, hcc⟩ := (hW v ((A.eQ v).symm z)).2 (by rw [RingEquiv.apply_symm_apply]; exact hz)
     refine ⟨algebraMap F E a, c, ?_⟩
-    rw [hF, e, map_add, map_mul, map_pow, RingEquiv.symm_apply_apply, hcc, map_natCast]
+    rw [hF, e, map_add (f := _), map_mul, map_pow, RingEquiv.symm_apply_apply, hcc, map_natCast]
   · intro v v' hne
     obtain ⟨a, h1, h2⟩ := adic_dist (A.pl v).1 (A.pl v').1 (fun h => hne (A.pl.injective (Subtype.ext h)))
     refine ⟨algebraMap F E a, ?_, ?_⟩

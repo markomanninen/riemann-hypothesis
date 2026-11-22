@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdSubConjEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdSubConjEqZero
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
@@ -124,7 +128,7 @@ theorem GlobalTheory.EtC.GalSec.Tens.lem_hom : ∀ (K Ω : Type) [Field K] [Fiel
     simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   · simp [Tens.lev]
   · intro φ ψ
-    simp only [Tens.lev, LocallyConstant.coe_add, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [Tens.lev, LocallyConstant.coe_add, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 private theorem polynomial_eval_eq_sum_eval_mul_idempotent {ι B : Type} [Fintype ι] [CommRing B] (e : ι → B) (he : ∑ i, e i = 1)
     (c : ι → B) (b : B) (hb : ∀ i, b * e i = c i * e i) (q : Polynomial B) :
     q.eval b = ∑ i, q.eval (c i) * e i := by
@@ -273,7 +277,8 @@ private theorem map_tens_lev {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] {
     (φ : LCRing K Ω k) :
     f (Tens.lev g₀ gs θ φ) = Tens.lev (f.comp g₀) (fun i => f.comp (gs i)) θ φ := by
   unfold Tens.lev
-  simp only [map_sum, map_mul, map_prod, map_tens_idem, RingHom.comp_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_prod, map_tens_idem, RingHom.comp_apply]
 
 private theorem tens_lev_legHom_eq_of_dependsOn {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω] (k : ℕ)
     (θ : Ω) (φ : LCRing K Ω k) (hφ : Tens.DependsOn K Ω k θ φ) :
@@ -353,7 +358,7 @@ theorem lcRing_universal : ∀ (K Ω : Type) [Field K] [Field Ω] [Algebra K Ω]
       obtain ⟨η, h1, h2⟩ := hcommon φ ψ
       obtain ⟨v, hv⟩ := lem_hom K Ω B k g₀ gs hgs η
       show lev g₀ gs (θf (φ + ψ)) (φ + ψ) = lev g₀ gs (θf φ) φ + lev g₀ gs (θf ψ) ψ
-      rw [← hwd _ η (hdadd η φ ψ h1 h2), ← hwd φ η h1, ← hwd ψ η h2, ← hv, ← hv, ← hv, map_add]
+      rw [← hwd _ η (hdadd η φ ψ h1 h2), ← hwd φ η h1, ← hwd ψ η h2, ← hv, ← hv, ← hv, map_add (f := _)]
   have hlegs : ∀ i, u.comp (legHom K Ω k i) = g i := by
     intro i
     cases i using Fin.cases with

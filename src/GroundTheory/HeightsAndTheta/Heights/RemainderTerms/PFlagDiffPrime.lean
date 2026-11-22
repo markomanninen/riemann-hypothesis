@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -25,7 +30,7 @@ theorem dvd_sub_collapse (a b : σ) (Q : MvPolynomial σ ℚ) :
   induction Q using MvPolynomial.induction_on with
   | C c => simp [collapse]
   | add p q hp hq =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact dvd_add hp hq
   | mul_X p i hp =>
     rw [map_mul]

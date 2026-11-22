@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -101,14 +105,16 @@ theorem exists_basis_split_of_exact_of_fg_valuationRing :
     have h1 : ∀ i, al (b (w i)) = 0 := fun i => (hex _).mpr ⟨w i, rfl⟩
     have h2 : ∑ j, g (Sum.inr j) • u j = 0 := by
       have h7 := congrArg al hg
-      simpa [map_add, map_sum, map_smul, h1, hta'] using h7
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_add (f := _), map_sum, map_smul, h1, hta'] using h7
     have h3 : ∀ j, g (Sum.inr j) = 0 :=
       Fintype.linearIndependent_iff.mp hu (fun j => g (Sum.inr j)) h2
     have h4 : ∑ i, g (Sum.inl i) • b (w i) = 0 := by
       simpa [h3] using hg
     have h5 : ∑ i, g (Sum.inl i) • w i = 0 := by
       apply hb
-      simpa [map_sum, map_smul] using h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_smul] using h4
     have h6 := Fintype.linearIndependent_iff.mp hw (fun i => g (Sum.inl i)) h5
     intro i
     cases i with
@@ -128,7 +134,8 @@ theorem exists_basis_split_of_exact_of_fg_valuationRing :
       rw [← hus, Submodule.mem_span_range_iff_exists_fun] at hax
       obtain ⟨c, hc⟩ := hax
       have hyal : al (x - ∑ j, c j • t j) = 0 := by
-        rw [map_sub, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum]
         simp only [LinearMap.map_smul_of_tower, hta']
         rw [hc, sub_self]
       obtain ⟨a, ha⟩ := (hex _).mp hyal

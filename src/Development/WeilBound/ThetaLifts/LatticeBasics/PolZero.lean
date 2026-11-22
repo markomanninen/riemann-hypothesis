@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
-import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FdEqZero
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NonZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,10 @@ theorem polZero_of (hC : CptAll) (hH : HermLine) (hL : CoefLine) (hT : ThConst) 
   have ig : ∀ s u s' u', ∀ y ∈ pairs B G X R Rf, ∀ y' ∈ pairs B G X R Rf,
       Integrable (fun g => comb G om om' s u y g * star (comb G om om' s' u' y' g)) (μ.restrict D) := fun s u s' u' y hy y' hy' => by
     have c := (cc s u y hy).mul (cc s' u' y' hy').star
-    obtain ⟨C, hC⟩ := cW.bdd c fun γ hγ g => by simp only [Pi.mul_apply, ci s u y hy γ hγ, ci s' u' y' hy' γ hγ]
+    obtain ⟨C, hC⟩ := cW.bdd c fun γ hγ g => by
+      change comb G om om' s u y (γ * g) * star (comb G om om' s' u' y' (γ * g)) =
+        comb G om om' s u y g * star (comb G om om' s' u' y' g)
+      rw [ci s u y hy γ hγ, ci s' u' y' hy' γ hγ]
     exact Integrable.of_bound c.aestronglyMeasurable C (Eventually.of_forall hC)
   obtain ⟨c, hc⟩ := hH F E σ B a a' G X om om' R Rf h hp hq μ D hμ hD 1 0 0 1
   have orth : ∀ y ∈ pairs B G X R Rf, pet μ D (comb G om om' 1 (-c) y) (comb G om om' 0 1 y) = 0 := fun y hy => by

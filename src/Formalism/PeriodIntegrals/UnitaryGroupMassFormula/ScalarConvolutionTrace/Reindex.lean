@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarConvolutionTrace.CardUNeZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarConvolutionTrace.CardUNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem representation_commutes_gamma : RepGamComm := by
   intro F _ _ k ψ₀ V _ _ π g
   apply LinearMap.ext
   intro v
-  simp only [repGam, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [repGam, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply,
     map_sum, map_smul]
   have hm : ∀ a b : GL (Fin k) F, π a (π b v) = π (a * b) v := fun a b => by
     rw [map_mul, Module.End.mul_apply]
@@ -50,7 +55,8 @@ theorem representation_conjugate_gamma : RepGamConj := by
   have hR : ∀ y : GL (Fin k) F, ((π y⁻¹) ∘ₗ projQ ψ₀ π ∘ₗ π y) v =
       ∑ z, ((cardU F k : ℂ)⁻¹ * psiNat ψ₀ (y * z * y⁻¹)) • π z v := by
     intro y
-    simp only [projQ, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [projQ, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.sum_apply,
       map_smul, map_sum]
     rw [← Equiv.sum_comp (MulAut.conj y).toEquiv, Finset.smul_sum]
     refine Finset.sum_congr rfl fun z _ => ?_
@@ -63,7 +69,8 @@ theorem representation_conjugate_gamma : RepGamConj := by
 
 theorem trace_representation_gamma : TraceRepGam := by
   intro F _ _ k ψ₀ V _ _ _ π
-  rw [representation_conjugate_gamma F k ψ₀ V π, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [representation_conjugate_gamma F k ψ₀ V π, map_sum]
 
   have h : ∀ y : GL (Fin k) F,
       LinearMap.trace ℂ V ((π y⁻¹) ∘ₗ projQ ψ₀ π ∘ₗ π y) = LinearMap.trace ℂ V (projQ ψ₀ π) := by

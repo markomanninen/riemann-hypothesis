@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramLogUnitaryTriangularInvariance
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramLogUnitaryTriangularInvariance
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+
+@[expose] public section
+
 open Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder
 set_option maxHeartbeats 1000000 in

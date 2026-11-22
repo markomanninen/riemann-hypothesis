@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecPairA
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -66,13 +70,13 @@ theorem IsPairClass.unique {a : Kˣ} {χ : charGrp (GK p K)} {c c' : Br p K}
 theorem isPairClass_pairBr (a : Kˣ) (χ : charGrp (GK p K)) :
     IsPairClass p K (ofK p K (Additive.ofMul a)) χ (pairBr p K a χ) := by
   unfold pairBr
-  rw [dif_pos (exists_isPairClass a χ)]
+  rw [dite_eq_left (exists_isPairClass a χ)]
   exact (exists_isPairClass a χ).choose_spec
 
 theorem pairBr_mul (a b : Kˣ) (χ : charGrp (GK p K)) :
     pairBr p K (a * b) χ = pairBr p K a χ + pairBr p K b χ := by
   refine IsPairClass.unique (isPairClass_pairBr (a * b) χ) ?_
-  rw [ofMul_mul, map_add]
+  rw [ofMul_mul, map_add (f := _)]
   exact (isPairClass_pairBr a χ).add_left (fun g => kbarT_rho_ofK g _) (isPairClass_pairBr b χ)
 
 theorem pairBr_add (a : Kˣ) (χ ψ : charGrp (GK p K)) :
@@ -81,11 +85,11 @@ theorem pairBr_add (a : Kˣ) (χ ψ : charGrp (GK p K)) :
 
 theorem pairK_mul (a b : Kˣ) (χ : charGrp (GK p K)) : pairK p K (a * b) χ = pairK p K a χ + pairK p K b χ := by
   unfold pairK
-  rw [pairBr_mul, map_add]
+  rw [pairBr_mul, map_add (f := _)]
 
 theorem pairK_add (a : Kˣ) (χ ψ : charGrp (GK p K)) : pairK p K a (χ + ψ) = pairK p K a χ + pairK p K a ψ := by
   unfold pairK
-  rw [pairBr_add, map_add]
+  rw [pairBr_add, map_add (f := _)]
 
 theorem pairK_one (χ : charGrp (GK p K)) : pairK p K 1 χ = 0 := by
   have h := pairK_mul 1 1 χ

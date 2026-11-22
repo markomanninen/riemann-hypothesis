@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestDefinitePeriodChangeOfMeasures
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpAttChrMu
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselColumnScalarFunctionContinuousLeftInvariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerFockMovedReal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleLiftReductionToFockVectorsUniform
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawWeilBiActionCommutes
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CentralEigenThetaIsFockVectorBoundedDegree
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OmZeroRat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealCentreActsByCharacterOnIsotypicSlices
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContAutRapidDecBoundedIntegrable
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealComponentCentralDefiniteUnitaryEqUnitScalar
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefficientSpaceEndomorphismScalarSchur
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestDefinitePeriodChangeOfMeasures
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpAttChrMu
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselColumnScalarFunctionContinuousLeftInvariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerFockMovedReal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubleLiftReductionToFockVectorsUniform
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawWeilBiActionCommutes
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CentralEigenThetaIsFockVectorBoundedDegree
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OmZeroRat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealCentreActsByCharacterOnIsotypicSlices
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContAutRapidDecBoundedIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RealComponentCentralDefiniteUnitaryEqUnitScalar
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefficientSpaceEndomorphismScalarSchur
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicUnitaryTopCong
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
@@ -94,13 +99,12 @@ theorem lift_cen (hθ : IsInfFam θ) {S T : HSp D} {x : DefSp S} {y : DefSp T} (
     have key2 : k.om (a, b) (k.pt ψ θ x y P) = l • k.pt ψ θ x y P := by
       rw [key1]
       unfold comb
-      rw [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun u _ => ?_
       rw [map_smul, hW.om_heis a b u _ hF, h3, hag a ha b hb.1 _ hF, hv, hl, smul_comm]
       congr 1
-      funext w
-      simp only [heisO, Pi.smul_apply, smul_eq_mul]
-      ring
+      exact GlobalTheory.SplitScalar.heisO_smul _ _ _ _ _ _
     have hpt := (GlobalTheory.SeeSaw.LiftSumProof.liftSum D ψ θ hθ S T x y hx hy k hk P).1
     rw [liftT_apply, liftT_apply, ← GlobalTheory.ChainOnto.setIntegral_fd_mul_right D S v.μ v.𝓕 v.haar v.fund
       (fun g => k.om (g, h * b) (k.pt ψ θ x y P) 0 * φ g) (fun γ hγ g => by rw [fix_left hW hpt g _ hγ, hφ.1 γ hγ g]) a,
@@ -228,8 +232,8 @@ theorem coCpt_last : GlobalTheory.Unf.CoCpt (G.V (.grid D.R.m D.R.m)) := by
   simp only [Node.neg, Nat.sub_self, Nat.zero_div, Nat.sub_zero] at this
   exact GlobalTheory.DefiniteQuotient.posDef_of_signature this
 
-variable (G) in
 
+variable (G) in
 abbrev Pols : Type := ∀ j : ℕ, PolF D (G.V (.top (j + 1))).rank (G.V (.top j)).rank
 
 variable (v : ∀ j : ℕ, WO (G.V (.top j)) (G.V (.top (j + 1))) → ℂ)
@@ -299,7 +303,7 @@ theorem col_step {j : ℕ} (hj : j + 2 ≤ D.R.m) (he : Even j) (I : Type) [Fint
   have hcont := fun i => Lp_cont W hv hM t hc (Q i) hφ j h0.le
   have hsum : GlobalTheory.Unf.IsContAut _ (∑ i, Lp W v M t c j (Q i) φ) :=
     ⟨fun γ hγ g => by simp only [Finset.sum_apply, (hcont _).1 γ hγ g],
-      by simpa only [Finset.sum_fn] using continuous_finset_sum _ fun i _ => (hcont i).2⟩
+      by simpa only [Finset.sum_fn] using continuous_finsetSum _ fun i _ => (hcont i).2⟩
   obtain ⟨e1, e2⟩ := hS (volT hM h0) (volT hM h1) _ _ (kd_is W hv t h0 (hc _ h0)) (kd_is W hv t h1 (hc _ h1)) rfl rfl
     (hre t t₀ j h0) (hre t t₀ (j + 1) h1) _ hsum hχ
   have e : biL W M t j (∑ i, Lp W v M t c j (Q i) φ) (combC W c C j) = ∑ p : Fin n × I, Lp W v M t c (j + 1 + 1)
@@ -341,7 +345,7 @@ theorem col_ind : ∀ σ j (hj : j + 2 * σ + 2 = D.R.m), Even j → ∀ (I : Ty
       (GlobalTheory.RowChain.topEmb G _ h') ∂M.ν (.grid D.R.m D.R.m) = _
     rw [(hS t M hM c hc φ hφ hχ).1]
     simp only [Finset.sum_apply, Lp_topEmb, mul_comm (F _), Finset.sum_mul]
-    apply integral_finset_sum
+    apply integral_finsetSum
     intro i _
     have h1 := Lp_cont W hv hM t hc (Q' i) hφ D.R.m le_rfl
     have h2 := hM (.grid D.R.m D.R.m) ⟨le_rfl, rfl⟩ (fun e => by cases e)
@@ -403,8 +407,8 @@ theorem rhoH_central {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {x
   rw [GlobalTheory.CoefModel.rhoH_toHilb, hs]
   exact (GlobalTheory.CoefModel.toHilb lam hJ).map_smul _ _
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem pairVec_cen {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {x : DefSp V} (hx : x.Is)
     (lam : D.what₂.Tau → DomWeight V.rank) {J : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ} (hJ : ∀ τ, (J τ).PosDef) :
     ∃ χ, ∀ ξ Ψ, HasCen V χ (pairVec (GlobalTheory.CoefModel.coefOf lam hJ (invTrK.comp (GlobalTheory.CoefModel.realGL θ V))) ξ Ψ) := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.FinalF
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+
+@[expose] public section
 
 open NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL GlobalTheory.Count GlobalTheory.Dec
 

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.Brauer.DoubleCentralizer
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.DoubleCentralizer
+
+@[expose] public section
 
 noncomputable section
 

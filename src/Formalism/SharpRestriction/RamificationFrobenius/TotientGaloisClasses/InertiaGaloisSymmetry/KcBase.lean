@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DecompTypeI
-import Formalism.FrobeniusOrbits.HostCorollaries
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.DecompTypeI
+public import Formalism.FrobeniusOrbits.HostCorollaries
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 open scoped Pointwise nonZeroDivisors

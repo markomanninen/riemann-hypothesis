@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SimpleTwistedTraceFormulaStable
+
+@[expose] public section
+
 open GlobalTheory.BCT
 
 noncomputable section
@@ -103,7 +108,7 @@ theorem fiber_count (ι : H →* G) (hι : Injective ι) (Γ : Subgroup G) (hΓ 
     simp only [Set.mem_preimage, Set.mem_singleton_iff, MulAction.mem_orbit_iff]
     constructor
     · intro he
-      obtain ⟨g', hg', k, hk, e⟩ := (DoubleCoset.eq Γ' K _ _).1 he
+      obtain ⟨g', hg', k, hk, e⟩ := (@DoubleCoset.eq _ _ Γ' K _ _).1 he
       obtain ⟨t, ht, rfl⟩ := (hΓ' g').1 hg'
       have e' : (ι h₀)⁻¹ = ι t * ((ι (Quotient.out δ))⁻¹ * x) * k * x⁻¹ := by
         rw [← e]; group
@@ -123,7 +128,7 @@ theorem fiber_count (ι : H →* G) (hι : Injective ι) (Γ : Subgroup G) (hΓ 
       refine ⟨ι t, (hT t).1 t.2, x⁻¹ * ι s * x, (hS s).1 s.2, ?_⟩
       simp only [map_mul, map_inv]
       group
-  obtain ⟨g', k, hg', hk, hy⟩ := DoubleCoset.mk_out_eq_mul Γ' K ((ι h₀)⁻¹ * x)
+  obtain ⟨g', hg', k, hk, hy⟩ := DoubleCoset.mk_out_eq_mul Γ' K ((ι h₀)⁻¹ * x)
   set y := Quotient.out (DoubleCoset.mk Γ' K ((ι h₀)⁻¹ * x)) with hydef
   set a := g' * (ι h₀)⁻¹ with hadef
   let φ : S →* G := (MulAut.conj a).toMonoidHom.comp (ι.comp S.subtype)
@@ -208,11 +213,11 @@ theorem unfold_classSum : ∀ {G H : Type} [Group G] [Group H] (ι : H →* G), 
     exact right_ne_zero_of_mul hp
   have hπ : ∀ q q' δ δ', Φ (q', δ) = Φ (q, δ') → q' = q := by
     intro q q' δ δ' h
-    obtain ⟨g', hg', k, hk, e⟩ := (DoubleCoset.eq Γ' K _ _).1 h
+    obtain ⟨g', hg', k, hk, e⟩ := (@DoubleCoset.eq _ _ Γ' K _ _).1 h
     have hΓ'Γ : g' ∈ Γ := by
       obtain ⟨t, -, rfl⟩ := (hΓ' g').1 hg'
       exact hιΓ t
-    rw [← DoubleCoset.out_eq' Γ K q, ← DoubleCoset.out_eq' Γ K q', DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' q, ← DoubleCoset.out_eq' q', DoubleCoset.eq]
     refine ⟨ι (Quotient.out δ') * g' * (ι (Quotient.out δ))⁻¹,
       Γ.mul_mem (Γ.mul_mem (hιΓ _) hΓ'Γ) (Γ.inv_mem (hιΓ _)), k, hk, ?_⟩
     have e' : Quotient.out q = ι (Quotient.out δ') * (g' * ((ι (Quotient.out δ))⁻¹ * Quotient.out q') * k) := by
@@ -220,13 +225,13 @@ theorem unfold_classSum : ∀ {G H : Type} [Group G] [Group H] (ι : H →* G), 
     rw [e']; group
   have hsurj : Surjective Φ := by
     intro b
-    obtain ⟨γ, k, hγ, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K (Quotient.out b)
+    obtain ⟨γ, hγ, k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ K (Quotient.out b)
     obtain ⟨h, rfl⟩ := (hΓ γ).1 hγ
     obtain ⟨t, ht⟩ := QuotientGroup.mk_out_eq_mul T h
     refine ⟨(DoubleCoset.mk Γ K (Quotient.out b), (h : H ⧸ T)), ?_⟩
     show DoubleCoset.mk Γ' K ((ι (Quotient.out (h : H ⧸ T)))⁻¹ * Quotient.out (DoubleCoset.mk Γ K (Quotient.out b))) = b
     rw [ht, e]
-    conv_rhs => rw [← DoubleCoset.out_eq' Γ' K b]
+    conv_rhs => rw [← DoubleCoset.out_eq' b]
     rw [DoubleCoset.eq]
     refine ⟨ι t, (hΓ' _).2 ⟨t, t.2, rfl⟩, k⁻¹, K.inv_mem hk, ?_⟩
     simp only [map_mul]
@@ -264,7 +269,7 @@ theorem unfold_classSum : ∀ {G H : Type} [Group G] [Group H] (ι : H →* G), 
         have hS0 : Nat.card ↥(Γ ⊓ K.map (MulAut.conj (Quotient.out q)).toMonoidHom) ≠ 0 := Nat.card_pos.ne'
         rw [← hc] at hS0
         obtain ⟨hn0, hc0⟩ := mul_ne_zero_iff.1 hS0
-        obtain ⟨g', k, hg', hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ' K ((ι (Quotient.out δ₀))⁻¹ * Quotient.out q)
+        obtain ⟨g', hg', k, hk, e⟩ := DoubleCoset.mk_out_eq_mul Γ' K ((ι (Quotient.out δ₀))⁻¹ * Quotient.out q)
         have hue : u (Quotient.out (DoubleCoset.mk Γ' K ((ι (Quotient.out δ₀))⁻¹ * Quotient.out q))) =
             u ((ι (Quotient.out δ₀))⁻¹ * Quotient.out q) := by rw [e, hu' g' hg' k hk]
         simp only [w, Φ]

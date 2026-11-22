@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafVanBPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafVanBPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -106,11 +110,6 @@ theorem stalkPt_of (hN : LeafSHSys) (hC : LeafSHCont) : LeafStalkPt := by
   have h0 := hc S.c.pt S.t S.sh hu
   obtain ⟨j, hj⟩ := hC hy q k hq i s ι U m c x S h0
   exact ⟨S.V j, S.a j, S.hx j, hj⟩
-
-theorem LeafVanBStalk_of (hN : LeafSHSys) (hC : LeafSHCont) : LeafVanBStalk := by
-  have hP := stalkPt_of hN hC
-  intro hy q _ k _ hq i B W s ι _ U m c hc
-  exact cov_of_pts q i ι U m c (hP hy q k hq i s ι U m c hc)
 
 theorem LeafVanBStalk_of_pt (hP : LeafStalkPt) : LeafVanBStalk := by
   intro hy q _ k _ hq i B W s ι _ U m c hc

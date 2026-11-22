@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.InductionParabolic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.InductionParabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V}
   {V' : Type*} [AddCommGroup V'] [Module ℂ V'] {ρ' : Representation ℂ G V'}
 
-omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 theorem isAdmissible_of_injective (hρ : IsSmooth ρ) (hρ' : IsAdmissible ρ')
     (f : Representation.IntertwiningMap ρ ρ') (hf : Function.Injective f) : IsAdmissible ρ := by
   refine ⟨hρ, fun K hKc hKo => ?_⟩
@@ -31,8 +35,8 @@ variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchi
 
 section Permute
 
-variable (F) in
 
+variable (F) in
 def permuteGL (s : Equiv.Perm (Fin n)) : GL (Fin n) F ≃* GL (Fin n) F :=
   Units.mapEquiv (reindexAlgEquiv F F s).toMulEquiv
 

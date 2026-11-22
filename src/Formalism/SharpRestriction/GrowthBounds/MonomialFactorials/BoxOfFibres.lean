@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,15 +14,15 @@ section Comb
 
 variable {s t : ℕ} (u : Fin t → Fin s)
 
-open Classical in
 
+open Classical in
 def ovr (a : Fin s → ℕ) (n : Fin t → ℕ) : Fin s → ℕ :=
   fun l => if h : ∃ i, u i = l then n (Classical.choose h) else a l
 
 theorem ovr_u (hu : Function.Injective u) (a : Fin s → ℕ) (n : Fin t → ℕ) (i : Fin t) : ovr u a n (u i) = n i := by
   unfold ovr
   have h : ∃ i', u i' = u i := ⟨i, rfl⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact congrArg n (hu (Classical.choose_spec h))
 
 theorem ovr_not (a : Fin s → ℕ) (n : Fin t → ℕ) (l : Fin s) (h : ¬ ∃ i, u i = l) : ovr u a n l = a l := dif_neg h

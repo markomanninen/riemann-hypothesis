@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SocleOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSocleProdIrrCongr
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LOneSatakeBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbeddingOfExponent
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SocleOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSocleProdIrrCongr
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LOneSatakeBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbeddingOfExponent
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.SplitWeil ValuativeRel
 

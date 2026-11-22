@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleZFamilySt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleZFamilySt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PAmpleAffineGen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -29,7 +34,8 @@ theorem aeval_mem_pow {I : Chart x} {Q : Submodule (chartRing S x I) Ω} (hQ : �
     | insert j t hj ih =>
       rw [Finset.prod_insert hj, Finset.sum_insert hj, pow_add]
       exact Submodule.mul_mem_mul (Submodule.pow_mem_pow _ (hQ j) _) ih
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   rw [aeval_monomial]
   have hdeg : ∑ j ∈ d.support, d j = e := by
@@ -38,12 +44,12 @@ theorem aeval_mem_pow {I : Chart x} {Q : Submodule (chartRing S x I) Ω} (hQ : �
   have hm := hmon d d.support
   rw [hdeg] at hm
   have := Submodule.smul_mem (Q ^ e)
-    (⟨algebraMap S Ω (coeff d f), Subalgebra.algebraMap_mem _ _⟩ : chartRing S x I) hm
+    (⟨algebraMap S Ω (AddMonoidAlgebra.coeff f d), Subalgebra.algebraMap_mem _ _⟩ : chartRing S x I) hm
   rw [chartRing_smul_def] at this
   exact this
 
-omit [Module S E] [IsScalarTower S Ω E] in
 
+omit [Module S E] [IsScalarTower S Ω E] in
 theorem smul_mem_twist_pow (F : SubSystem S x E) (H : SubSystem S x Ω) (I : Chart x) {c d : ℕ} {z : E}
     {q : Ω} (hz : z ∈ (F.twist (H.pow c)).sub I) (hq : q ∈ (H.pow d).sub I) :
     q • z ∈ (F.twist (H.pow (c + d))).sub I := by

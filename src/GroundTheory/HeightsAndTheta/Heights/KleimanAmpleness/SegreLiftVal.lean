@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreJoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreJoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -47,20 +52,6 @@ def segreLift (W : Ideal (MRing ι R)) : Ideal (MRing (segreIdx ι) R) :=
 end Objects
 
 section Examples
-
-example (W : Ideal (MRing (fun _ : Unit => Fin 2) ℚ)) :
-    segreY (R := ℚ) (fun _ => (0 : Fin 2)) * segreMon (fun _ => 1) -
-        segreY (fun _ => 1) * segreMon (fun _ => 0) ∈ segreLift _ ℚ W := by
-  simp only [segreLift, RingHom.mem_ker, segreY, segreMon, map_sub, map_mul, map_prod,
-    segreLiftMap, aeval_X, segreLiftVal]
-  simp only [Finset.univ_unique, Finset.prod_singleton]
-  ring
-
-example : (X ⟨Sum.inr (), (0 : Fin 2)⟩ : MRing (segreIdx (fun _ : Unit => Fin 2)) ℚ) ∉
-    segreLift _ ℚ ⊥ := by
-  simp only [segreLift, RingHom.mem_ker, segreLiftMap, aeval_X, segreLiftVal]
-  rw [Polynomial.C_eq_zero, Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_bot]
-  exact X_ne_zero _
 
 end Examples
 

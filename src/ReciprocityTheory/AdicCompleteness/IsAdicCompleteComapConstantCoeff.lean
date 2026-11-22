@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u
 
@@ -19,7 +23,7 @@ theorem map_C_sup_span_X :
     · rw [Ideal.map_le_iff_le_comap]
       intro a ha
       simpa using ha
-    · simp [Ideal.span_singleton_le_iff_mem]
+    · simp
   · intro f hf
     rw [f.eq_X_mul_shift_add_const]
     exact add_mem
@@ -51,7 +55,8 @@ theorem mem_pow_comap_constantCoeff_iff (n : ℕ) (f : A⟦X⟧) :
     have hX : (X : A⟦X⟧) ∈ I.comap (constantCoeff (R := A)) := by simp
     rw [f.eq_X_pow_mul_shift_add_trunc n]
     refine add_mem (Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hX n)) ?_
-    rw [trunc_apply, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [trunc_apply, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
     refine sum_mem fun i hi => ?_
     have hi' : i < n := (Finset.mem_Ico.1 hi).2
     rw [Polynomial.coeToPowerSeries.ringHom_apply, Polynomial.coe_monomial,

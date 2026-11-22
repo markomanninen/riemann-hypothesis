@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -37,7 +42,7 @@ theorem adicCompletion_injective_ringHom_of_finite
       Ideal.quotientMap_mk]
     rfl
   refine ⟨AdicCompletion.liftRingHom _ g hg, ?_⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hmap := AdicCompletion.map_injective J (f := Algebra.linearMap D N) hinj
   apply hmap

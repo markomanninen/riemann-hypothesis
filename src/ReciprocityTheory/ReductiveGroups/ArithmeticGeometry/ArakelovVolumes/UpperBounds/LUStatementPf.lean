@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPfC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPfC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.LUPf
 
@@ -37,7 +41,7 @@ theorem linePoly_eval (x v : Frame X.Ψ r) (t : ℂ) :
   congr 1
   ext i j
   simp [Mx, mat, Matrix.mul_apply, Finset.mul_sum, mul_add, Finset.sum_add_distrib, mul_left_comm,
-    Polynomial.eval_finset_sum]
+    Polynomial.eval_finsetSum]
 
 theorem dense_delta (hx0 : IsOrth X x0) (x : Frame X.Ψ r) (ε : ℝ) (hε : 0 < ε) :
     ∃ y ∈ ball x ε, DeltaF X x0 y ≠ 0 := by

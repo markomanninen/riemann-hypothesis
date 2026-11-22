@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefIsPsEffAndBigTensNef
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefIsPsEffAndBigTensNef
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RelAmpleExternalTensorPowerGroupPower
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSecNonzeroLocusEqOfLbIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -29,7 +34,7 @@ namespace GlobalTheory.NefFieldExt
 
 variable {k E : Type} [Field k] [Field E] {X Y : Scheme.{0}} [Algebra k Γ(X, ⊤)] [Algebra E Γ(Y, ⊤)]
 
-theorem isNef_pull (hN : Published.NefNumerics) [IsProper (strHom k X)] {L H : LB X} (h : IsNef k L)
+theorem isNef_pull (hN : Published.NefNumerics) [IsProper (strHom k (X := X))] {L H : LB X} (h : IsNef k L)
     (hH : IsAmpleLB H) {H' : LB Y} (hH' : IsAmpleLB H') (g : Y ⟶ X) : IsNef E (L.pull g) := by
   have hL := LB.isLB_pull h.isLB g
   have hA := LB.isLB_pull hH.isLB g
@@ -42,7 +47,7 @@ theorem isNef_pull (hN : Published.NefNumerics) [IsProper (strHom k X)] {L H : L
 
   letI := algebraΓAlong k (redι Z)
   have := isIntegral_red hi
-  have hZp : IsProper (strHom k (Scheme.IdealSheafData.vanishingIdeal Z).subscheme) := by
+  have hZp : IsProper (strHom k (X := (Scheme.IdealSheafData.vanishingIdeal Z).subscheme)) := by
     rw [← comp_strHom (appTop_algebraMap_along k (redι Z))]
     infer_instance
   have hHZ := hH.pull_of_isClosedImmersion (redι Z)
@@ -89,7 +94,7 @@ theorem isNef_pull (hN : Published.NefNumerics) [IsProper (strHom k X)] {L H : L
       change pull (redι C) (cls _ (isLB_lbPow hT' r)) = pull φ (cls _ hr')
       rw [cls_lbPow_tens_lbPow hL hA, cls_lbPow_tens_lbPow hLZ' hHZ', cls_pull h.isLB, cls_pull hH.isLB,
         cls_pull h.isLB, cls_pull hH.isLB]
-      simp only [map_nsmul, map_add, ← pull_comp, hφ]
+      simp only [map_nsmul, map_add (f := _), ← pull_comp, hφ]
     rw [← h1, hC.interNumRed_lbPow hH' hT', hC.interNumRed_of_cls_eq_add hH' hT' (isLB_lbPow hL m) hA rfl,
       hC.interNumRed_lbPow hH' hL] at h0
     exact nonneg_of_mul_nonneg_right h0 (Nat.cast_pos.2 hr)
@@ -112,7 +117,7 @@ theorem isNef_baseChange : GlobalTheory.Published.NefNumerics → ∀ (k E : Typ
   letI := algebraΓOfHom q
   intro L hL
   obtain ⟨hpp, A, hA⟩ := (isProjOver_iff_isProper_and_exists_isAmpleLB p).1 hp
-  have : IsProper (strHom k Y) := by rw [strHom_eq (f := p) fun _ => rfl]; exact hpp
+  have : IsProper (strHom k (X := Y)) := by rw [strHom_eq (f := p) fun _ => rfl]; exact hpp
   have : IsAffineHom π := MorphismProperty.of_isPullback H.flip inferInstance
   exact isNef_pull hN hL hA (hA.pull_of_isAffineHom π) π
 

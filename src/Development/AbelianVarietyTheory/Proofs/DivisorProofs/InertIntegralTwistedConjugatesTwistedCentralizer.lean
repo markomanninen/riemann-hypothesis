@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralTwConjMemCentMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellMulSimpleUIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralTwConjMemCentMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CellMulSimpleUIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -63,11 +68,11 @@ theorem finrank_fixF (σ : L →+* L) (h : ∀ x, σ (σ x) = x) (hne : ∃ x, �
 end Fixed
 
 theorem eq_twCent_mul_KGL : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ (n : ℕ) (w : Pl E), ¬ IsSplitAt w →
-    ∀ y g : GLw n w, y ∈ GlobalTheory.LFun.KGL w n →
+    ∀ y g : GLw n w, y ∈ GlobalTheory.LFun.KGL w (n := n) →
     (∃ u v : (w.adicCompletion E)[X], (∀ i, u.coeff i ∈ w.adicCompletionIntegers E) ∧
       (∀ i, v.coeff i ∈ w.adicCompletionIntegers E) ∧
       u * (nrmL n w y).val.charpoly + v * derivative (nrmL n w y).val.charpoly = 1) →
-    g⁻¹ * y * thL n w g ∈ GlobalTheory.LFun.KGL w n → ∃ t ∈ twCent (thL n w) y, ∃ k ∈ GlobalTheory.LFun.KGL w n, g = t * k := by
+    g⁻¹ * y * thL n w g ∈ GlobalTheory.LFun.KGL w (n := n) → ∃ t ∈ twCent (thL n w) y, ∃ k ∈ GlobalTheory.LFun.KGL w (n := n), g = t * k := by
   intro E _ _ _ hU n w hs y g hy hbez hyg
   obtain ⟨hc, hinv, hval, hns, -⟩ := GlobalTheory.ConjAtPlace.main E hU w
   obtain ⟨-, ⟨ϖ, q, hϖ, -⟩, -⟩ := hns hs
@@ -118,9 +123,23 @@ theorem eq_twCent_mul_KGL : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
   have hnr : (nrmL n w y).val = GlobalTheory.Tw.nrm y.val := by
     rw [nrmL, if_neg hs, Units.val_mul, hcs, thetaGL_val]; rfl
 
-  have hint : ∀ h : GLw n w, h ∈ GlobalTheory.LFun.KGL w n → (∀ i j, ‖h.val i j‖ ≤ 1) ∧ ‖h.val.det‖ = 1 := by
+  have hmem (O : Subring (w.adicCompletion E)) (h : GLw n w) :
+      h ∈ GLint (Fin n) O ↔
+        (∀ i j, h.val i j ∈ O) ∧ ∀ i j, (h⁻¹).val i j ∈ O := by
+    have hi : Function.Injective fun A : Matrix (Fin n) (Fin n) O => A.map O.subtype :=
+      Matrix.map_injective Subtype.val_injective
+    constructor
+    · rintro ⟨y, rfl⟩
+      exact ⟨fun i j => (y.1 i j).2, fun i j => ((y⁻¹).1 i j).2⟩
+    · rintro ⟨h1, h2⟩
+      refine ⟨⟨Matrix.of fun i j => ⟨_, h1 i j⟩, Matrix.of fun i j => ⟨_, h2 i j⟩, hi ?_, hi ?_⟩, Units.ext rfl⟩
+      · simp only [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)]
+        exact h.mul_inv
+      · simp only [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)]
+        exact h.inv_mul
+  have hint : ∀ h : GLw n w, h ∈ GlobalTheory.LFun.KGL w (n := n) → (∀ i j, ‖h.val i j‖ ≤ 1) ∧ ‖h.val.det‖ = 1 := by
     intro h hh
-    obtain ⟨h1, h2⟩ := (GlobalTheory.GKFactor.UnitaryInt.mem_GLint_iff_entries (Ov E w) h).1 hh
+    obtain ⟨h1, h2⟩ := (hmem (Ov E w) h).1 hh
     have hdet : ∀ M : Matrix (Fin n) (Fin n) (w.adicCompletion E), (∀ i j, M i j ∈ Ov E w) → M.det ∈ Ov E w := by
       intro M hM
       let M₀ : Matrix (Fin n) (Fin n) (Ov E w) := fun i j => ⟨M i j, hM i j⟩
@@ -133,9 +152,9 @@ theorem eq_twCent_mul_KGL : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
       rw [← norm_mul, ← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.det_one, norm_one]
     refine ⟨fun i j => (hle1 _).2 (h1 i j), ?_⟩
     nlinarith [norm_nonneg h.val.det, norm_nonneg (h⁻¹).val.det]
-  have hintR : ∀ h : GLw n w, (∀ i j, ‖h.val i j‖ ≤ 1) → ‖h.val.det‖ = 1 → h ∈ GlobalTheory.LFun.KGL w n := by
+  have hintR : ∀ h : GLw n w, (∀ i j, ‖h.val i j‖ ≤ 1) → ‖h.val.det‖ = 1 → h ∈ GlobalTheory.LFun.KGL w (n := n) := by
     intro h h1 h2
-    refine (GlobalTheory.GKFactor.UnitaryInt.mem_GLint_iff_entries (Ov E w) h).2 ⟨fun i j => (hle1 _).1 (h1 i j), fun i j => ?_⟩
+    refine (hmem (Ov E w) h).2 ⟨fun i j => (hle1 _).1 (h1 i j), fun i j => ?_⟩
     rw [Matrix.coe_units_inv]
     exact (hle1 _).1 (GlobalTheory.TwIntegral.intg_inv h1 h2 i j)
   obtain ⟨hy1, hy2⟩ := hint y hy

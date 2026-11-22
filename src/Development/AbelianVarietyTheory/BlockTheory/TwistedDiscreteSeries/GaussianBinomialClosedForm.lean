@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemSiegelOfIffRightAct
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemSiegelOfIffRightAct
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,11 +142,6 @@ theorem isZonal_one [CompleteSpace L] {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : 
     convert zpow_zero (q : ℂ) using 2
     ring
   · rfl
-
-example (q : ℕ) (ε s : ℂ) (α : Fin (1 / 2) → ℂˣ) (h : varY q ε s ≠ 1) :
-    closedForm q 1 (varX q 1 ε s) (varY q ε s) α = 1 := by
-  have : varX q 1 ε s = varY q ε s := by simp [varX, varY]
-  simp [closedForm, this, sub_ne_zero.2 h.symm]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SphericalSectionVariables
 

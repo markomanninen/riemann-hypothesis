@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledVacuumStabilizerGaussDecompositionBigCell
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInversePreservingAdelicLatticeAtPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowIdempotentAdelicLatticeModPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTraceZeroAdeleUnitLatticeAtInertPlaceStatement
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledVacuumStabilizerGaussDecompositionBigCell
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInversePreservingAdelicLatticeAtPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPowIdempotentAdelicLatticeModPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTraceZeroAdeleUnitLatticeAtInertPlaceStatement
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -61,7 +66,7 @@ def keepT : Subring S where
     exact hx _ (hy z hz)
   one_mem' z hz := by simpa using hz
   add_mem' {x y} hx hy z hz := by
-    simp only [Set.mem_setOf_eq, map_add, Matrix.add_mulVec] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _), Matrix.add_mulVec] at *
     exact add_mem (hx z hz) (hy z hz)
   zero_mem' z hz := by simp
   neg_mem' {x} hx z hz := by
@@ -74,7 +79,7 @@ def congI : Ideal (keepT φ Λ) where
     obtain ⟨a, ha, e1⟩ := hx z hz
     obtain ⟨c, hc, e2⟩ := hy z hz
     refine ⟨a + c, add_mem ha hc, ?_⟩
-    rw [AddMemClass.coe_add, map_add, Matrix.add_mulVec, e1, e2, smul_add]
+    rw [AddMemClass.coe_add, map_add (f := _), Matrix.add_mulVec, e1, e2, smul_add]
   zero_mem' z hz := ⟨0, zero_mem _, by simp⟩
   smul_mem' c {x} hx z hz := by
     obtain ⟨a, ha, e⟩ := hx z hz
@@ -118,7 +123,7 @@ theorem selfAdj_one (σ : E →ₐ[F] E) {d : ℕ} (J : Matrix (Fin d) (Fin d) (
 theorem selfAdj_add {σ : E →ₐ[F] E} {d : ℕ} {J P Q : Matrix (Fin d) (Fin d) (AE F E)} (hP : SelfAdj σ J P)
     (hQ : SelfAdj σ J Q) : SelfAdj σ J (P + Q) := by
   unfold SelfAdj at *
-  rw [Matrix.transpose_add, Matrix.add_mul, hP, hQ, map_add, Matrix.mul_add]
+  rw [Matrix.transpose_add, Matrix.add_mul, hP, hQ, map_add (f := _), Matrix.mul_add]
 
 theorem selfAdj_sub {σ : E →ₐ[F] E} {d : ℕ} {J P Q : Matrix (Fin d) (Fin d) (AE F E)} (hP : SelfAdj σ J P)
     (hQ : SelfAdj σ J Q) : SelfAdj σ J (P - Q) := by
@@ -146,7 +151,7 @@ theorem sa_gen {σ : E →ₐ[F] E} {d : ℕ}
       _ = J * (cA σ).mapMatrix K := by rw [← Matrix.mul_assoc, AlgHom.mapMatrix_apply, hKi]
   have h3 : SelfAdj σ J (K + Ki) := by
     unfold SelfAdj
-    rw [Matrix.transpose_add, Matrix.add_mul, h1, h2, map_add, Matrix.mul_add, add_comm]
+    rw [Matrix.transpose_add, Matrix.add_mul, h1, h2, map_add (f := _), Matrix.mul_add, add_comm]
   exact selfAdj_add (selfAdj_add h3 (selfAdj_one σ J)) (selfAdj_one σ J)
 
 end GlobalTheory.TwoFacCore
@@ -156,8 +161,8 @@ namespace GlobalTheory.TwoFacCore
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K Ki : Matrix (Fin d) (Fin d) (AE F E))
     (β b up um h : AE F E) (N₀ : ℕ) (hKK : K * Ki = 1) (hKiK : Ki * K = 1)
     (hK : ∀ z ∈ Λ, K *ᵥ z ∈ Λ) (hKi : ∀ z ∈ Λ, Ki *ᵥ z ∈ Λ)
@@ -175,8 +180,12 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
     intro x hx y hy
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx hy
     rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp [hKK, hKiK]
+  letI : IsMulCommutative (Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) :=
+    Algebra.isMulCommutative_adjoin (AE F E) (fun x hx y hy _ => hcomm x hx y hy)
   letI : CommRing (Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) :=
-    Algebra.adjoinCommRingOfComm (AE F E) hcomm
+    by
+      open scoped IsMulCommutative in
+        infer_instance
   let φ : (Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) →+*
       Matrix (Fin d) (Fin d) (AE F E) := (Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))).val.toRingHom
   let kS : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E))) :=
@@ -191,6 +200,7 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
     intro c z
     show (algebraMap (AE F E) (Matrix (Fin d) (Fin d) (AE F E)) c) *ᵥ z = c • z
     rw [Algebra.algebraMap_eq_smul_one, Matrix.smul_mulVec, Matrix.one_mulVec]
+  set_option synthInstance.maxHeartbeats 200000 in
   let kT : keepT φ Λ := ⟨kS, fun z hz => hK z hz⟩
   let kiT : keepT φ Λ := ⟨kiS, fun z hz => hKi z hz⟩
   have cmem : ∀ c : AE F E, (∀ z ∈ Λ, c • z ∈ Λ) → cS c ∈ keepT φ Λ := fun c hc z hz => by
@@ -218,14 +228,14 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
   have hh' : mk hT + mk hT = 1 := by
     have : mk (hT + hT) = mk 1 := mk_eq_of φ Λ p fun z hz => by
       show φ (cS h + cS h) *ᵥ z = (1 : Matrix (Fin d) (Fin d) (AE F E)) *ᵥ z
-      rw [map_add, Matrix.add_mulVec, hφc, ← add_smul, hh z hz, Matrix.one_mulVec]
-    simpa only [map_add, map_one] using this
+      rw [map_add (f := _), Matrix.add_mulVec, hφc, ← add_smul, hh z hz, Matrix.one_mulVec]
+    simpa only [map_add (f := _), map_one] using this
   have hp' : (1 + mk βT) * mk upT = 1 := by
     have : mk ((1 + βT) * upT) = mk 1 := mk_eq_of φ Λ p fun z hz => by
       show φ ((1 + cS β) * cS up) *ᵥ z = (1 : Matrix (Fin d) (Fin d) (AE F E)) *ᵥ z
-      have e : (1 + cS β) * cS up = cS ((1 + β) * up) := by simp only [cS, map_add, map_mul, map_one]
+      have e : (1 + cS β) * cS up = cS ((1 + β) * up) := by simp only [cS, map_add (f := _), map_mul, map_one]
       rw [e, hφc, hp z hz, Matrix.one_mulVec]
-    simpa only [map_mul, map_add, map_one] using this
+    simpa only [map_mul, map_add (f := _), map_one] using this
   have hm' : (1 - mk βT) * mk umT = 1 := by
     have : mk ((1 - βT) * umT) = mk 1 := mk_eq_of φ Λ p fun z hz => by
       show φ ((1 - cS β) * cS um) *ᵥ z = (1 : Matrix (Fin d) (Fin d) (AE F E)) *ᵥ z
@@ -235,9 +245,9 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
   let fT : keepT φ Λ := kT + kiT + 1 + 1
   have hφf : φ ((fT : _)) = K + Ki + 1 + 1 := by
     show φ (kS + kiS + 1 + 1) = K + Ki + 1 + 1
-    rw [map_add, map_add, map_add, map_one, hφk, hφki]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), map_one, hφk, hφki]
   have hD' : (mk kT + mk kiT + 1 + 1) ^ (2 * (N₀ + 1)) = (mk kT + mk kiT + 1 + 1) ^ (N₀ + 1) := by
-    have e : mk kT + mk kiT + 1 + 1 = mk fT := by simp only [fT, map_add, map_one]
+    have e : mk kT + mk kiT + 1 + 1 = mk fT := by simp only [fT, map_add (f := _), map_one]
     rw [e, ← map_pow, ← map_pow]
     refine Ideal.Quotient.eq.mpr fun z hz => ?_
     obtain ⟨y, hy, ey⟩ := hD z hz
@@ -249,20 +259,20 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
   let YT : keepT φ Λ := βT * (1 - fT ^ (N₀ + 1))
   have hφY : φ (YT : _) = Y := by
     show φ (cS β * (1 - (kS + kiS + 1 + 1) ^ (N₀ + 1))) = Y
-    rw [map_mul, map_sub, map_one, map_pow, map_add, map_add, map_add, map_one, hφk, hφki, hY, Algebra.smul_def]
+    rw [map_mul, map_sub, map_one, map_pow, map_add (f := _), map_add (f := _), map_add (f := _), map_one, hφk, hφki, hY, Algebra.smul_def]
     rfl
   have eY : mk βT * (1 - (mk kT + mk kiT + 1 + 1) ^ (N₀ + 1)) = mk YT := by
-    simp only [YT, fT, map_mul, map_sub, map_one, map_pow, map_add]
+    simp only [YT, fT, map_mul, map_sub, map_one, map_pow, map_add (f := _)]
   rw [eY] at u1 u2 u3
-  have u1' : IsUnit (mk (1 + YT)) := by rw [map_add, map_one]; exact u1
+  have u1' : IsUnit (mk (1 + YT)) := by rw [map_add (f := _), map_one]; exact u1
   have u2' : IsUnit (mk (1 - YT)) := by rw [map_sub, map_one]; exact u2
   have u3' : IsUnit (mk (1 + YT + kT * (1 - YT))) := by
-    rw [map_add, map_add, map_mul, map_sub, map_one]; exact u3
+    rw [map_add (f := _), map_add (f := _), map_mul, map_sub, map_one]; exact u3
   refine ⟨fun z hz => hφY ▸ YT.2 z hz, ?_, ?_, ?_⟩
   · have s1 := surj_of_isUnit φ Λ p u1'
     have : φ ((1 + YT : keepT φ Λ) : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) = 1 + Y := by
       show φ (1 + (YT : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E))))) = 1 + Y
-      rw [map_add, map_one, hφY]
+      rw [map_add (f := _), map_one, hφY]
     rwa [this] at s1
   · have s2 := surj_of_isUnit φ Λ p u2'
     have : φ ((1 - YT : keepT φ Λ) : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) = 1 - Y := by
@@ -274,7 +284,7 @@ theorem units_mod {d : ℕ} (Λ : AddSubgroup (Fin d → AE F E)) (p : ℕ) (K K
         = 1 + Y + K * (1 - Y) := by
       show φ (1 + (YT : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))) +
         kS * (1 - (YT : Algebra.adjoin (AE F E) ({K, Ki} : Set (Matrix (Fin d) (Fin d) (AE F E)))))) = 1 + Y + K * (1 - Y)
-      rw [map_add, map_add, map_mul, map_sub, map_one, hφY, hφk]
+      rw [map_add (f := _), map_add (f := _), map_mul, map_sub, map_one, hφY, hφk]
     rwa [this] at s3
 
 end GlobalTheory.TwoFacCore
@@ -287,11 +297,11 @@ theorem smul_map {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E
   ext i j
   simp [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_skew_cayley : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     ∀ k ∈ GlobalTheory.InertSph.KAt σ G.W v, ∃ Y : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E),
     At (evFin F v) Y ∧ (∀ z ∈ GlobalTheory.InertSph.latAt G.W v, Y *ᵥ z ∈ GlobalTheory.InertSph.latAt G.W v) ∧
     Yᵀ * incM F G.W.J + incM F G.W.J * Y.map (cA σ) = 0 ∧
@@ -302,7 +312,7 @@ theorem exists_skew_cayley : ∀ (F E : Type) [Field F] [NumberField F] [Field E
     (∃ M : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E), (1 + Y + mat k * (1 - Y)) * M = 1 ∧
       M * (1 + Y + mat k * (1 - Y)) = 1 ∧ ∀ z ∈ GlobalTheory.InertSph.latAt G.W v, M *ᵥ z ∈ GlobalTheory.InertSph.latAt G.W v) := by
   intro F E _ _ _ _ _ σ B a a' G X om om' hT v w hin k hk
-  have hlat : G.W.L.IsLattice E := hT.geo.hW.lat
+  have hlat : G.W.L.IsLattice E := hT.geo.hW.lat.toIsLattice
   obtain ⟨h2v, h3, -⟩ := hT.base.inert v w hin
   have hp0 : 0 < Ideal.absNorm v.asIdeal := by omega
   have hpv : ((Ideal.absNorm v.asIdeal : ℕ) : 𝓞 F) ∈ v.asIdeal := Ideal.absNorm_mem _
@@ -326,7 +336,7 @@ theorem exists_skew_cayley : ∀ (F E : Type) [Field F] [NumberField F] [Field E
   have hh2 : ∀ z ∈ GlobalTheory.InertSph.latAt G.W v,
       (algebraMap (AF F) (AE F E) ⅟(2 : AF F) + algebraMap (AF F) (AE F E) ⅟(2 : AF F)) • z = z := by
     intro z _
-    rw [← map_add, ← two_mul, mul_invOf_self', map_one, one_smul]
+    rw [← map_add (f := _), ← two_mul, mul_invOf_self', map_one, one_smul]
   obtain ⟨hYk, s1, s2, s3⟩ := units_mod (GlobalTheory.InertSph.latAt G.W v) (Ideal.absNorm v.asIdeal) (mat k) (mat k⁻¹) β b up um
     (algebraMap (AF F) (AE F E) ⅟(2 : AF F)) N₀ hKK hKiK hKk hKik
     (fun z hz => ⟨(hsc z hz).1, (hsc z hz).2.1, (hsc z hz).2.2.1, (hsc z hz).2.2.2.1, hh z hz⟩)
@@ -361,12 +371,12 @@ theorem exists_skew_cayley : ∀ (F E : Type) [Field F] [NumberField F] [Field E
     unfold SelfAdj at hsa
     rw [hYdef, Matrix.transpose_smul, Matrix.smul_mul, hsa, smul_map, hβσ, Matrix.mul_smul, ← AlgHom.mapMatrix_apply,
       neg_smul, add_neg_cancel]
-  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hlat v _ hpv 1 isUnit_one _ ?_ (keepAdd keepOne hYk) s1
+  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hT.geo.hW.lat v _ hpv 1 isUnit_one _ ?_ (keepAdd keepOne hYk) s1
     rw [one_smul, add_sub_cancel_left]; exact hYat
-  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hlat v _ hpv 1 isUnit_one _ ?_ (keepSub keepOne hYk) s2
+  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hT.geo.hW.lat v _ hpv 1 isUnit_one _ ?_ (keepSub keepOne hYk) s2
     intro u hu
     rw [one_smul, sub_sub_cancel_left, smul_neg, hYat u hu, neg_zero]
-  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hlat v _ hpv 2 (isUnit_of_invertible _) _ ?_
+  · refine GlobalTheory.T.exists_inverse_preserving_adelicLatticeAtPlace F E (a + a') G.W hT.geo.hW.lat v _ hpv 2 (isUnit_of_invertible _) _ ?_
       (keepAdd (keepAdd keepOne hYk) (keepMul hKk (keepSub keepOne hYk))) s3
     intro u hu
     have e : 1 + Y + mat k * (1 - Y) - (2 : AF F) • (1 : Matrix (Fin (a + a')) (Fin (a + a')) (AE F E)) =

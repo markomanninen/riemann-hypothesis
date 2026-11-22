@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeltaTApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaHeisenbergCommutingThetaOperator
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SymplOHFNegNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReindexDblIncM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeltaTApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaHeisenbergCommutingThetaOperator
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SymplOHFNegNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ theorem continuous_glue : Continuous fun p : WOF F E nS nT × WOF F E nS nT => (
   · exact ((continuous_apply j).comp ((continuous_apply k).comp continuous_snd)).congr fun p : WOF F E nS nT × WOF F E nS nT =>
       (congrFun (congrFun (bot_glue p.1 p.2) k) j).symm
 
-variable (F E nS nT) in
 
+variable (F E nS nT) in
 def glueE : (WOF F E nS nT × WOF F E nS nT) ≃+ WOF F E nS (nT + nT) where
   toFun p := glue p.1 p.2
   invFun x := (topR x, botR x)
@@ -96,14 +100,14 @@ theorem exists_prod_domain : ∃ (μ : Measure (WOF F E nS nT)) (𝓕 : Set (WOF
   let em := eh.toMeasurableEquiv
   have mp : MeasurePreserving em.symm ((μ.prod μ).map em) (μ.prod μ) :=
     (⟨em.measurable, rfl⟩ : MeasurePreserving em (μ.prod μ) ((μ.prod μ).map em)).symm em
-  have qt : Measure.QuasiMeasurePreserving topR ((μ.prod μ).map em) μ :=
+  have qt : QuasiMeasurePreserving topR ((μ.prod μ).map em) μ :=
     Measure.quasiMeasurePreserving_fst.comp mp.quasiMeasurePreserving
-  have qb : Measure.QuasiMeasurePreserving botR ((μ.prod μ).map em) μ :=
+  have qb : QuasiMeasurePreserving botR ((μ.prod μ).map em) μ :=
     Measure.quasiMeasurePreserving_snd.comp mp.quasiMeasurePreserving
   refine ⟨μ, 𝓕, (μ.prod μ).map em, topR ⁻¹' 𝓕 ∩ botR ⁻¹' 𝓕, hμ, h𝓕,
     (glueE F E nS nT).isAddHaarMeasure_map (μ.prod μ) continuous_glue hc', ⟨?_, ?_, ?_⟩, fun φ χ => ?_⟩
   · exact (h𝓕.nullMeasurableSet.preimage qt).inter (h𝓕.nullMeasurableSet.preimage qb)
-  · filter_upwards [qt.ae h𝓕.ae_covers, qb.ae h𝓕.ae_covers] with x ⟨a, ha⟩ ⟨b, hb⟩
+  · filter_upwards [QuasiMeasurePreserving.ae qt h𝓕.ae_covers, QuasiMeasurePreserving.ae qb h𝓕.ae_covers] with x ⟨a, ha⟩ ⟨b, hb⟩
     refine ⟨⟨glue a.1 b.1, glue_rat a.2 b.2⟩, ?_, ?_⟩
     · show topR (glue a.1 b.1 + x) ∈ 𝓕
       rw [topR_add, top_glue]; exact ha
@@ -116,10 +120,10 @@ theorem exists_prod_domain : ∃ (μ : Measure (WOF F E nS nT)) (𝓕 : Set (WOF
     let b' : ratLF F E nS nT := ⟨botR g'.1, bot_rat g'.2⟩
     by_cases h1 : a = a'
     · have h2 : b ≠ b' := fun h2 => hne (Subtype.ext (tb_ext (congrArg Subtype.val h1) (congrArg Subtype.val h2)))
-      refine measure_mono_null ?_ (qb.preimage_null (h𝓕.aedisjoint h2))
+      refine measure_mono_null ?_ (QuasiMeasurePreserving.preimage_null qb (h𝓕.aedisjoint h2))
       rintro x ⟨⟨y, hy, e⟩, ⟨y', hy', e'⟩⟩
       exact ⟨⟨botR y, hy.2, by rw [← e]; rfl⟩, ⟨botR y', hy'.2, by rw [← e']; rfl⟩⟩
-    · refine measure_mono_null ?_ (qt.preimage_null (h𝓕.aedisjoint h1))
+    · refine measure_mono_null ?_ (QuasiMeasurePreserving.preimage_null qt (h𝓕.aedisjoint h1))
       rintro x ⟨⟨y, hy, e⟩, ⟨y', hy', e'⟩⟩
       exact ⟨⟨topR y, hy.1, by rw [← e]; rfl⟩, ⟨topR y', hy'.1, by rw [← e']; rfl⟩⟩
   · rw [setIntegral_map_equiv, ← setIntegral_prod_mul]
@@ -257,8 +261,8 @@ theorem PositivityTheory.ThKW.weil_rep_unitary_pair_equivariant : ∀ (F E : Typ
       (∫ x in 𝓕, f₁ x * star (g₁ x) ∂μ) * ∫ x in 𝓕, conj (f₂ (-x)) * star (conj (g₂ (-x))) ∂μ := fun f₁ f₂ g₁ g₂ => by
     rw [← hprod]
     congr 1
-    funext x
-    simp only [deltaT_apply, star_mul']
+    ext x
+    simp only [deltaT, star_mul]
     ring
   obtain ⟨c, hc, H⟩ := abstract hψ (GlobalTheory.T.adelicSymplecticTraceForm_alternating_swap F E σ hinv _ _ JS _ hS hT' ξ₀ hσξ)
     (GlobalTheory.T.rational_points_self_annihilator_symplectic_standardChar F E σ B hB _ _ JS _ hS hT' ξ₀ hξ)

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.FrameDer
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.FrameDer
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,10 +17,6 @@ open PositivityTheory.RgTw (Mat G th tw hb)
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
-
-def InvSmooth : Prop := ∀ n : ℕ, IsOpen (GLs n) ∧ ContDiffOn ℝ ∞ (fun y : Mat n => y⁻¹) (GLs n) ∧
-  ContDiffOn ℝ ∞ (fun y : Mat n => yᴴ⁻¹) (GLs n) ∧ ContDiff ℝ ∞ (fun y : Mat n => y.det) ∧
-  ContDiff ℝ ∞ (fun y : Mat n => yᴴ)
 
 def ConeGL : Prop := ∀ (n : ℕ) (σ : (Fin n × Fin n → ℝ) → Mat n), (∀ v ∈ cone n, σ v * (σ v)ᴴ = hOf v) →
   ∀ v ∈ cone n, σ v ∈ GLs n ∧ (hOf v).det ≠ 0

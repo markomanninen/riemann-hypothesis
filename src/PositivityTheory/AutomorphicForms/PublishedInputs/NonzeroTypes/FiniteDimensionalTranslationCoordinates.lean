@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.KIface
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.KIface
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.ScalarOnInertiaProp
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TensorProductVectors
+
+@[expose] public section
 
 noncomputable section
 

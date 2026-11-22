@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GFaceSnGCastSucc
-import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCohomologyZeroEquivSectionsNatural
-import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCoefficientEquivCohomologyOfElements
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.GFaceSnGCastSucc
+public import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCohomologyZeroEquivSectionsNatural
+public import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCoefficientEquivCohomologyOfElements
+
+@[expose] public section
 
 theorem UpperTheory.Ru.crystallineComparison.theoryEx :
     UpperTheory.Ru.crystallineComparison.TheoryEx := by

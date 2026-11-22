@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.GaloisCohomology.GaloisCohomologyProofs.LdataNonempty
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.GaloisCohomology.GaloisCohomologyProofs.LdataNonempty
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,16 +59,14 @@ theorem exists_genU (k : Fin 2) : ∃ ω : (ZMod (H.g k))ˣ, orderOf ω = H.g k 
 
 def genU (k : Fin 2) : (ZMod (H.g k))ˣ := (exists_genU H k).choose
 
-theorem orderOf_genU (k : Fin 2) : orderOf (genU H k) = H.g k - 1 := (exists_genU H k).choose_spec
-
 structure NHyp (what₂ : Rows.Data R) : Prop where
   hsha : ∀ (p : ℕ) [Fact p.Prime] (e : ℕ), 0 < e → e < R.t →
     what₂.shaLen p e = ((Formalism.GaloisCohomology.shaLen (toyLocalData H p) (e : ℤ)).toNat : ℚ)
   hcard : what₂.restRowsFiniteGroupCard = exampleClassGroupCard H
   hg : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def ndToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NData R H what₂ where
   Om := AlgC
   plOm := ⟨fun v => placeOf AlgC v, fun v => isPlaceOver_placeOf AlgC v⟩
@@ -148,9 +150,6 @@ def ndToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NData R H what₂ where
   SQ_split i := i.elim
   restN_tameGenerator_generates i := i.elim
 
-theorem ndToy_chiT (what₂ : Rows.Data R) (h : NHyp H what₂) (k v) (j : Fin R.m) :
-    (ndToy H what₂ h).chiT k v j = genU H k ^ (2 * (j.1 + 1)) := rfl
-
 theorem conj_mem_algC {x : ℂ} (hx : x ∈ algebraicClosure ℚ ℂ) :
     starRingEnd ℂ x ∈ algebraicClosure ℚ ℂ :=
   mem_algebraicClosure_iff.2
@@ -173,8 +172,8 @@ theorem isCMConjOm_conjAlgC : IsCMConjOm H.E AlgC conjAlgC := by
   change starRingEnd ℂ (H.φ₀ x) = H.φ₀ (H.conj x)
   rw [baseEmbedding_conj]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def ntwToy {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
     (LL0 : IntermediateField ℚ what₂.LL) (h : NHyp H what₂) :
     NTw R H what₂ LL0 (ndToy H what₂ h) where
@@ -295,24 +294,11 @@ def ntwToy {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL
   res_art i := i.elim
   th i := i.elim
 
-open Classical in
 
-def chv (χ : Multiset ℂ) : ℂ := if h : ∃ c, χ = {c} then h.choose else 1
 
-open Classical in
-theorem chv_singleton (c : ℂ) : chv {c} = c := by
-  have h : ∃ c', ({c} : Multiset ℂ) = {c'} := ⟨c, rfl⟩
-  unfold chv
-  rw [dif_pos h]
-  exact (Multiset.singleton_inj.1 h.choose_spec).symm
-
-theorem placesOver_g_nonempty (h : ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E)
-    (k : Fin 2) : (placesOver H.E (H.g k)).Nonempty :=
-  Set.nonempty_of_ncard_ne_zero (by rw [h k]; exact Module.finrank_pos.ne')
 
 open Ideal in
 open scoped Pointwise in
-
 theorem exists_halfPlaces (p : ℕ) (hp : p.Prime)
     (h : (placesOver H.E p).ncard = Module.finrank ℚ H.E) :
     ∃ pl : Fin R.f → PlE H, (∀ v, pl v ∈ placesOver H.E p) ∧ Function.Injective pl ∧
@@ -392,19 +378,19 @@ theorem qPow_add (w : PlE H) (s t : ℝ) : qPow H w s * qPow H w t = qPow H w (s
 
 theorem qPow_zero (w : PlE H) : qPow H w 0 = 1 := by ext; simp [qPow]
 
-open Classical in
 
+open Classical in
 def toU (z : ℂ) : ℂˣ := if h : z = 0 then 1 else Units.mk0 z h
 
 theorem toU_val (u : ℂˣ) : toU (u : ℂ) = u := by
-  unfold toU; rw [dif_neg u.ne_zero]; ext; rfl
+  unfold toU; rw [dite_eq_right u.ne_zero]; ext; rfl
 
 theorem val_toU {z : ℂ} (h : z ≠ 0) : ((toU z : ℂˣ) : ℂ) = z := by
-  unfold toU; rw [dif_neg h]; rfl
+  unfold toU; rw [dite_eq_right h]; rfl
+
 
 open Polynomial in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def nautToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NAut (ndToy H what₂ h) where
   iotaQ i := i.elim
   iotaQC i := i.elim
@@ -541,10 +527,10 @@ def nautToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NAut (ndToy H what₂
 theorem shaExample_eq (p : ℕ) [hp : Fact p.Prime] (e : ℕ) :
     shaExample H p e = ((Formalism.GaloisCohomology.shaLen (toyLocalData H p) (e : ℤ)).toNat : ℚ) := by
   unfold shaExample
-  rw [dif_pos hp.out]
+  rw [dite_eq_left hp.out]
+
 
 open Ideal Polynomial in
-
 theorem placesOver_ncard_of_frob (p : ℕ) [hp : Fact p.Prime] (hpN : ¬ p ∣ H.condN)
     (hF : ∀ (P : Ideal (𝓞 H.E)) [P.IsPrime] [P.LiesOver (span {(p : ℤ)})] (σ : H.E ≃ₐ[ℚ] H.E),
       IsArithFrobAt ℤ σ P → H.galE σ = 1) :
@@ -582,7 +568,7 @@ theorem placesOver_ncard_of_frob (p : ℕ) [hp : Fact p.Prime] (hpN : ¬ p ∣ H
   let : Field (𝓞 H.E ⧸ P) := Ideal.Quotient.field P
   have : Finite (𝓞 H.E ⧸ P) := Ideal.finiteQuotientOfFreeOfNeBot P hP0
   let : Fintype (𝓞 H.E ⧸ P) := Fintype.ofFinite _
-  have hne : (X ^ p - X : (𝓞 H.E ⧸ P)[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero _ hp.out.one_lt
+  have hne : (X ^ p - X : (𝓞 H.E ⧸ P)[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt
   have hroot : ∀ y : 𝓞 H.E ⧸ P, y ∈ (X ^ p - X : (𝓞 H.E ⧸ P)[X]).roots := by
     intro y
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
@@ -595,7 +581,7 @@ theorem placesOver_ncard_of_frob (p : ℕ) [hp : Fact p.Prime] (hpN : ¬ p ∣ H
           Finset.card_le_card (fun y _ => Multiset.mem_toFinset.2 (hroot y))
       _ ≤ (X ^ p - X : (𝓞 H.E ⧸ P)[X]).roots.card := Multiset.toFinset_card_le _
       _ ≤ (X ^ p - X : (𝓞 H.E ⧸ P)[X]).natDegree := card_roots' _
-      _ = p := FiniteField.X_pow_card_sub_X_natDegree_eq _ hp.out.one_lt
+      _ = p := Polynomial.natDegree_X_pow_sub_X hp.out.one_lt
   have hnorm : absNorm P = p ^ ((span {(p : ℤ)}).inertiaDeg' P) :=
     absNorm_eq_pow_inertiaDeg' P hp.out
   have hcardk : absNorm P = Fintype.card (𝓞 H.E ⧸ P) := by
@@ -660,50 +646,14 @@ theorem placesOver_ncard_of_split (p : ℕ) [hp : Fact p.Prime] (hpm : p % H.con
     exact hmod
   rw [this, map_one]
 
-theorem placesOver_ncard_of_split_inj (hinj : Function.Injective R.h) (p : ℕ) [hp : Fact p.Prime]
-    (hpN : ¬ p ∣ H.condN) (hjq : jacobiSym (-(H.q : ℤ)) p = 1) (hjd : jacobiSym (-(H.d : ℤ)) p = 1)
-    (hpm : (p : ZMod (2 ^ (R.e + 2))) = 1 ∨ (p : ZMod (2 ^ (R.e + 2))) = -1) :
-    (placesOver H.E p).ncard = Module.finrank ℚ H.E := by
-  refine placesOver_ncard_of_frob H p hpN ?_
-  intro P _ _ σ hσ
-  obtain ⟨h1, h2, u, hu, h3⟩ := (H.der.frob p hpN P).2.2.1 σ hσ
-  rw [H.flPS.psAt_prime hp.out hpN] at h1
-  have hu1 : Formalism.FrobeniusOrbits.hcl R.e u = 1 := by
-    rcases hpm with h | h
-    · have : u = 1 := Units.ext (by rw [hu, h]; rfl)
-      rw [this]; rfl
-    · have : u = -1 := Units.ext (by rw [hu, h]; simp)
-      rw [this]; exact Formalism.FrobeniusOrbits.hcl_neg_one
-  refine Prod.ext (Prod.ext (Units.ext ?_) (Units.ext ?_)) ?_
-  · rw [h1, hjq]; rfl
-  · rw [h2, hjd]; rfl
-  · rw [hu1, R.toFrame.hH_apply] at h3
-    have h4 : R.h (R.iotaInv (H.gal σ).2) = R.h 0 := by rw [map_zero]; exact h3
-    exact (R.toFrame.iotaInv_eq_zero_iff _).1 (hinj h4)
-
 theorem g_split_of (hg : ∀ k, H.g k % H.condN = 1) :
     ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E := by
   intro k
   have : Fact (H.g k).Prime := ⟨H.g_prime k⟩
   exact placesOver_ncard_of_split H (H.g k) (hg k)
 
-theorem g_split_of_inj (hinj : Function.Injective R.h)
-    (hg : ∀ k, ¬ H.g k ∣ H.condN ∧ jacobiSym (-(H.q : ℤ)) (H.g k) = 1 ∧
-      jacobiSym (-(H.d : ℤ)) (H.g k) = 1 ∧
-      ((H.g k : ZMod (2 ^ (R.e + 2))) = 1 ∨ (H.g k : ZMod (2 ^ (R.e + 2))) = -1)) :
-    ∀ k, (placesOver H.E (H.g k)).ncard = Module.finrank ℚ H.E := by
-  intro k
-  have : Fact (H.g k).Prime := ⟨H.g_prime k⟩
-  obtain ⟨h1, h2, h3, h4⟩ := hg k
-  exact placesOver_ncard_of_split_inj H hinj (H.g k) h1 h2 h3 h4
-
-theorem examplePrimes_split :
-    jacobiSym (-571) 127 = 1 ∧ jacobiSym (-599) 127 = 1 ∧ jacobiSym (-571) 337 = 1 ∧
-      jacobiSym (-599) 337 = 1 ∧ ((127 : ℕ) : ZMod 16) = -1 ∧ ((337 : ℕ) : ZMod 16) = 1 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> norm_num <;> decide
 
 set_option synthInstance.maxHeartbeats 400000 in
-
 def nbcToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NBC (nautToy H what₂ h) where
   AU _ := Empty
   multAU _ π := π.elim
@@ -723,8 +673,8 @@ def nbcToy (what₂ : Rows.Data R) (h : NHyp H what₂) : NBC (nautToy H what₂
   embAV_sph i := i.elim
   embAV_inf i := i.elim
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def nexpToy {what₂ : Rows.Data R} [NumberField what₂.LL] [StarRing what₂.LL]
     (LL0 : IntermediateField ℚ what₂.LL) (h : NHyp H what₂) :
     NExp R H what₂ LL0 (ndToy H what₂ h) (ntwToy H LL0 h) where

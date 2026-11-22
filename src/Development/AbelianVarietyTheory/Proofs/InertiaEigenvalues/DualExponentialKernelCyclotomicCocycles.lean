@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualExponentialExistsUniqueCyclotomicLevel
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualExponentialImageContainsLattice
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsForallEqPowOfPowEqSelf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaFix
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusAndExponentModEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDegree
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardCocyclesCharRepModPowLeOfDuality
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DependentOfCardLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualExponentialExistsUniqueCyclotomicLevel
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualExponentialImageContainsLattice
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsForallEqPowOfPowEqSelf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaFix
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusAndExponentModEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDegree
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardCocyclesCharRepModPowLeOfDuality
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DependentOfCardLe
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc GlobalTheory.Cyc.TwistLift GlobalTheory.ExpImage
 
@@ -52,6 +56,7 @@ theorem cocycles_dependent (hT : Formalism.GaloisCohomology.LocalTateDualityK) (
     exact (hχ.continuous.comp (continuous_subtype_val.comp hΦ1)).zpow₀ _
       fun g => Or.inl (Units.ne_zero _)
   obtain ⟨g₀, hg₀, hg₁⟩ := (gen_dense l _ χ (GlobalTheory.InertiaEigenvalues.isActC_galActC l) hχ K s hs).1
+  change g₀ ∈ L.fixingSubgroup at hg₀
   have hg : ‖(χZ (Φ ⟨g₀, hg₀⟩) : ℤ_[l]) * (ψ (Φ ⟨g₀, hg₀⟩)⁻¹ : ℤ_[l]) - 1‖ =
       (l : ℝ) ^ (-(N : ℤ)) := by
     have h1 := LiftExp.norm_zpow_sub_one l s hs _ hg₁ ((e + 1 : ℕ) : ℤ) (by omega)
@@ -60,6 +65,8 @@ theorem cocycles_dependent (hT : Formalism.GaloisCohomology.LocalTateDualityK) (
     push_cast
     rw [hχZ, hψ, hN]
     push_cast at h1 ⊢
+    have hcast : (e : ℚ) + 1 = ((e + 1 : ℕ) : ℚ) := by push_cast; rfl
+    rw [hcast, padicValRat.of_nat, ← Nat.padicValNat_def] at h1
     rw [← h1]
     congr 2
     simp only [map_inv, MulEquiv.symm_apply_apply, Subgroup.coe_inv, Units.val_inv_eq_inv_val,
@@ -102,7 +109,7 @@ theorem expStar_add {z z' : GQ l → ℚ_[l]} {α α' : Om l} (h : ExpStar LT G 
   · simp only [h1.2.2 σ hσ τ hτ, h1'.2.2 σ hσ τ hτ]
     ring
   · convert add_mem (h2 σ hσ) (h2' σ hσ) using 1
-    simp only [map_add]
+    simp only [map_add (f := _)]
     ring
 
 theorem expStar_smul {z : GQ l → ℚ_[l]} {α : Om l} (c : ℚ_[l]) (h : ExpStar LT G e z α) :

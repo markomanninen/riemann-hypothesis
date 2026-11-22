@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.IsChainFirst
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,8 +73,7 @@ theorem rhoM_eq_sum (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
     (∑ τ : Ψ, ∑ a : Fin N, ∑ _b ∈ Finset.Ioi a, Finsupp.single (τ, a) 1 : (Ψ × Fin N) →₀ ℕ)
       = rhoM Ψ N := by
   ext ⟨τ, a⟩
-  simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finset.sum_const, smul_eq_mul,
-    Finsupp.coe_smul, Pi.smul_apply, Finsupp.single_apply, Prod.mk.injEq]
+  simp only [Finset.sum_apply', Finsupp.single_apply, Prod.mk.injEq]
   rw [Finset.sum_eq_single τ, Finset.sum_eq_single a]
   · simp [rhoM, Fin.card_Ioi]
   · intro b _ hb; simp [hb]
@@ -79,7 +82,7 @@ theorem rhoM_eq_sum (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
   · simp
 
 theorem coeff_rhoM_gapDelta (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) :
-    coeff (rhoM Ψ N) (gapDelta Ψ N) = 1 := by
+    AddMonoidAlgebra.coeff (gapDelta Ψ N) (rhoM Ψ N) = 1 := by
   let e := Fintype.equivFin Ψ
   letI : LinearOrder (Ψ × Fin N) :=
     LinearOrder.lift' (fun p => toLex (e p.1, p.2)) (fun p q h => by

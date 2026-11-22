@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.FromHC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Unique
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.FromHC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Unique
+
+@[expose] public section
 
 noncomputable section
 

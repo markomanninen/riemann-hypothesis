@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeFiniteESt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TildeFiniteESt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeVanish
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -28,7 +33,7 @@ theorem chartVal_zero {n : ℕ} (I : Cech.Idx (support x) n) :
 theorem chartVal_add {n : ℕ} (y y' : Cech.Cochain (locSys S N M.coneSubE) n) (I : Cech.Idx (support x) n) :
     chartVal M c (y + y') I = chartVal M c y I + chartVal M c y' I := by
   unfold chartVal
-  rw [Pi.add_apply, map_add, map_add]
+  rw [Pi.add_apply, map_add (f := _), map_add (f := _)]
 
 theorem chartVal_smul {n : ℕ} (a : S) (y : Cech.Cochain (locSys S N M.coneSubE) n)
     (I : Cech.Idx (support x) n) : chartVal M c (a • y) I = a • chartVal M c y I := by
@@ -49,7 +54,8 @@ theorem chartVal_d {n : ℕ} (y : Cech.Cochain (locSys S N M.coneSubE) n) (J : C
       ∑ j : J.1.1, Cech.sgn J.1.1 j • chartVal M c y (Cech.face J j) := by
   refine (congrArg (coeffE S x E c)
     (locConeE_d M y ⟨⟨J.1.1, J.1.2.1, Finset.subset_univ _⟩, J.2⟩ J.1.2.2)).trans ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul]
   rfl
@@ -75,6 +81,7 @@ def toTildeCocy (n : ℕ) :
   map_add' y y' := Subtype.ext (funext fun I => Subtype.ext (chartVal_add M c y.1 y'.1 I))
   map_smul' a y := Subtype.ext (funext fun I => Subtype.ext (chartVal_smul M c a y.1 I))
 
+set_option synthInstance.maxHeartbeats 200000 in
 def toTildeH (n : ℕ) : cohom M.coneGradedE n c →ₗ[S] (M.tildeSys c).H n :=
   Submodule.liftQ _ ((Submodule.mkQ _).comp (toTildeCocy M c n)) (by
     intro y hy
@@ -122,7 +129,8 @@ theorem d_liftCochain_any {n : ℕ} (t : Cech.Cochain (fun I : Chart x => ↥((M
           exact locConeE_liftTilde M c _ _ _
       _ = singleE S x E c (∑ j : K.1.1, Cech.sgn K.1.1 j •
             (t (Cech.face (⟨⟨K.1.1, K.1.2.1, hK⟩, K.2⟩ : Cech.Idx (support x) (n + 1)) j) : E)) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [map_zsmul]
       _ = 0 := by
@@ -140,6 +148,7 @@ theorem chartVal_liftCochain {n : ℕ} (t : Cech.Cochain (fun I : Chart x => ↥
   rw [e1]
   exact (congrArg (coeffE S x E c) e2).trans (coeffE_singleE_same _ _)
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem toTildeH_surjective (n : ℕ) : Function.Surjective (toTildeH M c n) := by
   intro q
   obtain ⟨t, rfl⟩ := Submodule.Quotient.mk_surjective _ q

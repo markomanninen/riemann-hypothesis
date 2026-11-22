@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Twexists
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Twexists
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,51 @@ theorem exists_torsion' : ∀ (R : Type) [CommRing R] [IsDomain R] [IsNoetherian
   intro R _ _ _ _ T _ S G _ hG x N hN τ hτ htor hsurj
   haveI : IsCommMonObj G := hG.comm
   have hBs : IsSemiAbelian ((Over.pullback x).obj G) :=
-    ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsSemiAbelian.pullback x G hG
+    { comm := by have := hG.comm; infer_instance
+      smooth := by have := hG.smooth; show Smooth (pullback.snd G.hom x); infer_instance
+      separated := by have := hG.separated; show IsSeparated (pullback.snd G.hom x); infer_instance
+      quasiCompact := by have := hG.quasiCompact; show QuasiCompact (pullback.snd G.hom x); infer_instance
+      geomConnected := by have := hG.geomConnected; show GeometricallyConnected (pullback.snd G.hom x); infer_instance
+      fibres := fun Ω _ _ q => by
+        obtain ⟨E⟩ := hG.fibres Ω (q ≫ x)
+        let eM := (Functor.mapMonNatIso (Over.pullbackComp q x) ≪≫ Functor.mapMonCompIso).app (Mon.mk G)
+        let e : (Over.pullback (q ≫ x)).obj G ≅ (Over.pullback q).obj ((Over.pullback x).obj G) :=
+          (Mon.forget _).mapIso eM
+        haveI : IsMonHom e.hom := by
+          show IsMonHom eM.hom.hom
+          infer_instance
+        letI := E.grpB
+        haveI := E.q_hom
+        haveI := E.i_hom
+        refine ⟨{
+          X := E.X
+          addCommGroup := E.addCommGroup
+          free := E.free
+          finite := E.finite
+          B := E.B
+          grpB := E.grpB
+          isAbelian := E.isAbelian
+          q := e.inv ≫ E.q
+          q_hom := inferInstance
+          q_flat := ?_
+          q_surjective := ?_
+          q_quasiCompact := ?_
+          i := E.i ≫ e.hom
+          i_hom := inferInstance
+          isKernel := ?_ }⟩
+        · rw [Over.comp_left]
+          have := E.q_flat
+          have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv
+          infer_instance
+        · rw [Over.comp_left]
+          have := E.q_surjective
+          have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv
+          infer_instance
+        · rw [Over.comp_left]
+          have := E.q_quasiCompact
+          have : IsIso e.inv.left := Functor.map_isIso (Over.forget _) e.inv
+          infer_instance
+        · refine IsPullback.of_iso E.isKernel (Iso.refl _) e (Iso.refl _) (Iso.refl _) ?_ ?_ ?_ ?_ <;> simp }
   haveI : IsCommMonObj ((Over.pullback x).obj G) := hBs.comm
   haveI : Smooth ((Over.pullback x).obj G).hom := hBs.smooth
   haveI : IsSeparated ((Over.pullback x).obj G).hom := hBs.separated

@@ -1,7 +1,11 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityEighth
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.VdEqZeroOfNotLe
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AlgebraMapConjO
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityEighth
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.VdEqZeroOfNotLe
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AlgebraMapConjO
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -63,13 +67,14 @@ theorem repr_coe {κ : Type} [Fintype κ] [DecidableEq κ] (b : Basis κ K V) (y
     rw [Submodule.coe_smul, algebraMap_smul]
     congr 1
     simp only [bO, Basis.span_apply]
-  rw [hy, map_sum]
-  simp only [map_smul, Basis.repr_self, Finsupp.coe_finset_sum, Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, map_sum]
+  simp only [map_smul, Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
     Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
 theorem exists_local_data (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm)
-    (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V} (hL : Submodule.IsLattice K L)
+    (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V} (hL : Submodule.IsFullLattice K L)
     (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) :
     ∃ (b : Basis (Fin (finrank K V)) K V) (H : Matrix (Fin (finrank K V)) (Fin (finrank K V)) (𝓞 K))
       (D : 𝓞 F), locF 𝔭 (spanO b) = locF 𝔭 L ∧ (∀ i j, algebraMap (𝓞 K) K (H i j) = h (b i) (b j)) ∧

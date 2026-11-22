@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LeviRep
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRepresent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LeviRep
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRepresent
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.GodementJacquet MeasureTheory
 open scoped Pointwise
@@ -55,7 +59,8 @@ theorem exists_eq_of_invariant {G V : Type} [Group G] [TopologicalSpace G] [IsTo
     Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨w, hwO⟩)
   have heK : (∑ x ∈ O, x) ∈ fixed σ K := by
     intro k
-    simp only [MonoidHom.one_apply, Units.val_one, one_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [MonoidHom.one_apply, Units.val_one, one_smul, map_sum]
     refine Finset.sum_nbij' (fun x => σ k x) (fun x => σ (k : G)⁻¹ x) ?_ ?_ ?_ ?_ ?_
     · intro x hx
       obtain ⟨c, hc, rfl⟩ := (hO x).1 hx
@@ -77,7 +82,8 @@ theorem exists_eq_of_invariant {G V : Type} [Group G] [TopologicalSpace G] [IsTo
     conv_lhs => rw [← hfix c hc]
     exact hinv c u w
   have key := hu _ heK
-  rw [map_sum, map_sum, Finset.sum_congr rfl hLO, Finset.sum_congr rfl hBO, Finset.sum_const,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_congr rfl hLO, Finset.sum_congr rfl hBO, Finset.sum_const,
     Finset.sum_const, nsmul_eq_mul, nsmul_eq_mul] at key
   exact mul_left_cancel₀ hcard key
 

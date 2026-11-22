@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IteratedFDerivEqZeroOfIsBigO
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IteratedFDerivEqZeroOfIsBigO
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR
 
@@ -21,7 +25,8 @@ theorem multilinear_diagonal_homogeneous {n a : ℕ} (D : ContinuousMultilinearM
       ∑ r : Fin a → Fin n, (∏ i, u (r i)) * D (fun i => EuclideanSpace.single (r i) (1 : ℂ)) := by
     have e1 : (fun _ : Fin a => u) = fun _ => ∑ k, u k • EuclideanSpace.single k (1 : ℂ) := by
       rw [← hu]
-    rw [e1, D.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, D.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [D.map_smul_univ (fun i => u (r i)) (fun i => EuclideanSpace.single (r i) (1 : ℂ)), smul_eq_mul]
   have h2 : ∀ r : Fin a → Fin n, ∏ i, u (r i) = ∏ k, u k ^ cnt r k := by

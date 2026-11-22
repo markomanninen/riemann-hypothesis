@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountIntegrals
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMinkowskiCount
-import GroundTheory.HeightsAndTheta.Heights.CovolumeGram
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountIntegrals
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMinkowskiCount
+public import GroundTheory.HeightsAndTheta.Heights.CovolumeGram
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeStB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -226,7 +231,7 @@ theorem rank_le (d : HSMBlockDatum D K ι Ω) (n : ℕ) {r : ℕ} (f : Fin r →
     have h1 := congrArg Matrix.trace (nonsing_inv_mul G hu)
     rw [trace_one, Fintype.card_fin] at h1
     rw [← h1]
-    simp [trace, mul_apply]
+    simp [trace, Matrix.mul_apply]
   have hQ : ∀ a, 0 ≤ a ⬝ᵥ (G *ᵥ a) := fun a => by
     simpa using hG.posSemidef.dotProduct_mulVec_nonneg a
   have hpt : ∀ w ∈ mcPts (mCoordIdeal d.y),
@@ -289,10 +294,10 @@ theorem rank_le (d : HSMBlockDatum D K ι Ω) (n : ℕ) {r : ℕ} (f : Fin r →
     ring
   rw [hr', h1, h2]
   have hint1 : Integrable (fun x => ∑ k, ∑ l, G⁻¹ k l * pairRe d.A n (f l) (f k) (blockPt d x) * 1) d.dV :=
-    integrable_finset_sum _ fun k _ => integrable_finset_sum _ fun l _ => (((hI k l).1.const_mul _).mul_const _)
+    MeasureTheory.integrable_finsetSum _ fun k _ => MeasureTheory.integrable_finsetSum _ fun l _ => (((hI k l).1.const_mul _).mul_const _)
   have hint2 : Integrable (fun x => ∑ k, ∑ l, G⁻¹ k l * pairRe d.A n (f l) (f k) (conjPt (blockPt d x)) * 1)
       d.dV :=
-    integrable_finset_sum _ fun k _ => integrable_finset_sum _ fun l _ => (((hI k l).2.const_mul _).mul_const _)
+    MeasureTheory.integrable_finsetSum _ fun k _ => MeasureTheory.integrable_finsetSum _ fun l _ => (((hI k l).2.const_mul _).mul_const _)
   have i1 : ∫ x, ∑ k, ∑ l, G⁻¹ k l * pairRe d.A n (f l) (f k) (blockPt d x) * 1 ∂d.dV ≤ 2 * c ^ 2 :=
     calc _ ≤ ∫ _, 2 * c ^ 2 ∂d.dV := integral_mono hint1 (integrable_const _) fun x => hpt _ (blockPt_mem d x)
       _ = 2 * c ^ 2 := by simp
@@ -319,7 +324,7 @@ theorem exists_gram {r : ℕ} {G : Matrix (Fin r) (Fin r) ℝ} (hG : G.PosDef) :
   refine ⟨fun k => WithLp.toLp 2 (fun i => M i k), ?_⟩
   ext k l
   rw [Matrix.gram_apply, EuclideanSpace.inner_toLp_toLp, ← hMM]
-  simp [dotProduct, mul_apply, Matrix.star_eq_conjTranspose, mul_comm]
+  simp [dotProduct, Matrix.mul_apply, Matrix.star_eq_conjTranspose, mul_comm]
 
 theorem count_of_gram {r : ℕ} {G : Matrix (Fin r) (Fin r) ℝ} (hG : G.PosDef) {ρ : ℝ} (hρ : 0 < ρ)
     (P : (Fin r → ℤ) → Prop)
@@ -440,9 +445,10 @@ theorem exists_isSecBasisM (y : (Σ k, ι k) → Ω) (k₀ : K) (n : ℕ) :
   have hle : N ≤ Submodule.span ℤ T := by
     refine Submodule.span_le.2 ?_
     rintro _ ⟨g, hg, rfl⟩
-    rw [g.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [g.as_sum, map_sum]
     refine Submodule.sum_mem _ fun m hm => ?_
-    rw [← mul_one (coeff m g), ← smul_eq_mul, ← smul_monomial, map_zsmul]
+    rw [← mul_one (AddMonoidAlgebra.coeff g m), ← smul_eq_mul, ← smul_monomial, map_zsmul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, fun k => hg m hm k, rfl⟩)
   have : IsNoetherian ℤ (Submodule.span ℤ T) := isNoetherian_span_of_finite ℤ hTf
   have : IsNoetherian ℤ N := isNoetherian_of_le hle

@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtExponentialDerivativeBijectiveTangentStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqZeroOfForallExistsLsumETwoPi
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueConstantTangentVectorsAlongArcStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LieImgIffIsLieCombStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusExtExponentialDerivativeBijectiveTangentStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RelabelEmbeddingsGoodBijectiveConjCompat
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ theorem exists_lift (w : ℂ) (hw : Ha.T < w.im) : ∃ xF : (Fin g → ℂ) → 
   have hw' : ∀ z, (Fu.ex Ha.i (Ha.Pw w) z).left ≫ Xo.univ.t.G.hom = yF ≫ pullback.fst _ _ := fun z =>
     (Over.w _).trans (pullback.lift_fst _ _ _).symm
   refine ⟨fun z => C.lift _ yF (hw' z), fun z => ⟨C.lift_fst _ _ _, ?_⟩, fun x z => ?_⟩
-  · rw [← Category.assoc, C.lift_snd]; exact pullback.lift_snd _ _ _
+  · rw [← Category.assoc, C.lift_snd]
+    exact pullback.lift_snd _ _ _
   · rw [Category.assoc, ← Y.m.act x, ← Category.assoc]
     congr 1
     refine C.hom_ext ?_ ?_
@@ -145,8 +150,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
   {u : Fin (Dw.mult τ) → (epsR S ⟶ t'.G)} (h₁ : ∀ i, (u i).left ≫ m.φ = y.u τ i)
   (h₂ : ∀ i, (u i).left ≫ φ = spMap (dualMap k) ≫ (v i).left)
 
-include hφ h₁ h₂ in
 
+include hφ h₁ h₂ in
 theorem isCombAt_one {cf : Fin (Dw.mult τ) → R} (h : IsLieComb cf v 1) :
     IsCombAt y.x (y.u τ) (fun i => k (cf i)) (1 : tEps y.x ⟶ Xo.univ.t.G).left := by
   have h0 := LieCombBaseChange.prod_left_comp hφ (T := epsR R) (T' := epsR S) _ (LieCombBaseChange.dualMap_over k)
@@ -159,8 +164,8 @@ theorem isCombAt_one {cf : Fin (Dw.mult τ) → R} (h : IsLieComb cf v 1) :
     rw [← e, map_one, List.map_ofFn] at e₁
     exact congrArg (fun q => q.left) e₁.symm
 
-include hφ h₁ h₂ in
 
+include hφ h₁ h₂ in
 theorem coeff_eq {cf cf' : Fin (Dw.mult τ) → R} (h : IsLieComb cf v 1) (h' : IsLieComb cf' v 1) (i) :
     k (cf i) = k (cf' i) := by
   refine congrFun ((y.basis τ _ ⟨Over.w _, ?_⟩ fun x => ?_).unique (isCombAt_one y m hφ τ h₁ h₂ h)

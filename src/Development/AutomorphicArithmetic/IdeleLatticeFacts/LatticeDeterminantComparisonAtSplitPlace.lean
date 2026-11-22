@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+
+@[expose] public section
 
 open scoped TensorProduct Matrix Topology Kronecker ComplexOrder Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -14,7 +18,7 @@ private theorem relIndex_map_of_injOn {G G' : Type} [AddGroup G] [AddGroup G'] (
     (hH : H ≤ R) (hK : K ≤ R) (hf : ∀ x ∈ R, f x = 0 → x = 0) :
     (H.map f).relIndex (K.map f) = H.relIndex K := by
   have hinj : Function.Injective (f.comp R.subtype) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     exact Subtype.ext (hf x x.2 hx)
   have h1 := AddSubgroup.relIndex_map_map_of_injective (H.addSubgroupOf R) (K.addSubgroupOf R) hinj
@@ -43,7 +47,7 @@ theorem UpperTheory.lattice_determinant_comparison_at_split_place :
     AddMonoidHom.mk' (fun x => (x : WOF F E nS nT).map (ev F E P)) (fun x y => by
       rw [XFF.coe_add]
       ext i j
-      simp [Matrix.map_apply, map_add])
+      simp [Matrix.map_apply, map_add (f := _)])
   have hφ : ∀ x, φ x = (x : WOF F E nS nT).map (ev F E P) := fun _ => rfl
   have hφe : ∀ x, φ (mulFF e x) = φ x := by
     intro x

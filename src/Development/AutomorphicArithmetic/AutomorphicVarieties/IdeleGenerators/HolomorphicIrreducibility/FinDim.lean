@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+
+@[expose] public section
 
 open CongruenceSubgroup UpperHalfPlane UpperTheory.V.Af Filter Asymptotics Function
 open scoped MatrixGroups ModularForm Topology
@@ -115,7 +119,7 @@ theorem UpperTheory.V.Sd.finDim :
       { toFun := fun f i => (qExpansion 1 f).coeff i
         map_add' := fun f g => by
           ext i
-          simp only [CuspForm.coe_add, ModularForm.qExpansion_add one_pos hΓ f g, map_add,
+          simp only [CuspForm.coe_add, ModularForm.qExpansion_add one_pos hΓ f g, map_add (f := _),
             Pi.add_apply]
         map_smul' := fun c f => by
           ext i

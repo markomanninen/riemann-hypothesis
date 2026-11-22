@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+
+@[expose] public section
 
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
@@ -194,7 +198,7 @@ theorem count_one_mod : ∀ q l m k : ℕ, 2 ≤ q → l.Prime → 0 < m → ¬ 
   have hpres : ∀ g, P g → P (fun r => g (r - m) + m) := by
     intro g hg
     refine ⟨fun r => ?_, ?_⟩
-    · rw [map_add, hg.1, map_natCast]; ring
+    · rw [map_add (f := _), hg.1, map_natCast]; ring
     · have e : ∑ r, (k : ZMod M) * (q : ZMod M) ^ (g (r - m) + m).val
           = ∑ r, (k : ZMod M) * (q : ZMod M) ^ (g r + m).val :=
         Equiv.sum_comp (Equiv.subRight (m : ZMod (l' + 1))) (fun r => (k : ZMod M) * (q : ZMod M) ^ (g r + m).val)

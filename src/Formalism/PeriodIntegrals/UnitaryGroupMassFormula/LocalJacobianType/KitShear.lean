@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocJacTyp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitAbs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitSplit
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocJacTyp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitAbs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.KitSplit
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem continuous_sigR' (σ : E →ₐ[F] E) : Continuous (sigR (Fv F v) σ) :=
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => simp [sigR]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have : (sigR (Fv F v) σ : Fv F v ⊗[F] E → Fv F v ⊗[F] E) = (σ.toLinearMap.baseChange (Fv F v)) :=
     funext h
   rw [this]
@@ -67,7 +71,7 @@ def shear {ι : Type} (τ : ι → ι) : (ι → Fv F v ⊗[F] E) ≃ₜ+ (ι �
   invFun w k := w k - D.e * sigR (Fv F v) σ (w (τ k))
   left_inv z := by
     funext k
-    simp only [map_add, map_mul, D.hσ]
+    simp only [map_add (f := _), map_mul, D.hσ]
     linear_combination (-(sigR (Fv F v) σ (sigR (Fv F v) σ (z (τ (τ k)))))) * D.e_mul_f
   right_inv w := by
     funext k
@@ -75,7 +79,7 @@ def shear {ι : Type} (τ : ι → ι) : (ι → Fv F v ⊗[F] E) ≃ₜ+ (ι �
     linear_combination (-(sigR (Fv F v) σ (sigR (Fv F v) σ (w (τ (τ k)))))) * D.e_mul_f
   map_add' x y := by
     funext k
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     ring
   continuous_toFun := continuous_pi fun k =>
     (continuous_apply k).add (continuous_const.mul ((continuous_sigR' σ).comp (continuous_apply (τ k))))
@@ -87,11 +91,11 @@ theorem shear_apply {ι : Type} (τ : ι → ι) (z : ι → Fv F v ⊗[F] E) (k
 
 theorem shear_first_coordinate {ι : Type} (τ : ι → ι) (z : ι → Fv F v ⊗[F] E) (k : ι) :
     D.p 0 (D.shear τ z k) = D.p 0 (z k) + D.p 1 (z (τ k)) := by
-  rw [shear_apply, map_add, map_mul, D.p_e.1, (D.p_sig _).1, one_mul]
+  rw [shear_apply, map_add (f := _), map_mul, D.p_e.1, (D.p_sig _).1, one_mul]
 
 theorem shear_second_coordinate {ι : Type} (τ : ι → ι) (z : ι → Fv F v ⊗[F] E) (k : ι) :
     D.p 1 (D.shear τ z k) = D.p 1 (z k) := by
-  rw [shear_apply, map_add, map_mul, D.p_e.2, zero_mul, add_zero]
+  rw [shear_apply, map_add (f := _), map_mul, D.p_e.2, zero_mul, add_zero]
 
 theorem mem_box_iff {ι : Type} (z : ι → Fv F v ⊗[F] E) :
     z ∈ Obox (E := E) v ι ↔ ∀ k, D.p 0 (z k) ∈ v.adicCompletionIntegers F ∧

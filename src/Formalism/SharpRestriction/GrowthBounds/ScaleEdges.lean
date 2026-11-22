@@ -1,11 +1,15 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.TheoremIIOfEdgeBoundConstants
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ColSpanMap
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GoodRankOfPrim
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.NumericProductInequality
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.InitialLevelMonoWeights
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableIffGeneralRank
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SourcePrimitiveIntegrality
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.TheoremIIOfEdgeBoundConstants
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ColSpanMap
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GoodRankOfPrim
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleNegMono
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.NumericProductInequality
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.InitialLevelMonoWeights
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableIffGeneralRank
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SourcePrimitiveIntegrality
+
+@[expose] public section
 
 noncomputable section
 

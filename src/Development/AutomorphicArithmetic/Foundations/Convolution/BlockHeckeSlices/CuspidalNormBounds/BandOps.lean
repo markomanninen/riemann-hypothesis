@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open NumberField GlobalTheory.CuspRep GroundTheory.Automorphic UpperTheory.V.Cm
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 private theorem lie_right_translate_comm (X : Lie E n) (y : GL (Fin n) (Cinf E)) (k : GL (Fin n) (Af E)) :
     ∃ X' : Lie E n, lie E n X * rt E n (infGL E n y * finGL E n k) =
@@ -35,7 +39,7 @@ private def itw (g : GA E n) : Subalgebra ℂ (UC E n) where
     exact ⟨a' * b', by rw [map_mul, mul_assoc, hb, ← mul_assoc, ha, map_mul, mul_assoc]⟩
   add_mem' := by
     rintro a b ⟨a', ha⟩ ⟨b', hb⟩
-    exact ⟨a' + b', by rw [map_add, add_mul, ha, hb, map_add, mul_add]⟩
+    exact ⟨a' + b', by rw [map_add (f := _), add_mul, ha, hb, map_add (f := _), mul_add]⟩
   algebraMap_mem' r := ⟨algebraMap _ _ r, by rw [AlgHom.commutes]; exact Algebra.commutes _ _⟩
 
 private theorem ιC_mem (g : GA E n) (X : Lie E n) : ιC E n X ∈ itw g := by
@@ -84,7 +88,7 @@ private theorem band_add {C : ℝ} (hC : 0 ≤ C) {φ ψ : Sm E n} (h₁ : Band 
   obtain ⟨B, hB⟩ := hN u
   obtain ⟨D, hD⟩ := hM u
   refine ⟨|B| + |D|, fun α g => ?_⟩
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   refine (norm_add_le _ _).trans ?_
   have := (hB α g).trans (bnd_mono hC B α.degree g (le_max_left N M))
   have := (hD α g).trans (bnd_mono hC D α.degree g (le_max_right N M))
@@ -164,7 +168,7 @@ private theorem band_hk {C : ℝ} (hC : 0 ≤ C) {φ : Sm E n} (h : Band C φ) (
 end UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.ConvolutionTheory.BW.bandOps :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.BandOps E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.BandOps E := by
   intro E _ _ _ n C hC
   exact ⟨UpperTheory.ConvolutionTheory.BW.band_zero C, fun φ h => ⟨fun ψ h₂ => UpperTheory.ConvolutionTheory.BW.band_add hC h h₂, UpperTheory.ConvolutionTheory.BW.band_smul h,
     UpperTheory.ConvolutionTheory.BW.band_uC h, UpperTheory.ConvolutionTheory.BW.band_rt hC h, fun w j => UpperTheory.ConvolutionTheory.BW.band_hk hC h w j⟩⟩

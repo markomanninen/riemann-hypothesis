@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompactUnitaryTorusRealPlaceTensorEqComplexPowStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasurableEmbeddingEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesCharacter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompactUnitaryTorusRealPlaceTensorEqComplexPowStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasurableEmbeddingEquiv
+
+@[expose] public section
 
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -330,7 +334,8 @@ theorem infEmb_hform (hc : IsCMExt F E σ) (u v : Fin r → w.Completion ⊗[F] 
     infEmb τ (Formalism.UG.hform (sigR w.Completion σ) (JR w.Completion J) u v) =
       star (infEmb τ ∘ u) ⬝ᵥ (J.map τ.1 *ᵥ (infEmb τ ∘ v)) := by
   unfold Formalism.UG.hform
-  simp only [map_sum, map_mul, dotProduct, Matrix.mulVec, Function.comp_apply, Pi.star_apply, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, dotProduct, Matrix.mulVec, Function.comp_apply, Pi.star_apply, Finset.mul_sum,
     Matrix.map_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have hJ : infEmb τ (JR w.Completion J i j) = τ.1 (J i j) := by
@@ -459,12 +464,14 @@ theorem exists_matrix (hc : IsCMExt F E σ) (h1 : ∀ y i, Ψ (sigR w.Completion
     have hy : y = ∑ j, e j • Ψ.symm (Pi.single j 1) := by
       apply Ψ.injective
       funext i
-      rw [map_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply]
       simp only [Algebra.smul_def, map_mul, Pi.mul_apply, h2, he, RingEquiv.apply_symm_apply, Pi.single_apply,
         mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     funext i
     conv_lhs => rw [hy]
-    simp only [Function.comp_apply, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_mul, he,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Function.comp_apply, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_mul, he,
       Matrix.mulVec, dotProduct, Matrix.of_apply]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   refine ⟨N, ?_, ?_⟩
@@ -492,7 +499,8 @@ theorem exists_matrix (hc : IsCMExt F E σ) (h1 : ∀ y i, Ψ (sigR w.Completion
         infEmb τ ∘ (mulMat φ (1 ⊗ₜ[F] alpha P) *ᵥ φ y) := by
       rw [← hg]
       funext i
-      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
     rw [hm, mulMat_mulVec, hN, map_mul]
     congr 1
     funext i

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.RhoSurj
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.RhoSurj
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -167,7 +171,8 @@ theorem AdFam.comm {ι : Type} [Fintype ι] {w : ι → FreeAlgebra ℂ (Lt n)}
     {E1 E2 : Fin n → Fin n → Module.End ℂ V} (hE : Pair2 E1 E2) (c d : Fin n) (t : ι → ℂ) :
     (E1 c d + E2 c d) * ev2 E1 E2 (∑ i, t i • w i) - ev2 E1 E2 (∑ i, t i • w i) * (E1 c d + E2 c d) =
       ev2 E1 E2 (∑ j, (M c d *ᵥ t) j • w j) := by
-  simp only [map_sum, map_smul, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.mul_sum, Finset.sum_mul, mul_smul_comm, smul_mul_assoc,
     ← Finset.sum_sub_distrib, ← smul_sub, h.2 V E1 E2 hE, Finset.smul_sum, Matrix.mulVec, dotProduct, Finset.sum_smul,
     smul_smul]
   rw [Finset.sum_comm]
@@ -185,7 +190,7 @@ theorem invLift2 {V : Type} [AddCommGroup V] [Module ℂ V] {E1 E2 : Fin n → F
         intro x y hx hy s hs
         have := hx s hs
         have := hy s hs
-        simp only [PiLp.add_apply, add_smul, Finset.sum_add_distrib, map_add, LinearMap.add_apply, *, add_zero]
+        simp only [PiLp.add_apply, add_smul, Finset.sum_add_distrib, map_add (f := _), LinearMap.add_apply, *, add_zero]
       zero_mem' := by intro s hs; simp
       smul_mem' := by
         intro r x hx s hs
@@ -230,7 +235,7 @@ theorem invLift2 {V : Type} [AddCommGroup V] [Module ℂ V] {E1 E2 : Fin n → F
   · intro s hs
     have e' : ∀ i, t i = k i + t' i := fun i => congrArg (fun x : EuclideanSpace ℂ ι => x i) e
     have := (hN k).1 hk s hs
-    simp only [e', add_smul, Finset.sum_add_distrib, map_add, LinearMap.add_apply, this, zero_add]
+    simp only [e', add_smul, Finset.sum_add_distrib, map_add (f := _), LinearMap.add_apply, this, zero_add]
 
 theorem liftInv : LiftInv := by
   classical
@@ -304,7 +309,8 @@ theorem liftInv : LiftInv := by
       rw [h2]
       simpa using h1
     conv_rhs => rw [← b.sum_repr s]
-    simp only [map_sum, map_mul, LinearMap.sum_apply, Module.End.mul_apply, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, LinearMap.sum_apply, Module.End.mul_apply, map_smul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hk i, map_smul, hu i]
   obtain ⟨a, hinv, ha⟩ := invLift2 hP L a0 (fun c d s hs => hLt c d rfl s hs) fun c d s hs => by

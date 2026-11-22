@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegPBOfFiniteEtaleCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSiegelObjectOddLevelRigid
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsGrpPullbackLocalOnBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SurjectiveAppOfPullbackSnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftShearMapSquareZeroAbelianSchemes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelFamilyClassifyingMapUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegPBOfFiniteEtaleCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSiegelObjectOddLevelRigid
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsGrpPullbackLocalOnBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SurjectiveAppOfPullbackSnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftShearMapSquareZeroAbelianSchemes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelFamilyClassifyingMapUnique
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.ZM GlobalTheory.SiegLev GlobalTheory.SiegelTor
@@ -123,10 +128,27 @@ theorem siegPB_id_of_local : ∀ (g n : ℕ) (B B' : Type) [CommRing B] [CommRin
     refine ⟨V, j, hj, hx, ?_⟩
     rw [Category.id_comp, ← reassoc_of% (lm a), ← lk a]
   have gp₂ : IsGrpPullback (G2 c.A) (G2 u.A) (𝟙 S) φ₂ := GlobalTheory.ShearLift.isGrpPullback_tensor gp gp sq.1 sq.2
-  have rL : Out.Rigidified (G2 c.A) c.P :=
-    (CechPic.cls_eq_zero_iff (pull_isLB c.isLB _)).1 (by rw [CechPic.cls_pull c.isLB]; exact cls_eSec c)
-  have rL' : Out.Rigidified (G2 u.A) u.P :=
-    (CechPic.cls_eq_zero_iff (pull_isLB u.isLB _)).1 (by rw [CechPic.cls_pull u.isLB]; exact cls_eSec u)
+  have rig (d : SiegPre g n ζ' sc) : Out.Rigidified (G2 d.A) d.P := by
+    have he : eSec d.A ≫ (lift (1 : d.A ⟶ d.A) (𝟙 d.A)).left = eSec (G2 d.A) := by
+      unfold eSec
+      rw [← Over.comp_left]
+      congr 1
+      ext <;> simp [Hom.one_def]
+    have z := (CechPic.cls_eq_zero_iff (pull_isLB d.isLB _)).2 d.rig₁
+    rw [CechPic.cls_pull d.isLB] at z
+    apply (CechPic.cls_eq_zero_iff (pull_isLB d.isLB _)).1
+    rw [CechPic.cls_pull d.isLB, ← he, CechPic.pull_comp, z, map_zero]
+  have rL : Out.Rigidified (G2 c.A) c.P := rig c
+  have rL' : Out.Rigidified (G2 u.A) u.P := by
+    have he : eSec u.A ≫ (lift (1 : u.A ⟶ u.A) (𝟙 u.A)).left = eSec (G2 u.A) := by
+      unfold eSec
+      rw [← Over.comp_left]
+      congr 1
+      ext <;> simp [Hom.one_def]
+    have z := (CechPic.cls_eq_zero_iff (pull_isLB u.isLB _)).2 u.rig₁
+    rw [CechPic.cls_pull u.isLB] at z
+    apply (CechPic.cls_eq_zero_iff (pull_isLB u.isLB _)).1
+    rw [CechPic.cls_pull u.isLB, ← he, CechPic.pull_comp, z, map_zero]
   have hiso : LBIso c.P (u.P.pull φ₂) :=
     GlobalTheory.RigidLocal.lbIso_of_local GlobalTheory.abelianSchemeLaws_all.1.globalFns S (G2 c.A) (G2 u.A) c.P u.P φ₂
       (AbelianSchemeGerms.isAbelianScheme_tensor _ _ c.ab c.ab) c.isLB u.isLB rL rL' gp₂ fun p => by

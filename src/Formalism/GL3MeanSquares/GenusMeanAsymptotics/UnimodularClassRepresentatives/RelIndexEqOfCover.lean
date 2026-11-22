@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.LIOrb
 
@@ -146,7 +150,7 @@ theorem sum_relIndex_fibre {X Y : Type*} [MulAction G X] [MulAction G Y] (π : X
       obtain ⟨t0, -, huniq⟩ := hX (g • t) (hA g t (hsX t ht.1).1)
       exact hne ((huniq t ⟨ht.1, g, rfl⟩).trans (huniq t' ⟨ht'.1, g', hg'⟩).symm)
     have hnc : Nat.card {x // x ∈ A ∧ π x = y} = ({x | x ∈ A ∧ π x = y} : Set X).ncard :=
-      by first | exact Nat.card_coe_set_eq _ | exact (Set.ncard_def _).symm
+      by exact (Set.ncard_ofPred _).symm
     rw [hnc, hfib, ncard_biUnion_finset _ _ hfin' hdisj]
     push_cast
     refine Finset.sum_congr rfl fun t ht => ?_

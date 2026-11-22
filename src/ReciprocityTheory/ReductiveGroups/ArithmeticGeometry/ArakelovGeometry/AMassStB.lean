@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMassStA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMassStA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CNormSt
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,14 +74,14 @@ theorem gb_sum_cons (y : Fin D → ℂ) :
   rw [Fin.sum_univ_succ]
   simp
 
-theorem gb_sheetDensity {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
-    (hFS : IsPullFS x e m) {y : Fin D → ℂ} {w : ((k : Unit) → GlobalTheory κ k) → ℂ}
+theorem gb_sheetDensity {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
+    (hFS : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.IsPullFS x e m) {y : Fin D → ℂ} {w : ((k : Unit) → GlobalTheory κ k) → ℂ}
     (h : ∃ γ, IsSheet (coordIdeal ℤ x) (gbPsi e) y w γ) :
-    sheetDensity (coordIdeal ℤ x) (gbPsi e) (purePot m D) (fun _ => 1) y w =
+    sheetDensity (coordIdeal ℤ x) (gbPsi e) (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.purePot m D) (fun _ => 1) y w =
       maDensity (fun _ : Fin D => gbPot) y := by
   have hs := h.choose_spec
   unfold sheetDensity
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   simp only [one_mul]
   apply maDensity_congr_of_eventuallyEq
   intro j
@@ -85,7 +89,7 @@ theorem gb_sheetDensity {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : Cone
   obtain ⟨-, hmem, hΨ⟩ := hy'
   rw [gb_mcPts_eq] at hmem
   rw [gbPsi_segre] at hΨ
-  simp only [purePot, gbPot]
+  simp only [ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.purePot, gbPot]
   rw [hFS _ hmem, ← gb_sum_cons y']
   congr 2
   refine Finset.sum_congr rfl (fun k _ => ?_)
@@ -139,7 +143,7 @@ theorem gb_ae_good {c : ℂ} {Δ : MvPolynomial (Fin (D + 1)) ℂ} {y₀ : Fin D
       simp only [eval_C]
       exact analyticOnNhd_const
     next p q hp hq =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       exact hp.add hq
     next p i hp =>
       simp only [map_mul, eval_X]
@@ -190,10 +194,10 @@ theorem gb_fibre_good {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {Δ : MvPol
         funext k
         simp [hmem.2 k, hc]
 
-theorem gb_integrand_ae {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
-    (hfr : IsProjFrame x e) (hFS : IsPullFS x e m) :
+theorem gb_integrand_ae {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
+    (hfr : IsProjFrame x e) (hFS : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.IsPullFS x e m) :
     ∀ᵐ y : Fin D → ℂ, ∑ᶠ w ∈ fibre (coordIdeal ℤ x) (gbPsi e) y,
-        sheetDensity (coordIdeal ℤ x) (gbPsi e) (purePot m D) (fun _ => 1) y w =
+        sheetDensity (coordIdeal ℤ x) (gbPsi e) (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.purePot m D) (fun _ => 1) y w =
       (projDeg x e : ℝ) * maDensity (fun _ : Fin D => gbPot) y := by
   obtain ⟨Δ, hΔ⟩ := exists_isDiscr hfr
   obtain ⟨c, hc, y₀, h₀⟩ := gb_exists_scale hΔ.1
@@ -203,9 +207,9 @@ theorem gb_integrand_ae {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : Cone
     finsum_mem_eq_finite_toFinset_sum _ hfin, Finset.sum_const, nsmul_eq_mul,
     ← Set.ncard_eq_toFinset_card _ hfin, hcard]
 
-theorem gb_ptsIntegralAt {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric ℂ (Ix κ)}
-    (hfr : IsProjFrame x e) (hFS : IsPullFS x e m) :
-    ptsIntegralAt (coordIdeal ℤ x) (gbPsi e) (purePot m D) (fun _ => 1) = projDeg x e := by
+theorem gb_ptsIntegralAt {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} {m : ConeMetric (C := ℂ) (ι := Ix κ)}
+    (hfr : IsProjFrame x e) (hFS : ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.IsPullFS x e m) :
+    ptsIntegralAt (coordIdeal ℤ x) (gbPsi e) (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.purePot m D) (fun _ => 1) = projDeg x e := by
   unfold ptsIntegralAt
   rw [integral_congr_ae (gb_integrand_ae hfr hFS)]
   first
@@ -220,35 +224,5 @@ theorem gb_isGoodProj {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} (hfr : IsPr
   obtain ⟨k, hk⟩ := exists_proj_ne_zero hfr hz
   intro h0
   exact hk (congrFun h0 k)
-
-def gbOne : HermLine (GlobalTheory κ) := HermLine.ofWeight (fun _ => (1 : ℝ)) (fun _ _ _ => rfl)
-
-theorem gb_logNorm_one : logNorm (gbOne (κ := κ)) 1 = fun _ => (1 : ℝ) := by
-  funext z
-  simp [logNorm, gbOne, HermLine.ofWeight]
-
-theorem gb_ptsIntegral (hInd : PtsIndepStatement) {x : Ix κ → Ω} {m : ConeMetric ℂ (Ix κ)}
-    (hL : IsSmoothHerm (HermLine.ofCone m))
-    (harith : IsArithVar (ι := GlobalTheory κ) (coordIdeal ℤ x) (D + 1))
-    {e : Fin (D + 1) → Ix κ} (hfr : IsProjFrame x e) (hFS : IsPullFS x e m) :
-    ptsIntegral (ι := GlobalTheory κ) (coordIdeal ℤ x) (purePot m D) (fun _ => 1) = projDeg x e := by
-  have hg : IsGoodProj (coordIdeal ℤ x) (gbPsi e) := gb_isGoodProj hfr
-  have hex : ∃ Ψ : (((k : Unit) → GlobalTheory κ k) → ℂ) →ₗ[ℂ] (Fin (D + 1) → ℂ), IsGoodProj (coordIdeal ℤ x) Ψ :=
-    ⟨gbPsi e, hg⟩
-  have hSm : IsSmoothHerm (gbOne (κ := κ)) := contDiffOn_const
-  have hSec : IsSectionOn (coordIdeal ℤ x) (gbOne (κ := κ)) 1 := by
-    refine ⟨fun _ => 0, fun _ => rfl, ?_, ?_⟩
-    · intro mm hm k
-      rw [MvPolynomial.support_one, Finset.mem_singleton] at hm
-      subst hm
-      simp
-    · intro h
-      exact RingHom.ker_ne_top _ ((Ideal.eq_top_iff_one _).2 h)
-  have key := hInd Unit (GlobalTheory κ) (coordIdeal ℤ x) D hex.choose (gbPsi e) (fun _ => HermLine.ofCone m)
-    (gbOne (κ := κ)) 1 harith hex.choose_spec hg (fun _ => hL) hSm hSec
-  rw [gb_logNorm_one] at key
-  unfold ptsIntegral
-  rw [dif_pos hex]
-  exact key.trans (gb_ptsIntegralAt hfr hFS)
 
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry

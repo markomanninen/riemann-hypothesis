@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CommuteEPderiv
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CommuteEPderiv
+
+@[expose] public section
 
 noncomputable section
 

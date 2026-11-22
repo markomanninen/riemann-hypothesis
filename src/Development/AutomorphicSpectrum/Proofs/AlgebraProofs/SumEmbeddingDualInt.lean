@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem sum_eigProj [IsAlgClosed K] [CharZero K] (ρ : 𝓞 E →+* Module.End K
   unfold eigProj
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul, sum_embedding_dualInt]
-  conv_rhs => rw [← map_one ρ, ← (RingOfIntegers.basis E).sum_repr 1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← map_one ρ, ← (RingOfIntegers.basis E).sum_repr 1, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, Int.cast_smul_eq_zsmul]
 
@@ -47,9 +52,11 @@ theorem finrank_eigSp_mul :
   set l : E := ∑ k, (m k : E) * dualInt E k with hl
   have h1 : ∀ τ : E →+* K, (finrank K (eigSp ρ τ) : K) = τ l := by
     intro τ
-    rw [← trace_eigProj, hl, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← trace_eigProj, hl, map_sum]
     unfold eigProj
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, hm, map_mul, map_intCast, smul_eq_mul, mul_comm]
   have h2 : ∀ τ : E →+* K, (finrank K (eigSp ρ τ) : E) = l := fun τ =>
@@ -57,7 +64,8 @@ theorem finrank_eigSp_mul :
   have h3 : ∀ τ : E →+* K, finrank K (eigSp ρ τ) = finrank K (eigSp ρ σ) := fun τ =>
     Nat.cast_injective ((h2 τ).trans (h2 σ).symm)
   have h4 : (finrank K V : K) = ∑ τ : E →+* K, (finrank K (eigSp ρ τ) : K) := by
-    rw [← LinearMap.trace_one, ← sum_eigProj ρ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.trace_one, ← sum_eigProj ρ, map_sum]
     exact Finset.sum_congr rfl fun τ _ => trace_eigProj ρ τ
   simp_rw [h3] at h4
   rw [Finset.sum_const, Finset.card_univ, NumberField.Embeddings.card, nsmul_eq_mul] at h4

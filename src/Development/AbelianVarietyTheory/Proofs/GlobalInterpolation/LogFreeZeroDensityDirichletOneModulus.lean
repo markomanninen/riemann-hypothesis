@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LogFactorialEqSumVonMangoldtMulDiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DirichletLZerosInWindowFiniteAndPosOrder
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DirichletLFewZerosSmallDiscStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLargeVonMangoldtLogPowerSeriesNearZeroStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LargeMeanOfLargeDerivativeStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimeMeanValueCharactersTwistIntegralLeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ZerosDisc
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LogFactorialEqSumVonMangoldtMulDiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DirichletLZerosInWindowFiniteAndPosOrder
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DirichletLFewZerosSmallDiscStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsLargeVonMangoldtLogPowerSeriesNearZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LargeMeanOfLargeDerivativeStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PrimeMeanValueCharactersTwistIntegralLeStatement
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology GlobalTheory.Lin
 open scoped Classical
 
@@ -66,10 +71,10 @@ theorem count_le (Z : Finset ℂ) (w : ℂ → ℝ) (F : ℝ → ℝ) (U h δ M 
     simp only [setIntegral_const, smul_eq_mul]
     rw [Real.volume_real_Icc_of_le (by linarith)]
     ring
-  rw [Finset.mul_sum, ← Finset.sum_congr rfl hint, ← integral_finset_sum _ (fun ρ _ => hgi ρ),
+  rw [Finset.mul_sum, ← Finset.sum_congr rfl hint, ← integral_finsetSum _ (fun ρ _ => hgi ρ),
     ← intervalIntegral.integral_const_mul, intervalIntegral.integral_of_le hU',
     ← integral_Icc_eq_integral_Ioc]
-  refine integral_mono (integrable_finset_sum _ (fun ρ _ => hgi ρ)) ?_ fun τ => ?_
+  refine integral_mono (integrable_finsetSum _ (fun ρ _ => hgi ρ)) ?_ fun τ => ?_
   · exact ((intervalIntegrable_iff_integrableOn_Icc_of_le hU').1 hF).const_mul M
   · have he : ∑ ρ ∈ Z, g ρ τ = δ * ∑ z ∈ Z.filter (fun z => |τ - z.im| ≤ h), w z := by
       rw [Finset.mul_sum, Finset.sum_filter]
@@ -169,14 +174,14 @@ theorem mean_le : ∃ C CM : ℝ, 0 < C ∧ 0 ≤ CM ∧ ∀ (q : ℕ) [NeZero q
   have hJ : ∀ χ : DirichletCharacter ℂ q, Integrable (fun y : ℝ =>
       ∫ τ in Set.Ioc (-T) T, ‖primeSum χ N y τ‖ ^ 2 / y) (volume.restrict (Set.Ioc N M)) :=
     fun χ => (hI χ).integral_prod_right
-  rw [← integral_finset_sum _ (fun χ _ => hJ χ)]
+  rw [← integral_finsetSum _ (fun χ _ => hJ χ)]
   have hlM : 0 ≤ Real.log M := Real.log_nonneg (by linarith)
   have hc : IntegrableOn (fun y : ℝ => C * (Real.log M + CM) * y⁻¹) (Set.Ioc N M) := by
     refine (ContinuousOn.integrableOn_Icc ?_).mono_set Set.Ioc_subset_Icc_self
     exact continuousOn_const.mul (continuousOn_id.inv₀ fun y hy => by
       have := hy.1; simp only [id]; linarith)
   calc _ ≤ ∫ y in Set.Ioc N M, C * (Real.log M + CM) * y⁻¹ := by
-        refine setIntegral_mono_on (integrable_finset_sum _
+        refine setIntegral_mono_on (integrable_finsetSum _
           (fun χ _ => hJ χ)) hc measurableSet_Ioc fun y hy => ?_
         have hy1 : 1 ≤ y := by linarith [hy.1]
         simp only [integral_div]

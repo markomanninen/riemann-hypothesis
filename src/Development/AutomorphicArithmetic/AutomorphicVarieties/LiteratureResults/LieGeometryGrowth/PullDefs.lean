@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,8 +52,8 @@ structure IsFlow (W : S → V → V) : Prop where
 theorem isFlow_zero : IsFlow G 0 :=
   ⟨fun _ => ⟨contDiffOn_const, fun p hp t _ => by simpa [flow] using hp⟩, fun _ _ _ _ => by simp, fun _ _ _ _ _ => by simp⟩
 
-open Classical in
 
+open Classical in
 def toOm {q : ℕ} (z : S → V → V [⋀^Fin q]→L[ℝ] (Fin d → ℂ)) : G.Om q :=
   if h : ∀ s, ContDiffOn ℝ ∞ (z s) G.Y then
     ⟨fun s => G.Y.indicator (z s), fun s =>
@@ -58,7 +62,7 @@ def toOm {q : ℕ} (z : S → V → V [⋀^Fin q]→L[ℝ] (Fin d → ℂ)) : G.
 
 theorem toOm_apply {q : ℕ} {z : S → V → V [⋀^Fin q]→L[ℝ] (Fin d → ℂ)} (h : ∀ s, ContDiffOn ℝ ∞ (z s) G.Y) (s : S) {p : V}
     (hp : p ∈ G.Y) : (toOm G z).1 s p = z s p := by
-  rw [toOm, dif_pos h]
+  rw [toOm, dite_eq_left h]
   exact Set.indicator_of_mem hp _
 
 def pbOm (W : S → V → V) {q : ℕ} (w : G.Om q) : G.Om q := toOm G fun s => pb (flow (W s) 1) (w.1 s)
@@ -74,7 +78,7 @@ end Om
 
 section Ad
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 structure IsFld (U : Subgroup (GL (Fin a) (Af E))) (Y : GA E a → Herm E a) (C : ℝ) : Prop where
   sm : ∀ i j w, ∃ φ : Sm E a, (∀ g, φ.1 g = (Y g).1 i j w) ∧ BddDer φ
@@ -88,31 +92,28 @@ theorem IsStep.fld {U : Subgroup (GL (Fin a) (Af E))} {f : GA E a → ℝ} {Y : 
     (h : IsStep U f Y C c f₀) : IsFld U Y C := ⟨h.Y_sm, h.Y_left, h.Y_cpt, h.Y_lev, h.root⟩
 
 theorem IsFld.neg {U : Subgroup (GL (Fin a) (Af E))} {Y : GA E a → Herm E a} {C : ℝ} (h : IsFld U Y C) :
-    IsFld U (-Y) C where
-  sm i j w := by
+    IsFld U (-Y) C := by
+  refine { sm := ?_, left := ?_, cpt := ?_, lev := ?_, root := ?_ }
+  · intro i j w
     obtain ⟨φ, h1, h2⟩ := h.sm i j w
     refine ⟨-φ, fun g => congrArg Neg.neg (h1 g), fun X l => ?_⟩
     obtain ⟨B, hB⟩ := h2 X l
     exact ⟨B, fun g => by rw [map_neg]; exact (norm_neg _).trans_le (hB g)⟩
-  left γ t g := congrArg Neg.neg (h.left γ t g)
-  cpt k g := by
+  · exact fun γ t g => congrArg Neg.neg (h.left γ t g)
+  · intro k g
     have e := congrArg Subtype.val (h.cpt k g)
     refine Subtype.ext ?_
     change k.1 * (-(Y (g * infGL E a (Unitary.toUnits k))).1) * star k.1 = -(Y g).1
     rw [mul_neg, neg_mul, ← e]
     rfl
-  lev u hu g := congrArg Neg.neg (h.lev u hu g)
-  root g t ht := by
+  · exact fun u hu g => congrArg Neg.neg (h.lev u hu g)
+  · intro g t ht
     obtain ⟨x, h1, h2⟩ := h.root g (-t) (by rwa [abs_neg])
     exact ⟨x, by rw [h1, neg_smul]; exact congrArg (1 + ·) (smul_neg t (Y g).1).symm, h2⟩
 
 def FCorr (U : Subgroup (GL (Fin a) (Af E))) (Y : GA E a → Herm E a) (W : (GL (Fin a) (Af E) ⧸ U) → HV E a → HV E a) : Prop :=
   ∀ (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)),
     W (x : GL (Fin a) (Af E) ⧸ U) (sand g (hOne E a)) = sand g (hv (Y (infGL E a g * finGL E a x)))
-
-theorem FCorr.neg {U : Subgroup (GL (Fin a) (Af E))} {Y : GA E a → Herm E a}
-    {W : (GL (Fin a) (Af E) ⧸ U) → HV E a → HV E a} (h : FCorr U Y W) : FCorr U (-Y) (-W) := fun g x => by
-  simp only [Pi.neg_apply, map_neg, h g x]
 
 def Bd {Ξ : AlgRep E a} {q : ℕ} (α : Co Ξ q) (g : GA E a) (M : ℝ) : Prop :=
   ∀ X : Fin q → Herm E a, ‖ev (α X) (retractOne g : KernelIndexFullLattice.G1 E a).1‖ ≤ M * ∏ i, ‖hv (X i)‖
@@ -122,7 +123,7 @@ theorem Bd.mono {Ξ : AlgRep E a} {q : ℕ} {α : Co Ξ q} {g : GA E a} {M M' : 
 
 theorem Bd.sub {Ξ : AlgRep E a} {q : ℕ} {α β : Co Ξ q} {g : GA E a} {M M' : ℝ} (h : Bd α g M) (h' : Bd β g M') :
     Bd (α - β) g (M + M') := fun X => by
-  rw [AlternatingMap.sub_apply, map_sub, Pi.sub_apply, add_mul]
+  rw [sub_apply, map_sub, Pi.sub_apply, add_mul]
   exact (norm_sub_le _ _).trans (add_le_add (h X) (h' X))
 
 end Ad

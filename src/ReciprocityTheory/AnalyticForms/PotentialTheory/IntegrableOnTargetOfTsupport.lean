@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -16,12 +20,6 @@ private theorem chartPartition_le_one (A : FinHolAtlas e X) (P : ChartPartition 
     P.χ k x ≤ 1 := by
   rw [← P.sum_eq_one x]
   exact Finset.single_le_sum (fun j _ => P.nonneg j x) (Finset.mem_univ k)
-
-private theorem chartPartition_contOn (A : FinHolAtlas e X) (P : ChartPartition A) (k j : Fin A.n) :
-    ContinuousOn (fun y => P.χ k ((A.chart j).symm y)) (A.chart j).target := by
-  have h := (P.smooth k j).continuousOn
-  rw [Set.preimage_univ, Set.inter_univ] at h
-  exact h
 
 private theorem smooth_continuous (A : FinHolAtlas e X) {f : X → ℝ} (hf : A.Smooth f) : Continuous f := by
   rw [continuous_iff_continuousAt]
@@ -71,7 +69,7 @@ private theorem chart_move [CompactSpace X] (A : FinHolAtlas e X) (P : ChartPart
       ((A.chart j).target ∩ (A.chart j).symm ⁻¹' (A.chart k).source) ⊆ (A.chart k).target := by
     rintro _ ⟨y, hy, rfl⟩
     exact (A.chart k).map_source hy.2
-  have e1 := setIntegral_eq_of_subset_of_forall_diff_eq_zero (μ := volume)
+  have e1 := setIntegral_eq_of_subset_of_forall_sdiff_eq_zero (μ := volume)
     (f := fun y => P.χ k ((A.chart k).symm y) * g ((A.chart k).symm y) * locDens A Φ k y)
     (A.chart k).open_target.measurableSet hsub (by
       rintro w ⟨hw, hnot⟩
@@ -86,7 +84,8 @@ private theorem chart_move [CompactSpace X] (A : FinHolAtlas e X) (P : ChartPart
         by_contra h0
         exact hns (hs (subset_tsupport _ (Function.mem_support.2 h0)))
       simp [hg0])
-  have e2 := setIntegral_eq_of_subset_of_forall_diff_eq_zero (μ := volume)
+  have e2 := setIntegral_eq_of_subset_of_forall_sdiff_eq_zero (μ := volume)
+    (s := (A.chart j).target ∩ (A.chart j).symm ⁻¹' (A.chart k).source)
     (f := fun y => P.χ k ((A.chart j).symm y) * g ((A.chart j).symm y) * locDens A Φ j y)
     (A.chart j).open_target.measurableSet Set.inter_subset_left (by
       rintro y ⟨hy, hnot⟩
@@ -128,7 +127,7 @@ theorem mIntLocalize : MIntLocalizeStatement := by
       (mIntegrable_continuous_mul A Φ g (P.χ k) hg (smooth_continuous A (P.smooth k)))
   unfold integralWith
   rw [Finset.sum_congr rfl (fun k _ => chart_move A P Φ hΦ j k g hs),
-    ← integral_finset_sum _ (fun k _ => hint k)]
+    ← MeasureTheory.integral_finsetSum _ (fun k _ => hint k)]
   refine setIntegral_congr_fun (A.chart j).open_target.measurableSet (fun y _ => ?_)
   rw [← Finset.sum_mul, ← Finset.sum_mul, P.sum_eq_one, one_mul]
 
@@ -166,7 +165,7 @@ theorem integralWithIndep : IntegralWithIndepStatement := by
         unfold integralWith
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl (fun i _ => ?_)
-        rw [integral_finset_sum _ (fun j _ => hint i j)]
+        rw [MeasureTheory.integral_finsetSum _ (fun j _ => hint i j)]
     _ = integralWith A Q Φ g := by
         unfold integralWith
         refine Finset.sum_congr rfl (fun i _ =>
@@ -177,7 +176,7 @@ theorem mIntEq : MIntEqStatement := by
   intro e X _ _ _ A P Φ hΦ g hg
   have h : Nonempty (ChartPartition A) := ⟨P⟩
   unfold mInt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact integralWithIndep A h.some P Φ hΦ g hg
 
 end

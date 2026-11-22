@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -27,8 +31,8 @@ theorem conjLinear_algebraMap (c : F) : conjLinear F E (algebraMap F E c) = alge
 theorem conjLinear_one : conjLinear F E 1 = 1 := by
   simpa using conjLinear_algebraMap (F := F) (E := E) 1
 
-omit [Algebra.IsQuadraticExtension F E] in
 
+omit [Algebra.IsQuadraticExtension F E] in
 theorem linearIndependent_one_of_not_mem [Nontrivial E] {x : E}
     (hx : x ∉ Set.range (algebraMap F E)) : LinearIndependent F ![1, x] := by
   rw [LinearIndependent.pair_iff]
@@ -106,9 +110,9 @@ theorem conjLinear_mul_self (x : E) :
     have htr2 : Algebra.trace F E (x * x) = 2 * (basisOneOf hx).repr (x * x) 0 +
         (basisOneOf hx).repr (x * x) 1 * (basisOneOf hx).repr (x * x) 1 := by
       conv_lhs => rw [hsq]
-      rw [map_add, trace_algebraMap_quadratic, ← Algebra.smul_def, map_smul, htr, smul_eq_mul]
+      rw [map_add (f := _), trace_algebraMap_quadratic, ← Algebra.smul_def, map_smul, htr, smul_eq_mul]
     rw [conjLinear_apply, conjLinear_apply, htr2, htr]
-    simp only [map_add, map_mul, map_ofNat]
+    simp only [map_add (f := _), map_mul, map_ofNat]
     linear_combination (-2 : E) * hsq
 
 theorem conjLinear_mul (x y : E) :
@@ -132,7 +136,6 @@ theorem conjLinear_conjLinear (x : E) : conjLinear F E (conjLinear F E x) = x :=
   ring
 
 variable (F E) in
-
 noncomputable def conj : E ≃ₐ[F] E :=
   AlgEquiv.ofLinearEquiv
     (LinearEquiv.ofInvolutive (conjLinear F E) (fun x => conjLinear_conjLinear x))

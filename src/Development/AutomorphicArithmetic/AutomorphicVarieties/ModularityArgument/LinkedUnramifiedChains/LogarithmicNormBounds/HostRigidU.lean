@@ -1,21 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IsIrrOfMatIrr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CzBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigEig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LevelAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GaussianFieldRangeEqKerQuarticChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.BkAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RestrictionToDecompositionGroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkHost
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HostEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostUnl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.FreeCU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IsIrrOfMatIrr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.IsIrrOfMatIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CzBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigEig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.RigSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LevelAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GaussianFieldRangeEqKerQuarticChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.BkAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RestrictionToDecompositionGroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkHost
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.HostEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostUnl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.FreeCU
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing UpperTheory.V.Pr.IsCD.complete
   UpperTheory.V.Pr.IsCD.fin UpperTheory.V.Pr.IsCD.isLocalHom
@@ -71,7 +74,8 @@ private theorem cocycle_coboundary_of_finite_index {k G W : Type} [Field k] [Cha
     intro g
     have e1 : ∑ q, F (g • q) = S := Equiv.sum_comp (MulAction.toPerm g) F
     refine e1.symm.trans ?_
-    simp only [hF, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, ← map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hF, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, ← map_sum,
       Nat.cast_smul_eq_nsmul, ← hS]
   have hn : (Fintype.card (G ⧸ H) : k) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   refine ⟨x - (Fintype.card (G ⧸ H) : k)⁻¹ • S, fun g => ?_⟩
@@ -91,8 +95,8 @@ private theorem rig_avg {K D V : Type} [Field K] [CharZero K] [Group D] [AddComm
 
 private theorem rig_away {O K G' Γ ι : Type} [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [Field K] [CharZero K]
     [Algebra O K] [Group G'] [TopologicalSpace G'] [IsTopologicalGroup G'] [Group Γ] [TopologicalSpace Γ]
-    (F : Frame O G' Γ ι) (hF : F.Ok) (r : Γ →* GG 3 K) (hm : HasMult F.η r) (y : Γ → Matrix (Fin 3) (Fin 3) K)
-    (r' : Γ →* GG 3 (DualNumber K)) (hy : IsCoc r y)
+    (F : Frame O G' Γ ι) (hF : F.Ok) (r : Γ →* GG (m := 3) (R := K)) (hm : HasMult F.η r) (y : Γ → Matrix (Fin 3) (Fin 3) K)
+    (r' : Γ →* GG (m := 3) (R := DualNumber K)) (hy : IsCoc r y)
     (hd : IsDeform ((GG.map (algebraMap K (DualNumber K))).comp r)
       (fun g => (y g).map (TrivSqZeroExt.inr : K → DualNumber K)) r')
     (hN : ∀ v ∉ F.Tb, ∀ s ∈ F.Nv v, y (F.loc v s) = 0)
@@ -111,8 +115,8 @@ private theorem rig_away {O K G' Γ ι : Type} [CommRing O] [IsLocalRing O] [Fin
     rw [map_mul]
     exact hy _ _
 
-private theorem rig_fst {K D : Type} [Field K] [Group D] (r : D →* GG 3 K) (y : D → Matrix (Fin 3) (Fin 3) K)
-    (r' : D →* GG 3 (DualNumber K))
+private theorem rig_fst {K D : Type} [Field K] [Group D] (r : D →* GG (m := 3) (R := K)) (y : D → Matrix (Fin 3) (Fin 3) K)
+    (r' : D →* GG (m := 3) (R := DualNumber K))
     (hd : IsDeform ((GG.map (algebraMap K (DualNumber K))).comp r)
       (fun g => (y g).map (TrivSqZeroExt.inr : K → DualNumber K)) r') (h : GL (Fin 3) (DualNumber K)) (g : D) (i j : Fin 3) :
     ((conjBy h⁻¹ r' g).mat i j).fst =
@@ -145,9 +149,9 @@ private theorem rig_char {l : ℕ} [Fact l.Prime] (c : Coef l) (u : ℤ_[l]ˣ) (
 private theorem rig_above (hP : UpperTheory.V.Loc.LocalPublishedTheorems) (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime]
     (c : Coef l) {N : ℕ} [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (o₁ : ℕ) (hD : HostData l e ψ o₁)
     (S : Finset Pl) (A : S → ValuationSubring Ω) (F : Frame c.O (Formalism.ConjugateSelfDual.G ℚ Ω) (Gam Ω S) S)
-    (hF : IsHostFrame Ω c e ψ S A F) (g₁ : Gam Ω S) (r : Gam Ω S →* GG 3 (PadicAlgCl l)) (hr : F.IsCharZeroPt g₁ r)
+    (hF : IsHostFrame Ω c e ψ S A F) (g₁ : Gam Ω S) (r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)) (hr : F.IsCharZeroPt g₁ r)
     (hm : HasMult F.η r) (hc : Continuous (mats r)) (y : Gam Ω S → Matrix (Fin 3) (Fin 3) (PadicAlgCl l))
-    (r' : Gam Ω S →* GG 3 (DualNumber (PadicAlgCl l))) (hyc : Continuous y) (hy : IsCoc r y)
+    (r' : Gam Ω S →* GG (m := 3) (R := DualNumber (PadicAlgCl l))) (hyc : Continuous y) (hy : IsCoc r y)
     (hd : IsDeform ((GG.map (algebraMap (PadicAlgCl l) (DualNumber (PadicAlgCl l)))).comp r)
       (fun g => (y g).map (TrivSqZeroExt.inr : PadicAlgCl l → DualNumber (PadicAlgCl l))) r')
     (h : GL (Fin 3) (DualNumber (PadicAlgCl l)))
@@ -162,8 +166,7 @@ private theorem rig_above (hP : UpperTheory.V.Loc.LocalPublishedTheorems) (Ω : 
   refine rig_loc hP φ hφ (F.ηv F.vl) (ok.η_cont.comp_continuous hl) (r.comp (F.loc F.vl)) _ (r'.comp (F.loc F.vl)) h
     (fun g => hm _) (hc.comp hl) (hyc.comp hl) (fun g k => ?_) (fun g => hd _) H ho hle hh.tri
     (fun a => (e : ℤ) * wt1 a) ?_ (fun s hs hs' a => ?_) (fun i j hij => ⟨g, hg, ?_⟩)
-  · simp only [map_mul]
-    exact hy _ _
+  · simpa only [map_mul, adRep, MonoidHom.comp_apply] using hy _ _
   · have he : (0 : ℤ) < e := by exact_mod_cast hD.e_pos
     intro a b hab
     refine mul_lt_mul_of_pos_left ?_ he
@@ -235,7 +238,7 @@ private theorem tw_iso {Γ k : Type} [Group Γ] [Field k] {n : ℕ} {r r' : Γ �
   rw [Units.val_mul, Units.val_mul, Af.tw_val, Af.tw_val, hg, Units.val_mul, Units.val_mul, Matrix.mul_smul,
     Matrix.smul_mul]
 
-private theorem conj_left {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (h : GL (Fin 3) R) (g : G)
+private theorem conj_left {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (h : GL (Fin 3) R) (g : G)
     (hg : (r g).right = 1) : (conjBy h r g).left = h * (r g).left * h⁻¹ := by
   have e : conjBy h r g = GG.ofGL h * r g * GG.ofGL h⁻¹ := by
     rw [map_inv]; rfl
@@ -275,7 +278,7 @@ private theorem h1f_equiv_of_intertwiner {F Ω : Type} [Field F] [NumberField F]
     (hf : ∀ g x, f (ρ g x) = ρ' g (f x)) (hf' : ∀ g x, f' (ρ' g x) = ρ g (f' x)) (H : Af.BlochKatoSelmerVanishes l ρ') :
     Af.BlochKatoSelmerVanishes l ρ := by
   intro c hZ hb
-  have h := H (fun g => f (c g)) ⟨hc.comp hZ.1, fun g h => by simp only [hZ.2 g h, map_add, hf]⟩ ⟨fun w hw => ?_, fun τ => ?_⟩
+  have h := H (fun g => f (c g)) ⟨hc.comp hZ.1, fun g h => by simp only [hZ.2 g h, map_add (f := _), hf]⟩ ⟨fun w hw => ?_, fun τ => ?_⟩
   · obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 h
     refine (mem_coboundaries1 _ _).2 ⟨f' m, fun g => ?_⟩
     rw [← hff (c g), hm g, map_sub, hf']
@@ -284,7 +287,7 @@ private theorem h1f_equiv_of_intertwiner {F Ω : Type} [Field F] [NumberField F]
   · obtain ⟨j, hj, ⟨h1, h2⟩, x, hx⟩ := hb.above τ
     refine ⟨j, hj, ⟨hc.comp h1, fun g h => ?_⟩, LinearMap.rTensor (Loc.Bcr l) (f.restrictScalars ℚ_[l]) x, fun g => ?_⟩
     · refine (congrArg f (h2 g h)).trans ?_
-      rw [map_add]
+      rw [map_add (f := _)]
       exact congrArg _ (hf _ _)
     · have key : ∀ y : V ⊗[ℚ_[l]] Loc.Bcr l, LinearMap.rTensor (Loc.Bcr l) (f.restrictScalars ℚ_[l])
           (Loc.actC ((MonoidHom.snd _ _).comp (Af.decJ F j).subtype)
@@ -296,24 +299,26 @@ private theorem h1f_equiv_of_intertwiner {F Ω : Type} [Field F] [NumberField F]
         induction y using TensorProduct.induction_on with
         | zero => simp
         | tmul a b => simp [Loc.actC, hf]
-        | add a b ha hb => simp only [map_add, ha, hb]
+        | add a b ha hb => simp only [map_add (f := _), ha, hb]
       rw [← key, ← map_sub, ← hx g, LinearMap.rTensor_tmul]
       rfl
 
-private theorem h1f_vanishing_conj_invariant {Ω : Type} [Field Ω] [CharZero Ω] {l : ℕ} [Fact l.Prime] (R : G ℚ Ω →* GG 3 (PadicAlgCl l))
+private theorem h1f_vanishing_conj_invariant {Ω : Type} [Field Ω] [CharZero Ω] {l : ℕ} [Fact l.Prime]
+    (R : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l))
     (h : GL (Fin 3) (PadicAlgCl l)) (H : Af.BlochKatoSelmerVanishes l (adRep (conjBy h R))) : Af.BlochKatoSelmerVanishes l (adRep R) := by
   have e : ∀ g, conjBy h R g = GG.ofGL h * R g * (GG.ofGL h)⁻¹ := fun g => rfl
-  refine h1f_equiv_of_intertwiner _ _ (GG.ad 3 _ (GG.ofGL h)) (GG.ad 3 _ (GG.ofGL h)⁻¹) ?_ (fun x => ?_) (fun g x => ?_) (fun g x => ?_) H
-  · have : ⇑(GG.ad 3 _ (GG.ofGL h)) = fun X => (GG.ofGL h).mat * X *
+  refine h1f_equiv_of_intertwiner _ _ (GG.ad (m := 3) _ (GG.ofGL h)) (GG.ad (m := 3) _ (GG.ofGL h)⁻¹)
+    ?_ (fun x => ?_) (fun g x => ?_) (fun g x => ?_) H
+  · have : ⇑(GG.ad (m := 3) _ (GG.ofGL h)) = fun X => (GG.ofGL h).mat * X *
         (((GG.ofGL h).left⁻¹ : GL (Fin 3) (PadicAlgCl l)) : Matrix (Fin 3) (Fin 3) (PadicAlgCl l)) := by
       funext X
       rw [GG.ad_apply, GG.adFun, if_pos (SemidirectProduct.right_inl _)]
     rw [this]
     exact (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
   · rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
-  · show GG.ad 3 _ _ (GG.ad 3 _ (R g) x) = GG.ad 3 _ (conjBy h R g) _
+  · show GG.ad (m := 3) _ _ (GG.ad (m := 3) _ (R g) x) = GG.ad (m := 3) _ (conjBy h R g) _
     rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul, e, inv_mul_cancel_right]
-  · show GG.ad 3 _ _ (GG.ad 3 _ (conjBy h R g) x) = GG.ad 3 _ (R g) _
+  · show GG.ad (m := 3) _ _ (GG.ad (m := 3) _ (conjBy h R g) x) = GG.ad (m := 3) _ (R g) _
     rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul, e, mul_assoc, inv_mul_cancel_left]
 
 private theorem val_of_even {Ω : Type} [Field Ω] (B : ValuationSubring Ω) {M : ℕ} (hM : Even M)
@@ -345,7 +350,7 @@ private theorem selmer_h1_vanishes_at_rigid_point (hH : Af.HypothesesH) (hL : Th
     (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [hl : Fact l.Prime] (c : Coef l) (N : ℕ) [NeZero N] (e : ℕ)
     (ψ : DirichletCharacter c.O N) (o₁ : ℕ) (hd : UnitaryThreeInertia.HostData l e ψ o₁) (S : Finset UnitaryThreeInertia.Pl) (A : S → ValuationSubring Ω)
     (F : UnitaryThreeInertia.Frame c.O (G ℚ Ω) (UnitaryThreeInertia.Gam Ω S) S) (hF : UnitaryThreeInertia.IsHostFrame Ω c e ψ S A F) (ι : Qbar l ≃+* ℂ)
-    (g₁ : UnitaryThreeInertia.Gam Ω S) (hg : F.Marked g₁) (r : UnitaryThreeInertia.Gam Ω S →* GG 3 (PadicAlgCl l)) (hr : F.IsCharZeroPt g₁ r)
+    (g₁ : UnitaryThreeInertia.Gam Ω S) (hg : F.Marked g₁) (r : UnitaryThreeInertia.Gam Ω S →* GG (m := 3) (R := PadicAlgCl l)) (hr : F.IsCharZeroPt g₁ r)
     (hmu : HasMult F.η r) (hc : Continuous (mats r)) (hB : BPrime K ι fun s => (r (toGS Ω _ s)).mat) :
     Af.BlochKatoSelmerVanishes l (adRep (r.comp F.π)) := by
   have hN := hH.litN
@@ -441,55 +446,3 @@ end Glob
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.HV GlobalTheory.GalOfCusp UpperTheory.V.Th UpperTheory.V.Z.J
 open Matrix UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
-
-theorem UpperTheory.V.Z.J.hostRigidUE :
-    Af.HypothesesH → Th.AdL → UnlEndLogNorm → UnitaryThreeInertia.HostRigid := by
-  intro hH hL hU K _ _ _ hK Ω _ _ _ l _ c N _ e ψ o₁ hD S A F hF ι g₁ hg r hr hB y r' hyc hy hd hN ⟨h, hh⟩ hSb
-  have hN' := hH.litN
-  have hP : Loc.LocalPublishedTheorems :=
-    ⟨hN'.coh.lfK, hN'.coh.ltK, hN'.coh.leK, hN'.coh.lf, hN'.coh.lt, hN'.coh.le, hN'.coh.bk⟩
-  have ok := hostFrame_ok Ω c e ψ o₁ hD S A F hF
-  haveI : IsGalois ℚ Ω := IsAlgClosure.isGalois ℚ Ω
-  haveI hcl := isClosed_NS Ω (S : Set Pl)
-  haveI : TotallyDisconnectedSpace (Gam Ω S) := totDisc_quot _ hcl
-  obtain ⟨hm, -, hc, -⟩ := isCharZeroPt_basic F ok g₁ hg r hr
-  have hz := selmer_h1_vanishes_at_rigid_point hH hL hU K hK Ω l c N e ψ o₁ hD S A F hF ι g₁ hg r hr hm hc hB
-  have hZ : (fun s => y (F.π s)) ∈ Z1 (adRep (r.comp F.π)) := ⟨hyc.comp ok.π_cont, fun g k => by
-    simp only [map_mul]
-    exact hy _ _⟩
-  have hsurj : Function.Surjective F.π := by
-    rw [hF.π]
-    exact QuotientGroup.mk_surjective
-  have hb := hz _ hZ ⟨fun w hw => ?_, fun τ => ?_⟩
-  · obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 hb
-    refine ⟨-m, fun g => ?_⟩
-    obtain ⟨s, rfl⟩ := hsurj g
-    rw [hm s, cob, map_neg, neg_sub_neg]
-    rfl
-  · by_cases hS : w ∈ S
-    · refine ⟨A ⟨w, hS⟩, hF.isOver _, ?_⟩
-      rw [← hF.I]
-      exact rig_away F ok r hm y r' hy hd hN hSb ⟨w, hS⟩ fun h => hw (by
-        have := hF.vl
-        rwa [← h] at this)
-    · obtain ⟨B, hB⟩ := exists_isPlaceOver Ω w
-      refine ⟨B, hB, 0, fun s hs => ?_⟩
-      have h1 : F.π s = 1 := by
-        rw [hF.π]
-        refine (QuotientGroup.eq_one_iff s).2 ?_
-        refine Subgroup.le_topologicalClosure _ (Subgroup.subset_normalClosure ?_)
-        simp only [Set.mem_iUnion]
-        exact ⟨w, hS, B, hB, hs⟩
-      have h2 := hy 1 1
-      rw [mul_one, map_one, Module.End.one_apply, left_eq_add] at h2
-      simp only [h1, h2, map_zero, sub_zero]
-  · obtain ⟨j, hj⟩ := (Loc.decEmb (F := ℚ) (Ω := Ω) (v := l)).1 _ _ (hF.isOver F.vl) hF.vl
-    refine ⟨j, Subsingleton.elim _ _, ?_⟩
-    obtain ⟨φ, h1, h2, h3, h4⟩ : ∃ φ : F.D F.vl →* Formalism.BasicNotions.Loc.GQ l, Topology.IsOpenEmbedding φ ∧
-        (∀ g x, φ g (j x) = j ((g : G ℚ Ω) x)) ∧ (∀ g, φ g ∈ Loc.Iq l → (g : G ℚ Ω) ∈ F.I F.vl) ∧
-        ∀ g, Loc.cyc l l (φ g) = cycZ ℚ Ω l (g : G ℚ Ω) := by
-      rw [hF.D, hF.I, ← hj]
-      obtain ⟨-, φ, a1, a2, -, a3, a4, -⟩ := (Loc.decEmb (F := ℚ) (Ω := Ω) (v := l)).2 j
-      exact ⟨φ, a1, a2, fun g => (a3 g).1, a4 l⟩
-    exact (Loc.bkAbove j φ (F.D F.vl).subtype h1 h2 _ _ hZ).1
-      (rig_above hP Ω c e ψ o₁ hD S A F hF g₁ r hr hm hc y r' hyc hy hd h hh φ h1 h3 h4)

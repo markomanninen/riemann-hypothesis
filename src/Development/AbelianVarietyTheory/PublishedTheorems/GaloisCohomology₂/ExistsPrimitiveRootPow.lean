@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,27 +30,8 @@ def PoitouTateDuality : Prop :=
       NineTermExact S Av μ (invAt S Av μ hμ inv) ρ hρ ∧ ShaDual S Av μ ρ ∧
         ∀ n, 3 ≤ n → Subsingleton (Hn ρ n)
 
-def PoitouTateOdd : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω]
-    (l : ℕ) [Fact l.Prime] (r : ℕ), l ≠ 2 → 0 < r →
-  ∀ ζ : Ω, IsPrimitiveRoot ζ (l ^ r) →
-  ∃ inv : InvFam F Ω l r, IsLocalInvariants ζ inv ∧
-    ∀ (S : Finset (HeightOneSpectrum (𝓞 F))), ContainsAbove S l →
-    ∀ (Av : S → ValuationSubring Ω), (∀ v, IsPlaceOver (Av v) v.1) →
-    ∀ (μ : GS Ω (S : Set (HeightOneSpectrum (𝓞 F))) →* (ZMod (l ^ r))ˣ)
-      (hμ : μ.comp (toGS Ω _) = cycMod F Ω l r),
-    ∀ (M : Type) [AddCommGroup M] [Module (ZMod (l ^ r)) M] [Finite M] [TopologicalSpace M]
-      [DiscreteTopology M]
-      (ρ : Representation (ZMod (l ^ r)) (GS Ω (S : Set (HeightOneSpectrum (𝓞 F)))) M)
-      (hρ : ContAction ρ),
-      NineTermExact S Av μ (invAt S Av μ hμ inv) ρ hρ ∧ ShaDual S Av μ ρ ∧
-        ∀ n, 3 ≤ n → Subsingleton (Hn ρ n)
-
-theorem PoitouTateDuality.odd (h : PoitouTateDuality) : PoitouTateOdd :=
-  fun F Ω _ _ _ _ _ l _ r hl => h F Ω l r (Or.inl hl)
 
 open NumberField IsDedekindDomain in
-
 theorem _root_.GlobalTheory.Published.PoitouTateDuality.totallyComplex (h : _root_.GlobalTheory.Published.PoitouTateDuality) :
     _root_.GlobalTheory.Published.PoitouTateTotallyComplex := by
   unfold _root_.GlobalTheory.Published.PoitouTateTotallyComplex
@@ -55,8 +40,8 @@ theorem _root_.GlobalTheory.Published.PoitouTateDuality.totallyComplex (h : _roo
   exact ⟨inv, hloc, fun S hS Av hAv μ hμ M _ _ _ _ _ ρ hρ =>
     ⟨(hall S hS Av hAv μ hμ M ρ hρ).1, (hall S hS Av hAv μ hμ M ρ hρ).2.1⟩⟩
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.Published.exists_primitiveRoot_pow (F Ω : Type) [Field F] [NumberField F]
     [Field Ω] [Algebra F Ω]
     [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) : ∃ ζ : Ω, IsPrimitiveRoot ζ (l ^ r) := by
@@ -65,8 +50,8 @@ theorem _root_.GlobalTheory.Published.exists_primitiveRoot_pow (F Ω : Type) [Fi
   haveI : NeZero (l ^ r) := ⟨pow_ne_zero r (Fact.out : l.Prime).ne_zero⟩
   exact HasEnoughRootsOfUnity.exists_primitiveRoot Ω (l ^ r)
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.Published.PoitouTateDuality.cohDimTwoGlobal
     (h : _root_.GlobalTheory.Published.PoitouTateDuality) : _root_.GlobalTheory.Published.CohDimTwoGlobal := by
   unfold _root_.GlobalTheory.Published.CohDimTwoGlobal

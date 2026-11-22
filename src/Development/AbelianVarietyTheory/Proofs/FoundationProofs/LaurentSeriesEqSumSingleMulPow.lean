@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped NNReal TensorProduct
 
 namespace GlobalTheory
@@ -15,7 +20,8 @@ theorem powerSeries_eq_sum_X_pow_mul_pow (p : ℕ) [hp : Fact p.Prime] (F : Powe
   have hp0 : 0 < p := hp.out.pos
   refine ⟨fun j => PowerSeries.mk fun i => PowerSeries.coeff (p * i + j) F, ?_⟩
   ext n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [powerSeries_pow_eq_expand_zmod, PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_expand]
   rw [Finset.sum_eq_single (⟨n % p, Nat.mod_lt n hp0⟩ : Fin p)]
   · have h1 : n % p ≤ n := Nat.mod_le n p
@@ -60,7 +66,8 @@ theorem laurentSeries_eq_sum_single_mul_pow :
       mul_one]
     congr 2
     ring
-  rw [key, hG, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, hG, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   dsimp only
   rw [map_mul, HahnSeries.ofPowerSeries_X_pow, map_pow, mul_pow, HahnSeries.single_pow, one_pow]

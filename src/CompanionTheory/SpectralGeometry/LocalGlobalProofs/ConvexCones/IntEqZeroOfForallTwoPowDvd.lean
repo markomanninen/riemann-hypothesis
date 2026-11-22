@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ theorem exists_two_pow_smul_of_covers2 {X : Type} [AddCommGroup X] {ι : Type} {
     obtain ⟨i, x, rfl⟩ := ha y
     obtain ⟨z, hz⟩ := ih x
     refine ⟨z, ?_⟩
-    rw [map_add, map_add, hd, hz, zero_add, pow_succ, mul_smul, two_smul]
+    rw [map_add (f := _), map_add (f := _), hd, hz, zero_add, pow_succ, mul_smul, two_smul]
     simp only [two_smul, smul_add]
 
 theorem addHom_eq_zero_of_covers2 {X : Type} [AddCommGroup X] [Module.Finite ℤ X] [Module.Free ℤ X]

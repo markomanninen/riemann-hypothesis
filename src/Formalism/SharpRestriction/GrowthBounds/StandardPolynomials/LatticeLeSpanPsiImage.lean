@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColGen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ColGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem xiSpan (N r t b : ℕ) :
       exact (map_ne_zero_iff _ hinj).2 (MvPolynomial.mem_support_iff.1 hm)
     rw [hmap] at h1
     exact ((MvPolynomial.mem_restrictSupport_iff (KK O)).1 h1) (Finset.mem_coe.2 hm')
-  rw [hmap, MvPolynomial.as_sum g, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hmap, MvPolynomial.as_sum g, map_sum]
   refine Submodule.sum_mem _ (fun m hm => ?_)
   obtain ⟨hv, hb⟩ := hsup m hm
   have hmon : m.prod (fun v e => (X v : MvPolynomial (BVar N r t) (KK O)) ^ e) =
@@ -128,7 +133,7 @@ theorem genSet_le {D : Formalism.BasicNotions.D7} (hA2 : Formalism.MainNotions.C
         exact Submodule.smul_mem _ a h1
     | zero => simp
     | add y1 y2 _ _ h1 h2 =>
-      rw [map_add, mul_add, add_mul]
+      rw [map_add (f := _), mul_add, add_mul]
       exact Submodule.add_mem _ h1 h2
     | smul a y1 _ h1 =>
       rw [AlgHom.map_smul_of_tower, mul_smul_comm, smul_mul_assoc]

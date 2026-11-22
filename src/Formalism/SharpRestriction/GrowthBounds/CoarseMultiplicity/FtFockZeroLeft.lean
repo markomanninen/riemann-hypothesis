@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FTDefs
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ theorem formAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc : ℝ}
       obtain ⟨c1, e1⟩ := hσ1I mm
       obtain ⟨c2, e2⟩ := hPc mm
       refine ⟨c1 + w ^ X.c * c2, ?_⟩
-      rw [map_add, ← e1, ← e2, coeff_sub]
+      rw [map_add (f := _), ← e1, ← e2, coeff_sub]
       ring
     obtain ⟨y1, hy1⟩ := h4 X.p O hS.1.prime (dvrOfStd hS) w X.n' X.m X.TT X.aT X.bT (P - σ₁)
       (Submodule.sub_mem _ hP hσ1P) σ₂ X.c hPc hσ2I
@@ -169,7 +173,7 @@ theorem formAt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cm Cc : ℝ}
         simp
     obtain ⟨ν0, h0⟩ := hmain
     refine ⟨ν0 + y1 + y2, ?_⟩
-    rw [hdec, mul_add, mul_add, h0, hy1, hy2, ← map_add, ← map_add]
+    rw [hdec, mul_add, mul_add, h0, hy1, hy2, ← map_add (f := _), ← map_add (f := _)]
     congr 1
     ring
 

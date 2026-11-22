@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InductionContragredient
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem exists_contraction [DecidableEq α] (l : ∀ i, Module.Dual ℂ (W i)) (
   | add x y hx hy =>
     obtain ⟨u, hu⟩ := hx
     obtain ⟨v, hv⟩ := hy
-    exact ⟨u + v, fun μ => by rw [map_add, map_add, hu, hv]⟩
+    exact ⟨u + v, fun μ => by rw [map_add (f := _), map_add (f := _), hu, hv]⟩
   | smul_tprod c v =>
     refine ⟨c • (∏ j ∈ Finset.univ.erase i, l j (v j)) • v i, fun μ => ?_⟩
     rw [map_smul, map_smul, map_smul, prodForm_tprod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ i),
@@ -274,8 +278,11 @@ theorem relInd_piTensor : ∀ (k : Type) [Field k] [ValuativeRel k] [Topological
     ext v
     show (relDeltaHalf k c (relProj k f p) : ℂ) • piTensor σ (relProj k f p) (PiTensorProduct.tprod ℂ v) =
       piTensor τ _ (PiTensorProduct.tprod ℂ v)
-    rw [piTensor_tprod, piTensor_tprod, relDeltaHalf_apply, Units.coe_prod, ← MultilinearMap.map_smul_univ]
-    rfl
+    rw [piTensor_tprod, piTensor_tprod, relDeltaHalf_apply, Units.coe_prod]
+    simpa [τ, relProj, twist_apply] using
+      ((PiTensorProduct.tprod ℂ).map_smul_univ
+        (fun i => (deltaHalf k (c i) (relProj k f p i) : ℂ))
+        (fun i => σ i (relProj k f p i) (v i))).symm
   have hbij : Function.Bijective (tensorMap τ ρ hρ) := ⟨tensorMap_injective τ ρ hρ,
     tensorMap_surjective τ ρ hρ (K := fun i => KO k (m i))
       (fun i => isSmooth_comp (isSmooth_twist (hσ i) (isSmoothChar_deltaHalf k)) _ (facts i).2.2.2.2.2.1)

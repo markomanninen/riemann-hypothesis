@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenNear
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartNakayamaGenAgree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenNear
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartNakayamaGenAgree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -19,7 +24,7 @@ variable {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K] {ι : K 
 def mdeg (μ : (Σ k, ι k) →₀ ℕ) : K → ℤ := fun k => ((∑ i, μ ⟨k, i⟩ : ℕ) : ℤ)
 
 def comp (g : K → ℤ) (b : MRingOver S ι) : MRingOver S ι :=
-  ∑ μ ∈ b.support.filter (fun μ => mdeg μ = g), monomial μ (coeff μ b)
+  ∑ μ ∈ b.support.filter (fun μ => mdeg μ = g), monomial μ (AddMonoidAlgebra.coeff b μ)
 
 theorem mdeg_of_mem_support_comp {g : K → ℤ} {b : MRingOver S ι} {μ : (Σ k, ι k) →₀ ℕ}
     (hμ : μ ∈ (comp g b).support) : mdeg μ = g := by
@@ -61,7 +66,7 @@ theorem exists_comp_notMem {P : Ideal (MRingOver S ι)} {b : MRingOver S ι} (hb
   exact h (fun k => ∑ i, μ ⟨k, i⟩)
 
 theorem comp_add_rest (g : K → ℤ) (b : MRingOver S ι) :
-    comp g b + ∑ μ ∈ b.support.filter (fun μ => ¬ mdeg μ = g), monomial μ (coeff μ b) = b := by
+    comp g b + ∑ μ ∈ b.support.filter (fun μ => ¬ mdeg μ = g), monomial μ (AddMonoidAlgebra.coeff b μ) = b := by
   unfold comp
   rw [Finset.sum_filter_add_sum_filter_not]
   exact b.support_sum_monomial_coeff
@@ -80,7 +85,7 @@ theorem comp_smul_mem (h𝓜 : KH.IsMGraded S ι 𝓜) {e g : K → ℤ} {m : M}
   unfold comp
   rw [Finset.sum_smul]
   refine Submodule.sum_mem _ fun μ hμ => ?_
-  have := monomial_smul_mem h𝓜 hm μ (coeff μ b)
+  have := monomial_smul_mem h𝓜 hm μ (AddMonoidAlgebra.coeff b μ)
   rwa [(Finset.mem_filter.mp hμ).2] at this
 
 theorem smul_sub_comp_mem (h𝓜 : KH.IsMGraded S ι 𝓜) {e G : K → ℤ} {m : M} (hm : m ∈ 𝓜 e)
@@ -120,7 +125,8 @@ theorem smul_mk_cancel {T : Submonoid (MRingOver S ι)} {M : Type} [AddCommGroup
 
 theorem sum_mk_one {T : Submonoid (MRingOver S ι)} {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M]
     {n : ℕ} (y : Fin n → M) : ∑ i, LocalizedModule.mk (y i) (1 : T) = LocalizedModule.mk (∑ i, y i) 1 := by
-  simp only [← LocalizedModule.mkLinearMap_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← LocalizedModule.mkLinearMap_apply, map_sum]
 
 theorem exists_smul_mem_span_of_mem_span {T : Submonoid (MRingOver S ι)} {M : Type} [AddCommGroup M]
     [Module (MRingOver S ι) M] {Z : Set (LocalizedModule T M)} {w : LocalizedModule T M}

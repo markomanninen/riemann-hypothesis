@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -514,7 +518,7 @@ lemma linearCoeff_chordCoeffQuadratic (hw : WFixed W w) (i : Fin 2) : (L i) (C2 
   have hn1 := nu_L hw
   have hss := mul_vanishing_order_two hs0 hs1 (lam w)
   rw [C2, c2, pow_two]
-  simp only [map_add, (cc_L_mul_eq_zero_of_vanishing hs0 hs1 _).2 i, (cc_L_mul_eq_zero_of_vanishing hn0 hn1 _).2 i,
+  simp only [map_add (f := _), (cc_L_mul_eq_zero_of_vanishing hs0 hs1 _).2 i, (cc_L_mul_eq_zero_of_vanishing hn0 hn1 _).2 i,
     (cc_L_mul_eq_zero_of_vanishing hss.1 hss.2 _).2 i, add_zero]
 
 lemma constantCoeff_thirdParam (hw : WFixed W w) : cc (z3 W w) = 0 := by
@@ -735,7 +739,7 @@ lemma chord (hU : WSubstUnique.{u}) (hw : WFixed W w) :
     ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (Wi w 0)) ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (Wi w 1)) ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (w3 W w))
     ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (lam w)) ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (nu w)) ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (F2 W w)) ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (wF W w))
     ((algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) (dd W w))
-    (by rw [← hv0, map_add, map_mul]) (by rw [← hv1, map_add, map_mul]) (by rw [w3, map_add, map_mul])
+    (by rw [← hv0, map_add (f := _), map_mul]) (by rw [← hv1, map_add (f := _), map_mul]) (by rw [w3, map_add (f := _), map_mul])
     (by
       have := congrArg (algebraMap (MvPowerSeries (Fin 2) K) (FractionRing (MvPowerSeries (Fin 2) K))) he1
       simpa [C3, C2, map_lineCoeffCubic, map_lineCoeffQuadratic, hCa,

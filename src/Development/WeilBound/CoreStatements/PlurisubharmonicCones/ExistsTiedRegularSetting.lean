@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMaxOscillation
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMollifierLowerBound
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PPolyMaxLowerBound
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncTransfer
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PCutoffs
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsSmoothConjInvariantMetricStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPotentialChartsWithRadiiStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeMetricFramePropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgePotentialSmoothOffBoundaryStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPotentialFromSncChartsStatement
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExpLeLogR
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMaxOscillation
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PMollifierLowerBound
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PChartComparison
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PPolyMaxLowerBound
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncPsh
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PTruncTransfer
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PCutoffs
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsSmoothConjInvariantMetricStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPotentialChartsWithRadiiStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgeMetricFramePropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HodgePotentialSmoothOffBoundaryStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPotentialFromSncChartsStatement
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExpLeLogR
+
+@[expose] public section
 
 namespace LevelTowerAlt.Reg
 
@@ -84,7 +88,8 @@ theorem exists_tied {M : XModel D} {A ref : HermLine J} (hra : ref.a = A.a) (hrs
       R.ph (M.proj z) = Real.log (A.h z) - Real.log (ref.h z)) :
     ∃ S : LogLogRegularisationSetting M D.Xo A, S.IsTied := by
   obtain ⟨ρ⟩ := ReciprocityTheory.AnForm.A.mollifierInhabit_thm D.n
-  obtain ⟨cut, Cc, hcut⟩ := CutoffsExist.proof M.Xc D.n M.atlas R.toPotentialCharts
+  have hcut := CutoffsExist.proof M.Xc D.n M.atlas R.toPotentialCharts
+  obtain ⟨cut, Cc, hcut⟩ := hcut
   obtain ⟨C, t₀, ht₀, hcmp⟩ := ChartComparison.proof MollifiedLowerBound.closed PolyMaxOscillation.proof_closed
     PolyMaxLowerBound.proof TruncPsh.proof TruncTransfer.proof M.Xc D.n M.atlas R ρ
   have hll : Tendsto (fun t : ℝ => Real.log (Real.log t⁻¹)) (𝓝[>] 0) atTop :=
@@ -105,14 +110,16 @@ theorem mem_Yo {M : XModel D} {z : (Σ k, J k) → ℂ} (hz : z ∈ mcPts (mCoor
     (∃ z' ∈ D.Xo, M.proj z' = M.proj z) ↔ z ∉ D.Bd := by
   refine ⟨?_, fun h => ⟨z, ⟨hz, h⟩, rfl⟩⟩
   rintro ⟨z', hz', e⟩ hB
-  obtain ⟨c, hc, rfl⟩ := (M.fibre z hz z' hz'.1).1 e.symm
+  have hf := (M.fibre z hz z' hz'.1).1 e.symm
+  obtain ⟨c, hc, rfl⟩ := hf
   exact hz'.2 (D.bd_torus z hB c hc)
 
 theorem main (Hd : HodgeData D) (M : XModel D) (hP : ChartPsh D (phMu Hd)) :
     ∃ S : LogLogRegularisationSetting M D.Xo (muLine Hd), S.IsTied := by
   classical
   obtain ⟨ref, hra, hrs, hrc⟩ := GlobalTheory.T.exists_smooth_conj_invariant_metric K J Hd.aMu
-  obtain ⟨hsm, hbd⟩ := GlobalTheory.T.hodge_potential_smooth_off_boundary K J II Ψ Ω W D Hd
+  have hreg := GlobalTheory.T.hodge_potential_smooth_off_boundary K J II Ψ Ω W D Hd
+  obtain ⟨hsm, hbd⟩ := hreg
   obtain ⟨-, -, -, hO⟩ := GlobalTheory.T.hodge_metric_frame_properties K J II Ψ Ω W D Hd
   have hrad : ∀ (a : Fin D.nCharts) (t₀ : Fin (Fintype.card Ψ * D.j * (D.N - D.j)) → ℂ), ∃ r > (0 : ℝ), (∀ i, t₀ i ≠ 0 → r ≤ ‖t₀ i‖) ∧
       (‖t₀‖ ≤ 1 / 2 → ∃ C > (0 : ℝ), ∀ t ∈ offBd D a, ‖t - t₀‖ < r →

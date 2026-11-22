@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import ReciprocityTheory.DualLattices.FischerSelfNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerIrreducibleUnitaryHighestWeightStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import ReciprocityTheory.DualLattices.FischerSelfNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerIrreducibleUnitaryHighestWeightStatement
+
+@[expose] public section
 
 open Formalism.MainNotions.S Matrix GlobalTheory.CompactHowe
 open scoped TensorProduct
@@ -18,13 +22,14 @@ theorem differentiable_rowSubst {k : ℕ} {κ : Type} {F : Type} [NormedAddCommG
     Differentiable ℂ fun g : Fin k → Fin k → ℂ => ψ (rowSubst (Matrix.of g) P) := by
   induction P using MvPolynomial.induction_on generalizing ψ with
   | C c => simp only [rowSubst_C]; exact differentiable_const _
-  | add p q hp hq => simp only [map_add]; exact (hp ψ).add (hq ψ)
+  | add p q hp hq => simp only [map_add (f := _)]; exact (hp ψ).add (hq ψ)
   | mul_X p s hp =>
     have h : (fun g : Fin k → Fin k → ℂ => ψ (rowSubst (Matrix.of g) (p * X s))) =
         fun g : Fin k → Fin k → ℂ => ∑ l, g l s.1 •
           (ψ ∘ₗ LinearMap.mulRight ℂ (X (l, s.2))) (rowSubst (Matrix.of g) p) := by
       funext g
-      rw [map_mul, rowSubst_X, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, rowSubst_X, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [LinearMap.comp_apply, LinearMap.mulRight_apply, ← map_smul, MvPolynomial.smul_eq_C_mul, Matrix.of_apply]
       congr 1
@@ -41,7 +46,8 @@ theorem totalDegree_rowSubst_le {k : ℕ} {κ : Type} (g : Matrix (Fin k) (Fin k
 theorem fischer_conj {k : ℕ} {κ : Type} (P Q : MvPolynomial (Fin k × κ) ℂ) :
     starRingEnd ℂ (fischer P Q) = fischer Q P := by
   classical
-  rw [fischer_eq_sum P Q (P.support ∪ Q.support) Finset.subset_union_left,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fischer_eq_sum P Q (P.support ∪ Q.support) Finset.subset_union_left,
     fischer_eq_sum Q P (P.support ∪ Q.support) Finset.subset_union_right, map_sum]
   refine Finset.sum_congr rfl fun A _ => ?_
   simp only [fw, map_mul, Complex.conj_conj, map_natCast]

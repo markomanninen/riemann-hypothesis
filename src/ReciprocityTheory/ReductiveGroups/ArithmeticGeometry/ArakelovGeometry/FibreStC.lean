@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.FibreStB
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem map_psumC {R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S) (p : 
   unfold psumC
   induction psumQ n k using MvPolynomial.induction_on
   next a => simp
-  next P1 P2 h1 h2 => simp only [map_add, h1, h2]
+  next P1 P2 h1 h2 => simp only [map_add (f := _), h1, h2]
   next P1 i h1 => simp [h1, Polynomial.coeff_map]
 
 theorem sum_roots_pow {K : Type*} [Field K] (p : Polynomial K) (hm : p.Monic)
@@ -183,7 +187,8 @@ theorem Gen.trace_w {w : Fin (D + 1) → ℂ} (hw : G.Good w) (Tr : Ω → Ω)
   rw [map_sub, map_mul, map_pow, sub_eq_zero] at hwk
   have hTrw : deh w 0 (G.TrP H) =
       ((G.P.map (deh w 0)).roots.map fun ρ => H.eval₂ (deh w 0) ρ).sum := by
-    rw [Gen.TrP, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Gen.TrP, map_sum]
     simp only [map_mul, G.deh_S, Polynomial.eval₂_eq_sum_range]
     generalize (G.P.map (deh w 0)).roots = s
     refine Multiset.induction_on s ?_ ?_
@@ -326,11 +331,11 @@ theorem exists_clear {A K : Type*} [CommRing A] [IsDomain A] [Field K] [Algebra 
       ∀ i, (Q i).map (algebraMap A K) = C (algebraMap A K b) * q i := by
   classical
   choose b hb using fun i =>
-    IsLocalization.integerNormalization_map_to_map (M := nonZeroDivisors A) (q i)
+    IsLocalization.integerNormalization_spec (M := nonZeroDivisors A) (q i)
   refine ⟨∏ i, (b i : A), fun i => C (∏ j ∈ Finset.univ.erase i, (b j : A)) *
     IsLocalization.integerNormalization (nonZeroDivisors A) (q i), ?_, fun i => ?_⟩
-  · exact Finset.prod_ne_zero_iff.mpr fun i _ => nonZeroDivisors.coe_ne_zero (b i)
-  · rw [Polynomial.map_mul, hb i, Polynomial.map_C, ← algebraMap_smul K (b i : A) (q i),
+  · exact Finset.prod_ne_zero_iff.mpr fun i _ => nonZeroDivisors.ne_zero (hb i).1
+  · rw [Polynomial.map_mul, (hb i).2, Polynomial.map_C, ← algebraMap_smul K (b i : A) (q i),
       Polynomial.smul_eq_C_mul, ← Finset.prod_erase_mul _ _ (Finset.mem_univ i)]
     simp only [map_mul, Polynomial.C_mul, mul_assoc]
 

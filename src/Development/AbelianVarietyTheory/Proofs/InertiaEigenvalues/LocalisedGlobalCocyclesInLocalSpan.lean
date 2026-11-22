@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LenCob
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass GlobalTheory.Cut
 
@@ -47,7 +51,7 @@ theorem factor {O K Γ X W : Type} [CommRing O] [IsNoetherianRing O] [Field K] [
       exact Y0.sub_mem (Submodule.subset_span ⟨_, rfl⟩) (Submodule.subset_span ⟨_, rfl⟩)
     | zero => simp
     | add a b _ _ ha hb =>
-      rw [mul_add, map_add, map_add, map_add, ha.2, hb.2]
+      rw [mul_add, map_add (f := _), map_add (f := _), map_add (f := _), ha.2, hb.2]
       exact ⟨Y0.add_mem ha.1 hb.1, rfl⟩
     | smul c a _ ha =>
       rw [mul_smul_comm, map_smul, map_smul, map_smul, ha.2]
@@ -134,9 +138,9 @@ theorem inY_of_span (z : S.X' → MatN D.nd i)
       simp [h, Finset.smul_sum, mul_smul]
     · simp [Finset.smul_sum]
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 2000000 in
-
 theorem inCut_of_cocW (Xs : Set (D.nd.X i)) {k : ℕ} (M : GE D.nd →* Matrix (Fin k) (Fin k) (D.nd.O i))
     (ψ : (S.X' → MatN D.nd i) → Matrix (Fin k) (Fin k) (D.nd.O i))
     (hψ : ∀ γ, ψ (fun x' => rTwO D.nd i r (S.p x') γ) = M γ)

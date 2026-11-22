@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProjectiveCharts
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Saturation
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VanIdealHomog
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProjectiveCharts
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,27 +14,7 @@ namespace GlobalTheory.CompanionTheory.GE.SerreVan
 
 variable {B : Type} [CommRing B] {M : ℕ}
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
-theorem comp_mul {a : MvPolynomial (Fin M) B} {e : ℕ} (ha : a.IsHomogeneous e) (d : ℕ)
-    (f : MvPolynomial (Fin M) B) :
-    homogeneousComponent (e + d) (a * f) = a * homogeneousComponent d f := by
-  have h := DirectSum.coe_decompose_mul_add_of_left_mem (homogeneousSubmodule (Fin M) B)
-    (i := e) (j := d) (a := a) (b := f) ha
-  rw [← decomposition.decompose'_apply, ← decomposition.decompose'_apply]
-  exact h
-
-attribute [local instance] MvPolynomial.gradedAlgebra in
-
-theorem comp_zero_X_mul (i : Fin M) (f : MvPolynomial (Fin M) B) :
-    homogeneousComponent 0 (X i * f) = 0 := by
-  have h := DirectSum.coe_decompose_mul_of_left_mem_of_not_le (homogeneousSubmodule (Fin M) B)
-    (i := 1) (n := 0) (a := X i) (b := f) (isHomogeneous_X B i) (by norm_num)
-  rw [← decomposition.decompose'_apply]
-  exact h
-
-noncomputable def sat {R : Type} [CommRing R] (Q : Ideal R) (x : R) : Ideal R :=
-  _root_.UpperTheory.Reformulated.B.IdealSaturationByElement.sat Q x
 
 def V0 (W : Finset (Fin M)) (P Q : Ideal (MvPolynomial (Fin M) B)) (n₀ : ℕ) : Prop :=
   ∀ n, n₀ ≤ n → ∀ f ∈ P, f.IsHomogeneous n → (∀ i ∈ W, ∃ m : ℕ, X i ^ m * f ∈ Q) → f ∈ Q

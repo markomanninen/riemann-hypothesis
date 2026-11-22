@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.YPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplFlat
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplModfree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCmPatch
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.YPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplFlat
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplModfree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCmPatch
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplMap
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
@@ -38,7 +42,7 @@ private theorem pmDim_quot {A B σ M : Type} [CommRing A] [CommRing B] [Algebra 
         rw [TensorProduct.tmul_add]
         exact Submodule.add_mem _ hu hv
     | add x z hx hz =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hz
   · rw [Submodule.smul_le]
     intro r hr x hx
@@ -117,7 +121,7 @@ theorem UpperTheory.V.Pa.Core.pmDim :
   letI : Algebra La B := ψ.toAlgebra
   haveI : IsLocalHom (algebraMap La B) := by
     show IsLocalHom ψ
-    refine ((IsLocalRing.local_hom_TFAE ψ).out 0 3).mpr ?_
+    refine ((IsLocalRing.local_hom_tfae ψ).out 1 4).mpr ?_
     have hm : maximalIdeal La = (q.comap c).map (algebraMap Λ La) := by
       simpa using (UpperTheory.V.AlgebraTools.IsCplAt.map_pow_eq Λ (q.comap c) La hLa 1).symm
     rw [hm, Ideal.map_le_iff_le_comap, Ideal.comap_comap, hψ, hφ]

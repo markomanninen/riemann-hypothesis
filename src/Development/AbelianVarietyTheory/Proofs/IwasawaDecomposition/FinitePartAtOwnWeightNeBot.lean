@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMultilinearMapOfIsotypicCommutingSubgroupsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualWeylModuleTensorCoefficientUniversalStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ISupRangeWeightMapsEqTopDefiniteUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryInfinitePointEqListProdPlacePartsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteUnitaryArchimedeanPointsDistinctPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAtStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsIrreducibleSmallRepUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMultilinearMapOfIsotypicCommutingSubgroupsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DualWeylModuleTensorCoefficientUniversalStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ISupRangeWeightMapsEqTopDefiniteUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryInfinitePointEqListProdPlacePartsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteUnitaryArchimedeanPointsDistinctPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAtStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
@@ -18,7 +22,7 @@ namespace GlobalTheory.DefU
 theorem prod_list_apply_multilinear {ι G V : Type} [DecidableEq ι] [Group G] [AddCommGroup V] [Module ℂ V]
     {H : ι → Type} [∀ v, Group (H v)] {Wv : ι → Type} [∀ v, AddCommGroup (Wv v)] [∀ v, Module ℂ (Wv v)]
     (ρ : Representation ℂ G V) (s : ∀ v, H v →* G) (σ : ∀ v, Representation ℂ (H v) (Wv v))
-    (F : MultilinearMap ℂ Wv V)
+    (F : (∀ v, Wv v) →ₘₗ[ℂ] V)
     (hF : ∀ v (h : H v) (x : ∀ u, Wv u), ρ (s v h) (F x) = F (Function.update x v (σ v h (x v))))
     (y : ∀ v, H v) (u : ∀ v, Wv v) :
     ∀ L : List ι, L.Nodup →
@@ -29,7 +33,7 @@ theorem prod_list_apply_multilinear {ι G V : Type} [DecidableEq ι] [Group G] [
   | cons a L ih =>
     intro hL
     rw [List.nodup_cons] at hL
-    rw [List.map_cons, List.prod_cons, map_mul, Module.End.mul_apply, ih hL.2, hF]
+    rw [List.map_cons, List.prod_cons, map_mul, mul_apply_eq_comp, ih hL.2, hF]
     congr 1
     funext v
     by_cases hv : v = a
@@ -67,10 +71,24 @@ theorem AutSub.finPart_wt_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsC
       _ a.2 _ b.2
   have hspan : ∀ v, (⨆ f : (σ v).IntertwiningMap (π.rep.comp (s v)), LinearMap.range f.toLinearMap) = ⊤ :=
     fun v => GlobalTheory.T.iSup_range_weightMaps_eq_top_definiteUnitary E n π v.embedding (W v) (hW v)
-  haveI : Nontrivial π.V := Submodule.nontrivial_iff_ne_bot.2 π.isAut.ne_bot
+  have hV : Nontrivial π.V := Submodule.nontrivial_iff_ne_bot.2 π.isAut.ne_bot
   obtain ⟨F, hF0, hF⟩ := GlobalTheory.T.exists_multilinearMap_of_isotypic_commuting_subgroups (InfinitePlace E) (UA E n) π.V (fun v => embU n v.embedding)
-    (fun v => nablaSq ℂ n (W v)) π.rep s σ inferInstance hirr hcomm hspan
-  obtain ⟨f0, hf0, -⟩ := GlobalTheory.T.dualWeylModule_tensor_coefficient_universal (InfinitePlace E) n W π.V F
+    (fun v => nablaSq ℂ n (W v)) π.rep s σ hV hirr hcomm hspan
+  let B := Formalism.L2.DIV.bVV ℂ W
+  let b := fun v => GlobalTheory.CoefIrred.ssBasis ℂ (W v)
+  have hB : ∀ i, B i = GlobalTheory.CoefIrred.tenMul W (fun v => b v (i v)) := by
+    intro i
+    apply Subtype.ext
+    rw [Formalism.L2.DIV.bVV_coe, GlobalTheory.CoefIrred.tenMul_coe, Formalism.L2.DIV.bVVfun]
+    simp only [b, GlobalTheory.CoefIrred.ssBasis_coe]
+  let f0 : W.Sp →ₗ[ℂ] π.V := B.constr ℂ (fun i => F (fun v => b v (i v)))
+  have hf0 : ∀ u, f0 (GlobalTheory.CoefIrred.tenMul W u) = F u := by
+    have hComp : f0.compMultilinearMap (GlobalTheory.CoefIrred.tenMul W) = F := by
+      apply Module.Basis.ext_multilinear b
+      intro i
+      simp only [LinearMap.compMultilinearMap_apply, ← hB, f0, Module.Basis.constr_basis]
+    intro u
+    exact congrArg (fun m => m u) hComp
   let f : W.Sp →ₗ[ℂ] (UA E n → ℂ) := π.V.subtype ∘ₗ f0
   have hten : ∀ (g : InfinitePlace E → GL (Fin n) ℂ) (u : ∀ v, nablaSq ℂ n (W v)),
       Formalism.L2.DIV.rhoK W g (GlobalTheory.CoefIrred.tenMul (K := ℂ) W u) =
@@ -96,17 +114,18 @@ theorem AutSub.finPart_wt_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsC
         rfl
       show (f0 (W.rep x (GlobalTheory.CoefIrred.tenMul W u))).1 = RU E n x (f0 (GlobalTheory.CoefIrred.tenMul W u)).1
       rw [h3, hf0, hf0, ← AutSub.rep_val, h1]
-      simp only [Finset.mem_toList, Finset.mem_univ, if_true]
-    have := (GlobalTheory.T.dualWeylModule_tensor_coefficient_universal (InfinitePlace E) n W (UA E n → ℂ)
-      ((f ∘ₗ W.rep x).compMultilinearMap (GlobalTheory.CoefIrred.tenMul W))).unique
-      (y₁ := f ∘ₗ W.rep x) (y₂ := RU E n x ∘ₗ f) (fun u => (LinearMap.compMultilinearMap_apply _ _ _).symm)
-      (fun u => by rw [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply, LinearMap.comp_apply]; exact (key u).symm)
-    exact LinearMap.congr_fun this w
+      simp only [Finset.mem_toList, Finset.mem_univ, ite_true]
+    have heq : f ∘ₗ W.rep x = RU E n x ∘ₗ f := by
+      apply B.ext
+      intro i
+      rw [hB]
+      exact key _
+    exact LinearMap.congr_fun heq w
   have hmem : f ∈ algForms W := ⟨fun w => π.le_autU (f0 w).2, hint⟩
   have hfin : (⟨f, hmem⟩ : algForms W) ∈ π.finPart W := AutSub.mem_finPart.2 fun w => (f0 w).2
   obtain ⟨u, hu⟩ : ∃ u, F u ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hF0 (MultilinearMap.ext h)
   refine (Submodule.ne_bot_iff _).2 ⟨⟨f, hmem⟩, hfin, fun h => hu ?_⟩
   have := LinearMap.congr_fun (congrArg Subtype.val h) (GlobalTheory.CoefIrred.tenMul W u)

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.FinTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensFactor
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.FinTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.FixLev
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ private theorem dep_extend {ι α : Type*} {β : α → Type*} (w : ι → α) (
   refine ⟨fun v => if h : ∃ i, w i = v then h.choose_spec ▸ ψ h.choose else d v, fun i => ?_, fun v hv => ?_⟩
   · have h : ∃ j, w j = w i := ⟨i, rfl⟩
     dsimp only
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     have e : h.choose = i := hw h.choose_spec
     generalize h.choose_spec = hs
     revert hs
@@ -117,7 +121,7 @@ private theorem dep_extend {ι α : Type*} {β : α → Type*} (w : ι → α) (
   · exact dif_neg hv
 
 section Loc
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 private theorem rhoL_mul (w : Pl K) (g h : Gw n w) : rhoL μ w (g * h) = rhoL μ w g ∘L rhoL μ w h := by
   have := (UpperTheory.ConvolutionTheory.Tf.commPrj K n μ ⊥).2.2.2.2.2.1 (AdelicGLn.localEmbedding w g) (AdelicGLn.localEmbedding w h)
@@ -203,7 +207,7 @@ private theorem haar_right {G : Type} [Group G] [TopologicalSpace G] [IsTopologi
     rw [this, ← Measure.map_map (measurable_mul_const u) (measurable_const_mul g), map_mul_left_eq_self]⟩
   haveI : IsFiniteMeasureOnCompacts (Measure.map (· * u) m) := ⟨fun C hC => by
     rw [Measure.map_apply (measurable_mul_const u) hC.measurableSet, hpre]
-    exact (hC.image (continuous_mul_right _)).measure_lt_top⟩
+    exact (hC.image (continuous_mul_const _)).measure_lt_top⟩
   have e := Measure.isMulLeftInvariant_eq_smul (Measure.map (· * u) m) m
   generalize Measure.haarScalarFactor (Measure.map (· * u) m) m = a at e
   have hJm : MeasurableSet (J : Set G) := hJ.2.measurableSet
@@ -226,7 +230,7 @@ private theorem haar_right {G : Type} [Group G] [TopologicalSpace G] [IsTopologi
 end Haar
 
 section BernoulliSumsFrobeniusOrbits
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 private theorem oloc_commute {w v : Pl K} (h : v ≠ w) [MeasurableSpace (Gw n w)] (m : Measure (Gw n w)) (φ : Gw n w → ℂ)
     (T : LL μ →L[ℂ] LL μ) (hT : IsOloc μ w m φ T) (x : Gw n v) : Commute T (rhoL μ v x) := by
@@ -294,7 +298,7 @@ private theorem oloc_absorb (v : Pl K) [MeasurableSpace (Gw n v)] [BorelSpace (G
 end BernoulliSumsFrobeniusOrbits
 
 section SlopeTestRemainingChoices
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 private theorem finAt_eq (h : AdelicGLn.FiniteAdelicGL K n) (v : Pl K) :
     finAt v (finEmb K n h) = AdelicGLn.finiteRestrictedEquiv K n h v := by

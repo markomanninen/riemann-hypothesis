@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+
+@[expose] public section
 
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan
 
@@ -15,7 +19,8 @@ theorem isPartOfBasis_of_injective {L L' : Type} [AddCommGroup L] [AddCommGroup 
   have hs : ∀ c, s c = ∑ i, c i • v i := fun c => by simp [s, LinearMap.sum_apply]
   have hπ : ∀ c, π (s c) = c := fun c => by
     ext j
-    simp [π, hs, map_sum, hψ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [π, hs, map_sum, hψ]
   let K := LinearMap.ker π
   obtain ⟨n, bK'⟩ := Submodule.basisOfPid b (K.map f)
   let bK := bK'.map (Submodule.equivMapOfInjective f hf K).symm

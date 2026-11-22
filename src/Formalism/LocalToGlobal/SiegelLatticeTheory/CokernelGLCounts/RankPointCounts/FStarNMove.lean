@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFwd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFwd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarPairOrthogonal.XLeOrthXplus
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem spanL {ι : Type*} (x : ι → S.V) (y : S.V) (h : ∀ i, S.hT (x i) y =
     obtain ⟨i, rfl⟩ := hv
     exact h i
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
   | smul c a _ ha => rw [hT_smulL, ha, mul_zero]
 
 theorem spanR {ι : Type*} (x : ι → S.V) (y : S.V) (h : ∀ i, S.hT y (x i) = 0) :
@@ -70,7 +74,8 @@ theorem gram_flag {T : E} (P Q : FlagG S r T) (a c : Fin (r + 1)) :
 
 theorem hermitian_double_sum_expand {ι : Type*} [Fintype ι] (x : ι → S.V) (g g' : ι → E) :
     S.hT (∑ i, g i • x i) (∑ j, g' j • x j) = ∑ i, ∑ j, star (g i) * (g' j * S.hT (x i) (x j)) := by
-  simp only [map_sum, LinearMap.sum_apply, hT_smulL, map_smul, smul_eq_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, hT_smulL, map_smul, smul_eq_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -152,7 +157,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
       map_add' := by
         intro c c'
         funext a
-        simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add]
+        simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add (f := _)]
       map_smul' := by
         intro m c
         funext a
@@ -173,7 +178,8 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
     simp [ℓ, LinearMap.sum_apply]
   have hℓcomb : ∀ (x : Fin (r + 1) → S.V) (y : S.V),
       ℓ (fun b => S.hT (x b) y) = S.hT (∑ b, k b • x b) y := fun x y => by
-    rw [hℓ, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hℓ, map_sum, LinearMap.sum_apply]
     exact Finset.sum_congr rfl fun b _ => (hT_smulL S _ _ _).symm
   have hrange : LinearMap.range A = LinearMap.ker ℓ := by
     have hle : LinearMap.range A ≤ LinearMap.ker ℓ := by
@@ -184,7 +190,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
       have e2 : ∑ b, k b • Q.fvec b = ∑ b, k b • P.fvec b + ∑ b, k b • (Q.fvec b - P.fvec b) := by
         rw [← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun b _ => by rw [smul_sub]; abel
-      rw [e2, map_add, LinearMap.add_apply, hT_X_X F hx0 x.2, add_zero, hsw,
+      rw [e2, map_add (f := _), LinearMap.add_apply, hT_X_X F hx0 x.2, add_zero, hsw,
         spanL S F.e _ hk _ x.2, star_zero]
     refine Submodule.eq_of_le_of_finrank_le hle ?_
     have h1 : finrank E (LinearMap.range A) = r := by
@@ -238,7 +244,8 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
     exact this
   have hn₀sum : ∀ g : Fin (r + 1) ⊕ Fin (r + 1) → E, n₀ (∑ i, g i • b₂ i) = ∑ i, g i • tg i := by
     intro g
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_smul, hn₀b]
 
   have hperp : ∀ (w : W) i, S.hT (tg i) ((w : S.V) - xm w) = 0 := by
@@ -277,7 +284,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
     have e6 : S.hT (∑ i, g i • tg i) (∑ i, g' i • tg i) = S.hT (∑ i, g i • b₂ i) (∑ i, g' i • b₂ i) := by
       rw [hermitian_double_sum_expand, hermitian_double_sum_expand]
       simp only [hgram]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [e1, e2, e3, e4, e5, e6]
   have hinj : Function.Injective n₀ := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
@@ -291,7 +298,7 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
   obtain ⟨g, w, hw, rfl⟩ := hdec v
   have key : n (∑ i, g i • b₂ i + w) - (∑ i, g i • b₂ i + w) =
       ∑ b, g (Sum.inr b) • (Q.fvec b - P.fvec b) - (xm ⟨w, hw⟩ : S.V) := by
-    rw [hn, map_add, hn₀sum, hn₀w w hw, hsplit]
+    rw [hn, map_add (f := _), hn₀sum, hn₀w w hw, hsplit]
     simp only [tg, Fintype.sum_sum_type, Sum.elim_inl, Sum.elim_inr, smul_sub, Finset.sum_sub_distrib]
     abel
   rw [key]
@@ -302,13 +309,13 @@ theorem exists_move {T T' : E} (F : FlagG S r T) (P Q : FlagG S r T')
   have h2 : S.hT (F.e a) (∑ a', g (Sum.inl a') • F.fvec a') = 0 :=
     spanR S F.fvec (F.e a) (fun c => by rw [hsw, hT_f_e, star_zero]) _
       (Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩))
-  rw [map_add, hw0, add_zero, hsplit, map_add, h2, zero_add] at h1
+  rw [map_add (f := _), hw0, add_zero, hsplit, map_add (f := _), h2, zero_add] at h1
   exact h1
 
 end NMoveP
 
-open NMoveP in
 
+open NMoveP in
 theorem n_move_holds (D : Formalism.BasicNotions.D7) : NMove D := by
   intro T T' F0 F'₂ F' hZ hG hO
   obtain ⟨n, hiso, hf, hp, horth⟩ := exists_move (VS D) F0 F'₂.fl F'.fl hZ hG hO

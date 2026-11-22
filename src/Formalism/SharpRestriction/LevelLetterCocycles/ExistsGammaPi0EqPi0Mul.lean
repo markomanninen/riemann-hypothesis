@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
-import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
+public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem inFr_add {a : ZMod n} {num den : LetA O n} {f g : W.EE} (hf : InFr W a n
   unfold InFr at *
   obtain ⟨u, hu, e1⟩ := hf
   obtain ⟨u', hu', e2⟩ := hg
-  exact ⟨u + u', add_mem hu hu', by rw [mul_add, e1, e2, mul_add, map_add]⟩
+  exact ⟨u + u', add_mem hu hu', by rw [mul_add, e1, e2, mul_add, map_add (f := _)]⟩
 
 theorem inFr_zero (a : ZMod n) (num den : LetA O n) : InFr W a num den 0 := by
   unfold InFr
@@ -79,13 +83,6 @@ theorem inFr_lE {a : ZMod n} {num den : LetA O n} {f : W.EE} (h : InFr W a num d
 theorem inFr_congr {a : ZMod n} {num num' den den' : LetA O n} {f : W.EE} (hn : num = num')
     (hd : den = den') (h : InFr W a num den f) : InFr W a num' den' f := by
   subst hn hd; exact h
-
-theorem prod_ps_split (hπ : W.π₀ ∈ W.AΔ) (e : ℕ) (b a d : ℕ → ℕ)
-    (h : ∀ s ∈ Finset.range e, b s = a s + d s) :
-    (∏ s ∈ Finset.range e, ps W s ^ b s) =
-      (∏ s ∈ Finset.range e, ps W s ^ a s) * ∏ s ∈ Finset.range e, ps W s ^ d s := by
-  rw [← Finset.prod_mul_distrib]
-  exact Finset.prod_congr rfl fun s hs => by rw [h s hs, pow_add]
 
 theorem prod_ps_mem (hπ : W.π₀ ∈ W.AΔ) (e : ℕ) (d : ℕ → ℕ) :
     (∏ s ∈ Finset.range e, ps W s ^ d s) ∈ W.AΔ := by
@@ -274,9 +271,6 @@ theorem inFr_of_inId {a : ZMod n} (e : ℕ) (α δ : ℕ → ℕ) (h : ∀ s ∈
   · exact Finset.prod_congr rfl fun s hs => by rw [(toNat_sub_of (α s) (δ s) (h s hs)).1]
   · exact Finset.prod_congr rfl fun s hs => by rw [(toNat_sub_of (α s) (δ s) (h s hs)).2]
 
-theorem prod_zero_pow (e : ℕ) : (∏ s ∈ Finset.range e, ps W s ^ (fun _ => (0 : ℕ)) s) = 1 := by
-  simp
-
 section Pi0
 
 open Formalism.MainNotions.UnusedSlot80.ToolsR Formalism.MainNotions.WachCoordinates
@@ -327,7 +321,7 @@ theorem inIdπ_add {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} {f g : W.EE} (hf : 
   unfold InIdπ at *
   obtain ⟨u, hu, e1⟩ := hf
   obtain ⟨u', hu', e2⟩ := hg
-  exact ⟨u + u', add_mem hu hu', by rw [mul_add, e1, e2, ← map_add]; congr 1; ring⟩
+  exact ⟨u + u', add_mem hu hu', by rw [mul_add, e1, e2, ← map_add (f := _)]; congr 1; ring⟩
 
 theorem inIdπ_smul {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} {f : W.EE} (hf : InIdπ W a e α f) (c : O) :
     InIdπ W a e α (c • f) := by
@@ -342,15 +336,15 @@ theorem inIdπ_aeval [IsDomain O] [NeZero n] (hR : RingP W) (hS : PsStable W) {a
   intro f hf
   induction P using Polynomial.induction_on' generalizing f with
   | add p q hp hq =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact inIdπ_add W (hp f hf) (hq f hf)
   | monomial k c =>
-    rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
+    rw [Polynomial.aeval_monomial, mul_apply_eq_comp, Module.algebraMap_end_apply]
     refine inIdπ_smul W ?_ c
     induction k with
     | zero => simpa using hf
     | succ k ih =>
-      rw [pow_succ', Module.End.mul_apply]
+      rw [pow_succ', mul_apply_eq_comp]
       exact inIdπ_γ W hR hS ih
 
 end Pi0
@@ -489,9 +483,6 @@ theorem mem_JS_down (A : ArcP n) {c : ZMod n} {s : ℕ} (hs : s < A.len c) {b : 
   refine ⟨s, Finset.mem_range.2 hs, ?_⟩
   rw [hτ]
   exact hi
-
-theorem lam_eq (A : ArcP n) (c : ZMod n) (e : ℕ) :
-    abelian₂ W A c e = ∏ s ∈ Finset.range e, ps W s ^ A.Hs c e s := rfl
 
 theorem inId_Lam {A : ArcP n} {c : ZMod n} {e : ℕ} {f : W.EE} (h : InFr W c 1 (abelian₂ W A c e) f) :
     InId W c e (fun s => ((0 : ℕ) : ℤ) - (A.Hs c e s : ℕ)) f := by
@@ -830,7 +821,7 @@ theorem ppo_single_eval {e : ℕ} {k : ℤ} (hk : k ≠ 0) :
     · rintro rfl; exact ⟨hk, rfl⟩
   unfold PPO
   rw [hks, Finset.prod_singleton]
-  simp [Polynomial.eval_finset_sum] <;> ring
+  simp [Polynomial.eval_finsetSum] <;> ring
 
 theorem part_c [IsDomain O] (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) (hKL : KillerLevCore W)
     (hCA : Formalism.MainNotions.LiftingTheory.CaseA W) (h5 : 5 ≤ PD.p) (hS : PsStable W)
@@ -912,7 +903,7 @@ theorem part_c [IsDomain O] (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.Ring
         rw [show (Polynomial.X ^ (PD.p ^ e) - 1 : Polynomial O) - fac W e k =
           Polynomial.C ((((W.χΓ W.gam) ^ ((k : ℤ) * (PD.p : ℤ) ^ e) : Oˣ) : O) - 1) by
             simp only [fac, map_sub, map_one]; ring]
-        rw [Polynomial.aeval_C, Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, Module.End.one_apply,
+        rw [Polynomial.aeval_C, Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, one_apply_eq_self,
           mul_smul_comm]
       have hz := inFr_sub W hf2 hf1
       rw [hdiff] at hz

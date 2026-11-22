@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.DivisionValues Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef
 
@@ -107,7 +111,8 @@ theorem coeff_mem {E : Type} [Field E] [NumberField E] {n : ℕ} {P : Ideal (�
   have he : (∑ k, b k • (Pi.single k 1 : Formalism.L2.Col.inType P y)) = 0 := by
     have := congrArg e hq
     rw [map_zero] at this
-    rw [← this, ← Submodule.mkQ_apply, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, ← Submodule.mkQ_apply, map_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, map_smul, Submodule.mkQ_apply, hx]
   have hi := congrFun he i
@@ -122,7 +127,7 @@ theorem coeff_mem {E : Type} [Field E] [NumberField E] {n : ℕ} {P : Ideal (�
 
 theorem two_mul_length_le {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ}
     {ST SG : Finset (HeightOneSpectrum (𝓞 E))} (P : HeightOneSpectrum (𝓞 E)) (y : List ℕ)
-    (d e : Col.DecoSet E n ST SG) (hy : ∀ a ∈ y, 0 < a) (he : e ∈ d.inertSet P.asIdeal y) :
+    (d e : Col.DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (hy : ∀ a ∈ y, 0 < a) (he : e ∈ d.inertSet P.asIdeal y) :
     2 * y.length ≤ n := by
   classical
   obtain ⟨⟨⟨e1⟩, ⟨e2⟩⟩, -, -⟩ := he

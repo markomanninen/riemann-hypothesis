@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
-import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
-import ReciprocityTheory.L2DbarEstimates.LeviForms.OfRealNormSqSumMul
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsEqnIffGeneratesAtInv
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpaCHessComp
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.CmpbHessAtAddConst
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.DetUpdateColEq
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.OfRealNormSqSumMul
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,12 +53,14 @@ theorem CInfAt.comp₂ (h : CInfAt f y) (h' : CInfAt f' y) {G : ℝ × ℝ → �
     contDiff_pi.2 fun a => contDiff_apply _ _ _
   have cr : ContDiff ℝ ∞ fun (v : ι ⊕ ι' → ℂ) a => v (.inr a) :=
     contDiff_pi.2 fun a => contDiff_apply _ _ _
+  let domain : Set (ι ⊕ ι' → ℂ) :=
+    (fun v a => v (.inl a)) ⁻¹' O ∩ (fun v a => v (.inr a)) ⁻¹' O'
   refine ⟨W ⊓ W', ι ⊕ ι', inferInstance,
     Sum.elim (fun a => resG X inf_le_left (g a)) fun a => resG X inf_le_right (g' a),
     fun v => G (F fun a => v (.inl a), F' fun a => v (.inr a)),
-    (fun v a => v (.inl a)) ⁻¹' O ∩ (fun v a => v (.inr a)) ⁻¹' O', hW,
+    domain, hW,
     (h₂.preimage cl.continuous).inter (h₂'.preimage cr.continuous), ⟨?_, ?_⟩,
-    hG.comp_contDiffOn ((h₄.comp cl.contDiffOn fun _ hv => hv.1).prodMk
+    hG.comp_contDiffOn ((h₄.comp (s := domain) cl.contDiffOn fun _ hv => hv.1).prodMk
       (h₄'.comp cr.contDiffOn fun _ hv => hv.2)), ?_⟩
   · simpa only [mem_preimage, Sum.elim_inl, ev_res _ hW] using h₃
   · simpa only [mem_preimage, Sum.elim_inr, ev_res _ hW] using h₃'
@@ -155,7 +161,7 @@ theorem isCInf_fsBasis {α : Type} [Fintype α] [DecidableEq α] (hB : B.IsLB) (
     (fsBasis p σ hB b hb M hM).IsCInf := fun i y hy => by
   have hs : ContDiff ℝ ∞ fun v : α → ℂ => ∑ a, ‖∑ j, M j a * v j‖ ^ 2 :=
     ContDiff.sum fun a _ => (ContDiff.sum fun j _ =>
-      contDiff_const.mul (contDiff_apply ℝ ℂ j)).norm_sq ℂ
+      contDiff_const.mul (contDiff_apply ℝ (fun _ => ℂ) j)).norm_sq ℂ
   refine ⟨B.U i, α, inferInstance, fun j => (b j).f i,
     fun v => Real.log (∑ a, ‖∑ j, M j a * v j‖ ^ 2), {v | ∑ a, ‖∑ j, M j a * v j‖ ^ 2 ≠ 0}, hy,
     isOpen_ne_fun hs.continuous continuous_const, ?_, hs.contDiffOn.log fun _ h => h,
@@ -181,25 +187,6 @@ theorem IsCInf.contDiffAt (h : φ.IsCInf) (c : AlgChart p σ D) {y : CxPts p σ}
     ContDiffAt ℝ 2 (fun v => φ.φ i (c.e.symm v)) (c.e y) :=
   ((contDiffOn_chart (h i) c).contDiffAt
     ((isOpen_over c.e (isOpen_ptsIn _)).mem_nhds (mem_over c.e hy hi))).of_le (by norm_cast)
-
-theorem semiPosReg_iff (h : φ.IsCInf) (R : AnRead p σ D) : φ.SemiPosReg D ↔ φ.SemiPos R := by
-  refine ⟨fun H i c => H i _, fun H i c y hy ξ => ?_⟩
-  obtain ⟨a, ha⟩ := R.cover y
-  set c' := R.chart a
-  have ho := isOpen_over c.e c'.e.open_source
-  have hm := mem_over c.e hy.1 ha
-  have e : (fun v => (φ.φ i (c.e.symm v) : ℂ)) =ᶠ[𝓝 (c.e y)]
-      (fun v => (φ.φ i (c'.e.symm v) : ℂ)) ∘ c'.e ∘ c.e.symm :=
-    eventually_of_mem (ho.mem_nhds hm) fun v hv => by
-      simp only [Function.comp_apply, c'.e.left_inv hv.2]
-  have e₂ : (c'.e ∘ c.e.symm) (c.e y) = c'.e y := congrArg c'.e (c.e.left_inv hy.1)
-  have hd : ContDiffAt ℂ 2 (c'.e ∘ c.e.symm) (c.e y) := contDiffAt_euclidean.2 fun b =>
-    ((ReciprocityTheory.L2DbarEstimates.contDiffOn_of_differentiableOn D _ _ ho
-      (differentiableOn_euclidean.1 (c.holo_trans c') b)).contDiffAt (ho.mem_nhds hm)).of_le
-      (by norm_cast)
-  rw [ReciprocityTheory.L2DbarEstimates.leviV_congr e, ReciprocityTheory.L2DbarEstimates.Y.leviV_comp (e₂ ▸
-    Complex.ofRealCLM.contDiff.contDiffAt.comp _ (h.contDiffAt c' ha hy.2)) hd, e₂]
-  exact H i a y ⟨ha, hy.2⟩ _
 
 end Weight
 
@@ -326,8 +313,8 @@ theorem chernPart_apply (h : φ.IsCInf) (ε : ℤˣ) (c : AlgChart p σ D) (hS :
     rw [c.chernDens_trans c' h hy hy', mul_left_comm, ENNReal.ofReal_mul (sq_nonneg _)]) c hS hc,
     chartMeas_apply_of_subset _ _ hS hc]
 
-omit [SecondCountableTopology (CxPts p σ)] in
 
+omit [SecondCountableTopology (CxPts p σ)] in
 theorem chernPart_neg_eq_zero (h : φ.IsCInf) (h' : φ.SemiPosReg D) : φ.chernPart D (-1) = 0 := by
   refine le_antisymm (iSup_le fun c => le_of_eq (Measure.measure_univ_eq_zero.1 ?_)) bot_le
   rw [chartMeas_apply _ _ MeasurableSet.univ, inter_univ, c.e.image_source_eq_target]
@@ -359,7 +346,7 @@ theorem ord_algebraMap (hz : Order.coheight z = 1) {a : Z.presheaf.stalk z} (ha 
   have : Ring.KrullDimLE 1 (Z.presheaf.stalk z) := krullDimLE_of_coheight_le hz.le
   have h0 := mem_nonZeroDivisors_of_ne_zero ha
   refine (Scheme.ord_eq_iff hz ((map_ne_zero_iff _ (IsFractionRing.injective _ _)).2 ha)).2 ?_
-  exact (Ring.ordFrac_eq_ord _ ha).trans (Ring.ordMonoidWithZeroHom_eq_coe _ h0
+  exact (Ring.ordFrac_eq_ord _).trans (Ring.ordMonoidWithZeroHom_eq_coe _ h0
     (ENat.coe_toNat (Ring.ord_ne_top h0)).symm)
 
 namespace CartierDiv
@@ -416,8 +403,8 @@ variable {q : Z ⟶ Sp k} {y : CxPts q σ} {f g : Z.functionField}
 
 abbrev under (y : CxPts q σ) : Z := y.1 (IsLocalRing.closedPoint ℂ)
 
-open Classical in
 
+open Classical in
 def ratVal (f : Z.functionField) (y : CxPts q σ) : ℂ :=
   if h : RegAt (under y) f then
     ev q σ h.exists_fnOf.choose h.exists_fnOf.choose_spec.choose_spec.choose y else 0
@@ -475,11 +462,6 @@ theorem logNorm_eq (φ : Weight q σ L) (hr : IsRatSec L r)
   push_cast
   ring
 
-theorem logNorm_addFn (φ : Weight q σ L) (u : CxPts q σ → ℝ) (r : L.ι → Z.functionFieldˣ)
-    (y : CxPts q σ) : logNorm (φ.addFn u) r y = logNorm φ r y - u y / 2 := by
-  simp only [logNorm, Weight.addFn]
-  ring
-
 theorem exists_isRatSec (hL : L.IsLB) : ∃ r, IsRatSec L r :=
   have ⟨i, hi⟩ := exists_chart hL (genericPoint Z)
   ⟨_, isRatSec_frameRat hL i hi⟩
@@ -488,8 +470,8 @@ theorem fnOf_sec_ne_zero {s : L.Sec} (hs : genericPoint Z ∈ nonzeroLocus s) {i
     (h : genericPoint Z ∈ L.U i) : fnOf _ h (s.f i) ≠ 0 :=
   ((unitAt_fnOf_iff h h _).2 ((mem_nonzeroLocus_iff s i h).1 hs)).ne_zero
 
-open Classical in
 
+open Classical in
 def ratOfSec (s : L.Sec) (hs : genericPoint Z ∈ nonzeroLocus s) (i : L.ι) :
     Z.functionFieldˣ :=
   if h : genericPoint Z ∈ L.U i then Units.mk0 _ (fnOf_sec_ne_zero hs h) else 1
@@ -500,15 +482,15 @@ theorem val_ratOfSec {i : L.ι} (h : genericPoint Z ∈ L.U i) :
     (ratOfSec s hs i : Z.functionField) = fnOf _ h (s.f i) := by
   rw [ratOfSec, dif_pos h, Units.val_mk0]
 
-variable (s hs) in
 
+variable (s hs) in
 theorem isRatSec_ratOfSec : IsRatSec L (ratOfSec s hs) := fun i j h => by
   rw [val_ratOfSec h.1, val_ratOfSec h.2, ← fnOf_resG inf_le_left h, ← fnOf_resG inf_le_right h,
     ← map_mul]
   exact congrArg _ (s.compat i j)
 
-variable (hL s hs) in
 
+variable (hL s hs) in
 abbrev divOfSec : CartierDiv Z := divOfRatSec hL (isRatSec_ratOfSec s hs)
 
 theorem notMem_supp_divOfSec {z : Z} : z ∉ (divOfSec hL s hs).supp ↔ z ∈ nonzeroLocus s := by
@@ -736,8 +718,8 @@ theorem nsq_shift (t : (k →+* ℂ) → ℝ) (ht : ∀ σ, t ((starRingEnd ℂ)
     ((L.shift t ht).φ σ).nsq s y = (L.φ σ).nsq s y * Real.exp (-(2 * t σ)) :=
   (L.φ σ).nsq_addFn _ s y
 
-variable (p) in
 
+variable (p) in
 def triv : HermLB p where
   B := LB.triv X
   isLB := LB.isLB_triv X
@@ -745,8 +727,8 @@ def triv : HermLB p where
   cInf _ := Weight.isCInf_ofFun (cInfAt_const 0)
   conj _ _ _ _ _ _ _ := rfl
 
-variable (p) in
 
+variable (p) in
 def fs {B : LB X} (hB : B.IsLB) {α : Type} [Fintype α] [DecidableEq α] (b : α → B.Sec)
     (hb : ⨆ j, nonzeroLocus (b j) = ⊤) (A : (k →+* ℂ) → Matrix α α ℂ) (hA : ∀ σ, (A σ).det ≠ 0)
     (hc : ∀ σ, ∃ U ∈ Matrix.unitaryGroup α ℂ,
@@ -768,10 +750,6 @@ theorem zero_mem_smallSec : 0 ∈ L.smallSec := fun σ y => by
 
 def SemiPos (D : ℕ) : Prop := ∀ σ, (L.φ σ).SemiPosReg D
 
-variable {L} in
-
-theorem semiPos_iff {D : ℕ} (R : ∀ σ, AnRead p σ D) : L.SemiPos D ↔ ∀ σ, (L.φ σ).SemiPos (R σ) :=
-  forall_congr' fun σ => Weight.semiPosReg_iff (L.cInf σ) (R σ)
 
 end HermLB
 
@@ -1067,25 +1045,6 @@ theorem curveDeg_sec
 
 end HermLB
 
-example (c : AlgChart p σ 1) {y : CxPts p σ} (hy : y ∈ c.e.source) :
-    c.chernDens (Weight.ofFun fun z => Complex.normSq (c.e z 0)) y = 1 / Real.pi := by
-  have e : (fun v => ((Complex.normSq (c.e (c.e.symm v) 0) : ℝ) : ℂ)) =ᶠ[𝓝 (c.e y)]
-      fun v : V 1 => ((Complex.normSq (v 0) : ℝ) : ℂ) :=
-    eventually_of_mem (c.e.open_target.mem_nhds (c.e.map_source hy)) fun v hv => by
-      simp only [c.e.right_inv hv]
-  have hg := (EuclideanSpace.proj (𝕜 := ℂ) (0 : Fin 1) : V 1 →L[ℂ] ℂ).contDiff.contDiffAt (n := 2)
-    (x := c.e y)
-  have h := ReciprocityTheory.L2DbarEstimates.leviV_normSq_comp hg fun _ => 1
-  rw [AlgChart.chernDens, AlgChart.hess]
-  erw [ReciprocityTheory.L2DbarEstimates.Y.cmpb_cHess_congr e]
-  simp only [leviV, Finset.univ_unique, Finset.sum_singleton, map_one, mul_one,
-    ReciprocityTheory.L2DbarEstimates.wd_of_differentiableAt (hg.differentiableAt two_ne_zero),
-    ContinuousLinearMap.fderiv] at h
-  rw [Matrix.det_unique]
-  erw [show cHess 1 (fun v : V 1 => ((Complex.normSq (v 0) : ℝ) : ℂ)) (c.e y) default default = _
-    from h]
-  simp [ReciprocityTheory.L2DbarEstimates.bas]
-
 namespace Weight
 
 variable {B : LB X} {D : ℕ}
@@ -1137,9 +1096,9 @@ theorem SemiPos.shift {L : HermLB p} (h : L.SemiPos D) (t : (k →+* ℂ) → �
     (ht : ∀ σ, t ((starRingEnd ℂ).comp σ) = t σ) : (L.shift t ht).SemiPos D :=
   fun σ => (h σ).addFn_const _
 
-variable (p D) in
 
-theorem isNef_triv : (triv p).IsNef D where
+variable (p D) in
+theorem isNef_triv : (triv p).IsNef D := {
   semiPos σ i c y _ ξ := (congrArg Complex.re (ReciprocityTheory.L2DbarEstimates.Y.cmpb_leviV_const 0 _ ξ)).ge
   vertical Z i _ _ κ _ _ _ _ := (interNum_eq_zero_of_cls_eq_zero κ _
     (fun _ => LB.isLB_pull (LB.isLB_triv X) i) 0
@@ -1160,7 +1119,7 @@ theorem isNef_triv : (triv p).IsNef D where
       have e' := ((triv p).φ σ).pull_φ i rfl (pick (((triv p).restr i).φ σ).isLB y) y
       rw [logNorm, Units.val_one, e]
       exact (congrArg (_ - · / 2) e').trans (by simp [triv, Weight.ofFun])
-    simp [curveDeg, h₁, h₂]
+    simp [curveDeg, h₁, h₂] }
 
 end HermLB
 
@@ -1168,8 +1127,8 @@ namespace ProjSpace
 
 variable (k) (N : ℕ)
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem isIntegral_of_isDomain [IsDomain k] : IsIntegral (PSpace k N) := by
   let η : ProjectiveSpectrum (grading k N) := ⟨⊥, Ideal.isPrime_bot, fun h =>
     MvPolynomial.X_ne_zero _ (h (HomogeneousIdeal.mem_irrelevant_of_mem _ one_pos (X_mem k N 0)))⟩
@@ -1208,16 +1167,6 @@ def hermitianTwistingSheaf : HermLB (PSpace.str k N) :=
     fun _ => ⟨1, one_mem _, by rw [mul_one, Matrix.map_one _ (map_zero _) (map_one _)]⟩
 
 theorem hermitianTwistingSheaf_weight (σ : k →+* ℂ) : (hermitianTwistingSheaf k N).φ σ = ProjAn.fsO1 k σ N := rfl
-
-example : GenSmooth (PSpace.str k N) N ∧ (hermitianTwistingSheaf k N).SemiPos N ∧
-    ∀ a, coord k N a ∈ (hermitianTwistingSheaf k N).smallSec := by
-  refine ⟨genSmooth_of_smooth _ _, HermLB.semiPos_fs _ _ _ _ _ _, fun a σ y => ?_⟩
-  have e (a) : Weight.combVal (PSpace.str k N) σ (coord k N) 1 a = secVal _ σ (coord k N a) := by
-    simp [Weight.combVal, Matrix.one_apply]
-  refine le_of_le_of_eq ?_ (Weight.sum_nsq_fs (hB := O1_isLB k N) (he := fun a => e a ▸ secVal_mem _)
-    (h := Weight.noCommonZero_combVal (iSup_nonzeroLocus_coord k N) (M := 1) (by simp)) y)
-  exact le_of_eq_of_le (congrArg (Weight.nsq _ · y) (e a).symm)
-    (Finset.single_le_sum (fun b _ => Weight.nsq_nonneg _ _ y) (Finset.mem_univ a))
 
 end ProjSpace
 
@@ -1279,7 +1228,7 @@ theorem finsum_ord_prime {ℓ : ℕ} (hℓ : ℓ.Prime) :
         (congrArg (fun n : ℕ∞ => (n.toNat : ℤ)) (Ring.ord_of_irreducible hi))
     have h₂ : Nat.card (Z.residueField z₀) = ℓ :=
       (Nat.card_congr (((IsLocalization.AtPrime.equivQuotMaximalIdeal P.asIdeal
-        (Z.presheaf.stalk z₀)).symm.trans (Ideal.quotientEquiv (Ideal.span {(ℓ : ℤ)}) P.asIdeal e
+        (Z.presheaf.stalk z₀)).toRingEquiv.symm.trans (Ideal.quotientEquiv (Ideal.span {(ℓ : ℤ)}) P.asIdeal e
           (by rw [Ideal.map_span, image_singleton]; rfl)).symm).trans
         (Int.quotientSpanNatEquivZMod ℓ)).toEquiv).trans (Nat.card_zmod ℓ)
     rw [h₁, h₂, Int.cast_one, one_mul]
@@ -1370,8 +1319,8 @@ theorem mem_asIdeal_iff (n : ℤ) : n ∈ (i (genericPoint Z)).asIdeal ↔ (n : 
   rw [← unitAt_fnOf_iff (Opens.mem_top _) (Opens.mem_top _), ← ne_eq, ← map_ne_zero_iff _ (fnOf_injective ⊤ (Opens.mem_top _))]
   exact ⟨UnitAt.ne_zero, unitAt_genericPoint⟩
 
-omit [IsIntegral Z] in
 
+omit [IsIntegral Z] in
 theorem surjective_intCast [IsClosedImmersion i] :
     Function.Surjective (Int.castRingHom Γ(Z, ⊤)) := by
   rw [← RingHom.ext_int (i.appTop.hom.comp (Scheme.ΓSpecIso (.of ℤ)).inv.hom) (Int.castRingHom _)]
@@ -1380,10 +1329,10 @@ theorem surjective_intCast [IsClosedImmersion i] :
 
 def trivShift (t : ℝ) : HermLB (𝟙 (Sp ℤ)) := (HermLB.triv _).shift (fun _ => t) fun _ => rfl
 
-open Classical in
 
+open Classical in
 theorem isArithHeight_trivShift (t : ℝ) : (trivShift t).IsArithHeight fun x =>
-    if x.asIdeal = ⊥ then t else Real.log (Nat.card (ℤ ⧸ x.asIdeal)) where
+    if x.asIdeal = ⊥ then t else Real.log (Nat.card (ℤ ⧸ x.asIdeal)) := {
   vertical Z i _ _ κ _ _ _ d hd := by
     have := (IsClosedImmersion.isAffine_surjective_of_isAffine i).1
     have hinj := (algebraMap κ Γ(Z, ⊤)).injective
@@ -1434,16 +1383,11 @@ theorem isArithHeight_trivShift (t : ℝ) : (trivShift t).IsArithHeight fun x =>
     have := hd.ge.trans (i.isClosedEmbedding.isInducing.topologicalKrullDim_le.trans
       isArithVar_int.dim_eq.le)
     norm_cast at this
-    omega
+    omega }
 
 theorem isSelfInter_trivShift (t : ℝ) : (trivShift t).IsSelfInter t :=
   ⟨_, isArithHeight_trivShift t, if_pos (Ideal.ext fun n =>
     (mem_asIdeal_iff (𝟙 (Sp ℤ)) n).trans (have := isArithVar_int.charZero; Int.cast_eq_zero))⟩
-
-example {t : ℝ} (ht : t < 0) : ¬ (trivShift t).IsNef 0 := fun h => by
-  obtain ⟨f, hf, e⟩ := isSelfInter_trivShift t
-  exact (((hf.isNef_iff isArithVar_int).1 h).2 _ (𝟙 _) isArithVar_int.dim_eq).not_gt
-    (e.symm ▸ ht)
 
 end ArithBase
 

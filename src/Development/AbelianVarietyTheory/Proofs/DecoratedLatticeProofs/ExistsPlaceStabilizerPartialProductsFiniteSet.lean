@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmSplitHalves
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer
 open Filter Topology
 
@@ -48,7 +53,7 @@ theorem locM_sandwich {e : R} (he : e * e = e) (A B J : Matrix n n R) :
 theorem cT_locM (σ : R →+* R) {e : R} (hσ : σ e = e) (M : Matrix n n R) :
     Formalism.UG.cT σ (locM e M) = locM e (Formalism.UG.cT σ M) := by
   ext i j
-  simp only [Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply, locM_apply, map_add, map_mul, map_sub, map_one, hσ]
+  simp only [Formalism.UG.cT, Matrix.transpose_apply, Matrix.map_apply, locM_apply, map_add (f := _), map_mul, map_sub, map_one, hσ]
   congr 2
   rw [Matrix.one_apply, Matrix.one_apply]
   split_ifs with h1 h2 h2 <;> simp_all [eq_comm]
@@ -107,10 +112,12 @@ theorem pe_idem (v : Pl D) : pe D v * pe D v = pe D v :=
 def peT (D : D7) (T : Finset (Pl D)) : AE D := ∑ v ∈ T, pe D v
 
 theorem inf_peT (T : Finset (Pl D)) : infPart D (peT D T) = 0 := by
-  rw [peT, map_sum]; exact Finset.sum_eq_zero fun v _ => inf_pe v
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [peT, map_sum]; exact Finset.sum_eq_zero fun v _ => inf_pe v
 
 theorem comp_peT (T : Finset (Pl D)) (w : Pl D) : compAt D w (peT D T) = if w ∈ T then 1 else 0 := by
-  simp [peT, map_sum, comp_pe]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [peT, map_sum, comp_pe]
 
 theorem pe_mul_peT {v : Pl D} {T : Finset (Pl D)} (hv : v ∉ T) : pe D v * peT D T = 0 :=
   ext_AE (by simp [inf_pe]) fun w => by
@@ -181,7 +188,7 @@ theorem latV_le (S : HSp D) (L : Lat S) {P : Pl D → Prop} {v : Pl D} (hv : P v
 
 theorem pe_smul_latV (S : HSp D) (L : Lat S) (P : Pl D → Prop) (v : Pl D) {y : Fin S.rank → AE D}
     (hy : y ∈ latV S L P) : pe D v • y ∈ latV S L (· = v) := by
-  let f : (Fin S.rank → AE D) →+ (Fin S.rank → AE D) := DistribMulAction.toAddMonoidHom _ (pe D v)
+  let f : (Fin S.rank → AE D) →+ (Fin S.rank → AE D) := DistribSMul.toAddMonoidHom _ (pe D v)
   have hle : latV S L P ≤ (latV S L (· = v)).comap f := by
     refine (AddSubgroup.closure_le _).2 ?_
     rintro _ ⟨α, hα, -, a, ha, x, hx, rfl⟩
@@ -249,7 +256,7 @@ set_option synthInstance.maxHeartbeats 400000
 
 theorem hom_loc {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (e a b : A) :
     φ (e * a + (1 - e) * b) = φ e * φ a + (1 - φ e) * φ b := by
-  simp only [map_add, map_mul, map_sub, map_one]
+  simp only [map_add (f := _), map_mul, map_sub, map_one]
 
 theorem hom_loc_one {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) {e : A} (he : φ e = 1) (a b : A) :
     φ (e * a + (1 - e) * b) = φ a := by
@@ -259,8 +266,8 @@ theorem hom_loc_zero {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) {e 
     φ (e * a + (1 - e) * b) = φ b := by
   rw [hom_loc, he, zero_mul, zero_add, sub_zero, one_mul]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem finite_place_products : ∀ (D : D7) (S : HSp D) (L : Lat S) (P : Pl D → Prop) (κ : GA D S), IsSelfDualC S L →
     InK S L P κ → ∀ Fs : Finset (Pl D), ∃ l : List (GA D S), (∀ y ∈ l, ∃ v, P v ∧ InK S L (· = v) y) ∧
       (∀ i j, infPart D (Formalism.L2.Theta.mt S l.prod i j) = infPart D (Formalism.L2.Theta.mt S κ i j)) ∧

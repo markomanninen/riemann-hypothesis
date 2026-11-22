@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.SwapLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem contractLeft_map (f : (Md n → ℂ) →ₗ[ℂ] (Md n → ℂ)) (d : Mo
   induction y using CliffordAlgebra.left_induction with
   | algebraMap r =>
     rw [AlgHom.commutes, CliffordAlgebra.contractLeft_algebraMap, CliffordAlgebra.contractLeft_algebraMap, map_zero]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
   | ι_mul x m hx =>
     have e : ExteriorAlgebra.map f (CliffordAlgebra.ι (0 : QuadraticForm ℂ (Md n → ℂ)) m * x) =
         CliffordAlgebra.ι (0 : QuadraticForm ℂ (Md n → ℂ)) (f m) * ExteriorAlgebra.map f x := by
@@ -60,7 +64,7 @@ theorem gamMul : GamMul := by
 
 theorem car : Car := by
   intro n v w
-  rw [annL_eq, creL_eq, ← matL_mul, ← matL_mul, ← map_add, ← matL_one, ← map_smul]
+  rw [annL_eq, creL_eq, ← matL_mul, ← matL_mul, ← map_add (f := _), ← matL_one, ← map_smul]
   congr 1
   apply LinearMap.ext
   intro y

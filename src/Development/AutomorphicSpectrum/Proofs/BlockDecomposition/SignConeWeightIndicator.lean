@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1
 
@@ -48,7 +52,7 @@ theorem sum_chains_eq_zero (R : V → V → Prop) (hr : ∀ x, R x x) (ht : ∀ 
         Classical.choose (exists_least R hr ht U h.1 h.2) else es,
       fun U hU hcU => by
         beta_reduce
-        rw [dif_pos ⟨hU, hcU⟩]
+        rw [dite_eq_left ⟨hU, hcU⟩]
         exact Classical.choose_spec (exists_least R hr ht U hU hcU)⟩
   obtain ⟨U, hU⟩ : ∃ U : Finset V → Finset V, ∀ s, U s = s.filter (fun x => ¬ R x es) :=
     ⟨_, fun _ => rfl⟩
@@ -206,8 +210,8 @@ theorem sdot_meet_join (e e' : Fin m → SignType) (a : Fin m → ℝ) :
   simp only [sMeet, sJoin]
   cases h1 : e i <;> cases h2 : e' i <;> simp <;> ring
 
-open Classical in
 
+open Classical in
 theorem gam_eq_sum (y : (Fin m → SignType) → ℝ) (a : Fin m → ℝ) (h0 : ¬ y 0 < sdot 0 a) :
     gam y a = ∑ s ∈ (Finset.univ : Finset (Finset (Fin m → SignType))).filter
       (fun s : Finset (Fin m → SignType) =>

@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TwoIrr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtScale
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtActInternal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TanScale
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.RigidDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.WcompMulHomog
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SInternal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EptInt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TwoIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtScale
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtActInternal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.TanScale
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.RigidDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.WcompMulHomog
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SInternal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EptInt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 private theorem graded_subalgebra_internal {O R X : Type} [CommRing O] [CommRing R] [Algebra O R] [AddCommGroup X]
@@ -19,7 +24,7 @@ private theorem graded_subalgebra_internal {O R X : Type} [CommRing O] [CommRing
   · rw [iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero]
     intro s v hv hs i hi
     have h1 := (iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero _).1 h s (fun i => (v i : R)) hv
-      (by rw [← AddSubmonoidClass.coe_finset_sum, hs]; rfl) i hi
+      (by rw [← AddSubmonoidClass.coe_finsetSum, hs]; rfl) i hi
     exact Subtype.ext h1
   · rw [eq_top_iff]
     rintro ⟨x, hx⟩ -
@@ -51,9 +56,9 @@ private theorem extend_point_degree_zero_graded {O A B K : Type} [CommRing O] [C
   let ψ : ∀ w, 𝓑 w →ₗ[O] K := fun w =>
     { toFun := fun f => X (g w f) * ((c⁻¹ : Kˣ) : K) ^ w.1.toNat
       map_add' := fun a b => by
-        rw [← add_mul, ← map_add]
+        rw [← add_mul, ← map_add (f := _)]
         congr 1
-        exact hk' _ _ (by rw [map_add, hg, hg, hg, Submodule.coe_add]; ring)
+        exact hk' _ _ (by rw [map_add (f := _), hg, hg, hg, Submodule.coe_add]; ring)
       map_smul' := fun r b => by
         rw [RingHom.id_apply, ← smul_mul_assoc, ← map_smul]
         congr 1
@@ -128,6 +133,7 @@ private theorem torus_dual_number_lift_zero (K : Type) [Field K] (t : Kˣ × Kˣ
   constructor <;> simp [e, TrivSqZeroExt.algebraMap_eq_inl]
 
 set_option maxHeartbeats 800000 in
+set_option synthInstance.maxHeartbeats 200000 in
 private theorem exists_lift_of_derivation_on_ideal {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l}
     (D : Raw Ω c) (hD : D.Good) (M : Model D) [GradedAlgebra M.gr] (hL : Loc.LocalPublishedTheorems) (hS : SoV Ω l) (hF : D.Fin0)
     (hN : D.NoEnd) (x : M.A →ₐ[c.O] PadicAlgCl l) (hx : OnS M.eqns.ideal x)
@@ -244,7 +250,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.m4 :
       simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hb n f f.2, hb' n f f.2,
         LinearMap.zero_apply]
       linear_combination ((n : PadicAlgCl l) * x f) * h
-    | add f g hf hg => rw [map_add, hf, hg]; simp
+    | add f g hf hg => rw [map_add (f := _), hf, hg]; simp
   by_cases h0 : b = 0
   · exact ⟨1, 0, Or.inl one_ne_zero, key _ _ (by simp [h0])⟩
   · exact ⟨b', -b, Or.inr (neg_ne_zero.2 h0), key _ _ (by ring)⟩

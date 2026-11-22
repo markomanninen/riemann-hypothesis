@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.PsiGenNorm
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LocalWeightCharts.PsiGenNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,13 +26,13 @@ theorem ellA_cont (z : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
   split_ifs with h
   · exact (continuous_apply _).comp (continuous_apply _)
   · simp only [Matrix.mulVec, dotProduct]
-    exact continuous_finset_sum _ fun j _ => (continuous_id.matrix_elem _ j).mul continuous_const
+    exact continuous_finsetSum _ fun j _ => (continuous_id.matrix_elem _ j).mul continuous_const
 
 theorem psiGen_cont (z : Fin (2 * r + k + 1) → ℂ) (c : Fin r → ℂ) :
     Continuous (psiGen k r z c) := by
   unfold psiGen
   exact Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp
-    (Complex.continuous_re.comp (continuous_finset_sum _ fun a _ => continuous_const.mul (ellA_cont z a)))))
+    (Complex.continuous_re.comp (continuous_finsetSum _ fun a _ => continuous_const.mul (ellA_cont z a)))))
 
 theorem inv_contOn : ContinuousOn (fun h : Mat k r => h⁻¹) (Gr k r) := by
   unfold Gr

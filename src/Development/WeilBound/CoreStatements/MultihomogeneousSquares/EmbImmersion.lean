@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
-import Development.WeilBound.CoreStatements.CentralCharts.PotLoc
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
+public import Development.WeilBound.CoreStatements.CentralCharts.PotLoc
+
+@[expose] public section
 
 noncomputable section
 

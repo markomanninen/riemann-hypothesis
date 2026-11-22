@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RegModelB
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegModelB
+
+@[expose] public section
 
 namespace Formalism.L2.Pj.RegC
 

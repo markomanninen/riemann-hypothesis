@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NVNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSZpowIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardKilledByInType
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecoRawMulIdem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InvMulIntAway
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RealizationFamilyNormalOperators
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSphericalDoubleCosetLabelIffDecreasing
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUnitaryElementaryDivisorsInertPrime
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CorrectionOfTransport
-import Formalism.LocalToGlobal.Columns.InputsGenus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NVNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSZpowIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CardKilledByInType
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecoRawMulIdem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InvMulIntAway
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RealizationFamilyNormalOperators
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsSphericalDoubleCosetLabelIffDecreasing
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsUnitaryElementaryDivisorsInertPrime
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CorrectionOfTransport
+public import Formalism.LocalToGlobal.Columns.InputsGenus
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -279,7 +284,7 @@ theorem decoOf_val {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
     (hc : CMData F E) {n : ℕ} [NeZero n] (ST SG : Finset (Pl E)) {x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
     (hx : x ∈ UAd hc n) : (decoOf ST SG x).1 = decoRaw ST SG x := by
   unfold decoOf
-  rw [dif_pos (decorated_lattice_exists hc n ST SG x hx)]
+  rw [dite_eq_left (decorated_lattice_exists hc n ST SG x hx)]
 
 theorem sum_reps [NeZero V.rank] (hβ : IsBaseFrame V 1 Λ 1) (hP : IsPrimeIdem Q e e)
     (hc : c ∈ St (1 : GL (Fin V.rank) (Lev.EAf D)))
@@ -288,7 +293,7 @@ theorem sum_reps [NeZero V.rank] (hβ : IsBaseFrame V 1 Λ 1) (hP : IsPrimeIdem 
     {α : GA D V} (hα : SuppF V e α) (hD : DivAt V e (ϖ : D.host.E) (labIn V.rank s) α) {R : Finset (GA D V)}
     (hR : ∀ γ ∈ R, SuppF V e γ) (hrep : IsCosetRep V {k | k ∈ KsphC V ∅ ∧ SuppF V e k} α R)
     {y : GL (Fin V.rank) (Lev.EAf D)} (hy : y ∈ UAd D.sp.cm V.rank) {M : Type} [AddCommMonoid M]
-    (ψ : DecoSet D.host.E V.rank ∅ SG → M) :
+    (ψ : DecoSet (E := D.host.E) (n := V.rank) (ST := ∅) (SG := SG) → M) :
     ∑ γ ∈ R, ψ (decoOf ∅ SG (y * inCoord c γ)) = ∑ d ∈ (decoOf ∅ SG y).inertNb Q.asIdeal s, ψ d := by
   have hI := idemOf_finSw hP
   have h0 := (supported_group_and_prime_idempotents V).2.2.1 Q e e hP
@@ -367,7 +372,7 @@ theorem exists_hecke (V : HSp D) {n : ℕ} [NeZero n] (h : n = V.rank) (Λ : Sub
     (hkU : k ∈ UAd D.sp.cm n) (hk : k ∈ St (1 : GL (Fin n) (Lev.EAf D))) (s : List ℕ) (hs : InertTypeOk V.rank s) :
     ∃ (x : Bridge.Gf V) (R : Finset (Bridge.Gf V)), IsLabElt V Q (labIn V.rank s) x ∧ (∀ a ∈ R, IsLocElt V Q a) ∧
       Bridge.IsDC (levEnv V 1 L).J x R ∧
-      ∀ (M : Type) [AddCommMonoid M] (ψ : DecoSet D.host.E n ∅ SG → M) (g : Bridge.Gf V),
+      ∀ (M : Type) [AddCommMonoid M] (ψ : DecoSet (E := D.host.E) (n := n) (ST := ∅) (SG := SG) → M) (g : Bridge.Gf V),
         ∑ a ∈ R, ψ (decoOf ∅ SG (A⁻¹ * LiftBrg.castGL h.symm (Formalism.UG.bc (swapAE D) ((g * a : Bridge.Gf V) : GL (Fin V.rank) _)) * A * k)) =
           ∑ d ∈ (decoOf ∅ SG (A⁻¹ * LiftBrg.castGL h.symm (Formalism.UG.bc (swapAE D) (g : GL (Fin V.rank) _)) * A * k)).inertNb
             Q.asIdeal s, ψ d := by
@@ -421,7 +426,7 @@ theorem inert_neighbours : ∀ (X : Stages) (px : PreX X.B.toPre) (I : Col2.ColI
       IsLabElt (Vc X.toD7 i) (q.1.1 : PlI X.B px).1 (labIn (Vc X.toD7 i).rank q.2) x ∧
       (∀ a ∈ R, IsLocElt (Vc X.toD7 i) (q.1.1 : PlI X.B px).1 a) ∧
       Bridge.IsDC (LiftBrg.envL X I hX U Xg tr L cV i t).lev.J x R ∧
-      ∀ (M : Type) [AddCommMonoid M] (ψ : Formalism.L2.Col.DecoSet X.toD7.host.E X.B.R.nV ∅ (LiftBrg.sgL X I U t) → M)
+      ∀ (M : Type) [AddCommMonoid M] (ψ : Formalism.L2.Col.DecoSet (E := X.toD7.host.E) (n := X.B.R.nV) (ST := ∅) (SG := LiftBrg.sgL X I U t) → M)
         (g : Bridge.Gf (Vc X.toD7 i)),
         ∑ a ∈ R, ψ (LiftBrg.ptL X I U i t A k (g * a)) =
           ∑ e ∈ (LiftBrg.ptL X I U i t A k g).inertNb ((q.1.1 : PlI X.B px).1).asIdeal q.2, ψ e := by

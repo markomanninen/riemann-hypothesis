@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.UnifExHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.UnifExHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,17 +74,17 @@ theorem fibU'_of (a : ℕ) (Y : TupV (E := E) v n a) (h1 : LamOC v Λ a) (h2 : H
   have : SecondCountableTopology (HermR (Fv F v) σ a) :=
     TopologicalSpace.Subtype.secondCountableTopology _
   have hμ : SdW F E σ n J (Fv F v) (psiV F ψ v) a (dX σ J ψ v a) := by
-    unfold dX; rw [dif_pos hW]; exact hW.choose_spec
+    unfold dX; rw [dite_eq_left hW]; exact hW.choose_spec
   have hν : SdHerm F E σ (Fv F v) (psiV F ψ v) a (dT σ ψ v a) := by
-    unfold dT; rw [dif_pos hH]; exact hH.choose_spec
+    unfold dT; rw [dite_eq_left hH]; exact hH.choose_spec
   have := hμ.1
   have := hν.1
   have hfibC : IsOm σ J ψ v a (omFam σ J ψ v a) := by
-    unfold omFam; rw [dif_pos hfib]; exact hfib.choose_spec
+    unfold omFam; rw [dite_eq_left hfib]; exact hfib.choose_spec
   have hTm := PI.VolStabSW.gramR_mem (Fv F v) σ hσ J hJ Y
   have hom : omAt σ J ψ v (gramR (Fv F v) σ J Y) =
       omFam σ J ψ v a (PI.VolStabSW.gramH (Fv F v) σ hσ J hJ Y) := by
-    unfold omAt; rw [dif_pos hTm]; rfl
+    unfold omAt; rw [dite_eq_left hTm]; rfl
   rw [hom]
   set G := PI.VolStabSW.gramH (n := a) (Fv F v) σ hσ J hJ with hGdef
   set T := G Y with hTdef

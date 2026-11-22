@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiscrK
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiscrK
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
+
+@[expose] public section
 
 open NumberField Ideal Formalism.HC Formalism.FrobeniusOrbits
 open scoped Pointwise

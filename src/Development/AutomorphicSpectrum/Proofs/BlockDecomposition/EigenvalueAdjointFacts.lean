@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem evAdj : EvAdj := by
     (by
       rintro a x y _ _ ⟨f, hf, hs, hcf, rfl⟩ ⟨f', hf', hs', hcf', rfl⟩
       refine ⟨a • f + f', hsum a f f' hf hf', hsec a f f' hs hs', ?_, rfl⟩
-      rw [hc2 a f f' (hmem hf) (hmem hf'), hcf, hcf', map_add, map_smul]) v
+      rw [hc2 a f f' (hmem hf) (hmem hf'), hcf, hcf', map_add (f := _), map_smul]) v
   refine ⟨κ, hκ, fun φ f' hφ hφs hf' hf's hcl => ?_⟩
   exact hrep (cls μ φ) ⟨φ, hφ, hφs, rfl⟩ (f' 1) ⟨f', hf', hf's, hcl, rfl⟩
 

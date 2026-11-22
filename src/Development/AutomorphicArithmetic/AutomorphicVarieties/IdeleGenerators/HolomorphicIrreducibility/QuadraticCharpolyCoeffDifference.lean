@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ShapeFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ShapeFacts
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.Af Formalism.ConjugateSelfDual
 open scoped Matrix
@@ -38,14 +42,14 @@ private theorem adjoint_charpoly_roots {S : Type} [Field S] (a b : S) (ha : a �
   have h2 : C (a / b) * C (b / a) = 1 := by
     rw [← map_mul, show a / b * (b / a) = 1 by field_simp, map_one]
   rw [h1]
-  simp only [a0F, map_add, map_neg, map_one]
+  simp only [a0F, map_add (f := _), map_neg, map_one]
   linear_combination (1 - X) * h2
 
 private theorem quadratic_charpoly_coeff_difference {S : Type} [CommRing S] [Nontrivial S] (g : Matrix (Fin 2) (Fin 2) S) (a b : S) :
     g.charpoly.coeff 1 - ((X - C a) * (X - C b)).coeff 1 = -(g.trace - (a + b)) ∧
     g.charpoly.coeff 0 - ((X - C a) * (X - C b)).coeff 0 = g.det - a * b := by
   have h : (X - C a) * (X - C b) = X ^ 2 - C (a + b) * X + C (a * b) := by
-    simp only [map_add, map_mul]; ring
+    simp only [map_add (f := _), map_mul]; ring
   rw [h, Matrix.charpoly_fin_two]
   constructor
   · simp only [coeff_add, coeff_sub, coeff_X_pow, coeff_C_mul, coeff_X_one, coeff_C]

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaEqZeroOfReal
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaSeriesTestFunctionHolomorphicWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermCColMulVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiHalfSymplecticOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CplxOfFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaEqZeroOfReal
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaSeriesTestFunctionHolomorphicWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermCColMulVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HxOfIsONFr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiHalfSymplecticOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CplxOfFrame
+
+@[expose] public section
 
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
@@ -25,7 +29,8 @@ theorem hasDerivAt_translate {n g : ℕ} (c : Fin g → ℝ) (H : (Fin g → ℂ
       (cexp (-(Real.pi / 2 : ℂ) * ∑ b, H (Z b) (Z b)) *
         (-(Real.pi * ∑ b, H (A b) (Z b)) * F Z + fderiv ℂ F Z A)) 0 := by
   have hc : ∀ z w, conj (H z w) = H w z := fun z w => by
-    simp only [hH, map_sum, map_mul, conj_ofReal, conj_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hH, map_sum, map_mul, conj_ofReal, conj_conj]
     exact Finset.sum_congr rfl fun _ _ => by ring
   have e : (fun t : ℝ => cexp (Real.pi * I * ((∑ b, (H (Z b) (((t : ℂ) • A) b)).im : ℝ) : ℂ)) *
       (cexp (-(Real.pi / 2 : ℂ) * ∑ b, H ((Z + (t : ℂ) • A) b) ((Z + (t : ℂ) • A) b)) * F (Z + (t : ℂ) • A))) =
@@ -43,7 +48,7 @@ theorem hasDerivAt_translate {n g : ℕ} (c : Fin g → ℝ) (H : (Fin g → ℂ
       ring
     have h3 : ∀ b, H ((Z + (t : ℂ) • A) b) ((Z + (t : ℂ) • A) b) =
         H (Z b) (Z b) + t * H (Z b) (A b) + t * H (A b) (Z b) + t ^ 2 * H (A b) (A b) := fun b => by
-      simp only [hH, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_mul, map_add, conj_ofReal, Finset.mul_sum,
+      simp only [hH, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_mul, map_add (f := _), conj_ofReal, Finset.mul_sum,
         ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun _ _ => by ring
     rw [Complex.ofReal_sum, mul_assoc, Finset.mul_sum]
@@ -85,7 +90,11 @@ theorem isFockVacAt_of_reads : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ
     congr 1
     funext t
     have h0 : (w + lineAt θ τ u t).map (finPart D) = 0 := by
-      rw [Matrix.map_add _ (finPart D).map_add, hw', (WeilVacMove.isLineAt_lineAt hθ τ u).2.1 t, add_zero]
+      ext i j
+      have h1 := congrFun (congrFun hw' i) j
+      have h2 := congrFun (congrFun ((WeilVacMove.isLineAt_lineAt hθ τ u).2.1 t) i) j
+      simp only [Matrix.map_apply, Matrix.zero_apply] at h1 h2
+      simp only [Matrix.map_apply, Matrix.add_apply, Matrix.zero_apply, map_add, h1, h2, add_zero]
     rw [heisO, GlobalTheory.AdThSympl.psi_symplOH_eq_of_isONFr D ψ θ V W r g hr X bas idx hψ hθ hV hev hm hs x hx0 w _ hw', hR.2 _ h0, hadd, hline]
   have hI : ∀ a b : Fin g → ℂ, hx X bas idx x (I • a) b = I * hx X bas idx x a b := fun a b => by
     simp only [hH, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]

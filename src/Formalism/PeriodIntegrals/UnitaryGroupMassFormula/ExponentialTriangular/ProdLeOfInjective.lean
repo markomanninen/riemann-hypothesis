@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -10,7 +14,7 @@ namespace PI.ET
 theorem det_mul_rect {R : Type*} [CommRing R] {k n : ℕ}
     (A : Matrix (Fin k) (Fin n) R) (B : Matrix (Fin n) (Fin k) R) :
     (A * B).det = ∑ f : Fin k → Fin n, (∏ i, B (f i) i) * (A.submatrix id f).det := by
-  simp only [det_apply, mul_apply, Fintype.prod_sum, Finset.smul_sum]
+  simp only [det_apply, Matrix.mul_apply, Fintype.prod_sum, Finset.smul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [Finset.mul_sum]
@@ -84,7 +88,7 @@ theorem prod_le_of_injective {n k : ℕ} (hk : k ≤ n) (p : Fin n → ℝ) (hp 
       have := ih (by omega)
       omega
   rw [h1]
-  refine Finset.prod_le_prod (fun j _ => hpos _) fun j _ => hp ?_
+  refine Finset.prod_le_prod₀ (fun j _ => hpos _) fun j _ => hp ?_
   rw [Fin.le_iff_val_le_val, Fin.val_castLE]
   exact h3 j.1 j.2
 

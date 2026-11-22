@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
-import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
+module
+
+public import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+public import ReciprocityTheory.SemistableReduction.GaussAbsMulOfMonomialOrder
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

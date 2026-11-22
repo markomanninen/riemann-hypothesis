@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -85,7 +89,8 @@ theorem proj_eigen_ne [IsDomain R] {χ ψ : MulChar F R} (h : χ ≠ ψ) (e : N 
   simp only [proj, he, Pi.zero_apply]
   have hs : ∑ a : Fˣ, algebraMap R C (χ⁻¹ (a : F)) * (algebraMap R C (ψ (a : F)) * e x) =
       algebraMap R C (∑ a : Fˣ, χ⁻¹ (a : F) * ψ (a : F)) * e x := by
-    rw [map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     exact Finset.sum_congr rfl fun a _ => by rw [map_mul, mul_assoc]
   rw [hs, orth_ne h, map_zero, zero_mul, mul_zero]
 
@@ -144,7 +149,7 @@ private theorem sum_Icc_pow_eq_zero_of_root_of_unity_ne_one {R : Type} [CommRing
 
 private theorem comp_smul_mem_augIdeal_of_fStable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
     {F : Type} [Field F] {N : Type} [AddCommGroup N] [Module F N] (A : Submodule R (N → C))
-    (hA : FStable F A) (a : F) : ∀ f ∈ augIdeal A, (fun x => f (a • x)) ∈ augIdeal A := by
+    (hA : FStable (F := F) A) (a : F) : ∀ f ∈ augIdeal A, (fun x => f (a • x)) ∈ augIdeal A := by
   intro f hf
   have h1 := (Submodule.mem_inf.1 hf).1
   have h2 : f 0 = 0 := by simpa using LinearMap.mem_ker.1 (Submodule.mem_inf.1 hf).2
@@ -153,7 +158,7 @@ private theorem comp_smul_mem_augIdeal_of_fStable {C : Type} [Field C] {R : Type
 
 private theorem comp_smul_mem_sqIdeal_of_fStable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
     {F : Type} [Field F] {N : Type} [AddCommGroup N] [Module F N] (A : Submodule R (N → C))
-    (hA : FStable F A) (a : F) (g : N → C) (hg : g ∈ sqIdeal (augIdeal A)) :
+    (hA : FStable (F := F) A) (a : F) (g : N → C) (hg : g ∈ sqIdeal (augIdeal A)) :
     (fun x => g (a • x)) ∈ sqIdeal (augIdeal A) := by
   let L : (N → C) →ₗ[R] (N → C) := LinearMap.funLeft R C (fun x : N => a • x)
   have hle : sqIdeal (augIdeal A) ≤ (sqIdeal (augIdeal A)).comap L := by
@@ -163,7 +168,7 @@ private theorem comp_smul_mem_sqIdeal_of_fStable {C : Type} [Field C] {R : Type}
       ⟨L f, comp_smul_mem_augIdeal_of_fStable A hA a f hf, L f', comp_smul_mem_augIdeal_of_fStable A hA a f' hf', rfl⟩
   exact hle hg
 
-theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ σ : MulChar F R, IsFund p σ → ∀ g ∈ augIdeal AA.carrier, (∀ χ : MulChar F R, proj χ g ∈ eig AA.carrier χ) ∧ g = ∑ m ∈ Finset.Icc 1 (p ^ f - 1), proj (σ ^ m) g ∧ (g ∈ afFun p AA.carrier → ∀ χ : MulChar F R, proj χ g ∈ afFun p AA.carrier) ∧ (∀ K : Submodule F N, g ∈ invFun AA.carrier K.toAddSubgroup → ∀ χ : MulChar F R, proj χ g ∈ invFun AA.carrier K.toAddSubgroup) ∧ (g ∈ sqIdeal (augIdeal AA.carrier) → ∀ χ : MulChar F R, proj χ g ∈ sqIdeal (augIdeal AA.carrier)) := by
+theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable (F := F) AA.carrier → ∀ σ : MulChar F R, IsFund p σ → ∀ g ∈ augIdeal AA.carrier, (∀ χ : MulChar F R, proj χ g ∈ eig AA.carrier χ) ∧ g = ∑ m ∈ Finset.Icc 1 (p ^ f - 1), proj (σ ^ m) g ∧ (g ∈ afFun p AA.carrier → ∀ χ : MulChar F R, proj χ g ∈ afFun p AA.carrier) ∧ (∀ K : Submodule F N, g ∈ invFun AA.carrier K.toAddSubgroup → ∀ χ : MulChar F R, proj χ g ∈ invFun AA.carrier K.toAddSubgroup) ∧ (g ∈ sqIdeal (augIdeal AA.carrier) → ∀ χ : MulChar F R, proj χ g ∈ sqIdeal (augIdeal AA.carrier)) := by
   intro p _ C _ _ _ v R _ _ hv hp F _ _ _ _ f hc N _ _ _ _ AA hFS σ hσ g hg
   have hinj : Function.Injective (algebraMap R C) := hv.hom_inj
   haveI : IsDomain R := Function.Injective.isDomain (algebraMap R C) hinj
@@ -203,7 +208,8 @@ theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClo
       rw [← Finset.mul_sum, Finset.sum_comm]
       congr 1
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_mul]
     rw [hsum]
     simp only [hz, apply_ite (algebraMap R C), ite_mul, map_zero, zero_mul, Finset.sum_ite_eq',
       Finset.mem_univ, if_true, Units.val_one, one_smul, map_natCast]
@@ -221,7 +227,7 @@ theorem proj_props : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClo
   · intro hsq χ
     exact proj_mem hw _ χ g fun a => comp_smul_mem_sqIdeal_of_fStable AA.carrier hFS a g hsq
 
-theorem proj_nf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ g ∈ afFun p AA.carrier, ∀ χ : MulChar F R, ¬ IsFund p χ → proj χ g ∈ pFun R p N := by
+theorem proj_nf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable (F := F) AA.carrier → ∀ g ∈ afFun p AA.carrier, ∀ χ : MulChar F R, ¬ IsFund p χ → proj χ g ∈ pFun R p N := by
   intro p _ C _ _ _ v R _ _ hv hp F _ _ _ _ f hc N _ _ _ _ AA hFS g hg χ hχ
   have hinj : Function.Injective (algebraMap R C) := hv.hom_inj
   haveI : IsDomain R := Function.Injective.isDomain (algebraMap R C) hinj
@@ -259,7 +265,8 @@ theorem proj_nf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
     exact Ideal.zero_mem _
   have hval : proj χ g x = algebraMap R C (w * ∑ a : Fˣ, χ⁻¹ (a : F) * l a) := by
     simp only [proj]
-    rw [← hw, map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hw, map_mul, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_mul, hl]

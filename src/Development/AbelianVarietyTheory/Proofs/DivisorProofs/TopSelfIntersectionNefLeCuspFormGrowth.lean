@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeImageBirationalLinearSystemEqSelfInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommonRestrIsoTens
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfGermEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegreeImageBirationalLinearSystemEqSelfInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommonRestrIsoTens
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfGermEqZero
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -122,7 +127,7 @@ theorem topSelf_le_growthOn : GlobalTheory.Published.NefNumerics → ∀ (E : Ty
   let S : LinSys c.F := ⟨Y₀ X Z, str₀ X Z, dimFlag Dw, L₀ X Z u, isLB_L₀ X Z u, 0, Fin.elim0⟩
   have hS : S.IsVariety := ⟨hV.1, hV.2.1, hV.2.2, hD⟩
   haveI : IsIntegral (Y₀ X Z) := hS.isIntegral
-  have hp : IsProjOver (strHom c.F (Y₀ X Z)) := by
+  have hp : IsProjOver (strHom c.F (X := (Y₀ X Z))) := by
     rw [strHom_eq (f := str₀ X Z) fun _ => rfl]
     exact hV.2.1
   have hdim : topologicalKrullDim (Y₀ X Z) = dimFlag Dw := ImageDegree.topologicalKrullDim_eq S hS

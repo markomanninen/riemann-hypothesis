@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThConstS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSection
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GenTransferKapCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepThConstS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSection
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.cut_GCore_GenTransferKapCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

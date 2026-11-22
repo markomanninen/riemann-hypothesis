@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.GeometricSideQuadraticFormIdentity
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeometricSideEstimates.GeometricSideQuadraticFormIdentity
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.AutomorphicForm
@@ -16,15 +21,19 @@ private theorem key {E : Type} [Field E] [NumberField E] {a : ℕ} (g : GA E a) 
   rw [← prod_norm_mul_finprod_norm hcx, AutomorphicForm.height, ← mul_assoc, ← Finset.prod_mul_distrib]
   refine mul_le_mul ?_ ?_ (finprod_nonneg fun _ => norm_nonneg _)
     (Finset.prod_nonneg fun w _ => by have := locHeight_pos (infAt w g); positivity)
-  · refine Finset.prod_le_prod (fun _ _ => pow_nonneg (norm_nonneg _) _) fun w _ => ?_
+  · refine Finset.prod_le_prod₀ (fun _ _ => pow_nonneg (norm_nonneg _) _) fun w _ => ?_
     rw [← mul_pow]
     refine pow_le_pow_left₀ (norm_nonneg _) ?_ _
     have h1 : ((c * x : E) : w.Completion) = ∑ j, ((c : w.Completion) * (y j).1 w) * ((infAt w g)⁻¹).val j i := by
       have := congrArg (infEval w) e
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
+      conv at this =>
+        lhs
+        rw [infEval_apply, AdeleRing.algebraMap_fst_apply]
       refine Eq.trans this (Finset.sum_congr rfl fun j _ => ?_)
       rw [map_mul, map_mul, ← infAt_inv]
-      rfl
+      simp only [infEval_apply, AdeleRing.algebraMap_fst_apply, infAt_apply]
     rw [h1]
     calc _ ≤ ∑ _j : Fin a, ‖(c : w.Completion)‖ * r * locHeight (infAt w g) := by
           refine norm_sum_le_of_le _ fun j _ => ?_
@@ -32,12 +41,13 @@ private theorem key {E : Type} [Field E] [NumberField E] {a : ℕ} (g : GA E a) 
           exact mul_le_mul (mul_le_mul_of_nonneg_left (hr j w) (norm_nonneg _))
             (norm_inv_apply_le_locHeight _ j i) (norm_nonneg _) (by positivity)
       _ = _ := by simp; ring
-  · refine finprod_le_finprod (Filter.eventually_cofinite.1 (eventually_norm_eq_one hcx)) (fun _ => norm_nonneg _)
+  · refine finprod_le_finprod₀ (Filter.eventually_cofinite.1 (eventually_norm_eq_one hcx)) (fun _ => norm_nonneg _)
       (finite_mulSupport_locHeight_finAt g) fun p => ?_
     have h1 : ((c * x : E) : p.adicCompletion E) =
         ∑ j, (algebraMap E (Ad E) c * y j).2 p * ((finAt p g)⁻¹).val j i := by
       have := congrArg (finEval p) e
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       refine Eq.trans this (Finset.sum_congr rfl fun j _ => ?_)
       rw [map_mul, ← finAt_inv]
       rfl
@@ -71,11 +81,13 @@ theorem UpperTheory.global_geometric_estimate_of_local :
     exact (congrFun this i).symm
   have hF : ∀ j, (y j).2 = ptF g v j := fun j => by
     change pFin E (∑ k, ratVec v k * g.val k j) = ∑ k, vFin v k * pFin E (g.val k j)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [map_mul]; rfl
   have hI : ∀ j, pInf E (y j) = pt g v j := fun j => by
     change pInf E (∑ k, ratVec v k * g.val k j) = ∑ k, vInf v k * pInf E (g.val k j)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [map_mul]; rfl
   have hn : ∀ (x : Ad E) (w : InfinitePlace E), ‖pInf E x w‖ = ‖x.1 w‖ := fun x w =>
     (AddMonoidHomClass.isometry_iff_norm (InfinitePlace.Completion.extensionEmbedding w)).1

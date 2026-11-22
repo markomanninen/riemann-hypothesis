@@ -1,38 +1,39 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCongr
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.WeightedSlopeExcessDecomposition
-import Formalism.SharpRestriction.GlobalSchurBounds.CMFieldLemmas
-import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
-import Formalism.SharpRestriction.GlobalSchurBounds.ZetaZeroFreeRegion
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.ZetaZeroFreeRegion
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.RamificationTwoAndConjugationAtQAndD
-import Formalism.SharpRestriction.GlobalSchurBounds.Joints
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.LipschitzWeightAndMinimum
-import Development.AutomorphicArithmetic.ConductorsKronecker.dataField
-import Development.AutomorphicArithmetic.ConductorsKronecker.Imports
-import Development.AutomorphicArithmetic.ConductorsKronecker.kronecker
-import Development.AutomorphicArithmetic.ConductorsKronecker.RecSurj
-import Development.AutomorphicArithmetic.ConductorsKronecker.InertiaD
-import Development.AutomorphicArithmetic.ConductorsKronecker.ChCond
-import Development.AutomorphicArithmetic.ConductorsKronecker.IsInertIff
-import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
-import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChBalance
-import Lemmata.GeneralBFactLeftBisAlt.Imports
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.QuadraticLogDerivCongr
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.OneLeThresholdMulPowers
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.WeightedSlopeExcessDecomposition
+public import Formalism.SharpRestriction.GlobalSchurBounds.CMFieldLemmas
+public import Formalism.SharpRestriction.GlobalSchurBounds.ShortIntervalPrimes
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
+public import Formalism.SharpRestriction.GlobalSchurBounds.ZetaZeroFreeRegion
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.ZetaZeroFreeRegion
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.RamificationTwoAndConjugationAtQAndD
+public import Formalism.SharpRestriction.GlobalSchurBounds.Joints
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.LipschitzWeightAndMinimum
+public import Development.AutomorphicArithmetic.ConductorsKronecker.dataField
+public import Development.AutomorphicArithmetic.ConductorsKronecker.Imports
+public import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+public import Development.AutomorphicArithmetic.ConductorsKronecker.RecSurj
+public import Development.AutomorphicArithmetic.ConductorsKronecker.InertiaD
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.ConductorsKronecker.IsInertIff
+public import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
+public import Development.AutomorphicArithmetic.DedekindLFunctions.LandauTheorems.ChBalance
+public import Lemmata.GeneralBFactLeftBisAlt.Imports
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.MainNotions.LinkB
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.FrobeniusOrbits
-
-def ThickSetChoice (R : Ranks) (Lw : ℕ) (C : ℝ) (T₂ : Finset ℕ) : Prop :=
-  (∀ s ∈ T₂, 4 * Lw * s < R.n0) ∧ NoRel T₂ Lw ∧
-  (R.n0 : ℝ) * Real.exp (-(C * Real.sqrt (Real.log (R.n0 : ℝ) * Real.log Lw))) / Lw ≤ T₂.card
 
 section BernoulliSumsFrobeniusOrbits
 
@@ -47,29 +48,14 @@ def GoodT (L : SizeData₂ D) (T : Finset (G.HH D)) (h t0 : G.HH D) : Prop :=
 
 def BadT (X : G.Inst D L) (h t : G.HH D) (T : Finset (G.HH D)) : Prop := ¬ GoodT L T h (X.bs h t)
 
-open Classical in
 
+open Classical in
 def ServedOrbitsSecondMoment (X : G.Inst D L) (Cb : ℝ) : Prop :=
   ∀ h : G.HH D, L.sc.x ^ (L.sc.eps / 4) ≤ (addOrderOf h : ℝ) → ∀ t : G.HH D,
     (∑ T : Finset (G.HH D), if t ∈ T ∧ BadT X h t T then UnusedSlot33.bern L.sc.delta1 T else 0) ≤
       (Cb * L.sc.x ^ (-2 : ℝ)) * L.sc.delta1
 
-open Classical in
 
-def TTChoice (X : G.Inst D L) (Cb : ℝ) (T : Finset (G.HH D)) : Prop :=
-  L.sc.delta1 * D.R.n / 2 ≤ (T.card : ℝ) ∧ (T.card : ℝ) ≤ 2 * L.sc.delta1 * D.R.n ∧
-  ∑ p ∈ largeOrderResiduePrimes L, Real.log p / p * ((T.filter (fun t => BadT X (G.hP D p) t T)).card : ℝ) ≤
-    4 * (Cb * L.sc.x ^ (-2 : ℝ)) * L.sc.delta1 * D.R.n * ∑ p ∈ largeOrderResiduePrimes L, Real.log p / p
-
-open Classical in
-
-theorem large_order_primes_eq_filter (L : SizeData₂ D) : largeOrderResiduePrimes L = (AuxBlock8.primesResidueBelow D L.sc.X').filter
-      (fun p => L.sc.x ^ (L.sc.eps / 4) ≤ (addOrderOf (G.hP D p) : ℝ)) := by
-  ext p
-  simp only [largeOrderResiduePrimes, AuxBlock8.primesResidueBelow, Finset.mem_filter, Finset.mem_range]
-  constructor
-  · rintro ⟨h1, h2, h3, h4⟩; exact ⟨⟨h1, h2, Nat.lt_ceil.mp h1, h3⟩, h4⟩
-  · rintro ⟨⟨h1, h2, -, h3⟩, h4⟩; exact ⟨h1, h2, h3, h4⟩
 
 end BernoulliSumsFrobeniusOrbits
 
@@ -102,23 +88,10 @@ def RankHyp (D : D7) : Prop :=
 theorem rank_formula_of_part_four (Lv : LevelData D) (h : StandardLattice.Conclusion4f D Lv) (hR : RankHyp D) : RankM D :=
   fun u => h hR.1 hR.2.1 u (hR.2.2 u).1 (hR.2.2 u).2
 
-def DataBF {eps : ℝ} (Fm : FamP eps) (CB : ℝ) : Prop :=
-  ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, ∃ (Δ : ℕ) (w : ℕ → (Fm.D x i).what₂.Tau → ℝ),
-    StandardLattice.DataB (Fm.D x i) (Fm.L x i).sc CB Δ w
-
 def RankHypF {eps : ℝ} (Fm : FamP eps) : Prop :=
   ∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, RankHyp (Fm.D x i)
 
 end Proviso
-
-def ChosenExists (CH : ℝ) : Prop :=
-  ∃ Fm : DFamP, ∀ ε (h0 : 0 < ε) (h1 : ε < 1 / 52), ChosenEx (Fm ε h0 h1) CH
-
-def ChoicesMade {eps : ℝ} (Fm : FamP eps) (CH C0 Cb : ℝ) : Prop :=
-  (∃ x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x,
-    ThickSetChoice (Fm.D x i).R (Fm.D x i).host.Lw (Fm.D x i).host.CT2 (Fm.D x i).host.T2 ∧
-    TTChoice (Fm.Gx x i) Cb (Fm.D x i).host.TT) ∧
-  ShortIntervalPrimes.FamilyPrimesAsPropTwoFive Fm ∧ ChosenCode Fm C0 CH
 
 end Formalism.MainNotions.LinkB
 
@@ -170,9 +143,6 @@ open NumberField Formalism.FrobeniusOrbits Formalism.BasicNotions Formalism.Main
 open scoped Pointwise ComplexConjugate
 
 open Classical
-
-instance factQ (D : D7) : Fact D.host.q.Prime := ⟨D.host.hyp.1⟩
-instance factD (D : D7) : Fact D.host.d.Prime := ⟨D.host.hyp.2.1⟩
 
 abbrev MM (D : D7) : Type := D5.E0 × D.R.A
 
@@ -437,12 +407,6 @@ namespace Formalism.MainNotions.Lnk
 
 open Formalism.BasicNotions Formalism.D5 Formalism.FrobeniusOrbits Formalism.LFunctionChainParameters.LHost Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds
 
-theorem Xpp_eq (s : Scale) (n : ℕ) (hn : (1 : ℝ) ≤ n) : s.X'' n = s.x * n * s.X' := by
-  obtain ⟨hx, hb, ha, hX, hb'⟩ := sc_pos s
-  have hn0 : (0 : ℝ) < n := by linarith
-  unfold Scale.X'' Scale.w'' Scale.b'
-  field_simp
-
 section Chars
 
 open DirichletCharacter
@@ -471,8 +435,8 @@ theorem log_deriv_L_one_congr_primitive {N1 N2 : ℕ} [NeZero N1] [NeZero N2] (�
 
 end Chars
 
-open Formalism.MainNotions.ZetaZeroFreeRegion Formalism.MainNotions.LnkBr in
 
+open Formalism.MainNotions.ZetaZeroFreeRegion Formalism.MainNotions.LnkBr in
 theorem char_at {D : D7} (L : SizeData₂ D) (x eps c6 C5 : ℝ) : Char_at L x eps c6 C5 := by
   intro e AD' he hAD
   subst he
@@ -1140,7 +1104,7 @@ theorem sEE_inner (D : D7) (x y : D.what₂.EE) : inner ℂ (D.sEE x) (D.sEE y) 
   have e1 : D.sEE x + D.sEE y = D.sEE (x + y) := (map_add _ _ _).symm
   have e2 : D.sEE x - D.sEE y = D.sEE (x - y) := (map_sub _ _ _).symm
   have e3 : D.sEE x - (RCLike.I : ℂ) • D.sEE y = D.sEE (x + (RCLike.I : ℂ) • y) := by
-    rw [map_add, map_smulₛₗ, hI, neg_smul, sub_eq_add_neg]
+    rw [map_add (f := _), map_smulₛₗ, hI, neg_smul, sub_eq_add_neg]
   have e4 : D.sEE x + (RCLike.I : ℂ) • D.sEE y = D.sEE (x - (RCLike.I : ℂ) • y) := by
     rw [map_sub, map_smulₛₗ, hI, neg_smul, sub_neg_eq_add]
   have f3 : ‖y - (RCLike.I : ℂ) • x‖ = ‖x + (RCLike.I : ℂ) • y‖ := by
@@ -1192,13 +1156,13 @@ theorem exists_rowBasis (D : D7) (V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE) 
   obtain ⟨f, hf⟩ := hv.exists_orthonormalBasis_extension_of_card_eq hcard
   exact ⟨f, fun k => by rw [hf (Sum.inl k) ⟨k, rfl⟩]; rfl⟩
 
-open Module in
 
+open Module in
 def bN (D : D7) (u : D.what₂.Word) : Basis (D.div.Nu u).ι ℂ (D.what₂.Mu u) :=
   Basis.mk (D.jN_basis u).1 (le_of_eq (D.jN_basis u).2.symm)
 
-open Module in
 
+open Module in
 def bE (D : D7) : Basis D.div.RR.ι ℂ D.what₂.EE := Basis.mk D.jEE_basis.1 (le_of_eq D.jEE_basis.2.symm)
 
 theorem bN_apply (D : D7) (u : D.what₂.Word) (j : (D.div.Nu u).ι) : bN D u j = D.jN u ((D.div.Nu u).b j) := by
@@ -1209,11 +1173,13 @@ theorem bE_apply (D : D7) (k : D.div.RR.ι) : bE D k = D.jEE (D.div.RR.b k) := b
 
 theorem bes_sum_left (D : D7) (u : D.what₂.Word) (F : D.what₂.EE) {ι : Type} (t : Finset ι) (c : ι → ℂ)
     (g : ι → D.what₂.Mu u) : D.besS u (∑ i ∈ t, c i • g i) F = ∑ i ∈ t, c i * D.besS u (g i) F := by
-  simp only [besS_eq, map_sum, map_smul, inner_sum, inner_smul_right]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [besS_eq, map_sum, map_smul, inner_sum, inner_smul_right]
 
 theorem bes_sum_right (D : D7) (u : D.what₂.Word) (φ : D.what₂.Mu u) {ι : Type} (t : Finset ι) (c : ι → ℂ)
     (g : ι → D.what₂.EE) : D.besS u φ (∑ i ∈ t, c i • g i) = ∑ i ∈ t, c i * D.besS u φ (g i) := by
-  simp only [besS_eq, map_sum, map_smulₛₗ, sum_inner, inner_smul_left, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [besS_eq, map_sum, map_smulₛₗ, sum_inner, inner_smul_left, Complex.conj_conj]
 
 def Vr0 (D : D7) (U : ∀ u, D.what₂.Mu u ≃ₗᵢ[ℂ] D.what₂.Mu u) (u : D.what₂.Word) :
     Matrix (Fin (D.duS u)) (D.div.Nu u).ι ℂ :=
@@ -1239,7 +1205,8 @@ theorem pm_vr (D : D7) (f : OrthonormalBasis (RowIx D) ℂ D.s.HH) (U : ∀ u, D
     (PMat D f u * Vr0 D U u) a j = inner ℂ (f a) (D.s.Pu u (iotaC D u (U u (oM D u j)))) := by
   rw [Matrix.mul_apply]
   conv_rhs => rw [← (eC D u).sum_repr' (iotaC D u (U u (oM D u j)))]
-  simp only [map_sum, map_smul, inner_sum, inner_smul_right, PMat, Vr0]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, inner_sum, inner_smul_right, PMat, Vr0]
   exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
 
 theorem block_eq (D : D7) (hRat : D.BuRational) (V : D.what₂.EE ≃ₗᵢ[ℂ] D.what₂.EE)
@@ -1260,7 +1227,8 @@ theorem block_eq (D : D7) (hRat : D.BuRational) (V : D.what₂.EE ≃ₗᵢ[ℂ]
   have e1 : oM D u j = ∑ j', (bN D u).repr (oM D u j) j' • bN D u j' := ((bN D u).sum_repr _).symm
   have e2 : oE D k = ∑ k', (bE D).repr (oE D k) k' • bE D k' := ((bE D).sum_repr _).symm
   conv_lhs => rw [e1, e2]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   rw [bes_sum_left]
   simp only [bes_sum_right, hbase]
   rw [Matrix.mul_apply]
@@ -1481,8 +1449,8 @@ variable {D : D7} (L : SizeData₂ D)
 
 def lE (w : D.what₂.places.Pl) : ℝ := SizeData₂.lwP w * (D.what₂.places.ramIdx w : ℝ)
 
-open Classical in
 
+open Classical in
 def suppT (u : D.what₂.Word) : Finset D.what₂.places.Pl :=
   L.supp.filter (fun w => D.what₂.places.resChar w = (D.mem u).A.T)
 
@@ -1511,8 +1479,8 @@ theorem Ee_eq' (u : D.what₂.Word) : L.Ee u = UnitWeightPartition.Ee L.supp (Si
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl (fun w _ => sz_eq w _)
 
-open Classical in
 
+open Classical in
 def Places_at (C : ℝ) : Prop :=
   ∀ u, ∃ (sg' : D.what₂.places.Pl → ℝ) (de muMu muMaxMu PT Rd LT RX : ℝ),
     UnitWeightPartition.HypLow L.supp (suppT L u) (SizeData₂.lifts D) lE L.gainD L.F (L.E u) L.tau L.io (fun w => (L.lenMN u w : ℝ)) sg'
@@ -1524,8 +1492,8 @@ def Places_at (C : ℝ) : Prop :=
     LT ≤ C * D.host.TT.card * D.R.m * (L.sc.a / D.R.k + L.sc.b') * Real.log ((D.mem u).A.T : ℝ) ∧
     RX ≤ C * L.sc.X'' D.R.n
 
-open Classical in
 
+open Classical in
 theorem slopesN_at_of (C : ℝ) (hC : 4 ≤ C) (hio : 0 ≤ IOsum L) (h : Places_at L C) : SlopesN_at L C := by
   intro u
   obtain ⟨sg', de, muMu, muMaxMu, PT, Rd, LT, RX, h1, h2, h3, h4, h5⟩ := h u
@@ -1671,128 +1639,11 @@ open Formalism.BasicNotions Formalism.D5 Formalism.LFunctionChainParameters.LHos
 
 variable {eps : ℝ}
 
-def Carries (Fm : FamP eps) {x : ℝ} (i : Fm.Ix x) (av bv : ℕ → ℤ) : Prop :=
-  ∀ t : (Fm.D x i).host.TT, (Fm.L x i).aT t = av (t : (Fm.D x i).R.A).val ∧
-    (Fm.L x i).bT t = bv (t : (Fm.D x i).R.A).val
-
-def AdmWt (Fm : FamP eps) {x : ℝ} (i0 : Fm.Ix x) (av bv : ℕ → ℤ) : Prop :=
-  ∀ t ∈ Fm.TTn x, aWin (Fm.L x i0) (av t) ∧ (Fm.L x i0).sc.b' ≤ (bv t : ℝ) ∧ (bv t : ℝ) ≤ Fm.bTop x
-
 def AskIs {D : D7} (L : SizeData₂ D) (A : ℝ) : Prop :=
   ∀ (e : Formalism.HC.Frame) (m : ℕ) (AD : ArithData e.A) (N : ℕ) (TT : Finset e.A) (a : e.A → ℝ)
     (w : Fin m → E0 × e.A → ℝ), Reads L e m TT a w → HEq AD (arithOf D.host.toHostRaw) →
     (∀ j t ρ, t ∈ TT → InPhi ρ → a t / w j ρ ≤ N) →
     (∑ t ∈ TT, ∑ j : Fin m, Formalism.LFunctionChainParameters.characterSumData.ASK AD N (a t) t (w j)) = A
-
-def EstimatesAtScale (Fm : FamP eps) (x Cord e K : ℝ) : Prop :=
-  ∃ (P : Par) (ι κ τ U Ω : Type) (_ : Fintype Ω) (π : Ω → ℝ) (Ps s sB : Finset ℕ) (J : Finset κ) (TT : Finset τ)
-    (BAD : ℕ → τ → Prop) (Sig : ℕ → Ω → ℝ) (io : U → ℕ → Ω → ℝ) (D : U → Ω → LD ι κ τ)
-    (i0 : Fm.Ix x) (av bv : Ω → ℕ → ℤ),
-    P.x = x ∧ P.ε = eps ∧ P.Cord = Cord ∧ Windows P e K ∧
-    WindowSettingHypotheses P π Ps s sB J TT BAD Sig io D ∧
-    (∀ o, AdmWt Fm i0 (av o) (bv o)) ∧
-    ∀ o (i : Fm.Ix x), Carries Fm i (av o) (bv o) →
-      J.card = (Fm.D x i).R.m ∧ TT.card = (Fm.D x i).host.TT.card ∧
-      ∃ υ : U, (D υ o).Ga J = (Fm.L x i).Ga ∧ (∑ p ∈ s, Real.log p * io υ p o) = IOsum (Fm.L x i) ∧
-        AskIs (Fm.L x i) ((D υ o).ASK P.d Ps J TT)
-
-def SmallOrderPrimes (Fm : FamP eps) : Prop :=
-  ∀ Cord : ℝ, 0 ≤ Cord → ∃ e K x0 : ℝ, ∀ x ≥ x0, x ∈ Fm.Win → EstimatesAtScale Fm x Cord e K
-
-theorem lossF_of_core (Fm : FamP eps) (h : SmallOrderPrimes Fm) : LossF Fm 0 := by
-  obtain ⟨Cord, hC0, hJ⟩ := joint_bound_eventually
-  obtain ⟨e, K, x0, hx⟩ := h Cord hC0
-  have heps : 0 < eps := by
-    obtain ⟨i⟩ := Fm.Ix_zero
-    rw [← Fm.L_eps 0 i]
-    exact (Fm.L 0 i).sc.eps_pos
-  have heps4 : eps < 1 / 4 := by
-    obtain ⟨i⟩ := Fm.Ix_zero
-    have := (Fm.L 0 i).sc.eps_lt
-    rw [Fm.L_eps 0 i] at this
-    linarith
-  obtain ⟨x1, hJ'⟩ := hJ eps e K heps heps4
-  refine ⟨3 * |K| + 13, max x0 (max x1 (Fm.x1 + 1)), by positivity, fun x hxx hw => ?_⟩
-  have e0 : x ≥ x0 := le_trans (le_max_left _ _) hxx
-  have e1 : x1 ≤ x := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hxx
-  have e2 : Fm.x1 < x := by
-    have := le_trans (le_trans (le_max_right x1 (Fm.x1 + 1)) (le_max_right _ _)) hxx
-    linarith
-  obtain ⟨P, ι, κ, τ, U, Ω, iΩ, π, Ps, s, sB, J, TT, BAD, Sig, io, D, i0, av, bv, hPx, hPe, hPC, hW, hS, hadm,
-    hties⟩ := hx x e0 hw
-  obtain ⟨o, -, hc1, hc2⟩ := hJ' P hPe hPC (by rw [hPx]; exact e1) hW ι κ τ U Ω π Ps s sB J TT BAD Sig io D hS
-  refine ⟨i0, av o, bv o, hadm o, fun i hi => ?_⟩
-  obtain ⟨hJc, hTc, υ, hGa, hIo, hAsk⟩ := hties o i hi
-  have hPC0 : 0 ≤ P.C := hW.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-  have hPCK : P.C ≤ K := hW.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
-  have hb : P.b = (Fm.L x i).sc.b := by
-    show Real.exp (P.x ^ P.ε) = Real.exp ((Fm.L x i).sc.x ^ (Fm.L x i).sc.eps)
-    rw [hPx, hPe, Fm.L_x x i e2, Fm.L_eps x i]
-  have hU : unitU P J.card TT.card =
-      ((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b := by
-    unfold unitU; rw [hJc, hTc, hb]
-  have hU0 : 0 ≤ ((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b :=
-    mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)) (Real.exp_pos _).le
-  have hone : (Fm.L x i).sc.x ^ ((0 : ℝ) * (Fm.L x i).sc.eps) = 1 := by rw [zero_mul, Real.rpow_zero]
-  have hKabs : K ≤ |K| := le_abs_self K
-  have hbig : (3 * P.C + 13) * (((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b) ≤
-      (3 * |K| + 13) * (Fm.D x i).host.TT.card * (Fm.D x i).R.m * (Fm.L x i).sc.b *
-        (Fm.L x i).sc.x ^ ((0 : ℝ) * (Fm.L x i).sc.eps) := by
-    rw [hone, mul_one]
-    have := mul_le_mul_of_nonneg_right (show 3 * P.C + 13 ≤ 3 * |K| + 13 by linarith) hU0
-    simpa [mul_assoc] using this
-  have hsmall : ((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b ≤
-      (3 * P.C + 13) * (((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b) := by
-    have := mul_le_mul_of_nonneg_right (show (1 : ℝ) ≤ 3 * P.C + 13 by linarith) hU0
-    linarith
-  constructor
-  · have h2 := hc2 υ
-    rw [hIo, hU] at h2
-    linarith
-  · intro e' m' AD N TT' a w hr hAD hcut
-    rw [hAsk e' m' AD N TT' a w hr hAD hcut]
-    have h1 := hc1 υ
-    rw [hGa, hU] at h1
-    linarith
-
-theorem lossF_mono (Fm : FamP eps) {eL eL' : ℝ} (hle : eL ≤ eL') (h : LossF Fm eL) : LossF Fm eL' := by
-  obtain ⟨C, x0, hC, hx⟩ := h
-  refine ⟨C, x0, hC, fun x hxx hw => ?_⟩
-  obtain ⟨i0, av, bv, hadm, hl⟩ := hx x hxx hw
-  refine ⟨i0, av, bv, hadm, fun i hi => ?_⟩
-  obtain ⟨h1, h2⟩ := hl i hi
-  have hsx := (Fm.L x i).sc.one_lt_alt
-  have hpow : (Fm.L x i).sc.x ^ (eL * (Fm.L x i).sc.eps) ≤ (Fm.L x i).sc.x ^ (eL' * (Fm.L x i).sc.eps) :=
-    Real.rpow_le_rpow_of_exponent_le hsx.le (mul_le_mul_of_nonneg_right hle (Fm.L x i).sc.eps_pos.le)
-  have hU0 : 0 ≤ C * ((Fm.D x i).host.TT.card : ℝ) * (Fm.D x i).R.m * (Fm.L x i).sc.b :=
-    mul_nonneg (mul_nonneg (mul_nonneg hC (Nat.cast_nonneg _)) (Nat.cast_nonneg _)) (Real.exp_pos _).le
-  have hm := mul_le_mul_of_nonneg_left hpow hU0
-  exact ⟨le_trans h1 hm, fun e m AD N TT a w hr hAD hcut => le_trans (h2 e m AD N TT a w hr hAD hcut) hm⟩
-
-theorem tops_clause {D : D7} {L : SizeData₂ D} (X : G.Inst D L) (Cb m : ℝ) (hCb : 0 ≤ Cb) (hm : 0 ≤ m)
-    (h1 : ChTT_at L) (h2 : ChBad_at X Cb) :
-    ∑ p ∈ largeOrderResiduePrimes L, 4 * m * L.sc.a * (Real.log p / p) * ((badTops X p).card : ℝ) ≤
-      32 * (Cb * L.sc.x ^ (-2 : ℝ)) * m * L.sc.a * D.host.TT.card * ∑ p ∈ largeOrderResiduePrimes L, Real.log p / p := by
-  have hx : 0 < L.sc.x := lt_trans one_pos L.sc.one_lt_alt
-  have ha : 0 ≤ L.sc.a := (sc_a_pos L.sc).le
-  have hβ : 0 ≤ Cb * L.sc.x ^ (-2 : ℝ) := mul_nonneg hCb (Real.rpow_nonneg hx.le _)
-  have hS : 0 ≤ ∑ p ∈ largeOrderResiduePrimes L, Real.log (p : ℝ) / p :=
-    Finset.sum_nonneg fun p _ => div_nonneg (Real.log_natCast_nonneg p) (Nat.cast_nonneg p)
-  have e1 : ∑ p ∈ largeOrderResiduePrimes L, 4 * m * L.sc.a * (Real.log p / p) * ((badTops X p).card : ℝ) =
-      4 * m * L.sc.a * ∑ p ∈ largeOrderResiduePrimes L, Real.log p / p * ((badTops X p).card : ℝ) := by
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun p _ => by ring
-  rw [e1]
-  have h3 : L.sc.delta1 * D.R.n ≤ 2 * (D.host.TT.card : ℝ) := by have := h1.1; linarith
-  have h4 : 4 * (Cb * L.sc.x ^ (-2 : ℝ)) * L.sc.delta1 * D.R.n * ∑ p ∈ largeOrderResiduePrimes L, Real.log (p : ℝ) / p ≤
-      8 * (Cb * L.sc.x ^ (-2 : ℝ)) * D.host.TT.card * ∑ p ∈ largeOrderResiduePrimes L, Real.log (p : ℝ) / p := by
-    apply mul_le_mul_of_nonneg_right _ hS
-    have := mul_le_mul_of_nonneg_left h3 (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hβ)
-    linarith
-  have h5 := mul_le_mul_of_nonneg_left (le_trans h2 h4) (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hm) ha)
-  calc _ ≤ 4 * m * L.sc.a * (8 * (Cb * L.sc.x ^ (-2 : ℝ)) * D.host.TT.card *
-        ∑ p ∈ largeOrderResiduePrimes L, Real.log (p : ℝ) / p) := h5
-    _ = _ := by ring
 
 theorem ioP_le {D : D7} {L : SizeData₂ D} (X : G.Inst D L) (K : G.Consts) (p : ℕ)
     (hS : ∀ t0 ∈ G.VV X K (G.aL L) (G.bL L) p,
@@ -1823,107 +1674,11 @@ section Points
 
 variable (Fm : FamP eps) (x : ℝ) (i0 : Fm.Ix x)
 
-def winAz : Finset ℤ :=
-  Finset.Icc ⌈(Fm.L x i0).sc.a⌉ ⌊(Fm.L x i0).sc.a + (Fm.L x i0).sc.a /
-    (((Fm.D x i0).R.k : ℝ) * (Fm.L x i0).sc.x ^ (Scale.A / 2))⌋
-
-def winBz : Finset ℤ := Finset.Icc ⌈(Fm.L x i0).sc.b'⌉ ⌊Fm.bTop x⌋
-
-abbrev Wt : Type := (t : ↥(Fm.TTn x)) → ↥(winAz Fm x i0) × ↥(winBz Fm x i0)
-
 variable {Fm x i0}
 
-def avOf (o : Wt Fm x i0) (n : ℕ) : ℤ := if h : n ∈ Fm.TTn x then ((o ⟨n, h⟩).1 : ℤ) else 0
 
-def bvOf (o : Wt Fm x i0) (n : ℕ) : ℤ := if h : n ∈ Fm.TTn x then ((o ⟨n, h⟩).2 : ℤ) else 0
-
-theorem admissible_weight_of_vector (o : Wt Fm x i0) : AdmWt Fm i0 (avOf o) (bvOf o) := by
-  intro t ht
-  simp only [avOf, bvOf, dif_pos ht]
-  have h1 := Finset.mem_Icc.mp (o ⟨t, ht⟩).1.2
-  have h2 := Finset.mem_Icc.mp (o ⟨t, ht⟩).2.2
-  exact ⟨⟨Int.ceil_le.mp h1.1, Int.le_floor.mp h1.2⟩, Int.ceil_le.mp h2.1, Int.le_floor.mp h2.2⟩
-
-theorem wt_nonempty (hx : Fm.x1 < x) : Nonempty (Wt Fm x i0) :=
-  ⟨fun τ => (⟨(Fm.L x i0).aT ((eqTT Fm x i0).symm τ), Finset.mem_Icc.mpr
-      ⟨Int.ceil_le.mpr ((Fm.L x i0).aT_win _).1, Int.le_floor.mpr ((Fm.L x i0).aT_win _).2⟩⟩,
-    ⟨(Fm.L x i0).bT ((eqTT Fm x i0).symm τ), Finset.mem_Icc.mpr
-      ⟨Int.ceil_le.mpr ((Fm.L x i0).bT_ge _), Int.le_floor.mpr (Fm.bT_le x hx i0 _)⟩⟩)⟩
-
-theorem exists_carrier (hCov : Fm.CoverAll) (hx : Fm.x1 < x) (o : Wt Fm x i0) :
-    ∃ i : Fm.Ix x, Carries Fm i (avOf o) (bvOf o) := by
-  obtain ⟨i, -, hi⟩ := hCov x hx i0 0 (avOf o) (bvOf o) (by unfold Ranks.n; positivity) (admissible_weight_of_vector o)
-  exact ⟨i, hi⟩
-
-open Classical in
-
-def StatementsAtPoints (Fm : FamP eps) (x : ℝ) (i0 : Fm.Ix x) (P : Par) {ι κ τ : Type} (Ps s sB : Finset ℕ) (J : Finset κ)
-    (TT : Finset τ) (BAD : ℕ → τ → Prop) (Sig : ℕ → Wt Fm x i0 → ℝ) (ioP : Fm.Ix x → ℕ → ℝ)
-    (ld : Fm.Ix x → LD ι κ τ) : Prop :=
-  TT.Nonempty ∧ (∀ p ∈ Ps, p.Prime ∧ p ≠ 2) ∧
-  (∀ p ∈ s, p.Prime ∧ (p : ℝ) ≤ P.Y) ∧ (∀ p ∈ s, ∀ o, 0 ≤ Sig p o) ∧
-  (∀ p ∈ s, (∑ o, Sig p o) / (Fintype.card (Wt Fm x i0) : ℝ) ≤ P.s₀) ∧
-  (∀ p ∈ sB, p.Prime ∧ (p : ℝ) ≤ P.Xp) ∧
-  (∑ p ∈ sB, 4 * (J.card : ℝ) * P.a * (Real.log p / p) * ((TT.filter fun t => BAD p t).card : ℝ) ≤
-    32 * P.β * (J.card : ℝ) * P.a * TT.card * ∑ p ∈ sB, Real.log p / p) ∧
-  ∀ (o : Wt Fm x i0) (i : Fm.Ix x), Carries Fm i (avOf o) (bvOf o) →
-    (∀ p ∈ s, ioP i p ≤ 2 * Sig p o * (2 * ((J.card : ℝ) * TT.card * P.a) / p)) ∧
-    ParametersHyp P Ps J TT (ld i) ∧ FirstHyp P Ps (ld i).cl ∧
-    (∀ p ∈ Ps, (ld i).cl p = PClass.second → p ∈ s ∧ P.θ < Sig p o) ∧
-    (∀ p ∈ Ps, (ld i).cl p = PClass.served → ∀ t ∈ TT \ (ld i).TTp p, p ∈ sB ∧ BAD p t) ∧
-    J.card = (Fm.D x i).R.m ∧ TT.card = (Fm.D x i).host.TT.card ∧
-    (ld i).Ga J = (Fm.L x i).Ga ∧ (∑ p ∈ s, Real.log p * ioP i p) = IOsum (Fm.L x i) ∧
-    AskIs (Fm.L x i) ((ld i).ASK P.d Ps J TT)
-
-open Classical in
-theorem estimates_at_scale_of_points (hCov : Fm.CoverAll) (hx : Fm.x1 < x) (P : Par) {ι κ τ : Type} (Ps s sB : Finset ℕ) (J : Finset κ)
-    (TT : Finset τ) (BAD : ℕ → τ → Prop) (Sig : ℕ → Wt Fm x i0 → ℝ) (ioP : Fm.Ix x → ℕ → ℝ)
-    (ld : Fm.Ix x → LD ι κ τ) (Cord e K : ℝ)
-    (hP : P.x = x ∧ P.ε = eps ∧ P.Cord = Cord ∧ Windows P e K)
-    (h : StatementsAtPoints Fm x i0 P Ps s sB J TT BAD Sig ioP ld) : EstimatesAtScale Fm x Cord e K := by
-  obtain ⟨g1, g2, g3, g4, g5, g6, g7, hpt⟩ := h
-  have := wt_nonempty (i0 := i0) hx
-  have hcard : (0 : ℝ) < (Fintype.card (Wt Fm x i0) : ℝ) := by exact_mod_cast Fintype.card_pos
-  refine ⟨P, ι, κ, τ, {σ : Wt Fm x i0 → Fm.Ix x // ∀ o, Carries Fm (σ o) (avOf o) (bvOf o)}, Wt Fm x i0, inferInstance,
-    fun _ => 1 / (Fintype.card (Wt Fm x i0) : ℝ), Ps, s, sB, J, TT, BAD, Sig, fun υ p o => ioP (υ.1 o) p,
-    fun υ o => ld (υ.1 o), i0, avOf, bvOf, hP.1, hP.2.1, hP.2.2.1, hP.2.2.2, ?_, admissible_weight_of_vector, ?_⟩
-  · refine ⟨g1, g2, fun _ => by positivity, ?_, g3, g4, ?_, ?_, g6, g7, ?_⟩
-    · rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-      field_simp
-    · intro p hp
-      have := g5 p hp
-      rw [← Finset.mul_sum, one_div, inv_mul_eq_div]
-      exact this
-    · intro υ p hp o
-      exact (hpt o (υ.1 o) (υ.2 o)).1 p hp
-    · intro υ o
-      obtain ⟨-, a2, a3, a4, a5, -⟩ := hpt o (υ.1 o) (υ.2 o)
-      exact ⟨a2, a3, a4, a5⟩
-  · intro o i hi
-    obtain ⟨-, -, -, -, -, a6, a7, a8, a9, a10⟩ := hpt o i hi
-    refine ⟨a6, a7, ⟨fun o' => if h : o' = o then i else (exists_carrier hCov hx o').choose, fun o' => ?_⟩, ?_⟩
-    · by_cases h : o' = o
-      · simp only [dif_pos h]; rw [h]; exact hi
-      · simp only [dif_neg h]; exact (exists_carrier hCov hx o').choose_spec
-    · simp only [dif_pos rfl]
-      exact ⟨a8, a9, a10⟩
 
 end Points
-
-def StatementsAtPointsLargeScales (Fm : FamP eps) : Prop :=
-  ∀ Cord : ℝ, 0 ≤ Cord → ∃ e K x0 : ℝ, ∀ x ≥ x0, x ∈ Fm.Win → ∃ (i0 : Fm.Ix x) (P : Par) (ι κ τ : Type) (Ps s sB : Finset ℕ)
-    (J : Finset κ) (TT : Finset τ) (BAD : ℕ → τ → Prop) (Sig : ℕ → Wt Fm x i0 → ℝ) (ioP : Fm.Ix x → ℕ → ℝ)
-    (ld : Fm.Ix x → LD ι κ τ),
-    (P.x = x ∧ P.ε = eps ∧ P.Cord = Cord ∧ Windows P e K) ∧ StatementsAtPoints Fm x i0 P Ps s sB J TT BAD Sig ioP ld
-
-theorem estimates_of_points_family (Fm : FamP eps) (hCov : Fm.CoverAll) (h : StatementsAtPointsLargeScales Fm) : SmallOrderPrimes Fm := by
-  intro Cord hC
-  obtain ⟨e, K, x0, hx⟩ := h Cord hC
-  refine ⟨e, K, max x0 (Fm.x1 + 1), fun x hxx hw => ?_⟩
-  have e0 : x ≥ x0 := le_trans (le_max_left _ _) hxx
-  have e1 : Fm.x1 < x := by have := le_trans (le_max_right x0 (Fm.x1 + 1)) hxx; linarith
-  obtain ⟨i0, P, ι, κ, τ, Ps, s, sB, J, TT, BAD, Sig, ioP, ld, hP, hpts⟩ := hx x e0 hw
-  exact estimates_at_scale_of_points hCov e1 P Ps s sB J TT BAD Sig ioP ld Cord e K hP hpts
 
 end Formalism.MainNotions.Lnk
 

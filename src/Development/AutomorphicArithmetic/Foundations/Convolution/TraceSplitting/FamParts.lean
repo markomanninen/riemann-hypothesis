@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamSat
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.LiftSum
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FamSat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.LiftSum
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V.Published PositivityTheory.RgJS UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.T Filter
 
@@ -52,7 +56,8 @@ theorem UpperTheory.ConvolutionTheory.T.famParts :
       simpa using this
     · have hN := (places F E hl).2.2.2.2.1
       filter_upwards [hsum, hT.eventually_cofinite_notMem] with w hw hwS
-      obtain ⟨B, ⟨B1, hB1, e1⟩, hB'⟩ := hw (resDeg F w) (hN w)
+      obtain ⟨B, ⟨B1, hB1, e1⟩, hB'⟩ := hw (resDeg F w) (by
+        simpa only [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hN w)
       obtain ⟨C, ⟨C1, hC1, e2⟩, e⟩ := hπ _ hwS
       have e3 : B = C := by
         rw [e1, e2]

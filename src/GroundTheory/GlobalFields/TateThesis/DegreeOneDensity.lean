@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.DegreeOnePrimes
-import GroundTheory.GlobalFields.TateThesis.PrimeZetaPole
-import GroundTheory.GlobalFields.KummerTheory.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.DegreeOnePrimes
+public import GroundTheory.GlobalFields.TateThesis.PrimeZetaPole
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -31,31 +35,34 @@ theorem primeIdealZetaSum_union {A B : Set (HeightOneSpectrum (𝓞 K))} (hd : D
     (f := fun w : HeightOneSpectrum (𝓞 K) => (absNorm w.asIdeal : ℝ) ^ (-s)) hd
     (summable_absNorm_rpow_neg_subtype A hs) (summable_absNorm_rpow_neg_subtype B hs)
 
+open private HasDirichletDensity.eq_1 from Mathlib.NumberTheory.NumberField.DirichletDensity in
 theorem hasDirichletDensity_zero_of_isBoundedUnder {S : Set (HeightOneSpectrum (𝓞 K))}
     (hS : IsBoundedUnder (· ≤ ·) (𝓝[>] 1) fun s => S.primeIdealZetaSum s) :
     S.HasDirichletDensity 0 := by
   obtain ⟨C, hC⟩ := hS
   have hC' : ∀ᶠ s in 𝓝[>] (1 : ℝ), S.primeIdealZetaSum s ≤ C := eventually_map.mp hC
-  have hden := tendsto_primeIdealZetaSum_univ_atTop K
+  have hden := tendsto_primeIdealZetaSum_univ_atTop (K := K)
   have hpos := hden.eventually_gt_atTop 0
-  unfold Set.HasDirichletDensity
+  simp only [HasDirichletDensity.eq_1]
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
     (Tendsto.div_atTop (tendsto_const_nhds (x := C)) hden) (Eventually.of_forall fun s => ?_) ?_
   · exact div_nonneg (S.primeIdealZetaSum_nonneg s) (univ.primeIdealZetaSum_nonneg s)
   · filter_upwards [hC', hpos] with s h1 h2
     exact div_le_div_of_nonneg_right h1 h2.le
 
+open private HasDirichletDensity.eq_1 from Mathlib.NumberTheory.NumberField.DirichletDensity in
 theorem hasDirichletDensity_univ : (univ : Set (HeightOneSpectrum (𝓞 K))).HasDirichletDensity 1 := by
-  unfold Set.HasDirichletDensity
+  simp only [HasDirichletDensity.eq_1]
   refine tendsto_const_nhds.congr' ?_
-  filter_upwards [(tendsto_primeIdealZetaSum_univ_atTop K).eventually_gt_atTop 0] with s hs
+  filter_upwards [(tendsto_primeIdealZetaSum_univ_atTop (K := K)).eventually_gt_atTop 0] with s hs
   exact (div_self hs.ne').symm
 
+open private HasDirichletDensity.eq_1 from Mathlib.NumberTheory.NumberField.DirichletDensity in
 theorem hasDirichletDensity_iff_of_subset_of_isBoundedUnder {S T : Set (HeightOneSpectrum (𝓞 K))}
     (hTS : T ⊆ S) (hb : IsBoundedUnder (· ≤ ·) (𝓝[>] 1) fun s => (S \ T).primeIdealZetaSum s)
     (δ : ℝ) : T.HasDirichletDensity δ ↔ S.HasDirichletDensity δ := by
   have h0 := hasDirichletDensity_zero_of_isBoundedUnder hb
-  unfold Set.HasDirichletDensity at h0 ⊢
+  simp only [HasDirichletDensity.eq_1] at h0 ⊢
   have heq : ∀ᶠ s in 𝓝[>] (1 : ℝ),
       S.primeIdealZetaSum s / (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s =
         T.primeIdealZetaSum s / (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s +
@@ -81,19 +88,13 @@ section degreeOne
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (K L) in
 
-theorem hasDirichletDensity_higherDegreePrimes :
-    (higherDegreePrimes K L).HasDirichletDensity 0 :=
-  hasDirichletDensity_zero_of_isBoundedUnder
-    (isBoundedUnder_primeIdealZetaSum_higherDegreePrimes K L)
 
 variable (K) in
-
 theorem hasDirichletDensity_inter_degreeOnePrimes_iff (S : Set (HeightOneSpectrum (𝓞 L)))
     (δ : ℝ) : (S ∩ degreeOnePrimes K L).HasDirichletDensity δ ↔ S.HasDirichletDensity δ := by
   refine hasDirichletDensity_iff_of_subset_of_isBoundedUnder inter_subset_left ?_ δ
-  obtain ⟨C, hC⟩ := primeIdealZetaSum_higherDegreePrimes_le K L
+  obtain ⟨C, hC⟩ := primeIdealZetaSum_higherDegreePrimes_le (K := K) (L := L)
   refine isBoundedUnder_of_eventually_le (a := C)
     (eventually_nhdsWithin_of_forall fun s (hs : 1 < s) => ?_)
   refine (primeIdealZetaSum_mono ?_ hs).trans (hC s hs.le)
@@ -101,8 +102,8 @@ theorem hasDirichletDensity_inter_degreeOnePrimes_iff (S : Set (HeightOneSpectru
   rw [← compl_degreeOnePrimes]
   exact fun h => hw.2 ⟨hw.1, h⟩
 
-variable (K L) in
 
+variable (K L) in
 theorem hasDirichletDensity_degreeOnePrimes : (degreeOnePrimes K L).HasDirichletDensity 1 := by
   have := (hasDirichletDensity_inter_degreeOnePrimes_iff K univ 1).mpr
     (hasDirichletDensity_univ (K := L))
@@ -127,7 +128,7 @@ theorem tendsto_neg_log_sub_one_atTop :
 theorem tendsto_primeIdealZetaSum_univ_div_neg_log :
     Tendsto (fun s : ℝ => (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s /
       -Real.log (s - 1)) (𝓝[>] 1) (𝓝 1) := by
-  obtain ⟨C, hC⟩ := exists_abs_primeIdealZetaSum_add_log_le K
+  obtain ⟨C, hC⟩ := exists_abs_primeIdealZetaSum_add_log_le (K := K)
   have hu := tendsto_neg_log_sub_one_atTop
   have hupos := hu.eventually_gt_atTop 0
   set P := fun s : ℝ => (univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s
@@ -177,7 +178,7 @@ theorem splitsCompletely_iff_ncard_primesOver (v : HeightOneSpectrum (𝓞 K)) :
   have key : (v.asIdeal.primesOver (𝓞 L)).ncard = ∑ _q : v.asIdeal.primesOver (𝓞 L), 1 := by
     rw [← Nat.card_coe_set_eq, Nat.card_eq_fintype_card, Fintype.card_eq_sum_ones]
   rw [key, ← hsum, Finset.sum_eq_sum_iff_of_le (fun q _ => Nat.one_le_iff_ne_zero.mpr
-    (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 (𝓞 K)).ne'
+    (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := 𝓞 K) q.1).ne'
       (Ideal.inertiaDeg_pos q.1 (𝓞 K)).ne'))]
   constructor
   · intro h q _
@@ -268,6 +269,7 @@ theorem primeIdealZetaSum_primesAbove {T : Set (HeightOneSpectrum (𝓞 K))}
     _ = _ := by
         rw [Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card, hcard, nsmul_eq_mul]
 
+open private HasDirichletDensity.eq_1 from Mathlib.NumberTheory.NumberField.DirichletDensity in
 theorem hasDirichletDensity_primesAbove_iff {T : Set (HeightOneSpectrum (𝓞 K))}
     (hT : ∀ v ∈ T, SplitsCompletely L v) (δ : ℝ) :
     (primesAbove L T).HasDirichletDensity (Module.finrank K L * δ) ↔ T.HasDirichletDensity δ := by
@@ -277,9 +279,9 @@ theorem hasDirichletDensity_primesAbove_iff {T : Set (HeightOneSpectrum (𝓞 K)
     exact_mod_cast (Module.finrank_pos (R := K) (M := L)).ne'
   have hKL := tendsto_primeIdealZetaSum_univ_div_univ K L
   have hLK := tendsto_primeIdealZetaSum_univ_div_univ L K
-  have hKpos := (tendsto_primeIdealZetaSum_univ_atTop K).eventually_gt_atTop 0
-  have hLpos := (tendsto_primeIdealZetaSum_univ_atTop L).eventually_gt_atTop 0
-  unfold Set.HasDirichletDensity
+  have hKpos := (tendsto_primeIdealZetaSum_univ_atTop (K := K)).eventually_gt_atTop 0
+  have hLpos := (tendsto_primeIdealZetaSum_univ_atTop (K := L)).eventually_gt_atTop 0
+  simp only [HasDirichletDensity.eq_1]
   constructor
   · intro h
     have := (h.const_mul n⁻¹).mul hLK
@@ -325,7 +327,7 @@ theorem dvd_differentIdeal_of_ramificationIdx_ne_one {w : HeightOneSpectrum (�
     (h : w.asIdeal.ramificationIdx (𝓞 K) ≠ 1) :
     w.asIdeal ∣ differentIdeal (𝓞 K) (𝓞 L) := by
   have h2 : 2 ≤ w.asIdeal.ramificationIdx (𝓞 K) := by
-    have := Ideal.ramificationIdx_pos w.asIdeal (𝓞 K)
+    have := Ideal.ramificationIdx_pos (R := 𝓞 K) w.asIdeal
     omega
   set v := w.asIdeal.under (𝓞 K)
   have hv0 : v ≠ ⊥ := mt Ideal.eq_bot_of_comap_eq_bot w.ne_bot
@@ -338,18 +340,18 @@ theorem dvd_differentIdeal_of_ramificationIdx_ne_one {w : HeightOneSpectrum (�
       v.map (algebraMap (𝓞 K) (𝓞 L)) := by
     rw [he]
     exact pow_multiplicity_dvd _ _
-  have := pow_sub_one_dvd_differentIdeal_aux (𝓞 K) K L w.asIdeal (by omega) hv0 hdvd
+  have := pow_sub_one_dvd_differentIdeal_aux (𝓞 K) K L w.asIdeal hv0 hdvd
   exact (dvd_pow_self _ (by omega)).trans this
 
-variable (K L) in
 
+variable (K L) in
 theorem finite_setOf_ramificationIdx_ne_one :
     {w : HeightOneSpectrum (𝓞 L) | w.asIdeal.ramificationIdx (𝓞 K) ≠ 1}.Finite :=
   (Ideal.finite_factors (differentIdeal_ne_bot (A := 𝓞 K) (B := 𝓞 L))).subset
     fun _ hw => dvd_differentIdeal_of_ramificationIdx_ne_one hw
 
-variable (K L) in
 
+variable (K L) in
 theorem hasDirichletDensity_setOf_splitsCompletely [IsGalois K L] :
     {v : HeightOneSpectrum (𝓞 K) | SplitsCompletely L v}.HasDirichletDensity
       (1 / Module.finrank K L) := by

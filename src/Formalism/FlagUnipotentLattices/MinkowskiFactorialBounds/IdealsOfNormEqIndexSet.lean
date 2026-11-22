@@ -1,6 +1,10 @@
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
-import Formalism.HyperbolicPlaceProducts.SecondLevelArithmeticNorm
-import Formalism.HyperbolicPlaceProducts.ArithmeticCountRevised
+module
+
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
+public import Formalism.HyperbolicPlaceProducts.SecondLevelArithmeticNorm
+public import Formalism.HyperbolicPlaceProducts.ArithmeticCountRevised
+
+@[expose] public section
 
 open Module Matrix Formalism.HermitianLatticeCounting.LatticeSumBounds
 open scoped BigOperators ComplexConjugate
@@ -205,57 +209,6 @@ theorem finite_order_congruence : FiniteOrderCongruence := by
     rw [hC, smul_smul, hG']; push_cast; ring_nf
   exact hA'ne (fo_zero_lemma_2 N p q s0 hp hq hs0 hps A' hA'q ⟨_, hform⟩)
 
-private theorem prod_pow_dvd_lemma (S : Finset ℕ) (e : ℕ → ℕ) (n : ℕ) :
-    (∀ p ∈ S, p.Prime) → (∀ p ∈ S, p ^ e p ∣ n) → ∏ p ∈ S, p ^ e p ∣ n := by
-  refine Finset.induction_on S (by simp) ?_
-  intro a S ha ih hS h
-  rw [Finset.prod_insert ha]
-  apply Nat.Coprime.mul_dvd_of_dvd_of_dvd
-  · apply Nat.Coprime.prod_right
-    intro q hq
-    apply Nat.Coprime.pow
-    exact (Nat.coprime_primes (hS a (by simp)) (hS q (by simp [hq]))).2
-      (by rintro rfl; exact ha hq)
-  · exact h a (by simp)
-  · exact ih (fun p hp => hS p (by simp [hp])) (fun p hp => h p (by simp [hp]))
-
-theorem minkowski_number_dvd : MinkowskiNumberDvd := by
-  intro N
-  unfold minkowskiNumber
-  apply prod_pow_dvd_lemma
-  · intro p hp; exact (Finset.mem_filter.1 hp).2
-  intro p hpS
-  have hp : p.Prime := (Finset.mem_filter.1 hpS).2
-  rcases Nat.eq_zero_or_pos N with rfl | hN
-  · simp
-  have h2 : N < 2 ^ N := by
-    clear hpS hp hN
-    induction N with
-    | zero => simp
-    | succ k ih => rw [pow_succ]; omega
-  have hlt : 2 * N < p ^ (N + 2) := by
-    calc 2 * N < 2 ^ (N + 2) := by rw [pow_add]; omega
-      _ ≤ p ^ (N + 2) := Nat.pow_le_pow_left hp.two_le _
-  have hlog : Nat.log p (2 * N) < N + 2 := Nat.log_lt_of_lt_pow (by omega) hlt
-  rw [hp.pow_dvd_factorial_iff hlog, Finset.sum_Ico_eq_sum_range]
-  have e : N + 2 - 1 = N + 1 := by omega
-  rw [e]
-  apply Finset.sum_le_sum
-  intro k _
-  have hp2 := hp.two_le
-  have hpk : 0 < p ^ k := pow_pos hp.pos k
-  rw [Nat.le_div_iff_mul_le (pow_pos hp.pos _)]
-  have h1 := Nat.div_mul_le_self N (p ^ k * (p - 1))
-  have h3 : p ^ (1 + k) ≤ 2 * (p ^ k * (p - 1)) := by
-    rw [pow_add, pow_one]
-    have : p ≤ 2 * (p - 1) := by omega
-    calc p * p ^ k ≤ 2 * (p - 1) * p ^ k := Nat.mul_le_mul_right _ this
-      _ = 2 * (p ^ k * (p - 1)) := by ring
-  calc N / (p ^ k * (p - 1)) * p ^ (1 + k)
-      ≤ N / (p ^ k * (p - 1)) * (2 * (p ^ k * (p - 1))) := Nat.mul_le_mul_left _ h3
-    _ = 2 * (N / (p ^ k * (p - 1)) * (p ^ k * (p - 1))) := by ring
-    _ ≤ 2 * N := Nat.mul_le_mul_left _ h1
-
 private theorem primeSet_lemma (K : Type) [Field K] [NumberField K]
     (I : Ideal (NumberField.RingOfIntegers K)) (hI : I ≠ ⊥) :
     ∃ T : Finset (Ideal (NumberField.RingOfIntegers K)),
@@ -344,7 +297,7 @@ private theorem normCount_lemma (K : Type) [Field K] [NumberField K] : ∀ n : �
       obtain ⟨r, rfl⟩ := Ideal.mem_span_singleton'.1 hb
       have hu : Ideal.Quotient.mk I r * (p : 𝓞 K ⧸ I) = 1 := by
         have := congrArg (Ideal.Quotient.mk I) hab
-        rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add, map_mul, map_one] at this
+        rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 ha, zero_add, map_mul, map_one] at this
         simpa [hqdef] using this
       have hpy : (p : 𝓞 K ⧸ I) * y = 0 := by
         rw [← nsmul_eq_mul, ← hy]; exact addOrderOf_nsmul_eq_zero y
@@ -641,7 +594,8 @@ lemma index_ideal_smul_top_le_norm_pow {E : Type} [Field E] [NumberField E] (p :
         rw [this, hg, smul_zero]
       have hrelQ : ∑ i ∈ s, (Ideal.Quotient.mk p (y i)) • b i = 0 := by
         have := congrArg (Submodule.mkQ (p • (⊤ : Submodule (𝓞 E) X))) hrel
-        rw [map_sum, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at this
         rw [← this]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hsm, map_smul, Submodule.mkQ_apply, hv]
@@ -746,7 +700,7 @@ theorem projective_quotient_card : ProjQuotCard := by
     rintro ⟨x, q⟩ ⟨x', q'⟩ hxy
     simp only [φ, LinearMap.coprod_apply, Submodule.coe_subtype] at hxy
     have h1 := congrArg f hxy
-    rw [map_add, map_add, hfh', hfh', LinearMap.mem_ker.1 q.2, LinearMap.mem_ker.1 q'.2,
+    rw [map_add (f := _), map_add (f := _), hfh', hfh', LinearMap.mem_ker.1 q.2, LinearMap.mem_ker.1 q'.2,
       add_zero, add_zero] at h1
     subst h1
     exact Prod.ext rfl (Subtype.ext (add_left_cancel hxy))
@@ -769,6 +723,7 @@ theorem projective_quotient_card : ProjQuotCard := by
     rw [hpi, AddSubgroup.index_pi]
     simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     congr 1
+    exact (Ideal.absNorm_eq_index I).symm
   have hcomap : (I • (⊤ : Submodule (𝓞 E) (Fin n → 𝓞 E))).comap
       (e : (P × Q) →ₗ[𝓞 E] (Fin n → 𝓞 E)) = I • ⊤ := by
     rw [Submodule.comap_equiv_eq_map_symm, Submodule.map_smul'', Submodule.map_top,

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRham
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
-import Development.AutomorphicArithmetic.CrystallineRing.Acris0
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.UniformContinuousConstSMulOfIsIsometricSMul
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.ExistsFactorialMulEqPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRham
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.DeRhamMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Embedding
+public import Development.AutomorphicArithmetic.CrystallineRing.Acris0
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,6 @@ open Reformulated.AutPerF
 
 section General
 variable {R S : Type} [CommRing R] [CommRing S]
-def compMap (I : Ideal R) (J : Ideal S) (f : R →+* S) (h : I ≤ J.comap f) : AdicCompletion I R →+* AdicCompletion J S := adicMap I J f h
 end General
 
 section Cp
@@ -53,8 +56,6 @@ def θD : BdRp l →+* ℂ_[l] := BdRPlus.thetaC l (PadicComplexInt l)
 def BdR : Type := Reformulated.AutPerF.BdR l (OC l)
 instance instCommRingBdR : CommRing (BdR l) := inferInstanceAs (CommRing (Reformulated.AutPerF.BdR l (OC l)))
 instance instAlgebraBdRpBdR : Algebra (BdRp l) (BdR l) := inferInstanceAs (Algebra (BdRPlus l (OC l)) (Reformulated.AutPerF.BdR l (OC l)))
-instance instIsFractionRingBdR : IsFractionRing (BdRp l) (BdR l) :=
-  inferInstanceAs (IsFractionRing (BdRPlus l (OC l)) (Reformulated.AutPerF.BdR l (OC l)))
 def pD : AinfP l →+* BdR l := UpperTheory.Ring.Comp.pD l
 def zD : ℤ_[l] →+* BdR l := UpperTheory.Ring.Comp.zD l
 def FilD (a : ℤ) : Submodule (BdRp l) (BdR l) := BdR.fil l (OC l) a

@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CapelliDetBlockLeviCongrModUpperBlockIdeal
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CapelliDetBlockLeviCongrModUpperBlockIdeal
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import GroundTheory.IdeleRoots.ConstantFrames.GaugeExistence.QdetSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ def fb {M n : ℕ} (d : Fin M → ℕ) (h : ∑ i, d i = n) (Y : ℂ) : FreeAlge
 theorem map_qdet {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (ψ : A →ₐ[ℂ] B) {n : ℕ}
     (X : Fin n → Fin n → A) (u : ℂ) : ψ (qdet X u) = qdet (fun p q => ψ (X p q)) u := by
   unfold qdet qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_list_prod, List.map_ofFn]
   congr 1
@@ -49,7 +54,7 @@ def cyc (lev : Fin n → ℕ) (E : Fin n → Fin n → Module.End ℂ V) (j : �
   carrier := {x | SuppIn (inU lev) x ∧ Deg j x ∧ bd (allT n) E x = 0}
   add_mem' := by
     rintro x y ⟨h1, h2, h3⟩ ⟨g1, g2, g3⟩
-    refine ⟨fun A hA i hi => ?_, fun A hA => ?_, by rw [map_add, h3, g3, add_zero]⟩
+    refine ⟨fun A hA i hi => ?_, fun A hA => ?_, by rw [map_add (f := _), h3, g3, add_zero]⟩
     · by_cases hx : x A = 0
       · have hy : y A ≠ 0 := fun hy => hA (by simp [hx, hy])
         exact g1 A hy i hi

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.SharpRestriction.AdmissibleParameterJoins
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.PChain
+module
+
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.SharpRestriction.AdmissibleParameterJoins
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.PChain
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,19 +14,7 @@ namespace Formalism.MainNotions
 
 open Formalism.BasicNotions
 
-def AllLinks {eps : ℝ} (Fm : FamP eps) (CV Cabs CH C0 eD eL : ℝ) : Prop :=
-  LinkV Fm CV ∧ LinkShaFin Fm ∧ LinkN Fm ∧ LinkEta Fm ∧ LinkIRR Fm ∧ SmallLevelRankEq Fm ∧ LinkDIVt Fm Cabs CH ∧
-    ((NuFullF Fm ∧ J.MuRank Fm) ∧ J.MuTu Fm ∧ J.MuDGam Fm) ∧
-    LinkG Fm ∧ LinkS Fm C0 ∧ LinkGLOBAL Fm Cabs CH C0 eD eL
-
 abbrev WithTw (𝒞 : FamClass) : FamClass := fun Fm => 𝒞 Fm ∧ TwGood Fm
-
-theorem Closed.withTw {𝒞 : FamClass} {P : ∀ {eps : ℝ}, FamP eps → ℝ → Prop} (h : Closed 𝒞 P) :
-    Closed (WithTw 𝒞) P := by
-  obtain ⟨a, ha, h⟩ := h
-  refine ⟨a, ha, fun e he hle => ?_⟩
-  obtain ⟨K, hK⟩ := h e he hle
-  exact ⟨K, fun Fm CH hc hL => hK Fm CH hc.1 hL⟩
 
 theorem muTu_of_tuSize {eps : ℝ} (Fm : FamP eps) (h0 : 0 < eps) (h : TuSize Fm) : J.MuTu Fm := by
   obtain ⟨x0, h⟩ := h

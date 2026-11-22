@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem map_eq_of_conj {W V : Type} [AddCommGroup W] [TopologicalSpace W] [IsTop
     funext x
     simp [← hc x]
   rw [hT, ← Measure.map_map hs.measurable (hB.measurable.comp he.measurable),
-    ← Measure.map_map hB.measurable he.measurable, hν, Measure.map_smul,
+    ← Measure.map_map hB.measurable he.measurable, hν,
+    Measure.map_smul c (hs.measurable.aemeasurable),
     Measure.map_map hs.measurable he.measurable]
   have : (e.symm ∘ e : W → W) = id := by
     funext x
@@ -39,7 +44,8 @@ theorem repr_mul_incl (y : R ⊗[F] E) (e : E) (k : Fin d) :
     (Algebra.TensorProduct.basis R b).repr (y * inclR R e) k =
       ∑ l, (Algebra.TensorProduct.basis R b).repr y l * algebraMap F R (b.repr (b l * e) k) := by
   conv_lhs => rw [← (Algebra.TensorProduct.basis R b).sum_repr y]
-  rw [Finset.sum_mul, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [smul_mul_assoc, map_smul, Finsupp.smul_apply, Algebra.TensorProduct.basis_apply]
   simp [inclR, Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.basis_repr_tmul]
@@ -65,7 +71,8 @@ theorem coE_rmul {n M : ℕ} (X : Fin n → Fin M → R ⊗[F] E) (g : Matrix (F
     coE b R n M (rmul R X (g.map (inclR R))) = (coMat b g M).map (algebraMap F R) *ᵥ coE b R n M X := by
   funext ⟨a, i, k⟩
   change (Algebra.TensorProduct.basis R b).repr (∑ c, X c i * inclR R (g c a)) k = _
-  rw [map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   simp only [Matrix.mulVec, dotProduct, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [repr_mul_incl, Finset.sum_eq_single i]

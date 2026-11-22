@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
-import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+public import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -81,9 +86,9 @@ private theorem main (D : Dat F E) (v : P F) (w w' : P E) [hl : w.asIdeal.LiesOv
       set a := algebraMap F (Kv v) (D.b.repr y 0)
       set b := algebraMap F (Kv v) (D.b.repr y 1)
       have e1 : algebraMap E (Kv w) y = i (a + b * τ) := by
-        rw [map_add, map_mul, hτ, hia, hia, ← map_mul, ← map_add, ← hy]
+        rw [map_add (f := _), map_mul, hτ, hia, hia, ← map_mul, ← map_add (f := _), ← hy]
       have e2 : algebraMap E (Kv w') y = j (a + b * τ) := by
-        rw [map_add, map_mul, he, hja, hja, ← map_mul, ← map_add, ← hy]
+        rw [map_add (f := _), map_mul, he, hja, hja, ← map_mul, ← map_add (f := _), ← hy]
       rw [← valued_algebraMap_field, ← valued_algebraMap_field, e1, e2, hiv, hjv]
     refine HeightOneSpectrum.ext (Ideal.ext fun a => ?_)
     rw [← HeightOneSpectrum.valuation_lt_one_iff_mem (K := E), ← HeightOneSpectrum.valuation_lt_one_iff_mem (K := E), hval]
@@ -98,7 +103,7 @@ private theorem main (D : Dat F E) (v : P F) (w w' : P E) [hl : w.asIdeal.LiesOv
   refine ⟨fun x => ψ (sg v (-(i.symm x / (2 * τ)))), ⟨fun x y => ?_, fun x hx => ?_, fun x hx => ?_⟩,
     fun x => ⟨sg v (i.symm x / 2), sg v (i.symm x / (2 * τ)), ?_, ?_⟩⟩
   · have e : -(i.symm (x + y) / (2 * τ)) = -(i.symm x / (2 * τ)) + -(i.symm y / (2 * τ)) := by
-      rw [map_add]; ring
+      rw [map_add (f := _)]; ring
     show ψ (sg v (-(i.symm (x + y) / (2 * τ)))) = _
     rw [e]
     exact g1 _ _

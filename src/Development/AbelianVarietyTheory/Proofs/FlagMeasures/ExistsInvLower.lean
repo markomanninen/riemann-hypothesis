@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+module
+
+public import Mathlib
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt Formalism.HermitianLatticeCounting.P
 open scoped Pointwise ENNReal Classical
@@ -49,12 +53,12 @@ theorem exists_reframe (F : FlagD H r) (f : Fin (r + 1) → V) (hf : ∀ a, f a 
     rw [h2, Set.image_univ] at h
     rw [Set.finrank, h, Fintype.card_fin]
     exact (finrank_X F).symm
-  · rw [hz, map_add, pairing_isotropicSpan_lastVector F (hX a), X_iso F (hX a) hx, add_zero]
+  · rw [hz, map_add (f := _), pairing_isotropicSpan_lastVector F (hX a), X_iso F (hX a) hx, add_zero]
   · rw [hz]
-    simp only [map_add, LinearMap.add_apply, pairing_lastVector_lastVector, pairing_isotropicSpan_lastVector F hx, z_X F hx, X_iso F hx hx, add_zero]
+    simp only [map_add (f := _), LinearMap.add_apply, pairing_lastVector_lastVector, pairing_isotropicSpan_lastVector F hx, z_X F hx, X_iso F hx hx, add_zero]
+
 
 omit [StarRing K] in
-
 theorem exists_inv_lower {j : ℕ} (A : Matrix (Fin j) (Fin j) K) (h0 : ∀ a b, a < b → A a b = 0)
     (h1 : ∀ a, A a a = 1) :
     ∃ M : Matrix (Fin j) (Fin j) K, M * A = 1 ∧ (∀ a b, a < b → M a b = 0) ∧ ∀ a, M a a = 1 := by
@@ -162,10 +166,10 @@ theorem exists_ist [FiniteDimensional K V] [CharZero K] (G G' : FlagD H r) {j : 
     obtain ⟨y, hy⟩ := exists_dual G b
     obtain ⟨x, hx, hxp⟩ := hs y
     refine ⟨y - x + star (H.B G.z (y - x) / G.T) • G.z, fun a => ?_, fun u hu => ?_, ?_⟩
-    · rw [map_add, map_sub, map_smulₛₗ, hy, e_X G _ hx, pairing_isotropicSpan_lastVector G (e_mem_X G a)]; simp
+    · rw [map_add (f := _), map_sub, map_smulₛₗ, hy, e_X G _ hx, pairing_isotropicSpan_lastVector G (e_mem_X G a)]; simp
     · have := hp (Fin.last r) hj u hu
-      rw [map_add, hxp u hu, map_smulₛₗ, FlagD.z, this]; simp
-    · rw [map_add, map_smulₛₗ, pairing_lastVector_lastVector]
+      rw [map_add (f := _), hxp u hu, map_smulₛₗ, FlagD.z, this]; simp
+    · rw [map_add (f := _), map_smulₛₗ, pairing_lastVector_lastVector]
       have := G.hT
       simp only [starRingEnd_apply, star_star, smul_eq_mul]
       field_simp
@@ -176,13 +180,19 @@ theorem exists_ist [FiniteDimensional K V] [CharZero K] (G G' : FlagD H r) {j : 
   have hsX : ∀ b, s b ∈ G.X := fun b => by
     rw [hsd]; exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (e_mem_X G a)
   have hsy : ∀ a b : Fin r, j ≤ b.val → H.B (s a) (y b) = H.B (y a) (y b) / 2 := fun a b hb => by
-    rw [hsd, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsd, map_sum, LinearMap.sum_apply]
     simp [hy1, hb]
   refine ⟨fun b => y b - s b, fun a b => ?_, fun b u hu => ?_, fun b => ?_, fun a b ha hb => ?_⟩
   · rw [map_sub, hy1, e_X G _ (hsX b), sub_zero]
-  · rw [map_sub, hy2 b u hu, hsd, map_sum, Finset.sum_eq_zero, sub_zero]
-    intro a ha
-    rw [map_smulₛₗ, hp a.castSucc (Finset.mem_filter.mp ha).2 u hu, smul_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sub, hy2 b u hu, hsd, map_sum]
+      have hz : (∑ a ∈ Finset.univ.filter (fun a : Fin r => j ≤ a.val),
+          H.B u ((H.B (y b) (y a) / 2) • G.e a.castSucc)) = 0 := by
+        apply Finset.sum_eq_zero
+        intro a ha
+        rw [map_smulₛₗ, hp a.castSucc (Finset.mem_filter.mp ha).2 u hu, smul_zero]
+      rw [hz, sub_zero]
   · rw [map_sub, hy3, z_X G (hsX b), sub_zero]
   · have h2 : H.B (y a) (s b) = H.B (y a) (y b) / 2 := by
       rw [← H.herm (s b), hsy b a ha, star_div₀, H.herm]; simp
@@ -215,7 +225,7 @@ theorem exists_nf : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
   obtain ⟨G, hG, hGT, hGX⟩ := exists_reframe F f hF
   obtain ⟨G', hG', hGT', hGX'⟩ := exists_reframe F' f' hF'
   have same : ∀ a : Fin (r + 1), j ≤ a.val → G'.e a = c • G.e a := fun a ha => by
-    rw [hG, hG', hf, hf', dif_neg (not_lt.mpr ha), dif_neg (not_lt.mpr ha)]
+    rw [hG, hG', hf, hf', dite_eq_right (not_lt.mpr ha), dite_eq_right (not_lt.mpr ha)]
   obtain ⟨ist, i1, i2, i3, i4⟩ := exists_ist G G' hj hS.1 same fun v => by
     obtain ⟨x, hx, hp⟩ := exists_perp F F' hj hD v
     exact ⟨x, Xa_le_X G j (by rwa [hGX]), fun u hu => hp u (by rwa [← hGX'])⟩
@@ -232,8 +242,9 @@ theorem exists_nf : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [Add
       (G'.e (Fin.castLE (hj.trans (Nat.le_succ r)) b)) = w.mat a b * ((sgn b : ℤ) : K) := fun a b => by
     have h := congrFun (congrFun hW a) b
     rw [Matrix.of_apply] at h
-    rw [← h, hG, hG', hf, hf', dif_pos (show (Fin.castLE (hj.trans (Nat.le_succ r)) a).val < j from a.isLt),
-      dif_pos (show (Fin.castLE (hj.trans (Nat.le_succ r)) b).val < j from b.isLt), map_sum, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h, hG, hG', hf, hf', dite_eq_left (show (Fin.castLE (hj.trans (Nat.le_succ r)) a).val < j from a.isLt),
+      dite_eq_left (show (Fin.castLE (hj.trans (Nat.le_succ r)) b).val < j from b.isLt), map_sum, Matrix.mul_apply]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [map_smulₛₗ, B_sum_left, Matrix.mul_apply]
     rw [starRingEnd_apply, Matrix.map_apply, star_star, smul_eq_mul, mul_comm]

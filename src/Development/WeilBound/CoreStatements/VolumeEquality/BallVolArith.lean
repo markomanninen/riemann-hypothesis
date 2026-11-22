@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.LevelIndexEq
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.LevelIndexEq
+
+@[expose] public section
 
 noncomputable section
 

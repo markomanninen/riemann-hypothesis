@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.GvPairOfOrbitDerivCont
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.GvPairOfOrbitDerivCont
+
+@[expose] public section
 
 noncomputable section
 

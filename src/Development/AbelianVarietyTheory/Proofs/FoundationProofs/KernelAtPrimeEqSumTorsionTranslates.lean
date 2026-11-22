@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLineStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairTestVectorExpansionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLineStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairTestVectorExpansionStatement
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -156,11 +160,12 @@ theorem Hf_add_left (D : D7) (T : Tor D) {N N' : ℕ} (x y z : VC D N N') :
 
 theorem Hf_add_right (D : D7) (T : Tor D) {N N' : ℕ} (x y z : VC D N N') :
     Hf D T x (y + z) = Hf D T x y + Hf D T x z := by
-  simp only [Hf, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, add_div]
+  simp only [Hf, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, add_div]
 
 theorem Hf_conj (D : D7) (T : Tor D) {N N' : ℕ} (x y : VC D N N') :
     Hf D T y x = (starRingEnd ℂ) (Hf D T x y) := by
-  simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal, mul_comm]
 
 theorem U_U (D : D7) (T : Tor D) {N N' : ℕ} (x y : VC D N N') (G : VC D N N' → ℂ) (z : VC D N N') :
     U D T x (U D T y G) z =
@@ -256,7 +261,8 @@ theorem Cmb.iop (hn : n ≠ 0) (hB : ∀ x ∈ B, ∀ y ∈ B, ∃ m : ℤ, (Hf 
   rw [one_mul, one_mul] at h3
   convert h3 using 1
   funext z
-  simp only [Iop, finsum_eq_sum_of_fintype]
+  unfold Iop
+  rw [finsum_eq_sum_of_fintype]
 
 theorem Cmb.out {C : ℝ} {G : VC D N N' → ℂ} (hG : Cmb D T lam B F₀ n C G) :
     ∃ (k : ℕ) (r : Fin k → Qbar) (s : Fin k → VC D N N'), (∀ i, n • s i ∈ B) ∧ (∀ i, ‖lam (r i)‖ ≤ C) ∧
@@ -272,9 +278,9 @@ end
 
 end GlobalTheory.NormSum.KernelAt
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.NormSum.KernelAt in
-
 theorem GlobalTheory.NormSum.kernel_eq_sum_translates : ∀ (D : D7), Inp D → ∀ (δ t0 : ℂ) (Q : ℕ), Crv D ⊤ δ → GL3Theta.IsTwoTorsionPointUnkilled D (lamOf D ⊤ δ) t0 → 0 < Q → ∀ (P : Pair D ⊤ δ t0 Q) (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (g : GA D P.a) (g' k' : GA D P.d), k' ∈ intG D P.d → TrivAt D p (g : GL (Fin P.a) (AE D)) → TrivAt D p ((g' * k' : GA D P.d) : GL (Fin P.d) (AE D)) → ∃ (b : Fin (fF D * P.a * P.d) → Matrix (Fin P.d) (Fin P.a) D.host.E) (k M : ℕ) (r : Fin k → Qbar) (s : Fin k → VC D P.a P.d), OnB D b ∧ LocBasis D p (YYl D (stdL D P.a) (stdL D P.d)) b ∧ 0 < M ∧ Nat.Coprime M p ∧ (∀ i, (M * Q) • s i ∈ LaB D (tor0 D ⊤ δ) b) ∧ (∀ i, ‖lam (r i)‖ ≤ (‖(Q : ℂ_[p])‖⁻¹) ^ (P.a * P.d)) ∧ P.W.Om g g' P.F = fun z => ∑ i, (r i : ℂ) * U D (tor0 D ⊤ δ) (s i) (pullB D (tor0 D ⊤ δ) b (GL3Theta.th0 (lamOf D ⊤ δ) t0)) z := by
   intro D hI δ t0 Q hC hT hQ P p _ lam g g' k' hk' hg hg'
   have hp : p.Prime := Fact.out
@@ -311,7 +317,7 @@ theorem GlobalTheory.NormSum.kernel_eq_sum_translates : ∀ (D : D7), Inp D → 
       (n₀ * (s₂ * s₁) * Q) (1 * 1) P.e0 := by
     rw [he0]
     refine Cmb.smul ⟨hε, ?_⟩ (Cmb.iop hn hB hi₀ (fun x hx => ?_) Cmb.base)
-    · rw [lamC, dif_pos hε] at hεn
+    · rw [lamC, dite_eq_left hε] at hεn
       exact hεn.le
     · rw [mul_assoc n₀, mul_comm n₀, mul_smul]
       exact AddSubgroup.nsmul_mem _ (a0 x hx) _
@@ -327,7 +333,7 @@ theorem GlobalTheory.NormSum.kernel_eq_sum_translates : ∀ (D : D7), Inp D → 
     rw [inv_pow, ← one_div, le_div_iff₀ (pow_pos hQ0 _), mul_comm]
     exact h
   have hc' : Bd lam 1 c := ⟨hc, by
-    rw [lamC, dif_pos hc] at hcn
+    rw [lamC, dite_eq_left hc] at hcn
     exact hcn.le⟩
   have c2 : ∀ i, Cmb D (tor0 D ⊤ δ) lam (LaB D (tor0 D ⊤ δ) b) (pullB D (tor0 D ⊤ δ) b (GL3Theta.th0 (lamOf D ⊤ δ) t0))
       (n₀ * (s₂ * s₁) * Q) (1 * 1) (U D (tor0 D ⊤ δ) (y i) (Iop D (tor0 D ⊤ δ) (La0 D (tor0 D ⊤ δ) P.a P.d)

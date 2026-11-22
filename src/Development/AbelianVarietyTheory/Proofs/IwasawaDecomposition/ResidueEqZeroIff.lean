@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 Formalism.UG Formalism.UG.P Matrix
 open scoped TensorProduct
@@ -237,8 +241,8 @@ theorem residue_phi {z : AfE F E} {r : 𝓞 E}
 
 end Prime
 
-include hφ in
 
+include hφ in
 theorem exists_prime : ∃ (w : HeightOneSpectrum (𝓞 E)) (ρ : 𝓞 E ⧸ w.asIdeal →+* Formalism.L2.Forms.kv F v), w.under (𝓞 F) = v ∧
     (∀ r : 𝓞 E, r ∈ w.asIdeal ↔ Valued.v (φ (inclE (F := F) (v.adicCompletion F) (r : E))) < 1) ∧
     ∀ (z : AfE F E) (c : 𝓞 E ⧸ w.asIdeal), HasRes w (adAt F w z) c →
@@ -280,7 +284,7 @@ theorem hasRes_add {z z' : P.adicCompletion E} {c c' : 𝓞 E ⧸ P.asIdeal} (h 
   obtain ⟨r, rfl, hr⟩ := h
   obtain ⟨r', rfl, hr'⟩ := h'
   refine ⟨r + r', map_add _ _ _, ?_⟩
-  rw [map_add, map_add, add_sub_add_comm]
+  rw [map_add (f := _), map_add (f := _), add_sub_add_comm]
   exact Valuation.map_add_lt _ hr hr'
 
 theorem hasRes_mul {z z' : P.adicCompletion E} {c c' : 𝓞 E ⧸ P.asIdeal} (h : HasRes P z c) (h' : HasRes P z' c') :
@@ -318,7 +322,7 @@ theorem exists_hasRes {z : AfE F E} (h : Valued.v (adAt F P z) ≤ 1) : ∃ c, H
     exact Valuation.map_sub_le _ h h0.le
   obtain ⟨a, ha⟩ := HeightOneSpectrum.exists_valuation_sub_lt_of_integer P h1 1
   refine ⟨_, a, rfl, ?_⟩
-  rw [e, map_add, adAt_inclE, add_sub_right_comm, ← map_sub]
+  rw [e, map_add (f := _), adAt_inclE, add_sub_right_comm, ← map_sub]
   refine Valuation.map_add_lt _ ?_ h0
   rw [valued_algebraMap, Valuation.map_sub_swap]
   simpa using ha
@@ -328,7 +332,8 @@ def IsRed (P : HeightOneSpectrum (𝓞 E)) (x : GL (Fin n) (AfE F E)) (A : Matri
 
 theorem IsRed.mul {x y : GL (Fin n) (AfE F E)} {A B : Matrix (Fin n) (Fin n) (𝓞 E ⧸ P.asIdeal)} (h : IsRed P x A)
     (h' : IsRed P y B) : IsRed P (x * y) (A * B) := fun i j => by
-  rw [Units.val_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Units.val_mul, Matrix.mul_apply, Matrix.mul_apply, map_sum]
   exact hasRes_sum _ fun l => by rw [map_mul]; exact hasRes_mul (h i l) (h' l j)
 
 theorem IsRed.unique {x : GL (Fin n) (AfE F E)} {A B : Matrix (Fin n) (Fin n) (𝓞 E ⧸ P.asIdeal)} (h : IsRed P x A)
@@ -366,7 +371,8 @@ theorem pullV_mul (g m : GL (Fin n) (AfE F E)) [StarRing E] (x : Sp E n) (i : Fi
 theorem hasRes_pullV [StarRing E] {g m : GL (Fin n) (AfE F E)} {A : Matrix (Fin n) (Fin n) (𝓞 E ⧸ P.asIdeal)} (hm : IsRed P m A)
     {x : Sp E n} {c : Fin n → 𝓞 E ⧸ P.asIdeal} (h : ∀ i, HasRes P (adAt F P (Col2.pullV g x i)) (c i)) (i : Fin n) :
     HasRes P (adAt F P (Col2.pullV (g * m⁻¹) x i)) ((A *ᵥ c) i) := by
-  rw [pullV_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pullV_mul, map_sum]
   exact hasRes_sum _ fun l => by rw [map_mul]; exact hasRes_mul (hm i l) (h l)
 
 end Res
@@ -376,8 +382,8 @@ section Pts
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E] {hc : CMData F E} {n : ℕ}
   {ST SG Q : Finset (HeightOneSpectrum (𝓞 E))}
 
-theorem smul_N (p : DecoF E n ST SG Q) (h : GLG E n SG) (c : GLQ E n Q) :
-    (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p).deco.1.N = p.deco.1.N := Submodule.map_id _
+theorem smul_N (p : DecoF E n ST SG Q) (h : GLG (E := E) (n := n) (SG := SG)) (c : GLQ E n Q) :
+    (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p).deco.1.N = p.deco.1.N := Submodule.map_id _
 
 theorem exists_pt [NeZero n] (hQ : ∀ P, P ∉ Q) {g : GL (Fin n) (AfE F E)} (hg : g ∈ Formalism.L2.Herm.UstdAf hc n) :
     ∃ q : DecoF E n ST SG Q, IsPtOf hc g q := by
@@ -401,8 +407,8 @@ theorem isPtOf_mul (hQ : ∀ P, P ∉ Q) {g m : GL (Fin n) (AfE F E)} {p : DecoF
     (h2 : ∀ i j, ((m⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) i j ∈ RInt F E)
     (hT : ∀ P ∈ ST, ∀ i j, adAt F P ((m : Matrix (Fin n) (Fin n) (AfE F E)) i j) =
       adAt F P (((1 : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) i j))
-    {h : GLG E n SG} (hh : ∀ w : SG, IsRed w.1 m (h w)) (c : GLQ E n Q) :
-    IsPtOf hc (g * m⁻¹) (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p) := by
+    {h : GLG (E := E) (n := n) (SG := SG)} (hh : ∀ w : SG, IsRed w.1 m (h w)) (c : GLQ E n Q) :
+    IsPtOf hc (g * m⁻¹) (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) := by
   refine ⟨mul_mem hg.uni (inv_mem hm), fun z => ?_, fun P v hv i hi => ?_, fun w v hv i => ?_, fun P => absurd P.2 (hQ _)⟩
   · rw [smul_N]
     refine (hg.lat z).trans ((mem_latS_std _).trans (Iff.trans ⟨fun h i => ?_, fun h i => ?_⟩ (mem_latS_std _).symm))
@@ -412,7 +418,8 @@ theorem isPtOf_mul (hQ : ∀ P, P ∉ Q) {g m : GL (Fin n) (AfE F E)} {p : DecoF
       rwa [Matrix.mulVec_mulVec, ← Units.val_mul, _root_.mul_inv_rev, inv_inv, inv_mul_cancel_left] at this
   · rw [smul_N] at hv
     have e : adAt F P.1 (Col2.pullV (g * m⁻¹) v i) = adAt F P.1 (Col2.pullV (g * 1⁻¹) v i) := by
-      rw [pullV_mul, pullV_mul, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [pullV_mul, pullV_mul, map_sum, map_sum]
       exact Finset.sum_congr rfl fun j _ => by rw [map_mul, map_mul, hT _ P.2]
     rw [e, inv_one, mul_one]
     exact hg.f P v hv i hi
@@ -426,12 +433,12 @@ theorem eq_of_be (p : DecoF E n ST SG Q) (w : SG) {A B : Matrix (Fin n) (Fin n) 
   rw [← e]
   exact h v hv
 
-theorem eq_of_smul_eq (p : DecoF E n ST SG Q) {h h' : GLG E n SG} {c c' : GLQ E n Q}
-    (e : ((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p = ((1, h', c') : UF E n × GLG E n SG × GLQ E n Q) • p) : h = h' :=
+theorem eq_of_smul_eq (p : DecoF E n ST SG Q) {h h' : GLG (E := E) (n := n) (SG := SG)} {c c' : GLQ E n Q}
+    (e : ((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p = ((1, h', c') : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p) : h = h' :=
   funext fun w => Units.ext (eq_of_be p w fun v _ => congrArg (fun q : DecoF E n ST SG Q => q.deco.1.be w v) e)
 
-theorem eq_red {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (hg : IsPtOf hc g p) {h : GLG E n SG} {c : GLQ E n Q}
-    (hq : IsPtOf hc (g * m⁻¹) (((1, h, c) : UF E n × GLG E n SG × GLQ E n Q) • p)) (w : SG)
+theorem eq_red {g m : GL (Fin n) (AfE F E)} {p : DecoF E n ST SG Q} (hg : IsPtOf hc g p) {h : GLG (E := E) (n := n) (SG := SG)} {c : GLQ E n Q}
+    (hq : IsPtOf hc (g * m⁻¹) (((1, h, c) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p)) (w : SG)
     {A : Matrix (Fin n) (Fin n) (𝓞 E ⧸ w.1.asIdeal)} (hA : IsRed w.1 m A) : A = h w :=
   eq_of_be p w fun v hv => funext fun i =>
     (hasRes_pullV hA (hg.be w v hv) i).unique (hq.be w v ((smul_N p h c).symm ▸ hv) i)

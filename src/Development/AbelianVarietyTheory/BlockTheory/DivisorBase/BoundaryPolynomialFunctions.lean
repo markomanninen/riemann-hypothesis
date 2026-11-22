@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+
+@[expose] public section
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.BoundaryPolynomialFunctions
 
@@ -58,8 +62,8 @@ def regIntegral (A : FinHolAtlas d X) (Z : Set X) (n : ℕ) (Φ : LocPot X) (S :
 def normSec (L : LocPot X) (s : X → X → ℂ) (y : X) : ℝ :=
   ‖s y y‖ * Real.exp (-L.φ y y)
 
-open scoped Classical in
 
+open scoped Classical in
 def absLogNorm (L : LocPot X) (s : X → X → ℂ) (y : X) : ℝ≥0∞ :=
   if s y y = 0 then ∞ else ENNReal.ofReal |logNormSec L s y|
 
@@ -90,28 +94,6 @@ def IsBoundarySetting {m : ℕ} (A : FinHolAtlas d X) (α : LocPot X) (Λ : Fin 
     (∀ i, IsPotential A (Λ i) ∧ IsSection A (Λ i) (σ i) ∧
       interior {y | σ i y y = 0} = ∅ ∧ ∀ y, normSec (Λ i) (σ i) y ≤ 1) ∧
     IsAdmissibleConst A α Λ c
-
-def LogNormIntegrablePoincare : Prop :=
-  ∀ (d : ℕ) (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X] (A : FinHolAtlas d X),
-    IsProjective A →
-  ∀ (m : ℕ) (α : LocPot X) (Λ : Fin m → LocPot X) (σ : Fin m → X → X → ℂ) (c : ℝ),
-    IsBoundarySetting A α Λ σ c →
-  ∀ (Z : Set X) (n : ℕ), IsIrreducibleAnalytic A Z → (regularLocus A Z n).Nonempty →
-    ¬ Z ⊆ boundary σ →
-  ∀ (L : LocPot X) (s : X → X → ℂ), IsPotential A L → IsSection A L s →
-    (∀ y, normSec L s y ≤ 1) →
-    (∃ y ∈ Z, s y y ≠ 0) →
-    (∀ C, IsIrreducibleComponent A (Z ∩ boundary σ) C → ∃ y ∈ C, s y y ≠ 0) →
-    regIntegral A Z n (poincarePot α Λ σ c) (regularLocus A Z n \ boundary σ)
-      (absLogNorm L s) < ∞
-
-theorem regularLocus_univ (A : FinHolAtlas d X) : regularLocus A Set.univ d = Set.univ := by
-  refine Set.eq_univ_of_forall fun x => ⟨trivial, ?_⟩
-  obtain ⟨j, hj⟩ := A.cover x
-  refine ⟨A.chart j, ⟨le_rfl, fun i => ⟨A.holo i j, A.holo j i⟩, ?_⟩, hj⟩
-  ext y
-  simp only [Set.univ_inter, Set.mem_setOf_eq]
-  exact ⟨fun h => ⟨h, fun k hk => absurd k.2 (not_lt.2 hk)⟩, fun h => h.1⟩
 
 end
 

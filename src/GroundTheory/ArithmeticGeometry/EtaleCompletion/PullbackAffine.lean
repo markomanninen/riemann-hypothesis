@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.EtaleCompletion.ModulesPullback
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.EtaleCompletion.ModulesPullback
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.Etale
@@ -71,8 +76,8 @@ lemma bijective_map_of_isIso_counit {C D : Type*} [Category C] [Category D] {F :
     ⟨fun a b h => (cancel_epi _).mp h,
       fun b => ⟨inv (adj.counit.app X) ≫ b, by simp⟩⟩
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 lemma existsUnique_hom_app_top {A : CommRingCat.{u}} (P P' : (Spec A).Modules)
     [IsIso P.fromTildeΓ] (f : Γ(P, ⊤) →ₗ[Γ(Spec A, ⊤)] Γ(P', ⊤)) :
     ∃! θ : P ⟶ P', ∀ x, θ.app ⊤ x = f x := by
@@ -139,7 +144,7 @@ lemma isBaseChangeSection_specMap {A R : CommRingCat.{u}} (φ : A ⟶ R) (N : (S
   let f : Γ(N, ⊤) →ₗ[Γ(Spec A, ⊤)] Γ((Scheme.Modules.pushforward g).obj P, ⊤) :=
     { toFun := fun n => e.symm (ψ n)
       map_add' := fun x y => by
-        rw [map_add, map_add]
+        rw [map_add (f := _), map_add (f := _)]
         rfl
       map_smul' := fun a x => by
         rw [hψ, map_smul]

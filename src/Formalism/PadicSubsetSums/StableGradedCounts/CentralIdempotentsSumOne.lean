@@ -1,5 +1,9 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+
+@[expose] public section
 
 open Finset
 
@@ -22,7 +26,8 @@ theorem centralIdem_act {G V W : Type} [Group G] [Fintype G] [AddCommGroup V] [M
   set c : ℂ := (Module.finrank ℂ V : ℂ) / (Fintype.card G : ℂ) with hc
   have e : σ.asAlgebraHom (centralIdem ρ) = ∑ g, (c * ρ.character g⁻¹) • σ g := by
     unfold centralIdem
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
     rfl
   obtain ⟨μ, hμ⟩ := schur_scalar σ hσ.2 (fun g => c * ρ.character g⁻¹) (by
     intro g k
@@ -30,7 +35,8 @@ theorem centralIdem_act {G V W : Type} [Group G] [Fintype G] [AddCommGroup V] [M
     simp only [this, Representation.char_conj])
   have htr : μ * (Module.finrank ℂ W : ℂ) = c * ∑ g, σ.character g * ρ.character g⁻¹ := by
     have h1 := congrArg (LinearMap.trace ℂ W) hμ
-    simp only [map_sum, map_smul, smul_eq_mul, LinearMap.trace_one] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, LinearMap.trace_one] at h1
     rw [← h1, Finset.mul_sum]
     exact Finset.sum_congr rfl fun g _ => by simp only [Representation.character]; ring
   have horth := Representation.char_orthonormal σ ρ
@@ -88,7 +94,8 @@ theorem central_idempotents_sum_one : CentralIdemSumOne := by
       (σ : Representation ℂ G W), IsIrr σ → σ.asAlgebraHom z = 1 := by
     intro W _ _ _ σ hσ
     obtain ⟨i₀, φ, hφ⟩ := hfull W σ hσ
-    rw [hz, map_sum, Finset.sum_eq_single i₀]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum, Finset.sum_eq_single i₀]
     · rw [centralIdem_act (ρ i₀) σ (hirr i₀) hσ, if_pos]
       exact ⟨(Representation.Equiv.mk φ (fun g => LinearMap.ext fun x => hφ g x)).symm⟩
     · intro i _ hi

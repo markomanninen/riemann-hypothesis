@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.SameSatakeOfProjection
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.SameSatakeOfProjection
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFiniteMeasureQuotMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,9 @@ namespace PositivityTheory.AdelicQuotientData
 
 namespace QORT
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem la_ratGL_inj : Function.Injective (ratGL E k) := by
   intro a b e
   ext i j
@@ -110,12 +114,18 @@ theorem band_eq (hQ2 : Q2) (hD0 : D0) (hN3 : N3) (hk : 1 ≤ k) (μ : Measure (G
     {β : GA E k → ℝ≥0∞} (hβ : IsWt (nuB E k k) β) (Φ : GA E k → ℂ) (hm : Measurable Φ)
     (hl : LeftInv (latticeGL E k) Φ) (hi : IntegrableOn Φ (stdDom (latticeGL E k)) μ) :
     ∫ g in band E k, Φ g ∂μ.withDensity β = ∫ g in stdDom (latticeGL E k), Φ g ∂μ := by
+  haveI : T1Space (GA E k) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
+  haveI : MeasurableSingletonClass (GA E k) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
   have hcont : Continuous (Dt : GA E k → ℝ) := (hD0 E k).2.2.1
   have hband : MeasurableSet (band E k) :=
     (hcont.measurable measurableSet_Ici).inter (hcont.measurable measurableSet_Iio)
   have hD := measurableSet_stdDom (latticeGL E k)
   have hL : MeasurableSet (latticeGL E k : Set (GA E k)) :=
-    (Subgroup.isClosed_of_discrete (H := latticeGL E k)).measurableSet
+    (Subgroup.isClosed_of_discreteTopology (U := latticeGL E k)).measurableSet
   let ν : Measure (GA E k) := Measure.sum fun l : latticeGL E k => Measure.dirac (l : GA E k)
   have hsum : ∀ f : GA E k → ℝ≥0∞, Measurable f → ∫⁻ x, f x ∂ν = ∑' l : latticeGL E k, f l := fun f hf => by
     simp only [ν, lintegral_sum_measure, lintegral_dirac' _ hf]

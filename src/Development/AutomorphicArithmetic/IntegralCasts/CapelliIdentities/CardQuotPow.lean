@@ -1,9 +1,8 @@
-import Mathlib
+module
 
-theorem UpperTheory.Reformulated.B.Yzb5.aux1 :
-    ∀ {F : Type} [inst : Field F], SubsemiringClass (Subring F) F := by
-  intro F _
-  infer_instance
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Yzb5.resQ :
     {F : Type} → [inst : Field F] → [inst_1 : ValuativeRel F] → ↥(ValuativeRel.valuation F).integer → ℕ :=
@@ -186,7 +185,8 @@ theorem UpperTheory.Reformulated.B.Yzb5.relIndex_map :
     have hx := b.sum_repr (e x)
     simp only [he] at hx
     have hmv : ((M.mulVecLin x) i : F) = f (∑ j, M i j * x j) := rfl
-    rw [hmv, map_sum, ← hx, map_sum, map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hmv, map_sum, ← hx, map_sum, map_sum, Finsupp.finsetSum_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, map_smul, map_smul, Finsupp.smul_apply, smul_eq_mul, mul_comm]
     rfl

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeRationalVectorsInAdelicTranslate
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalUnitaryGroupStructure
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteAdelicLatticeTransportLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCommonSmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLatticeRationalVectorsInAdelicTranslate
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RationalUnitaryGroupStructure
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteAdelicLatticeTransportLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsCommonSmulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -294,7 +298,7 @@ theorem mov_left {m₁ m₂ : Matrix (Fin k) (Fin k) (AfE D)} {Λ L : Lt D.host.
     (h₂ : ∀ u, lf (1 - idem I) • (m₂ *ᵥ u) = lf (1 - idem I) • u)
     (a : ∀ z ∈ hatV L, lf (idem I) • z ∈ hatV Λ) (b : ∀ z ∈ hatV Λ, lf (idem I) • z ∈ hatV L) : IsMov m₁ Λ L := by
   have d (z : Fin k → AfE D) : lf (idem I) • z + lf (1 - idem I) • z = z := by
-    rw [← add_smul, ← map_add, add_sub_cancel, map_one, one_smul]
+    rw [← add_smul, ← map_add (f := _), add_sub_cancel, map_one, one_smul]
   have key (u : Fin k → AfE D) : lf (1 - idem I) • (m₁ *ᵥ u) = lf (1 - idem I) • ((m₁ * m₂) *ᵥ u) := by
     rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_smul, ← Matrix.mulVec_smul, h₂]
   intro w
@@ -313,13 +317,13 @@ theorem cf_cf (x : AfE D) : cf D (cf D x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => exact congrArg (a ⊗ₜ[D.host.F] ·) (star_star x)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fin_cA (x : AE D) : finPart D (cA D x) = cf D (finPart D x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem hermA_one (x y : Fin k → AfE D) :
     hermA (cF D) (1 : Matrix (Fin k) (Fin k) D.host.E) x y = ∑ a, x a * cf D (y a) := by
@@ -339,7 +343,8 @@ theorem hermA_conj {m : Matrix (Fin k) (Fin k) (AfE D)}
     funext i
     exact (cf_cf _).symm
   have := congrArg (cf D) (h (cf D ∘ x) (cf D ∘ y))
-  simp only [hermA_one, map_sum, map_mul, e, Function.comp_apply, cf_cf] at this ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermA_one, map_sum, map_mul, e, Function.comp_apply, cf_cf] at this ⊢
   exact this
 
 variable {S T : HSp D}
@@ -355,8 +360,8 @@ theorem mem_Vset (C : Ctx S T) {M : ℕ} {h : GA D S} {Λ : Lt D.host.E S.rank}
   have hs : Submodule.span D.host.E (stdL D.host.E S.rank : Set (Fin S.rank → D.host.E)) = ⊤ := by
     rw [stdL, Submodule.span_span_of_tower, ← (Pi.basisFun D.host.E (Fin S.rank)).span_eq]
     congr 2
-    funext i
-    simp
+    funext a
+    exact (Pi.basisFun_apply D.host.E (Fin S.rank) a).symm
   rw [← hg] at hm
   have hint (z : D.host.E) : z ∈ (1 : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) ↔ IsIntegral ℤ z := by
     rw [FractionalIdeal.mem_one_iff]
@@ -440,7 +445,7 @@ theorem mem_lats (C : Ctx S T) (Lv : SW.Level C.X) {g : GA D T} {L : Lt D.host.E
   refine ⟨selfD_of_mov C hL hm, _, ?_, h1, h2⟩
   obtain ⟨a, m, hm, e⟩ := Lev.cop_iff.1 hs
   have e' := congrArg (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) e
-  rw [map_add, map_mul, map_one] at e'
+  rw [map_add (f := _), map_mul, map_one] at e'
   exact IsCoprime.mul_right (Lev.cop_iff.2 ⟨_, _, hm, e'⟩)
     (Lev.cop_iff.2 ⟨_, _, Lev.mem_conjI.2 (by rw [bar_algebraMap]; exact hm), e'⟩)
 
@@ -459,7 +464,7 @@ theorem exists_triv (C : Ctx S T) (Lv : SW.Level C.X) {g : GA D T} {L : Lt D.hos
   have hc : IsCoprime (Ideal.span {Lev.bar s * s}) Lv.𝔪 := by
     refine Lev.cop_mul ?_ hs.of_mul_right_left
     obtain ⟨b, m, hm', e⟩ := Lev.cop_iff.1 hs.of_mul_right_right
-    exact Lev.cop_iff.2 ⟨Lev.bar b, Lev.bar m, Lev.mem_conjI.1 hm', by rw [← map_mul, ← map_add, e, map_one]⟩
+    exact Lev.cop_iff.2 ⟨Lev.bar b, Lev.bar m, Lev.mem_conjI.1 hm', by rw [← map_mul, ← map_add (f := _), e, map_one]⟩
   have hv : ∀ v : HeightOneSpectrum (𝓞 D.host.F), C.under Lv ≤ v.asIdeal → t ∉ v.asIdeal := fun v hv htv => by
     haveI := v.isPrime
     obtain ⟨Q, hQ, hQp, e⟩ := Ideal.exists_ideal_over_prime_of_isIntegral v.asIdeal Lv.𝔪 hv

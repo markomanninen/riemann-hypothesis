@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetDefiniteUnitaryDoubleCosets
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetDefiniteUnitaryDoubleCosets
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,25 +19,28 @@ theorem isometry_withAbs (τ : M ≃+* M) (v w : InfinitePlace M) (h : ∀ x, w 
   exact h _
 
 def locMap (τ : M ≃+* M) (v w : InfinitePlace M) (h : ∀ x, w (τ x) = v x) : v.Completion →+* w.Completion :=
-  (InfinitePlace.Completion.equiv w).symm.toRingHom.comp
+  (AbsoluteValue.Completion.ofCompletion (v := w.1)).comp
     ((UniformSpace.Completion.mapRingHom (WithAbs.congr v.1 w.1 τ).toRingHom
-      (isometry_withAbs τ v w h).continuous).comp (InfinitePlace.Completion.equiv v).toRingHom)
+      (isometry_withAbs τ v w h).continuous).comp AbsoluteValue.Completion.toCompletion)
 
 theorem continuous_locMap (τ : M ≃+* M) (v w : InfinitePlace M) (h : ∀ x, w (τ x) = v x) :
     Continuous (locMap τ v w h) :=
-  (InfinitePlace.Completion.continuous_ofCompletion w).comp
-    ((UniformSpace.Completion.continuous_map).comp (InfinitePlace.Completion.continuous_toCompletion v))
+  (AbsoluteValue.Completion.continuous_ofCompletion w.1).comp
+    (UniformSpace.Completion.continuous_map.comp (AbsoluteValue.Completion.continuous_toCompletion v.1))
 
 theorem locMap_coe (τ : M ≃+* M) (v w : InfinitePlace M) (h : ∀ x, w (τ x) = v x) (x : M) :
     locMap τ v w h (x : v.Completion) = ((τ x : M) : w.Completion) := by
-  change InfinitePlace.Completion.ofCompletion ((UniformSpace.Completion.mapRingHom (WithAbs.congr v.1 w.1 τ).toRingHom
-    (isometry_withAbs τ v w h).continuous) ((WithAbs.toAbs v.1 x : WithAbs v.1) : v.1.Completion)) = _
-  exact congrArg InfinitePlace.Completion.ofCompletion (UniformSpace.Completion.mapRingHom_coe _ _)
+  rw [locMap, RingHom.comp_apply, RingHom.comp_apply, AbsoluteValue.Completion.toCompletion_coe]
+  calc
+    _ = AbsoluteValue.Completion.ofCompletion (v := w.1) (WithAbs.toAbs w.1 (τ x)) :=
+      congrArg (AbsoluteValue.Completion.ofCompletion (v := w.1))
+        (UniformSpace.Completion.mapRingHom_coe (isometry_withAbs τ v w h).continuous (WithAbs.toAbs v.1 x))
+    _ = _ := AbsoluteValue.Completion.ofCompletion_coe (WithAbs.toAbs w.1 (τ x))
 
 theorem locMap_comp (τ τ' : M ≃+* M) (u v w : InfinitePlace M) (h : ∀ x, v (τ x) = u x) (h' : ∀ x, w (τ' x) = v x)
     (h'' : ∀ x, w ((τ.trans τ') x) = u x) (y : u.Completion) :
     locMap τ' v w h' (locMap τ u v h y) = locMap (τ.trans τ') u w h'' y := by
-  induction y using InfinitePlace.Completion.induction_on with
+  induction y using AbsoluteValue.Completion.induction_on with
   | hp => exact isClosed_eq ((continuous_locMap _ _ _ _).comp (continuous_locMap _ _ _ _)) (continuous_locMap _ _ _ _)
   | ih a =>
     have e1 := locMap_coe τ u v h (WithAbs.equiv u.1 a)
@@ -47,7 +54,7 @@ theorem locMap_comp (τ τ' : M ≃+* M) (u v w : InfinitePlace M) (h : ∀ x, v
 
 theorem locMap_eq_self (τ : M ≃+* M) (hτ : ∀ x, τ x = x) (u : InfinitePlace M) (h : ∀ x, u (τ x) = u x)
     (y : u.Completion) : locMap τ u u h y = y := by
-  induction y using InfinitePlace.Completion.induction_on with
+  induction y using AbsoluteValue.Completion.induction_on with
   | hp => exact isClosed_eq (continuous_locMap _ _ _ _) continuous_id
   | ih a =>
     change locMap _ u u h (WithAbs.equiv u.1 a : u.Completion) = _
@@ -104,7 +111,8 @@ theorem infEquiv_algebraMap (σ : M ≃+* M) (x : M) :
   obtain ⟨w, rfl⟩ := (placePerm σ).surjective v
   change (Equiv.piCongrLeft (fun v : InfinitePlace M => v.Completion) (placePerm σ)
     (fun w => locEquiv σ w (algebraMap M (InfiniteAdeleRing M) x w))) (placePerm σ w) = _
-  rw [Equiv.piCongrLeft_apply_apply]
+  rw [Equiv.piCongrLeft_apply_apply, InfiniteAdeleRing.algebraMap_apply,
+    InfiniteAdeleRing.algebraMap_apply]
   exact locMap_coe σ w (placePerm σ w) (placePerm_apply σ w) x
 
 variable [NumberField M]
@@ -124,8 +132,8 @@ def finEquiv (σ : M ≃+* M) : Af M ≃+* Af M where
 
 end UpperTheory.CBC.GaloisActionOnAdeles
 
-open UpperTheory.CBC.GaloisActionOnAdeles in
 
+open UpperTheory.CBC.GaloisActionOnAdeles in
 def UpperTheory.CBC.SGalAdEx : Prop :=
   ∀ (M : Type) [Field M] [NumberField M] (σ : M ≃+* M), ∃ s : Ad M ≃+* Ad M, UpperTheory.CBC.IsGalAd σ s
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.V.Published
 open UpperTheory.Gal.UnramifiedFromSplittingCriterion
@@ -45,7 +49,7 @@ private theorem exists_zmod_castHom_eq_of_pow_char_eq_self {K : Type} [Field K] 
     apply Polynomial.monic_X_pow_sub
     rw [degree_X]; exact_mod_cast hp.out.one_lt
   have hdeg : (X ^ p - X : (ZMod p)[X]).roots.card = (X ^ p - X : (ZMod p)[X]).natDegree := by
-    rw [hroots, FiniteField.X_pow_card_sub_X_natDegree_eq _ hp.out.one_lt]
+    rw [hroots, Polynomial.natDegree_X_pow_sub_X hp.out.one_lt]
     simp [hcard]
   have hprod := Polynomial.prod_multiset_X_sub_C_of_monic_of_roots_card_eq hmon hdeg
   have hev := congrArg (fun P => (P.map f).eval z) hprod

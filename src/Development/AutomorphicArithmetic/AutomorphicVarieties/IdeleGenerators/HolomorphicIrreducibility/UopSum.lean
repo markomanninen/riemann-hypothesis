@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.DcSumEqOfMk
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.GlintPrincRelIndexNeZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsLocalRing UpperTheory.V UpperTheory.V.Sd Formalism.L2.Host
 
@@ -133,8 +137,8 @@ private theorem yy_res (φ : O →+* K) (hφ : Function.Injective φ) (n : ℕ) 
   have h1 := congrFun (congrFun hg 0) 1
   have h2 := congrFun (congrFun hg 1) 1
   simp [Matrix.mul_apply, Fin.sum_univ_two] at h1 h2
-  have h3 : p * b + u = u' := hφ (by rw [map_add, map_mul, ← h1, h2, mul_one])
-  rw [← h3, map_add, map_mul, (residue_eq_zero_iff _).2 hm, zero_mul, zero_add]
+  have h3 : p * b + u = u' := hφ (by rw [map_add (f := _), map_mul, ← h1, h2, mul_one])
+  rw [← h3, map_add (f := _), map_mul, (residue_eq_zero_iff _).2 hm, zero_mul, zero_add]
 
 private theorem yz_ne (φ : O →+* K) (hφ : Function.Injective φ) (n : ℕ) (π : Kˣ) (p : O) (hp : φ p = π)
     (hm : p ∈ maximalIdeal O) (u : O) :

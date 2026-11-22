@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import GroundTheory.GlobalFields.TateThesis.TraceDualLattice
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+public import GroundTheory.GlobalFields.TateThesis.TraceDualLattice
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -78,8 +82,8 @@ theorem mem_localInvDifferent_iff_valued (v : HeightOneSpectrum (𝓞 K)) (z : v
           mul_le_mul' h (intValuation_le_of_mem_ideal v (differentIdeal_ne_bot (A := ℤ)) hy)
       _ = 1 := by rw [← exp_add, add_neg_cancel, exp_zero]
 
-variable (K) in
 
+variable (K) in
 def finiteAdelicChar : AddChar 𝔸ᶠ[K] Circle :=
   (adelicChar K).compAddMonoidHom finiteAdeleInr
 

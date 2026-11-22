@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TruncatedSeriesCounting.StatementX
+module
+
+public import Mathlib
+public import Formalism.TruncatedSeriesCounting.StatementX
+
+@[expose] public section
 
 namespace Formalism.TruncatedSeriesCounting.X
 

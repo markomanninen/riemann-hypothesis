@@ -1,7 +1,11 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeVdLeOne
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySeventh
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeVdLeOne
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySeventh
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensitySixth
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+
+@[expose] public section
 
 open NumberField Module
 
@@ -85,29 +89,29 @@ theorem newton_iter (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : I
 
 theorem exists_exact_lift (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) {x₀ : V} (h1 : h x₀ x₀ = 1) {k : ℕ} (hk : 1 ≤ k) {y : V} (hy : y ∈ L)
     (hyy : CongrP 𝔭 k (h y y) 1) :
     ∃ z ∈ locF 𝔭 L, h z z = 1 ∧ z - y ∈ (extP K 𝔭 ^ k • locF 𝔭 L : Submodule (𝓞 K) V) := by
-  haveI := h𝔭.isPrime
+  have hcongr (j : ℕ) (b : 𝓞 F) :
+      CongrP 𝔭 j (algebraMap (𝓞 K) K (ι b)) 1 ↔ b - 1 ∈ 𝔭 ^ j := by
+    have h := integralBasisSpans.congrP_int h𝔭 j (ι b) (ι 1)
+    rw [Ideal.Quotient.eq, ← map_sub, idealPowerSpanBounds.mem_pow_iff] at h
+    simpa only [map_one] using h
   obtain ⟨a, ha⟩ := exists_norm_int hF hs hLi hy
-  have hI0 : WCA.InI 𝔭 k (algebraMap (𝓞 K) K (ι (a - 1))) := by
-    have := Cell.congrP_iff_inI.1 hyy
-    rwa [ha, ← map_one (algebraMap (𝓞 K) K), ← map_sub, ← map_one (algebraMap (𝓞 F) (𝓞 K)),
-      ← map_sub] at this
-  have ha1 : a - 1 ∈ 𝔭 ^ k := (Cell.inI_ι h𝔭).1 hI0
-  obtain ⟨v, hv⟩ := Cell.exists_near h𝔭 hF hs hL hLi (n := 1) one_ne_zero
-    ⟨x₀, by rw [h1, map_one, map_one]⟩
-  obtain ⟨y', hy', a', ha', ha1', hd'⟩ := newton_iter hK hF h𝔭 hk hy ha ha1 v
-  have hI : WCA.InI 𝔭 (v + k) (h y' y' - algebraMap (𝓞 K) K (ι 1)) := by
-    rw [ha', ← map_sub, ← map_sub]
-    exact (Cell.inI_ι h𝔭).2 (by rw [add_comm]; exact ha1')
-  obtain ⟨z, hz0, hz1, hzd⟩ :=
-    hv k hk y' ((WCA.inL_zero_iff h𝔭.isPrime).2 (localizedQuotients.le_locF 𝔭 L hy')) hI
-  refine ⟨z, (WCA.inL_zero_iff h𝔭.isPrime).1 hz0, by rw [hz1, map_one, map_one], ?_⟩
+  rw [ha] at hyy
+  have ha1 := (hcongr k a).1 hyy
+  have hOne : algebraMap F K ((1 : 𝓞 F) : F) = 1 := by simp
+  obtain ⟨c, hc⟩ := exists_exact_near hK hF hs hd hL hLi h𝔭 (n := 1) one_ne_zero
+    ⟨x₀, h1.trans hOne.symm⟩
+  obtain ⟨y', hy', a', ha', ha1', hd'⟩ := newton_iter hK hF h𝔭 hk hy ha ha1 c
+  obtain ⟨z, hz0, hz1, hzd⟩ := hc (k + c) (Nat.le_add_left c k) y'
+    (localizedQuotients.le_locF 𝔭 L hy') (by rw [ha', hOne]; exact (hcongr _ _).2 ha1')
+  rw [Nat.add_sub_cancel] at hzd
+  refine ⟨z, hz0, hz1.trans hOne, ?_⟩
   have : z - y = (z - y') + (y' - y) := by abel
   rw [this]
-  exact Submodule.add_mem _ (WCA.InL.mem h𝔭.isPrime hzd)
+  exact Submodule.add_mem _ hzd
     (Submodule.smul_mono le_rfl (localizedQuotients.le_locF 𝔭 L) hd')
 
 end Formalism.HermitianLattices.Ext.L3.PinF

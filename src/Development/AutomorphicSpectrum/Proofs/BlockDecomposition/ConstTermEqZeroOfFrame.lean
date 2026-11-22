@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CompatibleThetaRestrictions
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfLinearIndependent
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CompatibleThetaRestrictions
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIsometryOfLinearIndependent
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,17 +57,18 @@ variable {D : D7} {V : HSp D} {r : ℕ}
 theorem rat_mulVec_inc {n m : ℕ} (A : Matrix (Fin n) (Fin m) D.host.E) (x : Fin m → D.host.E) :
     (rat A).mulVec (fun i => incA D (x i)) = fun i => incA D ((A.mulVec x) i) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, rat, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, rat, map_sum]
 
 theorem conj_conditions {C₁ C₂ : Matrix (Fin V.rank) (Fin r) D.host.E}
     (g₀ gi : Matrix (Fin V.rank) (Fin V.rank) D.host.E) (h1 : g₀ * gi = 1)
     (hC : g₀ * C₁ = C₂) (hC' : gi * C₂ = C₁) (hH : C₂ᴴ * V.gram * g₀ = C₁ᴴ * V.gram)
-    (m : Mx D V.rank V.rank) (a1 : m ⬝ rat C₁ = 0) (a2 : rat (C₁ᴴ * V.gram) ⬝ m = 0)
+    (m : Mx D V.rank V.rank) (a1 : m * rat C₁ = 0) (a2 : rat (C₁ᴴ * V.gram) * m = 0)
     (a3 : ∀ x : Fin V.rank → D.host.E, (C₁ᴴ * V.gram).mulVec x = 0 →
       ∃ a : Fin r → AE D, m.mulVec (fun i => incA D (x i)) = (rat C₁).mulVec a) :
-    (rat g₀ ⬝ m ⬝ rat gi) ⬝ rat C₂ = 0 ∧ rat (C₂ᴴ * V.gram) ⬝ (rat g₀ ⬝ m ⬝ rat gi) = 0 ∧
+    (rat g₀ * m * rat gi) * rat C₂ = 0 ∧ rat (C₂ᴴ * V.gram) * (rat g₀ * m * rat gi) = 0 ∧
       ∀ x : Fin V.rank → D.host.E, (C₂ᴴ * V.gram).mulVec x = 0 →
-        ∃ a : Fin r → AE D, (rat g₀ ⬝ m ⬝ rat gi).mulVec (fun i => incA D (x i)) = (rat C₂).mulVec a := by
+        ∃ a : Fin r → AE D, (rat g₀ * m * rat gi).mulVec (fun i => incA D (x i)) = (rat C₂).mulVec a := by
   refine ⟨?_, ?_, fun x hx => ?_⟩
   · rw [Matrix.mul_assoc, ← rat_mul, hC', Matrix.mul_assoc, a1, Matrix.mul_zero]
   · rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, ← rat_mul, hH, a2, Matrix.zero_mul]
@@ -80,12 +85,12 @@ theorem conj_mem_NI {C₁ C₂ : Matrix (Fin V.rank) (Fin r) D.host.E} (γ : GA 
   have hC' : gi * C₂ = C₁ := by rw [← hC, ← Matrix.mul_assoc, h2, Matrix.one_mul]
   have hH : C₂ᴴ * V.gram * g₀ = C₁ᴴ * V.gram := by
     rw [← hC, Matrix.conjTranspose_mul, Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc g₀ᴴ, hu]
-  have ii' : rat g₀ ⬝ rat gi = (1 : Mx D V.rank V.rank) := by rw [← rat_mul, h1, rat_one]
+  have ii' : rat g₀ * rat gi = (1 : Mx D V.rank V.rank) := by rw [← rat_mul, h1, rat_one]
   have hle : NI V C₁ ≤ (NI V C₂).comap (MulAut.conj γ).toMonoidHom := by
     refine (Subgroup.closure_le _).2 fun g hg => Subgroup.subset_closure ?_
     obtain ⟨a1, a2, a3⟩ := hg
-    have em : (matHom V ((MulAut.conj γ).toMonoidHom g)).1 - 1 = rat g₀ ⬝ ((matHom V g).1 - 1) ⬝ rat gi := by
-      have e : (matHom V ((MulAut.conj γ).toMonoidHom g)).1 = mt V γ ⬝ mt V g ⬝ mt V γ⁻¹ := rfl
+    have em : (matHom V ((MulAut.conj γ).toMonoidHom g)).1 - 1 = rat g₀ * ((matHom V g).1 - 1) * rat gi := by
+      have e : (matHom V ((MulAut.conj γ).toMonoidHom g)).1 = mt V γ * mt V g * mt V γ⁻¹ := rfl
       rw [e, hm, hmi, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one, ii']
       rfl
     have := conj_conditions g₀ gi h1 hC hC' hH _ a1 a2 a3
@@ -102,7 +107,7 @@ theorem constTerm_eq_zero_of_frame : ∀ (D : D7) (V : HSp D) (r : ℕ) (C₁ C�
     GlobalTheory.Cusp.constTerm (GlobalTheory.Cusp.frameFlag h₁) φ = 0 → GlobalTheory.Cusp.constTerm (GlobalTheory.Cusp.frameFlag h₂) φ = 0 := by
   intro D V r C₁ C₂ h₁ h₂ φ hφ h0
   have hθ : (1 / 2 : D.host.E) + star (1 / 2 : D.host.E) = 1 := by
-    have e : star (1 / 2 : D.host.E) = 1 / 2 := by simp [star_div₀]
+    have e : star (1 / 2 : D.host.E) = 1 / 2 := by simp
     rw [e, add_halves]
   have e₁ : C₁ᴴ * V.gram * C₁ = 0 := h₁.2.2
   have e₂ : C₂ᴴ * V.gram * C₂ = 0 := h₂.2.2

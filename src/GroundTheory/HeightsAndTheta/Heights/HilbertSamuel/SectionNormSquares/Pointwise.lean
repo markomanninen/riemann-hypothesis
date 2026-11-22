@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SectionNormSquares.EventuallyDifferentiableAt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SectionNormSquares.EventuallyDifferentiableAt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -21,8 +26,8 @@ def nrm (k : K) (x : (Σ k, ι k) → ℂ) : ℝ := ∑ i, ‖x ⟨k, i⟩‖ ^ 
 
 def Nd (d : K → ℕ) (x : (Σ k, ι k) → ℂ) : ℝ := ∏ k, nrm k x ^ d k
 
-variable (ι) in
 
+variable (ι) in
 def blockNZ : Set ((Σ k, ι k) → ℂ) := {x | ∀ k, ∃ i, x ⟨k, i⟩ ≠ 0}
 
 theorem isOpen_blockNZ : IsOpen (blockNZ ι) := by
@@ -42,7 +47,7 @@ theorem Nd_pos (d : K → ℕ) {x : (Σ k, ι k) → ℂ} (hx : x ∈ blockNZ ι
 
 theorem contDiff_nrm (k : K) {n : WithTop ℕ∞} : ContDiff ℝ n (nrm (ι := ι) k) := by
   unfold nrm
-  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ _)
+  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) _)
 
 theorem contDiff_Nd (d : K → ℕ) {n : WithTop ℕ∞} : ContDiff ℝ n (Nd (ι := ι) d) := by
   unfold Nd

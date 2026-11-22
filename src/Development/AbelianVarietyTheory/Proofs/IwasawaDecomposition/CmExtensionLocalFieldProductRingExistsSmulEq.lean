@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInjectiveSeqNormOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsInjectiveSeqNormOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
@@ -29,7 +33,8 @@ theorem exists_quasiReflection {S : Type} [CommRing S] (s : S →+* S) (hs : ∀
   have hPJ : cT s P * J = J * P := by
     ext i j
     have h1 : s (r i) = ∑ k, J i k * w k := by
-      simp only [r, map_sum, map_mul, hs, hJ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [r, map_sum, map_mul, hs, hJ]
       exact Finset.sum_congr rfl fun k _ => by ring
     simp only [P, cT, Matrix.mul_apply, vecMulVec_apply, transpose_apply, map_apply, map_mul]
     calc ∑ k, s (w k) * s (r i) * J k j = s (r i) * r j := by
@@ -48,9 +53,10 @@ theorem exists_quasiReflection {S : Type} [CommRing S] (s : S →+* S) (hs : ∀
     rw [this, Matrix.sub_mul, Matrix.mul_sub, Matrix.smul_mul, Matrix.mul_smul, hPJ, Matrix.one_mul,
       Matrix.mul_one]
   · rw [sub_mulVec, one_mulVec, smul_mulVec, ← hr, ← smul_smul]
-    congr 2
-    funext i
-    simp only [P, mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul]
+    congr 1
+    ext i
+    simp only [P, Matrix.mulVec, dotProduct, vecMulVec_apply, Pi.smul_apply, smul_eq_mul,
+      Finset.sum_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun k _ => by ring
 
 theorem exists_unitary {S : Type} [CommRing S] (s : S →+* S) (hs : ∀ a, s (s a) = a) {n : ℕ}
@@ -59,7 +65,8 @@ theorem exists_unitary {S : Type} [CommRing S] (s : S →+* S) (hs : ∀ a, s (s
     (hD : IsUnit (β - v * hform s J y x)) :
     ∃ γ : GL (Fin n) S, cT s γ.1 * J * γ.1 = J ∧ γ.1 *ᵥ x = y := by
   have hsym : ∀ a b, s (hform s J a b) = hform s J b a := fun a b => by
-    simp only [hform, map_sum, map_mul, hs, hJ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hform, map_sum, map_mul, hs, hJ]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   have hl : ∀ z, hform s J (x - s v • y) z = hform s J x z - v * hform s J y z := fun z => by

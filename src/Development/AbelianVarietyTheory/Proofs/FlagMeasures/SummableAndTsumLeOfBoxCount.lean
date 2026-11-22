@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 
@@ -41,7 +45,7 @@ theorem summable_and_tsum_le_of_box_count (ι Γ : Type) [Fintype ι] (D : Γ �
       _ = ∏ _v : ι, ∑ k ∈ Finset.range M, q ^ k :=
           (Finset.prod_univ_sum (fun _ => Finset.range M) (fun _ k => q ^ k)).symm
       _ ≤ ∏ _v : ι, (2 : ℝ) :=
-          Finset.prod_le_prod (fun v _ => Finset.sum_nonneg (fun k _ => pow_nonneg hq0 k))
+          Finset.prod_le_prod₀ (fun v _ => Finset.sum_nonneg (fun k _ => pow_nonneg hq0 k))
             (fun v _ => hgeom M)
       _ = 2 ^ Fintype.card ι := by simp
   have hB : 0 ≤ c * A * (2 * Real.exp a) ^ Fintype.card ι := by positivity

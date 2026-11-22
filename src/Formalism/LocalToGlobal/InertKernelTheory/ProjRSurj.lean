@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelEntrywiseLastLevel
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ def relV (i : G.comp) (L : G.P.Tup) : Submodule ℂ (V × XR G.P ℂ) where
     intro a b ha hb g hg c γ hγ κ hp z z' hz
     have h1 := ha g hg c γ hγ κ hp z z' hz
     have h2 := hb g hg c γ hγ κ hp z z' hz
-    simp only [Prod.fst_add, Prod.snd_add, map_add, Pi.add_apply] at h1 h2 ⊢
+    simp only [Prod.fst_add, Prod.snd_add, map_add (f := _), Pi.add_apply] at h1 h2 ⊢
     rw [h1, h2, mul_add]
   zero_mem' := by
     intro g hg c γ hγ κ hp z z' hz

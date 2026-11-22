@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemBallOfGaugeLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAdicCompleteOfPowLe
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemBallOfGaugeLt
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ def prism : Obj l ↥(OL K) where
 
 def toP : bk.S ≃+* bk.prism.A := RingEquiv.refl _
 
-variable {bk} in
 
+variable {bk} in
 def hf {B : Obj l ↥(OL K)} (f : Hom bk.prism B) : bk.S →+* B.A := f.f
 
 def ι : Hom bk.prism (ainfObj K) where
@@ -103,7 +107,7 @@ def OE : Subring (WCb l) where
     obtain ⟨m, s, y, h⟩ := hw n
     obtain ⟨m', s', y', h'⟩ := hw' n
     refine ⟨m + m', X ^ m' * s + X ^ m * s', bk.evW X ^ m' * y + bk.evW X ^ m * y', ?_⟩
-    rw [map_add, map_mul, map_mul, map_pow, map_pow]
+    rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow]
     linear_combination bk.evW X ^ m' * h + bk.evW X ^ m * h'
   mul_mem' {w w'} hw hw' n := by
     obtain ⟨m, s, y, h⟩ := hw n
@@ -207,10 +211,10 @@ structure Seed {K : FinExt l} (bk : BK K) (d : ℕ) (ρ : ↥(GK K) → Matrix (
 
   W' : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀)
   W_mul : W * W' = bk.iA τ ^ (2 * N) • (1 : Matrix (Fin d) (Fin d) (bk.DA bk.ρ₀))
-  φ : ∀ Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap WittVector.frobenius Φ →
+  φ : ∀ Φ : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) WittVector.frobenius Φ →
     ((l : bk.DA bk.ρ₀) ^ c₁) • (W * X'.map bk.iS).map Φ =
       bk.iS (frobS l bk.a bk.E) ^ N • (W * X'.map bk.iS * F.map (bk.iS.comp C))
-  gal : ∀ (g : ↥(GK K)) (G : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀), IsDiscMap (Per.σA (g : GQ l)) G →
+  gal : ∀ (g : ↥(GK K)) (G : bk.DA bk.ρ₀ →+* bk.DA bk.ρ₀), IsDiscMap (l := _) (u := _) (ρ := _) (Per.σA (g : GQ l)) G →
     bk.iA (bk.ev bk.E * τ) ^ N • ((ρ g).map (bk.iA.comp (algebraMap ℤ_[l] (Ainf l))) * (W * X'.map bk.iS).map G) =
       bk.iA (Per.σA (g : GQ l) (bk.ev bk.E * τ)) ^ N • (W * X'.map bk.iS)
 
@@ -222,7 +226,7 @@ structure Height {K : FinExt l} {bk : BK K} {d : ℕ} {ρ : ↥(GK K) → Matrix
 
   Z : Matrix (Fin d) (Fin d) (bk.DS bk.ρ₀)
   Z_unit : IsUnit Z
-  W_mul : ∀ i : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap bk.ev i → s.W * Z.map i = Y.map bk.iA
+  W_mul : ∀ i : bk.DS bk.ρ₀ →+* bk.DA bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) bk.ev i → s.W * Z.map i = Y.map bk.iA
 
   a : ℕ
 

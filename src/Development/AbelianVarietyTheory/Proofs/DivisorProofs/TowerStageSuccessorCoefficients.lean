@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaneSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StageTriangleFactorStepFirst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHyperbolicPlaneSplitHermitianLatticeSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SkewHermitianSelfDualLatticeHyperbolicPlaneSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaneSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StageTriangleFactorStepFirst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHyperbolicPlaneSplitHermitianLatticeSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SkewHermitianSelfDualLatticeHyperbolicPlaneSplit
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.DivisionValues (vw)
@@ -33,8 +37,8 @@ section Planes
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-variable (σ) in
 
+variable (σ) in
 def IsSum {n n₁ : ℕ} (Y : Spc F E n) (Y₁ : Spc F E n₁) (x y : Fin n → E) (ι : Matrix (Fin n) (Fin n₁) E) : Prop :=
   form σ Y.J x x = 0 ∧ form σ Y.J y y = 0 ∧ form σ Y.J x y = 1 ∧
     (∀ u, form σ Y.J (ι *ᵥ u) x = 0 ∧ form σ Y.J (ι *ᵥ u) y = 0) ∧ ιᵀ * Y.J * ι.map σ = Y₁.J ∧ (∀ u, u ∈ Y₁.L ↔ ι *ᵥ u ∈ Y.L) ∧
@@ -56,7 +60,7 @@ theorem parts_eq_zero {n n₁ : ℕ} {J : Matrix (Fin n) (Fin n) E} {x y : Fin n
 
 theorem IsSum.exists_bases (hCM : IsCMExt F E σ) (B : Base F E) {n₁ : ℕ} {Y : Spc F E (n₁ + 2)} {Y₁ : Spc F E n₁}
     {x₀ y₀ : Fin (n₁ + 2) → E} {ι : Matrix (Fin (n₁ + 2)) (Fin n₁) E} (h : IsSum σ Y Y₁ x₀ y₀ ι) (hyx : form σ Y.J y₀ x₀ ≠ 0)
-    (hL : Y.L.IsLattice E) (hb : ∀ v : B.P, IsSplitBasis (B.τ v) Y₁.L (Y₁.bas v)) {i₀ i₁ : ℕ} (h01 : i₀ < i₁) (h1n : i₁ < n₁ + 2) :
+    (hL : Y.L.IsFullLattice E) (hb : ∀ v : B.P, IsSplitBasis (B.τ v) Y₁.L (Y₁.bas v)) {i₀ i₁ : ℕ} (h01 : i₀ < i₁) (h1n : i₁ < n₁ + 2) :
     ∃ (x y : Fin (n₁ + 2) → E) (𝔟 : FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (β : ∀ v : Pl F, GL (Fin (n₁ + 2)) (Fv F v)),
       IsSum σ Y Y₁ x y ι ∧ (∀ s : E, s ∈ 𝔟 ↔ s • x ∈ Y.L) ∧ (∀ v : B.P, IsSplitBasis (B.τ v) Y.L (β v)) ∧
       ∀ (v : B.P) (i : Fin (n₁ + 2)), (i.1 = i₀ → ∀ r, (β v).1 r i = B.τ v (x r)) ∧ (i.1 = i₁ → ∀ r, (β v).1 r i = B.τ v (y r)) ∧
@@ -85,7 +89,7 @@ theorem IsSum.exists_bases (hCM : IsCMExt F E σ) (B : Base F E) {n₁ : ℕ} {Y
     have e1 : (s' / c) • x = s' • x₀ := by rw [hxdef, smul_smul, div_mul_cancel₀ _ hc]
     have e2 : (t * σ c) • y = t • y₀ := by rw [hydef, smul_smul, mul_assoc, mul_inv_cancel₀ hσc, mul_one]
     exact ⟨s' / c, t * σ c, u, e1 ▸ h1, e2 ▸ h2, h3, by rw [e1, e2]⟩
-  obtain ⟨𝔟, h𝔟⟩ := GlobalTheory.T.exists_fractionalIdeal_mem_iff_smul_mem_lattice E (n₁ + 2) Y.L hL x (smul_ne_zero hc hx₀)
+  obtain ⟨𝔟, h𝔟⟩ := GlobalTheory.T.exists_fractionalIdeal_mem_iff_smul_mem_lattice E (n₁ + 2) Y.L hL.toIsLattice x (smul_ne_zero hc hx₀)
   have eL : lowLat ι Y.L = Y₁.L := Submodule.ext fun u => (hlow u).symm
   choose βY hβY using fun v : B.P => GlobalTheory.T.exists_splitPlace_localLatticeBasis_hyperbolicPlane F E σ hCM v.1 (B.τ v) n₁ Y.L x y ι (Y₁.bas v) i₀ i₁ h01 h1n
     (fun z hz => by
@@ -168,13 +172,14 @@ theorem hD_swap (S : HSp D) (u v : S.V) : S.hD v u = star (S.hD u v) := (S.herm.
 theorem hT_sum (S : HSp D) (u v : S.V) :
     S.hT u v = ∑ i, ∑ j, star (S.frame.equivFun u i) * S.gram i j * S.frame.equivFun v j := by
   conv_lhs => rw [← S.frame.sum_repr u, ← S.frame.sum_repr v]
-  simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, HSpace.gram, RingHom.id_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, HSpace.gram, RingHom.id_apply,
     starRingEnd_apply, Module.Basis.equivFun_apply, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
 theorem isomEmb_inj {S S₁ : HSp D} {ι : S₁.V →ₗ[D.host.E] S.V} (h : HSpace.IsIsomEmb S₁ S ι) : Function.Injective ι := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro u hu
   exact S₁.nondeg.1 u fun v => by rw [← h, hu, map_zero, LinearMap.zero_apply]
 
@@ -328,70 +333,8 @@ theorem cast_rank (B : Base F E) {a b n : ℕ} (hn : n = b + 2) (Γ : Geo σ a n
   subst hn
   exact ⟨Γ, H, H', R, h1, h2, h3, h4, h5, fun _ _ h => h⟩
 
-theorem const_pair (hP : GlobalTheory.FunPr.Hypotheses₂) (hK : ThetaIntegralsAgree) (hM : LocalMatching) {B : Base F E} (hB : B.IsGood σ)
-    {a a' : ℕ} {Γ : Geo σ a a'} (g : Γ.IsGood B) {Xa Xb : Chars F E} (xa : Xa.IsGood B a a') (xb : Xb.IsGood B a a') {la lb : ℂ}
-    (hlb : lb ≠ 0)
-    (H : ∀ R om om' Rf om₀ om₀' Rf₀ (c c₀ : ℂ), IsMatched B Γ Xa om om' R Rf → IsMatched B Γ Xb om₀ om₀' R Rf₀ →
-      IsConst B Γ Xa om om' R Rf c → IsConst B Γ Xb om₀ om₀' R Rf₀ c₀ →
-      ∃ k : (AE F E)ˣ, c * lb = ((Xa.ν k / Xb.ν k : Circle) : ℂ) * (c₀ * la))
-    {V : Spc F E a} {V' : Spc F E a'} {Z : Spc F E (a + a')} (g₂ : (reG Γ V V' Z).IsGood B) :
-    ∃ (R : RealMaps F a a') (d : ℂ) (k : (AE F E)ˣ), d ≠ 0 ∧
-      GlobalTheory.SqStepK.HasConstR B (reG Γ V V' Z) R Xa (d * ((Xa.ν k / Xb.ν k : Circle) : ℂ) * la) ∧
-      GlobalTheory.SqStepK.HasConstR B (reG Γ V V' Z) R Xb (d * ((Xb.ν k / Xb.ν k : Circle) : ℂ) * lb) := by
-  obtain ⟨oa, oa', ob, ob', R, Ra, Rb, da, db, m1, m2, k1, k2, hdb, k, hk⟩ := GlobalTheory.SqStepBig.pair_reG hP hK hM hB g xa xb H g₂
-  refine ⟨R, db / lb, k, div_ne_zero hdb hlb, ⟨oa, oa', Ra, m1, ?_⟩, ⟨ob, ob', Rb, m2, ?_⟩⟩
-  · convert k1 using 1
-    field_simp
-    linear_combination -hk
-  · convert k2 using 1
-    rw [div_self', Circle.coe_one, mul_one, div_mul_cancel₀ _ hlb]
-
 end Cast
 
-open GlobalTheory.SqStepBig in
-
-theorem tower_stage_successor_relation : GlobalTheory.FunPr.Hypotheses₂ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.ThetaIntegralsAgree → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.LocalMatching →
-  GBig fun {D} T _ _ G μ₀ _ _ _ => ∀ (W : G.Weil) (S : GridChoice W Set.univ), IsStdChar D W.ψ (-1) →
-    NumbersIn D.what₂.embLL S μ₀ → ∀ (i j : Fin D.R.m) (p q : ℕ) (A A' WW B' WW₁ : HSp D) (X : Tri T A A' WW)
-      (Y : Tri T A B' WW₁) (lam c : T → ℂ) (e : ℕ), GlobalTheory.SqTower.IsStageC W i j p (q + 1) X →
-      GlobalTheory.SqTower.IsStageC W i j p q Y → GlobalTheory.SqStepK.IsStepB X Y → Factor X W.ψ W.θ lam → Factor Y W.ψ W.θ c →
-      A.rank = A'.rank + 2 * e → ∀ t, ∃ (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E) (b : ℕ)
-        (Γ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig A.rank (b + 2)) (Γ₁ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Geo D.sp.cm.sig A.rank b)
-        (H : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Plane D.host.E (b + 2) b) (H' : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Plane D.host.E (A.rank + (b + 2)) (A.rank + b))
-        (R : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.RealMaps D.host.F A.rank (b + 2)) (R₁ : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.RealMaps D.host.F A.rank b) (d d₁ : ℂ)
-        (k k₁ : (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE D.host.F D.host.E)ˣ),
-        GlobalTheory.SqStep.BaseFits G W i j t Bs ∧ A'.rank = b + 2 ∧ Γ₁.V = Γ.V ∧ Γ₁.p = Γ.p ∧ Γ₁.q + 1 = Γ.q ∧
-        H.IsAdapted D.sp.cm.sig Bs Γ.V' Γ₁.V' 0 (b + 1) ∧ H'.IsAdapted D.sp.cm.sig Bs Γ.W Γ₁.W A.rank (A.rank + b + 1) ∧
-        d ≠ 0 ∧ d₁ ≠ 0 ∧ ∀ t' ∈ ({t, μ₀} : Set T),
-          GlobalTheory.SqStepK.HasConstR Bs Γ R (GlobalTheory.SqStep.chs G i j t')
-            (d * (((GlobalTheory.SqStep.chs G i j t').ν k / (GlobalTheory.SqStep.chs G i j μ₀).ν k : Circle) : ℂ) * lam t') ∧
-          GlobalTheory.SqStepK.HasConstR Bs Γ₁ R₁ (GlobalTheory.SqStep.chs G i j t')
-            (d₁ * (((GlobalTheory.SqStep.chs G i j t').ν k₁ / (GlobalTheory.SqStep.chs G i j μ₀).ν k₁ : Circle) : ℂ) * c t') := by
-  intro hP hK hM
-  refine gbig_of_three GlobalTheory.T.exists_realEmbeddings_sharedBase_towerStage (GlobalTheory.T.tower_stage_fit_factor hP hK hM) GlobalTheory.T.exists_realEmbeddings_sharedBase_towerStage ?_
-  rintro D T Lc sc G μ₀ C x b qb qd - W S hψ hN i j p q A A' WW B' WW₁ X Y lam c e hX hY ⟨hA, ⟨ι, x, y, hs⟩, ι', x', y', hs'⟩ hF hc he t
-  obtain ⟨emb, hemb⟩ := qb W hψ i j _ _ A A' WW X hX
-  obtain ⟨Bs, -, f⟩ := hemb t
-  have hn : A'.rank = B'.rank + 2 := hs.1
-  have f₁ : Fit G W i j t μ₀ Bs A.rank B'.rank := Fit.down_right (hn ▸ f)
-  obtain ⟨Γ, o, pΓ, qΓ, g, HX⟩ := qd W hψ i j _ _ A A' WW X lam t Bs hX hF f
-  obtain ⟨Γ₁, o₁, pΓ₁, qΓ₁, g₁, HY⟩ := qd W hψ i j _ _ A B' WW₁ Y c t Bs hY hc f₁
-  obtain ⟨U, H, hU, hH⟩ := plane_herm f.2.1 hs (neg_ne_zero.2 one_ne_zero) o.2.1 o₁.2.1 g.hV' g₁.hV' (i₀ := 0) (i₁ := B'.rank + 1)
-    (by omega) (by omega)
-  obtain ⟨Z, H', hZ, hH'⟩ := plane_skew f.2.1 hs' o.2.2 o₁.2.2 g.hW g₁.hW (i₀ := A.rank) (i₁ := A.rank + B'.rank + 1)
-    (by omega) (by omega)
-  have eV : reS Γ₁.V Γ.V = reS Γ.V Γ.V := reS_congr Γ.V (o.1.eq (hA ▸ o₁.1))
-  have hV : (reS Γ.V Γ.V).IsHerm D.sp.cm.sig Bs (A.rank - Γ.p) Γ.p := g.hV
-  have g₂ : (reG Γ Γ.V U Z).IsGood Bs := isGood_reG g hV hU hZ
-  have g₃ : (reG Γ₁ Γ.V Γ₁.V' Γ₁.W).IsGood Bs := isGood_reG g₁ (by rw [eV, pΓ₁, ← pΓ]; exact hV) g₁.hV' g₁.hW
-  obtain ⟨R, d, k, hd, c1, c2⟩ := const_pair hP hK hM f.2.1 g f.2.2.2.1 f.2.2.2.2.1 (hF.1 μ₀) HX g₂
-  obtain ⟨R₁, d₁, k₁, hd₁, c3, c4⟩ := const_pair hP hK hM f.2.1 g₁ f₁.2.2.2.1 f₁.2.2.2.2.1 (hc.1 μ₀) HY g₃
-  obtain ⟨Γ', K, K', R', e1, e2, e3, e4, e5, e6⟩ := cast_rank Bs hn (reG Γ Γ.V U Z) (reG Γ₁ Γ.V Γ₁.V' Γ₁.W) H H' R eV
-    (pΓ₁.trans pΓ.symm) (by show Γ₁.q + 1 = Γ.q; rw [qΓ, qΓ₁]) hH hH'
-  refine ⟨Bs, B'.rank, Γ', _, K, K', R', R₁, d, d₁, k, k₁, f.1, hn, e1, e2, e3, e4, e5, hd, hd₁, ?_⟩
-  rintro t' (rfl | rfl)
-  · exact ⟨e6 _ _ c1, c3⟩
-  · exact ⟨e6 _ _ c2, c4⟩
 
 end GlobalTheory.HermitianSkewAdaptation
 

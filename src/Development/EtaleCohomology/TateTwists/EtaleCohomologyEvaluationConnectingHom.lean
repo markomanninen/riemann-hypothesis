@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.TateTwists.PpEvBasicPf
-import Development.EtaleCohomology.TateTwists.PpEvMkPf
-import Development.EtaleCohomology.TateTwists.PpEvDeltaPf
-import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationExistsOfEvalua
+module
+
+public import Development.EtaleCohomology.TateTwists.PpEvBasicPf
+public import Development.EtaleCohomology.TateTwists.PpEvMkPf
+public import Development.EtaleCohomology.TateTwists.PpEvDeltaPf
+public import Development.EtaleCohomology.TateTwists.EtaleSemilinearCohomologyOperationExistsOfEvalua
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleCochainSemilinearMapOnClasses
 theorem etale_evaluation_map_basic_of_components : LateralTheory.EtaleFoundations.pp_ev_basic := by

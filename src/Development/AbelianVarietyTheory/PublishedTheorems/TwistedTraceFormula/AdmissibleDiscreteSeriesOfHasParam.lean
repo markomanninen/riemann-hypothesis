@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.BlattnerShiftsSignedParameters
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.BlattnerShiftsSignedParameters
+
+@[expose] public section
 
 open Formalism.BasicNotions.TH Formalism.L2.Theta Matrix
 

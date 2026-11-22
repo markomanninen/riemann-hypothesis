@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReducedBases.LatDefs
+module
+
+public import ReciprocityTheory.ReducedBases.LatDefs
+
+@[expose] public section
 
 noncomputable section
 

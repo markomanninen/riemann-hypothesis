@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.JacobiThetaHalfCharacteristic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.JacobiThetaHalfCharacteristic
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke
 
 namespace GlobalTheory.Glob.EvenThetaBound

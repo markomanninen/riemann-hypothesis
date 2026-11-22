@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantLeRpowOfThreeLe
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.FrobeniusPowerSeries
 
@@ -255,7 +259,7 @@ theorem PhiData.ContD_eq_of_X (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X = P.φ
       simp [PowerSeries.coeff_trunc, hm]
     obtain ⟨r, hr⟩ := hdvd
     have hf : f = (PowerSeries.trunc N f : O⟦X⟧) + X ^ N * r := by rw [← hr]; ring
-    rw [hf, map_add, map_add, map_mul, map_mul, map_pow, map_pow, hX, hpoly]
+    rw [hf, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, hX, hpoly]
     exact ⟨h r - P.φ r, by ring⟩
 
 theorem PhiData.exists_retraction :
@@ -270,7 +274,7 @@ theorem PhiData.exists_retraction :
     { toFun := fun f => c f ⟨0, hD⟩
       map_add' := fun f g => by
         have := huniq (f + g) (fun i => c f i + c g i) (by
-          simp only [map_add, mul_add, Finset.sum_add_distrib]
+          simp only [map_add (f := _), mul_add, Finset.sum_add_distrib]
           rw [← hc f, ← hc g])
         exact congrFun this _
       map_smul' := fun r f => by
@@ -311,7 +315,7 @@ theorem PhiData.DESC (f g : O⟦X⟧) (k : ℕ)
   have e2 : b * P.φ g = P.φ g * b := mul_comm _ _
   calc lam a * C ϖ ^ k + lam b * g = lam (P.φ (C ϖ ^ k) * a) + lam (P.φ g * b) := by
         rw [hlam1, hlam1]; ring
-    _ = lam (a * C ϖ ^ k + b * P.φ g) := by rw [map_add, e1, e2]
+    _ = lam (a * C ϖ ^ k + b * P.φ g) := by rw [map_add (f := _), e1, e2]
     _ = lam (P.φ f) := by rw [hab]
     _ = f := hlam2 f
 
@@ -328,7 +332,7 @@ theorem PhiData.cont_phi_phi_eq {g : O⟦X⟧} (hg : IsDist g) (f : O⟦X⟧) :
     obtain ⟨a, b, hab⟩ := Ideal.mem_span_pair.1 hk
     rw [Ideal.mem_span_pair]
     refine ⟨P.φ a, P.φ b, ?_⟩
-    rw [← hab, map_add, map_mul, map_mul, map_pow, ContD.alg_C]
+    rw [← hab, map_add (f := _), map_mul, map_mul, map_pow, ContD.alg_C]
 
 theorem PhiData.X_pow_mem_span_q_pow_l_pow (A' s : ℕ) (hs : 1 ≤ s) :
     (X : O⟦X⟧) ^ (A' + s - 1) ∈ Ideal.span {(X - C (l : O)) ^ A', C (l : O) ^ s} := ContD.m5 X (X - C (l : O)) (C (l : O)) A' s hs

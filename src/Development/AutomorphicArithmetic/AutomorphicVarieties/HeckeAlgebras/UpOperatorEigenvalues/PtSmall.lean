@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PtLt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PtLt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -46,7 +51,7 @@ theorem pt_res (b : R) (a : c.O) (h : Alg.res c.O R b = residue c.O a) : ‖y b 
 theorem pt_le (b : R) : ‖y b‖ ≤ 1 := by
   obtain ⟨a, ha⟩ := Alg.IsCO.res_surj (O := c.O) b
   have h := IsUltrametricDist.norm_add_le_max (y (b - algebraMap c.O R a)) (algebraMap c.O (Qbar l) a)
-  rw [← y.commutes, ← map_add, sub_add_cancel, y.commutes] at h
+  rw [← y.commutes, ← map_add (f := _), sub_add_cancel, y.commutes] at h
   exact h.trans (max_le (pt_lt y _ ha).le (coef_le a))
 
 theorem pt_unit (b : Rˣ) : ‖y b‖ = 1 := by
@@ -60,7 +65,7 @@ theorem pt_small (ε : ℝ) (hε : 0 < ε) : ∃ N : ℕ, ∀ b ∈ maximalIdeal
     induction hb using Submodule.span_induction with
     | mem z hz => exact hS z hz
     | zero => simpa using ht
-    | add a b _ _ ha hb => rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
     | smul a b _ hb =>
       rw [smul_eq_mul, map_mul, norm_mul]
       exact (mul_le_of_le_one_left (norm_nonneg _) (pt_le y a)).trans hb
@@ -82,7 +87,7 @@ theorem pt_small (ε : ℝ) (hε : 0 < ε) : ∃ N : ℕ, ∀ b ∈ maximalIdeal
       refine Submodule.mul_induction_on hb (fun a ha b hb => ?_) fun a b ha hb => ?_
       · rw [map_mul, norm_mul, pow_succ]
         exact mul_le_mul (ih a ha) (ht b hb) (norm_nonneg _) (pow_nonneg t0 _)
-      · rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
+      · rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
   obtain ⟨N, hN⟩ := exists_pow_lt_of_lt_one hε t1
   exact ⟨N, fun b hb => (hp N b hb).trans_lt hN⟩
 

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CompChartEventuallyEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CompChartEventuallyEq
+
+@[expose] public section
 
 open MeasureTheory ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open ReciprocityTheory.AnForm.P.TailBoundAlt

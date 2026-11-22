@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.HomDens
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.HomDens
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,23 +1,28 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.IntValSmul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieMultIffExistsFrame
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFunctorialMap
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackCorrespondenceStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUnique
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsPrincipalBaseChangeIffStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductAdjointStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiAbelianPullbackTorusExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusExtensionModuleStructureStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianPartBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PolarizedDataFieldExtension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.IntValSmul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieMultIffExistsFrame
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFunctorialMap
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueAct
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelExistsUniqueSemilinearStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackCorrespondenceStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductPullbackUnique
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsPrincipalBaseChangeIffStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductAdjointStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiAbelianPullbackTorusExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorusExtensionModuleStructureStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianPartBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PolarizedDataFieldExtension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -75,7 +80,6 @@ theorem exists_generic {X : Scheme.{0}} (G : Over X) [GrpObj G] [IsCommMonObj G]
     exact (smul_eq_zero.1 (show (s : 𝓞 L) • x = 0 from hs)).resolve_left (nonZeroDivisors.coe_ne_zero s)
   · refine eq_top_iff.2 fun x _ => ?_
     induction x using hbc.inductionOn with
-    | zero => exact Submodule.zero_mem _
     | tmul m => exact Submodule.subset_span ⟨m, rfl⟩
     | smul s n hn => exact Submodule.smul_mem _ _ (hn trivial)
     | add a b ha hb => exact Submodule.add_mem _ (ha trivial) (hb trivial)
@@ -101,9 +105,35 @@ theorem adj_model (t' : SAB H (Sp (𝓞 L))) (tB : SAB H (Sp L)) (m' : SABMap tB
     (hρ' : MB.IsActOf t'.act.act ρ') (eC : L →+* ℂ) (a : 𝓞 E) (x y : B.carrier) :
     (B.metric.form eC).inner ((1 : ComplexAt eC) ⊗ₜ[𝓞 L] ρ' a x) ((1 : ComplexAt eC) ⊗ₜ[𝓞 L] y) =
       (B.metric.form eC).inner ((1 : ComplexAt eC) ⊗ₜ[𝓞 L] x) ((1 : ComplexAt eC) ⊗ₜ[𝓞 L] ρ' (H.bar a) y) := by
-  let w := fun u : B.carrier => LieTangent.epsBase (eC.comp (algebraMap (𝓞 L) L)) rfl ≫ MB.pt u
-  have hl : ∀ u, MB.Lifts (eC.comp (algebraMap (𝓞 L) L)) (𝟙 t'.G.left) u (w u) := fun u => Category.comp_id _
-  have ht : ∀ u, IsTanAt t'.G _ (w u) := fun u => LieTangent.isTanAt_base _ rfl (MB.tan u)
+  let epsBase {R R' : Type} [CommRing R] [CommRing R'] {S : Scheme.{0}} {z : Sp R ⟶ S}
+      {z' : Sp R' ⟶ S} (φ : R →+* R') (h : spMap φ ≫ z = z') : epsAt z' ⟶ epsAt z :=
+    Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ)) (by
+      have heq : spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ) ≫
+          Spec.map (CommRingCat.ofHom (algebraMap R (DualNumber R))) =
+          Spec.map (CommRingCat.ofHom (algebraMap R' (DualNumber R'))) ≫ spMap φ := by
+        simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
+        congr 2
+        ext r <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+      change _ ≫ _ ≫ z = _ ≫ z'
+      rw [← Category.assoc, heq, Category.assoc, h])
+  have isTanAt_base {R R' : Type} [CommRing R] [CommRing R'] {S : Scheme.{0}}
+      {G : Over S} [GrpObj G] {z : Sp R ⟶ S} {z' : Sp R' ⟶ S}
+      (φ : R →+* R') (hφ : spMap φ ≫ z = z') {v : epsAt z ⟶ G}
+      (h : IsTanAt G z v) : IsTanAt G z' (epsBase φ hφ ≫ v) := by
+    have heq : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R' R' R').toRingHom) ≫
+        spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ) =
+        spMap φ ≫ Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R R).toRingHom) := by
+      simp only [spMap, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
+      congr 2
+      refine RingHom.ext fun a => ?_
+      simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+    change _ ≫ spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ) ≫ v.left = _
+    rw [← Category.assoc, heq, Category.assoc, h]
+    exact congrArg (·.left)
+      (comp_one (M := G) (Over.homMk (spMap φ) hφ : Over.mk z' ⟶ Over.mk z))
+  let w := fun u : B.carrier => epsBase (eC.comp (algebraMap (𝓞 L) L)) rfl ≫ MB.pt u
+  have hl : ∀ u, ((w u).left ≫ (𝟙 t'.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (eC.comp (algebraMap (𝓞 L) L))) ≫ (MB.pt u).left) := fun u => Category.comp_id _
+  have ht : ∀ u, IsTanAt t'.G _ (w u) := fun u => isTanAt_base _ rfl (MB.tan u)
   have ha : ∀ b u, w (ρ' b u) = w u ≫ t'.act.act b := fun b u => by
     simp only [w]
     rw [hρ' b u, Category.assoc]
@@ -125,7 +155,8 @@ theorem closure_basis {X V : Type} [AddCommGroup X] [AddCommGroup V] {r : ℕ} (
   · intro hx
     exact (AddSubgroup.closure_le κ.range).2 (by rintro _ ⟨i, rfl⟩; exact ⟨_, rfl⟩) hx
   · rintro ⟨δ, rfl⟩
-    rw [← bs.sum_repr δ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← bs.sum_repr δ, map_sum]
     refine AddSubgroup.sum_mem _ fun i _ => ?_
     rw [map_zsmul]
     exact AddSubgroup.zsmul_mem _ (AddSubgroup.subset_closure (Set.mem_range_self i)) _
@@ -145,7 +176,7 @@ theorem exists_lin {Ψ : Type} {X : Scheme.{0}} (t : SAB H X) (z : Sp (𝓞 L) �
         (MV.pt x).left ≫ P.m.φ = spMap (dualMap (algebraMap (𝓞 L) L)) ≫ v.left) ∧
       P.IsCochars MV A.I ∧
       (∃ (MB : LieModel t'.G (𝟙 _) A.Bq.carrier), IsFibre (HodgeIP t'.G t'.PP.L) (𝟙 _) A.Bq MB ∧
-        ∀ x : A.Λ, MB.Lifts (algebraMap (𝓞 L) L) m'.φ (A.f x) (MV.pt x ≫ P.τ.q ≫ P.e.hom)) ∧
+        ∀ x : A.Λ, ((MV.pt x ≫ P.τ.q ≫ P.e.hom).left ≫ m'.φ = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (algebraMap (𝓞 L) L)) ≫ (MB.pt (A.f x)).left)) ∧
       Module.finrank (𝓞 L) A.Bq.carrier ≤ Module.finrank L V := by
   letI := P.τ.addCommGroup
   letI := P.τ.grpB

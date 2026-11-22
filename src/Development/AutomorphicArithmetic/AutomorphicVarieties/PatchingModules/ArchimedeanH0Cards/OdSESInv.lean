@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.ObstructionBoundFromDuality
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -12,7 +16,8 @@ private theorem map_algebraMap_mul_mul_map_linearMap {l : ℕ} [Fact l.Prime] {F
       rw [Algebra.smul_def, map_mul]; ring
     rw [h1, h2, map_smul]
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, Finset.sum_mul, map_sum]
   exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun m _ => key _ _ _
 
 private theorem exists_matrix_map_eq_of_zero_on_of_mem_range {n : ℕ} {R Y Z : Type} [CommRing R] [AddCommGroup Y] [Module R Y] [AddCommGroup Z] [Module R Z] (w : Y →ₗ[R] Z) (S : Fin n → Fin n → Prop) (N : Matrix (Fin n) (Fin n) Z) (h0 : ∀ i j, S i j → N i j = 0) (hr : ∀ i j, ¬ S i j → N i j ∈ Set.range w) :
@@ -141,7 +146,7 @@ theorem UpperTheory.V.Pa.B2.odSES :
     exact hN
   refine ⟨inj, ex, surj, ?_, ?_⟩
   · intro w
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro q hq
     obtain ⟨m, rfl⟩ := D'.surj w q
     rw [f.comm] at hq

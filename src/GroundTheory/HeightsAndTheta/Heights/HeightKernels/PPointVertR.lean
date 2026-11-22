@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsPointVertRSteps
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -24,7 +29,7 @@ theorem PointVertR.proof (hI : VertRIndex.Statement) (hN : SectionIndexNorm.Stat
     PointVertR.Statement := by
   intro T _ K' _ _ y s hP hs hsP
   rw [hI T K' y s hP hs hsP, PointVertRAux.degC_eq_finrank hP,
-    ← Module.finrank_mul_finrank ℚ (blockFnField y) K', Nat.cast_mul, mul_assoc,
+    ← (letI : Module.Free (blockFnField y) K' := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (blockFnField y) K'), Nat.cast_mul, mul_assoc,
     hN T K' y s hP hs hsP]
 
 end

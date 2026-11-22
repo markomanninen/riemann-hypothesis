@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ZMemPerp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CardLeOfNonpos
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.ZMemPerp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CardLeOfNonpos
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -75,7 +79,7 @@ theorem wbDef_pos (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Tn u)
       obtain ⟨x, hx, w, hw, hxw⟩ := Submodule.mem_sup.1 (hle' ha)
       obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hw
       have h1 : (VS D).hT F0.z a.1 = c * (-(Tn u)) := by
-        rw [← hxw, map_add, map_smul, hzX x hx, F0.z_norm, smul_eq_mul, zero_add]
+        rw [← hxw, map_add (f := _), map_smul, hzX x hx, F0.z_norm, smul_eq_mul, zero_add]
       rw [hya] at h1
       have hc : c = 0 := by
         rcases mul_eq_zero.1 h1.symm with h | h
@@ -147,7 +151,8 @@ private theorem range_pi_hT_eq_top (D : D7) (u : D.what₂.Word) (F0 : FlagG (VS
       have h1 : f ((LinearMap.pi fun a => (VS D).hT (F0.e a)) y) = 0 :=
         LinearMap.mem_ker.mp (hf (LinearMap.mem_range_self _ y))
       rw [LinearMap.pi_apply_eq_sum_univ] at h1
-      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
         LinearMap.smul_apply, starRingEnd_apply, star_star, smul_eq_mul]
       simpa [LinearMap.pi_apply, smul_eq_mul, mul_comm] using h1
     have h0 := (VS D).nondeg.1 _ hw

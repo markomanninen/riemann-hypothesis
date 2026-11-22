@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory in
 theorem UpperTheory.Reformulated.B.Qf2.lintegral_swap_norm :

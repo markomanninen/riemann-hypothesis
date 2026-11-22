@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
-import Development.AutomorphicArithmetic.WeightCongruences.RootOfUnityGaloisActionCMDatum
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AutomorphicArithmetic.WeightCongruences.ProdNegOneZpow
+public import Development.AutomorphicArithmetic.WeightCongruences.RootOfUnityGaloisActionCMDatum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions
 
@@ -27,7 +31,7 @@ private theorem phase_pair (w : ℂ) (m : ℕ) (hm : 0 < m) (hw : w ^ m = 1) (hz
       rw [Complex.normSq_eq_norm_sq, hn, one_pow]
     rw [Complex.inv_def, this, inv_one, Complex.ofReal_one, mul_one]
   have hconj : 1 + w⁻¹ = (starRingEnd ℂ) (1 + w) := by
-    rw [hinv, map_add, map_one]
+    rw [hinv, map_add (f := _), map_one]
   rw [hconj, Complex.norm_conj]
   set a := 1 + w with ha
   have hna : (‖a‖ : ℂ) ≠ 0 := by
@@ -62,7 +66,7 @@ theorem UpperTheory.prod_cmType_phase_one_add_rootOfUnity :
         RingHom.comp_apply]
       change H.φ₀ ((H.gal.symm (g : R.GG) * H.gal.symm R.sg) (1 + z))
         = 1 + (H.φ₀ ((H.gal.symm (g : R.GG)) z))⁻¹
-      rw [AlgEquiv.mul_apply, map_add, map_one, hsg, map_add, map_one, map_inv₀, map_add,
+      rw [AlgEquiv.mul_apply, map_add (f := _), map_one, hsg, map_add (f := _), map_one, map_inv₀, map_add (f := _),
         map_one, map_inv₀]
     have hne : 1 + H.emb (g : R.GG) z ≠ 0 := by
       have : H.emb (g : R.GG) (1 + z) ≠ 0 := (map_ne_zero _).2 hz1

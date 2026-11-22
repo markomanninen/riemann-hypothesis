@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCHLat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCoordLatticeOfSelfDualFrame
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix
@@ -68,8 +72,8 @@ theorem negM_eq (τ : D.what₂.Tau) :
   have := c.2
   rw [nNeg_eq M hpq hε, hε, arr, sgn]
   by_cases h : (c : ℕ) < q
-  · rw [dif_pos h, if_pos h, if_neg (by simp only [decide_eq_true_eq]; omega)]; simp
-  · rw [dif_neg h, if_neg h, if_pos (by simp only [decide_eq_true_eq]; omega)]; simp
+  · rw [dite_eq_left h, if_pos h, if_neg (by simp only [decide_eq_true_eq]; omega)]; simp
+  · rw [dite_eq_right h, if_neg h, if_pos (by simp only [decide_eq_true_eq]; omega)]; simp
 
 theorem isONeg_x0Mat : IsONeg V q (x0Mat M) := by
   intro τ

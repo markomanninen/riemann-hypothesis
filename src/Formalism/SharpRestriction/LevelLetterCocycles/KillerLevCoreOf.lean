@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.SharpRestriction.LevelLetterCocycles.AlgebraMapUnitZpow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.SharpRestriction.LevelLetterCocycles.AlgebraMapUnitZpow
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,11 +23,11 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     {PD : PeriodData G Qp K₀ K B BdR}
 
-section Gen
-
 variable (W : LocWach PD LL O v n)
 
 local notation "ιE" => algebraMap (LetA O n) W.EE
+
+section Gen
 
 theorem γA_comm (g h : W.Gam) (a : LetA O n) : W.γA g (W.γA h a) = W.γA h (W.γA g a) := by
   funext i
@@ -76,7 +80,7 @@ theorem toLin_pow_apply (σ : W.EE →ₐ[O] W.EE) (k : ℕ) (f : W.EE) :
     (σ.toLinearMap ^ k) f = (σ ^ k) f := by
   induction k generalizing f with
   | zero => simp
-  | succ k ih => rw [pow_succ, Module.End.mul_apply, pow_succ, AlgHom.mul_apply]; exact ih _
+  | succ k ih => rw [pow_succ, mul_apply_eq_comp, pow_succ, AlgHom.mul_apply]; exact ih _
 
 theorem ι_lE (κ : ℕ) : ιE (lA W ^ κ) = lE W κ := by
   simp [lA, lE]
@@ -87,10 +91,6 @@ theorem smul_eq_ι (c : O) (f : W.EE) : c • f = ιE (algebraMap O (LetA O n) c
 end Gen
 
 section Red
-
-variable (W : LocWach PD LL O v n)
-
-local notation "ιE" => algebraMap (LetA O n) W.EE
 
 abbrev numI (e : ℕ) (α : ℕ → ℤ) : LetA O n := ∏ s ∈ Finset.range e, ps W s ^ (α s).toNat
 abbrev denI (e : ℕ) (α : ℕ → ℤ) : LetA O n := ∏ s ∈ Finset.range e, ps W s ^ (-(α s)).toNat
@@ -107,15 +107,12 @@ theorem prod_update (P : ℕ → LetA O n) (E : ℤ → ℕ) (e : ℕ) (α : ℕ
     rw [Function.update_of_ne (Finset.ne_of_mem_erase ht)]
   · rw [← Finset.mul_prod_erase _ _ hm]
 
-theorem inId_iff (a : ZMod n) (e : ℕ) (α : ℕ → ℤ) (f : W.EE) :
-    InId W a e α f ↔ ∃ u ∈ W.AΔ, ιE (denI W e α) * f = ιE (letE a * numI W e α * u) := Iff.rfl
-
 theorem inId_add {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} {f g : W.EE} (hf : InId W a e α f)
     (hg : InId W a e α g) : InId W a e α (f + g) := by
   obtain ⟨u, hu, hfu⟩ := hf
   obtain ⟨u', hu', hgu⟩ := hg
   refine ⟨u + u', Subalgebra.add_mem _ hu hu', ?_⟩
-  rw [mul_add, hfu, hgu, ← map_add]; congr 1; ring
+  rw [mul_add, hfu, hgu, ← map_add (f := _)]; congr 1; ring
 
 theorem inId_mulι {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} {f : W.EE} (hf : InId W a e α f) {c : LetA O n}
     (hc : c ∈ W.AΔ) : InId W a e α (ιE c * f) := by
@@ -187,10 +184,10 @@ theorem inId_aeval (hS : PsStable W) {a : ZMod n} {e : ℕ} {α : ℕ → ℤ} (
   induction P using Polynomial.induction_on with
   | C c => intro f hf; rw [Polynomial.aeval_C]; exact inId_smul W hf c
   | add p q hp hq =>
-    intro f hf; rw [map_add, LinearMap.add_apply]; exact inId_add W (hp f hf) (hq f hf)
+    intro f hf; rw [map_add (f := _), LinearMap.add_apply]; exact inId_add W (hp f hf) (hq f hf)
   | monomial k c ih =>
     intro f hf
-    rw [pow_succ, ← mul_assoc, map_mul, Module.End.mul_apply, Polynomial.aeval_X]
+    rw [pow_succ, ← mul_assoc, map_mul, mul_apply_eq_comp, Polynomial.aeval_X]
     exact ih _ (inId_γ W hS hf)
 
 theorem aeval_lE (P : Polynomial O) (κ : ℕ) (f : W.EE) :
@@ -203,10 +200,6 @@ theorem aeval_lE (P : Polynomial O) (κ : ℕ) (f : W.EE) :
 end Red
 
 section Step
-
-variable (W : LocWach PD LL O v n)
-
-local notation "ιE" => algebraMap (LetA O n) W.EE
 
 def chiL (ell : ℕ) : Oˣ := W.χΓ W.gam ^ ((PD.p : ℤ) ^ ell)
 
@@ -275,10 +268,6 @@ theorem chi_pow_eq (ell : ℕ) (z : ℤ) :
 end Step
 
 section Main
-
-variable (W : LocWach PD LL O v n)
-
-local notation "ιE" => algebraMap (LetA O n) W.EE
 
 theorem step (hU : PsUnitE W) (hC : PsCoprime W) (hG : LevGrad W) (hS : PsStable W)
     (hπ : W.π₀ ∈ W.AΔ) {a : ZMod n} {ell : ℕ} {α : ℕ → ℤ} {s : ℕ} (hs : s < ell) {f : W.EE}
@@ -411,10 +400,6 @@ end Main
 
 section Core
 
-variable (W : LocWach PD LL O v n)
-
-local notation "ιE" => algebraMap (LetA O n) W.EE
-
 theorem lE_add (κ κ' : ℕ) : lE W (κ + κ') = lE W κ * lE W κ' := by
   simp [lE, pow_add]
 
@@ -422,7 +407,7 @@ theorem aeval_mul_apply (P Q : Polynomial O) (f : W.EE) :
     Polynomial.aeval ((W.γE W.gam).toLinearMap : Module.End O W.EE) (P * Q) f =
       Polynomial.aeval ((W.γE W.gam).toLinearMap : Module.End O W.EE) P
         (Polynomial.aeval ((W.γE W.gam).toLinearMap : Module.End O W.EE) Q f) := by
-  rw [map_mul, Module.End.mul_apply]
+  rw [map_mul, mul_apply_eq_comp]
 
 theorem Ico_succ (a : ℤ) (N : ℕ) :
     Finset.Ico a (a + ((N + 1 : ℕ) : ℤ)) = insert (a + N) (Finset.Ico a (a + N)) := by
@@ -470,7 +455,7 @@ theorem levels (hU : PsUnitE W) (hC : PsCoprime W) (hG : LevGrad W) (hS : PsStab
     | zero =>
       refine ⟨0, ?_⟩
       simp only [Nat.cast_zero, add_zero, Finset.Ico_self, Finset.prod_empty, map_one,
-        Module.End.one_apply, Function.update_eq_self]
+        one_apply_eq_self, Function.update_eq_self]
       simpa [lE] using hf
     | succ N ih =>
       obtain ⟨κ, hκ⟩ := ih

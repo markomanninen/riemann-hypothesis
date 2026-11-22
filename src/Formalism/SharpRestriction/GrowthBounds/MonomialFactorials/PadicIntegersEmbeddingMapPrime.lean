@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockBoundUniformiser
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem padic_integers_embedding_map_prime (hpm : (p : O) ∈ IsLocalRing.maxima
 
 theorem padic_integers_embedding_injective (hpm : (p : O) ∈ IsLocalRing.maximalIdeal O) (hp0 : (p : O) ≠ 0)
     [IsAdicComplete (IsLocalRing.maximalIdeal O) O] : Function.Injective (iota0 p O hpm) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra hne
   have hspec := PadicInt.unitCoeff_spec hne

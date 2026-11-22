@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFixedOfSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirProjEqOneOfMem
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFixedOfSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirProjEqOneOfMem
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviIntegralFacts
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib
 
@@ -36,8 +40,32 @@ theorem gpProj_unip : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
     refine h.trans ((key _ _ (GlobalTheory.BZMir.Leib.blockIndex_false_ne_last m j i')).trans ?_)
     simp only [Matrix.one_apply, e_inj.eq_iff, Sigma.mk.inj_iff, heq_eq_eq, true_and,
       Units.val_one]
-  · apply GlobalTheory.CompanionTheory.BZMirAdj.mem_of_mirProj_eq_one
-    ext i i'
+  · have mem_of_proj (n : ℕ) (y : Mir k n) (hblock : ∀ i j : Fin n,
+          ((y : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.castSucc j) =
+            (1 : Matrix (Fin n) (Fin n) k) i j) :
+        y ∈ MirUin k n := by
+      have hrow : ∀ j, ((y : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) j =
+          GlobalTheory.BZMir.eLast k n j :=
+        fun j => congrFun ((GlobalTheory.BZMir.mem_Mir_iff k (y : GL (Fin (n + 1)) k)).1 y.2) j
+      rw [GlobalTheory.BZMir.MirUin, Subgroup.mem_subgroupOf, GlobalTheory.BZMir.MirU,
+        MonoidHom.mem_range]
+      refine ⟨Multiplicative.ofAdd fun i =>
+        ((y : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.last n), ?_⟩
+      apply Units.ext
+      ext i j
+      change ((1 : Matrix (Fin (n + 1)) (Fin (n + 1)) k) + GlobalTheory.BZMir.colMat k n (fun i =>
+        ((y : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.castSucc i) (Fin.last n))) i j =
+        ((y : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) i j
+      rw [Matrix.add_apply, GlobalTheory.BZMir.colMat]
+      rcases Fin.eq_castSucc_or_eq_last i with ⟨i, rfl⟩ | rfl <;>
+        rcases Fin.eq_castSucc_or_eq_last j with ⟨j, rfl⟩ | rfl
+      · simp [Matrix.one_apply, Fin.castSucc_ne_last, hblock]
+      · simp [Matrix.one_apply, Fin.castSucc_ne_last]
+      · simp [Matrix.one_apply, Fin.castSucc_ne_last, (Fin.castSucc_ne_last _).symm, hrow,
+          GlobalTheory.BZMir.eLast]
+      · simp [hrow, GlobalTheory.BZMir.eLast]
+    apply mem_of_proj j _
+    intro i i'
     have h := GlobalTheory.SmGL.leviProj_apply k (GlobalTheory.BZMir.Leib.eGP m j)
       (GlobalTheory.BZMir.Leib.hgpIncl k m j u) true (Fin.castSucc i) (Fin.castSucc i')
     have hne : GlobalTheory.BZMir.Leib.eGP m j ⟨true, Fin.castSucc i'⟩ ≠ Fin.last (m + j) :=

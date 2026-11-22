@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameUnipotentUnitriangular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexSpanLatticeMatrixDetNormStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsEqZpowMulUnit
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FrameUnipotentUnitriangular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexSpanLatticeMatrixDetNormStatement
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -102,15 +107,19 @@ private theorem dfam_mem_lower_span {E V : Type} [CommRing E] [AddCommGroup V]
     intro j hj
     have h1 : f j ∈ Submodule.span E (f '' {i | (i : ℕ) < J}) :=
       Submodule.subset_span ⟨j, hj, rfl⟩
+    have hs : {i : Fin m | i < j} ⊆ {i : Fin m | (i : ℕ) < J} :=
+      fun _ hi => lt_trans (Fin.lt_def.1 hi) hj
     have h2 : g j - f j ∈ Submodule.span E (f '' {i | (i : ℕ) < J}) :=
-      Submodule.span_mono (Set.image_mono fun i (hi : i < j) => lt_trans (Fin.lt_def.1 hi) hj) (hg j)
+      Submodule.span_mono (Set.image_mono hs) (hg j)
     simpa using Submodule.add_mem _ h2 h1
   have hf' : ∀ j : Fin m, (j : ℕ) < J → g' j ∈ Submodule.span E (f' '' {i | (i : ℕ) < J}) := by
     intro j hj
     have h1 : f' j ∈ Submodule.span E (f' '' {i | (i : ℕ) < J}) :=
       Submodule.subset_span ⟨j, hj, rfl⟩
+    have hs : {i : Fin m | i < j} ⊆ {i : Fin m | (i : ℕ) < J} :=
+      fun _ hi => lt_trans (Fin.lt_def.1 hi) hj
     have h2 : g' j - f' j ∈ Submodule.span E (f' '' {i | (i : ℕ) < J}) :=
-      Submodule.span_mono (Set.image_mono fun i (hi : i < j) => lt_trans (Fin.lt_def.1 hi) hj) (hg' j)
+      Submodule.span_mono (Set.image_mono hs) (hg' j)
     simpa using Submodule.add_mem _ h2 h1
   rcases a with j | j
   · exact Submodule.mem_sup_left (hf j ha)
@@ -387,9 +396,9 @@ private theorem relIndex_symm_of_blockFrameMatrix_lemma_2 {F : Type} [Field F] [
   rw [hv, zpow_zero, one_mul] at h3
   exact ⟨by exact_mod_cast h3.symm, h2⟩
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.HL.TraceVol.trace_volume : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E), ∀ (r k : ℕ) (S : _root_.GlobalTheory.HL.Frames L r k), ∀ (d : S.Datum) (Λ : Submodule L.O S.V), S.IsTerm d Λ → ∀ d' Λ', S.IsTerm d' Λ' → ∀ (J : ℕ) (Yy : Submodule L.O S.V), J ≤ r + 1 → Yy = (S.spanTo S.f J ⊔ S.spanTo S.f' J).restrictScalars L.O → (S.M d Λ ⊓ Yy).toAddSubgroup.relIndex (S.M d' Λ' ⊓ Yy).toAddSubgroup = (S.M d' Λ' ⊓ Yy).toAddSubgroup.relIndex (S.M d Λ ⊓ Yy).toAddSubgroup ∧ (S.M d Λ ⊓ Yy).toAddSubgroup.relIndex (S.M d' Λ' ⊓ Yy).toAddSubgroup ≠ 0 := by
   intro F _ _ _ _ _ E _ _ _ L r k S d Λ hT d' Λ' hT' J Yy hJ hYy
   subst hYy

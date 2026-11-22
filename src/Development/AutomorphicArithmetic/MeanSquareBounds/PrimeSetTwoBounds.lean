@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GL3MeanSquares.SecondEstimateOfIntervalHypothesis
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
-import Formalism.PeriodIntegrals.ExplicitFormula
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.SecondEstimateOfIntervalHypothesis
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
+public import Formalism.PeriodIntegrals.ExplicitFormula
+
+@[expose] public section
 
 open Finset
 open Formalism.HermitianLattices.ZeroFreeRegionGL2
@@ -40,8 +44,8 @@ def BoxAll (Q C τ Y X : ℝ) (f : ℕ → ℂ) (M : ℕ) : Prop :=
 
 def primePairSetFirst (z : ℝ) : Finset ℕ := PPset 8 3 (Real.exp z)
 
-open Classical in
 
+open Classical in
 def primeSetTwoBounds (z z' : ℝ) (q : ℕ) : Finset ℕ :=
   (Icc 1 ⌊Real.exp z'⌋₊).filter fun d => d.Prime ∧ d % 16 = 7 ∧ oddM z q ∣ d + 1 ∧ Real.exp z' ^ (1 / 2 : ℝ) < (d : ℝ)
 
@@ -64,8 +68,8 @@ structure Rows (z z' : ℝ) (q d : ℕ) : Prop where
   q_lt_d : q < d
   d_class : ∀ p : ℕ, p.Prime → p ≠ 2 → ((p : ℝ) ≤ z ∨ p = q) → (d + 1) % p = 0
 
-open Classical in
 
+open Classical in
 def G0 {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ) : ℂ := if χ = 1 then ((G1 y : ℝ) : ℂ) else Gchi χ y
 
 def NoExc (c : ℝ) {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : Prop :=

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeDEqSum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsDeeperCongruenceConjIntoCongruence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeDEqSum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsDeeperCongruenceConjIntoCongruence
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -65,7 +70,8 @@ theorem isoMap : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ
       rw [GlobalTheory.HeckeRecon.heckeD_eq_sum J D hfin, Finset.sum_apply]
       refine Finset.sum_congr rfl fun c _ => ?_
       split_ifs <;> rfl
-    rw [hsum, hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, hsum, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     split_ifs with hc
     · exact hrt _ f hf

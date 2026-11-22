@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelAnalyticDataExists
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.NotMemTop
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJOneSelf
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackThirdStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelAnalyticDataExists
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.NotMemTop
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorIJOneSelf
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackThirdStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -29,7 +34,7 @@ theorem onStep_fs (M : FlagModel y Ψ N j) (p : Ψ × Fin N) : M.OnStep p (fsHer
     · simp only [h2 k hk']
     · have : M.dy p k = 0 := by
         unfold FlagModel.dy
-        rw [dif_neg hk, if_neg hk']
+        rw [dite_eq_right hk, if_neg hk']
       simp [this]
 
 theorem isPsh_of_univ {e : ℕ} {X : Type} [TopologicalSpace X] {A : FinHolAtlas e X} {U : Set X} {P : LocPot X}

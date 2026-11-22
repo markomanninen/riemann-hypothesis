@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TypeSpaceProjectionToPointEigenspaces
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TypeSpaceProjectionToPointEigenspaces
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.L2 NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module Polynomial GlobalTheory.Pass GlobalTheory.PendOf
 
 noncomputable section
@@ -36,7 +41,7 @@ theorem exists_ext_dual {D : D7} (i : D.nd.Loc)
   have hb := D.what₂.jMt_basis (D.nd.mu i) (D.nd.j i) b
   let f0 : D.what₂.MtL (D.nd.mu i) (D.nd.j i) →ₛₗ[D.what₂.embLL] ℂ :=
     { toFun := fun z => ioC i (φ (D.nd.prMt i z))
-      map_add' := fun a c => by simp only [map_add]
+      map_add' := fun a c => by simp only [map_add (f := _)]
       map_smul' := fun a z => by
         show ioC i (φ (D.nd.prMt i (a • z))) = D.what₂.embLL a • ioC i (φ (D.nd.prMt i z))
         rw [LinearMap.map_smulₛₗ, map_smul, smul_eq_mul, map_mul, hι, smul_eq_mul] }
@@ -107,8 +112,8 @@ namespace GlobalTheory.PendOf.SecProof
 
 open GlobalTheory.EtaJoin.TypeTieProof Formalism.L2.NG Formalism.AUTREP ReciprocityTheory.Aut
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → HeckeRational D M → AVTied D M →
     GlobalTheory.EtaJoin.SplitUnif D → GlobalTheory.EtaJoin.HeckeScalar M i → Nonempty (Sec D i) := by
   intro D M i HT HR AV _ HS
@@ -177,7 +182,7 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
       obtain ⟨y, rfl⟩ := hx
       exact ⟨_, hpj y⟩
     | zero => rw [map_zero]; exact zero_mem _
-    | add a c _ _ ha hc => rw [map_add]; exact add_mem ha hc
+    | add a c _ _ ha hc => rw [map_add πh]; exact add_mem ha hc
     | smul c a _ ha => rw [hπs]; exact Submodule.smul_mem _ _ ha
   have hrange : LinearMap.range p = ⊤ := by
     rw [eq_top_iff, ← (Pi.basisFun ℂ _).span_eq, Submodule.span_le]
@@ -196,7 +201,7 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
     obtain ⟨z, rfl⟩ := LinearMap.range_eq_top.1 hrange f
     have hz : z ∈ G ⊔ typeSum D i none := by rw [hGtop]; exact Submodule.mem_top
     obtain ⟨a, ha, n, hn, rfl⟩ := Submodule.mem_sup.1 hz
-    exact ⟨⟨a, ha⟩, by simp [q, map_add, hnone n hn]⟩
+    exact ⟨⟨a, ha⟩, by simp [q, map_add (f := _), hnone n hn]⟩
   have hdim : finrank ℂ G ≤ Fintype.card (Σ x, Module.Free.ChooseBasisIndex (FractionRing (D.nd.O i)) (E x)) := by
     refine (finrank_iSup_le_sum' _).trans (le_of_eq ?_)
     rw [Fintype.card_sigma]
@@ -218,7 +223,7 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
     have hpa : q ⟨a, ha⟩ = q 0 := by
       rw [map_zero]
       show p a = 0
-      rw [map_add, hnone n hn, add_zero] at hz
+      rw [map_add (f := _), hnone n hn, add_zero] at hz
       exact hz
     have := congrArg Subtype.val (hqi hpa)
     simp only [Submodule.coe_zero] at this
@@ -233,7 +238,10 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
     refine (injective_iff_map_eq_zero Φ).2 fun u hu => ?_
     rw [hΦ] at hu
     have h1 : e.symm (πh u) = 0 := Subtype.ext hu
-    have h2 : πh u = 0 := by simpa using congrArg e h1
+    have h2 : πh u = 0 := by
+      have h := congrArg (fun z : G => e z) h1
+      rw [e.apply_symm_apply, e.map_zero] at h
+      exact h
     refine bW.repr.injective (Finsupp.ext fun k => ?_)
     have h3 := congrFun h2 k
     rw [hπ] at h3
@@ -251,10 +259,11 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
       refine iSup_le fun x' => ?_
       by_cases hx : x' = x
       · subst hx; exact le_sup_left
-      · exact le_sup_of_le_right (le_biSup (fun x' => typeSum D i (some x')) hx)
+      · exact le_sup_of_le_right (le_iSup_of_le x' (le_iSup_of_le hx le_rfl))
     obtain ⟨a, ha, c, hc, hac⟩ := Submodule.mem_sup.1 (hGle g.2)
     have hcG : c ∈ G := by
-      refine (iSup₂_le fun x' _ => le_iSup (fun x => typeSum D i (some x)) x') hc
+      change c ∈ ⨆ x, typeSum D i (some x)
+      exact (iSup₂_le fun x' _ => le_iSup (fun x : D.nd.X i => typeSum D i (some x)) x') hc
     have hpc : p c = 0 := by
       funext k
       by_cases hk : k.1 = x
@@ -266,7 +275,7 @@ theorem main : ∀ (D : D7) (M : MtFam D) (i : D.nd.Loc), HeckeTied D M → Heck
         rw [LinearMap.mem_ker, LinearMap.comp_apply, LinearMap.proj_apply] at h1
         have h2 : p (g : D.what₂.Mt (D.nd.mu i) (D.nd.j i)) k = 0 := by
           rw [hpg, hπ, show bW.repr u k = 0 from hint.collectedBasis_repr_of_mem_ne v (Ne.symm hk) hu, map_zero]
-        rw [← hac, map_add, Pi.add_apply, h1, zero_add] at h2
+        rw [← hac, map_add (f := _), Pi.add_apply, h1, zero_add] at h2
         simpa using h2
     have hc0 : c = 0 := by
       have := congrArg Subtype.val (hqi (a₁ := ⟨c, hcG⟩) (a₂ := 0) (by

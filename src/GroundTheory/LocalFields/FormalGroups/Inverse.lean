@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.FormalGroups.Truncation
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.FormalGroups.Truncation
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.FormalGroup
 
@@ -77,6 +81,7 @@ private lemma invStep_contract (f g : MvPowerSeries Unit R) (n : ℕ)
 private lemma existsUnique_invStep : ∃! g, invStep F g = g :=
   existsUnique_fixedPoint _ (invStep_contract F)
 
+@[no_expose]
 noncomputable def inv : PowerSeries R :=
   (existsUnique_invStep F).exists.choose
 
@@ -169,7 +174,5 @@ noncomputable instance instAddGroupPoint : AddGroup (F.Point σ) :=
 noncomputable instance instAddCommGroupPoint [F.IsComm] : AddCommGroup (F.Point σ) :=
   { instAddGroupPoint F with
     add_comm := fun x y => Subtype.ext (F.comm' x.prop y.prop) }
-
-private noncomputable def pointX : F.Point Unit := ⟨PowerSeries.X, PowerSeries.HasSubst.X'⟩
 
 end GroundTheory.LocalField.FormalGroup

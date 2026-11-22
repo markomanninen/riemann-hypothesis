@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LeftPhaseRule.HasDerivAtPhase
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LeftPhaseRule.HasDerivAtPhase
+
+@[expose] public section
 
 open Matrix
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q Formalism.QuantumDeterminants.WeylGroupFacts
@@ -60,11 +64,11 @@ lemma ell_form {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {l : Fin r} {
   rw [Finset.sum_eq_single l]
   · split_ifs with h
     · unfold fvec
-      rw [dif_pos (show l.succ.val < r by simp only [Fin.val_succ]; exact h)]
+      rw [dite_eq_left (show l.succ.val < r by simp only [Fin.val_succ]; exact h)]
       simp only [bvec, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
       rfl
     · unfold fvec
-      rw [dif_neg (show ¬ l.succ.val < r by simp only [Fin.val_succ]; exact h)]
+      rw [dite_eq_right (show ¬ l.succ.val < r by simp only [Fin.val_succ]; exact h)]
       rfl
   · intro a _ hal
     have hal' : a.val ≠ l.val := Fin.val_ne_of_ne hal

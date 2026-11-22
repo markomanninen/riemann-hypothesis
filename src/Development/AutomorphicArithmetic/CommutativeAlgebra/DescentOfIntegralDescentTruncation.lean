@@ -1,7 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LineHigh
-import Development.EtaleCohomology.EtaleSheaves.DescIntPf
-import Development.AutomorphicArithmetic.CommutativeAlgebra.CohomologyBaseChangeIntegralSurjectiveCech
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LineHigh
+public import Development.EtaleCohomology.EtaleSheaves.DescIntPf
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.CohomologyBaseChangeIntegralSurjectiveCech
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.DescIntPf
 

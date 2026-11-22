@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.NonemptyRepresentations.NonemptyOfAntitone
+module
+
+public import CompanionTheory.HarishChandraModules.NonemptyRepresentations.NonemptyOfAntitone
+
+@[expose] public section
 
 open Matrix
 
@@ -16,7 +20,7 @@ def D (Y : Matrix (Fin k) (Fin k) ℂ) : Matrix R.I R.I ℂ :=
 theorem D_add (Y Z : Matrix (Fin k) (Fin k) ℂ) : R.D (Y + Z) = R.D Y + R.D Z := by
   ext i j
   simp only [D, Matrix.of_apply, Matrix.add_apply]
-  rw [← map_add]; rfl
+  rw [← map_add (f := _)]; rfl
 
 theorem D_smul (c : ℂ) (Y : Matrix (Fin k) (Fin k) ℂ) : R.D (c • Y) = c • R.D Y := by
   ext i j

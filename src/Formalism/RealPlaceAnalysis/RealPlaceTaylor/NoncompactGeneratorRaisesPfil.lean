@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset
@@ -537,8 +541,10 @@ theorem symmetrization_equivariant (E : Fin n → Fin n → Module.End ℂ V) (h
       intro α; rw [factorAction_apply']; split_ifs <;> simp
     simp only [e1, Finset.sum_sub_distrib]
     rw [sum_update_first_index_swap i c d (fun α β => u1W E α (F β)), sum_update_second_index_swap i c d (fun α β => u1W E α (F β))]
-  rw [theta_map_apply, theta_map_apply, map_sum]
-  simp only [arr_operator_apply, map_add, map_sum, hder, Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [theta_map_apply, theta_map_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [arr_operator_apply, map_add (f := _), map_sum, hder, Finset.sum_add_distrib]
   rw [hkey]
   exact add_comm _ _
 

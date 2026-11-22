@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.TwZeroPfSplit
+module
+
+public import Development.EtaleCohomology.EtaleTrace.TwZeroPfSplit
+
+@[expose] public section
 
 noncomputable section
 open Polynomial

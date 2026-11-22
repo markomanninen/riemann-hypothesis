@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.TopOddNeEnd
+
+@[expose] public section
 
 noncomputable section
 

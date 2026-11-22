@@ -1,4 +1,8 @@
-import Formalism.DoubleCosetMeasures.StatementZ
+module
+
+public import Formalism.DoubleCosetMeasures.StatementZ
+
+@[expose] public section
 
 open MeasureTheory Matrix ComplexConjugate
 
@@ -33,7 +37,7 @@ private theorem phiU_eq_zero_of_not_mem_support {O : Subring F} {ϖ : F} {J' : S
       toRows₂ x ∈ Formalism.DoubleCosetMeasures.IIset O ϖ)) :
     Formalism.DoubleCosetMeasures.phiU O ϖ J' ρ x = 0 := by
   simp only [Formalism.DoubleCosetMeasures.phiU]
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem II_mul (O : Subring F) (ϖ : F) (y : Matrix (Fin t) (Fin a) F) (hy : y ∈ IIset O ϖ)
     (g : Matrix (Fin a) (Fin a) F) (hg : ∀ i j, g i j ∈ O) : y * g ∈ IIset O ϖ := by
@@ -96,12 +100,12 @@ theorem lemmaU : LemmaUSplit := by
     exact (hOpen1.measurableSet).preimage
       ((measurable_pi_apply j).comp (measurable_pi_apply i))
   have hR1 : Measurable (fun x : Matrix (Fin a ⊕ Fin t) (Fin a) F => toRows₁ x) :=
-    measurable_pi_lambda _ fun i => measurable_pi_apply (Sum.inl i)
+    Measurable.of_eval fun i => measurable_pi_apply (Sum.inl i)
   have hR2 : Measurable (fun x : Matrix (Fin a ⊕ Fin t) (Fin a) F => toRows₂ x) :=
-    measurable_pi_lambda _ fun i => measurable_pi_apply (Sum.inr i)
+    Measurable.of_eval fun i => measurable_pi_apply (Sum.inr i)
   have hFR : Measurable (fun p : Matrix (Fin a) (Fin a) F × Matrix (Fin t) (Fin a) F =>
       Matrix.fromRows p.1 p.2) := by
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     cases i with
     | inl i => exact (measurable_pi_apply i).comp measurable_fst
     | inr i => exact (measurable_pi_apply i).comp measurable_snd
@@ -141,7 +145,7 @@ theorem lemmaU : LemmaUSplit := by
             toRows₂ (x * (g : Matrix (Fin a) (Fin a) F)) ∈ IIset O ϖ :=
           ⟨⟨_, ekg⟩, by rw [toRows₂_mul]; exact II_mul O ϖ _ hxII _ (hJint g hg)⟩
         unfold omegaS phiU
-        rw [dif_pos h1, dif_pos h2, choose_eq h1.1 ⟨k, hk⟩ ek, choose_eq h2.1 _ ekg]
+        rw [dite_eq_left h1, dite_eq_left h2, choose_eq h1.1 ⟨k, hk⟩ ek, choose_eq h2.1 _ ekg]
         have hmul : (⟨k * g, J'.mul_mem hk hg⟩ : J') = ⟨k, hk⟩ * ⟨g, hg⟩ := rfl
         rw [hmul, map_mul, Units.val_mul]
         have hn : ((ρ ⟨k, hk⟩ : ℂˣ) : ℂ) * conj ((ρ ⟨k, hk⟩ : ℂˣ) : ℂ) = 1 := by
@@ -153,7 +157,7 @@ theorem lemmaU : LemmaUSplit := by
         have hn : ¬ ((∃ k : J', ((k : GL (Fin a) F) : Matrix (Fin a) (Fin a) F) = toRows₁ x) ∧
             toRows₂ x ∈ IIset O ϖ) := by
           rintro ⟨⟨k, ek⟩, h2⟩; exact hx ⟨⟨k, k.2, ek⟩, h2⟩
-        simp only [phiU]; rw [dif_neg hn]; simp
+        simp only [phiU]; rw [dite_eq_right hn]; simp
     simp_rw [hpt]
     rw [integral_indicator_const _ hSm]
     simp only [Measure.real, hνS, ENNReal.toReal_mul, Complex.real_smul]

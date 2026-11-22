@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.KerIso
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.KerIso
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

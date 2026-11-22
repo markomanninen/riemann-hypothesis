@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.ExistsTens
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.CxGrpComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.AlgIrr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.DualIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.MsetSep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.ConjugateCuspidalReps.IsConjRepRefl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.ExistsTens
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.CxGrpComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.AlgIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.DualIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.MsetSep
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ private theorem eF_mul {f g : GL (Fin a) (Cinf E) → ℂ} (hf : f ∈ regFun E 
   simp only [eF, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul, extGL_one]
   ring
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 open Classical in
 private theorem eF_coord (t τ : E →+* ℂ) (k l i j : Fin a) :
@@ -84,7 +88,7 @@ private theorem eF_det (t τ : E →+* ℂ) (i j : Fin a) :
     split_ifs at h4 ⊢ <;> linear_combination -h4
   · simp [h3]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private def tw (σ : ℂ ≃+* ℂ) : ((E →+* ℂ) → ℂ) →+* ((E →+* ℂ) → ℂ) :=
   Pi.ringHom fun τ => σ.symm.toRingHom.comp (Pi.evalRingHom (fun _ : E →+* ℂ => ℂ) (σ.toRingHom.comp τ))
 
@@ -93,7 +97,7 @@ private def tE (σ : ℂ ≃+* ℂ) : Cinf E →+* ((E →+* ℂ) → ℂ) := (t
 private theorem tE_apply (σ : ℂ ≃+* ℂ) (x : Cinf E) (τ : E →+* ℂ) : σ (tE σ x τ) = coord (σ.toRingHom.comp τ) x :=
   σ.apply_symm_apply _
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private theorem comp_inj (σ : ℂ ≃+* ℂ) (t τ : E →+* ℂ) : σ.toRingHom.comp t = σ.toRingHom.comp τ ↔ t = τ :=
   ⟨fun h => RingHom.ext fun x => σ.injective (RingHom.congr_fun h x), fun h => h ▸ rfl⟩
 
@@ -136,10 +140,10 @@ private theorem conj_fun (σ : ℂ ≃+* ℂ) {f : GL (Fin a) (Cinf E) → ℂ} 
     obtain ⟨Φ, hΦ, e1, r1, d1⟩ := h1
     obtain ⟨Ψ, hΨ, e2, r2, d2⟩ := h2
     refine ⟨Φ + Ψ, hΦ.add hΨ, fun y => by rw [Pi.add_apply, Pi.add_apply, e1, e2], ?_, fun τ i j => ?_⟩
-    · simp only [Pi.add_apply, map_add]
+    · simp only [Pi.add_apply, map_add (f := _)]
       exact (regFun E a).add_mem r1 r2
-    · simp only [Pi.add_apply, map_add]
-      rw [eF_add hf hg, map_add, ← d1, ← d2]
+    · simp only [Pi.add_apply, map_add (f := _)]
+      rw [eF_add hf hg, map_add (f := _), ← d1, ← d2]
       exact eF_add r1 r2 _ i j
   | mul f g hf hg h1 h2 =>
     obtain ⟨Φ, hΦ, e1, r1, d1⟩ := h1
@@ -148,11 +152,11 @@ private theorem conj_fun (σ : ℂ ≃+* ℂ) {f : GL (Fin a) (Cinf E) → ℂ} 
     · simp only [Pi.mul_apply, map_mul]
       exact (regFun E a).mul_mem r1 r2
     · simp only [Pi.mul_apply, map_mul]
-      rw [eF_mul hf hg, map_add, map_mul, map_mul, ← d1, ← d2, ← e1, ← e2]
+      rw [eF_mul hf hg, map_add (f := _), map_mul, map_mul, ← d1, ← d2, ← e1, ← e2]
       simp only [← one]
       exact eF_mul r1 r2 _ i j
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem stab_eOf {d : ℕ} {M : GL (Fin a) (Cinf E) → Matrix (Fin d) (Fin d) ℂ} (hM : IsReg M)
     (W : Submodule ℂ (Fin d → ℂ)) (hW : ∀ y, ∀ v ∈ W, M y *ᵥ v ∈ W) (τ : E →+* ℂ) (i j : Fin a) {v : Fin d → ℂ} (hv : v ∈ W) :
     eOf M τ i j *ᵥ v ∈ W := by
@@ -169,7 +173,7 @@ private theorem stab_eOf {d : ℕ} {M : GL (Fin a) (Cinf E) → Matrix (Fin d) (
   simp only [key, fun y => (Submodule.mem_dualAnnihilator φ).1 hφ _ (hW y v hv)]
   exact eF_const 0 τ i j
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 private theorem qdet_map (σ : ℂ ≃+* ℂ) {d : ℕ} (X : Fin a → Fin a → Matrix (Fin d) (Fin d) ℂ) (u : ℂ) :
     Formalism.REAL.qdet (fun i j => (X i j).map σ) (σ u) = (Formalism.REAL.qdet X u).map σ := by
   let f : Matrix (Fin d) (Fin d) ℂ →+* Matrix (Fin d) (Fin d) ℂ := σ.toRingHom.mapMatrix
@@ -177,7 +181,8 @@ private theorem qdet_map (σ : ℂ ≃+* ℂ) {d : ℕ} (X : Fin a → Fin a →
     ext k l
     simp [f, Matrix.algebraMap_matrix_apply, apply_ite σ]
   change Formalism.REAL.qdet (fun i j => f (X i j)) (σ u) = f _
-  simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn,
     Function.comp_def, Formalism.REAL.Tm, map_add, apply_ite f, hf, map_zero, map_sub, map_natCast]
 
 private theorem map_infChar (σ : ℂ ≃+* ℂ) (Ξ : AlgRep E a) {τ : E →+* ℂ} {m : Multiset ℂ} (h : AlgInfChar Ξ τ m) :

@@ -1,6 +1,10 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigZeroDecay
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.HaarExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigZeroDecay
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCPX
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,10 +41,9 @@ theorem one_le_hs (hn : 0 < n) (g : S7.UJ ε) : 1 ≤ Formalism.REAL.hs (S7.toM 
 
 private theorem hs_eq_re_trace_conjTranspose_mul' (X : Matrix (Fin n) (Fin n) ℂ) :
     Formalism.REAL.hs X = (Matrix.trace (X * Xᴴ)).re := by
-  simp [Formalism.REAL.hs, Matrix.trace, Matrix.mul_apply, Matrix.conjTranspose_apply, Complex.mul_conj,
-    Complex.normSq_eq_norm_sq]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  rw [← Complex.ofReal_pow, Complex.ofReal_re]
+  simp only [Formalism.REAL.hs, Matrix.trace, Matrix.diag_apply, Matrix.mul_apply,
+    Matrix.conjTranspose_apply, Complex.star_def, Complex.re_sum, Complex.mul_conj',
+    ← Complex.ofReal_pow, Complex.ofReal_re]
 
 theorem hs_mul_K (X : Matrix (Fin n) (Fin n) ℂ) (k : S7.KG ε) : Formalism.REAL.hs (X * S7.toMK k) = Formalism.REAL.hs X := by
   have hk : S7.toM (k : S7.UJ ε) ∈ Kset ε := k.2

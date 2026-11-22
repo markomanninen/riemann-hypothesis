@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransFinA
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransFinF
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransFinA
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransFinF
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,8 @@ theorem transFin_of : TensorGl → JMComm → StepFormula → QdetFacts → Spec
       have h2 : (Subalgebra.toSubmodule K).mkQ (∑ i ∈ Finset.range (n + 1), u ^ i • c i) = 0 := by
         rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact h1
-      simpa [map_sum, map_smul] using h2) i hi
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_smul] using h2) i hi
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at this
     exact this
   have hcB : ∀ i ∈ Finset.range (n + 1), c i ∈ B := hcoefmem B _ hinf (fun u hu => hqB u hu)

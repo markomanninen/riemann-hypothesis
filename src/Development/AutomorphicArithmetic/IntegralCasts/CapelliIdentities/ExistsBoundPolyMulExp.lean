@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Rc4.exists_bound_poly_mul_exp :
     ∀ (c : ℝ),

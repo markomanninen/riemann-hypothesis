@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ContrFactor
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.AllPositions
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
 namespace GlobalTheory.SymChain
@@ -51,10 +56,10 @@ theorem rowE_mem_symLev_of_box : ∀ (k : Type) [Field k] [ValuativeRel k] [Topo
       ∀ y z, (fromBlocks 1 0 M 1 : Matrix (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) k) y z ∈ 𝒪[k] := by
     intro M hM y z
     rcases y with y | y <;> rcases z with z | z
-    · simp only [fromBlocks_apply₁₁, one_apply]; split_ifs <;> simp [zero_mem, one_mem]
+    · simp only [fromBlocks_apply₁₁, Matrix.one_apply]; split_ifs <;> simp [zero_mem, one_mem]
     · simp [zero_mem]
     · simpa using hM y z
-    · simp only [fromBlocks_apply₂₂, one_apply]; split_ifs <;> simp [zero_mem, one_mem]
+    · simp only [fromBlocks_apply₂₂, Matrix.one_apply]; split_ifs <;> simp [zero_mem, one_mem]
   refine ⟨?_, ?_⟩
   · rw [mem_KO, ← map_inv]
     refine ⟨fun a b => ?_, fun a b => ?_⟩
@@ -66,13 +71,13 @@ theorem rowE_mem_symLev_of_box : ∀ (k : Type) [Field k] [ValuativeRel k] [Topo
       rw [reGL_symm_val, submatrix_apply, h, sub_self, map_zero]; exact zero_lt_one
     have h1 : (1 : Matrix (Ix (Fin κ ⊕ Fin (s + 1)) t j) (Ix (Fin κ ⊕ Fin (s + 1)) t j) k) a b =
         (1 : Matrix (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) k) (o a) (o b) := by
-      simp only [one_apply, EmbeddingLike.apply_eq_iff_eq]
+      simp only [Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq]
     rw [h1]
     change (fromBlocks 1 0 C' 1 : Matrix (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) (XIx (Fin κ) t j ⊕ Fin (c + 1 + 1)) k) (o a) (o b) = _
     rcases hoa : o a with y | l <;> rcases hob : o b with z | z
+    · simp [Matrix.one_apply]
     · simp [one_apply]
-    · simp [one_apply]
-    · rw [fromBlocks_apply₂₁, one_apply, if_neg (by simp), hC']
+    · rw [fromBlocks_apply₂₁, Matrix.one_apply, if_neg (by simp), hC']
       split_ifs with hl
       · exfalso
         have ha : a = Sum.inl (Sum.inr ⟨l.val, by omega⟩) :=
@@ -92,6 +97,6 @@ theorem rowE_mem_symLev_of_box : ∀ (k : Type) [Field k] [ValuativeRel k] [Topo
           subst hb
           exact hnf trivial
       · rfl
-    · simp [one_apply]
+    · simp [Matrix.one_apply]
 
 end GlobalTheory.SymChain

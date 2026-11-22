@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ContractMultilinearApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ContractMultilinearApply
+
+@[expose] public section
+
 open scoped TensorProduct
 
 noncomputable section
@@ -13,8 +18,6 @@ open GlobalTheory.SmGL
 
 variable {β : Type} [Fintype β] [DecidableEq β] {X : β → Type} [∀ a, AddCommGroup (X a)]
   [∀ a, Module ℂ (X a)]
-
-def contrML (l : ∀ a, X a →ₗ[ℂ] ℂ) (j : β) : MultilinearMap ℂ X (X j) := GlobalTheory.MultilinearContraction.contractMultilinear l j
 
 def contr (l : ∀ a, X a →ₗ[ℂ] ℂ) (j : β) : (PiTensorProduct ℂ X) →ₗ[ℂ] X j := GlobalTheory.MultilinearContraction.contract l j
 
@@ -46,15 +49,15 @@ theorem contr_mulSingle (ρ : ∀ a, Representation ℂ (Γ a) (X a)) (l : ∀ a
     (g : Γ j) (y : PiTensorProduct ℂ X) :
     contr l j (piTensor ρ (Pi.mulSingle j g) y) = ρ j g (contr l j y) := by
   induction y using PiTensorProduct.induction_on with
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | smul_tprod c x =>
     simp only [map_smul, piTensor_tprod, contr_tprod, Pi.mulSingle_eq_same]
     congr 2
     exact Finset.prod_congr rfl fun a ha => by
       rw [Pi.mulSingle_eq_of_ne (Finset.ne_of_mem_erase ha), map_one, Module.End.one_apply]
 
-omit [Fintype β] in
 
+omit [Fintype β] in
 theorem tprod_update_mulSingle (ρ : ∀ a, Representation ℂ (Γ a) (X a)) (x : ∀ a, X a) (j : β)
     (g : Γ j) (v : X j) :
     PiTensorProduct.tprod ℂ (Function.update x j (ρ j g v)) =

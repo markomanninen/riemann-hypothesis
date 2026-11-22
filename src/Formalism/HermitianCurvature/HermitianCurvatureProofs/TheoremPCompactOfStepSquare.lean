@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelOneSquareIntegrableGeneral
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHChk
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelOneSquareIntegrableGeneral
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHChk
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P5.HerD
 

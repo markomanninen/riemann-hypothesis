@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,7 +131,8 @@ theorem schur_row_recursion : L8 := by
       simp
     rw [h0, schur_zero_eq_one, map_one]
   · have h := congrArg (evalAt z) (sum_range_esymmL_mul_schur hn hj)
-    simp only [map_sum, map_mul, map_pow, map_neg, map_one, map_zero, evalAt_esymmL,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_pow, map_neg, map_one, map_zero, evalAt_esymmL,
       monomialChar_lamS] at h
     exact h
 

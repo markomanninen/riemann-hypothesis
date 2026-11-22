@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +39,8 @@ theorem exists_basis_of_saturated {R : Type} [CommRing R] [IsDomain R] [IsPrinci
     rw [Fintype.sum_sum_type] at hg
     have hr : ∀ j, g (Sum.inr j) = 0 := by
       have h1 := congrArg S.mkQ hg
-      simp only [w', Sum.elim_inl, Sum.elim_inr, map_add, map_sum, map_smul, map_zero, Submodule.mkQ_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [w', Sum.elim_inl, Sum.elim_inr, map_add (f := _), map_sum, map_smul, map_zero, Submodule.mkQ_apply,
         hmk, hs', smul_zero, Finset.sum_const_zero, zero_add] at h1
       exact Fintype.linearIndependent_iff.1 bQ.linearIndependent _ h1
     have hl : ∀ i, g (Sum.inl i) = 0 := by
@@ -50,7 +55,8 @@ theorem exists_basis_of_saturated {R : Type} [CommRing R] [IsDomain R] [IsPrinci
     have ht : (∑ j, bQ.repr (Submodule.Quotient.mk (p := S) v) j • s' j) ∈ Submodule.span R (Set.range w') :=
       Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨Sum.inr j, rfl⟩)
     have hvt : v - ∑ j, bQ.repr (Submodule.Quotient.mk (p := S) v) j • s' j ∈ S := by
-      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
       simp only [map_smul, Submodule.mkQ_apply, hs']
       rw [hv, sub_self]
     have hSle : S ≤ Submodule.span R (Set.range w') :=
@@ -70,6 +76,7 @@ theorem exists_basis_of_saturated {R : Type} [CommRing R] [IsDomain R] [IsPrinci
     · have hv : ∑ k, a k • b k = v := funext fun j => by simpa [Finset.sum_apply, smul_eq_mul] using ha j
       funext k
       rw [← hv]
-      simp [map_sum, Module.Basis.repr_self, Finsupp.single_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, Module.Basis.repr_self, Finsupp.single_apply]
 
 end Formalism.L2.Pj.SatLin

@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SatisfiesGlRelationsBilinearLeft
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowDivStable
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.HWRaise
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.SatisfiesGlRelationsBilinearLeft
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.RowDivStable
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.HWRaise
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,9 +62,9 @@ theorem deriv_rowGen (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : MvPo
     have : rowGen R a b (C c : MvPolynomial (Fin r × Fin m) R) = Polynomial.C (C c) := by
       simp [rowGen]
     rw [this, Polynomial.derivative_C, mul_zero]
-  | add p q hp hq => rw [map_add, Polynomial.derivative_add, mul_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.derivative_add, mul_add, hp, hq, map_add (f := _), map_add (f := _)]
   | mul_X p v hp =>
-    rw [map_mul, Polynomial.derivative_mul, mul_add, pol_mul, map_add, map_mul, map_mul, ← hp, pol_X]
+    rw [map_mul, Polynomial.derivative_mul, mul_add, pol_mul, map_add (f := _), map_mul, map_mul, ← hp, pol_X]
     have hg : (if a = b then 1 + Polynomial.X else 1) * Polynomial.derivative (rowGen R a b (X v)) =
         rowGen R a b (if v.1 = b then X (a, v.2) else 0) := by
       rw [rowGen_X']
@@ -93,7 +97,7 @@ theorem rowDiv_succ (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (k : ℕ)
     rowDiv R a b (k + 1) f * ((k : MvPolynomial (Fin r × Fin m) R) + 1) +
       (if a = b then rowDiv R a b k f * (k : MvPolynomial (Fin r × Fin m) R) else 0) =
       rowDiv R a b k (pol R a b f) := by
-  have h := congrArg (fun p => Polynomial.coeff p k) (deriv_rowGen R a b f)
+  have h := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p k) (deriv_rowGen R a b f)
   unfold rowDiv
   rw [← h]
   by_cases hab : a = b
@@ -115,7 +119,8 @@ theorem pol_eq_rowDiv (R : Type) [CommRing R] {r m : ℕ} (a b : Fin r) (f : MvP
 theorem pol_map {R S : Type} [CommRing R] [CommRing S] (ψ : R →+* S) {r m : ℕ} (a b : Fin r)
     (f : MvPolynomial (Fin r × Fin m) R) :
     pol S a b (MvPolynomial.map ψ f) = MvPolynomial.map ψ (pol R a b f) := by
-  simp [pol_apply, pderiv_map, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pol_apply, pderiv_map, map_sum]
 
 theorem pol_mem_dualWeyl (R : Type) [CommRing R] {r m : ℕ} (ν : Fin m → ℕ) (a b : Fin r)
     (f : MvPolynomial (Fin r × Fin m) R) (hf : f ∈ dualWeyl R r m ν) : pol R a b f ∈ dualWeyl R r m ν := by

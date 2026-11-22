@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.Fv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IrreducibleParity.Fv
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Loc.PS
 
@@ -14,7 +18,9 @@ private def phiK (τ r : K) (h : r * r = -1 + τ * r) : Etau K τ →ₐ[K] K wh
     linear_combination (-(x.im * y.im)) * h
   map_zero' := by simp
   map_add' x y := by simp only [QuadraticAlgebra.re_add, QuadraticAlgebra.im_add]; ring
-  commutes' a := by simp [QuadraticAlgebra.algebraMap_eq]
+  commutes' a := by
+    simp only [QuadraticAlgebra.algebraMap_re, QuadraticAlgebra.algebraMap_im, zero_mul,
+      add_zero, Algebra.algebraMap_self_apply]
 
 private lemma phiK_apply (h : r * r = -1 + τ * r) (x : Etau K τ) : phiK τ r h x = x.re + x.im * r := rfl
 

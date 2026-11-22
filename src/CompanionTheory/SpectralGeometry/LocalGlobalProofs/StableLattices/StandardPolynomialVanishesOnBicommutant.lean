@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+
+@[expose] public section
+
 open CompanionTheory.D.gk.admitted (stdPoly)
 open GlobalTheory.AutomorphicL2Unitary
 open scoped InnerProductSpace
@@ -39,10 +44,12 @@ theorem diag_mem_of_bicomm (σ : G →* (H →L[ℂ] H)) (hσ : ∀ g v, ‖σ g
       (C.starProjection w).ofLp k = ∑ l, Q k l (w.ofLp l) := by
     intro w k
     conv_lhs => rw [← sum_incl w]
-    simp [Q, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Q, map_sum]
   have key : C.starProjection (diag T z) = diag T (C.starProjection z) := by
     ext k
-    rw [hsum, diag_apply, hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, diag_apply, hsum, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [diag_apply]
     exact congrArg (fun S : H →L[ℂ] H => S (z.ofLp l)) (hQ k l)

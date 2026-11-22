@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -48,14 +53,14 @@ theorem frobSubalgebra_counit : ∀ (p : ℕ) [Fact p.Prime] (k A : Type) [Field
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [j]
-    | add x y hx hy => simp only [map_add, Subalgebra.coe_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Subalgebra.coe_add, hx, hy]
   have kr : ∀ x : B ⊗[k] B, ((TensorProduct.rid k B (LinearMap.lTensor B (ε.comp B.val).toLinearMap x) : B) : A)
       = TensorProduct.rid k A (LinearMap.lTensor A ε.toLinearMap (j x)) := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [j]
-    | add x y hx hy => simp only [map_add, Subalgebra.coe_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Subalgebra.coe_add, hx, hy]
   refine ⟨Δ', fun b => ?_, fun b => ?_⟩
   · apply Subtype.ext
     rw [kl, hjΔ]; exact hl _

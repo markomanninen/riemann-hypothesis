@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXPowPrimePowSubOneMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneAddXPowPrimePowSubOneMemSpan
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -22,7 +26,7 @@ theorem semilinear_sub_mem_pow_succ_smul {A N : Type} [CommRing A] [AddCommGroup
     exact Submodule.smul_mem_smul hga (h1 y)
   · intro y z hy hz
     have e : Y (y + z) - (y + z) = (Y y - y) + (Y z - z) := by
-      rw [map_add]; abel
+      rw [map_add (f := _)]; abel
     rw [e]
     exact Submodule.add_mem _ hy hz
 
@@ -44,7 +48,7 @@ theorem semilinear_iterate_prime_pow_sub_mem :
   set D : Module.End ℤ N := Y.toIntLinearMap - 1 with hD
   have h := congrArg (Polynomial.aeval D) huv
   rw [mul_comm u, mul_comm v] at h
-  simp only [map_add, map_mul, map_pow, map_sub, map_one, map_natCast, Polynomial.aeval_X] at h
+  simp only [map_add (f := _), map_mul, map_pow, map_sub, map_one, map_natCast, Polynomial.aeval_X] at h
   have hYD : (1 + D) = Y.toIntLinearMap := by rw [hD]; abel
   rw [hYD] at h
   have h' := congrArg (fun f : Module.End ℤ N => f x) h

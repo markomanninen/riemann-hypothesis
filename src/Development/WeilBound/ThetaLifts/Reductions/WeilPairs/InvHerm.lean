@@ -1,10 +1,15 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.Mfac
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxHermitianTensorAdeles
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilTransportAdelicSchwartzCmExtension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTransportWeilDatumCmExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.Mfac
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxHermitianTensorAdeles
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilTransportAdelicSchwartzCmExtension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousTransportWeilDatumCmExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedEqDiagonalLagrangianThetaIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -78,7 +83,7 @@ theorem exists_coord {B : Base F E} (hB : B.IsGood σ) {nS nT : ℕ} {JS : Matri
   congr 2
   funext x
   congr 1
-  funext i
+  ext i
   simp
 
 end
@@ -112,7 +117,9 @@ theorem cont : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField
     rw [inv_one]
     exact Matrix.transpose_one.symm) Φ hΦ
   show l (om (a h, 1) Φ) = _
-  rw [hl' _ h1, h2]
+  have hh := hl' _ h1
+  rw [h2] at hh
+  exact hh
 
 end PositivityTheory.ThKW.PhaseFourierInjectivity
 

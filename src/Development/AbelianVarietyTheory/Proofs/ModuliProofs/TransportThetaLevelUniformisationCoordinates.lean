@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolUnifReparam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsHolUnifReparam
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -37,7 +41,7 @@ theorem hermForm_eq_of_im {g : ℕ} (H H' : Matrix (Fin g) (Fin g) ℂ)
     intro y hy
     let f₁ : (Fin g → ℂ) →ₗ[ℝ] ℝ :=
       { toFun := fun x => (hermForm H' (h x) (h y)).im
-        map_add' := fun a c => by simp only [map_add, hermForm_add_left, Complex.add_im]
+        map_add' := fun a c => by simp only [map_add (f := _), hermForm_add_left, Complex.add_im]
         map_smul' := fun r a => by
           simp only [RingHom.id_apply, smul_eq_mul]
           rw [← Complex.coe_smul, map_smul, hermForm_smul_left, Complex.im_ofReal_mul] }
@@ -53,7 +57,7 @@ theorem hermForm_eq_of_im {g : ℕ} (H H' : Matrix (Fin g) (Fin g) ℂ)
     intro x
     let f₁ : (Fin g → ℂ) →ₗ[ℝ] ℝ :=
       { toFun := fun y => (hermForm H' (h x) (h y)).im
-        map_add' := fun a c => by simp only [map_add, hermForm_add_right, Complex.add_im]
+        map_add' := fun a c => by simp only [map_add (f := _), hermForm_add_right, Complex.add_im]
         map_smul' := fun r a => by
           simp only [RingHom.id_apply, smul_eq_mul]
           rw [← Complex.coe_smul, map_smul, hermForm_smul_right, Complex.star_def, Complex.conj_ofReal,
@@ -108,7 +112,7 @@ theorem transport_uniformisation :
   · unfold HolUnif.IsAH
     refine ⟨hA'.2.2.2.1, hA'.2.2.2.2.1, fun l => hAH.2.2.1 _, ?_⟩
     intro l i z hz
-    simp only [holUnifReparam, div_one, map_add]
+    simp only [holUnifReparam, div_one, map_add (f := _)]
     rw [hH z l, hH l l]
     exact hAH.2.2.2 ⟨h.symm l, l.2⟩ i (h.symm z) hz
   · intro z

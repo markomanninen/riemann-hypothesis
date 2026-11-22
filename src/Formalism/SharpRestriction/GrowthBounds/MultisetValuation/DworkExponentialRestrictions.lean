@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SubstitutionOfVariables
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SubstitutionOfVariables
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,8 +69,9 @@ theorem th_coordZ_eq {n' r0 r1 : ℕ} (B : OmBasis p n') (K' : Type) [Field K'] 
 theorem th_coordZ_int {n' r0 r1 : ℕ} (B : OmBasis p n') (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K')
     (x : Eidx n' r0 r1 ⊕ Eidx n' r0 r1) : IntR (Rp p K' vp) (coordZ B K' 1 x) := by
   intro n
-  rcases x with ⟨r, a, b⟩ | ⟨r, a, b⟩ <;>
-  · simp only [coordZ, map_sum, one_mul]
+  rcases x with ⟨r, a, b⟩ | ⟨r, a, b⟩
+  all_goals
+    simp only [coordZ, map_sum, one_mul]
     refine Subring.sum_mem _ fun s _ => ?_
     rw [MvPowerSeries.coeff_C_mul]
     refine Subring.mul_mem _ (Subring.subset_closure (Set.mem_union_left _ ⟨_, rfl⟩)) ?_
@@ -78,8 +83,9 @@ theorem th_coordZ_int {n' r0 r1 : ℕ} (B : OmBasis p n') (K' : Type) [Field K']
 theorem th_coordZA_int (X : Sys p) (K' : Type) [Field K'] [Algebra (K0 p) K'] (vp : K') (j : ℕ)
     (x : X.EA j ⊕ X.EA j) : IntR (Rp p K' vp) (X.coordZA K' j x) := by
   intro n
-  rcases x with ⟨v, r, a, b⟩ | ⟨v, r, a, b⟩ <;>
-  · simp only [Sys.coordZA, map_sum]
+  rcases x with ⟨v, r, a, b⟩ | ⟨v, r, a, b⟩
+  all_goals
+    simp only [Sys.coordZA, map_sum]
     refine Subring.sum_mem _ fun s _ => ?_
     rw [MvPowerSeries.coeff_C_mul]
     refine Subring.mul_mem _ (Subring.subset_closure (Set.mem_union_left _ ⟨_, rfl⟩)) ?_

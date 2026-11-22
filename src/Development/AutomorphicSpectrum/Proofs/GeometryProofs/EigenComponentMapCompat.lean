@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.EigMap
 
@@ -28,15 +32,16 @@ theorem eigSp_sum_eq_zero (ρ : O →+* Module.End k V) (s : Finset (O →+* k))
       have hne : t ≠ t₀ := fun e => ht₀ (e ▸ ht)
       obtain ⟨a, ha⟩ : ∃ a, t a ≠ t₀ a := by
         by_contra hcon
-        push_neg at hcon
+        push Not at hcon
         exact hne (RingHom.ext hcon)
       have hz : ∑ u ∈ s, (u a - t₀ a) • f u = 0 := by
         have h1 : ρ a (f t₀ + ∑ u ∈ s, f u) - t₀ a • (f t₀ + ∑ u ∈ s, f u) = 0 := by
           rw [hsum]; simp
         have h2 : ρ a (∑ u ∈ s, f u) = ∑ u ∈ s, u a • f u := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           exact Finset.sum_congr rfl fun u hu => (mem_eigSp_iff' ρ u _).1 (hf' u hu) a
-        rw [map_add, hf₀ a, h2, smul_add, Finset.smul_sum] at h1
+        rw [map_add (f := _), hf₀ a, h2, smul_add, Finset.smul_sum] at h1
         simp only [sub_smul, Finset.sum_sub_distrib]
         rw [← h1]
         abel
@@ -52,7 +57,7 @@ theorem eigSp_sum_eq_zero (ρ : O →+* Module.End k V) (s : Finset (O →+* k))
     · exact hs t ht
 
 theorem iSupIndep_eigSp (ρ : O →+* Module.End k V) : iSupIndep (fun σ : O →+* k => eigSp ρ σ) :=
-  (iSupIndep_iff_finset_sum_eq_zero_imp_eq_zero _).2 fun s v hv h0 i hi =>
+  (iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero _).2 fun s v hv h0 i hi =>
     eigSp_sum_eq_zero ρ s v hv h0 i hi
 
 theorem eq_zero_of_mem_eigSp_of_mem_iSup (ρ : O →+* Module.End k V) (σ : O →+* k) {y : V}
@@ -84,22 +89,22 @@ theorem eigComp_map {k k' V V' O : Type} [Field k] [Field k'] [AddCommGroup V] [
           κ.injective (RingHom.congr_fun e a))
         exact Submodule.mem_iSup_of_mem (κ.comp s) (Submodule.mem_iSup_of_mem hne (hmap s y hy))
       · intro a b ha hb
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ ha hb
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
   have h : ∃ p ∈ eigSp ρ σ, x - p ∈ ⨆ σ' ∈ {σ' : O →+* k | σ' ≠ σ}, eigSp ρ σ' := by
     by_contra hcon
-    exact hx (by rw [eigComp, dif_neg hcon])
-  have hp : eigComp ρ σ x = h.choose := by rw [eigComp, dif_pos h]
+    exact hx (by rw [eigComp, dite_eq_right hcon])
+  have hp : eigComp ρ σ x = h.choose := by rw [eigComp, dite_eq_left h]
   obtain ⟨hp₁, hp₂⟩ := h.choose_spec
   rw [← hp] at hp₁ hp₂
   have hp₃ := hsup _ hp₂
   rw [map_sub] at hp₃
   have h' : ∃ q ∈ eigSp ρ' (κ.comp σ), j x - q ∈ ⨆ τ' ∈ {τ' : O →+* k' | τ' ≠ κ.comp σ}, eigSp ρ' τ' :=
     ⟨_, hmap σ _ hp₁, hp₃⟩
-  have hq : eigComp ρ' (κ.comp σ) (j x) = h'.choose := by rw [eigComp, dif_pos h']
+  have hq : eigComp ρ' (κ.comp σ) (j x) = h'.choose := by rw [eigComp, dite_eq_left h']
   obtain ⟨hq₁, hq₂⟩ := h'.choose_spec
   rw [← hq] at hq₁ hq₂
   refine sub_eq_zero.1 (eq_zero_of_mem_eigSp_of_mem_iSup ρ' (κ.comp σ)

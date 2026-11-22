@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ThmFlatA
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FinConstFor
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -27,7 +32,7 @@ theorem exists_valuationSubring_of_padicEmbedding :
       add_mem' := by
         rintro _ _ ⟨x, rfl, hx⟩ ⟨y, rfl, hy⟩
         refine ⟨x + y, by simp, ?_⟩
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (hna _ _).trans (max_le hx hy)
       zero_mem' := ⟨0, by simp, by simp⟩
       neg_mem' := by
@@ -38,7 +43,7 @@ theorem exists_valuationSubring_of_padicEmbedding :
       add_mem' := by
         rintro a b ⟨x, hxa, hx⟩ ⟨y, hyb, hy⟩
         refine ⟨x + y, by simp [hxa, hyb], ?_⟩
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (hna _ _).trans_lt (max_lt hx hy)
       zero_mem' := ⟨0, by simp, by simp⟩
       smul_mem' := by

@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixWA
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixThA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfDualLatticeOfLevelClass
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixWA
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LFixThA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfDualLatticeOfLevelClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,12 +62,13 @@ theorem offM_of_N {g : G D n} (hg : g ∈ KOff D n S) {b : Mx D n n} (hb : mat g
   · rw [e]; exact (LFixTh.kOff_int hg hv _ _).1
 
 theorem intS_inner (V : HSp D) {S : Finset (Pl D)} (hQ : ∀ i j, IntS S (rat V.gram i j)) {x : Mx D V.rank n}
-    (hx : IntOff S x) (i j : Fin n) : IntS S (inner V x x i j) :=
+    (hx : IntOff S x) (i j : Fin n) : IntS S (GlobalTheory.StdUnn.inner V x x i j) :=
   intS_mul (adj_intS ((intOff_iff x).1 hx)) (intS_mul hQ ((intOff_iff x).1 hx)) i j
 
 theorem fixN (V : HSp D) {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) :
     ∃ S₀ : Finset (Pl D), ∀ S, S₀ ⊆ S → ∀ (n : ℕ) (θ : InfFam D) (μ : Measure (Mx D V.rank n))
-      (ω : G D n →* Module.End ℂ (schwartzA θ V.rank n)) (χ : (AE D)ˣ →* Circle), IsWeilSch ψ χ θ V μ ω →
+      (ω : G D n →* Module.End ℂ (schwartzA θ V.rank n)) (χ : (AE D)ˣ →* Circle),
+      GlobalTheory.StdUnn.IsWeilSch ψ χ θ V μ ω →
       ∀ g ∈ KOff D n S, IsN g → ∀ Ψ : schwartzA θ V.rank n, (∀ x, ¬ IntOff S x → Ψ.1 x = 0) → ω g Ψ = Ψ := by
   classical
   obtain ⟨S₁, hS₁⟩ := psi_off hψ

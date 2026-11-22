@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+
+@[expose] public section
 
 open MeasureTheory NumberField
 open scoped ENNReal
@@ -26,13 +30,5 @@ def FarModerate : Prop :=
     1 ≤ q → CountHyp B Cg n₀ d p q b →
       ∫⁻ x in moderate B q b, farSum B d x ∂(B.I.muA B.μf) ≤
         ENNReal.ofReal (Real.exp (-((B.I.n : ℝ) ^ 2 * (B.I.f : ℝ))) * mainTerm B d)
-
-example (d : InfinitePlace B.I.F → ℝ) (x γ : B.I.GA) (h : γ ∈ farSet B d x)
-    (h0 : phe B d (x⁻¹ * γ * x) ≠ 0) : ∃ v, epN B < dHS (uMat ((x⁻¹ * γ * x).1 v)) := by
-  by_contra hc
-  push Not at hc
-  exact h.2 ⟨h.1, h0, hc⟩
-
-example (q : ℕ) (b : ℝ) : moderate B q b ⊆ B.fund := fun _ hx => hx.1
 
 end GlobalTheory.IndefiniteRowSideFullHecke.FarTermsModerate

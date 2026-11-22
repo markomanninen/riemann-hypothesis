@@ -1,9 +1,13 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PairZero
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosSt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelRowsColumnsSquareIntegrable
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.OnlyIsotropic
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PairZero
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClosSt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelRowsColumnsSquareIntegrable
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.ProperRatH
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.AdmissibleLeHolds
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.OnlyIsotropic
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,11 +27,13 @@ theorem memLp_rt (X : PositivityTheory.Rg.BcB.E1.Ctx) (hr : X.μ.IsMulRightInvar
     MemLp (fun x => f (x * z)) 2 X.ν := by
   haveI := hr
   have hνμ : X.ν ≪ X.μ := Measure.absolutelyContinuous_of_le (Measure.restrict_le_self : X.μ.restrict X.F ≤ X.μ)
-  refine ⟨((aesm_of_inv X hinv hf.1).comp_measurePreserving (measurePreserving_mul_right X.μ z)).mono_ac hνμ, ?_⟩
-  rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top,
+  have hm : AEStronglyMeasurable (fun x => f (x * z)) X.ν :=
+    ((aesm_of_inv X hinv hf.aestronglyMeasurable).comp_measurePreserving (measurePreserving_mul_right X.μ z)).mono_ac hνμ
+  change eLpNorm (fun x => f (x * z)) 2 X.ν < ∞
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hm,
     lint_rt X hr (g := fun y => ‖f y‖ₑ ^ (2 : ℝ≥0∞).toReal) (fun γ y => by simp only [hinv γ y]) z,
-    ← eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top]
-  exact hf.2
+    ← eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf.aestronglyMeasurable]
+  exact hf
 
 theorem piInv_of (hC : PiClosureInv) : PiInv := by
   intro E _ _ _ n hn D π hθ ι _ Φ T hΦ hT
@@ -112,7 +118,7 @@ theorem piInv_of (hC : PiClosureInv) : PiInv := by
           congr 1
           exact integral_congr_ae ((hgu j).mono fun y hy => by simp only [hy, hFt])
       _ = ∑ j, ∫ x, starRingEnd ℂ ((h i : H E n 0 → ℂ) x) * ∫ y, kerH (Φ i j) x y * Ft j y ∂D.ν ∂D.ν :=
-          integral_finset_sum _ fun j _ => (hP j).1
+          integral_finsetSum _ fun j _ => (hP j).1
       _ = 0 := Finset.sum_eq_zero fun j _ => (hP j).2
   intro f hf
   have hle : Submodule.span ℂ {f | IsPiVec D π f} ≤ (piSp D π ι).comap (T : Hs (ι := ι) D →ₗ[ℂ] Hs (ι := ι) D) :=

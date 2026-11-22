@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegRadialWeight
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionCluster
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegRadialWeight
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteProjectionCluster
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -511,7 +516,7 @@ theorem tendsto_radialTransform_diff (hr : 0 < r) (hrs : r ≤ s) (z : Fin n →
   have hs2 : r ^ 2 ≤ s ^ 2 := pow_le_pow_left₀ hr.le hrs 2
   have h0 := distSq_nonneg x z
   rcases lt_or_ge (euclPot (z - x)) (r ^ 2) with h1 | h1
-  · rw [Set.indicator_of_notMem (fun h => h.2 ((mem_euclBall_iff_sq x hr z).2 h1))]
+  · rw [Set.indicator_of_notMem (fun (h : z ∈ euclBall x s \ euclBall x r) => h.2 ((mem_euclBall_iff_sq x hr z).2 h1))]
     refine tendsto_const_nhds.congr' ((eventually_le_pk ((div_lt_one hr2).2 h1)).mono fun k hk' => ?_)
     exact (radialTransform_diff_of_le e hr hrs k h0 ((div_le_iff₀ hr2).1 hk')).symm
   rcases lt_or_ge (euclPot (z - x)) (s ^ 2) with h2 | h2
@@ -523,7 +528,7 @@ theorem tendsto_radialTransform_diff (hr : 0 < r) (hrs : r ≤ s) (z : Fin n →
     rw [radialTransform_hk_of_le e k (div_nonneg h0 (hr2.trans_le hs2).le) hk',
       radialTransform_hk_of_one_le e k ((one_le_div hr2).2 h1)]
     ring
-  · rw [Set.indicator_of_notMem (fun h => (not_lt.2 h2) ((mem_euclBall_iff_sq x hs z).1 h.1))]
+  · rw [Set.indicator_of_notMem (fun (h : z ∈ euclBall x s \ euclBall x r) => (not_lt.2 h2) ((mem_euclBall_iff_sq x hs z).1 h.1))]
     simp only [radialTransform_diff_of_ge e hr hrs _ h2]
     exact tendsto_const_nhds
 
@@ -531,8 +536,8 @@ end Weights
 
 end RegLelongAnnulus
 
-open RegLelongAnnulus in
 
+open RegLelongAnnulus in
 theorem RegLelongAnnulus.proof (hRW : RegRadialWeight.Statement) (hCM : ChartMassCompact.Statement) :
     RegLelongAnnulus.Statement := by
   intro n d J A u ε x r s hJ hdim hAf hε hr hrs
@@ -668,7 +673,7 @@ theorem RegLelongAnnulus.proof (hRW : RegRadialWeight.Statement) (hCM : ChartMas
       by_contra hle
       replace hle := not_lt.1 hle
       apply hz
-      rw [Set.indicator_of_notMem (fun h => h.2 ((mem_euclBall_iff_sq x hr z).2 (by linarith))), mul_zero]
+      rw [Set.indicator_of_notMem (fun (h : z ∈ euclBall x s \ euclBall x r) => h.2 ((mem_euclBall_iff_sq x hr z).2 (by linarith))), mul_zero]
     have hR : Tendsto (fun k => ∫ y, chartDens J A (fun z => r ^ (2 * (e + 1)) * s ^ (2 * (e + 1)) *
           (radialTransform (e + 1) (hk k) (euclPot (z - x) / s ^ 2) -
             radialTransform (e + 1) (hk k) (euclPot (z - x) / r ^ 2)))

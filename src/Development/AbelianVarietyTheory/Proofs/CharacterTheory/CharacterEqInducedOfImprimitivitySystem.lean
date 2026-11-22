@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharTraceMulIdempotent
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.SumConjIdempotentEqCardSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharTraceMulIdempotent
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.SumConjIdempotentEqCardSmul
+
+@[expose] public section
 
 open GlobalTheory.BI
 
@@ -37,7 +41,8 @@ theorem character_eq_ind_of_imprimitive :
       have h3 : (Nat.card T : L) * LinearMap.trace L V (ρ g)
           = LinearMap.trace L V (ρ g * ∑ x : G, ρ x * e * ρ x⁻¹) := by
         rw [hsum, mul_smul_comm, mul_one, map_smul, smul_eq_mul]
-      rw [h3, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h3, Finset.mul_sum, map_sum]
       exact Finset.sum_congr rfl (fun x _ => hterm x)
     rw [Representation.character, ind, finsum_eq_sum_of_fintype]
     simp only [← hkey]

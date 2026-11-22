@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RamificationRankSum.Lattice
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RamificationRankSum.Points
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RamificationRankSum.Lattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RamificationRankSum.Points
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.EfRankSum
 

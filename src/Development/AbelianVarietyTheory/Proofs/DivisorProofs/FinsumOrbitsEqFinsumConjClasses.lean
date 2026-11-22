@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabEqStabilizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabilizerEqCentralizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedOrbitSumEqPairOrbitSumStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumConjClassesCentralizerOrbitsEqPairOrbitsStatement
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabEqStabilizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StabilizerEqCentralizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightedOrbitSumEqPairOrbitSumStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumConjClassesCentralizerOrbitsEqPairOrbitsStatement
+
+@[expose] public section
 
 open GlobalTheory.LKCount GlobalTheory.OrbitUnfold
 

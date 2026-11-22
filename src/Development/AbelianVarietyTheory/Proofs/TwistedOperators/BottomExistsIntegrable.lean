@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfDefinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsAtAndSeedFacts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfDefinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsAtAndSeedFacts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaTildeUnramified
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,9 +28,13 @@ open GlobalTheory.Grid (neg neg_gram sigOK_sgn isCartanInv_sgn)
 
 theorem exists_stdRig (n : ℕ) : ∃ (V : HSp D) (r : GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle.Rig V), V.rank = n ∧ V.SigOK ∧ r.IsStd ∧ r.Is := by
   let V : HSp D := Formalism.BasicNotions.Examples₂.posSpace Formalism.BasicNotions.Examples₂.star_isIntegral n
-  have hg : V.gram = 1 := Matrix.ext fun i j => by
-    refine (Formalism.BasicNotions.Examples₂.stdSpace_gram_apply (E := D.host.E) Formalism.BasicNotions.Examples₂.star_isIntegral n (fun _ => false) n 0 i j).trans ?_
-    exact (Matrix.one_apply (i := i) (j := j)).symm
+  have hg : V.gram = 1 := by
+    change (Formalism.BasicNotions.Examples₂.stdSpace (E := D.host.E) Formalism.BasicNotions.Examples₂.star_isIntegral n (fun _ => false) n 0).gram = (1 : Matrix (Fin n) (Fin n) D.host.E)
+    ext i j
+    change Fin n at i j
+    change (Formalism.BasicNotions.Examples₂.stdSpace (E := D.host.E) Formalism.BasicNotions.Examples₂.star_isIntegral n (fun _ => false) n 0).gram i j = (if i = j then 1 else 0)
+    simpa [Formalism.BasicNotions.Examples₂.sgn] using
+      (Formalism.BasicNotions.Examples₂.stdSpace_gram_apply (E := D.host.E) Formalism.BasicNotions.Examples₂.star_isIntegral n (fun _ => false) n 0 i j)
   let Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E) := Submodule.pi Set.univ fun _ => (1 : Submodule (𝓞 D.host.E) D.host.E)
   have hmem : ∀ y, y ∈ Λ ↔ ∀ i, IsIntegral ℤ (y i) := fun y => by
     simp only [Λ, Submodule.mem_pi, Set.mem_univ, true_imp_iff, Submodule.mem_one]
@@ -36,14 +44,9 @@ theorem exists_stdRig (n : ℕ) : ∃ (V : HSp D) (r : GlobalTheory.IndefiniteRo
     · subst h; simpa using isIntegral_one
     · simpa [h] using isIntegral_zero
   have hsd : IsSelfDualC V Λ := by
-    refine ⟨⟨Submodule.fg_pi fun _ => ?_, ?_⟩, fun y => ⟨fun hy x hx => ?_, fun h => (hmem y).2 fun i => ?_⟩⟩
+    refine ⟨Submodule.IsLattice.of_fg D.host.E (Submodule.fg_pi fun _ => ?_), fun y => ⟨fun hy x hx => ?_, fun h => (hmem y).2 fun i => ?_⟩⟩
     · rw [Submodule.one_eq_span]
       exact Submodule.fg_span (Set.finite_singleton _)
-    · rw [eq_top_iff, ← (Pi.basisFun D.host.E (Fin V.rank)).span_eq]
-      refine Submodule.span_mono ?_
-      rintro _ ⟨i, rfl⟩
-      rw [Pi.basisFun_apply]
-      exact hsingle i
     · have hs : IsIntegral ℤ (∑ a, ∑ b, star (x a) * V.gram a b * y b) := by
         rw [hg]
         refine IsIntegral.sum _ fun a _ => IsIntegral.sum _ fun b _ => ?_

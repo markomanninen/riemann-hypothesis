@@ -1,5 +1,9 @@
-import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormLogDerivLeLamF
+module
+
+public import Formalism.ZeroFreeRegion.SmallHeightLogDeriv
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormLogDerivLeLamF
+
+@[expose] public section
 
 open Complex Filter Topology ArithmeticFunction LSeries
 open scoped LSeries.notation

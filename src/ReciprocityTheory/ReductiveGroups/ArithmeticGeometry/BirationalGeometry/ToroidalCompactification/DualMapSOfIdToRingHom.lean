@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TanSRestrict
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TanSRestrict
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,7 +47,7 @@ theorem dAway_ext {T : Type} [CommRing T] {χ₁ χ₂ : DualNumber (Localizatio
   have h1 := RingHom.congr_fun hinl x.fst
   have h2 := RingHom.congr_fun hinl x.snd
   simp only [RingHom.comp_apply, TrivSqZeroExt.inlHom_apply] at h1 h2
-  rw [eq_inl_add_inr x, map_add, map_add, map_mul, map_mul, heps, h1, h2]
+  rw [eq_inl_add_inr x, map_add (f := _), map_add (f := _), map_mul, map_mul, heps, h1, h2]
 
 theorem dAway_lift {T : Type} [CommRing T] (gg : DualNumber S →+* T) (hu : IsUnit (gg (TrivSqZeroExt.inl s))) :
     ∃ χ : DualNumber (Localization.Away s) →+* T, χ.comp (dAway s) = gg := by
@@ -62,7 +66,7 @@ theorem dAway_lift {T : Type} [CommRing T] (gg : DualNumber S →+* T) (hu : IsU
                 MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op, map_add, map_mul]
               linear_combination (-(φ x.snd * φ y.snd)) * he
             map_zero' := by simp
-            map_add' := fun x y => by simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, map_add]; ring }, ?_⟩
+            map_add' := fun x y => by simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, map_add (f := _)]; ring }, ?_⟩
   refine RingHom.ext fun x => ?_
   conv_rhs => rw [eq_inl_add_inr x]
   simp only [RingHom.comp_apply, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, dAway, dualMapR,
@@ -98,21 +102,15 @@ theorem fromL_toL : (fromL s).comp (toL s) = RingHom.id _ := by
   apply dAway_ext s
   rw [RingHom.comp_assoc, toL_comp, fromL_comp, RingHom.id_comp]
 
-theorem toL_fromL : (toL s).comp (fromL s) = RingHom.id _ := by
-  apply IsLocalization.ringHom_ext (Submonoid.powers (TrivSqZeroExt.inl s : DualNumber S))
-  rw [RingHom.comp_assoc, fromL_comp, toL_comp, RingHom.id_comp]
-
 end Iso
 
 section Glue
 
 variable {S : Type} [CommRing S] {G : Over (Spec (CommRingCat.of S))} [GrpObj G]
 
-theorem dualMapS_ofId_toRingHom (s : S) :
-    (dualMapS (Algebra.ofId S (Localization.Away s)) : DualNumber S →+* DualNumber (Localization.Away s)) = dAway s := rfl
-
 set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem glue_tan {n : ℕ} (s : Fin n → S) (hs : Ideal.span (Set.range s) = ⊤)
     (w : ∀ k, sp (R₀ := S) (DualNumber (Localization.Away (s k))) ⟶ G) (hw : ∀ k, TanS (w k))
     (hc : ∀ k l (T : CommRingCat.{0}) (α : DualNumber (Localization.Away (s k)) →+* T)

@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PartialTrace
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PartialTrace
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem ptr_comm {dual : Bool} (hE : IsGlRep E) (hA : IsGKEndo dual ε σ E (gen
     ∀ x ∈ genSub E V, ptr A (E a b x) = E a b (ptr A x) := by
   intro x hx
   have hs : ∀ c, (Pi.single c x : Fin n → D) ∈ tensSub (genSub E V) := fun c => tpsc_single_mem hx c
-  rw [ptr_apply, ptr_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ptr_apply, ptr_apply, map_sum]
   cases dual
   · have key : ∀ c, A (Pi.single c (E a b x)) c = E a b (A (Pi.single c x) c) +
         (if c = a then A (Pi.single c x) b else 0) - (if b = c then A (Pi.single a x) c else 0) := by
@@ -110,7 +115,7 @@ theorem ptr_comm {dual : Bool} (hE : IsGlRep E) (hA : IsGKEndo dual ε σ E (gen
         rw [tpsc_tensVd_single]; abel
       have h2 := hA.2.1 a b _ (hs c)
       simp only [tensF, cond_true] at h2
-      rw [h1, map_add, h2, Pi.add_apply, tensVd_coord]
+      rw [h1, map_add (f := _), h2, Pi.add_apply, tensVd_coord]
       split_ifs <;> simp
     simp only [key, Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq,
       Finset.mem_univ, if_true, sub_add_cancel]
@@ -144,9 +149,12 @@ theorem ptr_kcomm {dual : Bool} (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn
     intro c c'
     have := congrFun (hA.2.2 k hk _ (hg c) _ (tpsc_single_mem hy c) (hf' c)) c'
     rw [this, tpsc_kDiag, hgs c]
-    simp [map_sum, map_smul, Finset.sum_apply]
-  rw [ptr_apply, ptr_apply, Submodule.coe_sum, Submodule.coe_sum, map_sum]
-  simp only [hAf, map_sum, map_smul, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ptr_apply, ptr_apply, Submodule.coe_sum, Submodule.coe_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hAf, map_sum, map_smul, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [Finset.sum_comm]

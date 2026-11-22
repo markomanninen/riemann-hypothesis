@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinTypeQE
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinTypeQE
+
+@[expose] public section
+
 open IsLocalRing TensorProduct ReciprocityTheory.AnForm.R
 
 namespace GlobalTheory

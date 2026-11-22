@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaL2OfAnalyticGenerator
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormalFormsEqOfKeyDataIsoComplex
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueLinearLiftOfHolomorphicAbelianVariet
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVariety
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaL2OfAnalyticGenerator
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.NormalFormsEqOfKeyDataIsoComplex
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueLinearLiftOfHolomorphicAbelianVariet
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormPullEqOfLbIsoPow
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaUniformisationComplexAbelianVariety
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
@@ -17,8 +21,8 @@ open MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 
 namespace GlobalTheory.AbelianPartNorm
 
-open GlobalTheory.KeyIsoNormal in
 
+open GlobalTheory.KeyIsoNormal in
 theorem exists_unif {P : Out.PolAV (Sp ℂ)} {rig : LB.Gen (P.L.pull (eSec P.A))} {th : P.L.Sec} {v : ℝ}
     (hv : Arch.IsThNormAt P rig th (RingHom.id ℂ) v) :
     ∃ (n : ℕ) (u : HolUnif P.A P.L n) (Hm : Matrix (Fin n) (Fin n) ℂ) (χ : u.Λ → ℂ)
@@ -161,8 +165,8 @@ theorem im_form_real {g : ℕ} {τ : Matrix (Fin g) (Fin g) ℂ} (hs : τ.IsSymm
     dotProduct_comm (X *ᵥ _), dotProduct_comm (X *ᵥ _), sd hXs, dotProduct_comm m' n]
   ring
 
-open GlobalTheory.ThetaMean in
 
+open GlobalTheory.ThetaMean in
 theorem mem_of_integral {g : ℕ} {τ : Matrix (Fin g) (Fin g) ℂ} (hs : τ.IsSymm) (hp : (τ.map Complex.im).PosDef)
     (x : Fin g → ℂ) (hx : ∀ a b : Fin g → ℤ, ∃ k : ℤ, (k : ℝ) = (x ⬝ᵥ
       ((τ.map Complex.im)⁻¹).map (fun x : ℝ => (x : ℂ)) *ᵥ
@@ -248,7 +252,7 @@ theorem form_eq {n g : ℕ} {τ : Matrix (Fin n) (Fin n) ℂ} {c₁ c₂ : Fin n
         have e2 := e (x + l)
         have e3 := hθ ⟨F l, hΛ l⟩ (F x)
         have e4 := hl₀ l x
-        rw [map_add, e3] at e2
+        rw [map_add (f := _), e3] at e2
         have h4 : χ ⟨F l, hΛ l⟩ ≠ 0 := norm_ne_zero_iff.1 (by rw [hχ]; exact one_ne_zero)
         simp only [hsub]
         have e5 : ∀ a b a' b' : ℂ, Complex.exp (Real.pi * (a - a') + Real.pi / 2 * (b - b')) =
@@ -299,7 +303,7 @@ theorem mean_eq {n g : ℕ} {τ : Matrix (Fin n) (Fin n) ℂ} {c₁ c₂ : Fin n
       ‖κ‖ ^ 2 * (Real.sqrt (2 ^ n * (τ.map Complex.im).det))⁻¹ := by
   obtain ⟨k1, k2⟩ := form_eq hs hp h₁ h₂ hκ hH hχ hθ F hF hρ hρn hρ0 e
   have hFi : Function.Injective F := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h0
     have h1 := (GlobalTheory.ThetaSquareIntegrable.posDef_form (h := 1) hp (by simp)).2 x h0
@@ -471,7 +475,7 @@ theorem norm_eq : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberFie
   have hi2 : ∀ z, Θ.h *ᵥ (Θ.h⁻¹ *ᵥ z) = z := fun z => by
     rw [Matrix.mulVec_mulVec, Matrix.mul_nonsing_inv _ hh, Matrix.one_mulVec]
   have hP : ∀ t, F (Ha.Pw w t) = F (Ha.P₀ t) := fun t => by
-    rw [Ha.Pw_eq, map_add, map_smul, F0 _ fun s => hG1 _ (Ha.shift s t).1, smul_zero, add_zero]
+    rw [Ha.Pw_eq, map_add (f := _), map_smul, F0 _ fun s => hG1 _ (Ha.shift s t).1, smul_zero, add_zero]
   have hS : ∀ k ∈ Θ.S, F (Θ.h⁻¹ *ᵥ Pi.single k 1) = 0 := fun k hk => by
     rw [← (Θ.per w k).1, hi1, hP]
     have h1 := (Ha.riemann _).1 ((Θ.orth (Pi.single (.inl k) 1)).2 ⟨fun k' => by simp, fun k' hk' => by
@@ -491,7 +495,8 @@ theorem norm_eq : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberFie
       funext k
       by_cases h : k ∈ Θ.S <;> simp [ext, h, Finset.sum_apply, Pi.single_apply]
     conv_rhs => rw [h1]
-    rw [Matrix.mulVec_add, map_add, Matrix.mulVec_sum, map_sum, Finset.sum_eq_zero fun k hk => by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mulVec_add, map_add (f := _), Matrix.mulVec_sum, map_sum, Finset.sum_eq_zero fun k hk => by
       rw [Matrix.mulVec_smul, map_smul, hS k hk, smul_zero], add_zero]
     rfl
   have hinj : Function.Injective fun i => (e i).1 := Subtype.val_injective.comp e.injective
@@ -510,11 +515,12 @@ theorem norm_eq : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberFie
       have h2 := Fk _ (hG1 _ ((Ha.ker _).2 ⟨_, h1, rfl⟩).1)
       rw [← hP, ← hi1 (Ha.Pw w _), ← hF', hm] at h2
       convert h2 using 2
-      funext i
-      simp only [Pi.add_apply, Matrix.mulVec, dotProduct, Matrix.submatrix_apply]
       congr 1
-      · simp [t, (e i).2]
-      · rw [← Finset.sum_compl_add_sum Θ.S, Finset.sum_eq_zero (s := Θ.S) fun k hk => by simp [t, hk], add_zero,
+      · funext i
+        simp [t, (e i).2]
+      · funext i
+        simp only [Matrix.mulVec, dotProduct, Matrix.submatrix_apply]
+        rw [← Finset.sum_compl_add_sum Θ.S, Finset.sum_eq_zero (s := Θ.S) fun k hk => by simp [t, hk], add_zero,
           Finset.sum_subtype (p := fun k => k ∉ Θ.S) Θ.Sᶜ (by simp), ← e.sum_comp]
         exact Finset.sum_congr rfl fun k _ => by simp [t, (e k).2])
     (ρ := fun x => ρ (L x)) (ρd.comp L.toContinuousLinearMap.differentiable) (fun x => ρn _)

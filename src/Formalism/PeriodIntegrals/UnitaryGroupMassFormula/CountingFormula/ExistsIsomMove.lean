@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.GmapLocEqOfFrame
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.GmapLocEqOfFrame
+
+@[expose] public section
 
 open NumberField
 
@@ -54,12 +58,14 @@ theorem exists_pair (hS : IsHermSemilocal S) (hM : IsSelfDualMod S h M) {ι : Ty
   refine ⟨α, hα0, hrM, m₀ - ∑ i, (h (x i) m₀ * (h (x i) (x i))⁻¹) • x i, ?_, ?_, ?_⟩
   · refine M.sub_mem hm₀ (M.sum_mem fun i _ => hM.smul_mem _ ?_ _ (hxM i))
     exact S.mul_mem (hM.int _ (hxM i) _ hm₀) (hxu i).2.2
-  · simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
-      map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, RingHom.id_apply, hrx, mul_zero,
-      Finset.sum_const_zero, sub_zero]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
+        map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, RingHom.id_apply, hrx, mul_zero,
+        Finset.sum_const_zero, sub_zero]
     rw [hα, inv_mul_cancel₀ hα0]
   · intro j
-    rw [map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
     simp only [map_smul, smul_eq_mul]
     rw [Finset.sum_eq_single j (fun i _ hij => by rw [hxo j i (Ne.symm hij), mul_zero])
       (by simp), mul_assoc, inv_mul_cancel₀ (hxu j).1, mul_one, sub_self]
@@ -109,14 +115,14 @@ theorem exists_of_ref (hS : IsHermSemilocal S) (hs : h.IsSymm) (hM : IsSelfDualM
   · rw [LinearMap.smul_apply, LinearMap.smul_apply, smul_eq_mul] at hcd
     exact ((inv_mul_eq_one₀ (inv_ne_zero hu0 |> fun _ => hu0)).1 hcd).symm
   · intro i
-    simp [map_add, map_smul, hwx i, hrx i]
+    simp [map_add (f := _), map_smul, hwx i, hrx i]
 
 theorem exists_quasi (hs : h.IsSymm) (w : V) {a : K} (ha : a + star a = a * star a * h w w) :
     ∃ τ ∈ Formalism.HermitianLatticesTheory.isom h, ∀ v, τ v = v - (a * h w v) • w := by
   let f : K → V →ₗ[K] V := fun b =>
     { toFun := fun v => v - (b * h w v) • w
       map_add' := fun x y => by
-        simp only [map_add, mul_add, add_smul]
+        simp only [map_add (f := _), mul_add, add_smul]
         abel
       map_smul' := fun c x => by
         simp only [map_smul, smul_eq_mul, RingHom.id_apply, smul_sub, smul_smul]

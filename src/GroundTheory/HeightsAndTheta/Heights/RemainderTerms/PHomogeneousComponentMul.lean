@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsCoinv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -14,7 +19,8 @@ theorem HomogeneousComponentMul.proof : HomogeneousComponentMul.Statement := by
       if d = m + i then p * homogeneousComponent i a else 0 := fun i =>
     homogeneousComponent_of_mem
       ((mem_homogeneousSubmodule _ _).mpr (hp.mul (homogeneousComponent_isHomogeneous i a)))
-  conv_lhs => rw [← sum_homogeneousComponent a, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← sum_homogeneousComponent a, Finset.mul_sum, map_sum]
   simp_rw [hterm]
   split_ifs with hmd
   · have hcongr : ∀ i ∈ range (a.totalDegree + 1),

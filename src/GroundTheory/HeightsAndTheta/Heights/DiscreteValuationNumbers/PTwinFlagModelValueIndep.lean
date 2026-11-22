@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitBis
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisLast
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisExtra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitBis
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisLast
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisExtra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR

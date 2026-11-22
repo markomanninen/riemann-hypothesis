@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DvdOfCompl
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DvdOfCompl
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem tr_multi_twist (K : Type) [Field K] (m : ℕ) (hm : 1 ≤ m) (vec : S �
     refine Finset.prod_congr rfl fun s _ => ?_
     rw [twist_theta K m hm (d s) (vec s) (M s) (hM s) _ (partS_Hd K d μ hμ s)]
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, smul_add, hx, hy]
+  | add x y _ _ hx hy => simp only [map_add (f := _), smul_add, hx, hy]
   | smul a x _ hx => simp only [map_smul]; rw [smul_comm, hx]
 
 theorem tr_tens_int (O Kf : Type) [CommRing O] [Field Kf] [Algebra O Kf] (m : ℕ) (lam : S → Fin (m + 1) → ℤ)
@@ -86,7 +90,7 @@ theorem tr_tens_int (O Kf : Type) [CommRing O] [Field Kf] [Algebra O Kf] (m : �
   | add x y _ _ hx hy =>
     obtain ⟨R1, h1⟩ := hx
     obtain ⟨R2, h2⟩ := hy
-    exact ⟨R1 + R2, by rw [map_add, smul_add, h1, h2, map_add]⟩
+    exact ⟨R1 + R2, by rw [map_add (f := _), smul_add, h1, h2, map_add (f := _)]⟩
   | smul a x _ hx =>
     obtain ⟨R1, h1⟩ := hx
     refine ⟨a • R1, ?_⟩
@@ -122,7 +126,7 @@ theorem tr_tens_lift (O Kf : Type) [CommRing O] [Field Kf] [Algebra O Kf] (m : �
   | add x y _ _ hx hy =>
     obtain ⟨y1, m1, h1⟩ := hx
     obtain ⟨y2, m2, h2⟩ := hy
-    exact ⟨y1 + y2, Submodule.add_mem _ m1 m2, by rw [map_add, smul_add, h1, h2, map_add]⟩
+    exact ⟨y1 + y2, Submodule.add_mem _ m1 m2, by rw [map_add (f := _), smul_add, h1, h2, map_add (f := _)]⟩
   | smul a x _ hx =>
     obtain ⟨y1, m1, h1⟩ := hx
     refine ⟨a • y1, Submodule.smul_mem _ _ m1, ?_⟩

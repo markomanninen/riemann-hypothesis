@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
-import GroundTheory.GlobalFields.GlobalReciprocity.General
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
+public import GroundTheory.GlobalFields.GlobalReciprocity.General
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,16 +16,16 @@ namespace UpperTheory.Gal.TP.Skew
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def stdSpc (n : ℕ) : Spc F E n where
   J := 1
   L := Submodule.pi Set.univ fun _ => (1 : Submodule (𝓞 E) E)
   θ := fun _ => 1
   bas := fun _ => 1
 
-variable (F) in
 
+variable (F) in
 def skewSpc (δ : E) (𝔞 : Submodule (𝓞 E) E) (d : ℕ) : Spc F E d where
   J := δ • 1
   L := Submodule.pi Set.univ fun _ => 𝔞
@@ -38,7 +42,7 @@ def IsPos (δ : E) (emb : ∀ w : InfinitePlace F, EmbOver E w) : Prop :=
   ∀ w, ∃ c : ℝ, 0 < c ∧ Complex.I * (emb w).1 δ = c
 
 def GoodField (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] : Prop :=
-  IsGalois ℚ E ∧ ∀ (v : Pl F) w, Formalism.UG.IsInertAt F E v w →
+  IsGalois ℚ E ∧ ∀ (v : Pl (F := F)) w, Formalism.UG.IsInertAt F E v w →
     (2 : 𝓞 F) ∉ v.asIdeal ∧ 3 < Ideal.absNorm v.asIdeal ∧ ¬ differentIdeal ℤ (𝓞 F) ≤ v.asIdeal
 
 def SpacesEx : Prop :=

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerSide
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsTerSide
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -35,12 +40,12 @@ theorem mem_mIdealOver_iff (y : (Σ k, ι k) → Ω) (f : MvPolynomial (Σ k, ι
       ∀ b : K → ℕ, aeval y (weightedHomogeneousComponent (NumbersDVR.blockWeight ι) b f) = 0 := by
   constructor
   · intro hf b
-    rw [← coeff_mConeMapOver, RingHom.mem_ker.mp hf, coeff_zero]
+    rw [← coeff_mConeMapOver, RingHom.mem_ker.mp hf, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   · intro h
     refine RingHom.mem_ker.mpr (MvPolynomial.ext _ _ fun d => ?_)
     have := coeff_mConeMapOver (S := S) y (⇑d) f
     rw [Finsupp.equivFunOnFinite_symm_coe] at this
-    rw [this, h, coeff_zero]
+    rw [this, h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
 
 end Homog
 
@@ -128,7 +133,8 @@ theorem CurveLift.full : CurveLift.Statement := by
     have h1 : (1 : Kleiman.chartRing k x (Kleiman.singleChart hi)) = ∑ j, ⟨g j * w j, hgA j j⟩ :=
       Subtype.ext (by simp [hsum])
     have h2 := congrArg ψ h1
-    rw [map_one, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_one, map_sum] at h2
     simp [hcon] at h2
   let t : Fin m → K' := fun b => ψ ⟨g b * w j0, hgA b j0⟩
   refine ⟨mIdealOver k (graphVec (fun a => ψ (Kleiman.ratio hi a)) t),

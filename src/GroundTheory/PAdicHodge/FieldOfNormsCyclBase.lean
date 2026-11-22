@@ -1,7 +1,18 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FieldOfNormsResidue
-import GroundTheory.PAdicHodge.FWCyclotomic
-import GroundTheory.LocalFields.KroneckerWeber
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FieldOfNormsResidue
+public import GroundTheory.PAdicHodge.CyclotomicTower
+public import GroundTheory.PAdicHodge.TiltValuation
+public import GroundTheory.PAdicHodge.TiltAlgebra
+public import GroundTheory.PAdicHodge.UntiltIndep
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.AxLemma
+public import GroundTheory.PAdicHodge.TiltAlgClosed
+public import GroundTheory.LocalFields.KroneckerWeber
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -32,7 +43,7 @@ scoped instance padicAlgCl_isValuativeTopology : IsValuativeTopology (PadicAlgCl
   exact GroundTheory.LocalField.isValuativeTopology_of_valued
 
 scoped instance padicAlgCl_valuativeExtension : ValuativeExtension ℚ_[p] (PadicAlgCl p) := by
-  refine ⟨fun a b ↦ ?_⟩
+  refine ⟨fun {a b} ↦ ?_⟩
   rw [vle_iff_norm_le, PadicAlgCl.norm_extends, PadicAlgCl.norm_extends,
     Valuation.Compatible.vle_iff_le (v := Padic.mulValuation),
     GroundTheory.LocalField.Padic.mulValuation_le_iff_norm_le]

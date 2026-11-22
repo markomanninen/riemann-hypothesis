@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.RpSmulLeft
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilTbijChart
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKwhitMeasND
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.RpSmulLeft
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilTbijChart
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKwhitMeasND
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -32,14 +36,14 @@ def rc_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) : Matrix (Fin d
   map_add' Y Y' := by funext k; simp
   map_smul' c Y := by funext k; simp
 theorem rp_add_left_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (Y Y' W : Matrix (Fin d.m) (Fin d.n) E) : _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d (Y + Y') W = _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d Y W + _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d Y' W := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add (f := _)]
 theorem rp_smul_left_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (c : F) (Y W : Matrix (Fin d.m) (Fin d.n) E) : _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d (c • Y) W = c * _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d Y W := by
   simp only [_root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k, Matrix.transpose_smul, Matrix.smul_mul, Matrix.trace_smul, map_smul, smul_eq_mul]
 def Lm_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (ε : ℤˣ) : (_root_.PositivityTheory.SiegelWeilFormula.TBij_k.Adp.Ix d → F) →ₗ[F] (_root_.PositivityTheory.SiegelWeilFormula.TBij_k.Adp.Ix d → F) where
   toFun a q := ((ε : ℤ) : F) * _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_k d ((_root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rc_k d).symm a) (_root_.PositivityTheory.SiegelWeilFormula.TW.Twp.eq_k d q)
   map_add' a b := by
     funext q
-    simp only [map_add, _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_add_left_k, Pi.add_apply]
+    simp only [map_add (f := _), _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_add_left_k, Pi.add_apply]
     ring
   map_smul' c a := by
     funext q
@@ -69,7 +73,7 @@ def ttL_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (X : Mx F E d.
   toFun Z := d.tt (d.gram X Z)
   map_add' Z Z' := by
     have e : (Z + Z').map (cA σ) = Z.map (cA σ) + Z'.map (cA σ) := Matrix.map_add _ (map_add _) _ _
-    simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.tt, _root_.PositivityTheory.SiegelWeilFormula.SD_k.gram, e, Matrix.mul_add, Matrix.trace_add, map_add]
+    simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.tt, _root_.PositivityTheory.SiegelWeilFormula.SD_k.gram, e, Matrix.mul_add, Matrix.trace_add, map_add (f := _)]
   map_smul' a Z := by
     have e : (a • Z).map (cA σ) = a • Z.map (cA σ) := Matrix.map_smul _ a (fun x => map_smul (cA σ) a x) _
     simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.tt, _root_.PositivityTheory.SiegelWeilFormula.SD_k.gram, e, Matrix.mul_smul, Matrix.trace_smul, map_smul, RingHom.id_apply]
@@ -116,7 +120,8 @@ theorem rp_nondeg_k (d : _root_.PositivityTheory.SiegelWeilFormula.SD_k σ) (Y :
     intro i j
     refine (traceForm_nondegenerate F E).1 _ fun z => ?_
     obtain ⟨e, rfl⟩ := hσ z
-    rw [Algebra.traceForm_apply, ← d.bs.sum_repr e, map_sum, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Algebra.traceForm_apply, ← d.bs.sum_repr e, map_sum, Finset.mul_sum, map_sum]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [AlgHom.map_smul_of_tower, mul_smul_comm, map_smul, ← _root_.PositivityTheory.SiegelWeilFormula.TW.Twp.rp_eq_k, h, smul_zero]
   have hdet : IsUnit d.A.J.det := isUnit_iff_ne_zero.2 (_root_.PositivityTheory.SiegelWeilFormula.KWhit.meas_detA_k d)

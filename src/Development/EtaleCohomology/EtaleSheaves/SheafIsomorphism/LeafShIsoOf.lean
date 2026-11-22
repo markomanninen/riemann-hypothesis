@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism.LeafSheafIsoOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SheafIsomorphism.LeafSheafIsoOf
+
+@[expose] public section
 
 namespace LateralTheory.E.LeafShIsoPf.Glue
 open LateralTheory.E.LeafDegCut LateralTheory.E.LeafShIsoPf LateralTheory.E.LeafShIsoPf.Sh

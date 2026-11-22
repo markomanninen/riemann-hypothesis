@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisible
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisible
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 noncomputable section
@@ -45,18 +50,19 @@ theorem gen_zmod {χ : G →* ℤ_[l]ˣ} {r : ℕ} {c : G × G → ℤ_[l]} (h :
     exact ⟨x, b, hb, fun p => by simpa only [GlobalTheory.TateTop.cob, hs] using e p⟩
   · simpa only [GlobalTheory.TateTop.cob, hs] using hx p
 
-open GlobalTheory.PadicH2Separated in
 
+open GlobalTheory.PadicH2Separated in
 theorem span : ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] (χ : G →* ℤ_[l]ˣ) (c : G × G → ℤ_[l]), Continuous (fun g => (χ g : ℤ_[l])) → (∀ r, GlobalTheory.TateTop.Gen χ r c) → (∀ r : ℕ, 0 < r → Finite (ReciprocityTheory.Gal.H1 (ReciprocityTheory.Gal.charRep ((Units.map (PadicInt.toZModPow r : ℤ_[l] →+* ZMod (l ^ r)).toMonoidHom).comp χ)))) → (Continuous (fun p => (c p : ℚ_[l])) ∧ ∀ g h k, ((χ g : ℤ_[l]) : ℚ_[l]) * (c (h, k) : ℚ_[l]) - (c (g * h, k) : ℚ_[l]) + (c (g, h * k) : ℚ_[l]) - (c (g, h) : ℚ_[l]) = 0) ∧ ∀ z : G × G → ℚ_[l], Continuous z → (∀ g h k, ((χ g : ℤ_[l]) : ℚ_[l]) * z (h, k) - z (g * h, k) + z (g, h * k) - z (g, h) = 0) → ∃ (x : ℚ_[l]) (f : G → ℚ_[l]), Continuous f ∧ ∀ g h, ((χ g : ℤ_[l]) : ℚ_[l]) * f h - f (g * h) + f g = z (g, h) - x * (c (g, h) : ℚ_[l]) := by
   intro l _ G _ _ _ _ χ c hχ hgen hfin
   have hl : l.Prime := Fact.out
   have hG := fun r => gen_zmod (hgen r)
-  have hcc : Continuous c := continuous_of_reductions c fun s => (hG (s + 1)).1.1.continuous
+  have hcc : Continuous c := GlobalTheory.PadicH2Separated.continuous_of_reductions c fun s =>
+    (hG (s + 1)).1.1.continuous
   have hcoc : ∀ g h k, (χ g : ℤ_[l]) * c (h, k) - c (g * h, k) + c (g, h * k) - c (g, h) = 0 := by
     intro g h k
     rw [← PadicInt.ext_of_toZModPow]
     intro n
-    simpa only [map_sub, map_add, map_mul, map_zero] using (hG n).1.2 g h k
+    simpa only [map_sub, map_add (f := _), map_mul, map_zero] using (hG n).1.2 g h k
   refine ⟨⟨continuous_subtype_val.comp hcc, fun g h k => ?_⟩, fun z hz hzc => ?_⟩
   · have e := congrArg (fun a : ℤ_[l] => (a : ℚ_[l])) (hcoc g h k)
     push_cast at e
@@ -81,9 +87,10 @@ theorem span : ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [TopologicalSpa
   have hlev : ∀ r, ∃ (x : ZMod (l ^ r)) (b : G → ZMod (l ^ r)), IsLocallyConstant b ∧ ∀ p,
       PadicInt.toZModPow r (w p) = PadicInt.toZModPow r (c p) * x +
         (PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * b p.2 - b (p.1 * p.2) + b p.1) := fun r =>
-    (hG r).2.1 _ ((IsLocallyConstant.iff_continuous _).2 ((continuous_reduction r).comp hwc))
+    (hG r).2.1 _ ((IsLocallyConstant.iff_continuous _).2
+      ((GlobalTheory.PadicH2Separated.continuous_reduction r).comp hwc))
       fun g k m => by
-        simpa only [map_sub, map_add, map_mul, map_zero] using
+        simpa only [map_sub, map_add (f := _), map_mul, map_zero] using
           congrArg (PadicInt.toZModPow r) (hwcoc g k m)
   choose X B hB hXB using hlev
   have hred : ∀ r, PadicInt.toZModPow r (((X r).val : ℕ) : ℤ_[l]) = X r := fun r => by
@@ -102,7 +109,7 @@ theorem span : ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [TopologicalSpa
         (PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * ψ (B (r + 1) p.2) - ψ (B (r + 1) (p.1 * p.2)) +
           ψ (B (r + 1) p.1)) := by
       have := congrArg ψ (hXB (r + 1) p)
-      simpa only [map_add, map_sub, map_mul, hψ] using this
+      simpa only [map_add (f := _), map_sub, map_mul, hψ] using this
     have e2 := hXB r p
     show PadicInt.toZModPow r (c p) * (ψ (X (r + 1)) - X r) =
       PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * (B r p.2 - ψ (B (r + 1) p.2)) -
@@ -141,7 +148,8 @@ theorem span : ∀ (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [TopologicalSpa
       B2 (charRep χ) := fun r =>
     GlobalTheory.padicInt_two_cocycle_eq_pow_smul_of_reduction_coboundary l G (charRep χ) hcont r _
       (hcompat r) _ hyZ (hyB r)
-  obtain ⟨f, hf, hfd⟩ := (separated_dvr_second_cohomology_mem _ _).1 (mem_coboundaries_of_forall_pow l G (charRep χ) _ hcompat hfin _ hyZ hker)
+  obtain ⟨f, hf, hfd⟩ := (separated_dvr_second_cohomology_mem _ _).1
+    (GlobalTheory.PadicH2Separated.mem_coboundaries_of_forall_pow l G (charRep χ) _ hcompat hfin _ hyZ hker)
   have hl0 : (l : ℚ_[l]) ^ m ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.2 hl.ne_zero)
   refine ⟨(x : ℚ_[l]) / (l : ℚ_[l]) ^ m, fun g => (f g : ℚ_[l]) / (l : ℚ_[l]) ^ m,
     (continuous_subtype_val.comp hf).div_const _, fun g h => ?_⟩

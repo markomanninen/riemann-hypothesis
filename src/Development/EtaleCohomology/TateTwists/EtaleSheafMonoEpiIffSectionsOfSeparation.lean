@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSheafMonoEpiSectionCriteria
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSheafMonoEpiSectionCriteria
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 

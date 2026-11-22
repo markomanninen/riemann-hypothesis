@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlaceEqOneOfNotMem
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlaceEqOneOfNotMem
+
+@[expose] public section
+
 open NumberField Matrix IsDedekindDomain
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.LocFrame
@@ -26,9 +31,10 @@ theorem finite_not_le_one (a : L) : {w : FinitePlace L | ¬ w a ≤ 1}.Finite :=
     refine Set.finite_empty.subset fun w hw => hw ?_
     rw [map_zero]
     exact zero_le_one
-  · refine (FinitePlace.mulSupport_finite ha).subset fun w hw => ?_
+  · refine (FinitePlace.hasFiniteMulSupport ha).subset fun w hw => ?_
+    change w a ≠ 1
     intro h
-    exact hw (le_of_eq h)
+    exact hw (h ▸ le_rfl)
 
 theorem exists_mul_le_one {v w : FinitePlace L} (hvw : w ≠ v) (a : L) :
     ∃ t : 𝓞 L, t ∉ v.maximalIdeal.asIdeal ∧ w ((t : L) * a) ≤ 1 := by

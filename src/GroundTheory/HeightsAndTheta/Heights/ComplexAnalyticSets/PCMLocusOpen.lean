@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMProjDimCriterion
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProjDimSpread
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIdealHeightSpread
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMProjDimCriterion
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StProjDimSpread
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIdealHeightSpread
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PlainAtR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusPowerCompatibility
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PlainAtR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusPowerCompatibility
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.LocLanglands GlobalTheory.GalOfCusp UpperTheory.Zero.LLC UpperTheory.V UpperTheory.V.Af UpperTheory.V.Z.Gam UpperTheory.V.Z.Win
@@ -51,7 +55,7 @@ theorem UpperTheory.V.Z.Win.attBC :
     rw [hf, satNum_pow]
     exact (UpperTheory.frobenius_power_compatibility K L Ω l ι w f hf).1 n r _ hF
   have hq : normV w ≠ 0 := by
-    rw [normV]
+    rw [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply]
     exact (Ideal.absNorm_eq_zero_iff.not.2 w.ne_bot)
   have e := satNum_inj n _ hq (frobEig_eq hF' h1)
   exact ⟨B, hB, e ▸ hB'⟩

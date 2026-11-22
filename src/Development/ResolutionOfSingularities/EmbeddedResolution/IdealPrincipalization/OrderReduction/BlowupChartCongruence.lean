@@ -1,11 +1,16 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
-import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
-import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowup
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupCartier
+public import Development.ResolutionOfSingularities.Foundations.Blowup.AffineBlowupChartPreimages
+public import Development.ResolutionOfSingularities.Foundations.Blowup.ReesGrading
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 
 noncomputable section
@@ -20,27 +25,27 @@ variable {B A : Type u} [CommRing B] [CommRing A]
 
 def eqModIdealSet (f g : B →+* A) (J : Ideal A) : Set B := {b | f b - g b ∈ J}
 
-private theorem one_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) :
+theorem one_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) :
     (1 : B) ∈ eqModIdealSet f g J := by
   show f 1 - g 1 ∈ J
   rw [map_one, map_one, sub_self]
   exact J.zero_mem
 
-private theorem zero_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) :
+theorem zero_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) :
     (0 : B) ∈ eqModIdealSet f g J := by
   show f 0 - g 0 ∈ J
   rw [map_zero, map_zero, sub_self]
   exact J.zero_mem
 
-private theorem add_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x y : B}
+theorem add_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x y : B}
     (hx : x ∈ eqModIdealSet f g J) (hy : y ∈ eqModIdealSet f g J) : x + y ∈ eqModIdealSet f g J := by
   show f (x + y) - g (x + y) ∈ J
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   have hrw : f x + f y - (g x + g y) = (f x - g x) + (f y - g y) := by ring
   rw [hrw]
   exact J.add_mem hx hy
 
-private theorem neg_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x : B}
+theorem neg_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x : B}
     (hx : x ∈ eqModIdealSet f g J) : -x ∈ eqModIdealSet f g J := by
   show f (-x) - g (-x) ∈ J
   rw [map_neg, map_neg]
@@ -48,7 +53,7 @@ private theorem neg_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x : B}
   rw [hrw]
   exact J.neg_mem hx
 
-private theorem mul_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x y : B}
+theorem mul_mem_eqModIdealSet (f g : B →+* A) (J : Ideal A) {x y : B}
     (hx : x ∈ eqModIdealSet f g J) (hy : y ∈ eqModIdealSet f g J) : x * y ∈ eqModIdealSet f g J := by
   show f (x * y) - g (x * y) ∈ J
   rw [map_mul, map_mul]
@@ -165,7 +170,7 @@ private theorem exists_mem_closure_chartRingHom_eq_mul_pow (I : Ideal R) (a : I)
       ring
     · rintro x y ⟨wx, hwx, hx⟩ ⟨wy, hwy, hy⟩
       refine ⟨wx + wy, Subring.add_mem _ hwx hwy, ?_⟩
-      rw [map_add, hx, hy]
+      rw [map_add (f := _), hx, hy]
       exact mul_add_mul_eq_add_mul wx wy _
 
 theorem closure_chartRingHom_union_chartFraction_eq_top (I : Ideal R) (a : I) :

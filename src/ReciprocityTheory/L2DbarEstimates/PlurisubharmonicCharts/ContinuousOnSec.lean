@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.ChartSymmEventuallyEq
-import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.GROWCountStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.ChartSymmEventuallyEq
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.LogNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -28,7 +32,7 @@ theorem contDiff_evalV {n : ℕ} {m : WithTop ℕ∞} (p : MvPolynomial (Fin n) 
 
 theorem norm_evalV_le {n : ℕ} (p : MvPolynomial (Fin n) ℂ) : ∃ C : ℝ, 0 ≤ C ∧ ∀ v : V n,
     ‖MvPolynomial.eval (fun k => v k) p‖ ≤ C * (1 + ‖v‖) ^ p.totalDegree := by
-  refine ⟨∑ m ∈ p.support, ‖MvPolynomial.coeff m p‖,
+  refine ⟨∑ m ∈ p.support, ‖AddMonoidAlgebra.coeff p m‖,
     Finset.sum_nonneg fun _ _ => norm_nonneg _, fun v => ?_⟩
   rw [MvPolynomial.eval_eq, Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
@@ -37,7 +41,7 @@ theorem norm_evalV_le {n : ℕ} (p : MvPolynomial (Fin n) ℂ) : ∃ C : ℝ, 0 
   rw [norm_prod]
   have h1 : 1 ≤ 1 + ‖v‖ := by linarith [norm_nonneg v]
   calc ∏ i ∈ m.support, ‖v i ^ m i‖ ≤ ∏ i ∈ m.support, (1 + ‖v‖) ^ m i :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => by
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => by
           rw [norm_pow]
           exact pow_le_pow_left₀ (norm_nonneg _)
             ((PiLp.norm_apply_le v i).trans (by linarith)) _

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePAllSet
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePLimTy
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePAllSet
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePLimTy
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,9 +35,9 @@ theorem allSet_add (V : VF C) (g : Fin 2) (hA : X.AddCvSt V) (hu : ∀ g c i, V.
   · intro q
     obtain ⟨c0, cI⟩ := hS (X.u (1 - g) q) (hu (1 - g) q)
     refine ⟨?_, fun n => ?_⟩
-    · rw [map_add, map_add, (hlam q).1, (hlam' q).1, c0]
+    · rw [map_add (f := _), map_add (f := _), (hlam q).1, (hlam' q).1, c0]
       simp
-    · rw [map_add, map_add]
+    · rw [map_add (f := _), map_add (f := _)]
       exact (((hlam q).2 n).add ((hlam' q).2 n)).add (cI n)
   · intro i
     rw [hL i, h1 i, h1' i, ← Finset.sum_add_distrib]
@@ -69,11 +73,13 @@ theorem allSet_repar {V : VF C} {g : Fin 2} (τ : PowerSeries C) (hτ : PowerSer
     exact constantCoeff_subst_zero (σ := Unit) (fun _ => hτ) (hδ i).1
   refine ⟨fun i => PowerSeries.subst τ (γ i), fun q => PowerSeries.subst τ (lam q), hcv γ hγ, hcv lam hlam, ?_, ?_⟩
   · intro i
-    rw [alongCv_repar (fun i => (hγ i).1) hτ, h1 i, ← PowerSeries.coe_substAlgHom hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [alongCv_repar (fun i => (hγ i).1) hτ, h1 i, ← PowerSeries.coe_substAlgHom hS, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [map_smul, PowerSeries.coe_substAlgHom hS, hxx]
   · intro q
-    rw [alongCv_repar (fun i => (hγ i).1) hτ, hxx, h2 q, ← PowerSeries.coe_substAlgHom hS, map_add, map_sub,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [alongCv_repar (fun i => (hγ i).1) hτ, hxx, h2 q, ← PowerSeries.coe_substAlgHom hS, map_add (f := _), map_sub,
       map_sum]
     congr 1
     refine Finset.sum_congr rfl fun c _ => ?_

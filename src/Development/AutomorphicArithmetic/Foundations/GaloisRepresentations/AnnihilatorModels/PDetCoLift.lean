@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.CommonModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.CommonModel
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.GalOfCusp TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
@@ -14,10 +19,11 @@ theorem UpperTheory.Gal.crystallineComparison.detCoLift_of :
     fun j hj => ⟨j, fun x i => by rw [hj]⟩
   · intro x y
     funext i
-    rw [Submodule.coe_add, f1, Pi.add_apply, Pi.add_apply, map_add]
+    rw [Submodule.coe_add, f1, Pi.add_apply, Pi.add_apply, map_add (f := _)]
   · intro c x
     funext i
-    rw [Submodule.coe_smul, f2, Pi.smul_apply, Pi.smul_apply, smul_eq_mul, map_mul, h1,
+    change π (co (c • (x : (Fin a → ↥LL.1) ⊗[ℚ_[l]] Bst P)) i) = _
+    rw [f2, Pi.smul_apply, Pi.smul_apply, smul_eq_mul, map_mul, h1,
       Algebra.smul_def]
   · intro c x
     funext i

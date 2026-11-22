@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalRingCardinality.NFLeTwoMulTSq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalRingCardinality.NFLeTwoMulTSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,15 +37,6 @@ def goodModel (R : RealDat D A Ks) (i : Fin D.R.m) : Submodule ℂ (R.HW i (sg0 
 def GoodRangeAt (R : RealDat D A Ks) (i : Fin D.R.m) (t : T) : Prop :=
   LinearMap.range (R.thG i t) = goodModel R i
 
-def ThetaSpan (R : RealDat D A Ks) (F : Face D A) : Prop :=
-  SizeOK D → R.Char F → ∀ i : Fin D.R.m, SpanAt R i A.μ0
-
-def ThetaGoodRange (R : RealDat D A Ks) (F : Face D A) : Prop :=
-  SizeOK D → R.Char F → ∀ (i : Fin D.R.m) (t : T), GoodRangeAt R i t
-
-def ThetaGoodRangeGap (R : RealDat D A Ks) (F : Face D A) : Prop :=
-  R.Char F → ∀ (i : Fin D.R.m) (t : T), GoodRangeAt R i t
-
 theorem range_eq_comap_iff {X H M : Type} [AddCommGroup X] [Module ℂ X] [AddCommGroup H] [Module ℂ H] [AddCommGroup M]
     [Module ℂ M] (e : H →ₗ[ℂ] M) (f : X →ₗ[ℂ] H) (p : X →ₗ[ℂ] M) (U : Submodule ℂ M) (hinj : Function.Injective e)
     (hle : U ≤ LinearMap.range e) (hc : ∀ x, e (f x) = p x) :
@@ -54,8 +49,8 @@ theorem range_eq_comap_iff {X H M : Type} [AddCommGroup X] [Module ℂ X] [AddCo
   · intro h
     rw [← h, Submodule.comap_map_eq_of_injective hinj]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem goodRangeAt_iff {R : RealDat D A Ks} (hW : R.models_HW) (hG : R.thP_thG) (i : Fin D.R.m) (t : T) :
     GoodRangeAt R i t ↔
       LinearMap.range (postOn (R.MW i (sg0 D A)) (R.eWf i (sg0 D A)) ∘ₗ R.thF i t) = R.Wat i (sg0 D A) R.triv :=

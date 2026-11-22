@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachLettersFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.LettersFreeOfRank
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachLettersFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,20 +52,8 @@ theorem φD_smulA (a : LetA O n) (x : W.DD T) : W.φD T (a • x) = W.φA a • 
   rw [algebraMap_smul, W.φE_ext, algebraMap_smul] at this
   exact this
 
-theorem γD_smulA (g : W.Gam) (a : LetA O n) (x : W.DD T) :
-    W.γD T g (a • x) = W.γA g a • W.γD T g x := by
-  have := W.γD_smul T g (algebraMap (LetA O n) W.EE a) x
-  rw [algebraMap_smul, W.γE_ext, algebraMap_smul] at this
-  exact this
-
-theorem γA_letE (g : W.Gam) (i : ZMod n) : W.γA g (letE i) = letE i := by
-  funext j
-  by_cases h : j = i
-  · subst h; simp [LocWach.γA, letγ, letE]
-  · simp [LocWach.γA, letγ, letE, h]
 
 include W in
-
 theorem neZero_letters : NeZero n := by
   have := PD.finK₀
   exact ⟨by rw [W.n_eq]; exact Module.finrank_pos.ne'⟩
@@ -81,7 +73,7 @@ theorem isUnit_Q : IsUnit (algebraMap (LetA O n) W.EE W.Q) := by
     have h2 := (Ideal.mem_jacobson_bot.1 hj) (x * r * (↑u⁻¹ : W.EE))
     have h3 : x * algebraMap (LetA O n) W.EE W.q =
         (((PD.p : ℕ) : W.EE) * (x * r * (↑u⁻¹ : W.EE)) + 1) * u := by
-      rw [hx, ← map_mul, h1, map_sub, map_pow, map_add, map_one, ← hx, hr, ← hu]
+      rw [hx, ← map_mul, h1, map_sub, map_pow, map_add (f := _), map_one, ← hx, hr, ← hu]
       have := u.inv_mul
       linear_combination (-((PD.p : ℕ) : W.EE) * x * r) * this
     exact isUnit_of_mul_isUnit_right (h3 ▸ h2.mul u.isUnit)
@@ -100,21 +92,6 @@ theorem Q_pow_smul_cancel (m : ℕ) {x y : W.DD T} (h : W.Q ^ m • x = W.Q ^ m 
   exact ((isUnit_Q W).pow m).smul_left_cancel.1 h
 
 variable {W T}
-
-theorem φD_fixed (i : ZMod n) {x : W.DD T} (hx : x ∈ W.Nl T (i - 1)) :
-    (letE i : LetA O n) • W.φD T x = W.φD T x := by
-  rw [← phi_letE W i, ← φD_smulA, ((mem_Nl_iff W T _ x).1 hx).2]
-
-theorem letE_smul_φpull (i : ZMod n) {y : W.DD T} (hy : y ∈ W.φpull T) :
-    (letE i : LetA O n) • y ∈ phiPullLetter W T i := by
-  induction hy using Submodule.span_induction with
-  | mem x hx =>
-    obtain ⟨z, hz, rfl⟩ := hx
-    rw [← phi_letE W i, ← φD_smulA]
-    exact Submodule.subset_span ⟨_, letE_smul_mem W T _ hz, rfl⟩
-  | zero => simp
-  | add x y _ _ hx hy => rw [smul_add]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx => rw [smul_comm]; exact Submodule.smul_mem _ a hx
 
 variable (W T)
 

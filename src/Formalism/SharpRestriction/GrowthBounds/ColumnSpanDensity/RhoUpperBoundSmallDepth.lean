@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MapMDetUnit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MapMDetUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem famS (v : Fin k → R.W ⧸ Ideal.span {(p : R.W)}) (hv : v ≠ 0) :
     | add x y _ _ hx hy =>
       obtain ⟨y1, s1, rfl⟩ := hx
       obtain ⟨y2, s2, rfl⟩ := hy
-      exact ⟨y1 + y2, s1 + s2, by funext i; simp only [Pi.add_apply, map_add]; ring⟩
+      exact ⟨y1 + y2, s1 + s2, by funext i; simp only [Pi.add_apply, map_add (f := _)]; ring⟩
     | smul r x _ hx =>
       obtain ⟨y1, s1, rfl⟩ := hx
       exact ⟨r * y1, r • s1, by
@@ -152,7 +156,7 @@ theorem famT (c : Fin k → R.W ⧸ Ideal.span {(p : R.W)}) (j : Fin k) (a : Fin
       · funext i
         simp [emb]
       · unfold phi at h1 h2 ⊢
-        simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, h1, h2, add_zero]
+        simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, h1, h2, add_zero]
     | smul r x _ hx =>
       obtain ⟨w, rfl, hw⟩ := hx
       refine ⟨r • w, ?_, ?_⟩
@@ -209,7 +213,7 @@ theorem restEdgeCountSrc : RestEdgeCountSrc := by
       intro l
       have e1 := congrFun hys l
       apply IsFractionRing.injective R.W R.Qq
-      rw [map_add, map_mul, map_mul, map_natCast]
+      rw [map_add (f := _), map_mul, map_mul, map_natCast]
       linear_combination (p : R.Qq) * e1 -
         (algebraMap R.W R.Qq (vt l) - algebraMap R.W R.Qq (vt0 l) * algebraMap R.W R.Qq y) * hpp
     have hv : (R.res y) • v i = v i' := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FinrankTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem prod_tops {n' : ℕ} (TT : Finset (Fin n')) (f : TT → ℚ) :
     symm
     apply Finset.prod_subset (Finset.subset_univ _)
     intro s _ hs
-    rw [dif_neg hs]
+    rw [dite_eq_right hs]
   rw [h1, ← Finset.prod_attach, Finset.univ_eq_attach]
   refine Finset.prod_congr rfl fun s _ => ?_
   rw [dif_pos s.2]
@@ -111,7 +115,7 @@ theorem lamAt_flat {n' : ℕ} (m : ℕ) {TT : Finset (Fin n')} (A B : TT → ℕ
               rw [← Fin.rev_rev i, h, Fin.rev_last]
             rw [if_neg h1, if_neg h2, if_neg h0, if_neg hl, neg_zero]
       rw [this, weylDim_hwt_eq, dimHar_comm]
-  · rw [dif_neg hs]
+  · rw [dite_eq_right hs]
     have : lamAt (flatW (m + 1) A B) s = fun _ => (0 : ℤ) := by
       unfold lamAt
       split_ifs <;> funext i <;> simp [flatW, hs]

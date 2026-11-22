@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTiltIntegersCpEquivCompatibleUntilt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
-import GroundTheory.PAdicHodge.TiltValuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTiltIntegersCpEquivCompatibleUntilt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+public import GroundTheory.PAdicHodge.TiltValuation
+
+@[expose] public section
+
 open Formalism.Per GlobalTheory.PSer
 open scoped Formalism.Per
 set_option maxHeartbeats 1000000 in

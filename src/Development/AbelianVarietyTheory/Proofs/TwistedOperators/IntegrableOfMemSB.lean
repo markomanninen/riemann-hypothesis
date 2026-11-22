@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeSupportAndFourierRelation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeSupportAndFourierRelation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
@@ -168,7 +172,7 @@ def avg (T : (n → k) → A →ₗ[ℂ] A) (l : A →ₗ[ℂ] ℂ) (h : ∀ v, 
     A →ₗ[ℂ] ℂ where
   toFun v := ∫ u, l (T u v) ∂(Measure.pi fun _ => ν)
   map_add' v w := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact integral_add (integrable_of_mem_SB ν (h v)) (integrable_of_mem_SB ν (h w))
   map_smul' a v := by
     simp only [map_smul, RingHom.id_apply]
@@ -179,7 +183,7 @@ def avg₂ {P : Type} [AddCommGroup P] [Module ℂ P] (T : (n → k) → A →�
   toFun φ := avg ν T (b φ) (h φ)
   map_add' φ φ' := by
     ext v
-    simp only [avg, map_add, LinearMap.add_apply, LinearMap.coe_mk, AddHom.coe_mk]
+    simp only [avg, map_add (f := _), LinearMap.add_apply, LinearMap.coe_mk, AddHom.coe_mk]
     exact integral_add (integrable_of_mem_SB ν (h φ v)) (integrable_of_mem_SB ν (h φ' v))
   map_smul' a φ := by
     ext v

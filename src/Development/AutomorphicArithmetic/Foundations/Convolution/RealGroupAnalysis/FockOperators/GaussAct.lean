@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CoordMk
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.HermAct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.CoordMk
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.HermAct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -11,7 +15,7 @@ namespace UpperTheory.ConvolutionTheory.R2.Fo
 
 section
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 private noncomputable def cwH (w : InfinitePlace F) : A F →+* ℂ :=
   Complex.ofRealHom.comp ((Pi.evalRingHom (fun _ : InfinitePlace F => ℝ) w).comp (TR.pInf F))
@@ -35,7 +39,7 @@ private theorem cE_bar (D : Dat F E) (τ : E →+* ℂ) (z : A E) :
   generalize D.co z 0 = u at hz
   generalize D.co z 1 = t at hz
   subst hz
-  rw [hbar, cE_mk, cE_mk, map_add, map_mul, hθ, conj_cw, conj_cw, cw_eq _ (-t), map_neg, ← cw_eq]
+  rw [hbar, cE_mk, cE_mk, map_add (f := _), map_mul, hθ, conj_cw, conj_cw, cw_eq _ (-t), map_neg, ← cw_eq]
   ring
 
 private theorem trace_herm (D : Dat F E) (τ : E →+* ℂ) (v : V4 F) :
@@ -47,7 +51,7 @@ private theorem trace_herm (D : Dat F E) (τ : E →+* ℂ) (v : V4 F) :
   have hR : cw (pl F τ) (v 0 ^ 2 + v 1 ^ 2 + 2 * (v 2 ^ 2 - rt D.δ * v 3 ^ 2)) =
       cw (pl F τ) (v 0) ^ 2 + cw (pl F τ) (v 1) ^ 2 +
         2 * (cw (pl F τ) (v 2) ^ 2 - cw (pl F τ) (rt D.δ) * cw (pl F τ) (v 3) ^ 2) := by
-    simp only [cw_eq, map_add, map_mul, map_pow, map_sub, map_ofNat]
+    simp only [cw_eq, map_add (f := _), map_mul, map_pow, map_sub, map_ofNat]
   rw [hR, ← hθ]
   simp only [Matrix.trace_fin_two, Matrix.mul_apply, Fin.sum_univ_two, Matrix.map_apply, Dat.herm,
     Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
@@ -66,7 +70,8 @@ private theorem pres (D : Dat F E) (h : GL (Fin 2) (A E))
     have h2 := congrArg (fun M : Matrix (Fin 2) (Fin 2) (Cinf E) => M.map (coord τ)) h1
     ext i j
     have h3 := congrFun (congrFun h2 i) j
-    simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.star_eq_conjTranspose, Matrix.conjTranspose_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.star_eq_conjTranspose, Matrix.conjTranspose_apply, map_sum, map_mul,
       UpperTheory.V.FieldIso.coord_star] at h3
     rw [Matrix.mul_apply]
     simp only [hK, Matrix.conjTranspose_apply, Matrix.map_apply]
@@ -92,7 +97,7 @@ end
 end UpperTheory.ConvolutionTheory.R2.Fo
 
 theorem UpperTheory.ConvolutionTheory.R2.Fo.gaussAct :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (h : GL (Fin 2) (A E)), (Matrix.GeneralLinearGroup.map (pInf E) h).val ∈ Matrix.unitaryGroup (Fin 2) (Cinf E) →
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (h : GL (Fin 2) (A E)), (Matrix.GeneralLinearGroup.map (pInf E) h).val ∈ Matrix.unitaryGroup (Fin 2) (Cinf E) →
     ∀ v, gauss D.δ (D.act h v) = gauss D.δ v := by
   intro F E _ _ _ _ _ _ _ D h hu v
   have key : ∀ w : InfinitePlace F,

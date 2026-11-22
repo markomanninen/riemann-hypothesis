@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SpanAtMono
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SpanAtMono
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -24,7 +29,7 @@ theorem SpecialCycleEval.proof (h1 : SpecialIdealCorresp.Statement.{u})
     show divCycle P (C ϖ) W * n (specialIdeal W) = 0
     have h' : ¬ (W ∈ (P ⊔ Ideal.span {C ϖ}).minimalPrimes ∧ IsRelevant W) := h
     unfold divCycle
-    rw [dif_neg h', zero_mul]
+    rw [dite_eq_right h', zero_mul]
   have hsupp2 : Function.support (fun V => idealCycle (specialIdeal P) V * n V) ⊆ t := by
     intro V hV
     by_contra h
@@ -32,7 +37,7 @@ theorem SpecialCycleEval.proof (h1 : SpecialIdealCorresp.Statement.{u})
     show idealCycle (specialIdeal P) V * n V = 0
     have h' : ¬ (V ∈ (specialIdeal P).minimalPrimes ∧ IsRelevant V) := h
     unfold idealCycle
-    rw [dif_neg h', zero_mul]
+    rw [dite_eq_right h', zero_mul]
   have hmem : ∀ W ∈ s, W.IsPrime ∧ (C ϖ : MRing ι O) ∈ W := fun W hW =>
     ⟨hW.1.1.1, hW.1.1.2 (Ideal.mem_sup_right (Ideal.subset_span rfl))⟩
   have hmaps : ∀ W ∈ s, specialIdeal W ∈ t := by
@@ -69,7 +74,7 @@ theorem SpecialCycleEval.proof (h1 : SpecialIdealCorresp.Statement.{u})
     have hW' : W ∈ (P ⊔ Ideal.span {C ϖ}).minimalPrimes ∧ IsRelevant W := hW
     have hV' : specialIdeal W ∈ (specialIdeal P).minimalPrimes ∧ IsRelevant (specialIdeal W) :=
       hmaps W hW
-    rw [dif_pos hW', dif_pos hV']
+    rw [dite_eq_left hW', dite_eq_left hV']
     exact congrArg (fun x : ℕ∞ => ((x.toNat : ℕ) : ℤ)) hm
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

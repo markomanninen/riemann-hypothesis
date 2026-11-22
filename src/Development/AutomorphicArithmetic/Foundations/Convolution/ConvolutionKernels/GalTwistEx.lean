@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.CuspDecay
-import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.CuspDecayHeights.CuspDecay
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTransport
+
+@[expose] public section
 
 noncomputable section
 

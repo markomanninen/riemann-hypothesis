@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsReductionComplex
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsReductionComplex
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,8 +23,8 @@ section Grading
 
 variable {R : Type} [CommRing R]
 
-open Classical in
 
+open Classical in
 def blockWt : (Σ k, ι k) → (K → ℕ) := fun q k => if q.1 = k then 1 else 0
 
 theorem weight_blockWt_apply (d : (Σ k, ι k) →₀ ℕ) (k : K) :
@@ -81,10 +86,10 @@ theorem homog_monomial_one_of_zmod [Fact p.Prime] {d : (Σ k, ι k) →₀ ℕ} 
   exact GenOnFibres.homog_monomial d 1 e fun k => h d (by rw [mem_support_iff, coeff_monomial, if_pos rfl]; exact one_ne_zero) k
 
 def liftPoly (F : MRingOver (ZMod p) ι) : MRingOver ℤ ι :=
-  ∑ d ∈ F.support, monomial d ((coeff d F).val : ℤ)
+  ∑ d ∈ F.support, monomial d ((AddMonoidAlgebra.coeff F d).val : ℤ)
 
 theorem coeff_liftPoly (F : MRingOver (ZMod p) ι) (d : (Σ k, ι k) →₀ ℕ) :
-    coeff d (liftPoly p F) = ((coeff d F).val : ℤ) := by
+    AddMonoidAlgebra.coeff (liftPoly p F) d = ((AddMonoidAlgebra.coeff F d).val : ℤ) := by
   classical
   rw [liftPoly, coeff_sum]
   simp only [coeff_monomial]
@@ -146,8 +151,8 @@ theorem redRing_mem_quotPart (c : K → ℤ) {m : MRingOver ℤ ι ⧸ GenOnFibr
     rw [redRing_mk]
     exact Submodule.subset_span ⟨_, ⟨hc, GenOnFibres.homog_map _ hF⟩, rfl⟩
   · rw [map_zero]; exact zero_mem _
-  · intro x x' hx hx'; rw [map_add]; exact add_mem hx hx'
-  · intro x hx; rw [map_neg]; exact neg_mem hx
+  · intro x x' hx hx'; rw [(redRing y p).map_add x x']; exact add_mem hx hx'
+  · intro x hx; rw [(redRing y p).map_neg x]; exact neg_mem hx
 
 theorem redLoc_mem_locPart (I : ∀ k, Finset (ι k)) (a : K → ℤ)
     {x : LocalizedModule (KH.cellMon ℤ I) (MRingOver ℤ ι ⧸ GenOnFibres.idealOver y ℤ)}
@@ -160,7 +165,7 @@ theorem redLoc_mem_locPart (I : ∀ k, Finset (ι k)) (a : K → ℤ)
     rw [redLoc_mk]
     exact Submodule.subset_span ⟨_, _, e, GenOnFibres.homog_map _ ht, redRing_mem_quotPart y p _ hm, rfl⟩
   · rw [map_zero]; exact zero_mem _
-  · intro x x' hx hx'; rw [map_add]; exact add_mem hx hx'
+  · intro x x' hx hx'; rw [map_add (redLoc y p I)]; exact add_mem hx hx'
   · intro x hx; rw [map_neg]; exact neg_mem hx
 
 theorem exists_lift_quotPart [Fact p.Prime] (c : K → ℤ)
@@ -177,11 +182,13 @@ theorem exists_lift_quotPart [Fact p.Prime] (c : K → ℤ)
   | add x x' _ _ hx hx' =>
     obtain ⟨m, hm, rfl⟩ := hx
     obtain ⟨m', hm', rfl⟩ := hx'
-    exact ⟨m + m', add_mem hm hm', map_add _ _ _⟩
+    exact ⟨m + m', add_mem hm hm', (redRing y p).map_add _ _⟩
   | smul r x _ hx =>
     obtain ⟨m, hm, rfl⟩ := hx
     refine ⟨r.val • m, nsmul_mem hm _, ?_⟩
+    change (redRing y p).toAddMonoidHom (r.val • m) = r • redRing y p m
     rw [map_nsmul, ← Nat.cast_smul_eq_nsmul (ZMod p), ZMod.natCast_zmod_val]
+    rfl
 
 theorem exists_lift_locPart [Fact p.Prime] (I : ∀ k, Finset (ι k)) (a : K → ℤ)
     {x : LocalizedModule (KH.cellMon (ZMod p) I) (MRingOver (ZMod p) ι ⧸ GenOnFibres.idealOver y (ZMod p))}
@@ -319,7 +326,7 @@ theorem ker_locPart [Fact p.Prime] (hP : IsMultiHomogIdeal (mCoordIdeal y)) (I :
   have hUF := GenOnFibres.homog_mul hU hF
   set D : K → ℕ := (fun k => ∑ i, d ⟨k, i⟩) + fun k => ((a + fun k => (e k : ℤ)) k).toNat with hDdef
   have hcomp := congrArg (weightedHomogeneousComponent blockWt D) hsum
-  rw [map_add, mul_comm g, weightedHomogeneousComponent_C_mul,
+  rw [map_add (f := _), mul_comm g, weightedHomogeneousComponent_C_mul,
     weightedHomogeneousComponent_eq_self ((isMultiHomog_iff _ _).mp hUF)] at hcomp
   have hq' := comp_mem hP hq D
   set g' := weightedHomogeneousComponent blockWt D g
@@ -394,7 +401,8 @@ variable [LinearOrder K] [∀ k, LinearOrder (ι k)] (y : (Σ k, ι k) → Ω) (
 theorem redCoch_cechD (n : ℕ) (w : KH.CechC ℤ ι (MRingOver ℤ ι ⧸ GenOnFibres.idealOver y ℤ) n) :
     redCoch y p (n + 1) (KH.cechD ℤ ι _ n w) = KH.cechD (ZMod p) ι _ n (redCoch y p n w) := by
   funext I
-  simp only [redCoch_apply, KH.cechD, LinearMap.pi_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [redCoch_apply, KH.cechD, LinearMap.pi_apply, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
   split_ifs with h
   · have hJ : ∀ l, Function.update I.1 k ((I.1 k).erase i) l ⊆ I.1 l := by
@@ -419,8 +427,8 @@ end Complex
 
 end FibreReduction
 
-open FibreReduction in
 
+open FibreReduction in
 theorem ReductionComplex.proof : ReductionComplex.Statement := by
   intro K _ _ ι _ _ Ω _ y D p a hV hp
   have : Fact p.Prime := ⟨hp⟩

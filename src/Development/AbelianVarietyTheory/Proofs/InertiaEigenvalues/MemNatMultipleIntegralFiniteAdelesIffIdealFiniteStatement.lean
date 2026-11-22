@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemNatMultipleIntegralFiniteAdelesIffIdealFinite
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
-import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemNatMultipleIntegralFiniteAdelesIffIdealFinite
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ZintZero
+public import GroundTheory.GlobalFields.TateThesis.AdeleIdealMeasure
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 set_option maxHeartbeats 1000000 in

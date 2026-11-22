@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceCut
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix ComplexConjugate
@@ -134,18 +138,18 @@ variable {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace �
 
 def SuppLocOp (Θ : D.Op (Mx k r → (Wq →L[ℂ] Wp))) : Prop := SuppLoc (fun f => D.ap Θ f)
 
-theorem suppLocOp_closed : Formalism.FourierDecayAlt.P.JCx2.mnClosed (SuppLocOp (k := k) (r := r) (Wp := Wp) (Wq := Wq)) where
-  zero := fun _ _ _ => rfl
-  one := fun f g hg => image_eq_zero_of_notMem_tsupport hg
-  add := fun a b ha hb f g hg => by
-    show D.ap a f g + D.ap b f g = 0
-    have h1 : D.ap a f g = 0 := ha f g hg
-    have h2 : D.ap b f g = 0 := hb f g hg
-    rw [h1, h2, add_zero]
-  mul := fun a b ha hb f g hg => ha (D.ap b f) g fun hg' => hg (tsupport_sub_of (hb f) hg')
-  cop := fun c f g hg => by
-    show c • f g = 0
-    rw [image_eq_zero_of_notMem_tsupport hg, smul_zero]
+theorem suppLocOp_closed : Formalism.FourierDecayAlt.P.JCx2.mnClosed (SuppLocOp (k := k) (r := r) (Wp := Wp) (Wq := Wq)) :=
+  { zero := fun _ _ _ => rfl
+    one := fun f g hg => image_eq_zero_of_notMem_tsupport hg
+    add := fun a b ha hb f g hg => by
+      show D.ap a f g + D.ap b f g = 0
+      have h1 : D.ap a f g = 0 := ha f g hg
+      have h2 : D.ap b f g = 0 := hb f g hg
+      rw [h1, h2, add_zero]
+    mul := fun a b ha hb f g hg => ha (D.ap b f) g fun hg' => hg (tsupport_sub_of (hb f) hg')
+    cop := fun c f g hg => by
+      show c • f g = 0
+      rw [image_eq_zero_of_notMem_tsupport hg, smul_zero] }
 
 theorem suppLocOp_rma (z z' : Fin (2 * r + k + 1) → ℂ) (s Y : ℂ) (a b : Fin 2) :
     SuppLocOp (Formalism.FourierDecayAlt.P.JCx2.rma_Qop (Wp := Wp) (Wq := Wq) k r z z' s Y a b) := fun f g hg => by
@@ -170,7 +174,7 @@ theorem waveJc_wave (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : M
     refine Submodule.subset_span ⟨mul_lc hW x hlc, s + s', ε, G, hε, hN, hG, fun y hy => ?_⟩
     rw [hW x y.1 y.2, hv y hy, smul_smul, fsv_add]
   | zero => rw [map_zero]; exact (waveJc P z z' π π' D l).zero_mem
-  | add x y _ _ hx hy => rw [map_add]; exact (waveJc P z z' π π' D l).add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact (waveJc P z z' π π' D l).add_mem hx hy
   | smul a x _ hx => rw [map_smul]; exact (waveJc P z z' π π' D l).smul_mem a hx
 
 theorem isWaveJc_jf (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
@@ -345,7 +349,7 @@ theorem rr_waveJc (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx 
     rw [hΨΦ, e]
     exact waveJc_wave P z z' π π' D l hWv _ hM
   | zero => rw [map_zero]; exact (waveJc P z z' π π' D l).zero_mem
-  | add x y _ _ hx hy => rw [map_add]; exact (waveJc P z z' π π' D l).add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact (waveJc P z z' π π' D l).add_mem hx hy
   | smul c x _ hx => rw [map_smul]; exact (waveJc P z z' π π' D l).smul_mem c hx
 
 theorem base0_le_waveJc (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))

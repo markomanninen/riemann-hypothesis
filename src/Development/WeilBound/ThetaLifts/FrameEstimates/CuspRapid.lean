@@ -1,15 +1,19 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.WeilConv
-import Development.WeilBound.ThetaLifts.FrameEstimates.OneMemLines
-import Development.WeilBound.ThetaLifts.FrameEstimates.DomContinuous
-import Development.WeilBound.ThetaLifts.FrameEstimates.IInvOfParts
-import Development.WeilBound.ThetaLifts.FrameEstimates.SchrAddPt
-import Development.WeilBound.ThetaLifts.FrameEstimates.UMGLin
-import Development.WeilBound.ThetaLifts.FrameEstimates.UMGSmooth
-import Development.WeilBound.ThetaLifts.FrameEstimates.LinDer
-import Development.WeilBound.ThetaLifts.FrameEstimates.LineGen
-import Development.WeilBound.ThetaLifts.FrameEstimates.LineEx
-import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapidOf
-import Development.WeilBound.ThetaLifts.FrameEstimates.SigRapid
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.WeilConv
+public import Development.WeilBound.ThetaLifts.FrameEstimates.OneMemLines
+public import Development.WeilBound.ThetaLifts.FrameEstimates.DomContinuous
+public import Development.WeilBound.ThetaLifts.FrameEstimates.IInvOfParts
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SchrAddPt
+public import Development.WeilBound.ThetaLifts.FrameEstimates.UMGLin
+public import Development.WeilBound.ThetaLifts.FrameEstimates.UMGSmooth
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LinDer
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LineGen
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LineEx
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapidOf
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SigRapid
+
+@[expose] public section
 
 noncomputable section
 

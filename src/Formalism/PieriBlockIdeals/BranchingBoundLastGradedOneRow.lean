@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.StatementLD
+module
+
+public import Formalism.PieriBlockIdeals.StatementLD
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -40,18 +44,6 @@ def Depth2Dual : Prop :=
     depth2 (fun a => -ξ (Fin.rev a)) (fun a => M - lam (Fin.rev a)) (fun a => M - μ (Fin.rev a)) = depth2 ξ lam μ ∧
       (Antitone ξ → Antitone fun a => -ξ (Fin.rev a))
 
-def DnShift : Prop :=
-  ∀ (p w i q c : ℕ) (lam2 : Fin q → ℕ), (∀ b, lam2 b ≤ w) →
-    Dn p (w + c) i (fun b => lam2 b + c) = Dn p w i lam2
-
-def DnLastIndep : Prop :=
-  ∀ (p w i q M M' : ℕ) (lam2 : Fin q → ℕ), w ≤ M → (∀ b, w ≤ lam2 b ∧ lam2 b ≤ M) → M ≤ M' →
-    Dn p (M' - w) i (fun b : Fin q => M' - lam2 (Fin.rev b)) = Dn p (M - w) i (fun b : Fin q => M - lam2 (Fin.rev b))
-
-def LemmaDLastGraded_rank2 : Prop :=
-  ∀ (l w y M : ℕ) (ξ : Fin (1 + 1) → ℤ), l.Prime → w ≤ y → y ≤ M → Antitone ξ →
-    LemmaDLastGradedAt l 1 1 w M (fun _ : Fin 1 => y) ξ
-
 def PeelBoundLast : Prop :=
   BranchingBoundLastGradedOneRow → ∀ (l q w M : ℕ) (lam2 : Fin q → ℕ) (ξ : Fin (q + 1) → ℤ), l.Prime → Antitone lam2 →
     (∀ b, w ≤ lam2 b ∧ lam2 b ≤ M) → Antitone ξ →
@@ -72,7 +64,7 @@ def PeelRows : Prop :=
     (∀ a b, a ≤ b → b < n + s → lam b ≤ lam a) → lam 0 + (n + s) ≤ h + lam (n + s - 1) + 1 → Antitone ξ →
     ∀ (I : ℤ) (e : ℕ), ExpUpTo l n lam ξ I e → ExpUpTo l (n + s) lam ξ I (e + s * ((h - 1) / (l - 1)))
 
-def blockCost (l n t I : ℕ) (lam : ℕ → ℕ) : ℕ :=
+noncomputable def blockCost (l n t I : ℕ) (lam : ℕ → ℕ) : ℕ :=
   (Finset.range (I + 1)).sup fun i =>
     padicValInt l (Dn t (lam 0 - lam n) i fun b : Fin n => lam 0 - res n lam (Fin.rev b))
 

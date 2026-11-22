@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DifferentiableIntegralMulCpow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenAdelicUnipotentTimesIntegralOutsideSet
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Definitions.Divisors.MirSet
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DifferentiableIntegralMulCpow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsOpenAdelicUnipotentTimesIntegralOutsideSet
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MirSet
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,7 @@ theorem exists_rat_mul_entries_mem {K : Set (Ad E)} (hK : ∀ x : Ad E, ∃ y : 
             if j = ⟨m, hm⟩ then (if (i : ℕ) < m then -algebraMap E (Ad E) (y i) else 0) else 0) := by
           ext i j : 1
           change algebraMap E (Ad E) ((GlobalTheory.JSW.colGL m fun i => -y i).val i j) = _
-          simp only [GlobalTheory.JSW.colGL, Matrix.add_apply, Matrix.of_apply, map_add, Matrix.one_apply, Fin.ext_iff]
+          simp only [GlobalTheory.JSW.colGL, Matrix.add_apply, Matrix.of_apply, map_add (f := _), Matrix.one_apply, Fin.ext_iff]
           split_ifs <;> simp_all
         rw [Units.val_mul, e1, add_mul, one_mul, Matrix.add_apply, Matrix.mul_apply]
         simp only [Matrix.of_apply, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
@@ -191,19 +195,19 @@ theorem exists_components (S : Finset (HeightOneSpectrum (𝓞 E)))
     · rw [map_mul, pLoc_locGL_of_ne (fun e : v = w => hv (Finset.mem_insert.2 (.inl e))),
         h2 v fun e => hv (Finset.mem_insert_of_mem e), mul_one]
 
-variable (E) in
 
+variable (E) in
 def mirAt (ℓ : Fin a) (S : Finset (HeightOneSpectrum (𝓞 E))) : Set (GA E a) :=
   {p | (∀ j, p.val ℓ j = if j = ℓ then 1 else 0) ∧ ∀ v ∉ S, compV E a v p = 1}
 
-variable (a) in
 
+variable (a) in
 def levelAt (S : Finset (HeightOneSpectrum (𝓞 E))) (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) : Set (GL (Fin a) (Af E)) :=
-  {κ | (∀ v, GeneralLinearGroup.map (pLoc E v) κ ∈ GlobalTheory.LFun.KGL v a) ∧ ∀ v ∈ S, ∀ i j,
+  {κ | (∀ v, GeneralLinearGroup.map (pLoc E v) κ ∈ GlobalTheory.LFun.KGL v (n := a)) ∧ ∀ v ∈ S, ∀ i j,
     Valued.v ((κ.val - 1) i j v) ≤ WithZero.exp (-FractionalIdeal.count E v (J : FractionalIdeal (𝓞 E)⁰ E))}
 
 theorem mem_integralFiniteGL_iff_KGL {κ : GL (Fin a) (Af E)} :
-    κ ∈ AdelicGLn.integralFiniteGL E a ↔ ∀ v, GeneralLinearGroup.map (pLoc E v) κ ∈ GlobalTheory.LFun.KGL v a := by
+    κ ∈ AdelicGLn.integralFiniteGL E a ↔ ∀ v, GeneralLinearGroup.map (pLoc E v) κ ∈ GlobalTheory.LFun.KGL v (n := a) := by
   simp only [AdelicGLn.mem_integralFiniteGL_iff, mem_integralFiniteAdeles, mem_GLint_iff_entries_cell, ← map_inv]
   exact ⟨fun h v => ⟨fun i j => h.1 i j v, fun i j => h.2 i j v⟩, fun h => ⟨fun i j v => (h v).1 i j, fun i j v => (h v).2 i j⟩⟩
 
@@ -211,7 +215,7 @@ theorem levelAt_subset (S : Finset (HeightOneSpectrum (𝓞 E))) (J : (Fractiona
     levelAt a S J ⊆ AdelicGLn.integralFiniteGL E a := fun _ hκ => mem_integralFiniteGL_iff_KGL.2 hκ.1
 
 theorem exists_levelAt_subset (S : Finset (HeightOneSpectrum (𝓞 E))) (U : Subgroup (GL (Fin a) (Af E)))
-    (hU : IsOpen (U : Set (GL (Fin a) (Af E)))) (hw : ∀ w ∉ S, ∀ k ∈ GlobalTheory.LFun.KGL w a, locGL E a w k ∈ U) :
+    (hU : IsOpen (U : Set (GL (Fin a) (Af E)))) (hw : ∀ w ∉ S, ∀ k ∈ GlobalTheory.LFun.KGL w (n := a), locGL E a w k ∈ U) :
     ∃ J : (FractionalIdeal (𝓞 E)⁰ E)ˣ, (∀ v ∈ S, 0 < FractionalIdeal.count E v (J : FractionalIdeal (𝓞 E)⁰ E)) ∧
       (∀ v ∉ S, FractionalIdeal.count E v (J : FractionalIdeal (𝓞 E)⁰ E) = 0) ∧ levelAt a S J ⊆ U := by
   classical
@@ -233,7 +237,7 @@ theorem exists_levelAt_subset (S : Finset (HeightOneSpectrum (𝓞 E))) (U : Sub
     fun κ h v hv i j => (h v (Finset.mem_union_left _ hv) i j).trans (WithZero.exp_le_exp.2 (by simp)),
     fun κ h v hv i j => (h v (Finset.mem_union_right _ hv) i j).trans (WithZero.exp_le_exp.2 (by simp))⟩
   obtain ⟨⟨T, m⟩, hT⟩ := ((AdelicGLn.isCompact_integralFiniteGL E a).diff hU).elim_directed_family_closed t htc (by
-    refine Set.eq_empty_of_forall_notMem fun κ ⟨h1, h2⟩ => h1.2 ?_
+    refine Set.disjoint_left.2 fun κ h1 h2 => h1.2 ?_
     have : κ = 1 := Units.ext (sub_eq_zero.1 (Matrix.ext fun i j => FiniteAdeleRing.ext _ fun v => ?_))
     · exact this ▸ one_mem U
     by_contra h0
@@ -263,14 +267,16 @@ theorem exists_levelAt_subset (S : Finset (HeightOneSpectrum (𝓞 E))) (U : Sub
       (GeneralLinearGroup.map (pLoc E v) x).val i j - pLoc E v ((1 : Matrix (Fin a) (Fin a) (Af E)) i j) :=
     fun x v i j => map_sub (pLoc E v) _ _
   by_contra hn
-  refine Set.eq_empty_iff_forall_notMem.1 hT (h⁻¹ * κ) ⟨⟨mem_integralFiniteGL_iff_KGL.2 fun v => ?_, fun hm => hn ?_⟩,
-    fun v hv i j => ?_⟩
+  refine (Set.disjoint_left.1 hT) (a := h⁻¹ * κ) ⟨mem_integralFiniteGL_iff_KGL.2 fun v => ?_, fun hm => hn ?_⟩
+    (fun v hv i j => ?_)
   · by_cases hv : v ∈ T \ S
     · rw [e1 v hv]; exact one_mem _
     · rw [e2 v hv]; exact hκ.1 v
   · simpa using mul_mem hh hm
   · by_cases hv' : v ∈ T \ S
     · rw [e3, e1 v hv', ← map_one (GeneralLinearGroup.map (n := Fin a) (pLoc E v)), ← e3]
+      simp only [Units.val_one, sub_self, Matrix.zero_apply]
+      change Valued.v (pLoc E v 0) ≤ _
       simp
     · have hS : v ∈ S := by_contra fun hS => hv' (Finset.mem_sdiff.2 ⟨hv, hS⟩)
       rw [e3, e2 v hv', ← e3]
@@ -279,7 +285,7 @@ theorem exists_levelAt_subset (S : Finset (HeightOneSpectrum (𝓞 E))) (U : Sub
       simp
 
 theorem rowGL_mem_KGL {v : HeightOneSpectrum (𝓞 E)} {ℓ : Fin a} {y : Fin a → v.adicCompletion E}
-    (h : ∀ j, Valued.v (y j - if j = ℓ then 1 else 0) < 1) : IsUnit (y ℓ) ∧ rowGL ℓ y ∈ GlobalTheory.LFun.KGL v a := by
+    (h : ∀ j, Valued.v (y j - if j = ℓ then 1 else 0) < 1) : IsUnit (y ℓ) ∧ rowGL ℓ y ∈ GlobalTheory.LFun.KGL v (n := a) := by
   have h1 : Valued.v (y ℓ) = 1 := by
     have := h ℓ
     rw [if_pos rfl] at this
@@ -314,7 +320,7 @@ theorem single_vecMul_unip {ℓ : Fin a} (hℓ : ∀ i, i ≤ ℓ) {u : GA E a} 
   · simpa using h2 j
   · simpa [hj.ne] using h1 ℓ j hj
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem exists_decomp {ℓ : Fin a} (hℓ : ∀ i, i ≤ ℓ) {S : Finset (HeightOneSpectrum (𝓞 E))}
     {J : (FractionalIdeal (𝓞 E)⁰ E)ˣ} (hJ : ∀ v ∈ S, 0 < FractionalIdeal.count E v (J : FractionalIdeal (𝓞 E)⁰ E))
@@ -325,7 +331,7 @@ theorem exists_decomp {ℓ : Fin a} (hℓ : ∀ i, i ≤ ℓ) {S : Finset (Heigh
       g * (infGL E a (rowGL ℓ fun i => pInf E ((Pi.single ℓ 1 ᵥ* g.val) i)))⁻¹ = u * p * finGL E a κ := by
   obtain ⟨u, hu, k, hk, rfl⟩ := hg
   rw [single_vecMul_unip hℓ hu, single_one_vecMul] at hi hf ⊢
-  have hk' : ∀ v ∉ S, compV E a v k ∈ GlobalTheory.LFun.KGL v a := by
+  have hk' : ∀ v ∉ S, compV E a v k ∈ GlobalTheory.LFun.KGL v (n := a) := by
     simpa only [US, Subgroup.mem_iInf, Subgroup.mem_comap] using hk
   have hc : ∀ v (x : GA E a), compV E a v x = GeneralLinearGroup.map (pLoc E v) (GeneralLinearGroup.map (pFin E) x) :=
     fun _ _ => rfl
@@ -380,9 +386,9 @@ end Decomposition
 
 section Main
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_finGL : Continuous (finGL E a) := by
   refine Continuous.units_map _ (continuous_const.add (continuous_pi fun i => continuous_pi fun j => ?_))
   exact (continuous_const.prodMk (continuous_apply_apply i j) :

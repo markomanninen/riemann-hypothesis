@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -38,19 +42,24 @@ theorem mvPowerSeries_three_eq_zero_of_subst_lines :
         ∑ᶠ e : Fin 3 →₀ ℕ, MvPowerSeries.coeff e Φ • PowerSeries.coeff n
           (e.prod fun s k => (PowerSeries.C (t s) * PowerSeries.X : PowerSeries K) ^ k) :=
       MvPowerSeries.coeff_subst ha Φ (Finsupp.single () n)
-    rw [h1]
-    simp only [hprod, PowerSeries.coeff_C_mul_X_pow, smul_eq_mul]
-    rw [finsum_eq_sum_of_support_subset _ (s := S) ?_]
-    · simp only [P, map_sum, MvPolynomial.eval_monomial]
-      refine Finset.sum_congr rfl (fun e he => ?_)
-      rw [if_pos ((hS e).1 he).symm, Finsupp.prod_fintype _ _ (fun s => pow_zero _)]
-    · intro e he
+    have hsupp : Function.support (fun e : Fin 3 →₀ ℕ =>
+        MvPowerSeries.coeff e Φ • PowerSeries.coeff n
+          (e.prod fun s k => (PowerSeries.C (t s) * PowerSeries.X : PowerSeries K) ^ k)) ⊆ S := by
+      intro e he
       rw [Function.mem_support] at he
+      rw [hprod, PowerSeries.coeff_C_mul_X_pow, smul_eq_mul] at he
       rw [Finset.mem_coe, hS]
       by_contra hne
-      exact he (by rw [if_neg (Ne.symm hne), mul_zero])
+      exact he (by simp [Ne.symm hne])
+    rw [h1]
+    rw [finsum_eq_sum_of_support_subset _ (s := S) hsupp]
+    simp only [hprod, PowerSeries.coeff_C_mul_X_pow, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [P, map_sum, MvPolynomial.eval_monomial]
+        refine Finset.sum_congr rfl (fun e he => ?_)
+        rw [if_pos ((hS e).1 he).symm, Finsupp.prod_fintype _ _ (fun s => pow_zero _)]
   have hP : P = 0 := MvPolynomial.funext (fun t => by rw [← hcoef, h t, map_zero, map_zero])
-  have hd := congrArg (MvPolynomial.coeff d) hP
+  have hd := congrArg (AddMonoidAlgebra.coeff · d) hP
   simp only [P, MvPolynomial.coeff_zero, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial,
     Finset.sum_ite_eq', Finset.sum_ite_eq, if_pos ((hS d).2 rfl)] at hd
   simpa using hd

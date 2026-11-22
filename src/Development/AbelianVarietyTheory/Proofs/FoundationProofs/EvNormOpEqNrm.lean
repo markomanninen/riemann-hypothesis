@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
+
+@[expose] public section
+
 open GlobalTheory.Col PowerSeries
 
 namespace GlobalTheory.Col
@@ -43,7 +48,8 @@ theorem ev_normOp_eq_nrm (R : Type) [CommRing R] (p m : ℕ) [hp : Fact p.Prime]
     refine Fintype.linearIndependent_iff.2 fun g hg i => ?_
     choose d hd using fun i => Ideal.Quotient.mk_surjective (g i)
     have hx : ev R p (m + 1) (∑ j, phi (R := R) p hp.out.pos (d j) * (1 + X) ^ (j : ℕ)) = 0 := by
-      rw [← hg, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hg, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hsm, ← hd j]
     obtain ⟨a, ha⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq_zero_iff_mem.1 hx)
@@ -57,7 +63,8 @@ theorem ev_normOp_eq_nrm (R : Type) [CommRing R] (p m : ℕ) [hp : Fact p.Prime]
     intro z _
     obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective z
     show ev R p (m + 1) y ∈ _
-    rw [← F1 y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← F1 y, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hsm]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -67,7 +74,8 @@ theorem ev_normOp_eq_nrm (R : Type) [CommRing R] (p m : ℕ) [hp : Fact p.Prime]
     have e1 : ev R p (m + 1) y = b'.equivFun.symm (fun i => ev R p m (b.repr y i)) := by
       rw [Module.Basis.equivFun_symm_apply]
       conv_lhs => rw [← F1 y]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [Module.Basis.mk_apply, hsm]
     rw [e1, ← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply]

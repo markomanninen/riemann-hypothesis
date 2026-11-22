@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IotaDictAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IotaDictAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,19 +36,6 @@ theorem bezoutMo {v : VA X.B.I} (hv : v ∈ X.B.I.Lf) {N : ℕ} (hN : Nat.Coprim
     have : ((z : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F)) • w = (⟨_, intCast_mem _ z⟩ : IntAf X.B.I.F X.B.I.E) • w := rfl
     rw [this]; exact Submodule.smul_mem _ _ hw
   exact add_mem (sm _ _ h) (sm _ _ (mL_Mo X.B.I (smul_mem_mL X.B.I hv)))
-
-theorem cE_mem (a : Fin D.R.rS) : ∃ c : ℕ, Nat.Coprime c X.B.g ∧
-    (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • incl X.B.I (X.crd (X.eX a)) ∈ X.B.I.Lf := by
-  obtain ⟨c, hc, hcm⟩ := (X.basisApprox a).1
-  refine ⟨c, hc, ?_⟩
-  have hmL : mL X.B.I X.B.g ≤ X.B.I.Lf := (Mo_le_Lf X).trans' (mL_Mo X.B.I)
-  have e : (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • incl X.B.I (X.crd (X.eX a)) =
-      (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • X.e0 a - (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • (X.e0 a - incl X.B.I (X.crd (X.eX a))) := by
-    rw [smul_sub]; abel
-  rw [e]
-  refine sub_mem ?_ (hmL hcm)
-  have : (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • X.e0 a = (⟨_, natCast_mem _ c⟩ : IntAf X.B.I.F X.B.I.E) • X.e0 a := rfl
-  rw [this]; exact Submodule.smul_mem _ _ (X.vectorsInLattice.1 a).1
 
 theorem cF_mem (a : Fin D.R.rS) : ∃ c : ℕ, Nat.Coprime c X.B.g ∧
     (c : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) • incl X.B.I (X.crd (X.fY a)) ∈ X.B.I.Lf := by
@@ -149,7 +140,8 @@ theorem hat_NgX (A : X.B.I.Gf) {u : D.what₂.Word} {Λ : Submodule (𝓞 D.host
     obtain ⟨s, hs⟩ := (Submodule.mem_span_range_iff_exists_fun D.host.E).1 hspan
     have hcoef : ∀ b, (VS D).hT (X.fY b) q = s b := by
       intro b
-      rw [← hs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hs, map_sum]
       simp only [map_smul, smul_eq_mul, Formalism.L2.SG.Pf.hT_f_e X, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
         Finset.mem_univ, if_true]
     choose c hc hcF using fun b => cF_mem X b
@@ -304,7 +296,8 @@ theorem iotaBridgeRAC_holds : IotaBridgeRAC := by
     rw [this]; exact Submodule.smul_mem _ _ hyL
   have hxo : ∀ a, (VS D).hT (X.eX a) x = 0 := by
     intro a
-    rw [hx, map_sub, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sub, map_smul, map_sum]
     simp only [map_smul, smul_eq_mul, X.ef, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true, hs]
     ring
   have hxL : x ∈ Lrep Λ (lf D (X.Fu u)) := ⟨hxΛ, orth_of_eX X hxo⟩

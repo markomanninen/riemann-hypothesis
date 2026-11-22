@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal Pointwise
@@ -44,10 +48,10 @@ def rtr {n : ℕ} (h₁ : GL (Fin n) k) (F : GL (Fin n) k → ℂ) : GL (Fin n) 
 variable [MeasurableSpace k] [BorelSpace k]
 
 def pRam (a a' : ℕ) (ϖ : kˣ) (ν β : kˣ →* ℂˣ) (Φ : Matrix (Fin a) (Fin (a + a')) k → ℂ) : GL (Fin (a + a')) k → ℂ :=
-  bigP (haarVol (KO k (Fin a))) ϖ finSumFinEquiv ν β Φ
+  GlobalTheory.SplitFlip.bigP (haarVol (KO k (Fin a))) ϖ finSumFinEquiv ν β Φ
 
 def pRam' (a a' : ℕ) (ν α : kˣ →* ℂˣ) (Ψ : Matrix (Fin a') (Fin (a + a')) k → ℂ) : GL (Fin (a + a')) k → ℂ :=
-  smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α Ψ
+  GlobalTheory.SplitFlip.smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α Ψ
 
 def invL (a d : ℕ) (ϖ : kˣ) (ν : kˣ →* ℂˣ) : Polynomial ℂ :=
   ∏ i ∈ Finset.range a, (1 - Polynomial.C ((ν ϖ : ℂ) * (resCard k : ℂ) ^ ((i : ℂ) - (d : ℂ) / 2)) * Polynomial.X)
@@ -59,10 +63,10 @@ def zetaUnr (a d : ℕ) (ϖ : kˣ) (ν : kˣ →* ℂˣ) (φ : Matrix (Fin a) (F
   ∑ᶠ m : ℤ, ∑ j ∈ Finset.range (a + 1), (invL a d ϖ ν).coeff j * zCoeff a d ϖ ν φ (m - j)
 
 def pUnr (a a' : ℕ) (ϖ : kˣ) (ν β : kˣ →* ℂˣ) (Φ : Matrix (Fin a) (Fin (a + a')) k → ℂ) : GL (Fin (a + a')) k → ℂ :=
-  fun h => zetaUnr a (a + a') ϖ ν fun g => omA ν β 1 h Φ (g * X0 k finSumFinEquiv)
+  fun h => zetaUnr a (a + a') ϖ ν fun g => omA ν β 1 h Φ (g * X0 (k := k) finSumFinEquiv)
 
 def pUnr' (a a' : ℕ) (ϖ : kˣ) (ν α : kˣ →* ℂˣ) (Ψ : Matrix (Fin a') (Fin (a + a')) k → ℂ) : GL (Fin (a + a')) k → ℂ :=
-  ((invL a' (a + a') ϖ ν).eval 1) • smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α Ψ
+  ((invL a' (a + a') ϖ ν).eval 1) • GlobalTheory.SplitFlip.smallP (haarVol (KO k (Fin a'))) finSumFinEquiv ν α Ψ
 
 structure HidaSetting (a a' : ℕ) (ϖ : kˣ) (α β ν : kˣ →* ℂˣ) : Prop where
   unif : IsUnif ϖ

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Lemmata.GeneralBFactThirdTail.Imports
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Lemmata.GeneralBFactThirdTail.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem riesz [FiniteDimensional E V] (h : V →ₗ⋆[E] V →ₗ[E] E) (hs : h
     | add x y hx hy ihx ihy =>
       intro huL
       have e2 : (⟨x + y, huL⟩ : Λ) = ⟨x, hspL hx⟩ + ⟨y, hspL hy⟩ := rfl
-      rw [e2, map_add, map_add, ihx (hspL hx), ihy (hspL hy)]
+      rw [e2, map_add (f := _), map_add (f := _), ihx (hspL hx), ihy (hspL hy)]
     | smul r x hx ih =>
       intro huL
       have e2 : (⟨r • x, huL⟩ : Λ) = r • ⟨x, hspL hx⟩ := rfl
@@ -65,8 +69,8 @@ theorem riesz [FiniteDimensional E V] (h : V →ₗ⋆[E] V →ₗ[E] E) (hs : h
     smul_eq_mul, smul_eq_mul] at h1
   exact mul_left_cancel₀ ((map_ne_zero_iff _ (IsFractionRing.injective (𝓞 E) E)).mpr hd) h1
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_retract (Λ : Submodule (𝓞 E) V) (hΛ : Λ.FG) (X : Submodule E V) :
     ∃ ρ : Λ →ₗ[𝓞 E] Λ, (∀ y, ((ρ y : Λ) : V) ∈ X) ∧ ∀ y : Λ, (y : V) ∈ X → ρ y = y := by
   classical

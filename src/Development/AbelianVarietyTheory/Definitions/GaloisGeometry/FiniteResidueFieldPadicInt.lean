@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ variable (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Fie
 
 def Lat (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K]
     [IsFractionRing O K] (r : ℕ) : Type :=
-  {L : Submodule O (Fin r → K) // L.IsLattice K}
+  {L : Submodule O (Fin r → K) // L.IsFullLattice K}
 
 def qRes [Finite (IsLocalRing.ResidueField O)] : ℕ := Nat.card (IsLocalRing.ResidueField O)
 
@@ -18,46 +22,42 @@ variable [IsFractionRing O K] (r : ℕ)
 
 def std : Lat O K r :=
   ⟨Submodule.span O (Set.range (Pi.basisFun K (Fin r))),
-    { fg := Submodule.fg_span (Set.finite_range _)
+    { toIsLattice := Submodule.IsLattice.of_fg K (Submodule.fg_span (Set.finite_range _))
       span_eq_top := by
         rw [Submodule.span_span_of_tower]; exact (Pi.basisFun K (Fin r)).span_eq }⟩
 
-instance instInhabitedLat : Inhabited (Lat O K r) := ⟨std O K r⟩
-
 variable {O K r}
-
-@[ext] theorem Lat.ext {L M : Lat O K r} (h : L.1 = M.1) : L = M := Subtype.ext h
 
 def glMap (g : GL (Fin r) K) (L : Submodule O (Fin r → K)) : Submodule O (Fin r → K) :=
   L.map ((Matrix.toLin' (g : Matrix (Fin r) (Fin r) K)).restrictScalars O)
 
-omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 theorem glMap_one (L : Submodule O (Fin r → K)) : glMap 1 L = L := by
   ext x; simp [glMap]
 
-omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 theorem glMap_mul (g h : GL (Fin r) K) (L : Submodule O (Fin r → K)) :
     glMap (g * h) L = glMap g (glMap h L) := by
   simp only [glMap, ← Submodule.map_comp, Units.val_mul, Matrix.toLin'_mul]
   rfl
 
-omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 theorem glMap_le_glMap_iff (g : GL (Fin r) K) (M L : Submodule O (Fin r → K)) :
     glMap g M ≤ glMap g L ↔ M ≤ L := by
   refine ⟨fun h => ?_, fun h => Submodule.map_mono h⟩
   have h' : glMap g⁻¹ (glMap g M) ≤ glMap g⁻¹ (glMap g L) := Submodule.map_mono h
   rwa [← glMap_mul, ← glMap_mul, inv_mul_cancel, glMap_one, glMap_one] at h'
 
-omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 theorem glMap_smul (g : GL (Fin r) K) (I : Ideal O) (L : Submodule O (Fin r → K)) :
     glMap g (I • L) = I • glMap g L := Submodule.map_smul'' _ _ _
 
-omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 
+omit [IsDomain O] [IsDiscreteValuationRing O] [IsFractionRing O K] in
 theorem relIndex_glMap (g : GL (Fin r) K) (M L : Submodule O (Fin r → K)) :
     (glMap g M).toAddSubgroup.relIndex (glMap g L).toAddSubgroup =
       M.toAddSubgroup.relIndex L.toAddSubgroup := by
@@ -68,15 +68,16 @@ theorem relIndex_glMap (g : GL (Fin r) K) (M L : Submodule O (Fin r → K)) :
   exact AddSubgroup.relIndex_map_map_of_injective (f :=
     (Matrix.toLin' (g : Matrix (Fin r) (Fin r) K)).toAddMonoidHom) M.toAddSubgroup L.toAddSubgroup hinj
 
-theorem glMap_isLattice (g : GL (Fin r) K) (L : Lat O K r) : (glMap g L.1).IsLattice K where
-  fg := L.2.fg.map _
-  span_eq_top := by
-    have : (glMap g L.1 : Set (Fin r → K))
-        = Matrix.toLin' (g : Matrix (Fin r) (Fin r) K) '' (L.1 : Set (Fin r → K)) := rfl
-    rw [this, Submodule.span_image, L.2.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-    intro y
-    refine ⟨Matrix.toLin' ((g⁻¹ : GL (Fin r) K) : Matrix (Fin r) (Fin r) K) y, ?_⟩
-    simp [Matrix.toLin'_apply, Matrix.mulVec_mulVec]
+theorem glMap_isLattice (g : GL (Fin r) K) (L : Lat O K r) : (glMap g L.1).IsFullLattice K := by
+  refine {
+    toIsLattice := Submodule.IsLattice.of_fg K (L.2.fg.map _)
+    span_eq_top := ?_ }
+  have : (glMap g L.1 : Set (Fin r → K))
+      = Matrix.toLin' (g : Matrix (Fin r) (Fin r) K) '' (L.1 : Set (Fin r → K)) := rfl
+  rw [this, Submodule.span_image, L.2.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+  intro y
+  refine ⟨Matrix.toLin' ((g⁻¹ : GL (Fin r) K) : Matrix (Fin r) (Fin r) K) y, ?_⟩
+  simp [Matrix.toLin'_apply, Matrix.mulVec_mulVec]
 
 def glLat (g : GL (Fin r) K) (L : Lat O K r) : Lat O K r := ⟨glMap g L.1, glMap_isLattice g L⟩
 
@@ -84,14 +85,14 @@ def glLat (g : GL (Fin r) K) (L : Lat O K r) : Lat O K r := ⟨glMap g L.1, glMa
 
 instance instMulActionLat : MulAction (GL (Fin r) K) (Lat O K r) where
   smul := glLat
-  one_smul L := Lat.ext (glMap_one L.1)
-  mul_smul g h L := Lat.ext (glMap_mul g h L.1)
+  one_smul L := Subtype.ext (glMap_one L.1)
+  mul_smul g h L := Subtype.ext (glMap_mul g h L.1)
 
 theorem smul_def (g : GL (Fin r) K) (L : Lat O K r) : g • L = glLat g L := rfl
 
 def maxMul (L : Lat O K r) : Lat O K r :=
   ⟨IsLocalRing.maximalIdeal O • L.1,
-    { fg := Submodule.FG.smul (IsNoetherian.noetherian _) L.2.fg
+    { toIsLattice := Submodule.IsLattice.of_fg K (Submodule.FG.smul (IsNoetherian.noetherian _) L.2.fg)
       span_eq_top := by
         obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
         have h0 : algebraMap O K ϖ ≠ 0 := by
@@ -148,6 +149,7 @@ def subElem (k : ℕ) (L : Lat O K r) : Set (Lat O K r) :=
 theorem subIdx_finite (n : ℕ) (L : Lat O K r) :
     (subIdx n L).Finite := by
   haveI := L.2
+  have := Submodule.IsLattice.finite K L.1
   have hq : qRes O ^ n ≠ 0 := (pow_pos (lt_of_lt_of_le two_pos two_le_qRes) _).ne'
   set I := IsLocalRing.maximalIdeal O ^ (qRes O ^ n)
   haveI : Finite (O ⧸ IsLocalRing.maximalIdeal O) := ‹Finite (IsLocalRing.ResidueField O)›
@@ -199,6 +201,7 @@ theorem relIndex_maxMul (L : Lat O K r) :
     (maxMul L).1.toAddSubgroup.relIndex L.1.toAddSubgroup = qRes O ^ r := by
   haveI := L.2
   haveI : Module.Free O L.1 := Submodule.IsLattice.free K L.1
+  have := Submodule.IsLattice.finite K L.1
   have hc : (IsLocalRing.maximalIdeal O • L.1).comap L.1.subtype
       = IsLocalRing.maximalIdeal O • (⊤ : Submodule O L.1) := by
     apply Submodule.map_injective_of_injective L.1.injective_subtype
@@ -210,7 +213,7 @@ theorem relIndex_maxMul (L : Lat O K r) :
     (TensorProduct.quotTensorEquivQuotSMul L.1 (IsLocalRing.maximalIdeal O)).toEquiv]
   change Nat.card (IsLocalRing.ResidueField O ⊗[O] L.1) = _
   rw [Module.natCard_eq_pow_finrank (K := IsLocalRing.ResidueField O), Module.finrank_baseChange,
-    Submodule.IsLattice.finrank_of_pi K L.1, Fintype.card_fin]
+    ((Submodule.IsFullLattice.finrank_eq K L.1).trans (Module.finrank_fintype_fun_eq_card K)), Fintype.card_fin]
   rfl
 
 theorem subElem_top (L : Lat O K r) :
@@ -285,13 +288,6 @@ theorem heckeElem_eq_zero {k : ℕ} (hk : r < k) (φ : Lat O K r → E) (L : Lat
     heckeElem k φ L = 0 := by
   simp [heckeElem, subElem_eq_empty hk]
 
-theorem heckeAll_smul (g : GL (Fin r) K) (n : ℕ) (φ : Lat O K r → E) (L : Lat O K r) :
-    heckeAll n φ (g • L) = heckeAll n (fun M => φ (g • M)) L := by
-  symm
-  refine finsum_mem_eq_of_bijOn (fun M => g • M) ⟨fun M hM => (smul_mem_subIdx_iff g n M L).2 hM,
-    (MulAction.injective g).injOn, fun M hM => ⟨g⁻¹ • M, ?_, smul_inv_smul g M⟩⟩ fun _ _ => rfl
-  rw [← smul_mem_subIdx_iff g, smul_inv_smul]; exact hM
-
 theorem heckeElem_smul (g : GL (Fin r) K) (k : ℕ) (φ : Lat O K r → E) (L : Lat O K r) :
     heckeElem k φ (g • L) = heckeElem k (fun M => φ (g • M)) L := by
   symm
@@ -307,20 +303,5 @@ theorem qRes_padicInt (p : ℕ) [Fact p.Prime] [Finite (IsLocalRing.ResidueField
     qRes ℤ_[p] = p := by
   unfold qRes
   rw [Nat.card_congr (PadicInt.residueField (p := p)).toEquiv, Nat.card_zmod]
-
-example : haveI := finite_residueField_padicInt 2
-    (heckeElem 2 : (Lat ℤ_[2] ℚ_[2] 2 → ℕ) → Lat ℤ_[2] ℚ_[2] 2 → ℕ) ≠ id := by
-  classical
-  haveI := finite_residueField_padicInt 2
-  intro h
-  have h1 := congrFun (congrFun h fun M => if M = std ℤ_[2] ℚ_[2] 2 then 1 else 0) (std ℤ_[2] ℚ_[2] 2)
-  rw [heckeElem_top] at h1
-  simp [maxMul_ne] at h1
-
-example : haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
-    (maxMul (std ℤ_[3] ℚ_[3] 2)).1.toAddSubgroup.relIndex (std ℤ_[3] ℚ_[3] 2).1.toAddSubgroup = 9 := by
-  haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
-  haveI := finite_residueField_padicInt 3
-  rw [relIndex_maxMul, qRes_padicInt]; rfl
 
 end GlobalTheory.LatHecke

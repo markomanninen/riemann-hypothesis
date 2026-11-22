@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ChangeVar
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTest
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotAny
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotFin
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProper
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ChangeVar
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTest
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotAny
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.QuotFin
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProper
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Geo
 open scoped ENNReal Pointwise
@@ -37,7 +41,7 @@ private lemma prod_fib {m : ℕ} (y : Fin m → G) (x : G) : (List.ofFn (fib y x
 
 private lemma closed_centr [T2Space G] (γ : G) : IsClosed ((Subgroup.centralizer {γ} : Subgroup G) : Set G) := by
   have : ((Subgroup.centralizer {γ} : Subgroup G) : Set G) = {g | g * γ = γ * g} := by
-    ext g; simp [Subgroup.mem_centralizer_singleton_iff]
+    ext g; simp [Subgroup.mem_centralizer_singleton_iff, commute_iff_eq]
   rw [this]
   exact isClosed_eq (continuous_id.mul continuous_const) (continuous_const.mul continuous_id)
 
@@ -208,9 +212,9 @@ theorem geoAbs : GeoAbs := by
         rw [integral_mul_const]
   · have no : ¬∃ ρ, IsNormAlong id (fun t : (Subgroup.centralizer {γ} : Subgroup G) => fun _ : Fin (m + 1) => (t : G)) ν ρ := by
       rintro ⟨ρ, hρ⟩
-      refine hex ⟨fun g => ρ fun _ => g, hρ.1.comp (measurable_pi_lambda _ fun _ => measurable_id), fun x => ?_⟩
+      refine hex ⟨fun g => ρ fun _ => g, hρ.1.comp (Measurable.of_eval fun _ => measurable_id), fun x => ?_⟩
       exact hρ.2 fun _ => x
     unfold quotInt
-    rw [dif_neg no, dif_neg hex]
+    rw [dite_eq_right no, dite_eq_right hex]
 
 end UpperTheory.ConvolutionTheory.L1

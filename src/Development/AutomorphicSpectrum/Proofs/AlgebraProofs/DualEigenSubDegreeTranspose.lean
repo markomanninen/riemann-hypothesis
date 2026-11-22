@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
-import Development.WeilBound.CoreStatements.HodgeTatePoints.EigFrob
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsSplitGaussChars
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GapCondExample
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.EigFrob
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Crv
 

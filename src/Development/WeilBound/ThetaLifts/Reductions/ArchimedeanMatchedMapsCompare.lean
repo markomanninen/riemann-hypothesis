@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.RealTrans
-import Development.WeilBound.ThetaLifts.Reductions.JoinDef
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.RealTrans
+public import Development.WeilBound.ThetaLifts.Reductions.JoinDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,22 @@ theorem archimedean_matched_maps_compare (hH : PositivityTheory.ThKR.JoinTri) (h
     {R R₂ : RealMaps F a a'} {Rf : FinMaps F a a'} (m : IsMatched B G X om om' R Rf) (m₂ : IsMatched B G X om om' R₂ Rf) :
     ∃ (e : R.Pi →ₗ[ℂ] R₂.Pi) (c : ℂ), c ≠ 0 ∧ (∀ x ∈ G.M.Pol B.ψ B.emb, e (R.p x) = R₂.p x) ∧
       ∀ x ∈ G.M'.Pol B.ψ B.emb, e (R.p' x) = c • R₂.p' x := by
-  have p1 := pairV m.triple
-  have p2 := pairV' m.triple
+  have hecke_div {χ χ' : Chr F E} (h : IsHecke F E χ) (h' : IsHecke F E χ') : IsHecke F E (χ / χ') :=
+    ⟨h.1.div' h'.1, fun x => by rw [MonoidHom.div_apply, h.2, h'.2, div_one]⟩
+  have res_div {K : Subgroup (AF F)ˣ} {χ χ' : Chr F E} {m n k : ℕ} (h : ResEtaPow K χ m) (h' : ResEtaPow K χ' n)
+      (e : k = m + n) : ResEtaPow K (χ / χ') k := fun x => by
+    rw [MonoidHom.div_apply, Circle.coe_div, h, h', e]
+    split_ifs
+    · simp
+    · rw [pow_add, div_eq_mul_inv, ← inv_pow, inv_neg, inv_one]
+  have p1 : IsPair B G.M X.β (X.β / X.α) om (a - G.p) G.p (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV, m.triple.geo.hW, m.triple.geo.hM, m.triple.chars.heckeβ,
+      hecke_div m.triple.chars.heckeβ m.triple.chars.heckeα, m.triple.chars.resβ,
+      res_div m.triple.chars.resβ m.triple.chars.resα rfl, m.triple.weil⟩
+  have p2 : IsPair B G.M' X.α (X.α / X.β) om' G.q (a' - G.q) (a + a' - (G.p + G.q)) (G.p + G.q) :=
+    ⟨m.triple.base, m.triple.geo.hV', m.triple.geo.hW, m.triple.geo.hM', m.triple.chars.heckeα,
+      hecke_div m.triple.chars.heckeα m.triple.chars.heckeβ, m.triple.chars.resα,
+      res_div m.triple.chars.resα m.triple.chars.resβ (add_comm _ _), m.triple.weil'⟩
   choose A hA using exists_linop hO hL hQ p1
   choose A' hA' using exists_linop hO hL hQ p2
   haveI := m₂.real.nontriv

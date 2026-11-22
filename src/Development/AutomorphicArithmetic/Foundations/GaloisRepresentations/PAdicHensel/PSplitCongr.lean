@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1
 open scoped TensorProduct
@@ -97,7 +101,7 @@ theorem UpperTheory.Gal.G1.pSplitCongr :
     calc e + e' = h * 2 := by rw [heeq, he'eq]; ring
       _ = 1 := h2
   have hse : sB e = e' := by
-    rw [heeq, he'eq, map_mul, map_add, map_one, hsh, hsw, sub_eq_add_neg]
+    rw [heeq, he'eq, map_mul, map_add (f := _), map_one, hsh, hsw, sub_eq_add_neg]
   have hse' : sB e' = e := by
     rw [heeq, he'eq, map_mul, map_sub, map_one, hsh, hsw, sub_neg_eq_add]
   have hNu : IsUnit N.det := isUnit_iff_ne_zero.mpr hN0

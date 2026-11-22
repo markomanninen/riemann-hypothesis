@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,10 +31,6 @@ def rm (f : C ⥤ AffOp X) (g : D ⥤ AffOp X) (σ : D ⥤ C)
     have h2 := Sec.res_res s (h T) (leOfHom (g.map φ).unop) b
     exact h1.symm.trans h2
   smul T r b := map_smul (Sec.res s (h T)) r b
-
-theorem rm_pull (f : C ⥤ AffOp X) (g : D ⥤ AffOp X) (σ : D ⥤ C) (h) (i : ℕ) (z : Cn (f ⋙ OAff s) i)
-    (c : Fin (i + 1) ⥤ D) :
-    pulln (rm s f g σ h) i z c = Sec.res s (h (c.obj (Fin.last i))) (z (c ⋙ σ)) := rfl
 
 theorem pull_rm_rm (f : C ⥤ AffOp X) (g : D ⥤ AffOp X) (k : E ⥤ AffOp X) (σ : D ⥤ C) (τ : E ⥤ D) (h h')
     (h'' : ∀ T, (k.obj T).unop.1 ≤ (f.obj ((τ ⋙ σ).obj T)).unop.1) (i : ℕ) (z : Cn (f ⋙ OAff s) i) :
@@ -168,7 +168,7 @@ theorem acyc_of_cone (hCx : CxSt) (hHt : HtpySt) (hA : AffAcycSt) [Quiver.IsThin
   · obtain ⟨y₁, e₁⟩ := H₁.2 n x hx
     obtain ⟨y₂, e₂⟩ := H₂.2 n x hx
     refine ⟨pulln (rm s (pt W) f c₂ hc₂) n y + y₁ - y₂, ?_⟩
-    rw [map_sub, map_add, ← e₁, ← e₂, ← pull_d hCx, hy, hp, h₀]
+    rw [map_sub, map_add (f := _), ← e₁, ← e₂, ← pull_d hCx, hy, hp, h₀]
     abel
 
 theorem acyc_member (hCx : CxSt) (hHt : HtpySt) (hA : AffAcycSt) {L : Type} [SemilatticeInf L]

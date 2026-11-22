@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotOntoOfCharAlone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePartBase
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeafDataOfOnTieOfIntegral
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ONPage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotOntoOfCharAlone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TypePartBase
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeafDataOfOnTieOfIntegral
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ONPage
+
+@[expose] public section
 
 set_option autoImplicit false
 

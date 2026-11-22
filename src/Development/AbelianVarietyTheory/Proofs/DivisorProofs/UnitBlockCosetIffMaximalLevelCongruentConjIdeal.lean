@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open Formalism.DivisionValues (vw)
@@ -73,7 +78,7 @@ theorem mem_map_iff {A R S : Type} [CommRing A] [CommRing R] [CommRing S] (ρ : 
         intro w hw y hy
         obtain ⟨u, hu⟩ := hρ.2 s.1
         obtain ⟨v, hv⟩ := hρ.2 t.1
-        have : y = u + v := hρ.1 (by rw [hy, map_add, hu, hv]; rfl)
+        have : y = u + v := hρ.1 (by rw [hy, map_add (f := _), hu, hv]; rfl)
         rw [this, add_mul]
         exact add_mem (hs w hw u hu) (ht w hw v hv)
       | smul a t _ ht =>
@@ -96,7 +101,7 @@ theorem mem_map_iff {A R S : Type} [CommRing A] [CommRing R] [CommRing S] (ρ : 
     | add u v _ _ hu hv =>
       obtain ⟨h1, h2⟩ := hu
       obtain ⟨h3, h4⟩ := hv
-      rw [map_add]
+      rw [map_add (f := _)]
       exact ⟨add_mem h1 h3, add_mem h2 h4⟩
     | neg u _ hu =>
       obtain ⟨h1, h2⟩ := hu
@@ -169,13 +174,13 @@ theorem core {R : Type} [CommRing R] (O : Subring R) (J : AddSubgroup R) (hJ : �
   · intro h i j
     have h3 := h ⟨o + i.1, by omega⟩ j
     rw [Matrix.mul_apply, Finset.sum_eq_single i] at h3
-    · have h4 : X ⟨o + i.1, by omega⟩ i = a := if_pos rfl
+    · have h4 : X ⟨o + i.1, by omega⟩ i = a := ite_eq_left rfl
       rw [h4] at h3
       have h5 : (H - 1) i j = (1 - a) * (H - 1) i j + a * (H - 1) i j := by ring
       rw [h5]
       exact add_mem (hJ _ ha _ (hH1 i j)) h3
     · intro l _ hl
-      have h4 : X ⟨o + i.1, by omega⟩ l = 0 := if_neg fun h' => hl (Fin.ext (by simp only at h'; omega))
+      have h4 : X ⟨o + i.1, by omega⟩ l = 0 := ite_eq_right fun h' => hl (Fin.ext (by simp only at h'; omega))
       rw [h4, zero_mul]
     · intro h'
       exact absurd (Finset.mem_univ i) h'

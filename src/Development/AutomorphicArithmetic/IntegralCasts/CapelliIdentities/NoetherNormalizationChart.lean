@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u
 
@@ -25,7 +29,7 @@ private lemma shear_comp (b : ℕ) (c d : A) (h : c + d = 0) :
   cases i using Fin.cases with
   | zero => simp [shear_zero]
   | succ i =>
-    rw [AlgHom.comp_apply, shear_succ, map_add, map_mul, map_pow, shear_zero, shear_succ,
+    rw [AlgHom.comp_apply, shear_succ, map_add (f := _), map_mul, map_pow, shear_zero, shear_succ,
       algHom_C, algebraMap_eq, add_assoc, ← add_mul, ← C_add, h]
     simp
 
@@ -92,7 +96,8 @@ theorem UpperTheory.exists_monic_change_of_variables :
   have ha : f.coeff v ≠ 0 := MvPolynomial.mem_support_iff.mp hv
   have hsum : chart A n b f = ∑ w ∈ f.support,
       Polynomial.C (MvPolynomial.C (f.coeff w)) * chart A n b (MvPolynomial.monomial w 1) := by
-    conv_lhs => rw [← f.support_sum_monomial_coeff, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← f.support_sum_monomial_coeff, map_sum]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [← chart_C b, ← map_mul, MvPolynomial.C_mul_monomial, mul_one]
   have hdeg : (chart A n b f).natDegree ≤ wt v := by
@@ -102,7 +107,7 @@ theorem UpperTheory.exists_monic_change_of_variables :
     rw [(chart_monomial hb w).natDegree_eq]
     exact hmax w hw
   have hcoeff : (chart A n b f).coeff (wt v) = MvPolynomial.C (f.coeff v) := by
-    rw [hsum, Polynomial.finset_sum_coeff, Finset.sum_eq_single_of_mem v hv]
+    rw [hsum, Polynomial.finsetSum_coeff, Finset.sum_eq_single_of_mem v hv]
     · have h1 := (chart_monomial (A := A) hb v).monic.coeff_natDegree
       rw [(chart_monomial hb v).natDegree_eq] at h1
       rw [Polynomial.coeff_C_mul, h1, mul_one]

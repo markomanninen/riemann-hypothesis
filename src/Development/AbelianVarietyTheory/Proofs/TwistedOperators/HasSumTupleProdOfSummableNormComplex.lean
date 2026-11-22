@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitHeightSummableExpNegAbs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitHeightSummableExpNegAbs
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory
@@ -30,7 +35,7 @@ theorem hasSum_pi_prod_of_summable_norm : ∀ (ι : Type) [Fintype ι] [Decidabl
     simpa using this
   have h2 : Tendsto (fun S : ∀ i, Finset (J i) => ∏ i, ∑ x ∈ S i, f i x)
       atTop (𝓝 (∏ i, ∑' j, f i j)) :=
-    tendsto_finset_prod _ fun i _ => ((hf i).of_norm.hasSum).comp (hproj i)
+    tendsto_finsetProd _ fun i _ => ((hf i).of_norm.hasSum).comp (hproj i)
   have h3 : (fun S : ∀ i, Finset (J i) => ∑ x ∈ Fintype.piFinset S, ∏ i, f i (x i)) =
       fun S => ∏ i, ∑ x ∈ S i, f i x := by
     funext S; exact (Finset.prod_univ_sum S fun i x => f i x).symm

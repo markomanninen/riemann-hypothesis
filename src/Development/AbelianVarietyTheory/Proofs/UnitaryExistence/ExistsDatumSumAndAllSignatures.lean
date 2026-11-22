@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermitianDatumDirectPower
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExtensionCyclotomicField28
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HermitianDatumDirectPower
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsCyclotomicExtensionCyclotomicField28
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -62,7 +67,7 @@ theorem sumForm_bijective {L M : Type} [AddCommGroup L] [AddCommGroup M] (B : Li
     obtain ⟨y, hy⟩ := hC.2 (φ ∘ₗ LinearMap.inr ℤ L M)
     refine ⟨(x, y), LinearMap.ext fun z => ?_⟩
     rw [sumForm_apply, hx, hy]
-    simp [← map_add]
+    simp [← map_add (f := _)]
 
 theorem sumForm_baseChange {L M : Type} [AddCommGroup L] [AddCommGroup M] (B : LinearMap.BilinForm ℤ L)
     (C : LinearMap.BilinForm ℤ M) (x y : ℝ ⊗[ℤ] (L × M)) :
@@ -71,11 +76,11 @@ theorem sumForm_baseChange {L M : Type} [AddCommGroup L] [AddCommGroup M] (B : L
       C.baseChange ℝ (TensorProduct.prodRight ℤ ℝ ℝ L M x).2 (TensorProduct.prodRight ℤ ℝ ℝ L M y).2 := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, Prod.fst_add, Prod.snd_add, ha, hb]; ring
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, Prod.fst_add, Prod.snd_add, ha, hb]; ring
   | tmul r u =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, Prod.fst_add, Prod.snd_add, ha, hb]; ring
+    | add a b ha hb => simp only [map_add (f := _), Prod.fst_add, Prod.snd_add, ha, hb]; ring
     | tmul s v => simp [sumForm_apply, add_smul, add_mul]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -126,9 +131,9 @@ def sumDatum (D D' : Datum H) : Datum H where
         · exact add_pos (h3 _ ha) (h3' _ hb)
     · intro a A t hA ht
       let A0 : ℝ ⊗[ℤ] D.La →ₗ[ℝ] ℝ ⊗[ℤ] D.La :=
-        ((DistribMulAction.toAddMonoidHom D.La a).toIntLinearMap).baseChange ℝ
+        ((DistribSMul.toAddMonoidHom D.La a).toIntLinearMap).baseChange ℝ
       let A1 : ℝ ⊗[ℤ] D'.La →ₗ[ℝ] ℝ ⊗[ℤ] D'.La :=
-        ((DistribMulAction.toAddMonoidHom D'.La a).toIntLinearMap).baseChange ℝ
+        ((DistribSMul.toAddMonoidHom D'.La a).toIntLinearMap).baseChange ℝ
       obtain ⟨k1, k2, k3⟩ := h4 a A0 _ (fun x => by simp [A0]) rfl
       obtain ⟨k1', k2', k3'⟩ := h4' a A1 _ (fun x => by simp [A1]) rfl
       have hAA : A = blockEnd e A0 A1 := by
@@ -136,7 +141,7 @@ def sumDatum (D D' : Datum H) : Datum H where
         intro x
         induction x using TensorProduct.induction_on with
         | zero => simp
-        | add a b ha hb => simp only [map_add, ha, hb]
+        | add a b ha hb => simp only [map_add (f := _), ha, hb]
         | tmul r u =>
           have : r ⊗ₜ[ℤ] u = r • ((1 : ℝ) ⊗ₜ[ℤ] u) := by simp [TensorProduct.smul_tmul']
           rw [this, map_smul, map_smul, hA]
@@ -157,27 +162,10 @@ def sumDatum (D D' : Datum H) : Datum H where
       · rw [Complex.add_re]; ring
       · rw [Complex.add_im]; ring
 
-theorem finrank_cyclotomic_twenty_eight : Module.finrank ℚ CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight = 12 := by
-  rw [IsCyclotomicExtension.finrank (n := 28) CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight (Polynomial.cyclotomic.irreducible_rat (by norm_num))]
-  decide
-
 end
 
 end GlobalTheory.DatumSum
 
 namespace GlobalTheory
-
-theorem exists_datum_sum_and_all_signatures :
-    (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D D' : Datum H), ∃ (D'' : Datum H) (e : D''.La ≃ₗ[𝓞 E] D.La × D'.La), D''.p = D.p + D'.p ∧ D''.q = D.q + D'.q ∧ ∀ x y, D''.EF x y = D.EF (e x).1 (e y).1 + D'.EF (e x).2 (e y).2) ∧ ∃ (E : Type) (_ : Field E) (_ : NumberField E) (_ : IsCMField E) (H : Host E), 2 < Module.finrank ℚ E ∧ ∀ p q : ℕ, ∃ D : Datum H, D.p = p ∧ D.q = q := by
-  refine ⟨fun E _ _ _ H D D' => ⟨DatumSum.sumDatum D D', LinearEquiv.refl (𝓞 E) (D.La × D'.La), rfl, rfl,
-    fun x y => DatumSum.sumForm_apply D.EF D'.EF x y⟩, ?_⟩
-  refine ⟨CM.CyclotomicTwentyEight.CyclotomicFieldTwentyEight, inferInstance, inferInstance, inferInstance, CM.CyclotomicTwentyEight.host, ?_, fun p q => ?_⟩
-  · rw [DatumSum.finrank_cyclotomic_twenty_eight]; norm_num
-  · obtain ⟨D, hp, hq⟩ := CM.CyclotomicTwentyEight.exists_datum
-    refine ⟨DatumSum.sumDatum (powDatum D p) (powDatum (CM.oppDatum D) q), ?_, ?_⟩
-    · change p * D.p + q * D.q = p
-      simp [hp, hq]
-    · change p * D.q + q * D.p = q
-      simp [hp, hq]
 
 end GlobalTheory

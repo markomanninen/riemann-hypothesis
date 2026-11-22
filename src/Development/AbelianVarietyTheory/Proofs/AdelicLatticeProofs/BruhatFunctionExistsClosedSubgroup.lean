@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.BruhatFunctionExistsVariant
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.BruhatFunctionExistsVariant
+
+@[expose] public section
 
 universe u
 
@@ -118,7 +122,7 @@ private lemma exists_nonneg_continuous_ne_zero_on_cosets {G : Type*} [Group G] [
     intro y
     obtain ⟨m, hm⟩ := hyU y
     have hc : Continuous fun z => ∑ n ∈ Finset.range (m + 2), φ (σ y) n z :=
-      continuous_finset_sum _ fun n _ => (φ (σ y) n).continuous
+      continuous_finsetSum _ fun n _ => (φ (σ y) n).continuous
     refine hc.continuousAt.congr ?_
     filter_upwards [(hUo _ m).mem_nhds hm] with z hz
     exact (hfeq y m z hz).symm
@@ -240,8 +244,8 @@ private lemma exists_bruhat_function_of_positive_on_cosets {G : Type*} [Group G]
     rw [integral_div]
     exact div_self (hFpos x).ne'
 
-open MeasureTheory Pointwise in
 
+open MeasureTheory Pointwise in
 theorem _root_.GlobalTheory.bruhatFunctionExists_closedSubgroup : _root_.HeckeCharacterZeroLocus.BruhatFunctionExistsVariant.{u} := by
   unfold _root_.HeckeCharacterZeroLocus.BruhatFunctionExistsVariant
   intro G _ _ _ _ _ _ _ H hH μ _

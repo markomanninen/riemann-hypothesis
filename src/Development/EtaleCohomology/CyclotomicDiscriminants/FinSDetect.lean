@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CyclotomicDiscriminants.SDetectCut
+module
+
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SDetectCut
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SDetect
 theorem detection_statement_holds : UpperTheory.V.ZK.SDetect := by

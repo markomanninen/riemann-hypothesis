@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -48,12 +52,12 @@ def Pt {X : Scheme.{0}} (p : X ⟶ S k) : Type := {y : S k ⟶ X // y ≫ p = �
 def Pt.map {Y X : Scheme.{0}} {q : Y ⟶ S k} {p : X ⟶ S k} (a : Y ⟶ X) (ha : a ≫ p = q) (y : Pt q) : Pt p :=
   ⟨y.1 ≫ a, by rw [Category.assoc, ha, y.2]⟩
 
-variable (k) in
 
+variable (k) in
 abbrev PN (N : ℕ) : Scheme.{0} := Proj (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) k)
 
-variable (k) in
 
+variable (k) in
 def PNto (N : ℕ) : PN k N ⟶ S k :=
   Proj.toSpecZero _ ≫ Spec.map (CommRingCat.ofHom (algebraMap k (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) k 0)))
 
@@ -61,8 +65,8 @@ def IsProj {X : Scheme.{0}} (p : X ⟶ S k) : Prop := ∃ (N : ℕ) (ι : X ⟶ 
 
 def SP (d : ℕ) {X : Scheme.{0}} (p : X ⟶ S k) : Prop := IsProper p ∧ SmoothOfRelativeDimension d p
 
-variable (k) in
 
+variable (k) in
 abbrev Fam : Type 1 := ∀ (d : ℕ) {X : Scheme.{0}} (p : X ⟶ S k), V l (pullback p p) (2 * d)
 
 variable {l}
@@ -82,8 +86,8 @@ structure IsDiag (δ : Fam l k) : Prop where
   span : ∀ (d : ℕ) {X : Scheme.{0}} (p : X ⟶ S k), SP d p → ∀ (y : Pt p) (U : X.Opens), (U : Set X) = (Set.range y.1)ᶜ →
     ∀ z : V l X (2 * d), pb l U.ι _ z = 0 → ∃ r : ℚ_[l], z = r • δ.cl d y
 
-variable (l) in
 
+variable (l) in
 def kun {X Y : Scheme.{0}} (p : X ⟶ S k) (q : Y ⟶ S k) (n : ℤ) :
     (⨁ i : ℤ, V l X i ⊗[ℚ_[l]] V l Y (n - i)) →ₗ[ℚ_[l]] V l (pullback p q) n :=
   DirectSum.toModule _ _ _ fun i => TensorProduct.lift

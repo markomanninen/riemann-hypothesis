@@ -1,15 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramFrMulInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatVectorThreeStepsConjugatePlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatVectorEqUnitSmulCentralTranslatePlacePart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffFrameMatrixIntegralOnH
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffAdjointFrameMatrixInte
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeIffUniformiserReductionVanishes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScalarDilationElementSupportDetPullback
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAdelicUnitarySplitPlaceComponent
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeisOFixOfIsThetaAt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramFrMulInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatVectorThreeStepsConjugatePlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatVectorEqUnitSmulCentralTranslatePlacePart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffFrameMatrixIntegralOnH
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemCompletedPairLatticeIffAdjointFrameMatrixInte
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeIffUniformiserReductionVanishes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScalarDilationElementSupportDetPullback
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAdelicUnitarySplitPlaceComponent
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeisOFixOfIsThetaAt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceAt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatSelf
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open NumberField IsDedekindDomain
@@ -175,7 +181,7 @@ theorem X_pval : ∀ (D : D7) (Q : Finset (Pl D.host.E)) (ϖ : 𝓞 D.host.E), (
         have e2 : (h2 P.1 P.2).2.unit = (h P.1 P.2).unit * (hu P.1).unit := Units.ext (key P.1 P.2).2
         rw [e1, hξ P.1 P.2, e2, map_mul, Units.val_mul, zpow_neg_one, Units.val_inv_eq_inv_val]
         field_simp
-    · rw [dif_neg, dif_neg, mul_zero]
+    · rw [dite_eq_right, dite_eq_right, mul_zero]
       · intro h2
         exact h fun PP hPP => isUnit_of_mul_isUnit_left (by rw [← (key PP hPP).2]; exact (h2 PP hPP).2)
       · intro h1
@@ -208,8 +214,8 @@ theorem exists_idF_of_fixed {D : D7} (V : HSp D) (y : (AE D)ˣ) (hy : cA D (y : 
   obtain ⟨a, ha⟩ := (GlobalTheory.Member.isDetRoot_laws D V).2.1 1 1 y (h1 1 (map_one _)) (h1 y hy)
   exact ⟨a, by rw [ha, one_mul]⟩
 
-open GlobalTheory.ConjTwist in
 
+open GlobalTheory.ConjTwist in
 theorem isLocUnit_conj {D : D7} {PP : Pl D.host.E} (h : Formalism.L2.NTheta.IsIdemAt (idemAt PP) PP) {u : (kP PP)ˣ} {x : (AE D)ˣ}
     (hx : IsLocUnit PP u x) :
     IsLocUnit (conjPl PP) (Units.map (conjK PP).toMonoidHom u) (Units.map (cA D).toMonoidHom x) := by
@@ -230,8 +236,8 @@ theorem isLocUnit_conj {D : D7} {PP : Pl D.host.E} (h : Formalism.L2.NTheta.IsId
     rw [resS_conj PP ⟨_, k1⟩ _ (GlobalTheory.AdelicLatMove.toEAf_cA _), k2]
     rfl
 
-open GlobalTheory.ConjTwist in
 
+open GlobalTheory.ConjTwist in
 theorem X_chr : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Hk3.Core R F → ∀ (i : Fin D.R.m) (t : T0) (B : Base (Vc D i) (Wc D i)) (ψ : Twist D Circle), B.Good → ψ.Good → B.admitted ψ.Q → R.xi t = B.de.chi * ψ.chi → ∀ PP ∈ R.Q t, conjPl PP ∈ B.de.Q ∪ ψ.Q → ∀ u : (kP PP)ˣ, (B.de.locC (conjPl PP) * ψ.locC (conjPl PP)) (Units.map (conjK PP).toMonoidHom u) = (R.xiR t PP u)⁻¹ := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hC i t B ψ hB hψ hQ hxi PP hPP hm u
   obtain ⟨P, -, h2, hP⟩ := hQ.1.split
@@ -329,8 +335,8 @@ theorem isRes_one {D : D7} {χ : Formalism.L2.Host.HChar D.host.E} {P : Pl D.hos
   rw [GlobalTheory.TypeValues.val_atFin P k a hk]
   exact (P.intValuation_eq_one_iff).2 ha
 
-open GlobalTheory.ChiUnit GlobalTheory.DilChi in
 
+open GlobalTheory.ChiUnit GlobalTheory.DilChi in
 theorem X_det : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Hk3.Core R F → ∀ (i : Fin D.R.m) (t : T0) (Q : Finset (Pl D.host.E)), Q ⊆ R.Q t → ∀ N : ℕ, (∀ PP ∈ Q, (N : 𝓞 D.host.E) ∈ PP.asIdeal) → ∀ e : AE D, IsIdemSum e Q → ∀ ϖ : 𝓞 D.host.E, ϖ ≠ 0 → (∀ PP ∈ Q, ϖ ∈ PP.asIdeal ∧ ϖ ∉ PP.asIdeal ^ 2) → ∀ (m : ℕ) (d d' : Datum.EAf D), d ∈ Formalism.L2.Herm.intAf D.host.F D.host.E → d' ∈ Formalism.L2.Herm.intAf D.host.F D.host.E → d * d' = 1 → ∀ x : (AE D)ˣ, (1 - e) * (x : AE D) = 1 - e → toEAf D e * toEAf D (x : AE D) = toEAf D e * (eToEAf D (ϖ : D.host.E) ^ m * d) → UnitOff N ((((Lift.chrTh (Lift.tup R.mu0 (R.xi t)) R.eta ((i : ℕ) + 1)).2 x : Circle) : ℂ))⁻¹ := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hC i t Q hQ N hNQ e he ϖ hϖ0 hϖ m d d' hd hd' hdd x hx1 hx2
   have hK := kerDat_tuple (i := i) hC.lev hC.thP t
@@ -354,7 +360,7 @@ theorem X_det : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A
     rw [Units.val_mul, hy']
     refine eq_of_parts ?_ ?_
     · have h1 := congrArg (infPart D) hx1
-      simp only [map_mul, map_sub, map_add, map_one, hinf, sub_zero, one_mul, zero_mul, add_zero, zero_add] at h1 ⊢
+      simp only [map_mul, map_sub, map_add (f := _), map_one, hinf, sub_zero, one_mul, zero_mul, add_zero, zero_add] at h1 ⊢
       exact h1
     · have h1 := congrArg (toEAf D) hx1
       have h2 := congrArg (toEAf D) hk
@@ -362,7 +368,7 @@ theorem X_det : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A
       have h4 : toEAf D (incA D ((u ^ m : D.host.Eˣ) : D.host.E)) = eToEAf D (ϖ : D.host.E) ^ m := by
         rw [← map_pow, Units.val_pow_eq_pow_val]; rfl
       rw [← h4] at hx2
-      simp only [map_mul, map_sub, map_add, map_one, ha] at h1 h2 h3 ⊢
+      simp only [map_mul, map_sub, map_add (f := _), map_one, ha] at h1 h2 h3 ⊢
       linear_combination h1 + toEAf D (incA D (((u ^ m)⁻¹ : D.host.Eˣ) : D.host.E)) * hx2 + toEAf D e * d * h2
   have hun : ∀ PP : Pl D.host.E, IsUnit (resS D.host.F PP ⟨d, hd⟩) := fun PP =>
     (IsUnit.of_mul_eq_one (⟨d', hd'⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) (Subtype.ext hdd)).map _
@@ -670,7 +676,9 @@ theorem isSBHalf_flatDat (hC : GlobalTheory.Hk3.Core R F) (i : Fin D.R.m) {Q : F
   have hinf := GlobalTheory.PlaceVec.idemSum_infPart he
   refine GlobalTheory.PlaceDatum.isSBHalf_of_red _ _ (frMapO (Vc D i) (Wc D i) (R.βV i) (R.βW i)) (GlobalTheory.PlaceDatum.frMapO_add _ _)
       (GlobalTheory.PlaceDatum.exists_den_frMapO sV.1.fg sW.1.fg _ _) ?_ Q _ fun y y' h => GlobalTheory.FlatVecExist.omegaFlat_congr _ _ _ h
-  obtain ⟨K, hK, h'⟩ := GlobalTheory.PlaceDatum.exists_nsmul_of_frMapO sV.1 sW.1 (R.βV i) (R.βW i)
+  obtain ⟨K, hK, h'⟩ := GlobalTheory.PlaceDatum.exists_nsmul_of_frMapO
+    (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ sV)
+    (Formalism.IndefR.Fin.PDA.selfDual_isFullLattice _ _ sW) (R.βV i) (R.βW i)
   exact ⟨K, hK, fun t ht => h' t (GlobalTheory.PlaceDatum.infPart_of_half hinf ht)⟩
 
 theorem base_facts (hC : GlobalTheory.Hk3.Core R F) (hG : QGuard R) {i : Fin D.R.m} {t : T0} (hV : VStd D i)
@@ -698,7 +706,8 @@ theorem base_facts (hC : GlobalTheory.Hk3.Core R F) (hG : QGuard R) {i : Fin D.R
     rw [← idem_eq hea, ← idem_eq het, show idem K = ∑ PP ∈ K, idemAt PP from rfl, Finset.sum_mul]
     exact Finset.sum_eq_zero fun j hj => GlobalTheory.FlatThreeSteps.idemAt_mul_idem hsp hL (hK hj) (Finset.disjoint_left.1 hd hj)
   have h2 : ea * cA D et = 0 := by
-    rw [← idem_eq hea, ← idem_eq het, idem, idem, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← idem_eq hea, ← idem_eq het, idem, idem, map_sum, Finset.sum_mul_sum]
     exact Finset.sum_eq_zero fun a ha => Finset.sum_eq_zero fun c hc => hsp.mul_conj (hK ha) (hL hc)
   have h3 : cA D ea * cA D et = 0 := by rw [← map_mul, h1, map_zero]
   have h4 : cA D ea * et = 0 := by rw [← Formalism.L2.Theta.cA_cA et, ← map_mul, h2, map_zero]
@@ -734,7 +743,7 @@ theorem pull_flat (hC : GlobalTheory.Hk3.Core R F) (i : Fin D.R.m) {Q : Finset (
   · rw [if_neg fun h => hi h.2]
     split_ifs with h
     · unfold omegaQ
-      rw [dif_neg, mul_zero]
+      rw [dite_eq_right, mul_zero]
       intro h'
       have := int_ct (X_pint D Q e he ϖ hϖ hϖ0 _ _ _ _ iW' (gramFr_mul_inv _ _) _ hy h.2 fun PP hPP => (h' PP hPP).1)
       rw [ct_ct] at this

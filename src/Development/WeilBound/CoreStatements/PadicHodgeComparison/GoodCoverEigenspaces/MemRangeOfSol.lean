@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -13,7 +17,8 @@ theorem mem_range_of_sol {m d J : Type*} [Fintype m] [Fintype d] (M : J → Matr
   let e := Module.Basis.ofVectorSpace k C
   have h1 : ∀ α j, M j *ᵥ (fun p => e.repr (x p) α) = 0 := fun α j => funext fun p => by
     have := congrArg (fun t => e.repr t α) (congrFun (hx j) p)
-    simpa [mulVec, dotProduct, ← Algebra.smul_def, map_sum, Finsupp.finset_sum_apply] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [mulVec, dotProduct, ← Algebra.smul_def, map_sum, Finsupp.finsetSum_apply] using this
   choose w hw using fun α => hB _ (h1 α)
   let S := Finset.univ.biUnion fun p => (e.repr (x p)).support
   refine ⟨fun q => ∑ α ∈ S, w α q • e α, funext fun p => ?_⟩

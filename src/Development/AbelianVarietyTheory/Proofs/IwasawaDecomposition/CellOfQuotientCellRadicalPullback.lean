@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan GlobalTheory.PolFan.CarDim
 
@@ -100,7 +104,7 @@ theorem exists_radical_test {O : Type} [CommRing O] [IsNoetherianRing O] (bar : 
     induction hx using Submodule.span_induction with
     | mem x hx => exact fun y => ConeSub.eq_zero_of_self_eq_zero β hβ.1 hp (hk0 x hx) y
     | zero => simp
-    | add x x' _ _ h1 h2 => intro y; rw [map_add, LinearMap.add_apply, h1, h2, add_zero]
+    | add x x' _ _ h1 h2 => intro y; rw [map_add (f := _), LinearMap.add_apply, h1, h2, add_zero]
     | smul a x _ h1 => intro y; rw [hβ.2 a x y]; exact h1 _
   · rw [← hG]
     exact Submodule.subset_span hk
@@ -147,7 +151,7 @@ theorem cell_of_quot_cell : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [pull_apply, pull_apply, hb.1 (t _) (t _), ← e2, hb.1 b (t ((orad (O := 𝓞 E) β).mkQ a)), ← e1]
   have hbK : ∀ k ∈ (orad (O := 𝓞 E) β), ∀ y, β k y = 0 := fun k hk y => by simpa using (mem_orad.1 hk) 1 y
 
-  have hmem : toReal β ∈ psdCone H.bar X := by
+  have hmem : toReal β ∈ psdCone (bar := H.bar) (X := X) := by
     have := ConeSub.sum_smul_toReal_mem_psdCone (𝓞 E) H.bar X 1 ![β] ![1] (fun i => by fin_cases i; exact hβ)
       (fun i y => by fin_cases i; exact hp y) (fun i => by fin_cases i; norm_num)
     simpa using this
@@ -261,7 +265,8 @@ theorem cell_of_quot_cell : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     have hv := (hKt _ (hσ.mem (s i)) (hσ.nonneg (s i))).2.1 hKj
     have e3 : k • σ (s i) = ∑ l, c' l • pull (orad (O := 𝓞 E) β).mkQ (δ l) := by
       have e := congrArg (pullLin (orad (O := 𝓞 E) β).mkQ) hkc
-      simp only [map_nsmul, map_sum, pullLin_apply] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_nsmul, map_sum, pullLin_apply] at e
       rw [desc _ (hσ.mem (s i)) hv] at e
       exact e
     rw [e3]

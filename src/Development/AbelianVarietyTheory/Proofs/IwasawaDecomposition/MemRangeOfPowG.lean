@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmbientBaseHeq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NoRamifiedNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeUOperatorRationalInvertibleRamifiedFormsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DGamDvdOfMinkMult
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.ChiMemSubfield
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AmbientBaseHeq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NoRamifiedNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeUOperatorRationalInvertibleRamifiedFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DGamDvdOfMinkMult
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.ChiMemSubfield
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,17 +95,20 @@ theorem dGamChoice_of_lcm (X : Stages) (hDG : ∀ u μ, (X.C.chTw u μ).DGam = G
 theorem colLay_of_herm (X : Stages) (hX : Nonempty (PreX X.B.toPre))
     (hDG : ∀ u μ, (X.C.chTw u μ).DGam = GlobalTheory.Mem.Col2.DGam X.B.fields.E X.B.R)
     (H : Formalism.L2.Herm.ColsHermS X.toD7) (T : ∀ u, Forms0 X.toD7 u) (hJ : ∀ u, Joint0 H.base.lev0 u (T u)) :
-    ColLay X.toD7 H.base.lev0 (errOf H) where
-  piG_lev := (GlobalTheory.Mem.ErrTies.exists_errX X.toD7 H).choose_spec.2.2.2.1
-  piT_lev := (GlobalTheory.Mem.ErrTies.exists_errX X.toD7 H).choose_spec.2.2.2.2.1
-  seen := (GlobalTheory.Mem.ErrTies.exists_errX X.toD7 H).choose_spec.2.2.2.2.2.1
-  tauOf := (GlobalTheory.Mem.ErrTies.exists_errX X.toD7 H).choose_spec.2.2.2.2.2.2
-  one u μ := by
-    have h0 : (X.C.chTw X.B.u₀ X.C.mu0).DGam = (X.C.mem X.B.u₀).C.DGam :=
-      congrArg (fun c => c.DGam) (X.C.memberColumns_twistedChain_base X.B.u₀)
-    exact (hDG u μ).trans ((hDG X.B.u₀ X.C.mu0).symm.trans h0)
-  mink := dGamChoice_of_lcm X hDG
-  atT := GlobalTheory.T.heckeUOperator_rational_invertible_ramifiedForms X hX H T hJ (fun u => psi0Rat X T u)
+    ColLay X.toD7 H.base.lev0 (errOf H) := by
+  have hErr := (GlobalTheory.Mem.ErrTies.exists_errX X.toD7 H).choose_spec
+  refine
+    { piG_lev := hErr.2.2.2.1
+      piT_lev := hErr.2.2.2.2.1
+      seen := hErr.2.2.2.2.2.1
+      tauOf := hErr.2.2.2.2.2.2
+      one := ?_
+      mink := dGamChoice_of_lcm X hDG
+      atT := GlobalTheory.T.heckeUOperator_rational_invertible_ramifiedForms X hX H T hJ (psi0Rat X T) }
+  intro u μ
+  have h0 : (X.C.chTw X.B.u₀ X.C.mu0).DGam = (X.C.mem X.B.u₀).C.DGam :=
+    congrArg (fun c => c.DGam) (X.C.memberColumns_twistedChain_base X.B.u₀)
+  exact (hDG u μ).trans ((hDG X.B.u₀ X.C.mu0).symm.trans h0)
 
 theorem colLay_of_tied (X : Stages) (hX : Nonempty (PreX X.B.toPre))
     (hDG : ∀ u μ, (X.C.chTw u μ).DGam = GlobalTheory.Mem.Col2.DGam X.B.fields.E X.B.R) (C : ColsTiedSym X.toD7) :

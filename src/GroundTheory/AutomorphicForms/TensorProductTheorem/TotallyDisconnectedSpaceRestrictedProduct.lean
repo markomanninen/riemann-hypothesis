@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LocallyProfinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,9 @@ instance totallyDisconnectedSpace_restrictedProduct [∀ v, TotallyDisconnectedS
     s (isTotallyDisconnected_of_totallyDisconnectedSpace _ _ (Set.subset_univ _)
       (hs.image _ RestrictedProduct.continuous_coe.continuousOn))⟩
 
-variable (K) in
 
-def boxSubgroup (K' : ∀ v, Subgroup (G v)) : Subgroup (Πʳ v, [G v, K v]) where
+variable (K) in
+def boxSubgroup (K K' : ∀ v, Subgroup (G v)) : Subgroup (Πʳ v, [G v, K v]) where
   carrier := {g | ∀ v, g v ∈ K' v}
   mul_mem' {a b} ha hb v := by
     rw [RestrictedProduct.mul_apply]

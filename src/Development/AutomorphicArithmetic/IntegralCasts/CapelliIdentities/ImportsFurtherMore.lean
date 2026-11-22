@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk8.exists_place :
     ∀ {F : Type} [inst : Field F] [NumberField F] (p : ℕ),
@@ -20,6 +24,7 @@ theorem UpperTheory.Reformulated.B.Qk8.exists_place :
       exact Ideal.zero_mem _)
   have hmem : (p : NumberField.RingOfIntegers F) ∈ Q := by
     have h : (p : ℤ) ∈ Q.comap (algebraMap ℤ (NumberField.RingOfIntegers F)) := by
+      change (p : ℤ) ∈ Ideal.under ℤ Q
       rw [hQP]
       exact Ideal.mem_span_singleton_self _
     rw [Ideal.mem_comap, map_natCast] at h

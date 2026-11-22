@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowFormPermutationSplit.Development
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RowFormPermutationSplit.Development
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ShiftedGeneratorEqIteSmulAdd
+
+@[expose] public section
 
 open Finset Formalism.REAL
 
@@ -52,7 +56,8 @@ theorem qminorRow_eq_unop {A : Type*} [Ring A] [Algebra ℂ A] {n t : ℕ} (E : 
     (a b : Fin t → Fin n) (u : ℂ) :
     PI.qminorRow E a b u = MulOpposite.unop (qminor (opE E) (b ∘ Fin.rev) (a ∘ Fin.rev) u) := by
   unfold PI.qminorRow Formalism.REAL.qminor
-  rw [show ∀ f : Equiv.Perm (Fin t) → Aᵐᵒᵖ, MulOpposite.unop (∑ σ, f σ) = ∑ σ, MulOpposite.unop (f σ) from
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [show ∀ f : Equiv.Perm (Fin t) → Aᵐᵒᵖ, MulOpposite.unop (∑ σ, f σ) = ∑ σ, MulOpposite.unop (f σ) from
     fun f => map_sum (MulOpposite.opAddEquiv : A ≃+ Aᵐᵒᵖ).symm f Finset.univ]
   refine Fintype.sum_equiv (revConj t) _ _ (fun σ => ?_)
   rw [MulOpposite.unop_mul, MulOpposite.unop_intCast, sign_revConj, ← Int.cast_comm]

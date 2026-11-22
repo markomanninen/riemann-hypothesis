@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ExtRobbaTeich
-import GroundTheory.PAdicHodge.RobbaSeries
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ExtRobbaTeich
+public import GroundTheory.PAdicHodge.RobbaSeries
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -426,12 +431,6 @@ theorem gaussNorm_zcoeff_mul {x y : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
   · subst hy0; simp [zcoeff, gaussNorm]
   exact (T.gaussNorm_lowIndex_zcoeff_mul hρ0 hρ1 hx hy hx0 hy0).1
 
-theorem lowIndex_zcoeff_mul {x y : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
-    (hx : ConvergesAt (T.zcoeff x) ρ) (hy : ConvergesAt (T.zcoeff y) ρ) (hx0 : x ≠ 0)
-    (hy0 : y ≠ 0) :
-    lowIndex (T.zcoeff (x * y)) ρ = lowIndex (T.zcoeff x) ρ + lowIndex (T.zcoeff y) ρ :=
-  (T.gaussNorm_lowIndex_zcoeff_mul hρ0 hρ1 hx hy hx0 hy0).2
-
 end TeichLift
 
 section Shift
@@ -464,40 +463,6 @@ theorem gaussNorm_shift (hρ0 : 0 < ρ) (N : ℤ) :
   rw [← Real.iSup_mul_of_nonneg (zpow_pos hρ0 _).le]
   congr 1
   exact (Equiv.addRight N).iSup_comp (g := fun j => ‖a j‖ * ρ ^ j)
-
-theorem mem_domSet_shift_iff (hρ0 : 0 < ρ) (N k : ℤ) :
-    k ∈ domSet (fun k => a (k + N)) ρ ↔ k + N ∈ domSet a ρ := by
-  simp only [domSet, Set.mem_setOf_eq, gaussNorm_shift hρ0, weight_shift hρ0 N k]
-  exact mul_left_inj' (zpow_pos hρ0 _).ne'
-
-theorem lowIndex_shift (hρ0 : 0 < ρ) (h : ConvergesAt a ρ) (ha : a ≠ 0) (N : ℤ) :
-    lowIndex (fun k => a (k + N)) ρ = lowIndex a ρ - N := by
-  have hs := convergesAt_shift hρ0 h N
-  have hs0 : (fun k => a (k + N)) ≠ 0 := by
-    intro h0
-    apply ha
-    funext j
-    have := congrFun h0 (j - N)
-    simpa using this
-  refine le_antisymm (lowIndex_le hρ0 hs hs0 ((mem_domSet_shift_iff hρ0 N _).2 ?_)) ?_
-  · rw [sub_add_cancel]; exact lowIndex_mem hρ0 h ha
-  · have := lowIndex_le hρ0 h ha ((mem_domSet_shift_iff hρ0 N _).1 (lowIndex_mem hρ0 hs hs0))
-    linarith
-
-theorem convergesAt_of_le (hneg : ∃ N, ∀ n < N, a n = 0) (h : ConvergesAt a ρ)
-    {ρ' : ℝ} (hρ' : 0 < ρ') (hle : ρ' ≤ ρ) : ConvergesAt a ρ' := by
-  refine convergesAt_of_eventually hρ' hneg fun ε hε => ?_
-  obtain ⟨B, hB⟩ := (h.finite_le hε).bddAbove
-  refine ⟨max (B + 1) 0, fun n hn => ?_⟩
-  have hn0 : 0 ≤ n := le_of_max_le_right hn
-  have h1 : ‖a n‖ * ρ' ^ n ≤ ‖a n‖ * ρ ^ n :=
-    mul_le_mul_of_nonneg_left (by
-      obtain ⟨m, rfl⟩ := Int.eq_ofNat_of_zero_le hn0
-      rw [zpow_natCast, zpow_natCast]; exact pow_le_pow_left₀ hρ'.le hle m) (norm_nonneg _)
-  refine h1.trans (le_of_lt (not_le.1 fun hc => ?_))
-  have := hB (show n ∈ {n | ε ≤ ‖a n‖ * ρ ^ n} from hc)
-  have := le_of_max_le_left hn
-  omega
 
 end Shift
 
@@ -564,27 +529,11 @@ theorem zcoeff_π_pow_mul_teich (N : ℕ) (c : L) : T.zcoeff (T.π ^ N * T.teich
     rw [zcoeff_natCast, coeff_π_pow_mul_teich, Pi.single_apply]
     simp
 
-theorem zcoeff_teich (c : L) : T.zcoeff (T.teich c) = Pi.single 0 c := by
-  simpa using T.zcoeff_π_pow_mul_teich 0 c
-
 theorem zcoeff_π_pow (N : ℕ) : T.zcoeff (T.π ^ N) = Pi.single (N : ℤ) 1 := by
   simpa using T.zcoeff_π_pow_mul_teich N 1
 
 theorem coeffB_algebraMap (x : Γ) : T.coeffB (algebraMap Γ T.B x) = T.zcoeff x := by
   rw [T.coeffB_eq (x := x) (N := 0) (by simp)]; simp
-
-theorem coeffB_invSelf : T.coeffB (IsLocalization.Away.invSelf T.π) = Pi.single (-1) 1 := by
-  rw [T.coeffB_eq (x := 1) (N := 1) (by rw [pow_one, mul_comm, IsLocalization.Away.mul_invSelf, map_one]),
-    zcoeff_one]
-  funext k
-  simp only [Pi.single_apply, Nat.cast_one]
-  congr 1; exact propext ⟨fun h => by omega, fun h => by omega⟩
-
-theorem coeffB_neg_exists (b : T.B) : ∃ N, ∀ n < N, T.coeffB b n = 0 := by
-  obtain ⟨n, x, hx⟩ := IsLocalization.Away.surj T.π b
-  refine ⟨-n, fun k hk => ?_⟩
-  rw [T.coeffB_eq hx]
-  exact T.zcoeff_of_neg _ (by omega)
 
 theorem exists_common (b c : T.B) : ∃ (x y : Γ) (N : ℕ),
     b * algebraMap Γ T.B T.π ^ N = algebraMap Γ T.B x ∧
@@ -607,7 +556,7 @@ theorem convergesAt_coeffB_add (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (hb : ConvergesAt
       gaussNorm (T.coeffB (b + c)) ρ ≤ max (gaussNorm (T.coeffB b) ρ) (gaussNorm (T.coeffB c) ρ) := by
   obtain ⟨x, y, N, hx, hy⟩ := T.exists_common b c
   have hxy : (b + c) * algebraMap Γ T.B T.π ^ N = algebraMap Γ T.B (x + y) := by
-    rw [add_mul, hx, hy, map_add]
+    rw [add_mul, hx, hy, map_add (f := _)]
   rw [T.coeffB_eq hx, convergesAt_shift_iff hρ0] at hb
   rw [T.coeffB_eq hy, convergesAt_shift_iff hρ0] at hc
   rw [T.coeffB_eq hxy, T.coeffB_eq hx, T.coeffB_eq hy, convergesAt_shift_iff hρ0,
@@ -643,287 +592,12 @@ theorem convergesAt_coeffB_mul (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (hb : ConvergesAt
   push_cast
   rw [neg_add, zpow_add₀ hρ0.ne']; ring
 
-theorem lowIndex_coeffB_mul (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (hb : ConvergesAt (T.coeffB b) ρ)
-    (hc : ConvergesAt (T.coeffB c) ρ) (hb0 : b ≠ 0) (hc0 : c ≠ 0) :
-    lowIndex (T.coeffB (b * c)) ρ = lowIndex (T.coeffB b) ρ + lowIndex (T.coeffB c) ρ := by
-  obtain ⟨x, y, N, hx, hy⟩ := T.exists_common b c
-  have hxy : (b * c) * algebraMap Γ T.B T.π ^ (N + N) = algebraMap Γ T.B (x * y) := by
-    rw [pow_add, map_mul, ← hx, ← hy]; ring
-  have hx0 : x ≠ 0 := by rintro rfl; exact hb0 (T.eq_zero_of_mul_pow (by rw [hx, map_zero]))
-  have hy0 : y ≠ 0 := by rintro rfl; exact hc0 (T.eq_zero_of_mul_pow (by rw [hy, map_zero]))
-  have hx0' : T.zcoeff x ≠ 0 := fun h => hx0 ((T.zcoeff_eq_zero_iff x).1 h)
-  have hy0' : T.zcoeff y ≠ 0 := fun h => hy0 ((T.zcoeff_eq_zero_iff y).1 h)
-  rw [T.coeffB_eq hx, convergesAt_shift_iff hρ0] at hb
-  rw [T.coeffB_eq hy, convergesAt_shift_iff hρ0] at hc
-  have hxy0' : T.zcoeff (x * y) ≠ 0 := by
-    intro h
-    have := T.gaussNorm_zcoeff_mul hρ0 hρ1 hb hc
-    have h0 : gaussNorm (0 : ℤ → L) ρ = 0 := by simp [gaussNorm]
-    rw [h, h0] at this
-    exact (mul_pos (gaussNorm_pos hρ0 hb hx0') (gaussNorm_pos hρ0 hc hy0')).ne' this.symm
-  rw [T.coeffB_eq hxy, T.coeffB_eq hx, T.coeffB_eq hy,
-    lowIndex_shift hρ0 (T.convergesAt_zcoeff_mul hρ0 hρ1 hb hc) hxy0',
-    lowIndex_shift hρ0 hb hx0', lowIndex_shift hρ0 hc hy0', T.lowIndex_zcoeff_mul hρ0 hρ1 hb hc hx0 hy0]
-  push_cast; ring
-
-def Econ (ρ : Set.Ioo (0 : ℝ) 1) : Subring T.B where
-  carrier := {b | ConvergesAt (T.coeffB b) ρ}
-  zero_mem' := by
-    show ConvergesAt (T.coeffB 0) ρ
-    rw [← map_zero (algebraMap Γ T.B), coeffB_algebraMap, (T.zcoeff_eq_zero_iff 0).2 rfl]
-    simpa using convergesAt_pi_single (L := L) 0 0 ρ
-  one_mem' := by
-    show ConvergesAt (T.coeffB 1) ρ
-    rw [← map_one (algebraMap Γ T.B), coeffB_algebraMap, zcoeff_one]
-    exact convergesAt_pi_single 0 1 ρ
-  add_mem' hb hc := (T.convergesAt_coeffB_add ρ.2.1 ρ.2.2 hb hc).1
-  mul_mem' hb hc := (T.convergesAt_coeffB_mul ρ.2.1 ρ.2.2 hb hc).1
-  neg_mem' hb := (T.convergesAt_coeffB_neg ρ.2.1 ρ.2.2 hb).1
-
-theorem mem_Econ {ρ : Set.Ioo (0 : ℝ) 1} : b ∈ T.Econ ρ ↔ ConvergesAt (T.coeffB b) ρ := Iff.rfl
-
-theorem Econ_anti {ρ ρ' : Set.Ioo (0 : ℝ) 1} (h : (ρ' : ℝ) ≤ ρ) : T.Econ ρ ≤ T.Econ ρ' :=
-  fun _ hb => convergesAt_of_le (T.coeffB_neg_exists _) hb ρ'.2.1 h
-
-theorem algebraMap_teich_mem_Econ (c : L) (ρ : Set.Ioo (0 : ℝ) 1) :
-    algebraMap Γ T.B (T.teich c) ∈ T.Econ ρ := by
-  rw [mem_Econ, coeffB_algebraMap, zcoeff_teich]; exact convergesAt_pi_single _ _ _
-
-theorem algebraMap_π_mem_Econ (ρ : Set.Ioo (0 : ℝ) 1) : algebraMap Γ T.B T.π ∈ T.Econ ρ := by
-  rw [mem_Econ, coeffB_algebraMap, ← pow_one T.π, zcoeff_π_pow]; exact convergesAt_pi_single _ _ _
-
-theorem invSelf_mem_Econ (ρ : Set.Ioo (0 : ℝ) 1) : IsLocalization.Away.invSelf T.π ∈ T.Econ ρ := by
-  rw [mem_Econ, coeffB_invSelf]; exact convergesAt_pi_single _ _ _
-
-def Gcon : Subring Γ where
-  carrier := {x | ∃ ρ : Set.Ioo (0 : ℝ) 1, ConvergesAt (T.zcoeff x) ρ}
-  zero_mem' := ⟨⟨1 / 2, by norm_num, by norm_num⟩, by
-    rw [(T.zcoeff_eq_zero_iff 0).2 rfl]; simpa using convergesAt_pi_single (L := L) 0 0 (1 / 2)⟩
-  one_mem' := ⟨⟨1 / 2, by norm_num, by norm_num⟩, by rw [zcoeff_one]; exact convergesAt_pi_single _ _ _⟩
-  add_mem' := by
-    rintro x y ⟨ρ₁, h₁⟩ ⟨ρ₂, h₂⟩
-    refine ⟨⟨min ρ₁ ρ₂, lt_min ρ₁.2.1 ρ₂.2.1, min_lt_of_left_lt ρ₁.2.2⟩, ?_⟩
-    exact T.convergesAt_zcoeff_add (lt_min ρ₁.2.1 ρ₂.2.1) (min_lt_of_left_lt ρ₁.2.2)
-      (convergesAt_of_le (T.zcoeff_neg_exists x) h₁ (lt_min ρ₁.2.1 ρ₂.2.1) (min_le_left _ _))
-      (convergesAt_of_le (T.zcoeff_neg_exists y) h₂ (lt_min ρ₁.2.1 ρ₂.2.1) (min_le_right _ _))
-  mul_mem' := by
-    rintro x y ⟨ρ₁, h₁⟩ ⟨ρ₂, h₂⟩
-    refine ⟨⟨min ρ₁ ρ₂, lt_min ρ₁.2.1 ρ₂.2.1, min_lt_of_left_lt ρ₁.2.2⟩, ?_⟩
-    exact T.convergesAt_zcoeff_mul (lt_min ρ₁.2.1 ρ₂.2.1) (min_lt_of_left_lt ρ₁.2.2)
-      (convergesAt_of_le (T.zcoeff_neg_exists x) h₁ (lt_min ρ₁.2.1 ρ₂.2.1) (min_le_left _ _))
-      (convergesAt_of_le (T.zcoeff_neg_exists y) h₂ (lt_min ρ₁.2.1 ρ₂.2.1) (min_le_right _ _))
-  neg_mem' := by
-    rintro x ⟨ρ, h⟩
-    exact ⟨ρ, T.convergesAt_zcoeff_neg ρ.2.1 ρ.2.2 h⟩
-
-def Edag : Subring T.B where
-  carrier := {b | ∃ ρ : Set.Ioo (0 : ℝ) 1, ConvergesAt (T.coeffB b) ρ}
-  zero_mem' := ⟨⟨1 / 2, by norm_num, by norm_num⟩, (T.Econ _).zero_mem⟩
-  one_mem' := ⟨⟨1 / 2, by norm_num, by norm_num⟩, (T.Econ _).one_mem⟩
-  add_mem' := by
-    rintro x y ⟨ρ₁, h₁⟩ ⟨ρ₂, h₂⟩
-    refine ⟨⟨min ρ₁ ρ₂, lt_min ρ₁.2.1 ρ₂.2.1, min_lt_of_left_lt ρ₁.2.2⟩, ?_⟩
-    exact (T.Econ _).add_mem (T.Econ_anti (ρ := ρ₁) (min_le_left _ _) h₁)
-      (T.Econ_anti (ρ := ρ₂) (min_le_right _ _) h₂)
-  mul_mem' := by
-    rintro x y ⟨ρ₁, h₁⟩ ⟨ρ₂, h₂⟩
-    refine ⟨⟨min ρ₁ ρ₂, lt_min ρ₁.2.1 ρ₂.2.1, min_lt_of_left_lt ρ₁.2.2⟩, ?_⟩
-    exact (T.Econ _).mul_mem (T.Econ_anti (ρ := ρ₁) (min_le_left _ _) h₁)
-      (T.Econ_anti (ρ := ρ₂) (min_le_right _ _) h₂)
-  neg_mem' := by
-    rintro x ⟨ρ, h⟩
-    exact ⟨ρ, (T.Econ ρ).neg_mem h⟩
-
-theorem mem_Edag : b ∈ T.Edag ↔ ∃ ρ : Set.Ioo (0 : ℝ) 1, b ∈ T.Econ ρ := Iff.rfl
-
-theorem Econ_le_Edag (ρ : Set.Ioo (0 : ℝ) 1) : T.Econ ρ ≤ T.Edag := fun _ h => ⟨ρ, h⟩
-
-theorem isUnit_of_coeff_zero_eq_one {u : Γ} (h : T.coeff u 0 = 1) : IsUnit u := by
-  haveI := T.isAdicComplete
-  have he : u - 1 ∈ T.I := by
-    show u - 1 ∈ Ideal.span {T.π}
-    rw [← T.ker_red, RingHom.mem_ker, map_sub, map_one, ← coeff_zero, h, sub_self]
-  have := (Ideal.mem_jacobson_bot.1 (IsAdicComplete.le_jacobson_bot (I := T.I) he)) 1
-  simpa using this
-
 theorem gaussNorm_single_zero_one_le {ρ : ℝ} (hρ0 : 0 < ρ) : gaussNorm (Pi.single 0 (1 : L)) ρ ≤ 1 := by
   refine gaussNorm_le fun n => ?_
   rw [Pi.single_apply]
   split_ifs with h
   · subst h; simp
   · simp
-
-theorem exists_inv_convergesAt {u : Γ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
-    (hu : ConvergesAt (T.zcoeff u) ρ) (h1 : T.coeff u 0 = 1) :
-    ∃ v : Γ, u * v = 1 ∧ ∃ ρ' : ℝ, 0 < ρ' ∧ ρ' < 1 ∧ ConvergesAt (T.zcoeff v) ρ' := by
-  obtain ⟨v, hv⟩ := (T.isUnit_of_coeff_zero_eq_one h1).exists_right_inv
-  refine ⟨v, hv, ?_⟩
-  have hG1 : 1 ≤ gaussNorm (T.zcoeff u) ρ := by
-    have := T.weight_natCast_le hu 0; simpa [h1] using this
-  set G := gaussNorm (T.zcoeff u) ρ
-  have he' : u - 1 = T.π * T.tail u := by
-    rw [← T.sub_teich_eq_π_mul_tail, ← coeff_zero, h1, T.teich_one]
-  have he_coeff : ∀ n : ℕ, T.coeff (u - 1) n = if n = 0 then 0 else T.coeff u n := by
-    intro n
-    rcases n with _ | n
-    · rw [he', coeff_π_mul_zero]; simp
-    · rw [he', coeff_π_mul_succ, ← coeff_succ]; simp
-  set ρ1 := ρ / (2 * G) with hρ1def
-  have hρ1pos : 0 < ρ1 := by positivity
-  have hρ1le : ρ1 ≤ ρ / 2 := div_le_div_of_nonneg_left hρ0.le (by norm_num) (by linarith)
-  have hρ1lt1 : ρ1 < 1 := by linarith
-  have he_conv : ConvergesAt (T.zcoeff (u - 1)) ρ1 := by
-    rw [sub_eq_add_neg]
-    refine convergesAt_of_le (T.zcoeff_neg_exists _) (T.convergesAt_zcoeff_add hρ0 hρ1 hu
-      (T.convergesAt_zcoeff_neg hρ0 hρ1 (by rw [zcoeff_one]; exact convergesAt_pi_single 0 1 ρ)))
-      hρ1pos (by linarith)
-  have he_norm : gaussNorm (T.zcoeff (u - 1)) ρ1 ≤ 1 / 2 := by
-    refine gaussNorm_le fun n => ?_
-    rcases lt_or_ge n 0 with hn | hn
-    · rw [T.zcoeff_of_neg _ hn, norm_zero, zero_mul]; norm_num
-    lift n to ℕ using hn
-    rw [zcoeff_natCast, he_coeff]
-    split_ifs with hn0
-    · simp
-    · have hw := T.weight_natCast_le hu n
-      have ht : (1 / (2 * G)) ^ n ≤ 1 / (2 * G) :=
-        pow_le_of_le_one (by positivity) (by rw [div_le_one (by positivity)]; linarith) hn0
-      calc ‖T.coeff u n‖ * ρ1 ^ (n : ℤ) = (‖T.coeff u n‖ * ρ ^ (n : ℤ)) * (1 / (2 * G)) ^ n := by
-            rw [zpow_natCast, zpow_natCast, hρ1def, div_eq_mul_one_div ρ, mul_pow]; ring
-        _ ≤ G * (1 / (2 * G)) := mul_le_mul hw ht (by positivity) (by linarith)
-        _ = 1 / 2 := by field_simp
-  have hne := T.convergesAt_zcoeff_neg hρ1pos hρ1lt1 he_conv
-  have hpow : ∀ k : ℕ, ConvergesAt (T.zcoeff ((-(u - 1)) ^ k)) ρ1 ∧
-      gaussNorm (T.zcoeff ((-(u - 1)) ^ k)) ρ1 ≤ 1 := by
-    intro k
-    induction k with
-    | zero =>
-      rw [pow_zero, zcoeff_one]
-      exact ⟨convergesAt_pi_single 0 1 ρ1, gaussNorm_single_zero_one_le hρ1pos⟩
-    | succ k ih =>
-      rw [pow_succ]
-      refine ⟨T.convergesAt_zcoeff_mul hρ1pos hρ1lt1 ih.1 hne, ?_⟩
-      rw [T.gaussNorm_zcoeff_mul hρ1pos hρ1lt1 ih.1 hne, T.gaussNorm_zcoeff_neg hρ1pos hρ1lt1 he_conv]
-      have := gaussNorm_nonneg (a := T.zcoeff (u - 1)) hρ1pos
-      nlinarith [ih.2, gaussNorm_nonneg (a := T.zcoeff ((-(u - 1)) ^ k)) hρ1pos]
-  have hsum : ∀ K : ℕ, ConvergesAt (T.zcoeff (∑ k ∈ Finset.range K, (-(u - 1)) ^ k)) ρ1 ∧
-      gaussNorm (T.zcoeff (∑ k ∈ Finset.range K, (-(u - 1)) ^ k)) ρ1 ≤ 1 := by
-    intro K
-    induction K with
-    | zero =>
-      rw [Finset.sum_range_zero, (T.zcoeff_eq_zero_iff 0).2 rfl]
-      exact ⟨convergesAt_zero, by simp [gaussNorm]⟩
-    | succ K ih =>
-      rw [Finset.sum_range_succ]
-      exact ⟨T.convergesAt_zcoeff_add hρ1pos hρ1lt1 ih.1 (hpow K).1,
-        (T.gaussNorm_zcoeff_add_le hρ1pos hρ1lt1.le ih.1 (hpow K).1).trans (max_le ih.2 (hpow K).2)⟩
-  have hvS : ∀ K : ℕ, v - ∑ k ∈ Finset.range K, (-(u - 1)) ^ k ∈ Ideal.span {T.π ^ K} := by
-    intro K
-    have hgeom := geom_sum_mul_neg (-(u - 1)) K
-    rw [show 1 - -(u - 1) = u by ring] at hgeom
-    have : v - ∑ k ∈ Finset.range K, (-(u - 1)) ^ k = (-(u - 1)) ^ K * v := by
-      have h2 : (∑ k ∈ Finset.range K, (-(u - 1)) ^ k) * u * v = (1 - (-(u - 1)) ^ K) * v := by
-        rw [hgeom]
-      have h3 : (∑ k ∈ Finset.range K, (-(u - 1)) ^ k) * u * v =
-          ∑ k ∈ Finset.range K, (-(u - 1)) ^ k := by rw [mul_assoc, hv, mul_one]
-      rw [h3] at h2; rw [h2]; ring
-    rw [this, he']
-    exact T.mem_span_pow.2 ⟨(-T.tail u) ^ K * v, by ring⟩
-  have hvb : ∀ n : ℕ, ‖T.coeff v n‖ * ρ1 ^ (n : ℤ) ≤ 1 := by
-    intro n
-    rw [T.coeff_eq_coeff_of_sub_mem (hvS (n + 1)) n le_rfl]
-    exact (T.weight_natCast_le (hsum (n + 1)).1 n).trans (hsum (n + 1)).2
-  refine ⟨ρ1 / 2, by positivity, by linarith, ?_⟩
-  refine convergesAt_of_eventually (by positivity) (T.zcoeff_neg_exists v) fun ε hε => ?_
-  obtain ⟨K, hK⟩ := exists_pow_lt_of_lt_one hε (show (1 / 2 : ℝ) < 1 by norm_num)
-  refine ⟨K, fun n hn => ?_⟩
-  lift n to ℕ using (by omega)
-  have hKn : K ≤ n := by exact_mod_cast hn
-  rw [zcoeff_natCast]
-  calc ‖T.coeff v n‖ * (ρ1 / 2) ^ (n : ℤ) = (‖T.coeff v n‖ * ρ1 ^ (n : ℤ)) * (1 / 2) ^ n := by
-        rw [zpow_natCast, zpow_natCast, div_eq_mul_one_div ρ1 2, mul_pow]; ring
-    _ ≤ 1 * (1 / 2) ^ K :=
-        mul_le_mul (hvb n) (pow_le_pow_of_le_one (by norm_num) (by norm_num) hKn) (by positivity)
-          zero_le_one
-    _ ≤ ε := by rw [one_mul]; exact hK.le
-
-theorem exists_inv_mem_Edag {b : T.B} (hb : b ∈ T.Edag) (hb0 : b ≠ 0) :
-    ∃ c ∈ T.Edag, b * c = 1 := by
-  classical
-  obtain ⟨ρ, hρ⟩ := hb
-  obtain ⟨N, x, hx⟩ := IsLocalization.Away.surj T.π b
-  have hx0 : x ≠ 0 := by
-    rintro rfl; exact hb0 (T.eq_zero_of_mul_pow (by rw [hx, map_zero]))
-  have hxc : ConvergesAt (T.zcoeff x) ρ := by
-    rw [T.coeffB_eq hx, convergesAt_shift_iff ρ.2.1] at hρ; exact hρ
-  have hex : ∃ k, T.coeff x k ≠ 0 := by
-    by_contra h
-    push_neg at h
-    exact hx0 (T.eq_of_coeff_eq (funext fun n => by rw [h n, coeff_zero_elem]))
-  obtain ⟨k0, hk0, hlow⟩ : ∃ k0, T.coeff x k0 ≠ 0 ∧ ∀ i < k0, T.coeff x i = 0 :=
-    ⟨Nat.find hex, Nat.find_spec hex, fun i hi => by
-      have := Nat.find_min hex hi; push_neg at this; exact this⟩
-  have hxx' : x = T.π ^ k0 * T.tail^[k0] x := by
-    have h0 : T.partialSum x (k0) = 0 := by
-      simp only [partialSum, finSum]
-      exact Finset.sum_eq_zero fun i hi => by
-        rw [hlow i (Finset.mem_range.1 hi), T.teich_zero, mul_zero]
-    have := T.sub_partialSum x (k0); rw [h0, sub_zero] at this; exact this
-  have hx'0 : T.coeff (T.tail^[k0] x) 0 = T.coeff x (k0) := by
-    rw [coeff_tail_iterate, zero_add]
-  have hx'c : ConvergesAt (T.zcoeff (T.tail^[k0] x)) ρ := by
-    have : T.zcoeff (T.tail^[k0] x) = fun k => T.zcoeff x (k + k0) := by
-      funext k
-      conv_rhs => rw [hxx']
-      rw [T.zcoeff_π_pow_mul]
-    rw [this]; exact convergesAt_shift ρ.2.1 hxc _
-  have hu0 : T.coeff (T.teich (T.coeff x (k0))⁻¹ * T.tail^[k0] x) 0 = 1 := by
-    rw [coeff_teich_mul, hx'0, inv_mul_cancel₀ hk0]
-  have hu := T.convergesAt_zcoeff_mul ρ.2.1 ρ.2.2
-    (by rw [zcoeff_teich]; exact convergesAt_pi_single _ _ _) hx'c
-    (x := T.teich (T.coeff x (k0))⁻¹)
-  obtain ⟨v, huv, ρ', hρ'0, hρ'1, hv⟩ := T.exists_inv_convergesAt ρ.2.1 ρ.2.2 hu hu0
-  refine ⟨algebraMap Γ T.B (T.teich (T.coeff x (k0))⁻¹ * v) *
-    algebraMap Γ T.B T.π ^ N * IsLocalization.Away.invSelf T.π ^ k0,
-    ⟨⟨ρ', hρ'0, hρ'1⟩, ?_⟩, ?_⟩
-  · refine Subring.mul_mem _ (Subring.mul_mem _ ?_
-      (Subring.pow_mem _ (T.algebraMap_π_mem_Econ _) _)) (Subring.pow_mem _ (T.invSelf_mem_Econ _) _)
-    rw [mem_Econ, coeffB_algebraMap]
-    exact T.convergesAt_zcoeff_mul hρ'0 hρ'1
-      (by rw [zcoeff_teich]; exact convergesAt_pi_single _ _ _) hv
-  · have hb' : b * algebraMap Γ T.B T.π ^ N =
-        algebraMap Γ T.B T.π ^ k0 * algebraMap Γ T.B (T.tail^[k0] x) := by
-      rw [hx]; conv_lhs => rw [hxx']
-      rw [map_mul, map_pow]
-    have huv' := congrArg (algebraMap Γ T.B) huv
-    rw [map_mul, map_mul, map_one] at huv'
-    calc b * (algebraMap Γ T.B (T.teich (T.coeff x (k0))⁻¹ * v) *
-          algebraMap Γ T.B T.π ^ N * IsLocalization.Away.invSelf T.π ^ k0)
-        = (b * algebraMap Γ T.B T.π ^ N) * algebraMap Γ T.B (T.teich (T.coeff x (k0))⁻¹ * v) *
-          IsLocalization.Away.invSelf T.π ^ k0 := by ring
-      _ = (algebraMap Γ T.B T.π * IsLocalization.Away.invSelf T.π) ^ k0 *
-          (algebraMap Γ T.B (T.teich (T.coeff x (k0))⁻¹) *
-            algebraMap Γ T.B (T.tail^[k0] x) * algebraMap Γ T.B v) := by
-          rw [hb', map_mul]; ring
-      _ = 1 := by rw [IsLocalization.Away.mul_invSelf, one_pow, one_mul, huv']
-
-theorem nontrivial_B : Nontrivial T.B := by
-  refine ⟨⟨0, 1, fun h => ?_⟩⟩
-  have h1 : algebraMap Γ T.B 0 = algebraMap Γ T.B 1 := by rw [map_zero, map_one]; exact h
-  have h2 := congrArg T.red (T.algebraMap_injective h1)
-  rw [map_zero, map_one] at h2
-  exact zero_ne_one h2
-
-theorem isField_Edag : IsField T.Edag where
-  exists_pair_ne := by
-    haveI := T.nontrivial_B
-    exact ⟨0, 1, fun h => zero_ne_one (congrArg Subtype.val h)⟩
-  mul_comm := mul_comm
-  mul_inv_cancel := by
-    rintro ⟨b, hb⟩ hb0
-    have hb0' : b ≠ 0 := fun h => hb0 (Subtype.ext h)
-    obtain ⟨c, hc, hbc⟩ := T.exists_inv_mem_Edag hb hb0'
-    exact ⟨⟨c, hc⟩, Subtype.ext hbc⟩
 
 end TeichLift
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -12,7 +16,7 @@ theorem locallyConstant_compactSupport_invariant_openAddSubgroup :
   have key : ∀ z : X, ∃ V : OpenAddSubgroup X, ∀ h ∈ V, g (z + h) = g z := by
     intro z
     have hT : Tendsto (fun h : X => z + h) (𝓝 0) (𝓝 z) := by
-      have := (continuous_add_left z).tendsto (0 : X)
+      have := (continuous_const_add z).tendsto (0 : X)
       simpa using this
     have hn : {h : X | g (z + h) = g z} ∈ 𝓝 (0 : X) := hT.eventually (hg.eventually_eq z)
     obtain ⟨V, hV⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ hn

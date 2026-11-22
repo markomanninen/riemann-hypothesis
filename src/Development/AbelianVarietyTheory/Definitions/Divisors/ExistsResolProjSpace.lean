@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsoOverOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsoOverOfIsOpenImmersion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -70,11 +74,11 @@ theorem isConjInv_fam : f.fam.IsConjInv := isConjInv_ofGram _ _ fun σ i j => by
     exact sub_self _
   have h₁ : P.PosSemidef := Matrix.PosSemidef.of_dotProduct_mulVec_nonneg
     ((f.posDef_gram _).1.sub ((f.posDef_gram σ).1.map _ fun _ => rfl)) fun y => (h₀ y).ge
-  have := congrFun ((h₁.dotProduct_mulVec_zero_iff (Pi.single j 1)).1 (h₀ _)) i
+  have := congrFun (h₁.dotProduct_mulVec_zero_iff.1 (h₀ (Pi.single j 1))) i
   simpa [P, sub_eq_zero] using this
 
-include f in
 
+include f in
 theorem isFull [IsScalarTower (𝓞 F) F V] : IsFull M := by
   refine ⟨f.isFrame.span ▸ Submodule.fg_span (Set.finite_range _), top_le_iff.1 fun x _ => ?_⟩
   have h : f.b.equivFun x ∈ Submodule.span F (Set.range f.w.col) := f.isFrame.full ▸ trivial
@@ -91,8 +95,8 @@ section Moving
 
 variable {Y : Scheme.{0}} {p : Y ⟶ Sp F} {U : Y.Opens} {D : ℕ} {B : LB Y}
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem restr_pull (hB : B.IsLB) {T : Scheme.{0}} (r : T ⟶ Y) {O O' : T.Opens} (h : O ≤ r ⁻¹ᵁ U) (h' : O' ≤ O)
     (f : H0 p B U) : restr h' (H0.pull r h f) = H0.pull r (h'.trans h) f :=
   ext_germ fun z hz => (exists_chart (LB.isLB_pull hB r) z).imp fun i hi => ⟨hi,
@@ -153,7 +157,8 @@ abbrev sys (abelian₂ : ℝ) : HermSys F where
 theorem ofSec_comb (abelian₂ : ℝ) (u : Fin f.N → F) :
     H0.ofSec M.str ⊤ ((M.sys Δ φ f abelian₂).comb u) = Δ.lift (φ (f.b.equivFun.symm u)) := by
   refine (LinSys.ofSec_comb (M.sys Δ φ f abelian₂).toLinSys ⊤ u).trans ?_
-  rw [f.b.equivFun_symm_apply, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.b.equivFun_symm_apply, map_sum, map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_smul, map_smul]; exact congrArg _ (ofSec_toSec _)
 
 theorem isAlgebraicData [IsReduced Y] (hU : Dense (U : Set Y)) (hc : GeometricallyConnected M.str) (hD : 1 ≤ D)
@@ -341,12 +346,12 @@ structure Consts where
 variable {S X : Type} [AddCommGroup S] [Module F S] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [AddCommGroup X]
   [Module F X] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] (ψ : S →ₗ[F] X) (hψ : Function.Injective ψ) (q : Prop)
 
-open Classical in
 
+open Classical in
 def rangeIf : Submodule F X := if q then LinearMap.range ψ else ⊥
 
-omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 
+omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 theorem rangeIf_le : rangeIf ψ q ≤ LinearMap.range ψ := by
   unfold rangeIf
   split_ifs
@@ -355,13 +360,13 @@ theorem rangeIf_le : rangeIf ψ q ≤ LinearMap.range ψ := by
 def invIf : rangeIf ψ q →ₗ[F] S :=
   (LinearEquiv.ofInjective ψ hψ).symm.toLinearMap ∘ₗ Submodule.inclusion (rangeIf_le ψ q)
 
-omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 
+omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 theorem apply_invIf (x : rangeIf ψ q) : ψ (invIf ψ hψ q x) = x :=
   congrArg Subtype.val ((LinearEquiv.ofInjective ψ hψ).apply_symm_apply ⟨x, rangeIf_le ψ q x.2⟩)
 
-omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 
+omit [NumberField F] [Module (𝓞 F) S] [IsScalarTower (𝓞 F) F S] [Module (𝓞 F) X] [IsScalarTower (𝓞 F) F X] in
 theorem invIf_injective : Function.Injective (invIf ψ hψ q) := fun x y e =>
   Subtype.ext (by rw [← apply_invIf ψ hψ, e, apply_invIf])
 
@@ -441,28 +446,5 @@ theorem nrm_dataEquiv {j : ℕ} (hj : j ≤ T) (σ : F →+* ℂ) (s : S j) :
     (congrArg _ ((equivIf (ψ j) (hψ j) _ hj).apply_symm_apply s))
 
 end Data
-
-theorem exists_resol_projSpace (F : Type) [Field F] [NumberField F] {M : ℕ} (hM : 1 ≤ M) :
-    ∃ (W₁ : Submodule F (H0 (PSpace.str F M) (lbZPow (ProjSpace.O1 F M) 1) ⊤))
-      (W₂ : Submodule F (H0 (PSpace.str F M) (lbZPow (ProjSpace.O1 F M) 2) ⊤))
-      (R : Resol (Common.powers (ProjSpace.O1_isLB F M)) (ProjSpace.chart F M (Fin.last M)) M W₁ W₂),
-      nonzeroLocus R.Δ₁.t = R.opn ∧ nonzeroLocus R.Δ₂.t = R.opn ∧ R.opn ≠ ⊥ := by
-  have hv := projSys.isVariety F M hM
-  have : IsIntegral (PSpace F M) := hv.isIntegral
-  have hg := projSys.gen_mem F M (Fin.last M)
-  have e (n : ℕ) (hn : 1 ≤ n) := (nonzeroLocus_secToPow (ProjSpace.coord F M (Fin.last M)) hn).trans
-    (ProjSpace.nonzeroLocus_coord F M (Fin.last M))
-  let Δ (n : ℕ) (hn : 1 ≤ n) := Cartier.ofSec (Twist.isLB_lbZPow (ProjSpace.O1_isLB F M) n)
-    (secToPow (ProjSpace.coord F M (Fin.last M)) n) ((e n hn).ge hg)
-  exact ⟨_, _, ⟨Modif.refl hv.smooth hv.proj ((ProjSpace.chart F M _).isOpen.dense ⟨_, hg⟩),
-    { Δ 1 le_rfl with cut := (baseIdeal_span _ _).symm.trans (Scheme.IdealSheafData.comap_id _).symm },
-    { Δ 2 one_le_two with cut := (baseIdeal_span _ _).symm.trans (Scheme.IdealSheafData.comap_id _).symm }⟩,
-    e 1 le_rfl, e 2 one_le_two, fun h => h.le hg⟩
-
-example : ∃ f : LatFrame (fun (σ : F →+* ℂ) (x : Fin 2 → F) => frameNorm 1 fun j => σ (x j))
-    (Submodule.span (𝓞 F) (Set.range (Pi.basisFun F (Fin 2)))), f.N = 2 :=
-  ⟨⟨2, 2, Pi.basisFun F _, 1, fun _ => 1, congrArg (fun v => Submodule.span _ (Set.range v))
-    (funext fun k => by simp [Matrix.one_apply]), (Proj.isAlgebraicData F 1 le_rfl).spans,
-    by simp, fun σ x => by simp [frameNorm], fun _ _ => rfl⟩, rfl⟩
 
 end GlobalTheory.CompHS

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -46,7 +50,7 @@ theorem integrable_exp_neg_mul_of_sublevel_growth :
     calc ENNReal.ofReal (Real.exp (-(b * d x))) ≤ ENNReal.ofReal (Real.exp (|b| - b * n)) :=
           ENNReal.ofReal_le_ofReal hexp
       _ = g n x := by simp only [g, Set.indicator_of_mem hxs]
-      _ ≤ ∑' m, g m x := ENNReal.le_tsum n
+      _ ≤ ∑' m, g m x := ENNReal.le_tsum (f := fun m => g m x) n
 
   let u : ℕ → ℝ := fun n => C' * Real.exp (|b| + a) * Real.exp (a - b) ^ n
   have hu0 : ∀ n, 0 ≤ u n := fun n => by positivity

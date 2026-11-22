@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -193,7 +197,8 @@ theorem eigComp_mem (W : Submodule ℂ (Fin g → ℂ)) (hW : ∀ a, ∀ y ∈ W
   have e : L y = Ls y := by
     calc L y = L (∑ t : E →+* ℂ, eigComp R.B (t.comp (algebraMap (𝓞 E) E)) y) := by rw [h2 y]
       _ = Ls (∑ t : E →+* ℂ, eigComp R.B (t.comp (algebraMap (𝓞 E) E)) y) := by
-        rw [map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum]
         exact Finset.sum_congr rfl fun t _ => key t _ ((h1 _).1 y)
       _ = Ls y := by rw [h2 y]
   rw [← hLs, ← e]
@@ -227,7 +232,8 @@ theorem gram_append_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
       exact eigComp_mem R _ hstable s (Submodule.subset_span ⟨v a, hvI a, rfl⟩)
     exact this
   have hqz : ∀ j, q (z j) = q (x j) := fun j => by
-    simp [hzdef, map_sub, map_sum, hwq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hzdef, map_sub, map_sum, hwq]
   have hzeig : ∀ j, z j ∈ eigSp R.B s := fun j =>
     Submodule.sub_mem _ (hx j) (Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ ((h1 s).1 _))
   have hspan : ∀ u ∈ I, ∀ j, R.ip (eigComp R.B s (R.P u)) (z j) = 0 := by
@@ -238,7 +244,8 @@ theorem gram_append_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] 
     have e1 : (n : ℂ) • eigComp R.B s (R.P u) = ∑ a, s (c a) • w a := by
       have e2 := (h1 s).2.2.2 (n : 𝓞 E) (R.P u)
       rw [← R.act, Nat.cast_smul_eq_nsmul, ← hc, map_natCast] at e2
-      rw [← e2, map_sum, ← hLs, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← e2, map_sum, ← hLs, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [R.act, hLs, (h1 s).2.2.2, hw]
     have e3 : starRingEnd ℂ (n : ℂ) * R.ip (eigComp R.B s (R.P u)) (z j) = 0 := by

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxSmall
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxSmall
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveBoxLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

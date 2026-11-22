@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenCoind
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenLevel
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealTraceMap
-import GroundTheory.ProfiniteCohomology.RealPlaces.Vanishing
-import GroundTheory.ProfiniteCohomology.RealPlaces.Devissage
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseMain
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenCoind
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealEvenLevel
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealTraceMap
+public import GroundTheory.ProfiniteCohomology.RealPlaces.Vanishing
+public import GroundTheory.ProfiniteCohomology.RealPlaces.Devissage
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseMain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,9 +18,9 @@ namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem isTotallyComplex_of_sq_eq_neg_one {F : Type*} [Field F] (x : F) (hx : x ^ 2 = -1) :
     IsTotallyComplex F := by
@@ -137,9 +142,9 @@ section Hypotheses
 variable [Fintype S] {N : ℕ} [NeZero N]
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((N : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) (hev : Even N)
 
+
 set_option maxHeartbeats 1000000 in
 include hS in
-
 theorem surjective_of_localToCompact_two [hne : Nonempty S]
     (t : tateCompactCohomologyRes (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 3 →+ ZMod N)
     (ht : ∀ ξ : ptTLocal (gsFinFamily S ιs) (gsRealFamily S ιr) (gsRoots S N) 2,
@@ -152,9 +157,9 @@ theorem surjective_of_localToCompact_two [hne : Nonempty S]
     (gsLocalInvRootsQZ S ιs N) (gsRealInvRootsQZ S ιr N) ht v η
     ((zmodToQZ_gsLocalInvRoots S ιs N v η).symm.trans (congrArg (zmodToQZ N) hη))
 
+
 omit [Fintype S] in
 include hS hev in
-
 theorem isTotallyComplex_of_gsOpenSubgroup_le {L : FiniteSubfield} [Fact (K ≤ L)]
     (hL : ∀ x : L.1, algebraMap L.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S)
     (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S))
@@ -170,9 +175,9 @@ theorem isTotallyComplex_of_gsOpenSubgroup_le {L : FiniteSubfield} [Fact (K ≤ 
   push_cast
   exact hz2
 
+
 omit [Fintype S] in
 include hS hev in
-
 theorem freeOnCosets_gsRealFamily_of_le (W₀ : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S))
     (hW₀ : ∀ σ ∈ W₀, ∀ ζ : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ, ζ ^ (2 * N) = 1 →
       σ (ζ : maxUnramifiedOutside K.1 ℚ̄ S) = ζ)

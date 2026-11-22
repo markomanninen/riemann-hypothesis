@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmPart
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarNMove
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmPart
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarNMove
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,7 @@ theorem inv_dc {Ωγ : S.V} {F₁ F₂ : LFlag S r T'} (h : DCRel Λ F F₁ F₂
     refine ⟨n v, ⟨?_, fun a => ?_⟩, ?_⟩
     · rw [hsp, Submodule.mem_map_equiv, LinearEquiv.symm_apply_apply]; exact hv.1
     · have e : n v = v + (n v - v) := by abel
-      rw [e, map_add, NMoveP.hT_f_X F.fl a hd, add_zero, hv.2]
+      rw [e, map_add (f := _), NMoveP.hT_f_X F.fl a hd, add_zero, hv.2]
     · have e : n v - Ωγ = (n v - v) + (v - Ωγ) := by abel
       rw [e]; exact Submodule.add_mem _ hd hvγ
   · rintro ⟨v, hv, hvγ⟩
@@ -154,7 +158,7 @@ theorem qu_dc {F₁ F₂ : LFlag S r T'} (h : DCRel Λ F F₁ F₂) : QU F F₁ 
       rw [hsp, Submodule.mem_map_equiv, LinearEquiv.symm_apply_apply]; exact hd
     have : n d = 0 := hq _ hnd fun a => by
       have e : n d = d + (n d - d) := by abel
-      rw [e, map_add, NMoveP.hT_f_X F.fl a hdd, add_zero, h0]
+      rw [e, map_add (f := _), NMoveP.hT_f_X F.fl a hdd, add_zero, h0]
     simpa using this
 
 theorem inv_eqv {P : LFlag S r T' → Prop} {x y : Carrier P} (h : Relation.EqvGen (Rel Λ F P) x y)
@@ -194,7 +198,7 @@ theorem z'_mem_UUE (F : LFlag S r T) (F' : LFlag S r T') (hF' : IsLift Λ F') : 
   rw [← hF'.2]
   exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self _)
 
-theorem sp_le_UUE (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' : LFlag S r T') (hF' : IsLift Λ F') :
+theorem sp_le_UUE (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' : LFlag S r T') (hF' : IsLift Λ F') :
     Submodule.span E (Set.range F'.fl.fvec) ≤ UUE Λ F F' := by
   rw [Submodule.span_le]
   rintro _ ⟨b, rfl⟩
@@ -203,7 +207,7 @@ theorem sp_le_UUE (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' : LFlag
   · rw [fvec_cs]
     exact PI.UnitaryGroupMassFormula.BetaLUniq.Xsp_le_UUE' S Λ hΛ F F' (Submodule.subset_span ⟨i, rfl⟩)
 
-theorem pair_core (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
+theorem pair_core (hΛ : Submodule.IsFullLattice E Λ) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V)
     (k : ℕ) (hLF : IsLift Λ F) (hL' : IsLift Λ F') (hL'' : IsLift Λ F'') (hG' : Gval F F' ≠ 0)
     (hdim : finrank E S.V = k + 2 * r + 1) (hT : T ≠ 0) (hs : s0 Λ F F' F'' β k = 1)
     (hsc : IsScalar Λ F F' F'' β) {Ω'' : S.V} (hΩ : OmV F.fl F''.fl Ω'') :
@@ -246,7 +250,7 @@ theorem pair_core (hΛ : Submodule.IsLattice E Λ) (F : LFlag S r T) (F' F'' : L
     exact this
   have hzz : S.hT F.fl.z ν = 0 := by
     have h1 : S.hT F.fl.z Ω'' = 1 := by rw [← fvec_last, hΩ.2]; simp
-    rw [hν, map_add, map_smul, h1, F.fl.z_norm, smul_eq_mul]
+    rw [hν, map_add (f := _), map_smul, h1, F.fl.z_norm, smul_eq_mul]
     field_simp
     ring
   have hνXp : ν ∈ orth S (Xplus F) := by
@@ -314,7 +318,7 @@ theorem omega_representative_holds : OmRep u u' F0 what₂ := by
   have r1 := Quot.eqvGen_exact eγ
   have r2 := Quot.eqvGen_exact e'
   have hRL := hrows.1 p.lam p.mem
-  have hΛ : Submodule.IsLattice D.host.E p.lam := hRL.2.1.1
+  have hΛ : Submodule.IsFullLattice D.host.E p.lam := hRL.1.1
   have hLF : IsLift p.lam (lf D F0) := hRL.2.1.2.2.1
 
   have i1 := (inv_eqv r1 (Inv (lf D F0) Ωγ) fun _ _ h => inv_dc h).1 ⟨Ωγ, hγ, by simp⟩

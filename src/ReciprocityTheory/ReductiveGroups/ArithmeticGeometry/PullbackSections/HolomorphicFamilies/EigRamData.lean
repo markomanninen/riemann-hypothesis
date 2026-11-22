@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.IdemDataBasis
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.EigRamCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.IdemDataBasis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,8 @@ theorem ev_D {k : Type} [Field k] (ψ : E →+* k) (δ : 𝓞 E) (hδ : ∀ i, I
     show ψ (omF (E := E) i : E) / ψ (δ : E) * ψ ((δ : E) * omDF i) = _
     rw [map_mul, map_mul]
     field_simp
-  rw [Finset.sum_congr rfl fun i _ => e i, ← map_sum, sum_omDF_omF, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl fun i _ => e i, ← map_sum, sum_omDF_omF, map_one]
 
 theorem dual_mul_expand (a : 𝓞 E) (i : Module.Free.ChooseBasisIndex ℤ (𝓞 E)) :
     (a : E) * TB.trDual (integralBasis E) i =
@@ -61,7 +66,8 @@ theorem dual_mul_expand (a : 𝓞 E) (i : Module.Free.ChooseBasisIndex ℤ (𝓞
     ring
   rw [e1, ← (RingOfIntegers.basis E).sum_repr (a * RingOfIntegers.basis E j)]
   push_cast
-  simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_zsmul, ← hb,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.mul_sum, map_sum, mul_smul_comm, map_zsmul, ← hb,
     ReciprocityTheory.ChartRestriction.G.PullbackSections.Pf.EigA.trace_dual_mul]
   simp
 
@@ -75,7 +81,8 @@ theorem eqv_D {k : Type} [Field k] (ψ : E →+* k) (δ : 𝓞 E) (hδ : ∀ i, 
     have h1 := dual_mul_expand (E := E) a ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm i)
     rw [← Equiv.sum_comp (Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm] at h1
     show algebraMap (𝓞 E) E (a * bD δ hδ i) = algebraMap (𝓞 E) E (∑ j, _ • bD δ hδ j)
-    rw [map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_sum]
     show (a : E) * ((δ : E) * TB.trDual (integralBasis E) ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm i)) = _
     rw [show (a : E) * ((δ : E) * TB.trDual (integralBasis E) ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm i)) =
         (δ : E) * ((a : E) * TB.trDual (integralBasis E) ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm i)) by ring, h1, Finset.mul_sum]
@@ -98,7 +105,8 @@ theorem eqv_D {k : Type} [Field k] (ψ : E →+* k) (δ : 𝓞 E) (hδ : ∀ i, 
     have h3 : ψ (a : E) * ψ (omF j : E) = ∑ i : Fin (nI E), (((RingOfIntegers.basis E).repr
         (a * RingOfIntegers.basis E ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm j))
         ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm i) : ℤ) : k) * ψ (omF i : E) := by
-      rw [← map_mul, show (a : E) * (omF j : E) = ((a * RingOfIntegers.basis E
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_mul, show (a : E) * (omF j : E) = ((a * RingOfIntegers.basis E
         ((Fintype.equivFin (Module.Free.ChooseBasisIndex ℤ (𝓞 E))).symm j) : 𝓞 E) : E) by simp [omF], h2, map_sum]
       simp [map_mul, map_intCast]
     rw [mul_div_assoc', h3, Finset.sum_div]
@@ -128,7 +136,8 @@ theorem comp_D {k : Type} [Field k] [CharZero k] {Ty : Type} [Fintype Ty] (ψ : 
   have hsum : ∑ i, (z i : 𝓞 E) * bD (N : 𝓞 E) hδ i = (N : 𝓞 E) := by
     apply RingOfIntegers.ext
     show algebraMap (𝓞 E) E (∑ i, (z i : 𝓞 E) * bD (N : 𝓞 E) hδ i) = algebraMap (𝓞 E) E (N : 𝓞 E)
-    rw [map_sum, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_natCast]
     have h1 := one_eq_sum_trace (E := E)
     have e : ∀ i, algebraMap (𝓞 E) E ((z i : 𝓞 E) * bD (N : 𝓞 E) hδ i) =
         (N : E) * (Algebra.trace ℚ E (omF i : E) • omDF (E := E) i) := by
@@ -140,7 +149,8 @@ theorem comp_D {k : Type} [Field k] [CharZero k] {Ty : Type} [Fintype Ty] (ψ : 
     rw [Finset.sum_congr rfl fun i _ => e i, ← Finset.mul_sum, ← h1, mul_one]
   have hM : ∑ i, (z i : k) • M (bD (N : 𝓞 E) hδ i) = (N : k) • (1 : Matrix (Fin d) (Fin d) k) := by
     have := congrArg M hsum
-    rw [map_sum, map_natCast] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_natCast] at this
     rw [Nat.cast_smul_eq_nsmul, nsmul_eq_mul, mul_one, ← this]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, map_intCast, Int.cast_smul_eq_zsmul, zsmul_eq_mul]

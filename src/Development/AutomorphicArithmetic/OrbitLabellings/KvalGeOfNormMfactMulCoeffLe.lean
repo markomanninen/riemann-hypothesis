@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
-import Formalism.GaussJetBounds.Statement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 open scoped BigOperators
 

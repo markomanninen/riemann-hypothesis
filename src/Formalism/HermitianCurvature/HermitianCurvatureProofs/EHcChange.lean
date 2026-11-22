@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Hpart2EqZeroOfInLie
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Hpart2EqZeroOfInLie
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -92,7 +96,7 @@ private theorem psi_add_hermitian_curvature (D : Mat k r →L[ℝ] E) (g A B : M
     rw [← smul_add]
     congr 1
     abel
-  simp only [Psi, h1, h2, mul_add, map_add, smul_add]
+  simp only [Psi, h1, h2, mul_add, map_add (f := _), smul_add]
   abel
 
 theorem Psi_sum {ι : Type*} (s : Finset ι) (D : Mat k r →L[ℝ] E) (g : Mat k r) (Z : ι → Mat k r) :

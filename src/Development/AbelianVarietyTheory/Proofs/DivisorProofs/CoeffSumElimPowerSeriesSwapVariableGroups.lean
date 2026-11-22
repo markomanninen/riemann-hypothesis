@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 namespace GlobalTheory.SwapCoeff
@@ -20,9 +25,9 @@ theorem coeff_swap : ∀ (R : Type) [CommRing R] (d : ℕ) (c : MvPowerSeries (F
     rw [Finsupp.embDomain_eq_mapDomain]
     ext x
     rcases x with i | i
-    · have := Finsupp.mapDomain_apply hinj (Finsupp.sumElim e a) (Sum.inr i)
+    · have := Finsupp.mapDomain_apply_of_injective hinj (Finsupp.sumElim e a) (Sum.inr i)
       simpa using this
-    · have := Finsupp.mapDomain_apply hinj (Finsupp.sumElim e a) (Sum.inl i)
+    · have := Finsupp.mapDomain_apply_of_injective hinj (Finsupp.sumElim e a) (Sum.inl i)
       simpa using this
   rw [hE] at h
   rw [swap_eq_rename]

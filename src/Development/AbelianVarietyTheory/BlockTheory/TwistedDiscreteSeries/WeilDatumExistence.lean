@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,6 @@ theorem weilDatumExists_iff (D : D7) :
       exact h S T ψ χS χT hψ h1 h2 h3 h4
   · intro h S T ψ χS χT hψ h1 h2 h3 h4
     exact (h S T ψ χS χT).2 ⟨hψ, h1, h2, h3, h4⟩
-
-example (D : D7) : Formalism.HermitianLatticesTheory.IsCMUnram D.host.E := D.sp.cm.cmUnram
-
-example (D : D7) : IsHeckeChar D (1 : (AE D)ˣ →* Circle) := ⟨continuous_const, fun _ => rfl⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.WeilDatumExistenceCriterion
 

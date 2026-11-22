@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.Interface
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.Interface
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.L2.FormalSeriesBounds
@@ -247,7 +251,8 @@ theorem exists_seq (V : VF C) (cpl : ∀ s : ℕ → C, (∀ n : ℕ, V.Ge n (s 
     rw [h2, mul_eq_zero, sub_eq_zero] at h1
     rcases h1 with h1 | h1
     · have h3 := congrArg π h1
-      rw [map_sum, map_zero] at h3
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h3
       simp only [map_mul, map_pow, hζπ, ← hf] at h3
       rw [geom_sum₂_self] at h3
       exact mul_ne_zero hNπ (pow_ne_zero _ (hx0 _)) h3

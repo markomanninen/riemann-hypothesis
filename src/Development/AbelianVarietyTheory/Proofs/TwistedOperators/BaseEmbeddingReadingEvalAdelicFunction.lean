@@ -1,11 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TransformIntegral
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ShiftSubTranslate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsGenReadsOfUnitAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionThirdStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PureTensorOSmul
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.HkSupSizedOfHkSup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TransformIntegral
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ShiftSubTranslate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsGenReadsOfUnitAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesFirst
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesSixth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PureTensorOSmul
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EmbeddingsDifferOnInteger
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.HkSupSizedOfHkSup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -169,8 +178,8 @@ theorem not_dvd_level (hL : LawsJ T) {P : Formalism.L2.DIV.Pl D.host.E} {p : ℕ
   rw [hu, Nat.cast_mul]
   exact P.asIdeal.mul_mem_right _ hpP
 
-omit [Algebra T.Q.c.F D.what₂.LL] in
 
+omit [Algebra T.Q.c.F D.what₂.LL] in
 theorem exists_transform (hT : GlobalTheory.IndefiniteRowSideFullHecke.SplitOffDetection.HeckeTransform) (hP : GlobalTheory.IndefiniteRowSideFullHecke.HeckePrimeDetection.HeckePointLaws) (hL : LawsJ T)
     (i : Fin D.R.m) {P : Ideal (𝓞 D.host.E)} {p k : ℕ} (hSO : GlobalTheory.IndefiniteRowSideFullHecke.SplitOffDetection.IsSplitOff T.Q.l P p) (hk : k ≤ D.R.r)
     (cq : T.Q.c.F) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {n : ℕ} (ha : Dom a n) :
@@ -217,8 +226,8 @@ theorem hkC_eq (i : Fin D.R.m) (P : Formalism.L2.DIV.Pl D.host.E) (k : ℕ) :
   rw [e2, inv_pow, inv_pow]
   rfl
 
-variable (T R κ) in
 
+variable (T R κ) in
 def ReadsCusp (i : Fin D.R.m) (σ : T.Q.c.F →+* ℂ) (hV : T.V ((i : ℕ) + 1) σ = Wc D i) : Prop :=
   ∀ (P : Formalism.L2.DIV.Pl D.host.E) (p k : ℕ) (α : GA D (Wc D i)) (Rc : Finset (GA D (Wc D i))), IsHkData R i P k α Rc →
     GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalLatticeThetaValues.IsUnitaryHeckeOperatorSplitPrimeData T R i P p k α Rc →
@@ -282,37 +291,9 @@ abbrev withConst (T : CoreJ D) (c' : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.
 variable (T : CoreJ D) [iA : Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F)
   (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
 
-def FrameOnCusp (i : Fin D.R.m) : Prop :=
-  ∃ c' : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.U j σ).Comp → ℂ,
-    (∀ j, InR D j → ∀ σ, GoodEmb T.Q.c σ → CUnit (c' j σ)) ∧
-    (∀ (i' : Fin D.R.m) (σ : T.Q.c.F →+* ℂ), ∀ f ∈ T.cuspA ((i' : ℕ) + 1) (wtA (κ i')) (κ i').n,
-      (withConst T c').phiJ ((i' : ℕ) + 1) σ (wtA (κ i')) f = T.phiJ ((i' : ℕ) + 1) σ (wtA (κ i')) f) ∧
-    ∀ hV : T.V ((i : ℕ) + 1) T.σ₀ = Wc D i, GlobalTheory.IndefiniteRowSideFullHecke.OrthonormalLatticeThetaValues.FramePin (withConst T c') R i T.σ₀ hV
-
 variable {T R κ v₀}
 
-omit iA in
-theorem phiC_withConst {c' : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.U j σ).Comp → ℂ} {j : ℕ} {σ : T.Q.c.F →+* ℂ} {W : HSp D}
-    (hV : T.V j σ = W) {a : (D.host.E →+* ℂ) × ℕ → ℕ} {f : T.R j} (h : (withConst T c').phiJ j σ a f = T.phiJ j σ a f) :
-    phiC (withConst T c') hV a f = phiC T hV a f := by
-  subst hV
-  exact h
 
-set_option maxHeartbeats 1600000 in
-
-def tieWithConst (fw : FWTie T R κ v₀) (c' : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.U j σ).Comp → ℂ)
-    (h1 : ∀ j, InR D j → ∀ σ, GoodEmb T.Q.c σ → CUnit (c' j σ))
-    (h2 : ∀ (i' : Fin D.R.m) (σ : T.Q.c.F →+* ℂ), ∀ f ∈ T.cuspA ((i' : ℕ) + 1) (wtA (κ i')) (κ i').n,
-      (withConst T c').phiJ ((i' : ℕ) + 1) σ (wtA (κ i')) f = T.phiJ ((i' : ℕ) + 1) σ (wtA (κ i')) f) :
-    @FWTie D G _ _ Pl0 T0 A (withConst T c') iA R κ v₀ :=
-  @FWTie.mk D G _ _ Pl0 T0 A (withConst T c') iA R κ v₀ fw.alg_eq fw.e fw.ks fw.kap fw.pt fw.nrm_eq
-    ⟨fw.laws.toLawsM, h1, fw.laws.muVal, fw.laws.muConj, fw.laws.intAll, fw.laws.modelW, fw.laws.familyUniformisationBasePointOrthogonal, fw.laws.kfHalf,
-      fw.laws.adPin⟩
-    fw.chiR fw.hv₀ fw.x0
-    (fun i σ hσ hV h => fw.ev0 i σ hσ hV fun ⟨j', hj'⟩ => h ⟨j', fun f => (hj' f).trans (phiC_withConst (T := T) (c' := c') hV (h2 i _ f f.2)).symm⟩)
-    (fun i σ hσ hV h f =>
-      (fw.ev i σ hσ hV (h.imp fun _ hj' f => (hj' f).trans (phiC_withConst (T := T) (c' := c') hV (h2 i _ f f.2))) f).trans
-        (phiC_withConst (T := T) (c' := c') hV (h2 i _ f f.2)).symm)
 
 omit iA in
 theorem phiC_congr {j : ℕ} {σ σ' : T.Q.c.F →+* ℂ} (e : σ = σ') {W : HSp D} (hV : T.V j σ = W) (hV' : T.V j σ' = W)
@@ -327,8 +308,8 @@ theorem phiC_apply {j : ℕ} {σ : T.Q.c.F →+* ℂ} {W : HSp D} (hV : T.V j σ
   subst hV
   rfl
 
-omit iA in
 
+omit iA in
 theorem exists_withConst (hL : LawsJ T) (j : ℕ) (σ : T.Q.c.F →+* ℂ) (c0 : (T.U j σ).Comp → ℂ) (h0 : CUnit c0) :
     ∃ c' : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.U j σ).Comp → ℂ, c' j σ = c0 ∧ LawsJ (withConst T c') := by
   classical
@@ -363,8 +344,8 @@ theorem readsCusp_of_shift {i : Fin D.R.m} (hβ : IsSDFrame (Wc D i) (R.βW i) (
     mul_left_comm] at h1
   exact mul_left_cancel₀ hc h1
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem readsCusp_of_clauses {i : Fin D.R.m} (hβ : IsSDFrame (Wc D i) (R.βW i) (R.ΛW i) 1) (hSb : R.fam_Sb)
     (hinf : R.models_inf) (hHW : R.models_HW) (hgW : R.models_gW) (hHV : R.models_HV) (hjV : R.models_jV)
     (hmem : R.thP_thF_mem) (fw : FWTie T R κ v₀) (hV₁ : T.V ((i : ℕ) + 1) (res T (sg0 D A)) = Wc D i)
@@ -438,15 +419,5 @@ theorem hkSupAt_of_clauses (hI : GlobalTheory.IndefiniteRowSideFullHecke.UnusedS
     readsCusp_of_clauses hβ hSb hinf hHW hgW hHV hjV hmem fw hV (h0.ex hV) h0.const hsp hom hR
 
 end Pin
-
-def HkSupFrame : Prop :=
-  ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : FamIn D.what₂.LL G Pl0 T0 D.R.m)
-    (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A), R.Char F →
-    ∀ (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
-      (_fw : FWTie T R κ v₀) (i : Fin D.R.m),
-      (∀ hV : T.V ((i : ℕ) + 1) (res T (sg0 D A)) = Wc D i, JEvAt T R κ v₀ i (sg0 D A) hV) →
-      Function.Injective ((R.FW i).j (sg0 D A)) →
-      RhoIs (sg0 D A) ((R.FW i).j (sg0 D A)) (R.HW i (sg0 D A)).e (actW R i (sg0 D A)) (R.FW i).chi (R.FW i).ρ →
-      FrameOnCusp T R κ i → HkSupAt T R i
 
 end GlobalTheory.HeckeSup

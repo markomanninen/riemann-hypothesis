@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.HmaxLe
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DenBound
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.HmaxLe
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DenBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+
+@[expose] public section
 
 noncomputable section
 

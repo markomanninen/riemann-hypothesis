@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Complex MeasureTheory
 
@@ -25,7 +29,7 @@ private lemma UpperTheory.fourier_vanishing_homogeneous (F : ℝ → ℂ) (hc : 
       push_cast; ring
   have hpow : cexp (s * (2 * k) * (t * I)) = cexp (s * (t * I)) ^ (2 * k) := by
     rw [← exp_nat_mul]; congr 1; push_cast; ring
-  simp only [map_pow, map_add, map_mul, MvPolynomial.eval_X, MvPolynomial.eval_C,
+  simp only [map_pow, map_add (f := _), map_mul, MvPolynomial.eval_X, MvPolynomial.eval_C,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.head_cons]
   rw [hpow, he]
 

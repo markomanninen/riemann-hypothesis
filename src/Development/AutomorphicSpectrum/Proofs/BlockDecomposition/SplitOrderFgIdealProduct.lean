@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.KFin
 open Formalism.UG (cT)
@@ -58,14 +62,14 @@ theorem fg_eq_prod_principal {k R : Type} [Field k] [CommRing R] (O : ValuationS
       obtain ⟨⟨x₂, hx₂, p₂⟩, ⟨y₂, hy₂, q₂⟩⟩ := (h₂ b).1 hb
       refine ⟨⟨u₁ * x₁ + u₂ * x₂, O.add_mem _ _ (O.mul_mem _ _ hu₁ hx₁) (O.mul_mem _ _ hu₂ hx₂), ?_⟩,
         ⟨v₁ * y₁ + v₂ * y₂, O.add_mem _ _ (O.mul_mem _ _ hv₁ hy₁) (O.mul_mem _ _ hv₂ hy₂), ?_⟩⟩
-      · rw [map_add, Prod.fst_add, p₁, p₂, e₁, e₂]
+      · rw [map_add (f := _), Prod.fst_add, p₁, p₂, e₁, e₂]
         ring
-      · rw [map_add, Prod.snd_add, q₁, q₂, f₁, f₂]
+      · rw [map_add (f := _), Prod.snd_add, q₁, q₂, f₁, f₂]
         ring
     · rintro ⟨⟨x, hx, p⟩, ⟨y, hy, q⟩⟩
       have hsplit : r = φ.symm ((φ r).1, 0) + φ.symm (0, (φ r).2) := by
         apply φ.injective
-        rw [map_add, RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
+        rw [map_add (f := _), RingEquiv.apply_symm_apply, RingEquiv.apply_symm_apply]
         ext <;> simp
       rw [hsplit]
       refine Submodule.add_mem _ ?_ ?_

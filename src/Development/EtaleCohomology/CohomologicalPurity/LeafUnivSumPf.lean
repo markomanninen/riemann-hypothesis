@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafFstHocPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFstHocPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC

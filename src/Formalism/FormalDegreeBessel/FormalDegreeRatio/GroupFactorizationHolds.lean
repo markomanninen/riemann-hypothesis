@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Mathlib
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
 
 open Matrix
 
@@ -28,13 +32,13 @@ theorem minor_eq_of_mul {m : ℕ} (L U X Y : Matrix (Fin m) (Fin m) ℂ)
   have h1 : (L * X).submatrix (Fin.castLE hl) (Fin.castLE hl) =
       L.submatrix (Fin.castLE hl) (Fin.castLE hl) * X.submatrix (Fin.castLE hl) (Fin.castLE hl) := by
     ext i j
-    simp only [submatrix_apply, mul_apply]
+    simp only [submatrix_apply, Matrix.mul_apply]
     rw [sum_fin_castLE hl (fun q => L (Fin.castLE hl i) q * X q (Fin.castLE hl j)) (fun q hq => by
       rw [hL0 _ _ (Fin.lt_def.2 (by simp; omega)), zero_mul])]
   have h2 : (Y * U).submatrix (Fin.castLE hl) (Fin.castLE hl) =
       Y.submatrix (Fin.castLE hl) (Fin.castLE hl) * U.submatrix (Fin.castLE hl) (Fin.castLE hl) := by
     ext i j
-    simp only [submatrix_apply, mul_apply]
+    simp only [submatrix_apply, Matrix.mul_apply]
     rw [sum_fin_castLE hl (fun q => Y (Fin.castLE hl i) q * U q (Fin.castLE hl j)) (fun q hq => by
       rw [hU0 _ _ (Fin.lt_def.2 (by simp; omega)), mul_zero])]
   have hdL : (L.submatrix (Fin.castLE hl) (Fin.castLE hl)).det = 1 := by

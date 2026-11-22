@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OpBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OpBound
+
+@[expose] public section
 
 open MvPolynomial
 

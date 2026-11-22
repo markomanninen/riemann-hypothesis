@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.DefGroup
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.DefGroup
+
+@[expose] public section
+
 open NumberField
 open scoped TensorProduct Matrix
 

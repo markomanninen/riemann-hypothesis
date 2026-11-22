@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.TwSecPfGamma
+module
+
+public import Development.EtaleCohomology.KummerTheory.TwSecPfGamma
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -11,7 +15,7 @@ def PrimTors : Prop := ∀ (q : ℕ) [NeZero q] (B : Type) [CommRing B], SH B �
       (Prim q B →₀ ULift.{1} (ZMod q)) ⧸ twRel q i B)
 
 def SecSH : Prop := ∀ (A : Type) [CommRing A], SH A → ∀ (R : Type) [CommRing R]
-  (M : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} R)), Function.Bijective (ofRings.sec M (Spec (CommRingCat.of A)))
+  (M : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} R)), Function.Bijective (ofRings.sec (R := R) M (Spec (CommRingCat.of A)))
 
 theorem TwSec_of (h1 : PrimTors) (h2 : SecSH) : TwSec := by
   intro q _ A _ hA hq
@@ -21,7 +25,7 @@ theorem TwSec_of (h1 : PrimTors) (h2 : SecSH) : TwSec := by
   obtain ⟨hne, hbij⟩ := h1 q _ hB hqB
   refine ⟨hne, fun i ζ => ?_⟩
   have key : (fun t : ZMod q => (ULift.up t : ULift.{1} (ZMod q)) • twGen i ζ) =
-      ofRings.sec (twF q i) (Spec (CommRingCat.of A)) ∘ (fun t : ZMod q =>
+      ofRings.sec (R := ZMod q) (twF q i) (Spec (CommRingCat.of A)) ∘ (fun t : ZMod q =>
         (ULift.up t : ULift.{1} (ZMod q)) • (Submodule.Quotient.mk (Finsupp.single ζ (1 : ULift.{1} (ZMod q))) :
           (Prim q _ →₀ ULift.{1} (ZMod q)) ⧸ twRel q i _)) := by
     funext t

@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.MemUnitaryGroupIffMulConjTranspose
+
+@[expose] public section
 
 open Matrix Finset Filter Topology Set
 
@@ -61,7 +65,7 @@ theorem flow_mem {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (W 
         Real.norm_eq_abs, abs_of_pos (inv_pos.2 hpos), div_eq_inv_mul]
       refine mul_le_mul_of_nonneg_left ?_ (inv_pos.2 hpos).le
       have e : Q (T s u) = Q (T (s - x) w) + Q (T (s - x) (Q (T x u))) := by
-        rw [← map_add, ← map_add, hw, sub_add_cancel, ← hadd, sub_add_cancel]
+        rw [← map_add (f := _), ← map_add (f := _), hw, sub_add_cancel, ← hadd, sub_add_cancel]
       have e2 : ‖Q (T (s - x) (Q (T x u)))‖ ≤ ‖Q (T x u)‖ := (hQn _).trans (hiso _ _).le
       have e3 := norm_add_le (Q (T (s - x) w)) (Q (T (s - x) (Q (T x u))))
       rw [← e] at e3

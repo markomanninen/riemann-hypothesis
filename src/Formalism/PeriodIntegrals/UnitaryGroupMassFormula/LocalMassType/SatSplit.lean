@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.StepW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.ColumnAdditionFixesTranspose
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreDef
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.StepW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.ColumnAdditionFixesTranspose
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreDef
+
+@[expose] public section
 
 noncomputable section
 

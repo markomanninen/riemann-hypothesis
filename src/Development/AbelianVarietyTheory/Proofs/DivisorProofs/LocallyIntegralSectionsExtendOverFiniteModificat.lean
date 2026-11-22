@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LePreimageOfCompEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteModificationIntegralElementsRegularStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLIPreimageMono
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorizationThroughFiniteModificationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericFibreSectionsInjectiveFlatIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPreimageOfLocalPreimagesInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAffineChartCoverOverModificationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPulledBackPowerSectionOfLocalLiftsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumMulPulledBackFunctionsGenericFibreEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LePreimageOfCompEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteModificationIntegralElementsRegularStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExtLIPreimageMono
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FactorizationThroughFiniteModificationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericFibreSectionsInjectiveFlatIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPreimageOfLocalPreimagesInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAffineChartCoverOverModificationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPulledBackPowerSectionOfLocalLiftsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumMulPulledBackFunctionsGenericFibreEqStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ private theorem secK_extend_locInt {X X' Y Z : Scheme.{0}} (L : LB X) (f : X' �
       gs p' z (LB.wchart L (K := Fin 1) (fun _ => α) j') (s.f j') := by
   have hz' : p' z ∈ LB.wchart L (K := Fin 1) (fun _ => α) j' := extLI_le_wchart L f l α e j' hz
   unfold gs
-  rw [dif_pos hz, dif_pos hz']
+  rw [dite_eq_left hz, dite_eq_left hz']
   calc _ = (p'.stalkMap z).hom (Y.presheaf.germ (l ⁻¹ᵁ LB.wchart L (K := Fin 1) (fun _ => f) j') (p' z) hz
           ((l.app (LB.wchart L (K := Fin 1) (fun _ => f) j')).hom (σ.f j'))) :=
         (Scheme.Hom.germ_stalkMap_apply p' _ z hz _).symm

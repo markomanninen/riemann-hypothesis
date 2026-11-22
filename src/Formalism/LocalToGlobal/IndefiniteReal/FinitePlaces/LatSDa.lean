@@ -1,10 +1,15 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.VacExApp
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemElt
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.VacExA
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LatticeVariant
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatMod
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.VacExApp
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemElt
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.VacExA
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FactPrincipalDatum
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ExistsNatSmulSingle
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LatticeVariant
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,51 +70,18 @@ theorem lsd_coordO : ∃ r : 𝓞 D.host.F, r ≠ 0 ∧ ∀ (x : 𝓞 D.host.E) 
       Algebra.smul_def]⟩
   choose y hy using hl
   refine ⟨∑ l, (ω.repr x l : ℤ) • y l, ?_⟩
-  rw [hx, map_sum, Finsupp.finset_sum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
   have hc : ((∑ l, (ω.repr x l : ℤ) • y l : 𝓞 D.host.F) : D.host.F) =
       ∑ l, (ω.repr x l : ℤ) • ((y l : 𝓞 D.host.F) : D.host.F) := by
-    rw [show ((∑ l, (ω.repr x l : ℤ) • y l : 𝓞 D.host.F) : D.host.F) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ l, (ω.repr x l : ℤ) • y l : 𝓞 D.host.F) : D.host.F) =
       algebraMap (𝓞 D.host.F) D.host.F (∑ l, (ω.repr x l : ℤ) • y l) from rfl, map_sum]
     exact Finset.sum_congr rfl fun l _ => map_zsmul _ _ _
   rw [hc]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_zsmul, Finsupp.smul_apply, ← hy l, zsmul_eq_mul, zsmul_eq_mul]
   ring
-
-theorem lsd_denFG {n : ℕ} (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E)) (hL : L.FG) :
-    ∃ d : 𝓞 D.host.E, d ≠ 0 ∧ ∀ t ∈ L, ∀ i, ∃ y : 𝓞 D.host.E, (d : D.host.E) * t i = y := by
-  classical
-  obtain ⟨g, hg⟩ := hL
-  obtain ⟨d, hd, h⟩ := lsd_den (D := D) (g.biUnion fun t => Finset.univ.image fun i => t i)
-  refine ⟨d, hd, fun t ht => ?_⟩
-  rw [← hg] at ht
-  induction ht using Submodule.span_induction with
-  | mem x hx =>
-    intro i
-    exact h _ (Finset.mem_biUnion.2 ⟨x, hx, Finset.mem_image.2 ⟨i, Finset.mem_univ _, rfl⟩⟩)
-  | zero => intro i; exact ⟨0, by simp⟩
-  | add x y _ _ hx hy =>
-    intro i
-    obtain ⟨a, ha⟩ := hx i
-    obtain ⟨b, hb⟩ := hy i
-    exact ⟨a + b, by rw [Pi.add_apply, mul_add, ha, hb]; exact (map_add (algebraMap (𝓞 D.host.E) D.host.E) a b).symm⟩
-  | smul c x _ hx =>
-    intro i
-    obtain ⟨a, ha⟩ := hx i
-    refine ⟨c * a, ?_⟩
-    rw [Pi.smul_apply, Algebra.smul_def,
-      show ((c * a : 𝓞 D.host.E) : D.host.E) = (c : D.host.E) * (a : D.host.E) from
-        map_mul (algebraMap (𝓞 D.host.E) D.host.E) c a, ← ha]
-    show (d : D.host.E) * ((c : D.host.E) * x i) = (c : D.host.E) * ((d : D.host.E) * x i)
-    ring
-
-theorem lsd_denFrac (I : FractionalIdeal (nonZeroDivisors (𝓞 D.host.E)) D.host.E) :
-    ∃ d : 𝓞 D.host.E, d ≠ 0 ∧ ∀ x ∈ I, ∃ y : 𝓞 D.host.E, (d : D.host.E) * x = y := by
-  obtain ⟨a, ha, h⟩ := I.isFractional
-  refine ⟨a, nonZeroDivisors.ne_zero ha, fun x hx => ?_⟩
-  obtain ⟨y, hy⟩ := h x hx
-  exact ⟨y, by rw [show ((y : 𝓞 D.host.E) : D.host.E) = algebraMap (𝓞 D.host.E) D.host.E y from rfl, hy,
-    Algebra.smul_def]⟩
 
 theorem lsd_spanDen {n : ℕ} (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E))
     (hL : Submodule.span D.host.E (L : Set (Fin n → D.host.E)) = ⊤) (x : Fin n → D.host.E) :
@@ -155,10 +127,13 @@ theorem lsd_mem (hΛS : IsSelfDualC S ΛS) (hΛT : IsSelfDualC T ΛT) :
         latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
   classical
   obtain ⟨c, hc, hc0⟩ := lsd_AA_ne (D := D)
-  have hT := hΛT.1.span_eq_top
-  have hS := hΛS.1.span_eq_top
-  choose dT hdT htT using fun i : Fin T.rank => lsd_spanDen ΛT hT (Pi.single i 1)
-  choose dS hdS hsS using fun j : Fin S.rank => lsd_spanDen ΛS hS (fun k => star (S.gram⁻¹ j k))
+  have hden : ∀ {n : ℕ} (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E)),
+      Submodule.IsFullLattice D.host.E L → ∀ x : Fin n → D.host.E, ∃ d : 𝓞 D.host.E, d ≠ 0 ∧ (d : D.host.E) • x ∈ L := by
+    intro n L hL x
+    obtain ⟨N, hN, hNx⟩ := PDA.exists_nat_smul_mem hL x
+    exact ⟨N, Nat.cast_ne_zero.mpr hN.ne', by simpa using hNx⟩
+  choose dT hdT htT using fun i : Fin T.rank => hden ΛT (PDA.selfDual_isFullLattice T ΛT hΛT) (Pi.single i 1)
+  choose dS hdS hsS using fun j : Fin S.rank => hden ΛS (PDA.selfDual_isFullLattice S ΛS hΛS) (fun k => star (S.gram⁻¹ j k))
   have hdT' : ∀ i, (dT i : D.host.E) ≠ 0 := fun i h => hdT i (FaithfulSMul.algebraMap_injective (𝓞 D.host.E) D.host.E
     (by rw [map_zero]; exact h))
   have hdS' : ∀ j, (dS j : D.host.E) ≠ 0 := fun j h => hdS j (FaithfulSMul.algebraMap_injective (𝓞 D.host.E) D.host.E
@@ -211,20 +186,18 @@ theorem lsd_mem (hΛS : IsSelfDualC S ΛS) (hΛT : IsSelfDualC T ΛT) :
     · rw [if_neg (fun h => hj h.2), if_neg hj, mul_zero, TensorProduct.tmul_zero, mul_zero]
   · rw [if_neg (fun h => hi h.1), if_neg hi, mul_zero, zero_mul, TensorProduct.tmul_zero, mul_zero]
 
-open Formalism.IndefR.PHeisFC in
 
+open Formalism.IndefR.PHeisFC in
 theorem lsd_finPart_expand (z : AE D) :
     finPart D z = ∑ k, sndA D.host.F (cE D.host.F D.host.E z k) ⊗ₜ[D.host.F] Module.finBasis D.host.F D.host.E k := by
-  conv_lhs => rw [VacEx.expand_cE z]
-  rw [map_sum]
-  rfl
+  have h := congrArg (finPart D) (VacEx.expand_cE z)
+  simpa only [map_sum, Fock.DRho.finPart_tmul] using h
 
 open Formalism.IndefR.PHeisFC in
 theorem lsd_infPart_expand (z : AE D) :
     infPart D z = ∑ k, fstA D.host.F (cE D.host.F D.host.E z k) ⊗ₜ[D.host.F] Module.finBasis D.host.F D.host.E k := by
-  conv_lhs => rw [VacEx.expand_cE z]
-  rw [map_sum]
-  rfl
+  have h := congrArg (infPart D) (VacEx.expand_cE z)
+  simpa only [map_sum, Fock.DRho.infPart_tmul] using h
 
 theorem lsdE_finPart (i : Fin T.rank) (j : Fin S.rank) (β : Af D.host.F) (e : D.host.E) (i' : Fin T.rank)
     (j' : Fin S.rank) :
@@ -235,9 +208,9 @@ theorem lsdE_finPart (i : Fin T.rank) (j : Fin S.rank) (β : Af D.host.F) (e : D
   · rfl
   · exact map_zero _
 
+
 set_option maxHeartbeats 1600000 in
 open Formalism.IndefR.PHeisFC in
-
 theorem latO_isOpen (hΛS : IsSelfDualC S ΛS) (hΛT : IsSelfDualC T ΛT) :
     IsOpen {w : WO S T | ∃ u ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E))
       (fun _ => True), (w - u).map (finPart D) = 0} := by
@@ -303,8 +276,8 @@ theorem lsd_fst (z : AE D) (k : Fin (Module.finrank D.host.F D.host.E)) :
     simp [Finsupp.smul_apply, Algebra.smul_def]
   | add x y hx hy =>
     have h1 : cE D.host.F D.host.E (x + y) k = cE D.host.F D.host.E x k + cE D.host.F D.host.E y k := by
-      rw [map_add]; rfl
-    rw [h1, map_add, hx, hy, ← Finsupp.add_apply, ← LinearEquiv.map_add, ← RingHom.map_add]
+      rw [map_add (f := _)]; rfl
+    rw [h1, map_add (f := _), hx, hy, ← Finsupp.add_apply, ← LinearEquiv.map_add (e := _), ← RingHom.map_add (f := _)]
 
 set_option maxHeartbeats 800000 in
 open Formalism.IndefR.PHeisFC in
@@ -318,8 +291,8 @@ theorem lsd_snd (z : AE D) (k : Fin (Module.finrank D.host.F D.host.E)) :
     simp [Finsupp.smul_apply, Algebra.smul_def]
   | add x y hx hy =>
     have h1 : cE D.host.F D.host.E (x + y) k = cE D.host.F D.host.E x k + cE D.host.F D.host.E y k := by
-      rw [map_add]; rfl
-    rw [h1, map_add, hx, hy, ← Finsupp.add_apply, ← LinearEquiv.map_add, ← RingHom.map_add]
+      rw [map_add (f := _)]; rfl
+    rw [h1, map_add (f := _), hx, hy, ← Finsupp.add_apply, ← LinearEquiv.map_add (e := _), ← RingHom.map_add (f := _)]
 
 theorem lsd_alg_int (y : 𝓞 D.host.F) : algebraMap D.host.F (Af D.host.F) (y : D.host.F) ∈ intAf D.host.F := by
   intro v
@@ -342,7 +315,7 @@ theorem lsd_int_coord : ∃ r : 𝓞 D.host.F, r ≠ 0 ∧ ∀ w ∈ intAE D, �
     exact intAf_mul ha (lsd_alg_int y)
   | zero => simp only [map_zero, Finsupp.zero_apply, mul_zero]; exact fun v => zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add, Finsupp.add_apply, mul_add]
+    rw [map_add (f := _), Finsupp.add_apply, mul_add]
     exact fun v => by rw [map_add]; exact add_mem (hx v) (hy v)
   | neg x _ hx =>
     rw [map_neg, Finsupp.neg_apply, mul_neg]
@@ -355,9 +328,9 @@ theorem lsd_cE_of_inf (z : AE D) (hz : infPart D z = 0) (k : Fin (Module.finrank
   rw [lsd_fst, hz, map_zero, Finsupp.zero_apply]
   rfl
 
+
 set_option maxHeartbeats 1600000 in
 open Formalism.IndefR.PHeisFC in
-
 theorem lsd_decomp (Y : WO S T) (hY : ∀ i j, infPart D (Y i j) = 0) :
     Y = ∑ i, ∑ j, ∑ k, lsdE S T i j (sndA D.host.F (cE D.host.F D.host.E (Y i j) k))
       (Module.finBasis D.host.F D.host.E k) := by
@@ -367,8 +340,9 @@ theorem lsd_decomp (Y : WO S T) (hY : ∀ i j, infPart D (Y i j) = 0) :
   rw [Finset.sum_eq_single i (fun b _ hb => by simp [Ne.symm hb]) (by simp),
     Finset.sum_eq_single j (fun b _ hb => by simp [Ne.symm hb]) (by simp)]
   simp only [and_self, if_true]
-  conv_lhs => rw [VacEx.expand_cE (Y i j)]
-  exact Finset.sum_congr rfl fun k _ => by rw [← lsd_cE_of_inf _ (hY i j) k]
+  calc
+    _ = ∑ k, cE D.host.F D.host.E (Y i j) k ⊗ₜ[D.host.F] Module.finBasis D.host.F D.host.E k := VacEx.expand_cE _
+    _ = _ := Finset.sum_congr rfl fun k _ => by rw [← lsd_cE_of_inf _ (hY i j) k]
 
 theorem lsdE_nsmul (N : ℕ) (i : Fin T.rank) (j : Fin S.rank) (β : Af D.host.F) (e : D.host.E) :
     N • lsdE S T i j β e = lsdE S T i j (algebraMap D.host.F (Af D.host.F) (N : D.host.F) * β) e := by
@@ -383,9 +357,9 @@ theorem lsdE_nsmul (N : ℕ) (i : Fin T.rank) (j : Fin S.rank) (β : Af D.host.F
   · rw [key, VacEx.nsmul_pairA, nsmul_eq_mul, ← map_natCast (algebraMap D.host.F (Af D.host.F))]
   · rw [smul_zero]
 
+
 set_option maxHeartbeats 1600000 in
 open Formalism.IndefR.PHeisFC in
-
 theorem latO_nsmul_mem (hΛS : IsSelfDualC S ΛS) (hΛT : IsSelfDualC T ΛT) :
     ∃ N : ℕ, 0 < N ∧ ∀ Y : WO S T, (∀ i j, finPart D (Y i j) ∈ intAE D) → (∀ i j, infPart D (Y i j) = 0) →
       N • Y ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
@@ -426,12 +400,12 @@ theorem lsd_fi : ∀ x ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT :
     intro i j
     rw [Matrix.of_apply, Fock.DRho.infPart_tmul, VacEx.fstA_pairA, TensorProduct.zero_tmul]
   | zero => intro i j; simp
-  | add x y _ _ hx hy => intro i j; rw [Matrix.add_apply, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => intro i j; rw [Matrix.add_apply, map_add (f := _), hx, hy, add_zero]
   | neg x _ hx => intro i j; rw [Matrix.neg_apply, map_neg, hx, neg_zero]
+
 
 set_option maxHeartbeats 1600000 in
 open Formalism.IndefR.PHeisFC in
-
 theorem latO_isCompact (hΛS : IsSelfDualC S ΛS) (hΛT : IsSelfDualC T ΛT) :
     IsCompact ((latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True :
       AddSubgroup (WO S T)) : Set (WO S T)) := by

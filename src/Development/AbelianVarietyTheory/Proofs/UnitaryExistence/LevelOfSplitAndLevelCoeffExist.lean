@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ def minCoeff {H : Host E} (l : Level H) : Coeff l :=
       (IntermediateField.mem_adjoin_simple_self ℚ _)
   { F := IntermediateField.normalClosure ℚ E ℂ ⊔ IntermediateField.adjoin ℚ {zeta l.M'}
     fin := by
-      haveI := IntermediateField.adjoin.finiteDimensional (isIntegral_zeta (M'_pos l))
+      have := IntermediateField.adjoin.finiteDimensional (isIntegral_zeta (M'_pos l))
       infer_instance
     conj := hconj
     zeta_mem := hz

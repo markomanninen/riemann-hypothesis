@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory
@@ -39,7 +44,8 @@ theorem exists_maximal_over_closedPt : ∀ (T E : Type) [CommRing T] [IsLocalRin
   haveI : Algebra.FiniteType (T[X] ⧸ P) (E ⧸ y) := hft
   haveI : Module.Finite (T[X] ⧸ P) (E ⧸ y) := finite_of_finite_type_of_isJacobsonRing _ _
   have hker : (RingHom.ker φ).IsMaximal := by
-    have := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := T[X] ⧸ P) (⊥ : Ideal (E ⧸ y))
+    have := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := T[X] ⧸ P) (⊥ : Ideal (E ⧸ y))
+    change (Ideal.comap φ ⊥).IsMaximal at this
     rwa [← RingHom.ker_eq_comap_bot] at this
   have hyc : y.comap f = (RingHom.ker φ).comap (Ideal.Quotient.mk P) := by
     ext x

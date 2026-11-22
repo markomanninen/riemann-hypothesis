@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfFree
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfFree
+
+@[expose] public section
 
 namespace PositivityTheory.KCo
 

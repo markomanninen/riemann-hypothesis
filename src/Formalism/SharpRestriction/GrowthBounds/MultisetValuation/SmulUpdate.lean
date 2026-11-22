@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelSumOfClassData
-import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.KernelSumOfClassData
+public import Formalism.SharpRestriction.GrowthBounds.LatticeSystems
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ theorem smul_update (C : Level P) (γ : C.Γ) (v : Fin P.nV) (L : P.Tup)
 theorem tm_equiv (C : Level P) (v : Fin P.nV) (i : ℕ) (F : P.Tup → P.Xsp)
     (hF' : ∀ (γ : C.Γ) (L : P.Tup), F (C.smul γ L) = (C.χ γ : O) • C.actX γ (F L)) (γ : C.Γ) (L : P.Tup) :
     P.Tminus v i F (C.smul γ L) = (C.χ γ : O) • C.actX γ (P.Tminus v i F L) := by
-  rw [tm_eq, tm_eq, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tm_eq, tm_eq, map_sum, Finset.smul_sum]
   symm
   apply Finset.sum_nbij' (fun A => A.map (nt_phi (P.W v) (C.act v γ)))
     (fun A => A.map (nt_phi (P.W v) (C.act v γ)⁻¹))

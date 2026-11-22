@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -177,7 +181,7 @@ private theorem lu_inv_mem {M : Type} [Group M] [Finite M] (S : Submonoid M) {x 
   exact pow_mem hx _
 
 private theorem lu_sub {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [Finite R]
-    (𝒜 : ℤ → Submodule O R) [GradedAlgebra 𝒜] : ∃ S : Subgroup (GG 3 R), ∀ x, x ∈ S ↔ GrMat 𝒜 x.mat := by
+    (𝒜 : ℤ → Submodule O R) [GradedAlgebra 𝒜] : ∃ S : Subgroup (GG (m := 3) (R := R)), ∀ x, x ∈ S ↔ GrMat 𝒜 x.mat := by
   have h1 : GrMat 𝒜 (1 : Matrix (Fin 3) (Fin 3) R) := fun a b => by
     by_cases h : a = b
     · subst h
@@ -197,28 +201,28 @@ private theorem lu_sub {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [A
     have hi : GrMat 𝒜 ((g⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) := lu_inv_mem S₀ hg
     rw [theta_val]
     generalize ((g⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) = X at hi
-    have e : (Jmat R 3 * Xᵀ * Jmat R 3) a b = X b.rev a.rev := by
+    have e : (Jmat (R := R) 3 * Xᵀ * Jmat (R := R) 3) a b = X b.rev a.rev := by
       fin_cases a <;> fin_cases b <;> simp [Matrix.mul_apply, Fin.sum_univ_three, Jmat, Fin.rev]
     have e' : wt b.rev a.rev = wt a b := by fin_cases a <;> fin_cases b <;> rfl
     rw [e, ← e']
     exact hi _ _
-  let S₁ : Submonoid (GG 3 R) :=
+  let S₁ : Submonoid (GG (m := 3) (R := R)) :=
     { carrier := {x | x.left ∈ S₀}
       one_mem' := S₀.one_mem
       mul_mem' := fun {x y} hx hy => by
-        show x.left * sgnAct 3 R x.right y.left ∈ S₀
+        show x.left * sgnAct (m := 3) (R := R) x.right y.left ∈ S₀
         refine mul_mem hx ?_
         rcases Int.units_eq_one_or x.right with h | h <;> rw [h]
         · rw [sgnAct_one]; exact hy
         · rw [sgnAct_neg_one]; exact hθ _ hy }
-  haveI : Finite (GG 3 R) := Finite.of_equiv _ SemidirectProduct.equivProd.symm
+  haveI : Finite (GG (m := 3) (R := R)) := Finite.of_equiv _ SemidirectProduct.equivProd.symm
   exact ⟨{ S₁ with inv_mem' := fun hx => lu_inv_mem S₁ hx }, fun _ => Iff.rfl⟩
 
 private theorem lu_ker {R R' : Type} [CommRing R] [CommRing R'] (p : R →+* R')
     (hp : ∀ x y, p x = 0 → p y = 0 → x * y = 0) (l : ℕ) (hl : ∀ x, p x = 0 → (l : R) * x = 0) :
-    (∀ a b : GG 3 R, GG.map p a = 1 → GG.map p b = 1 → a * b = b * a) ∧
-      ∀ a : GG 3 R, GG.map p a = 1 → a ^ l = 1 := by
-  have hk : ∀ a : GG 3 R, GG.map p a = 1 → ∃ u : GL (Fin 3) R, a = GG.ofGL u ∧
+    (∀ a b : GG (m := 3) (R := R), GG.map p a = 1 → GG.map p b = 1 → a * b = b * a) ∧
+      ∀ a : GG (m := 3) (R := R), GG.map p a = 1 → a ^ l = 1 := by
+  have hk : ∀ a : GG (m := 3) (R := R), GG.map p a = 1 → ∃ u : GL (Fin 3) R, a = GG.ofGL u ∧
       ∃ X : Matrix (Fin 3) (Fin 3) R, (u : Matrix (Fin 3) (Fin 3) R) = 1 + X ∧ ∀ i j, p (X i j) = 0 := by
     intro a ha
     have h1 : a.right = 1 := congrArg SemidirectProduct.right ha
@@ -265,12 +269,12 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_u :
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
     F.LocVan → ∀ {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R'] (𝒜 : ℤ → Submodule O R) [GradedAlgebra 𝒜] (p : R →ₐ[O] R') (j : ℤ), Function.Surjective p → SmallExt O 𝒜 (RingHom.ker p) j →
-    ∀ (v : ι), v ∉ F.Tb → ∀ (r' : F.D v →* GG 3 R'), Red (F.ηv v) (F.Ψv v) r' → F.LocAt v r' → IsLocallyConstant (mats r') →
+    ∀ (v : ι), v ∉ F.Tb → ∀ (r' : F.D v →* GG (m := 3) (R := R')), Red (F.ηv v) (F.Ψv v) r' → F.LocAt v r' → IsLocallyConstant (mats r') →
       (∀ g, ∃ X, GrMat 𝒜 X ∧ X.map p = (r' g).mat) →
-      ∃ r : F.D v →* GG 3 R, push p r = r' ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧ ∀ g, GrMat 𝒜 (r g).mat := by
+      ∃ r : F.D v →* GG (m := 3) (R := R), UnitaryThreeInertia.push p r = r' ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧ ∀ g, GrMat 𝒜 (r g).mat := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF _ R R' _ _ _ _ _ _ 𝒜 _ p j hp hS v hv r' hred hloc hlc hgr
   haveI := hS.fin
-  haveI : Finite (GG 3 R) := Finite.of_equiv _ SemidirectProduct.equivProd.symm
+  haveI : Finite (GG (m := 3) (R := R)) := Finite.of_equiv _ SemidirectProduct.equivProd.symm
   obtain ⟨S, hSm⟩ := lu_sub 𝒜
   letI := Fintype.ofFinite (ResidueField O)
   obtain ⟨l, hchar, n, hl, hcard⟩ := FiniteField.card' (ResidueField O)
@@ -298,7 +302,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_u :
   have hlc' : IsLocallyConstant r' := by
     have h1 : IsLocallyConstant (F.ηv v) :=
       hF.η_cont.comp_continuous (hF.π_cont.comp continuous_subtype_val)
-    refine IsLocallyConstant.desc r' (fun x : GG 3 R' => (x.mat, x.right)) ?_ ?_
+    refine IsLocallyConstant.desc r' (fun x : GG (m := 3) (R := R') => (x.mat, x.right)) ?_ ?_
     · have := hlc.prodMk h1
       convert this using 1
       funext g
@@ -317,7 +321,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_u :
         exact (r' g).left.isUnit
       by_contra hn
       have h2 : X.det ∈ maximalIdeal R := hn
-      rw [← res_eq_zero_iff O, ← res_map p, res_eq_zero_iff] at h2
+      rw [← res_eq_zero_iff O R, ← res_map p X.det, res_eq_zero_iff O R'] at h2
       exact h2 h1
     exact ⟨⟨⟨hu.unit, (r' g).right⟩, (hSm _).2 hX⟩, SemidirectProduct.ext (Units.ext hXp) rfl⟩
   have he : ∀ s ∈ F.Iv v, r' s ^ (2 * Nat.card (ResidueField O)ˣ) = 1 := fun s hs => by

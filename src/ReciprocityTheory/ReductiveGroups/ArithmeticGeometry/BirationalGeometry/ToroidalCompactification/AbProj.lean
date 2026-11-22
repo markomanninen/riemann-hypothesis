@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArcSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArcSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem isProper_str (R : Type) [CommRing R] (N : ℕ) : IsProper (PSpace.str R 
     · rintro ⟨p, hp⟩
       rw [MvPolynomial.mem_homogeneousSubmodule] at hp
       have ht : p.totalDegree = 0 := Nat.le_zero.mp hp.totalDegree_le
-      refine ⟨MvPolynomial.coeff 0 p, Subtype.ext ?_⟩
+      refine ⟨AddMonoidAlgebra.coeff p 0, Subtype.ext ?_⟩
       exact ((MvPolynomial.totalDegree_eq_zero_iff_eq_C).mp ht).symm
   haveI : IsIso (CommRingCat.ofHom
       (algebraMap R ↥(MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R 0))) :=

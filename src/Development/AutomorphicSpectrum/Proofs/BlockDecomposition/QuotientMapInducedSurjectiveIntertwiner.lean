@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.LeibPhi Topology
 open scoped TensorProduct
@@ -76,7 +80,7 @@ theorem exists_cInd_restrict_eq {G G' W W' : Type} [Group G] [TopologicalSpace G
     obtain ⟨M, hMo, -, hMsub⟩ := hbase _ hconj
     refine ⟨{g | ∃ a ∈ H, ∃ x ∈ M, g = a * ι c * x}, {y | ι (c⁻¹ * y) ∈ M}, ?_,
       GlobalTheory.CompanionTheory.LeibPhi.isHK_doubleCoset H M hMo (ι c), ?_, e, ?_⟩
-    · have hcont : Continuous (fun y : G' => ι (c⁻¹ * y)) := hι.comp (continuous_mul_left c⁻¹)
+    · have hcont : Continuous (fun y : G' => ι (c⁻¹ * y)) := hι.comp (continuous_const_mul c⁻¹)
       exact (hMo.preimage hcont).mem_nhds (by simp [one_mem])
     · intro y hy
       exact ⟨1, one_mem _, ι (c⁻¹ * y), hy, by simp⟩

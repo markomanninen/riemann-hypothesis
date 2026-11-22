@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.SatakeDualWeyl.StatementC
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.SatakeDualWeyl.StatementC
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ private theorem hT_eq_hform_gram_reindex_frame (S : HSpace E) {n : ℕ} (h : S.r
   subst h
   simp [hform, HSpace.gram]
   conv_lhs => rw [← S.frame.sum_repr x, ← S.frame.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
     smul_eq_mul, Finset.mul_sum]
   conv_lhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

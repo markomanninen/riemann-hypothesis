@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
 
 namespace GlobalTheory.TraceOnInjectiveMap
 
@@ -17,7 +21,7 @@ theorem trOn_map_of_injective {X V : Type} [AddCommGroup X] [Module ℂ X] [AddC
       exact ⟨L' x, h x hx, (hL x hx).symm⟩
   unfold GlobalTheory.BCT.trOn
   by_cases h' : ∀ x ∈ M, L' x ∈ M
-  · rw [dif_pos (hpres.2 h'), dif_pos h']
+  · rw [dite_eq_left (hpres.2 h'), dite_eq_left h']
     let e : M ≃ₗ[ℂ] Submodule.map j M := Submodule.equivMapOfInjective j hj M
     have hc : L.restrict (hpres.2 h') = e.conj (L'.restrict h') := by
       apply LinearMap.ext
@@ -29,6 +33,6 @@ theorem trOn_map_of_injective {X V : Type} [AddCommGroup X] [Module ℂ X] [AddC
         Submodule.coe_equivMapOfInjective_apply]
       exact hL x x.2
     rw [hc, LinearMap.trace_conj']
-  · rw [dif_neg (mt hpres.1 h'), dif_neg h']
+  · rw [dite_eq_right (mt hpres.1 h'), dite_eq_right h']
 
 end GlobalTheory.TraceOnInjectiveMap

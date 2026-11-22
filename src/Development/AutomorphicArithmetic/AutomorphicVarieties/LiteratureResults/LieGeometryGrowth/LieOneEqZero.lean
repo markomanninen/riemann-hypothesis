@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ open scoped TensorProduct
 
 section
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 private theorem chart_prod (f h : GA E a → ℂ) (g : GA E a) :
     chart (fun x => f x * h x) g = fun y => chart f g y * chart h g y := by
@@ -39,7 +43,7 @@ private theorem ev_mulOp {d : ℕ} (u : Sm E a) (m : Sm E a ⊗[ℂ] (Fin d → 
   induction m using TensorProduct.induction_on with
   | zero => simp
   | tmul φ v => rw [LinearMap.rTensor_tmul, ev_tmul, ev_tmul, mulOp_apply, mul_smul]
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy, smul_add]
 
 private theorem smLie_mulOp (Ξ : AlgRep E a) (X : Lie E a) (u : Sm E a) (m : Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ)) :
     smLie Ξ X ((mulOp u).rTensor _ m) =
@@ -49,9 +53,9 @@ private theorem smLie_mulOp (Ξ : AlgRep E a) (X : Lie E a) (u : Sm E a) (m : Sm
   | tmul φ v =>
     change lie E a X (mulOp u φ) ⊗ₜ[ℂ] v + mulOp u φ ⊗ₜ[ℂ] (Ξ.dmat X *ᵥ v) =
       (mulOp u).rTensor _ (lie E a X φ ⊗ₜ[ℂ] v + φ ⊗ₜ[ℂ] (Ξ.dmat X *ᵥ v)) + mulOp (lie E a X u) φ ⊗ₜ[ℂ] v
-    rw [lie_mulOp, map_add, LinearMap.rTensor_tmul, LinearMap.rTensor_tmul, TensorProduct.add_tmul]
+    rw [lie_mulOp, map_add (f := _), LinearMap.rTensor_tmul, LinearMap.rTensor_tmul, TensorProduct.add_tmul]
     abel
-  | add x y hx hy => simp only [map_add, hx, hy]; abel
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]; abel
 
 private theorem smK_mulOp (Ξ : AlgRep E a) (k : Kinf E a) (u : Sm E a) (hu : act (.cpt k) u = u)
     (m : Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ)) :
@@ -61,7 +65,7 @@ private theorem smK_mulOp (Ξ : AlgRep E a) (k : Kinf E a) (u : Sm E a) (hu : ac
   | tmul φ v =>
     have h : act (.cpt k) (mulOp u φ) = mulOp (act (.cpt k) u) (act (.cpt k) φ) := rfl
     simp only [smK, LinearMap.rTensor_tmul, TensorProduct.map_tmul, h, hu]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem lie_one_eq_zero (u : Sm E a) (hu : ∀ t g, u.1 (GlobalTheory.UnitaryBC.splitCentre E a t * g) = u.1 g) :
     lie E a (oneL E a) u = 0 := by
@@ -95,7 +99,8 @@ private theorem levelFn_mulOp {U : Subgroup (GL (Fin a) (Af E))} {Ξ : AlgRep E 
 private theorem ev_dCo (Ξ : AlgRep E a) {q : ℕ} (ω : Co Ξ q) (X : Fin (q + 1) → Herm E a) (g : GA E a) :
     ev (dCo (smLie Ξ) ω X) g =
       ∑ i : Fin (q + 1), (-1 : ℂ) ^ (i : ℕ) • ev (smLie Ξ (toL (X i).1) (ω (i.removeNth X))) g := by
-  rw [dCo, AlternatingMap.alternatizeUncurryFin_apply, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dCo, AlternatingMap.alternatizeUncurryFin_apply, map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, Pi.smul_apply, ← Int.cast_smul_eq_zsmul ℂ]
   push_cast
@@ -119,10 +124,10 @@ theorem UpperTheory.V.Lit.Geo.mulEx :
       exact Submodule.subset_span ⟨_, v, levelFn_mulOp hu hφ, LinearMap.rTensor_tmul _ _ _ _⟩
     · rw [map_zero]; exact Submodule.zero_mem _
     · intro x y _ _ hx hy
-      rw [map_add]; exact Submodule.add_mem _ hx hy
+      rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     · intro c x _ hx
       rw [map_smul]; exact Submodule.smul_mem _ c hx
   · rw [ev_dCo, ev_dCo, Finset.smul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     change _ • ev (smLie Ξ _ ((mulOp u).rTensor _ (α _))) g = _
-    rw [smLie_mulOp, map_add, Pi.add_apply, ev_mulOp, ev_mulOp, smul_add, smul_comm, mul_smul]
+    rw [smLie_mulOp, map_add (f := _), Pi.add_apply, ev_mulOp, ev_mulOp, smul_add, smul_comm, mul_smul]

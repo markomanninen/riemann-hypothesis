@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLitG
+
+@[expose] public section
 
 namespace Formalism.MainNotions.BesselDiscreteSeries
 

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SysOf
-import Mathlib.AlgebraicGeometry.AffineTransitionLimit
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysOf
+public import Mathlib.AlgebraicGeometry.AffineTransitionLimit
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

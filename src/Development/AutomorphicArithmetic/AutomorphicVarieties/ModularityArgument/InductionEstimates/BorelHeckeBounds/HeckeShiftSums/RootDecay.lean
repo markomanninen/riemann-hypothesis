@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.DiffBd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.VolOne
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.DiffBd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.VolOne
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -14,9 +18,9 @@ open scoped Pointwise
 private theorem sub_ct_le_of_altSum {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n))
     [μ.IsHaarMeasure] (f : CC K n) (φ : L2 μ) {r M : ℕ} (hM : 0 < M) (x : G1 K n) (k : ℕ) {B : ℝ}
     (hB : ∀ y : Fin (k + 1) → UPos n r → 𝔸[K], (∀ i, y i ∈ scaledUnipFD K n r M) →
-      ‖altSum (k + 1) (fun s => rc μ f φ (unipOne K n r s * x)) y 0‖ ≤ B) :
+      ‖altSum (k + 1) (fun s => rc μ f φ (unipOne (K := _) (n := _) r s * x)) y 0‖ ≤ B) :
     ‖rc μ f φ x - ct r (rc μ f φ) x‖ ≤ B := by
-  set H : (UPos n r → 𝔸[K]) → ℂ := fun s => rc μ f φ (unipOne K n r s * x) with hH
+  set H : (UPos n r → 𝔸[K]) → ℂ := fun s => rc μ f φ (unipOne (K := _) (n := _) r s * x) with hH
   set c : ℂ := ct r (rc μ f φ) x with hc
   have hHc : Continuous H :=
     (continuous_rconv (Gam K n) μ f φ).comp ((continuous_unipOne r).mul continuous_const)
@@ -52,28 +56,28 @@ private theorem sub_ct_le_of_altSum_inf {K : Type} [Field K] [NumberField K] {n 
     (hfin : ∀ z : UPos n r → 𝔸[K], (∀ p, (z p).1 = 0) →
       (∀ p, ∃ a ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 K) K,
         (z p).2 = (M : IsDedekindDomain.FiniteAdeleRing (𝓞 K) K) * a) →
-      ∀ w, f ((x⁻¹ * unipOne K n r z * x)⁻¹ * w) = f w)
+      ∀ w, f ((x⁻¹ * unipOne (K := _) (n := _) r z * x)⁻¹ * w) = f w)
     (k : ℕ) {B : ℝ}
     (hB : ∀ y : Fin (k + 1) → UPos n r → 𝔸[K], (∀ i, y i ∈ scaledUnipFD K n r M) →
-      ‖altSum (k + 1) (fun s => rc μ f φ (unipOne K n r (truncInf s) * x)) y 0‖ ≤ B) :
+      ‖altSum (k + 1) (fun s => rc μ f φ (unipOne (K := _) (n := _) r (truncInf s) * x)) y 0‖ ≤ B) :
     ‖rc μ f φ x - ct r (rc μ f φ) x‖ ≤ B := by
   refine sub_ct_le_of_altSum (r := r) μ f φ hM x k fun y hy => ?_
   have key : ∀ ε : Fin (k + 1) → Bool,
-      rc μ f φ (unipOne K n r (0 + altPoint y ε) * x) =
-        rc μ f φ (unipOne K n r (truncInf (0 + altPoint y ε)) * x) := by
+      rc μ f φ (unipOne (K := _) (n := _) r (0 + altPoint y ε) * x) =
+        rc μ f φ (unipOne (K := _) (n := _) r (truncInf (0 + altPoint y ε)) * x) := by
     intro ε
     rw [zero_add]
     have hfinP := hfin (truncFin (altPoint y ε)) (fun p => rfl) fun p => by
       obtain ⟨a, ha, hPa⟩ := exists_finite_altPoint_eq_natCast_mul hM y hy ε p
       exact ⟨a, ha, hPa⟩
-    have hP : unipOne K n r (altPoint y ε) * x = unipOne K n r (truncInf (altPoint y ε)) * x *
-        (x⁻¹ * unipOne K n r (truncFin (altPoint y ε)) * x) := by
+    have hP : unipOne (K := _) (n := _) r (altPoint y ε) * x = unipOne (K := _) (n := _) r (truncInf (altPoint y ε)) * x *
+        (x⁻¹ * unipOne (K := _) (n := _) r (truncFin (altPoint y ε)) * x) := by
       simp only [mul_assoc, mul_inv_cancel_left]
       rw [← mul_assoc, ← unipOne_add, truncInf_add_truncFin]
     rw [hP]
     exact rconv_mul_right μ f φ hfinP _
-  have heq : altSum (k + 1) (fun s => rc μ f φ (unipOne K n r s * x)) y 0 =
-      altSum (k + 1) (fun s => rc μ f φ (unipOne K n r (truncInf s) * x)) y 0 := by
+  have heq : altSum (k + 1) (fun s => rc μ f φ (unipOne (K := _) (n := _) r s * x)) y 0 =
+      altSum (k + 1) (fun s => rc μ f φ (unipOne (K := _) (n := _) r (truncInf s) * x)) y 0 := by
     rw [altSum_eq_sum, altSum_eq_sum]
     exact Finset.sum_congr rfl fun ε _ => congrArg (altSign ε • ·) (key ε)
   rw [heq]
@@ -86,7 +90,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
   intro K _ _ n μ _ f hf ω t hBor ht r hr hrn
   obtain ⟨hω, hωB⟩ := hBor
   obtain ⟨U, hU, hUf⟩ := hf.2
-  obtain ⟨V₀, hV₀c, hV₀⟩ := exists_compact_mem_nhds (1 : normOneGL K n)
+  obtain ⟨V₀, hV₀c, hV₀⟩ := exists_compact_mem_nhds (1 : normOneGL (K := K) (n := n))
   obtain ⟨Cc, N, hCc⟩ := exists_encard_le_siegel hω ht hV₀c
   refine ⟨N, fun k => ?_⟩
   obtain ⟨M, hM, hMconj⟩ := exists_natCast_conj_unipGL_mem U hU hω r
@@ -98,7 +102,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
   set c' := max c 0
   have h𝒞 := isCompact_unipBall (K := K) (n := n) (((k + 1 : ℕ) : ℝ) * R₁)
   set Q := archProj K n '' unipBall (K := K) (n := n) (((k + 1 : ℕ) : ℝ) * R₁) *
-    tsupport (f : normOneGL K n → ℂ)
+    tsupport (f : normOneGL (K := K) (n := n) → ℂ)
   have hQ : IsCompact Q := (h𝒞.image continuous_archProj).mul f.hasCompactSupport
   obtain ⟨s, -, hs⟩ := hQ.elim_nhds_subcover (fun g => (fun y => y * g) '' V₀) fun g _ => by
     have := (Homeomorph.mulRight g).isOpenMap.image_mem_nhds hV₀
@@ -108,8 +112,8 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
   rintro φ ρ x R ⟨hρ, b, hb, kk, hkk, hx⟩ hsieg hR1 hR
   obtain ⟨m₀, hmC₀, hm₀⟩ := hCc b hb ρ hρ hsieg kk hkk x hx R hR1 hR
   obtain ⟨m, hmdef⟩ : ∃ m : ℕ, m = s.card * m₀ := ⟨_, rfl⟩
-  have hm : ∀ z : normOneGL K n,
-      {γ : rationalGLOne K n | γ • z ∈ (fun y => x * y) '' Q}.encard ≤ m := by
+  have hm : ∀ z : normOneGL (K := K) (n := n),
+      {γ : rationalGLOne (K := K) (n := n) | γ • z ∈ (fun y => x * y) '' Q}.encard ≤ m := by
     intro z
     have := encard_le_of_subset_mul s hs hm₀ z
     rw [hmdef]
@@ -133,7 +137,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
     refine sub_ct_le_of_altSum_inf (r := r) μ f φ hM x ?_ k ?_
     · intro z hz1 hz2 w
       obtain ⟨u, hu⟩ := hMconj b hb ρ hρ kk hkk z hz1 hz2
-      have hxu : x⁻¹ * unipOne K n r z * x = finOne K n (u : AdelicGLn.integralFiniteGL K n) := by
+      have hxu : x⁻¹ * unipOne (K := _) (n := _) r z * x = finOne K n (u : AdelicGLn.integralFiniteGL K n) := by
         refine Subtype.ext ?_
         change (x : AdelicGLn.AdelicGL K n)⁻¹ * unipGL z * (x : AdelicGLn.AdelicGL K n) =
           finEmb K n _
@@ -158,7 +162,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
         exact h1.trans (mul_le_mul_of_nonneg_right (le_max_left _ _) hgain0)
       have hYR : ∀ i, ‖Y i‖ ≤ R₁ := fun i => (hYn i).trans hgR
       have hex : ∀ ε : Fin (k + 1) → Bool, ∃ C : ArchUnits K n,
-          archProj K n C = x⁻¹ * unipOne K n r (truncInf (altPoint y ε)) * x ∧
+          archProj K n C = x⁻¹ * unipOne (K := _) (n := _) r (truncInf (altPoint y ε)) * x ∧
             (C : ArchMatrix K n) = 1 + altPoint Y ε := by
         intro ε
         obtain ⟨C, hC1, hC2⟩ := exists_archProj_eq_conj x (truncInf (altPoint y ε)) fun p => rfl
@@ -167,13 +171,13 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
           map_altPoint (conjArch K n (x : AdelicGLn.AdelicGL K n))]
         rfl
       choose Cε hCε1 hCε2 using hex
-      have hsum : altSum (k + 1) (fun s => rc μ f φ (unipOne K n r (truncInf s) * x)) y 0 =
-          ∑ ε, (altSign ε : ℂ) * rconv (rationalGLOne K n) μ f φ (x * archProj K n (Cε ε)) := by
+      have hsum : altSum (k + 1) (fun s => rc μ f φ (unipOne (K := _) (n := _) r (truncInf s) * x)) y 0 =
+          ∑ ε, (altSign ε : ℂ) * rconv (rationalGLOne (K := K) (n := n)) μ f φ (x * archProj K n (Cε ε)) := by
         rw [altSum_eq_sum]
         refine Finset.sum_congr rfl fun ε _ => ?_
         rw [zero_add, hCε1 ε, zsmul_eq_mul]
-        have : x * (x⁻¹ * unipOne K n r (truncInf (altPoint y ε)) * x) =
-            unipOne K n r (truncInf (altPoint y ε)) * x := by group
+        have : x * (x⁻¹ * unipOne (K := _) (n := _) r (truncInf (altPoint y ε)) * x) =
+            unipOne (K := _) (n := _) r (truncInf (altPoint y ε)) * x := by group
         rw [this]
       rw [hsum]
       have hb' : ∀ w, ‖∑ ε, (altSign ε : ℂ) * f ((archProj K n (Cε ε))⁻¹ * w)‖ ≤ b₀ := by
@@ -181,7 +185,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
         refine (hc Y hYY hYR Cε hCε2 w).trans ?_
         have hprod : ∏ i, ‖Y i‖ ≤ (C₁' * gain) ^ (k + 1) := by
           rw [← Fin.prod_const]
-          exact Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => hYn i
+          exact Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => hYn i
         have hprod' : ∏ i, ‖Y i‖ ≤ (C₁' * gain) ^ k * R₁ := by
           refine hprod.trans ?_
           rw [pow_succ]
@@ -192,7 +196,77 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.rootDecay :
           _ ≤ b₀ := mul_le_mul_of_nonneg_left hprod' hc'0
       have hmem : ∀ ε, Cε ε ∈ unipBall (K := K) (n := n) (((k + 1 : ℕ) : ℝ) * R₁) := fun ε =>
         mem_unipBall_of_val_eq hYY hYR (hCε2 ε)
-      have hsq := enorm_sum_altSign_rconv_sq_le μ f φ x h𝒞 Cε hmem hb' hm
+      let ccTranslate (g : normOneGL (K := K) (n := n)) (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) :
+          CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ :=
+        ⟨⟨fun w => f (g⁻¹ * w), f.continuous.comp (continuous_const_mul _)⟩,
+          f.hasCompactSupport.comp_homeomorph (Homeomorph.mulLeft g⁻¹)⟩
+      
+      have rconv_mul_eq (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+          (φ : Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) (x g : normOneGL (K := K) (n := n)) :
+          rconv (rationalGLOne (K := K) (n := n)) μ f φ (x * g) = rconv (rationalGLOne (K := K) (n := n)) μ (ccTranslate g f) φ x := by
+        unfold rconv
+        refine integral_congr_ae (Eventually.of_forall fun z => ?_)
+        change f ((x * g)⁻¹ * z) * _ = f (g⁻¹ * (x⁻¹ * z)) * _
+        rw [mul_inv_rev, mul_assoc]
+      
+      have sum_altSign_rconv_eq (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+          (φ : Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) (x : normOneGL (K := K) (n := n)) {k : ℕ}
+          (C : (Fin k → Bool) → ArchUnits K n) :
+          ∑ ε, (altSign ε : ℂ) * rconv (rationalGLOne (K := K) (n := n)) μ f φ (x * archProj K n (C ε)) =
+            rconv (rationalGLOne (K := K) (n := n)) μ (fun w => ∑ ε, (altSign ε : ℂ) * f ((archProj K n (C ε))⁻¹ * w)) φ x := by
+        simp_rw [rconv_mul_eq f φ x]
+        unfold rconv
+        simp_rw [← integral_const_mul]
+        rw [← integral_finsetSum _ fun ε _ => (integrable_rconv (rationalGLOne (K := K) (n := n)) μ _ φ x).const_mul _]
+        refine integral_congr_ae (Eventually.of_forall fun z => ?_)
+        simp only [Finset.sum_mul]
+        refine Finset.sum_congr rfl fun ε _ => ?_
+        simp only [ccTranslate]
+        change _ * (f ((archProj K n (C ε))⁻¹ * (x⁻¹ * z)) * _) = _
+        ring
+      set_option synthInstance.maxHeartbeats 200000 in
+      have enorm_sum_altSign_rconv_sq_le (f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+          (φ : Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) (x : normOneGL (K := K) (n := n)) {k : ℕ} {𝒞 : Set (ArchUnits K n)}
+          (h𝒞 : IsCompact 𝒞) (C : (Fin k → Bool) → ArchUnits K n) (hC : ∀ ε, C ε ∈ 𝒞) {b : ℝ}
+          (hb : ∀ w, ‖∑ ε, (altSign ε : ℂ) * f ((archProj K n (C ε))⁻¹ * w)‖ ≤ b) {m : ℕ}
+          (hm : ∀ z : normOneGL (K := K) (n := n), {γ : (rationalGLOne (K := K) (n := n)) | γ • z ∈ (fun y => x * y) ''
+            (archProj K n '' 𝒞 * tsupport (f : normOneGL (K := K) (n := n) → ℂ))}.encard ≤ m) :
+          ‖∑ ε, (altSign ε : ℂ) * rconv (rationalGLOne (K := K) (n := n)) μ f φ (x * archProj K n (C ε))‖ₑ ^ 2 ≤
+            ENNReal.ofReal b ^ 2 * μ (archProj K n '' 𝒞 * tsupport (f : normOneGL (K := K) (n := n) → ℂ)) *
+              (m * ‖φ‖ₑ ^ 2) := by
+        set Q := archProj K n '' 𝒞 * tsupport (f : normOneGL (K := K) (n := n) → ℂ)
+        have hQ : IsCompact Q := (h𝒞.image continuous_archProj).mul f.hasCompactSupport
+        have hsupp : ∀ w ∉ Q, ∑ ε, (altSign ε : ℂ) * f ((archProj K n (C ε))⁻¹ * w) = 0 := by
+          intro w hw
+          refine Finset.sum_eq_zero fun ε _ => ?_
+          have : (archProj K n (C ε))⁻¹ * w ∉ tsupport (f : normOneGL (K := K) (n := n) → ℂ) := fun h' =>
+            hw ⟨archProj K n (C ε), ⟨C ε, hC ε, rfl⟩, _, h', mul_inv_cancel_left _ _⟩
+          rw [image_eq_zero_of_notMem_tsupport this, mul_zero]
+        set Ψ : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ :=
+          ⟨⟨fun w => ∑ ε, (altSign ε : ℂ) * f ((archProj K n (C ε))⁻¹ * w),
+            continuous_finsetSum _ fun ε _ => continuous_const.mul
+              (f.continuous.comp (continuous_const_mul _))⟩, HasCompactSupport.intro hQ hsupp⟩
+        rw [sum_altSign_rconv_eq f φ x C]
+        have hS : MeasurableSet ((fun y => x * y) '' Q) := (hQ.image (continuous_const_mul x)).measurableSet
+        have h1 := enorm_rconv_sq_le (rationalGLOne (K := K) (n := n)) μ Ψ φ x hS (fun y hy => hsupp _ fun hq => hy ⟨_, hq, by simp⟩) hm
+        refine h1.trans ?_
+        gcongr
+        calc ∫⁻ y, ‖Ψ y‖ₑ ^ 2 ∂μ = ∫⁻ y in Q, ‖Ψ y‖ₑ ^ 2 ∂μ := by
+              rw [← lintegral_indicator hQ.measurableSet]
+              refine lintegral_congr fun y => ?_
+              by_cases hy : y ∈ Q
+              · rw [indicator_of_mem hy]
+              · rw [indicator_of_notMem hy]
+                change ‖∑ ε, (altSign ε : ℂ) * f ((archProj K n (C ε))⁻¹ * y)‖ₑ ^ 2 = 0
+                rw [hsupp y hy]
+                simp
+          _ ≤ ∫⁻ _ in Q, ENNReal.ofReal b ^ 2 ∂μ := by
+              refine setLIntegral_mono' hQ.measurableSet fun y _ => ?_
+              gcongr
+              rw [← ofReal_norm]
+              exact ENNReal.ofReal_le_ofReal (hb y)
+          _ = ENNReal.ofReal b ^ 2 * μ Q := by rw [setLIntegral_const]
+      have hsq := enorm_sum_altSign_rconv_sq_le f φ x h𝒞 Cε hmem hb' hm
       have hA : ENNReal.ofReal b₀ ^ 2 * μ Q * (m : ℝ≥0∞) ≠ ⊤ :=
         ENNReal.mul_ne_top (ENNReal.mul_ne_top (by simp) hQ.measure_lt_top.ne) (by simp)
       have hle := norm_le_of_enorm_sq_le hA (by rw [mul_assoc]; exact hsq)

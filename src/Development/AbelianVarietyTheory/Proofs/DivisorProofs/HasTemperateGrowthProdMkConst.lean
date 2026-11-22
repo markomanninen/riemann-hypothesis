@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,6 +18,7 @@ theorem hasTemperateGrowth_prodMk_const (x' : V') : Function.HasTemperateGrowth 
     (Function.HasTemperateGrowth.const ((0 : V), x'))
   convert h using 1
   funext x
+  change (x, x') = (x, 0) + (0, x')
   simp
 
 theorem antilipschitz_prodMk_const (x' : V') : AntilipschitzWith 1 (fun x : V => (x, x')) :=
@@ -37,7 +42,7 @@ theorem lineSnd_add (v₁ v₂ : V') (f : 𝓢(V × V', ℂ)) :
     lineSnd (v₁ + v₂) f = lineSnd v₁ f + lineSnd v₂ f := by
   ext p
   simp only [lineSnd_apply, SchwartzMap.add_apply]
-  rw [← map_add]
+  rw [← map_add (f := _)]
   simp
 
 theorem lineSnd_smul (c : ℝ) (v : V') (f : 𝓢(V × V', ℂ)) :

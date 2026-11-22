@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFinite
-import GroundTheory.GlobalFields.TateThesis.GlobalZeta
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureCosets
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFinite
+public import GroundTheory.GlobalFields.TateThesis.GlobalZeta
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureCosets
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex
 open scoped NumberField.AdeleRing Real

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLeviSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLeviSum
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 private theorem leviLevel_reps {G : Type} [Group G] {K K' : Subgroup G} (S : Subgroup G) {m : G} (hS : S ≤ K)
@@ -111,10 +116,12 @@ theorem UpperTheory.V.AlgebraTools.leviLevel :
     rfl
   · show (hk2 ρ I I' 1 (hk2 ρ I' I' m v) : M) = hk2 ρ I I m (hk2 ρ I I' 1 v)
     rw [sJ, sI, sJ]
-    simp only [id, mul_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [id, mul_one, map_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j hj => ?_
-    rw [sI' j (ht j hj), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sI' j (ht j hj), map_sum]
     refine Finset.sum_congr rfl fun u _ => ?_
     rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, mul_assoc u, hJ j (ht j hj)]
     congr 2

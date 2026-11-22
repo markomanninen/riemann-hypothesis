@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Rypos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Locfin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Spanpsd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Exbasis
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 theorem UpperTheory.V.KT.stabfin :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (v : Vx L N),
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (v : Vx L N),
     Finite (MulAction.stabilizer (Gm L N) v) := by
   intro L _ _ _ N v
   classical

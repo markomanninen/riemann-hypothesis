@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ConjugationEquiv
 
@@ -22,12 +26,5 @@ def conjEquiv (N : Subgroup G) (b : G) (hb : ∀ u : G, u ∈ N ↔ b * u * b⁻
     ((continuous_const.mul continuous_subtype_val).mul continuous_const).subtype_mk _
   continuous_invFun :=
     ((continuous_const.mul continuous_subtype_val).mul continuous_const).subtype_mk _
-
-@[simp] theorem coe_conjEquiv (N : Subgroup G) (b : G) (hb : ∀ u : G, u ∈ N ↔ b * u * b⁻¹ ∈ N)
-    (u : N) : ((conjEquiv N b hb u : N) : G) = b * (u : G) * b⁻¹ := rfl
-
-@[simp] theorem coe_conjEquiv_symm (N : Subgroup G) (b : G)
-    (hb : ∀ u : G, u ∈ N ↔ b * u * b⁻¹ ∈ N) (u : N) :
-    (((conjEquiv N b hb).symm u : N) : G) = b⁻¹ * (u : G) * b := rfl
 
 end GlobalTheory.ConjugationEquiv

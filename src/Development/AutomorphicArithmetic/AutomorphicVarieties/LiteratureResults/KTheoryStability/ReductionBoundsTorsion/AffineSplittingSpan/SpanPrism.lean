@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.Transfer
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DcCons
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.AffineSplittingSpan.Transfer
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DcCons
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,27 +48,36 @@ theorem dc_smul {m : ℕ} (r : ℝ) (F : (Fin (m + 1) → Y) → ℝ) : dc (r �
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
-theorem dc_zero {m : ℕ} : dc (0 : (Fin (m + 1) → Y) → ℝ) = 0 := by
-  funext y; simp [dc]
-
 theorem dc_comp {Z : Type} {m : ℕ} (F : (Fin (m + 1) → Z) → ℝ) (ψ : Y → Z) (y : Fin (m + 2) → Y) :
     dc (fun w => F (fun i => ψ (w i))) y = dc F (fun i => ψ (y i)) := rfl
 
 theorem prism_sub (φ : Y → Y) : ∀ {n : ℕ} (F G : (Fin (n + 1) → Y) → ℝ),
-    prism φ (F - G) = prism φ F - prism φ G
-  | 0, _, _ => by funext y; simp [prism]
-  | n + 1, F, G => by
+    prism φ (F - G) = prism φ F - prism φ G := by
+  intro n
+  induction n with
+  | zero =>
+    intro F G
     funext y
-    simp only [prism_succ, Pi.sub_apply]
-    have := prism_sub φ (n := n) (fun w => F (Fin.cons (y 0) w)) (fun w => G (Fin.cons (y 0) w))
-    have h2 : (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w)) =
-        (fun w => F (Fin.cons (y 0) w)) - (fun w => G (Fin.cons (y 0) w)) := rfl
-    rw [h2, this, Pi.sub_apply]
+    simp [prism]
+  | succ n ih =>
+    intro F G
+    funext y
+    rw [Pi.sub_apply, prism_succ, prism_succ, prism_succ]
+    have hsub : prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w)) (Fin.tail y) =
+        prism φ (fun w => F (Fin.cons (y 0) w)) (Fin.tail y) -
+          prism φ (fun w => G (Fin.cons (y 0) w)) (Fin.tail y) :=
+      congrFun (ih (fun w => F (Fin.cons (y 0) w)) (fun w => G (Fin.cons (y 0) w))) (Fin.tail y)
+    change _ - _ - prism φ (fun w => F (Fin.cons (y 0) w) - G (Fin.cons (y 0) w))
+      (Fin.tail y) = _
+    rw [hsub]
     ring
 
 theorem prism_dc (φ : Y → Y) : ∀ (m : ℕ) (F : (Fin (m + 2) → Y) → ℝ) (y : Fin (m + 2) → Y),
-    dc (prism φ F) y + prism φ (dc F) y = F (fun i => φ (y i)) - F y
-  | 0, F, y => by
+    dc (prism φ F) y + prism φ (dc F) y = F (fun i => φ (y i)) - F y := by
+  intro m
+  induction m with
+  | zero =>
+    intro F y
     simp [dc, prism, Fin.sum_univ_succ, Fin.tail]
     have h1 : (Fin.cons (y 0) (fun i : Fin 1 => φ (y (Fin.succAbove 1 i))) : Fin 2 → Y) =
         fun j => (Fin.cons (y 0) (fun i => φ (y i)) : Fin 3 → Y) (Fin.succAbove 2 j) := by
@@ -78,11 +91,12 @@ theorem prism_dc (φ : Y → Y) : ∀ (m : ℕ) (F : (Fin (m + 2) → Y) → ℝ
       funext j; fin_cases j <;> rfl
     rw [h1, h2, h3]
     ring
-  | m + 1, F, y => by
+  | succ m ih =>
+    intro F y
     rw [← Fin.cons_self_tail y]
     set a := y 0
     set w := Fin.tail y
-    have ih := prism_dc φ m (fun w' => F (Fin.cons a w')) w
+    have h := ih (fun w' => F (Fin.cons a w')) w
     rw [dc_cons, prism_cons]
     have e1 : (fun w' => prism φ F (Fin.cons a w')) =
         (fun w' => F (Fin.cons a (Fin.cons (φ a) (fun i => φ (w' i))))) -
@@ -97,7 +111,7 @@ theorem prism_dc (φ : Y → Y) : ∀ (m : ℕ) (F : (Fin (m + 2) → Y) → ℝ
     have e4 : dc (fun w' => F (Fin.cons a (Fin.cons (φ a) (fun i => φ (w' i))))) w =
         dc (fun w' => F (Fin.cons a (Fin.cons (φ a) w'))) (fun i => φ (w i)) := rfl
     rw [e4]
-    linarith
+    linarith only [h]
 
 theorem mul_cons {P : Type} [Group P] (h a : P) {n : ℕ} (w : Fin n → P) :
     (fun i => h * (Fin.cons a w : Fin (n + 1) → P) i) = Fin.cons (h * a) (fun i => h * w i) := by
@@ -105,16 +119,23 @@ theorem mul_cons {P : Type} [Group P] (h a : P) {n : ℕ} (w : Fin n → P) :
 
 theorem prism_mul {P : Type} [Group P] (φ : P → P) (h : P) : ∀ {n : ℕ} (F : (Fin (n + 1) → P) → ℝ)
     (y : Fin n → P), prism φ F (fun i => h * y i) =
-      prism (fun z => h⁻¹ * φ (h * z)) (fun z => F (fun i => h * z i)) y
-  | 0, _, _ => rfl
-  | n + 1, F, y => by
-    rw [prism_succ, prism_succ]
-    have ih := prism_mul φ h (n := n) (fun w => F (Fin.cons (h * y 0) w)) (Fin.tail y)
-    have et : Fin.tail (fun i => h * y i) = fun i => h * Fin.tail y i := rfl
-    rw [et, ih, mul_cons]
-    congr 1
-    · congr 1; congr 1; funext i; simp
-    · congr 1; funext z; rw [mul_cons]
+      prism (fun z => h⁻¹ * φ (h * z)) (fun z => F (fun i => h * z i)) y := by
+  intro n
+  induction n with
+  | zero => intros; rfl
+  | succ n ih =>
+    intro F y
+    have hhead : (fun i => h * (Fin.cons (y 0) (fun j => h⁻¹ * φ (h * y j)) : Fin (n + 2) → P) i) =
+        Fin.cons (h * y 0) (fun j => φ (h * y j)) := by
+      rw [mul_cons]
+      simp
+    have htail : (fun w : Fin (n + 1) → P => F (fun i => h * (Fin.cons (y 0) w : Fin (n + 2) → P) i)) =
+        (fun w => F (Fin.cons (h * y 0) (fun i => h * w i))) := by
+      funext w
+      rw [mul_cons]
+    rw [prism_succ, prism_succ, hhead, htail]
+    exact congrArg (F (Fin.cons (h * y 0) (fun i => φ (h * y i))) - ·)
+      (ih (fun w => F (Fin.cons (h * y 0) w)) (Fin.tail y))
 
 theorem prism_inv {P : Type} [Group P] (φ : P → P) (S : Set P) (hφ : ∀ g ∈ S, ∀ z, φ (g * z) = g * φ z)
     {n : ℕ} (F : (Fin (n + 1) → P) → ℝ) (hF : InvS S F) : InvS S (prism φ F) := by
@@ -126,27 +147,27 @@ theorem prism_inv {P : Type} [Group P] (φ : P → P) (S : Set P) (hφ : ∀ g �
 
 theorem prism_eq_zero_of_set (φ : Y → Y) (S : Set Y) (hφ : ∀ z ∈ S, φ z ∈ S) : ∀ {n : ℕ}
     (F : (Fin (n + 1) → Y) → ℝ) (y : Fin n → Y), (∀ z : Fin (n + 1) → Y, (∀ i, z i ∈ S) → F z = 0) →
-      (∀ i, y i ∈ S) → prism φ F y = 0
-  | 0, _, _, _, _ => rfl
-  | n + 1, F, y, hF, hy => by
+      (∀ i, y i ∈ S) → prism φ F y = 0 := by
+  intro n
+  induction n with
+  | zero => intros; rfl
+  | succ n ih =>
+    intro F y hF hy
     rw [prism_succ]
     have h1 : F (Fin.cons (y 0) (fun i => φ (y i))) = 0 := by
       apply hF; intro i; refine Fin.cases ?_ (fun k => ?_) i
       · simpa using hy 0
       · simpa using hφ _ (hy k)
-    have h2 := prism_eq_zero_of_set φ S hφ (n := n) (fun w => F (Fin.cons (y 0) w)) (Fin.tail y)
-      (fun z hz => hF _ (fun i => Fin.cases (by simpa using hy 0) (fun k => by simpa using hz k) i))
-      (fun i => hy _)
-    rw [h1, h2, sub_zero]
-
-theorem prism_eq_zero_of_head (φ : Y → Y) : ∀ {n : ℕ} (F : (Fin (n + 2) → Y) → ℝ) (y : Fin (n + 1) → Y),
-    (∀ z : Fin (n + 2) → Y, z 0 = y 0 → F z = 0) → prism φ F y = 0
-  | 0, F, y, hF => by
-    rw [prism_succ, hF _ (by simp)]; simp [prism]
-  | n + 1, F, y, hF => by
-    rw [prism_succ, hF _ (by simp)]
-    rw [prism_eq_zero_of_head φ (n := n) (fun w => F (Fin.cons (y 0) w)) (Fin.tail y)
-      (fun z _ => hF _ (by simp)), sub_zero]
+    rw [h1, zero_sub, neg_eq_zero]
+    apply ih
+    · intro z hz
+      apply hF
+      intro i
+      refine Fin.cases ?_ (fun k => ?_) i
+      · simpa using hy 0
+      · simpa using hz k
+    · intro i
+      exact hy i.succ
 
 end PositivityTheory.KB.SplitAffineSpectral.PrismSpan
 

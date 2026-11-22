@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField
 
@@ -225,7 +229,7 @@ private theorem ringHom_adjoin_primitiveRoot_eq_add_mul_sub_one {z : K} {n : ℕ
   | add x y hx hy ihx ihy =>
     obtain ⟨t₁, h₁⟩ := ihx
     obtain ⟨t₂, h₂⟩ := ihy
-    exact ⟨t₁ + t₂, by push_cast; rw [map_add, h₁, h₂]; ring⟩
+    exact ⟨t₁ + t₂, by push_cast; rw [map_add (f := _), h₁, h₂]; ring⟩
   | mul x y hx hy ihx ihy =>
     obtain ⟨t₁, h₁⟩ := ihx
     obtain ⟨t₂, h₂⟩ := ihy

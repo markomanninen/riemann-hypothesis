@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMixSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMixedBridge
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMixSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionMixedBridge
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -31,7 +36,7 @@ theorem ResolutionMixedBridge.proof : ResolutionMixedBridge.Statement := by
   have key := AnResBridge.bridge d.R hex.choose (fun j => HermLine.ofCone (M j)) B.inv 1 d.arith
     hex.choose_spec (fun j => gbamix_smoothHerm_ofCone (hM j)) hBs hsec
   unfold ptsIntegral
-  rw [dif_pos hex, hgl]
+  rw [dite_eq_left hex, hgl]
   exact key
 
 end

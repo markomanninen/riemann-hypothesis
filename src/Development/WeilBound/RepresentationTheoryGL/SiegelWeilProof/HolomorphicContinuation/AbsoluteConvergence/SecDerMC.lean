@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMB
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.HasDerivAtPhi
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.SecDerMB
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.HasDerivAtPhi
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem hasDerivAt_ept (H : Matrix (Fin n) (Fin n) ℂ) (y : Fin m → Fin n →
 
 theorem evX_eulH (H : Matrix (Fin n) (Fin n) ℂ) (R : PX m n) (z : Fin m → Fin n → ℂ) :
     evX (eulH H R) z = ∑ k, MvPolynomial.eval (ept z) (pderiv k R) * ept (mulR H z) k := by
-  simp only [eulH, evX_eq, map_sum, map_add, map_mul, eval_X, eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eulH, evX_eq, map_sum, map_add (f := _), map_mul, eval_X, eval_C]
   rw [Fintype.sum_prod_type, Finset.sum_congr rfl fun a _ => Fintype.sum_prod_type _]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun j _ => ?_
   rw [Fintype.sum_bool]
@@ -61,14 +66,16 @@ def trHQ (ε : Fin m → Bool) (H : Matrix (Fin n) (Fin n) ℂ) : PX m n :=
 
 theorem evX_Qb_add (ε : Fin m → Bool) (z : Fin m → Fin n → ℂ) (i j : Fin n) :
     evX (Qb ε true i j + Qb ε false i j) z = ∑ a, star (z a i) * z a j := by
-  simp only [Qb, evX_eq, map_add, map_sum, map_mul, eval_X, ept, if_true, Bool.false_eq_true, if_false]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Qb, evX_eq, map_add (f := _), map_sum, map_mul, eval_X, ept, if_true, Bool.false_eq_true, if_false]
   convert Finset.sum_filter_add_sum_filter_not Finset.univ (fun x => ε x = true) (fun x => star (z x i) * z x j) using 3
   ext x; simp
 
 theorem evX_trHQ (ε : Fin m → Bool) (H : Matrix (Fin n) (Fin n) ℂ) (z : Fin m → Fin n → ℂ) :
     evX (trHQ ε H) z = ∑ a, ∑ j, star (z a j) * mulR H z a j := by
   have e : evX (trHQ ε H) z = ∑ i, ∑ j, H i j * evX (Qb ε true j i + Qb ε false j i) z := by
-    simp only [trHQ, evX_eq, map_sum, map_mul, eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [trHQ, evX_eq, map_sum, map_mul, eval_C]
   rw [e]
   simp only [evX_Qb_add, mulR, Finset.mul_sum]
   calc ∑ i, ∑ j, ∑ a, H i j * (star (z a j) * z a i) = ∑ j, ∑ i, ∑ a, H i j * (star (z a j) * z a i) :=

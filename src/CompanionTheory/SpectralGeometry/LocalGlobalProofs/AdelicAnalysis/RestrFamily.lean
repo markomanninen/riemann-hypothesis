@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.DisintegrationDensityExistsStatement
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.DisintegrationDensityExistsStatement
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -50,10 +55,11 @@ lemma piece (hι : Function.Injective ι) (hg : Continuous g) (hf : ∀ v, f v =
       simp only [Set.indicator_of_notMem this]
     simpa using e
 
-open Classical in
 
-noncomputable def restr (B : Set X) (fam : X → Measure V) : X → Measure V :=
-  fun b => if b ∈ B then fam b else 0
+open Classical in
+noncomputable def restr (B : Set X) (fam : X → Measure V) : X → Measure V := by
+  classical
+  exact fun b => if b ∈ B then fam b else 0
 
 lemma restr_family (hι : Function.Injective ι) (hg : Continuous g) (hf : ∀ v, f v = ι (g v))
     {B B₂ : Set X} (hB₂ : IsOpen B₂) (hsub : B₂ ⊆ B) {fam : X → Measure V}

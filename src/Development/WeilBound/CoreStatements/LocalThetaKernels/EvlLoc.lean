@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.GoodCharIsLocallyConstant
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.IntegrablePair
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsEqMulApplyZero
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsInvariantForm
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.GoodCharIsLocallyConstant
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.IntegrablePair
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.CyclicAndLine
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsEqMulApplyZero
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ExistsInvariantForm
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DualNumberGraphFiltrationIsotropicOfSkew
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ namespace PositivityTheory.ThKH.Evl
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Invertible (2 : k)]
   {κ : Type} [Fintype κ] {ψ : AddChar k ℂ}
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem schr_schr (w w' : (κ → k) × (κ → k)) (φ : (κ → k) → ℂ) :
     schr ψ w (schr ψ w' φ) = ψ (⅟(2 : k) * (w.1 ⬝ᵥ w'.2 - w'.1 ⬝ᵥ w.2)) • schr ψ (w + w') φ := by
   funext x
@@ -92,8 +96,8 @@ theorem core (hc : Continuous ψ) (hn : ∀ x, ‖ψ x‖ = 1) (h1 : ψ ≠ 1) {
     have : (ψ t - 1) * l (schr ψ b φ₀) = 0 := by linear_combination e1
     exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hψ)
 
-omit [Invertible (2 : k)] in
 
+omit [Invertible (2 : k)] in
 theorem exists_subgroup (κ : Type) [Fintype κ] : ∃ U : AddSubgroup (κ → k), IsCompact (U : Set (κ → k)) ∧
     (U : Set (κ → k)).indicator (fun _ => (1 : ℂ)) ∈ SB (κ → k) := by
   have := t2Space_local_field_bis (k := k)
@@ -132,8 +136,8 @@ theorem transl (hc : Continuous ψ) (hn : ∀ x, ‖ψ x‖ = 1) (h1 : ψ ≠ 1)
       · have : x + u ∉ U := fun h' => hx ((U.add_mem_cancel_right hu).1 h')
         simp [hx, this]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Invertible (2 : k)] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Invertible (2 : k)] in
 theorem mem_of_orth (large₂ : Submodule k ((κ → k) × (κ → k)))
     (hiso : ∀ w ∈ large₂, ∀ w' ∈ large₂, w.1 ⬝ᵥ w'.2 = w'.1 ⬝ᵥ w.2) (hdim : Module.finrank k large₂ = Fintype.card κ)
     (z : (κ → k) × (κ → k)) (hz : ∀ w ∈ large₂, w.1 ⬝ᵥ z.2 = z.1 ⬝ᵥ w.2) : z ∈ large₂ := by
@@ -145,7 +149,7 @@ theorem mem_of_orth (large₂ : Submodule k ((κ → k) × (κ → k)))
       (fun a b c => by simp only [Prod.fst_add, Prod.snd_add, add_dotProduct, dotProduct_add]; ring)
       (fun a b c => by simp only [Prod.smul_fst, Prod.smul_snd, smul_dotProduct, dotProduct_smul, smul_eq_mul]; ring)
   have hinj : Function.Injective Ω := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     refine Prod.ext (funext fun i => ?_) (funext fun i => ?_)
     · simpa [Ω] using LinearMap.congr_fun ha (0, Pi.single i 1)
@@ -249,7 +253,7 @@ theorem exists_test (hc : Continuous ψ) (hn : ∀ x, ‖ψ x‖ = 1) (h1 : ψ �
       funext t
       rw [← ext_j f (t + t₁)]
       have e3 := hiso _ (hσ t) _ (hσ t₁)
-      simp only [hg, schr, map_add, ← mul_assoc, ← AddChar.map_add_eq_mul, add_dotProduct, dotProduct_add] at e3 ⊢
+      simp only [hg, schr, map_add (f := _), ← mul_assoc, ← AddChar.map_add_eq_mul, add_dotProduct, dotProduct_add] at e3 ⊢
       congr 2
       have h2 : ⅟(2 : k) * 2 = 1 := invOf_mul_self _
       linear_combination ⅟(2 : k) * e3 - (j t ⬝ᵥ σ t₁) * h2

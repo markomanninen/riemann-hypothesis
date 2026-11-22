@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlockParabolicUnitriangularSubgroupsGLnPrimeFiel
+
+@[expose] public section
 
 open GlobalTheory.GLq Formalism.MainNotions.ArithmeticCylinders Polynomial
 open scoped Classical
@@ -38,7 +42,7 @@ theorem prod_pow_add (a b : ℕ) : ∏ i ∈ Finset.range (a + b), (g : ℂ) ^ i
 
 theorem toG_one (n : ℕ) : toG (1 : Mt g n) = 1 := by
   apply Units.ext
-  rw [toG, dif_pos isUnit_one, IsUnit.unit_spec]
+  rw [toG, dite_eq_left isUnit_one, IsUnit.unit_spec]
   rfl
 
 theorem tl_one (a b : ℕ) : tl a (1 : Mt g (a + b)) = 1 := by

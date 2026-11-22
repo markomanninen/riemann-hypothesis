@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -31,7 +35,7 @@ theorem exists_refine {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebr
     { carrier := {a | O.valuation (ι a) < 1}
       add_mem' := fun {a b} ha hb => by
         show O.valuation (ι (a + b)) < 1
-        rw [map_add]
+        rw [map_add (f := _)]
         exact O.valuation.map_add_lt ha hb
       zero_mem' := by simp
       smul_mem' := fun c x hx => by
@@ -60,7 +64,7 @@ theorem exists_refine {K Ω : Type} [Field K] [NumberField K] [Field Ω] [Algebr
       exact lt_of_le_of_lt (mul_le_of_le_one_left' (hι b)) ha
   have hadd : ∀ (x y : Ω) (a b : 𝓞 K), O.valuation (x - ι a) < 1 → O.valuation (y - ι b) < 1 →
       O.valuation (x + y - ι (a + b)) < 1 := fun x y a b ha hb => by
-    have : x + y - ι (a + b) = (x - ι a) + (y - ι b) := by rw [map_add]; ring
+    have : x + y - ι (a + b) = (x - ι a) + (y - ι b) := by rw [map_add (f := _)]; ring
     rw [this]
     exact O.valuation.map_add_lt ha hb
   let R : Subring Ω :=

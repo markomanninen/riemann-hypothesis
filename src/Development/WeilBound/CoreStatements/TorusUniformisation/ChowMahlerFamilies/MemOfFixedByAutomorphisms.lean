@@ -1,5 +1,9 @@
-import Mathlib
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace PositivityTheory.Xgn.FixedFieldAutomorphism
@@ -49,6 +53,7 @@ theorem PositivityTheory.Xgn.mem_of_fixed_by_automorphisms : ∀ (F : Intermedia
   · have hint : IsIntegral F c := hc.isIntegral
     haveI : FiniteDimensional F (IntermediateField.adjoin F {c}) :=
       IntermediateField.adjoin.finiteDimensional hint
+    set_option synthInstance.maxHeartbeats 200000 in
     have hE : Cardinal.mk (IntermediateField.adjoin F {c}) ≤ Cardinal.aleph0 := by
       refine (Algebra.IsAlgebraic.cardinalMk_le_max F _).trans (max_le hFc le_rfl)
     have key : ∀ φ : IntermediateField.adjoin F {c} →ₐ[F] ℂ,

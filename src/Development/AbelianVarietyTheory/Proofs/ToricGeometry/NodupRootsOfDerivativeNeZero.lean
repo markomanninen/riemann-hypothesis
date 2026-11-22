@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology Polynomial
 
@@ -148,7 +152,7 @@ theorem exists_norm_eval_le (a : MvPolynomial (Fin d) ℂ) :
     obtain ⟨C₂, m₂, h₂, hb⟩ := hb
     refine ⟨C₁ + C₂, m₁ + m₂, by positivity, fun x => ?_⟩
     have h1 : 1 ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
     refine (norm_add_le _ _).trans (add_le_add ((ha x).trans ?_) ((hb x).trans ?_))
     · exact mul_le_mul_of_nonneg_left (pow_le_pow_right₀ h1 (by omega)) h₁
     · exact mul_le_mul_of_nonneg_left (pow_le_pow_right₀ h1 (by omega)) h₂

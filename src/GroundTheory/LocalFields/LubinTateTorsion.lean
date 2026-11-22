@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.LubinTatePoints
-import GroundTheory.LocalFields.Eisenstein
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LubinTatePoints
+public import GroundTheory.LocalFields.Eisenstein
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,8 @@ section LTPoly
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
 
-variable (K) in
 
+variable (K) in
 theorem one_lt_card_residueField' : 1 < Nat.card 𝓀[K] := Finite.one_lt_card
 
 def ltPoly (π : 𝒪[K]) : 𝒪[K][X] := C π * X + X ^ Nat.card 𝓀[K]
@@ -66,20 +70,14 @@ theorem coeff_ltPoly_sub (π : 𝒪[K]) (n : ℕ) :
     Polynomial.coeff_coe]
 
 theorem isLubinTateSeries_ltPoly (π : 𝒪[K]) :
-    IsLubinTateSeries π (ltPoly π : PowerSeries 𝒪[K]) where
-  constantCoeff_eq_zero := by
-    have hq := one_lt_card_residueField' K
-    rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, ltPoly]
-    simp only [coeff_add, coeff_C_mul_X, coeff_X_pow]
-    simp
-    omega
-  coeff_one := by
-    have hq := one_lt_card_residueField' K
-    rw [Polynomial.coeff_coe, ltPoly]
-    simp only [coeff_add, coeff_C_mul_X, coeff_X_pow]
-    simp
-    omega
-  dvd_coeff_sub n := by
+    IsLubinTateSeries π (ltPoly π : PowerSeries 𝒪[K]) := by
+  have hq := one_lt_card_residueField' K
+  refine { constantCoeff_eq_zero := ?_, coeff_one := ?_, dvd_coeff_sub := ?_ }
+  · rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, ltPoly]
+    simp [coeff_X_pow, show 0 ≠ Nat.card 𝓀[K] by omega]
+  · rw [Polynomial.coeff_coe, ltPoly]
+    simp [coeff_X_pow, hq.ne]
+  · intro n
     rw [coeff_ltPoly_sub, coeff_C_mul_X]
     split_ifs
     · exact dvd_rfl
@@ -123,7 +121,7 @@ omit [ValuativeRel L] [ValuativeExtension K L] in
 theorem aeval_ltPoly (z : L) :
     aeval z ((ltPoly π).map (algebraMap 𝒪[K] K)) =
       algebraMap K L (π : K) * z + z ^ Nat.card 𝓀[K] := by
-  simp only [ltPoly, Polynomial.map_add, Polynomial.map_mul, map_C, Polynomial.map_X,
+  simp only [ltPoly, Polynomial.map_add (f := _), Polynomial.map_mul, map_C, Polynomial.map_X,
     Polynomial.map_pow, map_add, map_mul, aeval_C, aeval_X, map_pow]
   rfl
 
@@ -162,7 +160,7 @@ omit [ValuativeRel L] [ValuativeExtension K L] in
 theorem aeval_derivative_ltPoly (z : L) :
     aeval z (derivative ((ltPoly π).map (algebraMap 𝒪[K] K))) =
       algebraMap K L (π : K) + (Nat.card 𝓀[K] : L) * z ^ (Nat.card 𝓀[K] - 1) := by
-  simp only [ltPoly, Polynomial.map_add, Polynomial.map_mul, map_C, Polynomial.map_X,
+  simp only [ltPoly, Polynomial.map_add (f := _), Polynomial.map_mul, map_C, Polynomial.map_X,
     Polynomial.map_pow, derivative_C_mul_X, derivative_X_pow, map_add, aeval_C,
     map_mul, map_pow, aeval_X, map_natCast]
   rfl
@@ -379,8 +377,8 @@ theorem card_lubinTateTorsion_ltPoly (n : ℕ) :
 
 variable {f : PowerSeries 𝒪[K]}
 
-omit [IsSepClosed Ω] in
 
+omit [IsSepClosed Ω] in
 theorem lubinTatePointEquiv_mem_torsion_iff {g : PowerSeries 𝒪[K]} (hf : IsLubinTateSeries π f)
     (hg : IsLubinTateSeries π g) (n : ℕ) (x : IdealPoint Ω (lubinTateFormalGroup hπ hg)) :
     lubinTatePointEquiv hf hg x ∈ lubinTateTorsion Ω hf n ↔ x ∈ lubinTateTorsion Ω hg n := by
@@ -398,20 +396,6 @@ theorem exists_generator_lubinTateTorsion (hf : IsLubinTateSeries π f) (n : ℕ
       (∀ a : 𝒪[K], a • l = 0 ↔ a ∈ Ideal.span {π ^ n}) ∧
       ∀ m ∈ lubinTateTorsion Ω (hπ := hπ) hf n, ∃ a : 𝒪[K], a • l = m :=
   exists_generator_torsionBy hπ (card_lubinTateTorsion (hπ := hπ) hf) n
-
-theorem nonempty_linearEquiv_lubinTateTorsion (hf : IsLubinTateSeries π f) (n : ℕ) :
-    Nonempty ((𝒪[K] ⧸ Ideal.span {π ^ n}) ≃ₗ[𝒪[K]] lubinTateTorsion Ω (hπ := hπ) hf n) := by
-  obtain ⟨l, hl, hann, hgen⟩ := exists_generator_lubinTateTorsion (Ω := Ω) (hπ := hπ) hf n
-  let ψ : 𝒪[K] →ₗ[𝒪[K]] lubinTateTorsion Ω (hπ := hπ) hf n :=
-    (LinearMap.toSpanSingleton 𝒪[K] _ l).codRestrict _ fun a => Submodule.smul_mem _ a hl
-  have hker : LinearMap.ker ψ = Ideal.span {π ^ n} := by
-    ext a
-    rw [LinearMap.mem_ker, ← hann a]
-    exact ⟨fun h => congrArg Subtype.val h, fun h => Subtype.ext h⟩
-  have hsurj : Function.Surjective ψ := fun ⟨m, hm⟩ => by
-    obtain ⟨a, ha⟩ := hgen m hm
-    exact ⟨a, Subtype.ext ha⟩
-  exact ⟨(Submodule.quotEquivOfEq _ _ hker.symm).trans (ψ.quotKerEquivOfSurjective hsurj)⟩
 
 end Torsion
 
@@ -462,21 +446,20 @@ theorem map_residue_ltEisenstein (hπ : Irreducible π) (n : ℕ) :
       X ^ ((Nat.card 𝓀[K] - 1) * Nat.card 𝓀[K] ^ n) := by
   have hres : IsLocalRing.residue 𝒪[K] π = 0 :=
     (IsLocalRing.residue_eq_zero_iff _).mpr ((IsLocalRing.mem_maximalIdeal _).mpr hπ.not_isUnit)
-  rw [ltEisenstein, Polynomial.map_add, map_C, hres, C_0, zero_add, Polynomial.map_pow,
+  rw [ltEisenstein, Polynomial.map_add (f := _), map_C, hres, C_0, zero_add, Polynomial.map_pow,
     map_residue_ltPolyIter π hπ, ← pow_mul, mul_comm]
 
 theorem isEisensteinAt_ltEisenstein (hπ : Irreducible π) (n : ℕ) :
-    (ltEisenstein π n).IsEisensteinAt (IsLocalRing.maximalIdeal 𝒪[K]) where
-  leading := by
-    rw [(ltEisenstein_monic π n).1.leadingCoeff]
+    (ltEisenstein π n).IsEisensteinAt (IsLocalRing.maximalIdeal 𝒪[K]) := by
+  refine { leading := ?_, mem := ?_, notMem := ?_ }
+  · rw [(ltEisenstein_monic π n).1.leadingCoeff]
     exact fun h => (IsLocalRing.maximalIdeal.isMaximal 𝒪[K]).ne_top
       ((Ideal.eq_top_iff_one _).mpr h)
-  mem {k} hk := by
+  · intro k hk
     rw [← IsLocalRing.residue_eq_zero_iff, ← coeff_map, map_residue_ltEisenstein hπ, coeff_X_pow]
     rw [(ltEisenstein_monic π n).2] at hk
     simp [hk.ne]
-  notMem := by
-    have hq := one_lt_card_residueField' K
+  · have hq := one_lt_card_residueField' K
     have h0 : (ltEisenstein π n).coeff 0 = π := by
       rw [ltEisenstein, coeff_add, coeff_C_zero, coeff_zero_eq_eval_zero, eval_pow,
         ← coeff_zero_eq_eval_zero, coeff_zero_ltPolyIter, zero_pow (by omega), add_zero]
@@ -500,7 +483,7 @@ theorem aeval_ltEisenstein_eq_zero {L : Type*} [Field L] [Algebra K L] {n : ℕ}
     rw [mul_add, ← pow_succ', Nat.sub_add_cancel hq.le, mul_comm]
     exact h1
   have h3 := (mul_eq_zero.mp h2).resolve_left h0
-  rw [ltEisenstein, Polynomial.map_add, map_C, Polynomial.map_pow, map_add, aeval_C, map_pow]
+  rw [ltEisenstein, Polynomial.map_add (f := _), map_C, Polynomial.map_pow, map_add (f := _), aeval_C, map_pow]
   exact h3
 
 end Eisenstein

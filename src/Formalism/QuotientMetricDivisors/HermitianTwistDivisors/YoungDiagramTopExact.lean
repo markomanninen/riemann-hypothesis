@@ -1,5 +1,9 @@
-import Formalism.QuotientMetricDivisors.TheoremDivIneqRowsShift
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.YoungDiagramHook
+module
+
+public import Formalism.QuotientMetricDivisors.TheoremDivIneqRowsShift
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.YoungDiagramHook
+
+@[expose] public section
 
 open Finset
 

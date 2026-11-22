@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups TensorProduct
 
@@ -66,7 +71,7 @@ theorem exists_place_at_point : ∀ (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε 
       one_mem' := ⟨1, by rw [map_one, Filter.Germ.coe_one], analyticAt_const⟩
       add_mem' := by
         rintro f g ⟨φ, h1, h2⟩ ⟨ψ, h3, h4⟩
-        exact ⟨φ + ψ, by rw [map_add, h1, h3, Filter.Germ.coe_add], h2.add h4⟩
+        exact ⟨φ + ψ, by rw [map_add (f := _), h1, h3, Filter.Germ.coe_add], h2.add h4⟩
       mul_mem' := by
         rintro f g ⟨φ, h1, h2⟩ ⟨ψ, h3, h4⟩
         exact ⟨φ * ψ, by rw [map_mul, h1, h3, Filter.Germ.coe_mul], h2.mul h4⟩

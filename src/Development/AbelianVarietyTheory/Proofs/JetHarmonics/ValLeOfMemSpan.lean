@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DofIterSmulDir
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MapDofIterate
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BilinPartEigenMemRange
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValColumnsCongr
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffProdLeadingMinors
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumProdNabValLeadingMinors
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumProdNabValLeadingMinorsOfColumnJets
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsFormalBiextMap
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DofIterSmulDir
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MapDofIterate
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BilinPartEigenMemRange
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValColumnsCongr
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffProdLeadingMinors
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumProdNabValLeadingMinors
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumProdNabValLeadingMinorsOfColumnJets
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -220,7 +224,7 @@ theorem val_eigen_columns {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing
           obtain ⟨u, u', huu⟩ := hcop
           have h1 : τ l'.1 (star a) ∉ IsLocalRing.maximalIdeal (TWO.Ov v) := fun hx => by
             have := congrArg (τ l'.1) huu
-            rw [map_add, map_mul, map_mul, map_one] at this
+            rw [map_add (f := _), map_mul, map_mul, map_one] at this
             exact (IsLocalRing.maximalIdeal.isMaximal _).ne_top ((Ideal.eq_top_iff_one _).2 (this ▸
               Ideal.add_mem _ (Ideal.mul_mem_left _ _ (hmax _ (hZ _ hl'))) (Ideal.mul_mem_left _ _ hx)))
           have h2 : IsUnit (τ l.1 a - τ l'.1 (star a)) := by
@@ -287,7 +291,7 @@ theorem val_eigen_columns {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing
       simp [f₁, hb, hω1])]
   rw [← map_minorsP (algebraMap (TWO.Ov v) F), MvPolynomial.support_map_of_injective _ hinj]
   simp only [MvPolynomial.coeff_map]
-  rw [hval, map_add]
+  rw [hval, map_add (f := _)]
   have hmain : v (algebraMap (TWO.Ov v) F (MvPolynomial.eval y₁ (minorsP (TWO.Ov v) col m) *
       ∏ b, constantCoeff (f₁ b))) ≤ ((∑ t, ∑ s : Fin (rk t), m t s * (s.val + 1) : ℕ) * γ : ℚ) := by
     rw [map_mul, v.map_mul, map_prod, eval_minorsP, map_prod]
@@ -372,7 +376,8 @@ theorem val_unit_columns {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing 
   refine ⟨g, fun b => (colM al b).degree, fun b mo => ?_, (SymbolCols.sum_degree_colM al).trans hdeg, fun f hf => ?_⟩
   · have : g b = MvPowerSeries.map (algebraMap (TWO.Ov v) F)
         (∏ l, (∑ i, C (lam' l i) * (X ((0 : Fin 1), i) : PS (TWO.Ov v) 1 d)) ^ al (l, b)) := by
-      simp only [map_prod, map_pow, map_sum, map_mul, map_C, map_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_prod, map_pow, map_sum, map_mul, map_C, map_X]
       rfl
     rw [this, coeff_map]
     exact TWO.v_nonneg v _
@@ -389,7 +394,8 @@ theorem val_unit_columns {R : Type} [CommRing R] {d : ℕ} {O : Type} [CommRing 
         · rw [hl, Units.inv_mul, mul_one]
         · rw [mul_zero]
       have h2 := congrArg (algebraMap (TWO.Ov v) F) h1
-      rw [map_sum, apply_ite (algebraMap (TWO.Ov v) F), map_one, map_zero] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, apply_ite (algebraMap (TWO.Ov v) F), map_one, map_zero] at h2
       exact h2)
     (fun _ => 1) f₂ (fun b mo hmo => by
       rw [one_mul]

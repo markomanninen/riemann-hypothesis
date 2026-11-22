@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,11 +13,6 @@ namespace ReciprocityTheory.UG.AdeleIntA
 variable {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K] [IsFractionRing R K]
 
 def IsInt (y : FiniteAdeleRing R K) : Prop := ∀ v : HeightOneSpectrum R, y v ∈ v.adicCompletionIntegers K
-
-theorem isInt_zero : IsInt (0 : FiniteAdeleRing R K) := fun v => zero_mem (v.adicCompletionIntegers K)
-
-theorem isInt_add {x y : FiniteAdeleRing R K} (hx : IsInt x) (hy : IsInt y) : IsInt (x + y) :=
-  fun v => add_mem (hx v) (hy v)
 
 theorem isInt_mul {x y : FiniteAdeleRing R K} (hx : IsInt x) (hy : IsInt y) : IsInt (x * y) :=
   fun v => mul_mem (hx v) (hy v)

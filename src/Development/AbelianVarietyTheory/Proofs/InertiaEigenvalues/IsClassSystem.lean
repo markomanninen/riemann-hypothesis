@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwInputs.Move
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open Formalism.L2.Host (embLL0 CharFrame)
@@ -217,41 +222,6 @@ theorem TwistRel.eq {A : Type} [CommGroup A] {t t' : Twist D A} (r : TwistRel t 
   obtain ⟨r1, r2, r3⟩ := r
   cases r1; cases r2; cases r3
   rfl
-
-theorem BaseRel.refl {S T : HSp D} (B : Base S T) : BaseRel B B :=
-  ⟨by constructor <;> rfl, by constructor <;> rfl, by constructor <;> rfl, by constructor <;> rfl, .rfl, .rfl⟩
-
-theorem BaseRel.eq {S T : HSp D} {B B' : Base S T} (r : BaseRel B B') : B = B' := by
-  base_cases r B B'
-  rfl
-
-theorem SetupRel.refl {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N} (ρ : Setup X) : SetupRel ρ ρ where
-  rc := ⟨.rfl, .rfl⟩
-  ch := .rfl
-  bad := .rfl
-  e := .rfl
-  ek := .rfl
-  B i i' hi j j' hj b := by cases hi; cases Fin.ext hj; exact .refl _
-  om := .rfl
-  Cl i i' hi j j' hj b t t' ht := by cases hi; cases Fin.ext hj; cases ht.eq; rfl
-  rep i i' hi j j' hj b t t' ht := by cases hi; cases Fin.ext hj; cases ht.eq; rfl
-  β := .rfl
-  eG i i' hi j j' hj b := by cases hi; cases Fin.ext hj; rfl
-
-theorem SetupRel.eq {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N} {ρ ρ' : Setup X} (r : SetupRel ρ ρ') :
-    ρ = ρ' := by
-  obtain ⟨⟨κ, art⟩, ch, bad, e, ek, B, om, Cl, rep, β, eG⟩ := ρ
-  obtain ⟨⟨κ', art'⟩, ch', bad', e', ek', B', om', Cl', rep', β', eG'⟩ := ρ'
-  obtain ⟨⟨r1, r2⟩, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12⟩ := r
-  dsimp only at r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12
-  subst r1 r2 r3 r4 r5 r6 r8 r11
-  obtain rfl : B = B' := funext fun i => funext fun j => funext fun b => (r7 i i .rfl j j rfl b).eq
-  obtain rfl : Cl = Cl' := funext fun i => funext fun j => funext fun b => funext fun t => r9 i i .rfl j j rfl b t t ⟨.rfl, .rfl, .rfl⟩
-  obtain rfl : rep = rep' := funext fun i => funext fun j => funext fun b => funext fun t =>
-    eq_of_heq (r10 i i .rfl j j rfl b t t ⟨.rfl, .rfl, .rfl⟩)
-  obtain rfl : eG = eG' := funext fun i => funext fun j => funext fun b => eq_of_heq (r12 i i .rfl j j rfl b)
-  congr 1
-  exact Subsingleton.elim _ _
 
 end GlobalTheory.TwInputs.Move
 

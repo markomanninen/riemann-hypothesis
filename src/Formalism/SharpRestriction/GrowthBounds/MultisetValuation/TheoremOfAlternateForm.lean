@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem vGeK_zero (g : ℝ) : X.vGeK 0 g := by
 theorem vGeK_add {x y : X.G.Kf} {g : ℝ} (hx : X.vGeK x g) (hy : X.vGeK y g) : X.vGeK (x + y) g := by
   obtain ⟨a, rfl⟩ := (vGeK_iff X).1 hx
   obtain ⟨b, rfl⟩ := (vGeK_iff X).1 hy
-  exact (vGeK_iff X).2 ⟨a + b, by rw [map_add, mul_add]⟩
+  exact (vGeK_iff X).2 ⟨a + b, by rw [map_add (f := _), mul_add]⟩
 
 theorem vGeK_sum {ι : Type*} (s : Finset ι) (f : ι → X.G.Kf) {g : ℝ} (h : ∀ i ∈ s, X.vGeK (f i) g) :
     X.vGeK (∑ i ∈ s, f i) g := by
@@ -366,7 +370,7 @@ variable {n' k1 : ℕ} {p t m c r : ℕ} {TT : Finset (Fin n')} {a b : Fin n' �
 theorem lamI_ge (h : Std p n' k1 t m c r TT a b lam0 w) (s : Fin n') (i : ℕ) (h1 : 1 ≤ i) (h2 : i ≤ k1 + 1) :
     -w 1 s ≤ lamI lam0 s i := by
   unfold lamI
-  rw [dif_pos ⟨h1, h2⟩]
+  rw [dite_eq_left ⟨h1, h2⟩]
   have hs := (h.w_low s).2
   have hd : lam0 s (Fin.last k1) ≤ lam0 s ⟨i - 1, by omega⟩ := h.dom s (by change i - 1 ≤ k1; omega)
   linarith
@@ -510,7 +514,8 @@ theorem vGeK_hsymm (v : X.Pl) (m : ℕ → X.G.Kf) (hm : ∀ l ∈ Icc 1 X.mm, X
     X.vGeK (MvPolynomial.eval (X.FF v m j) (MvPolynomial.hsymm (Fin j × Fin (X.t + 1)) X.G.Kf l))
       ((l : ℝ) * ((muZ X.t (X.w v) j : ℤ) : ℝ)) := by
   have hfr := frac_of_place X v
-  rw [MvPolynomial.hsymm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.hsymm, map_sum]
   refine vGeK_sum X _ _ fun s _ => ?_
   rw [map_multiset_prod, Multiset.map_map]
   have h1 := vGeK_multiset_prod X hfr (fun x => X.FF v m j x) ((muZ X.t (X.w v) j : ℤ) : ℝ) s.1
@@ -636,6 +641,7 @@ theorem eO_pos (v : X.Pl) : 0 < X.eO := by
     obtain ⟨Q, hQ, hQc⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := X.G.O)
       (Ideal.span {(p : X.G.P.W v)}) hker
     have hp : (p : X.G.P.W v) ∈ Q.comap (algebraMap (X.G.P.W v) X.G.O) := by
+      change (p : X.G.P.W v) ∈ Ideal.under (X.G.P.W v) Q
       rw [hQc]
       exact Ideal.mem_span_singleton_self _
     rw [Ideal.mem_comap, map_natCast] at hp

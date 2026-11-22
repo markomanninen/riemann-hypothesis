@@ -1,37 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.WeilBound.CoreStatements.AmpleLineBundles.TopLePreimageOfEpsFibreSndComp
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.TopLePreimageOfEpsFibreSndComp
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
 
 namespace CoverDenseAlt
-
-theorem one_left {S : Scheme.{0}} {G : Over S} [GrpObj G] {Y Y' : Scheme.{0}} (k : Y' ⟶ Y) (a : Y ⟶ S)
-    {a' : Y' ⟶ S} (e : k ≫ a = a') : (1 : Over.mk a' ⟶ G).left = k ≫ (1 : Over.mk a ⟶ G).left := by
-  subst e
-  have h : (Over.homMk k rfl : Over.mk (k ≫ a) ⟶ Over.mk a) ≫ (1 : Over.mk a ⟶ G) = 1 := by
-    simp only [Hom.one_def, comp_toUnit_assoc]
-  rw [← h]
-  rfl
-
-theorem mul_left {S : Scheme.{0}} {G : Over S} [GrpObj G] {Y Y' : Scheme.{0}} (k : Y' ⟶ Y) (a : Y ⟶ S)
-    {a' : Y' ⟶ S} (e : k ≫ a = a') (x y : Over.mk a ⟶ G) (x' y' : Over.mk a' ⟶ G)
-    (hx : k ≫ x.left = x'.left) (hy : k ≫ y.left = y'.left) : k ≫ (x * y).left = (x' * y').left := by
-  subst e
-  have hx' : (Over.homMk k rfl : Over.mk (k ≫ a) ⟶ Over.mk a) ≫ x = x' := by
-    ext
-    exact hx
-  have hy' : (Over.homMk k rfl : Over.mk (k ≫ a) ⟶ Over.mk a) ≫ y = y' := by
-    ext
-    exact hy
-  have h : (Over.homMk k rfl : Over.mk (k ≫ a) ⟶ Over.mk a) ≫ (x * y) = x' * y' := by
-    rw [← hx', ← hy', Hom.mul_def, Hom.mul_def, comp_lift_assoc]
-  rw [← h]
-  rfl
 
 private theorem val_spMap_comp_eq {Z : Scheme} {A A' : Type} [CommRing A] [CommRing A'] (g : A →+* A')
     (z : Sp A ⟶ Z) (V : Z.Opens) (h : ⊤ ≤ z ⁻¹ᵁ V) (h' : ⊤ ≤ (spMap g ≫ z) ⁻¹ᵁ V) (f : Γ(Z, V)) :

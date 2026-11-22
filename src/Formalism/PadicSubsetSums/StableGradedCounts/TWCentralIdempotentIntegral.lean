@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.CentralIdempotentIntegral
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.CentralIdempotentIntegral
+
+@[expose] public section
 
 open Polynomial
 
@@ -10,9 +14,10 @@ theorem isIntegral_trace_of_isIntegral {K n : Type} [Field K] [Fintype n] [Decid
   let φ : Matrix n n K →ₐ[ℤ] Matrix n n L := ((algebraMap K L).mapMatrix).toIntAlgHom
   have hM' : IsIntegral ℤ (φ M) := hM.map φ
   have htr : algebraMap K L M.trace = (φ M).trace := by
-    simp only [Matrix.trace, Matrix.diag, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, Matrix.diag, map_sum]
     rfl
-  rw [← isIntegral_algebraMap_iff (A := K) (B := L) (algebraMap K L).injective, htr,
+  rw [← isIntegral_algebraMap_iff (A := K) (B := L) , htr,
     Matrix.trace_eq_sum_roots_charpoly]
   refine IsIntegral.multiset_sum fun μ hμ => ?_
   have hroot : IsRoot (φ M).charpoly μ := (mem_roots'.1 hμ).2

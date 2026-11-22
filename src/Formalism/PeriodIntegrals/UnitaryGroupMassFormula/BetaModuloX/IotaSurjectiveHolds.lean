@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.Skeleton
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Lemmata.GeneralBFactThirdSide.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.Skeleton
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Lemmata.GeneralBFactThirdSide.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem riesz [FiniteDimensional E V] (h : V →ₗ⋆[E] V →ₗ[E] E) (hs : h
     | add x y hx hy ihx ihy =>
       intro huL
       have e2 : (⟨x + y, huL⟩ : Λ) = ⟨x, hspL hx⟩ + ⟨y, hspL hy⟩ := rfl
-      rw [e2, map_add, map_add, ihx (hspL hx), ihy (hspL hy)]
+      rw [e2, map_add (f := _), map_add (f := _), ihx (hspL hx), ihy (hspL hy)]
     | smul r x hx ih =>
       intro huL
       have e2 : (⟨r • x, huL⟩ : Λ) = r • ⟨x, hspL hx⟩ := rfl
@@ -71,8 +75,8 @@ theorem riesz [FiniteDimensional E V] (h : V →ₗ⋆[E] V →ₗ[E] E) (hs : h
     smul_eq_mul, smul_eq_mul] at h1
   exact mul_left_cancel₀ ((map_ne_zero_iff _ (IsFractionRing.injective (𝓞 E) E)).mpr hd) h1
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_retract (Λ : Submodule (𝓞 E) V) (hΛ : Λ.FG) (X : Submodule E V) :
     ∃ ρ : Λ →ₗ[𝓞 E] Λ, (∀ y, ((ρ y : Λ) : V) ∈ X) ∧ ∀ y : Λ, (y : V) ∈ X → ρ y = y := by
   classical
@@ -199,7 +203,8 @@ theorem loc_div (Λ : Submodule (𝓞 E) S.V) (hU : Formalism.HermitianLatticesT
   have hsum : S.hT w (frameAct (frame F) ξ (Fin.castSucc c)) =
       ∑ a, ξ a (Fin.castSucc c) • S.hT w (frame F a) := by
     unfold frameAct
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl (fun a _ => ?_)
     rw [LinearMap.map_smul, smul_eq_mul, Algebra.smul_def]
   refine ⟨s, hs, ?_⟩
@@ -254,11 +259,41 @@ theorem iota_gen (Λ : Submodule (𝓞 E) S.V) (hL : Submodule.IsLattice E Λ)
   have hgE : ((g : 𝓞 E) : E) ≠ 0 := by
     have : ((g : 𝓞 E) : E) = (g : E) := map_natCast _ g
     rw [this]; exact Nat.cast_ne_zero.mpr hg
+  have hsp : Submodule.span E (Λ : Set S.V) = ⊤ := by
+    apply eq_top_iff.mpr
+    intro x _
+    obtain ⟨A, hA⟩ := hL.fg
+    obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples_of_finset
+      (nonZeroDivisors (𝓞 E)) (A.image (fun y => S.hT y x))
+    have hd0 : d ≠ 0 := nonZeroDivisors.ne_zero hd
+    have hx : d • x ∈ Λ := by
+      rw [← hU, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+      intro y hy
+      rw [← hA] at hy
+      induction hy using Submodule.span_induction with
+      | mem y hy =>
+        obtain ⟨r, hr⟩ := hint (S.hT y x) (Finset.mem_image.mpr ⟨y, hy, rfl⟩)
+        have hr' : algebraMap (𝓞 E) E r = algebraMap (𝓞 E) E d * S.hT y x := by simpa [Algebra.smul_def] using hr
+        rw [← algebraMap_smul E d x, LinearMap.map_smul, smul_eq_mul, ← hr']
+        exact Submodule.mem_one.mpr ⟨r, rfl⟩
+      | zero => simp
+      | add y z hy hz ihy ihz => simpa using Submodule.add_mem (1 : Submodule (𝓞 E) E) ihy ihz
+      | smul r y hy ih =>
+        rw [← algebraMap_smul E r y, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
+        obtain ⟨a, ha⟩ := Submodule.mem_one.mp ih
+        rw [← ha]
+        exact Submodule.mem_one.mpr ⟨⟨_, (r.isIntegral_coe.map (starRingEnd E).toIntAlgHom).mul a.isIntegral_coe⟩, rfl⟩
+    have hdE : algebraMap (𝓞 E) E d ≠ 0 := (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 E) E)).2 hd0
+    have hmem : (algebraMap (𝓞 E) E d) • x ∈ Submodule.span E (Λ : Set S.V) := by
+      rw [algebraMap_smul]; exact Submodule.subset_span hx
+    have := (Submodule.span E (Λ : Set S.V)).smul_mem (algebraMap (𝓞 E) E d)⁻¹ hmem
+    rw [smul_smul, inv_mul_cancel₀ hdE, one_smul] at this
+    exact this
   obtain ⟨ρ, hρX, hρid⟩ := exists_retract Λ hL.fg (Xsp F)
   let f : Λ →ₗ[𝓞 E] E := LinearMap.mulLeft (𝓞 E) (((g : 𝓞 E) : E)⁻¹) ∘ₗ
     (S.hT w).restrictScalars (𝓞 E) ∘ₗ Λ.subtype ∘ₗ ρ
   have hf : ∀ y, f y = (((g : 𝓞 E) : E))⁻¹ * S.hT w (ρ y : S.V) := fun y => rfl
-  obtain ⟨m, hm⟩ := riesz S.hT S.herm S.nondeg Λ hL.fg hL.span_eq_top f
+  obtain ⟨m, hm⟩ := riesz S.hT S.herm S.nondeg Λ hL.fg hsp f
   have hfint : ∀ y : Λ, ∃ o : 𝓞 E, f y = algebraMap (𝓞 E) E o := by
     intro y
     have hd := glob_div Λ hU g hg F F' hfix hadm w hwΛ hwo (ρ y : S.V) (ρ y).2 (hρX y)
@@ -276,7 +311,7 @@ theorem iota_gen (Λ : Submodule (𝓞 E) S.V) (hL : Submodule.IsLattice E Λ)
   · show w - (g : 𝓞 E) • m ∈ orth S (Xsp F)
     rw [mem_orth'']
     intro x hx
-    obtain ⟨d, hd0, hdx⟩ := exists_smul_mem Λ hL.span_eq_top x
+    obtain ⟨d, hd0, hdx⟩ := exists_smul_mem Λ hsp x
     have hdX : d • x ∈ Xsp F := by
       rw [← algebraMap_smul E d x]; exact (Xsp F).smul_mem _ hx
     have hρd : ρ ⟨d • x, hdx⟩ = ⟨d • x, hdx⟩ := hρid _ hdX

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CubeTrivialisationOnUniformisingSpace
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CubeTrivialisationOnUniformisingSpace
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -131,7 +135,7 @@ lemma exists_symmetry_values (hv : ValueRules) (hs : Out.Sym A L) :
   refine ⟨fun i j z => valAt' ((u.ex z).left ≫ σ) (L.wchart φ ![i, j]) (t.s ![i, j]).val,
     fun i j => ?_, fun i j z hi hj => ?_, fun i j i' j' z hi hj hi' hj' => ?_, fun i j z l => ?_⟩
   · have h := (u.hol (σ ⁻¹ᵁ L.wchart φ ![i, j]) ((σ.app _).hom (t.s ![i, j]).val)).2
-    refine (h.mono fun z hz => hch i j z hz.1 hz.2).congr fun z _ => ?_
+    refine (h.mono (by exact fun z hz => hch i j z hz.1 hz.2)).congr fun z _ => ?_
     exact ((hv _ (u.ex z).left).2.2.2.1 _ σ _ _).symm
   · exact val_unit_ne_zero _ hv (hch i j z hi hj) _
   · have k1 := hch i j z hi hj
@@ -202,8 +206,8 @@ lemma neg_eq (hv : ValueRules) (hL : L.IsLB) (hs : Out.Sym A L)
 
 end SymmetricSemicharacter
 
-open SymmetricSemicharacter in
 
+open SymmetricSemicharacter in
 theorem semicharacter_sq_eq_one_of_symmetric :
     ∀ (P : Out.PolAV (Sp ℂ)) (u : HolUnif P.A P.L P.g) (Hm : Matrix (Fin P.g) (Fin P.g) ℂ)
       (χ : u.Λ → ℂ), u.IsAH Hm χ → ∀ l, χ l ^ 2 = 1 := by

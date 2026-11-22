@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+
+@[expose] public section
 
 open NumberField MeasureTheory Module Finset
 
@@ -106,7 +110,8 @@ lemma sum_integral (F : Type) [Field F] [NumberField F] (u : Ix F → ℤ) :
 lemma emb_sum (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (u : Ix F → ℤ) (w : Rp F) :
     InfinitePlace.embedding_of_isReal w.2 (∑ i, (u i : F) * integralBasis F i)
       = B F (fun i => (u i : ℝ)) w := by
-  rw [B_apply]; simp [map_sum, map_mul, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [B_apply]; simp [map_sum, map_mul, map_intCast]
 
 theorem core (F : Type) [Field F] [NumberField F] [IsTotallyReal F] : ∃ C : ℝ, 0 < C ∧
     ∀ z : InfinitePlace F → ℂ, (∀ v, (z v).im ≠ 0) →

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LamHomApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LamHomApply
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
@@ -129,7 +134,7 @@ theorem dat_mkLevel_eq : ∀ (D : D7) (S T : HSp D) (C : Ctx S T) (hn : T.rank �
   have hTop : ∀ PP ∈ Pg ∪ Q, topL T.rank (Y PP) = ct.map ((Ideal.Quotient.mk PP.asIdeal).comp Lev.bar) := by
     intro PP hPP
     ext a b
-    rw [topL, dif_pos ⟨lt_of_lt_of_le a.2 hn, b.2⟩, hY PP hPP]
+    rw [topL, dite_eq_left ⟨lt_of_lt_of_le a.2 hn, b.2⟩, hY PP hPP]
     rfl
   have hcong0 : ∀ i, GlobalTheory.SW.Cong C.X (liftI Pg Q) (y i) 0 ↔ ∀ j, c i j ∈ liftI Pg Q := by
     intro i
@@ -154,7 +159,7 @@ theorem dat_mkLevel_eq : ∀ (D : D7) (S T : HSp D) (C : Ctx S T) (hn : T.rank �
   unfold Level.dat
   by_cases h : (∃ k : L.J, L.Red (fun i => y (Fin.castLE hn i)) k) ∧
       ∀ k : Fin S.rank, T.rank ≤ (k : ℕ) → GlobalTheory.SW.Cong C.X L.𝔪 (y k) 0
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     obtain ⟨k', hk'm, hk'c⟩ := h.1.choose_spec
     set κ := h.1.choose with hκdef
     have hκval : (κ.1 : GL (Fin T.rank) (𝓞 D.host.E ⧸ liftI Pg Q)).val =
@@ -192,7 +197,7 @@ theorem dat_mkLevel_eq : ∀ (D : D7) (S T : HSp D) (C : Ctx S T) (hn : T.rank �
       exact ⟨hLow PP (Finset.mem_union_left _ hPP), by rw [hTop PP (Finset.mem_union_left _ hPP)]; exact hJ PP hPP⟩
     rw [hK, one_mul]
     unfold omegaQ
-    rw [dif_pos hQc]
+    rw [dite_eq_left hQc]
     show ((lamHom Pg Q T.rank ξ (⟨κ.1, κ.2⟩ : Jgrp Pg Q T.rank) : ℂˣ) : ℂ) = _
     rw [lamHom_apply, Units.val_inv_eq_inv_val, Units.coe_prod, ← Finset.prod_inv_distrib]
     refine Finset.prod_congr rfl fun PP _ => ?_
@@ -204,7 +209,7 @@ theorem dat_mkLevel_eq : ∀ (D : D7) (S T : HSp D) (C : Ctx S T) (hn : T.rank �
         Matrix.GeneralLinearGroup.val_det_apply]
       exact hdetQ _ _
     rw [e, _root_.zpow_neg_one]
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     symm
     by_contra hne
     have hK : omegaK Pg Y ≠ 0 := left_ne_zero_of_mul hne
@@ -214,7 +219,7 @@ theorem dat_mkLevel_eq : ∀ (D : D7) (S T : HSp D) (C : Ctx S T) (hn : T.rank �
       exact hK (by unfold omegaK; rw [if_neg hc])
     have hQc : ∀ PP ∈ Q, LowZero T.rank (Y PP) ∧ IsUnit (topL T.rank (Y PP)).det := by
       by_contra hc
-      exact hQ (by unfold omegaQ; rw [dif_neg hc])
+      exact hQ (by unfold omegaQ; rw [dite_eq_right hc])
     apply h
     have hLow : ∀ PP ∈ Pg ∪ Q, LowZero T.rank (Y PP) := by
       intro PP hPP

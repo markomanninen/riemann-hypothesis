@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.Fischer
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+
+@[expose] public section
+
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open GlobalTheory.SW hiding Level
 open GlobalTheory.Dict (hx pv)
@@ -12,16 +17,16 @@ namespace GlobalTheory.Ker
 section DoubleCoset
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
+
 open Matrix Complex NumberField MeasureTheory in
 open scoped ComplexConjugate ComplexOrder Real Classical in
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] in
-
 theorem _root_.GlobalTheory.Ker.isOpen_doubleCoset_of_isOpen (Γ K : Subgroup G) (hK : IsOpen (K : Set G)) (a : G) :
     IsOpen {x : G | ∃ γ ∈ Γ, ∃ k ∈ K, x = γ * a * k} := by
   have hunion : {x : G | ∃ γ ∈ Γ, ∃ k ∈ K, x = γ * a * k} =
       ⋃ γ ∈ Γ, (fun k => γ * a * k) '' (K : Set G) := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_image, SetLike.mem_coe, exists_prop]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_image, SetLike.mem_coe, exists_prop]
     constructor
     · rintro ⟨γ, hγ, k, hk, rfl⟩
       exact ⟨γ, hγ, k, hk, rfl⟩
@@ -30,11 +35,11 @@ theorem _root_.GlobalTheory.Ker.isOpen_doubleCoset_of_isOpen (Γ K : Subgroup G)
   rw [hunion]
   exact isOpen_biUnion fun γ _ => isOpenMap_mul_left (γ * a) _ hK
 
+
 open Matrix Complex NumberField MeasureTheory in
 open scoped ComplexConjugate ComplexOrder Real Classical in
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] in
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
-
 theorem _root_.GlobalTheory.Ker.tsum_indicator_coset (Γ K : Subgroup G) (a : G)
     (hfin : {γ : G | γ ∈ Γ ∧ a⁻¹ * γ * a ∈ K}.Finite) (x : G) :
     ∑' γ : Γ, ((fun y => a⁻¹ * y) ⁻¹' (K : Set G)).indicator (1 : G → ENNReal) (γ • x)
@@ -76,7 +81,7 @@ theorem _root_.GlobalTheory.Ker.tsum_indicator_coset (Γ K : Subgroup G) (a : G)
         exact K.mul_mem hγ' (K.inv_mem hk₀)
     rw [← hinj.encard_image, ← himg, ← hfin.cast_ncard_eq, ENat.toENNReal_coe]
   · rw [Set.indicator_of_notMem hx, mul_zero]
-    refine ENNReal.tsum_eq_zero.2 fun γ => Set.indicator_of_notMem ?_ _
+    refine tsum_eq_zero_iff.2 fun γ => Set.indicator_of_notMem ?_ _
     intro hmem
     have hk : a⁻¹ * ((γ : G) * x) ∈ K := hmem
     exact hx ⟨(γ : G)⁻¹, Γ.inv_mem γ.2, _, hk, by group⟩
@@ -110,9 +115,9 @@ private theorem measure_fd_inter_doubleCoset_mul_ncard_eq {G : Type} [Group G]
   · intro γ
     exact ((measurable_one.indicator hmeasK).comp (measurable_const_smul γ)).aemeasurable
 
+
 open Matrix Complex NumberField MeasureTheory in
 open scoped ComplexConjugate ComplexOrder Real Classical in
-
 theorem _root_.GlobalTheory.Ker.integral_fundamentalDomain_eq_sum_doubleCoset : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [MeasurableSpace G] [BorelSpace G] (ν : Measure G) [ν.IsMulLeftInvariant] (Γ K : Subgroup G) [Countable Γ] (𝓖 : Set G), IsFundamentalDomain Γ 𝓖 ν → IsOpen (K : Set G) → ν K ≠ ⊤ → ∀ (ι : Type) [Fintype ι] (h : ι → G), (∀ x : G, ∃! i, ∃ γ ∈ Γ, ∃ k ∈ K, x = γ * h i * k) → (∀ i, {γ : G | γ ∈ Γ ∧ (h i)⁻¹ * γ * h i ∈ K}.Finite) → ∀ F : G → ℂ, (∀ γ ∈ Γ, ∀ x, F (γ * x) = F x) → (∀ k ∈ K, ∀ x, F (x * k) = F x) → ν 𝓖 ≠ ⊤ ∧ IntegrableOn F 𝓖 ν ∧ ∫ x in 𝓖, F x ∂ν = ((ν K).toReal : ℂ) * ∑ i, (({γ : G | γ ∈ Γ ∧ (h i)⁻¹ * γ * h i ∈ K}.ncard : ℕ) : ℂ)⁻¹ * F (h i) := by
   intro G _ _ _ _ _ ν _ Γ K _ 𝓖 h𝓖 hK hKtop ι _ h huniq hfin F hFΓ hFK
   have hCmeas : ∀ i, MeasurableSet {x : G | ∃ γ ∈ Γ, ∃ k ∈ K, x = γ * h i * k} := fun i =>
@@ -154,10 +159,10 @@ theorem _root_.GlobalTheory.Ker.integral_fundamentalDomain_eq_sum_doubleCoset : 
     rw [Measure.restrict_apply (hCmeas i)]
     exact hCGtop i
   refine ⟨h𝓖top, ?_, ?_⟩
-  · exact (integrable_finset_sum _ fun i _ => hint i).congr
+  · exact (integrable_finsetSum _ fun i _ => hint i).congr
       (ae_of_all _ fun x => (hdecomp x).symm)
   · refine (congrArg (fun f : G → ℂ => ∫ x in 𝓖, f x ∂ν) (funext hdecomp)).trans ?_
-    rw [integral_finset_sum _ fun i _ => hint i, Finset.mul_sum]
+    rw [integral_finsetSum _ fun i _ => hint i, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [integral_indicator_const _ (hCmeas i), measureReal_def, Measure.restrict_apply (hCmeas i),
       hCG i, ENNReal.toReal_div, ENNReal.toReal_natCast, Complex.real_smul]

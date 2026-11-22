@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.GoodXgFin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CyclicSplitting.IrrDecomp
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.GoodXgFin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CyclicSplitting.IrrDecomp
+
+@[expose] public section
 
 open Formalism.L2.DIV
 

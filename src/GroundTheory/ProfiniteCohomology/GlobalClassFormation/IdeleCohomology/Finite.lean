@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Places
-import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrand
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.IsDiscreteRepCoindStabRep
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.ExistsSIdelesCohomologyEqZero
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Places
+public import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrand
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.IsDiscreteRepCoindStabRep
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.ExistsSIdelesCohomologyEqZero
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -41,8 +46,8 @@ variable {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Algeb
 
 section Representation
 
-variable (L) in
 
+variable (L) in
 noncomputable abbrev finiteUnitsAboveRep :
     Representation ℤ Gal(L/K) (∀ w : PlacesOver L v, Additive (w.1.adicCompletion L)ˣ) :=
   piUnitsRep
@@ -83,11 +88,6 @@ noncomputable def finiteProjAboveRep : ideleRep K L ⟶ Rep.of (finiteUnitsAbove
       rw [finiteProjAbove_smul]
       rfl⟩
 
-@[simp]
-theorem finiteProjAboveRep_hom_apply (x : ideleRep K L) (w : PlacesOver L v) :
-    (finiteProjAboveRep v).hom x w = Additive.ofMul (finiteProjAbove v x.toMul w) :=
-  rfl
-
 noncomputable def finiteEmbedAboveRep : Rep.of (finiteUnitsAboveRep L v) ⟶ ideleRep K L :=
   Rep.ofHom ⟨AddMonoidHom.toIntLinearMap
     { toFun := fun y => Additive.ofMul (finiteEmbedAbove v fun w => (y w).toMul)
@@ -103,11 +103,6 @@ noncomputable def finiteEmbedAboveRep : Rep.of (finiteUnitsAboveRep L v) ⟶ ide
       change Additive.ofMul (finiteEmbedAbove v (σ • fun w => (y w).toMul)) = _
       rw [finiteEmbedAbove_smul]
       rfl⟩
-
-@[simp]
-theorem finiteEmbedAboveRep_hom_apply (y : ∀ w : PlacesOver L v, Additive (w.1.adicCompletion L)ˣ) :
-    (finiteEmbedAboveRep v).hom y = Additive.ofMul (finiteEmbedAbove v fun w => (y w).toMul) :=
-  rfl
 
 theorem finiteEmbedAboveRep_comp_finiteProjAboveRep :
     finiteEmbedAboveRep (L := L) v ≫ finiteProjAboveRep (L := L) v = 𝟙 _ := by
@@ -137,15 +132,15 @@ section Decomposition
 
 variable (w : PlacesOver L v)
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem mem_stabilizer_iff_smul_eq (σ : Gal(L/K)) :
     σ ∈ MulAction.stabilizer Gal(L/K) w.1.asIdeal ↔ σ • w = w := by
   rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, coe_smul_placesOver,
     HeightOneSpectrum.ext_iff, smul_asIdeal]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem galHom_eq_decomposition (σ : MulAction.stabilizer Gal(L/K) w.1.asIdeal)
     (h : w.1 = (σ : Gal(L/K)) • w.1) (x : w.1.adicCompletion L) :
     galHom (σ : Gal(L/K)) w.1 w.1 h x = σ • x := by

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.LemmaWFromLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdaptedIntegralBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentSeriesAdaptedBasisCoordsVanishBeyondFinraStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalEntryOfSemilinearModSubspaceStatement
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.LemmaWFromLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdaptedIntegralBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaurentSeriesAdaptedBasisCoordsVanishBeyondFinraStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalEntryOfSemilinearModSubspaceStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,7 +60,8 @@ theorem sub_coord_smul_col_mem : ∀ (F : Type) [Field F] (n : ℕ) (U : Submodu
       ∑ a, ((v a : PowerSeries F) : LaurentSeries F) • (fun c => (((g : Matrix (Fin n) (Fin n) (PowerSeries F)) c a : PowerSeries F) : LaurentSeries F)) := by
     funext c
     conv_lhs => rw [hz]
-    simp [Matrix.mulVec, dotProduct, Finset.sum_apply, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Finset.sum_apply, map_sum, mul_comm]
   rw [hsum, ← Finset.add_sum_erase _ _ (Finset.mem_univ p), add_sub_cancel_left]
   refine U.sum_mem fun a ha => ?_
   by_cases h0 : v a = 0

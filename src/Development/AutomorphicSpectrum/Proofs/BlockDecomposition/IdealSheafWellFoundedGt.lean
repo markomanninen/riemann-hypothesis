@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PowSubSuccLe
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry GroundTheory.Arith.SchemeCoh GlobalTheory.CompanionTheory.GE
 
@@ -23,7 +27,7 @@ theorem idealSheafData_wellFoundedGT :
     obtain ⟨U, hUt, hxU⟩ := hx
     exact TopologicalSpace.Opens.mem_iSup.mpr ⟨⟨U, hUt⟩, hxU⟩
   have hnoeth : ∀ i : t, WellFoundedGT (Ideal Γ(X, (i.1 : X.affineOpens).1)) := fun i => by
-    haveI : IsNoetherianRing Γ(X, (i.1 : X.affineOpens).1) :=
+    have : IsNoetherianRing Γ(X, (i.1 : X.affineOpens).1) :=
       IsLocallyNoetherian.component_noetherian i.1
     infer_instance
   let φ : X.IdealSheafData → (∀ i : t, Ideal Γ(X, (i.1 : X.affineOpens).1)) :=
@@ -34,7 +38,7 @@ theorem idealSheafData_wellFoundedGT :
     exact Scheme.IdealSheafData.ext_of_iSup_eq_top (fun i : t => i.1) hcov
       (fun i => congrFun h i)
   have h1 : WellFoundedLT (∀ i : t, (Ideal Γ(X, (i.1 : X.affineOpens).1))ᵒᵈ) := Pi.wellFoundedLT
-  have h2 : WellFoundedGT (∀ i : t, Ideal Γ(X, (i.1 : X.affineOpens).1)) := ⟨h1.wf⟩
+  have h2 : WellFoundedGT (∀ i : t, Ideal Γ(X, (i.1 : X.affineOpens).1)) := h1
   exact hφ.wellFoundedGT
 
 end GlobalTheory.CompanionTheory.GE

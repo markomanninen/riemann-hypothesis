@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScMuExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScMuExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+
+@[expose] public section
 
 noncomputable section
 

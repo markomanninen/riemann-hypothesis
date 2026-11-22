@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardFiberMulCardRange
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardFiberMulCardRange
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.HermitianSublattices
 
@@ -100,7 +104,7 @@ theorem card_preimage [Finite A] (f : A →+ Z) (hf : Function.Surjective f) (T 
   { toFun := fun a => (⟨a.1 - s (f a.1), by rw [AddMonoidHom.mem_ker, map_sub, hs, sub_self]⟩,
       ⟨f a.1, a.2⟩)
     invFun := fun x => ⟨x.1.1 + s x.2.1, by
-      rw [map_add, AddMonoidHom.mem_ker.mp x.1.2, hs, zero_add]
+      rw [map_add (f := _), AddMonoidHom.mem_ker.mp x.1.2, hs, zero_add]
       exact x.2.2⟩
     left_inv := fun a => by
       apply Subtype.ext
@@ -108,7 +112,7 @@ theorem card_preimage [Finite A] (f : A →+ Z) (hf : Function.Surjective f) (T 
       exact sub_add_cancel _ _
     right_inv := by
       rintro ⟨⟨k, hk⟩, ⟨z, hz⟩⟩
-      have hfk : f (k + s z) = z := by rw [map_add, AddMonoidHom.mem_ker.mp hk, hs, zero_add]
+      have hfk : f (k + s z) = z := by rw [map_add (f := _), AddMonoidHom.mem_ker.mp hk, hs, zero_add]
       refine Prod.ext (Subtype.ext ?_) (Subtype.ext ?_)
       · show k + s z - s (f (k + s z)) = k
         rw [hfk, add_sub_cancel_right]

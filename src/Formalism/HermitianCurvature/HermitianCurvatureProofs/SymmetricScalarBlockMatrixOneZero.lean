@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FubiniHeadLastPart
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerBlockPoint
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousInvUpper
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FubiniHeadLastPart
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StabilizerBlockPoint
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContinuousInvUpper
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.FourierDecayAlt
 
@@ -35,7 +39,7 @@ theorem lowW_of_empty {m : ℕ} (σ : Equiv.Perm (Fin m)) [IsEmpty (U.LW σ)] (v
   unfold U.lowW
   ext a b
   simp only [Matrix.add_apply, Matrix.of_apply]
-  rw [dif_neg (fun h => IsEmpty.false (⟨(a, b), h⟩ : U.LW σ)), add_zero]
+  rw [dite_eq_right (fun h => IsEmpty.false (⟨(a, b), h⟩ : U.LW σ)), add_zero]
 
 theorem probE {ι X : Type} [Fintype ι] [IsEmpty ι] [MeasureSpace X] : IsProbabilityMeasure (volume : Measure (ι → X)) := by
   rw [volume_pi, Measure.pi_of_empty]; infer_instance
@@ -166,7 +170,7 @@ theorem upper_mulVec_last {m : ℕ} (u : G.UT (m + 1) → ℂ) (x : Fin (m + 1) 
   rw [Finset.sum_eq_single (Fin.last m)]
   · simp
   · intro j _ hj
-    rw [if_neg (fun h => hj h.symm), dif_neg (not_lt.2 (Fin.le_last j))]
+    rw [if_neg (fun h => hj h.symm), dite_eq_right (not_lt.2 (Fin.le_last j))]
     simp
   · simp
 
@@ -188,11 +192,11 @@ theorem chars_block (β : ℂ) (n : ℕ) (a : Fin 1 → Fin n → ℂ) (b : Fin 
     rw [G4.subSum_blk, G4.superSum_blk, subSum_one, upper_mulVec_last, ← Dx2.SL.supS_superSum]
     have hA : U.cornerA a = a 0 (Fin.last m) := by
       unfold U.cornerA
-      rw [dif_pos ⟨by norm_num, by omega⟩]
+      rw [dite_eq_left ⟨by norm_num, by omega⟩]
       congr 1
     have hB : U.cornerB b = b (Fin.last m) 0 := by
       unfold U.cornerB
-      rw [dif_pos ⟨by norm_num, by omega⟩]
+      rw [dite_eq_left ⟨by norm_num, by omega⟩]
       congr 1
     rw [hA, hB]
     ring

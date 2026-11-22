@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedSubfieldLeCyclotomicExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComponentWachLetterBasisFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachImageDeRhamPlusComponentLevelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionsSpanFullLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowerSeriesEvaluation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibilityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedSubfieldLeCyclotomicExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComponentWachLetterBasisFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachImageDeRhamPlusComponentLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionsSpanFullLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowerSeriesEvaluation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibilityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionLatticeGradedOfLevelLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem Rep.add (anti : Antitone Fil) {a : ℕ} {f f' : ℤ → M} {y y' : R}
   have h1 := anti (show (N : ℤ) - max c c' ≤ (N : ℤ) - c by omega) (hc N)
   have h2 := anti (show (N : ℤ) - max c c' ≤ (N : ℤ) - c' by omega) (hc' N)
   convert add_mem h1 h2 using 1
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
   ring
 
 theorem Rep.sum (anti : Antitone Fil) {a : ℕ} {J : Type} (S : Finset J) {f : J → ℤ → M} {y : J → R}
@@ -152,7 +156,8 @@ theorem Rep.conv (anti : Antitone Fil) (exh : ∀ b, ∃ a, b ∈ Fil a)
         ι (PowerSeries.coeff k e) * (t ^ k * (t ^ r * p (f ((r : ℤ) - a)))) := by
     rw [← Finset.sum_range_diag_flip]
     refine Finset.sum_congr rfl fun q _ => ?_
-    rw [conv_eq_sum e f a hf, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [conv_eq_sum e f a hf, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j hj => ?_
     have : j ≤ q := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
     rw [hp, ← mul_assoc (t ^ j), ← pow_add, Nat.add_sub_cancel' this]
@@ -335,14 +340,14 @@ theorem crd_smul (lam : T.V →ₗ[LL] LL) (c : LL) (z : T.V ⊗[Qp] BdR) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => rw [TensorProduct.smul_tmul', crd_tmul, crd_tmul, map_smul, smul_eq_mul, map_mul, mul_assoc]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, mul_add]
 
 theorem crd_mulVR (lam : T.V →ₗ[LL] LL) (c : BdR) (z : T.V ⊗[Qp] BdR) :
     crd T ι lam (mulVR T c z) = c * crd T ι lam z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x b => rw [mulVR_tmul, crd_tmul, crd_tmul]; ring
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy, mul_add]
 
 theorem crd_compKer (lam : T.V →ₗ[LL] LL) {z : T.V ⊗[Qp] BdR} (hz : z ∈ compKer T ι) : crd T ι lam z = 0 := by
   induction hz using Submodule.span_induction with
@@ -350,7 +355,7 @@ theorem crd_compKer (lam : T.V →ₗ[LL] LL) {z : T.V ⊗[Qp] BdR} (hz : z ∈ 
     obtain ⟨c, y, rfl⟩ := hz
     rw [map_sub, crd_smul, crd_mulVR, sub_self]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul c x _ hx => rw [crd_smul, hx, mul_zero]
 
 theorem crd_filV (hι : ∀ c, ι c ∈ PD.Fil 0) (lam : T.V →ₗ[LL] LL) (a : ℤ) {z : T.V ⊗[Qp] BdR}
@@ -361,12 +366,12 @@ theorem crd_filV (hι : ∀ c, ι c ∈ PD.Fil 0) (lam : T.V →ₗ[LL] LL) (a :
   | tmul x b =>
     simp only [AlgebraTensorModule.map_tmul, crd_tmul]
     simpa using PD.Fil_mul _ _ _ _ (hι _) b.2
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _)]; exact add_mem hx hy
 
 theorem crd_sup (hι : ∀ c, ι c ∈ PD.Fil 0) (lam : T.V →ₗ[LL] LL) (a : ℤ) {z : T.V ⊗[Qp] BdR}
     (hz : z ∈ compKer T ι ⊔ FilV PD (LL := LL) (V := T.V) a) : crd T ι lam z ∈ PD.Fil a := by
   obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hz
-  rw [map_add, crd_compKer T ι lam hx, zero_add]
+  rw [map_add (f := _), crd_compKer T ι lam hx, zero_add]
   exact crd_filV PD T ι hι lam a hy
 
 variable {n : ℕ} (bV : Module.Basis (Fin n) LL T.V)
@@ -377,7 +382,8 @@ theorem sum_tmul_mem_filV (a : ℤ) (y : Fin n → BdR) (hy : ∀ α, y α ∈ P
 
 theorem crd_sum_tmul (y : Fin n → BdR) (α : Fin n) :
     crd T ι (bV.coord α) (∑ β, bV β ⊗ₜ[Qp] y β) = y α := by
-  rw [map_sum, Finset.sum_eq_single α]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single α]
   · simp [crd_tmul]
   · intro β _ hβ
     simp [crd_tmul, hβ]
@@ -398,7 +404,7 @@ theorem sub_sum_mem_compKer (z : T.V ⊗[Qp] BdR) :
     rfl
   | add x y hx hy =>
     convert add_mem hx hy using 1
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     abel
 
 theorem mem_sup_iff (hι : ∀ c, ι c ∈ PD.Fil 0) (a : ℤ) (z : T.V ⊗[Qp] BdR) :
@@ -418,8 +424,8 @@ theorem finrank_le [IsFractionRing O LL] [Nontrivial O] :
 
 end Coord
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem lat_eq_fil : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let _W := (HW l).W K s LL h; let _E := ((F l).E K s LL h).tie; let C := Cm l; ∀ T : Lt K LL, IsCrys ((D.loc l).PD K) T.ρ → ∀ (i : Let K) (ζ : ↥LL.1) τ, Pt (HW l) h i ζ τ → ∀ f : ℤ → T.V ⊗[ℚ_[l]] (D.loc l).R.B, f ∈ Lat C h T i ζ ↔ (∃ m : ℤ, ∀ k < m, f k = 0) ∧ ∀ k : ℤ, f k ∈ Di (HW l) h T i ∧ ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V) (f k) ∈ FilAt ((D.loc l).PD K) T τ (-k) := by
   intro D HW F Cm l _ K s LL h W E C T hT i ζ τ hpt f
   obtain ⟨hprim, hτ, ι, hcomp⟩ := (@GlobalTheory.NL.Points.points D HW l _ K s LL h).2.1 i ζ τ hpt
@@ -429,7 +435,9 @@ theorem lat_eq_fil : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : 
   have hgen := ((GlobalTheory.T.wachExpansion_basis_divisibility D HW F Cm l K s LL h T hT i ζ ⟨s, hprim⟩ hfull).2 _ nb).2.1
   obtain ⟨ev, hev, hdiv, htu, ht, sep⟩ := @GlobalTheory.NL.EvdR.exists_ev_dR D l _ K LL s ι
   obtain ⟨Ψ, hΨ0, hΨs, hΨr⟩ := GlobalTheory.T.wach_image_deRham_plus_component_level D HW F Cm l K s LL h T hT i ζ τ ι hcomp
-  have hfil := (GlobalTheory.T.deRhamComponent_wachLetter_basis_filtration D HW l K s LL h T hT i ζ τ ι hcomp hτ).2.1
+  have hfil := by
+    obtain ⟨-, -, -, hc, hc0⟩ := Points.points D HW l K s LL h
+    exact (GlobalTheory.NL.CompD.component_tied (D.locT l) K LL T hc hc0 hT τ ι hcomp.2.2 _ hτ).2.1
   have anti : Antitone ((D.loc l).PD K).Fil := antitone_int_of_succ_le ((D.loc l).PD K).Fil_anti
   have hι : ∀ c, ι c ∈ ((D.loc l).PD K).Fil 0 := fun c => by
     have h1 := anti (show (0 : ℤ) ≤ ((1 : ℕ) : ℤ) by simp) (hev (PowerSeries.C c) 1)
@@ -458,16 +466,19 @@ theorem lat_eq_fil : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : 
       (fun x α => crd_filV _ T ι hι _ _ (hΨ0 x)) (fun z hz => ?_) (fun x a ha α => ?_) nb
       (fun x => ((Cm l).C K s LL h).tie.levB_supp T i ζ x) _ hΛ
       (fun x => Submodule.subset_span ⟨1, x, (conv_one _).symm⟩) d m₀ (fun k hk => hm₀ _ (fun r => ?_) fun r hr => ?_) k
-    · simp only [AddMonoidHom.comp_apply, LinearMap.toAddMonoidHom_coe, map_smul, crd_smul]
+    · simp only [AddMonoidHom.comp_apply, LinearMap.toAddMonoidHom_coe]
+      rw [map_smul (ιV ((D.loc l).PD K) (LL := ↥LL.1) (V := T.V)), crd_smul]
     · obtain ⟨m, b, x, hb, hx⟩ := hΨs _ (sum_tmul_mem_filV _ T bV 0 z hz)
       refine ⟨m, b, x, hb, fun α => ?_⟩
       have := crd_compKer T ι (bV.coord α) hx
-      rw [map_sub, crd_sum_tmul, map_sum, sub_eq_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, crd_sum_tmul, map_sum, sub_eq_zero] at this
       simpa only [crd_mulVR] using this
     · obtain ⟨c, hc⟩ := hΨr x a ha
       refine ⟨c, fun M => ?_⟩
       have := crd_sup _ T ι hι (bV.coord α) _ (hc M)
-      rw [map_sub, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum] at this
       simp only [crd_mulVR] at this
       exact this
     · by_cases hr : r = k

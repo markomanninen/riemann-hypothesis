@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModelsAreCoverSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ModelsAreCoverSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ theorem exists_kTie : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) (M :
     rw [hT.grp, smul_smul, ← zpow_add₀ (Units.ne_zero _), add_neg_cancel, zpow_zero, one_smul]
   refine ⟨u, hpar, hord, fun x y => R.ι_inj ?_, fun z x => R.ι_inj ?_, ⟨fun x y h => ?_, fun y => ?_⟩, ?_,
     fun Z hZ v v' => ?_, fun v => hhi _ _ (hu v).symm, fun m' hm' g v w => ?_⟩
-  · rw [map_add, hu, hu, hu, Submodule.coe_add, hT.add]
+  · rw [map_add (f := _), hu, hu, hu, Submodule.coe_add, hT.add]
   · rw [map_smul, hu, hu, Submodule.coe_smul, hT.smul]
   · exact Subtype.ext (hT.bij.1 (by rw [← hu, ← hu, h]))
   · obtain ⟨x, hx⟩ := hT.bij.2 (R.ι y)
@@ -100,7 +104,7 @@ theorem exists_kTie : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) (M :
   · have h1 := (hasDerivAt_sq_zpow T m hZ).fun_smul (R.der Z hZ (u v))
     have h2 : HasDerivAt (fun t : ℝ => L (M.rep τ (NormedSpace.exp (t • phiFr (M.fr τ) br e Z)) (v : M.H τ)))
         (R.ι (R.HK.act Z (u v) + ((c : ℂ) * Z.trace) • u v)) 0 := by
-      convert h1 using 1
+      convert (preTransparency := .reducible) h1 using 1
       · funext t
         have h3 := rep_exp M τ (phi br e Z) t
         rw [hL, show phiFr (M.fr τ) br e Z = toFrame M τ (phi br e Z) from rfl, h3, hφ.exp,

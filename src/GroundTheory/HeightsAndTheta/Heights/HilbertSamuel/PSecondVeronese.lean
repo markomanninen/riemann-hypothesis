@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeronese
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeronese
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -17,7 +22,7 @@ theorem pair_eq {D : ℕ} {i j k l : Fin (D + 1)} (hij : i ≤ j) (hkl : k ≤ l
     i = k ∧ j = l := by
   have hm : ({i} + {j} : Multiset (Fin (D + 1))) = {k} + {l} := by
     have := congrArg Finsupp.toMultiset h
-    simpa only [map_add, Finsupp.toMultiset_single, one_nsmul] using this
+    simpa only [map_add (f := _), Finsupp.toMultiset_single, one_nsmul] using this
   have h1 : i = k ∨ i = l := by
     have : i ∈ ({k} + {l} : Multiset (Fin (D + 1))) := hm ▸ Multiset.mem_add.2 (Or.inl (Multiset.mem_singleton_self i))
     simpa using this
@@ -74,7 +79,7 @@ theorem x_linearIndependent (D : ℕ) : LinearIndependent ℤ (x D) := by
 
 theorem isSmoothMetric_metric (D : ℕ) : IsSmoothMetric (metric D) := by
   have hs : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (scale D) :=
-    contDiff_pi.2 fun q => contDiff_const.mul (contDiff_apply ℝ ℂ q)
+    contDiff_pi.2 fun q => contDiff_const.mul (contDiff_apply ℝ (fun _ => ℂ) q)
   exact (ProjLine.isSmoothMetric_fs (J := Ix (Idx D))).comp hs.contDiffOn fun z hz => scale_ne_zero hz
 
 theorem isConjInvariant_metric (D : ℕ) : IsConjInvariant (metric D) := by
@@ -82,7 +87,7 @@ theorem isConjInvariant_metric (D : ℕ) : IsConjInvariant (metric D) := by
   have h : scale D (fun q => conj (z q)) = fun q => conj (scale D z q) := by
     funext q
     simp [scale, map_mul, Complex.conj_ofReal]
-  show (fsMetric (Ix (Idx D))).ρ (scale D _) = (fsMetric (Ix (Idx D))).ρ (scale D z)
+  show (fsMetric (ι := Ix (Idx D))).ρ (scale D _) = (fsMetric (ι := Ix (Idx D))).ρ (scale D z)
   rw [h]
   exact ProjLine.isConjInvariant_fs (scale D z)
 

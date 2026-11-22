@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiscIsoOfProj
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FormRightMem
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardEqRelIndex
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiscIsoOfProj
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FormRightMem
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ApplyMemSmulOfMemAutSub
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardEqRelIndex
+
+@[expose] public section
 
 open NumberField Module
 
@@ -19,20 +23,13 @@ theorem mem_of_isLatIn {X : Submodule K V} {L : Submodule (𝓞 K) V} (hL : IsLa
     ∀ x ∈ L, x ∈ X := fun x hx => hL.2 ▸ Submodule.subset_span hx
 
 theorem isLattice_sup {X Y : Submodule K V} (hc : IsCompl X Y) {A B : Submodule (𝓞 K) V}
-    (hA : IsLatIn X A) (hB : IsLatIn Y B) : Submodule.IsLattice K (A ⊔ B) where
-  fg := hA.1.sup hB.1
-  span_eq_top := by
-    rw [eq_top_iff, ← hc.sup_eq_top]
-    refine sup_le ?_ ?_
-    · rw [← hA.2]
-      exact Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_left)
-    · rw [← hB.2]
-      exact Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_right)
+    (hA : IsLatIn X A) (hB : IsLatIn Y B) : Submodule.IsLattice K (A ⊔ B) :=
+  Submodule.IsLattice.of_fg K (hA.1.sup hB.1)
 
 theorem prO_sup {X Y : Submodule K V} (hc : IsCompl X Y) {A B : Submodule (𝓞 K) V}
     (hA : ∀ x ∈ A, x ∈ X) (hB : ∀ y ∈ B, y ∈ Y) {z : V} (hz : z ∈ A ⊔ B) : prO hc z ∈ A := by
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hz
-  rw [map_add, prO_apply, prO_apply, Submodule.projection_apply_of_mem_left hc (hA a ha),
+  rw [map_add (f := _), prO_apply, prO_apply, Submodule.projection_apply_of_mem_left hc (hA a ha),
     (Submodule.projection_apply_eq_zero_iff hc).2 (hB b hb), add_zero]
   exact ha
 
@@ -54,7 +51,13 @@ theorem discMod_finite [FiniteDimensional K V] {h : V →ₗ⋆[K] V →ₗ[K] K
     Finite (DiscMod h (orthK h U) T 𝔭) := by
   subst hΛ₀
   have hp := h𝔭.isPrime
-  obtain ⟨r, hr⟩ := LIOrb.exists_pow_smul_le hN₀ (isLattice_sup hc.symm hT hM) h𝔭
+  have hTM : Submodule.IsFullLattice K (T ⊔ M) := by
+    refine { toIsLattice := isLattice_sup hc.symm hT hM, span_eq_top := ?_ }
+    rw [eq_top_iff, ← hc.symm.sup_eq_top, ← hT.2, ← hM.2]
+    exact sup_le
+      (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_left))
+      (Submodule.span_mono (SetLike.coe_subset_coe.mpr le_sup_right))
+  obtain ⟨r, hr⟩ := LIOrb.exists_pow_smul_le hN₀ hTM h𝔭
   have hsurj := toDisc_surj h hc.symm T (locF 𝔭 N₀) 𝔭 hiW hpr
   have hker : ((extP K 𝔭) ^ r • ⊤ : Submodule (𝓞 K) ↥(locF 𝔭 N₀)) ≤
       LinearMap.ker (toDisc h hc.symm T (locF 𝔭 N₀) 𝔭 hiW) := by
@@ -71,11 +74,11 @@ theorem discMod_finite [FiniteDimensional K V] {h : V →ₗ⋆[K] V →ₗ[K] K
   exact ⟨Submodule.Quotient.mk y, Submodule.liftQ_apply _ _ _⟩
 
 theorem exists_lattice_locF {Λ L₁ L₂ : Submodule (𝓞 K) V} {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
-    (hL₁ : Submodule.IsLattice K L₁) (hL₂ : L₂.FG) (hΛ : locF 𝔭 Λ = Λ) (h1 : L₁ ≤ Λ)
+    (hL₁ : Submodule.IsFullLattice K L₁) (hL₂ : L₂.FG) (hΛ : locF 𝔭 Λ = Λ) (h1 : L₁ ≤ Λ)
     (h2 : Λ ≤ locF 𝔭 L₂) : ∃ Λ', Submodule.IsLattice K Λ' ∧ locF 𝔭 Λ' = Λ := by
   refine ⟨(L₁ ⊔ L₂) ⊓ Λ, ⟨(hL₁.fg.sup hL₂).of_le inf_le_left, ?_⟩, ?_⟩
-  · rw [eq_top_iff, ← hL₁.span_eq_top]
-    exact Submodule.span_mono (fun x hx => ⟨Submodule.mem_sup_left hx, h1 hx⟩)
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
   · have e := LIOrb.IA.locF_inf 𝔭 h𝔭.isPrime (L₁ ⊔ L₂) Λ
     rw [hΛ] at e
     rw [e]

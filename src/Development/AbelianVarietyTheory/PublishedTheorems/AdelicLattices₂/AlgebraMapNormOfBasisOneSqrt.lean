@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Matrix TensorProduct ComplexConjugate
@@ -35,8 +39,8 @@ theorem herm_col (G P : Matrix (Fin r) (Fin r) E) (a b : Fin r) :
   simp only [herm, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, Finset.sum_mul]
   exact Finset.sum_comm
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem gram_eq (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (Q : Matrix (Fin r) (Fin r) ℂ) :
     gram τ G Q = Qᵀ * G.map τ * Q.map conj := by
   ext a b
@@ -70,36 +74,6 @@ namespace Landherr
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
   {G G' : Matrix (Fin r) (Fin r) E}
 
-theorem congr_complex (h : ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc)
-    (τ : E →+* ℂ) :
-    ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧ G'.map τ = Qᵀ * G.map τ * Q.map conj := by
-  obtain ⟨P, hP, rfl⟩ := h
-  refine ⟨P.map τ, ?_, ?_⟩
-  · have : (P.map τ).det = τ P.det := (RingHom.map_det τ P).symm
-    rw [this]
-    exact (map_ne_zero τ).mpr hP
-  · rw [Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map]
-    congr 1
-    ext a b
-    exact embedding_cc τ _
-
-theorem det_norm (hG : G.det ≠ 0)
-    (h : ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc) :
-    ∃ x : E, G.det / G'.det = x * cc x := by
-  obtain ⟨P, hP, rfl⟩ := h
-  refine ⟨P.det⁻¹, ?_⟩
-  have h1 : cc P.det⁻¹ = (cc P.det)⁻¹ := by simp [cc]
-  have h2 := cc_ne_zero hP
-  rw [Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, det_map_cc, h1]
-  field_simp
-
-theorem iff (H : Landherr) (hG : ∀ a b, cc (G a b) = G b a) (hG' : ∀ a b, cc (G' a b) = G' b a)
-    (hd : G.det ≠ 0) (hd' : G'.det ≠ 0) :
-    (∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc) ↔
-      (∀ τ : E →+* ℂ, ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧
-        G'.map τ = Qᵀ * G.map τ * Q.map conj) ∧ ∃ x : E, G.det / G'.det = x * cc x :=
-  ⟨fun h => ⟨congr_complex h, det_norm hd h⟩, fun h => H E r G G' hG hG' hd hd' h.1 h.2⟩
-
 theorem size_zero (G G' : Matrix (Fin 0) (Fin 0) E) :
     ∃ P : Matrix (Fin 0) (Fin 0) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc :=
   ⟨1, by simp, Subsingleton.elim _ _⟩
@@ -122,8 +96,8 @@ theorem size_one (G G' : Matrix (Fin 1) (Fin 1) E) (hd : G.det ≠ 0) (hd' : G'.
     Fin.zero_eta, Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_fin_one, h1, hx]
   field_simp
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem congr_of_gram_eq (τ : E →+* ℂ) {Q Q' : Matrix (Fin r) (Fin r) ℂ} (hQ : Q.det ≠ 0)
     (hQ' : Q'.det ≠ 0) (h : gram τ G Q = gram τ G' Q') :
     ∃ R : Matrix (Fin r) (Fin r) ℂ, R.det ≠ 0 ∧ G'.map τ = Rᵀ * G.map τ * R.map conj := by
@@ -144,8 +118,8 @@ theorem congr_of_gram_eq (τ : E →+* ℂ) {Q Q' : Matrix (Fin r) (Fin r) ℂ} 
           rw [← h, Matrix.transpose_mul, Matrix.map_mul]
           simp only [Matrix.mul_assoc]
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem congr_conjugate (τ : E →+* ℂ)
     (h : ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧ G'.map τ = Qᵀ * G.map τ * Q.map conj) :
     ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧ G'.map (ComplexEmbedding.conjugate τ) =
@@ -159,8 +133,8 @@ theorem congr_conjugate (τ : E →+* ℂ)
         M.map (ComplexEmbedding.conjugate τ) = (M.map τ).map conj := fun M => rfl
     rw [e, e, h, Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map]
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem congr_of_signature (Ψ : Set (E →+* ℂ))
     (hΨ : ∀ τ : E →+* ℂ, τ ∈ Ψ ∨ ComplexEmbedding.conjugate τ ∈ Ψ)
     (hs : ∀ τ ∈ Ψ, ∃ p : ℕ,
@@ -192,8 +166,8 @@ theorem of_signature (H : Landherr) (hG : ∀ a b, cc (G a b) = G b a)
     ∃ P : Matrix (Fin r) (Fin r) E, P.det ≠ 0 ∧ G' = Pᵀ * G * P.map cc :=
   H E r G G' hG hG' hd hd' (congr_of_signature Ψ hΨ hs) hn
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem re_det_div_pos (hd : G.det ≠ 0) (τ : E →+* ℂ)
     (h : ∃ Q : Matrix (Fin r) (Fin r) ℂ, Q.det ≠ 0 ∧ G'.map τ = Qᵀ * G.map τ * Q.map conj) :
     0 < (τ (G.det / G'.det)).re := by
@@ -225,7 +199,7 @@ theorem norm_of_basis_one_sqrt (b : Module.Basis (Fin 2) A S) (h0 : b 0 = 1) (d 
     rw [add_mul, smul_mul_assoc, smul_mul_assoc, h1, h0, one_mul, Algebra.algebraMap_eq_smul_one,
       smul_smul, add_comm]
   rw [Algebra.norm_eq_matrix_det b, Matrix.det_fin_two]
-  simp only [Algebra.leftMulMatrix_eq_repr_mul, e0, e1, map_add, map_smul, Module.Basis.repr_self,
+  simp only [Algebra.leftMulMatrix_eq_repr_mul, e0, e1, map_add (f := _), map_smul, Module.Basis.repr_self,
     Finsupp.add_apply, Finsupp.smul_apply, Finsupp.single_apply]
   simp
   ring
@@ -237,7 +211,7 @@ theorem algebraMap_norm_of_basis_one_sqrt (b : Module.Basis (Fin 2) A S) (h0 : b
     conv_lhs => rw [← b.sum_repr z, Fin.sum_univ_two]
   generalize b.repr z 0 = x, b.repr z 1 = y at hz
   subst hz
-  rw [norm_of_basis_one_sqrt b h0 d h1, map_add, map_smul, map_smul, hσ, h0, map_one σ]
+  rw [norm_of_basis_one_sqrt b h0 d h1, map_add (f := _), map_smul, map_smul, hσ, h0, map_one σ]
   simp only [Algebra.smul_def, map_sub, map_mul, map_pow, ← h1]
   ring
 
@@ -247,8 +221,8 @@ section CM
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-variable (E) in
 
+variable (E) in
 theorem exists_cc_eq_neg : ∃ θ : E, θ ≠ 0 ∧ cc θ = -θ := by
   obtain ⟨x, hx⟩ : ∃ x : E, IsCMField.complexConj E x ≠ x := by
     by_contra h
@@ -266,7 +240,7 @@ theorem exists_basis_one_imaginary {θ : E} (h0 : θ ≠ 0) (hθ : cc θ = -θ) 
       exact hst
     have h2 : (s : E) - (t : E) * θ = 0 := by
       have := congrArg (IsCMField.complexConj E) h1
-      rw [map_add, map_mul, IsCMField.complexConj_apply_eq_self,
+      rw [map_add (f := _), map_mul, IsCMField.complexConj_apply_eq_self,
         IsCMField.complexConj_apply_eq_self, map_zero,
         show IsCMField.complexConj E θ = -θ from hθ] at this
       linear_combination this
@@ -280,14 +254,6 @@ theorem exists_sq_real {θ : E} (hθ : cc θ = -θ) :
     ∃ d : maximalRealSubfield E, (d : E) = θ * θ :=
   ⟨⟨θ * θ, (IsCMField.complexConj_eq_self_iff E _).mp (by
     rw [map_mul, show IsCMField.complexConj E θ = -θ from hθ]; ring)⟩, rfl⟩
-
-theorem coe_norm_eq_mul_cc (x : E) :
-    ((Algebra.norm (maximalRealSubfield E) x : maximalRealSubfield E) : E) = x * cc x := by
-  obtain ⟨θ, h0, hθ⟩ := exists_cc_eq_neg E
-  obtain ⟨b, hb0, hb1⟩ := exists_basis_one_imaginary h0 hθ
-  obtain ⟨d, hd⟩ := exists_sq_real hθ
-  exact algebraMap_norm_of_basis_one_sqrt b hb0 d (by rw [hb1]; exact hd.symm)
-    (IsCMField.complexConj E).toAlgHom (by rw [hb1]; exact hθ) x
 
 variable (A : Type*) [CommRing A] [Algebra (maximalRealSubfield E) A]
 
@@ -309,7 +275,7 @@ theorem norm_tmul_add_tmul {θ : E} (h0 : θ ≠ 0) (hθ : cc θ = -θ) {d : max
 theorem algebraMap_norm_tensor (z : A ⊗[maximalRealSubfield E] E) :
     algebraMap A (A ⊗[maximalRealSubfield E] E) (Algebra.norm A z) =
       z * Algebra.TensorProduct.map (AlgHom.id A A) (IsCMField.complexConj E).toAlgHom z := by
-  obtain ⟨θ, h0, hθ⟩ := exists_cc_eq_neg E
+  obtain ⟨θ, h0, hθ⟩ := exists_cc_eq_neg (E := E)
   obtain ⟨b, hb0, hb1⟩ := exists_basis_one_imaginary h0 hθ
   obtain ⟨d, hd⟩ := exists_sq_real hθ
   refine algebraMap_norm_of_basis_one_sqrt (Algebra.TensorProduct.basis A b)
@@ -325,50 +291,7 @@ end CM
 
 namespace HasseNorm
 
-theorem local_of_global {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
-    (A : Type*) [CommRing A] [Algebra K A] {a : K} (h : ∃ x : L, Algebra.norm K x = a) :
-    ∃ z : A ⊗[K] L, Algebra.norm A z = algebraMap K A a := by
-  obtain ⟨x, rfl⟩ := h
-  refine ⟨1 ⊗ₜ x, ?_⟩
-  rw [Algebra.norm_apply, Algebra.norm_apply, ← LinearMap.det_baseChange]
-  congr 1
-  exact (Algebra.baseChange_lmul x).symm
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
-
-theorem infinite_of_pos (a : maximalRealSubfield E) (ha : ∀ τ : E →+* ℂ, 0 < (τ a).re)
-    (v : InfinitePlace (maximalRealSubfield E)) :
-    ∃ z : v.Completion ⊗[maximalRealSubfield E] E,
-      Algebra.norm v.Completion z = algebraMap (maximalRealSubfield E) v.Completion a := by
-  have hv : v.IsReal := IsTotallyReal.isReal v
-  let e := InfinitePlace.Completion.ringEquivRealOfIsReal hv
-  have he : e (algebraMap _ v.Completion a) = InfinitePlace.embedding_of_isReal hv a :=
-    InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hv ((WithAbs.equiv v.1).symm a)
-  have hpos : 0 < InfinitePlace.embedding_of_isReal hv a := by
-    have h1 := ha (ComplexEmbedding.lift E v.embedding)
-    have h2 : ComplexEmbedding.lift E v.embedding (a : E) = v.embedding a :=
-      ComplexEmbedding.lift_algebraMap_apply E v.embedding a
-    rwa [h2, ← InfinitePlace.embedding_of_isReal_apply hv, Complex.ofReal_re] at h1
-  obtain ⟨θ, h0, hθ⟩ := exists_cc_eq_neg E
-  obtain ⟨d, hd⟩ := exists_sq_real hθ
-  refine ⟨_, (norm_tmul_add_tmul v.Completion h0 hθ hd
-    (e.symm (Real.sqrt (InfinitePlace.embedding_of_isReal hv a))) 0).trans ?_⟩
-  apply e.injective
-  rw [he, zero_pow two_ne_zero, mul_zero, sub_zero, map_pow, e.apply_symm_apply, Real.sq_sqrt hpos.le]
-
-theorem cm (H : HasseNorm) (a : maximalRealSubfield E) (ha : ∀ τ : E →+* ℂ, 0 < (τ a).re)
-    (hf : ∀ v : HeightOneSpectrum (𝓞 (maximalRealSubfield E)),
-      ∃ z : v.adicCompletion (maximalRealSubfield E) ⊗[maximalRealSubfield E] E,
-        Algebra.norm (v.adicCompletion (maximalRealSubfield E)) z =
-          algebraMap (maximalRealSubfield E) (v.adicCompletion (maximalRealSubfield E)) a) :
-    ∃ x : E, (a : E) = x * cc x := by
-  have : IsCyclic (E ≃ₐ[maximalRealSubfield E] E) :=
-    isCyclic_iff_exists_zpowers_eq_top.mpr ⟨_, IsCMField.zpowers_complexConj_eq_top E⟩
-  have h0 : a ≠ 0 := by
-    rintro rfl
-    simpa using ha (Classical.choice inferInstance)
-  obtain ⟨x, hx⟩ := H (maximalRealSubfield E) E a h0 hf (infinite_of_pos a ha)
-  exact ⟨x, by rw [← hx, coe_norm_eq_mul_cc]⟩
 
 end HasseNorm
 

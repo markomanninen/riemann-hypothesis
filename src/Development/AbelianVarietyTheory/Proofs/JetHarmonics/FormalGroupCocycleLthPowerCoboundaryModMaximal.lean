@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivCoeffOptionEquivLeft
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsNotMemForallMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PderivCoeffOptionEquivLeft
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsNotMemForallMem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -133,11 +137,11 @@ theorem split_bij {ρ κ β : Type} [Finite κ] [Finite β] {j0 : κ → ρ} {j1
   have dj : ∀ a b, j0 a ≠ j1 b := fun a b h => Sum.inl_ne_inr (hj.1 (a₁ := Sum.inl a) (a₂ := Sum.inr b) h)
   have v0 : ∀ (ν : κ →₀ ℕ) (μ : β →₀ ℕ) a, (ν.mapDomain j0 + μ.mapDomain j1) (j0 a) = ν a := by
     intro ν μ a
-    rw [Finsupp.add_apply, Finsupp.mapDomain_apply i0, Finsupp.mapDomain_notin_range, add_zero]
+    rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective i0, Finsupp.mapDomain_notin_range, add_zero]
     rintro ⟨b, hb⟩; exact dj a b hb.symm
   have v1 : ∀ (ν : κ →₀ ℕ) (μ : β →₀ ℕ) b, (ν.mapDomain j0 + μ.mapDomain j1) (j1 b) = μ b := by
     intro ν μ b
-    rw [Finsupp.add_apply, Finsupp.mapDomain_apply i1, Finsupp.mapDomain_notin_range, zero_add]
+    rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective i1, Finsupp.mapDomain_notin_range, zero_add]
     rintro ⟨a, ha⟩; exact dj a b ha
   constructor
   · rintro ⟨ν, μ⟩ ⟨ν', μ'⟩ h
@@ -189,13 +193,13 @@ theorem jet_subst {ρ κ β τ : Type} [Finite ρ] [Finite κ] [Finite β] [Fini
     refine (WithPiTopology.continuous_coeff C (Finsupp.single () n)).comp ((continuous_subst Hγ).comp ?_)
     exact continuous_pi fun ν => WithPiTopology.continuous_coeff C _
   · intro f g
-    simp only [subst_add Hs, map_add]
+    simp only [subst_add Hs, map_add (f := _)]
   · intro f g
     have : slice j0 j1 γ n (f + g) = slice j0 j1 γ n f + slice j0 j1 γ n g := by
       ext μ
-      rw [map_add, coeff_slice, coeff_slice, coeff_slice, ← map_add, ← subst_add Hγ]
+      rw [map_add (f := _), coeff_slice, coeff_slice, coeff_slice, ← map_add (f := _), ← subst_add Hγ]
       rfl
-    simp only [this, subst_add Ha, map_add]
+    simp only [this, subst_add Ha, map_add (f := _)]
   · intro e c
     obtain ⟨⟨ν0, μ0⟩, rfl⟩ := (split_bij hj).2 e
     have hsl : slice j0 j1 γ n (monomial (ν0.mapDomain j0 + μ0.mapDomain j1) c) =
@@ -234,13 +238,14 @@ theorem coeff_one_subst {κ : Type} [Fintype κ] {γ : κ → PowerSeries C}
     (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0) (f : MvPowerSeries κ C) :
     PowerSeries.coeff 1 (subst γ f : PowerSeries C) =
       ∑ i, PowerSeries.coeff 1 (γ i) * coeff (Finsupp.single i 1) f := by
-  have e : ∀ g : PowerSeries C, PowerSeries.coeff 1 g = constantCoeff (pderiv C () g) := by
+  have e : ∀ g : PowerSeries C, PowerSeries.coeff 1 g = constantCoeff (pderiv (R := C) () g) := by
     intro g
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
     simp [PowerSeries.coeff]
-  rw [e, ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst (a := γ) hγ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, GlobalTheory.FormalCalc.pderiv_subst (a := γ) (hasSubst_of_constantCoeff_zero hγ), map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_mul, cc_subst (a := γ) hγ, e, mul_comm, ← coeff_zero_eq_constantCoeff_apply (pderiv C i f), coeff_pderiv]
+  rw [map_mul, cc_subst (a := γ) hγ, e, mul_comm, ← coeff_zero_eq_constantCoeff_apply (pderiv (R := C) i f), coeff_pderiv]
   simp
 
 theorem v_nat (V : VF C) {u : ℕ} (hu : ¬ V.l ∣ u) : V.v (u : C) = 0 := by
@@ -260,7 +265,8 @@ theorem coeff_option_exp {σ : Type} {F : MvPowerSeries (Option σ) C} (hc : con
     PowerSeries.coeff n (optionEquivLeft σ C (mvExp F)) =
       ∑ k ∈ Finset.range (n + 1), ((k.factorial : C))⁻¹ • PowerSeries.coeff n (optionEquivLeft σ C F ^ k) := by
   ext x
-  rw [coeff_coeff_optionEquivLeft, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_coeff_optionEquivLeft, map_sum]
   show (∑ k ∈ Finset.range ((x.optionElim n).degree + 1), coeff (x.optionElim n) (F ^ k) / (k.factorial : C)) = _
   have hle : n ≤ (x.optionElim n).degree := by
     simpa using Finsupp.le_degree none (x.optionElim n)
@@ -347,7 +353,7 @@ theorem exists_series [CharZero C] (H : RLaw X V) {γ : κ → PowerSeries C} (h
   have hadd := formalAdd_constantCoeff H (gp_cc (C := C) (κ := κ) (1 : Fin 3)) (gp_cc 2)
   have hΦ : constantCoeff (hAt X (gp C κ (0 : Fin 3)) (gp C κ 1) + hAt X (gp C κ 0) (gp C κ 2) -
       hAt X (gp C κ 0) (addP X (gp C κ 1) (gp C κ 2))) = 0 := by
-    rw [map_sub, map_add, hAt_cc H (gp_cc 0) (gp_cc 1), hAt_cc H (gp_cc 0) (gp_cc 2), hAt_cc H (gp_cc 0) hadd]
+    rw [map_sub, map_add (f := _), hAt_cc H (gp_cc 0) (gp_cc 1), hAt_cc H (gp_cc 0) (gp_cc 2), hAt_cc H (gp_cc 0) hadd]
     simp
   have h := logInt_subst hb (fun p => hI p.1 p.2) (mem_logInt.2 ⟨hΦ, H.ph2⟩)
   refine ⟨_, h.1, h.2, fun n => ?_, ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdSubOfDvdSubX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdSubOfDvdSubX
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,8 @@ open PowerSeries GlobalTheory.NB.LT
 
 namespace GlobalTheory.NB.LT
 
-open scoped PowerSeries.WithPiTopology in
 
+open scoped PowerSeries.WithPiTopology in
 theorem exists_algHom_X_add_C {O : Type} [CommRing O] (I : Ideal O) [h : IsAdicComplete I O]
     (c : O) (hc : c ∈ I) : ∃ t : O⟦X⟧ →ₐ[O] O⟦X⟧, t X = X + C c := by
   let : WithIdeal O := ⟨I⟩
@@ -34,9 +38,9 @@ theorem exists_algEquiv_X_add_C : ∀ {O : Type} [CommRing O] (I : Ideal O) [IsA
   obtain ⟨t, ht⟩ := exists_algHom_X_add_C I (-c) (neg_mem hc)
   have hC : ∀ (u : O⟦X⟧ →ₐ[O] O⟦X⟧) (a : O), u (C a) = C a := fun u a => u.commutes a
   have h1 : (s.comp t) X = X := by
-    rw [AlgHom.comp_apply, ht, map_add, hs, hC, map_neg]; ring
+    rw [AlgHom.comp_apply, ht, map_add (f := _), hs, hC, map_neg]; ring
   have h2 : (t.comp s) X = X := by
-    rw [AlgHom.comp_apply, hs, map_add, ht, hC, map_neg]; ring
+    rw [AlgHom.comp_apply, hs, map_add (f := _), ht, hC, map_neg]; ring
   exact ⟨AlgEquiv.ofAlgHom s t (algHom_ext_X _ _ h1 (by rw [h1])) (algHom_ext_X _ _ h2 (by rw [h2])), hs⟩
 
 end GlobalTheory.NB.LT

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSimplicial
-open NumberField GlobalTheory.Shintani MeasureTheory Filter Topology
+module
+
+public import Mathlib
+
+@[expose] public section
+
+open NumberField MeasureTheory Filter Topology
 
 namespace GlobalTheory.Shintani
 
@@ -44,17 +49,12 @@ theorem denseRange_realEmbeddings :
     intro x σ
     change E (g σ) (algebraMap F (InfiniteAdeleRing F) x (g σ)) = σ x
     rw [InfiniteAdeleRing.algebraMap_apply]
-    have e1 := InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe (IsTotallyReal.isReal (g σ))
-      ((WithAbs.equiv (g σ).1).symm x)
-    have e2 := InfinitePlace.embedding_of_isReal_apply (IsTotallyReal.isReal (g σ)) x
     apply Complex.ofReal_injective
-    simp only [E, InfinitePlace.Completion.ringEquivRealOfIsReal_apply]
-    have e3 : ((InfinitePlace.Completion.extensionEmbeddingOfIsReal (IsTotallyReal.isReal (g σ)))
-        { toCompletion := ↑(WithAbs.toAbs (g σ).1 x) } : ℂ) = (g σ).embedding x := by
-      rw [← e2]
-      simp only [RingEquiv.apply_symm_apply, WithAbs.equiv_symm_apply, WithAbs.equiv_apply] at e1
-      exact congrArg _ e1
-    rw [e3, hemb σ]
+    simp only [E, InfinitePlace.Completion.ringEquivRealOfIsReal_apply,
+      InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply]
+    change InfinitePlace.Completion.extensionEmbedding (g σ)
+      (↑((WithAbs.equiv (g σ).1).symm x)) = (σ x : ℂ)
+    rw [InfinitePlace.Completion.extensionEmbedding_coe, RingEquiv.apply_symm_apply, hemb σ]
     rfl
 
   let P : (InfinitePlace F → ℝ) → ((F →+* ℝ) → ℝ) := fun y σ => y (g σ)

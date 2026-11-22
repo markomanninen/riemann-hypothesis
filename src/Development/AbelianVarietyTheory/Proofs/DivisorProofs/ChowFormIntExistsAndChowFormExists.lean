@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsMultiHomogeneousFixFirstBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsChowFormOfHomogeneousPrimeKrullDim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealQuotientHilbertPolyConeIdealEqFieldDegree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FieldDegreeLeChowFormDegreeAlgebraicPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormDegreeLeFieldDegreeAlgebraicPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealQuotientHilbertPolyMapBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimeMapRationalFunctionsGenericLinearFormNotM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeSaturationGenericHyperplaneSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHomogeneousAndHilbertPolyEqOfPrimeInSaturation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsChowFormGenericHyperplaneSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsMultiHomogeneousFixFirstBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsChowFormOfHomogeneousPrimeKrullDim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealQuotientHilbertPolyConeIdealEqFieldDegree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FieldDegreeLeChowFormDegreeAlgebraicPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormDegreeLeFieldDegreeAlgebraicPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealQuotientHilbertPolyMapBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPrimeMapRationalFunctionsGenericLinearFormNotM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPrimeSaturationGenericHyperplaneSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHomogeneousAndHilbertPolyEqOfPrimeInSaturation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsChowFormGenericHyperplaneSection
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -168,19 +172,20 @@ theorem comap_map_eq {L σ : Type} [Field L] [Algebra K L] (I : Ideal (MvPolynom
   obtain ⟨r, hr⟩ := (Algebra.linearMap K L).exists_leftInverse_of_injective
     (LinearMap.ker_eq_bot.2 (algebraMap K L).injective)
   have hr' : ∀ c : K, r (algebraMap K L c) = c := fun c => LinearMap.congr_fun hr c
-  let ρ : MvPolynomial σ L → MvPolynomial σ K := fun p => ∑ s ∈ p.support, monomial s (r (coeff s p))
-  have hρ : ∀ p s, coeff s (ρ p) = r (coeff s p) := fun p s => by
+  let ρ : MvPolynomial σ L → MvPolynomial σ K := fun p => ∑ s ∈ p.support, monomial s (r (AddMonoidAlgebra.coeff p s))
+  have hρ : ∀ p s, AddMonoidAlgebra.coeff (ρ p) s = r (AddMonoidAlgebra.coeff p s) := fun p s => by
     classical
     simp only [ρ, coeff_sum, coeff_monomial, Finset.sum_ite_eq']
     split_ifs with h
     · rfl
     · rw [notMem_support_iff.1 h, map_zero]
   have hadd : ∀ p q, ρ (p + q) = ρ p + ρ q := fun p q => MvPolynomial.ext _ _ fun s => by
-    simp only [hρ, coeff_add, map_add]
+    simp only [hρ, MvPolynomial.coeff_add, map_add (f := _)]
   have hmul : ∀ p (g : MvPolynomial σ K), ρ (p * map (algebraMap K L) g) = ρ p * g := fun p g =>
     MvPolynomial.ext _ _ fun s => by
       classical
-      simp only [hρ, coeff_mul, map_sum, coeff_map]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hρ, coeff_mul, map_sum, coeff_map]
       refine Finset.sum_congr rfl fun x _ => ?_
       rw [mul_comm, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
   refine le_antisymm (fun g hg => ?_) Ideal.le_comap_map

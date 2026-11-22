@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
-import ReciprocityTheory.GaloisValuations.GlobalA
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeDvdSubOneCyclotomicIrreducibleOverStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicCrossingFieldDecidingFrobeniusStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFrobRestrictScalarsOfPrimeAbsNormStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeAbsNormEqOfIrreducibleCyclotomicStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinitePlacesInertiaNotFixingFiniteExtensionStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+public import ReciprocityTheory.GaloisValuations.GlobalA
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeDvdSubOneCyclotomicIrreducibleOverStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicCrossingFieldDecidingFrobeniusStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFrobRestrictScalarsOfPrimeAbsNormStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeAbsNormEqOfIrreducibleCyclotomicStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinitePlacesInertiaNotFixingFiniteExtensionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem chebotarevDegreeOne' : ChebotarevDegreeOne := by
   have key := hcross (σ.restrictScalars F) (fun x => σ.commutes x) fun ζ hζ => by
     have hq : ζ ^ (τ : ZMod m).val = ζ ^ normV w := by
       rw [← hτ, ZMod.val_natCast]
-      exact (pow_eq_pow_mod _ hζ).symm
+      simpa only [normV, Ideal.absNorm_eq_natCard] using
+        (pow_eq_pow_mod (Ideal.absNorm w.asIdeal) hζ).symm
     rw [hq]
     have h1 := not_valuation_lt_one_of_isPlaceOver hmw hB 1
     rw [pow_one] at h1

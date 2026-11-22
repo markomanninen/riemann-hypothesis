@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.AtTraceT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingAdmissibleFacts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylLeOfHighestVectorRowOperatorStable
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.InverseLineDerivatives.AtTraceT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BranchingAdmissibleFacts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualWeylLeOfHighestVectorRowOperatorStable
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ open GlobalTheory.Mem.Gelf (rowE GlRel gelfC)
 variable {n : ℕ}
 
 theorem dw_w (lam : Fin n → ℤ) (hlam : Antitone lam) : (dw lam).w = lam := by
-  unfold dw; rw [dif_pos hlam]
+  unfold dw; rw [dite_eq_left hlam]
 
 theorem natW_anti (lam : Fin n → ℤ) : Antitone (dw lam).natW := by
   intro a b hab
@@ -27,7 +31,7 @@ theorem natW_add (lam : Fin n → ℤ) (hlam : Antitone lam) (a : Fin n) :
   have hn : 0 < n := a.pos
   have hd : (dw lam).detShift = (dw lam).w ⟨n - 1, by omega⟩ := by
     unfold Formalism.BasicNotions.DomWeight.detShift
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
   have hle : (dw lam).detShift ≤ (dw lam).w a := by
     rw [hd]
     exact (dw lam).anti (Fin.le_iff_val_le_val.mpr (by simp; omega))

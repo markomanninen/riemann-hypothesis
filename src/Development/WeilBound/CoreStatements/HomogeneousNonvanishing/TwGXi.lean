@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGTheta
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGTheta
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -46,7 +51,7 @@ theorem tw_g_xi : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar : 
       add_mem' := fun {x y} hx hy a => by
         obtain ⟨z, hz⟩ := hx a
         obtain ⟨w, hw⟩ := hy a
-        exact ⟨z + w, by push_cast; rw [add_div, add_mul, map_add, hz, hw]⟩
+        exact ⟨z + w, by push_cast; rw [add_div, add_mul, map_add (f := _), hz, hw]⟩
       zero_mem' := fun a => ⟨0, by simp⟩
       smul_mem' := fun r y hy a => by
         obtain ⟨z, hz⟩ := hy (r * a)
@@ -86,7 +91,10 @@ theorem tw_g_xi : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (bar : 
         by_contra h
         exact hne m h (by simpa using hm))
     have hpQ : (p : 𝓞 E) ∈ Q := by
-      have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := hQp ▸ Ideal.mem_span_singleton_self _
+      have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := by
+        change (p : ℤ) ∈ Ideal.under ℤ Q
+        rw [hQp]
+        exact Ideal.mem_span_singleton_self _
       simpa using this
     have hQ0 : Q ≠ ⊥ := by
       rintro rfl

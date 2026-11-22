@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AevalNeZeroOfMemCellMon
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecGen
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecMul
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsFormOfMemChartRingOver
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiHomogRename
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AevalNeZeroOfMemCellMon
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecGen
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecMul
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsFormOfMemChartRingOver
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiHomogRename
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

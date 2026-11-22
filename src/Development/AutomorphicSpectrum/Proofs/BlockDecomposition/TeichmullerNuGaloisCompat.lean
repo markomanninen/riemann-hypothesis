@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -32,7 +36,7 @@ theorem cr_square_semi {O : Type} [CommRing O] {F₁ F₂ F₃ F₄ : B.Fn O} {b
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
-theorem commute_phi_gal (σ : Gal(PadicAlgCl l/K)) : Commute (ACris.phi ℂ_[l] l) (ACris.galCris σ) :=
+theorem commute_phi_gal (σ : Gal(PadicAlgCl l/K)) : Commute (ACris.phi (K := ℂ_[l]) (p := l)) (ACris.galCris σ) :=
   RingHom.ext fun a => ACris.phi_gal_smul σ a
 
 theorem phiA_comp_gal (σ : Gal(PadicAlgCl l/K)) (N : ℕ) :

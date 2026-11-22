@@ -1,19 +1,24 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UfamConst
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.CommonEigenvectors.KillPoly
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.CasimirOnParabolicInduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieOneLMemZalg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsStableBdSub
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductSubsetSumVanishesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorSumAnnihilatorStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHeckeCapelliOperatorsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTorusTranslateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentialPolynomialSolutionSpaceStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRecurrencePolynomialStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusElementLeviEmbeddingStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UfamConst
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.CommonEigenvectors.KillPoly
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.CasimirOnParabolicInduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieOneLMemZalg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsStableBdSub
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductSubsetSumVanishesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TensorSumAnnihilatorStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHeckeCapelliOperatorsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTorusTranslateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExponentialPolynomialSolutionSpaceStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRecurrencePolynomialStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TorusElementLeviEmbeddingStatement
+
+@[expose] public section
+
 open scoped ENNReal
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology Polynomial
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Rs GlobalTheory.CompanionTheory.Conc
@@ -27,7 +32,7 @@ def polyOf {R : Type} [CommRing R] (n : ℕ) (c : ℕ → R) : R[X] := ∑ k ∈
 
 theorem polyOf_coeff {R : Type} [CommRing R] (n : ℕ) (c : ℕ → R) {j : ℕ} (hj : j ≤ n) : (polyOf n c).coeff j = c j := by
   classical
-  simp only [polyOf, finset_sum_coeff, coeff_C_mul_X_pow]
+  simp only [polyOf, finsetSum_coeff, coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   simp [Nat.lt_succ_iff, hj]
 
@@ -40,7 +45,8 @@ theorem polyOf_monic {R : Type} [CommRing R] (n : ℕ) (c : ℕ → R) (h : c n 
 
 theorem polyOf_map {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (n : ℕ) (c : ℕ → R) :
     (polyOf n c).map f = polyOf n (fun k => f (c k)) := by
-  simp [polyOf, Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [polyOf, Polynomial.map_sum]
 
 theorem alg_kill {ι : Type} [Fintype ι] (r s : ℕ) (hr : 0 < r) (M : ι → Multiset ℂ) (l' : Multiset ℂ)
     (hl' : ∀ (R : Type) [CommRing R] [Algebra ℂ R] (h : ι → R),
@@ -81,16 +87,18 @@ theorem alg_kill {ι : Type} [Fintype ι] (r s : ℕ) (hr : 0 < r) (M : ι → M
   rw [map_multiset_prod, Multiset.map_map, ← key]
   congr 1
   refine Multiset.map_congr rfl fun z _ => ?_
-  simp [hπ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [hπ, map_sum]
 
 theorem polyOf_eval {R : Type} [CommRing R] (n : ℕ) (c : ℕ → R) (x : R) :
     (polyOf n c).eval x = ∑ k ∈ Finset.range (n + 1), c k * x ^ k := by
-  simp [polyOf, eval_finset_sum]
+  simp [polyOf, eval_finsetSum]
 
 theorem coeff_zero_of_eval {R : Type} [CommRing R] [Algebra ℂ R] (P : R[X]) (Λ : R →ₗ[ℂ] ℂ)
     (h : ∀ u : ℂ, Λ (P.eval (algebraMap ℂ R u)) = 0) (j : ℕ) : Λ (P.coeff j) = 0 := by
   have hQ : polyOf P.natDegree (fun k => Λ (P.coeff k)) = 0 := Polynomial.funext fun u => by
-    rw [polyOf_eval, eval_zero, ← h u, eval_eq_sum_range, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [polyOf_eval, eval_zero, ← h u, eval_eq_sum_range, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
   by_cases hj : j ≤ P.natDegree
@@ -98,7 +106,7 @@ theorem coeff_zero_of_eval {R : Type} [CommRing R] [Algebra ℂ R] (P : R[X]) (�
     simpa [polyOf_coeff _ _ hj] using this
   · rw [coeff_eq_zero_of_natDegree_lt (not_le.1 hj), map_zero]
 
-theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (M : (E →+* ℂ) → Multiset ℂ), 0 < r → 0 < s →
+theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (M : (E →+* ℂ) → Multiset ℂ), 0 < r → 0 < s →
   (∀ τ, Multiset.card (M τ) = r + s) →
   ∃ l : List ℂ, l.length = Nat.choose (r + s) r ^ Fintype.card (E →+* ℂ) ∧
     ∀ F : Sm E (r + s), (∀ (v : BlockIx (r + s) r → Ad E) (g : GA E (r + s)), F.1 (unip v * g) = F.1 g) →
@@ -129,7 +137,7 @@ theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
     rw [hcomm x.1 x.2 w.1 w.2, mul_assoc]
   let I : Ideal S :=
     { carrier := {w | ∀ v q, Λ v q w = 0}
-      add_mem' := fun {x y} hx hy v q => by rw [map_add, hx, hy, add_zero]
+      add_mem' := fun {x y} hx hy v q => by rw [map_add (f := _), hx, hy, add_zero]
       zero_mem' := fun v q => map_zero _
       smul_mem' := fun x w hw v q => by
         rw [smul_eq_mul, hΛ]
@@ -140,7 +148,8 @@ theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
       ((polyOf n c).eval (algebraMap ℂ S u)).1 = ∑ k ∈ Finset.range (n + 1), u ^ k • e k := fun u n c e he => by
     rw [polyOf_eval]
     change S.val _ = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, map_pow, AlgHom.commutes, ← map_pow, ← Algebra.commutes, ← Algebra.smul_def]
     exact congrArg _ (he k)
@@ -156,7 +165,8 @@ theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
       rw [eval_multiset_prod, Multiset.map_map, map_multiset_prod, Multiset.map_map]
       congr 1
       refine Multiset.map_congr rfl fun x _ => ?_
-      simp
+      change (X + C (algebraMap ℂ S x)).eval (algebraMap ℂ S u) = algebraMap ℂ S (u + x)
+      rw [eval_add, eval_X, eval_C, (algebraMap ℂ S).map_add]
     rw [eval_sub, eval_mul, eP, map_sub, sub_eq_zero]
     have hG := hleft v.1 v.2 F hFN
     have h1 := GlobalTheory.CompanionTheory.CTFin.CapFactor.cap_levi E r s τ u (v.1 F) hG q
@@ -175,7 +185,8 @@ theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
   have e : ∀ z, S.val (∑ τ, ca τ (r - 1) - algebraMap ℂ S z) =
       (∑ τ : E →+* ℂ, ∑ i : Fin r, Eop (a := r + s) τ (Fin.castAdd s i) (Fin.castAdd s i)) -
         (z - ∑ τ, t τ) • (1 : Module.End ℂ (Sm E (r + s))) := fun z => by
-    rw [map_sub, map_sum, AlgHom.commutes]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, AlgHom.commutes]
     have h3 : ∀ τ, S.val (ca τ (r - 1)) = a τ (r - 1) := fun _ => rfl
     simp only [h3, htr, Finset.sum_add_distrib, ← Finset.sum_smul, sub_smul, Algebra.algebraMap_eq_smul_one]
     abel
@@ -191,7 +202,7 @@ theorem levi_kill : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E
 section Helpers
 open GlobalTheory.CompanionTheory.CTFin PositivityTheory.Affgl GlobalTheory.PRep GlobalTheory.CuspRep.LocEx PositivityTheory.Rg.Rs.JFinTr
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem exists_iw (r s : ℕ) (x : GA E (r + s)) : ∃ (v : BlockIx (r + s) r → Ad E) (p : GA E r × GA E s)
     (k : Kinf E (r + s)) (g : GL (Fin (r + s)) (Af E)),
@@ -276,7 +287,7 @@ theorem orbit_mem (r s : ℕ) (hr : 0 < r) (hs : 0 < s) (φ : Sm E (r + s)) (hφ
 
 end Helpers
 
-theorem killU : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N r : ℕ), 0 < r → r < N → ∃ D : ℕ, ∀ V : Submodule ℂ (Sm E N), IsDiscrete V →
+theorem killU : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N r : ℕ), 0 < r → r < N → ∃ D : ℕ, ∀ V : Submodule ℂ (Sm E N), IsDiscrete V →
   (∀ τ : E →+* ℂ, ∃ m, HasInfCharGL V τ m) → ∀ φ ∈ V, ∃ p : ℂ[X], p.Monic ∧ p.natDegree ≤ D ∧ An.Kill r φ.1 p ∧
     ∀ z, p.IsRoot z → ∃ c ∈ Exp r φ.1, z = Complex.exp c := by
   intro E _ _ _ N r hr hrN

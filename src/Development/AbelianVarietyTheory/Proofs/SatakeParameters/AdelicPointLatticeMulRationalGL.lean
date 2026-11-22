@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
 open scoped TensorProduct
 
@@ -26,7 +31,18 @@ theorem mulVec_mem_hatL_mvL {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     exact Submodule.smul_mem _ s ha
 
 theorem mvL_one_lat {E : Type} [Field E] [NumberField E] {N : ℕ} (M : Submodule (𝓞 E) (Fin N → E)) : mvL 1 M = M := by
-  unfold mvL; ext x; simp [toLE_apply]
+  unfold mvL
+  ext x
+  simp only [Submodule.mem_map, LinearMap.coe_restrictScalars, LinearEquiv.coe_coe]
+  constructor
+  · rintro ⟨y, hy, h⟩
+    change ((1 : GL (Fin N) E) : Matrix (Fin N) (Fin N) E) *ᵥ y = x at h
+    rw [Units.val_one, Matrix.one_mulVec] at h
+    simpa [h] using hy
+  · intro hx
+    refine ⟨x, hx, ?_⟩
+    change ((1 : GL (Fin N) E) : Matrix (Fin N) (Fin N) E) *ᵥ x = x
+    rw [Units.val_one, Matrix.one_mulVec]
 
 theorem latAd_mul_ratA : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] {N : ℕ}
     (y : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (g : GL (Fin N) E) (M : Submodule (𝓞 E) (Fin N → E)),

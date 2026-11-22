@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DegreeTopEqArithDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DegreeTopEqArithDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -14,14 +19,8 @@ namespace HermitianBundle
 
 variable {K : Type*} [Field K] [NumberField K] (E : HermitianBundle K)
 
-def bundleSlope : ℝ := E.deg / Module.finrank (𝓞 K) E.carrier
-
 def relSlope (F G : Submodule (𝓞 K) E.carrier) : ℝ :=
   (E.normDegree G - E.normDegree F) / ((E.rank G : ℝ) - E.rank F)
-
-def slopeMin : EReal :=
-  ⨅ (F : Submodule (𝓞 K) E.carrier) (hF : E.Saturated F) (_ : F ≠ ⊤),
-    (((E.quot F hF).bundleSlope : ℝ) : EReal)
 
 def Semistable : Prop :=
   0 < Module.finrank (𝓞 K) E.carrier ∧
@@ -36,10 +35,6 @@ structure IsCanonicalFiltration {m : ℕ} (f : Fin (m + 1) → Submodule (𝓞 K
     E.relSlope (f i.castSucc) G ≤ E.relSlope (f i.castSucc) (f i.succ)
   anti : StrictAnti fun i : Fin m ↦ E.relSlope (f i.castSucc) (f i.succ)
 
-def supNorm (v : E.carrier) : ℝ := ⨆ σ : K →+* ℂ, E.normAt σ v
-
-def firstMin : ℝ := ⨅ v : {v : E.carrier // v ≠ 0}, E.supNorm v
-
 theorem saturated_bot : E.Saturated ⊥ := by
   intro a x ha hx
   rw [Submodule.mem_bot] at hx ⊢
@@ -49,85 +44,9 @@ theorem saturated_top : E.Saturated ⊤ := fun _ _ _ _ ↦ Submodule.mem_top
 
 end HermitianBundle
 
-def ratLine (a : ℝ) : HermitianBundle ℚ :=
-  ⟨𝓞 ℚ, (HermitianMetric.integers ℚ).scale (Real.exp (-a)) (Real.exp_pos _)⟩
-
-def ratPlane (a b : ℝ) : HermitianBundle ℚ := (ratLine a).prod (ratLine b)
-
-def ratPlaneFlag (a b : ℝ) : Fin 3 → Submodule (𝓞 ℚ) (ratPlane a b).carrier :=
-  ![⊥, LinearMap.range (LinearMap.inl (𝓞 ℚ) (𝓞 ℚ) (𝓞 ℚ)), ⊤]
-
 def trivialFlag {K : Type*} [Field K] [NumberField K] (E : HermitianBundle K) :
     Fin 2 → Submodule (𝓞 K) E.carrier :=
   ![⊥, ⊤]
-
-def RelSlopeQuot.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K)
-    (F G : Submodule (𝓞 K) E.carrier) (hF : E.Saturated F), F < G →
-    E.relSlope F G = ((E.sub G).quot (F.comap G.subtype) (hF.comap_subtype G)).bundleSlope
-
-def DegreeBoundedFinite.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K) (c : ℝ),
-    {F : Submodule (𝓞 K) E.carrier | c ≤ E.degree F}.Finite
-
-def SlopeBoundedFinite.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K) (c : ℝ),
-    {F : Submodule (𝓞 K) E.carrier | F ≠ ⊥ ∧ c ≤ E.slope F}.Finite
-
-def MaxDestabilizing.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier →
-    ∃ F : Submodule (𝓞 K) E.carrier, F ≠ ⊥ ∧ ((E.slope F : ℝ) : EReal) = E.slopeMax ∧
-      ∀ G : Submodule (𝓞 K) E.carrier, G ≠ ⊥ → ((E.slope G : ℝ) : EReal) = E.slopeMax → G ≤ F
-
-def CanonicalFiltration.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    ∃ (m : ℕ) (f : Fin (m + 1) → Submodule (𝓞 K) E.carrier), E.IsCanonicalFiltration f ∧
-      ∀ (m' : ℕ) (g : Fin (m' + 1) → Submodule (𝓞 K) E.carrier), E.IsCanonicalFiltration g →
-        Set.range g = Set.range f
-
-def CanonicalFiltrationSlopes.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K) (n : ℕ)
-    (f : Fin (n + 2) → Submodule (𝓞 K) E.carrier), E.IsCanonicalFiltration f →
-    E.slopeMax = ((E.relSlope (f 0) (f 1) : ℝ) : EReal) ∧
-      E.slopeMin = ((E.relSlope (f (Fin.last n).castSucc) (f (Fin.last (n + 1))) : ℝ) : EReal)
-
-def SlopeBounds.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier →
-    E.slopeMin ≤ ((E.bundleSlope : ℝ) : EReal) ∧ ((E.bundleSlope : ℝ) : EReal) ≤ E.slopeMax
-
-def SemistableIff.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier → (E.Semistable ↔ E.slopeMax = E.slopeMin)
-
-def FirstMinAttained.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier →
-    0 < E.firstMin ∧ ∃ v : E.carrier, v ≠ 0 ∧ E.supNorm v = E.firstMin
-
-def FirstMinSlopeLower.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier → ((-Real.log E.firstMin : ℝ) : EReal) ≤ E.slopeMax
-
-def FirstMinSlopeUpper.Statement : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] (E : HermitianBundle.{0} K),
-    0 < Module.finrank (𝓞 K) E.carrier →
-    E.slopeMax ≤ ((-Real.log E.firstMin +
-      Real.log ((Module.finrank (𝓞 K) E.carrier : ℝ) * Module.finrank ℚ K) / 2 +
-      Real.log |(discr K : ℝ)| / (2 * Module.finrank ℚ K) : ℝ) : EReal)
-
-def RankTwoSplit.Statement : Prop :=
-  ∀ a b : ℝ, b < a →
-    (ratPlane a b).IsCanonicalFiltration (ratPlaneFlag a b) ∧
-      (ratPlane a b).slopeMax = ((a : ℝ) : EReal) ∧ (ratPlane a b).slopeMin = ((b : ℝ) : EReal) ∧
-      (ratPlane a b).bundleSlope = (a + b) / 2 ∧ (ratPlane a b).firstMin = Real.exp (-a)
-
-def RankTwoEqual.Statement : Prop :=
-  ∀ a : ℝ,
-    (ratPlane a a).Semistable ∧ (ratPlane a a).IsCanonicalFiltration (trivialFlag (ratPlane a a)) ∧
-      (ratPlane a a).slopeMax = ((a : ℝ) : EReal) ∧ (ratPlane a a).slopeMin = ((a : ℝ) : EReal) ∧
-      (ratPlane a a).bundleSlope = a ∧ (ratPlane a a).firstMin = Real.exp (-a)
 
 namespace HermitianBundle
 
@@ -215,20 +134,9 @@ theorem semistable_of_finrank_one (h1 : Module.finrank (𝓞 K) E.carrier = 1) :
 
 end HermitianBundle
 
-example : ratIntegers.Semistable :=
-  HermitianBundle.semistable_of_finrank_one _ (Module.finrank_self (𝓞 ℚ))
-
 theorem isCanonicalFiltration_integers (K : Type) [Field K] [NumberField K] :
     (HermitianBundle.integers K).IsCanonicalFiltration (trivialFlag (HermitianBundle.integers K)) :=
   HermitianBundle.isCanonicalFiltration_of_finrank_one _ (Module.finrank_self (𝓞 K))
-
-example : ratIntegers.IsCanonicalFiltration (trivialFlag ratIntegers) :=
-  isCanonicalFiltration_integers ℚ
-
-example : ratIntegers.IsCanonicalFiltration (m := 0 + 1) (trivialFlag ratIntegers) :=
-  isCanonicalFiltration_integers ℚ
-
-example : (0 : ℝ) < 1 := one_pos
 
 end
 

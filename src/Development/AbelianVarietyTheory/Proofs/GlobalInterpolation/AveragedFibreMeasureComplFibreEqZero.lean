@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FibOfZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FibOfZero
+
+@[expose] public section
+
 open MeasureTheory Topology
 
 namespace GlobalTheory.QuadFibre

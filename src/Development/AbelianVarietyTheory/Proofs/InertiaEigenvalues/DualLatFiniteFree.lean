@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.WachLatticeTwists.LatticeDualFibres.StatDualFibreLattice
+module
+
+public import Mathlib
+public import Formalism.WachLatticeTwists.LatticeDualFibres.StatDualFibreLattice
+
+@[expose] public section
+
 open Formalism.RepresentationBoundsCohomology.LOC
 
 namespace GlobalTheory
@@ -25,13 +30,13 @@ theorem dualLat_finite_free {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
     { toFun := g0
       map_add' := fun f f' => by
         funext x; apply hinj
-        rw [Pi.add_apply, map_add, hg0, hg0, hg0, Submodule.coe_add, map_add]
+        rw [Pi.add_apply, map_add (f := _), hg0, hg0, hg0, Submodule.coe_add, map_add (f := _)]
       map_smul' := fun c f => by
         funext x; apply hinj
         rw [Pi.smul_apply, smul_eq_mul, map_mul, hg0, hg0, Submodule.coe_smul, map_smul,
           RingHom.id_apply, Algebra.smul_def] }
   have ginj : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro f hf
     have h0 : ∀ x ∈ s, b x f = 0 := fun x hx => by
       rw [← hg0 f ⟨x, hx⟩]

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsHyp
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsHyp
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.SplitIntPI
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 

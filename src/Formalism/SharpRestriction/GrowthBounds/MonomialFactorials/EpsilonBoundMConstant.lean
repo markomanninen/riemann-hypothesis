@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ExistsHigh
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ExistsHigh
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeTwistedIso
-import GroundTheory.PAdicHodge.FactorizationFactorialLe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeTwistedIso
+public import GroundTheory.PAdicHodge.FactorizationFactorialLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem qC_sigX : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
   generalize hpdef : (gpProj k (i + 1) t h).2 = p at *
   induction w using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
   | tmul a b =>
     have hL : sigX τ σ η (a ⊗ₜ[ℂ] b) =
         (((dpowM (i + 1) (((t + 1 : ℕ) : ℝ) / 2) (levi k (i + 1) g) : ℂˣ) : ℂ) • τ.ρ (levi k (i + 1) g) a) ⊗ₜ[ℂ]

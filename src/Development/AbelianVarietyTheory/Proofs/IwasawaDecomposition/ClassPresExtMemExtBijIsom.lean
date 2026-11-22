@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+
+@[expose] public section
 
 open Formalism.IndefR Formalism.L2.DIV
 

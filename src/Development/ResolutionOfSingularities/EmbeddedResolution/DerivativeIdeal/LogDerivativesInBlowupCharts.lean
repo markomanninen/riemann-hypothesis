@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativesInBlowupCharts
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativesInBlowupCharts
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 namespace EtaleCoordinates
 
@@ -134,7 +139,8 @@ theorem map_logDerivIdeal_le_span_pow_mul [Fintype ι]
         conv_lhs => rw [eq_sum_smul_partialDeriv k ι S D]
         rw [finset_sum_derivation_apply]
         exact Finset.sum_congr rfl (fun j _ => smul_derivation_apply _ _ _)
-      rw [h0, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h0, map_sum]
       exact Finset.sum_congr rfl (fun j _ => map_mul φ _ _)
     rw [hDf]
     refine Ideal.sum_mem _ ?_

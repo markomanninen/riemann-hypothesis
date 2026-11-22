@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.TwoStepUnipotentCompactModSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.TwoStepUnipotentCompactModSubring
+
+@[expose] public section
 
 open Formalism.MainNotions.S Matrix NumberField Topology Filter
 open scoped TensorProduct
@@ -155,7 +159,7 @@ theorem exists_param [TopologicalSpace S] [IsTopologicalRing S]
       · rw [hw₂, mul_add, hw.1, ← mul_assoc, ← hc, mul_assoc, mul_sub, ← mul_assoc e₁,
           ← mul_assoc e₁, q1, q2]
       · rw [hw₂, add_mul, hw.2.1, mul_assoc, sub_mul, mul_assoc, mul_assoc, hb.2.2, hb'.2.2]
-      · rw [hw₂, map_add, hm, hsh, ← hc, map_sub, hm, hm, hi, hi, hw.2.2]
+      · rw [hw₂, map_add (f := _), hm, hsh, ← hc, map_sub, hm, hm, hi, hi, hw.2.2]
         noncomm_ring
     obtain ⟨ω, hω, hωK⟩ := hcov w₂
     have Bn : B (-β) = - B β := by rw [hB, hB]; simp
@@ -179,7 +183,7 @@ theorem exists_param' [TopologicalSpace S] [IsTopologicalRing S] {R : Type} [Rin
   obtain ⟨U, h1, h2, h3, h4⟩ := exists_param st f.range (f e) (f h) hcont hm hi
     (by rintro _ ⟨x, rfl⟩; exact ⟨_, hst x⟩) ⟨e, rfl⟩ ⟨h, rfl⟩ (by rw [← map_mul, h11])
     (by rw [← hst, ← map_mul, h13, map_zero]) (by rw [← hst, ← map_mul, h31, map_zero])
-    (by rw [← map_add, hh, map_one]) hc
+    (by rw [← map_add (f := _), hh, map_one]) hc
   refine ⟨U, h1, h2, h3, fun K hK g hg => ?_⟩
   obtain ⟨γ, c1, ⟨a, ha⟩, ⟨b, hb⟩, c2⟩ := h4 K (fun x => (hK x).elim fun y hy => ⟨_, ⟨y, rfl⟩, hy⟩) g hg
   refine ⟨⟨a, b, hf (by simp [ha, hb]), hf (by simp [ha, hb])⟩, (Cond.map_iff f hf hst).1 (by rwa [← ha] at c1), ?_⟩
@@ -198,7 +202,7 @@ variable {A : Type} [CommRing A] {n : Type} [Fintype n] [DecidableEq n]
 def adj (s : A →+* A) (J K : Matrix n n A) : Matrix n n A →+ Matrix n n A where
   toFun x := K * cT s x * J
   map_zero' := by simp [cT]
-  map_add' x y := by simp [cT, Matrix.map_add, Matrix.transpose_add, mul_add, add_mul]
+  map_add' x y := by simp [cT, Matrix.map_add (f := _), Matrix.transpose_add, mul_add, add_mul]
 
 theorem adj_apply (s : A →+* A) (J K x : Matrix n n A) : adj s J K x = K * cT s x * J := rfl
 
@@ -357,7 +361,7 @@ theorem exists_sub_mem_int (x : E ⊗[F] Af F) :
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, add_sub_add_comm]; exact add_mem ha hb⟩
+    exact ⟨a + b, by rw [map_add (f := _), add_sub_add_comm]; exact add_mem ha hb⟩
   | tmul e a =>
     have halg : Algebra.IsAlgebraic ℤ E :=
       (IsFractionRing.comap_isAlgebraic_iff (A := ℤ) (K := ℚ)).2 inferInstance
@@ -377,9 +381,9 @@ theorem exists_sub_mem_int (x : E ⊗[F] Af F) :
     rw [this]
     exact Formalism.UG.P.levelaf_tmul_mem _ hb
 
-omit [NumberField F] in
 
-theorem exists_compact_arch [IsTotallyComplex E] (φ : InfinitePlace F → (E →+* ℂ))
+omit [NumberField F] in
+theorem exists_compact_arch [_root_.NumberField.IsTotallyComplex E] (φ : InfinitePlace F → (E →+* ℂ))
     (hφ : ∀ v (a : F), φ v (algebraMap F E a) = v.embedding a) :
     ∃ C : Set (InfinitePlace F → ℂ), IsCompact C ∧
       ∀ z : InfinitePlace F → ℂ, ∃ y : 𝓞 E, (z - fun v => φ v y) ∈ C := by
@@ -470,7 +474,7 @@ theorem inc_star (a : I.E) : inc I (starRingEnd I.E a) = sf I (inc I a) := rfl
 theorem sf_sf (a : Bf I) : sf I (sf I a) = a := by
   induction a using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul e a => exact congrArg (· ⊗ₜ[I.F] a) (star_star e)
 
 theorem inc_injective : Function.Injective (inc I) := by
@@ -682,8 +686,8 @@ theorem exists_sub_mem_nhds (hc : IsCompact (IntAf I.F I.E : Set (Bf I)))
   ext i j
   simp
 
-omit [IsTopologicalRing (Bf I)] in
 
+omit [IsTopologicalRing (Bf I)] in
 theorem exists_compact_MA (hc : IsCompact (IntAf I.F I.E : Set (Bf I))) :
     ∃ K : Set (MA I), IsCompact K ∧ ∀ x, ∃ y, x - diag I y ∈ K := by
   haveI : IsTotallyComplex I.E := I.cm.cmUnram.1
@@ -700,9 +704,9 @@ theorem exists_compact_MA (hc : IsCompact (IntAf I.F I.E : Set (Bf I))) :
   · funext v
     ext i j
     change x.1 v i j - I.φ v (y i j) - I.φ v (z i j) = x.1 v i j - I.φ v (y i j + z i j)
-    rw [map_add, sub_sub]
+    rw [map_add (f := _), sub_sub]
   · change x.2 i j - inc I (y i j + z i j) ∈ IntAf I.F I.E
-    rw [map_add, ← sub_sub]
+    rw [map_add (f := _), ← sub_sub]
     exact sub_mem (hy i j) (Formalism.UG.P.adelstab_incl_int (F := I.F) (z i j))
 
 theorem continuous_adjA (hσ : Continuous (sf I)) : Continuous (adjA I) :=
@@ -755,7 +759,7 @@ theorem strong_approximation : ∀ (I : AutInst) (W : Submodule I.E (Fin I.n →
   · exact (hN _).2 (Cond.inv (g := (toMA I).toHomUnits a) (adjA_adjA I) ((hN a).1 ha))
   · have c1 := continuous_toMA I hind
     have c2 := continuous_adjA I hσ
-    rw [show I.NA W = _ from Set.ext hN]
+    rw [show I.NA W = {x | Cond (adjA I) ((diag I) e) ((toMA I) x)} from Set.ext hN]
     exact (isClosed_eq ((c2.comp c1).mul c1) continuous_const).inter
       ((isClosed_eq ((c1.sub continuous_const).mul continuous_const) continuous_const).inter
         (isClosed_eq ((continuous_const.mul (c1.sub continuous_const)).mul continuous_const) continuous_const))

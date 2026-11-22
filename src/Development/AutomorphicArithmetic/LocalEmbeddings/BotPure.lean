@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzEqPureTensorOfFiniteSlicesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergStableRelationOfVacuaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerFixedFunctionsProportionalOfSelfDualStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGaussianDatumFlippedFiniteTensorBigRoute
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemScLatOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatPtLeClosureAndSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SkewGramInrInl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartAlgebraMapLiftV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxGraphGraphHeis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzEqPureTensorOfFiniteSlicesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergStableRelationOfVacuaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerFixedFunctionsProportionalOfSelfDualStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGaussianDatumFlippedFiniteTensorBigRoute
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemScLatOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatPtLeClosureAndSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SkewGramInrInl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfPartAlgebraMapLiftV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxGraphGraphHeis
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -37,7 +41,7 @@ def lattice₂ (v : Pl D.host.F) : AddSubgroup (Matrix (Fin n) (Fin k) (AE D)) w
   carrier := {u | At (evFin D.host.F v) u ∧ m u ∈ Λ}
   zero_mem' := ⟨fun u _ => smul_zero u, by rw [map_zero]; exact zero_mem _⟩
   add_mem' := fun {a b} ha hb => ⟨fun u hu => by rw [smul_add, ha.1 u hu, hb.1 u hu, add_zero],
-    by rw [map_add]; exact add_mem ha.2 hb.2⟩
+    by rw [m.map_add]; exact add_mem ha.2 hb.2⟩
   neg_mem' := fun {a} ha => ⟨fun u hu => by rw [smul_neg, ha.1 u hu, neg_zero], by rw [map_neg]; exact neg_mem ha.2⟩
 
 def genP (v : Pl D.host.F) : Set (Matrix (Fin n) (Fin k) (AE D)) :=
@@ -49,8 +53,8 @@ theorem genP_subset (v : Pl D.host.F) : genP m Λ v ⊆ lattice₂ m Λ v := by
 
 variable {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)} {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
 
-variable (ΛS ΛT) in
 
+variable (ΛS ΛT) in
 abbrev latA : AddSubgroup (WO S T) := latO S T (ΛS : Set _) (ΛT : Set _) fun _ => True
 
 theorem cut_mem (v : Pl D.host.F) {x : WO S T} (hx : x ∈ latA ΛS ΛT) :
@@ -60,7 +64,7 @@ theorem cut_mem (v : Pl D.host.F) {x : WO S T} (hx : x ∈ latA ΛS ΛT) :
 theorem localLattice_le_closure_generators (v : Pl D.host.F) : lattice₂ m (latA ΛS ΛT) v ≤ AddSubgroup.closure (genP m (latA ΛS ΛT) v) := by
   intro u hu
   let f : WO S T →+ Matrix (Fin n) (Fin k) (AE D) :=
-    (DistribMulAction.toAddMonoidHom _ (liftV v (1 : Fv D.host.F v))).comp m.symm.toLinearMap.toAddMonoidHom
+    (DistribSMul.toAddMonoidHom _ (liftV v (1 : Fv D.host.F v))).comp m.symm.toLinearMap.toAddMonoidHom
   have hf : ∀ x, f x = liftV v (1 : Fv D.host.F v) • m.symm x := fun _ => rfl
   have e : u = f (m u) := by rw [hf, m.symm_apply_apply, GlobalTheory.BigDatLat.smul_eq_of_at hu.1]
   rw [e]
@@ -114,7 +118,7 @@ theorem thM_rho (hB : ∀ x y, sy Xs Ws x y = symplO S T (m x) (m y)) (ψ : AddC
   have h := hB (m.symm x) u
   rw [m.apply_symm_apply] at h
   unfold heisO symplOH thM
-  rw [map_add, m.symm_apply_apply, ← h, GlobalTheory.BigDat.invOf_two]
+  rw [map_add (f := _), m.symm_apply_apply, ← h, GlobalTheory.BigDat.invOf_two]
   rfl
 
 theorem thM_smul (ψ : AddChar (AF D.host.F) ℂ) (c : ℂ) (Φ : (Fin n × Fin k → AF D.host.F) → ℂ) :
@@ -149,7 +153,7 @@ theorem exists_vac (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {Bs : Base 
     ∃ f, Φ = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f Mo.vac := by
   have hstd := hBs.std
   refine GlobalTheory.T.adelicSchwartz_eq_pureTensor_of_finite_slices Mo.vac (fun v => (hM.vac v).2.1) hM.std Φ hΦ fun v y hy => ?_
-  obtain ⟨c, hc0, hc⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded Xs Ws v Mo.co hX.lat hW.lat
+  obtain ⟨c, hc0, hc⟩ := GlobalTheory.LatBound.locCo_latAtV_bounded Xs Ws v Mo.co hX.lat.toIsLattice hW.lat.toIsLattice
   obtain ⟨a, ha⟩ := GlobalTheory.T.schroedinger_fixed_functions_proportional_of_selfDual v (GlobalTheory.LatVac.psiAt Bs.ψ v) (GlobalTheory.VacAny.continuous_psiV hstd.1 v)
     (GlobalTheory.PsiNontriv.psiAt_ne_one Bs.ψ hstd v) (GlobalTheory.LatVac.locCo Mo.co v '' genP m (latA ΛS ΛT) v)
     ((lattice₂ m (latA ΛS ΛT) v).map (GlobalTheory.LatVac.locCo Mo.co v)) c
@@ -184,7 +188,7 @@ theorem graphP_snd {ε : AE D} {Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → �
   induction hp using Submodule.span_induction with
   | mem p h => obtain ⟨Φ, -, rfl⟩ := h; rfl
   | zero => exact (map_zero Tm).symm
-  | add p q _ _ hp hq => rw [Prod.snd_add, Prod.fst_add, map_add, hp, hq]
+  | add p q _ _ hp hq => rw [Prod.snd_add, Prod.fst_add, map_add (f := _), hp, hq]
   | smul c p _ hp => rw [Prod.smul_snd, Prod.smul_fst, map_smul, hp]
 
 theorem mem_graphP_of_intertwines {ε : AE D} {Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ)} (ψ : AddChar (AF D.host.F) ℂ) (χ : WO S T → ℂ)
@@ -232,8 +236,8 @@ theorem mem_localLattice_of_forall_addChar_eq_one (hS : IsSelfDualC S ΛS) (hT :
     rw [map_smul, m.apply_symm_apply]; exact GlobalTheory.LatticeStable.smul_mem_latO D _ _ _ _ _ _ hfc l hl⟩ hy
   rwa [hB, map_smul, m.apply_symm_apply, GlobalTheory.BigDat.symplO_cA_smul, GlobalTheory.BigDat.smul_of_isHalf hx'] at this
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_pure (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {Bs : Base D.host.F D.host.E}
     (hψ : IsStdChar D Bs.ψ (-1)) (hBs : Bs.IsGood D.sp.cm.sig) {r s r' s' : ℕ}
     (hX : Xs.IsHerm D.sp.cm.sig Bs r s) (hW : Ws.IsSkew D.sp.cm.sig Bs r' s') (hM : Mo.IsGood Bs.ψ)
@@ -269,7 +273,8 @@ theorem exists_pure (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {Bs : Base
   have hεa : ∀ i, ε * a i = a i := fun i => by
     rw [hε, Finset.sum_mul, Finset.sum_eq_single i (fun j _ h => horth j i h) (fun h => absurd (Finset.mem_univ _) h), (hid i).1]
   have hinf : infPart D ε = 0 := by
-    rw [hε, map_sum]; exact Finset.sum_eq_zero fun i _ => (hid i).2.2.2.2.2.2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hε, map_sum]; exact Finset.sum_eq_zero fun i _ => (hid i).2.2.2.2.2.2
   have hinf' : infPart D (cA D ε) = 0 := GlobalTheory.PlaceVec.infPart_cA hinf
   have hco0 : ∀ i, co i 0 = 0 := fun i => by simpa using hco i 0 0
   have hsm : ∀ i u, a i • u ∈ A i := fun i u => (hA i _).2 (GlobalTheory.BigDat.isHalf_smul_self (hid i).1 u)
@@ -331,8 +336,10 @@ theorem exists_pure (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {Bs : Base
       have hx' : IsHalf ε (m x) := (isHalf_m m).2 (GlobalTheory.BigDat.isHalf_mono (hεa i) ((hA i _).1 hx))
       have := mem_graphP_of_intertwines _ Bs.ψ (fun _ => 1) (m x) (m x) (fun Φ hΦ => by
         simp only [one_mul]
-        exact ⟨GlobalTheory.BigDat.GraphHeis.sb_trans_latO hS.1 hT.1 hinf hΦ hx', hTm.trans Φ hΦ _ hx'⟩) hp.2
-      simp only [one_mul, map_add, LinearEquiv.symm_apply_apply] at this
+        exact ⟨GlobalTheory.BigDat.GraphHeis.sb_trans_latO
+          (GlobalTheory.PlaceVec.selfDual_isFullLattice S ΛS hS)
+          (GlobalTheory.PlaceVec.selfDual_isFullLattice T ΛT hT) hinf hΦ hx', hTm.trans Φ hΦ _ hx'⟩) hp.2
+      simp only [one_mul, map_add (f := _), LinearEquiv.symm_apply_apply] at this
       rwa [← thM_rho m Mo hB] at this⟩)
     (fun i _ y hy p hp => ⟨GlobalTheory.HeisSchA.rho_mem_schA Mo Bs.ψ hstd y _ hp.1, by
       have hy' : IsHalf (cA D ε) (m y) := (isHalf_m m).2

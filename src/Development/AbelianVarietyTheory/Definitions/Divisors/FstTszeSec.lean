@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,12 +17,12 @@ open CategoryTheory GlobalTheory.CatCoh
 
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ] {F : Fam I g Λ} {K : Charts F}
 
+
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology in
 open CategoryTheory in
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
   {F : _root_.GlobalTheory.AnPer.Fam I g Λ} {K : _root_.GlobalTheory.AnPer.Charts F} in
-
 theorem _root_.GlobalTheory.AnPer.Charts.tsze_nil {O : Type} [CommRing O] [Algebra ℂ O] :
     IsNilpotent (RingHom.ker (TrivSqZeroExt.fstHom ℂ O (Fin g → O)).toRingHom) := by
   refine ⟨2, ?_⟩
@@ -29,8 +33,8 @@ theorem _root_.GlobalTheory.AnPer.Charts.tsze_nil {O : Type} [CommRing O] [Algeb
   rw [Ideal.mem_bot]
   ext <;> simp [hx, hy]
 
-variable (K) in
 
+variable (K) in
 @[reducible] def jet (k : K.K) : K.Obj where
   k := k
   C := TrivSqZeroExt (Hol (K.W k)) (Fin g → Hol (K.W k))
@@ -45,25 +49,25 @@ def tszeSec {O : Type} [CommRing O] [Algebra ℂ O] (D : Fin g → Derivation �
   map_one' := TrivSqZeroExt.ext (by simp) (funext fun a ↦ by simp)
   map_zero' := TrivSqZeroExt.ext (by simp) (funext fun a ↦ by simp)
   map_add' x y := TrivSqZeroExt.ext (by simp) (funext fun a ↦ by simp)
-  map_mul' x y := TrivSqZeroExt.ext (by simp) (funext fun a ↦ by simp [mul_comm])
+  map_mul' x y := TrivSqZeroExt.ext (by simp) (funext fun a ↦ by simp)
+
 
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology in
 open CategoryTheory in
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
   {F : _root_.GlobalTheory.AnPer.Fam I g Λ} {K : _root_.GlobalTheory.AnPer.Charts F} in
-
 theorem _root_.GlobalTheory.AnPer.Charts.fst_tszeSec {O : Type} [CommRing O] [Algebra ℂ O]
     (D : Fin g → Derivation ℂ O O) (h : O) :
     (_root_.GlobalTheory.AnPer.Charts.tszeSec D h).fst = h := by
   simp [_root_.GlobalTheory.AnPer.Charts.tszeSec]
 
+
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology in
 open CategoryTheory in
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
   {F : _root_.GlobalTheory.AnPer.Fam I g Λ} {K : _root_.GlobalTheory.AnPer.Charts F} in
-
 theorem _root_.GlobalTheory.AnPer.Charts.snd_tszeSec {O : Type} [CommRing O] [Algebra ℂ O]
     (D : Fin g → Derivation ℂ O O) (h : O) (a : Fin g) :
     (_root_.GlobalTheory.AnPer.Charts.tszeSec D h).snd a = D a h := by
@@ -71,12 +75,12 @@ theorem _root_.GlobalTheory.AnPer.Charts.snd_tszeSec {O : Type} [CommRing O] [Al
 
 def jetSec (k : K.K) : Hol (K.W k) →+* TrivSqZeroExt (Hol (K.W k)) (Fin g → Hol (K.W k)) := tszeSec dw
 
+
 set_option autoImplicit false in
 open TopologicalSpace Filter Topology in
 open CategoryTheory in
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
   {F : _root_.GlobalTheory.AnPer.Fam I g Λ} {K : _root_.GlobalTheory.AnPer.Charts F} in
-
 theorem _root_.GlobalTheory.AnPer.Charts.tsze_expand {O : Type} [CommRing O] (h : O) (v : Fin g → O) :
     (TrivSqZeroExt.inl h + TrivSqZeroExt.inr v : TrivSqZeroExt O (Fin g → O)) = TrivSqZeroExt.inl h +
       ∑ a, TrivSqZeroExt.inl (v a) * TrivSqZeroExt.inr (Pi.single a (1 : O)) := by
@@ -86,9 +90,10 @@ theorem _root_.GlobalTheory.AnPer.Charts.tsze_expand {O : Type} [CommRing O] (h 
   · simp [TrivSqZeroExt.fst_sum]
   · simp [TrivSqZeroExt.snd_sum, Finset.sum_apply, Pi.single_apply]
 
-def jet0 (k : K.K) : K.triv k ⟶ K.jet k := ptHom (K.jet k) (K.le_refl k)
+def jet0 (k : K.K) : K.Hom (K.triv k) (K.jet k) :=
+  ptHom (K.jet k) (K.le_refl k)
 
-def jet1 (k : K.K) : K.triv k ⟶ K.jet k :=
+def jet1 (k : K.K) : K.Hom (K.triv k) (K.jet k) :=
   fromTriv (K.jet k) (K.le_refl k) (jetSec k)
     (fun f ↦ TrivSqZeroExt.ext (fst_tszeSec _ _) (funext fun a ↦ (snd_tszeSec _ _ a).trans (dw_cst k a f)))
     (Relation.ReflTransGen.single ⟨fun a ↦ TrivSqZeroExt.inr (Pi.single a 1), fun _ ↦ rfl,

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyUnitaryConjOfSameEllipticCharpolyInert
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjOfCharpolyLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyUnitaryConjOfSameEllipticCharpolyInert
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjOfCharpolyLocal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -18,8 +23,10 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
   let O := w.adicCompletionIntegers E
   let ι := algebraMap O (w.adicCompletion E)
   have hι : Function.Injective ι := Subtype.val_injective
-  obtain ⟨y', hy'⟩ : ∃ y' : GL (Fin n) O, GeneralLinearGroup.map ι y' = γ.1 := (Subgroup.mem_subgroupOf.1 hγK)
-  obtain ⟨z', hz'⟩ : ∃ z' : GL (Fin n) O, GeneralLinearGroup.map ι z' = γ'.1 := (Subgroup.mem_subgroupOf.1 hγ'K)
+  change γ.1 ∈ (GeneralLinearGroup.map ι).range at hγK
+  change γ'.1 ∈ (GeneralLinearGroup.map ι).range at hγ'K
+  obtain ⟨y', hy'⟩ := hγK
+  obtain ⟨z', hz'⟩ := hγ'K
   have hch : ∀ x : GL (Fin n) O, x.val.charpoly.map ι = (GeneralLinearGroup.map ι x).val.charpoly := fun x =>
     (Matrix.charpoly_map _ _).symm
   have e1 : y'.val.charpoly.map ι = atPl w P := by rw [hch, hy', hγ]

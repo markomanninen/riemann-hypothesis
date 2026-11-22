@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.Mem.Th MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -59,7 +63,7 @@ theorem exists_short_notMem {X ι : Type} [NormedAddCommGroup X] [NormedSpace �
   have hyc : ‖y‖ < c := mem_ball_zero_iff.1 hy
   refine ⟨x, x.2, fun hxW => ?_, ?_⟩
   · have h1 : f (T x) = 0 := hf ⟨x, hxW, rfl⟩
-    rw [← hxy, hA, map_add, map_smul, hfv, smul_eq_mul] at h1
+    rw [← hxy, hA, map_add (f := _), map_smul, hfv, smul_eq_mul] at h1
     have h2 : f y = 0 := by
       have : f y * (1 + s) = 0 := by linarith
       exact (mul_eq_zero.1 this).resolve_right (by positivity)
@@ -90,7 +94,7 @@ theorem exists_norm_eq (hτ : Function.Surjective fun i => InfinitePlace.mk (τ 
   obtain ⟨i, hi⟩ := hτ (InfinitePlace.mk φ)
   exact ⟨i, fun x => (congrArg (fun w : InfinitePlace E => w x) hi).symm⟩
 
-theorem exists_basis [IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i)) :
+theorem exists_basis [_root_.NumberField.IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i)) :
     ∃ b : Module.Basis (Module.Free.ChooseBasisIndex ℤ (𝓞 E)) ℝ (I → ℂ),
       ∀ k, b k = Pi.ringHom τ (integralBasis E k) := by
   have hli : LinearIndependent ℝ fun k => Pi.ringHom τ (integralBasis E k) := by
@@ -114,8 +118,8 @@ theorem exists_basis [IsTotallyComplex E] (hτ : Function.Bijective fun i => Inf
       IsTotallyComplex.nrRealPlaces_eq_zero, zero_add, smul_eq_mul, mul_comm]
   exact ⟨basisOfLinearIndependentOfCardEqFinrank hli hcard, fun k => by simp⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem abs_det_eq_one {n : ℕ} {J G : Matrix (Fin n) (Fin n) (I → ℂ)} (hJ : IsUnit J.det)
     (hG : Formalism.UG.cT (starRingEnd (I → ℂ)) G * J * G = J) :
     |LinearMap.det ((Matrix.toLin' G).restrictScalars ℝ)| = 1 := by
@@ -162,7 +166,7 @@ theorem isIntegral_hform {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {N : ℤ} (hN 
   simp only [RingHom.toIntAlgHom_apply]
   ring
 
-theorem exists_bounded_basis [IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i))
+theorem exists_bounded_basis [_root_.NumberField.IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i))
     (hσ : ∀ i x, τ i (σ x) = star (τ i x)) {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (hJ : J.det ≠ 0)
     (han : ∀ x, x ≠ 0 → Formalism.UG.hform σ J x x ≠ 0) :
     ∃ R : ℝ, ∀ G : Matrix (Fin n) (Fin n) (I → ℂ),
@@ -229,7 +233,8 @@ theorem exists_bounded_basis [IsTotallyComplex E] (hτ : Function.Bijective fun 
     let g : (Fin n → I → ℂ) →ₗ[I → ℂ] (I → ℂ) :=
       ∑ a, Pi.ringHom τ (f (Pi.single a 1)) • LinearMap.proj a
     have hg : ∀ x : Fin n → E, g (fun a => Pi.ringHom τ (x a)) = Pi.ringHom τ (f x) := fun x => by
-      rw [LinearMap.pi_apply_eq_sum_univ f x, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.pi_apply_eq_sum_univ f x, map_sum]
       simp only [g, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply, smul_eq_mul, map_mul]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [mul_comm]
@@ -261,10 +266,10 @@ theorem cT_mul {A : Type} [CommRing A] (s : A →+* A) {n : ℕ} (P Q : Matrix (
 omit [NumberField E] in
 theorem gram_apply {n : ℕ} (J B : Matrix (Fin n) (Fin n) E) (a b : Fin n) :
     (Formalism.UG.cT σ B * J * B) a b = Formalism.UG.hform σ J (fun k => B k a) (fun k => B k b) := by
-  simp only [Formalism.UG.hform, Formalism.UG.cT, mul_apply, Finset.sum_mul, transpose_apply, map_apply]
-  exact Finset.sum_comm
+  simp only [Formalism.UG.hform, Formalism.UG.cT, Matrix.mul_apply, Finset.sum_mul, Matrix.transpose_apply, Matrix.map_apply]
+  rw [Finset.sum_comm]
 
-theorem exists_bounded_unitary [IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i))
+theorem exists_bounded_unitary [_root_.NumberField.IsTotallyComplex E] (hτ : Function.Bijective fun i => InfinitePlace.mk (τ i))
     (hσ : ∀ i x, τ i (σ x) = star (τ i x)) {n : ℕ} {J : Matrix (Fin n) (Fin n) E} (hJ : J.det ≠ 0)
     (han : ∀ x, x ≠ 0 → Formalism.UG.hform σ J x x ≠ 0) :
     ∃ (R : ℝ) (𝓒 : Set (Matrix (Fin n) (Fin n) E)), 𝓒.Finite ∧ ∀ G : Matrix (Fin n) (Fin n) (I → ℂ),
@@ -326,7 +331,7 @@ theorem hform_ne_zero {D : D7} {V : HSp D} (h : IsAniso V) (x : Fin V.rank → D
   refine h 1 (Matrix.of fun a _ => x a) ⟨one_pos, linearIndependent_unique_iff.2 hx, ?_⟩
   ext a b
   rw [Matrix.zero_apply, ← h0]
-  simp only [Formalism.UG.hform, Formalism.UG.cT, mul_apply, Finset.sum_mul, transpose_apply, map_apply, of_apply]
+  simp only [Formalism.UG.hform, Formalism.UG.cT, Matrix.mul_apply, Finset.sum_mul, Matrix.transpose_apply, Matrix.map_apply, Matrix.of_apply]
   rw [Finset.sum_comm]
 
 theorem mt_mul {D : D7} (V : HSp D) (x y : GA D V) : mt V (x * y) = mt V x * mt V y := by
@@ -412,7 +417,8 @@ theorem exists_compact : ∀ (D : D7) (V : HSp D), IsAniso V → ∃ K : Set (GA
   obtain ⟨C₃, hC₃, hCe₃⟩ := exists_compact_mul ((hC₂.insert 0).insert 1) (h𝓒.image fun M => M.map (incA D))
   obtain ⟨K, hK, hKe⟩ := GlobalTheory.StabCompact.exists_compact_of_entries (AF D.host.F) D.sp.cm.sig V.gram
     (GlobalTheory.DefiniteQuotient.gram_hermND V).2 C₃ hC₃
-  refine ⟨K⁻¹, hK.inv, fun g => ?_⟩
+  open scoped Pointwise in
+    refine ⟨K⁻¹, hK.inv, fun g => ?_⟩
   obtain ⟨γ, hγ, h₁⟩ := H₁ g⁻¹
   obtain ⟨u, hu, B, M, hM, hum, hBi, hBR⟩ := H₂ (g⁻¹ * γ)
   refine ⟨γ * u, mul_mem hγ hu, (g⁻¹ * γ * u)⁻¹, Set.inv_mem_inv.2 (hKe _ fun a b => ?_), by group⟩

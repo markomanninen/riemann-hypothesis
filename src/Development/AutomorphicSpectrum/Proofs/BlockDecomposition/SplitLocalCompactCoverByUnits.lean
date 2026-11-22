@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoublingNormDetSplitPlaceLatticeIntersection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormEqInv
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DoublingNormDetSplitPlaceLatticeIntersection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormEqInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,14 +122,21 @@ theorem exists_entry_norm (hM : 0 < M) (Y : Fin 1 → Fin M → Fv F v) : ∃ p 
 theorem exists_scale {ϖ : Fv F v} (hϖ : ‖ϖ‖ = (Ideal.absNorm v.asIdeal : ℝ)⁻¹) (hM : 0 < M)
     {Y : Fin 1 → Fin M → Fv F v} (hY : Y ≠ 0) :
     ∃ (j : ℤ) (Y' : Fin 1 → Fin M → Fv F v), ‖Y'‖ = 1 ∧ ‖Y‖ = ‖ϖ‖ ^ j ∧ ∀ p k, Y p k = ϖ ^ j * Y' p k := by
-  have hq := GlobalTheory.NormFvFacts.absNorm_gt_one F v
+  have hq : 1 < (Ideal.absNorm v.asIdeal : ℝ) := by
+    have h1 : Ideal.absNorm v.asIdeal ≠ 1 := fun h => v.isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h)
+    have h0 : Ideal.absNorm v.asIdeal ≠ 0 := fun h => v.ne_bot (Ideal.absNorm_eq_zero_iff.1 h)
+    exact_mod_cast (by omega : 1 < Ideal.absNorm v.asIdeal)
   have hq0 : (Ideal.absNorm v.asIdeal : ℝ) ≠ 0 := by positivity
   have hϖ0 : ϖ ≠ 0 := fun e => by
     rw [e, norm_zero] at hϖ
     exact inv_ne_zero hq0 hϖ.symm
   obtain ⟨p, k, hpk⟩ := exists_entry_norm hM Y
   have ha : Y p k ≠ 0 := fun e => hY (norm_eq_zero.1 (by rw [← hpk, e, norm_zero]))
-  obtain ⟨m, hm⟩ := GlobalTheory.NormFvFacts.norm_eq_zpow F v (Y p k) ha
+  have hv : Valued.v (Y p k) ≠ 0 := (Valuation.ne_zero_iff _).2 ha
+  have hm : ‖Y p k‖ = (Ideal.absNorm v.asIdeal : ℝ) ^ (Valued.v (Y p k)).log := by
+    rw [FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hv, NNReal.coe_zpow]
+    rfl
+  let m := (Valued.v (Y p k)).log
   refine ⟨-m, ϖ ^ m • Y, ?_, ?_, fun p k => ?_⟩
   · rw [norm_smul, norm_zpow, hϖ, ← hpk, hm, inv_zpow, inv_mul_cancel₀ (zpow_ne_zero _ hq0)]
   · rw [← hpk, hm, hϖ, zpow_neg, inv_zpow, inv_inv]
@@ -170,7 +181,10 @@ theorem summable_pow {t : ℝ≥0} (ht0 : t ≠ 0) (ht : t < 1) (k : ℕ) {n : �
 
 theorem neg_lt_of_norm_lt {ϖ : Fv F v} (hϖ : ‖ϖ‖ = (Ideal.absNorm v.asIdeal : ℝ)⁻¹) {x : ℝ} {j : ℤ} {k : ℕ}
     (e : x = ‖ϖ‖ ^ j) (hx : x < (Ideal.absNorm v.asIdeal : ℝ) ^ k) : -(k : ℤ) < j := by
-  have hq := GlobalTheory.NormFvFacts.absNorm_gt_one F v
+  have hq : 1 < (Ideal.absNorm v.asIdeal : ℝ) := by
+    have h1 : Ideal.absNorm v.asIdeal ≠ 1 := fun h => v.isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h)
+    have h0 : Ideal.absNorm v.asIdeal ≠ 0 := fun h => v.ne_bot (Ideal.absNorm_eq_zero_iff.1 h)
+    exact_mod_cast (by omega : 1 < Ideal.absNorm v.asIdeal)
   rw [e, hϖ, inv_zpow', ← zpow_natCast] at hx
   have := (zpow_lt_zpow_iff_right₀ hq).1 hx
   omega
@@ -183,8 +197,19 @@ theorem cover (h : IsCMExt F E σ) (hM : 2 ≤ M) (τ : E →ₐ[F] Fv F v)
       A ∩ {X | LinearIndependent (Fv F v ⊗[F] E) X} ⊆
         ⋃ i, (fun (X : Fin 1 → Fin M → Fv F v ⊗[F] E) (p : Fin 1) (k : Fin M) =>
           (u i : Fv F v ⊗[F] E) * X p k) '' P := by
-  obtain ⟨ϖ, hϖ⟩ := GlobalTheory.NormFvFacts.exists_norm_eq_inv F v
-  have hq := GlobalTheory.NormFvFacts.absNorm_gt_one F v
+  have hex : ∃ ϖ : Fv F v, ‖ϖ‖ = (Ideal.absNorm v.asIdeal : ℝ)⁻¹ := by
+    obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer F
+    have hv : Valued.v ((π : F) : v.adicCompletion F) = WithZero.exp (-1) := by
+      rw [v.valuedAdicCompletion_eq_valuation']; exact hπ
+    refine ⟨((π : F) : v.adicCompletion F), ?_⟩
+    rw [FinitePlace.norm_def, hv, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero, NNReal.coe_zpow]
+    rw [WithZero.log_exp, zpow_neg_one]
+    rfl
+  obtain ⟨ϖ, hϖ⟩ := hex
+  have hq : 1 < (Ideal.absNorm v.asIdeal : ℝ) := by
+    have h1 : Ideal.absNorm v.asIdeal ≠ 1 := fun h => v.isPrime.ne_top (Ideal.absNorm_eq_one_iff.1 h)
+    have h0 : Ideal.absNorm v.asIdeal ≠ 0 := fun h => v.ne_bot (Ideal.absNorm_eq_zero_iff.1 h)
+    exact_mod_cast (by omega : 1 < Ideal.absNorm v.asIdeal)
   have hq0 : (Ideal.absNorm v.asIdeal : ℝ) ≠ 0 := by positivity
   have hϖ0 : ϖ ≠ 0 := fun e => by
     rw [e, norm_zero] at hϖ

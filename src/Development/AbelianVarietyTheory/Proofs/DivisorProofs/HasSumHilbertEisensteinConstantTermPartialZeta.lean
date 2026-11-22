@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 open NumberField GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization

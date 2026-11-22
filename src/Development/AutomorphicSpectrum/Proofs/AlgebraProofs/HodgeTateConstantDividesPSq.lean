@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PrimRootSubOnePowAssociated
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.PrimRootSubOnePowAssociated
+
+@[expose] public section
 
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
@@ -15,7 +19,8 @@ theorem isPrimitiveRoot_map_of_charZero {A C : Type} [CommRing A] [IsDomain A] [
   have h2 : ψ ζ ≠ 1 := by
     intro h
     have hs := congrArg ψ (hζ.geom_sum_eq_zero hp1.one_lt)
-    rw [map_sum, map_zero] at hs
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at hs
     simp only [map_pow, h, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
       mul_one] at hs
     exact hp1.ne_zero (by exact_mod_cast hs)

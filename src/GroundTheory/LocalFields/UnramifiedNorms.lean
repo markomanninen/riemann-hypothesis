@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.LocalFields.UnramifiedNormSurj
-import GroundTheory.LocalFields.UnitsGalois
-import GroundTheory.LocalFields.CompleteTrivial
-import GroundTheory.LocalFields.HilbertCyclic
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnramifiedNormSurj
+public import GroundTheory.LocalFields.UnitsGalois
+public import GroundTheory.LocalFields.CompleteTrivial
+public import GroundTheory.LocalFields.HilbertCyclic
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem exists_eq_of_forall_smul_eq [IsGalois K L] {x : 𝒪[L]ˣ}
   have hfix : ((x : 𝒪[L]) : L) ∈ (⊥ : IntermediateField K L) :=
     (IsGalois.mem_bot_iff_fixed _).2 fun σ ↦ by
       have := congrArg (fun u : 𝒪[L]ˣ ↦ ((u : 𝒪[L]) : L)) (hx σ)
-      simpa using this
+      change σ ((x : 𝒪[L]) : L) = ((x : 𝒪[L]) : L) at this
+      exact this
   obtain ⟨c, hc⟩ := IntermediateField.mem_bot.1 hfix
   have hc0 : c ≠ 0 := by
     rintro rfl
@@ -51,7 +56,7 @@ theorem subsingleton_tateZero_integerUnits [IsGalois K L] [IsUnramified K L] :
     Subsingleton (TateZero (L ≃ₐ[K] L) 𝒪[L]ˣ) := by
   rw [subsingleton_tateZero_iff]
   intro x hx
-  obtain ⟨w, hw⟩ := exists_eq_of_forall_smul_eq hx
+  obtain ⟨w, hw⟩ := exists_eq_of_forall_smul_eq (K := K) (L := L) hx
   obtain ⟨v, rfl⟩ := normIntegerUnits_surjective (K := K) (L := L) w
   refine ⟨v, Units.ext (Subtype.ext ?_)⟩
   rw [coe_tateNorm_integerUnits, ← hw, ← coe_norm_integer, coe_normIntegerUnits_eq]

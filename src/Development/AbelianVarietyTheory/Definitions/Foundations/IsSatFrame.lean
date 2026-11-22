@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+
+@[expose] public section
 
 namespace GlobalTheory.FGDepth
 

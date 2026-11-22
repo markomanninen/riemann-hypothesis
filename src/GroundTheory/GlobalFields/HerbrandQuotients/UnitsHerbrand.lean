@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsExact
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
-import GroundTheory.GlobalFields.HerbrandQuotients.LatticeBridge
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsExact
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
+public import GroundTheory.GlobalFields.HerbrandQuotients.LatticeBridge
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -100,7 +104,6 @@ theorem linearIndependent_logLattice_basis {ι : Type*} (b : Basis ι ℤ (logLa
   · funext i
     rw [Basis.ofZLatticeBasis_apply, Basis.map_apply]
     rfl
-  all_goals rfl
 
 end Log
 
@@ -119,7 +122,6 @@ theorem mult_smul (g : L ≃ₐ[K] L) (w : InfinitePlace L) : (g • w).mult = w
   · rfl
 
 omit [NumberField K] [NumberField L] in
-
 theorem fullLog_unitsRep (g : L ≃ₐ[K] L) (x : Additive (𝓞 L)ˣ) :
     fullLog L (unitsRep K L g x) = funPermRep ℝ (L ≃ₐ[K] L) (InfinitePlace L) g (fullLog L x) := by
   funext w
@@ -134,7 +136,6 @@ theorem funPermRep_mem_logLattice (g : L ≃ₐ[K] L) {m : InfinitePlace L → �
   exact ⟨unitsRep K L g x, fullLog_unitsRep g x⟩
 
 variable (K L) in
-
 def logLatticeRep : Representation ℤ (L ≃ₐ[K] L) (logLattice L) where
   toFun g := ((funPermRep ℝ (L ≃ₐ[K] L) (InfinitePlace L) g).restrictScalars ℤ).restrict
     fun _ hm => funPermRep_mem_logLattice g hm
@@ -151,16 +152,15 @@ def logLatticeRep : Representation ℤ (L ≃ₐ[K] L) (logLattice L) where
 
 omit [NumberField K] [NumberField L] in
 theorem coe_logLatticeRep (g : L ≃ₐ[K] L) (m : logLattice L) :
-    (logLatticeRep K L g m : InfinitePlace L → ℝ) =
+    (logLatticeRep (K := K) (L := L) g m : InfinitePlace L → ℝ) =
       funPermRep ℝ (L ≃ₐ[K] L) (InfinitePlace L) g m :=
   rfl
 
 variable [FiniteDimensional K L]
 
 omit [NumberField K] in
-
 theorem cycHerbrand_unitsRep_eq_logLattice {σ : L ≃ₐ[K] L} (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
-    cycHerbrand (unitsRep K L) σ = cycHerbrand (logLatticeRep K L) σ := by
+    cycHerbrand (unitsRep K L) σ = cycHerbrand (logLatticeRep (K := K) (L := L)) σ := by
   let p : Additive (𝓞 L)ˣ →+ logLattice L := (fullLog L).toIntLinearMap.rangeRestrict.toAddMonoidHom
   have hp : Function.Surjective p := (fullLog L).toIntLinearMap.surjective_rangeRestrict
   have : Finite p.ker := by
@@ -171,7 +171,8 @@ theorem cycHerbrand_unitsRep_eq_logLattice {σ : L ≃ₐ[K] L} (hσ : ∀ g, g 
     · intro x y h
       simp only [Subtype.mk.injEq] at h
       exact Subtype.ext (Additive.toMul.injective h)
-  exact cycHerbrand_eq_of_surjective_of_finite_ker (unitsRep K L) (logLatticeRep K L) σ hp
+  exact cycHerbrand_eq_of_surjective_of_finite_ker (unitsRep K L)
+    (logLatticeRep (K := K) (L := L)) σ hp
     (fun g x => Subtype.ext (fullLog_unitsRep g x))
     (hasHerbrandQuotient_cycSubOne_of_finite _ hσ)
 

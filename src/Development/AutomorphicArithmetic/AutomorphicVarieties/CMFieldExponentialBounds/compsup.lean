@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimeSetBoundDataOfPrimitiveChar
-import Development.AutomorphicArithmetic.QuadraticCharacters.GaussRoot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimeSetBoundDataOfPrimitiveChar
+public import Development.AutomorphicArithmetic.QuadraticCharacters.GaussRoot
+
+@[expose] public section
 
 open NumberField Formalism.HC UpperTheory.Top UpperTheory.V
 
@@ -97,8 +101,16 @@ private theorem indep (A : AbF) {M : Type} [Field M] [NumberField M] (hM : IsAbF
     first
       | exact @IsAlgClosure.normal ℚ (AlgebraicClosure ℚ) _ _ (AlgebraicClosure.instAlgebra ℚ) _
       | convert @IsAlgClosure.normal ℚ (AlgebraicClosure ℚ) _ _ (AlgebraicClosure.instAlgebra ℚ) _
-  let f : CyclotomicField N ℚ →ₐ[ℚ] AlgebraicClosure ℚ := IsAlgClosed.lift
-  let f' : CyclotomicField N' ℚ →ₐ[ℚ] AlgebraicClosure ℚ := IsAlgClosed.lift
+  let f : CyclotomicField N ℚ →ₐ[ℚ] AlgebraicClosure ℚ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
+  let f' : CyclotomicField N' ℚ →ₐ[ℚ] AlgebraicClosure ℚ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   obtain ⟨σ, hσ⟩ := exists_lift f τ
   obtain ⟨τ', hσ'⟩ := exists_res f' σ
   obtain ⟨b, hb⟩ := exists_pow hζ' τ'
@@ -149,7 +161,7 @@ private theorem core (A : AbF) {M : Type} [Field M] [NumberField M] (hM : IsAbFi
   have e2 : τ β = β ↔ jacobiSym (a : ℤ) d = 1 := sqrt_iff hζ _ hτ' hd hd4 hdN hβ
   have hηa : τ η = η ^ a := act_root hζ _ hτ' ((hη.pow_eq_one_iff_dvd N).2 h2)
   have e3 : τ (η + η⁻¹) = η + η⁻¹ ↔ (a ≡ 1 [MOD 2 ^ (e + 2)] ∨ a + 1 ≡ 0 [MOD 2 ^ (e + 2)]) := by
-    rw [map_add, map_inv₀, hηa]
+    rw [map_add (f := _), map_inv₀, hηa]
     exact trace_iff (pow_ne_zero _ two_ne_zero) hη a
   have e4 : τ ∈ (IntermediateField.adjoin ℚ {α, β, η + η⁻¹}).fixingSubgroup ↔
       τ α = α ∧ τ β = β ∧ τ (η + η⁻¹) = η + η⁻¹ := by

@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementW
-import Formalism.GaussJetBounds.ThmAGauss
-import Formalism.GaussJetBounds.GaussJetProofs.OneGauss
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementW
+public import Formalism.GaussJetBounds.ThmAGauss
+public import Formalism.GaussJetBounds.GaussJetProofs.OneGauss
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -18,7 +22,7 @@ variable {K : Type} [Field K] {σ ι : Type}
 
 lemma jetPairPoly_eq_sum (P : MvPolynomial ι (MvPolynomial σ K)) (Th : MvPowerSeries ι K)
     (S : Finset (ι →₀ ℕ)) (hS : P.support ⊆ S) :
-    jetPairPoly P Th = ∑ κ ∈ S, MvPolynomial.coeff κ P *
+    jetPairPoly P Th = ∑ κ ∈ S, AddMonoidAlgebra.coeff P κ *
       MvPolynomial.C (((mfact κ : ℕ) : K) * MvPowerSeries.coeff κ Th) := by
   unfold jetPairPoly
   refine Finset.sum_subset hS fun κ _ hκ => ?_
@@ -47,9 +51,6 @@ section Exps
 
 variable {ι₁ ι₂ : Type}
 
-def jn (a : ι₁ →₀ ℕ) (b : ι₂ →₀ ℕ) : ι₁ ⊕ ι₂ →₀ ℕ :=
-  a.mapDomain Sum.inl + b.mapDomain Sum.inr
-
 end Exps
 
 section Along
@@ -69,8 +70,8 @@ section Norm
 variable {K : Type} [NormedField K] [IsUltrametricDist K] {σ₁ σ₂ : Type}
 
 lemma norm_coeff_rename_le {σ τ : Type} (e : σ → τ) (he : Function.Injective e)
-    (A : MvPolynomial σ K) {B : ℝ} (hA : ∀ n, ‖MvPolynomial.coeff n A‖ ≤ B) (n : τ →₀ ℕ) :
-    ‖MvPolynomial.coeff n (MvPolynomial.rename e A)‖ ≤ B := by
+    (A : MvPolynomial σ K) {B : ℝ} (hA : ∀ n, ‖AddMonoidAlgebra.coeff A n‖ ≤ B) (n : τ →₀ ℕ) :
+    ‖AddMonoidAlgebra.coeff (MvPolynomial.rename e A) n‖ ≤ B := by
   by_cases hn : ∃ u : σ →₀ ℕ, u.mapDomain e = n
   · obtain ⟨u, rfl⟩ := hn
     rw [MvPolynomial.coeff_rename_mapDomain e he]

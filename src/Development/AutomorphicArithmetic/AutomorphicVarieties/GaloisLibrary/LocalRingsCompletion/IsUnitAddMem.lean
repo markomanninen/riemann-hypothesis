@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.IsCharOneOfSubsingleton
+
+@[expose] public section
 
 open PowerSeries IsLocalRing UpperTheory.V.abelian₂
 open IsDiscreteValuationRing (addVal)
@@ -27,7 +31,7 @@ private theorem binom_prime {R : Type*} [CommRing R] {l : ℕ} (hl : l.Prime) (y
   refine ⟨Polynomial.aeval y r.divX, ?_⟩
   have h5 := congrArg (Polynomial.aeval y) hr
   rw [h4] at h5
-  simp only [map_pow, map_add, map_one, Polynomial.aeval_X, map_mul, map_natCast] at h5
+  simp only [map_pow, map_add (f := _), map_one, Polynomial.aeval_X, map_mul, map_natCast] at h5
   rw [h5]
   ring
 

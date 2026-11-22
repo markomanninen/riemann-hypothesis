@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStmt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantIntegrals
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LatticeSummability
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalConditionsAndQuotientSplitting
-import Lemmata.GeneralBFactRightSide.Imports
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStmt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MajorantIntegrals
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LatticeSummability
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PeriodLatticeFactsSplitOfGeneral
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocalConditionsAndQuotientSplitting
+public import Lemmata.GeneralBFactRightSide.Imports
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 
@@ -38,14 +42,17 @@ theorem sizesSup : PBC.SizesSup := by
   have hgR : (0 : ℝ) < S.g := by linarith
   have hrd1 := rd_ge_one E
   have hrd : 0 < S6.rd E := by linarith
-  obtain ⟨-, -, -, -, -, -, hN, -⟩ := Formalism.FourierDecayAlt.P.block_lattices Formalism.FourierDecayAlt.P.lattice_facts_general
-    Formalism.FourierDecayAlt.P.dualIdealEqLiftIdeal Formalism.FourierDecayAlt.P.scaledIdealNorm E hU S.g S.G.r b n hgN
+  have hN' := Formalism.FourierDecayAlt.P.Jx2.sqrt_idl
+    Formalism.FourierDecayAlt.P.scaledIdealNorm E S.g (S6.nuBlock S.G.r b n + 1) hgN
+  have hN : √(FractionalIdeal.absNorm (S6.dualIdl E S.g (S6.nuBlock S.G.r b n)) : ℝ) =
+      (((S.g : ℝ) * S6.rd E ^ (S6.nuBlock S.G.r b n + 1)) ^ S6.deg E)⁻¹ := by
+    simpa only [S6.dualIdl] using hN'
   set ν : ℤ := S6.nuBlock S.G.r b n with hν
   set x : ℝ := S6.rd E ^ ν with hx
   have hxpos : 0 < x := zpow_pos hrd _
   have hexp : ((2 * S.G.r + 4 : ℤ) - 2 * b - n) = ν + 1 := by
     simp only [hν, S6.nuBlock]; ring
-  rw [hexp, zpow_add₀ hrd.ne', zpow_one] at hN
+  rw [zpow_add₀ hrd.ne', zpow_one] at hN
   set m : ℝ := Finset.univ.inf' Finset.univ_nonempty (thr S b n) with hm
   have hmpos : 0 < m := by
     rw [hm, Finset.lt_inf'_iff]; exact fun v _ => hthr v
@@ -105,7 +112,7 @@ theorem sizesSup : PBC.SizesSup := by
         simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
         rw [pow_mul]
     _ ≤ ∏ v, Cs * (thr S b n v ^ 2 * ((S.g : ℝ) * (x * S6.rd E)) ^ 2) :=
-        Finset.prod_le_prod (fun v _ => by have := hthr v; positivity) (fun v _ => key v)
+        Finset.prod_le_prod₀ (fun v _ => by have := hthr v; positivity) (fun v _ => key v)
     _ = Cs ^ S.f * ((∏ v, thr S b n v) ^ 2 * ((S.g : ℝ) * (x * S6.rd E)) ^ (2 * S.f)) := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
           Finset.prod_mul_distrib, Finset.prod_pow, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
@@ -116,7 +123,7 @@ theorem psi_add {f : ℕ} (a b : crystallineComparison.V f) : crystallineCompari
   rw [← Complex.exp_add, ← mul_add, ← Finset.sum_add_distrib]
   congr 2
   refine Finset.sum_congr rfl (fun v _ => ?_)
-  simp only [Pi.add_apply, map_add]
+  simp only [Pi.add_apply, map_add (f := _)]
   ring
 
 theorem psi_zero {f : ℕ} : crystallineComparison.psi (0 : crystallineComparison.V f) = 1 := by simp [crystallineComparison.psi]
@@ -362,7 +369,7 @@ theorem lstdSum : PBC.LstdSum := by
     intro σ; rw [hvb, Measure.real, Measure.real, Measure.addHaar_ball_center]
   have hpt : ∀ σ : crystallineComparison.V f, ∀ y ∈ Metric.ball σ δ, crystallineComparison.mL K large₂ σ ≤ crystallineComparison.mL K L' y := by
     intro σ y hy
-    apply Finset.prod_le_prod (fun v _ => Formalism.FourierDecayAlt.P.LatticeSummability.mfac_nonneg K (hLg0 v) _ (norm_nonneg _))
+    apply Finset.prod_le_prod₀ (fun v _ => Formalism.FourierDecayAlt.P.LatticeSummability.mfac_nonneg K (hLg0 v) _ (norm_nonneg _))
     intro v _
     have hyv : ‖y v‖ ≤ ‖σ v‖ + δ := by
       have h1 : ‖y v - σ v‖ ≤ ‖y - σ‖ := norm_le_pi_norm (y - σ) v
@@ -406,7 +413,7 @@ theorem lstdSum : PBC.LstdSum := by
 
   rw [hmaj.2, hvb, vol_ball_V f δ hδ, show (Real.pi * δ ^ 2) ^ f = ∏ _v : Fin f, (Real.pi * δ ^ 2) by simp]
   rw [← Finset.prod_div_distrib]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro v _
     have hK2 : (0 : ℝ) < (K : ℝ) - 2 := by simp [hKdef, C.Kst]; norm_num
     have := hL'pos v

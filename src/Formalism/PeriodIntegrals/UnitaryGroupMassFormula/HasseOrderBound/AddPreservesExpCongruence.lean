@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HasseOrderBound.Development
+
+@[expose] public section
 
 noncomputable section
 

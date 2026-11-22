@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LGenKA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LGenKA
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.Rsw.L.LGenK
 
@@ -43,7 +47,7 @@ theorem core {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ x, σ (σ x) = 
   have hXY : c * (-cj σ b0) + d * cj σ a = 1 := by rw [← R3]; noncomm_ring
   have hXY' : c.map π * (-cj σ b0).map π + d.map π * (cj σ a).map π = 1 := by
     have := congrArg π.mapMatrix hXY
-    simpa only [map_add, map_mul, map_one, RingHom.mapMatrix_apply] using this
+    simpa only [map_add (f := _), map_mul, map_one, RingHom.mapMatrix_apply] using this
   have key : ∃ b : Matrix n n R, cj σ b = b ∧ (d + c * b).det ∉ 𝔭 := by
     have hdet : ∀ b : Matrix n n R, ((d + c * b).map π).det ≠ 0 → (d + c * b).det ∉ 𝔭 := by
       intro b hb hm
@@ -78,11 +82,11 @@ theorem core {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ x, σ (σ x) = 
           have h2π : π (↑h2.unit⁻¹ : R) * 2 = 1 := by
             rw [← map_ofNat π 2, ← map_mul, show (↑h2.unit⁻¹ : R) * 2 = ↑h2.unit⁻¹ * ↑h2.unit from rfl,
               Units.inv_mul, map_one]
-          simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.add_apply, smul_eq_mul, map_mul, map_add, cj_apply,
+          simp only [Matrix.map_apply, Matrix.smul_apply, Matrix.add_apply, smul_eq_mul, map_mul, map_add (f := _), cj_apply,
             hB', hsπ, hl, hij]
           linear_combination (B i j) * h2π
         have : (d + c * ((↑h2.unit⁻¹ : R) • (B' + cj σ B'))).map π = d.map π + c.map π * B := by
-          rw [← hmap]; simp [Matrix.map_add, Matrix.map_mul]
+          rw [← hmap]; simp [Matrix.map_add (f := _), Matrix.map_mul]
         rw [this]; exact hBd
     · push_neg at hst
       obtain ⟨y, hy, hσy⟩ := hst
@@ -99,11 +103,11 @@ theorem core {R : Type} [CommRing R] (σ : R →+* R) (hσ : ∀ x, σ (σ x) = 
       · rw [cj_add, cj_cj σ hσ, add_comm]
       · have hmap : (x • B' + cj σ (x • B')).map π = B := by
           ext i j
-          simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, cj_apply, map_add, map_mul,
+          simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, cj_apply, map_add (f := _), map_mul,
             hπx, hπσx, hB', hl]
           ring
         have : (d + c * (x • B' + cj σ (x • B'))).map π = d.map π + c.map π * B := by
-          rw [← hmap]; simp [Matrix.map_add, Matrix.map_mul]
+          rw [← hmap]; simp [Matrix.map_add (f := _), Matrix.map_mul]
         rw [this]; exact hBd
   obtain ⟨b, hb, hb𝔭⟩ := key
   refine ⟨b, hb, hU _ hb𝔭 fun hσ𝔭 => hb𝔭 ?_⟩

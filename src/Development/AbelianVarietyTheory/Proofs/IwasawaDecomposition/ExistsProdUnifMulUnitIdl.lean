@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,20 +74,19 @@ theorem valAt_prod (S : Finset (HeightOneSpectrum (𝓞 L))) (n : HeightOneSpect
 
 end GlobalTheory.Mem.Chr.IdlFact
 
-open GlobalTheory.Mem.Chr.IdlFact in
-open Classical in
 
+open Classical in
 theorem GlobalTheory.Mem.Chr.exists_prod_unif_mul_unitIdl : ∀ (L : Type) [Field L] [NumberField L] (a : Ideles L), ∃ (S : Finset (HeightOneSpectrum (𝓞 L))) (n : HeightOneSpectrum (𝓞 L) → ℤ) (u : Ideles L), u ∈ unitIdl L ∧ a = (∏ v ∈ S, localIdele L v (atFin v (unif v)) ^ n v) * u ∧ ∀ v, Valued.v ((a : AdeleRing (𝓞 L) L).2 v) = WithZero.exp (-(if v ∈ S then n v else 0)) := by
   intro L _ _ a
-  let S := (finite_valAt_ne_one a).toFinset
-  let n : HeightOneSpectrum (𝓞 L) → ℤ := fun v => -WithZero.log (valAt v a)
-  have hv : ∀ v, valAt v a = WithZero.exp (-(if v ∈ S then n v else 0)) := fun v => by
+  let S := (GlobalTheory.Mem.Chr.IdlFact.finite_valAt_ne_one a).toFinset
+  let n : HeightOneSpectrum (𝓞 L) → ℤ := fun v => -WithZero.log (GlobalTheory.Mem.Chr.IdlFact.valAt v a)
+  have hv : ∀ v, GlobalTheory.Mem.Chr.IdlFact.valAt v a = WithZero.exp (-(if v ∈ S then n v else 0)) := fun v => by
     split_ifs with h
     · simp only [n, neg_neg]
-      exact (WithZero.exp_log (valAt_ne_zero v a)).symm
-    · have : valAt v a = 1 := by simpa [S] using h
+      exact (WithZero.exp_log (GlobalTheory.Mem.Chr.IdlFact.valAt_ne_zero v a)).symm
+    · have : GlobalTheory.Mem.Chr.IdlFact.valAt v a = 1 := by simpa [S] using h
       rw [this]; simp
   refine ⟨S, n, (∏ v ∈ S, localIdele L v (atFin v (unif v)) ^ n v)⁻¹ * a, fun v => ?_, ?_, hv⟩
-  · rw [← valAt_apply, map_mul, map_inv, valAt_prod, hv v]
+  · rw [← GlobalTheory.Mem.Chr.IdlFact.valAt_apply, map_mul, map_inv, GlobalTheory.Mem.Chr.IdlFact.valAt_prod, hv v]
     exact inv_mul_cancel₀ WithZero.exp_ne_zero
   · rw [mul_inv_cancel_left]

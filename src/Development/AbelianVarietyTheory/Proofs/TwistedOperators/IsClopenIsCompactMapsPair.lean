@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HasConductorMulShift
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HasConductorMulShift
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open ValuativeRel Matrix IsLocalRing
 open scoped Pointwise
@@ -20,7 +24,7 @@ theorem ite_mem_SB {X : Type*} [TopologicalSpace X] {p : X → Prop} [DecidableP
 
 variable [Fintype n] [Fintype n']
 
-theorem isClopen_lattice (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] : IsClopen (L : Set (n → k)) := by
+theorem isClopen_lattice (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] : IsClopen (L : Set (n → k)) := by
   classical
   haveI := t2Space k
   obtain ⟨g, rfl⟩ := exists_smul_lat (stdLat k n) L
@@ -33,8 +37,8 @@ theorem isClopen_lattice (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] : IsC
   refine isClopen_iInter_of_finite fun i => IsClopen.preimage ⟨(isCompact_int k).isClosed, isOpen_int k⟩ ?_
   exact (continuous_apply i).comp (continuous_const.matrix_mulVec continuous_id)
 
-omit [Fintype n] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [Fintype n] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem maps_stdLat_iff {x : Matrix n n' k} :
     (∀ y ∈ stdLat k n', x *ᵥ y ∈ stdLat k n) ↔ ∀ i j, x i j ∈ 𝒪[k] := by
   classical
@@ -46,8 +50,8 @@ theorem maps_stdLat_iff {x : Matrix n n' k} :
     split_ifs
     exacts [one_mem _, zero_mem _]
 
-theorem isClopen_isCompact_maps (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsLattice k]
-    [L.IsLattice k] : IsClopen {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} ∧
+theorem isClopen_isCompact_maps (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsFullLattice k]
+    [L.IsFullLattice k] : IsClopen {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} ∧
       IsCompact {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} := by
   classical
   haveI := t2Space k
@@ -69,7 +73,7 @@ theorem isClopen_isCompact_maps (S : Submodule 𝒪[k] (n' → k)) (L : Submodul
   rw [e]
   exact ⟨IsClopen.preimage ⟨hKc.isClosed, hKo⟩ (sideMul g h).continuous, (sideMul g h).isCompact_preimage.2 hKc⟩
 
-theorem latInd_mem_SB (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsLattice k] [L.IsLattice k] :
+theorem latInd_mem_SB (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsFullLattice k] [L.IsFullLattice k] :
     latInd S L ∈ SB (Matrix n n' k) := by
   classical
   exact ite_mem_SB (isClopen_isCompact_maps S L).1 (isClopen_isCompact_maps S L).2

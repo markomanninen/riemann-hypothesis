@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjLowUni
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjLowUni
+
+@[expose] public section
 
 noncomputable section
 
@@ -228,13 +232,12 @@ theorem blocks_small : ∀ (E : Type) [Field E] [NumberField E] (m r : ℕ) (S :
     refine (hK.prod (hrow.prod hcol)).eventually_forall_of_forall_eventually fun z₀ _ => ?_
     obtain ⟨a, b⟩ := conj_near S Prod.fst continuous_fst z₀
     obtain ⟨-, -, -, -, c⟩ := blocks_near S a b
-    refine eventually_inf_principal.1 (Tendsto.eventually (p := fun x => x ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 E) E) ?_ hOo)
     have hc : Continuous fun t : Matrix (Fin (m + 1)) (Fin (r + 1)) (Af E) × (Fin (m + 1) → Af E) × (Fin (r + 1) → Af E) =>
         ∑ j, ∑ l, t.2.1 j * t.1 j l * t.2.2 l := by fun_prop
     have h3 := (hc.tendsto (0, z₀.2)).comp (c.prodMk_nhds
       (((continuous_snd.comp continuous_snd).tendsto (1, z₀)).mono_left inf_le_left))
     simp only [Matrix.zero_apply, mul_zero, zero_mul, Finset.sum_const_zero] at h3
-    exact h3
+    exact eventually_inf_principal.1 (h3.eventually hOo)
   refine ⟨_, h1.and h2, fun k hk hS Y hY => ?_⟩
   obtain ⟨a, b, c, d⟩ := hk.1 Y hY hS
   exact ⟨a, b, c, d, fun ρ hρ γ hγ => hk.2 (Y, ρ, γ) ⟨hY, hρ, hγ⟩ hS⟩

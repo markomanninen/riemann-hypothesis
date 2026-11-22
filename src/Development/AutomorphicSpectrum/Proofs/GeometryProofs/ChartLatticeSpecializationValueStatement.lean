@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartLatticeSpecializationValue
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartLatticeSpecializationValue
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LabelSigBijective
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar
 
 set_option maxHeartbeats 1000000 in

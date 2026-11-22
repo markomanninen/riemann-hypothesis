@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ThetaDilations.BoundedA
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ThetaDilations.BoundedA
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix
 open scoped ENNReal NNReal

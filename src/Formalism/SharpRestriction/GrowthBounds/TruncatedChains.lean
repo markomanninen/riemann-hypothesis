@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RaisingKillOfInterface
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestPairOf
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.ProjectorFactorMemWeightSpace
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.YbatBase
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.YbatStep
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnNODrop
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RaisingKillOfInterface
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestPairOf
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.ProjectorFactorMemWeightSpace
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.YbatBase
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.YbatStep
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CnNODrop
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.ExtremalProjector
 

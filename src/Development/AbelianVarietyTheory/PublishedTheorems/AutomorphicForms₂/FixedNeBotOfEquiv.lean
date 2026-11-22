@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsReadingLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAl
 def toIrrRep {n : ℕ} (π : Irr (w.adicCompletion E) n) : IrrRep (GL (Fin n) (w.adicCompletion E)) :=
   ⟨π.V, π.π, π.smooth, π.irr⟩
 
-theorem IsRec.recLaws {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRec h rc) :
+theorem IsRec.recLaws {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRec h rc) :
     RecLaws fun _ (π : Irr (w.adicCompletion E) _) => rc (cls (toIrrRep π)) := by
   obtain ⟨a, ha, ε, -, H⟩ := H
   have hc : ∀ (χ : (w.adicCompletion E)ˣ →* ℂˣ) (c : Irr (w.adicCompletion E) 1),
@@ -62,10 +66,5 @@ theorem IsRec.recLaws {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRec h rc
     have φ := equivRep (toIrrRep π)
     rw [H.sat (cls (toIrrRep π)) α ⟨IrrRep.irr _, fixed_ne_bot_of_equiv φ hα.2.1,
       (IsSubquotient.of_surjective φ.toIntertwiningMap φ.toLinearEquiv.surjective).trans hα.2.2⟩, WD.frobEig_diag]
-
-theorem _root_.GlobalTheory.Published.LocalLanglandsGL.exists_recLaws (H : GlobalTheory.Published.LocalLanglandsGL) (h : IsPlaceOver A w) :
-    ∃ rc : ∀ n, Irr (w.adicCompletion E) n → WD h, RecLaws rc :=
-  let ⟨_, hrc, _⟩ := H.1 E Ω A w h
-  ⟨_, hrc.recLaws⟩
 
 end GlobalTheory.LocLanglands

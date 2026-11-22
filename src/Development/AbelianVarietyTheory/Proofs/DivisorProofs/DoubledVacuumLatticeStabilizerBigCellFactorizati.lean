@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellFactorisationDoubledUnitaryGroup
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntiCols
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCellFactorisationDoubledUnitaryGroup
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -21,13 +26,13 @@ theorem invOf_two_eq [Invertible (2 : AE F E)] :
     (⅟(2 : AE F E)) = algebraMap (AF F) (AE F E) (⅟(2 : AF F)) :=
   invOf_eq_right_inv (by rw [← map_ofNat (algebraMap (AF F) (AE F E)) 2, ← map_mul, mul_invOf_self, map_one])
 
-theorem valued_two {v : Pl F} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : Valued.v (2 : Fv F v) = 1 := by
+theorem valued_two {v : Pl (F := F)} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) : Valued.v (2 : Fv F v) = 1 := by
   have := HeightOneSpectrum.valuedAdicCompletion_eq_valuation (K := F) v (2 : 𝓞 F)
   rw [HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_eq_one_iff.2 h2] at this
   convert this using 2
   exact (map_ofNat _ 2).symm
 
-theorem evFin_half_mem {v : Pl F} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
+theorem evFin_half_mem {v : Pl (F := F)} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     evFin F v (⅟(2 : AF F)) ∈ v.adicCompletionIntegers F := by
   have e : evFin F v (⅟(2 : AF F)) * 2 = 1 := by
     rw [← map_ofNat (evFin F v) 2, ← map_mul, invOf_mul_self, map_one]
@@ -36,14 +41,14 @@ theorem evFin_half_mem {v : Pl F} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
   rw [map_mul, valued_two h2, mul_one, map_one] at h
   rw [h]
 
-theorem half_smul_mem {d : ℕ} {W : Spc F E d} {v : Pl F} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) {y : Fin d → AE F E}
+theorem half_smul_mem {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} (h2 : (2 : 𝓞 F) ∉ v.asIdeal) {y : Fin d → AE F E}
     (hy : y ∈ GlobalTheory.InertSph.latAt W v) : (⅟(2 : AF F)) • y ∈ GlobalTheory.InertSph.latAt W v := by
   have hle : GlobalTheory.InertSph.latAt W v ≤ (GlobalTheory.InertSph.latAt W v).comap
-      (DistribMulAction.toAddMonoidHom (Fin d → AE F E) (⅟(2 : AF F))) := by
+      (DistribSMul.toAddMonoidHom (Fin d → AE F E) (⅟(2 : AF F))) := by
     show AddSubgroup.closure _ ≤ _
     rw [AddSubgroup.closure_le]
     rintro z ⟨a, ha, hint, y, hy, rfl⟩
-    rw [SetLike.mem_coe, AddSubgroup.mem_comap, DistribMulAction.toAddMonoidHom_apply, smul_smul]
+    rw [SetLike.mem_coe, AddSubgroup.mem_comap, DistribSMul.toAddMonoidHom_apply, smul_smul]
     refine AddSubgroup.subset_closure ⟨⅟(2 : AF F) * a, fun u hu => ?_, ?_, y, hy, rfl⟩
     · rw [smul_eq_mul, mul_left_comm, ← smul_eq_mul u a, ha u hu, mul_zero]
     · rw [map_mul]; exact mul_mem (evFin_half_mem h2) hint
@@ -51,7 +56,7 @@ theorem half_smul_mem {d : ℕ} {W : Spc F E d} {v : Pl F} (h2 : (2 : 𝓞 F) �
 
 section Lat
 
-variable {d : ℕ} {W : Spc F E d} {v : Pl F}
+variable {d : ℕ} {W : Spc F E d} {v : Pl (F := F)}
 
 theorem latD_add {z w : Fin d ⊕ Fin d → AE F E} (hz : z ∈ latD W v) (hw : w ∈ latD W v) : z + w ∈ latD W v :=
   ⟨add_mem hz.1 hw.1, add_mem hz.2 hw.2⟩
@@ -88,7 +93,7 @@ end Lat
 
 section Group
 
-variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F}
+variable {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl (F := F)}
 
 theorem KD_mul {a b : UD σ W} (ha : a ∈ KD σ W v) (hb : b ∈ KD σ W v) : a * b ∈ KD σ W v := by
   have hm : matD (a * b) = matD a * matD b := rfl
@@ -117,7 +122,7 @@ namespace GlobalTheory.DblVacFactor
 open Matrix GlobalTheory.DblVac GlobalTheory.BigCell
 
 theorem factor : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (d : ℕ)
-    (W : Spc F E d) (v : Pl F), (2 : 𝓞 F) ∉ v.asIdeal → ∀ g ∈ GlobalTheory.DblVac.KD σ W v,
+    (W : Spc F E d) (v : Pl (F := F)), (2 : 𝓞 F) ∉ v.asIdeal → ∀ g ∈ GlobalTheory.DblVac.KD σ W v,
     IsUnit ((GlobalTheory.DblVac.antiCols (F := F) (E := E) d)ᵀ * GlobalTheory.DblVac.matD g * GlobalTheory.DblVac.antiCols d).det →
     (∀ z ∈ GlobalTheory.InertSph.latAt W v,
       ((GlobalTheory.DblVac.antiCols (F := F) (E := E) d)ᵀ * GlobalTheory.DblVac.matD g * GlobalTheory.DblVac.antiCols d)⁻¹ *ᵥ z ∈

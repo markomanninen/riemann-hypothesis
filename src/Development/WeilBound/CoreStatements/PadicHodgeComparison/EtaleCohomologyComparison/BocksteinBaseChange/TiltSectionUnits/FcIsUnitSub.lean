@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.StmtPhi
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.TranscendentalPeriodUnits.CrBase
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.FixedBaseSurjectivity.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.StmtPhi
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.TranscendentalPeriodUnits.CrBase
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.FixedBaseSurjectivity.Imports
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -58,10 +62,10 @@ theorem factsC : BcrisPeriodFacts := fun l _ K r => by
   refine ⟨⟨fun a => fc_ι_c a, fun z => hb.ι_q z, hb.ι_inj, Loc2.isUnit_right _ _,
       ?_, fun z => hb.φ_q z, ?_, ?_, fun g z => hb.σ_q g.1 z, ?_⟩, fc_range⟩
   · intro a
-    show φB l (cB l a) = cB l (ACris.phi ℂ_[l] l a)
+    show φB l (cB l a) = cB l (ACris.phi (K := ℂ_[l]) (p := l) a)
     exact Loc2.map_mk₀ _ _ _ _ _ a
   · intro z
-    show ACris.phi ℂ_[l] l (algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l)
+    show ACris.phi (K := ℂ_[l]) (p := l) (algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l)
       (IsPerfectoidField.padicIntToWitt l z)) =
       algebraMap (AInf ℂ_[l] l) (ACris.ACris ℂ_[l] l) (IsPerfectoidField.padicIntToWitt l z)
     rw [ACris.phi_algebraMap, ACris.frobenius_padicIntToWitt]
@@ -69,8 +73,8 @@ theorem factsC : BcrisPeriodFacts := fun l _ K r => by
     show Formalism.Per6.σB g.1 (cB l a) = cB l (ACris.galCris (IntermediateField.fixingSubgroupEquiv K g) a)
     exact Loc2.map_mk₀ _ _ _ _ _ a
   · intro g a
-    show ACris.phi ℂ_[l] l (ACris.galCris (IntermediateField.fixingSubgroupEquiv K g) a) =
-      ACris.galCris (IntermediateField.fixingSubgroupEquiv K g) (ACris.phi ℂ_[l] l a)
+    show ACris.phi (K := ℂ_[l]) (p := l) (ACris.galCris (IntermediateField.fixingSubgroupEquiv K g) a) =
+      ACris.galCris (IntermediateField.fixingSubgroupEquiv K g) (ACris.phi (K := ℂ_[l]) (p := l) a)
     rw [← ACris.gal_smul_def, ← ACris.gal_smul_def, ACris.phi_gal_smul]
 
 end CrystallineSemistableComparison

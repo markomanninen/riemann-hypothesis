@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.QuotientMeasure
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.QuotientMeasure
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open scoped NumberField.AdeleRing RestrictedProduct
@@ -68,19 +72,19 @@ theorem exists_adelicNorm_vecMul_le_mul {C : Set (AdelicGLn.AdelicGL K n)} (hC :
     · exact norm_vecMul_le_of_norm_le v (zero_le_one.trans (hb1 v)) (hb v g hg) _
     · rw [norm_vecMul_integralGL v (hS g hg v hv), one_mul]
 
-variable (K n) in
 
+variable (K n) in
 def normOneGL : Subgroup (AdelicGLn.AdelicGL K n) :=
   (normOneSubgroup K).comap (AdelicGLn.det K n)
 
 theorem mem_normOneGL {g : AdelicGLn.AdelicGL K n} :
-    g ∈ normOneGL K n ↔ (ideleModule K (AdelicGLn.det K n g) : ℝ) = 1 :=
+    g ∈ normOneGL (K := K) (n := n) ↔ (ideleModule K (AdelicGLn.det K n g) : ℝ) = 1 :=
   mem_normOneSubgroup
 
-theorem isClosed_normOneGL : IsClosed (normOneGL K n : Set (AdelicGLn.AdelicGL K n)) :=
+theorem isClosed_normOneGL : IsClosed (normOneGL (K := K) (n := n) : Set (AdelicGLn.AdelicGL K n)) :=
   (isClosed_normOneSubgroup K).preimage (AdelicGLn.continuous_det K n)
 
-theorem rationalGL_le_normOneGL : AdelicGLn.rationalGL K n ≤ normOneGL K n := by
+theorem rationalGL_le_normOneGL : AdelicGLn.rationalGL K n ≤ normOneGL (K := K) (n := n) := by
   rintro _ ⟨γ, rfl⟩
   have h : AdelicGLn.det K n (AdelicGLn.diagonal K n γ) =
       IdeleGroup.diagonal K (Matrix.GeneralLinearGroup.det γ) := by
@@ -89,7 +93,7 @@ theorem rationalGL_le_normOneGL : AdelicGLn.rationalGL K n ≤ normOneGL K n := 
     exact (RingHom.map_det (algebraMap K 𝔸[K]) (γ : Matrix (Fin n) (Fin n) K)).symm
   rw [mem_normOneGL, h, ideleModule_diagonal, Positive.val_one]
 
-theorem maxCompact_le_normOneGL : maxCompact (K := K) (n := n) ≤ normOneGL K n := by
+theorem maxCompact_le_normOneGL : maxCompact (K := K) (n := n) ≤ normOneGL (K := K) (n := n) := by
   intro k hk
   set f : AdelicGLn.AdelicGL K n →* {r : ℝ // 0 < r} := (ideleModule K).comp (AdelicGLn.det K n)
     with hf
@@ -113,17 +117,6 @@ theorem maxCompact_le_normOneGL : maxCompact (K := K) (n := n) ≤ normOneGL K n
     exact absurd (hbound m).2 (not_le.2 hm)
   · obtain ⟨m, hm⟩ := (tendsto_pow_atTop_atTop_of_one_lt hgt).eventually_gt_atTop M |>.exists
     exact absurd (hbound m).1 (not_le.2 hm)
-
-theorem exists_pos_le_height_of_subset {C : Set (AdelicGLn.AdelicGL K n)} (hC : IsCompact C) :
-    ∃ ε : ℝ, 0 < ε ∧ ∀ g ∈ (AdelicGLn.rationalGL K n : Set (AdelicGLn.AdelicGL K n)) * C,
-      ∀ x : Fin n → K, x ≠ 0 → ε ≤ height g x := by
-  obtain ⟨ε, hε, h⟩ := exists_pos_le_height hC
-  refine ⟨ε, hε, ?_⟩
-  rintro _ ⟨_, ⟨γ, rfl⟩, c, hc, rfl⟩ x hx
-  rw [height_diagonal_mul]
-  refine h c hc _ fun h0 => hx ?_
-  have := congrArg (fun y => y ᵥ* ((γ⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)) h0
-  simpa [vecMul_vecMul, ← Units.val_mul] using this
 
 theorem ratVec_single_one (j : Fin n) :
     ratVec (Pi.single j (1 : K)) = (Pi.single j (1 : 𝔸[K]) : Fin n → 𝔸[K]) := by
@@ -187,7 +180,7 @@ theorem coe_finset_prod_pos {ι : Type*} (s : Finset ι) (f : ι → {r : ℝ //
   | insert a s ha ih => rw [Finset.prod_insert ha, Finset.prod_insert ha, Positive.val_mul, ih]
 
 theorem exists_isCompact_forall_of_pos_le_height {ε : ℝ} (hε : 0 < ε) :
-    ∃ C : Set (AdelicGLn.AdelicGL K n), IsCompact C ∧ ∀ g ∈ normOneGL K n,
+    ∃ C : Set (AdelicGLn.AdelicGL K n), IsCompact C ∧ ∀ g ∈ normOneGL (K := K) (n := n),
       (∀ x : Fin n → K, x ≠ 0 → ε ≤ height g x) →
         g ∈ (AdelicGLn.rationalGL K n : Set (AdelicGLn.AdelicGL K n)) * C := by
   classical
@@ -275,7 +268,7 @@ theorem exists_isCompact_forall_of_pos_le_height {ε : ℝ} (hε : 0 < ε) :
         _ = (s ^ m * r l) ^ d := (mul_pow _ _ _).symm
         _ ≤ r i ^ d := pow_le_pow_left₀ (mul_nonneg (pow_nonneg hs0.le _) (hr l).le) h1 _
 
-    have hba : b * diagUnits (m + 1) (fun i => posIdele (r i) (hr i)) ∈ normOneGL K (m + 1) := by
+    have hba : b * diagUnits (m + 1) (fun i => posIdele (r i) (hr i)) ∈ normOneGL (K := K) (n := (m + 1)) := by
       have : b * diagUnits (m + 1) (fun i => posIdele (r i) (hr i)) =
           AdelicGLn.diagonal K _ γ * g * k⁻¹ := by rw [heq]; group
       rw [this]
@@ -299,7 +292,7 @@ theorem exists_isCompact_forall_of_pos_le_height {ε : ℝ} (hε : 0 < ε) :
                   rw [Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ i),
                     Finset.card_univ, Fintype.card_fin, Nat.add_sub_cancel]
               _ ≤ ∏ j ∈ Finset.univ.erase i, r j ^ d :=
-                  Finset.prod_le_prod (fun _ _ => hLρ0.le) fun j _ => hlow j
+                  Finset.prod_le_prod₀ (fun _ _ => hLρ0.le) fun j _ => hlow j
         _ = ∏ j, r j ^ d := Finset.mul_prod_erase _ (fun j => r j ^ d) (Finset.mem_univ i)
         _ ≤ m₀⁻¹ := hprod
     have hbox : ∀ i, r i ∈ Icc Lb Ub := fun i => by
@@ -315,76 +308,22 @@ theorem exists_isCompact_forall_of_pos_le_height {ε : ℝ} (hε : 0 < ε) :
     dsimp only
     rw [← heq, inv_mul_cancel_left]
 
-theorem exists_isCompact_subset_iff {Y : Set (AdelicGLn.AdelicGL K n)}
-    (hY : Y ⊆ (normOneGL K n : Set (AdelicGLn.AdelicGL K n))) :
-    (∃ C : Set (AdelicGLn.AdelicGL K n), IsCompact C ∧
-      Y ⊆ (AdelicGLn.rationalGL K n : Set (AdelicGLn.AdelicGL K n)) * C) ↔
-    ∃ ε : ℝ, 0 < ε ∧ ∀ g ∈ Y, ∀ x : Fin n → K, x ≠ 0 → ε ≤ height g x := by
-  constructor
-  · rintro ⟨C, hC, hYC⟩
-    obtain ⟨ε, hε, h⟩ := exists_pos_le_height_of_subset hC
-    exact ⟨ε, hε, fun g hg => h g (hYC hg)⟩
-  · rintro ⟨ε, hε, h⟩
-    obtain ⟨C, hC, hC'⟩ := exists_isCompact_forall_of_pos_le_height (K := K) (n := n) hε
-    exact ⟨C, hC, fun g hg => hC' g (hY hg) (h g hg)⟩
 
 variable (K n) in
+abbrev rationalGLOne : Subgroup (normOneGL (K := K) (n := n)) :=
+  (AdelicGLn.rationalGL K n).subgroupOf (normOneGL (K := K) (n := n))
 
-abbrev rationalGLOne : Subgroup (normOneGL K n) :=
-  (AdelicGLn.rationalGL K n).subgroupOf (normOneGL K n)
-
-instance locallyCompactSpace_normOneGL : LocallyCompactSpace (normOneGL K n) :=
+instance locallyCompactSpace_normOneGL : LocallyCompactSpace (normOneGL (K := K) (n := n)) :=
   isClosed_normOneGL.isClosedEmbedding_subtypeVal.locallyCompactSpace
 
 instance discreteTopology_rationalGLOne : DiscreteTopology (rationalGLOne K n) := by
   have := AdelicGLn.discreteTopology_rationalGL K n
-  let f : rationalGLOne K n → AdelicGLn.rationalGL K n := fun x => ⟨(x : normOneGL K n), x.2⟩
+  let f : rationalGLOne K n → AdelicGLn.rationalGL K n := fun x => ⟨(x : normOneGL (K := K) (n := n)), x.2⟩
   refine DiscreteTopology.of_continuous_injective (f := f) ?_ ?_
   · exact (continuous_subtype_val.comp continuous_subtype_val).subtype_mk _
   · intro x y hxy
     have h1 := congrArg Subtype.val hxy
     exact Subtype.ext (Subtype.ext h1)
-
-theorem isCompact_closure_mk_image_iff {Y : Set (normOneGL K n)} :
-    IsCompact (closure (RightCosetSpace.mk (rationalGLOne K n) '' Y)) ↔
-      ∃ ε : ℝ, 0 < ε ∧ ∀ g ∈ Y, ∀ x : Fin n → K, x ≠ 0 →
-        ε ≤ height (g : AdelicGLn.AdelicGL K n) x := by
-  constructor
-  · intro hc
-    obtain ⟨D, hD, hKD⟩ := RightCosetSpace.exists_isCompact_subset_mk_image _ hc
-    obtain ⟨ε, hε, h⟩ := exists_pos_le_height_of_subset (hD.image continuous_subtype_val)
-    refine ⟨ε, hε, fun g hg x hx => h _ ?_ x hx⟩
-    obtain ⟨d, hdD, hd⟩ := hKD (subset_closure ⟨g, hg, rfl⟩)
-    obtain ⟨γ, hγ⟩ := (RightCosetSpace.mk_eq_mk_iff).1 hd
-    refine ⟨((γ⁻¹ : rationalGLOne K n) : normOneGL K n), (γ⁻¹ : rationalGLOne K n).2, d, ⟨d, hdD, rfl⟩, ?_⟩
-    rw [← hγ]
-    change (((γ : normOneGL K n) : AdelicGLn.AdelicGL K n))⁻¹ *
-      ((γ : normOneGL K n) * g : AdelicGLn.AdelicGL K n) = g
-    rw [inv_mul_cancel_left]
-  · rintro ⟨ε, hε, h⟩
-    obtain ⟨C, hC, hC'⟩ := exists_isCompact_forall_of_pos_le_height (K := K) (n := n) hε
-    set D : Set (normOneGL K n) := Subtype.val ⁻¹' C with hD
-    have hDc : IsCompact D := isClosed_normOneGL.isClosedEmbedding_subtypeVal.isCompact_preimage hC
-    have hsub : RightCosetSpace.mk (rationalGLOne K n) '' Y ⊆
-        RightCosetSpace.mk (rationalGLOne K n) '' D := by
-      rintro _ ⟨g, hg, rfl⟩
-      obtain ⟨_, ⟨γ, rfl⟩, c, hc, hgc⟩ := hC' g g.2 (h g hg)
-      have hγ1 : AdelicGLn.diagonal K n γ ∈ normOneGL K n := rationalGL_le_normOneGL ⟨γ, rfl⟩
-      have hc1 : c ∈ normOneGL K n := by
-        have : c = (AdelicGLn.diagonal K n γ)⁻¹ * g := by rw [← hgc, inv_mul_cancel_left]
-        rw [this]
-        exact mul_mem (inv_mem hγ1) g.2
-      refine ⟨⟨c, hc1⟩, hc, (RightCosetSpace.mk_eq_mk_iff).2
-        ⟨⟨⟨_, inv_mem hγ1⟩, ⟨γ⁻¹, map_inv _ _⟩⟩, ?_⟩⟩
-      refine Subtype.ext ?_
-      change (AdelicGLn.diagonal K n γ)⁻¹ * (g : AdelicGLn.AdelicGL K n) = c
-      rw [← hgc]
-      exact inv_mul_cancel_left _ _
-    have hT2 : T2Space (RightCosetSpace (rationalGLOne K n)) := RightCosetSpace.t2Space _
-    have hcl : IsClosed (RightCosetSpace.mk (rationalGLOne K n) '' D) :=
-      (hDc.image (RightCosetSpace.continuous_mk _)).isClosed
-    exact (hDc.image (RightCosetSpace.continuous_mk _)).of_isClosed_subset isClosed_closure
-      (closure_minimal hsub hcl)
 
 end Reduction
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SubQRMemIntegers
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SubQRMemIntegers
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published.SiegelOneVector GlobalTheory.CompanionTheory.SiegelND GlobalTheory.CompanionTheory.SiegelND.Coef
 open scoped TensorProduct ENNReal
@@ -29,7 +33,8 @@ private theorem tensorBasis_repr_sum_mem_of_repr_mem {F E R : Type} [Field F] [F
     {d : ℕ} (b : Module.Basis (Fin d) F E) (O : Subring R) {ι : Type} (s : Finset ι)
     (f : ι → R ⊗[F] E) (h : ∀ x ∈ s, ∀ m, (Algebra.TensorProduct.basis R b).repr (f x) m ∈ O) (m : Fin d) :
     (Algebra.TensorProduct.basis R b).repr (∑ x ∈ s, f x) m ∈ O := by
-  rw [map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   exact O.sum_mem fun x hx => h x hx m
 
 private theorem tensorBasis_repr_tmul_mem_of_mem {F E R : Type} [Field F] [Field E] [Algebra F E] [CommRing R] [Algebra F R]
@@ -55,7 +60,8 @@ private theorem tensorBasis_repr_sigR_mem_of_repr_mem {F E R : Type} [Field F] [
     (hs : ∀ k m, algebraMap F R (b.repr (σ (b k)) m) ∈ O) (z : R ⊗[F] E)
     (hz : ∀ m, (Algebra.TensorProduct.basis R b).repr z m ∈ O) (m : Fin d) :
     (Algebra.TensorProduct.basis R b).repr (sigR R σ z) m ∈ O := by
-  rw [eq_sum_repr_tmul_basis b z, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_repr_tmul_basis b z, map_sum]
   refine tensorBasis_repr_sum_mem_of_repr_mem b O _ _ (fun k _ m' => ?_) m
   simp only [sigR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
   exact tensorBasis_repr_tmul_mem_of_mem b O _ _ (hz k) (hs k) m'

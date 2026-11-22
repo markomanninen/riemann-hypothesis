@@ -1,5 +1,9 @@
-import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
-import ReciprocityTheory.GroupCohomology.IsTowerLim
+module
+
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+public import ReciprocityTheory.GroupCohomology.IsTowerLim
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -87,7 +91,8 @@ def Pair.hom {M : TRep R G} {M' : TRep R G'} (P : Pair M M') : Cx.Hom M.coch M'.
   comm n f := by
     refine Subtype.ext (funext fun g => ?_)
     show P.u (dn M.rho n f.1 fun i => P.φ (g i)) = dn M'.rho n (fun g => P.u (f.1 fun i => P.φ (g i))) g
-    simp only [dn_apply, map_add, map_sum, map_smul, P.equiv, contractNth_map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dn_apply, map_add (f := _), map_sum, map_smul, P.equiv, contractNth_map]
 
 def Pair.ofMap {M M' : TRep R G} (u : M.V →ₗ[R] M'.V) (hu : Continuous u)
     (he : ∀ g m, u (M.rho g m) = M'.rho g (u m)) : Pair M M' :=
@@ -137,8 +142,6 @@ def IsCup {M N P : TRep R G} (b : Pairing M N P)
     ∃ (z : P.coch.X (p + q)) (hz : P.coch.d (p + q) z = 0), z.1 = cupFun b p q x.1 y.1 ∧
       cup p q (M.coch.cls p x hx) (N.coch.cls q y hy) = P.coch.cls (p + q) z hz
 
-def TRep.cast (M : TRep R G) {n m : ℕ} (h : n = m) : M.H n ≃ₗ[R] M.H m := h ▸ LinearEquiv.refl R _
-
 def IsCoind (U : Subgroup G) (M : TRep R U) (C : TRep R G) (ev : Pair C M) : Prop :=
   ev.φ = U.subtype ∧ ∃ j : C.V → C(G, M.V), Topology.IsEmbedding j ∧
     (∀ c g, j c g = ev.u (C.rho g c)) ∧
@@ -159,25 +162,6 @@ attribute [instance] SelData.grp SelData.top SelData.tgrp
 namespace SelData
 
 variable {M : TRep R G} {ι : Type u} (S : SelData M ι)
-
-abbrev loc (v : ι) : Cx R := (M.res (S.φ v) (S.φ_cont v)).coch
-
-abbrev locHom (v : ι) : Cx.Hom M.coch (S.loc v) := (Pair.res M (S.φ v) (S.φ_cont v)).hom
-
-def diff : Cx.Hom (Cx.prod M.coch (Cx.pi S.U)) (Cx.pi S.loc) where
-  f n := LinearMap.pi fun v => ((S.locHom v).f n).comp (LinearMap.fst R _ _) -
-    ((S.j v).f n).comp ((LinearMap.proj v).comp (LinearMap.snd R _ _))
-  comm n x := funext fun v => by
-    show (S.locHom v).f (n + 1) (M.coch.d n x.1) - (S.j v).f (n + 1) ((S.U v).d n (x.2 v)) =
-      (S.loc v).d n ((S.locHom v).f n x.1 - (S.j v).f n (x.2 v))
-    rw [map_sub, (S.locHom v).comm, (S.j v).comm]
-
-def cx : Cx R := Cx.fib S.diff
-
-def toGlob : Cx.Hom S.cx M.coch := (Cx.prodFst _ _).comp (Cx.fibFst S.diff)
-
-def sel (n : ℕ) : Submodule R (M.H n) :=
-  ⨅ v, (LinearMap.range ((S.j v).H n)).comap ((S.locHom v).H n)
 
 end SelData
 

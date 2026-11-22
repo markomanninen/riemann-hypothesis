@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -19,11 +23,11 @@ private theorem mfr_ne_bot : _root_.Formalism.L2.Pj.Mfr l ≠ ⊥ := by
   rw [h, Ideal.mul_bot, eq_comm, Ideal.span_singleton_eq_bot] at hM
   exact absurd (Nat.cast_eq_zero.mp hM) (by omega)
 
+
 set_option autoImplicit false in
 open NumberField MvPolynomial in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Datum H}
   {l : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level H} in
-
 theorem _root_.GlobalTheory.ClassSumProbe.finite_conj_half :
     Finite (Dw.La ⧸ (_root_.Formalism.L2.Pj.Mfr l • ⊤ : Submodule (𝓞 E) Dw.La)) := by
   haveI := Dw.fin

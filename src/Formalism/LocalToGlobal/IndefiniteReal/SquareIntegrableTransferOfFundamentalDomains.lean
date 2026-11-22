@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SquareIntegrableTransfer
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SquareIntegrableTransfer
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodGA
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ theorem squareIntegrableTransfer_of_fundamentalDomains (μ : Measure (GA D (D.sp
   have hL := lintegral_comp_symm_mul_eq_ofReal_mul_setLIntegral μ 𝓕 X ι t c hι hιs hmap hH h𝓕 h𝓕' (fun y => ENNReal.ofReal (‖F y‖ ^ 2))
     (fun γ hγ x => by simp only [hinv γ hγ x])
   have hint : Integrable (fun y => ‖F y‖ ^ 2) (μ.restrict 𝓕) :=
-    (memLp_two_iff_integrable_sq_norm hF.1).1 hF
+    (memLp_two_iff_integrable_sq_norm hF.aestronglyMeasurable).1 hF
   have hfin : ∫⁻ y in 𝓕, ENNReal.ofReal (‖F y‖ ^ 2) ∂μ < ⊤ := hint.lintegral_lt_top
   have hasm : AEStronglyMeasurable (fun x => F (ι.symm x * t)) (muX X) := hmeasG.aestronglyMeasurable
   have hint2 : Integrable (fun x => ‖F (ι.symm x * t)‖ ^ 2) (muX X) := by

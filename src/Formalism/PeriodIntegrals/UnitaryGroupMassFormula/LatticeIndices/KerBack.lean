@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondSplitSmul
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondSplitSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,6 @@ theorem map_mul_inv (f : T →+* K) (g : GL n T) :
   rw [← Matrix.map_mul, g.mul_inv, Matrix.map_one _ (map_zero f) (map_one f)]
 
 include hs in
-
 theorem key_I (g : GL n T) (hg : g ∈ Formalism.UG.UJ s J) :
     ((P : Matrix n n K)ᵀ * (J.map (t1 θ))ᵀ) * (g : Matrix n n T).map (t2 θ) =
       (conjPrime₂ θ P g⁻¹)ᵀ * ((P : Matrix n n K)ᵀ * (J.map (t1 θ))ᵀ) := by
@@ -160,7 +163,7 @@ theorem kerBack (hJu : IsUnit J.det) : KerBack O θ s J P := by
       have e1 := congrFun a1z j
       have e2 := congrFun a2z j
       simp only [t1, t2, Pi.zero_apply, RingHom.comp_apply, RingHom.coe_fst, RingHom.coe_snd,
-        AlgEquiv.toAlgHom_eq_coe, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, AlgHom.coe_coe] at e1 e2
+        AlgEquiv.coe_toAlgHom, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, AlgHom.coe_coe] at e1 e2
       ext
       · simpa using e1
       · simpa using e2

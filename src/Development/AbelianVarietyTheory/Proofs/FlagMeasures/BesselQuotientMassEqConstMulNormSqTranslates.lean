@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevContinuousFormGardingVector
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorWordActionContinuous
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerOfNormEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcTypeWContinuousUnitaryIrreducible
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesProperties
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuotientMeasureRightInvariant
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGroupMatGroupUnimodularStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselSubgroupProductMeasureIsHaarStatement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.DegVand
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevContinuousFormGardingVector
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorWordActionContinuous
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InnerOfNormEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcTypeWContinuousUnitaryIrreducible
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.DerivedActionDiscreteSeriesProperties
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.FrechetContinuousContinuousOnOrbitHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuotientMeasureRightInvariant
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGroupMatGroupUnimodularStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.BesselSubgroupProductMeasureIsHaarStatement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,6 +55,7 @@ theorem continuous_Lp_two_of_const_norm_pointwise_continuous {ι : Type} [Topolo
       rw [hE]
       exact ENNReal.ofReal_le_ofReal (Real.le_sqrt_of_sq_le (hb i hi)))
     (fun i => (Lp.aestronglyMeasurable _).congr (he i))
+    ((Lp.aestronglyMeasurable (F j + F j)).congr (he j))
     (hc.mono fun x hx => ((hx.tendsto j).add_const _).mono_left inf_le_left)
   rw [hE, ENNReal.ofReal_le_ofReal_iff (Real.sqrt_nonneg _), ← two_smul ℂ, norm_smul] at h1
   obtain ⟨i, hi⟩ := hfr.exists
@@ -70,7 +75,7 @@ theorem integral_norm_inner_le (f g : Lp V 2 ν) : ∫ x, ‖⟪f x, g x⟫_ℂ�
     rw [h1, h2]
     simp [mul_comm]
   have h1 := real_inner_le_norm (hf.toLp _) (hg.toLp _)
-  rw [e, Lp.norm_toLp, Lp.norm_toLp, eLpNorm_norm, eLpNorm_norm, ← Lp.norm_def, ← Lp.norm_def] at h1
+  rw [e, Lp.norm_toLp, Lp.norm_toLp, eLpNorm_norm _ (Lp.aestronglyMeasurable f), eLpNorm_norm _ (Lp.aestronglyMeasurable g), ← Lp.norm_def, ← Lp.norm_def] at h1
   refine le_trans (integral_mono (L2.integrable_inner (𝕜 := ℂ) f g).norm (hf.integrable_mul hg)
     fun x => norm_inner_le_norm _ _) h1
 
@@ -113,7 +118,7 @@ theorem closable (hσ : IsURepOn (UJset ε) σ) (D : Submodule ℂ H) (a : H →
   have h1 : ∀ g : Formalism.REAL.UJ ε, ∀ v ∈ D, ∀ w ∈ D, ⟪A (σ (umat g) v), A (σ (umat g) w)⟫_ℂ = ⟪A v, A w⟫_ℂ := by
     intro g v hv w hw
     rw [inner_eq_sum_norm_sq_div_four, inner_eq_sum_norm_sq_div_four]
-    simp only [← map_smul, ← map_add, ← map_sub]
+    simp only [← map_smul, ← map_add (f := _), ← map_sub]
     rw [hn g _ (D.add_mem hv hw), hn g _ (D.sub_mem hv hw), hn g _ (D.sub_mem hv (D.smul_mem _ hw)),
       hn g _ (D.add_mem hv (D.smul_mem _ hw))]
   have key : ∀ v ∈ D, ⟪A v, f⟫_ℂ = 0 := by
@@ -165,7 +170,7 @@ theorem closable (hσ : IsURepOn (UJset ε) σ) (D : Submodule ℂ H) (a : H →
         · rw [integral_congr_ae e, ← integral_integral_swap (f := fun g x => K (g, x)) hK]
           congr 1
           funext g
-          simp only [K]
+          dsimp only [K]
           rw [integral_smul, ← integral_congr_ae (hae g), ← L2.inner_def, ← h1 g _ (hD g⁻¹ v hv) w hw, hmul]
       have hsub : ∀ w w' x, p (w - w') x = p w x - p w' x := fun w w' x => by
         simp only [p, gard_eq hσ hφ, map_sub, Pi.sub_apply, inner_sub_right]
@@ -176,8 +181,10 @@ theorem closable (hσ : IsURepOn (UJset ε) σ) (D : Submodule ℂ H) (a : H →
       have hfat : ∀ i, ∫ x, ‖p (u i) x‖ ∂ν ≤ c * ‖A (u i) - f‖ := fun i => by
         have h2 := Lp.eLpNorm_lim_le_liminf_eLpNorm (μ := ν) (p := 1) (f := fun j => p (u i - u j))
           (fun j => (hP _ (D.sub_mem (hu i) (hu j))).1.aestronglyMeasurable) (p (u i))
+          (hP _ (hu i)).1.aestronglyMeasurable
           (hlim.mono fun x hx => by simpa only [hsub, sub_zero] using hx.const_sub (p (u i) x))
-        simp only [eLpNorm_one_eq_lintegral_enorm] at h2
+        simp_rw [eLpNorm_one_eq_lintegral_enorm (hP _ (hu i)).1.aestronglyMeasurable,
+          eLpNorm_one_eq_lintegral_enorm (hP _ (D.sub_mem (hu i) (hu _))).1.aestronglyMeasurable] at h2
         have h3 : Tendsto (fun j => ENNReal.ofReal (c * ‖A (u i - u j)‖)) atTop
             (𝓝 (ENNReal.ofReal (c * ‖A (u i) - f‖))) := by
           simp only [map_sub]
@@ -280,8 +287,8 @@ theorem quotientMass_right_translation_invariant {Wp : Type} [NormedAddCommGroup
   · simp only
     rw [hval x hx]
 
-open GlobalTheory.CWDeriv in
 
+open GlobalTheory.CWDeriv in
 theorem continuousOn_orbit {ε : Fin (2 * r + k + 1) → Bool} {mu : Fin (2 * r + k + 1) → ℝ} {R : Rep k r}
     (hR : R.IsDS ε mu) {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] {Bm : R.H → V}
     (ha : ∀ v ∈ R.sm, ∀ w ∈ R.sm, Bm (v + w) = Bm v + Bm w) (hs : ∀ (a : ℂ), ∀ v ∈ R.sm, Bm (a • v) = a • Bm v)
@@ -317,10 +324,11 @@ theorem continuousOn_orbit {ε : Fin (2 * r + k + 1) → Bool} {mu : Fin (2 * r 
 end Quot
 
 theorem quotientMass_eq_eLpNorm_sq {k r : ℕ} {Wp : Type} [NormedAddCommGroup Wp] (ν : MeasureTheory.Measure (Formalism.QuantumDeterminants.Mt k r))
-    (Φ : Formalism.FourierDecayAlt.ThreeDimData.Mx k r → Wp) :
+    (Φ : Formalism.FourierDecayAlt.ThreeDimData.Mx k r → Wp)
+    (hΦ : MeasureTheory.AEStronglyMeasurable (fun x : Formalism.QuantumDeterminants.Mt k r => Φ (Matrix.of x)) ν) :
     PI.BesselPeriodGGP.l2SG ν Φ = MeasureTheory.eLpNorm (fun x : Formalism.QuantumDeterminants.Mt k r => Φ (Matrix.of x)) 2 ν ^ 2 := by
   have h := MeasureTheory.eLpNorm_nnreal_pow_eq_lintegral (μ := ν) (p := 2)
-    (f := fun x : Formalism.QuantumDeterminants.Mt k r => Φ (Matrix.of x)) two_ne_zero
+    (f := fun x : Formalism.QuantumDeterminants.Mt k r => Φ (Matrix.of x)) two_ne_zero hΦ
   simp only [NNReal.coe_ofNat, ENNReal.rpow_ofNat, ENNReal.coe_ofNat] at h
   exact h.symm
 
@@ -370,8 +378,16 @@ theorem besselQuotientMass_eq_const_mul_norm_sq_translates : ∀ (k r : ℕ) (ε
     fun v hv x hx => hBl' _ (hsm v hv _ hx)
   have hcont : ∀ v ∈ R.sm, ContinuousOn (fun g => B (R.σ g v)) (BranchingSupport.GG k r) := fun v hv =>
     continuousOn_orbit hR hB.1 hB.2.1 hB.2.2.2 hv
+  have hAm : MeasurableSet {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r} := IsClosed.measurableSet (α := Mt k r) hGG.1
+  have hBmeas : ∀ v ∈ R.sm, AEStronglyMeasurable (fun x : Mt k r => B (R.σ (Matrix.of x) v)) νq := fun v hv => by
+    have hc : ContinuousOn (fun x : Mt k r => B (R.σ (Matrix.of x) v)) {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r} :=
+      hcont v hv
+    have h2 := hc.aestronglyMeasurable (μ := νq) hAm
+    rwa [Measure.restrict_eq_self_of_ae_mem (s := {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r}) hae] at h2
+  have hmeas : ∀ v ∈ R.sm, AEStronglyMeasurable (a v) νq := fun v hv =>
+    (hBmeas v hv).congr (hae.mono fun x hx => (ha v hv x hx).symm)
   have hl2 : ∀ v ∈ R.sm, PI.BesselPeriodGGP.l2SG νq (fun g => B (R.σ g v)) = eLpNorm (a v) 2 νq ^ 2 := fun v hv => by
-    rw [quotientMass_eq_eLpNorm_sq, eLpNorm_congr_ae (hae.mono fun x hx => ha v hv x hx)]
+    rw [quotientMass_eq_eLpNorm_sq νq _ (hBmeas v hv), eLpNorm_congr_ae (hae.mono fun x hx => ha v hv x hx)]
   have hinv : ∀ v ∈ R.sm, ∀ g ∈ BranchingSupport.GG k r, eLpNorm (a (R.σ g v)) 2 νq = eLpNorm (a v) 2 νq := fun v hv g hg => by
     have h2 := quotientMass_right_translation_invariant hS (hcont v hv) (by
       rintro _ ⟨h, hh, m, hm, rfl⟩ x hx
@@ -382,13 +398,6 @@ theorem besselQuotientMass_eq_const_mul_norm_sq_translates : ∀ (k r : ℕ) (ε
       lintegral_congr_ae (hae.mono fun x hx => by simp only [hmul _ hx _ hg])
     rw [← h3, hl2 _ (hsm v hv g hg), hl2 v hv] at h2
     exact (ENNReal.pow_right_strictMono two_ne_zero).injective h2
-  have hAm : MeasurableSet {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r} := IsClosed.measurableSet (α := Mt k r) hGG.1
-  have hmeas : ∀ v ∈ R.sm, AEStronglyMeasurable (a v) νq := fun v hv => by
-    have hc : ContinuousOn (fun x : Mt k r => B (R.σ (Matrix.of x) v)) {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r} :=
-      hcont v hv
-    have h2 := hc.aestronglyMeasurable (μ := νq) hAm
-    rw [Measure.restrict_eq_self_of_ae_mem (s := {x : Mt k r | Matrix.of x ∈ BranchingSupport.GG k r}) hae] at h2
-    exact h2.congr (hae.mono fun x hx => (ha v hv x hx).symm)
   set D := Formalism.FourierDecayAlt.ThreeDimData.DDsp (k := k) (r := r) R.σ w with hDdef
   have hDs : ∀ v ∈ D, v ∈ R.sm := fun v hv =>
     (Submodule.span_le (p := R.smSub)).2 (by rintro _ ⟨g, hg, rfl⟩; exact hsm w hw g hg) hv
@@ -400,12 +409,12 @@ theorem besselQuotientMass_eq_const_mul_norm_sq_translates : ∀ (k r : ℕ) (ε
     induction hv using Submodule.span_induction with
     | mem y hy =>
       obtain ⟨g, hg, rfl⟩ := hy
-      refine ⟨hmeas _ (hsm w hw g hg), ?_⟩
+      change eLpNorm (a (R.σ g w)) 2 νq < ∞
       rw [hinv w hw g hg]
       rw [hl2 w hw] at hfin
       exact lt_top_iff_ne_top.2 fun h => hfin (by rw [h]; simp)
     | zero => rw [map_zero]; exact MemLp.zero
-    | add x y _ _ hx hy => rw [map_add]; exact hx.add hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add hy
     | smul c x _ hx => rw [map_smul]; exact hx.const_smul c
   let A₀ : D →ₗ[ℂ] Lp Wp 2 νq :=
     { toFun := fun v => (hmem v v.2).toLp _
@@ -494,7 +503,7 @@ theorem besselQuotientMass_eq_const_mul_norm_sq_translates : ∀ (k r : ℕ) (ε
     · rw [max_eq_right h, zero_mul]
       exact le_antisymm (sq_nonneg _) (h3 ▸ mul_nonpos_of_nonpos_of_nonneg h (sq_nonneg _))
   rw [h2, hl2 v (hDs v hv), hAn v hv, ENNReal.ofReal_pow ENNReal.toReal_nonneg,
-    ENNReal.ofReal_toReal (hmem v hv).2.ne]
+    ENNReal.ofReal_toReal (hmem v hv).ne]
 
 end GlobalTheory.BesselIsometry
 

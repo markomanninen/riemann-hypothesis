@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitMulPowOfKummerVanishesOnInertiaCurve
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOneOfPowEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitMulPowOfKummerVanishesOnInertiaCurve
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOneOfPowEqOne
+
+@[expose] public section
 
 open scoped MatrixGroups TensorProduct
 open Polynomial
@@ -99,7 +103,7 @@ theorem fix_adjoin {K L : Type} [Field K] [Field L] [Algebra K L] (Q : (L →+* 
     obtain ⟨T, hT⟩ := hx
     obtain ⟨T', hT'⟩ := hy
     exact ⟨T ∪ T', fun φ hq h => by
-      rw [map_add, hT φ hq fun t ht => h t (Finset.mem_union_left _ ht),
+      rw [map_add (f := _), hT φ hq fun t ht => h t (Finset.mem_union_left _ ht),
         hT' φ hq fun t ht => h t (Finset.mem_union_right _ ht)]⟩
   | inv x _ hx =>
     obtain ⟨T, hT⟩ := hx
@@ -132,7 +136,7 @@ theorem core {k K L : Type} [Field k] [IsAlgClosed k] [CharZero k] [Field K] [Al
   haveI : CharZero L := charZero_of_injective_ringHom (algebraMap K L).injective
   haveI : NeZero (l : L) := ⟨Nat.cast_ne_zero.2 hl.ne'⟩
   haveI : NeZero l := ⟨hl.ne'⟩
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot L l
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot L l
   have hθ0 : θ ≠ 0 := by
     rintro rfl
     rw [zero_pow hl.ne'] at hθ
@@ -166,8 +170,8 @@ namespace GlobalTheory.KZ.UnRoot
 theorem mem_Un_of_root_mem_adjoin : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε), ∀ (m l : ℕ), 0 < m → 0 < l → ∀ (θ : AlgebraicClosure X.K) (f : X.Kˣ), θ ∈ IntermediateField.adjoin X.K {y : AlgebraicClosure X.K | ∃ U ∈ X.Un m, y ^ m = algebraMap X.K (AlgebraicClosure X.K) (U : X.K)} → θ ^ l = algebraMap X.K (AlgebraicClosure X.K) (f : X.K) → f ∈ X.Un l := by
   intro Ω _ _ _ ε X m l hm hl θ f hθ hf W hW
   classical
-  haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
-  haveI : CharZero Ω := charZero_of_injective_ringHom (algebraMap ℚ Ω).injective
+  have : IsAlgClosed Ω := IsAlgClosure.isAlgClosed ℚ
+  have : CharZero Ω := charZero_of_injective_ringHom (algebraMap ℚ Ω).injective
   obtain ⟨B, rfl⟩ := exists_comap_eq (algebraMap X.K (AlgebraicClosure X.K)) W
   let e := RatFunc.algEquivOfTranscendental X.jK (GlobalTheory.K4.jK_transcendental X)
   let ψ : RatFunc Ω →ₐ[Ω] X.K := (IntermediateField.val _).comp e.toAlgHom

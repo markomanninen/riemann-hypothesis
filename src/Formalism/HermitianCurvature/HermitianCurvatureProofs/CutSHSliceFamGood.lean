@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGGfStep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGRadProper
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGParamSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH_SFG_PtSmooth
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGGfStep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGRadProper
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSHSFGParamSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH_SFG_PtSmooth
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

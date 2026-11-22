@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.HasLatBasis
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.HasLatBasis
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -26,7 +30,8 @@ theorem glAct_whe (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) (a b : Fin n
     (hx : x ∈ weightedHomogeneousSubmodule ℚ_[p] (fun x => (wv LL j x) ∘ e) ν) :
     glAct p LL j (e a) (e b) x ∈ weightedHomogeneousSubmodule ℚ_[p] (fun x => (wv LL j x) ∘ e) (ν + dl a b) := by
   classical
-  rw [x.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [x.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   have hdw : Finsupp.weight (fun x => (wv LL j x) ∘ e) d = ν := hx (mem_support_iff.mp hd)
   rw [glAct_apply]
@@ -35,14 +40,14 @@ theorem glAct_whe (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) (a b : Fin n
   · rw [if_pos hij]
     by_cases hv : LL.vec i
     · rw [if_pos hv]
-      have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e b) (i, e a) d (coeff d x)
+      have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e b) (i, e a) d (AddMonoidAlgebra.coeff x d)
       have e' : ν + dl a b = Finsupp.weight (fun x => (wv LL j x) ∘ e) d - (wv LL j (i, e b)) ∘ e
           + (wv LL j (i, e a)) ∘ e := by
         rw [hdw]; simp only [wv, hij, hv, if_true, dl, single_comp_emb]; abel
       rw [e']; exact this
     · rw [if_neg hv]
       refine Submodule.neg_mem _ ?_
-      have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e a) (i, e b) d (coeff d x)
+      have := wh_XD (K := ℚ_[p]) (fun x => (wv LL j x) ∘ e) (i, e a) (i, e b) d (AddMonoidAlgebra.coeff x d)
       have hn : ∀ c : Fin n, (-(Pi.single (e c) (1 : ℤ) : Fin r → ℤ)) ∘ e = -Pi.single c 1 := by
         intro c; rw [← single_comp_emb e c]; rfl
       have e' : ν + dl a b = Finsupp.weight (fun x => (wv LL j x) ∘ e) d - (wv LL j (i, e a)) ∘ e
@@ -74,21 +79,18 @@ noncomputable def GAe (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) (e : F
     rw [Finset.sum_ite_eq]
     split_ifs with h
     · rfl
-    · have := congrArg (coeff d) (hS _ h)
-      rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
-      exact this.symm
+    · simpa only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
+        coeff_weightedHomogeneousComponent, ite_true] using
+        congrArg (AddMonoidAlgebra.coeff · d) (hS _ h).symm
   idem := by
     classical
     intro μ ν x
-    ext d
-    by_cases h : μ = ν
-    · subst h; simp only [if_true, coeff_weightedHomogeneousComponent]; split_ifs <;> rfl
-    · simp only [if_neg h, coeff_zero, coeff_weightedHomogeneousComponent]
-      split_ifs with h1 h2 <;> first | rfl | (exfalso; exact h (h1.symm.trans h2))
+    exact weightedHomogeneousComponent_of_mem (weightedHomogeneousComponent_mem _ x ν)
   diag := by
     classical
     intro c μ x
-    rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun d hd => ?_
     rw [glAct_diag_monomial, ← weight_comp_apply, (Finset.mem_filter.mp hd).2]
   shift := by
@@ -105,7 +107,8 @@ noncomputable def GAe (p : ℕ) [Fact p.Prime] (LL : Letters N) (j : ℕ) (e : F
       · by_contra hne
         exact h (Finset.mem_image.mpr ⟨d, mem_support_iff.mpr hne, rfl⟩)
     conv_lhs => rw [hx]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     have e' : ∀ ν, weightedHomogeneousComponent (fun x => (wv LL j x) ∘ e) μ
         (glAct p LL j (e a) (e b) (weightedHomogeneousComponent (fun x => (wv LL j x) ∘ e) ν x)) =
         if ν = μ - dl a b then
@@ -136,7 +139,7 @@ theorem GAe_isWt_iff (LL : Letters N) (j : ℕ) (e : Fin n ↪o Fin r) (μ : Fin
   rw [GAe_comp]
   constructor
   · intro h m hm a
-    have hm' : coeff m x ≠ 0 := mem_support_iff.mp hm
+    have hm' : AddMonoidAlgebra.coeff x m ≠ 0 := mem_support_iff.mp hm
     rw [← h, coeff_weightedHomogeneousComponent] at hm'
     have hw : Finsupp.weight (fun x => (wv LL j x) ∘ e) m = μ := by
       by_contra hne; exact hm' (if_neg hne)

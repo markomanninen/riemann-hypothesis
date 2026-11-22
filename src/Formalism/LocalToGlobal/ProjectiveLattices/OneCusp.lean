@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem not_isIso_of_p0_zero (X : Data E r) (h0 : X.p0 = 0) (ξ : Fin r → E) :
     have := congrArg τ hh
     rw [map_zero] at this
     rw [← this]
-    simp only [hermC, herm, map_sum, map_mul, hv, cc, IsCMField.complexEmbedding_complexConj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hermC, herm, map_sum, map_mul, hv, cc, IsCMField.complexEmbedding_complexConj]
   have h2 : hermC τ X.Gm v v = ∑ a, ∑ b, w a * gram τ X.Gm P a b * conj (w b) := by
     have sw : ∀ f : Fin r → Fin r → Fin r → Fin r → ℂ,
         ∑ x, ∑ y, ∑ a, ∑ b, f x y a b = ∑ a, ∑ b, ∑ x, ∑ y, f x y a b := fun f =>
@@ -41,7 +46,8 @@ theorem not_isIso_of_p0_zero (X : Data E r) (h0 : X.p0 = 0) (ξ : Fin r → E) :
         ∑ a, ∑ b, w a * (P x a * τ (X.Gm x y) * conj (P y b)) * conj (w b) := by
       intro x y
       simp only [Matrix.mulVec, dotProduct]
-      rw [map_sum, Finset.sum_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_mul, Finset.sum_mul]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [Finset.mul_sum]
       refine Finset.sum_congr rfl fun b _ => ?_

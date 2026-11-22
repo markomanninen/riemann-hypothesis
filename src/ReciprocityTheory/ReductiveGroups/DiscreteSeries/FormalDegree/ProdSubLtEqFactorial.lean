@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdDefs
+
+@[expose] public section
 
 noncomputable section
 

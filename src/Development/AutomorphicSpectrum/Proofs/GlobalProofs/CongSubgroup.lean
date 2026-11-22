@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,9 +28,6 @@ inductive Tile (P : Set V) (Q : Set V → Prop) : Set V → Prop
       Tile P Q (coneOn s)
   | union {A B : Set V} (hA : Tile P Q A) (hB : Tile P Q B) (hAB : Disjoint A B) : Tile P Q (A ∪ B)
 
-theorem tile_ray (P : Set V) (v : V) (hv : v ≠ 0) (hP : v ∈ P) : Tile P (fun _ => True) (coneOn {v}) :=
-  Tile.cone {v} (by simpa using LinearIndepOn.singleton (R := ℚ) (v := id) (i := v) (by simpa using hv)) (by simpa using hP) trivial
-
 def posCone (F : Type) [Field F] [NumberField F] : ConvexCone ℚ F where
   carrier := {x | TotPos F x}
   smul_mem' := by
@@ -37,7 +38,7 @@ def posCone (F : Type) [Field F] [NumberField F] : ConvexCone ℚ F where
     exact mul_pos (by exact_mod_cast hc) (hx σ)
   add_mem' := by
     intro x hx y hy σ
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_pos (hx σ) (hy σ)
 
 def congSubgroup {F : Type} [Field F] [NumberField F] (𝔣 : Ideal (𝓞 F)) : Subgroup (𝓞 F)ˣ where

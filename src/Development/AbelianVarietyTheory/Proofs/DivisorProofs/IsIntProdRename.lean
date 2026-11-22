@@ -1,9 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUniqueStatement
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUniqueStatement
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.CoeffPowEqZeroOfCc
+
+@[expose] public section
+
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
 namespace GlobalTheory.FGDepth.CharBound
@@ -89,9 +97,9 @@ theorem coeff_mvExp_lin {σ : Type} [Fintype σ] (c : σ → C) (α : σ →₀ 
   have hg : ∀ β, coeff β g = ∏ s, c s ^ β s / ((β s).factorial : C) := fun β => by
     show (β.prod fun s n => c s ^ n / (n.factorial : C)) = _
     exact Finsupp.prod_fintype _ _ (fun s => by simp)
-  have hpL : ∀ i, pderiv C i L = c i • (1 : MvPowerSeries σ C) := fun i => by
+  have hpL : ∀ i, pderiv i L = c i • (1 : MvPowerSeries σ C) := fun i => by
     simp [hLdef, pderiv_X, Pi.single_apply]
-  have hpg : ∀ i, pderiv C i g = c i • g := fun i => by
+  have hpg : ∀ i, pderiv i g = c i • g := fun i => by
     ext β
     rw [coeff_pderiv, hg, coeff_smul, hg, Fintype.prod_eq_mul_prod_compl i,
       Fintype.prod_eq_mul_prod_compl i (fun s => c s ^ β s / ((β s).factorial : C))]
@@ -143,8 +151,8 @@ theorem eval_detPow (i c : ℕ) (H : Matrix (Fin i) (Fin i) C) :
   ext a b
   simp [RingHom.mapMatrix_apply]
 
-open Formalism.L2.Th1.C in
 
+open Formalism.L2.Th1.C in
 theorem subst_col (v : AddValuation C (WithTop ℝ)) {i d : ℕ} (G : LogFGL v d) (u : Fin i → Fin d → C)
     (b : Fin i) (w : Fin d → C) (χ : MvPowerSeries (Fin d) C)
     (hχ : ∀ α, coeff α (subst (expOf G) χ) = α.prod fun e n => w e ^ n / (n.factorial : C)) :
@@ -168,7 +176,8 @@ theorem subst_col (v : AddValuation C (WithTop ℝ)) {i d : ℕ} (G : LogFGL v d
     funext e; rw [subst_X hEA]; rfl
   rw [h2, ← subst_comp_subst_apply hE (hL b), h1, mvSubst_mvExp (by simp) (hL b)]
   congr 1
-  rw [← coe_substAlgHom (hL b), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← coe_substAlgHom (hL b), map_sum]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [map_smul, coe_substAlgHom, subst_X (hL b)]
 

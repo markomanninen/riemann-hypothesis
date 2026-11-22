@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
-import Development.EtaleCohomology.CohomologicalPurity.LeafHensCutDef
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafIndExc
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHensCutDef
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits

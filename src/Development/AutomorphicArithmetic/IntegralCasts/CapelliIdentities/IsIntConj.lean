@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf45.isInt_conj :
     ∀ {O : Type} [inst : CommRing O]

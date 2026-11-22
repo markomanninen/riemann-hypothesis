@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TwPairExists
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TwPairExists
+
+@[expose] public section
 
 namespace LateralTheory.E.RingCommutativity
 

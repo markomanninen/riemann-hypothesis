@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsOrb
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsOrb
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,14 +19,14 @@ variable {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     [IsDiscreteValuationRing W] [Field Qq] [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf]
     [Algebra O Kf] {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} {m : ℕ}
 
-open Classical in
 
+open Classical in
 def gOf (Lt : Fin nV → Submodule W (Fin (m + 1) → Qq)) : Fin nV → GL (Fin (m + 1)) Qq :=
   if h : ∀ v, IsLattice W (Lt v) then Classical.choose (exists_tupOf W Lt h) else 1
 
 theorem gOf_spec (Lt : Fin nV → Submodule W (Fin (m + 1) → Qq)) (h : ∀ v, IsLattice W (Lt v)) : Lt = tupOf W (gOf Lt) := by
   unfold gOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec (exists_tupOf W Lt h)
 
 def clsC (I : LocId L p nV W Qq) (hdet : IsUnit sp.gram0.det) (hk : m + 1 = R.k) (i : compL L p)
@@ -70,7 +74,7 @@ theorem clsC_tupOf (I : LocId L p nV W Qq) (hdet : IsUnit sp.gram0.det) (hk : m 
     (g : Fin nV → GL (Fin (m + 1)) Qq) :
     clsC I hdet hk i (tupOf W g) = Fib.mkC (HA sp) (KA L) (repP L p i * jQ I hdet hk g) := by
   rw [clsC_eq]
-  refine ((fibP I hdet hk hH).cls_iff (HA sp) (repP L p) (repP_mk L p) (prP_repP I hk) i i _ _).2
+  refine ((fibP I hdet hk hH).cls_iff (HA sp) (repP L p) (repP_mk L p) (prP_repP I hk) i i _ _ (repP_mk L p) (prP_repP I hk)).2
     ⟨rfl, 1, Subgroup.one_mem _, ?_, ?_⟩
   · rw [mul_one, inv_mul_cancel]
     exact Subgroup.one_mem _
@@ -84,15 +88,15 @@ variable (hS : HidaSetting p n' W Qq O Kf ι σ j w) (r : ℕ)
     (lam0 : Fin nV → Fin n' → Fin (m + 1) → ℤ) (dom : ∀ v, IsDominant (lam0 v)) (hk : m + 1 = R.k)
     (I : LocId L p nV W Qq) (ψ : Formalism.L2.Herm.awayFrom₂ L p →* Oˣ) (e : ℕ) (hdet : IsUnit sp.gram0.det) (hH : HypAtP I)
 
-include hH in
 
+include hH in
 theorem class_eq_iff_translate_level_zero (i i' : compL L p) (Lt Lt' : Fin nV → Submodule W (Fin (m + 1) → Qq))
     (h : ∀ v, IsLattice W (Lt v)) (h' : ∀ v, IsLattice W (Lt' v)) :
     clsC I hdet hk i Lt = clsC I hdet hk i' Lt' ↔
       i = i' ∧ ∃ γ : gamC sp.cm.sig sp.gram0 (Formalism.L2.Herm.awayFrom₂ L p) (repP L p i : GL (Fin R.k) _),
         Lt' = fun v => gMap W (prP I hk (ratA sp γ.1) v) (Lt v) := by
   rw [clsC_eq, clsC_eq]
-  refine ((fibP I hdet hk hH).cls_iff (HA sp) (repP L p) (repP_mk L p) (prP_repP I hk) i i' (gOf Lt) (gOf Lt')).trans
+  refine ((fibP I hdet hk hH).cls_iff (HA sp) (repP L p) (repP_mk L p) (prP_repP I hk) i i' (gOf Lt) (gOf Lt') (repP_mk L p) (prP_repP I hk)).trans
     (and_congr_right fun _ => ?_)
   refine (orb_iff I hk (repP L p i) (gOf Lt) (gOf Lt')).trans (exists_congr fun γ => ?_)
   rw [← gOf_spec Lt' h', ← gOf_spec Lt h]

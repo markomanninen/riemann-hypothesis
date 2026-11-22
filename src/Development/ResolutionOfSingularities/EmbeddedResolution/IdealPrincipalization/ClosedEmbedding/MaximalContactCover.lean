@@ -1,25 +1,30 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsNil
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IdealSheafFlatDescent
-import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
-import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
-import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.ClosedImmersionKrullDim
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.DisjointUnionCover
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.StrictTransformClosedImmersion
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.ClopenRestriction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsNil
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.IdealSheafFlatDescent
+public import Development.ResolutionOfSingularities.Foundations.Schemes.AffineOpens
+public import Development.ResolutionOfSingularities.EmbeddedResolution.AlgebraicPreliminaries.KernelFlatBaseChange
+public import Development.ResolutionOfSingularities.EmbeddedResolution.MaximalContactHypersurfaces.TunedSheaf
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.ClosedImmersionKrullDim
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.DisjointUnionCover
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.ClosedEmbedding.StrictTransformClosedImmersion
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MaxContactReduction
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u v w
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -31,18 +36,6 @@ namespace FunctorialResolution.EmbeddedResolution
 abbrev markedTripleOfIdeal (k : Type u) [Field k] (Y : Scheme.{u})
     (q : Y ⟶ Spec (CommRingCat.of k)) (J : Y.IdealSheafData) : MarkedIdealWithBoundary.{u} :=
   { base := k, scheme := Y, structMap := q, ideal := J, mult := 1, boundary := [] }
-
-@[simp] theorem markedTripleOfIdeal_scheme (k : Type u) [Field k] (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of k)) (J : Y.IdealSheafData) :
-    (markedTripleOfIdeal k Y q J).scheme = Y := rfl
-
-@[simp] theorem markedTripleOfIdeal_structureMorphism (k : Type u) [Field k] (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of k)) (J : Y.IdealSheafData) :
-    (markedTripleOfIdeal k Y q J).structMap = q := rfl
-
-@[simp] theorem markedTripleOfIdeal_ideal (k : Type u) [Field k] (Y : Scheme.{u})
-    (q : Y ⟶ Spec (CommRingCat.of k)) (J : Y.IdealSheafData) :
-    (markedTripleOfIdeal k Y q J).ideal = J := rfl
 
 def HasLocalEtaleCharts {X' : Scheme.{u}} {k : Type u} [Field k]
     (p : X' ⟶ Spec (CommRingCat.of k)) : Prop :=
@@ -162,32 +155,12 @@ def coverOpens {X X' : Scheme.{u}} {k : Type u} [Field k]
   | Sum.inl a => (A a).opens
   | Sum.inr b => (B b).opens
 
-@[simp] theorem coverOpens_inl {X X' : Scheme.{u}} {k : Type u} [Field k]
-    {p : X' ⟶ Spec (CommRingCat.of k)} {τ : X ⟶ X'} {c : ℕ} {α : Type v} {β : Type w}
-    (A : α → AdaptedEtaleChart p τ c) (B : β → DisjointEtaleChart p τ) (a : α) :
-    coverOpens A B (Sum.inl a) = (A a).opens := rfl
-
-@[simp] theorem coverOpens_inr {X X' : Scheme.{u}} {k : Type u} [Field k]
-    {p : X' ⟶ Spec (CommRingCat.of k)} {τ : X ⟶ X'} {c : ℕ} {α : Type v} {β : Type w}
-    (A : α → AdaptedEtaleChart p τ c) (B : β → DisjointEtaleChart p τ) (b : β) :
-    coverOpens A B (Sum.inr b) = (B b).opens := rfl
-
 def coverHypersurfaceIdeal {X X' : Scheme.{u}} {k : Type u} [Field k]
     {p : X' ⟶ Spec (CommRingCat.of k)} {τ : X ⟶ X'} {c : ℕ} {α : Type v} {β : Type w}
     (A : α → AdaptedEtaleChart p τ c) (B : β → DisjointEtaleChart p τ) :
     (i : α ⊕ β) → (coverOpens A B i).toScheme.IdealSheafData
   | Sum.inl a => (A a).chart.coordIdeal {(A a).coord}
   | Sum.inr _ => ⊤
-
-theorem coverHypersurfaceIdeal_inl {X X' : Scheme.{u}} {k : Type u} [Field k]
-    {p : X' ⟶ Spec (CommRingCat.of k)} {τ : X ⟶ X'} {c : ℕ} {α : Type v} {β : Type w}
-    (A : α → AdaptedEtaleChart p τ c) (B : β → DisjointEtaleChart p τ) (a : α) :
-    coverHypersurfaceIdeal A B (Sum.inl a) = (A a).chart.coordIdeal {(A a).coord} := rfl
-
-theorem coverHypersurfaceIdeal_inr {X X' : Scheme.{u}} {k : Type u} [Field k]
-    {p : X' ⟶ Spec (CommRingCat.of k)} {τ : X ⟶ X'} {c : ℕ} {α : Type v} {β : Type w}
-    (A : α → AdaptedEtaleChart p τ c) (B : β → DisjointEtaleChart p τ) (b : β) :
-    coverHypersurfaceIdeal A B (Sum.inr b) = ⊤ := rfl
 
 structure MaximalContactCover {X X' : Scheme.{u}} {k : Type u} [Field k]
     (p : X' ⟶ Spec (CommRingCat.of k)) (τ : X ⟶ X') (I : X.IdealSheafData) (c : ℕ) :
@@ -278,12 +251,6 @@ abbrev projection (C : MaximalContactCover p τ I c) : C.toCoverData.disjointUni
 @[simp] theorem projection_eq (C : MaximalContactCover p τ I c) :
     C.projection = C.toCoverData.disjointUnionMap := rfl
 
-theorem isAffine_disjointUnion (C : MaximalContactCover p τ I c) : IsAffine C.toCoverData.disjointUnion :=
-  MaxContactReduction.FiniteOpenCoverWithIdeals.isAffine_disjointUnion C.toCoverData C.isAffine
-
-instance instIsAffineTotal (C : MaximalContactCover p τ I c) : IsAffine C.toCoverData.disjointUnion :=
-  C.isAffine_disjointUnion
-
 theorem quasiCompact_projection_comp (C : MaximalContactCover p τ I c) :
     AlgebraicGeometry.QuasiCompact (C.projection ≫ p) :=
   MaxContactReduction.FiniteOpenCoverWithIdeals.quasiCompact_disjointUnionMap_comp C.toCoverData C.isAffine
@@ -291,17 +258,6 @@ theorem quasiCompact_projection_comp (C : MaximalContactCover p τ I c) :
 instance instQuasiCompactProjComp (C : MaximalContactCover p τ I c) :
     AlgebraicGeometry.QuasiCompact (C.projection ≫ p) :=
   C.quasiCompact_projection_comp
-
-theorem smooth_projection_comp (C : MaximalContactCover p τ I c) [AlgebraicGeometry.Smooth p] :
-    AlgebraicGeometry.Smooth (C.projection ≫ p) := by
-  have h : AlgebraicGeometry.Smooth C.toCoverData.disjointUnionMap :=
-    MaxContactReduction.FiniteOpenCoverWithIdeals.smooth_disjointUnionMap C.toCoverData
-  exact MorphismProperty.comp_mem (@AlgebraicGeometry.Smooth) C.toCoverData.disjointUnionMap p h
-    inferInstance
-
-instance instSmoothProjComp (C : MaximalContactCover p τ I c) [AlgebraicGeometry.Smooth p] :
-    AlgebraicGeometry.Smooth (C.projection ≫ p) :=
-  C.smooth_projection_comp
 
 theorem locallyOfFiniteType_projection_comp (C : MaximalContactCover p τ I c)
     [AlgebraicGeometry.LocallyOfFiniteType p] :
@@ -347,17 +303,6 @@ instance instIsClosedImmersionStarEmb (C : MaximalContactCover p τ I c) [IsClos
     IsClosedImmersion C.pullbackFiberToTotal :=
   C.isClosedImmersion_pullbackFiberToTotal
 
-theorem flat_pullbackFiberToBase (C : MaximalContactCover p τ I c) :
-    AlgebraicGeometry.Flat C.pullbackFiberToBase := by
-  have h : AlgebraicGeometry.Flat C.projection :=
-    MaxContactReduction.FiniteOpenCoverWithIdeals.flat_disjointUnionMap C.toCoverData
-  exact MorphismProperty.IsStableUnderBaseChange.of_isPullback
-    (P := @AlgebraicGeometry.Flat) C.isPullback_pullbackFiber.flip h
-
-instance instFlatStarToBase (C : MaximalContactCover p τ I c) :
-    AlgebraicGeometry.Flat C.pullbackFiberToBase :=
-  C.flat_pullbackFiberToBase
-
 theorem smooth_pullbackFiberToBase (C : MaximalContactCover p τ I c) :
     AlgebraicGeometry.Smooth C.pullbackFiberToBase := by
   have h : AlgebraicGeometry.Smooth C.projection :=
@@ -365,19 +310,11 @@ theorem smooth_pullbackFiberToBase (C : MaximalContactCover p τ I c) :
   exact MorphismProperty.IsStableUnderBaseChange.of_isPullback
     (P := @AlgebraicGeometry.Smooth) C.isPullback_pullbackFiber.flip h
 
-instance instSmoothStarToBase (C : MaximalContactCover p τ I c) :
-    AlgebraicGeometry.Smooth C.pullbackFiberToBase :=
-  C.smooth_pullbackFiberToBase
-
 theorem surjective_pullbackFiberToBase (C : MaximalContactCover p τ I c) :
     AlgebraicGeometry.Surjective C.pullbackFiberToBase := by
   have h : AlgebraicGeometry.Surjective C.projection := C.surjective_projection
   exact MorphismProperty.IsStableUnderBaseChange.of_isPullback
     (P := @AlgebraicGeometry.Surjective) C.isPullback_pullbackFiber.flip h
-
-instance instSurjectiveStarToBase (C : MaximalContactCover p τ I c) :
-    AlgebraicGeometry.Surjective C.pullbackFiberToBase :=
-  C.surjective_pullbackFiberToBase
 
 theorem ker_pullbackFiberToTotal (C : MaximalContactCover p τ I c) [IsClosedImmersion τ] :
     Scheme.Hom.ker C.pullbackFiberToTotal = τ.ker.comap C.projection := by

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ private theorem place (a : 𝓞 L) (ha : a ≠ 0) : ∃ w : InfinitePlace L, 1 �
     rwa [← w.norm_embedding_eq]
   have h2 := InfinitePlace.prod_eq_abs_norm (a : L)
   have h3 : ∏ w : InfinitePlace L, w (a : L) ^ w.mult < ∏ _w : InfinitePlace L, (1 : ℝ) :=
-    Finset.prod_lt_prod_of_nonempty
+    Finset.prod_lt_prod_of_nonempty₀
       (fun w _ => pow_pos (InfinitePlace.pos_iff.2 (RingOfIntegers.coe_ne_zero_iff.2 ha)) _)
       (fun w _ => pow_lt_one₀ (apply_nonneg w _) (h1 w) InfinitePlace.mult_ne_zero) Finset.univ_nonempty
   rw [h2, Finset.prod_const_one, ← Algebra.coe_norm_int] at h3
@@ -220,7 +224,7 @@ theorem pf_GRDual : GRDual := by
         exact zpow_le_zpow_right₀ (by norm_num) (by omega)
       have h0 : evR z (∑ᶠ v : Lat L N, rho (q h v / 4 ^ k) • rk h v) = 0 := by
         refine finsum_induction (fun x => evR z x = 0) (map_zero _)
-          (fun x y hx hy => by rw [map_add, hx, hy, add_zero]) fun v => ?_
+          (fun x y hx hy => by rw [map_add (f := _), hx, hy, add_zero]) fun v => ?_
         rw [map_smul, smul_eq_mul]
         by_cases hv : f ⬝ᵥ v = 0
         · refine mul_eq_zero_of_right _ ?_
@@ -240,13 +244,14 @@ theorem pf_GRDual : GRDual := by
     exact hk1.le
   have hsum : evR z (∑ᶠ k : ℤ, rho ((4 : ℝ) ^ k * μ h) • term ((4 : ℝ) ^ k) h) ≤ 32 * s / m := by
     by_cases hfin : (Function.support fun k : ℤ => rho ((4 : ℝ) ^ k * μ h) • term ((4 : ℝ) ^ k) h).Finite
-    · rw [finsum_eq_sum _ hfin, map_sum]
-      refine (Finset.sum_le_sum fun k _ => hterm k).trans ?_
-      rw [← Finset.mul_sum]
-      calc _ ≤ 4 * s * (2 * (4 / m)) :=
-            mul_le_mul_of_nonneg_left ((geo _ k0).trans (mul_le_mul_of_nonneg_left hinv (by norm_num)))
-              (mul_nonneg (by norm_num) hs0)
-        _ = _ := by ring
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [finsum_eq_sum _ hfin, map_sum]
+        refine (Finset.sum_le_sum fun k _ => hterm k).trans ?_
+        rw [← Finset.mul_sum]
+        calc _ ≤ 4 * s * (2 * (4 / m)) :=
+              mul_le_mul_of_nonneg_left ((geo _ k0).trans (mul_le_mul_of_nonneg_left hinv (by norm_num)))
+                (mul_nonneg (by norm_num) hs0)
+          _ = _ := by ring
     · rw [finsum_of_infinite_support hfin, map_zero]; exact div_nonneg (mul_nonneg (by norm_num) hs0) hm0
   have hμm : μ h * m ≤ 12 * C1 * |C2| := by
     have b1 : μ h ≤ |C2| * lamD h := (hcmp h hh).2.trans (mul_le_mul_of_nonneg_right (le_abs_self _) hD.le)
@@ -254,7 +259,7 @@ theorem pf_GRDual : GRDual := by
           mul_le_mul b1 hmC hm0 (mul_nonneg (abs_nonneg _) hD.le)
       _ = _ := by have := hD.ne'; clear * - this; generalize lamD h = x at *; field_simp
   have hR : (star y ⬝ᵥ (mat (ret μ h) w *ᵥ y)).re ≤ (12 * C1 * |C2| + 32) * s / m := by
-    rw [← hzz, ← evR_apply, ret, map_add, map_smul, smul_eq_mul, evR_apply z h, hzs]
+    rw [← hzz, ← evR_apply, ret, map_add (f := _), map_smul, smul_eq_mul, evR_apply z h, hzs]
     have : μ h * s ≤ 12 * C1 * |C2| * s / m := by
       rw [le_div_iff₀ hmp]
       exact (mul_right_comm _ _ _).trans_le (mul_le_mul_of_nonneg_right hμm hs0)

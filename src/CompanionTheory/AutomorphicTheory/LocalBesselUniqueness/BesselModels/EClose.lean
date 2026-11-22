@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.EFinal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyConvClose
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.EFinal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyConvClose
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ namespace Formalism.L2.SG.RealObj.EnergyConvJ
 
 namespace BM
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem locQuadGG_G_holds (hI : CompanionTheory.Lime.BM.Inputs2) : LocQuadGG_G := by
   intro D hG X u u' sc hsc v cv hcv g hZ
   obtain ⟨τ, hτ⟩ : ∃ τ, vOf X τ = v := ⟨X.pl v, X.pl.symm_apply_apply v⟩

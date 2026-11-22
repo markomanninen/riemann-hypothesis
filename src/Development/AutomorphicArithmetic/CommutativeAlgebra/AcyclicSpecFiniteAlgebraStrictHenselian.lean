@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomologyFunctorialityAxiomsHold
-import Development.AutomorphicArithmetic.CommutativeAlgebra.TwistedCohomologySpecProdBijectiveProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomologyFunctorialityAxiomsHold
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.TwistedCohomologySpecProdBijectiveProd
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
@@ -16,7 +20,7 @@ private theorem sh_of_finite (O T : Type) [CommRing O] [CommRing T] [Algebra O T
     [Module.Finite O T] (hO : SH O) (hT : HenselianLocalRing T) : SH T := by
   obtain ⟨_, hk⟩ := hO
   haveI : IsLocalHom (algebraMap O T) :=
-    ((IsLocalRing.local_hom_TFAE (algebraMap O T)).out 0 4).mpr
+    ((IsLocalRing.local_hom_tfae (algebraMap O T)).out 1 5).mpr
       (GlobalTheory.comap_eq_maximalIdeal_of_finite (IsLocalRing.maximalIdeal T))
   haveI : Algebra.IsAlgebraic (IsLocalRing.ResidueField O) (IsLocalRing.ResidueField T) := inferInstance
   exact ⟨hT, sepClosed_of_isAlgebraic (IsLocalRing.ResidueField O) (IsLocalRing.ResidueField T)⟩
@@ -74,8 +78,8 @@ private theorem acyc_pi (q : ℕ) (ι : Type) [Finite ι] :
 
 end UpperTheory.Cb.AcycFin
 
-open UpperTheory.Cb.AcycFin in
 
+open UpperTheory.Cb.AcycFin in
 theorem UpperTheory.acyclic_spec_finite_algebra_strictHenselian :
     ∀ (q : ℕ) (O A : Type) [CommRing O] [CommRing A] [Algebra O A] [Module.Finite O A], SH O → IsUnit (q : O) → Acyc q (sp A) := by
   intro q O A _ _ _ _ hO _

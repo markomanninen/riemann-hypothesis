@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntMulIntegerSmulMemLattice
 
@@ -14,7 +18,7 @@ theorem exists_int_mul_eq_integer {E : Type} [Field E] [NumberField E] (c : E) :
   rw [zsmul_eq_mul]
 
 theorem exists_int_smul_mem_lattice {E : Type} [Field E] [NumberField E] {n : ℕ}
-    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ) (w : Fin n → E) :
+    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ) (w : Fin n → E) :
     ∃ m : ℤ, m ≠ (0 : ℤ) ∧ (m : 𝓞 E) • w ∈ Λ := by
   have hw : w ∈ Submodule.span E (Λ : Set (Fin n → E)) := by
     rw [hΛ.span_eq_top]; trivial

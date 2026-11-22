@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.TwentyWordsLeB
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.TwentyWordsLeB
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+
+@[expose] public section
 
 noncomputable section
 

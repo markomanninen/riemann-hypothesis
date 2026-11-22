@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsKeyPow
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalisedModelUniformisationBaseChange
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsKeyPow
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.IndefiniteRowSideFullHecke.FibreFramesOnModels
 open GlobalTheory.KeyUnitModels
@@ -23,7 +28,7 @@ theorem exists_isPullback_pow {S S' : Scheme.{0}} (g : S' ⟶ S) (G : Over S) (A
       simp only [Over.mk_hom, Category.assoc]
       rw [h.w, ← Category.assoc, Over.w])
   have hψ : ∀ k, ψ.left ≫ pr G N k = (q k).left ≫ φ₀ := fun k => by
-    have : ψ ≫ Pi.π (fun _ => G) k = _ := Pi.lift_π _ k
+    have : ψ ≫ Pi.π (fun _ => G) k = _ := Pi.lift_comp_π _ k
     exact congrArg (fun t => Over.Hom.left t) this
   have hw : ψ.left ≫ (pow G N).hom = B.hom ≫ g := Over.w ψ
   have hpr : ∀ k, pr G N k ≫ G.hom = (pow G N).hom := fun k => Over.w (Pi.π (fun _ => G) k)
@@ -64,20 +69,21 @@ theorem exists_isPullback_pow {S S' : Scheme.{0}} (g : S' ⟶ S) (G : Over S) (A
         exact (Over.w (c s k)).symm
     exact congrArg (fun t => Over.Hom.left t) this
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem cls_pull_box {S : Scheme.{0}} (G : Over S) (L : LB G.left) (hL : L.IsLB) (N : ℕ)
     {X : Scheme.{0}} (φ : X ⟶ (pow G N).left) (h : ((boxLB G L N).pull φ).IsLB) :
     cls ((boxLB G L N).pull φ) h = ∑ k, pull (φ ≫ pr G N k) (cls L hL) := by
-  rw [cls_pull (LB.isLB_linComb hL _ _), cls_linComb hL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cls_pull (LB.isLB_linComb hL _ _), cls_linComb hL, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [one_smul, pull_comp]
 
 theorem isLB_triv (X : Scheme.{0}) : (LB.triv X).IsLB :=
   ⟨by simp, fun _ => map_one _, fun _ _ _ => by simp⟩
 
-open GlobalTheory.CechPic in
 
+open GlobalTheory.CechPic in
 theorem sections_line : ∀ (V K : Type) [CommRing V] [Field K] (f : V →+* K) (G : Over (Sp V)) [GrpObj G] [IsCommMonObj G] (L : LB G.left) (rig : LB.Gen (L.pull (eSec G))) (θ : L.Sec) (n : ℕ) (w : Fin n → (epsR V ⟶ G)) (x : KeyIn K), L.IsLB → IsFibreOf x G L rig θ w f → ∀ N : ℕ, ∃ (X' : Scheme.{0}) (p' : X' ⟶ Sp K) (φ : X' ⟶ (pow G N).left) (L' : LB X') (b : L'.Sec), IsPullback φ p' (pow G N).hom (spMap f) ∧ L'.IsLB ∧ LBIso L' ((boxLB G L N).pull φ) ∧ ∀ s : L'.Sec, ∃ a : K, ∀ i, s.f i = constFn p' _ a * b.f i := by
   intro V K _ _ f G _ _ L rig θ n w x hL hx N
   obtain ⟨φ₀, he, e, hg, F, hpb, hegen, -⟩ := hx

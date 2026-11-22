@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.NormEuclideanEmbeddingEqNetNorm
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.NormEuclideanEmbeddingEqNetNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem herm_conj : Nt.herm.Conj := by
   intro σ f g
   rw [Nt.herm_inner, Nt.herm_inner, Nt.inner_euclideanEmbedding_eq_average, Nt.inner_euclideanEmbedding_eq_average]
   rw [← Fintype.card_congr (Nt.cj σ), ← (Nt.cj σ).sum_comp]
-  simp only [Nt.ev_conj, Complex.conj_conj, star_mul', Complex.star_def, Complex.conj_ofReal, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Nt.ev_conj, Complex.conj_conj, star_mul', Complex.star_def, Complex.conj_ofReal, map_sum, map_mul]
 
 end NetData
 

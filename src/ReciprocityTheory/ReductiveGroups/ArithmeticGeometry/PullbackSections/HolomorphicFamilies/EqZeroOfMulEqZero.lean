@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.FirstBlockLemmaJ.Imports
+module
+
+public import Mathlib
+public import Lemmata.FirstBlockLemmaJ.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.PullbackSections.Pf
 

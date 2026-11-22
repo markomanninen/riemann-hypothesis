@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SqNormIntegralFundamentalDomainEqL2NormSq
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Pj MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker
@@ -31,13 +35,11 @@ theorem finPart_tmul (x : AF D.host.F) (e : D.host.E) :
     Formalism.L2.Theta.finPart D (x ⊗ₜ[D.host.F] e) = (sndA D.host.F x) ⊗ₜ[D.host.F] e := rfl
 
 theorem emb_mul (a : AE D) (x : AfE D) : emb D (Formalism.L2.Theta.finPart D a * x) = a * emb D x := by
-  induction a using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, add_mul, ha, hb]
+  induction a using TensorProduct.inductionOn with
+  | add a b ha hb => simp only [map_add (f := _), add_mul, ha, hb]
   | tmul y e =>
-    induction x using TensorProduct.induction_on with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, mul_add, ha, hb]
+    induction x using TensorProduct.inductionOn with
+    | add a b ha hb => simp only [map_add (f := _), mul_add, ha, hb]
     | tmul α f =>
       rw [finPart_tmul, Algebra.TensorProduct.tmul_mul_tmul, emb_tmul, emb_tmul,
         Algebra.TensorProduct.tmul_mul_tmul]
@@ -50,7 +52,7 @@ def outer (S T : HSp D) (v : Fin S.rank → AfE D) (u : Fin T.rank → AfE D) : 
 def outerHom (S T : HSp D) : (Fin S.rank → AfE D) →+ (Fin T.rank → AfE D) →+ WO S T :=
   AddMonoidHom.mk' (fun v => AddMonoidHom.mk' (fun u => outer S T v u) (fun u u' => by
       ext i j
-      simp only [outer, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul]))
+      simp only [outer, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul]))
     (fun v v' => AddMonoidHom.ext fun u => by
       ext i j
       simp only [outer, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply, Matrix.of_apply, Matrix.add_apply,
@@ -123,7 +125,8 @@ theorem actO_outer (S T : HSp D) (hS : S.gram = 1) (h : GA D S) (g : GA D T) (v 
   rw [h1, Matrix.one_mul, Matrix.mul_one] at key
   ext i j
   simp only [actO, key, outer, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply]
-  simp only [← emb_mul, ← map_sum, mul_comm (emb D _)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← emb_mul, ← map_sum, mul_comm (emb D _)]
   congr 1
   simp only [fmt, fmtC, Formalism.L2.Theta.cM, Matrix.mulVec, dotProduct, Matrix.map_apply, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun m _ => ?_

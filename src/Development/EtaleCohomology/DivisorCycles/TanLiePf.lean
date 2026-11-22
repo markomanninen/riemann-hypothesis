@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.OpenCoset
+module
+
+public import Development.EtaleCohomology.DivisorCycles.OpenCoset
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb.TanLiePf
@@ -13,7 +17,8 @@ theorem DX_comm {C : Type} [Field C] {N : ℕ} (Y Z : Mat C N) :
   apply MvPolynomial.derivation_ext
   intro p
   rw [Derivation.commutator_apply, DX_X, DX_X, DX_X]
-  simp only [map_sum, MvPolynomial.C_mul', map_smul, DX_X, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.C_mul', map_smul, DX_X, Finset.smul_sum, smul_smul]
   simp only [Matrix.sub_apply, Matrix.mul_apply, ← Finset.sum_sub_distrib]
   simp only [sub_smul, Finset.sum_smul, ← Finset.sum_sub_distrib]
   rw [Finset.sum_comm]

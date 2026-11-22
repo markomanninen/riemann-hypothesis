@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.OddLogRelation
-import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.OddLogRelation
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -434,13 +438,13 @@ theorem pi_factorial : PiFactorial := by
     norm_pow]
   refine pow_le_pow_of_le_one (norm_nonneg _) hle ?_
   have : Fact p.Prime := ⟨hp⟩
-  have hleg := sub_one_mul_padicValNat_factorial (p := p) i
+  have hleg := Nat.Prime.sub_one_mul_multiplicity_factorial (n := i) hp
   have hsq : p ^ 2 - 1 = (p + 1) * (p - 1) := by
     obtain ⟨m, rfl⟩ : ∃ m, p = m + 1 := ⟨p - 1, by have := hp.one_lt; omega⟩
     simp only [Nat.add_sub_cancel]
     have : (m + 1) ^ 2 = (m + 1 + 1) * m + 1 := by ring
     omega
-  rw [hsq, mul_assoc, hleg]
+  rw [hsq, mul_assoc, Nat.padicValNat_def, hleg]
   exact Nat.mul_le_mul_left _ (Nat.sub_le _ _)
 
 theorem exp_integral : ExpIntegral := by

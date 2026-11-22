@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
-import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+public import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum Topology Filter
   MeasureTheory WithZero
@@ -39,8 +43,8 @@ theorem localComponent_eq_one_of_mem_unitsLevel {v : HeightOneSpectrum (𝓞 K)}
   rw [MonoidHom.mem_ker, ofFinite_finiteUnitsSingle] at h2
   exact h2
 
-open Classical in
 
+open Classical in
 def finiteTest (v : HeightOneSpectrum (𝓞 K)) (x : v.adicCompletion K) : ℂ :=
   if v.asIdeal ∣ χ.conductor then
     (if h : Valued.v x = 1 then
@@ -62,7 +66,7 @@ theorem finiteTest_eq_zero {v : HeightOneSpectrum (𝓞 K)} {x : v.adicCompletio
 theorem finiteTest_eq_zero_of_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : v.asIdeal ∣ χ.conductor)
     {x : v.adicCompletion K} (hx : Valued.v x ≠ 1) : χ.finiteTest v x = 0 := by
   unfold finiteTest
-  rw [if_pos hv, dif_neg hx]
+  rw [if_pos hv, dite_eq_right hx]
 
 theorem finiteTest_eq_one {v : HeightOneSpectrum (𝓞 K)} (hv : ¬ v.asIdeal ∣ χ.conductor)
     {x : v.adicCompletion K} (hx : Valued.v x ≤ 1) : χ.finiteTest v x = 1 := by
@@ -73,7 +77,7 @@ theorem finiteTest_of_dvd {v : HeightOneSpectrum (𝓞 K)} (hv : v.asIdeal ∣ �
     (u : (v.adicCompletion K)ˣ) (hu : Valued.v (u : v.adicCompletion K) = 1) :
     χ.finiteTest v u = ((χ.localComponent v u : ℂ))⁻¹ := by
   unfold finiteTest
-  rw [if_pos hv, dif_pos hu, Circle.coe_inv]
+  rw [if_pos hv, dite_eq_left hu, Circle.coe_inv]
   congr 3
   exact Units.ext rfl
 
@@ -82,7 +86,8 @@ theorem finiteTest_add {v : HeightOneSpectrum (𝓞 K)} (x : v.adicCompletion K)
     (hh : Valued.v h ≤ exp (-(multiplicity v.asIdeal χ.conductor : ℤ))) :
     χ.finiteTest v (x + h) = χ.finiteTest v x := by
   by_cases hv : v.asIdeal ∣ χ.conductor
-  · have hn : 1 ≤ multiplicity v.asIdeal χ.conductor := multiplicity_pos_of_dvd hv
+  · have hn : 1 ≤ multiplicity v.asIdeal χ.conductor :=
+      multiplicity_pos_of_dvd hv (Ideal.finiteMultiplicity v.isPrime.ne_top χ.conductor_ne_bot)
     have hh1 : Valued.v h < 1 := by
       refine hh.trans_lt ?_
       rw [← exp_zero, exp_lt_exp]
@@ -119,7 +124,7 @@ theorem finiteTest_add {v : HeightOneSpectrum (𝓞 K)} (x : v.adicCompletion K)
         rw [this, Valuation.map_add_eq_of_lt_left _ (by rw [Valuation.map_neg, hxh]; exact hh1),
           hxh]
       rw [χ.finiteTest_eq_zero_of_dvd hv hx, χ.finiteTest_eq_zero_of_dvd hv hxh]
-  · rw [multiplicity_eq_zero.2 hv, Nat.cast_zero, neg_zero, exp_zero] at hh
+  · rw [multiplicity_eq_zero_of_not_dvd hv, Nat.cast_zero, neg_zero, exp_zero] at hh
     have hiff : Valued.v (x + h) ≤ 1 ↔ Valued.v x ≤ 1 := by
       constructor
       · intro hxh
@@ -219,7 +224,8 @@ theorem isCoprime_of_count_eq_zero {I 𝔪 : Ideal (𝓞 K)} (h𝔪 : 𝔪 ≠ �
   have hvI : v.asIdeal ∣ I := Ideal.dvd_iff_le.2 (le_sup_left.trans hle)
   have := h v hv𝔪
   rw [count_coeIdeal_eq_multiplicity v hI] at this
-  exact (multiplicity_pos_of_dvd hvI).ne' (by exact_mod_cast this)
+  exact (multiplicity_pos_of_dvd hvI (Ideal.finiteMultiplicity v.isPrime.ne_top hI)).ne'
+    (by exact_mod_cast this)
 
 theorem idealOfExponents_ne_bot {n : HeightOneSpectrum (𝓞 K) →₀ ℤ} (hn : ∀ v, 0 ≤ n v) :
     idealOfExponents n ≠ ⊥ := by
@@ -235,8 +241,8 @@ theorem count_idealOfExponents {n : HeightOneSpectrum (𝓞 K) →₀ ℤ} (hn :
       n v := by
   rw [coeIdeal_idealOfExponents hn, FractionalIdeal.count_finsuppProd]
 
-open Classical in
 
+open Classical in
 theorem finiteTestFun_mul_toIdele (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
     χ.finiteTestFun b * (χ.toIdele (ofFinite b) : ℂ) =
       if ∀ v, 0 ≤ ord v (ofFinite b) then χ.coeff (idealOfExponents (ordFinsupp K (ofFinite b)))
@@ -337,8 +343,8 @@ theorem finiteModule_ofFinite_eq {b : (FiniteAdeleRing (𝓞 K) K)ˣ}
     Real.rpow_one] at h
   exact h
 
-open Classical in
 
+open Classical in
 def orderTerm (s : ℂ) (n : HeightOneSpectrum (𝓞 K) →₀ ℤ) : ℂ :=
   if ∀ v, 0 ≤ n v then χ.coeff (idealOfExponents n) *
     (Ideal.absNorm (idealOfExponents n) : ℂ) ^ (-s) else 0

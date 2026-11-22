@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteContinuousCocyclesLocalGaloisRep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NatCastPowNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalGaloisRepInvariantsFromFractionRing
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinrankDdRFinsum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationLtOneIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisEmbeddingCount
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralNormLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteContinuousCocyclesLocalGaloisRep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NatCastPowNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalGaloisRepInvariantsFromFractionRing
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinrankDdRFinsum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationLtOneIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsPlaceEmb
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GaloisEmbeddingCount
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegralNormLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem card_span {O Λ K G ι : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
       rw [this]
       exact Submodule.sum_mem _ fun i _ => Submodule.subset_span ⟨_, (β i).2, b i, fun _ _ => rfl⟩
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
     have hT : Module.IsTorsionBySet O K (IsLocalRing.maximalIdeal O) := fun b a => hK a.1 a.2 b
@@ -69,8 +73,10 @@ theorem card_span {O Λ K G ι : Type} [CommRing O] [IsDomain O] [IsDiscreteValu
     choose c hc using fun j => IsLocalRing.residue_surjective (φ (b j))
     have h1 : ∀ g a, ∃ y, (∑ j, c j • β j : Z).1 g a = ϖ * y := fun g a => by
       have h2 := congrArg φ ((hΦ b g a).symm.trans (congrFun (congrFun hb g) a))
-      simp only [map_sum, ← hs', map_smul, ← hc, smul_eq_mul, Pi.zero_apply, map_zero, ← map_mul] at h2
-      rw [← map_sum, IsLocalRing.residue_eq_zero_iff, hϖ.maximalIdeal_eq, Ideal.mem_span_singleton] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, ← hs', map_smul, ← hc, smul_eq_mul, Pi.zero_apply, map_zero, ← map_mul] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, IsLocalRing.residue_eq_zero_iff, hϖ.maximalIdeal_eq, Ideal.mem_span_singleton] at h2
       obtain ⟨y, hy⟩ := h2
       exact ⟨y, by simpa [mul_comm] using hy⟩
     choose y hy using h1
@@ -169,14 +175,15 @@ variable {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] [Algebra E 
 
 theorem isFractionRing_LL : letI := Bw.toLL.toAlgebra; IsFractionRing O ↥Bw.LL.1 := by
   letI := Bw.toLL.toAlgebra
+  have hinj : Function.Injective Bw.toLL := Subtype.val_injective.comp Bw.eO.injective
   haveI : FaithfulSMul O ↥Bw.LL.1 :=
-    (faithfulSMul_iff_algebraMap_injective _ _).2 (GlobalTheory.EmbInj.toLL_inj Bw)
+    (faithfulSMul_iff_algebraMap_injective _ _).2 hinj
+  obtain ⟨_, -, hfr⟩ := (GlobalTheory.LocalIntegers.good_integers l Bw.LL).1.1
   refine IsFractionRing.of_field O _ fun x => ?_
-  obtain ⟨n, d, hd, hf⟩ := GlobalTheory.EmbInj.exists_frac Bw x
-  refine ⟨n, d, ?_⟩
-  have hd' : Bw.toLL d ≠ 0 := (map_ne_zero_iff _ (GlobalTheory.EmbInj.toLL_inj Bw)).2 hd
-  change x = Bw.toLL _ / Bw.toLL _
-  rw [← hf, mul_div_cancel_left₀ _ hd']
+  obtain ⟨n, d, -, rfl⟩ := IsFractionRing.div_surjective (A := ↥(OL Bw.LL)) x
+  refine ⟨Bw.eO.symm n, Bw.eO.symm d, ?_⟩
+  change _ = Bw.toLL _ / Bw.toLL _
+  simp [LocBridge.toLL]
 
 omit [IsDomain O] in
 theorem B1_le_Z1f (P : LocPrime l) {m : ℕ} (T : ↥Gw →* GL (Fin m) O)
@@ -185,13 +192,18 @@ theorem B1_le_Z1f (P : LocPrime l) {m : ℕ} (T : ↥Gw →* GL (Fin m) O)
   rintro _ ⟨x, rfl⟩
   have h : ∀ g, Formalism.WeaklyAdmissibleFiltrations.cob (Bw.rep T) x g = Bw.rep T g x - x := fun _ => rfl
   haveI : IsTopologicalRing ↥Bw.LL.1 := (GlobalTheory.LocalIntegers.good_integers l Bw.LL).1.2.2.2.1
-  refine ⟨⟨(GlobalTheory.BKDimNoInv.rep_continuous Bw T hT x).sub continuous_const, fun g k => ?_⟩, x ⊗ₜ 1, fun g => ?_⟩
+  have htoLL : Continuous Bw.toLL := continuous_subtype_val.comp Bw.eO_cont
+  have hcont : Continuous fun g => Bw.rep T g x := by
+    change Continuous fun g => ((T (Bw.e.symm g) : Matrix (Fin m) (Fin m) O).map Bw.toLL).mulVec x
+    exact ((hT.comp Bw.e_symm_cont).matrix_map htoLL).matrix_mulVec continuous_const
+  refine ⟨⟨hcont.sub continuous_const, fun g k => ?_⟩, x ⊗ₜ 1, fun g => ?_⟩
   · simp only [h, map_mul, Module.End.mul_apply, map_sub]
     abel
   · simp [h, Formalism.WeaklyAdmissibleFiltrations.actVB, TensorProduct.sub_tmul]
 
-set_option maxHeartbeats 1600000 in
 
+set_option synthInstance.maxHeartbeats 100000 in
+set_option maxHeartbeats 1600000 in
 theorem card_local [IsDiscreteValuationRing O] [IsTopologicalRing O] (hO : IsAdic (IsLocalRing.maximalIdeal O))
     (hfin : Formalism.GaloisCohomology.LocalFinitenessK) (P : LocPrime l) {m : ℕ} (T : ↥Gw →* GL (Fin m) O)
     (hT : Continuous fun g => ((T g : GL (Fin m) O) : Matrix (Fin m) (Fin m) O))
@@ -208,9 +220,34 @@ theorem card_local [IsDiscreteValuationRing O] [IsTopologicalRing O] (hO : IsAdi
   letI := Bw.toLL.toAlgebra
   haveI := isFractionRing_LL Bw
   haveI := GlobalTheory.BlochKatoIntegralScalars.compactSpace_GK Bw.Kw
-  have hinj := GlobalTheory.EmbInj.toLL_inj Bw
+  have hinj : Function.Injective Bw.toLL := Subtype.val_injective.comp Bw.eO.injective
   set W := Formalism.WeaklyAdmissibleFiltrations.finiteCocycles (P.PD Bw.Kw) (Bw.rep T) with hWdef
-  haveI := GlobalTheory.LocalH1Finiteness.finite_continuous_cocycles_localGaloisRep Bw hfin T hT
+  have hrep (g : ↥(GK Bw.Kw)) (x : Fin m → ↥Bw.LL.1) (a : Fin m) :
+      Bw.rep T g x a = ∑ b, Bw.toLL ((T (Bw.e.symm g) : Matrix (Fin m) (Fin m) O) a b) * x b := rfl
+  haveI : FiniteDimensional ↥Bw.LL.1 (Formalism.WeaklyAdmissibleFiltrations.continuousCocycles (Bw.rep T)) := by
+    haveI : FiniteDimensional ℚ_[l] ↥Bw.LL.1 := Bw.LL.2
+    haveI : FiniteDimensional ℚ_[l] ↥Bw.Kw.1 := Bw.Kw.2
+    have htoLL : Continuous Bw.toLL := continuous_subtype_val.comp Bw.eO_cont
+    let φ : Formalism.GaloisCohomology.GK l Bw.Kw.1 →* ↥(GK Bw.Kw) :=
+      (Bw.Kw.1.fixingSubgroupEquiv.symm : _ ≃* _).toMonoidHom
+    refine GlobalTheory.LocalH1Finiteness.finite_cocycles_of_compact_cover (l := l) (Bw.rep T) ?_ ?_ φ ?_ ?_ ?_
+    · refine continuous_pi fun a => ?_
+      simp only [hrep]
+      exact continuous_finsetSum _ fun b _ =>
+        ((htoLL.comp ((hT.comp Bw.e_symm_cont).matrix_elem a b)).comp continuous_fst).mul
+          ((continuous_apply b).comp continuous_snd)
+    · intro g x
+      refine (pi_norm_le_iff_of_nonneg (norm_nonneg x)).2 fun a => ?_
+      rw [hrep]
+      refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg x) fun b _ => ?_
+      rw [norm_mul]
+      have he : ‖Bw.toLL ((T (Bw.e.symm g) : Matrix (Fin m) (Fin m) O) a b)‖ ≤ 1 :=
+        (GlobalTheory.EmbInj.mem_OL_iff Bw.LL _).1 (Bw.eO _).2
+      exact (mul_le_of_le_one_left (norm_nonneg _) he).trans (norm_le_pi_norm x b)
+    · exact (GlobalTheory.fixingSubgroupEquiv_bicontinuous _ _ Bw.Kw.1).2
+    · exact Bw.Kw.1.fixingSubgroupEquiv.symm.surjective
+    · intro r M _ _ _ _ _ ρ' hr hcont
+      exact (hfin l Bw.Kw.1 Bw.Kw.2 r M ρ' hr hcont).2.1
   haveI : FiniteDimensional ↥Bw.LL.1 W :=
     Submodule.finiteDimensional_of_le (S₂ := Formalism.WeaklyAdmissibleFiltrations.continuousCocycles (Bw.rep T)) fun c hc => hc.1
   have hsm : ∀ (c : O) (y : ↥Gw → Fin m → O), (fun h a => Bw.toLL ((c • y) (Bw.e.symm h) a)) =
@@ -222,15 +259,21 @@ theorem card_local [IsDiscreteValuationRing O] [IsTopologicalRing O] (hO : IsAdi
         exact W.zero_mem
       add_mem' := fun {a b} ha hb => by
         have := W.add_mem ha hb
-        simp only [Set.mem_ofPred_eq, Pi.add_apply, map_add]
+        simp only [Set.mem_ofPred_eq, Pi.add_apply, map_add (f := _)]
         exact this
       smul_mem' := fun c y hy => by
         rw [Set.mem_ofPred_eq, hsm]
         exact W.smul_mem _ hy }
   have hZ : ∀ y, y ∈ Z ↔ (fun h a => Bw.toLL (y (Bw.e.symm h) a)) ∈ W := fun _ => Iff.rfl
   obtain ⟨hZf, hZr⟩ := finite_and_finrank Bw.e.toEquiv W Z hZ fun w hw => by
-    obtain ⟨d, hd, f, -, hf⟩ := GlobalTheory.BlochKatoRank.exists_integral Bw w hw.1.1
-    exact ⟨d, hd, f, hf⟩
+    obtain ⟨k, hk⟩ := GlobalTheory.BlochKatoIntegralScalars.exists_pow_mul_mem_OL Bw.LL w hw.1.1
+    have hd : (l : O) ^ k ≠ 0 := fun h => by
+      have he := congrArg Bw.toLL h
+      rw [map_pow, map_natCast, map_zero] at he
+      exact (Fact.out : l.Prime).ne_zero (by exact_mod_cast (eq_zero_of_pow_eq_zero he))
+    refine ⟨(l : O) ^ k, hd, fun g a => Bw.eO.symm ⟨_, hk g a⟩, fun g a => ?_⟩
+    change ((Bw.eO (Bw.eO.symm _) : OL Bw.LL) : Bw.LL.1) = _
+    rw [RingEquiv.apply_symm_apply, map_pow, map_natCast]
   have hcard := card_span hK Z fun c z hc hz => by
     rw [hZ, hsm] at hz
     exact (W.smul_mem_iff ((map_ne_zero_iff _ hinj).2 hc)).1 hz
@@ -266,18 +309,21 @@ theorem card_local [IsDiscreteValuationRing O] [IsTopologicalRing O] (hO : IsAdi
     · intro g h
       funext a
       have h1 := congrFun (hy'.2 (Bw.e g) (Bw.e h)) a
-      simp only [← map_mul, MulEquiv.symm_apply_apply, Pi.add_apply, GlobalTheory.LocalH1Finiteness.rep_apply, ← map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [← map_mul, MulEquiv.symm_apply_apply, Pi.add_apply, hrep, ← map_sum,
         ← map_add] at h1
-      simp only [Pi.add_apply, hρ, hf, hinj h1, map_add, map_sum, map_mul, add_smul, Finset.sum_smul, mul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Pi.add_apply, hρ, hf, hinj h1, map_add (f := _), map_sum, map_mul, add_smul, Finset.sum_smul, mul_smul]
   have hBS : B1 ρ ≤ Submodule.span Λ S := by
     rintro _ ⟨x, rfl⟩
-    rw [← Finset.univ_sum_single x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single x, map_sum]
     refine Submodule.sum_mem _ fun j _ => Submodule.subset_span
       ⟨fun g a => (T g : Matrix (Fin m) (Fin m) O) a j - (Pi.single j 1 : Fin m → O) a, ?_, x j, fun g a => ?_⟩
     · rw [hZ]
       refine hBW ⟨Pi.single j 1, funext fun h => funext fun a => ?_⟩
       change Bw.rep T h (Pi.single j 1) a - (Pi.single j 1 : Fin m → ↥Bw.LL.1) a = _
-      rw [GlobalTheory.LocalH1Finiteness.rep_apply]
+      rw [hrep]
       simp [Pi.single_apply, apply_ite Bw.toLL]
     · rw [amitsur_d0_apply, Pi.sub_apply, hρ]
       simp [Pi.single_apply, apply_ite (algebraMap O Λ), sub_smul, ite_smul]
@@ -351,8 +397,26 @@ theorem isFrac_iff (x : Emb bkP i) (e : D.host.E) (n d : X.O0 i) :
 
 theorem norm_toLL_lt_one_iff (v : PlE D.host) (hv : v ∈ placesOver D.host.E (X.l i)) (n : X.O0 i) :
     ‖(((bkP.br i v hv).toLL n : ↥(bkP.br i v hv).LL.1) : PadicAlgCl (X.l i))‖ < 1 ↔ ¬ IsUnit n := by
-  refine (GlobalTheory.EmbThroughCompletion.not_isUnit_iff _ ((bkP.br i v hv).eO n)).symm.trans ?_
-  rw [MulEquiv.isUnit_map]
+  let Bw := bkP.br i v hv
+  let x := Bw.eO n
+  have hnorm (y : Formalism.BasicNotions.Loc.OL Bw.LL) :=
+    (GlobalTheory.EmbInj.mem_OL_iff Bw.LL _).1 y.2
+  have hunit : ‖((x : ↥Bw.LL.1) : PadicAlgCl (X.l i))‖ < 1 ↔ ¬ IsUnit x := by
+    constructor
+    · intro h hu
+      obtain ⟨y, hy⟩ := isUnit_iff_exists_inv.1 hu
+      have hxy := congrArg (fun z : Formalism.BasicNotions.Loc.OL Bw.LL =>
+        ‖((z : ↥Bw.LL.1) : PadicAlgCl (X.l i))‖) hy
+      simp only [MulMemClass.coe_mul, norm_mul, OneMemClass.coe_one, norm_one] at hxy
+      have hx := norm_nonneg ((x : ↥Bw.LL.1) : PadicAlgCl (X.l i))
+      nlinarith [hnorm y]
+    · intro h
+      refine lt_of_le_of_ne (hnorm x) fun he => h ?_
+      have hx : (x : ↥Bw.LL.1) ≠ 0 := fun hx => by simp [hx] at he
+      refine isUnit_iff_exists_inv.2 ⟨⟨(x : ↥Bw.LL.1)⁻¹, (GlobalTheory.EmbInj.mem_OL_iff Bw.LL _).2 ?_⟩,
+        Subtype.ext (mul_inv_cancel₀ hx)⟩
+      rw [IntermediateField.coe_inv, norm_inv, he, inv_one]
+  exact hunit.trans (not_congr (MulEquiv.isUnit_map Bw.eO))
 
 theorem mem_iff_not_isUnit (x : Emb bkP i) (e : 𝓞 D.host.E) (n : X.O0 i)
     (h : algebraMap _ _ n = embOf bkP i x e) : e ∈ x.1.1.asIdeal ↔ ¬ IsUnit n := by
@@ -375,8 +439,20 @@ theorem embOf_bijective : Function.Bijective (embOf bkP i) := by
       ext e
       obtain ⟨n, hn⟩ := exists_int i (embOf bkP i ⟨⟨v, hv⟩, τ⟩) e
       exact (mem_iff_not_isUnit bkP i _ e n hn).trans (mem_iff_not_isUnit bkP i ⟨⟨v', hv'⟩, τ'⟩ e n (h ▸ hn)).symm
-    obtain rfl : τ = τ' := GlobalTheory.EmbInj.algHom_ext (bkP.br i v hv) τ τ' fun e =>
+    have hτ e : τ (cE bkP i v hv e) = τ' (cE bkP i v hv e) :=
       (fracEquiv_embOf bkP i ⟨⟨v, hv⟩, τ⟩ e).symm.trans (by rw [h]; exact fracEquiv_embOf bkP i ⟨⟨v, hv⟩, τ'⟩ e)
+    obtain rfl : τ = τ' := by
+      let Bw := bkP.br i v hv
+      have hd : DenseRange (cE bkP i v hv) := by
+        intro y
+        rw [Topology.IsEmbedding.subtypeVal.closure_eq_preimage_closure_image, ← Set.range_comp]
+        exact Bw.j_dense y.2
+      have hc (σ : EmbV bkP i v hv) : Continuous σ := by
+        apply Isometry.continuous
+        refine Isometry.of_dist_eq fun a b => ?_
+        rw [dist_eq_norm, dist_eq_norm, ← map_sub]
+        exact GlobalTheory.EmbInj.norm_algHom Bw.Kw Bw.LL σ (a - b)
+      exact DFunLike.ext _ _ (congrFun (hd.equalizer (hc τ) (hc τ') (funext hτ)))
     rfl
   · intro φ
     choose f hf using exists_int i φ
@@ -396,12 +472,43 @@ theorem embOf_bijective : Function.Bijective (embOf bkP i) := by
         exact (Fact.out : (X.l i).Prime).ne_zero (by exact_mod_cast hl)⟩
     have hv : v ∈ placesOver D.host.E (X.l i) := hl
     let Bw := bkP.br i v hv
-    obtain ⟨g, hg⟩ := GlobalTheory.EmbThroughCompletion.exists_conj (Bw.j.comp (algebraMap D.host.E N.Om))
-      (Bw.LL.1.val.toRingHom.comp ((fracEquiv bkP i v hv).toRingHom.comp φ))
-      (GlobalTheory.EmbThroughCompletion.norm_lt_one_iff v _ _ (norm_lt_one_iff_mem (N.plOm.2 v) Bw) fun x => by
-        change ‖((fracEquiv bkP i v hv (φ x) : ↥Bw.LL.1) : PadicAlgCl (X.l i))‖ < 1 ↔ _
-        rw [← hf, fracEquiv_alg, norm_toLL_lt_one_iff]
-        rfl)
+    let a := Bw.j.comp (algebraMap D.host.E N.Om)
+    let b := Bw.LL.1.val.toRingHom.comp ((fracEquiv bkP i v hv).toRingHom.comp φ)
+    have ha := norm_lt_one_iff_mem (N.plOm.2 v) Bw
+    have hb (x : 𝓞 D.host.E) : ‖b (x : D.host.E)‖ < 1 ↔ x ∈ v.asIdeal := by
+      change ‖((fracEquiv bkP i v hv (φ x) : ↥Bw.LL.1) : PadicAlgCl (X.l i))‖ < 1 ↔ _
+      rw [← hf, fracEquiv_alg, norm_toLL_lt_one_iff]
+      rfl
+    have hab (x : D.host.E) : ‖a x‖ < 1 ↔ ‖b x‖ < 1 := by
+      obtain ⟨n, d, h⟩ := v.exists_primeCompl_mul_eq_or_mul_eq (K := D.host.E) x
+      have hn (c : D.host.E →+* PadicAlgCl (X.l i)) (z : 𝓞 D.host.E) : ‖c (z : D.host.E)‖ ≤ 1 :=
+        GlobalTheory.EmbThroughCompletion.norm_le_one_of_isIntegral (R := ℤ)
+          (fun r => by simpa using IsUltrametricDist.norm_intCast_le_one (PadicAlgCl (X.l i)) r)
+          (map_isIntegral_int c z.isIntegral_coe)
+      have hd (c : D.host.E →+* PadicAlgCl (X.l i))
+          (hc : ∀ z : 𝓞 D.host.E, ‖c (z : D.host.E)‖ < 1 ↔ z ∈ v.asIdeal) :
+          ‖c ((d : 𝓞 D.host.E) : D.host.E)‖ = 1 :=
+        le_antisymm (hn c _) (not_lt.1 fun hlt => d.2 ((hc _).1 hlt))
+      rcases h with h | h
+      · have key (c : D.host.E →+* PadicAlgCl (X.l i))
+            (hc : ∀ z : 𝓞 D.host.E, ‖c (z : D.host.E)‖ < 1 ↔ z ∈ v.asIdeal) :
+            ‖c x‖ < 1 ↔ n ∈ v.asIdeal := by
+          have he := congrArg (fun y => ‖c y‖) h
+          simp only [map_mul, norm_mul] at he
+          change ‖c x‖ * ‖c ((d : 𝓞 D.host.E) : D.host.E)‖ = ‖c (n : D.host.E)‖ at he
+          rw [hd c hc, mul_one] at he
+          rw [he, hc]
+        exact (key a ha).trans (key b hb).symm
+      · have key (c : D.host.E →+* PadicAlgCl (X.l i))
+            (hc : ∀ z : 𝓞 D.host.E, ‖c (z : D.host.E)‖ < 1 ↔ z ∈ v.asIdeal) : ¬ ‖c x‖ < 1 := by
+          intro hlt
+          have he := congrArg (fun y => ‖c y‖) h
+          simp only [map_mul, norm_mul] at he
+          change ‖c x‖ * ‖c (n : D.host.E)‖ = ‖c ((d : 𝓞 D.host.E) : D.host.E)‖ at he
+          rw [hd c hc] at he
+          nlinarith [hn c n, norm_nonneg (c x), norm_nonneg (c (n : D.host.E))]
+        exact iff_of_false (key a ha) (key b hb)
+    obtain ⟨g, hg⟩ := GlobalTheory.EmbThroughCompletion.exists_conj a b hab
     let σ : Bw.Kw.1 →ₐ[ℚ_[X.l i]] PadicAlgCl (X.l i) :=
       (g : PadicAlgCl (X.l i) →ₐ[ℚ_[X.l i]] PadicAlgCl (X.l i)).comp Bw.Kw.1.val
     refine ⟨⟨⟨v, hv⟩, σ.codRestrict Bw.LL.1.toSubalgebra (Bw.LL_split σ)⟩, RingHom.ext fun e => ?_⟩
@@ -444,14 +551,62 @@ theorem noInv (h : IsotypicValuationAtRing bkP i s) (v : PlE D.host) (x : Fin D.
       Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).map (algebraMap (X.O0 i) (FractionRing (X.O0 i)))).mulVec x = x) : x = 0 :=
   h.2.2.1 v _ (N.plOm.2 v) x fun g hg => by rw [← Tgl_coe]; exact hx ⟨g, hg⟩
 
+set_option maxHeartbeats 8000000 in
+set_option synthInstance.maxHeartbeats 100000 in
+open Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations in
 theorem h1fDim_eq (h : GalHyp bkP i s) (u : placesOver D.host.E (X.l i)) [Fintype (EmbV bkP i u.1 u.2)] :
     (h1fDim bkP i s u : ℤ) =
       ∑ τ, ((dimD bkP i u.1 u.2 (Tgl i s) τ : ℤ) - dimFil0 bkP i u.1 u.2 (Tgl i s) τ) := by
   have hdR := (h.1.2.1 u.1 u.2 (Tgl i s) (Or.inr rfl)).1
-  have h1 := GlobalTheory.BKDimNoInv.finrank_h1f_no_invariants (bkP.br i u.1 u.2) (D.loc (X.l i)) ((Tgl i s).comp (DecV N u.1).subtype)
-    ((continuous_Tgl i s).comp continuous_subtype_val) (h.2.2.2.2.2.1 _ _).2.1 hdR (noInv bkP i s h.1 u.1)
-  obtain ⟨h2, h3⟩ := GlobalTheory.DeRhamSplit.finrank_DdR_local (D.loc (X.l i)) _ _ (bkP.br i u.1 u.2).LL_split
-    (lt_of_lt_of_le (by norm_num) h.2.2.2.2.2.2) _ hdR 0
+  let Bw := bkP.br i u.1 u.2
+  let T := (Tgl i s).comp (DecV N u.1).subtype
+  let e := fracEquiv bkP i u.1 u.2
+  have h0 : H0V (Bw.rep T) = ⊥ := by
+    rw [eq_bot_iff]
+    intro x hx
+    let y := fun j => e.symm (x j)
+    have hxy (j : Fin D.R.r) : e (y j) = x j := e.apply_symm_apply _
+    have he (a : X.O0 i) : e (algebraMap _ _ a) = Bw.toLL a := fracEquiv_alg bkP i u.1 u.2 a
+    have hy : y = 0 := noInv bkP i s h.1 u.1 y fun g => by
+      have hg := (Submodule.mem_iInf _).1 hx (Bw.e g)
+      rw [LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply, sub_eq_zero] at hg
+      change ((T (Bw.e.symm (Bw.e g)) : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).map Bw.toLL).mulVec x = x at hg
+      funext j
+      apply e.injective
+      simpa only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, he, hxy,
+        MulEquiv.symm_apply_apply] using congrFun hg j
+    rw [Submodule.mem_bot]
+    exact funext fun j => by simpa only [hy, Pi.zero_apply, map_zero] using (hxy j).symm
+  have hG := (GlobalTheory.LocalIntegers.good_integers (X.l i) Bw.LL).1
+  haveI : IsTopologicalRing ↥Bw.LL.1 := hG.2.2.2.1
+  let A : GRep ↥(GK Bw.Kw) ℚ_[X.l i] ↥Bw.LL.1 ↥(OL Bw.LL) :=
+    { V := Fin D.R.r → ↥Bw.LL.1
+      ρ := Bw.rep T
+      cont := fun x => by
+        have htoLL : Continuous Bw.toLL := continuous_subtype_val.comp Bw.eO_cont
+        have hT : Continuous fun g : ↥(DecV N u.1) => (T g : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)) :=
+          (continuous_Tgl i s).comp continuous_subtype_val
+        change Continuous fun g => ((T (Bw.e.symm g) : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).map Bw.toLL).mulVec x
+        exact ((hT.comp Bw.e_symm_cont).matrix_map htoLL).matrix_mulVec continuous_const }
+  have hA : IsDR (PDv bkP i u.1 u.2) A.ρ := by
+    change Module.finrank ↥Bw.LL.1 ↥(DdR (PDv bkP i u.1 u.2) (Bw.rep T)) =
+      Module.finrank ℚ_[X.l i] ↥Bw.Kw.1 * Module.finrank ↥Bw.LL.1 (Fin D.R.r → ↥Bw.LL.1)
+    rw [Module.finrank_fin_fun]
+    exact hdR
+  have h1 := (h.2.2.2.2.2.1 _ _).2.1 _ _ hG A hA
+  have hzero : Module.finrank ↥Bw.LL.1 ↥(H0V A.ρ) = 0 := by
+    change Module.finrank ↥Bw.LL.1 ↥(H0V (Bw.rep T)) = 0
+    rw [h0, finrank_bot]
+  rw [hzero, Nat.cast_zero, zero_add] at h1
+  haveI : FiniteDimensional ℚ_[X.l i] ↥Bw.Kw.1 := Bw.Kw.2
+  have hr : 0 < D.R.r := lt_of_lt_of_le (by norm_num) h.2.2.2.2.2.2
+  have hD : 0 < Module.finrank ↥Bw.LL.1 ↥(DdR (PDv bkP i u.1 u.2) (Bw.rep T)) := by
+    change 0 < Module.finrank ↥Bw.LL.1 ↥(DdR ((D.loc (X.l i)).PD Bw.Kw) (Bw.rep T))
+    rw [show _ = _ from hdR]
+    exact Nat.mul_pos Module.finrank_pos hr
+  haveI := FiniteDimensional.of_finrank_pos hD
+  obtain ⟨h2, h3⟩ := GlobalTheory.DeRhamSplit.finrank_DdR_finsum (PDv bkP i u.1 u.2) (Bw.rep T)
+    (GlobalTheory.DeRhamSplit.card_emb Bw.Kw Bw.LL Bw.LL_split) 0
   have h2' := (congrArg (Nat.cast : ℕ → ℤ) (h2.trans (finsum_eq_sum_of_fintype _))).trans (Nat.cast_sum _ _)
   have h3' := (congrArg (Nat.cast : ℕ → ℤ) (h3.trans (finsum_eq_sum_of_fintype _))).trans (Nat.cast_sum _ _)
   refine h1.trans ((congrArg₂ (· - ·) h2' h3').trans ?_)
@@ -461,7 +616,11 @@ theorem sum_h1fDim (h : GalHyp bkP i s) [Fintype (placesOver D.host.E (X.l i))] 
     ∑ u, h1fDim bkP i s u = D.R.f * D.R.r := by
   classical
   have hcard := card_emb bkP i
-  have hf : 2 * D.R.f ≠ 0 := by unfold Ranks.f Ranks.n; positivity
+  have hf : 2 * D.R.f ≠ 0 := by
+    have hm := D.R.m_le_f
+    have ht := D.R.two_le_m
+    unfold Ranks.f Ranks.n
+    omega
   haveI : Finite (Emb bkP i) := Nat.finite_of_card_ne_zero (by rw [hcard]; exact hf)
   haveI : ∀ u : placesOver D.host.E (X.l i), Finite (EmbV bkP i u.1 u.2) := fun u =>
     Finite.of_injective (fun τ => (⟨u, τ⟩ : Emb bkP i))
@@ -506,10 +665,28 @@ theorem locCount : LocalFiniteness → LocalTateDuality → LocalEulerChar → G
   rw [← finprod_set_coe_eq_finprod_mem, ← finprod_set_coe_eq_finprod_mem, finprod_eq_prod_of_fintype,
     finprod_eq_prod_of_fintype, ← sum_h1fDim bkP i s hG, ← Finset.prod_pow_eq_pow_sum, ← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun u _ => ?_
-  rw [bkOn, dif_pos u.2]
+  rw [bkOn, dite_eq_left u.2]
+  let Bw := bkP.br i u.1 u.2
+  let T := (Tgl i s).comp (DecV N u.1).subtype
+  let e := fracEquiv bkP i u.1 u.2
+  have h0 : Formalism.WeaklyAdmissibleFiltrations.H0V (Bw.rep T) = ⊥ := by
+    rw [eq_bot_iff]
+    intro x hx
+    let y := fun j => e.symm (x j)
+    have hxy (j : Fin D.R.r) : e (y j) = x j := e.apply_symm_apply _
+    have he (a : X.O0 i) : e (algebraMap _ _ a) = Bw.toLL a := fracEquiv_alg bkP i u.1 u.2 a
+    have hy : y = 0 := noInv bkP i s hG.1 u.1 y fun g => by
+      have hg := (Submodule.mem_iInf _).1 hx (Bw.e g)
+      rw [LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply, sub_eq_zero] at hg
+      change ((T (Bw.e.symm (Bw.e g)) : Matrix (Fin D.R.r) (Fin D.R.r) (X.O0 i)).map Bw.toLL).mulVec x = x at hg
+      funext j
+      apply e.injective
+      simpa only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, he, hxy,
+        MulEquiv.symm_apply_apply] using congrFun hg j
+    rw [Submodule.mem_bot]
+    exact funext fun j => by simpa only [hy, Pi.zero_apply, map_zero] using (hxy j).symm
   refine card_local (bkP.br i u.1 u.2) (X.twistBaseCoefficientRing_isAdic i) h4.2.2.2.1 (D.loc (X.l i)) ((Tgl i s).comp (DecV N u.1).subtype)
-    ((continuous_Tgl i s).comp continuous_subtype_val)
-    (GlobalTheory.BKDimNoInv.localGaloisRep_invariants_from_fractionRing _ _ (noInv bkP i s hG.1 u.1)) hkill _ fun g x a => ?_
+    ((continuous_Tgl i s).comp continuous_subtype_val) h0 hkill _ fun g x a => ?_
   have := hκ u.1 u.2 _ (N.plOm.2 u.1) g.1 g.2
   change ((κ g.1 : Λˣ) : Λ) • (_ : K) = _
   rw [this, Units.val_one, one_smul]

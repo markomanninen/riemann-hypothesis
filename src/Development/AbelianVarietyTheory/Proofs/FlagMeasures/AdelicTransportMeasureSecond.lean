@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.TopfBasis
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsCuspHom
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorAutomorphicDerivatives
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedHolomorphicFormEqMultiplicitySpaceValue
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvariantExtensionIntegrableOnCompact
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.TopfBasis
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsCuspHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorAutomorphicDerivatives
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoundedHolomorphicFormEqMultiplicitySpaceValue
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RightRegularRepUnitaryStronglyContinuous
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvariantExtensionIntegrableOnCompact
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsContinuousMultilinearMapOfInnerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem exists_rep_bound [μ.IsMulRightInvariant]
     have h1 := hv.1.hasDerivAt hp
     have h2 := ((ρ k).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt 0 h1
     refine HasDerivAt.unique (f := fun r : ℝ => ρ (e p r) v) (x := 0) ?_ h1
-    convert h2 using 1
+    convert (preTransparency := .reducible) h2 using 1
     · funext r
       show _ = (ρ k * ρ (e p r)) v
       rw [← map_mul, ← hcomm p r k hk, map_mul, mul_apply_eq_comp, hv.2 k hk]
@@ -170,8 +174,8 @@ theorem exists_transport (I : AutInst) (μf : Measure I.Gf) [μf.IsHaarMeasure] 
     have : IsOpen ((fun k : G => (T k).2) ⁻¹' (K : Set I.Gf)) := (h2 ▸ h1).preimage (continuous_snd.comp hT)
     exact this
 
-open NumberField in
 
+open NumberField in
 theorem hom_tens (I : AutInst) {μf : Measure I.Gf} [SigmaFinite μf] {fund : Set I.GA}
     {R : I.GA → (I.L2 μf fund →L[ℂ] I.L2 μf fund)} {H : InfinitePlace I.F → Type} [∀ v, NormedAddCommGroup (H v)]
     [∀ v, InnerProductSpace ℂ (H v)] {σ : ∀ v, Matrix (Fin I.n) (Fin I.n) ℂ → (H v →L[ℂ] H v)}
@@ -191,8 +195,8 @@ open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Fo
 open scoped TensorProduct InnerProductSpace ContDiff Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_adelic_rep {D : D7} {θ : InfFam D} {V : HSp D} (hθ : IsInfFam θ) {μ : Measure (GA D V)}
     (hμ : μ.IsHaarMeasure) (hμ' : μ.IsMulRightInvariant)
     {K : Type} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K] {ι : K → GA D V → ℂ}
@@ -236,8 +240,8 @@ theorem exists_adelic_rep {D : D7} {θ : InfFam D} {V : HSp D} (hθ : IsInfFam �
   exact ⟨R, L, hL, fun v h1 h2 => hR v (fun k ps hps => h1 k (fun i => (ps i).1) (fun i => (ps i).2) hps)
     fun k hk => h2 k hk.1 hk.2, hb⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_mmap {D : D7} {θ : InfFam D} {V : HSp D} (hθ : IsInfFam θ) {S : D.what₂.Tau → SPar} (M : DSModel V S)
     {μ : Measure (GA D V)} (hμ : μ.IsHaarMeasure) (hμ' : μ.IsMulRightInvariant)
     {K : Type} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K] {ι : K → GA D V → ℂ}
@@ -281,7 +285,8 @@ theorem exists_mmap {D : D7} {θ : InfFam D} {V : HSp D} (hθ : IsInfFam θ) {S 
       simp only [GlobalTheory.BackForm.coe_update] at h1 ⊢
       rw [Submodule.coe_smul, Φ.map_update_smul]
       filter_upwards [GlobalTheory.LocRep.rep_smul hlin c _, h1] with x e1 e2
-      rw [e1, e2, Pi.smul_apply, smul_eq_mul])
+      rw [e1, e2, Pi.smul_apply, smul_eq_mul]
+      rfl)
   refine ⟨T, fun u => (p u).2, fun u => ⟨fun γ hγ g => ?_, ⟨U, hU, fun k hk hk' g => ?_⟩, (p u).1⟩, fun τ u x => ?_⟩
   · refine (congrFun (uniq u (fun x => R (Φ fun τ => (u τ : M.H τ)) (γ * x))
       ((p u).1.comp (continuous_const_mul γ)) ?_) g).symm
@@ -291,23 +296,43 @@ theorem exists_mmap {D : D7} {θ : InfFam D} {V : HSp D} (hθ : IsInfFam θ) {S 
     have := rep_tr htr (p u).2 k
     rwa [hfix _ k hk hk'] at this
   · obtain ⟨c, hc⟩ := hb x
-    exact GlobalTheory.BackForm.cont_value ρ Φ T hsm (fun y => (hsmM y).2) L hL x c (fun y => hc _) τ u
+    obtain ⟨ℓ, hℓ⟩ := LinearMap.exists_extend ((LinearMap.proj x : (GA D V → ℂ) →ₗ[ℂ] ℂ) ∘ₗ T.toLinearMap u τ)
+    have hℓ' : ∀ w : M.sm τ, ℓ w = T (Function.update u τ w) x := fun w => LinearMap.congr_fun hℓ w
+    refine ⟨ℓ, ?_, hℓ'⟩
+    obtain ⟨C', hC', hb'⟩ := GlobalTheory.BackForm.sum_bound
+      (fun l (w : M.sm τ) => ‖l.foldr (dL2 θ V ρ) (Φ fun σ => ((Function.update u τ w σ : M.sm σ) : M.H σ))‖)
+      (fun l (w : M.sm τ) => ‖(GlobalTheory.BackForm.lettersAt τ l).foldr (dRep (M.rep τ)) (w : M.H τ)‖) (fun _ _ => norm_nonneg _) L (by
+        intro l hl
+        refine ⟨‖Φ.toContinuousLinearMap (fun σ => (GlobalTheory.BackForm.lettersAt σ l).foldr (dRep (M.rep σ)) (u σ : M.H σ)) τ‖, fun w => ?_⟩
+        refine le_trans (le_of_eq ?_) (ContinuousLinearMap.le_opNorm _ _)
+        rw [GlobalTheory.BackForm.word_map ρ Φ hsm (fun y => (hsmM y).2) l (hL l hl), ContinuousMultilinearMap.toContinuousLinearMap_apply]
+        congr 2
+        funext σ
+        by_cases h : σ = τ
+        · subst h; simp
+        · simp [Function.update_of_ne h])
+    refine ⟨L.map (GlobalTheory.BackForm.lettersAt τ), |c| * C', ?_, fun w hw => ?_⟩
+    · intro l hl
+      obtain ⟨l', h', rfl⟩ := List.mem_map.1 hl
+      exact GlobalTheory.BackForm.lettersAt_mem (hL l' h')
+    · have hw' : w ∈ M.sm τ := Submodule.subset_span hw
+      have h1 := hℓ' ⟨w, hw'⟩
+      have h2 := hb' ⟨w, hw'⟩
+      have h3 := hc (Φ fun σ => ((Function.update u τ ⟨w, hw'⟩ σ : M.sm σ) : M.H σ))
+      rw [List.map_map, mul_assoc]
+      simp only at h1
+      rw [h1]
+      refine h3.trans ((mul_le_mul_of_nonneg_right (le_abs_self c) (List.sum_nonneg ?_)).trans
+        (mul_le_mul_of_nonneg_left h2 (abs_nonneg c)))
+      intro z hz
+      obtain ⟨q, -, rfl⟩ := List.mem_map.1 hz
+      exact norm_nonneg _
 
 theorem infMat_of_mem_fin {D : D7} (V : HSp D) (φ : Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ) {k : GA D V}
     (hk : k ∈ GfC V) : infMat D.sp.cm.sig V.gram φ k = 1 := by
   have hk' : infHom V k = 1 := hk
   show (infHom V k).1.map φ = 1
   rw [hk', Units.val_one, Matrix.map_one _ (map_zero _) (map_one _)]
-
-theorem atTau_spec {D : D7} (V : HSp D) {θ : InfFam D} (hθ : IsInfFam θ) (τ : D.what₂.Tau) {a : Mt V.rank}
-    (ha : a ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ)) : atTau θ V τ a ∈ GinfC V ∧
-      ∀ τ', archM V (θ τ') (atTau θ V τ a) = (Pi.mulSingle τ a : D.what₂.Tau → Mt V.rank) τ' := by
-  obtain ⟨L, hL1, -, -, -, -, hL3, -⟩ := GlobalTheory.RealLift.exists_real_lift D θ V hθ
-  have hu : (Pi.mulSingle τ a : D.what₂.Tau → Mt V.rank) ∈ UG (gramAt D V) := fun τ' => by
-    by_cases h : τ' = τ
-    · subst h; simpa using ha
-    · simp [Pi.mulSingle_eq_of_ne h, Formalism.QuantumDeterminants.UH]
-  exact (hL3 τ a ha).symm ▸ hL1 _ hu
 
 end GlobalTheory.TensRep
 

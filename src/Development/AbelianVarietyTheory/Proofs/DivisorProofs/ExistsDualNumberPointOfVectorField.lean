@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,13 +59,13 @@ def psi (he : IsField W e) (U : Z.Opens) : Γ(Z, U) →+* Γ(Sp (DualNumber S), 
     ((proj S ≫ g₀).appLE (U ⊓ W) _ (le_inf_preimage g₀ hg U)).hom (e (U ⊓ W) (resG Z inf_le_left f))
   map_one' := by simp only [map_one, field_one he inf_le_right, map_zero, mul_zero, add_zero]
   map_mul' f f' := by
-    simp only [map_mul, he.2.1 _ inf_le_right, map_add, appLE_res g₀ hg]
+    simp only [map_mul, he.2.1 _ inf_le_right, map_add (f := _), appLE_res g₀ hg]
     linear_combination -(((proj S ≫ g₀).appLE (U ⊓ W) _ (le_inf_preimage g₀ hg U)).hom
       (e (U ⊓ W) (resG Z inf_le_left f)) * ((proj S ≫ g₀).appLE (U ⊓ W) _ (le_inf_preimage g₀ hg U)).hom
       (e (U ⊓ W) (resG Z inf_le_left f'))) * epsOn_mul_self (S := S) ((proj S ≫ g₀) ⁻¹ᵁ U)
   map_zero' := by simp only [map_zero, field_zero he inf_le_right, mul_zero, add_zero]
   map_add' f f' := by
-    simp only [map_add, he.1 _ inf_le_right]
+    simp only [map_add (f := _), he.1 _ inf_le_right]
     ring
 
 end GlobalTheory.EpsPoint
@@ -74,7 +78,7 @@ theorem psi_res (he : IsField W e) {U U' : Z.Opens} (h : U' ≤ U) (f : Γ(Z, U)
     psi g₀ hg he U' (resG Z h f) =
       ((Sp (DualNumber S)).presheaf.map (homOfLE (fun _ hx => h hx : (proj S ≫ g₀) ⁻¹ᵁ U' ≤ (proj S ≫ g₀) ⁻¹ᵁ U)).op).hom
         (psi g₀ hg he U f) := by
-  simp only [psi, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, map_add, map_mul, epsOn_res]
+  simp only [psi, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, map_add (f := _), map_mul, epsOn_res]
   congr 1
   · rw [resG, ← CommRingCat.comp_apply, ← CommRingCat.comp_apply, Scheme.Hom.naturality]
     rfl
@@ -112,7 +116,7 @@ theorem isLocal (he : IsField W e) (y : Sp (DualNumber S)) :
   rw [PresheafedSpace.stalkMap_germ_apply] at ha
   change IsUnit ((Sp (DualNumber S)).presheaf.germ _ y hU (((proj S ≫ g₀).app U).hom f + epsOn _ *
     ((proj S ≫ g₀).appLE (U ⊓ W) _ (le_inf_preimage g₀ hg U)).hom (e (U ⊓ W) (resG Z inf_le_left f)))) at ha
-  rw [map_add] at ha
+  rw [map_add (f := _)] at ha
   have hn : IsNilpotent ((Sp (DualNumber S)).presheaf.germ _ y hU (epsOn _ *
       ((proj S ≫ g₀).appLE (U ⊓ W) _ (le_inf_preimage g₀ hg U)).hom (e (U ⊓ W) (resG Z inf_le_left f)))) := by
     refine ⟨2, ?_⟩
@@ -168,7 +172,7 @@ theorem comp_eq_of_app {X T Y : Scheme.{0}} (i : X ⟶ T) (w q : T ⟶ Y) (hb : 
 theorem fst_app_psi (he : IsField W e) (U : Z.Opens) (a : Γ(Z, U)) :
     ((spMap (TrivSqZeroExt.fstHom S S S).toRingHom).app ((proj S ≫ g₀) ⁻¹ᵁ U)).hom (psi g₀ hg he U a) =
       ((spMap (TrivSqZeroExt.fstHom S S S).toRingHom).app ((proj S ≫ g₀) ⁻¹ᵁ U)).hom (((proj S ≫ g₀).app U).hom a) := by
-  simp only [psi, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, map_add, map_mul, fst_app_epsOn, zero_mul,
+  simp only [psi, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, map_add (f := _), map_mul, fst_app_epsOn, zero_mul,
     add_zero]
 
 theorem fst_comp (he : IsField W e) : spMap (TrivSqZeroExt.fstHom S S S).toRingHom ≫ epsPoint g₀ hg he = g₀ := by

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafVanBPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafVanBPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

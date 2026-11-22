@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanAntitone
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CartanAntitone
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitaryAdmissibleMatrixCoefficient
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Filter Topology
 
@@ -14,8 +18,8 @@ section Lemmas
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 theorem exists_unif : ∃ ϖ : kˣ, valuation k (ϖ : k) = uniformizer k := by
   obtain ⟨x, hx⟩ := valuation_surjective (uniformizer k)
   exact ⟨Units.mk0 x (by rintro rfl; exact uniformizer_ne_zero (R := k) (by simpa using hx.symm)), hx⟩
@@ -132,7 +136,7 @@ theorem vanishing {N r t : ℕ} (h : r + t = N) {ϖ : kˣ} (hϖ : valuation k (�
     obtain ⟨M1, h1⟩ := hx
     obtain ⟨M2, h2⟩ := hy
     refine ⟨max M1 M2, fun ν hν => ?_⟩
-    rw [map_add, map_add, h1 ν fun i j hi hj => le_trans (by simp) (hν i j hi hj),
+    rw [map_add (f := _), map_add (f := _), h1 ν fun i j hi hj => le_trans (by simp) (hν i j hi hj),
       h2 ν fun i j hi hj => le_trans (by simp) (hν i j hi hj), add_zero]
   | smul c x _ hx =>
     obtain ⟨M, hM⟩ := hx
@@ -193,8 +197,8 @@ theorem torusElt_eq_mul {N : ℕ} (ϖ : kˣ) (ν : Fin N → ℤ) (c : ℤ) :
 
 end Lemmas
 
-open GlobalTheory.GLDoubling in
 
+open GlobalTheory.GLDoubling in
 theorem isSupercuspidal_of_isCuspidal : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (N : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), GlobalTheory.SmGL.IsCuspidal π → GlobalTheory.PRep.IsSupercuspidal π := by
   intro k _ _ _ _ N V _ _ π hπ
   obtain ⟨hsm, hJ⟩ := (CuspMax.isCuspidal_iff_maximal k N V π).1 hπ

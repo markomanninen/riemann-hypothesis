@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodicSchwarzLemma
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaximumBoundField
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.PeriodicSchwarzLemma
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MaximumBoundField
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -174,7 +178,7 @@ theorem maxBound_holds : MaxBoundStatement (E := E) := by
           (1 + z.im / X.ttV (fun τ : X.Ψ => Data.emb τ.1 v) z0 τ)⁻¹ ^ (X.spread la τ / 2)
         ≤ (2 : ℝ) ^ (w / 2) := by
       calc _ ≤ ∏ τ : X.Ψ, (2 : ℝ) ^ (X.spread la τ / 2) := by
-            apply Finset.prod_le_prod
+            apply Finset.prod_le_prod₀
             · intro τ _
               obtain ⟨h1, -⟩ := hq τ
               exact Real.rpow_nonneg (le_trans (by linarith) (le_max_left _ _)) _

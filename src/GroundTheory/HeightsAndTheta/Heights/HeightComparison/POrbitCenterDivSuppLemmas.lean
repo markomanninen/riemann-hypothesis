@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenter
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PHeightRecR
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterMemIff
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightSubringPrimeMaximal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenter
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.PHeightRecR
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterMemIff
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightSubringPrimeMaximal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,7 @@ theorem exists_isWeightedHomogeneous_eq_of_chart {R : Type*} [CommRing R]
     · refine IsWeightedHomogeneous.add (h₁.mul (isWeightedHomogeneous_chartMonomial c D₂)) ?_
       rw [add_comm D₁]
       exact h₂.mul (isWeightedHomogeneous_chartMonomial c D₁)
-    · rw [map_add, map_mul, map_mul, hmon, hmon, mul_one, mul_one, e₁, e₂, map_add]
+    · rw [map_add (f := _), map_mul, map_mul, hmon, hmon, mul_one, mul_one, e₁, e₂, map_add (f := _)]
   | mul_X p i hp =>
     obtain ⟨D, G, h, e⟩ := hp
     exact ⟨D + coordDeg n i, G * X i, h.mul (isWeightedHomogeneous_X ℤ _ i),
@@ -53,8 +58,8 @@ theorem aeval_div_chart {Ω : Type*} [Field Ω] [Algebra ℤ Ω] (z : Coord n �
   simp_rw [div_pow]
   rw [Finset.prod_div_distrib, hden, div_eq_mul_inv, Finset.prod_inv_distrib]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem mem_orbitIdeal_iff_of_isMultiHomog (x : Cone n (AlgebraicClosure ℚ))
     (F : MvPolynomial (Coord n) ℤ) (a : ι → ℕ) (hF : Geo.IsMultiHomog (ι := blockIdx n) F a) :
     F ∈ orbitIdeal x ↔ evalCone (coordVec x) F = 0 := by
@@ -66,8 +71,8 @@ theorem mem_orbitIdeal_iff_of_isMultiHomog (x : Cone n (AlgebraicClosure ℚ))
     mul_eq_zero, C_eq_zero, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective _ _)]
   exact or_iff_left (Finset.prod_ne_zero_iff.mpr fun k _ ↦ pow_ne_zero _ (X_ne_zero k))
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem exists_chart_ciSup (x : Cone n (AlgebraicClosure ℚ)) (hx : BlockNonzero x)
     (v : FinitePlace (coordField x)) :
     ∃ c : (k : ι) → Fin (n k + 1), ∀ k, v (coordVec x k (c k)) = ⨆ i, v (coordVec x k i) ∧
@@ -85,9 +90,10 @@ theorem finitePlace_aeval_le_one {K : Type*} [Field K] [NumberField K] (v : Fini
   induction g using MvPolynomial.induction_on with
   | C a =>
     rw [aeval_C, algebraMap_int_eq, eq_intCast]
-    exact IsNonarchimedean.apply_intCast_le_one (fun a b ↦ FinitePlace.add_le v a b)
+    exact IsNonarchimedean.apply_intCast_le_one (map_zero_le v 1) (map_one v)
+      (map_neg_eq_map v) (FinitePlace.add_le v)
   | add p q hp hq =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (FinitePlace.add_le v _ _).trans (max_le hp hq)
   | mul_X p i hp =>
     rw [map_mul, map_mul, aeval_X]

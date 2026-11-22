@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BcrisRegularOfTensorInjStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgClosureTensorBcrisToBdRInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineFormalismOfRegular
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BcrisRegularOfTensorInjStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgClosureTensorBcrisToBdRInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatioInvariantInK0
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 noncomputable section
@@ -25,12 +30,12 @@ private theorem sig_smul (ρ : G → V →ₗ[Q] V) (g : G) (b : B) (w : B ⊗[Q
   induction w using TensorProduct.induction_on with
   | zero => simp
   | tmul c v => simp [sig_tmul, TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 private def DD (ρ : G → V →ₗ[Q] V) : Submodule F (B ⊗[Q] V) where
   carrier := {w | ∀ g, sig a ρ g w = w}
   zero_mem' := fun g => map_zero _
-  add_mem' := fun hx hy g => by rw [map_add, hx g, hy g]
+  add_mem' := fun hx hy g => by rw [map_add (f := _), hx g, hy g]
   smul_mem' := fun c x hx g => by rw [← algebraMap_smul B, sig_smul, ha, hx g]
 
 private theorem finrank_swap (ρ : G → V →ₗ[Q] V) (D : Submodule Q (V ⊗[Q] B))
@@ -42,7 +47,7 @@ private theorem finrank_swap (ρ : G → V →ₗ[Q] V) (D : Submodule Q (V ⊗[
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [sig_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   let e : ↥(DD F a ha ρ) ≃ₗ[Q] ↥D :=
     { toFun := fun x => ⟨TensorProduct.comm Q B V x, (hD _).2 fun g => by rw [← hc, x.2 g]⟩
       invFun := fun y => ⟨(TensorProduct.comm Q B V).symm y, fun g => by
@@ -70,11 +75,11 @@ private theorem span_bilin (ρ : G → V →ₗ[Q] V) (ρ' : G → V' →ₗ[Q] 
     intro g x y
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx']
+    | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
     | tmul c v =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add x x' hx hx' => simp only [map_add, hx, hx']
+      | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
       | tmul c' v' => simp only [sig_tmul, hm, map_mul, hb]
   set S := Submodule.span B (DD F a ha π : Set (B ⊗[Q] W))
   have key : ∀ x y, m x y ∈ S := by
@@ -140,7 +145,8 @@ private theorem span_eq_top_of_invariant [FiniteDimensional Q V] (ρ : G → V �
     ext j
     have := congrFun hc0 j
     simp only [Matrix.mulVec, dotProduct, A, Basis.toMatrix_apply, Pi.zero_apply] at this
-    simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul, map_zero, Finsupp.zero_apply]
     rw [← this]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
@@ -148,7 +154,8 @@ private theorem span_eq_top_of_invariant [FiniteDimensional Q V] (ρ : G → V �
       ∑ j, algebraMap Q B (v.repr (ρ g (v j)) k) * a g (e.repr w j) := by
     intro g w k
     conv_lhs => rw [← e.sum_repr w]
-    simp only [map_sum, sig_smul, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, sig_smul, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
       smul_eq_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_comm]

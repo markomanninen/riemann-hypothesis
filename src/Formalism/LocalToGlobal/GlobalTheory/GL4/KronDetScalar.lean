@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PDetAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PDetAll
+
+@[expose] public section
 
 open scoped Matrix
 

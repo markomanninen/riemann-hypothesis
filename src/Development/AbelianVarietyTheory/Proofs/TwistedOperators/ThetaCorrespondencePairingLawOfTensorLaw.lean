@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairingTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitarySpanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairingTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitarySpanStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
 open Formalism.MainNotions.SchurIrreducible (AdmGK ARi ARiiiUp ARiiiDown ARiiiLine DiscreteSeriesBlattner admQ5)
@@ -28,7 +33,7 @@ theorem ctr_map {U U' : Type} [AddCommGroup U] [Module ℂ U] [AddCommGroup U'] 
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rw [TensorProduct.map_tmul, ctr_tmul, ctr_tmul, map_smul, LinearMap.id_apply]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem mem_hwSub {V : Type} [AddCommGroup V] [Module ℂ V] (act : Mat p q →ₗ[ℂ] Module.End ℂ V) (μ : Ix p q → ℚ)
     (v : V) : v ∈ hwSub act μ ↔
@@ -54,13 +59,13 @@ theorem ctr_ne_zero {U : Type} [AddCommGroup U] [Module ℂ U] (Λ : Ix p q → 
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rw [TensorProduct.map_tmul, hd, hd, map_smul, LinearMap.id_apply]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hdc : ∀ u y, l (ctr R U u y) = ⟪R.ι u, R.ι (d y)⟫_ℂ := by
     intro u y
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rw [ctr_tmul, hd, map_smul, map_smul, inner_smul_right, smul_eq_mul, mul_comm]
-    | add x y hx hy => simp only [map_add, hx, hy, inner_add_right]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, inner_add_right]
   have hmem : d z ∈ hwSub R.HK.act Λ := by
     rw [mem_hwSub]
     exact ⟨fun a => by rw [← hdA, hw, map_smul], fun a b hab => by rw [← hdA, hn a b hab, map_zero]⟩
@@ -89,7 +94,7 @@ theorem exists_tintw (h₁ : IsGK a₁) (hA : AdmGK R.HK) (M : GKMod r s)
     exact hB.2 X hX P y
   obtain ⟨X, Y, hX, hY, -, rfl⟩ := exists_real_parts Z
   refine LinearMap.ext fun P => ?_
-  simp only [LinearMap.comp_apply, map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply,
+  simp only [LinearMap.comp_apply, map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply,
     TensorProduct.map_add_right, TensorProduct.map_smul_right, hreal X hX, hreal Y hY]
 
 theorem exists_tintw_inc (h₁ : IsGK a₁) (hA : AdmGK R.HK) (M : GKMod r s) {U : Type} [AddCommGroup U] [Module ℂ U]
@@ -102,7 +107,7 @@ theorem exists_tintw_inc (h₁ : IsGK a₁) (hA : AdmGK R.HK) (M : GKMod r s) {U
   let B₀ : MvPolynomial σ ℂ →ₗ[ℂ] R.HK.V →ₛₗ[starRingEnd ℂ] M.V :=
     { toFun := fun P =>
         { toFun := fun v => g (B P v)
-          map_add' := fun v w => by rw [map_add, map_add]
+          map_add' := fun v w => by rw [map_add (f := _), map_add (f := _)]
           map_smul' := fun c v => by rw [LinearMap.map_smulₛₗ, map_smul] }
       map_add' := fun P Q => by ext v; simp
       map_smul' := fun c P => by ext v; simp }
@@ -113,7 +118,7 @@ theorem exists_tintw_inc (h₁ : IsGK a₁) (hA : AdmGK R.HK) (M : GKMod r s) {U
     rw [← hy]
     exact congrArg inc (LinearMap.congr_fun hg y)
   obtain ⟨f, hf, hBf⟩ := exists_tintw (a₂ := a₂) R h₁ hA M B₀
-    ⟨fun Z hZ P v => hi (by rw [map_add, h0, h0, map_zero]; exact hB.1 Z hZ P v),
+    ⟨fun Z hZ P v => hi (by rw [map_add (f := _), h0, h0, map_zero]; exact hB.1 Z hZ P v),
      fun Z hZ P v => hi (by rw [h0, he Z hZ, h0]; exact hB.2 Z hZ P v)⟩
   exact ⟨f, hf, fun P v => by rw [← hBf, h0]⟩
 

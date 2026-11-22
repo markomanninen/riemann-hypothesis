@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -173,8 +178,8 @@ theorem divCycle_eq_toNat_multAt {P : Ideal (MRing ι R)} (f g : MRing ι R)
   by_cases hfW : P ⊔ Ideal.span {f} ≤ W
   · have hm : W ∈ (P ⊔ Ideal.span {f}).minimalPrimes :=
       ⟨⟨hW.1.1, hfW⟩, fun Q hQ hQW => hW.2 ⟨hQ.1, hle.trans hQ.2⟩ hQW⟩
-    rw [dif_pos ⟨hm, hrel⟩]
-  · rw [dif_neg (fun h => hfW h.1.1.2)]
+    rw [dite_eq_left ⟨hm, hrel⟩]
+  · rw [dite_eq_right (fun h => hfW h.1.1.2)]
     unfold multAt
     rw [Module.length_eq_zero_iff.mpr (localizedQuot_subsingleton_of_not_le _ W hfW)]
     rfl
@@ -189,7 +194,7 @@ theorem DivCycleMul.proof : DivCycleMul.Statement := by
   swap
   · simp only [Pi.add_apply]
     unfold divCycle
-    rw [dif_neg (fun h => hrel h.2), dif_neg (fun h => hrel h.2), dif_neg (fun h => hrel h.2),
+    rw [dite_eq_right (fun h => hrel h.2), dite_eq_right (fun h => hrel h.2), dite_eq_right (fun h => hrel h.2),
       add_zero]
   by_cases hm : W ∈ (P ⊔ Ideal.span {x * y}).minimalPrimes
   · have hW : W.IsPrime := hm.1.1
@@ -216,6 +221,6 @@ theorem DivCycleMul.proof : DivCycleMul.Statement := by
       fun h => hm (mem_minimalPrimes_sup_span_mul hy h)
     have hny : ¬ W ∈ (P ⊔ Ideal.span {y}).minimalPrimes :=
       fun h => hm (mul_comm y x ▸ mem_minimalPrimes_sup_span_mul hx h)
-    rw [dif_neg (fun h => hm h.1), dif_neg (fun h => hnx h.1), dif_neg (fun h => hny h.1), add_zero]
+    rw [dite_eq_right (fun h => hm h.1), dite_eq_right (fun h => hnx h.1), dite_eq_right (fun h => hny h.1), add_zero]
 
 end GroundTheory.Heights₂.Heights.NumbersDVR

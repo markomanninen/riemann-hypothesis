@@ -1,11 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMassSum
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulMemOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InnerRealizeEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasGramComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegScale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockDiagonalMulVecApply
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MulSmulIdemMem
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ComponentMassSum
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomogeneousCompIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmulMemOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InnerRealizeEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasGramComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegScale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockDiagonalMulVecApply
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.FlatTw GlobalTheory.IndefiniteRowSideFullHecke.ComponentMassSum
 
 set_option synthInstance.maxHeartbeats 400000
@@ -186,7 +191,7 @@ theorem degOn_zero (Z : Comp Xo c) (hr : rankOn U Z G = 0) : degOn U (xiR D) V d
   unfold rankOn at hr
   rw [hr, Nat.cast_zero, zero_mul]
 
-theorem degRes_eq [IsTotallyComplex c.F] (hO : Orthogonal U V dict G) (Z : Comp Xo c)
+theorem degRes_eq [_root_.NumberField.IsTotallyComplex c.F] (hO : Orthogonal U V dict G) (Z : Comp Xo c)
     (hR : HasGram (normRes U V dict Z G)) (hfg : (latOn U Z G).FG) :
     degRes U V dict Z G = degOn U (xiR D) V dict Z G - (rankOn U Z G : ℝ) / 2 *
       ((∑ σ : c.F →+* ℂ, Real.log (mass U V dict Z σ)) / (Module.finrank ℚ c.F : ℝ)) := by
@@ -205,7 +210,7 @@ theorem degRes_eq [IsTotallyComplex c.F] (hO : Orthogonal U V dict G) (Z : Comp 
     rw [hsc]
     ring
 
-theorem sums [IsTotallyComplex c.F] (hS : Splits U G) (hO : Orthogonal U V dict G) (hW : GoodW U (xiR D) V dict G)
+theorem sums [_root_.NumberField.IsTotallyComplex c.F] (hS : Splits U G) (hO : Orthogonal U V dict G) (hW : GoodW U (xiR D) V dict G)
     (hOn : ∀ Z, GoodOn U (xiR D) V dict Z G) :
     rankW U G = ∑ᶠ Z : Comp Xo c, rankOn U Z G ∧ degW U (xiR D) V dict G = ∑ᶠ Z : Comp Xo c, degRes U V dict Z G := by
   haveI : Finite (Comp Xo c) := CompFin.finite_comp Xo c

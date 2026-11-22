@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
-import Formalism.PeriodIntegrals.SwSand
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SandwichChart.SandwichOfOfCharts
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+public import Formalism.PeriodIntegrals.SwSand
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SandwichChart.SandwichOfOfCharts
+
+@[expose] public section
 
 noncomputable section
 

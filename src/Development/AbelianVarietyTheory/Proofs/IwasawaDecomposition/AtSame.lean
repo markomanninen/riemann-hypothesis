@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WithLocPre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WithLocPre
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl NumberField IsDedekindDomain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -276,17 +280,6 @@ def Mv.all {C : NChoice D} (a : NAllC D C) : NAllC m.D (m.ch C) := @_root_.Globa
     (muC_link := (by with_unfolding_all exact (a.muC_link :)))
     (iCq_embO := (by with_unfolding_all exact (a.iCq_embO :)))
     (embO_star := (by with_unfolding_all exact (a.embO_star :)))
-
-def Inner {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (n : NTrue hL D cf C tp) : Prop :=
-  LabConj n.D n.A.wdT ∧
-    (∀ k, haveI : Fact (n.D.host.g k).Prime := ⟨n.D.host.g_prime k⟩
-      n.A.grp.ζ k = (GlobalTheory.Mem.TypePl.labDat (n.D.host.g k)).gen) ∧
-    ∃ fr : Formalism.L2.OmFrame n.D, fr.jE = n.jE ∧ PhtOn n.A.wd fr fun _ _ _ _ => True
-
-def AtSame {cf : CharFrame D} {C : NChoice D} {tp : TupTied D cf C} (a : NAt hL D cf C tp) {D' : D7} {cf' : CharFrame D'}
-    {C' : NChoice D'} {tp' : TupTied D' cf' C'} (a' : NAt hL D' cf' C' tp') : Prop :=
-  HEq a'.all (m.all a.all) ∧ HEq a'.Pq a.Pq ∧ HEq (ratL a'.nt.L a'.nt.S) (ratL a.nt.L a.nt.S) ∧ HEq a'.nt.hL a.nt.hL ∧
-    HEq a'.nt.rep a.nt.rep ∧ HEq a'.nt.eig a.nt.eig ∧ (Inner a.nt → Inner a'.nt)
 
 section
 variable {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {Z : w.Lt} (S' : SStage B w.C Z.W)

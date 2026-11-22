@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ExistsDpPow
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ExistsDpPow
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.GrSplit
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -14,7 +18,7 @@ namespace CrystallineSemistableComparison.Pb.Diso
 variable (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O]
 
 structure OL : Prop where
-  tf : R.TF O
+  tf : R.TF (S := O)
   unit : ∀ u : ℕ, ¬ l ∣ u → IsUnit (u : O)
 
 variable {l O}
@@ -56,7 +60,7 @@ def thG (T : Thick (smFun X q)) (m : ℕ) : T.B ⧸ T.J →+* GB (l := l) T m �
   Ideal.quotientMap _ (Ideal.Quotient.mk _) fun _ hx => Ideal.mem_map_of_mem _ (Ideal.mem_sup_left hx)
 
 def Good (T : Thick (smFun X q)) (m : ℕ) : Prop :=
-  R.TF T.B ∧ R.PdI (GI (l := l) T) ∧
+  R.TF (S := T.B) ∧ R.PdI (GI (l := l) T) ∧
     ∀ x ∈ GI (l := l) T, x ∈ lm (l := l) T m → ∀ j : ℕ, j ≠ 0 → ∀ y : T.B, (j.factorial : T.B) * y = x ^ j → y ∈ lm (l := l) T m
 
 def GD (T : Thick (smFun X q)) (m : ℕ) (hT : Good (l := l) T m) : DividedPowers (GJ (l := l) T m) :=

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
-import Formalism.SharpRestriction.ParConsts
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.HeckeGaloisCriteria.OptInEqSome
+public import Formalism.SharpRestriction.ParConsts
+
+@[expose] public section
 
 noncomputable section
 

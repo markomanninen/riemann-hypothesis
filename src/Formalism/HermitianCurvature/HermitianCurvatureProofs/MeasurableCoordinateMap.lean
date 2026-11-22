@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurePreservingProdRearrange
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMUpper
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbJConvCpt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurePreservingProdRearrange
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMUpper
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbJConvCpt
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.OG
 
@@ -27,13 +31,6 @@ theorem meas_Xi : Measurable fun p : (C2.Lstidx w → ℂ) × RR k r w => Xi S w
       C2.tauM k r S.z' (G.upper p.2.2.2.1) * Matrix.of p.2.2.2.2 :=
     measM_mul (measM_tau _ (OF.measM_upper measurable_snd.snd.snd.fst)) measurable_snd.snd.snd.snd
   exact (measurable_snd.fst.fst.prodMk h1).prodMk (measurable_snd.snd.fst.prodMk h2)
-
-theorem measurable_coordinate_map : Measurable fun q : RR k r w => Xi0 S w q := by
-  have h1 : MeasM fun q : RR k r w => C2.tauM k r S.z (lowP w q.1.2.1)ᴴ * Matrix.of q.1.2.2 :=
-    measM_mul (measM_tau _ (measM_star (OF.measM_lowP w measurable_fst.snd.fst))) measurable_fst.snd.snd
-  have h2 : MeasM fun q : RR k r w => C2.tauM k r S.z' (G.upper q.2.2.1) * Matrix.of q.2.2.2 :=
-    measM_mul (measM_tau _ (OF.measM_upper measurable_snd.snd.fst)) measurable_snd.snd.snd
-  exact (measurable_fst.fst.prodMk h1).prodMk (measurable_snd.fst.prodMk h2)
 
 variable {μ0 μ0' : Measure (Mt k r)} (hμ0 : B.IsHaarOn (C2.N0set k r S.z) μ0)
   (hμ0' : B.IsHaarOn (C2.N0set k r S.z') μ0')
@@ -176,11 +173,15 @@ theorem comp_eq (θ : B.SS k r → ℝ) (F : B.Mat k r → (Wq →L[ℂ] Wp)) (x
   have E1 : rhoX S γ w x * Matrix.of P.1.2 =
       C2.tauM k r S.z (G.upper (e (x, q.1.2.1))) * Matrix.of q.1.2.2 := by
     have := congrArg (fun s : B.SS k r => Matrix.of s.1.2) hX
-    simpa [Xi, C6.actR] using this.symm
+    apply Matrix.ext
+    intro i j
+    simpa [Xi, C6.actR] using congrFun (congrFun this.symm i) j
   have E2 : (γ⁻¹ * rhoX S γ w x * γ) * Matrix.of P.2.2 =
       C2.tauM k r S.z' (G.upper q.2.2.1) * Matrix.of q.2.2.2 := by
     have := congrArg (fun s : B.SS k r => Matrix.of s.2.2) hX
-    simpa [Xi, C6.actR] using this.symm
+    apply Matrix.ext
+    intro i j
+    simpa [Xi, C6.actR] using congrFun (congrFun this.symm i) j
   have c1 : WeylGroupFacts.col k r (Matrix.of P.1.2) := by
     have h : Matrix.of P.1.2 = (rhoX S γ w x)⁻¹ * (rhoX S γ w x * Matrix.of P.1.2) := by
       rw [← Matrix.mul_assoc, iρ, Matrix.one_mul]

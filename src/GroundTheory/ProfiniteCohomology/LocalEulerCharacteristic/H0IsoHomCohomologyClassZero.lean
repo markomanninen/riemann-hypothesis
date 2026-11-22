@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,11 +21,12 @@ section MapAlong
 
 theorem H0Iso_hom_cohomology_class_zero (A : Rep.{u} k G) [IsDiscreteRep A] (z : cocycles A 0) :
     (((H0Iso A).hom.hom (cohomologyπ A 0 z) : A.ρ.invariants) : A) =
-      cochainOf A (cocycleι A 0 z) Fin.elim0 := by
+      cochainOf (A := A) (cocycleι (A := A) (p := 0) z) Fin.elim0 := by
   have h1 : (CochainComplex.isoHomologyπ₀ (cochainsComplex A)).inv.hom (cohomologyπ A 0 z) = z := by
     exact congrArg (fun φ => φ.hom z) (CochainComplex.isoHomologyπ₀ (cochainsComplex A)).hom_inv_id
   have h2 := congrArg (fun φ => φ.hom z) (cocyclesIso₀_hom_comp_f A)
-  change (shortComplexH0 A).f.hom ((cocyclesIso₀ A).hom.hom z) = cocycleι A 0 z at h2
+  change (shortComplexH0 A).f.hom ((cocyclesIso₀ A).hom.hom z) =
+    cocycleι (A := A) (p := 0) z at h2
   change (((cocyclesIso₀ A).hom.hom ((CochainComplex.isoHomologyπ₀ (cochainsComplex A)).inv.hom
     (cohomologyπ A 0 z)) : A.ρ.invariants) : A) = _
   rw [h1, ← h2]
@@ -36,7 +42,7 @@ theorem H0Iso_hom_cohomologyMapAlong (x : cohomology A 0) :
   obtain ⟨z, rfl⟩ := cohomologyπ_surjective A 0 x
   rw [cohomologyMapAlong_cohomologyπ, H0Iso_hom_cohomology_class_zero, H0Iso_hom_cohomology_class_zero,
     cochainOf_cocycleι_cocyclesMapAlong]
-  change f.hom (cochainOf A (cocycleι A 0 z) (⇑φ ∘ Fin.elim0)) = _
+  change f.hom (cochainOf (A := A) (cocycleι (A := A) (p := 0) z) (⇑φ ∘ Fin.elim0)) = _
   rw [Subsingleton.elim (⇑φ ∘ Fin.elim0) Fin.elim0]
 
 end MapAlong
@@ -57,11 +63,6 @@ def invariantsConj (g : G) : (Rep.res N.subtype A).ρ.invariants →ₗ[k] (Rep.
   map_add' a b := Subtype.ext (map_add _ _ _)
   map_smul' c a := Subtype.ext (map_smul _ _ _)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep A] in
-@[simp]
-theorem coe_invariantsConj_apply (g : G) (a : (Rep.res N.subtype A).ρ.invariants) :
-    ((invariantsConj A N g a : (Rep.res N.subtype A).ρ.invariants) : A) = A.ρ g a :=
-  rfl
 
 theorem H0Iso_hom_cohomologyConj (g : G) (x : cohomology (Rep.res N.subtype A) 0) :
     (H0Iso (Rep.res N.subtype A)).hom.hom ((cohomologyConj A N 0 g).hom x) =

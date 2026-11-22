@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.LamSZero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.MulVecSingleApply
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.LamSZero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormPairAlgebra.MulVecSingleApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ def lamSQ (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O) (hu : IsUnit (Z.map O.subty
   (headCols (cjT O cj hO Z)).liftQ (lamSL O cj Z) (fun k hk => by
     rw [LinearMap.mem_ker]; exact lamS_K O cj Z hO hu k hk)
 
-omit hO in
 
+omit hO in
 def lamLQ (Z : Matrix (Fin (r + 1)) (Fin (r + 1)) O) (hu : IsUnit (Z.map O.subtype).det) :
     MbMod Z →ₗ[O] E :=
   (headCols Z).liftQ (lamL O Z) (fun k hk => by rw [LinearMap.mem_ker]; exact lamL_K O Z hu k hk)

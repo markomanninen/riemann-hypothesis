@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.RDIota
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdRDSt
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.RDIota
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdPlace
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilKrdRDSt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -31,7 +35,7 @@ theorem cw_one_k {q : Type} [DecidableEq q] (w : InfinitePlace F) : d.cw w (1 : 
   Matrix.map_one _ (map_zero _) (map_one _)
 theorem cw_atM_k (w w' : InfinitePlace F) (Z : Matrix p p ℂ) : d.cw w' (_root_.PositivityTheory.SiegelWeilFormula.Krd.atM_k d w Z) = fam w Z w' := by
   ext i j
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, Matrix.map_apply, _root_.PositivityTheory.SiegelWeilFormula.Krd.atM_k, Matrix.of_apply, map_add, _root_.PositivityTheory.SiegelWeilFormula.Krd.sc_pi_k, Place.piInf_finOne, add_zero]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.cw, Matrix.map_apply, _root_.PositivityTheory.SiegelWeilFormula.Krd.atM_k, Matrix.of_apply, map_add (f := _), _root_.PositivityTheory.SiegelWeilFormula.Krd.sc_pi_k, Place.piInf_finOne, add_zero]
 theorem fin_atM_k (w : InfinitePlace F) (Z : Matrix p p ℂ) : finOne F • _root_.PositivityTheory.SiegelWeilFormula.Krd.atM_k d w Z = finOne F • (1 : Matrix p p (AE F E)) := by
   ext i j
   simp only [Matrix.smul_apply, _root_.PositivityTheory.SiegelWeilFormula.Krd.atM_k, Matrix.of_apply, smul_add, _root_.PositivityTheory.SiegelWeilFormula.Krd.sc_fin_k, zero_add, smul_smul, fin_idem]

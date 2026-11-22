@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.DataBu
+module
+
+public import Formalism.LocalRingCardinality.DataBu
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem exists_ext (D : D7) (γ : D.div.RR.V →ₗ[D.what₂.LL] D.what₂.LL) 
   have hB : ∀ i, B i = D.jEE (D.div.RR.b i) := fun i => Module.Basis.mk_apply _ _ i
   conv_lhs => rw [← D.div.RR.b.linearCombination_repr v]
   conv_rhs => rw [← D.div.RR.b.linearCombination_repr v]
-  rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.map_smulₛₗ, map_smul, ← hB, Module.Basis.constr_basis, map_smul, smul_eq_mul, smul_eq_mul, map_mul]
 

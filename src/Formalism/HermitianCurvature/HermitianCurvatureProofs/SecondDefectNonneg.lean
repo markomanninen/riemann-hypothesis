@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtEntryAppendStart
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtEntryAppendStart
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -27,7 +31,7 @@ theorem rr_top_eq (hVT : Top.VecVTypes) (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r �
     (P1 Q1 : C.LPt) (hP : D.IsLocPt P1 (P.r + 1)) (hQ : D.IsLocPt Q1 (P.r + 1)) :
     p.RR F (P.r + 1) w P1 Q1 = Top.topOf P p.l0 p.T p.ν' p.m₀ p.Θ p.TP F w P1 Q1 := by
   unfold KB.Pl.RR D.RRplace
-  rw [dif_pos ⟨hP, hQ⟩, dif_neg (by omega), if_pos rfl]
+  rw [dite_eq_left ⟨hP, hQ⟩, dite_eq_right (by omega), if_pos rfl]
   split_ifs with hw
   · subst hw
     set TT := Tz P.k P.r p.T.base.z * Tz P.k P.r p.T.base.z' with hTT
@@ -195,7 +199,13 @@ theorem vecT_deg (hDT : KB.DegTop) {Cb Cc : ℝ} {S : C.HidaSetting E Wp Wq}
     simp only [if_pos hloc]
     rw [eP]
     change B.hsVec (((p v).TP.E ρ).comp ((p v).V ((p v).Θ.Θ w e (F v ε)) (stdS S P ++ [(s, τ)]))) = _
-    rw [hV, ContinuousLinearMap.comp_smul, ContinuousLinearMap.comp_finset_sum, hsVec_smul, hsVec_sum]
+    have hcomp (a : Finset (Fin K → Fin (d + 1)))
+        (X : (Fin K → Fin (d + 1)) → Wq (S.pl v) →L[ℂ] Wp (S.pl v)) :
+        ((p v).TP.E ρ).comp (∑ n ∈ a, X n) = ∑ n ∈ a, ((p v).TP.E ρ).comp (X n) := by
+      induction a using Finset.induction_on with
+      | empty => simp
+      | insert n a hn ih => simp [hn, ContinuousLinearMap.comp_add, ih]
+    rw [hV, ContinuousLinearMap.comp_smul, hcomp, hsVec_smul, hsVec_sum]
     congr 1
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [ContinuousLinearMap.comp_smul, hsVec_smul]

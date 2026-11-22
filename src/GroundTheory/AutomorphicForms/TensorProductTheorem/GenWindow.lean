@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Operators
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Operators
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem mOrbitMap_mapDomain (ρ : Representation ℂ M V) (v : V) (h : M) (c : M
     mOrbitMap ρ v (Finsupp.mapDomain (h * ·) c) = ρ h (mOrbitMap ρ v c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp [mOrbitMap]
-  | add c d hc hd => rw [Finsupp.mapDomain_add, map_add, hc, hd, map_add, map_add]
+  | add c d hc hd => rw [Finsupp.mapDomain_add, map_add (f := _), hc, hd, map_add (f := _), map_add (f := _)]
   | single g a => simp [Finsupp.mapDomain_single, mOrbitMap_single, map_mul]
 
 theorem linearForm_mOrbitMap (ρ : Representation ℂ M V) (v : V) (l : Dual ℂ V) (h : M)
@@ -142,18 +146,15 @@ theorem IsWinProj.apply_of_mem (he : IsWinProj ρ e) {v : V} (hv : v ∈ LinearM
   obtain ⟨w, rfl⟩ := hv
   exact he.idem w
 
-variable (ρ e) in
 
+variable (ρ e) in
 def winOp (m : M) : End ℂ (LinearMap.range e) :=
   LinearMap.codRestrict (LinearMap.range e) (e ∘ₗ ρ m ∘ₗ (LinearMap.range e).subtype)
     fun x => ⟨_, rfl⟩
 
+
 variable (ρ e) in
-
 def winOps : Set (End ℂ (LinearMap.range e)) := range (winOp ρ e)
-
-theorem winOp_apply (m : M) (x : LinearMap.range e) : (winOp ρ e m x : V) = e (ρ m x) :=
-  rfl
 
 theorem isSimpleUnder_winOps [ρ.IsIrreducible] (he : IsWinProj ρ e)
     (hne : LinearMap.range e ≠ ⊥) : IsSimpleUnder (winOps ρ e) := by
@@ -241,7 +242,7 @@ variable (e : End ℂ V) (N : Submodule ℂ V)
 def mGenKernel : Submodule ℂ (mGenSubrep ρ N).toSubmodule where
   carrier := {u | ∀ g, e (ρ g u) = 0}
   add_mem' {a b} ha hb g := by
-    simp only [mem_setOf_eq, Submodule.coe_add, map_add, ha g, hb g, add_zero]
+    simp only [mem_setOf_eq, Submodule.coe_add, map_add (f := _), ha g, hb g, add_zero]
   zero_mem' g := by simp
   smul_mem' c a ha g := by
     simp only [mem_setOf_eq, Submodule.coe_smul, map_smul, ha g, smul_zero]
@@ -348,8 +349,8 @@ theorem isIrreducible_mGenQuotRep (he : IsWinProj ρ e) (hNe : N ≤ LinearMap.r
     rw [← this]
     exact hu'
 
-variable (ρ e N) in
 
+variable (ρ e N) in
 def mGenQuotForm (l : Dual ℂ V) :
     Dual ℂ ((mGenSubrep ρ N).toSubmodule ⧸ mGenKernel ρ e N) :=
   (mGenKernel ρ e N).liftQ (l ∘ₗ e ∘ₗ (mGenSubrep ρ N).toSubmodule.subtype) fun u hu => by

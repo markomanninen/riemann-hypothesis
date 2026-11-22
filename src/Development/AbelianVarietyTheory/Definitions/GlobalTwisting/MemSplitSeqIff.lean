@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PermRepSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,9 @@ instance (p : ℕ) : MulAction (GL (Fin n) R) (SplitSet R n p) where
     rw [List.map_map]
     congr 1
     funext x
-    simp only [pairAct, Function.comp_apply, mul_inv_rev, Units.val_mul, Matrix.mulVec_mulVec, Matrix.vecMul_vecMul])
+    apply Prod.ext
+    · simp [pairAct, Matrix.mulVec_mulVec]
+    · simp [pairAct, Matrix.vecMul_vecMul])
 
 theorem smul_val {p : ℕ} (g : GL (Fin n) R) (l : SplitSet R n p) : (g • l).1 = l.1.map (pairAct R n g) := rfl
 
@@ -64,7 +70,8 @@ theorem face_smul (p : ℕ) (i : Fin (p + 1)) (g : GL (Fin n) R) (l : SplitSet R
   rw [smul_val, List.eraseIdx_map]
   rfl
 
-abbrev splitRep (p : ℕ) : Rep ℤ (GL (Fin n) R) := perm ℤ (GL (Fin n) R) (SplitSet R n p)
+abbrev splitRep (p : ℕ) : Rep ℤ (GL (Fin n) R) :=
+  perm (k := ℤ) (G := GL (Fin n) R) (SplitSet R n p)
 
 def splitD (p : ℕ) : splitRep R n (p + 1) ⟶ splitRep R n p :=
   ∑ i : Fin (p + 1), (-1 : ℤ) ^ (i : ℕ) • permMap (face R n p i) (face_smul R n p i) (Rep.trivial ℤ _ ℤ)

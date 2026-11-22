@@ -1,34 +1,42 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementLat
-import Formalism.SharpRestriction.CuspSpanNormBounds.SArith
-import Formalism.LocalRingCardinality.Params
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.LocalRingCardinality.DataKernels
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
-import Formalism.FrobeniusOrbits.HostOrbitsPlaces
-import Formalism.FrobeniusOrbits.HostDiffSupport
-import Formalism.FrobeniusOrbits.HostThickExists
-import Formalism.FrobeniusOrbits.HostOrbitCountSg
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
-import Formalism.CoboundaryTransfers.Statement
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.RealCyclotomicSubfield
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.FinalGroup
-import Formalism.TameInertiaTowers.CentralOrderTwo.Galois
-import Formalism.TameInertiaTowers.CentralOrderTwo.ConjEqInvOfPowEqOne
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SArith
+public import Formalism.LocalRingCardinality.Params
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.LocalRingCardinality.DataKernels
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.SharpRestriction.CuspSpanNormBounds.DataS
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.FrobeniusOrbits.DiscrMaximalRealCyclotomic
+public import Formalism.FrobeniusOrbits.HostOrbitsPlaces
+public import Formalism.FrobeniusOrbits.HostDiffSupport
+public import Formalism.FrobeniusOrbits.HostThickExists
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ConjEMemHostFIff
+public import Formalism.CoboundaryTransfers.Statement
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.RealCyclotomicSubfield
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.CentralOrderTwo.OrderOfThreeUnitsTwoPow
+public import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+public import Formalism.TameInertiaTowers.CentralOrderTwo.MemDecompositionSubgroupIff
+public import Formalism.TameInertiaTowers.CentralOrderTwo.NegOneNeOneUnitsZmodFour
+public import Formalism.TameInertiaTowers.CentralOrderTwo.Groups
+public import Formalism.TameInertiaTowers.CentralOrderTwo.NormalOrderTwoCentral
+public import Formalism.TameInertiaTowers.CentralOrderTwo.Galois
+public import Formalism.TameInertiaTowers.CentralOrderTwo.ConjEqInvOfPowEqOne
+
+@[expose] public section
 
 namespace Bl.general_b_fact_left_alt
 
 theorem goal1 :
   ∀ {E : Type} [inst : Field.{0} E] [inst_1 : NumberField.{0} E] [inst_2 : StarRing.{0} E] {S : Formalism.BasicNotions.HSpace E}
   (Λ : Submodule.{0, 0} (NumberField.RingOfIntegers.{0} E) S.V),
-  Submodule.IsLattice.{0, 0, 0} E Λ →
+  Submodule.IsFullLattice.{0, 0, 0} E Λ →
     ∀ (v : S.V),
       Exists.{1} fun (c : NumberField.RingOfIntegers.{0} E) ↦
         And (Ne.{1} c 0) (Membership.mem.{0, 0} Λ (HSMul.hSMul.{0, 0, 0} c v)) := by

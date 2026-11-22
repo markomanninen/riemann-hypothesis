@@ -1,15 +1,46 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjWeilDatumViaAdjointExchangedPairStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianAdjointSymplecticActionThetaHeisenbergStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittMixedCoordsConjHermitianAdjointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittSourceProofStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjWeilDatumViaAdjointExchangedPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianAdjointSymplecticActionThetaHeisenbergStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittMixedCoordsConjHermitianAdjointStatement
+
+namespace I195MixedCoordinates_4160728ecfd2b76db64d5897
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_4160728ecfd2b76db64d5897
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -94,48 +125,62 @@ section Read
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {S T T₀ : HSp D} {ρ : ℕ} {d : HypDec T T₀ ρ} {χS : (AE D)ˣ →* Circle}
   {om : Rep S T} {om₀ : Rep S T₀} {μ : Measure (Mx D ρ S.rank)} {𝓕 : Set (Mx D ρ S.rank)}
   {μ' : Measure (Mx D S.rank ρ)} {𝓕' : Set (Mx D S.rank ρ)} {f : WO S T → ℂ}
-  (hsw : ∀ (f : WO S T → ℂ) y, d.mixS S ψ μ' 𝓕' (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y) =
-    cj (dagger T₀ S) (d.mixT S ψ μ 𝓕 f y))
+  (hsw : ∀ (f : WO S T → ℂ) y, (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕' (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y) =
+    cj (dagger T₀ S) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f y))
   (FS : FormulasS d ψ χS (conjAdjoint om) (conjAdjoint om₀) μ' 𝓕' (cj (dagger T S) f))
 include hsw FS
 
 theorem read_source (g : GA D S) (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (om (g, 1) f) y = om₀ (g, 1) (d.mixT S ψ μ 𝓕 f (mt S g⁻¹ ⬝ y)) := by
+    (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 (om (g, 1) f) y = om₀ (g, 1) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f (mt S g⁻¹ ⬝ y)) := by
   apply cj_dagger_inj S T₀
-  have h1 := FS.target g (incA D D.host.xi0⁻¹ • y)
+  have h1 : (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+      (conjAdjoint om (1, g) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
+      conjAdjoint om₀ (1, g) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+        (cj (dagger T S) f) (mt S g⁻¹ ⬝ (incA D D.host.xi0⁻¹ • y))) := FS.target g _
   rw [conjAdjoint_cj, hsw, Matrix.mul_smul, hsw, conjAdjoint_cj] at h1
   exact h1
 
 theorem read_core (h₀ : GA D T₀) (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (om (1, d.emb0 h₀) f) y = om₀ (1, h₀) (d.mixT S ψ μ 𝓕 f y) := by
+    (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 (om (1, d.emb0 h₀) f) y = om₀ (1, h₀) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f y) := by
   apply cj_dagger_inj S T₀
-  have h1 := FS.core h₀ (incA D D.host.xi0⁻¹ • y)
+  have h1 : (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+      (conjAdjoint om (d.emb0 h₀, 1) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
+      conjAdjoint om₀ (h₀, 1) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+        (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y)) := FS.core h₀ _
   rw [conjAdjoint_cj, hsw, hsw, conjAdjoint_cj] at h1
   exact h1
 
 theorem read_levi (a : GL (Fin ρ) (AE D)) (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (om (1, d.levi a) f) y =
+    (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 (om (1, d.levi a) f) y =
       (((χS (Matrix.GeneralLinearGroup.det a) : Circle) : ℂ) * (halfMod S.rank a : ℂ)) •
-        d.mixT S ψ μ 𝓕 f (y ⬝ a.1) := by
+        (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f (y ⬝ a.1) := by
   apply cj_dagger_inj S T₀
-  have h1 := FS.levi a (incA D D.host.xi0⁻¹ • y)
+  have h1 : (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+      (conjAdjoint om (d.levi a, 1) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
+      ((((χS (Matrix.GeneralLinearGroup.det a))⁻¹ : Circle) : ℂ) * (halfMod S.rank a : ℂ)) •
+        (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+          (cj (dagger T S) f) ((incA D D.host.xi0⁻¹ • y) ⬝ a.1) := FS.levi a _
   rw [conjAdjoint_cj, hsw, Matrix.smul_mul, hsw] at h1
   rw [cj_smul, conj_levi_coeff']
   exact h1
 
 theorem read_unip (hψ : IsStdChar D ψ (-1)) (b : Mx D ρ T₀.rank) (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (om (1, d.nB b) f) y = heisO ψ S T₀ (ofAdj S T₀ (y ⬝ b)) (d.mixT S ψ μ 𝓕 f y) := by
+    (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 (om (1, d.nB b) f) y = heisO ψ S T₀ (ofAdj S T₀ (y ⬝ b)) ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f y) := by
   apply cj_dagger_inj S T₀
-  have h1 := FS.unip b (incA D D.host.xi0⁻¹ • y)
+  have h1 : (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+      (conjAdjoint om (d.nB b, 1) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
+      heisO ψ T₀ S ((incA D D.host.xi0⁻¹ • y) ⬝ b)
+        ((_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕'
+          (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y)) := FS.unip b _
   rw [conjAdjoint_cj, hsw, Matrix.smul_mul, hsw, ← dagger_ofAdj, (GlobalTheory.T.hermitianAdjoint_symplectic_action_theta_heisenberg D ψ hψ S T₀).2.2.2] at h1
   exact h1
 
 theorem read_centre (hψ : IsStdChar D ψ (-1)) (hμ : IsCovolOne (ratMx D ρ S.rank) μ 𝓕) (c : skewA D ρ)
     (y : Mx D S.rank ρ) :
-    d.mixT S ψ μ 𝓕 (om (1, d.nC c) f) y = ψ (d.qT S c y) • d.mixT S ψ μ 𝓕 f y := by
+    (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 (om (1, d.nC c) f) y = ψ (d.qT S c y) • (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.target d) S ψ μ 𝓕 f y := by
   apply cj_dagger_inj S T₀
-  have h1 : d.mixS S ψ μ' 𝓕' (conjAdjoint om (d.nC c, 1) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
-      ψ (d.qS S c (incA D D.host.xi0⁻¹ • y)) • d.mixS S ψ μ' 𝓕' (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y) :=
+  have h1 : (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕' (conjAdjoint om (d.nC c, 1) (cj (dagger T S) f)) (incA D D.host.xi0⁻¹ • y) =
+      ψ (d.qS S c (incA D D.host.xi0⁻¹ • y)) • (_root_.I195MixedCoordinates_4160728ecfd2b76db64d5897.source d) S ψ μ' 𝓕' (cj (dagger T S) f) (incA D D.host.xi0⁻¹ • y) :=
     FS.centre c _
   rw [conjAdjoint_cj, hsw, hsw, quadratic_form_xi_inverse hψ d μ 𝓕 hμ] at h1
   rw [cj_smul, ← conj_psi_neg hψ, Complex.conj_conj]

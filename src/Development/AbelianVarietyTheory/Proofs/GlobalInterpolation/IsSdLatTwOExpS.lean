@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnimodularLatticeLocalConjSymm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnimodularLatticeLocalConjSymm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions Formalism.L2.Th1.H GlobalTheory.ThetaMove GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree
 
@@ -24,8 +28,8 @@ theorem zpow_smul_mem (M : Submodule (𝓞 E) (Sp E n)) (c : ℕ) {k : ℤ} (hk 
   rw [this]
   exact M.smul_mem _ hy
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem isLattice_twO {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N) {c : ℕ} (hc : 0 < c)
     {e : HeightOneSpectrum (𝓞 E) → ℤ} (he : ∀ Q, -1 ≤ e Q ∧ e Q ≤ 1) : Submodule.IsLattice E (twist₂ N c e) := by
   have hcE : (c : E) ≠ 0 := by exact_mod_cast hc.ne'
@@ -41,12 +45,8 @@ theorem isLattice_twO {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattic
     refine Submodule.fg_of_fg_map_injective f hf (Submodule.FG.of_le hN.fg ?_)
     rintro _ ⟨x, hx, rfl⟩
     exact h1 x hx
-  · rw [eq_top_iff, ← hN.span_eq_top, Submodule.span_le]
-    intro x hx
-    have : x = (c : E)⁻¹ • (c : E) • x := by rw [smul_smul, inv_mul_cancel₀ hcE, one_smul]
-    rw [this]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span (h2 x hx))
-
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
 theorem hStd_zpow_left (c : ℕ) (k : ℤ) (y x : Sp E n) :
     hStd E n (((c : E) ^ k) • y) x = hStd E n y (((c : E) ^ k) • x) := by
   rw [LinearMap.map_smulₛₗ₂, LinearMap.map_smul, map_zpow₀, map_natCast]

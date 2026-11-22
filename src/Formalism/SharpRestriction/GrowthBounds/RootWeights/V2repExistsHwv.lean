@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightModuleBounds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightModuleBounds
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem v2rep_comp_mem [CharZero K] (E : GLOps n K V) (Z : Submodule K V) (hZ : 
       rw [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply]
       exact Z.sub_mem (hZ a _ hsum) (Z.smul_mem _ hsum)
     have heq : (E a a - (ν a : K) • (1 : Module.End K V)) (∑ ρ ∈ s, g ρ) = ∑ ρ ∈ s.erase ν, g' ρ := by
-      rw [map_sum, ← Finset.sum_erase_add _ _ hν]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← Finset.sum_erase_add _ _ hν]
       have h0 : (E a a - (ν a : K) • (1 : Module.End K V)) (g ν) = 0 := by
         have := (v2rep_mem_weightSp E ν (g ν)).mp (hg ν hν) a
         rw [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, this, sub_self]

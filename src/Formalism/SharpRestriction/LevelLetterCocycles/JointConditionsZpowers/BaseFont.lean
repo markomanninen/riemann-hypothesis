@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+
+@[expose] public section
 
 noncomputable section
 
@@ -351,8 +355,8 @@ theorem cj_sum (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentities.Fon
         | rfl
         | (show cons0 LL k m u b.succ = u b; simp [cons0])
 
-include hc in
 
+include hc in
 theorem subquot_crys (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentities.FontaineAt PD LL O) {S : (K →ₐ[Qp] LL) → Set ℤ}
     (hcr : ∀ x, IsCrys PD (matRep (Ms x))) (hS : ∀ x τ, JumpsInV PD (matRep (Ms x)) τ (S τ))
     (T : LocLat G Qp LL O) (hT : IsSubquotOfSums T.ρ (fun x => ⇑(Ms x))) :
@@ -384,8 +388,8 @@ theorem subquot_crys (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentiti
   unfold CJ at hT'
   exact hT'
 
-include hc in
 
+include hc in
 theorem subsum_crys (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentities.FontaineAt PD LL O) {S : (K →ₐ[Qp] LL) → Set ℤ}
     (hcr : ∀ x, IsCrys PD (matRep (Ms x))) (hS : ∀ x τ, JumpsInV PD (matRep (Ms x)) τ (S τ))
     (A : GRep G Qp LL O) (hA : IsSubOfSums A.ρ (fun x => ⇑(Ms x))) :
@@ -425,8 +429,8 @@ theorem subsum_crys (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentitie
   unfold CJ at hA'
   exact hA'
 
-include hc in
 
+include hc in
 theorem jumps_of_multV_eq (hF : Formalism.MainNotions.TruncatedSeriesCountingIdentities.FontaineAt PD LL O) (x y : ι) (hx : IsCrys PD (matRep (Ms x)))
     (hy : IsCrys PD (matRep (Ms y))) (τ : K →ₐ[Qp] LL)
     (h : ∀ a, multV PD (matRep (Ms x)) τ a = multV PD (matRep (Ms y)) τ a) :

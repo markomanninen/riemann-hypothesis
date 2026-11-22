@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatMin
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatMin
+
+@[expose] public section
 
 namespace PI.LatMinWork
 

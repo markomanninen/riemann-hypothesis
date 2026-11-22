@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PartialDerivativeMinors.PMinorAff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PartialDerivativeMinors.PMinorAff
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem expand_gen {H : Type} [Fintype H] [DecidableEq H] {N0 N1 p : ℕ} [Fact 
           ((κ ((true, t), a, b)).factorial : ℂ_[p]) * (-(S * ut t)) ^ κ ((true, t), a, b)
       else 0)
     (P : PolyXZ H N0 N1) (m : XV H N0 →₀ ℕ) :
-    MvPolynomial.coeff m (applyAt0 N0 N1 p (E * sg) P) =
+    AddMonoidAlgebra.coeff (applyAt0 N0 N1 p (E * sg) P) m =
       ∑ κ2 ∈ P.support.biUnion (fun μ => Finset.Iic (zpart μ)),
         ∑ n ∈ Fintype.piFinset (fun _ : H => Finset.range (P.totalDegree + 1)),
           ((κ2.prod fun _ k => (k.factorial : ℂ_[p])) * MvPowerSeries.coeff κ2 sg) *
@@ -103,13 +107,13 @@ theorem expand_gen {H : Type} [Fintype H] [DecidableEq H] {N0 N1 p : ℕ} [Fact 
   let T : (XZ (Bool × H) N0 N1 →₀ ℕ) → (ZV H N0 N1 →₀ ℕ) → ℂ_[p] := fun μ κ2 =>
     if xpart μ = m ∧ κ2 ≤ zpart μ ∧
         (∀ t a b, (zpart μ - κ2) ((false, t), a, b) = (zpart μ - κ2) ((true, t), a, b)) then
-      ((MvPolynomial.coeff μ P : ℤ) : ℂ_[p]) * ((binomF (zpart μ) κ2 : ℕ) : ℂ_[p]) *
+      ((AddMonoidAlgebra.coeff P μ : ℤ) : ℂ_[p]) * ((binomF (zpart μ) κ2 : ℕ) : ℂ_[p]) *
         (∏ t : H, ∏ a : Fin N0, ∏ b : Fin N1,
           (((zpart μ - κ2) ((true, t), a, b)).factorial : ℂ_[p]) *
             (-(S * ut t)) ^ (zpart μ - κ2) ((true, t), a, b)) *
         ((κ2.prod fun _ k => (k.factorial : ℂ_[p])) * MvPowerSeries.coeff κ2 sg)
     else 0
-  have hL : MvPolynomial.coeff m (applyAt0 N0 N1 p (E * sg) P) =
+  have hL : AddMonoidAlgebra.coeff (applyAt0 N0 N1 p (E * sg) P) m =
       ∑ μ ∈ P.support, ∑ κ2 ∈ P.support.biUnion (fun μ => Finset.Iic (zpart μ)), T μ κ2 := by
     simp only [applyAt0, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial]
     refine Finset.sum_congr rfl fun μ hμ => ?_

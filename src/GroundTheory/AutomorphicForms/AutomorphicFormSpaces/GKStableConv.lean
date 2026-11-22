@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraRegularity
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -172,7 +176,7 @@ theorem rightDeriv_eq_integral_convDeriv [MeasurableSpace G] [BorelSpace G]
     rw [← this]
     congr 1
     funext y
-    simp only [mul_inv_rev, mul_assoc, inv_mul_cancel_left, inv_inv]
+    simp [mul_assoc, mul_inv_rev]
 
   have hderiv : ∀ (y : G) (t : ℝ), HasDerivAt (fun s : ℝ => κ (y⁻¹ * h.expG (s • X))⁻¹)
       (h.rightDeriv X (fun w : G => κ w⁻¹) (y⁻¹ * h.expG (t • X))) t := by

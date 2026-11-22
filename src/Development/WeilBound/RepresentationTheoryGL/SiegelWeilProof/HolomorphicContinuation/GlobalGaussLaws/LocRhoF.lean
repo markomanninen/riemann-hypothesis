@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FourierZeroN
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryGroupFamilyZariskiDense
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FourierZeroN
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryGroupFamilyZariskiDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,9 +32,9 @@ theorem evX_eq_zero {m : ℕ} (P : PX m n) (h : ∀ u : Fin m → Fin n → ℂ,
   have hinv : ∀ k, bind₁ reImInv (reIm (n := n) (m := m) k) = X k := by
     rintro ⟨a, i, b⟩
     cases b
-    · simp only [reIm, reImInv, Bool.false_eq_true, ↓reduceIte, map_add, map_mul, map_sub, bind₁_X_right, bind₁_C_right]
+    · simp only [reIm, reImInv, Bool.false_eq_true, ↓reduceIte, map_add (f := _), map_mul, map_sub, bind₁_X_right, bind₁_C_right]
       linear_combination (X (a, i, false) - X (a, i, true)) * hI + X (a, i, false) * h2
-    · simp only [reIm, reImInv, Bool.false_eq_true, ↓reduceIte, map_add, map_mul, map_sub, bind₁_X_right, bind₁_C_right]
+    · simp only [reIm, reImInv, Bool.false_eq_true, ↓reduceIte, map_add (f := _), map_mul, map_sub, bind₁_X_right, bind₁_C_right]
       linear_combination -(X (a, i, false) - X (a, i, true)) * hI + X (a, i, true) * h2
   have hQ : bind₁ reIm P = 0 := by
     apply GlobalTheory.UnitaryZariskiDense.eq_zero_of_eval_real
@@ -68,7 +72,7 @@ theorem fP_inj {m : ℕ} (c : ℝ) {P Q : PX m n} (h : fP c P = fP c Q) : P = Q 
 
 theorem fP_add_smul {m : ℕ} (c : ℝ) (a : ℂ) (P Q : PX m n) : fP c (a • P + Q) = a • fP c P + fP c Q := by
   funext u
-  simp only [fP, evX, map_add, MvPolynomial.smul_eval, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [fP, evX, map_add (f := _), MvPolynomial.smul_eval, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   ring
 
 end PositivityTheory.Rg.Sw.Glob.RhoH

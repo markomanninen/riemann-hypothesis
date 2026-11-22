@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MultiplicityOne.FinitePart
-import GroundTheory.AutomorphicForms.WhittakerCriterion
-import GroundTheory.AutomorphicForms.MultiplicityOne.NormOne
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FinitePart
+public import GroundTheory.AutomorphicForms.WhittakerCriterion
+public import GroundTheory.AutomorphicForms.MultiplicityOne.NormOne
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open NumberField IsDedekindDomain
@@ -16,11 +20,11 @@ open Reduction AutomorphicForm CuspidalSpectrum FourierWhittaker
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-variable {σ : UnitaryRep (normOneGL K n) H}
-variable {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {σ : UnitaryRep (normOneGL (K := K) (n := n)) H}
+variable {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
-theorem map_integrated_of_left_invariant {f : CompactlySupportedContinuousMap (normOneGL K n) ℂ}
-    {h : normOneGL K n} (hf : ∀ x, f (h⁻¹ * x) = f x) (v : H) :
+theorem map_integrated_of_left_invariant {f : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ}
+    {h : normOneGL (K := K) (n := n)} (hf : ∀ x, f (h⁻¹ * x) = f x) (v : H) :
     σ h (σ.integrated μ (UnitaryRep.ccToL1 μ f) v) = σ.integrated μ (UnitaryRep.ccToL1 μ f) v := by
   have e := σ.map_comp_integrated μ h (UnitaryRep.ccToL1 μ f)
   have e2 : UnitaryRep.leftTranslate μ h (UnitaryRep.ccToL1 μ f) = UnitaryRep.ccToL1 μ f := by
@@ -30,14 +34,14 @@ theorem map_integrated_of_left_invariant {f : CompactlySupportedContinuousMap (n
     filter_upwards [UnitaryRep.coeFn_leftTranslate μ h (UnitaryRep.ccToL1 μ f), hc,
       (measurePreserving_mul_left μ h⁻¹).quasiMeasurePreserving.ae_eq_comp hc] with x h1 h2 h3
     rw [h1]
-    change (UnitaryRep.ccToL1 μ f : normOneGL K n → ℂ) (h⁻¹ * x) = (UnitaryRep.ccToL1 μ f) x
-    rw [show (UnitaryRep.ccToL1 μ f : normOneGL K n → ℂ) (h⁻¹ * x) = f (h⁻¹ * x) from h3,
-      show (UnitaryRep.ccToL1 μ f : normOneGL K n → ℂ) x = f x from h2]
+    change (UnitaryRep.ccToL1 μ f : normOneGL (K := K) (n := n) → ℂ) (h⁻¹ * x) = (UnitaryRep.ccToL1 μ f) x
+    rw [show (UnitaryRep.ccToL1 μ f : normOneGL (K := K) (n := n) → ℂ) (h⁻¹ * x) = f (h⁻¹ * x) from h3,
+      show (UnitaryRep.ccToL1 μ f : normOneGL (K := K) (n := n) → ℂ) x = f x from h2]
     exact hf x
   rw [e2] at e
   exact congrArg (fun A : H →L[ℂ] H => A v) e
 
-theorem exists_fixedSubspace_ne_bot (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem exists_fixedSubspace_ne_bot (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (hσ : σ.IsIrreducible) :
     ∃ (U : Subgroup (AdelicGLn.integralFiniteGL K n))
       (hU : IsOpen (U : Set (AdelicGLn.integralFiniteGL K n))),

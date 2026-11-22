@@ -1,7 +1,11 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulTopIff
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatioHolds
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SumOrbitsEquivariant
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeOfFibLocNeZeroGood
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemSmulTopIff
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LocalDensityRatioHolds
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SumOrbitsEquivariant
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLatticeOfFibLocNeZeroGood
+
+@[expose] public section
 
 open NumberField Module Filter
 
@@ -27,7 +31,7 @@ def extHom (S : VecSplit h h') : (V' ≃ₗ[K] V') →* (V ≃ₗ[K] V) where
     intro a b
     ext v
     obtain ⟨c, x, rfl⟩ := S.cover v
-    rw [SplitBAux.extOf_apply, LinearEquiv.mul_apply, LinearEquiv.mul_apply, SplitBAux.extOf_apply,
+    rw [SplitBAux.extOf_apply, mul_apply_eq_comp, mul_apply_eq_comp, SplitBAux.extOf_apply,
       SplitBAux.extOf_apply]
 
 theorem extHom_apply (S : VecSplit h h') (g' : V' ≃ₗ[K] V') : extHom S g' = SplitBAux.extOf S g' := rfl
@@ -54,7 +58,7 @@ def kap (S : VecSplit h h') (M : Submodule (𝓞 K) V) (𝔭 : Ideal (𝓞 F)) (
 
 theorem nu_pos (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     (hs : h.IsSymm) (hd : IsTotPosDef h) {A₀ : Submodule (𝓞 K) V}
-    (hA₀ : Submodule.IsLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {𝔭 : Ideal (𝓞 F)}
+    (hA₀ : Submodule.IsFullLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) : 0 < nu h (locF 𝔭 A₀) 𝔭 := by
   have e : alphaL h (locF 𝔭 A₀) 𝔭 = alphaL h A₀ 𝔭 := by
     unfold alphaL
@@ -69,8 +73,8 @@ theorem nu_pos (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF
 
 theorem nu_mul_relIndex (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     (hs : h.IsSymm) (hd : IsTotPosDef h) {A₀ B₀ : Submodule (𝓞 K) V}
-    (hA₀ : Submodule.IsLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀)
-    (hB₀ : Submodule.IsLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)}
+    (hA₀ : Submodule.IsFullLattice K A₀) (hA₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h A₀)
+    (hB₀ : Submodule.IsFullLattice K B₀) (hB₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h B₀) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) :
     nu h (locF 𝔭 A₀) 𝔭 * ((autSub h (locF 𝔭 A₀)).relIndex (autSub h (locF 𝔭 B₀)) : ℝ) =
       nu h (locF 𝔭 B₀) 𝔭 * ((autSub h (locF 𝔭 B₀)).relIndex (autSub h (locF 𝔭 A₀)) : ℝ) := by
@@ -100,7 +104,7 @@ theorem inf_fixS_eq_map (S : VecSplit h h') (M : Submodule (𝓞 K) V) :
     have e : extHom S (SplitBAux.res S g hg.1 hx') = g := by
       ext v
       obtain ⟨c, a, rfl⟩ := S.cover v
-      rw [extHom_apply, SplitBAux.extOf_apply, SplitBAux.res_spec, map_add, map_smul, hx']
+      rw [extHom_apply, SplitBAux.extOf_apply, SplitBAux.res_spec, map_add (f := _), map_smul, hx']
     refine ⟨SplitBAux.res S g hg.1 hx', ?_, e⟩
     change extHom S _ ∈ autSub h M
     rw [e]
@@ -114,10 +118,25 @@ theorem relIndex_fix_eq (hs : h.IsSymm) (S : VecSplit h h') (M₁ M₂ : Submodu
   rw [inf_fixS_eq_map, inf_fixS_eq_map, Subgroup.relIndex_map_map_of_injective _ _ (extHom_injective S)]
 
 theorem oM_ne_zero (hs : h.IsSymm) (S : VecSplit h h') {M₁ : Submodule (𝓞 K) V}
-    (hM₁ : Submodule.IsLattice K M₁) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
+    (hM₁ : Submodule.IsFullLattice K M₁) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal)
     (hx : S.x₀ ∈ locF 𝔭 M₁) : oM S (locF 𝔭 M₁) ≠ 0 := by
-  have hN : Submodule.IsLattice K (S.adjoin (S.cut M₁)) :=
-    (S.isLattice_adjoin_iff' _).mpr (StabilizerLattices.isLattice_cut S hM₁)
+  have hcut := StabilizerLattices.isFullLattice_cut S hM₁
+  have hN : Submodule.IsFullLattice K (S.adjoin (S.cut M₁)) := by
+    refine { toIsLattice := (S.isLattice_adjoin_iff' _).mpr hcut.toIsLattice, span_eq_top := ?_ }
+    rw [eq_top_iff]
+    intro v _
+    obtain ⟨c, a, rfl⟩ := S.cover v
+    refine add_mem (Submodule.smul_mem _ c (Submodule.subset_span (S.x₀_mem_adjoin _))) ?_
+    have ha : a ∈ Submodule.span K (S.cut M₁ : Set V') := by
+      rw [hcut.span_eq_top]
+      exact Submodule.mem_top
+    have hle : (Submodule.span K (S.cut M₁ : Set V')).map S.ι ≤
+        Submodule.span K (S.adjoin (S.cut M₁) : Set V) := by
+      rw [Submodule.map_span]
+      apply Submodule.span_mono
+      rintro _ ⟨b, hb, rfl⟩
+      exact Submodule.mem_sup_right (Submodule.mem_map_of_mem hb)
+    exact hle (Submodule.mem_map_of_mem ha)
   have h1 : (autExt S (locF 𝔭 M₁)).relIndex (autExt S (locF 𝔭 (S.adjoin (S.cut M₁)))) ≠ 0 :=
     Subgroup.relIndex_comap_ne_zero (extHom S) (relIndex_autSub_ne_zero h hN hM₁ h𝔭)
   have h2 : autSub h' (S.cut (locF 𝔭 M₁)) ≤ autExt S (locF 𝔭 (S.adjoin (S.cut M₁))) := by
@@ -158,8 +177,8 @@ theorem kap_alg {E₁ E₂ Q₁ Q₂ ν₁ ν₂ μ₁ μ₂ a b c d a' b' o₁ 
 
 theorem kap_eq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) (hs : h.IsSymm) (hd : IsTotPosDef h)
     (S : VecSplit h h')
-    {M₁ M₂ : Submodule (𝓞 K) V} (hM₁ : Submodule.IsLattice K M₁)
-    (hM₁i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₁) (hM₂ : Submodule.IsLattice K M₂)
+    {M₁ M₂ : Submodule (𝓞 K) V} (hM₁ : Submodule.IsFullLattice K M₁)
+    (hM₁i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₁) (hM₂ : Submodule.IsFullLattice K M₂)
     (hM₂i : Formalism.HermitianLatticesTheory.IsIntegralLat h M₂) {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {n : 𝓞 F}
     (hn : n ≠ 0) (hx : h S.x₀ S.x₀ = algebraMap F K (n : F)) (hx₁ : S.x₀ ∈ locF 𝔭 M₁)
     (hx₂ : S.x₀ ∈ locF 𝔭 M₂) :
@@ -167,8 +186,8 @@ theorem kap_eq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF
       kap S (locF 𝔭 M₁) 𝔭 n J k = kap S (locF 𝔭 M₂) 𝔭 n J k := by
   have hq : (0 : ℝ) < (Ideal.absNorm 𝔭 : ℝ) := by
     exact_mod_cast reductionMapsOfForms.absNorm_pos h𝔭
-  have hT₁ := StabilizerLattices.isLattice_cut S hM₁
-  have hT₂ := StabilizerLattices.isLattice_cut S hM₂
+  have hT₁ := StabilizerLattices.isFullLattice_cut S hM₁
+  have hT₂ := StabilizerLattices.isFullLattice_cut S hM₂
   have hT₁i := UnimodularLocalization.isIntegralLat_cut S hM₁i
   have hT₂i := UnimodularLocalization.isIntegralLat_cut S hM₂i
 
@@ -199,10 +218,10 @@ theorem kap_eq (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF
         = (P.relIndex Q * Q.relIndex W * W.relIndex P) * Q.relIndex R := by ring
       _ = (Q.relIndex R * W.relIndex Q) * P.relIndex W := by rw [← c1]; ring
       _ = _ := by rw [← c2]; ring
-  have h2 := nu_mul_relIndex hK hF hs hd hM₁ hM₁i hM₂ hM₂i h𝔭
-  have h3 := nu_mul_relIndex hK hF (S.isSymm hs) (S.isTotPosDef hd) hT₁ hT₁i hT₂ hT₂i h𝔭
+  have h2 := nu_mul_relIndex hK hF hs hd (by first | exact hM₁ | exact hM₁.toIsLattice) hM₁i (by first | exact hM₂ | exact hM₂.toIsLattice) hM₂i h𝔭
+  have h3 := nu_mul_relIndex hK hF (S.isSymm hs) (S.isTotPosDef hd) (by first | exact hT₁ | exact hT₁.toIsLattice) hT₁i (by first | exact hT₂ | exact hT₂.toIsLattice) hT₂i h𝔭
   rw [← LocalizedFibreSets.cut_locF, ← LocalizedFibreSets.cut_locF, ← hQ, ← hR] at h3
-  filter_upwards [pair hK hF hs hd hM₁ hM₁i hM₂ hM₂i h𝔭 hn hx hx₁ hx₂] with J hJ
+  filter_upwards [pair hK hF hs hd (by first | exact hM₁ | exact hM₁.toIsLattice) hM₁i (by first | exact hM₂ | exact hM₂.toIsLattice) hM₂i h𝔭 hn hx hx₁ hx₂] with J hJ
   filter_upwards [hJ] with k hk
   rw [relIndex_fix_eq hs, relIndex_fix_eq hs, ← hP, ← hW] at hk
   unfold kap oM

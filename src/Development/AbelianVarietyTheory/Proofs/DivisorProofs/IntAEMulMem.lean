@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Formalism.UnipotentAdelicQuotients.ThmBInHecke
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain

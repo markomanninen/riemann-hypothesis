@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoveringOfForallMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoveringOfForallMem
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite
 
 noncomputable section
@@ -73,6 +78,3 @@ theorem free_hom_ext_of_covering (R : Type) [CommRing R] {S : Scheme.{0}} (F : G
   exact (nat φ).trans ((key (w ≫ g) hw).trans (nat ψ).symm)
 
 end GlobalTheory.EtC.Tr
-
-example : ∀ (R : Type) [CommRing R] {S : Scheme.{0}} (F : GlobalTheory.EtC.Shv R) (φ ψ : GlobalTheory.EtC.Tr.freeSch R S ⟶ F) (T : Sieve S), T ∈ Scheme.etaleTopology S → (∀ ⦃V : Scheme.{0}⦄ (v : V ⟶ S), T v → (GlobalTheory.EtC.free R).map (yoneda.map v) ≫ φ = (GlobalTheory.EtC.free R).map (yoneda.map v) ≫ ψ) → φ = ψ :=
-  @GlobalTheory.EtC.Tr.free_hom_ext_of_covering

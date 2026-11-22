@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.MemLin
+
+@[expose] public section
 
 noncomputable section
 

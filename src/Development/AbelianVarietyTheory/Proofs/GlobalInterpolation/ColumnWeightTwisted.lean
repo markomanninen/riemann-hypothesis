@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LevelChainSharpColumnValuationOwnChainIff
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LevelChainSharpColumnValuationOwnChainIff
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+
+@[expose] public section
 
 open Formalism.BasicNotions GlobalTheory.LvT
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LevelSAllOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MulVecSpanStable
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LevelSAllOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.MulVecSpanStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,13 +25,15 @@ theorem sigR_inclR (a : E) : sigR R σ (inclR R a) = inclR R (σ a) := by
 
 theorem hR_ratV_left (x : Fin n → E) (y : Fin n → R ⊗[F] E) :
     hR R σ J (ratV (F := F) R x) y = covR R σ J x ⬝ᵥ y := by
-  simp only [hR, Formalism.UG.hform, covR, ratV, JR, Matrix.map_apply, sigR_inclR, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, covR, ratV, JR, Matrix.map_apply, sigR_inclR, dotProduct,
     map_sum, map_mul, Finset.sum_mul]
   exact Finset.sum_comm
 
 theorem covR_ratV (x y : Fin n → E) :
     covR R σ J x ⬝ᵥ ratV (F := F) R y = inclR R (hE σ J x y) := by
-  simp only [covR, ratV, hE, Formalism.UG.hform, dotProduct, Finset.sum_mul, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [covR, ratV, hE, Formalism.UG.hform, dotProduct, Finset.sum_mul, map_sum, map_mul]
   exact Finset.sum_comm
 
 theorem ratV_add (x y : Fin n → E) :
@@ -67,7 +73,7 @@ theorem lin_fix_span (g : HA R σ J) {m : ℕ} (Y : Fin m → Fin n → E)
     obtain ⟨a, rfl⟩ := hw
     exact hY a
   | zero => exact map_zero _
-  | add w w' _ _ hw hw' => rw [map_add, hw, hw']
+  | add w w' _ _ hw hw' => rw [map_add (f := _), hw, hw']
   | smul c w _ hw => rw [map_smul, hw]
 
 theorem spanR_univ {m : ℕ} (Y : Fin m → Fin n → E) :
@@ -77,7 +83,8 @@ theorem spanR_univ {m : ℕ} (Y : Fin m → Fin n → E) :
 
 theorem hE_swap (hJ : IsHermND σ J) (hinv : ∀ x, σ (σ x) = x) (x y : Fin n → E) :
     hE σ J y x = σ (hE σ J x y) := by
-  simp only [hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hinv, hJ.1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hinv, hJ.1]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -127,7 +134,8 @@ theorem phiV_ratV (v : HeightOneSpectrum (𝓞 F)) (x : Fin n → E) :
 
 theorem phiV_cov (v : HeightOneSpectrum (𝓞 F)) (x : Fin n → E) (y : Fin n → Af F ⊗[F] E) :
     phiV v (covR (Af F) σ J x ⬝ᵥ y) = covR (Fv F v) σ J x ⬝ᵥ fun i => phiV v (y i) := by
-  simp only [dotProduct, map_sum, map_mul, covR, phiV_inclR]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, map_mul, covR, phiV_inclR]
 
 theorem phiV_span (v : HeightOneSpectrum (𝓞 F)) {m : ℕ} (Y : Fin m → Fin n → E)
     (y : Fin n → Af F ⊗[F] E) (hy : y ∈ spanR (F := F) (Af F) Y Set.univ) :

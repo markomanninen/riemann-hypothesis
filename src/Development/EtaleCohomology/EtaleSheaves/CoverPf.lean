@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AcycQAPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AcycQAPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.t_E1Cut LateralTheory.E.AcycQAPf
@@ -34,7 +38,7 @@ theorem dies_add (hQ : QAClosed) (hM : MV) (h1 : A1) {q : ℕ} {i n : ℤ} (hk :
     rw [Ideal.eq_top_iff_one]
     obtain ⟨u, hu⟩ := IsLocalization.Away.algebraMap_isUnit (S := T) (f + g)
     have hmem : φ (f + g) ∈ Ideal.span {φ f, φ g} := by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Ideal.add_mem _ (Ideal.subset_span (by simp)) (Ideal.subset_span (by simp))
     have : (1 : T) = ((u⁻¹ : Tˣ) : T) * φ (f + g) := by
       change (1 : T) = ((u⁻¹ : Tˣ) : T) * algebraMap S T (f + g)

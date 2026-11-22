@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTateOperatorLevelComplementStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTateMaximalIdealKillsFirstCohomologyStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerFixedIffMemCompletedIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormUnitPowSubOne
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousOrbitPadicComplex
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TateDecompositionCompletedCyclotomicIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTateOperatorLevelComplementStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTateMaximalIdealKillsFirstCohomologyStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerFixedIffMemCompletedIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormUnitPowSubOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,11 @@ namespace GlobalTheory.Cyc.LogClass
 variable {l : ℕ} [Fact l.Prime]
 
 theorem ks_le_kinf (K : FinExt l) (s : ℕ) : Ks K s ≤ Kinf K :=
-  sup_le_sup_left (IntermediateField.adjoin.mono _ _ _ fun (x : Om l) (hx : x ^ (l ^ s) = 1) =>
-    (⟨s, hx⟩ : ∃ j : ℕ, x ^ (l ^ j) = 1)) _
+  by
+    apply sup_le_sup_left _ _
+    apply IntermediateField.adjoin.mono
+    intro x hx
+    exact ⟨s, hx⟩
 
 theorem hinf_le_gj (K : FinExt l) (s : ℕ) : Hinf K ≤ Gj K s :=
   IntermediateField.fixingSubgroup_antitone (ks_le_kinf K s)
@@ -64,7 +71,7 @@ theorem norm_l_pow (n : ℕ) : ‖(l : PadicComplex l) ^ n‖ = (l : ℝ) ^ (-(n
 
 theorem ohat_norm (K : FinExt l) {y : PadicComplex l} (hy : y ∈ Ohat K) : ‖y‖ ≤ 1 := by
   have : closure (intC (Kinf K)) ⊆ {y : PadicComplex l | ‖y‖ ≤ 1} :=
-    closure_minimal (fun _ h => h.2) (isClosed_le continuous_norm continuous_const)
+    closure_minimal (by exact fun _ h => h.2) (isClosed_le continuous_norm continuous_const)
   exact this hy
 
 theorem exists_zeta (K : FinExt l) (s : ℕ) (hs : 1 ≤ s) :
@@ -93,7 +100,7 @@ theorem exists_zeta (K : FinExt l) (s : ℕ) (hs : 1 ≤ s) :
       rw [← Nat.cast_succ]; exact congrArg Nat.cast hm'
     rw [h4, ← h3, Finset.prod_range_succ', norm_mul, norm_prod, norm_sub_rev ζ]
     simp only [zero_add, pow_one]
-    refine mul_le_of_le_one_left (norm_nonneg _) (Finset.prod_le_one (fun _ _ => norm_nonneg _) ?_)
+    refine mul_le_of_le_one_left (norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) ?_)
     intro i _
     rw [sub_eq_add_neg]
     refine (IsUltrametricDist.norm_add_le_max _ _).trans ?_
@@ -196,7 +203,7 @@ def logC (χ : GQ l →* ℚ_[l]ˣ) (σ : GQ l) : PadicComplex l :=
 theorem logC_mul {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (g h : GQ l) :
     logC χ (g * h) = logC χ g + logC χ h := by
   have hn := (GlobalTheory.Cyc.cyc_basic l χ hχ).1
-  rw [logC, map_mul, Units.val_mul, (GlobalTheory.PadicLogUnits.logZl_hom l).1 _ _ (hn g) (hn h), map_add]
+  rw [logC, map_mul, Units.val_mul, (GlobalTheory.PadicLogUnits.logZl_hom l).1 _ _ (hn g) (hn h), map_add (f := _)]
   rfl
 
 theorem logC_hinf {χ : GQ l →* ℚ_[l]ˣ} (hχ : IsCyc χ) (K : FinExt l) {h : GQ l}
@@ -302,7 +309,7 @@ theorem exists_coeff {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {χ
     exact mul_le_of_le_one_left (by positivity) hy.2
   · have := key σ hσ
     simp only [hc1def] at this
-    rw [map_div₀ (act σ) _ (l : PadicComplex l), map_natCast, map_add]
+    rw [map_div₀ (act σ) _ (l : PadicComplex l), map_natCast, map_add (f := _)]
     generalize S w / (ζ - 1) = z at this ⊢
     generalize y / logC χ γ = β at this ⊢
     field_simp
@@ -323,7 +330,7 @@ theorem coeff_eq_zero {act : GQ l →* (PadicComplex l ≃+* PadicComplex l)} {�
     rw [map_mul, map_pow, map_natCast, this]
   obtain ⟨y, hy, x, hx, hyx⟩ := T1a _ hO
   have h1 := congrArg (act γ) hyx
-  rw [map_mul, map_pow, map_natCast, map_add, act_inC ha hγ.1 hy.1] at h1
+  rw [map_mul, map_pow, map_natCast, map_add (f := _), act_inC ha hγ.1 hy.1] at h1
   have h2 : logC χ γ * α = 0 := by
     refine T1b _ ?_ _ ((Xj K s).sub_mem (T1e γ (gj_le K s hγ.1) x hx) hx) n ?_
     · rw [mem_inC_iff]

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,13 +58,29 @@ instance : IsMonHom (pullCompIso p f G).hom := by
   show IsMonHom (pullCompMon p f G).hom.hom
   infer_instance
 
-theorem IsSemiAbelian.pullback (h : IsSemiAbelian G) : IsSemiAbelian ((Over.pullback f).obj G) where
-  comm := by have := h.comm; infer_instance
-  smooth := by have := h.smooth; show Smooth (pullback.snd G.hom f); infer_instance
-  separated := by have := h.separated; show IsSeparated (pullback.snd G.hom f); infer_instance
-  quasiCompact := by have := h.quasiCompact; show QuasiCompact (pullback.snd G.hom f); infer_instance
-  geomConnected := by have := h.geomConnected; show GeometricallyConnected (pullback.snd G.hom f); infer_instance
-  fibres := fun Ω _ _ q => by
+theorem IsSemiAbelian.pullback (h : IsSemiAbelian G) : IsSemiAbelian ((Over.pullback f).obj G) := by
+  refine
+    { comm := ?_
+      smooth := ?_
+      separated := ?_
+      quasiCompact := ?_
+      geomConnected := ?_
+      fibres := ?_ }
+  · have := h.comm
+    infer_instance
+  · have := h.smooth
+    change Smooth (pullback.snd G.hom f)
+    infer_instance
+  · have := h.separated
+    change IsSeparated (pullback.snd G.hom f)
+    infer_instance
+  · have := h.quasiCompact
+    change QuasiCompact (pullback.snd G.hom f)
+    infer_instance
+  · have := h.geomConnected
+    change GeometricallyConnected (pullback.snd G.hom f)
+    infer_instance
+  · intro Ω _ _ q
     obtain ⟨E⟩ := h.fibres Ω (q ≫ f)
     exact ⟨torusExtOfIso (pullCompIso q f G) E⟩
 
@@ -72,16 +92,5 @@ def OAct.pullback [IsCommMonObj G] {O : Type} [CommRing O] (a : OAct O G) : OAct
   add x y := by rw [a.add]; exact CategoryTheory.Functor.map_mul _ _ _
 
 end Pull
-
-def SABBaseChangeSt : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (S S' : Scheme.{0}) (f : S' ⟶ S) (t : SAB H S)
-    (PP' : RigLB ((Over.pullback f).obj t.G)),
-    (∃ w : LB.Iso PP'.L (t.PP.L.pull (pullback.fst t.G.hom f)), w.IsGen) →
-    ∃ (semi : IsSemiAbelian ((Over.pullback f).obj t.G)) (act : OAct (𝓞 E) ((Over.pullback f).obj t.G))
-      (cub : CubicalStr _ PP') (sym : PP'.IsSymmetric)
-      (adj : ∀ a, LBIso (cubeLB _ ![fst _ _ ≫ act.act a, snd _ _] PP'.L)
-        (cubeLB _ ![fst _ _, snd _ _ ≫ act.act (H.bar a)] PP'.L))
-      (prim : LBIso PP'.L (cubeLB _ ![𝟙 _, act.act H.w0] PP'.L)),
-      Nonempty (SABMap ⟨(Over.pullback f).obj t.G, semi, act, PP', cub, sym, adj, prim⟩ t f)
 
 end ReciprocityTheory.ChartRestriction.G.Geo.Tor

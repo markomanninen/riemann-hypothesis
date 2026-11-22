@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IntegralExtensionOfRegR1
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAtExtExtAll
-import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegralExtensionOfRegR1
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAtExtExtAll
+public import Formalism.LocalToGlobal.ProjectiveLattices.ValSetAlgSubset
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,24 +14,14 @@ open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor F
 
 variable {D : D7} {T : Top D} (h : LawsP T) (j : ℕ) (hj : InR D j)
 
-include h hj in
 
+include h hj in
 theorem pt_realise (la : HeightOneSpectrum (𝓞 T.Q.c.F))
     (y : PtV (T.Q.Xo j) T.Q.c (algCls _ _) Unit (fun _ _ _ _ => True) la) :
     ∃ y' : T.PtA j la, ∀ f, vAtV y' f = vAtV y f := by
   rcases y with ⟨q, S, io, e, ho, z, hz, η, hη, rfl⟩
   obtain ⟨η', hη'⟩ := T.G.liesTotal h.points_condition h.bc66 hj la S io e ho z hz
   exact ⟨PtV.mk la ho z hz η' hη', fun _ => rfl⟩
-
-theorem regularity_R1_extended_points : RegularityR1 (recPJ h j hj) (extAll h j hj) := by
-  intro w F hF la y'
-  rw [extAll_vAt_inc]
-  refine (h.reg j hj).int (dom_wtA w) (cutR_le T.C j w F.2) ?_ la y'.1 y'.2
-  rintro la' _ ⟨y, rfl⟩
-  obtain ⟨y', hy'⟩ := pt_realise h j hj la' y
-  have := hF la' y'
-  rw [recPJ_vAt_inc, hy'] at this
-  exact this
 
 theorem ereal_lin (a c : ℝ) (v : EReal) (h0 : 0 ≤ v) (ht : v ≠ ⊤) :
     (((a + c * v.toReal : ℝ)) : EReal) = (a : EReal) + (c : EReal) * v := by

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffForm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveDiffForm
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

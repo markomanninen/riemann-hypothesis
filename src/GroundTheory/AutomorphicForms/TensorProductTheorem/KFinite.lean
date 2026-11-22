@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CompactRep
-import GroundTheory.AutomorphicForms.TensorProductTheorem.MatrixCoeff
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CompactRep
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.MatrixCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,9 +71,6 @@ theorem exists_subrep_compl (h : IsKFinite σ) (v : X) {Y : Subrepresentation σ
       have := congrArg Subtype.val huc
       simpa using this
 
-variable (σ) in
-
-abbrev Alg := MonoidAlgebra ℂ K
 
 theorem isSemisimpleModule_asModule (h : IsKFinite σ) :
     IsSemisimpleModule (MonoidAlgebra ℂ K) σ.asModule := by

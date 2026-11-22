@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordSmoothPartialBesselInduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProperDomP
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WordSmoothPartialBesselInduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProperDomP
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

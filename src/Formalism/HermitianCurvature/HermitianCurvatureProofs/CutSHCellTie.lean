@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Tower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+
+@[expose] public section
 
 noncomputable section
 

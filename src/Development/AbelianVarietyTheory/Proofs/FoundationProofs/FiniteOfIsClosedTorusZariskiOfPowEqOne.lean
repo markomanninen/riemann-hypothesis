@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Topology
 
@@ -141,19 +145,6 @@ def torusChar (x : X) : (Multiplicative X →* Rˣ) →* R where
 @[simp] theorem torusChar_apply (x : X) (t : Multiplicative X →* Rˣ) :
     torusChar x t = t (Multiplicative.ofAdd x) := rfl
 
-noncomputable def torusTranslate (s : Multiplicative X →* Rˣ) :
-    AddMonoidAlgebra R X →ₐ[R] AddMonoidAlgebra R X :=
-  AddMonoidAlgebra.lift R _ X
-    { toFun x := single x.toAdd (s x : R)
-      map_one' := by simp [one_def]
-      map_mul' x y := by simp [single_mul_single] }
-
-noncomputable def torusInvert : AddMonoidAlgebra R X →ₐ[R] AddMonoidAlgebra R X :=
-  AddMonoidAlgebra.lift R _ X
-    { toFun x := single (-x.toAdd) (1 : R)
-      map_one' := by simp [one_def]
-      map_mul' x y := by simp [single_mul_single, add_comm] }
-
 variable [IsDomain R]
 
 noncomputable def torusPrime (t : Multiplicative X →* Rˣ) : PrimeSpectrum (AddMonoidAlgebra R X) :=
@@ -163,8 +154,8 @@ noncomputable def torusPrime (t : Multiplicative X →* Rˣ) : PrimeSpectrum (Ad
     f ∈ (torusPrime t).asIdeal ↔ torusEval t f = 0 := by
   simp [torusPrime]
 
-variable (R X) in
 
+variable (R X) in
 @[reducible] noncomputable def torusZariski : TopologicalSpace (Multiplicative X →* Rˣ) :=
   TopologicalSpace.induced torusPrime inferInstance
 
@@ -207,7 +198,7 @@ theorem finite_setOf_pow_eq_one_torus [Module.Finite ℤ X] {m : ℕ} (hm : m �
     {s : Multiplicative X →* Rˣ | s ^ m = 1}.Finite := by
   haveI : NeZero m := ⟨hm⟩
   haveI : AddGroup.FG X := Module.Finite.iff_addGroup_fg.1 inferInstance
-  obtain ⟨T, hT⟩ := (Group.fg_def.1 (inferInstance : Group.FG (Multiplicative X)))
+  obtain ⟨T, hT⟩ := Group.exists_of_isMulFG (Multiplicative X)
   let φ : {s : Multiplicative X →* Rˣ | s ^ m = 1} → (T → rootsOfUnity m R) := fun s x =>
     ⟨s.1 x, by simpa using DFunLike.congr_fun (show s.1 ^ m = 1 from s.2) x.1⟩
   refine Finite.of_injective φ fun s t h => Subtype.ext ?_
@@ -285,18 +276,6 @@ theorem finite_of_isClosed_torusZariski_of_pow_eq_one [Module.Finite ℤ X] {n :
   rw [h3, orderOf_one] at hs
   exact hp.one_lt.ne hs
 
-variable (R X) in
-
-def torusPowTorsion (n : ℕ) : Subgroup (Multiplicative X →* Rˣ) where
-  carrier := {t | ∃ j, t ^ n ^ j = 1}
-  one_mem' := ⟨0, one_pow _⟩
-  mul_mem' := by
-    rintro s t ⟨i, hi⟩ ⟨j, hj⟩
-    refine ⟨i + j, ?_⟩
-    rw [mul_pow, pow_add, pow_mul, hi, mul_comm (n ^ i), pow_mul, hj, one_pow, one_pow, one_mul]
-  inv_mem' := by
-    rintro s ⟨i, hi⟩
-    exact ⟨i, by rw [inv_pow, hi, inv_one]⟩
 
 end Torus
 
@@ -306,39 +285,6 @@ open AddMonoidAlgebra
 
 variable {R : Type*} [CommRing R] {X : Type*} [AddCommGroup X] {ι : Type*}
 
-variable (R) in
-
-noncomputable def torusCoord (b : Module.Basis ι ℤ X) : (Multiplicative X →* Rˣ) ≃* (ι → Rˣ) where
-  toFun t i := t (Multiplicative.ofAdd (b i))
-  invFun u := AddMonoidHom.toMultiplicativeLeft
-    (b.constr ℤ fun i => Additive.ofMul (u i)).toAddMonoidHom
-  left_inv t := by
-    have : (b.constr ℤ fun i => Additive.ofMul (t (Multiplicative.ofAdd (b i)))) =
-        (AddMonoidHom.toMultiplicativeLeft.symm t).toIntLinearMap := b.ext fun i => by simp
-    beta_reduce
-    rw [this]
-    rfl
-  right_inv u := by
-    funext i
-    simp
-  map_mul' s t := rfl
-
-@[simp] theorem torusCoord_apply (b : Module.Basis ι ℤ X) (t : Multiplicative X →* Rˣ) (i : ι) :
-    torusCoord R b t i = t (Multiplicative.ofAdd (b i)) := rfl
-
-theorem torusCoord_symm_apply (b : Module.Basis ι ℤ X) (u : ι → Rˣ) (x : X) :
-    (torusCoord R b).symm u (Multiplicative.ofAdd x) = (b.repr x).prod fun i m => u i ^ m := by
-  change Additive.toMul ((b.constr ℤ fun i => Additive.ofMul (u i)) x) = _
-  rw [Module.Basis.constr_apply, Finsupp.sum, Finsupp.prod, toMul_sum]
-  rfl
-
-noncomputable def laurentEval (u : ι → Rˣ) : AddMonoidAlgebra R (ι →₀ ℤ) →ₐ[R] R :=
-  torusEval ((torusCoord R Finsupp.basisSingleOne).symm u)
-
-@[simp] theorem laurentEval_single (u : ι → Rˣ) (x : ι →₀ ℤ) (a : R) :
-    laurentEval u (single x a) = a * ((x.prod fun i m => u i ^ m : Rˣ) : R) := by
-  rw [laurentEval, torusEval_single, torusCoord_symm_apply]
-  rfl
 
 end Coordinates
 

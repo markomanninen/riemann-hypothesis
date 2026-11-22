@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.DivIntoDualShift
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ImageLcv
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LcvBasis
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LocBasis
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ProdFormula
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.DivIntoDualShift
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ImageLcv
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LcvBasis
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LocBasis
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ProdFormula
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DivIntoDual
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix nonZeroDivisors
@@ -65,9 +69,10 @@ theorem shift_vw_pow (w : HeightOneSpectrum (𝓞 K)) (a : K) (ha : a ≠ 0) (n 
   rw [← FractionalIdeal.spanSingleton_pow, FractionalIdeal.count_pow]
 
 theorem shift_idx_smulLat (w : HeightOneSpectrum (𝓞 K)) (N : Submodule (𝓞 K) (Fin d → K))
-    (hN : Submodule.IsLattice K N) (a : K) (ha : a ≠ 0) :
+    (hN : Submodule.IsFullLattice K N) (a : K) (ha : a ≠ 0) :
     idx w N (smulLat a N) = (d : ℤ) * vw w a := by
-  obtain ⟨f, hf, hl⟩ := semilocal_basis_exists K d N hN w
+  letI := hN
+  obtain ⟨f, hf, hl⟩ := semilocal_basis_exists K d N inferInstance w
   have h1 : Formalism.HermitianLatticesTheory.localization₂ w.asIdeal (Submodule.span (𝓞 K) (Set.range f)) =
       Formalism.HermitianLatticesTheory.localization₂ w.asIdeal N := by
     unfold Formalism.HermitianLatticesTheory.loc at hl
@@ -87,7 +92,11 @@ theorem shift_idx_smulLat (w : HeightOneSpectrum (𝓞 K)) (N : Submodule (𝓞 
   unfold idx
   exact idxChange_lidx_congr w.asIdeal h1.symm rfl
 
-theorem shift_index_formula : ShiftIndex := by
+theorem shift_index_formula :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (d : ℕ)
+      (N N' : Submodule (𝓞 K) (Fin d → K)), Submodule.IsFullLattice K N →
+      ∀ (w : HeightOneSpectrum (𝓞 K)) (s : ℤ), IsShiftAt w N N' s →
+        idx w N N' = -((d : ℤ) * s) := by
   intro K _ _ _ d N N' hN w s hsh
   obtain ⟨a, ha, hva, hloc⟩ := hsh
   have e : idx w N N' = idx w N (smulLat a N) := by
@@ -98,11 +107,15 @@ theorem shift_index_formula : ShiftIndex := by
 
 end Smul
 
-theorem mu_log_conductor : MuLcv := by
+theorem mu_log_conductor :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
+      (d : ℕ), 0 < d →
+      ∀ X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ, (∀ v, IsUnit (X v).det) →
+      ∀ N : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K N →
+        Formalism.HN.muDef (Pi.basisFun K (Fin d)) X N = -(lcv X N) / d := by
   intro K _ _ _ _ d hd X hX N hN
-  have hfg : N.FG := Submodule.IsLattice.fg (self := hN)
-  have hspan : Submodule.span K (N : Set (Fin d → K)) = ⊤ :=
-    Submodule.IsLattice.span_eq_top (self := hN)
+  have hfg : N.FG := hN.fg
+  have hspan : Submodule.span K (N : Set (Fin d → K)) = ⊤ := hN.span_eq_top
   have hne : N ≠ ⊥ := by
     intro h
     have h2 : Submodule.span K (((⊥ : Submodule (𝓞 K) (Fin d → K))) : Set (Fin d → K)) = ⊥ := by
@@ -142,9 +155,21 @@ theorem shift_lw_pos {K : Type} [Field K] [NumberField K] [StarRing K]
     exact_mod_cast h2
   · exact_mod_cast Module.finrank_pos
 
-theorem shift_slope_mu : ShiftMu := by
+theorem shift_slope_mu :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
+      (d : ℕ) (X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ), (∀ v, IsUnit (X v).det) →
+      ∀ N N' : Submodule (𝓞 K) (Fin d → K),
+        Submodule.IsFullLattice K N → Submodule.IsFullLattice K N' →
+        ∀ σ : HeightOneSpectrum (𝓞 K) → ℤ, IsShift N N' σ →
+          lcv X N' = lcv X N - 2 * (d : ℝ) * ∑ᶠ w : HeightOneSpectrum (𝓞 K), lw w * (σ w : ℝ) ∧
+          (0 < d → (Function.support σ).Finite ∧
+            Formalism.HN.muDef (Pi.basisFun K (Fin d)) X N' =
+              Formalism.HN.muDef (Pi.basisFun K (Fin d)) X N +
+                2 * ∑ᶠ w : HeightOneSpectrum (𝓞 K), lw w * (σ w : ℝ)) := by
   intro K _ _ _ _ d X hX N N' hN hN' σ hσ
-  obtain ⟨hfin, hlcv⟩ := idxLcv_of covolume_via_basis K d X hX N N' hN hN'
+  letI := hN
+  letI := hN'
+  obtain ⟨hfin, hlcv⟩ := idxLcv_of covolume_via_basis K d X hX N N' inferInstance inferInstance
   have key : ∀ w, lw w * (idx w N N' : ℝ) = -(d : ℝ) * (lw w * (σ w : ℝ)) := fun w => by
     rw [shift_index_formula K d N N' hN w (σ w) (hσ w)]
     push_cast
@@ -185,132 +210,9 @@ section Prime
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-theorem shift_above_iff (p : ℕ) (hp : p.Prime) (w : HeightOneSpectrum (𝓞 K)) :
-    Above p w ↔ 0 < vw w (p : K) := by
-  have hp0 : (p : 𝓞 K) ≠ 0 := by
-    first
-    | exact Nat.cast_ne_zero.mpr hp.ne_zero
-    | intro h
-      have h' : ((p : 𝓞 K) : K) = 0 := by rw [h]; simp
-      have h'' : (p : K) = 0 := by simpa using h'
-      exact hp.ne_zero (by exact_mod_cast h'')
-  have hI : Ideal.span {(p : 𝓞 K)} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact hp0
-  have hv : vw w (p : K) =
-      ((Associates.mk w.asIdeal).count (Associates.mk (Ideal.span {(p : 𝓞 K)})).factors : ℤ) := by
-    rw [← FractionalIdeal.count_coe K w hI, FractionalIdeal.coeIdeal_span_singleton]
-    simp [vw]
-  show (p : 𝓞 K) ∈ w.asIdeal ↔ _
-  rw [hv, ← Ideal.dvd_span_singleton, ← Associates.count_ne_zero_iff_dvd hI w.irreducible]
-  omega
-
-theorem shift_vw_nat_nonneg (p : ℕ) (w : HeightOneSpectrum (𝓞 K)) : 0 ≤ vw w (p : K) := by
-  have h := (valuation_basic_properties K w).2.2.2.2.2.2 (p : 𝓞 K)
-  simpa using h
-
-variable [IsTotallyComplex K]
-
-theorem shift_sum_e (p : ℕ) (hp : p.Prime) :
-    (Function.support fun w : HeightOneSpectrum (𝓞 K) => lw w * (vw w (p : K) : ℝ)).Finite ∧
-    ∑ᶠ w : HeightOneSpectrum (𝓞 K), lw w * (vw w (p : K) : ℝ) = Real.log p := by
-  have hpK : (p : K) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne_zero
-  obtain ⟨hfin, hsum⟩ := prod_formula' K (p : K) hpK
-  refine ⟨hfin, ?_⟩
-  rw [← hsum]
-  have hnorm : ∀ v : InfinitePlace K, Real.log ‖v.embedding (p : K)‖ = Real.log p := by
-    intro v
-    simp
-  simp only [hnorm, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  have h2 := Formalism.HN.sizeMu_finrank_eq K
-  unfold Formalism.HN.nPl at h2
-  have hc : (Fintype.card (InfinitePlace K) : ℝ) ≠ 0 := by
-    have h1 : 0 < Module.finrank ℚ K := Module.finrank_pos
-    have h3 : Fintype.card (InfinitePlace K) ≠ 0 := by omega
-    exact_mod_cast h3
-  have hn' : (Module.finrank ℚ K : ℝ) = 2 * Fintype.card (InfinitePlace K) := by
-    exact_mod_cast h2
-  rw [hn']
-  field_simp
-
-theorem shift_above_finite (p : ℕ) (hp : p.Prime) :
-    {w : HeightOneSpectrum (𝓞 K) | Above p w}.Finite := by
-  have hp0 : (p : 𝓞 K) ≠ 0 := by
-    first
-    | exact Nat.cast_ne_zero.mpr hp.ne_zero
-    | intro h
-      have h' : ((p : 𝓞 K) : K) = 0 := by rw [h]; simp
-      have h'' : (p : K) = 0 := by simpa using h'
-      exact hp.ne_zero (by exact_mod_cast h'')
-  have hI : Ideal.span {(p : 𝓞 K)} ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
-    exact hp0
-  refine (Ideal.finite_factors hI).subset ?_
-  intro w hw
-  exact Ideal.dvd_span_singleton.mpr hw
-
-theorem shift_sum_e_finset (p : ℕ) (hp : p.Prime) :
-    ∑ w ∈ (shift_above_finite (K := K) p hp).toFinset, lw w * (vw w (p : K) : ℝ) = Real.log p := by
-  rw [← (shift_sum_e (K := K) p hp).2]
-  symm
-  apply finsum_eq_sum_of_support_subset
-  intro w hw
-  simp only [Function.mem_support, ne_eq] at hw
-  rw [Set.Finite.coe_toFinset, Set.mem_setOf_eq, shift_above_iff p hp]
-  have h1 : (vw w (p : K) : ℝ) ≠ 0 := right_ne_zero_of_mul hw
-  have h2 : vw w (p : K) ≠ 0 := by exact_mod_cast h1
-  have h3 := shift_vw_nat_nonneg (K := K) p w
-  omega
-
-theorem shift_sum_above (p : ℕ) (hp : p.Prime) :
-    ∑ᶠ (w : HeightOneSpectrum (𝓞 K)) (_ : Above p w), lw w =
-      ∑ w ∈ (shift_above_finite (K := K) p hp).toFinset, lw w := by
-  exact finsum_mem_eq_finite_toFinset_sum lw (shift_above_finite p hp)
-
-theorem shift_sum_above_le (p : ℕ) (hp : p.Prime) :
-    ∑ᶠ (w : HeightOneSpectrum (𝓞 K)) (_ : Above p w), lw w ≤ Real.log p := by
-  rw [shift_sum_above (K := K) p hp, ← shift_sum_e_finset (K := K) p hp]
-  apply Finset.sum_le_sum
-  intro w hw
-  rw [Set.Finite.mem_toFinset, Set.mem_setOf_eq, shift_above_iff p hp] at hw
-  have h0 : (1 : ℤ) ≤ vw w (p : K) := by omega
-  have h1 : (1 : ℝ) ≤ (vw w (p : K) : ℝ) := by exact_mod_cast h0
-  have h2 := shift_lw_pos w
-  nlinarith
+variable [_root_.NumberField.IsTotallyComplex K]
 
 end Prime
-
-theorem lattice_weight_sum_prime : LwSumPrime := by
-  intro K _ _ _ _ p hp
-  have hsum := shift_sum_e (K := K) p hp
-  have hlogp : 0 < Real.log p := Real.log_pos (by exact_mod_cast hp.one_lt)
-  have hex : ∃ w : HeightOneSpectrum (𝓞 K), Above p w := by
-    by_contra hno
-    push_neg at hno
-    have h0 : ∀ w : HeightOneSpectrum (𝓞 K), lw w * (vw w (p : K) : ℝ) = 0 := by
-      intro w
-      have h1 : ¬ 0 < vw w (p : K) := fun h => hno w ((shift_above_iff p hp w).2 h)
-      have h3 := shift_vw_nat_nonneg (K := K) p w
-      have h2 : vw w (p : K) = 0 := by omega
-      rw [h2]
-      simp
-    have h4 := hsum.2
-    rw [finsum_congr h0, finsum_zero] at h4
-    linarith
-  refine ⟨shift_above_finite (K := K) p hp, hex, fun w => shift_above_iff p hp w,
-    fun w => shift_lw_pos w, hsum.2, shift_sum_above_le (K := K) p hp, ?_⟩
-  intro e he
-  have he0 : (0 : ℝ) < e := by
-    obtain ⟨w0, hw0⟩ := hex
-    have h5 := (shift_above_iff p hp w0).1 hw0
-    rw [he w0 hw0] at h5
-    exact_mod_cast h5
-  rw [eq_div_iff he0.ne', shift_sum_above (K := K) p hp, Finset.sum_mul,
-    ← shift_sum_e_finset (K := K) p hp]
-  apply Finset.sum_congr rfl
-  intro w hw
-  rw [Set.Finite.mem_toFinset] at hw
-  rw [he w hw]
 
 section Unit
 
@@ -572,8 +474,9 @@ theorem localizationAt_fractionalIdeal_smul_eq_smul (I : FractionalIdeal (𝓞 K
     exact Submodule.subset_span ⟨_, hta, x, hx, rfl⟩
 
 theorem shift_smulLat_lattice (a : K) (ha : a ≠ 0) (N : Submodule (𝓞 K) (Fin d → K))
-    (hN : Submodule.IsLattice K N) : Submodule.IsLattice K (smulLat a N) := by
-  refine ⟨hN.fg.map _, ?_⟩
+    (hN : Submodule.IsFullLattice K N) : Submodule.IsFullLattice K (smulLat a N) := by
+  letI : Submodule.IsLattice K (smulLat a N) := Submodule.IsLattice.of_fg K (hN.fg.map _)
+  constructor
   have hset : ((smulLat a N : Submodule (𝓞 K) (Fin d → K)) : Set (Fin d → K)) =
       (LinearMap.lsmul K (Fin d → K) a) '' (N : Set (Fin d → K)) := by
     simp [smulLat]
@@ -582,14 +485,15 @@ theorem shift_smulLat_lattice (a : K) (ha : a ≠ 0) (N : Submodule (𝓞 K) (Fi
   exact ⟨a⁻¹ • v, by simp [smul_smul, mul_inv_cancel₀ ha, inv_mul_cancel₀ ha]⟩
 
 theorem shift_idealSmul_lattice (I : FractionalIdeal (𝓞 K)⁰ K) (hI : I ≠ 0)
-    (N : Submodule (𝓞 K) (Fin d → K)) (hN : Submodule.IsLattice K N) :
-    Submodule.IsLattice K (Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N) := by
-  have hNfg : N.FG := Submodule.IsLattice.fg (self := hN)
+    (N : Submodule (𝓞 K) (Fin d → K)) (hN : Submodule.IsFullLattice K N) :
+    Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N) := by
+  have hNfg : N.FG := hN.fg
   obtain ⟨c, hc, hcI⟩ := I.isFractional
   have hc0 : c ≠ 0 := nonZeroDivisors.ne_zero hc
   have hcK : (c : K) ≠ 0 := shift_coe_ne_zero hc0
-  constructor
-  · have hle : smulLat (c : K) (Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N) ≤ N := by
+  have hidealFg :
+      (Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N).FG := by
+    have hle : smulLat (c : K) (Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N) ≤ N := by
       unfold smulLat Formalism.HermitianLatticesTheory.idealSmul
       rw [Submodule.map_span, Submodule.span_le]
       rintro _ ⟨_, ⟨b, hb, x, hx, rfl⟩, rfl⟩
@@ -609,15 +513,16 @@ theorem shift_idealSmul_lattice (I : FractionalIdeal (𝓞 K)⁰ K) (hI : I ≠ 
       isNoetherian_submodule.mp hnoe _ hle
     rw [shift_smulLat_eq_map _ hcK] at hfg
     exact Submodule.fg_of_fg_map_injective _ (shiftEquiv d (c : K) hcK).injective hfg
-  · obtain ⟨b, hb, hb0⟩ := FractionalIdeal.exists_ne_zero_mem_isInteger hI
-    have hbK : (b : K) ≠ 0 := shift_coe_ne_zero hb
-    have hle : smulLat (b : K) N ≤ Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N := by
-      intro z hz
-      obtain ⟨x, hx, rfl⟩ := (shift_mem_smulLat _ N z).mp hz
-      exact Submodule.subset_span ⟨_, hb0, x, hx, rfl⟩
-    have h1 := Submodule.IsLattice.span_eq_top (self := shift_smulLat_lattice (b : K) hbK N hN)
-    rw [eq_top_iff, ← h1]
-    exact Submodule.span_mono hle
+  letI := Submodule.IsLattice.of_fg K hidealFg
+  constructor
+  obtain ⟨b, hb, hb0⟩ := FractionalIdeal.exists_ne_zero_mem_isInteger hI
+  have hbK : (b : K) ≠ 0 := shift_coe_ne_zero hb
+  have hle : smulLat (b : K) N ≤ Formalism.HermitianLatticesTheory.idealSmul (I : Submodule (𝓞 K) K) N := by
+    intro z hz
+    obtain ⟨x, hx, rfl⟩ := (shift_mem_smulLat _ N z).mp hz
+    exact Submodule.subset_span ⟨_, hb0, x, hx, rfl⟩
+  have hspan := (shift_smulLat_lattice (b : K) hbK N hN).span_eq_top
+  exact top_unique (hspan ▸ Submodule.span_mono (R := K) hle)
 
 theorem shift_eq_of_locP {A B : Submodule (𝓞 K) (Fin d → K)}
     (h : ∀ w : HeightOneSpectrum (𝓞 K), Formalism.HermitianLatticesTheory.localization₂ w.asIdeal A = Formalism.HermitianLatticesTheory.localization₂ w.asIdeal B) :
@@ -646,7 +551,15 @@ theorem shift_eq_of_locP {A B : Submodule (𝓞 K) (Fin d → K)}
 
 end Ideal
 
-theorem shift_existence : ShiftEx := by
+theorem shift_existence :
+    ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (d : ℕ)
+      (N : Submodule (𝓞 K) (Fin d → K)), Submodule.IsFullLattice K N →
+      ∀ σ : HeightOneSpectrum (𝓞 K) → ℤ, (Function.support σ).Finite →
+        IsShift N (Formalism.HermitianLatticesTheory.idealSmul (shiftIdeal σ : Submodule (𝓞 K) K) N) σ ∧
+        Submodule.IsFullLattice K
+          (Formalism.HermitianLatticesTheory.idealSmul (shiftIdeal σ : Submodule (𝓞 K) K) N) ∧
+        ∀ N' : Submodule (𝓞 K) (Fin d → K), IsShift N N' σ →
+          N' = Formalism.HermitianLatticesTheory.idealSmul (shiftIdeal σ : Submodule (𝓞 K) K) N := by
   intro K _ _ _ d N hN σ hσ
   have hI := shift_shiftIdeal_ne_zero σ
   have hsh : IsShift N (Formalism.HermitianLatticesTheory.idealSmul (shiftIdeal σ : Submodule (𝓞 K) K) N) σ := by

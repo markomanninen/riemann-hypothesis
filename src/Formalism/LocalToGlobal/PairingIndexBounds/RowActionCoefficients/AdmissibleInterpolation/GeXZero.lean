@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem geX_add (hval : ∀ x : Kc, x ∈ Oc ∨ x⁻¹ ∈ Oc) {x y : Kc} {g : 
     rw [e]
     exact Oc.mul_mem (Oc.pow_mem (Oc.add_mem Oc.one_mem h) b) (hx a b hb hab)
 
-variable (p Oc) in
 
+variable (p Oc) in
 def MG (hval : ∀ x : Kc, x ∈ Oc ∨ x⁻¹ ∈ Oc) (g : ℝ) : AddSubgroup Kc where
   carrier := {x | geX p Oc x g}
   add_mem' := fun hx hy => geX_add hval hx hy

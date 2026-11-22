@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
-import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartPhiE
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceSum
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.ActsLinOfSplitLin
+public import Formalism.LocalToGlobal.IndefiniteReal.WeilFull
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FinPartPhiE
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ def SplitOrInert (D : D7) : Prop :=
       ¬ Lev.IsConjPl (D := D) PP PP) ∨
     ∀ e : AE D, IsSplitIdem D e → e * algebraMap (AF D.host.F) (AE D) ε = 0
 
-open Classical in
 
+open Classical in
 theorem sbHalf_halfInd {S T : HSp D} (e : AE D) (Λ : AddSubgroup (WO S T)) : IsSBHalf e Λ (halfInd e Λ) := by
   unfold IsSBHalf halfInd
   refine ⟨?_, 1, one_pos, ?_⟩

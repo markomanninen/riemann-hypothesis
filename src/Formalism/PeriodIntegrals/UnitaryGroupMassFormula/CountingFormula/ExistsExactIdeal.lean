@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CountCoeEqMultiplicity
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CountCoeEqMultiplicity
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain
 
@@ -17,8 +21,8 @@ theorem count_span_unit (v : HeightOneSpectrum R) (s : R) (hs : s ∉ v.asIdeal)
   have hsp : Ideal.span {s} ≠ ⊥ := by simpa using hs0
   rw [← FractionalIdeal.coeIdeal_span_singleton, count_coe_eq_multiplicity v hsp]
   have : multiplicity v.asIdeal (Ideal.span {s}) = 0 := by
-    rw [multiplicity_eq_zero, Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
-    exact hs
+    apply multiplicity_eq_zero_of_not_dvd
+    rwa [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
   simp [this]
 
 theorem count_le_of_mem (v : HeightOneSpectrum R) {I : FractionalIdeal (nonZeroDivisors R) K} {y : K}

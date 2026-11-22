@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -30,7 +35,8 @@ theorem charpoly_mulLeft_eq_map_of_spanning_lattice (R F A S : Type) [CommRing R
   have hexp : ∀ y : S, ι y = ∑ i, algebraMap R F (b.repr y i) • ι (b i) := by
     intro y
     conv_lhs => rw [← b.sum_repr y]
-    simp only [map_sum, map_smul, algebraMap_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, algebraMap_smul]
   have hliR : LinearIndependent R (fun i => ι (b i)) :=
     b.linearIndependent.map' ι.toLinearMap (LinearMap.ker_eq_bot.mpr hι)
   have hli : LinearIndependent F (fun i => ι (b i)) :=

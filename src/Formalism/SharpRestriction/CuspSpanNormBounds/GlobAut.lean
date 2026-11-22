@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 noncomputable section
 

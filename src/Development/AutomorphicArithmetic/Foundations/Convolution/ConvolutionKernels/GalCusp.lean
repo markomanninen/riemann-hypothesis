@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.PresOfOrder
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AutOrder
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.QmapPres
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.PresOfOrder
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AutOrder
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.GalTwistEx
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.CuspidalSpectrum GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalProjection PositivityTheory.Rg.Tf.Core UpperTheory.ConvolutionTheory.K
@@ -34,7 +38,7 @@ theorem UpperTheory.ConvolutionTheory.K.galCusp :
   haveI : (Measure.map s.symm ν).IsAddHaarMeasure := ContinuousAddEquiv.isAddHaarMeasure_map ν s.symm
   obtain ⟨c, hc⟩ : ∃ c : NNReal, Measure.map s ν = c • ν := ⟨_, Measure.isAddLeftInvariant_eq_smul _ _⟩
   have hq : Measure.QuasiMeasurePreserving s.symm ν ν :=
-    ⟨s.symm.continuous.measurable, by
+    ⟨s.symm.continuous.measurable.aemeasurable, by
       rw [Measure.isAddLeftInvariant_eq_smul (Measure.map s.symm ν) ν]
       exact Measure.smul_absolutelyContinuous⟩
   have hL : ∀ (τ : K ≃+* K) (X : AutomorphicForm.UPos n r → AdeleRing (𝓞 K) K), X ∈ AutomorphicForm.unipLattice K n r →
@@ -48,23 +52,23 @@ theorem UpperTheory.ConvolutionTheory.K.galCusp :
     · exact Subtype.ext (s.injective (congrArg Subtype.val h))
     · exact ⟨⟨s.symm b, hL σ.symm b b.2⟩, Subtype.ext (s.apply_symm_apply _)⟩
     · change s.symm (s g + X) = g + s.symm X
-      rw [map_add, s.symm_apply_apply]
-  have hu : ∀ X, e (unipOne K n r X) = unipOne K n r (s X) := by
+      rw [map_add (f := _), s.symm_apply_apply]
+  have hu : ∀ X, e (unipOne (K := K) (n := n) r X) = unipOne (K := K) (n := n) r (s X) := by
     intro X
     refine Subtype.ext ?_
     rw [he]
     ext i j : 2
     change Formalism.L2.Host.CT.adMap σ (AutomorphicForm.unipMatrix X i j) = AutomorphicForm.unipMatrix (s X) i j
-    simp only [AutomorphicForm.unipMatrix, Matrix.add_apply, AutomorphicForm.blockEntry_apply, Matrix.one_apply, map_add]
+    simp only [AutomorphicForm.unipMatrix, Matrix.add_apply, AutomorphicForm.blockEntry_apply, Matrix.one_apply, map_add (f := _)]
     congr 1
     · split_ifs <;> simp
     · split_ifs
       · rfl
       · exact map_zero _
-  have key : ∀ y, ctFun K n r (fun z => (φ : RightCosetSpace (Gam K n) → ℂ) (mk (Gam K n) (e (Quotient.out z)))) y =
+  have key : ∀ y, ctFun (K := K) (n := n) r (fun z => (φ : RightCosetSpace (Gam K n) → ℂ) (mk (Gam K n) (e (Quotient.out z)))) y =
       (c : ℝ) • constantTermL2 μ r φ (e y) := by
     intro y
-    let F : (AutomorphicForm.UPos n r → AdeleRing (𝓞 K) K) → ℂ := fun X => φ (mk (Gam K n) (unipOne K n r X * e y))
+    let F : (AutomorphicForm.UPos n r → AdeleRing (𝓞 K) K) → ℂ := fun X => φ (mk (Gam K n) (unipOne (K := K) (n := n) r X * e y))
     have e1 := setIntegral_map_equiv (μ := ν) s.toHomeomorph.toMeasurableEquiv F
       (s.symm ⁻¹' AutomorphicForm.unipFundamentalDomain K n r)
     have e2 : s.toHomeomorph.toMeasurableEquiv ⁻¹' (s.symm ⁻¹' AutomorphicForm.unipFundamentalDomain K n r) =
@@ -78,7 +82,7 @@ theorem UpperTheory.ConvolutionTheory.K.galCusp :
     have e3 : ∫ X in s.symm ⁻¹' AutomorphicForm.unipFundamentalDomain K n r, F X ∂ν =
         ∫ X in AutomorphicForm.unipFundamentalDomain K n r, F X ∂ν := by
       refine hD'.setIntegral_eq hD fun ξ X => ?_
-      change φ (mk (Gam K n) (unipOne K n r (ξ + X) * e y)) = _
+      change φ (mk (Gam K n) (unipOne (K := K) (n := n) r (ξ + X) * e y)) = _
       rw [unipOne_add, mul_assoc, mk_mul_of_mem (unipOne_mem_rationalGLOne r ξ)]
     rw [e3] at e1
     simp only [ctFun, constantTermL2, h1, map_mul, hu]

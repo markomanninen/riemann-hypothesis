@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PeterssonStepZeroScalarFormsEqPosMulInnerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CmHostImaginaryGeneratorNeZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PeterssonStepZeroScalarFormsEqPosMulInnerStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum MeasureTheory NumberField IsDedekindDomain Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.FinPl GlobalTheory.SeeSaw ValuativeRel IsLocalRing
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -127,7 +132,8 @@ theorem sOp_ramAt_other' (β : Frame p S n) (β' : Frame p' S n') (P : Pair k n)
     simp [T, LinearMap.sum_apply]
   have hTc : ∀ h' : GL n' k, ∀ f, T (β'.rep h' f) = β'.rep h' (T f) := by
     intro h' f
-    rw [hT, hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, hT, map_sum]
     refine Finset.sum_congr rfl fun P₁ _ => ?_
     rw [map_smul, rep_comm β β' hv]
   refine ⟨fun P₂ => T (φ P₂), ⟨?_, ?_, ?_⟩, ?_⟩
@@ -137,7 +143,8 @@ theorem sOp_ramAt_other' (β : Frame p S n) (β' : Frame p' S n') (P : Pair k n)
   · let _ := Fintype.ofFinite 𝓀[k]ˣ
     rw [mem_Mram] at hM ⊢
     intro P₂
-    rw [← map_sum, hM P₂, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hM P₂, map_zero]
   · intro P₂
     show IsContAut S (T (φ P₂))
     rw [hT]
@@ -237,7 +244,7 @@ theorem opsStepZero_norm : ∀ (D : D7) (u : D.what₂.Word) (F : Formalism.L2.F
   have hL : ∀ φ, L φ = Sf φ := fun φ => rfl
   have hnorm : ∀ φ, ‖Sf φ‖ = Real.sqrt Q0 * ‖φ‖ := norm_of_inner Sf Q0 hQ0.le hinner
   have hinjL : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     have h := hnorm a
     rw [← hL, ha, norm_zero] at h

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Mathlib.Combinatorics.HalesJewett
-import Mathlib.LinearAlgebra.Vandermonde
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Mathlib.Combinatorics.HalesJewett
+public import Mathlib.LinearAlgebra.Vandermonde
+
+@[expose] public section
 
 theorem UpperTheory.V.Pr.expSums :
     UpperTheory.V.Pr.ExpSums := by

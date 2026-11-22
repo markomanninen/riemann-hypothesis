@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,9 +152,9 @@ theorem shiftOne_holds : ShiftOne := by
   swap
   · exact win t3 ht3 h3
   exfalso
-  rw [map_add, hσι, star_one, map_one] at h1
-  rw [map_add, hσι, star_neg, star_one, map_neg, map_one] at h2
-  rw [map_add, hσι] at h3
+  rw [map_add (f := _), hσι, star_one, map_one] at h1
+  rw [map_add (f := _), hσι, star_neg, star_one, map_neg, map_one] at h2
+  rw [map_add (f := _), hσι] at h3
   set sb := σ b
   set T := iA F E t3
   set S := iA F E (star t3)

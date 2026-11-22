@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem bilin_eq_zero_of_self_eq_zero {X : Type} [AddCommGroup X] (β : LinearMa
     (hs : ∀ y z, β y z = β z y) (hn : ∀ y, 0 ≤ β y y) {x : X} (hx : β x x = 0) (y : X) : β x y = 0 := by
   have key : ∀ k : ℤ, 0 ≤ 2 * k * β x y + β y y := fun k => by
     have h := hn (k • x + y)
-    simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hx, hs y x] at h
+    simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hx, hs y x] at h
     nlinarith
   have hc := hn y
   rcases lt_trichotomy (β x y) 0 with h | h | h
@@ -49,18 +53,18 @@ theorem exists_descent {X X₁ M F' : Type} [AddCommGroup X] [AddCommGroup X₁]
     obtain ⟨a, rfl⟩ := hq x
     obtain ⟨a', rfl⟩ := hq x'
     obtain ⟨b, rfl⟩ := hq y
-    rw [← map_add, hf, hf, hf, map_add, LinearMap.add_apply]
+    rw [← map_add (f := _), hf, hf, hf, map_add (f := _), LinearMap.add_apply]
   · intro c x y
     obtain ⟨a, rfl⟩ := hq x
     obtain ⟨b, rfl⟩ := hq y
     rw [← map_zsmul, hf, hf]
-    let g : X →+ M := AddMonoidHom.mk' (fun a => F a b) fun a a' => by rw [map_add, LinearMap.add_apply]
+    let g : X →+ M := AddMonoidHom.mk' (fun a => F a b) fun a a' => by rw [map_add (f := _), LinearMap.add_apply]
     exact (map_zsmul g c a).trans (int_smul_eq_zsmul iM c (F a b)).symm
   · intro x y y'
     obtain ⟨a, rfl⟩ := hq x
     obtain ⟨b, rfl⟩ := hq y
     obtain ⟨b', rfl⟩ := hq y'
-    rw [← map_add, hf, hf, hf, map_add]
+    rw [← map_add (f := _), hf, hf, hf, map_add (f := _)]
   · intro c x y
     obtain ⟨a, rfl⟩ := hq x
     obtain ⟨b, rfl⟩ := hq y
@@ -238,7 +242,7 @@ theorem mem_depthSet_of_rcone : ∀ (O : Type) [CommRing O] (bar : O → O) (ψ 
   let R : Submodule O X :=
     { carrier := {x | ∀ y, B x y = 0}
       add_mem' := fun {x x'} hx hx' y => by
-        simp only [Set.mem_setOf_eq, map_add, LinearMap.add_apply, hx y, hx' y, add_zero]
+        simp only [Set.mem_setOf_eq, map_add (f := _), LinearMap.add_apply, hx y, hx' y, add_zero]
       zero_mem' := fun y => by simp
       smul_mem' := fun c x hx y => by
         show B (c • x) y = 0

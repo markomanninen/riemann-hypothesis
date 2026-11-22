@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TracePairing
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TracePairing
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -46,7 +50,8 @@ theorem measurePreserving_mapComplexCoord (a : ℂ ≃L[ℝ] ℂ)
       ENNReal.ofReal |(LinearMap.det (mapComplexCoord K a : mixedSpace K →ₗ[ℝ] mixedSpace K))⁻¹| •
         (volume : Measure (mixedSpace K)) :=
     Measure.map_linearMap_addHaar_eq_smul_addHaar volume hne
-  rw [selfDualMeasure, Measure.map_smul, hmap, smul_smul, hd, abs_inv, abs_pow, ha,
+  rw [selfDualMeasure, Measure.map_smul _ (mapComplexCoord K a).continuous.aemeasurable,
+    hmap, smul_smul, hd, abs_inv, abs_pow, ha,
     ENNReal.ofReal_inv_of_pos (by positivity), ENNReal.ofReal_pow (by norm_num),
     ENNReal.ofReal_ofNat, ENNReal.mul_inv_cancel (by simp) (by simp), one_smul]
 

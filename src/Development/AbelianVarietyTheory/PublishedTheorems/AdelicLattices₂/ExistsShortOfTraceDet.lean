@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MinkowskiLinearForms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MinkowskiLinearForms
+
+@[expose] public section
 
 namespace GlobalTheory.HermClass
 
@@ -71,7 +75,8 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
   have hqe : ∀ x y, q x y = ∑ k, e.repr x k * e.repr y k * q (e k) (e k) := by
     intro x y
     conv_lhs => rw [← e.sum_repr x, ← e.sum_repr y]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Finset.sum_eq_single k]
     · ring
@@ -99,7 +104,8 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
     rw [Fintype.sum_equiv ε _ (fun p => ρ p.1 (e.repr (b i) p.2) * ρ p.1 (q (e p.2) (e p.2)) *
       ρ p.1 (e.repr (b i') p.2)) (fun _ => rfl), Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun φ _ => ?_
-    rw [hqe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hqe, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [map_mul]; ring
   have hdT : ((T.det : ℚ) : ℝ) = B.det ^ 2 * ∏ j, a j := by
@@ -123,7 +129,8 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
   obtain ⟨z, hz0, hz⟩ := exists_int_vecMul_lt A hA0 ht hA1
   refine ⟨z, hz0, fun φ => ?_⟩
   set v := ∑ i, z i • b i with hv
-  rw [← hρc, Complex.norm_real, hqe, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hρc, Complex.norm_real, hqe, map_sum]
   refine (norm_sum_le _ _).trans ?_
   have : ∀ k, ‖ρ φ (e.repr v k * e.repr v k * q (e k) (e k))‖ ≤ t ^ 2 := by
     intro k
@@ -131,10 +138,12 @@ theorem exists_short_of_trace_det {F : Type} [Field F] [NumberField F] [IsTotall
     have h3 : ∑ i, (z i : ℝ) * A i (ε.symm (φ, k)) =
         ρ φ (e.repr v k) * Real.sqrt |ρ φ (q (e k) (e k))| := by
       have hc : e.repr v k = ∑ i, (z i : F) * e.repr (b i) k := by
-        rw [← e.coord_apply, hv, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← e.coord_apply, hv, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_zsmul, zsmul_eq_mul, e.coord_apply]
-      rw [hc, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [A, Matrix.mul_diagonal, B, a, Matrix.of_apply, Equiv.apply_symm_apply,
         mul_assoc, map_mul, map_intCast]

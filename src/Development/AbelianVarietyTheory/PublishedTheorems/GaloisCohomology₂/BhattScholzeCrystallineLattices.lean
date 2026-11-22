@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,16 +29,5 @@ def BhattScholzeCrystallineLattices : Prop :=
       Realises K E P₀ e T ρ j → Realises K E' P₀ e T' ρ' j' →
       ∀ f : T →ₗ[ℤ_[l]] T', (∀ g x, f (ρ g x) = ρ' g (f x)) →
         ∃! u : FHom E E', ∀ x, j' (u.u P₀ x) = f.lTensor (WCb l) (j x))
-
-example (l : ℕ) [Fact l.Prime] (K LL : FinExt l) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (g : ↥(GK K))
-    (x : ↥T.L.T) : actTZ LL T g x = T.actT g x := rfl
-
-example (l : ℕ) [Fact l.Prime] (LL : FinExt l) :
-    (inferInstance : TopologicalSpace ↥LL.1) =
-      TopologicalSpace.induced Subtype.val (PseudoMetricSpace.toUniformSpace.toTopologicalSpace) := rfl
-
-example (l : ℕ) [Fact l.Prime] (K : FinExt l) :
-    (inferInstance : TopologicalSpace ↥(GK K)) =
-      TopologicalSpace.induced Subtype.val (krullTopology ℚ_[l] (Om l)) := rfl
 
 end GlobalTheory.Published

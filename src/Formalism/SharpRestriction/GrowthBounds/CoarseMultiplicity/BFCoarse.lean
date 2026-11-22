@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFTrueDeg
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Kummer
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFTrueDeg
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Kummer
+
+@[expose] public section
 
 noncomputable section
 

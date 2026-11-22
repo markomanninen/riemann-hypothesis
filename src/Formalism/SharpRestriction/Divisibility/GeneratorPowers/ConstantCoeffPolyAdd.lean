@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndEncPf
-import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.KillAdd
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndEncPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.KillAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ namespace KAV
 open MvPowerSeries
 
 theorem coeff_iterate_pderiv {σ R : Type} [CommRing R] (i : σ) (k : ℕ) :
-    ∀ (F : MvPowerSeries σ R) (N : σ →₀ ℕ), coeff N ((pderiv R i)^[k] F) =
+    ∀ (F : MvPowerSeries σ R) (N : σ →₀ ℕ), coeff N ((pderiv (R := R) i)^[k] F) =
       (∏ t ∈ Finset.range k, ((N i + t + 1 : ℕ) : R)) * coeff (N + k • Finsupp.single i 1) F := by
   induction k with
   | zero => intro F N; simp
@@ -50,7 +54,7 @@ theorem coeff_iterate_pderiv {σ R : Type} [CommRing R] (i : σ) (k : ℕ) :
 
 theorem coeff_foldr {σ κ R : Type} [CommRing R] (φ : κ → σ) (m : κ → ℕ) (F : MvPowerSeries σ R) :
     ∀ (L : List κ), L.Nodup → (∀ p ∈ L, ∀ q ∈ L, φ p = φ q → p = q) → ∀ N : σ →₀ ℕ, (∀ p ∈ L, N (φ p) = 0) →
-      coeff N (L.foldr (fun p g => (pderiv R (φ p))^[m p] g) F) =
+      coeff N (L.foldr (fun p g => (pderiv (R := R) (φ p))^[m p] g) F) =
         (L.map fun p => ((m p).factorial : R)).prod * coeff (N + (L.map fun p => m p • Finsupp.single (φ p) 1).sum) F
   | [], _, _, N, _ => by simp
   | p :: L, hnd, hinj, N, hN => by
@@ -58,19 +62,17 @@ theorem coeff_foldr {σ κ R : Type} [CommRing R] (φ : κ → σ) (m : κ → �
       (List.nodup_cons.1 hnd).2 (fun a ha b hb => hinj a (List.mem_cons_of_mem _ ha) b (List.mem_cons_of_mem _ hb))]
     · rw [List.map_cons, List.prod_cons, List.map_cons, List.sum_cons]
       have hf : (∏ t ∈ Finset.range (m p), ((0 + t + 1 : ℕ) : R)) = ((m p).factorial : R) := by
-        rw [← Finset.prod_range_add_one_eq_factorial]
-        push_cast
-        refine Finset.prod_congr rfl fun t _ => ?_
-        ring
-      rw [hf, add_assoc]
-      ring
+        simpa only [zero_add, Nat.cast_prod] using
+          congrArg (fun k : ℕ => (k : R)) (Finset.prod_range_add_one_eq_factorial (m p))
+      rw [hf, add_assoc, mul_assoc]
     · intro q hq
       have hpq : φ q ≠ φ p := fun h => (List.nodup_cons.1 hnd).1
         (hinj q (List.mem_cons_of_mem _ hq) p (List.mem_cons_self ..) h ▸ hq)
-      simp [hN q (List.mem_cons_of_mem _ hq), hpq.symm]
+      simp only [Finsupp.add_apply, Finsupp.smul_apply, Finsupp.single_eq_of_ne hpq,
+        hN q (List.mem_cons_of_mem _ hq), smul_zero, add_zero]
 
 theorem dAdd_single {S : Type} [CommRing S] {d n : ℕ} (j : Fin d) (b : Fin n) (G : Germ.PS S n d) :
-    TB.dAdd (Pi.single j 1) b G = pderiv S (b, j) G := by
+    TB.dAdd (Pi.single j 1) b G = pderiv (R := S) (b, j) G := by
   unfold TB.dAdd
   rw [Finset.sum_eq_single j]
   · simp
@@ -80,7 +82,7 @@ theorem dAdd_single {S : Type} [CommRing S] {d n : ℕ} (j : Fin d) (b : Fin n) 
     exact absurd (Finset.mem_univ j) h
 
 theorem dAdd_single' {S : Type} [CommRing S] {d n : ℕ} (j : Fin d) (b : Fin n) :
-    (TB.dAdd (Pi.single j 1) b : Germ.PS S n d → Germ.PS S n d) = pderiv S (b, j) :=
+    (TB.dAdd (Pi.single j 1) b : Germ.PS S n d → Germ.PS S n d) = pderiv (R := S) (b, j) :=
   funext fun G => dAdd_single j b G
 
 theorem constantCoeff_polyAdd {S : Type} [CommRing S] {d n : ℕ} {ι : Type} [Fintype ι] (e : ι → Fin d)
@@ -90,7 +92,8 @@ theorem constantCoeff_polyAdd {S : Type} [CommRing S] {d n : ℕ} {ι : Type} [F
         coeff (∑ p, m p • Finsupp.single (p.2, e p.1) 1) G) := by
   classical
   unfold TB.polyAdd
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, MvPowerSeries.constantCoeff_C]
   congr 1
@@ -162,7 +165,7 @@ theorem pderiv_comm {σ R : Type} [CommRing R] (i j : σ) (P : MvPolynomial σ R
       congr 1
       simp [Finsupp.single_apply, hij, Ne.symm hij]
       ring
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem colSum_conj {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
     (c : Coeff l) (hPsi : PsiCoverSt H) (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ) (P : MvPolynomial (LtN Dw n) c.F)
@@ -211,7 +214,8 @@ theorem secondOrder_zero {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
       ∑ b : Fin n, MvPolynomial.pderiv (ℓ, b) (MvPolynomial.pderiv (ℓ', b) Q) = 0 := by
     intro ℓ ℓ' h
     simp only [hQ, MvPolynomial.pderiv_map]
-    rw [← map_sum, colSum_conj c hPsi a n P hP ℓ ℓ' h, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, colSum_conj c hPsi a n P hP ℓ ℓ' h, map_zero]
   have hcol' : ∀ ℓ ℓ' : Lt1 Dw, ℓ.1 = ComplexEmbedding.conjugate ℓ'.1 →
       ∑ b : Fin n, MvPolynomial.pderiv (ℓ, b) (MvPolynomial.pderiv (ℓ', b) Q) = 0 := by
     intro ℓ ℓ' h
@@ -226,7 +230,7 @@ theorem secondOrder_zero {E : Type} [Field E] [NumberField E] [IsCMField E] {H :
   refine Finset.sum_eq_zero fun ℓ _ => ?_
   rw [Finset.sum_comm]
   refine Finset.sum_eq_zero fun ℓ' _ => ?_
-  rw [← Finset.mul_sum, map_add, add_mul]
+  rw [← Finset.mul_sum, map_add (f := _), add_mul]
   have h1 : MvPolynomial.C (β (ltIdx Dw ℓ) (ltIdx Dw ℓ')) *
       ∑ b : Fin n, MvPolynomial.pderiv (ℓ, b) (MvPolynomial.pderiv (ℓ', b) Q) = 0 := by
     by_cases hb : β (ltIdx Dw ℓ) (ltIdx Dw ℓ') = 0
@@ -289,7 +293,7 @@ theorem coeff_prod_cols {S : Type} [CommRing S] {n d : ℕ} (g : Fin n → MvPow
     · subst h
       rw [if_pos rfl]
       show Finsupp.mapDomain (ι b') (colPart b' M) (ι b' (0, j)) = M (b', j)
-      rw [Finsupp.mapDomain_apply (colEmb_inj b')]
+      rw [Finsupp.mapDomain_apply_of_injective (colEmb_inj b')]
       simp [colPart, Finsupp.comapDomain_apply, ι]
     · rw [if_neg h]
       apply Finsupp.mapDomain_notin_range
@@ -322,7 +326,7 @@ theorem coeff_prod_cols {S : Type} [CommRing S] {n d : ℕ} (g : Fin n → MvPow
     rw [Finsupp.coe_equivFunOnFinite_symm, hMb]
     split_ifs with hqb
     · have hq := congrArg (fun F : Fin n × Fin d →₀ ℕ => F q) hsum
-      simp only [Finsupp.finset_sum_apply] at hq
+      simp only [Finsupp.finsetSum_apply] at hq
       rw [← hq, Finset.sum_eq_single b]
       · intro b' _ hb'
         exact hsupp b' q (by rw [hqb]; exact Ne.symm hb')
@@ -334,7 +338,7 @@ theorem coeff_prod_cols {S : Type} [CommRing S] {n d : ℕ} (g : Fin n → MvPow
     rw [Finset.mem_finsuppAntidiag]
     refine ⟨?_, Finset.subset_univ _⟩
     ext q
-    rw [Finsupp.finset_sum_apply]
+    rw [Finsupp.finsetSum_apply]
     simp only [Finsupp.coe_equivFunOnFinite_symm, hMb]
     simp
 
@@ -373,13 +377,13 @@ theorem prodCol_holds : ProdColSt := by
     set ℓ := (ltIdx Dw).symm j with hℓ
     have e1 : ((z, j) : Fin 1 × Fin (dL Dw)) = ((0 : Fin 1), ltIdx Dw ℓ) := by
       rw [hℓ, Equiv.apply_symm_apply, Subsingleton.elim z 0]
-    rw [e1, Finsupp.mapDomain_apply hι]
+    rw [e1, Finsupp.mapDomain_apply_of_injective hι]
     unfold KAV.colPart colIdx
     rw [Finsupp.comapDomain_apply]
     dsimp only
     rw [show ((b, ltIdx Dw ℓ) : Fin n × Fin (dL Dw)) =
         (fun p : LtN Dw n => (p.2.2, ltIdx Dw ⟨p.1, p.2.1⟩)) (⟨ℓ.1, ℓ.2, b⟩ : LtN Dw n) from rfl,
-      Finsupp.mapDomain_apply hκ]
+      Finsupp.mapDomain_apply_of_injective hκ]
     rfl
 
 end Formalism.MainNotions.ModuliIntegralCharts.H1

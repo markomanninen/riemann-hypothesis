@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugedFormalGroupCurveLogarithmsAddSubgroupRescaStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemCvOfSubstXPow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugedFormalGroupCurveLogarithmsAddSubgroupRescaStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemCvOfSubstXPow
+
+@[expose] public section
 
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -19,7 +23,8 @@ theorem sum_rescale_tyS {l : ℕ} (hl : l.Prime) {ζ : C} (hζ : IsPrimitiveRoot
     PowerSeries.subst ((PowerSeries.X : PowerSeries C) ^ l) (tyS l fun s => (l : C) * a (s + 1)) =
       ∑ j ∈ Finset.range l, PowerSeries.rescale (ζ ^ j) (tyS l a) := by
   ext n
-  simp only [map_sum, PowerSeries.coeff_rescale, ← Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, PowerSeries.coeff_rescale, ← Finset.sum_mul]
   by_cases hn : l ∣ n
   · obtain ⟨q, rfl⟩ := hn
     have h1 : ∑ j ∈ Finset.range l, (ζ ^ j) ^ (l * q) = (l : C) := by
@@ -98,16 +103,18 @@ theorem frob_mem_tySet : ∀ (C : Type) [Field C] (V : VF C) (d : ℕ) [NeZero d
     exact sum_rescale_tyS hl hζ fun s => x s n
   convert hS using 1
   refine Prod.ext (funext fun i => ?_) (funext fun q => ?_)
-  · simp only [lo, Prod.fst_sum, Finset.sum_apply, ← PowerSeries.coe_substAlgHom hsub, map_sum, map_smul, key,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [lo, Prod.fst_sum, Finset.sum_apply, ← PowerSeries.coe_substAlgHom hsub, map_sum, map_smul, key,
       rescale_smul', Finset.smul_sum]
-    exact Finset.sum_comm
-  · simp only [lo, Prod.snd_sum, Finset.sum_apply, ← PowerSeries.coe_substAlgHom hsub, map_sum, map_sub, key,
+      exact Finset.sum_comm
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [lo, Prod.snd_sum, Finset.sum_apply, ← PowerSeries.coe_substAlgHom hsub, map_sum, map_sub, key,
       Finset.sum_sub_distrib]
-    congr 1
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    split_ifs
-    · simp only [map_smul, key, rescale_smul', Finset.smul_sum]
-    · simp
+      congr 1
+      rw [Finset.sum_comm]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      split_ifs
+      · simp only [map_smul, key, rescale_smul', Finset.smul_sum]
+      · simp
 
 end GlobalTheory.RowLaw.FrobCurve

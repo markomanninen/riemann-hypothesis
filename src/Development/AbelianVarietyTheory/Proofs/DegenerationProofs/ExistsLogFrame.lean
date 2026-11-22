@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ReframeSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.NonemptyFiniteRootsOfBimul
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -14,8 +18,8 @@ namespace GlobalTheory.Ex.Arch
 section Generic
 variable {O : Type} [CommRing O] [StarRing O]
 
-omit [StarRing O] in
 
+omit [StarRing O] in
 theorem exists_lift_ct [IsDedekindDomain O] [Module.Finite ℤ O] {V G X : Type} [AddCommGroup V] [Module ℂ V] [CommGroup G]
     [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] [Module O X] (F : O →+* Module.End ℂ V) (ex : V → G)
     (hadd : ∀ z w, ex (z + w) = ex z * ex w) (hs : Function.Surjective ex) (c : X → G)
@@ -64,7 +68,7 @@ theorem exists_log_frame [IsDedekindDomain O] [Module.Finite ℤ O] [Module.Free
       have a := congrArg Additive.ofMul (N.τ_add_right (e y) (e x) (e x'))
       have b := congrArg Additive.ofMul (hab.2.2.2.2.2.1 (ct x) (ct x') (ct y))
       apply Additive.ofMul.injective
-      simp only [hc, map_add, add_comm (ct y), ofMul_mul, ofMul_div] at a b ⊢
+      simp only [hc, map_add (f := _), add_comm (ct y), ofMul_mul, ofMul_div] at a b ⊢
       linear_combination (norm := abel) a - b)
     (fun y x => by rw [N.τ_symm, add_comm, div_right_comm])
     (fun a y x => by
@@ -96,7 +100,7 @@ theorem dict_of_val : BrActSt → ValSt → DictSt := by
     show H.w0 + H.bar H.w0 = 1
     rw [GlobalTheory.HostModel.cmHost_bar_halfIntegerGenerator, add_sub_cancel]
   obtain ⟨ct, hct, hc⟩ := exists_lift_ct B.F ex hab.1 hab.2.1 (fun x : A.D₀.X => A.N.c (e x))
-    (fun x y => by rw [map_add, A.N.c_add]) (fun a x z hz => A.ν.eA.injective (by
+    (fun x y => by rw [map_add (f := _), A.N.c_add]) (fun a x z hz => A.ν.eA.injective (by
       rw [hF, hz, A.ν.c_eq, A.ν.c_eq, hee, hee, DegPre.cF, DegPre.cF, A.oa.c_lin, Category.assoc]))
   obtain ⟨T, hT1, hT2, hT⟩ := exists_log_frame hab e ct hc hw (fun a y x => by
     obtain ⟨r, hr, h⟩ := b1 a
@@ -123,7 +127,7 @@ theorem dict_of_val : BrActSt → ValSt → DictSt := by
         rw [map_neg, map_neg, ← hab.2.2.2.2.2.2.1, ← hc, ← _root_.mul_assoc, A.N.even]
       psi_add := fun x y => by
         have h := hT x y
-        rw [map_add, map_add, A.N.ψ_add]
+        rw [map_add (f := _), map_add (f := _), A.N.ψ_add]
         push_cast
         linear_combination -(A.N.ψ (e x) : ℂ) * A.N.ψ (e y) * h
       be := β.be.comp e.toIntLinearEquiv.toLinearMap e.toIntLinearEquiv.toLinearMap

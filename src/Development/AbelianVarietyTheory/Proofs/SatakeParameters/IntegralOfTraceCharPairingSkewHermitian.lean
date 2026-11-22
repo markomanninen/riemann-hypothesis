@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Gam0
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.Gam0
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalThetaPairExistence
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.Hk3.GramSep
@@ -24,7 +29,7 @@ theorem int_of_psi_trace_gam : ∀ (L : Type) [Field L] [Valued L (WithZero (Mul
       exact mul_le_of_le_one_left' hb
     have hmem : Matrix.single k j c + Matrix.single j k (-σ c) ∈ gam σ ϖ e := by
       refine ⟨fun a a' => ?_, fun a a' => ?_⟩
-      · simp only [Matrix.add_apply, Matrix.single_apply, map_add, apply_ite σ, map_neg, hσ, map_zero,
+      · simp only [Matrix.add_apply, Matrix.single_apply, map_add (f := _), apply_ite σ, map_neg, hσ, map_zero,
           and_comm (a := k = a'), and_comm (a := j = a')]
         split_ifs <;> ring
       · rw [Matrix.add_apply]

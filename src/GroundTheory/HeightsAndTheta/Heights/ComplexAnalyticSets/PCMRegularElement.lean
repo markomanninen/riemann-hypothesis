@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRegularElement
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CMDepthAssoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRegularElement
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.CMDepthAssoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -80,7 +85,7 @@ theorem exists_isRegular_quotSMulTop {B : Type u} [CommRing B] [IsLocalRing B] [
   let N : ModuleCat.{u} B := ModuleCat.of B (Shrink.{u} (B ⧸ maximalIdeal B))
   have hregB : IsRegular B rs := (isRegular_iff_isWeaklyRegular_of_subset_maximalIdeal hm).mpr hreg
   have hextB : ∀ i < rs.length, Subsingleton (Ext N M i) :=
-    ((ModuleCat.exists_isRegular_tfae (maximalIdeal B) rs.length M (key B)).out 1 3).mpr
+    ((ModuleCat.exists_isRegular_tfae (maximalIdeal B) rs.length M (key B)).out 2 4).mpr
       (⟨rs, rfl, hm, hregB⟩ : ∃ rs' : List B, rs'.length = rs.length ∧ (∀ r ∈ rs', r ∈ maximalIdeal B) ∧ IsRegular M rs')
   have hext3 : ∀ i < rs.length - 1, Subsingleton (Ext N S.X₃ i) := by
     intro i hi
@@ -93,7 +98,7 @@ theorem exists_isRegular_quotSMulTop {B : Type u} [CommRing B] [IsLocalRing B] [
   have : Module.Finite B S.X₃ := inferInstanceAs (Module.Finite B (QuotSMulTop y B))
   have : Nontrivial S.X₃ := inferInstanceAs (Nontrivial (QuotSMulTop y B))
   obtain ⟨rs', hlen, hm', hreg'⟩ :=
-    ((ModuleCat.exists_isRegular_tfae (maximalIdeal B) (rs.length - 1) S.X₃ (key S.X₃)).out 1 3).mp hext3
+    ((ModuleCat.exists_isRegular_tfae (maximalIdeal B) (rs.length - 1) S.X₃ (key S.X₃)).out 2 4).mp hext3
   exact ⟨rs', hlen, hm', hreg'⟩
 
 theorem CMRegularElement.proof : CMRegularElement.Statement.{u} := by

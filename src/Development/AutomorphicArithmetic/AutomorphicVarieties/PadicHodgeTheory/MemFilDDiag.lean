@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemGKBot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemGKBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable {G A V V' : Type} [Group G] [CommRing A] [Algebra ℚ_[l] A] [AddCommGr
   [Module ℚ_[l] V] [IsScalarTower ℚ_[l] A V] [AddCommGroup V'] [Module A V'] [Module ℚ_[l] V']
   [IsScalarTower ℚ_[l] A V']
 
-variable (l) in
 
+variable (l) in
 def tm (B : Type) [AddCommGroup B] [Module ℚ_[l] B] (f : V →ₗ[A] V') : V ⊗[ℚ_[l]] B →ₗ[A] V' ⊗[ℚ_[l]] B :=
   AlgebraTensorModule.map f LinearMap.id
 
@@ -29,58 +33,69 @@ theorem tm_actC (g : G) (hf : ∀ x, f (ρ g x) = ρ' g (f x)) (y : V ⊗[ℚ_[l
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v b => exact congrArg (· ⊗ₜ _) (hf v)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tm_actD (g : G) (hf : ∀ x, f (ρ g x) = ρ' g (f x)) (y : V ⊗[ℚ_[l]] Bdr l) :
     tm l _ f (actD φ ρ g y) = actD φ ρ' g (tm l _ f y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v b => exact congrArg (· ⊗ₜ _) (hf v)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tm_Dcr (hf : ∀ g x, f (ρ g x) = ρ' g (f x)) {y : V ⊗[ℚ_[l]] Bcr l} (hy : y ∈ Dcr φ ρ) :
-    tm l _ f y ∈ Dcr φ ρ' :=
-  (mem_Dcr _ _ _).2 fun g => by rw [← tm_actC φ f g (hf g), (mem_Dcr _ _ _).1 hy]
+    tm l _ f y ∈ Dcr φ ρ' := by
+  simp only [Dcr, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
+    LinearMap.id_apply, sub_eq_zero] at hy ⊢
+  intro g
+  rw [← tm_actC φ f g (hf g), hy g]
 
 theorem tm_FilD (hf : ∀ g x, f (ρ g x) = ρ' g (f x)) {i : ℤ} {y : V ⊗[ℚ_[l]] Bdr l} (hy : y ∈ FilD φ ρ i) :
     tm l _ f y ∈ FilD φ ρ' i := by
-  refine ⟨(mem_Ddr _ _ _).2 fun g => by rw [← tm_actD φ f g (hf g), (mem_Ddr _ _ _).1 hy.1], ?_⟩
-  obtain ⟨z, rfl⟩ := hy.2
-  refine ⟨tm l _ f z, ?_⟩
-  clear hy
-  induction z using TensorProduct.induction_on with
-  | zero => simp only [map_zero]
-  | tmul v b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  have hyD : y ∈ Ddr φ ρ := hy.1
+  simp only [Ddr, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
+    LinearMap.id_apply, sub_eq_zero] at hyD
+  change tm l _ f y ∈ Ddr φ ρ' ∧ tm l _ f y ∈ FilT A V' i
+  refine ⟨?_, ?_⟩
+  · simp only [Ddr, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply,
+      LinearMap.id_apply, sub_eq_zero]
+    intro g
+    rw [← tm_actD φ f g (hf g), hyD g]
+  · obtain ⟨z, rfl⟩ := hy.2
+    refine ⟨tm l _ f z, ?_⟩
+    clear hy hyD
+    induction z using TensorProduct.induction_on with
+    | zero => simp only [map_zero]
+    | tmul v b => rfl
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tm_smulC (K : FinExt l) (c : A ⊗[ℚ_[l]] ↥(K0 K)) (y : V ⊗[ℚ_[l]] Bcr l) :
     tm l _ f (smulC V K c y) = smulC V' K c (tm l _ f y) := by
   induction c using TensorProduct.induction_on with
   | zero => simp only [map_zero, LinearMap.zero_apply]
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
   | tmul a k =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => exact congrArg (· ⊗ₜ _) (f.map_smul a v)
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tm_smulD (K : FinExt l) (c : A ⊗[ℚ_[l]] ↥K.1) (y : V ⊗[ℚ_[l]] Bdr l) :
     tm l _ f (smulD V K c y) = smulD V' K c (tm l _ f y) := by
   induction c using TensorProduct.induction_on with
   | zero => simp only [map_zero, LinearMap.zero_apply]
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
   | tmul a k =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => exact congrArg (· ⊗ₜ _) (f.map_smul a v)
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem smulC_one (K : FinExt l) (a : A) (y : V ⊗[ℚ_[l]] Bcr l) :
     smulC V K (a ⊗ₜ[ℚ_[l]] (1 : ↥(K0 K))) y = a • y := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero, smul_zero]
   | tmul v b => exact congrArg (_ ⊗ₜ ·) (one_smul ↥(K0 K) b)
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
 
 end Map
 
@@ -88,13 +103,13 @@ section Diag
 
 variable {G A : Type} [Group G] [CommRing A] [Algebra ℚ_[l] A] {n : ℕ}
 
-variable (l) in
 
+variable (l) in
 abbrev pr (B : Type) [AddCommGroup B] [Module ℚ_[l] B] (a : Fin n) :
     (Fin n → A) ⊗[ℚ_[l]] B →ₗ[A] A ⊗[ℚ_[l]] B := tm l B (LinearMap.proj a)
 
-variable (l) in
 
+variable (l) in
 abbrev inc (B : Type) [AddCommGroup B] [Module ℚ_[l] B] (a : Fin n) :
     A ⊗[ℚ_[l]] B →ₗ[A] (Fin n → A) ⊗[ℚ_[l]] B := tm l B (LinearMap.single A (fun _ => A) a)
 
@@ -104,13 +119,13 @@ theorem pr_inc (a b : Fin n) (x : A ⊗[ℚ_[l]] B) : pr l B a (inc l B b x) = i
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => by_cases h : a = b <;> simp [tm_tmul, h]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; split_ifs <;> simp
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; split_ifs <;> simp
 
 theorem sum_inc_pr (y : (Fin n → A) ⊗[ℚ_[l]] B) : ∑ a, inc l B a (pr l B a y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v c => simp [tm_tmul, ← sum_tmul, Finset.univ_sum_single]
-  | add x y hx hy => simp only [map_add, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
 
 variable {ρ : G →* GL (Fin n) A} {κ : Fin n → G →* Aˣ}
   (hρ : ∀ g, (ρ g : Matrix (Fin n) (Fin n) A) = Matrix.diagonal fun a => (κ a g : A))
@@ -196,7 +211,8 @@ theorem crys_diag {L : FinExt l} (h : K.1 ≤ L.1) (hN : ((GK L).subgroupOf (GK 
   have key : ∀ (c : Fin n → A ⊗[ℚ_[l]] ↥(K0 L)) b,
       pr l _ b (∑ a, smulC (Fin n → A) L (c a) (inc l _ a (x a))) = smulC A L (c b) (x b) := by
     intro c b
-    simp only [map_sum, ← tm_smulC, pr_inc, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, ← tm_smulC, pr_inc, Finset.sum_ite_eq, Finset.mem_univ, if_true]
   refine ⟨hN, hC, fun a => inc l _ a (x a), fun a => tm_Dcr _ _ (fun g => single_diag hρ a (incl h g)) (hx a),
     fun y hy => ?_, fun γ _ M hM => ?_⟩
   · choose c hc hcu using fun a => hB a _ (tm_Dcr _ _ (fun g => proj_diag hρ a (incl h g)) hy)

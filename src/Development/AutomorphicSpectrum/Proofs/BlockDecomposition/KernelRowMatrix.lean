@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FactorRapid
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem sum_sec {n : ℕ} [MeasurableSpace (G n)] [BorelSpace (G n)] (μ : Measu
       funext y; simp [Finset.sum_insert hi]
     rw [hz, Finset.sum_insert hi]
     refine ⟨hadd _ _ _ (hS i) ih1, fun g hg k => ?_, ?_⟩
-    · simp only [Pi.add_apply, Pi.smul_apply, map_add, map_smul]
+    · simp only [Pi.add_apply, Pi.smul_apply, map_add (f := _), map_smul]
       rw [hI i g hg k]
       exact congrArg (a i • (E.ρ k⁻¹) (f i g) + ·) (ih2 g hg k)
     · rw [hlin _ _ _ (hmem _ (hS i)) (hmem _ ih1), ih3]

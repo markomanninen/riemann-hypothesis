@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumUniformization
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremIdeles
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassField
-import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumUniformization
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremIdeles
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassField
+public import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -92,10 +97,10 @@ end Artin
 section Hilbert
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 include hK in
-
 theorem j_weierstrassCurve_idealPeriodPair_eq (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
     {E : WeierstrassCurve ℂ} [E.IsElliptic] {f : ℂ →+ E.toAffine.Point}
     (hf : IsAnalyticUniformization (idealLattice (algebraMap K ℂ) 𝔞) f) :
@@ -104,8 +109,8 @@ theorem j_weierstrassCurve_idealPeriodPair_eq (𝔞 : (FractionalIdeal (𝓞 K)�
   exact j_eq_of_isAnalyticUniformization hf
     (isAnalyticUniformization_toPointHom (idealPeriodPair (algebraMap K ℂ) hK 𝔞))
 
-include hK in
 
+include hK in
 theorem adjoin_j_eq_hilbertClassField_of_isAnalyticUniformization (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
     {E : WeierstrassCurve ℂ} [E.IsElliptic] {f : ℂ →+ E.toAffine.Point}
     (hf : IsAnalyticUniformization (idealLattice (algebraMap K ℂ) 𝔞) f) :
@@ -114,8 +119,8 @@ theorem adjoin_j_eq_hilbertClassField_of_isAnalyticUniformization (𝔞 : (Fract
   exact adjoin_j_eq_hilbertClassField hK
     (ellOf (algebraMap K ℂ) _ (latticeEnd_idealPeriodPair (algebraMap K ℂ) hK 𝔞))
 
-include hK in
 
+include hK in
 theorem mk_mem_map_standardOpenSubgroup_of_apply_j_eq (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K)
     (hs : ∀ x : maximalAbelianExtension K (algebraicClosure K ℂ),
       ((artinMap K (algebraicClosure K ℂ) (IdeleClassGroup.mk K s) x : algebraicClosure K ℂ) : ℂ) =

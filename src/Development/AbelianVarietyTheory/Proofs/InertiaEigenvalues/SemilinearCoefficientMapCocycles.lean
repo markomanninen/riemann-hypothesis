@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {Γ : Type} 
 def semilinearCoefficientMapCocycles : Z1 rho →ₛₗ[σ] Z1 rho' where
   toFun z := ⟨fun g => u (z.1 g), hu.comp z.2.1, fun g h => by
     beta_reduce
-    rw [z.2.2, map_add, he]⟩
+    rw [z.2.2, map_add (f := _), he]⟩
   map_add' z w := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' c z := Subtype.ext (funext fun g => map_smulₛₗ u _ _)
 
@@ -55,7 +59,8 @@ def vecMap : (Fin r → K) →ₛₗ[(f : K →+* K')] (Fin r → K') where
 theorem vecMap_repOn {Γ : Type} [Group Γ] {r : ℕ} (ρ : Γ →* GL (Fin r) O) (g : Γ) (m : Fin r → K) :
     vecMap f r (repOn ρ (1 : Γ →* Kˣ) K g m) = repOn ρ (1 : Γ →* K'ˣ) K' g (vecMap f r m) := by
   funext a
-  simp [vecMap, repOn, matAct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [vecMap, repOn, matAct, map_sum]
 
 end Coef
 
@@ -79,7 +84,7 @@ theorem slH1_mem_bkOn (v : PlE D.host) (x : H1 ((repOn ρ (1 : GE N →* Kˣ) K)
       change f ((z : ↥(DecV N v) → Fin r → K) g a) = _
       rw [hz, smul_eq_mul, smul_eq_mul, map_mul, AlgHom.commutes]
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx => rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
   · rw [Submodule.mem_bot] at hx ⊢
     rw [hx, map_zero]

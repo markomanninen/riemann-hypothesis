@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JMixedA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JMixedA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurG
+
+@[expose] public section
 
 noncomputable section
 

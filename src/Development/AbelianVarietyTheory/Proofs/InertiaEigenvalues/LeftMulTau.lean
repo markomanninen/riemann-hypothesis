@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -86,7 +90,8 @@ theorem row_mul (hG : A.IsGen τ p) (s c : A.K) :
   have hx := (bas A hG).sum_repr (s * bas A hG j)
   calc ∑ i : Fin r, Algebra.trace F A.K (τ ^ (i : ℕ) * c) * (bas A hG).repr (s * bas A hG j) i
       = Algebra.trace F A.K (∑ i : Fin r, ((bas A hG).repr (s * bas A hG j) i • bas A hG i) * c) := by
-        rw [map_sum]; refine Finset.sum_congr rfl fun i _ => ?_
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]; refine Finset.sum_congr rfl fun i _ => ?_
         rw [smul_mul_assoc, map_smul, smul_eq_mul, mul_comm, bas_apply A hG i]
     _ = Algebra.trace F A.K (τ ^ (j : ℕ) * (s * c)) := by
         rw [← Finset.sum_mul, hx, bas_apply]; ring_nf

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.EpsEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.EpsEq
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
@@ -42,6 +46,6 @@ theorem UpperTheory.V.Pa.hat_st :
     rw [MonoidAlgebra.of_apply, H.st, map_smul, H.r_ι, H.r_ι]
     exact key g
   · intro a b ha hb
-    simp only [map_add, ha, hb, Matrix.transpose_add]
+    simp only [map_add (f := _), ha, hb, Matrix.transpose_add]
   · intro c a ha
     simp only [map_smul, ha, Matrix.transpose_smul]

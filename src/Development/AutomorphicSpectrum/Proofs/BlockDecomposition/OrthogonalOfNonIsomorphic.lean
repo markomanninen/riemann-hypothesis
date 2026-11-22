@@ -1,18 +1,22 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareIntegrableSmoothSubmoduleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarRightInvariantStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralEqL2InnerStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RightTranslateIsometryStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieSkewAdjointBisStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepresentationUnitaryAverageStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteDimCompactStableStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOpenCompactSubgroupLeStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfIsOpenStab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareIntegrableSmoothSubmoduleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdmissibleDiscreteSpaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarRightInvariantStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralEqL2InnerStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RightTranslateIsometryStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieSkewAdjointBisStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepresentationUnitaryAverageStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsInvariantProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteDimCompactStableStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsOpenCompactSubgroupLeStatement
+
+@[expose] public section
 
 open scoped Classical InnerProductSpace ComplexConjugate
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
@@ -27,7 +31,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
 def fixS (V : Submodule ℂ (Sm E N)) (L : Subgroup (GL (Fin N) (Af E))) : Submodule ℂ (Sm E N) where
   carrier := {x | x ∈ V ∧ ∀ u ∈ L, finRep E N u x = x}
-  add_mem' := fun {x y} hx hy => ⟨V.add_mem hx.1 hy.1, fun u hu => by rw [map_add, hx.2 u hu, hy.2 u hu]⟩
+  add_mem' := fun {x y} hx hy => ⟨V.add_mem hx.1 hy.1, fun u hu => by rw [map_add (f := _), hx.2 u hu, hy.2 u hu]⟩
   zero_mem' := ⟨V.zero_mem, fun u _ => map_zero _⟩
   smul_mem' := fun c x hx => ⟨V.smul_mem c hx.1, fun u hu => by rw [map_smul, hx.2 u hu]⟩
 
@@ -132,7 +136,7 @@ theorem isoV_of_ne (μ : Measure (GA E N)) [μ.IsHaarMeasure] [μ.IsMulRightInva
     { toFun := fun x => ⟨T x, hTm x⟩
       map_add' := fun x y => Subtype.ext (uniq _ (hTm _) _ (V'.add_mem (hTm x) (hTm y)) fun z hz => by
         rw [← hT _ z hz]
-        simp only [Submodule.coe_add, map_add, inner_add_right]
+        simp only [Submodule.coe_add, map_add (f := _), inner_add_right]
         rw [← hT x z hz, ← hT y z hz])
       map_smul' := fun c x => Subtype.ext (uniq _ (hTm _) _ (V'.smul_mem c (hTm x)) fun z hz => by
         rw [← hT _ z hz]
@@ -151,7 +155,7 @@ theorem isoV_of_ne (μ : Measure (GA E N)) [μ.IsHaarMeasure] [μ.IsMulRightInva
     have h1 : T ⟨x₀, hx₀⟩ = 0 := congrArg Subtype.val (LinearMap.congr_fun h0 ⟨x₀, hx₀⟩)
     rw [hT ⟨x₀, hx₀⟩ y₀ hy₀, h1, map_zero, inner_zero_right]
   have hker : LinearMap.ker Tl = ⊥ := by
-    have hst : IsStable ((LinearMap.ker Tl).map V.subtype) := by
+    have hst : _root_.GlobalTheory.CuspRep.IsStable ((LinearMap.ker Tl).map V.subtype) := by
       rintro o _ ⟨x, hx, rfl⟩
       refine ⟨⟨_, hV.stable o _ x.2⟩, ?_, rfl⟩
       refine Subtype.ext ?_
@@ -167,7 +171,7 @@ theorem isoV_of_ne (μ : Measure (GA E N)) [μ.IsHaarMeasure] [μ.IsMulRightInva
       obtain rfl : x' = x := Subtype.ext e
       exact hx'
   have hran : LinearMap.range Tl = ⊤ := by
-    have hst : IsStable ((LinearMap.range Tl).map V'.subtype) := by
+    have hst : _root_.GlobalTheory.CuspRep.IsStable ((LinearMap.range Tl).map V'.subtype) := by
       rintro o _ ⟨_, ⟨x, rfl⟩, rfl⟩
       exact ⟨Tl ⟨_, hV.stable o _ x.2⟩, ⟨_, rfl⟩, eqv o x _ rfl⟩
     rcases hV'.irred _ (Submodule.map_subtype_le _ _) hst with h | h
@@ -187,8 +191,8 @@ theorem isoV_of_ne (μ : Measure (GA E N)) [μ.IsHaarMeasure] [μ.IsMulRightInva
 
 end GlobalTheory.CompanionTheory.FinDisc.Orth
 
-open GlobalTheory.CompanionTheory.FinDisc.Orth in
 
+open GlobalTheory.CompanionTheory.FinDisc.Orth in
 theorem GlobalTheory.CompanionTheory.FinDisc.integral_eq_zero_of_not_isoV :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) [MeasurableSpace (GA E N)] [BorelSpace (GA E N)]
   (μ : Measure (GA E N)) [μ.IsHaarMeasure] (F : Set (GA E N)), IsFundamentalDomain (latticeGL E N) F μ →

@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+module
+
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.LinRed GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.CompanionTheory.Hypotheses₂ GlobalTheory.CompanionTheory.Hypotheses₂.HCA
 open MeasureTheory CompanionTheory.D.gk.admitted
@@ -22,8 +26,6 @@ def grp {G : Set (Matrix (Fin n) (Fin n) ℂ)} (hG : IsLinRed G) : Subgroup (Mat
 
 abbrev toMat {G : Set (Matrix (Fin n) (Fin n) ℂ)} {hG : IsLinRed G} (g : grp hG) : Matrix (Fin n) (Fin n) ℂ :=
   ((g : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ)
-
-theorem toMat_mem {G : Set (Matrix (Fin n) (Fin n) ℂ)} {hG : IsLinRed G} (g : grp hG) : toMat g ∈ G := g.2
 
 theorem continuous_toMat {G : Set (Matrix (Fin n) (Fin n) ℂ)} {hG : IsLinRed G} :
     Continuous (toMat : grp hG → Matrix (Fin n) (Fin n) ℂ) :=
@@ -219,7 +221,8 @@ theorem isAdmOn_of_iwasawa {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H :
     calc v = ((∑ i, b.repr ⟨v, hv⟩ i • b i : S) : H) := by rw [b.sum_repr]
       _ = _ := (map_sum S.subtype _ _).trans (Finset.sum_congr rfl fun i _ => rfl)
   show Θ₀ v ∈ _
-  rw [hv2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hv2, map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [map_smul]
   refine Submodule.smul_mem _ _ (Submodule.mem_iSup_of_mem i ?_)

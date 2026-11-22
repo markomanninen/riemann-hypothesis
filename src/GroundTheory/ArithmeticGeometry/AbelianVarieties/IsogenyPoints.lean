@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogeny
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilFixedField
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DualIsogeny
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.WeilFixedField
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -56,8 +60,8 @@ variable [IsAlgClosed F] [DecidableEq F] {E E' E'' : WeierstrassCurve F} [E.IsEl
 
 namespace Isogeny
 
-omit [IsAlgClosed F] [DecidableEq F] in
 
+omit [IsAlgClosed F] [DecidableEq F] in
 theorem degree_pos (φ : Isogeny E E') : 0 < φ.degree := by
   have hfin := finiteDimensional_adjoin_of_transcendental E φ.transcendental_alt
   have hle : F⟮φ.x⟯ ≤ φ.comap.fieldRange := adjoin_simple_le_iff.mpr ⟨genX E', φ.comap_genX⟩
@@ -75,8 +79,8 @@ theorem finiteDimensional (φ : Isogeny E E') :
     FiniteDimensional φ.comap.fieldRange E.toAffine.FunctionField :=
   Module.finite_of_finrank_pos φ.degree_pos
 
-omit [IsAlgClosed F] [DecidableEq F] in
 
+omit [IsAlgClosed F] [DecidableEq F] in
 theorem degree_eq_one_of_comap_eq (ψ : Isogeny E E) {z : E.toAffine.FunctionField}
     (hz : Transcendental F z) (h : ψ.comap z = z) : ψ.degree = 1 := by
   have hfin := finiteDimensional_adjoin_of_transcendental E hz
@@ -124,7 +128,7 @@ theorem exists_map_translate (φ : Isogeny E E') (R : E.toAffine.Point) :
   have h2 : IsGenPt E (G + G) := isGenPt_add_self hG
   have h3 : IsGenPt E (G + cR + G) := by
     have : Point.map α (G + cR) = G + cR + G := by
-      rw [map_add, hα, map_constMap]; abel
+      rw [map_add (f := _), hα, map_constMap]; abel
     rw [← this]; exact isGenPt_map E α h1
   set Z := Point.map τ φ.1 - φ.1 with hZ
   have hτφ : Point.map τ φ.1 = φ.app (G + cR) h1 := by
@@ -135,7 +139,7 @@ theorem exists_map_translate (φ : Isogeny E E') (R : E.toAffine.Point) :
     have eατ : Point.map α (Point.map τ φ.1) = φ.app (G + cR + G) h3 := by
       rw [Point.map_map, map_eq_app]
       refine φ.app_congr ?_ _ _
-      rw [← Point.map_map, hτ, map_add, hα, map_constMap]; abel
+      rw [← Point.map_map, hτ, map_add (f := _), hα, map_constMap]; abel
     rw [hZ, map_sub, eα, eατ, φ.app_add h1 hG h3, φ.app_add hG hG h2, φ.app_genericPoint', hτφ]
     abel
   by_cases hZg : IsGenPt E' Z
@@ -170,7 +174,7 @@ theorem pointMap_eq_of_map_translate (φ : Isogeny E E') {R : E.toAffine.Point} 
 theorem pointMap_add (φ : Isogeny E E') (R S : E.toAffine.Point) :
     φ.pointMap (R + S) = φ.pointMap R + φ.pointMap S := by
   apply pointMap_eq_of_map_translate
-  rw [translate_add, ← Point.map_map, map_translate, map_add, map_translate, map_constMap, map_add]
+  rw [translate_add, ← Point.map_map, map_translate, map_add (f := _), map_translate, map_constMap, map_add (f := _)]
   abel
 
 noncomputable def pointHom (φ : Isogeny E E') : E.toAffine.Point →+ E'.toAffine.Point :=
@@ -182,7 +186,7 @@ theorem pointHom_apply (φ : Isogeny E E') (R : E.toAffine.Point) : φ.pointHom 
 theorem comap_comp_translate (φ : Isogeny E E') (R : E.toAffine.Point) :
     φ.comap.comp (translate E' (φ.pointMap R)) = (translate E R).comp φ.comap := by
   apply algHom_eq_of_map_genericPoint' E'
-  rw [← Point.map_map, map_translate_genericPoint, map_add, map_comap_genericPoint, ← Point.map_map,
+  rw [← Point.map_map, map_translate_genericPoint, map_add (f := _), map_comap_genericPoint, ← Point.map_map,
     map_comap_genericPoint, map_translate]
   exact congrArg (φ.1 + ·) (map_constMap E' φ.comap (φ.pointMap R))
 
@@ -192,9 +196,9 @@ theorem app_add_constMap (φ : Isogeny E E') {L : Type*} [Field L] [Algebra F L]
     φ.app (P + constMap E L R) h = φ.app P hP + constMap E' L (φ.pointMap R) := by
   have e : genEval E (P + constMap E L R) h = (genEval E P hP).comp (translate E R) := by
     refine (eq_genEval E _ ?_ h).symm
-    rw [← Point.map_map, map_translate_genericPoint, map_add, map_genEval_genericPoint]
+    rw [← Point.map_map, map_translate_genericPoint, map_add (f := _), map_genEval_genericPoint]
     exact congrArg _ (map_constMap E _ R)
-  rw [app, e, ← Point.map_map, map_translate, map_add, map_constMap]
+  rw [app, e, ← Point.map_map, map_translate, map_add (f := _), map_constMap]
   rfl
 
 theorem translate_comap_of_mem_ker (φ : Isogeny E E') {T : E.toAffine.Point}
@@ -229,7 +233,7 @@ instance finite_ker (φ : Isogeny E E') : Finite φ.pointHom.ker := by
 theorem pointMap_comp (ψ : Isogeny E' E'') (φ : Isogeny E E') (R : E.toAffine.Point) :
     (ψ.comp φ).pointMap R = ψ.pointMap (φ.pointMap R) := by
   apply pointMap_eq_of_map_translate
-  rw [comp_val, Point.map_map, ← comap_comp_translate, ← Point.map_map, map_translate, map_add,
+  rw [comp_val, Point.map_map, ← comap_comp_translate, ← Point.map_map, map_translate, map_add (f := _),
     map_constMap]
 
 omit [IsAlgClosed F] in

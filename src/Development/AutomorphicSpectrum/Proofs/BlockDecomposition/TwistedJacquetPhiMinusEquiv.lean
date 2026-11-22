@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicTwistedKernelDerivativeZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicTwistedKernelDerivativeZero
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir
 
@@ -46,7 +50,7 @@ theorem twKer_twAct_eq_map (ρ : Representation ℂ G V) (N₁ : Subgroup G) (θ
     have hz : ρ (u₁ : G) (ρ (s a) v) - ((θ₁ u₁ : ℂˣ) : ℂ) • ρ (s a) v ∈ twKer ρ N₁ θ₁ :=
       Submodule.subset_span ⟨u₁, _, rfl⟩
     show (twKer ρ N₁ θ₁).mkQ _ ∈ twKer (twAct ρ N₁ θ₁ s hs) N₂ θ₂
-    rw [hdec, map_add, Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero _).2 hz, zero_add, map_smul]
+    rw [hdec, map_add (f := _), Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero _).2 hz, zero_add, map_smul]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, Submodule.Quotient.mk v, ?_⟩)
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_sub, Submodule.Quotient.mk_smul]
     rfl
@@ -79,11 +83,11 @@ theorem mem_colFix_iff {N n : ℕ} (g : GL (Fin N) k) :
   · intro h i j hj
     have := congrFun (h j hj) i
     rw [mulVec_single_one] at this
-    simpa [one_apply, Pi.single_apply, Matrix.col_apply] using this
+    simpa [Matrix.one_apply, Pi.single_apply, Matrix.col_apply] using this
   · intro h j hj
     rw [mulVec_single_one]
     funext i
-    simpa [one_apply, Pi.single_apply, Matrix.col_apply] using h i j hj
+    simpa [Matrix.one_apply, Pi.single_apply, Matrix.col_apply] using h i j hj
 
 theorem glEmbMat_castSucc_castSucc (N : ℕ) (A : Matrix (Fin N) (Fin N) k) (i j : Fin N) :
     glEmbMat k N A (Fin.castSucc i) (Fin.castSucc j) = A i j := by
@@ -138,7 +142,7 @@ theorem MirUin_step (ψ : AddChar k Circle) {m n : ℕ} (hnm : n ≤ m) (u : Mir
     have h12 : p.1 ≠ p.2 := fun e => by rw [e] at hc; omega
     have h2 : p.2 ≠ Fin.last (m + 1) := fun e => hne (Prod.ext (Fin.ext (by
       rw [e] at hc; simp at hc ⊢; omega)) e)
-    simp [unip, colMat, one_apply, h12, h2]
+    simp [unip, colMat, Matrix.one_apply, h12, h2]
   · intro h
     exact absurd (Finset.mem_filter.2 ⟨Finset.mem_univ _, by simp, by simpa using hnm⟩) h
 
@@ -182,10 +186,10 @@ theorem levi_step (ψ : AddChar k Circle) {m n : ℕ} (hnm : n ≤ m) (a : derUn
     | last => simp at hj; omega
     | cast j =>
       induction i using Fin.lastCases with
-      | last => rw [glEmbMat_last_castSucc]; simp [one_apply, (Fin.castSucc_ne_last j).symm]
+      | last => rw [glEmbMat_last_castSucc]; simp [Matrix.one_apply, (Fin.castSucc_ne_last j).symm]
       | cast i =>
         rw [glEmbMat_castSucc_castSucc, hC i j (by simpa using hj)]
-        simp [one_apply]
+        simp [Matrix.one_apply]
   · rw [derCharM_apply, derCharM_apply]
     congr 2
     rw [hval]
@@ -256,7 +260,7 @@ theorem derUnipM_decomp {m n : ℕ} (hnm : n ≤ m) (u : derUnipM k (m + 1) n) :
     · rw [hval]
       show X (Fin.castSucc i) (Fin.castSucc j) = _
       rw [hC _ _ (by simpa using hj)]
-      simp [one_apply]
+      simp [Matrix.one_apply]
   let c : Multiplicative (Fin (m + 1) → k) := Multiplicative.ofAdd fun i => X (Fin.castSucc i) (Fin.last (m + 1))
   refine ⟨⟨⟨unip k (m + 1) c, MirU_le_Mir k (m + 1) ⟨c, rfl⟩⟩, Subgroup.mem_subgroupOf.2 ⟨c, rfl⟩⟩,
     ⟨⟨a₀, ha₀M⟩, Subgroup.mem_subgroupOf.2 ha₀D⟩, ?_⟩
@@ -265,7 +269,7 @@ theorem derUnipM_decomp {m n : ℕ} (hnm : n ≤ m) (u : derUnipM k (m + 1) n) :
   show X = (1 + colMat k (m + 1) c.toAdd) * glEmbMat k (m + 1) (blockMat k (m + 1) X)
   rw [add_mul, one_mul]
   ext i j
-  rw [Matrix.add_apply, mul_apply, Fin.sum_univ_castSucc]
+  rw [Matrix.add_apply, Matrix.mul_apply, Fin.sum_univ_castSucc]
   simp only [colMat, Fin.castSucc_ne_last, if_false, zero_mul, Finset.sum_const_zero, zero_add, if_true]
   induction j using Fin.lastCases with
   | last =>

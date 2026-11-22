@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 open MeasureTheory PositivityTheory.Rg.Tf.Loc
 open scoped ENNReal
@@ -7,7 +11,7 @@ theorem UpperTheory.V.Z.Tf.Orb.quotPos :
     UpperTheory.V.Z.Tf.Orb.QuotIndep → UpperTheory.V.Z.Tf.Orb.QuotInt → UpperTheory.V.Z.Tf.Orb.QuotMass → UpperTheory.V.Z.Tf.Orb.QuotPos := by
   intro _ hInt hMass G _ _ _ _ _ _ _ _ μG hμG H hH μ hμ hinv hex F hF hFH hC hnn hne
   have hρ := hex.choose_spec
-  rw [quotIntegral, dif_pos hex]
+  rw [quotIntegral, dite_eq_left hex]
   generalize hex.choose = ρ at hρ
   have hI := hInt G μG hμG H hH μ hμ hinv F hF hFH hC ρ hρ
   have hfin := (hMass G μG hμG H hH μ hμ hinv ρ hρ).1

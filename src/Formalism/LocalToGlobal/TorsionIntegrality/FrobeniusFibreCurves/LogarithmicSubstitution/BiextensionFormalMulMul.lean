@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.FirstLevelFromUniversalLaw
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementT
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

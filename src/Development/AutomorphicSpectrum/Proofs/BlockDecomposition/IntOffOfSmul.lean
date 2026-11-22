@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBoundFiniteInfinite
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TemperateMultiplierPreservesSchwartz
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroCoefficientTotal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEqSmulOfInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantFunctionalRestrict
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnipotentAtTauMemStabilizer
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSmallCompactLevelSymplecticCharacterTrivia
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmType
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsClopenCompactNbhdZero
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBoundFiniteInfinite
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TemperateMultiplierPreservesSchwartz
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroCoefficientTotal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsEqSmulOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslationInvariantFunctionalRestrict
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnipotentAtTauMemStabilizer
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSmallCompactLevelSymplecticCharacterTrivia
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtensionAdeleRealComponentsCmType
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsClopenCompactNbhdZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,16 +96,14 @@ theorem fin_mul_mem (θ : InfFam D) {h : (Fin a → Fin n → Af D.host.F ⊗[D.
     funext x
     ring
   | zero =>
-    convert (schwartzA θ a n).zero_mem using 1
-    funext x
-    simp
+    convert (schwartzA θ a n).zero_mem using 1 <;> ext x <;> simp
   | add Φ₁ Φ₂ _ _ h₁ h₂ =>
     convert (schwartzA θ a n).add_mem h₁ h₂ using 1
     funext x
     simp [mul_add]
   | smul c Φ _ h₁ =>
     convert (schwartzA θ a n).smul_mem c h₁ using 1
-    funext x
+    ext x
     simp only [Pi.smul_apply, smul_eq_mul]
     ring
 
@@ -115,9 +117,7 @@ theorem mul_mem (θ : InfFam D) {Φ Φ' : Mx D a n → ℂ} (hΦ : Φ ∈ schwar
     funext x
     ring
   | zero =>
-    convert (schwartzA θ a n).zero_mem using 1
-    funext x
-    simp
+    convert (schwartzA θ a n).zero_mem using 1 <;> ext x <;> simp
   | add Φ₁ Φ₂ _ _ h₁ h₂ =>
     convert (schwartzA θ a n).add_mem h₁ h₂ using 1
     funext x
@@ -137,17 +137,11 @@ theorem conj_mem (θ : InfFam D) {Φ : Mx D a n → ℂ} (hΦ : Φ ∈ schwartzA
     funext x
     simp
   | zero =>
-    convert (schwartzA θ a n).zero_mem using 1
-    funext x
-    simp
+    convert (schwartzA θ a n).zero_mem using 1 <;> ext x <;> simp
   | add Φ₁ Φ₂ _ _ h₁ h₂ =>
-    convert (schwartzA θ a n).add_mem h₁ h₂ using 1
-    funext x
-    simp
+    convert (schwartzA θ a n).add_mem h₁ h₂ using 1 <;> ext x <;> simp
   | smul c Φ _ h₁ =>
-    convert (schwartzA θ a n).smul_mem (conj c) h₁ using 1
-    funext x
-    simp
+    convert (schwartzA θ a n).smul_mem (conj c) h₁ using 1 <;> ext x <;> simp
 
 theorem row_mem (θ : InfFam D) {Φ : Mx D a n → ℂ} {φ : Mx D 1 n → ℂ} (hΦ : Φ ∈ schwartzA θ a n)
     (hφ : φ ∈ schwartzA θ 1 n) :
@@ -179,22 +173,18 @@ theorem row_mem (θ : InfFam D) {Φ : Mx D a n → ℂ} {φ : Mx D 1 n → ℂ} 
         rw [e3, e4]
         ring
     | zero =>
-      convert (schwartzA θ (a + 1) n).zero_mem using 1
-      funext x
-      simp
+      convert (schwartzA θ (a + 1) n).zero_mem using 1 <;> ext x <;> simp
     | add Φ₁ Φ₂ _ _ h₁ h₂ =>
       convert (schwartzA θ (a + 1) n).add_mem h₁ h₂ using 1
       funext x
       simp [mul_add]
     | smul c Φ _ h₁ =>
       convert (schwartzA θ (a + 1) n).smul_mem c h₁ using 1
-      funext x
+      ext x
       simp only [Pi.smul_apply, smul_eq_mul]
       ring
   | zero =>
-    convert (schwartzA θ (a + 1) n).zero_mem using 1
-    funext x
-    simp
+    convert (schwartzA θ (a + 1) n).zero_mem using 1 <;> ext x <;> simp
   | add Φ₁ Φ₂ _ _ h₁ h₂ =>
     convert (schwartzA θ (a + 1) n).add_mem h₁ h₂ using 1
     funext x

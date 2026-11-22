@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharPLemmas
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharPLemmas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open Polynomial
@@ -9,9 +14,9 @@ namespace GroundTheory.Heights₂.Heights.FieldNumbers
 
 universe u
 
+
 set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem finite_integralClosure_mvPolynomial_of_charP (k : Type u) [Field k] (p : ℕ) [Fact p.Prime]
     [CharP k p] (s : ℕ) (L : Type u) [Field L] [Algebra (FractionRing (MvPolynomial (Fin s) k)) L]
     [FiniteDimensional (FractionRing (MvPolynomial (Fin s) k)) L]
@@ -149,7 +154,8 @@ theorem finite_integralClosure_mvPolynomial_of_charP (k : Type u) [Field k] (p :
     (IntermediateField.isSeparable_adjoin_iff_isSeparable (F := F') (E := Ω)).mpr fun x ⟨j, hj⟩ => hj ▸ hωsep j
   have hLE : ∀ y : L, algebraMap L Ω y ∈ E := by
     intro y
-    rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum]
     refine sum_mem fun j _ => ?_
     rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply]
     obtain ⟨c', hc'⟩ := hFF' (b.repr y j)

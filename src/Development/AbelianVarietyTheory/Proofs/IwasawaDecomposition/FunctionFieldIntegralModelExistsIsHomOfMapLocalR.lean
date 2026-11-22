@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoBear
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomExtOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoBear
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomExtOfIsOpenImmersion
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH
 open ReciprocityTheory.ChartRestriction.G GlobalTheory.Points
@@ -49,7 +53,7 @@ theorem exists_nbhd_of_map_O (M : RatModel o Ω) (M' : RatModel o Ω') (φ : Ω 
       rw [e, AlgHom.commutes]
       exact Subalgebra.algebraMap_mem _ r
     | add x y _ _ hx hy =>
-      rw [← M.res_apply U hUne, map_add, map_add, res_apply, res_apply]
+      rw [← M.res_apply U hUne, map_add (f := _), map_add (f := _), res_apply, res_apply]
       exact add_mem hx hy
     | mul x y _ _ hx hy =>
       rw [← M.res_apply U hUne, map_mul, map_mul, res_apply, res_apply]

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WeakApproxDVR
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfWeak
-import Formalism.PeriodIntegrals.WeakApproxDVR
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WeakApproxDVR
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfWeak
+public import Formalism.PeriodIntegrals.WeakApproxDVR
+
+@[expose] public section
 
 open Formalism.MainNotions.G
 

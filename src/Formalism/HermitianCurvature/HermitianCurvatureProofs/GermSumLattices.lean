@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,7 +146,8 @@ theorem double_germ (h h' : Point K) (t₁ t₂ κ : Kˣ) (cr : K ⧸ R.toAddSub
   apply Finset.sum_congr rfl
   intro z hz
   have hz' : z ^ (m + 1) = (-t₁) ^ m * cr x := by simpa using hz
-  rw [hherm (pt2 h' m t₂ (cr x)) (addBlock h (m + 1) z), hG2 x hx', germSum_eq R ψ m γ hroots,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hherm (pt2 h' m t₂ (cr x)) (addBlock h (m + 1) z), hG2 x hx', germSum_eq R ψ m γ hroots,
     map_mul, Complex.conj_ofReal, map_sum]
   have hz₀ : (κ * z) ^ (m + 1) = (-t₂) ^ m * cr x := by
     rw [mul_pow, hκ, hz', ← mul_assoc, ← mul_pow]
@@ -245,14 +250,15 @@ theorem nsK_unit (hMM : MM R) (h h' : Point K) (z : Kˣ) :
     NsK R ψ (m + 1) h h' (z : K) = ((modK R (z : K) ^ (m ^ 2 + m) : ℝ) : ℂ) *
       Kp R ψ (addBlock h (m + 1) z) (addBlock h' (m + 1) z) := by
   unfold NsK
-  rw [dif_pos z.isUnit, IsUnit.unit_of_val_units]
+  rw [dite_eq_left z.isUnit, IsUnit.unit_of_val_units]
   unfold Ns
   rw [(hMM z z).2, Nat.add_sub_cancel, mul_comm (m + 1) m, tri_pow]
 
-open Classical in
 
-def amp (h h' : Point K) (t₁ ζ : Kˣ) (z : K) : ℂ :=
-  if hz : IsUnit z then
+open Classical in
+def amp (h h' : Point K) (t₁ ζ : Kˣ) (z : K) : ℂ := by
+  classical
+  exact if hz : IsUnit z then
     γ (hz.unit * t₁) * conj (γ (ζ * hz.unit * t₁)) *
       (((modK R ((m + 1 : ℕ) : K))⁻¹ * modK R z ^ (m ^ 2) : ℝ) : ℂ) *
       Kp R ψ (addBlock h (m + 1) hz.unit) (addBlock h' (m + 1) (ζ * hz.unit))
@@ -263,7 +269,7 @@ theorem amp_unit (h h' : Point K) (t₁ ζ z : Kˣ) :
       (((modK R ((m + 1 : ℕ) : K))⁻¹ * modK R (z : K) ^ (m ^ 2) : ℝ) : ℂ) *
       Kp R ψ (addBlock h (m + 1) z) (addBlock h' (m + 1) (ζ * z)) := by
   unfold amp
-  rw [dif_pos z.isUnit, IsUnit.unit_of_val_units]
+  rw [dite_eq_left z.isUnit, IsUnit.unit_of_val_units]
 
 theorem amp_latInv (h h' : Point K) (t₁ ζ : Kˣ) (Om Esq : Set K) (Λ' Λ₁ Λ₂ : AddSubgroup K)
     (hγ2 : ∀ a b : Kˣ, γ (a * b ^ 2) = γ a)
@@ -564,7 +570,7 @@ theorem germIdentityOfSteps : Formalism.FourierDecayAlt.A6.GermIdentityAssemble 
       · exact Filter.univ_mem
     · intro x hx ζ h1 h2
       have h3 := Set.mem_iInter₂.1 hx ζ ((hμ ζ).2 h1)
-      rwa [dif_pos ⟨h1, h2⟩] at h3
+      rwa [dite_eq_left ⟨h1, h2⟩] at h3
   obtain ⟨VXs, hVXs, hVXs'⟩ : ∃ E ∈ 𝓝 (0 : K), ∀ x ∈ E, ∀ (ζ : Kˣ) (h1 : ζ ^ (m + 1) = 1)
       (h2 : ζ ≠ 1), x ∈ VX ζ h1 h2 := by
     refine ⟨⋂ ζ ∈ μ, (if hh : ζ ^ (m + 1) = 1 ∧ ζ ≠ 1 then VX ζ hh.1 hh.2 else Set.univ),
@@ -574,7 +580,7 @@ theorem germIdentityOfSteps : Formalism.FourierDecayAlt.A6.GermIdentityAssemble 
       · exact Filter.univ_mem
     · intro x hx ζ h1 h2
       have h3 := Set.mem_iInter₂.1 hx ζ ((hμ ζ).2 h1)
-      rwa [dif_pos ⟨h1, h2⟩] at h3
+      rwa [dite_eq_left ⟨h1, h2⟩] at h3
   obtain ⟨EP, hEP, VP, hVP, hP⟩ := hPD K R ψ hD hn m Om Sg hOmc
   obtain ⟨ELC, hELC, hELC'⟩ := compact_mul_small hOmc (hΛ'lat.1.mem_nhds Λ'.zero_mem)
 

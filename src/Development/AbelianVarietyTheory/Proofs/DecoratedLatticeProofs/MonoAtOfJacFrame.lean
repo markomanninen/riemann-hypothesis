@@ -1,12 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SymRead
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevTrue
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RatioOKOfRootOfUnity
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeAtPlaceSplitsHyperbolicPlusCore
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitPointWeilCharConductorOneOfUnits
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SymRead
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsStdFr
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PinColL
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FrameTopAlt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.XiEqXiOffMul
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.UnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChartZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TailRd
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ValuationEqZeroOfRootOfSUnitRatio
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeAtPlaceSplitsHyperbolicPlusCore
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSplitPointWeilCharConductorOneOfUnits
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.RootEx GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.SplitWeil GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SeeSaw GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.LocMod GlobalTheory.MiS GlobalTheory.MiTop GlobalTheory.Fam ValuativeRel
@@ -22,7 +38,8 @@ variable {D : D7} {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [Is
 
 theorem conj_herm (S : HSp D) (x y : Fin S.rank → AE D) : cA D (hermAt S x y) = hermAt S y x := by
   have hg : ∀ i j, cA D (gA S i j) = gA S j i := fun i j => congrFun (congrFun (adj_gA S) j) i
-  simp only [hermAt, map_sum, RingHom.map_mul, cA_cA, hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermAt, map_sum, RingHom.map_mul, cA_cA, hg]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -32,7 +49,7 @@ theorem herm_smul_right (S : HSp D) (t : AE D) (x y : Fin S.rank → AE D) :
 
 variable (q : SplitPt D k)
 
-theorem conj_eps : cA D (q.e + cA D q.e) = q.e + cA D q.e := by rw [RingHom.map_add, cA_cA, add_comm]
+theorem conj_eps : cA D (q.e + cA D q.e) = q.e + cA D q.e := by rw [RingHom.map_add (f := _), cA_cA, add_comm]
 
 theorem conj_idAt {a : AE D} (ha : a ∈ idAt D (· = q.v)) : cA D a ∈ idAt D (· = q.v) := by
   rw [idem_iff, ← conj_eps, ← RingHom.map_mul, (idem_iff q a).1 ha]
@@ -130,7 +147,8 @@ theorem expand (hL : IsSelfDualC S L) {F : Frame k S.rank Y} (h : IntIn q S F L)
   congr 1
   generalize (F.γ *ᵥ fun r => q.pr (x r)) = y
   funext r
-  simp only [Matrix.mulVec, dotProduct, map_sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, colAt, sec_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, colAt, sec_mul]
   exact Finset.sum_congr rfl fun c _ => mul_comm _ _
 
 theorem mulVec_colMul {l m n : ℕ} (M : Mx D l m) (N : Mx D m n) (i : Fin n) (a : AE D) :
@@ -215,7 +233,8 @@ theorem colAt_core {N n : ℕ} {F : Frame k N Y} {F₀ : Frame k n Y₀} {c : Y}
     (h : ∀ r, F.β r c = (M.map (ofSplit q).pr * F₀.β) r a) : colAt q F c = (rat M : Mx D N n) *ᵥ colAt q F₀ a := by
   funext r
   change q.sec (F.β r c) = ∑ l, incA D (M r l) * q.sec (F₀.β l a)
-  rw [h, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, Matrix.mul_apply, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [mul_comm (incA D _), sec_mul_right, mul_comm]; rfl
 
@@ -242,11 +261,5 @@ theorem monoAt_of_jacFrame (hU : q.UnitAA) (J : JacLev D ρ) {L : Lat J.W} {L₀
     · exact Or.inr (Or.inr ⟨⟨2 * ρ - 1 - j.val, by omega⟩, hY _ j (by change j.val + (2 * ρ - 1 - j.val) + 1 = _; omega)⟩)
 
 end Frames
-
-theorem monoAt_jacLevel : ∀ (D : D7) (c : Comm D) (v : VCom c) (k₀ : Type) [Field k₀] [ValuativeRel k₀] [TopologicalSpace k₀] [IsNonarchimedeanLocalField k₀] (ι : Type) (o : TDat c k₀ ι) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (q : GlobalTheory.FinPl.SplitPt D k) (ψk : AddChar k Circle) (s : ℕ) (hs : s + 1 + 1 = D.R.m) (X : ℕ → Type) [∀ j, Fintype (X j)] [∀ j, DecidableEq (X j)] (Z : Type) [Fintype Z] [DecidableEq Z] (FX : ∀ j, j ≤ s + 1 → Frame k (c.X j).rank (X j)) (FT : Frame k c.T.rank Z) (FM : Frame k (c.X (s + 1 + 1)).rank (Z ⊕ Unit)) (FY : ∀ j d, j + d = s + 1 → Frame k (c.V j).rank (X j ⊕ Fin d)) (sc : ℕ → k) (z₀ : Fin c.Lz.rank → k), c.Is → q.UnitAA → (ofSplit q).IsChar c.ψ ψk → HasConductor ψk 1 → (∀ j, valuation k (sc j) = 1) → (∀ j, sc (j + 1 + 1) = sc j * (ofSplit q).xi) → (∀ j ρ h, valuation k ((ofSplit q).hz (c.B j ρ h)) = 1) → (∀ j ρ h d (hd : j + d = s + 1), (ofSplit q).IsBesFrame (c.B j ρ h) (sc j) (FX j (by omega)) (FY j d hd)) → (∀ j ρ h d (hd : j + 1 + d = s + 1), (ofSplit q).IsJacFrame (c.J j ρ h) (sc j) ((ofSplit q).hz (c.B j ρ h)) (FX (j + 1) (by omega)) (FY (j + 1) d hd)) → FM.β = fromCols ((c.oT (s + 1 + 1) hs).iA.map (ofSplit q).pr * FT.β) (Matrix.of fun r _ => ((c.oT (s + 1 + 1) hs).iB.map (ofSplit q).pr *ᵥ z₀) r) → (∀ h, (v.τ s h).map (ofSplit q).pr *ᵥ z₀ = (-((ofSplit q).xi * sc s)) • fun i => (ofSplit q).pr ((c.bes s 0 h).ζ i)) → (∀ j h, (v.τ j h)ᴴ * ((c.bes j 0 h).L.gram * v.τ j h) = (-(D.host.xi0 * star D.host.xi0)) • c.Lz.gram) → (∀ j hj, IntIn q (c.X j) (FX j hj) (c.x j).L) → IntIn q (c.X (s + 1 + 1)) FM (c.x (s + 1 + 1)).L → IntIn q c.T FT v.NT → IsSelfDualC c.T v.NT → (∀ j d hd, IsSelfDualC (c.V j) (v.N j) ∧ IntIn q (c.V j) (FY j d hd) (v.N j)) → (∀ j ρ h (hj : j ≤ s + 1), IsSelfDualC (c.bes j ρ h).V₀ (o.M j ρ h) ∧ ∃ F₀, (ofSplit q).IsCoreFrame (c.B j ρ h) (sc j) (FX j hj) F₀ ∧ IntIn q (c.bes j ρ h).V₀ F₀ (o.M j ρ h)) → ∀ j ρ (h : j + 2 * ρ + 2 = D.R.m), GlobalTheory.FinPl.MonoAt (c.J j ρ h).d (v.N (j + 1)) (c.x (j + 1)).L q.v := by
-  intro D c v k₀ _ _ _ _ ι o k _ _ _ _ q ψk s hs X _ _ Z _ _ FX FT FM FY sc z₀ h1 h2 _ _ h5 _ h7 _ h9 _ _ _ h13 _ _ _ h17 _ j ρ h
-  have hd : j + 1 + 2 * ρ = s + 1 := by omega
-  exact monoAt_of_jacFrame q h2 (c.J j ρ h) (h17 (j + 1) _ hd).1 (h1.x (j + 1) (by omega)).sd (h5 j) (h7 j ρ h)
-    (h9 j ρ h _ hd) (h17 (j + 1) _ hd).2 (h13 (j + 1) (by omega))
 
 end GlobalTheory.JacMono

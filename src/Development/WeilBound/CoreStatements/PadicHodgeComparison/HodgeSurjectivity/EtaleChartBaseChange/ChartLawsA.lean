@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveBot
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveBot
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -256,7 +260,8 @@ def BChart.resC {K : Type} [CommRing K] {W Z Y : Scheme.{0}} {q : Z ⟶ Spec (Co
   rel k := by
     refine (pres_base_change (pushout_res π c.affine hV' (c.C_aff k) h (c.C_le k)).2 (c.u k) (c.surj k)).2.trans ?_
     rw [c.rel k, Ideal.map_span, Set.image_insert_eq, ← Set.range_comp]
-    simp [Function.comp_def, rs]
+    simp only [Function.comp_def, RingHom.map_sub, RingHom.map_mul, RingHom.map_one,
+      MvPolynomial.map_X, MvPolynomial.map_C, rs]
   inter k j := by
     simp only [rs]
     rw [Scheme.basicOpen_res, ← c.inter k j]

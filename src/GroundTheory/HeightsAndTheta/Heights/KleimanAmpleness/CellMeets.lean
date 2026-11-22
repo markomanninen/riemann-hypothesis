@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -14,8 +19,9 @@ variable (S : Type) [CommRing S] {K : Type} [Fintype K] {ι : K → Type} [∀ k
 def CellMeets (y : (Σ k, ι k) → Ω) (I : ∀ k, Finset (ι k)) : Prop :=
   ∀ k, ∀ i ∈ I k, y ⟨k, i⟩ ≠ 0
 
-open Classical in
+open scoped Classical
 
+open Classical in
 def cellSec (y : (Σ k, ι k) → Ω) (γ : K → ℤ) (I : ∀ k, Finset (ι k)) : Submodule S Ω :=
   if CellMeets y I then
     Submodule.span S {z | ∃ (g t : MRingOver S ι) (a : K → ℕ),
@@ -25,8 +31,8 @@ def cellSec (y : (Σ k, ι k) → Ω) (γ : K → ℤ) (I : ∀ k, Finset (ι k)
 
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
-open Classical in
 
+open Classical in
 def cellD (y : (Σ k, ι k) → Ω) (n : ℕ) :
     (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι n → Ω) →ₗ[S] (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH.Cell K ι (n + 1) → Ω) :=
   LinearMap.pi fun I => if CellMeets y I.1 then ∑ k, ∑ i ∈ I.1 k,

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TendstoOfSqueeze
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeExistsPosUnique
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAlgebrasMaxCompactAndLeviInterStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeWholeGroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeVolumeUnitaryGroupEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TendstoOfSqueeze
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeExistsPosUnique
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsAlgebrasMaxCompactAndLeviInterStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeWholeGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaugeMeasureMatrixAlgebraSubgroupLocalAsymptoticStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RiemannianHaarGaugeVolumeUnitaryGroupEqStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -71,7 +75,7 @@ theorem Jm_eq {ε : Fin n → Bool} (e : Fin p ⊕ Fin q ≃ Fin n) (h1 : ∀ i,
   obtain ⟨b, rfl⟩ := e.surjective j
   simp only [Jm, blk, submatrix_apply, diagonal_apply, Equiv.symm_apply_apply,
     EmbeddingLike.apply_eq_iff_eq]
-  rcases a with a | a <;> rcases b with b | b <;> simp [h1, h2, one_apply] <;> split_ifs <;> simp
+  rcases a with a | a <;> rcases b with b | b <;> simp [h1, h2, Matrix.neg_apply, Matrix.one_apply] <;> split_ifs <;> simp_all
 
 theorem unit_allPos {N : ℕ} (g : UJ (allPos N)) : (uMat g)ᴴ * uMat g = 1 := by
   have h : inUJ (allPos N) (uMat g) := g.2

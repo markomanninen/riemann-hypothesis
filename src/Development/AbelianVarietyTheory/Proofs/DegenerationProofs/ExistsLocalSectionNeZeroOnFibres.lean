@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RegularOfBoundedAtPadicAlgClPoints
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianSchemeProperClosureDataBasicProperties
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAddExtension
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLineBundleOfNormOneGenerators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RegularOfBoundedAtPadicAlgClPoints
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.JacobsonClosedPointsToolsInt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianSchemeProperClosureDataBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAddExtension
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsLineBundleOfNormOneGenerators
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -17,6 +22,74 @@ open GlobalTheory.ZJ
 namespace GlobalTheory
 namespace ThetaLocal
 open NormGlue
+
+namespace LocalBoundedRegular
+
+theorem exists_point_norm_valF_eq {X : Scheme.{0}} {p : ℕ} [Fact p.Prime]
+    (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
+    (y : Spec (.of (integralClosure ℤ_[p] K)) ⟶ X) (U : X.Opens)
+    (hy : ⊤ ≤ (Spec.map (CommRingCat.ofHom (algebraMap (integralClosure ℤ_[p] K) K)) ≫ y) ⁻¹ᵁ U)
+    (φ : Γ(X, U)) :
+    ∃ y' : Sp (OO p) ⟶ X, y' (cPt p) = y (IsLocalRing.closedPoint (integralClosure ℤ_[p] K)) ∧
+      Set.range (gPt p ≫ y') ⊆ U ∧
+      valF (gPt p ≫ y') U φ = (((Scheme.ΓSpecIso (.of K)).hom
+        ((Spec.map (CommRingCat.ofHom (algebraMap (integralClosure ℤ_[p] K) K)) ≫ y).appLE
+          U ⊤ hy φ) : K) : PadicAlgCl p) := by
+  haveI := isLocalHom_integralClosureToPadicAlgClIntegers K
+  have e : gPt p ≫ spMap (integralClosureToPadicAlgClIntegers K) ≫ y =
+      spMap K.val.toRingHom ≫
+        Spec.map (CommRingCat.ofHom (algebraMap (integralClosure ℤ_[p] K) K)) ≫ y := by
+    rw [← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp]
+    rfl
+  refine ⟨spMap (integralClosureToPadicAlgClIntegers K) ≫ y, ?_, ?_, ?_⟩
+  · refine (Scheme.Hom.comp_apply _ _ _).trans (congrArg y ?_)
+    exact IsLocalRing.comap_closedPoint (integralClosureToPadicAlgClIntegers K)
+  · rw [e]
+    rintro _ ⟨q, rfl⟩
+    exact hy (Set.mem_univ (spMap K.val.toRingHom q))
+  · rw [e, BoundedRegular.valF_spMap_comp_eq _ _ U hy]
+    rfl
+
+theorem existsUnique_resG_eq {X : Scheme.{0}} [IsIntegral X] (π : X ⟶ Sp ℤ) [Flat π]
+    [LocallyOfFiniteType π] (hX : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme X) {U W : X.Opens}
+    (h : U ≤ W) (φ : Γ(X, U)) (hU : (U : Set X).Nonempty)
+    (H : ∀ (p : ℕ) [Fact p.Prime] (y : Sp (OO p) ⟶ X), y (cPt p) ∈ W →
+      Set.range (gPt p ≫ y) ⊆ U → ‖valF (gPt p ≫ y) U φ‖ ≤ 1) :
+    ∃! ψ : Γ(X, W), resG X h ψ = φ := by
+  haveI : Nonempty U := hU.to_subtype
+  haveI : Nonempty W := (hU.mono h).to_subtype
+  obtain ⟨ψ, hψ⟩ := exists_germToFunctionField_eq_of_frequently_norm_le_one π U W
+    (fun x _ _ _ => (hX x).2) (φ := φ) fun p _ K hK => ⟨K, hK, le_rfl, fun y hy hW _ _ => by
+      obtain ⟨y', h1, h2, h3⟩ := exists_point_norm_valF_eq K y U hy φ
+      rw [← h3]
+      exact H p y' (h1 ▸ hW) h2⟩
+  have e : resG X h ψ = φ :=
+    X.germToFunctionField_injective U ((X.presheaf.germ_res_apply (homOfLE h) _ _ ψ).trans hψ)
+  exact ⟨ψ, e, fun ψ' h' => map_injective_of_isIntegral X (homOfLE h) (h'.trans e.symm)⟩
+
+
+theorem regular (X : Scheme.{0}) [IsIntegral X] (π : X ⟶ Sp ℤ) [Flat π]
+    [LocallyOfFiniteType π] (hX : Geo.Tor.IsNormalScheme X) (U W : X.Opens)
+    (h : U ≤ W) (φ : Γ(X, U)) (hU : (U : Set X).Nonempty) :
+    ((∀ (p : ℕ) [Fact p.Prime] (y : Sp (OO p) ⟶ X), y (cPt p) ∈ W →
+        Set.range (gPt p ≫ y) ⊆ U → ‖valF (gPt p ≫ y) U φ‖ ≤ 1) →
+          ∃! ψ : Γ(X, W), resG X h ψ = φ) ∧
+    (IsUnit φ → (∀ (p : ℕ) [Fact p.Prime] (y : Sp (OO p) ⟶ X), y (cPt p) ∈ W →
+        Set.range (gPt p ≫ y) ⊆ U → ‖valF (gPt p ≫ y) U φ‖ = 1) →
+          ∃ ψ : Γ(X, W), IsUnit ψ ∧ resG X h ψ = φ) := by
+  refine ⟨existsUnique_resG_eq π hX h φ hU, fun hφ H => ?_⟩
+  haveI : Nonempty U := hU.to_subtype
+  obtain ⟨φ', hφ'⟩ := hφ.exists_right_inv
+  obtain ⟨ψ, hψ, -⟩ := existsUnique_resG_eq π hX h φ hU fun p _ y h1 h2 => (H p y h1 h2).le
+  obtain ⟨ψ', hψ', -⟩ := existsUnique_resG_eq π hX h φ' hU fun p _ y h1 h2 => by
+    have e := congrArg norm (BoundedRegular.valF_mul_valF_eq_one _ U h2 hφ')
+    rw [norm_mul, H p y h1 h2, _root_.one_mul, norm_one] at e
+    exact e.le
+  refine ⟨ψ, IsUnit.of_mul_eq_one ψ' (map_injective_of_isIntegral X (homOfLE h) ?_), hψ⟩
+  change resG X h (ψ * ψ') = resG X h 1
+  rw [map_mul, hψ, hψ', hφ', map_one]
+
+end LocalBoundedRegular
 
 theorem isUnit_gs_iff_mem {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (a : Γ(X, U)) :
     IsUnit (gs f y U a) ↔ f y ∈ X.basicOpen a := by
@@ -89,7 +162,7 @@ theorem exists_local_section {G Z X : Scheme.{0}} (p₁ p₂ : X ⟶ G) [IsInteg
   have hW₂ := g₂ W hWne
   have hE₂ := g₂ (E i₀) (hne _ ⟨_, hW hW₂⟩)
   have hE₁ : ∀ k, p₁ ξ ∈ M.U k → p₁ ξ ∈ E k := fun k hk => g₁ _ (hne _ ⟨_, hk⟩)
-  have ll := GlobalTheory.regular_of_bounded_at_padicAlgCl_points.2 X π hX
+  have ll := LocalBoundedRegular.regular X π hX
   have nrm : ∀ k (V : X.Opens) (h₁ : V ≤ p₁ ⁻¹ᵁ E k) (h₂ : V ≤ p₂ ⁻¹ᵁ E i₀), ∃ u : Γ(X, V)ˣ,
       (ξ ∈ V → gm (𝟙 X) ξ V u = gm p₁ ξ _ (t k) * (gm p₂ ξ _ (t i₀))⁻¹) ∧
       ∀ (p : ℕ) [Fact p.Prime] (c : Sp (OO p) ⟶ X), p₁ (c (cPt p)) ∈ M.U k → p₂ (c (cPt p)) ∈ W →
@@ -277,8 +350,8 @@ theorem exists_rational_section {C : Core} (T : C.Theta) (Om : Set C.G.toScheme)
         rw [map_mul, toStk_valF _ _ z hz', toStk_valF x _ z (l₂ i hz), toStk_valF x _ z (l₁ i hz), ht' i _ x z hz,
           ← Units.val_mul, inv_mul_cancel_right]
       have e₂ : valF x _ θ₀.val = valF x _ (T.θ.f j) := by
-        rw [hθ₀, valF, valF, dif_pos ((top_le_iff_mem x _ z).2 (l₁ i hz)),
-          dif_pos ((top_le_iff_mem x _ z).2 (lθ (l₁ i hz)))]
+        rw [hθ₀, valF, valF, dite_eq_left ((top_le_iff_mem x _ z).2 (l₁ i hz)),
+          dite_eq_left ((top_le_iff_mem x _ z).2 (lθ (l₁ i hz)))]
         congr 1
         change (C.A.left.presheaf.map (homOfLE lθ).op ≫ x.appLE _ _ _).hom _ = _
         rw [Scheme.Hom.map_appLE]
@@ -292,8 +365,8 @@ theorem exists_rational_section {C : Core} (T : C.Theta) (Om : Set C.G.toScheme)
 
 end ThetaLocal
 
-open ThetaLocal NormGlue in
 
+open ThetaLocal NormGlue in
 theorem exists_local_section_ne_zero_on_fibres : ∀ (C : Core) (L : C.Law) (T : C.Theta) (Om : Set C.G.toScheme) (ν), IsOpen Om → T.Norms Om ν → L.CompanionTheory Om → (∃ (M : LB C.G.toScheme) (w : LB.Iso (M.pull C.a) T.L.L) (D : M.ι → C.A.left.Opens), M.IsLB ∧ w.IsGen ∧ (∀ i, (D i : Set C.A.left).Nonempty) ∧ ∀ (p : ℕ) [Fact p.Prime] (x : Sp (PadicAlgCl p) ⟶ C.A.left) (i : M.ι) (j : T.L.L.ι), IntAt C.a (M.U i) x → Set.range x ⊆ T.L.L.U j → Set.range x ⊆ D i → ‖valF x _ (w.s (j, fun _ => i)).val‖ * ν p x j = 1) → ∃ M : LB C.G.toScheme, M.IsLB ∧ LBIso (M.pull C.a) T.L.L ∧ ∀ z : C.Z, ∃ (N : C.Z.Opens) (σ : LB.Sec (M.pull (C.GG.hom ⁻¹ᵁ N).ι)), z ∈ N ∧ ∀ z' ∈ N, ∃ x ∈ Out.nonzeroLocus σ, C.GG.hom ((C.GG.hom ⁻¹ᵁ N).ι x) = z' := by
   rintro C L T Om ν hOm hν hS ⟨M, w, D, hM, hw, hD, hn⟩
   refine ⟨M, hM, ⟨w, hw⟩, fun z => ?_⟩

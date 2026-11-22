@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenRing
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenChart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenRing
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HcptgenChart
+
+@[expose] public section
 
 noncomputable section
 

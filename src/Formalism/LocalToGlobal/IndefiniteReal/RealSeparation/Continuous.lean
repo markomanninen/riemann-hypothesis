@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FrameMatEqGlobal
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FrameMatEqGlobal
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ attribute [-instance] CStarMatrix.instHMulOfFintypeOfMulOfAddCommMonoid
 
 variable {D : D7} {A T : HSp D} {ι : A.V →ₗ[D.host.E] T.V} {s : GA D A →* GA D T}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem map_formula_one {R : Type*} [CommRing R] (φ : AE D →+* R) (hι : HSpace.IsIsomEmb A T ι) (h : GA D A)
     (hh : (mt A h).map φ = 1) :
     ((frameMat T A ι).map (incA D) * mt A h * (embP' A T ι).map (incA D) +

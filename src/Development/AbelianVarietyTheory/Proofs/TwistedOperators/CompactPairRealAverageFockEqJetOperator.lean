@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicInfFinSplitPeriodsUnimodular
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ClassFunctionSumIntegral
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousReGLSymm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfOfMulFinOf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerFockMovedReal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtOfMemGfC
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerMovedVec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MvZOneEqMapUnivSubst
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInvertibleFamilyEvalSpan
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentities
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EvalAtJetMap
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiTContinuous
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaGridCharactersArchExponentsGapGtRank
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitaryAdelicInfFinSplitPeriodsUnimodular
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ClassFunctionSumIntegral
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousReGLSymm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfOfMulFinOf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerFockMovedReal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtOfMemGfC
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.KerMovedVec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MvZOneEqMapUnivSubst
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInvertibleFamilyEvalSpan
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockSubstitutionIdentities
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EvalAtJetMap
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PsiTContinuous
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaGridCharactersArchExponentsGapGtRank
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterInfinityExponentGroupLaws
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsRealFnNeZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.DefStep
@@ -43,15 +47,15 @@ theorem integrable_term {K : Type} [Group K] [TopologicalSpace K] [IsTopological
     Integrable (fun k => ℓ (mvZ (fun τ => (r k τ)⁻¹) (fun _ => 1) P) * evalAt (fun τ => r k τ * y τ) F) ν := by
   have key : ∀ k, ℓ (mvZ (fun τ => (r k τ)⁻¹) (fun _ => 1) P) =
       ∑ m ∈ (GlobalTheory.KJAvg.univSubst P).support,
-        eval (fun w => r k⁻¹ w.1 w.2.1 w.2.2) (coeff m (GlobalTheory.KJAvg.univSubst P)) * ℓ (monomial m 1) := by
+        eval (fun w => r k⁻¹ w.1 w.2.1 w.2.2) (AddMonoidAlgebra.coeff (GlobalTheory.KJAvg.univSubst P) m) * ℓ (monomial m 1) := by
     intro k
     rw [GlobalTheory.KJAvg.mvZ_one_eq_map_univSubst, GlobalTheory.KJAvg.linear_eq_sum_coeff ℓ _ _ (MvPolynomial.support_map_subset _ _)]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [MvPolynomial.coeff_map]
     simp only [GlobalTheory.KJAvg.ontoUni_inv hr]
   simp_rw [key, Finset.sum_mul]
-  refine integrable_finset_sum _ fun m _ => ?_
-  have hm := (GlobalTheory.KJAvg.integrable_avg_term ν hr (coeff m (GlobalTheory.KJAvg.univSubst P)) y F).mul_const (ℓ (monomial m 1))
+  refine integrable_finsetSum _ fun m _ => ?_
+  have hm := (GlobalTheory.KJAvg.integrable_avg_term ν hr (AddMonoidAlgebra.coeff (GlobalTheory.KJAvg.univSubst P) m) y F).mul_const (ℓ (monomial m 1))
   refine hm.congr (Filter.Eventually.of_forall fun k => ?_)
   simp only
   ring
@@ -90,6 +94,7 @@ private theorem lft_mem_VV {K : Type} [Group K] [TopologicalSpace K] {r : K → 
   rw [e]
   exact Submodule.smul_mem _ _ (Submodule.coe_mem _)
 
+omit [Fintype ι] in
 private theorem evalAt_smul' (y : ι → Matrix (Fin b) (Fin b) ℂ) (c : ℂ) (p : PY ι b) :
     evalAt y (c • p) = c * evalAt y p := by
   unfold evalAt
@@ -163,7 +168,7 @@ theorem avg_eq_jet (hab : a ≤ b) (ha : 0 < a) (lam : ι → DomWeight a) (lam'
       ((ℓ.comp (mvZ (fun _ => 1) h).toLinearMap) (mvZ (fun τ => (r k τ)⁻¹) (fun _ => 1) P) *
         evalAt (fun τ => r k τ * y j τ) (v.1 * (∏ τ, (frDet ℂ a τ : PY ι a) ^ n τ)))) ν :=
     fun j _ => (integrable_term ν hr P _ (y j) _).const_mul (Pc j)
-  rw [integral_congr_ae (Filter.Eventually.of_forall hmain), integral_const_mul, integral_finset_sum _ hint]
+  rw [integral_congr_ae (Filter.Eventually.of_forall hmain), integral_const_mul, integral_finsetSum _ hint]
   simp only [integral_const_mul, hS _ _ hFV]
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply,
     Submodule.subtype_apply, evalLin_apply, smul_eq_mul, hu, evalAt_smul', evalAt_lft_eq,
@@ -174,6 +179,7 @@ theorem avg_eq_jet (hab : a ≤ b) (ha : 0 < a) (lam : ι → DomWeight a) (lam'
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
+omit [Fintype ι] in
 theorem substF_rename (g : ι → Matrix (Fin a) (Fin a) ℂ) (h : ι → Matrix (Fin b) (Fin b) ℂ) (P : FP ι a b) :
     GlobalTheory.CompactHowe.substF (fun τ => (g τ).transpose) h (rename (fun k : ι × Fin b × Fin a => (k.1, k.2.2, k.2.1)) P) =
       rename (fun k : ι × Fin b × Fin a => (k.1, k.2.2, k.2.1)) (mvZ g h P) := by
@@ -181,7 +187,8 @@ theorem substF_rename (g : ι → Matrix (Fin a) (Fin a) ℂ) (h : ι → Matrix
   rw [MvPolynomial.aeval_rename, ← AlgHom.comp_apply, MvPolynomial.comp_aeval]
   refine congrArg (fun f => aeval f P) ?_
   funext v
-  simp only [Function.comp_apply, map_sum, map_mul, MvPolynomial.rename_C, MvPolynomial.rename_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Function.comp_apply, map_sum, map_mul, MvPolynomial.rename_C, MvPolynomial.rename_X,
     Matrix.transpose_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -262,7 +269,7 @@ theorem grid_vals {i : ℕ} (hi : i + 1 ≤ D.R.m) (τ : D.what₂.Tau)
     intro j hj
     unfold parV
     rw [entries_shift, Finset.card_image_of_injective _ (add_left_injective _)]
-    exact (card_entries_parD D sc.cGap τ hj).trans (rank_grid G hj).symm
+    exact (GlobalTheory.FunObj.card_entries_parD D sc.cGap τ hj).trans (rank_grid G hj).symm
   have cardN : ∀ j, j ≤ D.R.m →
       ((entries (parV D sc.cGap j D.R.m τ)).image Neg.neg).card = (G.V (.grid j D.R.m)).rank := by
     intro j hj
@@ -271,7 +278,7 @@ theorem grid_vals {i : ℕ} (hi : i + 1 ≤ D.R.m) (τ : D.what₂.Tau)
       ((entries (parV D sc.cGap i D.R.m τ)).image Neg.neg).image (· + ((if Odd (i + D.R.m) then -(1 / 2) else 0) - (if Odd (i + 1 + D.R.m) then -(1 / 2) else 0))) ∪
         TPar.block (-(cen D sc.cGap τ (D.R.m - i) : ℚ) - (if Odd (i + 1 + D.R.m) then -(1 / 2) else 0)) (sLen D) := by
     unfold parV
-    rw [entries_shift, entries_shift, entries_parD_succ D sc.cGap τ hi]
+    rw [entries_shift, entries_shift, GlobalTheory.FunObj.entries_parD_succ D sc.cGap τ hi]
     exact neg_step _ _ _ _ _
   have hlt : ∀ x ∈ (entries (parV D sc.cGap i D.R.m τ)).image Neg.neg,
       ∀ y ∈ TPar.block (-(cen D sc.cGap τ (D.R.m - i) : ℚ) - (if Odd (i + 1 + D.R.m) then -(1 / 2) else 0)) (sLen D), y < x + ((if Odd (i + D.R.m) then -(1 / 2) else 0) - (if Odd (i + 1 + D.R.m) then -(1 / 2) else 0)) := by
@@ -284,7 +291,7 @@ theorem grid_vals {i : ℕ} (hi : i + 1 ≤ D.R.m) (τ : D.what₂.Tau)
       convert hy using 1
       ring
     rw [neg_sub_mem_block] at hy'
-    have hlt0 := parD_below D sc.cGap τ hi hp hy'
+    have hlt0 := GlobalTheory.FunObj.parD_below D sc.cGap τ hi hp hy'
     linarith
   exact step_vals hrb _ _ (cardN i hi0) hFe hlt (cardN (i + 1) hi) (wt G (.grid i D.R.m) τ) (wt G (.grid (i + 1) D.R.m) τ)
     (fun r => wt_grid_eq_highestWeight G τ hi0 (cardP i hi0) (cardN i hi0) r)
@@ -354,10 +361,10 @@ theorem exps_match {μ0 : T} (hL : L.Is μ0) {i : ℕ} (hi : i < D.R.m) (τ : D.
     omega
   have d1 : ((wt G (.grid (i + 1) D.R.m) τ).detShift : ℚ) =
       ((wt G (.grid (i + 1) D.R.m) τ).w ⟨(G.V (.grid (i + 1) D.R.m)).rank - 1, by omega⟩ : ℚ) := by
-    simp only [DomWeight.detShift, dif_pos hpos]
+    simp only [DomWeight.detShift, dite_eq_left hpos]
   have d0 : ((wt G (.grid i D.R.m) τ).detShift : ℚ) =
       ((wt G (.grid i D.R.m) τ).w ⟨(G.V (.grid i D.R.m)).rank - 1, by omega⟩ : ℚ) := by
-    simp only [DomWeight.detShift, dif_pos hra]
+    simp only [DomWeight.detShift, dite_eq_left hra]
   have g2 := gv2 ⟨(G.V (.grid (i + 1) D.R.m)).rank - 1, by omega⟩ hlast
   have g1 := gv1 ⟨(G.V (.grid i D.R.m)).rank - 1, by omega⟩
   have hcast : ((G.V (.grid (i + 1) D.R.m)).rank : ℚ) = (G.V (.grid i D.R.m)).rank + sLen D := by
@@ -368,20 +375,20 @@ theorem exps_match {μ0 : T} (hL : L.Is μ0) {i : ℕ} (hi : i < D.R.m) (τ : D.
   · have key : (e₂ : ℚ) = ((wt G (.grid (i + 1) D.R.m) τ).detShift : ℚ) := by
       rw [d1, g2, he₂, eb]
       by_cases h : Odd (i + 1 + D.R.m)
-      · simp only [h, pa.mpr h, if_true]
+      · simp only [h, pa.mpr h, ite_true]
         ring
-      · simp only [h, mt pa.mp h, if_false]
+      · simp only [h, mt pa.mp h, ite_false]
         ring
     exact_mod_cast key
   · have hnn : 0 ≤ (wt G (.grid (i + 1) D.R.m) τ).w ⟨(G.V (.grid i D.R.m)).rank - 1, by omega⟩ -
         (wt G (.grid (i + 1) D.R.m) τ).detShift := by
       have hd : (wt G (.grid (i + 1) D.R.m) τ).detShift =
           (wt G (.grid (i + 1) D.R.m) τ).w ⟨(G.V (.grid (i + 1) D.R.m)).rank - 1, by omega⟩ := by
-        simp only [DomWeight.detShift, dif_pos hpos]
+        simp only [DomWeight.detShift, dite_eq_left hpos]
       rw [hd, sub_nonneg]
       exact (wt G (.grid (i + 1) D.R.m) τ).anti (Fin.mk_le_mk.mpr (by omega))
     unfold nuEnd
-    rw [dif_pos (show (G.V (.grid i D.R.m)).rank - 1 < (G.V (.grid (i + 1) D.R.m)).rank by omega)]
+    rw [dite_eq_left (show (G.V (.grid i D.R.m)).rank - 1 < (G.V (.grid (i + 1) D.R.m)).rank by omega)]
     unfold DomWeight.natW
     rw [Int.toNat_of_nonneg hnn]
     have key : (e₁ : ℚ) + ((wt G (.grid i D.R.m) τ).detShift : ℚ) =
@@ -393,9 +400,9 @@ theorem exps_match {μ0 : T} (hL : L.Is μ0) {i : ℕ} (hi : i < D.R.m) (τ : D.
               (sLen D : ℚ) / 2 := g1
       rw [g1', d0, d1, g2, he₁, ea, hcast]
       by_cases h : Odd (i + D.R.m)
-      · simp only [h, pb.mpr h, if_true]
+      · simp only [h, pb.mpr h, ite_true]
         ring
-      · simp only [h, mt pb.mp h, if_false]
+      · simp only [h, mt pb.mp h, ite_false]
         ring
     exact_mod_cast key
 
@@ -444,8 +451,8 @@ theorem map_conj_of_unitary {n : ℕ} {u : Matrix (Fin n) (Fin n) ℂ} (hu : u �
 
 end Grid
 
-open GlobalTheory.KJInf GlobalTheory.SeeSaw in
 
+open GlobalTheory.KJInf GlobalTheory.SeeSaw in
 theorem real_average_jet : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T} (S : GridChoice W U) {μ0 : T},
     L.Is μ0 → ∀ (i : ℕ), i < D.R.m →
     ∀ (a b : D.what₂.Tau → ℚ), (∀ τ, HasInfExp D (G.chrS (.chi i D.R.m : Pair T)) τ (a τ)) → (∀ τ, HasInfExp D (G.chrT (.chi i D.R.m : Pair T)) τ (b τ)) →
@@ -465,8 +472,8 @@ theorem real_average_jet : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
   intro D T L sc G W U S μ0 hL i hi a b ha hb e₁ e₂ he₁ he₂ Q Λ
   classical
   have hi1 : i + 1 ≤ D.R.m := hi
-  haveI : LocallyCompactSpace (GA D (G.V (.grid i D.R.m))) := (Formalism.IndefR.Eqv.ga_facts D _).2.2.1
-  haveI : LocallyCompactSpace (GinfC (G.V (.grid i D.R.m))) := (GlobalTheory.AdelicSplit.isClosed_GinfC' _).locallyCompactSpace
+  have : LocallyCompactSpace (GA D (G.V (.grid i D.R.m))) := (Formalism.IndefR.Eqv.ga_facts D _).2.2.1
+  have : LocallyCompactSpace (GinfC (G.V (.grid i D.R.m))) := (GlobalTheory.AdelicSplit.isClosed_GinfC' _).locallyCompactSpace
   have hr : OntoUni fun k : GinfC (G.V (.grid i D.R.m)) => inB W.θ (G.V (.grid i D.R.m)) (S.N.frC (.grid i D.R.m)) k.1 :=
     GlobalTheory.SeeSaw.ontoUni_inB D W.θ _ _ W.θ_is (fun τ => GlobalTheory.RealType.frC_on S.N (by exact ⟨hi.le, rfl⟩) τ)
   have hr' : OntoUni fun k : GinfC (G.V (.grid (i + 1) D.R.m)) => inB W.θ (G.V (.grid (i + 1) D.R.m)) (S.N.frC (.grid (i + 1) D.R.m)) k.1 :=

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
-import Formalism.LocalRingCardinality.DataNChTie
-import Formalism.SharpRestriction.LevelLetterCocycles.VKEqOfFrac
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemZpowersOfTameGen
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Formalism.SharpRestriction.LevelLetterCocycles.VKEqOfFrac
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemZpowersOfTameGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -193,7 +197,9 @@ theorem l_mem_maximalIdeal {D : Formalism.BasicNotions.D7} {N : NData D.R D.host
   obtain ⟨P, hP, hPc⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := X.Ok i k')
     (IsLocalRing.maximalIdeal (X.O i))
     (by rw [(RingHom.injective_iff_ker_eq_bot _).1 (X.Ok_inj i k')]; exact bot_le)
-  rw [← IsLocalRing.eq_maximalIdeal hP, ← map_natCast (algebraMap (X.O i) (X.Ok i k')), ← Ideal.mem_comap, hPc]
+  rw [← IsLocalRing.eq_maximalIdeal hP, ← map_natCast (algebraMap (X.O i) (X.Ok i k')), ← Ideal.mem_comap]
+  change ((X.l i : ℕ) : X.O i) ∈ Ideal.under (X.O i) P
+  rw [hPc]
   exact X.O_l i
 
 section Main

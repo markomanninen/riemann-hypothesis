@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,14 +51,6 @@ theorem gsp_map (f : R →+* R') {ν : R} {g : M4 R} (h : IsGSp ν g) : IsGSp (f
   rw [IsGSp, adj_map, ← Matrix.map_mul, h]
   ext i j
   by_cases e : i = j <;> simp [e, Matrix.one_apply]
-
-def conjSp {Γ : Type} [Group Γ] {m : M4 R} (hm : IsGSp 1 m) (r : Γ →* M4 R) : Γ →* M4 R where
-  toFun g := adj m * r g * m
-  map_one' := by rw [map_one, mul_one, sp_adj_mul hm]
-  map_mul' g h := by
-    rw [map_mul]
-    calc adj m * (r g * r h) * m = adj m * r g * (m * adj m) * r h * m := by rw [sp_mul_adj hm]; simp only [mul_assoc, mul_one]
-      _ = _ := by simp only [mul_assoc]
 
 theorem wM_sp (pr : Bool) : IsGSp 1 (wM R pr) := by
   cases pr
@@ -106,12 +102,6 @@ theorem Par.adj {X : M4 R} (hX : Par X) : Par (adj X) := by
 variable {I : Ideal R}
 
 theorem Cg.refl (X : M4 R) : Cg I X X := fun i j => by simp
-
-theorem Cg.symm {X Y : M4 R} (h : Cg I X Y) : Cg I Y X := fun i j => by
-  simpa using neg_mem (h i j)
-
-theorem Cg.trans {X Y Z : M4 R} (h : Cg I X Y) (h' : Cg I Y Z) : Cg I X Z := fun i j => by
-  simpa using add_mem (h i j) (h' i j)
 
 theorem Cg.mul {X Y X' Y' : M4 R} (h : Cg I X Y) (h' : Cg I X' Y') : Cg I (X * X') (Y * Y') := by
   intro i j

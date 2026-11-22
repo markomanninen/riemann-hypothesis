@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIndexUnitIdlSup
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem obo_det {R : Type} [CommRing R] (g : GL (Fin 1) R) : obo R (GeneralLinea
 theorem obo_apply {R : Type} [CommRing R] (u : Rˣ) (i j : Fin 1) : (obo R u).val i j = u := by
   simp [obo, Subsingleton.elim i 0, Subsingleton.elim j 0]
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem lie_rt (X : Lie E 1) (h : GA E 1) : Commute (rt E 1 h) (lie E 1 X) :=
   LinearMap.ext fun φ => Subtype.ext <| funext fun g => by
@@ -57,7 +61,7 @@ theorem lie_act (X : Lie E 1) (o : Op E 1) : Commute (lie E 1 X) (act o) := by
 
 theorem scalar_of_eigen {a : ℕ} (π : CuspSub E a) (T : Module.End ℂ (Sm E a)) (hT : ∀ o, Commute T (act o))
     {φ : Sm E a} (hφ : φ ∈ π.V) (h0 : φ ≠ 0) {c : ℂ} (h : T φ = c • φ) : ∀ ψ ∈ π.V, T ψ = c • ψ := by
-  have hs : IsStable (π.V ⊓ T.eigenspace c) := fun o ψ hψ =>
+  have hs : _root_.GlobalTheory.CuspRep.IsStable (π.V ⊓ T.eigenspace c) := fun o ψ hψ =>
     ⟨π.stable o ψ hψ.1, Module.End.mem_eigenspace_iff.2 (by
       have h1 : T (act o ψ) = act o (T ψ) := LinearMap.congr_fun (hT o).eq ψ
       rw [h1, Module.End.mem_eigenspace_iff.1 hψ.2, map_smul])⟩
@@ -102,7 +106,7 @@ theorem lie_mem_Zalg (X : Lie E 1) : lie E 1 X ∈ Zalg E 1 := by
       rw [atEmb_eq]; simp
     have e2 : lieS E 1 0 0 (atEmb τ z) =
         z • Eop τ 0 0 + starRingEnd ℂ z • Eop (ComplexEmbedding.conjugate τ) 0 0 := by
-      rw [atEmb_eq, map_add, map_smul, map_smul]
+      rw [atEmb_eq, map_add (f := _), map_smul, map_smul]
       simp only [Eop, atEmb_conj, map_one, Complex.conj_I, e, map_neg, ← Complex.coe_smul]
       match_scalars
       · rw [Complex.re_eq_add_conj]; ring
@@ -116,7 +120,8 @@ theorem lie_mem_Zalg (X : Lie E 1) : lie E 1 X ∈ Zalg E 1 := by
       unfold atEmb
       simp only [InfinitePlace.mk_embedding, if_true]
     simp [this, Finset.univ_sum_single]
-  rw [e, ← lieS_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, ← lieS_apply, map_sum]
   exact sum_mem fun w _ => h1 _ _
 
 theorem lie_scalar (π : CuspSub E 1) (X : Lie E 1) : ∃ c : ℂ, ∀ ψ ∈ π.V, lie E 1 X ψ = c • ψ := by
@@ -312,7 +317,7 @@ theorem exists_eq_twist (π : CuspSub E 1) : ∃ χ : HChar E, (CuspSub.triv E l
       rw [obo_det, mul_one, mul_comm, ← h1, one_mul]⟩
   exact ⟨χ, CuspSub.ext ((((CuspSub.triv E le_rfl).twist χ).irred _ hle π.stable).resolve_left π.ne_bot).symm⟩
 
-theorem ofChar_bijective : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E],
+theorem ofChar_bijective : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E],
     Function.Bijective (CG.ofChar : HChar E → CG E 1) := by
   intro E _ _ _
   refine ⟨CG.ofChar_injective, fun σ => ?_⟩

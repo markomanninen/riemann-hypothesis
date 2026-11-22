@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictJumps
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictJumps
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.NL.CrystallineBase
 
 noncomputable section
@@ -16,7 +21,7 @@ theorem herr_of_tie {O D M : Type} [CommRing O] [AddCommGroup D] [Module O D] [A
   simp only [herrCocycles, LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.sub_apply,
     LinearMap.neg_apply, LinearMap.id_apply]
   apply hj
-  rw [map_zero, map_add, map_neg, map_sub, map_sub, hγ, hφ, ← hy, ← hz, map_add, map_sub, map_sub,
+  rw [map_zero, map_add (f := _), map_neg, map_sub, map_sub, hγ, hφ, ← hy, ← hz, map_add (f := _), map_sub, map_sub,
     hc, ht]
   abel
 

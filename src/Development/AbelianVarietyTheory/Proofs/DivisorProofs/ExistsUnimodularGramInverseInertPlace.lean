@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -14,36 +19,36 @@ open GlobalTheory.InertLocFrame
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {L : Type} [Field L]
 
-def intAt (v : Pl F) : AddSubgroup (AE F E) :=
-  AddSubgroup.closure {z : AE F E | ∃ a : AF F, At (evFin F v) a ∧
+def intAt (v : Pl (F := F)) : AddSubgroup (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :=
+  AddSubgroup.closure {z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E) | ∃ a : AF F, At (evFin F v) a ∧
     evFin F v a ∈ v.adicCompletionIntegers F ∧ ∃ o : 𝓞 E, z = a • inclR (F := F) (AF F) (o : E)}
 
-def hA (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → AE F E) : AE F E :=
+def hA (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E) :=
   ∑ k, ∑ l, U k * inclR (F := F) (AF F) (J k l) * cA σ (V l)
 
-theorem hA_add_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U U' V : Fin n → AE F E) :
+theorem hA_add_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U U' V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J (U + U') V = hA σ J U V + hA σ J U' V := by
   simp only [hA, Pi.add_apply, add_mul, Finset.sum_add_distrib]
 
-theorem hA_add_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V V' : Fin n → AE F E) :
+theorem hA_add_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V V' : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J U (V + V') = hA σ J U V + hA σ J U V' := by
-  simp only [hA, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hA, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
-theorem hA_neg_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → AE F E) :
+theorem hA_neg_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J (-U) V = -hA σ J U V := by
   simp only [hA, Pi.neg_apply, neg_mul, Finset.sum_neg_distrib]
 
-theorem hA_neg_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → AE F E) :
+theorem hA_neg_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J U (-V) = -hA σ J U V := by
   simp only [hA, Pi.neg_apply, map_neg, mul_neg, Finset.sum_neg_distrib]
 
-theorem hA_zero_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (V : Fin n → AE F E) :
+theorem hA_zero_left (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J 0 V = 0 := by simp [hA]
 
-theorem hA_zero_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U : Fin n → AE F E) :
+theorem hA_zero_right (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (U : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     hA σ J U 0 = 0 := by simp [hA]
 
-theorem at_mul {v : Pl F} {a b : AF F} (ha : At (evFin F v) a) : At (evFin F v) (a * b) := fun u hu => by
+theorem at_mul {v : Pl (F := F)} {a b : AF F} (ha : At (evFin F v) a) : At (evFin F v) (a * b) := fun u hu => by
   have := ha u hu
   rw [smul_eq_mul] at this ⊢
   rw [← mul_assoc, this, zero_mul]
@@ -51,13 +56,14 @@ theorem at_mul {v : Pl F} {a b : AF F} (ha : At (evFin F v) a) : At (evFin F v) 
 theorem hA_gen (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (a b : AF F) (y y' : Fin n → E) :
     hA σ J (a • fun i => inclR (F := F) (AF F) (y i)) (b • fun i => inclR (F := F) (AF F) (y' i)) =
       (a * b) • inclR (F := F) (AF F) (form σ J y y') := by
-  simp only [hA, form, dotProduct, Matrix.mulVec, Pi.smul_apply, map_sum, map_mul, Algebra.smul_def,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, form, dotProduct, Matrix.mulVec, Pi.smul_apply, map_sum, map_mul, Algebra.smul_def,
     AlgHom.commutes, GlobalTheory.InertSelfDual.cA_inclR, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   ring
 
-theorem hA_mem (σ : E →ₐ[F] E) (B : Base F E) {n r s : ℕ} (X : Spc F E n) (hX : X.IsHerm σ B r s) (v : Pl F)
-    {U V : Fin n → AE F E} (hU : U ∈ GlobalTheory.InertSph.latAt X v) (hV : V ∈ GlobalTheory.InertSph.latAt X v) :
+theorem hA_mem (σ : E →ₐ[F] E) (B : Base F E) {n r s : ℕ} (X : Spc F E n) (hX : X.IsHerm σ B r s) (v : Pl (F := F))
+    {U V : Fin n → _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hU : U ∈ GlobalTheory.InertSph.latAt X v) (hV : V ∈ GlobalTheory.InertSph.latAt X v) :
     hA σ X.J U V ∈ intAt (E := E) v := by
   induction hU using AddSubgroup.closure_induction with
   | mem U hU' =>
@@ -76,7 +82,7 @@ theorem hA_mem (σ : E →ₐ[F] E) (B : Base F E) {n r s : ℕ} (X : Spc F E n)
   | add U U' _ _ h1 h2 => rw [hA_add_left]; exact add_mem h1 h2
   | neg U _ h => rw [hA_neg_left]; exact neg_mem h
 
-theorem mul_lat_mem {d : ℕ} (W : Spc F E d) (v : Pl F) {c : AE F E} (hc : c ∈ intAt (E := E) v) {y : Fin d → E}
+theorem mul_lat_mem {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) {c : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)} (hc : c ∈ intAt (E := E) v) {y : Fin d → E}
     (hy : y ∈ W.L) : (fun k => c * inclR (F := F) (AF F) (y k)) ∈ GlobalTheory.InertSph.latAt W v := by
   induction hc using AddSubgroup.closure_induction with
   | mem z hz =>
@@ -98,12 +104,12 @@ open GlobalTheory.InertLocFrame
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {L : Type} [Field L]
 
-theorem at_mul_left' {v : Pl F} {z : AE F E} (hz : At (evFin F v) z) (w : AE F E) : At (evFin F v) (z * w) :=
+theorem at_mul_left' {v : Pl (F := F)} {z : AE F E} (hz : At (evFin F v) z) (w : AE F E) : At (evFin F v) (z * w) :=
   fun u hu => by rw [← smul_mul_assoc, hz u hu, zero_mul]
 
 section Emb
 
-variable {v : Pl F} {ι : L →+ AE F E} (himg : ∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z)
+variable {v : Pl (F := F)} {ι : L →+ AE F E} (himg : ∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z)
   (hmul : ∀ x y, ι (x * y) = ι x * ι y)
 include himg hmul
 
@@ -122,7 +128,8 @@ theorem mul_one_right (x : L) : ι x * ι 1 = ι x := by rw [← hmul, mul_one]
 theorem tJ_mul (hinj : Function.Injective ι) {m p q : Type} [Fintype p] (M : Matrix m p E) (N : Matrix p q E) :
     tJ ι (M * N) = tJ ι M * tJ ι N := by
   symm; apply tJ_eq himg hmul hinj; intro i j
-  rw [Matrix.mul_apply, Matrix.mul_apply, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, Matrix.mul_apply, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [hmul, tJ_spec himg hmul, tJ_spec himg hmul, map_mul]
   calc ι 1 * inclR (F := F) (AF F) (M i k) * (ι 1 * inclR (F := F) (AF F) (N k j))
@@ -153,7 +160,7 @@ namespace GlobalTheory.InertGram
 open GlobalTheory.InertLocFrame
 
 theorem exists_gram_inv : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E), B.IsGood σ →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     ∀ (n r s : ℕ) (X : Spc F E n), X.IsHerm σ B r s →
     ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L) (σL : L →+* L) (q : ℕ) (ι : L →+ AE F E),
       Formalism.UG.IsUnramInv ϖ σL q → Function.Injective ι → (∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z) → (∀ x y, ι (x * y) = ι x * ι y) → (∀ x, ι (σL x) = cA σ (ι x)) →
@@ -229,7 +236,8 @@ theorem exists_gram_inv : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
     rw [hint']
     have : ι (gram σL ι P X.J i j) = hA σ X.J (fun k => ι (Pm k i)) (fun k => ι (Pm k j)) := by
       rw [hGdef]
-      simp only [hA, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, hmul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hA, Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, hmul,
         tJ_spec himg hmul, hσ, Finset.sum_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_

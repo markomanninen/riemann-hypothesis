@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.LinearFormAdelic
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PhzEqFlat
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousNilpotentFramePart
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.RatVecCountable
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.LinearFormAdelic
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.PhzEqFlat
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.ContinuousNilpotentFramePart
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.RatVecCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem padCond {ε : ℤˣ} (hε : d.b.1ᵀ * dbl d.Y.J * d.b.1.map σ = Matrix
     have := congrFun (congrFun hc (L.em k)) (L.em l)
     simpa [padZ, ComplexParameterFamilyContinuity.em_ne, pre_em, Matrix.transpose_apply, smul_eq_mul] using this
   | zero => intro k l; simp
-  | add β β' _ _ h h' => intro k l; rw [Matrix.add_apply, Matrix.add_apply, h, h', map_add, mul_add, neg_add]
+  | add β β' _ _ h h' => intro k l; rw [Matrix.add_apply, Matrix.add_apply, h, h', map_add (f := _), mul_add, neg_add]
   | neg β _ h => intro k l; rw [Matrix.neg_apply, Matrix.neg_apply, h, map_neg, mul_neg]
 
 theorem sig_delta (hB : d.B.IsGood σ) {ε : ℤˣ}
@@ -104,7 +108,20 @@ theorem sig_delta (hB : d.B.IsGood σ) {ε : ℤˣ}
     (hcf : ∃ (x : d.G) (A' : Matrix (Fin d.n) (Fin d.n) (AE F E)), inFrame d.b x = Matrix.fromBlocks 1 (aB L δ 1) 0 A') :
     σ δ = ((-(ε : ℤ) : ℤ) : E) * δ := by
   obtain ⟨x, A', hx⟩ := hcf
-  have inv : ∀ z, cA σ (cA σ z) = z := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ (kunf.sigma_invol d.B hB)
+  have hc : ∀ x : E, cA σ (inclR (F := F) (AF F) x) = inclR (F := F) (AF F) (σ x) := by
+    intro x
+    show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] x) = (1 : AF F) ⊗ₜ[F] σ x
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
+  have inv : ∀ z, cA σ (cA σ z) = z := by
+    intro z
+    have hσ := kunf.sigma_invol d.B hB
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul a x =>
+      show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
+        (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ (a ⊗ₜ[F] x)) = a ⊗ₜ[F] x
+      rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply, hσ]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have h := kunf.frame_eq hε x
   rw [hx] at h
   have h1 : (1 : Matrix (Fin d.n) (Fin d.n) (AE F E)).map (cA σ) = 1 := Matrix.map_one _ (map_zero _) (map_one _)
@@ -121,11 +138,12 @@ theorem sig_delta (hB : d.B.IsGood σ) {ε : ℤˣ}
     by_cases hij : i = j <;> simp [Matrix.one_apply, hij]
   rw [hA, h1, Matrix.transpose_one, Matrix.one_mul, Matrix.mul_one] at h4
   have he := congrFun (congrFun h4 L.i₀) L.i₀
-  simp [aB, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR] at he
+  simp [aB, hc] at he
   have e2 : ((ε : ℤ) : E) * ((ε : ℤ) : E) = 1 := eps_sq ε
   have h5 : ((ε : ℤ) : E) * σ δ + δ = 0 := by
     apply kfour.inclR_injective (F := F)
-    rw [map_add, map_mul, map_intCast, he, map_zero]
+    rw [map_add (f := _), map_mul, map_intCast,
+      he, map_zero]
   push_cast
   linear_combination ((ε : ℤ) : E) * h5 - σ δ * e2
 
@@ -148,14 +166,27 @@ theorem ins_mem (hB : d.B.IsGood σ) {ε : ℤˣ}
     (hδ : σ δ = ((-(ε : ℤ) : ℤ) : E) * δ) (b : Fin L.n → AE F E) (a : AF F) {β : Matrix (Fin L.n) (Fin L.n) (AE F E)}
     (hβ : β ∈ nA σ L.Y L.b) : ins L (((ε : ℤ) : AE F E)) δ ((b, a), β) ∈ nA σ d.Y d.b := by
   rw [kunf.mem_nA_iff hε]
+  have hc : ∀ x : E, cA σ (inclR (F := F) (AF F) x) = inclR (F := F) (AF F) (σ x) := by
+    intro x
+    show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] x) = (1 : AF F) ⊗ₜ[F] σ x
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
   have e2 : ((ε : ℤ) : AE F E) * ((ε : ℤ) : AE F E) = 1 := eps_sq ε
   have cε : cA σ (((ε : ℤ) : AE F E)) = ((ε : ℤ) : AE F E) := map_intCast _ _
-  have inv : ∀ z, cA σ (cA σ z) = z := GlobalTheory.EisBL.DoubledUnipotentRadical.cA_cA σ (kunf.sigma_invol d.B hB)
+  have inv : ∀ z, cA σ (cA σ z) = z := by
+    intro z
+    have hσ := kunf.sigma_invol d.B hB
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul a x =>
+      show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ
+        (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ (a ⊗ₜ[F] x)) = a ⊗ₜ[F] x
+      rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply, hσ]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   ext r c
   simp only [Matrix.transpose_apply, Matrix.neg_apply, Matrix.smul_apply, Matrix.map_apply, smul_eq_mul]
   rcases eq_or_ne r L.i₀ with rfl | hr <;> rcases eq_or_ne c L.i₀ with rfl | hc
   · simp only [ins, dite_true]
-    rw [map_smul, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR, hδ, map_mul, map_intCast, Algebra.smul_def, Algebra.smul_def]
+    rw [map_smul, hc, hδ, map_mul, map_intCast, Algebra.smul_def, Algebra.smul_def]
     push_cast
     linear_combination (-(algebraMap (AF F) (AE F E) a * inclR (F := F) (AF F) δ)) * e2
   · simp [ins, hc]
@@ -243,7 +274,7 @@ theorem pEquiv0 {δ : E} (hδ0 : δ ≠ 0)
         · funext j
           rfl
         · show linearFormAdelic (F := F) δ ((β + β').1 L.i₀ L.i₀) = linearFormAdelic (F := F) δ (β.1 L.i₀ L.i₀) + linearFormAdelic (F := F) δ (β'.1 L.i₀ L.i₀)
-          rw [← map_add]
+          rw [← map_add (f := _)]
           rfl
       continuous_toFun := by
         refine Continuous.prodMk (Continuous.prodMk ?_ ?_) ?_
@@ -281,7 +312,11 @@ theorem pEquiv0 {δ : E} (hδ0 : δ ≠ 0)
       simp only [ins, incM, Matrix.map_apply, Matrix.of_apply, hr, hc, dite_true, dite_false]
     · rw [inclR_smul', ← hf]
     · exact hv' _
-    · rw [hv', map_neg, map_mul, map_intCast, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR]
+    · have hc : ∀ x : E, cA σ (inclR (F := F) (AF F) x) = inclR (F := F) (AF F) (σ x) := by
+        intro x
+        show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] x) = (1 : AF F) ⊗ₜ[F] σ x
+        rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
+      rw [hv', map_neg, map_mul, map_intCast, hc]
     · exact hT2 _ _
 
 end PositivityTheory.SiegelWeilFormula.Act.C5.Meas

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdeleJoinZero
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -37,7 +41,7 @@ local notation "toM" => InfiniteAdeleRing.ringEquiv_mixedSpace F
 theorem archimedean_map_add (z z' : mixedEmbedding.mixedSpace F) :
     GlobalTheory.WeilL2Words.arch1 F (z + z') = GlobalTheory.WeilL2Words.arch1 F z + GlobalTheory.WeilL2Words.arch1 F z' := by
   show (((toM).symm (z + z'), 0) : AF F) = (((toM).symm z + (toM).symm z', 0 + 0) : AF F)
-  rw [map_add, add_zero]
+  rw [map_add (f := _), add_zero]
 
 theorem arch_projection_real_smul (t : ℝ) (z : mixedEmbedding.mixedSpace F) :
     GlobalTheory.WeilL2Words.arch1 F (t • z) = rInf F t * GlobalTheory.WeilL2Words.arch1 F z := by
@@ -106,23 +110,23 @@ def mulMulT (P : Matrix α α R') (Q : Matrix β β R') : Matrix α β R' →ₗ
 end Lin
 
 theorem archDir_transport : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (ψ : AddChar (AF F) ℂ) (m n : ℕ) (JA : Matrix (Fin m) (Fin m) E) (JB : Matrix (Fin n) (Fin n) E) (ξ : AF F ⊗[F] E) (κ : Type) [Fintype κ]
-    (co : Darboux (symp (cA σ) ξ (incM F JA) (incM F JB)) κ)
-    (om : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB) →* Module.End ℂ ((κ → AF F) → ℂ)),
-    (∀ p w, ∀ φ ∈ schA F κ, om p (co.rho ψ w φ) = co.rho ψ (actAB (cA σ) p w) (om p φ)) →
-    ∃ M : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB) → ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) →ₗ[ℝ] ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)),
+    (co : Darboux (symp (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ξ ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB)) κ)
+    (om : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) →* Module.End ℂ ((κ → AF F) → ℂ)),
+    (∀ p w, ∀ φ ∈ schA F κ, om p (co.rho ψ w φ) = co.rho ψ (actAB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p w) (om p φ)) →
+    ∃ M : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) → ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)) →ₗ[ℝ] ((κ → mixedEmbedding.mixedSpace F) × (κ → mixedEmbedding.mixedSpace F)),
       (∀ p h, ∀ φ ∈ schA F κ,
         om p (schr ψ (GlobalTheory.WeilL2Words.archPair F (M p h)) φ) = schr ψ (GlobalTheory.WeilL2Words.archPair F h) (om p φ)) ∧
       ∀ h, Continuous fun p => M p h := by
   intro F E _ _ _ _ _ σ ψ m n JA JB ξ κ _ co om hom
-  let L : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB) →
+  let L : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) →
       ((κ → AF F) × (κ → AF F)) →ₗ[AF F] ((κ → AF F) × (κ → AF F)) := fun p =>
     co.e.toLinearMap ∘ₗ mulMulT (S := AF F) (((p⁻¹).1 : GL (Fin m) (AE F E)) : Matrix (Fin m) (Fin m) (AE F E))
       (((p⁻¹).2 : GL (Fin n) (AE F E)) : Matrix (Fin n) (Fin n) (AE F E)) ∘ₗ co.e.symm.toLinearMap
-  have hL : ∀ p x, L p x = co.e (actAB (cA σ) p⁻¹ (co.e.symm x)) := fun p x => rfl
+  have hL : ∀ p x, L p x = co.e (actAB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p⁻¹ (co.e.symm x)) := fun p x => rfl
   have hfix : ∀ p h, eInf F • L p (GlobalTheory.WeilL2Words.archPair F h) = L p (GlobalTheory.WeilL2Words.archPair F h) := by
     intro p h
     conv_rhs => rw [archPair_eInf h, map_smul]
-  have hact : ∀ (p : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB)) (x : Matrix (Fin m) (Fin n) (AE F E)), actAB (cA σ) p (actAB (cA σ) p⁻¹ x) = x := by
+  have hact : ∀ (p : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB)) (x : Matrix (Fin m) (Fin n) (AE F E)), actAB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p (actAB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p⁻¹ x) = x := by
     intro p x
     have h1 : ((p.1 : GL (Fin m) (AE F E)) : Matrix (Fin m) (Fin m) (AE F E)) *
         (((p⁻¹).1 : GL (Fin m) (AE F E)) : Matrix (Fin m) (Fin m) (AE F E)) = 1 := by
@@ -135,11 +139,11 @@ theorem archDir_transport : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
   refine ⟨fun p => { toFun := fun h => archParts (L p (GlobalTheory.WeilL2Words.archPair F h)), map_add' := ?_, map_smul' := ?_ },
     ?_, ?_⟩
   · intro h h'
-    rw [archPair_add, map_add, archParts_add]
+    rw [archPair_add, map_add (f := _), archParts_add]
   · intro t h
     rw [RingHom.id_apply, archPair_smul, map_smul, archParts_smul]
   · intro p h φ hφ
-    have key := hom p (actAB (cA σ) p⁻¹ (co.e.symm (GlobalTheory.WeilL2Words.archPair F h))) φ hφ
+    have key := hom p (actAB (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) p⁻¹ (co.e.symm (GlobalTheory.WeilL2Words.archPair F h))) φ hφ
     show om p (schr ψ (GlobalTheory.WeilL2Words.archPair F (archParts (L p (GlobalTheory.WeilL2Words.archPair F h)))) φ) = _
     rw [archPair_archParts (hfix p h), hL]
     simp only [Darboux.rho] at key
@@ -150,10 +154,10 @@ theorem archDir_transport : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
     haveI : IsModuleTopology (AF F) (Matrix (Fin m) (Fin n) (AE F E)) :=
       inferInstanceAs (IsModuleTopology (AF F) (Fin m → Fin n → AE F E))
     have hce : Continuous co.e := IsModuleTopology.continuous_of_linearMap co.e.toLinearMap
-    have hP : Continuous fun p : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB) =>
+    have hP : Continuous fun p : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) =>
         (((p⁻¹).1 : GL (Fin m) (AE F E)) : Matrix (Fin m) (Fin m) (AE F E)) :=
       Units.continuous_val.comp (continuous_subtype_val.comp (continuous_fst.comp continuous_inv))
-    have hQ : Continuous fun p : UG (cA σ) (incM F JA) × UG (cA σ) (incM F JB) =>
+    have hQ : Continuous fun p : UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JA) × UG (_root_.Algebra.TensorProduct.map (_root_.AlgHom.id (AF F) (AF F)) σ) ((_root_.Matrix.map · (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (AF F))) JB) =>
         (((p⁻¹).2 : GL (Fin n) (AE F E)) : Matrix (Fin n) (Fin n) (AE F E)) :=
       Units.continuous_val.comp (continuous_subtype_val.comp (continuous_snd.comp continuous_inv))
     exact continuous_archParts.comp (hce.comp ((hP.matrix_mul continuous_const).matrix_mul hQ.matrix_transpose))

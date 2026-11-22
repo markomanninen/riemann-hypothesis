@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.SubgroupQuotientStatement
-import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
-import ReciprocityTheory.DualLattices.MapTensorSpan
+module
+
+public import ReciprocityTheory.DualLattices.SubgroupQuotientStatement
+public import ReciprocityTheory.DualLattices.ExistsSmulMemOfMemSpan
+public import ReciprocityTheory.DualLattices.MapTensorSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,7 @@ private theorem mem_dualLat_span_lemma_2 {C R : Type} [Field C] [CommRing R] [Al
       add_mem' := by
         rintro f g ⟨r, hr⟩ ⟨s, hs⟩
         refine ⟨r + s, ?_⟩
-        rw [map_add, hr, hs, ← Finset.sum_add_distrib]
+        rw [map_add (f := _), hr, hs, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun a _ => ?_
         simp only [Pi.add_apply]
         ring
@@ -229,7 +233,8 @@ private theorem isLat_map_lemma_5 {C R : Type} [Field C] [CommRing R] [Algebra R
           simp only [Finset.sum_mul]
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring
-  rw [hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smul]
   refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, ?_⟩)
@@ -246,7 +251,7 @@ private theorem tensor_pair_lemma_6 {C R : Type} [Field C] [CommRing R] [Algebra
       add_mem' := by
         rintro F G ⟨r, hr⟩ ⟨s, hs⟩
         refine ⟨r + s, ?_⟩
-        rw [map_add, hr, hs, ← Finset.sum_add_distrib]
+        rw [map_add (f := _), hr, hs, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun b _ => ?_
@@ -346,7 +351,7 @@ theorem h2 (C R : Type) [Field C] [CommRing R] [Algebra R C] :
     refine ⟨extK (R := C) (C := C) K u, ?_⟩
     funext k
     show (if h : (k : N) ∈ K then u ⟨k, h⟩ else 0) = u k
-    rw [dif_pos k.2]
+    rw [dite_eq_left k.2]
   have hAK_lat : IsLat R (AA.carrier.map (resK (R := R) K)) :=
     isLat_map_lemma_5 v hv AA.carrier AA.lat (resK (R := C) (C := C) K) hres_surj
       (resK (R := R) K) (fun _ => rfl)

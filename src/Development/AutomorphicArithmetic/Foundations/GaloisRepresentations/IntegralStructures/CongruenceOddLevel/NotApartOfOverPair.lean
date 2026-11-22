@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ApartOfNotMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.WtDefs
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.OpenCompactMap
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.LacunaryBaseWeightAntitone
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ExistsTestOp
-import Development.AbelianVarietyTheory.Definitions.Divisors.CongWtLvLac
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWU4OfLimWU3
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicWeightDefiniteUnitaryAutRepStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicFormWeightLevelSmoothAtPlaceStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ApartOfNotMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.WtDefs
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.OpenCompactMap
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.LacunaryBaseWeightAntitone
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ExistsTestOp
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OverPair
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LimWU4OfLimWU3
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUniqueWeightDefiniteUnitaryAt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicWeightDefiniteUnitaryAutRepStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAlgebraicFormWeightLevelSmoothAtPlaceStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,13 +35,13 @@ def EllSt : Prop :=
         ∀ (σ : SmIrr (GL (Fin a) (w₀.adicCompletion E))) (v : σ.V), v ≠ 0 →
           (∀ g : J, σ.ρ g v = ((χ (θ g) : ℂˣ) : ℂ) • v) → GlobalTheory.SmGL.IsCuspidal σ.ρ
 
-open UpperTheory.Gal.Gen in
 
+open UpperTheory.Gal.Gen in
 def StepSt : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ), 1 ≤ a →
     ∀ (w₀ : HeightOneSpectrum (𝓞 E)), ((l : ℕ) : 𝓞 E) ∈ w₀.asIdeal → IsSplitAt w₀ →
     ∀ (v' : HeightOneSpectrum (𝓞 E)), ((l : ℕ) : 𝓞 E) ∈ v'.asIdeal → IsSplitAt v' → Apart v' w₀ →
-    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' a → x ∈ K) →
+    ∀ (K : Subgroup (UA E a)), IsLevelAway w₀ K → (∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' (n := a) → x ∈ K) →
     ∀ (Kv : Subgroup (GL (Fin a) (v'.adicCompletion E))), IsOpen (Kv : Set (GL (Fin a) (v'.adicCompletion E))) →
     ∀ (lam : (E →+* ℂ) → DomWeight a) (Jx : Type) (t : Jx → (UA E a →₀ ℂ)) (η : Submodule ℂ (UA E a → ℂ) → Jx → ℂ),
       (∀ j, IntW ι lam (t j) ∧ Loc.IntL ι lam (t j)) →
@@ -56,8 +61,8 @@ theorem not_apart_of_overPair {E : Type} [Field E] [NumberField E] [IsCMField E]
   obtain rfl : x = y := HeightOneSpectrum.ext ((key x hx).trans (key y hy).symm)
   exact GlobalTheory.Cong.AdaptLev.not_apart_trans (GlobalTheory.Cong.AdaptLev.not_apart_symm hxu) hyv
 
-open UpperTheory.Gal.Gen in
 
+open UpperTheory.Gal.Gen in
 theorem intL_congr {E : Type} [Field E] [NumberField E] [IsCMField E] {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) {a : ℕ}
     {v' : HeightOneSpectrum (𝓞 E)} {lam mu : (E →+* ℂ) → DomWeight a} (h : ∀ τ, mu τ ≠ lam τ → OverPair ι v' τ)
     {f : UA E a →₀ ℂ} (hv : ∀ g ∈ f.support, ∀ u, ¬ Apart u v' → cLoc u g = 1) (hf : Loc.IntL ι lam f) : Loc.IntL ι mu f := by
@@ -131,7 +136,7 @@ theorem congUWG_of (H : StepSt) (hFin : FinU) (D : ∀ a : ℕ, MvPolynomial (Fi
   have hlev : ∀ U', IsAutRepU U' → (∃ φ ∈ U', φ ≠ 0 ∧ ∀ x ∈ K', RU E a x φ = φ) → HasLevelOff w₀ v' Kw U' :=
     fun U' h1 h2 w g1 g2 g3 σ hσ => fixed_ne_bot h1 g1 (hloc U' h2 w g1 g2 g3) σ hσ
   refine ⟨Kw, hlev U hU.1 hfix, hoc, fun w h1 _ h3 h4 => hsph w h1 h3 h4, fun Z W hZ hW => ?_⟩
-  have hfin : ∀ {w} {f : UA E a →₀ ℂ}, (∀ g ∈ f.support, g ∈ locU a w) → ∀ g ∈ f.support, g ∈ finU E a :=
+  have hfin : ∀ {w} {f : UA E a →₀ ℂ}, (∀ g ∈ f.support, g ∈ locU a w) → ∀ g ∈ f.support, g ∈ finU (E := E) (n := a) :=
     fun h g hg => (Subgroup.mem_inf.1 (h g hg)).1
   have hhyp : ∀ w, IsSplitAt w → Apart w w₀ → Apart w v' → (∃ B, SatU U w B) → HypAt K' w := fun w h1 h2 h3 h4 x hx => by
     rw [hKs' w h1 h2 h3 x hx, hsph w h1 h3 h4]
@@ -178,7 +183,7 @@ theorem congUWG_of (H : StepSt) (hFin : FinU) (D : ∀ a : ℕ, MvPolynomial (Fi
     · exact ⟨_, (hZ z.1 z.2).2.1, (hZ z.1 z.2).2.2.1, fun g hg => htz z g (Finsupp.support_smul hg)⟩
   have hint : ∀ j, IntW ι lam (t j) ∧ Loc.IntL ι lam (t j) := by
     rintro ((j | p) | z)
-    · have key : ∀ g ∈ (tj j).support, g ∈ finU E a ∧ DenomLe l 0 g ∧ ‖ι.symm (tj j g)‖ ≤ 1 := fun g hg => by
+    · have key : ∀ g ∈ (tj j).support, g ∈ finU (E := E) (n := a) ∧ DenomLe l 0 g ∧ ‖ι.symm (tj j g)‖ ≤ 1 := fun g hg => by
         obtain ⟨h1, h2⟩ := htj j g hg
         refine ⟨(Subgroup.mem_inf.1 h1).1, fun u hu => ?_, by rw [h2]; exact O.int j _⟩
         have h3 : cLoc u g = 1 := hone (apart_of_not_mem hu (O.away j)) g h1 u (not_apart_self u)
@@ -212,7 +217,7 @@ theorem congUWG_of (H : StepSt) (hFin : FinU) (D : ∀ a : ℕ, MvPolynomial (Fi
     show cz ⟨z, hz⟩ * ez ⟨z, hz⟩ U' ≠ 0 ↔ _
     simp [hcz0]
   obtain ⟨τ₀, hτ₀⟩ := exists_overPl ι v' hv'
-  have hKv : ∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' a → x ∈ K := fun x hx h => (hKs v' hsv hap x hx).2 (hKwv ▸ h)
+  have hKv : ∀ x ∈ locU a v', cLoc v' x ∈ GlobalTheory.LFun.KGL v' (n := a) → x ∈ K := fun x hx h => (hKs v' hsv hap x hx).2 (hKwv ▸ h)
   have h2 := combine_holds (Qbar l) _ _ _ _ Q h1 (by
     rintro _ ⟨U₁, g1, g2, rfl⟩
     exact ⟨(hQ U₁ g1.aut g1.fix).2 g2, H E l ι a ha w₀ hw₀ hs₀ v' hv' hsv hap K hK hKv Kv hKvo lam _ t η hint

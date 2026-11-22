@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationContinuousOnInvertible
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ENNReal NNReal
@@ -66,7 +70,7 @@ theorem left_haar_eq_smul_biinvariant {U : Set (Mat k r)} (hU : IsClosedSubgroup
   refine ⟨c, hc0, hc1, ?_⟩
   calc μ = (pull hU μ).map inc := (map_pull μ hc').symm
     _ = (c • pull hU ν).map inc := by rw [← key]
-    _ = c • ν := by rw [Measure.map_smul, map_pull ν hν.conc]
+    _ = c • ν := by rw [Measure.map_smul _ inc_memb.measurable.aemeasurable, map_pull ν hν.conc]
 
 end Formalism.MainNotions.LeviCoordinates
 

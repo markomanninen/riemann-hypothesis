@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsMatrixForm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CechAcyclic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsMatrixForm
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite Abelian Simplicial GlobalTheory.Et
 universe v u
 
@@ -23,7 +27,8 @@ theorem alternatingCofaceMapComplex_preadditiveYoneda_d_apply {C : Type u} [Cate
     rw [AlgebraicTopology.AlternatingFaceMapComplex.objD, Preadditive.sum_comp]
     exact Finset.sum_congr rfl fun i _ => Preadditive.zsmul_comp _ _ _
   refine Eq.trans ?_ h2.symm
-  simp only [AlgebraicTopology.AlternatingCofaceMapComplex.objD, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgebraicTopology.AlternatingCofaceMapComplex.objD, map_sum, map_zsmul]
   rfl
 
 theorem alternatingCofaceMapComplex_preadditiveYoneda_exactAt_succ : ∀ {C : Type u} [Category.{v} C] [Abelian C] (X : SimplicialObject C) (I : C) [Injective I] (n : ℕ), ((AlgebraicTopology.alternatingFaceMapComplex C).obj X).ExactAt (n + 1) → ((AlgebraicTopology.alternatingCofaceMapComplex AddCommGrpCat.{v}).obj (X.rightOp ⋙ preadditiveYoneda.obj I)).ExactAt (n + 1) := by

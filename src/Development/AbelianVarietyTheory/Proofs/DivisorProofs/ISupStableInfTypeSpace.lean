@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
-open Classical in
 
+open Classical in
 theorem iSup_stable_inf_typeSpace {G E C : Type} [Group G] [Fintype G] [AddCommGroup E] [Module ℂ E]
     (ρ : Representation ℂ G E) (P : Subgroup G) (ψ : P →* ℂˣ) (U : C → Submodule ℂ E) (S : C → Prop)
     (hU : ∀ c g, (U c).map (ρ g) ≤ U c) :
@@ -36,7 +40,8 @@ theorem iSup_stable_inf_typeSpace {G E C : Type} [Group G] [Fintype G] [AddCommG
     intro k
     rw [hT, map_smul, smul_comm]
     congr 1
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft k) _ _ ?_
     intro h
     simp only [Equiv.coe_mulLeft, map_smul, map_mul, Subgroup.coe_mul, Module.End.mul_apply,

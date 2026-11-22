@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibrePointsLEId
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 
 namespace GlobalTheory.EtC.Tr
@@ -42,8 +47,5 @@ theorem mem_etaleTopology_of_pullback_finite : ∀ {Z X : Scheme.{0}} (f : Z ⟶
     rw [Sieve.pullback_eq_top_of_mem _ hTU]
     exact Scheme.etaleTopology.top_mem _
   · exact hT
-
-example : ∀ {Z X : Scheme.{0}} (f : Z ⟶ X) [IsFinite f] [Etale f] (T : Sieve X), T.pullback f ∈ Scheme.etaleTopology Z → (∀ {V : Scheme.{0}} (v : V ⟶ X), IsEmpty (pullback f v : Scheme.{0}) → T v) → T ∈ Scheme.etaleTopology X :=
-  mem_etaleTopology_of_pullback_finite
 
 end GlobalTheory.EtC.Tr

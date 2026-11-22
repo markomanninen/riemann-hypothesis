@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementKT
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementKT
+
+@[expose] public section
+
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -36,9 +41,6 @@ lemma sgnIx_dualIx (i : Fin (2 * r + k + 1)) : sgnIx k r (dualIx k r i) = sgnIx 
   split_ifs <;> first | rfl | omega
 
 lemma sgnIx_sq (i : Fin (2 * r + k + 1)) : sgnIx k r i * sgnIx k r i = 1 := by
-  unfold sgnIx; split_ifs <;> simp
-
-lemma star_sgnIx (i : Fin (2 * r + k + 1)) : star (sgnIx k r i) = sgnIx k r i := by
   unfold sgnIx; split_ifs <;> simp
 
 lemma Hpk_apply (i j : Fin (2 * r + k + 1)) :
@@ -282,10 +284,10 @@ lemma ell_conj_single (hg : PI.UpqRep.IsFrameW k r z g) (a b : Fin (2 * r + k + 
       rw [frame_row hg (Or.inl hc)]
       simp only [Fin.ext_iff, eI]
     by_cases h : c.val + 1 < r
-    · rw [dif_pos h, conj_single_apply, hrow, frame_inv_col hg _ (Or.inl h)]
+    · rw [dite_eq_left h, conj_single_apply, hrow, frame_inv_col hg _ (Or.inl h)]
       simp only [Fin.ext_iff, eI]
       split_ifs <;> first | omega | simp
-    · rw [dif_neg h, ← Matrix.mulVec_mulVec, frame_inv_mulVec_negativeVector hg, Matrix.mulVec_smul, Pi.smul_apply]
+    · rw [dite_eq_right h, ← Matrix.mulVec_mulVec, frame_inv_mulVec_negativeVector hg, Matrix.mulVec_smul, Pi.smul_apply]
       have : ((g * Matrix.single a b (1 : ℂ)) *ᵥ
           Pi.single (⟨r + k, by omega⟩ : Fin (2 * r + k + 1)) (1 : ℂ)) (eI k r c) =
           g (eI k r c) a * if b.val = r + k then 1 else 0 := by
@@ -373,11 +375,11 @@ theorem frame_matrix_units : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (
     simp [bvec]
   · unfold fvec
     by_cases h : r = 0
-    · rw [if_pos h, dif_neg (by simp [h]), frame_inv_mulVec_negativeVector hg]
+    · rw [if_pos h, dite_eq_right (by simp [h]), frame_inv_mulVec_negativeVector hg]
       subst h
       congr 2
     · have h0 : (0 : Fin (r + 1)).val < r := by simp; omega
-      rw [if_neg h, dif_pos h0]
+      rw [if_neg h, dite_eq_left h0]
       exact frame_inv_fix hg (j := 0) (Or.inl (by simp; omega))
   · funext d
     have hd := d.isLt
@@ -390,12 +392,12 @@ theorem frame_matrix_units : ∀ (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (
     rw [e, herm_U'' hU]
     unfold fvec
     by_cases h : r = 0
-    · rw [if_pos h, dif_neg (by simp [h]), frame_inv_mulVec_negativeVector hg, herm_smul_right, herm_single]
+    · rw [if_pos h, dite_eq_right (by simp [h]), frame_inv_mulVec_negativeVector hg, herm_smul_right, herm_single]
       unfold sgnIx
       simp only [Pi.smul_apply, Pi.single_apply, Fin.ext_iff, dualIx_val, Fin.val_last]
       split_ifs <;> first | omega | simp
     · have h0 : (0 : Fin (r + 1)).val < r := by simp; omega
-      rw [if_neg h, dif_pos h0]
+      rw [if_neg h, dite_eq_left h0]
       have := frame_inv_fix hg (j := 0) (Or.inl (by simp; omega))
       have e0 : bvec (eI k r ⟨(0 : Fin (r + 1)).val, h0⟩) = Pi.single (0 : Fin (2 * r + k + 1)) (1 : ℂ) := rfl
       rw [e0, this, herm_single]

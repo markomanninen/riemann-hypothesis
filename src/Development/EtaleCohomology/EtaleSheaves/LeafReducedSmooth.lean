@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.CurveThroughGenericPointSpreadsToSmoothProperFamily2
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendChainPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CurveThroughGenericPointSpreadsToSmoothProperFamily2
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendChainPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut

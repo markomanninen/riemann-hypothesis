@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.DatumLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisThA
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.StdCharExists
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisThA
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.StdCharExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,15 +24,15 @@ theorem hO_add_left (x x' y : WO S T) : hO S T (x + x') y = hO S T x y + hO S T 
 
 theorem hO_add_right (x y y' : WO S T) : hO S T x (y + y') = hO S T x y + hO S T x y' := by
   unfold hO
-  simp only [Matrix.add_apply, map_add, mul_add, add_mul, Finset.sum_add_distrib]
+  simp only [Matrix.add_apply, map_add (f := _), mul_add, add_mul, Finset.sum_add_distrib]
 
 theorem symplO_add_left (x x' y : WO S T) : symplO S T (x + x') y = symplO S T x y + symplO S T x' y := by
   unfold symplO
-  rw [hO_add_left, mul_add, map_add]
+  rw [hO_add_left, mul_add, map_add (f := _)]
 
 theorem symplO_add_right (x y y' : WO S T) : symplO S T x (y + y') = symplO S T x y + symplO S T x y' := by
   unfold symplO
-  rw [hO_add_right, mul_add, map_add]
+  rw [hO_add_right, mul_add, map_add (f := _)]
 
 theorem symplO_zero_left (y : WO S T) : symplO S T 0 y = 0 := by
   have h := symplO_add_left S T 0 0 y
@@ -68,7 +72,8 @@ theorem hO_eq_trace (x y : MO S T) : hO S T x y = (hOM S T x y).trace := by
 
 theorem cA_trace {k : ℕ} (M : Matrix (Fin k) (Fin k) (AE D)) : cA D M.trace = ((M.map (cA D))ᵀ).trace := by
   rw [Matrix.trace_transpose]
-  simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
 
 theorem hO_swap (x y : MO S T) : hO S T y x = cA D (hO S T x y) := by
   have e0 : (y.map (cA D)).map (cA D) = y := by ext i j; simp [cA_cA]
@@ -105,23 +110,8 @@ theorem symplOH_swap (x y : WO S T) : symplOH S T y x = -symplOH S T x y := by
 
 theorem symplOH_two (x y : WO S T) : symplOH S T x y + symplOH S T x y = symplO S T x y := by
   unfold symplOH
-  rw [← add_mul, ← map_add]
+  rw [← add_mul, ← map_add (f := _)]
   norm_num
-
-theorem ratW_add (a b : Matrix (Fin T.rank) (Fin S.rank) D.host.E) :
-    ratW T S (a + b) = ratW T S a + ratW T S b := by
-  exact Matrix.map_add _ (map_add (incA D)) a b
-
-theorem ratW_neg (a : Matrix (Fin T.rank) (Fin S.rank) D.host.E) : ratW T S (-a) = -ratW T S a := by
-  exact Matrix.map_neg _ (map_neg (incA D)) a
-
-theorem ratW_zero : ratW T S (0 : Matrix (Fin T.rank) (Fin S.rank) D.host.E) = 0 := by
-  exact Matrix.map_zero _ (map_zero (incA D))
-
-theorem mem_ratL_iff (x : WO S T) : x ∈ ratL T S ↔ ∃ a, ratW T S a = x := by
-  unfold ratL
-  simp only [AddMonoidHom.mem_range]
-  exact Iff.rfl
 
 theorem incA_eq_tmul (e : D.host.E) : incA D e = (1 : AF D.host.F) ⊗ₜ[D.host.F] e := rfl
 
@@ -129,19 +119,6 @@ theorem trace_incA (e : D.host.E) :
     Algebra.trace (AF D.host.F) (AE D) (incA D e) = algebraMap D.host.F (AF D.host.F) (Algebra.trace D.host.F D.host.E e) := by
   rw [incA_eq_tmul]
   exact Formalism.IndefR.PHeisTh.trace_tmul _
-
-theorem hO_rat (a b : Matrix (Fin T.rank) (Fin S.rank) D.host.E) :
-    ∃ e : D.host.E, hO S T (ratW T S a) (ratW T S b) = incA D e := by
-  refine ⟨∑ i, ∑ j, ∑ k, ∑ l, (HSpace.gram S)⁻¹ i j * D.sp.cm.sig (b k j) * HSpace.gram T k l * a l i, ?_⟩
-  unfold hO ratW
-  simp only [Matrix.map_apply, Formalism.IndefR.PHeisTh.cA_incA, map_sum, map_mul]
-
-theorem symplO_rat (a b : Matrix (Fin T.rank) (Fin S.rank) D.host.E) :
-    ∃ q : D.host.F, symplO S T (ratW T S a) (ratW T S b) = algebraMap D.host.F (AF D.host.F) q := by
-  obtain ⟨e, he⟩ := hO_rat S T a b
-  refine ⟨Algebra.trace D.host.F D.host.E (D.host.xi0 * e), ?_⟩
-  unfold symplO
-  rw [he, ← map_mul, trace_incA]
 
 end Formalism.IndefR.Fin
 

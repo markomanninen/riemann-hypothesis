@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private lemma sepCore {R S N ι : Type} [Ring R] [AddCommGroup S] [Module R S] [IsSimpleModule R S]
     [AddCommGroup N] [Module R N] (f : ι → S →ₗ[R] N)
@@ -36,7 +40,7 @@ theorem UpperTheory.irreducible_projection_exists :
       exact hr ⟨_, rfl⟩
     · simp
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Y.add_mem ha hb
   let Ys : Subrepresentation ρ := ⟨Y, hinv⟩
   let τ : Representation ℂ H Y := Ys.toRepresentation

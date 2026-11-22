@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Filter
 open scoped Classical
 
@@ -13,10 +18,10 @@ theorem finsum_doubleCoset_trivial_eq_one (H : Type) [Group H] (TH KH : Subgroup
     rw [hf, if_neg]
     rintro ⟨t, ht, k, hk, he⟩
     apply hq
-    rw [← DoubleCoset.out_eq' TH KH q, DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' q, DoubleCoset.eq]
     exact ⟨t⁻¹, inv_mem ht, k⁻¹, inv_mem hk, by rw [he]; group⟩
   rw [finsum_eq_single _ (DoubleCoset.mk TH KH 1) h1, hf, if_pos]
-  obtain ⟨a, b, ha, hb, he⟩ := DoubleCoset.mk_out_eq_mul TH KH (1 : H)
+  obtain ⟨a, ha, b, hb, he⟩ := DoubleCoset.mk_out_eq_mul TH KH (1 : H)
   exact ⟨a, ha, b, hb, by rw [he, mul_one]⟩
 
 theorem finsum_pi_prod_eq_prod_finsum (J : Type) [Fintype J] (α : J → Type) (f : ∀ j, α j → ℂ)
@@ -77,7 +82,7 @@ theorem doubleCoset_mk_eq_of_local (ι G : Type) [Group G] (H : ι → Type) [�
     · exact ⟨1, (TH i).one_mem, (p i g)⁻¹ * p i g', mul_mem (inv_mem hk.1) hk.2, by group,
         fun _ _ => rfl⟩
     · by_cases hi : i ∈ S0
-      · obtain ⟨t, ht, k, hk', he⟩ := (DoubleCoset.eq _ _ _ _).1 (h i hi)
+      · obtain ⟨t, ht, k, hk', he⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 (h i hi)
         exact ⟨t, ht, k, hk', he, fun h1 h2 => absurd ⟨h1, h2⟩ hk⟩
       · obtain ⟨a, ha, b, hb, hab⟩ := hg i hi
         obtain ⟨a', ha', b', hb', hab'⟩ := hg' i hi
@@ -103,7 +108,7 @@ theorem finsum_doubleCoset_eq_finprod_local : ∀ (ι G : Type) [Group G] (H : �
     simpa [S0] using hi
   have hloc : ∀ i (x : H i), s' i (Quotient.out (DoubleCoset.mk (TH i) (KH i) x)) = s' i x := by
     intro i x
-    obtain ⟨a, b, ha, hb, he⟩ := DoubleCoset.mk_out_eq_mul (TH i) (KH i) x
+    obtain ⟨a, ha, b, hb, he⟩ := DoubleCoset.mk_out_eq_mul (TH i) (KH i) x
     rw [he, hinv i a ha b hb]
   have hR : ∏ᶠ i, ∑ᶠ q : DoubleCoset.Quotient (TH i : Set (H i)) (KH i : Set (H i)), s' i (Quotient.out q)
       = ∏ i : S0, ∑ᶠ q : DoubleCoset.Quotient (TH i.1 : Set (H i.1)) (KH i.1 : Set (H i.1)), s' i.1 (Quotient.out q) := by
@@ -135,26 +140,26 @@ theorem finsum_doubleCoset_eq_finprod_local : ∀ (ι G : Type) [Group G] (H : �
       ∏ j : S0, s' j.1 (Quotient.out (y j))) Φ ?_ (fun q _ => rfl)).trans (finsum_mem_univ _)
   refine ⟨fun q _ => Set.mem_univ _, ?_, ?_⟩
   · intro q hq q' hq' he
-    rw [← DoubleCoset.out_eq' T K q, ← DoubleCoset.out_eq' T K q']
+    rw [← DoubleCoset.out_eq' q, ← DoubleCoset.out_eq' q']
     refine doubleCoset_mk_eq_of_local ι G H p T K TH KH S0 hsurj hcof hK hT _ _ ((hAdef q).1 hq) ((hAdef q').1 hq') (fun i hi => ?_)
     have := congrFun he ⟨i, hi⟩
     rwa [hΦ, hΦ] at this
   · intro y _
     obtain ⟨g, hg⟩ := hsurj (fun i => if hi : i ∈ S0 then Quotient.out (y ⟨i, hi⟩) else 1) (by
       filter_upwards [S0.finite_toSet.compl_mem_cofinite] with i hi
-      rw [dif_neg (by simpa using hi)]; exact (KH i).one_mem)
-    obtain ⟨a, b, ha, hb, he⟩ := DoubleCoset.mk_out_eq_mul T K g
+      rw [dite_eq_right (by simpa using hi)]; exact (KH i).one_mem)
+    obtain ⟨a, ha, b, hb, he⟩ := DoubleCoset.mk_out_eq_mul T K g
     refine ⟨DoubleCoset.mk T K g, ?_, ?_⟩
     · rw [hAdef]
       intro i hi
       refine ⟨p i a, (hT a).1 ha i, p i b, (hK b).1 hb i, ?_⟩
-      rw [he, map_mul, map_mul, hg i, dif_neg hi, mul_one]
+      rw [he, map_mul, map_mul, hg i, dite_eq_right hi, mul_one]
     · funext i
-      rw [hΦ, he, map_mul, map_mul, hg i.1, dif_pos i.2]
+      rw [hΦ, he, map_mul, map_mul, hg i.1, dite_eq_left i.2]
       show DoubleCoset.mk (TH i.1) (KH i.1) (p i.1 a * Quotient.out (y i) * p i.1 b) = y i
       have h1 : DoubleCoset.mk (TH i.1) (KH i.1) (p i.1 a * Quotient.out (y i) * p i.1 b) =
           DoubleCoset.mk (TH i.1) (KH i.1) (Quotient.out (y i)) :=
-        (DoubleCoset.eq _ _ _ _).2 ⟨(p i.1 a)⁻¹, inv_mem ((hT a).1 ha i.1), (p i.1 b)⁻¹,
+        (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨(p i.1 a)⁻¹, inv_mem ((hT a).1 ha i.1), (p i.1 b)⁻¹,
           inv_mem ((hK b).1 hb i.1), by group⟩
       rw [h1, DoubleCoset.out_eq']
 

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DframeCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormAnisotropicPart
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DframeCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormAnisotropicPart
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelsOfBuiltSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,17 +22,6 @@ theorem det_corner_matrix_level_zero {r' : ℕ} (hr : r' = 0) (z z' : Fin (2 * r
     (Zhat k r' z z' g).det = Q.zetaL k r' z z' (Fin.last r') g := by
   subst hr
   exact (Matrix.det_fin_one _).trans rfl
-
-theorem castV_herm {a b : ℕ} (h : a = b) (v w : Fin (2 * a + k + 1) → ℂ) :
-    herm (Hpk k b) (D.castV h v) (D.castV h w) = herm (Hpk k a) v w := by
-  subst h
-  rfl
-
-theorem capRep_cast {Wp : Type*} [NormedAddCommGroup Wp] [NormedSpace ℂ Wp] {a b m : ℕ} (h : a = b)
-    (π : Q.Mx k b → (Wp →L[ℂ] Wp)) (Bs : Fin m → Fin (2 * a + k + 1) → ℂ) (w : ℂ) (v : Wp) :
-    Q.capRep k a (fun y => π (D.castM h y)) Bs w v = Q.capRep k b π (fun c => D.castV h (Bs c)) w v := by
-  subst h
-  rfl
 
 end lev
 

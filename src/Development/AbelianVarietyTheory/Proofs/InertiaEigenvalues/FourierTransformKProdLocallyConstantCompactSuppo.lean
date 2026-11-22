@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EtaleHermitianPairStructureFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversionStatement
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -62,7 +67,7 @@ theorem fourK_isTest : ∀ (F E : Type) [NontriviallyNormedField F] [Nontriviall
     rw [integral_prod]
     · refine integral_congr_ae (Eventually.of_forall fun b' => ?_)
       refine integral_congr_ae (Eventually.of_forall fun c' => ?_)
-      simp only [Et.psiK, betaK_apply, map_add]
+      simp only [Et.psiK, betaK_apply, map_add (f := _)]
       congr 1
       rw [AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, mul_comm p.1, mul_comm c' p.1]
       ring

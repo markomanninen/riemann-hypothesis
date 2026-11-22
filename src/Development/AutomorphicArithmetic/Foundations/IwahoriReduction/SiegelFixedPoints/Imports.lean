@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFROfIsLamF
-import Development.AbelianVarietyTheory.Definitions.Foundations.ActWBOfInvariant
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalBActCommGamma0CapGamma0LevelShimuraReciprocitStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondCommutesHeckeU
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.ExistsSeries
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Actcls
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamFROfIsLamF
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ActWBOfInvariant
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalBActCommGamma0CapGamma0LevelShimuraReciprocitStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiamondCommutesHeckeU
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.ExistsSeries
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Actcls
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.Glue GlobalTheory.KummerEisensteinGalois UpperTheory.Kd.L
@@ -39,7 +43,8 @@ theorem UpperTheory.Kd.L.twist :
     have hpush : GlobalTheory.KA.push (redM l n m (N * N))
         (bTop X l n m N (fun σ => X.act l ((sgD N l (δ : ZMod N).val : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) (bB σ))) s y
         = X.diam N l (δ : ZMod N).val (GlobalTheory.KA.push (redM l n m (N * N)) (bTop X l n m N bB) s y) := by
-      simp only [GlobalTheory.KA.push, Tower.diam, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [GlobalTheory.KA.push, Tower.diam, map_sum]
       refine Finset.sum_congr rfl fun y' _ => ?_
       simp only [bTop]
       exact GlobalTheory.T.galB_act_comm_gamma0CapGamma0Level_shimuraReciprocity ε X ε.injective ⟨ψ, hψ2, hψ1⟩ N l w hP.odd hP.five hcop hw _ hD.1 _ _

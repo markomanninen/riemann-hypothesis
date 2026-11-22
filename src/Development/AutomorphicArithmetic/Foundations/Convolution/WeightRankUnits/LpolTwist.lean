@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.UnitAe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.DeltaProdAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.UnitAe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralTwistedConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
@@ -58,7 +62,7 @@ theorem UpperTheory.ConvolutionTheory.G2.stAA :
     GlobalTheory.BCT.ThBasic.charpoly_nrmL hU b w δ₂
   unfold stTw2 clSum
   refine UpperTheory.ConvolutionTheory.G2.sum_one ((thL a w).prodMap (thL b w)) _
-    (fun y => twOrb ((thL a w).prodMap (thL b w)) ((GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)) y
+    (fun y => twOrb ((thL a w).prodMap (thL b w)) ((GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))) y
       (UpperTheory.ConvolutionTheory.G2.unit2 a b w)) (locEl a w δ₁, locEl b w δ₂) ?_ ?_
   · rintro ⟨k₁, k₂⟩
     exact ⟨(UpperTheory.ConvolutionTheory.G2.lpol_twist hU a w k₁ _).trans l₁, (UpperTheory.ConvolutionTheory.G2.lpol_twist hU b w k₂ _).trans l₂⟩

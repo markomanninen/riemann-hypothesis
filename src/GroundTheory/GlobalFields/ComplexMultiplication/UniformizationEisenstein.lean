@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
-import GroundTheory.GlobalFields.ComplexMultiplication.EllipticRational
-import GroundTheory.GlobalFields.ComplexMultiplication.Uniformization
-import GroundTheory.GlobalFields.ComplexMultiplication.UniformizationAddition
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticFunctions
+public import GroundTheory.GlobalFields.ComplexMultiplication.EllipticRational
+public import GroundTheory.GlobalFields.ComplexMultiplication.Uniformization
+public import GroundTheory.GlobalFields.ComplexMultiplication.UniformizationAddition
+
+@[expose] public section
 
 open Complex Filter Topology Set
 open scoped PeriodPair Nat
@@ -39,20 +43,6 @@ lemma weierstrassCoeff_add_three (a b : R) (n : ℕ) :
       ∑ i : Fin (n + 1), weierstrassCoeff a b (i + 1) * weierstrassCoeff a b (n + 1 - i) := by
   rw [weierstrassCoeff]
 
-theorem weierstrassCoeff_map (f : R →ₐ[ℚ] S) (a b : R) (n : ℕ) :
-    f (weierstrassCoeff a b n) = weierstrassCoeff (f a) (f b) n := by
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    match n, ih with
-    | 0, _ => simp
-    | 1, _ => simp [map_smul]
-    | 2, _ => simp [map_smul]
-    | n + 3, ih =>
-      rw [weierstrassCoeff_add_three, weierstrassCoeff_add_three, map_smul, map_sum]
-      congr 1
-      refine Finset.sum_congr rfl fun i _ ↦ ?_
-      rw [map_mul, ih _ (by have := i.isLt; omega), ih _ (by omega)]
-
 theorem weierstrassCoeff_scale (t a b : R) (n : ℕ) :
     weierstrassCoeff (t ^ 4 * a) (t ^ 6 * b) n = t ^ (2 * n + 2) * weierstrassCoeff a b n := by
   induction n using Nat.strong_induction_on with
@@ -76,28 +66,17 @@ theorem weierstrassCoeff_scale (t a b : R) (n : ℕ) :
 
 end Recursion
 
-def eisensteinPoly (n : ℕ) : MvPolynomial (Fin 2) ℚ :=
-  (1 / (2 * (n : ℚ) + 1)) • weierstrassCoeff (MvPolynomial.X 0) (MvPolynomial.X 1) n
-
-lemma aeval_eisensteinPoly (x : Fin 2 → ℂ) (n : ℕ) :
-    MvPolynomial.aeval x (eisensteinPoly n) =
-      weierstrassCoeff (x 0) (x 1) n / (2 * n + 1) := by
-  rw [eisensteinPoly, map_smul, weierstrassCoeff_map, MvPolynomial.aeval_X, MvPolynomial.aeval_X,
-    Rat.smul_def]
-  push_cast
-  ring
-
 variable {L : PeriodPair}
 
-variable (L) in
 
+variable (L) in
 def weierstrassLaurentCoeff (j : ℕ) : ℂ := if j = 0 then 0 else (j + 1) * L.G (j + 2)
 
-lemma weierstrassLaurentCoeff_odd (i : ℕ) : weierstrassLaurentCoeff L (2 * i + 1) = 0 := by
+lemma weierstrassLaurentCoeff_odd (i : ℕ) : weierstrassLaurentCoeff (L := L) (2 * i + 1) = 0 := by
   rw [weierstrassLaurentCoeff, if_neg (by omega), L.G_eq_zero_of_odd _ ⟨i + 1, by ring⟩, mul_zero]
 
 lemma iteratedDeriv_weierstrassPExcept_zero (j : ℕ) :
-    iteratedDeriv j ℘[L - (0 : ℂ)] 0 = j ! * weierstrassLaurentCoeff L j := by
+    iteratedDeriv j ℘[L - (0 : ℂ)] 0 = j ! * weierstrassLaurentCoeff (L := L) j := by
   rw [L.iteratedDeriv_weierstrassPExcept_self 0, weierstrassLaurentCoeff]
   split_ifs with h
   · simp
@@ -180,15 +159,17 @@ lemma sum_range_of_odd_eq_zero {f : ℕ → ℂ} (hf : ∀ i, f (2 * i + 1) = 0)
     rw [show 2 * N + 1 + 1 = 2 * (N + 1) by ring]
 
 lemma weierstrassLaurentCoeff_recursion (n : ℕ) :
-    (((2 * n + 6 : ℂ) * (2 * n + 5)) - 12) * weierstrassLaurentCoeff L (2 * n + 6) =
-      6 * ∑ i : Fin (n + 1), weierstrassLaurentCoeff L (2 * ((i : ℕ) + 1)) * weierstrassLaurentCoeff L (2 * (n + 1 - i)) := by
+    (((2 * n + 6 : ℂ) * (2 * n + 5)) - 12) * weierstrassLaurentCoeff (L := L) (2 * n + 6) =
+      6 * ∑ i : Fin (n + 1), weierstrassLaurentCoeff (L := L) (2 * ((i : ℕ) + 1)) *
+        weierstrassLaurentCoeff (L := L) (2 * (n + 1 - i)) := by
   have e := laurent_ode_coeff (L := L) (2 * n + 4)
   simp only [iteratedDeriv_weierstrassPExcept_zero] at e
   rw [if_neg (by omega)] at e
   have hsum : ∑ j ∈ Finset.range (2 * n + 4 + 1), ((2 * n + 4).choose j : ℂ) *
-      ((j ! : ℂ) * weierstrassLaurentCoeff L j) * (((2 * n + 4 - j) ! : ℂ) * weierstrassLaurentCoeff L (2 * n + 4 - j)) =
+      ((j ! : ℂ) * weierstrassLaurentCoeff (L := L) j) *
+      (((2 * n + 4 - j) ! : ℂ) * weierstrassLaurentCoeff (L := L) (2 * n + 4 - j)) =
       ((2 * n + 4) ! : ℂ) * ∑ j ∈ Finset.range (2 * n + 4 + 1),
-        weierstrassLaurentCoeff L j * weierstrassLaurentCoeff L (2 * n + 4 - j) := by
+        weierstrassLaurentCoeff (L := L) j * weierstrassLaurentCoeff (L := L) (2 * n + 4 - j) := by
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun j hj ↦ ?_
     have hj' : j ≤ 2 * n + 4 := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
@@ -197,16 +178,20 @@ lemma weierstrassLaurentCoeff_recursion (n : ℕ) :
       exact_mod_cast this
     rw [← h']
     ring
-  have heven : ∑ j ∈ Finset.range (2 * n + 4 + 1), weierstrassLaurentCoeff L j * weierstrassLaurentCoeff L (2 * n + 4 - j) =
-      ∑ i : Fin (n + 1), weierstrassLaurentCoeff L (2 * ((i : ℕ) + 1)) * weierstrassLaurentCoeff L (2 * (n + 1 - i)) := by
+  have heven : ∑ j ∈ Finset.range (2 * n + 4 + 1),
+      weierstrassLaurentCoeff (L := L) j * weierstrassLaurentCoeff (L := L) (2 * n + 4 - j) =
+      ∑ i : Fin (n + 1), weierstrassLaurentCoeff (L := L) (2 * ((i : ℕ) + 1)) *
+        weierstrassLaurentCoeff (L := L) (2 * (n + 1 - i)) := by
     rw [show 2 * n + 4 + 1 = 2 * (n + 2) + 1 by ring,
-      sum_range_of_odd_eq_zero (f := fun j ↦ weierstrassLaurentCoeff L j * weierstrassLaurentCoeff L (2 * n + 4 - j))
+      sum_range_of_odd_eq_zero (f := fun j ↦
+        weierstrassLaurentCoeff (L := L) j * weierstrassLaurentCoeff (L := L) (2 * n + 4 - j))
         (fun i ↦ by simp only [weierstrassLaurentCoeff_odd, zero_mul]),
       Finset.sum_range_succ', Finset.sum_range_succ]
-    simp only [show weierstrassLaurentCoeff L (2 * 0) = 0 by simp [weierstrassLaurentCoeff], zero_mul, add_zero,
-      show 2 * n + 4 - 2 * (n + 1 + 1) = 0 by omega, show weierstrassLaurentCoeff L 0 = 0 by simp [weierstrassLaurentCoeff],
-      mul_zero]
-    rw [← Finset.sum_range (fun i ↦ weierstrassLaurentCoeff L (2 * (i + 1)) * weierstrassLaurentCoeff L (2 * (n + 1 - i)))]
+    simp only [show weierstrassLaurentCoeff (L := L) (2 * 0) = 0 by simp [weierstrassLaurentCoeff],
+      zero_mul, add_zero, show 2 * n + 4 - 2 * (n + 1 + 1) = 0 by omega,
+      show weierstrassLaurentCoeff (L := L) 0 = 0 by simp [weierstrassLaurentCoeff], mul_zero]
+    rw [← Finset.sum_range (fun i ↦ weierstrassLaurentCoeff (L := L) (2 * (i + 1)) *
+      weierstrassLaurentCoeff (L := L) (2 * (n + 1 - i)))]
     refine Finset.sum_congr rfl fun i hi ↦ ?_
     have : i < n + 1 := Finset.mem_range.1 hi
     rw [show 2 * n + 4 - 2 * (i + 1) = 2 * (n + 1 - i) by omega]
@@ -225,7 +210,7 @@ lemma weierstrassLaurentCoeff_recursion (n : ℕ) :
   linear_combination e
 
 theorem hasSum_weierstrassP_laurent {z : ℂ} (hz : ∀ l : L.lattice, (l : ℂ) ≠ 0 → ‖z‖ < ‖(l : ℂ)‖) :
-    HasSum (fun j ↦ weierstrassLaurentCoeff L j * z ^ j) (℘[L] z - 1 / z ^ 2) := by
+    HasSum (fun j ↦ weierstrassLaurentCoeff (L := L) j * z ^ j) (℘[L] z - 1 / z ^ 2) := by
   have h := L.weierstrassPExceptSeries_hasSum 0 z 0 (fun l hl ↦ by simpa using hz l hl)
   rw [weierstrassP_eq_except_zero z, add_sub_cancel_right]
   convert h using 2 with j
@@ -236,13 +221,13 @@ theorem hasSum_weierstrassP_laurent {z : ℂ} (hz : ∀ l : L.lattice, (l : ℂ)
   · simp [hj, L.lattice.zero_mem, L.sumInvPow_zero]
 
 lemma weierstrassLaurentCoeff_two_mul {n : ℕ} (hn : n ≠ 0) :
-    weierstrassLaurentCoeff L (2 * n) = (2 * n + 1) * L.G (2 * n + 2) := by
+    weierstrassLaurentCoeff (L := L) (2 * n) = (2 * n + 1) * L.G (2 * n + 2) := by
   rw [weierstrassLaurentCoeff, if_neg (by omega)]
   push_cast
   ring
 
 theorem weierstrassLaurentCoeff_eq (n : ℕ) (hn : n ≠ 0) :
-    weierstrassLaurentCoeff L (2 * n) = weierstrassCoeff L.g₂ L.g₃ n := by
+    weierstrassLaurentCoeff (L := L) (2 * n) = weierstrassCoeff L.g₂ L.g₃ n := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
     match n, ih, hn with
@@ -258,8 +243,8 @@ theorem weierstrassLaurentCoeff_eq (n : ℕ) (hn : n ≠ 0) :
       ring
     | n + 3, ih, _ =>
       have hrec := weierstrassLaurentCoeff_recursion (L := L) n
-      have hsum : ∑ i : Fin (n + 1), weierstrassLaurentCoeff L (2 * ((i : ℕ) + 1)) *
-          weierstrassLaurentCoeff L (2 * (n + 1 - i)) = ∑ i : Fin (n + 1),
+      have hsum : ∑ i : Fin (n + 1), weierstrassLaurentCoeff (L := L) (2 * ((i : ℕ) + 1)) *
+          weierstrassLaurentCoeff (L := L) (2 * (n + 1 - i)) = ∑ i : Fin (n + 1),
             weierstrassCoeff L.g₂ L.g₃ ((i : ℕ) + 1) * weierstrassCoeff L.g₂ L.g₃ (n + 1 - i) :=
         Finset.sum_congr rfl fun i _ ↦ by
           have := i.isLt
@@ -292,18 +277,6 @@ theorem G_eq_weierstrassCoeff_div {n : ℕ} (hn : n ≠ 0) :
     have : ((2 * n + 1 : ℕ) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 (by omega)
     exact_mod_cast this
   rw [← mul_G_eq_weierstrassCoeff hn, mul_div_cancel_left₀ _ h]
-
-theorem G_eq_aeval_eisensteinPoly {n : ℕ} (hn : n ≠ 0) :
-    L.G (2 * n + 2) = MvPolynomial.aeval ![L.g₂, L.g₃] (eisensteinPoly n) := by
-  rw [aeval_eisensteinPoly, G_eq_weierstrassCoeff_div hn]
-  rfl
-
-theorem exists_G_eq_aeval {k : ℕ} (hk : 2 ≤ k) :
-    ∃ P : MvPolynomial (Fin 2) ℚ, ∀ L : PeriodPair,
-      L.G (2 * k) = MvPolynomial.aeval ![L.g₂, L.g₃] P := by
-  refine ⟨eisensteinPoly (k - 1), fun L ↦ ?_⟩
-  rw [show 2 * k = 2 * (k - 1) + 2 by omega]
-  exact G_eq_aeval_eisensteinPoly (by omega)
 
 theorem G_eq_of_g₂_g₃ {L' : PeriodPair} {t : ℂ} (h₂ : L'.g₂ = t ^ 4 * L.g₂)
     (h₃ : L'.g₃ = t ^ 6 * L.g₃) {k : ℕ} (hk : 2 ≤ k) :

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped NNReal
 
 namespace GlobalTheory
@@ -55,7 +60,8 @@ theorem echelon_projector_frobenius (l : ℕ) [Fact l.Prime] (C : Type) [Field C
       rw [hWeq] at hyW
       obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun C).mp hyW
       have h0 : ∑ j, c j • (N.mkQ ∘ e ∘ a) j = 0 := by
-        simp only [Function.comp_apply, ← map_smul, ← map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Function.comp_apply, ← map_smul, ← map_sum]
         exact (Submodule.Quotient.mk_eq_zero N).mpr hyN
       have hc0 := Fintype.linearIndependent_iff.mp hli c h0
       simp [hc0]

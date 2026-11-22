@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrPApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIteratedFDerivRemCompLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ theorem norm_iteratedFDeriv_comp_le (e : A →L[ℝ] B) (he : ‖e‖ ≤ 1) (f 
   calc ‖iteratedFDeriv ℝ i f (e x)‖ * ∏ _j : Fin i, ‖e‖
       ≤ ‖iteratedFDeriv ℝ i f (e x)‖ * 1 := by
         gcongr
-        exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun _ _ => he
+        exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun _ _ => he
     _ = _ := mul_one _
 
 theorem exists_schwartz_prod (f₁ : 𝓢(A, ℂ)) (f₂ : 𝓢(B, ℂ)) :
@@ -219,23 +223,24 @@ theorem exists_hadamard [FiniteDimensional ℝ Y] (P : Submodule ℝ Y) (f : �
       ext
       · simp [B₁, Prod.fst_sum, h4]
       · simp [B₁, Prod.snd_sum, h4]
-    rw [← map_neg, h3, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_neg, h3, map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [map_smul, hK, Complex.real_smul]
   have hcK : ∀ j, Continuous fun s : ℝ => K j ((B₀ + s • B₁) x) := fun j => by
     refine (K j).continuous.comp ?_
     simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply]
     fun_prop
   have hI := intervalIntegral.integral_eq_sub_of_hasDerivAt (a := (0 : ℝ)) (b := 1) (fun s _ => hd s)
-    ((continuous_finset_sum _ fun j _ => continuous_const.mul (hcK j)).intervalIntegrable _ _)
-  rw [intervalIntegral.integral_finset_sum (f := fun j s => (L j x : ℂ) * K j ((B₀ + s • B₁) x)) fun j _ =>
+    ((continuous_finsetSum _ fun j _ => continuous_const.mul (hcK j)).intervalIntegrable _ _)
+  rw [intervalIntegral.integral_finsetSum (f := fun j s => (L j x : ℂ) * K j ((B₀ + s • B₁) x)) fun j _ =>
     (continuous_const.mul (hcK j)).intervalIntegrable _ _] at hI
   simp only [intervalIntegral.integral_const_mul, ← hg] at hI
   rw [hI, hB, hB, hH, hH]
   have h5 : f (x - π x) = 0 := hf _ (by rw [hπ, sub_sub_cancel]; exact (q x).2)
   simp [h5, hχ]
 
-open Complex GlobalTheory.CharFormDeriv in
 
+open Complex GlobalTheory.CharFormDeriv in
 theorem apply_linear_mul (T : 𝓢(Y, ℂ) →L[ℂ] ℂ) (L : Y →L[ℝ] ℝ)
     (hT : ∀ t : ℝ, ∀ f f' : 𝓢(Y, ℂ), (∀ x, f' x = Complex.exp ((I * t) * (L x : ℂ)) * f x) → T f' = T f)
     (f g : 𝓢(Y, ℂ)) (hg : ∀ x, g x = (L x : ℂ) * f x) : T g = 0 := by
@@ -295,7 +300,8 @@ theorem eq_of_eqOn : ∀ {Y : Type} [NormedAddCommGroup Y] [NormedSpace ℝ Y] [
     ext x
     rw [hu, SchwartzMap.sum_apply]
     exact Finset.sum_congr rfl fun j _ => (hv j x).symm
-  rw [← sub_eq_zero, ← map_sub, e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sub_eq_zero, ← map_sub, e, map_sum]
   refine Finset.sum_eq_zero fun j _ => apply_linear_mul ℓ (L j) (fun t a b hab => ?_) (u j) (v j) (hv j)
   refine h ((-t / (2 * Real.pi)) • (L j : Y →ₗ[ℝ] ℝ)) (fun p hp => by simp [hL j p hp]) a b (funext fun x => ?_)
   rw [hab, ech]

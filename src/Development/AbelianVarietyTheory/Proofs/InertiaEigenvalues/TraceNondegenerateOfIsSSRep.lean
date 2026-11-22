@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepOfTraceNondegenerate
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceFormNondegenerate
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.UniNilp
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepOfTraceNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceFormNondegenerate
+
+@[expose] public section
+
 open Formalism.MainNotions.N
 
 namespace GlobalTheory.TraceSemisimple
@@ -61,7 +66,8 @@ theorem isSSRep_mapRep :
     have := congrArg φ (htr g)
     rw [map_zero] at this
     rw [← this]
-    simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, map_sum, hent, hφι, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, map_sum, hent, hφι, Matrix.map_apply]
   ext i j
   rw [Matrix.zero_apply, ← Module.forall_dual_apply_eq_zero_iff k]
   intro φ

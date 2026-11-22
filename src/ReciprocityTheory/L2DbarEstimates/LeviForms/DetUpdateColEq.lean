@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.DifferentiableAtChart
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.IntegralFderivApplyEqZero
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.DifferentiableAtChart
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.I
 
@@ -98,8 +102,8 @@ theorem cont_adj {X : Type*} [TopologicalSpace X] {S : Set X}
     (F : Fin n → Fin n → X → ℂ) (hF : ∀ i j, ContinuousOn (F i j) S) (k l : Fin n) :
     ContinuousOn (fun w => (Matrix.of fun i j => F i j w).adjugate k l) S := by
   simp only [Matrix.adjugate_apply, Matrix.det_apply, Units.smul_def, zsmul_eq_mul]
-  refine continuousOn_finset_sum _ fun σ _ => continuousOn_const.mul ?_
-  refine continuousOn_finset_prod _ fun i _ => ?_
+  refine continuousOn_finsetSum _ fun σ _ => continuousOn_const.mul ?_
+  refine continuousOn_finsetProd _ fun i _ => ?_
   by_cases h : σ i = l
   · simp only [Matrix.updateRow_apply, h, ↓reduceIte]
     exact continuousOn_const
@@ -137,7 +141,7 @@ theorem hasDerivAt_det (A B : Matrix (Fin n) (Fin n) ℂ) (t : ℝ) :
       (A' := fun σ => ((Equiv.Perm.sign σ : ℤ) : ℂ) *
         ∑ k, (∏ l ∈ Finset.univ.erase k, (A + (t : ℂ) • B) (σ l) l) • B (σ k) k)
       (fun σ _ => by
-        have h := (HasDerivAt.finset_prod (u := Finset.univ) fun k _ => hent (σ k) k).const_mul
+        have h := (HasDerivAt.finsetProd (u := Finset.univ) fun k _ => hent (σ k) k).const_mul
           (((Equiv.Perm.sign σ : ℤ) : ℂ))
         simp only [Finset.prod_apply] at h
         exact h)

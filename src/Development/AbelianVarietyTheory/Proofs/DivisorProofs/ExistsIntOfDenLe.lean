@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinpolyIrreducibleNatDegreeOfRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOfBoundedImageInFinitelyGeneratedSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingsRealIndependent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixedVectorSquaredBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupTestFunctionSupportBoundedDenominatorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicDenominatorBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MarkedSumIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteOfBoundedImageInFinitelyGeneratedSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbeddingsRealIndependent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixedVectorSquaredBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormGroupTestFunctionSupportBoundedDenominatorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PAdicDenominatorBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +72,7 @@ theorem finite_fix_core (G : HTGroup p) (hG : G.a = 1) (v : InfinitePlace G.F)
   set b := Module.finBasis ℚ G.C with hb
   set S : Finset G.C := Finset.univ.image (fun i => ((N : ℚ)⁻¹) • b i) with hS
   let Φ : G.C →+ (InfinitePlace G.F → Fin G.n → Fin G.n → ℂ) :=
-    AddMonoidHom.mk' (fun c w i l => G.psi w c i l) (by intro a c; funext w i l; simp [map_add])
+    AddMonoidHom.mk' (fun c w i l => G.psi w c i l) (by intro a c; funext w i l; simp [map_add (f := _)])
   refine Set.Finite.of_finite_image ?_ ((grp_val_injective G β).injOn)
   refine GlobalTheory.T.finite_of_bounded_image_in_finitely_generated_subgroup Φ (fun k e he => GlobalTheory.T.embeddings_real_independent p G k e he) S _ ?_ (Real.sqrt (max K 0 * N)) ?_
   · rintro _ ⟨y, ⟨-, hne⟩, rfl⟩

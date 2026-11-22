@@ -1,7 +1,11 @@
-import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
-import ReciprocityTheory.DualLattices.ImportsAlt
-import ReciprocityTheory.DualLattices.VdetLeOfSpanLe
-import ReciprocityTheory.DualLattices.FourierMapSmulLambdaWeight
+module
+
+public import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
+public import ReciprocityTheory.DualLattices.ImportsAlt
+public import ReciprocityTheory.DualLattices.VdetLeOfSpanLe
+public import ReciprocityTheory.DualLattices.FourierMapSmulLambdaWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -321,15 +325,10 @@ theorem u3 : PrimeHopfOrderStatement := by
       simpa [ZMod.natCast_zmod_val] using h
     convert hmem using 1
     funext a
-    simp only [Finset.sum_apply, Pi.smul_apply, Pi.sub_apply, Pi.one_apply, Algebra.smul_def,
-      Pi.mul_apply, Pi.algebraMap_apply, hr, hs0, mul_one]
+    simp only [Finset.sum_apply, Pi.smul_apply, Pi.sub_apply, Pi.one_apply]
+    simp only [Algebra.smul_def, hr, hs0, mul_one]
     by_cases ha : a = 0
-    · subst ha
-      rw [hω0, mul_zero]
-      symm
-      apply Finset.sum_eq_zero
-      intro k _
-      simp [hr, hs0, Algebra.smul_def]
+    · simp [ha, hω0]
     · have h1' : ∑ k, wt ω k * BA (k * a) j0 = ω a * ∑ b, wt ω b * BA b j0 :=
         sum_wt_mul_comp_mul_eq hωpow hω1 hωmul a ha (fun b => BA b j0)
       have h2' : ∑ k, wt ω k = ω a * ∑ b, wt ω b := by

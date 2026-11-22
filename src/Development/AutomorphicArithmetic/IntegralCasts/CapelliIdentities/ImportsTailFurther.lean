@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.Yva3.Helpers
 
@@ -18,7 +22,7 @@ private lemma key {α ι : Type} [Fintype ι] [DecidableEq ι] [DecidableEq α] 
       = ∏ i, ∑ x ∈ u.image (fun η => η i), f x :=
     by rw [Finset.prod_univ_sum]
   have h3 : ∏ i, ∑ x ∈ u.image (fun η => η i), f x ≤ ∏ _i : ι, ∑' x, f x := by
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i _
       exact Finset.sum_nonneg fun x _ => h0 x
     · intro i _

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.CharacterQuadraticDerivativeZero
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.CharacterQuadraticDerivativeZero
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -31,7 +35,7 @@ theorem sp_smul_right_k (c : AF F) (x y : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n)
 theorem rho_rho_k (v w : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) (Φ : d.Fn) :
     d.dd.rho d.B.ψ v (d.dd.rho d.B.ψ w Φ) = d.B.ψ (⅟(2 : AF F) * _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d v w) • d.dd.rho d.B.ψ (v + w) Φ := by
   funext x
-  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul, map_add, Prod.fst_add,
+  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add,
     Prod.snd_add, add_assoc, add_dotProduct, dotProduct_add, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k]
   congr 2
   linear_combination (-((d.dd.e v).1 ⬝ᵥ (d.dd.e w).2)) * invOf_mul_self (2 : AF F)
@@ -123,8 +127,8 @@ theorem l_D_k {Ψ : d.Fn} (hΨ : Ψ ∈ d.sch) {u : Matrix (Fin d.m) (Fin d.n �
   | add x y hx hy ix iy =>
     have : ∀ t : ℝ, schr d.B.ψ (realAd F t • w) (x + y) = schr d.B.ψ (realAd F t • w) x + schr d.B.ψ (realAd F t • w) y :=
       fun t => funext fun _ => mul_add _ _ _
-    simp only [this, map_add]
-    rw [Box.D, Box.DP_add hx hy, map_add]
+    simp only [this, map_add (f := _)]
+    rw [Box.D, Box.DP_add hx hy, map_add (f := _)]
     exact ix.add iy
   | smul c x hx ix =>
     have : ∀ t : ℝ, schr d.B.ψ (realAd F t • w) (c • x) = c • schr d.B.ψ (realAd F t • w) x :=
@@ -178,21 +182,21 @@ theorem T_D_k {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {u : Matrix (Fin d.m) (Fin d.n �
   have h4 := (_root_.PositivityTheory.SiegelWeilFormula.KK.psi_line_deriv_k (d := d) (_root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d v u)).mul (_root_.PositivityTheory.SiegelWeilFormula.KK.l_D_k hΨ hu ha)
   rw [_root_.PositivityTheory.SiegelWeilFormula.KK.schr_zero_at_k, _root_.PositivityTheory.SiegelWeilFormula.KK.psi_zero_line_k] at h4
   refine h4.congr_deriv ?_
-  rw [show d.T (Box.D (d.dd.e u) Φ) X = d.l (d.dd.rho d.B.ψ v (Box.D (d.dd.e u) Φ)) from rfl, _root_.PositivityTheory.SiegelWeilFormula.KK.rho_D_k hΦ hu, map_add,
+  rw [show d.T (Box.D (d.dd.e u) Φ) X = d.l (d.dd.rho d.B.ψ v (Box.D (d.dd.e u) Φ)) from rfl, _root_.PositivityTheory.SiegelWeilFormula.KK.rho_D_k hΦ hu, map_add (f := _),
     map_smul, smul_eq_mul]
   ring
 theorem sp_add_right_k (x y y' : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d x (y + y') = _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d x y + _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d x y' := by
-  rw [_root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, map_add, Prod.fst_add, Prod.snd_add, dotProduct_add, add_dotProduct]
+  rw [_root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_eq_k, map_add (f := _), Prod.fst_add, Prod.snd_add, dotProduct_add, add_dotProduct]
   ring
 theorem sp_smul_left_k (c : AF F) (x y : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d (c • x) y = c * _root_.PositivityTheory.SiegelWeilFormula.KK.sp_k d x y := by
   rw [_root_.PositivityTheory.SiegelWeilFormula.KK.sp_anti_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_smul_right_k, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_anti_k y x]
   ring
 theorem mZ_add_k (Z Z' X : Mx F E d.m d.n) : _root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k d (Z + Z') X = _root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k d Z X + _root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k d Z' X := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k, Matrix.add_mul, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_add_right_k, evI_add', map_add]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k, Matrix.add_mul, _root_.PositivityTheory.SiegelWeilFormula.KK.sp_add_right_k, evI_add', map_add (f := _)]
 theorem td_T_add_k (Φ Ψ : d.Fn) (X : Mx F E d.m d.n) : d.T (Φ + Ψ) X = d.T Φ X + d.T Ψ X := by
-  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, _root_.PositivityTheory.SiegelWeilFormula.KK.rho_add_fn_k, map_add]
+  simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, _root_.PositivityTheory.SiegelWeilFormula.KK.rho_add_fn_k, map_add (f := _)]
 theorem T_smul_k (c : ℂ) (Φ : d.Fn) (X : Mx F E d.m d.n) : d.T (c • Φ) X = c * d.T Φ X := by
   simp only [_root_.PositivityTheory.SiegelWeilFormula.SD_k.T, _root_.PositivityTheory.SiegelWeilFormula.KK.rho_smul_fn_k, map_smul, smul_eq_mul]
 theorem T_zero_k (X : Mx F E d.m d.n) : d.T 0 X = 0 := by
@@ -277,7 +281,7 @@ theorem hasDerivAt_character_quadratic (s : AF F) : HasDerivAt (fun t : ℝ => d
   simpa using h2
 theorem nfe_add_k (u v : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     Box.nf (d.dd.e (u + v)).1 = Box.nf (d.dd.e u).1 + Box.nf (d.dd.e v).1 := by
-  rw [map_add, Prod.fst_add, Box.nf_add]
+  rw [map_add (f := _), Prod.fst_add, Box.nf_add]
 theorem at_add'_k {u v : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)} (hu : At (evI F) u) (hv : At (evI F) v) :
     At (evI F) (u + v) := fun c hc => by rw [smul_add, hu c hc, hv c hc, add_zero]
 theorem atZ_add_k {Z Z' : Mx F E d.m d.n} (hZ : At (evI F) Z) (hZ' : At (evI F) Z') : At (evI F) (Z + Z') :=
@@ -320,7 +324,7 @@ theorem T_D_dg_k {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z : Mx F E d.m d.n} (hZ : At 
     have hs : Box.nf (d.dd.e ((Z + Z₀) * (_root_.PositivityTheory.SiegelWeilFormula.KK.dg_k d)ᵀ)).1 ≠ 0 := by rwa [Matrix.add_mul, _root_.PositivityTheory.SiegelWeilFormula.KK.nfe_add_k, ha, zero_add]
     have e1 := _root_.PositivityTheory.SiegelWeilFormula.KK.T_D_dg_ne_k hΦ (_root_.PositivityTheory.SiegelWeilFormula.KK.atZ_add_k hZ h0) hs X
     have e2 := _root_.PositivityTheory.SiegelWeilFormula.KK.T_D_dg_ne_k hΦ h0 h0' X
-    rw [Matrix.add_mul, map_add, Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k, e2, _root_.PositivityTheory.SiegelWeilFormula.KK.mZ_add_k] at e1
+    rw [Matrix.add_mul, map_add (f := _), Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k, e2, _root_.PositivityTheory.SiegelWeilFormula.KK.mZ_add_k] at e1
     push_cast at e1
     linear_combination e1
   by_cases hC : ∃ Z₀ : Mx F E d.m d.n, At (evI F) Z₀ ∧ Box.nf (d.dd.e (Z₀ * (_root_.PositivityTheory.SiegelWeilFormula.KK.secondFrameColumns d)ᵀ)).1 ≠ 0
@@ -346,7 +350,7 @@ theorem T_D_dg_k {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z : Mx F E d.m d.n} (hZ : At 
     have E := hL'.unique hR
     rw [_root_.PositivityTheory.SiegelWeilFormula.KK.schr_zero_at_k] at E
     simp only [td_realAd_zero, zero_mul, AddChar.map_zero_eq_one, zero_smul, add_zero, one_mul, zero_add] at E
-    rw [map_add, Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k] at E
+    rw [map_add (f := _), Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k] at E
     simp only [_root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k]
     linear_combination E
   push_neg at hB hC
@@ -389,7 +393,7 @@ theorem hasDerivAt_translate_secondColumns {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z :
     simp only [Pi.mul_apply]
     rw [_root_.PositivityTheory.SiegelWeilFormula.KK.schr_zero_at_k]
     simp only [td_realAd_zero, zero_mul, AddChar.map_zero_eq_one, one_mul, zero_add]
-    rw [map_add, Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k, e2, evI_neg', map_neg]
+    rw [map_add (f := _), Box.D_add_left, _root_.PositivityTheory.SiegelWeilFormula.KK.td_T_add_k, e2, evI_neg', map_neg]
     simp only [_root_.PositivityTheory.SiegelWeilFormula.KK.mZ_k]
     push_cast
     ring

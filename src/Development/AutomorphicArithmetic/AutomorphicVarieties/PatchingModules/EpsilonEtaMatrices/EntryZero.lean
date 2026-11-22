@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.MemW1IffPattern
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.OneCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.HomCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FiltCount
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.MemW1IffPattern
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.OneCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.HomCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FiltCount
+
+@[expose] public section
 
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -95,7 +99,7 @@ private theorem adic_sum {D R ι : Type} [TopologicalSpace D] [CommRing R] {I : 
   · intro a s ha ih
     have e : (fun g => Ideal.Quotient.mk (I ^ N) (∑ i ∈ insert a s, f i g)) =
         fun g => Ideal.Quotient.mk (I ^ N) (f a g) + Ideal.Quotient.mk (I ^ N) (∑ i ∈ s, f i g) :=
-      funext fun g => by rw [Finset.sum_insert ha, map_add]
+      funext fun g => by rw [Finset.sum_insert ha, map_add (f := _)]
     rw [e]
     exact (h a N).comp₂ ih _
 
@@ -179,7 +183,7 @@ private theorem crd_coc {l : ℕ} [Fact l.Prime] {F : GFrame l} {n : ℕ} {x : N
           (k.wi1 X v * k.ρ1 X (F.φ v g⁻¹) * k.w1 X v) := by
       rw [map_inv]
       simp only [mul_assoc, hw']
-    rw [mul_add, add_mul, Matrix.add_apply, map_add, hsplit,
+    rw [mul_add, add_mul, Matrix.add_apply, map_add (f := _), hsplit,
       conj_entry _ _ _ (ht g).1 (ht g⁻¹).1 i j (hB h), (ht g).2.1 i, (ht g⁻¹).2.1 j, co_mul]
 
 private abbrev Idx {n : ℕ} (ty : Fin n → Bool) (g : ℕ) : Type :=

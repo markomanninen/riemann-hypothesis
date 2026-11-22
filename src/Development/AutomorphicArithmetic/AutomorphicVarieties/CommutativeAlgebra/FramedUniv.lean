@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.UnivLift
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -13,7 +17,7 @@ variable {O : Type} [CommRing O] [IsLocalRing O]
 
 private theorem map_max {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R']
     (f : R →ₐ[O] R') {x : R} (hx : x ∈ maximalIdeal R) : f x ∈ maximalIdeal R' := by
-  rwa [← res_eq_zero_iff O, res_map f, res_eq_zero_iff]
+  rwa [← res_eq_zero_iff O, UpperTheory.V.Alg.res_map f, res_eq_zero_iff]
 
 private theorem quot_univ {A K : Type} [CommRing A] [Algebra O A] [IsCO O A] [CommRing K] [Algebra O K] [Nontrivial K]
     (I : Ideal A) (f0 : A →ₐ[O] K) (h0 : ∀ x ∈ I, f0 x = 0) :
@@ -171,7 +175,7 @@ private theorem cut_HH (h : Matrix ι ι R) (hh : h.map (res O R) = 1) :
   refine ((Cut.mat (h.transpose * Φ.JR R * h) (Φ.JR R)).and (Cut.all fun a => Cut.all fun b =>
     Cut.all fun (_ : Φ.blk a ≠ Φ.blk b) => Cut.eq (h a b) 0)).congr fun R' _ _ _ f => ?_
   have e : (h.map f).map (res O R') = 1 := by
-    rw [← hh]; exact Matrix.ext fun a b => res_map f _
+    rw [← hh]; exact Matrix.ext fun a b => UpperTheory.V.Alg.res_map f _
   simp only [FormData.HH, FormData.JR, mmul, map_alg, e, and_true, map_zero, Matrix.map_apply, Matrix.transpose_map]
 
 private theorem HH_one : Φ.HH (1 : Matrix ι ι R) :=
@@ -270,7 +274,7 @@ private theorem framed_of_univ {X : Type} [AddCommGroup X] {w : ι → X} (Φ : 
       rw [show x = 0 from (hI O (AlgHom.id O O)).1 (InH_self Φ r0) x hx, map_zero]
     · rw [hα]; exact HH_one Φ
     · rw [hα, mul_one, one_mul, hom_map, hom_res]
-      exact Matrix.ext fun a b => ((res_map i _).trans ((ρ v).red s a b)).symm)
+      exact Matrix.ext fun a b => ((UpperTheory.V.Alg.res_map i _).trans ((ρ v).red s a b)).symm)
   have c2 : Cut O A1 fun R' _ _ _ f => ∀ q, L q R' (((r.map p).map f).comap (F.ψ q) (F.hψ q)) :=
     Cut.all fun q => (hL q).closed A1 ((r.map p).comap (F.ψ q) (F.hψ q)) fun s => by
       have := p1 (F.ψ q s)

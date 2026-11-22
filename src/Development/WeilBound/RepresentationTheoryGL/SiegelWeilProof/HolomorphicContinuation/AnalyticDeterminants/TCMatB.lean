@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCMatA
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlkB
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.TCMatA
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BlkB
+
+@[expose] public section
 
 noncomputable section
 

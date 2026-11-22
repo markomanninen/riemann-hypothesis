@@ -1,10 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Formalism.LocalToGlobal.Divisibility.ColumnFamilyPlaceCharacterComap
-import Formalism.LocalToGlobal.Divisibility.TiedLemmas
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.InGeoIff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.VolumeLeOfTrivialFirstPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Formalism.LocalToGlobal.Divisibility.ColumnFamilyPlaceCharacterComap
+public import Formalism.LocalToGlobal.Divisibility.TiedLemmas
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.InGeoIff
+public import Formalism.LocalToGlobal.IndefiniteReal.LiftGoodPartComplexEqRangeFamily
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OrZeroOf
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RestrictedCharacterDataValid
+public import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,13 +84,13 @@ theorem mu_mem (h : Wt' ⊆ Wt) {v : HeightOneSpectrum (𝓞 X.toD7.what₂.LL)}
   have hm := (tup_mem_tuOf I).2 hu
   rwa [tup_ixOf] at hm
 
-open Classical in
 
+open Classical in
 def resMu (h : Wt' ⊆ Wt) (v : HeightOneSpectrum (𝓞 X.toD7.what₂.LL)) : TupU I (usedOf I T Wt') :=
   if hv : (plB X).symm v ∈ Wt' then ⟨(z.R.mu v).1, Or.inr (z.mu_mem h hv)⟩ else mu0F (X := X.B.fields) (tuOf I (usedOf I T Wt'))
 
-open Classical in
 
+open Classical in
 def resTw (Wt' : Set X.B.places.Pl) : Finset (HeightOneSpectrum (𝓞 X.toD7.what₂.LL)) :=
   z.R.twPl.filter fun v => (plB X).symm v ∈ Wt'
 
@@ -158,24 +165,33 @@ theorem muOf_res (h : Wt' ⊆ Wt) : MuOf X I T Wt' (z.resMu h) (z.resTw Wt') := 
       rw [z.lev.xiH, ixOf_mu0F] at hb
       exact hb
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def resR (h : Wt' ⊆ Wt) : RealDat3 X.toD7 (famR X I hX (usedOf I T Wt') z.Xg z.tr) z.core.Q.c.F :=
   Res.dat3 (A3 := famR X I hX (usedOf I T Wt) z.Xg z.tr) (inclU I (usedOf_mono I T h))
     (mu0F (X := X.B.fields) (tuOf I (usedOf I T Wt'))) z.R (z.resMu h) (z.resTw Wt')
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem newTup (h : Wt' ⊆ Wt) (hc : ConjStable X Wt') :
     Res.NewTup (A3 := famR X I hX (usedOf I T Wt) z.Xg z.tr) (f := inclU I (usedOf_mono I T h))
-      (μ := mu0F (X := X.B.fields) (tuOf I (usedOf I T Wt'))) z.R (z.resMu h) (z.resTw Wt') where
-  sub v hv := (z.mem_twPl v).2 (h ((z.mem_resTw h v).1 hv))
-  conj v := by
+      (μ := mu0F (X := X.B.fields) (tuOf I (usedOf I T Wt'))) z.R (z.resMu h) (z.resTw Wt') := by
+  constructor
+  case sub =>
+    intro v hv
+    exact (z.mem_twPl v).2 (h ((z.mem_resTw h v).1 hv))
+  case conj =>
+    intro v
     rw [z.mem_resTw h, z.mem_resTw h]
     exact hc.symm_mem_iff v
-  on v hv := z.inclU_resMu h ((z.mem_resTw h v).1 hv)
-  off v hv := z.resMu_off h fun hv' => hv ((z.mem_resTw h v).2 hv')
-  used t := z.resMu_used h t
+  case on =>
+    intro v hv
+    exact z.inclU_resMu h ((z.mem_resTw h v).1 hv)
+  case off =>
+    intro v hv
+    exact z.resMu_off h fun hv' => hv ((z.mem_resTw h v).2 hv')
+  case used =>
+    exact z.resMu_used h
 
 end Dat
 

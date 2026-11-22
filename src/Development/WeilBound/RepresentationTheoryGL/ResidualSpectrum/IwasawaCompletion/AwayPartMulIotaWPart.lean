@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.IwasawaCompletion.FlDefs
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.IwasawaCompletion.FlDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem wPart_awayPart (g : GA E N) : wPart N w (awayPart N w g) = 1 := by
 theorem awayPart_mul_iota_wPart (g : GA E N) : awayPart N w g * iota N w (wPart N w g) = g := by
   rw [awayPart, inv_mul_cancel_right]
 
-theorem commute_iota [IsTotallyComplex E] {y : GA E N} (hy : wPart N w y = 1) (x : GL (Fin N) (w.adicCompletion E)) :
+theorem commute_iota [_root_.NumberField.IsTotallyComplex E] {y : GA E N} (hy : wPart N w y = 1) (x : GL (Fin N) (w.adicCompletion E)) :
     y * iota N w x = iota N w x * y := by
   refine ga_ext ?_ ?_
   · simp only [map_mul, MonoidHom.comp_apply, pInf_finGL, mul_one, one_mul]

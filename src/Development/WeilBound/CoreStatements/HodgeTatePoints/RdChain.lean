@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RdBase
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterExistsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupRestrictionStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupTranslationStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderFundamentalIdealStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupCharactersStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RdBase
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupRestrictionStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupTranslationStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderFundamentalIdealStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.StableHopfOrderSubgroupCharactersStatement
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -26,19 +30,21 @@ structure IsChain (n : ℕ) (K : ℕ → Submodule F N) (t : ℕ → N) : Prop w
   notMem : ∀ i < n, t i ∉ K i
 
 theorem IsChain.quot {n : ℕ} {K : ℕ → Submodule F N} {t : ℕ → N} (h : IsChain n K t) (j : ℕ) :
-    IsChain (n - j) (fun i => (K (j + i)).map (K j).mkQ) (fun i => (K j).mkQ (t (j + i))) where
-  mono := fun a b hab => Submodule.map_mono (h.mono (by omega))
-  zero := by simp
-  top := by
-    have : K (j + (n - j)) = ⊤ := top_le_iff.1 (h.top ▸ h.mono (by omega))
-    simp only [this, Submodule.map_top, Submodule.range_mkQ]
-  succ := fun i hi => by
-    simp only [← add_assoc]
-    rw [h.succ (j + i) (by omega), Submodule.map_sup, Submodule.map_span, Set.image_singleton]
-  notMem := fun i hi hm => by
-    apply h.notMem (j + i) (by omega)
-    have : t (j + i) ∈ ((K (j + i)).map (K j).mkQ).comap (K j).mkQ := hm
-    rwa [Submodule.comap_map_eq, Submodule.ker_mkQ, sup_eq_left.2 (h.mono (by omega))] at this
+    IsChain (n - j) (fun i => (K (j + i)).map (K j).mkQ) (fun i => (K j).mkQ (t (j + i))) := by
+  exact {
+    mono := fun a b hab => Submodule.map_mono (h.mono (by omega))
+    zero := by simp
+    top := by
+      have : K (j + (n - j)) = ⊤ := top_le_iff.1 (h.top ▸ h.mono (by omega))
+      simp only [this, Submodule.map_top, Submodule.range_mkQ]
+    succ := fun i hi => by
+      simp only [← add_assoc]
+      rw [h.succ (j + i) (by omega), Submodule.map_sup, Submodule.map_span, Set.image_singleton]
+    notMem := fun i hi hm => by
+      apply h.notMem (j + i) (by omega)
+      have : t (j + i) ∈ ((K (j + i)).map (K j).mkQ).comap (K j).mkQ := hm
+      rwa [Submodule.comap_map_eq, Submodule.ker_mkQ, sup_eq_left.2 (h.mono (by omega))] at this
+  }
 
 theorem IsChain.mem {n : ℕ} {K : ℕ → Submodule F N} {t : ℕ → N} (h : IsChain n K t) {i j : ℕ}
     (hi : i < min j n) : t i ∈ K j := by
@@ -49,44 +55,48 @@ theorem IsChain.mem {n : ℕ} {K : ℕ → Submodule F N} {t : ℕ → N} (h : I
 open Classical in
 theorem IsChain.sub {n : ℕ} {K : ℕ → Submodule F N} {t : ℕ → N} (h : IsChain n K t) (j : ℕ) :
     IsChain (min j n) (fun i => (K i).comap (K j).subtype)
-      (fun i => if hi : t i ∈ K j then ⟨t i, hi⟩ else 0) where
-  mono := fun a b hab => Submodule.comap_mono (h.mono hab)
-  zero := by simp [h.zero]
-  top := by
-    rw [Submodule.comap_subtype_eq_top]
-    rcases le_total j n with h1 | h1
-    · rw [min_eq_left h1]
-    · rw [min_eq_right h1, h.top]; exact le_top
-  succ := fun i hi => by
-    apply Submodule.map_injective_of_injective (K j).injective_subtype
-    simp only [dif_pos (h.mem hi)]
-    rw [Submodule.map_sup, Submodule.map_span, Set.image_singleton, Submodule.map_comap_subtype,
-      Submodule.map_comap_subtype, inf_eq_right.2 (h.mono (by omega)),
-      inf_eq_right.2 (h.mono (by omega)), h.succ i (by omega)]
-    rfl
-  notMem := fun i hi hm => by
-    apply h.notMem i (by omega)
-    simp only [dif_pos (h.mem hi)] at hm
-    exact hm
+      (fun i => if hi : t i ∈ K j then ⟨t i, hi⟩ else 0) := by
+  exact {
+    mono := fun a b hab => Submodule.comap_mono (h.mono hab)
+    zero := by simp [h.zero]
+    top := by
+      rw [Submodule.comap_subtype_eq_top]
+      rcases le_total j n with h1 | h1
+      · rw [min_eq_left h1]
+      · rw [min_eq_right h1, h.top]; exact le_top
+    succ := fun i hi => by
+      apply Submodule.map_injective_of_injective (K j).injective_subtype
+      simp only [dite_eq_left (h.mem hi)]
+      rw [Submodule.map_sup, Submodule.map_span, Set.image_singleton, Submodule.map_comap_subtype,
+        Submodule.map_comap_subtype, inf_eq_right.2 (h.mono (by omega)),
+        inf_eq_right.2 (h.mono (by omega)), h.succ i (by omega)]
+      rfl
+    notMem := fun i hi hm => by
+      apply h.notMem i (by omega)
+      simp only [dite_eq_left (h.mem hi)] at hm
+      exact hm
+  }
 
 theorem isChain_flag {n : ℕ} (b : Module.Basis (Fin n) F N) :
-    IsChain n (flagSub b) (fun i => if h : i < n then b ⟨i, h⟩ else 0) where
-  mono := fun a c hac => Submodule.span_mono (Set.image_mono fun j hj => lt_of_lt_of_le hj hac)
-  zero := by simp [flagSub]
-  top := by
-    have : {j : Fin n | (j : ℕ) < n} = Set.univ := Set.eq_univ_of_forall fun j => j.2
-    rw [flagSub, this, Set.image_univ, b.span_eq]
-  succ := fun i hi => by
-    have : {j : Fin n | (j : ℕ) < i + 1} = {j : Fin n | (j : ℕ) < i} ∪ {⟨i, hi⟩} := by
-      ext j
-      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_singleton_iff, Fin.ext_iff]
-      omega
-    simp only [dif_pos hi]
-    rw [flagSub, this, Set.image_union, Submodule.span_union, Set.image_singleton]
-    rfl
-  notMem := fun i hi => by
-    simp only [dif_pos hi]
-    exact b.linearIndependent.notMem_span_image (by simp)
+    IsChain n (flagSub b) (fun i => if h : i < n then b ⟨i, h⟩ else 0) := by
+  exact {
+    mono := fun a c hac => Submodule.span_mono (Set.image_mono fun j hj => lt_of_lt_of_le hj hac)
+    zero := by simp [flagSub]
+    top := by
+      have : {j : Fin n | (j : ℕ) < n} = Set.univ := Set.eq_univ_of_forall fun j => j.2
+      rw [flagSub, this, Set.image_univ, b.span_eq]
+    succ := fun i hi => by
+      have : {j : Fin n | (j : ℕ) < i + 1} = {j : Fin n | (j : ℕ) < i} ∪ {⟨i, hi⟩} := by
+        ext j
+        simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_singleton_iff, Fin.ext_iff]
+        omega
+      simp only [dite_eq_left hi]
+      rw [flagSub, this, Set.image_union, Submodule.span_union, Set.image_singleton]
+      rfl
+    notMem := fun i hi => by
+      simp only [dite_eq_left hi]
+      exact b.linearIndependent.notMem_span_image (by simp)
+  }
 
 end
 
@@ -162,7 +172,7 @@ theorem chain_partial (hstep : type_of% @GlobalTheory.T.stable_hopf_order_subgro
   have h2 := chain_le hex hsq hsplit hos p C v R hv hp F f hF χ _ _ AK hKs _ _ (h.sub j)
     s a (fun i hi => by
       rw [(hstep p C v R hv hp F f hF _ AK hKs _ _ ((h.sub j).notMem i hi)).2, hK,
-        sub_stepRes _ (h.mono (by omega)), dif_pos (h.mem hi),
+        sub_stepRes _ (h.mono (by omega)), dite_eq_left (h.mem hi),
         ← (hstep p C v R hv hp F f hF _ AA hst _ _ (h.notMem i (by omega))).2]
       exact hs _ (by omega)) ha
   rw [hK] at ha

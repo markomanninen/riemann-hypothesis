@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.Places
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh
 
@@ -17,8 +21,6 @@ noncomputable def intRep (M : Rep.{0} (ZMod ℓ) G) : Rep.{0} (ULift.{0} ℤ) G 
             exact map_zsmul (M.ρ g).toAddMonoidHom r m }
       map_one' := by ext m; simp
       map_mul' := fun g h => by ext m; simp [Module.End.mul_apply] }
-
-theorem intRep_ρ_apply (M : Rep.{0} (ZMod ℓ) G) (g : G) (m : M) : (intRep M).ρ g m = M.ρ g m := rfl
 
 def intRepEquiv (M : Rep.{0} (ZMod ℓ) G) : M ≃+ intRep M := AddEquiv.refl M
 

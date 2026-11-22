@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ExpLaw
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.PderivSecondEvFirstPointEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.ActLin
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,8 +20,8 @@ namespace ExpOf
 
 variable {R : Type} [CommRing R]
 
-open Formalism.FG.SolveVAux in
 
+open Formalism.FG.SolveVAux in
 theorem coeff_single_subst {σ τ : Type} [Fintype σ] [DecidableEq σ] [DecidableEq τ]
     (a : σ → MvPowerSeries τ R) (ha : ∀ s, constantCoeff (a s) = 0) (f : MvPowerSeries σ R) (t : τ) :
     coeff (Finsupp.single t 1) (subst a f) =
@@ -72,7 +76,8 @@ theorem cc_linPt {n : ℕ} (uvec : Lt1 Dw → Fin d → S) (b : Fin n) (i : Fin 
 theorem subst_linPt {n m : ℕ} (uvec : Lt1 Dw → Fin d → S) (b : Fin n)
     (a : Fin n × Fin (dL Dw) → MvPowerSeries (Fin m × Fin (dL Dw)) S) (ha : HasSubst a) (i : Fin d) :
     subst a (linPt uvec b i) = ∑ ℓ : Lt1 Dw, MvPowerSeries.C (uvec ℓ i) * a (b, ltIdx Dw ℓ) := by
-  rw [linPt, ← coe_substAlgHom ha, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [linPt, ← coe_substAlgHom ha, map_sum]
   refine Finset.sum_congr rfl fun ℓ _ => ?_
   rw [map_mul, coe_substAlgHom, subst_X ha]
   congr 1
@@ -88,7 +93,8 @@ theorem hasSubst_linPt {n : ℕ} (uvec : Lt1 Dw → Fin d → S) (b : Fin n) :
 theorem coeff_linPt (uvec : Lt1 Dw → Fin d → S) (ℓ : Lt1 Dw) (i : Fin d) :
     coeff (Finsupp.single ((0 : Fin 1), ltIdx Dw ℓ) 1) (linPt uvec (0 : Fin 1) i) = uvec ℓ i := by
   classical
-  rw [linPt, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [linPt, map_sum]
   simp only [coeff_C_mul, coeff_X]
   rw [Finset.sum_eq_single ℓ]
   · simp
@@ -220,7 +226,7 @@ theorem expPhi_hom (G : FGLaw S d) (uvec : Lt1 Dw → Fin d → S) (ℓ ε : Pt 
     fin_cases k
     show _ = subst (fun p : Fin 2 × Fin d => linPt uvec p.1 p.2)
       (X ((0 : Fin 2), i) + X ((1 : Fin 2), i) : MvPowerSeries (Fin 2 × Fin d) S)
-    rw [subst_linPt uvec 0 _ hasSubst_XX, ← coe_substAlgHom (hasSubst_Λ uvec), map_add, coe_substAlgHom,
+    rw [subst_linPt uvec 0 _ hasSubst_XX, ← coe_substAlgHom (hasSubst_Λ uvec), map_add (f := _), coe_substAlgHom,
       subst_X (hasSubst_Λ uvec), subst_X (hasSubst_Λ uvec), linPt, linPt, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun ℓ' _ => ?_
     rw [mul_add]

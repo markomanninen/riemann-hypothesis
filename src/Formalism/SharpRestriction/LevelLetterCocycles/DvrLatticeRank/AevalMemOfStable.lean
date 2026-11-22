@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.AevalEndApply
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.Imports
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelQPfA
-import Lemmata.PowerMembership.PowMem
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.AevalEndApply
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.Imports
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelQPfA
+public import Lemmata.PowerMembership.PowMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem aeval_mem_of_stable {R M : Type*} [CommRing R] [AddCommGroup M] [Module 
 theorem aeval_comm {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] (f : Module.End R M)
     (P : Polynomial R) (v : M) : Polynomial.aeval f P (f v) = f (Polynomial.aeval f P v) := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq, map_add (f := _)]
   | monomial k a =>
     rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.End.mul_apply, Module.algebraMap_end_apply,
       Module.algebraMap_end_apply, map_smul, ← Module.End.mul_apply, ← pow_succ, pow_succ',
@@ -63,7 +67,7 @@ theorem coord_γLA {r : ℕ} (bL : Basis (Fin r) O (LcQ W T π' c)) (z : LA W T 
       W.γE W.gamK (TensorProduct.equivFinsuppOfBasisRight bL z i) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, Finsupp.add_apply, hx, hy, map_add, Finsupp.add_apply, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), Finsupp.add_apply, hx, hy, map_add (f := _), Finsupp.add_apply, map_add (f := _)]
   | tmul e l =>
     rw [ModelFPf.γLA_tmul, TensorProduct.equivFinsuppOfBasisRight_apply_tmul,
       TensorProduct.equivFinsuppOfBasisRight_apply_tmul, Finsupp.mapRange_apply, Finsupp.mapRange_apply]
@@ -104,7 +108,8 @@ theorem mkL_sum {ι : Type*} (s : Finset ι) (co : ι → O) (y : ι → W.DD T)
     ext
     simp
   unfold mkL
-  rw [e, show Submodule.Quotient.mk (∑ i ∈ s, co i • (⟨y i, hy i⟩ : ↥(NcS W T (c - 1)))) =
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, show Submodule.Quotient.mk (∑ i ∈ s, co i • (⟨y i, hy i⟩ : ↥(NcS W T (c - 1)))) =
       ∑ i ∈ s, Submodule.Quotient.mk (p := (PiNS W T π' 1).comap (NcS W T (c - 1)).subtype)
         (co i • (⟨y i, hy i⟩ : ↥(NcS W T (c - 1)))) from map_sum (Submodule.mkQ _) _ _]
   simp only [Submodule.Quotient.mk_smul]

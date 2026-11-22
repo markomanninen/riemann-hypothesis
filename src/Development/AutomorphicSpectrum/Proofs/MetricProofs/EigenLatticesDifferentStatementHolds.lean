@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.EigenLatDifferent
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFactThird
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.EigenLatDifferent
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ProjSumSumEmbeddingsEqTrace
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CapelliComplements.GeneralBFactThird
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ open scoped nonZeroDivisors
 
 variable {E : Type} [Field E] [NumberField E] {K : Type} [Field K] [NumberField K] {N : ℕ}
 
-open Classical in
 
+open Classical in
 theorem sum_dual_mul (σ τ : E →+* K) :
     ∑ k, σ (HT.dualInt E k) * τ ((RingOfIntegers.basis E k : 𝓞 E) : E) = if τ = σ then 1 else 0 := by
   let ρ : 𝓞 E →+* Module.End K K :=
@@ -43,8 +47,8 @@ theorem card_embeddings [Fintype (E →+* K)] (ι : K →+* ℂ)
 def diffIm (s : E →+* K) : Submodule (𝓞 K) K :=
   Submodule.span (𝓞 K) ((fun x : 𝓞 E => s (x : E)) '' (differentIdeal ℤ (𝓞 E) : Set (𝓞 E)))
 
-variable (E K) in
 
+variable (E K) in
 def intLat : Submodule (𝓞 K) ((E →+* K) → K) :=
   Submodule.span (𝓞 K) (Set.range fun (b : 𝓞 E) (σ : E →+* K) => σ (b : E))
 
@@ -100,7 +104,7 @@ theorem mem_diffIm_of_single_mem [Fintype (E →+* K)] [DecidableEq (E →+* K)]
       rw [e]
       exact Submodule.smul_mem _ a (Submodule.subset_span ⟨x, hx0, rfl⟩)
     · intro x y hx hy
-      rw [map_add, add_mul]
+      rw [map_add (f := _), add_mul]
       exact add_mem hx hy
   simpa using h2
 
@@ -238,14 +242,15 @@ theorem eigenLat_le [Fintype (E →+* K)] (hc : Fintype.card (E →+* K) = Modul
       obtain ⟨u, hu, rfl⟩ := hv
       funext a
       have e := congrArg (fun z : I => s ((z : Fin N → E) a)) (hxf ⟨u, hu⟩)
-      simp only [Submodule.coe_sum, Finset.sum_apply, map_sum] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Submodule.coe_sum, Finset.sum_apply, map_sum] at e
       simp only [tmap_gen, hφ _ ⟨u, hu⟩ , Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
       rw [← e]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← map_mul, Submodule.coe_smul, Pi.smul_apply, Algebra.smul_def]
     | zero => simp
     | add a b _ _ ha hb =>
-      simp only [map_add, Pi.add_apply, add_smul, Finset.sum_add_distrib, ← ha, ← hb]
+      simp only [map_add (f := _), Pi.add_apply, add_smul, Finset.sum_add_distrib, ← ha, ← hb]
     | smul c a _ ha =>
       simp only [map_smul, Pi.smul_apply, smul_assoc, ← Finset.smul_sum, ← ha]
   have hsum := hrec _ hw'

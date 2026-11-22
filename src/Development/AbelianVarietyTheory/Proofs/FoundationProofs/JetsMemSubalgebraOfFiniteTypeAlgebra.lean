@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -23,7 +27,7 @@ theorem jets_mem_subalgebra_of_finiteType : ∀ (k A R : Type) [Field k] [CommRi
       exact S.smul_mem (hT _ (Finset.mem_image.2 ⟨(l, 1), by simp [hl], rfl⟩)) c
     | add x y _ _ hx hy =>
       intro l hl
-      rw [map_add]
+      rw [map_add (f := _)]
       exact S.add_mem (hx l hl) (hy l hl)
     | mul x y _ _ hx hy =>
       intro l hl

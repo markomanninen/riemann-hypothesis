@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.HidaLatticeInclusionAtCoarseWeightBound
-import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsLinkage
+module
+
+public import Formalism.PieriBlockIdeals.HidaLatticeInclusionAtCoarseWeightBound
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsLinkage
+
+@[expose] public section
 
 namespace Formalism.CohomologicalDescent.Down7
 

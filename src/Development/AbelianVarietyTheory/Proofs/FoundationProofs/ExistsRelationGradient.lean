@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -34,7 +38,8 @@ theorem exists_relation_gradient {R A k ι : Type} [CommRing R] [CommRing A] [Fi
   have hfv : ∀ γ : ι → k, f γ = ∑ j, γ j * v j := by
     intro γ
     conv_lhs => rw [pi_eq_sum_univ' γ]
-    simp [v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [v, map_sum]
   let ψ : MvPolynomial ι R →+* DualNumber k :=
     eval₂Hom ((TrivSqZeroExt.inlHom k k).comp (red.comp (ev.comp C)))
       (fun j => (TrivSqZeroExt.inl (red (ev (X j))) + TrivSqZeroExt.inr (v j) : DualNumber k))
@@ -108,7 +113,7 @@ theorem taylor_bound [Fintype ι] [DecidableEq ι] (c : R →+* K) (hc : ∀ w, 
         ∑ j, eval₂ c x (pderiv j (p + q)) * (y j - x j) =
         (eval₂ c y p - eval₂ c x p - ∑ j, eval₂ c x (pderiv j p) * (y j - x j)) +
         (eval₂ c y q - eval₂ c x q - ∑ j, eval₂ c x (pderiv j q) * (y j - x j)) := by
-      simp only [map_add, eval₂_add, add_mul, Finset.sum_add_distrib]; ring
+      simp only [map_add (f := _), eval₂_add, add_mul, Finset.sum_add_distrib]; ring
     rw [this]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hp hq)
   | mul_X p n hp =>
     have h1 : ∀ j, eval₂ c x (pderiv j (p * X n)) * (y j - x j) =

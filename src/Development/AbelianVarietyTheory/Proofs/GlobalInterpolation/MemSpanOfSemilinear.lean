@@ -1,14 +1,19 @@
-import Mathlib
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.GlobalTheoryTheory GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem NumberField
 
 namespace GlobalTheory.EX.OB
@@ -49,7 +54,7 @@ theorem mem_span_of_semilinear {B K O Kf V W ι : Type*} [CommRing B] [IsDomain 
     induction hy' using Submodule.span_induction with
     | mem z hz => obtain ⟨i, rfl⟩ := hz; exact Submodule.subset_span ⟨i, rfl⟩
     | zero => simp
-    | add z z' _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+    | add z z' _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
     | smul a z _ h =>
       obtain ⟨o, ho⟩ := (hσ (algebraMap B K a)).2 ⟨a, rfl⟩
       rw [← algebraMap_smul K a z, hφ, ← ho, algebraMap_smul]
@@ -68,7 +73,8 @@ theorem mem_span_of_semilinear {B K O Kf V W ι : Type*} [CommRing B] [IsDomain 
   have heq : ∀ i, σ (k i) = algebraMap O Kf (o i) := by
     apply Fintype.linearIndependent_iffₛ.1 hli
     simp only [algebraMap_smul, ho]
-    rw [← hk, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hk, map_sum]
     simp [hφ]
   rw [← hk]
   refine Submodule.sum_mem _ fun i _ => ?_

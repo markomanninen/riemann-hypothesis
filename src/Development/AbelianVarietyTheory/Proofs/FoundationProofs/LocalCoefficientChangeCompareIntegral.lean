@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompatibleCoboundaries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompatibleCoboundaries
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem coordQ_act {Γ : Type} [Group Γ] {k : ℕ} (M₀ : Γ →* Matrix (Fin 
   rw [coordQ_mk]
   congr 1
   funext j
-  simp only [Matrix.mulVec, dotProduct, map_sum, Matrix.map_apply, ← fracMap_alg f hf, hp]
+  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, ← fracMap_alg f hf, hp]
 
 variable {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω] {Gw : Subgroup (Ω ≃ₐ[E] Ω)}
   [Algebra ℤ_[l] O₀] [TopologicalSpace O₀] [Algebra ℤ_[l] O] [TopologicalSpace O]
@@ -120,7 +124,8 @@ theorem coordLL_mulVec {k : ℕ} (q : ↥B.LL.1 →ₗ[ℚ_[l]] ↥B₀.LL.1)
     intro i
     rw [Br.toLLK_alg]
     rfl
-  simp only [Matrix.mulVec, dotProduct, map_sum, h1, h2, ← hx, ← map_mul, hq, hp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, h1, h2, ← hx, ← map_mul, hq, hp]
 
 include hp in
 set_option synthInstance.maxHeartbeats 400000 in
@@ -187,8 +192,8 @@ theorem exists_coords {O₀ O : Type} [CommRing O₀] [IsDomain O₀] [IsDiscret
   · simp only [he]
     exact (SelmerLevel.fracComp b).sum_p x
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem bkG_le_extCond (l : ℕ) [Fact l.Prime] (P : LocPrime l) (E Ω : Type) [Field E] [Field Ω] [Algebra E Ω]
     (Gw : Subgroup (Ω ≃ₐ[E] Ω)) (O₀ O : Type) [CommRing O₀] [IsDomain O₀] [IsDiscreteValuationRing O₀]
     [Algebra ℤ_[l] O₀] [Module.Finite ℤ_[l] O₀] [TopologicalSpace O₀] [CommRing O] [IsDomain O]
@@ -213,7 +218,8 @@ theorem bkG_le_extCond (l : ℕ) [Fact l.Prime] (P : LocPrime l) (E Ω : Type) [
       rw [Finset.sum_apply]
       exact (hs (x j)).symm
     simp only [Pi.smul_apply, ← hx]
-    conv_lhs => rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [this, map_sum]
     rfl
   change (c : ↥Gw → KOG O k) ∈ Submodule.span O _
   rw [hsum]
@@ -221,7 +227,7 @@ theorem bkG_le_extCond (l : ℕ) [Fact l.Prime] (P : LocPrime l) (E Ω : Type) [
   have hZ : (fun g => coordQ (p a) (hi a) k ((c : ↥Gw → KOG O k) g)) ∈ Z1 (WKG M₀) :=
     ⟨(continuous_of_discreteTopology (f := coordQ (p a) (hi a) k)).comp c.2.1, fun g h => by
       beta_reduce
-      rw [c.2.2, map_add, coordQ_act (p a) (hp a)]⟩
+      rw [c.2.2, map_add (f := _), coordQ_act (p a) (hp a)]⟩
   exact ⟨⟨_, hZ⟩, ⟨⟨_, hZ⟩, coordQ_mem_HfD (p a) (hp a) (hi a) B₀ B hz P σ hσ M₀ c hc, rfl⟩, rfl⟩
 
 end GlobalTheory.BlochKatoBaseChange

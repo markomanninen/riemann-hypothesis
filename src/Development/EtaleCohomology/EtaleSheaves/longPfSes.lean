@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.longPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.longPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC
@@ -45,9 +49,9 @@ def ι (K : Cx R) (N : ℕ) : tr K N ⟶ tr K (N + 1) where
     have hij' : i + 1 = j := hij
     by_cases h : -(N : ℤ) ≤ i
     · have hj : -(N : ℤ) ≤ j := by omega
-      rw [ιf, dif_pos h, ιf, dif_pos hj, tr_d K N i j h hj, tr_d K (N + 1) i j (by push_cast; omega) (by push_cast; omega)]
+      rw [ιf, dite_eq_left h, ιf, dite_eq_left hj, tr_d K N i j h hj, tr_d K (N + 1) i j (by push_cast; omega) (by push_cast; omega)]
       simp
-    · rw [ιf, dif_neg h, zero_comp]
+    · rw [ιf, dite_eq_right h, zero_comp]
       exact (trZ K N i (by omega)).eq_of_src _ _
 
 def pf (K : Cx R) (N : ℕ) (i : ℤ) : (tr K (N + 1)).X i ⟶ (Sg K N).X i :=
@@ -70,14 +74,14 @@ theorem ιp (K : Cx R) (N : ℕ) : ι K N ≫ pp K N = 0 := by
   by_cases h : -(N : ℤ) ≤ i
   · exact (SgZ K N i (by push_cast; omega)).eq_of_tgt _ _
   · show ιf K N i ≫ _ = 0
-    rw [ιf, dif_neg h, zero_comp]
+    rw [ιf, dite_eq_right h, zero_comp]
 
 theorem nat1 {K L : Cx R} (g : K ⟶ L) (N : ℕ) : ι K N ≫ trm g (N + 1) = trm g N ≫ ι L N := by
   refine HomologicalComplex.hom_ext _ _ (fun i => ?_)
   rw [HomologicalComplex.comp_f, HomologicalComplex.comp_f]
   by_cases h : -(N : ℤ) ≤ i
   · show ιf K N i ≫ _ = _ ≫ ιf L N i
-    rw [ιf, dif_pos h, ιf, dif_pos h, trm_f g N i h, trm_f g (N + 1) i (by push_cast; omega)]
+    rw [ιf, dite_eq_left h, ιf, dite_eq_left h, trm_f g N i h, trm_f g (N + 1) i (by push_cast; omega)]
     simp
   · exact (trZ K N i (by omega)).eq_of_src _ _
 
@@ -89,11 +93,9 @@ theorem nat2 {K L : Cx R} (g : K ⟶ L) (N : ℕ) :
   by_cases h : i = -((N + 1 : ℕ) : ℤ)
   · subst h
     show pf K N _ ≫ _ = _ ≫ pf L N _
-    rw [pf, dif_pos rfl, pf, dif_pos rfl, trm_f g (N + 1) _ (by omega)]
+    rw [pf, dite_eq_left rfl, pf, dite_eq_left rfl, trm_f g (N + 1) _ (by omega)]
     simp [CochainComplex.singleFunctor, CochainComplex.singleFunctors, HomologicalComplex.single_map_f_self,
       HomologicalComplex.singleObjXSelf]
-    erw [Category.id_comp, Category.id_comp, Category.assoc, Category.assoc, Iso.inv_hom_id_assoc]
-    rfl
   · exact (SgZ L N i h).eq_of_tgt _ _
 
 theorem sesK (K : Cx R) (N : ℕ) : (ShortComplex.mk (ι K N) (pp K N) (ιp K N)).ShortExact := by
@@ -101,14 +103,14 @@ theorem sesK (K : Cx R) (N : ℕ) : (ShortComplex.mk (ι K N) (pp K N) (ιp K N)
   intro i
   by_cases h : -(N : ℤ) ≤ i
   · have hz : IsZero ((Sg K N).X i) := SgZ K N i (by push_cast; omega)
-    have : IsIso (ιf K N i) := by rw [ιf, dif_pos h]; infer_instance
+    have : IsIso (ιf K N i) := by rw [ιf, dite_eq_left h]; infer_instance
     have hI : IsIso ((ShortComplex.mk (ι K N) (pp K N) (ιp K N)).map (HomologicalComplex.eval _ _ i)).f := this
     refine ShortComplex.ShortExact.mk' ?_ inferInstance (hz.epi _)
     rw [ShortComplex.exact_iff_epi _ (hz.eq_of_tgt _ _)]
     infer_instance
   · by_cases h' : i = -((N + 1 : ℕ) : ℤ)
     · have hz : IsZero ((tr K N).X i) := trZ K N i (by omega)
-      have : IsIso (pf K N i) := by subst h'; rw [pf, dif_pos rfl]; exact IsIso.comp_isIso' inferInstance (IsIso.comp_isIso' inferInstance (Iso.isIso_inv _))
+      have : IsIso (pf K N i) := by subst h'; rw [pf, dite_eq_left rfl]; exact IsIso.comp_isIso' inferInstance (IsIso.comp_isIso' inferInstance (Iso.isIso_inv _))
       have hI : IsIso ((ShortComplex.mk (ι K N) (pp K N) (ιp K N)).map (HomologicalComplex.eval _ _ i)).g := this
       refine ShortComplex.ShortExact.mk' ?_ (hz.mono _) inferInstance
       rw [ShortComplex.exact_iff_mono _ (hz.eq_of_src _ _)]

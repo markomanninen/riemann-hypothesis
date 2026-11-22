@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.RadEqv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.ChebQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.QocEquiv
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AddPowNsmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.IsAdmissiblePrimeListNil
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.RadEqv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.ChebQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.GalBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.QocEquiv
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AddPowNsmul
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Odd UpperTheory.V.Stick UpperTheory.V.ML
 open scoped nonZeroDivisors Pointwise
@@ -227,7 +231,7 @@ theorem UpperTheory.V.ML.pick :
       refine ⟨K, hKo, fun h => h0 ?_, fun φ hφ hφK u hu => ?_⟩
       · obtain ⟨g, hg⟩ := hex (-1)
         have h1 := radEqv Ω l O (QO l O ⧸ P) m F r hF hMF hr.ne_zero ρ hρ (dualChar l α) (fun u => P.mkQ (ν u))
-          (fun u hu v hv => by rw [hν.add u hu v hv, map_add])
+          (fun u hu v hv => by rw [hν.add u hu v hv, map_add (f := _)])
           (fun g u hu => by rw [hν.eqv g u hu, map_smul])
           (fun u hu => by rw [← map_nsmul, hν.tors u hu, map_zero])
           (fun u hu hu' => (Submodule.Quotient.mk_eq_zero P).2 ((hK u).1 (h ⟨hu, hu'⟩)).2) g u₀ u₀.2

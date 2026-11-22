@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModVec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,13 +33,15 @@ private theorem h_sub_lemma_5 (D : Dat A n r) (v x y : n → A) : D.h v (x - y) 
 
 private theorem h_sum_lemma_6 (D : Dat A n r) (v : n → A) (t : Fin r → A) (w : Fin r → n → A) :
     D.h v (∑ a, t a • w a) = ∑ a, t a * D.h v (w a) := by
-  rw [← hL_apply_lemma, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hL_apply_lemma, map_sum]
   simp only [map_smul, smul_eq_mul, hL_apply_lemma]
 
 private theorem h_swap_lemma_7 (D : Dat A n r) (H : D.Hyp) (x y : n → A) :
     D.h y x = D.σA (D.h x y) := by
   show (∑ i, ∑ j, D.σA (y i) * D.JA i j * x j) = D.σA (∑ i, ∑ j, D.σA (x i) * D.JA i j * y j)
-  simp only [map_sum, map_mul, H.σσ, H.herm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, H.σσ, H.herm]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
@@ -46,11 +52,12 @@ private theorem h_fe_lemma_8 (D : Dat A n r) (H : D.Hyp) (a b : Fin r) :
 
 private theorem h_add_left_lemma_9 (D : Dat A n r) (H : D.Hyp) (x x' y : n → A) :
     D.h (x + x') y = D.h x y + D.h x' y := by
-  rw [h_swap_lemma_7 D H, h_add_lemma_4, map_add, ← h_swap_lemma_7 D H, ← h_swap_lemma_7 D H]
+  rw [h_swap_lemma_7 D H, h_add_lemma_4, map_add (f := _), ← h_swap_lemma_7 D H, ← h_swap_lemma_7 D H]
 
 private theorem h_sum_left_lemma_10 (D : Dat A n r) (H : D.Hyp) (t : Fin r → A) (w : Fin r → n → A)
     (y : n → A) : D.h (∑ a, t a • w a) y = ∑ a, D.σA (t a) * D.h (w a) y := by
-  rw [h_swap_lemma_7 D H, h_sum_lemma_6, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h_swap_lemma_7 D H, h_sum_lemma_6, map_sum]
   simp only [map_mul, ← h_swap_lemma_7 D H]
 
 theorem pV_apply (D : Dat A n r) (x : n → A) : pV D x = x - D.pX x - D.pXv x := rfl
@@ -194,7 +201,8 @@ end Hyp
 theorem sum_conj (σ : A →+* A) (U W : Fin r → Fin r → A) (α β : Fin r → A)
     (h : ∀ b c, ∑ a, σ (U a b) * W a c = if b = c then 1 else 0) :
     ∑ a, σ (∑ b, U a b * α b) * ∑ c, W a c * β c = ∑ b, σ (α b) * β b := by
-  simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   calc ∑ c, ∑ a, ∑ b, σ (U a b) * σ (α b) * (W a c * β c)
       = ∑ c, ∑ b, (∑ a, σ (U a b) * W a c) * (σ (α b) * β c) := by

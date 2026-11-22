@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -52,19 +57,36 @@ theorem exists_sec_pull {L : LB X} {L' : LB Y} (hL : L.IsLB) (hL' : L'.IsLB) (F 
     ∃ θ' : L'.Sec, ∀ (y : Y) (i : L.ι), F y ∈ X.basicOpen (θ i) → ∃ k, y ∈ Y.basicOpen (θ'.f k) := by
   have hP : (L.pull F).IsLB := Semi.LB.isLB_pull hL F
   let e := isoOfGen hL' hP w hw
-  let s : Γ(toMod (L.pull F), F ⁻¹ᵁ O) := pullSec L F O (mkSec θ hθ)
+  let s : Γ(toMod (L.pull F), F ⁻¹ᵁ O) := mkSec
+    (fun j => (F.appLE _ _ (pull_inf_le F O j)).hom (θ (j PUnit.unit))) (by
+      intro i j
+      have e : F ⁻¹ᵁ O ⊓ (L.pull F).U i ⊓ (L.pull F).U j ≤
+          F ⁻¹ᵁ (O ⊓ L.U (i PUnit.unit) ⊓ L.U (j PUnit.unit)) :=
+        inf_le_inf (pull_inf_le F O i) (pull_U_le F j)
+      have h := congrArg (F.appLE _ _ e).hom (hθ (i PUnit.unit) (j PUnit.unit))
+      rw [map_mul, appLE_resG, appLE_resG, appLE_resG] at h
+      rw [resG_appLE, resG_appLE, resG_pull_g]
+      exact h)
+  have hcoord (j : (L.pull F).ι) : coord s j =
+      (F.appLE _ _ (pull_inf_le F O j)).hom (θ (j PUnit.unit)) := by
+    exact congrFun (coord_mkSec _ _) j
   let s' : Γ(toMod L', F ⁻¹ᵁ O) := e.inv.app _ s
   have hs : e.hom.app _ s' = s := by
     have := congrArg (fun q => q.app (F ⁻¹ᵁ O) s) e.inv_hom_id
     exact this
-  refine ⟨globalEquiv L' ((toMod L').presheaf.map (homOfLE hO).op s'), fun y i hy => ?_⟩
+  let t : Γ(toMod L', ⊤) := (toMod L').presheaf.map (homOfLE hO).op s'
+  refine ⟨⟨fun k => resG Y (le_inf le_top le_rfl) (coord t k), fun i j => ?_⟩, fun y i hy => ?_⟩
+  · change resG Y _ (resG Y _ _) = _ * resG Y _ (resG Y _ _)
+    rw [resG_resG, resG_resG, coord_rel t i j _ _ le_rfl, resG_self]
   obtain ⟨k, hk⟩ := nonvanishing_of_iso hL' hP w hw s' y (fun _ => i) (by
     change y ∈ Y.basicOpen (coord (e.hom.app _ s') _)
     rw [hs]
+    rw [hcoord (fun _ => i)]
     exact (mem_basicOpen_appLE F (pull_inf_le F O (fun _ => i)) (θ i) y).2
       ⟨⟨(X.basicOpen_le _ hy).1, mem_pull.2 (X.basicOpen_le _ hy).2⟩, hy⟩)
   refine ⟨k, ?_⟩
-  rw [globalEquiv_f, coord_map, mem_basicOpen_resG, mem_basicOpen_resG]
+  dsimp only [t]
+  rw [coord_map, mem_basicOpen_resG, mem_basicOpen_resG]
   have := (Y.basicOpen_le _ hk).2
   exact ⟨this, ⟨trivial, this⟩, hk⟩
 

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -133,10 +137,11 @@ theorem ord_diagonal (v : HeightOneSpectrum (𝓞 K)) (a : Kˣ) :
     ord v (diagonal K a) = -log (v.valuation K a) := by
   rw [ord, ← coe_finiteProj, coe_finiteProj_diagonal, valuedAdicCompletion_eq_valuation']
 
-open Classical in
 
+open Classical in
 theorem exists_ord_eq_ite (v : HeightOneSpectrum (𝓞 K)) :
     ∃ x : IdeleGroup K, ∀ w, ord w x = if w = v then 1 else 0 := by
+  classical
   obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer K
   have hne : ((π : K) : v.adicCompletion K) ≠ 0 := by
     intro h
@@ -180,8 +185,8 @@ theorem ker_toFractionalIdeal :
   rw [MonoidHom.mem_ker, toFractionalIdeal_eq_iff, mem_standardOpenSubgroup_iff_ord]
   simp only [Units.val_one, count_one]
 
-open Classical in
 
+open Classical in
 theorem primeIdealUnit_mem_range (v : HeightOneSpectrum (𝓞 K)) :
     primeIdealUnit v ∈ (toFractionalIdeal (K := K)).range := by
   obtain ⟨x, hx⟩ := exists_ord_eq_ite v
@@ -252,13 +257,6 @@ def quotientEquivClassGroup :
     IdeleGroup K ⧸ ((diagonal K).range ⊔ standardOpenSubgroup K) ≃* ClassGroup (𝓞 K) :=
   (QuotientGroup.quotientMulEquivOfEq ker_toClassGroup.symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ toClassGroup_surjective)
-
-@[simp]
-theorem quotientEquivClassGroup_mk (x : IdeleGroup K) :
-    quotientEquivClassGroup (QuotientGroup.mk x :
-      IdeleGroup K ⧸ ((diagonal K).range ⊔ standardOpenSubgroup K)) =
-      ClassGroup.mk K (toFractionalIdeal x) :=
-  rfl
 
 end IdeleGroup
 

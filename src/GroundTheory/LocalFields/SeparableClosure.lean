@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.IntermediateField
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.IntermediateField
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,7 @@ def algebraicNormedField : NontriviallyNormedField L :=
   spectralNorm.nontriviallyNormedField K L
 
 theorem algebraicNormedField_isUltrametricDist :
-    letI := algebraicNormedField K L
-    IsUltrametricDist L := by
+    (letI := algebraicNormedField K L; IsUltrametricDist L) := by
   let := normedField K
   have := normedField_isUltrametricDist K
   have := normedField_completeSpace K
@@ -64,9 +67,8 @@ theorem algebraicNormedField_isUltrametricDist :
     (isNonarchimedean_spectralNorm (K := K) (L := L))
 
 theorem algebraicNormedField_norm_algebraMap (a : K) :
-    letI := normedField K
-    letI := algebraicNormedField K L
-    ‖algebraMap K L a‖ = ‖a‖ := by
+    (letI := normedField K; letI := algebraicNormedField K L;
+      ‖algebraMap K L a‖ = ‖a‖) := by
   let := normedField K
   exact spectralNorm_extends a
 
@@ -145,8 +147,8 @@ theorem vle_iff_spectralNorm_le [ValuativeRel L] [ValuativeExtension K L] (x y :
     change ¬ ‖y / x‖ < 1 ↔ _
     rw [norm_div, div_lt_one (norm_pos_iff.mpr hx), not_lt]
 
-variable (K) in
 
+variable (K) in
 theorem valuativeRel_eq_of_isAlgebraic {v₁ v₂ : ValuativeRel L}
     (e₁ : @ValuativeExtension K L _ _ _ v₁ _) (e₂ : @ValuativeExtension K L _ _ _ v₂ _) :
     v₁ = v₂ := by
@@ -180,13 +182,11 @@ def algebraicTopology : TopologicalSpace L :=
   (algebraicNormedField K L).toUniformSpace.toTopologicalSpace
 
 theorem algebraicValuativeRel_vle_iff (x y : L) :
-    letI := normedField K
-    letI := algebraicValuativeRel K L
-    x ≤ᵥ y ↔ spectralNorm K L x ≤ spectralNorm K L y := Iff.rfl
+    (letI := normedField K; letI := algebraicValuativeRel K L;
+      x ≤ᵥ y ↔ spectralNorm K L x ≤ spectralNorm K L y) := Iff.rfl
 
 theorem algebraicValuativeRel_valuativeExtension :
-    letI := algebraicValuativeRel K L
-    ValuativeExtension K L := by
+    (letI := algebraicValuativeRel K L; ValuativeExtension K L) := by
   let := algebraicValuativeRel K L
   constructor
   intro a b
@@ -196,20 +196,9 @@ theorem algebraicValuativeRel_valuativeExtension :
   rw [← algebraicNormedField_norm_algebraMap K L a, ← algebraicNormedField_norm_algebraMap K L b]
   rfl
 
-theorem algebraicValuativeRel_isNontrivial :
-    letI := algebraicValuativeRel K L
-    IsNontrivial L := by
-  let := algebraicNormedField K L
-  have := algebraicNormedField_isUltrametricDist K L
-  let := algebraicValuativeRel K L
-  have hc : (NormedField.valuation (K := L)).Compatible := Valuation.Compatible.ofValuation _
-  rw [isNontrivial_iff_isNontrivial (NormedField.valuation (K := L))]
-  infer_instance
-
 theorem algebraicTopology_isValuativeTopology :
-    letI := algebraicValuativeRel K L
-    letI := algebraicTopology K L
-    IsValuativeTopology L := by
+    (letI := algebraicValuativeRel K L; letI := algebraicTopology K L;
+      IsValuativeTopology L) := by
   let := algebraicNormedField K L
   have := algebraicNormedField_isUltrametricDist K L
   let := algebraicValuativeRel K L
@@ -235,9 +224,6 @@ instance separableClosure_valuativeExtension : ValuativeExtension K (SeparableCl
 instance separableClosure_isValuativeTopology : IsValuativeTopology (SeparableClosure K) :=
   algebraicTopology_isValuativeTopology K (SeparableClosure K)
 
-instance separableClosure_isNontrivial : IsNontrivial (SeparableClosure K) :=
-  algebraicValuativeRel_isNontrivial K (SeparableClosure K)
-
 end SeparableClosure
 
 section Topology
@@ -253,8 +239,8 @@ variable {K Ω : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonar
   [Field Ω] [ValuativeRel Ω] [TopologicalSpace Ω] [IsValuativeTopology Ω]
   [Algebra K Ω] [ValuativeExtension K Ω] [Algebra.IsAlgebraic K Ω]
 
-omit [TopologicalSpace Ω] [IsValuativeTopology Ω] in
 
+omit [TopologicalSpace Ω] [IsValuativeTopology Ω] in
 theorem exists_algebraMap_valuation_lt (γ : (ValueGroupWithZero Ω)ˣ) :
     ∃ a : K, a ≠ 0 ∧ valuation Ω (algebraMap K Ω a) < γ := by
   let := normedField K
@@ -311,12 +297,11 @@ section Inclusion
 variable {K Ω : Type*} [Field K] [Field Ω] [Algebra K Ω] [ValuativeRel Ω]
 
 theorem IntermediateField.valuativeExtension_inclusion {E F : IntermediateField K Ω} (h : E ≤ F) :
-    letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-    ValuativeExtension E F :=
+    (letI := (IntermediateField.inclusion h).toRingHom.toAlgebra; ValuativeExtension E F) :=
   letI := (IntermediateField.inclusion h).toRingHom.toAlgebra
-  ⟨fun a b ↦ by
-    rw [← IntermediateField.coe_vle_coe_iff (L := Ω) a b,
-      ← IntermediateField.coe_vle_coe_iff (L := Ω)]
+  ⟨fun {a b} ↦ by
+    rw [← IntermediateField.coe_vle_coe_iff (E := E) a b,
+      ← IntermediateField.coe_vle_coe_iff (E := F)]
     rfl⟩
 
 end Inclusion
@@ -325,8 +310,8 @@ section Finite
 
 variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
 
-variable (K) in
 
+variable (K) in
 theorem valuativeRel_eq_finiteExtensionStructure {L : Type*} [Field L] [Algebra K L]
     [FiniteDimensional K L] [v : ValuativeRel L] [ValuativeExtension K L] :
     v = (finiteExtensionStructure K L).rel :=
@@ -360,28 +345,12 @@ theorem continuous_algEquiv_of_isAlgebraic (σ : Ω ≃ₐ[K] Ω) : Continuous �
   rw [valuation_algEquiv_apply_of_isAlgebraic]
   exact hx
 
-def homeomorphOfIsAlgebraic (σ : Ω ≃ₐ[K] Ω) : Ω ≃ₜ Ω where
-  toEquiv := σ.toEquiv
-  continuous_toFun := continuous_algEquiv_of_isAlgebraic σ
-  continuous_invFun := continuous_algEquiv_of_isAlgebraic σ.symm
-
-@[simp]
-theorem coe_homeomorphOfIsAlgebraic (σ : Ω ≃ₐ[K] Ω) : ⇑(homeomorphOfIsAlgebraic σ) = σ :=
-  rfl
-
 end Finite
 
 section Check
 
 variable (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K]
   (L : IntermediateField K (SeparableClosure K)) [FiniteDimensional K L]
-
-example : IsNonarchimedeanLocalField L := inferInstance
-example : ValuativeExtension K L := inferInstance
-example : ValuativeExtension L (SeparableClosure K) := inferInstance
-example (σ : SeparableClosure K ≃ₐ[K] SeparableClosure K) (x : SeparableClosure K) :
-    valuation (SeparableClosure K) (σ x) = valuation (SeparableClosure K) x :=
-  valuation_algEquiv_apply_of_isAlgebraic σ x
 
 end Check
 

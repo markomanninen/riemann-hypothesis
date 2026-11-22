@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ open PositivityTheory.KB
 theorem ev_finset_sum {G H Y : Type} [Group G] [Group H] [MulAction H Y] (ρ : G →* H) {m : ℕ}
     (F : (Fin (m + 1) → Y) → ℝ) (y : Y) {ι : Type} (s : Finset ι) (z : ι → Chn G m) :
     ev ρ F y (∑ i ∈ s, z i) = ∑ i ∈ s, ev ρ F y (z i) := by
-  simp only [ev_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ev_eq, map_sum]
 
 theorem inv_dC {G H Y : Type} [Group G] [Group H] [MulAction H Y] (ρ : G →* H) {m : ℕ}
     (E : (Fin (m + 1) → Y) → ℝ) (hE : Inv ρ E) : Inv ρ (dC E) := by
@@ -24,7 +29,7 @@ theorem pEvDC : PEvDC := by
   refine Finsupp.induction_linear z ?_ ?_ ?_
   · simp [ev_zero]
   · intro a b ha hb
-    rw [ev_add, map_add, ev_add, ha, hb]
+    rw [ev_add, map_add (f := _), ev_add, ha, hb]
   · intro g a
     have hbd : bd G m (Finsupp.single g a) = a • bd G m (Finsupp.single g 1) := by
       rw [← map_smul, Finsupp.smul_single, smul_eq_mul, mul_one]
@@ -72,7 +77,7 @@ theorem pCob : PCob := by
     intro w
     refine Finsupp.induction_linear w ?_ ?_ ?_
     · simp [ev_zero]
-    · intro a b ha hb; rw [ev_add, ha, hb, map_add]
+    · intro a b ha hb; rw [ev_add, ha, hb, map_add (f := _)]
     · intro g a
       rw [ev_single]
       simp only [E, MonoidHom.id_apply, smul_eq_mul, mul_one, Fin.partialProd_right_inv]

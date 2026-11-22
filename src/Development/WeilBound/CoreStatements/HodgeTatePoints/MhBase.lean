@@ -1,13 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfSec
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 noncomputable section
 
@@ -167,7 +170,7 @@ theorem exists_emb (Γ : QFGroup R T) (A : Subalgebra R (T → R))
       map_one' := sec_ext Γ fun t => by rw [hs, map_one]; simp
       map_mul' := fun a b => sec_ext Γ fun t => by rw [hs, map_mul, hs, hs]; simp
       map_zero' := sec_ext Γ fun t => by rw [hs, map_zero]; simp
-      map_add' := fun a b => sec_ext Γ fun t => by rw [hs, map_add, hs, hs]; simp }
+      map_add' := fun a b => sec_ext Γ fun t => by rw [hs, map_add (f := _), hs, hs]; simp }
   obtain ⟨j, hj⟩ := exists_pb φ
   have hpt : ∀ t, (Γ.pt t).left ≫ j = Spec.map (CommRingCat.ofHom
       ((algebraMap R (FractionRing R)).comp

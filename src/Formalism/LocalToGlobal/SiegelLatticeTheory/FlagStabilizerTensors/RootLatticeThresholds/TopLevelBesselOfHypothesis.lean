@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BigCellDensity
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BigCellDensity
+
+@[expose] public section
 
 noncomputable section
 

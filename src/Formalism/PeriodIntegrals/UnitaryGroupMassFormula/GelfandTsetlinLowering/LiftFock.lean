@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowDivAdj
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQRowDivAdj
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,8 @@ theorem rowDiv_diag {r n : ℕ} (a : Fin r) (k : ℕ) (f : MvPolynomial (Fin r �
   classical
   unfold rowDiv
   conv_lhs => rw [f.as_sum]
-  rw [map_sum, Polynomial.finset_sum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   conv_rhs => rw [f.as_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [rowGen_diag_monomial, Polynomial.coeff_C_mul, Polynomial.coeff_one_add_X_pow]
@@ -168,11 +173,12 @@ private theorem isWeightedHomogeneous_coeff_rowGen {r n : ℕ} (a b c : Fin r) (
     IsWeightedHomogeneous (rw1 c) ((rowGen ℂ a b g).coeff j)
       (H + j * ((if a = c then 1 else 0) - (if b = c then 1 else 0))) := by
   classical
-  rw [g.as_sum, map_sum, Polynomial.finset_sum_coeff, ← mem_weightedHomogeneousSubmodule]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum, Polynomial.finsetSum_coeff, ← mem_weightedHomogeneousSubmodule]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [mem_weightedHomogeneousSubmodule]
   have hw := hg (mem_support_iff.mp hm)
-  have hC : rowGen ℂ a b (C (coeff m g) : MvPolynomial (Fin r × Fin n) ℂ) = Polynomial.C (C (coeff m g)) := by
+  have hC : rowGen ℂ a b (C (AddMonoidAlgebra.coeff g m) : MvPolynomial (Fin r × Fin n) ℂ) = Polynomial.C (C (AddMonoidAlgebra.coeff g m)) := by
     unfold rowGen
     rw [aeval_C, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
   rw [monomial_eq, map_mul, Finsupp.prod, map_prod]
@@ -312,13 +318,13 @@ theorem fockDetect_of (h3 : PI.HwIrred) (hD : EqvDiv) : FockDetect := by
       zero_mem' := by simp [fockF]
       add_mem' := by
         intro a b ha hb
-        simp only [Set.mem_ofPred_eq, map_add] at *
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at *
         unfold fockF at *
         rw [← zero_add (0 : ℂ)]
         nth_rewrite 1 [← ha]
         rw [← hb, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun m _ => ?_
-        simp only [coeff_add, star_add]
+        simp only [MvPolynomial.coeff_add, star_add]
         ring
       smul_mem' := by
         intro c a ha

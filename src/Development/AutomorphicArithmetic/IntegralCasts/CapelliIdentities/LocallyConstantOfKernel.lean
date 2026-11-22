@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.LocallyConstantOfKernel.lc_of_ker :
     ∀ {Γ C : Type} [inst : Group Γ]

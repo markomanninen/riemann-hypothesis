@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.ConverseStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.ConverseStep
+
+@[expose] public section
 
 open Matrix
 
@@ -196,9 +200,6 @@ theorem herm_es (v : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
   congr 1
   ext
   simp [esI, eI, h2]
-
-theorem bvec_apply (i j : Fin (2 * r + k + 1)) : bvec i j = if j = i then 1 else 0 := by
-  simp [bvec, Pi.single_apply]
 
 theorem herm_sum_left (v : Fin (r + 1) → Fin (2 * r + k + 1) → ℂ) (c : Fin (r + 1) → ℂ)
     (w : Fin (2 * r + k + 1) → ℂ) :

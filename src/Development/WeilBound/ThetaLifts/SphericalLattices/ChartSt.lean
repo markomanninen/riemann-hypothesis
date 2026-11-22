@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocModSt
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocModSt
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasMain
+
+@[expose] public section
 
 noncomputable section
 

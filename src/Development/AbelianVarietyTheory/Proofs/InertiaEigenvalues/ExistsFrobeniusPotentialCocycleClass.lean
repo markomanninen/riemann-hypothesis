@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotentialPhiSub
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsLogAExtends
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KisinInfGaloisActsThroughDescentDatumStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinBcrisComparisonFrobeniusNaturalityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinMuPowSmulFrobeniusMemAinfStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerSubOneAinfPropertiesCompatibleRootsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MonodromyMemRangeOfInvariantVectorStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisDecompTameCoverActionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorOneInjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HorizEqXiRedStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimePowSmulMemLocalLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotentialPhiSub
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsLogAExtends
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.KisinInfGaloisActsThroughDescentDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinBcrisComparisonFrobeniusNaturalityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinMuPowSmulFrobeniusMemAinfStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TeichmullerSubOneAinfPropertiesCompatibleRootsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MonodromyMemRangeOfInvariantVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisDecompTameCoverActionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TensorOneInjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HorizEqXiRedStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimePowSmulMemLocalLatticeStatement
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -40,13 +45,13 @@ theorem isCrisVal_add {P : PhiMod O K l e a ι} {T : LocLat G ℚ_[l] K O}
   obtain ⟨m, c, hm, h1, h2⟩ := h
   obtain ⟨m', c', hm', h1', h2'⟩ := h'
   refine ⟨m * m', m' • c + m • c', by rw [map_mul]; exact hm.mul hm', ?_, ?_⟩
-  · rw [map_add, inclL_smul, inclL_smul, ← h1, ← h1', map_mul, smul_add, mul_smul, mul_smul,
+  · rw [map_add (f := _), inclL_smul, inclL_smul, ← h1, ← h1', map_mul, smul_add, mul_smul, mul_smul,
       smul_comm (inclO l O m) (inclO l O m') w]
   · have e1 : (fun i => toB l O ((m' • c + m • c') i)) =
         toB l O m' • (fun i => toB l O (c i)) + toB l O m • (fun i => toB l O (c' i)) := by
       funext i
-      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul]
-    rw [e1, map_add, map_smul, map_smul, ← h2, ← h2', map_mul, smul_add, mul_smul, mul_smul,
+      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
+    rw [e1, map_add (f := _), map_smul, map_smul, ← h2, ← h2', map_mul, smul_add, mul_smul, mul_smul,
       smul_comm (toB l O m) (toB l O m') b]
 
 theorem isCrisVal_zero {P : PhiMod O K l e a ι} {T : LocLat G ℚ_[l] K O}
@@ -71,12 +76,12 @@ theorem isPotential_add (R : GalDat t ϖ s D T) {y y' : Vec K a ι} {b b' : TW (
   obtain ⟨hy', m₀', σ', b₀', h1', h2', h3', h4', h5'⟩ := h'
   refine ⟨add_mem hy hy', m₀ + m₀', σ + σ', b₀ + b₀', ?_, add_mem h2 h2', ?_, ?_, ?_⟩
   · change _ = toW t ϖ D.toPhiMod (⟨y, hy⟩ + ⟨y', hy'⟩)
-    rw [map_add, map_add, ← h1, ← h1']
+    rw [map_add (f := _), map_add (f := _), ← h1, ← h1']
     abel
-  · rw [Submodule.coe_add, map_add, map_add, h3, h3']
-  · rw [map_add]
+  · rw [Submodule.coe_add, map_add (f := _), map_add (f := _), h3, h3']
+  · rw [map_add (f := _)]
     exact isCrisVal_add h4 h4'
-  · rw [h5, h5', map_add, map_add]
+  · rw [h5, h5', map_add (f := _), map_add (f := _)]
     abel
 
 theorem isPotential_nsmul (R : GalDat t ϖ s D T) {y : Vec K a ι} {b : TW (OB l O) T}
@@ -118,13 +123,13 @@ theorem actB_mul (s : G →* GQ l) (T : LocLat G ℚ_[l] K O) (g g' : G) (z : TW
     actB s T (g * g') z = actB s T g (actB s T g' z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul w x =>
     have hw : galOB O (s (g * g')) w = galOB O (s g) (galOB O (s g') w) := by
       rw [map_mul]
       induction w using TensorProduct.induction_on with
       | zero => simp only [map_zero]
-      | add u v hu hv => simp only [map_add, hu, hv]
+      | add u v hu hv => simp only [map_add (f := _), hu, hv]
       | tmul o c =>
         simp only [galOB, Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
         exact congrArg (fun z : Per.Bcris l => o ⊗ₜ[ℤ_[l]] z) ((GlobalTheory.MemLoc.ActLaws.act_laws l).1 _ _ c)

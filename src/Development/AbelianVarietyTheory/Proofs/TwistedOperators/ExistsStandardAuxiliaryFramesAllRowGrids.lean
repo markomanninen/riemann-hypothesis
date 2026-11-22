@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExtendByZeroTrivialDecomposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExtendByZeroTrivialDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,21 +70,23 @@ end Gen
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc)
 
-theorem auxiliaryFrames_standard : Std (GlobalTheory.AscInh.auxiliaryFrames G) where
-  zA := rfl
-  zB := by
-    funext i
-    simp only [GlobalTheory.AscInh.auxiliaryFrames, GlobalTheory.AscInh.lineDec, Matrix.mulVec, dotProduct, pow_zero, mul_one]
-    exact Fin.sum_univ_one _
-  ζ ρ := by
-    funext i
-    show (-D.host.xi0) ^ ρ = (-D.host.xi0) ^ ρ * (-D.host.xi0) ^ 0
-    rw [pow_zero, mul_one]
-  hB ρ h := isAuxiliaryVectorWittDec_oddBesselRescale _ _
-  aB ρ h := coreMat_iA _ _
-  zB' ρ h := coreMat_iB _ _
-  hJ ρ h := isAuxiliaryVectorWittDec_evenFourierJacobiRescale _ _
-  aJ ρ h := rfl
+theorem auxiliaryFrames_standard : Std (GlobalTheory.AscInh.auxiliaryFrames G) := by
+  exact {
+    zA := rfl
+    zB := by
+      funext i
+      simp only [GlobalTheory.AscInh.auxiliaryFrames, GlobalTheory.AscInh.lineDec, Matrix.mulVec, dotProduct, pow_zero, mul_one]
+      exact Fin.sum_univ_one _
+    ζ ρ := by
+      funext i
+      show (-D.host.xi0) ^ ρ = (-D.host.xi0) ^ ρ * (-D.host.xi0) ^ 0
+      rw [pow_zero, mul_one]
+    hB ρ h := isAuxiliaryVectorWittDec_oddBesselRescale _ _
+    aB ρ h := coreMat_iA _ _
+    zB' ρ h := coreMat_iB _ _
+    hJ ρ h := isAuxiliaryVectorWittDec_evenFourierJacobiRescale _ _
+    aJ ρ h := rfl
+  }
 
 theorem exists_std_frames : All fun {_} _ _ _ {G} _ _ => ∃ F : Frames G, Std F :=
   fun _ _ _ _ _ _ _ G _ _ _ => ⟨_, auxiliaryFrames_standard G⟩

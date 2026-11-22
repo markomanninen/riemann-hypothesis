@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.ActsByFrameAct
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.NormRepresentationLift.ActsByFrameAct
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,6 @@ theorem star_int (x : 𝓞 E) : ∃ y : 𝓞 E, (y : E) = star (x : E) := by
 def cj (x : 𝓞 E) : 𝓞 E := Classical.choose (star_int x)
 
 @[simp] theorem coe_cj (x : 𝓞 E) : ((cj x : 𝓞 E) : E) = star (x : E) := Classical.choose_spec (star_int x)
-
-theorem cj_cj (x : 𝓞 E) : cj (cj x) = x := by
-  apply RingOfIntegers.ext; simp
 
 theorem exists_beta (P : HeightOneSpectrum (𝓞 E)) :
     ∃ β : E, (∀ p ∈ P.asIdeal, ∃ o : 𝓞 E, β * (p : E) = (o : E)) ∧
@@ -56,6 +57,6 @@ theorem exists_beta (P : HeightOneSpectrum (𝓞 E)) :
     push_cast at h1
     linear_combination (-β) * h1
   rw [this, ho, ho']
-  rw [map_add, map_mul]
+  rw [map_add (f := _), map_mul]
 
 end PI.NRL

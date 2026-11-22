@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,12 +70,12 @@ theorem kr_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (d : ℕ) 
     (A : Matrix (Fin n) (Fin n) R) : (kr d A).map f = kr d (A.map f) := by
   ext i j
   simp only [kr, reindex_apply, map_apply, submatrix_apply, kroneckerMap_apply, one_apply]
-  split_ifs <;> simp
+  by_cases h : i.divNat = j.divNat <;> simp [Matrix.one_apply, h]
 
 theorem kr_conjTranspose (d : ℕ) {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) : (kr d A)ᴴ = kr d Aᴴ := by
   ext i j
   simp only [kr, reindex_apply, conjTranspose_apply, submatrix_apply, kroneckerMap_apply, one_apply]
-  split_ifs with h1 h2 h2 <;> simp_all [eq_comm]
+  by_cases h : i.divNat = j.divNat <;> simp [Matrix.one_apply, eq_comm, h]
 
 theorem kr_mul (d : ℕ) {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) : kr d (A * B) = kr d A * kr d B := by
   simp only [kr, reindex_apply, submatrix_mul_equiv, ← mul_kronecker_mul, Matrix.mul_one]

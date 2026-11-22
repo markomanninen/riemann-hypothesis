@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.PositionPrependMemNoncompactPositionSubmodule
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Weights
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerOrth
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.PositionPrependMemNoncompactPositionSubmodule
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.Weights
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerOrth
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.KUnitB
+
+@[expose] public section
 
 noncomputable section
 

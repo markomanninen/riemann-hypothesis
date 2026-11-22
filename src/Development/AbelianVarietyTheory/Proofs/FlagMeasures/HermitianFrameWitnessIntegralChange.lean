@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsInnerLatticeVectorAnisotropicStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeFrameUnipotentStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentAddIsotropicToAnisotropicStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsInnerLatticeVectorAnisotropicStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeFrameUnipotentStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUnipotentAddIsotropicToAnisotropicStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
@@ -101,13 +105,15 @@ theorem witness_change : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalS
   refine ⟨hT, hT', ⟨n * kA, mul_mem hn hkA, ?_, ?_⟩, ⟨n' * kB, mul_mem hn' hkB, ?_, ?_⟩, ?_⟩
   · funext b
     show g b = n (kA (P.A.f b))
-    rw [hg b, hkAf b, map_sum, hf]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hg b, hkAf b, map_sum, hf]
     simp only [map_smul]
   · show t.abelian₂ = _
     rw [img_mul, hkAL, hLam]
   · funext b
     show g' b = n' (kB (P.B.f b))
-    rw [hg' b, hkBf b, map_sum, hf']
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hg' b, hkBf b, map_sum, hf']
     simp only [map_smul]
   · show t.abelian₂ = _
     rw [img_mul, hkBL, hLam']

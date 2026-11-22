@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbCut
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocOrbCut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalOrbitGerms
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,60 @@ theorem sbA_iff (x y : Fin (Formalism.MainNotions.LocalModelPeriodLattices.tr a)
 
 theorem isCoordA : Grp.IsCoord (K := E) (PW (sbA a))
     (Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 (Formalism.MainNotions.LocalModelPeriodLattices.tr a).2) :=
-  Grp.isCoord_low _ _ (sbA a) (sbA_iff a)
+  by
+    let s := (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1
+    let t := (Formalism.MainNotions.LocalModelPeriodLattices.tr a).2
+    let sb := sbA a
+    have hsb := sbA_iff a
+    change Grp.IsCoord (K := E) (PW sb) (Formalism.DoubleCosetMeasures.lowW E s t)
+    open Grp Formalism.DoubleCosetMeasures in
+    exact {
+        ne p hp := ne_of_gt hp.1
+        det x := isLowUni_det E (isLowUni_mk (fun _ hp => hp.1) x)
+        mem g := by
+          rw [Formalism.DoubleCosetMeasures.P.Supp.mem_lowW_iff s t (Formalism.DoubleCosetMeasures.P.Phase.ptI s t) (Formalism.DoubleCosetMeasures.P.Phase.ptI_mul_pt s t)
+            (Formalism.DoubleCosetMeasures.P.Phase.pt_mul_ptI s t) g]
+          constructor
+          · rintro ⟨hg, hc⟩
+            refine ⟨fun p => (g : Matrix (Fin s.sum) (Fin s.sum) E) p.1.1 p.1.2, ?_⟩
+            ext a b
+            by_cases hab : a = b
+            · subst hab; rw [mk_diag, hg.2]
+            · by_cases hp : PW sb (a, b)
+              · rw [mk_pos _ _ hab hp]
+              · rw [mk_neg _ _ hab hp]
+                rcases lt_or_gt_of_ne hab with h1 | h1
+                · exact Formalism.DoubleCosetMeasures.P.Phase.low_zero hg h1
+                · have hs : sb a b = true := by
+                    by_contra hcon
+                    exact hp ⟨h1, by simpa using hcon⟩
+                  have hb : blk s b = blk s a := ((hsb a b).1 hs).symm
+                  have hlt := Formalism.DoubleCosetMeasures.P.Phase.revF_lt_of_blk_eq s hb h1
+                  have h0 := Formalism.DoubleCosetMeasures.P.Phase.low_zero hc hlt
+                  rw [Formalism.DoubleCosetMeasures.P.Phase.conj_apply, Formalism.DoubleCosetMeasures.P.Phase.revF_revF,
+                    Formalism.DoubleCosetMeasures.P.Phase.revF_revF] at h0
+                  have h2 := (Units.mul_left_eq_zero _).1 h0
+                  exact (Units.mul_right_eq_zero _).1 h2
+          · rintro ⟨x, hx⟩
+            have hl : IsLowUni (mk (PW sb) x) := isLowUni_mk (fun _ hp => hp.1) x
+            rw [hx]
+            refine ⟨hl, fun a c hac => ?_, fun a => ?_⟩
+            · have hac' : a < c := by simpa using hac
+              rw [Formalism.DoubleCosetMeasures.P.Phase.conj_apply]
+              have h0 : mk (PW sb) x (Formalism.DoubleCosetMeasures.P.Phase.revF s a) (Formalism.DoubleCosetMeasures.P.Phase.revF s c) = 0 := by
+                by_cases hb : blk s a = blk s c
+                · refine mk_neg _ _ (fun e => ne_of_lt hac' (Formalism.DoubleCosetMeasures.P.Phase.revF_inj s e)) ?_
+                  rintro ⟨_, h2⟩
+                  have : sb (Formalism.DoubleCosetMeasures.P.Phase.revF s a) (Formalism.DoubleCosetMeasures.P.Phase.revF s c) = true := by
+                    rw [hsb, Formalism.DoubleCosetMeasures.P.Phase.blk_revF, Formalism.DoubleCosetMeasures.P.Phase.blk_revF]; exact hb
+                  simp only at h2
+                  rw [this] at h2
+                  exact absurd h2 (by decide)
+                · exact Formalism.DoubleCosetMeasures.P.Phase.low_zero hl (Formalism.DoubleCosetMeasures.P.Phase.revF_lt_of_blk_lt s
+                    (Formalism.DoubleCosetMeasures.P.Phase.blk_lt_of_lt_of_ne s hac' hb))
+              rw [h0]; simp
+            · rw [Formalism.DoubleCosetMeasures.P.Phase.conj_apply, hl.2]; simp
+    }
 
 theorem va_of_lowW (g : Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1 (Formalism.MainNotions.LocalModelPeriodLattices.tr a).2) :
     rhoA a ((g : GL (Fin (Formalism.MainNotions.LocalModelPeriodLattices.tr a).1.sum) E) : Matrix _ _ E) ∈ VaSet a := by
@@ -126,7 +183,7 @@ theorem va_of_lowW (g : Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNoti
   · have hne : eA a i ≠ eA a j := (eA a).injective.ne (ne_of_lt hij)
     have hlt : eA a i < eA a j := (eA_lt a).2 hij
     simp only [Matrix.submatrix_apply, mk, hne, if_false]
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hp
     exact absurd hp.1 (not_lt.2 hlt.le)
   · have hne : eA a i ≠ eA a j := (eA a).injective.ne hij
@@ -134,7 +191,7 @@ theorem va_of_lowW (g : Formalism.DoubleCosetMeasures.lowW E (Formalism.MainNoti
       simp only [sbA, eA_val]
       exact hsb
     simp only [Matrix.submatrix_apply, mk, hne, if_false]
-    rw [dif_neg]
+    rw [dite_eq_right]
     intro hp
     have h2 : sbA a (eA a i) (eA a j) = false := hp.2
     rw [hs] at h2
@@ -386,7 +443,7 @@ theorem cellCos (O : Set (Matrix (Fin (m + 1)) (Fin (m + 1)) E))
     {q : Formalism.FourierDecayAlt.A5.Cos M.R (Formalism.MainNotions.LocalModelPeriodLattices.tr a) | LocOrbCut.zQ M.R a q ∈ O}.ncard =
       {c : Quotient (cellSetoid M a) | ∃ p : CellPair a, Quotient.mk _ p = c ∧ p.1.1 * a.mat * p.1.2 ∈ O}.ncard := by
   have hb := cellCos_bijOn M a O hO
-  rw [← hb.image_eq, Set.ncard_image_of_injOn hb.injOn]
+  exact hb.ncard_eq
 
 theorem cellCos_finite_iff (O : Set (Matrix (Fin (m + 1)) (Fin (m + 1)) E))
     (hO : ∀ Z ∈ O, ∀ l ρ, TieN.IntLow M l → TieN.IntUp M ρ → l * Z * ρ ∈ O) :

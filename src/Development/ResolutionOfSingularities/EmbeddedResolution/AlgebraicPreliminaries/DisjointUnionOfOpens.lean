@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Schemes.SchemeMorphismProperties
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 namespace FunctorialResolution.EmbeddedResolution

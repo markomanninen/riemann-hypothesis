@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
-import GroundTheory.AutomorphicForms.IwahoriFactorization
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfFixedMemSpanTranslates
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvectorLiftOfSurjectionStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.Complementary
+public import GroundTheory.AutomorphicForms.IwahoriFactorization
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfFixedMemSpanTranslates
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EigenvectorLiftOfSurjectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,11 +97,12 @@ theorem conj_mem' (d : ℕ) (t : kˣ) (ht : valuation k (t : k) ≤ 1) {m : ℕ}
       GroundTheory.Automorphic.Parabolic.oppositeUnipotentRadical k (d + d) (blk (blk2 d))) :
     (Zt d t)⁻¹ * z * Zt d t ∈ GroundTheory.Automorphic.GLnLocal.congruenceSubgroup k (d + d) m := by
   obtain ⟨hz1, hz2⟩ := Subgroup.mem_inf.1 hz
-  refine GroundTheory.Automorphic.Parabolic.mem_congruenceSubgroup_of_le (fun i j => (conj_mem d t ht hz1 hz2 i j).1) ?_
+  refine (GroundTheory.Automorphic.GLnLocal.mem_congruenceSubgroup_iff k (d + d)).2 ⟨?_, fun i j => (conj_mem d t ht hz1 hz2 i j).1⟩
+  refine (GroundTheory.Automorphic.GLnLocal.mem_integralGL_iff k (d + d)).2 ⟨fun i j => (conj_mem d t ht hz1 hz2 i j).2, ?_⟩
   intro i j
   have e : ((Zt d t)⁻¹ * z * Zt d t)⁻¹ = (Zt d t)⁻¹ * z⁻¹ * Zt d t := by group
   rw [e]
-  exact (conj_mem d t ht (inv_mem hz1) (inv_mem hz2) i j).1
+  exact (conj_mem d t ht (inv_mem hz1) (inv_mem hz2) i j).2
 
 section Rep
 
@@ -112,7 +117,8 @@ theorem avL_apply (π : Representation ℂ G V) (K : Subgroup G) (H : Subgroup K
 
 theorem avL_fixed (π : Representation ℂ G V) (K : Subgroup G) (H : Subgroup K) [Fintype (K ⧸ H)] {x : V}
     (hx : ∀ h ∈ H, π ((h : K) : G) x = x) (κ : G) (hκ : κ ∈ K) : π κ (avL π K H x) = avL π K H x := by
-  rw [avL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avL_apply, map_sum]
   let κ' : K := ⟨κ, hκ⟩
   refine Fintype.sum_equiv (MulAction.toPerm κ' : K ⧸ H ≃ K ⧸ H) _ _ ?_
   intro q
@@ -155,7 +161,8 @@ theorem ineq (π : Representation ℂ G X) (B : X →ₗ[ℂ] X →ₗ⋆[ℂ] �
   have hA : B w w = B x w := by
     have e0 : B w w = B ((Fintype.card (K ⧸ H) : ℂ)⁻¹ • avL π K H x) w := by rw [hT]
     have e1 : B w w = (Fintype.card (K ⧸ H) : ℂ)⁻¹ * ∑ q : K ⧸ H, B (π ((q.out : K) : G) x) w := by
-      rw [e0, avL_apply, LinearMap.map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e0, avL_apply, LinearMap.map_smul, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, smul_eq_mul]
     have e2 : ∀ q : K ⧸ H, B (π ((q.out : K) : G) x) w = B x w := by
       intro q
       conv_lhs => rw [← hKfix q]
@@ -337,7 +344,8 @@ theorem bound_main : Bound k := by
       simp only [evI, LinearMap.coe_mk, AddHom.coe_mk]
       rw [act, one_mul]
       exact this
-    simp only [A, LinearMap.smul_apply, LinearMap.comp_apply, avL_apply, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [A, LinearMap.smul_apply, LinearMap.comp_apply, avL_apply, map_smul, map_sum]
     rw [Finset.sum_congr rfl (fun q _ => e1 q), Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ,
       smul_smul, inv_mul_cancel₀ (Nat.cast_ne_zero.2 Fintype.card_ne_zero), one_smul]
   let S : Module.End ℂ (fixed (parInd (blk2 d) τ) K) := A' - μ • 1

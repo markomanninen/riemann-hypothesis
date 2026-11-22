@@ -1,7 +1,26 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LocalLanglandsExistence.KernelCondGlob
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LocalLanglandsExistence.WeilEquivOfLocalDegreeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeilGroupRestriction
-import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaussSumNeZeroOfRamified
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalEmbeddingsTowerCompatibleStatement
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsGal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalFieldNormValuation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsMulLeftInvariantVolGL
+public import GroundTheory.GlobalFields.TateThesis.HeckeChar
+public import GroundTheory.LocalFields.LocalZetaEpsilon
+public import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
+public import GroundTheory.GlobalFields.SemilocalAlgebras.ContinuousCompletionMap
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharLocal
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LocalLanglandsExistence.WeilEquivOfLocalDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeilGroupRestriction
+public import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +66,8 @@ variable {Ω : Type} [Field Ω] {A : ValuationSubring Ω}
   [Field F] [NumberField F] [Algebra F Ω] [IsAlgClosure F Ω] [Algebra K F] [IsScalarTower K F Ω]
   {v : HeightOneSpectrum (𝓞 K)} {w : HeightOneSpectrum (𝓞 F)}
 
-omit [IsAlgClosure F Ω] in
 
+omit [IsAlgClosure F Ω] in
 theorem inertiaDeg_eq_one (h : IsPlaceOver A v) (h' : IsPlaceOver A w)
     (hloc : ∀ (σ : Weil h) (x : F), (σ : G K Ω) (algebraMap F Ω x) = algebraMap F Ω x) :
     w.asIdeal.inertiaDeg (𝓞 K) = 1 := by
@@ -60,8 +79,8 @@ theorem inertiaDeg_eq_one (h : IsPlaceOver A v) (h' : IsPlaceOver A w)
   rw [hn] at hf
   exact Nat.pow_right_injective (one_lt_normV v) (hf.symm.trans (pow_one _).symm)
 
-omit [IsAlgClosure F Ω] in
 
+omit [IsAlgClosure F Ω] in
 theorem exists_completionEquiv_of_he (h : IsPlaceOver A v) (h' : IsPlaceOver A w)
     (hloc : ∀ (σ : Weil h) (x : F), (σ : G K Ω) (algebraMap F Ω x) = algebraMap F Ω x)
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1) :

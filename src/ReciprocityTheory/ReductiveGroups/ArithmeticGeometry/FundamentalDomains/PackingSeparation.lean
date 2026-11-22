@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralTraceNormBounds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IntegralTraceNormBounds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.PackingSeparation
 
@@ -74,7 +78,7 @@ lemma sep (γ : 𝓞 E) (hγ : γ ≠ 0) : ∃ w : CP E, 1 ≤ ‖w.1.embedding 
   have h := prod_norm (E := E) (γ : E)
   rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ w1)] at h
   have hle : ∏ w ∈ Finset.univ.erase w1, ‖w.1.embedding (γ : E)‖ ^ 2 ≤ 1 :=
-    Finset.prod_le_one (fun _ _ => by positivity)
+    Finset.prod_le_one₀ (fun _ _ => by positivity)
       (fun w _ => pow_le_one₀ (norm_nonneg _) (hcon w).le)
   have hlt : ‖w1.1.embedding (γ : E)‖ ^ 2 < 1 := pow_lt_one₀ (norm_nonneg _) (hcon w1) two_ne_zero
   have := one_le_abs_norm γ hγ

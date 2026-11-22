@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 

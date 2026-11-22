@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacobianLeExp
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
-import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.IntegrableOfContinuousCompact
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.JacobianLeExp
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdScale
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,6 +46,7 @@ theorem fdl_inner_continuous {ε : Fin n → Bool} (lam : Fin n → ℝ) {Λ : F
     (Complex.continuous_ofReal.comp (Real.continuous_exp.comp hPh.neg)).mul
       (((hop.clm_apply continuous_const).inner continuous_const).mul
         (continuous_const.inner (hop.clm_apply continuous_const)))
+  have := CompactHaarProbability.dk_isProb ε
   have hI := continuous_parametric_integral_of_continuous (μ := dk ε)
     (f := fun (z : PCoord ε → ℂ) (k : KG ε) =>
       ((Real.exp (-Ph lam (toMK k⁻¹ * pmat z * toMK k)) : ℝ) : ℂ) *

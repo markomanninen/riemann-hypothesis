@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.GaloisCohomology.LocalTateDualityK
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.LocalTateDualityK
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology
 
 namespace GlobalTheory

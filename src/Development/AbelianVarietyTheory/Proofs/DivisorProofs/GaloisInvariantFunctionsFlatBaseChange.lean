@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open GlobalTheory.Mum
 
 namespace GlobalTheory.Mum.InvFun
 
-open TensorProduct in
 
+open TensorProduct in
 theorem alg_inv {R A R' B : Type} [CommRing R] [CommRing A] [CommRing R'] [CommRing B] [Algebra R A] [Algebra R R']
     [Algebra R B] [Algebra A B] [Algebra R' B] [IsScalarTower R A B] [IsScalarTower R R' B]
     [Algebra.IsPushout R A R' B] [Module.Flat R A] (hinj : Function.Injective (algebraMap R R'))
@@ -46,8 +50,7 @@ theorem alg_inv {R A R' B : Type} [CommRing R] [CommRing A] [CommRing R'] [CommR
         t i (e w) - e w := by
       intro w i
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]; ring
+      | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]; ring
       | tmul a r => simp [d, he, htA, htR, mul_sub, tmul_sub]
     have h0 : d.lTensor A w = 0 := by
       apply (TensorProduct.piRight R R A (fun _ : J => R')).injective

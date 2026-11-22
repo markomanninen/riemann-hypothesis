@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
+public import GroundTheory.AutomorphicForms.SphericalMinuscule
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +173,7 @@ theorem integer_eq : 𝒪[w.adicCompletion E] = Formalism.UG.Ov E w := by
   rw [Valuation.mem_integer_iff, he.le_one_iff_le_one]
   exact Iff.rfl
 
-theorem integralGL_eq_KGL (n : ℕ) : integralGL (w.adicCompletion E) n = KGL w n := by
+theorem integralGL_eq_KGL (n : ℕ) : integralGL (w.adicCompletion E) n = KGL w (n := n) := by
   have : ∀ O : Subring (w.adicCompletion E), O = 𝒪[w.adicCompletion E] →
       Formalism.UG.GLint (Fin n) O = integralGL (w.adicCompletion E) n := by
     rintro _ rfl
@@ -235,7 +240,7 @@ theorem cpow_eq_sqrt_pow (q : ℕ) {n r : ℕ} (hr : r ≤ n) :
 
 end Global
 
-theorem l12 : lift_levelP_alt₂ := by
+theorem l12 : PositivityTheory.JacquetShalikaLocal.lift_levelP_alt₂ := by
   intro E _ _ w
   have hq : qF (w.adicCompletion E) = Ideal.absNorm w.asIdeal := GlobalTheory.LFun.SatBoundGL.resCard_completion w
   refine ⟨hq, ?_⟩

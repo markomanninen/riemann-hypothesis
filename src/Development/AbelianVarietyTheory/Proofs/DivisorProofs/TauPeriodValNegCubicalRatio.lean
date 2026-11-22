@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EvenDefect
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EvenDefect
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -17,7 +22,12 @@ theorem val_tau_neg : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R), D
     have h := xadd 0 0
     rw [add_zero] at h
     exact (mul_eq_left.1 h.symm)
-  have C := isCub_cubV D.cub hJ
+  have face (x y : TK R ⟶ D.P.A) : cubV D.cub z J 1 x y = 1 := by
+    have h := val_corr hJ (D.cub.face 0) (lift x y).left
+    rw [val_one] at h
+    refine Eq.trans ?_ h
+    refine Eq.trans ?_ (val_cub D.cub (lift x y) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have B : ∀ u u' w v : D.X, u + u' = w → val (D.tau w v) (𝟙 _) z J *
       cubV D.cub z J (toUnit (TK R) ≫ D.c u) (toUnit (TK R) ≫ D.c u') (toUnit (TK R) ≫ D.c v) =
       val (D.tau u v) (𝟙 _) z J * val (D.tau u' v) (𝟙 _) z J := by
@@ -36,7 +46,7 @@ theorem val_tau_neg : ∀ (R : Type) [CommRing R] [IsDomain R] (D : DegPre R), D
   have T0 : ∀ v : D.X, val (D.tau 0 v) (𝟙 _) z J = 1 := by
     intro v
     have h := B 0 v v v (zero_add v)
-    rw [x0, C.face, _root_.mul_one] at h
+    rw [x0, face, _root_.mul_one] at h
     exact (mul_eq_right.1 h.symm)
   have e1 := B a (-a) 0 b (add_neg_cancel a)
   have e2 := B b (-b) 0 (-a) (add_neg_cancel b)

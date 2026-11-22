@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.InjTest
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.InjTest
+
+@[expose] public section
 
 open Polynomial Matrix UpperTheory.V UpperTheory.V.W
 
@@ -13,7 +17,7 @@ private theorem star_mapRingHom_eq_mapRingHom_star {l : ℕ} [Fact l.Prime] (F :
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp [GFrame.star]
   | add a b ha hb =>
-    simp only [map_add, GFrame.star, MulOpposite.unop_add] at *
+    simp only [map_add (f := _), GFrame.star, MulOpposite.unop_add] at *
     rw [ha, hb]
   | single g b =>
     simp only [GFrame.star, GFrame.starOp, MonoidAlgebra.lift_single, GFrame.eps, MonoidAlgebra.mapRingHom_single]
@@ -32,7 +36,8 @@ theorem UpperTheory.V.AlgebraTools.Det.polarInj :
   let u : MonoidAlgebra (MvPolynomial F.G₀ R) F.G₀ := y.coeff.support.sum fun g => MonoidAlgebra.single g (MvPolynomial.X g)
   let ev : MvPolynomial F.G₀ R →ₐ[R] B := MvPolynomial.aeval fun g => y.coeff g
   have hev : MonoidAlgebra.mapRingHom F.G₀ (ev : MvPolynomial F.G₀ R →+* B) u = y := by
-    simp only [u, map_sum, MonoidAlgebra.mapRingHom_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [u, map_sum, MonoidAlgebra.mapRingHom_single]
     simp only [ev, AlgHom.coe_toRingHom, MvPolynomial.aeval_X]
     exact y.sum_single
   have hevO : (ev : MvPolynomial F.G₀ R →+* B).comp (algebraMap O (MvPolynomial F.G₀ R)) = algebraMap O B := by
@@ -65,7 +70,7 @@ theorem UpperTheory.V.AlgebraTools.Det.polarInj :
       change D.D _ (MonoidAlgebra.mapRingHom F.G₀ (φ : MvPolynomial F.G₀ R →+* MvPolynomial F.G₀ (K x)) (F.star O _ n u)) = D.D _ (MonoidAlgebra.mapRingHom F.G₀ (φ : MvPolynomial F.G₀ R →+* MvPolynomial F.G₀ (K x)) u) at hx
       rw [D.nat _ _ φ, D.nat _ _ φ] at hx
       exact hx
-    have hc := congrArg (MvPolynomial.coeff m) hz
+    have hc := congrArg (AddMonoidAlgebra.coeff · m) hz
     rw [MvPolynomial.coeff_map] at hc
     simpa using hc
   rw [← hev, star_mapRingHom_eq_mapRingHom_star F O _ _ n _ hevO, D.nat _ _ ev, D.nat _ _ ev, key]

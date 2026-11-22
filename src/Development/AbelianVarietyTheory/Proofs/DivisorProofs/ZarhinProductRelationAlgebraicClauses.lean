@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaOK
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.SiegelTor GlobalTheory.EndLoc
 
@@ -43,21 +48,26 @@ instance isMonHom_pb (j : Fin 4) : IsMonHom (pb A B j) := by
   infer_instance
 
 theorem isMonHom_of_coords {X : Over S} [MonObj X] (f : X ⟶ Zob A B)
-    (ha : ∀ i, IsMonHom (f ≫ pa A B i)) (hb : ∀ j, IsMonHom (f ≫ pb A B j)) : IsMonHom f where
-  one_hom := zob_ext A B (fun i => by
-      haveI := ha i
-      rw [Category.assoc, IsMonHom.one_hom (f := f ≫ pa A B i), IsMonHom.one_hom (f := pa A B i)])
-    (fun j => by
-      haveI := hb j
-      rw [Category.assoc, IsMonHom.one_hom (f := f ≫ pb A B j), IsMonHom.one_hom (f := pb A B j)])
-  mul_hom := zob_ext A B (fun i => by
-      haveI := ha i
-      rw [Category.assoc, IsMonHom.mul_hom (f := f ≫ pa A B i), Category.assoc,
-        IsMonHom.mul_hom (f := pa A B i), ← Category.assoc, tensorHom_comp_tensorHom])
-    (fun j => by
-      haveI := hb j
-      rw [Category.assoc, IsMonHom.mul_hom (f := f ≫ pb A B j), Category.assoc,
-        IsMonHom.mul_hom (f := pb A B j), ← Category.assoc, tensorHom_comp_tensorHom])
+    (ha : ∀ i, IsMonHom (f ≫ pa A B i)) (hb : ∀ j, IsMonHom (f ≫ pb A B j)) : IsMonHom f := by
+  refine ⟨?_, ?_⟩
+  · apply zob_ext A B
+    · intro i
+      have := ha i
+      simp only [Category.assoc, IsMonHom.one_hom (f := f ≫ pa A B i),
+        IsMonHom.one_hom (f := pa A B i)]
+    · intro j
+      have := hb j
+      simp only [Category.assoc, IsMonHom.one_hom (f := f ≫ pb A B j),
+        IsMonHom.one_hom (f := pb A B j)]
+  · apply zob_ext A B
+    · intro i
+      have := ha i
+      simp only [Category.assoc, IsMonHom.mul_hom (f := f ≫ pa A B i),
+        IsMonHom.mul_hom (f := pa A B i), MonoidalCategory.tensorHom_comp_tensorHom_assoc]
+    · intro j
+      have := hb j
+      simp only [Category.assoc, IsMonHom.mul_hom (f := f ≫ pb A B j),
+        IsMonHom.mul_hom (f := pb A B j), MonoidalCategory.tensorHom_comp_tensorHom_assoc]
 
 theorem isMonHom_incZ : IsMonHom (incZ A B) := by
   apply isMonHom_of_coords

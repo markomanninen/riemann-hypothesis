@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PointDegreePosSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPositive
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PointDegreePosSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PHilbertPositive
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -78,7 +83,7 @@ theorem PointDegreePos.proof : PointDegreePos.Statement.{u, w} := by
   have := hP.isPrime
   obtain ⟨hfd, -⟩ := FieldNumbers.IntNumBase.full k Unit (fun _ => Fin (N + 1)) _ hP hrel
   unfold FieldNumbers.resDeg
-  rw [dif_pos hP.isPrime]
+  rw [dite_eq_left hP.isPrime]
   exact Module.finrank_pos
 
 end

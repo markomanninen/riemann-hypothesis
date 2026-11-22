@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionLocal
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationRestrict
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrLenRestrictSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionLocal
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationPoint
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PPrimeFiltrationRestrict
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -133,12 +138,13 @@ theorem d_mk (F₁ F₂ : SubSystem S x E) (u : Cech.Idx (support x) 0 → E) (h
       ∑ j : J.1.1, Cech.sgn J.1.1 j • F₁.res _ J.1 (Cech.face_subset J j) ⟨u (Cech.face J j), hu _⟩ := by
     apply Subtype.ext
     simp [SubSystem.res]
-  rw [this, ← Submodule.mkQ_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, ← Submodule.mkQ_apply, map_sum]
   simp only [map_zsmul]
   rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x E)
     (hlift : ∀ s : Chart x → E, (∀ I, s I ∈ F₁.sub I) →
       (∀ I₁ I₂ : Chart x, I₁.1 ⊆ I₂.1 → s I₁ - s I₂ ∈ F₂.sub I₂) →
@@ -164,7 +170,7 @@ theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x E)
     if h : (T.Nonempty ∧ T ⊆ support x) ∧ T.card = 0 + 1 then v ⟨⟨T, h.1⟩, h.2⟩ else 0
   have hV : ∀ I : Cech.Idx (support x) 0, V I.1.1 = v I := fun I => by
     simp only [V]
-    rw [dif_pos ⟨I.1.2, I.2⟩]
+    rw [dite_eq_left ⟨I.1.2, I.2⟩]
   have hVpair : ∀ (a b : Fin (N + 1)) (ha : a ∈ support x) (hb : b ∈ support x) (T : Chart x),
       a ∈ T.1 → b ∈ T.1 → V {a} - V {b} ∈ F₂.sub T := by
     intro a b ha hb T haT hbT
@@ -228,8 +234,8 @@ theorem exists_toCochain_eq (F₁ F₂ : SubSystem S x E)
   rw [← hsa]
   exact hts _
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem length_secs_eq (F₁ F₂ : SubSystem S x E)
     (hlift : ∀ s : Chart x → E, (∀ I, s I ∈ F₁.sub I) →
       (∀ I₁ I₂ : Chart x, I₁.1 ⊆ I₂.1 → s I₁ - s I₂ ∈ F₂.sub I₂) →
@@ -255,17 +261,18 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {K' K
 theorem restrictData_comp {hxy : ∀ i, y i ≠ 0 → x i ≠ 0} {hyz : ∀ i, z i ≠ 0 → y i ≠ 0}
     {Q : SubSystem S x Ω} {Q' : SubSystem S y K'} {Q'' : SubSystem S z K''} {r : Ω → K'}
     {r' : K' → K''} (h1 : RestrictData Q hxy Q' r) (h2 : RestrictData Q' hyz Q'' r') :
-    RestrictData Q (fun i hi => hxy i (hyz i hi)) Q'' (r' ∘ r) where
-  mem I q hq := h2.mem I _ (h1.mem (liftChart hyz I) q hq)
-  add I q hq q' hq' := by
+    RestrictData Q (fun i hi => hxy i (hyz i hi)) Q'' (r' ∘ r) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact fun I q hq => h2.mem I _ (h1.mem (liftChart hyz I) q hq)
+  · intro I q hq q' hq'
     simp only [Function.comp_apply]
     rw [h1.add (liftChart hyz I) q hq q' hq',
       h2.add I _ (h1.mem (liftChart hyz I) q hq) _ (h1.mem (liftChart hyz I) q' hq')]
-  smul I q hq f s e hs hf hse := by
+  · intro I q hq f s e hs hf hse
     simp only [Function.comp_apply]
     rw [h1.smul (liftChart hyz I) q hq f s e hs hf hse,
       h2.smul I (r q) (h1.mem (liftChart hyz I) q hq) f s e hs hf hse]
-  span I := by
+  · intro I
     rw [← h2.span I]
     apply le_antisymm
     · refine Submodule.span_le.mpr ?_
@@ -357,8 +364,8 @@ theorem exists_residue {k : Type u} [Field k] {R : Type w} [CommRing R] [Algebra
     ← map_zero (algebraMap (R ⧸ P) (FractionRing (R ⧸ P))),
     (IsFractionRing.injective (R ⧸ P) (FractionRing (R ⧸ P))).eq_iff, Ideal.Quotient.eq_zero_iff_mem]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem proof (hSC : SurjectiveClosed.Statement.{u, w})
     (hRQ : PrimeFiltration.RestrictQuot.Statement.{u, w}) : RestrLenRestrict.Statement.{u, w} := by
   intro k _ Ω _ _ N x K' _ _ y hxy hsp pp e hW Q Q' r hr

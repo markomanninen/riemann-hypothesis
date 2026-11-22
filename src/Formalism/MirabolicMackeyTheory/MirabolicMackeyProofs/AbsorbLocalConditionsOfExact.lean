@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.ErrSumGoodExact
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsComposeGeneral
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverP
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverPSqTail
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.ErrSumGoodExact
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsComposeGeneral
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverP
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PrimeLogOverPSqTail
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

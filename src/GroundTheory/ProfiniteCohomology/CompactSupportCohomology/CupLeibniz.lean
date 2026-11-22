@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.Pairing
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomologyMapPiLiftPiHomologyIsoHom
-import GroundTheory.ProfiniteCohomology.CupProducts.Pairing
-import GroundTheory.ProfiniteCohomology.CupProducts.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.Pairing
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomologyMapPiLiftPiHomologyIsoHom
+public import GroundTheory.ProfiniteCohomology.CupProducts.Pairing
+public import GroundTheory.ProfiniteCohomology.CupProducts.Functoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -22,8 +27,8 @@ noncomputable def cupPairingCochains (μ : A ⊗ B ⟶ C) {r s n : ℕ} (h : r +
 
 theorem cochainOf_cupPairingCochains (μ : A ⊗ B ⟶ C) {r s n : ℕ} (h : r + s = n)
     (x : (cochainsComplex A).X r) (y : (cochainsComplex B).X s) :
-    cochainOf C (cupPairingCochains μ h x y) =
-      fun σ => μ.hom (cupCochain h (cochainOf A x) (cochainOf B y) σ) :=
+    cochainOf (A := C) (cupPairingCochains μ h x y) =
+      fun σ => μ.hom (cupCochain h (cochainOf (A := A) x) (cochainOf (A := B) y) σ) :=
   rfl
 
 theorem d_cupLocallyConstant {r s n : ℕ} (h : r + s = n) (x : (cochainsComplex A).X r)
@@ -84,10 +89,6 @@ noncomputable def pi : LeibnizPairing (piComplex K) (piComplex N) (piComplex P) 
     rw [piComplex_d_hom_apply, piComplex_d_hom_apply]
     exact (μs v).leibniz h (x v) (y v)
 
-theorem pi_μ_apply {r s n : ℕ} (h : r + s = n) (x : (piComplex K).X r) (y : (piComplex N).X s)
-    (v : ι) : (pi μs).μ h x y v = (μs v).μ h (x v) (y v) :=
-  rfl
-
 theorem piHomologyIso_hom_pi_homology {r s n : ℕ} (h : r + s = n)
     (x : (piComplex K).homology r) (y : (piComplex N).homology s) (v : ι) :
     (piHomologyIso P n).hom.hom ((pi μs).homology h x y) v =
@@ -125,14 +126,15 @@ theorem localRes_cupPairingCochains (μ : A ⊗ B ⟶ C) (μᵥ : ∀ v, Aᵥ v 
   funext v
   apply cochainOf_injective
   funext σ
-  change (c v).hom (μ.hom (cupCochain h (cochainOf A x) (cochainOf B z) (⇑(φ v).toMonoidHom ∘ σ))) =
-    (μᵥ v).hom (cupCochain h (fun τ => (a v).hom (cochainOf A x (⇑(φ v).toMonoidHom ∘ τ)))
-      (fun τ => (b v).hom (cochainOf B z (⇑(φ v).toMonoidHom ∘ τ))) σ)
+  change (c v).hom (μ.hom (cupCochain h (cochainOf (A := A) x) (cochainOf (A := B) z)
+      (⇑(φ v).toMonoidHom ∘ σ))) =
+    (μᵥ v).hom (cupCochain h (fun τ => (a v).hom (cochainOf (A := A) x (⇑(φ v).toMonoidHom ∘ τ)))
+      (fun τ => (b v).hom (cochainOf (A := B) z (⇑(φ v).toMonoidHom ∘ τ))) σ)
   rw [cupCochain_apply, cupCochain_apply, ← Rep.hom_comm_apply, partialProd_comp_monoidHom]
   exact congrArg (fun F : Rep.res (φ v).toMonoidHom (A ⊗ B) ⟶ Cᵥ v => F.hom
-    ((cochainOf A x fun i => (⇑(φ v).toMonoidHom ∘ σ) ⟨i, by omega⟩) ⊗ₜ[k]
+    ((cochainOf (A := A) x fun i => (⇑(φ v).toMonoidHom ∘ σ) ⟨i, by omega⟩) ⊗ₜ[k]
       B.ρ ((φ v).toMonoidHom (Fin.partialProd σ ⟨r, by omega⟩))
-        (cochainOf B z fun j => (⇑(φ v).toMonoidHom ∘ σ) ⟨r + j, by omega⟩) :
+        (cochainOf (A := B) z fun j => (⇑(φ v).toMonoidHom ∘ σ) ⟨r + j, by omega⟩) :
       (A ⊗ B : Rep k G))) (hμ v)
 
 end Local

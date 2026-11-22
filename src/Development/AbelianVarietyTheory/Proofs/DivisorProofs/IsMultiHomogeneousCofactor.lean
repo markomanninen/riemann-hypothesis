@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
+
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
@@ -10,7 +15,7 @@ theorem wcomp_mul_of_left {σ F : Type} [Field F] (w : σ → ℕ) (n : ℕ) {P 
     weightedHomogeneousComponent w n (P * Q) =
       if k ≤ n then P * weightedHomogeneousComponent w (n - k) Q else 0 := by
   classical
-  letI := weightedGradedAlgebra F w
+  let := weightedGradedAlgebra F w
   have h := DirectSum.coe_decompose_mul_of_left_mem (weightedHomogeneousSubmodule F w) (a := P) (b := Q) n
     ((mem_weightedHomogeneousSubmodule F w k P).2 hP)
   have e : ∀ (m : ℕ) (R : MvPolynomial σ F),
@@ -28,19 +33,22 @@ theorem weight_add_of_mul {σ F : Type} [Field F] (w : σ → ℕ) {P Q : MvPoly
   set j := Finsupp.weight w s
   have hc : weightedHomogeneousComponent w j Q ≠ 0 := by
     intro h0
-    have := congrArg (coeff s) h0
-    rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
-    exact (mem_support_iff.mp hs) this
+    have := congrArg (AddMonoidAlgebra.coeff · s) h0
+    apply (mem_support_iff.mp hs)
+    simpa only [coeff_weightedHomogeneousComponent, j, ite_true,
+      AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] using this
+
   have hne : weightedHomogeneousComponent w (k + j) (P * Q) ≠ 0 := by
-    rw [wcomp_mul_of_left w (k + j) hP Q, if_pos (Nat.le_add_right k j), Nat.add_sub_cancel_left]
+    simp only [wcomp_mul_of_left w (k + j) hP Q, Nat.le_add_right, ite_true,
+      Nat.add_sub_cancel_left]
     exact mul_ne_zero hP0 hc
   by_contra hkm
   exact hne (hm.weightedHomogeneousComponent_ne (k + j) hkm)
 
 end GlobalTheory.CofactorHom
 
-open GlobalTheory.CofactorHom in
 
+open GlobalTheory.CofactorHom in
 theorem GlobalTheory.HSShort.isMultiHomogeneous_cofactor :
     ∀ (F : Type) [Field F] (B N : ℕ) (a a₁ : Fin B → ℕ) (G G' : MvPolynomial (Fin B × Fin N) F),
       G * G' ≠ 0 → IsMultiHomogeneous a (G * G') → IsMultiHomogeneous a₁ G →
@@ -52,7 +60,7 @@ theorem GlobalTheory.HSShort.isMultiHomogeneous_cofactor :
     exact weight_add_of_mul _ h0 (ha₁ b) (ha b) s hs
   obtain ⟨s₀, hs₀⟩ : ∃ s, s ∈ G'.support := by
     by_contra hno
-    push_neg at hno
+    push Not at hno
     apply h0
     rw [show G' = 0 from by
       ext s; by_contra hc; exact hno s (mem_support_iff.mpr hc), mul_zero]

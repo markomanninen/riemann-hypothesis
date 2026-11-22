@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.AdjointLowWeight.SymmetricCubeSymplecticSimilitude
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 open GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V.Af UpperTheory.V.Ws UpperTheory.V.Sd UpperTheory.V.Sd.S3
@@ -17,7 +21,8 @@ theorem UpperTheory.teichmuller_character_spec :
   have hgeom : (∑ i ∈ Finset.range m, (x : c.O) ^ i) * ((x : c.O) - 1) = 0 := by
     rw [geom_sum_mul, hX, sub_self]
   have hres' : residue c.O (∑ i ∈ Finset.range m, (x : c.O) ^ i) = residue c.O (m : c.O) := by
-    simp [map_sum, map_pow, hres]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_pow, hres]
   have hS : IsUnit (∑ i ∈ Finset.range m, (x : c.O) ^ i) := by
     rw [← isUnit_map_iff (residue c.O), hres', isUnit_map_iff]
     exact hm

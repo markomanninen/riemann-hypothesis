@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.FirstChernHodgeTateFacts
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.FirstChernHodgeTateFacts
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem coef_periodic (d : SD σ) {nb : nA σ d.Y d.b → d.G} (hN : IsNMap d.b 
       φ (nb β * g) * d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * β.1)))) := by
   have e1 : (β₀ +ᵥ β : nA σ d.Y d.b) = β₀.1 + β := rfl
   have e2 : ((β₀.1 + β : nA σ d.Y d.b) : Matrix (Fin d.n) (Fin d.n) (AE F E)) = β₀.1.1 + β.1 := rfl
-  rw [e1, kunf.nb_add hN, mul_assoc, hφ _ (kunf.nb_rat hN β₀.2), e2, Matrix.mul_add, Matrix.trace_add, map_add, neg_add,
+  rw [e1, kunf.nb_add hN, mul_assoc, hφ _ (kunf.nb_rat hN β₀.2), e2, Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add,
     AddChar.map_add_eq_mul, AddChar.map_neg_eq_inv, kunf.psi_rat d.ok.good.std T β₀, inv_one, one_mul]
 
 variable {d : SD σ} {L : LD d}
@@ -85,7 +89,7 @@ theorem fc_conj {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {�
     · refine ⟨⟨cj hU h.1 (-u) γ.1, cj_rat hU h.1 (neg_mem hu) γ.2⟩, Subtype.ext ?_⟩
       simpa using cj_inv hU h.1 (-u) γ.1
     · show cj hU h.1 (-u) ((cj hU h.1 u γ.1) + x) = γ.1 + cj hU h.1 (-u) x
-      rw [map_add, cj_inv]
+      rw [map_add (f := _), cj_inv]
   unfold fc
   simp_rw [e1]
   rw [← (cj_mp h hU hu).setIntegral_image_emb hme H 𝓖, himg,

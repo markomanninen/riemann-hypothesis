@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SumChar
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SumChar
+
+@[expose] public section
 
 open Finset ComplexConjugate
 
@@ -55,7 +59,8 @@ theorem parseval (A B : Finset (G →* ℂˣ)) (hd : Disjoint A B) :
   have hc : ∀ z, conj (dif A B z) =
       ∑ χ ∈ A, conj ((χ z : ℂˣ) : ℂ) - ∑ χ ∈ B, conj ((χ z : ℂˣ) : ℂ) := by
     intro z
-    simp [dif, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dif, map_sub, map_sum]
   simp_rw [hc, mul_sub, Finset.mul_sum]
   rw [Finset.sum_sub_distrib, Finset.sum_comm]
   rw [Finset.sum_comm (s := Finset.univ) (t := B)]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem exists_eq_smul_of_invariant {Γ Y : Type*} [MeasurableSpace Γ] [Measura
   have h3 : ∀ᵐ y ∂lam, ∀ᵐ g ∂m, ρ (T g y) = ρ y₀ := by
     filter_upwards [hOae] with y hy
     obtain ⟨φ, hφ, hyφ⟩ := htr y₀ hy₀O y hy
-    filter_upwards [hφ.ae hy₀] with g hg
+    filter_upwards [QuasiMeasurePreserving.ae hφ hy₀] with g hg
     rw [hyφ g, hg]
   have h4 : ∀ᵐ g ∂m, ∀ᵐ y ∂lam, ρ (T g y) = ρ y₀ :=
     (Measure.ae_ae_comm (p := fun g y => ρ (T g y) = ρ y₀) (hE _ measurable_const)).2 h3
@@ -215,16 +219,14 @@ theorem qmp_prodMap {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y] {μ : 
     [SFinite μ] [SFinite ν] {f : X → X} {g : Y → Y} (hf : Measure.QuasiMeasurePreserving f μ μ)
     (hg : Measure.QuasiMeasurePreserving g ν ν) :
     Measure.QuasiMeasurePreserving (Prod.map f g) (μ.prod ν) (μ.prod ν) := by
-  refine ⟨hf.measurable.prodMap hg.measurable, ?_⟩
-  rw [← Measure.map_prod_map μ ν hf.measurable hg.measurable]
-  exact hf.absolutelyContinuous.prod hg.absolutelyContinuous
+  exact QuasiMeasurePreserving.prodMap hf hg
 
 end GlobalTheory.CompanionTheory.OrbUniq
 
 namespace GlobalTheory.CompanionTheory.OrbUniq
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem uniq_of_trans : IdemEx → NullSing → Trans → Uniq := by
   intro hI hN hT D r t V b₀ hb S e he ν ν' hν hν' hne
   obtain ⟨hee, -⟩ := (hI D S).2 e he

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.EvalSecondZeroAtVariableZero
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOfZero
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.EvalSecondZeroAtVariableZero
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ConstantCoeffSubstOfZero
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.LogarithmEquivalence
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem Dj_psubst {l : PowerSeries K} (h1 : PowerSeries.coeff 1 l = 1) (j : Fin 
   simp only [Dj, pd, Dinv, dz]
   rw [Formalism.G.LogCR.pderiv_psubst hU, Formalism.G.LogCR.pderiv_psubst hU,
     PowerSeries.subst_mul (PowerSeries.HasSubst.of_constantCoeff_zero hU)]
-  linear_combination (-(at1 j (PowerSeries.derivative K l)⁻¹ *
-    PowerSeries.subst U (PowerSeries.derivative K g) * MvPowerSeries.pderiv K j U)) * hinv
+  linear_combination (-(at1 j (PowerSeries.derivative (R := K) l)⁻¹ *
+    PowerSeries.subst U (PowerSeries.derivative (R := K) g) * MvPowerSeries.pderiv (R := K) j U)) * hinv
 
 theorem key {l : PowerSeries K} (h1 : PowerSeries.coeff 1 l = 1) (j k : Fin 3) :
     at1 j (dz l)⁻¹ * pd j (PowerSeries.subst (MvPowerSeries.X k : MvPowerSeries (Fin 3) K) l) =
@@ -152,7 +156,7 @@ theorem invariant_derivation_subst_law_pair (hF : MvPowerSeries.constantCoeff F 
   have kb := key h1 j b
   simp only [pd] at ka kb
   rw [hl]
-  simp only [pd, map_add, mul_add]
+  simp only [pd, map_add (f := _), mul_add]
   rw [ka, kb]
   rcases eq_or_ne a j with ha | ha <;> rcases eq_or_ne b j with hb | hb
   · exact absurd (ha.trans hb.symm) hab
@@ -178,7 +182,7 @@ theorem invariant_derivation_subst_law_three (hF : MvPowerSeries.constantCoeff F
   have k2 := key h1 j 2
   simp only [pd] at k0 k1 k2
   rw [e1, e2]
-  simp only [pd, map_add, mul_add]
+  simp only [pd, map_add (f := _), mul_add]
   rw [k0, k1, k2]
   have hsum : ((if (0 : Fin 3) = j then 1 else 0) + (if (1 : Fin 3) = j then 1 else 0) +
       (if (2 : Fin 3) = j then 1 else 0) : MvPowerSeries (Fin 3) K) = 1 := by
@@ -239,7 +243,7 @@ theorem constantCoeff_subst_law_three (hF : MvPowerSeries.constantCoeff F = 0) (
   have h0 : PowerSeries.constantCoeff (g - PowerSeries.C (PowerSeries.constantCoeff g)) = 0 := by
     simp
   conv_lhs => rw [hg]
-  rw [PowerSeries.subst_add hs, PowerSeries.subst_C, map_add, MvPowerSeries.constantCoeff_C,
+  rw [PowerSeries.subst_add hs, PowerSeries.subst_C, map_add (f := _), MvPowerSeries.constantCoeff_C,
     PowerSeries.constantCoeff_subst_eq_zero (constantCoeff_law_three hF) _ h0, add_zero]
 
 theorem inv_dz_eq (hF : MvPowerSeries.constantCoeff F = 0) (hc : cob F l = 0)
@@ -257,9 +261,9 @@ theorem inv_dz_eq (hF : MvPowerSeries.constantCoeff F = 0) (hc : cob F l = 0)
     have e := hc
     simp only [cob] at e
     linear_combination e
-  have hd := congrArg (MvPowerSeries.pderiv K 1) hcob
+  have hd := congrArg (MvPowerSeries.pderiv (R := K) 1) hcob
   simp only [at1] at hd
-  rw [Formalism.G.LogCR.pderiv_psubst hF, map_add, Formalism.G.LogCR.pderiv_psubst (ccX (0 : Fin 2)),
+  rw [Formalism.G.LogCR.pderiv_psubst hF, map_add (f := _), Formalism.G.LogCR.pderiv_psubst (ccX (0 : Fin 2)),
     Formalism.G.LogCR.pderiv_psubst (ccX (1 : Fin 2)), MvPowerSeries.pderiv_X_of_ne (by decide),
     MvPowerSeries.pderiv_X_self, mul_zero, zero_add, mul_one] at hd
   have he := congrArg ev0 hd

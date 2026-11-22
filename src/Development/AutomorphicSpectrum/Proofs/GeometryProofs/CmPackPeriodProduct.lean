@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieNormSquareOfFamilyStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramLinearCombinationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramInvariantPullbackStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualBasisHermitianSumStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieNormSqBaseChangeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCMFrame
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieNormSquareOfFamilyStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramLinearCombinationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeGramInvariantPullbackStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualBasisHermitianSumStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieNormSqBaseChangeStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CM GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -16,41 +21,41 @@ namespace GlobalTheory.CompanionTheory.Ar.Fl.GInf
 variable {S : Scheme.{0}} {R R' R'' : Type} [CommRing R] [CommRing R'] [CommRing R'']
 
 theorem dualMap_comp_alg (f : R →+* R') :
-    (dualMap f).comp (algebraMap R (DualNumber R)) = (algebraMap R' (DualNumber R')).comp f := by
-  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+    (GlobalTheory.CompanionTheory.Ar.dualMap f).comp (algebraMap R (DualNumber R)) = (algebraMap R' (DualNumber R')).comp f := by
+  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, TrivSqZeroExt.algebraMap_eq_inl]
 
 theorem dualMap_comp_epsMul (f : R →+* R') (c : R) :
-    (dualMap f).comp (epsMul c) = (epsMul (f c)).comp (dualMap f) := by
-  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap, epsMul, mul_comm]
+    (GlobalTheory.CompanionTheory.Ar.dualMap f).comp (epsMul c) = (epsMul (f c)).comp (GlobalTheory.CompanionTheory.Ar.dualMap f) := by
+  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, epsMul, mul_comm]
 
 theorem fst_comp_dualMap (f : R →+* R') :
-    (TrivSqZeroExt.fstHom R' R' R').toRingHom.comp (dualMap f) = f.comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
+    (TrivSqZeroExt.fstHom R' R' R').toRingHom.comp (GlobalTheory.CompanionTheory.Ar.dualMap f) = f.comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
   refine RingHom.ext fun a => ?_
-  simp [dualMap]
+  simp [GlobalTheory.CompanionTheory.Ar.dualMap]
 
 theorem dualMap_comp_dualMap (f : R →+* R') (g : R' →+* R'') :
-    (dualMap g).comp (dualMap f) = dualMap (g.comp f) := by
-  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [dualMap]
+    (GlobalTheory.CompanionTheory.Ar.dualMap g).comp (GlobalTheory.CompanionTheory.Ar.dualMap f) = GlobalTheory.CompanionTheory.Ar.dualMap (g.comp f) := by
+  refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap]
 
 theorem epsMul_zero_eq : epsMul (0 : R) =
     (algebraMap R (DualNumber R)).comp (TrivSqZeroExt.fstHom R R R).toRingHom := by
   refine RingHom.ext fun a => TrivSqZeroExt.ext ?_ ?_ <;> simp [epsMul, TrivSqZeroExt.algebraMap_eq_inl]
 
 def bar (f : R →+* R') (x : Sp R ⟶ S) : epsAt (spMap f ≫ x) ⟶ epsAt x :=
-  Over.homMk (spMap (dualMap f)) (by
-    show spMap (dualMap f) ≫ spMap (algebraMap R (DualNumber R)) ≫ x = spMap (algebraMap R' (DualNumber R')) ≫ spMap f ≫ x
+  Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap f)) (by
+    show spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ spMap (algebraMap R (DualNumber R)) ≫ x = spMap (algebraMap R' (DualNumber R')) ≫ spMap f ≫ x
     rw [← Category.assoc, ← Category.assoc, spMap_comp_spMap, spMap_comp_spMap, dualMap_comp_alg])
 
 theorem exists_bc {G : Over S} (f : R →+* R') (x : Sp R ⟶ S) {x' : Sp R' ⟶ S} (hx : x' = spMap f ≫ x)
-    (u : epsAt x ⟶ G) : ∃ u' : epsAt x' ⟶ G, u'.left = spMap (dualMap f) ≫ u.left := by
+    (u : epsAt x ⟶ G) : ∃ u' : epsAt x' ⟶ G, u'.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ u.left := by
   subst hx
   exact ⟨bar f x ≫ u, rfl⟩
 
 theorem isComb_bc {G : Over S} [GrpObj G] (f : R →+* R') (x : Sp R ⟶ S) {x' : Sp R' ⟶ S} (hx : x' = spMap f ≫ x)
     {n : ℕ} (c : Fin n → R)
     (v : Fin n → (epsAt x ⟶ G)) (w : epsAt x ⟶ G) (v' : Fin n → (epsAt x' ⟶ G))
-    (w' : epsAt x' ⟶ G) (hv : ∀ i, (v' i).left = spMap (dualMap f) ≫ (v i).left)
-    (hw : w'.left = spMap (dualMap f) ≫ w.left) (h : Fl.IsComb c v w) :
+    (w' : epsAt x' ⟶ G) (hv : ∀ i, (v' i).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (v i).left)
+    (hw : w'.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ w.left) (h : Fl.IsComb c v w) :
     Fl.IsComb (fun i => f (c i)) v' w' := by
   subst hx
   obtain ⟨u, hu, rfl⟩ := h
@@ -59,7 +64,7 @@ theorem isComb_bc {G : Over S} [GrpObj G] (f : R →+* R') (x : Sp R ⟶ S) {x' 
       map_one' := comp_one _
       map_mul' := fun a b => comp_mul _ _ _ }
   refine ⟨fun i => φ (u i), fun i => ?_, ?_⟩
-  · show spMap (dualMap f) ≫ (u i).left = _
+  · show spMap (GlobalTheory.CompanionTheory.Ar.dualMap f) ≫ (u i).left = _
     rw [hu i, hv i, ← Category.assoc, ← Category.assoc, spMap_comp_spMap, spMap_comp_spMap, dualMap_comp_epsMul]
   · have e : w' = φ (List.ofFn u).prod := Over.OverMorphism.ext hw
     rw [e, map_list_prod, List.map_ofFn]
@@ -131,15 +136,15 @@ theorem tan_iff {S S' : Scheme.{0}} {t : SAB H S} {t' : SAB H S'} {f : S' ⟶ S}
       rw [Spec.map_id, Category.id_comp]
 
 theorem exists_vec {G : Over (Sp R)} [GrpObj G] (σ : R →+* R') (w : epsR R ⟶ G) :
-    ∃ U : epsAt (spMap σ) ⟶ G, U.left = spMap (dualMap σ) ≫ w.left ∧ (IsTangent w → IsTanAt G (spMap σ) U) := by
+    ∃ U : epsAt (spMap σ) ⟶ G, U.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap σ) ≫ w.left ∧ (IsTangent w → IsTanAt G (spMap σ) U) := by
   have h1 : w.left ≫ G.hom = spMap (algebraMap R (DualNumber R)) := Over.w w
-  refine ⟨Over.homMk (spMap (dualMap σ) ≫ w.left) (by
-    show (spMap (dualMap σ) ≫ w.left) ≫ G.hom = spMap (algebraMap R' (DualNumber R')) ≫ spMap σ
+  refine ⟨Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap σ) ≫ w.left) (by
+    show (spMap (GlobalTheory.CompanionTheory.Ar.dualMap σ) ≫ w.left) ≫ G.hom = spMap (algebraMap R' (DualNumber R')) ≫ spMap σ
     rw [Category.assoc, h1, spMap_comp_spMap, spMap_comp_spMap, dualMap_comp_alg]), rfl, fun ht => ?_⟩
   unfold IsTanAt
   rw [one_left]
   unfold IsTangent at ht
-  show spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ spMap (dualMap σ) ≫ w.left = _
+  show spMap (TrivSqZeroExt.fstHom R' R' R').toRingHom ≫ spMap (GlobalTheory.CompanionTheory.Ar.dualMap σ) ≫ w.left = _
   rw [← Category.assoc, spMap_comp_spMap, fst_comp_dualMap, ← spMap_comp_spMap, Category.assoc, ht]
   rfl
 
@@ -156,8 +161,8 @@ abbrev sg (X : CMPack Z c FU i hP) (s : X.K →+* ℂ) : 𝓞 X.K →+* ℂ := s
 theorem exists_lift (X : CMPack Z c FU i hP) (b : Bool) (a : PureType.lat hP (sgnRt H b))
     (u : epsAt (under X.y) ⟶ Xo.univ.t.G) (hu : X.IsImage b a u) (s : X.K →+* ℂ)
     (Ux : epsAt (spMap (sg X s)) ⟶ X.B.t.G)
-    (hUx : Ux.left = spMap (dualMap (sg X s)) ≫ (X.C b).v.left ≫ (X.ψ b a).left) :
-    ∃ U' : epsAt (spMap s) ⟶ X.t.G, U'.left ≫ X.m.φ = spMap (dualMap s) ≫ u.left ∧ U'.left ≫ X.m'.φ = Ux.left := by
+    (hUx : Ux.left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (sg X s)) ≫ (X.C b).v.left ≫ (X.ψ b a).left) :
+    ∃ U' : epsAt (spMap s) ⟶ X.t.G, U'.left ≫ X.m.φ = spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ u.left ∧ U'.left ≫ X.m'.φ = Ux.left := by
   obtain ⟨ρ, h1, h2⟩ := hu
   have hm := mono_alg X.K
   have hw : ρ ≫ X.t.G.hom = spMap (algebraMap X.K (DualNumber X.K)) := by
@@ -165,12 +170,12 @@ theorem exists_lift (X : CMPack Z c FU i hP) (b : Bool) (a : PureType.lat hP (sg
       Category.assoc, Category.assoc, Over.w (X.ψ b a)]
     have e1 : (X.C b).v.left ≫ (X.C b).P.A.hom = spMap (algebraMap (𝓞 X.K) (DualNumber (𝓞 X.K))) := Over.w (X.C b).v
     rw [e1, spMap_comp_spMap, spMap_comp_spMap, dualMap_comp_alg]
-  refine ⟨Over.homMk (spMap (dualMap s) ≫ ρ) (by
-    show (spMap (dualMap s) ≫ ρ) ≫ X.t.G.hom = spMap (algebraMap ℂ (DualNumber ℂ)) ≫ spMap s
+  refine ⟨Over.homMk (spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ ρ) (by
+    show (spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ ρ) ≫ X.t.G.hom = spMap (algebraMap ℂ (DualNumber ℂ)) ≫ spMap s
     rw [Category.assoc, hw, spMap_comp_spMap, spMap_comp_spMap, dualMap_comp_alg]), ?_, ?_⟩
-  · show (spMap (dualMap s) ≫ ρ) ≫ X.m.φ = _
+  · show (spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ ρ) ≫ X.m.φ = _
     rw [Category.assoc, h1]
-  · show (spMap (dualMap s) ≫ ρ) ≫ X.m'.φ = _
+  · show (spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ ρ) ≫ X.m'.φ = _
     rw [Category.assoc, h2, hUx, ← Category.assoc, spMap_comp_spMap, dualMap_comp_dualMap]
 
 theorem one_tangent (X : CMPack Z c FU i hP) (b : Bool) (a : PureType.lat hP (sgnRt H b)) :
@@ -190,7 +195,7 @@ theorem w_eq (X : CMPack Z c FU i hP) (b : Bool) (τ : E →+* ℂ) (hτ : τ (H
   have e3 : 2 * τ (H.w0 : E) = 1 + τ (H.rt : E) := by
     have h0 : (2 : E) * (H.w0 : E) = 1 + (H.rt : E) := by
       have := congrArg (algebraMap (𝓞 E) E) H.two_weight_eq_one_add_root
-      simp only [map_mul, map_add, map_one, map_ofNat] at this
+      simp only [map_mul, map_add (f := _), map_one, map_ofNat] at this
       exact this
     have := congrArg τ h0
     rwa [map_mul, map_add, map_one, map_ofNat] at this
@@ -208,7 +213,7 @@ theorem gram_family (X : CMPack Z c FU i hP) (b : Bool) (τ : E →+* ℂ) (hτ 
       ((s.comp (IntermediateField.inclusion (X.hM b)).toRingHom).comp (algebraMap (𝓞 (Z b).M) (Z b).M)) r)
     {M : ℕ} (aq : Fin M → PureType.lat hP (sgnRt H b)) (Wq : Fin M → (epsAt (under X.y) ⟶ Xo.univ.t.G))
     (hW : ∀ q, X.IsImage b (aq q) (Wq q)) (V : Fin M → (epsAt (under (spMap s ≫ X.y)) ⟶ Xo.univ.t.G))
-    (hV : ∀ q, (V q).left = spMap (dualMap s) ≫ (Wq q).left) :
+    (hV : ∀ q, (V q).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ (Wq q).left) :
     (∀ q, IsTanAt Xo.univ.t.G (under (spMap s ≫ X.y)) (V q)) ∧
     IsHodgeGram Xo.univ.t.G Xo.univ.t.PP.L (under (spMap s ≫ X.y)) V
       (Matrix.of fun q q' => r * kap X τ s (X.h b (aq q) (aq q'))) := by
@@ -219,8 +224,133 @@ theorem gram_family (X : CMPack Z c FU i hP) (b : Bool) (τ : E →+* ℂ) (hτ 
   have hnorm : IsLieNormSq (X.C b).P (X.C b).v (sg X s) r :=
     (T.lie_norm_sq_base_change E H _ _ _ _ (Z b).C (X.C b) _ (X.φ b) (sg X s) r (X.map b)).1 hr
   have hk : kap X τ s (wK H) = sg X s (X.ω b) := w_eq X b τ hτ s
-  have g0 := T.lie_norm_square_of_family E H (FU.Di i) (𝓞 X.K) (X.ω b) (X.C b) X.B (fun x x' => X.h b x x') _ (X.ψ b) (sg X s)
-    (kap X τ s) r M aq U (X.fam b) hk hnorm hUl
+  have g0 : IsHodgeGram X.B.t.G X.B.t.PP.L (spMap (sg X s)) U
+      (Matrix.of fun q q' => r * kap X τ s (X.h b (aq q) (aq q'))) := by
+    let C := X.C b
+    let T := X.B
+    let ψ := X.ψ b
+    let σ := sg X s
+    let κ := kap X τ s
+    let h := X.h b
+    let L := PureType.lat hP (sgnRt H b)
+    let ω := X.ω b
+    have hu (k : Fin M) : (U k).left =
+        spMap (GlobalTheory.CompanionTheory.Ar.dualMap σ) ≫ C.v.left ≫ (ψ (aq k)).left := by
+      rw [← Over.comp_left]
+      exact hUl k
+    obtain ⟨hlin, -, -, hlam⟩ := X.fam b
+    obtain ⟨P', φ, v', uC, Hm, χ, w, ⟨hg', hpb, hLB⟩, hvo, hAH, hdw, hrr⟩ := hnorm
+    have laws := abelianSchemeLaws_all.1
+    obtain ⟨Q, ψQ, hQg, hQpb, hQLB⟩ := exists_isPolFibre laws.polBaseChange σ T.pol
+    obtain ⟨rig0, hrig0⟩ := P'.rigid
+    obtain ⟨u0, Hm0, χ0, -, hAH0, -, -, d20, hend0, -⟩ := thetaUnifAV_all P' rig0 hrig0
+    obtain ⟨rigT, hrigT⟩ := Q.rigid
+    obtain ⟨uT, HmT, χT, -, hAHT, -, -, d2T, -, -⟩ := thetaUnifAV_all Q rigT hrigT
+    have := T.t.comm
+    have := C.P.isAb.comm
+    have hψm : ∀ b, IsMonHom (ψ b) := fun b => (hlin b).isMonHom
+    choose f hfm hfc using fun a : L =>
+      @PairingFibre.exists_hom _ _ _ _ _ _ _ _ _ _ _ _ _ hpb hQpb (ψ a) (hψm a)
+    choose e hem hec using fun c : OK H =>
+      @PairingFibre.exists_hom _ _ _ _ _ _ _ _ _ _ _ _ _ hpb hpb (C.act.act c) (C.act.hom c)
+    choose F hFl using fun a : L =>
+      @HodgeUnique.exists_linear_compare _ _ _ _ _ _ _ _ uT u0 (f a) (hfm a)
+    choose G hGl using fun c : OK H => hend0 (e c) (hem c)
+    obtain ⟨K, hK⟩ := @HodgeUnique.exists_linear_compare _ _ _ _ _ _ _ _ u0 uC (𝟙 P'.A) inferInstance
+    have hv'T : IsTangent v' := IsVecOver.isTangent hpb hvo (C.basis.1 0)
+    have hd0 : u0.IsDiff (K w) v' := by
+      simpa using HodgeUniq.isDiff_comp u0 uC d20 (𝟙 P'.A) K hK hv'T hdw
+    have hKH : ∀ z z', hermForm Hm0 (K z) (K z') = hermForm Hm z z' :=
+      (_root_.GlobalTheory.T.weilEq_iff_hermForm_eq_complex thetaUnifAV_all laws P' P' P' P' uC uC u0 uC Hm0 Hm χ0 χ hAH0 hAH (𝟙 _) (𝟙 _) (𝟙 _) (𝟙 _)
+        K K LinearMap.id LinearMap.id hK hK (fun z => by simp) (fun z => by simp)).1 (fun _ _ _ _ _ _ _ => Iff.rfl)
+    have hkey : ∀ b b' : L, ∀ z z',
+        hermForm HmT (F b z) (F b' z') = hermForm Hm0 (G (h b b') z) z' := by
+      intro b b' z z'
+      have W0 := (PairingFibre.lamEq_weilEq_over_ring laws (𝓞 X.K) C.P C.P T.pol C.P (ψ b) (ψ b') (C.act.act (h b b'))
+        (𝟙 _) (hψm b) (hψm b') (C.act.hom _) inferInstance ℂ σ).1 (hlam b b')
+      have hId : (𝟙 P'.A : P'.A ⟶ P'.A).left ≫ φ =
+          φ ≫ (𝟙 C.P.A : C.P.A ⟶ C.P.A).left := by
+        exact (Category.id_comp φ).trans (Category.comp_id φ).symm
+      have W1 := (PairingFibre.weilEq_iff hpb hpb hQpb hpb T.t.PP.isLB C.P.isLB Q.isLB P'.isLB
+        (LBIso.symm hQLB) (LBIso.symm hLB) (hfc b) (hfc b') (hec (h b b')) hId (𝟙 (Sp ℂ))).2
+        (by rw [Category.id_comp]; exact W0)
+      have := (_root_.GlobalTheory.T.weilEq_iff_hermForm_eq_complex thetaUnifAV_all laws P' P' Q P' u0 u0 uT u0 HmT Hm0 χT χ0 hAHT hAH0 (f b) (f b')
+        (e (h b b')) (𝟙 _) (F b) (F b') (G (h b b')) LinearMap.id (hFl b) (hFl b') (hGl _) (fun z => by simp)).1 W1 z z'
+      simpa using this
+    have hg1 : P'.g = 1 := hg'.trans C.dim
+    choose c hc using fun x : OK H => CurveAdjoint.exists_scalar hg1 (G x)
+    have pa : ∀ (b : OK H) (p : 𝟙_ (Over (Sp ℂ)) ⟶ P'.A),
+        Geo.Tor.pushHom hpb _ (p ≫ e b) = Geo.Tor.pushHom hpb _ p ≫ C.act.act b := fun b p =>
+      Over.OverMorphism.ext (by
+        show (p.left ≫ _) ≫ _ = (p.left ≫ _) ≫ _
+        rw [Category.assoc, hec, Category.assoc])
+    have inj : ∀ p q : 𝟙_ (Over (Sp ℂ)) ⟶ P'.A, Geo.Tor.pushHom hpb _ p = Geo.Tor.pushHom hpb _ q → p = q :=
+      fun p q e' => SymBaseChange.pushPt_injective hpb e'
+    have sc : ∀ (b : OK H) (s : ℂ) (Gs : (Fin P'.g → ℂ) →ₗ[ℂ] (Fin P'.g → ℂ)), (∀ z, Gs z = s • z) →
+        (∀ z, u0.ex (G b z) = u0.ex (Gs z)) → c b = s := fun b s Gs hG hh => by
+      have e' := congrFun ((hc b 1).symm.trans ((LinearMap.congr_fun (CurveAdjoint.linear_eq_of_ex u0 _ _ hh) 1).trans
+        (hG 1))) ⟨0, by omega⟩
+      simpa using e'
+    let j : OK H →+* ℂ := RingHom.mk'
+      { toFun := c
+        map_one' := sc 1 1 LinearMap.id (fun z => by simp) fun z => inj _ _ (by
+          rw [hGl, pa, C.act.one, Category.comp_id, LinearMap.id_apply])
+        map_mul' := fun b b' => sc _ _ (G b' ∘ₗ G b) (fun z => by
+          rw [LinearMap.comp_apply, hc, hc, smul_smul, mul_comm]) fun z => inj _ _ (by
+            rw [LinearMap.comp_apply, hGl, hGl, hGl, pa, pa, pa, C.act.mul, Category.assoc]) }
+      fun b b' => sc _ _ (G b + G b') (fun z => by
+        rw [LinearMap.add_apply, hc, hc, ← add_smul]; rfl) fun z => inj _ _ (by
+          rw [LinearMap.add_apply, u0.ex_add, map_mul, hGl, hGl, hGl, pa, pa, pa, C.act.add, Hom.mul_def, Hom.mul_def,
+            ← Category.assoc, comp_lift])
+    have heig : C.v ≫ C.act.act (wK H) = CMCurveTest.scaleVec ω C.v := by
+      obtain ⟨u_, hu_, hprod⟩ := C.eig
+      rw [hprod]
+      apply Over.OverMorphism.ext
+      simp only [List.ofFn_succ, List.ofFn_zero, List.prod_cons, List.prod_nil, _root_.mul_one]
+      exact hu_ 0
+    have hover : IsVecOver σ φ (C.v ≫ C.act.act (wK H)) (v' ≫ e (wK H)) := by
+      show (v' ≫ e _).left ≫ φ = _
+      rw [Over.comp_left, Category.assoc, hec, ← Category.assoc, hvo, Over.comp_left, Category.assoc]
+    have hsc : IsVecOver σ φ (C.v ≫ C.act.act (wK H)) (CMCurveTest.scaleVec (σ ω) v') := by
+      rw [heig]
+      exact CMCurveTest.isVecOver_scaleVec hvo ω
+    have hvv : v' ≫ e (wK H) = CMCurveTest.scaleVec (σ ω) v' :=
+      (existsUnique_isVecOver hpb.1 (C.v ≫ C.act.act (wK H))).unique hover hsc
+    have hGw : G (wK H) (K w) = σ ω • K w := by
+      have := hem (wK H)
+      have h1 := HodgeUniq.isDiff_comp u0 u0 d20 (e (wK H)) (G (wK H)) (hGl _) hv'T hd0
+      have h2 := CMCurveTest.isDiff_scaleVec u0 hd0 (σ ω)
+      rw [← hvv] at h2
+      exact HodgeUnique.eq_of_isDiff u0 (Fl.lie_norm_square_of_family.isTangent_comp hv'T (e (wK H))) h1 h2
+    have hjk : K w ≠ 0 → ∀ x, c x = κ x := by
+      intro hne x
+      have hw : c (wK H) = σ ω := by
+        have e' : (c (wK H) - σ ω) • K w = 0 := by rw [sub_smul, ← hc, hGw, sub_self]
+        exact sub_eq_zero.1 ((smul_eq_zero.1 e').resolve_right hne)
+      obtain ⟨⟨m, k⟩, hx, -⟩ := existsUnique_coord H x
+      have hw' : j (wK H) = κ (wK H) := hw.trans hk.symm
+      change j x = κ x
+      rw [hx, j.map_add, κ.map_add, j.map_mul, κ.map_mul, map_intCast j m, map_intCast j k,
+        map_intCast κ m, map_intCast κ k, hw']
+    refine ⟨Q, ψQ, fun k => v' ≫ f (aq k), uT, HmT, χT, fun k => F (aq k) (K w), hQpb, hQLB, hAHT,
+      fun k => ⟨?_, ?_⟩, fun k k' => ?_⟩
+    · rw [Over.comp_left, Category.assoc, hfc, ← Category.assoc, hvo, hu k, Category.assoc]
+      rfl
+    · have := hfm (aq k)
+      exact HodgeUniq.isDiff_comp uT u0 d2T (f (aq k)) (F (aq k)) (hFl _) hv'T hd0
+    · simp only [Matrix.of_apply]
+      rw [hkey, hc, Fl.lie_norm_square_of_family.hermForm_smul_left, hKH]
+      obtain ⟨t, ht⟩ : ∃ t : ℝ, hermForm Hm w w = t := ⟨_, Fl.lie_norm_square_of_family.hermForm_self_eq_re hAH.1 w⟩
+      rw [ht] at hrr ⊢
+      simp only [Complex.ofReal_re] at hrr
+      by_cases hne : K w = 0
+      · have h0 : (t : ℂ) = 0 := by rw [← ht, ← hKH, hne]; simp [hermForm]
+        have h0' : t = 0 := by exact_mod_cast h0
+        rw [hrr, h0']
+        simp
+      · rw [hjk hne, hrr]
+        push_cast
+        ring
   have hx1 : spMap (sg X s) = spMap s ≫ spMap (algebraMap (𝓞 X.K) X.K) := (spMap_comp_spMap _ _).symm
   have hx2 : under (spMap s ≫ X.y) = spMap s ≫ under X.y := Category.assoc _ _ _
   have hV2 : ∀ q, (V q).left = (U' q).left ≫ X.m.φ := fun q => (hV q).trans (h1 q).symm
@@ -259,7 +389,7 @@ end GlobalTheory.CompanionTheory.Ar.Fl.GInf
 
 namespace GlobalTheory.CompanionTheory.Ar.Fl.GInf
 
-theorem hodgeGram_cmVec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (FU : FamilyUnif Xo (algebraMap (KA l) ℂ) ty) (i : Fin FU.n) (Z : ∀ b : Bool, Curve0 H (sgnRt H b)) (P : (FU.Di i).La →+ (Fin g → ℂ)) (hP : IsPeriod (FU.Di i) ty P) (X : CMPack Z c FU i hP) (b : Bool) (τ : E →+* ℂ) (n : ℕ) (a : Fin n → PureType.lat hP (sgnRt H b)) (v : Vecs X.y n) (s : X.K →+* ℂ) (y' : Sp ℂ ⟶ Xo.XF c) (v' : Vecs y' n) (r : ℝ), τ (H.rt : E) = sgnRt H b → (∀ k, X.IsCMVec b τ (a k) (v k)) → y' = spMap s ≫ X.y → (∀ k, (v' k).left = spMap (dualMap s) ≫ (v k).left) → IsLieNormSq (Z b).C.P (Z b).C.v ((s.comp (IntermediateField.inclusion (X.hM b)).toRingHom).comp (algebraMap (𝓞 (Z b).M) (Z b).M)) r → IsHodgeGram Xo.univ.t.G Xo.univ.t.PP.L (under y') v' (Matrix.of fun k k' => r * ((X.ε b : ℤ) : ℂ) * s (X.β (tauE c τ ((H.rt : E) * sesq (FU.Di i) (a k) (a k'))))) := by
+theorem hodgeGram_cmVec : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (FU : FamilyUnif Xo (algebraMap (KA l) ℂ) ty) (i : Fin FU.n) (Z : ∀ b : Bool, Curve0 H (sgnRt H b)) (P : (FU.Di i).La →+ (Fin g → ℂ)) (hP : IsPeriod (FU.Di i) ty P) (X : CMPack Z c FU i hP) (b : Bool) (τ : E →+* ℂ) (n : ℕ) (a : Fin n → PureType.lat hP (sgnRt H b)) (v : Vecs X.y n) (s : X.K →+* ℂ) (y' : Sp ℂ ⟶ Xo.XF c) (v' : Vecs y' n) (r : ℝ), τ (H.rt : E) = sgnRt H b → (∀ k, X.IsCMVec b τ (a k) (v k)) → y' = spMap s ≫ X.y → (∀ k, (v' k).left = spMap (GlobalTheory.CompanionTheory.Ar.dualMap s) ≫ (v k).left) → IsLieNormSq (Z b).C.P (Z b).C.v ((s.comp (IntermediateField.inclusion (X.hM b)).toRingHom).comp (algebraMap (𝓞 (Z b).M) (Z b).M)) r → IsHodgeGram Xo.univ.t.G Xo.univ.t.PP.L (under y') v' (Matrix.of fun k k' => r * ((X.ε b : ℤ) : ℂ) * s (X.β (tauE c τ ((H.rt : E) * sesq (FU.Di i) (a k) (a k'))))) := by
   intro E _ _ _ H D l Xo c g ty FU i Z P hP X b τ n a v s y' v' r hτ hv hy hv' hr
   classical
   subst hy

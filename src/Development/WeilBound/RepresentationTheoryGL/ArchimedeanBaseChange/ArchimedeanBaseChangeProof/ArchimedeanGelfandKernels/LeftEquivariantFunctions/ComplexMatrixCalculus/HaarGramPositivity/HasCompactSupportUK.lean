@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.HaarGramPositivity.IntegralMulRightHaar
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.HaarGramPositivity.IntegralMulRightHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,8 @@ theorem gram_inv (hF : MatrixFrechetDerivativeAtZeroLaws) (lam : Fin n → ℤ) 
       = Fk lam (k' * k) := by
     intro k'
     simp only [Fk, Ak_mul hF, ← ContinuousLinearMap.star_eq_adjoint, star_mul, mul_assoc]
-  rw [gramQ_def, mul_assoc, ← hL, ← L.integral_comp_comm (Fk_int hF lam)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gramQ_def, mul_assoc, ← hL, ← L.integral_comp_comm (Fk_int hF lam)]
   simp only [hL, hF']
   exact integral_mul_right_haar (Fk lam) k
 
@@ -98,7 +103,7 @@ theorem gram_isPositive (hF : MatrixFrechetDerivativeAtZeroLaws) (lam : Fin n �
 
 theorem gram_isUnit (hF : MatrixFrechetDerivativeAtZeroLaws) (lam : Fin n → ℤ) : IsUnit (gramQ (n := n) lam) := by
   have hinj : Function.Injective (gramQ (n := n) lam) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     by_contra hne
     have h1 := inner_gram hF lam v

@@ -1,11 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
+
+open scoped BigOperators
 
 theorem transfer_continuous_of_continuousOn : ∀ (R G X : Type) [CommRing R] [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup X] [Module R X] [TopologicalSpace X] [IsTopologicalAddGroup X] (ρ : Representation R G X) (H : Subgroup G) [Fintype (G ⧸ H)], IsOpen (H : Set G) → (∀ g, Continuous (ρ g)) → let tr : (G → X) → G → X := fun f g => ∑ q : G ⧸ H, ρ (g • q).out (f ((g • q).out⁻¹ * g * q.out)); ∀ f : G → X, ContinuousOn f H → Continuous (tr f) := by
   intro R G X _ _ _ _ _ _ _ _ ρ H _ hH hρ tr f hf
   show Continuous (fun g => ∑ q : G ⧸ H, ρ (g • q).out (f ((g • q).out⁻¹ * g * q.out)))
-  refine continuous_finset_sum _ (fun q _ => ?_)
+  refine continuous_finsetSum _ (fun q _ => ?_)
   refine continuous_iff_continuousAt.2 (fun g₀ => ?_)
   have hsmul : ∀ g : G, g • q = ((g * q.out : G) : G ⧸ H) := by
     intro g

@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RedIffReduction
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordAdditive
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.RedIffReduction
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordAdditive
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -57,8 +61,8 @@ theorem red_one {g : GtPt D T} (h : g.IsZero) : U.Red 1 g := by
   have t₁ := val_unit (U.gt e) χ (Z := Z) (z := z) hJ
   exact t₁.trans ((val_corr hJ (h.2 χ) r.left).trans (val_one _)).symm
 
-variable {U} in
 
+variable {U} in
 theorem red_mul (hG : GlobalFnsSt) {g g' g'' : GtPt D T} {x x' : T ⟶ G} (hx : U.Red x g)
     (hx' : U.Red x' g') (h : g.IsAdd g' g'') : U.Red (x * x') g'' := by
   rw [red_iff_over] at hx hx' ⊢
@@ -90,19 +94,19 @@ variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {S : Type} [CommRing
   {A : PolAV (Spec (CommRingCat.of (FractionRing R)))}
   {G : Over (Spec (CommRingCat.of R))} [GrpObj G] [IsCommMonObj G] {U : PreU I D A G}
 
-variable (I φ) in
 
+variable (I φ) in
 abbrev lev (e : ℕ) : Over (Spec (CommRingCat.of (R ⧸ I ^ (e + 1)))) := Over.mk (levelMap I φ e)
 
-variable (I φ) in
 
+variable (I φ) in
 def levι (e : ℕ) : (Over.map (thick R I e)).obj (lev I φ e) ⟶ Over.mk (spMap φ) :=
   Over.homMk (thick S (I.map φ) e) (levelMap_thick I φ e).symm
 
 variable [IsLocalRing S] [IsHausdorff (I.map φ) S]
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem pt_ext {B : Over (Spec (CommRingCat.of R))} {b b' : Over.mk (spMap φ) ⟶ B}
     (h : ∀ e, levι I φ e ≫ b = levι I φ e ≫ b') : b = b' :=
   Over.OverMorphism.ext (hom_ext_of_isHausdorff (I.map φ) fun e => congrArg (·.left) (h e))

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.FinOrdValGen
-import GroundTheory.GlobalFields.TateThesis.HeckeChar
-import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
-import GroundTheory.GlobalFields.Adele.WeakApproxUnits
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.FinOrdValGen
+public import GroundTheory.GlobalFields.TateThesis.HeckeChar
+public import GroundTheory.GlobalFields.TateThesis.HeckeCharRayClass
+public import GroundTheory.GlobalFields.Adele.WeakApproxUnits
+
+@[expose] public section
 
 noncomputable section
 

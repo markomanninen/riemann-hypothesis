@@ -1,25 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictFinitePlaceMemSchwartzBruh
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMemOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensFormBox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedProjectionPreservesSchwartzAdmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatPartialEvaluationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxProductDiagonalFunctionalNeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationInvariantFunctionalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCharacterNormOneUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharSupportedIdeleEqLocalAbsValueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalNormUnramifiedFactorizationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalGLEmbeddingUnitary
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzRestrictFinitePlaceMemSchwartzBruh
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzSpaceTranslateMemOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensFormBox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedProjectionPreservesSchwartzAdmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatPartialEvaluationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BoxProductDiagonalFunctionalNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationInvariantFunctionalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalCharacterNormOneUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharSupportedIdeleEqLocalAbsValueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalNormUnramifiedFactorizationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaActionExistsStatement
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPairOfIsTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLocalGLEmbeddingUnitary
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.LatVac
 open scoped Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -82,13 +87,13 @@ section Proj
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-theorem liftV_mul (v : Pl F) (a : Fv F v) (y : AF F) : liftV v a * y = liftV v (a * evFin F v y) :=
+theorem liftV_mul (v : Pl (F := F)) (a : Fv F v) (y : AF F) : liftV v a * y = liftV v (a * evFin F v y) :=
   GlobalTheory.EmbChart.atPlace_mul_right v a y
 
-theorem mul_liftV (v : Pl F) (a : Fv F v) (y : AF F) : y * liftV v a = liftV v (evFin F v y * a) := by
+theorem mul_liftV (v : Pl (F := F)) (a : Fv F v) (y : AF F) : y * liftV v a = liftV v (evFin F v y * a) := by
   rw [mul_comm, liftV_mul, mul_comm]
 
-theorem proj_schr_off (ψ : AddChar (AF F) ℂ) (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
+theorem proj_schr_off (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
     (p q : κ → AF F) (hp : ∀ i, evFin F v (p i) = 0) (hq : ∀ i, evFin F v (q i) = 0) (Φ : (κ → AF F) → ℂ) :
     proj v φ₀ l (schr ψ (p, q) Φ) = schr ψ (p, q) (proj v φ₀ l Φ) := by
   funext y
@@ -98,13 +103,13 @@ theorem proj_schr_off (ψ : AddChar (AF F) ℂ) (v : Pl F) (φ₀ : (κ → Fv F
     have e1 : repl v y x ⬝ᵥ q = y ⬝ᵥ q := by
       simp only [dotProduct, repl, add_mul, sub_mul, liftV_mul, hq, mul_zero, map_zero, sub_zero, add_zero]
     have e2 : repl v y x + p = repl v (y + p) x := by
-      funext i; simp only [repl, Pi.add_apply, map_add, hp, add_zero]; ring
+      funext i; simp only [repl, Pi.add_apply, map_add (f := _), hp, add_zero]; ring
     simp only [schr, e1, e2, Pi.smul_apply, smul_eq_mul]
   rw [proj_apply, e, map_smul]
-  simp only [schr, proj_apply, Pi.add_apply, map_add, hp, add_zero, smul_eq_mul]
+  simp only [schr, proj_apply, Pi.add_apply, map_add (f := _), hp, add_zero, smul_eq_mul]
   ring
 
-theorem proj_schr_at (ψ : AddChar (AF F) ℂ) (v : Pl F) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
+theorem proj_schr_at (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) (φ₀ : (κ → Fv F v) → ℂ) (l : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ)
     (p q : κ → Fv F v) (h : ∀ φ ∈ SB (κ → Fv F v), l (schr (psiAt ψ v) (p, q) φ) = l φ) (Φ : (κ → AF F) → ℂ)
     (hΦ : Φ ∈ schA F κ) :
     proj v φ₀ l (schr ψ (fun i => liftV v (p i), fun i => liftV v (q i)) Φ) = proj v φ₀ l Φ := by
@@ -113,21 +118,27 @@ theorem proj_schr_at (ψ : AddChar (AF F) ℂ) (v : Pl F) (φ₀ : (κ → Fv F 
     have := restrict_liftV_mem_SB v _ (GlobalTheory.SchwartzTranslation.schA_add_const (fun i => y i - liftV v (evFin F v (y i))) Φ hΦ)
     convert this using 3
     funext i
-    simp only [repl, Pi.add_apply]; ring
+    simp only [repl, Pi.add_apply]
+    ring
   have e : (fun x => schr ψ (fun i => liftV v (p i), fun i => liftV v (q i)) Φ (repl v y x)) =
       schr (psiAt ψ v) (p, q) fun x => Φ (repl v y x) := by
     funext x
     have e2 : (repl v y x + fun i => liftV v (p i)) = repl v y (x + p) := by
-      funext i; simp only [repl, Pi.add_apply, map_add]; ring
+      funext i; simp only [repl, Pi.add_apply, map_add (f := _)]; ring
+    have evFin_invOf_two : evFin F v (⅟(2 : AF F)) = ⅟(2 : Fv F v) := by
+      refine (invOf_eq_right_inv ?_).symm
+      have ht : evFin F v (2 * ⅟(2 : AF F)) = 1 := by rw [mul_invOf_self, map_one]
+      rwa [map_mul, map_ofNat] at ht
     have e1 : (repl v y x ⬝ᵥ fun i => liftV v (q i)) +
         ⅟(2 : AF F) * ((fun i => liftV v (p i)) ⬝ᵥ fun i => liftV v (q i)) =
         liftV v (x ⬝ᵥ q + ⅟(2 : Fv F v) * (p ⬝ᵥ q)) := by
-      simp only [dotProduct, mul_liftV, evFin_repl, evFin_liftV, ← map_sum, GlobalTheory.VacAny.evFin_invOf_two, map_add]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [dotProduct, mul_liftV, evFin_repl, evFin_liftV, ← map_sum, evFin_invOf_two, map_add (f := _)]
     simp only [schr, e1, e2]
     rfl
   rw [proj_apply, proj_apply, e, h _ hs]
 
-theorem mixed_inv (ψ : AddChar (AF F) ℂ) (v : Pl F) (φ₀ : (κ ⊕ κ → Fv F v) → ℂ) (hφ₀ : φ₀ ∈ SB (κ ⊕ κ → Fv F v))
+theorem mixed_inv (ψ : AddChar (AF F) ℂ) (v : Pl (F := F)) (φ₀ : (κ ⊕ κ → Fv F v) → ℂ) (hφ₀ : φ₀ ∈ SB (κ ⊕ κ → Fv F v))
     (l₁ l₂ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (p₁ q₁ p₂ q₂ : κ → AF F)
     (hp : (1 - liftV v 1) • p₁ = (1 - liftV v 1) • p₂) (hq : (1 - liftV v 1) • q₁ = (1 - liftV v 1) • q₂)
     (h₁ : ∀ φ ∈ SB (κ → Fv F v), l₁ (schr (psiAt ψ v) (fun i => evFin F v (p₁ i), fun i => evFin F v (q₁ i)) φ) = l₁ φ)
@@ -172,8 +183,8 @@ omit [Invertible (2 : R)] [Fintype β] in
 theorem smul_one_map (a : E) : (a • (1 : Matrix β β E)).map c = c a • 1 := by
   ext i j; by_cases h : i = j <;> simp [Matrix.one_apply, h]
 
-omit [Invertible (2 : R)] in
 
+omit [Invertible (2 : R)] in
 theorem exists_shear (J : Matrix β β E) (ε : E) (h2 : ε * c ε = 0) (h3 : c (c ε) = ε) : ∃ γ : UG c (dbl J),
     ((γ : GL (β ⊕ β) E) : Matrix (β ⊕ β) (β ⊕ β) E) = Matrix.fromBlocks 1 ((-ε) • 1) ((-c ε) • 1) 1 := by
   have h2' : c ε * ε = 0 := by rw [mul_comm, h2]
@@ -185,8 +196,8 @@ theorem exists_shear (J : Matrix β β E) (ε : E) (h2 : ε * c ε = 0) (h3 : c 
     rw [Matrix.fromBlocks_map, smul_one_map, smul_one_map, Matrix.map_one _ (map_zero c) (map_one c), map_neg, map_neg, h3]
     simp [dbl, Matrix.fromBlocks_transpose, Matrix.fromBlocks_multiply, smul_smul, h2, h2']
 
-omit [Invertible (2 : R)] in
 
+omit [Invertible (2 : R)] in
 theorem exists_inl (J : Matrix β β E) (g : UG c J) : ∃ gd : UG c (dbl J),
     ((gd : GL (β ⊕ β) E) : Matrix (β ⊕ β) (β ⊕ β) E) = Matrix.fromBlocks ((g : GL β E) : Matrix β β E) 0 0 1 := by
   refine ⟨⟨⟨Matrix.fromBlocks ((g : GL β E) : Matrix β β E) 0 0 1,
@@ -249,7 +260,7 @@ end Mixed
 
 section Place
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl F}
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl (F := F)}
 
 omit [NumberField E] in
 theorem piW_algebraMap (τ : E →ₐ[F] Fv F v) (a : AF F) : piW τ (algebraMap (AF F) (AE F E) a) = evFin F v a := by
@@ -270,13 +281,13 @@ theorem exists_idem (h : IsCMExt F E σ) (t : E →ₐ[F] Fv F v) : ∃ ε : AE 
   · rw [hc]
     refine (GlobalTheory.EmbChart.sigR_tensAt v σ _).trans (congrArg _ ?_)
     rw [map_sub, map_one, sigR_splitIdem, sub_sub_cancel]
-  · rw [hc, ← map_add, add_sub_cancel]; rfl
+  · rw [hc, ← map_add (f := _), add_sub_cancel]; rfl
   · rw [hp, splitProj_splitIdem]
   · rw [hc, hp, map_sub, map_one, splitProj_splitIdem, sub_self]
   · rw [hc, hp, map_sub, map_one, splitProj_comp_splitIdem, sub_zero]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem at_det {n : ℕ} (T : Matrix (Fin n) (Fin n) (AE F E)) (hT : At (evFin F v) (T - 1)) : At (evFin F v) (T.det - 1) := by
   intro u hu
   let I : Ideal (AE F E) := LinearMap.ker (LinearMap.lsmul (AE F E) (AE F E) (algebraMap (AF F) (AE F E) u))
@@ -369,7 +380,7 @@ end Place
 
 section Linear
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl F}
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {v : Pl (F := F)}
   {n d : ℕ} {X : Spc F E n} {W : Spc F E d}
 
 theorem exists_at (M : Model σ X W) (w : Matrix (Fin n) (Fin d) (AE F E)) : ∃ u : Matrix (Fin n) (Fin d) (AE F E),
@@ -389,7 +400,7 @@ theorem star_mem_SB {Y : Type} [TopologicalSpace Y] {f : Y → ℂ} (hf : f ∈ 
 
 def conjForm {Y : Type} (l : (Y → ℂ) →ₗ[ℂ] ℂ) : (Y → ℂ) →ₗ[ℂ] ℂ where
   toFun f := star (l (star f))
-  map_add' f g := by rw [star_add, map_add, star_add]
+  map_add' f g := by rw [star_add, map_add (f := _), star_add]
   map_smul' c f := by rw [star_smul, map_smul, star_smul, star_star]; rfl
 
 theorem star_schr {R : Type} [CommRing R] [Invertible (2 : R)] (ψ : AddChar R ℂ) (hψ : ∀ x, ‖ψ x‖ = 1) {κ : Type} [Fintype κ]

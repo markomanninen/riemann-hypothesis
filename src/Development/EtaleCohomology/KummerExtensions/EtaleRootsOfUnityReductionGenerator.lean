@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleRootsOfUnityReductionMapGenerator
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistReductionResolutionMapGeneratorStatement
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleRootsOfUnityReductionMapGenerator
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistReductionResolutionMapGeneratorStatement
+
+@[expose] public section
 
 theorem LateralTheory.Ext.etale_roots_of_unity_reduction_generator : LateralTheory.EtaleFoundations.EtaleRootsOfUnityReductionMapGenerator := GlobalTheory.T.tateTwistReductionResolutionMap_generator

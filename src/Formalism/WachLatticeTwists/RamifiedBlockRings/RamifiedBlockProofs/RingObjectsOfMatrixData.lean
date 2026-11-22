@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.FinrankRangeEq
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.FinrankRangeEq
+
+@[expose] public section
 
 open Finset Classical
 
@@ -103,7 +107,7 @@ theorem eDiag' (A : Type) [CommRing A] (d : Type) [Fintype d] [DecidableEq d] (S
   rw [hp]
   congr 1
   funext a
-  simp only [hl]
+  rw [hl]
 
 set_option maxHeartbeats 8000000 in
 theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO : StatIdemKO) : RingObjectsExist := by
@@ -231,7 +235,8 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
       map_mul' := fun a b => by
         ext i j; apply hι; rw [hent]
         show (a.1 π' * b.1 π') i j = _
-        simp only [Matrix.mul_apply, map_sum, map_mul, hent]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mul_apply, map_sum, map_mul, hent]
       map_zero' := by
         ext i j; apply hι; rw [hent]
         show (0 : Matrix d d K) i j = ι ((0 : Matrix d d O) i j)
@@ -239,7 +244,7 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
       map_add' := fun a b => by
         ext i j; apply hι; rw [hent]
         show a.1 π' i j + b.1 π' i j = ι (ρf a i j + ρf b i j)
-        rw [map_add, hent, hent]
+        rw [map_add (f := _), hent, hent]
       commutes' := fun c => by
         ext i j; apply hι; rw [hent]
         show (algebraMap O (Matrix d d K) c) i j = ι ((algebraMap O (Matrix d d O) c) i j)
@@ -264,7 +269,7 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
           simp [Matrix.toSquareBlock_def, Matrix.one_apply, h, h']
       map_mul' := fun a b => by rw [map_mul]; exact blk_mul bl (hBD a) k
       map_zero' := by rw [map_zero]; ext i j; simp [Matrix.toSquareBlock_def]
-      map_add' := fun a b => by rw [map_add]; ext i j; simp [Matrix.toSquareBlock_def]
+      map_add' := fun a b => by rw [map_add (f := _)]; ext i j; simp [Matrix.toSquareBlock_def]
       commutes' := fun c => by
         rw [AlgHom.commutes]
         ext i j
@@ -402,7 +407,8 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
   let tE : G → T' := fun g => ⟨cE g, hcE g⟩
   have hEs : E = ∑ g ∈ sE, tE g • rR g := Subtype.ext (by
     show E.1 = R'.val (∑ g ∈ sE, tE g • rR g)
-    rw [hEsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hEsum, map_sum]
     exact Finset.sum_congr rfl fun g _ => funext fun y => (hsv (tE g) (rR g) y).symm)
   let τ : T' := ∑ g ∈ sE, tE g * ((χ g : (T')ˣ) : T')
   let c1 : Fin (t + 1) := ⟨1, by omega⟩
@@ -412,11 +418,13 @@ theorem ring_objects_of_matrix_data (hEM : StatEMat) (hSP : StatSplitPts) (hKO :
     apply hι
     have h1 : τ.1 π' = ∑ g ∈ sE, cE g π' * (χ₁ g : O) := by
       show ((Pi.evalRingHom (fun _ : X' => O) π').comp T'.val.toRingHom) τ = _
-      rw [map_sum]; rfl
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; rfl
     have h2 : E.1 π' a1.1 a1.1 = ι δO := by
       rw [hEπ, Matrix.diagonal_apply_eq]
       exact hval1 a1.1 (by rw [a1.2])
-    rw [← h2, hEsum, h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, hEsum, h1, map_sum]
     simp only [Finset.sum_apply, Matrix.sum_apply]
     refine Finset.sum_congr rfl fun g _ => ?_
     show _ = ι (cE g π') • ι (r₀ g π a1.1 a1.1)

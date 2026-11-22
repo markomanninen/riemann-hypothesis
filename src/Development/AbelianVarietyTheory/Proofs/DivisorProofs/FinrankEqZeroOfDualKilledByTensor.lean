@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField Polynomial
 
 namespace GlobalTheory
@@ -6,7 +11,7 @@ namespace GlobalTheory
 theorem ringOfIntegers_action_injective (F : Type) [Field F] [NumberField F] (X : Type)
     [AddCommGroup X] [Module.Free ℤ X] [Nontrivial X] (ρ : 𝓞 F →+* Module.End ℤ X) :
     Function.Injective ρ := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have hmem : a ∈ RingHom.ker ρ := ha
   have hn : ((Ideal.absNorm (RingHom.ker ρ) : ℕ) : 𝓞 F) ∈ RingHom.ker ρ := Ideal.absNorm_mem _
@@ -96,7 +101,8 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
   have lin : ∀ (e : ι → ℤ) (χ : X) (r : Module.Free.ChooseBasisIndex ℤ X),
       B.repr (ρ (∑ i, e i • b i) χ) r = ∑ i, e i * B.repr (ρ (b i) χ) r := by
     intro e χ r
-    simp [map_sum, map_zsmul, LinearMap.sum_apply, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_zsmul, LinearMap.sum_apply, Finsupp.finsetSum_apply]
   rcases CharP.char_is_prime_or_zero k (ringChar k) with hp | hp
   · set p := ringChar k with hpdef
     haveI : Fact p.Prime := ⟨hp⟩
@@ -111,7 +117,8 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
       intro χ r
       rw [lin, ← ZMod.intCast_zmod_eq_zero_iff_dvd]
       have := congrArg π (key χ r)
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       rw [← this]
       push_cast
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -140,7 +147,8 @@ theorem finrank_eq_zero_of_dual_killed : ∀ (F : Type) [Field F] [NumberField F
       intro χ r
       rw [lin]
       have := congrArg π (key χ r)
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       simp only [map_zsmul] at this
       have h2 : ((∑ i, e i * B.repr (ρ (b i) χ) r : ℤ) : ℚ)
           = (∏ j, ((c j).den : ℚ)) * ∑ i, (B.repr (ρ (b i) χ) r) • π (w i) := by

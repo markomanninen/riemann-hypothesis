@@ -1,8 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -44,14 +51,14 @@ theorem isCovolOne_map {μ : Measure (Mx D m n)} {𝓕 : Set (Mx D m n)} (h : Is
         left_inv := fun γ => Subtype.ext (e.apply_symm_apply _)
         right_inv := fun γ => Subtype.ext (e.symm_apply_apply _) }
     refine h.2.1.image_of_equiv e.toEquiv ?_ g fun γ x => ?_
-    · refine ⟨he'.measurable, ?_⟩
+    · refine ⟨he'.measurable.aemeasurable, ?_⟩
       have : (μ.map e).map e.symm = μ := by
         rw [Measure.map_map he'.measurable he.measurable]
         have : (e.symm ∘ e : Mx D m n → Mx D m n) = id := funext e.symm_apply_apply
         rw [this, Measure.map_id]
       exact this.absolutelyContinuous
     · change e (e.symm γ + x) = γ + e x
-      rw [map_add, e.apply_symm_apply]
+      rw [map_add (f := _), e.apply_symm_apply]
   · rw [hemb.map_apply, Set.preimage_image_eq _ e.injective]
     exact h.2.2
 

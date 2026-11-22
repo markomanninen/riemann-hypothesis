@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.PhGramOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.HasSubstGood
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.IntegralSubst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.HasSubstGood
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem gather_of (hSF : SumFirst) : Gather := by
   refine sAdd (sOfEq ?_) ?_
   · rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [← Finset.sum_mul, ← map_sum, hP_fst]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum, hP_fst]
   · have e1 : (∑ i, ∑ j, ∑ j' ∈ Finset.univ.filter (fun j' => j < j'),
           be l ex ph (mulBy l ex ((A j' i).2 * (A j i).1) (Xv j)) (Xv j') : MvPowerSeries (Fin k) ℂ_[p]) =
         ∑ j, ∑ j' ∈ Finset.univ.filter (fun j' => j < j'), ∑ i,

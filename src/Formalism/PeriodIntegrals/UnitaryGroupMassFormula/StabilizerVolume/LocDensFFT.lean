@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFFS
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFFS
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,8 +133,6 @@ theorem inert_delta (M a : ℕ) (ha : a + 2 ≤ M) (q : ℝ) (hq : 1 ≤ q) (j :
   rw [he, pow_add, div_mul_eq_div_div, div_self (pow_ne_zero _ hq0.ne'), one_div, ← inv_pow]
   exact inv_pow_le q hq _ (by omega)
 
-theorem swapR_apply (k : Type) [Field k] (y : k × k) : FiniteFieldSplitting.swapR k y = y.swap := rfl
-
 theorem card_transport {k K : Type} [Field k] [CommRing K] [Algebra k K] (σ : K ≃ₐ[k] K)
     (e : K ≃ₐ[k] k × k) (he : ∀ x, e (σ x) = (e x).swap) {M a : ℕ}
     (J : Matrix (Fin M) (Fin M) K) (T : Matrix (Fin a) (Fin a) K) :
@@ -146,9 +148,11 @@ theorem card_transport {k K : Type} [Field k] [CommRing K] [Algebra k K] (σ : K
     funext i j
     show ∑ a', ∑ b, (e (X i a')).swap * e (J a' b) * e (X j b) =
       e (∑ a', ∑ b, σ (X i a') * J a' b * X j b)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun a' _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, map_mul, he]
   rw [key]

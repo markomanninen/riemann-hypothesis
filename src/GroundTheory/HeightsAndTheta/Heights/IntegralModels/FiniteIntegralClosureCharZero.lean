@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.FiniteIntegralClosureLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.FiniteIntegralClosureLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open scoped nonZeroDivisors
@@ -38,11 +43,12 @@ theorem exists_prime_mem_of_isMaximal (A : Type*) [CommRing A] [Algebra.FiniteTy
     exact CharP.cast_eq_zero _ p
   · exfalso
     have : CharZero (A ⧸ 𝔪) := CharP.charP_to_charZero (A ⧸ 𝔪)
-    have hmax := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := ℤ) (⊥ : Ideal (A ⧸ 𝔪))
+    have hmax := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ) (⊥ : Ideal (A ⧸ 𝔪))
     have hbot : (⊥ : Ideal (A ⧸ 𝔪)).comap (algebraMap ℤ (A ⧸ 𝔪)) = ⊥ := by
       rw [← RingHom.ker_eq_comap_bot, RingHom.ker_eq_bot_iff_eq_zero]
       intro n hn
       exact_mod_cast (show ((n : ℤ) : A ⧸ 𝔪) = 0 by simpa using hn)
+    change ((⊥ : Ideal (A ⧸ 𝔪)).comap (algebraMap ℤ (A ⧸ 𝔪))).IsMaximal at hmax
     rw [hbot] at hmax
     exact Int.not_isField (Ring.isField_iff_maximal_bot.mpr hmax)
 
@@ -100,15 +106,16 @@ theorem exists_pow_smul_mem_of_isMaximal
       obtain ⟨H, rfl⟩ := ih G hG
       exact ⟨H, by rw [pow_succ, map_mul, mul_assoc, mul_left_comm]⟩
   have hφinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro F hF
     ext m
     rw [MvPolynomial.coeff_zero]
     by_contra hc
-    obtain ⟨G, hG⟩ := hpow (MvPolynomial.coeff m F).natAbs F hF
-    have hdvd : (p : ℤ) ^ (MvPolynomial.coeff m F).natAbs ∣ MvPolynomial.coeff m F :=
-      ⟨MvPolynomial.coeff m G, by conv_lhs => rw [hG]
-                                  rw [MvPolynomial.coeff_C_mul]⟩
+    obtain ⟨G, hG⟩ := hpow (AddMonoidAlgebra.coeff F m).natAbs F hF
+    have hdvd : (p : ℤ) ^ (AddMonoidAlgebra.coeff F m).natAbs ∣ AddMonoidAlgebra.coeff F m :=
+      ⟨AddMonoidAlgebra.coeff G m, by
+        conv_lhs => rw [hG]
+        rw [MvPolynomial.coeff_C_mul]⟩
     have h1 := Int.natAbs_dvd_natAbs.mpr hdvd
     rw [Int.natAbs_pow, Int.natAbs_natCast] at h1
     have h2 := Nat.le_of_dvd (Int.natAbs_pos.mpr hc) h1

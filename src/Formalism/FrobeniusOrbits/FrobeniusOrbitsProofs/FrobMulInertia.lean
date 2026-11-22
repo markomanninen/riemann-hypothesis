@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.FrobeniusOrbits.Statement
-import Formalism.TameInertiaTowers.TowerFieldFoundations
+module
+
+public import Mathlib
+public import Formalism.FrobeniusOrbits.Statement
+public import Formalism.TameInertiaTowers.TowerFieldFoundations
+
+@[expose] public section
 
 open NumberField IntermediateField Ideal
 

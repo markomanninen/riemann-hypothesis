@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.EqZeroOfPMulEqZero
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
-import GroundTheory.PAdicHodge.ACrisLog
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.EqZeroOfPMulEqZero
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+public import GroundTheory.PAdicHodge.ACrisLog
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,6 +29,7 @@ theorem zeroEquiv_logTerm (u : Reformulated.AutPerF.Ainf l (NC l))
     zeroEquiv l (((-1) ^ n * (n.factorial : Reformulated.AutPerF.AcrisZero l (NC l))) *
         Reformulated.AutPerF.AcrisZero.gamma (n + 1) (u - 1) (by rw [map_sub, hu, map_one, sub_self])) =
       ACris.logTermZero hx n := by
+  set_option synthInstance.maxHeartbeats 100000 in
   rw [ACris.logTermZero, map_mul, map_mul, map_pow, map_neg, map_one, map_natCast]
   congr 1
   apply Subtype.ext
@@ -33,8 +38,8 @@ theorem zeroEquiv_logTerm (u : Reformulated.AutPerF.Ainf l (NC l))
     ACris.dpow (n + 1) (u - 1)
   exact gamma_eq_dpow l (n + 1) (u - 1)
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem acrisNHom_log (u : Reformulated.AutPerF.Ainf l (NC l))
     (hu : Reformulated.AutPerF.Ainf.theta l (NC l) u = 1)
     (hx : u - 1 ∈ RingHom.ker (fontaineTheta (normInteger ℂ_[l]) l)) :
@@ -46,7 +51,8 @@ theorem acrisNHom_log (u : Reformulated.AutPerF.Ainf l (NC l))
   have hsum : ∑ n ∈ Finset.range M, ACris.logTerm hx n =
       acrisNHom l (algebraMap _ (Reformulated.AutPerF.Acris l (NC l))
         (Reformulated.AutPerF.Acris.logPartial M u hu)) := by
-    rw [acrisNHom_algebraMap, Reformulated.AutPerF.Acris.logPartial, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [acrisNHom_algebraMap, Reformulated.AutPerF.Acris.logPartial, map_sum, map_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [ACris.logTerm, zeroEquiv_logTerm l u hu hx n]
   rw [hsum, ← map_sub]
@@ -65,14 +71,6 @@ theorem cA_logTeich (η : Reformulated.AutPerF.tateModule l (OC l))
   rw [cA_apply, Reformulated.AutPerF.Acris.map_logTeich, Reformulated.AutPerF.Acris.logTeich,
     Reformulated.AutPerF.Acris.log_congr _ hu (by rw [Reformulated.AutPerF.tateModule.coe_map, tiltMap_eq])]
   exact acrisNHom_log l _ hu (ACris.mu_mem_ker h)
-
-theorem untilt_εO : PreTilt.untilt (PositivityTheory.LocInh.εO l) = 1 := by
-  have h1 : Formalism.Per6.tiltMap l (PositivityTheory.LocInh.εO l) = epsilon l := PositivityTheory.LocInh.tiltMap_tiltInv l _
-  have h2 := Reformulated.AutPerF.Tilt.untilt_map (e l).toRingHom (PositivityTheory.LocInh.εO l)
-  rw [tiltMap_eq, h1, untilt_epsilon] at h2
-  apply (e l).injective
-  rw [map_one]
-  exact h2.symm
 
 theorem cA_logTeich_eps (h0 : PreTilt.untilt (PositivityTheory.LocInh.εO l) = 1) :
     cA l (Reformulated.AutPerF.Acris.logTeich ⟨PositivityTheory.LocInh.εO l, h0⟩) = Formalism.Per6.tA l := by

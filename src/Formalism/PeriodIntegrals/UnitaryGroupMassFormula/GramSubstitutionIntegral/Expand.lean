@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.IntegralSubst
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.HasSubstGood
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BiadditiveCubes.ConstantCoeffLogEqZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.OrthogonalSplitPolarizationVanishes
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.IntegralSubst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GramSubstitutionIntegral.HasSubstGood
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BiadditiveCubes.ConstantCoeffLogEqZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupSplitting.OrthogonalSplitPolarizationVanishes
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem mulBy_add (hd : Data l ex ph) {a : MvPowerSeries σ ℂ_[p]} (ha : MvPow
     rw [map_mul, cc_lg hd ha, mul_zero]
   have h2 : MvPowerSeries.constantCoeff (MvPowerSeries.C e' * lg l a) = 0 := by
     rw [map_mul, cc_lg hd ha, mul_zero]
-  rw [lg_pt hd h1, lg_pt hd h2, map_add, add_mul]
+  rw [lg_pt hd h1, lg_pt hd h2, map_add (f := _), add_mul]
 
 theorem good_zero : Good (0 : MvPowerSeries σ ℂ_[p]) := by
   exact ⟨map_zero _, fun n => by simp [IsIntP]⟩
@@ -100,7 +104,8 @@ theorem sumFirst_of (hGA : GoodAdd) (hBS : BiaddSub) : SumFirst := by
 theorem cc_sum_lg (hd : Data l ex ph) {m : ℕ} {a : Fin m → MvPowerSeries σ ℂ_[p]}
     (ha : ∀ j, MvPowerSeries.constantCoeff (a j) = 0) :
     MvPowerSeries.constantCoeff (∑ j, lg l (a j)) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun j _ => cc_lg hd (ha j)
 
 theorem pt_sum_succ (hd : Data l ex ph) {m : ℕ} (a : Fin (m + 1) → MvPowerSeries σ ℂ_[p])

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PushInvertibleModelOfIso
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.DualNumberRingHomExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PushInvertibleModelOfIso
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.DualNumberRingHomExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,13 +60,13 @@ theorem keyAt_of_keyPB (h : KeyAt M z hz x) (h' : KeyPB x' x f) :
   obtain ⟨w'', T⟩ := exists_comp x.P.isLB w w' g g' Y.t.PP.isLB x'.P.isLB
   have he'' : eSec x'.P.A ≫ φ' ≫ φ = (spMap f ≫ z) ≫ eSec Y.t.G := by
     rw [← Category.assoc, he', Category.assoc, he, Category.assoc]
-  have hF : F' = dualMap f := KeyCancel.dualNumber_ringHom_ext
+  have hF : F' = Chart.dualMapR f := KeyCancel.dualNumber_ringHom_ext
     (fun a => by
       rw [hF']
-      ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl])
+      ext <;> simp [Chart.dualMapR, TrivSqZeroExt.algebraMap_eq_inl])
     (by
       rw [hε']
-      ext <;> simp [dualMap])
+      ext <;> simp [Chart.dualMapR])
   have hq := hp'.comp hp
   refine ⟨φ' ≫ φ, he'', w'', hg'.trans hg, hq, (isGen_iff w'').2 (T.pgen_comp x.P.isLB g g'), ?_, ?_, fun i => ?_⟩
   · have r₀ := (maps_iff w _ (fun _ => eSec Y.t.G) _ x.rig Y.t.PP.rig z _
@@ -105,7 +109,7 @@ theorem keyPB_of_keyAt (h : KeyAt M z hz x) (h' : KeyAt M (spMap f ≫ z) (le_pr
     (fun _ => rfl)).1 hr
   have r'' := (maps_iff w'' _ (fun _ => eSec Y.t.G) _ x'.rig Y.t.PP.rig (spMap f ≫ z) _
     (rigPull_le (φ' ≫ φ) (spMap f ≫ z) he'' Y.t.PP.L) (fun _ => rfl)).1 hr''
-  refine ⟨φ', he', w', hg''.trans hg.symm, dualMap f, hc.cancel hc'' hw0,
+  refine ⟨φ', he', w', hg''.trans hg.symm, Chart.dualMapR f, hc.cancel hc'' hw0,
     (isGen_iff w').2 (T.pgen_cancel Y.t.PP.isLB g g''),
     (maps_iff w' _ (fun _ => eSec x.P.A) _ x'.rig x.rig (spMap f) _ (rigPull_le φ' (spMap f) he' x.P.L)
       (fun _ => rfl)).2 (T.pmaps_cancel Y.t.PP.isLB (fun _ => he') r r''),
@@ -115,8 +119,8 @@ theorem keyPB_of_keyAt (h : KeyAt M z hz x) (h' : KeyAt M (spMap f ≫ z) (le_pr
     have b := (appLE_eq_iff_stalk w'' (mem_of_comm hc''.1.w (le_preimage_comp _ hz)) M.θ x'.th).1 hs'' Z q y j k hj hk
     rw [T Z q y j i k hj hi hk, ← Category.assoc, a, Units.val_mul, _root_.mul_assoc] at b
     exact (Units.mul_right_inj _).1 b
-  · ext <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
-  · ext <;> simp [dualMap]
+  · ext <;> simp [Chart.dualMapR, TrivSqZeroExt.algebraMap_eq_inl]
+  · ext <;> simp [Chart.dualMapR]
   · apply hp.hom_ext
     · rw [Category.assoc, hv'', Category.assoc, hv, FlagMod.ev_spMap f z M.U hz, FlagMod.dualMap_comp, spMap_comp₀,
         Category.assoc]
@@ -125,6 +129,6 @@ theorem keyPB_of_keyAt (h : KeyAt M z hz x) (h' : KeyAt M (spMap f ≫ z) (le_pr
       show Spec.map _ ≫ Spec.map _ = Spec.map _ ≫ Spec.map _
       rw [← Spec.map_comp, ← Spec.map_comp, ← CommRingCat.ofHom_comp, ← CommRingCat.ofHom_comp]
       congr 2
-      ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+      ext a <;> simp [Chart.dualMapR, TrivSqZeroExt.algebraMap_eq_inl]
 
 end GlobalTheory.KeyAtBC

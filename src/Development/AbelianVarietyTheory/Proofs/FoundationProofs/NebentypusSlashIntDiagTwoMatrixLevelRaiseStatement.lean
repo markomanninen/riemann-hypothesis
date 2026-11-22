@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NebentypusSlashIntDiagTwoMatrixLevelRaise
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NebentypusSlashIntDiagTwoMatrixLevelRaise
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices UpperHalfPlane CongruenceSubgroup
 open scoped MatrixGroups ModularForm Manifold
 set_option maxHeartbeats 1000000 in

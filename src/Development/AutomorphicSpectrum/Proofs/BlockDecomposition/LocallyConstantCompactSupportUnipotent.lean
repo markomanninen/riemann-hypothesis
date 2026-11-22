@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem dEmb_mul_entry (i t : ℕ) (d : Fin (t + 1) → k) (g : Mir k ((i + 1) +
   have hc : colMat k ((i + 1) + (t + 1)) (Fin.append (0 : Fin (i + 1) → k) d)
       (Fin.castSucc (Fin.natAdd (i + 1) b)) (Fin.last _) = d b := by
     simp only [colMat, if_true, Fin.lastCases_castSucc, Fin.append_right]
-  rw [Subgroup.coe_mul, Units.val_mul, hv, add_mul, one_mul, Matrix.add_apply, mul_apply,
+  rw [Subgroup.coe_mul, Units.val_mul, hv, add_mul, one_mul, Matrix.add_apply, Matrix.mul_apply,
     Finset.sum_eq_single (Fin.last _)]
   · rw [hc]
     exact congrArg (_ + ·) ((congrArg (d b * ·) hg).trans (mul_one _))

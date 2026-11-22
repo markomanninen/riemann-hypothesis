@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotentialPhiSub
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteClassesSubsetAdmissibleOfGoodO
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrystallineIffMemH1f
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotentialPhiSub
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteClassesSubsetAdmissibleOfGoodO
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrystallineIffMemH1f
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -27,7 +32,7 @@ theorem aeval_intertwine {R M N : Type} [CommRing R] [AddCommGroup M] [Module R 
       intro v
       rw [pow_succ, Module.End.mul_apply, hab, ih, pow_succ, Module.End.mul_apply]
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
   | monomial n c =>
     simp only [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply, hpow, map_smul]
 
@@ -51,7 +56,7 @@ theorem actVB_comp' (hι : ∀ h b, PD'.actB h b = PD.actB (ι h) b) (ρ : Repre
     (v : V ⊗[Qp] B) : actVB PD' (ρ.comp ι) h v = actVB PD ρ (ι h) v := by
   induction v using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v b =>
     change ρ (ι h) v ⊗ₜ[Qp] PD'.actB h b = ρ (ι h) v ⊗ₜ[Qp] PD.actB (ι h) b
     rw [hι]
@@ -61,7 +66,7 @@ theorem actVB_mulVB' (ρ : Representation LL G V) (g : G) (k : K₀')
     actVB PD ρ g (mulVB (LL := LL) k v) = mulVB (LL := LL) k (actVB PD ρ g v) := by
   induction v using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v b =>
     change ρ g v ⊗ₜ[Qp] PD.actB g (algebraMap K₀' B k * b) = ρ g v ⊗ₜ[Qp] (algebraMap K₀' B k * PD.actB g b)
     rw [map_mul, hk]
@@ -73,7 +78,7 @@ theorem snd_actVB' (ρ : Representation LL H (V × LL)) (hρ : ∀ h v, (ρ h v)
       AlgebraTensorModule.rTensor Qp B (LinearMap.snd LL V LL) (actVB PD' ρ h w) := by
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add w w' hw hw' => simp only [map_add, hw, hw']
+  | add w w' hw hw' => simp only [map_add (f := _), hw, hw']
   | tmul v b =>
     have h2 : LinearMap.snd LL V LL (ρ h v) = v.2 := hρ h v
     simp only [actVB, AlgebraTensorModule.map_tmul, AlgebraTensorModule.rTensor_tmul, h2]
@@ -104,7 +109,7 @@ theorem aeval_extRep' [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V
     induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp [mulVB]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
   have hlift1 : ∀ u : LL ⊗[Qp] K₀', ∃ x₁ : (V × LL) ⊗[Qp] B,
       x₁ ∈ Dcris PD' ((extRep ρ c).comp ι) ∧
@@ -117,12 +122,12 @@ theorem aeval_extRep' [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V
       refine ⟨a • mulVB (LL := LL) k y, (GlobalTheory.CrysSub.mem_Dcris _ _ _).2 fun h => ?_, ?_, ?_⟩
       · rw [map_smul, actVB_comp' ι PD PD' hι, actVB_mulVB' PD _ _ k (hkF h k), hyfix]
       · rw [map_smul, hsm, hpy]
-        simp [mulVB, smul_tmul']
+        simp [mulVB, smul_tmul', GlobalTheory.CrysExt.incl, AlgebraTensorModule.map_tmul]
       · rw [map_smul, actVB_mulVB' PD _ _ k (hg k), hyfix]
     | add u v hu hv =>
       obtain ⟨x₁, h1, h2, h3⟩ := hu
       obtain ⟨x₂, h4, h5, h6⟩ := hv
-      exact ⟨x₁ + x₂, add_mem h1 h4, by rw [map_add, map_add, h2, h5], by rw [map_add, h3, h6]⟩
+      exact ⟨x₁ + x₂, add_mem h1 h4, by rw [map_add (f := _), map_add (f := _), h2, h5], by rw [map_add (f := _), h3, h6]⟩
 
   obtain ⟨u, hu⟩ := (GlobalTheory.CrysExt.invariant_iff (fun h : H => PD'.actB h) PD'.invB _).1 fun h => by
     rw [snd_actVB' PD' ((extRep ρ c).comp ι) (fun h v => hE.1.2.2.2.2 (ι h) v) h x, (GlobalTheory.CrysSub.mem_Dcris _ _ _).1 hx h]
@@ -154,7 +159,7 @@ theorem aeval_extRep' [TopologicalSpace G] [TopologicalSpace V] [ContinuousAdd V
   have hpart2 := aeval_intertwine (AlgebraTensorModule.rTensor Qp B (LinearMap.inl LL V LL))
     (actVB PD ρ g) (actVB PD (extRep ρ c) g)
     (fun v => (GlobalTheory.CrysSub.rTensor_act _ _ _ _ hE.1.2.2.2.1 g v).symm) P (x₀ : V ⊗[Qp] B)
-  rw [hxe, map_add, hpart1, hpart2, hTP _ x₀.2, map_zero, add_zero]
+  rw [hxe, map_add (f := _), hpart1, hpart2, hTP _ x₀.2, map_zero, add_zero]
 
 end Gen
 

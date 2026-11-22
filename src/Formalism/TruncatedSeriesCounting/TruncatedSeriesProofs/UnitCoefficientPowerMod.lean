@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.TruncatedSeriesCounting.StatementX
+module
+
+public import Mathlib
+public import Formalism.TruncatedSeriesCounting.StatementX
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem unit_coefficient_power_mod : UnitCoefficientPowerMod := by
   obtain ⟨W, hW⟩ := hsplit
   have hc : coeff (ℓ * y) ((Formalism.WindowSums.p1 ℓ ε u) ^ y) =
       constantCoeff u ^ y + (ℓ : O) * coeff (ℓ * y) W := by
-    rw [hW, map_add, coeff_C_mul, mul_pow, ← pow_mul, mul_comm ℓ y]
+    rw [hW, map_add (f := _), coeff_C_mul, mul_pow, ← pow_mul, mul_comm ℓ y]
     have := coeff_mul_X_pow (u ^ y) (y * ℓ) 0
     rw [zero_add] at this
     rw [this, coeff_zero_eq_constantCoeff, map_pow]

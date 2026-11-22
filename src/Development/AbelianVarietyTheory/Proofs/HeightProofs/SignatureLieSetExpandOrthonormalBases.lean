@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.InnerDRepSq
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthonormalBasesMemUnitaryLieAlgebra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.InnerDRepSq
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.OrthonormalBasesMemUnitaryLieAlgebra
+
+@[expose] public section
+
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.TypeSum GlobalTheory.TypeSum.CasBasis GlobalTheory.LowTypeDetermined
 
 noncomputable section
@@ -15,7 +20,7 @@ theorem sum_get {α M : Type*} [AddCommMonoid M] (l : List α) (f : α → M) :
   rfl
 
 theorem trace_mul_unitE (U : Mx n) (a b : Fin n) : trace (U * unitE a b) = U b a := by
-  simp [trace, mul_apply, single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
+  simpa [unitE] using (Matrix.trace_mul_single U a b 1)
 
 theorem sum_flatMap {α M : Type*} [AddCommMonoid M] (l : List α) (f : α → List M) :
     (l.flatMap f).sum = (l.map fun a => (f a).sum).sum := by
@@ -143,8 +148,8 @@ end GlobalTheory.TypeSum.CasBasis.Expand
 
 namespace GlobalTheory.TypeSum.CasBasis
 
-open Expand in
 
+open Expand in
 theorem lieSet_expand_bases : ∀ (n : ℕ) (ε : Fin n → Bool), ∀ U ∈ lieSet ε,
     U = ∑ b, (trace (U * pB ε b)).re • pB ε b - ∑ i, (trace (U * kB ε i)).re • kB ε i := by
   intro n ε U hU

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplUniq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplUniq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaCplEx
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

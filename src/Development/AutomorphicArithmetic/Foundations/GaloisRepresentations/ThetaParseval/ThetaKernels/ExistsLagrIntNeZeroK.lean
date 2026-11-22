@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalLagrangianInvariantFormUnique
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsAdmissibleEqLagrangianIntegral
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LagrIntRhoInvK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalLagrangianInvariantFormUnique
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsAdmissibleEqLagrangianIntegral
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.LagrIntRhoInvK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -77,7 +81,7 @@ theorem exists_lagrInt_ne_zero_k : ∀ (F E : Type) [Field F] [NumberField F] [F
   · rintro _ ⟨γ₀, rfl⟩ u
     obtain ⟨y, z, h⟩ := hrat γ₀
     have e1 : Lm (((incAF F E).toAddMonoidHom.mapMatrix (m := Fin nT) (n := Fin nS)) γ₀ + u) = Lm (incM F γ₀) + Lm u := by
-      rw [map_add]; rfl
+      rw [map_add (f := _)]; rfl
     have hr : Lm (incM F γ₀) ∈ S := ⟨incM F γ₀, rfl⟩
     have hw : Lm u ∈ S := ⟨u, rfl⟩
     have hi := hiso _ hw _ hr

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ImV
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgAlg GlobalTheory.SgGlob GlobalTheory.SnMass GlobalTheory.SnMass.VolN GlobalTheory.SnMass.SkewVol
 open scoped TensorProduct ENNReal nonZeroDivisors Classical
@@ -9,11 +13,11 @@ namespace GlobalTheory.SnMass.SkewVol
 
 open NumberField.InfinitePlace
 
-def cxPlaceEquiv (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] :
+def cxPlaceEquiv (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] :
     {w : InfinitePlace E // IsComplex w} ≃ InfinitePlace E :=
   Equiv.subtypeUnivEquiv fun w => IsTotallyComplex.isComplex w
 
-def mixedCoords (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] :
+def mixedCoords (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] :
     mixedEmbedding.mixedSpace E ≃ₗ[ℝ] ((InfinitePlace E → ℝ) × (InfinitePlace E → ℝ)) where
   toFun x := (fun w => (x.2 ⟨w, IsTotallyComplex.isComplex w⟩).re,
     fun w => (x.2 ⟨w, IsTotallyComplex.isComplex w⟩).im)
@@ -27,7 +31,7 @@ def mixedCoords (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] :
     · apply Complex.ext <;> rfl
   right_inv y := rfl
 
-private theorem measurePreserving_mixedSpace_snd (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] :
+private theorem measurePreserving_mixedSpace_snd (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] :
     MeasurePreserving (Prod.snd : mixedEmbedding.mixedSpace E → ({w : InfinitePlace E // IsComplex w} → ℂ))
       volume volume := by
   have : IsEmpty {w : InfinitePlace E // IsReal w} :=
@@ -41,7 +45,7 @@ private theorem measurePreserving_mixedSpace_snd (E : Type) [Field E] [NumberFie
   rw [h, Measure.map_snd_prod]
   simp
 
-theorem measurePreserving_mixedCoords (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] :
+theorem measurePreserving_mixedCoords (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] :
     MeasurePreserving (mixedCoords E) volume volume := by
   have h2 := measurePreserving_piCongrLeft (fun _ : InfinitePlace E => (volume : Measure ℂ))
     (cxPlaceEquiv E)
@@ -58,7 +62,7 @@ theorem measurePreserving_mixedCoords (E : Type) [Field E] [NumberField E] [IsTo
   rw [e]
   exact key
 
-theorem mixedCoords_mixedEmbedding (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+theorem mixedCoords_mixedEmbedding (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
     (x : E) : mixedCoords E (mixedEmbedding E x) = (reV x, imV x) := by
   ext w <;> simp [mixedCoords, reV, imV, mixedEmbedding.mixedEmbedding_apply_isComplex]
 

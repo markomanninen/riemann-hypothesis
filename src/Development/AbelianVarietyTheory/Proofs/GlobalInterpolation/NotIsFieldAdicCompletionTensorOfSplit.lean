@@ -1,32 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain Polynomial
 
 namespace GlobalTheory.SplitPlace
-
-theorem exists_root {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F))
-    (t n : 𝓞 F) (hn : n ∈ v.asIdeal) (ht : t ∉ v.asIdeal) :
-    ∃ r : v.adicCompletion F, r ^ 2 + algebraMap F _ (t : F) * r + algebraMap F _ (n : F) = 0 := by
-  haveI := GlobalTheory.SelfDualGenus.isAdicComplete_adicCompletionIntegers v
-  set O := v.adicCompletionIntegers F
-  obtain ⟨r, hr, -⟩ := HenselianRing.is_henselian (I := IsLocalRing.maximalIdeal O)
-    (X ^ 2 + C (algebraMap (𝓞 F) O t) * X + C (algebraMap (𝓞 F) O n)) (by monicity!) 0
-    (by
-      simp only [eval_add, eval_pow, eval_X, eval_mul, eval_C, mul_zero, add_zero]
-      rw [zero_pow two_ne_zero, zero_add, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
-        GlobalTheory.SelfDualGenus.isUnit_algebraMap_iff]
-      exact fun h => h hn)
-    (by
-      refine IsUnit.map _ ?_
-      have := (GlobalTheory.SelfDualGenus.isUnit_algebraMap_iff v t).2 ht
-      simpa using this)
-  refine ⟨r, ?_⟩
-  have := congrArg (fun x : O => (x : v.adicCompletion F)) hr
-  simp only [IsRoot.def, eval_add, eval_pow, eval_X, eval_mul, eval_C] at this
-  push_cast at this
-  exact this
 
 open scoped TensorProduct in
 open NumberField IsDedekindDomain Polynomial in
@@ -49,9 +31,9 @@ private lemma exists_root_quadratic_of_isUnit_of_mem_maximalIdeal (R : Type) [Co
     (X ^ 2 + C b * X + C c) hmon 0 (by simpa using hc) (by simpa using hb.map _)
   exact ⟨β, by simpa using hβ⟩
 
+
 open scoped TensorProduct in
 open NumberField IsDedekindDomain Polynomial in
-
 theorem _root_.GlobalTheory.SplitPlace.not_isField_of_split : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
     [Algebra F E], Module.finrank F E = 2 → ∀ v : HeightOneSpectrum (𝓞 F),
     (v.asIdeal.primesOver (𝓞 E)).ncard = 2 → ¬ IsField (v.adicCompletion F ⊗[F] E) := by
@@ -120,11 +102,11 @@ theorem _root_.GlobalTheory.SplitPlace.not_isField_of_split : ∀ (F E : Type) [
   have hβF : (β : v.adicCompletion F) ^ 2 + algebraMap F (v.adicCompletion F) (b : F) * β
       + algebraMap F (v.adicCompletion F) (c : F) = 0 := by
     have h := congrArg (v.adicCompletionIntegers F).subtype hβ
-    rw [map_add, map_add, map_mul, map_pow, map_zero] at h
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero] at h
     exact h
   have hαE : (α : E) ^ 2 + algebraMap F E (b : F) * α + algebraMap F E (c : F) = 0 := by
     have h := congrArg (algebraMap (𝓞 E) E) hα2
-    rw [map_add, map_add, map_mul, map_pow, map_zero] at h
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, map_zero] at h
     exact h
   set x : v.adicCompletion F ⊗[F] E :=
     Algebra.TensorProduct.includeLeft (S := F) (B := E) (β : v.adicCompletion F) with hx
@@ -132,11 +114,11 @@ theorem _root_.GlobalTheory.SplitPlace.not_isField_of_split : ∀ (F E : Type) [
     Algebra.TensorProduct.includeRight (A := v.adicCompletion F) (α : E) with hy
   have hxeq : x ^ 2 + algebraMap F _ (b : F) * x + algebraMap F _ (c : F) = 0 := by
     have h := congrArg (Algebra.TensorProduct.includeLeft (R := F) (S := F) (B := E)) hβF
-    rw [map_add, map_add, map_mul, map_pow, AlgHom.commutes, AlgHom.commutes, map_zero] at h
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, AlgHom.commutes, AlgHom.commutes, map_zero] at h
     exact h
   have hyeq : y ^ 2 + algebraMap F _ (b : F) * y + algebraMap F _ (c : F) = 0 := by
     have h := congrArg (Algebra.TensorProduct.includeRight (R := F) (A := v.adicCompletion F)) hαE
-    rw [map_add, map_add, map_mul, map_pow, AlgHom.commutes, AlgHom.commutes, map_zero] at h
+    rw [map_add (f := _), map_add (f := _), map_mul, map_pow, AlgHom.commutes, AlgHom.commutes, map_zero] at h
     exact h
   have hprod : (x - y) * (x + y + algebraMap F _ (b : F)) = 0 := by
     linear_combination hxeq - hyeq

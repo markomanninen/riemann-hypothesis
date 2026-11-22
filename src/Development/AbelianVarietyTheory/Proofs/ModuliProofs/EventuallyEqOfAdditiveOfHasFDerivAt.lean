@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.TendstoUniformlyOnDoublingLogOfContraction
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.HolFamilyOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.TendstoUniformlyOnDoublingLogOfContraction
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,10 +30,6 @@ theorem isHolTo_mono {a : E → (Sp ℂ ⟶ Z)} {W W' : Set E} (h : IsHolTo W a)
   convert hW'.inter h1 using 1
   ext w
   exact ⟨fun hw => ⟨hw.1, hs hw.1, hw.2⟩, fun hw => ⟨hw.1, hw.2.2⟩⟩
-
-theorem HolAt.const (x : Sp ℂ ⟶ Z) (w₀ : E) : HolAt (fun _ => x) w₀ := by
-  refine ⟨Set.univ, isOpen_univ, trivial, fun U f => ⟨?_, differentiableOn_const _⟩⟩
-  by_cases h : ⊤ ≤ x ⁻¹ᵁ U <;> simp [h]
 
 namespace HolAt
 
@@ -134,9 +134,9 @@ theorem holAt_of_isPullback {S X : Scheme.{0}} {p : Z ⟶ X} {q : Z ⟶ Y} {s : 
     induction hg using Subring.closure_induction with
     | mem x hx =>
       rcases hx with ⟨y, rfl⟩ | ⟨y, rfl⟩
-      · exact ((ha U₁ y).2.mono fun w hw => ⟨hw.1, ((hiff w).1 hw.2).1⟩).congr fun w hw =>
+      · exact ((ha U₁ y).2.mono fun w (hw : w ∈ {w ∈ W | ⊤ ≤ c w ⁻¹ᵁ V}) => ⟨hw.1, ((hiff w).1 hw.2).1⟩).congr fun w hw =>
           valAt'_appLE _ _ _ _ _ _ hw.2
-      · exact ((hb U₂ y).2.mono fun w hw => ⟨hw.1, ((hiff w).1 hw.2).2⟩).congr fun w hw =>
+      · exact ((hb U₂ y).2.mono fun w (hw : w ∈ {w ∈ W | ⊤ ≤ c w ⁻¹ᵁ V}) => ⟨hw.1, ((hiff w).1 hw.2).2⟩).congr fun w hw =>
           valAt'_appLE _ _ _ _ _ _ hw.2
     | zero => simp only [valAt'_zero]; exact differentiableOn_const _
     | one => exact (differentiableOn_const (1 : ℂ)).congr fun w hw => valAt'_one _ hw.2
@@ -199,7 +199,7 @@ theorem exists_addMonoidHom_eqOn_ball {g : V → A} {r : ℝ} (hr : 0 < r)
       apply ih
       have : (2⁻¹ : ℝ) ^ k • x = (2⁻¹ : ℝ) ^ (k + 1) • x + (2⁻¹ : ℝ) ^ (k + 1) • x := by
         rw [← add_smul, pow_succ]; congr 1; ring
-      rw [this, map_add, hg _ (hball _) _ (hball _), h]
+      rw [this, map_add (f := _), hg _ (hball _) _ (hball _), h]
   have ht : Tendsto (fun j : ℕ => (2⁻¹ : ℝ) ^ j • x) atTop (𝓝 0) := by
     simpa using (tendsto_pow_atTop_nhds_zero_of_lt_one (r := (2⁻¹ : ℝ)) (by norm_num)
       (by norm_num)).smul_const x

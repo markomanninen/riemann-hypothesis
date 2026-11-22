@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.CoreDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.HeckeMultiplication
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.CapelliHighestWeightConjugated
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.CoreDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.HeckeMultiplication
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.CapelliHighestWeightConjugated
+
+@[expose] public section
 
 open Matrix PI.UpqRep
 open scoped ContDiff
@@ -63,7 +67,8 @@ lemma coef_smoothOnGV {n : ℕ} (ε : Fin n → Bool) {Hs : Type} [NormedAddComm
       Finset.sum_apply, ContinuousLinearMap.smulRight_apply, h', c,
       LinearMap.coe_toContinuousLinearMap', Module.Basis.coord_apply]
     conv_lhs => rw [← b.sum_repr w]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
 
 theorem smooth_translation : SmTrans := by
   intro k r ε Hs _ _ σ Wp Wq _ _ _ _ _ _ P₀ hP P Q hQ

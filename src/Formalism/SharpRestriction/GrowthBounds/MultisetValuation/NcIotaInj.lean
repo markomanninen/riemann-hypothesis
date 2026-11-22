@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcTsumOdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.NcTsumOdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,10 +43,24 @@ theorem nc_topsOn : Formalism.MainNotions.G.topsOn X (D.what₂.places.resChar w
   have h0 := hL u w hg
   dsimp only at h0
   obtain ⟨-, -, -, -, -, -, h⟩ := h0
-  have hst := nc_step (D := D) hg
-  have hr : t0 ∈ Finset.univ.image (X.bs (Formalism.MainNotions.G.hP D (D.what₂.places.resChar w))) := by
-    rw [← hst]; exact ht0
-  have hb := nc_bs_rep X _ t0 hr
+  have hsg : ¬ G.IsSg D (D.what₂.places.resChar w) := by
+    unfold G.IsSg
+    rw [hg.2.2.1]
+    decide
+  have hst : G.stepP D (D.what₂.places.resChar w) = G.hP D (D.what₂.places.resChar w) := by
+    unfold G.stepP
+    exact ite_eq_right hsg
+  let step := G.hP D (D.what₂.places.resChar w)
+  have hiter (t : G.HH D) (i : ℕ) : X.bs step (t + i • step) = X.bs step t := by
+    induction i with
+    | zero => simp
+    | succ i ih => rw [succ_nsmul, ← add_assoc, X.bs_step, ih]
+  have hr : t0 ∈ Finset.univ.image (X.bs step) := by
+    simpa only [G.reps, hst] using ht0
+  have hb : X.bs step t0 = t0 := by
+    obtain ⟨t, _, rfl⟩ := Finset.mem_image.mp hr
+    obtain ⟨i, hi⟩ := X.bs_orb step t
+    simpa only [hi] using (hiter (X.bs step t) i).symm
   have hpos : 0 < addOrderOf (Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) := addOrderOf_pos _
   ext t
   simp only [Formalism.MainNotions.G.topsOn, Finset.mem_filter, Finset.mem_image, hst]
@@ -61,28 +79,42 @@ theorem nc_topsOn : Formalism.MainNotions.G.topsOn X (D.what₂.places.resChar w
   · rintro ⟨s, hs, rfl⟩
     refine ⟨((h t0 ht0).2 s).2.1.1 hs, ?_⟩
     simp only [nc_iota]
-    rw [nc_bs_iter, hb]
+    change X.bs step (t0 + s.val • step) = t0
+    rw [hiter, hb]
 
 include hL ht0 in
 theorem nc_isV (s : Fin ((D.gat u w hg).P.n' (Y.vOf u w hg t0))) :
     Formalism.MainNotions.G.IsV X (D.what₂.places.resChar w) (nc_iota Y u w hg t0 s) ↔ ¬ IsOddPos s := by
   have hn := nc_n_eq X Y hT hL u w hg t0 ht0
-  have h0 := hL u w hg
-  dsimp only at h0
-  obtain ⟨-, -, -, -, -, -, h⟩ := h0
-  have hst := nc_step (D := D) hg
-  have hr : t0 ∈ Finset.univ.image (X.bs (Formalism.MainNotions.G.hP D (D.what₂.places.resChar w))) := by
-    rw [← hst]; exact ht0
-  have hb := nc_bs_rep X _ t0 hr
+  have hsg : ¬ G.IsSg D (D.what₂.places.resChar w) := by
+    unfold G.IsSg
+    rw [hg.2.2.1]
+    decide
+  have hst : G.stepP D (D.what₂.places.resChar w) = G.hP D (D.what₂.places.resChar w) := by
+    unfold G.stepP
+    exact ite_eq_right hsg
+  let step := G.hP D (D.what₂.places.resChar w)
+  have hiter (t : G.HH D) (i : ℕ) : X.bs step (t + i • step) = X.bs step t := by
+    induction i with
+    | zero => simp
+    | succ i ih => rw [succ_nsmul, ← add_assoc, X.bs_step, ih]
+  have hr : t0 ∈ Finset.univ.image (X.bs step) := by
+    simpa only [G.reps, hst] using ht0
+  have hb : X.bs step t0 = t0 := by
+    obtain ⟨t, _, rfl⟩ := Finset.mem_image.mp hr
+    obtain ⟨i, hi⟩ := X.bs_orb step t
+    simpa only [hi] using (hiter (X.bs step t) i).symm
   have hnP : Formalism.MainNotions.G.nP D (D.what₂.places.resChar w) =
       addOrderOf (Formalism.MainNotions.G.hP D (D.what₂.places.resChar w)) := by
-    simp only [Formalism.MainNotions.G.nP, if_neg (nc_notSg (D := D) hg)]
+    simp only [Formalism.MainNotions.G.nP, ite_eq_right hsg]
   have hs := lt_of_lt_of_eq s.isLt hn
   have key : ¬ IsOddPos s ↔ Even s.val := by
     show ¬ (s.val % 2 = 1) ↔ _
     rw [← Nat.odd_iff, Nat.not_odd_iff_even]
   rw [key]
-  simp only [Formalism.MainNotions.G.IsV, hst, hnP, nc_iota, nc_bs_iter, hb]
+  have hbs : X.bs (G.hP D (D.what₂.places.resChar w))
+      (t0 + s.val • G.hP D (D.what₂.places.resChar w)) = t0 := (hiter t0 s.val).trans hb
+  simp only [Formalism.MainNotions.G.IsV, hst, hnP, nc_iota, hbs]
   constructor
   · rintro ⟨i, hi, hev, heq⟩
     have hi' := nsmul_injOn_Iio_addOrderOf hi hs (add_left_cancel heq)

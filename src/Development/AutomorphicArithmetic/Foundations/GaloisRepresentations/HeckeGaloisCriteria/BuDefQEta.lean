@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEqAlt
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ set_option maxHeartbeats 1600000
 @[reducible] def thTr (x : ThetaX D) : ThetaX Λ.rec' := { x with }
 
 @[reducible] def errTr (x : ErrX D) : ErrX Λ.rec' := { x with }
-open DivX (md) in
 
+open DivX (md) in
 @[reducible] def divTr (X : DivX D) : DivX Λ.rec' := { X with md := fun S κ p _ la z => { md X S κ p la z with } }
 section Local
 

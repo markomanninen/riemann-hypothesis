@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ structure IsWittFrame (X Y : Matrix (Fin n) (Fin r) E) : Prop where
   aniso : ∀ z : Fin n → E, (cT (σ : E →+* E) X * J) *ᵥ z = 0 → (cT (σ : E →+* E) Y * J) *ᵥ z = 0 →
     hE σ J z z = 0 → z = 0
 
-variable (F) in
 
+variable (F) in
 abbrev adMat {m m' : Type} (X : Matrix m m' E) : Matrix m m' (AF F ⊗[F] E) := X.map (inclR (F := F) (AF F))
 
 def minParOne (X : Matrix (Fin n) (Fin r) E) : Set (GAd σ J) :=
@@ -40,24 +44,24 @@ def IsTorusElt (X Y : Matrix (Fin n) (Fin r) E) (t : Fin r → ℝ) (a : GAd σ 
     ∀ z : Fin n → E, (cT (σ : E →+* E) X * J) *ᵥ z = 0 → (cT (σ : E →+* E) Y * J) *ᵥ z = 0 →
       archMat σ J τ (projArch σ J w a) *ᵥ (fun i => τ.1 (z i)) = fun i => τ.1 (z i)
 
-variable (r) in
 
+variable (r) in
 def cone (c : ℝ) : Set (Fin r → ℝ) :=
   {t | (∀ i, 0 < t i) ∧ (∀ i j : Fin r, j.val = i.val + 1 → c * t j ≤ t i) ∧ ∀ i : Fin r, i.val + 1 = r → c ≤ t i}
 
 def siegelSet (X Y : Matrix (Fin n) (Fin r) E) (Ω : Set (GAd σ J)) (c : ℝ) (K : Subgroup (GAd σ J)) : Set (GAd σ J) :=
   {g | ∃ p ∈ Ω, ∃ t ∈ cone r c, ∃ a, IsTorusElt σ J X Y t a ∧ ∃ k ∈ K, g = p * a * k}
 
-variable (F n) in
 
+variable (F n) in
 def modulus (t : Fin r → ℝ) : ℝ := ∏ i : Fin r, t i ^ (2 * (Module.finrank ℚ F : ℤ) * ((n : ℤ) - 2 * (i.val : ℤ) - 1))
 
 def IsRealLine (γ : ℝ → GAd σ J) : Prop :=
   ∃ (w : InfinitePlace F) (τ : EmbOver E w) (Z : Matrix (Fin n) (Fin n) ℂ), Zᴴ * J.map τ.1 + J.map τ.1 * Z = 0 ∧
     ∀ t : ℝ, ∃ y : GArch σ J w, γ t = embArch σ J w y ∧ archMat σ J τ y = NormedSpace.exp (t • Z)
 
-variable {σ J} in
 
+variable {σ J} in
 def lineDer (γ : ℝ → GAd σ J) (φ : GAd σ J → ℂ) : GAd σ J → ℂ := fun g => deriv (fun t => φ (g * γ t)) 0
 
 def unipRad (C : Matrix (Fin n) (Fin r) E) : Subgroup (GAd σ J) :=
@@ -86,8 +90,8 @@ end GlobalTheory.SiegelSet
 
 namespace GlobalTheory.Published
 
-open GlobalTheory.SiegelSet in
 
+open GlobalTheory.SiegelSet in
 def SiegelSetUnitary : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ →
     ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E), IsHermND σ J →
@@ -165,7 +169,8 @@ theorem exists_isWittFrame (h : IsCMExt F E σ) (hJ : IsHermND σ J) :
     simp only [B, toLinearMapₛₗ₂'_apply, smul_eq_mul, RingHom.id_apply, RingHom.coe_coe]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   have hs : ∀ u v, B u v = (σ : E →+* E) (B v u) := fun u v => by
-    simp only [hB, map_sum, map_mul, RingHom.coe_coe, sigma_sigma h, hJ.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hB, map_sum, map_mul, RingHom.coe_coe, sigma_sigma h, hJ.1]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   let P : ℕ → Prop := fun r => ∃ x y : Fin r → Fin n → E, (∀ i j, B (x i) (x j) = 0) ∧ (∀ i j, B (y i) (y j) = 0) ∧
@@ -193,8 +198,8 @@ theorem exists_isWittFrame (h : IsCMExt F E σ) (hJ : IsHermND σ J) :
   exact hr (exists_cons B hs hx hy hxy (fun i => (gram_mulVec (of x)ᵀ z i).symm.trans (congrFun h1 i))
     (fun i => (gram_mulVec (of y)ᵀ z i).symm.trans (congrFun h2 i)) ((hB z z).trans h3) hw₀)
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem isWittFrame_plane : IsWittFrame σ !![0, 1; 1, 0] (!![1; 0] : Matrix (Fin 2) (Fin 1) E) !![0; 1] := by
   refine ⟨?_, ?_, ?_, fun z h1 h2 _ => ?_⟩
   · ext i j; simp [cT, Matrix.mul_apply, Fin.sum_univ_two]
@@ -246,70 +251,6 @@ theorem exists_unit_torus {A : Type} [CommRing A] {s : A →+* A} (hs : ∀ a, s
   exact ⟨⟨M d, M d⁻¹, hM d, hM'⟩, show cT s (M d) * J * M d = J by rw [hU, Matrix.mul_assoc, hM', Matrix.mul_one],
     hX d, hY d, rfl⟩
 
-theorem exists_isTorusElt (h : IsCMExt F E σ) (hJ : IsHermND σ J) {X Y : Matrix (Fin n) (Fin r) E}
-    (hW : IsWittFrame σ J X Y) {t : Fin r → ℝ} (ht : ∀ i, t i ≠ 0) : ∃ a, IsTorusElt σ J X Y t a := by
-  have := h.1
-  let ρ : ℝ →* AF F :=
-    { toFun := fun x => ((fun w => (InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).symm x :
-        Ainf F), (1 : Af F))
-      map_one' := Prod.ext (funext fun w => map_one _) rfl
-      map_mul' := fun x y => Prod.ext (funext fun w => map_mul _ _ _) (mul_one _).symm }
-  let ι : AF F →* AF F ⊗[F] E := (Algebra.TensorProduct.includeLeftRingHom : AF F →+* AF F ⊗[F] E)
-  let d : Fin r → (AF F ⊗[F] E)ˣ := fun i => Units.map (ι.comp ρ) (Units.mk0 (t i) (ht i))
-  have c1 : ∀ {a b : ℕ} (Z : Matrix (Fin a) (Fin b) E), cT (sigR (AF F) σ) (adMat F Z) = adMat F (cT (σ : E →+* E) Z) :=
-    fun Z => rfl
-  have c2 : ∀ Z Z' : Matrix (Fin n) (Fin r) E, (cT (sigR (AF F) σ) (adMat F Z) * JR (F := F) (AF F) J : Matrix (Fin r) (Fin n) (AF F ⊗[F] E)) * adMat F Z' =
-      adMat F (cT (σ : E →+* E) Z * J * Z') := fun Z Z' => by
-    rw [c1]; simp only [adMat, JR, Matrix.map_mul]
-  obtain ⟨m, hm, hX, hY, he⟩ := exists_unit_torus (s := sigR (AF F) σ) (J := JR (F := F) (AF F) J) (X := adMat F X) (Y := adMat F Y)
-    (fun a => by
-      induction a using TensorProduct.induction_on with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
-      | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (sigma_sigma h x))
-    ((c1 J).trans (congrArg (adMat F) (Matrix.ext fun i j => hJ.1 i j)))
-    ((c2 X X).trans (hW.xx ▸ Matrix.map_zero _ (map_zero _))) ((c2 Y Y).trans (hW.yy ▸ Matrix.map_zero _ (map_zero _)))
-    ((c2 X Y).trans (hW.xy ▸ Matrix.map_one _ (map_zero _) (map_one _))) d
-    (fun i => congrArg (ρ (t i) ⊗ₜ[F] ·) (map_one σ))
-  refine ⟨⟨m, hm⟩, Units.ext (Matrix.ext fun i j => ?_), fun w τ => ?_⟩
-  · let ψ := (Algebra.TensorProduct.map (sndA F) (AlgHom.id F E)).toRingHom
-    have h1 : ∀ k, ψ (d k).1 = 1 := fun k => rfl
-    have h2 : ∀ k, ψ (d k)⁻¹.1 = 1 := fun k => rfl
-    change ψ (m.1 i j) = (1 : Matrix (Fin n) (Fin n) _) i j
-    rw [he]
-    simp only [Matrix.add_apply, Matrix.mul_apply (N := cT _ _ * _), mul_diagonal, map_add, map_sum, map_mul, map_sub, h1,
-      h2, map_one, sub_self, mul_zero, zero_mul, Finset.sum_const_zero, add_zero, Matrix.one_apply, apply_ite ψ, map_zero]
-  · let φ := (infEmb τ).comp (compInf F E w)
-    have h0 : ∀ x : E, φ (inclR (F := F) (AF F) x) = τ.1 x := fun x => by
-      change infEmb τ (evInf F w 1 ⊗ₜ[F] x) = _
-      simp
-    have h1 : ∀ x : ℝ, φ (ι (ρ x)) = x := fun x => by
-      change infEmb τ ((InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).symm x ⊗ₜ[F] 1) = _
-      rw [infEmb_tmul, map_one, mul_one,
-        ← InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply (IsTotallyReal.isReal w)]
-      exact congrArg _ ((InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal w)).apply_symm_apply x)
-    have h2 : ∀ Z : Matrix (Fin n) (Fin r) E, (adMat F Z).map φ = Z.map τ.1 := fun Z => Matrix.ext fun i j => h0 _
-    have h3 : archMat σ J τ (projArch σ J w ⟨m, hm⟩) = m.1.map φ := rfl
-    rw [h3]
-    refine ⟨?_, ?_, fun z hz hz' => ?_⟩
-    · rw [← h2, ← Matrix.map_mul, hX, Matrix.map_mul, diagonal_map (map_zero _)]
-      exact congrArg (_ * diagonal ·) (funext fun i => h1 _)
-    · rw [← h2, ← Matrix.map_mul, hY, Matrix.map_mul, diagonal_map (map_zero _)]
-      exact congrArg (_ * diagonal ·) (funext fun i => (h1 (t i)⁻¹).trans (Complex.ofReal_inv _))
-    · have h4 : ∀ Z : Matrix (Fin n) (Fin r) E, (cT (σ : E →+* E) Z * J) *ᵥ z = 0 →
-          (cT (sigR (AF F) σ) (adMat F Z) * JR (F := F) (AF F) J : Matrix (Fin r) (Fin n) (AF F ⊗[F] E)) *ᵥ (inclR (F := F) (AF F) ∘ z) = 0 := fun Z hZ => funext fun i => by
-        have e : (cT (sigR (AF F) σ) (adMat F Z) * JR (F := F) (AF F) J : Matrix (Fin r) (Fin n) (AF F ⊗[F] E)) =
-          (cT (σ : E →+* E) Z * J).map (inclR (F := F) (AF F)) := by
-          rw [c1, Matrix.map_mul]; rfl
-        rw [e, ← RingHom.map_mulVec, hZ]; exact map_zero _
-      have h5 : m.1 *ᵥ (inclR (F := F) (AF F) ∘ z) = inclR (F := F) (AF F) ∘ z := by
-        rw [he, add_mulVec, add_mulVec, ← mulVec_mulVec, h4 Y hz', mulVec_zero, ← mulVec_mulVec, h4 X hz]
-        simp
-      funext i
-      rw [show (fun i => τ.1 (z i)) = φ ∘ inclR (F := F) (AF F) ∘ z from funext fun i => (h0 _).symm,
-        ← RingHom.map_mulVec, h5]
-      exact h0 _
-
 theorem exists_isRealLine (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : InfinitePlace F} (τ : EmbOver E w)
     {Z : Matrix (Fin n) (Fin n) ℂ} (hZ : Zᴴ * J.map τ.1 + J.map τ.1 * Z = 0) :
     ∃ γ, IsRealLine σ J γ ∧ ∀ t : ℝ, archMat σ J τ (projArch σ J w (γ t)) = NormedSpace.exp (t • Z) := by
@@ -327,8 +268,8 @@ theorem exists_isRealLine (h : IsCMExt F E σ) (hJ : IsHermND σ J) {w : Infinit
   exact ⟨fun t => embArch σ J w (y t), ⟨w, τ, Z, hZ, fun t => ⟨y t, rfl, hy t⟩⟩, fun t => by
     rw [projArch_embArch_self, hy]⟩
 
-variable (σ J) in
 
+variable (σ J) in
 theorem isSmoothModerate_const (c : ℂ) : IsSmoothModerate σ J fun _ => c := by
   refine ⟨fun _ _ _ => rfl, ⟨⊤, isOpen_univ, fun _ _ _ _ => rfl⟩, continuous_const, fun _ _ _ _ => contDiff_const, 0,
     fun l _ => ⟨‖c‖, fun g => ?_⟩⟩
@@ -340,11 +281,6 @@ theorem isSmoothModerate_const (c : ℂ) : IsSmoothModerate σ J fun _ => c := b
       exact ⟨0, by simp, by rw [List.foldr_cons, h]; funext g; simp [lineDer]⟩
   obtain ⟨c', h, e⟩ := this l
   simpa [e] using h
-
-example (t : Fin 1 → ℝ) : modulus F 2 t = t 0 ^ (2 * Module.finrank ℚ F) := by
-  simp [modulus, ← zpow_natCast]
-
-example {c : ℝ} (h1 : c ≤ 1) : (fun _ => 1) ∈ cone r c := ⟨fun _ => one_pos, fun _ _ _ => by simpa, fun _ _ => h1⟩
 
 theorem exists_isCompact_projFin {X Y : Matrix (Fin n) (Fin r) E} {Ω : Set (GAd σ J)} (hΩ : IsCompact Ω) (c : ℝ)
     {K : Subgroup (GAd σ J)} (hK : IsCompact (K : Set (GAd σ J))) :
@@ -372,15 +308,15 @@ theorem exists_cover (hP : GlobalTheory.Published.SiegelSetUnitary) (h : IsCMExt
   rw [Real.norm_of_nonneg (by positivity)]
   exact hC g hg
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem ug_eq_hr (hσ : ∀ x, σ (σ x) = x) {c : E} (hc : c ≠ 0) :
     GlobalTheory.WeilM.UG (Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ) (adMat F J) = HR (AF F) σ (c • J.map σ) := by
   let s := sigR (AF F) σ
   have hs : ∀ a, s (s a) = a := fun a => by
     induction a using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (hσ x)
   have hu : IsUnit (inclR (F := F) (AF F) c) := (IsUnit.mk0 c hc).map _
   have e : JR (F := F) (AF F) (c • J.map σ) = inclR (F := F) (AF F) c • (adMat F J).map s :=
@@ -394,8 +330,8 @@ theorem ug_eq_hr (hσ : ∀ x, σ (σ x) = x) {c : E} (hc : c ≠ 0) :
   rw [e, Matrix.mul_smul, Matrix.smul_mul, hu.smul_left_cancel, ← e2]
   exact (Matrix.map_injective (Function.LeftInverse.injective hs)).eq_iff.symm
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 theorem conj_exp (Z : Matrix (Fin n) (Fin n) ℂ) :
     (starRingEnd ℂ).mapMatrix (NormedSpace.exp Z) = NormedSpace.exp ((starRingEnd ℂ).mapMatrix Z) :=
   haveI : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) := FiniteDimensional.complete ℝ _
@@ -428,7 +364,7 @@ theorem IsRealLine.eq_oneP (hθ : IsInfFam θ) {γ : ℝ → GA D V} (h : IsReal
     · have : gramAt D V ρ = c (V.gram.map τ.1) :=
         Matrix.ext fun i j => (h0 (embOverOf D ρ) _).symm.trans (by rw [e, RingHom.comp_apply, h0]; rfl)
       change (c Z)ᴴ * _ + _ * c Z = 0
-      rw [this, show (c Z)ᴴ = c Zᴴ from rfl, ← map_mul, ← map_mul, ← map_add, hZ, map_zero]
+      rw [this, show (c Z)ᴴ = c Zᴴ from rfl, ← map_mul, ← map_mul, ← map_add (f := _), hZ, map_zero]
     · rw [show t • c Z = c (t • Z) from Matrix.ext fun i j => by simp [c],
         ← conj_exp, ← hy, GlobalTheory.Orb.archMat_apply, e]
       rfl
@@ -449,9 +385,6 @@ theorem isSmoothModerate_of_isAutFunSm (hθ : IsInfFam θ) (h : IsAutFunSm θ V 
         obtain ⟨p, hp, rfl⟩ := (hl γ List.mem_cons_self).eq_oneP hθ
         exact ⟨p :: l', List.forall_mem_cons.2 ⟨hp, h1⟩, by rw [List.foldr_cons, h2]; rfl⟩
     exact h2 ▸ hN l' h1
-
-example (D : D7) : ¬ IsCuspidal D.sp.cm.sig (GlobalTheory.CuspDecay.Model.plane D).gram fun _ => 1 :=
-  GlobalTheory.CuspDecay.Model.not_isCuspFun_one_plane D
 
 end Record
 

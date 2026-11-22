@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem cyc_succ (p n : ℕ) (hp : p.Prime) :
     cyc R p (n + 1) = ∑ i ∈ Finset.range p, ((1 + X : PowerSeries R) ^ (p ^ n)) ^ i := by
   unfold cyc
   rw [Polynomial.cyclotomic_prime_pow_eq_geom_sum hp]
-  simp [Polynomial.eval₂_finset_sum, Polynomial.eval₂_pow, Polynomial.eval₂_X]
+  simp [Polynomial.eval₂_finsetSum, Polynomial.eval₂_pow, Polynomial.eval₂_X]
 
 theorem om_succ (p n : ℕ) (hp : p.Prime) :
     (1 + X : PowerSeries R) ^ (p ^ (n + 1)) - 1 = cyc R p (n + 1) * ((1 + X : PowerSeries R) ^ (p ^ n) - 1) := by
@@ -69,8 +73,8 @@ end GlobalTheory.Col.Interp
 
 namespace GlobalTheory.Col
 
-open Interp in
 
+open Interp in
 theorem X_mul_mem_span_of_levels (R : Type) [CommRing R] (p : ℕ) [hp : Fact p.Prime] (hR : IsDomain R)
     (hpR : Prime (p : R)) (_hc : IsAdicComplete (Ideal.span {(p : R)}) R)
     (h : PowerSeries R) (k c : ℕ)

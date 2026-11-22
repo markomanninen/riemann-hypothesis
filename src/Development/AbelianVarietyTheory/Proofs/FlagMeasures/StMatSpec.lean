@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+
+@[expose] public section
 
 open NumberField GlobalTheory.HL
 open scoped Classical
@@ -17,7 +21,7 @@ def stMat (G : GFrames A r k) (x : G.GLV) : Matrix (Fin (r + 1)) (Fin (r + 1)) E
 theorem stMat_spec (G : GFrames A r k) (x : G.GLV)
     (h : ∃ B : Matrix (Fin (r + 1)) (Fin (r + 1)) E, ∀ b, x (G.f' b) = ∑ a, B a b • G.f' a) :
     ∀ b, x (G.f' b) = ∑ a, stMat G x a b • G.f' a := by
-  unfold stMat; rw [dif_pos h]; exact h.choose_spec
+  unfold stMat; rw [dite_eq_left h]; exact h.choose_spec
 
 end GlobalTheory.HL.TraceConjugationCover
 

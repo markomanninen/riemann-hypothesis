@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianDeRhamStructure
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeRhamComparisonBijectiveCupSmooth
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,8 +57,8 @@ theorem free_of (hC : GlobalTheory.Published.CrystallineSmoothLift) (hA : Global
 
 end GlobalTheory.Proof.AbelianDeRhamFreeOfHodge
 
-open GlobalTheory.Proof.AbelianDeRhamFreeOfHodge in
 
+open GlobalTheory.Proof.AbelianDeRhamFreeOfHodge in
 theorem GlobalTheory.Proof.abelianDeRhamFree_of_hodge :
     GlobalTheory.Published.CrystallineSmoothLift → GlobalTheory.Published.AbelianHodgeDeRham → GlobalTheory.Published.AbelianDeRhamFree := by
   intro hC hA R _ A _ g hab hg

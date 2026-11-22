@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenSESStep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenSESStep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -133,7 +138,7 @@ theorem mem_of_map_mem {M' : Type*} [AddCommGroup M'] [Module (MRingOver S ι) M
       obtain ⟨y₂, hy₂, e₂⟩ := h₂
       refine ⟨y₁ + y₂, add_mem hy₁ hy₂, ?_⟩
       have : g (x₁ + x₂) - g (y₁ + y₂) = (g x₁ - g y₁) + (g x₂ - g y₂) := by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         abel
       rw [this]
       exact add_mem e₁ e₂
@@ -164,7 +169,8 @@ theorem proof (hSES : KH.CechSESStatement) (hMap : KH.CechMapDegStatement) : Gen
 
   obtain ⟨y, hy_def⟩ : ∃ y, y = t₁ • LocalizedModule.mk m₀ t₀ - ∑ j, p j • z j I := ⟨_, rfl⟩
   have hLy : locMap (KH.cellMon S I.1) h y = 0 := by
-    rw [hy_def, map_sub, map_smul, map_sum, locMap_mk, e₁, sub_eq_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy_def, map_sub, map_smul, map_sum, locMap_mk, e₁, sub_eq_zero]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hzh]
   have hyloc : y ∈ KH.locPart ι 𝓜 (KH.cellMon S I.1) (d + fun k => (a₁ k : ℤ)) := by
@@ -213,7 +219,8 @@ theorem proof (hSES : KH.CechSESStatement) (hMap : KH.CechMapDegStatement) : Gen
     rw [this]
     exact LocalizedModule.mk_cancel_common_left _ _ _
   have hgy : t₂ • y = t₁ • ∑ l, p' l • KH.cechMap S ι g 0 (z' l) I := by
-    rw [← hgv, ← mul_smul, mul_comm, mul_smul, ← map_smul, e₂, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hgv, ← mul_smul, mul_comm, mul_smul, ← map_smul, e₂, map_sum]
     refine congrArg _ (Finset.sum_congr rfl fun l _ => ?_)
     rw [map_smul]
     rfl

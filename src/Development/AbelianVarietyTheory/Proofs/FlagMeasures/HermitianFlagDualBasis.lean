@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
 
@@ -38,12 +43,14 @@ theorem hR_zero_right (x : Fin n → R ⊗[F] E) : hR R σ J x 0 = 0 := (hRight 
 
 theorem hR_ratV (x y : Fin n → E) :
     hR R σ J (ratV (F := F) R x) (ratV (F := F) R y) = inclR R (hE σ J x y) := by
-  simp only [hR, hE, Formalism.UG.hform, ratV, JR, Matrix.map_apply, map_sum, map_mul, sigR_inclR,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, hE, Formalism.UG.hform, ratV, JR, Matrix.map_apply, map_sum, map_mul, sigR_inclR,
     AlgHom.coe_toRingHom, RingHom.coe_coe]
 
 theorem hE_symm (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) (x y : Fin n → E) :
     hE σ J y x = σ (hE σ J x y) := by
-  simp only [hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, Formalism.UG.hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hJ.1 b a]
@@ -72,7 +79,8 @@ theorem pairR (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : F
 theorem pair_sum (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : Frame E n r} {T : F}
     (hP : P.IsStd σ J T) (a : Fin r) (c : Fin (r + 1) → R ⊗[F] E) :
     hR R σ J (ratV (F := F) R (P.f a)) (∑ b, c b • ratV (F := F) R (F0 P b)) = c a.castSucc := by
-  rw [← hRight_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hRight_apply, map_sum]
   simp only [map_smul, hRight_apply, pairR hσ hJ hP, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
@@ -88,7 +96,7 @@ theorem expand (hσ : ∀ x, σ (σ x) = x) (hJ : IsHermND σ J) {r : ℕ} {P : 
     have hc' : c < b := hc
     symm
     rw [Finset.sum_eq_single c]
-    · rw [dif_pos hc', pairR hσ hJ hP, Fin.castSucc_castLT, if_pos rfl, one_smul]
+    · rw [dite_eq_left hc', pairR hσ hJ hP, Fin.castSucc_castLT, if_pos rfl, one_smul]
     · intro a _ hac
       split_ifs with h
       · rw [pairR hσ hJ hP, Fin.castSucc_castLT, if_neg (fun e => hac e.symm), zero_smul]
@@ -147,8 +155,8 @@ theorem exists_coeff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
           Matrix (Fin n) (Fin n) (Fv F v ⊗[F] E)) i j :=
       fun i j => (continuous_apply j).comp ((continuous_apply i).comp hM)
     simp only [hR, Formalism.UG.hform, lin, Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct]
-    exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
-      continuous_const.mul (continuous_finset_sum _ fun k _ => (hMij j k).mul continuous_const)
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
+      continuous_const.mul (continuous_finsetSum _ fun k _ => (hMij j k).mul continuous_const)
   · intro s x
     constructor
     · rintro rfl b
@@ -168,6 +176,6 @@ theorem exists_coeff : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
       symm
       show hR (Fv F v) σ J (ratV (F := F) (Fv F v) (P.f (a.castLT (lt_of_lt_of_le h (Fin.le_last b)))))
         (lin (Fv F v) σ J (s : HA (Fv F v) σ J) (ratV (F := F) (Fv F v) (F0 P b))) = x ⟨(a, b), h⟩
-      rw [H b, pair_sum hss hJ hP, Fin.castSucc_castLT, if_neg h.ne, dif_pos h]
+      rw [H b, pair_sum hss hJ hP, Fin.castSucc_castLT, if_neg h.ne, dite_eq_left h]
 
 end GlobalTheory.UnitriangularCoeff

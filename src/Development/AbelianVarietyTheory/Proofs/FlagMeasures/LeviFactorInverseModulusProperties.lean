@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetHsBall
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GradedPieceSizesUnipotentLeviCompactMove
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableSetHsBall
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GradedPieceSizesUnipotentLeviCompactMove
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.IwConst
 
 noncomputable section
@@ -34,14 +39,14 @@ theorem exists_cont_detOn (V : Submodule ℂ (Fin n → ℂ)) :
       rw [hp]
       apply Subtype.ext
       simp [LinearMap.restrict_apply, Matrix.toLin'_apply]
-    rw [detOn, dif_pos h', ← LinearMap.det_toMatrix b]
+    rw [detOn, dite_eq_left h', ← LinearMap.det_toMatrix b]
     congr 2
     ext i k
     rw [LinearMap.toMatrix_apply, Matrix.of_apply, e k]
 
 theorem detOn_one (V : Submodule ℂ (Fin n → ℂ)) : detOn (1 : Matrix (Fin n) (Fin n) ℂ) V = 1 := by
   have h' : ∀ y ∈ V, Matrix.toLin' (1 : Matrix (Fin n) (Fin n) ℂ) y ∈ V := fun y hy => by simpa using hy
-  rw [detOn, dif_pos h']
+  rw [detOn, dite_eq_left h']
   have hid : (Matrix.toLin' (1 : Matrix (Fin n) (Fin n) ℂ)).restrict h' = LinearMap.id :=
     LinearMap.ext fun y => Subtype.ext (by simp [LinearMap.restrict_apply])
   rw [hid, LinearMap.det_id, norm_one]
@@ -127,7 +132,7 @@ theorem dlt_props : ∀ (n : ℕ) (ε : Fin n → Bool) (a : ℕ) (j : Fin a →
   refine ⟨?_, ?_, ?_⟩
   · unfold dlt
     exact ENNReal.measurable_ofReal.comp ((measurable_layerProd j).comp
-      (measurable_pi_lambda _ fun i => measurable_locSize_uMat n ε a j W i))
+      (Measurable.of_eval fun i => measurable_locSize_uMat n ε a j W i))
   · intro l hl m hm
     have hl2 : ∀ i, ∀ y ∈ W i, uMat l *ᵥ y ∈ W i ∧ (uMat l)ᴴ *ᵥ y ∈ W i := hl.2
     have hm2 : ∀ i, ∀ y ∈ W i, uMat m *ᵥ y ∈ W i ∧ (uMat m)ᴴ *ᵥ y ∈ W i := hm

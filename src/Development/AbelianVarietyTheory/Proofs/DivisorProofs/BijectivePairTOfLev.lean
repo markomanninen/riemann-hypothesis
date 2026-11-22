@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MapSmulOfIsHausdorff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MapSmulOfIsHausdorff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,7 @@ theorem lev_congr {p : ℕ} [Fact p.Prime] {M M' : Type} [CommGroup M] [CommGrou
     rw [h] at this
     exact left_eq_mul.1 this
   obtain ⟨s, hs⟩ := (h2 n _).1 h3
-  rw [e, hs, map_add, map_smul, Tate.lev_add, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul, lev_nsmul,
+  rw [e, hs, map_add (f := _), map_smul, Tate.lev_add, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul, lev_nsmul,
     Tate.lev_pow, _root_.mul_one]
 
 variable {p : ℕ} [Fact p.Prime] {C : Type} [Field C] [IsAlgClosed C] [CharZero C]
@@ -44,7 +48,7 @@ theorem weilT_flip_surjective
   have hm : ∀ n z z', z ^ p ^ n = 1 → z' ^ p ^ n = 1 → κ n (z * z') = κ n z * κ n z' := by
     intro n z z' hz hz'
     have e : z * z' = (τ n z + τ n z').lev n := by rw [Tate.lev_add, hτ n z hz, hτ n z' hz']
-    rw [e, hκ, map_add, Tate.lev_add]
+    rw [e, hκ, map_add (f := _), Tate.lev_add]
   have hp := fun n => weil_perfect (A := A) (one_le_ppow p n) (κ n) (hm n)
   choose s hs hu using hp
   have hc : ∀ n, s (n + 1) ^ p = s n := by

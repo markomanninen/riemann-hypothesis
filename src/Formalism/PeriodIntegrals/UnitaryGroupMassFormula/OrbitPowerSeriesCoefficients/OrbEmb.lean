@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.OrbRestr
+module
+
+public import Formalism.PeriodIntegrals.OrbRestr
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,9 @@ theorem restr_eq_killCompl (D : D7) (p : ℕ) [Fact p.Prime] {N0 N1 : ℕ} (z : 
     (Th : MvPowerSeries (Pl D × Fin N0 × Fin N1) ℂ_[p]) :
     restr D p z Th = killCompl (orbEmb D p z (Fin N0 × Fin N1)) Th := by
   funext m
-  show _ = killComplFun (orbEmb D p z (Fin N0 × Fin N1)) Th m
-  unfold restr killComplFun
+  change _ = coeff m (killCompl (orbEmb D p z (Fin N0 × Fin N1)) Th)
+  rw [coeff_killCompl]
+  unfold restr
   rw [Finsupp.embDomain_eq_mapDomain]
   rfl
 
@@ -79,8 +84,8 @@ theorem killCompl_logPl_emb (D : D7) (p : ℕ) [Fact p.Prime] {β : Type} (z : P
     rw [orbEmb_apply, orbEmb_apply]
     simp only [backPl_orbMap, Nat.cast_mul, Nat.cast_ofNat]
   funext m
-  show killComplFun (orbEmb D p z β) (logPl D p (orbEmb D p z β w)) m = jetLogG p (nP D p) w m
-  unfold killComplFun
+  change coeff m (killCompl (orbEmb D p z β) (logPl D p (orbEmb D p z β w))) = _
+  rw [coeff_killCompl]
   show logPl D p (orbEmb D p z β w) (embDomain (orbEmb D p z β) m) = jetLogG p (nP D p) w m
   simp only [logPl, jetLogG, JetTdeg_embDomain]
   refine Finset.sum_congr rfl (fun e _ => ?_)
@@ -96,8 +101,8 @@ theorem killCompl_logPl_emb (D : D7) (p : ℕ) [Fact p.Prime] {β : Type} (z : P
 theorem killCompl_logPl_off (D : D7) (p : ℕ) [Fact p.Prime] {β : Type} (z : Pl D) (v : Pl D × β)
     (hv : ¬ ∃ w, orbEmb D p z β w = v) : killCompl (orbEmb D p z β) (logPl D p v) = 0 := by
   funext m
-  show killComplFun (orbEmb D p z β) (logPl D p v) m = 0
-  unfold killComplFun
+  change coeff m (killCompl (orbEmb D p z β) (logPl D p v)) = 0
+  rw [coeff_killCompl]
   show logPl D p v (embDomain (orbEmb D p z β) m) = 0
   simp only [logPl]
   refine Finset.sum_eq_zero (fun e _ => ?_)

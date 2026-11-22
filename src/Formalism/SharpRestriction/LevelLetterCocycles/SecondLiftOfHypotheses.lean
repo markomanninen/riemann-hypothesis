@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondLiftAtSituation
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondLiftAtSituation
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPosGramFormIntegralLatticeProperties
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPosGramFormIntegralLatticeProperties
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -141,7 +145,8 @@ theorem mem_dualL_iff (G : Matrix κ κ ℤ) (y : κ → F) :
       fun i => mem_trD.1 (h i) (l i) (hl i)
     choose n hn using hc
     refine ⟨∑ i, n i, ?_⟩
-    rw [BF_eq_vecMul, dotProduct, map_sum, Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [BF_eq_vecMul, dotProduct, map_sum, Int.cast_sum]
     exact Finset.sum_congr rfl fun i _ => hn i
 
 end GlobalTheory.HilbertThetaSeries.DualLevel
@@ -279,8 +284,8 @@ private theorem map_intCast_transpose_of_evenPos (G : Matrix κ κ ℤ) (hG : Ev
     exact_mod_cast this
   rw [← Matrix.transpose_map, hs]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem dual_level_index : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ] [DecidableEq κ] (G : Matrix κ κ ℤ), EvenPos G → (∀ y : κ → F, y ∈ dualL F G → ∀ d : 𝓞 F, d ∈ differentIdeal ℤ (𝓞 F) → ((G.det : F) * d) • y ∈ LL F κ) ∧ (∃ N : ℕ, 0 < N ∧ ∀ y ∈ dualL F G, (N : F) • y ∈ LL F κ ∧ IsIntegral ℤ ((N : F) * QF G y)) ∧ (∀ y : κ → F, (∀ ν ∈ dualL F G, ∃ n : ℤ, Algebra.trace ℚ F (BF G y ν) = n) → y ∈ LL F κ) ∧ (∀ (a : F) (y : κ → F), IsIntegral ℤ a → y ∈ dualL F G → a • y ∈ dualL F G) ∧ ((LL F κ).relIndex (dualL F G) : ℤ) = ((discr F).natAbs : ℤ) ^ Fintype.card κ * G.det ^ Module.finrank ℚ F := by
   intro F _ _ κ _ _ G hG
   have hdet : G.det ≠ 0 := (det_pos_of_evenPos hG).ne'

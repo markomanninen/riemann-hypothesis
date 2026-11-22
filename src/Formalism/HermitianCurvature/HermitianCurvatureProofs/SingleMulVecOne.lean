@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.UnitaryOfBlockWMem
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.UnitaryOfBlockWMem
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -131,7 +135,7 @@ theorem sum_single (θ : Fin k → ℝ) :
     rw [if_pos rfl]
     unfold dθ
     by_cases hin : r ≤ i.val ∧ i.val < r + k
-    · rw [dif_pos hin, Finset.sum_eq_single ⟨i.val - r, by omega⟩]
+    · rw [dite_eq_left hin, Finset.sum_eq_single ⟨i.val - r, by omega⟩]
       · rw [if_pos]
         constructor <;> (apply Fin.ext; simp only [wI, Fin.val_castSucc]; omega)
       · intro c _ hc
@@ -144,7 +148,7 @@ theorem sum_single (θ : Fin k → ℝ) :
         simp only
         omega
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [dif_neg hin]
+    · rw [dite_eq_right hin]
       apply Finset.sum_eq_zero
       intro c _
       rw [if_neg]
@@ -175,7 +179,7 @@ theorem diag_exp_blockW (θ : Fin k → ℝ) :
       · subst hij
         rw [if_pos rfl, if_pos rfl, Pi.coe_exp]
         unfold dθ
-        rw [dif_pos hi, ← Complex.exp_eq_exp_ℂ]
+        rw [dite_eq_left hi, ← Complex.exp_eq_exp_ℂ]
       · rw [if_neg hij, if_neg]
         intro h
         apply hij
@@ -189,7 +193,7 @@ theorem diag_exp_blockW (θ : Fin k → ℝ) :
     · subst hij
       rw [if_pos rfl, if_pos rfl, Pi.coe_exp]
       unfold dθ
-      rw [dif_neg (show ¬ (r ≤ i.val ∧ i.val < r + k) from hi), NormedSpace.exp_zero]
+      rw [dite_eq_right (show ¬ (r ≤ i.val ∧ i.val < r + k) from hi), NormedSpace.exp_zero]
     · rw [if_neg hij, if_neg hij]
 
 theorem torus {g : Mx k r} (hgU : g ∈ UH (Hpk k r)) (θ : Fin k → ℝ) :

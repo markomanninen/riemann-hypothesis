@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingBaseChangeUnit
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.HTChartExists
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TwoWeightEqOneAddRoot
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.WeilPairingBaseChangeUnit
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenericWeilPairing
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,11 @@ theorem level_param : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H 
     rw [Units.val_mk0, hz]
     exact IsPrimitiveRoot.coe_units_iff.2 (I.ζ_prim n hn)
   · let _ : Algebra Ω k := f.toAlgebra
-    let j : AlgebraicClosure Ω →ₐ[Ω] k := IsAlgClosed.lift
+    let j : AlgebraicClosure Ω →ₐ[Ω] k := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     have hj : spMap f = spMap j.toRingHom ≫ spMap (algebraMap Ω (AlgebraicClosure Ω)) := by
       rw [← WeilObj.spMap_comp_of]
       exact congrArg spMap (RingHom.ext fun x => (j.commutes x).symm)

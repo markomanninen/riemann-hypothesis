@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ConeFactorisationOfCodimensionTwo
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.KAtCompact
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FinSpan
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealId0
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubMain
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExtendByZeroOnSubsetApplyCoe
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ConeFactorisationOfCodimensionTwo
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.KAtCompact
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FinSpan
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealId0
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.FubMain
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.ExtendByZeroOnSubsetApplyCoe
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -75,8 +80,8 @@ theorem le_natCast_of_lt_natCast_succ {x : WithBot ℕ∞} {N : ℕ}
       have : a < N + 1 := by exact_mod_cast h
       exact_mod_cast (show a ≤ N by omega)
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem degLT_listSum (h6 : DegLTClosure.Statement) {α : Type*} (n : ℕ)
     (g : α → (K → ℤ) → ℤ) (l : List α) (hl : ∀ a ∈ l, DegLT (g a) n) :
     DegLT (fun m => (l.map fun a => g a m).sum) n := by
@@ -96,8 +101,8 @@ end Lemmas
 
 end HilbDegBound
 
-open HilbDegBound in
 
+open HilbDegBound in
 theorem HilbDegBound.proof (h1 : HilbFnVanishBlock.Statement.{u}) (h2 : HilbFnCut.Statement.{u})
     (h3 : PrimeFiltration.Statement.{u}) (h4 : DimStrictDrop.Statement.{u})
     (h5 : RelevantDimGe.Statement.{u}) (h6 : DegLTClosure.Statement)

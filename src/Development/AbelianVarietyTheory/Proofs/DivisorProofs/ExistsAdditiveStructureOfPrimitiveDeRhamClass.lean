@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,11 +21,13 @@ variable {R : Type} [CommRing R]
 
 def pullCompare {Y X : Over (Sp R)} (u : Y ⟶ X)
     (m : IsMor (dp0 R) (X.hom ≫ 𝟙 _) (dp0 R) (Y.hom ≫ 𝟙 _) (RingHom.id R) u.left)
-    {D : Type} [CommRing D] [Algebra R D] (w : Pt Y D) (z : Pt X D) (h : z = w ≫ u) :
+    {D : Type} [CommRing D] [Algebra R D] (w : Pt Y D) (z : Pt X D)
+    (h : z = (w ≫ u : Pt X D)) :
     trivAt z ⟶ m.obj (trivAt w) :=
   Thick.trivHom { RingHom.id D with commutes' := fun _ ↦ rfl } (by
-    change spMap (RingHom.id D) ≫ z.left = w.left ≫ u.left
-    rw [Cris.spMap_id, h]; simp)
+    subst z
+    change spMap (RingHom.id D) ≫ (w ≫ u).left = w.left ≫ u.left
+    rw [Cris.spMap_id, Category.id_comp, Over.comp_left])
 
 theorem exists_crystallineCocycleOnPoints_pullback_cohomologous {Y X : Over (Sp R)} (u : Y ⟶ X)
     (m : IsMor (dp0 R) (X.hom ≫ 𝟙 _) (dp0 R) (Y.hom ≫ 𝟙 _) (RingHom.id R) u.left)
@@ -32,7 +38,7 @@ theorem exists_crystallineCocycleOnPoints_pullback_cohomologous {Y X : Over (Sp 
   refine ⟨fun D _ _ w ↦ ev f (pullCompare u m w (w ≫ u) rfl), fun D _ _ D' _ _ φ w ↦ ?_⟩
   have h1 : ∀ (z : Pt X D') (h : z = (spOver φ ≫ w) ≫ u),
       @Eq D' (ev f (pullCompare u m (spOver φ ≫ w) z h))
-        (ev f (pullCompare u m (spOver φ ≫ w) _ rfl)) := fun z h ↦ by subst h; rfl
+        (ev f (pullCompare u m (spOver φ ≫ w) _ rfl)) := fun z h ↦ by subst z; rfl
   have k := ev_sq f (trivMap φ (w ≫ u))
     (pullCompare u m (spOver φ ≫ w) (spOver φ ≫ w ≫ u) (Category.assoc _ _ _).symm)
     (pullCompare u m w (w ≫ u) rfl) (m.functor.map (trivMap φ w)) fun _ ↦ rfl
@@ -49,7 +55,7 @@ theorem exists_isAdd_of_mem_primDR (R : Type) [CommRing R] (A : Over (Sp R)) [Gr
     IsMor.of_over _ (by rw [← Category.assoc, Over.w])
   have h' : CatCoh.H1.mk _ ((M μ[A]).coef.pullbackOneCocycle f) =
       CatCoh.H1.mk _ ((M (fst A A)).coef.pullbackOneCocycle f + (M (snd A A)).coef.pullbackOneCocycle f) := by
-    rw [map_add]; exact h
+    rw [map_add (f := _)]; exact h
   obtain ⟨k, hk⟩ := H1.mk_eq_mk.1 h'
   obtain ⟨c, hc⟩ := exists_crystallineCocycleOnPoints_pullback_cohomologous _ (M μ[A]) f
   obtain ⟨c₁, hc₁⟩ := exists_crystallineCocycleOnPoints_pullback_cohomologous _ (M (fst A A)) f
@@ -63,7 +69,7 @@ theorem exists_isAdd_of_mem_primDR (R : Type) [CommRing R] (A : Over (Sp R)) [Gr
           fv ((M (snd A A)).coef.pullbackOneCocycle f) D D' φ (lift x y)) :=
     congrFun (congrFun (congrFun hk _) _) (trivMap φ (lift x y))
   rw [hc, hc₁, hc₂, lift_fst, lift_snd, ← Hom.mul_def, comp_lift] at e
-  simp only [map_add, map_sub]
+  simp only [map_add (f := _), map_sub]
   linear_combination e
 
 end GlobalTheory.PtExt

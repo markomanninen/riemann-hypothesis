@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.UFinMulRId
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.UFinMulRId
+
+@[expose] public section
 
 noncomputable section
 

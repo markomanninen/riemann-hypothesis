@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
-import Formalism.DegreeFormula.Statement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingCompEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockSymApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+public import Formalism.DegreeFormula.Statement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MeasurePreservingCompEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BlockSymApply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -92,11 +96,12 @@ theorem curvPoly_model_zero : ∀ (ι : Type) [Fintype ι] (p q n : ℕ) (h : Fi
         (if Fintype.equivFinOfCardEq h (τ, j, b) = c then 1 else 0) := by
     intro a c i j
     change curv (fun u => ((Formalism.DegreeFormula.hP (flatCoordinateMatrixBlock h τ u))⁻¹)ᵀ) 0 _ _ i j = _
-    rw [curv_model h τ, Matrix.neg_apply, mul_apply]
-    simp [block_reshape_apply, EuclideanSpace.single_apply]
+    rw [curv_model h τ, Matrix.neg_apply, Matrix.mul_apply]
+    simp [block_reshape_apply, PiLp.single_apply]
   refine Matrix.ext fun i j => ?_
   simp only [GlobalTheory.GoodMetric.curvPoly, of_apply, e2, Matrix.neg_apply, blockSym_apply]
-  simp only [map_neg, neg_mul, Finset.sum_neg_distrib, neg_inj, map_sum, Finset.sum_mul, mul_ite, ite_mul, one_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_neg, neg_mul, Finset.sum_neg_distrib, neg_inj, map_sum, Finset.sum_mul, mul_ite, ite_mul, one_mul,
     zero_mul, mul_zero, apply_ite (C : ℂ → MvPolynomial (Fin n × Fin n) ℂ), map_one, map_zero]
   rw [Finset.sum_congr rfl fun _ _ => Finset.sum_comm, Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => ?_

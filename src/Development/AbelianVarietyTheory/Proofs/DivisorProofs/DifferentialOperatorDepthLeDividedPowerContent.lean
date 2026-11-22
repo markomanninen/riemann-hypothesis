@@ -1,10 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PeriodValuationTheory
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.EqZeroOrSingleOfDegreeLtTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameDualStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TypicalCurveStructureConstants
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.RootStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.FactorialWeightedSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.OmBStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.WtSubOneLe
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatFrame
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.EqZeroOrSingleOfDegreeLtTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupExpTwoSidedInverseUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameDualStatement
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.PGsh ReciprocityTheory.ChartRestriction.G.Sh GlobalTheory.FGDepth
 
@@ -50,7 +57,7 @@ theorem Near.prod {σ : Type} {k : ℕ} {a b : σ → MvPowerSeries τ S}
   | zero => simpa using Near.one k
   | add f g hf hg =>
     rw [Finsupp.prod_add_index' (by simp) (by simp [pow_add]),
-      Finsupp.prod_add_index' (by simp) (by simp [pow_add]), map_add]
+      Finsupp.prod_add_index' (by simp) (by simp [pow_add]), map_add (f := _)]
     exact hf.mul hg
   | single s n =>
     rw [Finsupp.prod_single_index (by simp), Finsupp.prod_single_index (by simp),
@@ -100,8 +107,8 @@ theorem isInt_mul {τ : Type} {f g : MvPowerSeries τ C} (hf : MvIsInt v f) (hg 
   rw [v.map_mul]
   exact add_nonneg (hf _) (hg _)
 
-open Classical in
 
+open Classical in
 def intSub (τ : Type) : Subring (MvPowerSeries τ C) where
   carrier := {f | MvIsInt v f}
   mul_mem' := isInt_mul v
@@ -109,7 +116,7 @@ def intSub (τ : Type) : Subring (MvPowerSeries τ C) where
     classical
     intro α; unfold IsIntV; rw [coeff_one]; split_ifs <;> simp
   add_mem' := by
-    intro f g hf hg α; unfold IsIntV; rw [map_add]
+    intro f g hf hg α; unfold IsIntV; rw [map_add (f := _)]
     exact le_trans (le_min (hf α) (hg α)) (v.map_add _ _)
   zero_mem' := by intro α; unfold IsIntV; simp
   neg_mem' := by intro f hf α; unfold IsIntV; rw [map_neg, v.map_neg]; exact hf α
@@ -160,7 +167,8 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
       (∑ a, u b a e • (X ⟨b, a⟩ : MvPowerSeries (Σ b, Fin (n b)) C)) =
         ∑ a, u b a e * if y = ⟨b, a⟩ then 1 else 0 := by
     intro b e y
-    simp only [map_sum, coeff_smul, coeff_X, Finsupp.single_left_inj one_ne_zero, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_smul, coeff_X, Finsupp.single_left_inj one_ne_zero, smul_eq_mul]
   set A := expAlong G u with hAdef
   have hA0 : ∀ x, constantCoeff (A x) = 0 := fun x =>
     constantCoeff_subst_eq_zero (hasSubst_of_constantCoeff_zero (hlin0 x.1)) (hlin0 x.1)
@@ -179,7 +187,8 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
     rw [GlobalTheory.FormalSeries.two_le_order_iff]
     refine ⟨by simp [hYdef, hA0], fun z => ?_⟩
     rw [map_sub, hYdef]
-    simp only [map_sum, coeff_smul, hA1, smul_eq_mul, coeff_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_smul, hA1, smul_eq_mul, coeff_X,
       Finsupp.single_left_inj one_ne_zero]
     simp_rw [Finset.mul_sum]
     rw [sub_eq_zero]
@@ -204,7 +213,8 @@ theorem depth_le_content : ∀ (C : Type) [Field C] [CharZero C] (v : AddValuati
   have hfint : MvIsInt v f := isInt_prod v L hLint α
   have hsub : subst A f = α.prod fun y k => Y y ^ k := by
     rw [hfdef, ← coe_substAlgHom hAs, map_finsuppProd]
-    simp only [map_pow, hLdef, hYdef, map_sum, map_smul, substAlgHom_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_pow, hLdef, hYdef, map_sum, map_smul, substAlgHom_X]
   have hord := lead_prod Y hY α
   rw [← hsub] at hord
   have hdeg : ∀ β ∈ P.support, β.degree = D := fun β hβ => by

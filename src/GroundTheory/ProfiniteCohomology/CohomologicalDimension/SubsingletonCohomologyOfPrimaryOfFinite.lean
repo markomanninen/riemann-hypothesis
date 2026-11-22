@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt
-import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
-import GroundTheory.ProfiniteCohomology.ColimitUnion
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+public import GroundTheory.ProfiniteCohomology.ColimitUnion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -60,9 +65,9 @@ theorem subsingleton_cohomology_X₂ {S : ShortComplex (Rep.{u} k G)} [IsDiscret
     Subsingleton (cohomology S.X₂ n) := by
   suffices h : ∀ x : cohomology S.X₂ n, x = 0 from ⟨fun x y => by rw [h x, h y]⟩
   intro x
-  obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS n) x
-    (Subsingleton.elim _ _)
-  rw [← hz, Subsingleton.elim z 0]
+  obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1
+    ((cochainsShortComplex_shortExact hS).homology_exact₂ n) x (@Subsingleton.elim _ h₃ _ _)
+  rw [← hz, @Subsingleton.elim _ h₁ z 0]
   exact map_zero _
 
 noncomputable def subQuotShortComplex (A : Rep.{u} k G) (W : Submodule k A)
@@ -73,15 +78,14 @@ noncomputable def subQuotShortComplex (A : Rep.{u} k G) (W : Submodule k A)
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem subQuotShortComplex_shortExact (A : Rep.{u} k G) (W : Submodule k A)
-    (h : ∀ g, W ≤ W.comap (A.ρ g)) : (subQuotShortComplex A W h).ShortExact where
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
-      ShortComplex.moduleCat_exact_iff]
-    intro a ha
-    change Submodule.Quotient.mk (p := W) a = 0 at ha
-    exact ⟨⟨a, (Submodule.Quotient.mk_eq_zero _).1 ha⟩, rfl⟩
-  mono_f := (Rep.mono_iff_injective _).2 Subtype.val_injective
-  epi_g := (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
+    (h : ∀ g, W ≤ W.comap (A.ρ g)) : (subQuotShortComplex A W h).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ((Rep.mono_iff_injective _).2 Subtype.val_injective)
+    ((Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _))
+  rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
+    ShortComplex.moduleCat_exact_iff]
+  intro a ha
+  change Submodule.Quotient.mk (p := W) a = 0 at ha
+  exact ⟨⟨a, (Submodule.Quotient.mk_eq_zero _).1 ha⟩, rfl⟩
 
 instance (A : Rep.{u} k G) [IsDiscreteRep A] (W : Submodule k A) (h : ∀ g, W ≤ W.comap (A.ρ g)) :
     IsDiscreteRep (subQuotShortComplex A W h).X₁ :=
@@ -158,26 +162,22 @@ section Primary
 
 variable {k : Type u} [CommRing k]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 def primarySubmodule (A : Rep.{u} k G) (p : ℕ) : Submodule k A where
   carrier := {a | ∃ k : ℕ, p ^ k • a = 0}
   add_mem' := fun {a b} ha hb => (AddCommGroup.primaryComponent A p).add_mem ha hb
   zero_mem' := ⟨0, by simp⟩
   smul_mem' := fun r a ⟨k, hk⟩ => ⟨k, by rw [smul_comm, hk, smul_zero]⟩
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
-theorem mem_primarySubmodule (A : Rep.{u} k G) (p : ℕ) (a : A) :
-    a ∈ primarySubmodule A p ↔ ∃ k : ℕ, p ^ k • a = 0 :=
-  Iff.rfl
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem primarySubmodule_le_comap (A : Rep.{u} k G) (p : ℕ) (g : G) :
     primarySubmodule A p ≤ (primarySubmodule A p).comap (A.ρ g) :=
   fun a ⟨k, hk⟩ => ⟨k, by rw [← map_nsmul, hk, map_zero]⟩
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem bijective_nsmul_quotient_primarySubmodule (A : Rep.{u} k G)
     (hA : IsAddTorsion A) {p : ℕ} (hp : p.Prime) :
     Function.Bijective fun x : A ⧸ primarySubmodule A p => p • x := by
@@ -242,8 +242,9 @@ theorem cdp_le_of_forall_primary {p : ℕ} (hp : p.Prime) {n : ℕ}
   rintro x ⟨k, hk⟩
   have hx : (cohomologyMap (Rep.mkQ A (primarySubmodule A p) hW) q).hom x = 0 :=
     hQ _ ⟨k, by rw [← map_nsmul, hk, map_zero]⟩
+  have hS := subQuotShortComplex_shortExact A (primarySubmodule A p) hW
   obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1
-    (cohomology_exact₂ (subQuotShortComplex_shortExact A (primarySubmodule A p) hW) q) x hx
+    ((cochainsShortComplex_shortExact hS).homology_exact₂ q) x hx
   rw [← hz, @Subsingleton.elim _ hT z 0]
   exact map_zero _
 
@@ -344,8 +345,8 @@ theorem subsingleton_cohomology_of_finite_of_simple {p : ℕ} {m : ℕ}
       obtain ⟨k, hk⟩ := hA b
       exact ⟨k, by rw [← map_nsmul, hk, map_zero]⟩
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem finite_sup_of_finite {R M : Type*} [Ring R] [AddCommGroup M] [Module R M]
     (W₁ W₂ : Submodule R M) [Finite W₁] [Finite W₂] : Finite ↥(W₁ ⊔ W₂) := by
   refine Finite.of_surjective
@@ -407,7 +408,12 @@ theorem subsingleton_cohomology_of_primary_of_finite [CompactSpace G] {p : ℕ} 
     exact ⟨⟨W, h1, h2⟩, h3⟩
   suffices hz : ∀ x : cohomology A m, x = 0 from ⟨fun x y => by rw [hz x, hz y]⟩
   intro x
-  obtain ⟨i, z, rfl⟩ := exists_cohomologyMap_subtype_eq A Wf hW hstable hunion m x
+  have hpreimage : ∃ (i : ι) (z : cohomology (A.subrepresentation (Wf i) (hstable i)) m),
+      (cohomologyMap (Rep.subtype A (Wf i) (hstable i)) m).hom z = x :=
+    exists_homologyMap_eq_of_cocone (subrepCochainsCocone A Wf hW hstable) m
+      (subrepCochainsCocone_surj A Wf hW hstable hunion m)
+      (subrepCochainsCocone_inj A Wf hW hstable _) x
+  obtain ⟨i, z, rfl⟩ := hpreimage
   have : Finite (A.subrepresentation (Wf i) (hstable i)) := i.2.2
   have hs := h (A.subrepresentation (Wf i) (hstable i)) (by
     rintro ⟨b, hb⟩
@@ -454,23 +460,6 @@ section Criteria
 
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
 
-theorem cdp_le_iff_forall_primary {p : ℕ} (hp : p.Prime) (n : ℕ) :
-    cdp p G ≤ n ↔ ∀ (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A],
-      (∀ a : A, ∃ k : ℕ, p ^ k • a = 0) → ∀ q : ℕ, n < q → Subsingleton (cohomology A q) := by
-  refine ⟨fun h => ?_, cdp_le_of_forall_primary hp⟩
-  have hsimple : ∀ (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A],
-      IsSimpleOrder (Subrepresentation A.ρ) → (∀ a : A, p • a = 0) →
-        Subsingleton (cohomology A (n + 1)) :=
-    fun A _ _ hA => subsingleton_cohomology_of_cdp_le hp h A hA (Nat.lt_succ_self n)
-  have hprim : ∀ (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A],
-      (∀ a : A, ∃ k : ℕ, p ^ k • a = 0) → Subsingleton (cohomology A (n + 1)) :=
-    fun A _ hA => subsingleton_cohomology_of_primary_of_finite hp.pos
-      (fun B _ _ hB => subsingleton_cohomology_of_finite_of_simple hsimple B hB) A hA
-  intro A _ hA q hq
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_lt hq
-  have := subsingleton_cohomology_add_of_primary hprim j A hA
-  rwa [show n + 1 + j = n + j + 1 by omega] at this
-
 theorem cdp_le_iff_forall_simple {p : ℕ} (hp : p.Prime) (n : ℕ) :
     cdp p G ≤ n ↔ ∀ (A : Rep.{u} (ULift.{u} ℤ) G) [IsDiscreteRep A],
       IsSimpleOrder (Subrepresentation A.ρ) → (∀ a : A, p • a = 0) →
@@ -489,86 +478,6 @@ end Criteria
 section Strict
 
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
-
-theorem cdp_le_cd {p : ℕ} (hp : p.Prime) : cdp p G ≤ cd G :=
-  le_iSup (fun q : Nat.Primes => cdp (q : ℕ) G) ⟨p, hp⟩
-
-theorem scdp_le_scd {p : ℕ} (hp : p.Prime) : scdp p G ≤ scd G :=
-  le_iSup (fun q : Nat.Primes => scdp (q : ℕ) G) ⟨p, hp⟩
-
-theorem scdp_le_cdp_add_one {p : ℕ} (hp : p.Prime) : scdp p G ≤ cdp p G + 1 := by
-  by_cases htop : cdp p G = ⊤
-  · rw [htop]
-    simp
-  obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.1 htop
-  have hcd : cdp p G ≤ n := hn ▸ le_rfl
-  rw [← hn, scdp_le_iff]
-  intro A _ q hq
-  have hq' : n + 1 < q := by exact_mod_cast hq
-  obtain ⟨q', rfl⟩ : ∃ q', q = q' + 1 := ⟨q - 1, by omega⟩
-  let φ : A →ₗ[ULift.{u} ℤ] A := p • LinearMap.id
-  have hφ : ∀ g (a : A), φ (A.ρ g a) = A.ρ g (φ a) := fun g a => by simp [φ, map_nsmul]
-  let K := LinearMap.ker φ
-  let I := LinearMap.range φ
-  have hK : ∀ g, K ≤ K.comap (A.ρ g) := by
-    intro g a ha
-    simp only [K, LinearMap.mem_ker, Submodule.mem_comap] at ha ⊢
-    rw [hφ, ha, map_zero]
-  have hI : ∀ g, I ≤ I.comap (A.ρ g) := by
-    rintro g _ ⟨b, rfl⟩
-    exact ⟨A.ρ g b, hφ g b⟩
-  let π : A ⟶ A.subrepresentation I hI :=
-    Rep.ofHom ⟨φ.rangeRestrict, fun g => LinearMap.ext fun a => Subtype.ext (hφ g a)⟩
-  let S : ShortComplex (Rep.{u} (ULift.{u} ℤ) G) :=
-    ShortComplex.mk (Rep.subtype A K hK) π (by
-      ext w
-      exact LinearMap.mem_ker.1 w.2)
-  have : IsDiscreteRep S.X₁ := isDiscreteRep_subrepresentation A K hK
-  have : IsDiscreteRep S.X₂ := (inferInstance : IsDiscreteRep A)
-  have : IsDiscreteRep S.X₃ := isDiscreteRep_subrepresentation A I hI
-  have hS : S.ShortExact :=
-    { exact := by
-        rw [← ShortComplex.exact_map_iff_of_faithful _
-          (forget₂ (Rep.{u} (ULift.{u} ℤ) G) (ModuleCat.{u} (ULift.{u} ℤ))),
-          ShortComplex.moduleCat_exact_iff]
-        intro a ha
-        exact ⟨⟨a, LinearMap.mem_ker.2 (congrArg Subtype.val ha)⟩, rfl⟩
-      mono_f := (Rep.mono_iff_injective _).2 Subtype.val_injective
-      epi_g := (Rep.epi_iff_surjective _).2 (LinearMap.surjective_rangeRestrict φ) }
-  have hKp : ∀ x : A.subrepresentation K hK, p • x = 0 := fun x =>
-    Subtype.ext (LinearMap.mem_ker.1 x.2)
-  have hQp : ∀ x : A.quotient I hI, p • x = 0 := by
-    intro x
-    obtain ⟨a, rfl⟩ := Submodule.mkQ_surjective I x
-    rw [← map_nsmul, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
-    exact ⟨a, rfl⟩
-  have hKq := subsingleton_cohomology_of_cdp_le hp hcd _ hKp (show n < q' + 1 by omega)
-  have hQq := subsingleton_cohomology_of_cdp_le hp hcd _ hQp (show n < q' by omega)
-  have hπinj : ∀ y : cohomology A (q' + 1), (cohomologyMap π (q' + 1)).hom y = 0 → y = 0 := by
-    intro y hy
-    obtain ⟨z, hz⟩ := (ShortComplex.moduleCat_exact_iff _).1 (cohomology_exact₂ hS (q' + 1)) y hy
-    rw [← hz, @Subsingleton.elim _ hKq z 0]
-    exact map_zero _
-  have hιinj : ∀ y : cohomology (A.subrepresentation I hI) (q' + 1),
-      (cohomologyMap (Rep.subtype A I hI) (q' + 1)).hom y = 0 → y = 0 := by
-    intro y hy
-    obtain ⟨w, hw⟩ := (ShortComplex.moduleCat_exact_iff _).1
-      (cohomology_exact₁ (subQuotShortComplex_shortExact A I hI) q' (q' + 1) rfl) y hy
-    rw [← hw, @Subsingleton.elim _ hQq w 0]
-    exact map_zero _
-  have hcomp : π ≫ Rep.subtype A I hI = p • 𝟙 A := by
-    ext a
-    rfl
-  have hpinj : ∀ x : cohomology A (q' + 1), p • x = 0 → x = 0 := by
-    intro x hx
-    rw [← cohomologyMap_nsmul_id_apply, ← hcomp, cohomologyMap_comp] at hx
-    exact hπinj x (hιinj _ hx)
-  rw [primaryComponent_eq_bot_iff]
-  rintro x ⟨k, hk⟩
-  exact eq_zero_of_pow_nsmul_eq_zero hpinj k x hk
-
-theorem scd_le_cd_add_one : scd G ≤ cd G + 1 :=
-  scd_le_iff.2 fun _ hp => (scdp_le_cdp_add_one hp).trans (add_le_add (cdp_le_cd hp) le_rfl)
 
 end Strict
 

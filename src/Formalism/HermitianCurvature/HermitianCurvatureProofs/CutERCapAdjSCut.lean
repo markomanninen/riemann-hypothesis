@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjCut
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.ER
 

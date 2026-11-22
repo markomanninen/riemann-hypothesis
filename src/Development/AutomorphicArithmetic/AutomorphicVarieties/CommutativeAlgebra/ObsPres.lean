@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoRes
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -134,7 +138,7 @@ private theorem op_detect {O B A R κ : Type} [CommRing O] [IsLocalRing O] [Comm
     rw [h2]
     refine add_mem (Ideal.mem_sup_left (Ideal.mem_map_of_mem _ ((op_loc p'' x).2 hx))) ?_
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 (hker h1)
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem_sup ?_ (op_loc_sq p' hb)
     have h3 : (maximalIdeal B).map i ≤ ((maximalIdeal R).map s).comap p' :=
       Ideal.map_le_iff_le_comap.2 fun t ht => by
@@ -189,7 +193,8 @@ private theorem op_ker {O B A R σ σB τ : Type} [CommRing O] [IsLocalRing O] [
         (maximalIdeal B).map (q.comp i) ⊔ maximalIdeal T ^ 2 := by
     intro T _ _ _ q
     have k1 := op_loc_sq (q.comp π) hc
-    rw [map_sub, map_sub, AlgHom.commutes, map_sum, ← e.sum_comp, Fintype.sum_sum_type] at k1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sub, AlgHom.commutes, map_sum, ← e.sum_comp, Fintype.sum_sum_type] at k1
     simp only [map_smul, AlgHom.comp_apply] at k1
     have k2 : algebraMap O T (constantCoeff g) ∈ (maximalIdeal B).map (q.comp i) := by
       rw [← (q.comp i).commutes]
@@ -295,7 +300,7 @@ private theorem op_count (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRi
             show F (algebraMap O _ c) = 0
             rw [F.commutes, IsScalarTower.algebraMap_apply O (ResidueField O), ResidueField.algebraMap_eq,
               (residue_eq_zero_iff c).2 hc, map_zero]
-        rw [map_add, h1, add_zero]
+        rw [map_add (f := _), h1, add_zero]
         exact h2 hy
       refine ⟨AlgHom.liftOfSurjective π hπ F hle, funext fun s => ?_⟩
       show (AlgHom.liftOfSurjective π hπ F hle (π (X s))).snd = v s
@@ -347,20 +352,22 @@ theorem UpperTheory.V.Alg.obs_pres :
       have hy' : y ∈ RingHom.ker π₀ := hy
       rw [hf] at hy'
       obtain ⟨d, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hy'
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Ideal.sum_mem _ fun u _ => ?_
       rw [map_mul]
       exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨u, rfl⟩)
     have hind : ∀ c : Fin n → O, ∑ u, c u • π (f u) = 0 → ∀ u, c u ∈ maximalIdeal O := fun c hc u => by
       rw [← op_loc (Algebra.ofId O (MvPowerSeries (Fin a) O))]
       refine hmin (fun u => algebraMap O _ (c u)) ((hπ0 _).1 ?_) u
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simpa only [← Algebra.smul_def, map_smul] using hc
     have hker : RingHom.ker p ≤ (maximalIdeal O).map (Algebra.ofId O _) ⊔ maximalIdeal _ ^ 2 := by
       intro x hx
       obtain ⟨x, rfl⟩ := hπ x
       obtain ⟨y, hy, w, hw, rfl⟩ := Submodule.mem_sup.1 (hk hx)
-      rw [map_add]
+      rw [map_add (f := _)]
       refine Submodule.add_mem_sup ?_ (op_loc_sq π hw)
       have h2 : (maximalIdeal O).map (Algebra.ofId O (MvPowerSeries (Fin a) O)) ≤
           ((maximalIdeal O).map (Algebra.ofId O (MvPowerSeries (Fin a) O ⧸ N))).comap π :=

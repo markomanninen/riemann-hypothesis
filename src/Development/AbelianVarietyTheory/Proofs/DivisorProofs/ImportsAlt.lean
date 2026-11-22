@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.ValuativeQuotient
@@ -42,7 +47,7 @@ theorem main : ∀ (V K B : Type) [CommRing V] [IsDomain V] [ValuationRing V] [F
     rw [Ideal.mem_comap, map_mul] at hb
     exact (Ideal.unit_mul_mem_iff_mem JK (IsLocalization.map_units (K ⊗[V] B) ⟨m, hm⟩)).mp hb
   · rw [hmap]
-    exact IsLocalization.map_comap M (K ⊗[V] B) JK
+    exact IsLocalization.map_under M (K ⊗[V] B) JK
   · rintro J' ⟨hJ'f, hJ'⟩
     rw [hmap] at hJ'
     rw [hflat] at hJ'f

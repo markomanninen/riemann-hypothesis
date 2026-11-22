@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.SegreIdealIsHomogeneous
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.SegreIdealIsHomogeneous
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -120,7 +124,8 @@ theorem segreMap_aeval_update [DecidableEq K] (p : (k : K) → ι k) {f : MvPoly
     rw [hc]
     ring
   conv_lhs => rw [f.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [f.as_sum]
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl key

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat GlobalTheory.KapOrb
 open scoped Classical
 
@@ -101,7 +106,7 @@ theorem twOrb_eq_orbSum : ∀ {G : Type} [Group G] [TopologicalSpace G] (Kg : Su
     have hg := Classical.choose_spec (hsurj (M (Quotient.out q.1)) q.2)
     set g := Classical.choose (hsurj (M (Quotient.out q.1)) q.2)
     have hk := hinj _ _ hg.symm
-    rw [← DoubleCoset.out_eq' (twCent (MonoidHom.id G) δ) Kg q.1, DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' q.1, DoubleCoset.eq]
     exact ⟨1, (twCent (MonoidHom.id G) δ).one_mem, _, Kg.inv_mem hk, by group⟩
   have hinjφ : Function.Injective φ := by
     intro a b hab
@@ -110,7 +115,7 @@ theorem twOrb_eq_orbSum : ∀ {G : Type} [Group G] [TopologicalSpace G] (Kg : Su
   have hsurjφ : Function.Surjective φ := by
     rintro ⟨L, hL⟩
     obtain ⟨g, rfl⟩ := hsurj L hL
-    obtain ⟨h, k, hh, hk, hout⟩ := DoubleCoset.mk_out_eq_mul (twCent (MonoidHom.id G) δ) Kg g
+    obtain ⟨h, hh, k, hk, hout⟩ := DoubleCoset.mk_out_eq_mul (twCent (MonoidHom.id G) δ) Kg g
     have hM : M (Quotient.out (DoubleCoset.mk (twCent (MonoidHom.id G) δ) Kg g)) = mulLat O (τ h : A) (M g) := by
       rw [hout, hK _ _ hk, (hT h hh).2]
     have hmem : M (Quotient.out (DoubleCoset.mk (twCent (MonoidHom.id G) δ) Kg g)) ∈ X := by

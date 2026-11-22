@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalarStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalarStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAlgebraMapPadicInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,9 +59,6 @@ def subRep (rho : Representation R Γ M) (N : AddSubgroup M) (hN : ∀ g, ∀ m 
   map_one' := by ext m; simp
   map_mul' g h := by ext m; simp; rfl
 
-omit [TopologicalSpace Γ] [TopologicalSpace M] [DiscreteTopology M] in
-theorem subRep_coe (rho : Representation R Γ M) (N : AddSubgroup M) (hN : ∀ g, ∀ m ∈ N, rho g m ∈ N) (n : ℕ)
-    [Module (ZMod n) N] (g : Γ) (m : N) : (subRep rho N hN n g m : M) = rho g m := rfl
 
 omit [DiscreteTopology M] in
 theorem contAction_subRep (rho : Representation R Γ M) (hc : ContAction rho) (N : AddSubgroup M)
@@ -116,7 +117,7 @@ theorem finite_case (h1 : LocalFiniteness) (h2 : LocalTateDuality) (h3 : LocalEu
     rw [LinearMap.sub_apply, sub_eq_zero, LinearMap.smul_apply, Nat.cast_smul_eq_nsmul] at hm
     exact hm
   have hd : Subsingleton (H0 ((twDual ((cycMod F Ω l r).comp (Dec (F := F) A).subtype) rho).comp (MonoidHom.id _))) := by
-    refine subsingleton_of_forall_eq 0 fun f => Subtype.ext (TDual.ext fun m => ?_)
+    refine subsingleton_of_forall_eq 0 fun f => Subtype.ext (LinearMap.ext fun m => ?_)
     obtain ⟨y, rfl⟩ := hsurj m
     have e := DFunLike.congr_fun (f.2 φ) (rho φ y)
     change ((cycMod F Ω l r φ : (ZMod (l ^ r))ˣ) : ZMod (l ^ r)) * f.1 (rho φ⁻¹ (rho φ y)) = f.1 (rho φ y) at e
@@ -291,8 +292,8 @@ theorem frob_scalar (bkP : BKPh X) (h : GalHyp bkP i s) {M R : ℕ} {P : Fin R �
 
 end HidaSetting
 
-open GlobalTheory.PrimeToInertia in
 
+open GlobalTheory.PrimeToInertia in
 theorem firstHalf : LocalFiniteness → LocalTateDuality → LocalEulerChar → TameLocal → ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (X : NTw D.R D.host D.what₂ D.LL0 N) (bkP : BKPh X) (i : X.Tw) (s : X.Sig i), GalHyp bkP i s → FirstHalf i s := by
   intro h1 h2 h3 _ D N X bkP i s h M R P d φ φ' hM hP Λ _ _ _ _ κ hκ hκl B _ _ _ _ hB ρ hρ a v hv
   have hp := hP.1.1 _ v hv

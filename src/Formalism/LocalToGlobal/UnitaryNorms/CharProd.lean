@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HeckeProd
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HeckeProd
+
+@[expose] public section
 
 noncomputable section
 

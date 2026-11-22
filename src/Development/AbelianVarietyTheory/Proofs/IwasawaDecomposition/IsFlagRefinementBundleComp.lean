@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ZH GlobalTheory.Cartier GlobalTheory.FlagBundle
 
 set_option autoImplicit false
@@ -51,7 +56,7 @@ theorem val_chain {M' : RatModel F Ω'} {M'' : RatModel F Ω''} {φ : Ω →ₐ[
 theorem Refines.comp {M : RatModel F Ω} {M' : RatModel F Ω'} {M'' : RatModel F Ω''} {φ : Ω →ₐ[F] Ω'}
     {f : M'.Z ⟶ M.Z} {φ' : Ω' →ₐ[F] Ω''} {f' : M''.Z ⟶ M'.Z} {k k' k'' : ι → ℕ} {S : Fr M m k}
     {S' : Fr M' m k'} {S'' : Fr M'' m k''} (h1 : Refines S S' φ f) (h2 : Refines S' S'' φ' f') :
-    Refines S S'' (φ'.comp φ) (f' ≫ f) where
+    Refines S S'' (φ'.comp φ) (f' ≫ f) := {
   le := le_trans h1.le h2.le
   hom := h1.hom.comp h2.hom
   sub z'' A'' hA'' A hA := by
@@ -100,7 +105,7 @@ theorem Refines.comp {M : RatModel F Ω} {M' : RatModel F Ω'} {M'' : RatModel F
         exact (hPq.mono h2.le le_rfl).mul hG
       refine hu2 q ⟨hq1, B'', hB'', ?_⟩
       rw [fac q hq1 B'' hB'', Mat.mul_inv_rev, ← mul_assoc] at hPq
-      exact hPq
+      exact hPq }
 
 end GlobalTheory.FlagBundle
 

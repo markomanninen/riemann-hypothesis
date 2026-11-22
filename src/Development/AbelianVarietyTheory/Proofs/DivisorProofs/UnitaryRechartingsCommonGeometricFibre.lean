@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCommonFibre
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.Models GlobalTheory.LN GlobalTheory.ShFam GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc
@@ -101,13 +106,17 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host 
     hW.cancel (hc.congr (Category.id_comp _).symm ec.symm) (by rw [ew, Category.comp_id])
   have hb'' : IsGrpPullback Q.A ρ''.P.A (spMap (σ.comp S''.R.val.toRingHom)) (e ≫ k₀'' ≫ α'') :=
     (he.comp (hk₀''.comp hα'')).congr (by rw [Category.id_comp]; exact sp_comp (RingHom.ext fun _ => rfl)) rfl
-  have hA : pull α (cls ρ'.P.L ρ'.P.isLB) = pull β (cls _ Xo.univ.t.PP.isLB) := by
+  have iso_iff {X Y : Scheme.{0}} {L : LB X} {M : LB Y} (hL : L.IsLB) (hM : M.IsLB) (φ : X ⟶ Y) :
+      LBIso L (M.pull φ) ↔ cls L hL = GlobalTheory.CechPic.pull φ (cls M hM) := by
+    rw [← cls_pull hM φ (pull_isLB hM φ)]
+    exact (cls_eq_iff hL _).symm
+  have hA : GlobalTheory.CechPic.pull α (cls ρ'.P.L ρ'.P.isLB) = GlobalTheory.CechPic.pull β (cls _ Xo.univ.t.PP.isLB) := by
     rw [← cls_pull ρ'.P.isLB α (pull_isLB ρ'.P.isLB α)]
     exact (iso_iff (pull_isLB ρ'.P.isLB α) Xo.univ.t.PP.isLB β).1 hL
-  have hA'' : pull α'' (cls ρ''.P.L ρ''.P.isLB) = pull β'' (cls _ Xo.univ.t.PP.isLB) := by
+  have hA'' : GlobalTheory.CechPic.pull α'' (cls ρ''.P.L ρ''.P.isLB) = GlobalTheory.CechPic.pull β'' (cls _ Xo.univ.t.PP.isLB) := by
     rw [← cls_pull ρ''.P.isLB α'' (pull_isLB ρ''.P.isLB α'')]
     exact (iso_iff (pull_isLB ρ''.P.isLB α'') Xo.univ.t.PP.isLB β'').1 hL''
-  have hk : pull k₀ (pull β (cls _ Xo.univ.t.PP.isLB)) = pull k₀'' (pull β'' (cls _ Xo.univ.t.PP.isLB)) := by
+  have hk : GlobalTheory.CechPic.pull k₀ (GlobalTheory.CechPic.pull β (cls _ Xo.univ.t.PP.isLB)) = GlobalTheory.CechPic.pull k₀'' (GlobalTheory.CechPic.pull β'' (cls _ Xo.univ.t.PP.isLB)) := by
     rw [← pull_comp, ← pull_comp, hkb]
   have lb'' : LBIso Q.L (ρ''.P.L.pull (e ≫ k₀'' ≫ α'')) := by
     rw [iso_iff Q.isLB ρ''.P.isLB, (iso_iff Q.isLB ρ'.P.isLB _).1 lc, ← ec]

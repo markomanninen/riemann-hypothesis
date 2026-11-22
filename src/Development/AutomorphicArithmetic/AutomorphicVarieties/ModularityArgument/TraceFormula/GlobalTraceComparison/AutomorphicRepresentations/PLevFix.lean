@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKUConjOfComp
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalTranslationCompCommutingOperator
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKUConjOfComp
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalTranslationCompCommutingOperator
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem levFix_pf :
       x ∈ Lev S M ↔ ∀ i : Pl E × Bool, Sl S i → qw n i.1 i.2 x ∈ M i.1 := by
     intro M x
     simp only [Lev, Subgroup.mem_iInf, Subgroup.mem_comap, Subtype.forall]
-  have memK : ∀ x : GF E n, x ∈ Kf E n ↔ ∀ u : Pl E, qw n u false x ∈ KGL u n := by
+  have memK : ∀ x : GF E n, x ∈ Kf E n ↔ ∀ u : Pl E, qw n u false x ∈ KGL u (n := n) := by
     intro x
     simp only [Kf, Subgroup.mem_iInf, Subgroup.mem_comap]
     rfl
@@ -152,19 +156,19 @@ theorem levFix_pf :
 
   have hHo : IsOpen (stb n ψ : Set (GF E n)) := (π.cusp ψ hψ).1.level
   have hcore : ∀ w : Pl E, ∃ M : Subgroup (GLw n w), IsOpen (M : Set (GLw n w)) ∧
-      M ≤ KGL w n ⊓ (stb n ψ).comap (jw n w false) ⊓ (stb n ψ).comap (jw n w true) ∧
-      ∀ k ∈ KGL w n, ∀ x ∈ M, k * x * k⁻¹ ∈ M := fun w =>
+      M ≤ KGL w (n := n) ⊓ (stb n ψ).comap (jw n w false) ⊓ (stb n ψ).comap (jw n w true) ∧
+      ∀ k ∈ KGL w (n := n), ∀ x ∈ M, k * x * k⁻¹ ∈ M := fun w =>
     core_exists _ _ (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).2
       (((GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).1.inter (hHo.preimage (hloc w false).1)).inter
         (hHo.preimage (hloc w true).1))
   choose M hMo hMle hMn using hcore
-  refine ⟨fun w => if w ∈ Z then M w else KGL w n, fun w => ?_, ψ, hψ, hψ0, fun k hk => ?_⟩
+  refine ⟨fun w => if w ∈ Z then M w else KGL w (n := n), fun w => ?_, ψ, hψ, hψ0, fun k hk => ?_⟩
   · by_cases hw : w ∈ Z
     · simp only [if_pos hw]
       exact ⟨hMo w, fun x hx => (hMle w hx).1.1, hMn w, fun h => absurd hw h⟩
     · simp only [if_neg hw]
       exact ⟨(GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w n).1, le_rfl,
-        fun k hk x hx => (KGL w n).mul_mem ((KGL w n).mul_mem hk hx) ((KGL w n).inv_mem hk), fun _ => trivial⟩
+        fun k hk x hx => (KGL w (n := n)).mul_mem ((KGL w (n := n)).mul_mem hk hx) ((KGL w (n := n)).inv_mem hk), fun _ => trivial⟩
   have hkN := (mem _ k).1 hk
   have hkK : k ∈ Kf E n := (hK k).1 ((mem _ k).2 fun i hi => by
     have := hkN i hi

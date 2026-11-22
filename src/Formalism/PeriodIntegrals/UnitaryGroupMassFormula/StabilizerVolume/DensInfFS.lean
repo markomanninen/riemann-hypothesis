@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfCo
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DensInfCo
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem exists_dual_of_linIndep {K : Type} [CommRing K] [IsSemisimpleRing K] {a 
   have e1 : ∑ k, Z i k * ∑ i', c i' * p (Pi.single k 1) i' =
       ∑ i', c i' * (p (Z i)) i' := by
     conv_rhs => rw [hZi]
-    simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i' _ => by ring
   rw [e1, ← hι, hp]
@@ -85,7 +90,8 @@ theorem freeSurj_of (h : SemisimpleTens) : FreeSurj := by
     have hX0 : ∑ i, s (g i) • X i = 0 := by
       funext l
       have := congrArg s (congrFun hv l)
-      simp only [v, map_sum, map_mul, s, sigR_invol (Ainf F) σ hσ, Pi.zero_apply, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [v, map_sum, map_mul, s, sigR_invol (Ainf F) σ hσ, Pi.zero_apply, map_zero] at this
       simpa [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using this
     have := Fintype.linearIndependent_iff.1 hX _ hX0 i
     have e2 := congrArg s this
@@ -93,7 +99,7 @@ theorem freeSurj_of (h : SemisimpleTens) : FreeSurj := by
     exact e2
   let half : Ainf F ⊗[F] E := algebraMap F (Ainf F ⊗[F] E) (1/2)
   have hh : half + half = 1 := by
-    simp only [half, ← map_add]; norm_num
+    simp only [half, ← map_add (f := _)]; norm_num
     first | rfl | exact Algebra.TensorProduct.one_def.symm
   have hsh : s half = half := (Algebra.TensorProduct.map (AlgHom.id F (Ainf F)) σ).commutes _
   have hw : ∀ j, ∃ w : Fin M → Ainf F ⊗[F] E, ∀ i, ∑ k, Z i k * w k =

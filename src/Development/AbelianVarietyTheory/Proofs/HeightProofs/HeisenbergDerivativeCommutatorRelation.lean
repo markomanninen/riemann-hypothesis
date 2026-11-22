@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section
 variable {G R : Type} [AddCommGroup G] [NormedAddCommGroup R] [NormedSpace ℝ R] [FiniteDimensional ℝ R]
   {ι : R →+ G} {π : G →+ R} {om : R →ₗ[ℝ] R →ₗ[ℝ] ℝ}
 
-omit [FiniteDimensional ℝ R] in
 
+omit [FiniteDimensional ℝ R] in
 theorem heisComm_coset (hπ : ∀ x, π (ι x) = x)
     (hf : ∀ (f : G → ℂ), Sm ι f → ∀ (u : R) (w : G), hD ι π om u f w =
       -(Real.pi * Complex.I) * (om (π w) u : ℝ) * f w + fderiv ℝ (fun x : R => f (w + ι x)) 0 u)
@@ -22,10 +26,10 @@ theorem heisComm_coset (hπ : ∀ x, π (ι x) = x)
     (fun x : R => hD ι π om v f (w + ι x)) = fun x : R =>
       -(Real.pi * Complex.I) * (om (π w + x) v : ℝ) * f (w + ι x) + fderiv ℝ (fun y : R => f (w + ι y)) x v := by
   funext x
-  rw [hf f h, map_add, hπ]
+  rw [hf f h, map_add (f := _), hπ]
   congr 2
   have e : (fun y : R => f (w + ι x + ι y)) = fun y : R => (fun z : R => f (w + ι z)) (x + y) := by
-    funext y; simp only [map_add, add_assoc]
+    funext y; simp only [map_add (f := _), add_assoc]
   rw [e, fderiv_comp_add_left (f := fun z : R => f (w + ι z)), add_zero]
 
 theorem heisComm_hasFDerivAt_om (a v x : R) :

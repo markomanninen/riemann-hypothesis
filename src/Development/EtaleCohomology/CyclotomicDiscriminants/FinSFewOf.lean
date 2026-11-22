@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CyclotomicDiscriminants.SFewOfCut
+module
+
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SFewOfCut
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SFewOf
 theorem few_of_statement_holds : UpperTheory.V.ZK.SFewOf := by

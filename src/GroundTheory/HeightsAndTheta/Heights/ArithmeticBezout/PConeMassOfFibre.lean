@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeFibreAverage
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralMass
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntPoly
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PPointLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeFibreAverage
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeIntegralMass
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntPoly
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PPointLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -37,7 +42,8 @@ theorem homogeneousComponent_aeval_coordPlaneSubst (m k d : ℕ) (f : MvPolynomi
     rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).2 he)]
     exact if_congr eq_comm rfl rfl
   conv_lhs => rw [← sum_homogeneousComponent f]
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   simp_rw [hterm]
   rw [Finset.sum_ite_eq']
   split_ifs with hd
@@ -46,14 +52,14 @@ theorem homogeneousComponent_aeval_coordPlaneSubst (m k d : ℕ) (f : MvPolynomi
     rw [homogeneousComponent_eq_zero _ _ (by omega), map_zero]
 
 theorem isProjPrime_coordPlaneIdeal {m : ℕ} (hm : 0 < m) (k : ℕ) :
-    IsProjPrime (coordPlaneIdeal m k) where
-  isPrime := RingHom.ker_isPrime _
-  isHomog f hf d := by
+    IsProjPrime (coordPlaneIdeal m k) := by
+  refine ⟨RingHom.ker_isPrime (aeval (coordPlaneSubst m k)), ?_, ?_⟩
+  · intro f hf d
     rw [coordPlaneIdeal, RingHom.mem_ker] at hf ⊢
     rw [← homogeneousComponent_aeval_coordPlaneSubst, hf, map_zero]
-  isRelevant := ⟨Fin.castAdd k ⟨0, hm⟩, by
+  · refine ⟨Fin.castAdd k ⟨0, hm⟩, ?_⟩
     rw [coordPlaneIdeal, RingHom.mem_ker, aeval_X, coordPlaneSubst, Fin.append_left]
-    exact X_ne_zero _⟩
+    exact X_ne_zero _
 
 theorem pointOf_std {n : ℕ} (y : EuclideanSpace ℂ (Fin n)) :
     (HermNorm.std n).pointOf y = fun i => y i := by

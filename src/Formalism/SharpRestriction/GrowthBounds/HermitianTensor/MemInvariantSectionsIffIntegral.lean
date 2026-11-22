@@ -1,10 +1,14 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudADef
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIso
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsTwoWeightIff
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CcDualWtAnti
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudADef
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIso
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.MemInvariantSectionsTwoWeightIff
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CcDualWtAnti
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDrowLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ private theorem rowAct_mul_lemma_0 {k n : ℕ} (g h : Matrix (Fin k) (Fin k) K) 
   have e : (rowAct K (n := n) g).comp (rowAct K (n := n) h) = rowAct K (n := n) (h * g) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp only [AlgHom.comp_apply, rowAct, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rowAct, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq,
       Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun _ _ => Finset.sum_congr rfl (fun _ _ => ?_))
@@ -160,7 +165,8 @@ theorem rowAct_D {k : ℕ} (c : K) (f : MvPolynomial (Fin (k + 1) × Fin (k + 1)
     rw [smul_monomial, C_mul_monomial, C_mul_monomial, smul_eq_mul]
     congr 1
     ring
-  rw [f.as_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl (fun u hu => ?_)
   rw [hmono, h u (mem_support_iff.mp hu)]
 
@@ -249,8 +255,7 @@ theorem hw_prim [IsLocalRing O] (hinj : Function.Injective (algebraMap O K)) (w 
       eval₂_comp_left, RingHom.comp_id]
     congr 1
     funext v
-    simp only [Function.comp_apply]
-    split_ifs <;> simp
+    by_cases h : v.1 = v.2 <;> simp [Function.comp_apply, h]
   rw [h2, ← map_mul] at h1
   have h3 : (1 : O) = w * eval (fun v : Fin k × Fin k => if v.1 = v.2 then (1 : O) else 0) z :=
     hinj (by rw [map_one]; exact h1)

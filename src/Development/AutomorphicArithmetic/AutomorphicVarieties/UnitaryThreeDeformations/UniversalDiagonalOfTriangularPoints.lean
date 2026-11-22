@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FinCrit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DiagEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FiniteResidue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FinCrit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DiagEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresEx
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia UpperTheory.V.Pr
 
@@ -23,8 +27,10 @@ theorem UpperTheory.V.UnitaryThreeInertia.universal_diagonal_of_triangular_point
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    F.Cl1 → ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R), F.IsUniv g₁ u →
-    (∀ (A : Type) [CommRing A] [Algebra O A] [IsCD O A], (∀ a ∈ maximalIdeal O, algebraMap O A a = 0) → ∀ r : Γ →* GG 3 A, F.IsPt g₁ r → Upper F.η r ∨ Lower F.η r) →
+    F.Cl1 → ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
+      (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u →
+    (∀ (A : Type) [CommRing A] [Algebra O A] [IsCD O A], (∀ a ∈ maximalIdeal O, algebraMap O A a = 0) →
+      ∀ r : Γ →* GG (m := 3) (R := A), F.IsPt g₁ r → Upper F.η r ∨ Lower F.η r) →
       Module.Finite O (wpart O u 0) := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hOk hCl g₁ hg₁ R _ _ _ u hu htri
   obtain ⟨W, hW, -⟩ := exists_adapted F hOk g₁ hg₁ u hu

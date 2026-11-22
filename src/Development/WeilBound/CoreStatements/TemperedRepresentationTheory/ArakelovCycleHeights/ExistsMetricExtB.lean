@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.Bridge
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArFormExistsOfInt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArMixOfBaseInt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HeightProjectionOfInt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.Bridge
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArFormExistsOfInt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ArMixOfBaseInt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HeightProjectionOfInt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,7 +54,7 @@ theorem exists_lb_twB (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp ℤ) (D : �
       (c : ι → Fin m) (t : ι → ℤ), ∀ j, LBIso ((twB m n (c j) (t j)).pull i) (B j) := by
   obtain ⟨N, e, he, hep⟩ := hX.isProjOver
   haveI := he
-  choose tt r g hg hcls using fun j => GlobalTheory.Amb.exists_twist_map e (B j) (hB j)
+  choose tt r g hg hcls using fun (j : ι) => GlobalTheory.Amb.exists_twist_map e (B j) (hB j)
   set eq := Fintype.equivFin ι
   let n : Fin (Fintype.card ι + 1) → ℕ := Fin.cons N (fun k => r (eq.symm k))
   let a : (i : Fin (Fintype.card ι + 1)) → X ⟶ projectiveSpace ℤ (n i) :=
@@ -109,7 +113,7 @@ theorem exists_ambientZ {X : Scheme.{0}} [IsIntegral X] {p : X ⟶ Sp ℤ} {D : 
     exists_lb_twB X p D hX ι (fun j => (L j).B) (fun j => (L j).isLB)
   haveI := hci
   haveI := GlobalTheory.Amb.isIntegral_mp ℤ m n
-  choose M hMB hMI using fun j => exists_metric_ext_B ℤ (MP ℤ m n) (mpStr ℤ m n) _ (isArithVar_mpZ m n)
+  choose M hMB hMI using fun (j : ι) => exists_metric_ext_B ℤ (MP ℤ m n) (mpStr ℤ m n) _ (isArithVar_mpZ m n)
     (GlobalTheory.Amb.genSmooth_mp ℤ m n) X i p hi (twB m n (c j) (t j)) (isLB_twB m n (c j) (t j)) (L j) (hiso j)
   exact ⟨m, n, i, hci, hi, M, fun j => isTwB_of_eq (M j) (c j) (t j) (hMB j), hMI⟩
 
@@ -158,10 +162,14 @@ theorem proj (HH : HeightsZ) (HQ : HeightsQ) (HP : ProjQ) : HeightProjection := 
   have hXh : L.IsArithHeight (fun x => hM0 (i x)) := (hI ()).isArithHeight hX (hhM.restrict hAM i hi)
   have heq : h = fun x => hM0 (i x) := GlobalTheory.HermLB.IsArithHeight.unique hX hh hXh
   have hY1 := hh'.restrict hAQ j hjq
-  have hY2 := (GlobalTheory.HermLB.refines_pull_pull (M ()) (qpSnd n' m n) (qpSnd_str n' m n) j hjq
-    (by rw [Category.assoc, qpSnd_str, hjq])).isArithHeight hY hY1
+  have iso_of_refines {Z : Scheme.{0}} {r : Z ⟶ Sp ℤ} {A B : HermLB r} {v : A.B.ι → B.B.ι}
+      (hv : Refines A B v 0) : A.Isometric B :=
+    GlobalTheory.HermLB.isometric_of_chart v hv.le (fun x j j' hj hj' => hv.g Z (𝟙 Z) x j j' hj hj')
+      (fun σ j y hy => ((hv.φ σ j y hy).trans (add_zero _)).symm)
+  have hY2 := (iso_of_refines (GlobalTheory.HermLB.refines_pull_pull (M ()) (qpSnd n' m n) (qpSnd_str n' m n) j hjq
+    (by rw [Category.assoc, qpSnd_str, hjq]))).isArithHeight hY hY1
   rw [GlobalTheory.Published.Amb.pull_congr (M ()) hjs _ hπi] at hY2
-  have hY3 := (GlobalTheory.HermLB.refines_pull_comp (M ()) i hi π hπ hπi).isArithHeight hY hY2
+  have hY3 := (iso_of_refines (GlobalTheory.HermLB.refines_pull_comp (M ()) i hi π hπ hπi)).isArithHeight hY hY2
   have hY4 := ((hI ()).pull π hπ).isArithHeight hY hY3
   refine ⟨fun y => h' (j y), hY4, ?_⟩
   have hpt : qpSnd n' m n (j (genericPoint Y)) = i (π (genericPoint Y)) := by

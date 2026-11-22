@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -17,7 +22,7 @@ theorem divCycle_support_finite {F : Type u} [Field F] {K : Type} [Fintype K] [D
   by_contra h
   apply hW
   simp only [divCycle]
-  rw [dif_neg (fun h' => h h'.1)]
+  rw [dite_eq_right (fun h' => h h'.1)]
 
 theorem cycEval_ratDiv {F : Type u} [Field F] {K : Type} [Fintype K] [DecidableEq K]
     {ι : K → Type} [∀ k, Fintype (ι k)] (N : Ideal (MRing ι F) → ℤ) (P : Ideal (MRing ι F))

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.StdSubAtOfRing
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.StdSubAtOfRing
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable (D : D7) (sc : Scale) (Ce : ℝ)
   (hd : ∀ u w h, ((X u w h).gat (rSc sc D.R.k (D.what₂.places.resChar w)) (epSc D.R sc Ce (D.what₂.places.resChar w))).d =
     Module.finrank ℂ (D.mem u).A.Mu0)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem gatIs_recG (H : LevelData (recG D sc Ce Lc X hd)) (hL : ∀ u, H u = Lc u)
     (hH : ∀ u w h, Cmp.HypAtP (X u w h).I) (u : D.what₂.Word) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) : GatIs (recG D sc Ce Lc X hd) H u w hg := by

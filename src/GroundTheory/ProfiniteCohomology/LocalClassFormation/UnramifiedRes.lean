@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.Unramified
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.Unramified
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -7,7 +12,7 @@ namespace GroundTheory.ProfCoh
 open CategoryTheory GroundTheory.LocalField ValuativeRel
 
 instance valuativeExtension_self (F : Type*) [Field F] [ValuativeRel F] : ValuativeExtension F F :=
-  ⟨fun _ _ => Iff.rfl⟩
+  ⟨fun {_ _} => Iff.rfl⟩
 
 section Tower
 
@@ -36,12 +41,6 @@ noncomputable def unitsResHom :
       ext x
       exact algebraMap_galRestrict_apply K K' L L' σ _⟩
 
-@[simp]
-theorem unitsResHom_hom_apply (x : Additive Lˣ) :
-    ((Additive.toMul ((unitsResHom K K' L L').hom x) : L'ˣ) : L') =
-      algebraMap L L' (x.toMul : L) :=
-  rfl
-
 noncomputable abbrev unitsResH2 :
     groupCohomology (galUnitsZ K L) 2 ⟶ groupCohomology (galUnitsZ K' L') 2 :=
   groupCohomology.map (galRestrict K K' L L') (unitsResHom K K' L L') 2
@@ -51,26 +50,28 @@ variable [ValuativeRel K'] [TopologicalSpace K'] [IsNonarchimedeanLocalField K']
   [ValuativeExtension K' L'] [ValuativeExtension L L'] [FiniteDimensional K K']
   [FiniteDimensional K' L'] [IsUnramified K' L']
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [FiniteDimensional K L] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [FiniteDimensional K L] in
 theorem ramificationIndex_right_eq :
-    ramificationIndex L L' = ramificationIndex K K' := by
+    (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L'))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) = (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation K'))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) := by
   have : ValuativeExtension K L' := valuativeExtension_trans K K' L'
   have : FiniteDimensional K L' := FiniteDimensional.trans K K' L'
   have : FiniteDimensional L L' := FiniteDimensional.right K L L'
   have h1 := ramificationIndex_tower K L L'
   have h2 := ramificationIndex_tower K K' L'
-  rw [IsUnramified.ramificationIndex_eq_one (K := K) (L := L), one_mul] at h1
-  rw [IsUnramified.ramificationIndex_eq_one (K := K') (L := L'), mul_one] at h2
-  rw [← h1, h2]
+  have hKL : ramificationIndex K L = 1 := IsUnramified.ramificationIndex_eq_one
+  have hK'L' : ramificationIndex K' L' = 1 := IsUnramified.ramificationIndex_eq_one
+  rw [hKL, one_mul] at h1
+  rw [hK'L', mul_one] at h2
+  exact h1.symm.trans h2
 
-theorem card_residueField_eq_pow : Nat.card 𝓀[K'] = Nat.card 𝓀[K] ^ residueDegree K K' := by
+theorem card_residueField_eq_pow : Nat.card 𝓀[K'] = Nat.card 𝓀[K] ^ ((IsLocalRing.maximalIdeal 𝒪[K']).inertiaDeg (𝒪[K])) := by
   let := Fintype.ofFinite 𝓀[K]
   let := Fintype.ofFinite 𝓀[K']
   rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card,
     Module.card_eq_pow_finrank (K := 𝓀[K]) (V := 𝓀[K']), residueDegree_eq_finrank]
 
-theorem galRestrict_frob : galRestrict K K' L L' (frob K' L') = frob K L ^ residueDegree K K' := by
+theorem galRestrict_frob : galRestrict K K' L L' (frob K' L') = frob K L ^ ((IsLocalRing.maximalIdeal 𝒪[K']).inertiaDeg (𝒪[K])) := by
   have he := IsUnramified.ramificationIndex_eq_one (K := K) (L := L)
   apply residueAlgEquiv_injective_of_unramified K L he
   ext y
@@ -95,14 +96,14 @@ theorem galRestrict_frob : galRestrict K K' L L' (frob K' L') = frob K L ^ resid
 theorem unitsResH2_comp_h2Valuation :
     unitsResH2 K K' L L' ≫ h2Valuation K' L' =
       h2Valuation K L ≫ groupCohomology.map (galRestrict K K' L L')
-        (intMulRes (galRestrict K K' L L') (ramificationIndex K K')) 2 := by
+        (intMulRes (galRestrict K K' L L') ((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation K'))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))))) 2 := by
   have : FiniteDimensional K L' := FiniteDimensional.trans K K' L'
   have : FiniteDimensional L L' := FiniteDimensional.right K L L'
   simp only [h2Valuation, groupCohomology.functor_map]
   rw [← groupCohomology.map_comp, ← groupCohomology.map_comp]
   refine groupCohomology.map_congr (by ext; rfl) (LinearMap.ext fun x => ?_) 2
   change ord (algebraMap L L' ((Additive.toMul x : Lˣ) : L)) =
-    (ramificationIndex K K' : ℤ) * ord ((Additive.toMul x : Lˣ) : L)
+    ((_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation K'))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) : ℤ) * ord ((Additive.toMul x : Lˣ) : L)
   rw [ord_algebraMap, ramificationIndex_right_eq K K' L L']
 
 theorem unramifiedInv_unitsResH2 (x : groupCohomology (galUnitsZ K L) 2) :

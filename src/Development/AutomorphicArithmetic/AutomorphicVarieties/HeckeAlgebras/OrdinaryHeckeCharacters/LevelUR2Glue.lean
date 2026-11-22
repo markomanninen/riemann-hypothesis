@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
@@ -36,7 +40,7 @@ theorem UpperTheory.V.Hi.levelUR2Glue :
         calc f t (z + w) = f t ((⟨z, hz⟩ + ⟨w, hw⟩ : N k) : P) := rfl
           _ = ((μ k t (⟨z, hz⟩ + ⟨w, hw⟩) : N k) : P) := hf t k _
           _ = ((μ k t ⟨z, hz⟩ : N k) : P) + ((μ k t ⟨w, hw⟩ : N k) : P) := by
-            rw [map_add, Submodule.coe_add]
+            rw [map_add (f := _), Submodule.coe_add]
           _ = f t z + f t w := by rw [← hf t k ⟨z, hz⟩, ← hf t k ⟨w, hw⟩]
       map_smul' := by
         intro a z
@@ -68,7 +72,7 @@ theorem UpperTheory.V.Hi.levelUR2Glue :
     show f (s + t) z = f s z + f t z
     calc f (s + t) z = ((μ k (s + t) ⟨z, hz⟩ : N k) : P) := hf _ k ⟨z, hz⟩
       _ = ((μ k s ⟨z, hz⟩ : N k) : P) + ((μ k t ⟨z, hz⟩ : N k) : P) := by
-        rw [map_add, LinearMap.add_apply, Submodule.coe_add]
+        rw [map_add (f := _), LinearMap.add_apply, Submodule.coe_add]
       _ = f s z + f t z := by rw [← hf s k ⟨z, hz⟩, ← hf t k ⟨z, hz⟩]
   · intro k t y
     exact hf t k y

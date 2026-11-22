@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneMemH0WeightZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneMemH0WeightZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem peel_HL (hP : Peel A X XT sp) (hdT : IsDominant XT) (hdsp : IsDominant s
 end Lat
 
 theorem dualWeyl_zero_const {R : Type} [CommRing R] {r n : ℕ} (F : MvPolynomial (Fin r × Fin n) R)
-    (hF : F ∈ dualWeyl R r n 0) : F = C (coeff 0 F) := by
+    (hF : F ∈ dualWeyl R r n 0) : F = C (AddMonoidAlgebra.coeff F 0) := by
   classical
   have h1 : IsWeightedHomogeneous (colW r n) F 0 := (mem_dualWeyl_iff.1 hF).1
   ext e

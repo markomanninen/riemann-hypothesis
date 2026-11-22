@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatake
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalGLLocalComponentsEventuallySatake
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MuCharacterExists
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CuspRepSatakeIffLocalComponentSatake
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspidalGLLocalComponentsEventuallySatake
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.FormsFiniteGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MuCharacterExists
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
 open UpperTheory.V.Af.Bc (cPl)
@@ -49,7 +53,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm.rChoice :
     rcases (hm w₀).2 with e | e <;> rwa [e]
   choose! B hB using fun w (h : ∃ B, (CG.mk π).HasSat w B) => h
   choose τ hτ using fun w => GlobalTheory.CuspRep.LocEx.exists_isLocComp hF E n π w
-  have hf : ∀ w : Pl E, ∃ g : GLw n w → ℂ, Lc (KGL w n) g ∧ trc (τ w).ρ (KGL w n) g ≠ 0 ∧
+  have hf : ∀ w : Pl E, ∃ g : GLw n w → ℂ, Lc (KGL w (n := n)) g ∧ trc (τ w).ρ (KGL w (n := n)) g ≠ 0 ∧
       (w = w₁ → ∀ y, g y ≠ 0 → y.val.charpoly.Separable) := fun w => by
     by_cases h : w = w₁
     · subst h

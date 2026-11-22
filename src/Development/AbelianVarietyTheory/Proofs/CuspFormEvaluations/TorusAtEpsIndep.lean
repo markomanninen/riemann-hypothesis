@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TorusAtData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.I2
 
@@ -39,7 +43,8 @@ theorem herm_add_right (G : Matrix (Fin r) (Fin r) E) (u v v' : Fin r → E) :
 theorem cc_herm {G : Matrix (Fin r) (Fin r) E} (hG : ∀ a b, cc (G a b) = G b a) (u v : Fin r → E) :
     cc (herm G u v) = herm G v u := by
   have h : cc (herm G u v) = ∑ a, ∑ b, cc (u a * G a b * cc (v b)) := by
-    simp only [herm, cc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [herm, cc, map_sum]
   rw [h, herm, Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [cc_mul, cc_mul, cc_cc, hG]; ring
@@ -57,11 +62,11 @@ theorem B_adj (X : Data E r) (a : E) (u v : Fin r → E) : B X (a • u) v = B X
 
 theorem B_add_left (X : Data E r) (u u' v : Fin r → E) : B X (u + u') v = B X u v + B X u' v := by
   unfold B
-  rw [herm_add_left, mul_add, map_add]
+  rw [herm_add_left, mul_add, map_add (f := _)]
 
 theorem B_add_right (X : Data E r) (u v v' : Fin r → E) : B X u (v + v') = B X u v + B X u v' := by
   unfold B
-  rw [herm_add_right, mul_add, map_add]
+  rw [herm_add_right, mul_add, map_add (f := _)]
 
 theorem B_sub_smul (X : Data E r) (a b : E) (u v : Fin r → E) :
     B X u ((a - b) • v) = B X u (a • v) - B X u (b • v) := by
@@ -163,7 +168,7 @@ theorem par_of_torusAt (X : DataX E r) {x : Frame X.Ψ r} (A : TorusAt X.toData 
   have h := A.T.eps_add (A.φ u) ((A.lat _).2 ⟨u, hu, rfl⟩) (A.φ v) ((A.lat _).2 ⟨v, hv, rfl⟩)
   have hd' := hd
   unfold B at hd'
-  rw [← map_add, eps_val A hu ha, eps_val A hv hb, eps_val A huv hc, A.im_eq u hu v hv, hd',
+  rw [← map_add (f := _), eps_val A hu ha, eps_val A hv hb, eps_val A huv hc, A.im_eq u hu v hv, hd',
     cos_sign A.sg_pm] at h
   have h1 : c.negOnePow = (a + b + d).negOnePow := by
     rw [Int.negOnePow_add, Int.negOnePow_add]
@@ -181,8 +186,8 @@ end GlobalTheory.SemicharIndep
 
 namespace GlobalTheory
 
-open SemicharIndep in
 
+open SemicharIndep in
 theorem torusAt_eps_indep : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : DataX E r), (∃ w0 : 𝓞 E, ∀ u ∈ X.Λ, ∀ v ∈ X.Λ, ∃ k : ℤ, Algebra.trace ℚ E (X.ξ0 * herm X.Gm u (((w0 : E) - cc (w0 : E)) • v)) - Algebra.trace ℚ E (X.ξ0 * herm X.Gm u v) = 2 * k) → ∀ (x x' : Frame X.Ψ r) (A : TorusAt X.toData x) (A' : TorusAt X.toData x') (γ : GL (Fin r) E), IsUStab X.Gm X.Λ γ → ∀ v ∈ X.Λ, A'.T.eps (A'.φ ((γ : Matrix (Fin r) (Fin r) E).mulVec v)) = A.T.eps (A.φ v) := by
   intro E _ _ _ r X _ x x' A A' γ hγ v hv
   obtain ⟨a, ha⟩ := B_int X hv (smul_mem X.toData A.w0 hv)

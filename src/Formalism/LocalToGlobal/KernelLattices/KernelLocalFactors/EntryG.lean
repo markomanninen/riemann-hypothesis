@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.KernelLattices.EntryG
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.EntryG
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -167,8 +171,6 @@ end Rec
 section Deg
 
 variable {K : Type} [Field K] {ι : Type} [Fintype ι] {a b : ℕ}
-
-def wtD (ι : Type) (a b : ℕ) : ((ι × Fin b × Fin b) ⊕ DVar ι a b) → ℕ := Sum.elim (fun _ => 0) (fun _ => 1)
 
 end Deg
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.CoverLowOfCov
-import Development.AbelianVarietyTheory.Definitions.Foundations.PowLtFirstRadius
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.CoverLowOfCov
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PowLtFirstRadius
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry NumberField IsDedekindDomain GlobalTheory.EtC GlobalTheory.Et GlobalTheory.GalV UpperTheory.Gal.G3
 universe u v

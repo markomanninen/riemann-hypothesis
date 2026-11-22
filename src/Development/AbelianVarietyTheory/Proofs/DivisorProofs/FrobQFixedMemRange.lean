@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtD
-import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtD
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TwOrbMEqTwOrbUOfNormal
+
+@[expose] public section
+
 open ReciprocityTheory.DiscreteGroups.LocalClassField GlobalTheory.LKRes
 
 namespace GlobalTheory.LKRes

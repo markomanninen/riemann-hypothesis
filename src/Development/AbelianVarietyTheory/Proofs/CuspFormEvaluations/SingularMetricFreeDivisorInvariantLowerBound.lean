@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OfRealRpowNegLe
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormBcharMulNfacRmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.Generic
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LocalUnfoldBStatementHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OfRealRpowNegLe
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.NormBcharMulNfacRmul
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology GlobalTheory.Shares
 open scoped ContDiff ENNReal Matrix
@@ -14,8 +18,8 @@ open GlobalTheory.Up GlobalTheory.Up.DivMetricPf
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} {X : Data E r}
 
-open Classical in
 
+open Classical in
 noncomputable def Wfree (Xa : ArchInM X) (Fl : FlatM X Xa) (G : Wt X.Ψ r) (n : ℕ) (x : Frame X.Ψ r) : ℝ≥0∞ :=
   if x ∈ X.dom then ENNReal.ofReal (Real.exp (-phla X G x)) *
     ENNReal.ofReal (∑ k, ‖Xa.w k x‖ ^ 2) ^ (-(1 / 2 : ℝ)) *
@@ -88,9 +92,9 @@ theorem measurable_Wfree : Measurable (Wfree Xa Fl G n) := by
   have ha : ContinuousOn (fun x => Real.exp (-phla X G x)) X.dom :=
     Real.continuous_exp.comp_continuousOn (IW.phla_contOn X G).neg
   have hA : ContinuousOn (fun x => ∑ k, ‖Xa.w k x‖ ^ 2) X.dom :=
-    continuousOn_finset_sum _ fun k _ => ((hw k).norm).pow 2
+    continuousOn_finsetSum _ fun k _ => ((hw k).norm).pow 2
   have hB : ContinuousOn (fun x => ∑ k, ‖Fl.s k x‖ ^ 2) X.dom :=
-    continuousOn_finset_sum _ fun k _ => ((hs k).norm).pow 2
+    continuousOn_finsetSum _ fun k _ => ((hs k).norm).pow 2
   have e : Wfree Xa Fl G n = fun x =>
       X.dom.indicator (fun x => ENNReal.ofReal (Real.exp (-phla X G x))) x *
         X.dom.indicator (fun x => ENNReal.ofReal (∑ k, ‖Xa.w k x‖ ^ 2)) x ^ (-(1 / 2 : ℝ)) *

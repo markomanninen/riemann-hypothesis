@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaI
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaJ
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsEquiv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsKfin
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdegTransfer
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaI
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaJ
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormulaK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsEquiv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsKfin
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FdegTransfer
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,17 +24,17 @@ theorem tf_kstable_fin (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D 
   obtain ⟨Z, hZ, rfl⟩ := exists_exp_eq_of_mem_Kset hk
   have hE := hD.glRep
   have hv0 : v ∈ layer ε E V0 0 := hv
-  obtain ⟨C, hC0, hC⟩ := exists_norm_actM_pow_le_of_inK hE hVK hVf hZ 0
+  obtain ⟨C, _, hC⟩ := exists_norm_actM_pow_le_of_inK hE hVK hVf hZ 0
   have hs : Summable fun m : ℕ => C ^ m * ‖v‖ * |(1 : ℝ) - 0| ^ m / (m.factorial : ℝ) := by
     have := (Real.summable_pow_div_factorial C).mul_right ‖v‖
     refine this.congr fun m => ?_
-    simp
+    simp only [sub_zero, abs_one, one_pow, mul_one]
     ring
   have hsum := hasSum_orbit_of_bound hσ hD hZ.1 v (fun m => C ^ m * ‖v‖) (fun m => hC v hv0 m) 0 1 hs
   rw [exp_zero_smul, hσ.1.1] at hsum
-  simp only [Complex.ofReal_one, one_smul, ContinuousLinearMap.one_apply] at hsum
+  simp only [Complex.ofReal_one, one_smul, one_apply_eq_self] at hsum
   have : FiniteDimensional ℂ (V0.map D.subtype) := Module.Finite.map _ _
-  have hcl : IsClosed ((V0.map D.subtype : Submodule ℂ H) : Set H) := Submodule.closed_of_finiteDimensional _
+  have hcl : IsClosed ((V0.map D.subtype : Submodule ℂ H) : Set H) := Submodule.isClosed_of_finiteDimensional _
   refine hcl.mem_of_tendsto hsum.tendsto_sum_nat (Filter.Eventually.of_forall fun N => ?_)
   refine Submodule.sum_mem _ fun m _ => Submodule.smul_mem _ _ ?_
   exact Submodule.mem_map_of_mem (actM_pow_mem_layer_of_inK hE hVK hZ hv0 m)
@@ -136,7 +140,7 @@ theorem tf_phi (dual : Bool) {lam : Fin n → ℝ} (hσ : IsURepOn (UJset ε) σ
       map_smul' := fun a f => Subtype.ext (vectorL2_ext fun c => by
         refine Eq.trans ?_ (toL2_smul_smooth ε a _)
         refine toL2_congr_of_eq_on_UJset fun g _ => ?_
-        simp [coefMap, tensGrp, mul_sum, mul_left_comm]) }
+        cases dual <;> simp [coefMap, tensGrp, ← smul_comm a, ← Finset.smul_sum, mul_sum]) }
   refine ⟨Φ, fun f => rfl, fun a b f => Subtype.ext (vectorL2_ext fun c => ?_)⟩
   refine (tfRdiag_smE (fun c => toL2_mem_smD_of_isSmoothL2 (hce c f.1 f.2).1) a b c).trans ?_
   refine (rightDerivative_toL2 (hce c f.1 f.2).1 a b).trans (toL2_congr_of_eq_on_UJset fun g hg => ?_)

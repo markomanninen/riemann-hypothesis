@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwSecPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwSecPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.E4 LateralTheory.E.LeafTwSecPf
@@ -76,6 +80,7 @@ theorem aux {q : ℕ} [NeZero q] {A : Type} [CommRing A] [Nontrivial A] (i : ℤ
 theorem LeafTwInj_of : LeafTwInj := by
   intro q _ B _ ζ k
   refine ⟨fun {X} x y h => ?_⟩
+  change ULift.{1} (ZMod q) at x y
   by_cases hX : Nonempty X.unop.left
   · haveI : Nontrivial Γ(X.unop.left, ⊤) := by
       obtain ⟨p⟩ := hX

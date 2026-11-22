@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.FinrankAdjoinRootsEqRootDeg
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.LevelInertiaLeLevelDec
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.FinrankAdjoinRootsEqRootDeg
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Gal Formalism.ConjugateSelfDual Formalism.GaloisCohomology UpperTheory.V.LDataCardLeFinrank
 
@@ -11,7 +15,7 @@ theorem UpperTheory.V.LDataCardLeFinrank.galTransport :
   have hc : ∀ g : G F' Ω', ∀ x : F,
       ((σ.trans g.toRingEquiv).trans σ.symm) (algebraMap F Ω x) = algebraMap F Ω x := by
     intro g x
-    simp only [RingEquiv.trans_apply, hσ, AlgEquiv.toRingEquiv_eq_coe, AlgEquiv.coe_ringEquiv,
+    simp only [RingEquiv.trans_apply, hσ, AlgEquiv.coe_toRingEquiv, AlgEquiv.coe_ringEquiv,
       AlgEquiv.commutes]
     rw [← hσ, RingEquiv.symm_apply_apply]
   let φ : G F' Ω' →* G F Ω :=
@@ -46,7 +50,8 @@ theorem UpperTheory.V.LDataCardLeFinrank.galTransport :
     rw [AlgEquiv.smul_def]
     have hs := congrArg (fun z : E => (z : Ω)) (b.sum_repr ⟨y, hy⟩)
     simp only [IntermediateField.coe_sum, IntermediateField.coe_smul] at hs
-    rw [← hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hs, map_sum]
     simp [map_smul, hb]
   · intro l _ g
     haveI : CharZero Ω := charZero_of_injective_algebraMap (algebraMap F Ω).injective

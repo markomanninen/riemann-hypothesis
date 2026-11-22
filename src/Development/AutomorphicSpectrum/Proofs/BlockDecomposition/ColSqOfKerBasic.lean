@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal Pointwise
@@ -17,7 +21,7 @@ theorem colSq_of_kerBasic : KerBasic → ColSq := by
   let A : X.G → ℝ≥0∞ := fun x => ∑' γ : X.Γ, ‖φ (x⁻¹ * (γ : X.G) * y)‖ₑ
   have hterm : ∀ γ : X.Γ, Measurable fun x : X.G => ‖φ (x⁻¹ * (γ : X.G) * y)‖ₑ := fun γ =>
     (hT.1.comp (by fun_prop)).enorm.measurable
-  have hAm : Measurable A := Measurable.ennreal_tsum hterm
+  have hAm : Measurable A := Measurable.tsum hterm
   have hAinv : ∀ (δ : X.Γ) (x : X.G), A ((δ : X.G) * x) = A x := by
     intro δ x
     simp only [A]

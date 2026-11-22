@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleWordBasis
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfReducibility
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantOrthogonalityHolds
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorSelfAdjoint
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LowerSetTypesSpan
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.AdmissibleWordBasis
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GeneratedWeightLemmaOfReducibility
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ContravariantOrthogonalityHolds
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorSelfAdjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,11 +21,6 @@ theorem dominanceOrder_refl {n : ℕ} (a : Fin n → ℤ) : DomLE a a := ⟨fun 
 
 theorem dominanceOrder_trans {n : ℕ} {a b c : Fin n → ℤ} (h1 : DomLE a b) (h2 : DomLE b c) : DomLE a c :=
   ⟨fun x => (h1.1 x).trans (h2.1 x), h1.2.trans h2.2⟩
-
-theorem dominanceOrder_antisymm {n : ℕ} {a b : Fin n → ℤ} (h1 : DomLE a b) (h2 : DomLE b a) : a = b := by
-  have h1' := (dominanceOrder_iff a b).1 h1
-  have h2' := (dominanceOrder_iff b a).1 h2
-  exact (Formalism.InvariantFactorPaths.GelfandTsetlinBases.A3ev.domLe_eq h1' (Finset.sum_le_sum fun j _ => h2'.2 j)).symm
 
 theorem dominanceOrder_add_negative_root {n : ℕ} (ν : Fin n → ℤ) {c d : Fin n} (h : d < c) : DomLE (ν + rootW c d) ν := by
   classical
@@ -273,8 +272,16 @@ theorem isotypicProj_commute_prefix (D : Formalism.BasicNotions.D7) (i j : Fin (
     (he : IsIsoProj (glOps F n LL {l | l.val < i.val}) lam e)
     (he' : IsIsoProj (glOps F n LL {l | l.val < j.val}) lam' e') : e * e' = e' * e := by
   rcases le_total i j with hij | hij
-  · exact isotypicProj_commute_of_subset LL D _ _ (fun l (hl : l.val < i.val) => lt_of_lt_of_le hl hij) lam lam' e e' he he'
-  · exact (isotypicProj_commute_of_subset LL D _ _ (fun l (hl : l.val < j.val) => lt_of_lt_of_le hl hij) lam' lam e' e he' he).symm
+  · exact isotypicProj_commute_of_subset LL D _ _ (by
+      intro l hl
+      change l.val < i.val at hl
+      change l.val < j.val
+      exact lt_of_lt_of_le hl hij) lam lam' e e' he he'
+  · exact (isotypicProj_commute_of_subset LL D _ _ (by
+      intro l hl
+      change l.val < j.val at hl
+      change l.val < i.val
+      exact lt_of_lt_of_le hl hij) lam' lam e' e he' he).symm
 
 end comm
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +22,15 @@ abbrev GV (D : D7) : Type := (VS D).V ≃ₗ[D.host.E] (VS D).V
 
 abbrev LV (D : D7) : Type := Submodule (𝓞 D.host.E) (VS D).V
 
-def Adapt {T : D.host.E} (g : GV D) (F G : LFlag (VS D) D.R.rS T) : Prop :=
+def Adapt {T : D.host.E} (g : GV D) (F G : LFlag (D.sp.Y 0) D.R.rS T) : Prop :=
   g ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT ∧ ∀ a : Fin (D.R.rS + 1), g (frame F a) - frame G a ∈ Xflag G a.val
 
-def Aut0 {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (Λ : LV D) : Set (GV D) :=
+def Aut0 {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (Λ : LV D) : Set (GV D) :=
   {a | Adapt a F F ∧ Formalism.HermitianLatticesTheory.gmap a Λ = Λ}
 
 section Base
 
-variable {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+variable {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
 
 def H0 : Set (GV D) :=
   {h | h ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT ∧ (∀ a, h (frame F a) = frame F a) ∧ ∀ a, h (frame F' a) = frame F' a}
@@ -41,7 +45,7 @@ def stabL (Λ : LV D) : Set (GV D) := {h | h ∈ H0 F F' ∧ gdat F F' (Formalis
 
 end Base
 
-def KeyEq {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (Λ : LV D) (γ₁ γ₂ : GV D) : Prop :=
+def KeyEq {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (Λ : LV D) (γ₁ γ₂ : GV D) : Prop :=
   (∃ n ∈ NRat F, ∃ n' ∈ NRat F', γ₂ = n * γ₁ * n') ∧
     IotaCompat Λ F (mapLF γ₁ F') (mapLF γ₂ F') (γ₂ * γ₁⁻¹) (gS D)
 
@@ -51,7 +55,7 @@ variable (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS)
 
 def Ext (p : PlF D) (g : GV D) (g' : Vp D p ≃ₗ[(D.s.atP p).Ep] Vp D p) : Prop := ∀ x, g' (baseChange₂ D p x) = baseChange₂ D p (g x)
 
-def Based (Tn T'n : ℕ) (F : LFlag (VS D) D.R.rS (Tn : D.host.E)) (F' : LFlag (VS D) D.R.rS (T'n : D.host.E)) : Prop :=
+def Based (Tn T'n : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (Tn : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T'n : D.host.E)) : Prop :=
   ∀ p, (FP p).A.f = (fun a => frFac Z.δ p a • baseChange₂ D p (frame F a)) ∧
     (FP p).B.f = (fun a => frFac Z.δ p a • baseChange₂ D p (frame F' a)) ∧
     (FP p).A.T = (Tn : (D.s.atP p).Fp) ∧ (FP p).B.T = (T'n : (D.s.atP p).Fp)
@@ -70,7 +74,7 @@ def RMoves (h : GV D) (y y' : Dat Z FP) : Prop :=
 def InGen (d y : Dat Z FP) : Prop :=
   (∀ p, LocNG.Datum.Rel (d p) (y p)) ∧ {p | y p ≠ d p}.Finite
 
-variable {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+variable {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
 
 def GRel (y y' : Dat Z FP) : Prop := ∃ h ∈ H0 F F', RMoves h y y'
 
@@ -84,7 +88,7 @@ end Local
 section Terms
 
 variable {X : HidaSetting D} {Y : Full X} {u u' : D.what₂.Word}
-  (F : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+  (F : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
 
 def TG (t : TauC Y u u') (Λ : LV D) : Prop :=
   ∃ g, Adapt g (lf D (X.Fu u)) F ∧ Adapt g t.frame F' ∧ Λ = Formalism.HermitianLatticesTheory.gmap g t.lam

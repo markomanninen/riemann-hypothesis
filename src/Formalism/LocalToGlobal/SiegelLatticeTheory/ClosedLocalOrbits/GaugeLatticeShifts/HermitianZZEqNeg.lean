@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UnitaryIsometries
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacobianCoordinates
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ private theorem hJ_smul_right_eq_mul (a : ℂ) (x y : Fin n → ℂ) : hJ ε x (
   simp only [hJ, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul]
 
 private theorem hJ_eq_conj_hJ_swap (x y : Fin n → ℂ) : hJ ε x y = conj (hJ ε y x) := by
-  simp only [hJ, Formalism.REAL.Jm, Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hJ, Formalism.REAL.Jm, Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, map_sum, map_mul,
     Complex.star_def, Complex.conj_conj]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : ε i <;> simp [h] <;> ring
@@ -81,14 +86,14 @@ theorem hJ_famSc (sc : ℝ) (e : Fin r → Fin n → ℂ) (z : Fin n → ℂ) (T
 theorem dl_diag_last (c : Fin (r + 1) → ℂ) :
     Dl (Matrix.diagonal c) (r + 1) = (∏ i : Fin r, c (Fin.castSucc i)) * c (Fin.last r) := by
   unfold Dl
-  rw [dif_pos le_rfl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective _), Matrix.det_diagonal,
+  rw [dite_eq_left le_rfl, Matrix.submatrix_diagonal _ _ (Fin.castLE_injective _), Matrix.det_diagonal,
     Fin.prod_univ_castSucc]
   rfl
 
 theorem dl_diag_r (c : Fin (r + 1) → ℂ) :
     Dl (Matrix.diagonal c) r = ∏ i : Fin r, c (Fin.castSucc i) := by
   unfold Dl
-  rw [dif_pos (Nat.le_succ r), Matrix.submatrix_diagonal _ _ (Fin.castLE_injective _), Matrix.det_diagonal]
+  rw [dite_eq_left (Nat.le_succ r), Matrix.submatrix_diagonal _ _ (Fin.castLE_injective _), Matrix.det_diagonal]
   rfl
 
 theorem normSq_last_gt (T T' : ℝ) (c : Fin (r + 1) → ℂ) (hG : 0 < Gv T T' (Matrix.diagonal c)) :

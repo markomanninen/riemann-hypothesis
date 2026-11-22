@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SupportSubsetMonoBox
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.SupportSubsetMonoBox
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ section Scalar
 theorem abs_prod_le_pow {α : Type*} (s : Finset α) (y : α → ℝ) {Y : ℝ} (hy : ∀ i ∈ s, |y i| ≤ Y) :
     |∏ i ∈ s, y i| ≤ Y ^ s.card := by
   rw [Finset.abs_prod]
-  calc ∏ i ∈ s, |y i| ≤ ∏ _i ∈ s, Y := Finset.prod_le_prod (fun _ _ => abs_nonneg _) hy
+  calc ∏ i ∈ s, |y i| ≤ ∏ _i ∈ s, Y := Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) hy
     _ = Y ^ s.card := Finset.prod_const Y
 
 theorem card_filter_lt_add_gt {α : Type*} [LinearOrder α] (s : Finset α) {i : α} (hi : i ∈ s) :
@@ -155,7 +159,7 @@ theorem geoNum_update (n : ℕ) (V : Ideal (MRing ι)) (hS : SymmAt n V) (v : Fi
     simp_rw [key]
 
 def geoML (n : ℕ) (V : Ideal (MRing ι)) (hS : SymmAt n V) :
-    MultilinearMap ℤ (fun _ : Fin n => K → ℤ) ℤ where
+    (Fin n → K → ℤ) →ₘₗ[ℤ] ℤ where
   toFun := geoNum n V
   map_update_add' := by
     intro inst m i x y
@@ -166,7 +170,8 @@ def geoML (n : ℕ) (V : Ideal (MRing ι)) (hS : SymmAt n V) :
   map_update_smul' := by
     intro inst m i c x
     obtain rfl : inst = instDecidableEqFin n := Subsingleton.elim _ _
-    rw [geoNum_update n V hS m i (c • x), geoNum_update n V hS m i x, smul_eq_mul, Finset.mul_sum]
+    rw [geoNum_update n V hS m i (c • x), geoNum_update n V hS m i x, RingHom.id_apply,
+      smul_eq_mul, Finset.mul_sum]
     simp [mul_assoc]
 
 theorem geoNum_expand (n : ℕ) (V : Ideal (MRing ι)) (hS : SymmAt n V) (v : Fin n → K → ℤ) :
@@ -181,6 +186,7 @@ theorem geoNum_expand (n : ℕ) (V : Ideal (MRing ι)) (hS : SymmAt n V) (v : Fi
   rw [this]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
+  simp only [RingHom.id_apply]
   rfl
 
 def nrm (z : K → ℤ) : ℝ := ∑ k, |(z k : ℝ)|

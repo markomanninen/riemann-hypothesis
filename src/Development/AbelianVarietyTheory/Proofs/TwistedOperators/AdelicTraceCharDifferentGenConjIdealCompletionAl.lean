@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TmulMemComplId
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartTraceCharacterIdempotentInverseDiffere
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TmulMemComplId
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartTraceCharacterIdempotentInverseDiffere
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -23,7 +28,7 @@ theorem conj_mem_AA_mul_AAbar {a : D.host.E} (ha : a ∈ D.host.AA * D.host.AAba
     rw [map_mul, mul_comm (D.host.conj x)]
     exact FractionalIdeal.mul_mem_mul (Formalism.L2.Pj.conj_mem_AA D hy) (Formalism.L2.Pj.conj_mem_AAbar D hx)
   · intro x y hx hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem (p := ((D.host.AA * D.host.AAbar : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E) :
       Submodule (𝓞 D.host.E) D.host.E)) hx hy
 
@@ -36,7 +41,7 @@ theorem hostDifferentGenerator_mul_mem_inverseDifferent {a : D.host.E} (ha : a �
 
 theorem psiE_add' (ψ : AddChar (AF D.host.F) ℂ) (x y : AE D) : psiE ψ (x + y) = psiE ψ x * psiE ψ y := by
   unfold psiE
-  rw [map_add, AddChar.map_add_eq_mul]
+  rw [map_add (f := _), AddChar.map_add_eq_mul]
 
 theorem psiE_zero' (ψ : AddChar (AF D.host.F) ℂ) : psiE ψ (0 : AE D) = 1 := by
   unfold psiE
@@ -64,10 +69,10 @@ theorem adelicTraceChar_differentGen_conj_idealCompletion : ∀ {D : D7} {ψ : A
     obtain ⟨α, hα, a, ha, rfl⟩ := hs
     exact adelicTraceChar_differentGen_conj_integral_tmul hψ hα ha
   | zero => rw [map_zero, mul_zero]; exact psiE_zero' ψ
-  | add x y _ _ hx hy => rw [map_add, mul_add, psiE_add', hx, hy, one_mul]
+  | add x y _ _ hx hy => rw [map_add (f := _), mul_add, psiE_add', hx, hy, one_mul]
   | neg x _ hx =>
     have h := psiE_add' ψ (incA D D.host.xi0 * cA D x) (incA D D.host.xi0 * cA D (-x))
-    rw [← mul_add, ← map_add, add_neg_cancel, map_zero, mul_zero, psiE_zero', hx, one_mul] at h
+    rw [← mul_add, ← map_add (f := _), add_neg_cancel, map_zero, mul_zero, psiE_zero', hx, one_mul] at h
     exact h.symm
 
 end GlobalTheory.XCharBF

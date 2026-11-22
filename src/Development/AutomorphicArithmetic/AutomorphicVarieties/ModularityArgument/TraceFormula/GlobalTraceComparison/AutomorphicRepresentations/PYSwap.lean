@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.FinprodSplitAlt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -55,8 +59,8 @@ private theorem sing_diag (N : ∀ w : Pl E, Subgroup (GLw n w)) (w : Pl E) (f :
 
 private theorem pf_sing_twist (S : Set (Pl E)) (N : ∀ w : Pl E, Subgroup (GLw n w)) (w : Pl E)
     (f : GLw n w → ℂ) (hw : IsSplitAt w) (hth : ∀ g, thF E n (thF E n g) = g)
-    (hin : ∀ v : Pl E, ¬ IsSplitAt v → ∀ g, qw n v true g ∈ KGL v n ↔ qw n v false g ∈ KGL v n)
-    (hN : ∀ v : Pl E, ¬ IsSplitAt v → N v = KGL v n) (g : GF E n) :
+    (hin : ∀ v : Pl E, ¬ IsSplitAt v → ∀ g, qw n v true g ∈ KGL v (n := n) ↔ qw n v false g ∈ KGL v (n := n))
+    (hN : ∀ v : Pl E, ¬ IsSplitAt v → N v = KGL v (n := n)) (g : GF E n) :
     pf S (sing N w f false) (thF E n g) = pf S (sing N w f true) g := by
   unfold pf
   refine finprod_congr fun v => finprod_congr fun _ => ?_
@@ -72,12 +76,12 @@ private theorem pf_sing_twist (S : Set (Pl E)) (N : ∀ w : Pl E, Subgroup (GLw 
     rw [if_neg hs, if_neg hs, mul_one, mul_one, sing_ne N w f false v false (by simp [hv]),
       sing_ne N w f true v false (by simp [hv]), hN v hs]
     have h := hin v hs g
-    by_cases hm : qw n v false g ∈ KGL v n
-    · rw [Set.indicator_of_mem (show qw n v true g ∈ (KGL v n : Set (GLw n v)) from h.2 hm),
-        Set.indicator_of_mem (show qw n v false g ∈ (KGL v n : Set (GLw n v)) from hm)]
+    by_cases hm : qw n v false g ∈ KGL v (n := n)
+    · rw [Set.indicator_of_mem (show qw n v true g ∈ (KGL v (n := n) : Set (GLw n v)) from h.2 hm),
+        Set.indicator_of_mem (show qw n v false g ∈ (KGL v (n := n) : Set (GLw n v)) from hm)]
       rfl
-    · rw [Set.indicator_of_notMem (show qw n v true g ∉ (KGL v n : Set (GLw n v)) from fun e => hm (h.1 e)),
-        Set.indicator_of_notMem (show qw n v false g ∉ (KGL v n : Set (GLw n v)) from hm)]
+    · rw [Set.indicator_of_notMem (show qw n v true g ∉ (KGL v (n := n) : Set (GLw n v)) from fun e => hm (h.1 e)),
+        Set.indicator_of_notMem (show qw n v false g ∉ (KGL v (n := n) : Set (GLw n v)) from hm)]
 
 end SlopeTestRemainingChoices
 
@@ -85,7 +89,7 @@ theorem ySwap_pf : SlotBasic → PfHecke → ProdOp → YSwap := by
   intro hSF hPH hPO E _ _ _ n S Z N hS hZ hG π y w hw f hf x x' hx
   obtain ⟨hth, -, -, -, -, hin, -⟩ := hSF E n S hS
   have hwS := hZ w hw
-  have hN : ∀ v : Pl E, ¬ IsSplitAt v → N v = KGL v n :=
+  have hN : ∀ v : Pl E, ¬ IsSplitAt v → N v = KGL v (n := n) :=
     fun v hv => (hG v).2.2.2 fun hvZ => hv (hZ v hvZ).2
   have F0 := sing_fam S N w f false ⟨hwS.1, by simp⟩ hf
   have F1 := sing_fam S N w f true ⟨hwS.1, fun _ => hwS.2⟩ hf

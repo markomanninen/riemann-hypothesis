@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,7 +18,7 @@ theorem residueField_localization_atPrime_isSepClosed_of_finiteType :
     IsAlgClosed.algebraMap_bijective_of_isIntegral
   haveI : IsAlgClosed (B ⧸ P) := IsAlgClosed.of_ringEquiv k (B ⧸ P) f
   let e : (B ⧸ P) ≃+* IsLocalRing.ResidueField (Localization.AtPrime P) :=
-    IsLocalization.AtPrime.equivQuotMaximalIdeal P (Localization.AtPrime P)
+    (IsLocalization.AtPrime.equivQuotMaximalIdeal P (Localization.AtPrime P)).toRingEquiv
   haveI : IsAlgClosed (IsLocalRing.ResidueField (Localization.AtPrime P)) :=
     IsAlgClosed.of_ringEquiv _ _ e
   infer_instance

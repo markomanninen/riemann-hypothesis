@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryApprox
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryApprox
+
+@[expose] public section
 
 noncomputable section
 

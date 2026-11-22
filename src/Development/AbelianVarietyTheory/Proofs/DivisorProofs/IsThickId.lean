@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveStructureSheafDegTwoVanish
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsAdditiveOfUniversal
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -77,9 +81,9 @@ def IsLift (s : X ⟶ Sp R) (i : X₀ ⟶ X) (L : LB X₀) (u : C1 (smallG i L �
 
 end Geo
 
+
 open MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CechPic in
 attribute [local instance] Over.cartesianMonoidalCategory in
-
 def AbLift : Prop :=
   ∀ (R : Type) [CommRing R] (I : Ideal R), I ^ 2 = ⊥ → ∀ (A : Over (Sp R)) [GrpObj A] (g : ℕ), IsAbelianScheme A →
     SmoothOfRelativeDimension g A.hom →

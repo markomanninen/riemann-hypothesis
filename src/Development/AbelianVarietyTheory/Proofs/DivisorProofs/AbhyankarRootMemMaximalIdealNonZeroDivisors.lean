@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocHomAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocHomAlgebraMap
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.AbhyankarRootUnit
@@ -34,7 +39,7 @@ theorem mem_maximalIdeal_and_mem_nonZeroDivisors_of_pow (S L : Type) [CommRing S
       algebraMap D (Localization.AtPrime Q) t ∈ nonZeroDivisors (Localization.AtPrime Q) := by
   have htDm : t ∈ maximalIdeal D := htu
   haveI hQmax : (Q.comap (algebraMap D (integralClosure D (D ⊗[S] L)))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := D) Q
   have hcomap : Q.comap (algebraMap D (integralClosure D (D ⊗[S] L))) = maximalIdeal D :=
     IsLocalRing.eq_maximalIdeal hQmax
   have htQ : algebraMap D (integralClosure D (D ⊗[S] L)) t ∈ Q := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalCechSmul
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalCechSmul
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalAlgebra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -43,7 +48,7 @@ def reesΦ : cechH (reesPre I F) 𝔘 p →ₗ[reesAlgebra I]
   map_add' x y := by
     apply PolynomialModule.ext
     ext n
-    simp only [reesCoefPoly_coeff, PolynomialModule.coeff_add, Finsupp.add_apply, map_add]
+    simp only [reesCoefPoly_coeff, PolynomialModule.coeff_add, Finsupp.add_apply, map_add (f := _)]
   map_smul' r x := by
     apply PolynomialModule.ext
     ext N
@@ -69,12 +74,12 @@ lemma smul_cechK_le (n : ℕ) : I • cechK I 𝔘 p (F := F) n ≤ cechK I 𝔘
   refine ⟨cechH.linearMap 𝔘 A (idealPowMul I F a ha1) p z, ?_⟩
   have h := congrArg (fun f => f.hom) (show modulesAbMap (idealPowMul I F a ha1) ≫
       modulesAbMap (idealPowι I F (n + 1)) =
-      modulesAbMap (idealPowι I F n) ≫ smulAbRingHom F (algebraMap A Γ(X, ⊤) a) by
+      modulesAbMap (idealPowι I F n) ≫ (smulAbRingHom F (algebraMap A Γ(X, ⊤) a)).asHom by
     rw [← modulesAbMap_comp, idealPowMul_ι, modulesAbMap_comp]
     rfl)
   change cechHMap 𝔘 (modulesAbMap (idealPowι I F (n + 1))).hom p
       (cechHMap 𝔘 (modulesAbMap (idealPowMul I F a ha1)).hom p z) =
-    cechHMap 𝔘 (smulAbRingHom F (algebraMap A Γ(X, ⊤) a)).hom p
+    cechHMap 𝔘 (smulAbRingHom F (algebraMap A Γ(X, ⊤) a)).asHom.hom p
       (cechHMap 𝔘 (modulesAbMap (idealPowι I F n)).hom p z)
   rw [← cechHMap_comp, ← cechHMap_comp]
   exact congrArg (fun f => cechHMap 𝔘 f p z) h
@@ -92,15 +97,16 @@ lemma range_reesΦ :
     refine ⟨∑ n ∈ P.coeff.support, (reesIncFam I hF 𝔘 hU n).cechH p (y n), ?_⟩
     apply PolynomialModule.ext
     ext k
-    rw [reesΦ_coeff, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [reesΦ_coeff, map_sum]
     simp_rw [reesCoefFam_reesIncFam]
     rw [Finset.sum_ite_eq']
     split_ifs with hk
     · exact hy k
     · exact (Finsupp.notMem_support_iff.1 hk).symm
 
-include hF hU in
 
+include hF hU in
 theorem exists_cechK_eq_pow_smul [IsProper (X ↘ Spec (.of A))] (hUtop : iSup 𝔘 = ⊤) :
     ∃ c, ∀ n, cechK I 𝔘 p (F := F) (n + c) = I ^ n • cechK I 𝔘 p c := by
   refine exists_eq_pow_smul_of_fg I (smul_cechK_le I 𝔘 p) ?_

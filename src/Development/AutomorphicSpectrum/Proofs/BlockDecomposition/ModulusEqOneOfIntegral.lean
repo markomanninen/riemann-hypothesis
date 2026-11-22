@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,7 +150,7 @@ theorem stability_coefficients : L0 → L2 → ColumnsMirabolic → FormCoeffici
       refine pow_ne_zero _ fun h => ?_
       exact valuation_uniformizer_ne_zero F (by rw [h, map_zero])
     refine ⟨(fun z : Fin (k + 1) → F => ((uniformizer F : F) ^ (max cu cv + 1))⁻¹ • (z - x)) ⁻¹'
-      Measures.box F (Fin (k + 1)), Measures.isOpen_box.preimage (by fun_prop), ?_, ?_⟩
+      (Measures.box F (Fin (k + 1))), Measures.isOpen_box.preimage (by fun_prop), ?_, ?_⟩
     · simpa using Measures.zero_mem_box
     · intro x' hx'
       have := hf1 x (x' - x) fun i => ⟨_, Measures.mem_box.1 hx' i, by

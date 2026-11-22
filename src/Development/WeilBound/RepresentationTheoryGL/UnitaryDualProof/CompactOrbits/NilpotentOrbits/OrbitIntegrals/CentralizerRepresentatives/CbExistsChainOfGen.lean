@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CentralizerRepresentatives.CbIsChainApply
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CentralizerRepresentatives.CbIsChainApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,20 +58,23 @@ theorem cb_single (N : W →ₗ[E] W) (L : ℕ) (u : W) (hu : (N ^ L) u = 0) (c 
     set y : W := ∑ i : Fin L, if s ≤ (i : ℕ) then c i • (N ^ ((i : ℕ) - s)) u else 0 with hydef
     set z : W := ∑ i : Fin L, if s < (i : ℕ) then c i • (N ^ ((i : ℕ) - s - 1)) u else 0 with hzdef
     refine ⟨s, hsL.le, y, ?_, ?_, ?_⟩
-    · rw [hydef, map_sum]
-      refine Finset.sum_eq_zero fun i _ => ?_
-      split_ifs
-      · rw [map_smul, cb_pow_pow, cb_pow_zero_of_le N hu (by omega), smul_zero]
-      · exact map_zero _
-    · rw [hydef, map_sum]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      split_ifs with h1
-      · rw [map_smul, cb_pow_pow, show s + ((i : ℕ) - s) = i by omega]
-      · rw [map_zero, hmin i (by omega) i.2, zero_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [hydef, map_sum]
+        refine Finset.sum_eq_zero fun i _ => ?_
+        split_ifs
+        · rw [map_smul, cb_pow_pow, cb_pow_zero_of_le N hu (by omega), smul_zero]
+        · exact map_zero _
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [hydef, map_sum]
+        refine Finset.sum_congr rfl fun i _ => ?_
+        split_ifs with h1
+        · rw [map_smul, cb_pow_pow, show s + ((i : ℕ) - s) = i by omega]
+        · rw [map_zero, hmin i (by omega) i.2, zero_smul]
     · have hyz : y = c ⟨s, hsL⟩ • u + N z := by
         have hc : c ⟨s, hsL⟩ • u = ∑ i : Fin L, if i = ⟨s, hsL⟩ then c i • u else 0 := by
           rw [Finset.sum_ite_eq']; simp
-        rw [hc, hydef, hzdef, map_sum, ← Finset.sum_add_distrib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hc, hydef, hzdef, map_sum, ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun i _ => ?_
         rcases lt_trichotomy (i : ℕ) s with h1 | h1 | h1
         · have hne : i ≠ ⟨s, hsL⟩ := fun he => by rw [he] at h1; exact lt_irrefl _ h1

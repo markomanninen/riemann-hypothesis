@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DividedPowerReduction.IsFirstChernThickening
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DividedPowerReduction.IsFirstChernThickening
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -41,8 +46,24 @@ theorem smor_cup : ∀ {R R' : Type} [CommRing R] [CommRing R'] {C C' : Type 1} 
   subst ey
   obtain ⟨a, ha⟩ := z
   obtain ⟨b, hb⟩ := w
-  obtain ⟨hc, e⟩ := CrystallineSemistableComparison.P.cup_cls (CH.mulP Φ.A) h a b ha hb
-  obtain ⟨hc', e'⟩ := CrystallineSemistableComparison.P.cup_cls (CH.mulP Φ'.A) h _ _ (hz _ _ ha) (hz _ _ hb)
+  have cup_cls {R : Type} [CommRing R] {C : Type 1} [Category.{0} C]
+      {F₁ F₂ F₃ : C ⥤ ModuleCat.{0} R} (P : CH.Pairing F₁ F₂ F₃)
+      {p q n : ℕ} (h : p + q = n) (a : CH.Cn F₁ p) (b : CH.Cn F₂ q) ha hb :
+      ∃ hc, P.cup h ((CH.cx F₁).cls a ha) ((CH.cx F₂).cls b hb) =
+        (CH.cx F₃).cls (P.cupC h a b) hc := by
+    have ce (x : CH.H F₁ p) (y : CH.H F₂ q) :
+        P.cup h x y = (CrystallineSemistableComparison.Auxff.toCx P).cup h x y := by
+      unfold CH.Pairing.cup CxPairing.cup
+      split_ifs with hz
+      · rfl
+      · exact absurd ((CrystallineSemistableComparison.Auxff.toCx P).leib h _ _ |>.trans (by
+          rw [show CH.d F₁ p (Quotient.out x).1 = 0 from (Quotient.out x).2,
+            show CH.d F₂ q (Quotient.out y).1 = 0 from (Quotient.out y).2]; simp)) hz
+    exact ⟨CrystallineSemistableComparison.Auxff.closed (CrystallineSemistableComparison.Auxff.toCx P) h a b ha hb,
+      (ce _ _).trans
+        (CrystallineSemistableComparison.P.cxcup_cls (CrystallineSemistableComparison.Auxff.toCx P) h a b ha hb _)⟩
+  obtain ⟨hc, e⟩ := cup_cls (CH.mulP Φ.A) h a b ha hb
+  obtain ⟨hc', e'⟩ := cup_cls (CH.mulP Φ'.A) h _ _ (hz _ _ ha) (hz _ _ hb)
   rw [e]
   unfold CH.Mor.pull
   rw [CrystallineSemistableComparison.P.mapH_cls _ _ _ _ (hz _ _ ha), CrystallineSemistableComparison.P.mapH_cls _ _ _ _ (hz _ _ hb), e',

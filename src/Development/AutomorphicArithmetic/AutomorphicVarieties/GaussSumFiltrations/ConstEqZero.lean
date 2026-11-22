@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -155,8 +159,8 @@ private theorem ez_at_imaginary_unit_shift_eq {F : Type} [Field F] [NumberField 
   congr 1
   simp only [mul_add, Finset.sum_add_distrib]
 
-open GlobalTheory.HilbertThetaSeries.QUniq in
 
+open GlobalTheory.HilbertThetaSeries.QUniq in
 theorem GlobalTheory.HilbertThetaSeries.hasQ_unique : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (f : Hn F → ℂ) (a b : F → ℂ),
     HasQ f a → HasQ f b → a = b := by
   intro F _ _ _ f a b ha hb

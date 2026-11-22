@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.ActAllCancelInv
-import Formalism.LocalToGlobal.GlobalTheory.GramNDetNe
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ActAllCancelInv
+public import Formalism.LocalToGlobal.GlobalTheory.GramNDetNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ theorem normTie_at (v : InfinitePlace D.what₂.LL) (x : ((D.fm u).lat 0).V)
   rw [InfinitePlace.mk_embedding] at h
   exact h
 
-open Classical in
 
+open Classical in
 theorem exists_single (hst : ∀ c, Subsingleton ((D.mem u).C.stab 0 c)) (x : ((D.fm u).lat 0).V) (c : (D.mem u).C.cls 0) :
     ∃ xc, co0 T xc = Pi.single c (co0 T x c) := by
   classical

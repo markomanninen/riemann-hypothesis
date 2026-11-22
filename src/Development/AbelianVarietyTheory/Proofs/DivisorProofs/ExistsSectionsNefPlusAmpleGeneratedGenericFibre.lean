@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SmallSecTensTriv
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolGe
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefRationalFibreOfNefFiniteFieldFibresStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionExtendingRationalGenericFibreMulIntStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensOfIsNef
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratingSecsOfClsEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NefFibPowIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefFibreTwistExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalDegreeEqOrderSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SmallSecTensTriv
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.VolGe
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNefRationalFibreOfNefFiniteFieldFibresStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSectionExtendingRationalGenericFibreMulIntStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensOfIsNef
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGeneratingSecsOfClsEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NefFibPowIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NefFibreTwistExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalDegreeEqOrderSum
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr
@@ -25,7 +30,12 @@ namespace GlobalTheory.GenFibreGen
 theorem nefFib_pow : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp k) (D : ℕ), IsArithVar p D → ∀ (L : HermLB p) (n : ℕ), NefFib L → NefFib (L.pow n) := by
   intro k _ X _ p D hX L n hL
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · refine AmpleTwistNef.nefFib_of_cls_eq ?_ (nefFib_of_isNef (HermLB.isNef_triv (p := p) (D := D)))
+  · have htriv : NefFib (HermLB.triv p) := by
+      intro Z i _ _ κ _ _ _ _
+      exact (interNum_eq_zero_of_cls_eq_zero κ _
+        (fun _ => LB.isLB_pull (LB.isLB_triv X) i) 0
+        (by rw [CechPic.cls_pull (LB.isLB_triv X)]; exact map_zero _)).ge
+    refine AmpleTwistNef.nefFib_of_cls_eq ?_ htriv
     erw [CechPic.cls_lbPow L.isLB 0, zero_smul]
     rfl
   · have := hX.finite
@@ -61,7 +71,7 @@ theorem exists_secs_generic : GlobalTheory.Published.NefNumerics → ∀ (k : Ty
       rw [map_nsmul]
       congr 1
       erw [CechPic.cls_tens (pull_isLB A.isLB _) (pull_isLB (L.pow n).isLB _), CechPic.cls_tens (L.pow n).isLB A.isLB]
-      rw [map_add, CechPic.cls_pull A.isLB, CechPic.cls_pull (L.pow n).isLB, add_comm]) (Fin N) t ht
+      rw [map_add (f := _), CechPic.cls_pull A.isLB, CechPic.cls_pull (L.pow n).isLB, add_comm]) (Fin N) t ht
   choose s hs using fun i => GlobalTheory.T.exists_section_extending_rationalGenericFibre_mul_int k X p D hX _ (((L.pow n).tens A).pow m).isLB (v i)
   refine ⟨m, N, s, hm, fun x hx => ?_⟩
   obtain ⟨y, rfl⟩ := exists_fst_eq k X p x hx

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.LinearIndependentFixed
 
@@ -45,7 +49,8 @@ theorem linearIndepOn_of_fixed {K B W G ι : Type} [Field K] [CommRing B] [IsDom
       have hbeq : ∀ j, b' j = b j0 * a g (b j) - a g (b j0) * b j := fun j => by rw [hb']
       have hσsum : ∑ j, a g (b j) • v j = 0 := by
         have := congrArg (σ g) hsum
-        rw [map_sum, map_zero] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at this
         simpa [hσ, hv] using this
       have hsum' : ∑ j, b' j • v j = 0 := by
         calc ∑ j, b' j • v j = b j0 • ∑ j, a g (b j) • v j - a g (b j0) • ∑ j, b j • v j := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -71,7 +75,8 @@ theorem indep_baseChange (k E : Type) [Field k] [Field E] [Algebra k E] (S : Lin
       have b := (S.bcFst E).map_appLE (U := W) (V := S.bcFst E ⁻¹ᵁ W) le_rfl (homOfLE hle).op
       exact congrArg (fun g => g.hom ((S.b j).f i)) (a.trans b.symm)
     have e₂ := congrArg Λ e
-    simp only [e', map_sum, hΛ] at e₂
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e', map_sum, hΛ] at e₂
     refine (comb_f S _ i hle).trans (e₂.symm.trans ?_)
     exact ((congrArg Λ (map_zero _)).trans (map_zero Λ)).trans (map_zero _).symm
   funext j

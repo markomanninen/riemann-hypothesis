@@ -1,22 +1,26 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.JTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SphUntw
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TWtBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UpUW
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TSatFrobT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DualOfWeights
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicTensorInductionOfLocalPlaces
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreOrd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PartU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.GalUnitaryT
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.LgAway
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.JTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryHeckeData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SphUntw
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CLocConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TWtBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryPointProperties
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UpUW
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TSatFrobT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DualOfWeights
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicTensorInductionOfLocalPlaces
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdCoreOrd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.OrdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PartU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.GalUnitaryT
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.LgAway
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -29,8 +33,6 @@ open scoped TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 set_option synthInstance.maxHeartbeats 200000
 open UpperTheory.GalN.V UpperTheory.V.Z.Win UpperTheory.V.Z.Desc.W UpperTheory.Zero.LLC
-open private au_isTeich au_open from Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.AuTeichEx
-attribute [-instance] UpperTheory.V.GradeZeroInterpolatingElement.instIsLocalRingSubtypePadicAlgClMemSubalgebraPadicIntO
 private theorem twRep_one {H M : Type} [Group H] [AddCommGroup M] [Module ℂ M] (ρ : Representation ℂ H M) :
     twRep ρ 1 = ρ := by
   ext g v
@@ -40,7 +42,7 @@ private theorem twRep_inv {H M : Type} [Group H] [AddCommGroup M] [Module ℂ M]
   ext g v
   simp [twRep, smul_smul]
 private theorem locDet_KGL {E : Type} [Field E] [NumberField E] {n : ℕ} {χ : Formalism.L2.Host.HChar E} {w : Plc E}
-    (h : χ.UnrAt w) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL w n) : CuspSub.locDet n χ w g = 1 :=
+    (h : χ.UnrAt w) {g : GL (Fin n) (w.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL w (n := n)) : CuspSub.locDet n χ w g = 1 :=
   h _ (GlobalTheory.SphGal.isUnitAt_det_of_mem hg)
 private theorem det_tw {n : ℕ} {k Γ H : Type} [Field k] [Group Γ] [Group H] {D D' : W.GDet n k Γ} {β : Γ →* kˣ}
     {ρ : Γ →* GL (Fin n) k} (φ : H →* Γ) (hD : D = W.GDet.ofRep (W.mat ρ)) (h : D.IsTwist β D') :
@@ -52,7 +54,7 @@ private theorem det_tw {n : ℕ} {k Γ H : Type} [Field k] [Group Γ] [Group H] 
   induction y using MonoidAlgebra.induction_linear with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add (W.GDet.repAlg _ B), ← ha, ← hb, ← map_add, ← map_add]
+    rw [map_add (W.GDet.repAlg _ B), ← ha, ← hb, ← map_add (f := _), ← map_add (f := _)]
     congr 2
     exact map_add (MonoidAlgebra.mapDomainRingHom B φ) a b
   | single g r =>
@@ -72,7 +74,7 @@ private theorem tw_aut (P : _root_.GlobalTheory.Mem.LiteralAutomorphy.Literature
         ∃ τ' : SmIrr (GLw n w), IsCompAlong σ' (locU n w) ((cLoc w).comp (locU n w).subtype) τ'.ρ ∧
           Nonempty (τ'.ρ.Equiv (twRep τ.ρ (CuspSub.locDet n κ w))) ∧
           ∀ A : ValuationSubring Ω, IsPlaceOver A w → (∀ g ∈ Ine (F := L) A, β g = 1) →
-            ∀ U ≤ GlobalTheory.LFun.KGL w n, fixd τ.ρ U ≠ ⊥ → fixd τ'.ρ U ≠ ⊥) ∧
+            ∀ U ≤ GlobalTheory.LFun.KGL w (n := n), fixd τ.ρ U ≠ ⊥ → fixd τ'.ρ U ≠ ⊥) ∧
       ∀ w, IsSplitAt w → ∀ τ' : SmIrr (GLw n w), IsCompAlong σ' (locU n w) ((cLoc w).comp (locU n w).subtype) τ'.ρ →
         ∃ τ : SmIrr (GLw n w), IsCompAlong σ (locU n w) ((cLoc w).comp (locU n w).subtype) τ.ρ ∧
           Nonempty (τ'.ρ.Equiv (twRep τ.ρ (CuspSub.locDet n κ w))) := by
@@ -178,11 +180,37 @@ private theorem autP (hP : _root_.UpperTheory.V.Af.HypothesesH') (hn : 1 ≤ n) 
     _root_.UpperTheory.V.Z.Ord.AutYAlt (hset Q τ₀) ι (_root_.UpperTheory.V.Z.Desc.W.PartOfAlt Q τ₀ ι) := by
   intro lam _ d ξ hξ F hF hK hI
   obtain ⟨e, he⟩ := hξ
-  obtain ⟨t, ht⟩ := au_isTeich c r
-  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) :=
-    au_open _ (ι.injective.comp Subtype.val_injective) τ₀ (hτ t ht).1
+  have hTeich : ∃ t, r.IsTeich t := by
+    obtain ⟨hcomplete, hfinite, hmem, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O
+    have : IsAdicComplete (maximalIdeal c.O) c.O := hcomplete
+    have : Finite (ResidueField c.O) := hfinite
+    have : CharP (ResidueField c.O) l := by
+      refine (CharP.charP_iff_prime_eq_zero (Fact.out : l.Prime)).2 ?_
+      rw [← map_natCast (residue c.O), residue_eq_zero_iff]
+      exact hmem
+    have : CharP (c.O ⧸ maximalIdeal c.O) l := inferInstanceAs (CharP (ResidueField c.O) l)
+    have : PerfectRing (ResidueField c.O) l := inferInstance
+    let lift := Perfection.lift l (ResidueField c.O) (c.O ⧸ maximalIdeal c.O)
+    let j := lift (RingHom.id (ResidueField c.O))
+    let τ := (Perfection.teichmuller l (maximalIdeal c.O)).comp j.toMonoidHom
+    have hres (x : ResidueField c.O) : residue c.O (τ x) = x :=
+      (Perfection.mk_teichmuller (j x)).trans
+        (RingHom.congr_fun (lift.symm_apply_apply (RingHom.id (ResidueField c.O))) x)
+    refine ⟨fun i => (Units.map τ).comp (r.chib i), fun i g => ⟨hres _, ?_⟩⟩
+    rw [MonoidHom.comp_apply, ← map_pow, ← Nat.card_units, pow_card_eq_one', map_one]
+  obtain ⟨t, ht⟩ := hTeich
+  have hop : IsOpen (τ₀.ker : Set (KT n (wt s))) := by
+    let f := ι.toRingHom.comp (algebraMap c.O (Qbar l))
+    have hf : Function.Injective f := ι.injective.comp Subtype.val_injective
+    have hker : ((Matrix.GeneralLinearGroup.map f).comp τ₀).ker = τ₀.ker := by
+      refine MonoidHom.ker_comp_of_injective _ _ fun a b hab => ?_
+      apply Units.ext
+      apply Matrix.ext
+      intro i j
+      exact hf (congrArg (fun x : GL (Fin m) ℂ => (x : Matrix (Fin m) (Fin m) ℂ) i j) hab)
+    exact hker ▸ (hτ t ht).1
   have h1 := decompU l L Ω s n hn V Q c m τ₀ ι hop lam d e ξ he F hF hK hI
-  refine SetLike.le_def.1 (iSup_le fun σ => ?_) h1
+  refine IsConcreteLE.le_iff.1 (iSup_le fun σ => ?_) h1
   by_cases h0 : YOf Q ι τ₀ e ξ σ.1 = ⊥
   · rw [h0]; exact bot_le
   · obtain ⟨Y, hY, -, hcomp, hLG⟩ := _root_.UpperTheory.V.Z.Desc.P.partU_alt hP l L Ω s n hn V Q c r ι m τ₀ hτ lam d e ξ he σ.1 σ.2 h0
@@ -265,7 +293,25 @@ theorem UpperTheory.V.Z.Desc.W.jTwist_of_alt : TypeGd → _root_.UpperTheory.V.Z
   · have hsp : ∀ u : s.St, IsSplitAt (s.w u) := fun u =>
       UpperTheory.isSplitAt_of_decomposition_le_restriction_range L Ω _ _ (s.hA u) (s.split _ (Or.inr (Or.inl u.2))) _ (Up.under_w _)
     obtain ⟨τ, h1, h2⟩ := t5 _ (hsp u) τ' hτ'
-    obtain ⟨t, ht⟩ := au_isTeich c r
+    have hTeich : ∃ t, r.IsTeich t := by
+      obtain ⟨hcomplete, hfinite, hmem, -⟩ := UpperTheory.V.abelian₂.dvr_finite l c.O
+      have : IsAdicComplete (maximalIdeal c.O) c.O := hcomplete
+      have : Finite (ResidueField c.O) := hfinite
+      have : CharP (ResidueField c.O) l := by
+        refine (CharP.charP_iff_prime_eq_zero (Fact.out : l.Prime)).2 ?_
+        rw [← map_natCast (residue c.O), residue_eq_zero_iff]
+        exact hmem
+      have : CharP (c.O ⧸ maximalIdeal c.O) l := inferInstanceAs (CharP (ResidueField c.O) l)
+      have : PerfectRing (ResidueField c.O) l := inferInstance
+      let lift := Perfection.lift l (ResidueField c.O) (c.O ⧸ maximalIdeal c.O)
+      let j := lift (RingHom.id (ResidueField c.O))
+      let τ := (Perfection.teichmuller l (maximalIdeal c.O)).comp j.toMonoidHom
+      have hres (x : ResidueField c.O) : residue c.O (τ x) = x :=
+        (Perfection.mk_teichmuller (j x)).trans
+          (RingHom.congr_fun (lift.symm_apply_apply (RingHom.id (ResidueField c.O))) x)
+      refine ⟨fun i => (Units.map τ).comp (r.chib i), fun i g => ⟨hres _, ?_⟩⟩
+      rw [MonoidHom.comp_apply, ← map_pow, ← Nat.card_units, pow_card_eq_one', map_one]
+    obtain ⟨t, ht⟩ := hTeich
     choose loc hloc using fun u : s.St => Up.comp_ex hσ (hsp u)
     classical
     have hT := _root_.UpperTheory.V.Hi.partUR2Type_alt l L Ω s n hn V Q c ι R.m R.τ₀ lam d e ξ hb σ hσ hY _ (R.type t ht) (Function.update loc u τ) (fun u' => by

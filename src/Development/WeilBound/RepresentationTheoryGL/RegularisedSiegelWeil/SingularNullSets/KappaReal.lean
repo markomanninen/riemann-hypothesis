@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdS
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LApproxIdS
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem kappa_real {F : Type} [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
       rw [← integral_const_mul]
       congr 1
       funext h
-      simp only [hf]
+      dsimp [f]
       ring
     rw [h1, hκ, neg_neg]
     push_cast

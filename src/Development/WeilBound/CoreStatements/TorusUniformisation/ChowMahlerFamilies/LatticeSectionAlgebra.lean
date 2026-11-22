@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num
 
 namespace PositivityTheory.Xgn.LatticeSectionAlgebra
@@ -61,7 +66,7 @@ theorem some_unit {Ω : Type} [Field Ω] (A : Subring Ω) [IsLocalRing A] {k : �
     Ideal.sum_mem _ fun l _ => Ideal.mul_mem_left _ _ (hm l)
   have h2 : (∑ l, (⟨c l, hc l⟩ : A) * ⟨g l, hg l⟩) = 1 := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     simpa using h
   rw [h2] at h1
   exact (IsLocalRing.maximalIdeal.isMaximal A).ne_top ((Ideal.eq_top_iff_one _).2 h1)
@@ -102,7 +107,7 @@ theorem PositivityTheory.Xgn.lattice_section_algebra : ∀ {o Ω : Type} [CommRi
   choose p hp using fun l => (t l).2
   have hsum' : ∑ l, (c l : Ω) * G (p l) = 1 := by
     have := congrArg Subtype.val hsum
-    rw [AddSubmonoidClass.coe_finset_sum] at this
+    rw [AddSubmonoidClass.coe_finsetSum] at this
     refine Eq.trans (Finset.sum_congr rfl fun l _ => ?_) this
     rw [← hp l]
     simp

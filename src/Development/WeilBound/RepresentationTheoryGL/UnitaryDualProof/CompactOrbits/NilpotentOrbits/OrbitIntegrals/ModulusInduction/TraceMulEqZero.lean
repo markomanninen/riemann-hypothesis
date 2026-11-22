@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem reg_in (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z) {c : Ma
       + c ^ Polynomial.rootMultiplicity 0 (minpoly k c) * c * Polynomial.aeval c q.divX = 0 := by
     have h1 := minpoly.aeval k c
     rw [hpq, ← Polynomial.X_mul_divX_add q] at h1
-    simp only [map_mul, map_pow, map_sub, map_add, Polynomial.aeval_X, Polynomial.aeval_C, map_zero,
+    simp only [map_mul, map_pow, map_sub, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, map_zero,
       sub_zero] at h1
     rw [mul_add, Algebra.algebraMap_eq_smul_one, mul_smul_comm, mul_one, ← mul_assoc] at h1
     rw [add_comm]
@@ -163,7 +167,7 @@ theorem exists_qZ [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ
 theorem piZ_spec [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z)
     (x : Matrix (Fin n) (Fin n) k) : qZ Z (piZ Z x) = qZ Z x := by
   unfold piZ
-  rw [dif_pos (exists_qZ Z hZ x)]
+  rw [dite_eq_left (exists_qZ Z hZ x)]
   exact (exists_qZ Z hZ x).choose_spec.2
 
 theorem piZ_eq [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (hZ : CR Z)
@@ -190,7 +194,8 @@ theorem continuous_piZ [CharZero k] (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)
     have hs : ∀ i j, Matrix.single i j (x i j) = x i j • Matrix.single i j (1 : k) := by
       intro i j
       rw [Matrix.smul_single, smul_eq_mul, mul_one]
-    simp only [hs, map_sum, map_smul] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hs, map_sum, map_smul] at h
     exact h
   have hfun : piZ Z (n := n) = fun x => ∑ i, ∑ j, x i j • piZ Z (Matrix.single i j (1 : k)) := funext hrep
   rw [hfun]

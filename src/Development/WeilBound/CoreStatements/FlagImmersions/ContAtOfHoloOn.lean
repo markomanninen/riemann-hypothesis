@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RiemannExtensionOfLogGrowth
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeSheets
-import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RiemannExtensionOfLogGrowth
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeSheets
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.AnalyticSubsetChartLocal
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 noncomputable section
 

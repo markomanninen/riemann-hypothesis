@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseLocal
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteRoots
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseLocal
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Dimension
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteRoots
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -36,7 +41,7 @@ theorem exists_natCast_mem_place (K : FiniteSubfield) {ℓ : ℕ} (hℓ : ℓ.Pr
     have heq : (((u⁻¹ : (𝓞 K.1)ˣ) : 𝓞 K.1) : K.1) = algebraMap ℚ K.1 (1 / ℓ) := by
       rw [eq_inv_of_mul_eq_one_right hK]
       simp
-    rw [heq, isIntegral_algebraMap_iff (algebraMap ℚ K.1).injective] at hint
+    rw [heq, isIntegral_algebraMap_iff ] at hint
     obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
     have hℓ0 : (ℓ : ℚ) ≠ 0 := by exact_mod_cast hℓ.ne_zero
     have hy' : ((ℓ * y : ℤ) : ℚ) = 1 := by
@@ -63,13 +68,13 @@ theorem exists_natCast_mem_place (K : FiniteSubfield) {ℓ : ℕ} (hℓ : ℓ.Pr
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) (n ℓ k : ℕ) (hℓ : ℓ.Prime)
   (hnk : n = ℓ ^ k) (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
 
-include hℓ hS in
 
+include hℓ hS in
 theorem nonempty_of_natCast_mem : Nonempty S :=
   (exists_natCast_mem_place K hℓ).elim fun v hv => ⟨⟨v, hS v hv⟩⟩
 
-include hnk hS in
 
+include hnk hS in
 theorem mem_of_natCast_pow_mem : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S := by
   intro v hv
   subst hnk
@@ -78,15 +83,15 @@ theorem mem_of_natCast_pow_mem : ∀ v : HeightOneSpectrum (𝓞 K.1), ((n : ℕ
 
 variable [NeZero n] (hodd : Odd n ∨ IsTotallyComplex K.1)
 
-include hnk hS hodd in
 
+include hnk hS hodd in
 theorem subsingleton_gsRoots_three : Subsingleton (cohomology (gsRoots S n) 3) :=
   subsingleton_cohomology_of_cdp_le_two (NeZero.ne n)
     (fun _ hp hpn => cdp_galUnramifiedOutside_le_two_of_dvd K S (NeZero.ne n)
       (mem_of_natCast_pow_mem S n ℓ k hnk hS) hodd hp hpn) (gsRoots S n) (nsmul_gsRoots S n) le_rfl
 
-include hnk hS hodd in
 
+include hnk hS hodd in
 theorem subsingleton_zmodRep_gs_three :
     Subsingleton (cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 3) :=
   subsingleton_cohomology_of_cdp_le_two (NeZero.ne n)
@@ -101,8 +106,8 @@ theorem natCard_zmodRep (G : Type) [Group G] : Nat.card (zmodRep.{0} G n) = n :=
 
 variable [Finite S]
 
-include hnk hS in
 
+include hnk hS in
 theorem finite_zmodRep_gs_one : Finite (cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) := by
   have : Finite (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) := inferInstanceAs (Finite (ULift.{0} (ZMod n)))
   refine finite_cohomology_gs K S _ (fun v hv => ?_) 1 (by norm_num)
@@ -111,18 +116,24 @@ theorem finite_zmodRep_gs_one : Finite (cohomology (zmodRep.{0} (galUnramifiedOu
 
 variable (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
 
+
 omit [Finite S] in
 include hnk hS in
-
 theorem natCard_gsRoots : Nat.card (gsRoots S n) = n := by
   change Nat.card (Additive (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S))) = n
   rw [Nat.card_congr Additive.toMul]
-  exact card_rootsOfUnity_maxUnramifiedOutside K S n (NeZero.ne n)
-    (fun v hv h => hv (mem_of_natCast_pow_mem S n ℓ k hnk hS v h))
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot ℚ̄ n
+  have hmem : ζ ∈ maxUnramifiedOutside K.1 ℚ̄ S :=
+    mem_maxUnramifiedOutside_of_pow_eq_one S (NeZero.ne n)
+      (fun v hv h => hv (mem_of_natCast_pow_mem S n ℓ k hnk hS v h)) hζ.pow_eq_one
+  have hζS : IsPrimitiveRoot (⟨ζ, hmem⟩ : maxUnramifiedOutside K.1 ℚ̄ S) n :=
+    IsPrimitiveRoot.of_map_of_injective (f := (maxUnramifiedOutside K.1 ℚ̄ S).val) hζ
+      Subtype.val_injective
+  exact hζS.card_rootsOfUnity
+
 
 omit [Finite S] in
 include hnk hS in
-
 theorem finite_gsRoots_local_one (v : S) :
     Finite (cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) 1) := by
   have : Finite (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) :=
@@ -132,8 +143,8 @@ theorem finite_gsRoots_local_one (v : S) :
   rw [natCard_gsRoots S n ℓ k hnk hS]
   exact Nat.cast_ne_zero.2 (NeZero.ne n)
 
-include hnk hS in
 
+include hnk hS in
 theorem finite_gsRoots_compact_two [Fintype S] :
     Finite (compactCohomologyRes (gsFinFamily S ιs) (gsRoots S n) 2) := by
   have : ∀ v : S, Finite (cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) 1) :=

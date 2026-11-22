@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RadFinAdjoinStable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.RadFinAdjoinStable
+
+@[expose] public section
+
 open scoped TensorProduct
 open UpperTheory.Lit.HoweDuality
 

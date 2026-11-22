@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ private theorem algHom_iterate_C_add_mul {O : Type} [CommRing O] (φ : PowerSeri
   induction s with
   | zero => rfl
   | succ n ih =>
-    simp only [Function.iterate_succ_apply', ih, map_add, map_mul, powerSeries_algHom_C']
+    simp only [Function.iterate_succ_apply', ih, map_add (f := _), map_mul, powerSeries_algHom_C']
 
 theorem psCoprime_lt {O : Type} [CommRing O] (l : ℕ) (φ : PowerSeries O →ₐ[O] PowerSeries O)
     (h : (X * (X + C (l : O)) : PowerSeries O) ∣ φ X) (s s' : ℕ) (hs : s < s') :

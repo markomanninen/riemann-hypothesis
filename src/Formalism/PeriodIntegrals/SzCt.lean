@@ -1,6 +1,10 @@
-import Formalism.LocalRingCardinality.DataErr
-import Formalism.LocalRingCardinality.DataParams
-import Formalism.SharpRestriction.ElevenLe
+module
+
+public import Formalism.LocalRingCardinality.DataErr
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.ElevenLe
+
+@[expose] public section
 
 noncomputable section
 

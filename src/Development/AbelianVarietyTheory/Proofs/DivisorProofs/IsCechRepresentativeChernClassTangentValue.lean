@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoboundarySndTr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantFormAbelianVarietyTranslateValue
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogChernCocycleContractionInvariantFieldTrivialiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoboundarySndTr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvariantFormAbelianVarietyTranslateValue
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogChernCocycleContractionInvariantFieldTrivialiStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -68,7 +72,8 @@ theorem prism_sum' {I J : Type} {U : I → A.left.Opens} (t : Finset J) (z : J �
     rw [Finset.sum_insert ha, Finset.sum_insert ha, prism_add', ih]
 
 theorem triv_sec {P Q : GPt A} (φ : P.Hom Q) : φ.triv ≫ Q.sec = P.sec ≫ φ.dual := by
-  apply Thick.hom_ext
+  apply Thick.Hom.ext'
+  apply AlgHom.ext
   intro b
   rw [Thick.comp_φ, Thick.comp_φ]
   show TrivSqZeroExt.inl (φ.ρ b) = dualAlg φ.ρ (TrivSqZeroExt.inl b)
@@ -78,7 +83,8 @@ theorem triv_sec {P Q : GPt A} (φ : P.Hom Q) : φ.triv ≫ Q.sec = P.sec ≫ φ
 
 theorem triv_tan {P Q : GPt A} (φ : P.Hom Q) {v : epsR K ⟶ A} (hv : IsTangent v) :
     (φ.tr v).triv ≫ Q.tan hv = P.tan hv ≫ φ.dual := by
-  apply Thick.hom_ext
+  apply Thick.Hom.ext'
+  apply AlgHom.ext
   intro b
   rw [Thick.comp_φ, Thick.comp_φ]
   rfl
@@ -219,7 +225,7 @@ private theorem triv_coc_lemma_7 {K : Type} [Field K] {A : Over (Sp K)} [GrpObj 
   rw [d1_apply] at e
   have e' : ψ.ρ (chernRepEv1 β φ.triv hP) - chernRepEv1 β (φ.triv ≫ ψ.triv) hP +
       chernRepEv1 β ψ.triv hQ = 0 := e
-  have hcomp : (φ.comp ψ).triv = φ.triv ≫ ψ.triv := Thick.hom_ext fun _ ↦ rfl
+  have hcomp : (φ.comp ψ).triv = φ.triv ≫ ψ.triv := Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl)
   rw [sub_add_eq_add_sub, sub_eq_zero] at e'
   rw [hcomp]
   exact e'.symm
@@ -234,7 +240,8 @@ private theorem chern_cob_lemma_10 {K : Type} [Field K] {A : Over (Sp K)} [GrpOb
       (∑ k, cupZ _ (c k) (ω k).1)).1 - d1 _ β := by
   have hsum : (∑ k, cup _ (H1.mk _ (c k)) (Form.cl _ (ω k))) =
       H2.mk (O (dp0 K) (A.hom ≫ 𝟙 (Sp K))) (∑ k, cupZ _ (c k) (ω k).1) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [← cup_mk]
     rfl
@@ -253,10 +260,12 @@ private theorem prism_eq_of_pullback_cup_sub_d1 {K : Type} [Field K] {A : Over (
     ev (∑ k, tanVal v (ω k) • c k) φ.triv =
       (N Q - ∑ k, cupContractionCorrectionTerm (c k) (ω k) hv Q - G3 Q + cochainTangentDiffCoeff β hv Q) -
         φ.ρ (N P - ∑ k, cupContractionCorrectionTerm (c k) (ω k) hv P - G3 P + cochainTangentDiffCoeff β hv P) := by
-  rw [hℓ1, prism_sub', map_sum, prism_sumZ', prismContractionTwoCochain_coboundary β hv φ hex] at hN
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hℓ1, prism_sub', map_sum, prism_sumZ', prismContractionTwoCochain_coboundary β hv φ hex] at hN
   simp only [prism_cup' hA] at hN
   rw [ev_sum_smul']
-  simp only [map_sub, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_add (f := _), map_sum]
   have hsm : ∀ k, tanVal v (ω k) • ev (c k) φ.triv =
       ev (c k) φ.triv * algebraMap K Q.B (tanVal v (ω k)) := fun k ↦ by
     rw [Algebra.smul_def, mul_comm]

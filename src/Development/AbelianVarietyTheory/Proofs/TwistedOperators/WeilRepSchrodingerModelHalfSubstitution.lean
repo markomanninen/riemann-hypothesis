@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,16 @@ private lemma isSBHalf_psi_mul_halfInd {ψ : AddChar (AF D.host.F) ℂ} {e : AE 
   have h0 : IsSBHalf e Λ (halfInd e Λ) := GlobalTheory.isSBHalf_halfInd e Λ
   unfold IsSBHalf at h0 ⊢
   obtain ⟨hsupp, k, hk, hinv, hlat⟩ := h0
-  have hχ := GlobalTheory.PlaceModel.isBichar_symplO S T ψ
+  have hχ : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y
+      rw [GlobalTheory.PlaceModel.symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y
+      rw [GlobalTheory.PlaceModel.symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y
+      rw [GlobalTheory.PlaceModel.symplO_zero_left, AddChar.map_zero_eq_one]
+    · intro y
+      rw [GlobalTheory.PlaceModel.symplO_zero_right, AddChar.map_zero_eq_one]
   refine ⟨fun t ht => hsupp t (right_ne_zero_of_mul ht), m * k, Nat.mul_pos hm hk, ?_, ?_⟩
   · intro u hu hue t
     have huh : u ∈ half S T e := (GlobalTheory.PlaceModel.isHalf_iff S T).1 hue
@@ -102,7 +115,9 @@ theorem om_placeModel : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp
     exact GlobalTheory.AdIdem.idempotent_mem_intAE D _ (by rw [← map_mul, hw])
   have hfm := GlobalTheory.LatFinMod.latO_finite_mod D S T ΛS ΛT hS.1.fg hT.1.fg (fun _ => True)
   have hnm : ∀ t : WO S T, t.map (infPart D) = 0 → ∃ k : ℕ, 0 < k ∧ k • t ∈ (latO S T ΛS ΛT fun _ => True) :=
-    fun t ht => GlobalTheory.PlaceDatum.exists_nsmul_mem_latO' hS.1 hT.1 t ht
+    fun t ht => GlobalTheory.PlaceDatum.exists_nsmul_mem_latO'
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS)
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT) t ht
   generalize (latO S T ΛS ΛT fun _ => True) = Λ at hdual hsm hfm hnm hTm hΛ hΦ ⊢
   have hcA : cA D a * cA D a = cA D a := by rw [← map_mul, ha]
   have hinf' : infPart D (cA D a) = 0 := GlobalTheory.PlaceDatum.infPart_cA hinf
@@ -145,7 +160,17 @@ theorem om_placeModel : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp
       (half S T (cA D a)) (Λ ⊓ half S T a) := by
     unfold IsSBHalf at hΦ
     obtain ⟨hsupp, k, hk, hinv, hlat⟩ := hΦ
-    refine GlobalTheory.PlaceDatum.mem_waveSpan (L' := Λ ⊓ half S T (cA D a)) (GlobalTheory.PlaceModel.isBichar_symplO S T ψ)
+    have hχ : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro x x' y
+        rw [GlobalTheory.PlaceModel.symplO_add_left, AddChar.map_add_eq_mul]
+      · intro x y y'
+        rw [GlobalTheory.PlaceModel.symplO_add_right, AddChar.map_add_eq_mul]
+      · intro y
+        rw [GlobalTheory.PlaceModel.symplO_zero_left, AddChar.map_zero_eq_one]
+      · intro y
+        rw [GlobalTheory.PlaceModel.symplO_zero_right, AddChar.map_zero_eq_one]
+    refine GlobalTheory.PlaceDatum.mem_waveSpan (L' := Λ ⊓ half S T (cA D a)) hχ
       inf_le_right inf_le_right hLL hXd (fun k hk x hx => GlobalTheory.PlaceModel.half_div S T a k hk x hx)
       (fun k hk y hy => GlobalTheory.PlaceModel.half_div S T (cA D a) k hk y hy) htf hfin Φ
       (fun t ht => (GlobalTheory.PlaceModel.isHalf_iff S T).1 (hsupp t ht)) k hk ?_ ?_
@@ -163,7 +188,10 @@ theorem om_placeModel : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp
     have hxH : IsHalf a x := (GlobalTheory.PlaceModel.isHalf_iff S T).2 hx
     have hyH : IsHalf (cA D a) y := (GlobalTheory.PlaceModel.isHalf_iff S T).2 hy
     have hthy : IsThetaFunO ψ S T (heisO ψ S T y f₀) :=
-      GlobalTheory.FinTranslate.isTheta_heisO_fin hψ (GlobalTheory.PlaceDatum.infPart_of_half hinf' hyH) hth
+      by
+        simpa using GlobalTheory.FinTranslate.isTheta_sum_heisO_fin D ψ S T hψ f₀ hth
+          Unit {()} (fun _ => y) (fun _ => 1)
+          (fun _ _ => GlobalTheory.PlaceDatum.infPart_of_half hinf' hyH)
     rw [placeModel_wave hLL hden hTm hxH hyH, hW.om_heis g h x _ hthy, hW.om_heis g h y f₀ hth, hc,
       GlobalTheory.SplitScalar.heisO_smul, GlobalTheory.SplitScalar.heisO_smul, wave_actO ψ a hΛ x y,
       placeModel_wave hLL hden hTm (GlobalTheory.SplitHecke.isHalf_actO g h hxH) (GlobalTheory.SplitHecke.isHalf_actO g h hyH)]
@@ -173,7 +201,7 @@ theorem om_placeModel : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp
   | add Ψ₁ Ψ₂ _ _ ih₁ ih₂ =>
     rw [show (fun x => (Ψ₁ + Ψ₂) (actO S T g⁻¹ h⁻¹ x)) =
       (fun x => Ψ₁ (actO S T g⁻¹ h⁻¹ x)) + (fun x => Ψ₂ (actO S T g⁻¹ h⁻¹ x)) from rfl]
-    simp only [map_add, ih₁, ih₂, smul_add]
+    simp only [map_add (f := _), ih₁, ih₂, smul_add]
   | smul r Ψ _ ih =>
     rw [show (fun x => (r • Ψ) (actO S T g⁻¹ h⁻¹ x)) = r • (fun x => Ψ (actO S T g⁻¹ h⁻¹ x)) from rfl]
     simp only [map_smul, ih]

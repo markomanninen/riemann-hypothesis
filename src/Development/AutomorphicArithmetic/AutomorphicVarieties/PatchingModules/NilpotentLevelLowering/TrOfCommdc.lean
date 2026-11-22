@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -366,7 +370,8 @@ private theorem trOf_main (Θ1) (h1 : IsThetaQ ρ C Θ1) (Θw) (hw : IsThetaQ ρ
     have hvC := fixd_anti ρ hle hv
     rw [hw.1 j t ht, hsum, hsum, h1.1 j t ht]
     rw [trOf_lev (ρ.comp (atJ n w j)) (C j) ht (trOf_fix ρ (fun _ => ⊤) j hv) (trOf_fix ρ C j hvC)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun y hy => ?_
     exact trOf_commQ ρ C j t y (hST j (y j) (hsS y hy j (Set.mem_univ j))) m.2
   intro j t m

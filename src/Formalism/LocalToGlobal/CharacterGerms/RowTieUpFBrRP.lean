@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrR
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrR
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -96,21 +100,19 @@ theorem valTie_vmOf : ValTie V (vmOf V) := by
   refine ⟨t, ht, ?_⟩
   rw [vmOf_of hx ht, vmOf_l, NNReal.coe_rpow]
 
-theorem integers_vmOf : (vmOf V).Integers V.RR where
-  hom_inj := Subtype.coe_injective
-  map_le_one := by
-    intro x
+theorem integers_vmOf : (vmOf V).Integers V.RR := by
+  refine ⟨Subtype.coe_injective, ?_, ?_⟩
+  · intro x
     show vmOf V (x : C) ≤ 1
     by_cases hx : (x : C) = 0
-    · rw [hx, map_zero]; exact zero_le_one
+    · simp [hx]
     obtain ⟨t, ht⟩ := exists_real (V := V) hx
     rw [vmOf_of hx ht]
     have h0 : V.Ge 0 (x : C) := x.2
     unfold VF.Ge at h0
     rw [ht] at h0
     exact NNReal.rpow_le_one (bb_lt V).le (WithTop.coe_le_coe.mp h0)
-  exists_of_le_one := by
-    intro r hr
+  · intro r hr
     suffices h : V.Ge 0 r from ⟨⟨r, h⟩, rfl⟩
     by_cases hx : r = 0
     · rw [hx]; exact VF.Ge.zero 0

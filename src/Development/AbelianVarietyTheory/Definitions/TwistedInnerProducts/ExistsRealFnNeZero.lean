@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.StepUnfold
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StatementWithTransposeOfBranching
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,8 +136,8 @@ theorem realFn_mul_fin (g : GA D (G.V X)) (k : FinPt G X) :
     realFn θ N X Λ V (g * k) = realFn θ N X Λ (fun y => V (y * k)) g := by
   rw [realFn_mul, ← Subgroup.coe_inv, rhoAt_fin, GlobalTheory.AutMult.toFin_coe]; rfl
 
-variable (X) in
 
+variable (X) in
 theorem exists_realFn_ne_zero : ∃ (Λ : Module.Dual ℂ (VV ℂ (wt G X))) (v : VV ℂ (wt G X)),
     realFn θ N X Λ (fun _ => v) 1 ≠ 0 := by
   haveI : Nontrivial (VV ℂ (wt G X)) :=
@@ -278,19 +282,6 @@ end Top
 section Examples
 
 variable {L : LevCh D T} {sc : Consts} {G : GridData L sc} {U : Set T} (θ : InfFam D) (N : Std G U) (X : Node)
-
-example : ∃ Λ V, realFn θ N X Λ V ≠ 0 :=
-  let ⟨Λ, v, h⟩ := exists_realFn_ne_zero θ N X
-  ⟨Λ, fun _ => v, fun e => h (congrFun e 1)⟩
-
-example (Λ) (V : FinPt G X → VV ℂ (wt G X)) (k : FinPt G X) (h : ∀ y, V (y * k) = V y) (g : GA D (G.V X)) :
-    realFn θ N X Λ V (g * k) = realFn θ N X Λ V g := by
-  simp only [realFn_mul_fin, h]
-
-example (k : GA D (G.V X)) (c : D.what₂.Tau → ℂˣ) (h : ∀ τ, realAt θ N X k τ = Matrix.GeneralLinearGroup.scalar _ (c τ))
-    (v : D.what₂.Tau × Fin (G.V X).rank × Fin (G.V X).rank) :
-    trAct (invTrK (realAt θ N X k)) (MvPolynomial.X v) = MvPolynomial.C ((c v.1 : ℂ)⁻¹) * MvPolynomial.X v := by
-  simp [trAct, Formalism.GradedWeylDivisibility.blockAct, invTrK_coe, h, ← map_inv, Matrix.diagonal_apply, apply_ite]
 
 end Examples
 

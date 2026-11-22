@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsMinorNeZero
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GfCurve
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsMinorNeZero
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GfCurve
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField MvPolynomial GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.HT ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles
 
 namespace PositivityTheory.HtPt.Gf
@@ -61,7 +66,7 @@ theorem exists_vanishing_ideal
           fun h => (hp.out.dvd_mul.1 h).elim h1 h1',
           hom_add (hom_nat_mul _ (hom_mul h2 (hom_mon _ _))) (hom_nat_mul _ (hom_mul (hom_mon _ _) h2')),
           add_mem (W.mul_mem_left _ (W.mul_mem_right _ h3)) (W.mul_mem_left _ (W.mul_mem_left _ h3')), ?_⟩
-        simp only [map_add, map_mul, map_natCast, aeval_mon_const, ← h4, ← h4']
+        simp only [map_add (f := _), map_mul, map_natCast, aeval_mon_const, ← h4, ← h4']
         push_cast; ring
       smul_mem' := by
         rintro u v ⟨n', d', g', h1', h2', h3', h4'⟩

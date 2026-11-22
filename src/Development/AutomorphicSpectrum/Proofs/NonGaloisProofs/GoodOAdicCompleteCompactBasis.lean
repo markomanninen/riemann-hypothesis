@@ -1,10 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TateH2IffAllFiniteExtensions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TateH2IffAllFiniteExtensions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
@@ -90,13 +98,13 @@ theorem basis_nhds (hop : IsOpen (Set.range (algebraMap O LL)))
       rw [hy, map_zero] at hxU
       exact hxU h0
     obtain ⟨n, hn⟩ := (hc.diff hU).elim_directed_family_closed (ball ϖ : ℕ → Set LL)
-      (fun n => (isCompact_ball hc ϖ n).isClosed) hint (ball_antitone ϖ).directed_ge
+      (fun n => (isCompact_ball hc ϖ n).isClosed) (Set.disjoint_iff_inter_eq_empty.mpr hint)
+      (ball_antitone ϖ).directed_ge
     refine ⟨n, trivial, fun x hx => hUt ?_⟩
     by_contra hxU
     have : x ∈ (Set.range (algebraMap O LL) \ U) ∩ (ball ϖ n : Set LL) :=
       ⟨⟨ball_subset_range ϖ n hx, hxU⟩, hx⟩
-    rw [hn] at this
-    exact this
+    exact (Set.disjoint_left.mp hn) this.1 this.2
   · rintro ⟨n, -, hn⟩
     exact Filter.mem_of_superset ((isOpen_ball hop hϖ n).mem_nhds (hzero n)) hn
 
@@ -169,8 +177,8 @@ section Main
 variable {l : ℕ} [Fact l.Prime] {LL O : Type} [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL]
   [CommRing O] [Algebra O LL]
 
-open GlobalTheory.TateTopCompare in
 
+open GlobalTheory.TateTopCompare in
 theorem t2_and_compact (h : GoodO (Qp := ℚ_[l]) LL O) :
     T2Space LL ∧ IsCompact (Set.range (algebraMap O LL)) := by
   have hfd : FiniteDimensional ℚ_[l] LL := h.2.1
@@ -202,8 +210,8 @@ theorem t2_and_compact (h : GoodO (Qp := ℚ_[l]) LL O) :
   rw [heq]
   exact hball.image hc2
 
-open GlobalTheory.TateTop in
 
+open GlobalTheory.TateTop in
 theorem not_isUnit_natCast (h : GoodO (Qp := ℚ_[l]) LL O) : ¬ IsUnit (l : O) := by
   rintro ⟨u, hu⟩
   have hsurj : Function.Surjective (algebraMap O LL) := by
@@ -241,8 +249,8 @@ theorem exists_pow_mem (h : GoodO (Qp := ℚ_[l]) LL O) {ϖ : O} (hϖ : Irreduci
     rw [this, pow_succ]
     ring
 
-open GlobalTheory.TateTop in
 
+open GlobalTheory.TateTop in
 theorem goodO_structure : ∀ (l : ℕ) [Fact l.Prime], ∀ (LL : Type) [Field LL] [Algebra ℚ_[l] LL]
     [TopologicalSpace LL] (O : Type) [CommRing O] [Algebra O LL], GoodO (Qp := ℚ_[l]) LL O →
     ∀ ϖ : O, Irreducible ϖ → IsAdicComplete (Ideal.span {ϖ}) O ∧ Finite (O ⧸ Ideal.span {ϖ}) ∧

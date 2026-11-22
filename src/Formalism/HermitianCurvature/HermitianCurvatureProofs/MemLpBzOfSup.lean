@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZeroNotMemPreimagePow
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZeroNotMemPreimagePow
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 
@@ -47,7 +51,7 @@ theorem memLp_bz_of_sup {s : ℕ} (hs : s ≠ 0) {β : ℂ} (hβ : β ≠ 0) {ε
       positivity
   have hgn : ∀ n, ∫⁻ z, g n z ≤ ENNReal.ofReal SS := fun n => by
     have hi : Integrable (fun z => ‖(K n).indicator (bz s bt) z‖ ^ 2) :=
-      (memLp_two_iff_integrable_sq_norm (hmem n).1).1 (hmem n)
+      (memLp_two_iff_integrable_sq_norm (hmem n).aestronglyMeasurable).1 (hmem n)
     show ∫⁻ z, ENNReal.ofReal (‖(K n).indicator (bz s bt) z‖ ^ 2) ≤ _
     rw [← ofReal_integral_eq_lintegral_ofReal hi (ae_of_all _ fun z => sq_nonneg _)]
     exact ENNReal.ofReal_le_ofReal (hbound n)

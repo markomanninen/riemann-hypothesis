@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnimodularBesselSubgroupsUWNStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcTypeWIrreducibleAndSchurAverageStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnimodularBesselSubgroupsUWNStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HcTypeWIrreducibleAndSchurAverageStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,18 +17,9 @@ namespace GlobalTheory.Amp.OnePiece
 
 variable {k r : ℕ}
 
-theorem continuous_lmul (a : Mat k r) : Continuous (lmulM a : Mt k r → Mt k r) := by
-  unfold lmulM
-  exact continuous_const.matrix_mul continuous_id.matrixOf
-
 theorem continuous_conj (a : Mat k r) : Continuous (conjM a : Mt k r → Mt k r) := by
   unfold conjM
   exact (continuous_const.matrix_mul continuous_id.matrixOf).matrix_mul continuous_const
-
-theorem continuous_mulPair :
-    Continuous fun p : Mt k r × Mt k r => lmulM (Matrix.of p.1) p.2 := by
-  unfold lmulM
-  exact continuous_fst.matrixOf.matrix_mul continuous_snd.matrixOf
 
 def grp (k r : ℕ) : Set (Mt k r) := {x | Matrix.of x ∈ GG k r}
 
@@ -124,7 +119,11 @@ theorem one_piece : ∀ (k r : ℕ) {Wp : Type} [NormedAddCommGroup Wp] [InnerPr
     have hit : ∫⁻ s, F (fun i j => (Matrix.of s * Matrix.of x) i j) ∂(muProd μW μN) ≤
         ∫⁻ h, ∫⁻ n, F (lmulM (Matrix.of h * Matrix.of n) x) ∂μN ∂μW :=
       calc ∫⁻ s, F (fun i j => (Matrix.of s * Matrix.of x) i j) ∂(muProd μW μN)
-          ≤ ∫⁻ p, F (lmulM (Matrix.of p.1 * Matrix.of p.2) x) ∂(μW.prod μN) := lintegral_map_le _ _
+          ≤ ∫⁻ p, F (lmulM (Matrix.of p.1 * Matrix.of p.2) x) ∂(μW.prod μN) := by
+            apply lintegral_map_le
+            have hc : Continuous (fun p : Mt k r × Mt k r => lmulM (Matrix.of p.1) p.2) := by
+              exact continuous_fst.matrixOf.matrix_mul continuous_snd.matrixOf
+            exact hc.measurable.aemeasurable
         _ ≤ ∫⁻ h, ∫⁻ n, F (lmulM (Matrix.of h * Matrix.of n) x) ∂μN ∂μW := lintegral_prod_le _
     refine hit.trans ?_
     have zero_case : (∀ h : Mt k r, Matrix.of h ∈ UWset k r z → ∀ n : Mt k r,

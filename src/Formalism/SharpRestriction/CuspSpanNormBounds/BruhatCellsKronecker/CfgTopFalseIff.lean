@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
-import Formalism.HermitianCurvature.StatementSz
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.OwnEvIntro
+public import Formalism.HermitianCurvature.StatementSz
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,19 +14,19 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formal
 theorem vOne_succ (D : D7) (τ : D.what₂.Tau) (j : ℕ) (h : j < D.R.k - 1) :
     vOne D τ (j + 1) = (((D.hc τ).v ⟨j, h⟩ : ℚ) : ℝ) := by
   have hh : 1 ≤ j + 1 ∧ j + 1 ≤ D.R.k - 1 := ⟨by omega, by omega⟩
-  rw [vOne, dif_pos hh]
+  rw [vOne, dite_eq_left hh]
   simp only [Nat.add_sub_cancel]
 
 theorem bOne_succ (D : D7) (τ : D.what₂.Tau) (j : ℕ) (h : j < D.R.m) :
     bOne D τ (j + 1) = (((D.hc τ).b ⟨j, h⟩ : ℚ) : ℝ) := by
   have hh : 1 ≤ j + 1 ∧ j + 1 ≤ D.R.m := ⟨by omega, by omega⟩
-  rw [bOne, dif_pos hh]
+  rw [bOne, dite_eq_left hh]
   simp only [Nat.add_sub_cancel]
 
 theorem uOne_succ (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) (j : ℕ) (h : j < D.R.k) :
     uOne D u τ (j + 1) = (((D.hcW u τ).u ⟨j, h⟩ : ℚ) : ℝ) := by
   have hh : 1 ≤ j + 1 ∧ j + 1 ≤ D.R.k := ⟨by omega, by omega⟩
-  rw [uOne, dif_pos hh]
+  rw [uOne, dite_eq_left hh]
   simp only [uS, Nat.add_sub_cancel]
 
 theorem five_le_k (D : D7) : 5 ≤ D.R.k := by
@@ -77,8 +81,8 @@ theorem vOne_arith (D : D7) (τ : D.what₂.Tau) : ∀ d j : ℕ, j + d + 2 = D.
     push_cast
     ring
 
-open Classical in
 
+open Classical in
 def cfgOf (D : D7) (τ : D.what₂.Tau) : Sz.Cfg where
   k := D.R.k
   m := D.R.m
@@ -95,7 +99,7 @@ def deOf (D : D7) (u : D.what₂.Word) (l : ℕ) : ℝ :=
 theorem deOf_succ (D : D7) (u : D.what₂.Word) (l : ℕ) (h : l < D.R.k - 2) :
     deOf D u (l + 1) = if D.s.letter u ⟨l, h⟩ then 1 else 0 := by
   have hh : 1 ≤ l + 1 ∧ l + 1 ≤ D.R.k - 2 := ⟨by omega, by omega⟩
-  rw [deOf, dif_pos hh]
+  rw [deOf, dite_eq_left hh]
   simp only [Nat.add_sub_cancel]
 
 theorem isWord_deOf (D : D7) (u : D.what₂.Word) : Sz.IsWord D.R.k (deOf D u) := by
@@ -105,7 +109,7 @@ theorem isWord_deOf (D : D7) (u : D.what₂.Word) : Sz.IsWord D.R.k (deOf D u) :
   · unfold deOf
     split_ifs <;> simp
   · have hn : ¬ (1 ≤ D.R.k - 1 ∧ D.R.k - 1 ≤ D.R.k - 2) := by omega
-    rw [deOf, dif_neg hn]
+    rw [deOf, dite_eq_right hn]
 
 theorem cfg_top_iff (D : D7) (τ : D.what₂.Tau) : (cfgOf D τ).top = true ↔ IsTop D τ := by
   simp [cfgOf]
@@ -166,14 +170,14 @@ theorem cfg_lam (D : D7) (τ : D.what₂.Tau) (a : Fin D.R.r) :
   · have h1 : a.1 + 1 < (cfgOf D τ).k := by
       show a.1 + 1 < D.R.k
       omega
-    rw [if_pos h1, dif_pos h, cfg_v D τ (a.1 + 1) (by omega) (by omega), vOne_succ D τ a.1 h]
+    rw [if_pos h1, dite_eq_left h, cfg_v D τ (a.1 + 1) (by omega) (by omega), vOne_succ D τ a.1 h]
   · have h1 : ¬ (a.1 + 1 < (cfgOf D τ).k) := by
       show ¬ (a.1 + 1 < D.R.k)
       omega
     have h2 : a.1 - (D.R.k - 1) < D.R.m := by
       have ha' : a.1 < D.R.k + D.R.m - 1 := ha
       omega
-    rw [if_neg h1, dif_neg h, dif_pos h2]
+    rw [if_neg h1, dite_eq_right h, dite_eq_left h2]
     show -bOne D τ (a.1 + 1 + 1 - D.R.k) = _
     rw [show a.1 + 1 + 1 - D.R.k = (a.1 - (D.R.k - 1)) + 1 by omega, bOne_succ D τ _ h2]
 
@@ -248,10 +252,6 @@ theorem Vand_lam (D : D7) (τ : D.what₂.Tau) :
 
 theorem rdE_eq (D : D7) : D.host.rdE = 2 * D.host.v := by
   rw [Host.v]
-  ring
-
-theorem ka_eq (D : D7) : D.host.ka = 2 * Real.pi / D.host.rdE := by
-  rw [Host.ka, Host.v, div_div_eq_mul_div]
   ring
 
 theorem cast_tri (m : ℕ) (hm : 1 ≤ m) : ((m * (m - 1) / 2 : ℕ) : ℝ) = (m : ℝ) * ((m : ℝ) - 1) / 2 := by

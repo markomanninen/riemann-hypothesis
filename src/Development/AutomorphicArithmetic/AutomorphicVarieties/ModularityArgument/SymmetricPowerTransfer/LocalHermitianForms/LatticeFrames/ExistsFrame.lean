@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenOfNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.EvenOfNorm
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Sym.Loc.CP
 
@@ -19,7 +23,7 @@ theorem exists_smul_mem (L : IsLoc O Δ) (hf : S.FG) (hd : ∀ y, y ∈ S ↔ �
     obtain ⟨a, ha⟩ := hb _ (Finset.mem_image_of_mem _ hx)
     exact ⟨a, by rw [ha, map_smul, Algebra.smul_def, smul_eq_mul]⟩
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply]; exact add_mem ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem ha hb
   | smul a x _ hx =>
     rw [← algebraMap_smul K a x, LinearMap.map_smul₂, smul_eq_mul]
     exact mul_mem ⟨a, rfl⟩ hx
@@ -43,7 +47,7 @@ theorem exists_unit (L : IsLoc O Δ) (hB : ∀ x y, B x y = B y x) (hf : S.FG) (
     obtain ⟨a, ha⟩ := h1 v hv
     obtain ⟨b, hb⟩ := h1 w hw
     obtain ⟨c, hc⟩ := h1 (v + w) (add_mem hv hw)
-    simp only [map_add, LinearMap.add_apply, map_mul] at ha hb hc
+    simp only [map_add (f := _), LinearMap.add_apply, map_mul] at ha hb hc
     refine ⟨i * (c - a - b), ?_⟩
     rw [map_smul, hadj, smul_eq_mul, map_mul, map_sub, map_sub]
     rw [hB (P v) (P w)] at hc

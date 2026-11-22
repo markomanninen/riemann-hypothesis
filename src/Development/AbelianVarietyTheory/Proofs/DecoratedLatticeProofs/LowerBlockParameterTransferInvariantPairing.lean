@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumRepsDatumEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LowerDiagonalBlockAsGLMemIntegralGeneralLinear
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeIdentityIntegral
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GenValAddSegL
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsParahoricAndIntegralGLDoubleCosetReps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InSuppMulLeft
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OmTwoTorusLeft
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumNegIndic
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumEqGenVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumRepsDatumEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LowerDiagonalBlockAsGLMemIntegralGeneralLinear
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeIdentityIntegral
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GenValAddSegL
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsParahoricAndIntegralGLDoubleCosetReps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InSuppMulLeft
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.OmTwoTorusLeft
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumNegIndic
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SumEqGenVal
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
 
 noncomputable section
@@ -95,7 +100,8 @@ theorem transfer : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
       ring
     have lhs : ∑ j ∈ R', (((ξ (d' j))⁻¹ : ℂˣ) : ℂ) • ρ' (j * mtor ϖ (indic s)) (b Φw x) =
         b (∑ j ∈ R', (((ξ (d' j))⁻¹ : ℂˣ) : ℂ) • (⟨omTwo μS μT 1 (j * mtor ϖ (indic s)) (datum ξ⁻¹), hW _ _ _ hΦ⟩ : W)) x := by
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, LinearMap.smul_apply, ← hb 1 _ Φw x, hρ1]
     have e4 : ∀ n ∈ Finset.range (Fintype.card D + 1),
@@ -104,10 +110,12 @@ theorem transfer : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
           (cn n * (den n)⁻¹ * genVal (resCard k) (Fintype.card A) (Fintype.card D) B n) • b Φw x := by
       intro n hn
       have hc := hsn n (Nat.lt_succ_iff.1 (Finset.mem_range.1 hn))
-      rw [map_smul, LinearMap.smul_apply, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, LinearMap.smul_apply, map_sum, LinearMap.sum_apply]
       simp_rw [map_smul, LinearMap.smul_apply]
       rw [GlobalTheory.ParHeckeTransfer.sum_eq_genVal k A D D' ϖ ξ μS μT hξ hT W hW hΦ X ρ x B ⟨hx1, hx2, hx3⟩ X' ρ' b hb (sn n) _ _ (hRR _), hc, smul_smul]
-    rw [lhs, key, map_smul, LinearMap.smul_apply, map_sum, LinearMap.sum_apply, Finset.sum_congr rfl e4,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [lhs, key, map_smul, LinearMap.smul_apply, map_sum, LinearMap.sum_apply, Finset.sum_congr rfl e4,
       ← Finset.sum_smul, smul_smul]
     congr 1
     have hN := GlobalTheory.ParHecke.StringEig.genVal_add_segL k ϖ hϖ (Fintype.card A) (Fintype.card D) t s.card B (μS ϖ) (μT ϖ) hx2

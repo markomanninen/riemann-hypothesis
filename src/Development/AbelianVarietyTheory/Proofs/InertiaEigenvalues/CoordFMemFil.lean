@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdemNotMemFilVOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDeRhamFilGradedSymbolToTateTwist
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAdaptedOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdemNotMemFilVOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDeRhamFilGradedSymbolToTateTwist
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,11 +57,11 @@ theorem coordF_sm (r : ↥LL.1 ⊗[ℚ_[l]] P.R.BdR) (x : (Fin m → ↥LL.1) �
     coordF P LL m (GlobalTheory.DRFil.sm ℚ_[l] P.R.BdR ↥LL.1 (Fin m → ↥LL.1) r x) = mulF P LL r • coordF P LL m x := by
   induction r using TensorProduct.induction_on with
   | zero => simp
-  | add r s hr hs => simp only [map_add, LinearMap.add_apply, hr, hs, add_smul]
+  | add r s hr hs => simp only [map_add (f := _), LinearMap.add_apply, hr, hs, add_smul]
   | tmul c b =>
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
     | tmul v b' =>
       funext j
       simp only [GlobalTheory.DRFil.sm_tmul, coordF_tmul, mulF_tmul, Pi.smul_apply, Pi.smul_apply, smul_eq_mul, map_mul]
@@ -72,7 +76,7 @@ theorem coordF_mem_fil (K : FinExt l) {n : ℤ} {x : (Fin m → ↥LL.1) ⊗[ℚ
   obtain ⟨z, rfl⟩ := hx
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, Pi.add_apply]; exact add_mem ha hb
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply]; exact add_mem ha hb
   | tmul v b =>
     have := (P.PD K).Fil_mul 0 n _ _ (embF_mem_fil P LL K (v j)) b.2
     rw [zero_add] at this
@@ -83,7 +87,7 @@ theorem mulF_mem_fil (K : FinExt l) {n : ℤ} {r : ↥LL.1 ⊗[ℚ_[l]] P.R.BdR}
   obtain ⟨z, rfl⟩ := hr
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add]; exact add_mem ha hb
+  | add a b ha hb => simp only [map_add (f := _)]; exact add_mem ha hb
   | tmul v b =>
     have := (P.PD K).Fil_mul 0 n _ _ (embF_mem_fil P LL K v) b.2
     rw [zero_add] at this
@@ -93,13 +97,15 @@ theorem mulF_idem (K : FinExt l) [FiniteDimensional ℚ_[l] ↥K.1] (τ : ↥K.1
     (hτ : ∀ x : ↥K.1, ((τ x : ↥LL.1) : Om l) = (x : Om l)) :
     mulF P LL (GlobalTheory.DRFil.idem P.R.BdR τ) = 1 := by
   obtain ⟨n, a, c, h, h1⟩ := GlobalTheory.DRFil.idem_repr P.R.BdR τ
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   have e : ∀ i, mulF P LL (a i ⊗ₜ[ℚ_[l]] algebraMap ↥K.1 P.R.BdR (c i)) =
       algebraMap (Om l) P.R.BdR (((a i * τ (c i) : ↥LL.1)) : Om l) := by
     intro i
     rw [mulF_tmul, embF_apply, IntermediateField.coe_mul, map_mul, hτ]
     rfl
-  simp only [e, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, ← map_sum]
   have h2 := congrArg (fun x : ↥LL.1 => (x : Om l)) h1
   simp only [IntermediateField.coe_sum, IntermediateField.coe_one] at h2
   simp only [IntermediateField.coe_mul] at h2 ⊢
@@ -115,19 +121,20 @@ theorem coordF_act (K : FinExt l) (r : ↥(GK K) →* Matrix.GeneralLinearGroup 
     simp only [map_zero, Pi.zero_apply]
     exact (Matrix.mulVec_zero _).symm
   | add a b ha hb =>
-    rw [map_add, map_add, ha, hb, ← Matrix.mulVec_add]
+    rw [map_add (f := _), map_add (f := _), ha, hb, ← Matrix.mulVec_add]
     congr 1
     funext j
-    simp
+    simp only [Pi.add_apply, map_add]
   | tmul v b =>
     have hfix : ∀ c : ↥LL.1, P.actQdR (g : GQ l) (embF P LL c) = embF P LL c := fun c => by
       rw [embF_apply, P.actQdR_Om, hg _ c.2]
     funext j
-    simp only [actVdR, AlgebraTensorModule.map_tmul, coordF_tmul, repOf_apply, P.PD_actdR,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [actVdR, AlgebraTensorModule.map_tmul, coordF_tmul, repOf_apply, P.PD_actdR,
       Matrix.mulVec, dotProduct, Matrix.map_apply, map_mul, hfix, map_sum]
     rw [Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [AlgHom.toLinearMap_apply, LinearMap.coe_restrictScalars, AlgEquiv.toAlgHom_eq_coe, AlgHom.coe_coe]
+    simp only [AlgHom.toLinearMap_apply, LinearMap.coe_restrictScalars, AlgEquiv.coe_toAlgHom, AlgHom.coe_coe]
     rw [mul_assoc]
     exact congrArg _ (congrArg _ (P.PD_actdR K g b))
 

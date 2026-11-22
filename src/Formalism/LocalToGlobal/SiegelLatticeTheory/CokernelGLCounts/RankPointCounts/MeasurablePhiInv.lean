@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CosetFd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CosetFd
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem phiInv_add (v w : ι → ℂ) : phiInv σ cj (v + w) = phiInv σ cj v + 
 
 theorem measurable_phiInv : Measurable (phiInv σ cj (K := K)) := by
   unfold phiInv
-  refine Measurable.prodMk (measurable_pi_lambda _ fun w => isEmptyElim w) (measurable_pi_lambda _ fun w => ?_)
+  refine Measurable.prodMk (Measurable.of_eval fun w => isEmptyElim w) (Measurable.of_eval fun w => ?_)
   by_cases h : cj (σ.symm w)
   · simp only [h, ↓reduceIte]
     exact Complex.continuous_conj.measurable.comp (measurable_pi_apply _)
@@ -165,7 +169,7 @@ theorem exists_fd (K : Type) [Field K] [NumberField K] [IsEmpty {w : InfinitePla
       rw [← hfE a, hae, hfg]
   obtain ⟨FL, hFLm, hFL⟩ := idealLattice_fd K I
   have hgm : Measurable g :=
-    (measurable_phiInv σ cj).comp (measurable_pi_lambda _ fun i => measurable_const.mul (measurable_pi_apply i))
+    (measurable_phiInv σ cj).comp (Measurable.of_eval fun i => measurable_const.mul (measurable_pi_apply i))
   have hdL : ∀ y, ∃! m : L, (m : ι → ℂ) + y ∈ g ⁻¹' FL :=
     existsUnique_add_mem_preimage_of_additive_equiv f g hgf hfg hg _ L hLM FL hFL
   let Λ' : AddSubgroup (ι → ℂ) := Λ.map E

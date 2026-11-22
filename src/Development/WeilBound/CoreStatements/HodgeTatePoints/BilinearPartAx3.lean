@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1IdentityLeft
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CanonA
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Comp1IdentityLeft
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CanonA
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem coeff_ax3_vanish {f : PS R 3 d} (hf : Ax3 f) (D : Fin 3 × Fin d →₀ 
 theorem exists_third (a b : Fin 3) : ∃ k, a ≠ k ∧ b ≠ k := by revert a b; decide
 
 theorem bilinear_part_ax3 {f : PS R 3 d} (hf : Ax3 f) {a : Fin 3 → Pt R 2 d} (ha : ZZ a) : bil (ev a f) 1 1 = 0 := by
-  have h1 : ∀ p : Fin 3 × Fin d, constantCoeff ((pderiv R p) f) = 0 := by
+  have h1 : ∀ p : Fin 3 × Fin d, constantCoeff ((pderiv p) f) = 0 := by
     intro p
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add]
     obtain ⟨k, hk, -⟩ := exists_third p.1 p.1
@@ -40,7 +44,7 @@ theorem bilinear_part_ax3 {f : PS R 3 d} (hf : Ax3 f) {a : Fin 3 → Pt R 2 d} (
     rw [Finsupp.single_apply, if_neg]
     rintro rfl
     exact hk rfl
-  have h2 : ∀ p q : Fin 3 × Fin d, constantCoeff ((pderiv R q) ((pderiv R p) f)) = 0 := by
+  have h2 : ∀ p q : Fin 3 × Fin d, constantCoeff ((pderiv q) ((pderiv p) f)) = 0 := by
     intro p q
     rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv, zero_add, coeff_pderiv]
     obtain ⟨k, hk1, hk2⟩ := exists_third p.1 q.1
@@ -230,7 +234,7 @@ theorem iso_rho : ∀ (R : Type) [CommRing R] (d : ℕ) (O : Type) [CommRing O] 
     · rintro ⟨u, v⟩
       simp [transH, Matrix.mulVec_mulVec, Matrix.mulVec_add, i2, ← Matrix.mul_assoc, t2]
     · rintro ⟨u, v⟩
-      simp [transH, Matrix.mulVec_mulVec, Matrix.mulVec_add, i1, t1]
+      simp [transH, Matrix.mulVec_sub, Matrix.mulVec_mulVec, Matrix.mulVec_add, i1, t1]
   · intro a
     have k1 : lin ψ 1 * rho B (star a) = rho B₂ (star a) * lin ψ 1 := by
       calc lin ψ 1 * rho B (star a) = lin ψ 1 * rho B (star a) * (lin φ 1 * lin ψ 1) := by

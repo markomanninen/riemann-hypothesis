@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+module
+
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedWeil
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasChr
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem idempotent_det_conj_identity (e : R) (h1 : e * e = e) (h2 : e * c e = 0)
     cases n with
     | zero => rw [Matrix.det_isEmpty, mul_one]
     | succ k => rw [hp k] at hd'; exact hd'
-  simp only [map_add, map_mul, map_sub, map_one]
+  simp only [map_add (f := _), map_mul, map_sub, map_one]
   linear_combination -key - c e * hd
 
 end Generic
@@ -103,7 +107,7 @@ theorem cA_cA (a : AE D) : cA D (cA D a) = a := by
   | zero => simp
   | tmul a b => simp [Algebra.TensorProduct.map_tmul, hs]
   | add x y hx hy =>
-    simp only [map_add] at *
+    simp only [map_add (f := _)] at *
     rw [hx, hy]
 
 theorem mt_rel (V : HSp D) (g : GA D V) :
@@ -183,7 +187,8 @@ theorem gram_det_ne (V : HSp D) : V.gram.det ≠ 0 := by
     simpa [Matrix.mulVec, dotProduct] using this
   have hb : V.hT.flip (∑ j, v j • V.frame j) = 0 := by
     refine V.frame.ext fun i => ?_
-    rw [LinearMap.flip_apply, LinearMap.zero_apply, map_sum, ← hrow i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.flip_apply, LinearMap.zero_apply, map_sum, ← hrow i]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul]
     exact mul_comm _ _
@@ -216,15 +221,6 @@ theorem isDetAt_root {e : AE D} (he : IsSplitIdem D e) (V : HSp D) (g : GA D V) 
   exact idempotent_det_conj_identity (cA D) e he.1 he.2.1 (mt V g) hs (det_conj_mul V g)
 
 variable {X : ThetaX D} {T : ThetaTied D X}
-
-theorem PhiYupTied.kernel {Wl : WeilTied D X T} (h : PhiYupTied Wl) (μ : D.what₂.Tup) (j : ℕ) (hj : j < D.R.m)
-    (g : GA D (D.sp.Y (j + 1))) (k : GA D (D.sp.Y j)) :
-    Wl.evS _ _ (Wl.om _ _ (X.carY μ (j + 1) j) (X.carY μ (j + 1) (j + 1)) (k, g) (X.PhiYup μ j)) 0 =
-      Wl.evS _ _ (Wl.om _ _ (X.carY μ (j + 1) (j + 1)) (X.carY μ (j + 1) j) (g, k) (X.PhiY μ j)) 0 := by
-  have s := Wl.om_swap _ _ (X.carY μ (j + 1) (j + 1)) (X.carY μ (j + 1) j) (rank_Y_ne X j hj)
-    (row_lift_ok T μ (j + 1) (by omega) hj (j + 1) hj) (row_lift_ok T μ (j + 1) (by omega) hj j hj.le)
-    g k (X.PhiY μ j) (X.PhiYup μ j) (h μ j hj) 0
-  rwa [Matrix.transpose_zero] at s
 
 end Formalism.L2.Theta
 

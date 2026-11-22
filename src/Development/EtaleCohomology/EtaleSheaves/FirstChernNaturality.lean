@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -26,7 +30,6 @@ theorem freeGen_nat {P P' : PSh} (g : P ⟶ P') (U : Scheme.{0}) (x : P.obj (op 
   simp only [ModuleCat.freeMk, freeP]
   simp [ModuleCat.free]
   erw [Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
-  rfl
 
 theorem ev_zpull {E E' : Spc} (f : E ⟶ E') {I : Cx R} {n : ℤ} (γ : Cocycle ((chains R).obj E') I n)
     (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :

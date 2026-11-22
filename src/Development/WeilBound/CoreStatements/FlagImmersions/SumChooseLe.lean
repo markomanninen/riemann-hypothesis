@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.RrCoeffSucc
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.RrCoeffSucc
+
+@[expose] public section
 
 noncomputable section
 

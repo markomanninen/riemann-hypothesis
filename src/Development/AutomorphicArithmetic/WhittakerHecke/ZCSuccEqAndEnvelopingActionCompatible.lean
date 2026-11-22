@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ZSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ZSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -13,16 +17,17 @@ private theorem UpperTheory.polynomial_identity_coefficients_zero {M : Type*} [A
     apply Polynomial.funext
     intro u
     have := congrArg f (h u)
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul] at this
     simp only [Polynomial.eval_finsetSum, Polynomial.eval_monomial, Polynomial.eval_zero]
     rw [← this]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
-  have := congrArg (fun p => Polynomial.coeff p (n - (i + 1))) hp
+  have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p (n - (i + 1))) hp
   simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at this
   rw [Finset.sum_eq_single i] at this
   · simpa using this
   · intro j _ hj
-    rw [if_neg]
+    rw [Finsupp.single_apply, if_neg]
     intro e
     apply hj
     have := j.2
@@ -41,7 +46,7 @@ private theorem UpperTheory.polynomial_coefficients_compare {M : Type*} [AddComm
   simp only [smul_sub, Finset.sum_sub_distrib, this, sub_self]
 
 theorem UpperTheory.zC_succ_eq_and_envelopingAction_compatible :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ),
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ),
           (∀ (τ : E →+* ℂ) (i : Fin n), UpperTheory.ConvolutionTheory.BW.zC E n τ (i + 1) = zc τ i) ∧
           ∀ (u : UC E n) (φ : GlobalTheory.CuspRep.Sm E n), (UpperTheory.V.Cm.uC E n u φ).1 = (uAct u (UpperTheory.V.Cm.smEq E n φ)).1 := by
   intro E _ _ _ n
@@ -58,4 +63,4 @@ theorem UpperTheory.zC_succ_eq_and_envelopingAction_compatible :
       rw [UpperTheory.V.Cm.uC_tmul, e]
       rfl
     | add a b ha hb =>
-      rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, Submodule.coe_add, ha, hb]
+      rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, Submodule.coe_add, ha, hb]

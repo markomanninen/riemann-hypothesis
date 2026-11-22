@@ -1,12 +1,14 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafRelHocPfX
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafRelHocPfX
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
 
 namespace LateralTheory.CohomologicalPurity.TubeCut
 
-instance discPL : PreservesLimitsOfSize.{0, 0} disc :=
-  inferInstanceAs (PreservesLimitsOfSize.{0, 0} (Functor.const SimplexCategoryᵒᵖ : PSh ⥤ _))
 instance discPC : PreservesColimitsOfSize.{0, 0} disc :=
   inferInstanceAs (PreservesColimitsOfSize.{0, 0} (Functor.const SimplexCategoryᵒᵖ : PSh ⥤ _))
 
@@ -113,6 +115,7 @@ theorem LeafRelLev_of : LeafRelLev := by
     rw [inj_nat]
   · intro σ
     exact ⟨(pbMapIso disc g (α.app (σ.obj 0)) (c' (σ.obj 0)) (c (σ.obj 0)) (hj _)).symm⟩
-  · exact ⟨disc.mapArrow.mapIso (pbMapIso ((evaluation _ _).obj n) (disc.map g) ((hocF J).map α) (aug c' hc') (aug c hc) h').symm⟩
+  · have e := (pbMapIso ((evaluation _ _).obj n) (disc.map g) ((hocF J).map α) (aug c' hc') (aug c hc) h').symm
+    exact ⟨disc.mapArrow.mapIso e⟩
 
 end LateralTheory.CohomologicalPurity.TubeCut

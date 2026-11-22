@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 open scoped TensorProduct
@@ -180,7 +184,7 @@ theorem mem_of_mul_mem {B : Type} [CommRing B] (u : Ideal B) [u.IsPrime] (I₀ :
     have hd : Disjoint (u.primeCompl : Set B) (Q' : Set B) :=
       Set.disjoint_left.2 fun x hxM hxI => hxM (hQu (hle hxI))
     haveI := IsLocalization.isPrime_of_isPrime_disjoint u.primeCompl L Q' hQ'.1 hd
-    have hc := IsLocalization.comap_map_of_isPrime_disjoint u.primeCompl L hQ'.1 hd
+    have hc := IsLocalization.under_map_of_isPrime_disjoint u.primeCompl L hQ'.1 hd
     have hPP : P ≤ Q'.map (algebraMap B L) :=
       hP.2 ⟨inferInstance, Ideal.map_mono hQ'.2⟩ (Ideal.map_le_iff_le_comap.2 hle)
     intro x hx

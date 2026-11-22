@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.Assemble
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.Assemble
+
+@[expose] public section
 
 namespace PI.OneCosetSharp.W
 

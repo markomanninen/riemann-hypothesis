@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -14,7 +18,7 @@ noncomputable def cN (r : ℕ) (c : Fin r → ℂ) (j : ℕ) : ℂ := if h : j <
 
 theorem cN_mk (r : ℕ) (c : Fin r → ℂ) (j : ℕ) (h : j < r) : c ⟨j, h⟩ = cN r c j := by
   unfold cN
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 def swp (k r : ℕ) (p : Fin (2 * r + k + 1)) : Fin (2 * r + k + 1) :=
   if r ≤ p.val ∧ p.val ≤ r + k then p else ⟨2 * r + k - p.val, by omega⟩
@@ -33,11 +37,6 @@ theorem swp_swp (k r : ℕ) (p : Fin (2 * r + k + 1)) : swp k r (swp k r p) = p 
 noncomputable def cf (k r : ℕ) (c : Fin r → ℂ) (p : Fin (2 * r + k + 1)) : ℂ :=
   if p.val < r then (star (cN r c p.val))⁻¹
   else if p.val ≤ r + k then 1 else cN r c (2 * r + k - p.val)
-
-theorem cf_one (k r : ℕ) (p : Fin (2 * r + k + 1)) : cf k r (fun _ => 1) p = 1 := by
-  have hp := p.isLt
-  simp only [cf, cN]
-  split_ifs <;> first | omega | simp
 
 noncomputable def Wm (k r : ℕ) (S : Finset ℕ) (c : Fin r → ℂ) : Mx k r := fun p q =>
   if q.val < r then
@@ -85,8 +84,8 @@ theorem Wm_empty (k r : ℕ) (c : Fin r → ℂ) : Wm k r ∅ c = 1 := by
   ext p q
   simp [Wm, Matrix.one_apply, Fin.val_inj]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem reflection_mul_weyl_cell (k r : ℕ) (S : Finset ℕ) (c : Fin r → ℂ) (a : Fin r) (ha : a.val ∉ S) :
     w1 k r a (c a) * Wm k r S c = Wm k r (insert a.val S) c := by
   ext p q
@@ -116,11 +115,8 @@ theorem prod_eq_Wm (k r : ℕ) (c : Fin r → ℂ) : ∀ L : List (Fin r), L.Nod
         List.toFinset_cons]
       apply reflection_mul_weyl_cell
       intro hm
-      simp only [List.mem_toFinset, List.mem_map] at hm
-      obtain ⟨b, hb, hba⟩ := hm
-      have hba' : b = a := Fin.ext hba
-      subst hba'
-      exact (List.nodup_cons.1 h).1 hb
+      rw [List.mem_toFinset, List.mem_map_of_injective Fin.val_injective] at hm
+      exact (List.nodup_cons.1 h).1 hm
 
 theorem wCell_last (k r : ℕ) (c : Fin r → ℂ) : wCell k r (Fin.last r) c = Wm k r (Finset.range r) c := by
   unfold wCell
@@ -134,8 +130,8 @@ theorem wCell_last (k r : ℕ) (c : Fin r → ℂ) : wCell k r (Fin.last r) c = 
   · intro hj
     exact ⟨⟨j, hj⟩, rfl⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem Wm_range_apply (k r : ℕ) (c : Fin r → ℂ) (p x : Fin (2 * r + k + 1)) :
     Wm k r (Finset.range r) c p x = if x = swp k r p then cf k r c p else 0 := by
   have hp := p.isLt
@@ -149,29 +145,13 @@ theorem Wm_mul_apply (k r : ℕ) (c : Fin r → ℂ) (M : Mx k r) (p q : Fin (2 
   simp_rw [Wm_range_apply]
   simp [ite_mul]
 
-theorem mul_Wm_apply (k r : ℕ) (c : Fin r → ℂ) (M : Mx k r) (p q : Fin (2 * r + k + 1)) :
-    (M * Wm k r (Finset.range r) c) p q = M p (swp k r q) * cf k r c (swp k r q) := by
-  rw [Matrix.mul_apply]
-  have e : ∀ x, Wm k r (Finset.range r) c x q = if x = swp k r q then cf k r c x else 0 := by
-    intro x
-    rw [Wm_range_apply]
-    by_cases h : x = swp k r q
-    · subst h
-      simp [swp_swp]
-    · rw [if_neg h, if_neg]
-      intro h'
-      apply h
-      rw [h', swp_swp]
-  simp_rw [e]
-  simp [mul_ite]
-
 def μE {k : ℕ} (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : ℕ) : ℂ :=
   if h : i < k + 1 ∧ j < k + 1 then μ ⟨i, h.1⟩ ⟨j, h.2⟩ else 0
 
 theorem μE_mk {k : ℕ} (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (i j : ℕ) (hi : i < k + 1) (hj : j < k + 1) :
     μ ⟨i, hi⟩ ⟨j, hj⟩ = μE μ i j := by
   unfold μE
-  rw [dif_pos ⟨hi, hj⟩]
+  rw [dite_eq_left ⟨hi, hj⟩]
 
 theorem bigCell_apply (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
     (p q : Fin (2 * r + k + 1)) :
@@ -183,38 +163,23 @@ theorem bigCell_apply (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1))
   have hq := q.isLt
   simp only [bigCell]
   by_cases h1 : q.val < r
-  · rw [dif_pos h1, if_pos h1, cN_mk r c q.val h1]
+  · rw [dite_eq_left h1, if_pos h1, cN_mk r c q.val h1]
     have e : (p = esI k r ⟨q.val, h1⟩) ↔ p.val = 2 * r + k - q.val := by
       rw [Fin.ext_iff]
       rfl
     by_cases h : p.val = 2 * r + k - q.val
     · rw [if_pos (e.mpr h), if_pos h]
     · rw [if_neg (mt e.mp h), if_neg h]
-  · rw [dif_neg h1, if_neg h1]
+  · rw [dite_eq_right h1, if_neg h1]
     by_cases h2 : q.val ≤ r + k
-    · rw [dif_pos h2, if_pos h2]
+    · rw [dite_eq_left h2, if_pos h2]
       by_cases h3 : r ≤ p.val ∧ p.val ≤ r + k
-      · rw [dif_pos h3, if_pos h3]
+      · rw [dite_eq_left h3, if_pos h3]
         exact μE_mk μ _ _ _ _
-      · rw [dif_neg h3, if_neg h3]
-    · rw [dif_neg h2, if_neg h2]
+      · rw [dite_eq_right h3, if_neg h3]
+    · rw [dite_eq_right h2, if_neg h2]
       have h4 : 2 * r + k - q.val < r := by omega
       rw [cN_mk r c _ h4]
 
-theorem cN_one (r j : ℕ) : cN r (fun _ => 1) j = if j < r then 1 else 0 := by
-  unfold cN
-  split_ifs <;> rfl
-
-set_option maxHeartbeats 1000000 in
-theorem main (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) :
-    bigCell k r c μ =
-      wCell k r (Fin.last r) c * bigCell k r (fun _ => 1) μ * wCell k r (Fin.last r) (fun _ => 1) := by
-  rw [wCell_last, wCell_last]
-  ext p q
-  rw [mul_Wm_apply, Wm_mul_apply, cf_one, mul_one, bigCell_apply, bigCell_apply]
-  have hp := p.isLt
-  have hq := q.isLt
-  simp only [cf, cN_one, swp_val]
-  split_ifs <;> first | rfl | (exfalso; omega) | (congr 1 <;> omega) | (congr 1 <;> congr 1 <;> congr 1 <;> omega) | (simp only [star_one, inv_one, mul_one, one_mul, mul_zero, zero_mul, star_zero, _root_.inv_zero] <;> first | rfl | (congr 1 <;> omega) | (congr 1 <;> congr 1 <;> congr 1 <;> omega))
 
 end PI.QnWCellW

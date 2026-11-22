@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ProcyclicDefs
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
-import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ProcyclicDefs
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.PrimaryComponentCohomologyEqBotOfScdpLt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -66,20 +71,6 @@ theorem _root_.MonoidHom.isLocallyConstant_of_isOpen_ker {H : Type*} [Group H] (
   rw [MonoidHom.mem_ker, map_mul, map_inv, inv_mul_eq_one] at hy
   exact hy.symm
 
-theorem exists_pow_mem_of_isOpen [CompactSpace G] (H : Subgroup G) (hH : IsOpen (H : Set G))
-    (σ : G) : ∃ N : ℕ, 0 < N ∧ σ ^ N ∈ H := by
-  have := Subgroup.quotient_finite_of_isOpen H hH
-  obtain ⟨N, hN, -, h⟩ := Subgroup.exists_pow_mem_of_index_ne_zero H.index_ne_zero_of_finite σ
-  exact ⟨N, hN, h⟩
-
-theorem IsTopologicalGenerator.eq_top_of_isOpen {σ : G} (hσ : IsTopologicalGenerator σ)
-    (H : Subgroup G) (hH : IsOpen (H : Set G)) (hσH : σ ∈ H) : H = ⊤ := by
-  have hcl : IsClosed (H : Set G) := H.isClosed_of_isOpen hH
-  have hle : (Subgroup.zpowers σ : Set G) ⊆ H := (Subgroup.zpowers_le.2 hσH)
-  have := hcl.closure_subset_iff.2 hle
-  rw [hσ.closure_eq] at this
-  exact eq_top_iff.2 fun x _ => this (Set.mem_univ x)
-
 end Generator
 
 section Cocycles
@@ -87,8 +78,8 @@ section Cocycles
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {A : Rep.{u} k G} {σ : G}
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem IsTopologicalGenerator.cocycle_eq_zero (hσ : IsTopologicalGenerator σ)
     {f : (Fin 1 → G) → A} (hlc : IsLocallyConstant f)
     (hf : (inhomogeneousCochains.d A 1).hom f = 0) (hσf : f (fun _ => σ) = 0) : f = 0 := by
@@ -126,8 +117,8 @@ section Existence
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {A : Rep.{u} k G} {σ : G}
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem sum_range_mul_eq_zero {a : A} {N m : ℕ} (hN : A.ρ (σ ^ N) a = a) (hm : m • a = 0) :
     ∑ i ∈ Finset.range (N * m), A.ρ (σ ^ i) a = 0 := by
   have hmem : σ ^ N ∈ stabilizer A.ρ a := hN
@@ -148,90 +139,6 @@ theorem sum_range_mul_eq_zero {a : A} {N m : ℕ} (hN : A.ρ (σ ^ N) a = a) (hm
   simp_rw [← map_nsmul, hm, map_zero, Finset.sum_const_zero]
 
 variable [CompactSpace G] [IsDiscreteRep A]
-
-theorem IsZHatGenerator.exists_cocycle (hσ : IsZHatGenerator σ) (a : A) (ha : IsOfFinAddOrder a) :
-    ∃ f : (Fin 1 → G) → A, IsLocallyConstant f ∧ (inhomogeneousCochains.d A 1).hom f = 0 ∧
-      f (fun _ => σ) = a := by
-  obtain ⟨N, hN0, hN⟩ := exists_pow_mem_of_isOpen _ (isOpen_stabilizer A a) σ
-  have hmem : σ ^ N ∈ stabilizer A.ρ a := hN
-  rw [mem_stabilizer] at hN
-  have hm0 : 0 < addOrderOf a := ha.addOrderOf_pos
-  have hm : addOrderOf a • a = 0 := addOrderOf_nsmul_eq_zero a
-  obtain ⟨L, hLdef⟩ : ∃ L, L = N * addOrderOf a := ⟨_, rfl⟩
-  have hL0 : 0 < L := hLdef ▸ Nat.mul_pos hN0 hm0
-  have : NeZero L := ⟨hL0.ne'⟩
-  obtain ⟨φ, hφo, hφσ⟩ := hσ.exists_hom L hL0
-  have hρ : ∀ (x y : ℤ) (v : A), A.ρ (σ ^ x) (A.ρ (σ ^ y) v) = A.ρ (σ ^ (x + y)) v := by
-    intro x y v
-    rw [zpow_add, map_mul, Module.End.mul_apply]
-  have hper : ∀ q : ℤ, A.ρ (σ ^ ((L : ℤ) * q)) a = a := by
-    intro q
-    have : σ ^ ((L : ℤ) * q) = (σ ^ N) ^ ((addOrderOf a : ℤ) * q) := by
-      rw [← zpow_natCast σ N, ← zpow_mul, hLdef]
-      push_cast
-      ring_nf
-    rw [this]
-    exact (mem_stabilizer _ _ _).1 (zpow_mem hmem _)
-  have hsum : ∑ i ∈ Finset.range L, A.ρ (σ ^ i) a = 0 := hLdef ▸ sum_range_mul_eq_zero hN hm
-  obtain ⟨c, hc⟩ : ∃ c : ℤ → A, ∀ n, c n = ∑ i ∈ Finset.range ((n : ZMod L).val), A.ρ (σ ^ i) a :=
-    ⟨_, fun _ => rfl⟩
-  have hc0 : c 0 = 0 := by rw [hc]; simp
-  have hrec : ∀ n : ℤ, c (n + 1) = c n + A.ρ (σ ^ n) a := by
-    intro n
-    obtain ⟨r, hr⟩ : ∃ r, r = (n : ZMod L).val := ⟨_, rfl⟩
-    have hrL : r < L := hr ▸ ZMod.val_lt _
-    have hrn : A.ρ (σ ^ n) a = A.ρ (σ ^ r) a := by
-      have h1 : (r : ℤ) = n % L := by rw [hr, ZMod.val_intCast]
-      have h2 : n = r + L * (n / L) := by rw [h1]; exact (Int.emod_add_mul_ediv n L).symm
-      conv_lhs => rw [h2]
-      rw [zpow_add, map_mul, Module.End.mul_apply, hper, zpow_natCast]
-    have hval : ((n + 1 : ℤ) : ZMod L).val = (r + 1) % L := by
-      rw [Int.cast_add, Int.cast_one, ZMod.val_add, ZMod.val_one_eq_one_mod, ← hr, Nat.add_mod_mod]
-    rw [hc, hc, hval, hrn, ← hr]
-    rcases Nat.lt_or_ge (r + 1) L with h | h
-    · rw [Nat.mod_eq_of_lt h, Finset.sum_range_succ]
-    · have h' : r + 1 = L := le_antisymm (by omega) h
-      rw [h', Nat.mod_self, Finset.range_zero, Finset.sum_empty, ← Finset.sum_range_succ, h', hsum]
-  have hcoc : ∀ x y : ℤ, c (x + y) = c x + A.ρ (σ ^ x) (c y) := by
-    intro x y
-    induction y using Int.induction_on with
-    | zero => simp [hc0]
-    | succ y ih =>
-      rw [← add_assoc, hrec, ih, hrec, map_add, hρ, add_assoc]
-    | pred y ih =>
-      have e1 := hrec (x + (-(y : ℤ) - 1))
-      have e2 := hrec (-(y : ℤ) - 1)
-      rw [show x + (-(y : ℤ) - 1) + 1 = x + -(y : ℤ) by ring, ih] at e1
-      rw [show -(y : ℤ) - 1 + 1 = -(y : ℤ) by ring] at e2
-      rw [e2, map_add, hρ] at e1
-      have e3 := e1.symm
-      rw [← add_assoc] at e3
-      exact add_right_cancel e3
-  obtain ⟨F, hF⟩ : ∃ F : G → A, ∀ g, F g =
-      ∑ i ∈ Finset.range (Multiplicative.toAdd (φ g)).val, A.ρ (σ ^ i) a := ⟨_, fun _ => rfl⟩
-  have hFpow : ∀ n : ℤ, F (σ ^ n) = c n := by
-    intro n
-    rw [hF, hc, map_zpow, hφσ, toAdd_zpow, toAdd_ofAdd, zsmul_one]
-  have hFlc : IsLocallyConstant F := by
-    have h1 : IsLocallyConstant φ := φ.isLocallyConstant_of_isOpen_ker hφo
-    have : F = (fun z : Multiplicative (ZMod L) =>
-        ∑ i ∈ Finset.range (Multiplicative.toAdd z).val, A.ρ (σ ^ i) a) ∘ φ := funext hF
-    rw [this]
-    exact h1.comp _
-  have hflc : IsLocallyConstant fun x : Fin 1 → G => F (x 0) :=
-    hFlc.comp_continuous (continuous_apply 0)
-  refine ⟨fun x => F (x 0), hflc, ?_, ?_⟩
-  · refine hσ.dense.eq_of_forall_zpow_pi (isLocallyConstant_d A hflc)
-      (IsLocallyConstant.const 0) fun n => ?_
-    show (inhomogeneousCochains.d A 1).hom (fun x => F (x 0)) (fun i => σ ^ n i) = 0
-    rw [inhomogeneousD_one_apply]
-    dsimp only
-    rw [← zpow_add, hFpow, hFpow, hFpow, hcoc]
-    abel
-  · show F σ = a
-    have h1 := hFpow 1
-    rw [zpow_one] at h1
-    rw [h1, ← zero_add (1 : ℤ), hrec, hc0, zpow_zero, map_one, Module.End.one_apply, zero_add]
 
 end Existence
 
@@ -292,7 +199,6 @@ noncomputable def H1Eval : cohomology A 1 ⟶ ModuleCat.of k (A ⧸ LinearMap.ra
   ((cochainsComplex A).homologyIsCokernel 0 1 (by simp)).desc
     (Limits.CokernelCofork.ofπ _ (toCycles_evalCocycles A σ))
 
-@[reassoc (attr := simp)]
 theorem cohomologyπ_H1Eval : cohomologyπ A 1 ≫ H1Eval A σ = evalCocycles A σ :=
   ((cochainsComplex A).homologyIsCokernel 0 1 (by simp)).fac _ Limits.WalkingParallelPair.one
 
@@ -331,21 +237,6 @@ theorem H1Eval_injective {σ : G} (hσ : IsTopologicalGenerator σ) :
   rw [hz]
   exact congrArg (fun φ => ModuleCat.Hom.hom φ b0) ((cochainsComplex A).toCycles_comp_homologyπ 0 1)
 
-theorem H1Eval_surjective [CompactSpace G] {σ : G} (hσ : IsZHatGenerator σ)
-    (hA : IsAddTorsion A) : Function.Surjective (H1Eval A σ).hom := by
-  intro y
-  obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-  obtain ⟨f, hlc, hd, hfσ⟩ := hσ.exists_cocycle a (hA a)
-  let x : locallyConstantCochains A 1 := ⟨f, hlc⟩
-  have hx : ((cochainsComplex A).d 1 2).hom x = 0 := by
-    rw [show (2 : ℕ) = 1 + 1 from rfl, cochainsComplex_d]
-    exact Subtype.ext hd
-  refine ⟨(cohomologyπ A 1).hom ((cochainsComplex A).cyclesMk x 2 (by simp) hx), ?_⟩
-  rw [H1Eval_cohomology_class_apply]
-  have h : cocycleFun A ((cochainsComplex A).cyclesMk x 2 (by simp) hx) = f :=
-    congrArg Subtype.val ((cochainsComplex A).i_cyclesMk x 2 (by simp) hx)
-  rw [h, hfσ]
-
 end H1
 
 section Iso
@@ -353,32 +244,7 @@ section Iso
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   (A : Rep.{u} k G) [IsDiscreteRep A] {σ : G}
 
-theorem invariants_eq_ker (hσ : IsTopologicalGenerator σ) :
-    A.ρ.invariants = LinearMap.ker (A.ρ σ - 1) := by
-  ext a
-  rw [Representation.mem_invariants, LinearMap.mem_ker, LinearMap.sub_apply,
-    Module.End.one_apply, sub_eq_zero]
-  refine ⟨fun h => h σ, fun h g => ?_⟩
-  have hσa : σ ∈ stabilizer A.ρ a := h
-  have htop := hσ.eq_top_of_isOpen _ (isOpen_stabilizer A a) hσa
-  have hg : g ∈ stabilizer A.ρ a := htop ▸ Subgroup.mem_top g
-  exact hg
-
-noncomputable def H0IsoKer (hσ : IsTopologicalGenerator σ) :
-    cohomology A 0 ≅ ModuleCat.of k (LinearMap.ker (A.ρ σ - 1)) :=
-  H0Iso A ≪≫ (LinearEquiv.ofEq _ _ (invariants_eq_ker A hσ)).toModuleIso
-
 variable [CompactSpace G]
-
-noncomputable def H1Iso (hσ : IsZHatGenerator σ) (hA : IsAddTorsion A) :
-    cohomology A 1 ≅ ModuleCat.of k (A ⧸ LinearMap.range (A.ρ σ - 1)) :=
-  (LinearEquiv.ofBijective (H1Eval A σ).hom
-    ⟨H1Eval_injective A hσ.dense, H1Eval_surjective A hσ hA⟩).toModuleIso
-
-@[simp]
-theorem H1Iso_hom (hσ : IsZHatGenerator σ) (hA : IsAddTorsion A) :
-    (H1Iso A hσ hA).hom = H1Eval A σ :=
-  rfl
 
 end Iso
 
@@ -387,49 +253,7 @@ section Vanishing
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [CompactSpace G]
 
-theorem isAddTorsion_discreteCoind (X : Type u) [AddCommGroup X] [Module k X]
-    (hX : IsAddTorsion X) : IsAddTorsion (discreteCoind k G X) := by
-  intro f
-  classical
-  have hfin := (f : LocallyConstant G X).range_finite
-  set s := hfin.toFinset
-  refine isOfFinAddOrder_iff_nsmul_eq_zero.2
-    ⟨∏ v ∈ s, addOrderOf v, Finset.prod_pos fun v _ => (hX v).addOrderOf_pos, ?_⟩
-  change (∏ v ∈ s, addOrderOf v) • (f : LocallyConstant G X) = 0
-  ext x
-  rw [LocallyConstant.coe_smul, Pi.smul_apply, LocallyConstant.coe_zero, Pi.zero_apply,
-    ← addOrderOf_dvd_iff_nsmul_eq_zero]
-  exact Finset.dvd_prod_of_mem _ (hfin.mem_toFinset.2 ⟨x, rfl⟩)
-
 variable {σ : G}
-
-theorem mem_range_sub_one_discreteCoind (hσ : IsZHatGenerator σ) (A : Rep.{u} k G)
-    [IsDiscreteRep A] (hA : IsAddTorsion A) (c : LocallyConstant G A) :
-    c ∈ LinearMap.range ((discreteCoind k G A).ρ σ - 1) := by
-  have hz := isZero_cohomology_discreteCoind k G A 0
-  have hs : Subsingleton (cohomology (discreteCoind k G A) 1) :=
-    ModuleCat.subsingleton_of_isZero hz
-  obtain ⟨x, hx⟩ := H1Eval_surjective (discreteCoind k G A) hσ
-    (isAddTorsion_discreteCoind (G := G) A hA) (Submodule.Quotient.mk c)
-  rw [Subsingleton.elim x 0, map_zero, eq_comm, Submodule.Quotient.mk_eq_zero] at hx
-  exact hx
-
-theorem IsZHatGenerator.isZero_cohomology_two (hσ : IsZHatGenerator σ) (A : Rep.{u} k G)
-    [IsDiscreteRep A] (hA : IsAddTorsion A) : IsZero (cohomology A 2) := by
-  refine IsZero.of_iso ?_ (cohomologyCoindCokernelIso A 0).symm
-  refine @ModuleCat.isZero_of_subsingleton _ _ _ ⟨fun x y => ?_⟩
-  apply H1Eval_injective (coindCokernel A) hσ.dense
-  refine Subsingleton.elim (h := ⟨fun q q' => ?_⟩) _ _
-  obtain ⟨q, rfl⟩ := Submodule.Quotient.mk_surjective _ q
-  obtain ⟨q', rfl⟩ := Submodule.Quotient.mk_surjective _ q'
-  rw [Submodule.Quotient.eq]
-  obtain ⟨c, hc⟩ := Submodule.Quotient.mk_surjective _ (q - q')
-  rw [← hc]
-  obtain ⟨d, hd⟩ := mem_range_sub_one_discreteCoind hσ A hA c
-  refine ⟨(coindCokernelπ A).hom d, ?_⟩
-  rw [LinearMap.sub_apply, Module.End.one_apply, ← Rep.hom_comm_apply, ← map_sub]
-  rw [← hd]
-  rfl
 
 end Vanishing
 

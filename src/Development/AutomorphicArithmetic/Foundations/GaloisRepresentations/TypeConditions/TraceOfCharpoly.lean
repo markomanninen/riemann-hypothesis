@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.DistinctAbsIrredConstituents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDecompositionSetting
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
-import Development.DiscreteGroups.GlobalIrreducibility.DzBigDef
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TypePrimeCompletionDegreeOneCountProof
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFiniteChosenSet
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.SpanMulMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.DistinctAbsIrredConstituents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsDecompositionSetting
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CycZBridge
+public import Development.DiscreteGroups.GlobalIrreducibility.DzBigDef
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TypePrimeCompletionDegreeOneCountProof
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFiniteChosenSet
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.SpanMulMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,8 @@ theorem cyc_onto (D : D7) (i : D.nd.Loc) (k : Fin 2) (hl : D.nd.l i = D.host.g k
   exact hσu
 
 theorem charP_res (D : D7) (i : D.nd.Loc) : CharP (IsLocalRing.ResidueField (D.nd.O i)) (D.nd.l i) := by
-  have hm := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := ℤ_[D.nd.l i]) (IsLocalRing.maximalIdeal (D.nd.O i))
+  have hm := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[D.nd.l i]) (IsLocalRing.maximalIdeal (D.nd.O i))
+  change ((IsLocalRing.maximalIdeal (D.nd.O i)).comap (algebraMap ℤ_[D.nd.l i] (D.nd.O i))).IsMaximal at hm
   have h1 : ((D.nd.l i : ℕ) : ℤ_[D.nd.l i]) ∈ (IsLocalRing.maximalIdeal (D.nd.O i)).comap (algebraMap ℤ_[D.nd.l i] (D.nd.O i)) := by
     rw [IsLocalRing.eq_maximalIdeal hm]
     exact PadicInt.irreducible_p.not_isUnit

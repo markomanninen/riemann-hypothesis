@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOpenNhdOneOfIntegralEqOneOnFinset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FixedPlaceUnitaryLocalPointsEquivLocalUnitaryGro
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSatakeParameterDefiniteUnitaryInertPlace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnramifiedOfSphericalVectorDictionary
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBallSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOpenNhdOneOfIntegralEqOneOnFinset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryLocalPoints
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FixedPlaceUnitaryLocalPointsEquivLocalUnitaryGro
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdmissibleLocalComponentDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSatakeParameterDefiniteUnitaryInertPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnramifiedOfSphericalVectorDictionary
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,7 @@ private theorem isCompact_adicCompletionIntegers' (w : Pl E) :
     Valued.isClosed_integer (w.adicCompletion E)
   exact (hCc.image (continuous_const.mul continuous_id)).of_isClosed_subset hcl hsub
 
-private theorem isCompact_KGL' (w : Pl E) : IsCompact (GlobalTheory.LFun.KGL w n : Set (GLw n w)) := by
+private theorem isCompact_KGL' (w : Pl E) : IsCompact (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) := by
   have hO := isCompact_adicCompletionIntegers' w
   let A : Set (Matrix (Fin n) (Fin n) (w.adicCompletion E)) :=
     {M | ∀ i j, M i j ∈ (w.adicCompletionIntegers E : Set (w.adicCompletion E))}
@@ -144,7 +148,7 @@ private theorem isCompact_KGL' (w : Pl E) : IsCompact (GlobalTheory.LFun.KGL w n
     · exact (isClosed_eq (continuous_fst.mul (MulOpposite.continuous_unop.comp continuous_snd))
         continuous_const).inter
         (isClosed_eq ((MulOpposite.continuous_unop.comp continuous_snd).mul continuous_fst) continuous_const)
-  have hclosed : IsClosed (GlobalTheory.LFun.KGL w n : Set (GLw n w)) :=
+  have hclosed : IsClosed (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) :=
     Subgroup.isClosed_of_isOpen _
       (Subgroup.isOpen_mono (fun g hg => ((GlobalTheory.PrincCong.mem_congSub_iff w n 0 g).1 hg).1)
         (GlobalTheory.PrincCong.isOpen_congSub w n 0))
@@ -167,14 +171,14 @@ private theorem isCompact_KGL' (w : Pl E) : IsCompact (GlobalTheory.LFun.KGL w n
   · exact g.inv_mul
 
 theorem isCompact_locK (w : Pl E) :
-    IsCompact (((GlobalTheory.LFun.KGL w n).comap ((cLoc w).comp (locU n w).subtype) : Subgroup (locU n w)) : Set (locU n w)) := by
+    IsCompact (((GlobalTheory.LFun.KGL w (n := n)).comap ((cLoc w).comp (locU n w).subtype) : Subgroup (locU n w)) : Set (locU n w)) := by
   obtain ⟨e, he⟩ := exists_equiv n w
-  have hK : IsCompact ((Subtype.val : UL n w → GLw n w) ⁻¹' (GlobalTheory.LFun.KGL w n : Set (GLw n w))) :=
+  have hK : IsCompact ((Subtype.val : UL n w → GLw n w) ⁻¹' (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w))) :=
     (isClosed_UL n w).isClosedEmbedding_subtypeVal.isCompact_preimage (isCompact_KGL' w)
-  have heq : (((GlobalTheory.LFun.KGL w n).comap ((cLoc w).comp (locU n w).subtype) : Subgroup (locU n w)) :
-      Set (locU n w)) = e ⁻¹' ((Subtype.val : UL n w → GLw n w) ⁻¹' (GlobalTheory.LFun.KGL w n : Set (GLw n w))) := by
+  have heq : (((GlobalTheory.LFun.KGL w (n := n)).comap ((cLoc w).comp (locU n w).subtype) : Subgroup (locU n w)) :
+      Set (locU n w)) = e ⁻¹' ((Subtype.val : UL n w → GLw n w) ⁻¹' (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w))) := by
     ext x
-    show cLoc w (x : UA E n) ∈ GlobalTheory.LFun.KGL w n ↔ ((e x : UL n w) : GLw n w) ∈ GlobalTheory.LFun.KGL w n
+    show cLoc w (x : UA E n) ∈ GlobalTheory.LFun.KGL w (n := n) ↔ ((e x : UL n w) : GLw n w) ∈ GlobalTheory.LFun.KGL w (n := n)
     rw [he]
   rw [heq]
   exact (e.toHomeomorph.isCompact_preimage).2 hK
@@ -203,7 +207,7 @@ theorem exists_cong_le (w : Pl E) (U : Subgroup (UL n w)) (hU : IsOpen (U : Set 
   apply hsub
   exact ⟨hN1 m (le_of_max_le_left hm) _ hγ1.2, hN2 m (le_of_max_le_right hm) _ hγ2.2⟩
 
-theorem congSub_le_KGL (w : Pl E) (m : ℕ) : GlobalTheory.PrincCong.congSub w n m ≤ GlobalTheory.LFun.KGL w n := by
+theorem congSub_le_KGL (w : Pl E) (m : ℕ) : GlobalTheory.PrincCong.congSub w n m ≤ GlobalTheory.LFun.KGL w (n := n) := by
   intro g hg
   exact ((GlobalTheory.PrincCong.mem_congSub_iff w n m g).1 hg).1
 
@@ -232,7 +236,7 @@ theorem isLevel_cong (w : Pl E) (m : ℕ) : IsLevel (MonoidHom.id (UL n w)) (KL 
 theorem isLevel_KL (w : Pl E) : IsLevel (MonoidHom.id (UL n w)) (KL n w) (KL n w) := by
   unfold GlobalTheory.BCT.IsLevel
   refine ⟨?_, le_rfl, fun k hk => hk⟩
-  have hK : IsOpen (GlobalTheory.LFun.KGL w n : Set (GLw n w)) :=
+  have hK : IsOpen (GlobalTheory.LFun.KGL w (n := n) : Set (GLw n w)) :=
     Subgroup.isOpen_mono (congSub_le_KGL w 0) (GlobalTheory.PrincCong.isOpen_congSub w n 0)
   rw [GlobalTheory.BCT.KL, Subgroup.coe_subgroupOf]
   exact hK.preimage continuous_subtype_val
@@ -263,11 +267,11 @@ theorem exists_level_at {φ : UA E n → ℂ} (hφ : IsAutFormU φ) (w : Pl E) :
 theorem exists_fix_off {φ : UA E n → ℂ} (hφ : IsAutFormU φ) :
     ∃ T : Finset (Pl E), ∀ w : Pl E,
       (∀ t ∈ T, t.under (𝓞 (maximalRealSubfield E)) ≠ w.under (𝓞 (maximalRealSubfield E))) →
-      ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w n → RU E n x φ = φ := by
+      ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) → RU E n x φ = φ := by
   obtain ⟨T, hT⟩ := GlobalTheory.FixLevOpen.mem_of_isOpen_of_eq_one_on_finset E n
-    {k : finU E n | RU E n (k : UA E n) φ = φ} hφ.level (by simp)
+    {k : finU (E := E) (n := n) | RU E n (k : UA E n) φ = φ} hφ.level (by simp)
   refine ⟨T, fun w hw x hx hc => ?_⟩
-  have hxf : x ∈ finU E n := GlobalTheory.DefU.LocAdm.locU_le_finU w hx
+  have hxf : x ∈ finU (E := E) (n := n) := GlobalTheory.DefU.LocAdm.locU_le_finU w hx
   have h := hT ⟨x, hxf⟩ (fun v hv => GlobalTheory.DefU.LocRet.mem_locU_ne hx (hw v hv))
     (fun v i j => GlobalTheory.UnramDict.cLoc_entry_mem hx hc v i j)
     (fun v i j => by
@@ -296,7 +300,7 @@ theorem step {π : Submodule ℂ (UA E n → ℂ)} (hπ : IsAutRepU π) {w : Pl 
     (hQ : ∀ q ∈ Q, ∀ x ∈ locU n w, q * x = x * q) {φ : UA E n → ℂ} (hφ : φ ∈ π) (h0 : φ ≠ 0)
     (hfix : ∀ q ∈ Q, RU E n q φ = φ) :
     ∃ ψ ∈ π, ψ ≠ 0 ∧ (∀ q ∈ Q, RU E n q ψ = ψ) ∧
-      ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w n → RU E n x ψ = ψ := by
+      ∀ x ∈ locU n w, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) → RU E n x ψ = ψ := by
   obtain ⟨φ1, hφ1, hne1, hfix1⟩ := hu
   have hst : ∀ (x : UA E n), ∀ f ∈ π, (GlobalTheory.PRep.rightReg ℂ (UA E n) ℂ x) f ∈ π := hπ.stable
   let j : locU n w →* UA E n := (locU n w).subtype
@@ -326,7 +330,7 @@ theorem step {π : Submodule ℂ (UA E n → ℂ)} (hπ : IsAutRepU π) {w : Pl 
     exact h2
   have hφ1ne : (⟨φ1, hφ1⟩ : π) ≠ 0 := fun h => hne1 (congrArg Subtype.val h)
   have hφ1K : (⟨φ1, hφ1⟩ : π) ∈ GlobalTheory.PRep.fixed (GlobalTheory.UnitaryBC.SatEx.pull π hst j)
-      ((GlobalTheory.LFun.KGL w n).comap ((cLoc w).comp (locU n w).subtype)) := by
+      ((GlobalTheory.LFun.KGL w (n := n)).comap ((cLoc w).comp (locU n w).subtype)) := by
     intro h
     simp only [MonoidHom.one_apply, Units.val_one, one_smul]
     apply Subtype.ext
@@ -336,7 +340,7 @@ theorem step {π : Submodule ℂ (UA E n → ℂ)} (hπ : IsAutRepU π) {w : Pl 
     { carrier := {v | ∀ q ∈ Q, RU E n q (v : UA E n → ℂ) = v}
       add_mem' := by
         intro a b ha hb q hq
-        simp only [Submodule.coe_add, map_add, ha q hq, hb q hq]
+        simp only [Submodule.coe_add, map_add (f := _), ha q hq, hb q hq]
       zero_mem' := by
         intro q hq
         simp
@@ -349,7 +353,7 @@ theorem step {π : Submodule ℂ (UA E n → ℂ)} (hπ : IsAutRepU π) {w : Pl 
       (((GlobalTheory.UnitaryBC.SatEx.pull π hst j g) v : π) : UA E n → ℂ)
     rw [key, ← Module.End.mul_apply, ← map_mul, hQ q hq g g.2, map_mul, Module.End.mul_apply, hv q hq]
   have hne : W ⊓ GlobalTheory.PRep.fixed (GlobalTheory.UnitaryBC.SatEx.pull π hst j)
-      ((GlobalTheory.LFun.KGL w n).comap ((cLoc w).comp (locU n w).subtype)) ≠ ⊥ := by
+      ((GlobalTheory.LFun.KGL w (n := n)).comap ((cLoc w).comp (locU n w).subtype)) ≠ ⊥ := by
     intro hbot
     have hWb := GlobalTheory.UnitaryBC.SatEx.pull_eq_bot (Z := Z) (p := p) hπ.irred hZ1 hZ2 hsm
       (isCompact_locK w) hφ1ne hφ1K W hWst hbot
@@ -439,7 +443,7 @@ theorem levelEx : LevelEx := by
         rw [← hκx]
         exact hκ
       exact hk w m (le_trans (Finset.le_sup hT') (le_max_right _ _)) x hx hc
-    · have hKL : cLoc w x ∈ GlobalTheory.LFun.KGL w n := by
+    · have hKL : cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) := by
         by_cases h : IsUnramU π w ∧ w ∉ R
         · simp only [K₀, if_pos h] at hκ
           rw [GlobalTheory.BCT.KL, Subgroup.mem_subgroupOf] at hκ

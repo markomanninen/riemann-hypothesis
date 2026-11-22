@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.FactsW
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.IdempotentCalculationHolds
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GenusApproximationProofs.GlueSmulSame
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,11 @@ theorem approximationAdelic_holds : ApproxA := by
   obtain ⟨d, hd, hdu⟩ := Formalism.UG.P.levelaf_denom (F := F) (E := E) u
   obtain ⟨b0, t, ht, heq⟩ :=
     Formalism.UG.P.csGlob_approx Formalism.UG.P.integral_adele_approximation_holds (d * D) (mul_ne_zero hd hD) _ hdu
-  rw [Formalism.L2.DIV.levelafC_eq_incl, Formalism.L2.DIV.levelafC_eq_incl] at heq
+  have hlevel (a : 𝓞 F) : Formalism.UG.P.levelafC E a = iA F E (algebraMap (𝓞 F) E a) := by
+    have h := Formalism.UG.P.csGlob_tmul_int (F := F) (E := E) (1 : E) a
+    rw [mul_one] at h
+    exact h
+  rw [hlevel, hlevel] at heq
   have hdE : algebraMap (𝓞 F) E d ≠ 0 := by
     intro h0
     apply hd
@@ -76,10 +84,12 @@ theorem unitNearOne_holds : UnitNear := by
     fun i j => (((U⁻¹ : (Matrix (Fin n) (Fin n) S)ˣ) : Matrix (Fin n) (Fin n) S) i j).2, ?_⟩
   have hMR : Mt * ((U⁻¹ : (Matrix (Fin n) (Fin n) S)ˣ) : Matrix (Fin n) (Fin n) S) = 1 := by
     rw [← hU]; exact U.mul_inv
+  set_option synthInstance.maxHeartbeats 200000 in
   have hφ : φ Mt = glueM e (1 - iA F E (algebraMap (𝓞 F) E π) • s) := by
+    change Mt.map S.subtype = _
     ext i j
     by_cases hij : i = j <;>
-      simp [φ, Mt, glueM, st, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply,
+      simp [Mt, glueM, st, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply,
         het, hpt, hij]
   have h2 := congrArg φ hMR
   rw [map_mul, map_one, hφ] at h2

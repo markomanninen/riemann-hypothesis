@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.CyclicCharacterEigen.ToIdeleSq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.CyclicCharacterEigen.ToIdeleSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,20 +30,5 @@ def Ram3 (ν c : kˣ →* ℂˣ) : Prop := ¬ IsUnram (ν * c) ∧ ¬ IsUnram c 
 end Loc
 
 def tri (a x : ℂˣ) : Multiset ℂ := (({a * x, x, a⁻¹ * x} : Multiset ℂˣ)).map fun b : ℂˣ => (b : ℂ)
-
-def par (D : Ad3.Dat) (χ : HChar ℚ) (p : Ad3.Pl) : Multiset ℂ := tri (D.ν p (unif (p.adicCompletion ℚ))) (χ.val p)
-
-def arch (k : ℕ) (s : ℂ) : ℂ := Ad3.lR k true s * Ad3.lR k false s
-
-structure EtaOK (K : Type) [Field K] [NumberField K] (η : HeckeCharacter ℚ) : Prop where
-  fin : IsOfFinOrder η
-  sgn : ∀ w : InfinitePlace ℚ, ((η.infiniteComponent w (-1) : Circle) : ℂ) = -1
-  ae : ∀ᶠ v : HeightOneSpectrum (𝓞 ℚ) in Filter.cofinite, (toH η).UnrAt v ∧ ∀ w : PlacesOver K v,
-    IsPrimitiveRoot ((toH η).val v) (fdeg w) ∧ Fintype.card (PlacesOver K v) * fdeg w = 2
-  loc : ∀ (v : HeightOneSpectrum (𝓞 ℚ)) (w : PlacesOver K v), ((toH η).loc v).comp (nm w) = 1 ∧
-    (∀ (w' : PlacesOver K v) (θ : (v.adicCompletion ℚ)ˣ →* ℂˣ), IsUnram (θ.comp (nm w)) → IsUnram (θ.comp (nm w'))) ∧
-    ∀ θ : (v.adicCompletion ℚ)ˣ →* ℂˣ, IsSmoothChar θ → IsSmoothChar (θ.comp (nm w)) ∧ (IsUnram θ → IsUnram (θ.comp (nm w))) ∧
-      (IsUnram (θ.comp (nm w)) → ((Finset.range 2).filter fun j => IsUnram (θ * ((toH η) ^ j).loc v)).card =
-        ∑ w' : PlacesOver K v, fdeg w')
 
 end UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.Ad

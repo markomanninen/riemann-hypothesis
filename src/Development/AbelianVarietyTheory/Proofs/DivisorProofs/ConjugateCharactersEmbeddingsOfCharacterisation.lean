@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OfCore
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefMapNormEquivariantBasisOfFive
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HvMemOfInert
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjWeil
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LUnifOfRhoGeoEquivAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OfCore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadingsExistRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefMapNormEquivariantBasisOfFive
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HvMemOfInert
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsEtaConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjWeil
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LUnifOfRhoGeoEquivAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem GlobalTheory.EtaValues.etaVals_five : ∀ {D : D7} {G : Type} [Group G] 
   obtain ⟨y, hy⟩ := h
   refine ⟨y, hy.trans ?_⟩
   rw [hR.lev.eta.2 P e he _ x hx]
-  rfl
+  simp [GlobalTheory.EtaValues.hv, Formalism.L2.Host.HChar.val, Ideal.absNorm_apply, Submodule.cardQuot_apply]
 
 theorem GlobalTheory.EtaConjExist.exists_isEtaConj_five : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Core5 R F → ∀ (i : Fin D.R.m), EtaVals R → ∀ (σ : D.what₂.LL →+* ℂ), OverK σ → ∃ η', IsEtaConj σ R.eta η' := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hR _ hV σ hσ
@@ -42,7 +46,7 @@ theorem GlobalTheory.EtaConjExist.exists_isEtaConj_five : ∀ {D : D7} {G : Type
   obtain ⟨y, hy⟩ := hV P e he (Formalism.L2.JoinChr.locU he.1 (Formalism.L2.Host.unif P)) rfl
   refine ⟨y, hy.trans ?_⟩
   rw [hR.lev.eta.2 P e he _ (Formalism.L2.JoinChr.locU he.1 (Formalism.L2.Host.unif P)) rfl]
-  rfl
+  simp [Formalism.L2.Host.HChar.val, Ideal.absNorm_apply, Submodule.cardQuot_apply]
 
 theorem GlobalTheory.EtaConjType.resEta_hasInfExp_of_isEtaConj_five : ∀ {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Core5 R F → ∀ (i : Fin D.R.m), ∀ (σ : D.what₂.LL →+* ℂ), OverK σ → ∀ η', IsEtaConj σ R.eta η' → ResEta D η' 1 ∧ ∀ ρ, HasInfExp D η' ρ (1 / 2) :=
   GlobalTheory.EtaConjType.resEta_hasInfExp_of_isEtaConj_ofFive

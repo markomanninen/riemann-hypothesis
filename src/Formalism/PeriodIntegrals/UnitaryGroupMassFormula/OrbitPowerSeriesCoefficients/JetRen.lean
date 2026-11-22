@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetMul
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.JetMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem applyAt0_rename (φ : Lt ↪ Lt') (T : MvPowerSeries (Lt × Fin N0 × Fi
       show Finsupp.mapDomain (xzMap φ) μ = Finsupp.embDomain (xzEmb φ) μ from
         (Finsupp.embDomain_eq_mapDomain (xzEmb φ) μ).symm]
     exact applyTerm_rename l φ T μ c
-  | add P Q hP hQ => rw [map_add, applyAt0_add, applyAt0_add, hP, hQ, map_add]
+  | add P Q hP hQ => rw [map_add (f := _), applyAt0_add, applyAt0_add, hP, hQ, map_add (f := _)]
 
 end Rename₂
 
@@ -116,8 +120,8 @@ theorem serIn_rename {Lt Lt' γ K : Type*} [CommSemiring K] (φ : Lt ↪ Lt') (T
   · exact hv (Finsupp.embDomain_of_notMem_range _ _ _ h)
 
 theorem norm_coeff_rename_le {σ τ K : Type*} [NormedCommRing K] (f : σ ↪ τ) (A : MvPolynomial σ K) {b : ℝ}
-    (hb : 0 ≤ b) (hA : ∀ m, ‖MvPolynomial.coeff m A‖ ≤ b) (m : τ →₀ ℕ) :
-    ‖MvPolynomial.coeff m (MvPolynomial.rename f A)‖ ≤ b := by
+    (hb : 0 ≤ b) (hA : ∀ m, ‖AddMonoidAlgebra.coeff A m‖ ≤ b) (m : τ →₀ ℕ) :
+    ‖AddMonoidAlgebra.coeff (MvPolynomial.rename f A) m‖ ≤ b := by
   by_cases h : ∃ m', Finsupp.mapDomain f m' = m
   · obtain ⟨m', rfl⟩ := h
     rw [MvPolynomial.coeff_rename_mapDomain f f.injective]

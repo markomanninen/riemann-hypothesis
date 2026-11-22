@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MonomialSumEqProdTensor
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MonomialSumEqProdTensor
+
+@[expose] public section
 
 noncomputable section
 

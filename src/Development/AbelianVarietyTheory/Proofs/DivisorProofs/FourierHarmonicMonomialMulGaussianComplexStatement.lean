@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourierHarmonicMonomialMulGaussianComplex
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourierHarmonicMonomialMulGaussianComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+
+@[expose] public section
+
 open NumberField MeasureTheory
 open scoped RealInnerProductSpace FourierTransform
 set_option maxHeartbeats 1000000 in

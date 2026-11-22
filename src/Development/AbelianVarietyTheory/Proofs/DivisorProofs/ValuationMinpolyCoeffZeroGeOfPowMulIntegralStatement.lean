@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationMinpolyCoeffZeroGeOfPowMulIntegral
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Formalism.PairingDivisors.StatementH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationMinpolyCoeffZeroGeOfPowMulIntegral
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Formalism.PairingDivisors.StatementH
+
+@[expose] public section
+
 open NumberField Polynomial IsDedekindDomain
 open Formalism.DivisionValues (vw lw)
 set_option maxHeartbeats 1000000 in

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.Emb2DiaMulVecIncVY
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.AeFacts
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.Emb2DiaMulVecIncVY
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.AeFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem emb2_norm (g : SL(2, E)) : ∀ u ∈ Submodule.span E {H.x, H.ι *ᵥ H�
   obtain ⟨a, b, rfl⟩ := Submodule.mem_span_pair.1 hu
   refine ⟨_, Submodule.mem_span_pair.2 ⟨a * g.1 0 0 + b * g.1 0 1, a * g.1 1 0 + b * g.1 1 1, rfl⟩, ?_⟩
   rw [incV_lin, incV_lin, Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul, (emb2_mulVec_incV_x_and_complement_x h hJ hH hH₁ _).1, (emb2_mulVec_incV_x_and_complement_x h hJ hH hH₁ _).2]
-  simp only [map_add, map_mul, smul_add, add_smul, smul_smul]
+  simp only [map_add (f := _), map_mul, smul_add, add_smul, smul_smul]
   exact add_add_add_comm _ _ _ _
 
 theorem mem_pair (hJ₁ : ∀ i j, σ (W₁.J j i) = -W₁.J i j) {u : UA σ W.J} {y : UA σ W₁.J} (hx : mat u *ᵥ incV F H.x = incV F H.x)
@@ -84,7 +88,7 @@ theorem mem_pair (hJ₁ : ∀ i j, σ (W₁.J j i) = -W₁.J i j) {u : UA σ W.J
         have z1 := congrArg (inclR (F := F) (AF F)) (hz _ (Submodule.mem_span_singleton_self _))
         rw [← fa_inc, map_zero] at z1
         have : ∀ w p q : Fin d → AE F E, fa σ W.J w (p + q) = fa σ W.J w p + fa σ W.J w q := fun w p q => by
-          simp only [fa, Pi.add_apply, map_add]
+          simp only [fa, Pi.add_apply, map_add (f := _)]
           rw [← dotProduct_add, ← Matrix.mulVec_add]; rfl
         rw [← fa_inc, incV_lin, this, fa_smul, fa_smul, ← incM_mulVec, ← incM_mulVec, fa_iota hH, fa_iota2 hH, z1]
         simp)
@@ -110,8 +114,8 @@ theorem mem_pair (hJ₁ : ∀ i j, σ (W₁.J j i) = -W₁.J i j) {u : UA σ W.J
       rw [e, Matrix.mulVec_add, hc, hb, Matrix.mulVec_smul, hx, Matrix.mulVec_add, Matrix.mulVec_smul, incM_mulVec]
       abel
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem two_orders [MeasurableSpace (Multiplicative (AE F E))] [BorelSpace (Multiplicative (AE F E))] (hd : W.J.det ≠ 0)
     (hJ₁ : ∀ i j, σ (W₁.J j i) = -W₁.J i j) {f c₀ c φ c' : UA σ W.J → ℂ} (hf : IsAut f)
     (h0 : IsCT H f c₀) (h1 : ∀ lev : UA σ W₁.J → UA σ W.J, (∀ y, IsLevi H 1 y (lev y)) →
@@ -202,8 +206,8 @@ theorem two_orders [MeasurableSpace (Multiplicative (AE F E))] [BorelSpace (Mult
       rw [hA, incM_mulVec, fa_inc]; rfl) (lat_of_good G2) LR
   exact uniq_sub cS LS A1 (st2 f φ c' hf.1 hf.2 hφ hc')
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem two_kill (hd : W.J.det ≠ 0) (hJ₁ : ∀ i j, σ (W₁.J j i) = -W₁.J i j) {f c₀ c : UA σ W.J → ℂ} (hf : IsAut f) (hm : Mod f)
     (h0 : IsCT H f c₀) (h1 : ∀ lev : UA σ W₁.J → UA σ W.J, (∀ y, IsLevi H 1 y (lev y)) →
       IsAv ((ratU σ W₁.J).subgroupOf (unip σ W₁ H₁)) (fun u => lev u.1) c₀ c) {l : ℂ} (hl : ‖l‖ < 1) {a : UA σ W.J}

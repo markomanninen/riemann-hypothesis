@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftRuleLevelPoint
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHead
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableGermIntegrand
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftRuleLevelPoint
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RootVectorActionCutoff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHead
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableGermIntegrand
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate
@@ -17,8 +21,8 @@ section alg
 
 variable {k r : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {D : Set (Q.Mx k r)}
 
-variable (E) in
 
+variable (E) in
 abbrev SB (hD : IsOpen D) : Subalgebra ℂ (Module.End ℂ (VS k r 0 D E)) :=
   Algebra.adjoin ℂ (Set.range fun pq : Fin (2 * r + k + 1) × Fin (2 * r + k + 1) => (PBG.E0 (E := E) hD pq.1 pq.2))
 
@@ -47,7 +51,8 @@ theorem map_AAx {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] (
     (hm : m ≤ r) (u : ℂ) :
     φ (C3.AAx k r Eu xi m hm u) = C3.AAx k r (fun p q => φ (Eu p q)) xi m hm u := by
   unfold C3.AAx
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   split_ifs
   · rw [map_smul, PBN.MC.map_qminor]
@@ -164,19 +169,19 @@ theorem plusPosOfParts : CutHL.PlusPosOfParts := by
     intro a q
     rw [hx₁, upper_minor_of_level_point hj Z τ γ ⟨a, by omega⟩ q (by show a.val < m + 1 + 1; omega)]
     by_cases hq : q.val < m + 1
-    · rw [dif_pos (by omega), dif_pos hq, zfull_apply, dif_pos ⟨a.isLt, hq⟩]
-    · rw [dif_neg hq]
+    · rw [dite_eq_left (by omega), dite_eq_left hq, zfull_apply, dite_eq_left ⟨a.isLt, hq⟩]
+    · rw [dite_eq_right hq]
       split_ifs with h1
-      · rw [zfull_apply, dif_neg (by simp; omega), if_neg (by simp; omega)]
+      · rw [zfull_apply, dite_eq_right (by simp; omega), if_neg (by simp; omega)]
       · rfl
   have hxl : ∀ q : Fin (2 * r + k + 1), PBG.xi0 x₁ ⟨m + 1, by omega⟩ q = if q.val = m + 1 then τ else 0 := by
     intro q
     rw [hx₁, upper_minor_of_level_point hj Z τ γ ⟨m + 1, by omega⟩ q (by simp)]
     by_cases hq : q.val = m + 1
-    · rw [dif_pos (by omega), if_pos hq, zfull_apply, dif_neg (by simp), if_pos ⟨rfl, hq⟩]
+    · rw [dite_eq_left (by omega), if_pos hq, zfull_apply, dite_eq_right (by simp), if_pos ⟨rfl, hq⟩]
     · rw [if_neg hq]
       split_ifs with h1
-      · rw [zfull_apply, dif_neg (by simp), if_neg (by simp; omega)]
+      · rw [zfull_apply, dite_eq_right (by simp), if_neg (by simp; omega)]
       · rfl
 
   have hHA := Formalism.FourierDecayAlt.P.head_algebra_relations (SB E hD) E k r m (by omega) z' (EB hD) La' (PBG.xi0 x₁) Z τ u
@@ -233,7 +238,7 @@ theorem plusPosOfParts : CutHL.PlusPosOfParts := by
       EB (E := E) hD (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩))) =
       (u - ((m + 1 : ℕ) : ℂ)) • C3.AAop k r (m + 1) (by omega) u Φ x₁ +
         τ • PBP.dz (fun τ' => C3.AAop k r (m + 1) (by omega) u Φ (x0 k r (m + 1) hj Z τ' γ)) τ := by
-    rw [mul_add, map_add, ← Algebra.commutes, ← Algebra.smul_def, map_smul, hyE, hT1, hdz, hy, hAA]
+    rw [mul_add, map_add (f := _), ← Algebra.commutes, ← Algebra.smul_def, map_smul, hyE, hT1, hdz, hy, hAA]
   rw [hmid, hAA, hAA] at hHA
   have hk : u - ((m + 1 : ℕ) : ℂ) = (Y : ℂ) + levelZeroKernel k r (m + 1) := by
     simp only [hu, levelZeroKernel]

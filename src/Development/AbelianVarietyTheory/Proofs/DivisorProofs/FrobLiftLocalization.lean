@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.DI
 
 namespace GlobalTheory.DI
@@ -23,7 +28,7 @@ theorem frobLift_localization :
       rw [mul_pow, this, zero_mul]
     have := hn.isUnit_add_right_of_commute hu (Commute.all _ _)
     rw [add_comm] at this
-    simpa [RingHom.comp_apply, hw, map_add, map_mul, map_pow, map_natCast] using this
+    simpa [RingHom.comp_apply, hw, map_add (f := _), map_mul, map_pow, map_natCast] using this
   refine ⟨IsLocalization.lift hunit, fun b => by simp [IsLocalization.lift_eq], ?_⟩
   intro z
   obtain ⟨⟨b, s⟩, rfl⟩ := IsLocalization.mk'_surjective S z
@@ -38,7 +43,7 @@ theorem frobLift_localization :
       algebraMap B Kt b ^ p + p * algebraMap B Kt v := by
     have := congrArg F' hspec
     rw [map_mul, hF', hF', hu, hv] at this
-    simpa [map_add, map_mul, map_pow, map_natCast] using this
+    simpa [map_add (f := _), map_mul, map_pow, map_natCast] using this
   obtain ⟨t, ht⟩ := (IsLocalization.map_units Kt s).pow p
   refine ⟨(algebraMap B Kt v - F' z * algebraMap B Kt u) * ↑t⁻¹, ?_⟩
   have hzs : z ^ p * algebraMap B Kt (s : B) ^ p = algebraMap B Kt b ^ p := by

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.DiagonalPullbacks.ProjectiveBundleFormulaTorsion
-import Development.EtaleCohomology.EtaleTrace.LRingPf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.DiagonalPullbacks.ProjectiveBundleFormulaTorsion
+public import Development.EtaleCohomology.EtaleTrace.LRingPf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.EtaleTrace CrystallineSemistableComparison CrystallineSemistableComparison.Onto UpperTheory.Gal.KunnethLefschetz UpperTheory.Gal.KunnethLefschetz.Di
@@ -102,6 +106,5 @@ theorem UpperTheory.Gal.KunnethLefschetz.Di.untw_holds :
   have hc := (hT n 0).comp hΦ
   convert hc using 1
   funext a
-  simp only [Function.comp, Φ]
   refine Finset.sum_congr rfl fun j _ => ?_
   exact term hI hR hP r ζ x n j (a j)

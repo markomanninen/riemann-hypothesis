@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsFiniteClass
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -54,8 +59,8 @@ variable (K : Subgroup G) (F : Submodule ℂ V) [FiniteDimensional ℂ F]
   (hF : ∀ v, v ∈ F ↔ ∀ k ∈ K, ρ k v = v)
   (horb : ∀ y, ((fun k : G => ρ k y) '' (K : Set G)).Finite)
 
-include hunit hF horb in
 
+include hunit hF horb in
 theorem proj {U : Submodule ℂ V} (hU : Stab ρ U) {x : V} (hx : x ∈ F) :
     ∃ u ∈ U ⊓ F, ∀ y ∈ U, inner ℂ (x - u) y = 0 := by
   haveI : FiniteDimensional ℂ ↥(U ⊓ F) := Submodule.finiteDimensional_of_le inf_le_right
@@ -75,8 +80,8 @@ theorem proj {U : Submodule ℂ V} (hU : Stab ρ U) {x : V} (hx : x ∈ F) :
   have h3 := inner_self_eq_zero.1 (h2 _ (U.sub_mem huU (hU k u huU)))
   exact (sub_eq_zero.1 h3).symm
 
-include hunit hF horb in
 
+include hunit hF horb in
 theorem mem_sSup_irr : ∀ x ∈ F, x ∈ sSup {W | IrrSub ρ W} := by
   haveI hfd : ∀ U : Submodule ℂ V, FiniteDimensional ℂ ↥(U ⊓ F) :=
     fun U => Submodule.finiteDimensional_of_le inf_le_right

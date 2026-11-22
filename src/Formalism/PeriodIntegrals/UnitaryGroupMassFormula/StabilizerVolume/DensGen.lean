@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.VolFromSW
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.VolFromSW
+
+@[expose] public section
 
 noncomputable section
 

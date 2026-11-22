@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.SubsingletonCohomologyOneGalUnitsSubgroupOf
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyKummer
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyGal
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
-import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.SubsingletonCohomologyOneGalUnitsSubgroupOf
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyKummer
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.CohomologyGal
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
+public import GroundTheory.ProfiniteCohomology.PoincareDuality.Torsion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -26,8 +31,8 @@ theorem rootsOfUnityTwoInv_apply (V : OpenSubgroup Gal(Ksep/K))
       ((cohomologyMap (kummerSequenceRes (K := K) (Ksep := Ksep) l (V : Subgroup Gal(Ksep/K))).f 2).hom x) :=
   AddMonoidHom.comp_apply _ _ x
 
-include hl in
 
+include hl in
 theorem rootsOfUnityTwoInv_injective (V : OpenSubgroup Gal(Ksep/K)) :
     Function.Injective (rootsOfUnityTwoInv (K := K) (Ksep := Ksep) l V) :=
   ((localClassFormationOfIsSepClosure K Ksep).inv_bijective V).1.comp
@@ -35,8 +40,8 @@ theorem rootsOfUnityTwoInv_injective (V : OpenSubgroup Gal(Ksep/K)) :
       (kummerSequenceRes_shortExact (Ksep := Ksep) l (V : Subgroup Gal(Ksep/K)) hl) 1
       (subsingleton_cohomology_one_galUnits_open K Ksep V))
 
-include hl in
 
+include hl in
 theorem range_rootsOfUnityTwoInv (V : OpenSubgroup Gal(Ksep/K)) :
     (rootsOfUnityTwoInv (K := K) (Ksep := Ksep) l V).range = (zmodToQZ l).range := by
   have : NeZero l := ⟨by rintro rfl; exact hl Nat.cast_zero⟩

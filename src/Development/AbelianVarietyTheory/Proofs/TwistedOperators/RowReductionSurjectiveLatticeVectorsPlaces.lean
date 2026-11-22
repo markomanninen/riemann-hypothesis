@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LamHomApply
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LamHomApply
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulMemLatO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNonvanishingFiniteDatumDefiniteLift
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker GlobalTheory.AdSpan
@@ -96,7 +101,7 @@ theorem redM_sub (PP : Formalism.L2.DIV.Pl D.host.E) {b c : ℕ} {N M : Matrix (
       Formalism.L2.DIV.resS D.host.F PP ⟨(N - M) i j, h⟩ else 0) =
     (if h : N i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E then Formalism.L2.DIV.resS D.host.F PP ⟨N i j, h⟩ else 0) -
     (if h : M i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E then Formalism.L2.DIV.resS D.host.F PP ⟨M i j, h⟩ else 0)
-  rw [dif_pos h1, dif_pos (hN i j), dif_pos (hM i j), ← (Formalism.L2.DIV.resS D.host.F PP).map_sub]
+  rw [dite_eq_left h1, dite_eq_left (hN i j), dite_eq_left (hM i j), ← (Formalism.L2.DIV.resS D.host.F PP).map_sub]
   rfl
 
 theorem redM_congr (PP : Formalism.L2.DIV.Pl D.host.E) {b c b' c' : ℕ} (N : Matrix (Fin b) (Fin c) (EAf D))
@@ -151,8 +156,8 @@ open GlobalTheory.LiftLevel GlobalTheory.LiftDat
 
 variable {D : D7}
 
-set_option maxHeartbeats 3000000 in
 
+set_option maxHeartbeats 3000000 in
 theorem exists_row {S T : HSp D} (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (e : AE D) (he : IsIdemSum e (Pg ∪ Q))
     (i0 : Fin S.rank) (t : ∀ PP : Formalism.L2.DIV.Pl D.host.E, Fin T.rank → Formalism.L2.DIV.kP PP) :
     ∃ R : Matrix (Fin S.rank) (Fin T.rank) (EAf D), IsIntM R ∧ (∀ i j, toEAf D e * R i j = R i j) ∧
@@ -201,11 +206,12 @@ theorem exists_row {S T : HSp D} (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) 
     intro PP hPP j
     show (if h : R i0 j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E then
       Formalism.L2.DIV.resS D.host.F PP ⟨R i0 j, h⟩ else 0) = _
-    rw [dif_pos (hRint i0 j)]
+    rw [dite_eq_left (hRint i0 j)]
     have hr : (⟨R i0 j, hRint i0 j⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = r0 i0 j := rfl
     rw [hr]
     simp only [r0, if_pos rfl]
-    rw [map_mul, hres PP hPP, one_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, hres PP hPP, one_mul, map_sum]
     simp_rw [map_mul, Formalism.L2.DIV.resS_oToS]
     rw [Finset.sum_eq_single ⟨PP, hPP⟩]
     · rw [hdel PP hPP PP hPP, if_pos rfl, one_mul, hc]
@@ -214,8 +220,8 @@ theorem exists_row {S T : HSp D} (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) 
     · intro h; exact absurd (Finset.mem_attach _ _) h
   exact ⟨R, hRint, hRe, hRred⟩
 
-set_option maxHeartbeats 3000000 in
 
+set_option maxHeartbeats 3000000 in
 theorem rowReduction_surjective_over_adelicFrames {S T : HSp D} (C : Ctx S T) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D))
     (Pg Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (e : AE D) (he : IsIdemSum e (Pg ∪ Q)) (a b : AE D) (hb : a * b = e)
     (hgen : IsGen C βS βT Pg Q e a) (h2' : liftI Pg Q ≠ ⊥) (hT : T.rank ≠ 0) (hn : T.rank ≤ S.rank)

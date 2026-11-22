@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RiemannFormFramePeriodsEqMajorant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RiemannFormFramePeriodsEqMajorant
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
@@ -21,7 +25,8 @@ theorem trace_mul_pairE (ξ : Module.Dual ℤ X) (b : 𝓞 E) (x : X) :
       (ξ (RingOfIntegers.basis E j • x) : ℚ) := by
     intro j
     unfold pairE
-    rw [Finset.mul_sum, map_sum, Finset.sum_eq_single j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum, Finset.sum_eq_single j]
     · have := LinearMap.BilinForm.apply_dualBasis_left (traceForm_nondegenerate ℚ E)
         (integralBasis E) j j
       rw [Algebra.traceForm_apply, if_pos rfl, integralBasis_apply] at this
@@ -39,7 +44,8 @@ theorem trace_mul_pairE (ξ : Module.Dual ℤ X) (b : 𝓞 E) (x : X) :
   have hb := (RingOfIntegers.basis E).sum_repr b
   conv_lhs => rw [← hb]
   conv_rhs => rw [← hb]
-  simp only [map_sum, Finset.sum_smul, Finset.sum_mul, map_zsmul, smul_assoc, smul_mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_smul, Finset.sum_mul, map_zsmul, smul_assoc, smul_mul_assoc]
   push_cast
   refine Finset.sum_congr rfl fun j _ => ?_
   have := h1 j
@@ -76,7 +82,7 @@ theorem re_herm_eq {g : ℕ} {Λ : Type} (P : Λ → (Fin g → ℂ)) (hP : Subm
     | mem x hx => obtain ⟨a, rfl⟩ := hx; exact h a b
     | zero => simp [hermForm]
     | add x y _ _ hx hy =>
-      simp only [hermForm, map_add, add_dotProduct, Complex.add_im] at *
+      simp only [hermForm, map_add (f := _), add_dotProduct, Complex.add_im] at *
       rw [hx, hy]
     | smul r x _ hx =>
       simp only [hermForm, hs, map_smul, smul_dotProduct, smul_eq_mul, Complex.im_ofReal_mul] at *
@@ -88,7 +94,7 @@ theorem re_herm_eq {g : ℕ} {Λ : Type} (P : Λ → (Fin g → ℂ)) (hP : Subm
     | mem x hx => obtain ⟨a, rfl⟩ := hx; exact h1 a u
     | zero => simp [hermForm]
     | add x y _ _ hx hy =>
-      simp only [hermForm, map_add, star_add, Matrix.mulVec_add, dotProduct_add, Complex.add_im] at *
+      simp only [hermForm, map_add (f := _), star_add, Matrix.mulVec_add, dotProduct_add, Complex.add_im] at *
       rw [hx, hy]
     | smul r x _ hx =>
       simp only [hermForm, hs, map_smul, star_smul, Matrix.mulVec_smul, dotProduct_smul, smul_eq_mul,

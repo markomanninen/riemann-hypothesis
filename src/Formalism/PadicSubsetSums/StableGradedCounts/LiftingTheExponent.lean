@@ -1,21 +1,26 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.WindowSums
+
+@[expose] public section
 
 namespace Formalism.IrreducibleCountingLemmas.WindowSums
 
 theorem sum_one_add_val (l : ℕ) [Fact l.Prime] (n : ℕ) :
     ∑ i ∈ Finset.range n, (1 + padicValNat l (i + 1)) = n + padicValNat l n.factorial := by
   induction n with
-  | zero => simp
+  | zero => simp [Nat.padicValNat_def]
   | succ n ih =>
     rw [Finset.sum_range_succ, ih, Nat.factorial_succ,
-      padicValNat.mul (Nat.succ_ne_zero n) (Nat.factorial_ne_zero n)]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.succ_ne_zero n) (Nat.factorial_ne_zero n)]
     simp only [Nat.succ_eq_add_one]
     omega
 
 theorem two_mul_val_factorial_le (l : ℕ) [hl : Fact l.Prime] (h2 : l ≠ 2) (n : ℕ) :
     2 * padicValNat l n.factorial ≤ n := by
   have h3 : 3 ≤ l := by have := hl.out.two_le; omega
-  have key := sub_one_mul_padicValNat_factorial (p := l) n
+  have key : (l - 1) * padicValNat l n.factorial = n - (l.digits n).sum := by
+    simpa only [Nat.padicValNat_def] using (hl.out.sub_one_mul_multiplicity_factorial (n := n))
   have hle : (l - 1) * padicValNat l n.factorial ≤ n := by rw [key]; exact Nat.sub_le _ _
   have h2le : 2 * padicValNat l n.factorial ≤ (l - 1) * padicValNat l n.factorial :=
     Nat.mul_le_mul_right _ (by omega)
@@ -24,12 +29,12 @@ theorem two_mul_val_factorial_le (l : ℕ) [hl : Fact l.Prime] (h2 : l ≠ 2) (n
 private theorem padicValInt_neg_natCast_add_one (l i : ℕ) :
     padicValInt l (-((i : ℤ) + 1)) = padicValNat l (i + 1) := by
   simp only [padicValInt]
-  rw [show (-((i : ℤ) + 1)).natAbs = i + 1 by omega]
+  rw [show (-((i : ℤ) + 1)).natAbs = i + 1 by omega, Nat.padicValNat_def]
 
 private theorem padicValInt_natCast_add_one (l i : ℕ) :
     padicValInt l ((i : ℤ) + 1) = padicValNat l (i + 1) := by
   simp only [padicValInt]
-  rw [show ((i : ℤ) + 1).natAbs = i + 1 by omega]
+  rw [show ((i : ℤ) + 1).natAbs = i + 1 by omega, Nat.padicValNat_def]
 
 theorem valuationSumBound : LiftExp := by
   intro l h J hl hl2 hJ h0

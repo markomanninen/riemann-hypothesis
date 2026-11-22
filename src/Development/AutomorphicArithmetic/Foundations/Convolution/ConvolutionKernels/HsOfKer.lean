@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.TraceClass
+module
+
+public import GroundTheory.AutomorphicForms.TraceClass
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic
 open scoped InnerProductSpace
@@ -18,9 +22,9 @@ private theorem UpperTheory.ConvolutionTheory.K.hsOfKer_countable {H : Type*} [N
   nlinarith [norm_nonneg (b i - b j)]
 
 private theorem UpperTheory.ConvolutionTheory.K.hsOfKer_sq {X : Type*} [MeasurableSpace X] (ν : Measure X)
-    {E : Type*} [NormedAddCommGroup E] (f : X → E) :
+    {E : Type*} [NormedAddCommGroup E] (f : X → E) (hf : AEStronglyMeasurable f ν) :
     eLpNorm f 2 ν ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_ofNat]
   rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
@@ -35,12 +39,13 @@ theorem UpperTheory.ConvolutionTheory.K.hsOfKer :
   rw [isHilbertSchmidt_iff b]
   have h1 : ∀ i, ‖A (b i)‖ₑ ^ 2 = ∫⁻ x, ‖⟪b i, k x⟫_ℂ‖ₑ ^ 2 ∂ν := by
     intro i
-    rw [Lp.enorm_def, eLpNorm_congr_ae (hA (b i)), UpperTheory.ConvolutionTheory.K.hsOfKer_sq]
+    rw [Lp.enorm_def, eLpNorm_congr_ae (hA (b i)),
+      UpperTheory.ConvolutionTheory.K.hsOfKer_sq _ _ (hk.aestronglyMeasurable.inner aestronglyMeasurable_const)]
     simp only [enorm_inner_comm (k _)]
   simp only [h1]
   rw [← lintegral_tsum]
   · simp only [← enorm_sq_eq_tsum b]
-    rw [← UpperTheory.ConvolutionTheory.K.hsOfKer_sq]
-    exact ENNReal.pow_lt_top hk.2
+    rw [← UpperTheory.ConvolutionTheory.K.hsOfKer_sq ν k hk.aestronglyMeasurable]
+    exact ENNReal.pow_lt_top hk
   · intro i
-    exact ((aestronglyMeasurable_const.inner hk.1).enorm).pow_const 2
+    exact ((aestronglyMeasurable_const.inner hk.aestronglyMeasurable).enorm).pow_const 2

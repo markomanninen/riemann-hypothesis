@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Existence
-import GroundTheory.AutomorphicForms.TensorProductTheorem.OuterTensor
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Existence
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.OuterTensor
+
+@[expose] public section
 
 noncomputable section
 

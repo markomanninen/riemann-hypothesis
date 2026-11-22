@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNG
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNG
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem coef_int (γ : TermDef.Term D u u' F0 what₂) {Λ₂ : Submodule (𝓞 
   set m := ∑ a, c a • frame (lf D F0) a with hm
   have hbm : baseChange₂ D p m = ∑ a, ((D.s.atP p).ιE (c a) * (((hu p a).unit⁻¹ : ((D.s.atP p).Ep)ˣ) : (D.s.atP p).Ep)) •
       (tLoc Zd p γ).f a := by
-    rw [hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Formalism.L2.SG.Pf.LocalDenominators.baseChange_smul₂, baseChangeAt_frame_eq Zd p γ (hu p), Units.smul_def, smul_smul]
   have hspan : baseChange₂ D p m ∈ Submodule.span (D.s.atP p).Ep (Set.range (tLoc Zd p γ).f) := by
@@ -73,7 +78,8 @@ theorem exists_y (γ : TermDef.Term D u u' F0 what₂) {Λ₂ : Submodule (𝓞 
   have hint : ∀ m ∈ Λ₂, m ∈ U → IsIntegral ℤ ((VS D).hT m v) := fun m hm hmU => by
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun D.host.E).1 hmU
     have hρm : ρ m = c (Fin.last D.R.rS) := by
-      rw [← hc, map_sum, Fin.sum_univ_castSucc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum, Fin.sum_univ_castSucc]
       simp only [map_smul, smul_eq_mul, hρe, mul_zero, Finset.sum_const_zero, zero_add, hρl, mul_one]
     rw [BwdNA.hsw (VS D) v m, hv, hρm]
     exact BwdNA.isInt_star (coef_int Zd γ hprim hu c (by rw [hc]; exact hm))
@@ -89,7 +95,7 @@ theorem exists_y (γ : TermDef.Term D u u' F0 what₂) {Λ₂ : Submodule (𝓞 
       obtain ⟨i, rfl⟩ := hx
       rw [BwdNA.hsw (VS D) w (F0.e i), ← frame_cs, hw, hρe, star_zero]
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
     | smul c x _ hx => rw [BwdNA.hT_smulL, hx, mul_zero]
   · have : frame (lf D F0) (Fin.last D.R.rS) = F0.z := by simp [frame, FlagG.fvec]
     rw [← this, hw, hρl]

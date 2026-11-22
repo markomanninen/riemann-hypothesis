@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct Opposite MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR MainStatements.Hodge GlobalTheory.CompanionTheory.HopfC
 
 set_option autoImplicit false
@@ -27,7 +32,7 @@ theorem con_lTensor {R : Type} [CommRing R] {I : Type} [Finite I] (V : I → Typ
     have h : (fun i ↦ LinearMap.lTensor (V i) φ ((u + v) i)) =
         (fun i ↦ LinearMap.lTensor (V i) φ (u i)) + (fun i ↦ LinearMap.lTensor (V i) φ (v i)) := by
       funext i; simp
-    rw [h, map_add, map_add, map_add, hu, hv]
+    rw [h, map_add (f := _), map_add (f := _), map_add (f := _), hu, hv]
 
 theorem tmap_id_eq {R : Type} [CommRing R] {A B B' : Type} [CommRing A] [CommRing B] [CommRing B']
     [Algebra R A] [Algebra R B] [Algebra R B'] (g : B →ₐ[R] B') (t : A ⊗[R] B) :
@@ -35,7 +40,7 @@ theorem tmap_id_eq {R : Type} [CommRing R] {A B B' : Type} [CommRing A] [CommRin
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Con_prB {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) {p q q' : ℕ}
     [Finite (Fin (p + 1) ⥤ C)] (Ξ : Cn F p →ₗ[R] R) (e : Fin (q + 1) →o Fin (q' + 1)) (B : Bi F p q) :
@@ -64,7 +69,7 @@ theorem con_prA {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ C
     rw [con_pure (V := fun a : Fin (p + 1) ⥤ C ↦ F.obj (a.obj (Fin.last p)))]
     exact con_pure (fun a : Fin (p' + 1) ⥤ C ↦ F.obj (a.obj (Fin.last p'))) M Ξ' (pr F e f) m
   | ha u v hu hv =>
-    rw [map_add, ← hu, ← hv, ← map_add]
+    rw [map_add (f := _), ← hu, ← hv, ← map_add (f := _)]
     congr 1
     funext a
     exact map_add _ _ _
@@ -75,7 +80,7 @@ theorem tmap_id_eq' {R : Type} [CommRing R] {A A' B : Type} [CommRing A] [CommRi
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem Con_prA {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) {p p' q : ℕ}
     [Finite (Fin (p + 1) ⥤ C)] [Finite (Fin (p' + 1) ⥤ C)] (Ξ' : Cn F p' →ₗ[R] R)

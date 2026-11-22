@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CyclotomicDiscriminants.SLayerCut
+module
+
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SLayerCut
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SLayer
 theorem layer_statement_holds : UpperTheory.V.ZK.SLayer := by

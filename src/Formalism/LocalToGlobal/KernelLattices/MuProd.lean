@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColInst
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.ComplSmulMapE
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColInst
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.ComplSmulMapE
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -45,8 +49,8 @@ theorem locId_one (v : HeightOneSpectrum (𝓞 F)) :
   rw [← TensorProduct.tmul_add, add_sub_cancel]
   rfl
 
-variable (E) in
 
+variable (E) in
 def locId (v : HeightOneSpectrum (𝓞 F)) : Eˣ →* (AfE F E)ˣ where
   toFun a :=
     { val := (a : E) ⊗ₜ[F] Formalism.L2.G.sgl F v 1 + (1 : E) ⊗ₜ[F] (1 - Formalism.L2.G.sgl F v 1)

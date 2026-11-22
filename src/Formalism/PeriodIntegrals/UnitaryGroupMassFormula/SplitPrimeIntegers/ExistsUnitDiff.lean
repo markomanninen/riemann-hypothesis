@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SplitIntLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SplitPrimeIntegers.EmbMemOfIsIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SplitIntLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SplitPrimeIntegers.EmbMemOfIsIntegral
+
+@[expose] public section
 
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
 open scoped TensorProduct
@@ -65,12 +69,12 @@ lemma approx (hspl : ∀ a : (v.adicCompletion F), spl ((1 : E) ⊗ₜ[F] a) = (
     obtain ⟨y1, h1, h1'⟩ := hx
     obtain ⟨y2, h2, h2'⟩ := hy
     refine ⟨y1 + y2, ?_, ?_⟩
-    · rw [map_add, map_add, Prod.fst_add,
+    · rw [map_add (f := _), map_add (f := _), Prod.fst_add,
         show (spl x).1 + (spl y).1 - (emb spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) y1 + emb spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) y2)
           = ((spl x).1 - emb spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) y1) + ((spl y).1 - emb spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) y2)
           by ring]
       exact Valuation.map_add_lt _ h1 h2
-    · rw [map_add, map_add, Prod.snd_add,
+    · rw [map_add (f := _), map_add (f := _), Prod.snd_add,
         show (spl x).2 + (spl y).2 - (emb spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) y1 + emb spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) y2)
           = ((spl x).2 - emb spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) y1) + ((spl y).2 - emb spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) y2)
           by ring]
@@ -173,7 +177,7 @@ lemma exists_unit_diff (hspl : ∀ a : (v.adicCompletion F), spl ((1 : E) ⊗ₜ
   obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.1 h1mem
   refine ⟨b, ?_⟩
   have hsum := congrArg (phi spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F))) hab
-  rw [map_add, map_one] at hsum
+  rw [map_add (f := _), map_one] at hsum
   have heq : phi spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) b - phi spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) b =
       1 - (phi spl (RingHom.fst (v.adicCompletion F) (v.adicCompletion F)) a + phi spl (RingHom.snd (v.adicCompletion F) (v.adicCompletion F)) b) := by
     rw [← hsum]; ring
@@ -211,7 +215,7 @@ theorem sup_dir (hspl : ∀ a : (v.adicCompletion F), spl ((1 : E) ⊗ₜ[F] a) 
       rw [sub_self, zero_mul]
   have hx' : spl x = spl ((1 : E) ⊗ₜ[F] (((⟨_, h2⟩ : (v.adicCompletionIntegers F))) : (v.adicCompletion F)) +
       w * ((1 : E) ⊗ₜ[F] ((((⟨_, h1⟩ : (v.adicCompletionIntegers F)) - ⟨_, h2⟩ : (v.adicCompletionIntegers F))) : (v.adicCompletion F)))) := by
-    rw [map_add, map_mul, hsw, hspl, hspl]
+    rw [map_add (f := _), map_mul, hsw, hspl, hspl]
     refine Prod.ext ?_ ?_
     · show (spl x).1 = (spl x).2 + 1 * ((spl x).1 - (spl x).2)
       ring

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
-import Lemmata.GeneralBFactAltForm.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+public import Lemmata.GeneralBFactAltForm.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.HermitianTraceFormVanishing
 

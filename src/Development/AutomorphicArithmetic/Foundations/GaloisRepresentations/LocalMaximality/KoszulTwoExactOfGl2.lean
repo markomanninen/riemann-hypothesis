@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -142,19 +146,21 @@ theorem koszulTwoExact_of_gl2 : FiltrationCocycleLiftCriterion → SubQEx → Ko
           exact Finset.card_pos.2 ⟨_, hQmem j⟩
         omega
       exact Pi.single_eq_of_ne this _
-    · rw [wd_single, map_sum]
-      refine Finset.sum_congr rfl fun l hl => ?_
-      have hl' : l ∉ Q := by simpa using hl
-      have hlc : l ∈ Qᶜ := hl
-      rw [map_sum]
-      simp only [hterm l hl']
-      rw [← hsum]
-      congr 1
-      have hw : wOn Qᶜ (fun l => act (r l)) l m = ∑ j, act (r (e j)) (g l j) := by
-        simpa [wOn, hl'] using hg l
-      rw [hw, Finset.smul_sum]
-      refine Finset.sum_congr rfl fun j _ => ?_
-      rw [map_zsmul, smul_smul, mul_comm, mul_assoc, GlobalTheory.cubeSign_mul_self, mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [wd_single, map_sum]
+        refine Finset.sum_congr rfl fun l hl => ?_
+        have hl' : l ∉ Q := by simpa using hl
+        have hlc : l ∈ Qᶜ := hl
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
+        simp only [hterm l hl']
+        rw [← hsum]
+        congr 1
+        have hw : wOn Qᶜ (fun l => act (r l)) l m = ∑ j, act (r (e j)) (g l j) := by
+          simpa [wOn, hl'] using hg l
+        rw [hw, Finset.smul_sum]
+        refine Finset.sum_congr rfl fun j _ => ?_
+        rw [map_zsmul, smul_smul, mul_comm, mul_assoc, GlobalTheory.cubeSign_mul_self, mul_one]
   obtain ⟨c, hc, hlev⟩ := gl2 κ E (fun _ => M) (fun l => act (r l)) Q d d wok qex
     (Pi.single Q m) (single_mem M _ hcard hm)
     (by

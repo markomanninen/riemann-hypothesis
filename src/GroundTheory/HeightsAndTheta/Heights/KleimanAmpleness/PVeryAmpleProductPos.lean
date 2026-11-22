@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleProductPosSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PointDegreePosSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutComponentSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutMultPosSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleProductPosSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PointDegreePosSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutComponentSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutMultPosSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -41,7 +46,7 @@ theorem VeryAmpleProductPos.proof (hR : GenericPointSectionInput.Statement.{u, w
       have hm := hM k N _ qq h
       exact mul_pos (by exact_mod_cast ENat.toNat_pos hm.1.ne' hm.2.ne) (ih qq _ hqW fun i => hL _)
     refine lt_of_lt_of_le ?_ (single_le_finsum q₀ ?_ ?_)
-    · rw [dif_pos ⟨hq₀, hq₀W⟩]
+    · rw [dite_eq_left ⟨hq₀, hq₀W⟩]
       exact hterm q₀ hq₀ hq₀W
     · refine (Ideal.finite_minimalPrimes_of_isNoetherianRing _
         (pp ⊔ zeroIdeal (L (Fin.last n)).toSubSystem s)).subset fun qq hqq => ?_

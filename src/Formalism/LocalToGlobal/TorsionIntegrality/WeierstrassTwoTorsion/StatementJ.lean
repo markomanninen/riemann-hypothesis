@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.CurveHyp
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.CurveHyp
+
+@[expose] public section
 
 open PowerSeries
 
@@ -24,13 +28,5 @@ def BridgeCurve : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (W : WeierstrassCurve K),
     IntModel W →
     Formalism.L2.Th1.B.CurveHyp (fgl W) (iSer W) (logSer W) (wpReg W) (xS W) (W.b₂ / 12)
-
-def BridgeTwo : Prop :=
-  ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (W : WeierstrassCurve K)
-    (xT yT : K), W.toAffine.Equation xT yT → 2 * yT + W.a₁ * xT + W.a₃ = 0 →
-    (tS W xT).subst (expSer W) = Formalism.L2.Th1.B.wOf (xT + W.b₂ / 12) (wpReg W) ∧
-    Formalism.L2.Th1.B.IsW (3 * (xT + W.b₂ / 12)) (3 * (xT + W.b₂ / 12) ^ 2 - g₂ W / 4)
-      ((tS W xT).subst (expSer W)) ∧
-    (IntModel W → ‖xT‖ ≤ 1 → Formalism.DworkPowerSeriesWeights.Integral (ι := Unit) (tS W xT))
 
 end Formalism.L2.Th1.A

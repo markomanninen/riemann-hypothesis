@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+
+@[expose] public section
 
 open NumberField
 
@@ -48,7 +52,7 @@ theorem trace_eq_finrank_mul_sum (E : Type) [Field E] [NumberField E] (X : Type)
       map_smul' := fun _ _ => rfl }
   have hR : ∀ l y, R l y = l (j y) := fun _ _ => rfl
   have hinj : Function.Injective R := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro l hl
     ext x
     obtain ⟨n, hn, y, hy⟩ := htor x

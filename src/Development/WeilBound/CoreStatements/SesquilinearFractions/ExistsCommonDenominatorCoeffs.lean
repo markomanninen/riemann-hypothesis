@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.DCompl
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.DCompl
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -26,8 +31,8 @@ theorem exists_common_denominator_coeffs (D : Datum H) {p : ℕ} (x' : Fin p →
   choose n hn b hb using hpt
   refine ⟨∏ i, ∏ a, n i a, ?_, fun y a => ?_⟩
   · intro h
-    obtain ⟨i, -, hi⟩ := (Prime.dvd_finset_prod_iff (Nat.prime_iff.1 ℓ.2) _).1 h
-    obtain ⟨a, -, ha⟩ := (Prime.dvd_finset_prod_iff (Nat.prime_iff.1 ℓ.2) _).1 hi
+    obtain ⟨i, -, hi⟩ := (Prime.dvd_finsetProd_iff (Nat.prime_iff.1 ℓ.2) _).1 h
+    obtain ⟨a, -, ha⟩ := (Prime.dvd_finsetProd_iff (Nat.prime_iff.1 ℓ.2) _).1 hi
     exact hn i a ha
   · have hy : y ∈ Submodule.span (𝓞 E) (Set.range t) := ht ▸ Submodule.mem_top
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 E)).1 hy
@@ -36,7 +41,8 @@ theorem exists_common_denominator_coeffs (D : Datum H) {p : ℕ} (x' : Fin p →
     choose w hw using hdv
     have he : projectionCoeffs D x' (∑ i, c i • t i) a = ∑ i, IsCMField.complexConj E (c i : E) * projectionCoeffs D x' (t i) a := by
       show projectionCoeffsAddHom D x' a (∑ i, c i • t i) = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       show projectionCoeffs D x' (c i • t i) a = _
       rw [projectionCoeffs_smul, Pi.smul_apply, smul_eq_mul]

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Published UpperTheory.V.Af.Sol
 
 private theorem UpperTheory.semisimple_restriction_normal_subgroup {K G V : Type} [Field K] [Group G] [AddCommGroup V] [Module K V]
@@ -35,7 +40,7 @@ private theorem UpperTheory.semisimple_restriction_normal_subgroup {K G V : Type
   have hsup : ∀ n ∈ N, ∀ v ∈ W ⊔ W', ρ n v ∈ W ⊔ W' := by
     intro n hn v hv
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hW n hn a ha) (hW's n hn b hb)
   have key : ∀ g : G, ∀ s ∈ S, ρ g s ∈ W ⊔ W' := by
     intro g
@@ -45,7 +50,7 @@ private theorem UpperTheory.semisimple_restriction_normal_subgroup {K G V : Type
         · intro n hn v hv
           obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
           obtain ⟨s, hs, rfl⟩ := Submodule.mem_map.mp hb
-          rw [map_add]
+          rw [map_add (f := _)]
           refine Submodule.add_mem_sup (hW's n hn a ha) ?_
           refine Submodule.mem_map.mpr ⟨ρ (g⁻¹ * n * g) s, hSs _ (hN.conj_mem' n hn g) s hs, ?_⟩
           rw [hmul, hmul]; congr 2; group

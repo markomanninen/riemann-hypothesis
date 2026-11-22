@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,11 +64,11 @@ theorem mem_nonzeroLocus {M : LB Y} (s : LB.Sec M) (y : Y) :
     refine ⟨hk, ?_⟩
     have hu := (Scheme.mem_basicOpen Y (s.f k) y hk).1 hy
     unfold gs
-    rw [dif_pos (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)]
+    rw [dite_eq_left (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)]
     exact hu
   · rintro ⟨hk, hu⟩
     unfold gs at hu
-    rw [dif_pos (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)] at hu
+    rw [dite_eq_left (show (𝟙 Y : Y ⟶ Y) y ∈ M.U k by simpa using hk)] at hu
     exact (Scheme.mem_basicOpen Y (s.f k) y hk).2 hu
 
 end

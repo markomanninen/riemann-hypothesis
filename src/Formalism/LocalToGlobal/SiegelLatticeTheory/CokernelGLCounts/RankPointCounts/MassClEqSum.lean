@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.MassDataInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem card_conj_eq (Γ K : Subgroup G) (x γ k : G) (hγ : γ ∈ Γ) (hk : k 
 theorem card_out_eq (Γ K : Subgroup G) (x : G) :
     Nat.card ↥(Γ ⊓ K.map (MulAut.conj (Quotient.out (DoubleCoset.mk Γ K x))).toMonoidHom) =
       Nat.card ↥(Γ ⊓ K.map (MulAut.conj x).toMonoidHom) := by
-  obtain ⟨γ, k, hγ, hk, h⟩ := DoubleCoset.mk_out_eq_mul Γ K x
+  obtain ⟨γ, hγ, k, hk, h⟩ := DoubleCoset.mk_out_eq_mul Γ K x
   rw [h]
   exact card_conj_eq Γ K x γ k hγ hk
 
@@ -73,19 +77,19 @@ theorem massCl_comap (e : G' ≃* G) (Γ K : Subgroup G) :
   unfold massCl
   refine finsum_eq_of_bijective (fun c => DoubleCoset.mk Γ K (e (Quotient.out c))) ⟨?_, ?_⟩ ?_
   · intro c1 c2 h
-    obtain ⟨γ, hγ, k, hk, h2⟩ := (DoubleCoset.eq Γ K _ _).mp h
+    obtain ⟨γ, hγ, k, hk, h2⟩ := (@DoubleCoset.eq _ _ Γ K _ _).mp h
     rw [← Quotient.out_eq c1, ← Quotient.out_eq c2]
-    refine (DoubleCoset.eq Γ' K' _ _).mpr
+    refine (@DoubleCoset.eq _ _ Γ' K' _ _).mpr
       ⟨e.symm γ, by simpa [hΓ'] using hγ, e.symm k, by simpa [hK'] using hk, ?_⟩
     apply e.injective
     simp [map_mul, h2]
   · intro c
-    obtain ⟨γ, k, hγ, hk, hout⟩ := DoubleCoset.mk_out_eq_mul Γ' K' (e.symm (Quotient.out c))
+    obtain ⟨γ, hγ, k, hk, hout⟩ := DoubleCoset.mk_out_eq_mul Γ' K' (e.symm (Quotient.out c))
     refine ⟨DoubleCoset.mk Γ' K' (e.symm (Quotient.out c)), ?_⟩
     show DoubleCoset.mk Γ K (e (Quotient.out (DoubleCoset.mk Γ' K' (e.symm (Quotient.out c))))) = c
     rw [hout]
     conv_rhs => rw [← Quotient.out_eq c]
-    refine ((DoubleCoset.eq Γ K _ _).mpr ⟨e γ, hγ, e k, hk, ?_⟩).symm
+    refine ((@DoubleCoset.eq _ _ Γ K _ _).mpr ⟨e γ, hγ, e k, hk, ?_⟩).symm
     simp [map_mul]
   · intro c
     rw [card_out_eq, hstab]
@@ -105,7 +109,7 @@ theorem massCl_eq_sum (Γ K : Subgroup G) (S : Finset α) (ℓ : G → α) (w : 
   unfold massCl
   have hout : ∀ x, ∃ γ ∈ Γ, ∃ k ∈ K, Quotient.out (DoubleCoset.mk Γ K x) = γ * x * k := by
     intro x
-    obtain ⟨γ, k, hγ, hk, h⟩ := DoubleCoset.mk_out_eq_mul Γ K x
+    obtain ⟨γ, hγ, k, hk, h⟩ := DoubleCoset.mk_out_eq_mul Γ K x
     exact ⟨γ, hγ, k, hk, h⟩
   rw [← Finset.sum_coe_sort S w, ← finsum_eq_sum_of_fintype]
   refine finsum_eq_of_bijective (fun c => (⟨ℓ (Quotient.out c), hS _⟩ : {s // s ∈ S}))
@@ -114,7 +118,7 @@ theorem massCl_eq_sum (Γ K : Subgroup G) (S : Finset α) (ℓ : G → α) (w : 
     have h' : ℓ (Quotient.out c1) = ℓ (Quotient.out c2) := congrArg Subtype.val h
     obtain ⟨γ, hγ, k, hk, h2⟩ := (hrel _ _).mp h'
     rw [← Quotient.out_eq c1, ← Quotient.out_eq c2]
-    exact (DoubleCoset.eq Γ K _ _).mpr ⟨γ, hγ, k, hk, h2⟩
+    exact (@DoubleCoset.eq _ _ Γ K _ _).mpr ⟨γ, hγ, k, hk, h2⟩
   · rintro ⟨s, hs⟩
     obtain ⟨x, rfl⟩ := hsurj s hs
     refine ⟨DoubleCoset.mk Γ K x, Subtype.ext ?_⟩

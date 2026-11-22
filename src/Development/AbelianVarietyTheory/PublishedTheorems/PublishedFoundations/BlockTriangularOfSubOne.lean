@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ONLeaves
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ONLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -155,10 +159,6 @@ def mirabInduced (ψ₀ : AddChar k ℂ) : Representation ℂ (mirabSub k n) (Mi
 def restrictMirab {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin (n + 1)) k) V) :
     Representation ℂ (mirabSub k n) V :=
   ρ.comp (mirabSub k n).subtype
-
-@[simp] theorem restrictMirab_apply {V : Type} [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ (GL (Fin (n + 1)) k) V) (h : mirabSub k n) :
-    restrictMirab n ρ h = ρ (h : GL (Fin (n + 1)) k) := rfl
 
 end Generic
 

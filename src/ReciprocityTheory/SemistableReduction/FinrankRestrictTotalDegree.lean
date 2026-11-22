@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

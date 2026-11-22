@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
@@ -42,8 +47,8 @@ def latM (G : Gm D n) (LS : Set (Fin n → D.host.E)) (LT : Set (Fin m → D.hos
     ∃ a : D.host.E, a ∈ D.host.AA ∧ ∃ s ∈ LS, ∃ t ∈ LT,
       w = Matrix.of fun i j => (pairA D.host.F 0 α) ⊗ₜ[D.host.F] (a * t i * ∑ k, star (s k) * G k j)}
 
-open scoped ContDiff in
 
+open scoped ContDiff in
 def ThetaM (ψ : AddChar (AF D.host.F) ℂ) (G : Gm D n) (H : Gm D m) (f : Mx D m n → ℂ) : Prop :=
   (∀ (γ : Matrix (Fin m) (Fin n) D.host.E) (w : Mx D m n), f (γ.map (incA D) + w) =
     ψ (-(algebraMap D.host.F (AF D.host.F) (1 / 2) * symplM G H (γ.map (incA D)) w)) * f w) ∧
@@ -151,25 +156,25 @@ def dualM {n m : ℕ} (G : Gm D n) (H : Gm D m) (βS : GL (Fin n) (Lev.EAf D)) (
       (H.map (incA D))).map (toEAf D)))
     βT.val
 
-open Classical in
 
+open Classical in
 def fstM {n m : ℕ} (ν : (AE D)ˣ →* Circle) (e : AE D) (I : Ideal (𝓞 D.host.E)) (βA : GL (Fin n) (Lev.EAf D))
     (βW : GL (Fin m) (Lev.EAf D)) (x : Mx D m n) : ℂ :=
   if IsHalf e x ∧ IsIntM (frM βA βW x) ∧ ∀ i j, n ≤ i.1 → InId I (frM βA βW x i j) then
     unitChar ν e (topL n (frM βA βW x))
   else 0
 
-open Classical in
 
+open Classical in
 def sndM {n m : ℕ} (ν : (AE D)ˣ →* Circle) (e : AE D) (I : Ideal (𝓞 D.host.E)) (a : ℕ) (G : Gm D n) (H : Gm D m)
     (βA : GL (Fin n) (Lev.EAf D)) (βW : GL (Fin m) (Lev.EAf D)) (y : Mx D m n) : ℂ :=
   if IsHalf (cA D e) y ∧ IsIntM (dualM G H βA βW y) ∧ ∀ i j, j.1 < a → InId I (dualM G H βA βW y i j) then
     unitChar ν e (rightBlock a (dualM G H βA βW y))
   else 0
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure TriM (T : Type) {a a' d : ℕ} (G : Gm D a) (G' : Gm D a') (H : Gm D d) where
 
   rA : RigM D a
@@ -207,8 +212,6 @@ def triTo {T : Type} {A A' WW : HSp D} (X : Tri T A A' WW) : TriM T A.gram A'.gr
 
 def triOf {T : Type} {A A' WW : HSp D} (X : TriM T A.gram A'.gram WW.gram) : Tri T A A' WW :=
   ⟨rigOf X.rA, rigOf X.rA', rigOf X.rW, X.om, X.om', X.vac, X.vac', X.e, X.c, X.f, X.f', X.m, X.fd, X.m', X.fd'⟩
-
-theorem triTo_triOf {T : Type} {A A' WW : HSp D} (X : TriM T A.gram A'.gram WW.gram) : triTo (triOf X) = X := rfl
 
 namespace TriM
 

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtCvs
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtCvs
+
+@[expose] public section
 
 open Matrix MvPolynomial
 open scoped ComplexConjugate ContDiff Topology

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,16 +57,16 @@ theorem lift_cobTwo (x y z : WithConv (A →ₐ[R] X)) (c : A ⊗[R] A) :
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a a' => simp [mul_assoc]
-    | add u v hu hv => simp only [TensorProduct.add_tmul, map_add, hu, hv, add_mul]
+    | add u v hu hv => simp only [TensorProduct.add_tmul, map_add (f := _), hu, hv, add_mul]
   induction c using TensorProduct.induction_on with
   | zero => simp
   | tmul a b =>
     rw [cobTwo_apply]
-    simp only [map_sub, map_add, TensorProduct.mk_apply, LinearMap.rTensor_tmul,
+    simp only [map_sub, map_add (f := _), TensorProduct.mk_apply, LinearMap.rTensor_tmul,
       LinearMap.lTensor_tmul, LinearMap.flip_apply, Algebra.TensorProduct.lift_tmul, val_tmul, hA,
       mul_apply, map_one, one_mul, mul_one]
   | add u v hu hv =>
-    simp only [map_add, hu, hv]
+    simp only [map_add (f := _), hu, hv]
     abel
 
 theorem val_comm (x y : WithConv (A →ₐ[R] X)) (c : A ⊗[R] A) :
@@ -70,7 +74,7 @@ theorem val_comm (x y : WithConv (A →ₐ[R] X)) (c : A ⊗[R] A) :
   induction c using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rw [TensorProduct.comm_tmul, val_tmul, val_tmul, mul_comm]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
 
 theorem val_push {Y : Type} [CommRing Y] [Algebra R Y] (u : X →ₐ[R] Y)
     (x y : WithConv (A →ₐ[R] X)) (c : A ⊗[R] A) :
@@ -78,7 +82,7 @@ theorem val_push {Y : Type} [CommRing Y] [Algebra R Y] (u : X →ₐ[R] Y)
   induction c using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp only [val_tmul, ptsPush_ofConv, AlgHom.comp_apply, map_mul]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
 
 variable {B : Type} [CommRing B] [Bialgebra R B]
 
@@ -92,7 +96,7 @@ theorem val_include (x y : WithConv (A →ₐ[R] B)) (c : A ⊗[R] A) :
     simp only [val_tmul, ptsPush_ofConv, AlgHom.comp_apply, Algebra.TensorProduct.includeLeft_apply,
       Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
       one_mul, TensorProduct.map_tmul, AlgHom.toLinearMap_apply]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
 
 theorem include_mul (f : A →ₐc[R] B) :
     ptsPush A (Algebra.TensorProduct.includeLeft : B →ₐ[R] B ⊗[R] B) (toConv (f : A →ₐ[R] B)) *
@@ -106,8 +110,8 @@ theorem include_mul (f : A →ₐc[R] B) :
 
 end CocycleSum
 
-open CocycleSum in
 
+open CocycleSum in
 theorem pullTwo_convMul {R A B : Type} [CommRing R] [CommRing A] [CommRing B] [Bialgebra R A]
     [Bialgebra R B] [IsCocomm R A] (f g : A →ₐc[R] B) (c : A ⊗[R] A) (hc : c ∈ symCocycles R A) :
     pullbackTwo (toConv f * toConv g).ofConv c = pullbackTwo f c + pullbackTwo g c +
@@ -120,7 +124,7 @@ theorem pullTwo_convMul {R A B : Type} [CommRing R] [CommRing A] [CommRing B] [B
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
   have key := four (M := WithConv (A →ₐ[R] B ⊗[R] B)) (fun x y => val x y c)
     (fun x y z => (lift_cobTwo x y z c).symm.trans (by rw [hc2, map_zero]))
     (fun x y => by rw [← val_comm, hcs])

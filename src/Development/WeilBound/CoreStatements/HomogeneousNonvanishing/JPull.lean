@@ -1,6 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M GlobalTheory.CompanionTheory.Ar.Cmp Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
 
@@ -42,7 +47,7 @@ theorem j_pull : ∀ (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (�
     rfl
   · unfold IsSmoothHerm
     rw [show A'.h = A.h ∘ fun z p => z (v p) from funext h.2]
-    exact ContDiffOn.comp hA (contDiffOn_pi.mpr fun p => (contDiff_apply ℝ ℂ (v p)).contDiffOn) fun z hz => hnz z hz
+    exact ContDiffOn.comp hA (contDiffOn_pi.mpr fun p => (contDiff_apply ℝ (fun _ => ℂ) (v p)).contDiffOn) fun z hz => hnz z hz
   · exact (hev z f).symm.trans (hz.2 _ hf)
 
 end PositivityTheory.UnitarySelfGeneration

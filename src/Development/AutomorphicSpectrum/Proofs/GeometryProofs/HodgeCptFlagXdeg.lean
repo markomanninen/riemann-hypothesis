@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorFlagStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUniqueStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptInteriorFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeInnerProductConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUniqueStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -427,13 +432,13 @@ theorem metricF_eq (hu : ∀ z z' w h h', Good Fl r a e₀ z w h → Good Fl r a
     metricF Fl r a e₀ w = h := by
   have hx : ∃ z h, Good Fl r a e₀ z w h := ⟨z, h, hG⟩
   unfold metricF
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
   exact hu _ _ _ _ _ hx.choose_spec.choose_spec hG
 
 theorem metricF_of_not {w : (Σ k, J k) → ℂ} (hx : ¬ ∃ z h, Good Fl r a e₀ z w h) :
     metricF Fl r a e₀ w = refNorm a w := by
   unfold metricF
-  rw [dif_neg hx]
+  rw [dite_eq_right hx]
 
 theorem exists_hodgeLine : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H)
     (l : Level H) (Xo : Moduli D l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β)

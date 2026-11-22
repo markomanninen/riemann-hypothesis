@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromSevenToSix
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemLevelsIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromSevenToSix
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemLevelsIff
+
+@[expose] public section
 
 noncomputable section
 

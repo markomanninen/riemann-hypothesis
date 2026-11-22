@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.UnitLemmaCaseALevelZero
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.ExtensionCocycleProofs.UnitLemmaCaseALevelZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,11 +99,12 @@ theorem character_value_formula_holds : StatChiVal := by
     have ht0 : t' ≠ 0 := by
       rintro rfl
       exact ht' (dvd_zero _)
-    rw [padicValNat.mul hl1 (mul_ne_zero (pow_ne_zero _ (Fact.out : ℓ.Prime).ne_zero) ht0),
-      padicValNat.mul (pow_ne_zero _ (Fact.out : ℓ.Prime).ne_zero) ht0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd ht',
-      padicValNat.eq_zero_of_not_dvd (Nat.not_dvd_of_pos_of_lt (by omega) (by omega))]
-    ring
+    have hpow : ℓ ^ a ≠ 0 := pow_ne_zero _ (Fact.out : ℓ.Prime).ne_zero
+    have hnd : ¬ ℓ ∣ ℓ - 1 := Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul hl1 (mul_ne_zero hpow ht0),
+      Nat.multiplicity_mul hpow ht0, Nat.multiplicity_prime_pow,
+      multiplicity_eq_zero_of_not_dvd ht', multiplicity_eq_zero_of_not_dvd hnd,
+      Nat.add_zero, Nat.zero_add]
   · rw [if_neg hdk]
     exact val_zero_of_not_dvd (fun h => hdk (hχ.1 k h))
 
@@ -256,7 +261,7 @@ theorem second_descent_free_part_holds : Stat2Free := by
   have hTadd : ∀ w₁ ∈ T, ∀ w₂ ∈ T, w₁ + w₂ ∈ T := by
     rintro _ ⟨y₁, hy₁, rfl⟩ _ ⟨y₂, hy₂, rfl⟩
     exact ⟨y₁ + y₂, fun k => S.P'.add_mem (hy₁ k) (hy₂ k), by
-      simp [map_add, smul_add, Finset.sum_add_distrib]⟩
+      simp [map_add (f := _), smul_add, Finset.sum_add_distrib]⟩
   have hTsum : ∀ (s : Finset (Fin ℓ)) (f : Fin ℓ → D'), (∀ k ∈ s, f k ∈ T) → ∑ k ∈ s, f k ∈ T := by
     intro s f
     induction s using Finset.induction_on with

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemInvCoeIdeal
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.WeightPositive
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemInvCoeIdeal
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.WeightPositive
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem isoZeroG (h : Dual e y z N) (hN : 0 < N) (τ : E →+* ℂ) (hτ : ∀ a
           smul_eq_mul, starRingEnd_apply, star_natCast, h0, hv', star_star, hyw, ← hxdef, RingHom.id_apply]
         ring
       have e2 : (τ (S.hT u u)).re = -(2 * n * Complex.normSq (τ x)) + (τ (S.hT v' v')).re := by
-        rw [e1, map_add, map_mul, hxx, map_neg, map_mul, map_ofNat, map_natCast, Complex.add_re]
+        rw [e1, map_add (f := _), map_mul, hxx, map_neg, map_mul, map_ofNat, map_natCast, Complex.add_re]
         congr 1
         have : -(2 * (n : ℂ)) * ((Complex.normSq (τ x) : ℝ) : ℂ) =
             ((-(2 * n * Complex.normSq (τ x)) : ℝ) : ℂ) := by push_cast; ring
@@ -141,17 +145,21 @@ theorem isoZeroG (h : Dual e y z N) (hN : 0 < N) (τ : E →+* ℂ) (hτ : ∀ a
   have hzF : ∀ a, S.hT z (y a) = 0 := fun a => hsw0 S (h.yz a)
   have hWE : ∀ b, S.hT (e b) xW = 0 := by
     intro b
-    simp [hxW, map_sub, map_sum, map_add, map_smul, h.ee, h.ey, h.ez]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hxW, map_sub, map_sum, map_add (f := _), map_smul, h.ee, h.ey, h.ez]
   have hWF : ∀ b, S.hT (y b) xW = 0 := by
     intro b
-    simp [hxW, map_sub, map_sum, map_add, map_smul, h.yy, h.ye, h.yz]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hxW, map_sub, map_sum, map_add (f := _), map_smul, h.yy, h.ye, h.yz]
   have hWz : S.hT z xW = 0 := by
-    simp [hxW, map_sub, map_sum, map_add, map_smul, hzE, hzF, hzz]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hxW, map_sub, map_sum, map_add (f := _), map_smul, hzE, hzF, hzz]
   have h1 := orthW xW ⟨hWE, hWF, hWz⟩
   have hwE : ∀ a, S.hT w (e a) = 0 := fun a => hsw0 S (hE a)
   have hwF : ∀ a, S.hT w (y a) = 0 := fun a => hsw0 S (hF a)
   have hwz : S.hT w z = 0 := hsw0 S hz
-  simpa [hxW, map_sub, map_sum, map_add, map_smul, hwE, hwF, hwz] using h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [hxW, map_sub, map_sum, map_add (f := _), map_smul, hwE, hwF, hwz] using h1
 
 end Gen
 

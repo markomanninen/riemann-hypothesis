@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,18 +101,6 @@ structure VBun (l : ℕ) (R : Type) [CommRing R] where
 
 attribute [instance] VBun.acg VBun.mod
 
-def FCrys.toVBun (E : FCrys l R) : VBun l R where
-  M := E.M
-  fin := E.fin
-  proj := E.proj
-  tr := E.tr
-  tr_bc := E.tr_bc
-  tr_id := E.tr_id
-  tr_comp := E.tr_comp
-
-def FCrys.Effective (E : FCrys l R) : Prop :=
-  ∀ (P : Obj l R) (x : E.M P), ∃ m : E.M P, ∀ d : ↥P.I, IsFrac (d : P.A) (E.Φ P d x) m 0
-
 theorem Delta.δ_zero {A : Type} [CommRing A] (D : Delta l A) : D.δ 0 = 0 := by
   have h := D.δ_add 0 0
   have e : ∑ k ∈ Finset.Ioo 0 l, ((l.choose k / l : ℕ) : A) * (0 : A) ^ k * (0 : A) ^ (l - k) = 0 :=
@@ -168,7 +160,7 @@ theorem Delta.map_δ_of_map_φ {A B : Type} [CommRing A] [CommRing B] (D : Delta
     f (D.δ a) = D'.δ (f a) := by
   rw [← sub_eq_zero]; apply htf
   have := h a
-  simp only [D.φ_eq, D'.φ_eq, map_add, map_mul, map_pow, map_natCast] at this
+  simp only [D.φ_eq, D'.φ_eq, map_add (f := _), map_mul, map_pow, map_natCast] at this
   linear_combination this
 
 theorem Hom.f_φ {P P' : Obj l R} (f : Hom P P') (a : P.A) : f.f (P.D.φ a) = P'.D.φ (f.f a) :=
@@ -263,12 +255,6 @@ def Obj.crys (l : ℕ) [hl : Fact l.Prime] : Obj l ℤ_[l] where
     simp [this]⟩
   str := Ideal.Quotient.mk _
 
-theorem Obj.crys_quot_nontrivial (l : ℕ) [Fact l.Prime] :
-    Nontrivial ((Obj.crys l).A ⧸ (Obj.crys l).I) := by
-  change Nontrivial (ℤ_[l] ⧸ Ideal.span {(l : ℤ_[l])})
-  rw [← PadicInt.maximalIdeal_eq_span_p]
-  exact Ideal.Quotient.nontrivial_iff.2 (IsLocalRing.maximalIdeal.isMaximal _).ne_top
-
 theorem semiBC_self {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) : SemiBC f.toSemilinearMap := by
   intro Q _ _ v
   refine ⟨LinearMap.toSpanSingleton B Q (v 1), fun x => ?_, fun w hw => ?_⟩
@@ -308,57 +294,9 @@ def FCrys.unit (l : ℕ) (R : Type) [CommRing R] : FCrys l R where
     linear_combination (-(f.f d) ^ b * (d' : P'.A) ^ (a + b + j)) * ha' +
       (f.f d ^ (a + b + k) * (d' : P'.A) ^ a) * hb
 
-theorem FCrys.unit_effective (l : ℕ) (R : Type) [CommRing R] : (FCrys.unit l R).Effective := by
-  intro P x
-  refine ⟨P.D.φ x, fun d => ?_⟩
-  change LocalizedModule.mk (P.D.φ x) (1 : Submonoid.powers (d : P.A)) = LocalizedModule.mk _ _
-  congr 1
-  ext; simp
-
-def VBun.unit (l : ℕ) (R : Type) [CommRing R] : VBun l R := (FCrys.unit l R).toVBun
-
-def FHom.id (E : FCrys l R) : FHom E E where
-  u _ := LinearMap.id
-  u_tr _ _ := rfl
-  u_Φ _ _ _ _ _ h := h
-
 def FHom.comp {E E' E'' : FCrys l R} (v : FHom E' E'') (u : FHom E E') : FHom E E'' where
   u P := (v.u P).comp (u.u P)
   u_tr f x := by simp [u.u_tr, v.u_tr]
   u_Φ P d x m k h := v.u_Φ P d _ _ k (u.u_Φ P d x m k h)
-
-instance FCrys.unit_crys_nontrivial (l : ℕ) [Fact l.Prime] :
-    Nontrivial ((FCrys.unit l ℤ_[l]).M (Obj.crys l)) :=
-  inferInstanceAs (Nontrivial ℤ_[l])
-
-instance VBun.unit_crys_nontrivial (l : ℕ) [Fact l.Prime] :
-    Nontrivial ((VBun.unit l ℤ_[l]).M (Obj.crys l)) :=
-  inferInstanceAs (Nontrivial ℤ_[l])
-
-theorem FCrys.unit_crys_Φ_ne_zero (l : ℕ) [hl : Fact l.Prime] :
-    (FCrys.unit l ℤ_[l]).Φ (Obj.crys l) ⟨(l : ℤ_[l]), Ideal.mem_span_singleton_self _⟩ (1 : ℤ_[l]) ≠ 0 := by
-  intro h
-  have h' : LocalizedModule.mk (1 : ℤ_[l]) (1 : Submonoid.powers (l : ℤ_[l])) =
-      LocalizedModule.mk (0 : ℤ_[l]) 1 := by
-    rw [LocalizedModule.zero_mk]; exact h
-  rw [LocalizedModule.mk_eq] at h'
-  obtain ⟨⟨_, r, rfl⟩, h'⟩ := h'
-  simp [Submonoid.smul_def, hl.out.ne_zero] at h'
-
-example (l : ℕ) [hl : Fact l.Prime] :
-    (Obj.crys l).D.δ (l : ℤ_[l]) = (1 : ℤ_[l]) - (l : ℤ_[l]) ^ (l - 1) := by
-  have h : (l : ℤ_[l]) = (l : ℤ_[l]) ^ l + (l : ℤ_[l]) * (show ℤ_[l] from (Obj.crys l).D.δ (l : ℤ_[l])) :=
-    (Obj.crys l).D.φ_eq (l : ℤ_[l])
-  have h0 : (l : ℤ_[l]) ≠ 0 := by exact_mod_cast hl.out.ne_zero
-  have h1 : (l : ℤ_[l]) ^ l = (l : ℤ_[l]) * (l : ℤ_[l]) ^ (l - 1) := by
-    rw [← pow_succ', Nat.sub_add_cancel hl.out.one_le]
-  refine mul_left_cancel₀ h0 (b := (show ℤ_[l] from (Obj.crys l).D.δ (l : ℤ_[l]))) ?_
-  linear_combination -h - h1
-
-example {A : Type} [CommRing A] (D : Delta 2 A) : D.δ 2 = -1 := by
-  have hI : Finset.Ioo 0 2 = {1} := by decide
-  have h1 := D.δ_add 1 1
-  rw [hI, D.δ_one, one_add_one_eq_two] at h1
-  simpa using h1
 
 end GlobalTheory.Prism

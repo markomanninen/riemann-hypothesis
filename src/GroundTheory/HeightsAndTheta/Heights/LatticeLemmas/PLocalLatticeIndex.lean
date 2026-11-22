@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsLocalLatticeIndex
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.LatticeLemmas
@@ -172,10 +177,6 @@ theorem LocalLatticeIndex.index_eq_det (A B : Submodule (v.adicCompletionInteger
   exact Finset.prod_congr rfl fun i _ => LocalLatticeIndex.card_quot_span v (ha i)
 
 end General
-
-theorem LocalLatticeIndex.proof : LocalLatticeIndex.Statement := by
-  intro K _ _ V _ _ _ _ v A B g hA hB hBA
-  exact LocalLatticeIndex.index_eq_det A B g hA.1 hA.2 hB hBA
 
 end
 

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
-import Mathlib.Algebra.Homology.DerivedCategory.KInjective
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
+public import Mathlib.Algebra.Homology.DerivedCategory.KInjective
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

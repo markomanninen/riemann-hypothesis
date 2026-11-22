@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComapInlMemStLat
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComapInlMemStLat
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 noncomputable section

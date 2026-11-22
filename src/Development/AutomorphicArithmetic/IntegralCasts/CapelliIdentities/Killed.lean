@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe12.killed :
     ∀ (l : ℕ) [inst : Fact (Nat.Prime l)] (M : Type)

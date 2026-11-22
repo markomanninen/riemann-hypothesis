@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.LintegralBallRpowLtTop
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.LintegralBallRpowLtTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -175,7 +179,7 @@ theorem local_int (A : WeightedAtlas n Y ι La) (hMVI : MVIntStatement n) (hn : 
   have hWb : W ⊆ Metric.ball vP ε := Metric.ball_subset_ball (min_le_left _ _)
   have hWt : W ⊆ e.target := fun v hv => (hball v (hWb hv)).1
   have hUo : IsOpen (e.source ∩ e ⁻¹' W) := e.isOpen_inter_preimage Metric.isOpen_ball
-  refine ⟨e.source ∩ e ⁻¹' W, hUo, ⟨hPs, Metric.mem_ball_self (lt_min hε one_pos)⟩, ?_⟩
+  refine ⟨e.source ∩ e ⁻¹' W, hUo, ⟨hPs, Set.mem_preimage.mpr (Metric.mem_ball_self (lt_min hε one_pos))⟩, ?_⟩
   set c := (g4 vP / 2) / K3 ^ 2 with hc
   have hcpos : 0 < c := by positivity
   set m6 := g6 vP / 2 with hm6

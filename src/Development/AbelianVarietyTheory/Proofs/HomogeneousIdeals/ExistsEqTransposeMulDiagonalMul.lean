@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SummableLatticeExpNegPiMulNormSqDiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SummableLatticeExpNegPiMulNormSqDiv
+
+@[expose] public section
 
 open Complex Matrix MeasureTheory
 open scoped Real
@@ -11,8 +15,8 @@ namespace GlobalTheory
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-open scoped MatrixOrder in
 
+open scoped MatrixOrder in
 theorem IsSiegel.exists_eq_transpose_mul_diagonal_mul {σ : Matrix ι ι ℂ} (h : IsSiegel σ) :
     ∃ P : Matrix ι ι ℝ, P.det ≠ 0 ∧ ∃ t : ι → ℂ, (∀ i, 0 < (t i).im) ∧
       σ = (P.map ofReal)ᵀ * diagonal t * P.map ofReal := by
@@ -45,12 +49,12 @@ theorem IsSiegel.exists_eq_transpose_mul_diagonal_mul {σ : Matrix ι ι ℂ} (h
   ext i j
   have e1' := congrFun (congrFun e1 i) j
   have e2' := congrFun (congrFun e2 i) j
-  simp only [mul_apply, map_apply, transpose_apply, diagonal_apply, mul_ite, mul_zero,
+  simp only [Matrix.mul_apply, map_apply, transpose_apply, diagonal_apply, mul_ite, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, if_true] at e1' e2' ⊢
   apply Complex.ext <;> simp [e1', e2']
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem ofReal_mulVec_eq (P : Matrix ι ι ℝ) (x : ι → ℝ) :
     (fun i => ((P *ᵥ x) i : ℂ)) = P.map ofReal *ᵥ fun i => (x i : ℂ) := by
   ext i
@@ -76,7 +80,7 @@ theorem IsSiegel.transpose_mul_mul {σ : Matrix ι ι ℂ} (h : IsSiegel σ) {P 
   · convert h.posDef.conjTranspose_mul_mul_same (B := P)
       (mulVec_injective_of_isUnit ((isUnit_iff_isUnit_det P).2 hP.isUnit)) using 1
     ext i j
-    simp [mul_apply]
+    simp [Matrix.mul_apply]
 
 theorem IsSiegel.isUnit_det {σ : Matrix ι ι ℂ} (h : IsSiegel σ) : IsUnit σ.det := by
   obtain ⟨P, hP, t, ht, rfl⟩ := h.exists_eq_transpose_mul_diagonal_mul
@@ -105,8 +109,8 @@ theorem IsSiegel.neg_inv {σ : Matrix ι ι ℂ} (h : IsSiegel σ) : IsSiegel (-
     ← transpose_nonsing_inv, inv_map_ofReal hP, transpose_map, transpose_transpose,
     ← diagonal_neg, Matrix.mul_neg, Matrix.neg_mul, Matrix.mul_assoc]
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem IsSiegel.add_map_ofReal {σ : Matrix ι ι ℂ} (h : IsSiegel σ) {C : Matrix ι ι ℝ}
     (hC : C.IsSymm) : IsSiegel (σ + C.map ofReal) := by
   refine ⟨h.isSymm.add (hC.map _), ?_⟩

@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.Assembly
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IotaBounded
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.EqToBdRPlusOfBounded
+module
+
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.Assembly
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IotaBounded
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.EqToBdRPlusOfBounded
+
+@[expose] public section
 
 noncomputable section
 

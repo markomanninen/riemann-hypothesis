@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementA
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementA
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.CasimirCommutation.casComm_casK_comm :
     ∀ {A : Type} [inst : Ring A] {n : ℕ} (ε : Fin n → Bool) (E : Fin n → Fin n → A),

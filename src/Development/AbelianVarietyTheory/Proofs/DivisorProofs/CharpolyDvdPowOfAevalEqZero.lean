@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -15,7 +19,7 @@ theorem charpoly_dvd_pow_of_aeval_eq_zero {R : Type*} [CommRing R] {n : Type*} [
     | add p q hp hq =>
       obtain ⟨H1, h1⟩ := hp
       obtain ⟨H2, h2⟩ := hq
-      exact ⟨H1 + H2, by rw [mul_add, h1, h2, map_add, map_add]; abel⟩
+      exact ⟨H1 + H2, by rw [mul_add, h1, h2, map_add (f := _), map_add (f := _)]; abel⟩
     | monomial k c =>
       refine ⟨algebraMap R (Matrix n n R[X]) c * ∑ i ∈ Finset.range k, a ^ i * b ^ (k - 1 - i), ?_⟩
       rw [aeval_monomial, aeval_monomial, ← mul_assoc, ← Algebra.commutes, mul_assoc, hab.mul_geom_sum₂,
@@ -54,7 +58,5 @@ theorem not_separable_charpoly : ∀ (F L C : Type) [Field F] [Field L] [Algebra
   · have e := eq_of_monic_of_dvd_of_natDegree_le (Matrix.charpoly_monic _) hmm h5 (by omega)
     rw [← e] at hc
     exact hns ((separable_map (algebraMap F L)).mp hc)
-
-example : ∀ (F L C : Type) [Field F] [Field L] [Algebra F L] [Ring C] [Algebra F C] [FiniteDimensional F C] (n : ℕ) (ι : C →ₐ[F] Matrix (Fin n) (Fin n) L) (y : C), ((minpoly F y).natDegree < n ∨ ((minpoly F y).natDegree = n ∧ ¬ (minpoly F y).Separable)) → ¬ (ι y).charpoly.Separable := not_separable_charpoly
 
 end GlobalTheory.SepCharpoly

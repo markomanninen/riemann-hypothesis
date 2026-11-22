@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotMeasUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.LintegralMulRightOfMem
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotMeasUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.LintegralMulRightOfMem
+
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix
@@ -208,7 +212,9 @@ theorem invariant_measure_unique :
     (comap_orbitQuot_invariant act hc h1 hm x₀ hφ ν hν) (hfin μ hμf)
     (comap_orbitQuot_invariant act hc h1 hm x₀ hφ μ hμ)
   have hμν : μ = c • ν := by
+    have hφν : AEMeasurable φ (ν.comap φ) := hφ.measurable.aemeasurable
     rw [← hrec μ hμZ, hcc, Measure.map_smul, hrec ν hνZ]
+    exact hφν
 
   have hct : c ≠ ⊤ := by
     rintro rfl

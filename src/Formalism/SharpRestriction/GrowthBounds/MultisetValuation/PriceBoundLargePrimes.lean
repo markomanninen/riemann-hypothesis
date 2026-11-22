@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PriceBoundSmallPrimes
-import Formalism.LocalRingCardinality.ColumnWeightSpreadOffTop
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PriceBoundSmallPrimes
+public import Formalism.LocalRingCardinality.ColumnWeightSpreadOffTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {p : ℕ} {G : Formalism.MainNotions.G.GAtP p} (Fl : Formalism.MainNoti
 
 theorem ne_lamI_last (s : Fin (G.P.n' v)) : lamI (G.P.lam0 v) s (G.P.m + 1) = G.P.lam0 v s (Fin.last G.P.m) := by
   unfold lamI
-  rw [dif_pos ⟨by omega, le_rfl⟩]
+  rw [dite_eq_left ⟨by omega, le_rfl⟩]
   rfl
 
 theorem ne_lamI_le (s : Fin (G.P.n' v)) (a : ℕ) (hm : 2 ≤ G.P.m) (hb : s ∈ Fl.TT v → 0 ≤ Fl.b v s) :
@@ -21,7 +25,7 @@ theorem ne_lamI_le (s : Fin (G.P.n' v)) (a : ℕ) (hm : 2 ≤ G.P.m) (hb : s ∈
   have hc : (0 : ℤ) ≤ Fl.c := Int.natCast_nonneg _
   unfold lamI
   by_cases h : 1 ≤ a ∧ a ≤ G.P.m + 1
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     by_cases hs : s ∈ Fl.TT v
     · obtain ⟨h1, h2, h3⟩ := (Fl.base v s).1 hs
       by_cases ha : a = 1
@@ -40,7 +44,7 @@ theorem ne_lamI_le (s : Fin (G.P.n' v)) (a : ℕ) (hm : 2 ≤ G.P.m) (hb : s ∈
     · rw [if_neg (fun h' => hs h'.1)]
       have := (abs_le.1 ((Fl.base v s).2 hs ⟨a - 1, by omega⟩)).2
       omega
-  · rw [dif_neg h, if_neg (fun h' => h ⟨by omega, by omega⟩)]
+  · rw [dite_eq_right h, if_neg (fun h' => h ⟨by omega, by omega⟩)]
     omega
 
 end Fl
@@ -65,8 +69,8 @@ variable (X : Formalism.MainNotions.G.Inst D L) (Y : Formalism.MainNotions.G.Lat
   (u : D.what₂.Word) (w : D.what₂.places.Pl) (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
   (t0 : Formalism.MainNotions.G.HH D) (ht0 : t0 ∈ Formalism.MainNotions.G.reps X (D.what₂.places.resChar w))
 
-include hL ht0 in
 
+include hL ht0 in
 theorem ne_w_non (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w hg).P.n' (Y.vOf u w hg t0)))
     (hs : s ∉ (Y.Fl u w hg).TT (Y.vOf u w hg t0)) :
     ((Y.Fl u w hg).w (Y.vOf u w hg t0) j s : ℝ) ≤ L.sc.w'' D.R.n + L.etaSz := by
@@ -80,8 +84,8 @@ theorem ne_w_non (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w
   have h6 := ne_kaJ_nonneg (D := D) j (Finset.mem_Icc.1 hj).1
   linarith
 
-include hL ht0 in
 
+include hL ht0 in
 theorem ne_w_top (j : ℕ) (hj : j ∈ SizeData₂.lifts D) (s : Fin ((D.gat u w hg).P.n' (Y.vOf u w hg t0)))
     (hs : s ∈ (Y.Fl u w hg).TT (Y.vOf u w hg t0)) :
     ((Y.Fl u w hg).w (Y.vOf u w hg t0) j s : ℝ) ≤
@@ -112,8 +116,8 @@ theorem ne_Nm (j : ℕ) (hj : j ∈ SizeData₂.lifts D) : (j : ℝ) * ((D.R.t :
 
 end Orbit
 
-open Classical in
 
+open Classical in
 theorem price_bound_large_primes : PriceBoundLargePrimes 1 := by
   intro D L X Y K hK _ hT hL u w hg hp t0 ht0 j hj
   have hr : (D.gat u w hg).P.r = 1 := by rw [(hL u w hg).2.2.2.1, if_neg (not_lt.2 hp)]

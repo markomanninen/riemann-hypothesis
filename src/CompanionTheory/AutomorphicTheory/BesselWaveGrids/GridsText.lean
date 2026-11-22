@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShiftAtRExistsEq
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.FourLeOfFive
-import CompanionTheory.AutomorphicTheory.BesselWaveGrids.PStarTie
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShiftAtRExistsEq
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.FourLeOfFive
+public import CompanionTheory.AutomorphicTheory.BesselWaveGrids.PStarTie
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid
 
@@ -13,7 +17,26 @@ variable {P : M.Par} {lam : Fin (2 * P.r + P.k + 1) → ℝ} {c g b : ℝ} {l n�
 theorem pairData_plus (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam P.u b) (hl1 : 1 ≤ l)
     (hlk : l < P.k) (hposition : (2 * n₀ + 1 : ℝ) ≤ P.u l - P.u (l + 1)) :
     PairData (shP P P.u (uPlus P.u l n₀)) (l + 1) (lamN lam) c g b := by
-  refine (movedData_of_hyp (P := shP P P.u (uPlus P.u l n₀)) h hu (by omega) hlk (fun i hi => ?_) ?_).toPair
+  open GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid in
+  have movedData_of_hyp {Q : M.Par} {lamLocal : Fin (2 * Q.r + Q.k + 1) → ℝ} {c g b : ℝ}
+      (h : HypLam Q.k Q.r lamLocal c g b) (hu : HypType Q.k Q.r lamLocal Q.u b) {j : ℕ}
+      (hj1 : 1 ≤ j) (hjk : j ≤ Q.k) (hmv : ∀ i, i ≠ j → Q.u' i = Q.u i)
+      (hj : |Q.u' j| ≤ b) : PairData Q j (lamN lamLocal) c g b := by
+    exact { c_pos := by linarith [h.c_ge]
+            g_ge := by linarith [h.c_ge, h.g_ge]
+            b_ge_three := h.b_ge_three
+            b_ge_k := h.k_le
+            b_ge_c := h.b_ge_c
+            lam_le := h.lamN_le
+            gap := h.lamN_gap
+            ul_le := ⟨hu.u_le j hj1 hjk, hj⟩
+            pair := fun Y hY =>
+              ⟨⟨0, pairOK_of_interlace Q.k (lamN lamLocal) Q.u 0 (-Y) (fun s h1 h2 => inter_half h.hc hu s h1 h2)⟩,
+                pairOK_of_moved Q.k j (lamN lamLocal) Q.u Q.u' (-Y) (fun s h1 h2 => inter_half h.hc hu s h1 h2) hmv (by
+                  rcases hY with ⟨h1, h2⟩ | ⟨h1, h2⟩
+                  · exact Or.inl ⟨by linarith, by linarith⟩
+                  · exact Or.inr ⟨by linarith, by linarith⟩)⟩ }
+  refine (movedData_of_hyp (Q := shP P P.u (uPlus P.u l n₀)) h hu (by omega) hlk (fun i hi => ?_) ?_)
   · show uPlus P.u l n₀ i = P.u i
     simp only [uPlus, if_neg hi]
   · show |uPlus P.u l n₀ (l + 1)| ≤ b
@@ -27,7 +50,26 @@ theorem pairData_plus (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam P
 theorem pairData_minus (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam P.u b) (hl1 : 1 ≤ l)
     (hlk : l < P.k) (hposition : (2 * n₀ + 1 : ℝ) ≤ P.u l - P.u (l + 1)) :
     PairData (shP P P.u (uMinus P.u l n₀)) l (lamN lam) c g b := by
-  refine (movedData_of_hyp (P := shP P P.u (uMinus P.u l n₀)) h hu hl1 hlk.le (fun i hi => ?_) ?_).toPair
+  open GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid in
+  have movedData_of_hyp {Q : M.Par} {lamLocal : Fin (2 * Q.r + Q.k + 1) → ℝ} {c g b : ℝ}
+      (h : HypLam Q.k Q.r lamLocal c g b) (hu : HypType Q.k Q.r lamLocal Q.u b) {j : ℕ}
+      (hj1 : 1 ≤ j) (hjk : j ≤ Q.k) (hmv : ∀ i, i ≠ j → Q.u' i = Q.u i)
+      (hj : |Q.u' j| ≤ b) : PairData Q j (lamN lamLocal) c g b := by
+    exact { c_pos := by linarith [h.c_ge]
+            g_ge := by linarith [h.c_ge, h.g_ge]
+            b_ge_three := h.b_ge_three
+            b_ge_k := h.k_le
+            b_ge_c := h.b_ge_c
+            lam_le := h.lamN_le
+            gap := h.lamN_gap
+            ul_le := ⟨hu.u_le j hj1 hjk, hj⟩
+            pair := fun Y hY =>
+              ⟨⟨0, pairOK_of_interlace Q.k (lamN lamLocal) Q.u 0 (-Y) (fun s h1 h2 => inter_half h.hc hu s h1 h2)⟩,
+                pairOK_of_moved Q.k j (lamN lamLocal) Q.u Q.u' (-Y) (fun s h1 h2 => inter_half h.hc hu s h1 h2) hmv (by
+                  rcases hY with ⟨h1, h2⟩ | ⟨h1, h2⟩
+                  · exact Or.inl ⟨by linarith, by linarith⟩
+                  · exact Or.inr ⟨by linarith, by linarith⟩)⟩ }
+  refine (movedData_of_hyp (Q := shP P P.u (uMinus P.u l n₀)) h hu hl1 hlk.le (fun i hi => ?_) ?_)
   · show uMinus P.u l n₀ i = P.u i
     simp only [uMinus, if_neg hi]
   · show |uMinus P.u l n₀ l| ≤ b
@@ -72,8 +114,30 @@ theorem grids_diff (p : KB.Pl P Wp Wq) (lam : Fin (2 * P.r + P.k + 1) → ℝ) (
     (hlen : 30 * ((P.r : ℝ) + 1) ^ 2 + 6 ≤ |P.u p.l0 - P.u' p.l0|) :
     TBBx5.WaveGrid p (PStar lam c) (gridY P p.l0 (3 * (P.r + 1))) (gridΛ P b (3 * (P.r + 1))) 3 (3 * (P.r + 1)) ∧
       TBBx5.LiftGrid p (PStar lam c) (gridY P p.l0 (3 * (P.r + 1))) (gridΛ P b (3 * (P.r + 1))) 3
-        (3 * (P.r + 1)) :=
-  grids_PStar p lam c g b ((lamData_of_hyp h hu hu').toPair p.hl.1 p.hl.2.1) ((len_le P.r).trans hlen)
+        (3 * (P.r + 1)) := by
+  have data : LamData P (lamN lam) c g b := {
+    c_pos := by linarith [h.c_ge]
+    g_ge := by linarith [h.c_ge, h.g_ge]
+    b_ge_three := h.b_ge_three
+    b_ge_k := h.k_le
+    b_ge_c := h.b_ge_c
+    lam_le := h.lamN_le
+    gap := h.lamN_gap
+    inter := fun s h1 h2 => ⟨inter_half h.hc hu s h1 h2, inter_half h.hc hu' s h1 h2⟩
+    u_le := fun i h1 h2 => ⟨hu.u_le i h1 h2, hu'.u_le i h1 h2⟩ }
+  have pair : PairData P p.l0 (lamN lam) c g b := {
+    c_pos := data.c_pos
+    g_ge := data.g_ge
+    b_ge_three := data.b_ge_three
+    b_ge_k := data.b_ge_k
+    b_ge_c := data.b_ge_c
+    lam_le := data.lam_le
+    gap := data.gap
+    ul_le := data.u_le p.l0 p.hl.1 p.hl.2.1
+    pair := fun Y _ =>
+      ⟨⟨0, GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid.pairOK_of_interlace P.k (lamN lam) P.u 0 (-Y) (fun s h1 h2 => (data.inter s h1 h2).1)⟩,
+       ⟨0, GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid.pairOK_of_interlace P.k (lamN lam) P.u' 0 (-Y) (fun s h1 h2 => (data.inter s h1 h2).2)⟩⟩ }
+  exact grids_PStar p lam c g b pair ((len_le P.r).trans hlen)
 
 theorem grids_plus {up up' : ℕ → ℝ} (q : KB.Pl (shP P up up') Wp Wq) (lam : Fin (2 * P.r + P.k + 1) → ℝ)
     (c g b : ℝ) (l n₀ : ℕ) (h : HypLam P.k P.r lam c g b) (hu : HypType P.k P.r lam P.u b)

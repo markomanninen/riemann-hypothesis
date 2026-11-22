@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ComapPowLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LenFgQuot
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ComapPowLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LenFgQuot
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 

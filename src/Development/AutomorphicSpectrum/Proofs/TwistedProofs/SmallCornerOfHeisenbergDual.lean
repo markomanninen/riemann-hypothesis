@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,13 @@ def H (σ : L →+* L) (x : Fin N → L) (A : Matrix (Fin N) (Fin N) L) (y : Fin
 
 theorem st_mul (σ : L →+* L) (A B : Matrix (Fin N) (Fin N) L) : st σ (A * B) = st σ B * st σ A := by
   ext i j
-  simp only [st, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [st, Matrix.mul_apply, map_sum, map_mul]
   exact Fintype.sum_equiv Fin.revPerm _ _ (fun k => by simp only [Fin.revPerm_apply, Fin.rev_rev]; ring)
 
 theorem st_add (σ : L →+* L) (A B : Matrix (Fin N) (Fin N) L) : st σ (A + B) = st σ A + st σ B := by
   ext i j
-  simp [st, map_add]
+  simp [st, map_add (f := _)]
 
 theorem st_one (σ : L →+* L) : st σ (1 : Matrix (Fin N) (Fin N) L) = 1 := by
   ext i j
@@ -33,7 +38,8 @@ theorem st_one (σ : L →+* L) : st σ (1 : Matrix (Fin N) (Fin N) L) = 1 := by
 theorem dv_vecMul (σ : L →+* L) (x : Fin N → L) (A : Matrix (Fin N) (Fin N) L) :
     dv σ (x ᵥ* A) = st σ A *ᵥ dv σ x := by
   ext j
-  simp only [dv, st, Matrix.vecMul, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dv, st, Matrix.vecMul, Matrix.mulVec, dotProduct, map_sum, map_mul]
   exact Fintype.sum_equiv Fin.revPerm _ _ (fun k => by simp only [Fin.revPerm_apply, Fin.rev_rev]; ring)
 
 theorem H_vecMul (σ : L →+* L) (x y : Fin N → L) (A P Q : Matrix (Fin N) (Fin N) L) :
@@ -59,7 +65,8 @@ theorem H_smul (σ : L →+* L) (x : Fin N → L) (A : Matrix (Fin N) (Fin N) L)
 
 theorem H_conj (σ : L →+* L) (hσ : ∀ x, σ (σ x) = x) (x y : Fin N → L) (A : Matrix (Fin N) (Fin N) L) :
     σ (H σ x A y) = H σ y (st σ A) x := by
-  simp only [H, dv, st, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [H, dv, st, dotProduct, Matrix.mulVec, map_sum, map_mul, hσ, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Fintype.sum_equiv Fin.revPerm _ _ (fun k => ?_)
   simp only [Fin.revPerm_apply, Fin.rev_rev]
@@ -215,7 +222,7 @@ theorem smallCorner_of_heis : Heis → Dual → SmallCorner := by
     rw [hb]
     simp [dotProduct, Finset.sum_neg_distrib]
   have hc : (w + xx * τ) + σ (w + xx * τ) = -∑ j, r j * σ (r j.rev) := by
-    rw [← hsum, map_add, map_mul, hσxx]
+    rw [← hsum, map_add (f := _), map_mul, hσxx]
     have hrb : r ⬝ᵥ b = xx + w + σ w := by rw [hxx]; ring
     rw [hrb]
     linear_combination xx * hτ1

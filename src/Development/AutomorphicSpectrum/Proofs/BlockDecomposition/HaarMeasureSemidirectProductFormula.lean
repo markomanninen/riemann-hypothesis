@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SemidirectProductHomeomorphOfClosedComplementStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ModularCharacterFunEqOfMapLeftMul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SemidirectProductHomeomorphOfClosedComplementStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ModularCharacterFunEqOfMapLeftMul
+
+@[expose] public section
+
 open MeasureTheory
 open scoped NNReal ENNReal
 
@@ -13,8 +18,8 @@ theorem modularCharacterFun_semidirect :
   haveI := hNR
   haveI := hMH
   haveI := hMR
-  haveI : BorelSpace N := Subtype.borelSpace (N : Set Q)
-  haveI : BorelSpace M := Subtype.borelSpace (M : Set Q)
+  haveI : BorelSpace N := Subtype.borelSpace (fun x => x ∈ (N : Set Q))
+  haveI : BorelSpace M := Subtype.borelSpace (fun x => x ∈ (M : Set Q))
   haveI : SecondCountableTopology N :=
     TopologicalSpace.Subtype.secondCountableTopology (N : Set Q)
   haveI : SecondCountableTopology M :=
@@ -79,12 +84,15 @@ theorem modularCharacterFun_semidirect :
   have hνN : νN.map f₂ = (δ m₀)⁻¹ • νN := by
     have : f₂ = (fun n : N => n₀ * n) ∘ (fun n : N => (MulAut.conjNormal (m₀ : Q) n : N)) := rfl
     rw [this, ← Measure.map_map (measurable_const_mul _) hcm.measurable, hδM _ m₀.2,
-      Measure.map_smul, (measurePreserving_mul_left νN n₀).map_eq]
+      Measure.map_smul (c := (δ m₀)⁻¹) (f := fun x : N => n₀ * x)
+        (measurable_const_mul _).aemeasurable,
+      (measurePreserving_mul_left νN n₀).map_eq]
   have hδ : δ (Ψ (m₀, n₀)) = δ m₀ := by
     rw [hΨ]
     simp [map_mul, hδN _ n₀.2]
   rw [hρ, Measure.map_map hmul hΨm, hcomp,
     ← Measure.map_map hΨm (hf₁.prodMap hf₂), ← Measure.map_prod_map νM νN hf₁ hf₂, hνM, hνN,
-    Measure.prod_smul_right, Measure.map_smul, hδ]
+    Measure.prod_smul_right,
+    Measure.map_smul (c := (δ m₀)⁻¹) (f := Ψ) hΨm.aemeasurable, hδ]
 
 end GlobalTheory.CompanionTheory.ModChar

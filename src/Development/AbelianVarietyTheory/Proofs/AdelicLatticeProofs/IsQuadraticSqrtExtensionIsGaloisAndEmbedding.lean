@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.QNorm
 open scoped WithZero
 
@@ -42,7 +47,7 @@ theorem isQuad_galois_and_embedding : ∀ (F E : Type) [Field F] [CharZero F] [F
     have h1 : σ (algebraMap F E a + algebraMap F E b * θ)
         = algebraMap F E a + algebraMap F E b * θ :=
       (IntermediateField.mem_fixedField_iff _ _).1 hx σ (Subgroup.mem_top _)
-    rw [map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, h.conj] at h1
+    rw [map_add (f := _), map_mul, AlgEquiv.commutes, AlgEquiv.commutes, h.conj] at h1
     have h2 : algebraMap F E a + algebraMap F E (-b) * θ
         = algebraMap F E a + algebraMap F E b * θ := by
       rw [← h1, map_neg]; ring
@@ -80,18 +85,18 @@ theorem isQuad_galois_and_embedding : ∀ (F E : Type) [Field F] [CharZero F] [F
         have hx := hAB x
         have hy := hAB y
         have hs := h.sq
-        simp only [map_add, map_mul]
+        simp only [map_add (f := _), map_mul]
         linear_combination y * hx + (algebraMap F E (A x) + algebraMap F E (B x) * θ) * hy
           + algebraMap F E (B x) * algebraMap F E (B y) * hs)
-      simp only [h1, h2, map_add, map_mul]
+      simp only [h1, h2, map_add (f := _), map_mul]
       linear_combination (-(φ (B x) * φ (B y))) * hr
     · intro x y
       obtain ⟨h1, h2⟩ := key (x + y) (A x + A y) (B x + B y) (by
         have hx := hAB x
         have hy := hAB y
-        simp only [map_add]
+        simp only [map_add (f := _)]
         linear_combination hx + hy)
-      simp only [h1, h2, map_add]
+      simp only [h1, h2, map_add (f := _)]
       ring
     · obtain ⟨h1, h2⟩ := key θ 0 1 (by simp)
       simp [h1, h2]

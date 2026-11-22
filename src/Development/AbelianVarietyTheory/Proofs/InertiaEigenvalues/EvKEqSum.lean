@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -26,7 +30,7 @@ theorem evK_eq_sum {D : Formalism.BasicNotions.D7} {Γ : Type} [Group Γ] [Finty
     obtain ⟨n₁, a₁, x₁, e₁⟩ := h₁
     obtain ⟨n₂, a₂, x₂, e₂⟩ := h₂
     refine ⟨n₁ + n₂, Fin.append a₁ a₂, Fin.append x₁ x₂, ?_⟩
-    rw [map_add, e₁, e₂, Fin.sum_univ_add]
+    rw [map_add (f := _), e₁, e₂, Fin.sum_univ_add]
     simp [Fin.append_left, Fin.append_right]
 
 end GlobalTheory.EvaluationSum

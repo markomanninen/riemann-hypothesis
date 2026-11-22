@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocalEnd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.ValSurjective
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocalEnd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.ValSurjective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain WithZero
 
@@ -83,7 +87,7 @@ theorem intOfHensel : IntOfHensel := by
       _ < 1 := by rw [mul_one, ← exp_zero, exp_lt_exp]; omega
   obtain ⟨z, hz⟩ := hH F v ℓ _ hℓ1 hu
   have hτ : (τ z) ^ ℓ = 1 + (N : v.adicCompletion F) * (τ x) ^ ℓ := by
-    rw [← map_pow, hz, map_add, map_one, map_mul, map_natCast, map_pow]
+    rw [← map_pow, hz, map_add (f := _), map_one, map_mul, map_natCast, map_pow]
   exact le_one_of_pow_eq v hm (by omega) hNv hτ
 
 theorem valOfInt : ValOfInt := by

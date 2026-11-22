@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
-import Formalism.DistinguishedUnitIdeals.FinalArcProps
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.DistinguishedUnitIdeals.FinalArcProps
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem BaseId.d_C (I : BaseId W) (m : O) : I.d (PowerSeries.C m) = algebraMap O
 
 theorem BaseId.d_q (I : BaseId W) : I.d I.Bs.q = qP W := by
   unfold Formalism.ExponentWindows.E.Base.q qP
-  rw [map_add, I.d_X, I.d_C, I.ℓ_eq, map_natCast]
+  rw [map_add (f := _), I.d_X, I.d_C, I.ℓ_eq, map_natCast]
 
 theorem BaseId.d_p (I : BaseId W) (s : ℕ) : I.d (I.Bs.p s) = pS W s := by
   unfold Formalism.ExponentWindows.E.Base.p pS
@@ -113,7 +117,7 @@ def DDl (T : LocLat G Qp LL O) (i : ZMod n) : AddSubgroup (W.DD T) where
   zero_mem' := ⟨smul_zero _, fun δ _ => map_zero _⟩
   add_mem' := by
     rintro a b ⟨ha, ha'⟩ ⟨hb, hb'⟩
-    exact ⟨by rw [smul_add, ha, hb], fun δ hδ => by rw [map_add, ha' δ hδ, hb' δ hδ]⟩
+    exact ⟨by rw [smul_add, ha, hb], fun δ hδ => by rw [map_add (f := _), ha' δ hδ, hb' δ hδ]⟩
   neg_mem' := by
     rintro a ⟨ha, ha'⟩
     exact ⟨by rw [smul_neg, ha], fun δ hδ => by rw [map_neg, ha' δ hδ]⟩
@@ -150,7 +154,7 @@ variable {I : BaseId W} {T : LocLat G Qp LL O}
 def Coord.t (C : Coord W I T) (i : ZMod n) (x : C.V) : W.DD T := ((C.θ i x : ↥(DDl W T i)) : W.DD T)
 
 theorem Coord.t_add (C : Coord W I T) (i : ZMod n) (x y : C.V) : C.t i (x + y) = C.t i x + C.t i y := by
-  simp only [Coord.t, map_add, AddSubgroup.coe_add]
+  simp only [Coord.t, map_add (f := _), AddSubgroup.coe_add]
 
 theorem Coord.t_sub (C : Coord W I T) (i : ZMod n) (x y : C.V) : C.t i (x - y) = C.t i x - C.t i y := by
   simp only [Coord.t, map_sub, AddSubgroup.coe_sub]
@@ -241,7 +245,8 @@ theorem tot_smulC (C : Coord W I T) (m : O) (y : ZMod n → C.V) :
 
 theorem tot_Δ (C : Coord W I T) (y : ZMod n → C.V) (δ : W.Gam) (hδ : δ ∈ W.DelF) :
     W.γD T δ (tot C y) = tot C y := by
-  rw [tot, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tot, map_sum]
   exact Finset.sum_congr rfl fun i _ => C.t_Δ i (y i) δ hδ
 
 theorem letE_tot (C : Coord W I T) (y : ZMod n → C.V) (i : ZMod n) :
@@ -269,13 +274,15 @@ theorem tot_surj (C : Coord W I T) (x : W.DD T) (hx : ∀ δ ∈ W.DelF, W.γD T
 
 theorem tot_dφ (C : Coord W I T) (z : ZMod n → C.V) :
     tot C ((latOf C).dφ z) = W.φD T (tot C z) - tot C z := by
-  simp only [tot, Formalism.ExponentWindows.E.Lat.dφ, Coord.t_sub, t_φ, Finset.sum_sub_distrib, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tot, Formalism.ExponentWindows.E.Lat.dφ, Coord.t_sub, t_φ, Finset.sum_sub_distrib, map_sum]
   congr 1
   exact Fintype.sum_equiv (Equiv.subRight 1) _ _ (fun i => rfl)
 
 theorem tot_dγ (C : Coord W I T) (z : ZMod n → C.V) :
     tot C ((latOf C).dγ z) = W.γD T W.gamK (tot C z) - tot C z := by
-  simp only [tot, Formalism.ExponentWindows.E.Lat.dγ, Coord.t_sub, t_γ, Finset.sum_sub_distrib, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tot, Formalism.ExponentWindows.E.Lat.dγ, Coord.t_sub, t_γ, Finset.sum_sub_distrib, map_sum]
 
 theorem mem_Z1DΔ (a b : W.DD T) : (a, b) ∈ W.wachCocyclesDelta T ↔
     W.γD T W.gamK a - a = W.φD T b - b ∧ (∀ δ ∈ W.DelF, W.γD T δ a = a) ∧
@@ -324,17 +331,6 @@ theorem mem_Zf (C : Coord W I T) (κ : (ZMod n → C.V) × (ZMod n → C.V)) :
   · rintro ⟨w, hw, he⟩
     exact ⟨w, hw, he⟩
 
-theorem Zf_smul (C : Coord W I T) (m : O) (κ : (ZMod n → C.V) × (ZMod n → C.V)) (h : κ ∈ Zf C) :
-    (PowerSeries.C m • κ.1, PowerSeries.C m • κ.2) ∈ Zf C := by
-  rw [mem_Zf] at h ⊢
-  obtain ⟨w, hw, he⟩ := h
-  refine ⟨m • w, ?_, ?_⟩
-  · have e : W.clK T (m • w) = m • W.clK T w := (W.clK T).map_smul m w
-    rw [e]
-    exact Submodule.smul_mem _ m hw
-  · simp only [tot_smulC]
-    rw [Submodule.coe_smul, he, Prod.smul_mk]
-
 structure CoordHom {T T' : LocLat G Qp LL O} (C : Coord W I T) (C' : Coord W I T')
     (F : LatHom T.L T'.L) where
   f : C.V →ₗ[PowerSeries O] C'.V
@@ -359,7 +355,8 @@ theorem tot_map {T T' : LocLat G Qp LL O} {C : Coord W I T} {C' : Coord W I T'} 
     (h : CoordHom C C' F) (y : ZMod n → C.V) :
     tot C' (fun i => (latHomOf h).f (y i)) = W.map F (tot C y) := by
   simp only [tot]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => h.coord_hom_map_trace i (y i)
 
 def BaseId.Inj (I : BaseId W) : Prop := Function.Injective I.ι

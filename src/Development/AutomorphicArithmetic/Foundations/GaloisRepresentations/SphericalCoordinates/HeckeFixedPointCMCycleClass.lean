@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.TotW
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.TotW
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def TateWit : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (gb : GBase D.toG ℂ) (N : ℕ) (S : Scheme.{0}) (s : S ⟶ Sp ℂ) (o : GObj gb N s)
     (hX : SmoothOfRelativeDimension D.g o.A.hom) (hL) (ρ : D.O →+* Matrix (Fin D.g) (Fin D.g) ℂ) (D' : PLat D.O D.inv) (t : D.La → D'.La) P (x : Sp ℂ ⟶ S) e, 0 < N → N.Coprime p →
     UnifAt (gfam o hX hL) (RingHom.id ℂ) ρ N D' t P x e → ∀ I : TIs o x, (∀ y, toUnit _ ≫ o.eta y = I.ev N y) →
-    ∃ f nu, IsWit D' f nu ∧ (∀ a, ∃ u, f N a = t a + N • u) ∧
+    ∃ (f : ℕ → D.La →+ D'.La) (nu : ℕ → ℤ), IsWit D' f nu ∧ (∀ a, ∃ u, f N a = t a + N • u) ∧
       ∀ n : ℕ, 0 < n → n.Coprime p → ∀ a, I.ev n a = e ((n : ℂ)⁻¹ • P (f n a))
 
 def IsogAt : Prop :=
@@ -25,7 +29,7 @@ def IsogAt : Prop :=
     ∃ (D'' : PLat D.O D.inv) (t'' : D.La → D''.La) (P'' : D''.La →+ (Fin D.g → ℂ)) (e'' : _) (inc : D'.La →ₗ[D.O] D''.La) (d : ℕ),
       D.Cls N D'' t'' ∧ UnifAt (gfam X.univ hX hL) (RingHom.id ℂ) ρ N D'' t'' P'' (x ≫ c.q) e'' ∧ (∀ u, P'' (inc u) = P u) ∧
       (∀ z, (e'' z).left = (e z).left ≫ c.tot) ∧ d.Coprime p ∧ (∀ u'', ∃ u, inc u = d • u'') ∧
-      ∃ f nu f'' nu'', IsWit D' f nu ∧ IsWit D'' f'' nu'' ∧ (∀ a, ∃ u, f N' a = t a + N' • u) ∧
+      ∃ (f : ℕ → D.La →+ D'.La) (nu : ℕ → ℤ) (f'' : ℕ → D.La →+ D''.La) (nu'' : ℕ → ℤ), IsWit D' f nu ∧ IsWit D'' f'' nu'' ∧ (∀ a, ∃ u, f N' a = t a + N' • u) ∧
         (∀ a, ∃ u, f'' N a = t'' a + N • u) ∧ ∀ n : ℕ, 0 < n → n.Coprime p → ∀ a b : D.La,
           (∃ u, inc (f n a) = f'' n b + n • u) ↔ ∃ w ∈ LaHat D, L.actG h (inAf D a) = inAf D b + n • w
 
@@ -58,7 +62,7 @@ def FixGa : Prop :=
     ∀ (v : InfinitePlace G.F) (t₀ : D.F →+* ℂ) (B : GlobalTheory.LKCx.Form G) (PD : PDic L B.β) (RD : RDic L v B.β ρ t₀) (D' : PLat D.O D.inv) (t : D.La → D'.La), D.Cls N' D' t →
     ∀ (P : D'.La →+ (Fin D.g → ℂ)) (j : D'.La →+ VQ D) (a : GlobalTheory.LKCx.Dat G v B.β), IsCoord L B PD RD N' D' t P j a → ∀ (x : Sp ℂ ⟶ X'.X) e, UnifAt (gfam X'.univ hX' hL') (RingHom.id ℂ) ρ N' D' t P x e →
     ∀ y, Sees B {g | h * g ∈ L.KN N} a y → ∃ (ga : D'.La →ₗ[D.O] D'.La) (H : Matrix (Fin D.g) (Fin D.g) ℂ), (∀ u, j (ga u) = actY L y⁻¹ (j u)) ∧ FixesPer D' P ga H ∧
-      ∀ w, ∀ Q, (∀ u, Q (j u) = P u) → ∀ hQ : IsPerQ L B.β ρ Q, Q (actY L y⁻¹ w) = H *ᵥ Q w
+      ∀ w, ∀ Q : VQ D →+ (Fin D.g → ℂ), (∀ u, Q (j u) = P u) → ∀ hQ : IsPerQ L B.β ρ Q, Q (actY L y⁻¹ w) = H *ᵥ Q w
 
 def FixEq : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (gb : GBase D.toG ℂ) (N N' : ℕ) (h : G.GAf), LevOk L N N' h → ∀ (X : GenModel gb N) (X' : GenModel gb N') (c₁ : Leg L 1 X' X) (c₂ : Leg L h X' X) (hX : SmoothOfRelativeDimension D.g X.univ.A.hom) (hL) (hX' : SmoothOfRelativeDimension D.g X'.univ.A.hom) (hL') (ρ : D.O →+* Matrix (Fin D.g) (Fin D.g) ℂ),

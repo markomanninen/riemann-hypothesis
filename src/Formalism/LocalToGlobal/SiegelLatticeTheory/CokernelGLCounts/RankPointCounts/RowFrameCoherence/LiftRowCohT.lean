@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.LiftRowCoh
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RowFrameCoherence.LiftRowCoh
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelativeEquivalence.DCRelEquivAllHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem liftT_map_mul (a b : S.V ≃ₗ[E] S.V) (U : Submodule E S.V) :
 
 theorem liftT_xsp_mapLF {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : LFlag S r T) :
     Xsp (mapLF γ F) = (Xsp F).map (γ : S.V →ₗ[E] S.V) := by
-  simp only [Xsp, mapLF, dif_pos hγ, Formalism.MainNotions.S.FlagG.X, mapFlag, Submodule.map_span, ← Set.range_comp]
+  simp only [Xsp, mapLF, dite_eq_left hγ, Formalism.MainNotions.S.FlagG.X, mapFlag, Submodule.map_span, ← Set.range_comp]
   rfl
 
 theorem liftT_xsp_eq {T : E} (F : LFlag S r T) : Xsp F = Xflag F r := by
@@ -105,13 +109,13 @@ section Grel
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word}
   {F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)} {F0' : FlagG (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)}
 
-theorem liftT_grel_equiv (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V) : Equivalence (GRel X u u' F0 F0' Λ Λ') where
-  refl _ := ⟨1, one_mem_NLam _ _, 1, one_mem_NLam _ _, by simp⟩
-  symm := by
-    rintro p q ⟨n, hn, n', hn', h⟩
+theorem liftT_grel_equiv (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V) : Equivalence (GRel X u u' F0 F0' Λ Λ') := by
+  constructor
+  · intro p
+    exact ⟨1, one_mem_NLam _ _, 1, one_mem_NLam _ _, by simp⟩
+  · rintro p q ⟨n, hn, n', hn', h⟩
     exact ⟨n⁻¹, nlam_inv hn, n'⁻¹, nlam_inv hn', by rw [h]; group⟩
-  trans := by
-    rintro p q r ⟨n, hn, n', hn', h⟩ ⟨m, hm, m', hm', h'⟩
+  · rintro p q r ⟨n, hn, n', hn', h⟩ ⟨m, hm, m', hm', h'⟩
     exact ⟨m * n, nlam_mul hm hn, n' * m', nlam_mul hn' hm', by rw [h', h]; group⟩
 
 theorem liftT_grel_of_mk_eq {Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V} {p q : GCar X u u' F0 F0' Λ Λ'}
@@ -184,10 +188,13 @@ theorem liftTransNeed_of (hR : RatPtNeed X) (hTR : ToTermRel X u u' (X.Fu u) (X.
       show Xsp (mapLF s'.lin (lf D (X.Fu u'))) = _
       rw [liftT_xsp_mapLF _ hs'i, hlin', liftT_map_mul, liftT_map_mul, hAn', liftT_map_mul, liftT_map_mul, hAμ]
     have hX2 : Xsp y.1 = (A.map (s.lin : (VS D).V →ₗ[D.host.E] (VS D).V)).map (β : (VS D).V →ₗ[D.host.E] (VS D).V) := by
-      rw [liftT_xsp_eq, ← hP.2.1 D.R.rS, ← liftT_xsp_eq]
-      show (Xsp (mapLF s.lin (lf D (X.Fu u')))).map _ = _
-      rw [liftT_xsp_mapLF _ hγi]
-    refine liftT_iotaCompat hP.2.2.2 hn (by rw [hX3, hX2]) (fun x' hx' => liftT_maps hβΛ hx'.1) ?_
+      calc
+        Xsp y.1 = Xflag y.1 D.R.rS := liftT_xsp_eq _
+        _ = (Xflag s.frame D.R.rS).map (β : (VS D).V →ₗ[D.host.E] (VS D).V) := (hP.2.1 D.R.rS).symm
+        _ = _ := congrArg (Submodule.map _)
+          ((liftT_xsp_eq s.frame).symm.trans (liftT_xsp_mapLF s.lin hγi (lf D (X.Fu u'))))
+    refine liftT_iotaCompat hP.2.2.2 hn (hX3.trans (congrArg (Submodule.map _) hX2.symm))
+      (fun x' hx' => liftT_maps hβΛ hx'.1) ?_
     intro x' hx'
     have hw : s.lin (s.lin⁻¹ x') = x' := s.lin.apply_symm_apply x'
     set w := s.lin⁻¹ x' with hwdef

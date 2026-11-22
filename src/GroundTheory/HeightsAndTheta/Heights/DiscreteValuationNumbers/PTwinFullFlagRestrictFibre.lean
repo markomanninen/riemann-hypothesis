@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinFullFlagRestrictLoc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinFullFlagRestrictLoc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles
@@ -94,8 +99,8 @@ include hPQ hs hf hf0 in
 theorem inv_mem_locAlg : f⁻¹ ∈ locAlg x Q :=
   (inv_mem_of_rs_ne_zero hPQ (chartRing_sub hPQ hs hf).1 hf0).1
 
-include hPQ hs hf hf0 in
 
+include hPQ hs hf hf0 in
 theorem mem_locAlg_of_pow_mul {a : Ω} {n : ℕ} (ha : f ^ n * a ∈ chartRing O (mseg x) s) : a ∈ locAlg x Q := by
   have hf' : f ≠ 0 := ne_zero_of_rs_ne_zero hPQ hf0
   have e : a = f⁻¹ ^ n * (f ^ n * a) := by
@@ -112,8 +117,8 @@ theorem frame_pow_mem (q : Fin N) : ∃ n : ℕ, f ^ n • b q ∈ B.lat s := by
     · exact zero_mem _
   · simp [Pi.single_apply]
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem frame_mem_stalk (q : Fin N) : b q ∈ stalk O x Q B := by
   obtain ⟨n, hn⟩ := frame_pow_mem hlat q
   have hf' : f ≠ 0 := ne_zero_of_rs_ne_zero hPQ hf0
@@ -122,8 +127,8 @@ theorem frame_mem_stalk (q : Fin N) : b q ∈ stalk O x Q B := by
   rw [e]
   exact smul_mem_stalk hPQ (pow_mem (inv_mem_locAlg hPQ hs hf hf0) n) (lat_le_stalk hs hn)
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem stalk_coords {m : V} (hm : m ∈ stalk O x Q B) :
     ∃ a : Fin N → Ω, (∀ q, a q ∈ locAlg x Q) ∧ m = ∑ q, a q • b q := by
   induction hm using AddSubgroup.closure_induction with
@@ -155,20 +160,21 @@ theorem stalk_coords {m : V} (hm : m ∈ stalk O x Q B) :
     obtain ⟨a, ha, rfl⟩ := hu
     exact ⟨-a, fun q => neg_mem (ha q), by simp [neg_smul, Finset.sum_neg_distrib]⟩
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem resMap_sum {a : Fin N → Ω} (ha : ∀ q, a q ∈ locAlg x Q) (m : stalk O x Q B)
     (hm : (m : V) = ∑ q, a q • b q) :
     resMap O x Q B m = ∑ q, rs x Q (a q) • resMap O x Q B ⟨b q, frame_mem_stalk hPQ hs hf hf0 hlat q⟩ := by
   have e : m = ∑ q, (⟨a q • b q, smul_mem_stalk hPQ (ha q) (frame_mem_stalk hPQ hs hf hf0 hlat q)⟩ :
       stalk O x Q B) := by
     apply Subtype.ext
-    rw [hm, AddSubmonoidClass.coe_finset_sum]
-  rw [e, map_sum]
+    rw [hm, AddSubmonoidClass.coe_finsetSum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   exact Finset.sum_congr rfl fun q _ => resMap_smul hPQ (ha q) ⟨b q, _⟩
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem exists_coordMap (bas : Module.Basis (Fin N) Ω V) (hbas : ∀ q, bas q = b q) :
     ∃ φ : resFibre O x Q B →ₗ[FractionRing (MRingOver (kap O) ι ⧸ Q)]
         (Fin N → FractionRing (MRingOver (kap O) ι ⧸ Q)),
@@ -186,12 +192,12 @@ theorem exists_coordMap (bas : Module.Basis (Fin N) Ω V) (hbas : ∀ q, bas q =
       map_zero' := by funext q; simp [rs_zero hPQ]
       map_add' := fun m m' => by
         funext q
-        simp only [AddSubgroup.coe_add, map_add, Pi.add_apply]
+        simp only [AddSubgroup.coe_add, map_add (f := _), Pi.add_apply]
         exact rs_add hPQ (hmem m q) (hmem m' q) }
   let Φ₀ : FractionRing (MRingOver (kap O) ι ⧸ Q) ⊗[ℤ] stalk O x Q B →ₗ[ℤ]
       (Fin N → FractionRing (MRingOver (kap O) ι ⧸ Q)) :=
     TensorProduct.lift (LinearMap.mk₂ ℤ (fun r m => r • ψ m) (fun r r' m => add_smul r r' (ψ m))
-      (fun c r m => smul_assoc c r (ψ m)) (fun r m m' => by rw [map_add, smul_add])
+      (fun c r m => smul_assoc c r (ψ m)) (fun r m m' => by rw [map_add (f := _), smul_add])
       (fun c r m => by rw [map_zsmul, smul_comm]))
   have hΦ₀ : ∀ r m, Φ₀ (r ⊗ₜ m) = r • ψ m := fun r m => TensorProduct.lift.tmul r m
   let Φ : FractionRing (MRingOver (kap O) ι ⧸ Q) ⊗[ℤ] stalk O x Q B →ₗ[FractionRing (MRingOver (kap O) ι ⧸ Q)]
@@ -202,7 +208,7 @@ theorem exists_coordMap (bas : Module.Basis (Fin N) Ω V) (hbas : ∀ q, bas q =
         induction t using TensorProduct.induction_on with
         | zero => simp
         | tmul r m => rw [TensorProduct.smul_tmul', hΦ₀, hΦ₀, smul_eq_mul, mul_smul]; rfl
-        | add u v hu hv => rw [smul_add, map_add, map_add, hu, hv, smul_add] }
+        | add u v hu hv => rw [smul_add, map_add (f := _), map_add (f := _), hu, hv, smul_add] }
   have hΦ : ∀ r m, Φ (r ⊗ₜ m) = r • ψ m := hΦ₀
   have hker : Submodule.span _ (resRel O x Q B) ≤ LinearMap.ker Φ := by
     rw [Submodule.span_le]
@@ -216,8 +222,8 @@ theorem exists_coordMap (bas : Module.Basis (Fin N) Ω V) (hbas : ∀ q, bas q =
   rw [resMap_apply, Submodule.mkQ_apply, Submodule.liftQ_apply, hΦ, one_smul]
   rfl
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem frame_res_basis (hb : LinearIndependent Ω b) (hsp : Submodule.span Ω (Set.range b) = ⊤) :
     LinearIndependent (FractionRing (MRingOver (kap O) ι ⧸ Q))
         (fun q => resMap O x Q B ⟨b q, frame_mem_stalk hPQ hs hf hf0 hlat q⟩) ∧
@@ -261,8 +267,8 @@ theorem frame_res_basis (hb : LinearIndependent Ω b) (hsp : Submodule.span Ω (
       exact Submodule.sum_mem _ fun q _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨q, rfl⟩)
     | add u v hu hv => rw [Submodule.Quotient.mk_add]; exact add_mem hu hv
 
-include hPQ hs hf hf0 hlat in
 
+include hPQ hs hf hf0 hlat in
 theorem frame_res_lat (e : resFibre O x Q B) :
     (∃ n : ℕ, rs x Q f ^ n • e ∈ resLat O x Q B s) ↔
       ∃ a : Fin N → FractionRing (MRingOver (kap O) ι ⧸ Q),

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
-open scoped NNReal ENNReal
+open scoped NNReal ENNReal Classical
 
 noncomputable section
 namespace GlobalTheory.FunObj
@@ -52,27 +56,28 @@ def Kept : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) → Prop
   | (Sum.inr l, Sum.inl _) => Odd c ∧ l.val = c / 2
   | _ => False
 
-omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 
+omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 theorem Kept.not_free {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1))} (h : Kept rs) : ¬ Free (c / 2 + 1) rs := by
   rcases rs with ⟨r | r, s | s⟩ <;> simp only [Kept, Free] at h ⊢ <;> omega
 
-variable (n n' c) in
 
-abbrev StepVar : Type _ := {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free (c / 2 + 1) rs ∨ Kept rs}
+variable (n n' c) in
+abbrev StepVar (n : Type*) (c : ℕ) (n' : Type*) : Type _ :=
+  {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Free (c / 2 + 1) rs ∨ Kept rs}
+
 
 open Classical in
-
 def stepPt (x₀ : Matrix n n' k) (e : StepVar n c n' → k) : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k :=
   basePt c x₀ + Matrix.of fun r s => if h : Free (c / 2 + 1) (r, s) ∨ Kept (r, s) then e ⟨(r, s), h⟩ else 0
 
-open Classical in
 
+open Classical in
 def keptPt (w : {rs : (n ⊕ Fin c) × (n' ⊕ Fin (c + 1)) // Kept rs} → k) : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k :=
   Matrix.of fun r s => if h : Kept (r, s) then w ⟨(r, s), h⟩ else 0
 
-omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 
+omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 theorem stepPt_eq (x₀ : Matrix n n' k) (e : StepVar n c n' → k) : stepPt x₀ e =
     affPt (c / 2 + 1) x₀ (fun rs => e ⟨rs.1, Or.inl rs.2⟩) + keptPt fun rs => e ⟨rs.1, Or.inr rs.2⟩ := by
   ext r s
@@ -96,22 +101,17 @@ theorem relIndex_ne_zero_of_isOpen {G : Type*} [Group G] [TopologicalSpace G] [I
   have : Finite (K ⧸ U.subgroupOf K) := Subgroup.quotient_finite_of_isOpen _ (hU.preimage continuous_subtype_val)
   exact fun h => Subgroup.index_ne_zero_of_finite (Subgroup.relIndex_eq_zero_of_le_right hH h)
 
-theorem invVol_pos {C : Subgroup (GL (n ⊕ Fin c) k)} (ho : IsOpen (C : Set (GL (n ⊕ Fin c) k)))
-    (hc : IsCompact (C : Set (GL (n ⊕ Fin c) k))) : 0 < invVol C :=
-  div_pos (Nat.cast_pos.2 (Nat.pos_of_ne_zero (relIndex_ne_zero_of_isOpen ho isCompact_KO inf_le_right)))
-    (Nat.cast_pos.2 (Nat.pos_of_ne_zero (relIndex_ne_zero_of_isOpen isOpen_KO hc inf_le_right)))
-
 theorem invVol_KO : invVol (KO k (n ⊕ Fin c)) = 1 := by
   simp [invVol, Subgroup.relIndex_eq_one.2 inf_le_right]
 
 end Vertex
 
-variable {k : Type*} [Field k] (G : Grid k)
+variable {k : Type*} [Field k] (G : Grid (k := k))
 
 def topRank (j : ℕ) : ℕ := G.r + 1 + G.m * (G.s - 1) + j * (G.t + 1)
 
-variable {G} in
 
+variable {G} in
 theorem topRank_add (hs : 1 ≤ G.s) (j : ℕ) : topRank G j + G.m = G.rank (G.m, j) + j + 1 := by
   obtain ⟨s, h⟩ := Nat.exists_eq_add_of_le' hs
   simp only [topRank, Grid.rank, h, Nat.add_sub_cancel]; ring
@@ -160,10 +160,10 @@ def fill (x : ColArgs G) (y : RowArgs G) (e : Vars G) : G.Args
   | .ex i j => if h : j = G.m then ((y i).submatrix (Fin.cast (by rw [h])) (Fin.cast (by rw [h])))ᵀ else 0
 
 theorem fill_theta (x : ColArgs G) (y : RowArgs G) (e : Vars G) (j : ℕ) :
-    fill hs x y e (.theta G.m j) = (downMap hs x e j)ᵀ := dif_pos rfl
+    fill hs x y e (.theta G.m j) = (downMap hs x e j)ᵀ := dite_eq_left rfl
 
 theorem fill_ex (x : ColArgs G) (y : RowArgs G) (e : Vars G) (i : ℕ) : fill hs x y e (.ex i G.m) = (y i)ᵀ :=
-  dif_pos rfl
+  dite_eq_left rfl
 
 def toFrame {j : ℕ} (hj : j < G.m) :
     GL (Fin (G.rank (G.m, j))) k ≃* GL (Fin (topRank G j) ⊕ Fin (G.m - 1 - j)) k :=
@@ -190,7 +190,7 @@ structure Reps (J : G.Level) where
 def onColumn (h : ∀ j : ℕ, GL (Fin (G.rank (G.m, j))) k) : G.VertexGroup := fun X =>
   if hi : X.1 = G.m then (show (G.m, X.2) = X from hi ▸ rfl) ▸ h X.2 else 1
 
-theorem onColumn_apply (h : ∀ j : ℕ, GL (Fin (G.rank (G.m, j))) k) (j : ℕ) : onColumn h (G.m, j) = h j := dif_pos rfl
+theorem onColumn_apply (h : ∀ j : ℕ, GL (Fin (G.rank (G.m, j))) k) (j : ℕ) : onColumn h (G.m, j) = h j := dite_eq_left rfl
 
 variable {hs}
 
@@ -198,19 +198,19 @@ def Reps.elt {J : G.Level} (ρ : Reps hs J) (β : Cosets hs J) : G.VertexGroup :
   | 0 => ρ.base
   | i + 1 => if h : i < G.m - 2 then ρ.rep ⟨i, h⟩ (β ⟨i, h⟩) else 1
 
+
 variable (hs) in
 open Classical in
-
 def Reps.through (J : G.Level) (h : ∀ j : ℕ, GL (Fin (G.rank (G.m, j))) k) : Reps hs J where
   base := h 0
   rep i β := if DoubleCoset.mk _ _ (h (i + 1)) = β then h (i + 1) else β.out
   mk_rep i β := by
     split_ifs with H
     · exact H
-    · exact DoubleCoset.out_eq' _ _ β
+    · exact DoubleCoset.out_eq' β
+
 
 variable (G) in
-
 def stair (ϖ : kˣ) (e j : ℕ) : GL (Fin (G.rank (G.m, j))) k := diagGL fun a => ϖ ^ (e * (a.val + 1 - topRank G j))
 
 theorem toFrame_stair (ϖ : kˣ) (e : ℕ) {j : ℕ} (hj : j < G.m) : toFrame hs hj (stair G ϖ e j) =
@@ -225,8 +225,8 @@ theorem toFrame_stair (ϖ : kˣ) (e : ℕ) {j : ℕ} (hj : j < G.m) : toFrame hs
   · simp [frame, Nat.sub_eq_zero_of_le (Nat.succ_le_of_lt a.2)]
   · simp [frame, add_assoc]
 
-variable (G) in
 
+variable (G) in
 structure UnfTerm where
 
   coef : ℚ
@@ -239,13 +239,13 @@ structure UnfTerm where
 
 variable [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (G) in
 
+variable (G) in
 def charFactor (g : G.VertexGroup) : ℂˣ :=
   ((oppositePath G.m).map fun b => G.kappa b b.src (gdet (g b.src)) * (G.kappa b b.tgt (gdet (g b.tgt)))⁻¹).prod
 
-variable (G) in
 
+variable (G) in
 def moved (keep : Bool) (g : G.VertexGroup) (T : G.Args → ℂ) : G.Args → ℂ := fun z =>
   (if keep then (1 : ℂ) else (((charFactor G g)⁻¹ : ℂˣ) : ℂ)) * G.pathAct .one (oppositePath G.m) g T z
 
@@ -258,32 +258,28 @@ theorem moved_false (g : G.VertexGroup) (T : G.Args → ℂ) (z : G.Args) : move
   | nil => simp
   | cons b γ ih =>
     simp only [List.map_cons, List.prod_cons, ← ih, Grid.edgeFactor, Assignment.read, gdet_invT]
-    simp only [Bool.false_eq_true, if_false, _root_.mul_inv_rev, Units.val_mul, Units.val_inv_eq_inv_val]
+    simp only [Bool.false_eq_true, ite_false, _root_.mul_inv_rev, Units.val_mul, Units.val_inv_eq_inv_val]
     field_simp
 
-variable [MeasurableSpace k] [BorelSpace k] (ψ : AddChar k Circle) (ν : Measure k)
+variable (hs) [MeasurableSpace k] [BorelSpace k] (ψ : AddChar k Circle) (ν : Measure k)
 
-variable (hs) in
 
 def flatIntegrand (S : G.Args → ℂ) (x : ColArgs G) (y : RowArgs G) (e : Vars G) : ℂ :=
   S (fill hs x y e) * (ψ (-phase x e) : ℂ)
 
-open Classical in
-variable (G) in
 
+variable (G) in
 def varsVol : Measure (Vars G) := Measure.pi fun _ => Measure.pi fun _ => ν
 
-variable (hs) in
 
 def flatTensor (S : G.Args → ℂ) (x : ColArgs G) (y : RowArgs G) : ℂ :=
   ∫ e, flatIntegrand hs ψ S x y e ∂(varsVol G ν)
 
-variable (hs) in
 
 def FlatIntegrable (T : G.Args → ℂ) : Prop :=
   ∀ g x y, Integrable (flatIntegrand hs ψ (moved G true g T) x y) (varsVol G ν)
 
-variable {J : G.Level} (keep : Bool) (ρ : Reps hs J) (T : G.Args → ℂ)
+variable {hs} {J : G.Level} (keep : Bool) (ρ : Reps hs J) (T : G.Args → ℂ)
 
 def unfTerm (β : Cosets hs J) : UnfTerm G where
   coef := ∏ i : Fin (G.m - 2), invVol (conjLevel hs J (ρ.elt β) (j := i + 1) (by omega))
@@ -296,40 +292,9 @@ def unfSupport : Set (Cosets hs J) := {β | (unfTerm ψ ν keep ρ T β).datum �
 def unf (hfin : (unfSupport ψ ν keep ρ T).Finite) : Multiset (UnfTerm G) :=
   hfin.toFinset.val.map (unfTerm ψ ν keep ρ T)
 
-theorem sum_unf (hfin : (unfSupport ψ ν keep ρ T).Finite) (f : UnfTerm G → ℂ) :
-    ((unf ψ ν keep ρ T hfin).map f).sum = ∑ᶠ β ∈ unfSupport ψ ν keep ρ T, f (unfTerm ψ ν keep ρ T β) := by
-  rw [finsum_mem_eq_finite_toFinset_sum _ hfin, unf, Multiset.map_map]; rfl
 
-theorem unfSupport_eq : unfSupport ψ ν keep ρ T = unfSupport ψ ν true ρ T := by
-  cases keep
-  · ext β
-    have h : (unfTerm ψ ν false ρ T β).datum = (((charFactor G (ρ.elt β))⁻¹ : ℂˣ) : ℂ) • (unfTerm ψ ν true ρ T β).datum := by
-      funext x y
-      simp [unfTerm, flatTensor, flatIntegrand, moved, mul_assoc, integral_const_mul]
-    simp only [unfSupport, Set.mem_setOf_eq, h, ne_eq, smul_eq_zero, Units.ne_zero, false_or]
-  · rfl
-
-theorem unfTerm_coef_pos (hJ : ∀ j, 0 < j → j < G.m → IsOpen (J (G.m, j) : Set (GL (Fin (G.rank (G.m, j))) k)) ∧
-    J (G.m, j) ≤ KO k _) (β : Cosets hs J) : 0 < (unfTerm ψ ν keep ρ T β).coef := by
-  refine Finset.prod_pos (R := ℚ) fun i _ => ?_
-  obtain ⟨ho, hK⟩ := hJ (i + 1) (by omega) (by omega)
-  have c1 : Continuous (toFrame hs (j := i + 1) (by omega)) :=
-    Continuous.units_map _ (continuous_id.matrix_reindex _ _)
-  have c2 : Continuous (toFrame hs (j := i + 1) (by omega)).symm :=
-    Continuous.units_map _ (continuous_id.matrix_reindex _ _)
-  refine invVol_pos ?_ ?_
-  · rw [conjLevel, Subgroup.map_equiv_eq_comap_symm', Subgroup.map_equiv_eq_comap_symm']
-    exact (ho.preimage ((continuous_const.mul continuous_id).mul continuous_const)).preimage c2
-  · exact ((isCompact_KO.of_isClosed_subset (Subgroup.isClosed_of_isOpen _ ho) hK).image
-      ((continuous_const.mul continuous_id).mul continuous_const)).image c1
 
 variable (hs J) in
-
-def stairTerm (ϖ : kˣ) (e : ℕ) : UnfTerm G :=
-  unfTerm ψ ν false (Reps.through hs J (stair G ϖ e)) T fun i => DoubleCoset.mk _ _ (stair G ϖ e (i + 1))
-
-variable (hs J) in
-
 def OneCoset (ϖ : kˣ) (e : ℕ) : Prop :=
   ∀ β ∈ unfSupport ψ ν false (Reps.through hs J (stair G ϖ e)) T, ∀ i, β i = DoubleCoset.mk _ _ (stair G ϖ e (i + 1))
 
@@ -340,65 +305,5 @@ theorem through_elt (h : ∀ j : ℕ, GL (Fin (G.rank (G.m, j))) k) {j : ℕ} (h
   | zero => rfl
   | succ i => simp [Reps.through, show i < G.m - 2 by omega]
 
-variable (hs) in
-
-theorem flatTensor_vacuum (hψ : ∀ a ∈ 𝒪[k], ψ a = 1) (hν : IsUnitVol ν) (S : G.Args → ℂ)
-    (h1 : ∀ z, (∀ b ∈ oppositePath G.m, ∀ i j, z b i j ∈ 𝒪[k]) → S z = 1)
-    (h0 : ∀ z, ¬ (∀ b ∈ oppositePath G.m, ∀ i j, z b i j ∈ 𝒪[k]) → S z = 0) :
-    Integrable (flatIntegrand hs ψ S 0 0) (varsVol G ν) ∧ flatTensor hs ψ ν S 0 0 = 1 := by
-  classical
-  have hb : ∀ {n n' : Type} {c : ℕ} r s, basePt c (0 : Matrix n n' k) r s ∈ 𝒪[k] := by
-    rintro n n' c (r | r) (s | s) <;> simp only [basePt, fromBlocks_apply₁₁, fromBlocks_apply₁₂, fromBlocks_apply₂₁,
-      fromBlocks_apply₂₂, of_apply, Matrix.zero_apply, zero_mem]
-    split_ifs <;> simp
-  let B : Set (Vars G) := Set.univ.pi fun _ => Set.univ.pi fun _ => (𝒪[k] : Set k)
-  have hp : ∀ e ∈ B, ∀ (j : Fin (G.m - 1)) r s, stepPt ((0 : ColArgs G) j) (e j) r s ∈ 𝒪[k] := fun e he j r s => by
-    refine add_mem (hb r s) ?_
-    rw [of_apply]
-    split_ifs
-    · exact he j trivial _ trivial
-    · exact zero_mem _
-  have key : flatIntegrand hs ψ S 0 0 = B.indicator 1 := by
-    funext e
-    by_cases he : e ∈ B
-    · rw [Set.indicator_of_mem he, flatIntegrand, h1, hψ]
-      · simp
-      · refine neg_mem (sum_mem fun j _ => add_mem (sum_mem fun i _ => hp e he j _ _) ?_)
-        split_ifs
-        · refine sum_mem fun r _ => mul_mem ?_ (hp e he j _ _)
-          unfold rowVar
-          split_ifs with h
-          · refine sum_mem fun l _ => ?_
-            split_ifs
-            · exact hp e he ⟨_, h⟩ _ _
-            · exact zero_mem _
-          · exact zero_mem _
-        · exact zero_mem _
-      · rintro (⟨i, j⟩ | ⟨i, j⟩) - r s <;> simp only [fill] <;> split_ifs
-        · simp only [transpose_apply, submatrix_apply, downMap]
-          split_ifs with h
-          · exact hp e he ⟨_, h⟩ _ _
-          · exact zero_mem _
-          · exact zero_mem _
-        all_goals exact zero_mem _
-    · rw [Set.indicator_of_notMem he, flatIntegrand, h0, zero_mul]
-      refine fun H => he fun j _ rs _ => ?_
-      have h2 := H (.theta G.m j) (by have := j.2; simp [oppositePath]; omega)
-        (frame (b := G.rank (G.m, j)) (by have := topRank_add hs j; have := j.2; omega) rs.1.2)
-        (frame (b := G.rank (G.m, j + 1)) (by have := topRank_add hs (j + 1); have := j.2; omega) rs.1.1)
-      rw [fill_theta, transpose_apply, downMap, dif_pos j.2] at h2
-      simp only [reindex_apply, submatrix_apply, Equiv.symm_apply_apply, stepPt, Matrix.add_apply, of_apply] at h2
-      rw [dif_pos rs.2] at h2
-      exact (add_mem_cancel_left (hb _ _)).1 h2
-  obtain ⟨_, _⟩ := Model.secondCountable_and_t2_local_field (k := k)
-  have := hν.1
-  have hm : MeasurableSet B :=
-    MeasurableSet.univ_pi fun _ => MeasurableSet.univ_pi fun _ => Model.isOpen_int.measurableSet
-  have hv : varsVol G ν B = 1 := by simp [varsVol, B, Measure.pi_pi, hν.2]
-  rw [flatTensor, key]
-  exact ⟨(integrable_indicator_iff hm).2 (integrableOn_const (by simp [hv])), by
-    rw [integral_indicator hm]; simp [Measure.real, hv]⟩
-
-example : topRank (⟨2, 3, 1, 1, 1, 1, 1⟩ : Grid k) 2 = (⟨2, 3, 1, 1, 1, 1, 1⟩ : Grid k).rank (2, 2) + 1 := rfl
 
 end GlobalTheory.FunObj

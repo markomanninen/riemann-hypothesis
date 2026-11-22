@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.LiftFactorization
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem avgInt : AvgInt := by
       rfl
     · intro h
       exact absurd (Finset.mem_univ _) h
-  rw [hint, integral_finset_sum _ fun c _ => (integrable_const _).indicator (hAm c)]
+  rw [hint, integral_finsetSum _ fun c _ => (integrable_const _).indicator (hAm c)]
   unfold GlobalTheory.BCT.avg
   rw [finsum_eq_sum_of_fintype, Finset.mul_sum]
   refine Finset.sum_congr rfl fun c _ => ?_

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
@@ -28,7 +32,8 @@ private theorem weight_operator_commutator_multiGl {ι V : Type} [Fintype ι] [A
       have h1 := congrArg (fun f : Module.End ℂ V => f x) (hcomm s t hst a a i j)
       simp only [Module.End.mul_apply] at h1
       rw [h1, add_zero]
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, key, smul_add, Finset.sum_add_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.sum_apply, LinearMap.smul_apply, key, smul_add, Finset.sum_add_distrib,
     map_sum, map_smul]
   congr 1
   simp [smul_ite, smul_sub, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq,
@@ -70,7 +75,7 @@ theorem UpperTheory.V.AlgRepEndIrreducible.lowLine :
       ring
     · simp
     · intro x y hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hx hy
   let P : Submodule ℂ V := (ℂ ∙ v) ⊔ M
   have hvP : v ∈ P := Submodule.mem_sup_left (Submodule.mem_span_singleton_self v)
@@ -78,7 +83,7 @@ theorem UpperTheory.V.AlgRepEndIrreducible.lowLine :
     intro t i j hji x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
     obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hy
-    rw [map_add, map_smul]
+    rw [map_add (f := _), map_smul]
     refine Submodule.mem_sup_right (add_mem (Submodule.smul_mem _ _ ?_) (hFM t i j hji z hz))
     obtain ⟨d, hd⟩ := hdist i j hji
     refine (le_iSup (fun k : ℕ => H.eigenspace (l0 + ((k : ℂ) + 1))) d) ?_

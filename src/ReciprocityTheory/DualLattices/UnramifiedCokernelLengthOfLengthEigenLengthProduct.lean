@@ -1,7 +1,11 @@
-import ReciprocityTheory.DualLattices.EigenLengthFrobeniusStatement
-import ReciprocityTheory.DualLattices.FrobEqOfLe
-import ReciprocityTheory.DualLattices.StdJForm
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
+module
+
+public import ReciprocityTheory.DualLattices.EigenLengthFrobeniusStatement
+public import ReciprocityTheory.DualLattices.FrobEqOfLe
+public import ReciprocityTheory.DualLattices.StdJForm
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,7 +151,8 @@ lemma sum_r (hS : HodgeTateSetting p v R O σ cp) (H : HodgeTateDatum p g v R O 
   have hFG : F ∘ₗ G = LinearMap.id := by
     refine LinearMap.ext fun y => funext fun i => Subtype.ext ?_
     change Matrix.mulVecLin (U.εL i) (G y) = (y i : Fin g → R)
-    rw [hG, map_sum, Finset.sum_eq_single i]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hG, map_sum, Finset.sum_eq_single i]
     · rw [hproj i i _ (y i).2, if_pos rfl]
     · intro b _ hb
       rw [hproj i b _ (y b).2, if_neg (Ne.symm hb)]
@@ -157,7 +162,8 @@ lemma sum_r (hS : HodgeTateSetting p v R O σ cp) (H : HodgeTateDatum p g v R O 
     change G (F x) = x
     rw [hG]
     change ∑ i, Matrix.mulVecLin (U.εL i) x = x
-    rw [← LinearMap.sum_apply, ← map_sum, U.εL_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, U.εL_sum]
     exact Matrix.one_mulVec x
   let e : (Fin g → R) ≃ₗ[R] ((i : Fin U.m) → LinearMap.range (Matrix.mulVecLin (U.εL i))) :=
     LinearEquiv.ofLinear F G hFG hGF

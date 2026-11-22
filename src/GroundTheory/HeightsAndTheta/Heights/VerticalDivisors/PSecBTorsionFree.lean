@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -19,7 +24,8 @@ theorem span_secCoord_eq_top (Q : Ideal (MvPolynomial (Fin n) R)) (y : Par e n �
     Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_sup_right (Ideal.subset_span (Set.mem_singleton _)))
   rw [map_sub, map_one, sub_eq_zero] at h1
   have h2 : (1 : SecAlg Q y) = ∑ j, Ideal.Quotient.mk _ (C (y (.inr j))) * secCoord Q y j := by
-    rw [← h1, chartForm, linForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1, chartForm, linForm, map_sum]
     simp only [map_mul, secCoord]
   rw [h2]
   exact Ideal.sum_mem _ fun j _ => Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨j, rfl⟩)
@@ -77,13 +83,13 @@ def chartSub (e : ℕ) (Q : Ideal (MvPolynomial (Fin n) D)) (j : Fin n) :
 theorem chartSub_rel_inl (e : ℕ) (Q : Ideal (MvPolynomial (Fin n) D)) (j : Fin n) (i : Fin e) :
     ∑ k, chartSub e Q j (.inl (i, k)) * chartCoord e Q j k = 0 := by
   simp only [chartSub, Sum.elim_inl, sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [mul_assoc, mul_comm (chartInvC e Q j) _, chartCoord_mul_inv, mul_one, sub_self]
 
 theorem chartSub_rel_inr (e : ℕ) (Q : Ideal (MvPolynomial (Fin n) D)) (j : Fin n) :
     ∑ k, chartSub e Q j (.inr k) * chartCoord e Q j k = 1 := by
   simp only [chartSub, Sum.elim_inr, sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [mul_assoc, mul_comm (chartInvC e Q j) _, chartCoord_mul_inv, mul_one, sub_sub_cancel]
   rw [one_mul, mul_comm, chartCoord_mul_inv]
 
@@ -97,7 +103,6 @@ def chartModel (Q : Ideal (MvPolynomial (Fin n) D)) : Ideal (MvPolynomial (Fin n
   Q.map (MvPolynomial.map ((algebraMap (MvPolynomial (Par e n) D) R).comp C))
 
 variable (D) in
-
 def chartPar : Par e n → R := fun p => algebraMap (MvPolynomial (Par e n) D) R (X p)
 
 theorem chartModel_le (Q : Ideal (MvPolynomial (Fin n) D)) :
@@ -145,14 +150,16 @@ theorem secIdeal_le_ker_chartPhi0 [IsLocalization S R] :
     have h := congrArg (algebraMap _ (ChartE' e Q j S)) (chartSub_rel_inl e Q j i)
     rw [map_zero] at h
     rw [← h]
-    simp only [secForm, linForm, chartPar, map_sum, map_mul, chartPhi0, eval₂Hom_C, eval₂Hom_X',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [secForm, linForm, chartPar, map_sum, map_mul, chartPhi0, eval₂Hom_C, eval₂Hom_X',
       chartHomR_algebraMap, chartHomA]
   · rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, RingHom.mem_ker, map_sub, map_one,
       sub_eq_zero]
     have h := congrArg (algebraMap _ (ChartE' e Q j S)) (chartSub_rel_inr e Q j)
     rw [map_one] at h
     rw [← h]
-    simp only [chartForm, linForm, chartPar, map_sum, map_mul, chartPhi0, eval₂Hom_C, eval₂Hom_X',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [chartForm, linForm, chartPar, map_sum, map_mul, chartPhi0, eval₂Hom_C, eval₂Hom_X',
       chartHomR_algebraMap, chartHomA]
 
 def chartPhi [IsLocalization S R] : SecAlg (chartModel e R Q) (chartPar D e R) →+* ChartE' e Q j S :=
@@ -206,7 +213,8 @@ theorem chartPsi0_rel_inl (i : Fin e) :
       (Ideal.subset_span ⟨i, rfl⟩)))
   have h1 := congrArg (algebraMap _ (ChartBj e R Q j)) h0
   rw [map_zero] at h1
-  rw [← h1, map_sum, secForm, linForm, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, map_sum, secForm, linForm, map_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, map_mul, map_mul, chartPsi0_coord, chartPsi0, eval₂Hom_X']
   rfl
@@ -219,8 +227,10 @@ theorem chartPsi0_rel_inr :
   have h1 := congrArg (algebraMap _ (ChartBj e R Q j)) h0
   rw [map_zero] at h1
   rw [← h1]
-  simp only [map_sub, map_one]
-  rw [map_sum, chartForm, linForm, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, chartForm, linForm, map_sum, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, map_mul, map_mul, chartPsi0_coord, chartPsi0, eval₂Hom_X']

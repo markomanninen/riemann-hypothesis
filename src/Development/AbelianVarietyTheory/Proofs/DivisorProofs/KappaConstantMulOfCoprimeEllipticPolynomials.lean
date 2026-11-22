@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedCentralizerIsNormOneTorus
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedCentralizerIsNormOneTorus
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 
@@ -131,7 +136,7 @@ theorem adj_aeval [StarRing R] (δ : GL (Fin n) R) (f : R[X]) :
     fun x y => by simpa using GlobalTheory.Tw.CentralizerAdjoin.adj_semi δ.val 1 x y
   induction f using Polynomial.induction_on with
   | C e => rw [aeval_C, GlobalTheory.Tw.CentralizerAdjoin.adj_algebraMap δ.isUnit, Polynomial.map_C, aeval_C]; rfl
-  | add p q hp hq => rw [map_add, hadd, hp, hq, Polynomial.map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), hadd, hp, hq, Polynomial.map_add (f := _), map_add (f := _)]
   | monomial k e ih =>
     rw [pow_succ, ← mul_assoc, map_mul, aeval_X, GlobalTheory.Tw.CentralizerAdjoin.adj_mul' δ.isUnit, ih,
       GlobalTheory.Tw.CentralizerAdjoin.adj_nrm δ.isUnit, mul_comm _ (X : R[X]), Polynomial.map_mul (p := X), Polynomial.map_X, map_mul, aeval_X]
@@ -254,13 +259,13 @@ theorem normOne_blk (c : R →+* R) (N₁ : GL (Fin a) R) (N₂ : GL (Fin b) R) 
     obtain ⟨u, v, huv⟩ := hP
     have k1 : f₁ + (f₂ - f₁) * u * P₁ = f₂ + (f₁ - f₂) * v * P₂ := by linear_combination (f₂ - f₁) * huv
     have a1 : aeval N₁.val (f₁ + (f₂ - f₁) * u * P₁) = x.val := by
-      rw [map_add, map_mul, e₁, mul_zero, add_zero, hx]
+      rw [map_add (f := _), map_mul, e₁, mul_zero, add_zero, hx]
     have a2 : aeval N₂.val (f₁ + (f₂ - f₁) * u * P₁) = y.val := by
-      rw [k1, map_add, map_mul, e₂, mul_zero, add_zero, hy]
+      rw [k1, map_add (f := _), map_mul, e₂, mul_zero, add_zero, hy]
     have a3 : aeval (N₁⁻¹).val ((f₁ + (f₂ - f₁) * u * P₁).map c) = aeval (N₁⁻¹).val (f₁.map c) := by
-      rw [Polynomial.map_add, Polynomial.map_mul, map_add, map_mul, e₁', mul_zero, add_zero]
+      rw [Polynomial.map_add (f := _), Polynomial.map_mul, map_add (f := _), map_mul, e₁', mul_zero, add_zero]
     have a4 : aeval (N₂⁻¹).val ((f₁ + (f₂ - f₁) * u * P₁).map c) = aeval (N₂⁻¹).val (f₂.map c) := by
-      rw [k1, Polynomial.map_add, Polynomial.map_mul, map_add, map_mul, e₂', mul_zero, add_zero]
+      rw [k1, Polynomial.map_add (f := _), Polynomial.map_mul, map_add (f := _), map_mul, e₂', mul_zero, add_zero]
     refine ⟨f₁ + (f₂ - f₁) * u * P₁, by rw [a1, a2, blkGL_val], ?_⟩
     rw [a3, a4, blkGL_val, ← map_mul, Prod.mk_mul_mk, hx', hy']
     exact map_one _
@@ -509,7 +514,7 @@ theorem kap_mul : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E 
   have e₂ := exists_norm E (n := P₂.natDegree) ⟨h₂.1, rfl, h₂.2.2⟩
   have e := exists_norm E (n := (P₁ * P₂).natDegree) ⟨h.1, rfl, h.2.2⟩
   unfold kap
-  rw [dif_pos e, dif_pos e₁, dif_pos e₂, mass_mul hn e.choose e₁.choose e₂.choose
+  rw [dite_eq_left e, dite_eq_left e₁, dite_eq_left e₂, mass_mul hn e.choose e₁.choose e₂.choose
     (by rw [e₁.choose_spec, e₂.choose_spec]; exact hc) (by rw [e.choose_spec]; exact h.2.2.1)
     (by rw [e.choose_spec, e₁.choose_spec, e₂.choose_spec]),
     UniqueFactorizationMonoid.normalizedFactors_mul h₁.1.ne_zero h₂.1.ne_zero, Multiset.card_add, pow_add,

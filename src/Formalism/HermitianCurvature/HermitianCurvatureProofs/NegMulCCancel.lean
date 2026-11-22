@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBlockActionInvariant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerBlockActionInvariant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StrictUpperNeg
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -23,8 +27,8 @@ def muXP (Bj : B.RealPlaceData k ρ Wp Wq) : Measure (XP k p ρ) := (Bj.μW.prod
 def GoodP (Bj : B.RealPlaceData k ρ Wp Wq) (x : XP k p ρ) : Prop :=
   (Matrix.of x.1.1 : B.Mat k ρ) ∈ UWset k ρ Bj.z ∧ (Matrix.of x.1.2 : B.Mat k ρ) ∈ Nset k ρ
 
-open Classical in
 
+open Classical in
 def sP (Bj : B.RealPlaceData k ρ Wp Wq) (x : XP k p ρ) : B.Mat k (p + ρ) :=
   if GoodP Bj x then
     U.Rn k p ρ (-x.2) * U.embG k p ρ ((Matrix.of x.1.1 : B.Mat k ρ)⁻¹ * (Matrix.of x.1.2 : B.Mat k ρ)⁻¹)
@@ -66,7 +70,6 @@ variable {k p ρ : ℕ}
 
 local instance bsS : BorelSpace ((G.UT p → ℂ) × (Fin p → ℝ)) := Prod.borelSpace
 local instance bsRC : BorelSpace (U.RC k p ρ) := Prod.borelSpace
-local instance bsRC2 : BorelSpace (U.RC k p ρ × U.RC k p ρ) := Prod.borelSpace
 
 theorem psi_rn_mulC (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (x y : U.RC k p ρ) :
     psi k (p + ρ) (liftVec k p ρ z) cStd (U.Rn k p ρ (StabilizerDisintegration.HC.mulC x y)) =

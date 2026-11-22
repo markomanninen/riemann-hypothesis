@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.MemOfPowQKSubOne
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.MemOfPowQKSubOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.UnramifiedExtensions
 

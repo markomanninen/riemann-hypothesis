@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MulMemSqOfSmulEqZero
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LemmaBTHolds
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChange
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecStalkSpecializesComp
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerAtOneCompEndo
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartRingNoetherianNormalFraction
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartPointInChartDominated
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpMapEqFromSpecStalk
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MulMemSqOfSmulEqZero
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LemmaBTHolds
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChange
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecStalkSpecializesComp
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerAtOneCompEndo
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartRingNoetherianNormalFraction
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartPointInChartDominated
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpMapEqFromSpecStalk
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -36,13 +41,13 @@ def augSub (A : Subalgebra R (T → R)) : Submodule R (T → R) where
 
 def toAug {A : Subalgebra R (T → R)} (f : augSub A) : augIdeal A := ⟨⟨f.1, f.2.1⟩, f.2.2⟩
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 def augCl (A : Subalgebra R (T → R)) : augSub A →ₗ[R] omega A where
   toFun f := (augIdeal A).toCotangent (toAug f)
   map_add' f g := by
-    rw [← LinearMap.map_add]
+    rw [← LinearMap.map_add (f := _)]
     rfl
   map_smul' c f := by
     have h : toAug (c • f) = algebraMap R A c • toAug f := rfl
@@ -86,8 +91,8 @@ def idem : TorsT E N p →* TorsT E N p where
   map_one' := by rw [fromN_one, toN_zero]
   map_mul' s t := Multiplicative.toAdd.injective (funext fun i => by simp [toN, fromN])
 
-variable {pq sc} in
 
+variable {pq sc} in
 theorem exists_eps (h : IsSec pq sc) : ∃ ε : 𝓞 E, pq (Ideal.Quotient.mk _ ε) = 1 ∧
     ∀ u, Ideal.Quotient.mk (Ideal.span {(p : 𝓞 E)}) ε * u = sc (pq u) := by
   obtain ⟨ε, hε⟩ := Ideal.Quotient.mk_surjective (sc 1)
@@ -136,8 +141,8 @@ theorem pts_idem (P : ChartPack G O c') {F : Type} [Field F]
   rw [← h1, h3, h2]
   simp only [Category.assoc]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem lat_eq_span [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (q : Cpt 𝔐.ξ)
     (ψ : CR O y c' →+* 𝔐.X.presheaf.stalk q.1) (h1 : spMap ψ ≫ P.x = 𝔐.X.fromSpecStalk q.1)
     (h2 : (genMap 𝔐.ξ q).comp ψ = algebraMap (CR O y c') Ω) :
@@ -164,14 +169,14 @@ theorem lat_eq_span [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (q : Cpt 𝔐.�
       (LieVB.cast (R := 𝔐.X.presheaf.stalk q.1) h1.symm Mq) b' fun e =>
         (LieVB.cast_left (R := 𝔐.X.presheaf.stalk q.1) h1.symm Mq (b' e)).trans (hb₀ e)
   have hsp : ∀ z : Fq, jq z ∈ Submodule.span (regAt 𝔐.ξ q) (Set.range P.toLi) := fun z =>
-    hbc.inductionOn z (fun z => jq z ∈ Submodule.span (regAt 𝔐.ξ q) (Set.range P.toLi)) (by simp)
+    hbc.inductionOn z
       (fun m => Submodule.subset_span ⟨m, (hcomp m).symm⟩)
       (fun (s : 𝔐.X.presheaf.stalk q.1) n h => by
         have h5 : jq (s • n) = genMap 𝔐.ξ q s • jq n := jq.map_smulₛₗ s n
         rw [h5]
         exact Submodule.smul_mem _ (⟨genMap 𝔐.ξ q s, s, rfl⟩ : regAt 𝔐.ξ q) h)
       (fun a b ha hb => by
-        rw [map_add]
+        rw [map_add (f := _)]
         exact add_mem ha hb)
   refine le_antisymm (fun e he => ?_) (Submodule.span_le.2 ?_)
   · obtain ⟨v, hv⟩ := (𝔐.M.mem_lat_iff q e).1 he
@@ -247,7 +252,8 @@ theorem mem_range_toLi_iff [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (hpt : D
       intro v
       have h1 : f (h v) = v := LinearMap.congr_fun hh v
       conv_lhs => rw [← h1, pi_eq_sum_univ' (h v)]
-      simp only [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]
     let g : Fin n → (P.L →ₗ[CR O y c'] Ω) := fun i =>
       (Algebra.linearMap (CR O y c') Ω) ∘ₗ (LinearMap.proj i) ∘ₗ h
     let Fi : Fin n → (𝔐.Li →ₗ[Ω] Ω) := fun i => P.toLi_bc.lift (g i)
@@ -267,7 +273,7 @@ theorem mem_range_toLi_iff [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (hpt : D
         exact Fam.chartRing_le_regAt O y c' q hq.1 hq.2 (h v i).2
       | zero => simp [(regAt 𝔐.ξ q).zero_mem]
       | add x x' _ _ hx hx' =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (regAt 𝔐.ξ q).add_mem hx hx'
       | smul s x _ hx =>
         have : Fi i (s • x) = (s : Ω) * Fi i x := by
@@ -277,10 +283,11 @@ theorem mem_range_toLi_iff [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (hpt : D
         exact (regAt 𝔐.ξ q).mul_mem s.2 hx
     have hsum : ∀ w : 𝔐.Li, w = ∑ i, Fi i w • P.toLi (f (Pi.single i 1)) := by
       intro w
-      refine P.toLi_bc.inductionOn w (fun w => w = ∑ i, Fi i w • P.toLi (f (Pi.single i 1))) (by simp) ?_ ?_ ?_
+      refine P.toLi_bc.inductionOn w ?_ ?_ ?_
       · intro m
         conv_lhs => rw [hv m]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [hFi, map_smul]
         exact (algebraMap_smul Ω (h m i) _).symm
@@ -289,10 +296,11 @@ theorem mem_range_toLi_iff [Smooth 𝔐.t.G.hom] (P : ChartPack G O c') (hpt : D
         simp only [map_smul, Finset.smul_sum, smul_eq_mul, mul_smul]
       · intro a b ha hb
         conv_lhs => rw [ha, hb]
-        simp only [map_add, add_smul, Finset.sum_add_distrib]
+        simp only [map_add (f := _), add_smul, Finset.sum_add_distrib]
     refine ⟨∑ i, (⟨Fi i e, hmem i⟩ : CR O y c') • f (Pi.single i 1), ?_⟩
     conv_rhs => rw [hsum e]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul]
     exact algebraMap_smul Ω (⟨Fi i e, hmem i⟩ : CR O y c') _
@@ -333,7 +341,8 @@ theorem ev_mem_dotDual (P : ChartPack G O c')
   intro l hl
   obtain ⟨v, hv⟩ := (mem_coordLat_dR_iff P hsec s b hb l).1 hl
   have h1 : l ⬝ᵥ (fun k => P.j u (b k)) = P.j u (∑ k, l k • b k) := by
-    simp [dotProduct, map_sum, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum, smul_eq_mul]
   rw [h1, ← hv, P.j_apply]
   exact (u v).2
 
@@ -367,7 +376,8 @@ theorem exists_form [CharZero Ω] (P : ChartPack G O c')
   have hproj : ∀ x : P.L, ∃ x', P.toLi x' = HT.eigProj 𝔐.ρ τ (P.toLi x) := by
     intro x
     refine ⟨∑ k, (⟨_, hcoef k⟩ : CR O y c') • P.ρ (RingOfIntegers.basis E k) x, ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [HT.eigProj, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, toLi_rho]
@@ -392,7 +402,8 @@ theorem exists_form [CharZero Ω] (P : ChartPack G O c')
     have h3 := (mem_dotDual_iff _ _ _).1 hm a h2
     have h4 : Ψ (P.toLi x) = a ⬝ᵥ m := by
       change ψ (HT.eigProj 𝔐.ρ τ (P.toLi x)) = _
-      rw [← ha, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← ha, map_sum]
       simp [dotProduct, hψb]
     rw [h4]
     exact h3
@@ -405,12 +416,12 @@ theorem exists_form [CharZero Ω] (P : ChartPack G O c')
         rfl) }
   have hju : ∀ w, P.j u w = Ψ w := by
     intro w
-    refine P.toLi_bc.inductionOn w (fun w => P.j u w = Ψ w) (by simp) (fun v => ?_) (fun t n hn => ?_)
+    refine P.toLi_bc.inductionOn w (fun v => ?_) (fun t n hn => ?_)
       (fun a a' ha ha' => ?_)
     · rw [P.j_apply]
       rfl
     · rw [map_smul, map_smul, hn]
-    · rw [map_add, map_add, ha, ha']
+    · rw [map_add (f := _), map_add (f := _), ha, ha']
   refine ⟨u, fun k => ?_, fun a v => ?_⟩
   · rw [hju]
     change ψ (HT.eigProj 𝔐.ρ τ (b k)) = _
@@ -583,7 +594,7 @@ theorem chartD_fun_clauses : ∀ (E : Type) [Field E] [NumberField E] [IsCMField
         exact f₀.2.2⟩
       have h3 : θ (u ∘ₗ P.ρ ε) = augCl (P.Γ₁.btOrder ⊤) f₁ := (hder (toAug f₁) _).2 d₁
       have h4 : θ (u ∘ₗ P.ρ ε) = θ u := by
-        rw [hw, map_add, (hker _).2 ⟨_, rfl⟩, add_zero]
+        rw [hw, map_add (f := _), (hker _).2 ⟨_, rfl⟩, add_zero]
       refine ⟨u, funext hu1, f₁, fun t => ?_, h4.symm.trans h3⟩
       change f₀.1 (idem pq sc (idem pq sc t)) = f₀.1 (idem pq sc t)
       have hi : idem pq sc (idem pq sc t) = idem pq sc t := by

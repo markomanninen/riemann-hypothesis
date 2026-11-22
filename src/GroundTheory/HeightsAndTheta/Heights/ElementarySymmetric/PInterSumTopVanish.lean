@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterSumTopVanish
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumAdditive
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterSumTopVanish
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PInterNumAdditive
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

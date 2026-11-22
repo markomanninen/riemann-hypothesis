@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralVecSmul
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralVecSmul
+
+@[expose] public section
 
 namespace PositivityTheory.AdelicQuotientData
 

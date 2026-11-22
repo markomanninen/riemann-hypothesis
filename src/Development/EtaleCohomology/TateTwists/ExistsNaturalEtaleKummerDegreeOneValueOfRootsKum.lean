@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.TateTwists.ExistsEtaleKummerChernClassCochainOfDegreeValues
-import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
-import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
+module
+
+public import Development.EtaleCohomology.TateTwists.ExistsEtaleKummerChernClassCochainOfDegreeValues
+public import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
+public import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -88,7 +92,7 @@ theorem kT_pow {q : ℕ} (hk : IsKum q (kumT q)) {W : Scheme.{0}} (ζ : Prim q �
       isUnit_of_mul_isUnit_right (x := ζ.1) (by rw [← mul_assoc, ← pow_succ', ← h]; exact w'.isUnit)
     have e : (w' : Γ(W, ⊤)) = ζ.1 * (hu.unit : Γ(W, ⊤)) := by rw [IsUnit.unit_spec, h, pow_succ', mul_assoc]
     rw [dkT, hk.2 W ζ hu.unit w' e]
-    simp only [Sec.map, map_add]
+    simp only [Sec.map, map_add (f := _)]
     have h0 := d_resGen q ζ
     simp only [Sec.map] at h0
     rw [h0, add_zero]

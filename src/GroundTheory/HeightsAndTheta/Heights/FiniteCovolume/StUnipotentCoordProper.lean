@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerLevi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsStabilizerLevi
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -26,8 +30,8 @@ theorem unipCoord_apply (h : HermitianForm F E W) (v : Basis ι E W) (x₀ w₀ 
         vecAt v w₀ w :=
   rfl
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem continuous_unipCoord (h : HermitianForm F E W) (v : Basis ι E W) (x₀ w₀ : W) :
     Continuous (unipCoord h v x₀ w₀) := by
   refine continuous_pi fun w => ?_
@@ -37,7 +41,7 @@ theorem continuous_unipCoord (h : HermitianForm F E W) (v : Basis ι E W) (x₀ 
       (continuous_subtype_val.comp continuous_subtype_val))
   exact (hc.matrix_mulVec continuous_const).sub continuous_const
 
-def UnipotentCoordProper.Statement [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+def UnipotentCoordProper.Statement [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
     (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=
   ∀ x₀ w₀ : W, IsHyperbolicPair h x₀ w₀ → ∀ K : Set (InfinitePlace E → ι → ℂ), IsCompact K →
     IsCompact {n : unipRadical h v x₀ | unipCoord h v x₀ w₀ n ∈ K}

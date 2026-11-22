@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.Lemma4OfRemainingStatements
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.MdWeightMapDomain
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.LeadingDepthOneMemClosure
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.CoeUntopDLeAlt
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.LetterWeightPos
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.Lemma4OfRemainingStatements
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.MdWeightMapDomain
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.LeadingDepthOneMemClosure
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.CoeUntopDLeAlt
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.LetterWeightPos
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,6 @@ theorem xx_mono (mg : ℤ → ℤ) (th o : ℤ → ℝ) (hmg : ∀ x, 0 ≤ mg x
     fun v hv => le_trans (WithTop.coe_le_coe.mpr (by linarith [hmg x])) hv
   exact ⟨fun he => ⟨(h1 he).1, key _ (h1 he).2⟩, fun he => ⟨(h2 he).1, key _ (h2 he).2⟩, h3⟩
 
-def segW : ℤ × Fin (r + K) → (ℤ → ℕ) := fun v => Pi.single v.1 1
-
 end XX
 
 section Comp
@@ -55,7 +57,7 @@ theorem SyS_compZ {H0 : PP} (hH0 : IsWeightedHomogeneous (normalVariableWeight n
   | add a b _ _ ha hb =>
     obtain ⟨Za, hZa, ea⟩ := ha
     obtain ⟨Zb, hZb, eb⟩ := hb
-    exact ⟨Za + Zb, add_mem hZa hZb, by rw [add_mul, map_add, ea, eb, add_mul]⟩
+    exact ⟨Za + Zb, add_mem hZa hZb, by rw [add_mul, map_add (f := _), ea, eb, add_mul]⟩
 
 end Comp
 
@@ -80,9 +82,9 @@ theorem normDeg_eq_vsDeg {n' r K : ℕ} (m : Fin n' × Fin (r + K) →₀ ℕ) :
   refine Finset.sum_congr rfl (fun t _ => ?_)
   rw [Fin.sum_univ_add]
   by_cases ht : Even t.val
-  · simp only [IsNormal, ht, if_true]
+  · simp only [IsNormal, ht, ite_true]
     simp
-  · simp only [IsNormal, ht, if_false]
+  · simp only [IsNormal, ht, ite_false]
     simp
 
 end Formalism.MainNotions.Pf14

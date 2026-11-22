@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import GroundTheory.GlobalFields.TateThesis.TateMain
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory
 open scoped NumberField.AdeleRing

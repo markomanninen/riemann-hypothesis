@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDegenerationPreDataOverSubfield
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullDegCancelTowerOfFields
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsRatioDescendsDegenerationPsiFamily
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AdditivePointsDescendFieldExtension
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsNumberFieldTorsionPoints
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveBaseChangeComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDegenerationPreDataOverSubfield
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullDegCancelTowerOfFields
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsRatioDescendsDegenerationPsiFamily
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AdditivePointsDescendFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsNumberFieldTorsionPoints
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveBaseChangeComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -182,8 +186,8 @@ theorem tau_defect (hφ : Function.Injective φ) (hD : IsPullDeg φ D D') (a b :
   rw [c a ha, c b hb, c (a + b) (by rw [cPoint_add, ha, hb, _root_.mul_one]), hr z J hJ, val_one] at e
   simpa using e.symm
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem bimult_defect (hG : GlobalFnsSt) (hφ : Function.Injective φ) (hD : IsPullDeg φ D D') (a a' b : D'.X) :
     ∃ r : (FractionRing R)ˣ, ∀ (y : (TK R').left) J', Good D'.P.L y J' →
       val (D'.tau (a + a') b) (𝟙 _) y J' * th D' (T := TK R') y J' (cP D' _ a) (cP D' _ a') (cP D' _ b) =
@@ -241,7 +245,7 @@ theorem bimult_defect (hG : GlobalFnsSt) (hφ : Function.Injective φ) (hD : IsP
       ((val_mul hJ _ _ _).symm.trans ((hr y J hJ).trans (congrArg₂ (· * ·) rfl (val_mul hJ _ _ _))))
     refine Eq.trans ?_ (val_cub D.cub κ hJ (cP D _ (hD.xe a)) (cP D _ (hD.xe a')) (cP D _ (hD.xe b))).symm
     rw [comp_cP, comp_cP, comp_cP]
-  rw [← βc, ← βc, ← βc, cub, ← map_add, vτ, vτ, vτ, cPoint_add] at key
+  rw [← βc, ← βc, ← βc, cub, ← map_add (f := _), vτ, vτ, vτ, cPoint_add] at key
   show τ' (a + a') b * _ = _ * (τ' a b * τ' a' b)
   apply Additive.ofMul.injective
   have e' := congrArg Additive.ofMul key

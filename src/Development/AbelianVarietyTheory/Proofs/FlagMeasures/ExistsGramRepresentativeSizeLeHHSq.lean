@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramUnipotentStabilizerBruhatCellConjRoot
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -65,7 +69,7 @@ theorem lead_inv {L U : Matrix (Fin N) (Fin N) K} (hL : IsLoUni L) (hU : IsUpUni
     rw [← Matrix.transpose_mul, ← Matrix.transpose_submatrix, ← Matrix.transpose_submatrix,
       Matrix.det_transpose, Matrix.det_transpose] at key
     exact key
-  · rw [dif_neg hl, dif_neg hl]
+  · rw [dite_eq_right hl, dite_eq_right hl]
 
 theorem det_mono_sq {w : Matrix (Fin N) (Fin N) K} {σ : Equiv.Perm (Fin N)} {d : Fin N → K}
     (hw : ∀ i j, w i j = if j = σ i then d i else 0) (I J : Fin n → Fin N) (hI : Function.Injective I)
@@ -361,7 +365,7 @@ theorem prod_le_HH (D : D7) (b C x : ℝ) (hb : 1 ≤ b) (Z : GramM D) (hx : x �
     exact GlobalTheory.LoopC.GramSize.one_le_prod'' _ _ (fun τ _ => one_le_locSize D b C Z τ)
   have hsz : sizeZ D b C Z = ∏ τ, locSize D b C Z τ := rfl
   calc ∏ τ, X τ ≤ ∏ τ, (b ^ x * locSize D b C Z τ ^ 2) :=
-        Finset.prod_le_prod (fun τ _ => h0 τ) (fun τ _ => h τ)
+        Finset.prod_le_prod₀ (fun τ _ => h0 τ) (fun τ _ => h τ)
     _ = b ^ (x * D.R.f) * sizeZ D b C Z ^ 2 := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard, Finset.prod_pow, ← hsz,
           ← Real.rpow_natCast (b ^ x) D.R.f, ← Real.rpow_mul hb0.le]

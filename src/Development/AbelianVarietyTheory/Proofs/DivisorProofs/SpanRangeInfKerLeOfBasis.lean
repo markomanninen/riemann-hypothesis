@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
-import Formalism.LocalRingCardinality.DataBu
-import Formalism.QuotientMetricDivisors.FinalW
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeInfKerEqSpanRationalKer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+public import Formalism.LocalRingCardinality.DataBu
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanRangeInfKerEqSpanRationalKer
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.DivisionValues Formalism.L2.DIV Formalism.L2.Indef
 
 namespace GlobalTheory

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial IsLocalRing
 
@@ -93,7 +97,7 @@ theorem isLocalRing_of_maximal {G : Subring (Ω × L)} (hG : Maximal Functional 
   refine IsLocalRing.of_nonunits_add ?_
   intro a b ha hb
   rw [key] at ha hb ⊢
-  rw [map_add, ha, hb, add_zero]
+  rw [map_add (f := _), ha, hb, add_zero]
 
 theorem exists_common_root [IsAlgClosed L] {k : Type*} [Field k] (ι : k →+* L) (I : Ideal k[X])
     (hI : I ≠ ⊤) : ∃ ξ : L, ∀ p ∈ I, eval₂ ι ξ p = 0 := by
@@ -196,7 +200,7 @@ theorem exists_valuationSubring_extension [IsAlgClosed L] (A : Subring Ω) (φ :
   have : IsLocalRing G := isLocalRing_of_maximal hG
   have : IsLocalHom (p₂ G) := ⟨fun r hr => isUnit_of_p₂_ne_zero hG r hr.ne_zero⟩
   have hinj : Function.Injective (p₁ G) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨⟨b, l⟩, hr⟩ h0
     have hb : b = 0 := h0
     subst hb

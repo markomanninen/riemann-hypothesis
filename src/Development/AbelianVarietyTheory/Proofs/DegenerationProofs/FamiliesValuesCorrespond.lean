@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueFamOfReps
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaEmbeddingSectionsBaseChangeAffine
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsUniqueFamOfReps
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaEmbeddingSectionsBaseChangeAffine
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -21,7 +25,7 @@ variable {F : Type} [Field F] {X Y : Scheme.{0}} {L : LB X} {K : Type} [Fintype 
 
 theorem toStk_valF' (x : Sp F ⟶ X) (U : X.Opens) (z : Sp F) (h : x z ∈ U) (a : Γ(X, U)) :
     toStk z (valF x U a) = gs x z U a := by
-  rw [valF, dif_pos ((top_le_iff_mem x U z).2 h), gs_eq x z U h]
+  rw [valF, dite_eq_left ((top_le_iff_mem x U z).2 h), gs_eq x z U h]
   show ((Sp F).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom
     ((Scheme.ΓSpecIso (CommRingCat.of F)).hom.hom _)) = _
   rw [Iso.hom_inv_id_apply]
@@ -124,7 +128,7 @@ theorem famMult_eq (k : ℕ) (mu α : N.X) :
   rw [Over.id_left, Category.id_comp] at this
   refine this.trans ?_
   erw [p₁, p₂, e]
-  rw [NumD.τ, map_mul, map_pow, map_div, map_div, psi_eq ν, psi_eq ν, psi_eq ν, map_add]
+  rw [NumD.τ, map_mul, map_pow, map_div, map_div, psi_eq ν, psi_eq ν, psi_eq ν, map_add (f := _)]
   apply Additive.ofMul.injective
   simp only [ofMul_mul, ofMul_inv, ofMul_div, ofMul_pow]
   module
@@ -173,7 +177,7 @@ theorem famV_fe (hG : GlobalFnsSt) {k : ℕ} {s : Fam D F k} {f : N.X → N.A �
   have e := (secRel_iff D.P.isLB _ _ _ _ _ _ _ _ _ u).1 (s.fe _ _ u hu hc) _ (pt ν x).left z ν.J hJ
   rw [hv u hu hc _ (pt ν x) z ν.J hJ, trF_eq, ← Over.comp_left, indicatorIdempotent_eq_add_sum, pt_tr, uVal_eq, pt_fst, ← H] at e
   have e₁ := H (α + k • mu) x
-  rw [map_add, map_nsmul, e] at e₁
+  rw [map_add (f := _), map_nsmul, e] at e₁
   have e₂ := famMult_eq ν z k mu α
   refine (toStk z).injective ((Units.mul_left_inj (rgU ν z ^ k)).1 (e₁.trans ?_))
   erw [e₂]
@@ -190,7 +194,7 @@ theorem phiVal_famV {k : ℕ} {p : QkPt D F k} {q : N.QT k} (hp : ν.QPt p q)
   have H := (famV_iff ν z s f).1 h
   obtain ⟨h₁, h₂, h₃⟩ := hp
   refine (famV_iff ν z t _).2 fun α x => ?_
-  have e := ht (ν.eX (α - q.1.1.toAdd)) (ν.eX α) (by rw [← h₁, ← map_add, sub_add_cancel]) _ (pt ν x) z ν.J hJ
+  have e := ht (ν.eX (α - q.1.1.toAdd)) (ν.eX α) (by rw [← h₁, ← map_add (f := _), sub_add_cancel]) _ (pt ν x) z ν.J hJ
   have e₁ : uVal D F k (ν.eX (α - q.1.1.toAdd)) p.g.b (pt ν x) z ν.J = _ := h₂ ▸ uVal_eq ν z k _ q.1.2.b x
   have e₂ : pt ν x ≫ DegPre.trPt D F p.g.b = pt ν (x * q.1.2.b) := h₂ ▸ pt_tr ν x q.1.2.b
   have e₃ : (val (LB.mulGen D.P.L _ _ _ _ (p.g.s (ν.eX (α - q.1.1.toAdd))) w) (𝟙 (Sp F)) z ν.J).val =
@@ -211,8 +215,8 @@ theorem sval_scale {X Y Z : Scheme.{0}} {L : LB X} {K : Type} [Fintype K] {φ : 
   (congrArg (gs r z _) (h _)).trans ((gs_mul r z _ (hJ.mem _ r) _ _).trans
     (congrArg₂ (· * ·) (gs_res r z le_top (hJ.mem _ r) _) rfl))
 
-omit ν z in
 
+omit ν z in
 theorem isGenSec_base (P : PolAV (Sp R)) (t : H0 P.L 1)
     (ht : ∀ s : H0 P.L 1, ∃ r : R, ∀ j, s.f j = resTop _ (scal P.A.hom r) * t.f j) :
     IsGenSec P.A P.L 1 (T := baseOver (Sp R)) (VVRank.pullTo (φ' := fun _ : Fin 1 => (snd (baseOver (Sp R)) P.A).left)

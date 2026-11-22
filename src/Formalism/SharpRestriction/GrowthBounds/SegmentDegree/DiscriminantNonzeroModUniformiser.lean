@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrobeniusReductionProduct
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.WordOrderBoundOfNumericBound
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LateVectorsDistinctTops
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.FrobeniusReductionProduct
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.WordOrderBoundOfNumericBound
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.LateVectorsDistinctTops
+
+@[expose] public section
 
 noncomputable section
 

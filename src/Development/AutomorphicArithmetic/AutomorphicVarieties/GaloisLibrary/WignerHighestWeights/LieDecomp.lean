@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.HolEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.HolEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WignerHighestWeights.IsAlgIsoRefl
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.AlgRepEndIrreducible
 open scoped TensorProduct
 
-private theorem scalarDecomp {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : Type} [AddCommGroup N]
+private theorem scalarDecomp {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : Type} [AddCommGroup N]
     [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N] (l : Cinf E →ₗ[ℝ] N) (x : Cinf E) :
     l x = ∑ τ : E →+* ℂ, coord τ x • ((1 / 2 : ℂ) • (l (atEmb τ 1) - Complex.I • l (atEmb τ Complex.I))) := by
   classical
@@ -16,7 +21,8 @@ private theorem scalarDecomp {E : Type} [Field E] [NumberField E] [IsTotallyComp
     rw [if_pos (by rw [InfinitePlace.mk_embedding])]
     congr 1 <;> simp
   rw [← Finset.sum_fiberwise Finset.univ InfinitePlace.mk]
-  conv_lhs => rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [e, map_sum]
   refine Finset.sum_congr rfl fun w _ => ?_
   have hne : w.embedding ≠ ComplexEmbedding.conjugate w.embedding := fun h =>
     InfinitePlace.not_isReal_iff_isComplex.2 (IsTotallyComplex.isComplex w)
@@ -47,13 +53,14 @@ private theorem scalarDecomp {E : Type} [Field E] [NumberField E] [IsTotallyComp
   match_scalars <;> ring
 
 theorem UpperTheory.V.AlgRepEndIrreducible.lieDecomp :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (N : Type) [AddCommGroup N] [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N] (L : Lie E a →ₗ[ℝ] N) (X : Matrix (Fin a) (Fin a) (Cinf E)),
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (N : Type) [AddCommGroup N] [Module ℂ N] [Module ℝ N] [IsScalarTower ℝ ℂ N] (L : Lie E a →ₗ[ℝ] N) (X : Matrix (Fin a) (Fin a) (Cinf E)),
       L (toL X) = ∑ τ : E →+* ℂ, hol τ L (X.map (coord τ)) := by
   intro E _ _ _ a N _ _ _ _ L X
   let L' : Matrix (Fin a) (Fin a) (Cinf E) →ₗ[ℝ] N := L
   change L' X = _
   conv_lhs => rw [Matrix.matrix_eq_sum_single X]
-  simp only [map_sum, hol_apply, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hol_apply, Matrix.map_apply]
   rw [Finset.sum_comm]
   conv_rhs => rw [Finset.sum_comm]
   rw [Finset.sum_comm]

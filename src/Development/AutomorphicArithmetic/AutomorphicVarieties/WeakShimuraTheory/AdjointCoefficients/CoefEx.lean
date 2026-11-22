@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -53,7 +57,7 @@ theorem UpperTheory.V.Ws.X1.coefEx :
     obtain ⟨a, ha⟩ := hex x hx
     obtain ⟨b, hb⟩ := hex y hy
     rw [hco x hx a ha, hco y hy b hb, hco (x + y) (K.add_mem hx hy) (a + b)
-      (by rw [ha, hb, ← Finset.sum_add_distrib]; simp [add_smul]), Pi.add_apply, map_add]
+      (by rw [ha, hb, ← Finset.sum_add_distrib]; simp [add_smul]), Pi.add_apply, map_add (f := _)]
   · intro u c x hx
     obtain ⟨a, ha⟩ := hex x hx
     obtain ⟨l, hl⟩ := hsc c

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnramifiedOfIsCMUnram
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnramifiedOfIsCMUnram
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 open scoped Matrix ComplexConjugate
@@ -73,7 +77,8 @@ theorem det_eq_norm_mul : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   exact det_eq_of_matrix hr (fun a b => W₁.herm.eq (W₁.frame b) (W₁.frame a))
     (fun a b => W₂.herm.eq (W₂.frame b) (W₂.frame a))
     (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit W₁).ne_zero (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit W₂).ne_zero
-    (isLattice_coordLat W₁ W₁.L0 W₁.standardTuple_isLattice) (isLattice_coordLat W₂ W₂.L0 W₂.standardTuple_isLattice)
+    (isLattice_coordLat W₁ W₁.L0 W₁.standardTuple_isLattice W₁.baseLattice_isUnimodular)
+    (isLattice_coordLat W₂ W₂.L0 W₂.standardTuple_isLattice W₂.baseLattice_isUnimodular)
     (selfDual_coordLat W₁ W₁.L0 W₁.baseLattice_isUnimodular) (selfDual_coordLat W₂ W₂.L0 W₂.baseLattice_isUnimodular)
     fun τ => ⟨_, _, h₁ τ, hs τ ▸ h₂ τ⟩
 

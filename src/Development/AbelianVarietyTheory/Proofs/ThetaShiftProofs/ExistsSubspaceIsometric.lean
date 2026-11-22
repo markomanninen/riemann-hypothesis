@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArcModelWitnessExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNeZeroIff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsDerivAt0NotIsDerivAlong
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsBigOPowIffIteratedFDerivEqZero
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCharacterRatioExpMulStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusCoordinateRatioDifferentiableAtOriginStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TangentVectorPowScaleInvEqStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FderivTorusCoordinateRatioEqZeroOfTangentStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusCoordinateRatioEqTorusCoordOverOriginStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsLinearLiftAdditiveHolomorphicAbelianStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsEntireUnitAppellHumbertFrameRatioStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FactorCommutatorEqOfNonvanishingStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaCharOffNeZeroDifferentiableQuasiPeriodicStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MemRealSpanPeriodsOfCharacterKernelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ArcModelWitnessExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsNeZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsDerivAt0NotIsDerivAlong
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsBigOPowIffIteratedFDerivEqZero
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertTrivialOfNowhereVanishing
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsCharacterRatioExpMulStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusCoordinateRatioDifferentiableAtOriginStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TangentVectorPowScaleInvEqStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FderivTorusCoordinateRatioEqZeroOfTangentStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusCoordinateRatioEqTorusCoordOverOriginStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsLinearLiftAdditiveHolomorphicAbelianStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsEntireUnitAppellHumbertFrameRatioStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FactorCommutatorEqOfNonvanishingStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaCharOffNeZeroDifferentiableQuasiPeriodicStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.MemRealSpanPeriodsOfCharacterKernelStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames CategoryTheory.MonObj GlobalTheory.AbelianLetters
@@ -36,7 +40,8 @@ theorem mulVec_period {g : ℕ} (h τ : Matrix (Fin g) (Fin g) ℂ) (p : (Fin g 
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hu]
-  rw [map_sum, Matrix.mulVec_sum, Fintype.sum_sum_type, e fun i => u (.inl i), e fun i => u (.inr i), Matrix.mulVec_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Matrix.mulVec_sum, Fintype.sum_sum_type, e fun i => u (.inl i), e fun i => u (.inr i), Matrix.mulVec_sum]
   simp only [map_zsmul, Matrix.mulVec_smul, (hp _).1, (hp _).2]
 
 theorem surjective_mulVec {g : ℕ} (h : Matrix (Fin g) (Fin g) ℂ) (e : Fin g → Fin g → ℂ)
@@ -58,8 +63,8 @@ theorem re_hermForm_eq {g g' : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (Hm' : Mat
     | mem_mem p q hp hq => exact hs p hp q hq
     | zero_left y _ => simp [hermForm]
     | zero_right y _ => simp [hermForm]
-    | add_left x y z _ _ _ h₁ h₂ => simp only [map_add, hermForm_add_left, Complex.add_im, h₁, h₂]
-    | add_right x y z _ _ _ h₁ h₂ => simp only [map_add, hermForm_add_right, Complex.add_im, h₁, h₂]
+    | add_left x y z _ _ _ h₁ h₂ => simp only [map_add (f := _), hermForm_add_left, Complex.add_im, h₁, h₂]
+    | add_right x y z _ _ _ h₁ h₂ => simp only [map_add (f := _), hermForm_add_right, Complex.add_im, h₁, h₂]
     | smul_left r x y _ _ h =>
       rw [← Complex.coe_smul, map_smul, hermForm_smul_left, hermForm_smul_left, Complex.im_ofReal_mul,
         Complex.im_ofReal_mul, h]
@@ -73,7 +78,7 @@ theorem re_hermForm_eq {g g' : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (Hm' : Mat
 noncomputable def piHerm {g g' : ℕ} (Hm : Matrix (Fin g') (Fin g') ℂ) (F : (Fin g → ℂ) →ₗ[ℂ] (Fin g' → ℂ)) (l : Fin g' → ℂ) :
     (Fin g → ℂ) →ₗ[ℂ] ℂ where
   toFun z := Real.pi * hermForm Hm (F z) l
-  map_add' x y := by rw [map_add, hermForm_add_left, mul_add]
+  map_add' x y := by rw [map_add (f := _), hermForm_add_left, mul_add]
   map_smul' t x := by rw [map_smul, hermForm_smul_left, RingHom.id_apply, smul_eq_mul]; ring
 
 noncomputable def dotForm {g : ℕ} (h : Matrix (Fin g) (Fin g) ℂ) (n : Fin g → ℂ) : (Fin g → ℂ) →ₗ[ℂ] ℂ where

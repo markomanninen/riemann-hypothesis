@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegralStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.RelatedPairsOrbitalTermEq
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegralStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem mem_of_isFreeOn (ρ : 𝓞 E →+* Module.End K V) (X : Submodule A V) {
     (h : IsFreeOn ρ X t) (i : Fin N) : t i ∈ X := by
   have h1 : t i = ∑ k, (RingOfIntegers.basis E).repr 1 k • ρ (RingOfIntegers.basis E k) (t i) := by
     have := congrArg (fun a => ρ a (t i)) ((RingOfIntegers.basis E).sum_repr 1)
-    simp only [map_sum, map_zsmul, map_one, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, map_one, LinearMap.sum_apply, LinearMap.smul_apply,
       Module.End.one_apply] at this
     exact this.symm
   rw [h1, h.2.2]
@@ -129,7 +134,8 @@ theorem eigSub_eq_different_smul_eigQuot : ∀ (A K : Type) [CommRing A] [Field 
     rw [hQ]
     refine Submodule.sum_mem _ fun i _ => ?_
     have h5 : y i = algebraMap A K (∑ k, u k * c (i, k)) := by
-      rw [map_sum, ← mul_one (y i), ← hu, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← mul_one (y i), ← hu, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, h4]
       ring

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.Imports
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Imports
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
+
 open scoped UpperHalfPlane MatrixGroups Manifold
 open GlobalTheory.Sieg GlobalTheory.QFam
 
@@ -44,7 +49,7 @@ lemma E_split {q : ℂ} (hq : ‖q‖ < 1) {m : ℕ} (hm : 0 < m) (u : ℂ) :
     ∏ j ∈ range m, E (q ^ m) (q ^ j * u) = E q u := by
   have hqm : ‖q ^ m‖ < 1 := by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg _) hq hm.ne'
   have h1 := (E_tend hq u).comp (tendsto_id.const_mul_atTop' hm)
-  have h2 := tendsto_finset_prod (range m) fun j _ => E_tend hqm (q ^ j * u)
+  have h2 := tendsto_finsetProd (range m) fun j _ => E_tend hqm (q ^ j * u)
   refine tendsto_nhds_unique (h2.congr fun N => ?_) h1
   simp only [Function.comp, id]
   induction N with

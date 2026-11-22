@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdSy
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdSy
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+
+@[expose] public section
 
 noncomputable section
 

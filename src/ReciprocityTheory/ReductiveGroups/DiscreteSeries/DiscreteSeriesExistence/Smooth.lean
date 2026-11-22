@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothA
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,18 +25,19 @@ theorem exists_smoothDerived (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) 
             Complex.I • dS σ (S7.cpart2 ε (Matrix.single a b 1)) v) ∧
         IsDerivedOn ε σ D E) := by
   classical
+  let D := SmDerA.smSub (ε := ε) (σ := σ)
   by_cases hσ : IsURepOn (UJset ε) σ
-  · refine ⟨SmDerA.smSub ε σ, fun a b => SmDerA.EcL hσ (Matrix.single a b 1), fun v => Iff.rfl,
+  · refine ⟨D, fun a b => SmDerA.EcL hσ (Matrix.single a b 1), fun v => Iff.rfl,
       fun _ => ⟨?_, ?_⟩⟩
     · intro v a b
-      show ((SmDerA.EcL hσ (Matrix.single a b 1) v : SmDerA.smSub ε σ) : H) = _
+      show ((SmDerA.EcL hσ (Matrix.single a b 1) v : D) : H) = _
       rw [SmDerA.EcL_apply, LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add,
         Submodule.coe_smul, SmDerA.Tm_apply hσ (SmDerA.inG_cpart1 ε _),
         SmDerA.Tm_apply hσ (SmDerA.inG_cpart2 ε _)]
     · refine ⟨SmDerA.EcL_glRep hσ, fun k hk v hv => IsSmoothVecU.kStable hσ hk hv, fun X hX v => ?_⟩
       rw [SmDerA.actM_EcL hσ X, SmDerA.EcL_inG hσ hX, SmDerA.Tm_apply hσ hX]
       exact hasDerivAt_dS hσ hX v.2
-  · exact ⟨SmDerA.smSub ε σ, fun _ _ => 0, fun v => Iff.rfl, fun h => absurd h hσ⟩
+  · exact ⟨D, fun _ _ => 0, fun v => Iff.rfl, fun h => absurd h hσ⟩
 
 def smD (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) : Submodule ℂ H :=
   (exists_smoothDerived ε σ).choose

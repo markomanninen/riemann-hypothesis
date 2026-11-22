@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SupportFreeOfBlockSubstInvariant
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SupportFreeOfBlockSubstInvariant
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -31,7 +35,7 @@ private theorem eq_of_aeval_block_zero_eq {D N : ℕ} (P Q : KTp K D N)
     induction R using MvPolynomial.induction_on
     · simp
     · rename_i p q hp hq
-      simp only [map_add, hp, hq]
+      simp only [map_add (f := _), hp, hq]
     · rename_i p v hp
       simp only [map_mul, MvPolynomial.aeval_X]
       rw [hp]
@@ -133,7 +137,8 @@ private theorem sH_comp_eq_of_X_eq (hd : d.AxH 𝒜) (h : d.S1)
     e M.det = (e : KTf K d.D d.N →+* KTf K d.D d.N) M.det from fun _ => rfl, RingHom.map_det]
   congr 1
   ext k l
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum,
     RingEquiv.coe_toRingHom]
   refine Finset.sum_congr rfl fun c _ => ?_
   obtain ⟨τ, hτ⟩ : ∃ τ : OmS (Ω c) d.D d.N ≃+* OmS (Ω c) d.D d.N,
@@ -164,7 +169,7 @@ private theorem sH_comp_eq_of_X_eq (hd : d.AxH 𝒜) (h : d.S1)
     · rename_i a
       rw [← MvPolynomial.algebraMap_eq, AlgEquiv.commutes, AlgHom.commutes, hK]
     · rename_i p q hp hq
-      simp only [map_add, hp, hq]
+      simp only [map_add (f := _), hp, hq]
     · rename_i p v hp
       simp only [map_mul, hp, hXc v]
   have hL : ∀ q : KTp K d.D d.N,
@@ -221,7 +226,7 @@ theorem de_pres (hd : d.AxH 𝒜) (h : d.S1) : ∃ a b : KTp K d.D d.N, d.IsPres
       rw [show d.sH c (MvPolynomial.C a) = algebraMap K (OmS (Ω c) d.D d.N) a from
         MvPolynomial.aeval_C _ _, hKC, MvPolynomial.aeval_C, MvPolynomial.algebraMap_apply]
     · rename_i p q hp hq
-      simp only [map_add, hp, hq]
+      simp only [map_add (f := _), hp, hq]
     · rename_i p v hp
       rw [map_mul (d.sH c), hp]
       simp only [map_mul, MvPolynomial.aeval_X]

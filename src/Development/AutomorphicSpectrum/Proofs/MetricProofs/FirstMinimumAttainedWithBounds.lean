@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
 
@@ -22,8 +27,8 @@ theorem abs_form_le (him : ∀ x y, ((f x y : ℤ) : ℝ) = (inner ℂ (p y) (p 
   rw [him, mul_comm]
   exact (Complex.abs_im_le_norm _).trans (norm_inner_le_norm _ _)
 
-include p in
 
+include p in
 theorem finite_short [Module.Free ℤ L] [Module.Finite ℤ L]
     (him : ∀ x y, ((f x y : ℤ) : ℝ) = (inner ℂ (p y) (p x)).im) (hu : Function.Surjective f) (T : ℝ) :
     {x : L | ‖p x‖ < T}.Finite := by
@@ -60,7 +65,7 @@ theorem finite_short [Module.Free ℤ L] [Module.Finite ℤ L]
 
 theorem period_injective (him : ∀ x y, ((f x y : ℤ) : ℝ) = (inner ℂ (p y) (p x)).im)
     (hi : Function.Injective f) : Function.Injective p := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   apply hi
   rw [map_zero]
@@ -194,7 +199,7 @@ theorem exists_mul_eq_int {a : 𝓞 E} (ha : a ≠ 0) : ∃ (c : 𝓞 E) (N : �
   exact_mod_cast this
 
 theorem ringHom_injective (s : 𝓞 E →+* ℂ) : Function.Injective s := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h
   obtain ⟨c, N, hN, hc⟩ := exists_mul_eq_int h
@@ -326,7 +331,7 @@ theorem form_all_eq_zero (R : RiemLat E g Λ) {vr : ℝ} (hvr : 0 < vr)
       obtain ⟨N₁, b₁, hN₁, hb₁, hf₁⟩ := h₁
       obtain ⟨N₂, b₂, hN₂, hb₂, hf₂⟩ := h₂
       refine ⟨N₁ * N₂, (N₂ : 𝓞 E) * b₁ + (N₁ : 𝓞 E) * b₂, mul_ne_zero hN₁ hN₂, ?_, ?_⟩
-      · rw [map_add, map_mul, map_mul, map_intCast, map_intCast, hb₁, hb₂]
+      · rw [map_add (f := _), map_mul, map_mul, map_intCast, map_intCast, hb₁, hb₂]
         push_cast
         ring
       · rw [add_smul, mul_smul, mul_smul, Int.cast_smul_eq_zsmul, Int.cast_smul_eq_zsmul]
@@ -395,7 +400,7 @@ theorem exists_subspace (R : RiemLat E g Λ) {Ψ : Type} [Fintype Ψ] [Nonempty 
     have hw : LinearIndependent ℂ w := LinearIndependent.of_comp (eigSp R.B (σ τ₀)).subtype hC
     have := hw.fintype_card_le_finrank
     rw [(hs τ₀).1] at this
-    simpa using this
+    simpa only [Fintype.card_fin] using this
   let b := Module.Free.chooseBasis ℤ (𝓞 E)
   let fam : Module.Free.ChooseBasisIndex ℤ (𝓞 E) × Fin r → Tan R := fun q => per R (b q.1 • v q.2)
   let W : Submodule ℝ (Tan R) := Submodule.span ℝ (Set.range fam)
@@ -405,7 +410,8 @@ theorem exists_subspace (R : RiemLat E g Λ) {Ψ : Type} [Fintype Ψ] [Nonempty 
   have hbase : ∀ (a : 𝓞 E) (i : Fin r), per R (a • v i) ∈ W := by
     intro a i
     have ha : a = ∑ k, (b.repr a k) • b k := (b.sum_repr a).symm
-    rw [ha, Finset.sum_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ha, Finset.sum_smul, map_sum]
     refine W.sum_mem fun k _ => ?_
     rw [smul_assoc, map_zsmul]
     exact hzs _ _ (Submodule.subset_span ⟨(k, i), rfl⟩)
@@ -418,7 +424,7 @@ theorem exists_subspace (R : RiemLat E g Λ) {Ψ : Type} [Fintype Ψ] [Nonempty 
     | zero => simp
     | add y₁ y₂ _ _ h₁ h₂ =>
       intro a
-      rw [smul_add, map_add]
+      rw [smul_add, map_add (f := _)]
       exact W.add_mem (h₁ a) (h₂ a)
     | smul c y _ h =>
       intro a

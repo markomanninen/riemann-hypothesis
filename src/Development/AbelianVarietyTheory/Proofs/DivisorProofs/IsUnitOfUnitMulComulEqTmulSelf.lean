@@ -1,10 +1,15 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
 
-open TensorProduct in
 
+open TensorProduct in
 theorem isUnit_of_unit_mul_comul_eq_tmul_self (K H : Type) [Field K] [CommRing H] [HopfAlgebra K H]
     (c : H ⊗[K] H) (hc : IsUnit c) (u : H) (hu : u ≠ 0)
     (h : c * Coalgebra.comul (R := K) u = u ⊗ₜ[K] u) : IsUnit u := by
@@ -32,7 +37,7 @@ theorem isUnit_of_unit_mul_comul_eq_tmul_self (K H : Type) [Field K] [CommRing H
     induction Coalgebra.comul (R := K) u using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [ψ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hψuu : ψ (u ⊗ₜ[K] u) = u * HopfAlgebra.antipode K u := by
     simp [ψ]
   have e := congrArg ψ h

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SummableLogAlpD
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdConvOfVolLocPos
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SummableLogAlpD
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdConvOfVolLocPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,7 @@ private theorem exp_bounds_prod_one_sub_pow_div (q η : ℝ) (hq : 2 ≤ q) (hη
           linarith
       _ = ∏ i ∈ Finset.Icc a N, Real.exp (-(2 * q⁻¹ ^ i)) := Real.exp_sum _ _
       _ ≤ ∏ i ∈ Finset.Icc a N, (1 - η ^ i / q ^ i) :=
-          Finset.prod_le_prod (fun i _ => (Real.exp_pos _).le) hfac
+          Finset.prod_le_prod₀ (fun i _ => (Real.exp_pos _).le) hfac
   · have hfac : ∀ i ∈ Finset.Icc a N, 1 - η ^ i / q ^ i ≤ Real.exp (q⁻¹ ^ i) := by
       intro i _
       have := (abs_le.mp (le_of_eq (hterm i))).1
@@ -96,7 +100,7 @@ private theorem exp_bounds_prod_one_sub_pow_div (q η : ℝ) (hq : 2 ≤ q) (hη
       have hy : q⁻¹ ^ i ≤ 1 := pow_le_one₀ hx0 (by linarith)
       linarith
     calc ∏ i ∈ Finset.Icc a N, (1 - η ^ i / q ^ i)
-        ≤ ∏ i ∈ Finset.Icc a N, Real.exp (q⁻¹ ^ i) := Finset.prod_le_prod hnn hfac
+        ≤ ∏ i ∈ Finset.Icc a N, Real.exp (q⁻¹ ^ i) := Finset.prod_le_prod₀ hnn hfac
       _ = Real.exp (∑ i ∈ Finset.Icc a N, q⁻¹ ^ i) := (Real.exp_sum _ _).symm
       _ ≤ Real.exp (2 * q⁻¹ ^ k) := Real.exp_le_exp.mpr hsum
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdRFJCoe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProperTriple
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricDoubleIntegralFiniteCombination
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdRFJCoe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProperTriple
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricDoubleIntegralFiniteCombination
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl ValuativeRel
 open GlobalTheory.PosOne (toOne Covers TriPos)
@@ -40,8 +45,10 @@ theorem finite_on_compacts_prodRFJ : ∀ (k : Type) [Field k] [ValuativeRel k] [
   by_cases hf : AEMeasurable (prodRFJ (k := k) (n := n) (c := c) ρ) M
   · rw [Measure.map_apply_of_aemeasurable hf hK.isClosed.measurableSet]
     exact (measure_mono hsub).trans_lt hD2.measure_lt_top
-  · rw [Measure.map_of_not_aemeasurable hf]
-    simp
+  · by_cases hzero : M = 0
+    · simp [hzero]
+    · rw [Measure.map_of_not_aemeasurable_of_ne_zero hf hzero]
+      exact measure_lt_top _ _
 
 end GlobalTheory.HaarR
 end

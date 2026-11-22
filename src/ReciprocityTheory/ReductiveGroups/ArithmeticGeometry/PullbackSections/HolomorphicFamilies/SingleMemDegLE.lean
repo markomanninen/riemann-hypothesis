@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,12 +20,12 @@ variable {V : Type} [CommRing V]
 
 theorem aeval_tan {ι : Type} [DecidableEq ι] (ℓ : ι) (P : MvPolynomial ι V) :
     aeval (fun i => if i = ℓ then (DualNumber.eps : DualNumber V) else 0) P =
-      algebraMap V (DualNumber V) (constantCoeff P) + coeff (Finsupp.single ℓ 1) P • DualNumber.eps := by
+      algebraMap V (DualNumber V) (constantCoeff P) + AddMonoidAlgebra.coeff P (Finsupp.single ℓ 1) • DualNumber.eps := by
   induction P using MvPolynomial.induction_on with
   | C a =>
     simp only [MvPolynomial.aeval_C, MvPolynomial.constantCoeff_C, MvPolynomial.coeff_C,
       if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm, zero_smul, add_zero]
-  | add p q hp hq => rw [map_add, hp, hq, map_add, map_add, MvPolynomial.coeff_add, add_smul]; abel
+  | add p q hp hq => rw [map_add (f := _), hp, hq, map_add (f := _), map_add (f := _), MvPolynomial.coeff_add, add_smul]; abel
   | mul_X p n hp =>
     rw [map_mul, hp, MvPolynomial.aeval_X, map_mul, MvPolynomial.constantCoeff_X, mul_zero, map_zero, zero_add,
       MvPolynomial.coeff_mul_X']
@@ -34,7 +38,7 @@ theorem aeval_tan {ι : Type} [DecidableEq ι] (ℓ : ι) (P : MvPolynomial ι V
       simp [h, this]
 
 theorem coeff_psTrunc {ι : Type} [Fintype ι] [DecidableEq ι] (m : ℕ) (f : MvPowerSeries ι V) (e : ι →₀ ℕ)
-    (he : e ∈ degLE m) : coeff e (psTrunc m f) = MvPowerSeries.coeff e f := by
+    (he : e ∈ degLE m) : AddMonoidAlgebra.coeff (psTrunc m f) e = MvPowerSeries.coeff e f := by
   simp [psTrunc, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, he]
 
 theorem single_mem_degLE {ι : Type} [Fintype ι] [DecidableEq ι] (ℓ : ι) : Finsupp.single ℓ 1 ∈ degLE (ι := ι) 1 := by

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.AnalyticTransOfAdd
+
+@[expose] public section
 
 open PowerSeries
 
@@ -114,8 +118,8 @@ end EtPowerP
 
 open Formalism.L2.Th1.E EtPowerP
 
-open Classical in
 
+open Classical in
 theorem etPower_of (h : UnitKerInt) : EtPower := by
   intro dK L hsq hd hCM p _ ι hp2 hpd hW α t M hα hαu hαt ht hM hMt
   classical

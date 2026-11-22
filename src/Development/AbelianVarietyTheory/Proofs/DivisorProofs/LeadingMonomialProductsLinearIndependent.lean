@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IndCount
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.JetsPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.DivStatementPfLE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.IndCount
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.JetsPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.DivStatementPfLE
+
+@[expose] public section
+
 open NumberField Module ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds GlobalTheory.ShareOn
 
 namespace GlobalTheory.JetIndepAtPts
@@ -43,12 +48,13 @@ theorem coeff_zero {n : ℕ} (A : Finset (Fin n → ℕ)) (b : (Fin n → ℕ) �
   have hp : p = 0 := by
     apply MvPolynomial.funext
     intro y
-    rw [hpdef, map_sum, map_zero, ← h y]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hpdef, map_sum, map_zero, ← h y]
     refine Finset.sum_congr rfl fun α _ => ?_
     rw [MvPolynomial.eval_monomial, Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
     simp
   intro α hα
-  have := congrArg (MvPolynomial.coeff (Finsupp.equivFunOnFinite.symm α)) hp
+  have := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm α)) hp
   rw [hpdef, MvPolynomial.coeff_sum, MvPolynomial.coeff_zero] at this
   rw [Finset.sum_eq_single α] at this
   · simpa [MvPolynomial.coeff_monomial] using this

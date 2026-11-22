@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.SpecialiseGenericMatrixInverse
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.SpecialiseGenericMatrixInverse
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,7 +168,8 @@ theorem twist_exponents_are_weight_entries : TwistExponentsAreWeightEntries := b
     intro m
     rw [hPdef]
     conv_lhs => rw [H.as_sum]
-    simp only [map_sum, MvPolynomial.map_monomial,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, MvPolynomial.map_monomial,
       torus_acts_through_weight (GLLaurent R n) (GLLaurent R n) ι LL n S (RingHom.id _) D, RingHom.id_apply, hprod,
       MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial]
     rw [Finset.sum_ite_eq']

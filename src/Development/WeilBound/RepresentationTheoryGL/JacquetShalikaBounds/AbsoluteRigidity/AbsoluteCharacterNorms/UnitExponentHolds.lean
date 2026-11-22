@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,19 +15,19 @@ namespace PositivityTheory.RgJS
 
 namespace UnitExponent
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 def nu (E : Type) [Field E] [NumberField E] (s : ℝ) : HChar E :=
   ⟨(GlobalTheory.Mem.Chr.CharModel.absChar E s).1, (GlobalTheory.Mem.Chr.CharModel.absChar E s).2⟩
 
-def zc (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (t : ℝ) :=
+def zc (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (t : ℝ) :=
   infId E (expU fun _ : InfinitePlace E => (t : ℂ))
 
 theorem zc_add (s t : ℝ) : zc E (s + t) = zc E s * zc E t := by
   unfold zc
   rw [← map_mul, ← expU_add]
   congr 2
-  funext w
+  funext x
   simp
 
 theorem continuous_zc : Continuous (zc E) := by

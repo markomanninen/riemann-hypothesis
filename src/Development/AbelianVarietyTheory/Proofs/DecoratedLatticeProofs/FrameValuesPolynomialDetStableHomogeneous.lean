@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeylDeterminantTwistTensorFiniteDimensionalStablStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.KJInf Formalism.L2.Forms GlobalTheory.SeeSaw
 open scoped TensorProduct
@@ -37,7 +42,7 @@ theorem evalAt_lft (g y : ι → Matrix (Fin a) (Fin a) ℂ) (F : PY ι a) :
     evalAt y (lft g F) = evalAt (fun τ => g τ * y τ) F := by
   induction F using MvPolynomial.induction_on with
   | C c => simp [evalAt, lft]
-  | add p q hp hq => simp only [evalAt, map_add] at *; rw [hp, hq]
+  | add p q hp hq => simp only [evalAt, map_add (f := _)] at *; rw [hp, hq]
   | mul_X p v hp =>
     simp only [evalAt, map_mul] at *
     rw [hp]
@@ -156,7 +161,7 @@ theorem evalAt_scale_cSpan (lam : ι → DomWeight a) (z : ι → ℂ) (y y' : �
       simp [hy τ]
     rw [e, eval_smul_of_isHomogeneous (isHomogeneous_of_mem_delSq (lam τ) (hf τ))]
   | zero => simp [evalAt_eq]
-  | add p q _ _ hp hq => simp only [evalAt_eq, map_add] at *; rw [hp, hq]; ring
+  | add p q _ _ hp hq => simp only [evalAt_eq, map_add (f := _)] at *; rw [hp, hq]; ring
   | smul c p _ hp => simp only [evalAt_eq, MvPolynomial.smul_eval] at *; rw [hp]; ring
 
 theorem valC_homog (G : ι → Matrix (Fin a) (Fin a) ℂ) (lam : ι → DomWeight a) (Φ : Frames G → ℂ) (hΦ : Φ ∈ ValC G lam)

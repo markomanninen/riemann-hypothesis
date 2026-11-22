@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ def bas : Matrix (Fin d) (Fin d) (bk.DS bk.ρ₀) := s.X.map (toDisc l (X : bk.S
 
 def Rel {B : Obj l ↥(OL K)} (u : B.A) (f g : Hom bk.prism B)
     (ε : Matrix (Fin d) (Fin d) (Disc l u bk.ρ₀)) : Prop :=
-  ∀ Ff Fg : bk.DS bk.ρ₀ →+* Disc l u bk.ρ₀, IsDiscMap (BK.hf f) Ff → IsDiscMap (BK.hf g) Fg →
+  ∀ Ff Fg : bk.DS bk.ρ₀ →+* Disc l u bk.ρ₀, IsDiscMap (l := _) (u := _) (ρ := _) (BK.hf f) Ff → IsDiscMap (l := _) (u := _) (ρ := _) (BK.hf g) Fg →
     toDisc l u bk.ρ₀ (BK.hf g bk.E) ^ s.N • (ht.bas.map Ff * ε) =
       toDisc l u bk.ρ₀ (BK.hf f bk.E) ^ s.N • ht.bas.map Fg
 

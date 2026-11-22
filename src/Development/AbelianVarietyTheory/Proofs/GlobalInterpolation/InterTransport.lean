@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.IndexExponentDegree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EmbHInjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralDensEqZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions Formalism.L2.Th1.H GlobalTheory.ThetaMove GlobalTheory.IndefiniteRowSideFullHecke.IndexExponentDegree
 
@@ -14,7 +18,7 @@ variable {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup V'] [Module
 
 theorem opU_comp (e : V ≃ₗ[ℂ] V') {H : Sesq V} {H' : Sesq V'} (hH : ∀ x y, H' (e x) (e y) = H x y)
     (F : V' → ℂ) (x z : V) : opU H x (fun w => F (e w)) z = opU H' (e x) F (e z) := by
-  simp only [opU, hH, map_add]
+  simp only [opU, hH, map_add (f := _)]
 
 def subEquiv (e : V ≃ₗ[ℂ] V') {Λ : AddSubgroup V} {Λ' : AddSubgroup V'} (h : ∀ x, x ∈ Λ ↔ e x ∈ Λ') : Λ ≃+ Λ' where
   toFun x := ⟨e x, (h _).1 x.2⟩
@@ -54,7 +58,7 @@ theorem inter_transport : ∀ (V V' : Type) [AddCommGroup V] [Module ℂ V] [Add
       rw [hE]
       exact h _ ((h₂ y).1 hy)
   · rw [hα x hx]; exact hs.1 _ ((h₂ x).1 hx)
-  · rw [hα _ (Λ₂.add_mem hx hy), hα x hx, hα y hy, map_add, hE]
+  · rw [hα _ (Λ₂.add_mem hx hy), hα x hx, hα y hy, map_add (f := _), hE]
     exact hs.2 _ ((h₂ x).1 hx) _ ((h₂ y).1 hy)
   · rw [opU_comp e hH, hα x hx]
     exact hF _ ((h₂ x).1 hx) _

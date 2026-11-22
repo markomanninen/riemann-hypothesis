@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.LogDR
@@ -59,7 +64,7 @@ def LatModel.secEquiv {V : Type} [AddCommGroup V] [Module X.functionField V] {M 
     {F F' : X.Modules} (L : LatModel M F) (L' : LatModel M F') (U : X.Opens) (h : genericPoint X ∈ U) :
     Γ(F, U) ≃ₗ[Γ(X, U)] Γ(F', U) where
   toFun := L.transfer L' U h
-  map_add' s t := L'.inj U h (by simp only [map_add, LatModel.val_transfer])
+  map_add' s t := L'.inj U h (by simp only [map_add (f := _), LatModel.val_transfer])
   map_smul' r s := L'.inj U h (by
     simp only [RingHom.id_apply, LatModel.val_transfer, L'.smul U h, L.smul U h])
   invFun := L'.transfer L U h
@@ -76,8 +81,8 @@ theorem subsingleton_sec_of_not_gen (F : X.Modules) {U : X.Opens} (hU : genericP
   haveI : Subsingleton Γ(X, U) := ⟨fun a b => fn_ext fun h => absurd h hU⟩
   exact Module.subsingleton Γ(X, U) Γ(F, U)
 
-open Classical in
 
+open Classical in
 def LatModel.secEquiv' {V : Type} [AddCommGroup V] [Module X.functionField V] {M : X → AddSubgroup V}
     {F F' : X.Modules} (L : LatModel M F) (L' : LatModel M F') (U : X.Opens) :
     Γ(F, U) ≃ₗ[Γ(X, U)] Γ(F', U) :=

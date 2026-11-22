@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasLabelOfIsCuspOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesIdempotentMulOfMapsToParabolicInduction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DepthZeroSupercuspidalCuspidalModule
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationUnitsMapEqOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasLabelOfIsCuspOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesIdempotentMulOfMapsToParabolicInduction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DepthZeroSupercuspidalCuspidalModule
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationUnitsMapEqOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,12 +105,12 @@ theorem ser_vanish (L : LabelDatum g) (h5 : 5 ≤ g) {k l n : ℕ} (σ : Fin k �
   refine finsum_mem_induction (fun a => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) a *
     mapDomainAlgHom ℂ ℂ (inB σ) (eSerC L l f₂) * eSerC L n f = 0) (by simp) ?_ ?_
   · intro x y hx hy
-    simp only [map_add, mul_add, add_mul, hx, hy, add_zero]
+    simp only [map_add (f := _), mul_add, add_mul, hx, hy, add_zero]
   rintro α ⟨hα, hα'⟩
   refine finsum_mem_induction (fun b => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) (zOf α) *
     mapDomainAlgHom ℂ ℂ (inB σ) b * eSerC L n f = 0) (by simp) ?_ ?_
   · intro x y hx hy
-    simp only [map_add, mul_add, add_mul, hx, hy, add_zero]
+    simp only [map_add (f := _), mul_add, add_mul, hx, hy, add_zero]
   rintro β ⟨hβ, hβ'⟩
   refine finsum_mem_induction (fun c => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) (zOf α) *
     mapDomainAlgHom ℂ ℂ (inB σ) (zOf β) * c = 0) (by simp) ?_ ?_
@@ -157,7 +161,8 @@ def sysOf (L : LabelDatum g) (h5 : 5 ≤ g) (hA : AllLab L) : Sys g where
       have := congrArg (fun z => ρ.asAlgebraHom z v) hv
       simpa only [map_mul, Module.End.mul_apply, hN, hA', hB, map_zero, LinearMap.zero_apply] using this
     have e : v = ∑ F ∈ S, ρ.asAlgebraHom (eSerC L (a + b) F) v := by
-      rw [← LinearMap.sum_apply, ← map_sum, hS, map_one, Module.End.one_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← LinearMap.sum_apply, ← map_sum, hS, map_one, Module.End.one_apply]
     by_cases hm : f * f' ∈ S
     · rw [Finset.sum_eq_single_of_mem _ hm fun F _ hF => hz F hF] at e; exact e.symm
     · rw [Finset.sum_eq_zero fun F hF => hz F (by rintro rfl; exact hm hF)] at e; rw [e]; simp
@@ -271,8 +276,10 @@ theorem series_of_sep (S : Sys g) (a b : ℕ) (V : Type) [AddCommGroup V] [Modul
     intro m i u hu
     obtain ⟨R, hR⟩ := S.sum m
     have e : u = ∑ f ∈ R, (repK π).asAlgebraHom (mapDomainAlgHom ℂ ℂ i (S.e m f)) u := by
-      rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, hR, map_one, map_one, Module.End.one_apply]
-    rw [e, map_sum] at hu
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, hR, map_one, map_one, Module.End.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum] at hu
     obtain ⟨f, -, hf⟩ := Finset.exists_ne_zero_of_sum_ne_zero hu
     exact ⟨f, hf⟩
   obtain ⟨f₂, hf₂⟩ := hsum (inB finSumFinEquiv) _ hw0
@@ -293,8 +300,8 @@ theorem series_of_sep (S : Sys g) (a b : ℕ) (V : Type) [AddCommGroup V] [Modul
     rw [← hN, ← Module.End.mul_apply, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
       ← map_mul, vanish S _ F f₁ f₂ h12, map_zero]
 
-open GlobalTheory.SmGL GlobalTheory.PRep in
 
+open GlobalTheory.SmGL GlobalTheory.PRep in
 theorem series_prod₂ (S : Sys g) {a b : ℕ} {W W' : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup W']
     [Module ℂ W'] (σ : Representation ℂ (GL (Fin a) ℚ_[g]) W) (ρ : Representation ℂ (GL (Fin b) ℚ_[g]) W')
     (F : (ZMod g)[X]) (hF : Has S (prod₂ σ ρ) F) : ∃ f f', Has S σ f ∧ Has S ρ f' ∧ F = f * f' := by
@@ -351,10 +358,11 @@ theorem actK_map {n : ℕ} {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCom
     {π : Representation ℂ (GL (Fin n) ℚ_[g]) V} {π' : Representation ℂ (GL (Fin n) ℚ_[g]) V'} (T : V →ₗ[ℂ] V')
     (hT : ∀ x v, T (π x v) = π' x (T v)) (a : MonoidAlgebra ℂ (Gn g n)) (v : V) :
     T (actK π a v) = actK π' a (T v) := by
-  simp only [actK, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hT]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [actK, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, hT]
+
 
 open GlobalTheory.SmGL GlobalTheory.PRep in
-
 theorem has_of_isSubquotient (S : Sys g) {n : ℕ} {V V' : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup V']
     [Module ℂ V'] {π : Representation ℂ (GL (Fin n) ℚ_[g]) V} {π' : Representation ℂ (GL (Fin n) ℚ_[g]) V'}
     (hs : IsSmooth π') (h : IsSubquotient π π') {F : (ZMod g)[X]} (hF : Has S π F) : Has S π' F := by
@@ -380,8 +388,8 @@ theorem has_of_isSubquotient (S : Sys g) {n : ℕ} {V V' : Type} [AddCommGroup V
     rw [e2, map_zero, hyu] at e3
     exact e3.symm
 
-open GlobalTheory.SmGL GlobalTheory.PRep in
 
+open GlobalTheory.SmGL GlobalTheory.PRep in
 theorem series_multiProd_std (S : Sys g) {s : ℕ} : ∀ {d : Fin s → ℕ} {X : Fin s → Type}
     [∀ i, AddCommGroup (X i)] [∀ i, Module ℂ (X i)] {N : ℕ} (hd : ∑ i, d i = N)
     (σ : ∀ i, Representation ℂ (GL (Fin (d i)) ℚ_[g]) (X i)) (F : (ZMod g)[X]),
@@ -407,8 +415,8 @@ theorem series_multiProd_std (S : Sys g) {s : ℕ} : ∀ {d : Fin s → ℕ} {X 
     | zero => exact hf
     | succ i => exact hfs i
 
-open GlobalTheory.SmGL GlobalTheory.PRep in
 
+open GlobalTheory.SmGL GlobalTheory.PRep in
 theorem series_of_isSubquotient (S : Sys g) {s N : ℕ} {d : Fin s → ℕ} {X : Fin s → Type}
     [∀ i, AddCommGroup (X i)] [∀ i, Module ℂ (X i)] (e : (Σ a, Fin (d a)) ≃ Fin N)
     (σ : ∀ i, Representation ℂ (GL (Fin (d i)) ℚ_[g]) (X i)) {V : Type} [AddCommGroup V] [Module ℂ V]

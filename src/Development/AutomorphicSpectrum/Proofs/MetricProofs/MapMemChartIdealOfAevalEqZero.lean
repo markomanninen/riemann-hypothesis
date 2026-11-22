@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FiniteMinimalPrimes
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ChPrime
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_int_clear (G : MvPolynomial σ ℚ) :
     obtain ⟨n₁, F, h₁, e₁⟩ := hf
     obtain ⟨n₂, F', h₂, e₂⟩ := hg
     refine ⟨n₁ * n₂, C n₂ * F + C n₁ * F', mul_ne_zero h₁ h₂, ?_⟩
-    simp only [map_add, map_mul, map_C, e₁, e₂]
+    simp only [map_add (f := _), map_mul, map_C, e₁, e₂]
     simp only [eq_intCast, Int.cast_mul, C_mul]
     ring
   | mul_X f i hf =>

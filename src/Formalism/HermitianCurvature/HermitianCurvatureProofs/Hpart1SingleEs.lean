@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftRuleLevelPoint
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftRuleLevelPoint
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate

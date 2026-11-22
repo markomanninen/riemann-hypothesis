@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -18,8 +22,8 @@ private theorem addChar_dotProduct_eq_one_of_norm_le {F : Type} [NontriviallyNor
     _ = ‖δ‖ * R := mul_comm _ _
     _ ≤ 1 := hδ
 
-open Matrix MeasureTheory Filter Topology in
 
+open Matrix MeasureTheory Filter Topology in
 theorem _root_.GlobalTheory.JR.fourG_isLocallyConstant_of_invariant :
     ∀ (F E : Type) [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E]
       [_root_.GlobalTheory.JR.Unram F E] (r : ℕ) (M : _root_.GlobalTheory.JR.Meas r F E) (ψ : AddChar F ℂ),

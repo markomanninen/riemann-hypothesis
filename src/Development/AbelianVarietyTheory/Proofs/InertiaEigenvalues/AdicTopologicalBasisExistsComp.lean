@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -15,7 +20,7 @@ theorem TopBasis.coeff_mem_of_mem_map {S A : Type} [CommRing S] [CommRing A] {s 
       rw [mul_comm, TB.c_mul]
       exact J.mul_mem_right _ hw
     | zero => intro a; rw [mul_zero, map_zero]; exact J.zero_mem
-    | add y z _ _ hy hz => intro a; rw [mul_add, map_add]; exact J.add_mem (hy a) (hz a)
+    | add y z _ _ hy hz => intro a; rw [mul_add, map_add (f := _)]; exact J.add_mem (hy a) (hz a)
     | smul b y _ hy => intro a; rw [smul_eq_mul, ← mul_assoc]; exact hy (a * b)
   simpa using key 1
 
@@ -67,7 +72,8 @@ def TopBasis.comp {S A : Type} [CommRing S] [CommRing A] {s : S →+* A} {I : Id
       rw [Ideal.map_map] at h'
       have h'' := Ideal.mul_mem_right (TB'.b j) _ h'
       convert h'' using 1
-      rw [map_sub, map_sum, sub_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, sub_mul, Finset.sum_mul]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul]; ring

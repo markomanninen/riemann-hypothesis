@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC UpperTheory.Pbf
 
@@ -20,7 +24,7 @@ private theorem mem_basicOpen_or (T : Scheme.{0}) (a b : Γ(T, ⊤)) (h : Ideal.
   obtain ⟨x, y, hxy⟩ := Ideal.mem_span_pair.mp h1
   have hu : IsUnit (ConcreteCategory.hom (T.presheaf.germ ⊤ u trivial) (x * a) +
       ConcreteCategory.hom (T.presheaf.germ ⊤ u trivial) (y * b)) := by
-    rw [← map_add, hxy, map_one]
+    rw [← map_add (f := _), hxy, map_one]
     exact isUnit_one
   rcases IsLocalRing.isUnit_or_isUnit_of_isUnit_add hu with hx | hy
   · left

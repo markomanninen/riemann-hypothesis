@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
-import GroundTheory.LocalFields.LocalFourierChar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
+public import GroundTheory.LocalFields.LocalFourierChar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwKerIffAverage
+
+@[expose] public section
 
 noncomputable section
 

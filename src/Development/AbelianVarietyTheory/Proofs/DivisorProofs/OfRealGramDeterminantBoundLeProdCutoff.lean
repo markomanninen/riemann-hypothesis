@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmatEqLowMat
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.ExhaustionFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NmatEqLowMat
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.ExhaustionFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory GlobalTheory.IndefiniteRowSideFullHecke.ExhaustionFrames GlobalTheory.IntBall
 open scoped ENNReal Matrix
 
@@ -18,7 +23,7 @@ theorem norm_entry_le_opNorm {m n : Type} [Fintype m] [Fintype n] [DecidableEq n
   rw [hv, mul_one] at h1
   have h2 := PiLp.norm_apply_le (Matrix.toEuclideanLin Z v) a
   have h3 : (Matrix.toEuclideanLin Z v) a = Z a b := by
-    simp [v, Matrix.toEuclideanLin_apply, Matrix.mulVec_single]
+    simp [v, Matrix.toLpLin_apply, Matrix.mulVec_single]
   rw [h3] at h2
   exact h2.trans h1
 

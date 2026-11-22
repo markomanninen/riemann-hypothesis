@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.NonemptyOfFrameValues
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalTrivialisationIffNormalisedArcStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicArcAgreesAnalyticDictionaryStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.NonemptyOfFrameValues
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsRingHomLift
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalTrivialisationIffNormalisedArcStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolomorphicArcAgreesAnalyticDictionaryStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -26,9 +30,10 @@ theorem map_real_eq_zero (φ : A.V →ₗ[ℝ] ℝ) (w : ℂ) (h : ∀ n, φ (A.
   have e : ((r, 0) : A.V) =
       ∑ i, (r (b i)).re • A.Pw w (AnArc.La.mk 0 (b.coord i).toAddMonoidHom 0) := by
     refine Prod.ext (AddMonoidHom.ext fun x => ?_) ?_
-    · rw [Prod.fst_sum, AddMonoidHom.finset_sum_apply]
+    · rw [Prod.fst_sum, AddMonoidHom.finsetSum_apply]
       conv_lhs => rw [← b.sum_repr x]
-      simp only [map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul]
       refine Finset.sum_congr rfl fun i _ => ?_
       have h1 : r (b i) = ((r (b i)).re : ℂ) := Complex.ext (by simp) (by simp [hr])
       change _ = (r (b i)).re • (A.Pw w (AnArc.La.mk 0 (b.coord i).toAddMonoidHom 0)).1 x
@@ -36,14 +41,15 @@ theorem map_real_eq_zero (φ : A.V →ₗ[ℝ] ℝ) (w : ℂ) (h : ∀ n, φ (A.
       simp [mul_comm]
     · rw [Prod.snd_sum]
       simp
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   simp [h]
 
 def abLift : (Fin A.gB → ℂ) →ₗ[ℝ] A.V where
   toFun z :=
     ({ toFun := fun x => -(A.H (A.ct x) z / (2 * Complex.I))
        map_zero' := by simp
-       map_add' := fun x x' => by simp only [map_add, AnArc.H_add_left]; ring }, z)
+       map_add' := fun x x' => by simp only [map_add (f := _), AnArc.H_add_left]; ring }, z)
   map_add' z z' := by
     refine Prod.ext (AddMonoidHom.ext fun x => ?_) rfl
     change -(A.H (A.ct x) (z + z') / (2 * Complex.I)) =
@@ -69,7 +75,8 @@ theorem map_I_smul_N (φ : A.V →ₗ[ℝ] ℝ) (w : ℂ) (v : A.La) (h : ∀ la
     (hn : ∀ x, (A.T v.y x).im = (A.H (A.ct v.y) (A.ct x)).re / 2) :
     φ (Complex.I • A.N v) * w.im = -(A.be v.y v.y : ℝ) := by
   set u : A.V := A.Pw w (AnArc.La.mk v.y 0 0) - abLift A (A.ct v.y) - w.im • Complex.I • A.N v with hu
-  have h2 : u = (u.1, 0) := Prod.ext rfl (by simp [hu, abLift])
+  have hN : (A.N v).2 = 0 := rfl
+  have h2 : u = (u.1, 0) := Prod.ext rfl (by simp [hu, abLift, hN])
   have h3 : φ u = 0 := by
     rw [h2]
     refine map_real_eq_zero A φ w (fun n => by simp [h]) _ fun x => ?_
@@ -124,7 +131,7 @@ theorem normOne_of_tauCan : Known → ∀ (E : Type) [Field E] [NumberField E] [
     have h0 := hP 0 v
     have h1 := hP 1 v
     rw [Ha.Pw_eq, AnArc.Pw_apply] at h0 h1
-    simp only [zero_smul, add_zero, one_smul, map_add] at h0 h1
+    simp only [zero_smul, add_zero, one_smul, map_add (f := _)] at h0 h1
     rw [h0] at h1
     exact add_left_cancel h1
   have hNP : Ha.N v = Ha.Pw w (gam.symm (Λ.A.nn (gam v))) := by

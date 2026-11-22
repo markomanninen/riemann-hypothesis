@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsHeisTrivial
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PerfectPairingQuotients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+
+@[expose] public section
+
 open Classical GlobalTheory.FinWeil
 open scoped BigOperators
 
@@ -45,7 +50,8 @@ theorem span_translates_vacuum : ∀ {R X M : Type} [CommRing R] [AddCommGroup X
     obtain ⟨c, hc⟩ := he _ (hfix _ (hSt t ht))
     rw [(t1 _ (hSt t ht) _ f hf hu).1] at hc
     have h3 := congrArg (W t) hc
-    rw [map_sum, map_smul] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul] at h3
     have h4 : ∀ i, W t (W (f i) (W (-t) v)) = γ (w • t) (-t) • (γ t (f i) • W (f i) v) := by
       intro i
       rw [h.comm, h.comp t (-t), add_neg_cancel, h.zero, map_smul, smul_comm]

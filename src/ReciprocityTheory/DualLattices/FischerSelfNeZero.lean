@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.WtGtRowSubstXSub
+module
+
+public import ReciprocityTheory.DualLattices.WtGtRowSubstXSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {ν : ℕ} {ι : Type*}
 theorem fischer_self_ne_zero (P : MvPolynomial (Fin ν × ι) ℂ) (hP : P ≠ 0) : fischer P P ≠ 0 := by
   intro h0
   have hsum : fischer P P = ((∑ A ∈ P.support,
-      ‖coeff A P‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) : ℝ) : ℂ) := by
+      ‖AddMonoidAlgebra.coeff P A‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) : ℝ) : ℂ) := by
     unfold fischer
     rw [Finset.union_self]
     push_cast
@@ -24,15 +28,15 @@ theorem fischer_self_ne_zero (P : MvPolynomial (Fin ν × ι) ℂ) (hP : P ≠ 0
     ring
   have hne : P.support.Nonempty :=
     Finset.nonempty_iff_ne_empty.mpr (fun h => hP (MvPolynomial.support_eq_empty.mp h))
-  have hpos : 0 < ∑ A ∈ P.support, ‖coeff A P‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) := by
+  have hpos : 0 < ∑ A ∈ P.support, ‖AddMonoidAlgebra.coeff P A‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) := by
     refine Finset.sum_pos (fun A hA => ?_) hne
-    have h1 : coeff A P ≠ 0 := MvPolynomial.mem_support_iff.mp hA
+    have h1 : AddMonoidAlgebra.coeff P A ≠ 0 := MvPolynomial.mem_support_iff.mp hA
     have h2 : 0 < ((A.prod fun _ e => e.factorial : ℕ) : ℝ) := by
       exact_mod_cast Finset.prod_pos fun _ _ => Nat.factorial_pos _
-    have h3 : 0 < ‖coeff A P‖ ^ 2 := by positivity
+    have h3 : 0 < ‖AddMonoidAlgebra.coeff P A‖ ^ 2 := by positivity
     positivity
   rw [hsum] at h0
-  have h4 : (∑ A ∈ P.support, ‖coeff A P‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) : ℝ) = 0 := by
+  have h4 : (∑ A ∈ P.support, ‖AddMonoidAlgebra.coeff P A‖ ^ 2 * ((A.prod fun _ e => e.factorial : ℕ) : ℝ) : ℝ) = 0 := by
     exact_mod_cast h0
   linarith
 
@@ -41,7 +45,8 @@ theorem rowSubst_mul (g h : Matrix (Fin ν) (Fin ν) ℂ) (P : MvPolynomial (Fin
   have key : (rowSubst (ι := ι) h).comp (rowSubst g) = rowSubst (h * g) := by
     apply MvPolynomial.algHom_ext
     intro p
-    simp only [AlgHom.comp_apply, rowSubst, MvPolynomial.aeval_X, map_sum, map_mul, MvPolynomial.aeval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, rowSubst, MvPolynomial.aeval_X, map_sum, map_mul, MvPolynomial.aeval_C,
       MvPolynomial.algebraMap_eq, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul, MvPolynomial.C_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun l _ => ?_

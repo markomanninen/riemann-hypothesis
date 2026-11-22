@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.CoordsAlg
@@ -10,10 +15,6 @@ noncomputable def cotFun {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (I
       rw [← Ideal.toCotangent_eq_zero]
       exact (Submodule.Quotient.mk_eq_zero _).mpr hx) ∘ₗ
     (Submodule.Quotient.restrictScalarsEquiv R (I • ⊤ : Submodule A I)).symm.toLinearMap
-
-theorem cotFun_toCotangent {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (I : Ideal A)
-    (f : I →ₗ[R] R) (hf : ∀ x : I, (x : A) ∈ I ^ 2 → f x = 0) (x : I) :
-    cotFun I f hf (I.toCotangent x) = f x := rfl
 
 theorem coords_of_derivation_basis : ∀ (R A : Type) [CommRing R] [IsLocalRing R] [CommRing A] [IsLocalRing A] [IsNoetherianRing A] [Algebra R A] (e : A →+* R), (∀ r, e (algebraMap R A r) = r) → Module.Free R (RingHom.ker e).Cotangent → Module.Finite R (RingHom.ker e).Cotangent → ∀ (n : ℕ) (dv : Fin n → A → R), (∀ a x y, dv a (x + y) = dv a x + dv a y) → (∀ a x y, dv a (x * y) = e x * dv a y + e y * dv a x) → (∀ a r, dv a (algebraMap R A r) = 0) → (∀ D : A → R, (∀ x y, D (x + y) = D x + D y) → (∀ x y, D (x * y) = e x * D y + e y * D x) → (∀ r, D (algebraMap R A r) = 0) → ∃! c : Fin n → R, ∀ x, D x = ∑ a, c a * dv a x) → ∃ z : Fin n → A, (∀ i, e (z i) = 0) ∧ (∀ a i, dv a (z i) = if a = i then 1 else 0) ∧ maximalIdeal A = (maximalIdeal R).map (algebraMap R A) ⊔ Ideal.span (Set.range z) := by
   intro R A _ _ _ _ _ _ e he hfree hfin n dv hadd hmul halg huniq
@@ -66,7 +67,7 @@ theorem coords_of_derivation_basis : ∀ (R A : Type) [CommRing R] [IsLocalRing 
     let D : A → R := fun x => φ (I.toCotangent ⟨_, hdec x⟩)
     have Dadd : ∀ x y, D (x + y) = D x + D y := by
       intro x y
-      simp only [D, ← map_add]
+      simp only [D, ← map_add (f := _)]
       congr 2
       ext; simp; ring
     have Dalg : ∀ r, D (algebraMap R A r) = 0 := by
@@ -87,7 +88,7 @@ theorem coords_of_derivation_basis : ∀ (R A : Type) [CommRing R] [IsLocalRing 
           Ideal.pow_le_self two_ne_zero hsq⟩ = 0 := (I.toCotangent_eq_zero _).2 hsq
       simp only [D]
       rw [key]
-      simp only [map_add, LinearMap.map_smul_of_tower, hw0,
+      simp only [map_add (f := _), LinearMap.map_smul_of_tower, hw0,
         map_zero, add_zero, map_smul, smul_eq_mul]
     obtain ⟨c, hc, -⟩ := huniq D Dadd Dmul Dalg
     refine ⟨c, ?_⟩
@@ -142,7 +143,8 @@ theorem coords_of_derivation_basis : ∀ (R A : Type) [CommRing R] [IsLocalRing 
       have hr : x - s ∈ I := I.sub_mem hx hsI'
       have hdr : ∀ b, dv b (x - s) = 0 := by
         intro b
-        rw [hdH, map_sub, hs, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hdH, map_sub, hs, map_sum]
         simp only [← hdH, hsmul, hdz]
         simp
       have hcot : I.toCotangent ⟨x - s, hr⟩ = 0 := by

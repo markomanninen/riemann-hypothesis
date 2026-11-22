@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+
+@[expose] public section
 
 noncomputable section
 

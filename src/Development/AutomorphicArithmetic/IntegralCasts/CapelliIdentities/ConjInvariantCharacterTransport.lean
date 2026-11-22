@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.DYhc8.eLast :
     (k : Type) → [Field k] → (n : ℕ) → Fin (n + (1 : ℕ)) → k :=

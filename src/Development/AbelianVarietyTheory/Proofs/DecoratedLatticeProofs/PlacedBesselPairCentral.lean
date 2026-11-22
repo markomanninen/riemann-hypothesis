@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ThmSOwn
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartMemFrameStabilizerIffLocalStabilizer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DatumLevelHyperspecialOffFinitePlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeFrameChainStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalFrameHermitianIdeal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacedBesselTranslateVector
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSuppVecLocEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InertPlaceLocalTraceCharacterConductorIntegers
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FirstIsotropicVectorCoordinatesNeZeroStatement
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacedBesselPairLattice
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualLatticeWithPrescribedSplitComponen
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReductionStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeCompletionAtPlacesMemCompletedHermitianLaStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLatticeCompletionAtPlacesOfFinPartMemHatLattiStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdemAtUniqueOrth
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GramEqOfInst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.Placed
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ThmSOwn
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FinitePartMemFrameStabilizerIffLocalStabilizer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DatumLevelHyperspecialOffFinitePlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeFrameChainStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalFrameHermitianIdeal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacedBesselTranslateVector
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSuppVecLocEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InertPlaceLocalTraceCharacterConductorIntegers
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FirstIsotropicVectorCoordinatesNeZeroStatement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacedBesselPairLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualSplitComponentIsLatticeStabilizerEq
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSelfDualLatticeWithPrescribedSplitComponen
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFiniteAdeleProjectionIntegralReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeCompletionAtPlacesMemCompletedHermitianLaStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLatticeCompletionAtPlacesOfFinPartMemHatLattiStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdemAtUniqueOrth
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.GramEqOfInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,8 @@ theorem cond_iff (q : SplitPt D k) {ϖ : k} (hϖ : ∀ x : k, valuation k x < 1 
 theorem mulVec_sec (q : SplitPt D k) {m n : ℕ} (M : Matrix (Fin m) (Fin n) (AE D)) (y : Fin n → k) :
     M *ᵥ (fun i => q.sec (y i)) = fun i => q.sec ((M.map q.pr *ᵥ y) i) := by
   funext i
-  simp only [Matrix.mulVec, dotProduct, map_sum, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, Matrix.map_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_comm, sec_mul_right, mul_comm]
 
@@ -98,7 +103,8 @@ theorem int_moved (q : SplitPt D k) {PP : Formalism.L2.DIV.Pl D.host.E} (hq : Fo
     have h4 : ∀ j, (1 - toEAf D q.e) * toEAf D (q.sec (y j)) = 0 := fun j => by
       rw [sub_mul, one_mul, ← map_mul, e_mul_sec, sub_self]
     rw [h2, ← map_inv]
-    simp only [mulVec, dotProduct, Finset.mul_sum, mul_left_comm (1 - toEAf D q.e), h4, mul_zero, Finset.sum_const_zero, zero_mem,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mulVec, dotProduct, Finset.mul_sum, mul_left_comm (1 - toEAf D q.e), h4, mul_zero, Finset.sum_const_zero, zero_mem,
       true_and, map_sum, map_mul, h1, q.pr_sec]
     rfl
   have hs : Function.Surjective (toEAf D) := by
@@ -160,7 +166,8 @@ theorem line_moved (q : SplitPt D k) {PP : Formalism.L2.DIV.Pl D.host.E} (hq : F
   have ht : ∀ i, q.pr (incA D (star ((V.gram *ᵥ u) i))) =
       ∑ j, q.pr (cA D (incA D (V.gram i j))) * q.pr (incA D (star (u j))) := by
     intro i
-    simp only [Matrix.mulVec, dotProduct, star_sum, star_mul', map_sum, map_mul, cA_incA]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, star_sum, star_mul', map_sum, map_mul, cA_incA]
   have hsum : ∀ y : Y → k, ∑ i, ∑ j, ((mt V t⁻¹).map q.pr *ᵥ (G.β *ᵥ y)) i * q.pr (cA D (incA D (V.gram i j))) *
       (((mt V t⁻¹).map fun a => q.pr (cA D a)) *ᵥ fun r => A * q.pr (incA D (star (u r)))) j = y m₁ * (A * κ') := by
     intro y
@@ -216,7 +223,8 @@ theorem line_bes (q : SplitPt D k) {PP : Formalism.L2.DIV.Pl D.host.E} (hq : For
   have key : ∀ {m : Type} (M : Matrix (Fin B.V.rank) m D.host.E) (j : m),
       ∑ r, π (M r j) * π (star ((B.V.gram *ᵥ fun r => B.d.e r i) r)) = π (star ((Mᴴ * B.V.gram * B.d.e) j i)) := by
     intro m M j
-    rw [Matrix.mul_assoc, Matrix.mul_apply, star_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_assoc, Matrix.mul_apply, star_sum, map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [star_mul', Matrix.conjTranspose_apply, star_star, map_mul]
     rfl
@@ -338,95 +346,6 @@ theorem sc_mul {c : Comm D} {v : VCom c} (G : GLoc v) {μ lam : D.host.E} {ζ₀
   change G.sc 0 * π μ = 1
   apply mul_right_cancel₀ (pow_ne_zero (D.R.rS + 1) hx0)
   linear_combination -h8
-
-theorem single (W : RealPack ex) (hW : PkHyp W) (r : Fin D.R.rS) (hr : r.1 = 0) {u : D.what₂.Word} (f : FamCh W u)
-    (B : SBes W.S.X W.Q.instEq u W.Q.Rl.ψ (D.sp.X 0)) (hP : Placed f B) (PP : Formalism.L2.DIV.Pl D.host.E) (hPP : PP ∈ (pk W).Pg) :
-    ∃ e, Formalism.L2.NTheta.IsIdemAt e PP ∧ ∀ c ∈ idAt D (· = PP.under (𝓞 D.host.F)),
-      (mt (D.sp.Y 0) (show GA D (D.sp.Y 0) from f.g.b 0)⁻¹ *ᵥ
-        (fun i => c * incA D (W.S.X.ιE (W.S.X.eR r (Fin.cast (rank_eq W.S.X W.Q.instEq) i)))) ∈
-          latV (D.sp.Y 0) ((pk W).ΛY 0) (· = PP.under (𝓞 D.host.F)) ↔
-        Cond e (2 * D.R.rS + 1) (c * incA D ((W.S.X.B.g : D.host.E) ^ D.R.rS)⁻¹)) := by
-  obtain ⟨k, i1, i2, i3, i4, ι, v, o, n, G, pl, hc, hv, ht, -, -, hR, hb⟩ := hP
-  obtain ⟨i, hi⟩ := pl.surjective ⟨PP, hPP⟩
-  obtain ⟨hq, hqv⟩ := hR.idem i
-  rw [hi] at hq hqv
-  change (G i).q.v = PP.under _ at hqv
-  change Formalism.L2.NTheta.IsIdemAt _ PP at hq
-  refine ⟨_, hq, fun c hcv => ?_⟩
-  rw [← hqv] at hcv ⊢
-  obtain ⟨μ, lam, n1, n2, n3⟩ := hb.norm
-  have hξ : -D.host.xi0 ^ (D.R.m / 2) ≠ 0 := neg_ne_zero.2 (pow_ne_zero _ (GlobalTheory.DualPairCompare.embedding_xi_zero_ne_zero D))
-  have hμ : μ ≠ 0 := left_ne_zero_of_mul (n1 ▸ hξ)
-  have h₀ : 0 + 2 * D.R.rS + 2 = D.R.m := by
-    obtain ⟨c, hc⟩ := D.R.m_even
-    have := D.R.two_le_m
-    unfold Ranks.rS
-    omega
-  have hg : ((W.S.X.B.g : ℕ) : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 (Formalism.L2.SG.Pf.modulus_g_ne_zero W.S.X)
-  obtain ⟨s, hs, he⟩ := GlobalTheory.LineIdeal.first_vec (F0 W u) (W.S.tr u) hW.bot.idE hc.std B hμ n2 r hr
-  have hd : B.d.e = (f.c.bes 0 D.R.rS h₀).d.e := eq_of_heq (Sigma.mk.inj (congrArg
-    (fun Z : BesLev D D.R.rS => (⟨Z.V.rank, Z.d.e⟩ : Σ n, Matrix (Fin n) (Fin D.R.rS) D.host.E)) (hb.lev h₀))).2
-  have hsc := sc_mul (G i) n1 n3 (hb.last i) h₀
-  have hT : ((D.mem u).A.T : 𝓞 D.host.E) ∉ PP.asIdeal := fun hT => by
-    refine Finset.disjoint_left.1 hv.disj ((ht.gP _).2 ⟨PP, hPP, rfl⟩) ((ht.tP _).2 ?_)
-    change algebraMap (𝓞 D.host.F) (𝓞 D.host.E) _ ∈ PP.asIdeal
-    rwa [map_natCast]
-  have hTv := val_nat (G i).q hq _ hT
-  have hz : star B.ζ ⬝ᵥ B.L.gram *ᵥ B.ζ = star μ * (μ * -((D.mem u).A.T : D.host.E)) := by
-    have e : B.d.i₀ *ᵥ vecB B.o B.ζ = μ • GlobalTheory.Core.SBesEx.cY W.S.X W.Q.instEq (W.S.X.zu u) := funext n2
-    refine (norm_vec B.lev).trans ?_
-    change star (B.d.i₀ *ᵥ vecB B.o B.ζ) ⬝ᵥ (D.sp.Y 0).gram *ᵥ (B.d.i₀ *ᵥ vecB B.o B.ζ) = _
-    rw [e, star_smul, mulVec_smul, smul_dotProduct, dotProduct_smul, GlobalTheory.Core.SBesEx.cY_isom D _ _ hW.bot.idE, W.S.X.zu_norm]
-    rfl
-  have hzu := (G i).hz_unit 0 _ h₀
-  have hzu' := hzu
-  rw [← hb.lev h₀] at hzu'
-  change valuation _ ((G i).q.pr (incA D (star B.ζ ⬝ᵥ B.L.gram *ᵥ B.ζ))) = 1 at hzu'
-  have hμ1 : valuation _ ((G i).q.pr (incA D μ)) = 1 := by
-    have := congrArg (valuation _) hsc
-    rwa [map_mul, (G i).sc_unit, one_mul, map_one] at this
-  have hμ2 : valuation _ ((G i).q.pr (incA D (star μ))) = 1 := by
-    simp only [hz, RingHom.map_mul, RingHom.map_neg, map_natCast, Valuation.map_mul, Valuation.map_neg, hμ1, hTv, mul_one] at hzu'
-    exact hzu'
-  have hxi : valuation _ (ofSplit (G i).q).xi = 1 := by
-    have := congrArg (valuation _) ((G i).sc_step 0)
-    rw [map_mul, (G i).sc_unit, (G i).sc_unit, one_mul] at this
-    exact this.symm
-  obtain ⟨σ, -, hM⟩ := hR.frame i 0 ((G i).s + 1) (Nat.zero_add _)
-  obtain ⟨hsd, hfr⟩ := GlobalTheory.T.self_dual_lattice_frame_chain W hW 0 (by omega)
-  have hs0 : s ≠ 0 := by rcases hs with rfl | rfl <;> simp
-  have H := line_bes (G i).q hq (f.c.B 0 _ h₀) ((pk W).ΛY 0) ((pk W).βY 0) hfr hsd (f.g.b 0) _ _ _
-    (fun h0 => by simpa [h0] using (G i).sc_unit 0) ((G i).bes 0 _ h₀ _ (Nat.zero_add _)) _ (G i).S.ϖ
-    (Matrix.fromBlocks_diagonal _ _) (σ.symm.trans (GlobalTheory.StepData.stdOrd _ _ 0 _ (Nat.zero_add _))) hM r hr
-    (incA D (s * μ)⁻¹ * (c * incA D ((W.S.X.B.g : D.host.E) ^ D.R.rS)⁻¹))
-    (Ideal.mul_mem_left _ _ (Ideal.mul_mem_right _ _ hcv))
-  have e : (fun i => c * incA D (W.S.X.ιE (W.S.X.eR r (Fin.cast (rank_eq W.S.X W.Q.instEq) i)))) =
-      fun l => incA D (s * μ)⁻¹ * (c * incA D ((W.S.X.B.g : D.host.E) ^ D.R.rS)⁻¹) * incA D (B.d.e l r) := by
-    funext l
-    rw [he, mul_comm (incA D _), mul_assoc, mul_assoc, ← RingHom.map_mul, ← RingHom.map_mul]
-    congr 2
-    field_simp
-  rw [e, hd]
-  refine H.trans ?_
-  rw [cond_iff (G i).q (G i).S.unif]
-  generalize c * incA D ((W.S.X.B.g : D.host.E) ^ D.R.rS)⁻¹ = a
-  have hs1 : valuation _ ((G i).q.pr (incA D (s * μ)⁻¹)) = 1 := by
-    rw [← RingHom.comp_apply, map_inv₀, map_inv₀, RingHom.comp_apply]
-    rcases hs with rfl | rfl <;> simp [hμ1]
-  have hs2 : valuation _ ((G i).q.pr (incA D (star (s * μ)⁻¹))) = 1 := by
-    rw [star_inv₀, ← RingHom.comp_apply, map_inv₀, map_inv₀, RingHom.comp_apply]
-    rcases hs with rfl | rfl <;> simp [hμ2]
-  have hϖ : 0 < valuation _ ((G i).S.ϖ : (G i).k) := by simp [zero_lt_iff]
-  simp only [Valuation.mem_integer_iff, RingHom.map_mul, GlobalTheory.FinPl.FrameLat.cA_incA, Valuation.map_mul, map_div₀, Valuation.map_neg,
-    Valuation.map_pow, Valuation.map_one, hs1, hs2, hxi, hzu, (G i).sc_unit, one_mul, one_pow, div_one, div_le_one₀ hϖ]
-
-theorem line_indep : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts} {Yd : DivX D} {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Yd cX} (W : RealPack ex), PkHyp W → ∀ (hr : 1 ≤ D.R.rS) u u' (f : FamCh W u) (f' : FamCh W u') (B : SBes W.S.X W.Q.instEq u W.Q.Rl.ψ (D.sp.X 0)) (B' : SBes W.S.X W.Q.instEq u' W.Q.Rl.ψ (D.sp.X 0)), Placed f B → Placed f' B' → ∀ a₀ a a₀' a', IsAt f B a₀ a → IsAt f' B' a₀' a' → ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 D.host.F), (∃ PP ∈ (pk W).Pg, PP.under (𝓞 D.host.F) = v) → ∀ c ∈ GlobalTheory.FinPl.idAt D (· = v), (Matrix.mulVec (Formalism.L2.Theta.mt (D.sp.Y 0) (show GA D (D.sp.Y 0) from f.g.b 0)⁻¹) ((fun i => c * Formalism.L2.Theta.incA D (W.S.X.ιE (W.S.X.eR ⟨0, hr⟩ (Fin.cast (GlobalTheory.Core.Mi.rank_eq W.S.X W.Q.instEq) i))))) ∈ GlobalTheory.FinPl.latV (D.sp.Y 0) ((pk W).ΛY 0) (· = v) ↔ Matrix.mulVec (Formalism.L2.Theta.mt (D.sp.Y 0) (show GA D (D.sp.Y 0) from f'.g.b 0)⁻¹) ((fun i => c * Formalism.L2.Theta.incA D (W.S.X.ιE (W.S.X.eR ⟨0, hr⟩ (Fin.cast (GlobalTheory.Core.Mi.rank_eq W.S.X W.Q.instEq) i))))) ∈ GlobalTheory.FinPl.latV (D.sp.Y 0) ((pk W).ΛY 0) (· = v)) := by
-  intro D L hT Gi Gl Kc Yd cX ex W hW hr u u' f f' B B' hP hP' a₀ a a₀' a' _ _ v ⟨PP, hPP, hv⟩ c hc
-  subst hv
-  obtain ⟨e, he, h⟩ := single W hW ⟨0, hr⟩ rfl f B hP PP hPP
-  obtain ⟨e', he', h'⟩ := single W hW ⟨0, hr⟩ rfl f' B' hP' PP hPP
-  obtain rfl := (GlobalTheory.PlaceIdemUniq.idemAt_unique_orth D e e' PP PP he he').1 rfl
-  exact (h c hc).trans (h' c hc).symm
 
 end GlobalTheory.LevelLine
 

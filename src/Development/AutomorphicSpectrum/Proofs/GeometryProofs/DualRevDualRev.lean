@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.HodgeModel
 

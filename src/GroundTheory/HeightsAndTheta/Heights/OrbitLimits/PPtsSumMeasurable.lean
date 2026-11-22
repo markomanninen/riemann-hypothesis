@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StPtsSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsSumMeasurableA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -57,6 +62,14 @@ theorem PtsSumMeasurable.proof : PtsSumMeasurable.Statement := by
     have : S m = B m ∩ ⋂ m' ∈ Finset.range m, (B m' ∩ {y | σ m' y = σ m y})ᶜ := by
       ext y
       simp [hSdef]
+      intro _
+      constructor
+      · intro h i hi
+        by_cases hb : y ∈ B i
+        · exact Or.inr (h i hi hb)
+        · exact Or.inl hb
+      · intro h i hi hb
+        exact (h i hi).resolve_left (not_not.mpr hb)
     rw [this]
     exact (hBo m).measurableSet.inter (Finset.measurableSet_biInter _ fun m' _ =>
       ((hBo m').measurableSet.inter (measurableSet_eq_fun (hσm m') (hσm m))).compl)
@@ -75,7 +88,7 @@ theorem PtsSumMeasurable.proof : PtsSumMeasurable.Statement := by
     simp only
     rw [Set.indicator_of_mem hm, hdens m y hm.1]
     unfold sheetDensity
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact (hy _ _ _ hex.choose_spec hsh).symm
   have hmemF : ∀ m, y ∈ S m → σ m y ∈ (hfin y).toFinset := by
     intro m hm
@@ -118,7 +131,7 @@ theorem PtsSumMeasurable.proof : PtsSumMeasurable.Statement := by
       · rfl
     · have h0 : sheetDensity P Ψ (pot L) (logNorm A s) y w = 0 := by
         unfold sheetDensity
-        rw [dif_neg hex]
+        rw [dite_eq_right hex]
       refine Eventually.of_forall fun N => ?_
       rw [h0]
       refine (Finset.sum_eq_zero fun m _ => ?_).symm

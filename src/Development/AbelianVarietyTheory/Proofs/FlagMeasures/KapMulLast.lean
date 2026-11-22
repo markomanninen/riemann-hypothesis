@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlkExt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BlkExt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.MatGroupHaarUniqueFiniteCompactOpenPos
+
+@[expose] public section
 
 noncomputable section
 
@@ -294,10 +298,10 @@ theorem meas_sec (i j : Fin (k + 1)) : Measurable fun β : Fin k → ℂ => sec 
     simp only [sec_cc, sec_cl, sec_lc, sec_ll] <;> fun_prop
 
 theorem meas_top : Measurable fun g : PI.MtM (k + 1) => (Matrix.of.symm (top η (Matrix.of g)) : PI.MtM k) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   show Measurable fun g : PI.MtM (k + 1) => ∑ l, g i.castSucc l * sec η (-bet (Matrix.of g)) l j.castSucc
   refine Finset.measurable_sum _ fun l _ => Measurable.mul (by fun_prop) ?_
-  exact (meas_sec l j.castSucc).comp (measurable_pi_lambda _ fun a => (meas_bet a).neg)
+  exact (meas_sec l j.castSucc).comp (Measurable.of_eval fun a => (meas_bet a).neg)
 
 theorem closed_G (hη : η = 1 ∨ η = -1) : IsClosed {g : PI.MtM (k + 1) | Matrix.of g ∈ UH (Hd k η)} :=
   (GlobalTheory.GramExp.isMatGroup_UH _ (Hd_sq k hη)).1

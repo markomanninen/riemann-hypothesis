@@ -1,9 +1,13 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.TauDefs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PolynomialProperness.TauDefs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormFlagVector
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GNonneg
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C2
 
@@ -55,12 +59,12 @@ lemma herm_xi_zero (k r : ℕ) (y : Fin (2 * r + k + 1) → ℂ)
     rw [hz, mul_zero]
   · have hx : xiV k r p i = 0 := by
       unfold xiV
-      rw [dif_neg hi]
+      rw [dite_eq_right hi]
     rw [Pi.star_apply, hx, star_zero, zero_mul]
 
 lemma xiV_hi (k r : ℕ) (p : Fin r → ℂ) (i : Fin (2 * r + k + 1)) (hi : r ≤ i.val) : xiV k r p i = 0 := by
   unfold xiV
-  rw [dif_neg (show ¬ (i.val < r) by omega)]
+  rw [dite_eq_right (show ¬ (i.val < r) by omega)]
 
 lemma hermitian_xi_orthogonal (k r : ℕ) {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (p : Fin r → ℂ) :
     herm (Hpk k r) (xiV k r p) z = 0 := by
@@ -80,19 +84,6 @@ lemma hermitian_xi_orthogonal (k r : ℕ) {z : Fin (2 * r + k + 1) → ℂ} (hz 
 
 lemma T_ne {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : StdZ k r z) : ((Tz k r z : ℝ) : ℂ) ≠ 0 := by
   exact Complex.ofReal_ne_zero.mpr hz.2.ne'
-
-lemma nEich_heis {k r : ℕ} {z : Fin (2 * r + k + 1) → ℂ} (hz : StdZ k r z) (ξ : Fin r → ℂ)
-    (u : Fin (2 * r + k + 1) → ℂ) :
-    nEich k r z ξ *ᵥ u = u - herm (Hpk k r) u (((1 : ℂ) / ((Tz k r z : ℝ) : ℂ)) • z) • xiV k r ξ +
-      herm (Hpk k r) u (xiV k r ξ) • (((1 : ℂ) / ((Tz k r z : ℝ) : ℂ)) • z +
-        ((1 : ℂ) / (2 * ((Tz k r z : ℝ) : ℂ))) • xiV k r ξ) := by
-  rw [nEich_mulVec, Formalism.FourierDecayAlt.P.B2x4.herm_smul_right]
-  have hc : star ((1 : ℂ) / ((Tz k r z : ℝ) : ℂ)) = (1 : ℂ) / ((Tz k r z : ℝ) : ℂ) := by
-    simp [Complex.star_def]
-  rw [hc]
-  funext i
-  simp only [Pi.add_apply, Pi.sub_apply, Pi.neg_apply, Pi.smul_apply, smul_eq_mul]
-  ring
 
 theorem neFacts : NEFacts := by
   intro k r z hz ξ
@@ -138,7 +129,7 @@ theorem neFacts : NEFacts := by
     funext l
     unfold xiV
     by_cases hl : l.val < r
-    · rw [dif_pos hl]
+    · rw [dite_eq_left hl]
       by_cases h : l = eI k r a
       · have e : (⟨l.val, hl⟩ : Fin r) = a := Fin.ext (by show l.val = a.val; rw [h]; rfl)
         rw [e, h, Pi.single_eq_same, Pi.single_eq_same]
@@ -149,7 +140,7 @@ theorem neFacts : NEFacts := by
         apply hl
         rw [h]
         exact a.isLt
-      rw [dif_neg hl, Pi.single_eq_of_ne h']
+      rw [dite_eq_right hl, Pi.single_eq_of_ne h']
   refine ⟨?_, hfix, ?_⟩
   · simp only [Nset, Set.mem_setOf_eq]
     refine ⟨?_, ?_, ?_⟩

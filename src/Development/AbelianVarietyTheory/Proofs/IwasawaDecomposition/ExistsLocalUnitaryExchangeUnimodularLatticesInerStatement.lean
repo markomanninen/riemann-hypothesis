@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalUnitaryExchangeUnimodularLatticesIner
-import Mathlib
-import Formalism.LocalToGlobal.Columns.HeckeInertComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalUnitaryExchangeUnimodularLatticesIner
+public import Formalism.LocalToGlobal.Columns.HeckeInertComm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Col Formalism.HermitianLatticesTheory
 open Classical
 

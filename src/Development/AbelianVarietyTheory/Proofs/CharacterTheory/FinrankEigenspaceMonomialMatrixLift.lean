@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
 namespace GlobalTheory.MonoEigen
@@ -95,7 +100,7 @@ theorem finrank_eq_card (E : Submodule K (Fin n → K))
     (LinearMap.funLeft K K Subtype.val).comp E.subtype
   have hf : ∀ (v : E) s, f v s = v.1 s.1 := fun _ _ => rfl
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v h0
     have hv := (hE _).1 v.2
     ext i
@@ -117,7 +122,8 @@ theorem finrank_eq_card (E : Submodule K (Fin n → K))
     choose u hu h1 h0 using fun s : {j // GoodRep σ a j} => exists_vec σ a s.2
     refine ⟨∑ s, w s • ⟨u s, (hE _).2 (hu s)⟩, ?_⟩
     ext t
-    rw [map_sum, Finset.sum_apply, Finset.sum_eq_single t]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply, Finset.sum_eq_single t]
     · simp [hf, h1]
     · intro s _ hst
       simp [hf, h0 s t.1 t.2 (fun h => hst (Subtype.ext h).symm)]

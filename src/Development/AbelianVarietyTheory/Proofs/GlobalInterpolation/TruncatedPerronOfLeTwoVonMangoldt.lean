@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronPsi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronPsi
+
+@[expose] public section
 
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
 

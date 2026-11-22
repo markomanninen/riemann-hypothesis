@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
-import Development.DiscreteGroups.GlobalIrreducibility.LConvSepT
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvSepT
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.HodgeCompactPullback
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HodgeComponentFactorPointStatement
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.HodgeCompactPullback
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.HodgeComponentFactorPointStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.HcptPullK
@@ -32,7 +36,7 @@ theorem stHt : SquareStatements.StHt := by
   have hgen := A.tie.gen
   have hgen' := A'.tie.gen
   obtain ⟨mh, hmh⟩ := ht_cancel A.m A'.m hf
-  obtain ⟨j₀, hj₀⟩ := GlobalTheory.T.lie_model_pullback_map A.X A'.X Ω Ω' A.ξ A'.ξ h i A.t.G A'.t.G mh.φ A.Li A'.Li A.M A'.M hdom mh.cart
+  obtain ⟨j₀, hj₀⟩ := GlobalTheory.CompanionTheory.Ar.LieJ.exists_map A.X A'.X Ω Ω' A.ξ A'.ξ h i A.t.G A'.t.G mh.φ A.Li A'.Li A.M A'.M hdom mh.cart
   have hjj : ∀ w, j w = j₀ w := fun w => by
     apply A'.M.inj
     apply Over.OverMorphism.ext
@@ -41,13 +45,21 @@ theorem stHt : SquareStatements.StHt := by
       show _ = (A'.M.pt (j₀ w)).left ≫ A'.m.φ
       rw [hmh, ← Category.assoc (A'.M.pt (j₀ w)).left, hj₀ w, Category.assoc]
     · rw [Over.w, Over.w]
-  have hj : ∀ e, (A'.M.pt (j e)).left ≫ mh.φ = Spec.map (CommRingCat.ofHom (dualMap i)) ≫ (A.M.pt e).left :=
+  have hj : ∀ e, (A'.M.pt (j e)).left ≫ mh.φ = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap i)) ≫ (A.M.pt e).left :=
     fun e => by rw [hjj e]; exact hj₀ e
   have hsm : Smooth A.t.G.hom := A.t.semi.smooth
-  obtain ⟨-, hspan, -⟩ := GlobalTheory.T.lie_lattice_dominant_compat A.X A'.X Ω Ω' A.ξ A'.ξ h i A.t.G A'.t.G mh.φ A.Li A'.Li A.M A'.M j hgen hgen' hdom
+  obtain ⟨-, hspan, -⟩ := GlobalTheory.CompanionTheory.Ar.LiePull.main A.X A'.X Ω Ω' A.ξ A'.ξ h i A.t.G A'.t.G mh.φ A.Li A'.Li A.M A'.M j hgen hgen' hdom
     mh.cart hsm hj
-  have hρj := GlobalTheory.T.lie_model_pullback_action A.X A'.X Ω Ω' A.ξ A'.ξ h i A.t.G A'.t.G mh.φ A.Li A'.Li A.M A'.M j (𝓞 E) A.t.act.act A'.t.act.act A.ρ A'.ρ
-    hdom mh.cart hj A.act A'.act (fun a => mh.act a)
+  have hρj : ∀ a e, A'.ρ a (j e) = j (A.ρ a e) := by
+    intro a e
+    apply A'.M.inj
+    rw [A'.act a (j e)]
+    apply Over.OverMorphism.ext
+    apply mh.cart.1.hom_ext
+    · simp only [Over.comp_left, Category.assoc, mh.act a]
+      rw [← Category.assoc, hj e, hj (A.ρ a e), A.act a e, Over.comp_left]
+      simp only [Category.assoc]
+    · rw [Over.w, Over.w]
   obtain ⟨jd, hjd⟩ := GlobalTheory.T.dual_map_of_field_extension Ω Ω' i A.Li A'.Li j hext hspan
   have hW : ∀ s, eigSp A'.ρ ((i.comp A.cst).comp (labelEmb c s)) = Submodule.span Ω' (j '' (A.Vgen s : Set A.Li)) := fun s =>
     GlobalTheory.T.eigenspace_field_extension E Ω Ω' i A.Li A'.Li j A.ρ A'.ρ (A.emb s) hext hspan hρj

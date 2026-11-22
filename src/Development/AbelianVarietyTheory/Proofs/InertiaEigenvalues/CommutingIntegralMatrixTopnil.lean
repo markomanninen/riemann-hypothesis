@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UltrametricNormDetOneAddSmul
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UltrametricNormDetOneAddSmul
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ClosedBallValuationSubringToSubring
+
+@[expose] public section
 
 open Matrix Polynomial
 
@@ -74,7 +78,7 @@ theorem norm_lt_one_of_pow_of_commute (E : Type) [NontriviallyNormedField E] [Is
   have hNmap : N'.map O.subtype = N := by ext; rfl
   have hbO : u.toSubring O hu' * N'.charpoly + v.toSubring O hv' * derivative N'.charpoly = 1 := by
     apply Polynomial.map_injective O.subtype Subtype.val_injective
-    rw [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map,
+    rw [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul, ← Polynomial.derivative_map,
       Polynomial.map_toSubring, Polynomial.map_toSubring, ← Matrix.charpoly_map, hNmap,
       Polynomial.map_one]
     exact huv
@@ -83,7 +87,7 @@ theorem norm_lt_one_of_pow_of_commute (E : Type) [NontriviallyNormedField E] [Is
   have hbk : (u.toSubring O hu').map π * N''.charpoly
       + (v.toSubring O hv').map π * derivative N''.charpoly = 1 := by
     have := congrArg (Polynomial.map π) hbO
-    simpa [hN'', Polynomial.map_add, Polynomial.map_mul, Polynomial.derivative_map,
+    simpa [hN'', Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.derivative_map,
       Matrix.charpoly_map] using this
   have hwk : w'' * N'' = N'' * w'' := by
     rw [hN'', hw'', ← Matrix.map_mul, ← Matrix.map_mul, hwN']

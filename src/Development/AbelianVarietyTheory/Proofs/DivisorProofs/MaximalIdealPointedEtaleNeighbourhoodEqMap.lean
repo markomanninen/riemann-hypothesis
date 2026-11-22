@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+
+@[expose] public section
+
 open IsLocalRing GlobalTheory.Henselisation
 
 namespace GlobalTheory.Henselisation.EtNbhd

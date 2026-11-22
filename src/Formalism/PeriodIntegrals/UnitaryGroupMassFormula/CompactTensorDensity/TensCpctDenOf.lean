@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FinOrdAd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FinOrdAd
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem coordR_smul (φ : E →ₗ[F] F) (a : R) (t : E ⊗[F] R) :
   | tmul e x =>
     rw [Algebra.smul_def, Algebra.TensorProduct.right_algebraMap_apply,
       Algebra.TensorProduct.tmul_mul_tmul, one_mul, coordR_tmul, coordR_tmul, mul_smul_comm]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, mul_add]
 
 def coordL (φ : E →ₗ[F] F) : E ⊗[F] R →ₗ[R] R where
   toFun := coordR φ

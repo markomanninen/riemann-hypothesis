@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ProjectionIntoHolds
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsBasisLocF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.DifferentIdealEqTop
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ProjectionIntoHolds
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsBasisLocF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.DifferentIdealEqTop
+
+@[expose] public section
 
 open NumberField Module
 
@@ -59,9 +63,10 @@ theorem riesz_hermitian_holds : RieszH := by
       map_smul' := fun r c => by simp [Finset.smul_sum, smul_smul] }
   have hΦ : ∀ c, h (∑ i, star (c i) • b i) = Φ c := by
     intro c
-    simp [Φ, map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply, star_star]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Φ, map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply, star_star]
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     have hx : (∑ i, star (c i) • b i) = 0 := by
       apply hnd
@@ -123,13 +128,13 @@ theorem projOnto_of (hS : SummandLoc) (hR : RieszH) : ProjOnto := by
     apply hnd
     intro z
     have ez := Submodule.projection_add_projection_eq_self hc z
-    rw [← ez, map_add]
+    rw [← ez, map_add (f := _)]
     have h1 : h w (Y.projection X hc.symm z) = 0 := hXY w hwX _ (Submodule.projection_apply_mem _ z)
     have hzX : X.projection Y hc z ∈ X := Submodule.projection_apply_mem hc z
     have ex := Submodule.projection_add_projection_eq_self hc x
     have e3 : h (X.projection Y hc z) (X.projection Y hc x) = h (X.projection Y hc z) x := by
       conv_rhs => rw [← ex]
-      rw [map_add, hXY _ hzX _ (Submodule.projection_apply_mem _ x), add_zero]
+      rw [map_add (f := _), hXY _ hzX _ (Submodule.projection_apply_mem _ x), add_zero]
     have h2 : h (X.projection Y hc z) w = 0 := by
       rw [hw, map_sub, e3, key, hπid _ hzX, sub_self]
     rw [h1, add_zero, ← hs.eq (X.projection Y hc z) w, h2, map_zero]

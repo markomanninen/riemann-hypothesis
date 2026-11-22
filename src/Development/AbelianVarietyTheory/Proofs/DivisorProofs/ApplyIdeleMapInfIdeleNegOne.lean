@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqOneOfInfOfVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.AdelicCMFields.UnitaryHeckeCharacterIdele
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroAdeleCharEqCompMulTotallyReal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqOneOfInfOfVal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -38,7 +42,7 @@ theorem pInf_ideleMap_infIdele (v : InfinitePlace (maximalRealSubfield E)) (w : 
     pInf E (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.ideleMap (maximalRealSubfield E) E (infIdele _ v (-1)) : Ad E) w =
       if w.comap (algebraMap (maximalRealSubfield E) E) = v then -1 else 1 := by
   show (InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w))
-    (NumberField.LiesOver.completionMap (v := w.comap (algebraMap (maximalRealSubfield E) E)) (w := w)
+    (AbsoluteValue.Completion.map (w.comap (algebraMap (maximalRealSubfield E) E)).1 w.1
       (Pi.mulSingle v ((-1 : (v.Completion)ˣ) : v.Completion) (w.comap (algebraMap (maximalRealSubfield E) E)))) = _
   split_ifs with h
   · subst h
@@ -57,8 +61,8 @@ namespace GlobalTheory.PolChar
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-open Classical in
 
+open Classical in
 def iAt (v : InfinitePlace (maximalRealSubfield E)) : (Cinf E)ˣ where
   val w := if w.comap (algebraMap (maximalRealSubfield E) E) = v then Complex.I else 1
   inv w := if w.comap (algebraMap (maximalRealSubfield E) E) = v then -Complex.I else 1

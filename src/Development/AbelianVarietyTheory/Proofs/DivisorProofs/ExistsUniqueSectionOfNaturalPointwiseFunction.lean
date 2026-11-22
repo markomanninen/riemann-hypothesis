@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NaturalPointwiseCochainConstOfGlobalSectionsBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NaturalPointwiseCochainConstOfGlobalSectionsBase
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,7 +66,7 @@ theorem ext_of_evU (R : Type) [CommRing R] (Y : Over (Sp R)) (U : Y.left.Opens) 
   have hz : ⊤ ≤ z.left ⁻¹ᵁ U := fromSpecStalk_top y U hy
   have e := h S z hz
   unfold evU at e
-  rw [dif_pos hz, dif_pos hz] at e
+  rw [dite_eq_left hz, dite_eq_left hz] at e
   unfold evalAt at e
   change (Scheme.ΓSpecIso S).hom ((Y.left.fromSpecStalk y).appLE U ⊤ hz a) =
     (Scheme.ΓSpecIso S).hom ((Y.left.fromSpecStalk y).appLE U ⊤ hz a') at e
@@ -102,23 +106,19 @@ theorem exists_unique_section : ∀ (R : Type) [CommRing R] (Y : Over (Sp R)) (U
       rw [hw, CommRingCat.ofHom_id, Spec.map_id, Category.id_comp]
     rw [← h1, hs (CommRingCat.of E) w ⟨(), le_top⟩]
     unfold evU
-    rw [dif_pos hz]
+    rw [dite_eq_left hz]
     unfold evalAt
     simp only [RingHom.comp_apply]
     congr 1
-    have key : ∀ (g : Spec (CommRingCat.of E) ⟶ Y.left) (_ : w ≫ U.ι = g) (h : ⊤ ≤ g ⁻¹ᵁ U),
-        g.appLE U ⊤ h = U.ι.appLE U ⊤ (by simp) ≫ w.appLE ⊤ ⊤ le_top := by
-      rintro _ rfl h
-      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
-    rw [key _ hw hz, CommRingCat.comp_apply, Scheme.Opens.ι_appLE]
-    have hid : ∀ (f : Opposite.op U ⟶ Opposite.op (U.ι ''ᵁ ⊤)) (g : Opposite.op (U.ι ''ᵁ ⊤) ⟶ Opposite.op U)
-        (x : Γ(Y.left, U.ι ''ᵁ ⊤)), Y.left.presheaf.map f (Y.left.presheaf.map g x) = x := by
-      intro f g x
-      rw [← ConcreteCategory.comp_apply, ← Functor.map_comp, Subsingleton.elim (g ≫ f) (𝟙 _),
-        CategoryTheory.Functor.map_id]
+    have hι : U.ι.appLE U ⊤ U.ι_preimage_self.ge = U.topIso.inv := by
+      rw [Scheme.Opens.ι_appLE, Scheme.Opens.topIso_inv]
       rfl
-    rw [Scheme.Opens.topIso_hom]
-    erw [hid]
+    have key : ∀ (g : Spec (CommRingCat.of E) ⟶ Y.left) (_ : w ≫ U.ι = g) (h : ⊤ ≤ g ⁻¹ᵁ U),
+        g.appLE U ⊤ h = U.topIso.inv ≫ w.appLE ⊤ ⊤ le_top := by
+      rintro _ rfl h
+      rw [← hι]
+      exact (Scheme.Hom.appLE_comp_appLE _ _ _ _ _ _ _).symm
+    rw [key _ hw hz, CommRingCat.comp_apply, Iso.hom_inv_id_apply]
     rw [Scheme.Hom.appTop, Scheme.Hom.app_eq_appLE]
     rfl
   refine ⟨U.topIso.hom s, hex, fun a ha ↦ ?_⟩

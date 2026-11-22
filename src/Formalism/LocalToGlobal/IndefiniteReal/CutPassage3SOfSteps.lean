@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.InBlock
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.InBlock
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassA
+public import Formalism.LocalToGlobal.IndefiniteReal.RowGSurj
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -31,7 +36,8 @@ theorem epM_eq (h1 : I.ρf 1 = 1) (hm : ∀ g h, I.ρf (g * h) = I.ρf g * I.ρf
     (χ : P →* (𝓞 K)ˣ) (hχ : ∀ h, (((χ h : (𝓞 K)ˣ) : 𝓞 K) : K) = ((ψ h : Kˣ) : K)) :
     (I.epM P ψ).mulVecLin = Formalism.IndefR.TransferLatticeStatement.epP P χ (I.rep h1 hm) := by
   rw [← Matrix.toLin'_apply']
-  simp only [epM, Formalism.IndefR.TransferLatticeStatement.epP, map_smul, map_sum, hχ, map_inv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [epM, Formalism.IndefR.TransferLatticeStatement.epP, map_smul, map_sum, hχ, map_inv]
   congr 1
   refine Finset.sum_congr (by congr; exact Subsingleton.elim _ _) (fun h _ => ?_)
   have e := hχ h⁻¹
@@ -43,10 +49,11 @@ theorem eMat_eq (h1 : I.ρf 1 = 1) (hm : ∀ g h, I.ρf (g * h) = I.ρf g * I.ρ
     [Module K W] (τ : Representation K G W) :
     (I.eMat τ).mulVecLin = Formalism.IndefR.TransferLatticeStatement.eS τ (I.rep h1 hm) := by
   rw [← Matrix.toLin'_apply']
-  simp only [eMat, Formalism.IndefR.TransferLatticeStatement.eS, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eMat, Formalism.IndefR.TransferLatticeStatement.eS, map_smul, map_sum]
   rfl
 
-theorem passage_of_steps [IsTotallyComplex K] {s : ℕ} (H : I.Hyp s) {S : Type} [Fintype S] {Ws : S → Type}
+theorem passage_of_steps [_root_.NumberField.IsTotallyComplex K] {s : ℕ} (H : I.Hyp s) {S : Type} [Fintype S] {Ws : S → Type}
     [∀ s, AddCommGroup (Ws s)] [∀ s, Module K (Ws s)] [∀ s, FiniteDimensional K (Ws s)]
     (τ : ∀ s, Representation K G (Ws s)) (nbar : ℝ) (N : IndefNum I.A3.fam3.base3)
     (hρ : I.PRho) (hJ : I.PJ) (hR : I.PRange) (hMet : I.PMet) (hFr : I.PFrames) (hU : I.PUni)
@@ -58,7 +65,42 @@ theorem passage_of_steps [IsTotallyComplex K] {s : ℕ} (H : I.Hyp s) {S : Type}
   obtain ⟨χ0, hχ0⟩ := Formalism.IndefR.LatticeTransfer.liftChar K I.P0 I.ψ0
   obtain ⟨χ1, hχ1⟩ := Formalism.IndefR.LatticeTransfer.liftChar K I.P1 I.ψ1
   have hFrm : (I.LA τ nbar).FramesG := hFr s H
-  have hL : (I.LA τ nbar).LatG := hLat s H
+  have hL : (I.LA τ nbar).LatG := by
+    classical
+    letI : Finite T := H.ok.ok2.tup_fin
+    letI : Fintype T := Fintype.ofFinite T
+    let L : T → Submodule (𝓞 K) (Fin I.Sg.D → K) := fun t => matLat (I.X.rowMat I.cg false t)
+      ((lv (faceOf3 I.A3 ⊥ 1 I.P1 I.ψ1 I.Dc I.Sp I.Zsc I.X.zs) false).abelian₂ t)
+    have hfull : ∀ t, Submodule.IsFullLattice K (L t) := fun t =>
+      matLat_full _ (rowG_surj H t) _
+        (BlockDat.Lam_full H.ok.ok2.conj (H.ok.ok2.what₂ t) H.ok.ok2.irr)
+    choose a ha0 ha using fun t => GluingInclusion.denom (K := K) (L I.A3.fam3.base3.μ0) (L t)
+      (Submodule.IsLattice.fg (self := (hfull _).toIsLattice)) (hfull t).span_eq_top
+    let d := ∏ t, a t
+    have hd : d ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun t _ => ha0 t)
+    have hle : ∀ x ∈ L I.A3.fam3.base3.μ0, x ∈ Submodule.span K (I.Sg.RR : Set _) := by
+      intro x hx
+      have hdx : d • x ∈ I.Sg.RR := by
+        apply (I.mem_RRg).2
+        intro w
+        obtain ⟨r, hr⟩ := Finset.dvd_prod_of_mem a (Finset.mem_univ (I.X.μ w))
+        have hdmem : d • x ∈ L (I.X.μ w) := by
+          change (∏ t, a t) • x ∈ L (I.X.μ w)
+          rw [hr, mul_comm, mul_smul]
+          exact (L _).smul_mem r (ha _ x hx)
+        obtain ⟨z, hz, hz'⟩ := (exponent_index_lattice.mem_matLat _ _ _).mp hdmem
+        refine ⟨1, one_mem _, z, hz, ?_⟩
+        rw [one_smul]
+        exact hz'
+      have hdK : algebraMap (𝓞 K) K d ≠ 0 := (IsFractionRing.injective (𝓞 K) K).ne hd
+      have hmem : d • x ∈ Submodule.span K (I.Sg.RR : Set (Fin I.Sg.D → K)) :=
+        Submodule.subset_span hdx
+      have hs := (Submodule.span K (I.Sg.RR : Set (Fin I.Sg.D → K))).smul_mem
+        (algebraMap (𝓞 K) K d)⁻¹ hmem
+      rw [← algebraMap_smul K d x, smul_smul, inv_mul_cancel₀ hdK, one_smul] at hs
+      exact hs
+    refine { toIsLattice := hLat s H, span_eq_top := ?_ }
+    exact top_unique (by rw [← (hfull I.A3.fam3.base3.μ0).span_eq_top]; exact Submodule.span_le.mpr hle)
   have key0 : (I.LA τ nbar).ep0.mulVecLin = Formalism.IndefR.TransferLatticeStatement.epP I.P0 χ0 (I.rep h1 hm) :=
     I.epM_eq h1 hm I.P0 I.ψ0 χ0 hχ0
   have key1 : (I.LA τ nbar).ep1.mulVecLin = Formalism.IndefR.TransferLatticeStatement.epP I.P1 χ1 (I.rep h1 hm) :=
@@ -122,11 +164,5 @@ theorem cutPassage3S_of_steps (h : Steps3) : CutPassage3S := by
   obtain ⟨hρ, hJ, hR, hMet, hFr, hU, hLat, hGL, hS, hG⟩ := h K G Pl0 I0 Ty T m I
   exact I.passage_of_steps ⟨hok, hsep, hst, hin, h4, hp0, hp1, hh2, hrat, hh2g, hratg, hgu, hge, hn0, hn1⟩
     τ nbar _ hρ hJ hR hMet hFr hU hLat hGL hS (hG S Ws τ) hτ hX hM1 hn hM2 hla
-
-theorem cutPassage3_of_S (h : CutPassage3S) : CutPassage3 := by
-  intro K _ _ _ _ G _ _ Pl0 I0 Ty T m A3 s P0 ψ0 P1 ψ1 Dc Sp Zsc X C CH gE S _ Ws _ _ _ τ nbar a1 a2 a3 a4 a5 a6 a7
-    a8 a9 a10 a11 a12 a13 _ _ a16 a17 a18 a19 a20 a21 a22 a23
-  exact h K G Pl0 I0 Ty T m A3 s P0 ψ0 P1 ψ1 Dc Sp Zsc X C CH gE S Ws τ nbar a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12
-    a13 a16 a17 a18 a19 a20 a21 a22 a23
 
 end Formalism.IndefR.CxPass

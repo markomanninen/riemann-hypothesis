@@ -1,6 +1,10 @@
-import GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DedekindZetaEulerProductMulSubOneEntireNeZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneSubRePosOfNormLeHalf
+module
+
+public import GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DedekindZetaEulerProductMulSubOneEntireNeZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.OneSubRePosOfNormLeHalf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

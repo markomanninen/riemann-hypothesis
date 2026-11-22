@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.EUInvApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.NormalG
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralOfEv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.EUInvApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.NormalG
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralOfEv
+
+@[expose] public section
 
 noncomputable section
 
@@ -233,7 +237,7 @@ private theorem id1K (hs : s * s = Δ) (hd : IsDat c d m) (h : Models c d m δ �
       ((quo t).re • (1 : Matrix (Fin 3) (Fin 3) K) + (quo t).im • (eU hs (δ * theta Δ δ) : Matrix (Fin 3) (Fin 3) K)) *
       ((eU hs (δ * theta Δ δ) : Matrix (Fin 3) (Fin 3) K) - 1) := by
   have h1 := congrArg (proj hs).mapMatrix (id1 hd h t)
-  rw [map_mul, map_mul, map_sub, map_add, pm_smul, pm_smul, map_one, pm_coe, pm_coe] at h1
+  rw [map_mul, map_mul, map_sub, map_add (f := _), pm_smul, pm_smul, map_one, pm_coe, pm_coe] at h1
   exact h1
 
 private theorem id2K (hs : s * s = Δ) (hd : IsDat c d m) (h : Models c d m δ ι Q) (t : (Etau K τ)ˣ) :
@@ -242,7 +246,7 @@ private theorem id2K (hs : s * s = Δ) (hd : IsDat c d m) (h : Models c d m δ �
       (eU hs (δ * theta Δ δ) : Matrix (Fin 3) (Fin 3) K) * (eU hs (δ * theta Δ δ) : Matrix (Fin 3) (Fin 3) K) -
         τ • (eU hs (δ * theta Δ δ) : Matrix (Fin 3) (Fin 3) K) + 1 := by
   have h1 := congrArg (proj hs).mapMatrix (id2 hd h t)
-  rw [map_mul, map_add, map_sub, map_mul, pm_smul, map_one, pm_coe, pm_coe] at h1
+  rw [map_mul, map_add (f := _), map_sub, map_mul, pm_smul, map_one, pm_coe, pm_coe] at h1
   exact h1
 
 end Proj

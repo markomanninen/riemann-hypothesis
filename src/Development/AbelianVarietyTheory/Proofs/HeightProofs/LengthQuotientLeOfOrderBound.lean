@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsIntegralIffMemSpanOneTmulIntegralClosure
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FlatLength
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemIntegralClosureOfMemSpan
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsIntegralIffMemSpanOneTmulIntegralClosure
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FlatLength
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemIntegralClosureOfMemSpan
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.WeightAlgebra Formalism.MainNotions.Gaps.EtaleWeightGaps Formalism.L2.Pj
 open scoped TensorProduct
@@ -100,7 +104,8 @@ theorem length_quotient_le_of_order_bound :
     (Submodule.span R' ((fun v : (∀ c, L c) => (1 : F') ⊗ₜ[F] v) ''
       (Submodule.span R (Set.range b) : Set _))) ?_ ?_) (le_of_eq ?_)
   · intro a ha
-    rw [hspan, LinearMap.comp_apply, ← Finset.univ_sum_single (Ψ a), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hspan, LinearMap.comp_apply, ← Finset.univ_sum_single (Ψ a), map_sum]
     refine Submodule.sum_mem _ fun c _ => ?_
     obtain ⟨η, hη0, hη⟩ := hη c
     have hx := mem_span_one_tmul_of_order_bound R R' F F' hmax hres (L c) (n c) η hη0 hη
@@ -120,7 +125,7 @@ theorem length_quotient_le_of_order_bound :
         · simp only [Pi.single_eq_same]
         · simp only [Pi.single_eq_of_ne hc, TensorProduct.tmul_zero]
     | zero => simp
-    | add x y _ _ hx hy => rw [Pi.single_add, map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [Pi.single_add, map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul r x _ hx => rw [Pi.single_smul, map_smul]; exact Submodule.smul_mem _ _ hx
   · rw [hspan, Submodule.map_span, ← Set.range_comp, ← Set.range_comp,
       ← e.surjective.range_comp]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
-import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+public import GroundTheory.GlobalFields.ClassFieldConsequences.HilbertClassField
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,15 +14,6 @@ namespace UpperTheory.V.CF
 section Art
 
 variable (K H : Type) [Field K] [NumberField K] [Field H] [NumberField H] [Algebra K H]
-
-def IsArt (φ : ClassGroup (𝓞 K) →* Gal(H/K)) : Prop :=
-  ∀ (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 H)), w.asIdeal.LiesOver v.asIdeal →
-    IsArithFrobAt (𝓞 K) (φ (primeCl v)) w.asIdeal
-
-structure IsClassField (B : Subgroup (ClassGroup (𝓞 K))) : Prop where
-  ab : IsAbelianGalois K H
-  unr : GroundTheory.Global.IsUnramifiedEverywhere K H
-  art : ∃ φ : ClassGroup (𝓞 K) →* Gal(H/K), IsArt K H φ ∧ Function.Surjective φ ∧ φ.ker = B
 
 end Art
 
@@ -62,15 +57,6 @@ def UnramAt (L : Type) [Field L] [NumberField L] (p : ℕ) : Prop :=
 
 def phi (p : ℕ) (P : Type) [Group P] : Subgroup P := Subgroup.closure (Set.range fun g : P => g ^ p) ⊔ commutator P
 
-theorem commutator_le_phi (p : ℕ) (P : Type) [Group P] : commutator P ≤ phi p P := le_sup_right
-
-instance phi_normal (p : ℕ) (P : Type) [Group P] : (phi p P).Normal where
-  conj_mem n hn g := by
-    have h : g * n * g⁻¹ * n⁻¹ ∈ phi p P :=
-      commutator_le_phi p P (Subgroup.commutator_mem_commutator (Subgroup.mem_top _) (Subgroup.mem_top _))
-    have := mul_mem h hn
-    rwa [inv_mul_cancel_right] at this
-
 def aug (R G : Type) [CommRing R] [Group G] : MonoidAlgebra R G →ₐ[R] R := MonoidAlgebra.lift R R G 1
 
 theorem aug_single (R G : Type) [CommRing R] [Group G] (g : G) (r : R) : aug R G (MonoidAlgebra.single g r) = r := by
@@ -80,9 +66,6 @@ def augIdeal (R G : Type) [CommRing R] [CommGroup G] : Ideal (MonoidAlgebra R G)
   Ideal.span (Set.range fun g : G => MonoidAlgebra.of R G g - 1)
 
 def pStar (p : ℕ) : ℤ := (-1) ^ (p / 2) * p
-
-example : pStar 7 = -7 := by decide
-example : pStar 5 = 5 := by decide
 
 end UpperTheory.V.CF
 

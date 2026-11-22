@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearFormRadicalRankOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjugateBlockSingleLastColumn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EmbeddedGroupMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LinearFormRadicalRankOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdjugateBlockSingleLastColumn
+
+@[expose] public section
 
 open Matrix
 
@@ -18,13 +22,13 @@ theorem liftVec_eB (u : Fin (2 * ρ + k + 1) → ℂ) (x : U.Ix k p ρ) :
   rcases x with (a | b) | c
   · have ha := a.isLt
     simp only [liftVec, Sum.elim_inl]
-    rw [dif_neg]
+    rw [dite_eq_right]
     simp only [U.eB, Equiv.trans_apply, Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr, finSumFinEquiv_apply_left,
       finSumFinEquiv_apply_right, finCongr_apply, Equiv.refl_apply, Fin.coe_cast, Fin.coe_castAdd, Fin.coe_natAdd, eI]
     omega
   · have hb := b.isLt
     simp only [liftVec, Sum.elim_inl, Sum.elim_inr]
-    rw [dif_pos]
+    rw [dite_eq_left]
     · congr 1
       ext
       simp only [U.eB, Equiv.trans_apply, Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr, finSumFinEquiv_apply_left,
@@ -35,7 +39,7 @@ theorem liftVec_eB (u : Fin (2 * ρ + k + 1) → ℂ) (x : U.Ix k p ρ) :
       omega
   · have hc := c.isLt
     simp only [liftVec, Sum.elim_inr]
-    rw [dif_neg]
+    rw [dite_eq_right]
     simp only [U.eB, Equiv.trans_apply, Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr, finSumFinEquiv_apply_left,
       finSumFinEquiv_apply_right, finCongr_apply, Equiv.refl_apply, Fin.coe_cast, Fin.coe_castAdd, Fin.coe_natAdd, eI]
     omega
@@ -69,10 +73,6 @@ theorem eI_X' (a : ℕ) (ha : a < p) (h : a < p + ρ) :
   simp only [U.eB, Equiv.trans_apply, Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr, finSumFinEquiv_apply_left,
       finSumFinEquiv_apply_right, finCongr_apply, Equiv.refl_apply, Fin.coe_cast, Fin.coe_castAdd, Fin.coe_natAdd, eI]
 
-local macro "blks" : tactic => `(tactic| simp only [Ux3.block3_apply, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
-  Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, Matrix.fromRows_apply_inl, Matrix.fromRows_apply_inr,
-  Matrix.fromCols_apply_inl, Matrix.fromCols_apply_inr])
-
 private theorem embG_eB_inl_inl_apply_eq_ite (y : B.Mat k ρ) (a : Fin p) (x : U.Ix k p ρ) :
     U.embG k p ρ y (U.eB k p ρ (Sum.inl (Sum.inl a))) (U.eB k p ρ x) = if x = Sum.inl (Sum.inl a) then 1 else 0 := by
   rcases x with (a' | b') | c' <;> simp [U.embG, Ux6.block3_apply, Matrix.one_apply] <;> (try split_ifs) <;> simp_all
@@ -97,10 +97,10 @@ theorem ell_embG (z : Fin (2 * ρ + k + 1) → ℂ) (y : B.Mat k ρ) :
     · have h' : (Fin.natAdd p b).val + 1 < p + ρ := by simp; omega
       have hV' : eI k (p + ρ) ⟨(Fin.natAdd p b).val + 1, h'⟩ =
           U.eB k p ρ (Sum.inl (Sum.inr (eI k ρ ⟨b.val + 1, h⟩))) := eI_V' (b.val + 1) h (by simp; omega)
-      rw [dif_pos h', dif_pos h, hV, hV']
+      rw [dite_eq_left h', dite_eq_left h, hV, hV']
       simp [U.embG, Ux6.block3_apply]
     · have h' : ¬ (Fin.natAdd p b).val + 1 < p + ρ := by simp; omega
-      rw [dif_neg h', dif_neg h, hV, embG_mulVec_liftVec_eB_apply]
+      rw [dite_eq_right h', dite_eq_right h, hV, embG_mulVec_liftVec_eB_apply]
       rfl
   · intro a _
     have ha := a.isLt
@@ -134,9 +134,9 @@ theorem ell_muP (z : Fin (2 * ρ + k + 1) → ℂ) (hz : inWb k ρ z) (q : Matri
     · have h' : (Fin.castAdd ρ a).val + 1 < p + ρ := by simp; omega
       have hX' : eI k (p + ρ) ⟨(Fin.castAdd ρ a).val + 1, h'⟩ =
           U.eB k p ρ (Sum.inl (Sum.inl ⟨a.val + 1, h⟩)) := eI_X' (a.val + 1) h h'
-      rw [dif_pos h', dif_pos h, hX']
+      rw [dite_eq_left h', dite_eq_left h, hX']
       simp [U.muP, Ux6.block3_apply]
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       split_ifs with h'
       · have hρ : 0 < ρ := by simp at h'; omega
         have hV' : eI k (p + ρ) ⟨(Fin.castAdd ρ a).val + 1, h'⟩ =
@@ -212,19 +212,19 @@ theorem psi_right_action_comm : PsiRnAct := by
   apply psi_of_ell
   rw [Ux3.rn_eq, Ux3.rn_eq, Formalism.FourierDecayAlt.P.PBH.ell_uni _ hz0, Formalism.FourierDecayAlt.P.PBH.ell_uni _ hz0]
   by_cases hp : 0 < p
-  · rw [dif_pos hp, dif_pos hp]
+  · rw [dite_eq_left hp, dite_eq_left hp]
     by_cases hρ : 0 < ρ
-    · rw [dif_pos hρ, dif_pos hρ]
+    · rw [dite_eq_left hρ, dite_eq_left hρ]
       have e := congrFun (corner_block_action_invariant h' x (bvec (eI k ρ ⟨0, hρ⟩)) hh.1 (hh.2.1 ⟨0, hρ⟩).1) ⟨p - 1, by omega⟩
       have e2 : ∀ M : Matrix (Fin p) (Fin (2 * ρ + k + 1)) ℂ,
           M ⟨p - 1, by omega⟩ ⟨0, by omega⟩ = (M *ᵥ bvec (eI k ρ ⟨0, hρ⟩)) ⟨p - 1, by omega⟩ := by
         intro M; simp only [bvec, Matrix.mulVec_single_one]; rfl
       exact (e2 _).trans (e.trans (e2 _).symm)
-    · rw [dif_neg hρ, dif_neg hρ]
+    · rw [dite_eq_right hρ, dite_eq_right hρ]
       have hlow : U.lowV k p ρ (liftVec k p ρ z') = z' := by
-        funext q; simp only [U.lowV, liftVec]; rw [dif_pos (by omega)]; congr 1; ext; simp
+        funext q; simp only [U.lowV, liftVec]; rw [dite_eq_left (by omega)]; congr 1; ext; simp
       rw [hlow]
       exact congrFun (corner_block_action_invariant h' x z' hh.1 hh.2.2) _
-  · rw [dif_neg hp, dif_neg hp]
+  · rw [dite_eq_right hp, dite_eq_right hp]
 
 end Formalism.FourierDecayAlt.P.LeftFubiniLemmas

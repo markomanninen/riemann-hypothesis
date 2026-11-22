@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.PositionExpansionTopCoefficients
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.PositionExpansionTopCoefficients
+
+@[expose] public section
 
 namespace Bl.HermitianSesquilinear
 
@@ -10,7 +14,7 @@ private theorem conj_eq_of_nonneg_real {M : Type} [AddCommGroup M] [Module ℂ M
   have h2 := (h (x + Complex.I • y)).2
   have hx := (h x).2
   have hy := (h y).2
-  simp only [map_add, LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  simp only [map_add (f := _), LinearMap.add_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     Complex.add_im, Complex.mul_im, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.conj_I, Complex.neg_re,
     Complex.neg_im, RingHom.id_apply] at h1 h2
   apply Complex.ext

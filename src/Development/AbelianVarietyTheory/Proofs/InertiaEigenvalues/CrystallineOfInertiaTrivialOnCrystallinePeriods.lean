@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictCrystallineDeRhamFiniteExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaFixesMaximalUnramifiedExtensionQlStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallinePeriodsExtensionSpanStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInertiaMulGaloisCompositumStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpeiserDescentSpanStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysOfCrystallinePeriodsLeSpanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictCrystallineDeRhamFiniteExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InertiaFixesMaximalUnramifiedExtensionQlStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallinePeriodsExtensionSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInertiaMulGaloisCompositumStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpeiserDescentSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysOfCrystallinePeriodsLeSpanStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
@@ -75,7 +79,7 @@ theorem sigQ_one (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (w : P.R.B ⊗[�
   | tmul b v =>
     rw [sigQ_tmul, OneMemClass.coe_one, map_one, map_one]
     rfl
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 end GlobalTheory.CrysInertDescent
 
@@ -98,7 +102,7 @@ theorem sigQ_smul (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (g : Gl l) (b :
     rw [TensorProduct.smul_tmul', sigQ_tmul, sigQ_tmul, TensorProduct.smul_tmul']
     congr 1
     exact map_mul (P.actQ (g : GQ l)) b c
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
 
 theorem comm_sigQ (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (g : Gl l) (w : P.R.B ⊗[ℚ_[l]] T.V) :
     TensorProduct.comm ℚ_[l] P.R.B T.V (sigQ P T g w) =
@@ -145,7 +149,7 @@ theorem eq_on_span {R M : Type} [Semiring R] [AddCommMonoid M] [Module R M] (f f
   induction hw using Submodule.span_induction with
   | mem x hx => exact h x hx
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | smul c x _ hx => rw [hf, hf', hx]
 
 theorem actVB_mulVB_inert (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (K : FinExt l) (i : Gl l)
@@ -160,7 +164,7 @@ theorem actVB_mulVB_inert (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (K : Fi
     congr 1
     rw [P.PD_actB]
     exact congrArg (· * _) (inert_fix_B P i hi _)
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.CrysInertDescent
 
@@ -190,7 +194,7 @@ theorem kill_span (P : LocPrime l) {LL : FinExt l} (T : QLat LL) (K K'' : FinExt
   induction hw using Submodule.span_induction with
   | mem x hx => exact hp _ hx
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   | smul c x _ hx =>
     have e1 := LinearMap.congr_fun (hcm c).eq (TensorProduct.comm ℚ_[l] P.R.B T.V x)
     rw [comm_smul (LL := ↥LL.1)]

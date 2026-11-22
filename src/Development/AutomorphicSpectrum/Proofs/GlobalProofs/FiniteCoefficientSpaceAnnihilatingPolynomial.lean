@@ -1,13 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IoInjective
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SkewOfCommute
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+
+@[expose] public section
 
 noncomputable section
 
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory Matrix
-open scoped TensorProduct Topology InnerProductSpace
-
-attribute [local instance] Formalism.BasicNotions.Host.cmStar
+open MeasureTheory
+open scoped Topology
 
 namespace GlobalTheory.CompanionTheory.HcFinite.OneParam
 
@@ -51,8 +52,8 @@ theorem hasDerivAt_of_oneParam {E : Type*} [NormedRing E] [NormedAlgebra ℝ E] 
   convert hd using 1
   rw [hadd, ← mul_assoc, mul_smul_comm, mul_sub, mul_one]
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 theorem exists_generator {K W : Type} [Group K] [TopologicalSpace K] [AddCommGroup W] [Module ℂ W]
     [FiniteDimensional ℂ W] (ρ : Representation ℂ K W) (hρ : GlobalTheory.Published.AutFin.IsContRep ρ) (s : ℝ → K)
     (hs : Continuous s) (h0 : s 0 = 1) (hadd : ∀ a b, s (a + b) = s a * s b) :
@@ -66,7 +67,7 @@ theorem exists_generator {K W : Type} [Group K] [TopologicalSpace K] [AddCommGro
     intro a c
     simp only [M, hadd, map_mul, LinearMap.toMatrix_mul]
   have hMc : Continuous M := by
-    refine continuous_pi fun i => continuous_pi fun j => ?_
+    refine continuous_matrix fun i j => ?_
     simp only [M, LinearMap.toMatrix_apply]
     exact (hρ (b.coord i) (b j)).comp hs
   obtain ⟨D₀, hD₀⟩ := hasDerivAt_of_oneParam M hMc hM0 hMadd
@@ -82,7 +83,6 @@ theorem exists_generator {K W : Type} [Group K] [TopologicalSpace K] [AddCommGro
   convert hk using 1
   show L (ρ (s t) * Matrix.toLin b b D₀) = L (Matrix.toLin b b (LinearMap.toMatrix b b (ρ (s t)) * D₀))
   rw [Matrix.toLin_mul b b b, Matrix.toLin_toMatrix, Module.End.mul_eq_comp]
-  all_goals rfl
 
 theorem iteratedDeriv_eq {K W : Type} [Group K] [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ K W) (s : ℝ → K)
     (D : Module.End ℂ W)
@@ -134,7 +134,8 @@ theorem coeff_ode : ∀ (K W : Type) [Group K] [TopologicalSpace K] [AddCommGrou
   rw [Polynomial.aeval_eq_sum_range] at hc
   calc ∑ j ∈ Finset.range ((LinearMap.charpoly D).natDegree + 1), (LinearMap.charpoly D).coeff j * L (D ^ j)
       = L (∑ j ∈ Finset.range ((LinearMap.charpoly D).natDegree + 1), (LinearMap.charpoly D).coeff j • D ^ j) := by
-        simp [map_sum, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [map_sum, smul_eq_mul]
     _ = 0 := by rw [hc, map_zero]
 
 end GlobalTheory.CompanionTheory.HcFinite.OneParam

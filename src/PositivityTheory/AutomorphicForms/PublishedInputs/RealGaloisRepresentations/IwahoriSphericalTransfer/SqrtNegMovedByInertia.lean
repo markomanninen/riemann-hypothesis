@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
-import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.FinrankAdjoinSqrtNegOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConductorExponentAtPlaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalEmbeddingOverPlace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteGaloisInertiaLiftsAbsoluteInertiaRat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.Brauer
+public import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.FinrankAdjoinSqrtNegOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConductorExponentAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalEmbeddingOverPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteGaloisInertiaLiftsAbsoluteInertiaRat
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published UpperTheory.V.Af.Bc GlobalTheory.RealGal
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -77,7 +82,7 @@ theorem sqrt_neg_moved_by_inertia : ∀ (F Ω : Type) [Field F] [NumberField F] 
   set f : F[X] := X ^ 2 + C (p : F) with hfdef
   have hf_root : ∀ x : Ω, aeval x f = 0 ↔ x ^ 2 = -(p : Ω) := by
     intro x
-    simp only [hfdef, map_add, map_pow, aeval_X, aeval_C, map_natCast]
+    simp only [hfdef, map_add (f := _), map_pow, aeval_X, aeval_C, map_natCast]
     constructor <;> intro h <;> linear_combination h
   have hmon : f.Monic := monic_X_pow_add_C _ two_ne_zero
   have hirr : Irreducible f := by
@@ -133,12 +138,12 @@ theorem sqrt_neg_moved_by_inertia : ∀ (F Ω : Type) [Field F] [NumberField F] 
     | add x y _ _ hx hy =>
       obtain ⟨a, b, rfl⟩ := hx
       obtain ⟨c, d, rfl⟩ := hy
-      exact ⟨a + c, b + d, by rw [map_add, map_add]; ring⟩
+      exact ⟨a + c, b + d, by rw [map_add (f := _), map_add (f := _)]; ring⟩
     | mul x y _ _ hx hy =>
       obtain ⟨a, b, rfl⟩ := hx
       obtain ⟨c, d, rfl⟩ := hy
       refine ⟨a * c - b * d * p, a * d + b * c, ?_⟩
-      simp only [map_add, map_sub, map_mul, map_natCast]
+      simp only [map_add (f := _), map_sub, map_mul, map_natCast]
       linear_combination (algebraMap F Ω b * algebraMap F Ω d) * hδ
   have hcond : ∀ x : M, A.valuation (algebraMap M Ω x) ≤ 1 →
       A.valuation (algebraMap M Ω (τ x) - algebraMap M Ω x) < 1 := by
@@ -148,7 +153,7 @@ theorem sqrt_neg_moved_by_inertia : ∀ (F Ω : Type) [Field F] [NumberField F] 
     rw [hab] at hx ⊢
     have e : σ₀ (algebraMap F Ω a + algebraMap F Ω b * δ) - (algebraMap F Ω a + algebraMap F Ω b * δ)
         = (-2 : Ω) * (algebraMap F Ω b * δ) := by
-      rw [map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hσ₀']; ring
+      rw [map_add (f := _), map_mul, AlgEquiv.commutes, AlgEquiv.commutes, hσ₀']; ring
     rw [e]
     have hb1 : A.valuation (algebraMap F Ω b * δ) < 1 := by
       by_cases hb : b = 0

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+
+@[expose] public section
+
 open GlobalTheory.Col PowerSeries
 
 noncomputable section
@@ -26,7 +31,7 @@ theorem ringHom_ext_of_poly {R S : Type} [CommRing R] [CommRing S] (f g : PowerS
       rw [map_mul, map_pow]
       exact Dvd.dvd.mul_right (pow_dvd_pow_of_dvd hF _) _
     exact (X_pow_dvd_iff.1 this) n (Nat.lt_succ_self n)
-  rw [hh, map_add, map_add, map_add, map_add, hP, key f hf, key g hg]
+  rw [hh, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hP, key f hf, key g hg]
 
 end GlobalTheory.Col.NormFrob
 
@@ -105,7 +110,7 @@ theorem normOp_eq_smap_add (σ : R ≃+* R) (hfl : FrobLift R p σ)
   have hcong : ∀ x g : PowerSeries R,
       red p (Algebra.norm (PowerSeries R) (x + (p : PowerSeries R) * g)) = red p (Algebra.norm (PowerSeries R) x) := by
     intro x g
-    rw [Algebra.norm_eq_matrix_det b, Algebra.norm_eq_matrix_det b, RingHom.map_det, RingHom.map_det, map_add,
+    rw [Algebra.norm_eq_matrix_det b, Algebra.norm_eq_matrix_det b, RingHom.map_det, RingHom.map_det, map_add (f := _),
       map_mul, map_natCast, map_add, map_mul, map_natCast]
     have hz : ((p : ℕ) : Matrix (Fin p) (Fin p) (PowerSeries (R ⧸ Ideal.span {(p : R)}))) = 0 := by
       ext i j

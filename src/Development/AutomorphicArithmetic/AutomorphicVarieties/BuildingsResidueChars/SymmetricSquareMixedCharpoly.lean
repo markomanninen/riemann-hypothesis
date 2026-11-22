@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.QuadraticSplitting.QuadSplit
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -19,8 +23,10 @@ private def Qm (α β : k) : Matrix (Fin 4) (Fin 4) k :=
   (2 : k)⁻¹ • !![0, β⁻¹, 0, 1; α⁻¹, 0, -1, 0; 0, -β⁻¹, 0, 1; α⁻¹, 0, 1, 0]
 
 private lemma PQ (h2 : (2 : k) ≠ 0) {α β : k} (ha : α ≠ 0) (hb : β ≠ 0) : Pm α β * Qm α β = 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Pm, Qm, Matrix.mul_apply, Fin.sum_univ_four] <;> field_simp <;> ring
+  ext i j : 1
+  fin_cases i <;> fin_cases j <;>
+    simp [Pm, Qm, Matrix.mul_apply, Fin.sum_univ_four] <;>
+    field_simp [h2, ha, hb] <;> ring
 
 private lemma cp_conj (h2 : (2 : k) ≠ 0) {α β : k} (ha : α ≠ 0) (hb : β ≠ 0) (M N : Matrix (Fin 4) (Fin 4) k)
     (h : Pm α β * M = N * Pm α β) : M.charpoly = N.charpoly := by
@@ -33,24 +39,29 @@ private lemma P_mix (h2 : (2 : k) ≠ 0) (α β : kˣ) (A B : Matrix (Fin 2) (Fi
     Pm (α : k) β * mix (β / α) A B = blk A B * Pm (α : k) β := by
   have ha := α.ne_zero
   have hb := β.ne_zero
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Pm, mix, blk, Matrix.mul_apply, Fin.sum_univ_four] <;> field_simp <;> ring
+  ext i j : 1
+  fin_cases i <;> fin_cases j <;>
+    simp [Pm, mix, blk, Matrix.mul_apply, Fin.sum_univ_four, Units.val_div_eq_div_val] <;>
+    field_simp [h2, ha, hb] <;> ring
 
 private lemma blk_P (α β : k) (A B : Matrix (Fin 2) (Fin 2) k) :
     blk A B * Pm α β * Matrix.diagonal ![β, -α, -β, α] =
       ant (A * Matrix.diagonal ![α ^ 2, β ^ 2]) B * Pm α β := by
-  ext i j
+  ext i j : 1
   rw [Matrix.mul_diagonal]
   fin_cases i <;> fin_cases j <;> simp [Pm, ant, blk, Matrix.mul_apply, Fin.sum_univ_four] <;> ring
 
 private lemma cp_blk (A B : Matrix (Fin 2) (Fin 2) k) : (blk A B).charpoly = A.charpoly * B.charpoly := by
-  simp [Matrix.charpoly, Matrix.det_succ_row_zero, Fin.sum_univ_succ, blk, Matrix.charmatrix_apply, Fin.succAbove,
-    Matrix.diagonal_apply]
+  simp only [Matrix.charpoly, Matrix.det_succ_row_zero, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.det_fin_zero, Matrix.submatrix_apply, Matrix.charmatrix_apply]
+  norm_num [blk, Fin.succAbove, Fin.lt_def, Fin.ext_iff, Matrix.diagonal_apply]
   ring
 
 private lemma cp_ant (A B : Matrix (Fin 2) (Fin 2) k) : (ant A B).charpoly = (A * B).charpoly.comp (X ^ 2) := by
-  simp [Matrix.charpoly, Matrix.det_succ_row_zero, Fin.sum_univ_succ, ant, Matrix.charmatrix_apply, Fin.succAbove,
-    Matrix.diagonal_apply, Matrix.mul_apply]
+  simp only [Matrix.charpoly, Matrix.det_succ_row_zero, Fin.sum_univ_succ, Fin.sum_univ_zero,
+    Matrix.det_fin_zero, Matrix.submatrix_apply, Matrix.charmatrix_apply]
+  norm_num [ant, Fin.succAbove, Fin.lt_def, Fin.ext_iff, Matrix.diagonal_apply, Matrix.mul_apply,
+    Fin.sum_univ_two]
   ring
 
 end UpperTheory.V.Sd.S2.symmetric_square_mixed_charpoly

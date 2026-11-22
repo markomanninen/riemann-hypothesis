@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,8 +117,8 @@ theorem exists_finite_part (p : ℕ) (hp : p ≠ 0) : ∃ pf : Afˣ, (pf : Af) =
     rw [h1, hAv, Units.val_pow_eq_pow_val]
     show ((e w).symm r) ^ m = (p : w.Completion)
     rw [← map_pow, hrm, map_natCast]
-  have hA : A = ((prodEquiv ℚ).symm (T, 1)) ^ m * ofFinite pf := by
-    apply (prodEquiv ℚ).injective
+  have hA : A = ((IdeleGroup.prodEquiv ℚ).symm (T, 1)) ^ m * ofFinite pf := by
+    apply (IdeleGroup.prodEquiv ℚ).injective
     have h2 : prodEquiv ℚ (ofFinite pf) = (1, pf) := by
       show prodEquiv ℚ ((ContinuousMulEquiv.symm (prodEquiv ℚ)) (1, pf)) = _
       rw [ContinuousMulEquiv.apply_symm_apply]
@@ -129,7 +133,7 @@ theorem exists_finite_part (p : ℕ) (hp : p ≠ 0) : ∃ pf : Afˣ, (pf : Af) =
     | succ k ih =>
       rw [pow_succ, pow_succ, ← ih]
       rfl
-  have h3 : ω.toIdele ((prodEquiv ℚ).symm (T, 1)) ^ m = 1 := by
+  have h3 : ω.toIdele ((IdeleGroup.prodEquiv ℚ).symm (T, 1)) ^ m = 1 := by
     rw [← hpow, hωm]; rfl
   have h4 := ω.toIdele_diagonal (Units.mk0 (p : ℚ) hq)
   change ω.toIdele A = 1 at h4

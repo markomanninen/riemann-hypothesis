@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.StrongMultOneC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -16,8 +20,14 @@ theorem UpperTheory.V.Af.StrongMultiplicityOne.orthStep :
     UpperTheory.V.Af.StrongMultiplicityOne.ChartCont → UpperTheory.V.Af.StrongMultiplicityOne.OrthStep := by
   classical
   intro hcc E _ _ _ n μ _ f hf ⟨C, hC⟩ hl a ha ⟨D, hD⟩ h0 β h
+  have : OpensMeasurableSpace (RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n))) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      infer_instance
+  have : OpensMeasurableSpace (RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) × Lie E n) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      infer_instance
   have := Reduction.isFiniteMeasure_quotientMeasure (K := E) (n := n) μ
-  generalize RightCosetSpace.quotientMeasure (Reduction.rationalGLOne E n) μ = ν at *
+  generalize RightCosetSpace.quotientMeasure (Reduction.rationalGLOne (K := E) (n := n)) μ = ν at *
   have : SFinite ν := sfinite_of_finite ν
   have : (volume : Measure (Cinf E)).IsAddHaarMeasure := inferInstance
   have : (volume : Measure (Fin n → Cinf E)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
@@ -32,10 +42,10 @@ theorem UpperTheory.V.Af.StrongMultiplicityOne.orthStep :
     split_ifs with hx
     · exact hr _ γ g
     · rfl
-  let F : RightCosetSpace (Reduction.rationalGLOne E n) × Lie E n → ℂ := fun z =>
+  let F : RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) × Lie E n → ℂ := fun z =>
     CuspidalSpectrum.cuspQuot (hF z.2) z.1
-  have hFmk : ∀ (y : Reduction.normOneGL E n) x,
-      F (RightCosetSpace.mk (Reduction.rationalGLOne E n) y, x) = chart f y.1 x := fun _ _ => rfl
+  have hFmk : ∀ (y : Reduction.normOneGL (K := E) (n := n)) x,
+      F (RightCosetSpace.mk (Reduction.rationalGLOne (K := E) (n := n)) y, x) = chart f y.1 x := fun _ _ => rfl
   have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC 1)
   have hFb : ∀ z, ‖F z‖ ≤ C := by
     rintro ⟨q, x⟩
@@ -50,30 +60,30 @@ theorem UpperTheory.V.Af.StrongMultiplicityOne.orthStep :
     obtain ⟨y, rfl⟩ := RightCosetSpace.mk_surjective _ q
     rw [hFmk]
     exact dif_neg hx
-  have hopen : IsOpen ((Set.univ : Set (RightCosetSpace (Reduction.rationalGLOne E n))) ×ˢ invSet E n) :=
+  have hopen : IsOpen ((Set.univ : Set (RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)))) ×ˢ invSet E n) :=
     isOpen_univ.prod GlobalTheory.CuspRep.isOpen_invSet
   have hFc : ContinuousOn F (Set.univ ×ˢ invSet E n) := by
     rintro ⟨q, x⟩ ⟨-, hx⟩
     obtain ⟨y, rfl⟩ := RightCosetSpace.mk_surjective _ q
-    have hq := (RightCosetSpace.isOpenQuotientMap_mk (Reduction.rationalGLOne E n)).prodMap
+    have hq := (RightCosetSpace.isOpenQuotientMap_mk (Reduction.rationalGLOne (K := E) (n := n))).prodMap
       (IsOpenQuotientMap.id (X := Lie E n))
     refine ContinuousAt.continuousWithinAt ?_
     refine (hq.continuousAt_comp_iff (g := F) (x := (y, x))).1 ?_
     have h1 : ContinuousAt (fun z : GA E n × Lie E n => chart f z.1 z.2) (y.1, x) :=
       (hcc E n f hf).1.continuousAt ((isOpen_univ.prod GlobalTheory.CuspRep.isOpen_invSet).mem_nhds ⟨trivial, hx⟩)
-    have h2 : Continuous fun z : Reduction.normOneGL E n × Lie E n => ((z.1.1, z.2) : GA E n × Lie E n) :=
+    have h2 : Continuous fun z : Reduction.normOneGL (K := E) (n := n) × Lie E n => ((z.1.1, z.2) : GA E n × Lie E n) :=
       (continuous_subtype_val.comp continuous_fst).prodMk continuous_snd
-    exact ContinuousAt.comp (f := fun z : Reduction.normOneGL E n × Lie E n => ((z.1.1, z.2) : GA E n × Lie E n))
+    exact ContinuousAt.comp (f := fun z : Reduction.normOneGL (K := E) (n := n) × Lie E n => ((z.1.1, z.2) : GA E n × Lie E n))
       (x := (y, x)) h1 h2.continuousAt
   have hFm : Measurable F := by
     have hc : ContinuousOn F (Set.univ ×ˢ invSet E n)ᶜ :=
       (continuousOn_const (c := (0 : ℂ))).congr fun z hz => hF0 z.1 z.2 fun hx => hz ⟨trivial, hx⟩
     have := hFc.measurable_piecewise hc hopen.measurableSet
     rwa [Set.piecewise_same] at this
-  have hint : Integrable (fun z : RightCosetSpace (Reduction.rationalGLOne E n) × Lie E n =>
+  have hint : Integrable (fun z : RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) × Lie E n =>
       (a z.1 * F z) * β z.2)
       (ν.prod volume) := by
-    have hβ : Integrable (fun z : RightCosetSpace (Reduction.rationalGLOne E n) × Lie E n => β z.2)
+    have hβ : Integrable (fun z : RightCosetSpace (Reduction.rationalGLOne (K := E) (n := n)) × Lie E n => β z.2)
         (ν.prod volume) :=
       (β.integrable (μ := volume)).comp_snd _
     refine hβ.bdd_mul (c := D * C) (((ha.measurable.comp measurable_fst).mul hFm).aestronglyMeasurable)

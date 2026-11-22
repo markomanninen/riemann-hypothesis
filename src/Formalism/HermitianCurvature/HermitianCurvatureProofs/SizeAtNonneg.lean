@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfPlaces
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfPlaces
+
+@[expose] public section
 
 open Finset NumberField
 open scoped ComplexConjugate ComplexOrder

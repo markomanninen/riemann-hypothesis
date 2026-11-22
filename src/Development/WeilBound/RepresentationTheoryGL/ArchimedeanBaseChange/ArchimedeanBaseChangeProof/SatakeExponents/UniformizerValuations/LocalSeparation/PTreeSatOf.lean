@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,13 +40,13 @@ theorem treeSatOf_holds : TreeSatOf := by
   obtain ⟨hinv, J, L, heq, hsep⟩ := hT E N t P w hg hu htp
   have hKo := (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w N).1
   have hKc := Final.GLintComm E w N
-  have fixK : ∀ φ, (∀ k ∈ KGL w N, finRep E N (locGL E N w k) φ = φ) →
-      φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w N) :=
+  have fixK : ∀ φ, (∀ k ∈ KGL w (n := N), finRep E N (locGL E N w k) φ = φ) →
+      φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w (n := N)) :=
     fun φ h => GlobalTheory.LGrp.mem_fixed.2 fun k hk => h k hk
-  have smK : ∀ φ, φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w N) → SmVec ((finRep E N).comp (locGL E N w)) φ :=
+  have smK : ∀ φ, φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w (n := N)) → SmVec ((finRep E N).comp (locGL E N w)) φ :=
     fun φ h => ⟨_, hKo, h⟩
-  have hLfix : ∀ j φ, φ ∈ t.space → φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w N) →
-      L j φ ∈ fixed (lp P w) (KGL w N) := fun j φ hS hf =>
+  have hLfix : ∀ j φ, φ ∈ t.space → φ ∈ fixed ((finRep E N).comp (locGL E N w)) (KGL w (n := N)) →
+      L j φ ∈ fixed (lp P w) (KGL w (n := N)) := fun j φ hS hf =>
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => by rw [← heq j k φ hS (smK _ hf), GlobalTheory.LGrp.mem_fixed.1 hf k hk]
   obtain ⟨j, hj⟩ : ∃ j, L j φ0 ≠ 0 := by
     by_contra hc
@@ -50,7 +54,7 @@ theorem treeSatOf_holds : TreeSatOf := by
     exact hφ00 (hsep φ0 hφ0S (smK _ (fixK _ hφ0K)) hc)
   obtain ⟨b, hb, -⟩ := GlobalTheory.SatInd.exists_sat_multiProd P.h (π := fun i => (P.σ i w).ρ) (fun i => (P.σ i w).smooth)
     (fun i => (P.σ i w).irred) (hLfix j φ0 hφ0S (fixK _ hφ0K)) hj
-  have hvec : ∀ f ∈ fixed (lp P w) (KGL w N), f ≠ 0 → IsSatVecGL w (lp P w) f (∑ i, b i) := fun f hf hf0 => by
+  have hvec : ∀ f ∈ fixed (lp P w) (KGL w (n := N)), f ≠ 0 → IsSatVecGL w (lp P w) f (∑ i, b i) := fun f hf hf0 => by
     obtain ⟨S, hS, hfS⟩ := GlobalTheory.SatInd.exists_sat_multiProd P.h (π := fun i => (P.σ i w).ρ)
       (fun i => (P.σ i w).smooth) (fun i => (P.σ i w).irred) hf hf0
     have e : S = b := funext fun a => (hS a).unique (hb a)
@@ -61,7 +65,7 @@ theorem treeSatOf_holds : TreeSatOf := by
   have hf := fixK _ hφK
   refine ⟨hφ0, hf, hcard, fun ϖ hϖ i hi => ?_⟩
   have hh := GlobalTheory.LFun.Tj_mem_hecke (n := N) hϖ i
-  have hTS := tso_heckeVec_mem (K := KGL w N) (h := Tj ℂ N (Ov E w) ϖ i) t.space hinv hφS
+  have hTS := tso_heckeVec_mem (K := KGL w (n := N)) (h := Tj ℂ N (Ov E w) ϖ i) t.space hinv hφS
   have hTf := GlobalTheory.LFun.SatCompare.heckeVec_mem_fixed hKc hh hf
   refine sub_eq_zero.1 (hsep _ (t.space.sub_mem hTS (t.space.smul_mem _ hφS))
     (smK _ (sub_mem hTf (Submodule.smul_mem _ _ hf))) fun j' => ?_)
@@ -69,7 +73,7 @@ theorem treeSatOf_holds : TreeSatOf := by
   rw [LinearMap.map_sub, LinearMap.map_smul]
   refine sub_eq_zero.2 (key.trans ?_)
   by_cases h0 : L j' φ = 0
-  · exact (congrArg (heckeVec (lp P w) (KGL w N) (Tj ℂ N (Ov E w) ϖ i)) h0).trans
+  · exact (congrArg (heckeVec (lp P w) (KGL w (n := N)) (Tj ℂ N (Ov E w) ϖ i)) h0).trans
       (tso_heckeVec_zero.trans ((smul_zero _).symm.trans (congrArg _ h0.symm)))
   · exact (hvec _ (hLfix j' φ hφS hf) h0).2.2.2 ϖ hϖ i hi
 

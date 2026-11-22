@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdUniq
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.SdUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,6 @@ theorem isClosed_ann : IsClosed (ann χ (M : Set V)) := by
     isClosed_eq (hχc.comp (continuous_const.prodMk continuous_id)) continuous_const
 
 include hχc hχ hsym hn hMc hMo in
-
 theorem key (Φ : V → ℂ) (hc : Continuous Φ) (hs : HasCompactSupport Φ) (z : V) :
     ∫ y in (M : Set V), (∫ x, Φ x * χ x y ∂μ) * χ y z ∂μ =
       (μ.real (M : Set V) : ℂ) * ∫ u in ann χ M, Φ (u - z) ∂μ := by

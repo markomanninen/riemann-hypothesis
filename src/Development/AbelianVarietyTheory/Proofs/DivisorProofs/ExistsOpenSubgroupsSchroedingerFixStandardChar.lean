@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryPartnerDiagStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -89,11 +93,15 @@ theorem dotProduct_adeleJoin_zero {κ : Type} [Fintype κ] (v : κ → AdeleRing
   have e1 : ∀ s : AdeleRing (𝓞 F) F, s.1 = q1 s := fun _ => rfl
   have e2 : ∀ s : AdeleRing (𝓞 F) F, s.2 = q2 s := fun _ => rfl
   refine Prod.ext ?_ ?_
-  · rw [e1, dotProduct, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, dotProduct, map_sum]
+    change ∑ i, q1 (v i * GlobalTheory.WeilCont.adeleJoin F 0 y i) = 0
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_mul, adeleJoin_zero_apply]
     exact mul_zero _
-  · rw [e2, dotProduct, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, dotProduct, map_sum]
+    change ∑ i, q2 (v i * GlobalTheory.WeilCont.adeleJoin F 0 y i) = ∑ i, (v i).2 * y i
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, adeleJoin_zero_apply]
     rfl

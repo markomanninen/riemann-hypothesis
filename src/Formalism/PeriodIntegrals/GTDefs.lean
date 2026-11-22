@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.PeriodIntegrals.GTBranch
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.PeriodIntegrals.GTBranch
+
+@[expose] public section
 
 noncomputable section
 

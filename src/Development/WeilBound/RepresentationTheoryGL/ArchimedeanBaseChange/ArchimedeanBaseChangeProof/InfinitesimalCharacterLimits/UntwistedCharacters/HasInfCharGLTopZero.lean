@@ -1,10 +1,14 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.InfInd2Holds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceOperatorEigenvalueSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieCentralElementTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivSplitCentre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasInfCharGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BaseChangeSpehOfDiscreteSeries
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.InfinitesimalCharacterGlue
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.InfInd2Holds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceOperatorEigenvalueSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieCentralElementTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IteratedDerivSplitCentre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasInfCharGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BaseChangeSpehOfDiscreteSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem hasInfCharGL_tw {N : ℕ} {V : Submodule ℂ (Sm E N)} {τ : E →+* ℂ
 theorem prod_cancel (m₁ m₂ : Multiset ℂ) (u : ℂ) (r s : ℕ) :
     ((m₁.map (· + (s : ℂ) / 2)).map (u - (s : ℂ) / 2 + ·)).prod *
         ((m₂.map (· + -(r : ℂ) / 2)).map (u + (r : ℂ) / 2 + ·)).prod = ((m₁ + m₂).map (u + ·)).prod := by
-  rw [Multiset.map_add, Multiset.prod_add, Multiset.map_map, Multiset.map_map]
+  rw [Multiset.map_add (f := _), Multiset.prod_add, Multiset.map_map, Multiset.map_map]
   congr 2
   · exact Multiset.map_congr rfl fun x _ => by simp only [Function.comp_apply]; ring
   · exact Multiset.map_congr rfl fun x _ => by simp only [Function.comp_apply]; ring
@@ -46,7 +50,7 @@ theorem hasInfCharGL_node {r s : ℕ} {U₁ : Submodule ℂ (Sm E r)} {U₂ : Su
         (hasInfCharGL_tw h₁ _) (hasInfCharGL_tw h₂ _) u F hF
     rw [hc, prod_cancel]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul a x _ hx => rw [map_smul, hx, smul_comm]
 
 theorem hasInfCharGL_space {N : ℕ} (t : Tr E N) (τ : E →+* ℂ) (m : Multiset ℂ) (h : t.InfOf τ m) :

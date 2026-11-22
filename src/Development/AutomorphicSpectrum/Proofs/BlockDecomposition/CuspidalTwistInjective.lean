@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,7 +91,7 @@ theorem exists_scalar {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] {π :
   have h2 : (w : V) ≠ 0 := fun e => hw.2 (Subtype.ext e)
   exact ⟨c, eq_smul_of_eigenvector hi hz h2 h1⟩
 
-theorem eq_zero_of_nu_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL k) (hd : 0 < x.1) {s : ℝ}
+theorem eq_zero_of_nu_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL (k := k)) (hd : 0 < x.1) {s : ℝ}
     (hs : x.nu (s : ℂ) = x) : s = 0 := by
   have h1 := IrrGL.tw_of x.rep x.2.rep.smooth x.2.rep.irr (absPow k (s : ℂ)) (isSmoothChar_absPow _)
   rw [IrrGL.of_rep] at h1
@@ -128,7 +132,7 @@ theorem eq_zero_of_nu_eq (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (
   exact (mul_eq_zero.1 h11).resolve_right (Real.log_ne_zero_of_pos_of_ne_one hpos hne)
 
 theorem nu_natCast_inj : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL k) (hx : x.IsCusp) (a b : ℕ)
+    (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (x : IrrGL (k := k)) (hx : x.IsCusp) (a b : ℕ)
     (h : x.nu (a : ℂ) = x.nu (b : ℂ)), a = b := by
   intro k _ _ _ _ hA x hx a b h
   have h1 : x.nu (((a : ℝ) - (b : ℝ) : ℝ) : ℂ) = x := by

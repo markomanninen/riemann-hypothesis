@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.SandwichModelDomains.StatementW
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
+module
+
+public import Formalism.ThetaLogCoordinates.SandwichModelDomains.StatementW
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.SchurTraceProofs.WeightCompApply
+
+@[expose] public section
 
 open MvPolynomial
 

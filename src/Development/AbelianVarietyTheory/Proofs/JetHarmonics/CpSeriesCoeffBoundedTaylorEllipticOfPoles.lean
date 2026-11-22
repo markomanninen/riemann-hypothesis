@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralWeierstrassChartXyUnitSeries
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsEllipticFunctionMulProdEqXy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralWeierstrassChartXyUnitSeries
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsEllipticFunctionMulProdEqXy
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.MomOne
@@ -70,7 +74,8 @@ theorem prod_coeff_le (ι : ℂ ≃+* ℂ_[q]) {m : ℕ} (a : Fin m → ℂ) (ha
   revert n
   refine Finset.prod_induction _ (fun p : Polynomial ℂ => ∀ n, ‖ι (p.coeff n)‖ ≤ 1) ?_ ?_ ?_
   · intro p r hp hr n
-    rw [Polynomial.coeff_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.coeff_mul, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one ?_
     intro x _
     rw [map_mul, norm_mul]
@@ -104,7 +109,8 @@ theorem bdd_hat_of_ell : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q) (ℓ : ℂ_[q]
   have hS1 : Bd 1 S := bd_one_sum _ _ fun i _ =>
     bd_one_mul (bd_one_mul (bd_mono (bd_C _) (hint i)) (bd_X_pow _)) (bd_one_pow hxs i)
   have hS0 : ‖constantCoeff S‖ = 1 := by
-    rw [hS, Finset.sum_range_succ, map_add, map_sum, Finset.sum_eq_zero, zero_add]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hS, Finset.sum_range_succ, map_add (f := _), map_sum, Finset.sum_eq_zero, zero_add]
     · have : D.coeff m = 1 := by rw [← hdeg]; exact hmon.coeff_natDegree
       simp [this, hx0]
     · intro i hi

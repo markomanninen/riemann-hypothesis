@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ProdSqrtLead
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootOriginComparisonSubset
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ProdSqrtLead
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RootOriginComparisonSubset
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUniqueLeftBasisCoordsAdicCompletion
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi

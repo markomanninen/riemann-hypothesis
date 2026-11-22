@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SphericalMinuscule
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SphericalMinuscule
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ namespace Spherical
 
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   {n : ℕ}
-
-local notation "π" => (GLnLocal.uniformizer F : F)
 
 theorem minusculeSet_eq (k : ℕ) :
     minusculeSet F n k = ⋃ (S : {S : Finset (Fin n) // S.card = k}) (c : Pairs S.1 → 𝓀[F]),
@@ -49,8 +51,8 @@ theorem mul_mem_minusculeSet_iff {k : ℕ} {a g b : GL (Fin n) F} (ha : a ∈ in
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
   {μ : Measure (GL (Fin n) F)} [μ.IsHaarMeasure]
 
-variable (μ) in
 
+variable (μ) in
 def indicatorHecke (U : Set (GL (Fin n) F)) (hc : IsCompact U) (ho : IsOpen U)
     (hU : ∀ k ∈ integralGL F n, ∀ x, (k * x ∈ U ↔ x ∈ U) ∧ (x * k ∈ U ↔ x ∈ U)) :
     SphericalHecke μ (F := F) (n := n) :=
@@ -65,12 +67,8 @@ def indicatorHecke (U : Set (GL (Fin n) F)) (hc : IsCompact U) (ho : IsOpen U)
         · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hU k hk x).2.2 h)]
         · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (fun h' => h ((hU k hk x).2.1 h'))]
 
-theorem indicatorHecke_apply (U : Set (GL (Fin n) F)) (hc : IsCompact U) (ho : IsOpen U) (hU)
-    (g : GL (Fin n) F) :
-    (indicatorHecke μ U hc ho hU : HeckeAlgebra μ) g = U.indicator (fun _ => (1 : ℂ)) g := rfl
 
 variable (μ) in
-
 def minusculeHecke (k : ℕ) : SphericalHecke μ (F := F) (n := n) :=
   indicatorHecke μ (minusculeSet F n k) (isCompact_minusculeSet k) (isOpen_minusculeSet k)
     fun a ha x => ⟨by simpa using mul_mem_minusculeSet_iff (g := x) ha (integralGL F n).one_mem,
@@ -194,8 +192,8 @@ theorem torusPow_const_comm (t : ℤ) (g : GL (Fin n) F) :
   refine Units.ext (Matrix.ext fun i j => ?_)
   rw [Units.val_mul, Units.val_mul, coe_torusPow, diagonal_mul, mul_diagonal, mul_comm]
 
-variable (F n) in
 
+variable (F n) in
 def centralSet : Set (GL (Fin n) F) :=
   torusPow F n (fun _ => -1) • (integralGL F n : Set (GL (Fin n) F))
 
@@ -207,8 +205,8 @@ theorem mem_centralSet {g : GL (Fin n) F} :
   · intro h
     exact ⟨_, h, by simp [smul_eq_mul]⟩
 
-variable (μ) in
 
+variable (μ) in
 def centralHecke : SphericalHecke μ (F := F) (n := n) :=
   indicatorHecke μ (centralSet F n) ((isCompact_integralGL F n).smul _)
     ((isOpen_integralGL F n).smul _) fun a ha x => by
@@ -242,14 +240,14 @@ theorem satake_centralHecke :
     rw [Finset.mem_singleton, ← QuotientGroup.out_eq' x]
     exact (QuotientGroup.eq.2 (mem_centralSet.1 hm)).symm
 
-variable (F) in
 
+variable (F) in
 def qF : ℕ := Nat.card 𝓀[F]
 
 theorem qF_pos : 0 < qF F := Nat.card_pos
 
-variable (F) in
 
+variable (F) in
 def yElt (i : Fin n) : LaurentRing n := single (Pi.single i 1) ((qF F : ℂ) ^ (n - 1 - i.val))
 
 theorem sum_single_one (S : Finset (Fin n)) : ∑ i ∈ S, (Pi.single i 1 : Fin n → ℤ) = lamS S := by

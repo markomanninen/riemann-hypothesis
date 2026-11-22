@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyGivesConjugateLieData
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FamilyGivesConjugateLieData
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -57,8 +62,10 @@ theorem family_conj_H_eq : ∀ (K : Type) [Field K] (C : ACurve K) (p : ℕ) [Fa
   have hiso := fun i => GlobalTheory.T.alpha_beta_isomorphism_transport K p d O F.B (F.BK i) (F.φ i) (F.ψ i) (F.lam i) (F.iso i)
   refine ⟨{ lie := fun i => colLat C i (lin (F.φ i) 1)
             H := fun i => imLat C i (transH (F.φ i) (F.ψ i) (F.lam i))
-            lie_bun := isBun_colLat C _ _ h₁ h₂ (F.ae.subset fun i hi h => hi ?_)
-            H_bun := isBun_imLat C _ hT (F.ae.subset fun i hi h => hi ?_)
+            lie_bun := isBun_colLat C _ _ h₁ h₂ (F.ae.subset fun i hi h => hi ⟨(good i h).1, (good i h).2.1⟩)
+            H_bun := isBun_imLat C _ hT (F.ae.subset fun i hi h => hi (by
+              obtain ⟨g₁, g₂, g₃⟩ := good i h
+              exact imLat_transH_eq C (h₁ i) (h₂ i) g₁ g₂ g₃))
             ρ := ρ
             ρH := ρH
             ρH_hom := fun a i x hx => ?_
@@ -71,9 +78,6 @@ theorem family_conj_H_eq : ∀ (K : Type) [Field K] (C : ACurve K) (p : ℕ) [Fa
               (fun i y => (hiso i).2 y) (fun i => locSplit C F i)
             α_act := fun a u => ?_
             β_act := fun a y => ?_ }, hρH, fun _ => rfl⟩
-  · exact ⟨(good i h).1, (good i h).2.1⟩
-  · obtain ⟨g₁, g₂, g₃⟩ := good i h
-    exact imLat_transH_eq C (h₁ i) (h₂ i) g₁ g₂ g₃
   · obtain ⟨w, hw, rfl⟩ := (mem_imLat C).1 hx
     rw [hρH]
     refine (mem_imLat C).2 ⟨rhoH (F.BK i) a w, rhoH_mem_stdH C i (F.Bi i) (F.BK i) (F.mapK i) a hw, ?_⟩

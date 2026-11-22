@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.CuspFrame
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.PointwiseKernelBound
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.NearNonzeroTerms
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LayerProdCountMulDensityLeTwo
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PowLePowRatio
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalFlagExistsUniqueSemistable
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSizeEqLeast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SizeIntegralsAndCardCompositions
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsRadicalSpanPrimeOfNcardPrimesOverEqFinrank
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountHypPAtAddQAt
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralTypeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.CuspFrame
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.PointwiseKernelBound
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.NearNonzeroTerms
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LayerProdCountMulDensityLeTwo
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PowLePowRatio
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalFlagExistsUniqueSemistable
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSizeEqLeast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SizeIntegralsAndCardCompositions
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsRadicalSpanPrimeOfNcardPrimesOverEqFinrank
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountHypPAtAddQAt
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LintegralTypeLe
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ContDiff
@@ -73,7 +77,7 @@ theorem integral_count_dens (n f q a : ℕ) (j : Fin a → ℕ) (de lo M : ℝ) 
           mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left h2 hM) hP
     · simp [Set.indicator_apply, hl]
   have hcont : ContinuousOn (fun τ : Fin a → ℝ => M * 2 * ∏ i, 2 * (f : ℝ) * j i / τ i) S := by
-    refine continuousOn_const.mul (continuousOn_finset_prod _ fun i _ => ?_)
+    refine continuousOn_const.mul (continuousOn_finsetProd _ fun i _ => ?_)
     exact continuousOn_const.div (continuous_apply i).continuousOn
       fun τ hτ => ne_of_gt (lt_of_lt_of_le hlo (hτ i (Set.mem_univ _)).1)
   have hint : IntegrableOn (fun τ : Fin a → ℝ => M * 2 * ∏ i, 2 * (f : ℝ) * j i / τ i) S :=
@@ -198,7 +202,7 @@ theorem near_terms_one_type : GlobalTheory.FlagMeas.FlagMeasureBound → GlobalT
         (2 * B.I.f * q * (11 * q * Real.log (bigX B b))) ^ a := by
       calc ∏ i, 2 * (B.I.f : ℝ) * j i * Real.log (1 / (2 * lo))
           ≤ ∏ _i : Fin a, 2 * (B.I.f : ℝ) * q * (11 * q * Real.log (bigX B b)) := by
-            refine Finset.prod_le_prod (fun i _ => by positivity) fun i _ => ?_
+            refine Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => ?_
             have hji : (j i : ℝ) ≤ q := by
               exact_mod_cast le_trans (Finset.single_le_sum (fun k _ => Nat.zero_le (j k))
                 (Finset.mem_univ i)) hjq

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.KudlaSplittingSplitUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.KudlaSplittingSplitUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,12 +60,10 @@ def weyl (ν : Type) [Fintype ν] [DecidableEq ν] : UG c (stdJ ν E) :=
   ⟨⟨stdJ ν E, -stdJ ν E, by rw [Matrix.mul_neg, stdJ_mul_stdJ, neg_neg], by rw [Matrix.neg_mul, stdJ_mul_stdJ, neg_neg]⟩, by
     rw [mem_UG_iff]
     have h : ((stdJ ν E).map c)ᵀ = -stdJ ν E := by
-      ext (i | i) (j | j) <;> simp [stdJ, one_apply, eq_comm]
+      ext (i | i) (j | j) <;> simp [stdJ, Matrix.one_apply, eq_comm]
     change stdJ ν E * stdJ ν E * ((stdJ ν E).map c)ᵀ = stdJ ν E
     rw [h, stdJ_mul_stdJ]
     simp⟩
-
-theorem weyl_val : ((weyl c ν : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E) = stdJ ν E := rfl
 
 def unip (b : Matrix ν ν E) (hb : (b.map c)ᵀ = b) : UG c (stdJ ν E) :=
   ⟨⟨fromBlocks 1 b 0 1, fromBlocks 1 (-b) 0 1, by simp [fromBlocks_multiply], by simp [fromBlocks_multiply]⟩, by
@@ -69,9 +71,6 @@ def unip (b : Matrix ν ν E) (hb : (b.map c)ᵀ = b) : UG c (stdJ ν E) :=
     have h0 : (0 : Matrix ν ν E).map c = 0 := Matrix.map_zero _ (map_zero c)
     have h1 : (1 : Matrix ν ν E).map c = 1 := Matrix.map_one _ (map_zero c) (map_one c)
     simp [stdJ, fromBlocks_map, fromBlocks_transpose, fromBlocks_multiply, h0, h1, hb]⟩
-
-theorem unip_val (b : Matrix ν ν E) (hb : (b.map c)ᵀ = b) :
-    ((unip c b hb : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E) = fromBlocks 1 b 0 1 := rfl
 
 abbrev mat (g : UG c (stdJ ν E)) : Matrix (ν ⊕ ν) (ν ⊕ ν) E := ((g : GL (ν ⊕ ν) E) : Matrix (ν ⊕ ν) (ν ⊕ ν) E)
 

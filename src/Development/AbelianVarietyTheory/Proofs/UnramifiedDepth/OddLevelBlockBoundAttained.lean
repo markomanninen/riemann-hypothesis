@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
-import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
-import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ConstantCoeffSubstSame
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockOfNormalForm
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.SumEqOfIsHomogeneous
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockValueOnRowsEqStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RowDataMainTermNormalFormAndLevelOneStatement
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MainTermImpliesRowHypothesisStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
+public import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+public import Formalism.LocalToGlobal.CharacterGerms.LatticeInclusionFormsInjective
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ConstantCoeffSubstSame
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockOfNormalForm
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.SumEqOfIsHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.BlockValueOnRowsEqStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RowDataMainTermNormalFormAndLevelOneStatement
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MainTermImpliesRowHypothesisStatement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -44,7 +48,7 @@ omit [∀ g, Fintype (I g)] in
 theorem rename_minor {n N : ℕ} (hN : n ≤ N) (g : Fin 2) (en : Fin N → I g) :
     MvPolynomial.rename (fun x : Fin n × Fin N => (x.1, (⟨g, en x.2⟩ : WV I))) (minorK K n N n) =
       letterDet K g fun c => en (Fin.castLE hN c) := by
-  rw [minorK, dif_pos ⟨le_rfl, hN⟩, AlgHom.map_det, letterDet]
+  rw [minorK, dite_eq_left ⟨le_rfl, hN⟩, AlgHom.map_det, letterDet]
   congr 1
   refine Matrix.ext fun b c => ?_
   simp

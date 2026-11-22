@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapPoly
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapPoly
+
+@[expose] public section
 
 open NumberField
 
@@ -16,7 +20,8 @@ theorem UpperTheory.ConvolutionTheory.BW.zSpec :
       rw [Finset.card_univ, Fintype.card_fin]
       exact Polynomial.degree_le_natDegree.trans_lt (by exact_mod_cast Nat.lt_succ_of_le h1)
     conv_rhs => rw [Lagrange.eq_interpolate hinj hd]
-    rw [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff, zC, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Lagrange.interpolate_apply, Polynomial.finsetSum_coeff, zC, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Polynomial.coeff_C_mul, h4, map_smul, smul_eq_mul, mul_comm]
     rfl
@@ -28,7 +33,8 @@ theorem UpperTheory.ConvolutionTheory.BW.zSpec :
   · rw [← sub_eq_zero]
     refine (Module.forall_dual_apply_eq_zero_iff ℂ _).1 fun ℓ => ?_
     obtain ⟨p, h1, -, h3, h4⟩ := key ℓ
-    rw [map_sub, sub_eq_zero, ← h3, map_sum, Polynomial.eval_eq_sum_range' (Nat.lt_succ_of_le h1),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, sub_eq_zero, ← h3, map_sum, Polynomial.eval_eq_sum_range' (Nat.lt_succ_of_le h1),
       ← Finset.sum_range_reflect]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, h4, smul_eq_mul, mul_comm]

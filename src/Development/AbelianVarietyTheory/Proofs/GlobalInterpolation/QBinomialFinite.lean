@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableTpFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MultipliableTpFactor
+
+@[expose] public section
+
 open Complex
 open scoped Real
 

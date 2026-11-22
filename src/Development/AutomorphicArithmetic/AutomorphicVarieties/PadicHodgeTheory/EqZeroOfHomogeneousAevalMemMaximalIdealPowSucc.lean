@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg
 
 private def Cg {A : Type} [CommRing A] (I : Ideal A) (k : ℕ) (a b : A) : Prop :=
@@ -115,7 +120,8 @@ theorem UpperTheory.eq_zero_of_homogeneous_aeval_mem_maximalIdeal_pow_succ :
     refine MvPowerSeries.coeff_of_lt_order (lt_of_lt_of_le ?_ (order_of_mem_pow _ _ hvm))
     rw [Finsupp.degree_eq_sum, hdeg d hd]
     exact_mod_cast Nat.lt_succ_self N
-  rw [hval, map_sum, Finset.sum_eq_single d] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hval, map_sum, Finset.sum_eq_single d] at h0
   · rw [MvPowerSeries.coeff_monomial_same,
       map_eq_zero_iff _ (IsFractionRing.injective O E)] at h0
     exact mul_ne_zero (MvPolynomial.mem_support_iff.1 hd) (pow_ne_zero _ hc) h0

@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionEigenfunctionMaximalCompact
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.ConjUnitIdeleAt
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionEigenfunctionMaximalCompact
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.ConjUnitIdeleAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,13 +37,13 @@ theorem PositivityTheory.Rg.Rsw.exists_tau {F E : Type} [Field F] [NumberField F
     | tmul a x =>
       simp only [splitProj, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply]
       rw [e a x, map_smul, Prod.smul_fst, smul_eq_mul, hτ]
-    | add y z hy hz => simp only [map_add, Prod.fst_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), Prod.fst_add, hy, hz]
   · induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a x =>
       simp only [splitProj, Algebra.TensorProduct.lift_tmul, AlgHom.id_apply, AlgHom.comp_apply]
       rw [e a x, map_smul, Prod.smul_snd, smul_eq_mul, hτ, hx]
-    | add y z hy hz => simp only [map_add, Prod.snd_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), Prod.snd_add, hy, hz]
 
 set_option maxHeartbeats 1000000 in
 theorem PositivityTheory.Rg.Rsw.jacquet_piatetski_first_bound : GoodPlacesOutsideFiniteSet := by

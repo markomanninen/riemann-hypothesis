@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -224,10 +228,36 @@ private theorem split_lemma_8 {F E : Type} [Field F] [NumberField F] [Field E] [
     rw [e]
     exact add_mem (sum_mem fun v hv => h1 v hv) h2
 
+open Formalism.HermitianLatticesTheory in
+private theorem fullLattice_of_sameGenus {E : Type} [Field E] [NumberField E] [StarRing E]
+    {n : ℕ} {N : Submodule (𝓞 E) (Sp E n)} (hN : Submodule.IsLattice E N)
+    (hG : SameGenus (hStd E n) (stdLat E n) N) : Submodule.IsFullLattice E N := by
+  refine { toIsLattice := hN, span_eq_top := ?_ }
+  obtain ⟨p, hp⟩ := Ideal.exists_maximal (𝓞 E)
+  let _ := hp.isPrime
+  obtain ⟨g, _, hg⟩ := hG p hp
+  apply (Submodule.eq_top_iff_forall_basis_mem ((Pi.basisFun E (Fin n)).map g)).2
+  intro i
+  rw [Module.Basis.map_apply, Pi.basisFun_apply]
+  have hi : (Pi.single i (1 : E) : Sp E n) ∈ stdLat E n := by
+    simpa using single_mem_stdLat (E := E) i 1
+  have hgi : g (Pi.single i (1 : E)) ∈ loc (K := E) p N := by
+    rw [← hg, gmap, Submodule.mem_map]
+    exact ⟨_, locBasic_le_locS _ _ hi, rfl⟩
+  obtain ⟨s, hs, hsi⟩ := locBasic_mem_locS.mp hgi
+  have hs₀ : algebraMap (𝓞 E) E s ≠ 0 := by
+    intro h
+    have hs_zero := (map_eq_zero_iff _ (IsFractionRing.injective (𝓞 E) E)).mp h
+    exact locBasic_hcompl_not_mem (K := E) p s hs (hs_zero ▸ p.zero_mem)
+  let W := Submodule.span E (N : Set (Sp E n))
+  have hsmul : algebraMap (𝓞 E) E s • g (Pi.single i (1 : E)) ∈ W :=
+    Submodule.subset_span (by rwa [algebraMap_smul])
+  simpa only [inv_smul_smul₀ hs₀] using W.smul_mem (algebraMap (𝓞 E) E s)⁻¹ hsmul
+
 theorem genusToPoint_of (hLoc : LocEq) (hMem : MemLocFStd) (hCof : IdemCof) (hI : IdemCalc) (hGl : GlueExists)
     (hCm : Commens) : GenusToPoint := by
   intro F E _ _ _ _ _ _ hc n N hN hG
-  obtain ⟨D, hD, hD1, hD2⟩ := hCm F E n N hN
+  obtain ⟨D, hD, hD1, hD2⟩ := hCm F E n N (fullLattice_of_sameGenus hN hG)
   have hfin : {v : HeightOneSpectrum (𝓞 F) | D ∈ v.asIdeal}.Finite := by
     have h0 : Ideal.span ({D} : Set (𝓞 F)) ≠ 0 := by
       rw [Ne, Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot]
@@ -278,7 +308,7 @@ theorem genusToPoint_of (hLoc : LocEq) (hMem : MemLocFStd) (hCof : IdemCof) (hI 
         add_mem' := by
           intro a b ha hb
           show algebraMap (𝓞 F) (𝓞 E) (a + b) • y ∈ N
-          rw [map_add, add_smul]
+          rw [map_add (f := _), add_smul]
           exact N.add_mem ha hb
         zero_mem' := by
           show algebraMap (𝓞 F) (𝓞 E) 0 • y ∈ N

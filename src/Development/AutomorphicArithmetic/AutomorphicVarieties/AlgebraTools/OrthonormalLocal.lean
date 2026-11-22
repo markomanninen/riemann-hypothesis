@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DiagLocal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DiagLocal
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 

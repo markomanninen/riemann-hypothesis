@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemLevelsIff
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PadicIntegersEmbeddingMapPrime
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.MemLevelsIff
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestRankLProved
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PadicIntegersEmbeddingMapPrime
+
+@[expose] public section
 
 noncomputable section
 

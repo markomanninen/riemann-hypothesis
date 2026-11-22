@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInverseNatCast
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeIsoOfTwoPadicAlgClUniformisationsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedPointOverLabelPowRNEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UTorsClosed
-import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.DeltaIsGreatest
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantBoundedByShortestVector
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UnitThetaConstantsGenerateIntegralTorsion
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WeightSpaceValuesIntegralTorsionBoundShortestVec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPartAttainsBoundUniqueShortestVectorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInverseNatCast
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLatticeIsoOfTwoPadicAlgClUniformisationsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedPointOverLabelPowRNEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UTorsClosed
+public import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.DeltaIsGreatest
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantBoundedByShortestVector
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.UnitThetaConstantsGenerateIntegralTorsion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.WeightSpaceValuesIntegralTorsionBoundShortestVec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightPartAttainsBoundUniqueShortestVectorStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem cm_symm {N : ℕ} {x y : Y} (h : CongMod N x y) : CongMod N y x := by
 theorem cm_map {Y' : Type} [AddCommGroup Y'] (f : Y →+ Y') {N : ℕ} {x y : Y} (h : CongMod N x y) :
     CongMod N (f x) (f y) := by
   obtain ⟨w, rfl⟩ := h
-  exact ⟨f w, by rw [map_add, map_nsmul]⟩
+  exact ⟨f w, by rw [map_add (f := _), map_nsmul]⟩
 
 theorem cm_of_mk {N : ℕ} {x y : Y} (h : (QuotientAddGroup.mk x : ModN N Y) = QuotientAddGroup.mk y) : CongMod N x y := by
   rw [QuotientAddGroup.eq] at h
@@ -52,8 +56,8 @@ end Cong
 variable {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] {S : ThetaSys o Ω} {ρ : S.Real} {M : RatModel o Ω} {p : ℕ}
   [Fact p.Prime] {Y : Type} [AddCommGroup Y] {q : Y → ℝ}
 
-variable (ρ M q) in
 
+variable (ρ M q) in
 def GLab (y : Sp (PadicAlgCl p) ⟶ M.Z) (yy : S.Gam →+ ModN (S.r * S.N) Y) : Prop :=
   ∃ (c₀ : Ω) (hc : c₀ ≠ 0) (R' : Subalgebra o Ω) (fg : R'.FG) (frac : ∀ x : Ω, ∃ a ∈ R', ∃ b ∈ R', x = a / b)
     (hth : ∀ x, c₀ * S.th x ∈ R') (hev : ∀ x k, c₀ * S.ev x k ∈ R') (ρ' : (S.rechart c₀ hc R' fg frac hth hev).Real),
@@ -223,7 +227,8 @@ theorem GLab.norms [ArithBase o Ω] (hM : ReciprocityTheory.ChartRestriction.G.G
       congr 1
       field_simp
     refine (congrArg₂ (· * ·) e₁ hδd.symm).trans ?_
-    rw [← norm_mul, ← e₂, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← norm_mul, ← e₂, map_sum]
     simp only [map_mul]
   have hm0 : (m : ℝ) ≠ 0 := by
     have := S.N_ge
@@ -240,7 +245,7 @@ theorem GLab.norms [ArithBase o Ω] (hM : ReciprocityTheory.ChartRestriction.G.G
         have e : S.N • v₀ = m • m • v₀ := by rw [← mul_smul, ← sq, ← hm]
         show _ ≤ l.q (m • ν + S.N • v₀)
         rw [e, ← smul_add, hqm, hqm, hq, hq]
-        exact mul_le_mul_of_nonneg_left (hmin _ ⟨j v₀, by rw [map_add, map_nsmul]⟩) hN.le) h (hker ▸ hh) ρ'.i₀
+        exact mul_le_mul_of_nonneg_left (hmin _ ⟨j v₀, by rw [map_add (f := _), map_nsmul]⟩) hN.le) h (hker ▸ hh) ρ'.i₀
     replace this := (key h ξ n hn hξ).trans_le this
     rw [mul_comm, mul_le_mul_iff_right₀ hδ, hqm, hq] at this
     refine this.trans (le_of_eq ?_)
@@ -248,7 +253,7 @@ theorem GLab.norms [ArithBase o Ω] (hM : ReciprocityTheory.ChartRestriction.G.G
     exact mul_div_cancel_left₀ _ hN.ne'
   · obtain ⟨h, hh, hk0, he⟩ := GlobalTheory.T.weightPart_attains_bound_unique_shortest_vector u l hint m k hm hk hkm ν (fun χ hχ => by
       rw [hq, hq]
-      exact hmin _ ⟨j χ, by rw [map_add, map_nsmul]⟩ fun e => hχ (by simpa using j.injective e))
+      exact hmin _ ⟨j χ, by rw [map_add (f := _), map_nsmul]⟩ fun e => hχ (by simpa using j.injective e))
     refine ⟨h, hker ▸ hh, hk0, fun ξ n hn hξ => ?_⟩
     have := (key h ξ n hn hξ).trans he
     rwa [mul_comm, mul_right_inj' hδ.ne', hq] at this

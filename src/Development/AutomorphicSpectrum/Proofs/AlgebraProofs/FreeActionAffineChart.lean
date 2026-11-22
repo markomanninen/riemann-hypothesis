@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.RegularHypothesesAndConclusion
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HasAffineChartId
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FiniteFaithfullyFlatKer
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsQuotientSchemeOfFiniteFlatSubgroup
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CoequifiberedDiagramMap
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SpecHomCompCoaction
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.RegularHypothesesAndConclusion
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HasAffineChartId
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FiniteFaithfullyFlatKer
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsQuotientSchemeOfFiniteFlatSubgroup
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CoequifiberedDiagramMap
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SpecHomCompCoaction
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,8 +127,7 @@ lemma rightCoaction_counit [IsMonHom i] [Mono v] (b : B) :
   refine Eq.trans ?_ h1
   generalize ρ b = z
   induction z with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul x y => simp [φ, Algebra.smul_def, _root_.mul_comm]
 
 lemma rightCoaction_assoc [IsMonHom i] [Mono v] (b : B) :
@@ -151,27 +154,23 @@ lemma rightCoaction_assoc [IsMonHom i] [Mono v] (b : B) :
   have e₁ (z : B ⊗[R] Λ) :
       TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ z) = φ₁ z := by
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y =>
       simp only [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, φ₁,
         Algebra.TensorProduct.lift_tmul, AlgHom.comp_apply]
       generalize ρ x = w
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, add_tmul, add_mul, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), add_tmul, add_mul, hx, hy]
       | tmul x y => simp [φ₀, l, r₁, r₂]
   have e₂ (z : B ⊗[R] Λ) : (Coalgebra.comul (R := R) (A := Λ)).lTensor B z = φ₂ z := by
     induction z with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x y =>
       simp only [LinearMap.lTensor_tmul, φ₂, Algebra.TensorProduct.lift_tmul, AlgHom.comp_apply,
         Bialgebra.comulAlgHom_apply]
       generalize Coalgebra.comul (R := R) y = w
       induction w with
-      | zero => simp
-      | add x y hx hy => simp only [map_add, tmul_add, mul_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), tmul_add, mul_add, hx, hy]
       | tmul x y => simp [l, r₁, r₂]
   rw [e₁, e₂, h]
 
@@ -272,8 +271,43 @@ theorem affine_chart (H Z : Over (Spec (CommRingCat.of R))) [GrpObj H] [ModObj H
   let C : Subring B := ρ.toRingHom.eqLocus (includeLeft : B →ₐ[R] B ⊗[R] Λ).toRingHom
   let c : CommRingCat.of C ⟶ CommRingCat.of B := CommRingCat.ofHom C.subtype
   have po : IsPushout c c (CommRingCat.ofHom ρ.toRingHom)
-      (CommRingCat.ofHom (includeLeft : B →ₐ[R] B ⊗[R] Λ).toRingHom) :=
-    isPushout_equalizer ρ _ hs h₄
+      (CommRingCat.ofHom (includeLeft : B →ₐ[R] B ⊗[R] Λ).toRingHom) := by
+    let β : B →ₐ[R] B ⊗[R] Λ := includeLeft
+    refine ⟨⟨by ext x; exact x.2⟩, ⟨PushoutCocone.isColimitAux' _ fun s ↦ ?_⟩⟩
+    have he (b : B) (hb : ρ b = β b) : s.inl b = s.inr b :=
+      congr($(s.condition) ⟨b, hb⟩)
+    let : Algebra R s.pt := (s.inl.hom.comp (algebraMap R B)).toAlgebra
+    let φ : B →ₐ[R] s.pt := ⟨s.inl.hom, fun _ ↦ rfl⟩
+    let ψ : B →ₐ[R] s.pt := ⟨s.inr.hom, fun r ↦ (he _ (by simp [β])).symm⟩
+    have hk : RingHom.ker (productMap β ρ).toRingHom ≤
+        RingHom.ker (productMap ψ φ).toRingHom := by
+      refine h₄.le.trans (Ideal.span_le.2 ?_)
+      rintro _ ⟨b, hb, rfl⟩
+      have : ψ b = φ b := (he b hb).symm
+      simpa [sub_eq_zero, RingHom.mem_ker] using this
+    let d : B ⊗[R] Λ →+* s.pt := (productMap β ρ).toRingHom.liftOfSurjective hs
+      ⟨(productMap ψ φ).toRingHom, hk⟩
+    have hd (z) : d (productMap β ρ z) = productMap ψ φ z :=
+      RingHom.liftOfRightInverse_comp_apply (productMap β ρ).toRingHom _ _ _ z
+    refine ⟨CommRingCat.ofHom d, ?_, ?_, fun {m} hm₁ hm₂ ↦ ?_⟩
+    · ext b
+      have := hd (1 ⊗ₜ b)
+      rw [productMap_right_apply, productMap_right_apply] at this
+      exact this
+    · ext b
+      have := hd (b ⊗ₜ 1)
+      rw [productMap_left_apply, productMap_left_apply] at this
+      exact this
+    · ext t
+      obtain ⟨z, rfl⟩ := hs t
+      refine Eq.trans ?_ (hd z).symm
+      have e₁ (b) : m.hom (ρ b) = φ b := congr($hm₁ b)
+      have e₂ (b) : m.hom (β b) = ψ b := congr($hm₂ b)
+      induction z with
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
+      | tmul x y =>
+        rw [productMap_apply_tmul, productMap_apply_tmul, ← e₁, ← e₂]
+        exact map_mul m.hom _ _
   have pb := isPullback_SpecMap_of_isPushout _ _ _ _ po
   have hk := isIso_lift_spec (e ≪≫ invIso H) v
   set k := lift (specHom (includeRight : Λ →ₐ[R] B ⊗[R] Λ) ≫ (e ≪≫ invIso H).hom)

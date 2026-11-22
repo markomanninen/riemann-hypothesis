@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.CoprimeProd
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.CoprimeProd
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem sum_single_smul (v : Fin r → O) : ∑ i, v i • (Pi.single i (1 : O) 
 theorem coordA_cst (b : Module.Basis (Fin r) O (Fin r → O)) (j : Fin r) (v : Fin r → O) :
     coordA b j (cst v) = C (b.repr v j) := by
   conv_rhs => rw [← sum_single_smul v]
-  simp [coordA, cst, map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [coordA, cst, map_sum, mul_comm]
 
 theorem sum_coordA (b : Module.Basis (Fin r) O (Fin r → O)) (w : Fin r → PowerSeries O) :
     ∑ j, coordA b j w • cst (b j) = w := by
@@ -49,7 +54,8 @@ theorem sum_coordA (b : Module.Basis (Fin r) O (Fin r → O)) (w : Fin r → Pow
     intro i
     have h := congrFun (b.sum_repr (Pi.single i 1)) k
     rw [← h]
-    simp [Finset.sum_apply, map_sum, Finset.mul_sum, mul_comm, mul_left_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum, Finset.mul_sum, mul_comm, mul_left_comm]
   simp_rw [hi]
   simp [Pi.single_apply]
 
@@ -71,9 +77,6 @@ theorem coordA_mem_ideal (b : Module.Basis (Fin r) O (Fin r → O)) (j : Fin r)
     (J : Ideal (PowerSeries O)) (w : Fin r → PowerSeries O) (hw : ∀ i, w i ∈ J) :
     coordA b j w ∈ J :=
   Ideal.sum_mem _ (fun i _ => Ideal.mul_mem_left _ _ (hw i))
-
-theorem cst_sub (v v' : Fin r → O) : cst (v - v') = cst v - cst v' := by
-  ext i; simp [cst]
 
 theorem cst_mem_ext (V : Submodule O (Fin r → O)) (v : Fin r → O) (hv : v ∈ V) :
     cst v ∈ ext V :=
@@ -418,7 +421,7 @@ theorem const_reduce [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible ϖ)
   funext i
   have h1 := congrFun hz i
   have h2 := congrArg C (congrFun hδ i)
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul] at h2
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul] at h2
   simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, Pi.sub_apply, cst] at h1 ⊢
   rw [h2] at h1
   linear_combination h1
@@ -459,13 +462,13 @@ theorem two_const_reduce [IsDiscreteValuationRing O] (ϖ : O) (hϖ : Irreducible
   · funext i
     have e0 := congrFun h₀ i
     have hC := congrArg C (congrFun hδ i)
-    simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_add, map_sub,
+    simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_sub,
       map_mul] at hC
-    simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, Pi.sub_apply, cst, map_add] at e0 ⊢
+    simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, Pi.sub_apply, cst, map_add (f := _)] at e0 ⊢
     linear_combination e0 + hC + C (lam' i) * hh
   · funext i
     have e1 := congrFun h₁ i
-    simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, Pi.sub_apply, cst, map_add] at e1 ⊢
+    simp only [Pi.smul_apply, smul_eq_mul, Pi.add_apply, Pi.sub_apply, cst, map_add (f := _)] at e1 ⊢
     linear_combination e1 + C (lam' i) * hg
 
 end Steps

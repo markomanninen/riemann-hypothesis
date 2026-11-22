@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -23,16 +28,6 @@ def PairNumberRelabel.Statement : Prop :=
           pairNum P (fun i => x i ∘ e) (fun i => x' i ∘ e) f g Gs (Q.map (· ∘ e)))
 
 section Examples
-
-def swapFactors : (Σ _ : Fin 2, Fin 2) ≃ (Σ _ : Fin 2, Fin 2) where
-  toFun v := ⟨Equiv.swap 0 1 v.1, v.2⟩
-  invFun v := ⟨Equiv.swap 0 1 v.1, v.2⟩
-  left_inv := by
-    rintro ⟨a, b⟩
-    simp
-  right_inv := by
-    rintro ⟨a, b⟩
-    simp
 
 end Examples
 

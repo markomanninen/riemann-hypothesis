@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdOK
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.MainNotions
 

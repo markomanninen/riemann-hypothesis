@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 namespace GlobalTheory.CoeffBC
@@ -41,7 +46,7 @@ theorem exists_isCoord [IsScalarTower L L' M'] (u : Basis ι L L') (J : M →ₗ
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [smul_assoc, smul_comm]
     | add a b ha hb =>
-      simp only [map_add, smul_add, Finset.sum_add_distrib, ha, hb]
+      simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, ha, hb]
   · rw [hπ, u.repr_self, Finsupp.single_apply]
     by_cases hk : k = l
     · simp [hk]
@@ -52,13 +57,15 @@ variable {u : ι → L'} {J : M →ₗ[L] M'} {π : ι → M' →ₗ[L] M}
 
 theorem IsCoord.sum (h : IsCoord u J π) (m : ι → M) (k : ι) :
     π k (∑ l, u l • J (m l)) = m k := by
-  simp [map_sum, h.2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, h.2]
 
 theorem IsCoord.comm (h : IsCoord u J π) (hN : IsCoord u JN πN) (f : N →ₗ[L] M)
     (f' : N' →ₗ[L'] M') (hf : ∀ y, f' (JN y) = J (f y)) (k : ι) (x : N') :
     π k (f' x) = f (πN k x) := by
   conv_lhs => rw [← hN.1 x]
-  simp only [map_sum f', map_smul, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum f', map_smul, hf]
   exact h.sum _ k
 
 theorem IsCoord.rel_ker (h : IsCoord u J π) (hN : IsCoord u JN πN) (f : N →ₗ[L] M)
@@ -80,7 +87,8 @@ theorem IsCoord.rel_range (h : IsCoord u J π) (hN : IsCoord u JN πN) (f : N �
   · intro hx
     choose y hy using hx
     refine ⟨∑ k, u k • JN (y k), ?_⟩
-    simp only [map_sum, map_smul, hf, hy]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hf, hy]
     exact h.1 x
 
 omit [Algebra L L'] [Fintype ι] [DecidableEq ι] in
@@ -154,7 +162,7 @@ theorem IsCoord.tensor {Q : Type} [Field Q] [Algebra Q L] [Algebra Q L'] [Module
     | tmul m c =>
       simp only [AlgebraTensorModule.map_tmul, LinearMap.id_apply, TensorProduct.smul_tmul']
       rw [← TensorProduct.sum_tmul, h.1]
-    | add a b ha hb => simp only [map_add, smul_add, Finset.sum_add_distrib, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), smul_add, Finset.sum_add_distrib, ha, hb]
   · intro k l x
     induction x using TensorProduct.induction_on with
     | zero => simp
@@ -162,7 +170,7 @@ theorem IsCoord.tensor {Q : Type} [Field Q] [Algebra Q L] [Algebra Q L'] [Module
       simp only [AlgebraTensorModule.map_tmul, LinearMap.id_apply, TensorProduct.smul_tmul', h.2]
       split_ifs <;> simp
     | add a b ha hb =>
-      simp only [map_add, smul_add, ha, hb]
+      simp only [map_add (f := _), smul_add, ha, hb]
       split_ifs <;> simp
 
 theorem map_comm {Q : Type} [Field Q] [Algebra Q L] [Algebra Q L'] [Module Q M] [Module Q M']
@@ -175,7 +183,7 @@ theorem map_comm {Q : Type} [Field Q] [Algebra Q L] [Algebra Q L'] [Module Q M] 
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul m c => simp [hf]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 end General
 

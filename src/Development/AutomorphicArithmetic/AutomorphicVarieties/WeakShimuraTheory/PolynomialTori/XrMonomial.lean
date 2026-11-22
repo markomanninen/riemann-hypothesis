@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement
 
@@ -67,7 +71,8 @@ private theorem xr_agree {O R X K : Type} [CommRing O] [CommRing R] [Algebra O R
   let p : MvPowerSeries W.σ O := ∑ m ∈ T, coeff m f • monomial m 1
   have hpc : ∀ m, coeff m p = if m ≤ n' then coeff m f else 0 := by
     intro m
-    simp only [p, map_sum, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_monomial, mul_ite, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_monomial, mul_ite, mul_one,
       mul_zero]
     rw [Finset.sum_ite_eq]
     simp only [T, Finset.mem_Iic]
@@ -86,15 +91,18 @@ private theorem xr_agree {O R X K : Type} [CommRing O] [CommRing R] [Algebra O R
   have hG : ∀ (K' : Type) [CommRing K'] [Algebra O K'] (G : MvPowerSeries W.σ O →ₐ[O] K'),
       G p = ∑ m ∈ T, coeff m f • ∏ s, G (MvPowerSeries.X s) ^ m s := by
     intro K' _ _ G
-    simp only [p, map_sum, map_smul, mvPowerSeries_algHom_monomial_eq_prod_X_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, map_smul, mvPowerSeries_algHom_monomial_eq_prod_X_pow]
   let y : W.A := ∑ m ∈ T, coeff m f • ∏ s, W.zA s ^ m s
   have hy : F p = η y := by
     rw [hG K F]
-    simp only [y, map_sum, map_smul, map_prod, map_pow, hX]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum, map_smul, map_prod, map_pow, hX]
   have hyR : (y : R) = W.π p := by
     rw [hG R W.π]
     show W.A.val y = _
-    simp only [y, map_sum, map_smul, map_prod, map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum, map_smul, map_prod, map_pow]
     rfl
   let e : W.A := ∑ m ∈ μ, (⟨W.π (b m), W.part_le_A (j := 0) (Submodule.mem_map_of_mem (hb m))⟩ : W.A) *
     ∏ s, W.zA s ^ m s
@@ -104,13 +112,15 @@ private theorem xr_agree {O R X K : Type} [CommRing O] [CommRing R] [Algebra O R
     rw [map_sub]
     show (x : R) - (y : R) = _
     rw [hx, hyR, ← map_sub, hg]
-    simp only [e, map_sum, map_mul, map_prod, map_pow, mvPowerSeries_algHom_monomial_eq_prod_X_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_sum, map_mul, map_prod, map_pow, mvPowerSeries_algHom_monomial_eq_prod_X_pow]
     rfl
   have hdiff : F f - η x = F (f - p) - η e := by
     rw [← he, map_sub, map_sub, hy]
     ring
   rw [hdiff, hg]
-  simp only [e, map_sum, map_mul, mvPowerSeries_algHom_monomial_eq_prod_X_pow, hX, map_prod, map_pow]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, map_sum, map_mul, mvPowerSeries_algHom_monomial_eq_prod_X_pow, hX, map_prod, map_pow]
   rw [← Finset.sum_sub_distrib]
   refine Ideal.sum_mem _ fun m hm => ?_
   rw [← sub_mul]
@@ -157,7 +167,7 @@ private theorem xr_const {O S σ : Type} [CommRing O] [CommRing S] [Algebra O S]
           · exact hn t ht
         · rfl
       have hgq : g = X s * q + r := by rw [← hq, sub_add_cancel]
-      rw [hgq, map_add, map_mul]
+      rw [hgq, map_add (f := _), map_mul]
       exact I.add_mem (I.mul_mem_right _ (hF s)) hrI
   have h := key Finset.univ (f - algebraMap O (MvPowerSeries σ O) (constantCoeff f)) ?_
   · rwa [map_sub, F.commutes] at h
@@ -220,7 +230,7 @@ theorem UpperTheory.V.Ws.Po.extR :
         exact (map_zero η).symm
       · rintro y z ⟨hy1, hy2⟩ ⟨hz1, hz2⟩
         refine ⟨W.A.add_mem hy1 hz1, fun h => ?_⟩
-        rw [map_add, hy2 hy1, hz2 hz1, ← map_add]
+        rw [map_add (f := _), hy2 hy1, hz2 hz1, ← map_add (f := _)]
         rfl
     exact (key a a.2).2 a.2
   · intro x hx

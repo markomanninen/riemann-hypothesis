@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SmithMat
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SmithMat
+
+@[expose] public section
 
 namespace PI.SmithWork
 
@@ -48,11 +52,6 @@ theorem addCol_apply (s : ι → R) (i : ι) (B : Matrix ι ι R) (a c : ι) :
   rw [mul_add, mul_one, mul_vecMulVec, mulVec_single_one]
   simp [vecMulVec_apply]
 
-def two (i j : ι) (p q r s : R) : Matrix ι ι R := fun a =>
-  if a = i then p • Pi.single i 1 + q • Pi.single j 1
-  else if a = j then r • Pi.single i 1 + s • Pi.single j 1
-  else Pi.single a 1
-
 end General
 
 section Block
@@ -62,24 +61,16 @@ variable {n : ℕ}
 def blk (b : R) (D : Matrix (Fin n) (Fin n) R) : Matrix (Fin (n + 1)) (Fin (n + 1)) R :=
   fun a c => Fin.cases (Fin.cases b (fun _ => 0) c) (fun i => Fin.cases 0 (fun k => D i k) c) a
 
-@[simp] theorem blk_zero_zero (b : R) (D : Matrix (Fin n) (Fin n) R) : blk b D 0 0 = b := rfl
-@[simp] theorem blk_zero_succ (b : R) (D : Matrix (Fin n) (Fin n) R) (k : Fin n) :
-    blk b D 0 k.succ = 0 := rfl
-@[simp] theorem blk_succ_zero (b : R) (D : Matrix (Fin n) (Fin n) R) (i : Fin n) :
-    blk b D i.succ 0 = 0 := rfl
-@[simp] theorem blk_succ_succ (b : R) (D : Matrix (Fin n) (Fin n) R) (i k : Fin n) :
-    blk b D i.succ k.succ = D i k := rfl
-
 theorem blk_mul (b b' : R) (D D' : Matrix (Fin n) (Fin n) R) :
     blk b D * blk b' D' = blk (b * b') (D * D') := by
-  ext a c
-  refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun k => ?_) c <;>
-    simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  refine Matrix.ext fun a c => ?_
+  cases a using Fin.cases <;> cases c using Fin.cases <;>
+    simp [blk, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem blk_one : blk (1 : R) (1 : Matrix (Fin n) (Fin n) R) = 1 := by
-  ext a c
-  refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun k => ?_) c <;>
-    simp [Matrix.one_apply, Fin.succ_ne_zero, (Fin.succ_ne_zero _).symm]
+  refine Matrix.ext fun a c => ?_
+  cases a using Fin.cases <;> cases c using Fin.cases <;>
+    simp [blk, Matrix.one_apply, (Fin.succ_ne_zero _).symm]
 
 theorem isUnit_blk_one {U : Matrix (Fin n) (Fin n) R} (hU : IsUnit U) : IsUnit (blk 1 U) := by
   obtain ⟨u, rfl⟩ := hU
@@ -89,9 +80,9 @@ theorem isUnit_blk_one {U : Matrix (Fin n) (Fin n) R} (hU : IsUnit U) : IsUnit (
 theorem eq_blk (B : Matrix (Fin (n + 1)) (Fin (n + 1)) R) (hr : ∀ k : Fin n, B 0 k.succ = 0)
     (hc : ∀ i : Fin n, B i.succ 0 = 0) :
     B = blk (B 0 0) (B.submatrix Fin.succ Fin.succ) := by
-  ext a c
-  refine Fin.cases ?_ (fun i => ?_) a <;> refine Fin.cases ?_ (fun k => ?_) c <;>
-    simp [hr, hc]
+  refine Matrix.ext fun a c => ?_
+  cases a using Fin.cases <;> cases c using Fin.cases <;>
+    simp [blk, hr, hc]
 
 theorem Eqv.blk {D D' : Matrix (Fin n) (Fin n) R} (h : Eqv D D') (b : R) :
     Eqv (blk b D) (blk b D') := by

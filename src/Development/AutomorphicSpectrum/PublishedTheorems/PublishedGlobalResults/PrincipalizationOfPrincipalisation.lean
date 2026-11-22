@@ -1,38 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.Monomial
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.ConclusionOfSmooth
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.Monomial
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.ConclusionOfSmooth
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.CompanionTheory.Hypotheses₂
 
 open AlgebraicGeometry CategoryTheory Limits ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
-
-def ResolutionAndPrincipalisationCharZero : Prop := ResolutionCharZero ∧ PrincipalisationCharZero
-
-def ResK : Prop := ReciprocityTheory.ChartRestriction.G.Geo.ResK.ResKStatement
-
-def IsSncIdeal {Y : Scheme.{0}} (I : Y.IdealSheafData) : Prop :=
-  ∀ y : Y, ∃ (V : Y.affineOpens) (hy : y ∈ V.1) (n : ℕ) (z : Fin n → Γ(Y, V.1)) (a : Fin n → ℕ),
-    FinalTheorems.Rsp (Y.presheaf.stalk y) n (fun i => Y.presheaf.germ V.1 y hy (z i)) ∧
-      I.ideal V = Ideal.span {∏ i, z i ^ a i}
-
-def ProjResolution : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (X : Scheme.{0}) (g : X ⟶ Sp K) [LocallyOfFinitePresentation g],
-    IsIntegral X → IsProjOver g →
-    ∃ (X' : Scheme.{0}) (f : X' ⟶ X),
-      Smooth (f ≫ g) ∧ IsProjOver (f ≫ g) ∧ IsIso (f ∣_ g.smoothLocus) ∧
-        Dense ((f ⁻¹ᵁ g.smoothLocus : X'.Opens) : Set X')
-
-def Principalization : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (Y : Scheme.{0}) (g : Y ⟶ Sp K) (I : Y.IdealSheafData),
-    IsIntegral Y → Smooth g → IsProjOver g → I ≠ ⊥ →
-    ∃ (Y' : Scheme.{0}) (f : Y' ⟶ Y),
-      Smooth (f ≫ g) ∧ IsProjOver (f ≫ g) ∧ IsIso (f ∣_ I.support.compl) ∧ IsSncIdeal (I.comap f)
 
 theorem exists_closed_in_prod {K : Type} [Field K] {M : ℕ} {X' : Scheme.{0}} (h : X' ⟶ PSpace K M)
     (hp : IsProjOver (h ≫ PSpace.str K M)) :

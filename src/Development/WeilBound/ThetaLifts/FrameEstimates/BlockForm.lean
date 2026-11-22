@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem sig_index {n r s k : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : HasSig M
       ((Finset.sum_eq_zero_iff_of_nonneg fun i _ => Complex.normSq_nonneg (f i)).1 hf i (Finset.mem_univ i))
   refine le_min ?_ ?_
   · have := LinearMap.finrank_le_finrank_of_injective (f := (LinearMap.funLeft ℂ ℂ Sum.inl) ∘ₗ L) (by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro v hv
       have h1 : ∀ i, L v (Sum.inl i) = 0 := fun i => congrFun hv i
       have h2 := hz (fun j => L v (Sum.inr j)) (by rw [← hiso]; simp [h1])
@@ -88,7 +92,7 @@ theorem sig_index {n r s k : ℕ} {M : Matrix (Fin n) (Fin n) ℂ} (h : HasSig M
       · exact h2 j)
     simpa using this
   · have := LinearMap.finrank_le_finrank_of_injective (f := (LinearMap.funLeft ℂ ℂ Sum.inr) ∘ₗ L) (by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro v hv
       have h1 : ∀ i, L v (Sum.inr i) = 0 := fun i => congrFun hv i
       have h2 := hz (fun j => L v (Sum.inl j)) (by rw [hiso]; simp [h1])

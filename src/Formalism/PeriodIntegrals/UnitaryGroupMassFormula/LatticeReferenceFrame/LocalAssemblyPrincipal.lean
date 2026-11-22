@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.SpanSmulInto
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.SpanSmulInto
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem local_assembly_principal : PPAssemble := by
   choose sw hsw using fun i => LA_clear (I := I) p (hw i).1
   choose sd hsd using fun i => LA_clear (I := I) p (hw i).2
   have hT0p : Nat.Coprime ((∏ i, sw i) * ∏ i, sd i) p :=
-    Nat.Coprime.mul (Nat.Coprime.prod_left fun i _ => (hsw i).1)
+    Nat.Coprime.mul_left (Nat.Coprime.prod_left fun i _ => (hsw i).1)
       (Nat.Coprime.prod_left fun i _ => (hsd i).1)
   obtain ⟨T, hTdef⟩ : ∃ T : ℕ, T = ((∏ i, sw i) * ∏ i, sd i) ^ Nat.totient (p ^ m) := ⟨_, rfl⟩
   have hTp : Nat.Coprime T p := hTdef ▸ Nat.Coprime.pow_left _ hT0p

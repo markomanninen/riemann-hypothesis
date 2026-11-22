@@ -1,10 +1,14 @@
-import Formalism.NormUnitaryBounds.Statement
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqCovolume
-import Formalism.LatticeSlopes.LatticeSlopesProofs.ShortVector
+module
+
+public import Mathlib
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqCovolume
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.ShortVector
+
+@[expose] public section
 
 open Module Submodule
 

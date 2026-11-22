@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SSAscent
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SSAscent
+
+@[expose] public section
+
 open Formalism.MainNotions.N GlobalTheory.PsChar
 
 namespace GlobalTheory.SSCont

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
+
 open Matrix Finset MeasureTheory
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
@@ -53,24 +58,24 @@ theorem integrable_normSq (x : SmF n) :
 theorem ipK_self (x : SmF n) :
     ipK κ x x = ((∫ k, ‖x.1 k.1‖ ^ 2 ∂κ : ℝ) : ℂ) := by
   rw [← integral_complex_ofReal]
-  unfold ipK
+  delta ipK
   refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
   simp [Complex.conj_mul']
 
 theorem ipK_conj (x y : SmF n) : conj (ipK κ y x) = ipK κ x y := by
-  unfold ipK
+  delta ipK
   rw [← integral_conj]
   refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
   simp [mul_comm]
 
 theorem ipK_add_left (x y z : SmF n) : ipK κ (x + y) z = ipK κ x z + ipK κ y z := by
-  unfold ipK
+  delta ipK
   rw [← integral_add (integrable_integrand κ x z) (integrable_integrand κ y z)]
   refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
   simp [add_mul]
 
 theorem ipK_smul_left (c : ℂ) (x y : SmF n) : ipK κ (c • x) y = conj c * ipK κ x y := by
-  unfold ipK
+  delta ipK
   rw [← integral_const_mul]
   refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
   simp [mul_assoc]

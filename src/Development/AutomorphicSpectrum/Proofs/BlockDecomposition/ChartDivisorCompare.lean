@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.UniformIntegrabilityProportionalityHolds
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjFullRankMeetsRegular
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDivisorCompare
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartIntegralPoints
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegreChartIntegralHoldsStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.UniformIntegrabilityProportionalityHolds
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjFullRankMeetsRegular
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDivisorCompare
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreChartIntegralPoints
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegreChartIntegralHoldsStatement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.Ar

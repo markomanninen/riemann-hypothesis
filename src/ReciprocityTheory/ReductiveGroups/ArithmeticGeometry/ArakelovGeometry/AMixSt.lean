@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AInterpSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AInterpSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.CasChainA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
@@ -44,7 +48,7 @@ theorem gaamix_ne_zero_of_mcPts {P : Ideal (MRing (GlobalTheory κ))} {z : Ix κ
   rintro rfl
   exact hi rfl
 
-theorem gaamix_contDiffAt_log {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m)
+theorem gaamix_contDiffAt_log {m : ConeMetric (C := ℂ) (ι := Ix κ)} (hm : IsSmoothMetric m)
     {γ : (Fin D → ℂ) → Ix κ → ℂ} {y : Fin D → ℂ}
     (hγ : ∀ᶠ y' in 𝓝 y, DifferentiableAt ℂ γ y') (hy : γ y ≠ 0) :
     ContDiffAt ℝ 2 (fun y' => Real.log (m.ρ (γ y'))) y := by
@@ -56,7 +60,7 @@ theorem gaamix_contDiffAt_log {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric 
     hm.contDiffAt (isOpen_ne.mem_nhds hy)
   exact_mod_cast (contDiffAt_infty.mp ((hρ.comp y hc).log (m.pos _ hy).ne')) 2
 
-theorem gaamix_log_interp (m₀ m₁ : ConeMetric ℂ (Ix κ)) (t : ℝ) {z : Ix κ → ℂ} (hz : z ≠ 0) :
+theorem gaamix_log_interp (m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)) (t : ℝ) {z : Ix κ → ℂ} (hz : z ≠ 0) :
     Real.log ((interp m₀ m₁ t).ρ z) = (1 - t) * Real.log (m₀.ρ z) + t * Real.log (m₁.ρ z) := by
   have h₀ := m₀.pos z hz
   have h₁ := m₁.pos z hz
@@ -64,7 +68,7 @@ theorem gaamix_log_interp (m₀ m₁ : ConeMetric ℂ (Ix κ)) (t : ℝ) {z : Ix
   rw [Real.log_mul (Real.rpow_pos_of_pos h₀ _).ne' (Real.rpow_pos_of_pos h₁ _).ne',
     Real.log_rpow h₀, Real.log_rpow h₁]
 
-theorem gbamix_maDensity_interp {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)
+theorem gbamix_maDensity_interp {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)} (h₀ : IsSmoothMetric m₀)
     (h₁ : IsSmoothMetric m₁) (t : ℝ) {γ : (Fin D → ℂ) → Ix κ → ℂ} {y : Fin D → ℂ}
     (hγ : ∀ᶠ y' in 𝓝 y, DifferentiableAt ℂ γ y' ∧ γ y' ≠ 0) :
     maDensity (fun j y' => purePot (interp m₀ m₁ t) D j (γ y')) y =
@@ -115,12 +119,12 @@ theorem gbamix_ne_zero_of_blocks {z : Ix κ → ℂ} (hz : ∀ k, ∃ i, z ⟨k,
   rintro rfl
   exact hi rfl
 
-theorem gbamix_smoothHerm_ofCone {m : ConeMetric ℂ (Ix κ)} (hm : IsSmoothMetric m) :
+theorem gbamix_smoothHerm_ofCone {m : ConeMetric (C := ℂ) (ι := Ix κ)} (hm : IsSmoothMetric m) :
     IsSmoothHerm (HermLine.ofCone m) := by
   exact (show ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) m.ρ {z | z ≠ 0} from hm).mono
     fun z hz => gbamix_ne_zero_of_blocks hz
 
-theorem gbamix_logRatio_deg {m₀ m₁ : ConeMetric ℂ (Ix κ)} (c : Unit → ℂ) (z : Ix κ → ℂ)
+theorem gbamix_logRatio_deg {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)} (c : Unit → ℂ) (z : Ix κ → ℂ)
     (hc : ∀ k, c k ≠ 0) : logRatio m₀ m₁ (fun p => c p.1 * z p) = logRatio m₀ m₁ z := by
   have e : (fun p : Ix κ => c p.1 * z p) = c () • z := by
     funext p
@@ -128,7 +132,7 @@ theorem gbamix_logRatio_deg {m₀ m₁ : ConeMetric ℂ (Ix κ)} (c : Unit → �
   unfold logRatio
   rw [e, m₀.smul, m₁.smul, mul_div_mul_left _ _ (norm_ne_zero_iff.2 (hc ()))]
 
-theorem gbamix_smooth_logRatio {m₀ m₁ : ConeMetric ℂ (Ix κ)} (h₀ : IsSmoothMetric m₀)
+theorem gbamix_smooth_logRatio {m₀ m₁ : ConeMetric (C := ℂ) (ι := Ix κ)} (h₀ : IsSmoothMetric m₀)
     (h₁ : IsSmoothMetric m₁) :
     ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (logRatio m₀ m₁) {z | z ≠ 0} := by
   have h0 : ContDiffOn ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) m₀.ρ {z | z ≠ 0} := h₀

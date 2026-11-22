@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualOm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualOm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem isFrob_of_rootOfUnity {l : ℕ} [Fact l.Prime] (σ : ℂ_[l] →+* ℂ_[
       push_cast at hr'
       refine ⟨a + b - x * y * r, sub_mem (add_mem ha hb)
         (mul_mem (mul_mem (hW hx) (hW hy)) r.2), ?_⟩
-      rw [map_add, ea, eb, hr']
+      rw [map_add (f := _), ea, eb, hr']
       ring
     | neg x hx ihx =>
       obtain ⟨a, ha, ea⟩ := ihx

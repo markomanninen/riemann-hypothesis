@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBruhatUniformSummableMajorant
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SummableProdCoord
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBruhatUniformSummableMajorant
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SummableProdCoord
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.EisRkNBound
@@ -32,26 +37,28 @@ theorem continuous_inv_entry (i j : ι) :
     Units.continuous_val.comp continuous_inv
   exact h.matrix_elem i j
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem finPartPi_mulVec (M : Matrix ι ι 𝔸[K]) (x : ι → 𝔸[K]) :
     finPartPi (M *ᵥ x) = M.map Adele2.finRingHom *ᵥ finPartPi x := by
   funext i
   show Adele2.finRingHom (∑ j, M i j * x j) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ ↦ map_mul _ _ _
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem infPartPi_mulVec (M : Matrix ι ι 𝔸[K]) (x : ι → 𝔸[K]) :
     infPartPi (M *ᵥ x) = M.map Adele2.infRingHom *ᵥ infPartPi x := by
   funext i
   show Adele2.infRingHom (∑ j, M i j * x j) = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun j _ ↦ map_mul _ _ _
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem norm_mulVec_le (M : Matrix ι ι (mixedSpace K)) (u : ι → mixedSpace K) :
     ‖M *ᵥ u‖ ≤ (∑ i, ∑ j, ‖M i j‖) * ‖u‖ := by
   have hc : 0 ≤ ∑ i, ∑ j, ‖M i j‖ :=
@@ -80,7 +87,7 @@ theorem exists_fractionalIdeal_of_isCompact (I : (FractionalIdeal (𝓞 K)⁰ K)
   have hT : Continuous T := by
     refine continuous_pi fun i ↦ ?_
     simp only [T, Matrix.mulVec, dotProduct, Matrix.map_apply]
-    refine continuous_finset_sum _ fun j _ ↦ ?_
+    refine continuous_finsetSum _ fun j _ ↦ ?_
     exact (continuous_finRingHom.comp ((continuous_inv_entry i j).comp continuous_fst)).mul
       ((continuous_apply j).comp continuous_snd)
   set S : Set 𝔸ᶠ[K] := ⋃ i : ι, (fun x : ι → 𝔸ᶠ[K] ↦ x i) '' (T '' (C ×ˢ B))
@@ -133,7 +140,7 @@ theorem exists_summable_bound_tensor_cosetIndicator (φ : 𝓢(ι → mixedSpace
   obtain ⟨A, hA, hφ⟩ := exists_norm_le_inv_one_add_pow φ (k * n)
   let c : GL ι 𝔸[K] → ℝ := fun h ↦ ∑ i, ∑ j,
     ‖(((h⁻¹ : GL ι 𝔸[K]) : Matrix ι ι 𝔸[K]).map Adele2.infRingHom) i j‖
-  have hc : Continuous c := continuous_finset_sum _ fun i _ ↦ continuous_finset_sum _ fun j _ ↦
+  have hc : Continuous c := continuous_finsetSum _ fun i _ ↦ continuous_finsetSum _ fun j _ ↦
     (continuous_infRingHom.comp (continuous_inv_entry i j)).norm
   obtain ⟨B, hB⟩ := hC.exists_bound_of_continuousOn hc.continuousOn
   set B' := max B 1
@@ -183,7 +190,7 @@ theorem exists_summable_bound_tensor_cosetIndicator (φ : 𝓢(ι → mixedSpace
           rw [hprod, ht', mul_inv, ← mul_assoc, mul_assoc A, mul_inv_cancel₀ hB0, mul_one]
       _ ≤ A * B' ^ (k * n) * ∏ i, ((1 + ‖mixedEmbedding K (ξ i)‖) ^ k)⁻¹ := by
           refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-          exact Finset.prod_le_prod (fun _ _ ↦ by positivity) fun i _ ↦ hinv i
+          exact Finset.prod_le_prod₀ (fun _ _ ↦ by positivity) fun i _ ↦ hinv i
   · push_neg at hm
     obtain ⟨i, hi⟩ := hm
     have hz : ∏ i, cosetIndicator I (b i) (finPartPi Y i) = 0 :=
@@ -191,7 +198,7 @@ theorem exists_summable_bound_tensor_cosetIndicator (φ : 𝓢(ι → mixedSpace
     rw [hz, mul_zero, norm_zero]
     exact hu0
 
-theorem exists_summable_bound_mulVec {F : (ι → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi K ι)
+theorem exists_summable_bound_mulVec {F : (ι → 𝔸[K]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := K) (ι := ι))
     {C : Set (GL ι 𝔸[K])} (hC : IsCompact C) :
     ∃ u : (ι → K) → ℝ, Summable u ∧ ∀ h ∈ C, ∀ ξ : ι → K,
       ‖F ((h : Matrix ι ι 𝔸[K]) *ᵥ fun i ↦ algebraMap K 𝔸[K] (ξ i))‖ ≤ u ξ := by
@@ -213,7 +220,7 @@ theorem exists_summable_bound_mulVec {F : (ι → 𝔸[K]) → ℂ} (hF : F ∈ 
     exact mul_le_mul_of_nonneg_left (hGu a ha ξ) (norm_nonneg r)
 
 theorem exists_summable_bound_thetaC {k : Type} [Field k] [NumberField k] {ι : Type} [Fintype ι]
-    [DecidableEq ι] {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi k ι)
+    [DecidableEq ι] {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι))
     {C : Set (GL ι 𝔸[k])} (hC : IsCompact C) :
     ∃ u : (ι → k) → ℝ, Summable u ∧ ∀ h ∈ C, ∀ ξ : ι → k,
       ‖F ((h : Matrix ι ι 𝔸[k]) *ᵥ PositivityTheory.RgEis.ratV ξ)‖ ≤ u ξ :=

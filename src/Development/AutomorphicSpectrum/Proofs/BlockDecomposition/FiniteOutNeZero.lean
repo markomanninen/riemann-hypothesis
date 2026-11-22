@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 open GlobalTheory.SplitFlip
 
@@ -65,7 +69,7 @@ theorem integral_eq_sum (μ : Measure G) [μ.IsMulLeftInvariant] (K : Subgroup G
     exact hfin
   rw [finsum_eq_sum_of_support_subset (s := S) _ (fun q hq => hF.mem_toFinset.2 hq)]
   conv_lhs => rw [hsum]
-  rw [integral_finset_sum S hint, Finset.smul_sum]
+  rw [MeasureTheory.integral_finsetSum S hint, Finset.smul_sum]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [integral_indicator_const _ (hmeas q)]
   simp only [Measure.real, measure_coset]
@@ -129,9 +133,8 @@ theorem isInvInvariant [MeasurableSpace F] [BorelSpace F] (μ : Measure (GL ι F
   have hne : μ (K : Set (GL ι F)) ≠ 0 := (hKo.measure_pos μ ⟨1, K.one_mem⟩).ne'
   have hnt : μ (K : Set (GL ι F)) ≠ ⊤ := hKc.measure_lt_top.ne
   have h2 := congrArg (fun m : Measure (GL ι F) => m (K : Set (GL ι F))) hc
-  have hKi : (K : Set (GL ι F))⁻¹ = K := by
-    ext x
-    simp
+  open scoped Pointwise in
+  have hKi : (K : Set (GL ι F))⁻¹ = K := inv_coe_set
   simp only [Measure.inv_apply, hKi, Measure.coe_nnreal_smul_apply] at h2
   have h3 : ((Measure.haarScalarFactor μ.inv μ : NNReal) : ENNReal) = 1 :=
     (ENNReal.mul_left_inj hne hnt).1 (by rw [one_mul]; exact h2.symm)

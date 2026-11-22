@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.ConjScalesMeasure
@@ -28,7 +33,7 @@ theorem eq_smul_map_haar {G : Type} [Group G] [TopologicalSpace G] [IsTopologica
     exact (hK.image continuous_subtype_val).measure_lt_top
   have e1 := Measure.isMulLeftInvariant_eq_smul ν (Measure.haar : Measure M)
   refine ⟨Measure.haarScalarFactor ν (Measure.haar : Measure M), ?_⟩
-  rw [← Measure.map_smul]
+  rw [← Measure.map_smul _ hemb.measurable.aemeasurable]
   conv_lhs => rw [← hmap, e1]
   rfl
 

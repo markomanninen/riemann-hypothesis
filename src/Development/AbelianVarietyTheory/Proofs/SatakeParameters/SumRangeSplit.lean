@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TopRowsParams
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BlockRowsMemIcc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.YoungDiagramCardEqSumRowLenRange
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NotMemTopPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TopRowsParams
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BlockRowsMemIcc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.YoungDiagramCardEqSumRowLenRange
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 

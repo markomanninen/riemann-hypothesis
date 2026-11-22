@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,17 +59,6 @@ def IsGaugeOn (k r : ℕ) (S : Set (Mat k r)) (ν : Measure (Mt k r)) : Prop :=
   IsHaarOn S ν ∧ Tendsto (fun ρ : ℝ => (ν (expBall (k := k) (r := r) S ρ)).toReal / sVol k r S ρ) (𝓝[>] 0) (𝓝 1)
 
 def wLast (k r : ℕ) : Fin (2 * r + k + 1) → ℂ := bvec (wI k r (Fin.last k))
-
-def ConstValStd : Prop :=
-  ∀ (k r : ℕ) (T T' : ℝ) (μW μW' : Measure (Mt k r)) (a a' : ℝ)
-    (μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ),
-    WbData k r ((Real.sqrt T : ℂ) • wLast k r) ((Real.sqrt T' : ℂ) • wLast k r) μW μW' a a' μsec →
-    ∀ (νg : Measure (Mt k r)) (c : ℝ≥0∞), IsHaarOn (UWb k r) νg →
-      (∀ m ∈ UWb k r, Tendsto (fun ρ : ℝ => (νg (tBall k r m ρ)).toReal / bVol k r ρ) (𝓝[>] 0) (𝓝 1)) →
-      (∀ φ : Mt k r → ℝ≥0∞, Measurable φ →
-        rhsW k r ((Real.sqrt T : ℂ) • wLast k r) ((Real.sqrt T' : ℂ) • wLast k r) μW μW' μsec φ =
-          c * ∫⁻ x, φ x ∂νg) →
-      c.toReal = (wbConst k T T' a a')⁻¹
 
 def GaugeVolUk : Prop :=
   ∀ (k r : ℕ) (ν : Measure (Mt k r)), IsGaugeOn k r (UWset k r (wLast k r)) ν →

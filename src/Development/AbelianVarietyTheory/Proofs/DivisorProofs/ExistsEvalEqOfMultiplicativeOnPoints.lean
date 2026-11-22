@@ -1,48 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorEqZeroOfForallGeometricPoint
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GroupLikeIntegralOfFiniteFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorEqZeroOfForallGeometricPoint
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
-
-theorem exists_smul_fun_eq_eval_points (O C A : Type) [CommRing O] [IsDomain O] [Field C]
-    [Algebra O C] [IsFractionRing O C] [CommRing A] [Algebra O A] [Module.Finite O A]
-    [Module.Free O A] (κ : (A →ₐ[O] C) → C) :
-    ∃ (d : O) (a : A), d ≠ 0 ∧ ∀ x : A →ₐ[O] C, x a = algebraMap O C d * κ x := by
-  classical
-  have hli : LinearIndependent C (fun x : A →ₐ[O] C => x.toLinearMap) :=
-    linearIndependent_algHom_toLinearMap O A C
-  obtain ⟨g, hg⟩ := LinearMap.exists_leftInverse_of_injective
-    (Finsupp.linearCombination C (fun x : A →ₐ[O] C => x.toLinearMap))
-    (LinearMap.ker_eq_bot.mpr hli)
-  let l : (A →ₗ[O] C) →ₗ[C] C := Finsupp.linearCombination C κ ∘ₗ g
-  have hl : ∀ x : A →ₐ[O] C, l x.toLinearMap = κ x := by
-    intro x
-    have := LinearMap.congr_fun hg (Finsupp.single x 1)
-    simp only [LinearMap.comp_apply, Finsupp.linearCombination_single, one_smul,
-      LinearMap.id_apply] at this
-    simp only [l, LinearMap.comp_apply, this, Finsupp.linearCombination_single, one_smul]
-  let B := Module.Free.chooseBasis O A
-  let c := fun i => l (Algebra.linearMap O C ∘ₗ B.coord i)
-  have hc : ∀ f : A →ₗ[O] C, l f = ∑ i, f (B i) * c i := by
-    intro f
-    have : f = ∑ i, f (B i) • (Algebra.linearMap O C ∘ₗ B.coord i) := by
-      refine B.ext fun j => ?_
-      rw [LinearMap.sum_apply, Finset.sum_eq_single j]
-      · simp
-      · intro i _ hij
-        simp [Finsupp.single_apply, hij.symm]
-      · simp
-    conv_lhs => rw [this]
-    simp only [map_sum, map_smul, smul_eq_mul, c]
-  obtain ⟨d, hd⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors O) c
-  choose o ho using hd
-  refine ⟨d, ∑ i, o i • B i, nonZeroDivisors.coe_ne_zero d, fun x => ?_⟩
-  rw [← hl, hc, Finset.mul_sum, map_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_smul, Algebra.smul_def, ho, Algebra.smul_def]
-  simp only [AlgHom.toLinearMap_apply]
-  ring
 
 open scoped TensorProduct in
 private lemma eq_zero_of_forall_algHom_apply_eq_zero_of_isReduced {C V : Type} [Field C] [IsAlgClosed C] [CommRing V]
@@ -57,7 +22,7 @@ private lemma eq_zero_of_forall_algHom_apply_eq_zero_of_isReduced {C V : Type} [
     let eqv : C ≃ₐ[C] V ⧸ m := AlgEquiv.ofBijective (Algebra.ofId C (V ⧸ m))
       ⟨(algebraMap C (V ⧸ m)).injective, hsurj⟩
     have h := hv (eqv.symm.toAlgHom.comp (Ideal.Quotient.mkₐ C m))
-    simp only [AlgHom.comp_apply, Ideal.Quotient.mkₐ_eq_mk, AlgEquiv.toAlgHom_eq_coe,
+    simp only [AlgHom.comp_apply, Ideal.Quotient.mkₐ_eq_mk, AlgEquiv.coe_toAlgHom,
       AlgHom.coe_coe] at h
     exact Ideal.Quotient.eq_zero_iff_mem.mp ((map_eq_zero_iff _ eqv.symm.injective).mp h)
   rw [IsArtinianRing.jacobson_eq_radical] at hmem
@@ -86,7 +51,7 @@ private lemma exists_eq_one_and_eq_zero_of_ne_algHom {C V : Type} [Field C] [Com
         RingHom.id_apply, smul_eq_mul]
       exact inv_mul_cancel₀ (sub_ne_zero.mpr (hsep z' h).choose_spec)
     · simp only [u]
-      rw [dif_neg h, map_one]
+      rw [dite_eq_right h, map_one]
   have hu' : ∀ z', z' ≠ z → z' (u z') = 0 := by
     intro z' h
     simp only [u]
@@ -116,8 +81,8 @@ private lemma sum_sum_mul_sub_mul_mul_eq_zero_of_sum_mul_eq {C ι : Type} [Field
     · exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
   rw [e1, h, sub_self]
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem _root_.GlobalTheory.exists_eval_eq_of_multiplicative_on_points : ∀ (O C A : Type) [CommRing O] [IsDomain O] [Field C] [IsAlgClosed C] [Algebra O C] [IsFractionRing O C] [IsIntegrallyClosed O] [CommRing A] [Algebra O A] [Module.Finite O A] [Module.Free O A], IsReduced (C ⊗[O] A) → ∀ (Δ : A →ₐ[O] A ⊗[O] A) (ε : A →ₐ[O] O) (κ : (A →ₐ[O] C) → C), (∀ x y : A →ₐ[O] C, κ ((Algebra.TensorProduct.lift x y (fun _ _ => Commute.all _ _)).comp Δ) = κ x * κ y) → κ ((Algebra.ofId O C).comp ε) = 1 → ∃ b : A, ∀ x : A →ₐ[O] C, x b = κ x := by
   intro O C A _ _ _ _ _ _ _ _ _ _ _ hred Δ ε κ hmul _
   classical
@@ -135,7 +100,8 @@ theorem _root_.GlobalTheory.exists_eval_eq_of_multiplicative_on_points : ∀ (O 
   have hevC : ∀ (z : C ⊗[O] A →ₐ[C] C) (a : Module.Free.ChooseBasisIndex O A → C),
       z (∑ i, a i • eC i) = ∑ i, a i * res z (e i) := by
     intro z a
-    simp [eC, res, map_sum, Algebra.TensorProduct.basis_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [eC, res, map_sum, Algebra.TensorProduct.basis_apply]
   have hcoord : ∀ a : Module.Free.ChooseBasisIndex O A → C,
       (∀ x : A →ₐ[O] C, ∑ i, a i * x (e i) = 0) → a = 0 := by
     intro a ha
@@ -154,7 +120,8 @@ theorem _root_.GlobalTheory.exists_eval_eq_of_multiplicative_on_points : ∀ (O 
   have hval : ∀ x, κ x = ∑ i, c i * x (e i) := by
     intro x
     have h1 : ext x b' = κ x := by
-      simp only [b', map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [b', map_sum, map_smul, smul_eq_mul]
       rw [Finset.sum_eq_single (ext x)]
       · rw [hw1, mul_one, hres]
       · intro z _ hz
@@ -170,7 +137,8 @@ theorem _root_.GlobalTheory.exists_eval_eq_of_multiplicative_on_points : ∀ (O 
         ∑ i, ∑ j, algebraMap O C (m k i j) * (x (e i) * y (e j)) := by
     intro x y k
     conv_lhs => rw [← (e.tensorProduct e).sum_repr (Δ (e k))]
-    simp only [map_sum, map_smul, Module.Basis.tensorProduct_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Module.Basis.tensorProduct_apply,
       Algebra.smul_def, Fintype.sum_prod_type, map_mul, AlgHom.commutes,
       Algebra.TensorProduct.lift_tmul, m]
   have key : ∀ x y : A →ₐ[O] C, ∑ j, (∑ i, (∑ k, c k * algebraMap O C (m k i j) - c i * c j) *
@@ -213,7 +181,8 @@ theorem _root_.GlobalTheory.exists_eval_eq_of_multiplicative_on_points : ∀ (O 
     IsIntegrallyClosed.isIntegral_iff.mp (IsIntegral.of_mem_of_fg S hfg _ (hcM i))
   choose o ho using hint
   refine ⟨∑ i, o i • e i, fun x => ?_⟩
-  rw [hval, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hval, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, Algebra.smul_def, ho]
 

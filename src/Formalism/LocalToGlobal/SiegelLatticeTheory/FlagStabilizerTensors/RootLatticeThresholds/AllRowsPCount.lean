@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsLab
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsLab
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,8 +157,8 @@ theorem part_iff_k (k : Fin 2) (x y : KSub X.B.I) :
       exact hv
     · rw [if_neg hk, if_neg hk]
 
-open Classical in
 
+open Classical in
 def redD (k : Fin 2) : X.B.I.RedDatum (D.host.g (1 - k) ^ 1) (D.host.g k ^ 1) where
   G₁ := ↥(Sub (fun kv : (Σ k', D.nd.PlG k') => ¬ kv.1 = k))
   G₂ := ↥(Sub (fun kv : (Σ k', D.nd.PlG k') => kv.1 = k))
@@ -229,10 +233,10 @@ theorem sumW_single (k : Fin 2) (f : Polynomial (ZMod (D.host.g k))) (g : GL (Fi
 theorem sumW_all (k : Fin 2) (g : GL (Fin D.R.r) (ZMod (D.host.g k))) :
     ∑ c : Fin D.R.r → ZMod (D.host.g k), (D.ntypes.eSer k (Formalism.CyclotomicNorms.monicOf c)).coeff g =
       (1 : MonoidAlgebra ℂ (GL (Fin D.R.r) (ZMod (D.host.g k)))).coeff g := by
-  rw [← Formalism.L2.SG.AllRowsOf.sum_eSer' k, MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply]
+  rw [← Formalism.L2.SG.AllRowsOf.sum_eSer' k, MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
+
 
 open Classical in
-
 theorem ES_cyl_pA (k : Fin 2) (S : Finset (Tup D k)) : ES (cyl D k (S : Set (Tup D k))) = ∑ t ∈ S, pA (Gt k t) := by
   apply MonoidAlgebra.ext; ext γ
   rw [ES_eq, MonoidAlgebra.coeff_sum, Finset.sum_apply', MonoidAlgebra.coeff_sum, Finset.sum_apply']
@@ -529,7 +533,7 @@ theorem mul_supp {H : Subgroup (∀ i, G i)} (A B : MonoidAlgebra ℂ (∀ i, G 
 
 theorem sum_supp {κ : Type} (T : Finset κ) {H : Subgroup (∀ i, G i)} (A : κ → MonoidAlgebra ℂ (∀ i, G i))
     (hA : ∀ t, ∀ γ, (A t).coeff γ ≠ 0 → γ ∈ H) (γ : ∀ i, G i) (h : (∑ t ∈ T, A t).coeff γ ≠ 0) : γ ∈ H := by
-  rw [MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply] at h
+  rw [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply] at h
   obtain ⟨t, -, ht⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   exact hA t γ ht
 

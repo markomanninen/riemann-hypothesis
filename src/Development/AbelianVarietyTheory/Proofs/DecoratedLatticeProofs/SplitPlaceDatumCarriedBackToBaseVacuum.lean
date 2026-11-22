@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUnique
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceBaseVacuumDatumExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer lastPair)
@@ -203,7 +207,12 @@ theorem isSBHalf_of_mem_waveSpan {D : D7} {S T : HSp D} (ψ : AddChar (AF D.host
     (hdY : ∀ y ∈ half S T (cA D e), ∃ k : ℕ, 0 < k ∧ k • y ∈ Λ) :
     ∀ Θ ∈ waveSpan (fun x y : WO S T => ψ (symplO S T x y)) (half S T e) (half S T (cA D e)) (Λ ⊓ half S T e),
       IsSBHalf e Λ Θ := by
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y; rw [symplO_zero_left, AddChar.map_zero_eq_one]
+    · intro y; rw [symplO_zero_right, AddChar.map_zero_eq_one]
   intro Θ hΘ
   induction hΘ using Submodule.span_induction with
   | mem _ hh =>
@@ -273,7 +282,7 @@ def reach (ψ : AddChar (AF D.host.F) ℂ) (e : AE D) (Λ : AddSubgroup (WO S T)
     · rcases Finset.mem_union.1 (Finsupp.support_add hu) with h | h
       · exact hc u h
       · exact hd u h
-    · rw [map_add, hc' f₀ Tm hT, hd' f₀ Tm hT, comb_eq_lc, comb_eq_lc, comb_eq_lc, map_add]
+    · rw [map_add (f := _), hc' f₀ Tm hT, hd' f₀ Tm hT, comb_eq_lc, comb_eq_lc, comb_eq_lc, map_add (f := _)]
   zero_mem' := ⟨zero_mem _, 0, by simp, fun f₀ Tm _ => by rw [map_zero, comb_eq_lc, map_zero]⟩
   smul_mem' a b hb := by
     obtain ⟨hb1, d, hd, hd'⟩ := hb
@@ -310,7 +319,13 @@ theorem reach_modul {ψ : AddChar (AF D.host.F) ℂ} {e : AE D} {Λ : AddSubgrou
     ∀ Θ ∈ reach ψ e Λ Φ, ∀ y ∈ half S T (cA D e), (fun t => ψ (symplO S T t y) * Θ t) ∈ reach ψ e Λ Φ := by
   intro Θ hΘ y hy
   obtain ⟨h1, c, hc, hc'⟩ := mem_reach.1 hΘ
-  refine mem_reach.2 ⟨modul_mem (isBichar_symplO S T ψ) h1 hy, _, support_shift (φ := fun u => ψ (symplOH S T y u)) (half_le_sum' he hy) hc, fun f₀ Tm hT => ?_⟩
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y; rw [symplO_zero_left, AddChar.map_zero_eq_one]
+    · intro y; rw [symplO_zero_right, AddChar.map_zero_eq_one]
+  refine mem_reach.2 ⟨modul_mem hb h1 hy, _, support_shift (φ := fun u => ψ (symplOH S T y u)) (half_le_sum' he hy) hc, fun f₀ Tm hT => ?_⟩
   rw [hT.modul Θ (hsb Θ h1) y ((isHalf_iff S T).2 hy), hc' f₀ Tm hT, heisO_comb]
 
 theorem exists_back (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (hec : e * cA D e = 0) (Λ : AddSubgroup (WO S T))
@@ -325,7 +340,12 @@ theorem exists_back (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (hec : e * cA D 
   have tf : ∀ k : ℕ, 0 < k → Function.Injective fun t : WO S T => k • t := fun k hk a b hab => by
     rw [← inv_smul_nsmul S T hk a, ← inv_smul_nsmul S T hk b]
     exact congrArg _ hab
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; rw [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a b y; rw [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y; rw [symplO_zero_left, AddChar.map_zero_eq_one]
+    · intro y; rw [symplO_zero_right, AddChar.map_zero_eq_one]
   have hce : cA D e * e = 0 := by rw [mul_comm, hec]
   have hsb := isSBHalf_of_mem_waveSpan ψ e Λ hLL' hdX hdY
   obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
@@ -364,7 +384,9 @@ theorem datumBack : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topologi
   obtain ⟨hLL', hX, -, hfin, hden⟩ := dualPair hψ hS hT hs hε heq
   have hdX : ∀ x ∈ half S T p.e, ∃ k : ℕ, 0 < k ∧ k • x ∈ latO S T (LS : Set _) (LT : Set _) (· = p.v) := by
     intro x hx
-    obtain ⟨k, hk, hkx⟩ := exists_nsmul_mem_latO' hS.1 hT.1 x (infPart_half hε heε hx)
+    obtain ⟨k, hk, hkx⟩ := exists_nsmul_mem_latO'
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS)
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hT) x (infPart_half hε heε hx)
     refine ⟨k, hk, ?_⟩
     have := (idem_smul_mem hε he heε hkx).1
     rwa [smul_comm, (mem_half S T).1 hx] at this

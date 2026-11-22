@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.KappaZeroNonneg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.KappaZeroNonneg
+
+@[expose] public section
 
 noncomputable section
 

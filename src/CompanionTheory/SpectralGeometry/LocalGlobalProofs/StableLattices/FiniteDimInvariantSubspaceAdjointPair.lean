@@ -1,5 +1,10 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+
+@[expose] public section
+
 open Finset CompanionTheory.RgExh CompanionTheory.RgExh.U
 open CompanionTheory.D.LK (Pos Cn ann cre lift bd om cpt allT LocFin)
 open Formalism.REAL (GlRel KHighest IsWeight)
@@ -39,7 +44,7 @@ theorem highest_preimage_inner {E : Type*} [NormedAddCommGroup E] [InnerProductS
   have har : ∀ i, a i (D u) = 0 := by
     intro i
     have h1 : a i (D y) = a i (D u) + D (a i w) := by
-      rw [← haD i w hwT, ← map_add, ← map_add, hyuw]
+      rw [← haD i w hwT, ← map_add (f := _), ← map_add (f := _), hyuw]
     rw [hDy i, haw i, map_zero, add_zero] at h1
     exact h1.symm
   have hperp : ∀ z ∈ S, ⟪D u, D z⟫_ℂ = 0 := by
@@ -49,10 +54,10 @@ theorem highest_preimage_inner {E : Type*} [NormedAddCommGroup E] [InnerProductS
       obtain ⟨i, t, ht, rfl⟩ := hz
       rw [← hbD i t ht, ← hadj, har i, inner_zero_left]
     | zero => simp
-    | add x z _ _ hx hz => rw [map_add, inner_add_right, hx, hz, add_zero]
+    | add x z _ _ hx hz => rw [map_add (f := _), inner_add_right, hx, hz, add_zero]
     | smul c x _ hx => rw [map_smul, inner_smul_right, hx, mul_zero]
   have hDu : D u = 0 := inner_self_eq_zero.1 (hperp u huS)
-  exact ⟨w, hwT, haw, by rw [hyuw, map_add, hDu, zero_add]⟩
+  exact ⟨w, hwT, haw, by rw [hyuw, map_add (f := _), hDu, zero_add]⟩
 
 theorem highest_preimage_of_stable : ∀ (n : ℕ) (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V] (ι : Type) (T : Submodule ℂ (Cn n V))
     (a b : ι → Module.End ℂ (Cn n V)) (D : Module.End ℂ (Cn n V)) (y : Cn n V), FiniteDimensional ℂ T →

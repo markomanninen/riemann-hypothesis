@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ omit [NumberField E] in
 theorem isMir_emb {m : ℕ} (ιE : GL (Fin k) E →* GL (Fin m) E) (h : IsEmb ιE) (γ : GL (Fin k) E) :
     IsMir k (ιE γ) := by
   intro i c hic
-  rw [h γ, embM, Matrix.of_apply, dif_neg (by omega)]
+  rw [h γ, embM, Matrix.of_apply, dite_eq_right (by omega)]
 
 end PKLt2
 

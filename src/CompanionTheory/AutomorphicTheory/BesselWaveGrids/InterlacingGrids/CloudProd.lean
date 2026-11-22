@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid
 
@@ -36,10 +40,10 @@ theorem prod_le_prod_range_of_rank (A : Finset ℕ) (F : ℕ → ℝ) (φ : ℕ 
     (hmap : ∀ s ∈ A, φ s < k) (hw : ∀ j, 1 ≤ w j) :
     ∏ s ∈ A, F s ≤ ∏ j ∈ range k, w j := by
   classical
-  calc ∏ s ∈ A, F s ≤ ∏ s ∈ A, w (φ s) := prod_le_prod hF0 hF
+  calc ∏ s ∈ A, F s ≤ ∏ s ∈ A, w (φ s) := prod_le_prod₀ hF0 hF
     _ = ∏ j ∈ A.image φ, w j := (prod_image hinj).symm
     _ ≤ ∏ j ∈ range k, w j := by
-      apply prod_le_prod_of_subset_of_one_le
+      apply prod_le_prod_of_subset_of_one_le₀
       · intro j hj
         obtain ⟨s, hs, rfl⟩ := mem_image.mp hj
         exact mem_range.mpr (hmap s hs)
@@ -82,6 +86,7 @@ theorem cloud_prod_le (k : ℕ) (lam : ℕ → ℝ) (c g Y : ℝ) (hk : 1 ≤ k)
     push_cast
     ring
   have hone : (1 : ℝ) ≤ (2 + c) * k := by nlinarith
+  have hbound0 : 0 ≤ (2 + c) * k := by positivity
   rw [← prod_filter_mul_prod_filter_not (Icc 1 (k - 1)) (fun s => 0 < Y + lam s)]
   have hL : ∏ s ∈ (Icc 1 (k - 1)).filter (fun s => 0 < Y + lam s),
       (1 + (1 + c) / max |Y + lam s| 1) ≤ (2 + c) * k := by
@@ -142,7 +147,7 @@ theorem cloud_prod_le (k : ℕ) (lam : ℕ → ℝ) (c g Y : ℝ) (hk : 1 ≤ k)
     · rw [not_nonempty_iff_eq_empty.mp hne, prod_empty]
       exact hone
   calc _ ≤ ((2 + c) * k) * ((2 + c) * k) :=
-        mul_le_mul hL hR (prod_nonneg fun s _ => hF0 s) (by linarith)
+        mul_le_mul_of_nonneg hL hR (prod_nonneg fun s _ => hF0 s) hbound0
     _ = (2 + c) ^ 2 * (k : ℝ) ^ 2 := by ring
 
 end GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid

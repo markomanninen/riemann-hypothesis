@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem rank_one (𝔠 : Submodule (𝓞 K) K) (hfg : 𝔠.FG) (h0 : 𝔠 ≠ �
       add_mem' := by
         intro x y hx hy a ha
         have := 𝔠.add_mem (hx a ha) (hy a ha)
-        rw [map_add, add_div, smul_add]
+        rw [map_add (f := _), add_div, smul_add]
         exact this
       zero_mem' := by
         intro a _
@@ -145,7 +149,7 @@ theorem rank_one (𝔠 : Submodule (𝓞 K) K) (hfg : 𝔠.FG) (h0 : 𝔠 ≠ �
       rw [map_mul, mul_div_assoc]
       exact this
     · intro x y hx hy
-      rw [map_add, add_div]
+      rw [map_add (f := _), add_div]
       exact 𝔠.add_mem hx hy
 
   have hle : (𝔞 * J) ≤ J := Ideal.mul_le_right

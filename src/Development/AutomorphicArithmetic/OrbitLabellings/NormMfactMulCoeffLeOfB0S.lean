@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Formalism.GaussJetBounds.OneLetterRadius
-import Development.AutomorphicArithmetic.OrbitLabellings.BeSConstantCoeffEqZeroAndWtGe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
+public import Formalism.GaussJetBounds.OneLetterRadius
+public import Development.AutomorphicArithmetic.OrbitLabellings.BeSConstantCoeffEqZeroAndWtGe
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.DworkPowerSeriesWeights Formalism.IncomingBounds UpperTheory.G2
@@ -32,7 +36,7 @@ private theorem factA {K : Type} [NormedField K] [IsUltrametricDist K] [CharZero
   rw [hm, norm_prod]
   calc ∏ i, ‖(((κ i).factorial : ℕ) : K)‖
       ≤ ∏ i, ‖(l : K)‖ ^ ((κ i : ℝ) / ((l : ℝ) - 1) - (Real.logb l A + 1)) :=
-        Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => key _ (hκ i))
+        Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => key _ (hκ i))
     _ = ‖(l : K)‖ ^ ((∑ i, (κ i : ℝ) / ((l : ℝ) - 1)) -
           (Fintype.card ι : ℝ) * (Real.logb l A + 1)) := by
         rw [← Real.rpow_sum_of_pos hπ0, Finset.sum_sub_distrib, Finset.sum_const,

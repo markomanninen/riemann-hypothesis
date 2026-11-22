@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicAddCharEqArchimedeanMulFinprodLocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourierBijOnSchwartzBruhatFinitePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralPointsIndicatorFourierSelfUnramifiedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanSchwartzTraceFourierBijectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicPureTensorEqProductLocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicPoissonSummationAnyHaarStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiUnramifiedAwayDifferent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActFromBlocks
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicAddCharEqArchimedeanMulFinprodLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FourierBijOnSchwartzBruhatFinitePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralPointsIndicatorFourierSelfUnramifiedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanSchwartzTraceFourierBijectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicPureTensorEqProductLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicPoissonSummationAnyHaarStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PsiUnramifiedAwayDifferent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerMemSchwartzBruhatFinitePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+
+@[expose] public section
+
 open scoped Matrix GlobalTheory.VacAny
 open NumberField IsDedekindDomain MeasureTheory Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RatWeilOp
 
@@ -99,11 +104,13 @@ theorem evI_dot (x y : κ → AF F) :
     evI F (x ⬝ᵥ y) = (fun i => evI F (x i)) ⬝ᵥ (fun i => evI F (y i)) := by
   have h : ∀ a : AF F, evI F a = ((InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp (fstA F).toRingHom) a :=
     fun a => rfl
-  simp only [h, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, dotProduct, map_sum, map_mul]
 
-theorem evFin_dot (v : Pl F) (x y : κ → AF F) :
+theorem evFin_dot (v : Pl (F := F)) (x y : κ → AF F) :
     evFin F v (x ⬝ᵥ y) = (fun i => evFin F v (x i)) ⬝ᵥ (fun i => evFin F v (y i)) := by
-  simp only [dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, map_mul]
 
 theorem evFin_mem (a : AF F) : ∀ᶠ v in cofinite, evFin F v a ∈ v.adicCompletionIntegers F :=
   a.2.2.mono fun _ hv => hv
@@ -114,7 +121,7 @@ theorem psiUnr_eventually (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) : ∀ᶠ v 
   by_contra h
   exact hv (GlobalTheory.StdCharUnrF.psiUnr_of_not_le F ψ hψ v fun hle => h (Ideal.dvd_iff_le.2 hle))
 
-theorem pure_mem_schA (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hφ : IsFam φ) :
+theorem pure_mem_schA (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (hφ : IsFam φ) :
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ ∈ schA F κ :=
   Submodule.subset_span ⟨f, fun y => ∏ᶠ v, φ v fun i => evalV F v (y i),
     ⟨GlobalTheory.WeilM.isLocallyConstant_finprod_evalV φ hφ.1 hφ.2, GlobalTheory.AdelicCoordSupport.hasCompactSupport_finprod φ hφ.1 hφ.2⟩, rfl⟩
@@ -122,10 +129,10 @@ theorem pure_mem_schA (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → �
 def archT (f : SInf F κ) (b : κ → mixedEmbedding.mixedSpace F) : (κ → mixedEmbedding.mixedSpace F) → ℂ :=
   fun z => f z * Complex.exp (-(2 * Real.pi * Complex.I) * (Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (z ⬝ᵥ b) : ℝ))
 
-def finT (ψ : AddChar (AF F) ℂ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (y : κ → AF F) : ∀ v : Pl F, (κ → Fv F v) → ℂ :=
+def finT (ψ : AddChar (AF F) ℂ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (y : κ → AF F) : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ :=
   fun v z => φ v z * GlobalTheory.LatVac.psiAt ψ v (z ⬝ᵥ fun i => evFin F v (y i))
 
-theorem finT_isFam (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ) (hφ : IsFam φ)
+theorem finT_isFam (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ) (hφ : IsFam φ)
     (y : κ → AF F) : IsFam (finT ψ φ y) := by
   refine ⟨fun v => ?_, ?_⟩
   · have e : finT ψ φ y v = schr (GlobalTheory.LatVac.psiAt ψ v) (0, fun i => evFin F v (y i)) (φ v) := by
@@ -174,7 +181,7 @@ theorem archT_integrable [MeasurableSpace (κ → mixedEmbedding.mixedSpace F)] 
   exact f.integrable.mul_bdd hc.aestronglyMeasurable
     (ae_of_all _ fun z => (GlobalTheory.StdCharFromIsStd.norm_exp_real _).le)
 
-theorem pure_mul_psi (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ)
+theorem pure_mul_psi (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ)
     (hφ : IsFam φ) (x y : κ → AF F) :
     GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ x * ψ (x ⬝ᵥ y) = archT f (fun i => evI F (y i)) (fun i => evI F (x i)) *
       ∏ᶠ v, finT ψ φ y v (fun i => evFin F v (x i)) := by
@@ -223,14 +230,14 @@ theorem weyl_hasOp : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F �
   haveI : BorelSpace (κ → AF F) := ⟨rfl⟩
   letI mI : MeasurableSpace (κ → mixedEmbedding.mixedSpace F) := borel _
   haveI : BorelSpace (κ → mixedEmbedding.mixedSpace F) := ⟨rfl⟩
-  letI mV : ∀ v : Pl F, MeasurableSpace (κ → Fv F v) := fun _ => borel _
-  haveI bV : ∀ v : Pl F, BorelSpace (κ → Fv F v) := fun _ => ⟨rfl⟩
+  letI mV : ∀ v : Pl (F := F), MeasurableSpace (κ → Fv F v) := fun _ => borel _
+  haveI bV : ∀ v : Pl (F := F), BorelSpace (κ → Fv F v) := fun _ => ⟨rfl⟩
   obtain ⟨μ, hμ⟩ : ∃ μ : Measure (κ → AF F), μ.IsAddHaarMeasure := ⟨Measure.addHaar, inferInstance⟩
   obtain ⟨μi, hμi⟩ : ∃ μ : Measure (κ → mixedEmbedding.mixedSpace F), μ.IsAddHaarMeasure :=
     ⟨Measure.addHaar, inferInstance⟩
-  obtain ⟨μv, hμv, hμv1⟩ : ∃ μv : ∀ v : Pl F, Measure (κ → Fv F v), (∀ v, (μv v).IsAddHaarMeasure) ∧
+  obtain ⟨μv, hμv, hμv1⟩ : ∃ μv : ∀ v : Pl (F := F), Measure (κ → Fv F v), (∀ v, (μv v).IsAddHaarMeasure) ∧
       ∀ v, μv v {x | ∀ i, x i ∈ v.adicCompletionIntegers F} = 1 := by
-    let K : ∀ v : Pl F, TopologicalSpace.PositiveCompacts (κ → Fv F v) := fun v =>
+    let K : ∀ v : Pl (F := F), TopologicalSpace.PositiveCompacts (κ → Fv F v) := fun v =>
       ⟨⟨Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)),
         isCompact_univ_pi fun _ => ReciprocityTheory.GeneralLinearIntegers.GeneralLinearIntegersOpenCompact.isCompact_integers v⟩, by
           show (interior (Set.pi Set.univ fun _ => (v.adicCompletionIntegers F : Set (Fv F v)))).Nonempty
@@ -249,7 +256,7 @@ theorem weyl_hasOp : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F �
   have hsub : ∀ v, ∀ φ ∈ SB (κ → Fv F v), φ ∈ intSub (GlobalTheory.LatVac.psiAt ψ v) (μv v) := fun v φ hφ y =>
     (hφ.1.continuous.mul ((hψc v).comp (continuous_id.dotProduct continuous_const))).integrable_of_hasCompactSupport
       hφ.2.mul_right
-  let ev : ∀ v : Pl F, ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ → Fv F v) → ℂ := fun v => ftE (GlobalTheory.LatVac.psiAt ψ v) (μv v)
+  let ev : ∀ v : Pl (F := F), ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ → Fv F v) → ℂ := fun v => ftE (GlobalTheory.LatVac.psiAt ψ v) (μv v)
   have hev : ∀ v, ∀ φ ∈ SB (κ → Fv F v), ev v φ = ft (GlobalTheory.LatVac.psiAt ψ v) (μv v) φ :=
     fun v φ hφ => ftE_eq _ _ (hsub v φ hφ)
   have hbij : ∀ v, Set.BijOn (ev v) (SB (κ → Fv F v) : Set _) (SB (κ → Fv F v) : Set _) := fun v =>
@@ -259,7 +266,7 @@ theorem weyl_hasOp : ∀ (F : Type) [Field F] [NumberField F], IsTotallyReal F �
     filter_upwards [psiUnr_eventually ψ hψ] with v hv
     rw [hev v (ind κ v) (GlobalTheory.StdVacuum.indicator_mem_SB v)]
     exact GlobalTheory.T.integralPointsIndicator_fourier_self_unramified F v (GlobalTheory.LatVac.psiAt ψ v) (fun x => hv x) κ (μv v) (hμv1 v)
-  have hpureE : ∀ (f : SInf F κ) (φ : ∀ v : Pl F, (κ → Fv F v) → ℂ), IsFam φ →
+  have hpureE : ∀ (f : SInf F κ) (φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ), IsFam φ →
       GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ ∈ intSub ψ μ ∧
       ft ψ μ (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ) = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure (c₀ • ei' f) (fun v => ev v (φ v)) := by
     intro f φ hφ

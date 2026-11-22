@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgWeightHighestWeightExistsUniqueAntitoneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicWeightPolyMatrixMultiplicativeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolynomialRepGLComplexAlgebraicWeightEvalPointStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBorelEigenvectorOfPolynomialRepGLComplexStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRationalPointOrbitAlgebraicWeight
-import Formalism.LocalToGlobal.Columns.MtAdWtIrr
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixEx
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixLine
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.GLDense
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameEquivApply
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulVecEqProdSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgWeightHighestWeightExistsUniqueAntitoneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraicWeightPolyMatrixMultiplicativeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolynomialRepGLComplexAlgebraicWeightEvalPointStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBorelEigenvectorOfPolynomialRepGLComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpanRationalPointOrbitAlgebraicWeight
+public import Formalism.LocalToGlobal.Columns.MtAdWtIrr
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixEx
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixLine
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.GLDense
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameEquivApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulVecEqProdSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem exists_beig_mem {Ψ : GL (Fin n) ℂ → Matrix κ κ ℂ} (hΨ : IsPoly
       rw [hact, ← Matrix.mulVec_mulVec, hact, hact, hep _ (hst _ _ (heS y)), hΨ.mul, Matrix.mulVec_mulVec]
     · choose Q hQ using hΨ.poly
       refine ⟨∑ l, (∑ k, MvPolynomial.C (Pm i k) * Q k l) * MvPolynomial.C (I l j), fun B => ?_⟩
-      simp only [Matrix.mul_apply, map_sum, map_mul, MvPolynomial.eval_C, hQ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_sum, map_mul, MvPolynomial.eval_C, hQ]
   obtain ⟨w, lam, hw0, hw⟩ := GlobalTheory.T.exists_borelEigenvector_of_polynomialRepGLComplex n _ _ hR
   refine ⟨e w, heS w, lam, fun h => hw0 (he (by rw [h, map_zero])), fun B hB => ?_⟩
   have h1 := hw B hB
@@ -221,7 +226,7 @@ def coef {G : Type} (Φ : G → Matrix κ κ ℂ) (u : κ → ℂ) : (κ → ℂ
 
 theorem coef_injective {G : Type} {Φ : G → Matrix κ κ ℂ} {u : κ → ℂ} (hu : u ≠ 0)
     (hspan : ∀ x, x ≠ 0 → ∀ w, w ∈ Submodule.span ℂ (Set.range fun g => Φ g *ᵥ x)) : Function.Injective (coef Φ u) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   by_contra hx0
   apply hu
@@ -395,7 +400,7 @@ theorem iso_of_hwAt (a a' : AlgWt L n) (lam : ι → Fin n → ℤ) (ha : ∀ τ
       (∀ l : ι → GL (Fin n) ℂ, (∀ τ, PI.UnitaryGroupMassFormula.HwConjInf.LowUni (l τ).val) → u ᵥ* Φ l = u) ∧
       (∀ g : ι → GL (Fin n) ℂ, (∀ τ, (g τ).val.BlockTriangular id) →
         Φ g *ᵥ v = (∏ τ, ∏ i, ((g τ).val i i) ^ (lam τ i)) • v) ∧
-      ∀ γ, LinearMap.toMatrix b b (c.ρ γ) = Φ (mtwEmb emb (mtwRat γ)) := by
+      ∀ γ, LinearMap.toMatrix b b (c.ρ γ) = Φ (mtwEmb emb (mtwRat (L := L) (n := n) γ)) := by
     intro c hc
     obtain ⟨_, κ, _, _, b, P, hP⟩ := c.alg
     have hP' : Agrees c b P := hP
@@ -430,21 +435,21 @@ theorem iso_of_hwAt (a a' : AlgWt L n) (lam : ι → Fin n → ℤ) (ha : ∀ τ
       rintro _ ⟨γ₀, hγ, rfl⟩
       exact ⟨mtwEmb emb γ₀, by simp only [ptOf_rat emb hinj hcm hall γ₀ hγ]⟩
     · simp only [ptOf_rat emb hinj hcm hall _ (mtwRat_mem γ)]
-      exact hP' γ (mtwRat γ) (congrArg Units.val (mtwInc_mtwRatFun γ)).symm
+      exact hP' γ (mtwRat (L := L) (n := n) γ) (congrArg Units.val (mtwInc_mtwRatFun γ)).symm
   obtain ⟨κ, _, _, b, Φ, u, v, m1, m2, m3, m4, m5, m6, m7, m8⟩ := data a ha
   obtain ⟨κ', _, _, b', Φ', u', v', n1, n2, n3, n4, n5, n6, n7, n8⟩ := data a' ha'
   obtain ⟨e, he⟩ := exists_equiv m1 n1 m2 n2 m3 n3 m4 m5 n4 n5 m6 n6 _ m7 n7
   refine ⟨(b.equivFun.trans e).trans b'.equivFun.symm, fun γ x => b'.equivFun.injective ?_⟩
-  have k1 : b.equivFun (a.ρ γ x) = Φ (mtwEmb emb (mtwRat γ)) *ᵥ b.equivFun x := by
+  have k1 : b.equivFun (a.ρ γ x) = Φ (mtwEmb emb (mtwRat (L := L) (n := n) γ)) *ᵥ b.equivFun x := by
     rw [← m8]; exact (LinearMap.toMatrix_mulVec_repr b b _ x).symm
-  have k2 : ∀ y, b'.equivFun (a'.ρ γ y) = Φ' (mtwEmb emb (mtwRat γ)) *ᵥ b'.equivFun y := fun y => by
+  have k2 : ∀ y, b'.equivFun (a'.ρ γ y) = Φ' (mtwEmb emb (mtwRat (L := L) (n := n) γ)) *ᵥ b'.equivFun y := fun y => by
     rw [← n8]; exact (LinearMap.toMatrix_mulVec_repr b' b' _ y).symm
   simp only [LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply, k1, k2, he]
 
 end Wt
 
-open Formalism.BasicNotions Formalism.L2 Formalism.L2.DIV Formalism.L2.Col in
 
+open Formalism.BasicNotions Formalism.L2 Formalism.L2.DIV Formalism.L2.Col in
 theorem exists_equiv_VV : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (ι : Type) [Fintype ι]
     (emb : ι → L →+* ℂ), Function.Injective emb → (∀ t t', emb t ≠ ComplexEmbedding.conjugate (emb t')) →
     (∀ σ : L →+* ℂ, ∃ t, σ = emb t ∨ σ = ComplexEmbedding.conjugate (emb t)) → ∀ a : NG.AlgWt L n,

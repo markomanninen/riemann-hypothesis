@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.RepBase
-import GroundTheory.AutomorphicForms.HarishChandraCentre.FischerForm
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.RepBase
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.FischerForm
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -36,8 +40,6 @@ noncomputable def rowDer (i j : Fin n) : Derivation ℂ (Poly n) (Poly n) :=
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     ring
 
-@[simp] theorem rowDer_coe (i j : Fin n) : (rowDer i j : Module.End ℂ (Poly n)) = rowOp i j := rfl
-
 theorem rowDer_apply (i j : Fin n) (f : Poly n) : rowDer i j f = rowOp i j f := rfl
 
 theorem rowOp_comm_self (a i j : Fin n) :
@@ -54,7 +56,7 @@ theorem rowOp_comm_self (a i j : Fin n) :
   refine LinearMap.ext fun f => ?_
   have h := congrArg (fun D : Derivation ℂ (Poly n) (Poly n) => D f) key
   simp only [Derivation.commutator_apply, Derivation.smul_apply, rowDer_apply] at h
-  simp only [Module.End.mul_apply, LinearMap.add_apply, LinearMap.smul_apply]
+  simp only [mul_apply_eq_comp, LinearMap.add_apply, LinearMap.smul_apply]
   rw [← h]
   abel
 
@@ -62,7 +64,8 @@ def rowWt (m : Fin n × Fin n →₀ ℕ) (i : Fin n) : ℕ := ∑ k, m (i, k)
 
 theorem rowOp_self_monomial (i : Fin n) (s : Fin n × Fin n →₀ ℕ) (c : ℂ) :
     rowOp i i (monomial s c) = monomial s (c * (rowWt s i : ℂ)) := by
-  rw [rowOp_apply, rowWt, Nat.cast_sum, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rowOp_apply, rowWt, Nat.cast_sum, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [pderiv_monomial, X, monomial_mul, one_mul]
   by_cases hk : s (i, k) = 0
@@ -76,10 +79,10 @@ theorem rowOp_self_monomial (i : Fin n) (s : Fin n × Fin n →₀ ℕ) (c : ℂ
     rw [add_tsub_cancel_of_le hle]
 
 theorem coeff_rowOp_self (i : Fin n) (m : Fin n × Fin n →₀ ℕ) (f : Poly n) :
-    coeff m (rowOp i i f) = (rowWt m i : ℂ) * coeff m f := by
+    AddMonoidAlgebra.coeff (rowOp i i f) m = (rowWt m i : ℂ) * AddMonoidAlgebra.coeff f m := by
   classical
   induction f using MvPolynomial.induction_on' with
-  | add p q hp hq => rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
   | monomial s c =>
     rw [rowOp_self_monomial, coeff_monomial, coeff_monomial]
     by_cases h : s = m
@@ -88,19 +91,19 @@ theorem coeff_rowOp_self (i : Fin n) (m : Fin n × Fin n →₀ ℕ) (f : Poly n
 
 theorem rowWt_eq_of_eigen {h : Poly n} {c : Fin n → ℂ} (hc : ∀ a, rowOp a a h = c a • h)
     {m : Fin n × Fin n →₀ ℕ} (hm : m ∈ h.support) (a : Fin n) : (rowWt m a : ℂ) = c a := by
-  have := congrArg (coeff m) (hc a)
+  have := congrArg (AddMonoidAlgebra.coeff · m) (hc a)
   rw [coeff_rowOp_self, coeff_smul, smul_eq_mul] at this
   exact mul_right_cancel₀ (MvPolynomial.mem_support_iff.1 hm) this
 
 noncomputable def wtProj (μ : Fin n → ℕ) : Module.End ℂ (Poly n) where
-  toFun f := ∑ m ∈ f.support with rowWt m = μ, monomial m (coeff m f)
+  toFun f := ∑ m ∈ f.support with rowWt m = μ, monomial m (AddMonoidAlgebra.coeff f m)
   map_add' f g := by
     classical
     ext m
-    simp only [coeff_sum, coeff_monomial, coeff_add]
-    simp only [Finset.sum_ite_eq', Finset.mem_filter, MvPolynomial.mem_support_iff, coeff_add]
+    simp only [coeff_sum, coeff_monomial, MvPolynomial.coeff_add]
+    simp only [Finset.sum_ite_eq', Finset.mem_filter, MvPolynomial.mem_support_iff, MvPolynomial.coeff_add]
     by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, if_false]
-    · by_cases h1 : coeff m f = 0 <;> by_cases h2 : coeff m g = 0 <;> by_cases h3 : coeff m f + coeff m g = 0 <;>
+    · by_cases h1 : AddMonoidAlgebra.coeff f m = 0 <;> by_cases h2 : AddMonoidAlgebra.coeff g m = 0 <;> by_cases h3 : AddMonoidAlgebra.coeff f m + AddMonoidAlgebra.coeff g m = 0 <;>
         simp_all
     · simp
   map_smul' c f := by
@@ -110,17 +113,17 @@ noncomputable def wtProj (μ : Fin n → ℕ) : Module.End ℂ (Poly n) where
     simp only [Finset.sum_ite_eq', Finset.mem_filter, MvPolynomial.mem_support_iff, coeff_smul,
       smul_eq_mul]
     by_cases hm : rowWt m = μ <;> simp only [hm, and_true, and_false, if_false]
-    · by_cases h1 : coeff m f = 0 <;> by_cases h2 : c * coeff m f = 0 <;> simp_all
+    · by_cases h1 : AddMonoidAlgebra.coeff f m = 0 <;> by_cases h2 : c * AddMonoidAlgebra.coeff f m = 0 <;> simp_all
     · simp
 
 theorem coeff_wtProj (μ : Fin n → ℕ) (m : Fin n × Fin n →₀ ℕ) (f : Poly n) :
-    coeff m (wtProj μ f) = if rowWt m = μ then coeff m f else 0 := by
+    AddMonoidAlgebra.coeff (wtProj μ f) m = if rowWt m = μ then AddMonoidAlgebra.coeff f m else 0 := by
   classical
-  change coeff m (∑ m ∈ f.support with rowWt m = μ, monomial m (coeff m f)) = _
+  change AddMonoidAlgebra.coeff (∑ m ∈ f.support with rowWt m = μ, monomial m (AddMonoidAlgebra.coeff f m)) m = _
   simp only [coeff_sum, coeff_monomial, Finset.sum_ite_eq', Finset.mem_filter,
     MvPolynomial.mem_support_iff]
   by_cases hm : rowWt m = μ
-  · by_cases h1 : coeff m f = 0 <;> simp [hm, h1]
+  · by_cases h1 : AddMonoidAlgebra.coeff f m = 0 <;> simp [hm, h1]
   · simp [hm]
 
 theorem wtProj_eq_self_iff (μ : Fin n → ℕ) (f : Poly n) :
@@ -128,7 +131,7 @@ theorem wtProj_eq_self_iff (μ : Fin n → ℕ) (f : Poly n) :
   constructor
   · intro h m hm
     by_contra hne
-    have := congrArg (coeff m) h
+    have := congrArg (AddMonoidAlgebra.coeff · m) h
     rw [coeff_wtProj, if_neg hne] at this
     exact MvPolynomial.mem_support_iff.1 hm this.symm
   · intro h
@@ -149,7 +152,7 @@ theorem wtProj_wtProj (μ ν : Fin n → ℕ) (f : Poly n) :
     split_ifs <;> rfl
   · rw [if_neg h]
     ext m
-    rw [coeff_wtProj, coeff_wtProj, coeff_zero]
+    rw [coeff_wtProj, coeff_wtProj, MvPolynomial.coeff_zero]
     split_ifs with h1 h2
     · exact absurd (h1.symm.trans h2) h
     · rfl
@@ -200,9 +203,10 @@ theorem wtProj_comm {T : Module.End ℂ (Poly n)} (hT : ∀ a, T * rowOp a a = r
   have hν : ∀ ν, wtProj ν (T (wtProj ν f)) = T (wtProj ν f) := fun ν =>
     wtProj_eq_self_of_eigen ν fun a => by
       have h1 := congrArg (fun S : Module.End ℂ (Poly n) => S (wtProj ν f)) (hT a)
-      simp only [Module.End.mul_apply] at h1
+      simp only [mul_apply_eq_comp] at h1
       rw [← h1, rowOp_self_of_wtProj ν _ a (by rw [wtProj_wtProj, if_pos rfl]), map_smul]
-  conv_lhs => rw [← sum_wtProj f, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← sum_wtProj f, map_sum, map_sum]
   rw [Finset.sum_eq_single μ]
   · exact hν μ
   · intro ν _ hne
@@ -210,7 +214,7 @@ theorem wtProj_comm {T : Module.End ℂ (Poly n)} (hT : ∀ a, T * rowOp a a = r
   · intro hμ
     have h0 : wtProj μ f = 0 := by
       ext m
-      rw [coeff_wtProj, coeff_zero]
+      rw [coeff_wtProj, MvPolynomial.coeff_zero]
       split_ifs with hm
       · by_contra hc
         exact hμ (Finset.mem_image.2 ⟨m, MvPolynomial.mem_support_iff.2 hc, hm⟩)
@@ -229,11 +233,11 @@ theorem rowOp_shift {μ : Fin n → ℕ} {v : Poly n} (hv : wtProj μ v = v) {i 
       ((μ a : ℂ) + ((if i = a then 1 else 0) - (if j = a then 1 else 0))) • w := by
     intro a
     have h1 := congrArg (fun S : Module.End ℂ (Poly n) => S v) (rowOp_comm_self a i j)
-    simp only [Module.End.mul_apply, LinearMap.add_apply, LinearMap.smul_apply] at h1
+    simp only [mul_apply_eq_comp, LinearMap.add_apply, LinearMap.smul_apply] at h1
     rw [h1, rowOp_self_of_wtProj μ v a hv, map_smul, add_smul]
   obtain ⟨m, hm⟩ : ∃ m, m ∈ w.support := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hne (MvPolynomial.support_eq_empty.1 (Finset.eq_empty_of_forall_notMem h))
   have hwt : ∀ m' ∈ w.support, ∀ a, ((rowWt m' a : ℕ) : ℤ) =
       (μ a : ℤ) + ((if i = a then 1 else 0) - (if j = a then 1 else 0)) := by
@@ -261,7 +265,7 @@ theorem rowOp_shift {μ : Fin n → ℕ} {v : Poly n} (hv : wtProj μ v = v) {i 
       unfold wtHeight
       simp_rw [hwt m hm]
       simp only [mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib, mul_ite, mul_one,
-        mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+        mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
     have : ((i : ℕ) : ℤ) < ((j : ℕ) : ℤ) := by exact_mod_cast hij
     rw [hsum]
     linarith
@@ -282,7 +286,7 @@ theorem eq_zero_of_forall_highestWeight (T T' : Module.End ℂ (Poly n))
     have h1 : fischer (T' k) (T' k) = fischer (T k) (T k) := by
       rw [hadj', hadj]
       have := congrArg (fun S : Module.End ℂ (Poly n) => S k) hnormal
-      simp only [Module.End.mul_apply] at this
+      simp only [mul_apply_eq_comp] at this
       rw [this]
     rw [hk, fischer_zero_left] at h1
     exact (fischer_self_eq_zero_iff _).1 h1
@@ -296,7 +300,7 @@ theorem eq_zero_of_forall_highestWeight (T T' : Module.End ℂ (Poly n))
     rw [fischer_rowOp]
     refine hs _ ?_
     have := congrArg (fun S : Module.End ℂ (Poly n) => S k) (hcomm j i)
-    simp only [Module.End.mul_apply] at this
+    simp only [mul_apply_eq_comp] at this
     rw [this, hk, map_zero]
   have hS4 : ∀ s ∈ S, T s = 0 → s = 0 := fun s hs hT =>
     (fischer_self_eq_zero_iff s).1 (hs s hT)
@@ -306,13 +310,13 @@ theorem eq_zero_of_forall_highestWeight (T T' : Module.End ℂ (Poly n))
   set g := T f
   obtain ⟨m₀, hm₀⟩ : ∃ m, m ∈ g.support := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hg (MvPolynomial.support_eq_empty.1 (Finset.eq_empty_of_forall_notMem h))
   set μ₀ := rowWt m₀
   have hμ₀ : wtProj μ₀ g ≠ 0 := by
     intro h
-    have := congrArg (coeff m₀) h
-    rw [coeff_wtProj, if_pos rfl, coeff_zero] at this
+    have := congrArg (AddMonoidAlgebra.coeff · m₀) h
+    rw [coeff_wtProj, if_pos rfl, MvPolynomial.coeff_zero] at this
     exact MvPolynomial.mem_support_iff.1 hm₀ this
   set d := ∑ a, μ₀ a
   set W : Finset (Fin n → ℕ) :=

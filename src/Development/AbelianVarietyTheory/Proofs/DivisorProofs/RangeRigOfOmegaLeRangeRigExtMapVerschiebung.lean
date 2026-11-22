@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveFrobeniusPullbackCotangentModVerscStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKernelIdealOfAppEqZeroFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobTwistBaseChangeHomApp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveFrobeniusPullbackCotangentModVerscStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKernelIdealOfAppEqZeroFieldStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +24,8 @@ theorem range_rigOfOmega_le_range_rigExtMap_verschiebung :
         LinearMap.range (rigExtMap (verschiebung h G)) := by
   intro p _ K _ h G
   rintro _ ⟨w, rfl⟩
-  obtain ⟨β, w', hβ, hd⟩ := GlobalTheory.T.exists_additive_frobeniusPullback_cotangent_mod_verschiebung p K h G (-(w.1 1))
+  obtain ⟨β, w', hβ, hd⟩ :=
+    GlobalTheory.T.exists_additive_frobeniusPullback_cotangent_mod_verschiebung p K h G (-(w.1 1))
   obtain ⟨-, c, B₀, -, hB₀, -, hB₀'⟩ := exists_of_cobOne_eq_zero hβ
   obtain ⟨B, hB⟩ : cocyclesMap (verschiebung h G) c ∈ LinearMap.range (frobTwist h G).cob :=
     (Submodule.Quotient.mk_eq_zero _).1
@@ -38,7 +44,7 @@ theorem range_rigOfOmega_le_range_rigExtMap_verschiebung :
     ((frobTwist h G).omegaLevel_one_bijective h).1 (by
       rw [map_sub, omegaLevel_apply, omegaLevel_apply, omegaLevel_apply, omegaMap_val,
         ← omegaLevel_apply, ← omegaLevel_apply _ _ u, hu, map_add, hw'']
-      change dUnit K (B.1 1) = _
+      change dUnit (R := K) (B.1 1) = _
       rw [dUnit, dUnit, map_sub, ← dUnit, ← dUnit, hd]
       abel)
   refine ⟨G.rigMk (c, u), ?_⟩

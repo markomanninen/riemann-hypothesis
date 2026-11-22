@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.AutP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LevBasis
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.AutP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LevBasis
+
+@[expose] public section
 
 attribute [-instance] UpperTheory.V.Pr.IsCD.toIsDomain UpperTheory.V.Pr.IsCD.toIsDiscreteValuationRing
 
@@ -91,7 +95,7 @@ theorem UpperTheory.V.Th.spUnl :
       rw [Units.val_mul, Units.val_zpow_eq_zpow_val, hine i s hs, hcyc]
       fin_cases i <;>
         simp [ι, Raw.ps, Raw.th, Raw.al, Raw.Psi, Chr.Psi, hinv] <;>
-        (try rw [zpow_add₀ (hne _), zpow_one, zpow_natCast]) <;> ring
+        (try rw [zpow_add₀ (hne _), zpow_one, zpow_natCast]) <;> dsimp [MonoidHomClass.toMonoidHom] <;> ring
   · intro i j heq
     by_cases hij : i = j
     · subst hij

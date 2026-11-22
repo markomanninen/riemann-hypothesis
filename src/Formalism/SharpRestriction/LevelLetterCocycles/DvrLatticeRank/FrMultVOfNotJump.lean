@@ -1,4 +1,8 @@
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -40,7 +44,7 @@ theorem fr_filV_succ (a : ℤ) : FilV PD (LL := LL) (V := V) (a + 1) ≤ FilV PD
   | tmul v b =>
     exact LinearMap.mem_range.2 ⟨v ⊗ₜ ⟨b.1, PD.Fil_anti a b.2⟩, by simp⟩
   | add s t hs ht =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hs ht
 
 theorem fr_filV_anti : Antitone (fun a : ℤ => FilV PD (LL := LL) (V := V) a) := antitone_int_of_succ_le fun a => fr_filV_succ PD a
@@ -90,7 +94,7 @@ theorem fr_filV_sep (x : V ⊗[Qp] BdR) (hx : ∀ a, x ∈ FilV PD (LL := LL) (V
         TensorProduct.equivFinsuppOfBasisLeft_apply_tmul, Finsupp.mapRange_apply]
       exact Submodule.smul_of_tower_mem _ _ b.2
     | add s t hs ht =>
-      rw [map_add, map_add, Finsupp.add_apply]
+      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
       exact add_mem hs ht
   have hz : e x = 0 := by
     ext i

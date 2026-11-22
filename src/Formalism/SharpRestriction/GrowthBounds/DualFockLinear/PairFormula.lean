@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LaTwInvT
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LaTwInvT
+
+@[expose] public section
 
 noncomputable section
 

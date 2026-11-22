@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAddRight
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAddRight
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BetaAtAddLeftAndDiagEqTwoOrder
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsGoodIntegral
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProperOfSubsingleton
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,17 +63,6 @@ theorem vPsiAt_eq (A : DatAt Y P) (χ : A.Ylat) : (∃ r, PsiCoord A.U.D.toPre �
   have h4 : ‖fC A u‖ = 1 := by nlinarith [norm_nonneg (fC A u), norm_nonneg (fC A (↑u⁻¹ : A.R))]
   simp only [vPsiAt, dif_pos hex]
   rw [hu, map_mul, norm_mul, h4, one_mul]
-
-theorem natCast_mem (hp : 1 < p) (A : DatAt Y P) : (p : A.R) ∈ maximalIdeal A.R := by
-  rw [mem_maximalIdeal, mem_nonunits_iff]
-  intro hu
-  obtain ⟨u, hu'⟩ := hu.exists_right_inv
-  have h := congrArg (fun x => ‖fC A x‖) hu'
-  simp only [map_mul, map_natCast, map_one, norm_mul, norm_one, C.norm_p] at h
-  have hp' : (1 : ℝ) < p := by exact_mod_cast hp
-  have h4 : (p : ℝ)⁻¹ < 1 := inv_lt_one_of_one_lt₀ hp'
-  have h5 : (0 : ℝ) < (p : ℝ)⁻¹ := by positivity
-  nlinarith [norm_le A u]
 
 theorem betaAdd (Y : Model Xo c β) (p : ℕ) : BetaAdd Y p := fun _ _ A =>
   (BetaAdd.main A.R A.U.D _ _ p A.normal (norm_le A) (coord_ne_zero A)).1

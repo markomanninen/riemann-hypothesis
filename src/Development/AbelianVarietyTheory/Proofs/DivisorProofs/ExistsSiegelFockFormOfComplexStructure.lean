@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 
 namespace GlobalTheory
@@ -43,7 +48,7 @@ theorem siegel_fock_exists : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace 
     rw [hΦ]; simp [hJ0]
   have hsplit : ∀ w : V × V, E.symm w = (A w.1 + w.2, B w.1) := fun w => by
     have hw : w = (w.1, 0) + (0, w.2) := by simp
-    rw [hw, map_add, hAB, hP0]; simp
+    rw [hw, map_add (f := _), hAB, hP0]; simp
   have hJB : ∀ p, J (0, B p) = (p, -A p) := fun p => by
     have := hE (p, 0)
     rw [hAB, hΦ] at this
@@ -54,7 +59,7 @@ theorem siegel_fock_exists : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace 
     rw [E.apply_symm_apply]
     show J w = Φ _
     conv_lhs => rw [← hE w]
-    rw [hΦ, hΦ, map_add, hJJ]
+    rw [hΦ, hΦ, map_add (f := _), hJJ]
     ext <;> simp <;> abel
   have hAsym : ∀ x y, β x (A y) = β y (A x) := fun x y => by
     have := hJ (0, B x) (0, B y)

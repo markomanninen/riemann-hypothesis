@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParabolicAtStandardWeylElement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GapHypOfNodes
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DiscreteSeriesUniqueLargeGap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ParabolicAtStandardWeylElement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GapHypOfNodes
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DiscreteSeriesUniqueLargeGap
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,12 +107,12 @@ theorem gapped_holPar {R : Ranks} (hc : HCParam R) (i : Fin R.m) {p q : ℕ} (hp
     rw [show a.1 + (p - 1 - a) = p - 1 by omega] at h1
     have e1 : Formalism.L2.NTheta.lamAt hc (p - 1) = -hc.b i := by
       unfold Formalism.L2.NTheta.lamAt
-      rw [dif_neg (by omega), dif_pos (by omega)]
+      rw [dite_eq_right (by omega), dite_eq_left (by omega)]
       congr 2
       exact Fin.ext (by simp only; omega)
     have e2 : Formalism.L2.NTheta.lamAt hc p = -hc.b ⟨i.1 + 1, hj⟩ := by
       unfold Formalism.L2.NTheta.lamAt
-      rw [dif_neg (by omega), dif_pos (by omega)]
+      rw [dite_eq_right (by omega), dite_eq_left (by omega)]
       congr 2
       exact Fin.ext (by simp only; omega)
     have h3 := hg hj
@@ -191,7 +195,7 @@ theorem exists_boundAt (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (R 
     exact FiniteDimensional.span_of_finite Ks (Set.finite_range b)
   let ι : (R.FW i).WK →ₛₗ[(sg0 D A3.A).comp (algebraMap Ks D.what₂.LL)] MMap (R.MW i (sg0 D A3.A)) :=
     { toFun := fun x => (R.HW i (sg0 D A3.A)).e ((R.FW i).j (sg0 D A3.A) x)
-      map_add' := fun x y => by rw [Submodule.coe_add, map_add, map_add]
+      map_add' := fun x y => by rw [Submodule.coe_add, map_add (f := _), map_add (f := _)]
       map_smul' := fun a x => by rw [Submodule.coe_smul, ← algebraMap_smul D.what₂.LL a, map_smulₛₗ, map_smul]; rfl }
   let κ := {t : ℕ × PlE D.host × GA D (Wc D i) × Finset (GA D (Wc D i)) // HkAt R.C i t.1 t.2.1 t.2.2.1 t.2.2.2}
   obtain ⟨S, h1, h2⟩ := exists_finset_eig _ ι
@@ -216,7 +220,8 @@ theorem exists_boundAt (hG : Formalism.L2.SG.ConcreteSettingExists.GapHyp D) (R 
     have hx : x ∈ Submodule.span D.what₂.LL (Set.range b) := hsp' ▸ Submodule.mem_top
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hx
     show (R.HW i (sg0 D A3.A)).e _ ∈ Submodule.span ℂ (Set.range ι)
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Submodule.sum_mem _ fun l _ => ?_
     rw [map_smulₛₗ, map_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨⟨b l, hb l⟩, rfl⟩)

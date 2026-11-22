@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ContractionDerivatives.ContractLeftMap
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ContractionDerivatives.ContractLeftMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,8 @@ theorem Pm_ι_mul (s : ℂ) (v : Md n → ℂ) (y : abelian₂ n) :
     Pm n s (ιE n v * y) = ιE n v * ExteriorAlgebra.map (Matrix.toLin' (s • (1 : Matrix (Md n) (Md n) ℂ))) y +
       s • (ιE n v * Pm n s y) := by
   have hv : ∑ m : Md n, v m • ιE n (Pi.single m 1) = ιE n v := by
-    simp_rw [← LinearMap.map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [← LinearMap.map_smul, ← map_sum]
     congr 1
     ext j
     simp [Finset.sum_apply, Pi.single_apply]
@@ -115,7 +120,8 @@ theorem number : Number := by
   intro n s
   have e : ∑ m : Md n, creL n (Pi.single m 1) * gamM (s • (1 : Matrix (Md n) (Md n) ℂ)) * annL n (Pi.single m 1) =
       matL n (Pm n s) := by
-    rw [Pm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Pm, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [creL_eq, gamM_eq, annL_eq, ← matL_mul, ← matL_mul]
   rw [e]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
-import Development.WeilBound.CoreStatements.PeriodRingComparison.PrimitiveEpsilon.UntiltEpsilonEqOne
-import Development.WeilBound.CoreStatements.PeriodRingComparison.TeichmullerLogarithm.LogEps
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.PrimitiveEpsilon.UntiltEpsilonEqOne
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.TeichmullerLogarithm.LogEps
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+
+@[expose] public section
 
 noncomputable section
 

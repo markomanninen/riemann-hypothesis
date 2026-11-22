@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -16,9 +20,6 @@ theorem hpk_sq (k r : ℕ) : Hpk k r * Hpk k r = 1 := GBasic.Hpk_sq k r
 
 theorem hpk_isUnit_det (k r : ℕ) : IsUnit (Hpk k r).det :=
   isUnit_det_of_left_inverse (hpk_sq k r)
-
-theorem one_mem (k r : ℕ) : (1 : B.Mat k r) ∈ B.GV k r :=
-  (unitary_group_holds _ _ (hpk_isUnit_det k r)).1
 
 theorem mul_mem {k r : ℕ} {g h : B.Mat k r} (hg : g ∈ B.GV k r) (hh : h ∈ B.GV k r) :
     g * h ∈ B.GV k r :=
@@ -72,7 +73,7 @@ theorem hs_hpk_mul {k r : ℕ} (M : B.Mat k r) : hs (Hpk k r * M) = hs M := by
   unfold hs
   have e : ∀ i j, (Hpk k r * M) i j = GBasic.sgn k r i * M (GBasic.sig k r i) j := by
     intro i j
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     simp only [GBasic.Hpk_eq k r i, ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   have hs1 : ∀ i, Complex.normSq (GBasic.sgn k r i) = 1 := by
     intro i; unfold GBasic.sgn; split_ifs <;> simp
@@ -149,28 +150,6 @@ theorem entry_le_gN {k r : ℕ} (g : B.Mat k r) (i j : Fin (2 * r + k + 1)) : �
   rw [gN_eq, Complex.norm_def]
   exact Real.sqrt_le_sqrt (normSq_le_hs g i j)
 
-theorem hs_le_of_entry {ι : Type*} [Fintype ι] (M : Matrix ι ι ℂ) {c : ℝ}
-    (h : ∀ i j, ‖M i j‖ ≤ c) : hs M ≤ (Fintype.card ι : ℝ) ^ 2 * c ^ 2 := by
-  unfold hs
-  have h1 : ∀ i j, Complex.normSq (M i j) ≤ c ^ 2 := by
-    intro i j
-    rw [Complex.normSq_eq_norm_sq]
-    exact pow_le_pow_left₀ (norm_nonneg _) (h i j) 2
-  calc ∑ i, ∑ j, Complex.normSq (M i j) ≤ ∑ _i : ι, ∑ _j : ι, c ^ 2 :=
-        Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun j _ => h1 i j
-    _ = (Fintype.card ι : ℝ) ^ 2 * c ^ 2 := by
-        simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]; ring
-
-theorem gN_le_of_entry {k r : ℕ} (g : B.Mat k r) {c : ℝ} (hc : 0 ≤ c) (h : ∀ i j, ‖g i j‖ ≤ c) :
-    B.gN g ≤ (2 * r + k + 1 : ℕ) * c := by
-  rw [gN_eq]
-  have h1 := hs_le_of_entry g h
-  rw [Fintype.card_fin] at h1
-  have h2 : (0 : ℝ) ≤ ((2 * r + k + 1 : ℕ) : ℝ) * c := by positivity
-  calc Real.sqrt (hs g) ≤ Real.sqrt ((((2 * r + k + 1 : ℕ) : ℝ) * c) ^ 2) :=
-        Real.sqrt_le_sqrt (by rw [mul_pow]; exact h1)
-    _ = ((2 * r + k + 1 : ℕ) : ℝ) * c := Real.sqrt_sq h2
-
 theorem mx_nonneg {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ) : 0 ≤ C2.mx M := norm_nonneg _
 
 theorem entry_le_mx {m : ℕ} (M : Matrix (Fin m) (Fin m) ℂ) (i j : Fin m) : ‖M i j‖ ≤ C2.mx M := by
@@ -201,7 +180,7 @@ theorem mx_mul_le {m : ℕ} (A B' : Matrix (Fin m) (Fin m) ℂ) :
   have h0 : 0 ≤ (m : ℝ) * C2.mx A * C2.mx B' := by
     have := mx_nonneg A; have := mx_nonneg B'; positivity
   refine (mx_le_iff _ h0).2 fun i j => ?_
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   calc ‖∑ l, A i l * B' l j‖ ≤ ∑ l, ‖A i l * B' l j‖ := norm_sum_le _ _
     _ ≤ ∑ _l : Fin m, C2.mx A * C2.mx B' := by
         refine Finset.sum_le_sum fun l _ => ?_

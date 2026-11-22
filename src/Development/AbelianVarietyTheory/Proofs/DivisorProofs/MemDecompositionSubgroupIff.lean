@@ -1,8 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Statement
-import ReciprocityTheory.GaloisValuations.Global
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuationPlacesCompatibleTower
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+public import Formalism.ConjugateSelfDual.Statement
+public import ReciprocityTheory.GaloisValuations.Global
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.Imports
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.RealStructures.Imports
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.ImportsBis
+public import PositivityTheory.AutomorphicForms.PublishedInputs.RealGaloisRepresentations.IwahoriSphericalTransfer.RamificationIdxEqOneAndInertiaDegEqOne
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual

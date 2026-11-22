@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocInstSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocInstSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,34 +12,34 @@ namespace PositivityTheory.Rg.Sw.Glob.LocInstH
 
 variable {σ : Type}
 
-def reP (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ m ∈ p.support, monomial m (coeff m p).re
+def reP (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ m ∈ p.support, monomial m (AddMonoidAlgebra.coeff p m).re
 
-def imaginary (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ m ∈ p.support, monomial m (coeff m p).im
+def imaginary (p : MvPolynomial σ ℂ) : MvPolynomial σ ℝ := ∑ m ∈ p.support, monomial m (AddMonoidAlgebra.coeff p m).im
 
-theorem coeff_reP (p : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : coeff m (reP p) = (coeff m p).re := by
+theorem coeff_reP (p : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : AddMonoidAlgebra.coeff (reP p) m = (AddMonoidAlgebra.coeff p m).re := by
   classical
   unfold reP
   rw [coeff_sum]
   by_cases h : m ∈ p.support
   · rw [Finset.sum_eq_single m (fun b _ hb => by rw [coeff_monomial, if_neg hb]) (fun hm => absurd h hm), coeff_monomial, if_pos rfl]
   · rw [Finset.sum_eq_zero (fun b hb => by rw [coeff_monomial, if_neg (fun (e : b = m) => h (e ▸ hb))])]
-    have h0 : coeff m p = 0 := by simpa [mem_support_iff] using h
+    have h0 : AddMonoidAlgebra.coeff p m = 0 := by simpa [mem_support_iff] using h
     simp [h0]
 
-theorem coeff_imP (p : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : coeff m (imaginary p) = (coeff m p).im := by
+theorem coeff_imP (p : MvPolynomial σ ℂ) (m : σ →₀ ℕ) : AddMonoidAlgebra.coeff (imaginary p) m = (AddMonoidAlgebra.coeff p m).im := by
   classical
   unfold imaginary
   rw [coeff_sum]
   by_cases h : m ∈ p.support
   · rw [Finset.sum_eq_single m (fun b _ hb => by rw [coeff_monomial, if_neg hb]) (fun hm => absurd h hm), coeff_monomial, if_pos rfl]
   · rw [Finset.sum_eq_zero (fun b hb => by rw [coeff_monomial, if_neg (fun (e : b = m) => h (e ▸ hb))])]
-    have h0 : coeff m p = 0 := by simpa [mem_support_iff] using h
+    have h0 : AddMonoidAlgebra.coeff p m = 0 := by simpa [mem_support_iff] using h
     simp [h0]
 
 theorem eq_map_re_add_im (p : MvPolynomial σ ℂ) :
     p = map (algebraMap ℝ ℂ) (reP p) + C Complex.I * map (algebraMap ℝ ℂ) (imaginary p) := by
   ext m
-  rw [coeff_add, coeff_C_mul, coeff_map, coeff_map, coeff_reP, coeff_imP]
+  rw [MvPolynomial.coeff_add, coeff_C_mul, coeff_map, coeff_map, coeff_reP, coeff_imP]
   apply Complex.ext <;> simp
 
 theorem eq_zero_of_eval_real (p : MvPolynomial σ ℂ) (h : ∀ y : σ → ℝ, eval (fun i => (y i : ℂ)) p = 0) : p = 0 := by

@@ -1,6 +1,10 @@
-import Mathlib.Topology.ContinuousMap.StoneWeierstrass
-import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
-import Mathlib.Topology.Metrizable.Urysohn
+module
+
+public import Mathlib.Topology.ContinuousMap.StoneWeierstrass
+public import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
+public import Mathlib.Topology.Metrizable.Urysohn
+
+@[expose] public section
 
 noncomputable section
 

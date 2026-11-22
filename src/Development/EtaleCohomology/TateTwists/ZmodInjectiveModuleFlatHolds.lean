@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleKInjectiveExtensionAlongQuasiIsoFromSingle
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleKInjectiveExtensionAlongQuasiIsoFromSingle
+
+@[expose] public section
 
 namespace LateralTheory.EtaleFoundations.QFFlat
 
@@ -40,9 +44,9 @@ theorem zmod_P (q : ℕ) [NeZero q] (a : ZMod q) :
 theorem ulift_P (q : ℕ) [NeZero q] (a : ULift.{1} (ZMod q)) :
     ∃ b : ULift.{1} (ZMod q), b * a = 0 ∧ ∀ r : ULift.{1} (ZMod q), r * b = 0 → ∃ c, c * a = r := by
   obtain ⟨b, hb, h⟩ := zmod_P q a.down
-  refine ⟨ULift.up b, ULift.ext _ _ hb, fun r hr => ?_⟩
+  refine ⟨ULift.up b, ULift.ext hb, fun r hr => ?_⟩
   obtain ⟨c, hc⟩ := h r.down (congrArg ULift.down hr)
-  exact ⟨ULift.up c, ULift.ext _ _ hc⟩
+  exact ⟨ULift.up c, ULift.ext hc⟩
 
 theorem key {R : Type u} {M : Type v} [CommRing R] [Small.{v} R] [AddCommGroup M] [Module R M] (hM : Module.Injective R M)
     (hP : ∀ a : R, ∃ b : R, b * a = 0 ∧ ∀ r : R, r * b = 0 → ∃ c, c * a = r)
@@ -97,7 +101,7 @@ theorem flat_of {R : Type u} {M : Type v} [CommRing R] [Small.{v} R] [IsPrincipa
       obtain ⟨mx, rfl⟩ := hx
       obtain ⟨my, rfl⟩ := hy
       exact ⟨mx + my, by rw [tmul_add]⟩
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro t ht
   obtain ⟨m, rfl⟩ := hrep t
   have ham : a • m = 0 := by simpa using ht

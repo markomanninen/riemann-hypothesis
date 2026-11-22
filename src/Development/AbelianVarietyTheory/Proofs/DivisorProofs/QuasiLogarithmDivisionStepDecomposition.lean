@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentOfQuasiLogarithmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogarithmDecompositionOfTangentDivisibleByPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfLinearZeroCoboundaryZeroFractionsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentOfQuasiLogarithmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuasiLogarithmDecompositionOfTangentDivisibleByPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfLinearZeroCoboundaryZeroFractionsStatement
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -25,16 +29,16 @@ theorem ql_add {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} (hμ : ∀ i, 
     QL μ N (f + g) := by
   obtain ⟨f0, f1, f2⟩ := hf
   obtain ⟨g0, g1, g2⟩ := hg
-  refine ⟨by rw [map_add, f0, g0, add_zero], fun i => ?_, fun α => ?_⟩
+  refine ⟨by rw [map_add (f := _), f0, g0, add_zero], fun i => ?_, fun α => ?_⟩
   · obtain ⟨a, ha, ha'⟩ := f1 i
     obtain ⟨b, hb, hb'⟩ := g1 i
     refine ⟨a + b, N.add_mem ha hb, ?_⟩
-    simp only [lin, map_add] at ha' hb' ⊢
+    simp only [lin, map_add (f := _)] at ha' hb' ⊢
     rw [ha', hb']
   · obtain ⟨a, ha, ha'⟩ := f2 α
     obtain ⟨b, hb, hb'⟩ := g2 α
     refine ⟨a + b, N.add_mem ha hb, ?_⟩
-    rw [formalCoboundary_add (constantCoeff_up_eq_zero hμ), map_add, ha', hb', map_add]
+    rw [formalCoboundary_add (constantCoeff_up_eq_zero hμ), map_add (f := _), ha', hb', map_add (f := _)]
 
 theorem ql_smul {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} (hμ : ∀ i, constantCoeff (μ i) = 0)
     {N : Ideal O} (a : O) {f : MvPowerSeries (Fin d) E} (hf : QL μ N f) :
@@ -60,7 +64,7 @@ theorem ql_zero {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} (hμ : ∀ i,
 
 theorem comb_add {ι : Type} [Fintype ι] (b b' : ι → O) (e : ι → MvPowerSeries (Fin d) E) :
     comb (b + b') e = comb b e + comb b' e := by
-  simp only [comb, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
+  simp only [comb, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
 
 theorem ql_comb {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} (hμ : ∀ i, constantCoeff (μ i) = 0)
     {ι : Type} [Fintype ι] (b : ι → O) (e : ι → MvPowerSeries (Fin d) E)
@@ -131,7 +135,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
     have key := GlobalTheory.T.eq_zero_of_lin_zero_cob1_zero p O E hF d c.μ c.isLaw (g - comb bw e) ?_ ?_
     · exact sub_eq_zero.1 key
     · funext i
-      simp only [lin, hcw, map_sub, map_sum, coeff_smul, Pi.zero_apply] at hw ⊢
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lin, hcw, map_sub, map_sum, coeff_smul, Pi.zero_apply] at hw ⊢
       have hl' : ∀ j, coeff (Finsupp.single i 1) (e (Sum.inl j)) =
           (Pi.single j (1 : E) : Fin d → E) i := fun j => congrFun (hlin j) i
       simp only [hl', hw]
@@ -140,7 +145,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
     · let L : MvPowerSeries (Fin d) E →+ MvPowerSeries (Fin d ⊕ Fin d) E :=
         AddMonoidHom.mk' (cob1 (up E c.μ)) (formalCoboundary_add hc0)
       have hL : ∀ x, L x = cob1 (up E c.μ) x := fun _ => rfl
-      rw [← hL, map_sub, hcw, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hL, map_sub, hcw, map_sum]
       simp only [hL, formalCoboundary_smul hc0, hcob, smul_zero, Finset.sum_const_zero, sub_zero]
       exact hg
 

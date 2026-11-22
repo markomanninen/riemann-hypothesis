@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthElim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClmSupBound
+
+@[expose] public section
 
 open GlobalTheory.SliceSchwartz GlobalTheory.SliceOp
 open scoped ContDiff
@@ -23,7 +27,8 @@ theorem GlobalTheory.norm_iteratedFDeriv_succ_le_sum_partial :
     intro v
     have hv := b.sum_repr v
     simp [L, ContinuousLinearMap.sum_apply]
-    conv_lhs => rw [← hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← hv, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_smul, Complex.real_smul]
   have key : iteratedFDeriv ℝ n (fderiv ℝ g) z =

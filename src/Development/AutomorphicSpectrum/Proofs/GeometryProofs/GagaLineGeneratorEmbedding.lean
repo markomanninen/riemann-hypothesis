@@ -1,21 +1,26 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GagaLineGeneratorComplexStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProperModelGenericFibreCompareStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeBasisPullbackDominantStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GermStalkClosedPointToBaseChange
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InjectiveOfIsCptGen
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlgClosedTensorIsDomainStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GagaLineGeneratorComplexStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ProperModelGenericFibreCompareStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeBasisPullbackDominantStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GermStalkClosedPointToBaseChange
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapGermEqGenMapGerm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOneOfChartGenerators
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InjectiveOfIsCptGen
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlgClosedTensorIsDomainStatement
+
+@[expose] public section
+
 open TensorProduct
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
@@ -85,7 +90,7 @@ theorem tensor_ker [CommRing Ω] [Algebra K Ω] (φ : A →ₐ[K] Ω) (S : Submo
     obtain ⟨d₂, m₂, h₂⟩ := hy
     refine ⟨d₁ * d₂, S.mul_mem m₁ m₂, ?_⟩
     have e : (d₁ * d₂) ⊗ₜ[K] (1 : C) = (d₁ ⊗ₜ[K] (1 : C)) * (d₂ ⊗ₜ[K] (1 : C)) := by simp
-    rw [map_add, e]
+    rw [map_add (f := _), e]
     linear_combination (d₂ ⊗ₜ[K] (1 : C)) * h₁ + (d₁ ⊗ₜ[K] (1 : C)) * h₂
 
 theorem tensor_frac [Field Ω] [Algebra K Ω] (φ : A →ₐ[K] Ω) (H : ∀ w : Ω, ∃ a d, φ d ≠ 0 ∧ w * φ d = φ a)
@@ -101,7 +106,7 @@ theorem tensor_frac [Field Ω] [Algebra K Ω] (φ : A →ₐ[K] Ω) (H : ∀ w :
     obtain ⟨d₂, b₂, m₂, h₂⟩ := hy
     refine ⟨d₁ * d₂, (d₂ ⊗ₜ[K] (1 : C)) * b₁ + (d₁ ⊗ₜ[K] (1 : C)) * b₂, by simp [m₁, m₂], ?_⟩
     have e : (φ (d₁ * d₂)) ⊗ₜ[K] (1 : C) = (φ d₁ ⊗ₜ[K] (1 : C)) * (φ d₂ ⊗ₜ[K] (1 : C)) := by simp
-    simp only [map_add, map_mul (Algebra.TensorProduct.map φ (AlgHom.id K C)), ← h₁, ← h₂,
+    simp only [map_add (f := _), map_mul (Algebra.TensorProduct.map φ (AlgHom.id K C)), ← h₁, ← h₂,
       Algebra.TensorProduct.map_tmul, AlgHom.id_apply, e]
     ring
 
@@ -590,8 +595,8 @@ end GlobalTheory.CompanionTheory.Ar.Flat.GagaRat
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
-open GagaRat in
 
+open GagaRat in
 theorem gaga_rat : GagaSections → ∀ (K : Type) [Field K] (σ : K →+* ℂ) (X : Scheme.{0}) (s : X ⟶ Sp K) (Ω : Type) [Field Ω] [Algebra K Ω] (ξ : Sp Ω ⟶ X) (L : Lat ξ Ω) (W : X.Opens) (F : (Sp ℂ ⟶ X) → ℂ), IsProper s → Smooth s → ξ ≫ s = spMap (algebraMap K Ω) → IsCptGen ξ → ConstClosed K Ω → L.IsVB 1 ⊤ → genPt ξ ∈ W → (∀ p : Cpt ξ, p.1 ∈ W → L.IsGenAt p 1) → (∀ (x : Sp ℂ ⟶ X) (h : genPt ξ ⤳ centre x), x ≫ s = spMap σ → ∃ t : Ω, L.IsGenAt ⟨centre x, h⟩ t ∧ ExtendsUnitAt s σ ξ W F t x) → ∃ (f : Ω) (κ : ℂ), κ ≠ 0 ∧ (∀ p : Cpt ξ, L.IsGenAt p f) ∧ ∀ y : Sp ℂ ⟶ X, y ≫ s = spMap σ → ⊤ ≤ y ⁻¹ᵁ W → genPt ξ ⤳ centre y → ValAt ξ y f (κ * F y) := by
   intro hG K _ σ X s Ω _ _ ξ L W F hP hS hξs hξ hCC hVB hW hW1 hext
   haveI : CharZero K := σ.charZero

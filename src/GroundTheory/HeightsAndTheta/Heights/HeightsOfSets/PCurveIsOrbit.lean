@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveIsOrbit
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveIsOrbit
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.MemMCoordIdealIffOfIsWeightedHomogeneous
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.DenseChart
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

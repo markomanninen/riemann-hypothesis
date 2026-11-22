@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QvalAddTower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QvalAddTower
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -26,6 +30,6 @@ theorem labels_of_tateIsoQ : BrGtSt → BrWpSt → ∀ (E : Type) [Field E] [Num
   · obtain ⟨q₀, hy, -, heq⟩ := I.lin n hn x a
     obtain ⟨c, hc, -⟩ := (hQ n).1 q₀
     obtain ⟨z, hz, -⟩ := ((hQ n).2.2 _ _ _ _ hc (hq n (x • a))).1 heq
-    exact ⟨ν.eX z, by rw [hz, map_add, map_nsmul, hc.1, hy, (hq n a).1]⟩
+    exact ⟨ν.eX z, by rw [hz, map_add (f := _), map_nsmul, hc.1, hy, (hq n a).1]⟩
 
 end GlobalTheory.ModelData

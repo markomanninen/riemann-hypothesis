@@ -1,4 +1,8 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.AlternatingBinomial
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.AlternatingBinomial
+
+@[expose] public section
 
 namespace Formalism.LatticeBaseChangeAlt
 

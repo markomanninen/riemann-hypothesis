@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 
@@ -56,9 +60,9 @@ noncomputable def chartAlgebra (hW : IsAffineOpen W)
 theorem chartAlgebra_isScalarTower (hW : IsAffineOpen W) (h : Y ⟶ X) (e : V ≤ h ⁻¹ᵁ W)
     (g : V.toScheme ⟶ AffineSpace n W.toScheme)
     (hg : g ≫ (AffineSpace n W.toScheme ↘ W.toScheme) = h.resLE W V e) :
-    letI : Algebra Γ(X, W) Γ(Y, V) := (h.appLE W V e).hom.toAlgebra
-    letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
-    IsScalarTower Γ(X, W) (MvPolynomial n Γ(X, W)) Γ(Y, V) := by
+    (letI : Algebra Γ(X, W) Γ(Y, V) := (h.appLE W V e).hom.toAlgebra
+     letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
+     IsScalarTower Γ(X, W) (MvPolynomial n Γ(X, W)) Γ(Y, V)) := by
   let : Algebra Γ(X, W) Γ(Y, V) := (h.appLE W V e).hom.toAlgebra
   let : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
   refine IsScalarTower.of_algebraMap_eq fun a => ?_
@@ -174,8 +178,8 @@ private theorem affineSpaceOpenIsoSpecMvPolynomial_hom_appTop_C {X' : Scheme.{u}
 
 theorem chartAlgebra_etale (hW : IsAffineOpen W) (hV : IsAffineOpen V)
     (g : V.toScheme ⟶ AffineSpace n W.toScheme) [Etale g] :
-    letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
-    Algebra.Etale (MvPolynomial n Γ(X, W)) Γ(Y, V) := by
+    (letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
+     Algebra.Etale (MvPolynomial n Γ(X, W)) Γ(Y, V)) := by
   let : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
   have : IsAffine V.toScheme := hV
   have : IsAffine W.toScheme := hW
@@ -202,8 +206,8 @@ theorem chartAlgebra_etale (hW : IsAffineOpen W) (hV : IsAffineOpen V)
 
 theorem chartAlgebra_formallyEtale (hW : IsAffineOpen W) (hV : IsAffineOpen V)
     (g : V.toScheme ⟶ AffineSpace n W.toScheme) [Etale g] :
-    letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
-    Algebra.FormallyEtale (MvPolynomial n Γ(X, W)) Γ(Y, V) := by
+    (letI : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
+     Algebra.FormallyEtale (MvPolynomial n Γ(X, W)) Γ(Y, V)) := by
   let : Algebra (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra hW g
   have : Algebra.Etale (MvPolynomial n Γ(X, W)) Γ(Y, V) := chartAlgebra_etale hW hV g
   infer_instance

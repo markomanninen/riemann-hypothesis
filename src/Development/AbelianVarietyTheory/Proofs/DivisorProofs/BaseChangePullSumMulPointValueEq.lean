@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsPullbackChStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsAdditiveLiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsPullbackChStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineCocycleOnTrivialThickeningsAdditiveLiStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,19 +30,26 @@ theorem ptAlg_apply_of_left {R D E : Type} [CommRing R] [CommRing D] [Algebra R 
 
 end GlobalTheory.PtExt
 
-theorem GlobalTheory.PtExt.bcPull_sumMul_fv : ∀ (R D : Type) [CommRing R] [CommRing D] [Algebra R D] (B : Over (Sp R)) (B' : Over (Sp D)) (q : B'.left ⟶ (SpAlg R D ⊗ B).left) (w : q ≫ (SpAlg R D ⊗ B).hom = B'.hom ≫ spMap (algebraMap R D)) (π : B'.left ⟶ B.left), q ≫ (fst (SpAlg R D) B).left = B'.hom → q ≫ (snd (SpAlg R D) B).left = π → ∀ (mB : IsMor (dp0 R) (B.hom ≫ 𝟙 _) (dp0 D) (B'.hom ≫ 𝟙 _) (algebraMap R D) π) (J : Type) [Fintype J] (d : J → D) (β : J → Z1 (O (dp0 R) (B.hom ≫ 𝟙 _))), bcPull w (sumMul d fun i ↦ fv (β i)) = fv (∑ i, d i • mB.coef.pullbackOneCocycle (β i)) := by
+theorem GlobalTheory.PtExt.bcPull_sumMul_fv : ∀ (R D : Type) [CommRing R] [CommRing D] [Algebra R D]
+    (B : Over (Sp R)) (B' : Over (Sp D)) (q : B'.left ⟶ (SpAlg R D ⊗ B).left)
+    (w : q ≫ (SpAlg R D ⊗ B).hom = B'.hom ≫ spMap (algebraMap R D)) (π : B'.left ⟶ B.left),
+    q ≫ (fst (SpAlg R D) B).left = B'.hom → q ≫ (snd (SpAlg R D) B).left = π →
+    ∀ (mB : IsMor (dp0 R) (B.hom ≫ 𝟙 _) (dp0 D) (B'.hom ≫ 𝟙 _) (algebraMap R D) π)
+      (J : Type) [Fintype J] (d : J → D) (β : J → Z1 (O (dp0 R) (B.hom ≫ 𝟙 _))),
+      bcPull w (sumMul d fun i ↦ fv (X := B) (β i)) =
+        fv (X := B') (∑ i, d i • mB.coef.pullbackOneCocycle (β i)) := by
   classical
   intro R D _ _ _ B B' q w π hfst hsnd mB J _ d β
   have w' : π ≫ B.hom = B'.hom ≫ spMap (algebraMap R D) := by
     rw [← hsnd, Category.assoc, Over.w (snd (SpAlg R D) B), w]
   obtain ⟨hadd, hsmul, -⟩ := GlobalTheory.T.crystallineCocycleOnTrivialThickenings_additive_linear D B'
   funext E i1 i2 E' i3 i4 ψ y
-  have hzero : fv (0 : Z1 (O (dp0 D) (B'.hom ≫ 𝟙 _))) E E' ψ y = 0 := by
+  have hzero : fv (X := B') 0 E E' ψ y = 0 := by
     have h := congrArg (fun u : Fn1 B' ↦ u E E' ψ y) (hadd 0 0)
     simp only [add_zero, Fn1.add] at h
     linear_combination -h
-  have hsum : ∀ s : Finset J, fv (∑ i ∈ s, d i • mB.coef.pullbackOneCocycle (β i)) E E' ψ y =
-      ∑ i ∈ s, algebraMap D E' (d i) * fv (mB.coef.pullbackOneCocycle (β i)) E E' ψ y := by
+  have hsum : ∀ s : Finset J, fv (X := B') (∑ i ∈ s, d i • mB.coef.pullbackOneCocycle (β i)) E E' ψ y =
+      ∑ i ∈ s, algebraMap D E' (d i) * fv (X := B') (mB.coef.pullbackOneCocycle (β i)) E E' ψ y := by
     intro s
     induction s using Finset.induction_on with
     | empty => simpa using hzero
@@ -52,7 +63,7 @@ theorem GlobalTheory.PtExt.bcPull_sumMul_fv : ∀ (R D : Type) [CommRing R] [Com
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [GlobalTheory.T.crystallineCocycleOnTrivialThickenings_pullback_changeOfBase R D (algebraMap R D) B B' π w' mB (β i)]
   congr 1
-  · letI : Algebra R E := algVia (algebraMap R D) E
+  · let _ : Algebra R E := algVia (algebraMap R D) E
     have hl : (ptVia w y ≫ fst (SpAlg R D) B).left = spMap (algebraMap D E) := by
       rw [Over.comp_left]
       change (y.left ≫ q) ≫ (fst (SpAlg R D) B).left = _

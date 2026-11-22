@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UJClassMass
-import Formalism.ThetaLiftIndependence.ThetaOrbitSums.LatLiftIndep
+module
+
+public import Formalism.PeriodIntegrals.UJClassMass
+public import Formalism.ThetaLiftIndependence.ThetaOrbitSums.LatLiftIndep
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticesTheory Formalism.ThetaLiftIndependence
 
@@ -94,7 +98,7 @@ private lemma sum_inv_card_autL_eq_of_isClassReps {s t : Finset (Submodule (𝓞
 theorem mass_eq_of_reps {s : Finset (Submodule (𝓞 K) V)} (hs : IsClassReps h L0 s) :
     mass h L0 = ∑ N ∈ s, ((Nat.card (autL h N) : ℕ) : ℝ)⁻¹ := by
   have hex : ∃ t, IsClassReps h L0 t := ⟨s, hs⟩
-  rw [Formalism.HermitianLatticesTheory.mass, dif_pos hex]
+  rw [Formalism.HermitianLatticesTheory.mass, dite_eq_left hex]
   exact sum_inv_card_autL_eq_of_isClassReps hex.choose_spec hs
 
 theorem sum_eq_mass {Λ : G → Submodule (𝓞 K) V} {ι : Γ → V ≃ₗ[K] V} (D : IsDict Γ Kf h L0 Λ ι)

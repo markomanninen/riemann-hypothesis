@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+module
+
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -27,7 +31,7 @@ variable {n : ℕ} {L : Fin (n + 1) → ℤ} {P : (Fin n → ℤ) → Prop}
 theorem runUp (hR : ∀ M, P M → ∀ i, (∀ j, M i ≠ L j) → P (Function.update M i (M i + 1)))
     (M : Fin n → ℤ) (i : Fin n) (t0 : ℤ) (h0 : P (Function.update M i t0)) (t : ℤ) (ht : t0 ≤ t) :
     (∀ t', t0 ≤ t' → t' < t → ∀ j, t' ≠ L j) → P (Function.update M i t) := by
-  induction t, ht using Int.le_induction with
+  induction t, ht using Int.leInduction with
   | base => intro _; exact h0
   | succ t ht ih =>
     intro hv
@@ -38,7 +42,7 @@ theorem runUp (hR : ∀ M, P M → ∀ i, (∀ j, M i ≠ L j) → P (Function.u
 theorem runDown (hD : ∀ M, P M → ∀ i, (∀ j, M i - 1 ≠ L j) → P (Function.update M i (M i - 1)))
     (M : Fin n → ℤ) (i : Fin n) (t0 : ℤ) (h0 : P (Function.update M i t0)) (t : ℤ) (ht : t ≤ t0) :
     (∀ t', t ≤ t' → t' < t0 → ∀ j, t' ≠ L j) → P (Function.update M i t) := by
-  induction t, ht using Int.le_induction_down with
+  induction t, ht using Int.leInductionDown with
   | base => intro _; exact h0
   | pred t ht ih =>
     intro hv

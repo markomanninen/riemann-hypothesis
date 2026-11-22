@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.NablaSpans.ExpansionCoeffValuationGe
+module
+
+public import Formalism.PeriodIntegrals.NablaSpans.ExpansionCoeffValuationGe
+
+@[expose] public section
 
 noncomputable section
 

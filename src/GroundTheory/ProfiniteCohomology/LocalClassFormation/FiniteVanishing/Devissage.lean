@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.EulerChar
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveSnake
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.EulerChar
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveSnake
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -45,16 +50,15 @@ def cokerShortComplex : ShortComplex (Rep.{u} k G) :=
     exact (Submodule.Quotient.mk_eq_zero _).2 ⟨a, rfl⟩)
 
 theorem cokerShortComplex_shortExact (hi : Function.Injective i.hom) :
-    (cokerShortComplex i).ShortExact where
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
+    (cokerShortComplex i).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ((Rep.mono_iff_injective i).2 hi) ?_
+  · rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k G) (ModuleCat.{u} k)),
       ShortComplex.moduleCat_exact_iff]
     intro b hb
     change Submodule.Quotient.mk (p := LinearMap.range i.hom.toLinearMap) b = 0 at hb
     obtain ⟨a, ha⟩ := (Submodule.Quotient.mk_eq_zero _).1 hb
     exact ⟨a, ha⟩
-  mono_f := (Rep.mono_iff_injective _).2 hi
-  epi_g := (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
+  · exact (Rep.epi_iff_surjective _).2 (Submodule.mkQ_surjective _)
 
 end Coker
 
@@ -94,8 +98,8 @@ theorem finite_cohomology_zero (M : Rep.{u} k G) [IsDiscreteRep M] [Finite M] :
     Finite (cohomology M 0) :=
   Finite.of_equiv _ (H0Iso M).toLinearEquiv.toEquiv.symm
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem exists_openSubgroup_le_fixing (U W₀ : OpenSubgroup G) (M : Rep.{u} k (U : Subgroup G))
     [IsDiscreteRep M] [Finite M] :
     ∃ (V : OpenSubgroup G) (_ : (V : Subgroup G) ≤ U), V ≤ W₀ ∧

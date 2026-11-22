@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WProof
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.TransitiveOverLocalRings
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WProof
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.TransitiveOverLocalRings
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,8 @@ theorem unipSplitF_of (hG : GramU) (hS : SplitR) (hLs : LatStd) : UnipSplitF := 
       Qi *ᵥ (∑ a, c a • W a) = ∑ a, c a • (Qi *ᵥ W a) := by
     intro m c W
     show Matrix.mulVecLin Qi (∑ a, c a • W a) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, Matrix.mulVecLin_apply]
   have primT : ∀ W : Fin (r + 1) → Fin n → Fv F v ⊗[F] E, IsPrim v Λ W →
       ∀ c : Fin (r + 1) → Fv F v ⊗[F] E, IntV v (∑ a, c a • (Qi *ᵥ W a)) →
@@ -226,11 +231,13 @@ theorem unipSplitF_of (hG : GramU) (hS : SplitR) (hLs : LatStd) : UnipSplitF := 
   have hB0 := lift _ _ _ hLB hBo
   have hAZ : fA D Z = fA D Z0 * U.map D.π₁ := by
     refine Matrix.ext fun i b => ?_
-    simp only [fA, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, hZe, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [fA, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, hZe, map_sum, map_mul]
     exact Finset.sum_congr rfl fun a _ => mul_comm _ _
   have hBZ : fB D Z = fB D Z0 * U.map D.π₂ := by
     refine Matrix.ext fun i b => ?_
-    simp only [fB, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, hZe, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [fB, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, hZe, map_sum, map_mul]
     exact Finset.sum_congr rfl fun a _ => mul_comm _ _
   have hA1 : ∃ L : Matrix (Fin (r + 1)) (Fin n) (Fv F v), L * fA D Z = 1 := by
     rw [hAZ]; exact leftInv_mul_uMat D.π₁ x _ hA0

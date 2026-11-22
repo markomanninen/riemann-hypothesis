@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DetFromBlocksSingle
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OfRoots
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DetFromBlocksSingle
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -141,12 +145,14 @@ theorem herm' (x y : S.V) : S.hT x y = star (S.hT y x) := by
 
 theorem hT_comb_left (v : ι → S.V) (c : ι → E) (x : S.V) :
     S.hT (∑ p, c p • v p) x = star c ⬝ᵥ fun p => S.hT (v p) x := by
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, dotProduct, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, dotProduct, Pi.star_apply,
     smul_eq_mul, starRingEnd_apply]
 
 theorem hT_comb_right (v : ι → S.V) (c : ι → E) (x : S.V) :
     S.hT x (∑ p, c p • v p) = star (fun p => S.hT (v p) x) ⬝ᵥ c := by
-  simp only [map_sum, map_smul, dotProduct, Pi.star_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, dotProduct, Pi.star_apply, smul_eq_mul]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [herm' x (v p), mul_comm]
 
@@ -186,7 +192,7 @@ theorem exists_isom (v : ι → S.V) (Γ A : Matrix ι ι E) (hΓ : ∀ p q, Γ 
     rw [hT_comb_left]
     congr 1
     funext p
-    simp only [map_sum, map_smul, smul_eq_mul, Matrix.mulVec, dotProduct]
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_smul, smul_eq_mul]
     exact Finset.sum_congr rfl fun q _ => by rw [hΓ, mul_comm]
   have hiso : ∀ x y, S.hT (f x) (f y) = S.hT x y := by
     intro x y
@@ -203,7 +209,7 @@ theorem exists_isom (v : ι → S.V) (Γ A : Matrix ι ι E) (hΓ : ∀ p q, Γ 
       simp only [star_mulVec, hH, dotProduct_mulVec, vecMul_vecMul]
       rw [← add_dotProduct, ← add_dotProduct, ← vecMul_add, ← vecMul_add, hBm, vecMul_zero, zero_dotProduct]
     rw [hfx, hfy]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [hW (B *ᵥ ux) (B *ᵥ uy), hT_comb_left v (B *ᵥ ux) y, hT_comb_right v (B *ᵥ uy) x, hcx, hcy]
     linear_combination key
   have hinj : Function.Injective f := by
@@ -332,7 +338,7 @@ theorem gramM_apply (F : LFlag S r T) (F' : LFlag S r T') (p q) :
 theorem Dr1_eq (F : LFlag S r T) (F' : LFlag S r T') : Dr1 F F' = (ZhatL F F').det := by
   show leadMinorE (Zhat F.fl F'.fl) (r + 1) = _
   unfold leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   have hc : (Fin.castLE (le_refl (r + 1))) = id := funext fun i => Fin.ext rfl
   rw [hc, Matrix.submatrix_id_id]
 
@@ -344,7 +350,7 @@ theorem gramM_det (F : LFlag S r T) (F' : LFlag S r T') : (gramM F F').det = (-1
   have hr : Dl F.fl F'.fl r = ((ZhatL F F').submatrix Fin.castSucc Fin.castSucc).det := by
     show leadMinorE (Zhat F.fl F'.fl) r = _
     unfold leadMinorE
-    rw [dif_pos (Nat.le_succ r)]
+    rw [dite_eq_left (Nat.le_succ r)]
     rfl
   have hr1 : Dl F.fl F'.fl (r + 1) = (ZhatL F F').det := Dr1_eq F F'
   show _ = Gflag F.fl F'.fl
@@ -578,7 +584,8 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
   obtain ⟨y, hy⟩ : ∃ y, y = ∑ b, w b • frame F' b := ⟨_, rfl⟩
   have hperp : ∀ c, S.hT (frame F c) y = 0 := by
     intro c
-    rw [hy, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum]
     simp only [map_smul, smul_eq_mul]
     have h1 := congrFun hZw c
     simp only [Matrix.mulVec, dotProduct, Pi.zero_apply] at h1
@@ -595,7 +602,8 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
       rw [Matrix.mulVec_zero]
       funext p
       have h2 := congrArg (S.hT (Sum.elim (frame F) (frame F') p)) hs
-      rw [map_sum, map_zero] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h2
       simp only [map_smul, smul_eq_mul] at h2
       rw [Pi.zero_apply, ← h2]
       simp only [Matrix.mulVec, dotProduct, gramM_apply]
@@ -631,7 +639,8 @@ theorem Dr1_ne_zero {T' : ℕ} (F : LFlag S r T) (F' : LFlag S r (T' : E)) (τ :
     have hyy : S.hT y y = star (w (Fin.last r)) * w (Fin.last r) * -(T' : E) := by
       have h1 : ∀ b, S.hT (frame F' b) y = w b * (if b = Fin.last r then -(T' : E) else 0) := by
         intro b
-        rw [hy, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hy, map_sum]
         simp only [map_smul, smul_eq_mul, gram_self, Matrix.diagonal_apply]
         rw [Finset.sum_eq_single b]
         · simp
@@ -659,7 +668,7 @@ end Det
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem frame_mem_of_XS (D : D7) (Λ : LatV D) {T : D.host.E} (F : LFlag (hS D) D.R.rS T) (hz : F.fl.z ∈ Λ)
+theorem frame_mem_of_XS (D : D7) (Λ : LatV D) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (hz : F.fl.z ∈ Λ)
     (hX : XLam Λ F = XS D F.fl) (b : Fin (D.R.rS + 1)) : frame F b ∈ Λ := by
   refine Fin.lastCases ?_ (fun i => ?_) b
   · rw [frame_last]; exact hz
@@ -717,7 +726,7 @@ theorem congruence_mem : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ 
     have e2 : (hS D).hT (D.sp.iXY 0 w') y = 0 := by rw [herm', e1, star_zero]
     have e3 : (hS D).hT y y = 0 := hyO y hyP
     have e4 : (hS D).hT (D.sp.iXY 0 w') (D.sp.iXY 0 w') = (D.sp.X 0).hT w' w' := D.sp.iXY_isom 0 hm0 w' w'
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     rw [e1, e2, e3, e4]
     simp only [map_zero, add_zero]
     exact hposW (embS D τ0) w' hw'0

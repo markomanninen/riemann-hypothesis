@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeNotMemOfMemQE
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimeNotMemOfMemQE
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,50 @@ theorem pref_m (u : B.Word) (a : I.ι) (b : (I.stp0 u a B.R.m).β) (q : (I.stp0 
   rw [← topLev_pref_m I.Ch I.sel (I.tup a) (I.cst a) I.Ps u]
   exact ⟨fun h => h.2.2, fun h => ⟨fun e => by omega, fun e => by omega, h⟩⟩
 
-theorem stX_ok (a : I.ι) : (I.stX a).Ok :=
-  stepY_ok (Ys.triv B.fields _) Unit (fun _ => rowTyG I.Ch I.Ps) (fun _ => levQX B.R I.sel (I.tup a)) (fun _ => True)
-    (base_fields_primes_ok B X).1 (fun _ => levQX_finiteIndex I.sel (I.tup a))
-    (fun _ P g => (levQX_root (R := B.R) I.sel (I.tup a) P).imp fun _ hm => ⟨hm.1, hm.2 g⟩) fun _ _ => Set.finite_singleton _
+theorem stX_ok (a : I.ι) : (I.stX a).Ok := by
+  have hX := (base_fields_primes_ok B X).1
+  let y := Ys.triv B.fields (B.R.N B.R.m - 1)
+  let Λ := rowTyG I.Ch I.Ps
+  let Θ := levQX B.R I.sel (I.tup a)
+  have hRoot (g : Θ.grp) : IsOfFinOrder (Θ.chr g) := by
+    rw [show Θ.chr g = ∏ P, (Θ P).lam (piProj (fun P => (Θ P).H) P g) from
+      piChar_apply (fun P => (Θ P).H) (fun P => (Θ P).lam) g]
+    refine Finset.prod_induction _ IsOfFinOrder (fun _ _ => IsOfFinOrder.mul) IsOfFinOrder.one ?_
+    intro P _
+    obtain ⟨m, hm, hpow⟩ := levQX_root (R := B.R) I.sel (I.tup a) P
+    exact isOfFinOrder_iff_pow_eq_one.2 ⟨m, hm, hpow _⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact stepY_fin_orb (ST := ∅) y Unit (fun _ => Λ) (fun _ => Θ) (fun _ => True) hX
+      (fun _ => levQX_finiteIndex I.sel (I.tup a)) (fun _ _ => Set.finite_singleton _)
+  · intro b p
+    haveI : Finite (autO p.1.1.deco.1.N) := by
+      first
+      | exact autO_finite (posStar_of_ok hX) p.1.1.deco.full_lattice
+      | exact autO_finite (posStar_of_ok hX) p.1.1.deco.full_lattice.toIsLattice
+    exact Finite.of_injective _ (stabAut_inj y Unit (fun _ => Λ) (fun _ => Θ) (fun _ => True) b p)
+  · intro _ g
+    let M : Matrix (Fin (B.R.N B.R.m - 1)) (Fin (B.R.N B.R.m - 1)) B.fields.E := ↑(toGLm _ _ g.1.1)
+    have h : Mᴴ * 1 * M = 1 := toGLm_mem_UJ g.1
+    rw [Matrix.mul_one] at h
+    exact h
+  · intro _ g
+    exact isOfFinOrder_iff_pow_eq_one.1
+      ((MonoidHom.isOfFinOrder Λ.chr (isOfFinOrder_of_finite g.2.1)).mul (hRoot g.2.2))
+  · intro _ g p x
+    show (↑(toGLm _ _ g.1.1) : Matrix _ _ _) *ᵥ x ∈ (p.1.1.deco.1.act g.1.1 g.2.1.1).Lsh ↔
+      x ∈ p.1.1.deco.1.Lsh
+    rw [toGLm_mulVec, Deco.Lsh_act _ g.1.2, mem_gmap, LinearEquiv.symm_apply_apply]
+  · intro _ p
+    first
+    | exact p.1.1.deco.2.Lsh_full_lattice
+    | exact p.1.1.deco.2.Lsh_full_lattice.toIsLattice
+  · intro b g p h h₁
+    exact stepY_eq_one y Unit (fun _ => Λ) (fun _ => Θ) (fun _ => True) b g p h
+      (Subtype.ext ((toGLm B.fields.E (B.R.N B.R.m - 1)).injective (h₁.trans (map_one _).symm)))
+
 
 set_option maxHeartbeats 1600000 in
-
-theorem perIn_ok (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Ok where
+theorem perIn_ok (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Ok := {
   step := stX_ok a
   til_smul _ g p := Subtype.ext (Prod.ext
     (tilF_extTop I.Ch I.sel (I.tup a) (I.cst a) I.Ps (base_fields_primes_ok B X).2.1 u (piT_notMem_Q h u a) g p.1.1)
@@ -66,11 +106,11 @@ theorem perIn_ok (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Ok where
     exact ⟨(), trivPt _ _ _ _ _ d, (topPt_val I.sel (I.tup a) (I.cst a) u _).symm.trans
       (congrArg (topPt I.sel (I.tup a) (I.cst a) u) hd)⟩
   H_idx _ := (inferInstance : (⊤ : Subgroup _).FiniteIndex)
-  H_rat _ g := ⟨g, Subgroup.mem_top _, rfl⟩
+  H_rat _ g := ⟨g, Subgroup.mem_top _, rfl⟩ }
+
 
 set_option maxHeartbeats 1600000 in
-
-theorem perIn_over (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Over (I.atIn u a) where
+theorem perIn_over (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Over (I.atIn u a) := {
   norm_tz := by
     show star (star (((B.primes X).piT u : 𝓞 B.fields.E) : B.fields.E)) *
       star (((B.primes X).piT u : 𝓞 B.fields.E) : B.fields.E) = ((B.primes X).T u : B.fields.E)
@@ -88,7 +128,7 @@ theorem perIn_over (h : I.Ok) (u : B.Word) (a : I.ι) : (I.perIn u a).Over (I.at
     change x ∈ ((I.perIn u a).til b p).1.1.deco.1.N at hx
     show ((I.perIn u a).til b p).1.1.deco.1.f P x = _
     rw [til_deco h u a b p] at hx ⊢
-    exact tilH_f _ p.1.1.deco (conj_piT_notMem hPr u) (piT_notMem_vGs hPr u) P x hx
+    exact tilH_f _ p.1.1.deco (conj_piT_notMem hPr u) (piT_notMem_vGs hPr u) P x hx }
 
 theorem perIn_laws : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok →
     ∀ u a, (I.perIn u a).Ok ∧ (I.perIn u a).Over (I.atIn u a) :=

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def realSize (θ : InfFam D) {m n : ℕ} (x : Mx D m n) : ℝ := ∑ τ, ∑ i, 
 
 def InBox {m n : ℕ} (K : Set (Mx D m n)) (x : Mx D m n) : Prop := ∃ k ∈ K, (x - k).map (finPart D) = 0
 
-open Classical in
 
+open Classical in
 def maj (θ : InfFam D) {m n : ℕ} (K : Set (Mx D m n)) (N : ℕ) (x : Mx D m n) : ℝ :=
   if InBox K x then ((1 + realSize θ x) ^ N)⁻¹ else 0
 
@@ -40,14 +44,6 @@ theorem maj_nonneg (θ : InfFam D) {m n : ℕ} (K : Set (Mx D m n)) (N : ℕ) (x
   split_ifs
   · have := realSize_nonneg θ x; positivity
   · exact le_rfl
-
-theorem isSobForm_eval (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) : IsSobForm ψ θ S T fun f => f 0 where
-  add _ _ _ _ := rfl
-  smul _ _ _ := rfl
-  bound _ _ := ⟨0, 1, fun f _ => by
-    rw [ENNReal.coe_one, one_mul]
-    exact le_trans (le_iSup (fun w => ‖f w‖ₑ) 0)
-      (GlobalTheory.Size.le_wordSum (A := GlobalTheory.Size.heisDer ψ θ) (p := fun φ : WO S T → ℂ => ⨆ w, ‖φ w‖ₑ) (l := []) le_rfl f)⟩
 
 end GlobalTheory.Unf
 

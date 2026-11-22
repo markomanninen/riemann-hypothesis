@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TraceFib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AeEvTNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TraceGramDetNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HadamardGram
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TraceFib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AeEvTNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TraceGramDetNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HadamardGram
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HNormPts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -36,14 +40,59 @@ theorem disc_pointwise (hd : d.AxH 𝒜) (h : d.S1) (a b : KTp K d.D d.N) (hab :
     rw [map_zero] at habE
     exact mul_ne_zero hDe ((map_ne_zero_iff _ (IsFractionRing.injective _ _)).mpr hb0) habE.symm
   have heW : ∀ c, hd.a4.choose c ∈ 𝒜 c d.wF ∧ hd.a4.choose c ≠ 0 := hd.a4.choose_spec.1
-  have hST := MeasureTheory.ae_all_iff.mpr fun c => d.norm_at_sg hd h c sg
+  have hST : ∀ᵐ z ∂(ReciprocityTheory.MultiplicativeHeights.blockSphereProb d.D (d.N + 1)),
+      ∀ c, (d.ST c sg (d.tOf z)).Finite ∧ (d.ST c sg (d.tOf z)).ncard = d.delc c := by
+    have : Countable K := countable_numberField K
+    filter_upwards [NPB.ae_gen (D := d.D) (N := d.N) sg] with z hz
+    obtain ⟨y, -, hpt⟩ := NPB.exists_gen sg (fun q => d.tOf z q.1 q.2) hz 1 one_ne_zero
+    have hy : ∀ i, y (Fin.natAdd (d.N + 1) i) ≠ 0 := by
+      intro i h0
+      apply hpt (MvPolynomial.X (i.succ, 0)) (MvPolynomial.X_ne_zero _)
+      simp [NPB.gpt, h0]
+    intro c
+    let pt := NPB.gpt (fun q => d.tOf z q.1 q.2) y
+    let : Algebra (KTf K d.D d.N) (OmS (Ω c) d.D d.N) := (d.KTtoS h c).toAlgebra
+    let : Algebra (KTf K d.D d.N) ℂ := (tauPev sg pt hpt).toAlgebra
+    have := d.KT_finiteDimensional hd c
+    let e : KTf K d.D d.N ≃+* d.KT c :=
+      (d.KTtoS h c).rangeRestrictFieldEquiv.trans (RingEquiv.subfieldCongr (d.KTtoS_fieldRange h c))
+    have he : (algebraMap (KTf K d.D d.N) (OmS (Ω c) d.D d.N)).comp e.symm.toRingHom =
+        (RingEquiv.refl (OmS (Ω c) d.D d.N)).toRingHom.comp (algebraMap (d.KT c) (OmS (Ω c) d.D d.N)) := by
+      refine RingHom.ext fun x => ?_
+      change d.KTtoS h c (e.symm x) = (x : OmS (Ω c) d.D d.N)
+      exact congrArg (fun u : d.KT c => (u : OmS (Ω c) d.D d.N)) (e.apply_symm_apply x)
+    have : FiniteDimensional (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+      Module.Finite.of_equiv_equiv e.symm (RingEquiv.refl _) he
+    have hrank : Module.finrank (KTf K d.D d.N) (OmS (Ω c) d.D d.N) = d.delc c :=
+      (Algebra.finrank_eq_of_equiv_equiv e.symm (RingEquiv.refl _) he).symm
+    have : CharZero (KTf K d.D d.N) := inferInstance
+    have : Algebra.IsSeparable (KTf K d.D d.N) (OmS (Ω c) d.D d.N) :=
+      Algebra.IsSeparable.of_integral _ _
+    let restrict (σ : OmS (Ω c) d.D d.N →ₐ[KTf K d.D d.N] ℂ) :=
+      (σ : OmS (Ω c) d.D d.N →+* ℂ).comp (algebraMap (Ω c) (OmS (Ω c) d.D d.N))
+    have hcomm (σ : OmS (Ω c) d.D d.N →ₐ[KTf K d.D d.N] ℂ) :
+        (σ : OmS (Ω c) d.D d.N →+* ℂ).comp (d.KTtoS h c) = tauPev sg pt hpt :=
+      RingHom.ext fun x => σ.commutes x
+    have hinj : Function.Injective restrict := fun σ₁ σ₂ hσ =>
+      AlgHom.coe_ringHom_injective (d.emb_ext h c sg pt hpt _ _ (hcomm σ₁) (hcomm σ₂) hσ)
+    have hrange : Set.range restrict = d.ST c sg (fun i j => pt (i.succ, j)) := by
+      ext P
+      constructor
+      · rintro ⟨σ, rfl⟩
+        exact d.emb_mem_ST hd h c sg pt hpt _ (hcomm σ)
+      · intro hP
+        obtain ⟨σ, hσ, hrestrict⟩ := d.exists_emb hd h c sg pt hpt P hP
+        exact ⟨{ σ with commutes' := fun x => RingHom.congr_fun hσ x }, hrestrict⟩
+    rw [d.ST_scale c sg (d.tOf z) y hy] at hrange
+    refine ⟨hrange ▸ Set.finite_range _, ?_⟩
+    rw [← hrange, Set.ncard_range_of_injective hinj, Nat.card_eq_fintype_card, AlgHom.card, hrank]
   filter_upwards [hST, d.de_fibre hd h a b ⟨hb0, habE, m, hm0, hma, hmb⟩ sg,
     d.ae_evT_ne_zero sg a ha0 m hm0 hma, d.ae_evT_ne_zero sg b hb0 m hm0 hmb] with z hz hfib haz hbz
   set e := hd.a4.choose with he
   set t := d.tOf z with ht
   set s : Fin d.del → ℝ := fun k => d.supN sg d.wF (d.thp (hd.sel k)) with hsdef
   have hfin : ∀ c, (d.ST c sg t).Finite := fun c => (hz c).1
-  have hcard : ∀ c, (d.ST c sg t).ncard = d.delc c := fun c => (hz c).2.1
+  have hcard : ∀ c, (d.ST c sg t).ncard = d.delc c := fun c => (hz c).2
   let _ : ∀ c, Fintype (d.ST c sg t) := fun c => (hfin c).fintype
   let M : (Σ c, d.ST c sg t) → Fin d.del → ℂ := fun r k =>
     (r.2 : Ω r.1 →+* ℂ) (ratio (Ω := Ω r.1) (d.thp (hd.sel k) r.1) (e r.1))

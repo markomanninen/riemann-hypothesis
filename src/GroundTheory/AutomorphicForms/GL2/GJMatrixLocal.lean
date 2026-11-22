@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJMatrixFinite
-import GroundTheory.AutomorphicForms.GL2.GJMatrixCoord
-import GroundTheory.LocalFields.LocalFourier
-import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixFinite
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixCoord
+public import GroundTheory.LocalFields.LocalFourier
+public import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.GJMatrix
 
@@ -22,10 +26,6 @@ def localSchwartzBruhatPi : Submodule ℂ ((ι → F) → ℂ) where
   add_mem' hf hg := ⟨hf.1.add hg.1, hf.2.add hg.2⟩
   smul_mem' c _ hf := ⟨hf.1.comp (c • ·), hf.2.comp_left (smul_zero c)⟩
 
-omit [Field F] [ValuativeRel F] [IsNonarchimedeanLocalField F] [Fintype ι] in
-theorem mem_localSchwartzBruhatPi {f : (ι → F) → ℂ} :
-    f ∈ localSchwartzBruhatPi F ↔ IsLocallyConstant f ∧ HasCompactSupport f :=
-  Iff.rfl
 
 variable {F}
 
@@ -193,8 +193,8 @@ section Matrix
 
 variable {n : ℕ}
 
-omit [Field F] [ValuativeRel F] [IsNonarchimedeanLocalField F] in
 
+omit [Field F] [ValuativeRel F] [IsNonarchimedeanLocalField F] in
 theorem isSchwartzBruhat_iff_comp_symm (Φ : Matrix (Fin n) (Fin n) F → ℂ) :
     IsSchwartzBruhat Φ ↔
       Φ ∘ (matrixCoordHomeomorph (Fin n) F).symm ∈ localSchwartzBruhatPi F := by

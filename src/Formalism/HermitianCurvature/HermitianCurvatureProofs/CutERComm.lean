@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutER
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFoldRev
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutER
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnFoldRev
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorPreservesFusionForms
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 open Formalism.REAL Formalism.QuantumDeterminants

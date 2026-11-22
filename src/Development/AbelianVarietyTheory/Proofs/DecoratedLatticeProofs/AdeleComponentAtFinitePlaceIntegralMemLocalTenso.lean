@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SigV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SigV
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl IsDedekindDomain NumberField GlobalTheory.FixedUnitNorm
 open scoped TensorProduct
 
@@ -16,7 +21,7 @@ theorem compAt_mem_intV_of_intAt : ∀ (D : D7) (v : Pl D) (a : AE D), a ∈ int
     apply AddSubgroup.subset_closure
     exact ⟨_, hα v, x, rfl⟩
   | zero => rw [RingHom.map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [RingHom.map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [RingHom.map_add (f := _)]; exact add_mem hy hz
   | neg y _ hy => rw [RingHom.map_neg]; exact neg_mem hy
 
 end GlobalTheory.FixedUnitNorm

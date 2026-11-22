@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
+
+@[expose] public section
 
 open Polynomial Matrix UpperTheory.V UpperTheory.V.W
 
@@ -36,7 +40,7 @@ theorem UpperTheory.V.AlgebraTools.Det.formRep :
     induction y using MonoidAlgebra.induction_linear with
     | zero => simp [GFrame.star]
     | add x z hx hz =>
-      rw [(UpperTheory.V.AlgebraTools.Det.starApi F O B n).2.2.1, map_add, map_add, Matrix.transpose_add, Matrix.add_mul,
+      rw [(UpperTheory.V.AlgebraTools.Det.starApi F O B n).2.2.1, map_add (f := _), map_add (f := _), Matrix.transpose_add, Matrix.add_mul,
         Matrix.mul_add, hx, hz]
     | single g b =>
       have hs : F.star O B n (MonoidAlgebra.single g b) =

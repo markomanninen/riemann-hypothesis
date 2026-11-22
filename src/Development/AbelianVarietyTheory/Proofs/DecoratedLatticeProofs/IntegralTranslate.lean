@@ -1,13 +1,36 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceModeStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedCoordinatesOfThetaFunctionAreThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+
+namespace I195MixedCoordinates_35474aefd184915ecb24a8bf
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_35474aefd184915ecb24a8bf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
 open scoped TensorProduct
@@ -22,9 +45,9 @@ theorem integral_translate {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
   simp_rw [add_comm _ a]
   exact integral_add_left_eq_self (μ := ν) F a
 
-set_option maxHeartbeats 1000000 in
 
-theorem half_avg_heis_inv : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ e, IsSplitIdem D e → ∀ ℓ₀ : (WO S₀ T → ℂ) →ₗ[ℂ] ℂ, (∀ u : WO S₀ T, (∀ i j, cA D e * u i j = u i j) → ∀ f, IsThetaFunO ψ S₀ T f → ℓ₀ (heisO ψ S₀ T u f) = ℓ₀ f) → ∀ H : AddSubgroup (Mx D T.rank ρ), (∀ x, x ∈ H ↔ ∀ i j, cA D e * x i j = x i j) → ∀ [MeasurableSpace H] [BorelSpace H] (ν : Measure H) [ν.IsAddHaarMeasure], ∀ u : WO S T, (∀ i j, cA D e * u i j = u i j) → ∀ f, IsThetaFunO ψ S T f → ∫ x : H, ℓ₀ (d.mixS T ψ μ 𝓕 (heisO ψ S T u f) x.1) ∂ν = ∫ x : H, ℓ₀ (d.mixS T ψ μ 𝓕 f x.1) ∂ν := by
+set_option maxHeartbeats 1000000 in
+theorem half_avg_heis_inv : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ e, IsSplitIdem D e → ∀ ℓ₀ : (WO S₀ T → ℂ) →ₗ[ℂ] ℂ, (∀ u : WO S₀ T, (∀ i j, cA D e * u i j = u i j) → ∀ f, IsThetaFunO ψ S₀ T f → ℓ₀ (heisO ψ S₀ T u f) = ℓ₀ f) → ∀ H : AddSubgroup (Mx D T.rank ρ), (∀ x, x ∈ H ↔ ∀ i j, cA D e * x i j = x i j) → ∀ [MeasurableSpace H] [BorelSpace H] (ν : Measure H) [ν.IsAddHaarMeasure], ∀ u : WO S T, (∀ i j, cA D e * u i j = u i j) → ∀ f, IsThetaFunO ψ S T f → ∫ x : H, ℓ₀ ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 (heisO ψ S T u f) x.1) ∂ν = ∫ x : H, ℓ₀ ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 f x.1) ∂ν := by
   intro D ψ hψ S S₀ T ρ d μ 𝓕 hμ e he ℓ₀ hℓ₀ H hH _ _ ν _ u hu f hf
   have hee : cA D (cA D e) * cA D e = 0 := by rw [GlobalTheory.DualPairCheck.cA_cA]; exact he.2.1
   have horth : ∀ {x y : WO S T}, IsHalf (cA D e) x → IsHalf (cA D e) y → symplO S T x y = 0 :=
@@ -55,7 +78,7 @@ theorem half_avg_heis_inv : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
     rw [hu_eq, add_assoc, GlobalTheory.SplitScalar.heisO_add_of_orth ψ S T (horth hXa hsum),
       GlobalTheory.SplitScalar.heisO_add_of_orth ψ S T (horth h0w hYb)]
   let v : VolM D T.rank ρ := ⟨μ, 𝓕, hμ⟩
-  have key : ∀ x : H, ℓ₀ (d.mixS T ψ μ 𝓕 (heisO ψ S T u f) x.1) = ℓ₀ (d.mixS T ψ μ 𝓕 f (x + ⟨a, (hH a).2 ha⟩).1) := by
+  have key : ∀ x : H, ℓ₀ ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 (heisO ψ S T u f) x.1) = ℓ₀ ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 f (x + ⟨a, (hH a).2 ha⟩).1) := by
     intro x
     have hx : IsHalf (cA D e) x.1 := (hH x.1).1 x.2
     have hxa : IsHalf (cA D e) (x.1 + a) := fun i j => by
@@ -63,17 +86,18 @@ theorem half_avg_heis_inv : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStd
     obtain ⟨c1, -, -, -, -⟩ := GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ S S₀ T ρ d v g₁ hg₁t
     obtain ⟨-, -, c3, -, -⟩ := GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ S S₀ T ρ d v g₂ hg₂t
     obtain ⟨-, c2, -, -, -⟩ := GlobalTheory.T.heisenbergOperator_thetaFunctional_mixedSourceModel D ψ hψ S S₀ T ρ d v f hf
-    have e1 : d.mixS T ψ μ 𝓕 (heisO ψ S T u f) x.1 = d.mixS T ψ μ 𝓕 g₁ (x.1 + a) := by
+    have e1 : (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 (heisO ψ S T u f) x.1 = (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 g₁ (x.1 + a) := by
       rw [hsplit]; exact c1 x.1 a
-    have e2 : d.mixS T ψ μ 𝓕 g₁ (x.1 + a) = heisO ψ S₀ T w (d.mixS T ψ μ 𝓕 g₂ (x.1 + a)) := c3 (x.1 + a) w
-    have e3 : d.mixS T ψ μ 𝓕 g₂ (x.1 + a) = d.mixS T ψ μ 𝓕 f (x.1 + a) := by
-      rw [hg₂, c2 (x.1 + a) b, horth (show IsHalf (cA D e) (d.extX T (x.1 + a)) from hhalfR _ hxa) hYb,
+    have e2 : (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 g₁ (x.1 + a) = heisO ψ S₀ T w ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 g₂ (x.1 + a)) := c3 (x.1 + a) w
+    have e3 : (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 g₂ (x.1 + a) = (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 f (x.1 + a) := by
+      have hc2 : (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 (heisO ψ S T (d.extY T b) f) (x.1 + a) = ψ (symplO S T (d.extX T (x.1 + a)) (d.extY T b)) • (_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 f (x.1 + a) := c2 (x.1 + a) b
+      rw [hg₂, hc2, horth (show IsHalf (cA D e) (d.extX T (x.1 + a)) from hhalfR _ hxa) hYb,
         AddChar.map_zero_eq_one, one_smul]
-    have hmt : IsThetaFunO ψ S₀ T (d.mixS T ψ μ 𝓕 g₂ (x.1 + a)) :=
+    have hmt : IsThetaFunO ψ S₀ T ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 g₂ (x.1 + a)) :=
       GlobalTheory.MixValues.mixS_theta D ψ hψ S S₀ T ρ d μ 𝓕 hμ g₂ hg₂t (x.1 + a)
     rw [e1, e2, hℓ₀ w hw _ hmt, e3]
     rfl
   rw [integral_congr_ae (Filter.Eventually.of_forall key)]
-  exact integral_translate ν (fun x : H => ℓ₀ (d.mixS T ψ μ 𝓕 f x.1)) _
+  exact integral_translate ν (fun x : H => ℓ₀ ((_root_.I195MixedCoordinates_35474aefd184915ecb24a8bf.source d) T ψ μ 𝓕 f x.1)) _
 
 end GlobalTheory.HalfInvariance

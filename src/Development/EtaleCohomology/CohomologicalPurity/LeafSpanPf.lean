@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafChartCut
+
+@[expose] public section
 
 noncomputable section
 open TensorProduct
@@ -20,7 +24,7 @@ theorem span_of_subsingleton {R P B ι : Type} [CommRing R] [CommRing P] [CommRi
       rw [KaehlerDifferential.map_D]
       exact Submodule.subset_span ⟨i, rfl⟩
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact T.add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact T.add_mem ha hb
     | smul c m _ hm =>
       rw [LinearMap.map_smul, ← algebraMap_smul B c]
       exact T.smul_mem _ hm
@@ -35,7 +39,7 @@ theorem span_of_subsingleton {R P B ι : Type} [CommRing R] [CommRing P] [CommRi
     | tmul b m =>
       rw [KaehlerDifferential.mapBaseChange_tmul]
       exact T.smul_mem _ (hmap m)
-    | add a b ha hb => rw [map_add]; exact T.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact T.add_mem ha hb
   obtain ⟨t, rfl⟩ := (KaehlerDifferential.exact_mapBaseChange_map R P B (ω)).mp hk
   exact hbc t
 
@@ -74,8 +78,8 @@ theorem annih {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] [Module.Fi
       ← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero] at this
     exact this
 
-open KaehlerDifferential in
 
+open KaehlerDifferential in
 theorem key {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (I : Ideal A) {e d : ℕ}
     (x : Fin d → A) (y : Fin e → A) (f : A) (hx : ∀ j, x j ∈ I)
     (hfI : ∀ a ∈ I, f * a ∈ Ideal.span (Set.range x))
@@ -92,7 +96,8 @@ theorem key {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (I : Ideal A) {
     obtain ⟨b, hb⟩ := Ideal.mem_span_range_iff_exists_fun.mp (hfI a ha)
     have e1 : D R A (f * a) = f • D R A a + a • D R A f := Derivation.leibniz _ _ _
     have e2 : D R A (f * a) = ∑ j, (b j • D R A (x j) + x j • D R A (b j)) := by
-      rw [← hb, map_sum]; simp only [Derivation.leibniz]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hb, map_sum]; simp only [Derivation.leibniz]
     have e3 : f • D R A a = ∑ j, (b j • D R A (x j) + x j • D R A (b j)) - a • D R A f := by
       rw [← e2, e1]; abel
     rw [e3]
@@ -110,7 +115,8 @@ theorem key {R A : Type} [CommRing R] [CommRing A] [Algebra R A] (I : Ideal A) {
     intro k
     rw [← algebraMap_smul (A ⧸ I) (c' k), Ideal.Quotient.algebraMap_eq, hc']
   have h0 : mapBaseChange R A (A ⧸ I) (1 ⊗ₜ ω') = 0 := by
-    rw [mapBaseChange_tmul, one_smul, hω', map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mapBaseChange_tmul, one_smul, hω', map_sub, map_sum]
     simp only [LinearMap.map_smul_of_tower, map_D, hck, hc, sub_self]
   obtain ⟨t, ht⟩ := (exact_kerCotangentToTensor_mapBaseChange R A (A ⧸ I)
     Ideal.Quotient.mk_surjective (1 ⊗ₜ ω')).mp h0

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ArtKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ArtKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -69,7 +73,7 @@ private theorem eq_one_of_pow {F : Type} [NormedField F] [IsUltrametricDist F] (
   · exact sub_eq_zero.1 h3
 
 private theorem pow_eq_one_of_unr {K Ω F : Type} [Field K] [NumberField K] [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω]
-    [IsTotallyComplex K] [NormedField F] [IsUltrametricDist F] (κ : G K Ω →* Fˣ) (hc : Continuous fun g => (κ g : F))
+    [_root_.NumberField.IsTotallyComplex K] [NormedField F] [IsUltrametricDist F] (κ : G K Ω →* Fˣ) (hc : Continuous fun g => (κ g : F))
     (hI : ∀ (A : ValuationSubring Ω), ∀ g ∈ Ine (F := K) A, κ g = 1) (g : G K Ω) : (κ g : F) ^ classNumber K = 1 := by
   have key : ∀ (ε : ℝ) (h0 : 0 < ε) (h1 : ε ≤ 1), ‖(κ g : F) ^ classNumber K - 1‖ < ε := by
     intro ε h0 h1

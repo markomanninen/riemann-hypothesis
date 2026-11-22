@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideRest
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsSideRest
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo PositivityTheory.HtPt
 open GroundTheory.Heights₂.Heights.CoordinateConeArithVar
@@ -38,7 +42,7 @@ theorem exists_homog (c : ∀ k, J k) (f : MRing J) : ∃ (d : K → ℕ) (h : M
     obtain ⟨d', h', hh', e'⟩ := hg
     refine ⟨d + d', h * Gf.mon c d' + Gf.mon c d * h',
       Gf.hom_add (Gf.hom_mul hh (Gf.hom_mon c d')) (Gf.hom_mul (Gf.hom_mon c d) hh'), fun Ω _ z hz => ?_⟩
-    simp only [map_add, map_mul, Gf.aeval_mon, hz, one_pow, Finset.prod_const_one, mul_one, one_mul, e Ω z hz,
+    simp only [map_add (f := _), map_mul, Gf.aeval_mon, hz, one_pow, Finset.prod_const_one, mul_one, one_mul, e Ω z hz,
       e' Ω z hz]
   | mul_X f p hf =>
     obtain ⟨d, h, hh, e⟩ := hf

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SqPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairGluing.ExistsDenLe
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SqPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairGluing.ExistsDenLe
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix

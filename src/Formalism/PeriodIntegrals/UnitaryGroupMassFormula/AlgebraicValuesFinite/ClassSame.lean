@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.AlgValsFin
+module
+
+public import Formalism.PeriodIntegrals.AlgValsFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,14 +31,16 @@ def ProdNorm : Prop :=
   ∀ (k : Lˣ) (T : Finset (HeightOneSpectrum (𝓞 L))), (∀ v, v ∉ T → ordF v k = 0) →
     ∏ φ : L →+* ℂ, ‖φ (k : L)‖ = ∏ v ∈ T, ((Ideal.absNorm v.asIdeal : ℕ) : ℝ) ^ ordF v k
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def ClassPow : Prop :=
   ∃ h : ℕ, 0 < h ∧ ∀ v : HeightOneSpectrum (𝓞 L), ∃ k : Lˣ,
     ∀ u : HeightOneSpectrum (𝓞 L), ordF u k = if u = v then (h : ℤ) else 0
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def ClassSame : Prop :=
   ∃ (ι : Type) (_ : Finite ι) (c : HeightOneSpectrum (𝓞 L) → ι),
     ∀ v w, c v = c w → ∃ k : Lˣ, ∀ u : HeightOneSpectrum (𝓞 L),

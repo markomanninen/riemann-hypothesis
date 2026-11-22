@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOp
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ConstructionB
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,9 @@ theorem exists_strictFund (Γ : Subgroup G) [DiscreteTopology Γ] :
     have : O n = ⋃ s ∈ Γ, ⋃ m < n, (fun y => s * y) ⁻¹' B m := by
       ext y; simp [hO]
     rw [this]
-    exact isOpen_biUnion fun s _ => isOpen_biUnion fun m _ => (hBo m).preimage (continuous_const.mul continuous_id)
+    exact isOpen_iUnion fun s => isOpen_iUnion fun _ =>
+      isOpen_iUnion fun m => isOpen_iUnion fun _ =>
+        (hBo m).preimage (continuous_const.mul continuous_id)
   refine ⟨⋃ n, B n \ O n, MeasurableSet.iUnion fun n => (hBo n).measurableSet.diff (hOo n).measurableSet, ?_, ?_⟩
   · intro x
     classical
@@ -344,11 +350,15 @@ theorem nt_int_eq_zero (a : 𝓞 I.E) (h : ∀ v, ‖I.φ v (a : I.E)‖ < 1) : 
     obtain ⟨v, hv⟩ := nt_absEmb I σ.toRingHom
     exact (hv a).trans_lt (h v)
   have hn := Algebra.norm_eq_prod_embeddings ℚ ℂ (a : I.E)
-  let σ0 : I.E →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let σ0 : I.E →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hlt : ‖∏ σ : I.E →ₐ[ℚ] ℂ, σ (a : I.E)‖ < 1 := by
     rw [norm_prod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ σ0)]
     have hle : ∏ σ ∈ Finset.univ.erase σ0, ‖σ (a : I.E)‖ ≤ 1 :=
-      Finset.prod_le_one (fun _ _ => norm_nonneg _) (fun σ _ => (hσ σ).le)
+      Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) (fun σ _ => (hσ σ).le)
     calc ‖σ0 (a : I.E)‖ * ∏ σ ∈ Finset.univ.erase σ0, ‖σ (a : I.E)‖ ≤ ‖σ0 (a : I.E)‖ * 1 :=
           mul_le_mul_of_nonneg_left hle (norm_nonneg _)
       _ < 1 := by rw [mul_one]; exact hσ σ0
@@ -422,7 +432,7 @@ theorem trC_phi (x : 𝓞 I.E) (t : 𝓞 I.E ⊗[ℤ] Formalism.UG.intAd I.F) : 
     have : ((x : I.E) * (o : I.E)) = ((x * o : 𝓞 I.E) : I.E) := by simp
     rw [this, ← hs, Algebra.smul_def]
     exact mul_mem (nt_intAd_of_int I s) r.2
-  | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
 
 theorem nt_trace_of_intAf (a : I.E) (ha : Formalism.UG.inclE (F := I.F) (Af I.F) a ∈ IntAf I.F I.E) (x : 𝓞 I.E) :
     Algebra.trace I.F I.E ((x : I.E) * a) ∈ (algebraMap (𝓞 I.F) I.F).range := by
@@ -782,7 +792,8 @@ theorem trC_nondeg (u : I.E ⊗[I.F] Af I.F) (h : ∀ x : 𝓞 I.E, trC I x u = 
     let bi : 𝓞 I.E := ⟨b i, hbI i⟩
     have hbi : (bi : I.E) = b i := rfl
     have h1 := h bi
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     simp only [trC_tmul, hbi] at h1
     have e : ∀ j, Algebra.trace I.F I.E (b i * d j) = if i = j then 1 else 0 := by
       intro j
@@ -1145,7 +1156,7 @@ theorem dcrel_of {Λ Λ' : Submodule (𝓞 E) S.V} {T T' : E} (F : LFlag S r T) 
     (hΛ : Formalism.HermitianLatticesTheory.gmap γ Λ' = Λ) {n n' : S.V ≃ₗ[E] S.V} (hn : n ∈ NLam Λ F) (hn' : n' ∈ NLam Λ' F')
     (h : γ₂ = n * γ * n') : DCRel Λ F (mapLF γ F') (mapLF γ₂ F') := by
   have hm : γ * n' * γ⁻¹ ∈ NLam Λ (mapLF γ F') := by
-    rw [mapLF, dif_pos hγ]
+    rw [mapLF, dite_eq_left hγ]
     refine ⟨⟨(Formalism.HermitianLatticesTheory.isom S.hT).mul_mem ((Formalism.HermitianLatticesTheory.isom S.hT).mul_mem hγ hn'.1.1) ((Formalism.HermitianLatticesTheory.isom S.hT).inv_mem hγ),
       by rw [gmap_mul, gmap_mul, gmap_inv hΛ, hn'.1.2, hΛ]⟩, fun j x hx => ?_, fun x hx => ?_⟩
     · change x ∈ (mapFlag γ hγ F'.fl).Xa (j + 1) at hx
@@ -1161,11 +1172,11 @@ theorem dcrel_of {Λ Λ' : Submodule (𝓞 E) S.V} {T T' : E} (F : LFlag S r T) 
       refine ⟨n' (γ.symm x) - γ.symm x, hn'.2.2 _ hy, ?_⟩
       simp [le_mul_app, le_inv_app, map_sub]
   refine ⟨n, hn, γ * n' * γ⁻¹, hm, fun a => ?_, ?_⟩
-  · rw [mapLF, mapLF, dif_pos hγ, dif_pos hγ₂]
+  · rw [mapLF, mapLF, dite_eq_left hγ, dite_eq_left hγ₂]
     show (mapFlag γ₂ hγ₂ F'.fl).fvec a = n ((γ * n' * γ⁻¹) ((mapFlag γ hγ F'.fl).fvec a))
     rw [fvec_mapFlag, fvec_mapFlag, h]
     simp [le_mul_app, le_inv_app]
-  · rw [mapLF, mapLF, dif_pos hγ, dif_pos hγ₂]
+  · rw [mapLF, mapLF, dite_eq_left hγ, dite_eq_left hγ₂]
     show γ₂ F'.zt = n ((γ * n' * γ⁻¹) (γ F'.zt))
     rw [h]
     simp [le_mul_app, le_inv_app]
@@ -1485,7 +1496,7 @@ theorem crd_surj (x : Fin X.B.I.n → X.B.I.E) : ∃ v, X.crd v = x :=
   ⟨X.bas.repr.symm (Finsupp.equivFunOnFinite.symm fun i => X.ιE (x i)), by
     funext i; simp [Formalism.L2.SG.HidaSetting.HidaSetting.crd, crdOf]⟩
 
-theorem crd_lat (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLattice D.host.E Λ) :
+theorem crd_lat (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsFullLattice D.host.E Λ) :
     ∃ s : Finset (Fin X.B.I.n → X.B.I.E), (∀ l ∈ s, ∃ w ∈ Λ, X.crd w = l) ∧
       Submodule.span X.B.I.E (s : Set (Fin X.B.I.n → X.B.I.E)) = ⊤ ∧
       ∃ c : ℤ, c ≠ 0 ∧ ∀ w ∈ Λ, ∀ i, IsIntegral ℤ ((c : X.B.I.E) * X.crd w i) := by
@@ -1496,20 +1507,18 @@ theorem crd_lat (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLat
   · intro l hl
     obtain ⟨w, hw, rfl⟩ := Finset.mem_image.1 hl
     exact ⟨w, hgΛ w hw, rfl⟩
-  · rw [eq_top_iff]
-    rintro x -
+  · have hspan : Submodule.span D.host.E (g : Set (VS D).V) = ⊤ := by
+      rw [← Submodule.span_span_of_tower (𝓞 D.host.E), hg]
+      exact hΛ.span_eq_top
+    apply top_unique
+    intro x _
     obtain ⟨v, rfl⟩ := crd_surj X x
-    have hv : v ∈ Submodule.span D.host.E (g : Set (VS D).V) := by
-      have h1 : v ∈ Submodule.span D.host.E (Λ : Set (VS D).V) := hΛ.span_eq_top ▸ Submodule.mem_top
-      refine (Submodule.span_le.2 ?_) h1
-      intro w hw
-      rw [← hg] at hw
-      exact Submodule.span_le_restrictScalars (𝓞 D.host.E) D.host.E _ hw
+    have hv : v ∈ Submodule.span D.host.E (g : Set (VS D).V) := by rw [hspan]; trivial
     induction hv using Submodule.span_induction with
-    | mem w hw => exact Submodule.subset_span (by simpa using ⟨w, hw, rfl⟩)
-    | zero => rw [crd_zero]; exact zero_mem _
-    | add a b _ _ ha hb => rw [crd_add]; exact add_mem ha hb
-    | smul a b _ hb => rw [crd_smul]; exact Submodule.smul_mem _ _ hb
+    | mem v hv => exact Submodule.subset_span (Finset.mem_coe.mpr (Finset.mem_image.mpr ⟨v, hv, rfl⟩))
+    | zero => rw [crd_zero]; exact Submodule.zero_mem _
+    | add a b _ _ ha hb => rw [crd_add]; exact Submodule.add_mem _ (ha (by trivial)) (hb (by trivial))
+    | smul a v _ hv => rw [crd_smul]; exact Submodule.smul_mem _ _ (hv (by trivial))
   · choose m hm0 hmI using fun (w : (VS D).V) (i : Fin X.B.I.n) => nt_int_mul_of X.B.I (X.crd w i)
     refine ⟨∏ w ∈ g, ∏ i, m w i, Finset.prod_ne_zero_iff.2 fun w _ => Finset.prod_ne_zero_iff.2 fun i _ => hm0 w i,
       fun w hw => ?_⟩
@@ -1533,7 +1542,7 @@ theorem crd_lat (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLat
       refine IsIntegral.mul ?_ (ha i)
       exact (RingOfIntegers.isIntegral_coe o).map (X.ιE.symm.toRingHom.toIntAlgHom)
 
-theorem ROsub_discrete (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLattice D.host.E Λ)
+theorem ROsub_discrete (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsFullLattice D.host.E Λ)
     (γ : (VS D).V ≃ₗ[D.host.E] (VS D).V) : DiscreteTopology (ROsub X F0 F0' Λ Λ' γ) := by
   obtain ⟨s, hsΛ, hspan, c, hc0, hc⟩ := crd_lat X Λ hΛ
   refine ginf_disc_of_lat X.B.I _ s hspan c hc0 ?_
@@ -1547,7 +1556,7 @@ theorem ROsub_discrete (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Subm
   exact (hc _ hnw i).sub (hc _ hw i)
 
 theorem fundExists_of_lat (what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V))
-    (hL : ∀ Λ ∈ what₂, Submodule.IsLattice D.host.E Λ) : FundExists X u u' F0 F0' what₂ rows' := by
+    (hL : ∀ Λ ∈ what₂, Submodule.IsFullLattice D.host.E Λ) : FundExists X u u' F0 F0' what₂ rows' := by
   intro t
   have := ROsub_discrete X F0 F0' t.lam t.lam' (hL _ t.mem) t.lin
   exact isSFund_of_discrete X.B.I (ROsub X F0 F0' t.lam t.lam' t.lin)

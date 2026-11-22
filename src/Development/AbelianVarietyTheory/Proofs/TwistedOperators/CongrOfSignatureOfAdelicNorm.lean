@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ChainMatrices
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+
+@[expose] public section
 
 open Formalism.BasicNotions IsDedekindDomain NumberField Matrix
 open scoped TensorProduct ComplexConjugate
@@ -81,7 +85,7 @@ theorem exists_sq_sub (cm : CMData F E) {θ : E} (h0 : θ ≠ 0) (hθ : star θ 
     (algebraMap F E).injective ?_⟩
   have h1 : Formalism.UG.sigR cm.sig R ((1 : E) ⊗ₜ[F] u + θ ⊗ₜ[F] w) =
       (1 : E) ⊗ₜ[F] u - θ ⊗ₜ[F] w := by
-    rw [map_add]
+    rw [map_add (f := _)]
     change (star (1 : E)) ⊗ₜ[F] u + (star θ) ⊗ₜ[F] w = _
     rw [star_one, hθ, TensorProduct.neg_tmul, sub_eq_add_neg]
   have h2 : ∀ s : F, ∀ r : R, (algebraMap F E s) ⊗ₜ[F] r = (1 : E) ⊗ₜ[F] (algebraMap F R s * r) := by
@@ -117,7 +121,7 @@ theorem congr_of_signature_of_adelic_norm : ∀ (F E : Type) [Field F] [NumberFi
     exact congr_of_hasSignature h h'
   obtain ⟨a, ha⟩ := (cm.fixed (G.det / G'.det)).1 (by
     rw [star_div₀, ← Matrix.det_conjTranspose, ← Matrix.det_conjTranspose, hG, hG'])
-  obtain ⟨θ, h0, hθ⟩ := GlobalTheory.Published.exists_cc_eq_neg E
+  obtain ⟨θ, h0, hθ⟩ := GlobalTheory.Published.exists_cc_eq_neg (E := E)
   rw [hcc] at hθ
   obtain ⟨d, hdθ⟩ := (cm.fixed (θ * θ)).1 (by rw [star_mul', hθ]; ring)
   have hd0 : d ≠ 0 := fun h => mul_ne_zero h0 h0 (by rw [← hdθ, h, map_zero])

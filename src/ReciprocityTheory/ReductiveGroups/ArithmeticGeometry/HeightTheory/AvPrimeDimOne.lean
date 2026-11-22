@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -6,21 +10,12 @@ open IsLocalRing
 
 theorem av_no_two_chain {S : Type*} [CommRing S] [IsDomain S] {A B : Ideal S} [A.IsPrime]
     [B.IsPrime] (h1 : ⊥ < A) (h2 : A < B) (hB : B.height ≤ 1) : False := by
-  have hza : (⟨⊥, Ideal.bot_prime⟩ : PrimeSpectrum S) < ⟨A, ‹A.IsPrime›⟩ := h1
-  have hab : (⟨A, ‹A.IsPrime›⟩ : PrimeSpectrum S) < ⟨B, ‹B.IsPrime›⟩ := h2
-  have e1 := Order.height_add_one_le hza
-  have e2 := Order.height_add_one_le hab
-  unfold Ideal.height at hB
-  refine absurd hB (not_le.mpr (lt_of_lt_of_le (show (1 : ℕ∞) < 2 by norm_num)
-    (le_iInf₂ fun J hJ => ?_)))
-  have hJB : J = B := by
-    have h' := hJ
-    rw [Ideal.minimalPrimes_eq_subsingleton_self] at h'
-    exact h'
-  subst hJB
-  change (2 : ℕ∞) ≤ Order.height (⟨J, ‹J.IsPrime›⟩ : PrimeSpectrum S)
-  calc (2 : ℕ∞) = 1 + 1 := by norm_num
-    _ ≤ _ := le_trans (add_le_add (le_add_self.trans e1) le_rfl) e2
+  have hA : 1 ≤ A.height := le_add_self.trans (Ideal.height_add_one_le_of_lt_of_isPrime h1)
+  have hB₂ : (2 : ℕ∞) ≤ B.height := calc
+    (2 : ℕ∞) = 1 + 1 := by norm_num
+    _ ≤ A.height + 1 := add_le_add hA le_rfl
+    _ ≤ B.height := Ideal.height_add_one_le_of_lt_of_isPrime h2
+  exact (by norm_num : ¬ (2 : ℕ∞) ≤ 1) (hB₂.trans hB)
 
 theorem av_key {S : Type*} [CommRing S] [IsDomain S] [IsNoetherianRing S] [IsLocalRing S] (g : S)
     (hg : g ≠ 0) (H : ∀ Q : Ideal S, Q.IsPrime → Q ≠ ⊥ → g ∈ Q) (Q : Ideal S) (hQ : Q.IsPrime)
@@ -105,7 +100,7 @@ theorem av_prime_dim_one {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing
 
   obtain ⟨p, ⟨hpP, hhp, hpm⟩, hpmax⟩ := set_has_maximal_iff_noetherian.mpr
     (inferInstance : IsNoetherian R R) {q : Ideal R | q.IsPrime ∧ h ∉ q ∧ q ≠ m}
-    ⟨⊥, Ideal.bot_prime, fun h' => hh ((Submodule.mem_bot R).mp h'), fun e => hm0 e.symm⟩
+    ⟨⊥, Ideal.isPrime_bot, fun h' => hh ((Submodule.mem_bot R).mp h'), fun e => hm0 e.symm⟩
   haveI := hpP
   refine ⟨p, hpP, ?_, hhp⟩
   have hplt : p < m := lt_of_le_of_ne (IsLocalRing.le_maximalIdeal hpP.ne_top) hpm
@@ -162,7 +157,7 @@ theorem av_prime_dim_one {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing
     exact a12.ne (hM.eq_of_le (s ⟨2, by omega⟩).isPrime.ne_top a12.le)
   · haveI hMp : (m.map f).IsPrime := Ideal.map_isPrime_of_surjective Ideal.Quotient.mk_surjective
       (by rw [Ideal.mk_ker]; exact hplt.le)
-    have hlt : (⟨⊥, Ideal.bot_prime⟩ : PrimeSpectrum (R ⧸ p)) < ⟨m.map f, hMp⟩ := by
+    have hlt : (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum (R ⧸ p)) < ⟨m.map f, hMp⟩ := by
       rw [← PrimeSpectrum.asIdeal_lt_asIdeal]
       refine bot_lt_iff_ne_bot.mpr fun e => ?_
       have hy : f y ∈ m.map f := Ideal.mem_map_of_mem f hym

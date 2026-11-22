@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
+
+@[expose] public section
+
 open UpperTheory.Gal.LocalSmoothExtension
 
 open GlobalTheory.HodgeCoh UpperTheory.Gal.CertificateRingHomMap in

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsInCharacterIsotypicPartTwistedInductionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsotypicPartExteriorProductInflatedSurjectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsInCharacterIsotypicPartTwistedInductionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsotypicPartExteriorProductInflatedSurjectionStatement
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI GlobalTheory.Shin SemidirectProduct
 open scoped Classical
 
@@ -25,11 +30,11 @@ theorem kills_hcTw : ∀ (F : Type) [Field F] [Finite F], ∀ (t : F →+* F) (a
     unfold ext0
     by_cases h : InPar a z
     · have hz : z ∈ H := (hmem z).2 h
-      rw [if_pos h, dif_pos hz]
+      rw [if_pos h, dite_eq_left hz]
       show _ = α (π ⟨z, hz⟩).1 * β (π ⟨z, hz⟩).2
       rw [hπ]
     · have hz : z ∉ H := fun hz => h ((hmem z).1 hz)
-      rw [if_neg h, dif_neg hz]
+      rw [if_neg h, dite_eq_right hz]
   have h1 : hcTw t a b α β n = fun x => (Nat.card H : ℂ)⁻¹ *
       ∑ᶠ y : GL (Fin n) F, ext0 H (fun p => α (π p).1 * β (π p).2) (y⁻¹ * x * (fun y => gal t n y) y) := by
     funext x

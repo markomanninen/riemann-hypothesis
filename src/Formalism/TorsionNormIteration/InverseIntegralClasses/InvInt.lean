@@ -1,5 +1,9 @@
-import Formalism.TorsionNormIteration.InvIntegralOfClass
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+module
+
+public import Formalism.TorsionNormIteration.InvIntegralOfClass
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem Low.mul {m k : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low 
   rw [MvPowerSeries.coeff_mul]
   refine Finset.sum_eq_zero fun ab hab => ?_
   have hab' : ab.1 + ab.2 = d := by simpa using hab
-  have hdeg : ab.1.degree + ab.2.degree = d.degree := by rw [← hab', map_add]
+  have hdeg : ab.1.degree + ab.2.degree = d.degree := by rw [← hab', map_add (f := _)]
   by_cases h1 : ab.1.degree < m
   · rw [hx _ h1, zero_mul]
   · rw [hy _ (by omega), mul_zero]
@@ -36,12 +40,7 @@ theorem Low.mul {m k : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low 
 theorem Low.add {m : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low m y) :
     Low m (x + y) := by
   intro d hd
-  rw [map_add, hx d hd, hy d hd, add_zero]
-
-theorem Low.sub {m : ℕ} {x y : MvPowerSeries ι K} (hx : Low m x) (hy : Low m y) :
-    Low m (x - y) := by
-  intro d hd
-  rw [map_sub, hx d hd, hy d hd, sub_zero]
+  rw [map_add (f := _), hx d hd, hy d hd, add_zero]
 
 theorem low_zero (x : MvPowerSeries ι K) : Low 0 x := by
   intro d hd

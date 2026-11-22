@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ArtSch
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmallArtinSchreier.ExistsAsOfValLtOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ArtSch
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SmallArtinSchreier.ExistsAsOfValLtOne
+
+@[expose] public section
 
 theorem smallSurjective : PI.ArtSch.TiltSmall := PI.UnitaryGroupMassFormula.ASSmall.tiltSmall

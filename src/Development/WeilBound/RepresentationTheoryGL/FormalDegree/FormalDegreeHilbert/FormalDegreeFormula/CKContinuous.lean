@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.FormalDegreeFormula.ModelFunctionsMultiply
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.FormalDegree.FormalDegreeHilbert.FormalDegreeFormula.ModelFunctionsMultiply
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,8 @@ theorem kNull_of (hW : MomW) (hP : CoefPow) : KNull := by
     exact ((cK_continuous T).pow 2).measurable.ennreal_ofReal
   replace hz := (lintegral_eq_zero_iff hmeas).1 hz
   rw [Filter.EventuallyEq, ae_restrict_iff' hsm.compl] at hz
-  filter_upwards [hz] with k hk h0k
+  apply hz.mono
+  intro k hk h0k
   have hk' := hk (by simp [hs, h0k])
   simp only [Pi.zero_apply, ENNReal.ofReal_eq_zero] at hk'
   nlinarith [sq_nonneg (cK T k), norm_nonneg (⟪T.w, T.op k T.w⟫_ℂ)]

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UhMeasurableSet
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal ComplexConjugate

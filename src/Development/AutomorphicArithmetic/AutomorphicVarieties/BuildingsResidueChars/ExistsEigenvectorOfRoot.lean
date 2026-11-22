@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 theorem UpperTheory.exists_eigenvector_of_root :
@@ -6,7 +11,7 @@ theorem UpperTheory.exists_eigenvector_of_root :
   intro L C D W _ _ _ _ _ _ _ _ s j S T hj hspan hT q b hb hq
   by_contra hcon
   have hinj : Function.Injective (aeval S q) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra h0
     exact hcon ⟨x, h0, hx⟩
@@ -23,7 +28,7 @@ theorem UpperTheory.exists_eigenvector_of_root :
     induction p using Polynomial.induction_on' with
     | add p r hp hr =>
       intro x
-      simp only [Polynomial.map_add, map_add, LinearMap.add_apply, hp, hr]
+      simp only [Polynomial.map_add (f := _), map_add (f := _), LinearMap.add_apply, hp, hr]
     | monomial n a =>
       intro x
       rw [Polynomial.map_monomial, aeval_monomial, aeval_monomial, Module.End.mul_apply,

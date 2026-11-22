@@ -1,10 +1,15 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -49,19 +54,6 @@ def centerInvariant {Y : Scheme.{u}} (I : Y.IdealSheafData) (m : ℕ) (L : List 
   positions := lexMaxIndices I m L
   rank := minIndexCard I m L
   value := maxCandidateOrder I m L
-
-@[simp] theorem centerInvariant_indices {Y : Scheme.{u}} (I : Y.IdealSheafData) (m : ℕ)
-    (L : List Y.IdealSheafData) : (centerInvariant I m L).positions = lexMaxIndices I m L := rfl
-
-@[simp] theorem centerInvariant_depth {Y : Scheme.{u}} (I : Y.IdealSheafData) (m : ℕ)
-    (L : List Y.IdealSheafData) : (centerInvariant I m L).rank = minIndexCard I m L := rfl
-
-@[simp] theorem centerInvariant_order {Y : Scheme.{u}} (I : Y.IdealSheafData) (m : ℕ)
-    (L : List Y.IdealSheafData) : (centerInvariant I m L).value = maxCandidateOrder I m L := rfl
-
-@[simp] theorem centerInvariant_sortedIndices {Y : Scheme.{u}} (I : Y.IdealSheafData) (m : ℕ)
-    (L : List Y.IdealSheafData) :
-    (centerInvariant I m L).sortedIndices = sortedIndices (lexMaxIndices I m L) := rfl
 
 end MonomialCenter
 

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFibA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFibB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFibA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFibB
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,6 @@ variable {K : Type*} [Fintype K] [DecidableEq K] {ι : K → Type*} [∀ k, Fint
   [∀ k, DecidableEq (ι k)]
 
 variable (ι) in
-
 def segMono (i : (k : K) → ι k) : MvPolynomial (Σ k, ι k) ℂ := ∏ k, X ⟨k, i k⟩
 
 theorem eval_segMono (i : (k : K) → ι k) (z : (Σ k, ι k) → ℂ) : eval z (segMono ι i) = segre z i := by
@@ -19,7 +22,8 @@ theorem eval_segMono (i : (k : K) → ι k) (z : (Σ k, ι k) → ℂ) : eval z 
 
 theorem segMono_homog (i : (k : K) → ι k) :
     IsWeightedHomogeneous (blkW ι) (segMono ι i) (fun _ => 1) := by
-  have := IsWeightedHomogeneous.prod (w := blkW ι) Finset.univ (fun k => (X ⟨k, i k⟩ : MvPolynomial (Σ k, ι k) ℂ))
+  have := IsWeightedHomogeneous.prod (w := blkW ι) Finset.univ
+    (fun k => (X ⟨k, i k⟩ : MvPolynomial (Σ k, ι k) ℂ))
     (fun k => blkW ι ⟨k, i k⟩) (fun k _ => isWeightedHomogeneous_X ℂ _ _)
   unfold segMono
   convert this using 1
@@ -37,9 +41,11 @@ theorem eval_psiPoly (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1)
   have hs : segre z = ∑ i, segre z i • (fun i' => if i = i' then (1 : ℂ) else 0) := by
     funext i'
     simp [Finset.sum_apply]
-  simp only [psiPoly, map_sum, map_mul, eval_C, eval_segMono]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psiPoly, map_sum, map_mul, eval_C, eval_segMono]
   conv_rhs => rw [hs]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_comm]
 
@@ -53,7 +59,6 @@ theorem psiPoly_homog (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1
   exact (mem_weightedHomogeneousSubmodule _ _ _ _).mp hmem
 
 variable (ι) in
-
 def idealC (P : Ideal (MRing ι)) : Ideal (MvPolynomial (Σ k, ι k) ℂ) :=
   Ideal.map (map (Int.castRingHom ℂ)) P
 
@@ -134,10 +139,12 @@ theorem segre_rel {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P)
     rw [hD]
     exact comp_mul_homog (psiPoly_homog Ψ j) (c j) _
   have heq := congrArg (weightedHomogeneousComponent (blkW ι) (fun _ : K => n + 1)) hga
-  rw [hseg, map_add, ← hc, map_sum] at heq
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hseg, map_add (f := _), ← hc, map_sum] at heq
   simp only [hterm] at heq
   have hev := congrArg (eval z) heq
-  rw [map_add, map_sum, eval_idealC hz hgc, zero_add, map_pow, eval_segMono] at hev
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sum, eval_idealC hz hgc, zero_add, map_pow, eval_segMono] at hev
   rw [← hev]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   rw [map_mul, hG2, eval_psiPoly, mul_comm]

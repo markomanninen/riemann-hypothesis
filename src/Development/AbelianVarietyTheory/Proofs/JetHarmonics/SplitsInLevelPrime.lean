@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions
 open GlobalTheory.PtTie
 

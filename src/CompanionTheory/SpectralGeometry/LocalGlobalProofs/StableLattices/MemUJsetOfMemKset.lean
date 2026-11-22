@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.KsetSubset
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.KsetSubset
+
+@[expose] public section
 
 open Matrix
 open PI.UpqRep (UJset Kset IsKFin IsKStableOn)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionLatticeFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionSpanStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionLatticeFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionSpanStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -14,7 +19,7 @@ theorem SectionRingFinite.proof (hL : SectionLatticeFinite.Statement) (hS : Sect
   intro K _ ι _ Ω _ y a q w hy hw hgen
   classical
   obtain ⟨n₀, hn₀⟩ := hS K ι Ω y a q w hy hw hgen
-  choose G hG using fun m : ℕ => hL K ι Ω y a m hy
+  choose G hG using fun m : ℕ => _root_.AddSubgroup.isAddFG_iff.mp (hL K ι Ω y a m hy)
   set P : Finset (ℕ × Ω) :=
     (Finset.range (n₀ + 1)).biUnion fun m => (G m).image fun g => (m, g) with hP
   have memP : ∀ m g, m ≤ n₀ → g ∈ G m → (m, g) ∈ P := by

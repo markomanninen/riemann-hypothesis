@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.L2.Th1.H GlobalTheory.IndefiniteRowSideFullHecke.JetSumTable GlobalTheory.MomT
 
 noncomputable section
@@ -8,7 +13,8 @@ namespace GlobalTheory.MomT.Heis
 
 theorem HV_conj {ι : Type} [Fintype ι] {a b : ℕ} (sc : ℝ) (x y : VV ι a b) :
     Formalism.L2.Ker.HV sc y x = (starRingEnd ℂ) (Formalism.L2.Ker.HV sc x y) := by
-  simp only [Formalism.L2.Ker.HV, LinearMap.mk₂'ₛₗ_apply, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.L2.Ker.HV, LinearMap.mk₂'ₛₗ_apply, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
   congr 1
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => mul_comm _ _
 
@@ -28,7 +34,7 @@ theorem alpha_opU_mul {V : Type} [AddCommGroup V] [Module ℂ V] (H : Sesq V)
       simp only [← Complex.exp_add, h]
     linear_combination u * this
   apply key
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   rw [hH x y]
   have h1 : H x y = ((H x y).re : ℂ) + ((H x y).im : ℂ) * Complex.I := (Complex.re_add_im _).symm
   have h2 : (starRingEnd ℂ) (H x y) = ((H x y).re : ℂ) - ((H x y).im : ℂ) * Complex.I := by
@@ -59,10 +65,10 @@ theorem imH_eq (x y : HomE X.E a b) : imH A x y = coc A x y - coc A y x := by
   ring
 
 theorem imH_add_left (x y z : HomE X.E a b) : imH A (x + y) z = imH A x z + imH A y z := by
-  simp only [imH, altE, emb_add, map_add, LinearMap.add_apply, Complex.add_im]
+  simp only [imH, altE, emb_add, map_add (f := _), LinearMap.add_apply, Complex.add_im]
 
 theorem imH_add_right (x y z : HomE X.E a b) : imH A x (y + z) = imH A x y + imH A x z := by
-  simp only [imH, altE, emb_add, map_add, LinearMap.add_apply, Complex.add_im]
+  simp only [imH, altE, emb_add, map_add (f := _), LinearMap.add_apply, Complex.add_im]
 
 theorem Wx_comm (x y : HomE X.E a b) (F : VCx X.Tau a b → ℂ) :
     Wx A x (Wx A y F) = fun z => brkE A y x * Wx A y (Wx A x F) z := by
@@ -101,8 +107,8 @@ theorem calculus : ∀ (X : Fields) (A : Amb X) (a b : ℕ), (∀ (x y : HomE X.
   intro X A a b
   refine ⟨Wx_Wx A, Wx_comm A, imH_eq A, fun x y z => ⟨?_, ?_, imH_add_left A x y z, imH_add_right A x y z⟩,
     fun _ _ => rfl, fun y t => ?_, fun x F hF k => contDiff_Wx A x F k (hF k), fun κ T c F hF m => jetC_sum A κ T c F hF m⟩
-  · simp only [coc, imH_add_left, emb_add, map_add, LinearMap.add_apply, Complex.add_re]; ring
-  · simp only [coc, imH_add_right, emb_add, map_add, LinearMap.add_apply, Complex.add_re]; ring
+  · simp only [coc, imH_add_left, emb_add, map_add (f := _), LinearMap.add_apply, Complex.add_re]; ring
+  · simp only [coc, imH_add_right, emb_add, map_add (f := _), LinearMap.add_apply, Complex.add_re]; ring
   · have : brkE A y t = Complex.exp (-(2 * (Real.pi : ℂ)) * Complex.I * (imH A t y : ℂ)) := rfl
     rw [this, Complex.exp_eq_one_iff]
     have hne : (2 * (Real.pi : ℂ) * Complex.I) ≠ 0 := Complex.two_pi_I_ne_zero

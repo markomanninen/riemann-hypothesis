@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.GlobalCharacterOfInputs
+
+@[expose] public section
 
 open Matrix Polynomial
 open PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.G8
@@ -42,7 +46,7 @@ theorem exists_eigenbasis {n : ℕ} (N : Matrix (Fin n) (Fin n) ℂ) (hs : N.cha
   ext i j
   have h2 := congrFun (hNv j) i
   rw [mul_diagonal]
-  simpa [mul_apply, mulVec, dotProduct, mul_comm] using h2
+  simpa [Matrix.mul_apply, mulVec, dotProduct, mul_comm] using h2
 
 variable {n : ℕ}
 

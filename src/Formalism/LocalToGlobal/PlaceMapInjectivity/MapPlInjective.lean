@@ -1,5 +1,9 @@
-import Formalism.ConjugateSelfDual.StatementRest
-import Mathlib
+module
+
+public import Formalism.ConjugateSelfDual.StatementRest
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

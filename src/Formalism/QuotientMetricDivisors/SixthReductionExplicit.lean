@@ -1,13 +1,15 @@
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.FinalW
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.GlobalBoundRefinements
+module
+
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.GlobalBoundRefinements
+
+@[expose] public section
 
 open NumberField
 
 namespace Formalism.DivisionValues
 
 theorem divIneqRecord : DivIneqRecord := divisor_inequality_explicit
-
-theorem goodTwist : GoodTwist := good_twisted_lattice
 
 end Formalism.DivisionValues

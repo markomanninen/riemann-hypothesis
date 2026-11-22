@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SiegelOneDescent.Descend2
+
+@[expose] public section
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.So
 
@@ -88,8 +92,9 @@ theorem jcpt : StdGood → GrpTop → JTop → JCpt := by
   have hP : IsCompact ((Subtype.val : cover A ν ι → _) ⁻¹' (B ×ˢ C₂)) :=
     hemb.isCompact_preimage (hBc.prod hC₂)
   have hprj : Continuous (prj A ν ι) := continuous_snd.comp continuous_subtype_val
-  have hclK : IsClosed (cK α j : Set (cover A ν ι)) :=
-    (hUK.isClosed.preimage hj).inter (hC₂.isClosed.preimage hprj)
+  have hclK : IsClosed (cK α j : Set (cover A ν ι)) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact (hUK.isClosed.preimage hj).inter (hC₂.isClosed.preimage hprj)
   refine hP.of_isClosed_subset hclK ?_
   intro x hx
   have h1 : j x ∈ C₁ := hx.1

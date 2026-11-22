@@ -1,19 +1,23 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RatioTrans
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxMaps
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPowGrpBaseChange
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsMonHomOfComm
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowExt
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGrpPullbackThick
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordCompatOfPow
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.RatioTrans
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxMaps
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsPowGrpBaseChange
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.IsMonHomOfComm
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PowExt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIsPowGrpSplitTorus
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsGrpPullbackThick
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GtCoordCompatOfPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem mul_box (hG : GlobalFnsSt) (t : ∀ χ : D.X, LB.Gen (LB.LinComb D.P.L (
       val (t (pD.xe χ i)) (ρ i).left y J * val (t (pD.xe χ' i)) (ρ i).left y J := fun i => by
     have vc := val_cub D.cub (ρ i) hJ (cP D T (pD.xe χ i)) (cP D T (pD.xe χ' i)) p
     rw [comp_cP, comp_cP] at vc
-    rw [cPoint_proj, cPoint_proj, hp, map_add, Pi.add_apply]
+    rw [cPoint_proj, cPoint_proj, hp, map_add (f := _), Pi.add_apply]
     exact ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) rfl vc)).symm.trans
       ((val_corr hJ (hm (pD.xe χ i) (pD.xe χ' i)) (ρ i).left).trans (val_mul hJ _ _ _))
   have m' := Finset.prod_congr (s₁ := Finset.univ) rfl fun i _ => m i

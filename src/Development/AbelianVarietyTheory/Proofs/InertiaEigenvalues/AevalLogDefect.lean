@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,8 @@ def truncLogF {R : Type} [CommRing R] (n : ℕ) (u : R) : R :=
 
 theorem map_truncLogF {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (n : ℕ) (u : R) :
     f (truncLogF n u) = truncLogF n (f u) := by
-  simp [truncLogF, map_sum, map_mul, map_pow, map_neg, map_one, map_natCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [truncLogF, map_sum, map_mul, map_pow, map_neg, map_one, map_natCast]
 
 def logDefect (n : ℕ) : MvPolynomial (Fin 2) ℤ :=
   truncLogF n (MvPolynomial.X 0 + MvPolynomial.X 1 + MvPolynomial.X 0 * MvPolynomial.X 1) -

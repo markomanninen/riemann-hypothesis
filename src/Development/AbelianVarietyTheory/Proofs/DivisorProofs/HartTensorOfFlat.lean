@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -10,7 +15,7 @@ def divIdeal (A S X : Type) [CommRing A] [CommRing S] [Algebra A S] [AddCommGrou
   carrier := {u | ∃ x : X, algebraMap A S u • y = algebraMap A S a • x}
   add_mem' := by
     rintro u v ⟨x, hx⟩ ⟨x', hx'⟩
-    exact ⟨x + x', by rw [map_add, add_smul, hx, hx', smul_add]⟩
+    exact ⟨x + x', by rw [map_add (f := _), add_smul, hx, hx', smul_add]⟩
   zero_mem' := ⟨0, by simp⟩
   smul_mem' := by
     rintro c u ⟨x, hx⟩
@@ -23,7 +28,7 @@ theorem lTensor_smul_id_apply (R M O : Type) [CommRing R] [AddCommGroup M] [Modu
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul o n => simp [LinearMap.lTensor_tmul, algebraMap_smul, TensorProduct.tmul_smul]
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
 
 end GlobalTheory.HartFlatBaseChange
 
@@ -66,7 +71,7 @@ theorem GlobalTheory.GoodEtale.hart_tensor_of_flat : ∀ (A R M O : Type) [CommR
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul o n => simp [TensorProduct.piRight_apply, TensorProduct.piRightHom_tmul]
-    | add x y hx hy => rw [map_add, Pi.add_apply, hx, hy, map_add]
+    | add x y hx hy => rw [map_add (f := _), Pi.add_apply, hx, hy, map_add (f := _)]
   have hg : g.lTensor O m = 0 := by
     apply (TensorProduct.piRight R R O (fun _ : s => M ⧸ N)).injective
     funext i

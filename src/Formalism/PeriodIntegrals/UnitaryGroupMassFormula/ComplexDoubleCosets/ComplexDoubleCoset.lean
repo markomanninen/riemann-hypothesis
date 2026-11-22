@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.CplxDC
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ComplexDoubleCosets.CplxDC
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FoldDCUnfold
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -87,8 +91,8 @@ theorem complex_double_coset : CplxDC.{u} := by
     rw [poinc_split D g φ (fun y => split (φ y)) hAfin x, poinc_split D' h ψ (fun y => split (ψ y)) hBfin x,
       sum_cf_mul_sum_cf_mul_eq_sum_sum_toReal_mul]
   have hABm : ∀ k j, Measurable (fun x => (∑' δ : D, g k ((δ : G) * x)) * ∑' δ : D', h j ((δ : G) * x)) :=
-    fun k j => (Measurable.ennreal_tsum fun δ => (hgm k).comp (measurable_const_mul _)).mul
-      (Measurable.ennreal_tsum fun δ => (hhm j).comp (measurable_const_mul _))
+    fun k j => (Measurable.tsum fun δ => (hgm k).comp (measurable_const_mul _)).mul
+      (Measurable.tsum fun δ => (hhm j).comp (measurable_const_mul _))
   have hABfin : ∀ k j, ∫⁻ x in FΓ, (∑' δ : D, g k ((δ : G) * x)) * ∑' δ : D', h j ((δ : G) * x) ∂μ ≠ ⊤ :=
     fun k j => ne_top_of_le_ne_top hfin (lintegral_mono fun x => mul_le_mul' (hA k x) (hB j x))
   have hint := fun k j => toReal_int (ν := μ.restrict FΓ) (hABm k j).aemeasurable (hABfin k j)
@@ -111,21 +115,21 @@ theorem complex_double_coset : CplxDC.{u} := by
   rw [show (fun x => poinc D φ x * poinc D' ψ x) = _ from funext hprod]
   have hI1 : Integrable (fun x => ∑ k, ∑ j, cf k * cf j *
       ((((∑' δ : D, g k ((δ : G) * x)) * ∑' δ : D', h j ((δ : G) * x)).toReal : ℝ) : ℂ)) (μ.restrict FΓ) :=
-    integrable_finset_sum _ fun k _ => integrable_finset_sum _ fun j _ => ((hint k j).1).const_mul _
+    MeasureTheory.integrable_finsetSum _ fun k _ => MeasureTheory.integrable_finsetSum _ fun j _ => ((hint k j).1).const_mul _
   refine ⟨hI1, ?_⟩
   have hr : ∀ r : R, ∫ x in Fs r, φ x * ψ ((r : G)⁻¹ * x) ∂μ =
       ∑ k, ∑ j, cf k * cf j * (((∫⁻ x in Fs r, g k x * h j ((r : G)⁻¹ * x) ∂μ).toReal : ℝ) : ℂ) := by
     intro r
     simp_rw [hprod2 (r : G)]
-    rw [integral_finset_sum _ (fun k _ => integrable_finset_sum _ fun j _ => ((hrint k j r).1).const_mul _)]
+    rw [MeasureTheory.integral_finsetSum _ (fun k _ => MeasureTheory.integrable_finsetSum _ fun j _ => ((hrint k j r).1).const_mul _)]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [integral_finset_sum _ (fun j _ => ((hrint k j r).1).const_mul _)]
+    rw [MeasureTheory.integral_finsetSum _ (fun j _ => ((hrint k j r).1).const_mul _)]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [integral_const_mul, (hrint k j r).2]
-  rw [tsum_congr hr, integral_finset_sum _ (fun k _ => integrable_finset_sum _ fun j _ => ((hint k j).1).const_mul _),
+  rw [tsum_congr hr, MeasureTheory.integral_finsetSum _ (fun k _ => MeasureTheory.integrable_finsetSum _ fun j _ => ((hint k j).1).const_mul _),
     Summable.tsum_finsetSum (fun k _ => summable_sum fun j _ => (hsI k j).mul_left _)]
   refine Finset.sum_congr rfl fun k _ => ?_
-  rw [integral_finset_sum _ (fun j _ => ((hint k j).1).const_mul _),
+  rw [MeasureTheory.integral_finsetSum _ (fun j _ => ((hint k j).1).const_mul _),
     Summable.tsum_finsetSum (fun j _ => (hsI k j).mul_left _)]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [integral_const_mul, (hint k j).2, hunf k j, tsum_mul_left, ← Complex.ofReal_tsum,

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RSplitCore2
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RSplitCore2
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ lemma card_le {p : ℕ} (hp : p.Prime) (s : Finset (HeightOneSpectrum (𝓞 K)))
         apply Finset.sum_le_sum
         intro q _
         haveI := q.2.1
-        exact Nat.mul_pos (Ideal.ramificationIdx_pos q.1 ℤ) (Ideal.inertiaDeg_pos q.1 ℤ)
+        exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) q.1) (Ideal.inertiaDeg_pos q.1 ℤ)
     _ = Module.finrank ℤ (𝓞 K) := hsum
     _ = Module.finrank ℚ K := RingOfIntegers.rank K
 

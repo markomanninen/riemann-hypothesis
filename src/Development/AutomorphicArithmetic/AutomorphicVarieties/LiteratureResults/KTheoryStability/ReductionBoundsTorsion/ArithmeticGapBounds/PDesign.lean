@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem out_mk {Γ : Type*} [Group Γ] (N H : Subgroup Γ) [N.Normal] (hNH : N �
   obtain ⟨n, hn⟩ := QuotientGroup.mk_out_eq_mul N k
   rw [hn]
   have e : k * (n : Γ) = (k * n * k⁻¹) * k := by group
-  rw [e, hφ _ (hNH (Subgroup.Normal.conj_mem ‹_› _ n.2 k))]
+  rw [e, hφ _ (hNH (Subgroup.Normal.conj_mem _ n.2 k))]
 
 theorem rel_out {Γ : Type*} [Group Γ] (H : Subgroup Γ) (φ : Γ → ℝ)
     (hφ : ∀ h ∈ H, ∀ k, φ (h * k) = φ k) (y : Γ) :

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RulesOnPbT
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RulesOnPbT
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

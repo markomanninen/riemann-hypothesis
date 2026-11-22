@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisEqZeroOfForallDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAcrisLogOneAdd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalLogDefect
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LogDefectCoeffEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorialTruncatedLogAdditivityDefectCoeffDvdStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AcrisEqZeroOfForallDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAcrisLogOneAdd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AevalLogDefect
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LogDefectCoeffEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorialTruncatedLogAdditivityDefectCoeffDvdStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -20,7 +24,7 @@ theorem defect_mem {R : Type} [CommRing R] (S : Subring R) (a b : R)
   choose A hAS hA using ha
   choose B hBS hB using hb
   have hD : ∀ d : Fin 2 →₀ ℕ, ∃ D : ℤ, (((d 0).factorial * (d 1).factorial : ℕ) : ℤ) *
-      MvPolynomial.coeff d (logDefect n) = ((n.factorial * ((n - 1) / 2).factorial : ℕ) : ℤ) * D := by
+      AddMonoidAlgebra.coeff (logDefect n) d = ((n.factorial * ((n - 1) / 2).factorial : ℕ) : ℤ) * D := by
     intro d
     have hd : Finsupp.single 0 (d 0) + Finsupp.single 1 (d 1) = d := by
       ext x; fin_cases x <;> simp
@@ -78,10 +82,11 @@ theorem isLogJ_add : ∀ (l : ℕ) [Fact l.Prime] (a b : Per.Ainf l) (y y' : Per
         (sa : Per.AinfP l) + (sb : Per.AinfP l) + ((l ^ r * q : ℕ) : Per.AinfP l) * e := by
       simp [hEe]
     rw [hc]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     push_cast at hE ⊢
     linear_combination hsa + hsb - hE
-  · simp only [map_add, map_mul, map_natCast]
+  · set_option synthInstance.maxHeartbeats 200000 in
+    simp only [map_add (f := algebraMap (Per.Acris0 l) (Per.Acris l)), map_mul, map_natCast]
     push_cast
     linear_combination hza + hzb
 

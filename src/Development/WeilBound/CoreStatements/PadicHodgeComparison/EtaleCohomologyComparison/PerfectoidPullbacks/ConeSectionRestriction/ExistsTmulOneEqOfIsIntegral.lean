@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,7 +28,6 @@ theorem exists_tmul_one_eq_of_isIntegral {P A : Type} [CommRing P] [IsDomain P] 
         ((TensorProduct.toIntegralClosure P A (FractionRing P) u : _) : A ⊗[P] FractionRing P) := by
     intro u
     induction u with
-    | zero => exact ⟨0, by simp⟩
     | tmul a y =>
       obtain ⟨p, hp⟩ := IsIntegrallyClosed.isIntegral_iff.mp y.2
       refine ⟨p • a, ?_⟩
@@ -33,7 +36,7 @@ theorem exists_tmul_one_eq_of_isIntegral {P A : Type} [CommRing P] [IsDomain P] 
     | add x y hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [TensorProduct.add_tmul, ha, hb, map_add, Subalgebra.coe_add]⟩
+      exact ⟨a + b, by rw [TensorProduct.add_tmul, ha, hb, map_add (f := _), Subalgebra.coe_add]⟩
   obtain ⟨a, ha⟩ := key u
   exact ⟨a, by rw [ha, hu]⟩
 
@@ -71,7 +74,8 @@ theorem exists_away_isDomain_of_etale {P A : Type} [CommRing P] [IsDomain P] [Is
     have h1 : (∑ i, a i) = 1 := by
       apply hι
       simp only
-      rw [TensorProduct.sum_tmul, Finset.sum_congr rfl (fun i _ => ha i), ← map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [TensorProduct.sum_tmul, Finset.sum_congr rfl (fun i _ => ha i), ← map_sum,
         Finset.univ_sum_single]
       exact map_one φ.symm
     exact (Ideal.IsPrime.ne_top inferInstance) ((Ideal.eq_top_iff_one q).2 (h1 ▸ hsum))
@@ -85,7 +89,7 @@ theorem exists_away_isDomain_of_etale {P A : Type} [CommRing P] [IsDomain P] [Is
     exact isUnit_one
   let ψ : Localization.Away (a i₀) →+* Ai i₀ := IsLocalization.Away.lift (a i₀) hFg
   have hψ : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨⟨y, s⟩, rfl⟩ := IsLocalization.mk'_surjective (Submonoid.powers (a i₀)) x
     have hspec := IsLocalization.mk'_spec (Localization.Away (a i₀)) y s

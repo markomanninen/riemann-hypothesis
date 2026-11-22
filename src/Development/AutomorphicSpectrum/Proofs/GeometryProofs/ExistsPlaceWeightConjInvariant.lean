@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointExistsUniqueEmbeddingStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointExistsUniqueEmbeddingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem isOpen_nzBlocks : IsOpen (nzBlocks K ι) := by
 theorem blockSq_contDiff (k : K) {n : WithTop ℕ∞} :
     ContDiff ℝ n fun z : (Σ k, ι k) → ℂ => blockSq z k := by
   unfold blockSq
-  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ (⟨k, i⟩ : Σ k, ι k))
+  exact ContDiff.sum fun i _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (⟨k, i⟩ : Σ k, ι k))
 
 theorem prMap_contDiffOn {n : WithTop ℕ∞} :
     ContDiffOn ℝ n (prMap (K := K) (ι := ι)) (nzBlocks K ι) := by
@@ -73,14 +77,14 @@ theorem prMap_contDiffOn {n : WithTop ℕ∞} :
     rw [Complex.real_smul, Complex.ofReal_inv, prMap, div_eq_inv_mul]
   rw [hq]
   have hs : ContDiff ℝ n fun z : (Σ k, ι k) → ℂ => (starRingEnd ℂ) (z ⟨q.1, q.2.2⟩) := by
-    have h0 := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ (n := n) (⟨q.1, q.2.2⟩ : Σ k, ι k))
+    have h0 := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) (n := n) (⟨q.1, q.2.2⟩ : Σ k, ι k))
     simpa [Function.comp_def] using h0
   have h1 : ContDiffOn ℝ n (fun z : (Σ k, ι k) → ℂ => (blockSq z q.1)⁻¹) (nzBlocks K ι) :=
     (blockSq_contDiff q.1).contDiffOn.inv fun z hz =>
       (blockSq_pos ((show ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0 from hz) q.1)).ne'
   have h2 : ContDiffOn ℝ n (fun z : (Σ k, ι k) → ℂ => z ⟨q.1, q.2.1⟩ * (starRingEnd ℂ) (z ⟨q.1, q.2.2⟩))
       (nzBlocks K ι) :=
-    ((contDiff_apply ℝ ℂ (n := n) (⟨q.1, q.2.1⟩ : Σ k, ι k)).mul hs).contDiffOn
+    ((contDiff_apply ℝ (fun _ => ℂ) (n := n) (⟨q.1, q.2.1⟩ : Σ k, ι k)).mul hs).contDiffOn
   exact ContDiffOn.smul h1 h2
 
 theorem prMap_continuousAt {z : (Σ k, ι k) → ℂ} (hz : z ∈ nzBlocks K ι) :
@@ -322,7 +326,7 @@ theorem cj_contDiff {n : WithTop ℕ∞} : ContDiff ℝ n (cj (K := K) (ι := ι
   rw [contDiff_pi]
   intro p
   show ContDiff ℝ n fun z : (Σ k, ι k) → ℂ => (starRingEnd ℂ) (z p)
-  have h0 := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ ℂ (n := n) p)
+  have h0 := Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) (n := n) p)
   simpa [Function.comp_def] using h0
 
 theorem cj_cj (z : (Σ k, ι k) → ℂ) : cj (cj z) = z := by
@@ -356,8 +360,8 @@ theorem average {y : (Σ k, ι k) → Ω} {φ : F →+* Ω} {t : (F →+* ℂ) �
 
 end PlaceWeightSmooth
 
-open PlaceWeightSmooth in
 
+open PlaceWeightSmooth in
 theorem exists_placeWeight (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω]
     (F : Type) [Field F] [NumberField F] (y : (Σ k, ι k) → Ω) (φ : F →+* Ω) (t : (F →+* ℂ) → ℝ)
     (hO : OverInt y φ) :

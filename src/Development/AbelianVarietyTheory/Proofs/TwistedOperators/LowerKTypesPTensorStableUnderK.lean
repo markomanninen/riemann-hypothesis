@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsKStableOnOfLieStableFiniteDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FunJetApply
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsKStableOnOfLieStableFiniteDim
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.SphJet
 open scoped InnerProductSpace ComplexOrder Matrix.Norms.L2Operator
@@ -124,7 +128,8 @@ theorem vmAct_mul (τ : Matrix (Fin n) (Fin n) ℂ → (W →L[ℂ] W)) (k l : M
     (h : τ (lᴴ * kᴴ) = τ lᴴ * τ kᴴ) (G : PiLp 2 (fun _ : Fin n × Fin n => W)) :
     vmAct τ (k * l) G = vmAct τ l (vmAct τ k G) := by
   ext q
-  simp only [vmAct_apply, Matrix.conjTranspose_mul, h, ContinuousLinearMap.mul_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vmAct_apply, Matrix.conjTranspose_mul, h, ContinuousLinearMap.mul_apply, map_sum, map_smul,
     Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun p _ => ?_
@@ -140,7 +145,7 @@ def vmGen (a₀ : W →ₗ[ℂ] W) (Y : Matrix (Fin n) (Fin n) ℂ) :
     (∑ d, Y d q.1 • G (d, q.2)) + (∑ c, star (Y c q.2) • G (q.1, c)) + a₀ (G q)
   map_add' F G := by
     ext q
-    simp only [PiLp.add_apply, smul_add, Finset.sum_add_distrib, map_add]
+    simp only [PiLp.add_apply, smul_add, Finset.sum_add_distrib, map_add (f := _)]
     abel
   map_smul' c G := by
     ext q
@@ -216,7 +221,8 @@ theorem familyArrayLinearMap_matrixUnitFamilyActionGenerator (E : Fin n → Fin 
     exact Finset.sum_congr rfl fun x _ => by simp
   ext α
   obtain ⟨⟨a, b⟩, rfl⟩ : ∃ p, α = fun _ => p := ⟨α 0, funext fun i => by rw [Subsingleton.elim i 0]⟩
-  simp [isometryArrayLinearMap, arr1, arrE, factorAction, ptE, arrTo, arrOf, actM, vmGen_apply, ha, Finset.sum_add_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [isometryArrayLinearMap, arr1, arrE, factorAction, ptE, arrTo, arrOf, actM, vmGen_apply, ha, Finset.sum_add_distrib,
     smul_add, smul_sub, Finset.sum_sub_distrib, hYe', hite, smul_ite, hs1, hs2,
     LinearMap.sum_apply, map_sum, map_smul, neg_smul, Finset.sum_neg_distrib]
   abel
@@ -297,7 +303,7 @@ theorem vminus_stable_under_K : ∀ (V W : Type) [NormedAddCommGroup V] [InnerPr
   choose f hf using hex
   let a₀ : W →ₗ[ℂ] W :=
     { toFun := f
-      map_add' := fun v v' => j.injective (by simp only [map_add, hf])
+      map_add' := fun v v' => j.injective (by simp only [map_add (f := _), hf])
       map_smul' := fun c v => j.injective (by simp only [map_smul, hf, RingHom.id_apply]) }
   have ha : ∀ v, j (a₀ v) = actM E ((-Y).map star) (j v) := hf
   have hJJ := Jm_mul_self ε

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsND
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneN
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneA
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsND
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneN
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsOneA
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,7 +189,7 @@ theorem small_term_pow_le (h : rows_Hyps Y C' Cl Cg cb Cu cT CT C0 A c Cpr Ca C2
     unfold rows_Mt; exact Finset.prod_nonneg fun τ _ => a0 τ
   have mm : rows_Mt Y Ca δm t ≤ rows_Mt Y (max Ca 1) δm t := by
     unfold rows_Mt
-    exact Finset.prod_le_prod (fun τ _ => a0 τ) fun τ _ =>
+    exact Finset.prod_le_prod₀ (fun τ _ => a0 τ) fun τ _ =>
       ampMin_mono_constant D hCa (le_max_left _ _) (by linarith) τ u u' _ _ _ (hx τ)
   have m3 : rows_Mt Y Ca δm t ≤ (∏ τ, tvPr D τ u') * wordPairWeightRatio D u u' ^ D.R.f :=
     mm.trans (m1.trans (mul_le_mul_of_nonneg_left m2 hP0))

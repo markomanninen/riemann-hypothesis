@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothAdd
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal ComplexConjugate

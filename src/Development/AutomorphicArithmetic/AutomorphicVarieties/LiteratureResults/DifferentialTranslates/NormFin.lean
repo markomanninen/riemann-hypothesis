@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
-import GroundTheory.GlobalFields.TateThesis.ConductorIdeal
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+public import GroundTheory.GlobalFields.TateThesis.ConductorIdeal
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Dr
 
 private theorem one_of_compact {G : Type} [Group G] [TopologicalSpace G] (U : Subgroup G) (hU : IsCompact (U : Set G))

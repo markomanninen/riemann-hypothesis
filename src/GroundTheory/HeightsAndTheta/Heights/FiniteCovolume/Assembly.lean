@@ -1,59 +1,63 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdaptedReduction
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdelicCovolumeFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchInvariant
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchLatticeDiscrete
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArithmeticCovolumeFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedGenerators
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedIndexSubgroupsFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedInverseCompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoeffLatticeBasis
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementForm
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCongruenceUnitsFiniteIndex
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDiscreteFundamentalDomain
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenReflection
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenReflectionMaps
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenspacesOrthogonal
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramDetermines
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHyperbolicPairTransitive
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIdealClassesFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIndexLeDet
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegerSmallAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegralFamilyBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIsotropicScaling
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIsotropicSplit
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PKTransitive
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLatticeOrbitsFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLenCauchySchwarz
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLenSq
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineCoeffsFG
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineIndexCoeffs
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineIndexNeZero
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLinePairOrbitsFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMahlerCompactness
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantExists
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMinkowskiVolumeForm
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PParabolicDecomposition
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PPhaseOnMinus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PScalingLaw
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PShortestVectorIndex
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PShortVectorIsotropic
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusIntegralHomogeneous
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldingIntegral
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldingTorus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldOrbit
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVectorOrbitsFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVolumeFormIntComb
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedIndexBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedLenSmul
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedNormSq
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedSpaceDim
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightPos
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWittPartner
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdaptedReduction
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdelicCovolumeFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchInvariant
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchLatticeDiscrete
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArithmeticCovolumeFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedGenerators
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedIndexSubgroupsFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PBoundedInverseCompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoeffLatticeBasis
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementForm
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCongruenceUnitsFiniteIndex
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDiscreteFundamentalDomain
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenReflection
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenReflectionMaps
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PEigenspacesOrthogonal
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramDetermines
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHyperbolicPairTransitive
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIdealClassesFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIndexLeDet
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegerSmallAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegralFamilyBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIsotropicScaling
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIsotropicSplit
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PKTransitive
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLatticeOrbitsFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLenCauchySchwarz
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLenSq
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineCoeffsFG
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineIndexCoeffs
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineIndexNeZero
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLinePairOrbitsFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMahlerCompactness
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantExists
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMinkowskiVolumeForm
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PParabolicDecomposition
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PPhaseOnMinus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PScalingLaw
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PShortestVectorIndex
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PShortVectorIsotropic
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTorusIntegralHomogeneous
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldingIntegral
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldingTorus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldOrbit
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVecAtNeZero
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVectorOrbitsFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PVolumeFormIntComb
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedIndexBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedLenSmul
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedNormSq
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightedSpaceDim
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWeightPos
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PWittPartner
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -130,17 +134,12 @@ theorem IndexLeDet.full : IndexLeDet.Statement E := IndexLeDet.proof E
 
 theorem WeightedNormSq.full : WeightedNormSq.Statement E := WeightedNormSq.proof E
 
-theorem IdealClassesFinite.full : IdealClassesFinite.Statement E := IdealClassesFinite.proof E
-
 theorem IntegralFamilyBound.full : IntegralFamilyBound.Statement E := IntegralFamilyBound.proof E
 
-theorem CongruenceUnitsFiniteIndex.full : CongruenceUnitsFiniteIndex.Statement E :=
-  CongruenceUnitsFiniteIndex.proof E
-
-theorem WeightedSpaceDim.full [IsTotallyComplex E] : WeightedSpaceDim.Statement E :=
+theorem WeightedSpaceDim.full [_root_.NumberField.IsTotallyComplex E] : WeightedSpaceDim.Statement E :=
   WeightedSpaceDim.proof E
 
-theorem WeightedIndexBound.full [IsTotallyComplex E] : WeightedIndexBound.Statement E :=
+theorem WeightedIndexBound.full [_root_.NumberField.IsTotallyComplex E] : WeightedIndexBound.Statement E :=
   WeightedIndexBound.proof E (CoeffLatticeBasis.full E) (IndexLeDet.full E) (WeightedNormSq.full E)
     (WeightedSpaceDim.full E) (MinkowskiVolumeForm.full _ _) (VolumeFormIntComb.full _ _)
 
@@ -157,7 +156,7 @@ end Numbers
 section Spaces
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (h : HermitianForm F E W) (v : Basis ι E W)
 
@@ -216,7 +215,7 @@ end Spaces
 section Conditional
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem MahlerCompactness.full_of {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*}
     [Fintype ι] [DecidableEq ι] (h : HermitianForm F E W) (v : Basis ι E W)

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThProps
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -79,8 +83,8 @@ def BetaAbs {n : ℕ} (Λ : GenLat E n) (β : c.F) : Prop :=
   ∀ σ : c.F →+* ℂ, ‖σ β‖ ^ 2 =
     ((Λ.Ln.toAddSubgroup.addSubgroupOf Λ.La.toAddSubgroup).index : ℝ) ^ (Dw.p + Dw.q)
 
-open Classical in
 
+open Classical in
 def betaH {n : ℕ} (Λ : GenLat E n) : c.F :=
   if h : ∃ β : c.F, β ≠ 0 ∧ BetaIs (Dw := Dw) c Λ β ∧ BetaAbs (Dw := Dw) c Λ β then h.choose else 1
 
@@ -92,8 +96,8 @@ def InZh {n : ℕ} (Λ : GenLat E n) (N : ℕ) {T : Over Xo.X} (a : Fin n → (T
 
 def Mfr (l : Level H) : Ideal (𝓞 E) := l.Mb.map (H.bar : 𝓞 E →+* 𝓞 E)
 
-open Classical in
 
+open Classical in
 def cSep (l : Level H) : 𝓞 E := if h : ∃ c, c ∈ Mfr l ∧ c - 1 ∈ l.Mb then h.choose else 0
 
 def pairL {n : ℕ} (x0 x : Fin n → Dw.La) : ℤ := ∑ b, Dw.EF (x0 b) (cSep l • x b)
@@ -135,12 +139,12 @@ structure DeltaDat (n : ℕ) : Type 1 where
 
   φδ : (Fin n → LevQ Dw l₂) → c.F
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.eF {n : ℕ} (d : DeltaDat Xo c n) : c.F ≃ₐ[ℚ] d.c₂.F := IntermediateField.equivOfEq d.hF.symm
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.w {n : ℕ} (d : DeltaDat Xo c n) (x0 : Fin n → Dw.La) : (Fin n → LevQ Dw d.l₂) → d.c₂.F :=
   fun q => d.eF (zetaM c ^ pairL (l := l) x0 (fun b => levRep (q b)) * d.φδ q)
 
@@ -149,14 +153,14 @@ def SecMaps {X : Scheme.{0}} {A B : LB X} (w : LB.Iso A B) (a : LB.Sec A) (b : L
     ((@id (Γ(X, B.U p.1 ⊓ A.U p.2)ˣ) (w.s p) : Γ(X, B.U p.1 ⊓ A.U p.2)ˣ) : Γ(X, B.U p.1 ⊓ A.U p.2)) *
       (X.presheaf.map (homOfLE (inf_le_right : B.U p.1 ⊓ A.U p.2 ≤ A.U p.2)).op).hom (a.f p.2)
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.EtaOK {n : ℕ} (d : DeltaDat Xo c n) : Prop :=
   (∀ a, (d.Xo₂.univ.eta a ^ d.pd).left ≫ d.m.φ = d.r ≫ (Xo.univ.eta a).left) ∧
     ∀ a, (d.Xo₂.univ.etaA a ^ (d.l₂.A / l.A)).left ≫ d.m.φ = d.r ≫ (Xo.univ.etaA a).left
 
-variable {Xo c} in
 
+variable {Xo c} in
 def FrOver {n : ℕ} (d : DeltaDat Xo c n) {k : Type} [CommRing k]
     [Algebra c.F k] [Algebra d.c₂.F k] (y₂ : FrPt d.Xo₂ d.c₂ k) (y : FrPt Xo c k) : Prop :=
   y₂.x ≫ d.r = y.x ∧ (∀ τ i, y₂.u τ i ≫ d.m.φ = y.u τ i) ∧
@@ -176,8 +180,8 @@ def FrOver {n : ℕ} (d : DeltaDat Xo c n) {k : Type} [CommRing k]
           pm ⁻¹ᵁ (PPx y.x).U i),
       (pm.appLE _ _ h).hom (y.s.f i) = t.f (fun _ _ => i 0)
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.IsLev {n : ℕ} (d : DeltaDat Xo c n) : Prop :=
   l.Dvd d.l₂ ∧ d.l₂.M = l.M * d.pd ∧ Nat.Coprime d.pd l.M ∧ d.l₂.Mb = l.Mb * d.I ∧
     d.I ⊔ d.I.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ ∧
@@ -188,8 +192,8 @@ def DeltaDat.IsLev {n : ℕ} (d : DeltaDat Xo c n) : Prop :=
     d.cδ ∈ sec d.Xo₂ d.c₂ 0 0 ∧
     (∀ (k : Type) [Field k] [IsAlgClosed k] [Algebra d.c₂.F k] (y₂ : FrPt d.Xo₂ d.c₂ k), evR d.Xo₂ d.c₂ d.cδ y₂ ≠ 0)
 
-open Classical in
 
+open Classical in
 def cHalf (H : Host E) (I : Ideal (𝓞 E)) : 𝓞 E :=
   if h : ∃ c, c ∈ I.map (H.bar : 𝓞 E →+* 𝓞 E) ∧ c - 1 ∈ I then h.choose else 0
 
@@ -199,8 +203,8 @@ abbrev LaJ {n : ℕ} (d : DeltaDat Xo c n) : Type := Dw.La ⧸ (d.I.map (H.bar :
 
 abbrev LaI {n : ℕ} (d : DeltaDat Xo c n) : Type := Dw.La ⧸ (d.I • ⊤ : Submodule (𝓞 E) Dw.La)
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.PhiPin {n : ℕ} (d : DeltaDat Xo c n) (ph : (Fin n → LaJ Xo c d) → c.F)
     (ψ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) →* c.Fˣ) (x₀ : Fin n → LaJ Xo c d) : Prop :=
   (∀ x x' : Fin n → LaJ Xo c d, (∀ b : Fin n, b.val < Dw.p + Dw.q → x b = x' b) → ph x = ph x') ∧
@@ -215,8 +219,8 @@ def DeltaDat.PhiPin {n : ℕ} (d : DeltaDat Xo c n) (ph : (Fin n → LaJ Xo c d)
       ((⟨zeta d.l₂.M', d.c₂.zeta_mem⟩ : d.c₂.F) ^ (d.l₂.M' / d.pd)) ^
         (∑ b, Dw.EF (qRep (x b)) (cHalf H d.I • levRep (q b)))
 
-variable {Xo c} in
 
+variable {Xo c} in
 def DeltaDat.PsiTie {n : ℕ} (d : DeltaDat Xo c n) (ψ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) →* c.Fˣ) : Prop :=
   ∀ (k : LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) (g : Sim Dw) (ρ : d.Xo₂.X ≅ d.Xo₂.X),
     g.InGam l d.l₂ → (∀ a, Dw.ModN d.l₂.A (g.f d.l₂.A a - a)) → d.Xo₂.LevAut g ρ →
@@ -309,15 +313,6 @@ def noDelta (nab : NabV Xo c) (m : SABMap Xo.univ.t Xo.univ.t (𝟙 Xo.X)) (n : 
   nab₂ := nab
   cδ := 1
   φδ := fun _ => 1
-
-def ShortThetaUnit (nab : NabV Xo c) (n : ℕ) : Prop :=
-  ∀ (a : (E →+* ℂ) × ℕ → ℕ) (N : ℕ) (x0 : Fin n → Dw.La) (P : MvPolynomial (LtN Dw n) c.F),
-    GenLat.LevOK (⟨stdLat E n⟩ : GenLat E n) N l.M → P ∈ harmA c a n → ∃ u : (𝓞 c.F)ˣ,
-    ∀ (S : Type) [CommRing S] [Algebra c.F S] (y : FrPt Xo c S) (v : S) (w : (Fin n → LevQ Dw l) → S),
-      ShortValAt Xo c nab (x0Dat c x0) ⟨stdLat E n⟩ (betaH (Dw := Dw) c ⟨stdLat E n⟩) N P y v →
-      (∀ q, ThValAt Xo c nab y (fun b => levRep (q b)) P (w q)) →
-      v = algebraMap c.F S ((u : 𝓞 c.F) : c.F) * algebraMap c.F S ((Nat.card (Fin n → LevQ Dw l) : c.F))⁻¹ *
-        ∑ᶠ q : Fin n → LevQ Dw l, algebraMap c.F S (zetaM c ^ pairL (l := l) x0 fun b => levRep (q b)) * w q
 
 def SpanningAtDominantWeight (nab : NabV Xo c) (bad nV : ℕ)
     (cusp : ((E →+* ℂ) × ℕ → ℕ) → ℕ → Submodule c.F (Rul Xo c))

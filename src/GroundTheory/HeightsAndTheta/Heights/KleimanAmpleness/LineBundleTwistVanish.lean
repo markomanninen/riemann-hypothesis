@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestExtra
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherAlt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistVanishAll
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistSplit
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMore
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecMul
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZpowMemSubringOfInvMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsRestExtra
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsFurtherAlt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistVanishAll
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistSplit
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsMore
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PChartSecMul
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZpowMemSubringOfInvMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

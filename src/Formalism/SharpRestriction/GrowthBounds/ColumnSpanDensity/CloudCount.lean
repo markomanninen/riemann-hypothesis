@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorsLEOfFintype
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FactorsLEOfFintype
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,10 +118,12 @@ theorem cloud_count (hS : LemmaSMat) (hRet : LatRetract) (hBP : BePerfect) (hD3 
       congr 1
       rw [Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul, hPP]
     · show be p 1 Hp (∑ k, algebraMap R.O R.Kf (P' i k) • io (x1 k)) (y2 b) = _
-      rw [be_sum_left, Matrix.fromBlocks_apply₁₂, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [be_sum_left, Matrix.fromBlocks_apply₁₂, Matrix.mul_apply, map_sum]
       exact Finset.sum_congr rfl fun k _ => by rw [hNm, map_mul, Matrix.of_apply]
     · show be p 1 Hp (x2 a) (∑ k, P'' k l • tt k) = _
-      rw [be_sum, Matrix.fromBlocks_apply₂₁, Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [be_sum, Matrix.fromBlocks_apply₂₁, Matrix.mul_apply, map_sum]
       exact Finset.sum_congr rfl fun k _ => by rw [hBm, map_mul, Matrix.of_apply]
     · show be p 1 Hp (x2 a) (y2 b) = _
       rw [hG2, Matrix.fromBlocks_apply₂₂, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
@@ -130,7 +136,8 @@ theorem cloud_count (hS : LemmaSMat) (hRet : LatRetract) (hBP : BePerfect) (hD3 
     have : ∑ l, be p 1 Hp (Xb i) (Yb l) * algebraMap R.O R.Kf (M l j) = algebraMap R.O R.Kf
         ((Matrix.fromBlocks (z1 • (1 : Matrix (Fin s) (Fin s) R.O)) (P' * Matrix.of Nm) (Matrix.of Bm * P'')
           (z2 • (1 : Matrix (Fin n2) (Fin n2) R.O)) * M) i j) := by
-      rw [Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [hGb, map_mul]
     rw [this, hblk, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
     split_ifs <;> simp
@@ -154,7 +161,8 @@ theorem cloud_count (hS : LemmaSMat) (hRet : LatRetract) (hBP : BePerfect) (hD3 
   have hFgg : ∀ i j, be p 1 Hp (io (Fg i)) (gg j) = if i = j then algebraMap R.O R.Kf (z1 * z2) else 0 := by
     intro i j
     have e1 : io (Fg i) = ∑ k, algebraMap R.O R.Kf (P i k) • io (x1 k) := by
-      simp only [Fg, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Fg, map_sum, map_smul]
     rw [e1, be_mat R Hp (fun k => io (x1 k)) y2 (Matrix.of Nm) (fun k k' => hNm k k') P Q i j, hPQ,
       Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
     split_ifs <;> simp

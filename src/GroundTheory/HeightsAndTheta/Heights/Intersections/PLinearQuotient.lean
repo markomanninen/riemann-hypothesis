@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLinearQuotient
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLinearQuotient
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -52,7 +57,8 @@ theorem LinearQuotient.proof : LinearQuotient.Statement := by
       (b.equivFun (L.mkQ (lift i))) from rfl, hlift, he, Fintype.linearCombination_apply_single, one_smul]
   have hψθ : ∀ v, ψ (θ v) = ℓ (∑ i, b.equivFun (L.mkQ v) i • lift i) := by
     intro v
-    rw [hθ, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hθ, map_sum, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_smul, map_smul, aeval_X]
   have hspan : Submodule.span F S ≤ (Ideal.span S).restrictScalars F :=
@@ -69,7 +75,8 @@ theorem LinearQuotient.proof : LinearQuotient.Statement := by
           rw [← Submodule.Quotient.mk_eq_zero, Submodule.Quotient.mk_sub]
           have : (Submodule.Quotient.mk (∑ i, b.equivFun (L.mkQ (Pi.single s 1)) i • lift i) : (σ → F) ⧸ L) =
               ∑ i, b.equivFun (L.mkQ (Pi.single s 1)) i • b i := by
-            rw [← Submodule.mkQ_apply, map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [← Submodule.mkQ_apply, map_sum]
             simp only [map_smul, hlift]
           rw [this, b.sum_equivFun, Submodule.mkQ_apply, sub_self]
         have h2 := hspan hmem

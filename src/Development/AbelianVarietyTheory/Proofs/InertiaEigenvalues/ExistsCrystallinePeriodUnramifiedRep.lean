@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLiftsOfNormLeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
-import Formalism.SharpRestriction.LevelLetterCocycles.ProdOneSubPrimitiveRoots
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLiftsOfNormLeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
+public import Formalism.SharpRestriction.LevelLetterCocycles.ProdOneSubPrimitiveRoots
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,12 +29,12 @@ def act (g : G) : Matrix n n (WittVector p R) →+* Matrix n n (WittVector p R) 
 theorem act_apply (g : G) (M : Matrix n n (WittVector p R)) (i j : n) :
     act ρ g M i j = WittVector.map (ρ g).toRingHom (M i j) := rfl
 
-variable (p) in
 
+variable (p) in
 def Dv (N : ℕ) (M : Matrix n n (WittVector p R)) : Prop := ∀ i j, (p : WittVector p R) ^ N ∣ M i j
 
-variable (p) in
 
+variable (p) in
 def Jset : Set G := {g : G | ∀ m, 0 < m → g ∈ fixer ρ p m}
 
 omit [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [IsDomain R] [CharP R p]
@@ -83,7 +87,7 @@ theorem approx_step
     have e : (A g * Y) i j = Y i j + ((A g - 1) * Y) i j := by rw [sub_mul, one_mul]; simp
     have h2 := Dv_mul_right Y (h1 g) i j
     rw [pow_one] at h2
-    rw [e, ← WittVector.constantCoeff_apply, map_add, WittVector.constantCoeff_apply,
+    rw [e, ← WittVector.constantCoeff_apply, map_add (f := _), WittVector.constantCoeff_apply,
       WittVector.constantCoeff_apply, cc0 _ h2, add_zero]
   have hD : ∀ g, ∃ D : Matrix n n (WittVector p R), A g * act ρ g Q - Q = (p : WittVector p R) ^ N • D :=
     fun g => ⟨Matrix.of fun i j => (hE g i j).choose, by
@@ -108,7 +112,7 @@ theorem approx_step
     exact mul_left_cancel₀ hp0 this
   have hec : ∀ g h i j, (D (g * h) i j).coeff 0 = (D g i j).coeff 0 + ρ g ((D h i j).coeff 0) := by
     intro g h i j
-    rw [hcoc, Matrix.add_apply, ← WittVector.constantCoeff_apply, map_add, WittVector.constantCoeff_apply,
+    rw [hcoc, Matrix.add_apply, ← WittVector.constantCoeff_apply, map_add (f := _), WittVector.constantCoeff_apply,
       WittVector.constantCoeff_apply, ccA, act_apply, WittVector.map_coeff]
     rfl
   have hnear : ∀ᶠ g in 𝓝ˢ (Jset p ρ), ∀ i j, (D g i j).coeff 0 = 0 := by
@@ -203,7 +207,7 @@ theorem exists_solution
         simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.zero_apply,
           WittVector.constantCoeff_apply]
         exact cc0 _ this
-      rw [e, map_add, h0, map_one, zero_add]
+      rw [e, map_add (f := _), h0, map_one, zero_add]
     have hdet : WittVector.constantCoeff Q.det = 1 := by
       rw [RingHom.map_det, hmap, Matrix.det_one]
     have hmem : Q.det - 1 ∈ Ideal.span {(p : WittVector p R)} := by

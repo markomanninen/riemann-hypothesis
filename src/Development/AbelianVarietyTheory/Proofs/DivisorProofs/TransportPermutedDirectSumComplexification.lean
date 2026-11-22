@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -31,7 +35,7 @@ def phi (e : C →ₗ[Ks] WL) : ℂ ⊗[Ks] C →ₗ[ℂ] ℂ ⊗[LL] WL where
       rw [TensorProduct.smul_tmul', TensorProduct.liftAddHom_tmul, TensorProduct.liftAddHom_tmul]
       show (c • z) ⊗ₜ[LL] e f = c • (z ⊗ₜ[LL] e f)
       rw [TensorProduct.smul_tmul']
-    | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 @[simp] theorem phi_tmul (e : C →ₗ[Ks] WL) (z : ℂ) (f : C) : phi e (z ⊗ₜ[Ks] f) = z ⊗ₜ[LL] e f :=
   TensorProduct.liftAddHom_tmul (phiBil (LL := LL) e) (phiBil_compat e) z f
@@ -42,7 +46,7 @@ theorem phi_comm (e : C →ₗ[Ks] WL) (a : C →ₗ[Ks] C) (r : WL →ₗ[LL] W
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul z f => simp [h]
-  | add x y hx hy => simp only [LinearMap.comp_apply, map_add] at hx hy ⊢; rw [hx, hy]
+  | add x y hx hy => simp only [LinearMap.comp_apply, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
 
 theorem phi_bijective (WK : Submodule Ks WL) (n : ℕ) (b : Fin n → WL) (hliK : LinearIndependent Ks b)
     (hspK : Submodule.span Ks (Set.range b) = WK) (hliL : LinearIndependent LL b)
@@ -90,8 +94,8 @@ theorem transport_general {H G X : Type} [Group G] [Group H] [DecidableEq X] [Mu
 
 end General
 
-open GlobalTheory.DefRead in
 
+open GlobalTheory.DefRead in
 theorem transport : ∀ (Ks LL WL C H G X : Type) [Field Ks] [Field LL] [Algebra Ks LL] [AddCommGroup WL] [Module LL WL] [Module Ks WL]
     [IsScalarTower Ks LL WL] [AddCommGroup C] [Module Ks C] [Group G] [Group H] [Fintype X] [DecidableEq X] [MulAction H X]
     (σ : LL →+* ℂ) (WK : Submodule Ks WL) (n : ℕ) (b : Fin n → WL), (∀ j, b j ∈ WK) → LinearIndependent Ks b →

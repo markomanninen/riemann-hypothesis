@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitNormOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitNormOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published GlobalTheory.PlaneNorm
 open scoped TensorProduct
 
@@ -46,7 +51,7 @@ theorem unit_or_norm : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     intro s t hst0
     rw [Algebra.smul_def, Algebra.smul_def, mul_one] at hst0
     have e2 := congrArg σ hst0
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσd, map_zero] at e2
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσd, map_zero] at e2
     have ht : algebraMap F E t * d = 0 := by linear_combination (hst0 - e2) / 2
     have ht0 : t = 0 := by
       rcases mul_eq_zero.1 ht with h1 | h1
@@ -82,11 +87,11 @@ theorem unit_or_norm : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
       rw [hε]
       linear_combination (-(1 + ι r⁻¹ * D) * ι (1 / 2)) * h2 + (-ι (1 / 2) ^ 2 * ι r⁻¹ ^ 2) * hD2 + (-ι (1 / 2) ^ 2 * (ι r⁻¹ * ι r + 1)) * hs
     have hσε : sigR K σ ε = 1 - ε := by
-      rw [hε, map_mul, map_add, map_mul, map_one, hst, hst, hsD]
+      rw [hε, map_mul, map_add (f := _), map_mul, map_one, hst, hst, hsD]
       linear_combination h2
     intro k _
     refine ⟨ι k * ε + (1 - ε), ?_⟩
-    rw [map_add, map_mul, map_sub, map_one, hst, hσε]
+    rw [map_add (f := _), map_mul, map_sub, map_one, hst, hσε]
     linear_combination (ι k ^ 2 + 1 - 2 * ι k) * he0
   · left
     push_neg at hsq
@@ -102,7 +107,7 @@ theorem unit_or_norm : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
         field_simp
         linear_combination h0
     have hN : (ι u + ι v * D) * sigR K σ (ι u + ι v * D) = ι (u * u - c * (v * v)) := by
-      rw [map_add, map_mul, hst, hst, hsD, map_sub, map_mul, map_mul, map_mul]
+      rw [map_add (f := _), map_mul, hst, hst, hsD, map_sub, map_mul, map_mul, map_mul]
       linear_combination (-(ι v * ι v)) * hDD
     refine IsUnit.of_mul_eq_one (sigR K σ (ι u + ι v * D) * ι (u * u - c * (v * v))⁻¹) ?_
     rw [← mul_assoc, hN, ← map_mul, mul_inv_cancel₀ hn, map_one]

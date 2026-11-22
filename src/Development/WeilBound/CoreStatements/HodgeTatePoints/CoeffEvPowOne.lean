@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbBase
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,10 @@ variable {R : Type} [CommRing R] {σ : Type} [Finite σ]
 
 def scl (w : σ → ℕ) (m : σ →₀ ℕ) : σ →₀ ℕ := Finsupp.equivFunOnFinite.symm fun s => w s * m s
 
-@[simp] theorem scl_apply (w : σ → ℕ) (m : σ →₀ ℕ) (s : σ) : scl w m s = w s * m s := rfl
-
 theorem scl_inj {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) : Function.Injective (scl w) := fun m m' h => by
   ext s
   have := congrArg (fun f => f s) h
-  simpa [hw s] using this
+  simpa [scl, hw s] using this
 
 theorem hasSubst_w {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) :
     HasSubst (fun s => (X s : MvPowerSeries σ R) ^ w s) :=
@@ -29,7 +31,7 @@ theorem prod_w (w : σ → ℕ) (m : σ →₀ ℕ) :
   classical
   have := Fintype.ofFinite σ
   rw [monomial_eq', Finsupp.prod_fintype _ _ (by simp), Finsupp.prod_fintype _ _ (by simp)]
-  simp [pow_mul]
+  simp [scl, pow_mul]
 
 theorem coeff_scl {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) (g : MvPowerSeries σ R) (m : σ →₀ ℕ) :
     coeff (scl w m) (subst (fun s => (X s : MvPowerSeries σ R) ^ w s) g) = coeff m g := by
@@ -37,7 +39,7 @@ theorem coeff_scl {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) (g : MvPowerSeries σ
   rw [coeff_subst (hasSubst_w hw), finsum_eq_single _ m]
   · simp [prod_w]
   · intro m' h
-    rw [prod_w, coeff_monomial, if_neg ((scl_inj hw).ne h.symm), smul_zero]
+    rw [prod_w, coeff_monomial, ite_eq_right ((scl_inj hw).ne h.symm), smul_zero]
 
 theorem coeff_not_scl {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) (g : MvPowerSeries σ R) (e : σ →₀ ℕ)
     (he : ∀ m, e ≠ scl w m) :
@@ -45,10 +47,10 @@ theorem coeff_not_scl {w : σ → ℕ} (hw : ∀ s, w s ≠ 0) (g : MvPowerSerie
   classical
   rw [coeff_subst (hasSubst_w hw)]
   refine finsum_eq_zero_of_forall_eq_zero fun m => ?_
-  rw [prod_w, coeff_monomial, if_neg (he m), smul_zero]
+  rw [prod_w, coeff_monomial, ite_eq_right (he m), smul_zero]
 
 theorem exists_scl (p : ℕ) [hp : Fact p.Prime] [CharP R p] (S : σ → Prop) [DecidablePred S]
-    (f : MvPowerSeries σ R) (hf : ∀ s, S s → pderiv R s f = 0) :
+    (f : MvPowerSeries σ R) (hf : ∀ s, S s → pderiv s f = 0) :
     ∃ g : MvPowerSeries σ R, f = subst (fun s => (X s : MvPowerSeries σ R) ^ (if S s then p else 1)) g := by
   classical
   have hw : ∀ s, (if S s then p else 1) ≠ 0 := fun s => by split_ifs <;> simp [hp.out.ne_zero]
@@ -66,8 +68,8 @@ theorem exists_scl (p : ℕ) [hp : Fact p.Prime] [CharP R p] (S : σ → Prop) [
       refine he ⟨Finsupp.equivFunOnFinite.symm fun s => if S s then e s / p else e s, ?_⟩
       ext s
       by_cases h : S s
-      · simp [h, Nat.mul_div_cancel' (hc s h)]
-      · simp [h]
+      · simp [scl, h, Nat.mul_div_cancel' (hc s h)]
+      · simp [scl, h]
     have h0 : e s ≠ 0 := fun h => hs (h ▸ dvd_zero p)
     have h1 := congrArg (coeff (e - Finsupp.single s 1)) (hf s hS)
     rw [coeff_pderiv, tsub_add_cancel_of_le (by simpa [Finsupp.single_le_iff] using Nat.one_le_iff_ne_zero.2 h0),
@@ -108,19 +110,19 @@ theorem coeff_ev_pow_one (g : PS R 1 d) (j : Fin d) :
   congr 2
   ext s
   by_cases h : s = (0, j)
-  · simp [h]
-  · simp [Finsupp.single_eq_of_ne h]
+  · simp [scl, h]
+  · simp [scl, Finsupp.single_eq_of_ne h]
 
 theorem bil_ev_pow_two (g : PS R 2 d) : bil (ev (n := 2) ![ptPow R d p 0, pt R d 1] g) p 1 = bil g 1 1 := by
   ext i j
   rw [bil, bil, ← coeff_scl (w_ne p) g, ev_pow_two_eq]
   congr 2
   ext ⟨s, t⟩
-  fin_cases s <;> simp [Finsupp.single_apply]
+  fin_cases s <;> simp [scl, Finsupp.single_apply]
 
 end
 
-theorem series_in_p : ∀ (R : Type) [CommRing R] (p : ℕ) [Fact p.Prime] [CharP R p] (d : ℕ), (∀ f : PS R 1 d, (∀ j, pderiv R ((0 : Fin 1), j) f = 0) → ∃ g : PS R 1 d, f = ev (n := 1) ![ptPow R d p 0] g) ∧ ∀ f : PS R 2 d, (∀ j, pderiv R ((0 : Fin 2), j) f = 0) → ∃ g : PS R 2 d, f = ev (n := 2) ![ptPow R d p 0, pt R d 1] g := by
+theorem series_in_p : ∀ (R : Type) [CommRing R] (p : ℕ) [Fact p.Prime] [CharP R p] (d : ℕ), (∀ f : PS R 1 d, (∀ j, pderiv ((0 : Fin 1), j) f = 0) → ∃ g : PS R 1 d, f = ev (n := 1) ![ptPow R d p 0] g) ∧ ∀ f : PS R 2 d, (∀ j, pderiv ((0 : Fin 2), j) f = 0) → ∃ g : PS R 2 d, f = ev (n := 2) ![ptPow R d p 0, pt R d 1] g := by
   intro R _ p _ _ d
   refine ⟨fun f hf => ?_, fun f hf => ?_⟩
   · simp only [ev_pow_one_eq]

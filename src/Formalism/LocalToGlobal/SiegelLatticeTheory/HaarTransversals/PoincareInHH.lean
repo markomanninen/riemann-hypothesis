@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.RowsDef
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.ColsDim
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareSeriesSquareIntegrable
-import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.RowsDef
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.ColsDim
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.FoldBound
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareSeriesSquareIntegrable
+public import Formalism.SharpRestriction.CuspSpanNormBounds.UnimodularSchurMeasures.RrgCountableField
+
+@[expose] public section
 
 noncomputable section
 
@@ -244,10 +248,6 @@ def HaarTransversal : Set (Hfin X u) :=
     IsLevelTwoCongruentAt X ((X.xu u)⁻¹ * (h : X.B.I.Gf) * X.xu u)}
 
 def K0 : Subgroup (Hfin X u) := Subgroup.closure (HaarTransversal X u)
-
-def ColsLink (hK : X.LevelSubgroupCharacter) : Prop :=
-  Ku X u hK ≤ K0 X u ∧ Formalism.L2.SG.ColsDim.StabTriv (iotaF X u) (K0 X u) ∧
-    Finite (Formalism.L2.SG.ColsDim.Classes (iotaF X u) (Ku X u hK))
 
 def c0 (volN volH : ℝ) : ℝ := volN * volH / (Module.finrank ℂ (X.Vpi u) : ℝ)
 

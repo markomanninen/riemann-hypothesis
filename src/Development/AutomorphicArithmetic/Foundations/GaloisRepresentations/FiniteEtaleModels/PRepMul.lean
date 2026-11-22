@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLevelBaseChange
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.IsEtIdealOfPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLevelBaseChange
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.EtLev GlobalTheory.UPel.HT.ES
 open UpperTheory.Gal.FiniteEtaleModels
@@ -21,7 +26,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.repMul_holds :
     h.2.2.1 _ (Submodule.subset_span ⟨e, by simpa using he, y, rfl⟩)
   have dec : ∀ y : D.La, algebraMap (𝓞 D.F) D.O ea • y + algebraMap (𝓞 D.F) D.O eb • y = y := by
     intro y
-    rw [← add_smul, ← map_add, hsum, map_one, one_smul]
+    rw [← add_smul, ← map_add (f := _), hsum, map_one, one_smul]
   have r₁ : ∀ y, lu₁ (algebraMap (𝓞 D.F) D.O eb • y) = lu₁ y := by
     intro y
     conv_rhs => rw [← dec y, hl₁.1, kill hl₁ ea hea, _root_.one_mul]

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import GroundTheory.LocalFields.PrincipalUnitsRank
-import GroundTheory.LocalFields.MainTheorem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalClassFieldTheoryOfOpenEmbedding
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalFieldUnitsStructureTheorem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import GroundTheory.LocalFields.PrincipalUnitsRank
+public import GroundTheory.LocalFields.MainTheorem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalClassFieldTheoryOfOpenEmbedding
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalFieldUnitsStructureTheorem
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
@@ -44,13 +48,13 @@ private theorem as_ext {M A B : Type} [CommGroup M] [TopologicalSpace M] [CommGr
       (∀ U : OpenNormalSubgroup B, ∀ᶠ y in F, b⁻¹ * f y ∈ U.toSubgroup) → Filter.Tendsto f F (𝓝 b) := by
     intro F b h W hW
     have hW' : (fun x => b * x) ⁻¹' W ∈ 𝓝 (1 : B) :=
-      (continuous_mul_left b).continuousAt.preimage_mem_nhds (by simpa using hW)
+      (continuous_const_mul b).continuousAt.preimage_mem_nhds (by simpa using hW)
     obtain ⟨U, hU⟩ := hbasis _ hW'
     refine Filter.mem_map.2 ?_
     filter_upwards [h U] with y hy
     simpa using hU hy
   have hNo : ∀ (a : A) U, IsOpen ((fun x => a⁻¹ * x) ⁻¹' (V U : Set A)) :=
-    fun a U => (hVo U).preimage (continuous_mul_left a⁻¹)
+    fun a U => (hVo U).preimage (continuous_const_mul a⁻¹)
   have hNa : ∀ (a : A) U, a ∈ (fun x => a⁻¹ * x) ⁻¹' (V U : Set A) := by
     intro a U
     simp [one_mem]
@@ -70,7 +74,7 @@ private theorem as_ext {M A B : Type} [CommGroup M] [TopologicalSpace M] [CommGr
       simpa using h1
     have hbC : (f y0)⁻¹ * b ∈ U.toSubgroup := by
       have hC : IsClosed ((fun x => (f y0)⁻¹ * x) ⁻¹' (U.toSubgroup : Set B)) :=
-        (hUc U).preimage (continuous_mul_left _)
+        (hUc U).preimage (continuous_const_mul _)
       exact hC.closure_subset (hb.mem_closure_of_mem (s := (fun x => (f y0)⁻¹ * x) ⁻¹' (U.toSubgroup : Set B)) hev)
     filter_upwards [hev] with y hy
     have := U.toSubgroup.mul_mem (U.toSubgroup.inv_mem hbC) hy
@@ -144,7 +148,7 @@ private theorem as_ker {M A : Type} [CommGroup M] [TopologicalSpace M] [CommGrou
     rw [mem_closure_iff_nhds]
     intro O hO
     have hO1 : (fun z => x * z) ⁻¹' O ∈ 𝓝 (1 : A) :=
-      (continuous_mul_left x).continuousAt.preimage_mem_nhds (by simpa using hO)
+      (continuous_const_mul x).continuousAt.preimage_mem_nhds (by simpa using hO)
     obtain ⟨O', hO'O, hO'o, h1O'⟩ := mem_nhds_iff.1 hO1
     obtain ⟨V, hVo, hVO⟩ := hb O' hO'o h1O'
     haveI : Finite (A ⧸ V) := Subgroup.quotient_finite_of_isOpen V hVo
@@ -154,7 +158,7 @@ private theorem as_ker {M A : Type} [CommGroup M] [TopologicalSpace M] [CommGrou
     have hSo : IsOpen S := (isOpen_discrete {(0 : ZMod (Np : ℕ))}).preimage
       ((ProfiniteInteger.continuous_proj Np).comp (continuous_toAdd.comp hD))
     let W := (fun z => x⁻¹ * z) ⁻¹' ((V : Set A) ∩ S)
-    have hWo : IsOpen W := (hVo.inter hSo).preimage (continuous_mul_left _)
+    have hWo : IsOpen W := (hVo.inter hSo).preimage (continuous_const_mul _)
     have hxW : x ∈ W := by simp [W, S, one_mem]
     obtain ⟨y, hgV, hgS⟩ := hd.exists_mem_open hWo ⟨x, hxW⟩
     have hdiv : (V.index : ℤ) ∣ Multiplicative.toAdd (v y) := by
@@ -286,7 +290,7 @@ private theorem as_core {l : ℕ} [Fact l.Prime] {d : ℕ} {M A : Type} [CommGro
     have hWa : IsOpen Wa := (as_open n).preimage (continuous_toAdd.comp hac)
     let O : Set A := ((fun x => g⁻¹ * x) ⁻¹' (f.ker : Set A)) ∩ Wπ ∩ Wa ∩ (m.ker : Set A)
     have hOo : IsOpen O :=
-      (((hf.preimage (continuous_mul_left _)).inter hWπ).inter hWa).inter hmker
+      (((hf.preimage (continuous_const_mul _)).inter hWπ).inter hWa).inter hmker
     have hgO : g ∈ O := by
       refine ⟨⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
       · simp [one_mem]

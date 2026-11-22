@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqvCorMulCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqvCorMulCol
+
+@[expose] public section
 
 open Matrix Topology GlobalTheory.SmGL GlobalTheory.Whittaker
 
@@ -142,7 +146,7 @@ theorem exists_cut_cor_of_sub : ∀ {F : Type} [NormedField F] [ProperSpace F] [
           simp
   obtain ⟨t, ht⟩ := hUc.elim_finite_subcover
     (fun a : U => (fun x => x * (a : GL (Fin (m + 1)) F)⁻¹) ⁻¹' (U₁ : Set (GL (Fin (m + 1)) F)))
-    (fun a => hU₁o.preimage (continuous_mul_right _))
+    (fun a => hU₁o.preimage (continuous_mul_const _))
     (fun u hu => Set.mem_iUnion.2 ⟨⟨u, hu⟩, by simp [U₁.one_mem]⟩)
   obtain ⟨S, hS⟩ := key (t.image Subtype.val) (fun a ha => by
     obtain ⟨b, _, rfl⟩ := Finset.mem_image.1 ha

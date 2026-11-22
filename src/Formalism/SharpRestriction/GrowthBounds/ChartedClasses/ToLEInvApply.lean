@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.PtStep0
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.PtStep0
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem bc_mulVec (γ : GL (Fin N) E) (x : Fin N → E) :
       Matrix (Fin N) (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) *ᵥ (fun a => inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (x a)) =
       fun a => inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (((γ : Matrix (Fin N) (Fin N) E) *ᵥ x) a) := by
   funext a
-  simp [bc, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [bc, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem latAd_rat (γ : GL (Fin N) E) (y : GL (Fin N) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)) (Lb : Submodule (𝓞 E) (Fin N → E)) :
     latAd (bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ * y) Lb = mvL γ (latAd y Lb) := by
@@ -72,7 +77,8 @@ private lemma hform_eq_lemma (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) (x 
 private lemma ringHom_mulVec_eq_map_mulVec (σ : E →+* E) (M : Matrix (Fin N) (Fin N) E) (x : Fin N → E) :
     (fun i => σ ((M *ᵥ x) i)) = (M.map σ) *ᵥ (fun i => σ (x i)) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 private lemma hform_mulVec_eq_of_cT_mul_mul_eq' (σ : E →+* E) (J : Matrix (Fin N) (Fin N) E) (M : Matrix (Fin N) (Fin N) E)
     (hM : cT σ M * J * M = J) (x y : Fin N → E) :
@@ -132,15 +138,6 @@ theorem latK_tr (J : Matrix (Fin N) (Fin N) E) (a : 𝓞 E) (y κ₀ : GL (Fin N
 theorem reE_rfl : reE (E := E) (rfl : N = N) = LinearEquiv.refl E (Fin N → E) := by
   ext x i
   simp [reE]
-
-theorem map_reE_symm {n : ℕ} (h : N = n) (h' : n = N) (Λ : Submodule (𝓞 E) (Fin N → E)) :
-    (Λ.map (((reE (E := E) h : (Fin N → E) ≃ₗ[E] (Fin n → E)) : (Fin N → E) →ₗ[E] (Fin n → E)).restrictScalars (𝓞 E))).map
-      (((reE (E := E) h' : (Fin n → E) ≃ₗ[E] (Fin N → E)) : (Fin n → E) →ₗ[E] (Fin N → E)).restrictScalars (𝓞 E)) = Λ := by
-  subst h
-  have e : ∀ h'' : N = N, reE (E := E) h'' = LinearEquiv.refl E (Fin N → E) := fun _ => reE_rfl
-  rw [e]
-  ext x
-  simp
 
 theorem map_reE_rfl (h : N = N) (Λ : Submodule (𝓞 E) (Fin N → E)) :
     Λ.map (((reE (E := E) h : (Fin N → E) ≃ₗ[E] (Fin N → E)) : (Fin N → E) →ₗ[E] (Fin N → E)).restrictScalars (𝓞 E)) = Λ := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlgHomAlgebraicClosureApplyEqPowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSetOfRingHomCompEqOfFiniteStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteFieldEmbeddingStalkOfFiniteStalkMapStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.InducedModelMorphismCompStructureMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAlgHomAlgebraicClosureApplyEqPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSetOfRingHomCompEqOfFiniteStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteFieldEmbeddingStalkOfFiniteStalkMapStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -75,10 +79,9 @@ theorem GlobalTheory.LevelFinite.finite_ratio_field : ∀ (o Ω : Type) [CommRin
       refine (GlobalTheory.T.finite_setOf_ringHom_comp_eq_of_finite' _ Ω _ φ (τ0.comp φ) hφ).subset ?_
       intro τ' hτ'
       exact hφeq _ τ' τ0 (hτ'.trans hτ0.symm)
-    · convert Set.finite_empty
-      ext τ'
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-      exact fun h => hne ⟨τ', h⟩
+    · apply Set.Finite.subset Set.finite_empty
+      intro τ' hτ'
+      exact (hne ⟨τ', hτ'⟩).elim
   have hS := hpts (AlgebraicClosure Ω) (fun i => algebraMap Ω (AlgebraicClosure Ω) (v i))
   have hinj : Function.Injective (fun m : ℕ => ((τ m : Ω →ₐ[_] AlgebraicClosure Ω) : Ω →+* AlgebraicClosure Ω)) := by
     intro m m' hmm

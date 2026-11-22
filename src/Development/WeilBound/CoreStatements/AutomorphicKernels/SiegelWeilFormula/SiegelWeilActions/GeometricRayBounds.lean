@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.UnipotentBlockCornerEmbedded
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.UnipotentBlockCornerEmbedded
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,9 @@ theorem stab_dec (h : Hyp L nb uM nb' w₁ cM δ) {x : d.G} (hx : x ∈ rat2 σ 
             rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← Algebra.smul_def, TensorProduct.tmul_smul,
               TensorProduct.smul_tmul', TensorProduct.smul_tmul', smul_eq_mul, mul_one, ← Algebra.algebraMap_eq_smul_one]
           rw [e1, hz₀]
-          simp [incM, GlobalTheory.ThK.incV, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR, map_add, map_sum, map_mul]
+          have hc : ∀ a : E, cA σ (inclR (F := F) (AF F) a) = inclR (F := F) (AF F) (σ a) := fun _ => rfl
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [incM, GlobalTheory.ThK.incV, hc, map_add (f := _), map_sum, map_mul]
         · obtain ⟨j, rfl⟩ := (L.rng k).1 hk
           rw [r2]; rfl
   have hS : inFrame d.b s = sExp L e (GlobalTheory.ThK.incV F b₀) := by

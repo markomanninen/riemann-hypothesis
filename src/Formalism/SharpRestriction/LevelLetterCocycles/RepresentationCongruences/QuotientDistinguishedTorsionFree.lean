@@ -1,7 +1,11 @@
-import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Mathlib.RingTheory.DiscreteValuationRing.Basic
-import Mathlib.LinearAlgebra.Basis.Defs
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffEqZeroOfSumEqZero
+module
+
+public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
+public import Mathlib.RingTheory.DiscreteValuationRing.Basic
+public import Mathlib.LinearAlgebra.Basis.Defs
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.CoeffEqZeroOfSumEqZero
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.FrobeniusPowerSeries
 

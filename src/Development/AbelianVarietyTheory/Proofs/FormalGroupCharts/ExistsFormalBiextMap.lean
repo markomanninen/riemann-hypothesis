@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -84,36 +88,28 @@ theorem nc_law (G : FGLaw R d) : NoConst G.F := G.const
 theorem nc_act {O : Type} [CommRing O] {G : FGLaw R d} (A : OAct O G) (a : O) :
     NoConst (A.act a) := A.const a
 
-local macro "no_const" : tactic =>
-  `(tactic| repeat' first
-    | exact nc_zero
-    | exact nc_pt _
-    | exact nc_law _
-    | exact nc_act _ _
-    | apply nc_comp1
-    | apply nc_addOf)
-
-local macro "push_map" h:ident : tactic =>
-  `(tactic| simp (disch := no_const) only [map_mul, map_one, map_ev1, map_ev2, map_ev3,
-    mapPt_zero, mapPt_pt, mapPt_comp1, mapPt_addOf, FGLaw.add] at $h:ident)
+local macro "map_formal_series" h:ident : tactic =>
+  `(tactic|
+    simp (disch := solve | apply_rules [nc_zero, nc_pt, nc_comp1, nc_addOf, nc_law, nc_act])
+      only [FGLaw.add, map_ev1, map_ev2, map_ev3, mapPt_zero, mapPt_pt, mapPt_comp1,
+        mapPt_addOf, map_X, map_one, map_mul] at $h:ident)
 
 def mapLaw (G : FGLaw R d) : FGLaw k d where
   F := mapPt f G.F
   const i := by simp [mapPt, G.const i]
   unit i := by
     have h := congrArg (MvPowerSeries.map f) (G.unit i)
-    rw [map_X] at h
-    push_map h
+    map_formal_series h
     exact h
   comm i := by
     have h := congrArg (MvPowerSeries.map f) (G.comm i)
-    push_map h
+    map_formal_series h
     exact h
   assoc i := by
     have h0 : ev (n := 3) ![addOf G.F (pt R d 0) (pt R d 1), pt R d 2] (G.F i) =
         ev (n := 3) ![pt R d 0, addOf G.F (pt R d 1) (pt R d 2)] (G.F i) := G.assoc i
     have h := congrArg (MvPowerSeries.map f) h0
-    push_map h
+    map_formal_series h
     exact h
 
 def mapAct {O : Type} [CommRing O] {G : FGLaw R d} (A : OAct O G) : OAct O (mapLaw f G) where
@@ -121,19 +117,19 @@ def mapAct {O : Type} [CommRing O] {G : FGLaw R d} (A : OAct O G) : OAct O (mapL
   const a i := by simp [mapPt, A.const a i]
   hom a := by
     have h := congrArg (mapPt f) (A.hom a)
-    push_map h
+    map_formal_series h
     exact h
   add_act a b := by
     have h := congrArg (mapPt f) (A.add_act a b)
-    push_map h
+    map_formal_series h
     exact h
   mul_act a b := by
     have h := congrArg (mapPt f) (A.mul_act a b)
-    push_map h
+    map_formal_series h
     exact h
   one_act := by
     have h := congrArg (mapPt f) A.one_act
-    push_map h
+    map_formal_series h
     exact h
 
 def mapFB {O : Type} [CommRing O] [StarRing O] (B : FB R d O) : FB k d O where
@@ -145,95 +141,95 @@ def mapFB {O : Type} [CommRing O] [StarRing O] (B : FB R d O) : FB k d O where
   ad a := MvPowerSeries.map f (B.ad a)
   cocycleLeft_zero_fst := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleLeft_zero_fst)
-    push_map h
+    map_formal_series h
     exact h
   cocycleLeft_zero_snd := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleLeft_zero_snd)
-    push_map h
+    map_formal_series h
     exact h
   cocycleLeft_zero_thd := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleLeft_zero_thd)
-    push_map h
+    map_formal_series h
     exact h
   cocycleRight_zero_fst := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleRight_zero_fst)
-    push_map h
+    map_formal_series h
     exact h
   cocycleRight_zero_snd := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleRight_zero_snd)
-    push_map h
+    map_formal_series h
     exact h
   cocycleRight_zero_thd := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleRight_zero_thd)
-    push_map h
+    map_formal_series h
     exact h
   symmetry_zero_fst := by
     have h := congrArg (MvPowerSeries.map f) (B.symmetry_zero_fst)
-    push_map h
+    map_formal_series h
     exact h
   symmetry_zero_snd := by
     have h := congrArg (MvPowerSeries.map f) (B.symmetry_zero_snd)
-    push_map h
+    map_formal_series h
     exact h
   adjoint_zero_fst a := by
     have h := congrArg (MvPowerSeries.map f) (B.adjoint_zero_fst a)
-    push_map h
+    map_formal_series h
     exact h
   adjoint_zero_snd a := by
     have h := congrArg (MvPowerSeries.map f) (B.adjoint_zero_snd a)
-    push_map h
+    map_formal_series h
     exact h
   cocycleLeft_assoc := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleLeft_assoc)
-    push_map h
+    map_formal_series h
     exact h
   cocycleLeft_comm := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleLeft_comm)
-    push_map h
+    map_formal_series h
     exact h
   cocycleRight_assoc := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleRight_assoc)
-    push_map h
+    map_formal_series h
     exact h
   cocycleRight_comm := by
     have h := congrArg (MvPowerSeries.map f) (B.cocycleRight_comm)
-    push_map h
+    map_formal_series h
     exact h
   interchange := by
     have h := congrArg (MvPowerSeries.map f) (B.interchange)
-    push_map h
+    map_formal_series h
     exact h
   sy_inv := by
     have h := congrArg (MvPowerSeries.map f) (B.sy_inv)
-    push_map h
+    map_formal_series h
     exact h
   sy_law := by
     have h := congrArg (MvPowerSeries.map f) (B.sy_law)
-    push_map h
+    map_formal_series h
     exact h
   adjoint_compat_left a := by
     have h := congrArg (MvPowerSeries.map f) (B.adjoint_compat_left a)
-    push_map h
+    map_formal_series h
     exact h
   adjoint_compat_right a := by
     have h := congrArg (MvPowerSeries.map f) (B.adjoint_compat_right a)
-    push_map h
+    map_formal_series h
     exact h
   ad_one := by
     have h := congrArg (MvPowerSeries.map f) (B.ad_one)
-    push_map h
+    map_formal_series h
     exact h
   ad_mul a b := by
     have h := congrArg (MvPowerSeries.map f) (B.ad_mul a b)
-    push_map h
+    map_formal_series h
     exact h
   ad_add a b := by
     have h := congrArg (MvPowerSeries.map f) (B.ad_add a b)
-    push_map h
+    map_formal_series h
     exact h
   ad_sy a := by
     have h := congrArg (MvPowerSeries.map f) (B.ad_sy a)
-    push_map h
+    map_formal_series h
     exact h
 
 end GlobalTheory.FBMap

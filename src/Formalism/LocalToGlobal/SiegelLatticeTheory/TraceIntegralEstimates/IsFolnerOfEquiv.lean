@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.FolnerAbs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.FolnerAbs
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -52,20 +56,20 @@ theorem isHaarSub_comap (Φ : G ≃* H) (hΦ : Continuous Φ) (hΦ' : Continuous
     ext x
     simp
   · intro s hsS
-    rw [Measure.map_map (continuous_mul_left s).measurable hs]
+    rw [Measure.map_map (continuous_const_mul s).measurable hs]
     have e1 : (fun x => s * x) ∘ ⇑Φ.symm = ⇑Φ.symm ∘ (fun y => Φ s * y) := by
       funext y
       simp
-    rw [e1, ← Measure.map_map hs (continuous_mul_left (Φ s)).measurable, hl _ hsS]
+    rw [e1, ← Measure.map_map hs (continuous_const_mul (Φ s)).measurable, hl _ hsS]
   · intro K hKc
     rw [hmap]
     exact hK _ ((E.symm.isCompact_preimage).2 hKc)
   · intro s hsS
-    rw [Measure.map_map (continuous_mul_right s).measurable hs]
+    rw [Measure.map_map (continuous_mul_const s).measurable hs]
     have e1 : (fun x => x * s) ∘ ⇑Φ.symm = ⇑Φ.symm ∘ (fun y => y * Φ s) := by
       funext y
       simp
-    rw [e1, ← Measure.map_map hs (continuous_mul_right (Φ s)).measurable, hr _ hsS]
+    rw [e1, ← Measure.map_map hs (continuous_mul_const (Φ s)).measurable, hr _ hsS]
   · rw [Measure.map_map continuous_inv.measurable hs]
     have e1 : (fun x : G => x⁻¹) ∘ ⇑Φ.symm = ⇑Φ.symm ∘ (fun y => y⁻¹) := by
       funext y

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Ua5.MatIrr.{u_1, u_2} :
     {G : Type u_1} →

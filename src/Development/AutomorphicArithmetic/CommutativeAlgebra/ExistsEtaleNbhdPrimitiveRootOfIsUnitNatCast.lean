@@ -1,6 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.DerivUnit
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.DerivUnit
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry GlobalTheory.EtC
 
 private theorem evalRoot {A : Type} [CommRing A] (q : ℕ) :
@@ -22,7 +27,7 @@ private theorem unitDeriv {A : Type} [CommRing A] (q : ℕ) (hq : IsUnit ((q : �
 
 private theorem injOf {A : Type} [CommRing A] [Nontrivial A] (q : ℕ) [NeZero q] :
     Function.Injective (algebraMap A (AdjoinRoot (Polynomial.cyclotomic q A))) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h0
   rw [AdjoinRoot.algebraMap_eq, AdjoinRoot.of, RingHom.comp_apply, AdjoinRoot.mk_eq_zero] at ha
@@ -38,7 +43,7 @@ private theorem surjOf {A : Type} [CommRing A] [Nontrivial A] (q : ℕ) [NeZero 
   have := (Polynomial.cyclotomic.monic q A).finite_adjoinRoot
   obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral
     (S := AdjoinRoot (Polynomial.cyclotomic q A)) p.asIdeal ⊥ (by
-      rw [← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 (injOf q)]
+      rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 (injOf q)]
       exact bot_le)
   exact ⟨⟨Q, hQ⟩, PrimeSpectrum.ext hQc⟩
 

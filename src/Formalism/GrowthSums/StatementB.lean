@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+module
+
+public import Mathlib
+public import Formalism.SubspaceCounting.GoodOrbitIntervalTileCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,6 @@ def SegmentBound : Prop :=
       let D := if s < s' then b - a else b + n - a
       D < G' ∧ (a + D) % n = b ∧
         (T ∩ (range (D + 1)).image (fun j => (a + j) % n)).card ≤ N₁
-
-def OldestFar : Prop :=
-  ∀ (n : ℕ) (T : Finset ℕ) (L₁ L₂ K r : ℕ), 0 < n → L₁ < n → K ≤ r → L₁ + 1 ≤ L₂ → CondA n T L₂ K →
-    ∀ i ∈ T, i < n → (T ∩ (Icc 1 L₁).image (fun d => (i + n * L₁ - d) % n)).card < r
 
 def NextEvenTop : Prop :=
   ∀ (n : ℕ) (T : Finset ℕ) (L₂ K r u M₀ G' N₁ : ℕ), 1 ≤ r → 1 ≤ u →

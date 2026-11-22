@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpRGrpFinal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpX
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSRhR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSRhvR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SpectralCompositionZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpRGrpFinal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpX
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSRhR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSRhvR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SpectralCompositionZero
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

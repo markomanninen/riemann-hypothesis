@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PerfectPairingOrthogonalOfCard
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeisenbergWeightSpaceFinrank
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeisenbergWeightSpaceIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PerfectPairingOrthogonalOfCard
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeisenbergWeightSpaceFinrank
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.HeisenbergWeightSpaceIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,12 +59,9 @@ variable {E : Type} [AddCommGroup E] [Module F E] {W : X → Type} [∀ α, AddC
 
 def classSub (S : ∀ α, E →ₗ[F] W α) (N : ℕ) (α : X) : Submodule F E where
   carrier := {v | ∀ β, (¬ ∃ mu, β = α + N • mu) → S β v = 0}
-  add_mem' := fun {v v'} h h' β hβ => by rw [map_add, h β hβ, h' β hβ, add_zero]
+  add_mem' := fun {v v'} h h' β hβ => by rw [map_add (f := _), h β hβ, h' β hβ, add_zero]
   zero_mem' := fun β _ => map_zero _
   smul_mem' := fun c v h β hβ => by rw [map_smul, h β hβ, smul_zero]
-
-theorem mem_classSub {S : ∀ α, E →ₗ[F] W α} {α : X} {v : E} :
-    v ∈ classSub S N α ↔ ∀ β, (¬ ∃ mu, β = α + N • mu) → S β v = 0 := Iff.rfl
 
 theorem exists_proj [Module.Finite ℤ X] [IsAlgClosed F] (hN : (N : F) ≠ 0) (S : ∀ α, E →ₗ[F] W α)
     (hc : (Nat.card (TorChar X F N) : F) ≠ 0) (l : TorChar X F N → E → E)
@@ -71,7 +72,8 @@ theorem exists_proj [Module.Finite ℤ X] [IsAlgClosed F] (hN : (N : F) ≠ 0) (
   have key : ∀ β, S β ((Nat.card (TorChar X F N) : F)⁻¹ • ∑ τ, (((evalChar F N α τ)⁻¹ : Fˣ) : F) • l τ v) =
       ((Nat.card (TorChar X F N) : F)⁻¹ * ∑ τ, ((Units.coeHom F).comp (evalChar F N β / evalChar F N α)) τ) • S β v :=
     fun β => by
-      rw [map_smul, map_sum, mul_smul, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_smul, map_sum, mul_smul, Finset.sum_smul]
       refine congrArg _ (Finset.sum_congr rfl fun τ _ => ?_)
       rw [map_smul, hl, smul_smul, ← Units.val_mul, mul_comm, ← div_eq_mul_inv]
       rfl
@@ -119,7 +121,7 @@ theorem classSub_structure [Module.Finite ℤ X] [IsAlgClosed F] [FiniteDimensio
     rw [i.symm_apply_apply]; rfl
   let Wt : (a.range →* Fˣ) → Submodule F E := fun χ =>
     { carrier := {v | ∀ t, lam t v = (χ t : F) • v}
-      add_mem' := fun {v v'} h h' t => by rw [map_add, h t, h' t, smul_add]
+      add_mem' := fun {v v'} h h' t => by rw [map_add (f := _), h t, h' t, smul_add]
       zero_mem' := fun t => by rw [map_zero, smul_zero]
       smul_mem' := fun r v h t => by rw [map_smul, h t, smul_comm] }
   have hWt : ∀ χ v, v ∈ Wt χ ↔ ∀ t, lam t v = (χ t : F) • v := fun _ _ => Iff.rfl

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueCharacterOfMul
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.InvariantFunctionsDescend
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueCharacterOfMul
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.InvariantFunctionsDescend
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -32,7 +36,7 @@ theorem kap_gm (σ : Z ⟶ Y) (r : Y ⟶ X) (z : Z) (U : X.Opens) (a : Γ(X, U)�
     rw [gm_val r (σ z) U h]
     exact Scheme.Hom.germ_stalkMap_apply σ (r ⁻¹ᵁ U) z h _
   · have h' : ¬ (σ ≫ r) z ∈ U := h
-    rw [gm, gm, dif_neg h, dif_neg h']
+    rw [gm, gm, dite_eq_right h, dite_eq_right h']
     exact map_one _
 
 theorem kap_injective (σ : Z ⟶ Y) [Flat σ] (z : Z) : Function.Injective (kap σ z) := by
@@ -255,7 +259,7 @@ theorem Eqns.ker (mul : ∀ (T : Over S') (x y : T ⟶ B'), toBase hβ (x * y) =
     have a := h.2.2 t y u
     have c : @id (T.left.presheaf.stalk z)ˣ (cubV M.c (T := Over.mk (T.hom ≫ f)) z J 1
       (toBase hβ (π y)) (toBase hβ (π u))) = 1 := (isCub_cubV M.c (T := Over.mk (T.hom ≫ f)) hJ).face _ _
-    rwa [ht, o, c, (isCub_cubV M'.c hI).face, _root_.one_mul, _root_.mul_one] at a
+    rwa [ht, o, c, (isCub_cubV M'.c hI).face _ _, _root_.one_mul, _root_.mul_one] at a
 
 theorem exists_lift [Flat q.left] [Surjective q.left] {T : Over S'} (x : T ⟶ B') :
     ∃ (T' : Over S') (ρ : T' ⟶ T) (x' : T' ⟶ G), Flat ρ.left ∧ Surjective ρ.left ∧ x' ≫ q = ρ ≫ x :=
@@ -448,8 +452,8 @@ end Main
 
 end GlobalTheory.IsoDesc
 
-open GlobalTheory.IsoDesc in
 
+open GlobalTheory.IsoDesc in
 theorem GlobalTheory.isCPMap_descends : ∀ (S S' : Scheme.{0}) [ConnectedSpace S'] (f : S' ⟶ S) (X : Type) [AddCommGroup X] [Module.Free ℤ X] (G' : Over S') [GrpObj G'] [IsCommMonObj G'] [ConnectedSpace G'.left] (Q : TQ G' X) (P' : CP G') (D : Q.Desc P') (B : Over S) [GrpObj B] [IsCommMonObj B] (M : CP B) (β : Q.B.left ⟶ B.left) (hβ : β ≫ B.hom = Q.B.hom ≫ f) (hw) (w), (∀ (T : Over S') (x y : T ⟶ Q.B), toBase hβ (x * y) = toBase hβ x * toBase hβ y) → IsCPMap P' M f (Q.q.left ≫ β) hw w → ∃ v, IsCPMap D.M M f β hβ v := by
   intro S S' _ f X _ _ G _ _ _ Q P D B _ _ M β hβ hw w mul Hw
   have := Q.q_hom

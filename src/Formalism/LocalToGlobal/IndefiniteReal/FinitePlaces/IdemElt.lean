@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemLoc
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ theorem split_datum (P : HeightOneSpectrum (𝓞 D.host.E)) (hP : ¬ Lev.IsConjP
 instance finiteFE : Module.Finite D.host.F D.host.E :=
   Module.finite_of_finrank_pos (by rw [D.sp.cm.deg2]; norm_num)
 
-set_option synthInstance.maxHeartbeats 200000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
 theorem emb_exists (v : HeightOneSpectrum (𝓞 D.host.F)) (b : D.host.E) (t N : D.host.F)
     (ht : algebraMap D.host.F D.host.E t = b + star b) (hN : algebraMap D.host.F D.host.E N = b * star b)
     (hb : star b ≠ b) (r₁ : v.adicCompletion D.host.F)
@@ -98,7 +102,7 @@ theorem emb_exists (v : HeightOneSpectrum (𝓞 D.host.F)) (b : D.host.E) (t N :
   have hPm : P.Monic := by simp only [P]; monicity!
   have hPd : P.natDegree = 2 := by simp only [P]; compute_degree!
   have hPb : Polynomial.aeval b P = 0 := by
-    simp only [P, map_add, map_sub, map_mul, Polynomial.aeval_X_pow, Polynomial.aeval_X,
+    simp only [P, map_add (f := _), map_sub, map_mul, Polynomial.aeval_X_pow, Polynomial.aeval_X,
       Polynomial.aeval_C, ht, hN]
     ring
   have hint : IsIntegral D.host.F b := ⟨P, hPm, hPb⟩
@@ -143,7 +147,7 @@ theorem emb_exists (v : HeightOneSpectrum (𝓞 D.host.F)) (b : D.host.E) (t N :
   let pb := IntermediateField.adjoin.powerBasis hint
   have hr' : Polynomial.aeval r₁ (minpoly D.host.F pb.gen) = 0 := by
     rw [IntermediateField.adjoin.powerBasis_gen, IntermediateField.minpoly_gen, hmin]
-    simp only [P, map_add, map_sub, map_mul, Polynomial.aeval_X_pow, Polynomial.aeval_X, Polynomial.aeval_C]
+    simp only [P, map_add (f := _), map_sub, map_mul, Polynomial.aeval_X_pow, Polynomial.aeval_X, Polynomial.aeval_C]
     exact hr
   let ι0 := pb.lift r₁ hr'
   refine ⟨ι0.comp ((IntermediateField.equivOfEq htop).symm.toAlgHom.comp
@@ -169,7 +173,7 @@ theorem phiE_mul (a b : v.adicCompletion D.host.F) : phiE v (a * b) = phiE v a *
   simp only [phiE, map_mul]
 
 theorem phiE_add (a b : v.adicCompletion D.host.F) : phiE v (a + b) = phiE v a + phiE v b := by
-  simp only [phiE, map_add]
+  simp only [phiE, map_add (f := _)]
 
 theorem phiE_sub (a b : v.adicCompletion D.host.F) : phiE v (a - b) = phiE v a - phiE v b := by
   simp only [phiE, map_sub]
@@ -236,7 +240,7 @@ theorem compV_int (ι : D.host.E →ₐ[D.host.F] v.adicCompletion D.host.F) {z 
     exact mul_le_one' (ha v) (val_emb_le v ι x)
   | zero => simp
   | add y z _ _ hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (Valuation.map_add _ _ _).trans (max_le hy hz)
   | neg y _ hy => rwa [map_neg, Valuation.map_neg]
 

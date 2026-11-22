@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ExistsMapOfCoefGe
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeOfOneLeMul
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ExistsMapOfCoefGe
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LeOfOneLeMul
+
+@[expose] public section
 
 noncomputable section
 

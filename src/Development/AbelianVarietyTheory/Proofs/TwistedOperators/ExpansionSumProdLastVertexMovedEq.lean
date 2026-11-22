@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlippedLocalTotalTensorFixedByInnerVertexLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOChiRight
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridStandardVacuumScalarEqProdLocalPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatHatStabOfHatL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopPairSourceCharProdLocalIdeles
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetUnitaryConjAtPlaceEqDetLatticeBasisComponent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlippedLocalTotalTensorFixedByInnerVertexLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOChiRight
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GridStandardVacuumScalarEqProdLocalPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LatHatStabOfHatL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TopPairSourceCharProdLocalIdeles
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DetUnitaryConjAtPlaceEqDetLatticeBasisComponent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.LastVertexInv GlobalTheory.LastVertexMove
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -233,7 +238,7 @@ theorem cpt_eq_finAdEquiv (w : Pl D.host.E) (z : AE D) :
   | tmul a x =>
     change toAd D (x ⊗ₜ[D.host.F] a.2) w = GlobalTheory.LFun.toFinAd D.host.F D.host.E (a.2 ⊗ₜ[D.host.F] x) w
     rw [toAd_spec, GlobalTheory.LFun.toFinAd_tmul, mul_comm]
-  | add a b ha hb => simp only [map_add, ha, hb]; rfl
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]; rfl
 
 theorem detIdl_eq {e : AE D} {w : Pl D.host.E} (he : Formalism.L2.NTheta.IsIdemAt e w) (V : HSp D) (g : GA D V) (y : (Kw w)ˣ)
     (hy : ((Formalism.L2.Theta.mt V g).map ((cpt w).comp (toEAf D))).det = y) :
@@ -242,8 +247,8 @@ theorem detIdl_eq {e : AE D} {w : Pl D.host.E} (he : Formalism.L2.NTheta.IsIdemA
   have hc := cpt_of_isIdemAt he
   refine GlobalTheory.LFun.eq_locIdele ?_ (FiniteAdeleRing.ext _ fun Q => ?_)
   · change infPart D _ = 1
-    rw [detIdl_val he.1.1, map_add, map_mul, map_sub, hd.1, map_one, zero_mul, sub_zero, zero_add]
-  · rw [← cpt_eq_finAdEquiv, detIdl_val he.1.1, map_add, map_add, map_mul, map_mul, map_sub, map_sub, map_one, map_one]
+    rw [detIdl_val he.1.1, map_add (f := _), map_mul, map_sub, hd.1, map_one, zero_mul, sub_zero, zero_add]
+  · rw [← cpt_eq_finAdEquiv, detIdl_val he.1.1, map_add (f := _), map_add (f := _), map_mul, map_mul, map_sub, map_sub, map_one, map_one]
     by_cases hQ : Q = w
     · subst hQ
       rw [hc.1, one_mul, sub_self, add_zero, ← RingHom.comp_apply, RingHom.map_det, RingHom.mapMatrix_apply, hy]

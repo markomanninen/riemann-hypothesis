@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WeylProd
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WeylProd
-import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
-import Formalism.LocalToGlobal.Columns.Inputs
-import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WeylProd
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WeylProd
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+public import Formalism.LocalToGlobal.Columns.Inputs
+public import Formalism.LocalToGlobal.Columns.CmUnramifiedOfFieldConditions
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -22,7 +26,7 @@ theorem weylDim_of_weylProd (h : PI.WeylProd) {n : ℕ} (lam : DomWeight n) : We
     apply Int.toNat_of_nonneg
     unfold DomWeight.detShift
     have hn : 0 < n := lt_of_le_of_lt (Nat.zero_le _) t.isLt
-    rw [dif_pos hn]
+    rw [dite_eq_left hn]
     have h1 : t ≤ (⟨n - 1, by omega⟩ : Fin n) := by
       rw [Fin.le_def]
       have := t.isLt

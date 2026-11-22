@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeVacuaExistUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+
+@[expose] public section
 
 namespace GlobalTheory.Dict.Poisson
 
@@ -210,7 +214,7 @@ theorem ctr_rows {B : Lt E r} {y : Matrix (Fin n) (Fin r) E} (hy : ∀ k, y k �
     unfold ctr
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Pi.add_apply, cc, map_add, add_smul]
+    rw [Pi.add_apply, cc, map_add (f := _), add_smul]
     rfl
   unfold stdL at hv
   induction hv using Submodule.span_induction with
@@ -257,8 +261,8 @@ theorem nat_smul_mem_smul {k : ℕ} (hk : (k : 𝓞 E) ∈ P) {x : Fin r → E} 
   have h := Submodule.smul_mem_smul hk hx
   rwa [Nat.cast_smul_eq_nsmul, ← Nat.cast_smul_eq_nsmul E]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem mem_of_two (hM : Odd M) (hsM : s.Coprime M) (hMQ : (M : 𝓞 E) ∈ Q) (hc : Q ⊔ P = ⊤) {j : ℕ}
     {z : Fin r → E} (ha : ∀ t ∈ Q ^ j, t • z ∈ P • L) {b : 𝓞 E}
     (hb2 : ((2 * s : ℕ) : E) • b • z ∈ L) : b • z ∈ P • L := by
@@ -712,7 +716,7 @@ theorem GlobalTheory.Dict.poisson_roots : ∀ (E : Type) [Field E] [NumberField 
       exact h
     have e2 : (l.M : E)⁻¹ • mk a' = (l.M : E)⁻¹ • mk (a k) + mk c := by
       have h2 : a' = a k + l.M • c := by rw [← hc']; abel
-      rw [h2, map_add, map_nsmul, smul_add, ← Nat.cast_smul_eq_nsmul E, smul_smul,
+      rw [h2, map_add (f := _), map_nsmul, smul_add, ← Nat.cast_smul_eq_nsmul E, smul_smul,
         inv_mul_cancel₀ hM0, one_smul]
     have e : Y (fun k => Submodule.Quotient.mk (a k)) k - y' k =
         (Y (fun k => Submodule.Quotient.mk (a k)) k - (l.M : E)⁻¹ • mk a') + mk c - v k := by

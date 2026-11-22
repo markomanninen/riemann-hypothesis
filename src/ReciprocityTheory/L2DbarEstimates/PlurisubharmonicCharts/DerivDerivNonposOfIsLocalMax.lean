@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.OfRealNormSqSumMul
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.OfRealNormSqSumMul
+
+@[expose] public section
 
 open Complex ComplexConjugate Filter Topology
 
@@ -46,8 +50,8 @@ private theorem differentiableAt_fderiv_of_contDiffAt_two' {f : ReciprocityTheor
     (hf : ContDiffAt ℝ 2 f x) : DifferentiableAt ℝ (fderiv ℝ f) x :=
   (hf.fderiv_right (m := 1) one_add_one_eq_two.le).differentiableAt (by norm_num)
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem snd_nonpos_of_isLocalMax {f : V n → ℝ} {x : V n} (hf : ContDiffAt ℝ 2 f x)
     (hmax : IsLocalMax f x) (u : V n) : fderiv ℝ (fderiv ℝ f) x u u ≤ 0 := by
   have hD := differentiableAt_fderiv_of_contDiffAt_two' hf
@@ -135,7 +139,8 @@ private theorem re_div_four_mul_mul_conj_mul_four (P Q : ℝ) (z w : ℂ) :
 private theorem bilinear_apply_sum_sum (T : ReciprocityTheory.L2DbarEstimates.V n →L[ℝ] ReciprocityTheory.L2DbarEstimates.V n →L[ℝ] ℝ) (v w : Fin n → ReciprocityTheory.L2DbarEstimates.V n) :
     T (∑ j, v j) (∑ k, w k) = ∑ j, ∑ k, T (v j) (w k) := by
   have h : ∀ a : ReciprocityTheory.L2DbarEstimates.V n, T (∑ j, v j) a = ∑ j, T (v j) a := fun a => by
-    rw [map_sum, ContinuousLinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ContinuousLinearMap.sum_apply]
   rw [h]
   exact Finset.sum_congr rfl fun j _ => map_sum (T (v j)) w Finset.univ
 
@@ -151,7 +156,7 @@ theorem leviV_re_eq {f : V n → ℝ} {x : V n} (hf : ContDiffAt ℝ 2 f x) (ξ 
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun k _ => ?_
-  simp only [map_add, map_sub, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.sub_apply,
     ContinuousLinearMap.smul_apply, smul_eq_mul]
   ring
 

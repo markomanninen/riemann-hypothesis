@@ -1,8 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.HeckeFlatSpecialisation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOfMemDoubleCosetK
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IntegralMatrixTranslation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
+
+@[expose] public section
 
 open scoped Classical BigOperators
 open IsLocalRing Module Matrix
@@ -10,8 +11,6 @@ open IsLocalRing Module Matrix
 noncomputable section
 
 namespace GlobalTheory.AdaptedLocalData
-
-open GlobalTheory.IndefiniteRowSideFullHecke.HeckeFlatSpecialisation
 
 section Field
 

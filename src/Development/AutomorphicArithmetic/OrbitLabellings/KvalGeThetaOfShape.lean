@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
-import Formalism.SharpRestriction.Divisibility.OrbitPlaces
-import Development.AutomorphicArithmetic.OrbitLabellings.ExistsNonnegDualFnumSubLeOfDemandNearMul
-import Development.AutomorphicArithmetic.OrbitLabellings.KvalGeOfNormMfactMulCoeffLe
-import Development.AutomorphicArithmetic.OrbitLabellings.NormMfactMulCoeffLeOfB0S
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.ColDefs
+public import Formalism.SharpRestriction.Divisibility.OrbitPlaces
+public import Development.AutomorphicArithmetic.OrbitLabellings.ExistsNonnegDualFnumSubLeOfDemandNearMul
+public import Development.AutomorphicArithmetic.OrbitLabellings.KvalGeOfNormMfactMulCoeffLe
+public import Development.AutomorphicArithmetic.OrbitLabellings.NormMfactMulCoeffLeOfB0S
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G UpperTheory.G2 Classical

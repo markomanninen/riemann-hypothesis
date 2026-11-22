@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
-import GroundTheory.AutomorphicForms.SmoothRep
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.TraceQuot
+public import GroundTheory.AutomorphicForms.SmoothRep
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter ValuativeRel
 open GroundTheory.Global GroundTheory.Global.SemiLocal
@@ -52,7 +56,8 @@ private theorem mean_eq {T' T : Subgroup H} [T'.FiniteIndex] [T.FiniteIndex] (hl
 private theorem mean_mem {T : Subgroup H} [T.FiniteIndex] {v : V} (hv : ∀ t ∈ T, ρ t v = v) (h : H) :
     ρ h (mean ρ T v) = mean ρ T v := by
   unfold mean
-  rw [map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum]
   congr 1
   refine Fintype.sum_equiv (MulAction.toPerm h) _ _ ?_
   intro q
@@ -64,12 +69,13 @@ private theorem mean_mem {T : Subgroup H} [T.FiniteIndex] {v : V} (hv : ∀ t �
 
 private theorem mean_lin {W : Type} [AddCommGroup W] [Module ℂ W] (T : Subgroup H) [T.FiniteIndex]
     (p : V →ₗ[ℂ] W) {v : V} (hp : ∀ h, p (ρ h v) = p v) : p (mean ρ T v) = p v := by
-  simp only [mean, map_smul, map_sum, hp, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mean, map_smul, map_sum, hp, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
     ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ (card_ne T), one_smul]
 
 private theorem mean_add (T : Subgroup H) [T.FiniteIndex] (x y : V) :
     mean ρ T (x + y) = mean ρ T x + mean ρ T y := by
-  simp only [mean, map_add, Finset.sum_add_distrib, smul_add]
+  simp only [mean, map_add (f := _), Finset.sum_add_distrib, smul_add]
 
 private theorem mean_smul (T : Subgroup H) [T.FiniteIndex] (c : ℂ) (x : V) :
     mean ρ T (c • x) = c • mean ρ T x := by

@@ -1,17 +1,21 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FiniteTypeAlgebraCommonEigencharacterStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantCoefficientsExpansionStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CapelliPolynomialPermutationMatchStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SumOfLevelSizesEqStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.StandardBlocksLevelSumStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CenterActionCommutesLeviDifferenceStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegreeStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundaryStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentationStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HighestWeightClassBoundaryAndWeightStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FreeAlgebraActionOnSubquotientStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LevelWeightSumBoundStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.Bdy
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FiniteTypeAlgebraCommonEigencharacterStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantCoefficientsExpansionStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CapelliPolynomialPermutationMatchStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SumOfLevelSizesEqStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.StandardBlocksLevelSumStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CenterActionCommutesLeviDifferenceStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionPreservesSupportDegreeStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionCommutesWithTotalBoundaryStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LeviActionIsGlRepresentationStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HighestWeightClassBoundaryAndWeightStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.FreeAlgebraActionOnSubquotientStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.LevelWeightSumBoundStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,16 +37,16 @@ theorem sub_char {W : Type} [AddCommGroup W] [Module ℂ W] (R : Subalgebra ℂ 
   haveI : Algebra.FiniteType ℂ R := (Subalgebra.fg_iff_finiteType R).1 hfg
   obtain ⟨φ, hφ⟩ := GlobalTheory.T.finite_type_algebra_common_eigencharacter R W t ht
   refine ⟨fun x => if h : x ∈ R then φ ⟨x, h⟩ else 0, ?_, ?_, ?_, ?_⟩
-  · simp only [R.one_mem, dif_pos]
+  · simp only [R.one_mem, dite_eq_left]
     exact map_one φ
   · intro x hx y hy
-    simp only [hx, hy, R.add_mem hx hy, R.mul_mem hx hy, dif_pos]
+    simp only [hx, hy, R.add_mem hx hy, R.mul_mem hx hy, dite_eq_left]
     exact ⟨map_add φ ⟨x, hx⟩ ⟨y, hy⟩, map_mul φ ⟨x, hx⟩ ⟨y, hy⟩⟩
   · intro x hx c
-    simp only [hx, R.smul_mem hx c, dif_pos]
+    simp only [hx, R.smul_mem hx c, dite_eq_left]
     exact map_smul φ c ⟨x, hx⟩
   · intro x hx c e
-    simp only [hx, dif_pos]
+    simp only [hx, dite_eq_left]
     exact hφ ⟨x, hx⟩ c e
 
 theorem L_core : ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (t : W) (M : ℕ) (d : Fin M → ℕ)
@@ -66,12 +70,12 @@ theorem L_core : ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (t : W) (M : ℕ
       mem_image.2 ⟨j, mem_range.2 (Nat.lt_succ_of_le hj), rfl⟩⟩))
   set R := Algebra.adjoin ℂ (S : Set (Module.End ℂ W)) with hR
   have hcomm : ∀ x ∈ R, ∀ y ∈ R, x * y = y * x := by
-    letI := Algebra.adjoinCommRingOfComm ℂ (s := (S : Set (Module.End ℂ W))) (fun a ha b hb => by
+    letI := Algebra.isMulCommutative_adjoin ℂ (s := (S : Set (Module.End ℂ W))) (fun a ha b hb _ => by
       obtain ⟨i, j, rfl⟩ := hS a ha
       obtain ⟨k, l, rfl⟩ := hS b hb
       exact c4 i k j l)
     intro x hx y hy
-    exact congrArg Subtype.val (mul_comm (⟨x, hx⟩ : R) ⟨y, hy⟩)
+    exact congrArg Subtype.val (mul_comm' (⟨x, hx⟩ : R) ⟨y, hy⟩)
   obtain ⟨f, f1, f2, f3, f4⟩ := sub_char R hcomm ⟨S, rfl⟩ t ht
   have fsum : ∀ (A : Finset ℕ) (g : ℕ → Module.End ℂ W), (∀ j ∈ A, g j ∈ R) → (∑ j ∈ A, g j) ∈ R ∧
       f (∑ j ∈ A, g j) = ∑ j ∈ A, f (g j) := by
@@ -93,7 +97,7 @@ theorem L_core : ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (t : W) (M : ℕ
   have hdeg : ∀ i, (∑ j ∈ range (d i), C (a i j) * X ^ j : ℂ[X]).degree < (d i : WithBot ℕ) := fun i => by
     rw [degree_lt_iff_coeff_zero]
     intro m hm
-    simp only [finset_sum_coeff, coeff_C_mul, coeff_X_pow]
+    simp only [finsetSum_coeff, coeff_C_mul, coeff_X_pow]
     refine Finset.sum_eq_zero fun j hj => ?_
     have : m ≠ j := by have := Finset.mem_range.1 hj; omega
     simp [this]
@@ -110,7 +114,7 @@ theorem L_core : ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (t : W) (M : ℕ
     rw [c2 i u]
     refine ⟨m1, ?_⟩
     rw [m2, sum_range_succ]
-    simp only [P, eval_add, eval_pow, eval_X, eval_finset_sum, eval_mul, eval_C]
+    simp only [P, eval_add, eval_pow, eval_X, eval_finsetSum, eval_mul, eval_C]
     rw [add_comm]
     congr 1
     · rw [f3 _ (hmemS i _ le_rfl), c1, f1, mul_one]
@@ -142,7 +146,7 @@ theorem L_core : ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (t : W) (M : ℕ
     · have h1 : 1 ≤ d i := Nat.one_le_iff_ne_zero.2 hd
       rw [nextCoeff_of_natDegree_pos (by rw [hnd i]; omega), hnd i]
       have hco : (P i).coeff (d i - 1) = a i (d i - 1) := by
-        simp only [P, coeff_add, coeff_X_pow, finset_sum_coeff, coeff_C_mul]
+        simp only [P, coeff_add, coeff_X_pow, finsetSum_coeff, coeff_C_mul]
         rw [if_neg (by omega), zero_add, Finset.sum_eq_single (d i - 1)]
         · simp
         · intro b _ hb; simp [Ne.symm hb]
@@ -250,7 +254,7 @@ theorem coBlock : InjU → GenCOU → COBlock := by
       rw [map_list_prod, List.map_ofFn]
       congr 2
       funext i
-      simp only [Function.comp, map_qdet, Xq, s]
+      simpa [Function.comp_def, Xq, hs] using (map_qdet ρ _ (Y + shift (sz lev M) i)).symm
     rw [e1]
     refine Submodule.linearMap_qext _ (LinearMap.ext fun z => ?_)
     obtain ⟨hz, e⟩ := hρ (fb (sz lev M) h Y) z

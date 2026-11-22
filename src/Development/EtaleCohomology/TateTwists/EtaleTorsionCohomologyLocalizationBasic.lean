@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosureProperties
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleLocalPropertyBasicClosureProperties
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleLocalPropertyBasicClosure
 theorem etale_torsion_cohomology_localization_basic : LateralTheory.EtaleFoundations.EtaleLocalPropertyBasicClosure := by

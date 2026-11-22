@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffHypInclAt
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffHypInclAt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M.PLAux
 

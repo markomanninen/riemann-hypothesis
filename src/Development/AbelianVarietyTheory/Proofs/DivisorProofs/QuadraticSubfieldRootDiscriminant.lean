@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EigenvectorLieDegree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.AdelicDegreeTameRamification
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.EigenvectorLieDegree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.AdelicDegreeTameRamification
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.EqOfLeOfAbsNormEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.IndefiniteRowSideFullHecke Polynomial
 
@@ -17,7 +21,7 @@ theorem finrank_eq_two_of_adjoin_sqrt_eq_top (K : Type) [Field K] [NumberField K
   have hmin : minpoly ℚ x = X ^ 2 - C (a : ℚ) :=
     (minpoly.eq_of_irreducible_of_monic hirr hev hmon).symm
   have := IntermediateField.adjoin.finrank (K := ℚ) (x := x) (.of_finite ℚ x)
-  rw [hmin, natDegree_X_pow_sub_C, hadj, IntermediateField.finrank_top'] at this
+  rw [hmin, natDegree_X_pow_sub_C _, hadj, IntermediateField.finrank_top'] at this
   exact this
 
 theorem adjoin_gen_eq_top_rat {E : Type} [Field E] [NumberField E] (y : E) :

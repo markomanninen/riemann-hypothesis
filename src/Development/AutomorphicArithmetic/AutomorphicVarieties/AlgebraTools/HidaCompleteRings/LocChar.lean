@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -54,7 +58,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locChar :
         { carrier := {t | ρ t y ∈ maximalIdeal R ^ k • (⊤ : Submodule R N)}
           add_mem' := fun {a b} ha hb => by
             show ρ (a + b) y ∈ maximalIdeal R ^ k • (⊤ : Submodule R N)
-            rw [map_add, LinearMap.add_apply]
+            rw [map_add (f := _), LinearMap.add_apply]
             exact add_mem ha hb
           zero_mem' := by
             show ρ 0 y ∈ maximalIdeal R ^ k • (⊤ : Submodule R N)

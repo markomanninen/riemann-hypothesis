@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RecDefs
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -59,7 +63,8 @@ theorem normHom_mem_multiplicative_group (hL : FiniteDimensional ℚ_[p] L) (y :
   have := Fintype.ofFinite (GK p K ⧸ subG p K L)
   rw [mem_multOf_iff_fixed (le_refl K)]
   intro σ _
-  rw [normHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [normHom_apply, map_sum]
   refine Fintype.sum_equiv (MulAction.toPerm σ) _ _ fun c => ?_
   induction c using QuotientGroup.induction_on with
   | H τ =>
@@ -99,7 +104,8 @@ theorem finite_quot_of_le {L' : IntermediateField ℚ_[p] (PadicAlgCl p)} (hL' :
 
 theorem tower_bijective {L' : IntermediateField ℚ_[p] (PadicAlgCl p)} (h : K ≤ L) (h' : L ≤ L') :
     Bijective (fun x : (GK p K ⧸ subG p K L) × (GK p L ⧸ subG p L L') =>
-      (QuotientGroup.mk (x.1.out * resGK h x.2.out) : GK p K ⧸ subG p K L')) := by
+      (QuotientGroup.mk (x.1.out * resGK (p := p) (K := K) (L := L) h x.2.out) :
+        GK p K ⧸ subG p K L')) := by
   have hres : ∀ τ : GK p L, resGK h τ ∈ subG p K L := fun τ => by
     rw [← range_resGK h]; exact ⟨τ, rfl⟩
   constructor
@@ -153,7 +159,8 @@ theorem normHom_comp_normHom_of_le {L' : IntermediateField ℚ_[p] (PadicAlgCl p
   have := Fintype.ofFinite (GK p K ⧸ subG p K L')
   have := Fintype.ofFinite (GK p L ⧸ subG p L L')
   rw [normHom_apply, normHom_apply, normHom_apply]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [← Fintype.sum_prod_type']
   refine Fintype.sum_bijective _ (tower_bijective h h') _ _ fun x => ?_
   rw [kbarRep_out y hy, kbarRep_mul]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -54,7 +58,11 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.indTens 
   have key : ∀ x i g, (ES x i).1.1 g = EV ((Φ x).1 g) i := by
     intro x i g
     induction x using TensorProduct.induction_on with
-    | zero => simp
+    | zero =>
+      rw [ES.map_zero, Φ.map_zero]
+      change (0 : V) = EV 0 i
+      rw [EV.map_zero]
+      rfl
     | tmul a b =>
       rw [hΦ]
       simp only [ES, EV, TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply]
@@ -67,13 +75,15 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.indTens 
     | tmul a b =>
       rw [hact]
       simp only [EV, TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply, map_smul]
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   refine ⟨LinearEquiv.ofBijective Φ ⟨?_, ?_⟩, hΦ⟩
   · refine (injective_iff_map_eq_zero Φ).2 fun x hx => ?_
     apply ES.injective
     ext i g
     rw [key, hx]
-    simp
+    change EV 0 i = 0
+    rw [EV.map_zero]
+    rfl
   · intro f
     have hlaw : ∀ (p : P) g, f.1 (p * g) = ((extTensor ρ m).comp (MonoidHom.inl P Γ)) p (f.1 g) := f.2.1.2
     let c : _ → GlobalTheory.PRep.smoothPart (ind P ρ) := fun i =>

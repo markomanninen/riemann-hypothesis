@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaIsotropicStabiliserSplitPlace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaIsotropicStabilizerInertPlace
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaIsotropicStabiliserSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaIsotropicStabilizerInertPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem exists_frame {K : Type} [Field K] {n : ℕ} (x y : Fin n → K) (φ : Fi
   have e := congrArg (fun z : LinearMap.ker f => z.1 r) (b.sum_repr (P (Pi.single c 1)))
   have e2 : (P (Pi.single c 1)).1 r = (Pi.single c 1 : Fin n → K) r - p c * x r - φ c * y r := by
     simp [P]
-  simp only [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply, SetLike.val_smul, Pi.smul_apply, smul_eq_mul] at e
+  simp only [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply, SetLike.val_smul, Pi.smul_apply, smul_eq_mul] at e
   simp only [Matrix.add_apply, Matrix.vecMulVec_apply, Matrix.mul_apply, Matrix.of_apply, mul_comm ((b _).1 r), e, e2,
     Matrix.one_apply, Pi.single_apply]
   ring
@@ -73,6 +77,51 @@ theorem core (hσ : IsCMExt F E σ) {c : 𝓞 E} (hc : (c : E) + σ c = 1) (hJ :
     (hx : x ≠ 0) (h0 : ((fun i => σ (x i)) ᵥ* J) ⬝ᵥ x = 0) (g : GLoc σ J v) :
     ∃ q k : GLoc σ J v, emb σ J v q ∈ lineStab σ J x ∧ k ∈ stabLoc σ J L v ∧ g = q * k := by
   classical
+  have : Submodule.IsFullLattice E L := by
+    let S := Submodule.span E (L : Set (Fin n → E))
+    let b := Pi.basisFun E (Fin n)
+    let M := L ⊔ Submodule.span (𝓞 E) (Set.range b)
+    have hLM : L ≤ M := le_sup_left
+    have hM : Submodule.IsFullLattice E M := by
+      refine { toIsLattice := ?_, span_eq_top := ?_ }
+      · exact Submodule.IsLattice.of_fg E
+          ((Submodule.IsLattice.fg E L).sup (Submodule.fg_span (Set.finite_range b)))
+      · apply top_unique
+        rw [← b.span_eq]
+        exact Submodule.span_mono fun _ hz =>
+          (show Submodule.span (𝓞 E) (Set.range b) ≤ M from le_sup_right) (Submodule.subset_span hz)
+    have hloc : latLoc F L v ≤ latLoc F M v := by
+      intro z hz
+      exact latLoc_induction (p := fun z => z ∈ latLoc F M v)
+        (fun _ ha _ hx => tmul_mem_latLoc ha (hLM hx)) (zero_mem _)
+        (fun _ _ => add_mem) (fun _ => neg_mem) hz
+    -- The scalar extension of the quotient map vanishes on the completed lattice.
+    let f := ((S.mkQ.restrictScalars F).baseChange (Fv F v)).comp
+      (TensorProduct.piRight F (Fv F v) (Fv F v) (fun _ : Fin n => E)).symm.toLinearMap
+    have hgen (a : Fv F v) (z : Fin n → E) :
+        f (fun i => a ⊗ₜ[F] z i) = a ⊗ₜ[F] S.mkQ z := by
+      simp [f, LinearMap.restrictScalars_apply]
+    have hker : ∀ z ∈ latLoc F L v, f z = 0 := by
+      intro z hz
+      refine latLoc_induction (p := fun z => f z = 0) ?_ (map_zero f)
+        (fun y z hy hz => by rw [map_add, hy, hz, add_zero])
+        (fun y hy => by rw [map_neg, hy, neg_zero]) hz
+      intro a _ y hy
+      rw [hgen, Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero S).2 (Submodule.subset_span hy),
+        TensorProduct.tmul_zero]
+    refine ⟨top_unique ?_⟩
+    change ⊤ ≤ S
+    rw [← Submodule.IsFullLattice.span_eq_top (self := SelfDual.isLattice_dualGlob (σ := σ) hJ.2 hM)]
+    refine Submodule.span_le.mpr fun y hy => ?_
+    have hyLoc : (fun i => (1 : Fv F v) ⊗ₜ[F] y i) ∈ latLoc F L v := by
+      rw [show latLoc F L v = dualLoc σ J L v from hL]
+      have hyDual : (fun i => (1 : Fv F v) ⊗ₜ[F] y i) ∈ dualLoc σ J M v := by
+        rw [← SelfDual.latLoc_dualGlob hJ.2 hM]
+        exact tmul_mem_latLoc (one_mem _) hy
+      exact fun z hz => hyDual z (hloc hz)
+    have hyZero := hker _ hyLoc
+    rw [hgen, Module.FaithfullyFlat.one_tmul_eq_zero_iff, Submodule.mkQ_apply] at hyZero
+    exact (Submodule.Quotient.mk_eq_zero S).1 hyZero
   have hφ : (fun i => σ (x i)) ᵥ* J ≠ 0 := fun h => hx (funext fun i => σ.injective (by
     have := Matrix.eq_zero_of_vecMul_eq_zero hJ.2 h
     simpa using congrFun this i))

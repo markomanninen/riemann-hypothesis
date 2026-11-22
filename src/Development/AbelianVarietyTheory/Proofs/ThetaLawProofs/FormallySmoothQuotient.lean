@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsResEqOfUnitInChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsResEqOfUnitInChart
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.HenselZero
@@ -35,7 +39,7 @@ theorem formallySmooth_quotient {R S ι : Type} [CommRing R] [CommRing S] [Algeb
     rw [addDers_apply, this, add_neg_cancel]
   · refine Ideal.Quotient.algHom_ext _ (AlgHom.ext fun a => ?_)
     show Ideal.Quotient.mk I (addDers τ g' t h0 a) = g (Ideal.Quotient.mk _ a)
-    rw [addDers_apply, map_add, hg, Ideal.Quotient.eq_zero_iff_mem.2
+    rw [addDers_apply, map_add (f := _), hg, Ideal.Quotient.eq_zero_iff_mem.2
       (Ideal.sum_mem _ fun k _ => Ideal.mul_mem_left _ _ (ht k)), add_zero]
 
 theorem exists_derivation_lift {R S K : Type} [CommRing R] [CommRing S] [Algebra R S] [Algebra.FormallySmooth R S]
@@ -99,7 +103,7 @@ theorem exists_algHom_ker_eq {O S ι : Type} [CommRing O] [IsDomain O] [IsDiscre
   · rw [← hker, RingHom.mem_ker, hu, residue_eq_zero_iff]
     exact hπ.not_isUnit
   · have hb₀ : ψ b = 0 := hle' hb
-    rw [map_add, hb₀, zero_add, map_mul, AlgHom.commutes] at ha₀
+    rw [map_add (f := _), hb₀, zero_add, map_mul, AlgHom.commutes] at ha₀
     exact (mul_eq_zero.1 ha₀).resolve_left hπ.ne_zero
 
 end GlobalTheory.HenselZero

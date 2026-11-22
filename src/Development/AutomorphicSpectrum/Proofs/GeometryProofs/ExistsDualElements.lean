@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Filter Topology Metric
 
 namespace GlobalTheory.CompanionTheory.ExpChart.DualElements
@@ -55,7 +60,7 @@ theorem exists_dual_elements :
   intro R A _ _ _ r g E v φ h1 h2 h3 h4
   let D : Fin g → A →+ Localization.Away r := fun a =>
     AddMonoidHom.mk' (fun x => TrivSqZeroExt.snd (v a x)) (fun x y => by
-      rw [map_add, TrivSqZeroExt.snd_add])
+      rw [map_add (f := _), TrivSqZeroExt.snd_add])
   have hD : ∀ a x, D a x = TrivSqZeroExt.snd (v a x) := fun _ _ => rfl
   have hDmul : ∀ a x y, D a (x * y) = E x * D a y + E y * D a x := by
     intro a x y
@@ -115,10 +120,12 @@ theorem exists_dual_elements :
   · rw [hρ, map_mul]
     exact mul_ne_zero (hb2u.map φ).ne_zero hN
   · intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun c' _ => by rw [map_mul, hEt', mul_zero]
   · intro i c
-    rw [← hD, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hD, map_sum]
     have hsum : ∑ c', D i (algebraMap R A (n c c') * t' c') =
         algebraMap R (Localization.Away r) b2 * (N.adjugate * N) c i := by
       rw [Matrix.mul_apply, Finset.mul_sum]

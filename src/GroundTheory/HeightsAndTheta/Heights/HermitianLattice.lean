@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights
 
@@ -21,9 +25,6 @@ def ofComplex : ℂ ≃ₐ[ℂ] ComplexAt σ := AlgEquiv.refl
 instance : Algebra (𝓞 K) (ComplexAt σ) :=
   ((ofComplex σ).toRingHom.comp (σ.comp (algebraMap (𝓞 K) K))).toAlgebra
 
-theorem algebraMap_apply (a : 𝓞 K) :
-    algebraMap (𝓞 K) (ComplexAt σ) a = ofComplex σ (σ (a : K)) := rfl
-
 theorem smul_def (a : 𝓞 K) (z : ComplexAt σ) : a • z = ofComplex σ (σ (a : K)) * z := rfl
 
 theorem complex_smul_def (c : ℂ) (z : ComplexAt σ) : c • z = ofComplex σ c * z := rfl
@@ -31,8 +32,6 @@ theorem complex_smul_def (c : ℂ) (z : ComplexAt σ) : c • z = ofComplex σ c
 instance : SMulCommClass (𝓞 K) ℂ (ComplexAt σ) where
   smul_comm a c z := by
     rw [smul_def, complex_smul_def, complex_smul_def, smul_def, mul_left_comm]
-
-instance : SMulCommClass ℂ (𝓞 K) (ComplexAt σ) := SMulCommClass.symm _ _ _
 
 def conj : ComplexAt σ →+* ComplexAt (conjugate σ) :=
   (ofComplex (conjugate σ)).toRingHom.comp ((starRingEnd ℂ).comp (ofComplex σ).symm.toRingHom)
@@ -46,8 +45,6 @@ def conjLinear : ComplexAt σ →ₗ[𝓞 K] ComplexAt (conjugate σ) where
   map_smul' a z := by
     rw [smul_def, map_mul, RingHom.id_apply, smul_def, conj_ofComplex]
     rfl
-
-theorem conjLinear_apply (z : ComplexAt σ) : conjLinear σ z = conj σ z := rfl
 
 theorem conj_smul (c : ℂ) (z : ComplexAt σ) : conj σ (c • z) = starRingEnd ℂ c • conj σ z := by
   rw [complex_smul_def, map_mul, conj_ofComplex, complex_smul_def]
@@ -78,7 +75,7 @@ theorem conjMap_smul (c : ℂ) (x : Fibre σ E) :
   induction x using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
   | tmul z e => rw [smul_tmul', conjMap_tmul, conjMap_tmul, smul_tmul', conj_smul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 end Fibre
 
@@ -110,7 +107,7 @@ def coreOfInjective {𝕜 V W : Type*} [RCLike 𝕜] [AddCommGroup V] [Module �
   inner x y := inner 𝕜 (f x) (f y)
   conj_inner_symm x y := inner_conj_symm (f x) (f y)
   re_inner_nonneg x := inner_self_nonneg
-  add_left x y z := by simp only [map_add, inner_add_left]
+  add_left x y z := by simp only [map_add (f := _), inner_add_left]
   smul_left x y r := by simp only [map_smul, inner_smul_left]
   definite x h := hf (by rw [map_zero]; exact inner_self_eq_zero.mp h)
 
@@ -141,7 +138,7 @@ theorem integersCoord_conjMap (σ : K →+* ℂ) (x : Fibre σ (𝓞 K)) :
   | tmul z a =>
     rw [conjMap_tmul, integersCoord_tmul, integersCoord_tmul, map_mul]
     rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 variable (K)
 
@@ -179,7 +176,7 @@ theorem standardCoord_conjMap (σ : K →+* ℂ) (ι : Type*) [Fintype ι] [Deci
   | tmul z v =>
     rw [conjMap_tmul, standardCoord_tmul, standardCoord_tmul, map_mul]
     rfl
-  | add x y hx hy => rw [map_add, map_add, PiLp.add_apply, hx, hy, map_add, PiLp.add_apply, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), PiLp.add_apply, hx, hy, map_add (f := _), PiLp.add_apply, map_add (f := _)]
 
 variable (K)
 
@@ -187,7 +184,8 @@ def HermitianMetric.standard (ι : Type*) [Fintype ι] [DecidableEq ι] :
     HermitianMetric K (ι → 𝓞 K) where
   form σ := coreOfInjective (standardCoord K σ ι).toLinearMap (standardCoord K σ ι).injective
   form_conj σ x y := by
-    simp only [coreOfInjective_inner, LinearEquiv.coe_coe, PiLp.inner_apply, RCLike.inner_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coreOfInjective_inner, LinearEquiv.coe_coe, PiLp.inner_apply, RCLike.inner_apply,
       standardCoord_conjMap, map_sum, map_mul, Complex.conj_conj]
 
 theorem HermitianMetric.standard_inner (ι : Type*) [Fintype ι] [DecidableEq ι] (σ : K →+* ℂ)
@@ -206,8 +204,6 @@ def HermitianBundle.standard (n : ℕ) : HermitianBundle K :=
 end Examples
 
 abbrev GaussianField : Type := CyclotomicField 4 ℚ
-
-example : NumberField GaussianField := inferInstance
 
 def ratIntegers : HermitianBundle ℚ := HermitianBundle.integers ℚ
 
@@ -231,11 +227,6 @@ theorem HermitianMetric.standard_inner_single (K : Type*) [Field K] [NumberField
   · simp
 
 def ratEmbedding : ℚ →+* ℂ := Rat.castHom ℂ
-
-example : ((HermitianMetric.standard ℚ (Fin 2)).form ratEmbedding).inner
-    ((1 : ComplexAt ratEmbedding) ⊗ₜ[𝓞 ℚ] (Pi.single 0 1 : Fin 2 → 𝓞 ℚ))
-    ((1 : ComplexAt ratEmbedding) ⊗ₜ[𝓞 ℚ] (Pi.single 0 1 : Fin 2 → 𝓞 ℚ)) = 1 :=
-  HermitianMetric.standard_inner_single ℚ 2 ratEmbedding 0
 
 end
 

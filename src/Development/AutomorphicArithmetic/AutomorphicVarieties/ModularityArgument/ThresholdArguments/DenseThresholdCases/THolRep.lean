@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TLocCompR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TSatLoc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HolRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TLocCompR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TSatLoc
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -32,7 +36,7 @@ private theorem proj {φ : TR.Sm F a} (h0 : φ ≠ 0) (h : φ ∈ ⨆ π : TR.Cu
       by_cases h3 : ψ = 0
       · exact ih (by rw [← e2, h3, zero_add]; exact h2)
       refine ⟨π, ψ, h1, h3, fun z hz c hc => ?_⟩
-      rw [← e2, map_add, smul_add] at hc
+      rw [← e2, map_add (f := _), smul_add] at hc
       have h4 : z ψ - c • ψ ∈ π.V ⊓ ⨆ π ∈ S, π.V := by
         refine ⟨sub_mem (hz _ π.stable _ h1) (π.V.smul_mem c h1), ?_⟩
         have : z ψ - c • ψ = c • ψ' - z ψ' := by linear_combination (norm := module) hc
@@ -64,7 +68,8 @@ private theorem lie_eq_sum (X : Matrix (Fin a) (Fin a) (TR.Rinf F)) :
     simp [Matrix.sum_apply, Matrix.single_apply, ite_and, Pi.single_apply, ite_apply]
   change L X = _
   conv_lhs => rw [e]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   rfl
 private theorem rt_Eop (y : GL (Fin a) (TR.Rinf F)) (v : InfinitePlace F) (i j : Fin a) :
     TR.rt F a (TR.infGL F a y) * TR.Eop v i j =
@@ -103,14 +108,14 @@ private theorem cap_all (π : TR.CuspSub F a) {ψ : TR.Sm F a} (h : ψ ∈ π.V)
   · exact absurd (e.le ⟨h, Module.End.mem_eigenspace_iff.2 hc⟩) h0
   · exact fun x hx => Module.End.mem_eigenspace_iff.1 (e.ge hx).2
 private theorem exists_sat (P : _root_.UpperTheory.V.Af.Hypotheses') (π : TR.CuspSub F a) (w : HeightOneSpectrum (𝓞 F))
-    (h : HasFixed (π.locRep w) (GlobalTheory.LFun.KGL w a)) : ∃ B, π.HasSat w B := by
+    (h : HasFixed (π.locRep w) (GlobalTheory.LFun.KGL w (n := a))) : ∃ B, π.HasSat w B := by
   obtain ⟨⟨σ, hσ⟩, h2⟩ := _root_.UpperTheory.V.Af.local_comp_real_of_printed_results P F a π w
   have hi := h2 σ hσ
   obtain ⟨h3, h4⟩ := _root_.UpperTheory.V.Af.satake_local_of_printed_results P F a w σ
   obtain ⟨x, hx0, hx⟩ := h
   obtain ⟨B, hB⟩ := h3 (GlobalTheory.CuspRep.LocSph.exists_fixed_of_mem_iSup (π.locRep w) σ.ρ σ.irred
     (fun f : {f : σ.V →ₗ[ℂ] π.V // ∀ g v, f (σ.ρ g v) = π.finPart (locGL F a w g) (f v)} => f.1) (fun f => f.2)
-    (GlobalTheory.LFun.KGL w a : Set _) x hx0 hx (hi.2 ▸ Submodule.mem_top))
+    (GlobalTheory.LFun.KGL w (n := a) : Set _) x hx0 hx (hi.2 ▸ Submodule.mem_top))
   exact ⟨B, (h4 _ _ hi B).2 hB⟩
 end Proj
 section Loc
@@ -130,7 +135,7 @@ private theorem hecke_eq_dc {G V : Type} [Group G] [AddCommGroup V] [Module ℂ 
   · rw [h1 _ (by rwa [QuotientGroup.out_eq'])]; simp [hc]
   · rw [h2 _ (by rwa [QuotientGroup.out_eq'])]; simp [hc]
 variable {F : Type} [Field F] [NumberField F] (w : HeightOneSpectrum (𝓞 F))
-private theorem iwahori_level_zero_eq : K1 w 0 = KGL w 2 := by
+private theorem iwahori_level_zero_eq : K1 w 0 = KGL w (n := 2) := by
   ext g
   refine ⟨fun ⟨k, _, e⟩ => ⟨k, e⟩, fun ⟨k, e⟩ => ⟨k, ?_, e⟩⟩
   haveI : Subsingleton (w.adicCompletionIntegers F ⧸ IsLocalRing.maximalIdeal (w.adicCompletionIntegers F) ^ 0) :=
@@ -138,11 +143,11 @@ private theorem iwahori_level_zero_eq : K1 w 0 = KGL w 2 := by
   exact Subsingleton.elim _ _
 private theorem hecke_Tj {V : Type} [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ (GL (Fin 2) (w.adicCompletion F)) V)
     (j : ℕ) (a : GL (Fin 2) (w.adicCompletion F)) (ha : a.val = diagJ 2 (atFin w (unif w) : w.adicCompletion F) j) (x : V) :
-    heckeVec ρ (KGL w 2) (Tj ℂ 2 (Ov F w) (atFin w (unif w) : w.adicCompletion F) j) x = Hi.dc ρ (KGL w 2) (KGL w 2) a x := by
+    heckeVec ρ (KGL w (n := 2)) (Tj ℂ 2 (Ov F w) (atFin w (unif w) : w.adicCompletion F) j) x = Hi.dc ρ (KGL w (n := 2)) (KGL w (n := 2)) a x := by
   refine hecke_eq_dc ρ _ a _ (fun g hg => ?_) (fun g hg => ?_)
     (Formalism.UG.P.finite_support_cosets (Final.GLintComm F w 2) (Tj_mem_hecke (unif_spec w) j).2) x
   · obtain ⟨k, hk⟩ := hg
-    have h : ((k : GL (Fin 2) (w.adicCompletion F)) * a)⁻¹ * g ∈ KGL w 2 := QuotientGroup.eq.1 hk
+    have h : ((k : GL (Fin 2) (w.adicCompletion F)) * a)⁻¹ * g ∈ KGL w (n := 2) := QuotientGroup.eq.1 hk
     rw [Tj, Set.indicator_of_mem, Pi.one_apply]
     refine ⟨k, k.2, _, h, ?_⟩
     rw [← ha, ← Units.val_mul, ← Units.val_mul, mul_inv_cancel_left]
@@ -162,15 +167,16 @@ private theorem sat_two {V : Type} [AddCommGroup V] [Module ℂ V] {ρ : Represe
       h.2.2.2 _ (unif_spec w) 1 (by norm_num)]
     congr 1
     rw [Complex.ofReal_cpow (by positivity)]
-    have : qV F w = normV w := rfl
+    have : qV F w = normV w := by
+      simp [qV, normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
     simp [satEig, Multiset.esymm, Multiset.powersetCard_one, this]
     norm_num [add_comm]
   · have h2 := h.2.2.2 _ (unif_spec w) 2 le_rfl
     set z := GeneralLinearGroup.scalar (Fin 2) (atFin w (unif w))
     rw [hecke_Tj w ρ 2 z (by ext i j; fin_cases i <;> fin_cases j <;> simp [z, diagJ])] at h2
-    have ho : ∀ q ∈ MulAction.orbit (KGL w 2) (z : _ ⧸ KGL w 2), q = z := by
+    have ho : ∀ q ∈ MulAction.orbit (KGL w (n := 2)) (z : _ ⧸ KGL w (n := 2)), q = z := by
       rintro _ ⟨k, rfl⟩
-      change (((k : GL (Fin 2) (w.adicCompletion F)) * z : GL (Fin 2) (w.adicCompletion F)) : _ ⧸ KGL w 2) = _
+      change (((k : GL (Fin 2) (w.adicCompletion F)) * z : GL (Fin 2) (w.adicCompletion F)) : _ ⧸ KGL w (n := 2)) = _
       rw [← GlobalTheory.CuspRep.scalar_comm]
       exact QuotientGroup.mk_mul_of_mem _ k.2
     rw [(Hi.dcSum ℂ _ V ρ _ _ z ((Set.finite_singleton _).subset ho)).1 {z}
@@ -197,7 +203,8 @@ private theorem uop_map {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGro
     rw [e]
   have hd : ∀ u, GeneralLinearGroup.det (aff (atFin w (unif w)) u) = atFin w (unif w) := fun u =>
     Units.ext (by simp [aff, Matrix.det_fin_two])
-  rw [(uopSum F w V ρ c x hx).2 _ hS, (uopSum F w W ρ' c _ hx').2 _ hS, map_add, map_sum, smul_add, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [(uopSum F w V ρ c x hx).2 _ hS, (uopSum F w W ρ' c _ hx').2 _ hS, map_add (f := _), map_sum, smul_add, Finset.smul_sum]
   simp only [hf, hd]
   congr 1
   split_ifs
@@ -339,11 +346,15 @@ theorem UpperTheory.V.Sd.holRep_alt :
   set ν := GlobalTheory.HeckeGal.Model.absPow F (1 - (k : ℝ) / 2) with hν
   obtain ⟨hν1, hν2, -⟩ := GlobalTheory.HeckeGal.Model.absPow_isAbsPow F (1 - (k : ℝ) / 2)
   rw [← hν] at hν1 hν2
-  have hq : ∀ w : Pl F, (0 : ℝ) < normV w := fun w =>
-    Nat.cast_pos.2 (zero_lt_one.trans (NumberField.HeightOneSpectrum.one_lt_absNorm w))
+  have hn : ∀ w : Pl F, normV w = Ideal.absNorm w.asIdeal := fun w => by
+    simp [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  have hq : ∀ w : Pl F, (0 : ℝ) < normV w := fun w => by
+    rw [hn w]
+    exact Nat.cast_pos.2 (zero_lt_one.trans (NumberField.HeightOneSpectrum.one_lt_absNorm w))
   have hν3 : ∀ w, ((ν.val w : ℂˣ) : ℂ) = (((normV w : ℝ) ^ ((k : ℝ) / 2 - 1) : ℝ) : ℂ) := fun w => by
     rw [hν2, Complex.ofReal_cpow (hq w).le, ← Complex.ofReal_neg, neg_sub]
-    rfl
+    rw [hn w]
+    simp only [Complex.ofReal_natCast]
   set π := π₀.twist ν
   set x₀ : π₀.V := ⟨ψ, hψ⟩
   set T := π₀.toTwist ν
@@ -379,7 +390,7 @@ theorem UpperTheory.V.Sd.holRep_alt :
       show GeneralLinearGroup.det (GeneralLinearGroup.scalar (Fin 2) (atFin w (unif w))) =
         atFin w (unif w) * atFin w (unif w) from Units.ext (by simp [sq]), map_mul, mul_comm, ← Units.val_mul, ← mul_assoc]
     rfl
-  have hsat : ∀ w, (∀ u ∈ GlobalTheory.LFun.KGL w 2, π.locRep w u (T x₀) = T x₀) → ∃ α β : ℂˣ, π.HasSat w {α, β} ∧
+  have hsat : ∀ w, (∀ u ∈ GlobalTheory.LFun.KGL w (n := 2), π.locRep w u (T x₀) = T x₀) → ∃ α β : ℂˣ, π.HasSat w {α, β} ∧
       Uop w (π.locRep w) 0 (T x₀) = ((((normV w : ℝ) ^ (1 / 2 : ℝ) : ℝ) : ℂ) * (α + β)) • T x₀ ∧
       α * β = (ω * ν * ν).val w := fun w h => by
     obtain ⟨B, hB⟩ := exists_sat P.toClassicalTheorems π w ⟨_, hx0, h⟩
@@ -402,7 +413,10 @@ theorem UpperTheory.V.Sd.holRep_alt :
     fin_cases i <;> fin_cases j <;> simp at e' ⊢ <;> omega
   · obtain ⟨i, -, rfl⟩ := Multiset.mem_map.1 hz
     exact ⟨_, add_comm _ _⟩
-  · simp only [HChar.locInf_mul, hν, sign_abs, mul_one]
+  · have hs : ∀ v, (ω * ν * ν).locInf v (-1) = ω.locInf v (-1) := fun v => by
+      change (ω.locInf v (-1) * ν.locInf v (-1)) * ν.locInf v (-1) = _
+      rw [hν, sign_abs, mul_one, mul_one]
+    rw [hs v, hs v']
     exact Units.ext ((sign_hol hφ.hol hφ.ne v).trans (sign_hol hφ.hol hφ.ne v').symm)
   · obtain ⟨B, hl, hr, hf, hc, hX⟩ := P.gkR F 2 π
     refine TR.CuspSub.isSelfDualBy_of_iso B hl hr hf hc hX (P.smoR F 2 one_le_two _ _ ?_)

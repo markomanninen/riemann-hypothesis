@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -19,7 +23,8 @@ private theorem UpperTheory.sum_B_smul_pi_sum_smul_eq_sum_smul {G N : Type} [Gro
     rw [map_mul]
     rfl
   calc _ = ∑ h, u i (g * h) • π (g * h) v := by
-        simp_rw [map_sum, map_smul, hπ, Finset.smul_sum, smul_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp_rw [map_sum, map_smul, hπ, Finset.smul_sum, smul_smul]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl (fun h _ => ?_)
         rw [← Finset.sum_smul, hR]
@@ -49,7 +54,8 @@ private theorem UpperTheory.sum_smul_pi_average_eq_card_smul_of_dual {G N : Type
       = ∑ h, ∑ g, ∑ k, (u i h * c k (g⁻¹ * h)) • π g (F k) := by
         refine Finset.sum_congr rfl (fun h _ => ?_)
         rw [← Equiv.sum_comp (Equiv.mulLeft h⁻¹)]
-        simp only [Equiv.coe_mulLeft, map_sum, map_smul, hπ, Finset.smul_sum, smul_smul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Equiv.coe_mulLeft, map_sum, map_smul, hπ, Finset.smul_sum, smul_smul,
           _root_.mul_inv_rev, inv_inv, mul_inv_cancel_left]
     _ = ∑ g, ∑ k, (∑ h, u i h * c k (g⁻¹ * h)) • π g (F k) := by
         rw [Finset.sum_comm]
@@ -96,13 +102,15 @@ private theorem UpperTheory.exists_dual_family_of_linearIndependent' (O : Type) 
     (pi_eq_sum_univ (w j)).symm
   have h2 : ∑ h, P (fun h' => if h = h' then 1 else 0) k * w j h = if k = j then 1 else 0 := by
     have := congrFun (congrArg P hsum) k
-    rw [map_sum, hPw] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, hPw] at this
     simp only [map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] at this
     rw [eq_comm] at this
     simp only [mul_comm]
     rw [← this]
     simp [eq_comm]
-  simp only [IsScalarTower.algebraMap_apply O (FractionRing O) ℂ, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [IsScalarTower.algebraMap_apply O (FractionRing O) ℂ, ← map_mul, ← map_sum]
   rw [show (∑ h, P (fun h' => if h = h' then 1 else 0) k * algebraMap O (FractionRing O) (u j h))
     = if k = j then 1 else 0 from h2]
   split_ifs <;> simp
@@ -151,7 +159,8 @@ theorem UpperTheory.exists_integral_rep_detecting_invariant_subspace :
   let B : G → Matrix (Fin m) (Fin m) ℂ := fun g j i => algebraMap O ℂ (A g⁻¹ j i)
   have hR : ∀ g i h, u' i (g * h) = ∑ j, B g j i * u' j h := by
     intro g i h
-    simp only [u', B, hRO, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [u', B, hRO, map_sum, map_mul]
   have hsp : I ≤ Submodule.span ℂ (Set.range u') := by
     refine hspan.trans (Submodule.span_le.2 ?_)
     rintro x ⟨hxI, hxO⟩
@@ -169,7 +178,8 @@ theorem UpperTheory.exists_integral_rep_detecting_invariant_subspace :
       simp only [Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply,
         smul_eq_mul] at e2
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, u']
-      rw [← hy g, ← e2, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hy g, ← e2, map_sum]
       simp [map_mul]
     rw [hx]
     exact Submodule.sum_mem _ (fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩))

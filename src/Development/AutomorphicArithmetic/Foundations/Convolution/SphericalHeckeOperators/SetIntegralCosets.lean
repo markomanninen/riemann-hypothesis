@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
-import GroundTheory.AutomorphicForms.WhittakerGroups
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.DcoShape
+public import GroundTheory.AutomorphicForms.WhittakerGroups
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -169,11 +173,11 @@ private theorem exists_depth (F : Type) [Field F] [ValuativeRel F] [TopologicalS
   · exact ⟨0, fun e _ => by simp [hx]⟩
   obtain ⟨z, u, rfl⟩ := exists_zpow_mul_unit F hx
   refine ⟨(-z).toNat, fun e he => ?_⟩
-  have h0 : ((0 : ℕ) : ℤ) ≤ e + z := by push_cast; omega
-  rw [← mul_assoc, ← zpow_add₀ (GLnLocal.uniformizer_ne_zero F)]
-  have h1 := Parabolic.valuation_zpow_mul_le_pow_mul (F := F) (x := ((u : (ValuativeRel.valuation F).integer) : F)) h0
-  rw [pow_zero, one_mul] at h1
-  exact h1.trans ((Valuation.mem_integer_iff _ _).1 (u : (ValuativeRel.valuation F).integer).2)
+  have h0 : 0 ≤ e + z := by omega
+  rw [← mul_assoc, ← zpow_add₀ (Parabolic.uniformizer_ne_zero (F := F)),
+    ← Int.toNat_of_nonneg h0, zpow_natCast]
+  exact (Valuation.mem_integer_iff _ _).1
+    (mul_mem (pow_mem (GLnLocal.uniformizer F).2 _) (u : (ValuativeRel.valuation F).integer).2)
 
 private theorem exists_deep (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
     (n : ℕ) {ι : Type*} [Finite ι] (u : ι → GL (Fin n) F) (hu : ∀ i, u i ∈ unipotent F n) :
@@ -192,7 +196,7 @@ private theorem exists_deep (F : Type) [Field F] [ValuativeRel F] [TopologicalSp
         (GLnLocal.uniformizer F : F) ^ (a r - a s) * (u i : Matrix (Fin n) (Fin n) F) r s := by
       intro r s
       rw [← torusPow_neg, Units.val_mul, Units.val_mul, coe_torusPow, coe_torusPow, Matrix.mul_diagonal,
-        Matrix.diagonal_mul, sub_eq_add_neg, zpow_add₀ (GLnLocal.uniformizer_ne_zero F), Pi.neg_apply]
+        Matrix.diagonal_mul, sub_eq_add_neg, zpow_add₀ (Parabolic.uniformizer_ne_zero (F := F)), Pi.neg_apply]
       ring
     refine (mem_unipotent_inf_integralGL_iff F n).2 ⟨hN, fun r s => ?_⟩
     rcases lt_trichotomy r s with h | h | h

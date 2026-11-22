@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.LubinTateReciprocity.RootEval
-import GroundTheory.LocalFields.FormalGroups.OverUnramified
-import GroundTheory.LocalFields.LubinTateTorsion
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LubinTateReciprocity.RootEval
+public import GroundTheory.LocalFields.FormalGroups.OverUnramified
+public import GroundTheory.LocalFields.LubinTateTorsion
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,9 +34,9 @@ theorem constantCoeff_subst_of_constantCoeff_eq_zero {G : R⟦X⟧} (hG : consta
     (F : R⟦X⟧) : constantCoeff (subst G F : R⟦X⟧) = constantCoeff F := by
   have hs := HasSubst.of_constantCoeff_zero' hG
   conv_lhs => rw [F.eq_X_mul_shift_add_const]
-  rw [← coe_substAlgHom hs, map_add, map_mul, coe_substAlgHom hs, subst_X hs, subst_C]
+  rw [← coe_substAlgHom hs, map_add (f := _), map_mul, coe_substAlgHom hs, subst_X hs, subst_C]
   change constantCoeff (G * _ + PowerSeries.C _) = _
-  rw [map_add, map_mul, hG, zero_mul, zero_add, constantCoeff_C]
+  rw [map_add (f := _), map_mul, hG, zero_mul, zero_add, constantCoeff_C]
 
 theorem exists_subst_eq_mul {G W : R⟦X⟧} (hG : constantCoeff G = 0) (hW : constantCoeff W = 0) :
     ∃ V : R⟦X⟧, (subst G W : R⟦X⟧) = G * V ∧ constantCoeff V = coeff 1 W := by
@@ -112,8 +116,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {B : Type*} [CommRing B] [IsDomain B] [IsDiscreteValuationRing B] [Algebra 𝒪[K] B]
   (hunr : (maximalIdeal 𝒪[K]).map (algebraMap 𝒪[K] B) = maximalIdeal B)
 
-variable (π B) in
 
+variable (π B) in
 abbrev ltEisB (m : ℕ) : Polynomial B :=
   (ltEisenstein π m).map (algebraMap 𝒪[K] B)
 
@@ -126,10 +130,10 @@ omit [IsDomain B] [IsDiscreteValuationRing B] in
 theorem ltEisB_eq (m : ℕ) :
     ltEisB π B m = Polynomial.C (algebraMap 𝒪[K] B π) +
       ((ltPolyIter π m).map (algebraMap 𝒪[K] B)) ^ (Nat.card 𝓀[K] - 1) := by
-  rw [ltEisB, ltEisenstein, Polynomial.map_add, Polynomial.map_C, Polynomial.map_pow]
+  rw [ltEisB, ltEisenstein, Polynomial.map_add (f := _), Polynomial.map_C, Polynomial.map_pow]
+
 
 include hπ hunr in
-
 theorem isDistinguishedAt_ltEisB (m : ℕ) : (ltEisB π B m).IsDistinguishedAt (maximalIdeal B) := by
   have hmon := (ltEisenstein_monic π m).1
   refine ⟨⟨fun {n} hn => ?_⟩, hmon.map _⟩
@@ -137,8 +141,8 @@ theorem isDistinguishedAt_ltEisB (m : ℕ) : (ltEisB π B m).IsDistinguishedAt (
   rw [Polynomial.coeff_map, ← hunr]
   exact Ideal.mem_map_of_mem _ ((isEisensteinAt_ltEisenstein hπ m).mem hn)
 
-include hπ hunr in
 
+include hπ hunr in
 theorem algebraMap_uniformizer_mul_eq_zero {c : B} (h : algebraMap 𝒪[K] B π * c = 0) : c = 0 := by
   have hπB := irreducible_algebraMap hunr hπ
   exact (mul_eq_zero.mp h).resolve_left hπB.ne_zero
@@ -156,11 +160,13 @@ theorem repr_ringHom_eq (T : AdjoinRoot P →+* AdjoinRoot P) (ψ : B → B)
     pb.basis.repr (T z) i = ψ (pb.basis.repr z i) := by
   have hTz : T z = ∑ j, ψ (pb.basis.repr z j) • pb.basis j := by
     conv_lhs => rw [← pb.basis.sum_repr z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Algebra.smul_def, Algebra.smul_def, map_mul, PowerBasis.coe_basis, map_pow, hgen,
       AdjoinRoot.algebraMap_eq, hof, hroot]
-  rw [hTz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hTz, map_sum]
   simp only [map_smul, Module.Basis.repr_self, Finsupp.coe_finsetSum, Finset.sum_apply,
     Finsupp.smul_apply, Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, if_true]
@@ -183,8 +189,8 @@ theorem rootEval_subst_ltSeries_uniformizer_pow_succ {F : B⟦X⟧} (hF : consta
   rw [hV, map_mul, ltSeries_uniformizer_pow, ltPolyIter_succ_eq_mul, Polynomial.map_mul,
     Polynomial.coe_mul, map_mul, rootEval_self, mul_zero, zero_mul]
 
-omit hπ hunr [IsDomain B] [IsDiscreteValuationRing B] [IsAdicComplete (maximalIdeal B) B] in
 
+omit hπ hunr [IsDomain B] [IsDiscreteValuationRing B] [IsAdicComplete (maximalIdeal B) B] in
 theorem aeval_root_ltPolyIter_pow :
     Polynomial.aeval (AdjoinRoot.root (ltEisB π B m)) ((ltPolyIter π m).map (algebraMap 𝒪[K] B)) ^ (Nat.card 𝓀[K] - 1) =
       AdjoinRoot.of (ltEisB π B m) (-algebraMap 𝒪[K] B π) := by
@@ -192,12 +198,12 @@ theorem aeval_root_ltPolyIter_pow :
       (Polynomial.C (algebraMap 𝒪[K] B π) +
         ((ltPolyIter π m).map (algebraMap 𝒪[K] B)) ^ (Nat.card 𝓀[K] - 1)) = 0 := by
     rw [← ltEisB_eq, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self]
-  rw [map_add, Polynomial.aeval_C, map_pow] at h
+  rw [map_add (f := _), Polynomial.aeval_C, map_pow] at h
   rw [map_neg, eq_neg_of_add_eq_zero_right h]
   rfl
 
-omit [IsAdicComplete (maximalIdeal B) B] in
 
+omit [IsAdicComplete (maximalIdeal B) B] in
 theorem eq_zero_of_aeval_root_ltPolyIter_mul {z : AdjoinRoot (ltEisB π B m)}
     (h : Polynomial.aeval (AdjoinRoot.root (ltEisB π B m)) ((ltPolyIter π m).map (algebraMap 𝒪[K] B)) * z = 0) : z = 0 := by
   have hq := one_lt_card_residueField' K
@@ -232,8 +238,8 @@ theorem aeval_rootEval_ltSeries_eq_zero {a : 𝒪[K]} (ha : IsUnit a) :
   exact eq_zero_of_rootEval_subst_mul hπ hunr m (constantCoeff_ltSeries hπ a)
     (by rw [coeff_one_ltSeries]; exact ha.map _) h1
 
-omit hπ hunr [IsDomain B] [IsDiscreteValuationRing B] [IsAdicComplete (maximalIdeal B) B] in
 
+omit hπ hunr [IsDomain B] [IsDiscreteValuationRing B] [IsAdicComplete (maximalIdeal B) B] in
 theorem map_map_ltEisB (φ : B →ₐ[𝒪[K]] B) :
     (ltEisB π B m).map (φ : B →+* B) = ltEisB π B m := by
   rw [ltEisB, Polynomial.map_map, AlgHom.comp_algebraMap_of_tower]
@@ -313,8 +319,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   (φ : B →ₐ[𝒪[K]] B) (hφ : ∀ x : B, residue B (φ x) = residue B x ^ Nat.card 𝓀[K])
   (u : 𝒪[K]ˣ)
 
-include hφ in
 
+include hφ in
 theorem exists_twistFrob_fixed_root :
     ∃ x : AdjoinRoot (ltEisB π B m), twistFrob hπ hunr m φ u x = x ∧
       Polynomial.aeval x (ltEisB ((u : 𝒪[K]) * π) B m) = 0 := by

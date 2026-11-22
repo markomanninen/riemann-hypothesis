@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundCount
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSupBoundCount
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SupBoundCountLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -65,13 +70,15 @@ theorem main {D : ℕ} {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} 
   have hmem : ∀ m : Fin r → ℤ, aeval d.y (∑ k, m k • f k) ∈ secM d.y (blockDeg d.k₀ n) := by
     intro m
     rw [← hb'.2.2]
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _
       (Submodule.subset_span ⟨k, by simp [aeval_map_int]⟩)
   have hinj : Function.Injective fun m : Fin r → ℤ => aeval d.y (∑ k, m k • f k) := by
     intro m m' h
     have h0 : ∑ k, (m k - m' k) • aeval d.y (f k) = 0 := by
-      simp only [map_sum, map_zsmul] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul] at h
       simp only [sub_smul, Finset.sum_sub_distrib]
       exact sub_eq_zero.2 h
     funext k
@@ -86,7 +93,8 @@ theorem main {D : ℕ} {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} 
     obtain ⟨m, hm⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hs'
     have hms : aeval d.y (∑ k, m k • f k) = s := by
       rw [← hm]
-      simp [map_sum, aeval_map_int]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, aeval_map_int]
     refine ⟨⟨m, ?_⟩, ?_⟩
     · show IsSmallH _ _ _ _ _
       rw [hms]
@@ -122,7 +130,7 @@ theorem SupBoundCount.proof : SupBoundCount.Statement := by
   have hex := SupBoundCount.exists_isSecBasisM d.y d.k₀ n
   have h := SupBoundCount.main d n hc hsup hex.choose_spec
   refine ⟨h.1, ?_⟩
-  rw [blockChi, dif_pos hex]
+  rw [blockChi, dite_eq_left hex]
   exact h.2
 
 end

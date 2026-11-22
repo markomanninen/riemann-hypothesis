@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistIntoTorsorSheafOfMuQuotientAndPreshe
+module
+
+public import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistIntoTorsorSheafOfMuQuotientAndPreshe
+
+@[expose] public section
 
 open CategoryTheory GlobalTheory.EtC
 namespace LateralTheory.EtaleFoundations.KTP

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicFamilySmoothEntriesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeGramDeterminantStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FiniteSat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicFamilySmoothEntriesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeGramDeterminantStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FiniteSat
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 
 namespace LevelTowerAlt.LocFin
@@ -56,7 +61,7 @@ theorem rg_pos (R : RiemLat E g Λ) {N : ℕ} (e : Module.Basis (Fin N) ℤ Λ) 
   have h2 : ∀ l, R.form (e l) w = -(if l = k then 1 else 0) := by
     intro l
     have ha := R.alt (e l + w)
-    simp only [map_add, LinearMap.add_apply, R.alt] at ha
+    simp only [map_add (f := _), LinearMap.add_apply, R.alt] at ha
     have hb : R.form w (e l) = if l = k then 1 else 0 := by
       rw [hw]; simp [Finsupp.single_apply]
     linarith
@@ -73,7 +78,8 @@ theorem rg_coords (R : RiemLat E g Λ) {N m : ℕ} (e : Module.Basis (Fin N) ℤ
   have h : ∀ i, R.P (v i) = ∑ k, (((e.repr (v i) k : ℤ) : ℝ) : ℂ) • R.P (e k) := by
     intro i
     conv_lhs => rw [← e.sum_repr (v i)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul, Complex.ofReal_intCast, Int.cast_smul_eq_zsmul]
   ext i j
@@ -141,7 +147,8 @@ theorem LevelTowerAlt.cusps_locally_finite_family : ∀ (E : Type) [Field E] [Nu
   refine ⟨_, fun i => (b i : Λ), fun x => ⟨fun hx => ⟨fun i => b.repr ⟨x, hx⟩ i, ?_⟩, ?_⟩,
     fun x k hk hx => hI.2.1 x k hk hx, hd0, ?_⟩
   · have := congrArg (I.subtype.toAddMonoidHom.toIntLinearMap) (b.sum_repr ⟨x, hx⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simpa using this
   · rintro ⟨y, rfl⟩
     exact I.sum_mem fun i _ => zsmul_mem (b i).2 _

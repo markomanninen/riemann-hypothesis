@@ -1,17 +1,53 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.ExtraFinal
-import Development.AutomorphicSpectrum.Proofs.JetProofs.ExistsDiagonalCongrOfSimilitudeDistinctEigenvalu
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.MassIntegralStmt
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.PrincipalHermitianLattice
+public import Formalism.LocalRingCardinality.DataDIVDefs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleClassGroupCardPos
+public import Formalism.LocalRingCardinality.DataKerP
+public import Formalism.LocalRingCardinality.DataLatDefs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ClassRecordRowDimensionZero
+public import Formalism.LocalRingCardinality.DataNChoice
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraTheta
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraVal
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraNum
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraGat
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExistsHomOfBasis
+public import Formalism.LocalRingCardinality.DataMink
+public import Formalism.SharpRestriction.InertJacobiLevels.ExtraGatC
+public import Formalism.LocalRingCardinality.KernelPlaceMeanBound
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalRingCardinality.SpanPowerMembership.RankRecordRowDimensionZero
+public import Formalism.LocalRingCardinality.SpanPowerMembership.SignSplitEquivInl
+public import Formalism.LocalRingCardinality.SpanPowerMembership.DivXExample
+public import Formalism.LocalRingCardinality.DataParams
+public import Formalism.SharpRestriction.InertJacobiLevels.SecondTorsionCardPos
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmRec
+public import Formalism.SharpRestriction.InertJacobiLevels.ExistsLarge
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.SharpRestriction.InertJacobiLevels.TiesView
+public import Formalism.SharpRestriction.InertJacobiLevels.TiesLat
+public import Formalism.SharpRestriction.GrowthBounds.DefsInst
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IsDerivedOnOfIsKMod
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKTypeMultiplicityOneUnconditional
+public import Formalism.ThetaLiftIndependence.Statement
+public import Formalism.HermitianLattices.StatementMass
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowHCParameterIsHCParamAndFormalDegreePos
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Front
 
-theorem discreteSeriesUpqUnique : GlobalTheory.Published.DiscreteSeriesUpqUnique := by
-  have h := GlobalTheory.CompanionTheory.DS.dsUnique
-  unfold GlobalTheory.CompanionTheory.DS.DSUnique at h
-  unfold GlobalTheory.Published.DiscreteSeriesUpqUnique
-  intros
-  apply h <;> assumption
+theorem discreteSeriesUpqUnique : GlobalTheory.Published.DiscreteSeriesUpqUnique :=
+  fun n ε lam hlam H H' _ _ _ _ σ σ' hσ hσ' =>
+    GlobalTheory.CompanionTheory.DSUniq.ds_unique
+      _root_.CompanionTheory.D.LK.hMultAlg _root_.CompanionTheory.D.LK.hKModExists
+      _root_.CompanionTheory.D.LK.hOrthCyc n ε lam H H' σ σ' hlam hσ hσ'
 
 end GlobalTheory.CompanionTheory.Front

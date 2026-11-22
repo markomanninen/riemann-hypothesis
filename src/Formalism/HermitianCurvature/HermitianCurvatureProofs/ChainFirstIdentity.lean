@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourthExpansionIdentity
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ScalarInverseSimplification
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.QuantumDetHighestWeightHolds
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -20,7 +24,8 @@ theorem chain_first_identity : LastColumnChain := by
   have hcs : a ∘ Fin.castSucc = xR k r (m + 1) (by omega) := by
     funext l; ext; simp [a, xR, eI]
   have hexp := Formalism.FourierDecayAlt.P.expansion_last_column A _ (m + 1) E a a u
-  rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
 
   have hzero : ∀ l : Fin m, La ((((-1 : ℤ) ^ (m + 1 + ((Fin.castSucc (Fin.castSucc l) : Fin (m + 2)) : ℕ)) : ℤ) : A) *
       (qminor E (a ∘ (Fin.castSucc (Fin.castSucc l)).succAbove) (a ∘ Fin.castSucc) u *
@@ -68,7 +73,8 @@ theorem chain_first_identity : LastColumnChain := by
   have hQm : La (qminor E (a ∘ (Fin.castSucc (Fin.last m) : Fin (m + 2)).succAbove) (a ∘ Fin.castSucc) u) =
       (c ⟨m + 1, by omega⟩ / c ⟨m, by omega⟩) • La (qminor E (xR k r m (by omega)) (xR k r m (by omega)) u) := by
     rw [hrows, Formalism.REAL.quantumMinorRowSkew_holds A _ (m + 1) E rowsP _ (finRotate (m + 1)) u, la_intmul, sign_finRotate]
-    rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum]
     rw [Fin.sum_univ_castSucc, Finset.sum_eq_zero, zero_add]
     · rw [la_intmul]
       have hr0 : rowsP 0 = eI k r ⟨m + 1, by omega⟩ := by simp [rowsP]

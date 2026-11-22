@@ -1,11 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.DiscreteSeriesLowestKTypeOfClassification
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DRepCEqDsigC
-open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.GKModule GlobalTheory.GKLie GlobalTheory.CompanionTheory.GKClosure GlobalTheory.CompanionTheory.Hypotheses₂
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
+
+open Matrix Formalism.REAL
 open GlobalTheory.SmoothGlob (lieSet)
-open scoped InnerProductSpace
 
 noncomputable section
 
@@ -26,8 +28,6 @@ theorem skew_of_commute {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) 
 theorem exp_mem_Kset {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (hc : X * Jm ε = Jm ε * X) (t : ℝ) :
     NormedSpace.exp (t • X) ∈ Kset ε := by
   have hs := skew_of_commute hX hc
-  have hJ : (Jm ε)⁻¹ = Jm ε := Matrix.inv_eq_right_inv (Formalism.REAL.Jm_mul_self ε)
-  have hu : IsUnit (Jm ε) := IsUnit.of_mul_eq_one _ (Formalism.REAL.Jm_mul_self ε)
   constructor
   · rw [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose, ← Matrix.exp_conjTranspose,
       Matrix.conjTranspose_smul, hs]
@@ -35,20 +35,8 @@ theorem exp_mem_Kset {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (hc
     have hcm : Commute (t • X) (-(t • X)) := (Commute.refl _).neg_right
     rw [hneg, ← Matrix.exp_add_of_commute _ _ hcm]
     simp
-  · have h1 : Jm ε * (t • X) * (Jm ε)⁻¹ = t • X := by
-      rw [hJ, Matrix.mul_smul, Matrix.smul_mul, ← hc, Matrix.mul_assoc, Formalism.REAL.Jm_mul_self, Matrix.mul_one]
-    have h2 := Matrix.exp_conj (Jm ε) (t • X) hu
-    rw [h1, hJ] at h2
-    calc NormedSpace.exp (t • X) * Jm ε = Jm ε * NormedSpace.exp (t • X) * Jm ε * Jm ε := by rw [← h2]
-      _ = Jm ε * NormedSpace.exp (t • X) := by rw [Matrix.mul_assoc, Formalism.REAL.Jm_mul_self, Matrix.mul_one]
-
-variable {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-  {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
+  · exact ((show Commute X (Jm ε) from hc).smul_left t).exp_left
 
 end GlobalTheory.CompanionTheory.Hypotheses₂.KStable
-
-namespace GlobalTheory.CompanionTheory.Hypotheses₂
-
-end GlobalTheory.CompanionTheory.Hypotheses₂
 
 end

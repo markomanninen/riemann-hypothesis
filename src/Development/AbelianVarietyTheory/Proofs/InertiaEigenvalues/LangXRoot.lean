@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PMonE.LangIsogenyConstruction
 
@@ -99,7 +103,7 @@ theorem lang_span [FiniteDimensional k V] (q : ℕ) (hq : 1 < q) (F : V →+ V)
     | add x y _ _ hx hy =>
       obtain ⟨x', hx', ex⟩ := hx
       obtain ⟨y', hy', ey⟩ := hy
-      exact ⟨x' + y', U.add_mem hx' hy', by rw [map_add, ← ex, ← ey]; abel⟩
+      exact ⟨x' + y', U.add_mem hx' hy', by rw [map_add (f := _), ← ex, ← ey]; abel⟩
     | smul_mem c w hw =>
       obtain ⟨z, hz⟩ := as_root q hq c
       refine ⟨z • w, U.smul_mem _ (hfix w hw), ?_⟩
@@ -111,7 +115,7 @@ theorem lang_span [FiniteDimensional k V] (q : ℕ) (hq : 1 < q) (F : V →+ V)
     | add x y _ _ hx hy =>
       obtain ⟨x', hx', ex⟩ := hx
       obtain ⟨y', hy', ey⟩ := hy
-      exact ⟨x' + y', U.add_mem hx' hy', by rw [map_add, ← ex, ← ey]⟩
+      exact ⟨x' + y', U.add_mem hx' hy', by rw [map_add (f := _), ← ex, ← ey]⟩
     | smul_mem c w hw =>
       obtain ⟨z, hz⟩ := IsAlgClosed.exists_pow_nat_eq c (by omega : 0 < q)
       refine ⟨z • w, U.smul_mem _ (hfix w hw), ?_⟩
@@ -183,7 +187,8 @@ theorem lang_span [FiniteDimensional k V] (q : ℕ) (hq : 1 < q) (F : V →+ V)
     have hFz : F z - z = y ^ q • u := by
       have e1 : F z = ∑ i ∈ Finset.range s, (x i) ^ q • (⇑F)^[i + 1] v +
           y ^ q • (⇑F)^[s + 1] v := by
-        rw [hz, map_sum, Finset.sum_range_succ]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hz, map_sum, Finset.sum_range_succ]
         congr 1
         · refine Finset.sum_congr rfl fun i _ => ?_
           rw [hF, Function.iterate_succ_apply']

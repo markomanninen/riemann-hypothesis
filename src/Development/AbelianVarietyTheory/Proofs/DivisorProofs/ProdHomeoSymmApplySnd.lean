@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,16 +55,6 @@ def prodHomeo (hle : N' ≤ N) (hs : ∀ v, s v ∈ N) (hsc : Continuous s) (hπ
     (hπmul : ∀ a b : N, π (a * b) = π a + π b) (hπs : ∀ (a : N) (v : V), (a : G) = s v → π a = v)
     (hker : ∀ a : N, π a = 0 ↔ (a : G) ∈ N') (z : N' × V) :
     (prodHomeo hle hs hsc hπc hπmul hπs hker z : G) = z.1 * s z.2 := rfl
-
-@[simp] theorem prodHomeo_symm_apply_fst (hle : N' ≤ N) (hs : ∀ v, s v ∈ N) (hsc : Continuous s)
-    (hπc : Continuous π) (hπmul : ∀ a b : N, π (a * b) = π a + π b)
-    (hπs : ∀ (a : N) (v : V), (a : G) = s v → π a = v) (hker : ∀ a : N, π a = 0 ↔ (a : G) ∈ N') (n : N) :
-    (((prodHomeo hle hs hsc hπc hπmul hπs hker).symm n).1 : G) = n * (s (π n))⁻¹ := rfl
-
-@[simp] theorem prodHomeo_symm_apply_snd (hle : N' ≤ N) (hs : ∀ v, s v ∈ N) (hsc : Continuous s)
-    (hπc : Continuous π) (hπmul : ∀ a b : N, π (a * b) = π a + π b)
-    (hπs : ∀ (a : N) (v : V), (a : G) = s v → π a = v) (hker : ∀ a : N, π a = 0 ↔ (a : G) ∈ N') (n : N) :
-    ((prodHomeo hle hs hsc hπc hπmul hπs hker).symm n).2 = π n := rfl
 
 end GlobalTheory.Cusp.Shear
 

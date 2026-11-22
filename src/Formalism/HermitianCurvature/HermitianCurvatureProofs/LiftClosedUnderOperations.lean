@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactSupportFacts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairAtStarMul
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactSupportFacts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseCutoffIsTruncation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairAtStarMul
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TLB
 

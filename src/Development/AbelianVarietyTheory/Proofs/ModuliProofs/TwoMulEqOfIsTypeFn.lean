@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.HostGeneratorPowFourTraceNormModEight
+
+@[expose] public section
 
 open NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -117,11 +121,11 @@ theorem exists_datum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
   have hB : ∀ x y, EF.baseChange ℝ x y = (hermForm Hm (e x) (e y)).im := fun x y => by
     induction x using TensorProduct.induction_on with
     | zero => simp [hermForm]
-    | add x x' h h' => simp only [map_add, LinearMap.add_apply, h, h', hermForm_add_left, Complex.add_im]
+    | add x x' h h' => simp only [map_add (f := _), LinearMap.add_apply, h, h', hermForm_add_left, Complex.add_im]
     | tmul r x =>
       induction y using TensorProduct.induction_on with
       | zero => simp [hermForm]
-      | add y y' h h' => simp only [map_add, h, h', hermForm_add_right, Complex.add_im]
+      | add y y' h h' => simp only [map_add (f := _), h, h', hermForm_add_right, Complex.add_im]
       | tmul r' y =>
         rw [het, het, hermForm_smul_left, hermForm_smul_right, LinearMap.BilinForm.baseChange_tmul]
         simp [him]
@@ -152,7 +156,7 @@ theorem exists_datum : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H
     have hAe : ∀ x i, e (A x) i = ty i (a : E) * e x i := fun x i => by
       induction x using TensorProduct.induction_on with
       | zero => simp
-      | add x x' h h' => simp only [map_add, Pi.add_apply, h, h', mul_add]
+      | add x x' h h' => simp only [map_add (f := _), Pi.add_apply, h, h', mul_add]
       | tmul r x =>
         have : (r ⊗ₜ[ℤ] x : ℝ ⊗[ℤ] La) = r • (1 ⊗ₜ[ℤ] x) := by
           rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]

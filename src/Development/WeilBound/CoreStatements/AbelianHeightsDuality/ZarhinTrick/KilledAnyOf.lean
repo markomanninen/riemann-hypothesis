@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiDefs
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiPtsA
+module
+
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiDefs
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiCoreDefs
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.QiPtsA
+
+@[expose] public section
 
 set_option autoImplicit false
 

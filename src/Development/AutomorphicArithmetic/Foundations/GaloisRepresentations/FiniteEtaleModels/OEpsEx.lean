@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+
+@[expose] public section
 
 theorem UpperTheory.Gal.FiniteEtaleModels.O.epsEx :
     UpperTheory.Gal.FiniteEtaleModels.O.EpsEx := by

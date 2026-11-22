@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.TraceAlgebra.IsoOfTrace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.TraceAlgebra.IsoOfTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem toLinAlgEquiv'_eq (a : Matrix (Fin n) (Fin n) k) : Matrix.toLinAlgEquiv'
 
 theorem ss_add {a b : Matrix (Fin n) (Fin n) k} (h : Commute a b) (ha : SS a) (hb : SS b) : SS (a + b) := by
   unfold SS
-  rw [← toLinAlgEquiv'_eq, map_add]
+  rw [← toLinAlgEquiv'_eq, map_add (f := _)]
   exact Module.End.IsSemisimple.add_of_commute (h.map Matrix.toLinAlgEquiv') ha hb
 
 theorem ss_mul {a b : Matrix (Fin n) (Fin n) k} (h : Commute a b) (ha : SS a) (hb : SS b) : SS (a * b) := by
@@ -70,11 +74,13 @@ theorem conj_of (hiso : IsoOfTrace k) : Conj k := by
       simp [hs w hw, hs' w hw]
     · rw [Set.mem_singleton_iff] at ha hb; subst ha; subst hb; rfl
   set R := Algebra.adjoin k S with hRdef
-  letI : CommRing R := Algebra.adjoinCommRingOfComm k hcomm
 
   have hRc : ∀ x ∈ R, ∀ y ∈ R, Commute x y := fun x hx y hy =>
     Algebra.commute_of_mem_adjoin_of_forall_mem_commute hy fun b hb =>
       (Algebra.commute_of_mem_adjoin_of_forall_mem_commute hx fun a ha => hcomm b hb a ha).symm
+
+  letI : CommRing R := { (inferInstance : Ring R) with
+    mul_comm := fun x y => Subtype.ext (hRc x x.2 y y.2).eq }
 
   have hRss : ∀ x ∈ R, SS x.1 ∧ SS x.2 := by
     intro x hx

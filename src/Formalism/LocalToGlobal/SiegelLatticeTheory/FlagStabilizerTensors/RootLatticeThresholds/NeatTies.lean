@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NormalizingConstantEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NormalizingConstantEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHNeat
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical InnerProductSpace ComplexConjugate
@@ -22,7 +26,7 @@ theorem sharp_bij_of_neat (u : D.what₂.Word) (hN : Formalism.L2.SG.PoincareInH
     fun ρ => DoubleCoset.mk (iotaF X u).range (Ku X u Y.hK) ((Y.cs u).h ρ)
   have hcls : Function.Bijective cls := by
     refine ⟨fun ρ ρ' h => ?_, fun c => ?_⟩
-    · obtain ⟨a, ⟨γ, rfl⟩, κ, hκ, hab⟩ := (DoubleCoset.eq _ _ _ _).1 h
+    · obtain ⟨a, ⟨γ, rfl⟩, κ, hκ, hab⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 h
       obtain ⟨ρ0, _, huniq⟩ := Y.colReps u ((Y.cs u).h ρ')
       have h1 := huniq ρ ⟨γ, ⟨κ, hκ⟩, hab⟩
       have h2 := huniq ρ' ⟨1, 1, by simp⟩
@@ -75,17 +79,17 @@ theorem finX_of_neat (hN : ∀ u, Formalism.L2.SG.PoincareInHH.Cut.NeatKu X u Y.
       rowOf Y.TR (Y.cs u) (Y.cs u') s₁ = rowOf Y.TR (Y.cs u) (Y.cs u') s₂ →
       rowOf Y.TR (Y.cs u) (Y.cs u') s₁' = rowOf Y.TR (Y.cs u) (Y.cs u') s₂' →
       s0T s₁ s₂ = s0T s₁' s₂' ∧ (liftScalar s₁ s₂ ↔ liftScalar s₁' s₂')) (hG : ∀ u u' (t : RT Y u u'), t.G ∈ D.host.F)
-    (hvol : VolPosC) : FinX Y where
-  shInj u := (sharp_bij_of_neat Y u (hN u)).1
-  shSurj u := (sharp_bij_of_neat Y u (hN u)).2
-  inHH := hin
-  puLin u := Formalism.L2.SG.PoincareInHH.Cut.puLinear_holds X u Y.hK (Y.Dt u)
-  finHH := hfin
-  fibFin := hfib
-  pairIndep := hpi
-  Greal := hG
-  cdEx n ε := cd_haar_scaling D.cd n ε
-  volPos u := hvol D X Y u (Formalism.L2.SG.Closed.level_subgroup_properties X)
+    (hvol : VolPosC) : FinX Y :=
+  { shInj := fun u => (sharp_bij_of_neat Y u (hN u)).1
+    shSurj := fun u => (sharp_bij_of_neat Y u (hN u)).2
+    inHH := hin
+    puLin := fun u => Formalism.L2.SG.PoincareInHH.Cut.puLinear_holds X u Y.hK (Y.Dt u)
+    finHH := hfin
+    fibFin := hfib
+    pairIndep := hpi
+    Greal := hG
+    cdEx := fun n ε => cd_haar_scaling D.cd n ε
+    volPos := fun u => hvol D X Y u (Formalism.L2.SG.Closed.level_subgroup_properties X) }
 
 end FinXN
 

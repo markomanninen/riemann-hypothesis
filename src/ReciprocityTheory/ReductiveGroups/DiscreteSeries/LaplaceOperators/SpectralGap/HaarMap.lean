@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ClosedSubgroupsStatement
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.SpectralGap.ClosedSubgroupsStatement
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,6 +140,6 @@ theorem haarMap : HaarMapStatement := by
       show s * (P⁻¹ * Formalism.MainNotions.S.umat g * P) = P⁻¹ * ((P * s * P⁻¹) * Formalism.MainNotions.S.umat g) * P
       simp only [Matrix.mul_assoc, h2']
     rw [Measure.map_map hcl.measurable hme.measurable, hcomp,
-      ← Measure.map_map hme.measurable (continuous_mul_left g₀).measurable, map_mul_left_eq_self]
+      ← Measure.map_map hme.measurable (continuous_const_mul g₀).measurable, map_mul_left_eq_self]
 
 end ReciprocityTheory.ChartRestriction.DS.Lap

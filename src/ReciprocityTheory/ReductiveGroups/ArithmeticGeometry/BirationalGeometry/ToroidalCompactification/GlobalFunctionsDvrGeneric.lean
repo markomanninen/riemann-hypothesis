@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrOpen
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrOpen
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -13,21 +17,18 @@ namespace ReciprocityTheory.ChartRestriction.G.Geo.Tor.GlobalFunctionsDvrGeneric
 open ReciprocityTheory.ChartRestriction.G.Out
 
 theorem powObj_props {S : Scheme.{0}} (G : Over S) [Smooth G.hom] [IsSeparated G.hom] [QuasiCompact G.hom] :
-    ∀ n : ℕ, Smooth (powObj G n).hom ∧ IsSeparated (powObj G n).hom ∧ QuasiCompact (powObj G n).hom
-  | 0 => ⟨by show Smooth (𝟙 S); infer_instance, by show IsSeparated (𝟙 S); infer_instance,
-      by show QuasiCompact (𝟙 S); infer_instance⟩
-  | n + 1 => by
-    obtain ⟨h1, h2, h3⟩ := powObj_props G n
-    refine ⟨?_, ?_, ?_⟩
-    · show Smooth (G ⊗ powObj G n).hom
-      rw [Over.tensorObj_hom, pullback.condition]
-      infer_instance
-    · show IsSeparated (G ⊗ powObj G n).hom
-      rw [Over.tensorObj_hom, pullback.condition]
-      infer_instance
-    · show QuasiCompact (G ⊗ powObj G n).hom
-      rw [Over.tensorObj_hom, pullback.condition]
-      infer_instance
+    ∀ n : ℕ, Smooth (powObj G n).hom ∧ IsSeparated (powObj G n).hom ∧ QuasiCompact (powObj G n).hom := by
+  intro n
+  induction n with
+  | zero =>
+    change Smooth (𝟙 S) ∧ IsSeparated (𝟙 S) ∧ QuasiCompact (𝟙 S)
+    exact ⟨inferInstance, inferInstance, inferInstance⟩
+  | succ n ih =>
+    obtain ⟨hsmooth, hsep, hqc⟩ := ih
+    change Smooth (G ⊗ powObj G n).hom ∧ IsSeparated (G ⊗ powObj G n).hom ∧
+      QuasiCompact (G ⊗ powObj G n).hom
+    rw [Over.tensorObj_hom, pullback.condition]
+    exact ⟨inferInstance, inferInstance, inferInstance⟩
 
 variable {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
 

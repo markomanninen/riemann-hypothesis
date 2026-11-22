@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -41,7 +45,7 @@ def img (B : Type) {Q : Type} [CommRing B] [CommRing Q] [Algebra B Q] (p m : ℕ
   zero_mem' := ⟨0, by simp⟩
   add_mem' := by
     rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩
-    exact ⟨a + b, by rw [mul_add, map_add]⟩
+    exact ⟨a + b, by rw [mul_add, map_add (f := _)]⟩
   neg_mem' := by
     rintro _ ⟨a, rfl⟩
     exact ⟨-a, by rw [mul_neg, map_neg]⟩
@@ -56,7 +60,8 @@ def psum (z : σ → B) (f : MvPowerSeries σ Q) (n : ℕ) : Q :=
 theorem psum_eq (z : σ → B) (f : MvPowerSeries σ Q) (n : ℕ) :
     psum z f n = ∑ α ∈ Finset.Iic (box σ n),
       coeff α f * algebraMap B Q (α.prod fun i e => z i ^ e) := by
-  simp only [psum, trunc', truncFinset_apply, map_sum, MvPolynomial.eval_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psum, trunc', truncFinset_apply, map_sum, MvPolynomial.eval_monomial]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [map_finsuppProd]
   simp [map_pow]
@@ -117,8 +122,8 @@ end GlobalTheory.QLog.ValEx
 
 namespace GlobalTheory.QLog
 
-open ValEx in
 
+open ValEx in
 theorem existsUnique_hasVal_of_dIn : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing B] [CommRing Q]
     [CommRing O] [Algebra B Q] (θ : B →+* O), IsFrame p Q θ → ∀ (σ : Type) [Fintype σ]
     [DecidableEq σ] (z : σ → B), (∀ i, ∃ N : ℕ, (p : B) ∣ z i ^ N) →

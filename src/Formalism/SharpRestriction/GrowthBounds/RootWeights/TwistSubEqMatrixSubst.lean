@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,11 +12,12 @@ namespace Formalism.MainNotions.G.GLWeightTheory
 
 open Formalism.MainNotions.G
 
-open Classical in
 
+open Classical in
 def matrixSubst {R B : Type*} [CommRing R] [CommRing B] {ι : Type*} {n : ℕ} (LL : Letters ι) (S : Set ι)
     (φ : R →+* B) (m m' : Matrix (Fin n) (Fin n) B) :
     MvPolynomial (ι × Fin n) R →+* MvPolynomial (ι × Fin n) B :=
+  open Classical in
   MvPolynomial.eval₂Hom (MvPolynomial.C.comp φ) fun v =>
     if v.1 ∈ S then
       (if LL.vec v.1 then ∑ b : Fin n, MvPolynomial.C (m b v.2) * X (v.1, b)
@@ -60,7 +65,8 @@ theorem matrixSubst_comp (φ : R →+* B) (m1 m1' m2 m2' : Matrix (Fin n) (Fin n
           simp only [h1]
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun a _ => ?_
-          rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
         · rw [if_pos hS, if_neg hv, if_pos hS, if_neg hv, map_sum]
           have h1 : ∀ b : Fin n, matrixSubst LL S (RingHom.id B) m1 m1' (C (m2' v.2 b) * X (v.1, b)) =
               ∑ a : Fin n, C (m2' v.2 b * m1' b a) * X (v.1, a) := by
@@ -71,7 +77,8 @@ theorem matrixSubst_comp (φ : R →+* B) (m1 m1' m2 m2' : Matrix (Fin n) (Fin n
           simp only [h1]
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun a _ => ?_
-          rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [Matrix.mul_apply, map_sum, Finset.sum_mul]
       · rw [if_neg hS, if_neg hS, matrixSubst_X, if_neg hS]
   exact congrArg (fun f => f F) this
 

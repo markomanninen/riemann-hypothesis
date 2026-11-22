@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNaturaStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct
 
@@ -102,7 +107,7 @@ theorem assoc_eval (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Bialgebra O
           induction c using TensorProduct.induction_on with
           | zero => simp
           | tmul a b => simp [Φ₁, Algebra.TensorProduct.one_def]
-          | add a b ha hb => rw [map_add, ha, hb, TensorProduct.add_tmul, map_add]
+          | add a b ha hb => rw [map_add (f := _), ha, hb, TensorProduct.add_tmul, map_add (f := _)]
         rw [key]
         simp [Φ₂]
       · simp [x3, h3.1, Φ₂, Algebra.TensorProduct.one_def]) (μ i)
@@ -130,21 +135,21 @@ theorem assoc_eval (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Bialgebra O
       induction c using TensorProduct.induction_on with
       | zero => simp
       | tmul a a' => simp
-      | add c c' hc hc' => rw [TensorProduct.add_tmul, map_add, hc, hc', map_add]
-    | add a b ha hb => rw [map_add, ha, hb, map_add]
+      | add c c' hc hc' => rw [TensorProduct.add_tmul, map_add (f := _), hc, hc', map_add (f := _)]
+    | add a b ha hb => rw [map_add (f := _), ha, hb, map_add (f := _)]
   have k2 : ∀ c : A ⊗[O] A, Φ₂ c = TensorProduct.assoc O A A A (LinearMap.rTensor A (Coalgebra.comul (R := O) (A := A)) c) := by
     intro c
     rw [← ka]
     induction c using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [Φ₂]
-    | add a b ha hb => rw [map_add, ha, hb, map_add, map_add]
+    | add a b ha hb => rw [map_add (f := _), ha, hb, map_add (f := _), map_add (f := _)]
   have k4 : ∀ c : A ⊗[O] A, Φ₄ c = LinearMap.lTensor A (Coalgebra.comul (R := O) (A := A)) c := by
     intro c
     induction c using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [Φ₄]
-    | add a b ha hb => rw [map_add, ha, hb, map_add]
+    | add a b ha hb => rw [map_add (f := _), ha, hb, map_add (f := _)]
   rw [k2, k4, Coalgebra.coassoc_apply]
 
 end GlobalTheory.Chart.Assoc

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureLocalBallStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFactorSandwichApprox
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherSide
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarMeasureLocalBallStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalFactorSandwichApprox
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsFurtherSide
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology Filter GlobalTheory.CompanionTheory.Equi
 open scoped Classical
 
@@ -52,7 +57,8 @@ theorem small_box (v : HeightOneSpectrum (𝓞 F)) (ι : Type) [Fintype ι] {U :
     exact isCompact_univ_pi fun _ => isCompact_ball v k
   · intro k
     exact isClosed_set_pi fun _ _ => isClosed_ball v k
-  · intro y hy
+  · rw [mem_nhdsSet_iff_forall]
+    intro y hy
     have : y = 0 := by
       funext i
       have h : y i ∈ ⋂ n, GlobalTheory.CompanionTheory.Mass.MeanV.Sandwich.ballV (F := F) v n :=
@@ -252,15 +258,15 @@ theorem loc_approx : ∀ (F : Type) [Field F] [NumberField F] (v : HeightOneSpec
     intro c
     rw [boxInd_eq, integral_indicator_one (hmeas k c), hr]
   have hg : Integrable (fun y => ∑ c ∈ C, ψ c * boxInd v k c y) μ :=
-    integrable_finset_sum _ fun c _ => (hbi c).const_mul _
+    integrable_finsetSum _ fun c _ => (hbi c).const_mul _
   have hs : Integrable (fun y => ∑ c ∈ C, boxInd v k c y) μ :=
-    integrable_finset_sum _ fun c _ => hbi c
+    integrable_finsetSum _ fun c _ => hbi c
   have e1 : ∫ y, ∑ c ∈ C, ψ c * boxInd v k c y ∂μ = ∑ c ∈ C, ψ c * vol := by
-    rw [integral_finset_sum _ fun c _ => (hbi c).const_mul _]
+    rw [integral_finsetSum _ fun c _ => (hbi c).const_mul _]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [integral_const_mul, hint]
   have e2 : ∫ y, ∑ c ∈ C, boxInd v k c y ∂μ = (C.card : ℝ) * vol := by
-    rw [integral_finset_sum _ fun c _ => hbi c]
+    rw [integral_finsetSum _ fun c _ => hbi c]
     simp [hint]
   have hb := norm_integral_le_of_norm_le (hs.const_mul δ)
     (Eventually.of_forall fun y => (by simpa [Real.norm_eq_abs] using hpt y :

@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetOfColSpanEq
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.ThirdMomentLaw
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.DetOfColSpanEq
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.ThirdMomentLaw
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,16 +38,16 @@ theorem exists_pow_smul_integral (p : ℕ) (hp : Irreducible (p : W)) {ι κ : T
   exact ⟨Finset.univ.sup f, fun m' hm' i j =>
     hf (i, j) m' (le_trans (Finset.le_sup (Finset.mem_univ (i, j))) hm')⟩
 
-omit [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] in
 
+omit [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] in
 theorem mul_integral {ι κ μ : Type} [Fintype κ] {A : Matrix ι κ Qq} {B : Matrix κ μ Qq}
     (hA : ∀ i j, A i j ∈ (algebraMap W Qq).range) (hB : ∀ i j, B i j ∈ (algebraMap W Qq).range) :
     ∀ i j, (A * B) i j ∈ (algebraMap W Qq).range := fun i j => by
   rw [Matrix.mul_apply]
   exact Subring.sum_mem _ fun l _ => Subring.mul_mem _ (hA i l) (hB l j)
 
-omit [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] in
 
+omit [IsDomain W] [IsDiscreteValuationRing W] [IsFractionRing W Qq] in
 theorem mem_movLat_iff {N N' : ℕ} (k : GL (Fin N) Qq) (k' : GL (Fin N') Qq) (y : Matrix (Fin N') (Fin N) Qq) :
     y ∈ UnitaryThetaMoves.movLat W Qq k k' ↔
       ∀ i j, (((k'⁻¹ : GL (Fin N') Qq) : Matrix (Fin N') (Fin N') Qq) * y * (k : Matrix (Fin N) (Fin N) Qq)) i j ∈

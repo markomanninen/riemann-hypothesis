@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GenericSubmoduleMonomials
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairingEquivariantAndNeZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsMapNablaSqPad
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemDualWeylOfUnitriangularFixed
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowDivEqZeroOfMatRepUnipotentFixed
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightMapDomain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsStableDisjoint
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleOuterTprod
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OuterTensorIntertwiningEqZeroOfLeft
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsColAddFixedOfStable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightedHomogeneousComponentColWMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GenericSubmoduleMonomials
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairingEquivariantAndNeZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsMapNablaSqPad
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemDualWeylOfUnitriangularFixed
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowDivEqZeroOfMatRepUnipotentFixed
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightMapDomain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsStableDisjoint
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleOuterTprod
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OuterTensorIntertwiningEqZeroOfLeft
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsColAddFixedOfStable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightedHomogeneousComponentColWMem
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching GlobalTheory.GLDuality
 open Formalism.REAL (fockF)
@@ -90,7 +94,7 @@ theorem colAdd_matRep_diag {n n' : ℕ} (t : Fin n → ℂˣ) (l j : Fin n) (c :
     rw [AlgHom.comp_apply, AlgHom.comp_apply, hX]
     by_cases hs : s = j
     · subst hs
-      simp only [colAdd, map_mul, algHom_C, aeval_X, if_true, map_add, hX, algebraMap_eq]
+      simp only [colAdd, map_mul, algHom_C, aeval_X, if_true, map_add (f := _), hX, algebraMap_eq]
       have : (C ((t l)⁻¹ : ℂ) : MvPolynomial (Fin n' × Fin n) ℂ) * C (t l : ℂ) = 1 := by
         rw [← map_mul]; simp
       simp only [Units.val_inv_eq_inv_val] at this ⊢
@@ -105,7 +109,7 @@ theorem exists_mem_dualWeyl_of_stable (n n' : ℕ) (N : Submodule ℂ (MvPolynom
   obtain ⟨v, hv, hv0, hf⟩ := GlobalTheory.GLDuality.exists_colAdd_fixed_of_stable n n' N hN hst
   let M : Submodule ℂ (MvPolynomial (Fin n' × Fin n) ℂ) :=
     { carrier := {w | w ∈ N ∧ ∀ l j : Fin n, l < j → ∀ c : ℂ, colAdd ℂ l j c w = w}
-      add_mem' := fun ha hb => ⟨N.add_mem ha.1 hb.1, fun l j h c => by rw [map_add, ha.2 l j h, hb.2 l j h]⟩
+      add_mem' := fun ha hb => ⟨N.add_mem ha.1 hb.1, fun l j h c => by rw [map_add (f := _), ha.2 l j h, hb.2 l j h]⟩
       zero_mem' := ⟨N.zero_mem, fun l j h c => map_zero _⟩
       smul_mem' := fun a _ ha => ⟨N.smul_mem a ha.1, fun l j h c => by rw [map_smul, ha.2 l j h]⟩ }
   have hM : ∀ t : Fin n → ℂˣ, ∀ w ∈ M, matRep n n' (diagGL ℂ n t, 1) w ∈ M := fun t w hw =>
@@ -162,7 +166,7 @@ theorem nonempty_equiv_polyRep (n n' : ℕ) :
   have hΦ : ∀ i v, Φ (DirectSum.lof ℂ _ _ i v) = φ i v := fun i v =>
     DirectSum.toModule_lof ℂ (φ := fun i => (φ i).toLinearMap) i v
   have hinj : Function.Injective Φ.toLinearMap := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine GlobalTheory.directSum_eq_zero_of_toModule_eq_zero _ _ hirr hdis Φ ?_ (DFinsupp.support x) x
       (fun j hj => DFinsupp.notMem_support_iff.1 hj) hx

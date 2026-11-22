@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NegMulCCancel
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NegMulCCancel
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

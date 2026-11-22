@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
-import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.PublishedIntClosHolds
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,6 @@ structure FromW (ζ : PtsG G la) (y : E.Pt' la) extends SecPt ζ y where
     toOsK (xplus X E hM) la G.w x = (a : OsK (xplus X E hM) la G.w) →
     IsLocalization.Away.lift (sec (xplus X E hM) la G.w 0) toSecPt.s0 (x : Lw (xplus X E hM) la G.w) =
       algebraMap T.V T.Fr (ι (algebraMap _ (Loc ζ) a))
-
-def SecPtSt (G : GlobalFamilyData (xplus X E hM) ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) : Prop :=
-  ∀ ζ : PtsG G la, ∃ y : E.Pt' la, Nonempty (SecPt ζ y)
 
 def secQ (y : PtsG G la → E.Pt' la) (hs : ∀ ζ, SecPt ζ (y ζ)) (g0 : B.Cusp j wF) : LocalPointData G la where
   y ζ := .inr (y ζ)
@@ -146,7 +147,7 @@ lemma SecPt.lift_Jid {r : ↥(Frac0 (xplus X E hM) la G.w)} (hr : r ∈ Jid (xpl
     obtain ⟨i, rfl⟩ := hx
     rw [coe_sfr, h.lift_frac, h.onS i, zero_mul]
   | zero => simp
-  | add x y _ _ hx hy => rw [Subalgebra.coe_add, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [Subalgebra.coe_add, map_add (f := _), hx, hy, add_zero]
   | smul a x _ hx => rw [smul_eq_mul, Subalgebra.coe_mul, map_mul, hx, mul_zero]
 
 lemma SecPt.lift_JHK {u : WeightFamilies.Wt D j} {z : ↥(HK (xplus X E hM) la G.w u)}
@@ -159,7 +160,7 @@ lemma SecPt.lift_JHK {u : WeightFamilies.Wt D j} {z : ↥(HK (xplus X E hM) la G
     have : h.lift (algebraMap ↥(Frac0 (xplus X E hM) la G.w) (Lw (xplus X E hM) la G.w) r) = 0 := h.lift_Jid hr
     rw [this, zero_mul]
   · intro x y hx hy
-    rw [Submodule.coe_add, map_add, hx, hy, add_zero]
+    rw [Submodule.coe_add, map_add (f := _), hx, hy, add_zero]
 
 end Lift
 

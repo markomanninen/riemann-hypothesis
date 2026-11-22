@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.BesselChar
@@ -38,7 +43,7 @@ theorem unip_pi_iff {ι S : Type} [Fintype ι] [DecidableEq ι] [CommRing S] {n 
       rw [h0] at h1
       rw [h1, h3, ha]
       funext k
-      simp only [Pi.add_apply, map_add]
+      simp only [Pi.add_apply, map_add (f := _)]
       rw [show φ (y' k) = y k from congr_fun h0 k]
   · intro h
     choose hc hv using h

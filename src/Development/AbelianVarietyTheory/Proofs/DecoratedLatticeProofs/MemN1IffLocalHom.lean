@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtXCastAdd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtXCastAdd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeUnipotentHaarAndModulus
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSumRowCol
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.VolBridge
 
@@ -21,7 +25,8 @@ theorem apply_eq_sum (x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)) (w 
     x w l = ∑ v, w v * x (Pi.single v 1) l := by
   have hw : w = ∑ v, Pi.single v (w v) := (Finset.univ_sum_single w).symm
   conv_lhs => rw [hw]
-  rw [map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun v _ => ?_
   have h : (Pi.single v (w v) : Fin (M + c) → E) = w v • (Pi.single v (1 : E) : Fin (M + c) → E) := by
     ext j; simp [Pi.single_apply]
@@ -72,7 +77,7 @@ theorem fixX_of_unip {x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)} (hU
   · intro v _ hvl
     by_cases hv : v.1 < M
     · rw [hU l v (by have := one_le_lv M l.1; unfold lv; rw [if_pos hv]; exact this), if_neg (Ne.symm hvl), mul_zero]
-    · rw [inX_apply, dif_neg hv, zero_mul]
+    · rw [inX_apply, dite_eq_right hv, zero_mul]
   · intro h; exact absurd (Finset.mem_univ l) h
 
 theorem unip_of {x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)} (hR : Loc.R1cond E M c x)
@@ -112,8 +117,8 @@ theorem lev_eq (s : A ⊕ Fin c) : lev 1 s = lv M (e s).1 := by
   · simp only [lev, Sum.elim_inr, lv, he i]
     split_ifs <;> omega
 
-include he in
 
+include he in
 theorem inN_iff (x : (Fin (M + c) → E) ≃ₗ[E] (Fin (M + c) → E)) : InN 1 (locHom ι e x) ↔ Unip x := by
   have hval : ∀ r s, (locHom ι e x).val r s = ι (x (Pi.single (e s) 1) (e r)) := fun r s => rfl
   have hent : ∀ (a : E) (r s : A ⊕ Fin c),

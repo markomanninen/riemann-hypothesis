@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem chInf_of (hL : ChLift) (hA : AddIntF) : ChInf := by
   obtain ⟨ℓ, hℓc, hℓ⟩ := hL F χ hχ
   have hI : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := Complex.two_pi_I_ne_zero
   let g : F →+ ℂ := AddMonoidHom.mk' (fun a => ℓ (algebraMap F (InfiniteAdeleRing F) a) /
-    (2 * Real.pi * Complex.I)) (by intro a b; simp only [map_add, add_div])
+    (2 * Real.pi * Complex.I)) (by intro a b; simp only [map_add (f := _), add_div])
   have hint : ∀ a ∈ Λ, ∃ n : ℤ, g a = n := by
     intro a ha
     have he : Complex.exp (ℓ (algebraMap F (InfiniteAdeleRing F) a)) = 1 := by

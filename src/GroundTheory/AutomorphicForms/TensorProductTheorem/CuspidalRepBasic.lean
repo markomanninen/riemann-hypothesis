@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.CuspidalRep
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -8,12 +12,6 @@ namespace AutomorphicForm
 namespace CuspidalAutomorphicRepresentation
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
-
-@[ext] theorem ext {π π' : CuspidalAutomorphicRepresentation K n} (h : π.carrier = π'.carrier) : π = π' := by
-  cases π
-  cases π'
-  subst h
-  rfl
 
 theorem carrier_ne_bot (π : CuspidalAutomorphicRepresentation K n) : π.carrier ≠ ⊥ := by
   intro h

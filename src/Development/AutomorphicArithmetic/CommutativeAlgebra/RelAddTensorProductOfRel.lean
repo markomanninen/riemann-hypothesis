@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsEtaleTrivializationOfTwoInvertibleModuleTo
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsEtaleTrivializationOfTwoInvertibleModuleTo
+
+@[expose] public section
 
 open CategoryTheory TensorProduct UpperTheory.PicD
 
@@ -19,11 +23,11 @@ private theorem cotangentAtUnit_tangentBijection {A C M M' : Type} [CommRing A] 
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul c y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y1 y2 h1 h2 => rw [TensorProduct.tmul_add, map_add, map_add, h1, h2]
+      | add y1 y2 h1 h2 => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), h1, h2]
       | tmul m m' =>
         simp [F, e, e', LinearMap.liftBaseChange_tmul, smul_eq_mul, mul_assoc]
   have : ⇑(LinearMap.liftBaseChange C
@@ -41,13 +45,13 @@ theorem UpperTheory.rel_add_tensorProduct_of_rel :
   refine ⟨C, i1, i2, hff, het, w + w', g * g',
     (Algebra.TensorProduct.lmul' A (S := C)).toLinearMap ∘ₗ TensorProduct.map t t', ?_⟩
   refine ⟨?_, ?_, ?_, cotangentAtUnit_tangentBijection t t' T.bij T'.bij⟩
-  · rw [map_add, map_add, T.dw, T'.dw]
-  · rw [P.un_mul, T.hg, T'.hg, map_add, map_add]
+  · rw [map_add (f := _), map_add (f := _), T.dw, T'.dw]
+  · rw [P.un_mul, T.hg, T'.hg, map_add (f := _), map_add (f := _)]
     abel
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, add_smul, hx, hy, TensorProduct.tmul_add]
+    | add x y hx hy => rw [map_add (f := _), add_smul, hx, hy, TensorProduct.tmul_add]
     | tmul m m' =>
       have h1 := T.ht m
       have h2 := T'.ht m'

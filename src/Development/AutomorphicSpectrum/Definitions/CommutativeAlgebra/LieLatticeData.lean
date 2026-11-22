@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,10 @@ def stdLat (R : Subalgebra o Ω) (ι : Type) : AddSubgroup (ι → Ω) :=
   AddSubgroup.pi Set.univ fun _ => R.toSubring.toAddSubgroup
 
 def divLat {V : Type} [AddCommGroup V] [Module Ω V] (c : Ω) (L : AddSubgroup V) : AddSubgroup V :=
-  L.comap (DistribMulAction.toAddMonoidHom V c)
+  L.comap (DistribSMul.toAddMonoidHom V c)
 
 def mulLat {V : Type} [AddCommGroup V] [Module Ω V] (c : Ω) (L : AddSubgroup V) : AddSubgroup V :=
-  L.map (DistribMulAction.toAddMonoidHom V c)
+  L.map (DistribSMul.toAddMonoidHom V c)
 
 def dotDual (R : Subalgebra o Ω) {m : ℕ} (L : AddSubgroup (Fin m → Ω)) : AddSubgroup (Fin m → Ω) :=
   ⨅ l ∈ L, R.toSubring.toAddSubgroup.comap

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecFracExt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsFrameVec
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SpecFracExt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.ChartRestriction.G.AR.Inst Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Rec
@@ -33,7 +38,17 @@ theorem exists_extended_identification : ∀ (E : Type) [Field E] [NumberField E
   have hj : GlobalTheory.IsGenericPointHom (Spec.map (CommRingCat.ofHom (algebraMap T.V T.Fr))) :=
     GlobalTheory.IsGenericPointHom.fractionField T.V T.Fr
   have hS := GlobalTheory.Published.SemiAbelianHomExtension.isNormalScheme_spec T.V
-  have hH' := IsSemiAbelian.pullback zV tX.G tX.semi
+  have hH' : ReciprocityTheory.ChartRestriction.G.Semi.IsSemiAbelian ((Over.pullback zV).obj tX.G) := by
+    have h := tX.semi
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+    · have := h.comm; infer_instance
+    · have := h.smooth; show Smooth (Limits.pullback.snd tX.G.hom zV); infer_instance
+    · have := h.separated; show IsSeparated (Limits.pullback.snd tX.G.hom zV); infer_instance
+    · have := h.quasiCompact; show QuasiCompact (Limits.pullback.snd tX.G.hom zV); infer_instance
+    · have := h.geomConnected; show GeometricallyConnected (Limits.pullback.snd tX.G.hom zV); infer_instance
+    · intro Ω _ _ q
+      obtain ⟨F⟩ := h.fibres Ω (q ≫ zV)
+      exact ⟨torusExtOfIso (pullCompIso q zV tX.G) F⟩
   obtain ⟨e, ⟨hmon, heq⟩, -⟩ := hE.generic_existsUnique_iso_of_extensions hS hj G.semi hH' m2.cart hψ
   obtain ⟨_, _⟩ := hj.quasiCompact_and_dominant
   obtain ⟨_, _⟩ := GlobalTheory.ExtUnique.flat_and_isSeparated_of_isSemiAbelian G.G G.semi

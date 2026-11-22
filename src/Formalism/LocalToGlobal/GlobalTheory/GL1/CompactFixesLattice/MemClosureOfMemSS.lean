@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.CoordMulTmul
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompactAdele
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.CoordMulTmul
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompactAdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem coord_mem_of_mem_SS {ι : Type} (b : Module.Basis ι F E) (D : 𝓞 F)
     rw [coord_tmul, smul_smul, ← hm]
     exact smul_mem_intAd m ha
   | zero => rw [map_zero, smul_zero]; exact zero_mem _
-  | add u v _ _ hu hv => rw [map_add, smul_add]; exact add_mem hu hv
+  | add u v _ _ hu hv => rw [map_add (f := _), smul_add]; exact add_mem hu hv
   | neg u _ hu => rw [map_neg, smul_neg]; exact neg_mem hu
 
 end Formalism.L2.GlobalTheoryTheory.FiltrationBoundaryCriterion.CompactFixesLatticeTheory

@@ -1,4 +1,8 @@
-import Formalism.TruncatedSeriesCounting.AprimeArith
+module
+
+public import Formalism.TruncatedSeriesCounting.AprimeArith
+
+@[expose] public section
 
 noncomputable section
 

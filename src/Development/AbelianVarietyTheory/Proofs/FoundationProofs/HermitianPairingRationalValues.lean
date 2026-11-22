@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -15,7 +20,8 @@ theorem pair_integral {E : Type} [Field E] [NumberField E] [StarRing E] {N N' : 
     IsIntegral ℤ (∑ i, ∑ j, A i j * star (B i j)) := by
   obtain ⟨hLfg, hLspan, hLdual⟩ := hL
   obtain ⟨-, -, hL'dual⟩ := hL'
-  obtain ⟨m, x, φ, hx, hφ, hxφ⟩ := GlobalTheory.TauLat.exists_dual_family L ⟨hLfg, hLspan⟩
+  obtain ⟨m, x, φ, hx, hφ, hxφ⟩ := GlobalTheory.TauLat.exists_dual_family L
+    { toIsLattice := Submodule.IsLattice.of_fg E hLfg, span_eq_top := hLspan }
 
   set ψ : Fin m → Fin N → E := fun k b => star (φ k b) with hψdef
   have hψ : ∀ k, ψ k ∈ L := by
@@ -52,7 +58,8 @@ theorem pair_integral {E : Type} [Field E] [NumberField E] [StarRing E] {N N' : 
     exact (hL'dual _).1 (hB _ (hψ k)) _ (hA _ (hx k))
   have h2 : ∑ i, (A.mulVec (x k)) i * star ((B.mulVec (ψ k)) i) =
       starRingEnd E (∑ i, star ((A.mulVec (x k)) i) * (B.mulVec (ψ k)) i) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, starRingEnd_apply, starRingEnd_apply, star_star, mul_comm]
   rw [h2]
@@ -77,12 +84,12 @@ theorem mulVec_mem_of_homL (D : D7) {N N' : ℕ} {L : Submodule (𝓞 D.host.E) 
 theorem hYY_add_left (D : D7) {N N' : ℕ} (x x' y : Matrix (Fin N') (Fin N) D.host.E) :
     hYY D (x + x') y = hYY D x y + hYY D x' y := by
   unfold hYY
-  simp only [Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem hYY_add_right (D : D7) {N N' : ℕ} (x y y' : Matrix (Fin N') (Fin N) D.host.E) :
     hYY D x (y + y') = hYY D x y + hYY D x y' := by
   unfold hYY
-  simp only [Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Matrix.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem hYY_gen (D : D7) {N N' : ℕ} {L : Submodule (𝓞 D.host.E) (Fin N → D.host.E)}
     {L' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)} (hL : SD D L) (hL' : SD D L')

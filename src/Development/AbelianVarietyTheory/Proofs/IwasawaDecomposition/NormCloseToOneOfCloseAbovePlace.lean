@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocUnitApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocUnitApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem exists_mem_comap_not_mem (v : HeightOneSpectrum (𝓞 E)) (w : HeightOne
   by_contra h
   push_neg at h
   have hmax : (w.asIdeal.comap (algebraMap (𝓞 E) (𝓞 K))).IsMaximal :=
-    haveI := w.isMaximal; Ideal.isMaximal_comap_of_isIntegral_of_isMaximal w.asIdeal
+    haveI := w.isMaximal; Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝓞 E) w.asIdeal
   exact hw (hmax.eq_of_le v.isPrime.ne_top fun e he => h e he)
 
 theorem exists_mul_mem_integers (v : HeightOneSpectrum (𝓞 E)) (y : K)

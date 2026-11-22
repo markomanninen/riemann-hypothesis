@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.SiegelHeight
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V UpperTheory.V.Fb
 
 private theorem UpperTheory.V.Fb.norm_term_le {E : Type*} [NormedField E] {n : ℕ} (g : GL (Fin n) E)
@@ -7,7 +12,7 @@ private theorem UpperTheory.V.Fb.norm_term_le {E : Type*} [NormedField E] {n : �
   have h : ‖∏ i, (g : Matrix (Fin n) (Fin n) E) (σ i) i‖ ≤ locHeight g ^ n := by
     rw [norm_prod]
     calc ∏ i, ‖(g : Matrix (Fin n) (Fin n) E) (σ i) i‖ ≤ ∏ _i : Fin n, locHeight g :=
-          Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => norm_apply_le_locHeight g _ _
+          Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => norm_apply_le_locHeight g _ _
       _ = locHeight g ^ n := by simp
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with e | e <;> rw [e]
   · rwa [one_smul]
@@ -46,8 +51,8 @@ theorem UpperTheory.adelicNorm_det_le_height_pow :
     (fun v hv => by simp only [Set.Finite.coe_toFinset]; exact Or.inr hv)
   rw [ideleModule_eq, AutomorphicForm.height, e1, e2, mul_pow, ← mul_assoc, ← Finset.prod_pow, ← Finset.prod_pow,
     ← Finset.prod_mul_distrib]
-  refine mul_le_mul (Finset.prod_le_prod (fun _ _ => by positivity) fun w _ => ?_)
-    (Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun v _ => ?_)
+  refine mul_le_mul (Finset.prod_le_prod₀ (fun _ _ => by positivity) fun w _ => ?_)
+    (Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun v _ => ?_)
     (Finset.prod_nonneg fun _ _ => norm_nonneg _)
     (Finset.prod_nonneg fun w _ => by have := locHeight_pos (infAt w g); positivity)
   · rw [hi, ← pow_mul, mul_comm w.mult n, pow_mul, ← mul_pow]

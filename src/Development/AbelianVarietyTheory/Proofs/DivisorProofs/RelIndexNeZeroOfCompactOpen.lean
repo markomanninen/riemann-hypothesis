@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+
+@[expose] public section
+
 open GlobalTheory.LKCount
 open scoped Classical
 

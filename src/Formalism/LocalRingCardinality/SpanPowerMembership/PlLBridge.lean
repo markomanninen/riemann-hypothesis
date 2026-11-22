@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.SpanPowerMembership.PlOver
+module
+
+public import Formalism.LocalRingCardinality.SpanPowerMembership.PlOver
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem wtLog_eq (p : ℕ) [hp : Fact p.Prime]
   rw [D.ram_eq, plEq_plLEquiv]
   have := v.1.isPrime
   have : v.1.asIdeal.LiesOver (Ideal.span {(p : ℤ)}) := liesOver_of_mem _ v.2
-  rw [Ideal.absNorm_eq_pow_inertiaDeg' (p := p) _ hp.out, padicValNat.prime_pow]
+  rw [Ideal.absNorm_eq_pow_inertiaDeg' (p := p) _ hp.out, Nat.padicValNat_def, Nat.multiplicity_prime_pow]
   have hlog : Real.log (p : ℝ) ≠ 0 := (Real.log_pos (by exact_mod_cast hp.out.one_lt)).ne'
   have h0 : (Module.finrank ℚ D.what₂.LL : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Module.finrank_pos.ne'
   push_cast

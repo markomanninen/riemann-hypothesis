@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnHolFamOfHolTo
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnHolFamOfHolTo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -109,13 +113,8 @@ def linOAct (ty : Fin g → (E →+* ℂ)) : OAct (𝓞 E) (addFGLaw g) where
 
 def anFB [StarRing (𝓞 E)] (ty : Fin g → (E →+* ℂ)) : FB ℂ g (𝓞 E) := FB.triv (addFGLaw g) (linOAct ty)
 
-theorem anFB_canon [StarRing (𝓞 E)] (ty : Fin g → (E →+* ℂ)) : (anFB ty).IsCanonGauge ℂ 0 where
-  ax0 := ev_zero' _
-  ax1 := ev_zero' _
-  ph1 := by simp [anFB, FB.triv, ev_zero', expS_zero_an]
-  ph2 := by simp [anFB, FB.triv, ev_zero', expS_zero_an]
-  sy := by simp [anFB, FB.triv, ev_zero', expS_zero_an]
-  ad a := by simp [anFB, FB.triv, ev_zero', expS_zero_an]
+theorem anFB_canon [StarRing (𝓞 E)] (ty : Fin g → (E →+* ℂ)) : (anFB ty).IsCanonGauge ℂ 0 := by
+  constructor <;> simp [anFB, FB.triv, ev_zero', expS_zero_an]
 
 end Act
 

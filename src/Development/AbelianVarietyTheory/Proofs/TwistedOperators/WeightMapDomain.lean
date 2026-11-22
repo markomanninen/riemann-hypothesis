@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalB
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching GlobalTheory.GLDuality
 open Formalism.REAL (fockF)
@@ -70,7 +74,7 @@ theorem wide {r n : ℕ} (h : r ≤ n) (ν : Fin n → ℕ) (hν : Antitone ν) 
   have hvars : (f.vars : Set (Fin r × Fin n)) ⊆
       Set.range (Prod.map id (Fin.castLE h) : Fin r × Fin r → Fin r × Fin n) := by
     intro x hx
-    rw [Finset.mem_coe, MvPolynomial.mem_vars] at hx
+    rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hx
     obtain ⟨u, hu, hxu⟩ := hx
     have hwu : Finsupp.weight (colW r n) u = ν := hpt.1 (MvPolynomial.mem_support_iff.mp hu)
     have hx2 : x.2.val < r := by
@@ -82,8 +86,8 @@ theorem wide {r n : ℕ} (h : r ≤ n) (ν : Fin n → ℕ) (hν : Antitone ν) 
   obtain ⟨g, rfl⟩ := exists_rename_eq_of_vars_subset_range f _ hφi hvars
   have hgw : IsWeightedHomogeneous (colW r r) g (fun i => ν (Fin.castLE h i)) := by
     intro u hu
-    have hu' : coeff (Finsupp.mapDomain (Prod.map id (Fin.castLE h)) u)
-        (rename (Prod.map id (Fin.castLE h)) g) ≠ 0 := by
+    have hu' : AddMonoidAlgebra.coeff (rename (Prod.map id (Fin.castLE h)) g)
+        (Finsupp.mapDomain (Prod.map id (Fin.castLE h)) u) ≠ 0 := by
       rwa [coeff_rename_mapDomain _ hφi]
     have hwu := hpt.1 hu'
     funext i
@@ -110,7 +114,7 @@ theorem highest_line : ∀ (r n : ℕ) (ν : Fin n → ℕ) (v : MvPolynomial (F
   have hant : Antitone ν := by
     intro i j hij
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hij' : i < j := lt_of_le_of_ne hij (by rintro rfl; exact lt_irrefl _ hlt)
     have hbot := dualWeylNonDom ℂ r n ν ⟨i, j, hij', hlt⟩
     rw [hbot] at hv

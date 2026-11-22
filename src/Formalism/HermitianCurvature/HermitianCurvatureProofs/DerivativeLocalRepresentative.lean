@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapRWordsOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GroupEquationsPostHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieDecompositionLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CapRWordsOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GroupEquationsPostHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LieDecompositionLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField Matrix
 open scoped ContDiff Topology

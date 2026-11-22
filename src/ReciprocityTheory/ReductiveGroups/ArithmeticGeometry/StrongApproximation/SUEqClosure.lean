@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.HfDecompSelf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.SubProjOrth
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.HfDecompSelf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.SubProjOrth
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.SA
 
@@ -96,7 +100,7 @@ theorem fix_all_good {r : ℕ} (F : OFam σ J e f r) (hF : F.Spans) {h : Matrix 
       conv_rhs => rw [hcform]
       rw [hlin, hsym b e, hsym b f]
     have h2 := congrArg σ h1
-    rw [map_add, map_mul, map_mul, hσ, hσ, map_one] at h2
+    rw [map_add (f := _), map_mul, map_mul, hσ, hσ, map_one] at h2
     linear_combination h2
   obtain ⟨b4, r4, f4, u4⟩ : ∃ b', Reach σ J e f F.a b b' ∧ b' = hf σ J b' f • e + hf σ J b' e • f ∧
       IsUnit (hf σ J b' f) := by

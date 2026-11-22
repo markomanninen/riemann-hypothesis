@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PmapsOfGenRelR
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsAdicCompleteIdealEps
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.DescentPowerIsoEndomorphismAbelianPartUniformiza
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowerSectionOfChartFunctions
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PmapsOfGenRelR
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsAdicCompleteIdealEps
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.GmMulEqOfResMulEq
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExpandsGTransport
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.DescentPowerIsoEndomorphismAbelianPartUniformiza
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,14 @@ theorem sq_of_tri (hs : φ' ≫ π = Φ ≫ φ) {w₁ : LB.Iso M' (M₀.pull (Φ
   intro Z r z j i i' k hj hi hi' hk
   have hj' : π (φ' (r z)) ∈ M₀.U j := (congrArg (fun g => g (r z) ∈ M₀.U j) hs).mpr hj
   rw [← T₁ Z r z j i k hj hi hk, ← T₂ Z r z j i' k hj' hi' hk]
-  exact gw_heq hs.symm e r z j k
+  have gw_heq_local {X X' : Scheme.{0}} {L : LB X} {L' : LB X'} {F F' : X' ⟶ X}
+      (h : F = F') {a : LB.Iso L' (L.pull F)} {b : LB.Iso L' (L.pull F')}
+      (hab : HEq a b) {Z : Scheme.{0}} (f : Z ⟶ X') (z : Z) (j : L.ι) (k : L'.ι) :
+      gw a f z j k = gw b f z j k := by
+    subst h
+    obtain rfl := eq_of_heq hab
+    rfl
+  exact gw_heq_local hs.symm e r z j k
 
 theorem genRelR_baseChange (hs : φ' ≫ π = Φ ≫ φ) (S : Sq w wD wp w') (hw : w.IsGen) (hM : M.IsLB) (hM₀ : M₀.IsLB)
     {K : Type} [Fintype K] {ε : K → ℤ} {T T' N N' : Scheme.{0}} {o : K → (T ⟶ B)} {o' : K → (T' ⟶ B')}
@@ -51,9 +62,75 @@ theorem genRelR_baseChange (hs : φ' ≫ π = Φ ≫ φ) (S : Sq w wD wp w') (hw
     (hp : ∀ k, (v' ≫ o' k) ≫ φ' = κ' ≫ g' k)
     (H : GenRelR w (LB.pullGen _ _ _ t v) (LB.pullGen _ _ _ ν κ)) :
     GenRelR w' (LB.pullGen _ _ _ t' v') (LB.pullGen _ _ _ ν' κ') := by
+  have gm_pullU_eq_gm_comp {S T W : Scheme.{0}} (h : T ⟶ S) (r : W ⟶ T) (z : W) (V : S.Opens)
+      (a : Γ(S, V)ˣ) : gm r z (h ⁻¹ᵁ V) (pullU h V a) = gm (r ≫ h) z V a := by
+    by_cases hz : r z ∈ h ⁻¹ᵁ V
+    · have hz' : (r ≫ h) z ∈ V := hz
+      simp only [gm, dif_pos hz, dif_pos hz']
+      all_goals first
+      | rfl
+      | (ext; simp [pullU, Scheme.comp_app])
+    · have hz' : (r ≫ h) z ∉ V := hz
+      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+
+  have gm_pullGen' {X Y : Scheme.{0}} (L : LB X) {K : Type} [Fintype K] (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : LB.Gen (LB.LinComb L φ ε))
+      {Z Z' : Scheme.{0}} (h : Z ⟶ Y) (r : Z' ⟶ Z) (z : Z') (j : K → L.ι) :
+      gm r z (LB.wchart L (fun k => h ≫ φ k) j) ((LB.pullGen L φ ε t h).s j) = gm (r ≫ h) z (LB.wchart L φ j) (t.s j) := by
+    by_cases hz : r z ∈ LB.wchart L (fun k => h ≫ φ k) j
+    · exact (gm_res r z _ hz (pullU h _ (t.s j))).trans (gm_pullU_eq_gm_comp h r z _ _)
+    · have hz' : (r ≫ h) z ∉ LB.wchart L φ j := fun H => hz (Set.mem_iInter.2 fun k => Set.mem_iInter.1 H k)
+      simp only [gm, dif_neg hz, dif_neg hz', MonoidHom.one_apply]
+      rfl
+
+
   have P := ConstGrp.pmaps_of_genRelR ((isGen_iff w).1 hw) hM hM₀ (DVR.pullGen_isGen _ _ _ _ ht v)
     (DVR.pullGen_isGen _ _ _ _ hν κ) H
-  refine (genRelR_iff w' _ _).2 ⟨hp, fun j j₀ h₀ h₁ => congrArg Units.val ?_⟩
+  have toStkA_valR_local {A : Type} [CommRing A] {X : Scheme.{0}} (x : Sp A ⟶ X) (U : X.Opens) (z : Sp A) (ht : ⊤ ≤ x ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
+      toStkA z (valR x U a.val) = (gm x z U a).val := by
+    have hz : x z ∈ U := ht (show z ∈ (⊤ : (Sp A).Opens) from trivial)
+    have e1 : ∀ c, (Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom c) = c :=
+      fun c => congrArg (fun f => CommRingCat.Hom.hom f c) (Iso.hom_inv_id (Scheme.ΓSpecIso (CommRingCat.of A)))
+    rw [valR, dif_pos ht, gm, dif_pos hz]
+    show ((Sp A).presheaf.germ ⊤ z trivial).hom ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom
+        ((Scheme.ΓSpecIso (CommRingCat.of A)).hom.hom ((x.appLE U ⊤ ht).hom a.val))) =
+      ((Sp A).presheaf.germ (x ⁻¹ᵁ U) z hz).hom ((x.app U).hom a.val)
+    rw [e1]
+    exact TopCat.Presheaf.germ_res_apply (Sp A).presheaf (homOfLE ht) z trivial ((x.app U).hom a.val)
+
+  have genRelR_iff_local {A : Type} [CommRing A] [IsLocalRing A] {B B₀ : Scheme.{0}}
+      {M : LB B} {M₀ : LB B₀} {φ : B ⟶ B₀} (w : LB.Iso M (M₀.pull φ))
+      {pt : K → (Sp A ⟶ B)} {pt₀ : K → (Sp A ⟶ B₀)}
+      (t : LB.Gen (LB.LinComb M pt ε)) (t₀ : LB.Gen (LB.LinComb M₀ pt₀ ε)) : GenRelR w t t₀ ↔ (∀ k, pt k ≫ φ = pt₀ k) ∧ ∀ (j : K → M.ι) (j₀ : K → M₀.ι),
+      (∀ k, φ (pt k (cpt A)) ∈ M₀.U (j₀ k)) → (∀ k, pt k (cpt A) ∈ M.U (j k)) →
+      ((∏ k, gw w (pt k) (cpt A) (j₀ k) (j k) ^ ε k) * gm (𝟙 _) (cpt A) (LB.wchart M pt j) (t.s j)).val =
+        (gm (𝟙 _) (cpt A) (LB.wchart M₀ pt₀ j₀) (t₀.s j₀)).val := by
+    unfold GenRelR
+    refine and_congr_right fun hpt => forall_congr' fun j => forall_congr' fun j₀ => ?_
+    have hP_iff : (∀ k, ⊤ ≤ pt k ⁻¹ᵁ (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k)) ↔
+        (∀ k, φ (pt k (cpt A)) ∈ M₀.U (j₀ k)) ∧ (∀ k, pt k (cpt A) ∈ M.U (j k)) := by
+      simp only [top_le_iff_cpt]
+      exact ⟨fun h => ⟨fun k => Set.mem_iInter.1 (h k).1 PUnit.unit, fun k => (h k).2⟩,
+        fun h k => ⟨Set.mem_iInter.2 fun _ => h.1 k, h.2 k⟩⟩
+    rw [hP_iff, and_imp]
+    refine forall_congr' fun h1 => forall_congr' fun h2 => ?_
+    have hP : ∀ k, ⊤ ≤ pt k ⁻¹ᵁ (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k) := hP_iff.2 ⟨h1, h2⟩
+    have hT : ⊤ ≤ (𝟙 (Sp A)) ⁻¹ᵁ (LB.LinComb M pt ε).U j :=
+      (top_le_iff_cpt _ _).2 (Set.mem_iInter.2 fun k => h2 k)
+    have hT₀ : ⊤ ≤ (𝟙 (Sp A)) ⁻¹ᵁ (LB.LinComb M₀ pt₀ ε).U j₀ := by
+      refine (top_le_iff_cpt _ _).2 (Set.mem_iInter.2 fun k => ?_)
+      show pt₀ k ((𝟙 (Sp A)) (cpt A)) ∈ M₀.U (j₀ k)
+      rw [← hpt k]
+      exact h1 k
+    have hW : ∀ k (u : Γ(B, (LB.div (M₀.pull φ) M).U (fun _ => j₀ k, j k))ˣ),
+        toStkA (cpt A) (valR (pt k) _ u.val) = (gm (pt k) (cpt A) _ u).val :=
+      fun k u => toStkA_valR_local _ _ _ (hP k) u
+    rw [← (toStkA_injective (A := A)).eq_iff, map_mul, map_prod, toStkA_valR_local _ _ _ hT, toStkA_valR_local _ _ _ hT₀]
+    simp only [hW, map_zpow]
+    rw [← Units.coe_prod, ← Units.val_mul, Units.val_inj, Units.val_inj]
+    simp only [zpow_neg, Finset.prod_inv_distrib]
+    exact eq_inv_mul_iff_mul_eq
+
+  refine (genRelR_iff_local w' _ _).2 ⟨hp, fun j j₀ h₀ h₁ => congrArg Units.val ?_⟩
   set z := cpt A'
   choose i hi using fun k => exists_chart hM (Φ ((v' ≫ o' k) z))
   choose p hp' using fun k => exists_chart hM₀ (φ (Φ ((v' ≫ o' k) z)))
@@ -188,7 +265,7 @@ variable {R R' : Type} [CommRing R] [CommRing R']
 theorem dual_hom_ext {ρ ρ' : DualNumber R →+* R'} (h : ∀ r, ρ (TrivSqZeroExt.inl r) = ρ' (TrivSqZeroExt.inl r))
     (he : ρ DualNumber.eps = ρ' DualNumber.eps) : ρ = ρ' := RingHom.ext fun a => by
   have e : a = TrivSqZeroExt.inl a.fst + TrivSqZeroExt.inl a.snd * DualNumber.eps := by ext <;> simp
-  rw [e, map_add, map_add, map_mul, map_mul, h, h, he]
+  rw [e, map_add (f := _), map_add (f := _), map_mul, map_mul, h, h, he]
 
 theorem dualMap_inl (φ : R →+* R') (a : R) : dualMap φ (TrivSqZeroExt.inl a) = TrivSqZeroExt.inl (φ a) := by
   ext <;> simp [dualMap]
@@ -224,13 +301,13 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
   {hD : Out.IsPullDeg (PowerSeries.map f) W.P.D.toPre W'.P.D.toPre}
   {bc : W'.t.G ≅ (Over.pullback (Out.specOf (PowerSeries.map f))).obj W.t.G}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem lieImg_baseChange [IsLocalRing A] [IsLocalRing A']
     (hU : Out.IsPullUnif (PowerSeries.map f) hD bc W.P.U W'.P.U) (he : ∀ y, hD.xe (W'.e y) = W.e (p.xe y))
     (hs : W'.φ ≫ prj p = prj hD ≫ W.φ) (S : Sq W.w hD.w p.w W'.w)
     {ν : Out.GtPt a.D₀ (epsR A)} {ν' : Out.GtPt a'.D₀ (epsR A')} {v : epsR (PowerSeries A) ⟶ W.t.G}
-    {v' : epsR (PowerSeries A') ⟶ W'.t.G} (hν : LetBC p ν ν') (hv : LieImg W ν v)
+    {v' : epsR (PowerSeries A') ⟶ W'.t.G} (hν : ArcQ.LetBC p ν ν') (hv : LieImg W ν v)
     (hv' : v'.left ≫ bc.hom.left ≫ pullback.fst W.t.G.hom (Out.specOf (PowerSeries.map f)) =
       spMap (dualMap (PowerSeries.map f)) ≫ v.left) : LieImg W' ν' v' := by
   intro n ρ' κ' vn' hρ₁ hρ₂ hκ₁ hκ₂ hb hf x
@@ -238,8 +315,10 @@ theorem lieImg_baseChange [IsLocalRing A] [IsLocalRing A']
   obtain ⟨h, hh, ⟨-, ht⟩, -⟩ := lev n
   obtain ⟨ho, Ht⟩ := ht (W'.e x)
   rw [he] at ho Ht
-  obtain ⟨hg, Hν⟩ := hν.2 x
-  have Hν := (maps_iff p.w _ _ _ _ _ _ _ (Out.GeneratorPullback.pullAlong_le _ _ _ _ _ hg) (fun _ => rfl)).1 Hν
+  unfold ArcQ.LetBC at hν
+  obtain ⟨hg, hmaps⟩ := hν.2 x
+  have Hν := (maps_iff p.w _ _ _ (ν'.s x) (ν.s (p.xe x)) _ _
+    (Out.GeneratorPullback.pullAlong_le _ _ _ _ _ hg) (fun _ => rfl)).1 hmaps
   have := isLocalRing_trunc A n
   have := isLocalRing_trunc A' n
   have := ConstTan.isLocalRing_dual (PowerSeries A ⧸ Ideal.span {(PowerSeries.X : PowerSeries A)} ^ (n + 1))
@@ -292,8 +371,8 @@ theorem lieImg_baseChange [IsLocalRing A] [IsLocalRing A']
     refine (congrArg (_ ≫ ·) (spMap_comp' _ _)).trans ((spMap_comp' _ _).trans (Eq.trans ?_ (spMap_comp' _ _).symm))
     exact congrArg spMap (RingHom.ext fun r => (hκ₁ r).symm)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem thetaOf_baseChange (hG : Out.GlobalFnsSt)
     (hU : Out.IsPullUnif (PowerSeries.map f) hD bc W.P.U W'.P.U)
     (hs : W'.φ ≫ prj p = prj hD ≫ W.φ) (S : Sq W.w hD.w p.w W'.w) (m : SABMap W'.t W.t (spMap (PowerSeries.map f)))
@@ -321,7 +400,7 @@ theorem thetaOf_baseChange (hG : Out.GlobalFnsSt)
     rw [map_zero] at a₁ a₂
     exact isPullTerm_baseChange hs S a.D₀.P.isLB (srel_of t₁ t₂) a₂ a₁ hT
 
-theorem main : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] (b : O →+* A) (a : ArcIn Dw l β A b) (χ : Sp (PowerSeries A) ⟶ Y.X) (W : Wit Y a χ) (A' : Type) [CommRing A'] [IsDomain A'] [IsLocalRing A'] [IsNoetherianRing A'] (b' : O →+* A') (a' : ArcIn Dw l β A' b') (f : A →+* A') (p : Out.IsPullDeg f a.D₀ a'.D₀) (W' : Wit Y a' (spMap (PowerSeries.map f) ≫ χ)), InBC f a a' p → WitBC f p W W' → ∃ m : SABMap W'.t W.t (spMap (PowerSeries.map f)), W'.m.φ = m.φ ≫ W.m.φ ∧ (∀ ν ν' v (v' : epsR (PowerSeries A') ⟶ W'.t.G), LetBC p ν ν' → LieImg W ν v → v'.left ≫ m.φ = spMap (dualMap (PowerSeries.map f)) ≫ v.left → LieImg W' ν' v') ∧ ∀ (w : LB.Iso W'.t.PP.L (W.t.PP.L.pull m.φ)) th th' θ (θ' : LB.Sec W'.t.PP.L) θ₂, RigIso m w → ThBC p th th' → ThetaOf W th θ → PullSec m.φ θ θ₂ → IsoMaps w θ' θ₂ → ThetaOf W' th' θ' := by
+theorem main : Out.Laws → Out.Laws2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [IsNoetherianRing A] (b : O →+* A) (a : ArcIn Dw l β A b) (χ : Sp (PowerSeries A) ⟶ Y.X) (W : Wit Y a χ) (A' : Type) [CommRing A'] [IsDomain A'] [IsLocalRing A'] [IsNoetherianRing A'] (b' : O →+* A') (a' : ArcIn Dw l β A' b') (f : A →+* A') (p : Out.IsPullDeg f a.D₀ a'.D₀) (W' : Wit Y a' (spMap (PowerSeries.map f) ≫ χ)), InBC f a a' p → WitBC f p W W' → ∃ m : SABMap W'.t W.t (spMap (PowerSeries.map f)), W'.m.φ = m.φ ≫ W.m.φ ∧ (∀ ν ν' v (v' : epsR (PowerSeries A') ⟶ W'.t.G), ArcQ.LetBC p ν ν' → LieImg W ν v → v'.left ≫ m.φ = spMap (dualMap (PowerSeries.map f)) ≫ v.left → LieImg W' ν' v') ∧ ∀ (w : LB.Iso W'.t.PP.L (W.t.PP.L.pull m.φ)) th th' θ (θ' : LB.Sec W'.t.PP.L) θ₂, RigIso m w → ThBC p th th' → ThetaOf W th θ → PullSec m.φ θ θ₂ → IsoMaps w θ' θ₂ → ThetaOf W' th' θ' := by
   intro hL _ E _ _ _ H Dw l Xo c O _ β Y A _ _ _ _ b a χ W A' _ _ _ _ b' a' f p W' _
     ⟨hD, bc, _, hU, hφ, he, hs, w₁, w₂, e, T₁, T₂⟩
   obtain ⟨m, hm⟩ := sabCancel pullCubCancel E H _ _ _ _ _ _ _ _ W.m W'.m

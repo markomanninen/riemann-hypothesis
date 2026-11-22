@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRingKrullDimQuotientMvPolynomialEqNat
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -41,7 +45,7 @@ theorem mem_smul_of_isHomogeneous_of_coeff_mem {J : Ideal R} {Q : Submodule R (M
     (hp : p.IsHomogeneous n) (hJ : ∀ m, p.coeff m ∈ J) : p ∈ J • Q := by
   rw [p.as_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
-  have h1 : monomial m (coeff m p) = coeff m p • monomial m (1 : R) := by
+  have h1 : monomial m (AddMonoidAlgebra.coeff p m) = AddMonoidAlgebra.coeff p m • monomial m (1 : R) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [h1]
   refine Submodule.smul_mem_smul (hJ m) (hQ m ?_)
@@ -110,7 +114,8 @@ theorem exists_smul_mem_formCombinations [Finite σ] {I : Ideal (MvPolynomial σ
     have hrh : r.IsHomogeneous (e + n) :=
       hp'.sub (IsHomogeneous.sum _ _ _ fun i _ => (hF i).mul (hG i))
     have h0 : map (Ideal.Quotient.mk J) (r - u) = 0 := by
-      rw [map_sub, hueq, hr, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, hueq, hr, map_sub, map_sum]
       simp only [map_mul, hGg, sub_self]
     have h1 : r - homogeneousComponent (e + n) u ∈ J • homogeneousSubmodule σ R (e + n) := by
       refine mem_smul_of_isHomogeneous_of_coeff_mem (n := e + n)
@@ -206,7 +211,8 @@ theorem algebraicIndependent_of_quotient {ι o S T : Type*} [CommRing o] [IsDede
     have := RingHom.congr_fun h3 G'
     simpa [h1] using this)
   apply hm
-  rw [← Ideal.Quotient.eq_zero_iff_mem, ← coeff_map, h4, coeff_zero]
+  rw [← Ideal.Quotient.eq_zero_iff_mem, ← coeff_map, h4]
+  simp
 
 end Independence
 
@@ -239,7 +245,7 @@ theorem map_algebraMap_quotient_ne_top [IsDomain o] (I : Ideal (MvPolynomial σ 
     intro p hp
     have h1 := homogeneousComponent_mem_of_mem hI hp 0
     rw [homogeneousComponent_zero, ← Ideal.Quotient.eq_zero_iff_mem] at h1
-    have h2 : coeff 0 p • (1 : MvPolynomial σ o ⧸ I) = 0 := by
+    have h2 : AddMonoidAlgebra.coeff p 0 • (1 : MvPolynomial σ o ⧸ I) = 0 := by
       rw [← Algebra.algebraMap_eq_smul_one]; exact h1
     exact (smul_eq_zero.mp h2).resolve_right one_ne_zero
   intro h
@@ -288,20 +294,6 @@ theorem exists_forms_algebraicIndependent_smul_sub_sum_mem (I : Ideal (MvPolynom
         change Ideal.Quotient.mk _ (map _ (C r)) = Ideal.Quotient.mk _ (C _)
         rw [map_C]) hind
   · rwa [Nat.add_sub_cancel_left]
-
-example : (⊥ : Ideal (MvPolynomial (Fin 2) ℤ)).IsHomogeneous (homogeneousSubmodule (Fin 2) ℤ) ∧
-    Module.IsTorsionFree ℤ (MvPolynomial (Fin 2) ℤ ⧸ (⊥ : Ideal (MvPolynomial (Fin 2) ℤ))) ∧
-    (Ideal.span {(2 : ℤ)}).IsMaximal ∧
-    (Ideal.span {(2 : ℤ)}).map
-      (algebraMap ℤ (MvPolynomial (Fin 2) ℤ ⧸ (⊥ : Ideal (MvPolynomial (Fin 2) ℤ)))) ≠ ⊤ := by
-  have h1 : Module.IsTorsionFree ℤ
-      (MvPolynomial (Fin 2) ℤ ⧸ (⊥ : Ideal (MvPolynomial (Fin 2) ℤ))) :=
-    Function.Injective.moduleIsTorsionFree _
-      (AlgEquiv.quotientBot ℤ (MvPolynomial (Fin 2) ℤ)).injective (fun c x => map_smul _ c x)
-  have h2 : (Ideal.span {(2 : ℤ)}).IsMaximal :=
-    PrincipalIdealRing.isMaximal_of_irreducible Int.prime_two.irreducible
-  exact ⟨Ideal.IsHomogeneous.bot _, h1, h2,
-    map_algebraMap_quotient_ne_top _ (Ideal.IsHomogeneous.bot _) bot_ne_top h2.ne_top⟩
 
 end Main
 

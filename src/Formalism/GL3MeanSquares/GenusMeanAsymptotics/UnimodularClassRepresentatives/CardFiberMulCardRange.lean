@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.NormLifting
 
@@ -9,7 +13,7 @@ theorem card_fiber_mul_card_range {G H : Type*} [AddCommGroup G] [AddCommGroup H
   obtain ⟨g0, hg0⟩ := hh
   have e1 : {g : G // f g = h} ≃ f.ker :=
     { toFun := fun g => ⟨g.1 - g0, by rw [AddMonoidHom.mem_ker, map_sub, g.2, hg0, sub_self]⟩
-      invFun := fun k => ⟨k.1 + g0, by rw [map_add, (AddMonoidHom.mem_ker).mp k.2, hg0, zero_add]⟩
+      invFun := fun k => ⟨k.1 + g0, by rw [map_add (f := _), (AddMonoidHom.mem_ker).mp k.2, hg0, zero_add]⟩
       left_inv := fun g => by ext; simp
       right_inv := fun k => by ext; simp }
   rw [Nat.card_congr e1, ← Nat.card_congr (QuotientAddGroup.quotientKerEquivRange f).toEquiv, mul_comm]
@@ -48,7 +52,7 @@ variable {A : Type*} [CommRing A] (σ : A →+* A) (I : Ideal A)
 def fixSub : AddSubgroup A where
   carrier := {w | w ∈ I ∧ σ w = w}
   zero_mem' := ⟨I.zero_mem, map_zero σ⟩
-  add_mem' := fun ha hb => ⟨I.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2]⟩
+  add_mem' := fun ha hb => ⟨I.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2]⟩
   neg_mem' := fun ha => ⟨I.neg_mem ha.1, by rw [map_neg, ha.2]⟩
 
 theorem mem_fixSub {w : A} : w ∈ fixSub σ I ↔ w ∈ I ∧ σ w = w := Iff.rfl
@@ -77,7 +81,7 @@ theorem exists_trace (hσ : ∀ a, σ (σ a) = a) {θ e : A} (he : (θ - σ θ) 
 
 def trI (σ : A →+* A) (I : Ideal A) : I →+ A :=
   AddMonoidHom.mk' (fun w => (w : A) + σ w) (fun a b => by
-    simp only [Submodule.coe_add, map_add]; abel)
+    simp only [Submodule.coe_add, map_add (f := _)]; abel)
 
 theorem range_trI (hσ : ∀ a, σ (σ a) = a) (hI : ∀ a ∈ I, σ a ∈ I) {θ e : A}
     (he : (θ - σ θ) * e = 1) : (trI σ I).range = fixSub σ I := by
@@ -88,7 +92,7 @@ theorem range_trI (hσ : ∀ a, σ (σ a) = a) (hI : ∀ a ∈ I, σ a ∈ I) {�
   · rintro ⟨w, rfl⟩
     show ((w : A) + σ w) ∈ I ∧ σ ((w : A) + σ w) = (w : A) + σ w
     refine ⟨I.add_mem w.2 (hI _ w.2), ?_⟩
-    rw [map_add, hσ, add_comm]
+    rw [map_add (f := _), hσ, add_comm]
   · intro hx
     obtain ⟨v, hv, hv2⟩ := exists_trace hσ he ((mem_fixSub σ I).mpr hx)
     exact ⟨⟨v, hv⟩, hv2⟩
@@ -134,7 +138,7 @@ def linPart (σ : A →+* A) (I : Ideal A) {M : ℕ} (y : Fin M → A) : (Fin M 
   AddMonoidHom.mk' (fun δ => ∑ i, (σ (y i) * (δ i : A) + σ (δ i) * y i)) (fun a b => by
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [Pi.add_apply, Submodule.coe_add, map_add]; ring)
+    simp only [Pi.add_apply, Submodule.coe_add, map_add (f := _)]; ring)
 
 theorem linPart_apply (I : Ideal A) {M : ℕ} (y : Fin M → A) (δ : Fin M → I) :
     linPart σ I y δ = ∑ i, (σ (y i) * (δ i : A) + σ (δ i) * y i) := rfl
@@ -151,10 +155,11 @@ theorem range_linPart (hσ : ∀ a, σ (σ a) = a) {I : Ideal A} (hI : ∀ a ∈
     rw [linPart_apply]
     constructor
     · exact sum_mem (fun i _ => I.add_mem (I.mul_mem_left _ (δ i).2) (I.mul_mem_right _ (hI _ (δ i).2)))
-    · rw [map_sum]
-      refine Finset.sum_congr rfl (fun i _ => ?_)
-      simp only [map_add, map_mul, hσ]
-      ring
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+        refine Finset.sum_congr rfl (fun i _ => ?_)
+        simp only [map_add (f := _), map_mul, hσ]
+        ring
   · rintro ⟨hwI, hwσ⟩
     obtain ⟨v, hv, hv2⟩ := exists_trace hσ he ((mem_fixSub σ I).mpr ⟨hwI, hwσ⟩)
     refine ⟨fun i => ⟨y i * (m * v), I.mul_mem_left _ (I.mul_mem_left _ hv)⟩, ?_⟩
@@ -169,7 +174,8 @@ theorem range_linPart (hσ : ∀ a, σ (σ a) = a) {I : Ideal A} (hI : ∀ a ∈
     calc ∑ i, (σ (y i) * ((⟨y i * (m * v), I.mul_mem_left _ (I.mul_mem_left _ hv)⟩ : I) : A) +
           σ ((⟨y i * (m * v), I.mul_mem_left _ (I.mul_mem_left _ hv)⟩ : I) : A) * y i)
         = ∑ i, σ (y i) * (y i * (m * v)) + σ (∑ i, σ (y i) * (y i * (m * v))) := by
-          rw [Finset.sum_add_distrib, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [Finset.sum_add_distrib, map_sum]
           congr 1
           refine Finset.sum_congr rfl (fun i _ => ?_)
           simp only [map_mul, hσ]
@@ -225,7 +231,8 @@ theorem card_lift [Finite A] (hπ : Function.Surjective π) (hστ : ∀ a, π (
   let Φ : {x : Fin M → A // ∑ i, σ (x i) * x i = n} → {x : Fin M → B // ∑ i, τ (x i) * x i = π n} :=
     fun x => ⟨fun i => π (x.1 i), by
       have h1 : ∑ i, τ (π (x.1 i)) * π (x.1 i) = π (∑ i, σ (x.1 i) * x.1 i) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_congr rfl (fun i _ => by rw [map_mul, hστ])
       rw [h1, x.2]⟩
   refine card_eq_mul_of_fibers Φ _ (fun yb => ?_)
@@ -233,12 +240,14 @@ theorem card_lift [Finite A] (hπ : Function.Surjective π) (hστ : ∀ a, π (
   let y : Fin M → A := fun i => lift (yb.1 i)
   have hyπ : ∀ i, π (y i) = yb.1 i := fun i => hlift _
   have hwI : n - ∑ i, σ (y i) * y i ∈ I := by
-    rw [hmemI, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hmemI, map_sub, map_sum]
     have h1 : ∑ i, π (σ (y i) * y i) = ∑ i, τ (yb.1 i) * yb.1 i :=
       Finset.sum_congr rfl (fun i _ => by rw [map_mul, hστ, hyπ])
     rw [h1, yb.2, sub_self]
   have hwσ : σ (n - ∑ i, σ (y i) * y i) = n - ∑ i, σ (y i) * y i := by
-    rw [map_sub, hn, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, hn, map_sum]
     congr 1
     exact Finset.sum_congr rfl (fun i _ => by rw [map_mul, hσ, mul_comm])
   have hwR : n - ∑ i, σ (y i) * y i ∈ (linPart σ I y).range := by
@@ -281,7 +290,7 @@ theorem card_lift [Finite A] (hπ : Function.Surjective π) (hστ : ∀ a, π (
           apply Subtype.ext
           funext i
           simp only [Φ]
-          rw [map_add, hyπ, (hmemI _).mp (δ.1 i).2, add_zero]⟩
+          rw [map_add (f := _), hyπ, (hmemI _).mp (δ.1 i).2, add_zero]⟩
       left_inv := fun x => by
         apply Subtype.ext
         apply Subtype.ext

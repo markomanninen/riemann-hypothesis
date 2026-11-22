@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellResMemLocPart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CellResMemLocPart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -58,13 +63,13 @@ theorem isMultiHomog_X_pow [DecidableEq K] (k : K) (i : ι k) (n : ℕ) :
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hj
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       exact hj (eq_of_heq (Sigma.mk.inj_iff.mp h).2).symm
     · simp
   · rw [Pi.single_eq_of_ne hl]
     refine Finset.sum_eq_zero fun j _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     exact hl (Sigma.mk.inj_iff.mp h).1.symm
 
@@ -92,7 +97,8 @@ theorem mConeMapOver_homog {g : MRingOver S ι} {d : K → ℕ} (hg : IsMultiHom
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  simp only [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hX : ∏ p : Σ k, ι k, (X p.1 : MvPolynomial K Ω) ^ μ p = ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
     rw [Fintype.prod_sigma]
@@ -181,15 +187,15 @@ def evLin (I : ∀ k, Finset (ι k)) (hI : Good y I) :
         have hs0 := aeval_ne_zero_of_mem hI s.2
         have hs0' := aeval_ne_zero_of_mem hI s'.2
         rw [LocalizedModule.mk_add_mk, ev_mk, ev_mk, ev_mk]
-        simp only [Submonoid.smul_def, map_add, evalAtPoint_smul, Submonoid.coe_mul, map_mul]
+        simp only [Submonoid.smul_def, map_add (f := _), evalAtPoint_smul, Submonoid.coe_mul, map_mul]
         field_simp
   map_smul' s x := by
     induction x using LocalizedModule.induction_on with
     | h m t =>
       rw [LocalizedModule.smul'_mk, ev_mk, ev_mk, map_smul, smul_div_assoc, RingHom.id_apply]
 
-open Classical in
 
+open Classical in
 def evMap (I : ∀ k, Finset (ι k)) :
     LocalizedModule (cellMon S I) (MRingOver S ι ⧸ mIdealOver S y) →ₗ[S] Ω :=
   if h : Good y I then evLin y I h else 0
@@ -198,7 +204,7 @@ theorem evMap_mk {I : ∀ k, Finset (ι k)} (hI : Good y I) (g : MRingOver S ι)
     evMap y I (LocalizedModule.mk (Ideal.Quotient.mk (mIdealOver S y) g) t) =
       aeval y g / aeval y (t : MRingOver S ι) := by
   unfold evMap
-  rw [dif_pos hI]
+  rw [dite_eq_left hI]
   exact ev_mk y I hI _ t
 
 end Eval
@@ -303,12 +309,6 @@ theorem evMap_injOn {I : ∀ k, Finset (ι k)} (hI : Good y I) (β : K → ℤ) 
 
 def chart (c : ∀ k, ι k) : ∀ k, Finset (ι k) := fun k => {c k}
 
-theorem prod_X_mem (c : ∀ k, ι k) (e : K → ℕ) :
-    ∏ k, (X ⟨k, c k⟩ : MRingOver S ι) ^ e k ∈ cellMon S (chart c) :=
-  Submonoid.prod_mem _ fun k _ =>
-    Submonoid.pow_mem _ (Submonoid.subset_closure (show (X ⟨k, c k⟩ : MRingOver S ι) ∈
-      {f | ∃ k, ∃ i ∈ chart c k, f = X ⟨k, i⟩} from ⟨k, c k, Finset.mem_singleton_self _, rfl⟩)) _
-
 theorem aeval_prod_X (c : ∀ k, ι k) (e : K → ℕ) :
     aeval y (∏ k, (X ⟨k, c k⟩ : MRingOver S ι) ^ e k) = ∏ k, y ⟨k, c k⟩ ^ e k := by
   simp [map_prod]
@@ -321,7 +321,8 @@ theorem prod_pow_add (c : ∀ k, ι k) (b b' : K → ℕ) :
 theorem aeval_div_mem_chartRing (c : ∀ k, ι k) {p : MRingOver S ι} {d : K → ℕ} (hp : IsMultiHomog p d) :
     aeval y p / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingOver S y c := by
   classical
-  rw [p.as_sum, map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [p.as_sum, map_sum, Finset.sum_div]
   refine Subalgebra.sum_mem _ fun μ hμ => ?_
   have hdeg := hp μ hμ
   rw [aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
@@ -362,7 +363,7 @@ theorem exists_of_mem_chartRing (c : ∀ k, ι k) (hc : ∀ k, y ⟨k, c k⟩ �
     · refine isMultiHomog_add (isMultiHomog_mul hp (isMultiHomog_prod_X c b')) ?_
       rw [add_comm b b']
       exact isMultiHomog_mul hp' (isMultiHomog_prod_X c b)
-    · rw [map_add, map_mul, map_mul, aeval_prod_X, aeval_prod_X, prod_pow_add]
+    · rw [map_add (f := _), map_mul, map_mul, aeval_prod_X, aeval_prod_X, prod_pow_add]
       field_simp [hP b, hP b']
   | mul x x' _ _ h h' =>
     obtain ⟨b, p, hp, rfl⟩ := h
@@ -403,7 +404,7 @@ theorem cellRes_smul {J I : ∀ k, Finset (ι k)} (s : S)
   · induction x using LocalizedModule.induction_on with
     | h m t => rw [LocalizedModule.smul'_mk, cellRes_mk h, cellRes_mk h, LocalizedModule.smul'_mk]
   · unfold cellRes
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     simp
 
 theorem cellRes_mem_locPart {J I : ∀ k, Finset (ι k)} (h : cellMon S J ≤ cellMon S I) (β : K → ℤ)

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegLaw
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.RegLaw
+
+@[expose] public section
 
 noncomputable section
 

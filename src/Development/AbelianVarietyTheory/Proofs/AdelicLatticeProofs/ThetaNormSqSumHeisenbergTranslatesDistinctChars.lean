@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,18 +40,23 @@ theorem integral_norm_sq_sum {X ι : Type} [MeasurableSpace X] (ν : Measure X) 
     exact mul_le_mul (hC i x) (hC j x) (norm_nonneg _) ((norm_nonneg _).trans (hC i x))
   have e : ∀ x, ((‖(∑ i ∈ s, c i • g i) x‖ ^ 2 : ℝ) : ℂ) =
       ∑ i ∈ s, ∑ j ∈ s, (c i * (starRingEnd ℂ) (c j)) * (g i x * (starRingEnd ℂ) (g j x)) := fun x => by
-    rw [Complex.ofReal_pow, ← Complex.mul_conj', Finset.sum_apply, map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Complex.ofReal_pow, ← Complex.mul_conj', Finset.sum_apply, map_sum, Finset.sum_mul_sum]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     simp only [Pi.smul_apply, smul_eq_mul, map_mul]
     ring
   apply Complex.ofReal_injective
   rw [← integral_complex_ofReal]
   simp_rw [e]
-  rw [integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => (hi i j).const_mul _,
+  rw [integral_finsetSum (f := fun i x => ∑ j ∈ s, c i * (starRingEnd ℂ) (c j) *
+      (g i x * (starRingEnd ℂ) (g j x))) _
+      (fun i _ => integrable_finsetSum _ fun j _ => (hi i j).const_mul _),
     Finset.card_eq_sum_ones]
   push_cast
   refine Finset.sum_congr rfl fun i hi' => ?_
-  rw [integral_finset_sum _ fun j _ => (hi i j).const_mul _, Finset.sum_eq_single i]
+  rw [integral_finsetSum (f := fun j x => c i * (starRingEnd ℂ) (c j) *
+      (g i x * (starRingEnd ℂ) (g j x))) _ (fun j _ => (hi i j).const_mul _),
+    Finset.sum_eq_single i]
   · rw [integral_const_mul, Complex.mul_conj', hc i hi']
     simp_rw [Complex.mul_conj', ← Complex.ofReal_pow]
     rw [integral_complex_ofReal, h1 i hi']

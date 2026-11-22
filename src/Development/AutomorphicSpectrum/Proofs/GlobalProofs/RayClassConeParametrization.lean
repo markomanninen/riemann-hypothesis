@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -48,7 +52,7 @@ theorem exists_complement {𝔣 𝔞 : Ideal (𝓞 F)} (h𝔣 : 𝔣 ≠ ⊥) (h
   have hu : IsUnit (Ideal.Quotient.mk 𝔣 α) := by
     refine IsUnit.of_mul_eq_one (Ideal.Quotient.mk 𝔣 a) ?_
     have : Ideal.Quotient.mk 𝔣 b = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hb
-    rw [mul_comm, ← map_mul, ← map_one (Ideal.Quotient.mk 𝔣), ← hab, map_add, this, add_zero]
+    rw [mul_comm, ← map_mul, ← map_one (Ideal.Quotient.mk 𝔣), ← hab, map_add (f := _), this, add_zero]
   obtain ⟨u, hu⟩ := hu
   set e := Nat.card (𝓞 F ⧸ 𝔣)ˣ with he
   have he0 : 0 < e := Nat.card_pos
@@ -215,7 +219,8 @@ theorem exists_frac {t : ℚ} (h : 0 < t) : ∃ (m : ℕ) (s : ℚ), 0 < s ∧ s
 theorem totPos_sum {r : ℕ} (hr : 0 < r) {u : Fin r → F} (hu : ∀ i, TotPos F (u i)) {t : Fin r → ℚ} (ht : ∀ i, 0 < t i) :
     TotPos F (∑ i, (t i : F) * u i) := fun σ => by
   haveI : Nonempty (Fin r) := ⟨⟨0, hr⟩⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_pos (fun i _ => ?_) Finset.univ_nonempty
   rw [map_mul, map_ratCast]
   exact mul_pos (by exact_mod_cast ht i) (hu i σ)
@@ -229,7 +234,8 @@ theorem coneBox_finite (𝔣 𝔟 : Ideal (𝓞 F)) {r : ℕ} (w : Fin r → �
   rintro _ ⟨y, ⟨-, t, ht, e⟩, rfl⟩
   refine ⟨y.isIntegral_coe, fun φ => ?_⟩
   have h1 : ‖φ (y : F)‖ ≤ ∑ i, ‖φ (w i : F)‖ := by
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [map_mul, map_ratCast, norm_mul, Complex.norm_ratCast]
     have : |((t i : ℚ) : ℝ)| ≤ 1 := by

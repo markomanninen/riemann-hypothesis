@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.OrbitNormCounting.NormCount
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC GlobalTheory.BCT
@@ -51,7 +55,7 @@ theorem UpperTheory.ConvolutionTheory.G3.orbUnit :
   intro G _ _ _ θ K δ hθ hδ horb hcpt
   unfold twOrb
   rw [finsum_eq_single _ (DoubleCoset.mk (twCent θ δ) K 1)]
-  · obtain ⟨t, k, ht, hk, hx⟩ := DoubleCoset.mk_out_eq_mul (twCent θ δ) K (1 : G)
+  · obtain ⟨t, ht, k, hk, hx⟩ := DoubleCoset.mk_out_eq_mul (twCent θ δ) K (1 : G)
     generalize hxx : Quotient.out (DoubleCoset.mk (twCent θ δ) K 1) = x at hx ⊢
     rw [mul_one] at hx
     have ht' : t * δ = δ * θ t := ht
@@ -84,7 +88,7 @@ theorem UpperTheory.ConvolutionTheory.G3.orbUnit :
       intro hy
       apply hq
       obtain ⟨k, hk, e⟩ := horb _ hy ⟨_, rfl⟩
-      rw [← DoubleCoset.out_eq' (twCent θ δ) K q]
+      rw [← DoubleCoset.out_eq' q]
       symm
       rw [DoubleCoset.eq]
       refine ⟨Quotient.out q * k' * k⁻¹, ?_, k * (k' : G)⁻¹, K.mul_mem hk (K.inv_mem k'.2), ?_⟩

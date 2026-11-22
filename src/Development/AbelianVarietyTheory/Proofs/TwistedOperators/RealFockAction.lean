@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RealActionRational
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,15 +13,13 @@ open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum Formalism.In
 
 namespace GlobalTheory.Proof.RealFockActionTwistedOperators
 
-open GlobalTheory.IndefiniteRowSideFullHecke.RealActionRational
-
 theorem thetaKO_rat_mul {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (hom : IsWeilDatumO ψ S T χS χT om) {f : WO S T → ℂ}
     (hf : IsThetaFunO ψ S T f) {γ : GA D S} (hγ : γ ∈ GQ S) (h : GA D S) (g : GA D T) :
     thetaKO om (γ * h) g f = thetaKO om h g f := by
   unfold thetaKO
   have hp : ((γ * h, g) : GA D S × GA D T) = (γ, 1) * (h, g) := by simp
-  rw [hp, map_mul, Module.End.mul_apply]
+  rw [hp, map_mul, mul_apply_eq_comp]
   exact hom.om_aut γ hγ 1 (one_mem _) _ (hom.om_pres _ _ hf)
 
 theorem thetaKO_mul_right {D : D7} {S T : HSp D} (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ))
@@ -25,7 +27,7 @@ theorem thetaKO_mul_right {D : D7} {S T : HSp D} (om : GA D S × GA D T →* Mod
     thetaKO om (h * u) g f = thetaKO om h g (om (u, 1) f) := by
   unfold thetaKO
   have hp : ((h * u, g) : GA D S × GA D T) = (h, g) * (u, 1) := by simp
-  rw [hp, map_mul, Module.End.mul_apply]
+  rw [hp, map_mul, mul_apply_eq_comp]
 
 theorem adForms_rat {G Γ W : Type} [Group G] [Group Γ] (ι : Γ →* G) [NormedAddCommGroup W] [InnerProductSpace ℂ W]
     {ρ : Γ →* Module.End ℂ W} {J : Subgroup G} {χ : J →* ℂˣ} {f : G → W} (hf : f ∈ Bridge.AdForms ι ρ J χ)

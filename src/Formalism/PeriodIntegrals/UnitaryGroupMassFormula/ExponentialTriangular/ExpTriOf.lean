@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExpTri
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExpTri
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialTriangular.SortedSpec
+
+@[expose] public section
 
 open Matrix Finset
 

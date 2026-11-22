@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.Admissible
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.Admissible
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem finsetSup_kstable (s : Finset (Submodule ℂ H))
       infer_instance
     · intro g hg v hv
       obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (h1.2 g hg y hy) (h2.2 g hg z hz)
 
 theorem isKFin_of_mem_lowKSub {lam : Fin n → ℝ} {w : H} (hw : w ∈ lowKSub ε lam σ) : IsKFin ε σ w := by

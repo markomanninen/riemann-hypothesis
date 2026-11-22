@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOrthogonality
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOrthogonality
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.PolyDerivSmulLetter
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemIffConjugateNotMem
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DetOfTriangular
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
+
+@[expose] public section
 
 open NumberField Matrix Complex
 open scoped ComplexConjugate
@@ -17,8 +21,8 @@ noncomputable section
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (X : Data E r) {g : ℕ}
 
-open Classical in
 
+open Classical in
 def borMat (b : Frame X.Ψ r) : Matrix (X.Ψ × Fin r) (X.Ψ × Fin r) ℂ :=
   Matrix.of fun p q => if q.1 = p.1 then
     (if (p.2 : ℕ) < X.p0 then (mat b p.1)ᵀ p.2 q.2 else (mat b p.1)⁻¹ p.2 q.2) else 0
@@ -135,8 +139,8 @@ theorem per_lact (x : Frame X.Ψ r) {γ : GL (Fin r) E}
       (Matrix.isUnit_iff_isUnit_det _).1 (γ.isUnit.map p.1.1.mapMatrix)
     rw [Matrix.mul_inv_rev, mulVec_mulVec, Matrix.mul_assoc, nonsing_inv_mul _ hu, Matrix.mul_one]
 
-variable (X) in
 
+variable (X) in
 theorem differentiableOn_per (v : Fin r → E) (p : X.Ψ × Fin r) :
     DifferentiableOn ℂ (fun x => per X x v p) X.dom := by
   have hent : ∀ τ a c, Differentiable ℂ fun x : Frame X.Ψ r => mat x τ a c := by
@@ -158,8 +162,8 @@ theorem differentiableOn_per (v : Fin r → E) (p : X.Ψ × Fin r) :
     · exact differentiable_const _
     · exact hent _ _ _
 
-variable (X) in
 
+variable (X) in
 def Hm (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (x : Frame X.Ψ r) :
     Matrix (Fin g) (Fin g) ℂ :=
   (hMat X bas idx x)ᵀ * imInv X bas idx x * (hMat X bas idx x).map conj
@@ -208,13 +212,13 @@ theorem hermForm_Hm_rmul (z w : Fin g → ℂ) :
 
 end Rmul
 
-variable (X) in
 
+variable (X) in
 theorem c_pos (τ : X.Ψ) : 0 < X.c τ :=
   mul_pos two_pos (norm_pos_iff.2 ((map_ne_zero τ.1).2 X.ξ0_ne))
 
-variable (X) in
 
+variable (X) in
 theorem emb_neg_half (τ : X.Ψ) : τ.1 (-(X.κ0 / 2)) = I * (X.c τ / 2 : ℝ) := by
   have hξ : (τ.1 X.ξ0).re = 0 := by
     have h := congrArg Complex.re (PerMove.map_cc τ.1 X.ξ0)
@@ -234,8 +238,8 @@ theorem emb_neg_half (τ : X.Ψ) : τ.1 (-(X.κ0 / 2)) = I * (X.c τ / 2 : ℝ) 
       rw [abs_of_neg (by linarith)]; ring
     · rw [abs_of_pos hpos]; ring
 
-variable (X) in
 
+variable (X) in
 theorem EF_eq_sum (u v : Fin r → E) : (EF X u v : ℝ) =
     ∑ τ : X.Ψ, X.c τ * -(hermC τ.1 X.Gm (Data.emb τ.1 u) (Data.emb τ.1 v)).im := by
   rw [EF_def, UnitFrame.trace_eq_sum_re X.Ψ X.cmType]
@@ -298,13 +302,13 @@ theorem gram_mul_im (G A τ : Matrix (Fin g) (Fin g) ℂ)
   generalize Aᵀ * G * A.map conj = M at hM hN
   ext j k
   have h := hN j k
-  simp only [mul_apply, im_sum, map_apply, mul_im, hM, conj_im, zero_mul, add_zero, mul_neg,
+  simp only [Matrix.mul_apply, im_sum, map_apply, mul_im, hM, conj_im, zero_mul, add_zero, mul_neg,
     Finset.sum_neg_distrib, neg_inj] at h
   apply Complex.ext
-  · simp only [mul_apply, re_sum, map_apply, re_mul_ofReal, h]
-    by_cases hjk : j = k <;> simp [one_apply, hjk]
-  · simp only [mul_apply, im_sum, map_apply, im_mul_ofReal, hM]
-    by_cases hjk : j = k <;> simp [one_apply, hjk]
+  · simp only [Matrix.mul_apply, re_sum, map_apply, re_mul_ofReal, h]
+    by_cases hjk : j = k <;> simp [Matrix.one_apply, hjk]
+  · simp only [Matrix.mul_apply, im_sum, map_apply, im_mul_ofReal, hM]
+    by_cases hjk : j = k <;> simp [Matrix.one_apply, hjk]
 
 variable {bas}
 
@@ -487,12 +491,9 @@ theorem differentiableOn_det_hMat (hs : IsSympl X bas) :
 
 theorem differentiableOn_tauMat (hs : IsSympl X bas) (i j : Fin g) :
     DifferentiableOn ℂ (fun x => tauMat X bas idx x i j) X.dom := by
-  simp only [tauMat, mul_apply]
+  simp only [tauMat, Matrix.mul_apply, perMat_apply]
   exact DifferentiableOn.fun_sum fun l _ =>
     (differentiableOn_hMat idx hs i l).mul (differentiableOn_per X _ _)
-
-example : (tauMat HyperbolicCusp.flagData Gauss.bas Gauss.idx Gauss.one).IsSymm :=
-  tauMat_isSymm _ Gauss.isSympl_bas Gauss.one_mem
 
 end
 

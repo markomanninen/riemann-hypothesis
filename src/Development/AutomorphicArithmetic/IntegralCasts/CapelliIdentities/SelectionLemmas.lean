@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SelectionLemmas.aux1.{u_1} :
     ∀ {K : Type u_1} [inst : Field K],

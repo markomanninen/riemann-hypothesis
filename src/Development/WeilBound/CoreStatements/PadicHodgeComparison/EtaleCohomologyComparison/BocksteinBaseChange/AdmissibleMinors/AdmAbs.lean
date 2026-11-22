@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTailAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,8 @@ theorem indep_S (hstab : ∀ g, ∀ x ∈ S, σ g x ∈ S)
       have h1 := hsw x
       have h2 : ∑ i, σ g (s i) * w i x = 0 := by
         have h3 := congrArg (σ g) h1
-        rw [map_sum, map_zero] at h3
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_zero] at h3
         simpa only [map_mul, hw] using h3
       calc ∑ i, (σ g (s i0) * s i - s i0 * σ g (s i)) * w i x
           = σ g (s i0) * ∑ i, s i * w i x - s i0 * ∑ i, σ g (s i) * w i x := by
@@ -158,7 +163,8 @@ theorem admissible_of_absolute (hstab : ∀ g, ∀ x ∈ S, σ g x ∈ S)
       (fun i => S.sub_mem (hstab g _ (hβS j i)) (sum_mem fun k _ => S.mul_mem (hβS k i) (hρS g k j)))
       (fun x => by
         have e1 : σ g (c j x) = ∑ i, σ g (β j i) * w' i x := by
-          rw [hβc j x, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hβc j x, map_sum]
           simp only [map_mul, hw']
         have e2 : ∑ k, ρ g k j * c k x = ∑ i, (∑ k, β k i * ρ g k j) * w' i x := by
           simp only [hβc _ x, Finset.mul_sum, Finset.sum_mul]

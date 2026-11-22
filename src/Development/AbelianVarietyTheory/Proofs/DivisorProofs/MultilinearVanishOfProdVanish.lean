@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset Function
 
@@ -6,7 +10,7 @@ namespace GlobalTheory
 
 theorem multilinear_vanish_of_prod_vanish_of_agree_off_finset {K : Type} [Field K] {ι : Type} [Fintype ι]
     [DecidableEq ι] {X : ι → Type} (A : ∀ i, Submodule K (X i → K)) {M : Type} [AddCommGroup M]
-    [Module K M] (P : MultilinearMap K (fun i => A i) M) (S : Finset ι) :
+    [Module K M] (P : (∀ i, A i) →ₘₗ[K] M) (S : Finset ι) :
     ∀ {D : Type} (s : Finset D) (c : D → K) (f : D → ∀ i, A i),
       (∀ i ∉ S, ∀ d ∈ s, ∀ d' ∈ s, f d i = f d' i) →
       (∀ x : ∀ i, X i, ∑ d ∈ s, c d * ∏ i, (f d i : X i → K) (x i) = 0) →
@@ -30,7 +34,7 @@ theorem multilinear_vanish_of_prod_vanish_of_agree_off_finset {K : Type} [Field 
       have hex : ∀ i, ∃ t : X i, (f d₀ i : X i → K) t ≠ 0 := by
         intro i
         by_contra h
-        push_neg at h
+        push Not at h
         apply hne
         have h0 : f d₀ i = 0 := by
           apply Subtype.ext
@@ -56,7 +60,7 @@ theorem multilinear_vanish_of_prod_vanish_of_agree_off_finset {K : Type} [Field 
       intro d hd
       have h := congrArg Subtype.val (b.sum_repr ⟨f d i₀, hmem d hd⟩)
       simp only [Submodule.coe_sum, Submodule.coe_smul] at h
-      simp only [a, dif_pos hd]
+      simp only [a, dite_eq_left hd]
       exact h.symm
     have hP : ∀ d ∈ s, P (f d) = ∑ l, a d l • P (update (f d) i₀ (b l)) := by
       intro d hd
@@ -64,7 +68,7 @@ theorem multilinear_vanish_of_prod_vanish_of_agree_off_finset {K : Type} [Field 
         rw [← hexp d hd, update_eq_self]
       rw [e, P.map_update_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
-      rw [P.map_update_smul, update_idem]
+      rw [P.map_update_smul, RingHom.id_apply, update_idem]
 
     have hsplit : ∀ (g : ∀ i, A i) (y : ∀ i, X i), ∏ i, (g i : X i → K) (y i) =
         (g i₀ : X i₀ → K) (y i₀) * ∏ i ∈ univ.erase i₀, (g i : X i → K) (y i) := fun g y =>
@@ -124,7 +128,7 @@ theorem multilinear_vanish_of_prod_vanish_of_agree_off_finset {K : Type} [Field 
 
 theorem multilinear_vanish_of_prod_vanish {K : Type} [Field K] {ι : Type} [Fintype ι]
     [DecidableEq ι] {X : ι → Type} (A : ∀ i, Submodule K (X i → K)) {M : Type} [AddCommGroup M]
-    [Module K M] (P : MultilinearMap K (fun i => A i) M) {D : Type} (s : Finset D) (c : D → K)
+    [Module K M] (P : (∀ i, A i) →ₘₗ[K] M) {D : Type} (s : Finset D) (c : D → K)
     (f : D → ∀ i, A i)
     (hx : ∀ x : ∀ i, X i, ∑ d ∈ s, c d * ∏ i, (f d i : X i → K) (x i) = 0) :
     ∑ d ∈ s, c d • P (f d) = 0 :=

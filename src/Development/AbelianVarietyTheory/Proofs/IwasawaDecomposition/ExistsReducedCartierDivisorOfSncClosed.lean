@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,13 +24,13 @@ variable {Y : Scheme.{0}} [IsIntegral Y] (j : Y ⟶ X) [IsOpenImmersion j]
 def pull (y : Y) : X.presheaf.stalk (j y) →+* Y.functionField :=
   (algebraMap (Y.presheaf.stalk y) Y.functionField).comp (j.stalkMap y).hom
 
+
 set_option autoImplicit false in
 open AlgebraicGeometry CategoryTheory in
 open TopologicalSpace Opposite in
 variable {X : Scheme.{0}} in
 variable {Y : Scheme.{0}} [IsIntegral Y] (j : Y ⟶ X) [IsOpenImmersion j] in
 omit [IsIntegral Y] in
-
 theorem _root_.GlobalTheory.BoundaryDivisor.stalkMap_bijective (y : Y) : Function.Bijective (j.stalkMap y).hom :=
   ConcreteCategory.bijective_of_isIso _
 
@@ -151,11 +155,11 @@ private lemma exists_eq_mul_of_pow_eq_mul_germ (T : Closeds X) (U : X.affineOpen
     (X.presheaf.map i₁.op s) hvan
   exact ⟨c, by rw [← hc, X.presheaf.germ_res_apply]⟩
 
+
 set_option autoImplicit false in
 open AlgebraicGeometry CategoryTheory in
 open TopologicalSpace Opposite in
 variable {X : Scheme.{0}} in
-
 theorem _root_.GlobalTheory.BoundaryDivisor.exists_reduced_cartierDiv :
     ∀ (X Y : Scheme.{0}) [IsIntegral Y] (j : Y ⟶ X) [IsOpenImmersion j]
       (T : TopologicalSpace.Closeds X), _root_.ReciprocityTheory.AnForm.R.FinalTheorems.Snc (Scheme.IdealSheafData.vanishingIdeal T) →

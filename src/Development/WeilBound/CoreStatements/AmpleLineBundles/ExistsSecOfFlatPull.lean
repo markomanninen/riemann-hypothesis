@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.FlatBCSec
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ theorem exists_sec_of_flat_pull [Module.Flat R S] [CompactSpace X]
     { toFun := fun f kl => dfun L V c hVc f kl.1 kl.2
       map_add' := fun f g => by
         funext kl
-        simp only [dfun, Pi.add_apply, map_add, mul_add]
+        simp only [dfun, Pi.add_apply, map_add (f := _), mul_add]
         abel
       map_smul' := fun r f => by
         funext kl
@@ -59,7 +63,9 @@ theorem exists_sec_of_flat_pull [Module.Flat R S] [CompactSpace X]
         (rsL p (V k) (V k ⊓ V l) inf_le_left).comp (LinearMap.proj k) -
           (mulL p (V k ⊓ V l) (res (pair_le L V c hVc k l) (L.g (c k) (c l))).val).comp
             ((rsL p (V l) (V k ⊓ V l) inf_le_right).comp (LinearMap.proj l)) := by
-      ext f; rfl
+      apply LinearMap.ext
+      intro f
+      rfl
     rw [hdec, LinearMap.rTensor_sub, LinearMap.sub_apply, LinearMap.rTensor_comp_apply, LinearMap.rTensor_comp_apply,
       LinearMap.rTensor_comp_apply, ← piLeft_apply_eq, ← piLeft_apply_eq, hpt, hpt]
     apply (eTens p p' φ H (V k ⊓ V l) (hinter _ _ (hVa k) (hVa l))).injective
@@ -103,7 +109,7 @@ theorem exists_sec_of_flat_pull [Module.Flat R S] [CompactSpace X]
       exact h2.2
     | add x₁ x₂ h₁ h₂ =>
       intro h
-      rw [map_add, map_add, Pi.add_apply, map_add] at h
+      rw [map_add (f := _), map_add (f := _), Pi.add_apply, map_add (f := _)] at h
       rcases Scheme.basicOpen_add_le _ _ _ h with h | h
       exacts [h₁ h, h₂ h]
   apply key x

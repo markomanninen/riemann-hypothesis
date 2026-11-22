@@ -1,16 +1,21 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubMemSpanOfEtale
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubSubSmulEqZeroOfSmulEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExtendedDividedPowers
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UZeroApplySelf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCastIsUnit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsLiftToThickening
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversalStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpsilonCyclotomicElementPropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RootExtensionLiftStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubMemSpanOfEtale
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubSubSmulEqZeroOfSmulEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExtendedDividedPowers
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UZeroApplySelf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCastIsUnit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsLiftToThickening
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversalStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpsilonCyclotomicElementPropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RootExtensionLiftStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry DividedPowers GroundTheory.PAdicHodge GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.PAlg CrystallineSemistableComparison.B
 
@@ -27,7 +32,7 @@ theorem twist {Λ D : Type} [CommRing Λ] [CommRing D] (i : Λ →+* D) (hf : i.
   have hgi' : ∀ a, g (i a) = i a := fun a => RingHom.congr_fun hgi a
   let γ : D →ₗ[Λ] D :=
     { toFun := fun x => i χ * g x
-      map_add' := fun x y => by rw [map_add, mul_add]
+      map_add' := fun x y => by rw [map_add (f := _), mul_add]
       map_smul' := fun a x => by
         simp only [RingHom.id_apply, hs, map_mul, hgi']
         ring }
@@ -60,7 +65,7 @@ theorem mem_map_basis {D E ι : Type} [CommRing D] [CommRing E] [Algebra D E]
         rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
         exact Ideal.mul_mem_right _ _ hy
       | add x _ y _ hx hy =>
-        rw [map_add, Finsupp.add_apply]
+        rw [map_add (f := _), Finsupp.add_apply]
         exact add_mem hx hy
     simpa using key _ h'
   · intro h
@@ -218,14 +223,16 @@ theorem tw_facts (ε : Eps l) (k : Bool) (n : ℕ) (hn : IsNilpotent (l : (base 
     GlobalTheory.CompanionTheory.ThickHom.isNilpotent_of_mem (DD k (base l) n) hl hn hx
   have h0 : IsNilpotent ((base l).cris n (ε.qk 0) - 1) := by
     have := hI _ (ε.μ_mem k (base l) n)
-    rwa [Eps.μ, map_sub, map_one] at this
+    set_option synthInstance.maxHeartbeats 200000 in
+      rwa [Eps.μ, map_sub, map_one] at this
   obtain ⟨w, hw⟩ := GlobalTheory.CompanionTheory.RootsDivide.sub_one_dvd l Fact.out (fun j => (base l).cris n (ε.qk j)) hn
     (fun j => by rw [← map_pow, hq]) h0 m c hc
   set ξ := (base l).cris n (∑ i ∈ Finset.range l, ε.qk 1 ^ i) with hξd
   have hξI : ξ ∈ JJ k (base l) n := fil_le k (base l) n (hξ (base l) n)
   refine ⟨w, ξ, ?_, hI _ hξI, fun r => ?_⟩
   · have : (base l).cris n ε.μ = ((base l).cris n (ε.qk 1) - 1) * ξ := by
-      rw [hμ, map_mul, map_sub, map_one]
+      set_option synthInstance.maxHeartbeats 200000 in
+        rw [hμ, map_mul, map_sub, map_one]
     rw [this, map_pow]
     have hw' : (base l).cris n (ε.qk 1) - 1 = ((base l).cris n (ε.qk m) ^ c - 1) * w := hw
     rw [hw']
@@ -239,7 +246,7 @@ theorem tw_facts (ε : Eps l) (k : Bool) (n : ℕ) (hn : IsNilpotent (l : (base 
 
 end Tower
 
-theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {κ : O →+* OC l} {d : ℕ} {s : F.Small d} (𝒯 : Tower κ s) (k : Bool) (n : ℕ) (𝓛 : Lift s.a (fun k => (s.T k : s.R)) (bs l k n).R (bs l k n).I (κb κ k n)) (δ : DividedPowers ((bs l k n).I.map 𝓛.i)) (hδ : IsDPMorphism (bs l k n).γ δ 𝓛.i) (hp : (bs l k n).p ≠ 0) (hn : IsNilpotent ((bs l k n).p : (bs l k n).R)) (ε : Eps l) (ρ : ℕ → ℕ) (hρ : Slow ρ) (γ : Gam d →* End (liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn)) (γ' : Gam d →* End 𝒯.obj) (θ : SingleObj.functor γ ⟶ SingleObj.functor γ' ⋙ gE F κ k n), n ≠ 0 → (∀ j, (θ.app (SingleObj.star _)).φ (𝓛.t j) = 𝒯.A.toAcr n (WittVector.teichmuller l (𝒯.c j 0 : 𝒯.A.A))) → (∀ a j, Thick.Hom.φ (γ a : liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn ⟶ liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn) (𝓛.t j) = 𝓛.i (ε.qU n) ^ (Multiplicative.toAdd a j) * 𝓛.t j) → (∀ a j, PAlg.Hom.f (A := 𝒯.A) (B := 𝒯.A) (γ' a : 𝒯.obj ⟶ 𝒯.obj).1 (𝒯.c j 0).val = 𝒯.A.s (ε.e 0) ^ (Multiplicative.toAdd a j) * (𝒯.c j 0).val) → Nonempty (NI (Polynomial.X : Polynomial ℤ) (Functor.whiskerRight θ (flt F κ ε k n ρ hρ).rees)) := by
+theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {κ : O →+* OC l} {d : ℕ} {s : F.Small d} (𝒯 : Tower κ s) (k : Bool) (n : ℕ) (𝓛 : Lift s.a (fun k => (s.T k : s.R)) (bs l k n).R (bs l k n).I (κb κ k n)) (δ : DividedPowers ((bs l k n).I.map 𝓛.i)) (hδ : IsDPMorphism (bs l k n).γ δ 𝓛.i) (hp : (bs l k n).p ≠ 0) (hn : IsNilpotent ((bs l k n).p : (bs l k n).R)) (ε : Eps l) (ρ : ℕ → ℕ) (hρ : Slow ρ) (γ : Gam d →* End (liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn)) (γ' : Gam d →* End 𝒯.obj) (θ : SingleObj.functor γ ⟶ SingleObj.functor γ' ⋙ gE F κ k n), n ≠ 0 → (∀ j, (θ.app (SingleObj.star _)).φ (𝓛.t j) = 𝒯.A.toAcr n (WittVector.teichmuller l (𝒯.c j 0 : 𝒯.A.A))) → (∀ a j, Thick.Hom.φ (γ a).asHom (𝓛.t j) = 𝓛.i (ε.qU n) ^ (Multiplicative.toAdd a j) * 𝓛.t j) → (∀ a j, PAlg.Hom.f (A := 𝒯.A) (B := 𝒯.A) (γ' a).asHom.1 (𝒯.c j 0).val = 𝒯.A.s (ε.e 0) ^ (Multiplicative.toAdd a j) * (𝒯.c j 0).val) → Nonempty (NI (Polynomial.X : Polynomial ℤ) (Functor.whiskerRight θ (flt F κ ε k n ρ hρ).rees)) := by
   intro l _ O _ F κ d s 𝒯 k n 𝓛 δ hδ hp hn ε ρ hρ γ γ' θ hn0 h1 h2 h3
   classical
   obtain ⟨X⟩ := GlobalTheory.CompanionTheory.RootAdjoin.nonempty_rootExt l Fact.out 𝓛.D 𝓛.t
@@ -255,7 +262,7 @@ theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {
   have hA := @ni_of_basis (bs l k n) (Lc F κ k n) (Acris l) _ ((base l).cris n) ρ hρ ε.μ (ε.μ_mem k (base l) n) d _ _ θ X.ι X.E _ alg X.b X.a₀ X.b_a₀ e₀ hbij hal χ (fun g => dif_pos rfl)
   refine hA ?_ (fun r => fil (DD k (base l) n) r) ?_ ?_ hflat ?_ ?_
   · intro g a
-    show (mapAcr (γ' g : 𝒯.obj ⟶ 𝒯.obj).1 n) (e₀ (X.b a)) =
+    show (mapAcr (γ' g).asHom.1 n) (e₀ (X.b a)) =
       (mapAcr 𝒯.A.fromBase n) ((base l).cris n (χ g a)) * e₀ (X.b a)
     by_cases ha : a = X.a₀
     · have h0 : χ g a = 1 := dif_pos ha
@@ -266,7 +273,7 @@ theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {
         exact Finset.prod_congr rfl fun j _ => by rw [map_pow, hr]
       have hc : ∀ j m, (𝒯.c j (m + 1) : 𝒯.A.A) ^ l = 𝒯.c j m := fun j m => by
         rw [← Units.val_pow_eq_pow_val, 𝒯.c_succ]
-      have he := eig_prod 𝒯.A ε n (γ' g : 𝒯.obj ⟶ 𝒯.obj).1 (fun j m => (𝒯.c j m : 𝒯.A.A)) hc
+      have he := eig_prod 𝒯.A ε n (γ' g).asHom.1 (fun j m => (𝒯.c j m : 𝒯.A.A)) hc
         (Multiplicative.toAdd g) (fun j => h3 g j) (mm a ha) (cc a ha)
       rw [hbe]
       refine he.trans ?_
@@ -279,9 +286,10 @@ theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {
     exact hfil k r
   · intro k' z
     have hq : 𝓛.i (ε.qU n) - 1 = 𝓛.i ((base l).cris n ε.μ) := by
-      rw [Eps.μ, map_sub, map_sub, map_one, map_one, ← Eps.qU_val]
+      set_option synthInstance.maxHeartbeats 200000 in
+        rw [Eps.μ, map_sub, map_sub, map_one, map_one, ← Eps.qU_val]
     let φ : 𝓛.D →+* 𝓛.D :=
-      Thick.Hom.φ (γ (gen k') : liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn ⟶ liftObj s (b := bs l k n) rfl 𝓛 δ hδ hp hn)
+      Thick.Hom.φ (γ (gen k')).asHom
     refine (GlobalTheory.CompanionTheory.LiftFlat.lift_flat 𝓛.i 𝓛.t 𝓛.et).2 ((bs l k n).I.map 𝓛.i) (𝓛.i ((base l).cris n ε.μ)) φ
       ?_ (RingHom.ext (Thick.Hom.comm _)) ?_ ?_ z
     · intro x hx
@@ -298,7 +306,7 @@ theorem main : ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {F : Fn O} {
           (𝓛.i (ε.qU n) ^ (Multiplicative.toAdd (gen k') j) - 1) * 𝓛.t j := by ring
       rw [this]
       exact hd.mul_right _
-    · exact fun z => hom_sub_mem s rfl 𝓛 δ hδ hp hn (γ (gen k')) z
+    · exact fun z => hom_sub_mem s rfl 𝓛 δ hδ hp hn (γ (gen k')).asHom z
   · intro a ha
     obtain ⟨k', hk'⟩ := hnd a ha
     obtain ⟨w, ξ, h1', h2', h3'⟩ := tw_facts ε k n hn ρ hρ (mm a ha) (cc a ha k') hk'

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.HermitianLattices.HermitianLatticesProofs.MassBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,13 +13,8 @@ namespace GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity
 
 open NumberField Formalism.BasicNotions
 
-def MassPlane : Prop :=
-  ∀ (D : D7), letI := D.host.cmStar
-    ∀ W : HSpace D.host.E, W.rank = 2 → W.SigOK → (∀ τ : D.host.E →+* ℂ, W.sig τ = (2, 0)) →
-      Formalism.HermitianLatticesTheory.mass W.hT W.L0 = Formalism.MainNotions.StandardLattice.massI D 2
 
 open scoped ComplexOrder in
-
 theorem posDef_of_hasSignature {n : Type} [Fintype n] [DecidableEq n] {J : Matrix n n ℂ} {p : ℕ}
     (h : Formalism.UG.HasSignature J p 0) : J.PosDef := by
   obtain ⟨e, P, hP⟩ := h
@@ -56,7 +55,8 @@ theorem trace_pos {E : Type} [Field E] [NumberField E] [StarRing E]
     have h2 : τ (W.hT x x) = star (fun i => τ (W.frame.repr x i)) ⬝ᵥ
         (W.gram.map τ).mulVec (fun i => τ (W.frame.repr x i)) := by
       conv_lhs => rw [← W.frame.sum_repr x]
-      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply,
         smul_eq_mul, map_mul, RingHom.id_apply, starRingEnd_apply, hst, dotProduct, Matrix.mulVec,
         Matrix.map_apply, HSpace.gram, Pi.star_apply, Finset.mul_sum]
       rw [Finset.sum_comm]
@@ -71,25 +71,5 @@ theorem trace_pos {E : Type} [Field E] [NumberField E] [StarRing E]
     Finset.sum_pos (fun σ _ => hloc (σ : E →+* ℂ)) ⟨IsAlgClosed.lift, Finset.mem_univ _⟩
   rw [← hre] at hpos
   simpa using hpos
-
-theorem mass_formula₂ (D : D7) : letI := D.host.cmStar
-    ∀ W : HSpace D.host.E, W.SigOK → (∀ τ : D.host.E →+* ℂ, W.sig τ = (2, 0)) →
-      (∃ s, Formalism.ThetaLiftIndependence.IsClassReps W.hT W.L0 s) ∧
-      (∀ L ∈ Formalism.HermitianLatticesTheory.genus W.hT W.L0, 0 < Nat.card (Formalism.ThetaLiftIndependence.autL W.hT L)) ∧
-      (∀ s, Formalism.ThetaLiftIndependence.IsClassReps W.hT W.L0 s →
-        Formalism.HermitianLatticesTheory.mass W.hT W.L0 = ∑ L ∈ s, ((Nat.card (Formalism.ThetaLiftIndependence.autL W.hT L) : ℕ) : ℝ)⁻¹) ∧
-      0 < Formalism.HermitianLatticesTheory.mass W.hT W.L0 := by
-  letI := D.host.cmStar
-  intro W hs hp
-  have hpos := trace_pos D.sp.cm.cmUnram.2.1 W hs hp
-  obtain ⟨h1, h2, h3⟩ := Formalism.HermitianLatticesTheory.massBasic _ _ W.hT W.herm hpos W.L0 W.standardTuple_isLattice
-  obtain ⟨-, hwt, -⟩ := Formalism.ThetaLiftIndependence.classRepsDefinite _ _ W.hT W.herm hpos W.L0 W.standardTuple_isLattice
-  refine ⟨h1, fun L hL => ?_, h2, h3⟩
-  obtain ⟨n, hn, hLn⟩ := hwt L hL
-  have hc : Nat.card (Formalism.ThetaLiftIndependence.autL W.hT L) = n := by
-    unfold Formalism.ThetaLiftIndependence.latWt at hLn
-    exact_mod_cast inv_inj.mp hLn
-  rw [hc]
-  exact hn
 
 end GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity

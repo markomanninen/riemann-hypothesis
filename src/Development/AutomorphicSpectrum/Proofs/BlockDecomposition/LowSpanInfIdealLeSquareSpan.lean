@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open GroundTheory.Automorphic.HarishChandra GlobalTheory.CompanionTheory.PresRho
@@ -34,7 +39,7 @@ theorem recover (lam : Fin n → ℂ) {x : U n} (hx : x ∈ lowSpan n) :
     rw [vermaCoord_canon_of_not lam (not_hasUpper hm), lowPart_eq hm, diagExp_eq hm]
     simp
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | smul r x _ hx => rw [map_smul, map_smul, hx]
 
 theorem eq_zero_of_mem (lam : Fin n → ℂ) {x : U n} (hx : x ∈ lowSpan n)

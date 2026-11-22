@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLim
+module
+
+public import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLim
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.GlobalClassField
 

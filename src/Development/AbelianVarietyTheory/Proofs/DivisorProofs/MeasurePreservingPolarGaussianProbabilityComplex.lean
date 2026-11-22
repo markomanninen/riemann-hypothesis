@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFirstCoords
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
-import ReciprocityTheory.SemistableReduction.SJCoreA
-import ReciprocityTheory.SemistableReduction.SJCoreB
-import ReciprocityTheory.SemistableReduction.SJCoreD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousFirstCoords
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+public import ReciprocityTheory.SemistableReduction.SJCoreA
+public import ReciprocityTheory.SemistableReduction.SJCoreB
+public import ReciprocityTheory.SemistableReduction.SJCoreD
+
+@[expose] public section
+
 open MeasureTheory Set MvPolynomial ReciprocityTheory.MultiplicativeHeights GlobalTheory.SphereMeanDrop
 
 noncomputable section
@@ -73,6 +78,6 @@ theorem measurePreserving_polar_gaussProb (n : ℕ) (hn : 0 < n) :
       Measure.prod_prod]
   refine ⟨hfm, ?_⟩
   rw [hsph, hrad, hgau, Measure.prod_smul_left, Measure.prod_smul_right, smul_smul,
-    Measure.map_smul, hB.map_eq, hmass, ENNReal.mul_inv (Or.inl ha0) (Or.inl haT)]
+    Measure.map_smul _ hfm.aemeasurable, hB.map_eq, hmass, ENNReal.mul_inv (Or.inl ha0) (Or.inl haT)]
 
 end GlobalTheory.SphereMeanDrop

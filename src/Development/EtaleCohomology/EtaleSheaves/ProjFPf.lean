@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TorEtPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TorEtPf
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.t_E1Cut LateralTheory.E.LCSplitPf LateralTheory.E.TorEtPf

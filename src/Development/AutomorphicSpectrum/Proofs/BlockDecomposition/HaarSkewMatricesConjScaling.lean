@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRadNMulLevM
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRadNMulLevM
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
@@ -59,9 +64,9 @@ theorem lr_skew_symm (a : GL (Fin n) (AE D)) :
     ∀ s ∈ skewA D n, (GlobalTheory.ModuLR.lrCE a (ad a)⁻¹).symm s ∈ skewA D n :=
   fun s hs => (skewConj (a⁻¹).1 ⟨s, hs⟩).2
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem map_skewConj : ∀ (D : D7) (r : ℕ) (κ : Measure (skewA D r)), κ.IsAddHaarMeasure → ∀ a : GL (Fin r) (AE D), κ.map (skewConj a.1) = ((absA D (Matrix.GeneralLinearGroup.det a) ^ r)⁻¹ : ℝ≥0) • κ := by
   intro D n κ hκ a
   obtain ⟨i1, i2, i3, i4, -, -⟩ := lattice_Mx D n n

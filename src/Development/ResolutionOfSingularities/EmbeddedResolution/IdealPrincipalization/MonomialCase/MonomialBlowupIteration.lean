@@ -1,15 +1,20 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequencePrefix
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SingleBlowup
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReductionProperties
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedOrderReduction.SequencePrefix
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.MonomialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.Append
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.SingleBlowup
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -49,11 +54,6 @@ theorem monomialBlowupStep_center_zero (s : MarkedBlowupSequenceData p I m E) (h
   ofSingleBlowup_center_zero h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2
 
 @[simp]
-theorem monomialBlowupStep_blowupMorphism_zero (s : MarkedBlowupSequenceData p I m E) (h : IsAdmissibleCenter s) :
-    (monomialBlowupStep s h).map 0 = Blowup.blowup.proj (centerAtLast s) :=
-  ofSingleBlowup_blowupMorphism_zero h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2
-
-@[simp]
 theorem monomialBlowupStep_projectionToBase_one (s : MarkedBlowupSequenceData p I m E) (h : IsAdmissibleCenter s) :
     (monomialBlowupStep s h).proj 1 = Blowup.blowup.proj (centerAtLast s) :=
   ofSingleBlowup_projectionToBase_one h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2
@@ -81,7 +81,7 @@ theorem blowupAtCenter_eq_append (hinv : ComapIsoInvariance.{u}) (s : MarkedBlow
     (h : IsAdmissibleCenter s) :
     blowupAtCenter hinv s = s.append (monomialBlowupStep s h) hinv := by
   unfold blowupAtCenter monomialBlowupStep
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem blowupAtCenter_length (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E)
     (h : IsAdmissibleCenter s) :
@@ -101,7 +101,7 @@ theorem isStationaryAt_iff_not_isAdmissibleCenter (hinv : ComapIsoInvariance.{u}
     show (blowupAtCenter hinv (monomialBlowupIterate hinv s n)).length
         = (monomialBlowupIterate hinv s n).length
     unfold blowupAtCenter
-    rw [dif_neg h]
+    rw [dite_eq_right h]
 
 theorem blowupAtCenter_schemeAt_succ (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E)
     (h : IsAdmissibleCenter s) :
@@ -193,7 +193,9 @@ theorem isStationaryAt_monomialStallIndex (hinv : ComapIsoInvariance.{u}) (p : X
     (I : X.IdealSheafData) (m : ℕ) (E : List X.IdealSheafData)
     (hex : ∃ n : ℕ, MarkedBlowupSequenceData.IsStationaryAt hinv (emptyMarkedBlowupSequenceData p I m E) n) :
     MarkedBlowupSequenceData.IsStationaryAt hinv (emptyMarkedBlowupSequenceData p I m E) (monomialStallIndex hinv p I m E) := by
-  exact Nat.sInf_mem hex
+  exact Nat.sInf_mem
+    (s := {n : ℕ | MarkedBlowupSequenceData.IsStationaryAt hinv (emptyMarkedBlowupSequenceData p I m E) n})
+    hex
 
 theorem isAdmissibleCenter_of_lt_monomialStallIndex (hinv : ComapIsoInvariance.{u})
     (p : X ⟶ Spec (CommRingCat.of k)) (I : X.IdealSheafData) (m : ℕ)
@@ -217,13 +219,13 @@ theorem monomialStallIndex_eq_of_isStationaryAt (hinv : ComapIsoInvariance.{u})
     (hstep : ∀ j < n, MarkedBlowupSequenceData.IsAdmissibleCenter
       (MarkedBlowupSequenceData.monomialBlowupIterate hinv (emptyMarkedBlowupSequenceData p I m E) j)) :
     monomialStallIndex hinv p I m E = n := by
-  have hne : ∃ j : ℕ, MarkedBlowupSequenceData.IsStationaryAt hinv (emptyMarkedBlowupSequenceData p I m E) j := ⟨n, hstall⟩
   have h1 : monomialStallIndex hinv p I m E ≤ n := Nat.sInf_le hstall
   refine le_antisymm h1 ?_
   by_contra hlt
   have hlt' : monomialStallIndex hinv p I m E < n := lt_of_not_ge hlt
   have hmem : MarkedBlowupSequenceData.IsStationaryAt hinv (emptyMarkedBlowupSequenceData p I m E)
-      (monomialStallIndex hinv p I m E) := Nat.sInf_mem hne
+      (monomialStallIndex hinv p I m E) :=
+    isStationaryAt_monomialStallIndex hinv p I m E ⟨n, hstall⟩
   exact ((MarkedBlowupSequenceData.isStationaryAt_iff_not_isAdmissibleCenter hinv _ _).mp hmem) (hstep _ hlt')
 
 theorem monomialBlowupSeq_eq_monomialBlowupIterate (hinv : ComapIsoInvariance.{u}) (p : X ⟶ Spec (CommRingCat.of k))
@@ -270,7 +272,7 @@ private theorem blowupAtCenter_schemeAt_of_le {p : X ⟶ Spec (CommRingCat.of k)
     exact MarkedBlowupSequenceData.append_schemeAt_of_le_length d (MarkedBlowupSequenceData.monomialBlowupStep d h) hinv hi
   · have hs : MarkedBlowupSequenceData.blowupAtCenter hinv d = d := by
       unfold MarkedBlowupSequenceData.blowupAtCenter
-      rw [dif_neg h]
+      rw [dite_eq_right h]
     rw [hs]
 
 private theorem length_le_blowupAtCenter_length {p : X ⟶ Spec (CommRingCat.of k)}
@@ -282,7 +284,7 @@ private theorem length_le_blowupAtCenter_length {p : X ⟶ Spec (CommRingCat.of 
     omega
   · have hs : MarkedBlowupSequenceData.blowupAtCenter hinv d = d := by
       unfold MarkedBlowupSequenceData.blowupAtCenter
-      rw [dif_neg h]
+      rw [dite_eq_right h]
     exact le_of_eq (by rw [hs])
 
 private theorem monomialBlowupIterate_length_le_and_schemeAt_eq {p : X ⟶ Spec (CommRingCat.of k)}
@@ -356,7 +358,7 @@ private theorem isPrefix_monomialBlowupIterate_succ {p : X ⟶ Spec (CommRingCat
   · have hs : MarkedBlowupSequenceData.blowupAtCenter hinv (MarkedBlowupSequenceData.monomialBlowupIterate hinv s j)
         = MarkedBlowupSequenceData.monomialBlowupIterate hinv s j := by
       unfold MarkedBlowupSequenceData.blowupAtCenter
-      rw [dif_neg h]
+      rw [dite_eq_right h]
     rw [MarkedBlowupSequenceData.monomialBlowupIterate_succ, hs]
     exact MarkedBlowupSequenceData.IsPrefix.refl _
 
@@ -565,7 +567,7 @@ private theorem blowupAtCenter_center_of_lt {p : X ⟶ Spec (CommRingCat.of k)}
       (MarkedBlowupSequenceData.blowupAtCenter_eq_append hinv d h) e
   · have hs : MarkedBlowupSequenceData.blowupAtCenter hinv d = d := by
       unfold MarkedBlowupSequenceData.blowupAtCenter
-      rw [dif_neg h]
+      rw [dite_eq_right h]
     have key : ∀ D : MarkedBlowupSequenceData p I m E, D = d →
         ∀ eD : D.obj i = d.obj i, D.center i = (d.center i).comap (eqToHom eD) := by
       rintro D rfl eD
@@ -707,18 +709,6 @@ variable {k : Type u} [Field k] {X : Scheme.{u}} {p : X ⟶ Spec (CommRingCat.of
 def monomialStallIndex (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) : ℕ :=
   sInf {n : ℕ | IsStationaryAt hinv s n}
 
-theorem monomialStallIndex_eq_sInf (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) :
-    monomialStallIndex hinv s = sInf {n : ℕ | IsStationaryAt hinv s n} :=
-  rfl
-
-def monomialIterateUntilStall (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) :
-    MarkedBlowupSequenceData p I m E :=
-  monomialBlowupIterate hinv s (monomialStallIndex hinv s)
-
-theorem monomialIterateUntilStall_eq_monomialBlowupIterate (hinv : ComapIsoInvariance.{u}) (s : MarkedBlowupSequenceData p I m E) :
-    monomialIterateUntilStall hinv s = monomialBlowupIterate hinv s (monomialStallIndex hinv s) :=
-  rfl
-
 theorem monomialStallIndex_eq_zero_of_not_isAdmissibleCenter (hinv : ComapIsoInvariance.{u})
     (s : MarkedBlowupSequenceData p I m E) (h : ¬ IsAdmissibleCenter s) : monomialStallIndex hinv s = 0 := by
   have h0 : IsStationaryAt hinv s 0 := (isStationaryAt_iff_not_isAdmissibleCenter hinv s 0).mpr h
@@ -738,13 +728,6 @@ theorem monomialStallIndex_eq_monomialStallIndex_empty (hinv : ComapIsoInvarianc
     (E : List X.IdealSheafData) :
     monomialStallIndex hinv p I m E =
       MarkedBlowupSequenceData.monomialStallIndex hinv (emptyMarkedBlowupSequenceData p I m E) :=
-  rfl
-
-theorem monomialBlowupSeq_eq_monomialIterateUntilStall (hinv : ComapIsoInvariance.{u})
-    (p : X ⟶ Spec (CommRingCat.of k)) (I : X.IdealSheafData) (m : ℕ)
-    (E : List X.IdealSheafData) :
-    monomialBlowupSeq hinv p I m E =
-      MarkedBlowupSequenceData.monomialIterateUntilStall hinv (emptyMarkedBlowupSequenceData p I m E) :=
   rfl
 
 end

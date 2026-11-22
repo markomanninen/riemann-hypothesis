@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsHeckeLOfCompleted
-import Development.WeilBound.ThetaLifts.LatticeBasics.ConstOfGood
-import Development.WeilBound.ThetaLifts.Reductions.WeightConstants.Bridge
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeLEntireAndNonzeroAtOneHolds
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsHeckeLOfCompleted
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ConstOfGood
+public import Development.WeilBound.ThetaLifts.Reductions.WeightConstants.Bridge
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeLEntireAndNonzeroAtOneHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem lInt2 : LInt2 := by
     obtain ⟨L, hL, hz⟩ := PositivityTheory.ThKRed.HK.heckeL_ne_zero hφ hu' (GlobalTheory.Published.HeckeFEModel.hasInf_inv hn) ⟨w₀, by have := k0 w₀; omega⟩
     refine ⟨L, hL.1, fun s hs => eq_charL hu' (fun W x => ?_) hL hs, fun z h1 => hz z fun w => by
       have := k0 w; have := le_abs_self (B.mα w - B.mβ w); rw [abs_neg]; omega⟩
-    rw [Formalism.L2.Host.HChar.loc_inv, hloc]
+    have loc_inv : (H⁻¹).loc W x = (H.loc W x)⁻¹ := rfl
+    rw [loc_inv, hloc]
     exact (map_inv Circle.toUnits _).symm
 
 theorem constOfGood (hS : GlobalTheory.Published.StrongApproxSU) : ConstOfGood :=

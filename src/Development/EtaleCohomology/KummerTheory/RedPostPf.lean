@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.BockCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.BockCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -74,13 +78,13 @@ theorem RedPost_of (hU : SemiUniq) (hE : TwExt) (hZ : ZHom) (hS : LateralTheory.
   rw [h1, h2]
   obtain ⟨φ1, hφ1⟩ := hZ (TZ Q i) ((res ℤ (TZ q i)).X 0)
     (fun U => AddMonoidHom.mk' (fun a : Sec (TZ Q i) U => ρ.app U 0 (Sec.map (resι _ (tw Q i)) (up _ a)))
-      (fun a b => by rw [up_add, sec_add, map_add]))
+      (fun a b => by rw [up_add, sec_add, map_add (f := _)]))
     (fun V U g a => by
       change Sec.res g (ρ.app U 0 (Sec.map (resι _ (tw Q i)) (up _ a))) = ρ.app V 0 (Sec.map (resι _ (tw Q i)) (up _ (Sec.res g a)))
       rw [ρ.nat, sec_nat, up_res])
   obtain ⟨φ2, hφ2⟩ := hZ (TZ Q i) ((res ℤ (TZ q i)).X 0)
     (fun U => AddMonoidHom.mk' (fun a : Sec (TZ Q i) U => ρ'.app U 0 (Sec.map (resι _ (tw Q i)) (up _ a)))
-      (fun a b => by rw [up_add, sec_add, map_add]))
+      (fun a b => by rw [up_add, sec_add, map_add (f := _)]))
     (fun V U g a => by
       change Sec.res g (ρ'.app U 0 (Sec.map (resι _ (tw Q i)) (up _ a))) = ρ'.app V 0 (Sec.map (resι _ (tw Q i)) (up _ (Sec.res g a)))
       rw [ρ'.nat, sec_nat, up_res])

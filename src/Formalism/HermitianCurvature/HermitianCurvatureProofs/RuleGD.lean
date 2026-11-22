@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementR
+module
+
+public import Formalism.HermitianCurvature.StatementR
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.RuleGD
 
@@ -113,7 +117,7 @@ lemma keyA (L : LevelData A r) (φ : A →+* A) (t : ℂ) (e : A)
     apply tprod_map
     intro l
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [LevelData.Tl, hp, hc, hci, hal, map_add]
+    fin_cases i <;> fin_cases j <;> simp [LevelData.Tl, hp, hc, hci, hal, map_add (f := _)]
     abel
   have hAr : φ (L.Ar Y) = L.Ar (Y + t) := by
     unfold LevelData.Ar; rw [← hT]; rfl
@@ -123,13 +127,13 @@ lemma keyA (L : LevelData A r) (φ : A →+* A) (t : ℂ) (e : A)
   have hDrb : φ L.Drb = L.Drb := map_ofFn_prod φ L.cb hcb
   have hl0 : φ (L.l0 Y) = L.l0 (Y + t) + e := by
     have h2 : algebraMap ℂ A (Y + t + 1 / 2) = algebraMap ℂ A (Y + 1 / 2) + algebraMap ℂ A t := by
-      rw [← map_add]; congr 1; ring
+      rw [← map_add (f := _)]; congr 1; ring
     simp only [LevelData.l0, map_sub, map_neg, map_mul, hal, hnab, hzb, hGGi, h2, add_mul]
     abel
   constructor
   · unfold LevelData.Ahat; rw [map_mul, hDr, hAr]
   · unfold LevelData.R0
-    rw [map_mul, map_mul, map_add, map_mul, hDrb, hGG, hl0, hAr, hBr]
+    rw [map_mul, map_mul, map_add (f := _), map_mul, hDrb, hGG, hl0, hAr, hBr]
     simp only [add_mul, mul_add, mul_assoc]
     abel
 
@@ -162,7 +166,7 @@ lemma keyV (L : LevelData A r) (φ : A →+* A) (t : ℂ) (e : A)
   constructor
   · unfold LevelData.Ahatv; rw [map_mul, hDrb, hAr]
   · unfold LevelData.R0v
-    rw [map_mul, map_mul, map_add, map_mul, hDr, hGG, hm0, hAr, hBr]
+    rw [map_mul, map_mul, map_add (f := _), map_mul, hDr, hGG, hm0, hAr, hBr]
     simp only [add_mul, mul_add, mul_assoc]
     abel
 
@@ -267,7 +271,7 @@ theorem shiftConjugation : Formalism.FourierDecayAlt.R.RuleD := by
   have hal : ∀ z, (ψ2.comp ψ1) (algebraMap ℂ A z) = algebraMap ℂ A z := fun z => by
     rw [RingHom.comp_apply, cj_alg, cj_alg]
   have hp : ∀ l, (ψ2.comp ψ1) (L.p l) = L.p l + algebraMap ℂ A 1 := fun l => by
-    rw [RingHom.comp_apply, cj_of_eq _ _ _ _ (p_Dr L l), map_one, map_add, map_one,
+    rw [RingHom.comp_apply, cj_of_eq _ _ _ _ (p_Dr L l), map_one, map_add (f := _), map_one,
       cj_fix _ _ _ _ (L.p_ζ l), map_one]
   have hnab : (ψ2.comp ψ1) L.nab = L.nab + algebraMap ℂ A 1 * (L.ζb * L.GGi)
       - (L.ζb * L.GGi - L.ζi) := by
@@ -292,7 +296,7 @@ theorem shiftConjugation : Formalism.FourierDecayAlt.R.RuleD := by
   have hal' : ∀ z, (χ2.comp χ1) (algebraMap ℂ A z) = algebraMap ℂ A z := fun z => by
     rw [RingHom.comp_apply, cj_alg, cj_alg]
   have hpb : ∀ l, (χ2.comp χ1) (L.pb l) = L.pb l + algebraMap ℂ A 1 := fun l => by
-    rw [RingHom.comp_apply, cj_of_eq _ _ _ _ (pb_Drb L l), map_one, map_add, map_one,
+    rw [RingHom.comp_apply, cj_of_eq _ _ _ _ (pb_Drb L l), map_one, map_add (f := _), map_one,
       cj_fix _ _ _ _ (L.pb_ζb l), map_one]
   have hnabs : (χ2.comp χ1) L.nabs = L.nabs - algebraMap ℂ A 1 * (L.ζ * L.GGi)
       - (L.ζbi - L.ζ * L.GGi) := by

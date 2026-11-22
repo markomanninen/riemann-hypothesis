@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 set_option maxHeartbeats 1000000 in
@@ -16,7 +20,7 @@ theorem _root_.GlobalTheory.T.finrank_dualInvariants_scalarRep_eq_finrank_ker_sm
       { carrier := {b | ∀ x : N, f (b • x) = 0}
         add_mem' := fun {a b} ha hb x => by
           simp only [Set.mem_setOf_eq] at ha hb
-          rw [add_smul, map_add, ha x, hb x, add_zero]
+          rw [add_smul, map_add (f := _), ha x, hb x, add_zero]
         zero_mem' := fun x => by simp
         smul_mem' := fun c b hb x => by
           simp only [Set.mem_setOf_eq] at hb

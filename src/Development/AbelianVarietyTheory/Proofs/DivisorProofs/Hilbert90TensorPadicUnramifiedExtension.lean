@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemilinearFixedSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobQFixedMemRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemilinearFixedSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobQFixedMemRange
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -81,7 +86,7 @@ theorem tensorMap_padicUnramifiedFrobenius_iterate_degree (r : ℕ) (hr : 0 < r)
   | tmul b y =>
     rw [RingHom.coe_pow]
     exact (tensorMap_padicUnramifiedFrobenius_iterate_tmul p B r r b y).trans (by rw [padicUnramifiedFrobenius_iterate_degree_apply_eq p r hr])
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 end HilbertNinety
 
@@ -109,7 +114,7 @@ theorem hilbert90_frobenius_tensor_unramified_padic : ∀ (p : ℕ) [Fact p.Prim
       add_mem' := by
         intro x y hx hy
         show σ (x + y) * _ = x + y
-        rw [map_add, add_mul]
+        rw [map_add (f := _), add_mul]
         rw [show σ x * ((a⁻¹ : (B ⊗[ℚ_[p]] Qr p r)ˣ) : _) = x from hx,
           show σ y * ((a⁻¹ : (B ⊗[ℚ_[p]] Qr p r)ˣ) : _) = y from hy]
       zero_mem' := by
@@ -131,7 +136,7 @@ theorem hilbert90_frobenius_tensor_unramified_padic : ∀ (p : ℕ) [Fact p.Prim
   let F : (Qr p r ⊗[ℚ_[p]] B) →+ (Qr p r ⊗[ℚ_[p]] B) :=
     { toFun := fun w => e.symm (τ (e w))
       map_zero' := by simp [τ]
-      map_add' := fun x y => by simp only [τ, map_add, add_mul] }
+      map_add' := fun x y => by simp only [τ, map_add (f := _), add_mul] }
   have hFe : ∀ w, e (F w) = τ (e w) := fun w => AlgEquiv.apply_symm_apply e _
   have hF : ∀ (c : Qr p r) (w : Qr p r ⊗[ℚ_[p]] B), F (c • w) = s c • F w := by
     intro c w
@@ -163,7 +168,7 @@ theorem hilbert90_frobenius_tensor_unramified_padic : ∀ (p : ℕ) [Fact p.Prim
         add_mem' := by
           intro x y hx hy
           show e (x + y) ∈ m
-          rw [map_add]
+          rw [map_add (f := _)]
           exact m.add_mem hx hy
         zero_mem' := by
           show e 0 ∈ m

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
+
+@[expose] public section
 
 noncomputable section
 

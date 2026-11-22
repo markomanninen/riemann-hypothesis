@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedOfParts
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.StRedOfParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem phi_bijective (σ : E →ₐ[F] E) (ι : E →ₐ[F] K) (h2 : Module.fin
   have hsurj : Function.Surjective (phi σ ι) := by
     rintro ⟨u, v⟩
     refine ⟨((u - v) / (ι a - ι (σ a))) ⊗ₜ[F] a + (u - (u - v) / (ι a - ι (σ a)) * ι a) ⊗ₜ[F] (1 : E), ?_⟩
-    rw [map_add, phi_tmul, phi_tmul]
+    rw [map_add (f := _), phi_tmul, phi_tmul]
     simp only [map_one, mul_one, Prod.mk_add_mk, Prod.mk.injEq]
     constructor
     · ring
@@ -45,7 +49,7 @@ theorem phi_sig (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) (ι : E →ₐ
     simp only [Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
       Algebra.TensorProduct.map_tmul, AlgHom.id_apply, phi_tmul, hσ, Prod.swap_prod_mk]
   | add x y hx hy =>
-    rw [map_add, map_add, map_add, hx, hy]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
     rfl
 
 end MassDataIdxSplit

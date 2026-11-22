@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,8 +22,8 @@ theorem sum_mul_symplCons {n : ℕ} (c : ℝ) (x : Fin n ⊕ Fin n → ℝ)
 
 end PSymplReducePosDef
 
-open PSymplReducePosDef in
 
+open PSymplReducePosDef in
 theorem SymplReducePosDef.proof : SymplReducePosDef.Statement := by
   intro n H hH
   have hsymm : ∀ i j, H j i = H i j := fun i j => by
@@ -51,7 +56,7 @@ theorem SymplReducePosDef.proof : SymplReducePosDef.Statement := by
     have hL : symplCons (-(S / h)) 0 x ⬝ᵥ (H *ᵥ symplCons (-(S / h)) 0 x) =
         (h * (-(S / h)) + S) * (-(S / h)) + (-(S / h)) * S + Q := by
       rw [dotProduct_comm]
-      simp only [dotProduct, mulVec, sum_mul_symplCons]
+      simp only [dotProduct, mulVec, PSymplReducePosDef.sum_mul_symplCons]
       rw [← hh, ← hS]
       simp only [add_mul, Finset.sum_add_distrib]
       rw [← hQ]

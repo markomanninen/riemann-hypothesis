@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -26,7 +31,7 @@ theorem exists_order_integers_mul_finite_index (F B : Type) [Field F] [NumberFie
     { carrier := {a | (N : B) * f a ∈ OB}
       add_mem' := by
         intro a b ha hb
-        simp only [Set.mem_setOf_eq, map_add, mul_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _), mul_add] at *
         exact OB.add_mem ha hb
       zero_mem' := by simp
       smul_mem' := by
@@ -66,7 +71,7 @@ theorem exists_order_integers_mul_finite_index (F B : Type) [Field F] [NumberFie
       rw [hL, ← mul_assoc]
       exact OB.mul_mem (hP a) b.2
     | add t u ht hu =>
-      rw [map_add, mul_add]
+      rw [map_add (f := _), mul_add]
       exact OB.add_mem ht hu
 
 end GlobalTheory

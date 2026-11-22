@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafNormalModelPf
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafNormalModelPf
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -60,7 +64,8 @@ theorem isIntegrallyClosed_intClosure (u : L) [FiniteDimensional (IntermediateFi
   have := isFractionRing_intClosure Ω u
   rw [isIntegrallyClosed_iff L]
   intro x hx
-  exact ⟨⟨x, isIntegral_trans x hx⟩, rfl⟩
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact ⟨⟨x, isIntegral_trans (A := integralClosure (Algebra.adjoin Ω {u}) L) x hx⟩, rfl⟩
 
 theorem ringKrullDim_intClosure (u : L) (hu : Transcendental Ω u) :
     ringKrullDim (integralClosure (Algebra.adjoin Ω {u}) L) = 1 := by

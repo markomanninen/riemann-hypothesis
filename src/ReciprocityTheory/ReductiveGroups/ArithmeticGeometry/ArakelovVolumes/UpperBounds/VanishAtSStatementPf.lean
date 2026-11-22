@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfA
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.VanishPf
 

@@ -1,37 +1,42 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationLocalityUnitaryGroupVStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEqStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicAddCharNontrivialFinitePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormEqZeroOfLagrangianAtPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryElementActsLocalOperatorAtPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedDiagonalIntegralLinearFormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharSupportedIdeleEqLocalAbsValueStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTestStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitDetGramOfHermitianSelfDualLatticeSpace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunctionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalIntegralHeisenbergTranslateIntegralIndicStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergDiagonalIntegralMemSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianDiagonalIntegralExtendsLinearFormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralInjectiveSubspaceCompactOpenConstNeZeroStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearFormEqZeroOfKillsProductSchwartzBruhatStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsotropicIntegralInvariantHeisenbergFirstVarsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedAbsDetMulIntegralCompMulVecFinitePlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePlaceComponentAdeleNormEqLocalNormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianColumnsLinearParametrisationFinitePlacStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledWeilOperatorDiagonalIntegralHeisenbergPoiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelParabolicLeviInverseQuotientDetNormStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryScalarInertPlaceInvertibleShiftsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentBlockUnipotentIdentityStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalProductActsOfAdelicProductActsFirstStatement
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc MeasureTheory GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationLocalityUnitaryGroupVStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEqStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicAddCharNontrivialFinitePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticFormEqZeroOfLagrangianAtPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledUnitaryElementActsLocalOperatorAtPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdmittedDiagonalIntegralLinearFormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DistribHaarCharSupportedIdeleEqLocalAbsValueStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTestStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharactersAgreeInertUnramified
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryDoubledBlockDiagOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitDetGramOfHermitianSelfDualLatticeSpace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalIntegralHeisenbergTranslateIntegralIndicStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergDiagonalIntegralMemSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianDiagonalIntegralExtendsLinearFormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralInjectiveSubspaceCompactOpenConstNeZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearFormEqZeroOfKillsProductSchwartzBruhatStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsotropicIntegralInvariantHeisenbergFirstVarsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedAbsDetMulIntegralCompMulVecFinitePlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePlaceComponentAdeleNormEqLocalNormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrangianColumnsLinearParametrisationFinitePlacStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubledWeilOperatorDiagonalIntegralHeisenbergPoiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelParabolicLeviInverseQuotientDetNormStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryScalarInertPlaceInvertibleShiftsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentBlockUnipotentIdentityStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalProductActsOfAdelicProductActsFirstStatement
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels MeasureTheory GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagChar
 open scoped TensorProduct Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -60,16 +65,16 @@ def boxL {k κ κ' : Type} [CommRing k] (φ₂ : (κ' → k) → ℂ) : ((κ →
 
 variable {F : Type} [Field F] [NumberField F]
 
-theorem one_sub_smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl F} {u : M} (hu : At (evFin F v) u) :
+theorem one_sub_smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl (F := F)} {u : M} (hu : At (evFin F v) u) :
     (1 - liftV v (1 : Fv F v)) • u = 0 := hu _ (by rw [map_sub, map_one, evFin_liftV, sub_self])
 
-theorem smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl F} {u : M} (hu : At (evFin F v) u) :
+theorem smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl (F := F)} {u : M} (hu : At (evFin F v) u) :
     liftV v (1 : Fv F v) • u = u := by
   have h := one_sub_smul_of_at hu
   rw [sub_smul, one_smul] at h
   exact (sub_eq_zero.1 h).symm
 
-theorem at_of_one_sub_smul {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl F} {u : M}
+theorem at_of_one_sub_smul {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl (F := F)} {u : M}
     (h : (1 - liftV v (1 : Fv F v)) • u = 0) : At (evFin F v) u := fun t ht => by
   have h1 : t * (1 - liftV v (1 : Fv F v)) = t := by
     have h2 := at_liftV v (1 : Fv F v) t ht
@@ -77,11 +82,11 @@ theorem at_of_one_sub_smul {M : Type} [AddCommGroup M] [Module (AF F) M] {v : Pl
     rw [mul_sub, mul_one, h2, sub_zero]
   rw [← h1, mul_smul, h, smul_zero]
 
-def Scales {κ : Type} [Fintype κ] (v : Pl F) (Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (T : Module.End ℂ ((κ → AF F) → ℂ))
+def Scales {κ : Type} [Fintype κ] (v : Pl (F := F)) (Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (T : Module.End ℂ ((κ → AF F) → ℂ))
     (a : ℂ) : Prop :=
   ∀ Φ ∈ SB (κ → Fv F v), ∃ Φ₁ ∈ SB (κ → Fv F v), Acts (evFin F v) T Φ Φ₁ ∧ Λ Φ₁ = a * Λ Φ
 
-theorem Scales.mul {κ : Type} [Fintype κ] {v : Pl F} {Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ}
+theorem Scales.mul {κ : Type} [Fintype κ] {v : Pl (F := F)} {Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ}
     {T T' : Module.End ℂ ((κ → AF F) → ℂ)} {a a' : ℂ} (h : Scales v Λ T a) (h' : Scales v Λ T' a')
     (hp : ∀ Φ ∈ schA F κ, T' Φ ∈ schA F κ) : Scales v Λ (T * T') (a * a') := by
   intro Φ hΦ
@@ -92,7 +97,7 @@ theorem Scales.mul {κ : Type} [Fintype κ] {v : Pl F} {Λ : ((κ → Fv F v) �
   show T (T' _) = _
   rw [hA₁ r hr, hA₂ r hr1]
 
-theorem Scales.unique {κ : Type} [Fintype κ] {v : Pl F} {Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ}
+theorem Scales.unique {κ : Type} [Fintype κ] {v : Pl (F := F)} {Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ}
     {T : Module.End ℂ ((κ → AF F) → ℂ)} {a a' : ℂ} (h : Scales v Λ T a) (h' : Scales v Λ T a')
     {Φ : (κ → Fv F v) → ℂ} (hΦ : Φ ∈ SB (κ → Fv F v)) (h0 : Λ Φ ≠ 0) : a = a' := by
   obtain ⟨Φ₁, -, hA₁, e₁⟩ := h Φ hΦ
@@ -101,10 +106,10 @@ theorem Scales.unique {κ : Type} [Fintype κ] {v : Pl F} {Λ : ((κ → Fv F v)
   rw [e, e₂] at e₁
   exact (mul_right_cancel₀ h0 e₁).symm
 
-theorem scales_one {κ : Type} [Fintype κ] (v : Pl F) (Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) : Scales v Λ 1 1 :=
+theorem scales_one {κ : Type} [Fintype κ] (v : Pl (F := F)) (Λ : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) : Scales v Λ 1 1 :=
   fun Φ hΦ => ⟨Φ, hΦ, fun _ _ => rfl, (one_mul _).symm⟩
 
-theorem scales_of_box {κ : Type} [Fintype κ] {v : Pl F} (ψ : AddChar (Fv F v) ℂ) (hψ : Continuous ψ) (hψ1 : ψ ≠ 1)
+theorem scales_of_box {κ : Type} [Fintype κ] {v : Pl (F := F)} (ψ : AddChar (Fv F v) ℂ) (hψ : Continuous ψ) (hψ1 : ψ ≠ 1)
     (Λ : ((κ ⊕ κ → Fv F v) → ℂ) →ₗ[ℂ] ℂ) (T : Module.End ℂ ((κ ⊕ κ → AF F) → ℂ)) (a : ℂ)
     (hex : ∀ Φ ∈ SB (κ ⊕ κ → Fv F v), ∃ Φ₁ ∈ SB (κ ⊕ κ → Fv F v), Acts (evFin F v) T Φ Φ₁)
     (r : (κ ⊕ κ → AF F) → ℂ) (hr0 : r 0 ≠ 0) (hr : ∀ Φ ∈ SB (κ ⊕ κ → Fv F v), Rest (evFin F v) Φ r)
@@ -115,7 +120,7 @@ theorem scales_of_box {κ : Type} [Fintype κ] {v : Pl F} (ψ : AddChar (Fv F v)
       map_add' := fun f f' => by
         have e : tens (evFin F v) (f + f') r = tens (evFin F v) f r + tens (evFin F v) f' r := by
           funext x; simp [tens, add_mul]
-        funext t; simp only [e, map_add, Pi.add_apply]; ring
+        funext t; simp only [e, map_add (f := _), Pi.add_apply]; ring
       map_smul' := fun c f => by
         have e : tens (evFin F v) (c • f) r = c • tens (evFin F v) f r := by
           funext x; simp [tens, mul_assoc]
@@ -145,7 +150,7 @@ theorem scales_of_box {κ : Type} [Fintype κ] {v : Pl F} (ψ : AddChar (Fv F v)
 
 theorem char_eq_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → v ∉ X.T →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → v ∉ X.T →
     ∀ (m : ℕ) (C : Matrix (Fin (a + a')) (Fin m) (AE F E)), GlobalTheory.InertVacLag.IsLagrAt σ G.W v C →
     ∀ l : ((Fin a' × Fin (a + a') → Fv F v) → ℂ) →ₗ[ℂ] ℂ, GlobalTheory.InertVacLag.HeisInv G.M' B.ψ v C l →
     (∃ φ ∈ SB (Fin a' × Fin (a + a') → Fv F v), l φ ≠ 0) →
@@ -179,10 +184,12 @@ theorem char_eq_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
   have hiso : ∀ y y', (j y).1 ⬝ᵥ (j y').2 = (j y').1 ⬝ᵥ (j y).2 := by
     intro y y'
     have h0 := GlobalTheory.T.symplecticForm_eq_zero_of_lagrangianAtPlace σ G.V'.J G.W v C hC (-1) _ _ (hlag y) (hlag y')
+    change symp (cA σ) (-1) (incM F G.V'.J) (incM F G.W.J) (ζ y * Cᵀ) (ζ y' * Cᵀ) = 0 at h0
     rw [G.M'.co.form] at h0
     have h1 := congrArg (evFin F v) h0
     rw [← sub_eq_zero, ← (hζ y).2, ← (hζ y').2]
-    simpa [locCo, dotProduct, map_sum, map_mul, map_sub] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [locCo, dotProduct, map_sum, map_mul, map_sub] using h1
 
   have hHeis : ∀ φ₂ ∈ SB (Fin a' × Fin (a + a') → Fv F v), HeisInv G.M' B.ψ v C (Λ ∘ₗ boxL φ₂) := by
     rintro φ₂ hφ₂ u ⟨hu, z, hz⟩ φ hφ φ₁ hφ₁ hA
@@ -262,7 +269,8 @@ theorem char_eq_one : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
     rw [hΛ _ hΦ₁, hΛ _ hΦ, one_mul, lagInt, lagInt, ← GlobalTheory.T.normalizedAbsDet_mul_integral_comp_mulVec_finitePlace F v N ν hν T (fun y => diagW (psiAt B.ψ v) μ Φ (j y)),
       ← integral_const_mul]
     refine congrArg _ (funext fun y => ?_)
-    rw [← (hζ y).2, hpt' _ (hζ y).1, ← hs, ← hTζ, (hζ _).2]
+    set_option backward.isDefEq.respectTransparency false in
+      rw [← (hζ y).2, hpt' _ (hζ y).1, ← hs, ← hTζ, (hζ _).2]
 
   obtain ⟨k, hk, α, β, hα, hβ, e1, e2, e3, e4⟩ := GlobalTheory.T.exists_unitaryScalar_inertPlace_invertible_shifts F E σ B hT.base v w hin a' G.V'.J g
   obtain ⟨gd, hgd⟩ := GlobalTheory.unitary_diag_one_mem_dbl (AF F) (AE F E) (cA σ) (Fin a') (incM F G.V'.J) g

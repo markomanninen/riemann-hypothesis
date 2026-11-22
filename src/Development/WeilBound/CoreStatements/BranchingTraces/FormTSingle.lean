@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
-import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+module
+
+public import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,11 +30,13 @@ theorem u_adj (hU : IsURepOn (UJset ε) π) (g : UJ ε) (x y : H) : ⟪π (um g)
   conv_lhs => rw [hy]
   exact (LinearIsometry.mk (π (um g) : H →ₗ[ℂ] H) (hU.2.1 _ (umat_mem g))).inner_map_map x _
 
-theorem repOn (hU : IsURepOn (UJset ε) π) : RepOn (PI.PhMeasCore.UH (Jm ε)) π where
-  one_mem := (1 : UJ ε).2
-  mul_mem a ha b hb := (indefiniteUnitaryMk ε a ha * indefiniteUnitaryMk ε b hb).2
-  map_one := hU.1.1
-  map_mul a ha b hb := hU.1.2 a ha b hb
+theorem repOn (hU : IsURepOn (UJset ε) π) : RepOn (PI.PhMeasCore.UH (Jm ε)) π := by
+  exact {
+    one_mem := (1 : UJ ε).2
+    mul_mem := fun a ha b hb => (indefiniteUnitaryMk ε a ha * indefiniteUnitaryMk ε b hb).2
+    map_one := hU.1.1
+    map_mul := hU.1.2
+  }
 
 theorem smT_act (hU : IsURepOn (UJset ε) π) (g : UJ ε) {x : Fin m → H} (hx : x ∈ SmT ε π) : actT π (um g) x ∈ SmT ε π := by
   intro c

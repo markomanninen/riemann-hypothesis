@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaLiftTrivialOrbitTermsVanish
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaLiftTrivialOrbitTermsVanish
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -6,7 +10,7 @@ open scoped Classical
 open UpperTheory.ConvolutionTheory.R2
 
 theorem UpperTheory.ConvolutionTheory.R2.datNeg :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyComplex E] (δ : F) (θ : E) (b : Module.Basis (Fin 2) F E),
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex E] (δ : F) (θ : E) (b : Module.Basis (Fin 2) F E),
       b 0 = 1 → b 1 = θ → θ ^ 2 = algebraMap F E δ → ∀ φ : F →+* ℝ, φ δ < 0 := by
   intro F E _ _ _ _ _ _ δ θ b h0 h1 hθ φ
   by_contra hneg
@@ -29,7 +33,7 @@ theorem UpperTheory.ConvolutionTheory.R2.datNeg :
     have hz := b.sum_repr z
     rw [Fin.sum_univ_two, h0, h1, Algebra.smul_def, Algebra.smul_def] at hz
     rw [← hz]
-    simp only [map_add, map_mul, map_one, hτ, Complex.conj_ofReal, hreal]
+    simp only [map_add (f := _), map_mul, map_one, hτ, Complex.conj_ofReal, hreal]
   apply IsTotallyComplex.complexEmbedding_not_isReal τ
   rw [NumberField.ComplexEmbedding.isReal_iff]
   ext z

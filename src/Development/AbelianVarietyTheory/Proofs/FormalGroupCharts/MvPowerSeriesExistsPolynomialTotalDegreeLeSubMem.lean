@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsPolynomialSubMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsPolynomialSubMem
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -16,7 +20,7 @@ theorem monomial_one_mem_span_X_pow {R σ : Type*} [CommRing R] (α : σ →₀ 
   | add a b ha hb =>
     have : (monomial (a + b) (1 : R) : MvPowerSeries σ R) = monomial a 1 * monomial b 1 := by
       rw [monomial_mul_monomial, one_mul]
-    rw [this, map_add, pow_add]
+    rw [this, map_add (f := _), pow_add]
     exact Ideal.mul_mem_mul ha hb
   | single s n =>
     rw [← X_pow_eq, Finsupp.degree_single]
@@ -34,7 +38,7 @@ theorem exists_polynomial_totalDegree_le_sub_mem : ∀ (R : Type) [CommRing R] (
   let Φ : (Option τ → MvPowerSeries σ O) →ₗ[O] MvPowerSeries σ O :=
     { toFun := fun x => (truncTotal N (x none) : MvPolynomial σ O) + ∑ j, x (some j) * f j
       map_add' := fun x y => by
-        simp only [Pi.add_apply, map_add, MvPolynomial.coe_add, add_mul, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), MvPolynomial.coe_add, add_mul, Finset.sum_add_distrib]
         ring
       map_smul' := fun c x => by
         simp only [Pi.smul_apply, map_smul, MvPolynomial.coe_smul, smul_add, Finset.smul_sum,

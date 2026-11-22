@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SchurOrthogonalitySquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DiscreteTopologyRationalPointsHermitianSpace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.EquivariantFiniteGroup
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SchurOrthogonalitySquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsFundamentalDomain
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DiscreteTopologyRationalPointsHermitianSpace
+
+@[expose] public section
 
 open MeasureTheory Filter Set GlobalTheory.OpTrace
 open scoped InnerProductSpace ENNReal Topology Pointwise symmDiff ComplexConjugate
@@ -35,8 +39,6 @@ def IsSubrep.rep (hW : IsSubrep π W) : G →* (W →L[ℂ] W) where
   map_one' := by ext v; simp
   map_mul' g h := by ext v; exact DFunLike.congr_fun (map_mul π g h) (v : H)
 
-@[simp] theorem IsSubrep.coe_rep_apply (hW : IsSubrep π W) (g : G) (v : W) : (hW.rep g v : H) = π g v := rfl
-
 theorem IsSubrep.completeSpace [CompleteSpace H] (hW : IsSubrep π W) : CompleteSpace W :=
   hW.1.completeSpace_coe
 
@@ -53,14 +55,6 @@ theorem isSubrep_closure_sSup {S : Set (Submodule ℂ H)} (h : ∀ W ∈ S, IsSu
   isSubrep_topologicalClosure fun g _ hv =>
     (sSup_le fun W hW v hv => (le_sSup hW : W ≤ sSup S) ((h W hW).2 g v hv) :
       sSup S ≤ (sSup S).comap (π g : H →ₗ[ℂ] H)) hv
-
-theorem isSubrep_disc : IsSubrep π (disc π) := isSubrep_closure_sSup fun _ h => h.1
-
-theorem IsIrredSubrep.le_disc (hW : IsIrredSubrep π W) : W ≤ disc π :=
-  (le_sSup (s := {W | IsIrredSubrep π W}) hW).trans (Submodule.le_topologicalClosure _)
-
-theorem disc_le (hU : IsClosed (U : Set H)) (h : ∀ W, IsIrredSubrep π W → W ≤ U) : disc π ≤ U :=
-  Submodule.topologicalClosure_minimal _ (sSup_le h) hU
 
 theorem IsSubrep.isSubrep_rep_iff (hW : IsSubrep π W) {T : Submodule ℂ W} :
     IsSubrep hW.rep T ↔ IsSubrep π (T.map W.subtype) := by
@@ -90,13 +84,6 @@ theorem IsSubrep.isIrredSubrep_iff (hW : IsSubrep π W) : IsIrredSubrep π W ↔
     exact (h2 _ (hW.isSubrep_rep_iff.2 (e.symm ▸ hU'))).imp
       (fun h => by rw [← e, h, Submodule.map_bot]) fun h => by rw [← e, h, Submodule.map_subtype_top]
 
-theorem isTopIrreducible_iff_top : IsTopIrreducible π ↔ IsIrredSubrep π ⊤ :=
-  ⟨fun h => ⟨isSubrep_top, by have := h.1; exact top_ne_bot, fun U _ hU => h.2 U hU⟩,
-    fun h => ⟨(Submodule.nontrivial_iff ℂ).1 ⟨_, _, h.2.1⟩, fun U hU => h.2.2 U le_top hU⟩⟩
-
-theorem IsTopIrreducible.disc_eq_top (h : IsTopIrreducible π) : disc π = ⊤ :=
-  top_le_iff.1 (isTopIrreducible_iff_top.1 h).le_disc
-
 theorem isIrredSubrep_span_singleton {v : H} (hv : v ≠ 0) (h : ∀ g, ∃ c : ℂ, π g v = c • v) :
     IsIrredSubrep π (ℂ ∙ v) := by
   refine ⟨⟨Submodule.closed_of_finiteDimensional _, fun g w hw => ?_⟩, by simpa using hv, fun U hU _ => ?_⟩
@@ -108,8 +95,8 @@ theorem isIrredSubrep_span_singleton {v : H} (hv : v ≠ 0) (h : ∀ g, ∃ c : 
 
 variable [CompleteSpace H] [TopologicalSpace G]
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem IsSubrep.isUnitaryRep (hW : IsSubrep π W) (hπ : IsUnitaryRep π) : IsUnitaryRep hW.rep :=
   ⟨fun g v => hπ.norm_apply g v, fun v => (hπ.continuous_apply v).subtype_mk _⟩
 
@@ -124,8 +111,8 @@ theorem IsSubrep.starProjection_apply (hW : IsSubrep π W) (hπ : IsUnitaryRep �
 
 variable [MeasurableSpace G] {μ : Measure G} {f : G → ℂ}
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem IsSubrep.map_mem_of_isRepOp (hW : IsSubrep π W) {T : H →L[ℂ] H} (hT : IsRepOp π μ f T) {v : H}
     (hv : v ∈ W) : T v ∈ W := by
   have := hW.completeSpace
@@ -133,8 +120,8 @@ theorem IsSubrep.map_mem_of_isRepOp (hW : IsSubrep π W) {T : H →L[ℂ] H} (hT
     W.subtypeₗᵢ.integral_comp_comm]
   exact Subtype.property _
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem IsSubrep.coe_repOp_rep (hW : IsSubrep π W) {T : H →L[ℂ] H} (hT : IsRepOp π μ f T) :
     IsRepOp hW.rep μ f (repOp hW.rep μ f) ∧ ∀ v : W, (repOp hW.rep μ f v : H) = T v := by
   have := hW.completeSpace
@@ -146,8 +133,8 @@ theorem IsSubrep.coe_repOp_rep (hW : IsSubrep π W) {T : H →L[ℂ] H} (hT : Is
   rw [h.repOp_eq]
   exact ⟨h, fun _ => rfl⟩
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem isRepOp_of_integrable [SecondCountableTopology G] [OpensMeasurableSpace G] (hπ : IsUnitaryRep π)
     (hf : Integrable f μ) : IsRepOp π μ f (repOp π μ f) :=
   hπ.isRepOp_of_integrable hf fun v => hf.1.smul (hπ.continuous_apply v).aestronglyMeasurable
@@ -244,7 +231,7 @@ theorem hasCompactSupport_starFn {f : G → ℂ} (hf : HasCompactSupport f) : Ha
 
 theorem finite_mem_compact [T2Space G] [DiscreteTopology Γ] {C : Set G} (hC : IsCompact C) :
     {γ : Γ | (γ : G) ∈ C}.Finite :=
-  ((Subgroup.isClosed_of_discrete (H := Γ)).isClosedEmbedding_subtypeVal.isCompact_preimage hC).finite_of_discrete
+  (Γ.isClosed_of_discreteTopology.isClosedEmbedding_subtypeVal.isCompact_preimage hC).finite_of_discrete
 
 theorem finite_support_kernel [T2Space G] [DiscreteTopology Γ] {f : G → ℂ} (hf : HasCompactSupport f) (x y : G) :
     (Function.support fun γ : Γ => f (x⁻¹ * γ * y)).Finite :=
@@ -255,8 +242,8 @@ theorem hasSum_kernel [T2Space G] [DiscreteTopology Γ] {f : G → ℂ} (hf : Ha
     HasSum (fun γ : Γ => f (x⁻¹ * γ * y)) (kernel Γ f x y) :=
   (summable_of_hasFiniteSupport (finite_support_kernel hf x y)).hasSum
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 instance (priority := 50) countable_of_discrete [SecondCountableTopology G] [DiscreteTopology Γ] : Countable Γ :=
   TopologicalSpace.separableSpace_iff_countable.1 inferInstance
 
@@ -294,13 +281,13 @@ theorem sec_eq {q : Quot Γ} {x : G} (hx : x ∈ stdDom Γ) (e : mk Γ x = q) : 
   rw [← h, h1]
   simp
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [BorelSpace G] [DiscreteTopology Γ] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [BorelSpace G] [DiscreteTopology Γ] in
 theorem measurable_mk : Measurable (mk Γ) := measurable_quotient_mk''
 
-theorem measurableEmbedding_sec : MeasurableEmbedding (sec Γ) where
-  injective := Function.LeftInverse.injective mk_sec
-  measurable := fun s hs => by
+theorem measurableEmbedding_sec : MeasurableEmbedding (sec Γ) := by
+  refine ⟨Function.LeftInverse.injective mk_sec, ?_, ?_⟩
+  · intro s hs
     have : mk Γ ⁻¹' (sec Γ ⁻¹' s) = ⋃ γ : Γ, (fun x => (γ : G) * x) ⁻¹' (s ∩ stdDom Γ) := by
       ext x
       simp only [mem_preimage, mem_iUnion, mem_inter_iff]
@@ -310,7 +297,7 @@ theorem measurableEmbedding_sec : MeasurableEmbedding (sec Γ) where
     change MeasurableSet (mk Γ ⁻¹' (sec Γ ⁻¹' s))
     rw [this]
     exact .iUnion fun γ => measurable_const_mul _ (hs.inter (measurableSet_stdDom Γ))
-  measurableSet_image' := fun s hs => by
+  · intro s hs
     have : sec Γ '' s = mk Γ ⁻¹' s ∩ stdDom Γ := by
       ext x
       exact ⟨by rintro ⟨q, h, rfl⟩; exact ⟨by simpa using h, sec_mem q⟩, fun h => ⟨_, h.1, sec_eq h.2 rfl⟩⟩
@@ -337,7 +324,7 @@ instance [SigmaFinite μ] : SigmaFinite (quotMeasure Γ μ) :=
     (by rw [measurePreserving_sec.map_eq]; infer_instance)
 
 theorem quotMeasure_smul (c : ℝ≥0∞) : quotMeasure Γ (c • μ) = c • quotMeasure Γ μ := by
-  rw [quotMeasure, Measure.restrict_smul, Measure.map_smul, quotMeasure]
+  rw [quotMeasure, Measure.restrict_smul, Measure.map_smul c measurable_mk.aemeasurable, quotMeasure]
 
 variable [μ.IsMulLeftInvariant]
 
@@ -370,8 +357,8 @@ theorem ae_quotMeasure_iff {p : Quot Γ → Prop} : (∀ᵐ q ∂quotMeasure Γ 
     exact iff_of_eq (congrArg (¬ p ·) (mk_mul γ⁻¹ x))
   · rwa [← Measure.restrict_apply' (measurableSet_stdDom Γ)]
 
-theorem quasiMeasurePreserving_mk : Measure.QuasiMeasurePreserving (mk Γ) μ (quotMeasure Γ μ) :=
-  ⟨measurable_mk, .mk fun s hs h => by
+theorem quasiMeasurePreserving_mk : QuasiMeasurePreserving (mk Γ) μ (quotMeasure Γ μ) :=
+  ⟨measurable_mk.aemeasurable, .mk fun s hs h => by
     rw [Measure.map_apply measurable_mk hs]
     exact measure_eq_zero_iff_ae_notMem.2 (ae_quotMeasure_iff.1 (measure_eq_zero_iff_ae_notMem.1 h))⟩
 
@@ -401,8 +388,8 @@ theorem aestronglyMeasurable_quotMeasure_iff_lift {F : Quot Γ → ℂ} :
 theorem memLp_quotMeasure_iff (h : IsFundamentalDomain Γ 𝓕 μ) {F : Quot Γ → ℂ} {p : ℝ≥0∞} :
     MemLp F p (quotMeasure Γ μ) ↔ MemLp (lift Γ F) p (μ.restrict 𝓕) :=
   ⟨fun h' => h'.comp_measurePreserving (measurePreserving_mk h), fun h' => by
-    have hm := (aestronglyMeasurable_quotMeasure_iff h).2 h'.1
-    exact ⟨hm, (eLpNorm_comp_measurePreserving hm (measurePreserving_mk h)).symm.trans_lt h'.2⟩⟩
+    have hm := (aestronglyMeasurable_quotMeasure_iff h).2 h'.aestronglyMeasurable
+    exact memLp_iff.2 <| (eLpNorm_comp_measurePreserving hm (measurePreserving_mk h)).symm.trans_lt (memLp_iff.1 h')⟩
 
 theorem lintegral_eq_lintegral_tsum {f : G → ℝ≥0∞} (hf : AEMeasurable f μ) :
     ∫⁻ g, f g ∂μ = ∫⁻ q, ∑' γ : Γ, f (γ * q.out) ∂quotMeasure Γ μ := by
@@ -468,9 +455,6 @@ def MemL2Quotient.toL2 (h : MemL2Quotient Γ μ φ) : L2 Γ μ := h.2.toLp _
 theorem memL2_lift (F : L2 Γ μ) : MemL2Quotient Γ μ (lift Γ F) :=
   ⟨leftInv_lift _, by rw [descend_lift]; exact Lp.memLp F⟩
 
-@[simp] theorem toL2_lift (F : L2 Γ μ) : (memL2_lift F).toL2 = F :=
-  Lp.ext ((memL2_lift F).2.coeFn_toLp.trans (by rw [descend_lift]))
-
 theorem MemL2Quotient.coeFn_toL2 (h : MemL2Quotient Γ μ φ) : h.toL2 =ᵐ[quotMeasure Γ μ] descend Γ φ := h.2.coeFn_toLp
 
 theorem MemL2Quotient.integrable_mul_conj (h : MemL2Quotient Γ μ φ) (h' : MemL2Quotient Γ μ ψ) :
@@ -483,15 +467,15 @@ theorem MemL2Quotient.inner_toL2_eq_theta_pairing (h : MemL2Quotient Γ μ φ) (
   filter_upwards [h.coeFn_toL2, h'.coeFn_toL2] with q e e'
   simp [e, e']
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [BorelSpace G] [DiscreteTopology Γ] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [BorelSpace G] [DiscreteTopology Γ] in
 theorem LeftInv.convR (h : LeftInv Γ φ) (f : G → ℂ) : LeftInv Γ (convR μ f φ) := fun γ hγ x => by
   simp only [AutomorphicL2Unitary.convR, mul_assoc, h γ hγ]
 
 variable [μ.IsMulLeftInvariant]
 
-omit [SecondCountableTopology G] in
 
+omit [SecondCountableTopology G] in
 theorem convR_eq (f φ : G → ℂ) (x : G) : convR μ f φ x = ∫ y, f (x⁻¹ * y) * φ y ∂μ := by
   rw [← integral_mul_left_eq_self _ x]
   simp [convR]
@@ -515,8 +499,8 @@ theorem MemL2Quotient.toL2_eq_iff_ae_eq (h : MemL2Quotient Γ μ φ) (h' : MemL2
 
 variable [μ.IsMulRightInvariant]
 
-variable (Γ μ) in
 
+variable (Γ μ) in
 def R : G →* (L2 Γ μ →L[ℂ] L2 Γ μ) where
   toFun g := (Lp.compMeasurePreservingₗᵢ ℂ (rmul Γ g) (measurePreserving_rmul g)).toContinuousLinearMap
   map_one' := ContinuousLinearMap.ext fun F => Lp.ext <|
@@ -528,17 +512,14 @@ def R : G →* (L2 Γ μ →L[ℂ] L2 Γ μ) where
           (Lp.coeFn_compMeasurePreserving F (measurePreserving_rmul h))).mono fun q e =>
             e.trans (congrArg F (rmul_mul g h q).symm)
 
-variable (Γ μ) in
 
+variable (Γ μ) in
 abbrev Rop (f : G → ℂ) : L2 Γ μ →L[ℂ] L2 Γ μ := repOp (R Γ μ) μ f
 
-variable (Γ μ) in
 
+variable (Γ μ) in
 abbrev L2disc : Submodule ℂ (L2 Γ μ) := disc (R Γ μ)
 
-variable (Γ μ) in
-
-abbrev Rdisc : G →* (L2disc Γ μ →L[ℂ] L2disc Γ μ) := (isSubrep_disc (π := R Γ μ)).rep
 
 theorem coeFn_R (g : G) (F : L2 Γ μ) : R Γ μ g F =ᵐ[quotMeasure Γ μ] fun q => F (rmul Γ g q) :=
   Lp.coeFn_compMeasurePreserving F (measurePreserving_rmul g)
@@ -559,18 +540,6 @@ theorem right_translate_toL2 (h : MemL2Quotient Γ μ φ) (g : G) : R Γ μ g h.
   l2DiscreteQuotient_ext_iff_lift_ae_eq.2 <| (lift_R g _).trans <| EventuallyEq.trans
     ((measurePreserving_mul_right μ g).quasiMeasurePreserving.ae h.lift_toL2_ae_eq) (h.mul_right g).lift_toL2_ae_eq.symm
 
-omit [μ.IsMulLeftInvariant] [μ.IsMulRightInvariant] in
-
-theorem memL2_const [IsFiniteMeasure (quotMeasure Γ μ)] (c : ℂ) : MemL2Quotient Γ μ fun _ => c :=
-  ⟨fun _ _ _ => rfl, memLp_const c⟩
-
-theorem isIrredSubrep_const [IsFiniteMeasure (quotMeasure Γ μ)] [NeZero μ] :
-    IsIrredSubrep (R Γ μ) (ℂ ∙ (memL2_const (Γ := Γ) (μ := μ) 1).toL2) := by
-  refine isIrredSubrep_span_singleton (fun h => ?_) fun g => ⟨1, by rw [right_translate_toL2, one_smul]⟩
-  have h1 := (memL2_const (Γ := Γ) (μ := μ) 1).coeFn_toL2
-  rw [h] at h1
-  obtain ⟨q, hq⟩ := ((Lp.coeFn_zero ℂ 2 _).symm.trans h1).exists
-  exact zero_ne_one hq
 
 variable [LocallyCompactSpace G] [IsFiniteMeasureOnCompacts μ]
 
@@ -601,7 +570,7 @@ theorem continuous_R (F : L2 Γ μ) : Continuous fun g => R Γ μ g F := by
     exact union_subset ((key g g₀).trans (image_mono subset_union_left))
       ((key g₀ g).trans (image_mono subset_union_right))
   · intro f g hf hg _ h1 h2
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact h1.add h2
   · refine isClosed_of_closure_subset fun F hF => ?_
     refine TendstoUniformly.continuous (F := fun F' g => R Γ μ g F') (p := 𝓝 F) ?_
@@ -611,8 +580,8 @@ theorem continuous_R (F : L2 Γ μ) : Continuous fun g => R Γ μ g F := by
     rw [dist_eq_norm, ← map_sub, norm_R, ← dist_eq_norm, dist_comm]
     exact h
 
-variable (Γ μ) in
 
+variable (Γ μ) in
 theorem isUnitaryRep_R : IsUnitaryRep (R Γ μ) := ⟨norm_R, continuous_R⟩
 
 variable {f f' : G → ℂ}
@@ -651,8 +620,6 @@ abbrev autMeasure : Measure (AutQ V) := quotMeasure (GQ V) μ
 
 abbrev DividedPowerChartLift : Type := L2 (GQ V) μ
 
-abbrev kernelG (f : GA D V → ℂ) (x y : GA D V) : ℂ := kernel (GQ V) f x y
-
 abbrev RG [μ.IsHaarMeasure] [μ.IsMulRightInvariant] : GA D V →* (DividedPowerChartLift V μ →L[ℂ] DividedPowerChartLift V μ) := R (GQ V) μ
 
 abbrev RopG [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (f : GA D V → ℂ) : DividedPowerChartLift V μ →L[ℂ] DividedPowerChartLift V μ := Rop (GQ V) μ f
@@ -667,7 +634,7 @@ theorem leftInv_of_isAutFun {φ : GA D V → ℂ} (h : IsAutFun V φ) : LeftInv 
 
 theorem isVolPair_volPair (h : ∃ p : Measure (GA D V) × Set (GA D V), IsVolPair D V p.1 p.2) :
     IsVolPair D V (volPair V).1 (volPair V).2 := by
-  rw [volPair, dif_pos h]; exact h.choose_spec
+  rw [volPair, dite_eq_left h]; exact h.choose_spec
 
 theorem muQ_eq (h : ∃ p : Measure (GA D V) × Set (GA D V), IsVolPair D V p.1 p.2) :
     muQ V = autMeasure V (volPair V).1 :=
@@ -675,37 +642,6 @@ theorem muQ_eq (h : ∃ p : Measure (GA D V) × Set (GA D V), IsVolPair D V p.1 
   (quotMeasure_eq (isVolPair_volPair h).2).symm
 
 end Adelic
-
-example {G : Type} [Group G] (f : G → ℂ) (x y : G) : kernel ⊥ f x y = f (x⁻¹ * y) := by
-  rw [kernel, tsum_eq_single 1 fun γ h => absurd (Subsingleton.elim _ _) h]
-  simp
-
-example {G : Type} [Group G] [Countable G] [TopologicalSpace G] [DiscreteTopology G] [MeasurableSpace G]
-    [BorelSpace G] : quotMeasure (⊤ : Subgroup G) Measure.count univ = 1 := by
-  rw [quotMeasure_univ (Γ := ⊤) (𝓕 := {1}) (.mk' (measurableSet_singleton 1).nullMeasurableSet fun x =>
-    ⟨⟨x⁻¹, Subgroup.mem_top _⟩, inv_mul_cancel x, fun γ h => Subtype.ext (eq_inv_of_mul_eq_one_left (show (γ : G) * x = 1 from h))⟩)]
-  simp
-
-example {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [CompactSpace G]
-    [MeasurableSpace G] [BorelSpace G] (μ : Measure G) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
-    (χ : G →* ℂ) (hχ : Continuous χ) :
-    ∃ F : L2 ⊥ μ, F ≠ 0 ∧ lift ⊥ F =ᵐ[μ] χ ∧ (∀ g, R ⊥ μ g F = χ g • F) ∧ F ∈ L2disc ⊥ μ := by
-  have hD : IsFundamentalDomain (⊥ : Subgroup G) (univ : Set G) μ :=
-    .mk' .univ fun _ => ⟨1, trivial, fun _ _ => Subsingleton.elim _ _⟩
-  have h : MemL2Quotient ⊥ μ χ := (memL2_iff_fundamental_domain hD).2 ⟨fun γ hγ g => by rw [Subgroup.mem_bot.1 hγ, one_mul],
-    hχ.memLp_of_hasCompactSupport (.of_compactSpace _)⟩
-  have h0 : h.toL2 ≠ 0 := fun e => by
-    have h1 := h.lift_toL2_ae_eq
-    rw [e] at h1
-    obtain ⟨x, hx⟩ := ((ae_quotMeasure_iff.1 (Lp.coeFn_zero ℂ 2 (quotMeasure ⊥ μ))).and h1).exists
-    exact ((Group.isUnit x).map χ).ne_zero (hx.2.symm.trans hx.1)
-  have h2 : ∀ g, R ⊥ μ g h.toL2 = χ g • h.toL2 := fun g => l2DiscreteQuotient_ext_iff_lift_ae_eq.2 <| by
-    filter_upwards [lift_R g h.toL2, (measurePreserving_mul_right μ g).quasiMeasurePreserving.ae h.lift_toL2_ae_eq,
-      ae_quotMeasure_iff.1 (Lp.coeFn_smul (χ g) h.toL2), h.lift_toL2_ae_eq] with x e1 e2 e3 e4
-    rw [e1, e2, map_mul, mul_comm, ← e4]
-    exact e3.symm
-  exact ⟨_, h0, h.lift_toL2_ae_eq, h2,
-    (isIrredSubrep_span_singleton h0 fun g => ⟨_, h2 g⟩).le_disc (Submodule.mem_span_singleton_self _)⟩
 
 end GlobalTheory.AutomorphicL2Unitary
 

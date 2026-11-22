@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NoRatInert
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormCmPrimeInertPrimeSign
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NoRatInert
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormCmPrimeInertPrimeSign
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.RatEqui GlobalTheory.InertParity
 open scoped BigOperators Pointwise
@@ -106,8 +110,8 @@ theorem hom_gen (N : ℕ) (ψ : (AE D)ˣ →* ℂˣ) (h1 : ∀ u, IntU D u → �
     obtain ⟨c, hc⟩ := exists_gen D C hC
     rw [huniq hy (ha.mul hc), map_mul, Units.val_mul, v1 a ha, v2 c hc, sgn_mul e1 e2 n1 n2, mul_pow]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem character_at_inert_component : ∀ (D : D7) (N : ℕ) (χ : HeckeU D N) (y : 𝓞 D.host.E) (x : (AE D)ˣ), y ≠ 0 → (∀ q : ℕ, q.Prime → (InertQ D q → ZeroAt D q ((x : AE D) - inc D (y : D.host.E))) ∧ (¬ InertQ D q → ZeroAt D q ((x : AE D) - 1))) → ((χ.f x : ℂˣ) : ℂ) = sgn D (Ideal.absNorm (Ideal.span {y})) ^ N := by
   intro D N χ y x hy0 hx
   obtain ⟨hinv, ε, hε, h1, h2, h3⟩ := GlobalTheory.NormSum.HalfIdempotent.conj_involutive_and_exists_half_idempotent D
@@ -116,7 +120,7 @@ theorem character_at_inert_component : ∀ (D : D7) (N : ℕ) (χ : HeckeU D N) 
     linear_combination h1 + h1' + 2 * h2
   have heO : 1 - (ε + sgA D ε) ∈ OhE D := sub_mem (one_mem _) (add_mem hε (VacMove.sgA_mem D hε))
   have hse : sgA D (1 - (ε + sgA D ε)) = 1 - (ε + sgA D ε) := by
-    rw [map_sub, map_add, map_one, hinv, add_comm]
+    rw [map_sub, map_add (f := _), map_one, hinv, add_comm]
   have hunr : ∀ y : (AE D)ˣ, (y : AE D) ∈ OhE D →
       (1 - (ε + sgA D ε)) * ((y⁻¹ : (AE D)ˣ) : AE D) ∈ OhE D → χ.f (proj _ he y) = 1 := by
     intro y hy hy'
@@ -152,7 +156,7 @@ theorem character_at_inert_component : ∀ (D : D7) (N : ℕ) (χ : HeckeU D N) 
   · have : proj _ he (sgU D y) = sgU D (proj _ he y) := by
       ext
       change _ * sgA D y + _ = sgA D (_ * y + _)
-      rw [map_add, map_mul, hse, map_sub, map_one, hse]
+      rw [map_add (f := _), map_mul, hse, map_sub, map_one, hse]
     rw [MonoidHom.comp_apply, map_mul, this, χ.norm]
   · have h4 := val_of_real_neg χ a ha hneg
     set t := Units.map (inc D).toMonoidHom a with ht
@@ -162,7 +166,7 @@ theorem character_at_inert_component : ∀ (D : D7) (N : ℕ) (χ : HeckeU D N) 
     have : t = proj _ he t * (proj ε h1 t * sgU D (proj ε h1 t)) := by
       ext
       change (t : AE D) = (_ * t + _) * ((ε * t + _) * sgA D (ε * t + _))
-      rw [map_add, map_mul, map_sub, map_one, hst]
+      rw [map_add (f := _), map_mul, map_sub, map_one, hst]
       linear_combination ((t : AE D) - 1) ^ 2 * he -
         ((t : AE D) - 1) ^ 2 * (1 + (1 - (ε + sgA D ε)) * (t - 1)) * h2
     rw [this, map_mul, χ.norm, mul_one] at h4

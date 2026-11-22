@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.T2SpaceMatrixOfIsNonarchimedeanLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,13 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 variable {n : Type} [Fintype n]
 
 theorem exists_lifts [DecidableEq n] (P : Pair k n) : ∃ F, Lifts P.lat F P.red := by
+  haveI := Submodule.IsLattice.free k P.lat
   obtain ⟨g, hg⟩ := Module.projective_lifting_property (Algebra.linearMap 𝒪[k] 𝓀[k]) P.fn residue_surjective
   let b := Module.Free.chooseBasis 𝒪[k] P.lat
-  let G : (n → k) →ₗ[k] k := (b.extendOfIsLattice k).constr k fun i => (g (b i) : k)
+  let G : (n → k) →ₗ[k] k := (b.extendOfIsFullLattice k).constr k fun i => (g (b i) : k)
   have h1 : (G.restrictScalars 𝒪[k]) ∘ₗ P.lat.subtype = (Algebra.linearMap 𝒪[k] k) ∘ₗ g := b.ext fun i => by
-    have := (b.extendOfIsLattice k).constr_basis k (fun i => (g (b i) : k)) i
-    rw [Module.Basis.extendOfIsLattice_apply] at this
+    have := (b.extendOfIsFullLattice k).constr_basis k (fun i => (g (b i) : k)) i
+    rw [Module.Basis.extendOfIsFullLattice_apply] at this
     exact this
   refine ⟨fun i => G (Pi.single i 1), fun y => ⟨g y, ?_, LinearMap.congr_fun hg y⟩⟩
   have h2 : G y = (g y : k) := LinearMap.congr_fun h1 y
@@ -49,8 +54,8 @@ theorem cosetInd_add (q : Unif k) {L : Submodule 𝒪[k] (n → k)} {f : Module.
 
 variable {χ : AddChar k Circle} (hχ : HasConductor χ 1) {e : k}
 
-include hχ in
 
+include hχ in
 theorem char_dual (he : e = 1 ∨ e = -1) {L : Submodule 𝒪[k] (n → k)} {η y : n → k} (hη : InDual L η) (hy : y ∈ L) :
     χ (e * (η ⬝ᵥ y)) = 1 := by
   rcases he with rfl | rfl

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KerAltSucc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KerAltSucc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -67,18 +72,18 @@ theorem up_surj (X : DblData R) (n : ℕ) (w : X.shift.C n) : ∃ z, X.up n z = 
 
 namespace Good
 
-theorem shift {X : DblData R} (hX : X.Good) : X.shift.Good where
-  ha p := hX.ha (p + 1)
-  hc q := LinearMap.ext fun _ => rfl
-  ka p := hX.ka (p + 1)
-  ra p := hX.ra (p + 1)
-  rh p q := hX.rh (p + 1) q
-  kc q := Submodule.ker_subtype _
-  rc q := by
-    show LinearMap.ker (X.v 1 q) = LinearMap.range (LinearMap.range (X.v 0 q)).subtype
-    rw [Submodule.range_subtype]
-    exact hX.rv 0 q
-  rv p q := hX.rv (p + 1) q
+theorem shift {X : DblData R} (hX : X.Good) : X.shift.Good :=
+  { ha := fun p => hX.ha (p + 1)
+    hc := fun _ => LinearMap.ext fun _ => rfl
+    ka := fun p => hX.ka (p + 1)
+    ra := fun p => hX.ra (p + 1)
+    rh := fun p q => hX.rh (p + 1) q
+    kc := fun _ => Submodule.ker_subtype _
+    rc := fun q => by
+      show LinearMap.ker (X.v 1 q) = LinearMap.range (LinearMap.range (X.v 0 q)).subtype
+      rw [Submodule.range_subtype]
+      exact hX.rv 0 q
+    rv := fun p q => hX.rv (p + 1) q }
 
 theorem a_d {X : DblData R} (hX : X.Good) (p : ℕ) (x : X.A p) :
     X.a (p + 1) (X.dA p x) = X.v p 0 (X.a p x) :=
@@ -144,23 +149,33 @@ theorem Rel.zero : ∀ (n : ℕ) (X : DblData R), Rel n X 0 0
   | n + 1, X => rel_succ.mpr ⟨0, by rw [map_zero, map_zero], by rw [map_zero]; exact Rel.zero n X.shift⟩
 
 theorem Rel.add : ∀ (n : ℕ) (X : DblData R) {x₁ x₂ : X.A n} {y₁ y₂ : X.C n},
-    Rel n X x₁ y₁ → Rel n X x₂ y₂ → Rel n X (x₁ + x₂) (y₁ + y₂)
-  | 0, X, _, _, _, _, h₁, h₂ => rel_zero.mpr (by rw [map_add, map_add, rel_zero.mp h₁, rel_zero.mp h₂])
-  | n + 1, X, _, _, _, _, h₁, h₂ => by
-      obtain ⟨z₁, e₁, r₁⟩ := rel_succ.mp h₁
-      obtain ⟨z₂, e₂, r₂⟩ := rel_succ.mp h₂
-      refine rel_succ.mpr ⟨z₁ + z₂, by rw [map_add, map_add, e₁, e₂], ?_⟩
-      rw [map_add]
-      exact Rel.add n X.shift r₁ r₂
+    Rel n X x₁ y₁ → Rel n X x₂ y₂ → Rel n X (x₁ + x₂) (y₁ + y₂) := by
+  intro n
+  induction n with
+  | zero =>
+    intro X x₁ x₂ y₁ y₂ h₁ h₂
+    exact rel_zero.mpr (by rw [map_add, map_add, rel_zero.mp h₁, rel_zero.mp h₂])
+  | succ n ih =>
+    intro X x₁ x₂ y₁ y₂ h₁ h₂
+    obtain ⟨z₁, e₁, r₁⟩ := rel_succ.mp h₁
+    obtain ⟨z₂, e₂, r₂⟩ := rel_succ.mp h₂
+    refine rel_succ.mpr ⟨z₁ + z₂, by rw [map_add, map_add, e₁, e₂], ?_⟩
+    rw [map_add]
+    exact ih X.shift r₁ r₂
 
 theorem Rel.smul : ∀ (n : ℕ) (X : DblData R) (r : R) {x : X.A n} {y : X.C n},
-    Rel n X x y → Rel n X (r • x) (r • y)
-  | 0, X, r, _, _, h₁ => rel_zero.mpr (by rw [map_smul, map_smul, rel_zero.mp h₁])
-  | n + 1, X, r, _, _, h₁ => by
-      obtain ⟨z, e, r₁⟩ := rel_succ.mp h₁
-      refine rel_succ.mpr ⟨r • z, by rw [map_smul, map_smul, e], ?_⟩
-      rw [map_smul]
-      exact Rel.smul n X.shift r r₁
+    Rel n X x y → Rel n X (r • x) (r • y) := by
+  intro n
+  induction n with
+  | zero =>
+    intro X r x y h₁
+    exact rel_zero.mpr (by rw [map_smul, map_smul, rel_zero.mp h₁])
+  | succ n ih =>
+    intro X r x y h₁
+    obtain ⟨z, e, r₁⟩ := rel_succ.mp h₁
+    refine rel_succ.mpr ⟨r • z, by rw [map_smul, map_smul, e], ?_⟩
+    rw [map_smul]
+    exact ih X.shift r r₁
 
 def relSub (n : ℕ) (X : DblData R) : Submodule R (X.A n × X.C n) where
   carrier := {p | Rel n X p.1 p.2}
@@ -379,23 +394,31 @@ theorem graph_equiv {M N M' N' : Type} [AddCommGroup M] [Module R M] [AddCommGro
 
 namespace DblData
 
-theorem bdryA (X : DblData R) (hX : X.Good) : ∀ (n : ℕ) (x : X.A n), x ∈ bdry X.dA n → Rel n X x 0
-  | 0, x, hx => by
-      have hx0 : x = 0 := (Submodule.mem_bot R).mp hx
-      subst hx0
-      exact Rel.zero 0 X
-  | n + 1, x, hx => by
-      obtain ⟨x₀, rfl⟩ := LinearMap.mem_range.mp hx
-      exact bdA n X hX x₀
+theorem bdryA (X : DblData R) (hX : X.Good) : ∀ (n : ℕ) (x : X.A n), x ∈ bdry X.dA n → Rel n X x 0 := by
+  intro n
+  cases n with
+  | zero =>
+    intro x hx
+    have hx0 : x = 0 := (Submodule.mem_bot R).mp hx
+    subst hx0
+    exact Rel.zero 0 X
+  | succ n =>
+    intro x hx
+    obtain ⟨x₀, rfl⟩ := (LinearMap.mem_range (f := X.dA n)).mp hx
+    exact bdA n X hX x₀
 
-theorem bdryC (X : DblData R) (hX : X.Good) : ∀ (n : ℕ) (y : X.C n), y ∈ bdry X.dC n → Rel n X 0 y
-  | 0, y, hy => by
-      have hy0 : y = 0 := (Submodule.mem_bot R).mp hy
-      subst hy0
-      exact Rel.zero 0 X
-  | n + 1, y, hy => by
-      obtain ⟨y₀, rfl⟩ := LinearMap.mem_range.mp hy
-      exact bdC n X hX y₀
+theorem bdryC (X : DblData R) (hX : X.Good) : ∀ (n : ℕ) (y : X.C n), y ∈ bdry X.dC n → Rel n X 0 y := by
+  intro n
+  cases n with
+  | zero =>
+    intro y hy
+    have hy0 : y = 0 := (Submodule.mem_bot R).mp hy
+    subst hy0
+    exact Rel.zero 0 X
+  | succ n =>
+    intro y hy
+    obtain ⟨y₀, rfl⟩ := (LinearMap.mem_range (f := X.dC n)).mp hy
+    exact bdC n X hX y₀
 
 theorem equiv (X : DblData R) (hX : X.Good) (n : ℕ) : Nonempty (H X.dA n ≃ₗ[R] H X.dC n) :=
   graph_equiv (X.dA n) (X.dC n) (bdry X.dA n) (bdry X.dC n) (relSub n X)

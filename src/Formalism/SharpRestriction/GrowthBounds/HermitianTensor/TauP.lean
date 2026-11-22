@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.PdAevalScale
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsP
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DPsiMonomialIwh
-import Mathlib.LinearAlgebra.Matrix.Transvection
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetYNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.PdAevalScale
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetFactsP
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DPsiMonomialIwh
+public import Mathlib.LinearAlgebra.Matrix.Transvection
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DetYNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,8 @@ open Formalism.MainNotions.G Formalism.MainNotions.flipOneThree Formalism.Counti
 private theorem isWeightedHomogeneous_comp_addMonoidHom {R σ M M' : Type*} [CommSemiring R] [AddCommMonoid M] [AddCommMonoid M'] (ψ : M →+ M') (w : σ → M) {f : MvPolynomial σ R} {m : M} (h : IsWeightedHomogeneous w f m) : IsWeightedHomogeneous (fun v => ψ (w v)) f (ψ m) := by
   intro d hd
   rw [← h hd, Finsupp.weight_apply, Finsupp.weight_apply]
-  simp [Finsupp.sum, map_sum, map_nsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finsupp.sum, map_sum, map_nsmul]
 
 private theorem isWeightedHomogeneous_colW_adjugate_genY {R : Type} [CommRing R] (r : ℕ) (a i : Fin r) :
     IsWeightedHomogeneous (colW r r) ((genY R r).adjugate a i) (fun k => if k = a then 0 else 1) := by
@@ -134,7 +139,7 @@ private theorem adjugate_subst_mem_dualWeyl_of_mem {R : Type} [CommRing R] [IsDo
       simp only [colAdd, aeval_X]
       by_cases h : v.2 = l.rev
       · have h' : v.2.rev = l := by rw [h, Fin.rev_rev]
-        simp [h, h', map_add, map_mul, aeval_X, aeval_C, Fin.rev_rev]
+        simp [h, h', map_add (f := _), map_mul, aeval_X, aeval_C, Fin.rev_rev]
       · have h' : v.2.rev ≠ l := fun e => h (by rw [← e, Fin.rev_rev])
         simp [h, h']
     have hl : j.rev < l.rev := Fin.rev_lt_rev.mpr hlj
@@ -163,7 +168,7 @@ private theorem map_aeval_adjugate_subst_eq_aeval_map {A B : Type} [CommRing A] 
   next a =>
     simp [aeval_C, map_C]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   next p v hp =>
     simp only [map_mul, hp, aeval_X, map_X, hadj]
 
@@ -173,7 +178,8 @@ private theorem pow_mul_aeval_eq_of_homogeneous_of_mul_eq {R σ S : Type} [CommR
     u ^ D * aeval Z f = w ^ D * aeval Z' f := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  simp only [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   rw [aeval_monomial, aeval_monomial]
   have hD := hf d hd
@@ -183,9 +189,9 @@ private theorem pow_mul_aeval_eq_of_homogeneous_of_mul_eq {R σ S : Type} [CommR
   have e2 : w ^ D * d.prod (fun i k => Z' i ^ k) = d.prod (fun i k => (w * Z' i) ^ k) := by
     rw [← hD]
     simp only [Finsupp.prod, Finsupp.sum, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]
-  calc u ^ D * (algebraMap R S (coeff d f) * d.prod (fun i k => Z i ^ k))
-      = algebraMap R S (coeff d f) * (u ^ D * d.prod (fun i k => Z i ^ k)) := by ring
-    _ = algebraMap R S (coeff d f) * (w ^ D * d.prod (fun i k => Z' i ^ k)) := by rw [e1, e2]; simp only [h]
+  calc u ^ D * (algebraMap R S (AddMonoidAlgebra.coeff f d) * d.prod (fun i k => Z i ^ k))
+      = algebraMap R S (AddMonoidAlgebra.coeff f d) * (u ^ D * d.prod (fun i k => Z i ^ k)) := by ring
+    _ = algebraMap R S (AddMonoidAlgebra.coeff f d) * (w ^ D * d.prod (fun i k => Z' i ^ k)) := by rw [e1, e2]; simp only [h]
     _ = _ := by ring
 
 private theorem degree_eq_sum_of_mem_dualWeyl {R : Type} [CommRing R] (r n : ℕ) (ν : Fin n → ℕ)
@@ -224,7 +230,8 @@ private theorem transpose_act_comp_adjugate_subst_comp_act_eq_det {R : Type} [Co
   apply MvPolynomial.algHom_ext
   intro v
   have hx : rowAct R A (X v) = ∑ b, C (A v.1 b) * X (b, v.2) := by simp [rowAct, aeval_X]
-  rw [AlgHom.comp_apply, AlgHom.comp_apply, hx, map_sum, map_sum, aeval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AlgHom.comp_apply, AlgHom.comp_apply, hx, map_sum, map_sum, aeval_X]
   have hC : ∀ c : R, rowAct R (n := r) A.transpose (C c) = C c := fun c => (rowAct R (n := r) A.transpose).commutes c
   simp only [map_mul, aeval_C, aeval_X, algebraMap_eq, hC, hr]
   have hsum : (∑ b, C (A v.1 b) * ((genY R r).adjugate * Am.adjugate) v.2.rev b) = ((genY R r).adjugate * Am.adjugate * Am) v.2.rev v.1 := by

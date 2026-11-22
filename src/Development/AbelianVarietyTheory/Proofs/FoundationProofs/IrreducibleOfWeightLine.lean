@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemISupInfWeightSubmoduleOfDiagonalStableStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemISupInfWeightSubmoduleOfDiagonalStableStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts MeasureTheory
 open Formalism.MainNotions.SchurIrreducible (IrrU IrrGK IsHCMod)
 open scoped TensorProduct
@@ -49,11 +54,11 @@ theorem irreducible_of_weight_line : ∀ (p q : ℕ) (M : GKMod p q) (H : Type) 
           rw [sub_mul, h1, sub_self]
         exact (mul_eq_zero.1 h2).resolve_left hne
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add, inner_add_left, hy, hz, add_zero]
+    | add y z _ _ hy hz => rw [map_add (f := _), inner_add_left, hy, hz, add_zero]
   let U' : Submodule ℂ M.V :=
     { carrier := {y | ∀ x ∈ N, inner ℂ (E x) (E y) = 0}
       add_mem' := fun {y z} hy hz x hx => by
-        rw [map_add, inner_add_right, hy x hx, hz x hx, add_zero]
+        rw [map_add (f := _), inner_add_right, hy x hx, hz x hx, add_zero]
       zero_mem' := fun x _ => by simp
       smul_mem' := fun c y hy x hx => by
         rw [map_smul, inner_smul_right, hy x hx, mul_zero] }

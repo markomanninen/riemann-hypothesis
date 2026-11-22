@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GaloisCohomology.Statement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AutCongrContinuousCycInertia
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.Statement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AutCongrContinuousCycInertia
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Gal Formalism.ConjugateSelfDual Formalism.GaloisCohomology
 
@@ -29,11 +33,11 @@ theorem pairH1_id_bijective (rho : Representation R G M) (rho' : Representation 
   · obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     simp only [pairH1DecompositionMap, Submodule.mapQ_apply]
     congr 1
-    exact Subtype.ext (funext fun g => by simp [h1])
+    exact Subtype.ext (funext fun g => by simp [compatiblePairCocycles1, h1])
   · obtain ⟨f, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     simp only [pairH1DecompositionMap, Submodule.mapQ_apply]
     congr 1
-    exact Subtype.ext (funext fun g => by simp [h2])
+    exact Subtype.ext (funext fun g => by simp [compatiblePairCocycles1, h2])
 
 end General
 

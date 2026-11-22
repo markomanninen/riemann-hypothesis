@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.TorsionRankCounts.RankCount
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK UpperTheory.V.ZK.Up
 
@@ -18,7 +22,8 @@ private theorem rankCount_gen (M : Type) [AddCommGroup M] [Module.Finite ℤ M] 
     fun i => Submodule.mkQ_surjective _ (b i)
   choose v hv using hv
   refine ⟨_, v, hs, fun m => ⟨fun i => b.repr ((Submodule.torsion ℤ M).mkQ m) i, ?_⟩⟩
-  rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_sum]
   simp only [map_smul, hv]
   rw [b.sum_repr, sub_self]
 
@@ -65,7 +70,8 @@ theorem UpperTheory.V.ZK.Up.rankCount :
       have hxb : x b = (((⟨x b, hm⟩ : J') - ∑ i, c i • v i : J') : H) + ∑ i, c i • ((v i : J') : H) := by
         simp
       conv_rhs => rw [hx b hb, hxb]
-      rw [map_add, map_sum, add_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, add_comm]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_zsmul, zsmul_eq_toNat_emod_nsmul_of_nsmul_eq_zero q hq _ (hB _)]

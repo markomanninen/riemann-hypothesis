@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.SpanEqTopOfForallMaximal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.SpanEqTopOfForallMaximal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -144,15 +148,11 @@ theorem mem_redKer_of_section (q : A →ₐ[R] A₀) (s : A₀ →ₐ[R] A) (hs 
     exact Ideal.Quotient.eq.2 (by simp [RingHom.mem_ker, hs])
   rw [mem_redKer, this, ← spMap_comp, Category.assoc, hy, comp_one']
 
-variable (G A) in
 
+variable (G A) in
 def UnitInChart : Prop :=
   ∃ (B : Type) (_ : CommRing B) (_ : Algebra R B) (j : sp B ⟶ G) (u : B →ₐ[R] A),
     IsOpenImmersion j.left ∧ spMap u ≫ j = 1
-
-theorem UnitInChart.map (h : UnitInChart G A) (φ : A →ₐ[R] A') : UnitInChart G A' := by
-  obtain ⟨B, _, _, j, u, hj, hu⟩ := h
-  exact ⟨B, _, _, j, φ.comp u, hj, by rw [← spMap_comp, Category.assoc, hu, comp_one']⟩
 
 variable (G A) in
 theorem span_unitInChart :
@@ -274,7 +274,7 @@ theorem epsTo_add_comp {w : sp (R₀ := R) (DualNumber R) ⟶ G} (hw : IsTan w) 
   have hψ₀ : ψ (e 0) = t₁ := vecTo_single _ _ _ _
   have hψ₁ : ψ (e 1) = t₂ := vecTo_single _ _ _ _
   have := congrArg (spMap ψ ≫ ·) univ
-  simp only [MonObj.comp_mul, ← Category.assoc, spMap_comp, comp_epsTo, map_add, hψ₀, hψ₁] at this
+  simp only [MonObj.comp_mul, ← Category.assoc, spMap_comp, comp_epsTo, map_add (f := _), hψ₀, hψ₁] at this
   exact this
 
 variable [IsCommMonObj G] {n : ℕ}

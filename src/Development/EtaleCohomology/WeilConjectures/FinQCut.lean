@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.WeilConjectures.FermatCount
-import Development.EtaleCohomology.KummerTheory.AdicLimPf
+module
+
+public import Development.EtaleCohomology.WeilConjectures.FermatCount
+public import Development.EtaleCohomology.KummerTheory.AdicLimPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeBounds
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalLatticeBounds
+
+@[expose] public section
 
 open MeasureTheory NumberField Topology Filter Set
 open scoped NumberField.AdeleRing Classical nonZeroDivisors
@@ -136,7 +140,9 @@ theorem continuous_tsum_ratMat {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ}
   refine continuous_iff_continuousAt.2 fun p₀ => ?_
   obtain ⟨A, B, hA, hB, hU⟩ := exists_nhds_compact (K := K) (n := n) p₀
   obtain ⟨u, hu, hbd⟩ := exists_summable_bound hΦ ⟨(p₀.1 : ℝ) / 2, half_pos p₀.1.2⟩ hA hB
-  refine (continuousOn_tsum (fun ξ => ?_) hu (fun ξ p hp => hbd p.1 hp.1.le p.2.1 hp.2.1 p.2.2
+  refine (continuousOn_tsum (s := {p : {r : ℝ // 0 < r} × AdelicGLn.AdelicGL K n ×
+      AdelicGLn.AdelicGL K n | (p₀.1 : ℝ) / 2 < p.1 ∧ p.2.1 ∈ A ∧ p.2.2 ∈ B})
+    (fun ξ => ?_) hu (fun ξ p hp => hbd p.1 hp.1.le p.2.1 hp.2.1 p.2.2
     hp.2.2 ξ)).continuousAt hU
   exact (hΦc.comp ((continuous_centralSection_mul_coe.matrix_mul continuous_const).matrix_mul
     continuous_snd_snd_coe)).continuousOn
@@ -158,7 +164,9 @@ theorem continuous_tsum_GL {Φ : Matrix (Fin n) (Fin n) 𝔸[K] → ℂ}
   refine continuous_iff_continuousAt.2 fun p₀ => ?_
   obtain ⟨A, B, hA, hB, hU⟩ := exists_nhds_compact (K := K) (n := n) p₀
   obtain ⟨u, hu, hbd⟩ := exists_summable_bound hΦ ⟨(p₀.1 : ℝ) / 2, half_pos p₀.1.2⟩ hA hB
-  refine (continuousOn_tsum (u := fun γ : GL (Fin n) K => u (γ : Matrix (Fin n) (Fin n) K))
+  refine (continuousOn_tsum (s := {p : {r : ℝ // 0 < r} × AdelicGLn.AdelicGL K n ×
+      AdelicGLn.AdelicGL K n | (p₀.1 : ℝ) / 2 < p.1 ∧ p.2.1 ∈ A ∧ p.2.2 ∈ B})
+    (u := fun γ : GL (Fin n) K => u (γ : Matrix (Fin n) (Fin n) K))
     (fun γ => ?_) (hu.comp_injective (fun _ _ h => Units.ext h))
     (fun γ p hp => hbd p.1 hp.1.le p.2.1 hp.2.1 p.2.2 hp.2.2 _)).continuousAt hU
   exact (hΦc.comp ((continuous_centralSection_mul_coe.matrix_mul continuous_const).matrix_mul

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UJClassFin
-import Formalism.HermitianLattices.StatementMass
+module
+
+public import Formalism.PeriodIntegrals.UJClassFin
+public import Formalism.HermitianLattices.StatementMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def UJClassMass : Prop :=
     (h : V →ₗ⋆[E] V →ₗ[E] E) (M : ℕ) (b : Module.Basis (Fin M) E V) (L0 : Submodule (𝓞 E) V),
     (∀ a, σ a = star a) → (∃ θ : E, σ θ ≠ θ) →
     (∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a)) →
-    h.IsSymm → h.Nondegenerate → Submodule.IsLattice E L0 →
+    h.IsSymm → h.Nondegenerate → Submodule.IsFullLattice E L0 →
     (∀ τ : E →+* ℂ, HasSignature ((gramOf h b).map τ) M 0) →
     ∀ (n : ℕ) (g : Fin n → HA (AF F) σ (gramOf h b)),
       (∀ x, ∃ i, ∃ γ : GamG σ (gramOf h b), ∃ k : SFin σ (gramOf h b) (crdOf b L0),

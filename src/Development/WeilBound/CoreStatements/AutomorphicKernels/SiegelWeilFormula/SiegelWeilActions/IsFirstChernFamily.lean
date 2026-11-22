@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem latHaar : LatHaar := by
   have : (μ.map φ).IsAddHaarMeasure := inferInstance
   have hc := Measure.isAddLeftInvariant_eq_smul (μ.map φ) μ
   have hqmp : Measure.QuasiMeasurePreserving φ μ μ := by
-    refine ⟨hmeas, fun t ht => ?_⟩
+    refine ⟨hmeas.aemeasurable, fun t ht => ?_⟩
     rw [hc, Measure.smul_apply, ht, smul_zero]
   let e : Γ → Γ := fun g => ⟨φ.symm g, (hΓ _).1 (by simp)⟩
   have he : Function.Bijective e := by
@@ -32,7 +36,7 @@ theorem latHaar : LatHaar := by
   have hef : ∀ g : Γ, Function.Semiconj φ (e g +ᵥ ·) (g +ᵥ ·) := by
     intro g x
     show φ ((e g : V) + x) = (g : V) + φ x
-    rw [map_add]
+    rw [map_add (f := _)]
     simp [e]
   have hs' : IsAddFundamentalDomain Γ (φ ⁻¹' s) μ := hs.preimage_of_equiv hqmp he hef
   have heq : μ (φ ⁻¹' s) = μ s := hs'.measure_eq hs

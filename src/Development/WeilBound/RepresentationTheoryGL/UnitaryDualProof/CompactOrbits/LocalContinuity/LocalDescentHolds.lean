@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
-import GroundTheory.AutomorphicForms.WhittakerDistribution
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+
+@[expose] public section
 
 noncomputable section
 
@@ -156,7 +160,7 @@ theorem local_descent_holds : LocStep (k := k) := by
         obtain ⟨O, hO, hyO, hOW⟩ := hF
         obtain ⟨O', hO', hyO', hOW'⟩ := hF'
         exact ⟨O ∩ O', hO.inter hO', ⟨hyO, hyO'⟩, fun W hW hWO => by
-          rw [add_mul, map_add, hOW W hW (hWO.trans inter_subset_left),
+          rw [add_mul, map_add (f := _), hOW W hW (hWO.trans inter_subset_left),
             hOW' W hW (hWO.trans inter_subset_right), add_zero]⟩
       | smul a F _ hF =>
         obtain ⟨O, hO, hyO, hOW⟩ := hF
@@ -177,7 +181,7 @@ theorem local_descent_holds : LocStep (k := k) := by
         f * (q ⁻¹' (W ∩ B1)).indicator 1 + f * (q ⁻¹' (W \ B1)).indicator 1 := by
       funext p
       by_cases h1 : q p ∈ W <;> by_cases h2 : q p ∈ B1 <;> simp [Set.indicator_apply, h1, h2]
-    rw [hsplit, map_add, hQ1 _ (hW.inter hB1) inter_subset_right,
+    rw [hsplit, map_add (f := _), hQ1 _ (hW.inter hB1) inter_subset_right,
       hQ2 _ (hW.diff hB1) (fun z hz => (hWB hz.1).resolve_left hz.2), add_zero]
   have hfin : ∀ t : Finset (Fin (2 * m + 1) × Fin (Module.finrank k Z) → k),
       IsClopen (⋃ i ∈ t, V i) ∧

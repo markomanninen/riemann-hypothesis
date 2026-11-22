@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainX1
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainX1
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MinorCellOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+
+@[expose] public section
 
 open Matrix
 
@@ -21,8 +25,8 @@ theorem posL_cI (p : Fin (2 * r + k + 1)) : posL k r 0 (cI p) = p := Fin.ext (by
 theorem cI_inj : Function.Injective (cI (k := k) (r := r)) := fun p q h => Fin.ext (by
   have := congrArg Fin.val h; simpa [cI] using this)
 
-variable (E) in
 
+variable (E) in
 abbrev SA (hD : IsOpen D) : Subalgebra ℂ (Module.End ℂ (VS k r 0 D E)) :=
   Algebra.adjoin ℂ (Set.range fun p : Fin (mdim k r 0) × Fin (mdim k r 0) => Eh (E := E) (i := 0) hD p.1 p.2)
 
@@ -110,14 +114,15 @@ theorem map_qminor {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B
     (E : Fin n → Fin n → A) (a b : Fin t → Fin n) (u : ℂ) :
     φ (qminor E a b u) = qminor (fun p q => φ (E p q)) a b u := by
   unfold qminor
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
   congr 2
   congr 1
-  funext l
-  simp only [Function.comp_apply, Tm, map_add]
   congr 1
+  funext k
+  simp only [Function.comp_apply, Tm, map_add]
   split_ifs <;> simp
 
 theorem qminor_reindex {A : Type} [Ring A] [Algebra ℂ A] {n n' t : ℕ} (E : Fin n' → Fin n' → A) (ι : Fin n → Fin n')
@@ -127,9 +132,9 @@ theorem qminor_reindex {A : Type} [Ring A] [Algebra ℂ A] {n n' t : ℕ} (E : F
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 2
   congr 1
-  funext l
-  simp only [Function.comp_apply, Tm]
   congr 1
+  funext l
+  simp only [Tm, Function.comp_apply]
   by_cases h : a (σ l) = b l
   · rw [if_pos h, if_pos (congrArg ι h)]
   · rw [if_neg h, if_neg (fun e => h (hι e))]

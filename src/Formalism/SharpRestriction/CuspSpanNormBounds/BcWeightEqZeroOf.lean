@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StarVecMulDM
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 open scoped ContDiff

@@ -1,20 +1,16 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.WittDiag
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
-import Formalism.SatakeDualWeyl.StatementF
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
+public import Formalism.SatakeDualWeyl.StatementF
+
+@[expose] public section
 
 noncomputable section
 
 open Matrix
 
 namespace Formalism.IndefR.LocBrg
-
-def IntWittLoc : Prop :=
-  ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] [CompleteSpace L] (ϖ : L) (σ : L →+* L) (q : ℕ),
-    Formalism.UG.IsUnramInv ϖ σ q → Odd q → ∀ (n : ℕ) (H : Matrix (Fin n) (Fin n) L),
-      (∀ i j, H i j ∈ Formalism.UG.intL L) → Valued.v H.det = 1 → Formalism.UG.cT σ H = H →
-      ∃ R ∈ Formalism.UG.GLint (Fin n) (Formalism.UG.intL L),
-        Formalism.UG.cT σ ((R : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) * H * ((R : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) =
-          Formalism.UG.antiJ L n
 
 section Glue
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PairValPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.PairValPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,19 @@ theorem same_phiF (p : Point K N) {a : ℕ} (hs : sameBF p.1 N a) :
   unfold sameBF at hs ⊢
   obtain ⟨h1, h2, h3⟩ := hs
   have ha : a < N := by omega
-  have hσa := pσ_lt p.1 a (by rw [hsum]; exact ha)
+  have hσlt (bs : List (K × ℕ)) (i : ℕ) (hi : i < (bs.map Prod.snd).sum) :
+      pσ bs i < (bs.map Prod.snd).sum := by
+    induction bs generalizing i with
+    | nil => simp at hi
+    | cons b bs ih =>
+      obtain ⟨t, s⟩ := b
+      simp only [List.map_cons, List.sum_cons] at hi ⊢
+      simp only [pσ]
+      split_ifs with his
+      · omega
+      · have htail := ih (i - s) (by omega)
+        omega
+  have hσa := hσlt p.1 a (hsum.symm ▸ ha)
   have hinv1 := pσ_inv p.1 (a + 1) (by rw [hsum]; exact h1)
   have hinv0 := pσ_inv p.1 a (by rw [hsum]; exact ha)
   have hv1 := pv_psigma_eq_pv p.1 (a + 1) (by rw [hsum]; exact h1)
@@ -117,36 +133,30 @@ private theorem pv_ne_zero_of_blocks_ne_zero : ∀ (bs : List (K × ℕ)), (∀ 
 
 private lemma mul_ptMat_apply_eq (p : Point K N) (A : Matrix (Fin N) (Fin N) K) (i j k : Fin N)
     (hk : k.val = pσ p.1 j.val) : (A * ptMat p) i j = A i k * pv p.1 k.val := by
-  have hs : (p.1.map Prod.snd).sum = N := p.2.2
   rw [Matrix.mul_apply, Finset.sum_eq_single k]
   · have e : ptMat p k j = pv p.1 k.val := by
-      show ptEntry p.1 k.val j.val = _
-      rw [ptEntry_eq_pv p.1 _ _ (by rw [hs]; exact k.isLt), if_pos]
-      rw [hk, pσ_inv p.1 _ (by rw [hs]; exact j.isLt)]
+      rw [ptMat_apply'_pv, ite_eq_left]
+      rw [hk, pσ_inv p.1 _ (p.2.2.symm ▸ j.isLt)]
     rw [e]
   · intro c _ hc
     have e : ptMat p c j = 0 := by
-      show ptEntry p.1 c.val j.val = _
-      rw [ptEntry_eq_pv p.1 _ _ (by rw [hs]; exact c.isLt), if_neg]
+      rw [ptMat_apply'_pv, ite_eq_right]
       intro e
       apply hc
       apply Fin.ext
-      rw [hk, e, pσ_inv p.1 _ (by rw [hs]; exact c.isLt)]
+      rw [hk, e, pσ_inv p.1 _ (p.2.2.symm ▸ c.isLt)]
     rw [e, mul_zero]
   · intro h; exact absurd (Finset.mem_univ k) h
 
 private lemma ptMat_mul_apply_eq (p : Point K N) (A : Matrix (Fin N) (Fin N) K) (i j k : Fin N)
     (hk : k.val = pσ p.1 i.val) : (ptMat p * A) i j = pv p.1 i.val * A k j := by
-  have hs : (p.1.map Prod.snd).sum = N := p.2.2
   rw [Matrix.mul_apply, Finset.sum_eq_single k]
   · have e : ptMat p i k = pv p.1 i.val := by
-      show ptEntry p.1 i.val k.val = _
-      rw [ptEntry_eq_pv p.1 _ _ (by rw [hs]; exact i.isLt), if_pos hk]
+      rw [ptMat_apply'_pv, ite_eq_left hk]
     rw [e]
   · intro c _ hc
     have e : ptMat p i c = 0 := by
-      show ptEntry p.1 i.val c.val = _
-      rw [ptEntry_eq_pv p.1 _ _ (by rw [hs]; exact i.isLt), if_neg]
+      rw [ptMat_apply'_pv, ite_eq_right]
       intro e
       exact hc (Fin.ext (e.trans hk.symm))
     rw [e, zero_mul]
@@ -156,10 +166,42 @@ theorem simple_eqF (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUn
     (h : n * ptMat p = ptMat p * m) : sgLoF n = sgUpF m := by
   have hs : (p.1.map Prod.snd).sum = N := p.2.2
   have hbs := p.2.1
+  have hσlt (bs : List (K × ℕ)) (i : ℕ) (hi : i < (bs.map Prod.snd).sum) :
+      pσ bs i < (bs.map Prod.snd).sum := by
+    induction bs generalizing i with
+    | nil => simp at hi
+    | cons b bs ih =>
+      obtain ⟨t, s⟩ := b
+      simp only [List.map_cons, List.sum_cons] at hi ⊢
+      simp only [pσ]
+      split_ifs with his
+      · omega
+      · have htail := ih (i - s) (by omega)
+        omega
   have hlt : ∀ i, i < N → pσ p.1 i < N := fun i hi => by
-    have := pσ_lt p.1 i (by rw [hs]; exact hi); rwa [hs] at this
+    simpa only [hs] using hσlt p.1 i (hs.symm ▸ hi)
   have hinv : ∀ i, i < N → pσ p.1 (pσ p.1 i) = i := fun i hi => pσ_inv p.1 i (by rw [hs]; exact hi)
   have hv : ∀ i, i < N → pv p.1 i ≠ 0 := fun i hi => pv_ne_zero_of_blocks_ne_zero p.1 hbs i (by rw [hs]; exact hi)
+  have hadj (bs : List (K × ℕ)) (i : ℕ) :
+      (pσ bs (i + 1) + 1 = pσ bs i ∧ pv bs (i + 1) = pv bs i) ∨
+        pσ bs i < pσ bs (i + 1) := by
+    induction bs generalizing i with
+    | nil => simp [pσ]
+    | cons b bs ih =>
+      obtain ⟨t, s⟩ := b
+      by_cases hsucc : i + 1 < s
+      · have hi : i < s := by omega
+        simp only [pσ, pv, ite_eq_left hsucc, ite_eq_left hi]
+        exact Or.inl ⟨by omega, trivial⟩
+      · by_cases hi : i < s
+        · right
+          simp only [pσ, ite_eq_right hsucc, ite_eq_left hi]
+          omega
+        · have hsub : i + 1 - s = (i - s) + 1 := by omega
+          simp only [pσ, pv, ite_eq_right hsucc, ite_eq_right hi, hsub]
+          rcases ih (i - s) with ⟨hσ, hv⟩ | hσ
+          · exact Or.inl ⟨by omega, hv⟩
+          · exact Or.inr (by omega)
   have key : ∀ (i j k l : Fin N), k.val = pσ p.1 j.val → l.val = pσ p.1 i.val →
       n i k * pv p.1 k.val = pv p.1 i.val * m l j := by
     intro i j k l hk hl
@@ -171,7 +213,7 @@ theorem simple_eqF (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUn
       else 0 := by
     intro a
     by_cases ha : a.val + 1 < N
-    · rw [dif_pos ha]
+    · rw [dite_eq_left ha]
       have K1 := key ⟨a.val + 1, ha⟩ ⟨pσ p.1 a.val, hlt _ a.isLt⟩ a ⟨pσ p.1 (a.val + 1), hlt _ ha⟩
         (hinv _ a.isLt).symm rfl
       split_ifs with hS
@@ -181,21 +223,21 @@ theorem simple_eqF (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUn
         have h3' : pv p.1 (Fin.val (⟨a.val + 1, ha⟩ : Fin N)) = pv p.1 a.val := h3
         rw [e, h3'] at K1
         exact mul_right_cancel₀ (hv _ a.isLt) (K1.trans (mul_comm _ _))
-      · rcases pσ_nb p.1 hbs a.val (by rw [hs]; exact ha) with hsame | hgt
+      · rcases hadj p.1 a.val with hsame | hgt
         · exact absurd ⟨ha, hsame.1, hsame.2⟩ hS
         · have e : m ⟨pσ p.1 (a.val + 1), hlt _ ha⟩ ⟨pσ p.1 a.val, hlt _ a.isLt⟩ = 0 :=
             (hm _ _).1 (by rw [Fin.lt_iff_val_lt_val]; exact hgt)
           rw [e, mul_zero] at K1
           exact (mul_eq_zero.1 K1).resolve_right (hv _ a.isLt)
-    · rw [dif_neg ha, dif_neg (fun hS => ha hS.1)]
+    · rw [dite_eq_right ha, dite_eq_right (fun hS => ha hS.1)]
   have hup : ∀ b : Fin N, (if h : b.val + 1 < N then m b ⟨b.val + 1, h⟩ else 0) =
       if hS : sameBF p.1 N b.val then m b ⟨b.val + 1, hS.1⟩ else 0 := by
     intro b
     by_cases hb : b.val + 1 < N
-    · rw [dif_pos hb]
+    · rw [dite_eq_left hb]
       split_ifs with hS
       · rfl
-      · rcases pσ_nb p.1 hbs b.val (by rw [hs]; exact hb) with hsame | hgt
+      · rcases hadj p.1 b.val with hsame | hgt
         · exact absurd ⟨hb, hsame.1, hsame.2⟩ hS
         · have K1 := key ⟨pσ p.1 b.val, hlt _ b.isLt⟩ ⟨b.val + 1, hb⟩ ⟨pσ p.1 (b.val + 1), hlt _ hb⟩ b
             rfl (hinv _ b.isLt).symm
@@ -203,7 +245,7 @@ theorem simple_eqF (p : Point K N) {n m : Matrix (Fin N) (Fin N) K} (hn : IsLoUn
             (hn _ _).1 (by rw [Fin.lt_iff_val_lt_val]; exact hgt)
           rw [e, zero_mul] at K1
           exact (mul_eq_zero.1 K1.symm).resolve_left (hv _ (hlt _ b.isLt))
-    · rw [dif_neg hb, dif_neg (fun hS => hb hS.1)]
+    · rw [dite_eq_right hb, dite_eq_right (fun hS => hb hS.1)]
   unfold sgLoF sgUpF
   rw [Finset.sum_congr rfl (fun a _ => hlo a), Finset.sum_congr rfl (fun b _ => hup b)]
   set fe : Fin N → Fin N := fun a =>

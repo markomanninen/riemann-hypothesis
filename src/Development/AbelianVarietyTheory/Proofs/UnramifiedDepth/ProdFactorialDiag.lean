@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreAndCapelli
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.BiadditiveInSingleVariables
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.LegendreAndCapelli
+
+@[expose] public section
+
 open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds
 
 noncomputable section
@@ -52,7 +57,7 @@ theorem Low.mul {α β : σ →₀ ℕ} {g h : MvPowerSeries σ C} (hg : Low α 
       rw [Finset.HasAntidiagonal.mem_antidiagonal] at hq
       apply hg.term hh
       · have h := congrArg Finsupp.degree hq
-        rw [map_add, map_add] at h
+        rw [map_add (f := _), map_add (f := _)] at h
         omega
       · exact hne
     · intro h
@@ -64,7 +69,7 @@ theorem Low.mul {α β : σ →₀ ℕ} {g h : MvPowerSeries σ C} (hg : Low α 
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hq
     apply hg.term hh
     · have h := congrArg Finsupp.degree hq
-      rw [map_add] at h hm
+      rw [map_add (f := _)] at h hm
       omega
     · intro h
       apply hne
@@ -105,7 +110,7 @@ def kill (p : σ → Prop) [DecidablePred p] : MvPolynomial σ C →ₐ[C] MvPol
   MvPolynomial.aeval fun x => if p x then MvPolynomial.X x else 0
 
 theorem coeff_kill (p : σ → Prop) [DecidablePred p] (m : σ →₀ ℕ) (hm : ∀ x ∈ m.support, p x)
-    (P : MvPolynomial σ C) : MvPolynomial.coeff m (kill p P) = MvPolynomial.coeff m P := by
+    (P : MvPolynomial σ C) : AddMonoidAlgebra.coeff (kill p P) m = AddMonoidAlgebra.coeff P m := by
   classical
   refine MvPolynomial.induction_on' P (fun u a => ?_) (fun P Q hP hQ => ?_)
   · unfold kill
@@ -125,10 +130,13 @@ theorem coeff_kill (p : σ → Prop) [DecidablePred p] (m : σ →₀ ℕ) (hm :
         apply Finset.prod_eq_zero hx
         rw [if_neg hpx]
         exact zero_pow (Finsupp.mem_support_iff.1 hx)
-      rw [hz, mul_zero, MvPolynomial.coeff_zero, MvPolynomial.coeff_monomial, if_neg]
-      rintro rfl
-      exact hpx (hm x hx)
-  · rw [map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hP, hQ]
+      have hne : u ≠ m := by
+        intro h
+        subst u
+        exact hpx (hm x hx)
+      rw [hz, mul_zero]
+      simp [MvPolynomial.coeff_monomial, hne]
+  · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hP, hQ]
 
 def Lead (p : σ → Prop) [DecidablePred p] (α : σ →₀ ℕ) (P : MvPolynomial σ C) : Prop :=
   kill p P = MvPolynomial.monomial α 1 ∧ P.IsHomogeneous α.degree ∧ ∀ x ∈ α.support, p x
@@ -146,7 +154,7 @@ theorem Lead.mul {α β : σ →₀ ℕ} {P Q : MvPolynomial σ C} (hP : Lead p 
   obtain ⟨hkQ, hhQ, hsQ⟩ := hQ
   refine ⟨?_, ?_, ?_⟩
   · rw [map_mul, hkP, hkQ, MvPolynomial.monomial_mul, mul_one]
-  · rw [map_add]
+  · rw [map_add (f := _)]
     exact hhP.mul hhQ
   · intro x hx
     rcases Finset.mem_union.1 (Finsupp.support_add hx) with h | h
@@ -176,7 +184,7 @@ theorem jet_eq {α : σ →₀ ℕ} {P : MvPolynomial σ C} {g : MvPowerSeries �
   classical
   obtain ⟨hk, hh, hs⟩ := hP
   obtain ⟨h1, h0⟩ := hg
-  have hcoef : MvPolynomial.coeff α P = 1 := by
+  have hcoef : AddMonoidAlgebra.coeff P α = 1 := by
     rw [← coeff_kill p α hs P, hk, MvPolynomial.coeff_monomial, if_pos rfl]
   unfold jetAt0
   rw [Finset.sum_eq_single α]
@@ -208,7 +216,8 @@ theorem lead_det {k : ℕ} (w : Fin k → Fin k → σ) (hw : ∀ b c, p (w b c)
     rw [hM, Matrix.det_diagonal, MvPolynomial.monomial_sum_one]
     rfl
   · have hdeg : (∑ b : Fin k, Finsupp.single (w b b) 1).degree = k := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp [Finsupp.degree_single]
     rw [hdeg, Matrix.det_apply]
     apply MvPolynomial.IsHomogeneous.sum
@@ -314,7 +323,7 @@ theorem lead_minor (j : Fin N × Fin N' → σ) (hj : ∀ b c, p (j (b, c)) ↔ 
   have hpoly : MvPolynomial.rename j (minorK C N N' k) = (Matrix.of fun b c : Fin k =>
       (MvPolynomial.X (j (Fin.castLE h1 b, Fin.castLE h2 c)) : MvPolynomial σ C)).det := by
     unfold minorK
-    rw [dif_pos ⟨h1, h2⟩, AlgHom.map_det]
+    rw [dite_eq_left ⟨h1, h2⟩, AlgHom.map_det]
     congr 1
     ext b c
     simp [MvPolynomial.rename_X]
@@ -324,7 +333,7 @@ theorem lead_minor (j : Fin N × Fin N' → σ) (hj : ∀ b c, p (j (b, c)) ↔ 
     apply Finset.sum_congr rfl
     intro b _
     unfold dgOne
-    rw [dif_pos ⟨lt_of_lt_of_le b.isLt h1, lt_of_lt_of_le b.isLt h2⟩]
+    rw [dite_eq_left ⟨lt_of_lt_of_le b.isLt h1, lt_of_lt_of_le b.isLt h2⟩]
     rfl
   rw [hpoly, hexp]
   exact hL
@@ -350,9 +359,9 @@ theorem low_monG (j : Fin N × Fin N' → σ) {t : σ → MvPowerSeries σ C} (h
   intro ρ _
   unfold dgOne
   by_cases h : ρ.val < N'
-  · rw [dif_pos h, dif_pos ⟨ρ.isLt, h⟩]
+  · rw [dite_eq_left h, dite_eq_left ⟨ρ.isLt, h⟩]
     exact low_tangent ht (j (ρ, ⟨ρ, h⟩)) _
-  · rw [dif_neg h, dif_neg (fun hh => h hh.2)]
+  · rw [dite_eq_right h, dite_eq_right (fun hh => h hh.2)]
     exact low_one
 
 theorem dg_apply (j : Fin N × Fin N' → σ) (hj : Function.Injective j) (f : ℕ → ℕ)
@@ -362,7 +371,7 @@ theorem dg_apply (j : Fin N × Fin N' → σ) (hj : Function.Injective j) (f : �
   rw [Finsupp.finsetSum_apply, Finset.sum_eq_single b.val]
   · unfold dgOne
     by_cases hbc : b.val = c.val
-    · rw [if_pos hbc, dif_pos ⟨b.isLt, by rw [hbc]; exact c.isLt⟩, Finsupp.single_apply,
+    · rw [if_pos hbc, dite_eq_left ⟨b.isLt, by rw [hbc]; exact c.isLt⟩, Finsupp.single_apply,
         if_pos (by congr 1; exact Prod.ext (Fin.ext rfl) (Fin.ext hbc))]
     · rw [if_neg hbc]
       split_ifs with h
@@ -393,30 +402,6 @@ theorem dg_apply_of_notMem (j : Fin N × Fin N' → σ) (f : ℕ → ℕ) (x : �
   split_ifs
   · rw [Finsupp.single_apply, if_neg (fun h => hx _ h.symm)]
   · rfl
-
-theorem prod_factorial_diag (e : ℕ → ℕ) :
-    ∏ x : Fin N × Fin N', (if x.1.val = x.2.val then monAl N N' e x.1.val else 0).factorial =
-      ∏ ρ : Fin N, (monAl N N' e ρ.val).factorial := by
-  classical
-  rw [Fintype.prod_prod_type]
-  apply Finset.prod_congr rfl
-  intro b _
-  by_cases hb : b.val < N'
-  · rw [Finset.prod_eq_single ⟨b.val, hb⟩]
-    · simp
-    · intro c _ hc
-      rw [if_neg, Nat.factorial_zero]
-      intro h
-      exact hc (Fin.ext h.symm)
-    · intro h
-      exact absurd (Finset.mem_univ _) h
-  · rw [monAl_eq_zero e hb, Nat.factorial_zero]
-    apply Finset.prod_eq_one
-    intro c _
-    rw [if_neg, Nat.factorial_zero]
-    intro h
-    have h' : b.val = c.val := h
-    exact hb (by rw [h']; exact c.isLt)
 
 end Diagonal
 
@@ -467,96 +452,11 @@ theorem val_nat {l : ℕ} (hl : l.Prime) (hv : v (l : C) = 1) {n : ℕ} (hn : n 
     rintro rfl
     exact hm (dvd_zero l)
   have hfact := Fact.mk hl
-  rw [padicValNat.mul (pow_ne_zero _ hl.ne_zero) hm0, padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, AddValuation.map_mul,
+  rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hl.ne_zero) hm0, Nat.padicValNat_def, padicValNat.prime_pow,
+    Nat.padicValNat_def, padicValNat.eq_zero_of_not_dvd hm, add_zero, Nat.cast_mul, Nat.cast_pow, AddValuation.map_mul,
     AddValuation.map_pow, hv, val_coprime v hl hv hm, add_zero, ← WithTop.coe_one, ← WithTop.coe_nsmul,
     nsmul_eq_mul, mul_one]
 
 end Valuation
-
-theorem mon_one_type : MON := by
-  classical
-  intro C _ _ N N' e t ht
-  classical
-  have hL := lead_monP (C := C) (p := fun x : Fin N × Fin N' => x.1.val = x.2.val) id (fun b c => Iff.rfl) e
-  have hG := low_monG (C := C) (N := N) (N' := N') id ht e
-  simp only [MvPolynomial.rename_id, AlgHom.id_apply] at hL
-  have hjet := jet_eq hL hG
-  have hm2 : mfact (dg (id : Fin N × Fin N' → Fin N × Fin N') (monAl N N' e)) =
-      ∏ ρ : Fin N, (monAl N N' e ρ.val).factorial := by
-    rw [GlobalTheory.LegendreFacts.mfact_eq_prod, ← prod_factorial_diag e]
-    apply Finset.prod_congr rfl
-    intro x _
-    obtain ⟨b, c⟩ := x
-    exact congrArg Nat.factorial (dg_apply id Function.injective_id _ b c)
-  refine ⟨?_, sum_monAl e, ?_⟩
-  · rw [← hm2]
-    exact hjet
-  · intro v l hl hv
-    set M := ∏ ρ : Fin N, (monAl N N' e ρ.val).factorial with hM
-    have hM0 : M ≠ 0 := Finset.prod_ne_zero_iff.2 (fun ρ _ => Nat.factorial_ne_zero _)
-    refine ⟨?_, ?_⟩
-    · rw [val_nat v hl hv hM0, WithTop.coe_le_coe]
-      let A : Fin N →₀ ℕ := Finsupp.equivFunOnFinite.symm (fun ρ => monAl N N' e ρ.val)
-      have hA1 : mfact A = M := by
-        rw [GlobalTheory.LegendreFacts.mfact_eq_prod]
-        rfl
-      have hA2 : A.degree = monDeg N N' e := by
-        rw [GlobalTheory.LegendreFacts.degree_eq_sum', ← sum_monAl e]
-        rfl
-      by_cases hd : 1 ≤ A.degree
-      · have h := ((GlobalTheory.LegendreFacts.legendre_facts l hl).2.2.1 (Fin N) A hd).2
-        rw [hA1, hA2] at h
-        exact h
-      · have hd0 : monDeg N N' e = 0 := by omega
-        have hall : ∀ ρ : Fin N, monAl N N' e ρ.val = 0 := by
-          intro ρ
-          have h := sum_monAl (N := N) (N' := N') e
-          rw [hd0] at h
-          exact (Finset.sum_eq_zero_iff.1 h) ρ (Finset.mem_univ _)
-        have hM1 : M = 1 := by
-          rw [hM]
-          simp [hall]
-        rw [hM1, hd0]
-        simp
-    · intro hlt
-      apply val_coprime v hl hv
-      rw [hM]
-      intro hdvd
-      obtain ⟨ρ, _, hρ⟩ := (Prime.dvd_finsetProd_iff hl.prime _).1 hdvd
-      exact absurd ((Nat.Prime.dvd_factorial hl).1 hρ) (not_le.2 (hlt ρ))
-
-theorem mon_types : MONTypes := by
-  classical
-  intro C _ _ B _ _ N N' e t ht
-  classical
-  let p : (Σ b : B, Fin N × Fin (N' b)) → Prop := fun x => x.2.1.val = x.2.2.val
-  have hL : Lead p (∑ b : B, dg (fun x => (⟨b, x⟩ : Σ b : B, Fin N × Fin (N' b))) (monAl N (N' b) (e b)))
-      (∏ b : B, MvPolynomial.rename (fun x => (⟨b, x⟩ : Σ b : B, Fin N × Fin (N' b)))
-        (monP C N (N' b) (e b))) :=
-    lead_prod _ _ _ (fun b _ => lead_monP _ (fun r c => Iff.rfl) (e b))
-  have hG : Low (∑ b : B, dg (fun x => (⟨b, x⟩ : Σ b : B, Fin N × Fin (N' b))) (monAl N (N' b) (e b)))
-      (∏ b : B, monG N (N' b) (e b) fun x => t ⟨b, x⟩) :=
-    low_prod _ _ _ (fun b _ => low_monG _ ht (e b))
-  rw [jet_eq hL hG, GlobalTheory.LegendreFacts.mfact_eq_prod, Fintype.prod_sigma]
-  congr 1
-  apply Finset.prod_congr rfl
-  intro b _
-  rw [← prod_factorial_diag (e b)]
-  apply Finset.prod_congr rfl
-  intro y _
-  congr 1
-  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single b]
-  · obtain ⟨r, c⟩ := y
-    exact dg_apply _ (fun x y hxy => eq_of_heq (Sigma.mk.inj hxy).2) _ r c
-  · intro b' _ hb'
-    apply dg_apply_of_notMem
-    intro z hz
-    exact hb' (congrArg Sigma.fst hz).symm
-  · intro h
-    exact absurd (Finset.mem_univ b) h
-
-theorem main : MON ∧ MONTypes := by
-  exact ⟨mon_one_type, mon_types⟩
 
 end GlobalTheory.MinorGerm

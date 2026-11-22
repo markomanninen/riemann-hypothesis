@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistableComparison CrystallineSemistableComparison.Pb GlobalTheory.CompanionTheory.ConeLocal
@@ -61,7 +66,7 @@ theorem column_clear {A B Af Bw : Type} [CommRing A] [CommRing B] [CommRing Af] 
     rwa [map_mul, map_pow, e1, e1] at h1
   have hp1 := hmul k (lam (ρ f) ^ N) (μ a)
   rw [hF, hD, leibniz_pow (p k) (hmul k) (lam (ρ f)) N, hD] at hp1
-  simp only [map_add, map_mul, map_neg, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_neg, map_pow, map_natCast]
   rw [hp1, ← hF]
   ring
 
@@ -160,7 +165,8 @@ theorem clear_sum : ∀ {A B Af Bw : Type} [CommRing A] [CommRing B] [CommRing A
   have hymem : (∑ L, ρ (e L) * nn L) ∈ minorGroup ρ D κ :=
     AddSubgroup.sum_mem _ fun L _ => minorGroup_mul ρ D κ (e L) (hnn L)
   have h0 : lam (ρ f ^ K * x - ∑ L, ρ (e L) * nn L) = 0 := by
-    rw [map_sub, map_mul, map_pow, hx, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_mul, map_pow, hx, Finset.mul_sum, map_sum]
     simp only [hterm]
     exact sub_self _
   obtain ⟨N', hN'⟩ := hker _ h0

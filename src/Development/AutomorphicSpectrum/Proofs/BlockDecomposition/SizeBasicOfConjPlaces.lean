@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem posLog_max_one {x : ℝ} (hx : 0 ≤ x) : Real.posLog (max x 1) = Real.p
 
 section Global
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ}
 
 theorem logSizeM_eq (A : Matrix (Fin n) (Fin n) (Ad E)) :
     logSizeM A = ∑ v, Real.posLog (s2 (A.map (cV v))) + ∑ᶠ w, Real.posLog (sz (A.map (cW w))) :=
@@ -95,7 +99,7 @@ theorem logSizeM_mul (hS : SzFin) (A B : Matrix (Fin n) (Fin n) (Ad E)) :
         Real.posLog (s2 (A.map (cV v))) + Real.posLog (s2 (B.map (cV v))) +
           Real.posLog ((n : ℝ) ^ 2) := fun v => by
       rw [Matrix.map_mul]
-      refine (Real.posLog_le_posLog (max_sq_entry_nonneg _) (max_sq_entry_mul_le _ _)).trans ?_
+      refine (Real.posLog_le_posLog (le_trans (by norm_num) (max_sq_entry_nonneg _)) (max_sq_entry_mul_le _ _)).trans ?_
       refine Real.posLog_mul.trans ?_
       have := Real.posLog_mul (x := (n : ℝ) ^ 2) (y := s2 (A.map (cV v)))
       linarith
@@ -107,7 +111,7 @@ theorem logSizeM_mul (hS : SzFin) (A B : Matrix (Fin n) (Fin n) (Ad E)) :
     refine finsum_mono (supp_fin hS _) (((supp_fin hS A).union (supp_fin hS B)).subset
       (Function.support_add _ _)) fun w => ?_
     rw [Matrix.map_mul]
-    exact (Real.posLog_le_posLog (sz_nonneg _) (sz_mul_le _ _)).trans Real.posLog_mul
+    exact (Real.posLog_le_posLog (le_trans (by norm_num) (sz_nonneg _)) (sz_mul_le _ _)).trans Real.posLog_mul
   rw [logSizeM_eq, logSizeM_eq, logSizeM_eq]
   linarith
 
@@ -154,13 +158,13 @@ theorem logSizeM_locBdd (hS : SzFin) (A₀ : Matrix (Fin n) (Fin n) (Ad E)) :
   filter_upwards [Filter.eventually_all.2 hev] with A hA
   rw [logSizeM_eq]
   refine add_le_add (Finset.sum_le_sum fun v _ => ?_) ?_
-  · refine Real.posLog_le_posLog (max_sq_entry_nonneg _) (Real.iSup_le (fun p => ?_)
+  · refine Real.posLog_le_posLog (le_trans (by norm_num) (max_sq_entry_nonneg _)) (Real.iSup_le (fun p => ?_)
       (Real.iSup_nonneg fun _ => sq_nonneg _))
     exact (pow_le_pow_left₀ (norm_nonneg _) ((hA p).1 v) 2).trans
       (le_sup (fun q : Fin n × Fin n => (‖cV v (A₀ q.1 q.2)‖ + 1) ^ 2) p)
   · refine finsum_mono (supp_fin hS A) (supp_fin hS A₀) fun w => ?_
     rw [← posLog_max_one (sz_nonneg (A₀.map (cW w)))]
-    refine Real.posLog_le_posLog (sz_nonneg _) (Real.iSup_le (fun p => ?_) (by positivity))
+    refine Real.posLog_le_posLog (le_trans (by norm_num) (sz_nonneg _)) (Real.iSup_le (fun p => ?_) (by positivity))
     exact ((hA p).2 w).trans (max_le_max_right 1
       (le_sup (fun q : Fin n × Fin n => ‖cW w (A₀ q.1 q.2)‖) p))
 

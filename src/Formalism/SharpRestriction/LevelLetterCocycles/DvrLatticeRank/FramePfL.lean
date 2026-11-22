@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfDict
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfDict
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
       ∀ j, a j = PowerSeries.subst (π' j) (f j))
     (γ0 : ∀ δ ∈ W.DelF, PowerSeries.constantCoeff (W.γ₀ δ PowerSeries.X) = 0)
 
-open Classical in
 
+open Classical in
 def framepf_gco (x : ↥(NcS W T (c - 1))) : Fin Bs.r → PowerSeries O :=
   if h : ∃ g : Fin Bs.r → PowerSeries O, (x : W.DD T) = ∑ k, framepf_ι π' (c - 1) (g k) • Bs.b k
   then Classical.choose h else 0
@@ -34,7 +38,7 @@ theorem framepf_gco_spec (x : ↥(NcS W T (c - 1))) :
     (x : W.DD T) = ∑ k, framepf_ι π' (c - 1) (framepf_gco Bs π' c x k) • Bs.b k := by
   have h := framepf_coord Bs π' (c - 1) hπ0 hR2 x.2
   unfold framepf_gco
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec h
 
 include hπ0 hΔπ hR2 γ0 in
@@ -59,7 +63,7 @@ def framepf_coordL : ↥(NcS W T (c - 1)) →ₗ[O] (Fin Bs.r → O) where
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [Pi.add_apply, framepf_ι_add π' (c - 1) (hπ0 _), add_smul]
     funext k
-    rw [e, Pi.add_apply, map_add]
+    rw [e, Pi.add_apply, map_add (f := _)]
     rfl
   map_smul' o x := by
     have e : framepf_gco Bs π' c (o • x) = fun k => PowerSeries.C o * framepf_gco Bs π' c x k := by
@@ -76,8 +80,8 @@ theorem framepf_coordL_apply (x : ↥(NcS W T (c - 1))) (k : Fin Bs.r) :
 
 variable (hu : IsUnit (algebraMap (LetA O n) W.EE π'))
 
-include hπ0 hΔπ hR2 γ0 hu in
 
+include hπ0 hΔπ hR2 γ0 hu in
 theorem framepf_coordL_ker (x : ↥(NcS W T (c - 1))) :
     framepf_coordL Bs π' c hπ0 hΔπ hR2 γ0 x = 0 ↔ (x : W.DD T) ∈ PiNS W T π' 1 := by
   have hx := framepf_gco_spec Bs π' c hπ0 hR2 x

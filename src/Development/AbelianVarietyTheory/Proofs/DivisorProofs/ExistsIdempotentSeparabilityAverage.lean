@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.SepAverage
@@ -37,7 +42,8 @@ theorem avg_comm {C : Type} [CommRing C] {H : Type*} [AddCommGroup H] [Module C 
       (by intros; simp [add_mul]) (by intros; simp only [map_zsmul, smul_mul_assoc])
       (by intros; simp [mul_add]) (by intros; simp only [map_zsmul, mul_smul_comm])
   have h := congrArg (TensorProduct.lift B) (hsep c)
-  simp only [map_sum, TensorProduct.lift.tmul, B, LinearMap.mk₂_apply] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, TensorProduct.lift.tmul, B, LinearMap.mk₂_apply] at h
   calc ρ c * ∑ j, ρ (x j) * g * ρ (y j) = ∑ j, ρ (c * x j) * g * ρ (y j) := by
         simp [Finset.mul_sum, map_mul, mul_assoc]
     _ = ∑ j, ρ (x j) * g * ρ (y j * c) := h
@@ -78,7 +84,8 @@ theorem exists_idempotent_average : ∀ (C O : Type) [CommRing C] [Ring O] (I : 
   have hsum : ∀ z, ∑ j, ρ (x j) (ρ (y j) z) = (N : C) • z := by
     intro z
     have := LinearMap.congr_fun (congrArg ρ hxy) z
-    simp only [map_sum, map_mul, map_intCast, LinearMap.sum_apply, Module.End.mul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_intCast, LinearMap.sum_apply, Module.End.mul_apply,
       Module.End.intCast_apply] at this
     rw [this, Int.cast_smul_eq_zsmul]
   have hpz : ∀ z, p z = n • ∑ j, ρ (x j) (ε (σ (ε (ρ (y j) z)))) := by
@@ -99,7 +106,7 @@ theorem exists_idempotent_average : ∀ (C O : Type) [CommRing C] [Ring O] (I : 
     have hv : ε (ρ (y j) z) ∈ F := hεF _ (hρF _ _ hzF)
     rw [← hEF] at hv
     obtain ⟨e, he, t, ht, het⟩ := Submodule.mem_sup.mp hv
-    rw [← het, map_add, hσE e he, zero_add]
+    rw [← het, map_add (f := _), hσE e he, zero_add]
     exact hpres σ t ht
   set u : Module.End C H := p * p - p with hu_def
   have hu : ∀ z, u z ∈ I • (⊤ : Submodule C H) := by

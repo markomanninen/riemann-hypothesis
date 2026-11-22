@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalConjugationSelfDualLatticesHost
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteNotIsUnitOneAddSmul
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalConjugationSelfDualLatticesHost
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteNotIsUnitOneAddSmul
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsCongrIffTraceFormsIsometricCm
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem exists_isometry (hc : Formalism.HermitianLatticesTheory.IsCMUnram E) (W 
   have hd : W.gramᵀ.det ≠ 0 := by
     rw [Matrix.det_transpose]; exact (GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.gram_det_isUnit W).ne_zero
   obtain ⟨P, hP0, hP⟩ := congr_signMatrix (GlobalTheory.LocalQuad.landherr_of_hasseNormSt GlobalTheory.QNorm.hasseNormSt)
-    GlobalTheory.QNorm.hasseNormSt hG hd (isLattice_coordLat W W.L0 W.standardTuple_isLattice) (selfDual_coordLat W W.L0 W.baseLattice_isUnimodular)
+    GlobalTheory.QNorm.hasseNormSt hG hd (isLattice_coordLat W W.L0 W.standardTuple_isLattice W.baseLattice_isUnimodular) (selfDual_coordLat W W.L0 W.baseLattice_isUnimodular)
     Set.univ (fun _ => Or.inl trivial) W.rank fun τ _ => by
       have h0 := hs τ
       rw [hp τ] at h0
@@ -86,7 +90,8 @@ theorem exists_isometry (hc : Formalism.HermitianLatticesTheory.IsCMUnram E) (W 
   change ∑ i, cc ((P *ᵥ W.frame.equivFun x) i) * (P *ᵥ W.frame.equivFun y) i = _
   generalize W.frame.equivFun x = u
   generalize W.frame.equivFun y = v
-  simp only [herm, cc, Matrix.mul_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.transpose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [herm, cc, Matrix.mul_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.transpose_apply,
     Matrix.map_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
@@ -129,7 +134,53 @@ theorem sameGenus_stdLat (hc : Formalism.HermitianLatticesTheory.IsCMUnram E) {n
   haveI := unramified_of_isCMUnram hc
   have hf : ∀ x y : Fin n → E, GlobalTheory.IndefiniteRowSideFullHecke.AdmissibleHarmonicLattice.stdForm x y = stdForm E n y x := fun x y =>
     Finset.sum_congr rfl fun i _ => mul_comm _ _
-  have hgen := GlobalTheory.GenusSelfDual.inGenus_of_selfDual (Λ := ⟨L, hL.fg, hL.span_eq_top⟩) fun x => by
+  have hspan : Submodule.span E (L : Set (Fin n → E)) = ⊤ := by
+    by_contra h
+    obtain ⟨f, hf0, hle⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr h)
+    let w : Fin n → E := fun i => star (f (Pi.single i 1))
+    have hw : ∀ y ∈ L, stdForm E n y w = 0 := by
+      intro y hy
+      have hyf : f y = 0 := LinearMap.mem_ker.mp (hle (Submodule.subset_span hy))
+      have hrepr := f.pi_apply_eq_sum_univ y
+      have hsingle : ∀ i : Fin n, (fun j => if i = j then (1 : E) else 0) = Pi.single i 1 := by
+        intro i
+        ext j
+        simp [Pi.single_apply, eq_comm]
+      simp only [hsingle] at hrepr
+      change (∑ i, star (y i) * star (f (Pi.single i 1))) = 0
+      calc
+        _ = star (∑ i, y i * f (Pi.single i 1)) := by simp
+        _ = star (f y) := by rw [hrepr]; simp [smul_eq_mul]
+        _ = 0 := by rw [hyf, star_zero]
+    have hline : ∀ c : E, c • w ∈ L := by
+      intro c
+      apply (hsd _).2
+      intro y hy
+      refine ⟨0, ?_⟩
+      simp only [map_zero, LinearMap.map_smul, hw y hy, smul_zero]
+    have hw0 : w = 0 := by
+      by_contra hw0
+      obtain ⟨j, hj⟩ := Function.ne_iff.mp hw0
+      have htop : L.map (LinearMap.proj (R := 𝓞 E) (φ := fun _ : Fin n => E) j) = ⊤ := by
+        refine eq_top_iff.mpr fun x _ => ⟨(x / w j) • w, hline _, ?_⟩
+        simp [div_mul_cancel₀ _ hj]
+      have : Module.Finite (𝓞 E) E := ⟨by rw [← htop]; exact hL.fg.map _⟩
+      have := Algebra.IsIntegral.of_finite (𝓞 E) E
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    apply hf0
+    apply LinearMap.ext
+    intro y
+    rw [f.pi_apply_eq_sum_univ y]
+    apply Finset.sum_eq_zero
+    intro i _
+    have hi : star (f (Pi.single i 1)) = 0 := congrFun hw0 i
+    have : f (Pi.single i 1) = 0 := by simpa using congrArg star hi
+    have hsingle : (fun j => if i = j then (1 : E) else 0) = Pi.single i 1 := by
+      ext j
+      simp [Pi.single_apply, eq_comm]
+    rw [hsingle, this, smul_zero]
+  have hgen := GlobalTheory.GenusSelfDual.inGenus_of_selfDual (Λ := ⟨L, hL.fg, hspan⟩) fun x => by
     simpa only [hf] using hsd x
   intro P hP
   haveI : P.IsPrime := hP.isPrime
@@ -148,13 +199,17 @@ theorem mass_eq_std (hc : Formalism.HermitianLatticesTheory.IsCMUnram E) (W : Fo
     (hp : ∀ τ : E →+* ℂ, W.sig τ = (W.rank, 0)) :
     Formalism.HermitianLatticesTheory.mass W.hT W.L0 = Formalism.HermitianLatticesTheory.mass (stdForm E W.rank) (stdLat E W.rank) := by
   obtain ⟨e, he⟩ := exists_isometry hc W hs hp
+  have hL : Submodule.IsFullLattice E W.L0 :=
+    { toIsLattice := W.standardTuple_isLattice
+      span_eq_top := GlobalTheory.LocalConjugacy.span_eq_top_of_unimodular W W.L0
+        W.standardTuple_isLattice W.baseLattice_isUnimodular }
   obtain ⟨h1, h2, -⟩ := Formalism.HermitianLatticesTheory.massBasic _ _ W.hT W.herm
-    (GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity.trace_pos hc.2.1 W hs hp) W.L0 W.standardTuple_isLattice
+    (GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity.trace_pos hc.2.1 W hs hp) W.L0 hL
   have h3 := mass_transport e.symm (isoSymm e he) (tMap e W.L0) (by rwa [tMap_symm]) (by rwa [tMap_symm])
   rw [tMap_symm] at h3
   rw [← h3]
   refine (mass_eq_of_sameGenus _ (stdForm_symm E _) (fun r => ?_)
-    (sameGenus_stdLat hc _ (tMap_lattice e _ W.standardTuple_isLattice) fun x => ?_)).symm
+    (sameGenus_stdLat hc (tMap e W.L0) (Submodule.IsLattice.of_fg E (W.standardTuple_isLattice.fg.map _)) fun x => ?_)).symm
   · exact ⟨IsCMField.ringOfIntegersComplexConj E r, rfl⟩
   · obtain ⟨x, rfl⟩ := e.surjective x
     rw [mem_tMap, e.symm_apply_apply]

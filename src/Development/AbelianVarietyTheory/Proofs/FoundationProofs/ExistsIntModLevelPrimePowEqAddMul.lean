@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeMulBernoulliMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.Integral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PrimeMulBernoulliMem
+
+@[expose] public section
 
 open Finset GlobalTheory.KummerEisensteinGalois GlobalTheory.EisCong
 

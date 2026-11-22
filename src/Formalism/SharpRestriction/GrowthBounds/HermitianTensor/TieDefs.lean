@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ModelIdentificationOfExplicitMap
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovWeyl
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovDet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ModelIdentificationOfExplicitMap
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovWeyl
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.CovDet
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDetInt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,9 +32,14 @@ private lemma isHalf_iff_smul_eq {e : AE D} (u : WO S T) : IsHalf e u ↔ e • 
   unfold IsHalf
   constructor
   · intro hu
-    exact Matrix.ext fun i j => by simpa [Matrix.smul_apply] using hu i j
+    apply Matrix.ext
+    intro i j
+    change e * u i j = u i j
+    exact hu i j
   · intro hu i j
-    simpa [Matrix.smul_apply] using congrFun (congrFun hu i) j
+    have h := congrFun (congrFun hu i) j
+    change e * u i j = u i j at h
+    exact h
 
 private lemma isHalf_actO_twisted_operators {e : AE D} (g : GA D S) (h : GA D T) {u : WO S T} (hu : IsHalf e u) :
     IsHalf e (actO S T g h u) := by

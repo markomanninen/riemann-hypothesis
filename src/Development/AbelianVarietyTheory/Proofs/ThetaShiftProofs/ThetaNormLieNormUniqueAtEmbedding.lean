@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaL2FamilyUniformCompare
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LinearIndependentOfIsLieBasis
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsValLineLogNormAtIffEmbedding
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThetaL2FamilyUniformCompare
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LinearIndependentOfIsLieBasis
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsValLineLogNormAtIffEmbedding
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -97,7 +101,7 @@ theorem archimedean_l2_norm_unique (hU : ThetaUnifAV) {K : Type} [Field K] {P : 
         exact congrArg (· * _) (GeneratorNorm.norm_factor Hm z a))
       (fun a j z hz => by
         show ‖u'.fr _ (F z)‖ = _ * ‖u'.fr _ (F (z + a))‖
-        rw [hu'.2.2.2 ⟨F a, hFΛ a a.2⟩ _ _ (U' j z hz), norm_mul, norm_mul, hu'.2.2.1, _root_.one_mul, map_add,
+        rw [hu'.2.2.2 ⟨F a, hFΛ a a.2⟩ _ _ (U' j z hz), norm_mul, norm_mul, hu'.2.2.1, _root_.one_mul, map_add (f := _),
           ← hHH, ← hHH]
         exact congrArg (· * _) (GeneratorNorm.norm_factor Hm' (F z) (F a)))
   have hθθ : ∀ z, θ' (F z) = θ z := fun z => by
@@ -121,7 +125,7 @@ theorem archimedean_l2_norm_unique (hU : ThetaUnifAV) {K : Type} [Field K] {P : 
       ‖θ' z‖ ^ 2 * Real.exp (-Real.pi * hermSq Hm' z) := fun a ha z => by
     obtain ⟨a, rfl⟩ := T.surjective a
     obtain ⟨z, rfl⟩ := T.surjective z
-    rw [← map_add, hT, hT, hff, hff, hper a ((hΛ a).1 ha)]
+    rw [← map_add (f := _), hT, hT, hff, hff, hper a ((hΛ a).1 ha)]
   haveI := u.discrete
   haveI := u'.discrete
   haveI : IsZLattice ℝ u.Λ := ⟨u.full⟩

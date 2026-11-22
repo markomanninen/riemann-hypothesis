@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DownRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndexBoundAll
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareThetaTripleExistsSignatureRankSumLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NegIdxOfIsStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseFits
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DownRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianSelfDualLatticeSpaceFormHermitianNondeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndexBoundAll
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareThetaTripleExistsSignatureRankSumLt
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset
 open Formalism.DivisionValues (vw)
@@ -73,12 +77,7 @@ theorem mem_conjLat {n : ℕ} (L : Submodule (𝓞 D.host.E) (Fin n → D.host.E
 
 theorem isLattice_conjLat {n : ℕ} {L : Submodule (𝓞 D.host.E) (Fin n → D.host.E)} (hL : L.IsLattice D.host.E) :
     (conjLat L).IsLattice D.host.E := by
-  refine ⟨hL.fg.map _, ?_⟩
-  have h1 : ((conjLat L : Submodule (𝓞 D.host.E) (Fin n → D.host.E)) : Set (Fin n → D.host.E)) = cvE D n '' (L : Set _) := by
-    rw [conjLat, Submodule.map_coe]; rfl
-  rw [h1, Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-  intro z
-  exact ⟨fun i => star (z i), by ext i; simp [cvE]⟩
+  exact Submodule.IsLattice.of_fg D.host.E (hL.fg.map _)
 
 theorem isIntegral_star_iff (a : D.host.E) : IsIntegral ℤ (star a) ↔ IsIntegral ℤ a := by
   constructor
@@ -185,8 +184,8 @@ theorem hasSignature_all (hG : B.IsGood D.sp.cm.sig) {m a b : ℕ} (J : Matrix (
 
 end GlobalTheory.ConjSpace
 
-open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc) in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels (Base Spc) in
 theorem GlobalTheory.ConjSpace.main : ∀ (D : D7) (Bs : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base D.host.F D.host.E), Bs.IsGood D.sp.cm.sig → GlobalTheory.SqStepBig.EmbCM Bs →
     ∀ (n r p : ℕ) (V : GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc D.host.F D.host.E n), V.IsHerm D.sp.cm.sig Bs r p →
       ∃ (B : HSp D) (Λ : Submodule (𝓞 D.host.E) (Fin B.rank → D.host.E)),
@@ -196,11 +195,11 @@ theorem GlobalTheory.ConjSpace.main : ∀ (D : D7) (Bs : GlobalTheory.Indefinite
     obtain ⟨w⟩ : Nonempty (InfinitePlace D.host.F) := inferInstance
     exact (hV.sig w).1
   have hgram := GlobalTheory.WeilSchrodinger.gram_hspOf V.J (GlobalTheory.ConjSpace.sesq_herm hV) (GlobalTheory.ConjSpace.sesq_nondeg hV)
-    (GlobalTheory.ConjSpace.conjLat V.L) (GlobalTheory.ConjSpace.isLattice_conjLat hV.lat) (GlobalTheory.ConjSpace.sesq_unimod hV)
+    (GlobalTheory.ConjSpace.conjLat V.L) (GlobalTheory.ConjSpace.isLattice_conjLat hV.lat.toIsLattice) (GlobalTheory.ConjSpace.sesq_unimod hV)
     (fun _ => (n - p, p))
   refine ⟨GlobalTheory.WeilSchrodinger.hspOf D V.J (GlobalTheory.ConjSpace.sesq_herm hV) (GlobalTheory.ConjSpace.sesq_nondeg hV)
-    (GlobalTheory.ConjSpace.conjLat V.L) (GlobalTheory.ConjSpace.isLattice_conjLat hV.lat) (GlobalTheory.ConjSpace.sesq_unimod hV)
-    (fun _ => (n - p, p)), GlobalTheory.ConjSpace.conjLat V.L, ⟨GlobalTheory.ConjSpace.isLattice_conjLat hV.lat, fun y => ?_⟩,
+    (GlobalTheory.ConjSpace.conjLat V.L) (GlobalTheory.ConjSpace.isLattice_conjLat hV.lat.toIsLattice) (GlobalTheory.ConjSpace.sesq_unimod hV)
+    (fun _ => (n - p, p)), GlobalTheory.ConjSpace.conjLat V.L, ⟨GlobalTheory.ConjSpace.isLattice_conjLat hV.lat.toIsLattice, fun y => ?_⟩,
     fun τ => ?_, ⟨rfl, ?_, fun y => ?_⟩⟩
   · rw [hgram]
     refine (GlobalTheory.ConjSpace.mem_conjLat_iff (n := n) hV y).trans ?_

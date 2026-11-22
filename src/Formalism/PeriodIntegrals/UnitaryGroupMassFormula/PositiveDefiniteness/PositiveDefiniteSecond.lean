@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PositiveDefiniteness.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PositiveDefiniteness.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,9 +17,9 @@ theorem re_nonneg_of_rat {k : ℕ} (M : Matrix (Fin k) (Fin k) ℂ) (z : ℂ) (h
     (v : Fin k → ℂ) : 0 ≤ (star v ⬝ᵥ (M *ᵥ v)).re := by
   have hQc : Continuous fun w : Fin k → ℂ => (star w ⬝ᵥ (M *ᵥ w)).re := by
     show Continuous fun w : Fin k → ℂ => (∑ i, star (w i) * ∑ j, M i j * w j).re
-    exact Complex.continuous_re.comp (continuous_finset_sum _ fun i _ =>
+    exact Complex.continuous_re.comp (continuous_finsetSum _ fun i _ =>
       (continuous_star.comp (continuous_apply i)).mul
-        (continuous_finset_sum _ fun j _ => continuous_const.mul (continuous_apply j)))
+        (continuous_finsetSum _ fun j _ => continuous_const.mul (continuous_apply j)))
   let ψ : (Fin k → ℝ) × (Fin k → ℝ) → (Fin k → ℂ) := fun p i => (p.1 i : ℂ) + (p.2 i : ℂ) * z
   have hψ : Continuous ψ := by fun_prop
   let d : (Fin k → ℚ) × (Fin k → ℚ) → (Fin k → ℝ) × (Fin k → ℝ) :=
@@ -56,9 +60,9 @@ theorem posDef_of_points {E : Type} [Field E] (φ : E →+* ℂ) {k : ℕ} (N : 
       have hQc : Continuous fun a : Fin k → ℝ =>
           (star (fun i => (a i : ℂ)) ⬝ᵥ (N *ᵥ fun i => (a i : ℂ))).re := by
         show Continuous fun a : Fin k → ℝ => (∑ i, star ((a i : ℂ)) * ∑ j, N i j * (a j : ℂ)).re
-        exact Complex.continuous_re.comp (continuous_finset_sum _ fun i _ =>
+        exact Complex.continuous_re.comp (continuous_finsetSum _ fun i _ =>
           (continuous_star.comp (Complex.continuous_ofReal.comp (continuous_apply i))).mul
-            (continuous_finset_sum _ fun j _ =>
+            (continuous_finsetSum _ fun j _ =>
               continuous_const.mul (Complex.continuous_ofReal.comp (continuous_apply j))))
       have hd : DenseRange (fun α : Fin k → ℚ => fun i => (α i : ℝ)) :=
         DenseRange.piMap fun _ => Rat.denseRange_cast
@@ -77,7 +81,7 @@ theorem posDef_of_points {E : Type} [Field E] (φ : E →+* ℂ) {k : ℕ} (N : 
       obtain ⟨t, ht⟩ := hreal
       refine re_nonneg_of_rat N (φ t) ht (fun α β => ?_)
       have h1 := hpt (fun i => (α i : E) + (β i : E) * t)
-      simpa [map_add, map_mul, map_ratCast] using h1
+      simpa [map_add (f := _), map_mul, map_ratCast] using h1
   have hpsd : N.PosSemidef := by
     rw [Matrix.posSemidef_iff_dotProduct_mulVec]
     refine ⟨hN, fun v => ?_⟩
@@ -97,7 +101,8 @@ theorem positive_definite_second : Step2 := by
   have hQ : ∀ x : Fin k → E, star (fun i => φ (x i)) ⬝ᵥ (J.map φ *ᵥ (fun i => φ (x i)))
       = φ (hform (σ : E →+* E) J x x) := by
     intro x
-    simp only [dotProduct, mulVec, hform, Pi.star_apply, hst, Matrix.map_apply, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, mulVec, hform, Pi.star_apply, hst, Matrix.map_apply, map_sum, map_mul,
       Finset.mul_sum, mul_assoc]
     rfl
   have hdet : J.det ≠ 0 := by

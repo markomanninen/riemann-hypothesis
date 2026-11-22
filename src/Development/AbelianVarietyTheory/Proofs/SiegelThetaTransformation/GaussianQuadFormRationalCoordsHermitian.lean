@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHEqThSDictionary
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -59,7 +64,8 @@ theorem im_tauOf (Ψ : Finset (E →+* ℂ)) (Z : CM Ψ N N) :
     ((tauOf Ψ Z).map fun t => (t.im : ℂ)) = tauOf Ψ (fun τ => imH (Z τ)) := by
   ext p q
   simp only [Matrix.map_apply, tauOf, Matrix.of_apply]
-  rw [Complex.im_eq_sub_conj, map_sum, ← Finset.sum_sub_distrib, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Complex.im_eq_sub_conj, map_sum, ← Finset.sum_sub_distrib, Finset.sum_div]
   refine Finset.sum_congr rfl fun τ _ => ?_
   simp only [imH, Matrix.smul_apply, Matrix.sub_apply, Matrix.conjTranspose_apply,
     Complex.star_def, smul_eq_mul, map_add, map_mul, Complex.conj_conj]

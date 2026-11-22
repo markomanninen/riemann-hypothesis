@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
-import Formalism.LocalToGlobal.Columns.BaseLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+public import Formalism.LocalToGlobal.Columns.BaseLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Col
 

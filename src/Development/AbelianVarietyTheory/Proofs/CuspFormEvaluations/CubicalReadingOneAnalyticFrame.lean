@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBase
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AbelianHolomorphicFrameReadingConstOfFormsCancel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsHolFamPullbackLiftOfCommonBase
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.AbelianHolomorphicFrameReadingConstOfFormsCancel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.PullbackSections Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.AnVal
@@ -68,8 +72,8 @@ omit [IsCommMonObj A] in
 theorem e_add_period (z : Fin g → ℂ) {a : Fin g → ℂ} (ha : a ∈ Φ.lat) : Φ.e (z + a) = Φ.e z := by
   rw [Φ.e_add, (Φ.e_ker a).2 ha, _root_.mul_one]
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 theorem hol_lin {N : ℕ} (Λ : (Fin N → ℂ) →ₗ[ℂ] (Fin g → ℂ)) : IsHolFam fun v => (Φ.e (Λ v)).left := by
   have h := Φ.hol
   unfold IsHolFam at h ⊢
@@ -161,7 +165,8 @@ theorem tripleColumnPeriodLattice_span_real_top : Submodule.span ℝ (lat3 Φ : 
   rw [eq_top_iff]
   rintro v -
   have hv : v = ∑ k : Fin 3, e.symm (Pi.single k (e v k)) := by
-    rw [← map_sum, Finset.univ_sum_single, LinearEquiv.symm_apply_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Finset.univ_sum_single, LinearEquiv.symm_apply_apply]
   rw [hv]
   exact Submodule.sum_mem _ fun k _ => key k _
 
@@ -181,7 +186,7 @@ theorem genRd_cubical (cub : CubicalStr A L) (x : Fin 3 → Fin g → ℂ) :
       have hcol : ∀ k, colsEquiv 3 g gm k ∈ Φ.lat := fun k =>
         ((AddSubgroup.mem_pi _).1 (AddSubgroup.mem_comap.1 hgm)) k (Set.mem_univ _)
       refine ⟨fun z => ?_, fun I => ?_⟩
-      · simp only [map_add, tri, Pi.add_apply, e_add_period Φ _ (hcol _)]
+      · simp only [map_add (f := _), tri, Pi.add_apply, e_add_period Φ _ (hcol _)]
       · simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, hp]
         exact sum_mem fun a _ => hcol a)
     (fun z w => third_difference Φ.Hm (colsEquiv 3 g z) (colsEquiv 3 g w))

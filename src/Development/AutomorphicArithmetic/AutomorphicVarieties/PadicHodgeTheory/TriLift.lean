@@ -1,35 +1,40 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTorusLiftToNilpotentThickening
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUnipotentFromTorusCoords
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTorusCoordsOfUnipotent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ContinuousUnitsInvOfContinuousCoeFiniteQpAlgebra
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsContinuousIsGamOfTorusCocycle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ConjugateRestrictionOpenNormal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCocycleExtensionOfConjugationInvariantRest
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemFiniteCocyclesIffRestrictSubgroupMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrystallineTriangularIffOfCharData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCrystallineTriangularLiftOfMemFiniteCocycl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrystallineTriangularIffMemFiniteCocyclesOfCha
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorsionDatumFiniteCocyclesBaseChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorsionDatumFiniteCocyclesCompare
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.AdmSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fDescAvg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTorusLiftToNilpotentThickening
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUnipotentFromTorusCoords
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTorusCoordsOfUnipotent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ContinuousUnitsInvOfContinuousCoeFiniteQpAlgebra
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsContinuousIsGamOfTorusCocycle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ConjugateRestrictionOpenNormal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCocycleExtensionOfConjugationInvariantRest
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.MemFiniteCocyclesIffRestrictSubgroupMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrystallineTriangularIffOfCharData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsCrystallineTriangularLiftOfMemFiniteCocycl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrystallineTriangularIffMemFiniteCocyclesOfCha
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorsionDatumFiniteCocyclesBaseChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorsionDatumFiniteCocyclesCompare
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 namespace UpperTheory.V.Loc.TriangularDeformation
 open Topology
 
-private def resH {G B : Type} [Group G] [CommRing B] (u : G →* GG 3 B) (H : Subgroup G)
+private def resH {G B : Type} [Group G] [CommRing B] (u : G →* GG (m := 3) (R := B)) (H : Subgroup G)
     (h : ∀ g ∈ H, (u g).right = 1) : H →* GL (Fin 3) B where
   toFun g := (u g).left
   map_one' := by simp
   map_mul' g g' := by simp [h g g.2]
 
 private theorem lcr_iff {l : ℕ} [Fact l.Prime] {B : Type} [CommRing B] [Algebra ℚ_[l] B] (H : Subgroup (GQ l))
-    (u : GQ l →* GG 3 B) (h : ∀ g ∈ H, (u g).right = 1) : LCr H u ↔ IsCr H.subtype (colRep (resH u H h)) := by
+    (u : GQ l →* GG (m := 3) (R := B)) (h : ∀ g ∈ H, (u g).right = 1) : LCr H u ↔ IsCr H.subtype (colRep (resH u H h)) := by
   refine ⟨fun ⟨ρ, hρ, hc⟩ => ?_, fun hc => ⟨_, fun _ => rfl, hc⟩⟩
   have : resH u H h = ρ := MonoidHom.ext fun g => (hρ g).symm
   rwa [this]
@@ -57,7 +62,7 @@ private theorem gam_add {G B : Type} [Group G] [CommRing B] [TopologicalSpace G]
   simp only [Pi.add_apply, chRep_apply, g1 g g', hδ.2 g g']
   ring
 
-private theorem gamDiff : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ℚ_[l] E] {η : GQ l →* ℤˣ} {Ψ : GQ l →* Eˣ} {H : Subgroup (GQ l)} {e : ℕ} (hD : TriDat η Ψ H e) {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (T : Tor η B), T.Good π Ψ → ∀ (h : B) (β : GQ l → B × B) (γ γ' : GQ l → B) (u u' : GQ l →* GG 3 B), Continuous β → Continuous γ → Continuous γ' → (∀ g, π (β g).1 = 0) → T.IsGam h β γ → T.IsGam h β γ' → T.Coord h β γ u → T.Coord h β γ' u' → LCr H u → (LCr H u' ↔ γ' - γ ∈ UpperTheory.V.Loc.finiteCocycles (MonoidHom.id (GQ l)) (chRep T.χ2)) := by
+private theorem gamDiff : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ℚ_[l] E] {η : GQ l →* ℤˣ} {Ψ : GQ l →* Eˣ} {H : Subgroup (GQ l)} {e : ℕ} (hD : TriDat η Ψ H e) {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (T : Tor η B), T.Good π Ψ → ∀ (h : B) (β : GQ l → B × B) (γ γ' : GQ l → B) (u u' : GQ l →* GG (m := 3) (R := B)), Continuous β → Continuous γ → Continuous γ' → (∀ g, π (β g).1 = 0) → T.IsGam h β γ → T.IsGam h β γ' → T.Coord h β γ u → T.Coord h β γ' u' → LCr H u → (LCr H u' ↔ γ' - γ ∈ UpperTheory.V.Loc.finiteCocycles (MonoidHom.id (GQ l)) (chRep T.χ2)) := by
   intro hP l _ E _ _ _ _ _ η Ψ H e hD B _ _ _ _ _ _ _ _ _ _ π hπ T hT h β γ γ' u u' cβ cγ cγ' hβ g1 g2 c1 c2 hu
   haveI := hD.normal
   haveI := hD.fin
@@ -111,7 +116,7 @@ private theorem triM_nE {B : Type} [CommRing B] (c : B) (t : Fin 3 → Bˣ) (x y
   ring
 
 private theorem conj_nE {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} {T : Tor η B} {h : B} {β : G → B × B}
-    {γ : G → B} {u : G →* GG 3 B} (hu : T.Coord h β γ u) (s : G) (c : B) :
+    {γ : G → B} {u : G →* GG (m := 3) (R := B)} (hu : T.Coord h β γ u) (s : G) (c : B) :
     u s * GG.ofGL (nE c) = GG.ofGL (nE (T.χ2 s * c)) * u s := by
   refine SemidirectProduct.ext ?_ (by simp)
   have hm : ((u s).left : Matrix (Fin 3) (Fin 3) B) = _ := hu.mat s
@@ -120,7 +125,7 @@ private theorem conj_nE {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} 
     simp only [SemidirectProduct.mul_left, SemidirectProduct.left_inl, SemidirectProduct.right_inl, hu.right, hs,
       sgnAct_one, sgnAct_neg_one, theta_nE, Units.val_mul, hm, triM_nE, Tor.χ2_apply] <;> simp
 
-private theorem gamCr : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ℚ_[l] E] {η : GQ l →* ℤˣ} {Ψ : GQ l →* Eˣ} {H : Subgroup (GQ l)} {e : ℕ} (hD : TriDat η Ψ H e) {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (T : Tor η B), T.Good π Ψ → ∀ (h : B), 2 * h = 1 → ∀ β ∈ UpperTheory.V.Loc.finiteCocycles (MonoidHom.id (GQ l)) T.M1, (∀ g, π (β g).1 = 0) → ∃ (γ : GQ l → B) (u : GQ l →* GG 3 B), Continuous γ ∧ T.IsGam h β γ ∧ T.Coord h β γ u ∧ LCr H u := by
+private theorem gamCr : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] ℚ_[l] E] {η : GQ l →* ℤˣ} {Ψ : GQ l →* Eˣ} {H : Subgroup (GQ l)} {e : ℕ} (hD : TriDat η Ψ H e) {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (T : Tor η B), T.Good π Ψ → ∀ (h : B), 2 * h = 1 → ∀ β ∈ UpperTheory.V.Loc.finiteCocycles (MonoidHom.id (GQ l)) T.M1, (∀ g, π (β g).1 = 0) → ∃ (γ : GQ l → B) (u : GQ l →* GG (m := 3) (R := B)), Continuous γ ∧ T.IsGam h β γ ∧ T.Coord h β γ u ∧ LCr H u := by
   intro hP l _ E _ _ _ _ _ η Ψ H e hD B _ _ _ _ _ _ _ _ _ _ π hπ T hT h hh β hβ hβ0
   haveI := hD.normal
   haveI := hD.fin
@@ -201,8 +206,8 @@ private theorem gamCr : LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] 
   refine (diff (fun g : H => (γ + b) g + h * (β g).1 * (β g).2) (resH u' H r2) (by fun_prop)
     (fun g => cu'.mat g)).2.2 ?_
   convert hbN using 1
-  funext g
-  simp only [Pi.sub_apply, Pi.add_apply, hz₀]
+  ext g
+  simp only [Pi.sub_apply, Pi.add_apply, Pi.neg_apply, hz₀]
   ring
 
 private theorem triM_map {B B' : Type} [CommRing B] [CommRing B'] (p : B →+* B') (t : Fin 3 → Bˣ) (t' : Fin 3 → B'ˣ)
@@ -210,14 +215,14 @@ private theorem triM_map {B B' : Type} [CommRing B] [CommRing B'] (p : B →+* B
   ext i j
   fin_cases i <;> fin_cases j <;> simp [triM, ht]
 
-private theorem gg_ext {B : Type} [CommRing B] {a b : GG 3 B} (h1 : a.mat = b.mat) (h2 : a.right = b.right) : a = b :=
+private theorem gg_ext {B : Type} [CommRing B] {a b : GG (m := 3) (R := B)} (h1 : a.mat = b.mat) (h2 : a.right = b.right) : a = b :=
   SemidirectProduct.ext (Units.ext h1) h2
 
 private theorem lcr_map {l : ℕ} [Fact l.Prime] {B : Type} [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B]
     [TopologicalSpace B] [IsModuleTopology ℚ_[l] B] [IsTopologicalRing B]
     {B' : Type} [CommRing B'] [Algebra ℚ_[l] B'] [Module.Finite ℚ_[l] B']
     [TopologicalSpace B'] [IsModuleTopology ℚ_[l] B'] [IsTopologicalRing B'] (p : B →ₐ[ℚ_[l]] B')
-    (hp : Function.Surjective p) {H : Subgroup (GQ l)} (hH : IsOpen (H : Set (GQ l))) {u : GQ l →* GG 3 B}
+    (hp : Function.Surjective p) {H : Subgroup (GQ l)} (hH : IsOpen (H : Set (GQ l))) {u : GQ l →* GG (m := 3) (R := B)}
     (cu : Continuous fun g => (u g).mat) (hu : LCr H u) : LCr H ((GG.map (p : B →+* B')).comp u) := by
   obtain ⟨ρ, hρ, hc⟩ := hu
   have cp : Continuous p := IsModuleTopology.continuous_of_linearMap p.toLinearMap
@@ -260,7 +265,7 @@ end UpperTheory.V.Loc.TriangularDeformation
 
 open UpperTheory.V.Loc.TriangularDeformation in
 theorem UpperTheory.V.Loc.triLift :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (B : Type) [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [Algebra O B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] O B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower O E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (B' : Type) [CommRing B'] [Algebra ℚ_[l] B'] [Module.Finite ℚ_[l] B'] [Algebra O B'] [Algebra ℤ_[l] B'] [IsScalarTower ℤ_[l] O B'] [IsScalarTower ℤ_[l] ℚ_[l] B'] [Algebra E B'] [IsScalarTower O E B'] [IsScalarTower ℚ_[l] E B'] (π' : B' →ₐ[E] E) (hπ' : ∀ a, π' a = 0 → IsNilpotent a) (p : B →ₐ[E] B'), Function.Surjective p → π'.comp p = π → ∀ u' : GQ l →* GG 3 B', D.InDtri (π' : B' →+* E) u' → ∃ u : GQ l →* GG 3 B, D.InDtri (π : B →+* E) u ∧ (GG.map (p : B →+* B')).comp u = u' := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (B : Type) [CommRing B] [Algebra ℚ_[l] B] [Module.Finite ℚ_[l] B] [Algebra O B] [Algebra ℤ_[l] B] [IsScalarTower ℤ_[l] O B] [IsScalarTower ℤ_[l] ℚ_[l] B] [Algebra E B] [IsScalarTower O E B] [IsScalarTower ℚ_[l] E B] (π : B →ₐ[E] E) (hπ : ∀ a, π a = 0 → IsNilpotent a) (B' : Type) [CommRing B'] [Algebra ℚ_[l] B'] [Module.Finite ℚ_[l] B'] [Algebra O B'] [Algebra ℤ_[l] B'] [IsScalarTower ℤ_[l] O B'] [IsScalarTower ℤ_[l] ℚ_[l] B'] [Algebra E B'] [IsScalarTower O E B'] [IsScalarTower ℚ_[l] E B'] (π' : B' →ₐ[E] E) (hπ' : ∀ a, π' a = 0 → IsNilpotent a) (p : B →ₐ[E] B'), Function.Surjective p → π'.comp p = π → ∀ u' : GQ l →* GG (m := 3) (R := B'), D.InDtri (π' : B' →+* E) u' → ∃ u : GQ l →* GG (m := 3) (R := B), D.InDtri (π : B →+* E) u ∧ (GG.map (p : B →+* B')).comp u = u' := by
   intro hP l _ O _ _ _ _ _ _ _ D E _ _ _ _ _ _ _ _ B _ _ _ _ _ _ _ _ _ _ π hπ B' _ _ _ _ _ _ _ _ _ _ π' hπ' p hp hpπ u' hu'
   letI : TopologicalSpace B := moduleTopology ℚ_[l] B
   haveI : IsModuleTopology ℚ_[l] B := ⟨rfl⟩
@@ -348,19 +353,19 @@ theorem UpperTheory.V.Loc.triLift :
   have cβ : Continuous β := fβ.1.1
   have β0 : ∀ g, π (β g).1 = 0 := fun g => by rw [← hππ, (hβp g).1, β0']
   obtain ⟨γ, u, cγ, gγ, cu, hu⟩ := gamCr hP hD π hπ T hT h hh β fβ β0
-  have push : ∀ (γ : GQ l → B) (u : GQ l →* GG 3 B), T.Coord h β γ u →
+  have push : ∀ (γ : GQ l → B) (u : GQ l →* GG (m := 3) (R := B)), T.Coord h β γ u →
       T'.Coord (p h) β' (fun g => p (γ g)) ((GG.map (p : B →+* B')).comp u) := fun γ u c =>
     ⟨fun g => c.right g, fun g => by
       rw [MonoidHom.comp_apply, GG.map_mat, c.mat, triM_map (p : B →+* B') _ _ (hTp g)]
-      simp only [RingHom.coe_coe, map_add, map_mul, (hβp g).1, (hβp g).2]⟩
+      simp only [RingHom.coe_coe, map_add (f := _), map_mul, (hβp g).1, (hβp g).2]⟩
   have hq : ∀ g i j, p ((T.t g i / T.t g j : Bˣ) : B) = ((T'.t g i / T'.t g j : B'ˣ) : B') := fun g i j => by
     have : ∀ i, Units.map (p : B →* B') (T.t g i) = T'.t g i := fun i => Units.ext (hTp g i)
     rw [← this, ← this, ← _root_.map_div]
     rfl
   have gp : T'.IsGam (p h) β' (fun g => p (γ g)) := fun g g' => by
     simp only [gγ g g', omg, Tor.adjointSuperdiagRep_apply, Tor.χ2_apply]
-    split_ifs <;> simp only [map_add, map_mul, map_sub, map_neg, map_intCast, hq, (hβp _).1, (hβp _).2]
-  have cmat : ∀ (γ : GQ l → B) (u : GQ l →* GG 3 B), Continuous γ → T.Coord h β γ u →
+    split_ifs <;> simp only [map_add (f := _), map_mul, map_sub, map_neg, map_intCast, hq, (hβp _).1, (hβp _).2]
+  have cmat : ∀ (γ : GQ l → B) (u : GQ l →* GG (m := 3) (R := B)), Continuous γ → T.Coord h β γ u →
       Continuous fun g => (u g).mat := fun γ u cγ c => by
     simp only [c.mat]
     exact continuous_triM hT.cont (by fun_prop) (by fun_prop) (by fun_prop)

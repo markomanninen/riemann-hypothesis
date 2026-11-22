@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 open ValuativeRel IsDedekindDomain NumberField Filter Topology
 open scoped TensorProduct
@@ -81,7 +85,8 @@ theorem trace_base_change {F E K L : Type} [Field F] [Field E] [Algebra F E] [Fi
   have key : ∀ y : E, g y = ∑ i, f (b.repr y i) • g (b i) := by
     intro y
     conv_lhs => rw [← b.sum_repr y]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Algebra.smul_def, Algebra.smul_def, map_mul, hc]
   have hsp : ⊤ ≤ Submodule.span K (Set.range fun i => g (b i)) := by
@@ -97,7 +102,8 @@ theorem trace_base_change {F E K L : Type} [Field F] [Field E] [Algebra F E] [Fi
     rw [key y]
     simp_rw [← hcb]
     exact congrFun (c.repr_sum_self _) i
-  rw [Algebra.trace_eq_matrix_trace c, Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace c, Algebra.trace_eq_matrix_trace b, Matrix.trace, Matrix.trace,
     map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul]
@@ -131,7 +137,7 @@ def smallIdeal {F Ω : Type} [Field F] [NormedField Ω] [IsUltrametricDist Ω] (
   zero_mem' := by simp
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
   smul_mem' := by
     intro c x hx
@@ -145,12 +151,11 @@ theorem mem_smallIdeal {F Ω : Type} [Field F] [NormedField Ω] [IsUltrametricDi
     (σ : F →+* Ω) (x : 𝓞 F) : x ∈ smallIdeal σ ↔ ‖σ x‖ < 1 := Iff.rfl
 
 theorem smallIdeal_isPrime {F Ω : Type} [Field F] [NormedField Ω] [IsUltrametricDist Ω]
-    (σ : F →+* Ω) : (smallIdeal σ).IsPrime where
-  ne_top' := by
-    rw [Ideal.ne_top_iff_one, mem_smallIdeal]
+    (σ : F →+* Ω) : (smallIdeal σ).IsPrime := by
+  refine Ideal.isPrime_iff.mpr ⟨?_, ?_⟩
+  · rw [Ideal.ne_top_iff_one, mem_smallIdeal]
     simp
-  mem_or_mem' := by
-    intro x y h
+  · intro x y h
     simp only [mem_smallIdeal] at *
     by_contra h'
     push Not at h'
@@ -286,7 +291,8 @@ theorem sum_local_trace {l : ℕ} [Fact l.Prime] {F : Type} [Field F] [NumberFie
     ∑ s, Algebra.trace ℚ_[l] (K s) (ι s t) = ((Algebra.trace ℚ F t : ℚ) : ℚ_[l]) := by
   classical
   apply (algebraMap ℚ_[l] (PadicAlgCl l)).injective
-  rw [map_sum, map_ratCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_ratCast]
   have e : ((Algebra.trace ℚ F t : ℚ) : PadicAlgCl l) =
       algebraMap ℚ (PadicAlgCl l) (Algebra.trace ℚ F t) := by simp
   rw [e, trace_eq_sum_embeddings]

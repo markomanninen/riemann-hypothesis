@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVAppendSingletonEqVecVSliceAt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialHeadTypes
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopUnipotentIntegralRankZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VecVAppendSingletonEqVecVSliceAt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolynomialHeadTypes
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopUnipotentIntegralRankZero
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 

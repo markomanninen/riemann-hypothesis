@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSqMulPowLeProdBilinFormLatticeBasisStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSqMulPowLeProdBilinFormLatticeBasisStatement
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 
@@ -16,7 +20,8 @@ theorem dichQuadBound {X : Type} [AddCommGroup X] (β : LinearMap.BilinForm ℤ 
     simp only [map_sub, LinearMap.sub_apply] at h
     rw [hs (u j) (u i)] at h; linarith
   have hexp : β (∑ i, u i) (∑ i, u i) = ∑ i, ∑ j, β (u i) (u j) := by
-    simp only [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply]
     first | rfl | exact Finset.sum_comm
   have h2 : 2 * ∑ i, ∑ j, β (u i) (u j) ≤ 2 * ((Fintype.card ι : ℤ) * ∑ i, β (u i) (u i)) := by
     calc 2 * ∑ i, ∑ j, β (u i) (u j) = ∑ i, ∑ j, 2 * β (u i) (u j) := by simp [Finset.mul_sum]
@@ -52,7 +57,7 @@ theorem dichDetCongr {X₀ X : Type} [AddCommGroup X₀] [Module.Free ℤ X₀] 
     simp [hh, hw j, Module.Basis.constr_basis, natCast_zsmul]
   have e : ε.toLinearMap ∘ₗ g = ε.toLinearMap ∘ₗ k + (N : ℤ) • (ε.toLinearMap ∘ₗ hh) := by
     rw [hg, LinearMap.comp_add, LinearMap.comp_smul]
-  rw [e, ← LinearMap.det_toMatrix b, ← LinearMap.det_toMatrix b, map_add, map_smul]
+  rw [e, ← LinearMap.det_toMatrix b, ← LinearMap.det_toMatrix b, map_add (f := _), map_smul]
   set A := LinearMap.toMatrix b b (ε.toLinearMap ∘ₗ k)
   set B := LinearMap.toMatrix b b (ε.toLinearMap ∘ₗ hh)
   have hm : (Int.castRingHom (ZMod N)).mapMatrix (A + (N : ℤ) • B) = (Int.castRingHom (ZMod N)).mapMatrix A := by
@@ -93,7 +98,8 @@ theorem dichRelLift {X₀ : Type} [AddCommGroup X₀] [Module.Free ℤ X₀] [Mo
     have h0 := hμ (d i) (Finset.mem_image_of_mem _ (Finset.mem_univ i))
     rw [hid, sub_eq_zero] at h0
     conv_lhs => rw [← b.sum_repr (a i)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_zsmul, Module.Basis.constr_basis]
     exact h0.symm
 
@@ -127,7 +133,7 @@ private theorem cm_sum {ι : Type} [Fintype ι] (c : ι → ℤ) {x y : ι → X
 private theorem quad_sub_le (β : LinearMap.BilinForm ℤ X) (hs : ∀ x y, β x y = β y x) (hp : ∀ y, 0 ≤ β y y)
     (u v : X) : β (u - v) (u - v) ≤ 2 * β u u + 2 * β v v := by
   have h := hp (u + v)
-  simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply] at h ⊢
+  simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply] at h ⊢
   rw [hs v u] at h ⊢; linarith
 
 private theorem quad_nsmul (β : LinearMap.BilinForm ℤ X) (w : X) :
@@ -211,7 +217,8 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
     nlinarith
 
   have hkc : ∀ c : ι → ℤ, ∑ i, c i • k (a i) = k (∑ i, c i • a i) := fun c => by
-    rw [map_sum]; simp only [map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; simp only [map_zsmul]
   have hrel : ∀ c ∈ S, ∑ i, c i • μ i = 0 := by
     intro c hc
     refine hvan _ ?_ (dD0 c) (hDS c hc) (dichQuadBound β hsym hp c μ)
@@ -219,7 +226,8 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
     rwa [hkc, hSa c hc, map_zero] at h
   obtain ⟨g, hg⟩ := hSl X μ hrel
   have hg' : ∀ c : ι → ℤ, g (∑ l, c l • a l) = ∑ l, c l • μ l := fun c => by
-    rw [map_sum]; simp only [map_zsmul, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]; simp only [map_zsmul, hg]
   have hgk : ∀ x, CongMod N (g x) (k x) := by
     intro x
     rw [← hcf x, hg', ← hkc]
@@ -250,7 +258,8 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
     exact sub_eq_zero.1 hx
   have hlinT' : ∀ o ∈ T, ∀ x, g (o • x) = o • g x := by
     intro o ho x
-    rw [← hcf x, Finset.smul_sum, map_sum, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hcf x, Finset.smul_sum, map_sum, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [smul_comm o (cf x l) (a l), map_zsmul, map_zsmul, hlinT o ho l, smul_comm]
   have hlin : ∀ (o : O) x, g (o • x) = o • g x := by
@@ -259,7 +268,7 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
     induction this using Submodule.span_induction with
     | mem o ho => exact hlinT' o ho
     | zero => intro x; simp
-    | add o o' _ _ h h' => intro x; rw [add_smul, map_add, h, h', add_smul]
+    | add o o' _ _ h h' => intro x; rw [add_smul, map_add (f := _), h, h', add_smul]
     | smul n o _ h => intro x; rw [smul_assoc, map_zsmul, h, smul_assoc]
   let gO : X₀ →ₗ[O] X := { toFun := g, map_add' := g.map_add, map_smul' := fun o x => hlin o x }
 
@@ -302,7 +311,7 @@ theorem dichotomy : ∀ (O : Type) [CommRing O] [Module.Finite ℤ O] (bar : O �
       exact_mod_cast h1.trans h2
     have hprod : ∏ j, (β (g (b j)) (g (b j)) : ℝ) ≤ ((D : ℝ) * s0) ^ r := by
       calc ∏ j, (β (g (b j)) (g (b j)) : ℝ) ≤ ∏ _j : Fin r, ((D : ℝ) * s0) :=
-            Finset.prod_le_prod (fun j _ => by exact_mod_cast hp _) (fun j _ => hbj j)
+            Finset.prod_le_prod₀ (fun j _ => by exact_mod_cast hp _) (fun j _ => hbj j)
         _ = _ := by simp
     have hDs0 : (0 : ℝ) ≤ D * s0 := mul_nonneg (by exact_mod_cast hD) (by exact_mod_cast hs0)
     have hDs : (D : ℝ) * s0 ≤ M * lam := by

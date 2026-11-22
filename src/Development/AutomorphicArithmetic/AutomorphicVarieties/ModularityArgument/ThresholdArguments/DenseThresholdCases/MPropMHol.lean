@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.BaseChangeNorms.PropMHol
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.Hypotheses4Z
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.THolLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.BaseChangeNorms.PropMHol
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.Hypotheses4Z
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.THolLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AfDesc
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -138,7 +142,7 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
     split_ifs
     · exact (nval hω w).le
     · simp
-    · rw [map_add, map_one]
+    · rw [map_add (f := _), map_one]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le norm_one.le (nval hω w).le)
     · simp
   obtain ⟨g, lam, hg, hlam⟩ := _root_.UpperTheory.V.Sd.holLift_alt PP.h F l ι (k + 1) (Nat.le_add_left _ _) (levL l c) hfin ω hω χ 0 a'
@@ -161,10 +165,10 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
       · have h4 := sm_mul (nval hω w).le (sm_add (sm_mul (le_of_cong (hpow w (hL0 w h0).1) norm_one.le) h3.2)
           (sm_mul h3.1 (hpow w (hL0 w h0).1)))
         convert sm_add (sm_sub h1 h2) h4 using 2
-        simp only [map_add, map_sub, map_mul, map_pow, map_natCast] at e' ⊢
+        simp only [map_add (f := _), map_sub, map_mul, map_pow, map_natCast] at e' ⊢
         linear_combination e'
       · convert sm_sub h1 h2 using 2
-        simp only [map_add, map_sub, map_mul, map_pow, map_natCast, map_zero] at e' ⊢
+        simp only [map_add (f := _), map_sub, map_mul, map_pow, map_natCast, map_zero] at e' ⊢
         linear_combination e')
   refine ⟨k, hkB, hkd', g, lam, hg, ?_, hlam⟩
   by_contra hcusp
@@ -180,7 +184,7 @@ theorem UpperTheory.V.Z.Bc.propMHolZ_alt :
     have h3 : ‖ι.symm (η₁.val w : ℂˣ) - 1‖ * ‖ι.symm (η₂.val w : ℂˣ) - 1‖ < 1 := by
       rw [← norm_mul]
       convert h2 using 2
-      simp only [map_add, map_mul, map_pow, map_natCast, map_one, Units.val_mul]
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_one, Units.val_mul]
       ring
     by_contra hn
     rw [not_or, not_lt, not_lt] at hn

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsTameRamified
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EventuallyIncAMulMemIntAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittCoreEmbeddingPreservesSupportedUnitarySubgro
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsTameRamified
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EventuallyIncAMulMemIntAt
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.IwaPlace Matrix
 open NumberField
@@ -39,15 +43,16 @@ theorem exists_nat_intRing {ι : Type} [Fintype ι] (z : ι → D.host.E) :
   exact mul_mem (natCast_mem _ c) (incA_mem_intRing o)
 
 theorem mulVec_colMul {k m n : ℕ} (P : Mx D k m) (x : Mx D m n) (i : Fin n) (b : AE D) :
-    P *ᵥ colMul x i b = fun l => b * (P ⬝ x) l i := by
+    P *ᵥ colMul x i b = fun l => b * (P * x) l i := by
   funext l
   simp only [Matrix.mulVec, dotProduct, colMul, Matrix.mul_apply, Finset.mul_sum]
   exact Finset.sum_congr rfl fun k _ => by ring
 
 theorem hermAt_colMul (S : HSp D) {n : ℕ} (x : Mx D S.rank n) (i : Fin n) (a : AE D) (y : Fin S.rank → AE D) :
-    hermAt S (colMul x i a) y = cA D (((adj x ⬝ gA S) *ᵥ y) i) * a := by
+    hermAt S (colMul x i a) y = cA D (((adj x * gA S) *ᵥ y) i) * a := by
   have hG : ∀ k l, cA D (gA S k l) = gA S l k := fun k l => congrFun (congrFun (adj_gA S) l) k
-  simp only [hermAt, colMul, Matrix.mulVec, dotProduct, Matrix.mul_apply, adj, Matrix.transpose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermAt, colMul, Matrix.mulVec, dotProduct, Matrix.mul_apply, adj, Matrix.transpose_apply,
     Matrix.map_apply, map_sum, map_mul, GlobalTheory.RamLine.cA_cA', hG, Finset.sum_mul]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   ring
@@ -144,7 +149,7 @@ theorem principal_of_dense {E : Type} [Field E] [NumberField E] {A : Type} [Comm
         rw [RingHom.map_zero, zero_mul]; exact zero_mem _
       add_mem' := fun {a b} ha hb => by
         change ι (a + b) * (ν * ε) ∈ I
-        rw [RingHom.map_add, add_mul]; exact add_mem ha hb
+        rw [RingHom.map_add (f := _), add_mul]; exact add_mem ha hb
       smul_mem' := fun r o ho => by
         change ι (r * o) * (ν * ε) ∈ I
         have h := hmod _ (hint r) _ ho
@@ -241,8 +246,8 @@ theorem mul_eq_of_unit {A : Type} [CommRing A] {ε a α β : A} (t : A) (ha : ε
 
 theorem mul_rearr {A : Type} [CommRing A] (m K ε x : A) : m * K * ε * x = m * (K * x * ε) := by ring
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem ideals_at_place : ∀ (D : D7) (S S₀ : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (L : Lat S) (L₀ : Lat S₀) (v : Pl D) (ε : AE D) (hεε : ε * ε = ε) (hεc : cA D ε = ε) (hεI : ε ∈ intAt D (· = v)) (hε : ∀ a, a ∈ idAt D (· = v) ↔ ε * a = a), IsSDAt S v (latV S L (· = v)) → MonoAt d L L₀ v → ∃ α β : Fin ρ → AE D, (∀ i, α i ∈ idAt D (· = v)) ∧ (∀ i, β i ∈ idAt D (· = v)) ∧ (∀ i, α i * β i = ε) ∧ (∀ i, ∀ a ∈ idAt D (· = v), colMul d.jX i a ∈ latV S L (· = v) ↔ a * β i ∈ intAt D (· = v)) ∧ (∀ i, ∀ a ∈ idAt D (· = v), colMul d.jY i a ∈ latV S L (· = v) ↔ a * cA D (α i) ∈ intAt D (· = v)) := by
   intro D S S₀ ρ d L L₀ v ε hεε hεc hεI hε hSD hMono
   unfold MonoAt at hMono
@@ -252,10 +257,25 @@ theorem ideals_at_place : ∀ (D : D7) (S S₀ : HSp D) (ρ : ℕ) (d : HypDec S
   have hc : ∀ a ∈ intAt D (· = v), cA D a ∈ intAt D (· = v) := fun a ha =>
     mem_intAt_iff.2 ⟨(hε _).2 (by rw [← hεc, ← RingHom.map_mul, (hε a).1 ha.1]),
       GlobalTheory.RamLine.cA_mem (mem_intAt_iff.1 ha).2⟩
+  have hpX : d.pX = adj d.jY * gA S := by
+    rw [HypDec.pX, HypDec.qX, HypDec.jY, gA, ← rat_conjTranspose]
+    exact Matrix.map_mul
+  have hpY : d.pY = adj d.jX * gA S := by
+    rw [HypDec.pY, HypDec.qY, HypDec.jX, gA, ← rat_conjTranspose]
+    exact Matrix.map_mul
+  have hpXX : d.pX * d.jX = 1 := by
+    have h := congrArg (rat (D := D)) d.e'e
+    rw [rat_one] at h
+    simpa only [HypDec.pX, HypDec.qX, HypDec.jX, rat, Matrix.map_mul] using h
+  have hpYY : d.pY * d.jY = 1 := by
+    have hadj {k m n : ℕ} (x : Mx D k m) (y : Mx D m n) : adj (x * y) = adj y * adj x :=
+      Formalism.UG.cT_mul (cA D) x y
+    have h := congrArg adj (hpX ▸ hpXX : (adj d.jY * gA S) * d.jX = 1)
+    simpa only [hpY, hadj, adj_adj, adj_gA, adj_one, Matrix.mul_assoc] using h
   have hX : ∀ i a y, hermAt S (colMul d.jX i a) y = cA D ((d.pY *ᵥ y) i) * a := fun i a y => by
-    rw [hermAt_colMul, d.pY_eq]
+    rw [hermAt_colMul, hpY]
   have hY : ∀ i a y, hermAt S (colMul d.jY i a) y = cA D ((d.pX *ᵥ y) i) * a := fun i a y => by
-    rw [hermAt_colMul, d.pX_eq]
+    rw [hermAt_colMul, hpX]
   obtain ⟨K, hK, hKz⟩ := exists_nat_intRing (D := D)
     (Sum.elim (fun p : Fin S.rank × Fin ρ => d.e p.1 p.2) (fun p : Fin S.rank × Fin ρ => d.e' p.1 p.2))
   have hcol : ∀ (x : Mx D S.rank ρ) (i : Fin ρ), (∀ k, (K : AE D) * x k i ∈ GlobalTheory.RamLine.intRing D) →
@@ -286,14 +306,14 @@ theorem ideals_at_place : ∀ (D : D7) (S S₀ : HSp D) (ρ : ℕ) (d : HypDec S
       (fun a ha => by
         obtain ⟨ha1, ha2⟩ := (hI a).1 ha
         have h := hpair _ ha1 _ (hcol d.jY i fun k => hKz (Sum.inr (k, i)))
-        rw [hX, mulVec_colMul, d.pY_jY] at h
+        rw [hX, mulVec_colMul, hpYY] at h
         simp only [Matrix.one_apply_eq, mul_one] at h
         rwa [RingHom.map_mul, map_natCast, hεc, mul_assoc, (hε a).1 ha2] at h)
     exact ⟨α, β, h1, h2, h3, fun a ha => ⟨fun h => (h4 a ha).1 ((hI a).2 ⟨h, ha⟩), fun h => ((hI a).1 ((h4 a ha).2 h)).1⟩⟩
   choose α β h1 h2 h3 h4 using key
   refine ⟨α, β, h1, h2, h3, h4, fun i a ha => ⟨fun h => ?_, fun h => ?_⟩⟩
   · have h5 := hpair _ h _ ((h4 i _ (h1 i)).2 (by rw [h3]; exact hεI))
-    rw [hY, mulVec_colMul, d.pX_jX] at h5
+    rw [hY, mulVec_colMul, hpXX] at h5
     simp only [Matrix.one_apply_eq, mul_one] at h5
     rwa [mul_comm] at h5
   · refine (hdual (colMul d.jY i a) fun k => Ideal.mul_mem_right _ _ ha).2 fun x hx => ?_

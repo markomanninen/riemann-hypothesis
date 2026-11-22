@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ theorem ker_classHom_le : (classHom L).ker ≤ unitIdl L ⊔ (diagUnits L).range
   rw [this]
   exact Subgroup.mul_mem_sup hu ⟨_, rfl⟩
 
-open Classical in
 
+open Classical in
 theorem finiteIndex_unitIdl_sup : ∀ (L : Type) [Field L] [NumberField L],
     (unitIdl L ⊔ (diagUnits L).range).FiniteIndex := by
   intro L _ _

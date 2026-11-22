@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
+
+@[expose] public section
 
 noncomputable section
 

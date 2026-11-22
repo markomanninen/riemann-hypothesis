@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SingleMemStandardLattice
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ExistsNeZeroMemNormSqLeGramDetDivRelIndex
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SingleMemStandardLattice
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ExistsNeZeroMemNormSqLeGramDetDivRelIndex
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.TheoremA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -62,7 +66,8 @@ theorem orthProj_mem_span {m : ℕ} (b : Fin k → Fin r → K) (c : Fin m → F
   have e2 : hpv b (∑ j, o j • c j) = ∑ j, ∑ a, (RingOfIntegers.basis K).repr (o j) a • hwv b c (j, a) := by
     simp_rw [e]
     change hpvHom b _ = _
-    simp only [map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul]
     rfl
   rw [e2]
   exact Submodule.sum_mem _ fun j _ => Submodule.sum_mem _ fun a _ =>
@@ -101,7 +106,8 @@ theorem relIndex_orthProj_lattice {m : ℕ} {b : Fin k → Fin r → K} (hb : Li
     have hft : hpv b t = hpvHom b q := by
       rw [← hn]
       change hpvHom b t = _
-      simp only [t, map_sum, map_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [t, map_sum, map_zsmul]
       rfl
     have hz : hpv b (q - t) = 0 := by
       change hpvHom b (q - t) = 0
@@ -119,7 +125,7 @@ theorem relIndex_orthProj_lattice {m : ℕ} {b : Fin k → Fin r → K} (hb : Li
     refine ⟨?_, hq⟩
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hS
     change hpvHom b (y + z) ∈ _
-    rw [map_add]
+    rw [map_add (f := _)]
     have hy0 : hpvHom b y = 0 := (projectedVector_eq_zero_iff hb y).mpr hy.2
     rw [hy0, zero_add]
     exact orthProj_mem_span b c hz

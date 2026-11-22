@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -45,7 +49,7 @@ theorem isCoboundary_of_refine {I J : Type} {O : I → X.Opens} {φ : ∀ a b, S
     have ha : O a ⊓ P k ⊓ (O a ⊓ P l) ≤ O a := inf_le_left.trans inf_le_left
     have h1 := congrArg (restrict M (le_inf hk hl)) (h k l)
     have h2 := hφ a (τ k) (τ l) _ ha (hk.trans (hP k)) (hl.trans (hP l))
-    simp only [map_add, map_sub, restrict_restrict] at h1 h2 ⊢
+    simp only [map_add (f := _), map_sub, restrict_restrict] at h1 h2 ⊢
     rw [← h2, h1]
     abel
   choose ψ hψ using hglue
@@ -57,7 +61,7 @@ theorem isCoboundary_of_refine {I J : Type} {O : I → X.Opens} {φ : ∀ a b, S
   have h1 := congrArg (restrict M (le_inf ha hk)) (hψ a k)
   have h2 := congrArg (restrict M (le_inf hb hk)) (hψ b k)
   have h3 := hφ a b (τ k) _ ha hb (hk.trans (hP k))
-  simp only [map_add, map_sub, restrict_restrict] at h1 h2 h3 ⊢
+  simp only [map_add (f := _), map_sub, restrict_restrict] at h1 h2 h3 ⊢
   rw [h1, h2, ← h3]
   abel
 
@@ -91,8 +95,8 @@ theorem h1Zero_iff (hM : M.IsLB) : FirstCohomologyVanishes M ↔ CechHOneVanishe
       intro a b d W ha hb hd
       apply (chart hM (c a) (ha.trans (hV a))).injective
       have h := congrArg (rs X (le_inf (le_inf ha hb) hd)) (hφ a b d)
-      simp only [map_add, map_mul, rs_rs] at h
-      rw [map_add, chart_restrict hM (c a) (inf_le_left.trans (hV a)),
+      simp only [map_add (f := _), map_mul, rs_rs] at h
+      rw [map_add (f := _), chart_restrict hM (c a) (inf_le_left.trans (hV a)),
         chart_change hM (c a) (c b) _ (hb.trans (hV b)),
         chart_restrict hM (c b) (inf_le_left.trans (hV b)),
         chart_restrict hM (c a) (inf_le_left.trans (hV a))]
@@ -143,7 +147,7 @@ theorem cechHOneVanishesOnOpen_of_cover {κ : Type} {D : κ → X.Opens} {V : X.
     intro i j k W hi hj hk
     refine ext_of_cover (fun a => W ⊓ O a) (fun a => inf_le_left)
       (le_iSup_inf ((hi.trans (hD i)).trans hcO)) fun a => ?_
-    simp only [map_add, restrict_restrict]
+    simp only [map_add (f := _), restrict_restrict]
     rw [hθ' i j a _ (inf_le_left.trans hi) (inf_le_left.trans hj) inf_le_right,
       hθ' j k a _ (inf_le_left.trans hj) (inf_le_left.trans hk) inf_le_right,
       hθ' i k a _ (inf_le_left.trans hi) (inf_le_left.trans hk) inf_le_right]
@@ -259,7 +263,8 @@ theorem cechHOneVanishesOnOpen_of_isAffineOpen (hM : M.IsLB) {V : X.Opens} (hT :
   refine isCoboundary_of_refine hφ D τ hD (fun a => (hO a).trans hDc)
     (fun k => ∑ m, rs X (hDV k) (h m * t m ^ a₂) • ρ k m) fun k l => ?_
   have h1 := congrArg (rs X (inf_le_left.trans (hDV k) : D k ⊓ D l ≤ V)) hh
-  simp only [map_sum, map_smulₛₗ, map_mul, map_pow, map_one, rs_rs] at h1 ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, map_mul, map_pow, map_one, rs_rs] at h1 ⊢
   rw [← Finset.sum_sub_distrib, ← one_smul Γ(X, D k ⊓ D l) (restrict M _ (φ (τ k) (τ l))), ← h1,
     Finset.sum_smul]
   refine Finset.sum_congr rfl fun m _ => ?_
@@ -382,7 +387,7 @@ theorem restrict_d_two (x : GlobalTheory.Cube.Term (secCube f M D) 2) {i j k : �
       restrict M (iInf_le_iInf_of_subset D (by simp [Finset.insert_subset_iff]))
         (comp M D f x {i, j} (Finset.card_pair h.ne)) :=
     d_two_apply_triple _ x h h' hc
-  rw [e, map_add, map_sub, restrict_restrict, restrict_restrict, restrict_restrict]
+  rw [e, map_add (f := _), map_sub, restrict_restrict, restrict_restrict, restrict_restrict]
 
 theorem IsCocycle.diag {I : Type} {O : I → X.Opens} {φ : ∀ a b, SecOn M (O a ⊓ O b)}
     (hφ : IsCocycle M O φ) (a : I) : φ a a = 0 := by
@@ -561,9 +566,6 @@ def kerEquiv {V : X.Opens} (hD : ∀ i, D i ≤ V) (hc : V ≤ ⨆ i, D i) :
     SecOnR f M V ≃ₗ[R] LinearMap.ker ((cechLB f M D).d 0 1).hom :=
   LinearEquiv.ofInjective _ (toCech_injective M f hD hc) ≪≫ₗ
     LinearEquiv.ofEq _ _ (exact_toCech M f hD hc).linearMap_ker_eq.symm
-
-@[simp] theorem kerEquiv_val {V : X.Opens} (hD : ∀ i, D i ≤ V) (hc : V ≤ ⨆ i, D i)
-    (x : SecOnR f M V) : (kerEquiv M f hD hc x).1 = toCech M f D hD x := rfl
 
 def secKerEquiv (hc : ⨆ i, D i = ⊤) :
     LB.Sec M ≃+ LinearMap.ker ((cechLB f M D).d 0 1).hom :=

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.UniformBoundAllData
-import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.LogbAddOneNonneg
-import Formalism.GaussJetBounds.OneLetterGaussJets.GainDominatesOddLevelSum
+module
+
+public import Formalism.SharpRestriction.Divisibility.JetPolynomialLogs.UniformBoundAllData
+public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
+public import Formalism.GaussJetBounds.OneLetterGaussJets.GainDominatesOddLevelSum
+
+@[expose] public section
 
 noncomputable section
 

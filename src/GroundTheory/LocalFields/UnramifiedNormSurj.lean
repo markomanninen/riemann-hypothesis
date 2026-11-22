@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.LocalFields.UnramifiedDefs
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
-import GroundTheory.LocalFields.FilteredSurj
-import GroundTheory.GlobalFields.KummerTheory.LocalIndex
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.UnramifiedDefs
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+public import GroundTheory.LocalFields.FilteredSurj
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,6 @@ variable {K L : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
 
 omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] [TopologicalSpace L]
   [IsNonarchimedeanLocalField L] [FiniteDimensional K L] in
-
 theorem coe_normIntegerUnits_eq (u : 𝒪[L]ˣ) :
     ((normIntegerUnits K L u : 𝒪[K]ˣ) : 𝒪[K]) = Algebra.norm 𝒪[K] (u : 𝒪[L]) :=
   rfl
@@ -30,7 +33,7 @@ theorem exists_norm_one_add_smul (r : 𝒪[K]) (a : 𝒪[L]) :
   let b := Module.Free.chooseBasis 𝒪[K] 𝒪[L]
   refine ⟨(Matrix.det (1 + (X : 𝒪[K][X]) • (Algebra.leftMulMatrix b a).map C)).divX.divX.eval r,
     ?_⟩
-  rw [Algebra.norm_eq_matrix_det b, map_add, map_one, map_smul, Matrix.det_one_add_smul,
+  rw [Algebra.norm_eq_matrix_det b, map_add (f := _), map_one, map_smul, Matrix.det_one_add_smul,
     Algebra.trace_eq_matrix_trace b]
   ring
 
@@ -38,7 +41,8 @@ theorem residue_eq_sum_repr (y : 𝒪[L]) :
     residue 𝒪[L] y = ∑ i, residue 𝒪[K] ((Module.Free.chooseBasis 𝒪[K] 𝒪[L]).repr y i) •
       residue 𝒪[L] (Module.Free.chooseBasis 𝒪[K] 𝒪[L] i) := by
   conv_lhs => rw [← (Module.Free.chooseBasis 𝒪[K] 𝒪[L]).sum_repr y]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [Algebra.smul_def, map_mul, Algebra.smul_def]
   rfl
@@ -47,8 +51,8 @@ section Residue
 
 variable [IsUnramified K L]
 
-variable (K L) in
 
+variable (K L) in
 def residueBasis : Module.Basis (Module.Free.ChooseBasisIndex 𝒪[K] 𝒪[L]) 𝓀[K] 𝓀[L] :=
   basisOfTopLeSpanOfCardEqFinrank (fun i ↦ residue 𝒪[L] (Module.Free.chooseBasis 𝒪[K] 𝒪[L] i))
     (by
@@ -97,7 +101,7 @@ theorem irreducible_algebraMap_of_isUnramified {ϖ : 𝒪[K]} (hϖ : Irreducible
     Irreducible (algebraMap 𝒪[K] 𝒪[L] ϖ) := by
   rw [IsDiscreteValuationRing.irreducible_iff_uniformizer]
   have h := map_maximalIdeal K L
-  rw [IsUnramified.ramificationIndex_eq_one, pow_one, hϖ.maximalIdeal_eq, Ideal.map_span,
+  rw [ramificationIndex, IsUnramified.ramificationIndex_eq_one, pow_one, hϖ.maximalIdeal_eq, Ideal.map_span,
     Set.image_singleton] at h
   exact h.symm
 
@@ -189,46 +193,11 @@ theorem normIntegerUnits_surjective : Function.Surjective (normIntegerUnits K L)
   obtain ⟨g, -, rfl⟩ := hh
   exact ⟨g, rfl⟩
 
-theorem map_normUnits_unitFiltrationUnits (n : ℕ) :
-    (unitFiltrationUnits L n).map (normUnits K L) = unitFiltrationUnits K n := by
-  have h : (normUnits K L).comp (unitsIncl L) = (unitsIncl K).comp (normIntegerUnits K L) := by
-    ext u
-    simp [normUnits_unitsIncl]
-  rw [unitFiltrationUnits, unitFiltrationUnits, Subgroup.map_map, h, ← Subgroup.map_map,
-    map_normIntegerUnits_unitFiltration]
-
-theorem unitFiltrationUnits_zero_le_range_normUnits :
-    unitFiltrationUnits K 0 ≤ (normUnits K L).range := by
-  rw [← map_normUnits_unitFiltrationUnits (L := L) 0]
-  exact Subgroup.map_le_range _ _
-
 end Residue
 
 section NormGroup
 
-variable (K L) in
 
-def ordModFinrank : Kˣ →* Multiplicative (ZMod (Module.finrank K L)) where
-  toFun x := Multiplicative.ofAdd ((ord (x : K) : ℤ) : ZMod (Module.finrank K L))
-  map_one' := by simp [ord]
-  map_mul' x y := by
-    rw [Units.val_mul, ord_mul x.ne_zero y.ne_zero, Int.cast_add, ofAdd_add]
-
-omit [ValuativeRel L] [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L]
-  [FiniteDimensional K L] in
-theorem ordModFinrank_apply (x : Kˣ) :
-    ordModFinrank K L x = Multiplicative.ofAdd ((ord (x : K) : ℤ) : ZMod (Module.finrank K L)) :=
-  rfl
-
-theorem ordModFinrank_surjective : Function.Surjective (ordModFinrank K L) := by
-  intro z
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  obtain ⟨k, hk⟩ := ZMod.intCast_surjective (Multiplicative.toAdd z)
-  refine ⟨uniformizerUnit hϖ ^ k, ?_⟩
-  have hϖ0 : (ϖ : K) ≠ 0 := by exact_mod_cast hϖ.ne_zero
-  rw [ordModFinrank_apply, Units.val_zpow_eq_zpow_val, coe_uniformizerUnit, ord_zpow hϖ0,
-    ord_uniformizer hϖ, mul_one, hk]
-  rfl
 
 variable [IsUnramified K L]
 
@@ -245,56 +214,17 @@ theorem mem_range_normUnits_iff (x : Kˣ) :
       rw [← hk, ← hx, ord_unitsOfIntProd]
     obtain ⟨v, hv⟩ := normIntegerUnits_surjective (K := K) (L := L) u
     refine ⟨Units.map (algebraMap K L : K →* L) (uniformizerUnit hϖ) ^ k * unitsIncl L v, ?_⟩
-    rw [← hx, unitsOfIntProd_eq, map_mul, map_zpow, normUnits_unitsIncl, hv, hm, zpow_mul]
+    have hnv : normUnits K L (unitsIncl L v) = unitsIncl K (normIntegerUnits K L v) := by
+      ext
+      rw [coe_normUnits]
+      change Algebra.norm K ((v : 𝒪[L]) : L) = _
+      rw [← coe_norm_integer (K := K) (L := L) (v : 𝒪[L])]
+      exact congrArg (algebraMap 𝒪[K] K) (coe_normIntegerUnits_eq v)
+    rw [← hx, unitsOfIntProd_eq, map_mul, map_zpow, hnv, hv, hm, zpow_mul]
     congr 2
     ext
     simp [Algebra.norm_algebraMap]
 
-theorem ker_ordModFinrank : (ordModFinrank K L).ker = (normUnits K L).range := by
-  ext x
-  rw [MonoidHom.mem_ker, mem_range_normUnits_iff, ordModFinrank_apply, ofAdd_eq_one,
-    ZMod.intCast_zmod_eq_zero_iff_dvd]
-
-variable (K L) in
-
-def quotientRangeNormUnitsEquiv :
-    Kˣ ⧸ (normUnits K L).range ≃* Multiplicative (ZMod (Module.finrank K L)) :=
-  (QuotientGroup.quotientMulEquivOfEq ker_ordModFinrank.symm).trans
-    (QuotientGroup.quotientKerEquivOfSurjective _ ordModFinrank_surjective)
-
-theorem quotientRangeNormUnitsEquiv_mk (x : Kˣ) :
-    quotientRangeNormUnitsEquiv K L (QuotientGroup.mk x) = ordModFinrank K L x :=
-  rfl
-
-theorem index_range_normUnits : (normUnits K L).range.index = Module.finrank K L := by
-  rw [Subgroup.index, Nat.card_congr (quotientRangeNormUnitsEquiv K L).toEquiv]
-  exact Nat.card_zmod _
-
-theorem zpowers_mk_uniformizerUnit {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) :
-    Subgroup.zpowers (QuotientGroup.mk (uniformizerUnit hϖ) : Kˣ ⧸ (normUnits K L).range) = ⊤ := by
-  rw [eq_top_iff]
-  rintro q -
-  induction q using QuotientGroup.induction_on with
-  | H x =>
-    refine ⟨ord (x : K), ?_⟩
-    have hϖ0 : (ϖ : K) ≠ 0 := by exact_mod_cast hϖ.ne_zero
-    simp only
-    rw [← QuotientGroup.mk_zpow, QuotientGroup.eq, mem_range_normUnits_iff, Units.val_mul,
-      Units.val_inv_eq_inv_val, Units.val_zpow_eq_zpow_val, coe_uniformizerUnit,
-      ord_mul (inv_ne_zero (zpow_ne_zero _ hϖ0)) x.ne_zero, ← zpow_neg, ord_zpow hϖ0,
-      ord_uniformizer hϖ]
-    simp
-
-theorem orderOf_mk_uniformizerUnit {ϖ : 𝒪[K]} (hϖ : Irreducible ϖ) :
-    orderOf (QuotientGroup.mk (uniformizerUnit hϖ) : Kˣ ⧸ (normUnits K L).range) =
-      Module.finrank K L := by
-  rw [orderOf_eq_card_of_forall_mem_zpowers (fun q ↦ by
-    rw [zpowers_mk_uniformizerUnit hϖ]; exact Subgroup.mem_top q)]
-  exact index_range_normUnits
-
-theorem isCyclic_quotient_range_normUnits : IsCyclic (Kˣ ⧸ (normUnits K L).range) := by
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
-  exact isCyclic_iff_exists_zpowers_eq_top.2 ⟨_, zpowers_mk_uniformizerUnit hϖ⟩
 
 end NormGroup
 

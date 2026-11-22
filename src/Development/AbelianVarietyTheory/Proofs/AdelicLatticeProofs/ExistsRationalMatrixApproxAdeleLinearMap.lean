@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdempotentAdelesAndSmallAdelicMatrices
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdempotentAdelesAndSmallAdelicMatrices
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
 
-open GlobalTheory.UnRep.SmallMat in
 
+open GlobalTheory.UnRep.SmallMat in
 theorem GlobalTheory.UnRep.exists_rational_approx_after_adele_linear : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)), L.FG → Submodule.span E (L : Set (Fin n → E)) = ⊤ → ∀ (φ : Matrix (Fin n) (Fin n) (RA F E) →+ Matrix (Fin n) (Fin n) (RA F E)), (∀ (a : FiniteAdeleRing (𝓞 F) F) (M : Matrix (Fin n) (Fin n) (RA F E)), φ ((a ⊗ₜ[F] (1 : E) : RA F E) • M) = (a ⊗ₜ[F] (1 : E) : RA F E) • φ M) → ∀ (M : Matrix (Fin n) (Fin n) (RA F E)) (D : ℕ), 0 < D → ∃ M₀ : Matrix (Fin n) (Fin n) E, ∀ z ∈ hat F (L : Set (Fin n → E)), ∃ w ∈ hat F (L : Set (Fin n → E)), φ (M - fm F M₀) *ᵥ z = D • w := by
   intro F E _ _ _ _ _ n L hL hsp φ hφ M D hD
   obtain ⟨-, hS, -, -, hint⟩ := GlobalTheory.UnRep.idempotent_adeles_small_matrices F E n L hL hsp
@@ -20,7 +24,7 @@ theorem GlobalTheory.UnRep.exists_rational_approx_after_adele_linear : ∀ (F E 
     obtain ⟨u, hu, hu'⟩ := hA z hz
     obtain ⟨w, hw, hw'⟩ := hB z hz
     refine ⟨u + w, add_mem hu hw, ?_⟩
-    rw [smul_add, ← hu', ← hw', ← Matrix.add_mulVec, fm_add, ← map_add, add_sub_add_comm]
+    rw [smul_add, ← hu', ← hw', ← Matrix.add_mulVec, fm_add, ← map_add (f := _), add_sub_add_comm]
   have hzero : P 0 := ⟨0, fun z _ => ⟨0, zero_mem _, by simp [fm_zero]⟩⟩
   have hgen : ∀ (a : FiniteAdeleRing (𝓞 F) F) (B : Matrix (Fin n) (Fin n) E),
       P ((a ⊗ₜ[F] (1 : E) : RA F E) • fm F B) := by

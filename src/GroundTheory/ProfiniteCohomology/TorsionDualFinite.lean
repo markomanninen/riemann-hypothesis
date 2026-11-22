@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -21,7 +26,7 @@ theorem toReal_mk (q : ℚ) : toReal (mk q) = ((q : ℝ) : AddCircle (1 : ℝ)) 
   rfl
 
 theorem toReal_injective : Injective toReal := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨q, rfl⟩ := mk_surjective x
   rw [toReal_mk, AddCircle.coe_eq_zero_iff] at hx
@@ -51,16 +56,8 @@ noncomputable def toAddChar (f : G →+ QZ) : AddChar G ℂ where
   map_zero_eq_one' := by simp
   map_add_eq_mul' a b := by simp [toComplex_add]
 
-@[simp]
-theorem toAddChar_apply (f : G →+ QZ) (g : G) : toAddChar f g = toComplex (f g) :=
-  rfl
-
 theorem toAddChar_injective : Injective (toAddChar (G := G)) := fun _ _ h =>
   AddMonoidHom.ext fun a => toComplex_injective (DFunLike.congr_fun h a)
-
-theorem toAddChar_add (f f' : G →+ QZ) : toAddChar (f + f') = toAddChar f + toAddChar f' := by
-  ext a
-  simp [toComplex_add]
 
 theorem exists_comp_eq_of_injective (i : G →+ H) (hi : Injective i) (f : G →+ QZ) :
     ∃ g : H →+ QZ, g.comp i = f := by
@@ -91,8 +88,8 @@ theorem exists_apply_ne_zero {a : G} (ha : a ≠ 0) : ∃ f : G →+ QZ, f a ≠
   refine ⟨toAddCircle.symm.toAddMonoidHom.comp (c : G →+ AddCircle (1 : ℚ)), fun h => hc ?_⟩
   exact (AddEquiv.map_eq_zero_iff toAddCircle.symm).mp h
 
-variable (G) in
 
+variable (G) in
 def evalHom : G →+ ((G →+ QZ) →+ QZ) where
   toFun a :=
     { toFun := fun f => f a
@@ -101,12 +98,8 @@ def evalHom : G →+ ((G →+ QZ) →+ QZ) where
   map_zero' := by ext f; simp
   map_add' a b := by ext f; simp
 
-@[simp]
-theorem evalHom_apply (a : G) (f : G →+ QZ) : evalHom G a f = f a :=
-  rfl
-
-theorem evalHom_injective : Injective (evalHom G) := by
-  rw [injective_iff_map_eq_zero]
+theorem evalHom_injective : Injective (evalHom (G := G)) := by
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra hne
   obtain ⟨f, hf⟩ := exists_apply_ne_zero hne
@@ -126,40 +119,12 @@ theorem card_hom_le [Finite G] : Nat.card (G →+ QZ) ≤ Nat.card G := by
 theorem card_hom [Finite G] : Nat.card (G →+ QZ) = Nat.card G :=
   card_hom_le.antisymm <| (Nat.card_le_card_of_injective _ evalHom_injective).trans card_hom_le
 
-variable (G) in
-
-noncomputable def addCharEquiv [Finite G] : (G →+ QZ) ≃+ AddChar G ℂ :=
-  AddEquiv.ofBijective
-    (AddMonoidHom.mk' toAddChar toAddChar_add)
-    (by
-      have := Fintype.ofFinite G
-      refine toAddChar_injective.bijective_of_nat_card_le ?_
-      rw [card_hom, Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, AddChar.card_eq])
-
-@[simp]
-theorem addCharEquiv_apply [Finite G] (f : G →+ QZ) (a : G) :
-    addCharEquiv G f a = toComplex (f a) :=
-  rfl
 
 end QZ
 
 namespace QZDual
 
 variable {N : Type*} [AddCommGroup N] [TopologicalSpace N] [DiscreteTopology N]
-
-noncomputable def addCharEquiv [Finite N] : QZDual N ≃+ AddChar N ℂ :=
-  toAddMonoidHomEquiv.trans (QZ.addCharEquiv N)
-
-@[simp]
-theorem addCharEquiv_apply [Finite N] (χ : QZDual N) (a : N) :
-    addCharEquiv χ a = QZ.toComplex (χ a) :=
-  rfl
-
-instance [Finite N] : Finite (QZDual N) :=
-  Finite.of_injective _ (toAddMonoidHomEquiv (A := N)).injective
-
-theorem card_eq [Finite N] : Nat.card (QZDual N) = Nat.card N :=
-  (Nat.card_congr (toAddMonoidHomEquiv (A := N)).toEquiv).trans QZ.card_hom
 
 end QZDual
 

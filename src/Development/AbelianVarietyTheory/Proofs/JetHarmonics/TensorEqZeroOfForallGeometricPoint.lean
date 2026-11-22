@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
+
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory
@@ -34,7 +39,7 @@ theorem tensor_eq_zero_of_forall_geometric_point :
       (Algebra.TensorProduct.includeRight : A →ₐ[O] TensorProduct O F A) :=
     Algebra.TensorProduct.includeRight_injective hinj
   have hL : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     apply hR
     rw [map_zero]
@@ -63,7 +68,7 @@ theorem tensor_eq_zero_of_forall_geometric_point :
     induction s using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => simp [L, TensorProduct.piLeft]
-    | add s s' h h' => rw [map_add, map_add, Pi.add_apply, h, h', map_add]
+    | add s s' h h' => rw [map_add (f := _), map_add (f := _), Pi.add_apply, h, h', map_add (f := _)]
   rw [key, ht]
   rfl
 

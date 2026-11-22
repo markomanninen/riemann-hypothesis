@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollifyEqConvolution
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollifyEqConvolution
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 

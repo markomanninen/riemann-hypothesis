@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCTheta
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCCurvCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCTheta
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

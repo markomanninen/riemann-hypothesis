@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.MtHeckeLoc
+module
+
+public import Formalism.LocalToGlobal.Columns.MtHeckeLoc
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct

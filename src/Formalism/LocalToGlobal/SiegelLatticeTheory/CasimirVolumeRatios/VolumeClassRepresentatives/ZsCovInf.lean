@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasLev
-import Formalism.LocalRingCardinality.DataTies
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasLev
+public import Formalism.LocalRingCardinality.DataTies
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,6 @@ theorem det_ne_of_inUJ {C : Matrix (Fin n) (Fin n) ℂ} (h : Cᴴ * Formalism.RE
 
 def ofInUJ {C : Matrix (Fin n) (Fin n) ℂ} (h : Cᴴ * Formalism.REAL.Jm ε * C = Formalism.REAL.Jm ε) : Formalism.REAL.UJ ε :=
   ⟨Matrix.nonsingInvUnit C (Ne.isUnit (det_ne_of_inUJ ε h)), h⟩
-
-theorem umat_ofInUJ {C : Matrix (Fin n) (Fin n) ℂ} (h : Cᴴ * Formalism.REAL.Jm ε * C = Formalism.REAL.Jm ε) :
-    PI.CdHaarScale.umat (ofInUJ ε h) = C := rfl
 
 theorem umat_mul (g h : Formalism.REAL.UJ ε) :
     PI.CdHaarScale.umat (g * h) = PI.CdHaarScale.umat g * PI.CdHaarScale.umat h := rfl
@@ -59,8 +60,8 @@ theorem signs_eq : (fun i => (e.symm i).isLeft) = ε := by
   · simp [h1]
   · simp [h2]
 
-include h1 h2 in
 
+include h1 h2 in
 theorem sq_inUJ {C : Matrix (Fin P ⊕ Fin Q) (Fin n) ℂ} (hC : Cᴴ * Formalism.UG.Jpq P Q * C = Formalism.REAL.Jm ε) :
     (C.submatrix e.symm id)ᴴ * Formalism.REAL.Jm ε * C.submatrix e.symm id = Formalism.REAL.Jm ε := by
   have := Formalism.IndefR.Eqv.MF.sq_gram e.symm C

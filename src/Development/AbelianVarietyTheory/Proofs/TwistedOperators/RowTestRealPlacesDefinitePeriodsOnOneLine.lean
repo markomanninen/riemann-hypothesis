@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PeriodsOnLineOfInvLine
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FinrankInvFunBranch
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestDefinitePeriodsInvariantFunctionalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PeriodsOnLineOfInvLine
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FinrankInvFunBranch
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowTestDefinitePeriodsInvariantFunctionalStatement
+
+@[expose] public section
 
 open GlobalTheory.RowClaim GlobalTheory.RowReal
 

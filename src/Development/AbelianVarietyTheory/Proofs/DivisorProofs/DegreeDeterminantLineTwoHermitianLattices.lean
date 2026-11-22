@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameCoord
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LcvBasis
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrameCoord
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.LcvBasis
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.IdxRules
+
+@[expose] public section
 
 noncomputable section
 
@@ -189,8 +193,9 @@ theorem det_gram_smul (h : ReciprocityTheory.GeometryOfNumbersTheory.HermFam K (
 
 theorem det_gram_re_pos (h : ReciprocityTheory.GeometryOfNumbersTheory.HermFam K (Fin n → K)) (σ : K →+* ℂ) {m : ℕ}
     {u : Fin m → Fin n → K} (hu : LinearIndependent K u) : 0 < (h.gram σ u).det.re := by
-  have := (h.posDef σ m u hu).det_pos
-  exact (Complex.pos_iff.1 this).1
+  open scoped ComplexOrder in
+    have := (h.posDef σ m u hu).det_pos
+    exact (Complex.pos_iff.1 this).1
 
 theorem lineDeg_frame (h : ReciprocityTheory.GeometryOfNumbersTheory.HermFam K (Fin n → K)) {L : Submodule (𝓞 K) (Fin n → K)} (hL : L.FG)
     {m : ℕ} {u : Fin m → Fin n → K} (hu : LinearIndependent K u)

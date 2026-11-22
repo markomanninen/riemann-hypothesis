@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NotCdomRaiseOfLt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommonEigenvectors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NotCdomRaiseOfLt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CommonEigenvectors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ProductIntervalFrames
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -154,7 +158,7 @@ theorem first_weight_half_integral {Wp : Type} [NormedAddCommGroup Wp] [InnerPro
   have hDg : QrCap.Dg θ = QrCap.Dg (0 : Fin P.k → ℝ) := by
     unfold QrCap.Dg
     congr 1
-    funext c
+    funext a
     simp only [hθ, Pi.zero_apply]
     split_ifs
     · push_cast
@@ -229,7 +233,7 @@ theorem radial_gauge_integrality_holds : GTRInt := by
     intro i hi
     obtain ⟨hi1, hi2⟩ := Finset.mem_Icc.1 hi
     unfold M.rho
-    rw [dif_pos ⟨hi1, hi2⟩]
+    rw [dite_eq_left ⟨hi1, hi2⟩]
     unfold M.Par.lo
     obtain ⟨a, ha⟩ := hOK.int_u (i + 1) (Finset.mem_Icc.2 ⟨by omega, by omega⟩)
     obtain ⟨b, hb⟩ := hOK.int_u' (i + 1) (Finset.mem_Icc.2 ⟨by omega, by omega⟩)

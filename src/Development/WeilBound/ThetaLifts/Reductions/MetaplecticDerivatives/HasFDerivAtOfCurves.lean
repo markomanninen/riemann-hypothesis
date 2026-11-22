@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.MpFOne
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.MpFOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem hasDerivAt_det_one {M : ℝ → l → l → ℝ} {X : l → l → ℝ} (
   have hd : DifferentiableAt ℝ (fun N : l → l → ℝ => (Matrix.of N).det) (M 0) := by
     simp only [Matrix.det_apply', Matrix.of_apply]
     exact DifferentiableAt.fun_sum fun σ _ => (((contDiff_prod (n := 1) (f := fun i (N : l → l → ℝ) => N (σ i) i)
-      fun i _ => contDiff_apply_apply ℝ ℝ (σ i) i).differentiable one_ne_zero) _).const_mul _
+      fun i _ => contDiff_apply_apply (𝕜 := ℝ) (E := ℝ) (σ i) i).differentiable one_ne_zero) _).const_mul _
   have h1 := hd.hasFDerivAt.comp_hasDerivAt 0 h
   have h2 : HasDerivAt (fun t : ℝ => M 0 + t • X) X 0 := by
     simpa using ((hasDerivAt_id (0 : ℝ)).smul_const X).const_add (M 0)
@@ -88,6 +92,9 @@ theorem curve {g : ℝ → (l ⊕ l) → (l ⊕ l) → ℝ} {X : (l ⊕ l) → (
   let c : ℝ → ℝ := fun t => (√|(Matrix.of (g t)).toBlocks₁₁.det|)⁻¹
   have eA : ∀ t, (A t).det = (Matrix.of (g t)).toBlocks₁₁.det := fun t => det_bl _ _ _
   have A0 : A 0 = 1 := by simp only [A, g0, block_inl_inl_one]
+  letI : HasSummableGeomSeries (Eu l →L[ℝ] Eu l) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact inferInstance
   have h0 : IsUnit (A 0) := A0 ▸ isUnit_one
   have hopen : ∀ᶠ u in 𝓝 0, IsUnit (A u) := (hd _ _).continuousAt.eventually (Units.isOpen.mem_nhds h0)
   have hdet : ∀ t, IsUnit (A t) → (Ring.inverse (A t)).det * (A t).det = 1 := fun t ht => by
@@ -144,7 +151,8 @@ theorem secDer : SecDer l := by
   refine (h1.comp x₀ h2).congr_fderiv ?_
   ext1 v
   rw [ContinuousLinearMap.comp_apply, hL, ← qd_sum]
-  simp only [map_sum, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   exact ((schwartzToL2 l).restrictScalars ℝ).map_smul _ _
 

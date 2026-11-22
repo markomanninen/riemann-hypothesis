@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Real
 
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] {κ : Type} [Fintype κ]
 
-variable (V κ) in
 
+variable (V κ) in
 def dgL : (κ → V) →L[ℝ] (κ ⊕ κ → V) := GlobalTheory.SchwartzBox.restr V (Sum.elim id id)
 
 theorem dg_add (x u : κ → V) : dgL V κ u + Sum.elim x 0 = Sum.elim (u + x) u := by
@@ -132,7 +136,7 @@ theorem summable_decay (f : (κ → mixedEmbedding.mixedSpace F) → ℂ) (hf : 
 
 open GroundTheory.Automorphic.GJMatrix GroundTheory.Global
 
-theorem sch_eq : schA F κ = schwartzBruhatPi F κ := rfl
+theorem sch_eq : schA F κ = schwartzBruhatPi (K := F) (ι := κ) := rfl
 
 def sl (a : κ → AF F) (Φ : (κ ⊕ κ → AF F) → ℂ) (u : κ → AF F) : ℂ := Φ (Sum.elim (u + a) u)
 
@@ -161,7 +165,7 @@ theorem coset_split (J) (b : κ ⊕ κ → Af F) (a : κ → Af F) :
 abbrev rt (ξ : κ → F) : κ → AF F := fun i => algebraMap F (AF F) (ξ i)
 
 theorem sl_coset (f : 𝓢(κ ⊕ κ → mixedEmbedding.mixedSpace F, ℂ)) (J) (b : κ ⊕ κ → Af F) :
-    (∀ a, sl a (schwartzBruhatTensorPi f (finiteTensor fun i => cosetIndicator J (b i))) ∈ schwartzBruhatPi F κ) ∧
+    (∀ a, sl a (schwartzBruhatTensorPi f (finiteTensor fun i => cosetIndicator J (b i))) ∈ schwartzBruhatPi (K := F) (ι := κ)) ∧
     Summable fun ξ : κ ⊕ κ → F => adelicFourierPi F
       (sl (rt (ξ ∘ .inl)) (schwartzBruhatTensorPi f (finiteTensor fun i => cosetIndicator J (b i)))) (rt (ξ ∘ .inr)) := by
   have m : ∀ c : κ → Af F, finiteTensor (fun i => cosetIndicator J (c i)) ∈ finiteSchwartzBruhatPi F := fun c =>
@@ -174,7 +178,7 @@ theorem sl_coset (f : 𝓢(κ ⊕ κ → mixedEmbedding.mixedSpace F, ℂ)) (J) 
   · rw [sl_tensor, coset_split, adelicFourierPi_schwartzBruhatTensorPi, finiteFourierPi_smul]
     rfl
 
-theorem sl_mem {Φ : (κ ⊕ κ → AF F) → ℂ} (h : Φ ∈ schA F (κ ⊕ κ)) : (∀ a, sl a Φ ∈ schwartzBruhatPi F κ) ∧
+theorem sl_mem {Φ : (κ ⊕ κ → AF F) → ℂ} (h : Φ ∈ schA F (κ ⊕ κ)) : (∀ a, sl a Φ ∈ schwartzBruhatPi (K := F) (ι := κ)) ∧
     Summable fun ξ : κ ⊕ κ → F => adelicFourierPi F (sl (rt (ξ ∘ .inl)) Φ) (rt (ξ ∘ .inr)) := by
   rw [sch_eq, schwartzBruhatPi_eq_cosetSpanPi] at h
   induction h using Submodule.span_induction with

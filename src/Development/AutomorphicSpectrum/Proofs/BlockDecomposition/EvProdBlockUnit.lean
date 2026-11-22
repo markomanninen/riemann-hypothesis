@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIsUnder
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PullRatioTopEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdZpowSingle
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ArakelovCycleHeights.QpSndStr
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ResidueDegreeOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ArFormExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIsUnder
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PullRatioTopEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProdZpowSingle
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.ProjSpace GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.ArInt
@@ -154,8 +159,8 @@ theorem mem_pick_ptC (y : CxPts (mpStr ℤ m n) σ₀) :
     y ∈ ptsIn (mpStr ℤ m n) σ₀ (M.B.U (pick M.isLB y) ⊓ mchart (ptC y)) :=
   mem_ptsIn_inf.2 ⟨mem_pick M.isLB y, mem_ptC y⟩
 
-open Classical in
 
+open Classical in
 def hOf (z : (Σ k, Bk n k) → ℂ) : ℝ :=
   if hz : ∃ y, IsUnder y z then hval M a u hz.choose z (pick M.isLB hz.choose) (ptC hz.choose) else 0
 
@@ -176,7 +181,7 @@ theorem hOf_eq (h1 : (∀ i j c',
     {y : CxPts (mpStr ℤ m n) σ₀} {z : (Σ k, Bk n k) → ℂ} (hy : IsUnder y z) (i : M.B.ι) (c : ∀ k, Bk n k)
     (hi : y ∈ ptsIn (mpStr ℤ m n) σ₀ (M.B.U i ⊓ mchart c)) : hOf M a u z = hval M a u y z i c := by
   have hz : ∃ y, IsUnder y z := ⟨y, hy⟩
-  rw [hOf, dif_pos hz, uniq z _ _ hz.choose_spec hy]
+  rw [hOf, dite_eq_left hz, uniq z _ _ hz.choose_spec hy]
   have h0 := mem_pick_ptC M y
   rw [mem_ptsIn_inf] at h0 hi
   rw [hval_chart M a u h1 z (pick M.isLB y) i (ptC y) (mem_ptsIn_inf.2 h0) (mem_ptsIn_inf.2 ⟨hi.1, h0.2⟩),
@@ -223,7 +228,7 @@ def lineOf (h1 : (∀ i j c',
       rw [hOf_eq M a u h1 h2 uniq (isUnder_smul hy l hl) _ _ (mem_pick_ptC M y),
         hOf_eq M a u h1 h2 uniq hy _ _ (mem_pick_ptC M y), hval_smul]
     · have hz' : ¬ ∃ y, IsUnder y (fun p => l p.1 * z p) := fun ⟨y, hy⟩ => hz ⟨y, isUnder_of_smul l hl hy⟩
-      rw [hOf, dif_neg hz', hOf, dif_neg hz, mul_zero]
+      rw [hOf, dite_eq_right hz', hOf, dite_eq_right hz, mul_zero]
 
 theorem isHermRep_lineOf (h1 : (∀ i j c',
       res (le_inf (inf_le_left.trans inf_le_right) inf_le_right :

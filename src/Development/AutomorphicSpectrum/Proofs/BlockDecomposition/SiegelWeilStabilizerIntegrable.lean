@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MeasurableSetIntF
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.MeasurableSetIntF
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -21,7 +26,7 @@ theorem repr_map {F E A B : Type} [Field F] [Field E] [Algebra F E] [CommRing A]
   | zero => simp
   | tmul a e =>
     simp [Algebra.TensorProduct.basis_repr_tmul, Algebra.TensorProduct.map_tmul]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 section Cont
 
@@ -45,9 +50,10 @@ theorem continuous_trace_pair [FiniteDimensional F E] (σ : E →ₐ[F] E) {n : 
       fun B : HeckeCharacterZeroLocus.SiegelWeilU.HermR R σ n => ∑ a, ∑ c, (Algebra.trace R (R ⊗[F] E) ∘ₗ LinearMap.mulLeft R (T a c))
         ((B : Matrix (Fin n) (Fin n) (R ⊗[F] E)) c a) := by
     funext B
-    simp [Matrix.trace, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, Matrix.mul_apply, map_sum]
   rw [h]
-  exact continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun c _ =>
+  exact continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun c _ =>
     (continuous_linear _).comp (continuous_entry σ c a)
 
 end Cont

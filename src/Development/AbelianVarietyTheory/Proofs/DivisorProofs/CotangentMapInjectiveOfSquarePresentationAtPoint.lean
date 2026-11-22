@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.CotangentSquare
@@ -21,7 +26,8 @@ theorem pderiv_comb [Fintype σ] (η : MvPolynomial σ B →+* O) (f g : σ → 
     (hf : ∀ i, η (f i) = 0) (k : MvPolynomial σ B) (hk : k ∈ firstOrderKer η) (l : σ) :
     η (pderiv l (∑ i, g i * f i + k)) = ∑ i, η (g i) * η (pderiv l (f i)) := by
   have := hk.2 l
-  simp [map_sum, pderiv_mul, hf, this]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, pderiv_mul, hf, this]
 
 theorem det_ne_zero_of_mul_eq [Fintype σ] [DecidableEq σ] [IsDomain O] {N J : Matrix σ σ O}
     {c : O} (hc : c ≠ 0) (h : N * J = c • (1 : Matrix σ σ O)) : J.det ≠ 0 := by

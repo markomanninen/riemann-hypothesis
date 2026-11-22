@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.MomOne
@@ -19,7 +23,7 @@ theorem norm_zc (a : ℤ_[q]) : ‖zc a‖ = ‖a‖ := by
 
 theorem coeff_DT (f : ℂ_[q]⟦X⟧) (n : ℕ) :
     coeff n (DT f) = coeff (n + 1) f * (n + 1) + coeff n f * n := by
-  rw [DT, add_mul, one_mul, map_add, coeff_derivative]
+  rw [DT, add_mul, one_mul, map_add (f := _), coeff_derivative]
   cases n with
   | zero => simp
   | succ n => rw [coeff_succ_X_mul, coeff_derivative]; simp
@@ -64,7 +68,7 @@ theorem ode_unique (c : ℂ_[q]) (h : ℂ_[q]⟦X⟧) {f g : ℂ_[q]⟦X⟧} (hf
   | succ n ih =>
     have h1 := congrArg (coeff n) hf
     have h2 := congrArg (coeff n) hg
-    rw [coeff_DT, map_add, coeff_C_mul] at h1 h2
+    rw [coeff_DT, map_add (f := _), coeff_C_mul] at h1 h2
     have h3 : ((n : ℂ_[q]) + 1) ≠ 0 := by exact_mod_cast n.succ_ne_zero
     apply mul_right_cancel₀ h3
     rw [ih] at h1
@@ -88,12 +92,12 @@ theorem DT_subst_mulS (a : ℤ_[q]) (f : ℂ_[q]⟦X⟧) :
   have hs := hasSubst_mulS a
   have h2 := DT_mulS a
   have h1 : (DT f).subst (mulS a : ℂ_[q]⟦X⟧) =
-      (1 + mulS a) * (derivative ℂ_[q] f).subst (mulS a : ℂ_[q]⟦X⟧) := by
-    rw [DT, ← coe_substAlgHom hs, map_mul, map_add, map_one, substAlgHom_X]
+      (1 + mulS a) * (derivative f).subst (mulS a : ℂ_[q]⟦X⟧) := by
+    rw [DT, ← coe_substAlgHom hs, map_mul, map_add (f := _), map_one, substAlgHom_X]
   rw [h1]
   unfold DT at h2 ⊢
   rw [derivative_subst hs]
-  linear_combination ((derivative ℂ_[q] f).subst (mulS a : ℂ_[q]⟦X⟧)) * h2
+  linear_combination ((derivative f).subst (mulS a : ℂ_[q]⟦X⟧)) * h2
 
 theorem constantCoeff_subst_mulS (a : ℤ_[q]) {f : ℂ_[q]⟦X⟧} (hf : constantCoeff f = 0) :
     constantCoeff (f.subst (mulS a : ℂ_[q]⟦X⟧)) = 0 := by
@@ -119,7 +123,7 @@ theorem mulS_subst (a b : ℤ_[q]) :
   have hs := hasSubst_mulS b
   have hz : zc (a * b) = zc a * zc b := by simp [zc_eq]
   refine ode_unique (zc (a * b)) (C (zc (a * b))) ?_ ?_ ?_
-  · rw [DT_subst_mulS, DT_mulS, ← coe_substAlgHom hs, map_mul, map_add, map_one, hz, map_mul]
+  · rw [DT_subst_mulS, DT_mulS, ← coe_substAlgHom hs, map_mul, map_add (f := _), map_one, hz, map_mul]
     have : (substAlgHom hs : ℂ_[q]⟦X⟧ →ₐ[ℂ_[q]] ℂ_[q]⟦X⟧) (C (zc a)) = C (zc a) :=
       (substAlgHom hs : ℂ_[q]⟦X⟧ →ₐ[ℂ_[q]] ℂ_[q]⟦X⟧).commutes (zc a)
     rw [this]

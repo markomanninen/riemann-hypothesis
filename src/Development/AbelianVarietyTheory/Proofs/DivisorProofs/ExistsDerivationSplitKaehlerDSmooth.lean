@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open KaehlerDifferential
 namespace GlobalTheory
 theorem bertini_derivation_split : ∀ (k A : Type) [Field k] [CommRing A] [Algebra k A] [Algebra.Smooth k A], ∃ (n : ℕ) (δ : Fin n → Derivation k A A) (ω : Fin n → KaehlerDifferential k A), ∀ a : A, KaehlerDifferential.D k A a = ∑ l, δ l a • ω l := by
@@ -10,7 +15,8 @@ theorem bertini_derivation_split : ∀ (k A : Type) [Field k] [CommRing A] [Alge
   simp only [LinearMap.comp_apply, LinearMap.id_apply] at h
   conv_lhs => rw [← h]
   conv_lhs => rw [pi_eq_sum_univ (g (KaehlerDifferential.D k A a))]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
   refine Finset.sum_congr rfl fun l _ => ?_
   congr 2
   ext j

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFieldCompletionTensorOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTest
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagWZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFieldCompletionTensorOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergInvariantFormVanishesLagrangianTest
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels MeasureTheory GlobalTheory.LatVac GlobalTheory.InertVacLag GlobalTheory.InertLagChar
 open scoped TensorProduct Matrix GlobalTheory.VacAny
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -30,25 +35,25 @@ theorem exists_ne_of_cm {F E : Type} [Field F] [NumberField F] [Field E] [Number
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem idem_smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl F) (u : M)
+theorem idem_smul_of_at {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl (F := F)) (u : M)
     (hu : At (evFin F v) u) : GlobalTheory.LatVac.liftV v (1 : Fv F v) • u = u := by
   have h := hu (1 - GlobalTheory.LatVac.liftV v 1) (by rw [map_sub, map_one, evFin_liftV, sub_self])
   rw [sub_smul, one_smul] at h
   exact (sub_eq_zero.1 h).symm
 
-theorem idem_mul (v : Pl F) (x : AF F) :
+theorem idem_mul (v : Pl (F := F)) (x : AF F) :
     GlobalTheory.LatVac.liftV v (1 : Fv F v) * x = GlobalTheory.LatVac.liftV v (evFin F v x) := by
   have h := at_liftV v (1 : Fv F v) (x - GlobalTheory.LatVac.liftV v (evFin F v x)) (by rw [map_sub, evFin_liftV, sub_self])
   have h2 := idem_smul_of_at v _ (at_liftV v (evFin F v x))
   rw [smul_eq_mul] at h h2
   linear_combination h + h2
 
-theorem at_idem_smul {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl F) (z : M) :
+theorem at_idem_smul {M : Type} [AddCommGroup M] [Module (AF F) M] (v : Pl (F := F)) (z : M) :
     At (evFin F v) (GlobalTheory.LatVac.liftV v (1 : Fv F v) • z) := by
   intro u hu
   rw [smul_smul, ← smul_eq_mul, at_liftV v 1 u hu, zero_smul]
 
-theorem idem_smul_eq_zero (v : Pl F) (a : AE F E) (ha : compFin F E v a = 0) :
+theorem idem_smul_eq_zero (v : Pl (F := F)) (a : AE F E) (ha : compFin F E v a = 0) :
     GlobalTheory.LatVac.liftV v (1 : Fv F v) • a = 0 := by
   have key : ∀ a : AE F E, GlobalTheory.LatVac.liftV v (1 : Fv F v) • a =
       (GlobalTheory.LatVac.liftV v).rTensor E (compFin F E v a) := by
@@ -58,17 +63,17 @@ theorem idem_smul_eq_zero (v : Pl F) (a : AE F E) (ha : compFin F E v a = 0) :
     | tmul x e =>
       rw [TensorProduct.smul_tmul', smul_eq_mul, idem_mul]
       simp [compFin]
-    | add x y hx hy => rw [smul_add, hx, hy, map_add, map_add]
+    | add x y hx hy => rw [smul_add, hx, hy, map_add (f := _), map_add (f := _)]
   rw [key, ha, map_zero]
 
-theorem compFin_lift (v : Pl F) (q : Fv F v ⊗[F] E) :
+theorem compFin_lift (v : Pl (F := F)) (q : Fv F v ⊗[F] E) :
     compFin F E v ((GlobalTheory.LatVac.liftV v).rTensor E q) = q := by
   induction q using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [compFin, evFin_liftV]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
-theorem exists_inv_at (v : Pl F) {n : ℕ} (M : Matrix (Fin n) (Fin n) (AE F E))
+theorem exists_inv_at (v : Pl (F := F)) {n : ℕ} (M : Matrix (Fin n) (Fin n) (AE F E))
     (h : IsUnit (M.map (compFin F E v)).det) :
     ∃ b : Matrix (Fin n) (Fin n) (AE F E), At (evFin F v) b ∧
       b * M = GlobalTheory.LatVac.liftV v (1 : Fv F v) • (1 : Matrix (Fin n) (Fin n) (AE F E)) ∧
@@ -109,7 +114,7 @@ namespace GlobalTheory.InertScalarUnit
 open GlobalTheory.LatVac
 
 theorem exists_scalar_inv_at : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E), B.IsGood σ →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (g : UA σ J),
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (g : UA σ J),
     ∃ k : UA σ J, At (evFin F v) (mat k - 1) ∧ ∃ a b : Matrix (Fin n) (Fin n) (AE F E), At (evFin F v) a ∧ At (evFin F v) b ∧
       a * (1 - mat k) = liftV v (1 : Fv F v) • (1 : Matrix (Fin n) (Fin n) (AE F E)) ∧
       (1 - mat k) * a = liftV v (1 : Fv F v) • (1 : Matrix (Fin n) (Fin n) (AE F E)) ∧
@@ -140,7 +145,7 @@ theorem exists_scalar_inv_at : ∀ (F E : Type) [Field F] [NumberField F] [Field
   have hnum : ∀ m : ℕ, (m : E) + ξ ≠ 0 := by
     intro m h
     have h2 := congrArg σ h
-    rw [map_add, map_natCast, hξ, map_zero, ← sub_eq_add_neg] at h2
+    rw [map_add (f := _), map_natCast, hξ, map_zero, ← sub_eq_add_neg] at h2
     exact hden m h2
   let lam : ℕ → E := fun m => ((m : E) + ξ) / ((m : E) - ξ)
   have hlam : Function.Injective lam := by
@@ -161,7 +166,7 @@ theorem exists_scalar_inv_at : ∀ (F E : Type) [Field F] [NumberField F] [Field
     rw [hl, div_eq_one_iff_eq (hden m)] at h
     exact hξ0 (by linear_combination h / 2)
   have hσl : σ l = ((m : E) - ξ) / ((m : E) + ξ) := by
-    simp only [hl, lam, map_div₀, map_add, map_sub, map_natCast, hξ]
+    simp only [hl, lam, map_div₀, map_add (f := _), map_sub, map_natCast, hξ]
     ring
   have hlσl : l * σ l = 1 := by
     rw [hσl, hl]

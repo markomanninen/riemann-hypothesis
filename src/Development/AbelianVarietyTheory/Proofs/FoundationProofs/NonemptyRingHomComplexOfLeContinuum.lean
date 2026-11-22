@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataRRMetric
-import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
-import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataRRMetric
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Formalism.LocalToGlobal.LatticeGeometry.CmTypeMeetsConjugatePair
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -10,8 +14,8 @@ open Formalism.BasicNotions NumberField
 
 namespace GlobalTheory.WittFracComplex
 
-open Cardinal in
 
+open Cardinal in
 theorem nonempty_ringHom_complex_of_le_continuum (K : Type) [Field K] [CharZero K] (hK : #K ≤ 𝔠) :
     Nonempty (K →+* ℂ) := by
   let F := FractionRing (MvPolynomial ℝ K)
@@ -43,8 +47,8 @@ theorem charZero_wittVector (p : ℕ) [hp : Fact p.Prime] (k : Type) [Field k] [
   · subst h
     exact CharP.charP_to_charZero _
 
-open Cardinal in
 
+open Cardinal in
 theorem mk_wittVector_le (p : ℕ) (k : Type) (hk : #k ≤ ℵ₀) : #(WittVector p k) ≤ 𝔠 := by
   have h : Function.Injective (WittVector.coeff : WittVector p k → ℕ → k) :=
     fun x y h => WittVector.ext (fun n => congrFun h n)
@@ -52,8 +56,8 @@ theorem mk_wittVector_le (p : ℕ) (k : Type) (hk : #k ≤ ℵ₀) : #(WittVecto
   rw [← Cardinal.power_def, Cardinal.mk_nat, ← Cardinal.aleph0_power_aleph0]
   exact Cardinal.power_le_power_right hk
 
-open Cardinal in
 
+open Cardinal in
 theorem nonempty_ringHom_complex : ∀ (p : ℕ) [Fact p.Prime], Nonempty (DV.KW p →+* ℂ) := by
   intro p _
   have hk : #(AlgebraicClosure (ZMod p)) ≤ ℵ₀ := by

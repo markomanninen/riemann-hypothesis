@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -8,8 +13,8 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo
 
 noncomputable section
 
-open Classical in
 
+open Classical in
 def FlagBundleSectionDiv.Statement : Prop :=
   ∀ (F : Type) [Field F] (Ω : Type) [Field Ω] [Algebra F Ω]
     (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [∀ k, Fintype (ι k)]
@@ -32,10 +37,6 @@ def FlagBundleSectionDiv.Statement : Prop :=
       ∀ W : Ideal (MRing (bundleIdx ι M) F),
         ratDiv (projIdeal F y w φ (truncCoord t ((i : ℕ) + 1))) f g W =
           if W = projIdeal F y w φ (truncCoord t i) then 1 else 0
-
-abbrev lineGenT : Fin 2 → FractionRing (MvPolynomial (Fin 2) LineFieldTwoElement) :=
-  fun j => algebraMap (MvPolynomial (Fin 2) LineFieldTwoElement) (FractionRing (MvPolynomial (Fin 2) LineFieldTwoElement))
-    (X j)
 
 end
 

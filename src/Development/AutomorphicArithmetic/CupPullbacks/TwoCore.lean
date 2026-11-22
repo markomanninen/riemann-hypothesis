@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingExistsUniqueAdditiveExact
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MayerVietorisConnectingCupPullback
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupProductGradedCommStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistCupUnitAndPrimitiveRootClassesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
 namespace UpperTheory.P2
@@ -115,7 +120,7 @@ theorem core' (hc : Cover2 (ZMod q) f₁ f₂) (ξ : Ht q X (1 + 1) 1) (κ : Ht 
   set C : Ht q E m j → Ht q X (m + 1 + 1) (j + 1) := fun b => (cup q (pull _ π _ _ b) ξ).cast hm rfl with hC
   have Cadd : ∀ b b', C (b + b') = C b + C b' := by
     intro b b'
-    simp only [hC, map_add, AddMonoidHom.add_apply, cast_add']
+    simp only [hC, map_add (f := _), AddMonoidHom.add_apply, cast_add']
   have Cneg : ∀ b, C (-b) = - C b := by
     intro b
     simp only [hC, map_neg, AddMonoidHom.neg_apply, cast_neg]
@@ -138,7 +143,7 @@ theorem core' (hc : Cover2 (ZMod q) f₁ f₂) (ξ : Ht q X (1 + 1) 1) (κ : Ht 
     have ker : ∀ a b, pull _ π _ _ a + C b = 0 → a = 0 ∧ b = 0 := by
       intro a b h
       have h1 := congrArg (pull _ f₁ _ _) h
-      rw [map_add, hres₁, add_zero, map_zero, ← pull_comp] at h1
+      rw [map_add (f := _), hres₁, add_zero, map_zero, ← pull_comp] at h1
       have ha : a = 0 := (injective_iff_map_eq_zero _).1 ((h₁ (j + 1) (m + 1 + 1)).1) a h1
       subst ha
       rw [map_zero, zero_add] at h

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NormOneInfinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.NormOneInfinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
@@ -64,7 +68,7 @@ theorem finite_not_isUnit_det {E R : Type} [Field E] [CommRing R] (φ : E →+* 
     rw [key, h4] at h2
     have h5 : (1 + ((Ideal.Quotient.mk M).comp φ) l • (1 : Matrix (Fin n) (Fin n) (R ⧸ M))) =
         ((Ideal.Quotient.mk M).comp φ) (1 + l) • 1 := by
-      rw [map_add, map_one, add_smul, one_smul]
+      rw [map_add (f := _), map_one, add_smul, one_smul]
     rw [h5, Matrix.det_smul, Matrix.det_one, mul_one] at h2
     have h6 := (map_eq_zero _).1 (pow_eq_zero_iff (by
       intro h; rw [h] at h2; simp at h2) |>.1 h2)

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulMatMemUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualIffLatticeVolumeAndPlancherelStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MulMatMemUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuadraticStarStructure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedStandardAddCharConductorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualIffLatticeVolumeAndPlancherelStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelfDualMeasureExistsUniqueFourierInversion
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -19,9 +24,9 @@ theorem star_smul_vec [hU : Unram F E] {r : ℕ} (a : F) (c : Fin r → E) : sta
 
 def trForm [Unram F E] (r : ℕ) : LinearMap.BilinForm F (Fin r → E) :=
   LinearMap.mk₂ F (fun c b => Algebra.trace F E (star c ⬝ᵥ b))
-    (fun c c' b => by simp only [star_add, add_dotProduct, map_add])
+    (fun c c' b => by simp only [star_add, add_dotProduct, map_add (f := _)])
     (fun a c b => by simp only [star_smul_vec, smul_dotProduct, map_smul])
-    (fun c b b' => by simp only [dotProduct_add, map_add])
+    (fun c b b' => by simp only [dotProduct_add, map_add (f := _)])
     (fun a c b => by simp only [dotProduct_smul, map_smul])
 
 theorem trForm_apply [Unram F E] {r : ℕ} (c b : Fin r → E) :
@@ -121,7 +126,8 @@ theorem pi_selfDual [hU : Unram F E] (ψ : AddChar F ℂ) (hψ : IsStdChar ψ) (
       rw [trForm_apply] at h1
       simpa [dotProduct, Pi.single_apply, apply_ite star] using h1
     · intro h x hx
-      rw [trForm_apply, dotProduct, map_sum, addChar_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [trForm_apply, dotProduct, map_sum, addChar_sum]
       refine Finset.prod_eq_one fun i _ => ?_
       rw [Pi.star_apply]
       exact (hc (y i)).2 (h i) (star (x i)) (by rw [hU.norm_star]; exact hx i)

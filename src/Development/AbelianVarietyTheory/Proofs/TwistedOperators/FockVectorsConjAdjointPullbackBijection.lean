@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianAdjointLawsStandardCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.APlusComm
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharacterHalfSymplecticFormRealPoint
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HermitianAdjointLawsStandardCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.APlusComm
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasDerivAtZeroAndIsTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharacterHalfSymplecticFormRealPoint
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieAlgebrasAtPlaceActFockVectorsByFockOperators
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,7 +140,7 @@ theorem aPlus_dag (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (L : AdjLaw ψ
   rw [GlobalTheory.FockSubst.aPlus_eq, GlobalTheory.FockSubst.aPlus_eq, dRho_dag hθ L, dRho_dag hθ L, cdag_cplx τ hS hT,
     dRho_neg' hψ hθ hg]
   funext x
-  simp only [dag, Pi.smul_apply, Pi.add_apply, Pi.neg_apply, smul_eq_mul, map_mul, map_add, map_neg, map_inv₀,
+  simp only [dag, Pi.smul_apply, Pi.add_apply, Pi.neg_apply, smul_eq_mul, map_mul, map_add (f := _), map_neg, map_inv₀,
     Complex.conj_ofReal, Complex.conj_I]
   ring
 
@@ -154,7 +158,7 @@ theorem vac_dag (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (L : AdjLaw ψ S
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at this
   simp only [dag, Pi.add_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul, Pi.zero_apply]
   have e := congrArg (starRingEnd ℂ) this
-  simp only [map_add, map_mul, Complex.conj_I, map_zero] at e
+  simp only [map_add (f := _), map_mul, Complex.conj_I, map_zero] at e
   rw [map_neg]
   linear_combination e
 
@@ -260,7 +264,7 @@ theorem ptF_C (A : Fr V) (B : Fr W) (g : WO V W → ℂ) (x : ℂ) (Q : PolF D W
 theorem ptF_add (A : Fr V) (B : Fr W) (g : WO V W → ℂ) (p q : PolF D W.rank V.rank) :
     ptF ψ θ A B g (p + q) = ptF ψ θ A B g p + ptF ψ θ A B g q := by
   unfold ptF
-  rw [map_add]
+  rw [map_add (f := _)]
 
 theorem ptF_one (A : Fr V) (B : Fr W) (g : WO V W → ℂ) : ptF ψ θ A B g 1 = g := by
   unfold ptF pureTensorO
@@ -322,8 +326,8 @@ theorem dag_smul' (c : ℂ) (f : WO S T → ℂ) : dag S T (c • f) = starRingE
 
 end GlobalTheory.FockAdjoint
 
-open GlobalTheory.FockAdjoint in
 
+open GlobalTheory.FockAdjoint in
 theorem GlobalTheory.FockAdjoint.fock_dag : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D), IsStdChar D ψ (-1) →
     IsInfFam θ → ∀ (S T : HSp D) (A : Fr S) (B : Fr T), ∃ j : PolF D T.rank S.rank ≃+ PolF D S.rank T.rank,
       (∀ (c : ℂ) P, j (c • P) = starRingEnd ℂ c • j P) ∧ ∀ f, IsVacF ψ θ A B f → IsVacF ψ θ B A (dag S T f) ∧
@@ -342,7 +346,7 @@ theorem GlobalTheory.FockAdjoint.fock_dag : ∀ (D : D7) (ψ : AddChar (AF D.hos
     | C a =>
       rw [jHom_C, ← mul_one (MvPolynomial.C _), ptF_C, ptF_one, ← mul_one (MvPolynomial.C a), ptF_C, ptF_one,
         dag_smul']
-    | add p q hp hq => rw [map_add, ptF_add, ptF_add, hp, hq, dag_add]
+    | add p q hp hq => rw [map_add (f := _), ptF_add, ptF_add, hp, hq, dag_add]
     | mul_X p v hp =>
       obtain ⟨τ, i, j⟩ := v
       rw [map_mul, jHom_X, mul_comm (jHom A B p), mul_assoc, ptF_C, ptF_X_mul hψ hθ B A hd, hp, mul_comm p,

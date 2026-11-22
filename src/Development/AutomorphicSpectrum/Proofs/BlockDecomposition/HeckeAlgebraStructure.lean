@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HkMemFixed
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutTranslate
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteOutNeZero
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SubOfNonNil
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HkMemFixed
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutTranslate
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteOutNeZero
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.SmGL GlobalTheory.PRep PositivityTheory.Rg.BcN.F2
 

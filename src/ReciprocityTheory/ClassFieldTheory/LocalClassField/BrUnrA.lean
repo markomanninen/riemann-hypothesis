@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.GroupCohomology.ImportsAlt
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.HSubsingletonOfUniquelyDivisible
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+module
+
+public import Mathlib
+public import ReciprocityTheory.GroupCohomology.ImportsAlt
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.HSubsingletonOfUniquelyDivisible
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -15,7 +19,7 @@ theorem bijective_H_of_adm {G : Type} [Group G] [TopologicalSpace G] [IsTopologi
   have hs := admissibility_holds ℤ G _ _ _ _ _ h
   obtain ⟨⟨δ, -, hl⟩, -⟩ := lES_holds ℤ _ _ _ _ _ hs
   constructor
-  · rw [injective_iff_map_eq_zero]
+  · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨y, rfl⟩ := (hl.exB n x).1 hx
     rw [Subsingleton.elim y 0, map_zero]
@@ -124,18 +128,18 @@ def trivInfl (φ : G' →* G) (hφ : Continuous φ) (A : Type) [AddCommGroup A] 
 
 theorem trivial_inflation_h1_rat_mod_int_injective (φ : G' →* G) (hφ : Continuous φ) (hs : Surjective φ) :
     Injective ((trivInfl φ hφ QZ).hom.H 1) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨x, hx, rfl⟩ := Cx.exists_cls c
   obtain ⟨e, he⟩ := exists_h1_equiv_characters G
   obtain ⟨e', he'⟩ := exists_h1_equiv_characters G'
   apply e.injective
-  rw [map_zero]
+  rw [e.map_zero]
   refine Subtype.ext (AddMonoidHom.ext fun a => ?_)
   obtain ⟨g', hg'⟩ := hs a.toMul
   rw [Cx.Hom.H_cls] at hc
   have h1 := he' _ ((trivInfl φ hφ QZ).hom.d_f_eq_zero hx) g'
-  rw [hc, map_zero] at h1
+  rw [hc, e'.map_zero] at h1
   have h2 := he x hx (φ g')
   rw [hg'] at h2
   have h3 : (fun i => φ ((![g'] : Fin 1 → G') i)) = ![a.toMul] := by
@@ -146,8 +150,20 @@ theorem trivial_inflation_h1_rat_mod_int_injective (φ : G' →* G) (hφ : Conti
 theorem trivial_inflation_h2_int_injective [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [CompactSpace G']
     [T2Space G'] [TotallyDisconnectedSpace G'] (φ : G' →* G) (hφ : Continuous φ) (hs : Surjective φ) :
     Injective ((trivInfl φ hφ ℤ).hom.H 2) := by
-  have s := admissibility_holds ℤ G _ _ _ _ _ (admissible_int_rat_sequence G)
-  have s' := admissibility_holds ℤ G' _ _ _ _ _ (admissible_int_rat_sequence G')
+  have hadm (K : Type) [Group K] [TopologicalSpace K] [IsTopologicalGroup K] :
+      admitted (trivMap K (Int.castAddHom ℚ))
+        (trivMap K (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)) := by
+    refine ⟨rfl, rfl, ?_, ?_, ?_⟩
+    · have hi : Injective (trivMap K (Int.castAddHom ℚ)).u := Int.cast_injective (α := ℚ)
+      exact (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology hi
+        (fun _ _ => isOpen_discrete _)).isEmbedding
+    · intro (y : ℚ)
+      show (QuotientAddGroup.mk y : QZ) = 0 ↔ y ∈ (Int.castAddHom ℚ).range
+      exact QuotientAddGroup.eq_zero_iff y
+    · have hq := QuotientAddGroup.mk'_surjective (Int.castAddHom ℚ).range
+      exact ⟨Function.surjInv hq, continuous_of_discreteTopology, Function.surjInv_eq hq⟩
+  have s := admissibility_holds ℤ G _ _ _ _ _ (hadm G)
+  have s' := admissibility_holds ℤ G' _ _ _ _ _ (hadm G')
   obtain ⟨⟨δ, h1, -⟩, -⟩ := lES_holds ℤ _ _ _ _ _ s
   obtain ⟨⟨δ', h1', -⟩, -⟩ := lES_holds ℤ _ _ _ _ _ s'
   have hnat := connNat_holds ℤ _ _ _ _ _ _ _ _ _ _ (trivInfl φ hφ ℤ).hom (trivInfl φ hφ ℚ).hom
@@ -167,7 +183,6 @@ theorem conn_cls_of_lift (δ)
     ∃ (x : (trivRep G QZ).coch.X 1) (hx : (trivRep G QZ).coch.d 1 x = 0) (y : (trivRep G ℤ).coch.X 2)
       (hy : (trivRep G ℤ).coch.d 2 y = 0), (∀ g, x.1 g = (QuotientAddGroup.mk (t (g 0)) : QZ)) ∧ y.1 = m ∧
       δ 1 ((trivRep G QZ).coch.cls 1 x hx) = (trivRep G ℤ).coch.cls 2 y hy := by
-  have hs := admissibility_holds ℤ G _ _ _ _ _ (admissible_int_rat_sequence G)
   have hb : @Continuous _ (trivRep G ℚ).V _ _ (fun g : Fin 1 → G => t (g 0)) :=
     IsLocallyConstant.continuous (Y := (trivRep G ℚ).V) (ht.comp_continuous (continuous_apply 0))
   let b : (trivRep G ℚ).coch.X 1 := ⟨fun g => t (g 0), hb⟩
@@ -186,18 +201,36 @@ theorem conn_cls_of_lift (δ)
     show t (g 1) - t (g 0 * g 1) + t (g 0) = _
     rw [hm]; ring
   have ha : (trivRep G ℤ).coch.d 2 a = 0 := by
-    apply hs.inj 3
-    rw [map_zero, (trivMap G (Int.castAddHom ℚ)).hom.comm, ← hba, (trivRep G ℚ).coch.dd]
+    let i := (trivMap G (Int.castAddHom ℚ)).hom
+    have hd : i.f 3 ((trivRep G ℤ).coch.d 2 a) = 0 := by
+      rw [i.comm, ← hba, (trivRep G ℚ).coch.dd]
+    apply Subtype.ext
+    funext g
+    apply Int.cast_injective (α := ℚ)
+    exact congrArg (fun z => z.1 g) hd
   have hc : (trivRep G QZ).coch.d 1 ((trivMap G (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)).hom.f 1 b) = 0 := by
     rw [← (trivMap G (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)).hom.comm, hba]
-    exact (hs.exact 2 _).2 ⟨a, rfl⟩
+    apply Subtype.ext
+    funext g
+    exact (QuotientAddGroup.eq_zero_iff _).2 ⟨a.1 g, rfl⟩
   exact ⟨_, hc, a, ha, fun g => rfl, rfl, hδ 1 b a hc ha hba⟩
 
 theorem exists_cocycle_form [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] (c : (trivRep G ℤ).H 2) :
     ∃ (t : G → ℚ) (m : (Fin 2 → G) → ℤ) (y : (trivRep G ℤ).coch.X 2) (hy : (trivRep G ℤ).coch.d 2 y = 0),
       IsLocallyConstant t ∧ (∀ g, (m g : ℚ) = t (g 0) + t (g 1) - t (g 0 * g 1)) ∧ y.1 = m ∧
       c = (trivRep G ℤ).coch.cls 2 y hy := by
-  have s := admissibility_holds ℤ G _ _ _ _ _ (admissible_int_rat_sequence G)
+  have hadm : admitted (trivMap G (Int.castAddHom ℚ))
+      (trivMap G (QuotientAddGroup.mk' (Int.castAddHom ℚ).range)) := by
+    refine ⟨rfl, rfl, ?_, ?_, ?_⟩
+    · have hi : Injective (trivMap G (Int.castAddHom ℚ)).u := Int.cast_injective (α := ℚ)
+      exact (Topology.IsOpenEmbedding.of_continuous_injective_isOpenMap continuous_of_discreteTopology hi
+        (fun _ _ => isOpen_discrete _)).isEmbedding
+    · intro (y : ℚ)
+      show (QuotientAddGroup.mk y : QZ) = 0 ↔ y ∈ (Int.castAddHom ℚ).range
+      exact QuotientAddGroup.eq_zero_iff y
+    · have hq := QuotientAddGroup.mk'_surjective (Int.castAddHom ℚ).range
+      exact ⟨Function.surjInv hq, continuous_of_discreteTopology, Function.surjInv_eq hq⟩
+  have s := admissibility_holds ℤ G _ _ _ _ _ hadm
   obtain ⟨⟨δ, h1, -⟩, -⟩ := lES_holds ℤ _ _ _ _ _ s
   obtain ⟨c', rfl⟩ := (conn_int_rat_bijective G δ h1 1 one_pos).2 c
   obtain ⟨x, hx, rfl⟩ := Cx.exists_cls c'

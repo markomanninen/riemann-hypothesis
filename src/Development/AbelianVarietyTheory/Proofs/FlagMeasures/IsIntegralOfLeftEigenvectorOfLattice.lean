@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermitianFormUnitaryOneOne
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec
 open scoped InnerProductSpace ComplexOrder ContDiff
 
@@ -27,7 +32,8 @@ theorem isIntegral_of_left_eigenvector_of_lattice {E K : Type} [Field E] [Number
     have h1 : (fun i => algebraMap E K ((B *ᵥ y) i))
         = (B.map (algebraMap E K)) *ᵥ (fun i => algebraMap E K (y i)) := by
       ext i
-      simp [Matrix.mulVec, dotProduct, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mulVec, dotProduct, map_sum]
     show v ⬝ᵥ (fun i => algebraMap E K ((B *ᵥ y) i)) = _ * (v ⬝ᵥ (fun i => algebraMap E K (y i)))
     rw [h1, Matrix.dotProduct_mulVec, hw, smul_dotProduct, smul_eq_mul]
   have hcK : algebraMap E K c ≠ 0 := by simpa using hc
@@ -112,7 +118,7 @@ theorem trace_mem_of_nilpotent_mod_radical (E : Type) [Field E] [NumberField E] 
   have hdown : ∀ x : E, IsIntegral (𝓞 E) (f x) → ∃ t : 𝓞 E, (t : E) = x := by
     intro x hx
     exact IsIntegrallyClosed.isIntegral_iff.1
-      ((isIntegral_algebraMap_iff (algebraMap E K).injective).1 hx)
+      ((isIntegral_algebraMap_iff ).1 hx)
   obtain ⟨t₀, ht₀⟩ := hdown A.trace (hr ▸ r.2)
   have hsK : (s : K) * (g : K) = f A.trace ^ N := by
     have := congrArg (fun x : R => (x : K)) hs

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecCut
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenSpecCut
+
+@[expose] public section
 
 noncomputable section
 

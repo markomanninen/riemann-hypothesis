@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementS
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementA
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementS
+
+@[expose] public section
 
 open PowerSeries
 
@@ -13,8 +17,8 @@ variable (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l]) (W :
 
 def Unif : Prop := Formalism.L2.Th1.A.g₂ W = ι L.g₂ ∧ Formalism.L2.Th1.A.g₃ W = ι L.g₃
 
-open Classical in
 
+open Classical in
 def ptW (t : ℂ) : W.toAffine.Point :=
   if h : t ∉ L.lattice ∧ W.toAffine.Nonsingular (ι (L.weierstrassP t) - W.b₂ / 12)
       ((ι (L.derivWeierstrassP t) - W.a₁ * (ι (L.weierstrassP t) - W.b₂ / 12) - W.a₃) / 2)
@@ -32,8 +36,8 @@ def gW (t : ℂ) : PowerSeries ℂ_[l] :=
 
 end Gen
 
-open Classical in
 
+open Classical in
 def PtWAdd : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l]) (W : WeierstrassCurve ℂ_[l]), Unif l L ι W →
     ∀ s t : ℂ, ptW l L ι W (s + t) = ptW l L ι W s + ptW l L ι W t
@@ -42,8 +46,8 @@ def PtWZero : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l]) (W : WeierstrassCurve ℂ_[l]), Unif l L ι W →
     ∀ t : ℂ, ptW l L ι W t = 0 ↔ t ∈ L.lattice
 
-open Classical in
 
+open Classical in
 def AnalyticSysW : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ_[l]) (W : WeierstrassCurve ℂ_[l]), Unif l L ι W →
     ∀ (π : ℂ →+ W.toAffine.Point), (∀ t, π t = ptW l L ι W t) → IsTransSys W π (gW l L ι W)

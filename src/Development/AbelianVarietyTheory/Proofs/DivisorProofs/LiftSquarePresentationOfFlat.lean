@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMapLeMapMulKerOfFlatTargetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeSupKerMulOfLeSupMaximalMulSectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerInfMapLeMapMulKerOfFlatTargetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeSupKerMulOfLeSupMaximalMulSectionStatement
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -35,7 +40,7 @@ theorem lift_square_presentation_of_flat : ∀ (O B A k H σ : Type) [CommRing O
     intro F
     induction F using MvPolynomial.induction_on with
     | C a => simp [hΨ, hΦ, hT, hρB]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p i hp =>
       simp only [map_mul, hp]
       simp [hΨ, hΦ, hT]

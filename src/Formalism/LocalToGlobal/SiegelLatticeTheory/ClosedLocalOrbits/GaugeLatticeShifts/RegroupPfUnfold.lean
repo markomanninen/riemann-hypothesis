@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,19 +14,6 @@ namespace Formalism.L2.SG.Pf.RegroupPf
 section OrbitUnfold
 
 variable {H : Type*} [Group H] [MeasurableSpace H] [MeasurableMul H]
-
-def stabSub (N : Subgroup H) {C : Type*} (act : N → C → C) (h1 : ∀ c, act 1 c = c)
-    (hmul : ∀ n m c, act (n * m) c = act n (act m c)) (r : C) : Subgroup H where
-  carrier := {h | ∃ n : N, (n : H) = h ∧ act n r = r}
-  one_mem' := ⟨1, rfl, h1 r⟩
-  mul_mem' := by
-    rintro _ _ ⟨a, rfl, ha⟩ ⟨b, rfl, hb⟩
-    exact ⟨a * b, rfl, by rw [hmul, hb, ha]⟩
-  inv_mem' := by
-    rintro _ ⟨a, rfl, ha⟩
-    refine ⟨a⁻¹, rfl, ?_⟩
-    calc act a⁻¹ r = act a⁻¹ (act a r) := by rw [ha]
-      _ = r := by rw [← hmul, inv_mul_cancel, h1]
 
 theorem isFund_of_exact (μ : Measure H) (R : Subgroup H) (W : Set H) (hm : MeasurableSet W)
     (hc : ∀ x, ∃ g ∈ R, g * x ∈ W) (hu : ∀ x ∈ W, ∀ g ∈ R, g * x ∈ W → g = 1) :
@@ -201,7 +192,7 @@ theorem orbit_unfold (μ : Measure H) [μ.IsMulLeftInvariant]
     exact ((hasum.hasSum.prod_fiberwise fun j => (hasum.prod_factor j).hasSum).tsum_eq).symm
   refine ⟨?_, ?_⟩
   · have hEm : Measurable fun y => ∑' c, ‖F c y‖ₑ :=
-      Measurable.ennreal_tsum fun c => (hFm c).enorm
+      Measurable.tsum fun c => (hFm c).enorm
     have hfin_ae : ∀ᵐ y ∂(μ.restrict Ω), ∑' c, ‖F c y‖ₑ < ⊤ := ae_lt_top hEm hint.ne
     have hsN : ∀ y, ∑' c, ‖F c y‖ₑ < ⊤ → Summable fun c => ‖F c y‖ := by
       intro y hy

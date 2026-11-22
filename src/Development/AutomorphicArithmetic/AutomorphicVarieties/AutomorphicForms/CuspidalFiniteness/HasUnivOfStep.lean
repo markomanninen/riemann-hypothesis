@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import GroundTheory.AutomorphicForms.HarishChandraCentre
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import GroundTheory.AutomorphicForms.HarishChandraCentre
+
+@[expose] public section
 
 namespace UpperTheory.V.Af.CuspFin
 
@@ -52,7 +56,8 @@ theorem map_qdet {A B : Type} [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B] 
   have h : ∀ v a b, f (Formalism.REAL.Tm X v a b) = Formalism.REAL.Tm (fun a b => f (X a b)) v a b := fun v a b => by
     unfold Formalism.REAL.Tm
     split_ifs <;> simp
-  simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.qdet, Formalism.REAL.qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn,
     Function.comp_def, h]
 
 end UpperTheory.V.Af.CuspFin

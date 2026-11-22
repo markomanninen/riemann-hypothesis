@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HcoSmulRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HcoSmulRight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 
@@ -169,7 +173,8 @@ theorem quad_zero (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gP
   have key : ∀ u : Fin (r + 1) → ℂ, ∑ d, ∑ e, conj (k d) * (u e * conj (u d)) * k e =
       (∑ e, k e * u e) * conj (∑ d, k d * u d) := by
     intro u
-    rw [map_sum, Finset.sum_mul_sum, Finset.sum_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul_sum, Finset.sum_comm]
     refine Finset.sum_congr rfl (fun d _ => Finset.sum_congr rfl (fun e _ => ?_))
     rw [map_mul]
     ring
@@ -282,7 +287,8 @@ theorem xco_gram (hT : 0 < T) (hT' : 0 < T') (hdet : Zm.det ≠ 0) (hG : 0 < gPo
   have h4 := congrFun (congrFun h3 c) b
   simp only [Matrix.add_apply, Matrix.conjTranspose_apply, Rm, Matrix.of_apply, Complex.star_def] at h4
   have h5 : ∑ a : Fin r, Zm a.castSucc b * conj (Mf T T' Zm a.castSucc c) = conj (Km T T' Zm b c) := by
-    rw [← h2, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h2, map_sum]
     refine Finset.sum_congr rfl (fun a _ => ?_)
     rw [map_mul, Complex.conj_conj]
     ring

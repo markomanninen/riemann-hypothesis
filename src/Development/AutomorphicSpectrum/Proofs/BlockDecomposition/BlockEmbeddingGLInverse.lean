@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColGeR
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin GlobalTheory.CompanionTheory.TyFin.ColStep
 
@@ -23,18 +27,18 @@ theorem sum_fin_of_ge_zero {d j : ℕ} (hjd : j ≤ d) (f : Fin d → K)
 theorem blkEmb_row_ge {d j : ℕ} (A : Matrix (Fin j) (Fin j) K) (i l : Fin d)
     (hi : j ≤ (i : ℕ)) : blkEmb K d j A i l = if i = l then 1 else 0 := by
   simp only [GlobalTheory.CompanionTheory.TyFin.ColStep.blkEmb]
-  rw [dif_neg fun h => (not_lt.2 hi) h.1]
+  rw [dite_eq_right fun h => (not_lt.2 hi) h.1]
 
 theorem blkEmb_col_ge {d j : ℕ} (A : Matrix (Fin j) (Fin j) K) (i l : Fin d)
     (hl : j ≤ (l : ℕ)) : blkEmb K d j A i l = if i = l then 1 else 0 := by
   simp only [GlobalTheory.CompanionTheory.TyFin.ColStep.blkEmb]
-  rw [dif_neg fun h => (not_lt.2 hl) h.2]
+  rw [dite_eq_right fun h => (not_lt.2 hl) h.2]
 
 theorem blkEmb_lt {d j : ℕ} (A : Matrix (Fin j) (Fin j) K) (i l : Fin d)
     (hi : (i : ℕ) < j) (hl : (l : ℕ) < j) :
     blkEmb K d j A i l = A ⟨i, hi⟩ ⟨l, hl⟩ := by
   simp only [GlobalTheory.CompanionTheory.TyFin.ColStep.blkEmb]
-  rw [dif_pos ⟨hi, hl⟩]
+  rw [dite_eq_left ⟨hi, hl⟩]
 
 theorem blkEmb_one (d j : ℕ) : blkEmb K d j (1 : Matrix (Fin j) (Fin j) K) = 1 := by
   ext i l

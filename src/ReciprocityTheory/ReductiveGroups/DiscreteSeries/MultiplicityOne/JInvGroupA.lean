@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StDiagExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem embWb_apply_offW (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (v : Fin 
     intro j
     unfold isW at hi
     simp only [embWb]
-    rw [dif_neg (fun h => hi h.1)]
+    rw [dite_eq_right (fun h => hi h.1)]
     by_cases h : i = j
     · subst h; simp [hi]
     · simp [h]
@@ -39,7 +43,7 @@ theorem embWb_mulVec_eq_zero_on_isW (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ
   · have h0 : embWb k r γ i j = 0 := by
       unfold isW at hi hj
       simp only [embWb]
-      rw [dif_neg (fun h => hj h.2), if_neg (fun h => h.2 hi)]
+      rw [dite_eq_right (fun h => hj h.2), if_neg (fun h => h.2 hi)]
     rw [h0, zero_mul]
 
 theorem measurable_invM : Measurable (invM : Mt k r → Mt k r) := by
@@ -51,7 +55,7 @@ theorem measurable_invM : Measurable (invM : Mt k r → Mt k r) := by
     funext x i j
     simp only [invM, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.smul_apply, smul_eq_mul]
   rw [h]
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   exact hd.measurable.inv.mul ((continuous_apply j).comp ((continuous_apply i).comp ha)).measurable
 
 section cc
@@ -64,7 +68,8 @@ def cc (v : Fin (2 * r + k + 1) → ℂ) : Fin (2 * r + k + 1) → ℂ :=
 theorem map_conj_mulVec {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (u : Fin n → ℂ) :
     A.map (starRingEnd ℂ) *ᵥ (fun i => conj (u i)) = fun i => conj ((A *ᵥ u) i) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
 
 theorem col_apply {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) : (M *ᵥ bvec j) i = M i j := by
   simp [bvec, Matrix.mulVec, dotProduct, Pi.single_apply]

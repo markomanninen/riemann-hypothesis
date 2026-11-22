@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.Blo
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.NearBlo
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.HeightTwoBlocks.Blo
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.NearBlo
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ResTyp
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.Summand
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -8,7 +13,7 @@ open GroundTheory.Automorphic.CuspidalSpectrum PositivityTheory.Rg.Fx UpperTheor
 
 namespace UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (BW.Pl E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (BW.Pl E)}
 
 private abbrev Pts (E : Type) [Field E] [NumberField E] : Type :=
   ((E →+* ℂ) → Multiset ℂ) → (BW.Pl E → Multiset ℂ) → Prop
@@ -21,8 +26,8 @@ private def step (S : Set (BW.Pl E)) (r : ℕ) (p : ((E →+* ℂ) → Fin r →
     (∀ τ, Λ τ = (Finset.univ.val.map fun i => p.1 τ i + c) + Λ' τ) ∧
     ∀ w ∉ S, t w = ((p.2 w).map fun x : ℂˣ => (x : ℂ) * ((Formalism.UG.qV E w : ℕ) : ℂ) ^ (-c)) + t' w)
 
-open Classical in
 
+open Classical in
 private noncomputable def par {r : ℕ} (b : Blo S r) : ((E →+* ℂ) → Fin r → ℂ) × (BW.Pl E → Multiset ℂˣ) :=
   (b.Λ, fun w => if w ∈ S then 0 else b.sat w)
 
@@ -78,7 +83,7 @@ private theorem step_key {r s : ℕ} (b : Blo S r) (d : Dat S s) :
     · rw [ht w hw, ptS_cons]
       simp [par, if_neg hw]
 
-private def Fin' (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) : Prop :=
+private def Fin' (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) : Prop :=
   ∀ (ρ : Typ E n) (B : ℝ),
     {q : ℕ × Pts E | ∃ d : Dat S n, d.HasTyp ρ.ρ ∧ (∀ τ i, ‖d.lam τ i‖ ≤ B) ∧ q = key d}.Finite
 
@@ -139,7 +144,7 @@ private theorem fin_all (n : ℕ) : Fin' E S n := by
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.KX.near2 :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) (ρ : Typ E n) (B : ℝ), ∃ D : Set (Dat S n), D.Finite ∧
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (S : Set (BW.Pl E)) (n : ℕ) (ρ : Typ E n) (B : ℝ), ∃ D : Set (Dat S n), D.Finite ∧
       ∀ d : Dat S n, d.HasTyp ρ.ρ → (∀ τ i, ‖d.lam τ i‖ ≤ B) → ∃ d' ∈ D, d'.len = d.len ∧ ∀ Λ t, d'.On Λ t ↔ d.On Λ t := by
   intro E _ _ _ S n ρ B
   have f := fin_all (E := E) (S := S) n ρ B

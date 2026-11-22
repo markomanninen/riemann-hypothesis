@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -22,7 +26,8 @@ theorem jetCoef_mk (κ : Type) (m : ℕ) (p : MvPolynomial κ V) :
 
 theorem psTrunc_map {σ : Type} [Fintype σ] [DecidableEq σ] (m : ℕ) (F : MvPowerSeries σ V) :
     psTrunc m (MvPowerSeries.map f F) = MvPolynomial.map f (psTrunc m F) := by
-  simp only [psTrunc, map_sum, MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psTrunc, map_sum, MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
 
 theorem jetCoef_alg (κ : Type) (m : ℕ) :
     (jetCoef f κ m).comp (algebraMap V (Jet V κ m)) = (algebraMap K (Jet K κ m)).comp f := by

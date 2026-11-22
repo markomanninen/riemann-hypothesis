@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD GlobalTheory.CechDR GlobalTheory.HodgeCoh ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -43,7 +47,7 @@ def formGerm (j : ℕ) {V : X.Opens} (hV : IsAffineOpen V) (hη : genericPoint X
   { toFun := fun x ↦ (semiHom_germSec s hη).mDR
       ((toOmEquiv s j hV).symm (sectionsOn.toΓ _ _ x) : DR k (Sec s V))
     map_add' := fun x y ↦ by
-      rw [map_add, map_add, Submodule.coe_add, map_add]
+      rw [map_add (f := _), map_add (f := _), Submodule.coe_add, map_add (f := _)]
     map_smul' := fun r x ↦ by
       rw [sectionsOn.toΓ_smul]
       have h1 : (toOmEquiv s j hV).symm (restrictGlobal X V (algebraMap k Γ(X, ⊤) r) •
@@ -62,8 +66,5 @@ def formGermI (j : ℕ) {V : X.Opens} (hV : IsAffineOpen V) (hη : genericPoint 
 
 theorem formGermI_ffAlg (j : ℕ) {V : X.Opens} (hV : IsAffineOpen V) (hη : genericPoint X ∈ V) :
     formGermI (inst := ffAlg s) s j hV hη rfl = formGerm s j hV hη := rfl
-
-example (j : ℕ) {V : X.Opens} (hV : IsAffineOpen V) (hη : genericPoint X ∈ V) :
-    letI := algΓ s; formGerm s j hV hη 0 = 0 := map_zero _
 
 end GlobalTheory.HodgeCoh

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,9 +18,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 variable {Y : Spc F E n} {A : Spc F E m}
 
-attribute [local instance] GlobalTheory.LocalData.complRel
-
-local instance locField' (v : Pl F) : IsNonarchimedeanLocalField (Fv F v) := GlobalTheory.LocalData.isLocalField v
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 def SplitModel : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E) (n d : ℕ) (X : Spc F E n) (W : Spc F E d) (M : Model σ X W) (χX χW : Chr F E) (om : Rep σ X W) (r s r' s' : ℕ),
@@ -32,8 +34,8 @@ def zint {n d : ℕ} {X : Spc F E n} {W : Spc F E d} (om : Rep σ X W) (ν : @Me
     (a : G2 σ X → ℝ) (e : UA σ X.J × UA σ X.J →* G2 σ X) (Φ : Fn F n d) (s : ℂ) (g : UA σ X.J) : ℂ :=
   (a (e (g, 1)) : ℂ) ^ (s - ((d : ℂ) - n) / 2) * coef om ν Φ g
 
-variable (σ Y) in
 
+variable (σ Y) in
 def locGrp (v : Pl F) : Subgroup (UA σ Y.J) := Subgroup.closure (UAt σ Y (evFin F v))
 
 def IntAt (v : Pl F) (g : UA σ Y.J) : Prop :=
@@ -45,9 +47,9 @@ def IsSphAt (K : Subgroup (G2 σ Y)) (χ : Chr F E) (v : Pl F) (z : ℂ) (f : G2
   ∀ p t, IsPar p t → At (evFin F v) (mat2 p - 1) → ∀ k ∈ K, At (evFin F v) (mat2 k - 1) →
     f (p * k) = (χ (Matrix.GeneralLinearGroup.det t) : ℂ) * ((absE F E (Matrix.GeneralLinearGroup.det t) : ℝ) : ℂ) ^ z
 
+
 open Classical in
 variable (E) in
-
 def locD (n : ℕ) (v : Pl F) (s : ℂ) : ℂ :=
   ∏ i ∈ Finset.range n, (1 - (if Nonempty (E →ₐ[F] Fv F v) then 1 else -1) ^ (n - (i + 1)) *
     (Ideal.absNorm v.asIdeal : ℂ) ^ (-(2 * s + (i + 1 : ℕ))))⁻¹
@@ -103,31 +105,6 @@ def DProd : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ) (T : Finset (Pl F)), ∃ d : ℂ → ℂ,
     DifferentiableOn ℂ d {z | 0 < z.re} ∧ ∀ z : ℂ, 0 < z.re → d z ≠ 0 ∧
       HasProd (fun v : {v : Pl F // v ∉ T} => locD E n v.1 z) (d z)
-
-def IsReps (v : Pl F) {j : ℕ} (R : Finset (GL (Fin (j + 1)) (Fv F v))) : Prop :=
-  ∀ g : GL (Fin (j + 1)) (Fv F v), (∃ k ∈ GlobalTheory.SplitWeil.KO (Fv F v) (Fin (j + 1)), ∃ k' ∈ GlobalTheory.SplitWeil.KO (Fv F v) (Fin (j + 1)),
-      g.1 = k.1 * Matrix.diagonal (Function.update 1 0 (unifAt v : Fv F v)) * k'.1) ↔
-    ∃! x, x ∈ R ∧ x⁻¹ * g ∈ GlobalTheory.SplitWeil.KO (Fv F v) (Fin (j + 1))
-
-def actL {v : Pl F} {n j m : ℕ} (ξ : (Fv F v)ˣ →* ℂˣ) (g : GL (Fin j) (Fv F v)) :
-    Module.End ℂ (Matrix (Fin n) (Fin j) (Fv F v) × Matrix (Fin n) (Fin m) (Fv F v) → ℂ) where
-  toFun φ y := ξ (Matrix.GeneralLinearGroup.det g) * φ (y.1 * g.1, y.2)
-  map_add' _ _ := funext fun _ => mul_add _ _ _
-  map_smul' _ _ := funext fun _ => mul_left_comm _ _ _
-
-def LocHecke : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (v : Pl F) (n j m : ℕ) (ξ₁ ξ₂ : (Fv F v)ˣ →* ℂˣ), GlobalTheory.SplitFlip.CondLE (unifAt v) 0 ξ₂ →
-    ∀ l : (Matrix (Fin n) (Fin (j + 1)) (Fv F v) × Matrix (Fin n) (Fin m) (Fv F v) → ℂ) →ₗ[ℂ] ℂ,
-    (∀ φ ∈ SB _, ∀ γ : GL (Fin n) (Fv F v), l (fun y => φ ((γ⁻¹).1 * y.1, (γ⁻¹).1 * y.2)) = ξ₁ (Matrix.GeneralLinearGroup.det γ) * l φ) →
-    (∀ φ ∈ SB _, ∀ b : Matrix (Fin (j + 1)) (Fin m) (Fv F v), l (fun y => φ (y.1, y.2 + y.1 * b)) = l φ) →
-    ∀ R, IsReps v R → ∀ φ ∈ SB _, (∀ k ∈ GlobalTheory.SplitWeil.KO (Fv F v) (Fin (j + 1)), actL ξ₂ k φ = φ) → ∀ x y : ℂ,
-      let q : ℂ := Ideal.absNorm v.asIdeal
-      let A : ℕ → ℂ := fun r => ξ₂ (unifAt v) * (ξ₁ (unifAt v) : ℂ)⁻¹ * q ^ ((n : ℤ) - r - m)
-      let c : ℕ → ℂ := fun r => A r * ∑ i ∈ Finset.range r, q ^ i + ξ₂ (unifAt v) * ∑ i ∈ Finset.Ico r (j + 1), q ^ i
-      let z : ℕ → ℂ := fun r => A r ^ r * (ξ₂ (unifAt v) : ℂ) ^ (j + 1 - r)
-      let T : ℕ → Module.End ℂ (Matrix (Fin n) (Fin (j + 1)) (Fv F v) × Matrix (Fin n) (Fin m) (Fv F v) → ℂ) := fun r =>
-        x • ∑ g ∈ R, actL ξ₂ g + y • actL ξ₂ (Matrix.GeneralLinearGroup.scalar _ (unifAt v)) - (x * c r + y * z r) • 1
-      l (((List.range (j + 2)).map T).prod φ) = 0
 
 end GlobalTheory.ThK.Dbl
 

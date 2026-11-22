@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConeAtOfToricChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOfMemAdjoinInv
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGenOfFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConeAtOfToricChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralOfMemAdjoinInv
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGenOfFrames
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEvalSum
-import GroundTheory.PAdicHodge.ACrisBdR
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEvalSum
+public import GroundTheory.PAdicHodge.ACrisBdR
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open scoped ContDiff
 
 namespace PositivityTheory.Rg.Rs.InducedTensorMap
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
 def res (y : GA E (r + s)) : (GA E (r + s) → ℂ) →ₗ[ℂ] (GA E r × GA E s → ℂ) :=
   LinearMap.funLeft ℂ ℂ fun m => lev (Ad E) r s m * y
@@ -20,12 +24,12 @@ theorem res_apply (y : GA E (r + s)) (F : GA E (r + s) → ℂ) (m : GA E r × G
 
 structure Good (U₁ : Submodule ℂ (Sm E r)) (U₂ : Submodule ℂ (Sm E s)) (f₁ : Sm E r →ₗ[ℂ] Sm E r)
     (f₂ : Sm E s →ₗ[ℂ] Sm E s) : Prop where
-  hU₁ : IsStable U₁
-  hU₂ : IsStable U₂
+  hU₁ : _root_.GlobalTheory.CuspRep.IsStable U₁
+  hU₂ : _root_.GlobalTheory.CuspRep.IsStable U₂
   hf₁ : ∀ o, ∀ ψ ∈ U₁, f₁ (act o ψ) = act o (f₁ ψ)
   hf₂ : ∀ o, ∀ ψ ∈ U₂, f₂ (act o ψ) = act o (f₂ ψ)
 
-theorem good_id {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} (hU₁ : IsStable U₁) (hU₂ : IsStable U₂) :
+theorem good_id {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} (hU₁ : _root_.GlobalTheory.CuspRep.IsStable U₁) (hU₂ : _root_.GlobalTheory.CuspRep.IsStable U₂) :
     Good U₁ U₂ LinearMap.id LinearMap.id :=
   ⟨hU₁, hU₂, fun _ _ _ => rfl, fun _ _ _ => rfl⟩
 
@@ -144,7 +148,7 @@ theorem ext_res {F F' : GA E (r + s) → ℂ} (hF : ∀ (u : BlockIx (r + s) r �
   rw [mul_assoc, hF, hF']
   exact congrFun (e k g) m
 
-theorem ind_id {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} (hU₁ : IsStable U₁) (hU₂ : IsStable U₂)
+theorem ind_id {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} (hU₁ : _root_.GlobalTheory.CuspRep.IsStable U₁) (hU₂ : _root_.GlobalTheory.CuspRep.IsStable U₂)
     {F : GA E (r + s) → ℂ} (hF : IsInd U₁ U₂ F) : ind LinearMap.id LinearMap.id F = F := by
   refine ext_res (ind_left (good_id hU₁ hU₂) hF) hF.1 fun k g => ?_
   rw [ind_levi (good_id hU₁ hU₂) hF, tensOp_id (hF.2 k g)]

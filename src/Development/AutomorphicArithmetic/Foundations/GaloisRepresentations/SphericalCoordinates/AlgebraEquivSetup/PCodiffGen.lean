@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.CodiffUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,7 @@ theorem pCodiffGen : CodiffGen := by
         exact addOrderOf_nsmul_eq_zero x
       have hu : (q : 𝓞 E ⧸ K) * Ideal.Quotient.mk K t = 1 := by
         have := congrArg (Ideal.Quotient.mk K) hkm
-        rw [map_add, Ideal.Quotient.eq_zero_iff_mem.2 hk, zero_add, map_mul, map_one, map_natCast] at this
+        rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hk, zero_add, map_mul, map_one, map_natCast] at this
         rw [mul_comm]
         exact this
       have hx0 : x = 0 := by

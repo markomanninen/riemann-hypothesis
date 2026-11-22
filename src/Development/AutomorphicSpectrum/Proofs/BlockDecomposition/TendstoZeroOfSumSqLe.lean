@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisTer
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisTer
+
+@[expose] public section
 
 open MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa
   GroundTheory.Automorphic.Spherical PositivityTheory.JacquetShalikaLocal

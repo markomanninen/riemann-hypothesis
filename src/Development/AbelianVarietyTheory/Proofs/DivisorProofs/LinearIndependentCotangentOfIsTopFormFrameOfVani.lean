@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsJacobianSectionIsUnitGermOfLocalIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentreAtOfIsAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsJacobianSectionIsUnitGermOfLocalIso
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,7 +66,8 @@ theorem linearIndependent_toCotangent {k A P : Type*} [CommRing k] [CommRing A] 
   have hsq : ∑ j : J, b j * ρ (z j) ∈ maximalIdeal P ^ 2 := by
     have e : ∑ j : J, g j • ((maximalIdeal P).toCotangent ⟨ρ (z j), hz j⟩ : CotangentSpace P) =
         (maximalIdeal P).toCotangent (∑ j : J, b j • (⟨ρ (z j), hz j⟩ : maximalIdeal P)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, ← hb j, ← ResidueField.algebraMap_eq, algebraMap_smul]
     rw [e, Ideal.toCotangent_eq_zero] at hg
@@ -71,7 +76,8 @@ theorem linearIndependent_toCotangent {k A P : Type*} [CommRing k] [CommRing A] 
   have htk : ∀ j : J, algebraMap P κ (ρ (z j)) = 0 := fun j => by
     rw [ResidueField.algebraMap_eq]; exact (residue_eq_zero_iff _).2 (hz j)
   refine h5 g ?_ i
-  rw [← h0, map_sum, tmul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h0, map_sum, tmul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Derivation.leibniz, tmul_add, ← smul_tmul, ← smul_tmul, Algebra.smul_def, mul_one,
     Algebra.smul_def, mul_one, htk, zero_tmul, add_zero, ← hb j, ← ResidueField.algebraMap_eq]

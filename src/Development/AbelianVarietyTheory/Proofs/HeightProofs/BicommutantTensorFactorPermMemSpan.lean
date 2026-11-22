@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+
+@[expose] public section
 
 open GlobalTheory.SmoothForms NumberField Matrix
 open scoped ContDiff Topology
@@ -17,7 +21,8 @@ theorem bicomm_left_mul {ι G : Type} [Fintype ι] [DecidableEq ι] (ρ : G → 
       ext x y
       simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.mul_apply, Matrix.single_apply, smul_eq_mul]
       by_cases h : i = y <;> simp [h]
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     simp only [Matrix.mul_apply, Matrix.sum_apply, map_smul, Matrix.smul_apply, smul_eq_mul, Matrix.of_apply, mul_comm]
   have key2 : ∀ (A : Matrix ι ι ℂ) (i j a b : ι),
       (A * (Matrix.of fun a b => p (Matrix.single b i 1) a j)) a b = (A * p (Matrix.single b i 1)) a j := by
@@ -34,7 +39,8 @@ theorem bicomm_left_mul {ι G : Type} [Fintype ι] [DecidableEq ι] (ρ : G → 
     conv_lhs => rw [Matrix.matrix_eq_sum_single X]
     simp [Matrix.smul_single]
   rw [h2]
-  simp only [Matrix.mul_sum, map_sum, Matrix.mul_smul, map_smul, h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_sum, map_sum, Matrix.mul_smul, map_smul, h1]
 
 theorem bicomm_mem_span {ι G : Type} [Fintype ι] [DecidableEq ι] [Group G] [Fintype G] (ρ : G → Matrix ι ι ℂ)
     (h1 : ρ 1 = 1) (hmul : ∀ g h, ρ g * ρ h = ρ (h * g)) (M : Matrix ι ι ℂ)

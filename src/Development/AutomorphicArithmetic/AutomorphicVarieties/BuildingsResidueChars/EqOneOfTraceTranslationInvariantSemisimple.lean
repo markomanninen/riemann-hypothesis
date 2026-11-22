@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.UnitaryBC UpperTheory.V
 open UpperTheory.V.W (Plc Lp resP)
@@ -79,7 +83,7 @@ theorem UpperTheory.eq_one_of_trace_translation_invariant_semisimple :
       rw [mul_sub, mul_one, ← map_mul, map_sub, hσ, hσ, Matrix.trace_toLin'_eq,
         Matrix.trace_toLin'_eq, htr, sub_self]
     | zero => simp
-    | add b c _ _ hb hc => rw [add_mul, map_add, hb, hc, add_zero]
+    | add b c _ _ hb hc => rw [add_mul, map_add (f := _), hb, hc, add_zero]
     | smul c b _ hb => rw [smul_mul_assoc, map_smul, hb, smul_zero]
   let x' : A := ⟨σ g - 1, hxA⟩
   obtain ⟨L', hL⟩ := exists_isCompl (Submodule.span A {x'})

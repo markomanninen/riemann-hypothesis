@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsFrameCover
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem exists_lower_mul_upper (A : Matrix (Fin n) (Fin n) K)
   refine ⟨Matrix.of fun i k => if h : (k : ℕ) < i then -v i ⟨k, h⟩ else if k = i then 1 else 0, ?_, ?_, ?_⟩
   · intro i k h
     simp only [Matrix.of_apply]
-    rw [dif_neg (by have := Fin.lt_def.mp h; omega), if_neg (ne_of_gt h)]
+    rw [dite_eq_right (by have := Fin.lt_def.mp h; omega), if_neg (ne_of_gt h)]
   · intro i
     simp
   · intro i j h
@@ -34,17 +38,17 @@ theorem exists_lower_mul_upper (A : Matrix (Fin n) (Fin n) K)
       simp only [Matrix.of_apply]
       rcases lt_trichotomy k i with h | h | h
       · have hk : (k : ℕ) < i := h
-        rw [dif_pos hk, dif_pos hk, if_neg (ne_of_lt h), add_zero]
+        rw [dite_eq_left hk, dite_eq_left hk, if_neg (ne_of_lt h), add_zero]
       · subst h; simp
       · have hk : ¬ (k : ℕ) < i := by have := Fin.lt_def.mp h; omega
-        rw [dif_neg hk, dif_neg hk, if_neg (ne_of_gt h), if_neg (ne_of_gt h), zero_mul, add_zero]
+        rw [dite_eq_right hk, dite_eq_right hk, if_neg (ne_of_gt h), if_neg (ne_of_gt h), zero_mul, add_zero]
     rw [Finset.sum_congr rfl fun k _ => hsplit k, Finset.sum_add_distrib, Finset.sum_ite_eq',
       if_pos (Finset.mem_univ _)]
     have hs : ∑ k : Fin i, -v i k * A (Fin.castLE i.isLt.le k) j =
         ∑ k : Fin n, (if h : (k : ℕ) < i then -v i ⟨k, h⟩ * A k j else 0) := by
       refine Fintype.sum_of_injective (Fin.castLE i.isLt.le) (Fin.castLE_injective _) _ _ (fun k hk => ?_)
         (fun k => by simp)
-      rw [dif_neg]
+      rw [dite_eq_right]
       intro hlt
       exact hk ⟨⟨k, hlt⟩, Fin.ext rfl⟩
     rw [← hs]
@@ -137,9 +141,9 @@ theorem exists_cell (T : Type) (m : T → ℕ) (K : Type) [Field K] (M : ℕ) (D
     intro τ i j
     unfold cell
     rcases lt_trichotomy i j with h | h | h
-    · rw [dif_neg (not_lt.2 h.le), if_neg h.ne, hN τ i j h]
+    · rw [dite_eq_right (not_lt.2 h.le), if_neg h.ne, hN τ i j h]
     · subst h; simp [hN1]
-    · rw [dif_pos h]
+    · rw [dite_eq_left h]
   rintro ⟨τ, j⟩
   have hexp : u ⟨τ, j⟩ = ∑ k, b τ k j • cellVec c w (fun y : CellVar m => N y.1 y.2.1.1 y.2.1.2) ⟨τ, k⟩ := by
     rw [hA, hNb]

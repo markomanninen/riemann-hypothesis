@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveComplexPoint
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.Intersections.FlagBundleSt
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.POneBlockPoints
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.IsArithVarBotDualBlocksUnit
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveComplexPoint
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.FlagBundleSt
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.POneBlockPoints
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -90,8 +95,8 @@ theorem ker_coneMapQ_eq {Ω : Type} [Field Ω] [CharZero Ω] (y : (Σ k, ι k) �
   simp only [hc, IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree.comap_ker_coneMapQ] at h
   exact lt_irrefl _ h
 
-open IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree in
 
+open IndefiniteRowSideFullHecke.HeightsSet.CoordCurveDegree in
 theorem aeval_ratio_eq_zero_of_le {Ω L : Type} [Field Ω] [CharZero Ω] [Field L] [CharZero L]
     {y : (Σ k, ι k) → Ω} {z : (Σ k, ι k) → L} (hyz : mCoordIdeal y ≤ mCoordIdeal z) (d : ∀ k, ι k)
     (hyd : ∀ k, y ⟨k, d k⟩ ≠ 0) (hzd : ∀ k, z ⟨k, d k⟩ ≠ 0) {g : MvPolynomial (Σ k, ι k) ℚ}
@@ -156,7 +161,8 @@ def linVal (w : Fin i → K) : ProjField K i :=
 
 theorem linVal_eq (w : Fin i → K) :
     linVal w = ∑ j, constK K i (w j) * algebraMap (MvPolynomial (Fin i) K) (ProjField K i) (X j) := by
-  simp [linVal, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linVal, map_sum, map_mul]
 
 theorem linVal_smul (a : K) (w : Fin i → K) : linVal (a • w) = constK K i a * linVal w := by
   rw [linVal_eq, linVal_eq, Finset.mul_sum]
@@ -188,7 +194,8 @@ theorem exists_combo (b : Module.Basis T ℤ (dualLattice F)) (w : Fin i → K) 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h2 := congrArg (constK K i) (hj j)
-  simp only [map_mul, map_intCast, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_intCast, map_sum] at h2
   rw [← mul_assoc, h2, Finset.sum_mul]
   exact Finset.sum_congr rfl fun t _ => mul_assoc _ _ _
 
@@ -258,7 +265,8 @@ theorem exists_point (b : Module.Basis T ℤ (dualLattice F)) {L : Type} [Field 
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [linVal_single, mul_div_assoc]
     have h2 := congrArg ψ e
-    rw [map_sum, hψ] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, hψ] at h2
     simp only [map_mul] at h2
     rw [show ev2 (X ⟨(), t⟩) = z ⟨(), t⟩ from eval₂_X _ _ _] at h2
     rw [← h2]

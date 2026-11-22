@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SatSplit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SatSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem hform_mulVec (σ : A →+* A) (J M : Matrix (Fin n) (Fin n) A) (x y : Fi
   have hx : (fun i => σ ((M *ᵥ x) i)) = (M.map σ) *ᵥ (fun i => σ (x i)) := by
     funext i
     show σ (∑ j, M i j * x j) = ∑ j, σ (M i j) * σ (x j)
-    simp only [map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul]
   have hc : Formalism.UG.cT σ M = (M.map σ)ᵀ := rfl
   rw [hform_eq_dot, hform_eq_dot, hx, hc, ← mulVec_mulVec, ← mulVec_mulVec]
   conv_rhs => rw [dotProduct_mulVec, vecMul_transpose]
@@ -47,13 +52,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem sc_mul (a b : Fv F v) : sc (E := E) v (a * b) = sc (E := E) v a * sc (E := E) v b := by
   simp only [sc, Algebra.TensorProduct.tmul_mul_tmul, mul_one]
 
-theorem sc_add (a b : Fv F v) : sc (E := E) v (a + b) = sc (E := E) v a + sc (E := E) v b := by
-  simp only [sc, TensorProduct.add_tmul]
-
 theorem sc_one : sc (E := E) v (1 : Fv F v) = 1 := rfl
-
-theorem sc_zero : sc (E := E) v (0 : Fv F v) = 0 := by
-  simp only [sc, TensorProduct.zero_tmul]
 
 theorem split_decomp {e : Fv F v ⊗[F] E} {π₁ π₂ : Fv F v ⊗[F] E →+* Fv F v}
     (h1 : ∀ x, x * e = sc (E := E) v (π₁ x) * e) (h2 : ∀ x, x * (1 - e) = sc (E := E) v (π₂ x) * (1 - e))

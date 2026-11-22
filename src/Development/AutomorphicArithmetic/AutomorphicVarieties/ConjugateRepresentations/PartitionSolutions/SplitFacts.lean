@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PairFactsAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PairFactsAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -209,23 +213,23 @@ def SandCpt : Prop :=
     ∀ K ⊆ cone E a, IsCompact K → IsCompact {g : GL (Fin a) (Cinf E) | sand g (hOne E a) ∈ K}
 
 def SplitFacts : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ),
     (∀ t, GeneralLinearGroup.map (pFin E) (GlobalTheory.UnitaryBC.splitCentre E a t) = 1 ∧
       ∃ r : ℝ, 0 < r ∧ ∀ p, sand (GeneralLinearGroup.map (pInf E) (GlobalTheory.UnitaryBC.splitCentre E a t)) p = r • p) ∧
     ∀ r : ℝ, 0 < r → ∃ t, ∀ p, sand (GeneralLinearGroup.map (pInf E) (GlobalTheory.UnitaryBC.splitCentre E a t)) p = r • p
 
 def SuppFwd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → ∀ (Ξ : AlgRep E a) (q : ℕ) (α : Co Ξ q) w,
     Corr U Ξ α w → CSupp α → CSuppG (geo ho U Ξ) w
 
 def SuppBwd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))), IsCompact (U : Set (GL (Fin a) (Af E))) → ∀ (Ξ : AlgRep E a) (q : ℕ) (α : Co Ξ q) w,
     Corr U Ξ α w → CSuppG (geo ho U Ξ) w → CSupp α
 
 def LevCorr : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) (q : ℕ),
     (∀ α : Co Ξ q, IsLev U Ξ α → dCo (smLie Ξ) α = 0 → ∃ w : (geo ho U Ξ).Om q, Corr U Ξ α w.1 ∧
       (∀ γ, (geo ho U Ξ).act q γ w = w) ∧ (geo ho U Ξ).dOm q w = 0) ∧

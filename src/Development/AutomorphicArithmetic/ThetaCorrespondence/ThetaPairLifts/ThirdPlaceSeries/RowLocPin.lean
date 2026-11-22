@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTiedRowLoc
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTiedRowLoc
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

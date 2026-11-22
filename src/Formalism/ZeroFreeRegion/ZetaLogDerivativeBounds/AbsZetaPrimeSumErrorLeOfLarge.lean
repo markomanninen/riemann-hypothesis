@@ -1,6 +1,10 @@
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.IntegralEqIntervalIntegralAddCompl
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaNeZeroOfMemRectangle
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormIntegralComplLe
+module
+
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.IntegralEqIntervalIntegralAddCompl
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaNeZeroOfMemRectangle
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.NormIntegralComplLe
+
+@[expose] public section
 
 open Complex MeasureTheory
 

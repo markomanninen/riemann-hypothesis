@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
+
 open GlobalTheory.WeilM
 
 noncomputable section
@@ -106,7 +111,8 @@ theorem apply_eq_of_periodic {C : Set (X → ℂ)} (a : (X → ℂ) →ₗ[ℂ] 
     have : (χ q.out - 1) * a (cosetInd U q) = 0 := by rw [sub_mul, e, one_mul, sub_self]
     exact (mul_eq_zero.mp this).resolve_left (sub_ne_zero.mpr hχ1)
   conv_lhs => rw [hsum]
-  rw [map_sum, Finset.sum_eq_single (0 : X ⧸ U)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single (0 : X ⧸ U)]
   · rw [map_smul, smul_eq_mul, ← QuotientAddGroup.mk_zero, hout]
   · intro q _ hq
     rw [map_smul, hkill q hq, smul_zero]

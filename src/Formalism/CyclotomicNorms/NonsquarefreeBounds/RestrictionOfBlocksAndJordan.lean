@@ -1,5 +1,9 @@
-import Formalism.CyclotomicNorms.StatementI
-import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.PowerPCycle
+module
+
+public import Formalism.CyclotomicNorms.StatementI
+public import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.PowerPCycle
+
+@[expose] public section
 
 open Finset Module
 
@@ -16,7 +20,8 @@ theorem repr_diag_apply (ρ : Representation k G V) (e : Module.Basis (Fin N) k 
     e.repr (ρ y v) m = χ m y * e.repr v m := by
   have h : ρ y v = ∑ i, (e.repr v i * χ i y) • e i := by
     conv_lhs => rw [← e.sum_repr v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, hy, smul_smul]
   rw [h, e.repr_sum_self]
@@ -186,13 +191,14 @@ theorem restriction_of_blocks_and_jordan (hB : BlocksCycle) (hJ : JordanTransiti
       ∀ j, (∀ g, e j ∉ W.map (ρ g)) → e.repr x j = 0 :=
     ⟨{ carrier := {x | ∀ j, (∀ g, e j ∉ W.map (ρ g)) → e.repr x j = 0}
        add_mem' := fun {a b} ha hb j hj => by
-         rw [map_add, Finsupp.add_apply, ha j hj, hb j hj, add_zero]
+         rw [map_add (f := _), Finsupp.add_apply, ha j hj, hb j hj, add_zero]
        zero_mem' := fun j _ => by rw [map_zero, Finsupp.zero_apply]
        smul_mem' := fun c {x} hx j hj => by
          rw [map_smul, Finsupp.smul_apply, hx j hj, smul_zero] }, fun x => Iff.rfl⟩
   have hYst : ∀ g' : G, ∀ x ∈ Y, ρ g' x ∈ Y := by
     intro g' x hx
-    rw [← e.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr x, map_sum]
     refine Y.sum_mem fun i _ => ?_
     rw [map_smul]
     by_cases hi : ∃ g, e i ∈ W.map (ρ g)

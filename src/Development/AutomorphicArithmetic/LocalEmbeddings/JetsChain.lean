@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfOfMulFinOf
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqFinClSumAvg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunction
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtTransInvHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfOfMulFinOf
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqVolMulSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralEqFinClSumAvg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOpenLevelFixingThetaFunction
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtTransInvHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,15 +150,16 @@ theorem sumV_eq {A : ℕ → Type} (o : ∀ n, A n → GfC (V n)) (w : ∀ n, A 
     simp only [sumV]
     refine finsum_congr fun a => ?_
     letI : ∀ j : Fin n, Fintype (A j) := fun j => @Fintype.ofFinite _ (hA j (by omega))
-    rw [sumV_eq o w n fun j hj => hA j (by omega), finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sumV_eq o w n fun j hj => hA j (by omega), finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     have e1 : ext (P := fun j => GfC (V j)) (n + 1)
         (fun j => o j (Fin.snoc (α := fun j : Fin (n + 1) => A j) c a j)) n = o n a := by
-      rw [ext, dif_pos (Nat.lt_succ_self n)]
+      rw [ext, dite_eq_left (Nat.lt_succ_self n)]
       exact congrArg (o n) (Fin.snoc_last (α := fun j : Fin (n + 1) => A j) a c)
     have e2 : ptV comp v (ext (n + 1) fun j => o j (Fin.snoc (α := fun j : Fin (n + 1) => A j) c a j)) n =
         ptV comp v (ext n fun j => o j (c j)) n := ptV_congr comp v n fun j hj => by
-      rw [ext, ext, dif_pos (Nat.lt_succ_of_lt hj), dif_pos hj]
+      rw [ext, ext, dite_eq_left (Nat.lt_succ_of_lt hj), dite_eq_left hj]
       exact congrArg (o j) (Fin.snoc_castSucc (α := fun j : Fin (n + 1) => A j) a c ⟨j, hj⟩)
     have e3 : ∏ j : Fin (n + 1), w j (Fin.snoc (α := fun j : Fin (n + 1) => A j) c a j) = w n a * ∏ j : Fin n, w j (c j) := by
       rw [Fin.prod_univ_castSucc, mul_comm]
@@ -194,26 +199,35 @@ include hc hF hFa
 theorem ptF_left (x : ∀ n, GfC (V n)) : ∀ n ≤ N, ∀ γ ∈ GQ (V n), ∀ g, ptF comp v ρ Λ x n (γ * g) = ptF comp v ρ Λ x n g
   | 0, _, γ, hγ, g => (hF _).symm.trans ((hFa γ hγ g).trans (hF _))
   | n + 1, hn, γ, hγ, g => by
-    obtain ⟨κ, h1, h2⟩ := exists_haar _ (hc n hn).1
-    simp only [ptF_succ (hc n hn) κ h1 h2, (hc n hn).2.2.2.2.2.1 γ hγ]
+    have hArrow : ArrowOK comp ρ ker Λ n := hc n (Nat.lt_of_succ_le hn)
+    have hDef : IsDefiniteSpace (V n) := hArrow.1
+    have hHaar := exists_haar (V n) hDef
+    rcases hHaar with ⟨κ, h1, h2⟩
+    simp only [ptF_succ hArrow κ h1 h2, hArrow.2.2.2.2.2.1 γ hγ]
 
 theorem ptF_rat {x x' : ∀ n, GfC (V n)} (hx : ∀ j < N, ∃ γ ∈ ratFin (V j), x' j = γ * x j) :
     ∀ n ≤ N, ptF comp v ρ Λ x' n = ptF comp v ρ Λ x n
   | 0, _ => rfl
   | n + 1, hn => by
-    obtain ⟨κ, h1, h2⟩ := exists_haar _ (hc n hn).1
-    obtain ⟨γ, hγ, e⟩ := hx n hn
+    have hn' : n < N := Nat.lt_of_succ_le hn
+    have hArrow : ArrowOK comp ρ ker Λ n := hc n hn'
+    have hDef : IsDefiniteSpace (V n) := hArrow.1
+    have hHaar := exists_haar (V n) hDef
+    rcases hHaar with ⟨κ, h1, h2⟩
+    have hRat : ∃ γ ∈ ratFin (V n), x' n = γ * x n := hx n hn'
+    rcases hRat with ⟨γ, hγ, e⟩
     funext g
-    rw [ptF_succ (hc n hn) κ h1 h2, ptF_succ (hc n hn) κ h1 h2, ptF_rat hx n (by omega), e]
+    rw [ptF_succ hArrow κ h1 h2, ptF_succ hArrow κ h1 h2, ptF_rat hx n (by omega), e]
     exact avg_rat _ κ (fun z => ker n z g * ptF comp v ρ Λ x n z) (fun q hq z => by
-      rw [(hc n hn).2.2.2.2.1 q hq, ptF_left hc hF hFa x n (by omega) q hq]) hγ _
+      rw [hArrow.2.2.2.2.1 q hq, ptF_left hc hF hFa x n (by omega) q hq]) hγ _
+
 
 omit hF in
-
 theorem liftC_left (μ : ∀ n, Measure (GA D (V n))) (fd : ∀ n, Set (GA D (V n))) :
     ∀ n ≤ N, ∀ γ ∈ GQ (V n), ∀ g, liftC μ fd ker F n (γ * g) = liftC μ fd ker F n g
   | 0, _, γ, hγ, g => hFa γ hγ g
-  | n + 1, hn, γ, hγ, g => by simp only [liftC, (hc n hn).2.2.2.2.2.1 γ hγ]
+  | n + 1, hn, γ, hγ, g => by
+    simp only [liftC, (hc n (Nat.lt_of_succ_le hn)).2.2.2.2.2.1 γ hγ]
 
 omit hc hF hFa in
 theorem liftC_right (μ : ∀ n, Measure (GA D (V n))) (fd : ∀ n, Set (GA D (V n))) :
@@ -233,9 +247,12 @@ theorem liftC_real (μ : ∀ n, Measure (GA D (V n))) (fd : ∀ n, Set (GA D (V 
   | n + 1, hn => by
     intro h
     have ih := liftC_real μ fd K hK n (by omega)
-    obtain ⟨h1, ⟨K₀, h2, h3, h4⟩, h5⟩ := hK n hn
-    obtain ⟨-, a2, a3, a4, a5, -, a7, a8⟩ := hc n hn
-    obtain ⟨hfin, κ, hκH, hκP, hU⟩ := GlobalTheory.DefiniteClassReal.integral_eq_finClSum_avg (V n) a2 K₀ (K n) h2 h1 h3 (μ n) (fd n) h4
+    have hn' : n < N := Nat.lt_of_succ_le hn
+    have hLevel := hK n hn'
+    rcases hLevel with ⟨h1, ⟨K₀, h2, h3, h4⟩, h5⟩
+    have hArrow : ArrowOK comp ρ ker Λ n := hc n hn'
+    rcases hArrow with ⟨-, a2, a3, a4, a5, -, a7, a8⟩
+    have hAvg := GlobalTheory.DefiniteClassReal.integral_eq_finClSum_avg (V n) a2 K₀ (K n) h2 h1 h3 (μ n) (fd n) h4
       (fun g => ker n g h * liftC μ fd ker F n g)
       (fun γ hγ g => by
         rw [a5 γ hγ, liftC_left hc hFa μ fd n (by omega) γ hγ])
@@ -248,9 +265,11 @@ theorem liftC_real (μ : ∀ n, Measure (GA D (V n))) (fd : ∀ n, Set (GA D (V 
           rw [ih, finOf_mul_inf, mul_inv_rev, map_mul, Module.End.mul_apply]
         simp only [e]
         exact a4 _))
+    rcases hAvg with ⟨hfin, κ, hκH, hκP, hU⟩
     haveI := Fintype.ofFinite (FinCl (V n) (K n))
     simp only [liftC, sumV]
-    rw [hU, finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hU, finsum_eq_sum_of_fintype, finsum_eq_sum_of_fintype, map_sum, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     simp only [isFinReal_apply a3 ih]
     rw [a8 κ hκH hκP, map_smul, map_smul, smul_eq_mul, wgt, div_eq_mul_inv]

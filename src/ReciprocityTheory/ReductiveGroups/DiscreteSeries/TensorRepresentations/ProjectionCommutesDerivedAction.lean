@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccATensWordMem
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccBLowKShiftF
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ImageLeClosGen
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccATensWordMem
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.OccBLowKShiftF
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ImageLeClosGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem tensor_generated_mem_layer (hE : IsGlRep E) {V : Submodule ℂ D} (hVs :
 theorem occurrence_coef_add (dual : Bool) (η f f' : Fin n → H) :
     occCoef dual σ η (f + f') = occCoef dual σ η f + occCoef dual σ η f' := by
   funext g
-  simp only [occCoef, tensGrp, Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib, inner_add_right]
+  simp only [occCoef, tensGrp, Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib, inner_add_right]
 
 theorem occurrence_coef_smul (dual : Bool) (η f : Fin n → H) (c : ℂ) :
     occCoef dual σ η (c • f) = c • occCoef dual σ η f := by

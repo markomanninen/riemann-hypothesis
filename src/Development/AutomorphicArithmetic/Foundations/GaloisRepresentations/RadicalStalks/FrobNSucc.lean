@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Root
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.FrobEpi
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.CohHomNatCastZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.Root
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.FrobEpi
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.CohHomNatCastZero
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -80,10 +84,10 @@ private theorem card_bound {C : Type} [CommRing C] (χ : C →+* k) {f j : ℕ}
       rw [Finset.mem_val, Set.Finite.mem_toFinset] at hx
       exact hx
     obtain ⟨c, rfl⟩ := RingHom.mem_range.mp hx'
-    rw [Polynomial.mem_roots (FiniteField.X_pow_card_sub_X_ne_zero k hq)]
+    rw [Polynomial.mem_roots (Polynomial.X_pow_sub_X_ne_zero (R := k) hq)]
     simp [hc c]
   have hle := Polynomial.card_le_degree_of_subset_roots hsub
-  rw [FiniteField.X_pow_card_sub_X_natDegree_eq k hq, hZ] at hle
+  rw [Polynomial.natDegree_X_pow_sub_X (R := k) hq, hZ] at hle
   exact absurd hle (not_le.mpr (Nat.pow_lt_pow_right hp1 hjf))
 
 private theorem rho_ringHom {A : Over (Sp k)} [GrpObj A] {C : Type} [CommRing C] {w : Ideal C} {f : ℕ}
@@ -207,7 +211,7 @@ private theorem kill (hk : (p : k) = 0) {A : Over (Sp k)} [GrpObj A] [IsReduced 
         _ = χ c := hσ _
   have hdec : x = rho i π.ε x + rho i (1 - π.ε) x := by
     rw [← LinearMap.add_apply, ← hL.add, add_sub_cancel, hL.one, Module.End.one_apply]
-  rw [hdec, map_add, h1, h2, add_zero]
+  rw [hdec, map_add (f := _), h1, h2, add_zero]
 
 private theorem vRoot [IsAlgClosed k] (hk : (p : k) = 0) {A : Over (Sp k)} [GrpObj A] [IsCommMonObj A]
     (hab : IsAbelianScheme A) {C : Type} [CommRing C] {w : Ideal C} {f : ℕ} (π : Par p w f)

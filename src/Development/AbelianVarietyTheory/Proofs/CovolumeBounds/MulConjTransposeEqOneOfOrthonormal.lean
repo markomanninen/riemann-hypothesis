@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -27,15 +31,15 @@ theorem alternatingMap_apply_eq_sum_minors {n : Type*} [Fintype n] [LinearOrder 
   classical
   let b := Pi.basisFun R n
   have h := (b.exteriorPower i).sum_repr (exteriorPower.ιMulti R i A)
-  rw [← exteriorPower.alternatingMapLinearEquiv_apply_ιMulti f A, ← h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← exteriorPower.alternatingMapLinearEquiv_apply_ιMulti f A, ← h, map_sum]
   refine Finset.sum_congr rfl fun S _ => ?_
   rw [map_smul, exteriorPower.basis_repr_apply, exteriorPower.ιMultiDual_apply_ιMulti,
     exteriorPower.basis_apply, exteriorPower.ιMulti_family,
     exteriorPower.alternatingMapLinearEquiv_apply_ιMulti]
   congr 2
-  funext a
-  simp only [b, Function.comp_apply, Pi.basisFun_apply]
-  rfl
+  ext a
+  simp [b, subsetEnum, Set.powersetCard.ofFinEmbEquiv_symm_apply, Pi.basisFun_apply]
 
 theorem det_mul_eq_sum_minors {n : Type*} [Fintype n] [LinearOrder n] {i : ℕ}
     (A : Matrix (Fin i) n R) (B : Matrix n (Fin i) R) :

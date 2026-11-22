@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceIffAdditiveMapsExist
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceIffAdditiveMapsExist
+
+@[expose] public section
 
 namespace GlobalTheory
 

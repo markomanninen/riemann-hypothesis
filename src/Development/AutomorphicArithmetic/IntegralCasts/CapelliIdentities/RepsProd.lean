@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Classical
 
@@ -12,7 +16,7 @@ theorem UpperTheory.Reformulated.B.P9.aux2 :
       a ∈ {x : V | x ∈ Λ ∧ (p : V → V) x = x} →
         b ∈ {x : V | x ∈ Λ ∧ (p : V → V) x = x} → a + b ∈ Λ ∧ (p : V → V) (a + b) = a + b := by
   intro V _ p Λ a b ha hb
-  exact ⟨Λ.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2]⟩
+  exact ⟨Λ.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2]⟩
 
 theorem UpperTheory.Reformulated.B.P9.aux3 :
     ∀ {V : Type} [inst : AddCommGroup V] (p : V →+ V) (Λ : AddSubgroup V), (0 : V) ∈ Λ ∧ (p : V → V) (0 : V) = (0 : V) := by
@@ -36,7 +40,7 @@ theorem UpperTheory.Reformulated.B.P9.aux6 :
       a ∈ {x : V | x ∈ Λ ∧ (p : V → V) x = (0 : V)} →
         b ∈ {x : V | x ∈ Λ ∧ (p : V → V) x = (0 : V)} → a + b ∈ Λ ∧ (p : V → V) (a + b) = (0 : V) := by
   intro V _ p Λ a b ha hb
-  exact ⟨Λ.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2, add_zero]⟩
+  exact ⟨Λ.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2, add_zero]⟩
 
 theorem UpperTheory.Reformulated.B.P9.aux7 :
     ∀ {V : Type} [inst : AddCommGroup V] (p : V →+ V) (Λ : AddSubgroup V), (0 : V) ∈ Λ ∧ (p : V → V) (0 : V) = (0 : V) := by
@@ -84,7 +88,7 @@ theorem UpperTheory.Reformulated.B.P9.reps_prod :
     change a + b - (a' + b') ∈ M at hxy
     change a + b = a' + b'
     have h1 : p (a + b - (a' + b')) = a - a' := by
-      rw [map_sub, map_add, map_add, (hA1' a ha).2, (hA1' a' ha').2, (hB1' b hb).2,
+      rw [map_sub, map_add (f := _), map_add (f := _), (hA1' a ha).2, (hA1' a' ha').2, (hB1' b hb).2,
         (hB1' b' hb').2, add_zero, add_zero]
     have h2 : a = a' := hA2 a ha a' ha' (h1 ▸ hM _ hxy)
     have h3 : b = b' := by

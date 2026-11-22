@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffOfSnd
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffOfSnd
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate ContDiff
@@ -33,8 +37,8 @@ def cZ {j N : ℕ} (Z : MJ j) (p : Fin N) (a : Fin j) : ℂ := if hp : p.val < j
 def cvZ (k r : ℕ) {j : ℕ} (Z : MJ j) (p : Fin (2 * r + k + 1)) (a : Fin j) : ℂ :=
   if hp : 2 * r + k < p.val + j then conj (Z a ⟨2 * r + k - p.val, by omega⟩) else 0
 
-open scoped Classical in
 
+open scoped Classical in
 def AZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (u : ℂ) (h : MJ j → E) : MJ j → E := fun Z =>
   ∑ c : Fin m → Fin (2 * r + k + 1),
     if StrictMono c then
@@ -42,8 +46,8 @@ def AZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (u : ℂ) (h : MJ j → E)
         qminG (EopZ (E := E) k r j) (C3.xR k r m hm) c u h Z
     else 0
 
-open scoped Classical in
 
+open scoped Classical in
 def AvZ (k r j m : ℕ) (hm : m ≤ r) (hmj : m ≤ j) (ell : ℂ) (h : MJ j → E) : MJ j → E := fun Z =>
   ∑ B : Fin m → Fin (2 * r + k + 1),
     if StrictMono (fun l => C3.keyS k r (B l)) then
@@ -103,7 +107,7 @@ theorem zop_qminG (k r j : ℕ) {t : ℕ} (a b : Fin t → Fin (2 * r + k + 1)) 
 end zop
 
 theorem contDiff_entry {j : ℕ} (a b : Fin j) : ContDiff ℝ ∞ fun Z : MJ j => Z a b :=
-  (contDiff_apply ℝ ℂ b).comp (contDiff_apply ℝ (Fin j → ℂ) a)
+  (contDiff_apply ℝ (fun _ => ℂ) b).comp (contDiff_apply ℝ (fun _ => (Fin j → ℂ)) a)
 
 theorem contDiff_det_of {j m : ℕ} (M : MJ j → Matrix (Fin m) (Fin m) ℂ) (hM : ∀ a b, ContDiff ℝ ∞ fun Z => M Z a b) :
     ContDiff ℝ ∞ fun Z => (M Z).det := by

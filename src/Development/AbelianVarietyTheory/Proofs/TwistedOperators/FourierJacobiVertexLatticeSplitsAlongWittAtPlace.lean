@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionCoreProjMulCoreEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionCoreProjMulCoreEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,9 +39,29 @@ theorem monoAt_of_proj {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (L : L
       exact rat_mulVec_mem_latV _ (hY i) _ hy
     · exact rat_mulVec_mem_latV d.q0 h0 _ hy
   · rintro ⟨h1, h3, h2⟩
+    have hrat : d.e * d.qX + d.i₀ * d.q0 + d.e' * d.qY = 1 := by
+      have h : fromRows (fromRows d.qX d.q0) d.qY * fromCols (fromCols d.e d.i₀) d.e' = 1 := by
+        rw [fromRows_mul_fromCols, fromRows_mul_fromCols, fromRows_mul, mul_fromCols,
+          GlobalTheory.SeeSaw.SplitLat.qX_e, GlobalTheory.SeeSaw.SplitLat.qX_i₀,
+          GlobalTheory.SeeSaw.SplitLat.qX_e', GlobalTheory.SeeSaw.SplitLat.qY_e,
+          GlobalTheory.SeeSaw.SplitLat.qY_i₀, GlobalTheory.SeeSaw.SplitLat.qY_e',
+          GlobalTheory.SeeSaw.SplitLat.wittDecomposition_coreProj_mul_e_eq_zero,
+          GlobalTheory.SeeSaw.SplitLat.wittDecomposition_coreProj_mul_core_eq_one,
+          GlobalTheory.SeeSaw.SplitLat.wittZeroProjection_mul_dualBasis_eq_zero,
+          fromBlocks_one, fromRows_zero, fromCols_zero, fromBlocks_one]
+      rw [← fromCols_mul_fromRows, ← fromCols_mul_fromRows]
+      exact (Matrix.mul_eq_one_comm_of_card_eq _ _ _ (by simp [← d.rank_add]; ring)).1 h
+    have hsum : d.jX * d.pX + d.j0 * d.p0 + d.jY * d.pY = 1 := by
+      have h := congrArg rat hrat
+      change (d.e * d.qX + d.i₀ * d.q0 + d.e' * d.qY).map (incA D) = (1 : Matrix (Fin S.rank) (Fin S.rank) D.host.E).map (incA D) at h
+      rw [Matrix.map_add _ (map_add (incA D)), Matrix.map_add _ (map_add (incA D)),
+        Matrix.map_mul, Matrix.map_mul, Matrix.map_mul, Matrix.map_one] at h
+      · exact h
+      · exact map_zero (incA D)
+      · exact map_one (incA D)
     have e : y = d.jX *ᵥ (d.pX *ᵥ y) + d.j0 *ᵥ (d.p0 *ᵥ y) + d.jY *ᵥ (d.pY *ᵥ y) := by
       rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Matrix.add_mulVec, ← Matrix.add_mulVec,
-        d.sum_eq_one, Matrix.one_mulVec]
+        hsum, Matrix.one_mulVec]
     rw [e, mulVec_eq_sum_colMul d.jX, mulVec_eq_sum_colMul d.jY]
     refine add_mem (add_mem (sum_mem fun i _ => h1 i) ?_) (sum_mem fun i _ => h3 i)
     exact rat_mulVec_mem_latV d.i₀ hi _ h2

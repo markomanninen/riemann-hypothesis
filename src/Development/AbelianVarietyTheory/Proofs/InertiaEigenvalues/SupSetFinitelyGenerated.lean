@@ -1,22 +1,59 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtGeo
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsModelPushInvertibleOverCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIntegralFramesModelInvertiblePushforward
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.NumberFieldFinitePlaceCompletionEmbedding
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAlgebraMapEqOfValVLeOne
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NoCommonZeroOfFiniteValues
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompactifiedModuliPartOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsModuliSchemePolarizedAbelianLevel
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullObjOfSecondTyping
-import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.CubeMapTripleProductUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTopBaseModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoOfNoTwoTorsion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtGeo
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsModelPushInvertibleOverCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIntegralFramesModelInvertiblePushforward
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.NumberFieldFinitePlaceCompletionEmbedding
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAlgebraMapEqOfValVLeOne
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NoCommonZeroOfFiniteValues
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.EvaluationLawsGenericFramesAtlasHold
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompactifiedModuliPartOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsModuliSchemePolarizedAbelianLevel
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOnTorsion
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullLevelChangeActsOnUnitaryFamily
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FullLevelObjectPullbackExistsAndFull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelDataPullbackOfLevelMap
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MapToUniversalObjectUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleSurjectiveLevelMap
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelChangeExtendsBaseModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrimeToPartLevelExistsUniqueMono
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapsClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllSixAbelianSchemeLawsHold
+public import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.CubeMapTripleProductUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsTopBaseModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.TopAmpExists
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SystemPrimesDistinctLevelsGeThree
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoAppTopOfIsPullbackOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsStandardSmoothOfRelativeDimensionAwayJacobian
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SecExtendOfNonzeroLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsIsoOfIsFiniteOfUniqueLiftOfClassicalPoints
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DenseTorsionAndEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabMapOfLbIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPolAVGenericFibre
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.TestObj
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsQProjOverOfIsIso
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -56,7 +93,7 @@ theorem fg_of_separating {K V : Type} [Field K] [AddCommGroup V] [Module K V] (O
         ext ψ
         exact ψ.1.map_smul (a : K) g.1 }
   have hΦ : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro g hg
     exact Subtype.ext (hsep g (hS g g.2) fun ψ hψ => congrArg Subtype.val (congrFun hg ⟨ψ, hψ⟩))
   have : Module.Finite O S := Module.Finite.of_injective Φ hΦ
@@ -65,8 +102,8 @@ theorem fg_of_separating {K V : Type} [Field K] [AddCommGroup V] [Module K V] (O
 variable {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   (la : HeightOneSpectrum (𝓞 K))
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem exists_denominator (y : L)
     (hy : ∀ w : HeightOneSpectrum (𝓞 L), w.asIdeal.LiesOver la.asIdeal → w.valuation L y ≤ 1) :
     ∃ s : 𝓞 K, s ∉ la.asIdeal ∧ ∃ z : 𝓞 L, algebraMap K L s * y = z := by
@@ -140,7 +177,7 @@ theorem exists_bound (X : Set L)
       exact le_of_eq_of_le (congrArg _ ho.symm) (la.valuation_le_one o)
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [RingOfIntegers.coe_eq_algebraMap (x + y), map_add, mul_add, map_add, mul_add]
+      rw [RingOfIntegers.coe_eq_algebraMap (x + y), map_add (f := _), mul_add, map_add (f := _), mul_add]
       exact Valuation.map_add_le _ hx hy
     | smul n x _ hx =>
       have e : ((d : 𝓞 K) : K) * ℓ ((D : L)⁻¹ * ((n • x : 𝓞 L) : L)) =
@@ -164,8 +201,8 @@ section Geometry
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
   (Xo : Moduli Dw l) (c : Coeff l)
 
-open GlobalTheory.Models GlobalTheory.Models.RankZero in
 
+open GlobalTheory.Models GlobalTheory.Models.RankZero in
 theorem exists_model_rank_zero (hD : Dw.p + Dw.q = 0) {O : Type} [CommRing O] [IsDomain O] [IsIntegrallyClosed O]
     [IsNoetherianRing O] (β : O →+* c.F) : ∃ Y : Model Xo c β, PushInvertible Y.t.G Y.t.PP.L := by
   have hX := isIso_moduli GlobalTheory.card_torsion_abelianVariety hD Xo
@@ -218,7 +255,8 @@ theorem exists_bound_values {la : HeightOneSpectrum (𝓞 c.F)} {p : ℕ} (hp : 
     show vV T.V (κ (algebraMap c.F L x)) = _
     rw [ho.2]
     simp only [vLa]
-    rw [← HeightOneSpectrum.valuation_liesOver L la w x, WithZero.log_pow]
+    rw [← HeightOneSpectrum.valuation_liesOver L la w x,
+      ← Ideal.ramificationIdx'_eq_ramificationIdx la.asIdeal w.asIdeal la.ne_bot, WithZero.log_pow]
     push_cast
     simp [mul_assoc]
   let _ : Algebra c.F T.Fr := io.toAlgebra
@@ -264,7 +302,7 @@ theorem exists_value_ne_zero {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {f : R
   have hev : evR Xo c f y = f q y := by
     have hT := hL.test q.R y
     unfold evR evalAt
-    rw [dif_pos hT]
+    rw [dite_eq_left hT]
     exact (hf.1 _ _ _ _ _ hT.choose_spec.choose_spec.choose_spec).symm
   have hM : ∃ M : Ideal q.R, M.IsMaximal ∧ f q y ∉ M := by
     by_contra hcon

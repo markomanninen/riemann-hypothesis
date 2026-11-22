@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DualGramInterpGram
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineStableLieEigenspaceFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenFrameChartVectorsCompactFlagSpaceAffi
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagDeterminantIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DualGramInterpGram
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAffineStableLieEigenspaceFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenFrameChartVectorsCompactFlagSpaceAffi
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FlagDeterminantIso
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -30,18 +35,18 @@ attribute [local instance] Over.cartesianMonoidalCategory
 
 theorem gm_val_stalk {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) (a : Γ(X, U)ˣ) :
     (gm f y U a).val = (f.stalkMap y).hom ((X.presheaf.germ U (f y) h).hom a.val) := by
-  rw [gm, dif_pos h]
+  rw [gm, dite_eq_left h]
   exact (Scheme.Hom.germ_stalkMap_apply f U y h a.val).symm
 
 theorem gm_id_val {Y : Scheme.{0}} (y : Y) (U : Y.Opens) (h : y ∈ U) (a : Γ(Y, U)ˣ) :
     (gm (𝟙 Y) y U a).val = (Y.presheaf.germ U y h).hom a.val := by
-  rw [gm, dif_pos (show (𝟙 Y : Y ⟶ Y) y ∈ U from h)]
+  rw [gm, dite_eq_left (show (𝟙 Y : Y ⟶ Y) y ∈ U from h)]
   rfl
 
 theorem gm_val_ev {X Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U)
     (h' : ⊤ ≤ (Y.fromSpecStalk y ≫ f) ⁻¹ᵁ U) (a : Γ(X, U)ˣ) :
     (gm f y U a).val = ev (Y.fromSpecStalk y ≫ f) U h' a.val := by
-  rw [gm, dif_pos h]
+  rw [gm, dite_eq_left h]
   have h1 : ⊤ ≤ Y.fromSpecStalk y ⁻¹ᵁ (f ⁻¹ᵁ U) := top_le_stalk_preimage y (𝟙 Y) h
   refine (ev_fromSpecStalk_eq y h h1 _).symm.trans (Eq.trans ?_ (ev_appLE (Y.fromSpecStalk y) f le_rfl h1 h' a.val))
   rw [← Scheme.Hom.app_eq_appLE]
@@ -87,7 +92,7 @@ variable {O : Type} [CommRing O] {β : O →+* c.F} {Y : Model Xo c β} {R R' R'
   {x'' : Sp R'' ⟶ Y.X}
 
 theorem isMap_of_comp {f : EigFrame Y φ x} {f' : EigFrame Y φ' x'} {f'' : EigFrame Y φ'' x''} {ρ : R →+* R'}
-    {ψ : R' →+* R''} {χ : R →+* R''} (h : f.IsMap ρ f') (h' : f.IsMap χ f'') (e : ψ.comp ρ = χ) : f'.IsMap ψ f'' :=
+    {ψ : R' →+* R''} {χ : R →+* R''} (h : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f embτ basisIdx) ρ f') (h' : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f embτ basisIdx) χ f'') (e : ψ.comp ρ = χ) : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f' embτ basisIdx) ψ f'' :=
   fun τ i => by rw [h' τ i, h τ i, GlobalTheory.GradedPieces.dual_comp, e]
 
 def detPow (a : (E →+* ℂ) → ℤ) (f g : EigFrame Y φ x) : Rˣ := ∏ τ, (f.isUnit_det_co g τ).unit ^ (-a τ)
@@ -100,14 +105,15 @@ theorem detPow_mul (a : (E →+* ℂ) → ℤ) (f g k : EigFrame Y φ x) : detPo
   exact Units.ext (by simp only [Units.val_mul, IsUnit.unit_spec, ← Matrix.det_mul, EigFrame.co_mul])
 
 theorem detPow_map (a : (E →+* ℂ) → ℤ) {f g : EigFrame Y φ x} {f' g' : EigFrame Y φ' x'} {ψ : R →+* R'}
-    (hf : f.IsMap ψ f') (hg : g.IsMap ψ g') (hx : x' = spMap ψ ≫ x) :
+    (hf : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f embτ basisIdx) ψ f') (hg : (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v g embτ basisIdx) ψ g') (hx : x' = spMap ψ ≫ x) :
     detPow a f' g' = Units.map ψ.toMonoidHom (detPow a f g) := by
   rw [detPow, detPow, map_prod]
   refine Finset.prod_congr rfl fun τ _ => ?_
   rw [map_zpow]
   congr 1
   refine Units.ext ?_
-  rw [IsUnit.unit_spec, hf.co τ hg hx]
+  simp only [Units.coe_map, IsUnit.unit_spec]
+  rw [EigFrame.IsMap.co τ hf hg hx]
   exact (ψ.map_det _).symm
 
 theorem detPow_chart (a : (E →+* ℂ) → ℤ) {Z : Scheme.{0}} {π : Z ⟶ Y.X} (F : Frames Y π) (k k' : F.J) (z : Sp R ⟶ Z)
@@ -166,8 +172,8 @@ variable (TF : TorFlag Xo c) (Z : Comp Xo c) [IsIntegral (X₀ TF.Y Z)] {φ₀ :
   (f₀ : EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι))
   (a : (E →+* ℂ) → ℤ)
 
-omit [IsIntegral (X₀ TF.Y Z)] in
 
+omit [IsIntegral (X₀ TF.Y Z)] in
 theorem stalk_pt (y : Y₀ TF.X Z) : ((Y₀ TF.X Z).fromSpecStalk y ≫ inc₀ TF.X Z) ≫ TF.X.π =
     spMap ((π₀ TF.X Z).stalkMap y).hom ≫ (X₀ TF.Y Z).fromSpecStalk (π₀ TF.X Z y) ≫ (barComp TF.Y Z).ι := by
   rw [← Category.assoc (spMap _), Category.assoc, ← morphismRestrict_ι, ← Category.assoc]
@@ -221,7 +227,7 @@ theorem exists_isQuot (D : CartierDiv (X₀ TF.Y Z))
     (hD : ∀ (x : X₀ TF.Y Z) (φ : c.F →+* (X₀ TF.Y Z).presheaf.stalk x)
       (f : EigFrame TF.Y φ ((X₀ TF.Y Z).fromSpecStalk x ≫ (barComp TF.Y Z).ι))
       (fK : EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι)),
-      (X₀ TF.Y Z).fromSpecStalk x ≫ s₀ TF.Y Z = spMap φ → f.IsMap (algebraMap _ (X₀ TF.Y Z).functionField) fK →
+      (X₀ TF.Y Z).fromSpecStalk x ≫ s₀ TF.Y Z = spMap φ → (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f embτ basisIdx) (algebraMap _ (X₀ TF.Y Z).functionField) fK →
       D.IsEqn x (detPow a fK f₀))
     (k : TF.X.F.J) (O : (X₀ TF.Y Z).Opens) (g : (X₀ TF.Y Z).functionFieldˣ) (hg : ∀ x ∈ O, D.IsEqn x g)
     (O' : (Y₀ TF.X Z).Opens) (hk : O' ≤ inc₀ TF.X Z ⁻¹ᵁ TF.X.F.U k) (hO : O' ≤ π₀ TF.X Z ⁻¹ᵁ O) (y : Y₀ TF.X Z)
@@ -292,7 +298,7 @@ theorem exists_isQuot (D : CartierDiv (X₀ TF.Y Z))
 
 end Main
 
-theorem pull_toLB_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c) [IsIntegral (X₀ TF.Y Z)] (φ₀ : c.F →+* (X₀ TF.Y Z).functionField) (f₀ : GlobalTheory.ShFam.EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι)) (a : (E →+* ℂ) → ℤ) (D : CartierDiv (X₀ TF.Y Z)), (X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ s₀ TF.Y Z = spMap φ₀ → (∀ (x : X₀ TF.Y Z) (φ : c.F →+* (X₀ TF.Y Z).presheaf.stalk x) (f : GlobalTheory.ShFam.EigFrame TF.Y φ ((X₀ TF.Y Z).fromSpecStalk x ≫ (barComp TF.Y Z).ι)) (fK : GlobalTheory.ShFam.EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι)), (X₀ TF.Y Z).fromSpecStalk x ≫ s₀ TF.Y Z = spMap φ → f.IsMap (algebraMap _ (X₀ TF.Y Z).functionField) fK → D.IsEqn x (∏ τ, (fK.isUnit_det_co f₀ τ).unit ^ (-a τ))) → CechPic.pull (π₀ TF.X Z) (cls (toLB D) (isLB_toLB D)) = cls (LL₀ TF.X Z fun ix => ix.elim 0 fun x => a x.1) (LB.isLB_pull (TF.X.F.isLB_LL _) _) := by
+theorem pull_toLB_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (TF : TorFlag Xo c) (Z : Comp Xo c) [IsIntegral (X₀ TF.Y Z)] (φ₀ : c.F →+* (X₀ TF.Y Z).functionField) (f₀ : GlobalTheory.ShFam.EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι)) (a : (E →+* ℂ) → ℤ) (D : CartierDiv (X₀ TF.Y Z)), (X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ s₀ TF.Y Z = spMap φ₀ → (∀ (x : X₀ TF.Y Z) (φ : c.F →+* (X₀ TF.Y Z).presheaf.stalk x) (f : GlobalTheory.ShFam.EigFrame TF.Y φ ((X₀ TF.Y Z).fromSpecStalk x ≫ (barComp TF.Y Z).ι)) (fK : GlobalTheory.ShFam.EigFrame TF.Y φ₀ ((X₀ TF.Y Z).fromSpecStalk (genericPoint (X₀ TF.Y Z)) ≫ (barComp TF.Y Z).ι)), (X₀ TF.Y Z).fromSpecStalk x ≫ s₀ TF.Y Z = spMap φ → (fun mapψ dstFrame => ∀ embτ basisIdx, _root_.GlobalTheory.ShFam.EigFrame.v dstFrame embτ basisIdx = _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (_root_.Formalism.L2.Pj.dualMap mapψ) ≫ _root_.GlobalTheory.ShFam.EigFrame.v f embτ basisIdx) (algebraMap _ (X₀ TF.Y Z).functionField) fK → D.IsEqn x (∏ τ, (fK.isUnit_det_co f₀ τ).unit ^ (-a τ))) → CechPic.pull (π₀ TF.X Z) (cls (toLB D) (isLB_toLB D)) = cls (LL₀ TF.X Z fun ix => ix.elim 0 fun x => a x.1) (LB.isLB_pull (TF.X.F.isLB_LL _) _) := by
   intro E _ _ _ H Dw l Xo c TF Z _ φ₀ f₀ a D h₀ hD
   have hL := pull_isLB (isLB_toLB D) (π₀ TF.X Z)
   have hM : (LL₀ TF.X Z fun ix => ix.elim 0 fun x => a x.1).IsLB := LB.isLB_pull (TF.X.F.isLB_LL _) _

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -38,13 +43,15 @@ theorem normForm_eq_det {R A : Type*} [CommRing R] [CommRing A] [Algebra R A] {�
   rw [Algebra.leftMulMatrix_eq_repr_mul, Matrix.of_apply]
   have key : (∑ j, X j * C (x j) : MvPolynomial (Fin n) A) * B k =
       ∑ i, (∑ j, X j * C (b.repr (x j * b k) i)) • B i := by
-    simp only [hB, Algebra.smul_def, MvPolynomial.algebraMap_def, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hB, Algebra.smul_def, MvPolynomial.algebraMap_def, map_sum, map_mul,
       MvPolynomial.map_X, MvPolynomial.map_C, Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [mul_assoc, ← C_mul]
     conv_lhs => rw [← b.sum_repr (x j * b k)]
-    simp only [map_sum, Finset.mul_sum, Algebra.smul_def, C_mul, mul_assoc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum, Algebra.smul_def, C_mul, mul_assoc]
   rw [key, B.repr_sum_self]
 
 theorem map_linForm {R S : Type*} [CommRing R] [CommRing S] (φ : R →+* S) {n : ℕ}
@@ -137,7 +144,8 @@ theorem SecAlgFieldChange.proof : SecAlgFieldChange.Statement := by
   rw [SecAlgFieldChange.normForm_eq_det b, SecAlgFieldChange.normForm_eq_det B, RingHom.map_det]
   congr 1
   refine Matrix.ext fun i k => ?_
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
     MvPolynomial.map_X, MvPolynomial.map_C, hx, hBk]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← map_mul, hB]

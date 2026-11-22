@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IwahoriFactorizationLowerDiagUpper
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IwahoriFactorizationLowerDiagUpper
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -32,8 +36,9 @@ theorem UpperTheory.one_add_maximalIdeal_subset_units :
   have w0 : w 3 0 = 1 := by decide
   have w1 : w 3 1 = 0 := by decide
   have w2 : w 3 2 = -1 := by decide
-  have hz : ∀ g i j, i < j → ρ.r g i j = 0 := fun g i j hij =>
-    (Submodule.eq_bot_iff _).1 ht _ (Ideal.subset_span ⟨g, i, j, hij, rfl⟩)
+  have hz : ∀ g i j, i < j → ρ.r g i j = 0 := fun g i j hij => by
+    have hm : ρ.r g i j ∈ ρ.triM := Ideal.subset_span ⟨g, i, j, hij, rfl⟩
+    exact (Submodule.eq_bot_iff _).1 ht _ hm
   have hs := (UpperTheory.V.Fr.star h).2.2.2.2 ρ
   have s1 : ∀ g, ρ.r (F.star g) 1 0 = ρ.r g 2 1 := fun g => hs g 1 0
   have s2 : ∀ g, ρ.r (F.star g) 2 0 = ρ.r g 2 0 := fun g => hs g 2 0

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.TwistedTraces.CasimirEqOfOrthonormalBases
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsSignedBasisLieSubalgebraExpCompact
-import Development.AutomorphicArithmetic.TwistedTraces.NormCuspVecLGkActionLeOfAevalEqZero
-import Development.AutomorphicArithmetic.TwistedTraces.NormApplyLeOfLaplacianLowerBound
-import Development.AutomorphicArithmetic.TwistedTraces.ReInnerGeOfSpanEigenvectors
-import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalCuspFormsOfLevelAndDerivOpBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Development.AutomorphicArithmetic.TwistedTraces.CasimirEqOfOrthonormalBases
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsSignedBasisLieSubalgebraExpCompact
+public import Development.AutomorphicArithmetic.TwistedTraces.NormCuspVecLGkActionLeOfAevalEqZero
+public import Development.AutomorphicArithmetic.TwistedTraces.NormApplyLeOfLaplacianLowerBound
+public import Development.AutomorphicArithmetic.TwistedTraces.ReInnerGeOfSpanEigenvectors
+public import Development.AutomorphicArithmetic.TwistedTraces.FiniteDimensionalCuspFormsOfLevelAndDerivOpBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C Polynomial Topology
@@ -16,7 +20,7 @@ theorem UpperTheory.ConvolutionTheory.C.nearFinite :
   have hcas : casimir b ε = casimir b' ε' :=
     UpperTheory.casimir_eq_of_orthonormal_bases _ B ι (Fin d) b ε b' ε' hsym hε (fun i j => by rw [hB, horth])
       (fun i => by rcases hε' i with h | h <;> rw [h] <;> norm_num) horth'
-  obtain ⟨μ, hμ⟩ : ∃ μ : Measure (normOneGL K n), μ.IsHaarMeasure := ⟨Measure.haar, inferInstance⟩
+  obtain ⟨μ, hμ⟩ : ∃ μ : Measure (normOneGL (K := K) (n := n)), μ.IsHaarMeasure := ⟨Measure.haar, inferInstance⟩
   have hM : ∀ i, ∃ M : ℝ, ε' i = -1 → ∀ φ ∈ centralCuspForms K n,
       (∀ k, Polynomial.aeval ((gkModuleCusp K n).σ k) (LinearMap.charpoly (τ k)) φ = 0) →
       ‖cuspVecL μ ((gkModuleCusp K n).ρ (b' i) φ)‖ ≤ M * ‖cuspVecL μ φ‖ := by
@@ -45,13 +49,15 @@ theorem UpperTheory.ConvolutionTheory.C.nearFinite :
   have hT : ∀ φ : cuspForms K n, uActionCusp K n (casimir b' ε') φ =
       ∑ i, (ε' i : ℂ) • (gkModuleCusp K n).ρ (b' i) ((gkModuleCusp K n).ρ (b' i) φ) := by
     intro φ
-    simp only [casimir, map_sum, map_smul, map_mul, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [casimir, map_sum, map_smul, map_mul, LinearMap.sum_apply, LinearMap.smul_apply,
       Module.End.mul_apply, gkModuleCusp_ρ_apply, Complex.coe_smul]
   have hsymT : ∀ x ∈ centralCuspForms K n, ∀ y ∈ centralCuspForms K n,
       inner ℂ (cuspVecL μ (uActionCusp K n (casimir b' ε') x)) (cuspVecL μ y) =
         inner ℂ (cuspVecL μ x) (cuspVecL μ (uActionCusp K n (casimir b' ε') y)) := by
     intro x hx y hy
-    rw [hT, hT, map_sum, map_sum, sum_inner, inner_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT, hT, map_sum, map_sum, sum_inner, inner_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have h1 := hskew (b' i) _ (ρ_mem_centralCuspForms (b' i) hx) y hy
     have h2 := hskew (b' i) x hx _ (ρ_mem_centralCuspForms (b' i) hy)

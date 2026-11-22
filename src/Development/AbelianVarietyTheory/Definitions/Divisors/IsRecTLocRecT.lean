@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import CompanionTheory.EightfoldTheory.ZeroLevelTheory.LocalLanglands.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import CompanionTheory.EightfoldTheory.ZeroLevelTheory.LocalLanglands.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,14 +17,14 @@ namespace GlobalTheory.CuspRep.ParLawsT
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {a : ℕ}
 
-def locRecT (hT : UpperTheory.Zero.LLC.RecTExists) (h : IsPlaceOver A w) : IrrGL (w.adicCompletion E) → WD h :=
+def locRecT (hT : UpperTheory.Zero.LLC.RecTExists) (h : IsPlaceOver A w) : IrrGL (k := w.adicCompletion E) → WD h :=
   (hT E Ω A w h).choose
 
 theorem isRecT_locRecT (hT : UpperTheory.Zero.LLC.RecTExists) (h : IsPlaceOver A w) :
     UpperTheory.Zero.LLC.IsRecT h (locRecT hT h) :=
   (hT E Ω A w h).choose_spec
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def locParT (hT : UpperTheory.Zero.LLC.RecTExists) (π : CG E a) (h : IsPlaceOver A w) : WD h :=
   locRecT hT h ⟨a, ParLaws.toCl (π.loc w)⟩

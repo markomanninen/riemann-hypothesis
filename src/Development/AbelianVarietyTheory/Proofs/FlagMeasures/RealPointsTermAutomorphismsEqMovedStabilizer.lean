@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RatLinkPoints
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnipotentGroupsLatticesGlobalCoordinatesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MovedTermLatticeIsGlobalTermPhaseStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLattices
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RatLinkPoints
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalUnipotentGroupsLatticesGlobalCoordinatesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MovedTermLatticeIsGlobalTermPhaseStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLattices
+
+@[expose] public section
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
@@ -81,13 +85,13 @@ theorem ext_symm (p : IsDedekindDomain.HeightOneSpectrum (𝓞 F)) {g : (Fin n �
   apply g'.injective
   rw [LinearEquiv.apply_symm_apply, h, LinearEquiv.apply_symm_apply]
 
-private theorem mem_iff_forall_bc_mem_lat_and_finite (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ) :
+private theorem mem_iff_forall_bc_mem_lat_and_finite (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ) :
     (∀ x, x ∈ Λ ↔ ∀ p, A.bc p x ∈ A.lat p Λ) ∧ (∀ p, IsLat (A.L p) (A.lat p Λ)) ∧
       {p | A.lat p Λ ≠ Submodule.span (A.L p).O
         (Set.range fun i => (Pi.single i 1 : Fin n → (A.loc p).Ep))}.Finite := by
   exact PlacesRec.lattice_local A n Λ hΛ
 
-theorem map_le_of_local (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ)
+theorem map_le_of_local (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ)
     (g : (Fin n → E) ≃ₗ[E] (Fin n → E))
     (hg : ∀ p, ∃ g', A.Ext p g g' ∧ g' • A.lat p Λ = A.lat p Λ) :
     Λ.map ((g : (Fin n → E) →ₗ[E] (Fin n → E)).restrictScalars (𝓞 E)) ≤ Λ := by
@@ -99,7 +103,7 @@ theorem map_le_of_local (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule
   rw [hs, LinearEquiv.smul_def, he] at this
   exact this
 
-theorem map_eq_of_local (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ)
+theorem map_eq_of_local (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ)
     (g : (Fin n → E) ≃ₗ[E] (Fin n → E))
     (hg : ∀ p, ∃ g', A.Ext p g g' ∧ g' • A.lat p Λ = A.lat p Λ) :
     Λ.map ((g : (Fin n → E) →ₗ[E] (Fin n → E)).restrictScalars (𝓞 E)) = Λ := by
@@ -126,7 +130,7 @@ section Glob
 
 variable {D : D7}
 
-theorem nlam_iff (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFlag (VS D) D.R.rS T)
+theorem nlam_iff (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
     (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) :
     n ∈ NLam Λ F ↔ n ∈ NRat F ∧ Formalism.HermitianLatticesTheory.gmap n Λ = Λ := by
   simp only [NLam, NRat, IsAutLam, Set.mem_ofPred_eq]
@@ -149,7 +153,7 @@ theorem gmap_inv_of (a : (VS D).V ≃ₗ[D.host.E] (VS D).V) {Λ Λ' : Submodule
   ext x
   simp [Formalism.HermitianLatticesTheory.gmap]
 
-variable {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (VS D) D.R.rS T} {F0' : LFlag (VS D) D.R.rS T'}
+variable {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (D.sp.Y 0) D.R.rS T} {F0' : LFlag (D.sp.Y 0) D.R.rS T'}
   {FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS} {G : GFrames (placesOf Z) D.R.rS D.R.k}
   (c : GCoord Z F0 F0' FP G)
 
@@ -188,12 +192,12 @@ namespace GlobalTheory.RoEq
 
 section Key
 
-variable {D : D7} {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (VS D) D.R.rS T} {F0' : LFlag (VS D) D.R.rS T'}
+variable {D : D7} {Z : LocDat D} {T T' : D.host.E} {F0 : LFlag (D.sp.Y 0) D.R.rS T} {F0' : LFlag (D.sp.Y 0) D.R.rS T'}
   {FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS} {G : GFrames (placesOf Z) D.R.rS D.R.k}
   (c : GCoord Z F0 F0' FP G)
 
 set_option maxHeartbeats 1000000 in
-theorem mem_rat_stab_iff (L : G.Lt) (hL : Submodule.IsLattice D.host.E L) (σ : G.GLV)
+theorem mem_rat_stab_iff (L : G.Lt) (hL : Submodule.IsFullLattice D.host.E L) (σ : G.GLV)
     (hx : ∀ p, ∃ g', (placesOf Z).Ext p σ g') :
     σ ∈ (placesOf Z).rat (fun p => MulAction.stabilizer (G.S p).GLV ((placesOf Z).lat p L)) ↔
       L.map ((σ : G.V →ₗ[D.host.E] G.V).restrictScalars (𝓞 D.host.E)) = L := by
@@ -239,9 +243,9 @@ private theorem exists_ext' {F₁ E₁ : Type} [Field F₁] [NumberField F₁] [
       (LinearMap.toMatrix'_mulVec (g : (Fin m → E₁) →ₗ[E₁] (Fin m → E₁)) x).symm, RingHom.map_mulVec]
     rfl
 
-theorem key {Tu Tu' : D.host.E} (F : LFlag (VS D) D.R.rS Tu) (F' : LFlag (VS D) D.R.rS Tu')
+theorem key {Tu Tu' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS Tu) (F' : LFlag (D.sp.Y 0) D.R.rS Tu')
     (ρ l : (VS D).V ≃ₗ[D.host.E] (VS D).V) (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V)
-    (hl : Formalism.HermitianLatticesTheory.gmap l Λ' = Λ) (hL : Submodule.IsLattice D.host.E (c.lat ρ Λ))
+    (hl : Formalism.HermitianLatticesTheory.gmap l Λ' = Λ) (hL : Submodule.IsFullLattice D.host.E (c.lat ρ Λ))
     (hN : ∀ n, n ∈ NRat F ↔ c.grp ρ n ∈ G.N) (hN' : ∀ m, m ∈ NRat F' ↔ c.grp (ρ * l) m ∈ G.N')
     (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) :
     (n ∈ NLam Λ F ∧ l⁻¹ * n * l ∈ NLam Λ' F') ↔ c.grp ρ n ∈ G.stabL (c.lat ρ Λ) := by
@@ -269,12 +273,18 @@ end Key
 
 end GlobalTheory.RoEq
 
-theorem GlobalTheory.RoEq.roinf_eq_realPts : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), Formalism.MainNotions.S.Cnt.Stand D u u' → 4 * D.R.rS + 7 ≤ D.R.k → ∀ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (F'0 : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (FP : ∀ p : PlF D, LocNG.FPair (locH (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p) D.R.rS), ZhatOM (ZhatL F00 F'0) = ptMat w → Gval F00 F'0 ≠ 0 → (∀ p, AtBase (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p F00 F'0 (Tu D u) (Tu D u') (FP p) ∧ (FP p).RelG (LocNG.theta (Y.M p))) → ∀ (G : GFrames (placesOf (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D)) D.R.rS D.R.k) (c : GCoord (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) F00 F'0 FP G), ∀ (t₀ : TauC Y u u') (ρ : ((VS D).V ≃ₗ[D.host.E] (VS D).V)) (U U' : Formalism.L2.SG.PairVal.MatR D), MovesTo F00 F'0 (lf D (X.Fu u)) t₀.frame ρ U U' → Formalism.L2.SG.TermOp.ROinf t₀ = realPts X {σ | c.grp ρ σ ∈ G.stabL (c.lat ρ t₀.lam)} := by
+theorem GlobalTheory.RoEq.roinf_eq_realPts : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), Formalism.MainNotions.S.Cnt.Stand D u u' → 4 * D.R.rS + 7 ≤ D.R.k → ∀ (w : Point D.host.E (D.R.rS + 1)) (F00 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F'0 : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (FP : ∀ p : PlF D, LocNG.FPair (locH (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p) D.R.rS), ZhatOM (ZhatL F00 F'0) = ptMat w → Gval F00 F'0 ≠ 0 → (∀ p, AtBase (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) p F00 F'0 (Tu D u) (Tu D u') (FP p) ∧ (FP p).RelG (LocNG.theta (Y.M p))) → ∀ (G : GFrames (placesOf (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D)) D.R.rS D.R.k) (c : GCoord (⟨Y.δ, Y.M, Y.agree⟩ : LocDat D) F00 F'0 FP G), ∀ (t₀ : TauC Y u u') (ρ : ((VS D).V ≃ₗ[D.host.E] (VS D).V)) (U U' : Formalism.L2.SG.PairVal.MatR D), MovesTo F00 F'0 (lf D (X.Fu u)) t₀.frame ρ U U' → Formalism.L2.SG.TermOp.ROinf t₀ = realPts X {σ | c.grp ρ σ ∈ G.stabL (c.lat ρ t₀.lam)} := by
   intro D X Y u u' hst hk w F00 F'0 FP hZ hG hAt G c t₀ ρ U U' hmv
   obtain ⟨hN, hN', -⟩ := GlobalTheory.T.rational_unipotent_groups_lattices_global_coordinates D X Y u u' hst hk w F00 F'0 FP hZ hG hAt G c t₀ ρ U U' hmv
-  have hT := (GlobalTheory.T.movedTermLattice_isGlobalTerm_phase D X Y u u' hst hk w F00 F'0 FP hZ hG hAt G c t₀ ρ U U' hmv).1
+  have hrow : Submodule.IsFullLattice D.host.E t₀.lam := ((Y.rowsOK u).1 t₀.lam t₀.mem).1.1
+  have hT : Submodule.IsFullLattice D.host.E (c.lat ρ t₀.lam) := by
+    haveI : Submodule.IsLattice D.host.E (c.lat ρ t₀.lam) :=
+      Submodule.IsLattice.of_fg _ (hrow.fg.map _)
+    refine ⟨?_⟩
+    change Submodule.span D.host.E (((ρ.trans c.e : (VS D).V ≃ₗ[D.host.E] G.V) : (VS D).V →ₗ[D.host.E] G.V) '' (t₀.lam : Set (VS D).V)) = ⊤
+    rw [← Submodule.map_span, hrow.span_eq_top, Submodule.map_top, LinearEquiv.range]
   have hkey := fun n => GlobalTheory.RoEq.key c (lf D (X.Fu u)) (lf D (X.Fu u')) ρ t₀.lin t₀.lam t₀.lam'
-    t₀.rep.2.2.2.1 hT.1 hN hN' n
+    t₀.rep.2.2.2.1 hT hN hN' n
   ext y
   simp only [Formalism.L2.SG.TermOp.ROinf, Formalism.L2.SG.TermOp.ROset, realPts, Set.mem_ofPred_eq]
   constructor

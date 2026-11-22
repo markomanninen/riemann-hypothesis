@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.WedgeSub
+
+@[expose] public section
+
 open Matrix PositivityTheory.Rg.BcB.D1
 
 namespace GlobalTheory.CompanionTheory.WedgeMinor
@@ -13,7 +18,8 @@ theorem det_mul_submatrix_expand {K ι ι' κ : Type} [CommRing K] [Fintype ι] 
     simp [Matrix.mul_apply, Finset.sum_apply]
   have key : ∀ M : Matrix κ κ K,
       M.det = (detRowAlternating (R := K) (n := κ)).toMultilinearMap M := fun _ => rfl
-  rw [key, h, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, h, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
   rfl
@@ -42,7 +48,7 @@ theorem norm_minor_mul_le {K ι ι' κ : Type} [NormedField K] [IsUltrametricDis
   rw [norm_mul, norm_prod]
   refine mul_le_mul ?_ (le_nF A s) (norm_nonneg _) (pow_nonneg (sz_nonneg g) _)
   calc ∏ i, ‖g (t i) (s i)‖ ≤ ∏ _i : κ, sz g :=
-        Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => le_sz g _ _
+        Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => le_sz g _ _
     _ = sz g ^ Fintype.card κ := by simp
 
 theorem nF_mul_le {K ι ι' κ : Type} [NormedField K] [IsUltrametricDist K] [Fintype ι]

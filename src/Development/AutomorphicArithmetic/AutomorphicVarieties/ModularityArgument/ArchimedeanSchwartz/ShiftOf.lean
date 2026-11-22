@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ExpIndep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ExpIndep
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,41 +42,41 @@ def four (e : ℝ) (Φ : Lie K n → ℂ) (y : Lie K n) : ℂ :=
 end Defs
 
 def Weyl : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (U : Set (Lie K n)), IsOpen U →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (U : Set (Lie K n)), IsOpen U →
     ∀ F : Lie K n → ℂ, ContDiffOn ℝ ∞ F U → ∀ x ∈ U, detAt τ x * detD τ F x =
       ∑ p : Equiv.Perm (Fin n), (((Equiv.Perm.sign p : ℤˣ) : ℤ) : ℂ) * (List.finRange n).foldr
         (fun j G y => rd τ (p j) j G y + (if p j = j then ((n - 1 - j.val : ℕ) : ℂ) else 0) * G y) F x
 
 def Ptw : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (φ : Sm K n) (m : Multiset ℂ),
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (φ : Sm K n) (m : Multiset ℂ),
     (∀ u, cap τ u φ = (m.map (u + ·)).prod • φ) → ∀ (g : GA K n) (u : ℂ) (e : (K →+* ℂ) → ℕ), ∀ x ∈ invSet K n,
       detD τ (fun y => chart φ.1 g y * wt u e y) x =
         (m.map (u - e τ + ((n : ℂ) - 1) / 2 + ·)).prod * (chart φ.1 g x * wt u e x * (detAt τ x)⁻¹)
 
 def Parts : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (Φ : Lie K n → ℂ), IsTest Φ →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (τ : K →+* ℂ) (Φ : Lie K n → ℂ), IsTest Φ →
     IsTest (detD τ Φ) ∧ ∀ F : Lie K n → ℂ, ContDiffOn ℝ ∞ F (invSet K n) →
       ∫ x, detD τ Φ x * F x = (-1) ^ n * ∫ x, Φ x * detD τ F x
 
 def ShiftL : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), ∃ k : ℂ, k ≠ 0 ∧
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ), ∃ k : ℂ, k ≠ 0 ∧
     ∀ (φ : Sm K n) (m : (K →+* ℂ) → Multiset ℂ), (∀ τ u, cap τ u φ = ((m τ).map (u + ·)).prod • φ) →
     ∀ Φ : Lie K n → ℂ, IsTest Φ → IsTest (detAll Φ) ∧ ∀ (g : GA K n) (s : ℂ),
       ∫ x, detAll Φ x * chart φ.1 g x * ((nrm x : ℝ) : ℂ) ^ (s + 1 + ((n : ℂ) - 1) / 2 - n) =
         k * (linPoly (∑ τ, m τ)).eval s * ∫ x, Φ x * chart φ.1 g x * ((nrm x : ℝ) : ℂ) ^ (s + ((n : ℂ) - 1) / 2 - n)
 
 def FourD : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (e : ℝ), e ≠ 0 → ∃ κ : ℂ, κ ≠ 0 ∧
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (e : ℝ), e ≠ 0 → ∃ κ : ℂ, κ ≠ 0 ∧
     ∀ Φ : Lie K n → ℂ, IsTest Φ → ∀ y, four e (detAll Φ) y = κ * (nrm y : ℝ) * four e Φ y
 
 def TestEx : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (f : Lie K n → ℂ), ContinuousOn f (invSet K n) →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (f : Lie K n → ℂ), ContinuousOn f (invSet K n) →
     (∃ x ∈ invSet K n, f x ≠ 0) → ∃ Φ : Lie K n → ℂ, IsTest Φ ∧
       (Differentiable ℂ fun s : ℂ => ∫ x, Φ x * f x * ((nrm x : ℝ) : ℂ) ^ s) ∧
       ∃ s : ℂ, ∫ x, Φ x * f x * ((nrm x : ℝ) : ℂ) ^ s ≠ 0
 
 def HaarL : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) [MeasurableSpace (GL (Fin n) (Cinf K))]
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) [MeasurableSpace (GL (Fin n) (Cinf K))]
     [BorelSpace (GL (Fin n) (Cinf K))], ∃ m : Measure (GL (Fin n) (Cinf K)), m.IsHaarMeasure ∧
       Measure.map (fun g : GL (Fin n) (Cinf K) => toL g.val) m =
         ((volume : Measure (Lie K n)).restrict (invSet K n)).withDensity fun x => ENNReal.ofReal ((nrm x)⁻¹ ^ n)

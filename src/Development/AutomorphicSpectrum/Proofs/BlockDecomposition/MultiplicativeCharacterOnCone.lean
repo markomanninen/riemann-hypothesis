@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.StrictCone
 
@@ -63,7 +67,8 @@ theorem char_eq_prod {n : ℕ} (φ : (Fin n → ℤ) → ℂˣ) (h : ∀ g g', �
     simp [Finset.sum_apply, Pi.single_apply]
   have h2 : F x = ∑ i, x i • F (Pi.single i 1) := by
     conv_lhs => rw [hx]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_zsmul]
   have h3 := congrArg Additive.toMul h2
   simpa [F, toMul_sum] using h3

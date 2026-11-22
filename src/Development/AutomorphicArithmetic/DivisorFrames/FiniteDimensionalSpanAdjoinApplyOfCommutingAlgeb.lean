@@ -1,7 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ULieDefs
+module
 
-open NumberField Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut GlobalTheory.ULie
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableOfIsSm
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InducedSectionZFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+
+@[expose] public section
+
+open NumberField Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet GlobalTheory.UAut
 open scoped TensorProduct
 
 private theorem UpperTheory.adjoin_apply_mem_of_invariant_submodule {V : Type} [AddCommGroup V] [Module ℂ V]
@@ -93,7 +100,8 @@ theorem UpperTheory.finiteDimensional_span_adjoin_apply_of_commuting_algebraic :
               (Submodule.mem_map_of_mem hw)
           · have hsplit : (a ^ j) w = (a ^ (j - Q.natDegree)) ((a ^ Q.natDegree) w) := by
               rw [← Module.End.mul_apply, ← pow_add, Nat.sub_add_cancel (not_lt.mp hj)]
-            rw [hsplit, hred w hw, map_neg, map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [hsplit, hred w hw, map_neg, map_sum]
             refine U'.neg_mem (U'.sum_mem (fun i hi => ?_))
             rw [map_smul, ← Module.End.mul_apply, ← pow_add]
             refine U'.smul_mem _ (ihj _ ?_ w hw)
@@ -109,7 +117,7 @@ theorem UpperTheory.finiteDimensional_span_adjoin_apply_of_commuting_algebraic :
           exact hpow _ w hw
         · simp
         · show a (x + y) ∈ U'
-          rw [map_add]
+          rw [map_add (f := _)]
           exact U'.add_mem hx hy
       have hU'b : ∀ b ∈ (↑t : Set (Module.End ℂ V)), ∀ u ∈ U', b u ∈ U' := by
         intro b hb u hu
@@ -122,7 +130,7 @@ theorem UpperTheory.finiteDimensional_span_adjoin_apply_of_commuting_algebraic :
           exact hpow _ _ (hUinv _ b hb w hw)
         · simp
         · show b (x + y) ∈ U'
-          rw [map_add]
+          rw [map_add (f := _)]
           exact U'.add_mem hx hy
       have hle : U ↑(insert a t) ≤ U' := by
         rw [Submodule.span_le]

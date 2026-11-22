@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AdelicLemmas
-import Formalism.LocalToGlobal.Columns.TwQCmp
-import Formalism.LocalToGlobal.Columns.HeckeInertLemmas
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AdelicLemmas
+public import Formalism.LocalToGlobal.Columns.TwQCmp
+public import Formalism.LocalToGlobal.Columns.HeckeInertLemmas
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.L2.Col
 open Formalism.L2.DIV (Pl kP St resS oToS idS cmpS)
 open scoped TensorProduct

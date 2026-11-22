@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,6 +87,8 @@ theorem key {μ : Measure G2} {𝓕 : Set G2} [μ.IsMulLeftInvariant] (hfd : IsF
     (hs : ∀ (γ : Gam) x, T ((e γ : G2) * x) = (γ : G2) * T x) :
     (∀ F : G2 → ℝ≥0∞, LInv F → ∫⁻ g in 𝓕, F (T g) ∂μ = ∫⁻ g in 𝓕, F g ∂μ) ∧
     ∀ F : G2 → ℂ, LInv F → ∫ g in 𝓕, F (T g) ∂μ = ∫ g in 𝓕, F g ∂μ := by
+  haveI : SMulInvariantMeasure G2 G2 μ := Measure.IsMulLeftInvariant.smulInvariantMeasure
+  haveI : SMulInvariantMeasure Gam G2 μ := Subgroup.smulInvariantMeasure Gam
   have hemb : MeasurableEmbedding T := T.measurableEmbedding
   have h𝓕' : IsFundamentalDomain Gam (T '' 𝓕) μ := hfd.image_of_equiv T.toEquiv (hT.symm T).quasiMeasurePreserving e (fun γ x => hs γ x)
   have hinv : ∀ {X : Type} (F : G2 → X), LInv F → ∀ (γ : Gam) (x : G2), F (γ • x) = F x := by
@@ -169,7 +175,7 @@ theorem measurePreserving_det_inverse_twist {μ : Measure G2} [μ.IsHaarMeasure]
     rw [Measure.map_map hc.measurable hc.measurable]
     have hid : inv2 ∘ inv2 = id := funext det_inverse_twist_involutive
     rw [hid, Measure.map_id]
-  rw [h1, Measure.map_smul, h1, smul_smul] at h2
+  rw [h1, Measure.map_smul, h1, smul_smul] at h2 <;> try exact hc.measurable.aemeasurable
   obtain ⟨K, hKc, hKn⟩ := exists_compact_mem_nhds (1 : G2)
   have hpos : μ K ≠ 0 := (Measure.measure_pos_of_mem_nhds μ hKn).ne'
   have hfin : μ K ≠ ⊤ := hKc.measure_lt_top.ne
@@ -277,6 +283,8 @@ theorem level {μ : Measure G2} {𝓕 : Set G2} {mK : Measure KA} {𝓓 : Set Jd
     μ {g | Dt g = 1} = 0 := by
   classical
   haveI := h.haar
+  haveI : SMulInvariantMeasure G2 G2 μ := Measure.IsMulLeftInvariant.smulInvariantMeasure
+  haveI : SMulInvariantMeasure Gam G2 μ := Subgroup.smulInvariantMeasure Gam
   have hGinv : ∀ (γ : Gam) (x : G2), Dt ((γ : G2) * x) = Dt x := fun γ x => by
     obtain ⟨γ0, hγ0⟩ := γ.2
     rw [← hγ0, Dt_mul]

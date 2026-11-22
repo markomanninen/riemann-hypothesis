@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeterminantSectionRule
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompactificationOpenOfClosed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FlatSectionAndDegree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FramePointCombinationMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ReadsZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsHorizontalGeneratorOfCharts
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactification
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DeterminantSectionRule
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompactificationOpenOfClosed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FlatSectionAndDegree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FramePointCombinationMatrix
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -101,12 +105,12 @@ theorem ptF_map {φ : S →ₐ[c.F] T} {y : FrPt Xo c S} {z : FrPt Xo c T} (h : 
   · rw [Category.assoc, ptF_snd, ptF_snd, ← DetExtendZero.spMap_comp]
     exact congrArg spMap φ.comp_algebraMap.symm
 
-variable (Y) in
 
+variable (Y) in
 abbrev pt (y : FrPt Xo c S) : Sp S ⟶ Y.X := ptF y ≫ Y.jQ ≫ genι Y
 
-variable (Y) in
 
+variable (Y) in
 def fr (y : FrPt Xo c S) : EigFrame Y (algebraMap c.F S) (pt Y y) := EigFrame.ofFrPt Y y rfl
 
 theorem sameVec_fr (y : FrPt Xo c S) (τ : E →+* ℂ) (i : Fin (Dw.mult τ)) : SameVec Y y (y.u τ i) ((fr Y y).v τ i) :=
@@ -116,8 +120,8 @@ theorem fr_map {φ : S →ₐ[c.F] T} {y : FrPt Xo c S} {z : FrPt Xo c T} (h : F
     (i : Fin (Dw.mult τ)) : (fr Y z).v τ i = spMap (Chart.dualMapR φ.toRingHom) ≫ (fr Y y).v τ i := by
   refine sameVec_unique (sameVec_fr z τ i) ?_
   obtain ⟨w, t, e, e'⟩ := sameVec_fr (Y := Y) y τ i
-  refine ⟨spMap (dualMap φ.toRingHom) ≫ w, isTan_map _ (ptF_map h).symm t, ?_, ?_⟩
-  · rw [Category.assoc, e, h.2.1]
+  refine ⟨spMap (GlobalTheory.CompanionTheory.Ar.dualMap φ.toRingHom) ≫ w, isTan_map _ (ptF_map h).symm t, ?_, ?_⟩
+  · rw [Category.assoc, e, h.2.1]; rfl
   · rw [Category.assoc, e']; rfl
 
 theorem pt_toGen (y : FrPt Xo c S) : pt Y y ≫ toGen Y = ptF y ≫ Y.jQ := by

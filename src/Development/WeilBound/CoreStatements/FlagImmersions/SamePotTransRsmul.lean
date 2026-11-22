@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionPotentialPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionReindexed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyReindexed
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphicStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionPotentialPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LogResolutionReindexed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyReindexed
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogResolutionFunctorialHolomorphicStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -263,7 +267,7 @@ theorem sum_padicValNat_log {S : Finset ℕ} (hS : ∀ p ∈ S, p.Prime) {n : �
     · intro p hp q hq hpq
       exact IsCoprime.pow (Nat.isCoprime_iff_coprime.2 ((Nat.coprime_primes (hS p hp) (hS q hq)).2 hpq))
     · intro p _
-      exact_mod_cast (pow_padicValNat_dvd : p ^ padicValNat p n ∣ n)
+      exact_mod_cast ((_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _)) : p ^ padicValNat p n ∣ n)
   have hd : ∏ p ∈ S, p ^ padicValNat p n ∣ n := by
     apply Int.natCast_dvd_natCast.1
     push_cast

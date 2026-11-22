@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane
 open scoped MatrixGroups ModularForm
 open scoped Manifold
@@ -8,7 +13,8 @@ namespace GlobalTheory.HeckeFamilyMatrices
 
 theorem polySlash_map_conj (w : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) (p : ℂ[X]) :
     (slP w g p).map (starRingEnd ℂ) = slP w g (p.map (starRingEnd ℂ)) := by
-  simp only [slP, LinearMap.sum_apply, LinearMap.comp_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [slP, LinearMap.sum_apply, LinearMap.comp_apply,
     LinearMap.toSpanSingleton_apply, lcoeff_apply, Polynomial.map_sum, Polynomial.map_smul,
     Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_add, Polynomial.map_X, Polynomial.map_C,
     map_intCast, coeff_map, Polynomial.map_intCast, Polynomial.map_natCast]
@@ -37,7 +43,7 @@ theorem polynomialMapCoeffConj_mem_eichlerShimuraCocycles (Γ : Subgroup SL(2, �
   · have := h1 γ
     rw [mem_degreeLT] at this ⊢
     exact lt_of_le_of_lt (degree_map_le) this
-  · simp only [cj, h2, Polynomial.map_add, polySlash_map_conj]
+  · simp only [cj, h2, Polynomial.map_add (f := _), polySlash_map_conj]
 
 theorem polynomialMapCoeffConj_mem_eichlerShimuraCoboundaries (Γ : Subgroup SL(2, ℤ)) (w : ℕ) (z : Γ → ℂ[X]) (hz : z ∈ B1 Γ w) : cj z ∈ B1 Γ w := by
   obtain ⟨⟨p, hp⟩, rfl⟩ := hz

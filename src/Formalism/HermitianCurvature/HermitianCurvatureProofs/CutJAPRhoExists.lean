@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoAssembly
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCapSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoEigOrth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoLagrange
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoAssembly
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoCapSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoEigOrth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoLagrange
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA
 

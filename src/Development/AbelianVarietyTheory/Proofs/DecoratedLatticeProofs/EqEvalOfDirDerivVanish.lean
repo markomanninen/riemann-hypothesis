@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped ContDiff
 
 namespace GlobalTheory.PolyOfDeriv
@@ -77,8 +82,10 @@ theorem multilinear_diag_poly {ι : Type} [Fintype ι] [DecidableEq ι] {k : ℕ
   intro x
   have hx : (fun _ : Fin k => x) = fun _ => ∑ i, x i • (Pi.single i (1:ℝ) : ι → ℝ) := by
     funext _; ext l; simp [Pi.single_apply]
-  rw [hx, M.map_sum]
-  simp only [map_sum, map_mul, MvPolynomial.eval_C, map_prod, MvPolynomial.eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, M.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPolynomial.eval_C, map_prod, MvPolynomial.eval_X]
   refine Finset.sum_congr rfl fun r _ => ?_
   rw [M.map_smul_univ (fun j => x (r j)) (fun j => Pi.single (r j) 1)]
   rw [Complex.real_smul, Complex.ofReal_prod, mul_comm]
@@ -98,7 +105,8 @@ theorem eq_eval_of_dirDeriv_vanish : ∀ (ι : Type) [Fintype ι] [DecidableEq �
     (fun k t => hasDerivAt_iter hu k 0 x t) (by funext t; exact congrFun hrep _) 1
   simp only [zero_add, one_smul, zero_smul, iteratedFDeriv_zero_apply, hq] at key
   rw [key]
-  simp only [map_sum, map_mul, MvPolynomial.eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPolynomial.eval_C]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_comm]; simp
 

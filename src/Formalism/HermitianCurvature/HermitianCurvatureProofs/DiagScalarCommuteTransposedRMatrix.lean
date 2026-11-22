@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.StatementWd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
-import Formalism.YangianSpanCharacter.YangianRelationFirst
+module
+
+public import Formalism.HermitianCurvature.StatementWd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.YangianSpanCharacter.YangianRelationFirst
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.Wd11
 
@@ -617,14 +621,6 @@ end Steps
 end Formalism.FourierDecayAlt.P.Wd11
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem R_matrix_UU_relation : Formalism.FourierDecayAlt.Wd.RhUU := by
-  intro K A S _ _ _ _ _ _ _ _ a D s
-  exact Wd11.rhUU a D s
-
-theorem transposed_R_matrix_UU_relation : Formalism.FourierDecayAlt.Wd.RhtUU := by
-  intro K A S _ _ _ _ _ _ _ _ b d s
-  exact Wd11.rhtUU b d s
 
 theorem plane_wave_vector_identity : Formalism.FourierDecayAlt.Wd.PlaneWaveVec := by
   intro K A S _ _ _ _ _ _ _ _ σ f fi s w hW hc hci hp hw

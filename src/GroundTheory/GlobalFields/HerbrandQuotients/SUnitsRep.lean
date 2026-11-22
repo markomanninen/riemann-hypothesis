@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.SUnits
-import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SUnits
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Galois
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsPerm
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -20,7 +24,6 @@ def unitsMap (g : L ≃ₐ[K] L) : (𝓞 L)ˣ →* (𝓞 L)ˣ :=
   Units.map (MulSemiringAction.toRingHom (L ≃ₐ[K] L) (𝓞 L) g : 𝓞 L →* 𝓞 L)
 
 variable (K L) in
-
 def unitsRep : Representation ℤ (L ≃ₐ[K] L) (Additive (𝓞 L)ˣ) where
   toFun g := (unitsMap g).toAdditive.toIntLinearMap
   map_one' := by
@@ -98,10 +101,10 @@ theorem ofUnits_unitsRep (hS : ∀ (g : L ≃ₐ[K] L), ∀ w ∈ S, g • w ∈
 
 theorem valuationVector_sUnitRep (hS : ∀ (g : L ≃ₐ[K] L), ∀ w ∈ S, g • w ∈ S)
     (g : L ≃ₐ[K] L) (x : Additive (S.unit L)) :
-    letI := stableMulAction S hS
+    letI _ := stableMulAction S hS
     SUnit.valuationVector S (sUnitRep S hS g x) =
       funPermRep ℤ (L ≃ₐ[K] L) S g (SUnit.valuationVector S x) := by
-  let := stableMulAction S hS
+  let _ := stableMulAction S hS
   funext w
   rw [funPermRep_apply, ← ofMul_toMul x, sUnitRep_apply, toMul_ofMul,
     SUnit.valuationVector_apply, SUnit.valuationVector_apply]

@@ -1,4 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
+
+noncomputable section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -61,7 +67,7 @@ private theorem isPrecomplete_finite {R M : Type} [CommRing R] [AddCommGroup M] 
     | succ n ih =>
       have : g (n + 1) = g n + d n := by
         simp only [hg, Finset.sum_range_succ]; abel
-      rw [this, map_add, ih, hdφ]; abel
+      rw [this, map_add (f := _), ih, hdφ]; abel
   have hgc : ∀ {m n : ℕ}, m ≤ n → g m ≡ g n [SMOD (I ^ m • ⊤ : Submodule R (Fin r → R))] := by
     intro m n hmn
     rw [SModEq.sub_mem]
@@ -118,10 +124,11 @@ theorem UpperTheory.V.Alg.co_finite :
       have : P.comap (algebraMap R R') = maximalIdeal R :=
         le_antisymm (IsLocalRing.le_maximalIdeal hne) hle
       rw [this]; infer_instance
-    haveI := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := R) P hcm
+    haveI := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap R R')
+      (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) P hcm
     exact IsLocalRing.eq_maximalIdeal this
   have hcm' : (maximalIdeal R').comap (algebraMap R R') = maximalIdeal R :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := R) (maximalIdeal R'))
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := R) (algebraMap _ _) (RingHom.Finite.to_isIntegral (RingHom.finite_algebraMap.mpr inferInstance)) (maximalIdeal R'))
   have hloc : IsLocalHom (algebraMap R R') := by
     refine ⟨fun a ha => ?_⟩
     by_contra hna

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PreChainLe
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.TlNonempty
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PreChainLe
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MemSupportSumMonomial
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsSide
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenSESStep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgFiltSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ImportsSide
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenSESStep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgFiltSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -18,9 +23,9 @@ variable {S : Type} [CommRing S] {K : Type} [Fintype K] [LinearOrder K] {ι : K 
   [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)]
   {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M] [Module S M] [IsScalarTower S (MRingOver S ι) M]
 
+
 omit [Fintype K] [LinearOrder K] [∀ k, Fintype (ι k)] [∀ k, LinearOrder (ι k)] [Module S M]
   [IsScalarTower S (MRingOver S ι) M] in
-
 theorem loc_subsingleton_of_kill {T : Submonoid (MRingOver S ι)} {u : MRingOver S ι} (hu : u ∈ T)
     (hk : ∀ y : M, u • y = 0) : Subsingleton (LocalizedModule T M) := by
   have h0 : ∀ x : LocalizedModule T M, x = 0 := by
@@ -47,8 +52,8 @@ theorem h1_vanish_generated_of_localized_subsingleton
     rw [one_smul, Fin.sum_univ_zero]
     exact (h 0 I).elim _ _
 
-omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 theorem isMGraded_punit : KH.IsMGraded S ι (fun _ : K → ℤ => (⊥ : Submodule S PUnit)) := by
   refine ⟨DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top (fun _ => disjoint_bot_left)
     (Subsingleton.elim _ _), fun _ _ _ _ _ _ => (Submodule.mem_bot _).2 (Subsingleton.elim _ _)⟩

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,9 @@ def FinOrb (K K' : Subgroup G) (x : G) : Prop := (MulAction.orbit K (x : G ⧸ K
 
 def HeckePair (I : Subgroup G) : Prop := ∀ x : G, FinOrb I I x
 
-theorem heckePair_top : HeckePair (⊤ : Subgroup G) := fun _ =>
-  have : Subsingleton (G ⧸ (⊤ : Subgroup G)) := QuotientGroup.subsingleton_quotient_top
-  Set.toFinite _
 
+open scoped Classical in
 open Classical in
-
 def hk2 (ρ : Representation A G M) (K K' : Subgroup G) (x : G) : fixd ρ K' →ₗ[A] fixd ρ K :=
   if h : ∀ v ∈ fixd ρ K', dc ρ K K' x v ∈ fixd ρ K then (dc ρ K K' x).restrict h else 0
 
@@ -34,16 +35,13 @@ def inc (ρ : Representation A G M) {I K : Subgroup G} (h : I ≤ K) : fixd ρ K
 
 def trc (ρ : Representation A G M) (K I : Subgroup G) : fixd ρ I →ₗ[A] fixd ρ K := hk2 ρ K I 1
 
-variable (A) in
+
+variable (A)
 
 abbrev permRep (I : Subgroup G) : Representation A G (MonoidAlgebra A (G ⧸ I)) := Representation.ofMulAction A G (G ⧸ I)
 
-variable (A) in
-
 def HkAlg (I : Subgroup G) : Subalgebra A (Module.End A (fixd (permRep A I) I)) :=
   Algebra.adjoin A (Set.range (hk (permRep A I) I))
-
-variable (A) in
 
 def hT (I : Subgroup G) (x : G) : HkAlg A I := ⟨hk (permRep A I) I x, Algebra.subset_adjoin ⟨x, rfl⟩⟩
 
@@ -55,18 +53,6 @@ structure LeviFact (I : Subgroup G) where
   M_L : ∀ m ∈ Mf, ∀ l ∈ Lf, m * l * m⁻¹ ∈ Lf
   uniq : ∀ u ∈ Uf, ∀ m ∈ Mf, ∀ l ∈ Lf, u * m * l = 1 → u = 1 ∧ m = 1
   fact : ∀ g ∈ I, ∃ u ∈ Uf ⊓ I, ∃ m ∈ Mf ⊓ I, ∃ l ∈ Lf ⊓ I, g = u * m * l
-
-def LeviFact.triv (I : Subgroup G) : LeviFact I where
-  Uf := ⊥
-  Mf := ⊤
-  Lf := ⊥
-  M_U m _ u hu := by simpa using hu
-  M_L m _ u hu := by simpa using hu
-  uniq u hu m _ l hl h := by
-    have h1 : u = 1 := by simpa using hu
-    have h2 : l = 1 := by simpa using hl
-    simpa [h1, h2] using h
-  fact g hg := ⟨1, one_mem _, g, ⟨trivial, hg⟩, 1, one_mem _, by simp⟩
 
 def LeviFact.Pos {I : Subgroup G} (F : LeviFact I) (m : G) : Prop :=
   m ∈ F.Mf ∧ (∀ u ∈ F.Uf ⊓ I, m * u * m⁻¹ ∈ I) ∧ ∀ l ∈ F.Lf ⊓ I, m⁻¹ * l * m ∈ I

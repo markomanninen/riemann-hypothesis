@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.DedekindLFunctions.SplitInertia
-import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.Window
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+module
+
+public import Development.AutomorphicArithmetic.DedekindLFunctions.SplitInertia
+public import Development.AutomorphicArithmetic.PrimitiveCosets.RecH
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.GaloisMapComplexConjugation
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.Window
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ def HostAddCharCompatible (H : HostRaw φ) (ell : AddChar (E0 × φ.A) ℂ → �
   ∀ ψ : AddChar (E0 × φ.A) ℂ, ψ ≠ 0 → ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N), χ.IsPrimitive →
     (∀ n : ℕ, n ≠ 0 → χ (n : ZMod N) = primVal (arith H) ψ n) → ell ψ = An.logDerivativeAtOne χ
 
-open Classical in
 
+open Classical in
 def keptA (Λ : Level) (H : HostRaw φ) : Finset (AddChar (E0 × φ.A) ℂ) :=
   Finset.univ.filter fun ψ => H.Kept Λ.KEPT (chr φ ψ)
 
@@ -39,12 +43,6 @@ def CoreAtH (H : HostRaw φ) (TT : Finset φ.A) (eD eL K cHH eK eps x : ℝ) : P
     CostWindows x (fPl φ.A) Dd.b η θ ∧
     RestSize eps x (Fintype.card φ.A) TT.card T2.card m Dd.b Dd.k Dd.a ∧
     ∀ s ∈ T2, s ∈ φ.A0
-
-def pcOf (ψ : PChar) : Deduction.PC := ⟨ψ.N, ψ.χ, ψ.prim⟩
-
-def pcTo (ξ : Deduction.PC) : PChar := ⟨ξ.N, ξ.χ, ξ.prim⟩
-
-def pcEquiv : PChar ≃ Deduction.PC := ⟨pcOf, pcTo, fun _ => rfl, fun _ => rfl⟩
 
 end UpperTheory.Comparison₂
 

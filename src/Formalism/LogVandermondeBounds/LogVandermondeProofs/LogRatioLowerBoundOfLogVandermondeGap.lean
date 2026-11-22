@@ -1,4 +1,8 @@
-import Formalism.LogVandermondeBounds.VandPlace
+module
+
+public import Formalism.LogVandermondeBounds.VandPlace
+
+@[expose] public section
 
 namespace Formalism.LogVandermondeBounds.StandardLattice
 

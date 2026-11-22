@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory.CechPic GlobalTheory.CxPts GlobalTheory.HermTools GlobalTheory.Vanishing GlobalTheory.Adelic GlobalTheory.HilbertSamuel GlobalTheory.ChowHt GlobalTheory.TangentOrigin
@@ -21,10 +26,10 @@ theorem form_eq_of_re_diag {K V : Type} [Field K] [AddCommGroup V] [Module K V] 
     (hd : ∀ x, (F x x).re = (G x x).re) (ha : ∃ a : K, (σ a).im ≠ 0) (x y : V) : F x y = G x y := by
   have hFl : ∀ x x' y, F (x + x') y = F x y + F x' y := by
     intro x x' y
-    rw [← hFc y (x + x'), hFa, map_add, hFc, hFc]
+    rw [← hFc y (x + x'), hFa, map_add (f := _), hFc, hFc]
   have hGl : ∀ x x' y, G (x + x') y = G x y + G x' y := by
     intro x x' y
-    rw [← hGc y (x + x'), hGa, map_add, hGc, hGc]
+    rw [← hGc y (x + x'), hGa, map_add (f := _), hGc, hGc]
   have hre : ∀ x y, (F x y).re = (G x y).re := by
     intro x y
     have h1 := hd (x + y)
@@ -61,7 +66,8 @@ theorem majAt_smul_right (b : Module.Basis ι K V) (X : InfinitePlace K → Matr
 theorem majAt_conj (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (v : InfinitePlace K) (x y : V) :
     starRingEnd ℂ (Formalism.HermitianLatticesTheory.majAt b X v x y) = Formalism.HermitianLatticesTheory.majAt b X v y x := by
-  simp only [Formalism.HermitianLatticesTheory.majAt, map_sum, map_mul, Complex.star_def, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.HermitianLatticesTheory.majAt, map_sum, map_mul, Complex.star_def, Complex.conj_conj]
   exact Finset.sum_congr rfl fun i _ => by ring
 
 theorem majAt_self_re (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
@@ -77,6 +83,7 @@ end Maj
 
 theorem form_self_re_nonneg {K V : Type} [Field K] [AddCommGroup V] [Module K V] (nm : HermFam K V)
     (σ : K →+* ℂ) (x : V) : 0 ≤ (nm.form σ x x).re := by
+  open scoped ComplexOrder in
   by_cases hx : x = 0
   · subst hx
     have h0 : nm.form σ 0 0 = 0 := by
@@ -90,7 +97,7 @@ theorem form_self_re_nonneg {K V : Type} [Field K] [AddCommGroup V] [Module K V]
     rw [Matrix.det_unique] at hp
     simpa using (Complex.pos_iff.1 hp).1.le
 
-theorem finrank_eq_two_mul_nPl' {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] :
+theorem finrank_eq_two_mul_nPl' {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] :
     Module.finrank ℚ K = 2 * Formalism.HN.nPl K := by
   rw [IsTotallyComplex.finrank, Formalism.HN.nPl, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces,
     IsTotallyComplex.nrRealPlaces_eq_zero, zero_add]
@@ -99,7 +106,7 @@ end GlobalTheory.FrameDeg
 
 namespace GlobalTheory.FrameDeg
 
-theorem deg_eq_neg_log_ht : ∀ (K V : Type) [Field K] [NumberField K] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [StarRing K] [IsTotallyComplex K] [FiniteDimensional K V] (nm : HermFam K V), nm.IsConjInv → ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) → (∀ v x, Formalism.HermitianLatticesTheory.normAt b X v x = nm.nrm v.embedding x) → ∀ L : Submodule (𝓞 K) V, L.FG → deg nm L = -Real.log (Formalism.HN.ht b X L) / (2 * (Formalism.HN.nPl K : ℝ)) := by
+theorem deg_eq_neg_log_ht : ∀ (K V : Type) [Field K] [NumberField K] [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [FiniteDimensional K V] (nm : HermFam K V), nm.IsConjInv → ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (b : Module.Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) → (∀ v x, Formalism.HermitianLatticesTheory.normAt b X v x = nm.nrm v.embedding x) → ∀ L : Submodule (𝓞 K) V, L.FG → deg nm L = -Real.log (Formalism.HN.ht b X L) / (2 * (Formalism.HN.nPl K : ℝ)) := by
   intro K V _ _ _ _ _ _ _ _ _ nm hinv ι _ _ b X hX hnorm L hL
   classical
 
@@ -127,6 +134,7 @@ theorem deg_eq_neg_log_ht : ∀ (K V : Type) [Field K] [NumberField K] [AddCommG
   have hne := he.relIndex_ne_zero hL
   have hgram : ∀ v, Formalism.HN.gramPl b X v e = nm.gram v.embedding e := by
     intro v; ext a c; simp [Formalism.HN.gramPl, HermFam.gram, hform]
+  open scoped ComplexOrder in
   have hpos : ∀ σ, 0 < (nm.gram σ e).det.re := fun σ =>
     (Complex.pos_iff.1 (Matrix.PosDef.det_pos (nm.posDef σ _ e he.2.1))).1
   have hsum : ∑ σ : K →+* ℂ, Real.log (nm.gram σ e).det.re =

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.FunctionField.DivisorDegree
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.DivisorDegree
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+
+@[expose] public section
 
 noncomputable section
 

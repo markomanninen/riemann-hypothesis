@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.PeakTraceBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularizedExponentialSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularizedExponentialSumStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.PeakTraceBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularizedExponentialSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RegularizedExponentialSumStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -211,8 +215,11 @@ theorem adjoin_comm {A : Type} [CommRing A] [StarRing A] [Algebra ℂ A] [StarMo
     · rw [Set.mem_singleton_iff] at hb; subst hb
       rw [star_mul, star_star]; exact hcomm a ha _ (Or.inr rfl)
   intro x hx y hy
-  letI := StarAlgebra.adjoinCommRingOfComm ℂ hcomm hcs
-  exact congrArg Subtype.val (mul_comm (⟨x, hx⟩ : StarAlgebra.adjoin ℂ _) ⟨y, hy⟩)
+  letI := StarAlgebra.isMulCommutative_adjoin ℂ
+    (fun x hx => ⟨(hcs x hx x hx).symm⟩)
+    (fun x hx y hy _ => hcomm x hx y hy)
+    (fun x hx y hy _ => hcs x hx y hy)
+  exact congrArg Subtype.val (mul_comm' (⟨x, hx⟩ : StarAlgebra.adjoin ℂ _) ⟨y, hy⟩)
 
 theorem peak {A : Type} [CommRing A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A]
     {ι : Type} [Fintype ι] [Nonempty ι] {H : ι → Type} [∀ s, NormedAddCommGroup (H s)]
@@ -307,7 +314,8 @@ theorem peak {A : Type} [CommRing A] [StarRing A] [Algebra ℂ A] [StarModule �
     set w := θ s χ g
     set T : ℝ := ∑ s', ∑ g' ∈ t s', ‖θ s χ (d g')‖ ^ 2 with hT
     have hTh : θ s χ h = (T : ℂ) := by
-      simp only [hh, hT, map_sum, map_mul, map_star, Complex.star_def, Complex.conj_mul']
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hh, hT, map_sum, map_mul, map_star, Complex.star_def, Complex.conj_mul']
       push_cast; rfl
     have hT0 : 0 ≤ T := by positivity
     have hTM : T + 2 ≤ M := by

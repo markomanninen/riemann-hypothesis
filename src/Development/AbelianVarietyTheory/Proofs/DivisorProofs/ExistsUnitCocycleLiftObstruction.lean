@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsBasOpens
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAugmentationTensorSigmaMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapBasicProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapNatural
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapInjectiveOfFlat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsBasOpens
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAugmentationTensorSigmaMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapNatural
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AugmentationSigmaMapInjectiveOfFlat
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.LiftSys GlobalTheory.Obs GlobalTheory.LBObs GlobalTheory.AbLaw GlobalTheory.AbDual GlobalTheory.CechPic
@@ -65,7 +70,7 @@ theorem exists_isObU : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
       have k4 := hzK T' T'' T''' b c
       unfold Aug.KerQ at k1 k2 k3 k4 ⊢
       rw [em]
-      simp only [map_sub, map_add, k1, k2, k3, k4, sub_self, add_zero]
+      simp only [map_sub, map_add (f := _), k1, k2, k3, k4, sub_self, add_zero]
     · have m1 : L.ρ c (σ T'' (z T T' T'' a b)) ∈ I.map (algebraMap R (L.B T''')) := by
         rw [nat.1]; exact (hbas T''').1 _
       have m2 := (hbas T''').1 (z T T'' T''' (a ≫ b) c)
@@ -74,13 +79,13 @@ theorem exists_isObU : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀] (I : Ide
       have h12 := hmul T''' _ _ m1 m2
       have h43 := hmul T''' _ _ m4 m3
       have hA := congrArg (L.ρ c) (heq T T' T'' a b)
-      rw [map_mul, map_mul, map_add, map_one] at hA
+      rw [map_mul, map_mul, map_add (f := _), map_one] at hA
       have hB := heq T T'' T''' (a ≫ b) c
       have hC := heq T T' T''' a (b ≫ c)
       have hD := heq T' T'' T''' b c
       have hF := hL b c (v T T' a : L.B T')
       rw [Category.assoc] at hB
-      rw [em, map_sub, map_add, map_add, ← nat.1]
+      rw [em, map_sub, map_add (f := _), map_add (f := _), ← nat.1]
       set E1 := L.ρ c (σ T'' (z T T' T'' a b))
       set E2 := σ T''' (z T T'' T''' (a ≫ b) c)
       set E3 := σ T''' (z T T' T''' a (b ≫ c))

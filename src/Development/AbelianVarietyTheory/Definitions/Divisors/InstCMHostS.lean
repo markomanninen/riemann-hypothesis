@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
-import ReciprocityTheory.Automorphisms.Unitary
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConjSubConjSub
+public import ReciprocityTheory.Automorphisms.Unitary
+
+@[expose] public section
 
 noncomputable section
 

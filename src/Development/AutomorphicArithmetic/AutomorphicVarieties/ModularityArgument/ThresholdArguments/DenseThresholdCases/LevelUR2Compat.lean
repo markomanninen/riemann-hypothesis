@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.LevelUR2Compat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TCoreUniq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.LevelUR2Compat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.LitAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TCoreUniq
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -29,7 +33,8 @@ private theorem lc_chi {n : ℕ} {R R' G : Type} [CommRing R] [CommRing R'] [Gro
   rwa [MonoidAlgebra.mapRingHom_single, map_one] at h
 private theorem lc_pol {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (n q : ℕ) (a : ℕ → A) :
     (Hi.heckePol n q a).map f = Hi.heckePol n q fun j => f (a j) := by
-  simp [Hi.heckePol, Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Hi.heckePol, Polynomial.map_sum]
 section
 variable {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] {l : ℕ} [Fact l.Prime]
     {n : ℕ} {c : Coef l} (H : HSet L Ω l n c) {T' T : Type} [CommRing T'] [CommRing T] [Algebra c.O T'] [Algebra c.O T]
@@ -95,22 +100,81 @@ private theorem lc_univ {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Alge
     (hΦg : ∀ i, Φ (H.gen θ a K' i) = H.gen θ a K i) (hΦA : ∀ b, Φ (algebraMap A _ b) = algebraMap A _ b)
     (D : W.GDet n (H.TK θ a K') H.Gq) (ψ : ∀ v, Fin n → Dec (F := L) (H.pl v) →* (H.TK θ a K')ˣ)
     (hU : H.IsUniv θ a K' (maximalIdeal _) D ψ) :
-    H.IsUniv θ a K (maximalIdeal _) (D.map Φ.toRingHom) fun v i => W.pushCh Φ.toRingHom (ψ v i) where
-  cont := lc_cont Φ D hU.cont
-  ψ_cont v i := lc_pcont Φ (ψ v i) (hU.ψ_cont v i)
-  frob w B σ hB hσ := lc_frob Φ D _ _ (fun j => 0 < j ∧ j - 1 < n) _ _ (fun _ _ => hΦg _) (hU.frob w B σ hB hσ)
-  ψ_unit v i s g u hg hs := lc_unit H Φ v g (ψ v i) i _ _ (hΦA _) (hU.ψ_unit v i s g u hg hs)
-  ψ_unif v j s g hg hs := lc_unif H Φ v g (ψ v) j _ _ (hΦg _) (hU.ψ_unif v j s g hg hs)
+    H.IsUniv θ a K (maximalIdeal _) (D.map Φ.toRingHom) fun v i => W.pushCh Φ.toRingHom (ψ v i) := by
+  refine { cont := lc_cont Φ D hU.cont, ψ_cont := ?_, frob := ?_, ψ_unit := ?_, ψ_unif := ?_ }
+  · intro v i
+    exact lc_pcont Φ (ψ v i) (hU.ψ_cont v i)
+  · intro w B σ hB hσ
+    exact lc_frob Φ D _ _ (fun j => 0 < j ∧ j - 1 < n) _ _ (fun _ _ => hΦg _) (hU.frob w B σ hB hσ)
+  · intro v i s g u hg hs
+    exact lc_unit H Φ v g (ψ v i) i _ _ (hΦA _) (hU.ψ_unit v i s g u hg hs)
+  · intro v j s g hg hs
+    exact lc_unif H Φ v g (ψ v) j _ _ (hΦg _) (hU.ψ_unif v j s g hg hs)
 set_option maxHeartbeats 1600000 in
 theorem UpperTheory.V.Hi.level_change_compat_rank_two_of_dense_weight :
     _root_.GlobalTheory.Mem.LiteralAutomorphy.LiteratureRankNHypothesis → ∀ (L Ω : Type) [Field L] [NumberField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (l : ℕ) [Fact l.Prime] (n : ℕ) (c : Coef l) (H : HSet L Ω l n c), H.Ax →
     ∀ (A : Type) [CommRing A] [Algebra c.O A] [Alg.IsCO c.O A] (θ : H.X.I.T →* Aˣ), H.IsWt θ →
     ∀ (a : H.Op → c.O) (K K' : H.Lev) [Fact (CommOn (H.MK θ a K) (H.op A))] [Alg.IsCO c.O (H.TK θ a K)] [Fact (CommOn (H.MK θ a K') (H.op A))] [Alg.IsCO c.O (H.TK θ a K')] (R : Type) [CommRing R] [Algebra c.O R] (D₀ : W.GDet n R H.Gq) (ψ₀ : ∀ v, Fin n → Dec (F := L) (H.pl v) →* Rˣ), (∀ (T : Type) [CommRing T] [Algebra c.O T] [Alg.IsCO c.O T] (f g : R →ₐ[c.O] T), D₀.map f.toRingHom = D₀.map g.toRingHom → (∀ v i, W.pushCh f.toRingHom (ψ₀ v i) = W.pushCh g.toRingHom (ψ₀ v i)) → f = g) → ∀ (f : R →ₐ[c.O] H.TK θ a K) (f' : R →ₐ[c.O] H.TK θ a K'), H.IsMap θ a K D₀ ψ₀ f → H.IsMap θ a K' D₀ ψ₀ f' → ∀ φ : H.MK θ a K →ₗ[A] H.MK θ a K', Function.Injective φ → (∀ i (y : H.MK θ a K), ((φ ((H.gen θ a K i : Module.End A (H.MK θ a K)) y) : H.MK θ a K') : H.X.Fn A H.m) = H.op A i (φ y)) → ∀ t y, φ ((f t : Module.End A (H.MK θ a K)) y) = (f' t : Module.End A (H.MK θ a K')) (φ y) := by
-  intro hN L Ω _ _ _ _ _ l _ n c H hA A _ _ _ θ hθ a K K' _ _ _ _ R _ _ D₀ ψ₀ huniq f f' hf hf' φ hφ hgen t y
+  intro _ L Ω _ _ _ _ _ l _ n c H hA A _ _ _ θ _ a K K' _ _ _ _ R _ _ D₀ ψ₀ huniq f f' hf hf' φ hφ hgen t y
   obtain ⟨Ψ, hΨg, hΨ⟩ := levelUR2HeckeMap A _ _ _ _ (H.MK θ a K) (H.MK θ a K') (H.op A) (H.op A) φ id hφ hgen
   obtain ⟨Φ, hΦ⟩ : ∃ Φ : H.TK θ a K' →ₐ[c.O] H.TK θ a K, ∀ x, Φ x = Ψ x := ⟨Ψ.restrictScalars c.O, fun _ => rfl⟩
   have hM := lc_univ H θ a K K' Φ (fun i => (hΦ _).trans (hΨg i)) (fun b => (hΦ _).trans (Ψ.commutes b)) _ _ hf'
-  have e := lc_comp f' Φ f D₀ ψ₀ (huniq _) (_root_.UpperTheory.V.Hi.core_unique_of_axioms_weight_char hN L Ω l n c H hA A θ hθ a K _ _ hM _ _ hf) t
+  have hcore (D D' : W.GDet n (H.TK θ a K) H.Gq)
+      (ψ ψ' : ∀ v, Fin n → Dec (F := L) (H.pl v) →* (H.TK θ a K)ˣ)
+      (hU : H.IsUniv θ a K (maximalIdeal _) D ψ)
+      (hU' : H.IsUniv θ a K (maximalIdeal _) D' ψ') : D' = D ∧ ψ' = ψ := by
+    have adic_ext {Γ : Type} [TopologicalSpace Γ] {S : Set Γ} (hS : Dense S)
+        {p q : Γ → H.TK θ a K} (hp : Alg.AdicCont (maximalIdeal _) p)
+        (hq : Alg.AdicCont (maximalIdeal _) q) (hpq : ∀ x ∈ S, p x = q x) : p = q := by
+      funext x
+      refine IsHausdorff.eq_iff_smodEq (I := maximalIdeal (H.TK θ a K)).2 fun N => ?_
+      rw [smul_eq_mul, Ideal.mul_top]
+      let : TopologicalSpace (H.TK θ a K ⧸ maximalIdeal (H.TK θ a K) ^ N) := ⊥
+      have : DiscreteTopology (H.TK θ a K ⧸ maximalIdeal (H.TK θ a K) ^ N) := ⟨rfl⟩
+      exact congrFun (Continuous.ext_on hS (hp N).continuous (hq N).continuous
+        fun z hz => by simp only [hpq z hz]) x
+    refine ⟨CA.d_gext D' D fun g i _ _ => congrFun (adic_ext hA.dense (hU'.cont i) (hU.cont i) ?_) g, ?_⟩
+    · rintro _ ⟨w, hw, B, σ, hB, hσ, rfl⟩
+      simp only [W.GDet.lam, hU.frob ⟨w, hw⟩ B σ hB hσ, hU'.frob ⟨w, hw⟩ B σ hB hσ]
+    · funext v i
+      have hd : DenseRange (Subgroup.inclusion (Weil_le_Dec (H.ovr v))) :=
+        UpperTheory.weil_group_dense_in_galois_group L Ω _ _ (H.ovr v)
+      refine MonoidHom.ext fun g =>
+        Units.ext (congrFun (adic_ext hd (hU'.ψ_cont v i) (hU.ψ_cont v i) ?_) g)
+      rintro _ ⟨s, rfl⟩
+      let incl := Subgroup.inclusion (Weil_le_Dec (H.ovr v))
+      let p := (ψ' v i).comp incl
+      let q := (ψ v i).comp incl
+      have unit_eq (s₀ : Weil (H.ovr v)) (u : Uo ((H.Sl v).adicCompletion L))
+          (hu : H.art v s₀ = u) : p s₀ = q s₀ := by
+        have e := hU'.ψ_unit v i s₀ (incl s₀) u rfl hu
+        have e' := hU.ψ_unit v i s₀ (incl s₀) u rfl hu
+        exact mul_right_cancel (inv_injective (Units.ext
+          ((Units.eq_inv_of_mul_eq_one_left e).symm.trans (Units.eq_inv_of_mul_eq_one_left e'))))
+      have unif_eq (s₀ : Weil (H.ovr v)) (hu : H.art v s₀ = unif _) : p s₀ = q s₀ := by
+        let pε := fun j : Fin n => ψ' v j (incl s₀) * H.epsV (H.TK θ a K) v (incl s₀) ^ (j : ℕ)
+        let qε := fun j : Fin n => ψ v j (incl s₀) * H.epsV (H.TK θ a K) v (incl s₀) ^ (j : ℕ)
+        have prod_eq (j : Fin n) : ∏ k with k ≤ j, pε k = ∏ k with k ≤ j, qε k :=
+          Units.ext ((hU'.ψ_unif v j s₀ (incl s₀) rfl hu).trans
+            (hU.ψ_unif v j s₀ (incl s₀) rfl hu).symm)
+        have term_eq (j : Fin n) : pε j = qε j := by
+          induction j using WellFoundedLT.induction with
+          | ind j ih =>
+            have hj : j ∈ Finset.univ.filter fun k => k ≤ j := by simp
+            have e := prod_eq j
+            rw [← Finset.mul_prod_erase _ pε hj, ← Finset.mul_prod_erase _ qε hj,
+              Finset.prod_congr rfl (g := qε) fun k hk => ih k (by
+                rw [Finset.mem_erase, Finset.mem_filter] at hk
+                exact lt_of_le_of_ne hk.2.2 hk.1)] at e
+            exact mul_right_cancel e
+        exact mul_right_cancel (term_eq i)
+      obtain ⟨s₀, hs₀⟩ := (hA.art_spec v).surj (unif _)
+      have e := unit_eq (s * (s₀ ^ ord _ (H.art v s))⁻¹) ⟨_, GlAx.val_div_ord (H.art v s)⟩ (by
+        rw [map_mul, map_inv, map_zpow, hs₀]
+        exact (div_eq_mul_inv _ _).symm)
+      rw [map_mul, map_mul, map_inv, map_inv, map_zpow, map_zpow, unif_eq s₀ hs₀] at e
+      exact congrArg Units.val (mul_right_cancel e)
+  have e := lc_comp f' Φ f D₀ ψ₀ (huniq _) (hcore _ _ _ _ hM hf) t
   rw [e, hΦ]
   exact hΨ (f' t) y
 end

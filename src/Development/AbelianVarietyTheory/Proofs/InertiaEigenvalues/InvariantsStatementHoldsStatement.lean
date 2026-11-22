@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantsStatementHolds
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvariantsStatementHolds
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.invariants_statement_holds : ∀ (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), Formalism.MainNotions.InvariantsGenerators.H0InvariantsTheorem D HW F := by

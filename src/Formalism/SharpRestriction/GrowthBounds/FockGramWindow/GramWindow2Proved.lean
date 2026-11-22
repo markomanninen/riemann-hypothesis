@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.GramWindow2
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem bad_le_smith (n : ℕ) (k : ℤ) (Ψ : MvPolynomial σ ℚ_[p] → MvPol
     intro i l
     have e1 : s * Ψ (x i) (y l) = ∑ a, ∑ b, (P i a : ℚ_[p]) * (s * Ψ (e a) (e b)) * (Q b l : ℚ_[p]) := by
       rw [← hbeΨ, hx, hy]
-      simp only [zsmul_eq, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, hbeΨ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [zsmul_eq, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, hbeΨ,
         Finset.mul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun a _ => ?_
@@ -105,7 +110,8 @@ theorem bad_le_smith (n : ℕ) (k : ℤ) (Ψ : MvPolynomial σ ℚ_[p] → MvPol
     have hb := Formalism.MainNotions.G.SymmetricFormBlocks.gc_bdd_gen p Ψ h1
       (fun n' s' f v => by
         show be (∑ i ∈ s', f i) v = ∑ i ∈ s', be (f i) v
-        rw [map_sum, LinearMap.sum_apply])
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, LinearMap.sum_apply])
       L (Submodule.span ℚ_[p] (Set.range e)) (fun z hz => Submodule.span_subset_span ℤ_[p] ℚ_[p] _ hz) k
     set cc : Fin m → ℤ_[p] := fun t => ⟨(p : ℚ_[p]) ^ k * s / (d (ι t) : ℚ_[p]), hsc t⟩ with hcc
     refine le_csSup hb ⟨fun t => x (ι t), fun t => cc t • y (ι t), fun t => hxL _,

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVan
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestSide
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVan
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestSide
+
+@[expose] public section
 
 noncomputable section
 

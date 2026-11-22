@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldRecursion
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldRecursion
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,12 +15,12 @@ open AddMonoidAlgebra Finset
 
 variable {n : ℕ}
 
-variable (n) in
 
+variable (n) in
 def antisymm : LaurentRing n →ₗ[ℂ] LaurentRing n where
   toFun p := ∑ σ : Equiv.Perm (Fin n), Equiv.Perm.sign σ • permAct σ p
   map_add' p q := by
-    simp only [map_add, smul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), smul_add, Finset.sum_add_distrib]
   map_smul' c p := by
     simp only [map_smul, RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun σ _ => ?_
@@ -70,10 +74,7 @@ theorem alternant_eq_zero {μ : Fin n → ℤ} {i j : Fin n} (hij : i ≠ j) (h 
   congr 1
   funext x
   simp only [Function.comp_apply, Equiv.swap_apply_def]
-  split_ifs with h1 h2
-  · rw [h1, h]
-  · rw [h2, h]
-  · rfl
+  split_ifs <;> simp_all
 
 theorem monomial_add (μ ν : Fin n → ℤ) : monomial (μ + ν) = monomial μ * monomial ν := by
   simp only [monomial, single_mul_single, mul_one]
@@ -96,18 +97,18 @@ theorem alternant_eq_det (μ : Fin n → ℤ) :
   rw [AddMonoidAlgebra.prod_single, Finset.prod_const_one, permAct_single]
   congr 1
   funext x
-  simp only [Function.comp_apply, Finset.sum_apply, Pi.single_apply]
-  rw [Finset.sum_eq_single (σ.symm x)]
+  rw [Finset.sum_apply, Finset.sum_eq_single (σ.symm x)]
   · simp
   · intro b _ hb
+    simp only [Pi.single_apply]
     rw [if_neg]
     intro h
     exact hb (by rw [h, Equiv.symm_apply_apply])
   · intro h
     exact absurd (Finset.mem_univ _) h
 
-variable (n) in
 
+variable (n) in
 def staircase : Fin n → ℤ := fun i => (n : ℤ) - 1 - i
 
 theorem staircase_injective : Function.Injective (staircase n) := by
@@ -122,11 +123,10 @@ theorem monomial_single_natCast (a : Fin n) (m : ℕ) :
   simp only [varL, monomial, single_pow, one_pow]
   congr 1
   funext x
-  simp only [Pi.smul_apply, Pi.single_apply, nsmul_eq_mul]
-  split_ifs <;> simp
+  simp [Pi.single_apply]
+
 
 open Polynomial in
-
 def rootPoly (n : ℕ) : (LaurentRing n)[X] := ∏ a : Fin n, (X - C (varL a))
 
 open Polynomial in
@@ -143,12 +143,12 @@ theorem eval_rootPoly (a : Fin n) : (rootPoly n).eval (varL a) = 0 := by
   rw [rootPoly, eval_prod]
   exact Finset.prod_eq_zero (Finset.mem_univ a) (by simp)
 
-open Polynomial in
 
+open Polynomial in
 def remCoeff (m k : ℕ) : LaurentRing n := ((X ^ m : (LaurentRing n)[X]) %ₘ rootPoly n).coeff k
 
-open Polynomial in
 
+open Polynomial in
 theorem pow_eq_sum_remCoeff (hn : 0 < n) (a : Fin n) (m : ℕ) :
     varL a ^ m = ∑ k : Fin n, remCoeff (n := n) m k * varL a ^ (k : ℕ) := by
   have hne : rootPoly n ≠ 1 := by
@@ -254,7 +254,7 @@ theorem exists_antisymm_eq_mul (p : LaurentRing n) :
   | add x y hx hy =>
     obtain ⟨qx, hqx⟩ := hx
     obtain ⟨qy, hqy⟩ := hy
-    exact ⟨qx + qy, by rw [map_add, hqx, hqy, mul_add]⟩
+    exact ⟨qx + qy, by rw [map_add (f := _), hqx, hqy, mul_add]⟩
   | single μ c =>
     obtain ⟨q, hq⟩ := exists_alternant_eq_mul μ
     refine ⟨c • q, ?_⟩
@@ -299,7 +299,7 @@ theorem altQuot_eq_of_mul {p q : LaurentRing n} (h : alternant (staircase n) * q
   mul_left_cancel₀ alternant_staircase_ne_zero ((alternant_mul_altQuot p).trans h.symm)
 
 theorem altQuot_add (p q : LaurentRing n) : altQuot (p + q) = altQuot p + altQuot q :=
-  altQuot_eq_of_mul (by rw [mul_add, alternant_mul_altQuot, alternant_mul_altQuot, map_add])
+  altQuot_eq_of_mul (by rw [mul_add, alternant_mul_altQuot, alternant_mul_altQuot, map_add (f := _)])
 
 theorem altQuot_sum {ι : Type*} (s : Finset ι) (f : ι → LaurentRing n) :
     altQuot (∑ i ∈ s, f i) = ∑ i ∈ s, altQuot (f i) :=
@@ -326,7 +326,8 @@ theorem lamS_comp_symm (σ : Equiv.Perm (Fin n)) (S : Finset (Fin n)) :
   simp only [Function.comp_apply, lamS_apply, Finset.mem_map_equiv]
 
 theorem permAct_esymmL (r : ℕ) (σ : Equiv.Perm (Fin n)) : permAct σ (esymmL n r) = esymmL n r := by
-  rw [esymmL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [esymmL, map_sum]
   simp only [permAct_monomial, lamS_comp_symm]
   refine Finset.sum_nbij' (fun S => S.map σ.toEmbedding) (fun S => S.map σ.symm.toEmbedding)
     ?_ ?_ ?_ ?_ (fun _ _ => rfl)
@@ -396,7 +397,7 @@ theorem permAct_varL (σ : Equiv.Perm (Fin n)) (a : Fin n) : permAct σ (varL a)
   rw [varL, permAct_monomial]
   congr 1
   funext x
-  simp only [Function.comp_apply, Pi.single_apply, Equiv.symm_apply_eq]
+  simp [Pi.single_apply, Equiv.symm_apply_eq]
 
 theorem swap_lt_swap {i j a b : Fin n} (hij : (j : ℕ) = i + 1) (hab : a < b)
     (hne : ¬(a = i ∧ b = j)) : Equiv.swap i j a < Equiv.swap i j b := by
@@ -468,8 +469,8 @@ theorem hlR_swap (t : ℂ) {μ : Fin n → ℤ} {i j : Fin n} (hij : (j : ℕ) =
     rw [varL, varL, ← monomial_add, ← monomial_add]
     congr 1
     funext x
-    simp only [Pi.add_apply, Function.comp_apply, Pi.single_apply, hs, Equiv.swap_apply_def]
-    split_ifs with h1 h2 h3 h4 h5 <;> simp_all
+    simp only [Pi.add_apply, Function.comp_apply, hs, Equiv.swap_apply_def, Pi.single_apply]
+    split_ifs <;> simp_all
   have hss : μ ∘ s ∘ s = μ := by
     funext x
     simp [hs, Equiv.swap_apply_self]

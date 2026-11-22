@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
-import Lemmata.GeneralBFactThirdVersion.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
+public import Lemmata.GeneralBFactThirdVersion.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,6 @@ theorem intE_add {x y : E} (hx : IntE x) (hy : IntE y) : IntE (x + y) := by
 
 theorem intE_neg {x : E} (hx : IntE x) : IntE (-x) := by
   obtain ⟨a, rfl⟩ := hx; exact ⟨-a, by simp⟩
-
-theorem intE_sub {x y : E} (hx : IntE x) (hy : IntE y) : IntE (x - y) := by
-  rw [sub_eq_add_neg]; exact intE_add hx (intE_neg hy)
 
 theorem intE_mul {x y : E} (hx : IntE x) (hy : IntE y) : IntE (x * y) := by
   obtain ⟨a, rfl⟩ := hx; obtain ⟨b, rfl⟩ := hy; exact ⟨a * b, by simp⟩
@@ -64,10 +65,6 @@ theorem den_fin {ι : Type*} [Fintype ι] (x : ι → E) : ∃ m : ℕ, m ≠ 0 
   rw [this]
   exact intE_nat_mul _ (hx i)
 
-theorem intE_scale {m : ℕ} (k : ℕ) {x : E} (h : IntE ((m : E) * x)) : IntE (((k * m : ℕ) : E) * x) := by
-  have : ((k * m : ℕ) : E) * x = (k : E) * ((m : E) * x) := by push_cast; ring
-  rw [this]; exact intE_nat_mul k h
-
 theorem den_mat {m n : Type*} [Fintype m] [Fintype n] (A : Matrix m n E) :
     ∃ k : ℕ, k ≠ 0 ∧ ∀ i j, IntE ((k : E) * A i j) := by
   obtain ⟨k, hk, h⟩ := den_fin (fun p : m × n => A p.1 p.2)
@@ -98,9 +95,9 @@ theorem int_smul_mem (Λ : Submodule (𝓞 E) V) {c : E} (hc : IntE c) {v : V} (
   obtain ⟨o, rfl⟩ := hc
   rw [coe_smul_eq]; exact Λ.smul_mem o hv
 
-theorem lat_smul_mem (Λ : Submodule (𝓞 E) V) (h : Submodule.IsLattice E Λ) (v : V) :
+theorem lat_smul_mem (Λ : Submodule (𝓞 E) V) (h : Submodule.IsFullLattice E Λ) (v : V) :
     ∃ m : ℕ, m ≠ 0 ∧ (m : E) • v ∈ Λ := by
-  first | exact Bl.general_b_fact_third_version.goal1 .. | (apply Bl.general_b_fact_third_version.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_third_version.goal1 <;> assumption) | (apply @Bl.general_b_fact_third_version.goal1 <;> assumption) | (intros; apply @Bl.general_b_fact_third_version.goal1 <;> assumption) | (apply @Bl.general_b_fact_third_version.goal1 <;> first | assumption | infer_instance)
+  exact Bl.general_b_fact_third_version.goal1 Λ h v
 
 theorem lat_fun_bdd (Λ : Submodule (𝓞 E) V) (h : Submodule.IsLattice E Λ) {ι : Type*} [Fintype ι]
     (φ : ι → V →ₗ[E] E) : ∃ m : ℕ, m ≠ 0 ∧ ∀ v ∈ Λ, ∀ i, IntE ((m : E) * φ i v) := by
@@ -112,7 +109,7 @@ theorem lat_fun_bdd (Λ : Submodule (𝓞 E) V) (h : Submodule.IsLattice E Λ) {
   induction hv using Submodule.span_induction with
   | mem x hx => exact hmS (i, ⟨x, hx⟩)
   | zero => simpa using intE_zero
-  | add x y _ _ hx hy => rw [map_add, mul_add]; exact intE_add hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), mul_add]; exact intE_add hx hy
   | smul o x _ hx =>
     rw [← coe_smul_eq, LinearMap.map_smul, smul_eq_mul, mul_left_comm]
     exact intE_mul ⟨o, rfl⟩ hx

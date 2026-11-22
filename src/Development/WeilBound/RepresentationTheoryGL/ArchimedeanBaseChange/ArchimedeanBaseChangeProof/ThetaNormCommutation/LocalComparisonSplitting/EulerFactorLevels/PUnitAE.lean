@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertIntegralTwistedConjugatesTwistedCentralizer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralConjEtaleMemCentralizerMulIntegralGL
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPcRatFMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyBezoutSeparableDerivativeAdicIntegers
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertIntegralTwistedConjugatesTwistedCentralizer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralConjEtaleMemCentralizerMulIntegralGL
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMaxCompactGLOfCommuteEtaleCharpolyBounded
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyPcRatFMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyBezoutSeparableDerivativeAdicIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,11 @@ theorem unitae_nrm (hU : Unr E) (n : ℕ) (w : Pl E) (δ : GL (Fin n) E) :
     rw [map_mul, thE, GlobalTheory.ThetaPull.map_thetaGL (algebraMap E (w.adicCompletion E)) _ (cj w) (fun x => (hp x).symm)]
 
 theorem unitae_single (hU : Unr E) (n : ℕ) (δ : GL (Fin n) E) (hsep : (polE δ).Separable) :
-    ∀ᶠ w : Pl E in cofinite, locEl n w δ ∈ GlobalTheory.LFun.KGL w n ∧
-      (∀ g : GLw n w, g⁻¹ * locEl n w δ * thL n w g ∈ GlobalTheory.LFun.KGL w n →
-        ∃ t ∈ twCent (thL n w) (locEl n w δ), t⁻¹ * g ∈ GlobalTheory.LFun.KGL w n) ∧
+    ∀ᶠ w : Pl E in cofinite, locEl n w δ ∈ GlobalTheory.LFun.KGL w (n := n) ∧
+      (∀ g : GLw n w, g⁻¹ * locEl n w δ * thL n w g ∈ GlobalTheory.LFun.KGL w (n := n) →
+        ∃ t ∈ twCent (thL n w) (locEl n w δ), t⁻¹ * g ∈ GlobalTheory.LFun.KGL w (n := n)) ∧
       (∀ t ∈ twCent (thL n w) (locEl n w δ), IsCompact (closure (Subgroup.zpowers t : Set (GLw n w))) →
-        t ∈ GlobalTheory.LFun.KGL w n) := by
+        t ∈ GlobalTheory.LFun.KGL w (n := n)) := by
   filter_upwards [GlobalTheory.EulerTwU.eventually_pc_ratF_mem δ, GlobalTheory.EulerTwU.eventually_pc_ratF_mem (δ * thE E n δ),
     GlobalTheory.BCT.SepBezout.bezout_eventually E _ hsep] with w h1 h2 h3
   rw [GlobalTheory.EulerTwU.pc_ratF] at h1 h2
@@ -46,12 +50,12 @@ theorem unitae_single (hU : Unr E) (n : ℕ) (δ : GL (Fin n) E) (hsep : (polE �
         (polE δ).map (algebraMap E (w.adicCompletion E)) := Matrix.charpoly_map _ _
     rw [hN, e]
     exact h3
-  have hy : locEl n w δ ∈ GlobalTheory.LFun.KGL w n := by
+  have hy : locEl n w δ ∈ GlobalTheory.LFun.KGL w (n := n) := by
     unfold locEl
     split_ifs
     · exact h2
     · exact h1
-  have hNK : nrmL n w (locEl n w δ) ∈ GlobalTheory.LFun.KGL w n := by rw [hN]; exact h2
+  have hNK : nrmL n w (locEl n w δ) ∈ GlobalTheory.LFun.KGL w (n := n) := by rw [hN]; exact h2
   refine ⟨hy, ?_, ?_⟩
   · intro g hg
     by_cases hs : IsSplitAt w

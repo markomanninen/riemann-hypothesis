@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -20,7 +25,7 @@ theorem exists_semilinear_lift_of_projective : ∀ (R R₀ : Type) [CommRing R] 
   let f : P → R₀ →+ M := fun w => AddMonoidHom.mk' (fun c => σ c • m w) (by
     intro a b
     rw [← add_smul]
-    exact key _ _ _ (hmW w) (by rw [map_add, hσ, hσ, hσ]))
+    exact key _ _ _ (hmW w) (by rw [map_add (f := _), hσ, hσ, hσ]))
   have hf : ∀ w c, f w c = σ c • m w := fun _ _ => rfl
   let g : (P →₀ R₀) →+ M := Finsupp.liftAddHom f
   have hg : ∀ w c, g (Finsupp.single w c) = σ c • m w := by
@@ -30,7 +35,7 @@ theorem exists_semilinear_lift_of_projective : ∀ (R R₀ : Type) [CommRing R] 
     intro r x
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [smul_add, map_add, map_add, ha, hb, smul_add]
+    | add a b ha hb => rw [smul_add, map_add (f := _), map_add (f := _), ha, hb, smul_add]
     | single w c =>
       rw [Finsupp.smul_single, hg, hg, smul_smul]
       exact key _ _ _ (hmW w) (by rw [map_mul, hσ, hσ, smul_eq_mul])
@@ -38,13 +43,13 @@ theorem exists_semilinear_lift_of_projective : ∀ (R R₀ : Type) [CommRing R] 
     intro x
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add]; exact W.add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _)]; exact W.add_mem ha hb
     | single w c => rw [hg]; exact W.smul_mem _ (hmW w)
   have g3 : ∀ x, q (g x) = v (Finsupp.linearCombination R₀ id x) := by
     intro x
     induction x using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add, map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
     | single w c =>
       rw [hg, Finsupp.linearCombination_single, map_smul, hmq, ← hv, hσ]
       rfl

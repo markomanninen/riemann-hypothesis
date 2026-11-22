@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenFibreExists
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogIdealChain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GenFibreExists
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogIdealChain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace PositivityTheory.Xgp.lemma_v
@@ -80,7 +85,7 @@ theorem geoNum_nonneg (hK : ReciprocityTheory.ChartRestriction.G.ArakelovGeometr
       exact (mem_support_iff.1 hm) (by rw [coeff_C, if_neg (Ne.symm h)])
     simp [hm0]
   have hnh : ¬ IsHorizontal W := fun h => hnot W h (by rwa [map_natCast])
-  obtain ⟨h1, h2, h3⟩ := (ReciprocityTheory.ChartRestriction.G.Geo.divSuppArith K ι P D _ _ W hP hsec hW).2 hnh
+  obtain ⟨h1, h2, h3⟩ := (GlobalTheory.CompanionTheory.Ar.PB.Known.divSuppArith K ι P D (oneLine (ι := ι)) (C (p : ℤ)) W hP hsec hW).2 hnh
   refine hK K ι W D a h1 h2.ne_zero h3 fun j W' hW' hWW' hdim => ?_
   exact ha j W' hW' (le_sup_left.trans (hle.trans hWW'))
     (ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.charOf_eq_of_mem hW'.1 hp (hWW' hpW)) hdim

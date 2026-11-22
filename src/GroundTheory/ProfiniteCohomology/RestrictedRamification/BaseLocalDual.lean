@@ -1,12 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseLocal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -55,9 +58,9 @@ theorem bijective_zmodMulPairing_tTop {r s : ℕ} (h : r + s = 2) :
   rw [← tensorHom_zmodDualIso_zmodMulPairing m Dl hDl, ← Category.assoc, MonoidalCategory.tensorHom_comp_tensorHom,
     Category.id_comp, Iso.inv_hom_id, MonoidalCategory.id_tensorHom_id, Category.id_comp]
 
+
 omit [TopologicalSpace H] [IsTopologicalGroup H] [CompactSpace H] [TotallyDisconnectedSpace H] [IsDiscreteRep Dl]
   [NeZero m] in
-
 theorem comp_eq_tensorHom_zmodMulPairing {M Dm : Rep.{0} (ULift.{0} ℤ) H} (μ : M ⊗ Dm ⟶ Dm) (ρ : Dm ⟶ Dl)
     (ι : M ⟶ zmodRep.{0} H m)
     (hμ : ∀ (a : M) (d : Dm), μ.hom (a ⊗ₜ[ULift.{0} ℤ] d) = (ZMod.cast (ι.hom a).down : ℤ) • d) :
@@ -68,8 +71,8 @@ theorem comp_eq_tensorHom_zmodMulPairing {M Dm : Rep.{0} (ULift.{0} ℤ) H} (μ 
   obtain ⟨b⟩ := ι.hom a
   rw [zmodMulPairing_tmul]
 
-omit [CompactSpace H] [TotallyDisconnectedSpace H] [NeZero m] in
 
+omit [CompactSpace H] [TotallyDisconnectedSpace H] [NeZero m] in
 theorem cohomologyMap_cupPairing_of_comp_eq {M Dm M' : Rep.{0} (ULift.{0} ℤ) H} [IsDiscreteRep M]
     [IsDiscreteRep Dm] [IsDiscreteRep M'] (μ : M ⊗ Dm ⟶ Dm) (μ' : M' ⊗ Dl ⟶ Dl) (ρ : Dm ⟶ Dl) (ι : M ⟶ M')
     (hμ : μ ≫ ρ = (ι ⊗ₘ ρ) ≫ μ') {r s q : ℕ} (h : r + s = q) (x : cohomology M r) (y : cohomology Dm s) :
@@ -79,12 +82,14 @@ theorem cohomologyMap_cupPairing_of_comp_eq {M Dm M' : Rep.{0} (ULift.{0} ℤ) H
 
 end LocalZMod
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) (n : ℕ)
   [NeZero n]
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem nsmul_galRootsOfUnity_local (v : S)
     (ω : galRootsOfUnity.{0} ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)
       (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) n) : n • ω = 0 := by
@@ -106,8 +111,8 @@ omit [NeZero n] in
 theorem bijective_zmodResToLocal (v : S) : Function.Bijective (zmodResToLocal S ιs n v).hom :=
   Function.bijective_id
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem pairingRes_zmodMulPairing_comp_gsRootsLocalMor (v : S) :
     pairingRes (gsFinFamily S ιs v).toMonoidHom (zmodMulPairing n (gsRoots S n) (nsmul_gsRoots S n)) ≫
         gsRootsLocalMor S ιs n v =
@@ -118,8 +123,8 @@ theorem pairingRes_zmodMulPairing_comp_gsRootsLocalMor (v : S) :
   obtain ⟨a⟩ := a
   exact zmodMulPairing_tmul n (gsRoots S n) (nsmul_gsRoots S n) a d
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem gsLocalInvRoots_cupPairing (v : S) {r s : ℕ} (h : r + s = 2)
     (ξ : cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n)) r)
     (η : cohomology (Rep.res (gsFinFamily S ιs v).toMonoidHom (gsRoots S n)) s) :

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOneOfMemLev
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeSplitCm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOneOfMemLev
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeSplitCm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host
 open GlobalTheory.HeckeUnrExt
@@ -32,7 +36,10 @@ theorem exists_isSplitAt_under_ne : ∀ (E : Type) [Field E] [NumberField E] [Is
   obtain ⟨Q, hQmax, hQ⟩ := Ideal.exists_ideal_over_maximal_of_isIntegral (S := 𝓞 E)
     (Ideal.span {(p : ℤ)}) (by rw [(RingHom.injective_iff_ker_eq_bot _).mp hinj]; exact bot_le)
   have hpQ : (p : 𝓞 E) ∈ Q := by
-    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := hQ ▸ Ideal.subset_span rfl
+    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 E)) := by
+      change (p : ℤ) ∈ Ideal.under ℤ Q
+      rw [hQ]
+      exact Ideal.subset_span rfl
     simpa using this
   have hp0 : (p : 𝓞 E) ≠ 0 := by exact_mod_cast hp.ne_zero
   let w₁ : HeightOneSpectrum (𝓞 E) := ⟨Q, hQmax.isPrime, fun h => hp0 (by rw [h] at hpQ; simpa using hpQ)⟩

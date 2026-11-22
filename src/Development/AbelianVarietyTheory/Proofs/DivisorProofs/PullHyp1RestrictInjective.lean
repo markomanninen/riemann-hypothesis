@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.CechDR
 
 set_option autoImplicit false
@@ -16,7 +21,7 @@ theorem pullHyp1_restrict_injective {R : Type} [CommRing R] {C : Type} [Category
       ∃ g : C0 F, (∀ ⦃T T' : C⦄ (φ : T ⟶ T'), g T' = mp F φ (g T)) ∧ ∀ t, g (G.obj t) = g' t)
     (hf : Function.Injective (pullGlob1 (CoefMap.restrict F G))) :
     Function.Injective (pullHyp1 (CoefMap.restrict F G)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨x, rfl⟩ := Hyp1.mk_surjective F c
   have ht : toO F (Hyp1.mk F x) = 0 := h1 (by rw [← toO_pullHyp1, hc, map_zero, map_zero])
@@ -49,10 +54,10 @@ theorem pullHyp1_restrict_injective {R : Type} [CommRing R] {C : Type} [Category
     rw [hhG, map_sub, hω]))
   refine Hyp1.mk_eq_zero.2 ⟨g₀ + h, Tot1.ext (fun T T' φ ↦ ?_) fun T ↦ ?_⟩
   · rw [dTot0_f]
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     linear_combination hh φ + hg0 T T' φ
   · have e : x.1.2 T - D R _ (g₀ T) = D R _ (h T) := congrArg (fun ω : Glob1 F ↦ ω.1 T) hθψ
-    rw [dTot0_ω, Pi.add_apply, map_add, ← e]
+    rw [dTot0_ω, Pi.add_apply, map_add (f := _), ← e]
     abel
 
 end GlobalTheory.CechDR

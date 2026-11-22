@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+
+@[expose] public section
 
 open Polynomial
 
@@ -31,7 +35,24 @@ private theorem cmpPrime_core {Λ B : Type} [CommRing Λ] [IsDomain Λ] [CommRin
       (∏ j ∈ Finset.univ.erase i, g j).map (algebraMap Λ (FractionRing Λ)) := by
     rw [Polynomial.map_prod]
     intro h
-    obtain ⟨j, hj, hdvd⟩ := (Prime.dvd_finset_prod_iff gprime _).1 h
+    have exists_dvd : ∀ (S : Finset (Fin s)),
+        (g i).map (algebraMap Λ (FractionRing Λ)) ∣
+          ∏ j ∈ S, (g j).map (algebraMap Λ (FractionRing Λ)) →
+        ∃ j ∈ S, (g i).map (algebraMap Λ (FractionRing Λ)) ∣
+          (g j).map (algebraMap Λ (FractionRing Λ)) := by
+      intro S
+      induction S using Finset.induction_on with
+      | empty =>
+        simp only [Finset.prod_empty, Finset.notMem_empty, false_and, exists_false]
+        exact fun hd => gprime.not_isUnit (isUnit_iff_dvd_one.mpr hd)
+      | @insert a S ha ih =>
+        simp only [Finset.prod_insert ha, Finset.mem_insert]
+        intro hd
+        rcases gprime.dvd_or_dvd hd with hd | hd
+        · exact ⟨a, Or.inl rfl, hd⟩
+        · obtain ⟨j, hj, hdj⟩ := ih hd
+          exact ⟨j, Or.inr hj, hdj⟩
+    obtain ⟨j, hj, hdvd⟩ := exists_dvd _ h
     have hji : j ≠ i := Finset.ne_of_mem_erase hj
     have hassoc := (irr i).associated_of_dvd (irr j) hdvd
     have heq := Polynomial.eq_of_monic_of_associated (mapMonic i) (mapMonic j) hassoc

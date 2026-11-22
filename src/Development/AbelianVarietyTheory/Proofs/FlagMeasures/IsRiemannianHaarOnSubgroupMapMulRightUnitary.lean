@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
@@ -18,7 +22,7 @@ theorem map_mul_right_of_conj_nhds {G : Type} [Group G] [TopologicalSpace G] [Is
     ⟨fun K hK => measure_lt_top_of_isCompact_of_isMulLeftInvariant' hU ht hK⟩
 
   have hVo : IsOpen ((fun g : G => g * l⁻¹) ⁻¹' interior B) :=
-    isOpen_interior.preimage (continuous_mul_right l⁻¹)
+    isOpen_interior.preimage (continuous_mul_const l⁻¹)
   have hV : ν.map (fun g => g * l) ((fun g : G => g * l⁻¹) ⁻¹' interior B) = ν (interior B) := by
     rw [Measure.map_apply hmeas hVo.measurableSet]
     congr 1

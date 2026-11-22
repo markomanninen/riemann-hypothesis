@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+
+@[expose] public section
 
 noncomputable section
 

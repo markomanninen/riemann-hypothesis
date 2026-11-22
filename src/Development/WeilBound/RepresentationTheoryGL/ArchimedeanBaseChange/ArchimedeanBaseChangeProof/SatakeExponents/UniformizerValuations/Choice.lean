@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.JoinType
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.FiniteDiscreteFamilies.PeakCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,19 +48,12 @@ def ChoiceT : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n 
     ∀ i, ∀ p ∈ Z i, (c.sum fun x a => a * ((∏ k, (s i).eps k ^ x k : ℂˣ) : ℂ) *
         ev2 w p.1 p.2 (resL (s i) x) (resR (s i) x)) ≠ 0 → chiOf w (s i) p.1 p.2 = α
 
-def TargetOK (w : Pl E) (s : Shuf n) (ξa : Fin s.a → ℂˣ) (ξb : Fin s.b → ℂˣ) (α : Fin n → ℂˣ) : Prop :=
-  chiOf w s ξa ξb = α
-
 def ChoiceS : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (K' : Subgroup (GLw n w)),
   IsOpen (K' : Set (GLw n w)) → IsCompact (K' : Set (GLw n w)) → ∀ P : SmIrr (GLw n w), (∃ v ∈ fixed P.ρ K', v ≠ 0) →
   ∀ (k : ℕ) (D : Fin k → Pre E n),
   ∃ e : GLw n w → ℂ, IsHk K' e ∧ (∃ v₀ ∈ fixed P.ρ K', ∃ l : _ →ₗ[ℂ] ℂ, l v₀ = 1 ∧ ∀ v ∈ fixed P.ρ K', hk P.ρ K' e v = l v • v₀) ∧
     ∀ j, ∀ τ : SmIrr (GLw n w), GlobalTheory.SmGL.IsSubquotient τ.ρ (prodAt (D j) w) → IsEmpty (τ.ρ.Equiv P.ρ) →
       ∀ v ∈ fixed τ.ρ K', hk τ.ρ K' e v = 0
-
-def ChoiceM : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E) (K' : Subgroup (GLw n w))
-  (k : ℕ) (D : Fin k → Pre E n), (∀ j, FiniteDimensional ℂ (fixed (prodAt (D j) w) K')) →
-  ∃ m : ℕ, ∀ j, Module.finrank ℂ (fixed (prodAt (D j) w) K') < m
 
 def ChoiceTOf : Prop := PeakCone → ChiEval → GapRes → ChoiceT
 

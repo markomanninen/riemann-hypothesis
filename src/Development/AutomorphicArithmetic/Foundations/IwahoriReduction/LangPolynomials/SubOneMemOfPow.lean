@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OneAddXPowSubOneMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowSubOneMem
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OneAddXPowSubOneMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowSubOneMem
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 private theorem pow_sub_one_mem {S : Type} [CommRing S] (J : Ideal S) (p : ℕ) (hp : p.Prime) (hpJ : (p : S) ∈ J)
@@ -112,8 +117,8 @@ private theorem norm_congr {A B : Type} [CommRing A] [CommRing B] [Algebra A B] 
     rw [Algebra.norm_eq_matrix_det b, Algebra.norm_eq_matrix_det b, ← Ideal.Quotient.eq, RingHom.map_det, RingHom.map_det]
     congr 1
     ext i j
-    rw [← Algebra.smul_def, map_add, map_smul]
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add, map_mul]
+    rw [← Algebra.smul_def, map_add (f := _), map_smul]
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _), map_mul]
     rw [Ideal.Quotient.eq_zero_iff_mem.2 (Ideal.mem_span_singleton_self a), zero_mul, add_zero]
   · rw [Algebra.norm_eq_one_of_not_exists_basis A h, Algebra.norm_eq_one_of_not_exists_basis A h, sub_self]
     exact zero_mem _
@@ -160,7 +165,7 @@ private theorem cyc_mem (R : Type) [CommRing R] (p n : ℕ) [Fact p.Prime] :
   unfold GlobalTheory.Col.cyc
   rw [Polynomial.hom_eval₂]
   have h1 : (PowerSeries.constantCoeff (R := R)).comp (PowerSeries.C (R := R)) = RingHom.id R := by ext a; simp
-  rw [h1, map_add, map_one, PowerSeries.constantCoeff_X, add_zero, Polynomial.eval₂_id,
+  rw [h1, map_add (f := _), map_one, PowerSeries.constantCoeff_X, add_zero, Polynomial.eval₂_id,
     Polynomial.eval_one_cyclotomic_prime_pow]
   exact Ideal.subset_span rfl
 

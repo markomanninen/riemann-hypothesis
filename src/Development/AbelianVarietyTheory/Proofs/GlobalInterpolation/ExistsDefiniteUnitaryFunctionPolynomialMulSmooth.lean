@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplitStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryCoordinateAlgebraDenseStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DefiniteUnitaryRealApproxAndFiniteInfiniteSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitaryCoordinateAlgebraDenseStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
@@ -14,13 +18,13 @@ theorem continuous_of_right_invariant_open {G : Type} [Group G] [TopologicalSpac
   refine ⟨(fun y => x⁻¹ * y) ⁻¹' (V : Set G), hV.preimage (by fun_prop), by simp, fun y hy => ?_⟩
   rw [← h _ hy x, mul_inv_cancel_left]
 
-theorem exists_fun_of_poly_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (m : ℕ) (p : Fin m → infU E n → ℂ) (e : Fin m → finU E n → ℂ), (∀ i, p i ∈ Algebra.adjoin ℂ {f : infU E n → ℂ | ∃ (τ : E →+* ℂ) (i j : Fin n), f = fun x => (cEmb τ x.1).val i j}) → (∀ i, ∃ V : Subgroup (finU E n), IsOpen (V : Set (finU E n)) ∧ ∀ u ∈ V, ∀ g, e i (g * u) = e i g) → ∃ φ : UA E n → ℂ, Continuous φ ∧ IsOpen {k : finU E n | RU E n k φ = φ} ∧ FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : infU E n => RU E n k φ)) ∧ ∀ (g : finU E n) (k : infU E n), φ (g.1 * k.1) = ∑ i, p i k * e i g := by
+theorem exists_fun_of_poly_smooth : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (m : ℕ) (p : Fin m → infU E n → ℂ) (e : Fin m → finU (E := E) (n := n) → ℂ), (∀ i, p i ∈ Algebra.adjoin ℂ {f : infU E n → ℂ | ∃ (τ : E →+* ℂ) (i j : Fin n), f = fun x => (cEmb τ x.1).val i j}) → (∀ i, ∃ V : Subgroup (finU (E := E) (n := n)), IsOpen (V : Set (finU (E := E) (n := n))) ∧ ∀ u ∈ V, ∀ g, e i (g * u) = e i g) → ∃ φ : UA E n → ℂ, Continuous φ ∧ IsOpen {k : finU (E := E) (n := n) | RU E n k φ = φ} ∧ FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k : infU E n => RU E n k φ)) ∧ ∀ (g : finU (E := E) (n := n)) (k : infU E n), φ (g.1 * k.1) = ∑ i, p i k * e i g := by
   intro E _ _ _ n m p e hp he
   obtain ⟨-, -, -, a, b, ha, hb, -, hab⟩ := GlobalTheory.T.definiteUnitary_realApprox_and_finite_infinite_split E n
   obtain ⟨hcont, -, -, -, hco⟩ := GlobalTheory.T.unitary_coordinate_algebra_dense E n
   choose V hVo hV using he
-  have haf : ∀ g : finU E n, a g.1 = g := fun g => by simpa using (hab g 1).1
-  have hbf : ∀ g : finU E n, b g.1 = 1 := fun g => by simpa using (hab g 1).2
+  have haf : ∀ g : finU (E := E) (n := n), a g.1 = g := fun g => by simpa using (hab g 1).1
+  have hbf : ∀ g : finU (E := E) (n := n), b g.1 = 1 := fun g => by simpa using (hab g 1).2
   have hai : ∀ k : infU E n, a k.1 = 1 := fun k => by simpa using (hab 1 k).1
   have hbi : ∀ k : infU E n, b k.1 = k := fun k => by simpa using (hab 1 k).2
   have hR : ∀ (x : UA E n) (φ : UA E n → ℂ) (g : UA E n), RU E n x φ g = φ (g * x) := fun _ _ _ => rfl
@@ -28,22 +32,22 @@ theorem exists_fun_of_poly_smooth : ∀ (E : Type) [Field E] [NumberField E] [Is
   · exact continuous_finsetSum _ fun i _ => ((hcont _ (hp i)).comp hb).mul
       ((continuous_of_right_invariant_open _ _ (hVo i) (hV i)).comp ha)
   · set φ : UA E n → ℂ := fun x => ∑ i, p i (b x) * e i (a x) with hφ
-    let S : Subgroup (finU E n) :=
-      { carrier := {k : finU E n | RU E n k φ = φ}
+    let S : Subgroup (finU (E := E) (n := n)) :=
+      { carrier := {k : finU (E := E) (n := n) | RU E n k φ = φ}
         one_mem' := by
-          change RU E n ((1 : finU E n) : UA E n) φ = φ
+          change RU E n ((1 : finU (E := E) (n := n)) : UA E n) φ = φ
           funext g
           rw [hR]
           simp
         mul_mem' := fun {x y} hx hy => by
-          change RU E n ((x * y : finU E n) : UA E n) φ = φ
+          change RU E n ((x * y : finU (E := E) (n := n)) : UA E n) φ = φ
           funext g
           have h1 := congrFun (show RU E n x φ = φ from hx) g
           have h2 := congrFun (show RU E n y φ = φ from hy) (g * x)
           rw [hR] at h1 h2 ⊢
           rw [Subgroup.coe_mul, ← mul_assoc, h2, h1]
         inv_mem' := fun {x} hx => by
-          change RU E n ((x⁻¹ : finU E n) : UA E n) φ = φ
+          change RU E n ((x⁻¹ : finU (E := E) (n := n)) : UA E n) φ = φ
           funext g
           have h1 := congrFun (show RU E n x φ = φ from hx) (g * (x : UA E n)⁻¹)
           rw [hR] at h1 ⊢

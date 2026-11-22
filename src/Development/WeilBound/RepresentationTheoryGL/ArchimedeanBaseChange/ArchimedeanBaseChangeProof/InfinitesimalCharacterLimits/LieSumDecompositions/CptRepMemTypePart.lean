@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.GrowPHolds
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PrHolds
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.GrowPHolds
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PrHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open GlobalTheory.AutomorphicL2Unitary GlobalTheory.CuspRep GlobalTheory.Unitary
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.Leaf2Aux.Alg
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
 section Hilb
 
@@ -43,7 +47,7 @@ theorem exists_rep (hinj : ∀ x ∈ W, cls h x = 0 → x = 0) (S : Submodule �
   let g : LinearMap.range T →ₗ[ℂ] ℂ :=
     { toFun := fun m => conj (f (e.symm m).1)
       map_add' := fun m m' => by
-        rw [map_add, Submodule.coe_add, hadd _ (e.symm m).2 _ (e.symm m').2, map_add]
+        rw [map_add (f := _), Submodule.coe_add, hadd _ (e.symm m).2 _ (e.symm m').2, map_add (f := _)]
       map_smul' := fun c m => by
         rw [map_smul, Submodule.coe_smul, hsmul c _ (e.symm m).2, map_mul, Complex.conj_conj]
         rfl }
@@ -109,8 +113,8 @@ theorem rep_rt (h2 : PairRt) {g : GA E N} (hg : ∀ φ ∈ W, rt E N g φ ∈ W)
     _ = conj (inner ℂ (cls h (rt E N g p)) (cls h s)) := by rw [e2]
     _ = inner ℂ (cls h s) (cls h (rt E N g p)) := inner_conj_symm _ _
 
-theorem rep_mem_typePart (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0) (hW : IsStable W)
-    (hWQ : ∀ s ∈ W, GrowQ s.1) {U : Submodule ℂ (Sm E N)} (hU : IsStable U) (hUP : ∀ χ ∈ U, GrowP χ.1)
+theorem rep_mem_typePart (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0) (hW : _root_.GlobalTheory.CuspRep.IsStable W)
+    (hWQ : ∀ s ∈ W, GrowQ s.1) {U : Submodule ℂ (Sm E N)} (hU : _root_.GlobalTheory.CuspRep.IsStable U) (hUP : ∀ χ ∈ U, GrowP χ.1)
     {χ : Sm E N} (hχ : χ ∈ U) [FiniteDimensional ℂ (orbSpan χ)] {L : Subgroup (GL (Fin N) (Af E))} {Y : Type}
     [AddCommGroup Y] [Module ℂ Y] {ρ : Representation ℂ (Kinf E N) Y} (hχT : χ ∈ typePart L ρ)
     (S : Submodule ℂ (Sm E N)) [FiniteDimensional ℂ S] (hSW : S ≤ W)
@@ -178,13 +182,13 @@ theorem rep_mem_typePart (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h
     rw [hΦ k]
     rfl
 
-theorem exists_repV (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0) (hW : IsStable W)
-    (hWA : ∀ x ∈ W, IsAutForm x) (hWQ : ∀ s ∈ W, GrowQ s.1) {V : Submodule ℂ (Sm E N)} (hV : IsStable V)
+theorem exists_repV (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0) (hW : _root_.GlobalTheory.CuspRep.IsStable W)
+    (hWA : ∀ x ∈ W, IsAutForm x) (hWQ : ∀ s ∈ W, GrowQ s.1) {V : Submodule ℂ (Sm E N)} (hV : _root_.GlobalTheory.CuspRep.IsStable V)
     (hVW : V ≤ W)
     (hVfd : ∀ (L : Subgroup (GL (Fin N) (Af E))), IsOpen (L : Set (GL (Fin N) (Af E))) → ∀ (Y : Type)
       [AddCommGroup Y] [Module ℂ Y] [FiniteDimensional ℂ Y] (ρ : Representation ℂ (Kinf E N) Y),
         GlobalTheory.Published.AutFin.IsContRep ρ → FiniteDimensional ℂ (V ⊓ typePart L ρ : Submodule ℂ (Sm E N)))
-    {U : Submodule ℂ (Sm E N)} (hU : IsStable U) (hUA : ∀ χ ∈ U, IsAutForm χ) (hUP : ∀ χ ∈ U, GrowP χ.1)
+    {U : Submodule ℂ (Sm E N)} (hU : _root_.GlobalTheory.CuspRep.IsStable U) (hUA : ∀ χ ∈ U, IsAutForm χ) (hUP : ∀ χ ∈ U, GrowP χ.1)
     {χ : Sm E N} (hχ : χ ∈ U) : ∃ a ∈ V, ∀ u ∈ V, pr χ.1 u.1 = inner ℂ (cls h u) (cls h a) := by
   obtain ⟨L, hLo, hLc, hχT⟩ := exists_type (hUA χ hχ)
   have : FiniteDimensional ℂ (orbSpan χ) := (hUA χ hχ).kfin
@@ -206,13 +210,13 @@ theorem exists_repV (h1 : PairLin) (h2 : PairRt) (hinj : ∀ x ∈ W, cls h x = 
   have hS'W : S' ≤ W := hS'V.trans hVW
   have hSL : ∀ l ∈ L, ∀ s ∈ S', finRep E N l s ∈ S' := fun l hl s hs => by
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hs
-    rw [map_add]
+    rw [map_add (f := _)]
     refine add_mem (Submodule.mem_sup_left (finRep_mem_orbitSpan hl hy)) (Submodule.mem_sup_right ?_)
     rw [hz.2.1 l hl]
     exact hz
   have hSK : ∀ k, ∀ s ∈ S', cptRep E N k s ∈ S' := fun k s hs => by
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hs
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem (Submodule.mem_sup_left (cptRep_mem_orbitSpan k hy))
       (Submodule.mem_sup_right ⟨hV (.cpt k) z hz.1, cptRep_mem_typePart hz.2 k⟩)
   obtain ⟨p, hpS, hp⟩ := exists_rep h hinj S' hS'W (fun s => pr χ.1 s.1) (hadd S' hS'W) (hsm S' hS'W)
@@ -228,13 +232,13 @@ end PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.Leaf2Aux.Alg
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.Leaf2Aux
 
-open Alg in
 
+open Alg in
 theorem core_of (h1 : PairLin) (h2 : PairRt) (h3 : PairLie) (h4 : GrowQHolds) : Core := by
   intro E _ _ _ N U hU hUA hUP φ hφU hφA hφ0
   have : (Measure.haar : Measure (GA E N)).IsMulRightInvariant := GlobalTheory.CovolGL.isMulRightInvariant E N _
   have hF := PositivityTheory.Rg.HF.GL.automorphicFormsFiniteGL
-  have hW : IsStable (A2 E N) := PrSt.isStable_square_integrable_forms hF
+  have hW : _root_.GlobalTheory.CuspRep.IsStable (A2 E N) := PrSt.isStable_square_integrable_forms hF
   have hA : ∀ x ∈ A2 E N, IsAutForm x := fun x hx => (PrSt.mem_square_integrable_forms hx).1
   have h : ∀ x ∈ A2 E N, MemL2Quotient (latticeGL E N) (Measure.haar : Measure (GA E N)) x.1 := fun x hx =>
     memL2_of_isAutForm (PrSt.mem_square_integrable_forms hx).1 (PrSt.mem_square_integrable_forms hx).2

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerWindowSums
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjective
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerWindowSums
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankCyclotomicExtAndCyclotomicCharSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,8 @@ theorem descent {G M Ω : Type} [Group G] [AddCommGroup M] [Field Ω] (H : Subgr
         simp only [Set.mem_setOf_eq, Pi.zero_apply, hm0, Finset.sum_const_zero]
         exact F'.zero_mem
       smul_mem' := fun c a ha => by
-        simp only [Set.mem_setOf_eq, Pi.smul_apply, smul_eq_mul, hmm, ← map_sum] at *
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Set.mem_setOf_eq, Pi.smul_apply, smul_eq_mul, hmm, ← map_sum] at *
         exact hF'm _ _ ha }
   let φ : G ⧸ H → (S →* Ω) := fun q => (ε q.out).comp S.subtype
   have hφ : Function.Injective φ := by
@@ -59,7 +64,8 @@ theorem descent {G M Ω : Type} [Group G] [AddCommGroup M] [Field Ω] (H : Subgr
       rw [hε, hxH h hh, (hH h).1 hh a a.2]
     apply hfix _ (F.sum_mem fun q _ => hFA _ _ (hFm _ _ hx))
     intro g
-    rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm g) (fun q : G ⧸ H => A q.out (m a x))]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Equiv.sum_comp (MulAction.toPerm g) (fun q : G ⧸ H => A q.out (m a x))]
     refine Finset.sum_congr rfl fun q _ => ?_
     obtain ⟨h, hh⟩ := QuotientGroup.mk_out_eq_mul H (g * q.out)
     have h2 : (MulAction.toPerm g q : G ⧸ H) = ((g * q.out : G) : G ⧸ H) :=
@@ -86,7 +92,7 @@ theorem map_mem_FilV (K K' : FinExt l) (a : ℤ) (f : V →ₗ[LL] V) (g : P.R.B
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]; exact Submodule.zero_mem _
   | tmul v b => exact ⟨f v ⊗ₜ ⟨g b.1, hg _ b.2⟩, rfl⟩
-  | add y z hy hz => simp only [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => simp only [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem FilV_eq (K K' : FinExt l) (a : ℤ) :
     FilV (P.PD K') (LL := LL) (V := V) a = FilV (P.PD K) (LL := LL) (V := V) a := by
@@ -106,7 +112,7 @@ theorem FilV_anti (K : FinExt l) (a : ℤ) :
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]; exact Submodule.zero_mem _
   | tmul v b => exact ⟨v ⊗ₜ ⟨b.1, (P.PD K).Fil_anti a b.2⟩, rfl⟩
-  | add y z hy hz => simp only [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => simp only [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem mul_mem_Fil (K : FinExt l) (a : ℤ) (c : Om l) (b : P.R.BdR) (hb : b ∈ (P.PD K).Fil a) :
     algebraMap (Om l) P.R.BdR c * b ∈ (P.PD K).Fil a := by
@@ -137,7 +143,7 @@ theorem actVdR_comp {K K' : FinExt l} (h : K.1 ≤ K'.1) (ρ : Representation LL
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul v b => rw [actVdR_tmul, actVdR_tmul]; rfl
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 def mulOm (c : Om l) : V ⊗[ℚ_[l]] P.R.BdR →ₗ[LL] V ⊗[ℚ_[l]] P.R.BdR :=
   AlgebraTensorModule.map LinearMap.id (LinearMap.mulLeft ℚ_[l] (algebraMap (Om l) P.R.BdR c))
@@ -174,32 +180,32 @@ theorem mem_succ_of_fixed {K K' : FinExt l} (h : K.1 ≤ K'.1) (ρ : Representat
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp [actVdR_tmul]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro g g' x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp [actVdR_tmul]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp [mulOm_tmul]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro g g' x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp [mulOm_tmul, mul_assoc]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro g g' x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero, add_zero]
     | tmul v b => simp [mulOm_tmul, add_mul, tmul_add]
-    | add y z hy hz => simp only [map_add, hy, hz]; abel
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]; abel
   · intro g c x
     induction x using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul v b => simp [mulOm_tmul, actVdR_tmul, P.actQdR_Om]
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   · intro g
     rw [Subgroup.mem_subgroupOf]
     exact ⟨fun hg a ha => hg ⟨a, ha⟩, fun hg a => hg a.1 a.2⟩

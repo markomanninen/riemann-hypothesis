@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CovariantDegrees
+
+@[expose] public section
 
 noncomputable section
 

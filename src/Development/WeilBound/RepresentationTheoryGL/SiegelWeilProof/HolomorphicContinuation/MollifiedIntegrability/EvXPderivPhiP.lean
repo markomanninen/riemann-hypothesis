@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GWickB
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.GWickB
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,8 +81,10 @@ theorem dEv_wirt (P : PX m n) (x : Fin m → Fin n → ℂ) (a : Fin m) (j : Fin
 theorem evX_pderiv_phiP (ε : Fin m → Bool) (c t : ℝ) (b : Matrix (Fin n) (Fin n) ℂ) (x : Fin m → Fin n → ℂ)
     (a : Fin m) (j : Fin n) :
     evX (pderiv (a, j, false) (phiP ε c t b)) x = -∑ k, (Amat ε c t b a) k j * star (x a k) := by
-  simp only [phiP, map_neg, map_sum, pderiv_mul, pderiv_C, pderiv_X, Pi.single_apply]
-  simp only [evX, map_neg, map_sum, map_mul, Prod.ext_iff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [phiP, map_neg, map_sum, pderiv_mul, pderiv_C, pderiv_X, Pi.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [evX, map_neg, map_sum, map_mul, Prod.ext_iff]
   simp only [mul_zero, mul_one, zero_mul, Pi.single_apply, Prod.mk.injEq, and_true, Bool.false_eq_true, and_false,
     if_false, map_zero, add_zero, zero_add]
   rw [neg_inj, Finset.sum_eq_single a]

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+
+@[expose] public section
 
 namespace GlobalTheory.IndefiniteRowSideFullHecke.SmallUnipotentElements
 
@@ -43,9 +47,6 @@ def SmallElementStatement (E : Type) [Field E] [NumberField E] [IsCMField E] : P
     ∀ x ∈ X.dom, NoContraction X x →
     ∀ γ ∈ Γo, (∀ τ : X.Ψ, OpNormLe X.toData x τ (γ : Matrix (Fin r) (Fin r) E)
       (Real.exp (1 / (3 * (r : ℝ))))) → γ = 1
-
-def BalancedBallStatement (E : Type) [Field E] [NumberField E] [IsCMField E] : Prop :=
-  BalancedPointStatement E ∧ SmallElementStatement E
 
 end
 

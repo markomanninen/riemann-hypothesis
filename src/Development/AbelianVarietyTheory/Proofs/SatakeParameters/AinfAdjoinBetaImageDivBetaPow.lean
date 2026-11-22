@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
-import Development.AbelianVarietyTheory.Counterexamples.UpperHalfSurvey.NonemptyAlgebra
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+public import Development.AbelianVarietyTheory.Counterexamples.UpperHalfSurvey.NonemptyAlgebra
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PadicIntHomUnique
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Polynomial GlobalTheory.Pst GlobalTheory.MemLoc GlobalTheory.Pst.StLat GlobalTheory.Pst.NoLog
 open scoped Formalism.Per
 
@@ -21,7 +26,7 @@ theorem Sa_decomp (ϖ : Per.Fl l) (x : Per.AinfP l) (hx : x ∈ Sa ϖ) :
   | add x y _ _ hx hy =>
     obtain ⟨a, u, hu, rfl⟩ := hx
     obtain ⟨b, v, hv, rfl⟩ := hy
-    exact ⟨a + b, u + v, add_mem hu hv, by rw [map_add]; ring⟩
+    exact ⟨a + b, u + v, add_mem hu hv, by rw [map_add (f := _)]; ring⟩
   | mul x y _ _ hx hy =>
     obtain ⟨a, u, hu, rfl⟩ := hx
     obtain ⟨b, v, hv, rfl⟩ := hy

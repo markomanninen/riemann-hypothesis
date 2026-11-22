@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDensBlock
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.ZeroDetectionSecond
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DyadicSizeLePowTwelveSecond
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDensBlock
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.ZeroDetectionSecond
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.DyadicSizeLePowTwelveSecond
+
+@[expose] public section
 
 open Complex Finset
 
@@ -119,9 +123,8 @@ theorem zero_count_second : Count1 := by
     · exact Nat.le_mul_of_pos_right _ (by positivity)
     · calc 2 * (pYd M T * 2 ^ j) = qd M T ^ 3 * 2 ^ (j + 1) := by unfold pYd; ring
         _ ≤ qd M T ^ 3 * 2 ^ pJd M T := by
-            gcongr
-            · norm_num
-            · omega
+            apply Nat.mul_le_mul_left
+            exact Nat.pow_le_pow_right (by norm_num) (by omega)
         _ ≤ _ := hYN
     · intro p hp
       obtain ⟨-, h2, h3, h4, -⟩ := hS p (mem_filter.1 hp).1

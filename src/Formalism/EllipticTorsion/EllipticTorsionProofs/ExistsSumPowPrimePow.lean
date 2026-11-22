@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.EllipticTorsionWeights
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.EllipticTorsionWeights
+
+@[expose] public section
 
 universe u
 
@@ -42,12 +46,13 @@ theorem frobenius_expansion : FrobExpand := by
         - ∑ e, C (b e) * X e ^ (p ^ j)
       = ∑ e, C (a e ^ (p ^ j) - b e) * X e ^ (p ^ j)
         + C (p : K) * map R.subtype r := by
-    rw [hmap, ← map_pow, hr, map_add, map_sum, map_mul, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hmap, ← map_pow, hr, map_add (f := _), map_sum, map_mul, map_natCast]
     simp only [map_pow, map_mul, map_C, map_X, mul_pow, map_sub, sub_mul,
       Finset.sum_sub_distrib, map_natCast]
     simp [a']
     ring
-  rw [key, coeff_add, coeff_sum, coeff_C_mul, coeff_map]
+  rw [key, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, coeff_sum, coeff_C_mul, coeff_map]
   refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
   · refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) fun e _ => ?_
     rw [coeff_C_mul, coeff_X_pow, norm_mul]
@@ -55,8 +60,8 @@ theorem frobenius_expansion : FrobExpand := by
     · simpa using hab e
     · simp
   · rw [norm_mul]
-    have h1 : ‖((coeff α r : R) : K)‖ ≤ 1 := (coeff α r).2
-    calc ‖(p : K)‖ * ‖((coeff α r : R) : K)‖ ≤ ‖(p : K)‖ * 1 :=
+    have h1 : ‖(r.coeff α : K)‖ ≤ 1 := (r.coeff α).2
+    calc ‖(p : K)‖ * ‖(r.coeff α : K)‖ ≤ ‖(p : K)‖ * 1 :=
           mul_le_mul_of_nonneg_left h1 (norm_nonneg _)
       _ = ‖(p : K)‖ := mul_one _
 

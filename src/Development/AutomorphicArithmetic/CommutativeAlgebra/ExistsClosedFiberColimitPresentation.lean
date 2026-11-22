@@ -1,5 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafVanBStalkPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafVanBStalkPf
+
+@[expose] public section
+
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open LateralTheory.E.E4 LateralTheory.E.LeafGhostCut LateralTheory.E.EtaleTopologySheaves LateralTheory.E.LeafDegCut LateralTheory.E.LeafVanBPf LateralTheory.E.LeafVanBStalkPf

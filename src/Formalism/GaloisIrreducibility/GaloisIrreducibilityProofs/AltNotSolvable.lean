@@ -1,4 +1,8 @@
-import Formalism.GaloisIrreducibility.Statement
+module
+
+public import Formalism.GaloisIrreducibility.Statement
+
+@[expose] public section
 
 namespace Formalism.GaloisIrreducibility
 

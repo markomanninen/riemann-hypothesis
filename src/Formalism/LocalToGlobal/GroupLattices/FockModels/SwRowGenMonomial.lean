@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowDivZero
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowDivZero
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LEhwLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LGradedLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -111,14 +115,14 @@ theorem sw_euler_monomial (R : Type) [CommRing R] {r n : ℕ} (a : Fin r) (m : F
 
 theorem sw_coeff_euler (R : Type) [CommRing R] {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin n) R)
     (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (rowDiv R a a 1 f) = ((Finsupp.weight (lgraded_wa a) m : ℕ) : R) * coeff m f := by
+    AddMonoidAlgebra.coeff (rowDiv R a a 1 f) m = ((Finsupp.weight (lgraded_wa a) m : ℕ) : R) * AddMonoidAlgebra.coeff f m := by
   induction f using MvPolynomial.induction_on' with
   | monomial u c =>
     rw [sw_euler_monomial, coeff_smul, coeff_monomial, smul_eq_mul]
     split_ifs with h
     · subst h; rfl
     · simp
-  | add p q hp hq => rw [rowDiv_add, coeff_add, coeff_add, hp, hq, mul_add]
+  | add p q hp hq => rw [rowDiv_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem sw_Dop_self (R : Type) [CommRing R] {r n : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin n) R) :
     Dop R a a f = rowDiv R a a 1 f := by
@@ -144,7 +148,7 @@ theorem sw_euler (R : Type) [CommRing R] {r n : ℕ} (a : Fin r) (μ : Fin r →
   rw [sw_Dop_self]
   ext m
   rw [sw_coeff_euler, coeff_smul, smul_eq_mul]
-  by_cases hm : coeff m f = 0
+  by_cases hm : AddMonoidAlgebra.coeff f m = 0
   · rw [hm, mul_zero, mul_zero]
   · rw [← lgraded_weight_rowW, hf hm]
 
@@ -169,7 +173,7 @@ theorem sw_weyl_map {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) {r n
     rw [← lclosedeq_applyWord_map, lclosedeq_hw_map]
     exact Submodule.subset_span ⟨w, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [smul_eq_C_mul, map_mul, map_C, ← smul_eq_C_mul]
     exact Submodule.smul_mem _ _ hx

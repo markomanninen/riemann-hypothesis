@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.PosNear
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVCos
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.PosNear
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,11 +33,11 @@ theorem hasCOSub_of_lat {𝕜 V : Type} [Field 𝕜] [TopologicalSpace 𝕜] [Ad
   intro N hN
   obtain ⟨k, hk⟩ := exists_pow_smul_mem_nhds_of_isCompact' (L : Set V) hLc π hπ N hN
   have hc : π ^ k ≠ 0 := pow_ne_zero k h0
-  have himg : ((L.map (DistribMulAction.toAddMonoidHom V (π ^ k)) : AddSubgroup V) : Set V) =
+  have himg : ((L.map (DistribSMul.toAddMonoidHom V (π ^ k)) : AddSubgroup V) : Set V) =
       (fun x => π ^ k • x) '' (L : Set V) := by
     ext x
     simp
-  refine ⟨L.map (DistribMulAction.toAddMonoidHom V (π ^ k)), ?_, ?_, ?_⟩
+  refine ⟨L.map (DistribSMul.toAddMonoidHom V (π ^ k)), ?_, ?_, ?_⟩
   · rw [himg]
     exact isOpenMap_smul₀ hc _ hLo
   · rw [himg]
@@ -65,7 +69,7 @@ def latSub {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {d : �
     intro x y hx hy
     simp only [latV, Set.mem_setOf_eq] at hx hy ⊢
     intro i j k
-    simp only [Pi.add_apply, map_add, Finsupp.add_apply]
+    simp only [Pi.add_apply, map_add (f := _), Finsupp.add_apply]
     exact add_mem (hx i j k) (hy i j k)
   zero_mem' := by
     simp only [latV, Set.mem_setOf_eq]
@@ -79,18 +83,9 @@ def latSub {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] {d : �
     simp only [Pi.neg_apply, map_neg, Finsupp.neg_apply]
     exact neg_mem (hx i j k)
 
-theorem tensNA_holds : TensNA := by
-  unfold TensNA InCtx
-  intro F E _ _ _ _ _ σ _ M J _ _ _ a _ _ X0 hT _ v
-  haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  obtain ⟨π, h0, hπ⟩ := exists_pow_tendsto_zero_Fv v
-  exact hasCOSub_of_lat (latSub (Module.finBasis F E) v a M)
-    (PositiveNearLattice.isClopen_latV (b := Module.finBasis F E) (v := v) a M).isOpen
-    (PositiveNearLattice.isCompact_latV (b := Module.finBasis F E) (v := v) a M) π h0 hπ
-
 def scaledB (𝕜 : Type) {V : Type} [Field 𝕜] [AddCommGroup V] [Module 𝕜 V] (L : AddSubgroup V)
     (Λ : AddSubgroup V) : Prop :=
-  ∃ c : 𝕜, c ≠ 0 ∧ Λ = L.map (DistribMulAction.toAddMonoidHom V c)
+  ∃ c : 𝕜, c ≠ 0 ∧ Λ = L.map (DistribSMul.toAddMonoidHom V c)
 
 theorem isCOBasis_scaled {𝕜 V : Type} [Field 𝕜] [TopologicalSpace 𝕜] [AddCommGroup V]
     [Module 𝕜 V] [TopologicalSpace V] [ContinuousSMul 𝕜 V] (L : AddSubgroup V)
@@ -99,11 +94,11 @@ theorem isCOBasis_scaled {𝕜 V : Type} [Field 𝕜] [TopologicalSpace 𝕜] [A
   intro N hN
   obtain ⟨k, hk⟩ := exists_pow_smul_mem_nhds_of_isCompact' (L : Set V) hLc π hπ N hN
   have hc : π ^ k ≠ 0 := pow_ne_zero k h0
-  have himg : ((L.map (DistribMulAction.toAddMonoidHom V (π ^ k)) : AddSubgroup V) : Set V) =
+  have himg : ((L.map (DistribSMul.toAddMonoidHom V (π ^ k)) : AddSubgroup V) : Set V) =
       (fun x => π ^ k • x) '' (L : Set V) := by
     ext x
     simp
-  refine ⟨L.map (DistribMulAction.toAddMonoidHom V (π ^ k)), ⟨π ^ k, hc, rfl⟩, ?_, ?_, ?_⟩
+  refine ⟨L.map (DistribSMul.toAddMonoidHom V (π ^ k)), ⟨π ^ k, hc, rfl⟩, ?_, ?_, ?_⟩
   · rw [himg]
     exact isOpenMap_smul₀ hc _ hLo
   · rw [himg]
@@ -120,56 +115,5 @@ theorem isCOBasis_latSub {F E : Type} [Field F] [NumberField F] [Field E] [Algeb
   exact isCOBasis_scaled (latSub b v a M)
     (PositiveNearLattice.isClopen_latV (b := b) (v := v) a M).isOpen
     (PositiveNearLattice.isCompact_latV (b := b) (v := v) a M) π h0 hπ
-
-def DensVLat : Prop := InCtx fun F E _ _ _ _ _ σ M J a _X0 _hT =>
-  ∀ ψ, IsCharAF F ψ → ∀ v : HeightOneSpectrum (𝓞 F),
-    ∀ μv, SdW F E σ M J (Fv F v) (psiV F ψ v) a μv →
-    ∀ νv, SdHerm F E σ (Fv F v) (psiV F ψ v) a νv → ∀ (d : ℕ) (b : Module.Basis (Fin d) F E),
-      DensCosB (scaledB (Fv F v) (latSub b v a M)) μv (gramR (Fv F v) σ J) Subtype.val νv
-        {X | LinearIndependent (Fv F v ⊗[F] E) X}
-
-theorem densVLC_of_lat (hT : TensAll) (hC : DensVLat) : DensVLC := by
-  unfold DensVLC InCtx
-  unfold DensVLat InCtx at hC
-  unfold TensAll InCtx at hT
-  intro F E _ _ _ _ _ σ hcm M J hJ hs1 hs2 a ha1 ha2 X0 hT' hdet ψ hψ v μv hμ νv hν
-  haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  obtain ⟨-, htf⟩ := hT F E σ hcm M J hJ hs1 hs2 a ha1 ha2 X0 hT' hdet
-  obtain ⟨h1, h2, h3, -⟩ := htf v
-  haveI : OpensMeasurableSpace (Fv F v ⊗[F] E) := by
-    first
-      | infer_instance
-      | exact ⟨le_rfl⟩
-  haveI : OpensMeasurableSpace (Fin a → Fin M → Fv F v ⊗[F] E) := by
-    first
-      | infer_instance
-      | exact ⟨le_rfl⟩
-  haveI : OpensMeasurableSpace ↥(HermR (Fv F v) σ a) := by
-    first
-      | infer_instance
-      | exact ⟨le_rfl⟩
-  haveI : IsFiniteMeasureOnCompacts μv := by
-    first
-      | infer_instance
-      | (haveI := hμ.1; infer_instance)
-      | (haveI := hμ.2.1; infer_instance)
-      | (haveI := hμ.1.1; infer_instance)
-      | (haveI := hμ.2; infer_instance)
-  haveI : IsFiniteMeasureOnCompacts νv := by
-    first
-      | infer_instance
-      | (haveI := hν.1; infer_instance)
-      | (haveI := hν.2.1; infer_instance)
-      | (haveI := hν.1.1; infer_instance)
-      | (haveI := hν.2; infer_instance)
-  have h := hC F E σ hcm M J hJ hs1 hs2 a ha1 ha2 X0 hT' hdet ψ hψ v μv hμ νv hν _
-    (Module.finBasis F E)
-  exact densLC_of_cosB _ _ (isCOBasis_latSub (Module.finBasis F E) v a M) h
-
-theorem densV_of_lat (hT : TensAll) (hC : DensVLat) : DensV :=
-  densV_of hT tensNA_holds (densVLC_of_lat hT hC)
-
-theorem densV_of_core (hT : TensAll) (hC : DensVCs) : DensV :=
-  densV_of_cos hT tensNA_holds hC
 
 end PI.VolStabSW

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterRestriction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharExponentOfInfinityType
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHeckeCharacterRestriction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharExponentOfInfinityType
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceTensorProductFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
+
 open scoped TensorProduct
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.CuspRep
 
@@ -36,7 +41,7 @@ theorem eta_infDiag {F E : Type} [Field F] [NumberField F] [Field E] [NumberFiel
       (InfinitePlace.isReal_mk_iff.2 (ComplexEmbedding.isReal_iff.2 (RingHom.ext fun x => ?_)))
     change starRingEnd ℂ (τ x) = τ x
     rw [← b.sum_repr x, Fin.sum_univ_two, h0, Algebra.smul_def, Algebra.smul_def]
-    simp only [map_add, map_mul, map_one, hτ, h3, Complex.conj_ofReal]
+    simp only [map_add (f := _), map_mul, map_one, hτ, h3, Complex.conj_ofReal]
   have hv := GlobalTheory.HeckeBridge.coe_infDiag (E := F) a
   have e : GlobalTheory.IdeleNormChar.normSign E (infDiag a) =
       ∏ w : InfinitePlace F, GlobalTheory.QuadSymbol.eta F E w.Completion (GlobalTheory.QuadSymbol.infDiag F a w) := by
@@ -88,12 +93,12 @@ theorem exists_hchar_norm {F E : Type} [Field F] [NumberField F] [Field E] [Numb
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul a x => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hsf : ∀ y, finTens F E (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ y) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ (finTens F E y) := fun y => by
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul a x => rfl
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have key : ∀ (x x' : Neutral.B1.Ideles E) (k : E), (x : AdeleRing (𝓞 E) E).1 = algebraMap E _ k →
       (x' : AdeleRing (𝓞 E) E).1 = algebraMap E _ (c k) →
       (x' : AdeleRing (𝓞 E) E).2 = conjFin c (x : AdeleRing (𝓞 E) E).2 → H.1 x * H.1 x' = 1 := fun x x' k h1 h2 h3 => by
@@ -101,8 +106,38 @@ theorem exists_hchar_norm {F E : Type} [Field F] [NumberField F] [Field E] [Numb
     rw [hΦ] at e1
     have e2 : infTens F E (u x : AF F ⊗[F] E) = (1 : Ainf F) ⊗ₜ[F] k :=
       j.injective ((congrArg Prod.fst e1).trans (h1.trans (hj k).symm))
+    have had : ∀ a : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F,
+        conjFin c (GlobalTheory.AdeleBaseChange.adMap F E a) = GlobalTheory.AdeleBaseChange.adMap F E a := by
+      intro a
+      have hc' : ∀ x : F, c (algebraMap F E x) = algebraMap F E x := fun x => by rw [← hc]; exact σ.commutes x
+      refine FiniteAdeleRing.ext _ fun w => ?_
+      have hu := GlobalTheory.DefU.ClassFin.under_conjSrc c hc' w
+      have hadmap : ∀ {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)}
+          (h : w.under (𝓞 F) = v), (GlobalTheory.AdeleBaseChange.adMap F E a) w = complMap h (a v) := by
+        intro v w h
+        subst h
+        rfl
+      have e1 : pLoc E w (conjFin c (GlobalTheory.AdeleBaseChange.adMap F E a)) = conjLoc c w (complMap hu (a (w.under (𝓞 F)))) := by
+        rw [pLoc_conjFin]
+        exact congrArg _ (hadmap hu)
+      have e2 : (GlobalTheory.AdeleBaseChange.adMap F E a) w = complMap (rfl : w.under (𝓞 F) = _) (a (w.under (𝓞 F))) := rfl
+      have e3 := congrFun ((HeightOneSpectrum.denseRange_algebraMap F (w.under (𝓞 F))).equalizer
+        ((conjLoc_spec c w).1.comp (InertChart.continuous_complMap hu)) (InertChart.continuous_complMap (rfl : w.under (𝓞 F) = _))
+        (funext fun k => by
+          change conjLoc c w (complMap hu (algebraMap F _ k)) = complMap rfl (algebraMap F _ k)
+          rw [complMap_algebraMap, complMap_algebraMap, (conjLoc_spec c w).2.1, hc'])) (a (w.under (𝓞 F)))
+      exact e1.trans (e3.trans e2.symm)
+    have hsig : ∀ y : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af F ⊗[F] E,
+        finAdEquiv F E (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ y) = conjFin c (finAdEquiv F E y) := by
+      intro y
+      induction y using TensorProduct.induction_on with
+      | zero => simp only [map_zero]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
+      | tmul a z =>
+        change toFinAd F E (a ⊗ₜ[F] σ z) = conjFin c (toFinAd F E (a ⊗ₜ[F] z))
+        rw [toFinAd_tmul, toFinAd_tmul, map_mul, had, conjFin_algebraMap, hc]
     have e3 : (u x' : AF F ⊗[F] E) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ (u x : AF F ⊗[F] E) := Φ.symm_apply_eq.2 (by
-      rw [hΦ, hsi, hsf, e2, GlobalTheory.DefU.ClassFin.finAdEquiv_sigR σ c hc]
+      rw [hΦ, hsi, hsf, e2, hsig]
       refine Prod.ext (h2.trans ?_) (h3.trans (congrArg (conjFin c) (congrArg Prod.snd e1).symm))
       rw [← hc]
       exact (hj (σ k)).symm)
@@ -173,7 +208,7 @@ theorem isCsd_of_norms (H : HChar E)
       simpa using ((Complex.ofRealCLM.hasDerivAt (x := 0)).mul_const (dchi H (z + star z))).cexp
     rw [funext h4] at h5
     have h6 := h5.unique (hasDerivAt_const _ _)
-    rw [map_add] at h6
+    rw [map_add (f := _)] at h6
     rw [map_neg]
     exact (eq_neg_of_add_eq_zero_left h6).symm
 
@@ -190,9 +225,9 @@ theorem exists_neg_at (w₀ : InfinitePlace E) : ∃ (a : (maximalRealSubfield E
       simp [this]⟩
   have hd : ∀ w, InfType.diagInf E k w = w.embedding k := fun w => pInf_algebraMap k w
   have hm : k + IsCMField.complexConj E k ∈ maximalRealSubfield E :=
-    (IsCMField.complexConj_eq_self_iff E _).1 (by rw [map_add, IsCMField.complexConj_apply_apply, add_comm])
+    (IsCMField.complexConj_eq_self_iff E _).1 (by rw [map_add (f := _), IsCMField.complexConj_apply_apply, add_comm])
   have he : ∀ w : InfinitePlace E, w.embedding (k + IsCMField.complexConj E k) = ((2 * (w.embedding k).re : ℝ) : ℂ) :=
-    fun w => by rw [map_add, IsCMField.complexEmbedding_complexConj, Complex.add_conj]
+    fun w => by rw [map_add (f := _), IsCMField.complexEmbedding_complexConj, Complex.add_conj]
   have hn : (w₀.embedding k).re < 0 := hd w₀ ▸ hk1
   refine ⟨Units.mk0 ⟨_, hm⟩ fun h => ?_, fun w => 2 * (w.embedding k).re, he, mul_neg_of_pos_of_neg two_pos hn, fun w hw => ?_⟩
   · have h1 := he w₀

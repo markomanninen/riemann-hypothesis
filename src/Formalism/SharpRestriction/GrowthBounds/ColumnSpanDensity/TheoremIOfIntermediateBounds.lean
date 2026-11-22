@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.MeanDefs
+
+@[expose] public section
 
 noncomputable section
 

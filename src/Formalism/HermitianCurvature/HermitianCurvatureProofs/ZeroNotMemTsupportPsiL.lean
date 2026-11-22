@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntMulOfCpt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntMulOfCpt
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff

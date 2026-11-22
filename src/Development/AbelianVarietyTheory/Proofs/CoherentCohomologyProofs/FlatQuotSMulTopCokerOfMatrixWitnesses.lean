@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits DirectSum MvPolynomial TensorProduct GlobalTheory
 
@@ -44,7 +48,7 @@ theorem flat_quotSMulTop_coker_of_matrix_witnesses :
       simp only [Matrix.smul_mulVec, Matrix.one_mulVec, Matrix.add_mulVec,
         ← Matrix.mulVec_mulVec] at this
       exact this
-    rw [← map_smul, hx, map_add, hK, hU, add_zero]
+    rw [← map_smul, hx, map_add (f := _), hK, hU, add_zero]
   have hI : ∀ s ∈ I, ∀ x, s • pr x = 0 := by
     intro s hs x
     obtain ⟨d, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun S).1 hs
@@ -97,7 +101,8 @@ theorem flat_quotSMulTop_coker_of_matrix_witnesses :
     simp only [p, q, LinearMap.sum_apply, LinearMap.comp_apply,
       LinearMap.proj_apply, LinearMap.pi_apply, Submodule.mkQ_apply, Submodule.liftQ_apply,
       LinearMap.toSpanSingleton_apply]
-    conv_rhs => rw [← Finset.univ_sum_single v, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← Finset.univ_sum_single v, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← map_smul]
     refine congrArg pr ?_

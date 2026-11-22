@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qe29.GLOps.{u_2, u_3} :
     ℕ → (K : Type u_2) → (V : Type u_3) → [inst : Field K] → [inst_1 : AddCommGroup V] → [_root_.Module K V] → Type u_3 :=
@@ -15,12 +19,6 @@ noncomputable def UpperTheory.Reformulated.B.Qe29.Umon.{u_2, u_3} :
     fun {n : ℕ} {K : Type u_2} {V : Type u_3} [Field K] [AddCommGroup V] [_root_.Module K V]
         (E : UpperTheory.Reformulated.B.Qe29.GLOps n K V) ↦
       Submonoid.closure (Set.range fun (ab : Fin n × Fin n) ↦ E ab.1 ab.2)
-
-theorem UpperTheory.Reformulated.B.Qe29.aux3.{u_1, u_2} :
-    ∀ {K : Type u_1} {V : Type u_2} [inst : Field K] [inst_1 : AddCommGroup V] [inst_2 : _root_.Module K V],
-      SMulCommClass K K V := by
-  intro K V _ _ _
-  infer_instance
 
 noncomputable def UpperTheory.Reformulated.B.Qe29.weightSp.{u_2, u_3} :
     {n : ℕ} →

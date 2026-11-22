@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DividedWeightUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedWeightGapsBlockAndBar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DividedWeightUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedWeightGapsBlockAndBar
+
+@[expose] public section
 
 open GlobalTheory.MeanTop
 

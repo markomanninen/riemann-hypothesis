@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.InfinitePlaces
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.IntegerUnits
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.InfinitePlaces
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.IntegerUnits
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -15,8 +19,8 @@ namespace IdeleGroup
 
 variable (S : Set (HeightOneSpectrum (𝓞 K)))
 
-variable (L) in
 
+variable (L) in
 abbrev SIdelesProduct : Type _ :=
   ((v : InfinitePlace K) → (w : v.placesOver L) → (w.1.Completion)ˣ) ×
     ((v : S) → (w : PlacesOver L v.1) → (w.1.adicCompletion L)ˣ) ×
@@ -74,8 +78,8 @@ theorem mem_placesOver_comap (u : InfinitePlace L) :
     u ∈ (u.comap (algebraMap K L)).placesOver L :=
   (InfinitePlace.liesOver_iff_comap_eq _ u).2 rfl
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem sIdelesToProduct_injective : Function.Injective (sIdelesToProduct (L := L) S) := by
   intro x y h
   refine Subtype.ext (Units.ext (adele_ext (funext fun u ↦ ?_) fun u ↦ ?_))
@@ -93,8 +97,8 @@ variable {S}
 def assembleInfinite (p : SIdelesProduct L S) (u : InfinitePlace L) : (u.Completion)ˣ :=
   p.1 (u.comap (algebraMap K L)) ⟨u, mem_placesOver_comap u⟩
 
-open Classical in
 
+open Classical in
 def assembleFinite (p : SIdelesProduct L S) (u : HeightOneSpectrum (𝓞 L)) :
     (u.adicCompletion L)ˣ :=
   if h : below K u ∈ S then p.2.1 ⟨below K u, h⟩ ⟨u, inferInstance⟩
@@ -115,7 +119,7 @@ theorem assembleFinite_eq_of_mem (p : SIdelesProduct L S) (v : S) (w : PlacesOve
   obtain ⟨v, hv⟩ := v
   have e : below K u = v := (below_eq_iff u v).2 hu
   subst e
-  rw [assembleFinite, dif_pos hv]
+  rw [assembleFinite, dite_eq_left hv]
 
 omit [NumberField K] in
 theorem assembleFinite_eq_of_not_mem (p : SIdelesProduct L S) (v : ↥Sᶜ) (w : PlacesOver L v.1) :
@@ -124,7 +128,7 @@ theorem assembleFinite_eq_of_not_mem (p : SIdelesProduct L S) (v : ↥Sᶜ) (w :
   obtain ⟨v, hv⟩ := v
   have e : below K u = v := (below_eq_iff u v).2 hu
   subst e
-  rw [assembleFinite, dif_neg hv]
+  rw [assembleFinite, dite_eq_right hv]
 
 omit [NumberField K] in
 theorem assembleFinite_mem (p : SIdelesProduct L S) {u : HeightOneSpectrum (𝓞 L)}

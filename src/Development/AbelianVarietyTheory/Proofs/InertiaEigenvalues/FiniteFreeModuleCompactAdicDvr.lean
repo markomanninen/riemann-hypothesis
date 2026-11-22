@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -19,7 +23,7 @@ theorem finite_free_compact_adic_dvr
         fun v => ∑ i, v i • b i := by
       funext v; simp
     rw [this]
-    exact continuous_finset_sum _ fun i _ => (continuous_apply i).smul continuous_const
+    exact continuous_finsetSum _ fun i _ => (continuous_apply i).smul continuous_const
   let H : (Module.Free.ChooseBasisIndex O M → O) ≃ₜ M :=
     hΦ.homeoOfEquivCompactToT2 (f := b.equivFun.symm.toEquiv)
   have hH : ∀ v, H v = b.equivFun.symm v := fun v => rfl

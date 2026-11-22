@@ -1,4 +1,8 @@
-import Formalism.WindowSums.Statement
+module
+
+public import Formalism.WindowSums.Statement
+
+@[expose] public section
 
 noncomputable section
 

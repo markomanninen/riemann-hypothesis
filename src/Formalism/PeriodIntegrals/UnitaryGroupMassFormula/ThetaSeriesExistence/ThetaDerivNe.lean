@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatDefs
-import Formalism.PeriodIntegrals.SigmaStarEx
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatDefs
+public import Formalism.PeriodIntegrals.SigmaStarEx
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,9 +28,10 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
     (PD : _root_.Formalism.WeaklyAdmissibleFiltrations.PeriodData G Qp K₀ K B BdR) in
 theorem _root_.GlobalTheory.SplitJump.fil_mono {a b : ℤ} (h : a ≤ b) : PD.Fil b ≤ PD.Fil a := by
-  induction b, h using Int.le_induction with
+  induction b, h using Int.leInduction with
   | base => exact le_rfl
   | succ b _ ih => exact (PD.Fil_anti b).trans ih
+
 
 open Module TensorProduct in
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
@@ -35,7 +40,6 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR]
     (PD : _root_.Formalism.WeaklyAdmissibleFiltrations.PeriodData G Qp K₀ K B BdR) in
-
 theorem _root_.GlobalTheory.SplitJump.eq_zero_of_mem_fil_one (k : K) (hk : algebraMap K BdR k ∈ PD.Fil 1) :
     k = 0 := by
   by_contra hne
@@ -83,7 +87,8 @@ private lemma sum_basis_tmul_coord_eq (y : V ⊗[Qp] BdR) :
     ∑ i, e i ⊗ₜ[Qp] _root_.GlobalTheory.SplitJump.coord e BdR y i = y := by
   apply (_root_.GlobalTheory.SplitJump.coord e BdR).injective
   ext j
-  simp [map_sum, coord_tmul_eq_repr_mul, Finsupp.single_apply, Pi.single_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, coord_tmul_eq_repr_mul, Finsupp.single_apply, Pi.single_apply]
 
 open Module TensorProduct in
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
@@ -108,12 +113,13 @@ theorem _root_.GlobalTheory.SplitJump.mem_filV (a : ℤ) (y : V ⊗[Qp] BdR) :
       rw [IsScalarTower.algebraMap_apply Qp K BdR, ← Algebra.smul_def]
       exact (PD.Fil a).smul_mem _ f.2
     | add z₁ z₂ h₁ h₂ =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact (PD.Fil a).add_mem h₁ h₂
   · intro h
     refine ⟨∑ i, e i ⊗ₜ[Qp]
       (⟨_root_.GlobalTheory.SplitJump.coord e BdR y i, h i⟩ : (PD.Fil a).restrictScalars Qp), ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← sum_basis_tmul_coord_eq e y]
     rfl
 
@@ -138,23 +144,26 @@ theorem _root_.GlobalTheory.SplitJump.coord_act (g : G) (x : V ⊗[Qp] BdR) :
     ext i
     have hv : ρ g v = ∑ j, e.repr v j • ρ g (e j) := by
       conv_lhs => rw [← e.sum_repr v]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp [LinearMap.map_smul_of_tower]
     have hσ : ∀ r : Qp, PD.actdR g (algebraMap Qp BdR r) = algebraMap Qp BdR r := by
       intro r
       rw [IsScalarTower.algebraMap_apply Qp K BdR, AlgEquiv.commutes]
     simp only [AlgebraTensorModule.map_tmul, coord_tmul_eq_repr_mul, Matrix.mulVec, dotProduct,
       Matrix.of_apply]
-    rw [hv, map_sum, Finset.sum_apply', map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, map_sum, Finset.sum_apply', map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, hσ, map_smul, Finsupp.smul_apply, smul_eq_mul, map_mul]
     change _ * PD.actdR g b = _
     ring
   | add x₁ x₂ h₁ h₂ =>
-    rw [map_add, map_add, h₁, h₂, ← Matrix.mulVec_add]
+    rw [map_add (f := _), map_add (f := _), h₁, h₂, ← Matrix.mulVec_add]
     congr 1
     ext i
     simp
+
 
 open Module TensorProduct in
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
@@ -166,7 +175,6 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
 variable {LL : Type} [Field LL] [Algebra Qp LL]
     {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
     (ρ : Representation LL G V) {n : ℕ} (e : Basis (Fin n) Qp V) in
-
 theorem _root_.GlobalTheory.SplitJump.exists_coord (W W' : Matrix (Fin n) (Fin n) BdR) (hWW : W * W' = 1)
     (hg : ∀ g, (Matrix.of fun i j => algebraMap Qp BdR (e.repr (ρ g (e j)) i)) *
       W.map (PD.actdR g) = W)
@@ -206,6 +214,7 @@ theorem _root_.GlobalTheory.SplitJump.exists_coord (W W' : Matrix (Fin n) (Fin n
   choose k hk using fun i => PD.invdR _ fun g => hinv i g
   exact ⟨k, funext hk⟩
 
+
 open Module TensorProduct in
 variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -216,7 +225,6 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
 variable {LL : Type} [Field LL] [Algebra Qp LL]
     {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
     (ρ : Representation LL G V) {n : ℕ} (e : Basis (Fin n) Qp V) in
-
 theorem _root_.GlobalTheory.SplitJump.jump_eq_zero (W W' : Matrix (Fin n) (Fin n) BdR)
     (hWW : W * W' = 1)
     (hW : ∀ i j, W i j ∈ PD.Fil 0) (hW' : ∀ i j, W' i j ∈ PD.Fil 0)

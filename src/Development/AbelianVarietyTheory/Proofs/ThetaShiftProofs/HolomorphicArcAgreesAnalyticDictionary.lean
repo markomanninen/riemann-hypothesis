@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSubspaceIsometric
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FamilyUniformisationFibreTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSubspaceIsometric
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.AppellHumbertUnifTangentWeilPairing
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FamilyUniformisationFibreTheta
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -64,7 +68,7 @@ theorem exists_linear (hT : ThetaUnifAV) {g : ℕ} (ex : (Fin g → ℂ) → Out
   choose l hl using hv
   have hmul : ∀ x z z', eTwoPi (l (z + z') x) = eTwoPi (l z x) * eTwoPi (l z' x) := fun x z z' => by
     have h := d.add (l z, F z) (l z', F z')
-    rw [hl, hl, Prod.mk_add_mk, ← map_add] at h
+    rw [hl, hl, Prod.mk_add_mk, ← map_add (f := _)] at h
     rw [(ex₀_eq_iff_char d _ _ _).1 ((hl _).trans (TorusExt.isAdd_unique (add z z') h)) x, AddMonoidHom.add_apply,
       AnArc.e_add]
   have hd : ∀ x, DifferentiableAt ℂ (fun z => eTwoPi (l z x)) 0 := fun x => by
@@ -110,7 +114,7 @@ theorem exists_linear (hT : ThetaUnifAV) {g : ℕ} (ex : (Fin g → ℂ) → Out
       (Set.countable_range fun n : ℤ => (n : ℂ) * (2 * Real.pi * Complex.I)) fun s => ?_
     obtain ⟨n, hn⟩ := Complex.exp_eq_exp_iff_exists_int.1
       (show Complex.exp (L (x + x') (s • z)) = Complex.exp (L x (s • z) + L x' (s • z)) by
-        rw [Complex.exp_add, ← hL, ← hL, ← hL, map_add, AnArc.e_add])
+        rw [Complex.exp_add, ← hL, ← hL, ← hL, map_add (f := _), AnArc.e_add])
     refine ⟨n, ?_⟩
     simp only [map_smul, smul_eq_mul] at hn ⊢
     linear_combination -hn
@@ -150,13 +154,14 @@ theorem form_eq_zero (D : A.V →ₗ[ℝ] A.V →ₗ[ℝ] ℝ) (alt : ∀ a b, D
       conv_lhs => rw [← Complex.re_add_im s]
       rw [add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
     have : D (Complex.I • a) = 0 := LinearMap.ext fun b => by rw [hI, ha]; simp
-    rw [e, map_add, map_smul, map_smul, ha, this, smul_zero, smul_zero, add_zero]
+    rw [e, map_add (f := _), map_smul, map_smul, ha, this, smul_zero, smul_zero, add_zero]
   have hT : ∀ a : A.V, a.2 = 0 → D a = 0 := fun a ha => by
     let b := Module.Free.chooseBasis ℤ A.X
     have e : a = ∑ i, a.1 (b i) • A.P0 (AnArc.La.mk 0 (b.coord i).toAddMonoidHom 0) := by
       refine Prod.ext (A.coord.injective (funext fun k => ?_)) (by simp [ha, Prod.snd_sum])
       simp [Prod.fst_sum, AnArc.coord_apply, b, Finsupp.single_apply]
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     exact Finset.sum_eq_zero fun i _ => hc _ _ (h₁ _)
   let s : Set A.V := {a | a.2 = 0} ∪ Set.range fun l => A.P0 (AnArc.La.mk 0 0 l)
   have hs : Submodule.span ℝ s = ⊤ := by
@@ -183,8 +188,8 @@ theorem form_eq_zero (D : A.V →ₗ[ℝ] A.V →ₗ[ℝ] ℝ) (alt : ∀ a b, D
     · rw [alt, hT b hb]; simp
     · exact h₂ l m
 
-open AppellHumbertTrivial in
 
+open AppellHumbertTrivial in
 theorem im_eq_EF {w : ℂ} (hw : (A.BwMat w).PosDef) {g : ℕ} (k : A.V →ₗ[ℂ] (Fin g → ℂ))
     {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian)
     (h₁ : ∀ n m, (hermForm Hm (k (A.Pw w (AnArc.La.mk 0 n 0))) (k (A.Pw w m))).im = A.EF (AnArc.La.mk 0 n 0) m)
@@ -193,11 +198,11 @@ theorem im_eq_EF {w : ℂ} (hw : (A.BwMat w).PosDef) {g : ℕ} (k : A.V →ₗ[�
     (hermForm Hm (k (A.Pw w a)) (k (A.Pw w b))).im = A.EF a b := by
   let D : A.V →ₗ[ℝ] A.V →ₗ[ℝ] ℝ := LinearMap.mk₂ ℝ
     (fun p q => (hermForm Hm (k p) (k q)).im - (A.Hw w p q).im)
-    (fun p p' q => by simp only [map_add, LinearMap.add_apply, hermForm_add_left, Complex.add_im]; ring)
+    (fun p p' q => by simp only [map_add (f := _), LinearMap.add_apply, hermForm_add_left, Complex.add_im]; ring)
     (fun r p q => by
       rw [← Complex.coe_smul, map_smul, map_smul, hermForm_smul_left, LinearMap.smul_apply, smul_eq_mul, smul_eq_mul,
         Complex.im_ofReal_mul, Complex.im_ofReal_mul, mul_sub])
-    (fun p q q' => by simp only [map_add, hermForm_add_right, Complex.add_im]; ring)
+    (fun p q q' => by simp only [map_add (f := _), hermForm_add_right, Complex.add_im]; ring)
     (fun r p q => by
       rw [← Complex.coe_smul, map_smul, map_smulₛₗ, hermForm_smul_right, Complex.star_def, Complex.conj_ofReal,
         smul_eq_mul, smul_eq_mul, Complex.im_ofReal_mul, Complex.im_ofReal_mul, mul_sub])
@@ -228,8 +233,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
   {χ : Sp (PowerSeries ℂ) ⟶ Y.X} {W : Wit Y a χ} {g : ℕ} {ty : Fin g → (E →+* ℂ)}
   {Fu : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty} (Ha : HolArc Y σ a χ W Fu)
 
-open AbelianLetters AppellHumbertTrivial in
 
+open AbelianLetters AppellHumbertTrivial in
 theorem im_hermForm_eq (hL : Out.Laws) (hL2 : Out.Laws2) (hP : ∀ w v, Ha.y v = 0 → Ha.Pw w v = Ha.P₀ v) {n : ℕ}
     (u : HolUnif a.D₀.P.A a.D₀.P.L n) {Hm : Matrix (Fin n) (Fin n) ℂ} {χ' : u.Λ → ℂ} (hAH : u.IsAH Hm χ')
     (F : (Fin g → ℂ) →ₗ[ℂ] (Fin n → ℂ)) (hF : ∀ z, (u.ex (F z)).left = (show Sp ℂ ⟶ _ from (Ha.ex₀ z).b.left))
@@ -285,8 +290,8 @@ theorem im_hermForm_eq (hL : Out.Laws) (hL2 : Out.Laws2) (hP : ∀ w v, Ha.y v =
 
 end ThetaShiftProofs
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem holArc_agrees : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) [Algebra (FractionRing ℂ) ℂ] [IsScalarTower ℂ (FractionRing ℂ) ℂ] (σ : c.F →+* ℂ) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (a : ArcIn Dw l β ℂ (σ.comp β)) (χ : Sp (PowerSeries ℂ) ⟶ Y.X) (W : Wit Y a χ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo (σ.comp (IntermediateField.inclusion c.le).toRingHom) ty) (Ha : HolArc Y σ a χ W Fu) (Λ : GtAn₀ a), letI := H.starRing; ∃ (gam : (Fu.Di Ha.i).La ≃ₗ[𝓞 E] Λ.A.La) (h : (Fin g → ℂ) ≃ₗ[ℂ] Λ.A.V), (∀ z, Λ.ex₀ (h z) = Ha.ex₀ z) ∧ (∀ v, Λ.y (gam v) = Ha.y v) ∧ (∀ w v, h (Ha.Pw w v) = Λ.A.Pw w (gam v)) ∧ ∀ v v', Λ.A.EF (gam v) (gam v') = (Fu.Di Ha.i).EF v v' := by
   intro hK E _ _ _ H Dw l Xo c _ _ σ O _ β Y a χ W g ty Fu Ha Λ
   letI := H.starRing
@@ -319,14 +324,14 @@ theorem holArc_agrees : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCM
     obtain ⟨m, hm⟩ := Λ.y_onto (Ha.y v)
     obtain ⟨n, hn, e⟩ := (Λ.toGtDict.ex₀_eq_iff (h (Ha.P₀ v)) (Λ.A.P0 m)).1
       ((hh _).trans (TorusExt.isIota_unique (Ha.iota v) (hm ▸ Λ.iota m)))
-    exact ⟨n + m, by simpa [hn] using hm, by rw [map_add, ← e, sub_add_cancel]⟩
+    exact ⟨n + m, by simpa [hn] using hm, by rw [map_add (f := _), ← e, sub_add_cancel]⟩
   choose gm hgy hgP using hg
   have hgN : ∀ v, Λ.A.N (gm v) = h (Ha.N v) := fun v => eq_of_ex₀_smul Λ.toGtDict fun s => by
     rw [← map_smul h, hh]
     exact TorusExt.IsTorusPtF.unique ((TorusExt.isTorusPtF_iff_isTorusPt _ _).2 (Λ.shift_be s (gm v)))
       ((TorusExt.isTorusPtF_iff_isTorusPt _ _).2 (hgy v ▸ Ha.shift s v))
   have hgw : ∀ w v, h (Ha.Pw w v) = Λ.A.Pw w (gm v) := fun w v => by
-    rw [Ha.Pw_eq, map_add, map_smul, AnArc.Pw_apply, hgP, hgN]
+    rw [Ha.Pw_eq, map_add (f := _), map_smul, AnArc.Pw_apply, hgP, hgN]
   obtain ⟨T₀, hT₀⟩ := Λ.A.exists_BwMat_posDef
   obtain ⟨w, hw, hw'⟩ : ∃ w : ℂ, Ha.T < w.im ∧ T₀ < w.im :=
     ⟨(max Ha.T T₀ + 1 : ℝ) * Complex.I, by simpa using (le_max_left _ _).trans_lt (lt_add_one _),
@@ -341,7 +346,7 @@ theorem holArc_agrees : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCM
       exact TorusExt.gtAct_unique hK.laws.globalFns (Ha.lin x (s • z)) (hh (s • z) ▸ Λ.lin x (h (s • z)))
   let gm₁ : (Fu.Di Ha.i).La →ₗ[𝓞 E] Λ.A.La :=
     { toFun := gm
-      map_add' := fun v v' => qinj (by rw [map_add, ← hgw, ← hgw, ← hgw, map_add, map_add])
+      map_add' := fun v v' => qinj (by rw [map_add (f := _), ← hgw, ← hgw, ← hgw, map_add (f := _), map_add (f := _)])
       map_smul' := fun x v => qinj (by
         rw [RingHom.id_apply, AnArc.Pw_smul, ← hgw, ← hgw, ← hlin]
         exact congrArg h (funext (pl x v))) }
@@ -352,8 +357,8 @@ theorem holArc_agrees : Known → ∀ (E : Type) [Field E] [NumberField E] [IsCM
     obtain ⟨n, hn, e⟩ := (Ha.ker (h.symm (Λ.A.P0 (m - gm v)))).1 (by
       rw [← hh, h.apply_symm_apply]
       exact (Λ.ker_y _).2 ⟨_, by rw [map_sub, hgy, hv, sub_self], rfl⟩)
-    refine ⟨n + v, hext _ _ ((hgy _).trans (by rw [map_add, hn, zero_add, hv])) ((hgP _).trans ?_)⟩
-    rw [map_add, map_add, ← e, h.apply_symm_apply, ← hgP, map_sub, sub_add_cancel]
+    refine ⟨n + v, hext _ _ ((hgy _).trans (by rw [map_add (f := _), hn, zero_add, hv])) ((hgP _).trans ?_)⟩
+    rw [map_add (f := _), map_add (f := _), ← e, h.apply_symm_apply, ← hgP, map_sub, sub_add_cancel]
   refine ⟨LinearEquiv.ofBijective gm₁ ⟨ginj, gsurj⟩, h, hh, hgy, hgw, ?_⟩
   have hD : ∀ v v', (hermForm Hm (h.symm (Λ.A.Pw w (gm v))) (h.symm (Λ.A.Pw w (gm v')))).im =
       (Fu.Di Ha.i).EF v v' := fun v v' => by

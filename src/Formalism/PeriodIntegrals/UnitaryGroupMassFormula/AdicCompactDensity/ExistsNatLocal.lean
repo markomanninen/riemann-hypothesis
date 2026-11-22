@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AdCpctDen
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AdCpctDen
+
+@[expose] public section
 
 namespace PI.AdCpctDenWork
 
@@ -58,8 +62,8 @@ theorem exists_nat_adele (a : FiniteAdeleRing (𝓞 F) F) :
 
 end PI.AdCpctDenWork
 
-open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum PI.AdCpctDenWork in
 
+open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum PI.AdCpctDenWork in
 theorem PI.adCpctDen : PI.AdCpctDen := by
   intro F _ _ C hC
   classical

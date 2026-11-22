@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.UnitCongruentToInteger
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.UnitCongruentToInteger
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -26,7 +30,7 @@ theorem iAdd {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a + b) := by
   refine ⟨r1 * s2 + r2 * s1, s1 * s2, fun h => ?_, ?_⟩
   · rcases P.isPrime.mem_or_mem h with h | h
     exacts [hs1 h, hs2 h]
-  · simp only [map_mul, map_add]
+  · simp only [map_mul, map_add (f := _)]
     rw [← h1, ← h2]
     ring
 theorem iSub {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a - b) := by

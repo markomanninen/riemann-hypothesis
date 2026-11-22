@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FglGram
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FglGram
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ private lemma low_mul_lemma {X Y : MvPowerSeries σ ℂ_[p]} {a b : ℕ}
   rw [MvPowerSeries.coeff_mul]
   refine Finset.sum_eq_zero fun x hx => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-  have hd : x.1.degree + x.2.degree = β.degree := by rw [← hx, map_add]
+  have hd : x.1.degree + x.2.degree = β.degree := by rw [← hx, map_add (f := _)]
   by_cases h1 : x.1.degree < a
   · rw [hX _ h1, zero_mul]
   · rw [hY _ (by omega), mul_zero]
@@ -123,7 +127,7 @@ theorem expMv_add {D E : MvPowerSeries σ ℂ_[p]} (hD : constantCoeff D = 0) (h
           coeff x.1 (D ^ i) * coeff x.2 (E ^ j) / ((i.factorial : ℂ_[p]) * (j.factorial : ℂ_[p])) := by
       intro x hx
       rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
-      have hdeg : x.1.degree + x.2.degree = α.degree := by rw [← hx, map_add]
+      have hdeg : x.1.degree + x.2.degree = α.degree := by rw [← hx, map_add (f := _)]
       rw [coeff_expMv_of_le hD α.degree (by omega), coeff_expMv_of_le hE α.degree (by omega),
         Finset.sum_mul_sum]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -137,7 +141,8 @@ theorem expMv_add {D E : MvPowerSeries σ ℂ_[p]} (hD : constantCoeff D = 0) (h
       coeff α (D ^ m * E ^ (n - m)) / ((m.factorial : ℂ_[p]) * ((n - m).factorial : ℂ_[p])) := by
     rw [coeff_expMv]
     refine Finset.sum_congr rfl fun n _ => ?_
-    rw [add_pow, map_sum, Finset.sum_div]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [add_pow, map_sum, Finset.sum_div]
     refine Finset.sum_congr rfl fun m hm => ?_
     have hmn : m ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
     rw [mul_comm _ ((n.choose m : ℕ) : MvPowerSeries σ ℂ_[p]), ← nsmul_eq_mul, map_nsmul, nsmul_eq_mul]
@@ -188,7 +193,7 @@ theorem int_expMv_neg {D : MvPowerSeries σ ℂ_[p]} (hD : constantCoeff D = 0)
       apply hx'.1
       exact Prod.ext (by rw [← h1, h0, add_zero]) h0
     have h3 : x.2.degree ≠ 0 := fun hd => h2 ((Finsupp.degree_eq_zero_iff _).mp hd)
-    have h4 : x.1.degree + x.2.degree = α.degree := by rw [← h1, map_add]
+    have h4 : x.1.degree + x.2.degree = α.degree := by rw [← h1, map_add (f := _)]
     omega
 
 def Good (D : MvPowerSeries σ ℂ_[p]) : Prop :=
@@ -197,7 +202,7 @@ def Good (D : MvPowerSeries σ ℂ_[p]) : Prop :=
 theorem simeq_iff_good (f g : MvPowerSeries σ ℂ_[p]) : Simeq f g ↔ Good (f - g) := Iff.rfl
 
 theorem good_add {D E : MvPowerSeries σ ℂ_[p]} (hD : Good D) (hE : Good E) : Good (D + E) := by
-  refine ⟨by rw [map_add, hD.1, hE.1, add_zero], ?_⟩
+  refine ⟨by rw [map_add (f := _), hD.1, hE.1, add_zero], ?_⟩
   rw [expMv_add hD.1 hE.1]
   exact int_mul hD.2 hE.2
 

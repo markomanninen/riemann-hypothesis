@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFilteredStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SecondTwistSmallIffExactlyAtAndFinClause
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamComparisonIsFilteredStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SecondTwistSmallIffExactlyAtAndFinClause
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,27 +69,27 @@ theorem actVdR_act (ε : A →ₐ[LL] LL) (ρ : Representation LL G V) (g : G) (
     actVdR PD ρ g (act V ε r y) = act V ε (gal PD (LL := LL) g r) (actVdR PD ρ g y) := by
   induction r using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
   | tmul a b =>
     simp only [gal, Algebra.TensorProduct.map_tmul, act_tmul, map_smul, AlgHom.id_apply]
     congr 1
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v x => simp [actVdR]
 
 theorem actVdR_twist (ρ ρ' : Representation LL G V) (g : G) (c : LL) (h : ∀ x, ρ' g x = c • ρ g x)
     (y : V ⊗[Qp] BdR) : actVdR PD ρ' g y = c • actVdR PD ρ g y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
   | tmul v x => simp [actVdR, h, smul_tmul']
 
 theorem actVdR_char (ν : Representation LL G A) (g : G) (c : LL) (h : ∀ x, ν g x = c • x)
     (y : A ⊗[Qp] BdR) : actVdR PD ν g y = c • gal PD (LL := LL) g y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
   | tmul v x => simp [actVdR, gal, h, smul_tmul']
 
 theorem mulVdR_eq_act (ε : A →ₐ[LL] LL) (c : K) (y : V ⊗[Qp] BdR) :
@@ -97,7 +101,7 @@ theorem map_mulLeft (b : BdR) (y : A ⊗[Qp] BdR) :
       ((1 : A) ⊗ₜ b) * y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
   | tmul v x => simp
 
 theorem act_mem_filV (ε : A →ₐ[LL] LL) {a k : ℤ} {r : A ⊗[Qp] BdR} {y : V ⊗[Qp] BdR}
@@ -107,13 +111,13 @@ theorem act_mem_filV (ε : A →ₐ[LL] LL) {a k : ℤ} {r : A ⊗[Qp] BdR} {y :
   obtain ⟨y, rfl⟩ := hy
   induction r using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simpa only [map_add, LinearMap.add_apply] using add_mem ha hb
+  | add a b ha hb => simpa only [map_add (f := _), LinearMap.add_apply] using add_mem ha hb
   | tmul c b =>
     rw [AlgebraTensorModule.map_tmul, act_tmul]
     refine Submodule.smul_mem _ _ ?_
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simpa only [map_add] using add_mem hx hy
+    | add x y hx hy => simpa only [map_add (f := _)] using add_mem hx hy
     | tmul v x =>
       refine ⟨v ⊗ₜ ⟨b.1 * x.1, ?_⟩, rfl⟩
       rw [add_comm]
@@ -126,11 +130,11 @@ theorem mul_mem_filV {a k : ℤ} {r y : A ⊗[Qp] BdR}
   obtain ⟨y, rfl⟩ := hy
   induction r using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simpa only [map_add, add_mul] using add_mem ha hb
+  | add a b ha hb => simpa only [map_add (f := _), add_mul] using add_mem ha hb
   | tmul c b =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simpa only [map_add, mul_add] using add_mem hx hy
+    | add x y hx hy => simpa only [map_add (f := _), mul_add] using add_mem hx hy
     | tmul v x =>
       refine ⟨(c * v) ⊗ₜ ⟨b.1 * x.1, ?_⟩, by simp⟩
       rw [add_comm]
@@ -149,7 +153,7 @@ theorem exists_idem [Algebra.IsSeparable Qp K] (ε : A →ₐ[LL] LL) (τ : K �
   · generalize Algebra.FormallyUnramified.elem Qp K = z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simpa only [map_add] using add_mem ha hb
+    | add a b ha hb => simpa only [map_add (f := _)] using add_mem ha hb
     | tmul a b =>
       refine ⟨algebraMap LL A (τ a) ⊗ₜ ⟨algebraMap K BdR b, ?_⟩, rfl⟩
       rw [Algebra.algebraMap_eq_smul_one]
@@ -157,7 +161,7 @@ theorem exists_idem [Algebra.IsSeparable Qp K] (ε : A →ₐ[LL] LL) (τ : K �
   · generalize Algebra.FormallyUnramified.elem Qp K = z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a b => simp [hf, gal]
   · have := congrArg f (Algebra.FormallyUnramified.one_tmul_mul_elem (R := Qp) c)
     rw [map_mul, map_mul, hf, hf, map_one, map_one, map_one] at this
@@ -167,7 +171,7 @@ theorem exists_idem [Algebra.IsSeparable Qp K] (ε : A →ₐ[LL] LL) (τ : K �
       intro z
       induction z using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, add_smul]
+      | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb, add_smul]
       | tmul a b =>
         rw [hf, act_tmul, AlgHom.commutes]
         change τ a • mulVdR (LL := LL) b y = _
@@ -189,13 +193,27 @@ theorem line_of_single_jump (ν : Representation LL G V) (τ : K →ₐ[Qp] LL) 
     rw [if_neg ha, multV] at this
     exact Submodule.eq_of_le_of_finrank_eq (anti (by omega)) (by omega)
   have up : ∀ a, b + 1 ≤ a → FildR PD ν τ a = FildR PD ν τ (b + 1) := fun a ha => by
-    induction a, ha using Int.le_induction with
-    | base => rfl
-    | succ a ha ih => rw [st a (by omega), ih]
+    obtain ⟨n, rfl⟩ : ∃ n : ℕ, a = b + 1 + n := by
+      refine ⟨(a - (b + 1)).toNat, ?_⟩
+      have := Int.toNat_of_nonneg (show 0 ≤ a - (b + 1) by omega)
+      omega
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      have heq : b + 1 + (↑(n + 1) : ℤ) = (b + 1 + n) + 1 := by omega
+      rw [heq, st _ (by omega), ih]
+      omega
   have down : ∀ a ≤ b, FildR PD ν τ a = FildR PD ν τ b := fun a ha => by
-    induction a, ha using Int.le_induction_down with
-    | base => rfl
-    | pred a ha ih => rw [← st (a - 1) (by omega), sub_add_cancel, ih]
+    obtain ⟨n, rfl⟩ : ∃ n : ℕ, a = b - n := by
+      refine ⟨(b - a).toNat, ?_⟩
+      have := Int.toNat_of_nonneg (show 0 ≤ b - a by omega)
+      omega
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      have heq : b - (↑(n + 1) : ℤ) + 1 = b - n := by omega
+      rw [← st (b - (↑(n + 1) : ℤ)) (by omega), heq, ih]
+      omega
   have bot : FildR PD ν τ (b + 1) = ⊥ := by
     rw [eq_bot_iff]
     intro x hx

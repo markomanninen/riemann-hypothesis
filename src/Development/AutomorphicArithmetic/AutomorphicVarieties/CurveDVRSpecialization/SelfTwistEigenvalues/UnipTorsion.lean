@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -14,7 +18,7 @@ private theorem UpperTheory.V.Pr.T.unipTorsion_unit {A : Type} [CommRing A] [IsL
   set π : AdjoinRoot χ →+* AdjoinRoot χ ⧸ M := Ideal.Quotient.mk M with hπdef
   set φ : A →+* AdjoinRoot χ ⧸ M := π.comp (algebraMap A (AdjoinRoot χ)) with hφdef
   have hcomap : Ideal.comap (algebraMap A (AdjoinRoot χ)) M = IsLocalRing.maximalIdeal A :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M)
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := A) M)
   have hker : ∀ a ∈ IsLocalRing.maximalIdeal A, φ a = 0 := by
     intro a ha
     rw [← hcomap, Ideal.mem_comap] at ha
@@ -34,7 +38,7 @@ private theorem UpperTheory.V.Pr.T.unipTorsion_unit {A : Type} [CommRing A] [IsL
   have hs := key (∑ i ∈ Finset.range m, X ^ i)
   have hz : π (AdjoinRoot.mk χ (∑ i ∈ Finset.range m, X ^ i)) = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr hmem
   rw [hz, hroot] at hs
-  simp only [eval₂_finset_sum, eval₂_X_pow, one_pow, Finset.sum_const, Finset.card_range,
+  simp only [eval₂_finsetSum, eval₂_X_pow, one_pow, Finset.sum_const, Finset.card_range,
     nsmul_eq_mul, mul_one] at hs
   have hu := hm.map φ
   rw [map_natCast] at hu
@@ -52,7 +56,8 @@ theorem UpperTheory.V.Pr.T.unipTorsion :
   have h1 : aeval γ (∑ i ∈ Finset.range m, (X : A[X]) ^ i) * aeval γ p = 1 := by
     rw [← map_mul, ← sub_eq_zero, ← map_one (aeval (R := A) γ), ← map_sub, hq, map_mul, hγ, zero_mul]
   have h2 : (1 - γ) * aeval γ (∑ i ∈ Finset.range m, (X : A[X]) ^ i) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_pow, aeval_X]
     rw [mul_neg_geom_sum, hγm, sub_self]
   have h3 : 1 - γ = 0 := by

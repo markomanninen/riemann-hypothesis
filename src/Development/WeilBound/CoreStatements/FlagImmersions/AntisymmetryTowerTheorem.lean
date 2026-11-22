@@ -1,12 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.AntisymmetricPerturbationBoundStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PolarizationPolynomialCoeffBoundStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.AntisymmetricPerturbationBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PolarizationPolynomialCoeffBoundStatement
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
@@ -41,15 +45,14 @@ private theorem inWall_and_dominant_of_eq_neighbors {Ψ : Type} [Fintype Ψ] [De
   have hδN : δ * ((N : ℝ) + 1) = 1 / 4 := by
     rw [hδ]
     field_simp
-    try ring
   have hr : 1 / (16 * ((N : ℝ) + 1)) = δ / 4 := by
     rw [hδ]
     field_simp
-    try ring
+    ring
   have hc : 1 / (8 * ((N : ℝ) + 1)) = δ / 2 := by
     rw [hδ]
     field_simp
-    try ring
+    ring
   rw [← hδ, hr] at hx
   rw [hc]
   have hb : ∀ (s : Ψ) (i : Fin N),
@@ -119,13 +122,13 @@ private theorem inWall_and_dominant_of_eq_neighbors {Ψ : Type} [Fintype Ψ] [De
       have h1 := abs_le.1 (hb s i)
       rw [abs_le]
       constructor <;> linarith [h1.1, h1.2]
-    · simp only [gap, ent, dif_pos (show j - 1 < N by omega), dif_pos hjN]
+    · simp only [gap, ent, dite_eq_left (show j - 1 < N by omega), dite_eq_left hjN]
       exact sub_eq_zero.2 hxe
     · intro τ' hτ'
-      simp only [gap, ent, dif_pos (show j - 1 < N by omega), dif_pos hjN]
+      simp only [gap, ent, dite_eq_left (show j - 1 < N by omega), dite_eq_left hjN]
       exact G τ' ⟨j - 1, by omega⟩ ⟨j, hjN⟩ (show j = j - 1 + 1 by omega) (fun h => hτ' h.1)
     · intro s i hi hij
-      simp only [ent, dif_pos (show i < N by omega), dif_pos hi]
+      simp only [ent, dite_eq_left (show i < N by omega), dite_eq_left hi]
       exact G s ⟨i, by omega⟩ ⟨i + 1, hi⟩ rfl (fun h => hij h.2)
   · intro s a b hab
     exact hdom s ((b : ℕ) - (a : ℕ)) a b (by have := Fin.le_iff_val_le_val.1 hab; omega)

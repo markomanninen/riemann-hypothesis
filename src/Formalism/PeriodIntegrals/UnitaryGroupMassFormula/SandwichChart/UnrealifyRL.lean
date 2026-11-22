@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LongWeylElementSquare
-import Formalism.PeriodIntegrals.SwSand
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SandwichChart.SandwichOfOfCharts
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LongWeylElementSquare
+public import Formalism.PeriodIntegrals.SwSand
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SandwichChart.SandwichOfOfCharts
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,6 @@ theorem normRL : NormRL := by
   rw [Fintype.sum_bool, Real.rpow_two, Complex.sq_norm, Complex.normSq_apply]
   simp [RL, realifyFun]
   ring
-
-theorem unrealify_RL (X : Mat k r) : unrealify (RL X) = X := by
-  ext i j
-  apply Complex.ext <;> simp [unrealify, RL, realifyFun]
 
 def sgI (k r : ℕ) (i : Fin (2 * r + k + 1)) : Fin (2 * r + k + 1) :=
   if r ≤ i.val ∧ i.val ≤ r + k then i else ⟨2 * r + k - i.val, by omega⟩

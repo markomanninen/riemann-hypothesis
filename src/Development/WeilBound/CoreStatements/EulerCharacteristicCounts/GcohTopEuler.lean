@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTop
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohEuler
+module
+
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTop
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohEuler
+
+@[expose] public section
 
 namespace PositivityTheory.LocalTateOrthogonality.Gcoh
 

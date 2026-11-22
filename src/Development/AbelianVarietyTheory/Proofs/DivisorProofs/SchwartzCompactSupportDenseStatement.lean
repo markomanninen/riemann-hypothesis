@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCompactSupportDense
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzCompactSupportDense
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped SchwartzMap
 set_option maxHeartbeats 1000000 in

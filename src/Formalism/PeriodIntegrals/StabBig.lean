@@ -1,4 +1,8 @@
-import Formalism.FormalDegreeBessel.StatementBF
+module
+
+public import Formalism.FormalDegreeBessel.StatementBF
+
+@[expose] public section
 
 open Matrix
 

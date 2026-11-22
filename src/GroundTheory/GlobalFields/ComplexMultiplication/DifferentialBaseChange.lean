@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialConstant
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialConstant
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -38,8 +42,8 @@ theorem map_bcEmb_genericPoint [DecidableEq F'] :
         (E.baseChange (E.baseChange F').toAffine.FunctionField).toAffine.Point) :=
   map_liftPoint_genericPoint E _ _
 
-omit [E.IsElliptic] in
 
+omit [E.IsElliptic] in
 theorem transcendental_bcEmb {z : E.toAffine.FunctionField} (hz : Transcendental F z) :
     Transcendental F' (bcEmb (F' := F') E z) := by
   set K' := (E.baseChange F').toAffine.FunctionField
@@ -184,8 +188,8 @@ theorem bcDiff_smul (a : E.toAffine.FunctionField) (η : Ω[E.toAffine.FunctionF
 
 variable [DecidableEq F'] {E} {E' : WeierstrassCurve F}
 
-omit [E.IsElliptic] [DecidableEq F'] in
 
+omit [E.IsElliptic] [DecidableEq F'] in
 theorem bcDiff_omegaAt (P : (E'.baseChange E.toAffine.FunctionField).toAffine.Point) :
     bcDiff (F' := F') E (omegaAt E' P) =
       omegaAt (E'.baseChange F') (Point.map (W' := E') (bcEmb (F' := F') E) P :
@@ -204,12 +208,12 @@ theorem bcDiff_omegaAt (P : (E'.baseChange E.toAffine.FunctionField).toAffine.Po
         bcEmb (F' := F') E (E'.baseChange E.toAffine.FunctionField).a₄ := ((bcEmb (F' := F') E).commutes E'.a₄).symm
     refine (omegaAt_some_eq (E'.baseChange F') _ ?_ ?_).symm
     · rw [c1, c3, ← bcDiff_D, ← s, bcDiff_smul]
-      simp only [map_add, map_mul, map_ofNat]
+      simp only [map_add (f := _), map_mul, map_ofNat]
     · rw [c1, c2, c4, ← bcDiff_D, ← t, bcDiff_smul]
-      simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
+      simp only [map_add (f := _), map_sub, map_mul, map_pow, map_ofNat]
+
 
 variable (E) in
-
 theorem bcDiff_invariantDifferential :
     bcDiff (F' := F') E (invariantDifferential E) = invariantDifferential (E.baseChange F') := by
   rw [invariantDifferential, bcDiff_omegaAt, map_bcEmb_genericPoint]

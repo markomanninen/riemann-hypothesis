@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromNineToEight
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestBCdimOfYbc
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromNineToEight
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestBCdimOfYbc
+
+@[expose] public section
 
 noncomputable section
 

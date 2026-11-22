@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.RankOneEisenstein.Theta2Integral
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GodementSection
+public import GroundTheory.GlobalFields.TateThesis.TateMain
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.EisRk1
 

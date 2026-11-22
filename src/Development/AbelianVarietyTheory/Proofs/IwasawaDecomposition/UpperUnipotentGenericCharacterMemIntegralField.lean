@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -33,7 +38,9 @@ theorem chr0_mem_Ks : ∀ (B : Base) (px : PreX B.toPre) (I : Col2.ColIn B px) (
   intro B px I p
   have hPr := (GlobalTheory.Mem.Col2.base_fields_primes_ok B px).2.1
   unfold chr0 P0 LevelP.ofLocal
-  erw [MonoidHom.finset_prod_apply, Units.coe_prod]
+  letI : IsOneApply (lev0 I →* B.LLˣ) := ⟨fun _ => rfl⟩
+  letI : IsMulApply (lev0 I →* B.LLˣ) := ⟨fun _ _ _ => rfl⟩
+  erw [prod_apply, Units.coe_prod]
   refine B.Ks.prod_mem fun PP _ => ?_
   have hk : ∃ k, PP.1 ∈ (B.primes px).vG k := by
     have h : PP.1 ∈ (B.primes px).vG 0 ∪ (B.primes px).vG 1 := by

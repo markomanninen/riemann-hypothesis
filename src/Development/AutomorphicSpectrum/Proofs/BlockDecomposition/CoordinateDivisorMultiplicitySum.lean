@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CoheightEqOneOfDimClosure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLineBundleSectionsGenerateIdealSheaf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedSubschemeModLProjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DimOfIsArithVar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealMultiprojectivePrime
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpecializesIffPointIdealLe
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectivePrimeEqPointIdeal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DictExistsPtIdealEqBot
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMult
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CoheightEqOneOfDimClosure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLineBundleSectionsGenerateIdealSheaf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosedSubschemeModLProjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DimOfIsArithVar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PointIdealMultiprojectivePrime
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SpecializesIffPointIdealLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiprojectivePrimeEqPointIdeal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DictExistsPtIdealEqBot
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartMult
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace MvPolynomial
@@ -85,7 +90,8 @@ theorem gam_of_form {Z : Scheme.{0}} (f : Z ⟶ MP ℤ m n) (c : ∀ k, Bk n k) 
   classical
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun e he => ?_
   have he' : ∀ k, ∑ i, e ⟨k, i⟩ = d k := fun k => by
     rw [← GroundTheory.Heights₂.Heights.weight_coordDeg_apply, hF (mem_support_iff.mp he)]
@@ -94,11 +100,11 @@ theorem gam_of_form {Z : Scheme.{0}} (f : Z ⟶ MP ℤ m n) (c : ∀ k, Bk n k) 
     refine Finset.prod_congr rfl fun k _ => ?_
     show ∏ i, (X k : MvPolynomial (Fin (m + 1)) Γ(Z, f ⁻¹ᵁ mchart c)) ^ e ⟨k, i⟩ = _
     rw [← he' k, Finset.prod_pow_eq_pow_sum]
-  have hm : (monomial e (coeff e F) : Pol n) = C (coeff e F) * ∏ p, X p ^ e p := by
+  have hm : (monomial e (AddMonoidAlgebra.coeff F e) : Pol n) = C (AddMonoidAlgebra.coeff F e) * ∏ p, X p ^ e p := by
     rw [monomial_eq, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
   rw [hm]
   simp only [map_mul, map_prod, map_pow, gam_X, mul_pow, Finset.prod_mul_distrib, hX]
-  have hc : gam f c (C (coeff e F)) = C (eps f c (C (coeff e F))) := by
+  have hc : gam f c (C (AddMonoidAlgebra.coeff F e)) = C (eps f c (C (AddMonoidAlgebra.coeff F e))) := by
     simp [gam, eps, Phi, dehomog]
   rw [hc]
   ring
@@ -257,7 +263,7 @@ theorem length_stalk {Z : Scheme.{0}} (f : Z ⟶ MP ℤ m n) [IsClosedImmersion 
   letI : Algebra Γ(Z, f ⁻¹ᵁ mchart c) (Z.presheaf.stalk w) := TopCat.Presheaf.algebra_section_stalk Z.presheaf x
   haveI inst : IsLocalization.AtPrime (Z.presheaf.stalk w) (hU.primeIdealOf x).asIdeal := hU.isLocalization_stalk x
   have hP : (hU.primeIdealOf x).asIdeal = ptPrime f c w hw := by
-    rw [← IsLocalization.AtPrime.comap_maximalIdeal (Z.presheaf.stalk w) (hU.primeIdealOf x).asIdeal]
+    rw [← IsLocalization.AtPrime.under_maximalIdeal (Z.presheaf.stalk w) (hU.primeIdealOf x).asIdeal]
     ext a
     rw [ptPrime, RingHom.mem_ker, Ideal.under_def, Ideal.mem_comap, IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
     have h1 := Scheme.mem_basicOpen Z a w hw
@@ -488,5 +494,7 @@ theorem divOfSec_cycle : ∀ (m : ℕ) (n : Fin (m + 1) → ℕ) (Z : Scheme.{0}
     exact notMem_supp_divOfSec.2 this (CartierDiv.mem_supp_of_mult_ne_zero h0)
   calc ∑ᶠ w, D.mult w * u (ptIdeal (f w)) = ∑ᶠ w ∈ S, D.mult w * u (ptIdeal (f w)) := by
         rw [finsum_mem_def, Set.indicator_eq_self.2 hsupp]
-    _ = _ := finsum_mem_congr rfl fun w hw => by rw [hD, mult_eq_multAt m n Z f k l hs w hw.1]
+    _ = _ := finsum_mem_congr rfl fun w hw => by
+      simpa only [hD] using congrArg (fun x : ℤ => x * u (ptIdeal (f w)))
+        (mult_eq_multAt m n Z f k l hs w hw.1)
 end GlobalTheory.CompanionTheory.MixZ.DivCyc

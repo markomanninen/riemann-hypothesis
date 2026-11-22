@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjFB
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Main
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BoundedSums
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjFB
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.Main
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BoundedSums
+
+@[expose] public section
 
 noncomputable section
 

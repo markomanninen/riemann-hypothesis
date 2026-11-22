@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarietyLelongMono
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarWirtinger
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarLelongMono
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLinearNoetherNormalization
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarietyLelongMono
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarWirtinger
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarLelongMono
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLinearNoetherNormalization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

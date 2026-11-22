@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ def creL (n : ℕ) : (Md n → ℂ) →ₗ[ℂ] Matrix (Finset (Md n)) (Finset (
 def annL (n : ℕ) : (Md n → ℂ) →ₗ[ℂ] Matrix (Finset (Md n)) (Finset (Md n)) ℂ where
   toFun w := matL n (CliffordAlgebra.contractLeft (Q := (0 : QuadraticForm ℂ (Md n → ℂ))) (dualOf w))
   map_add' w w' := by
-    rw [← map_add, ← map_add]; congr 2; ext v; simp [dualOf, add_dotProduct]
+    rw [← map_add (f := _), ← map_add (f := _)]; congr 2; ext v; simp [dualOf, add_dotProduct]
   map_smul' c w := by
     rw [RingHom.id_apply, ← map_smul, ← map_smul]; congr 2; ext v; simp [dualOf, smul_dotProduct]
 
@@ -55,8 +59,8 @@ abbrev Jd (n : ℕ) (lam : Fin n → ℤ) := Fin (Module.finrank ℂ (Formalism.
 
 def wb (lam : Fin n → ℤ) : Module.Basis (Jd n lam) ℂ (Formalism.BasicNotions.nablaSq ℂ n (dw lam)) := Module.finBasis ℂ _
 
-open Classical in
 
+open Classical in
 def Rm (lam : Fin n → ℤ) (x : Mat n) : Matrix (Jd n lam) (Jd n lam) ℂ :=
   if h : IsUnit x.det then LinearMap.toMatrix (wb lam) (wb lam) (GlobalTheory.Branching.sqRep ℂ n (dw lam) (Matrix.nonsingInvUnit x h))
   else 0

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultMk
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ThresholdStandardSeventeen
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.MultMk
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.ThresholdStandardSeventeen
+
+@[expose] public section
 
 noncomputable section
 

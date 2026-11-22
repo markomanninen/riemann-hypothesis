@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
-import Formalism.LocalToGlobal.Columns.ChainInstY
-import Formalism.LocalToGlobal.Columns.XtSumSingle
-import Formalism.LocalToGlobal.Columns.LastRowColLevSym
-import Formalism.LocalToGlobal.Columns.ChainTopLawB
-import Formalism.LocalToGlobal.Columns.ChainLawPhiTop
-import Formalism.LocalToGlobal.Columns.ChainTopLawTw
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumLawK1DepthTwiceMStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
+public import Formalism.LocalToGlobal.Columns.ChainInstY
+public import Formalism.LocalToGlobal.Columns.XtSumSingle
+public import Formalism.LocalToGlobal.Columns.LastRowColLevSym
+public import Formalism.LocalToGlobal.Columns.ChainTopLawB
+public import Formalism.LocalToGlobal.Columns.ChainLawPhiTop
+public import Formalism.LocalToGlobal.Columns.ChainTopLawTw
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.TopLawQ
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumLawK1DepthTwiceMStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker NumberField IsDedekindDomain Classical
 
@@ -17,8 +21,8 @@ noncomputable section
 
 namespace GlobalTheory.StabTopLaw
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem xiTop_stab_law : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ} (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) (G : ChGlob X R.m) (m2 : ℕ), X.Ok → Pr.Ok → IsSel X sel → (∀ i, Pr.g i ∈ S) → (∀ v, Pr.T v ∈ S) → L.Ok Ch sel mu cst G m2 → Ch.Ok → cst.sharp = true → R.m ≤ cst.A → (∀ j, j ≤ m2 + 1 → ∀ (b : L.β j) (P : rowSG Pr sel mu), P.1 ∈ Pr.vGs → L.h j b P = 1) → 2 * cst.M ≤ twTopDepth R → ∀ (u : Pr.Word) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (p' : ChPt (R := R) sel mu u (m2 + 1 + 1)) (a : FrmG (twLt Ch (m2 + 1 + 1)) (twTt (R := R) sel mu (m2 + 1 + 1))), Y ∈ ybSet sel mu cst p.deco.1.N → a • p' = p' → ∀ x, XiTop Ch sel mu cst (m2 + 1) p Y p' (a.1.1.toLinearMap ∘ₗ x) * ∏ P : rowSG Pr sel mu, muAt Ch sel mu cst (m2 + 1) P ((LinearEquiv.det a.1.1 : X.Eˣ) : X.E) = (((twLt Ch (m2 + 1 + 1)).chr a.2.1 * (twTt (R := R) sel mu (m2 + 1 + 1)).chr a.2.2 : X.Kˣ) : X.K) * XiTop Ch sel mu cst (m2 + 1) p Y p' x := by
   intro X Pr R Ch sel S mu cst L G m2 hX hPr hsel hgS hTS hL hCh hsh hA hb hMd u p Y p' a hY hfix x
   have hm : R.m = m2 + 2 := hL.hm
@@ -32,8 +36,8 @@ theorem xiTop_stab_law : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Char
     frsF_smulQ sel mu u p' (twLt Ch (m2 + 1 + 1)) (twTt (R := R) sel mu (m2 + 1 + 1)) a w
   rw [hfix] at hκ'
   have e0 : phiT X.K p.deco.1 p'.deco.1 (a.1.1.toLinearMap ∘ₗ x) = phiT X.K p.deco.1 p'.deco.1 x := by
-    have h := phiT_smul X.K p.deco p'.deco 1 1 a.1 (a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs) x
-    have hd : (a • p').deco = (a.1, (a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs)) • p'.deco := rfl
+    have h := phiT_smul X.K p.deco p'.deco 1 1 a.1 (a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs)) x
+    have hd : (a • p').deco = (a.1, (a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs))) • p'.deco := rfl
     rw [← hd, hfix, ← Prod.one_eq_mk, one_smul] at h
     exact h
 
@@ -90,13 +94,13 @@ theorem xiTop_stab_law : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Char
   have hchr : (((twLt Ch (m2 + 1 + 1)).chr a.2.1 * (twTt (R := R) sel mu (m2 + 1 + 1)).chr a.2.2 : X.Kˣ) : X.K) =
       ∏ w : rowSG Pr sel mu,
         (if hw : w.1 ∈ Pr.vGs then
-          (((twLt Ch (m2 + 1 + 1) ⟨w.1, hw⟩).lam ⟨(a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K)
+          (((twLt Ch (m2 + 1 + 1) ⟨w.1, hw⟩).lam ⟨(a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs)) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K)
         else
           (((twTt (R := R) sel mu (m2 + 1 + 1) ⟨w.1, (Finset.mem_union.mp w.2).resolve_left hw⟩).lam
               ⟨(a.2.2 : GLQ X.E (R.N (m2 + 1 + 1)) (QE sel (mu : Chr X.F X.E X.K))) ⟨w.1, (Finset.mem_union.mp w.2).resolve_left hw⟩,
                 a.2.2.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K)) := by
     rw [prod_uSG_dite hS
-      (fun w => (((twLt Ch (m2 + 1 + 1) w).lam ⟨(a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs) w, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K))
+      (fun w => (((twLt Ch (m2 + 1 + 1) w).lam ⟨(a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs)) w, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K))
       (fun Q => (((twTt (R := R) sel mu (m2 + 1 + 1) Q).lam ⟨(a.2.2 : GLQ X.E (R.N (m2 + 1 + 1)) (QE sel (mu : Chr X.F X.E X.K))) Q,
         a.2.2.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K))]
     rw [Units.val_mul, levFam_chr_apply_coe]
@@ -107,7 +111,7 @@ theorem xiTop_stab_law : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Char
       muAt Ch sel mu cst (m2 + 1) w ((LinearEquiv.det a.1.1 : X.Eˣ) : X.E) *
         topDat Ch sel mu cst (m2 + 1) w (inFr (frsF sel mu p w) (frsF sel mu p' w) (a.1.1.toLinearMap ∘ₗ x)) ((frsF sel mu p w).symm (repY Y)) =
       (if hw : w.1 ∈ Pr.vGs then
-          (((twLt Ch (m2 + 1 + 1) ⟨w.1, hw⟩).lam ⟨(a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K)
+          (((twLt Ch (m2 + 1 + 1) ⟨w.1, hw⟩).lam ⟨(a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs)) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩ : X.Kˣ) : X.K)
         else
           (((twTt (R := R) sel mu (m2 + 1 + 1) ⟨w.1, (Finset.mem_union.mp w.2).resolve_left hw⟩).lam
               ⟨(a.2.2 : GLQ X.E (R.N (m2 + 1 + 1)) (QE sel (mu : Chr X.F X.E X.K))) ⟨w.1, (Finset.mem_union.mp w.2).resolve_left hw⟩,
@@ -121,20 +125,20 @@ theorem xiTop_stab_law : ∀ {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Char
       rw [LinearEquiv.apply_symm_apply]
       exact hz
     by_cases hw : w.1 ∈ Pr.vGs
-    · rw [dif_pos hw]
+    · rw [dite_eq_left hw]
       obtain ⟨hne, -, hqm⟩ := ybSet_props2 sel mu cst hY w hw
       have hr0 := representative_mem hne
       have hq : ((qOf w.1 : ℕ) : X.E) • (frsF sel mu p w).symm (repY Y) ∈ stdAt X.E (R.N (m2 + 1)) w.1 := by
         rw [← LinearEquiv.map_smul]
         exact hFst _ (hqm _ hr0)
-      have key := topDat_law hc hn hLaw hRow w hw 1 ⟨(a.2.1 : GLG X.E (R.N (m2 + 1 + 1)) Pr.vGs) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩
+      have key := topDat_law hc hn hLaw hRow w hw 1 ⟨(a.2.1 : GLG (E := X.E) (n := R.N (m2 + 1 + 1)) (SG := Pr.vGs)) ⟨w.1, hw⟩, a.2.1.2 _ (Set.mem_univ _)⟩
         1 (κ' w) (fun z _ => by simp) (hκr' w hw) (ciQ_notMem_sq hX hPr hw)
         (inFr (frsF sel mu p w) (frsF sel mu p' w) x) ((frsF sel mu p w).symm (repY Y)) ((frsF sel mu p w).symm (repY Y)) (by simp) hq
       have h1 : rhoS Ch sel mu (m2 + 1) w ((LinearEquiv.det ((1 : ↥(GLint X.E (R.N (m2 + 1)) w.1)) : Sp X.E (R.N (m2 + 1)) ≃ₗ[X.E] Sp X.E (R.N (m2 + 1))) : X.Eˣ) : X.E) = 1 := by
         simp [rhoS, LocE.unitV, redP_one]
       rw [h1, one_mul, map_one, inv_one, Units.val_one, mul_one] at key
       exact key
-    · rw [dif_neg hw]
+    · rw [dite_eq_right hw]
       obtain ⟨hne, hqm⟩ := coupling_index_scaled_mem_local sel mu cst hY w hw
       have hr0 := representative_mem hne
       have hq : ((qOf w.1 : X.E) ^ cst.M) • (frsF sel mu p w).symm (repY Y) ∈ stdAt X.E (R.N (m2 + 1)) w.1 := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
-import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
-import Formalism.CyclotomicNorms.StatementI
-import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+public import Formalism.GL3MeanSquares.SmoothedRemainderRealIntegralFormula
+public import Formalism.CyclotomicNorms.StatementI
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RayPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,39 +14,11 @@ namespace GlobalTheory.NT
 
 open Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory NumberField IsDedekindDomain
 
-def ntZeros {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : Set ℂ :=
-  {ρ | 0 < ρ.re ∧ ρ.re < 1 ∧ DirichletCharacter.LFunction χ ρ = 0}
-
 def mult {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (ρ : ℂ) : ℕ :=
   analyticOrderNatAt (DirichletCharacter.LFunction χ) ρ
 
-def zsum {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (S : Set ℂ) (f : ℂ → ℂ) : ℂ :=
-  ∑ᶠ ρ ∈ ntZeros χ ∩ S, (mult χ ρ : ℂ) * f ρ
-
-def zsumR {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (S : Set ℂ) (f : ℂ → ℝ) : ℝ :=
-  ∑ᶠ ρ ∈ ntZeros χ ∩ S, (mult χ ρ : ℝ) * f ρ
-
 def NormOne (d M p : ℕ) : Prop :=
   ∃ u v : ℤ, (p : ℤ) = (1 + M * u) ^ 2 + (1 + M * u) * (M * v) + (M * v) ^ 2 * (((d + 1) / 4 : ℕ) : ℤ)
-
-def QNum (x eps : ℝ) (q : ℕ) : Prop :=
-  q.Prime ∧ q % 8 = 3 ∧ Real.sqrt (X1 x eps) < q ∧ (q : ℝ) ≤ X1 x eps
-
-def DNum (x eps : ℝ) (q d : ℕ) : Prop :=
-  d.Prime ∧ d % 16 = 7 ∧ Real.sqrt (X2 x eps) < d ∧ (d : ℝ) ≤ X2 x eps ∧ kronSym (-(d : ℤ)) q = 1 ∧
-    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x ^ (eps / 5) → kronSym (-(d : ℤ)) p = 1
-
-def BoxQ (x eps : ℝ) (q M : ℕ) : Prop :=
-  2 ≤ M ∧ GoodAllFor (8 * X1 x eps) (psDir q) M ∧ GoodAllFor (8 * X1 x eps) (fun a => chi8 a * psDir q a) M
-
-def BoxD (x eps : ℝ) (q d M : ℕ) : Prop :=
-  2 ≤ M ∧ GoodAllFor (8 * X1 x eps * X2 x eps) (chDir d) M ∧
-  GoodAllFor (8 * X1 x eps * X2 x eps) (fun a => chi8 a * chDir d a) M ∧
-  GoodAllFor (8 * X1 x eps * X2 x eps) (fun a => chDir d a * psDir q a) M ∧
-  GoodAllFor (8 * X1 x eps * X2 x eps) (fun a => chi8 a * chDir d a * psDir q a) M
-
-def Ssum (x : ℝ) (κ : ℕ → ℂ) (q : ℕ) : ℂ :=
-  ∑ n ∈ Finset.Icc 1 ⌊zz x⌋₊, ((GlobalTheoryTheory.cn x n : ℝ) : ℂ) * κ n * kron (-(q : ℤ)) n
 
 theorem normOne_iff {d : ℕ} (hd : d % 4 = 3) (M p : ℕ) : NormOne d M p ↔ GlobalTheory.Mem.An.NormOne d M p := by
   obtain ⟨k, hk, rfl⟩ : ∃ k : ℕ, (d + 1) / 4 = k + 1 ∧ d = 4 * k + 3 := ⟨d / 4, by omega, by omega⟩
@@ -56,22 +32,6 @@ theorem normOne_iff {d : ℕ} (hd : d % 4 = 3) (M p : ℕ) : NormOne d M p ↔ G
     obtain rfl : A = 2 * (1 + M * u) + M * v := by linarith
     exact ⟨u, v, by nlinarith [h]⟩
 
-example : NormOne 7 1 2 := ⟨-1, 1, by norm_num⟩
-
-example : NormOne 7 2 7 := ⟨-1, 1, by norm_num⟩
-
-example : ¬ NormOne 7 1 3 := by
-  rw [normOne_iff (by norm_num)]
-  rintro ⟨A, B, h, -, -⟩
-  push_cast at h
-  have hB : B ^ 2 ≤ 1 := by nlinarith [sq_nonneg A]
-  have hA : A ^ 2 ≤ 12 := by nlinarith [sq_nonneg B]
-  have h1 : -1 ≤ B ∧ B ≤ 1 := by constructor <;> nlinarith
-  have h2 : -4 ≤ A ∧ A ≤ 4 := by constructor <;> nlinarith
-  obtain ⟨h1, h1'⟩ := h1
-  obtain ⟨h2, h2'⟩ := h2
-  interval_cases A <;> interval_cases B <;> omega
-
 section Hecke
 
 variable {K : Type} (L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
@@ -84,13 +44,13 @@ def InInertia (𝔭 : HeightOneSpectrum (𝓞 K)) (σ : L ≃ₐ[K] L) : Prop :=
 
 def UnramIn (𝔭 : HeightOneSpectrum (𝓞 K)) : Prop := ∀ σ : L ≃ₐ[K] L, InInertia L 𝔭 σ → σ = 1
 
-open Classical in
 
+open Classical in
 def heckeVal (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔭 : HeightOneSpectrum (𝓞 K)) : ℂ :=
   if h : (∀ σ, InInertia L 𝔭 σ → χ σ = 1) ∧ ∃ σ, IsFrob L 𝔭 σ then ((χ h.2.choose : ℂˣ) : ℂ) else 0
 
-open Classical in
 
+open Classical in
 def heckeIdeal (χ : (L ≃ₐ[K] L) →* ℂˣ) (I : Ideal (𝓞 K)) : ℂ :=
   ∏ᶠ 𝔭 : HeightOneSpectrum (𝓞 K), heckeVal L χ 𝔭 ^ (Associates.mk 𝔭.asIdeal).count (Associates.mk I).factors
 
@@ -105,8 +65,8 @@ def IsModulus (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔪 : Ideal (𝓞 K)) : Prop :
 def condNorm (χ : (L ≃ₐ[K] L) →* ℂˣ) : ℕ :=
   sInf {n | ∃ 𝔪 : Ideal (𝓞 K), IsModulus L χ 𝔪 ∧ Ideal.absNorm 𝔪 = n}
 
-variable (K) in
 
+variable (K) in
 def bigQ : ℝ :=
   |(discr K : ℝ)| * ((⨆ χ : (L ≃ₐ[K] L) →* ℂˣ, condNorm L χ : ℕ) : ℝ) *
     (Module.finrank ℚ K : ℝ) ^ Module.finrank ℚ K
@@ -116,11 +76,8 @@ def HeckeZero (χ : (L ≃ₐ[K] L) →* ℂˣ) (β : ℂ) : Prop :=
     (∀ s : ℂ, 1 < s.re → HasProd (fun 𝔭 : HeightOneSpectrum (𝓞 K) =>
       (1 - heckeVal L χ 𝔭 * ((Ideal.absNorm 𝔭.asIdeal : ℕ) : ℂ) ^ (-s))⁻¹) (F s)) ∧ F β = 0
 
-def piC (σ : L ≃ₐ[K] L) (X : ℝ) : ℕ :=
-  {𝔭 : HeightOneSpectrum (𝓞 K) | UnramIn L 𝔭 ∧ IsFrob L 𝔭 σ ∧ ((Ideal.absNorm 𝔭.asIdeal : ℕ) : ℝ) ≤ X}.ncard
 
 omit [NumberField K] [NumberField L] in
-
 instance smulCommClass_gal_integers : SMulCommClass (L ≃ₐ[K] L) (𝓞 K) (𝓞 L) where
   smul_comm s a x := by
     apply RingOfIntegers.ext
@@ -153,7 +110,7 @@ theorem heckeVal_eq [IsGalois K L] (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔭 : Hei
     heckeVal L χ 𝔭 = (χ σ : ℂˣ) := by
   have h : (∀ σ, InInertia L 𝔭 σ → χ σ = 1) ∧ ∃ σ, IsFrob L 𝔭 σ := ⟨hχ, σ, hσ⟩
   unfold heckeVal
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨P, hP, hPo, h1⟩ := (isFrob_iff L 𝔭 _).1 h.2.choose_spec
   obtain ⟨P', hP', hPo', h2⟩ := (isFrob_iff L 𝔭 _).1 hσ
   have := 𝔭.isPrime
@@ -168,7 +125,7 @@ theorem heckeVal_eq [IsGalois K L] (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔭 : Hei
 theorem heckeVal_eq_zero (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔭 : HeightOneSpectrum (𝓞 K))
     (hχ : ¬ ∀ τ, InInertia L 𝔭 τ → χ τ = 1) : heckeVal L χ 𝔭 = 0 := by
   unfold heckeVal
-  rw [dif_neg fun h => hχ h.1]
+  rw [dite_eq_right fun h => hχ h.1]
 
 theorem heckeVal_of_unramIn [IsGalois K L] (χ : (L ≃ₐ[K] L) →* ℂˣ) {𝔭 : HeightOneSpectrum (𝓞 K)}
     (hu : UnramIn L 𝔭) {σ : L ≃ₐ[K] L} (hσ : IsFrob L 𝔭 σ) : heckeVal L χ 𝔭 = (χ σ : ℂˣ) :=
@@ -228,16 +185,6 @@ theorem heckeZero_rat_one_iff (L : Type) [Field L] [NumberField L] [Algebra ℚ 
     have := (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ)).hasProd_iff.2 (riemannZeta_eulerProduct_hasProd hs)
     convert this using 2 with p
     simp [heckeVal_one, absNorm_rat]
-
-example : HeckeZero ℚ (1 : (ℚ ≃ₐ[ℚ] ℚ) →* ℂˣ) (-2) ∧ ¬ HeckeZero ℚ (1 : (ℚ ≃ₐ[ℚ] ℚ) →* ℂˣ) 2 := by
-  exact ⟨(heckeZero_rat_one_iff ℚ (-2)).2 (by simpa using riemannZeta_neg_two_mul_nat_add_one 0),
-    fun h => riemannZeta_ne_zero_of_one_lt_re (by simp) ((heckeZero_rat_one_iff ℚ 2).1 h)⟩
-
-example : bigQ ℚ ℚ = 1 := by
-  have h : ∀ χ : (ℚ ≃ₐ[ℚ] ℚ) →* ℂˣ, condNorm ℚ χ = 1 := fun χ => by
-    have hχ : χ = 1 := by ext σ; rw [Subsingleton.elim σ 1]; simp
-    rw [hχ, condNorm_one]
-  simp [bigQ, h, Rat.numberField_discr]
 
 end GlobalTheory.NT
 

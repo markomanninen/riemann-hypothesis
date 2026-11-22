@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -194,7 +198,7 @@ theorem subst_eq {w : PowerSeries R} (hw : WFixed W w) {σ : Type} (s : MvPowerS
     (hs : MvPowerSeries.constantCoeff s = 0) : WEqAt W s (w.subst s) := by
   have ha := hasSubst_of_constantCoeff_eq_zero_elliptic_torsion hs
   have e := congrArg (PowerSeries.substAlgHom ha) hw.2
-  simp only [map_add, map_mul, map_pow, substAlgHom_C ha, substAlgHom_X' ha] at e
+  simp only [map_add (f := _), map_mul, map_pow, substAlgHom_C ha, substAlgHom_X' ha] at e
   rw [substAlgHom_apply' ha] at e
   unfold Formalism.ELL.WEqAt
   simp only [Algebra.smul_def]

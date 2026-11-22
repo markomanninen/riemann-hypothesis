@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TraceEqAdd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolHOfPi
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.TraceEqAdd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SdVolHOfPi
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ theorem b_fg : (Submodule.span (v.adicCompletionIntegers F)
         have := congrArg (fun y : 𝓞 E => (y : E)) (b.sum_repr x)
         simpa using this.symm
       simp only
-      rw [hx, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [map_zsmul]
       exact zsmul_mem (Submodule.subset_span (Set.mem_range_self i)) _
@@ -69,7 +74,7 @@ theorem b_sigR_mem (σ : E →ₐ[F] E) {z : Fv F v ⊗[F] E} (hz : z ∈ OEv (E
     rw [e]
     exact b_inclR_mem (F := F) (E := E) v ⟨σ (b : E), hb⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul r x _ hx =>
     have h1 : r • x = algebraMap (Fv F v) (Fv F v ⊗[F] E) (r : Fv F v) * x := by
       rw [← Algebra.smul_def]; rfl

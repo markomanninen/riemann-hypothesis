@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealExtendConjMulEqAbsNorm
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdealExtendConjMulEqAbsNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
+
+@[expose] public section
 
 open NumberField
 

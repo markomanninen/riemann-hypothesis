@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
-import Formalism.LocalRingCardinality.DataTheta
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.FiniteIntertwining
+public import Formalism.LocalRingCardinality.DataTheta
+
+@[expose] public section
 
 noncomputable section
 

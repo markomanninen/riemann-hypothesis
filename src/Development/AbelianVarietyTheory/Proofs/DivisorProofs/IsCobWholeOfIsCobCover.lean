@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatFamilyExistsUnique
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatFamilyExistsUnique
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB)
@@ -17,7 +22,7 @@ namespace GlobalTheory.PtExt
 theorem isCob_whole_of_isCob_cover : ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (K : Type) (W : K → X.left.Opens), ⨆ i, W i = ⊤ → ∀ u : Fn1 X, IsCoc (whole X) u → ∀ k : Fn0 X, IsCob W u k → ∃ k' : Fn0 X, IsCob (whole X) u k' := by
   intro R _ X K W hW u hu k hk
   have ex : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt X D), ∃! d : D,
-      ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D →ₐ[R] E), Sm W (spOver ψ ≫ x) →
+      ∀ (E : Type) [CommRing E] [Algebra R E] (ψ : D →ₐ[R] E), Sm W (D := E) (spOver ψ ≫ x) →
         k E (spOver ψ ≫ x) - u D E ψ x = ψ d := by
     intro D _ _ x
     refine natFamily_existsUnique R X K W hW D x (fun E _ _ ψ ↦ k E (spOver ψ ≫ x) - u D E ψ x) ?_
@@ -31,7 +36,7 @@ theorem isCob_whole_of_isCob_cover : ∀ (R : Type) [CommRing R] (X : Over (Sp R
     ring
   let k' : Fn0 X := fun D _ _ x ↦ (ex D x).exists.choose
   have hk' : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt X D) (E : Type) [CommRing E] [Algebra R E]
-      (ψ : D →ₐ[R] E), Sm W (spOver ψ ≫ x) → k E (spOver ψ ≫ x) - u D E ψ x = ψ (k' D x) :=
+      (ψ : D →ₐ[R] E), Sm W (D := E) (spOver ψ ≫ x) → k E (spOver ψ ≫ x) - u D E ψ x = ψ (k' D x) :=
     fun D _ _ x ↦ (ex D x).exists.choose_spec
   refine ⟨k', fun D _ _ D' _ _ φ x _ ↦ ?_⟩
   have huniq : k' D' (spOver φ ≫ x) = u D D' φ x + φ (k' D x) := by
@@ -42,7 +47,7 @@ theorem isCob_whole_of_isCob_cover : ∀ (R : Type) [CommRing R] (X : Over (Sp R
     have h1 := hk' D x E (ψ.comp φ) (by rw [e]; exact hψ)
     have c := hu D D' E φ ψ x (sm_whole x)
     rw [e, c, AlgHom.comp_apply] at h1
-    rw [map_add, ← h1]
+    rw [map_add (f := _), ← h1]
     ring
   rw [huniq]
   ring

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.HermitianLattices.FinalNeighbourConstruct
-import Formalism.HermitianLattices.FinalMass
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ShortVectorEveryPlace
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.FinalNeighbourConstruct
+public import Formalism.HermitianLattices.FinalMass
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.ShortVectorEveryPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem star_algebraMap_mem_range (r : 𝓞 K) : star (algebraMap (𝓞 K) K r) 
 theorem inner_sum_orthonormal (h : V →ₗ⋆[K] V →ₗ[K] K) {n : ℕ} (e : Fin n → V)
     (he : ∀ i j, h (e i) (e j) = if i = j then 1 else 0) (a b : Fin n → K) :
     h (∑ i, a i • e i) (∑ j, b j • e j) = ∑ i, star (a i) * b i := by
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, he,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, he,
     smul_eq_mul, starRingEnd_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [mul_comm]
@@ -57,7 +62,8 @@ theorem unimodular_of_orthonormal_basis (h : V →ₗ⋆[K] V →ₗ[K] K) (L : 
     refine Submodule.sum_mem _ fun i _ => ?_
     have h1 := hz (e i) (Submodule.subset_span ⟨i, rfl⟩)
     have h2 : h (e i) (∑ j, c j • e j) = c i := by
-      simp only [map_sum, map_smul, he, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, he, smul_eq_mul]
       simp [Finset.sum_ite_eq]
     rw [h2] at h1
     obtain ⟨o, ho⟩ := Submodule.mem_one.1 h1

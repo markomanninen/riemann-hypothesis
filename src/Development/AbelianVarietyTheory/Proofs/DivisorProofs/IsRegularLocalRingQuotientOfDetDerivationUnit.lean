@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientSpanRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationExtendLocalizationAtPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientSpanRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivationExtendLocalizationAtPrime
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -37,9 +41,10 @@ theorem isRegularLocalRing_quotient : ∀ (T : Type) [CommRing T] [IsRegularRing
       refine Submodule.mul_induction_on hy (fun a ha b hb => ?_) (fun y z hy hz => ?_)
       · rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
         exact Ideal.add_mem _ (Ideal.mul_mem_right _ _ ha) (Ideal.mul_mem_right _ _ hb)
-      · rw [map_add]; exact Ideal.add_mem _ hy hz
+      · rw [map_add (f := _)]; exact Ideal.add_mem _ hy hz
     have h1 := hsq _ ha
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     have h2 : ∀ j, D' (a j * x j) = a j * algebraMap T A (D i (f j)) + x j * D' (a j) := by
       intro j
       rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, hD']
@@ -62,7 +67,8 @@ theorem isRegularLocalRing_quotient : ∀ (T : Type) [CommRing T] [IsRegularRing
     have hv : M.mulVec (fun j => residue A (a j)) = 0 := by
       funext i
       have := (residue_eq_zero_iff _).mpr (hrow i)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       simp only [Matrix.mulVec, dotProduct, M, RingHom.mapMatrix_apply, Matrix.map_apply,
         Matrix.of_apply, Pi.zero_apply, φ, RingHom.comp_apply]
       rw [← this]
@@ -78,7 +84,8 @@ theorem isRegularLocalRing_quotient : ∀ (T : Type) [CommRing T] [IsRegularRing
     intro g hg i
     choose a ha using fun j => residue_surjective (g j)
     have h1 : (maximalIdeal A).toCotangent (∑ j, a j • τ j) = 0 := by
-      rw [map_sum, ← hg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hg]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, ← ha j]
       rfl

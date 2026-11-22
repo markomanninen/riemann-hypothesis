@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem srLift_field (A : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (K : Submodule k
   · have h0 : (LinearMap.ker A.mulVecLin).projectionOnto C hC (Pi.single (Fin.last n) 1) = 0 :=
       Submodule.linearProjOfIsCompl_apply_right hC ⟨_, heC⟩
     rw [LinearMap.toMatrix'_apply]
-    simp [h, h0]
+    simp only [h, LinearMap.comp_apply, h0, LinearMap.map_zero, Pi.zero_apply]
   · intro hdet
     obtain ⟨v, hv0, hv⟩ := Matrix.exists_mulVec_eq_zero_iff.2 hdet
     apply hv0
@@ -88,7 +92,7 @@ theorem srLift_field (A : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (K : Submodule k
       rw [← Matrix.mulVecLin_apply]
       exact LinearMap.mem_ker.1 hx
     have hproj : (LinearMap.ker A.mulVecLin).projectionOnto C hC (x + c) = ⟨x, hx⟩ := by
-      rw [map_add, Submodule.linearProjOfIsCompl_apply_left hC ⟨x, hx⟩,
+      rw [map_add (f := _), Submodule.linearProjOfIsCompl_apply_left hC ⟨x, hx⟩,
         Submodule.linearProjOfIsCompl_apply_right hC ⟨c, hc⟩, add_zero]
     have hv' : A *ᵥ c + (φ ⟨x, hx⟩ : Fin (n + 1) → k) = 0 := by
       have e : h (x + c) = (φ ⟨x, hx⟩ : Fin (n + 1) → k) := by
@@ -154,7 +158,8 @@ theorem exists_local (m : Ideal R) [hm : m.IsMaximal] (A : Matrix (Fin (n + 1)) 
     show _ ∈ redV m '' (K : Set (Fin (n + 1) → R))
     refine ⟨w - A *ᵥ x, hx, ?_⟩
     funext i
-    simp [redV, Ab, Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [redV, Ab, Matrix.mulVec, dotProduct, map_sum]
   obtain ⟨Hb, hHcol, hHlast, hdet⟩ := srLift_field Ab (Kbar m K) hAb hKb
   have hlift : ∀ j, ∃ g : Fin (n + 1) → R, g ∈ K ∧ redV m g = fun i => Hb i j := by
     intro j
@@ -174,7 +179,7 @@ theorem exists_local (m : Ideal R) [hm : m.IsMaximal] (A : Matrix (Fin (n + 1)) 
       rw [RingHom.map_det, RingHom.mapMatrix_apply]
       congr 1
       ext i j
-      simp only [Matrix.map_apply, Matrix.add_apply, map_add, Ab]
+      simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _), Ab]
       congr 1
       by_cases hj : j = Fin.last n
       · subst hj
@@ -239,9 +244,10 @@ theorem srLift_of_finite (hfin : {m : Ideal R | m.IsMaximal}.Finite) (A : Matrix
     rw [RingHom.map_det, RingHom.mapMatrix_apply] at hdetM ⊢
     convert hdetM using 2
     ext i j
-    simp only [Matrix.map_apply, Matrix.add_apply, map_add]
+    simp only [Matrix.map_apply, Matrix.add_apply, map_add (f := _)]
     congr 1
-    rw [Matrix.sum_apply, map_sum, Finset.sum_eq_single M]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.sum_apply, map_sum, Finset.sum_eq_single M]
     · have h1 : Ideal.Quotient.mk M (e M) = 1 := by
         rw [← map_one (Ideal.Quotient.mk M)]
         exact Ideal.Quotient.eq.2 (he1 M hMS)

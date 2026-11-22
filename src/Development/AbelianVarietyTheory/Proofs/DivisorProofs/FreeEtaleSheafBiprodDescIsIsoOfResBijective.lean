@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSections
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeHomSections
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -28,15 +32,15 @@ theorem freeYoneda_res_id {F : Shv R} {U : Scheme.{0}} (s : Sec F U) : Sec.res (
 theorem freeYoneda_secMap_comp {F G H : Shv R} (φ : F ⟶ G) (ψ : G ⟶ H) {U : Scheme.{0}} (s : Sec F U) :
     Sec.map (φ ≫ ψ) s = Sec.map ψ (Sec.map φ s) := rfl
 
-variable (R) in
 
+variable (R) in
 theorem freeYoneda_gen {Y U : Scheme.{0}} (x : U ⟶ Y) :
     freeGen R (yoneda.obj Y) U x = Sec.res x (freeGen R (yoneda.obj Y) Y (𝟙 Y)) := by
   rw [(free_hom_sections R (yoneda.obj Y) ((free R).obj (yoneda.obj Y))).2.2.1]
   simp
 
-variable (R) in
 
+variable (R) in
 theorem freeYoneda_ev_bijective {Y : Scheme.{0}} (F : Shv R) :
     Function.Bijective fun h : (free R).obj (yoneda.obj Y) ⟶ F => Sec.map h (freeGen R (yoneda.obj Y) Y (𝟙 Y)) := by
   obtain ⟨hex, hext, -, -⟩ := free_hom_sections R (yoneda.obj Y) F
@@ -52,8 +56,8 @@ theorem freeYoneda_ev_bijective {Y : Scheme.{0}} (F : Shv R) :
       exact freeYoneda_res_res g x s)
     exact ⟨φ, (hφ Y (𝟙 Y)).trans (freeYoneda_res_id s)⟩
 
-variable (R) in
 
+variable (R) in
 theorem freeYoneda_ev_pre {Y X : Scheme.{0}} (f : Y ⟶ X) {F : Shv R} (h : (free R).obj (yoneda.obj X) ⟶ F) :
     Sec.map ((free R).map (yoneda.map f) ≫ h) (freeGen R (yoneda.obj Y) Y (𝟙 Y)) =
       Sec.res f (Sec.map h (freeGen R (yoneda.obj X) X (𝟙 X))) := by

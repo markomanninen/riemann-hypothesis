@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 
 namespace GlobalTheory
@@ -19,11 +24,12 @@ theorem memLp_two_and_tendsto_of_cauchy_of_ae_tendsto :
     ∀ (X : Type) [MeasurableSpace X] (μ : Measure X) (E : Type) [NormedAddCommGroup E] (v : ℕ → X → E) (u : X → E) (K : ℝ), (∀ n, MemLp (v n) 2 μ) → (∀ᵐ x ∂μ, Tendsto (fun n => v n x) atTop (𝓝 (u x))) → (∀ n m : ℕ, n ≤ m → ∫ x, ‖v n x - v m x‖ ^ 2 ∂μ ≤ K / ((n : ℝ) + 1)) → MemLp u 2 μ ∧ Tendsto (fun n => eLpNorm (v n - u) 2 μ) atTop (𝓝 0) := by
   intro X _ μ E _ v u K hv hlim hC
   have hu : AEStronglyMeasurable u μ :=
-    aestronglyMeasurable_of_tendsto_ae atTop (fun n => (hv n).1) hlim
+    aestronglyMeasurable_of_tendsto_ae atTop (fun n => (hv n).aestronglyMeasurable) hlim
   have hb : ∀ n, eLpNorm (v n - u) 2 μ ≤ ENNReal.ofReal (Real.sqrt (K / ((n : ℝ) + 1))) := by
     intro n
     have hF := Lp.eLpNorm_lim_le_liminf_eLpNorm (μ := μ) (p := 2) (f := fun m => v n - v m)
-      (fun m => ((hv n).sub (hv m)).1) (v n - u)
+      (fun m => ((hv n).sub (hv m)).aestronglyMeasurable) (v n - u)
+      ((hv n).aestronglyMeasurable.sub hu)
       (by
         filter_upwards [hlim] with x hx
         exact tendsto_const_nhds.sub hx)
@@ -32,7 +38,7 @@ theorem memLp_two_and_tendsto_of_cauchy_of_ae_tendsto :
     exact eLpNorm_two_le_ofReal_sqrt_of_integral_le ((hv n).sub (hv m)) (hC n m hm)
   refine ⟨?_, ?_⟩
   · have h0 : MemLp (v 0 - u) 2 μ :=
-      ⟨(hv 0).1.sub hu, (hb 0).trans_lt ENNReal.ofReal_lt_top⟩
+      memLp_iff.mpr ((hb 0).trans_lt ENNReal.ofReal_lt_top)
     have := (hv 0).sub h0
     simpa using this
   · have h1 : Tendsto (fun n : ℕ => K / ((n : ℝ) + 1)) atTop (𝓝 0) :=

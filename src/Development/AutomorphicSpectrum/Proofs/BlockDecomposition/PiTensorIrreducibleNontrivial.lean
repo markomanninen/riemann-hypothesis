@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
-import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SquareIntegrableTempered.CasselmanCriterion.Zj
+public import GroundTheory.AutomorphicForms.SupercuspidalCoefficients
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult
 
@@ -23,14 +27,14 @@ theorem nontrivial_piTensorProduct_of_nontrivial {ι : Type} [Fintype ι] {V : �
     exact hv i ((Module.forall_dual_apply_eq_zero_iff ℂ (v i)).1
       fun f => not_not.1 (not_exists.1 hc f))
   choose f hf using hf
-  let F : MultilinearMap ℂ V ℂ := (MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap f
+  let F : (Π i, V i) →ₘₗ[ℂ] ℂ := (MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap f
   have hF : PiTensorProduct.lift F (PiTensorProduct.tprod ℂ v) ≠ 0 := by
     rw [PiTensorProduct.lift.tprod]
     simpa [F] using Finset.prod_ne_zero_iff.2 fun i _ => hf i
   refine ⟨PiTensorProduct.tprod ℂ v, 0, fun h => hF ?_⟩
   rw [h, map_zero]
 
-theorem nontrivial_piTensorProduct_irrGL : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], ∀ {h : ℕ} (x : Fin h → IrrGL k), Nontrivial (PiTensorProduct ℂ (fun a => (x a).2.rep.V)) := by
+theorem nontrivial_piTensorProduct_irrGL : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], ∀ {h : ℕ} (x : Fin h → IrrGL (k := k)), Nontrivial (PiTensorProduct ℂ (fun a => (x a).2.rep.V)) := by
   intro k _ _ _ _ h x
   have : ∀ a, Nontrivial (x a).2.rep.V := fun a =>
     nontrivial_space_of_isIrreducible _ (x a).2.rep.irr

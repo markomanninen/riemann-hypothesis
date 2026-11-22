@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProdE
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ProdE
+
+@[expose] public section
 
 noncomputable section
 

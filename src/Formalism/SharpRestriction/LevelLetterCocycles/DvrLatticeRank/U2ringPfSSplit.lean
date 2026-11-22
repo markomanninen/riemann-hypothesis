@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U2ringPfEMkAeval
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U2ringPfEMkAeval
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [CommRing O] [Algebra O LL] {v : AddValuation LL (WithTop ℚ)} {n : ℕ}
     (W : LocWach PD LL O v n)
 
-local notation "mkI" y => Ideal.Quotient.mk (DualFramesAlt.eigenRingInvariants.Ia y)
+local notation "mkI" y:max => Ideal.Quotient.mk (DualFramesAlt.eigenRingInvariants.Ia y)
 
 theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
     [IsAdicComplete (IsLocalRing.maximalIdeal O) O]
@@ -63,7 +67,7 @@ theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
     intro i
     obtain ⟨uv, huv⟩ := DualFramesAlt.eigenRingInvariants.ev_exists (hxm i) u
     have h1 : (mkI (xs i)) π = (mkI (xs i)) (PowerSeries.C (uv * xs i ^ s')) := by
-      rw [hπu, map_mul, map_pow, huv, DualFramesAlt.eigenRingInvariants.mk_X, ← map_pow, ← map_mul, ← map_pow, ← map_mul]
+      simp only [hπu, map_mul, map_pow, huv, DualFramesAlt.eigenRingInvariants.mk_X]
     have h2 := DualFramesAlt.eigenRingInvariants.ev_inj (hxm i) ((hyv i).symm.trans h1)
     rw [h2]
     exact Ideal.mul_mem_left _ _ (Ideal.pow_mem_of_mem _ (hxm i) _ (by omega))
@@ -75,23 +79,25 @@ theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
       rw [sub_ne_zero]
       exact hζ.pow_ne_one_of_pos_of_lt (by have := (Finset.mem_Ico.1 hi).1; omega) (Finset.mem_Ico.1 hi).2
     obtain ⟨qv, hqv⟩ := DualFramesAlt.eigenRingInvariants.ev_exists (hxm i) W.q₀
-    have h1 := congrArg (Ideal.Quotient.mk (DualFramesAlt.eigenRingInvariants.Ia (xs i))) W.q₀_def
+    have h1 := congrArg (mkI (xs i)) W.q₀_def
     have e1 : (mkI (xs i)) (PowerSeries.X * W.q₀) = (mkI (xs i)) (PowerSeries.C (xs i * qv)) := by
-      rw [map_mul, DualFramesAlt.eigenRingInvariants.mk_X, hqv, ← map_mul, ← map_mul]
+      simp only [map_mul, DualFramesAlt.eigenRingInvariants.mk_X, hqv]
     have e2 : (mkI (xs i)) ((1 + PowerSeries.X) ^ p - 1) =
         (mkI (xs i)) (PowerSeries.C ((1 + xs i) ^ p - 1)) := by
-      simp only [map_sub, map_pow, map_add, map_one, DualFramesAlt.eigenRingInvariants.mk_X]
+      simp only [map_sub, map_pow, map_add (f := _), map_one, DualFramesAlt.eigenRingInvariants.mk_X]
     rw [e1, e2, hxroot i, sub_self] at h1
     have h3 := DualFramesAlt.eigenRingInvariants.ev_inj (hxm i) h1
     have hqv0 : qv = 0 := (mul_eq_zero.1 h3).resolve_left hxne
-    obtain ⟨wv, hwv⟩ := DualFramesAlt.eigenRingInvariants.ev_exists (hxm i) wq
-    have hwvu : IsUnit wv := u2ringPfE_val_unit (hxm i)
-      ((PowerSeries.isUnit_iff_constantCoeff).1 hwq) hwv
-    have h4 : (mkI (xs i)) W.q₀ = (mkI (xs i)) (PowerSeries.C (wv * Ec.eval (yv i))) := by
-      rw [hQ, map_mul, hwv, u2ringPfE_mk_aeval (hyv i), ← map_mul, ← map_mul]
-    rw [hqv, hqv0] at h4
-    have h5 := DualFramesAlt.eigenRingInvariants.ev_inj (hxm i) h4
-    exact (mul_eq_zero.1 h5.symm).resolve_left hwvu.ne_zero
+    let q := Ideal.Quotient.mkₐ O (DualFramesAlt.eigenRingInvariants.Ia (xs i))
+    have hzero : q W.q₀ = 0 := by
+      change (mkI (xs i)) W.q₀ = 0
+      simp only [hqv, hqv0, map_zero]
+    have hyq : q π = q (PowerSeries.C (yv i)) := hyv i
+    have heval : Polynomial.aeval (PowerSeries.C (yv i)) Ec = PowerSeries.C (Ec.eval (yv i)) :=
+      Polynomial.aeval_algebraMap_apply_eq_algebraMap_eval (yv i) Ec
+    rw [hQ, map_mul, ← Polynomial.aeval_algHom_apply q, hyq, Polynomial.aeval_algHom_apply q,
+      heval, (hwq.map q).mul_right_eq_zero] at hzero
+    exact DualFramesAlt.eigenRingInvariants.ev_zero (hxm i) hzero
 
   have hfib : ∀ y ∈ IsLocalRing.maximalIdeal O, (I.filter fun i => yv i = y).card ≤ s' := by
     intro y hy
@@ -101,7 +107,7 @@ theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
       Finset.card_image_of_injOn (hxinj.mono (by intro i hi; exact (Finset.mem_filter.1 hi).1))
     have hTm : ∀ t ∈ Tt, t ∈ IsLocalRing.maximalIdeal O := by
       intro t ht; obtain ⟨i, -, rfl⟩ := Finset.mem_image.1 ht; exact hxm i
-    have hf0 : ∀ t ∈ Tt, Ideal.Quotient.mk (DualFramesAlt.eigenRingInvariants.Ia t) (π - PowerSeries.C y) = 0 := by
+    have hf0 : ∀ t ∈ Tt, (mkI t) (π - PowerSeries.C y) = 0 := by
       intro t ht
       obtain ⟨i, hi, rfl⟩ := Finset.mem_image.1 ht
       rw [map_sub, hyv i, (Finset.mem_filter.1 hi).2, sub_self]
@@ -166,7 +172,7 @@ theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
         simp [Polynomial.coe_pow, Polynomial.coe_add, Polynomial.coe_one, Polynomial.coe_X]
       obtain ⟨p', hp'⟩ : ∃ p', p = p' + 1 := ⟨p - 1, by omega⟩
       rw [map_sub, e, Polynomial.coeff_coe, Polynomial.coeff_one_add_X_pow, Nat.choose_self,
-        PowerSeries.coeff_one, if_neg (by omega), sub_zero, hp', PowerSeries.coeff_succ_X_mul] at h
+        PowerSeries.coeff_one, ite_eq_right (by omega), sub_zero, hp', PowerSeries.coeff_succ_X_mul] at h
       rw [hp', Nat.add_sub_cancel]
       exact_mod_cast h
     rw [hcoef] at hc1
@@ -190,9 +196,9 @@ theorem u2ringPfS_split [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
     · show ζ ^ i - 1 ≠ 0
       rw [sub_ne_zero]
       exact hζ.pow_ne_one_of_pos_of_lt (by have := (Finset.mem_Ico.1 hi).1; omega) (Finset.mem_Ico.1 hi).2
-    · show (mkI xs i) π = _
+    · show (mkI (xs i)) π = _
       rw [hyv i]
-      show _ = (mkI xs i) (PowerSeries.C (eqv j : O))
+      show _ = (mkI (xs i)) (PowerSeries.C (eqv j : O))
       rw [hij]
 
 end U2S

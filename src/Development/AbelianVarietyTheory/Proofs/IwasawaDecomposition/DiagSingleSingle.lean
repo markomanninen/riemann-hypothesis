@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Formalism.SharpRestriction.InertJacobiLevels.HostFam
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NegOneNormFromCmFieldFiniteAdelesStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasSignatureDiagonalSgn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RootOfUnityEightQMemCoeffGaloisSubfield
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Formalism.SharpRestriction.InertJacobiLevels.HostFam
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NegOneNormFromCmFieldFiniteAdelesStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasSignatureDiagonalSgn
+
+@[expose] public section
 
 noncomputable section
 
@@ -188,7 +192,7 @@ def hypVec (a b : E) (i : Fin R.rS) : Fin (R.rankY 0) → E :=
 theorem hypVec_hypVec (a b c d : E) (i j : Fin R.rS) :
     diagForm _ (cut _ (pY R 0)) (hypVec R a b i) (hypVec R c d j) =
       if i = j then star a * c - star b * d else 0 := by
-  simp only [hypVec, map_add, LinearMap.add_apply, diag_single_single, cut_idxP, cut_idxM]
+  simp only [hypVec, map_add (f := _), LinearMap.add_apply, diag_single_single, cut_idxP, cut_idxM]
   have hi := i.isLt
   have hj := j.isLt
   have e1 : ¬ ((idxP R i : ℕ) = idxM R j) := by simp only [idxP, idxM]; omega
@@ -205,14 +209,14 @@ theorem hypVec_hypVec (a b c d : E) (i j : Fin R.rS) :
 
 theorem ext_hypVec (x : Fin (R.N 0) → E) (a b : E) (i : Fin R.rS) :
     diagForm _ (cut _ (pY R 0)) (extTo (R.N 0) (R.rankY 0) x) (hypVec R a b i) = 0 := by
-  rw [hypVec, map_add, diag_ext_single, diag_ext_single, add_zero]
+  rw [hypVec, map_add (f := _), diag_ext_single, diag_ext_single, add_zero]
   · simp only [idxM, N_zero]; omega
   · simp only [idxP, N_zero]; omega
 
 theorem z_hypVec (c a b : E) (i : Fin R.rS) :
     diagForm _ (cut _ (pY R 0)) (Pi.single (idxZ R) c) (hypVec R a b i) = 0 := by
   have hi := i.isLt
-  rw [hypVec, map_add, diag_single_single, diag_single_single, if_neg, if_neg, add_zero]
+  rw [hypVec, map_add (f := _), diag_single_single, diag_single_single, if_neg, if_neg, add_zero]
   · simp only [idxM, idxZ]; omega
   · simp only [idxP, idxZ]; omega
 
@@ -322,10 +326,5 @@ end GlobalTheory.Mem.DiagSp
 
 open Formalism.BasicNotions NumberField IsDedekindDomain GlobalTheory.Mem
 open scoped TensorProduct
-
-theorem GlobalTheory.Mem.exists_spaces : ∀ (R : Ranks) (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] (cm : CMData F E) (T : ℕ) (hT : T.Prime) (pz : E) (hpz : star pz * pz = T) (vn : ℕ → Bool), ∃ S : Spaces R F E, S.T = T ∧ (∀ j, j ≤ R.m → ∀ τ : E →+* ℂ, (S.Y j).sig τ = sigYD R j) ∧ S.Vneg = vn ∧ ∃ hstar : ∀ x : E, IsIntegral ℤ x → IsIntegral ℤ (star x), ∀ j, S.X j = Formalism.BasicNotions.Examples₂.posSpace hstar (R.N j) := by
-  intro R F E _ _ _ _ _ _ cm T hT pz hpz vn
-  exact ⟨DiagSp.spacesStd R cm T hT pz hpz vn, rfl, fun j _ τ => DiagSp.spY_sig R j τ, rfl,
-    Formalism.BasicNotions.Examples₂.star_isIntegral, fun _ => rfl⟩
 
 end

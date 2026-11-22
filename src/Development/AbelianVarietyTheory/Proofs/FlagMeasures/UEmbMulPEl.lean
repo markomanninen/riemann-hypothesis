@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
+
+@[expose] public section
 
 noncomputable section
 
@@ -191,7 +195,7 @@ theorem cont_parAct (k r : ℕ) : Continuous fun q : (UT r → ℂ) × PPar k r 
   refine Continuous.prodMk ?_ ?_
   · refine continuous_pi fun a => continuous_pi fun j => ?_
     change Continuous fun q : (UT r → ℂ) × PPar k r => ∑ c, star (upper q.1 a c) * q.2.1 c j
-    exact continuous_finset_sum _ fun c _ => (hu.matrix_elem a c).star.mul (by fun_prop)
+    exact continuous_finsetSum _ fun c _ => (hu.matrix_elem a c).star.mul (by fun_prop)
   · have hs : Continuous fun q : (UT r → ℂ) × PPar k r => skewLin r q.2.2 :=
       (skewLin r).continuous_of_finiteDimensional.comp (by fun_prop)
     exact (coordLin r).continuous_of_finiteDimensional.comp (hu.matrix_mul (hs.matrix_mul hu.matrix_conjTranspose))

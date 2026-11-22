@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.AlSel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LaInj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LaDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.KapF
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.AlSel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LaInj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.LaDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.KapF
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -35,7 +39,7 @@ private theorem UpperTheory.V.Pa.exists_dual_functional_complement {R F N V : Ty
         refine key _ _ _ (hc _ (μ + ν).2) ?_
         have e : T ((μ + ν : L) : N →+ F) - ∑ j, (c μ μ.2 + c ν ν.2) j • κ j
             = (T μ - ∑ j, c μ μ.2 j • κ j) + (T ν - ∑ j, c ν ν.2 j • κ j) := by
-          simp only [Submodule.coe_add, map_add, Pi.add_apply, add_smul, Finset.sum_add_distrib]
+          simp only [Submodule.coe_add, map_add (f := _), Pi.add_apply, add_smul, Finset.sum_add_distrib]
           abel
         rw [e]
         exact B.add_mem (hc _ μ.2) (hc _ ν.2)
@@ -82,7 +86,8 @@ private theorem UpperTheory.V.Pa.exists_dual_functional_complement {R F N V : Ty
       intro μ hμ
       have e : ∀ j, μ (m j) = C ⟨μ, hμ⟩ j := fun j => hm j ⟨μ, hμ⟩
       have ev2 : μ y = ∑ j, C ⟨μ, hμ⟩ j * a j := hev ⟨μ, hμ⟩
-      rw [map_sub, map_sum, ev2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, ev2]
       simp only [hL μ hμ, hb, e]
       rw [sub_eq_zero]
       exact Finset.sum_congr rfl fun j _ => mul_comm _ _

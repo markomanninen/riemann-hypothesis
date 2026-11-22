@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.CxCoh GlobalTheory.PDA GlobalTheory.PDForm GlobalTheory.SmoothLift
 
 set_option autoImplicit false
@@ -9,8 +14,8 @@ noncomputable section
 
 namespace GlobalTheory.CatCoh.Desc
 
-open Classical in
 
+open Classical in
 theorem restrict_upwardClosed_subcategory_pull1_bijective : ∀ (R : Type) [CommRing R] (C : Type 1) [Category.{0} C]
     (F : C ⥤ CommAlgCat.{0} R) (P : ObjectProperty C), (∀ S S', (S ⟶ S') → P S → P S') →
     (∀ T, Desc.Sep F fun S (_ : T ⟶ S) ↦ P S) → (∀ T, Desc.Glue F fun S (_ : T ⟶ S) ↦ P S) →
@@ -86,7 +91,7 @@ theorem restrict_upwardClosed_subcategory_pull1_bijective : ∀ (R : Type) [Comm
     · have k1 := hf _ _ (φ ≫ ψ) S u hp
       have k2 := hf _ _ φ S (ψ ≫ u) hp
       have k3 := hf _ _ ψ S u hp
-      simp only [map_sub, map_add, mp_comp, Category.assoc] at k1 k2 ⊢
+      simp only [map_sub, map_add (f := _), mp_comp, Category.assoc] at k1 k2 ⊢
       linear_combination k1 - k2 - k3
     · rw [CoefMap.pullCohomologyOne_class]
       congr 1

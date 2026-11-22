@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionTensorPullbackRingHomBijective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SectionTensorPullbackRingHomBijective
+
+@[expose] public section
+
 open Set
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
@@ -25,7 +30,7 @@ theorem exists_const_addEquiv_of_range_eq : ∀ (n g : ℕ) (Λ Λ' : Type) [Add
     rw [← hf _ b₀ hb₀, ← hk _ b₀ hb₀]
   · intro x x'
     apply hi
-    rw [map_add, ← hf _ b₀ hb₀, ← hf _ b₀ hb₀, ← hf _ b₀ hb₀, map_add]
+    rw [map_add (f := _), ← hf _ b₀ hb₀, ← hf _ b₀ hb₀, ← hf _ b₀ hb₀, map_add (f := _)]
   · intro b hb x
     exact hf x b hb
 

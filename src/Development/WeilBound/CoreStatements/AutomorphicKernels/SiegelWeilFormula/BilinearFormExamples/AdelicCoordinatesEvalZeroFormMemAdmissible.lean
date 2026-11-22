@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem Bf_incM [FiniteDimensional F E] {m n : ℕ} (σ : E →ₐ[F] E) (J : Ma
   have h1 : (incM F Z).map (cA σ) = incM F (Z.map σ) := by ext; rfl
   rw [Bf, h1, ← incM_transpose', ← incM_mul', ← incM_mul', ← trace_inclR']
   congr 1
-  rw [Matrix.trace, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.trace, Matrix.trace, map_sum]
   rfl
 
 theorem e_rat {m n : ℕ} {σ : E →ₐ[F] E} (bs : Module.Basis (Fin 2) F E) (A : Spc F E m) (Y : Spc F E n)
@@ -174,7 +179,8 @@ theorem evaluation_zero_antisymmetric {m n : ℕ} {σ : E →ₐ[F] E} (bs : Mod
     show _ = algebraMap F (AF F) (xiEquiv bs b hb y k)
     rw [xiEquiv_apply]
   have hdot : (fun k => algebraMap F (AF F) (a k)) ⬝ᵥ (fun k => algebraMap F (AF F) (c k)) = algebraMap F (AF F) (a ⬝ᵥ c) := by
-    simp [dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum]
   simp only [ev0, LinearMap.coe_mk, AddHom.coe_mk, Darboux.rho, schr, ha, zero_dotProduct, zero_add, hdot, invOf_two_alg, hψ,
     one_mul]
 

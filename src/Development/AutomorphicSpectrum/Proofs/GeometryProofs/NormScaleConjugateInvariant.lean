@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsComplexPointNonvanishingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointConjugate
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsPowSubMemSpanOfIsUnitModOfIsAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsComplexPointNonvanishingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointConjugate
+
+@[expose] public section
 
 noncomputable section
 

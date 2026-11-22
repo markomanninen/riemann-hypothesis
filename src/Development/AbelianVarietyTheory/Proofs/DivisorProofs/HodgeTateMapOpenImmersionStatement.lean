@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateMapOpenImmersion
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateMapOpenImmersion
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtMapDualBCLeft
+
+@[expose] public section
 
 set_option autoImplicit false
 

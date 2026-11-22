@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiRegularAlongOfEtale
-import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentBasisCoords
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiRegularAlongOfEtale
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LinearIndependentBasisCoords
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyHomologyEquiv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,8 +24,6 @@ def extSpace (V : Submodule K X) : Submodule E X' := Submodule.span E (ι '' V)
 
 def extMap (V : Submodule K X) : V →ₛₗ[j] extSpace ι V :=
   (ι.domRestrict V).codRestrict _ fun x => Submodule.subset_span ⟨x, x.2, rfl⟩
-
-@[simp] theorem coe_extMap (V : Submodule K X) (x : V) : (extMap ι V x : X') = ι x := rfl
 
 theorem isExtension_extMap
     (h : ∀ (n : ℕ) (v : Fin n → X), LinearIndependent K v → LinearIndependent E fun i => ι (v i))
@@ -50,8 +52,8 @@ theorem fg_extLat {M : Submodule (𝓞 K) X} (h : M.FG) : (extLat ι M).FG := by
   obtain ⟨S, rfl⟩ := h
   exact extLat_span ι S ▸ Submodule.fg_span (S.finite_toSet.image ι)
 
-variable {ι} in
 
+variable {ι} in
 theorem IsExtension.span_extLat (hι : IsExtension ι) {M : Submodule (𝓞 K) X}
     (h : Submodule.span K (M : Set X) = ⊤) : Submodule.span E (extLat ι M : Set X') = ⊤ := by
   refine top_le_iff.1 (hι.span.ge.trans (Submodule.span_le.2 ?_))
@@ -133,8 +135,8 @@ theorem finite_top (hp : IsProjOver p) (hB : B.IsLB) : Module.Finite k (H0 p B �
 variable [Algebra k E] {q : T ⟶ Sp E} {r : T ⟶ Y} (H : IsPullback r q p (spMap (algebraMap k E)))
   {B' : LB T} (hB : B.IsLB) (hB' : B'.IsLB) (a : ChartPull B' B r) {W : T.Opens}
 
-include hB hB' in
 
+include hB hB' in
 theorem linearIndependent_pullChart (h : W ≤ r ⁻¹ᵁ O) (h' : r ⁻¹ᵁ O ≤ W) {ι : Type*} [Fintype ι]
     {f : ι → H0 p B O} (hf : LinearIndependent k f) :
     LinearIndependent E fun i => pullChart a H.w h (f i) := by
@@ -148,8 +150,10 @@ theorem linearIndependent_pullChart (h : W ≤ r ⁻¹ᵁ O) (h' : r ⁻¹ᵁ O 
       obtain ⟨d, hd⟩ := exists_chart hB' z
       have hz' := hle hz.1
       have e := congrArg (germ d z (h' hz'.1) hd) hu
-      simp only [map_sum, germ_smul, germ_pullChart, map_zero] at e
-      simp only [map_sum, map_mul, ger_algX, ger_appLE, ger_resG, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, germ_smul, germ_pullChart, map_zero] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, ger_algX, ger_appLE, ger_resG, map_zero]
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) ((Finset.mul_sum _ _ _).symm.trans
         ((congrArg ((r.stalkMap z).hom (tr B (r z) c (a.idx d)).val * ·) e).trans (mul_zero _)))
       rw [mul_left_comm, ← map_mul]
@@ -158,13 +162,15 @@ theorem linearIndependent_pullChart (h : W ≤ r ⁻¹ᵁ O) (h' : r ⁻¹ᵁ O 
   have e₂ := (map_sum Λ _ _).symm.trans ((congrArg Λ e).trans (map_zero Λ))
   have e₃ := congrArg (ger y hyV) ((Finset.sum_congr rfl fun i _ => (hΛ _ _).symm).trans e₂)
   refine ⟨c, hc, ?_⟩
-  simp only [map_sum, map_mul, map_zero, ger_resG] at e₃
-  simp only [map_sum, germ_smul, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_zero, ger_resG] at e₃
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, germ_smul, map_zero]
   refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e₃
   exact congrArg (· * _) (ger_algX y hyV _).symm
 
-include hB hB' in
 
+include hB hB' in
 theorem isExtension_pullChart_top (hp : IsProjOver p) (hq : IsProjOver q) :
     IsExtension (pullChart (O := ⊤) (W := ⊤) a H.w le_top) := by
   refine ⟨fun _ _ => linearIndependent_pullChart H hB hB' a _ le_top, ?_⟩
@@ -208,8 +214,8 @@ def polarMap (C : ProdChart P B N) (t : P.Sec) (ht : O ≤ nonzeroLocus t) : H0 
   (C.mulEquiv (σ := H0.ofSec p O t) fun y hy i hi => by
     rw [germ_ofSec, isUnit_ger_iff]; exact ht hy).symm.toLinearMap ∘ₗ restr le_top
 
-variable (p B) in
 
+variable (p B) in
 def polar (hP : P.IsLB) (hB : B.IsLB) (t : P.Sec) (ht : O ≤ nonzeroLocus t) : Submodule k (H0 p B O) :=
   LinearMap.range (polarMap (tensChart hP hB) t ht)
 
@@ -246,25 +252,7 @@ theorem cval_mem (f : H0 p B ⊤) : cval σ f ∈ fibSec p σ B := by
   obtain ⟨s, rfl⟩ := bijective_ofSec_top.2 f
   exact cval_ofSec σ s ▸ secVal_mem s
 
-theorem cval_mem_holSec {D : ℕ} (R : AnRead p σ D) (f : H0 p B ⊤) : cval σ f ∈ R.holSec B := by
-  obtain ⟨s, rfl⟩ := bijective_ofSec_top.2 f
-  exact cval_ofSec σ s ▸ R.secVal_mem_holSec s
-
 variable {σ}
-
-def assocVal : ((tens (tens P B) N).ι → CxPts p σ → ℂ) →ₗ[ℂ] ((tens P (tens B N)).ι → CxPts p σ → ℂ) :=
-  LinearMap.funLeft ℂ _ fun c => ((c.1, c.2.1), c.2.2)
-
-theorem assocVal_mem_holSec {D : ℕ} {R : AnRead p σ D} {f : (tens (tens P B) N).ι → CxPts p σ → ℂ}
-    (hf : f ∈ R.holSec _) : assocVal f ∈ R.holSec _ := by
-  have e (c : (tens P (tens B N)).ι) : (tens P (tens B N)).U c = (tens (tens P B) N).U ((c.1, c.2.1), c.2.2) :=
-    (inf_assoc _ _ _).symm
-  refine ⟨⟨fun c c' y h h' => ?_, fun c y h => hf.1.2 _ y (e c ▸ h)⟩, fun c => e c ▸ hf.2 _⟩
-  have g := e c ▸ h
-  have g' := e c' ▸ h'
-  refine (hf.1.1 _ _ y g g').trans (congrArg (· * _) ?_)
-  rw [gv_tens g g', gv_tens h h', gv_tens (mem_ptsIn_inf.1 g).1 (mem_ptsIn_inf.1 g').1,
-    gv_tens (mem_ptsIn_inf.1 h).2 (mem_ptsIn_inf.1 h').2, mul_assoc]
 
 end General
 
@@ -326,15 +314,17 @@ theorem linearIndependent_cval (hq : Etale q) (hB : B.IsLB) (τ : E →+* ℂ) {
     exact congrArg _ ((ev_ofHom hV φ.toRingHom φ.commutes _).symm.trans (ev_res hle hz _))
   have e₂ := congrArg (fun x => ger y hyV (TensorProduct.lid E _ (l.rTensor _ x))) e
   refine ⟨c, hc, ?_⟩
-  simp only [map_sum, LinearMap.rTensor_tmul, lid_tmul, Algebra.smul_def, map_mul, map_zero, ger_resG] at e₂
-  simp only [map_sum, germ_smul, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.rTensor_tmul, lid_tmul, Algebra.smul_def, map_mul, map_zero, ger_resG] at e₂
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, germ_smul, map_zero]
   refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) e₂
   exact congrArg (· * _) (ger_algX y hyV _).symm
 
 variable (hf : IsFinite q) (he : Etale q) (φ : ∀ τ, Weight q τ B)
 
-open Classical in
 
+open Classical in
 def pointHerm : HermFam E (H0 q B ⊤) :=
   letI : ∀ τ, Fintype (CxPts q τ) := fun τ => @Fintype.ofFinite _ (finite_cxPts hf τ)
   ofCoords (P := CxPts q)
@@ -355,18 +345,14 @@ theorem csq_pointHerm (τ : E →+* ℂ) {ι : Type*} [Fintype ι] (c : ι → �
     csq (pointHerm hf he φ) τ c g = ∑ᶠ y, (φ τ).nsq (∑ i, c i • cval τ (g i)) y := by
   letI := @Fintype.ofFinite _ (finite_cxPts hf τ)
   rw [finsum_eq_sum_of_fintype, csq, ← Complex.ofReal_re (∑ y, _)]
-  simp only [form_pointHerm, Finset.mul_sum, Weight.nsq, Complex.ofReal_sum, Complex.ofReal_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form_pointHerm, Finset.mul_sum, Weight.nsq, Complex.ofReal_sum, Complex.ofReal_mul,
     Complex.ofReal_pow, ← Complex.conj_mul', Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul,
     Finset.sum_mul]
   refine congrArg _ ?_
   simp only [← Fintype.sum_prod_type']
   exact Fintype.sum_equiv ⟨fun t => (t.2.2, t.2.1, t.1), fun t => (t.2.2, t.2.1, t.1), fun _ => rfl, fun _ => rfl⟩
     _ _ fun t => by simp only [Equiv.coe_fn_mk]; ring
-
-theorem nrm_pointHerm_sq (τ : E →+* ℂ) (g : H0 q B ⊤) :
-    (pointHerm hf he φ).nrm τ g ^ 2 = ∑ᶠ y, (φ τ).nsq (cval τ g) y := by
-  rw [← cnrm_one, cnrm_sq, csq_pointHerm]
-  simp
 
 end Points
 

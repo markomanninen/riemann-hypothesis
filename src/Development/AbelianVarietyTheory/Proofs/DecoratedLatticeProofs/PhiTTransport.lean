@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedInvMulLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSubLtOfHasRes
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CongAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ClassLatticeSelfDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedInvMulLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValSubLtOfHasRes
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,15 +25,14 @@ theorem mem_localization_iff {n : ℕ} {g : GL (Fin n) (AfE F E)} {N : Submodule
     z ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N ↔ ∀ i, Valued.v (adAt F P (Col2.pullV g z i)) ≤ 1 := by
   classical
   have e : N = Formalism.UG.CS.globLat g (stdLat E n) := by
-    have h1 := Formalism.UG.P.global_lattice_one_holds F E (Fin n) N (Module.Finite.iff_fg.2 hN.fg) hN.span_eq_top
-    ext v
-    conv_lhs => rw [← h1]
-    have e1 : ∀ (x : GL (Fin n) (AfE F E)) (Λ : Submodule (𝓞 E) (Fin n → E)) (v : Fin n → E),
-        v ∈ Formalism.UG.CS.globLat x Λ ↔ ((x⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)) *ᵥ
-          (fun i => Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (v i)) ∈ Formalism.L2.Herm.hatL (F := F) Λ :=
-      fun _ _ _ => Iff.rfl
-    rw [e1, e1, inv_one, Units.val_one, Matrix.one_mulVec]
-    exact hg _
+    have hspan : Submodule.span E (stdLat E n : Set (Sp E n)) = ⊤ := by
+      rw [stdLat_eq_span, Submodule.span_span_of_tower]
+      convert (Pi.basisFun E (Fin n)).span_eq using 1
+      congr 2
+      ext i
+      exact congrFun (Pi.basisFun_apply E (Fin n) i).symm _
+    exact GlobalTheory.ClassLatticeSelfDual.eq_globLat (F := F) (stdLat E n) N
+      (Module.Finite.iff_fg.2 stdLat_lattice.fg) hspan (Module.Finite.iff_fg.2 hN.fg) g hg
   rw [e]
   constructor
   · intro hz i
@@ -91,8 +95,8 @@ abbrev adMat (F : Type) [Field F] [NumberField F] [Algebra F E] (x : HomE E a b)
 def mid (g : GL (Fin a) (AfE F E)) (g' : GL (Fin b) (AfE F E)) (x : HomE E a b) : Matrix (Fin b) (Fin a) (AfE F E) :=
   ((g'⁻¹ : GL (Fin b) (AfE F E)) : Matrix (Fin b) (Fin b) (AfE F E)) * adMat F x * (g : Matrix (Fin a) (Fin a) (AfE F E))
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem pullV_map (g' : GL (Fin b) (AfE F E)) (x : HomE E a b) (z : Sp E a) :
     Col2.pullV g' (x z) = (((g'⁻¹ : GL (Fin b) (AfE F E)) : Matrix (Fin b) (Fin b) (AfE F E)) * adMat F x) *ᵥ
       fun j => Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (z j) := by
@@ -103,8 +107,8 @@ theorem pullV_map (g' : GL (Fin b) (AfE F E)) (x : HomE E a b) (z : Sp E a) :
   rw [← LinearMap.toMatrix'_mulVec x z]
   exact RingHom.map_mulVec _ _ _ i
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem pullV_mid (g : GL (Fin a) (AfE F E)) (g' : GL (Fin b) (AfE F E)) (x : HomE E a b) (z : Sp E a) :
     Col2.pullV g' (x z) = mid g g' x *ᵥ Col2.pullV g z := by
   rw [pullV_map]
@@ -114,14 +118,14 @@ theorem pullV_mid (g : GL (Fin a) (AfE F E)) (g' : GL (Fin b) (AfE F E)) (x : Ho
 def Good (P : HeightOneSpectrum (𝓞 E)) (ia : Fin a) (ib : Fin b) (X : Matrix (Fin b) (Fin a) (AfE F E)) : Prop :=
   (∀ r s, Valued.v (adAt F P (X r s)) ≤ 1) ∧ ∀ s, Valued.v (adAt F P (X ib s - (1 : Matrix (Fin a) (Fin a) (AfE F E)) ia s)) < 1
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem Good.congr {P : HeightOneSpectrum (𝓞 E)} {ia : Fin a} {ib : Fin b} {X Y : Matrix (Fin b) (Fin a) (AfE F E)}
     (h : Good P ia ib X) (hXY : ∀ r s, Valued.v (adAt F P (Y r s - X r s)) < 1) : Good P ia ib Y := by
   refine ⟨fun r s => ?_, fun s => ?_⟩
-  · rw [← sub_add_cancel (Y r s) (X r s), map_add]
+  · rw [← sub_add_cancel (Y r s) (X r s), map_add (f := _)]
     exact Valuation.map_add_le _ (hXY r s).le (h.1 r s)
-  · rw [← sub_add_sub_cancel (Y ib s) (X ib s), map_add]
+  · rw [← sub_add_sub_cancel (Y ib s) (X ib s), map_add (f := _)]
     exact Valuation.map_add_lt _ (hXY ib s) (h.2 s)
 
 variable {ST SG Q SG' Q' : Finset (HeightOneSpectrum (𝓞 E))}
@@ -136,7 +140,7 @@ theorem cond_iff {g : GL (Fin a) (AfE F E)} {g' : GL (Fin b) (AfE F E)} {p : Dec
     refine ⟨fun r s => ?_, fun s => ?_⟩
     · refine row_of_lat hg.lat (fun t => Valued.v (adAt F P.1 t) ≤ 1) (by simp) (fun t t' ht ht' => ?_) (fun c hc t ht => ?_)
         ((((g'⁻¹ : GL (Fin b) (AfE F E)) : Matrix (Fin b) (Fin b) (AfE F E)) * adMat F x) r) (fun z hz => ?_) s
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact Valuation.map_add_le _ ht ht'
       · rw [map_mul, map_mul]
         exact mul_le_one' (hint c hc) ht
@@ -153,7 +157,7 @@ theorem cond_iff {g : GL (Fin a) (AfE F E)} {g' : GL (Fin b) (AfE F E)} {p : Dec
           rfl
         rw [e] at h2
         exact h2
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact Valuation.map_add_lt _ ht ht'
       · rw [map_mul, map_mul]
         exact lt_of_le_of_lt (mul_le_of_le_one_left' (hint c hc)) ht
@@ -169,7 +173,8 @@ theorem cond_iff {g : GL (Fin a) (AfE F E)} {g' : GL (Fin b) (AfE F E)} {p : Dec
     have hxz : x z ∈ p'.deco.1.at P.1 := by
       refine (mem_localization_iff p'.deco.2.lat hg'.lat P.1 _).2 fun r => ?_
       rw [pullV_mid g]
-      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul]
       exact Valuation.map_sum_le _ fun s _ => by
         rw [map_mul]
         exact mul_le_one' (h1 r s) (hw s)
@@ -179,21 +184,24 @@ theorem cond_iff {g : GL (Fin a) (AfE F E)} {g' : GL (Fin b) (AfE F E)} {p : Dec
       have e1 : Col2.pullV g z ia = ((1 : Matrix (Fin a) (Fin a) (AfE F E)) *ᵥ Col2.pullV g z) ia := by rw [Matrix.one_mulVec]
       rw [pullV_mid g, e1]
       simp only [Matrix.mulVec, dotProduct, _root_.sub_mul, Finset.sum_sub_distrib]
-    rw [Valuation.map_sub_swap, ← map_sub, e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Valuation.map_sub_swap, ← map_sub, e, map_sum]
     refine Valuation.map_sum_lt _ one_ne_zero fun s _ => ?_
     rw [map_mul, map_mul]
     exact lt_of_le_of_lt (mul_le_of_le_one_right' (hw s)) (h2 s)
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem val_mul_mul_lt (P : HeightOneSpectrum (𝓞 E)) {A : Matrix (Fin b) (Fin b) (AfE F E)} {D : Matrix (Fin b) (Fin a) (AfE F E)}
     {C : Matrix (Fin a) (Fin a) (AfE F E)} (hA : ∀ r s, Valued.v (adAt F P (A r s)) ≤ 1) (hD : ∀ r s, Valued.v (adAt F P (D r s)) < 1)
     (hC : ∀ r s, Valued.v (adAt F P (C r s)) ≤ 1) (r : Fin b) (s : Fin a) : Valued.v (adAt F P ((A * D * C) r s)) < 1 := by
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   refine Valuation.map_sum_lt _ one_ne_zero fun j _ => ?_
   rw [map_mul, map_mul]
   refine lt_of_le_of_lt (mul_le_of_le_one_right' (hC j s)) ?_
-  rw [Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum]
   refine Valuation.map_sum_lt _ one_ne_zero fun l _ => ?_
   rw [map_mul, map_mul]
   exact lt_of_le_of_lt (mul_le_of_le_one_left' (hA r l)) (hD l j)
@@ -240,8 +248,8 @@ theorem phiT_eq (K : Type) [Field K] (ha : 0 < a) (hb : 0 < b) {k y : GL (Fin a)
   · exact absurd (key'.2 h2) h1
   · rfl
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem val_natCast_lt {S : Finset (HeightOneSpectrum (𝓞 E))} {M : ℕ} (hM : (∏ P ∈ S, Ideal.absNorm P.asIdeal) ∣ M)
     {P : HeightOneSpectrum (𝓞 E)} (hP : P ∈ S) : Valued.v ((M : ℕ) : P.adicCompletion E) < 1 := by
   have e : ((M : ℕ) : P.adicCompletion E) = algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E ((M : ℕ) : 𝓞 E)) := by

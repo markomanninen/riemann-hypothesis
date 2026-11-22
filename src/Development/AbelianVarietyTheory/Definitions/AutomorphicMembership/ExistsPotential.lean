@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemberFormsNonempty
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralDetOfPreservesLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemberFormsNonempty
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralDetOfPreservesLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ private theorem prod_sigmaOf (x : H.E) :
       induction hy using IntermediateField.adjoin_induction with
       | mem y hy => rw [Set.mem_singleton_iff.1 hy]; exact h1
       | algebraMap y => exact AlgEquiv.commutes _ y
-      | add y z _ _ hy hz => rw [map_add, hy, hz]
+      | add y z _ _ hy hz => rw [map_add (f := _), hy, hz]
       | inv y _ hy => rw [map_inv₀, hy]
       | mul y z _ _ hy hz => rw [map_mul, hy, hz]
     refine ⟨IntermediateField.fixingSubgroupEquiv H.K ⟨_, h2⟩, Subtype.ext ?_⟩
@@ -127,11 +131,8 @@ variable (B : Pre)
 
 def uI : ℂˣ := Units.mk0 Complex.I Complex.I_ne_zero
 
-theorem norm_uI_zpow (a b : ℤ) : ‖((uI ^ a * uI ^ b : ℂˣ) : ℂ)‖ = 1 := by
-  simp [uI]
 
 open Classical in
-
 @[reducible] def ch (u : B.Word) : ColumnChain B.R (Tau B.R) (B.hcW u) :=
   haveI : Fact (B.T u).Prime := ⟨B.T_prime u⟩
   { chain B.R (Tau B.R) (B.hcW u) (B.T u) with
@@ -140,8 +141,8 @@ open Classical in
     rho_norm := fun _ _ _ => by simp [uI]
     rho'_norm := fun _ _ _ => by simp [uI] }
 
-open Classical in
 
+open Classical in
 @[reducible] def member (u : B.Word) : Member B.R (Tau B.R) (B.hcW u) :=
   haveI : Fact (B.T u).Prime := ⟨B.T_prime u⟩
   { C := ch B u
@@ -157,7 +158,7 @@ open Classical in
   A_Dstar _ := rfl
   A_GamP _ := rfl
   clsLat := letI := B.host.cmStar; fun _ i _ => (B.sp.X i).L0
-  clsLat_lat := letI := B.host.cmStar; fun _ i _ => (B.sp.X i).standardTuple_isLattice
+  clsLat_lat := letI := B.host.cmStar; fun _ i _ => baseLattice_full (B.sp.X i)
   Tup := Fin 3
   mu0 := 0
   muStar := 1
@@ -182,8 +183,8 @@ open Classical in
   rhoDet_eq_inv_muTilde_chiD_pow _ _ _ := rfl
   rhoDetPrime_eq_muTilde_mul_chi_pow _ _ _ := rfl
 
-open Classical in
 
+open Classical in
 def cols (B : Base) : Cols B where
   toCols0 := cols0 B.toPre
   fm u :=
@@ -195,28 +196,6 @@ theorem two_lt_alt (u : B.Word) : 2 < B.T u := by
   have h2 := (B.T_prime u).two_le
   omega
 
-open Classical in
-
-theorem exists_cols (B : Base) : ∃ C : Cols B, (∀ u i, Nonempty ((C.mem u).C.cls i)) ∧
-    (∀ u, (C.mem u).A.Mram ≠ ⊥) ∧ (∀ u i, (C.fm u).Fi i ≠ ⊥) ∧ C.mu0 ≠ C.muStar ∧ C.mu0 ≠ C.muStar' ∧
-    C.muStar ≠ C.muStar' ∧ Function.Injective C.chiD ∧ ∀ u i c, C.chiD (C.detCls u i c) ≠ 1 := by
-  refine ⟨cols B, fun u i => ⟨(1 : Tau B.R → (ZMod (B.T u))ˣ)⟩, fun u => ?_, fun u i => ?_,
-    (by decide : (0 : Fin 3) ≠ 1), (by decide : (0 : Fin 3) ≠ 2), (by decide : (1 : Fin 3) ≠ 2),
-    fun _ _ h => h, fun u i c h => ?_⟩
-  · haveI : Fact (B.T u).Prime := ⟨B.T_prime u⟩
-    exact mram_ne_bot B.R (Tau B.R) (B.hcW u) (B.T u) (card_Tau B.host) (two_lt_alt B.toPre u)
-  · exact (top_ne_bot : (⊤ : Submodule ℂ ((Tau B.R → (ZMod (B.T u))ˣ) → Unit → ℂ)) ≠ ⊥)
-  · have h' : uI = 1 := h
-    have := congrArg (fun x : ℂˣ => (x : ℂ).re) h'
-    simp [uI] at this
-
-theorem nonempty_cols0 (B : Pre) : Nonempty (Cols0 B) := ⟨cols0 B⟩
-
-theorem T_win (C : Cols0 B) (u : B.Word) : (C.mem u).A.Tstar ≤ ((C.mem u).A.T : ℝ) ∧
-    ((C.mem u).A.T : ℝ) ≤ (1 + 1 / ((B.R.f : ℝ) * B.R.k)) * (C.mem u).A.Tstar := by
-  unfold ColumnsAtT.Tstar ColumnsAtT.Xu
-  rw [C.A_T, C.A_duStar, C.A_Dstar, C.A_GamP]
-  exact B.T_win u
 
 end Chain
 

@@ -1,5 +1,11 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.ContinuousToBdRPlus
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAToBdRPlusIff
+module
+
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Action
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAToBdRPlusIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,11 +54,11 @@ theorem eval_eq_of_isCrisDRF {f : Bcris p R →+* BdR p R} (hf : IsCrisDRF f) (x
     have hy2 : y = algebraMap (AinfInv p R) (BdRPlus p R) (a0 : AinfInv p R) + (p : BdRPlus p R) ^ (N + n + k) * yz := by
       apply hinj
       rw [← hy, hz]
-      simp only [map_add, map_mul, map_pow, map_natCast]
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast]
       rw [hf.on0 a0, hyz]
     have hx2 : Acris.toBdRPlus p R x =
         algebraMap (AinfInv p R) (BdRPlus p R) (a0 : AinfInv p R) + (p : BdRPlus p R) ^ (N + n + k) * Acris.toBdRPlus p R z := by
-      rw [hz, map_add, map_mul, map_pow, map_natCast, Acris.toBdRPlus_algebraMap_zero]
+      rw [hz, map_add (f := _), map_mul, map_pow, map_natCast, Acris.toBdRPlus_algebraMap_zero]
     refine ⟨(p : Ainf p R) ^ n * az - (p : Ainf p R) ^ N * bz, ?_⟩
     have e1 : BdRPlus.eval p R n ((p : BdRPlus p R) ^ N * yz) =
         Ideal.Quotient.mk _ (algebraMap (Ainf p R) (AinfInv p R) az) := haz
@@ -62,7 +68,7 @@ theorem eval_eq_of_isCrisDRF {f : Bcris p R →+* BdR p R} (hf : IsCrisDRF f) (x
       rfl
     rw [map_mul, map_pow, map_natCast] at e1
     rw [hy2, hx2]
-    simp only [map_add, map_mul, map_pow, map_natCast, map_sub]
+    simp only [map_add (f := _), map_mul, map_pow, map_natCast, map_sub]
     rw [add_sub_add_left_eq_sub, ← mul_sub]
     calc (p : AinfInv p R ⧸ AinfInv.kerTheta p R ^ n) ^ (N + n + k) * (BdRPlus.eval p R n yz - BdRPlus.eval p R n (Acris.toBdRPlus p R z))
         = (p : AinfInv p R ⧸ AinfInv.kerTheta p R ^ n) ^ k *

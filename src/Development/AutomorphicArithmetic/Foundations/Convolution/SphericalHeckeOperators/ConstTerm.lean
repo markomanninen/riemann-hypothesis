@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalHeckeOperators.SymSum
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical GroundTheory.Automorphic.GLnLocal GroundTheory.Automorphic.Iwasawa UpperTheory.ConvolutionTheory.H
 
@@ -192,7 +196,7 @@ private theorem ct_int {T : GL (Fin n) F → ℂ} (hT : T ∈ locallyConstantCom
         refine (Finset.sum_eq_zero fun l _ => ?_).symm
         rw [Set.indicator_of_notMem (fun h => hc ⟨l, h⟩), mul_zero]
   simp_rw [hpt]
-  rw [integral_finset_sum _ fun l _ => (hTi.indicator (hm l)).const_mul _]
+  rw [integral_finsetSum _ fun l _ => (hTi.indicator (hm l)).const_mul _]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [integral_const_mul, integral_indicator (hm l)]
 
@@ -216,7 +220,8 @@ theorem UpperTheory.ConvolutionTheory.H.constTerm :
   let P : LaurentRing n := ∑ l ∈ Λ, AddMonoidAlgebra.single l (c l)
   have hev : ∀ z, evalAt z P = ∫ g, T g * ctFun σ z g ∂μ := by
     intro z
-    rw [ct_int μ hT Λ hΛ σ z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ct_int μ hT Λ hΛ σ z, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [evalAt_single]
     simp only [c]

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published
 open scoped TensorProduct
 
@@ -110,7 +115,7 @@ theorem sigR_smul (σ : E →ₐ[F] E) (c : K) (z : K ⊗[F] E) : sigR K σ (c �
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [sigR, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 def sigL (σ : E →ₐ[F] E) : K ⊗[F] E →ₗ[K] K ⊗[F] E where
   toFun := sigR K σ
@@ -150,7 +155,7 @@ theorem exists_isCompact_entries_of_anisotropic :
   have hhc : Continuous fun x : Fin M → K ⊗[F] E => hR K σ J x x := by
     show Continuous fun x => Formalism.UG.hform (sigR K σ) (JR K J) x x
     unfold Formalism.UG.hform
-    exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
       ((hs.comp (continuous_apply i)).mul continuous_const).mul (continuous_apply j)
   let Q : (Fin (Module.finrank K (Fin M → K ⊗[F] E)) → K) → (Fin (Module.finrank K (K ⊗[F] E)) → K) :=
     fun y => ψ (hR K σ J (φ.symm y) (φ.symm y))

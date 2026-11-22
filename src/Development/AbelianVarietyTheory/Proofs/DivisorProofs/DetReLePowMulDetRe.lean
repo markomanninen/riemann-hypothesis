@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSimultaneousDiagonalisationPosDefHermitianStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSimultaneousDiagonalisationPosDefHermitianStatement
+
+@[expose] public section
+
 open Filter Topology MeasureTheory GlobalTheory.HSAmp
 open scoped ComplexOrder Matrix
 namespace GlobalTheory.HSAmp
@@ -57,7 +62,7 @@ theorem det_re_le_pow_mul_det_re (ι : Type) [Fintype ι] [DecidableEq ι] (A B 
     rwa [Complex.re_ofReal_mul, Complex.ofReal_re] at this
   have hprod : ∏ i, d i ≤ κ ^ Fintype.card ι := by
     calc ∏ i, d i ≤ ∏ _i : ι, κ :=
-          Finset.prod_le_prod (fun i _ => (hdpos i).le) (fun i _ => hdle i)
+          Finset.prod_le_prod₀ (fun i _ => (hdpos i).le) (fun i _ => hdle i)
       _ = κ ^ Fintype.card ι := by simp
   refine le_of_mul_le_mul_left ?_ hpos
   calc Complex.normSq t * A.det.re = ∏ i, d i := hAre

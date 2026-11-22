@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntegralExpansionsOfValuationGe
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsNilpotentOfMemKerJetTruncR
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ValSerGermFnVal
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.TopLePreimageWchart
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValueAtZeroOfSectionValue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntegralExpansionsOfValuationGe
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsNilpotentOfMemKerJetTruncR
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ValSerGermFnVal
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.TopLePreimageWchart
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ValueAtZeroOfSectionValue
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -196,7 +200,8 @@ theorem val_eq_of_approx {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuati
     rw [← _root_.add_assoc, Finset.add_sum_erase T (fun β => ∑ i, c i * TWO.algVF (V := V) (F := F) (a i β))
       (Finset.mem_insert_self _ _), Finset.sum_comm, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [← Finset.mul_sum, ← map_sum, map_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← map_sum, map_sub]
     ring
   rw [e, AddValuation.map_add_eq_of_lt_left, hχ]
   rw [hχ]
@@ -223,7 +228,8 @@ theorem main : Laws → Laws4 → TwistBCSpanStatement → JetSer.JetAlgSt → J
         MvPowerSeries.map (TWO.algVF (V := V) (F := F)) (S i * (w⁻¹).val)) :=
       ⟨l', c', σ', fi', fun i => S i * (w⁻¹).val, ρ, hE', hlin', hρ,
         fun i => ⟨S i, hS i, by rw [← hw, Units.inv_mul_cancel_right]⟩, rfl⟩
-    rw [(hgm s f).1 hf, ← (hgm s _).1 hf', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(hgm s f).1 hf, ← (hgm s _).1 hf', map_sum]
     refine y.v.map_le_sum fun i _ => ?_
     rw [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_map, AddValuation.map_mul]
     exact (hc' i).trans (le_add_of_nonneg_right (GC.v_alg_nonneg y.hϖ y.hv _))
@@ -247,7 +253,8 @@ theorem main : Laws → Laws4 → TwistBCSpanStatement → JetSer.JetAlgSt → J
       (fun β hβ => GC.valuation_ge_at_zero y.hϖ y.hv (ho β hβ) (PhiValue.valueAtZero_of_sectionValue _ F q β _ _ (hv0 β)))
     have e : MvPowerSeries.constantCoeff f = (∑ i, c i * TWO.algVF (V := V) (F := F) (x₀ i)) *
         TWO.algVF (V := V) (F := F) ((u * w⁻¹) ^ q).val := by
-      rw [hfe, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hfe, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, MvPowerSeries.constantCoeff_C, MvPowerSeries.constantCoeff_map, hgi, map_mul, _root_.mul_assoc]
     rw [e, AddValuation.map_mul, key]

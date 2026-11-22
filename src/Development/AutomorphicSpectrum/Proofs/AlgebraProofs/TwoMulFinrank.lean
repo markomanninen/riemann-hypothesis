@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OmStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.OmStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,9 @@ variable {C O : Type} [Field C] [CommRing O] [Algebra O C] {E : Type} [Field E] 
   (P : HTPoint C O c κ N V Ω)
 
 theorem ht_surjective : Function.Surjective P.ht := by
-  rw [← LinearMap.range_eq_top, eq_top_iff, ← P.om_lat.span_eq_top, Submodule.span_le]
+  have : P.om.IsFullLattice C := P.om_lat
+  have hspan : Submodule.span C (P.om : Set Ω) = ⊤ := Submodule.IsFullLattice.span_eq_top
+  rw [← LinearMap.range_eq_top, eq_top_iff, ← hspan, Submodule.span_le]
   intro y hy
   obtain ⟨x, -, hx⟩ := P.κ_mem y hy
   show y ∈ LinearMap.range P.ht
@@ -25,10 +31,24 @@ theorem ht_surjective : Function.Surjective P.ht := by
   rw [map_smul, hx, ← algebraMap_smul C κ y, smul_smul, inv_mul_cancel₀ P.κ_ne, one_smul]
 
 theorem T_lattice : P.T.IsLattice C := by
-  obtain ⟨-, hsp, hT⟩ := P.free
-  refine ⟨?_, hsp⟩
-  rw [hT]
-  exact Submodule.fg_span (Set.finite_range _)
+  obtain ⟨hli, -, hT⟩ := P.free
+  have hfg : P.T.FG := by
+    rw [hT]
+    exact Submodule.fg_span (Set.finite_range _)
+  refine ⟨hfg, ?_⟩
+  intro s hs hliO
+  rcases s.eq_empty_or_nonempty with rfl | ⟨x, hx⟩
+  · exact linearIndepOn_empty C id
+  have hinj : Function.Injective (algebraMap O C) := by
+    intro a b hab
+    apply hliO.linearIndependent.smul_left_injective ⟨x, hx⟩
+    change a • x = b • x
+    rw [← algebraMap_smul C a x, ← algebraMap_smul C b x, hab]
+  have : FaithfulSMul O C := (faithfulSMul_iff_algebraMap_injective O C).mpr hinj
+  have : Nontrivial O := (algebraMap O C).domain_nontrivial
+  refine Submodule.linearIndepOn_of_finrank_le_finrank_span P.T hfg ?_ hs hliO
+  rw [hT, Submodule.span_span_of_tower O, finrank_span_eq_card hli,
+    finrank_span_eq_card (hli.restrict_scalars' O)]
 
 theorem rho_t_mem (a : 𝓞 E) (i : Fin N) : P.ρ a (P.t i) ∈ P.T := by
   obtain ⟨-, -, hT⟩ := P.free
@@ -36,7 +56,8 @@ theorem rho_t_mem (a : 𝓞 E) (i : Fin N) : P.ρ a (P.t i) ∈ P.T := by
     rw [hT]
     exact Submodule.subset_span ⟨(i, k), rfl⟩
   rw [← (RingOfIntegers.basis E).sum_repr a]
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply]
   exact Submodule.sum_mem _ fun k _ => zsmul_mem (hmem k) _
 
 theorem T_stable (a : 𝓞 E) : ∀ x ∈ P.T, P.ρ a x ∈ P.T := by
@@ -53,16 +74,16 @@ theorem T_stable (a : 𝓞 E) : ∀ x ∈ P.T, P.ρ a x ∈ P.T := by
 
 theorem ht_eigProj (σ : E →+* C) (x : V) :
     P.ht (eigProj P.ρ σ x) = eigProj P.ρΩ σ (P.ht x) := by
-  simp only [eigProj, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, P.ht_lin]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eigProj, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, P.ht_lin]
 
 theorem om'_lattice : P.om'.IsLattice C := by
-  have hT := T_lattice P
-  refine ⟨?_, ?_⟩
+  have : P.om.IsFullLattice C := P.om_lat
+  apply Submodule.IsLattice.mono_of_fg C (show P.om' ≤ P.om from ?_) ?_
+  · rintro _ ⟨x, hx, rfl⟩
+    exact P.ht_mem x hx
   · rw [HTPoint.om']
-    exact hT.fg.map _
-  · rw [HTPoint.om', Submodule.map_coe, LinearMap.coe_restrictScalars, ← Submodule.map_span,
-      hT.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
-    exact ht_surjective P
+    exact (T_lattice P).fg.map _
 
 theorem omHT_eq (σ : E →+* C) :
     P.omHT σ = (eigQuot P.ρ σ P.T).map (P.ht.restrictScalars O) := by
@@ -75,7 +96,7 @@ theorem omHT_eq (σ : E →+* C) :
 
 theorem e_skew (x y : V) : P.e x y = - P.e y x := by
   have h := P.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, P.alt, zero_add, add_zero] at h
+  simp only [map_add (f := _), LinearMap.add_apply, P.alt, zero_add, add_zero] at h
   exact eq_neg_of_add_eq_zero_right h
 
 theorem dualLat_flip : dualLat P.e.flip P.T = P.T := by
@@ -88,15 +109,14 @@ include P in
 theorem finite_V : Module.Finite C V := by
   obtain ⟨s, hs⟩ := (T_lattice P).fg
   refine ⟨⟨s, ?_⟩⟩
-  rw [← Submodule.span_span_of_tower O, hs, (T_lattice P).span_eq_top]
+  rw [← Submodule.span_span_of_tower O, hs, P.free.2.1]
 include P in
 theorem two_mul_finrank : 2 * finrank C Ω = finrank C V := by
   haveI := finite_V P
   have hrefl : LinearMap.BilinForm.IsRefl P.e := fun x y h => by rw [e_skew P y x, h, neg_zero]
   have horth : LinearMap.BilinForm.orthogonal P.e (LinearMap.ker P.ht) = LinearMap.ker P.ht := by
     ext x
-    simp only [LinearMap.BilinForm.mem_orthogonal_iff, LinearMap.BilinForm.isOrtho_def,
-      LinearMap.mem_ker]
+    simp only [LinearMap.BilinForm.mem_orthogonal_iff, LinearMap.mem_ker]
     rw [P.lagr x]
     refine forall₂_congr fun y _ => ?_
     rw [e_skew P y x, neg_eq_zero]

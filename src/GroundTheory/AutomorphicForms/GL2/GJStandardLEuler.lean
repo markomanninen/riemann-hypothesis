@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJStandardLDefs
-import GroundTheory.AutomorphicForms.GL2.GJStandardLTensor
-import GroundTheory.AutomorphicForms.GL2.GJStandardLBump
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLDefs
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLTensor
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLBump
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology IsDedekindDomain NumberField NumberField.mixedEmbedding
 open scoped NumberField.AdeleRing RestrictedProduct SchwartzMap Classical ENNReal NNReal
@@ -139,7 +143,9 @@ theorem map_prodEquiv_eq (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasu
     (μi : Measure (AdelicGLn.InfiniteAdelicGL K n)) [μi.IsHaarMeasure] :
     ν.map (AdelicGLn.prodEquiv K n) =
       prodConst ν μi • μi.prod (Measure.haar : Measure (AdelicGLn.FiniteAdelicGL K n)) :=
-  Measure.isMulLeftInvariant_eq_smul _ _
+  by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact Measure.isMulLeftInvariant_eq_smul _ _
 
 theorem integral_eq_mul (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     (μi : Measure (AdelicGLn.InfiniteAdelicGL K n)) [μi.IsHaarMeasure]
@@ -151,8 +157,9 @@ theorem integral_eq_mul (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasur
     rw [integral_map_equiv me (fun p ↦ A p.1 * B p.2)]
     rfl
   have hme : ν.map me = ν.map (AdelicGLn.prodEquiv K n) := rfl
-  rw [h1, hme, map_prodEquiv_eq ν μi, integral_smul_nnreal_measure, integral_prod_mul, NNReal.smul_def,
-    Complex.real_smul]
+  set_option synthInstance.maxHeartbeats 200000 in
+    rw [h1, hme, map_prodEquiv_eq ν μi, integral_smul_nnreal_measure, integral_prod_mul, NNReal.smul_def,
+      Complex.real_smul]
 
 theorem lintegral_eq_mul (ν : Measure (AdelicGLn.AdelicGL K n)) [ν.IsHaarMeasure]
     (μi : Measure (AdelicGLn.InfiniteAdelicGL K n)) [μi.IsHaarMeasure]
@@ -189,8 +196,8 @@ instance borelSpace_finRes : BorelSpace (Πʳ v : HeightOneSpectrum (𝓞 K),
     [GL (Fin n) (v.adicCompletion K), (integralGL (v.adicCompletion K) n : Set (GL (Fin n) (v.adicCompletion K)))]) :=
   ⟨rfl⟩
 
-variable (K n) in
 
+variable (K n) in
 def finHaar : Measure (Πʳ v : HeightOneSpectrum (𝓞 K),
     [GL (Fin n) (v.adicCompletion K), (integralGL (v.adicCompletion K) n : Set (GL (Fin n) (v.adicCompletion K)))]) :=
   (Measure.haar : Measure (AdelicGLn.FiniteAdelicGL K n)).map (AdelicGLn.finiteRestrictedEquiv K n)
@@ -199,8 +206,8 @@ instance isHaarMeasure_finHaar : (finHaar K n).IsHaarMeasure := by
   unfold finHaar
   infer_instance
 
-variable (K n) in
 
+variable (K n) in
 def finConst : ℝ :=
   (finHaar K n).real {x | ∀ v, x v ∈ integralGL (v.adicCompletion K) n}
 

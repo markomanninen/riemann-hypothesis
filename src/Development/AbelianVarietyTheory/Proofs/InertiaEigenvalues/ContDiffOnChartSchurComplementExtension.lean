@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.SchurExt
 open scoped ContDiff Topology
@@ -87,7 +91,7 @@ theorem det_Scof (M : Matrix (Fin (m + r + 1 + 1)) (Fin (m + r + 1 + 1)) R) (hM 
 
 end Maps
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem isUnit_ad_iff (a : Ad E) : IsUnit a ↔ IsUnit (pInf E a) ∧ IsUnit (pFin E a) := by
   change IsUnit a ↔ IsUnit ((infEq E).symm a.1) ∧ IsUnit a.2
@@ -117,10 +121,10 @@ theorem psi_split (a : Ad E) :
     psi a = GlobalTheory.WhitBump.psiInf (pInf E a) * GlobalTheory.WhitBump.psiFin (pFin E a) := by
   have e : a = sInf E (pInf E a) + sFin E (pFin E a) := by
     refine ad_ext ?_ ?_
-    · rw [map_add]
+    · rw [map_add (f := _)]
       change pInf E a = (infEq E).symm (infEq E (pInf E a)) + (infEq E).symm 0
       simp
-    · rw [map_add]
+    · rw [map_add (f := _)]
       change pFin E a = 0 + pFin E a
       simp
   rw [psi]
@@ -177,7 +181,7 @@ theorem chart_schurF_eq (β : GA E (m + 1) → ℂ) (b₁ : GA E (r + 1) → ℂ
       by rw [RingHom.mapMatrix_apply, map_Dof, hMf]; exact hDf⟩
   have hSM : IsUnit (Scof M).det :=
     det_Scof M ((Matrix.isUnit_iff_isUnit_det _).1 (Units.isUnit _)) hDM
-  rw [chart, dif_pos hx]
+  rw [chart, dite_eq_left hx]
   change schurF β b₁ χ (g * infGL E _ hx.unit) = _
   rw [schurF]
   rw [if_pos hDM, psi_split, apply_mkGL β _ hSM, apply_mkGL b₁ _ hDM, chiF]
@@ -210,7 +214,7 @@ theorem chart_schurF_eq (β : GA E (m + 1) → ℂ) (b₁ : GA E (r + 1) → ℂ
 
 theorem chart_schurF_zero (β : GA E (m + 1) → ℂ) (b₁ : GA E (r + 1) → ℂ)
     (χ : (Fin (r + 1) → Fin (m + 1) → Cinf E) → ℝ) (C : Set (GA E (r + 1)))
-    (hC : ∀ p, b₁ p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA E (r + 1), u⁻¹ * p ∈ C)
+    (hC : ∀ p, b₁ p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA (E := E) (a := (r + 1)), u⁻¹ * p ∈ C)
     (g : GA E (m + r + 1 + 1)) (x : Lie E (m + r + 1 + 1)) (hx : IsUnit (Matrix.of x))
     (hK : (Dof ((g : Matrix (Fin (m + r + 1 + 1)) (Fin (m + r + 1 + 1)) (Ad E)).map (pInf E) * Matrix.of x)).det ∉
       (fun c : GA E (r + 1) => pInf E (c : Matrix (Fin (r + 1)) (Fin (r + 1)) (Ad E)).det) '' C) :
@@ -221,7 +225,7 @@ theorem chart_schurF_zero (β : GA E (m + 1) → ℂ) (b₁ : GA E (r + 1) → �
     have h1 : ((infGL E _ hx.unit : GA E _) : Matrix (Fin (m + r + 1 + 1)) (Fin (m + r + 1 + 1)) (Ad E)).map (pInf E) = Matrix.of x :=
       (congrArg Units.val (pInf_infGL hx.unit)).trans hx.unit_spec
     rw [hMdef, Units.val_mul, Matrix.map_mul, h1]
-  rw [chart, dif_pos hx]
+  rw [chart, dite_eq_left hx]
   change schurF β b₁ χ (g * infGL E _ hx.unit) = 0
   rw [schurF]
   split_ifs with hDM
@@ -247,12 +251,12 @@ end GlobalTheory.SchurExt.SmoothPart
 
 namespace GlobalTheory.SchurExt
 
-open GlobalTheory.SchurExt.SmoothPart in
 
-theorem contDiffOn_chart_schurF : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (m r : ℕ)
+open GlobalTheory.SchurExt.SmoothPart in
+theorem contDiffOn_chart_schurF : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (m r : ℕ)
     (β : GA E (m + 1) → ℂ) (b₁ : GA E (r + 1) → ℂ) (χ : (Fin (r + 1) → Fin (m + 1) → Cinf E) → ℝ),
     (∀ g, ContDiffOn ℝ ∞ (chart β g) (invSet E (m + 1))) → (∀ g, ContDiffOn ℝ ∞ (chart b₁ g) (invSet E (r + 1))) →
-    (∃ C : Set (GA E (r + 1)), IsCompact C ∧ ∀ p, b₁ p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA E (r + 1), u⁻¹ * p ∈ C) →
+    (∃ C : Set (GA E (r + 1)), IsCompact C ∧ ∀ p, b₁ p ≠ 0 → ∃ u ∈ GlobalTheory.JSW.NA (E := E) (a := (r + 1)), u⁻¹ * p ∈ C) →
     ContDiff ℝ ∞ χ → ∀ g, ContDiffOn ℝ ∞ (chart (schurF β b₁ χ) g) (invSet E (m + r + 1 + 1)) := by
   intro E _ _ _ m r β b₁ χ hβ hb hC hχ g
   set Gi := (g : Matrix (Fin (m + r + 1 + 1)) (Fin (m + r + 1 + 1)) (Ad E)).map (pInf E) with hGi
@@ -261,7 +265,7 @@ theorem contDiffOn_chart_schurF : ∀ (E : Type) [Field E] [NumberField E] [IsTo
   swap
   · refine (contDiffOn_const (c := (0 : ℂ))).congr fun x hx0 => ?_
     have hx : IsUnit (Matrix.of x) := hx0
-    rw [chart, dif_pos hx]
+    rw [chart, dite_eq_left hx]
     change schurF β b₁ χ (g * infGL E _ hx.unit) = 0
     rw [schurF, if_neg]
     intro hDM

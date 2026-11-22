@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.HermSingleLeft
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.IsIntegralOfIntOE
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HermLatFin
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.HermSingleLeft
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.IsIntegralOfIntOE
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HermLatFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem lattice_classes_finite_refinement : LatFin := by
   let Sub : Submodule (𝓞 E) (Fin M → E) → Set (Set (Fin M → E)) := fun N₀ =>
     {s | (∃ G : AddSubgroup (Fin M → E), (G : Set (Fin M → E)) = s) ∧ (∀ x ∈ N₀, (c0 : E) • x ∈ s) ∧ s ⊆ N₀}
   refine ⟨⋃ N₀ ∈ {N₀ | N₀ ∈ SE ∧ N₀.FG}, Sub N₀,
-    Set.Finite.biUnion (hSEf.subset fun N₀ h => h.1) fun N₀ h => sub_finite N₀ h.2 c0 hc0, ?_⟩
+    Set.Finite.biUnion (hSEf.subset (by exact fun N₀ h => h.1)) fun N₀ h => sub_finite N₀ h.2 c0 hc0, ?_⟩
   intro Λ h1 h2 h3 h4
   have hDE : (D : E) ≠ 0 := by exact_mod_cast hD.ne'
 

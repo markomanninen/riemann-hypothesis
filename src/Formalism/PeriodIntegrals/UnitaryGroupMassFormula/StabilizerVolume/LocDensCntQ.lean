@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensFF
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ private theorem isQuadInv_and_bijective_of_not_isSquare (k K : Type) [Field k] [
   have h2K : (2 : K) ≠ 0 := by
     intro h
     have h11 : algebraMap k K (1 + 1) = 0 := by
-      rw [map_add, map_one]
+      rw [map_add (f := _), map_one]
       linear_combination h
     have h11' : (1 + 1 : k) = 0 := (algebraMap k K).injective (h11.trans (map_zero _).symm)
     exact h2 (by linear_combination h11')
@@ -113,7 +117,7 @@ theorem exists_quadAlg (k : Type) [Field k] [Finite k] (h2 : (2 : k) ≠ 0) (D :
     have : Fact (Irreducible (X ^ 2 - C D : k[X])) := ⟨hirr⟩
     have hf0 : (X ^ 2 - C D : k[X]) ≠ 0 := hirr.ne_zero
     have hfin : Module.finrank k (AdjoinRoot (X ^ 2 - C D : k[X])) = 2 := by
-      rw [(AdjoinRoot.powerBasis hf0).finrank, AdjoinRoot.powerBasis_dim, natDegree_X_pow_sub_C]
+      rw [(AdjoinRoot.powerBasis hf0).finrank, AdjoinRoot.powerBasis_dim, natDegree_X_pow_sub_C _]
     have : Module.Finite k (AdjoinRoot (X ^ 2 - C D : k[X])) := (AdjoinRoot.powerBasis hf0).finite
     have hr : AdjoinRoot.root (X ^ 2 - C D : k[X]) * AdjoinRoot.root (X ^ 2 - C D : k[X]) =
         algebraMap k (AdjoinRoot (X ^ 2 - C D : k[X])) D := by

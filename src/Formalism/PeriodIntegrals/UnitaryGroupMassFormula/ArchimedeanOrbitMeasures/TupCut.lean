@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GoodChartExOfStd
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MatNDHHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensNu
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.UnitsOpenTens
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstTestOfPolarWh
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.GoodChartExOfStd
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.MatNDHHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.DensNu
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.UnitsOpenTens
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ConstTestOfPolarWh
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ def PolarChartContDiffAt {D : D7} (X : HidaSetting D) (u' : D.what₂.Word)
     (κ : EuclideanSpace ℝ ι → HA (Ainf X.B.I.F) X.B.I.cm.sig X.B.I.J) (eH : HmI X ≃ₜ EuclideanSpace ℝ η) : Prop :=
   ContDiffAt ℝ 1 (PsiC X u' a κ eH) ((0 : EuclideanSpace ℝ ι), eH (TI X u' hT))
 
-open Classical in
 
+open Classical in
 def PsiDet {D : D7} (X : HidaSetting D) (u' : D.what₂.Word)
     (hT : ∀ i j, X.B.I.cm.sig (gramE X.B.I.cm.sig X.B.I.J (tupH (frameOf X u')) j i) =
       gramE X.B.I.cm.sig X.B.I.J (tupH (frameOf X u')) i j)
@@ -52,7 +56,7 @@ theorem loc_glue {E F : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [Finite
       Set.InjOn (Φ.symm ∘ f) U ∧
       ContinuousAt (fun z => |((Φ.symm : F →L[ℝ] E).comp (fderiv ℝ f z)).det|) z0 ∧
       (Φ.symm : F →L[ℝ] E).comp (fderiv ℝ f z0) = ContinuousLinearMap.id ℝ E := by
-  have hs := h1.hasStrictFDerivAt (by norm_num)
+  have hs := h1.hasStrictFDerivAt_fderiv (by norm_num)
   rw [hd] at hs
   have hev := h1.eventually (by simp)
   have hPc : (hs.toOpenPartialHomeomorph f : E → F) = f := hs.toOpenPartialHomeomorph_coe
@@ -112,7 +116,7 @@ theorem tupJac_of_pieces {D : D7} (X : HidaSetting D) (u' : D.what₂.Word) (ψ 
       rw [Measure.map_map Φ.symm.continuous.measurable Φ.continuous.measurable]
       have : (Φ.symm ∘ Φ : _ → _) = id := funext fun z => Φ.symm_apply_apply z
       rw [this, Measure.map_id]
-    rw [hvol, Measure.map_smul] at e1
+    rw [hvol, Measure.map_smul _ Φ.symm.continuous.measurable.aemeasurable] at e1
     have hD0 : ENNReal.ofReal Dv ≠ 0 := by simpa using hDv
     rw [e1, smul_smul, ENNReal.inv_mul_cancel hD0 ENNReal.ofReal_ne_top, one_smul]
   set eT : TupI X ≃ₜ (EuclideanSpace ℝ ι × EuclideanSpace ℝ η) :=
@@ -120,7 +124,7 @@ theorem tupJac_of_pieces {D : D7} (X : HidaSetting D) (u' : D.what₂.Word) (ψ 
   have hμ : μinf.map eT = ENNReal.ofReal (Real.sqrt |(matI X).det| / Dv) • volume := by
     have e : (eT : TupI X → _) = Φ.symm ∘ tupCoord X := rfl
     rw [e, ← Measure.map_map Φ.symm.continuous.measurable (tupCoord X).continuous.measurable,
-      densMu_holds X u' ψ hT μinf νinf fibInf hP, Measure.map_smul, hvs, smul_smul,
+      densMu_holds X u' ψ hT μinf νinf fibInf hP, Measure.map_smul _ Φ.symm.continuous.measurable.aemeasurable, hvs, smul_smul,
       ENNReal.ofReal_div_of_pos hDv, div_eq_mul_inv]
 
   obtain ⟨U, hUn, hder, hinj, hcont, hbase⟩ := loc_glue f z0 Φ h1 hd

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvB
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvC
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndVerb
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpTieAlg
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvB
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -84,9 +88,11 @@ theorem cc_diagL {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B : FB S d O) (
             | simp [pt])
         (B.A.const w0 i)
   · unfold bilL
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun l _ => ?_
     first
       | simp [hlg]
@@ -97,8 +103,8 @@ theorem cc_diagL {d : ℕ} {O : Type} [CommRing O] [StarRing O] (B : FB S d O) (
 
 end HarmInvPf
 
-open HarmInvPf in
 
+open HarmInvPf in
 theorem harmInv_of_kill (hK : HarmKillJetSt) (hA : ExpActOfSt) : HarmInvSt := by
   intro E _ _ _ H Dw l Xo c _ hs S _ _ _ y C cc hsym hbal k n D f f' hj a P hP hD
   obtain ⟨h0, h1, hadd⟩ := HarmInvB.logOf_props C.B.G

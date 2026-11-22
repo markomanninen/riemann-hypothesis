@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -35,7 +40,7 @@ def piW (ϖ : PreTilt O p) (hϖ : ϖ.untilt = (p : O)) : WRing p O ϖ →+* Ainf
   Ideal.Quotient.lift _ ((Ideal.Quotient.mk (span {(p : O) ^ (0 + 1)})).comp (fontaineTheta O p))
     (fun a ha => by
       obtain ⟨b, c, rfl⟩ := Ideal.mem_span_pair.1 ha
-      simp only [RingHom.comp_apply, map_add, map_mul, map_pow, map_natCast,
+      simp only [RingHom.comp_apply, map_add (f := _), map_mul, map_pow, map_natCast,
         fontaineTheta_teichmuller, hϖ, modP_valuationIntegers_prime_eq_zero]
       simp)
 
@@ -63,7 +68,7 @@ lemma ker_piW (hv : v.Integers O) (ϖ : PreTilt O p) (hϖ : ϖ.untilt = (p : O))
     rw [h3] at ha
     obtain ⟨b, c, rfl⟩ := Ideal.mem_span_pair.1 ha
     refine Ideal.mem_span_singleton'.2 ⟨Ideal.Quotient.mk _ b, ?_⟩
-    simp only [map_add, map_mul, map_natCast, mk_teich, mul_zero, add_zero]
+    simp only [map_add (f := _), map_mul, map_natCast, mk_teich, mul_zero, add_zero]
   · intro hx
     obtain ⟨y, hy⟩ := Ideal.mem_span_singleton'.1 hx
     rw [RingHom.mem_ker, ← hy, map_mul, map_natCast, modP_valuationIntegers_prime_eq_zero, mul_zero]
@@ -171,8 +176,8 @@ lemma psiW_surj : Function.Surjective (psiW p O hv ε hε ϖ hϖ) := by
 def LW : LAlg (Ainf.R0 p O ε) :=
   { carrier := WRing p O ϖ, alg := (toW p O hv ε hε ϖ hϖ).toAlgebra, loc := W_local p O hv ϖ hϖ }
 
-omit hϖ in
 
+omit hϖ in
 def LK : LAlg (Ainf.R0 p O ε) :=
   { carrier := ResK O hv, alg := ((resO O hv).comp (Ainf.thetaBar p O hv ε hε)).toAlgebra }
 
@@ -183,8 +188,8 @@ def piWL : LHom (LW p O hv ε hε ϖ hϖ) ((Ainf.ainfTowerL p O hv ε hε).R 0) 
       rfl },
     TowerExample.isLocalHom_of_surj _ (piW_surj p O hv ϖ hϖ)⟩
 
-omit hϖ in
 
+omit hϖ in
 def rho1L : LHom ((Ainf.ainfTowerL p O hv ε hε).R 0) (LK p O hv ε hε) :=
   ⟨{ toRingHom := rho1 p O hv
      commutes' := fun _ => rfl },

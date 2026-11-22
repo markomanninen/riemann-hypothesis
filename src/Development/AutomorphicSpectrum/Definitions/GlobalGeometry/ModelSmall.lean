@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CInfGood
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
-import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CInfGood
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,16 +49,16 @@ def trOf (Rd : Reading Fr h Z) (u : GlobalTheory.AllWt.Weight Dw) (s : RM.Ω) : 
   letI := Rd.φ.toAlgebra
   Algebra.trace (Om Z) RM.Ω (s / gauge Rd u)
 
-variable (E) in
 
+variable (E) in
 def exTwo (p : ℕ) : ℝ := GlobalTheory.CovHt.htEx E p + if p = 2 then 1 else 0
 
-variable (l) in
 
+variable (l) in
 def costTwo (B : ℝ) : ℝ := ∑ᶠ p ∈ GlobalTheory.CompHt.htPrimes l B, exTwo E p * Real.log p
 
-variable (Xo c) in
 
+variable (Xo c) in
 def HTLow : Prop := ∀ (p : ℕ) (la : HeightOneSpectrum (𝓞 c.F)), p.Prime → ((p : ℕ) : 𝓞 c.F) ∈ la.asIdeal →
   ∀ w ∈ (GlobalTheory.CompHt.htVals Xo c).1 la, ∃ v ∈ (GlobalTheory.CompHt.recVals Xo c).1 la, ∀ (u : GlobalTheory.AllWt.Weight Dw),
     ∀ f ∈ GlobalTheory.AllWt.secZ Xo c (GlobalTheory.AllWt.exOf Dw u 0),

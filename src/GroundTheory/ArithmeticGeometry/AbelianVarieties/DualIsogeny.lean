@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsTranslate
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsTranslate
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -102,8 +106,8 @@ theorem isIsogeny_iff (Q : (E'.baseChange E.toAffine.FunctionField).toAffine.Poi
     | zero => exact hg.elim
     | some x y h => exact ⟨⟨x, y, h, rfl, hg⟩, hr⟩
 
-omit [E.IsElliptic] [E'.IsElliptic] in
 
+omit [E.IsElliptic] [E'.IsElliptic] in
 theorem respectsAdd_iff (Q : (E'.baseChange E.toAffine.FunctionField).toAffine.Point) :
     RespectsAdd E E' Q ↔ ∀ (L : Type u) [Field L] [Algebra F L] [DecidableEq L]
       (P₁ P₂ : (E.baseChange L).toAffine.Point) (h₁ : IsGenPt E P₁) (h₂ : IsGenPt E P₂)
@@ -137,7 +141,7 @@ theorem RespectsAdd.add {Q₁ Q₂ : (E'.baseChange E.toAffine.FunctionField).to
   intro L _ _ _ u₁ v₁ u₂ v₂ u₃ v₃ k₁ k₂ k₃ t₁ t₂ t₃ hs
   have e₁ := h₁ L u₁ v₁ u₂ v₂ u₃ v₃ k₁ k₂ k₃ t₁ t₂ t₃ hs
   have e₂ := h₂ L u₁ v₁ u₂ v₂ u₃ v₃ k₁ k₂ k₃ t₁ t₂ t₃ hs
-  simp only [ratMapValue, map_add] at e₁ e₂ ⊢
+  simp only [ratMapValue, map_add (f := _)] at e₁ e₂ ⊢
   rw [e₁, e₂]
   abel
 
@@ -149,8 +153,8 @@ theorem RespectsAdd.neg {Q : (E'.baseChange E.toAffine.FunctionField).toAffine.P
   simp only [ratMapValue, map_neg] at e ⊢
   rw [e, neg_add]
 
-variable (E E') in
 
+variable (E E') in
 def isogHom : AddSubgroup (E'.baseChange E.toAffine.FunctionField).toAffine.Point where
   carrier := {Q | RespectsAdd E E' Q}
   zero_mem' := respectsAdd_zero
@@ -317,7 +321,7 @@ theorem exists_map_eq_of_not_isGenPt (E : WeierstrassCurve F) {L : Type*} [Field
             C (c ^ 3 + E.a₂ * c ^ 2 + E.a₄ * c + E.a₆) : F[X]).natDegree = 2 := by
           compute_degree!
         omega
-      · simp only [map_sub, map_add, map_mul, map_pow, aeval_X, aeval_C, hc]
+      · simp only [map_sub, map_add (f := _), map_mul, map_pow, aeval_X, aeval_C, hc]
         linear_combination heq
     obtain ⟨d, hd⟩ := exists_algebraMap_eq_of_isAlgebraic' hyalg
     have hcd : E.toAffine.Nonsingular c d := by
@@ -348,11 +352,11 @@ theorem isGenPt_neg {L : Type*} [Field L] [Algebra F L] [DecidableEq L]
 omit [IsAlgClosed F] [DecidableEq F] in
 theorem isGenPt_add_self {L : Type*} [Field L] [Algebra F L] [DecidableEq L]
     {P : (E.baseChange L).toAffine.Point} (hP : IsGenPt E P) : IsGenPt E (P + P) := by
-  rw [← map_genEval_genericPoint E P hP, ← map_add]
+  rw [← map_genEval_genericPoint E P hP, ← map_add (f := _)]
   exact isGenPt_map E _ (by rw [← two_zsmul]; exact (mulIsogeny E 2 two_ne_zero).isGenPt)
 
-omit [IsAlgClosed F] [DecidableEq F] in
 
+omit [IsAlgClosed F] [DecidableEq F] in
 theorem map_genEval_neg {Q : (E'.baseChange E.toAffine.FunctionField).toAffine.Point}
     (hQ : RespectsAdd E E' Q) {L : Type u} [Field L] [Algebra F L] [DecidableEq L]
     {P : (E.baseChange L).toAffine.Point} (hP : IsGenPt E P) :
@@ -390,8 +394,8 @@ theorem isGenPt_of_mem_isogHom {Q : (E'.baseChange E.toAffine.FunctionField).toA
     (hQ : Q ∈ isogHom E E') (h0 : Q ≠ 0) : IsGenPt E' Q :=
   ((isIsogeny_iff Q).mp ((mem_isogHom_iff.mp hQ).resolve_left h0)).1
 
-omit [IsAlgClosed F] [DecidableEq F] in
 
+omit [IsAlgClosed F] [DecidableEq F] in
 theorem respectsAdd_map_genEval {Q : (E'.baseChange E.toAffine.FunctionField).toAffine.Point}
     (hQ : RespectsAdd E E' Q) (hg : IsGenPt E' Q)
     {R : (E''.baseChange E'.toAffine.FunctionField).toAffine.Point} (hR : RespectsAdd E' E'' R) :
@@ -410,8 +414,8 @@ theorem respectsAdd_map_genEval {Q : (E'.baseChange E.toAffine.FunctionField).to
   rw [genEval_congr E' e _ h₃']
   exact hR L _ _ _ _ h₃'
 
-variable (E) in
 
+variable (E) in
 abbrev isogEnd : Type u := isogHom E E
 
 noncomputable def homComp (R : isogHom E' E'') (Q : isogHom E E') : isogHom E E'' :=
@@ -421,11 +425,11 @@ noncomputable def homComp (R : isogHom E' E'') (Q : isogHom E E') : isogHom E E'
 
 theorem homComp_of_isGenPt (R : isogHom E' E'') (Q : isogHom E E') (h : IsGenPt E' Q.1) :
     (homComp R Q).1 = Point.map (genEval E' Q.1 h) R.1 := by
-  rw [homComp, dif_pos h]
+  rw [homComp, dite_eq_left h]
 
 theorem homComp_of_not_isGenPt (R : isogHom E' E'') (Q : isogHom E E') (h : ¬ IsGenPt E' Q.1) :
     homComp R Q = 0 := by
-  rw [homComp, dif_neg h]
+  rw [homComp, dite_eq_right h]
 
 theorem eq_zero_of_not_isGenPt (Q : isogHom E E') (h : ¬ IsGenPt E' Q.1) : Q = 0 := by
   rcases mem_isogHom_iff.mp Q.2 with h0 | h1
@@ -512,20 +516,6 @@ noncomputable instance : Ring (isogEnd E) :=
     mul_zero := homComp_zero_right }
 
 theorem isogEnd_mul_def (a b : isogEnd E) : a * b = homComp a b := rfl
-
-instance : IsDomain (isogEnd E) := by
-  have : NoZeroDivisors (isogEnd E) := by
-    refine ⟨fun {a b} hab => ?_⟩
-    by_contra hne
-    push_neg at hne
-    have hb : IsGenPt E b.1 := isGenPt_of_mem_isogHom b.2 (fun h => hne.2 (Subtype.ext h))
-    have ha : IsGenPt E a.1 := isGenPt_of_mem_isogHom a.2 (fun h => hne.1 (Subtype.ext h))
-    have := congrArg Subtype.val hab
-    rw [isogEnd_mul_def, homComp_of_isGenPt _ _ hb] at this
-    exact isGenPt_ne_zero E (isGenPt_map E _ ha) this
-  have : Nontrivial (isogEnd E) := ⟨⟨1, 0, fun h =>
-    isGenPt_ne_zero E (isGenPt_genericPoint (E := E)) (congrArg Subtype.val h)⟩⟩
-  exact NoZeroDivisors.to_isDomain _
 
 end AlgClosed
 

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -20,14 +25,16 @@ theorem GlobalTheory.tensor_fraction_injective_of_injective
     intro j; rw [hx j, Algebra.smul_def]
   have h0 : ∑ j, x j ⊗ₜ[R] r j = 0 := by
     apply hβ
-    rw [map_sum, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero]
     simp only [hβt, hx', map_mul]
     calc ∑ j, θ (algebraMap B K (s : B)) * θ (u j) * c (r j)
         = θ (algebraMap B K (s : B)) * ∑ j, c (r j) * θ (u j) := by
           rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun j _ => by ring
       _ = 0 := by rw [h, mul_zero]
   have h1 := congrArg ((IsScalarTower.toAlgHom R B K).toLinearMap.rTensor R₁) h0
-  simp only [map_sum, LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply,
     IsScalarTower.coe_toAlgHom', map_zero] at h1
   have h2 : (algebraMap B K (s : B)) • ∑ j, u j ⊗ₜ[R] r j = 0 := by
     rw [Finset.smul_sum]

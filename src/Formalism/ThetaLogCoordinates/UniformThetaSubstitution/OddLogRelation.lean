@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GaussJetBounds.Statement
+module
+
+public import Mathlib
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 

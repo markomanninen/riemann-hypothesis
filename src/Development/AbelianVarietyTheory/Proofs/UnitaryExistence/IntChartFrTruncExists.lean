@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntChartFrTrunc
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IntegralChartTransportToFramedPointStatement
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IntegralChartsCompleteDvrStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.IntChartSt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIntChartFrTrunc
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IntegralChartTransportToFramedPointStatement
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IntegralChartsCompleteDvrStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

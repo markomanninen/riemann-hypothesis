@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -36,8 +40,9 @@ theorem prod_norm_natCast_infinitePlaceCompletion_pow_mult (n : ℕ) :
     ∏ w : InfinitePlace K, ‖(n : w.Completion)‖ ^ w.mult = (n : ℝ) ^ Module.finrank ℚ K := by
   have h := InfinitePlace.prod_eq_abs_norm (n : K)
   have hw : ∀ w : InfinitePlace K, ‖(n : w.Completion)‖ = w (n : K) := fun w ↦ by
-    rw [← map_natCast (algebraMap K w.Completion) n]
-    exact InfinitePlace.Completion.norm_coe (K := K) (v := w) _
+    rw [← map_natCast (algebraMap K w.Completion) n, AbsoluteValue.Completion.algebraMap_def,
+      AbsoluteValue.Completion.norm_coe, WithAbs.algebraMap_right_apply,
+      WithAbs.ofAbs_toAbs, Algebra.algebraMap_self_apply, ← InfinitePlace.coe_apply]
   simp_rw [hw, h, ← map_natCast (algebraMap ℚ K) n, Algebra.norm_algebraMap]
   push_cast
   exact abs_of_nonneg (by positivity)

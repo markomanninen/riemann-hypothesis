@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.ThreeApartOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAbelianOverSubfield
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalCoreLeFixingSubgroupNormalClosure
-import ReciprocityTheory.GaloisValuations.Global
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemRealOfSq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.ThreeApartOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAbelianOverSubfield
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormalCoreLeFixingSubgroupNormalClosure
+public import ReciprocityTheory.GaloisValuations.Global
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemRealOfSq
+
+@[expose] public section
 
 noncomputable section
 

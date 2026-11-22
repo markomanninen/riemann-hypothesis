@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.YtTargetOf
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.FirstSummandActionMem
+module
+
+public import Formalism.AdmissibleDesigns.YtTargetOf
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.FirstSummandActionMem
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -19,8 +23,8 @@ variable {G : Type} [Group G] {LL : Type} [Field LL]
     {A T' GG : Type} [Ring A] [Algebra O A] [CommRing T'] [Algebra T' A] [Group GG]
     (r : GG →* A) (χ : GG →* T'ˣ) (E : A) (Dw : Subgroup GG) (eG : ↥Dw ≃* G)
 
-variable (O) in
 
+variable (O) in
 def lRep : Representation O GG A where
   toFun g := LinearMap.mulLeft O (uElt r χ g)
   map_one' := LinearMap.ext fun a => by simp [uElt_one]
@@ -266,14 +270,6 @@ variable {D : D7} {i : D.nd.Loc} {dc : TruncatedSeriesCountingIdentities.Decl D 
   {r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))} (π : D.nd.X i)
   {Dd : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingData (D.nd.O i) (D.nd.X i) (Fin D.R.nV) (GE D.nd) D.R.t (Formalism.MainNotions.N.RepresentationBoundsCohomology.blk D.R)}
   (ρ : D.nd.X i → (GE D.nd →* GL (Fin D.R.r) (D.nd.O i)))
-
-theorem twisted_target_of_inputs (hfin : Module.Finite (D.nd.O i) Dd.R') (hF : TruncatedSeriesCountingIdentities.FontaineAtPlacesOverL i) (hG2 : TruncatedSeriesCountingIdentities.admG2 i r ρ π)
-    (hD : TruncatedSeriesCountingIdentities.SemisimpleDecomposition i r ρ π) {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : w ∈ placesOver D.host.E (D.nd.l i))
-    (hE : EmbRW i dc r Dd hw) (hc : MsContW i r hw)
-    [∀ k, SMulCommClass Dd.R' (D.nd.O i) (blockRestrictedRepresentationType (Formalism.MainNotions.N.RepresentationBoundsCohomology.blk D.R) Dd.ρk k)] (c : Fin (D.R.t + 1)) :
-    YtTarget i dc r π Dd hw c := by
-  exact ytTarget_of (hfin := hfin) (hF := hF) (hG2 := hG2)
-    (hemb := ytEmbW_of i dc r Dd hw hE (lineW_of i r ρ π hD hw)) (hc := hc) (c := c)
 
 end RecT
 

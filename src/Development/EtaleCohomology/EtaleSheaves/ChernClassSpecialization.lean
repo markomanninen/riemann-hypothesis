@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CupProductRingLaws
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -13,7 +17,7 @@ variable {R : Type} [CommRing R]
 theorem free_hom_ext {P : PSh} {F : Shv R} (f g : (free R).obj P ⟶ F)
     (h : ∀ U x, (f.hom.app (op U)).hom (freeGen R P U x) = (g.hom.app (op U)).hom (freeGen R P U x)) : f = g := by
   apply Sheaf.hom_ext
-  apply sheafify_hom_ext (J := Scheme.etaleTopology) f.hom g.hom F.cond
+  apply sheafify_hom_ext (J := Scheme.etaleTopology) f.hom g.hom F.property
   ext U : 2
   induction U using Opposite.rec with | _ U => ?_
   apply ModuleCat.free_hom_ext

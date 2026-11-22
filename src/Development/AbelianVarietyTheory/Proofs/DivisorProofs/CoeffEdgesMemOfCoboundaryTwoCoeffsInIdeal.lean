@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -247,7 +251,7 @@ theorem killCompl_formalGroupLawCoboundaryTwo {μ : Fin d → MvPowerSeries (Fin
       unfold op
       rw [killCompl_powerSeriesEvalTwoGroups _ _ x2c x3c, killCompl_inl_threeGroupsSecondVariables, killCompl_inl_threeGroupsThirdVariables]
     unfold cob2
-    rw [map_sub, map_add, map_sub, killCompl_powerSeriesEvalTwoGroups _ c x2c x3c, killCompl_powerSeriesEvalTwoGroups _ c h12 x3c,
+    rw [map_sub, map_add (f := _), map_sub, killCompl_powerSeriesEvalTwoGroups _ c x2c x3c, killCompl_powerSeriesEvalTwoGroups _ c h12 x3c,
       killCompl_powerSeriesEvalTwoGroups _ c x1c h23, killCompl_powerSeriesEvalTwoGroups _ c x1c x2c, killCompl_inl_threeGroupsFirstVariables, killCompl_inl_threeGroupsSecondVariables, killCompl_inl_threeGroupsThirdVariables, k12, k23,
       powerSeriesEvalTwoGroups_zero_zero, hc, map_zero, powerSeriesEvalTwoGroups_X_zero]
     abel
@@ -262,7 +266,7 @@ theorem killCompl_formalGroupLawCoboundaryTwo {μ : Fin d → MvPowerSeries (Fin
       unfold op
       rw [killCompl_powerSeriesEvalTwoGroups _ _ x2c x3c, killCompl_thirdBlock_threeGroupsSecondVariables, killCompl_thirdBlock_threeGroupsThirdVariables]
     unfold cob2
-    rw [map_sub, map_add, map_sub, killCompl_powerSeriesEvalTwoGroups _ c x2c x3c, killCompl_powerSeriesEvalTwoGroups _ c h12 x3c,
+    rw [map_sub, map_add (f := _), map_sub, killCompl_powerSeriesEvalTwoGroups _ c x2c x3c, killCompl_powerSeriesEvalTwoGroups _ c h12 x3c,
       killCompl_powerSeriesEvalTwoGroups _ c x1c h23, killCompl_powerSeriesEvalTwoGroups _ c x1c x2c, killCompl_thirdBlock_threeGroupsFirstVariables, killCompl_thirdBlock_threeGroupsSecondVariables, killCompl_thirdBlock_threeGroupsThirdVariables, k12, k23,
       powerSeriesEvalTwoGroups_zero_zero, hc, map_zero, powerSeriesEvalTwoGroups_zero_X]
     abel

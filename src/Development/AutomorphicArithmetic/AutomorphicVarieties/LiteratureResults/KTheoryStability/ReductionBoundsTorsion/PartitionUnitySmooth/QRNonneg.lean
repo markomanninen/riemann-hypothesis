@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,7 +89,8 @@ private theorem term_low {C : ℝ} (hC : 0 < C) {h : HS L N} (hh : h ∈ Pos L N
   have eW : (∑ᶠ v : Lat L N, rho (q h v / s) • rk h v) = ∑ v ∈ T, rho (q h v / s) • rk h v :=
     finsum_eq_sum_of_support_subset _ fun v hv => by_contra fun hn => hv (by simp only [hz v hn, zero_smul])
   have eT : qR (term s h) (toR u) = (s ^ 2 * zed s h)⁻¹ * ∑ v ∈ T, rho (q h v / s) * qR (rk h v) (toR u) := by
-    rw [← evR_apply, term, eW, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← evR_apply, term, eW, map_smul, map_sum]
     simp only [map_smul, smul_eq_mul, evR_apply]
   have hq0 : q h 0 ≤ s := by
     have : toR (0 : Lat L N) = 0 := by funext w a; simp [toR]
@@ -168,7 +173,8 @@ theorem pf_GRLow : GRLow := by
     have := not_le.1 hcase
     linarith [mul_comm (μ h) (q h u), mul_assoc 16 (q h u) (μ h)]
   change _ ≤ evR (toR u) (ret μ h)
-  rw [ret, finsum_eq_sum_of_support_subset _ hsupp, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ret, finsum_eq_sum_of_support_subset _ hsupp, map_add (f := _), map_sum]
   simp only [map_smul, smul_eq_mul, evR_apply]
   refine le_add_of_nonneg_of_le (mul_nonneg hμ0.le (qR_nonneg hh _)) ?_
   refine le_trans (le_of_eq ?_) (Finset.single_le_sum (f := fun j : ℤ => rho ((4 : ℝ) ^ j * μ h) * qR (term ((4 : ℝ) ^ j) h) (toR u))

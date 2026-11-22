@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PsiApply
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.Pb.Psi
 
@@ -31,6 +35,6 @@ theorem extension_fixed : ∀ {W C₀ : Type} [CommRing W] [CommRing C₀] {K₀
   induction v using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => rw [hE, map_mul, hg, hy]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
 
 end GlobalTheory.CompanionTheory.FrobFix

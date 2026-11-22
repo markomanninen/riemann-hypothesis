@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
 
@@ -28,9 +33,9 @@ private theorem exists_ringHom_zmod_ker_eq {E : Type} [Field E] [NumberField E] 
   ext x
   simp [RingHom.mem_ker, Ideal.Quotient.eq_zero_iff_mem]
 
+
 open NumberField Module Matrix in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.NormOneSplit.mem_span_iff {E : Type} [Field E] [NumberField E] {T : ℕ}
     (hT : T.Prime)
     (hs : ∀ P : Ideal (𝓞 E), P.IsMaximal → ((T : 𝓞 E) ∈ P) →
@@ -133,14 +138,14 @@ private theorem card_solutions_mul_involution_eq_pow {H K : Type} [Finite H] [Fi
             else c h / (g ⟨ι h, hlt h hh⟩).1, fun h => by
           by_cases hh : h < ι h
           · dsimp only
-            rw [dif_pos hh, dif_neg (hnlt h hh)]
+            rw [dite_eq_left hh, dif_neg (hnlt h hh)]
             have hg := (g ⟨h, hh⟩).2
             have hs : (⟨ι (ι h), hlt (ι h) (hnlt h hh)⟩ : {h : H // h < ι h}) = ⟨h, hh⟩ :=
               Subtype.ext (hι h)
             rw [hs, hcι]
             field_simp
           · dsimp only
-            rw [dif_neg hh, dif_pos (hlt h hh)]
+            rw [dif_neg hh, dite_eq_left (hlt h hh)]
             have hg := (g ⟨ι h, hlt h hh⟩).2
             field_simp⟩
         left_inv := fun f => by
@@ -217,9 +222,9 @@ private theorem comp_mapRingHom_star_ne_of_split {F E : Type} [Field F] [NumberF
   rw [Ideal.ramificationIdx'_eq_ramificationIdx' _ _ hne, ← hcard] at hle2
   exact (hs P hPm hTP).2 (Ideal.pow_le_pow_right h2le (hle2 hTmap))
 
+
 open NumberField Module Matrix in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.NormOneSplit.card_norm_classes : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E], _root_.Formalism.BasicNotions.CMData F E → ∀ T : ℕ, T.Prime → (∀ P : Ideal (𝓞 E), P.IsMaximal → ((T : 𝓞 E) ∈ P) → Ideal.absNorm P = T ∧ (T : 𝓞 E) ∉ P ^ 2) → ∀ c : 𝓞 E, star (c : E) = (c : E) → IsCoprime c (T : 𝓞 E) → Nat.card {a : 𝓞 E ⧸ Ideal.span {(T : 𝓞 E)} // ∃ x y : 𝓞 E, Ideal.Quotient.mk _ x = a ∧ (y : E) = star (x : E) ∧ x * y - c ∈ Ideal.span {(T : 𝓞 E)}} = (T - 1) ^ finrank ℚ F := by
   intro F E _ _ _ _ _ _ hcm T hT hs c hc hcop
   haveI : Fact T.Prime := ⟨hT⟩
@@ -272,7 +277,7 @@ theorem _root_.GlobalTheory.NormOneSplit.card_norm_classes : ∀ (F E : Type) [F
     intro φ h0
     obtain ⟨a, b, hab⟩ := hcop
     have := congrArg φ hab
-    rw [map_add, map_mul, map_mul, h0, hT0, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, h0, hT0, map_one] at this
     simp at this
   have hτcc : τ c = c := Subtype.ext ((hτc c).trans hc)
   obtain ⟨m, hm, hcount⟩ := card_solutions_mul_involution_eq_pow (fun φ : 𝓞 E →+* ZMod T => φ.comp τ)

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycNumIntAndComb
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FinitePlacesModelFamilyStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.CycNumIntAndComb
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FinitePlacesModelFamilyStatement
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 
@@ -16,7 +21,7 @@ theorem divCycle_support_finite {K : Type} [Fintype K] {ι : K → Type} [∀ k,
   by_contra h
   apply hW
   unfold divCycle
-  rw [dif_neg (fun h' => h h'.1)]
+  rw [dite_eq_right (fun h' => h h'.1)]
 
 theorem cycEval_ratDiv {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
     {O : Type} [CommRing O] [IsNoetherianRing O] (n : Ideal (MRing ι O) → ℤ) (P : Ideal (MRing ι O))
@@ -47,8 +52,8 @@ theorem ck_cast {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
   push_cast
   rfl
 
-omit [Fintype K] [∀ k, Fintype (ι k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] in
 theorem length_classList {σ : Type} (cls : σ → K → ℤ) {H : MvPolynomial σ ℝ} {e : ℕ}
     (hH : H.IsHomogeneous e) {μ : σ →₀ ℕ} (hμ : μ ∈ H.support) : (classList cls μ).length = e := by
   have h := hH (mem_support_iff.mp hμ)
@@ -57,8 +62,8 @@ theorem length_classList {σ : Type} (cls : σ → K → ℤ) {H : MvPolynomial 
   rw [← h, Finsupp.weight_apply]
   simp [Finsupp.sum]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem cycNum_transfer {O₀ : Type} [CommRing O₀] [IsDomain O₀] [IsDiscreteValuationRing O₀]
     {Λ : Type} [Fintype Λ] {O : Λ → Type} [∀ l, CommRing (O l)] [∀ l, IsDomain (O l)]
     [∀ l, IsDiscreteValuationRing (O l)] (Z₀ : Ideal (MRing ι O₀) → ℤ)
@@ -148,7 +153,7 @@ variable {A : Type} [CommRing A] [IsDedekindDomain A] [Module.Finite ℤ A]
 theorem finite_primes_containing {a : A} (ha : a ≠ 0) :
     Finite {n : Ideal A // n.IsPrime ∧ a ∈ n} := by
   have hfin := Ideal.finite_minimalPrimes_of_isNoetherianRing A (Ideal.span {a})
-  refine Set.Finite.to_subtype (hfin.subset ?_)
+  refine Set.Finite.to_subtype (hfin.subset (show {n : Ideal A | n.IsPrime ∧ a ∈ n} ⊆ _ from ?_))
   rintro n ⟨hn, han⟩
   have hn0 : n ≠ ⊥ := fun h => ha (by simpa [h] using han)
   have hmax := Ring.DimensionLEOne.maximalOfPrime hn0 hn

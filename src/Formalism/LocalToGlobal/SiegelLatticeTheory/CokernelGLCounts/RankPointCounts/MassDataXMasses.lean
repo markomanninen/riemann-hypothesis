@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataMasses
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXLeaves
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXSA
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataMasses
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXLeaves
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXSA
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.MassDataX
 

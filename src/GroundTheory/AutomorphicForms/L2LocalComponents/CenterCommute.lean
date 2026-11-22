@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MultiplicityOne.GL2BumpFunctions.ParametrixLie
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MultiplicityOne.GL2BumpFunctions.ParametrixLie
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff
@@ -93,12 +97,12 @@ theorem exists_wordSum (u : UniversalEnvelopingAlgebra ℝ h.lieSubalgebra) :
     obtain ⟨La, ha⟩ := iha
     obtain ⟨Lb, hb⟩ := ihb
     refine ⟨La.flatMap fun p => Lb.map fun q => (p.1 * q.1, p.2 ++ q.2), fun v => ?_⟩
-    rw [map_mul, map_mul, Module.End.mul_apply, ha, hb, h.wordSum_wordSum π v.2]
+    rw [map_mul, map_mul, mul_apply_eq_comp, ha, hb, h.wordSum_wordSum π v.2]
   | add a b iha ihb =>
     obtain ⟨La, ha⟩ := iha
     obtain ⟨Lb, hb⟩ := ihb
     refine ⟨La ++ Lb, fun v => ?_⟩
-    rw [map_add, map_add, LinearMap.add_apply, Submodule.coe_add, ha, hb, wordSum_append]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, Submodule.coe_add, ha, hb, wordSum_append]
 
 variable [CompleteSpace E]
 
@@ -114,7 +118,8 @@ theorem hasDerivAt_wordSum_expG (hπ : ∀ g, ‖π g‖ ≤ 1) {w : E} (hw : h.
         funext fun s => h.listOp_eq_wordOp π _ _
       rw [e, h.listOp_eq_wordOp π]
       exact h.hasDerivAt_wordOp_expG π hπ hw X _
-    exact (h1.const_smul p.1).add (hasDerivAt_wordSum_expG hπ hw X L)
+    simpa only [wordSum_cons] using
+      (h1.fun_const_smul p.1).fun_add (hasDerivAt_wordSum_expG hπ hw X L)
 
 theorem uAction_map_expG (hπ : ∀ g, ‖π g‖ ≤ 1) {z : UniversalEnvelopingAlgebra ℝ h.lieSubalgebra}
     (hz : z ∈ h.centerU) {v : E} (hv : h.IsSmoothVector π v) (X : 𝔤) :
@@ -139,7 +144,7 @@ theorem uAction_map_expG (hπ : ∀ g, ‖π g‖ ≤ 1) {z : UniversalEnvelopin
         (coe_derivEnd _ _ _ _).symm, ← hL, ← hL,
       show h.derivOp π X ((h.uAction π z w : h.smoothVectors π) : E) =
         ((h.derivEnd π X (h.uAction π z w) : h.smoothVectors π) : E) from (coe_derivEnd _ _ _ _).symm,
-      hX, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, hc, neg_add_cancel]
+      hX, ← mul_apply_eq_comp, ← mul_apply_eq_comp, ← map_mul, ← map_mul, hc, neg_add_cancel]
 
   set c : ℝ → E := fun t => π (h.expG (t • (-X))) (h.wordSum π L (π (h.expG (t • X)) v)) with hcdef
   have hderiv : ∀ t, HasDerivAt c 0 t := by
@@ -175,7 +180,6 @@ theorem wordSum_integrated (hπ : ∀ g, ‖π g‖ ≤ 1) {w : E} (hw : h.IsSmo
       h.wordSum π L (π.integrated μ f w) = ∫ g, f g • h.wordSum π L (π g w) ∂μ
   | [] => by simp
   | p :: L => by
-    have := secondCountableTopology_subgroup_units G
     have hfc := hf.continuous h
     have hint1 : Integrable (fun g => f g • (p.1 • h.listOp π p.2 (π g w))) μ := by
       have hc : Continuous fun g : G => h.listOp π p.2 (π g w) := by
@@ -196,10 +200,28 @@ theorem wordSum_integrated (hπ : ∀ g, ‖π g‖ ≤ 1) {w : E} (hw : h.IsSmo
             funext fun g => h.listOp_eq_wordOp π _ _
           have hq : Continuous fun g : G => h.listOp π q.2 (π g w) := by
             rw [e]; exact h.continuous_wordOp_map π hπ hw _
-          exact (hq.const_smul q.1).add ih
+          simpa only [wordSum_cons] using (hq.fun_const_smul q.1).fun_add ih
       exact (hfc.smul hc).integrable_of_hasCompactSupport hf.2.smul_right
+    have hword : ∀ {k : ℕ} (Y : Fin k → 𝔤),
+        h.wordOp π Y (π.integrated μ f w) = ∫ g, f g • h.wordOp π Y (π g w) ∂μ := by
+      intro k
+      induction k with
+      | zero =>
+        intro Y
+        rfl
+      | succ k ih =>
+        intro Y
+        rw [wordOp_succ, ih (Fin.tail Y)]
+        have hs (g : G) : h.IsSmoothVector π (h.wordOp π (Fin.tail Y) (π g w)) :=
+          h.isSmoothVector_wordOp π (h.isSmoothVector_map π hw g) _
+        have hz : h.IsSmoothVector π (∫ g, f g • h.wordOp π (Fin.tail Y) (π g w) ∂μ) := by
+          rw [← ih (Fin.tail Y)]
+          exact h.isSmoothVector_wordOp π (h.isSmoothVector_integrated π μ hf w) _
+        simpa only [wordOp_succ] using
+          h.derivOp_integral π μ hπ hf (h.continuous_wordOp_map π hπ hw (Fin.tail Y)) hs (Y 0)
+            (by simpa only [wordOp_succ] using h.continuous_wordOp_map π hπ hw Y) hz
     rw [wordSum_cons, wordSum_integrated hπ hw hf L, h.listOp_eq_wordOp π,
-      h.wordOp_integrated π μ hπ hw hf, ← integral_smul, ← integral_add _ hint2]
+      hword, ← integral_smul, ← integral_add _ hint2]
     · refine integral_congr_ae (Eventually.of_forall fun g => ?_)
       simp only [wordSum_cons, smul_add, h.listOp_eq_wordOp π]
       rw [smul_comm]

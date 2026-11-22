@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolynomialChartInjective
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalCurveRegularPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolynomialChartInjective
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PNormalCurveRegularPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,7 @@ theorem PolynomialChartInjective.full : PolynomialChartInjective.Statement := by
   have hspan : Submodule.span ℂ (Set.range r) = ⊤ :=
     hlin.span_eq_top_of_card_eq_finrank' (by simp [Module.finrank_fintype_fun_eq_card, hk])
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     let ψ : (σ → ℂ) →ₗ[ℂ] ℂ :=
       { toFun := fun u ↦ ∑ i, u i * v i
@@ -38,7 +43,8 @@ theorem PolynomialChartInjective.full : PolynomialChartInjective.Statement := by
       rintro _ ⟨j, rfl⟩
       have h0 := congrFun hv j
       simp only [hL, ContinuousLinearMap.pi_apply, Pi.zero_apply] at h0
-      rw [pi_eq_sum_univ' v, map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [pi_eq_sum_univ' v, map_sum] at h0
       simp only [map_smul, smul_eq_mul, hrow] at h0
       simpa [ψ, mul_comm] using h0
     rw [hspan] at hker

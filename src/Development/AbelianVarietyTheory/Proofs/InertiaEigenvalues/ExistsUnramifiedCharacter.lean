@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAlgEquivRootOfUnityEqPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc TensorProduct
 
@@ -92,7 +96,7 @@ theorem deg_mul (g h : GQ l) : deg (g * h) = deg g + deg h := by
   refine PadicInt.ext_of_toZModPow.1 fun n => ?_
   obtain ⟨a, ha⟩ := exists_acts g n
   obtain ⟨b, hb⟩ := exists_acts h n
-  rw [map_add, deg_spec ha, deg_spec hb, deg_spec (ha.mul hb), Nat.cast_add]
+  rw [map_add (f := _), deg_spec ha, deg_spec hb, deg_spec (ha.mul hb), Nat.cast_add]
 
 theorem deg_eq_nat {g : GQ l} {a : ℕ} (h : ∀ n, Acts g n a) : deg g = a := by
   refine PadicInt.ext_of_toZModPow.1 fun n => ?_
@@ -111,7 +115,7 @@ theorem continuous_deg : Continuous (deg : GQ l → ℤ_[l]) := by
   obtain ⟨n, hn⟩ := PadicInt.exists_pow_neg_lt l hε
   obtain ⟨ξ, hξ⟩ := exists_prim (l := l) n
   haveI : NeZero (l ^ (l ^ n) - 1) := ⟨(lev_pos n).ne'⟩
-  have ho := (stabilizer_isOpen_of_isIntegral (K := ℚ_[l]) ξ).preimage (continuous_mul_left g⁻¹)
+  have ho := (stabilizer_isOpen_of_isIntegral (K := ℚ_[l]) ξ).preimage (continuous_const_mul g⁻¹)
   filter_upwards [ho.mem_nhds (show g⁻¹ * g ∈ MulAction.stabilizer (GQ l) ξ by simp)] with h hh
   have h1 : (g⁻¹ * h) ξ = ξ := hh
   have h2 : h ξ = g ξ := by

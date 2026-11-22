@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfHomPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfHomPf
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 

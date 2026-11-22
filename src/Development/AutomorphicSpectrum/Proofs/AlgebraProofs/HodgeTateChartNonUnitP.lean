@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
+module
+
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RedOmHTBc
+
+@[expose] public section
+
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct
 
 namespace GlobalTheory.CompanionTheory.Ar.HT

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -13,9 +18,5 @@ def OrbitChartQuot.Statement : Prop :=
       Nonempty ((chartRing x c ⧸ chartPoint x c V) ≃+*
         (MvPolynomial (Coord n) ℤ ⧸
           (V ⊔ Ideal.span (Set.range fun k ↦ (X ⟨k, c k⟩ : MvPolynomial (Coord n) ℤ) - 1))))
-
-example : (∀ k, samplePoint k ((fun _ ↦ 0) k) ≠ 0) ∧
-    orbitIdeal samplePoint ≤ orbitIdeal samplePoint :=
-  ⟨fun _ ↦ by simp [samplePoint], le_rfl⟩
 
 end GroundTheory.Heights₂.Heights

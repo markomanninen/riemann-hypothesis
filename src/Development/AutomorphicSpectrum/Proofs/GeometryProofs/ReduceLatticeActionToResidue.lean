@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -27,7 +32,8 @@ theorem trace_eigProj_eq_sum {K V : Type} [Field K] [AddCommGroup V] [Module K V
     (ρ : 𝓞 E →+* Module.End K V) (σ : E →+* K) :
     LinearMap.trace K V (HT.eigProj ρ σ) =
       ∑ k, σ (HT.dualInt E k) * LinearMap.trace K V (ρ (RingOfIntegers.basis E k)) := by
-  simp [HT.eigProj, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [HT.eigProj, map_sum, map_smul]
 
 variable {Ω Vs C : Type} [Field Ω] [AddCommGroup Vs] [Module Ω Vs] [Field C]
 
@@ -54,7 +60,8 @@ theorem trace_of_comb {R : Subring Ω} {g : ℕ} {ℓ : Fin g → Vs} (hl : Line
   push_cast
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Matrix.diag_apply, LinearMap.toMatrix_apply, hbj, hx j, comb]
-  simp only [← hbj, map_sum, map_smul, Module.Basis.repr_self]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← hbj, map_sum, map_smul, Module.Basis.repr_self]
   simp [Finsupp.single_apply]
 
 theorem trace_of_cols {g : ℕ} (f : Module.End C (Fin g → C)) (y : Fin g → Fin g → C)
@@ -91,7 +98,8 @@ theorem finrank_eigSp_eval : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs C :
     fun a => trace_of_comb hl hs (ρ a) (M a) (hM a)
   have tC : ∀ a, LinearMap.trace C (Fin g → C) (ρC a) = ψ (∑ j, M a j j) := by
     intro a
-    rw [trace_of_cols (ρC a) (fun j i => ψ (M a j i)) (hC a), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [trace_of_cols (ρC a) (fun j i => ψ (M a j i)) (hC a), map_sum]
   set T : R' := ∑ k, ⟨σ (HT.dualInt E k), (hσ _).1⟩ * ∑ j, M (RingOfIntegers.basis E k) j j with hTdef
   have h1 : (Module.finrank Ω (HT.eigSp ρ σ) : Ω) = (T : Ω) := by
     rw [← trace_eigProj, trace_eigProj_eq_sum, hTdef]
@@ -105,7 +113,8 @@ theorem finrank_eigSp_eval : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs C :
     rw [← h1]
     simp
   have h3 : (Module.finrank C (HT.eigSp ρC σC) : C) = ψ T := by
-    rw [← trace_eigProj, trace_eigProj_eq_sum, hTdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← trace_eigProj, trace_eigProj_eq_sum, hTdef, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [tC, map_mul]
     congr 1

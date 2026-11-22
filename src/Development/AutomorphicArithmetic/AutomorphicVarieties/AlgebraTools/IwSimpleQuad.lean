@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
 private theorem quadAbs {A G M ι : Type} [CommRing A] [Group G] [AddCommGroup M] [Module A M] [Fintype ι] [DecidableEq ι]
@@ -16,7 +21,8 @@ private theorem quadAbs {A G M ι : Type} [CommRing A] [Group G] [AddCommGroup M
   have fx : ∀ (w : fixd ρ I), ∀ g ∈ I, ρ g w = w := fun w => w.2
   have key : ∀ c ≠ o, ∑ c', ρ (x c' * s) (ρ (x c * s) v) = (hk ρ I s (hk ρ I (d c) v) : M) := by
     intro c hco
-    rw [← fx (hk ρ I s _) _ (hy c hco), hT, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← fx (hk ρ I s _) _ (hy c hco), hT, map_sum]
     refine Finset.sum_congr rfl fun c' _ => ?_
     rw [(hkNorm A G M ρ I (d c) hI (hd c hco)).1]
     conv_rhs => rw [← fx v _ (hy c hco)]
@@ -31,7 +37,8 @@ private theorem quadAbs {A G M ι : Type} [CommRing A] [Group G] [AddCommGroup M
     simp only [this]
     simp [Nat.cast_smul_eq_nsmul]
   rw [Module.End.mul_apply, hT, hT]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm, ← Finset.add_sum_erase _ _ (Finset.mem_univ o), k0]
   simp only [LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, LinearMap.sum_apply,
     Submodule.coe_add, Submodule.coe_smul, Submodule.coe_sum, Module.End.mul_apply]

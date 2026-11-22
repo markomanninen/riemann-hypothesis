@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilyStatementOfItemsFourSeven
-import Formalism.FlagUnipotentLattices.AlgebraicIdentityHigherDegree
-import Formalism.FormalDegreeBessel.FinalDS
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.FamilyStatementOfItemsFourSeven
+public import Formalism.FlagUnipotentLattices.AlgebraicIdentityHigherDegree
+public import Formalism.FormalDegreeBessel.FinalDS
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,9 +147,6 @@ theorem degree_ratio_one_of_vandermonde (D : D7) (large₂ : SizeData₂ D) (C' 
 section Fam
 
 variable {eps : ℝ} (Fm : FamP eps)
-
-def deg_VandLineF (Cg cb Cu cT CT C0 C1 : ℝ) : Prop :=
-  ∀ Cn : ℝ, OwnEv Fm fun C' Cl x i => deg_VandLine (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 Cn C1
 
 end Fam
 

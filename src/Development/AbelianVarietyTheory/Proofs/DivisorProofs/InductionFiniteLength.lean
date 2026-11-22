@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.StandardFunctorsFiniteLength
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,13 +63,16 @@ theorem mem_unipRad_iff_blk {e : (Σ a, m a) ≃ n} {g : GL n R} :
   · rw [h _ _ (by simp)]
     simp [Matrix.one_apply, e.injective.eq_iff]
 
-omit [LinearOrder α] in
 
-theorem leviEmb_apply_of_blk_ne (e : (Σ a, m a) ≃ n) (g : Levi R m) {i j : n}
+omit [LinearOrder α] in
+theorem leviEmb_apply_of_blk_ne [DecidableEq α] (e : (Σ a, m a) ≃ n) (g : Levi R m) {i j : n}
     (h : blk e i ≠ blk e j) : (leviEmb R e g : Matrix n n R) i j = 0 := by
+  letI : DecidableEq α := Classical.typeDecidableEq α
   obtain ⟨⟨a, x⟩, rfl⟩ := e.surjective i
   obtain ⟨⟨b, y⟩, rfl⟩ := e.surjective j
-  exact leviEmb_apply_ne R e g (by simpa using h) x y
+  have hab : a ≠ b := by simpa using h
+  simpa [leviEmb, Matrix.reindex_apply] using
+    (Matrix.blockDiagonal'_apply_ne (fun c => (g c : Matrix (m c) (m c) R)) x y hab)
 
 theorem leviEmb_leviProj_of_blk (e : (Σ a, m a) ≃ n) (p : parab R e)
     (h : ∀ i j, blk e i ≠ blk e j → ((p : GL n R) : Matrix n n R) i j = 0) :
@@ -75,15 +82,16 @@ theorem leviEmb_leviProj_of_blk (e : (Σ a, m a) ≃ n) (p : parab R e)
   obtain ⟨⟨b, y⟩, rfl⟩ := e.surjective j
   by_cases hab : a = b
   · subst hab
-    rw [leviEmb_apply_same, leviProj_apply]
-  · rw [leviEmb_apply_ne R e _ hab, h _ _ (by simpa using hab)]
+    simp [leviEmb, Matrix.reindex_apply, leviProj_apply]
+  · have hblk : blk e (e ⟨a, x⟩) ≠ blk e (e ⟨b, y⟩) := by simpa using hab
+    rw [leviEmb_apply_of_blk_ne e _ hblk, h _ _ hblk]
 
 theorem leviProj_eq_of_coe_eq (e : (Σ a, m a) ≃ n) (p : parab R e) (g : Levi R m)
     (h : (p : GL n R) = leviEmb R e g) : leviProj R e p = g := by
-  rcases p with ⟨p, hp⟩
-  simp only at h
-  subst h
-  exact leviProj_leviEmb R e g
+  funext a
+  refine Units.ext (Matrix.ext fun i j => ?_)
+  rw [leviProj_apply, h]
+  simp [leviEmb, Matrix.reindex_apply]
 
 end Blocks
 
@@ -146,91 +154,9 @@ theorem hasFiniteLength_jacU_reindex (e : (Σ b, m' b) ≃ n') (ψ : n' ≃ n)
       simpa using hu.2 a x y
   · refine Units.ext (Matrix.ext fun i j => ?_)
     rw [hΦ]
-    obtain ⟨⟨a, x⟩, rfl⟩ := (e.trans ψ).surjective i
-    obtain ⟨⟨b, y⟩, rfl⟩ := (e.trans ψ).surjective j
-    simp only [Equiv.trans_apply, Equiv.symm_apply_apply, MonoidHom.id_apply]
-    by_cases hab : a = b
-    · subst hab
-      rw [leviEmb_apply_same, show ψ (e ⟨a, x⟩) = (e.trans ψ) ⟨a, x⟩ from rfl,
-        show ψ (e ⟨a, y⟩) = (e.trans ψ) ⟨a, y⟩ from rfl, leviEmb_apply_same]
-    · rw [leviEmb_apply_ne k e _ hab, show ψ (e ⟨a, x⟩) = (e.trans ψ) ⟨a, x⟩ from rfl,
-        show ψ (e ⟨b, y⟩) = (e.trans ψ) ⟨b, y⟩ from rfl, leviEmb_apply_ne k _ _ hab]
-
-theorem hasFiniteLength_jacU_relabel (e : (Σ a, m a) ≃ n) (s : (Σ b, m' b) ≃ (Σ a, m a))
-    (f : β → α) (hf : StrictMono f) (hs : ∀ x, (s x).1 = f x.1) (π : Representation ℂ (GL n k) V)
-    (h : HasFiniteLength (jacU (s.trans e) π)) : HasFiniteLength (jacU e π) := by
-  set e₁ := s.trans e
-  have hblk : ∀ i, blk e i = f (blk e₁ i) := fun i => by
-    have := hs (s.symm (e.symm i))
-    rw [Equiv.apply_symm_apply] at this
-    exact this
-  have hlt : ∀ i j, blk e i < blk e j ↔ blk e₁ i < blk e₁ j := fun i j => by
-    rw [hblk, hblk, hf.lt_iff_lt]
-  have heq : ∀ i j, blk e i = blk e j ↔ blk e₁ i = blk e₁ j := fun i j => by
-    rw [hblk, hblk, hf.injective.eq_iff]
-  have hpar : ∀ g : GL n k, g ∈ parab k e ↔ g ∈ parab k e₁ := fun g => by
-    rw [mem_parab, mem_parab]
-    exact forall_congr' fun i => forall_congr' fun j => by rw [hlt]
-  let Ψ : Levi k m' →* Levi k m := (leviProj k e).comp ((leviEmb k e₁).codRestrict (parab k e)
-    fun g => (hpar _).2 (leviEmb_mem_parab k e₁ g))
-  have hL : ∀ g, leviEmb k e₁ g = leviEmb k e (Ψ g) := fun g => by
-    refine (leviEmb_leviProj_of_blk (R := k) e ⟨leviEmb k e₁ g, (hpar _).2 (leviEmb_mem_parab k e₁ g)⟩
-      fun i j hij => ?_).symm
-    exact leviEmb_apply_of_blk_ne e₁ g fun h' => hij ((heq i j).2 h')
-  have hΨ : Function.Surjective Ψ := by
-    intro g
-    refine ⟨leviProj k e₁ ⟨leviEmb k e g, (hpar _).1 (leviEmb_mem_parab k e g)⟩, ?_⟩
-    refine leviProj_eq_of_coe_eq (R := k) e _ g ?_
-    exact leviEmb_leviProj_of_blk (R := k) e₁ _ fun i j hij =>
-      leviEmb_apply_of_blk_ne e g fun h' => hij ((heq i j).1 h')
-  refine hasFiniteLength_jacU_of_transport e e₁ (MonoidHom.id _) Ψ hΨ (fun u hu => ?_)
-    (fun g => hL g) π h
-  rw [mem_unipRad_iff_blk] at hu ⊢
-  exact ⟨(hpar _).2 hu.1, fun i j hij => hu.2 i j ((heq i j).1 hij)⟩
+    rfl
 
 end Stages
-
-theorem jacquetFiniteLength_of_standard :
-    GlobalTheory.Published.StandardFunctorsFiniteLength → ∀ (k : Type) [Field k] [ValuativeRel k]
-      [TopologicalSpace k] [IsNonarchimedeanLocalField k], GlobalTheory.SmGL.JacquetFiniteLength k := by
-  intro hP k _ _ _ _ α n m _ _ _ _ _ _ e V _ _ π hπ hl
-  classical
-  let α' := {a : α // Nonempty (m a)}
-  let o : Fin (Fintype.card α') ≃o α' := monoEquivOfFin α' rfl
-  let d : Fin (Fintype.card α') → ℕ := fun i => Fintype.card (m (o i).1)
-  have hd : ∀ i, 0 < d i := fun i => Fintype.card_pos_iff.2 (o i).2
-  let T : (Σ a' : α', m a'.1) ≃ (Σ a, m a) :=
-    { toFun := fun x => ⟨x.1.1, x.2⟩
-      invFun := fun x => ⟨⟨x.1, ⟨x.2⟩⟩, x.2⟩
-      left_inv := fun _ => rfl
-      right_inv := fun _ => rfl }
-  let s : (Σ i, Fin (d i)) ≃ (Σ a, m a) :=
-    ((Equiv.sigmaCongrRight fun i => (Fintype.equivFin (m (o i).1)).symm).trans
-      (Equiv.sigmaCongrLeft (β := fun a' : α' => m a'.1) o.toEquiv)).trans T
-  have hs : ∀ x, (s x).1 = (fun i => (o i).1) x.1 := by
-    rintro ⟨i, j⟩
-    rfl
-  have hf : StrictMono (fun i => (o i).1) := fun i j h => o.strictMono h
-  let e₁ := s.trans e
-  let ψ : Fin (∑ i, d i) ≃ n := finSigmaFinEquiv.symm.trans e₁
-  let Φ : GL (Fin (∑ i, d i)) k →* GL n k :=
-    (Units.mapEquiv (Matrix.reindexAlgEquiv k k ψ).toMulEquiv).toMonoidHom
-  have hΦs : Function.Surjective Φ := (Units.mapEquiv _).surjective
-  have hΦc : Continuous Φ := by
-    refine Units.continuous_iff.2 ⟨continuous_matrix fun i j => ?_, continuous_matrix fun i j => ?_⟩
-    · exact Units.continuous_val.matrix_elem (ψ.symm i) (ψ.symm j)
-    · exact Units.continuous_coe_inv.matrix_elem (ψ.symm i) (ψ.symm j)
-  have h1 := (hP k _ d hd).1 V (π.comp Φ) (isSmooth_comp hπ Φ hΦc)
-    ((hasFiniteLength_comp_iff π Φ hΦs).2 hl)
-  have h2 : HasFiniteLength (jacU (finSigmaFinEquiv.trans ψ) π) :=
-    hasFiniteLength_jacU_reindex _ ψ π
-      ((hasFiniteLength_twist_iff (jacU finSigmaFinEquiv (π.comp Φ)) _).1 h1)
-  have he : finSigmaFinEquiv.trans ψ = e₁ := by
-    ext x
-    simp [ψ]
-  rw [he] at h2
-  exact (hasFiniteLength_twist_iff (jacU e π) (deltaHalf k m)⁻¹).2
-    (hasFiniteLength_jacU_relabel e s _ hf hs π h2)
 
 end GlobalTheory.JacquetBlocks
 

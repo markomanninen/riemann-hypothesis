@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.LocalToGlobal.ProjectiveLattices.DatIndep
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.LocalToGlobal.ProjectiveLattices.DatIndep
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,8 +47,8 @@ theorem thValAt_iff (hU : ThExprUniqSt) [StarRing (𝓞 E)] (nab nab' : NabV Xo 
 
 end CIndNab
 
-open CIndNab in
 
+open CIndNab in
 theorem nabUniq_of_chartIndep2 (hC : ChartIndepSt2) {E : Type} [Field E] [NumberField E] [IsCMField E]
     {H : Host E} {Dw : Datum H} {l : Level H} (Xo : Moduli Dw l) (c : Coeff l) : NabUniq Xo c := by
   intro _ nab nab' h h' a n _

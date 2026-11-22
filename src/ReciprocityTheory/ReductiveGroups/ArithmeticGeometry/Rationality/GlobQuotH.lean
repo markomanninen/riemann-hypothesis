@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.GlobSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Hadamard
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.GlobSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.Hadamard
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 
@@ -18,8 +22,7 @@ lemma norm_emb_eq (v : HeightOneSpectrum (𝓞 K)) {x : K} (hx : x ≠ 0) :
   have hv : v.valuation K x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
   have h1 : Valued.v (FinitePlace.embedding v x) = v.valuation K x :=
     HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v x
-  rw [FinitePlace.norm_def, h1, WithZeroMulInt.toNNReal_neg_apply _ hv, ordAt, neg_neg,
-    unzero_toAdd_eq_log _ hv]
+  rw [FinitePlace.norm_def, h1, WithZeroMulInt.toNNReal_neg_apply _ hv, ordAt, neg_neg]
   push_cast
   rfl
 
@@ -35,7 +38,7 @@ lemma log_norm_emb (v : HeightOneSpectrum (𝓞 K)) {x : K} (hx : x ≠ 0) :
 lemma finite_mulSupport_emb {x : K} (hx : x ≠ 0) :
     (Function.mulSupport fun v : HeightOneSpectrum (𝓞 K) => ‖FinitePlace.embedding v x‖).Finite := by
   have h : (Function.mulSupport fun w : FinitePlace K => w x).Finite :=
-    FinitePlace.mulSupport_finite hx
+    NumberField.FinitePlace.hasFiniteMulSupport hx
   refine (h.image FinitePlace.maximalIdeal).subset ?_
   intro v hv
   refine ⟨FinitePlace.mk v, ?_, FinitePlace.maximalIdeal_mk v⟩
@@ -61,7 +64,7 @@ lemma finsum_ordAt {x : K} (hx : x ≠ 0) :
     ∑ᶠ v : HeightOneSpectrum (𝓞 K), (ordAt v x : ℝ) * logN v =
       ∑ σ : InfinitePlace K, (σ.mult : ℝ) * Real.log (σ x) := by
   have hfin : (Function.mulSupport fun w : FinitePlace K => w x).Finite :=
-    FinitePlace.mulSupport_finite hx
+    NumberField.FinitePlace.hasFiniteMulSupport hx
   have hprod := NumberField.prod_abs_eq_one hx
   have hA : 0 < ∏ w : InfinitePlace K, w x ^ w.mult :=
     Finset.prod_pos fun w _ => pow_pos (InfinitePlace.pos_iff.2 hx) _
@@ -132,7 +135,7 @@ lemma log_det_le {ρ : ℕ} (m : Matrix (Fin ρ) (Fin ρ) K) (hdet : m.det ≠ 0
   rw [Matrix.det_transpose, hnormA] at hH
   simp only [Matrix.transpose_apply] at hH
   have hprod : ∏ j, Real.sqrt (∑ i, ‖A i j‖ ^ 2) ≤ ∏ j : Fin ρ, (Real.sqrt ρ * Real.exp (b j)) :=
-    Finset.prod_le_prod (fun j _ => Real.sqrt_nonneg _) fun j _ => hcol j
+    Finset.prod_le_prod₀ (fun j _ => Real.sqrt_nonneg _) fun j _ => hcol j
   have key : Real.exp (∑ i, a i) * σ m.det ≤ Real.sqrt ρ ^ ρ * Real.exp (∑ j, b j) := by
     calc _ ≤ _ := hH
       _ ≤ _ := hprod

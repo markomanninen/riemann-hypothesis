@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtSolveMapFixedIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.PtSolveMapFixedIff
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh
 
@@ -24,6 +28,8 @@ theorem ptNs_const (G : LogFGL v d) : ∀ n a, constantCoeff (ptNs G n a) = 0
       rintro (i | i)
       · simp
       · exact ptNs_const G n i
+    change constantCoeff
+      (subst (Sum.elim (fun b => (X b : MvPowerSeries (Fin d) C)) (ptNs G n)) (G.F a)) = 0
     exact constantCoeff_subst_eq_zero (hasSubst_of_constantCoeff_zero h0) h0 (G.F_const a)
 
 theorem ptNs_hasSubst (G : LogFGL v d) (n : ℕ) :
@@ -50,7 +56,8 @@ theorem ptNs_lin (G : LogFGL v d) : ∀ (n : ℕ) (a s : Fin d),
       rintro (i | i)
       · simp
       · exact ptNs_const G n i
-    show coeff (Finsupp.single s 1) (subst _ (G.F a)) = _
+    change coeff (Finsupp.single s 1)
+      (subst (Sum.elim (fun b => (X b : MvPowerSeries (Fin d) C)) (ptNs G n)) (G.F a)) = _
     rw [pt_coeff_single_subst (ptNs_hasSubst G n) h0 (G.F_const a) s, Fintype.sum_sum_type]
     simp only [pt_F_lin, Sum.elim_inl, Sum.elim_inr, pt_coeff_single_X, ptNs_lin G n,
       Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, add_zero, zero_add,
@@ -181,7 +188,8 @@ theorem nsmul_coprime_bijective_curves [CharZero C] (G : LogFGL v d) {p : ℕ} (
         hK0 b]
     · obtain ⟨s, rfl⟩ := exists_eq_single_of_degree_eq_one α hd
       rw [hK]
-      simp only [map_sub, map_sum, MvPowerSeries.coeff_smul, ptNs_lin, MvPowerSeries.coeff_X,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, MvPowerSeries.coeff_smul, ptNs_lin, MvPowerSeries.coeff_X,
         Finsupp.single_left_inj one_ne_zero, hMab, smul_eq_mul, mul_ite, mul_one, mul_zero]
       simp [Finset.sum_ite_eq, Finset.sum_ite_eq', eq_comm]
   have hf : PTGood v gb := isCurve_iff_good.mp hgb

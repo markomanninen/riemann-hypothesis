@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveComplexPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.CurveComplexPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -78,7 +83,11 @@ theorem full : CurveComplexPoint.Statement := by
   let : Field L := Ideal.Quotient.field m
   have : Module.Finite ℚ L := finite_of_finite_type_of_isJacobsonRing ℚ L
   have : Algebra.IsAlgebraic ℚ L := Algebra.IsAlgebraic.of_finite ℚ L
-  let φ : L →ₐ[ℚ] ℂ := IsAlgClosed.lift
+  let φ : L →ₐ[ℚ] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let z : (Σ k, ι k) → ℂ := fun p => φ (Ideal.Quotient.mk m (X p))
   have hz : ∀ f : MRing ι, eval z (map (Int.castRingHom ℂ) f) =
       φ (Ideal.Quotient.mk m (map (Int.castRingHom ℚ) f)) := by

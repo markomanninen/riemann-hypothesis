@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularMapCAppendMapLinForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsWeaklyRegularMapCAppendMapLinForm
+
+@[expose] public section
 
 open MvPolynomial TensorProduct
 
@@ -27,7 +31,8 @@ def genForm (a : Fin N → A) : MvPolynomial (Fin N) k ⊗[k] A := ∑ i, X i �
 
 theorem polyEquiv_genForm (a : Fin N → A) :
     polyEquiv k A N (genForm (k := k) a) = linForm a () := by
-  simp [genForm, linForm, map_sum, polyEquiv_X_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [genForm, linForm, map_sum, polyEquiv_X_tmul]
 
 theorem isDomain_tensor : IsDomain (MvPolynomial (Fin N) k ⊗[k] A) :=
   Function.Injective.isDomain (polyEquiv k A N).toRingHom
@@ -103,7 +108,8 @@ theorem span_genericForm_isPrime_or_eq_top :
     exact h
   have hinj : Function.Injective (algebraMap B (K ⊗[k] A)) := IsLocalization.injective _ hM
   have ht0 : t = algebraMap B (K ⊗[k] A) (genForm (k := k) a) := by
-    rw [ht, hφ, genForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, hφ, genForm, map_sum]
     rfl
   have hspan : Ideal.span {t} = (Ideal.span {genForm (k := k) a}).map (algebraMap B (K ⊗[k] A)) := by
     rw [Ideal.map_span, Set.image_singleton, ht0]

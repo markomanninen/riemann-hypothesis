@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.GaloisEmbeddingExistence
 
@@ -17,7 +21,11 @@ theorem exists_galois_embedding (R R' : Type) [CommRing R] [IsDomain R] [CharZer
     exact (algebraMap K Ω).injective.comp (IsFractionRing.injective R K)
   haveI : FaithfulSMul R Ω := (faithfulSMul_iff_algebraMap_injective R Ω).2 hΩ
   haveI : CharZero K := charZero_of_injective_algebraMap (IsFractionRing.injective R K)
-  let φ : R' →ₐ[R] Ω := IsAlgClosed.lift
+  let φ : R' →ₐ[R] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hφ : Function.Injective φ := by
     have h1 : (RingHom.ker φ).comap (algebraMap R R') = ⊥ := by
       rw [eq_bot_iff]

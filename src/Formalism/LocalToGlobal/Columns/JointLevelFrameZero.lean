@@ -1,5 +1,15 @@
-import Formalism.LocalToGlobal.Columns.CharactersLevelZeroAgree
-import Formalism.LocalToGlobal.Columns.TiedGlRec
+module
+
+public import Formalism.LocalToGlobal.Columns.HermOwed
+public import Formalism.LocalToGlobal.Columns.TiedCls
+public import Formalism.LocalToGlobal.Columns.TiedXp
+public import Formalism.LocalToGlobal.Columns.TiedGlPl
+public import Formalism.LocalToGlobal.Columns.TiedGlMat
+public import Formalism.LocalToGlobal.Columns.RecLevelDiv
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.LocalToGlobal.HermitianForms.DefsChi
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -40,50 +50,5 @@ structure ColLevelXRest {R : Ranks} {F E : Type} [Field F] [NumberField F] [Fiel
       Matrix (Fin R.k) (Fin R.k) (E ⊗[F] w.adicCompletion F)).mulVec t.1 =
       (fun a => inclE (F := F) (w.adicCompletion F) (sp.crd0 z.1 a)) →
     fz (e.symm ⟨w, h⟩) c z = fMe w h (L.fT w h t)
-
-variable {d : ColDat} (a : ColArgs d) (hS : SpStd d.toColBase) (hH : HostHyp d) (hP : PtSurj d) (hK : LocalLevelIsKOneEverywhere d)
-  (S : GSplit (Pr := d.Pr) d.sp.cm) (hI : IwAll d S) (O : AtTOwed a hS hH)
-
-abbrev LevelZeroConditions : Type :=
-  ∀ u : d.what₂.Word, ColLevelXRest ((hermCols a hS hP hK S hI).lev0 u) (d.piT u) ((hermCols a hS hP hK S hI).vT u)
-    (fun v c z => ((d.colRec a).fm u).fv 0 v c ((hermAtT a hS hH O u).pr 0 v c z))
-
-def levelZeroCompatibility (L0 : LevelZeroConditions a hS hH hP hK S hI O) :
-    CH.Lev0Tied (d.colRec a) (hermCols a hS hP hK S hI) (hermAtT a hS hH O) := fun u =>
-  { piG := d.piG
-    piG_K := hH.piG_K
-    piG_norm := fun i => by
-      have h := congrArg (algebraMap (𝓞 d.host.E) d.host.E) (d.hPr.piG_norm i)
-      rw [map_mul, map_natCast] at h
-      exact h
-    splitG_pi := S.sp_pi
-    splitG_alg := S.sp_alg
-    frG_lat := (L0 u).frG_lat
-    fM_pi := (L0 u).fM_pi
-    fMe := (L0 u).fMe
-    fv0 := (L0 u).fv0 }
-
-theorem piGConst (L0 : LevelZeroConditions a hS hH hP hK S hI O) :
-    CH.PiGConst (d.colRec a) (hermCols a hS hP hK S hI) (hermAtT a hS hH O) (levelZeroCompatibility a hS hH hP hK S hI O L0) :=
-  fun _ _ => rfl
-
-theorem th_joint_sp (hCh : d.Ch.Ok) (u : d.what₂.Word) : (recGLoc a S hCh).sp = ((hermCols a hS hP hK S hI).lev0 u).splitG := rfl
-
-theorem th_joint_piG (hCh : d.Ch.Ok) (L0 : LevelZeroConditions a hS hH hP hK S hI O) (u : d.what₂.Word) :
-    (recGLoc a S hCh).piG = (levelZeroCompatibility a hS hH hP hK S hI O L0 u).piG := rfl
-
-theorem jointLevel_frame_zero (hCh : d.Ch.Ok) (hl : d.lev = colLevS d.Ch) (u : d.what₂.Word) (i : Fin 2) (v : HeightOneSpectrum (𝓞 d.host.F))
-    (h : (d.host.g i : 𝓞 d.host.F) ∈ v.asIdeal) :
-    (recGLev a S hCh hl hS hH hP u 0 (Nat.zero_le _)).fr i v h =
-      Formalism.L2.Forms.reGL (Formalism.L2.Forms.rank_eq_first_level d.R) _ (((hermCols a hS hP hK S hI).lev0 u).frG i v h) := by
-  rw [recGLev_fr]
-  have h0 : recUnit S u 0 i v h = 1 := by
-    unfold recUnit
-    rw [if_neg]
-    have := d.R.two_le_m
-    omega
-  show glvD (d.R.N 0) v (recUnit S u 0 i v h) = _
-  rw [h0, glvD_one]
-  exact (map_one (Formalism.L2.Forms.reGL (Formalism.L2.Forms.rank_eq_first_level d.R) (v.adicCompletion d.host.F))).symm
 
 end Formalism.L2.Col

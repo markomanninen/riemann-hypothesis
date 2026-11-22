@@ -1,7 +1,11 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+
+@[expose] public section
 
 open Module NumberField Matrix
 
@@ -32,7 +36,7 @@ theorem realize_apply1 (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι 
 
 theorem realize_injective (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
     (hX : ∀ v, IsUnit (X v).det) : Function.Injective (Formalism.HermitianLatticesTheory.realize b X) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨v⟩ : Nonempty (InfinitePlace K) := inferInstance
   have hf : ∀ i, Formalism.HermitianLatticesTheory.fcoord b X v x i = 0 := by
@@ -200,7 +204,7 @@ end DetG
 
 section NT
 
-variable (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+variable (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
 
 theorem isEmpty_real : IsEmpty {w : InfinitePlace K // w.IsReal} := ⟨fun w => (InfinitePlace.not_isReal_iff_isComplex.mpr (IsTotallyComplex.isComplex w.1)) w.2⟩
 

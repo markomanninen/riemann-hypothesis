@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.Interface
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.Interface
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem kindAll_pl {pl : (Σ i : Fin K, Fin (what₂ i)) → Fin N} (hpl : Funct
     (kind : ∀ i, Fin (what₂ i) → Knd d) (s : Σ i : Fin K, Fin (what₂ i)) : kindAll pl kind (pl s) = kind s.1 s.2 := by
   unfold kindAll
   have hex : ∃ s', pl s' = pl s := ⟨s, rfl⟩
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   have hc : hex.choose = s := hpl hex.choose_spec
   rw [hc]
 
@@ -60,10 +64,10 @@ private lemma forall_support_ne_zero_iff_forall_mem_vars {R0 : Type} [Field R0] 
     (∀ μ ∈ Q.support, ∀ w, μ (ρ, w) ≠ 0 → T w) ↔ (∀ w, (ρ, w) ∈ Q.vars → T w) := by
   constructor
   · intro H w hw
-    obtain ⟨μ, hμ, hx⟩ := (MvPolynomial.mem_vars _).1 hw
+    obtain ⟨μ, hμ, hx⟩ := (MvPolynomial.mem_vars_iff_mem_support _).1 hw
     exact H μ hμ w (Finsupp.mem_support_iff.1 hx)
   · intro H μ hμ w hx
-    exact H w ((MvPolynomial.mem_vars _).2 ⟨μ, hμ, Finsupp.mem_support_iff.2 hx⟩)
+    exact H w ((MvPolynomial.mem_vars_iff_mem_support _).2 ⟨μ, hμ, Finsupp.mem_support_iff.2 hx⟩)
 
 theorem rowsOK_iff (G : ∀ g, Cart V d (I g) (J g)) (alt : Prop) {N : ℕ} (P : MvPolynomial (Fin N × WV I) C)
     (kind : Fin N → Knd d) : RowsOK G alt P kind ↔
@@ -103,7 +107,7 @@ theorem rowsOK_prodAll (G : ∀ g, Cart V d (I g) (J g)) (alt : Prop)
       exact h3 w hw'
     · exfalso
       unfold kindAll at hk
-      rw [dif_neg hex] at hk
+      rw [dite_eq_right hex] at hk
       cases hk
   · by_cases hex : ∃ s, pl s = ρ
     · obtain ⟨s, rfl⟩ := hex

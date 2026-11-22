@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ChartLaw
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepPinExistsOfPlace
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.HHRed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.ChartLaw
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepPinExistsOfPlace
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.HermitianZZEqNeg
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.HHRed
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,12 +125,12 @@ theorem stCoordV_mul {u u' : D.what₂.Word} {γ : X.B.I.Ginf} {y₁ y₂ : Form
   unfold BX
   simp only [stCoordV_coef X v u' γ]
   rw [hmul, coef_mul (X.B.I.ε v) _ _ _ hdual hfz hS₁ hS₂ ⟨p.1.1.1, ha_free p⟩ p.1.2 hab,
-    Fin.sum_univ_castSucc, dif_neg (fun h => (not_lt.2 (Fin.le_last _)) h.2), add_zero]
+    Fin.sum_univ_castSucc, dite_eq_right (fun h => (not_lt.2 (Fin.le_last _)) h.2), add_zero]
   rw [mul_add, mul_add, Finset.mul_sum]
   congr 1
   refine Finset.sum_congr rfl fun c _ => ?_
   by_cases hc : p.1.1 < c.castSucc ∧ c.castSucc < p.1.2
-  · rw [dif_pos hc, if_pos ⟨hc.1, hc.2⟩]
+  · rw [dite_eq_left hc, if_pos ⟨hc.1, hc.2⟩]
     simp only [midL, midR]
     have e1 : fam (fun a => rv X.B.I v (X.eR a)) (rv X.B.I v (X.zR u')) c.castSucc = rv X.B.I v (X.eR c) := by
       unfold fam; rw [Fin.snoc_castSucc]
@@ -134,7 +138,7 @@ theorem stCoordV_mul {u u' : D.what₂.Word} {γ : X.B.I.Ginf} {y₁ y₂ : Form
     simp only [Fin.val_castSucc, Fin.eta]
     have hpow : (D.host.rdE : ℂ) ^ (D.R.rS - c.castSucc.1) ≠ 0 := pow_ne_zero _ hrd
     field_simp
-  · rw [dif_neg hc, if_neg (fun h => hc ⟨h.1, h.2⟩), mul_zero]
+  · rw [dite_eq_right hc, if_neg (fun h => hc ⟨h.1, h.2⟩), mul_zero]
 
 end Law
 

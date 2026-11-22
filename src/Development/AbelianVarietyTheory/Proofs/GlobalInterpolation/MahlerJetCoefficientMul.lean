@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,14 @@ theorem jet_eq {κ : Type} (v : κ → V) {f : V → ℂ} (hf : ContDiff ℂ ∞
       hf.differentiable_iteratedFDeriv (by exact_mod_cast ENat.natCast_lt_top _) x
     have h : (fun y => iteratedFDeriv ℂ L.length f y (fun i => v (L.get i))) = ddl v L f :=
       funext fun y => jet_eq v hf L y
-    show iteratedFDeriv ℂ (L.length + 1) f x _ = _
+    have hm : Fin.tail (fun i : Fin (L.length + 1) => v ((a :: L).get i)) =
+        fun i => v (L.get i) := by
+      funext i
+      simp [Fin.tail]
+    change iteratedFDeriv ℂ (L.length + 1) f x (fun i => v ((a :: L).get i)) = _
     rw [iteratedFDeriv_succ_apply_left]
     rw [← fderiv_continuousMultilinear_apply_const_apply hd]
-    show fderiv ℂ (fun y => iteratedFDeriv ℂ L.length f y (fun i => v (L.get i))) x (v a) = _
+    rw [hm]
     rw [h]
     rfl
 
@@ -156,13 +164,13 @@ theorem LJ_mul_X (v : κ → V) {f : V → ℂ} (hf : ContDiff ℂ ∞ f) (p : M
     LJ v f (p * X i) = LJ v (dd (v i) f) p := by
   induction p using MvPolynomial.induction_on' with
   | monomial m c => rw [X, monomial_mul, LJ_monomial, LJ_monomial, mul_one, monoJet_add_single v hf]
-  | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq]
 
 theorem LJ_fun_add (v : κ → V) {F G : V → ℂ} (hF : ContDiff ℂ ∞ F) (hG : ContDiff ℂ ∞ G)
     (p : MvPolynomial κ ℂ) : LJ v (fun z => F z + G z) p = LJ v F p + LJ v G p := by
   induction p using MvPolynomial.induction_on' with
   | monomial m c => rw [LJ_monomial, LJ_monomial, LJ_monomial, monoJet_add v hF hG, mul_add]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]; ring
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]; ring
 
 theorem split_single_inl (e : κ ⊕ κ →₀ ℕ) (i : κ) :
     Finsupp.sumFinsuppAddEquivProdFinsupp (e + Finsupp.single (Sum.inl i) 1) =
@@ -182,13 +190,13 @@ theorem BJ_mul_X_inl (v : κ → V) {F : V → ℂ} (G : V → ℂ) (hF : ContDi
     BJ v F G (Q * X (Sum.inl i)) = BJ v (dd (v i) F) G Q := by
   induction Q using MvPolynomial.induction_on' with
   | monomial m c => rw [X, monomial_mul, BJ_monomial, BJ_monomial, mul_one, split_single_inl, monoJet_add_single v hF]
-  | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq]
 
 theorem BJ_mul_X_inr (v : κ → V) (F : V → ℂ) {G : V → ℂ} (hG : ContDiff ℂ ∞ G) (Q : MvPolynomial (κ ⊕ κ) ℂ) (i : κ) :
     BJ v F G (Q * X (Sum.inr i)) = BJ v F (dd (v i) G) Q := by
   induction Q using MvPolynomial.induction_on' with
   | monomial m c => rw [X, monomial_mul, BJ_monomial, BJ_monomial, mul_one, split_single_inr, monoJet_add_single v hG]
-  | add p q hp hq => rw [add_mul, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [add_mul, map_add (f := _), map_add (f := _), hp, hq]
 
 theorem LJ_mul (v : κ → V) (P : MvPolynomial κ ℂ) : ∀ (F G : V → ℂ), ContDiff ℂ ∞ F → ContDiff ℂ ∞ G →
     LJ v (fun z => F z * G z) P = BJ v F G (cop P) := by
@@ -200,7 +208,7 @@ theorem LJ_mul (v : κ → V) (P : MvPolynomial κ ℂ) : ∀ (F G : V → ℂ),
       monoJet_zero v hF, monoJet_zero v hG]
   | add p q hp hq =>
     intro F G hF hG
-    rw [map_add, map_add, map_add, hp F G hF hG, hq F G hF hG]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hp F G hF hG, hq F G hF hG]
   | mul_X p i ih =>
     intro F G hF hG
     rw [LJ_mul_X v (hF.mul hG), dd_mul _ hF hG, LJ_fun_add v ((contDiff_dd _ hF).mul hG) (hF.mul (contDiff_dd _ hG)),
@@ -259,9 +267,9 @@ theorem cop_Pn (n : κ → ℕ) :
 theorem split_rename (a b : κ →₀ ℕ) :
     Finsupp.sumFinsuppAddEquivProdFinsupp (Finsupp.mapDomain Sum.inl a + Finsupp.mapDomain Sum.inr b) = (a, b) := by
   ext j
-  · simp [Finsupp.fst_sumFinsuppAddEquivProdFinsupp, Finsupp.mapDomain_apply Sum.inl_injective,
+  · simp [Finsupp.fst_sumFinsuppAddEquivProdFinsupp, Finsupp.mapDomain_apply_of_injective Sum.inl_injective,
       Finsupp.mapDomain_notin_range]
-  · simp [Finsupp.snd_sumFinsuppAddEquivProdFinsupp, Finsupp.mapDomain_apply Sum.inr_injective,
+  · simp [Finsupp.snd_sumFinsuppAddEquivProdFinsupp, Finsupp.mapDomain_apply_of_injective Sum.inr_injective,
       Finsupp.mapDomain_notin_range]
 
 theorem BJ_rename (v : κ → V) (F G : V → ℂ) (p q : MvPolynomial κ ℂ) :
@@ -272,8 +280,8 @@ theorem BJ_rename (v : κ → V) (F G : V → ℂ) (p q : MvPolynomial κ ℂ) :
     | monomial b d =>
       rw [rename_monomial, rename_monomial, monomial_mul, BJ_monomial, LJ_monomial, LJ_monomial, split_rename]
       ring
-    | add q q' hq hq' => rw [map_add, mul_add, map_add, hq, hq', map_add, mul_add]
-  | add p p' hp hp' => rw [map_add, add_mul, map_add, hp, hp', map_add, add_mul]
+    | add q q' hq hq' => rw [map_add (f := _), mul_add, map_add (f := _), hq, hq', map_add (f := _), mul_add]
+  | add p p' hp hp' => rw [map_add (f := _), add_mul, map_add (f := _), hp, hp', map_add (f := _), add_mul]
 
 end Alg2
 
@@ -290,7 +298,8 @@ theorem mahler_mul (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V] (κ : T
       mahler v F k * mahler v G (fun i => n i - k i) := by
   have hF' : ContDiff ℂ ∞ F := hF.of_le le_top
   have hG' : ContDiff ℂ ∞ G := hG.of_le le_top
-  rw [mahler_eq, LJ_mul v _ F G hF' hG', cop_Pn, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mahler_eq, LJ_mul v _ F G hF' hG', cop_Pn, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [BJ_rename, ← mahler_eq, ← mahler_eq]
 

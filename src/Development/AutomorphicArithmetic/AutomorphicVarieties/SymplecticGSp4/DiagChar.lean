@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EptInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SplAdjUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.Minkowski
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.PlacesQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLeOneOfIsIntegral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EptInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.SplAdjUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.Minkowski
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.PlacesQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLeOneOfIsIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 namespace UpperTheory.V.GradeZeroInterpolatingElement.DiagonalCharacters
@@ -49,11 +54,12 @@ private theorem match_chars {H K : Type} [Group H] [Field K] (a b : Fin 4 → H 
     rw [linearIndependent_iff_injective_finsuppLinearCombination] at li
     have h1 : (∑ i, Finsupp.single (a i) (1 : K)) = ∑ j, Finsupp.single (b j) (1 : K) := by
       apply li
-      simp only [map_sum, Finsupp.linearCombination_single, one_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finsupp.linearCombination_single, one_smul]
       funext g
       simpa using h g
     have h2 := congrArg (fun f => f (b j)) h1
-    simp only [Finsupp.finset_sum_apply, Finsupp.single_apply, hn, hb.eq_iff] at h2
+    simp only [Finsupp.finsetSum_apply, Finsupp.single_apply, hn, hb.eq_iff] at h2
     simp at h2
   choose n hn using key
   have hinj : Function.Injective n := fun x y e => hb (by rw [← hn x, ← hn y, e])

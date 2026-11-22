@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplS
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplS
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem rep_of (σ : E →ₐ[F] E) (hfin : Module.finrank F E = 2) {α : E} (h�
     intro s t hst
     rw [← Algebra.algebraMap_eq_smul_one, Algebra.smul_def] at hst
     have h1 := congrArg σ hst
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσα, map_zero] at h1
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσα, map_zero] at h1
     have h2 : (2 : E) * (algebraMap F E t * α) = 0 := by linear_combination hst - h1
     have ht : algebraMap F E t = 0 :=
       (mul_eq_zero.1 ((mul_eq_zero.1 h2).resolve_left two_ne_zero)).resolve_right hα0
@@ -75,7 +79,7 @@ theorem exists_d (σ : E →ₐ[F] E) {α : E} (hrep : ∀ e : E, ∃ a b : F, e
   obtain ⟨a, b, hab⟩ := hrep (α * α)
   rw [Algebra.smul_def] at hab
   have h1 := congrArg σ hab
-  rw [map_mul, map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσα, neg_mul_neg] at h1
+  rw [map_mul, map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσα, neg_mul_neg] at h1
   have h2 : (2 : E) * (algebraMap F E b * α) = 0 := by linear_combination h1 - hab
   have hb : algebraMap F E b * α = 0 := (mul_eq_zero.1 h2).resolve_left two_ne_zero
   exact ⟨a, by rw [hab, hb, add_zero]⟩
@@ -115,7 +119,7 @@ theorem tens_rep {α : E} (hrep : ∀ e : E, ∃ a b : F, e = algebraMap F E a +
   | add x y hx hy =>
     obtain ⟨a, b, rfl⟩ := hx
     obtain ⟨a', b', rfl⟩ := hy
-    exact ⟨a + a', b + b', by simp only [map_add]; ring⟩
+    exact ⟨a + a', b + b', by simp only [map_add (f := _)]; ring⟩
 
 theorem sigR_rep (σ : E →ₐ[F] E) {α : E} (hσα : σ α = -α) (a b : K) :
     sigR K σ (algebraMap K (K ⊗[F] E) a + algebraMap K (K ⊗[F] E) b * ((1 : K) ⊗ₜ[F] α)) =
@@ -195,7 +199,7 @@ theorem main_gen {F E : Type} [Field F] [Field E] [Algebra F E] [CharZero F] [Ch
     refine (eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hint)
       (monic_X_pow_sub_C d two_ne_zero) (minpoly.dvd F α ?_) ?_).symm
     · simp [hd, sq]
-    · rw [natDegree_X_pow_sub_C]
+    · rw [natDegree_X_pow_sub_C _]
       have h0 := minpoly.natDegree_pos hint
       have h1 : (minpoly F α).natDegree ≠ 1 := fun h => hα_nr (minpoly.natDegree_eq_one_iff.1 h)
       omega

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+
+@[expose] public section
+
 open GlobalTheory.UnitDiscAlg
 
 namespace GlobalTheory.UnitDiscAlg
@@ -12,7 +17,7 @@ theorem integ_det_le {E : Type} [NontriviallyNormedField E] [IsUltrametricDist E
   have hs : ‖((Equiv.Perm.sign σ : ℤ) : E)‖ ≤ 1 := by
     rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
   exact mul_le_one₀ hs (Finset.prod_nonneg fun _ _ => norm_nonneg _)
-    (Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => hy _ _)
+    (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => hy _ _)
 
 theorem isUnit_and_integ_inv_of_norm_det_eq_one :
     ∀ (E : Type) [NontriviallyNormedField E] [IsUltrametricDist E] (n : ℕ)

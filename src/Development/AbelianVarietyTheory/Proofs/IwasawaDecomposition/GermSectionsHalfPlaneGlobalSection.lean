@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Filter Topology
 
 namespace GlobalTheory
@@ -14,7 +19,7 @@ theorem germSections_glue {Y ι : Type} (G : ℂ → (ℂ → Y) → Prop)
   refine h1 z (s i) _ ?_ (hs i z hz)
   filter_upwards [(hU i).mem_nhds hz] with w hw
   have h : ∃ i, w ∈ U i := ⟨i, hw⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact hag i _ ⟨hw, h.choose_spec⟩
 
 theorem germSections_halfPlane_global (Y : Type) (G : ℂ → (ℂ → Y) → Prop) (T : ℝ)

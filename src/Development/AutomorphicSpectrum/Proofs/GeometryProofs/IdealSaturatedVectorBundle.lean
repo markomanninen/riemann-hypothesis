@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
-import Development.WeilBound.CoreStatements.HodgeTatePoints.NearMemSpan
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenWeil
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.NearMemSpan
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -54,10 +58,10 @@ private theorem exists_mul_eq_one_of_dedekind_ideal_ne_bot {Ω : Type} [Field Ω
       have := congrArg Subtype.val hw
       simpa [map_mul, mul_div_assoc] using this
     · rintro a b ⟨ha, ha'⟩ ⟨hb, hb'⟩
-      have hab : σ (a + b) / σ x ∈ R := by rw [map_add, add_div]; exact add_mem ha hb
+      have hab : σ (a + b) / σ x ∈ R := by rw [map_add (f := _), add_div]; exact add_mem ha hb
       refine ⟨hab, ?_⟩
       have : (⟨_, hab⟩ : R) = ⟨_, ha⟩ + ⟨_, hb⟩ := by
-        ext; simp [map_add, add_div]
+        ext; simp [map_add (f := _), add_div]
       rw [this]; exact add_mem ha' hb'
   obtain ⟨h1, h2⟩ := hC
   have : (⟨_, h1⟩ : R) = 1 := by ext; simp [div_self hσx]

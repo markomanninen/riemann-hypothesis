@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagLatticesNearUnderStabiliser
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordOfMemXa
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagLatticesNearUnderStabiliser
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CoordOfMemXa
+
+@[expose] public section
 
 noncomputable section
 open NumberField MeasureTheory Matrix Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.DegVol
@@ -336,7 +340,8 @@ theorem entries {β : Fin r → ℕ} (hβ : IsBlock N β) {s : V ≃ₗ[K] V} (h
   have hcoef : ∀ (c : Fin r) (d : V), IsDual N c d →
       H.B ((s : V →ₗ[K] V) (N.F.e b.castSucc) - N.F.e b.castSucc) d = u c := by
     intro c d hd
-    rw [hu, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu, map_sum, LinearMap.sum_apply]
     simp only [map_smul, LinearMap.smul_apply, IsDual.e hβ hd, smul_eq_mul, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq', Finset.mem_univ, if_true]
   have hlow : ∀ c : Fin r, c < b → ∀ d, IsDual N c d →
@@ -381,7 +386,8 @@ theorem entries {β : Fin r → ℕ} (hβ : IsBlock N β) {s : V ≃ₗ[K] V} (h
           rw [hiso]
           have hexp : (s⁻¹ : V ≃ₗ[K] V) (N.F'.e p.castSucc) =
               N.F'.e p.castSucc + ∑ q, v q • N.F'.e q.castSucc := eq_add_of_sub_eq' hv
-          rw [hexp, map_add, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hexp, map_add (f := _), map_sum]
           have h0 : H.B (N.F.e b.castSucc) (N.F'.e p.castSucc) = 0 := by
             by_contra h'
             exact hne (hβcp.trans (hβ.2.2.1 b p h').symm)
@@ -424,7 +430,7 @@ theorem elem_isom (x v : V) (hx : H.B x x = 0) (hv : H.B v v = 0) (h : H.B x v =
   have e1 := H.herm w v
   have e2 := H.herm w x
   have e3 : H.B v x = 0 := B_swap0 H h
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
     LinearMap.map_smulₛₗ, smul_eq_mul, starRingEnd_apply, hx, hv, h, e3, e1, e2]
   ring
 

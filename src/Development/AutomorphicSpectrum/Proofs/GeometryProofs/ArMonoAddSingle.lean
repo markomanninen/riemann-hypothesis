@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,8 @@ theorem length_toList {J : Type} (m : J →₀ ℕ) : (Finsupp.toMultiset m).toL
 
 end RootMono
 
-open RootMono in
 
+open RootMono in
 theorem arMono_add_single (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (M : RootModel Ψ N) (II : IntersectionSystem)
     (t : ℝ) (m : Ψ × Fin N →₀ ℕ) (r : Ψ × Fin N) (hII : IsIntersectionSystem II) (hm : m.degree = dimFl Ψ N) :
     M.arMono II t ((m + Finsupp.single r 1).mapDomain some) =
@@ -57,12 +61,12 @@ theorem arMono_add_single (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) (M
   have hdm : (m.mapDomain some).degree = dimFl Ψ N := by
     rw [Finsupp.degree_mapDomain, hm]
   have hdeg : ((m + Finsupp.single r 1).mapDomain some).degree = dimFl Ψ N + 1 := by
-    rw [hn, map_add, hdm, Finsupp.degree_single]
+    rw [hn, map_add (f := _), hdm, Finsupp.degree_single]
   have hnone : ((m + Finsupp.single r 1).mapDomain some) none = 0 :=
     Finsupp.mapDomain_notin_range _ _ (by simp)
   have hperm : (Finsupp.toMultiset ((m + Finsupp.single r 1).mapDomain some)).toList.Perm
       ((Finsupp.toMultiset (m.mapDomain some)).toList ++ [some r]) := by
-    rw [← Multiset.coe_eq_coe, ← Multiset.coe_add, Multiset.coe_toList, Multiset.coe_toList, hn, map_add]
+    rw [← Multiset.coe_eq_coe, ← Multiset.coe_add, Multiset.coe_toList, Multiset.coe_toList, hn, map_add (f := _)]
     simp
   have hlen₁ : (Finsupp.toMultiset ((m + Finsupp.single r 1).mapDomain some)).toList.length = dimFl Ψ N + 1 := by
     rw [length_toList, hdeg]

@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.DualHopfOrderStatement
-import ReciprocityTheory.DualLattices.MemDualLatMapFourier
+module
+
+public import ReciprocityTheory.DualLattices.DualHopfOrderStatement
+public import ReciprocityTheory.DualLattices.MemDualLatMapFourier
+
+@[expose] public section
 
 noncomputable section
 

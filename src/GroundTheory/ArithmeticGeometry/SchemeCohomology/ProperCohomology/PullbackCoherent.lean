@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.Annihilator
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackUnit
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.Annihilator
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackUnit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -76,7 +81,7 @@ theorem finite_pullback_of_isAffine (g : T ⟶ U) [IsAffine T] [IsAffine U] (N :
     | mem x hx =>
       exact Submodule.subset_span (by simp only [Finset.coe_image]; exact ⟨x, hx, rfl⟩)
     | zero => rw [map_zero]; exact L.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact L.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact L.add_mem hx hy
     | smul r x _ hx => rw [Etale.pullbackSection_smul]; exact L.smul_mem _ hx
   have hL : L = ⊤ := by
     obtain ⟨ψ', -, huniq⟩ := Etale.existsUnique_pullbackSection g N (P ⧸ L) 0

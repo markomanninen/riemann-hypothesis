@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualStdModelField
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -106,8 +111,8 @@ theorem scale_inr {a : ProjField K i} (ha : a ≠ 0) (j : PBlk i ()) :
 
 end StandardDualModelTranscendence
 
-open DualArithmeticVariety StandardDualModelTranscendence in
 
+open DualArithmeticVariety StandardDualModelTranscendence in
 theorem DualStdModelTransc.proof : DualStdModelTransc.Statement := by
   intro K _ _ i T _ _ b Φ₀ _ _ hΦ _ c
   have hy : dualLatticeCoord b ⟨(), c⟩ ≠ 0 := by

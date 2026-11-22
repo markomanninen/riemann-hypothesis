@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransfer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.AllPartsTransfer
+
+@[expose] public section
 
 open Module NumberField
 
@@ -110,7 +114,8 @@ theorem trace_repC {K : Type} [Field K] (σ : K →+* ℂ) {G : Type} [Group G] 
     LinearMap.trace ℂ _ (repC σ τ g) = σ (charOf τ g) := by
   rw [LinearMap.trace_eq_matrix_trace ℂ (Pi.basisFun ℂ (Fin (finrank K T))), charOf,
     LinearMap.trace_eq_matrix_trace K (Module.finBasis K T) (τ g)]
-  simp [repC, LinearMap.toMatrix_eq_toMatrix', Matrix.trace, map_sum, LinearMap.toMatrixAlgEquiv_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [repC, LinearMap.toMatrix_eq_toMatrix', Matrix.trace, map_sum, LinearMap.toMatrixAlgEquiv_apply,
     LinearMap.toMatrix_apply]
 
 end CharacterLemmas
@@ -171,7 +176,8 @@ theorem dimSq_of (h : Schur) : DimSq := by
     push_cast
     exact Complex.conj_mul' _
   have e1 := congrArg σ hs
-  rw [map_sum, map_natCast] at e1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_natCast] at e1
   simp_rw [hterm] at e1
   have e2 : (∑ x : G, ‖σ (charOf (τ s) x)‖ ^ 2 : ℝ) = (Fintype.card G : ℝ) := by
     exact_mod_cast e1

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.BlockTypes
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.BlockTypes
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem good_of_pos {N : ℕ} {t : Tr E N} (h : Tr.Pos t) (hz : ∀ z ∈ t.twis
     exact ⟨ih₁ h.1 fun z hz' => hz z (by simp [Tr.twists, hz']),
       ih₂ h.2 fun z hz' => hz z (by simp [Tr.twists, hz'])⟩
 
-theorem stable_of_pos {N : ℕ} {t : Tr E N} (h : Tr.Pos t) : t.AllLeaves fun _ V => IsStable V := by
+theorem stable_of_pos {N : ℕ} {t : Tr E N} (h : Tr.Pos t) : t.AllLeaves fun _ V => _root_.GlobalTheory.CuspRep.IsStable V := by
   induction t with
   | leaf V z' => exact h.2.stable
   | node t₁ t₂ ih₁ ih₂ => exact ⟨ih₁ h.1, ih₂ h.2⟩
@@ -99,7 +103,7 @@ theorem emb_trans {U U' : Submodule ℂ (Sm E N)} {P : Sm E N → Prop} (h₁ : 
   simp only [LinearMap.comp_apply]
   rw [he₁ o φ hφ, he₂ o _ (hf₁ φ hφ)]
 
-theorem emb_of_isoV {V V' : Submodule ℂ (Sm E N)} (hV : IsStable V) (h : IsoV V V') : Emb V (· ∈ V') := by
+theorem emb_of_isoV {V V' : Submodule ℂ (Sm E N)} (hV : _root_.GlobalTheory.CuspRep.IsStable V) (h : IsoV V V') : Emb V (· ∈ V') := by
   obtain ⟨T, hT⟩ := h
   obtain ⟨C, hC⟩ := Submodule.exists_isCompl V
   let p := Submodule.linearProjOfIsCompl V C hC
@@ -112,7 +116,7 @@ theorem emb_of_isoV {V V' : Submodule ℂ (Sm E N)} (hV : IsStable V) (h : IsoV 
     simp only [LinearMap.comp_apply, hp φ hφ, hp _ hψ, Submodule.subtype_apply, LinearEquiv.coe_coe]
     exact hT o ⟨φ, hφ⟩ ⟨act o φ, hψ⟩ rfl
 
-theorem isoV_of_common {V₁ V₂ V' : Submodule ℂ (Sm E N)} (hV₂ : IsStable V₂) (h₁ : IsoV V₁ V') (h₂ : IsoV V₂ V') :
+theorem isoV_of_common {V₁ V₂ V' : Submodule ℂ (Sm E N)} (hV₂ : _root_.GlobalTheory.CuspRep.IsStable V₂) (h₁ : IsoV V₁ V') (h₂ : IsoV V₂ V') :
     IsoV V₁ V₂ := by
   obtain ⟨T₁, hT₁⟩ := h₁
   obtain ⟨T₂, hT₂⟩ := h₂

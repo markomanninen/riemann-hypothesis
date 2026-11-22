@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ReciprocityMap
-import GroundTheory.LocalFields.AbstractLocalReciprocity.CoeNormEqProdSmulNorm
-import GroundTheory.LocalFields.AbstractLocalReciprocity.NormFormula
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ReciprocityMap
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.CoeNormEqProdSmulNorm
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.NormFormula
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -79,8 +83,8 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Comp
 
 section Galois
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem valuation_smul_of_map_eq (S : OpenSubgroup G) {g : G}
     (hg : (S : Subgroup G).map (MulAut.conj g).toMonoidHom = S) (a : fixedModule A (S : Subgroup G))
     (hga : g • (a : A) ∈ fixedModule A (S : Subgroup G)) :
@@ -96,8 +100,8 @@ theorem valuation_smul_of_map_eq (S : OpenSubgroup G) {g : G}
 
 variable {K L : OpenSubgroup G}
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem commutator_mem_of_isCyclic [((L : Subgroup G).subgroupOf K).Normal]
     (hcyc : IsCyclic ((K : Subgroup G) ⧸ (L : Subgroup G).subgroupOf K)) {a b : G}
     (ha : a ∈ (K : Subgroup G)) (hb : b ∈ (K : Subgroup G)) :
@@ -114,8 +118,8 @@ theorem commutator_mem_of_isCyclic [((L : Subgroup G).subgroupOf K).Normal]
   · rw [map_mul, map_mul, map_mul, map_inv, map_inv,
       mul_right_comm (D.deg a)⁻¹, inv_mul_cancel, one_mul, inv_mul_cancel]
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem conj_mem_of_isCyclic [((L : Subgroup G).subgroupOf K).Normal]
     (hcyc : IsCyclic ((K : Subgroup G) ⧸ (L : Subgroup G).subgroupOf K)) {H : Subgroup G}
     (hH : (L : Subgroup G) ⊓ D.deg.ker ≤ H) {g h : G} (hg : g ∈ (K : Subgroup G))
@@ -129,8 +133,8 @@ end Galois
 
 section Hull
 
-variable (D) in
 
+variable (D) in
 def maxUnramified (K L : OpenSubgroup G) : OpenSubgroup G where
   toSubgroup := (K : Subgroup G) ⊓ ((L : Subgroup G).map D.deg).comap D.deg
   isOpen' := Subgroup.isOpen_mono (H₁ := ((K ⊓ L : OpenSubgroup G) : Subgroup G))
@@ -151,14 +155,14 @@ omit [TotallyDisconnectedSpace G] in
 theorem le_maxUnramified (hLK : L ≤ K) : L ≤ D.maxUnramified K L :=
   fun x hx => ⟨hLK hx, x, hx, rfl⟩
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem inf_ker_le_maxUnramified :
     (K : Subgroup G) ⊓ D.deg.ker ≤ (D.maxUnramified K L : Subgroup G) :=
   fun x hx => ⟨hx.1, 1, (L : Subgroup G).one_mem, by rw [map_one, (MonoidHom.mem_ker.1 hx.2)]⟩
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem relInertiaDegree_maxUnramified :
     relInertiaDegree D.deg (D.maxUnramified K L) L = 1 := by
   rw [relInertiaDegree, Subgroup.relIndex_eq_one]
@@ -581,12 +585,6 @@ theorem reciprocity_bijective_of_isCyclic
   rw [hcard]
   exact le_rfl
 
-variable (D) in
-
-noncomputable def reciprocityEquiv
-    (hcyc : IsCyclic ((K : Subgroup G) ⧸ (L : Subgroup G).subgroupOf K)) :
-    (K : Subgroup G) ⧸ (L : Subgroup G).subgroupOf K ≃* tateZero A (K : Subgroup G) (L : Subgroup G) :=
-  MulEquiv.ofBijective _ (reciprocity_bijective_of_isCyclic (D := D) hLK hax hcyc)
 
 end Cyclic
 

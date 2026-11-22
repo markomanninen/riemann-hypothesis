@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestRawTail1Of
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.RestRawTail1Of
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,8 @@ theorem key3One_S {X : Loc} [Fact X.p.Prime] {O : Type} [CommRing O] [IsDomain O
             MvPolynomial.X ((topOdd X j i, false), c.succ) : RHH O X) : RHH O X) := by
   have hq1 : 1 ≤ X.p ^ (segDists X.TT j).get i := Nat.one_le_pow _ _ (Fact.out : X.p.Prime).pos
   unfold kSkey
-  rw [map_sum, Fin.sum_univ_succ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Fin.sum_univ_succ]
   simp only [map_mul, map_pow, liftSubst_X_true_zero_eq_X, liftSubst_X_true_succ_eq_C_mul_X, liftSubst_X_false_zero_eq_C_mul_X, liftSubst_X_false_succ_eq_X]
   rw [Algebra.smul_def, Algebra.smul_def, MvPolynomial.algebraMap_apply,
     MvPolynomial.algebraMap_apply, map_pow, map_pow]

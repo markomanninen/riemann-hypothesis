@@ -1,29 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisMatrix
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NormCardQuotientSpan
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisMatrix
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.NormCardQuotientSpan
+
+@[expose] public section
 
 namespace GlobalTheory
 namespace TorsionMatrix
 
 section
 open Matrix
-
-theorem norm_card_quot_span (l : ℕ) [Fact l.Prime] {a : ℤ_[l]} (ha : a ≠ 0) :
-    ‖((Nat.card (ℤ_[l] ⧸ Ideal.span {a}) : ℕ) : ℚ_[l])‖ = ‖a‖ := by
-  have h1 : Ideal.span {a} = RingHom.ker (PadicInt.toZModPow (p := l) a.valuation) := by
-    rw [PadicInt.ker_toZModPow]
-    conv_lhs => rw [PadicInt.unitCoeff_spec ha]
-    exact Ideal.span_singleton_mul_left_unit (PadicInt.unitCoeff ha).isUnit _
-  have h2 : Nat.card (ℤ_[l] ⧸ Ideal.span {a}) = l ^ a.valuation := by
-    rw [h1, Nat.card_congr (RingHom.quotientKerEquivOfSurjective
-      (ZMod.ringHom_surjective (PadicInt.toZModPow (p := l) a.valuation))).toEquiv, Nat.card_zmod]
-  rw [h2, PadicInt.norm_eq_zpow_neg_valuation ha]
-  push_cast
-  rw [Padic.norm_p_pow]
 
 theorem norm_index_range (l : ℕ) [Fact l.Prime] {κ : Type} [Fintype κ] [DecidableEq κ]
     (M : Matrix κ κ ℤ_[l]) (hM : M.det ≠ 0) :
@@ -131,7 +122,7 @@ theorem exists_tower (l : ℕ) [hl : Fact l.Prime] (m : ℕ) (Q : Type) [AddComm
   have hs : ∀ t : Fin m → ZMod l,
       ((∑ j, (t j).val • b j : T l) : Q) = ∑ j, (t j).val • τ j 0 := by
     intro t
-    rw [AddSubgroup.val_finset_sum]
+    rw [AddSubgroup.val_finsetSum]
     rfl
   refine ⟨τ, h1, fun i n => hg2 _ _ (h1 i n), fun x hx => ?_⟩
   simpa only [Subtype.ext_iff, hs] using hb ⟨x, hx⟩
@@ -217,7 +208,8 @@ theorem map_ev (g : Q →+ Q) {pt pt' : κ → Q} (h : ∀ i, N • pt i = 0) (h
   have : M *ᵥ t = ∑ j, fun i => M i j * t j := by
     funext i
     simp [mulVec, dotProduct, Finset.sum_apply]
-  rw [this, map_sum, ev_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum, ev_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_nsmul, hM, ev_apply, Finset.smul_sum]
   exact Finset.sum_congr rfl fun i _ => (val_mul_smul (h' i) _ _).symm
@@ -341,7 +333,8 @@ theorem exists_padic_matrix : ∀ (l : ℕ) [Fact l.Prime] (m : ℕ) (Q : Type) 
     have : Finite (Polynomial.aeval s F).toAddMonoidHom.ker := hfin
     exact norm_det_eq l τ h1 hb (Polynomial.aeval s F).toAddMonoidHom _ (hρ _)
   · obtain ⟨t, ht, -⟩ := hb j x (by rw [pow_succ', mul_smul, hx, smul_zero])
-    rw [← ht, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← ht, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_nsmul, hρ, ← hF, h0]
     simp

@@ -1,8 +1,12 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsVecOfHermRep
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardStabilizerAutSub
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsRepsOfCover
-import Formalism.ThetaLiftIndependence.ThetaOrbitSums.ClassRepsDefinite
-import Lemmata.GeneralBFactSecondForm.Imports
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsVecOfHermRep
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardStabilizerAutSub
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsRepsOfCover
+public import Formalism.ThetaLiftIndependence.ThetaOrbitSums.ClassRepsDefinite
+public import Lemmata.GeneralBFactSecondForm.Imports
+
+@[expose] public section
 
 open NumberField Module
 
@@ -33,9 +37,9 @@ theorem trace_pos {h : V →ₗ⋆[K] V →ₗ[K] K} (hd : IsTotPosDef h) :
   rw [this] at hpos
   exact_mod_cast hpos
 
-theorem exists_smul_mem {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (v : V) :
-    ∃ r : 𝓞 K, r ≠ 0 ∧ r • v ∈ Λ := by
-  first | exact Bl.general_b_fact_second_form.goal1 .. | (apply Bl.general_b_fact_second_form.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_second_form.goal1 <;> assumption)
+theorem exists_smul_mem {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (v : V) :
+    ∃ r : 𝓞 K, r ≠ 0 ∧ r • v ∈ Λ :=
+  Bl.general_b_fact_second_form.goal1 hΛ v
 
 scoped instance latAct (h : V →ₗ⋆[K] V →ₗ[K] K) :
     MulAction (Formalism.HermitianLatticesTheory.isom h) (Submodule (𝓞 K) V) where
@@ -44,10 +48,6 @@ scoped instance latAct (h : V →ₗ⋆[K] V →ₗ[K] K) :
   mul_smul a b Λ := autSub_gmap_mul a.1 b.1 Λ
 
 variable {h : V →ₗ⋆[K] V →ₗ[K] K}
-
-theorem smul_lat (g : Formalism.HermitianLatticesTheory.isom h) (Λ : Submodule (𝓞 K) V) : g • Λ = Formalism.HermitianLatticesTheory.gmap g.1 Λ := rfl
-
-theorem smul_vec (g : Formalism.HermitianLatticesTheory.isom h) (x : V) : g • x = g.1 x := rfl
 
 theorem smul_pair (g : Formalism.HermitianLatticesTheory.isom h) (p : Submodule (𝓞 K) V × V) :
     g • p = (Formalism.HermitianLatticesTheory.gmap g.1 p.1, g.1 p.2) := rfl
@@ -112,18 +112,26 @@ theorem isLattice_cut (S : VecSplit h h') {Λ : Submodule (𝓞 K) V}
     have hle : (S.cut Λ).map (S.ι.restrictScalars (𝓞 K)) ≤ Λ := Submodule.map_comap_le _ _
     exact Submodule.fg_of_fg_map_injective (S.ι.restrictScalars (𝓞 K)) S.inj
       (Submodule.FG.of_le_of_isNoetherian hle)
-  · rw [eq_top_iff]
-    intro a _
-    obtain ⟨r, hr, hra⟩ := exists_smul_mem hΛ (S.ι a)
-    have h1 : r • a ∈ S.cut Λ := by
-      rw [VecSplit.mem_cut_iff, ← algebraMap_smul K r a, map_smul, algebraMap_smul]
-      exact hra
-    have hr' : algebraMap (𝓞 K) K r ≠ 0 := by
-      simpa using hr
-    have e : a = (algebraMap (𝓞 K) K r)⁻¹ • (r • a) := by
-      rw [← algebraMap_smul K r a, smul_smul, inv_mul_cancel₀ hr', one_smul]
-    rw [e]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
+  · intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli
+
+theorem isFullLattice_cut (S : VecSplit h h') {L : Submodule (𝓞 K) V}
+    (hL : Submodule.IsFullLattice K L) : Submodule.IsFullLattice K (S.cut L) := by
+  refine { toIsLattice := isLattice_cut S hL.toIsLattice, span_eq_top := ?_ }
+  rw [eq_top_iff]
+  intro a _
+  have ha : S.ι a ∈ Submodule.span K (L : Set V) := by
+    rw [hL.span_eq_top]
+    exact Submodule.mem_top
+  obtain ⟨y, hy, r, hya⟩ := (IsLocalization.mem_span_iff (nonZeroDivisors (𝓞 K))).mp ha
+  rw [Submodule.span_eq] at hy
+  have hr : (r : 𝓞 K) • a ∈ S.cut L := by
+    rw [S.mem_cut_iff, ← algebraMap_smul K (r : 𝓞 K), map_smul, hya, smul_smul,
+      IsLocalization.mk'_spec', map_one, one_smul]
+    exact hy
+  have hmul := Submodule.smul_mem (Submodule.span K (S.cut L : Set V'))
+    (IsLocalization.mk' K 1 r) (Submodule.subset_span hr)
+  rwa [← algebraMap_smul K (r : 𝓞 K), smul_smul, IsLocalization.mk'_spec, map_one, one_smul] at hmul
 
 def emb (S : VecSplit h h') (Λ' : Submodule (𝓞 K) V') : Submodule (𝓞 K) V :=
   Λ'.map (S.ι.restrictScalars (𝓞 K))

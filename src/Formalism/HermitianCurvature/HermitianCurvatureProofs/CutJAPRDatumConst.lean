@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSectionStab
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomAtGq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSectionStab
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomAtGq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRhoFrameLoc
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -219,11 +223,6 @@ theorem prWv_self {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < 
   rw [hw, PRhoCut.FL.herm_alt]
   push_cast
   rw [neg_div, div_self hT0, neg_smul, one_smul, add_neg_cancel]
-
-theorem unitH_one {x : Fin (2 * r + k + 1) → ℂ} (h : herm (Hpk k r) x x = 1) : SSn.unitH k r x = x := by
-  unfold SSn.unitH
-  rw [h]
-  simp
 
 theorem unitH_pos {c : ℝ} (hc : 0 < c) {x : Fin (2 * r + k + 1) → ℂ} (h : herm (Hpk k r) x x = 1) :
     SSn.unitH k r (((c : ℝ) : ℂ) • x) = x := by

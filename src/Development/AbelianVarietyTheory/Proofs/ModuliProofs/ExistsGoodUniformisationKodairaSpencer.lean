@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CauchyRiemannIffDifferentiableOnComplex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CauchyRiemannIffDifferentiableOnComplex
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -45,8 +49,10 @@ theorem ex_add_period (l : u.Λ) (z : Fin g → ℂ) : u.ex (z + l) = u.ex z := 
   rw [u.ex_add, (u.ker _).2 l.2, _root_.mul_one]
 
 theorem ksRel_const (w : Fin g → ℂ) :
-    KSRel u A₀.hom (𝟙 _) (fun _ => 0) 0 (fun z W f => fderiv ℂ (fn u (𝟙 _) W f) z w) where
-  der z := by
+    KSRel u A₀.hom (𝟙 _) (fun _ => 0) 0 (fun z W f => fderiv ℂ (fn u (𝟙 _) W f) z w) := by
+  refine { der := ?der, base := ?base, hol := ?hol, per := ?per }
+  case der =>
+    intro z
     have hd : ∀ (W : A₀.left.Opens) (k : Γ(A₀.left, W)), ⊤ ≤ ((u.ex z).left ≫ 𝟙 _) ⁻¹ᵁ W →
         DifferentiableAt ℂ (fn u (𝟙 _) W k) z :=
       fun W k hW => differentiableAt_fn u W k hW
@@ -55,7 +61,7 @@ theorem ksRel_const (w : Fin g → ℂ) :
         funext y
         simp only [fn, valAt', Pi.add_apply]
         split_ifs with hy
-        · simp only [valAt, map_add]
+        · simp only [valAt, map_add (f := _)]
         · exact (add_zero 0).symm
       show fderiv ℂ (fn u (𝟙 _) W (f + f')) z w =
         fderiv ℂ (fn u (𝟙 _) W f) z w + fderiv ℂ (fn u (𝟙 _) W f') z w
@@ -76,7 +82,7 @@ theorem ksRel_const (w : Fin g → ℂ) :
         filter_upwards [(isOpen_dom u W').mem_nhds hW'] with y hy
         have hyW' : ⊤ ≤ ((u.ex y).left ≫ 𝟙 _) ⁻¹ᵁ W' := hy
         have hy' : ⊤ ≤ ((u.ex y).left ≫ 𝟙 _) ⁻¹ᵁ W := hyW'.trans (Scheme.Hom.preimage_mono _ h)
-        simp only [fn, valAt', dif_pos hyW', dif_pos hy']
+        simp only [fn, valAt', dite_eq_left hyW', dite_eq_left hy']
         unfold valAt resG
         have key : A₀.left.presheaf.map (homOfLE h).op ≫ Scheme.Hom.appLE ((u.ex y).left ≫ 𝟙 _) W' ⊤ hyW' =
             Scheme.Hom.appLE ((u.ex y).left ≫ 𝟙 _) W ⊤ hy' :=
@@ -84,7 +90,8 @@ theorem ksRel_const (w : Fin g → ℂ) :
         rw [← key]
         rfl
       rw [hev.fderiv_eq]
-  base z r := by
+  case base =>
+    intro z r
     show fderiv ℂ (fn u (𝟙 _) ⊤ (constFn A₀.hom ⊤ r)) z w = 0
     obtain ⟨K, hK⟩ : ∃ K : ℂ, ∀ y, fn u (𝟙 _) ⊤ (constFn A₀.hom ⊤ r) y = K := by
       refine ⟨(Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom
@@ -96,16 +103,18 @@ theorem ksRel_const (w : Fin g → ℂ) :
         rw [Scheme.Hom.appLE_comp_appLE]
         congr 1
         simp
-      simp only [fn, valAt', dif_pos ht]
+      simp only [fn, valAt', dite_eq_left ht]
       unfold valAt constFn
       rw [← key]
       rfl
     have e : fn u (𝟙 _) ⊤ (constFn A₀.hom ⊤ r) = fun _ => K := funext hK
     rw [e]
     simp
-  hol W f :=
-    ((cauchyRiemann_iff_differentiableOn_complex g _ _ (isOpen_dom u W)).2 (differentiableOn_fn u W f)).2 w
-  per l W f z _ := by
+  case hol =>
+    intro W f
+    exact ((cauchyRiemann_iff_differentiableOn_complex g _ _ (isOpen_dom u W)).2 (differentiableOn_fn u W f)).2 w
+  case per =>
+    intro l W f z _
     show fderiv ℂ (fn u (𝟙 _) W f) (z + l) w =
       fderiv ℂ (fn u (𝟙 _) W f) z w + fderiv ℂ (fn u (𝟙 _) W f) z ((0 : Matrix (Fin g) (Fin g) ℂ).mulVec (star (l : Fin g → ℂ)))
     have hp : (fun y => fn u (𝟙 _) W f (y + l)) = fn u (𝟙 _) W f := by

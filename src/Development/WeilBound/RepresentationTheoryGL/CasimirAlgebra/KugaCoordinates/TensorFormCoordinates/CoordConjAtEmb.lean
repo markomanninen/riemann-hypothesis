@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousConjFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,13 +21,13 @@ lemma coord_atEmb_ne {τ τ' : E →+* ℂ} (h : InfinitePlace.mk τ' ≠ Infini
   have h0 := congrArg (coord τ') (atEmb_mul_of_ne h 1 z)
   rwa [map_mul, coord_atEmb, map_zero, one_mul] at h0
 
-lemma coord_conj_atEmb [IsTotallyComplex E] (τ : E →+* ℂ) (z : ℂ) :
+lemma coord_conj_atEmb [_root_.NumberField.IsTotallyComplex E] (τ : E →+* ℂ) (z : ℂ) :
     coord (ComplexEmbedding.conjugate τ) (atEmb τ z) = starRingEnd ℂ z := by
   have : atEmb τ z = atEmb (ComplexEmbedding.conjugate τ) (starRingEnd ℂ z) := by
     rw [atEmb_conj, Complex.conj_conj]
   rw [this, coord_atEmb]
 
-lemma cxkey [IsTotallyComplex E] (τ τ' : E →+* ℂ) :
+lemma cxkey [_root_.NumberField.IsTotallyComplex E] (τ τ' : E →+* ℂ) :
     (1 / 2 : ℂ) * (coord τ' (atEmb τ 1) - Complex.I * coord τ' (atEmb τ Complex.I)) =
       if τ' = τ then 1 else 0 := by
   by_cases hm : InfinitePlace.mk τ' = InfinitePlace.mk τ

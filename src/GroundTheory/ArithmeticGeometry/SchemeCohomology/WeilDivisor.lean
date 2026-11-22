@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -80,9 +85,6 @@ lemma ord_mul (x : PrimeDivisor X) {f g : X.functionField} (hf : f ≠ 0) (hg : 
   simp only [ord, map_mul]
   rw [WithZero.log_mul ((Valuation.ne_zero_iff _).mpr hf) ((Valuation.ne_zero_iff _).mpr hg)]
   ring
-
-lemma ord_one (x : PrimeDivisor X) : x.ord 1 = 0 := by
-  simp [ord]
 
 end PrimeDivisor
 
@@ -186,34 +188,7 @@ section Divisor
 
 variable [IsIntegral X] [IsNoetherian X] [IsNormalScheme X]
 
-noncomputable def divisorOf (f : (X.functionField)ˣ) : WeilDivisor X :=
-  Finsupp.ofSupportFinite (fun x => x.ord (f : X.functionField))
-    (PrimeDivisor.finite_ord_ne_zero f.ne_zero)
 
-lemma divisorOf_apply (f : (X.functionField)ˣ) (x : PrimeDivisor X) :
-    divisorOf f x = x.ord (f : X.functionField) := rfl
-
-noncomputable def principalDivisor : Additive (X.functionField)ˣ →+ WeilDivisor X where
-  toFun f := divisorOf f.toMul
-  map_zero' := by
-    ext x
-    simp [divisorOf_apply, PrimeDivisor.ord_one]
-  map_add' f g := by
-    ext x
-    simp only [divisorOf_apply, toMul_add, Units.val_mul, Finsupp.coe_add, Pi.add_apply]
-    exact x.ord_mul f.toMul.ne_zero g.toMul.ne_zero
-
-lemma principalDivisor_apply (f : (X.functionField)ˣ) (x : PrimeDivisor X) :
-    principalDivisor (Additive.ofMul f) x = x.ord (f : X.functionField) := rfl
-
-variable (X) in
-
-noncomputable def principalDivisors : AddSubgroup (WeilDivisor X) :=
-  (principalDivisor (X := X)).range
-
-variable (X) in
-
-abbrev ClassGroup : Type u := WeilDivisor X ⧸ principalDivisors X
 
 end Divisor
 

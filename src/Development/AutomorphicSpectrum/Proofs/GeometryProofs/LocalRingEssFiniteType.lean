@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeIsMaximalOfIsFractionRing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimeIsMaximalOfIsFractionRing
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.FunctionField GroundTheory.Heights₂.Heights.Inter IsLocalRing GlobalTheory.CompanionTheory.Ar.GeoDeg
 
 noncomputable section
@@ -23,7 +28,8 @@ theorem aeval_ratio_mul_chartMono {B : Type} [Fintype B] {J : B → Type} [∀ k
   have hψC : ∀ a : ℤ, ψ (C a) = φ (C a) := fun a =>
     RingHom.congr_fun (RingHom.ext_int (ψ.comp C) (φ.comp C)) a
   show ψ g * φ (chartMono c e) = φ g
-  rw [g.as_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hdeg : ∀ k, ∑ i, m ⟨k, i⟩ = e k := hg m hm
   have hchart : φ (chartMono c e) = ∏ q : (Σ k, J k), φ (X ⟨q.1, c q.1⟩) ^ m q := by
@@ -66,7 +72,7 @@ theorem essFiniteType_locRing : ∀ (B : Type) [Fintype B] (J : B → Type) [∀
       rw [aeval_C, algebraMap_int_eq, Int.coe_castRingHom]
       exact intCast_mem _ a
     next f g hf hg =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem hf hg
     next f q hf =>
       rw [map_mul, aeval_X]

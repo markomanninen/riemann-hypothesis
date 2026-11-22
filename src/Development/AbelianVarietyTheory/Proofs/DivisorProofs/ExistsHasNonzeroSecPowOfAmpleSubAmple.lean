@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicMorseExistsSectionAmpleSubGeneratedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraicMorseExistsSectionAmpleSubGeneratedStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Filter Asymptotics
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -7,7 +11,7 @@ open GlobalTheory GlobalTheory.QCoh GlobalTheory.CechPic GlobalTheory.Twist
 
 namespace GlobalTheory
 
-theorem exists_hasNonzeroSec_pow_of_ample_sub_ample : ∀ (k : Type) [Field k] [Infinite k] (X : Scheme.{0}) [IsIntegral X] [Algebra k Γ(X, ⊤)], IsProjOver (strHom k X) → ∀ d : ℕ, topologicalKrullDim X ≤ (d + 1 : ℕ) → ∀ (L B M : LB X) (hL : IsAmpleLB L) (hB : IsAmpleLB B) (hM : M.IsLB), cls L hL.isLB = cls M hM + cls B hB.isLB → ((d : ℤ) + 1) * interNum k (GlobalTheory.structureModule X) (Fin.cons B (fun _ : Fin d => L) : Fin (d + 1) → LB X) < topSelfIntersection k L (d + 1) → ∃ r, 1 ≤ r ∧ HasNonzeroSec (lbPow M r) := by
+theorem exists_hasNonzeroSec_pow_of_ample_sub_ample : ∀ (k : Type) [Field k] [Infinite k] (X : Scheme.{0}) [IsIntegral X] [Algebra k Γ(X, ⊤)], IsProjOver (strHom k (X := X)) → ∀ d : ℕ, topologicalKrullDim X ≤ (d + 1 : ℕ) → ∀ (L B M : LB X) (hL : IsAmpleLB L) (hB : IsAmpleLB B) (hM : M.IsLB), cls L hL.isLB = cls M hM + cls B hB.isLB → ((d : ℤ) + 1) * interNum k (GlobalTheory.structureModule X) (Fin.cons B (fun _ : Fin d => L) : Fin (d + 1) → LB X) < topSelfIntersection k L (d + 1) → ∃ r, 1 ≤ r ∧ HasNonzeroSec (lbPow M r) := by
   intro k _ _ X _ _ hX d hdim L B M hL hB hM hcls hineq
 
   have hgen : ∀ᶠ n : ℕ in atTop, IsGenerated (lbPow B n) := by
@@ -17,16 +21,18 @@ theorem exists_hasNonzeroSec_pow_of_ample_sub_ample : ∀ (k : Type) [Field k] [
       ⟨ι, hι, φ ≫ (unitTwistIso (X := X) (L := lbPow B n)).hom, epi_comp _ _⟩
   obtain ⟨m, hmB, hm1⟩ := (hgen.and (eventually_ge_atTop 1)).exists
 
-  have hLm : IsAmpleLB (lbPow L m) := (isAmpleLB_basic.2.1 hL.isLB hm1).2 hL
+  have hLm : IsAmpleLB (lbPow L m) := (isAmpleLB_pow_iff hL.isLB hm1).2 hL
   have hMm : (lbPow M m).IsLB := isLB_lbPow hM m
   have hclsm : cls (lbPow L m) hLm.isLB = cls (lbPow M m) hMm + cls (lbPow B m) hmB.isLB := by
     rw [CechPic.cls_lbPow hL.isLB m, CechPic.cls_lbPow hM m, CechPic.cls_lbPow hB.isLB m, hcls,
       smul_add]
 
   have hv : DiffVanish (d + 1 + 1) (chiPic k (structureModule X)) := by
-    apply diffVanish_chiPic_of_isProjOver (f := strHom k X) (algebraMap_eq_strHom k X) _ hX
-    unfold QCoh.suppDim
-    exact (topologicalKrullDim_subspace_le _ _).trans hdim
+    exact diffVanish_chiPic_of_isProjOver (f := strHom k X) (algebraMap_eq_strHom k X)
+      (structureModule X) hX
+      (by
+        unfold QCoh.suppDim
+        exact (topologicalKrullDim_subspace_le _ _).trans hdim)
   have hprod : (∏ _i : Fin (d + 1), (m : ℤ)) = (m : ℤ) ^ (d + 1) := by simp
   have hP : ∀ i, ((Fin.cons B fun _ : Fin d => L : Fin (d + 1) → LB X) i).IsLB := by
     intro i
@@ -43,11 +49,11 @@ theorem exists_hasNonzeroSec_pow_of_ample_sub_ample : ∀ (k : Type) [Field k] [
       (m : ℤ) ^ (d + 1) * interNum k (structureModule X)
         (Fin.cons B fun _ : Fin d => L : Fin (d + 1) → LB X) := by
     rw [← hprod]
-    refine hv.interNum_of_cls_eq_zsmul hP hQ (fun _ => (m : ℤ)) ?_
-    intro i
-    refine Fin.cases ?_ (fun j => ?_) i
-    · exact (CechPic.cls_lbPow hB.isLB m _).trans (natCast_zsmul _ _).symm
-    · exact (CechPic.cls_lbPow hL.isLB m _).trans (natCast_zsmul _ _).symm
+    exact hv.interNum_of_cls_eq_zsmul hP hQ (fun _ => (m : ℤ)) (by
+      intro i
+      refine Fin.cases ?_ (fun j => ?_) i
+      · exact (CechPic.cls_lbPow hB.isLB m _).trans (natCast_zsmul _ _).symm
+      · exact (CechPic.cls_lbPow hL.isLB m _).trans (natCast_zsmul _ _).symm)
   have hT : topSelfIntersection k (lbPow L m) (d + 1) = (m : ℤ) ^ (d + 1) * topSelfIntersection k L (d + 1) := by
     rw [topSelf_def, topSelf_def, ← hprod]
     exact hv.interNum_of_cls_eq_zsmul (fun _ => hL.isLB) (fun _ => hLm.isLB) (fun _ => (m : ℤ))

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C Polynomial Topology
@@ -33,14 +37,16 @@ theorem UpperTheory.re_inner_ge_of_span_eigenvectors :
       exact hab (Subtype.ext (mul_right_cancel₀ h3 h2))
   have hv' : v = ∑ a ∈ f.support, f a := hfv.symm
   have e1 : inner ℂ (j v) (j v) = ∑ a ∈ f.support, inner ℂ (j (f a)) (j (f a)) := by
-    rw [hv', map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv', map_sum, sum_inner]
     refine Finset.sum_congr rfl fun a ha => ?_
     rw [inner_sum, Finset.sum_eq_single_of_mem a ha]
     intro b _ hb
     exact horth a b hb.symm
   have e2 : inner ℂ (j v) (j (T v))
       = ∑ a ∈ f.support, (a : ℂ) * inner ℂ (j (f a)) (j (f a)) := by
-    rw [hv', map_sum T, map_sum, map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv', map_sum T, map_sum, map_sum, sum_inner]
     refine Finset.sum_congr rfl fun a ha => ?_
     rw [inner_sum, Finset.sum_eq_single_of_mem a ha, hT, map_smul, inner_smul_right]
     intro b _ hb

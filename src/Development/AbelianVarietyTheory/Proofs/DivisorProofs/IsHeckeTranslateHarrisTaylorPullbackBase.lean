@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke
@@ -19,19 +23,21 @@ theorem isGaloisCover_of_isPullback {X Y X' Y' : Scheme.{0}} {Ga Ga' : Type} [Gr
     (one' : ρ' 1 = 𝟙 X') (mul' : ∀ a c, ρ' (a * c) = ρ' a ≫ ρ' c) (inj' : Function.Injective ρ')
     (hπ : ∀ a, ρ' a ≫ π' = π')
     (up : ∀ a', ∃ a, ρ' a' ≫ u = u ≫ ρ a) (down : ∀ a, ∃ a', ρ' a' ≫ u = u ≫ ρ a) :
-    GlobalTheory.ZM.IsGaloisCover Ga' ρ' π' where
-  finite := by
-    have := h.finite
+    GlobalTheory.ZM.IsGaloisCover Ga' ρ' π' := by
+  refine
+    { finite := ?_
+      one := one'
+      mul := mul'
+      inv := hπ
+      fin := MorphismProperty.of_isPullback (P := @IsFinite) hp h.fin
+      etale := MorphismProperty.of_isPullback (P := @Etale) hp h.etale
+      onto := MorphismProperty.of_isPullback (P := @Surjective) hp h.onto
+      fibre := ?_ }
+  · have := h.finite
     choose σ hσ using up
     refine Finite.of_injective σ fun a c e => inj' ?_
     exact hp.hom_ext (by rw [hσ, hσ, e]) (by rw [hπ, hπ])
-  one := one'
-  mul := mul'
-  inv := hπ
-  fin := MorphismProperty.of_isPullback (P := @IsFinite) hp h.fin
-  etale := MorphismProperty.of_isPullback (P := @Etale) hp h.etale
-  onto := MorphismProperty.of_isPullback (P := @Surjective) hp h.onto
-  fibre K _ _ y y' e := by
+  · intro K _ _ y y' e
     obtain ⟨a, ha, ha'⟩ := h.fibre K (y ≫ u) (y' ≫ u) (by simp only [Category.assoc, hp.w, reassoc_of% e])
     obtain ⟨a', ea'⟩ := down a
     have ex : y ≫ ρ' a' = y' := hp.hom_ext

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubleCosetOperatorsCommOfAntiInvolution
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsIrreducibleIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ImportsMore
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqTopOfStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DoubleCosetOperatorsCommOfAntiInvolution
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsIrreducibleIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqTopOfStable
+
+@[expose] public section
+
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes IsDedekindDomain NumberField Filter GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.AdelicU GlobalTheory.AutMult
 open GlobalTheory.PRep (IsAdmissible fixed)
 
@@ -146,7 +150,8 @@ theorem heckeOp_comm (ρ : Representation ℂ G V) (K : Subgroup G) (τ : G → 
     (fun k hk g => by simp only [map_mul, Module.End.mul_apply, hv k hk])
   rw [heckeOp_eq_sum ρ K a (heckeOp ρ K b v), heckeOp_eq_sum ρ K b v,
     heckeOp_eq_sum ρ K b (heckeOp ρ K a v), heckeOp_eq_sum ρ K a v]
-  simpa only [map_sum, map_mul, Module.End.mul_apply] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, map_mul, Module.End.mul_apply] using this
 
 theorem heckeTerm_eq (ρ : Representation ℂ G V) (K : Subgroup G) (a : G) {v : V}
     (hv : ∀ k ∈ K, ρ k v = v) (y : K) :
@@ -162,7 +167,8 @@ theorem heckeOp_fixed (ρ : Representation ℂ G V) (K : Subgroup G) (a : G)
     [Fintype (K ⧸ (stabSub K a).subgroupOf K)] {v : V} (hv : ∀ k ∈ K, ρ k v = v) :
     ∀ k ∈ K, ρ k (heckeOp ρ K a v) = heckeOp ρ K a v := by
   intro k hk
-  rw [heckeOp_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [heckeOp_apply, map_sum]
   refine Fintype.sum_equiv (MulAction.toPerm (⟨k, hk⟩ : K)) _ _ fun q => ?_
   have hq : (MulAction.toPerm (⟨k, hk⟩ : K) q : K ⧸ (stabSub K a).subgroupOf K) =
       ((⟨k, hk⟩ * q.out : K) : K ⧸ (stabSub K a).subgroupOf K) := by
@@ -199,8 +205,8 @@ theorem finsum_quot_le {K W : Type} [Group K] [AddCommGroup W] {H H' : Subgroup 
 
 end GlobalTheory.GelfandLine
 
-open GlobalTheory.GelfandLine in
 
+open GlobalTheory.GelfandLine in
 theorem GlobalTheory.fixed_eq_span_of_gelfandPair : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (K : Subgroup G), IsOpen (K : Set G) → IsCompact (K : Set G) → ∀ θ : G → G, (∀ x y, θ (x * y) = θ y * θ x) → (∀ x, θ (θ x) = x) → (∀ g, ∃ a ∈ K, ∃ b ∈ K, θ g = a * g * b) → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ G W), ρ.IsIrreducible → IsAdmissible ρ → ∀ x ∈ fixed ρ K, x ≠ 0 → fixed ρ K = ℂ ∙ x := by
   first
   | exact @_root_.GlobalTheory.GroupAverageProjection.main

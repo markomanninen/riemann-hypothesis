@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Topology
 
@@ -8,6 +12,7 @@ theorem goal1 {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [SecondCountableTopology G] [MeasurableSpace G] [OpensMeasurableSpace G]
     (Γ : Subgroup G) [DiscreteTopology Γ] :
     ∃ s : Set G, MeasurableSet s ∧ ∀ μ : Measure G, IsFundamentalDomain Γ s μ := by
+  open scoped Pointwise in
   classical
   obtain ⟨U, hUo, hU⟩ := isOpen_induced_iff.mp (isOpen_discrete ({1} : Set Γ))
   have h1U : (1 : G) ∈ U := by

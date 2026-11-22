@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.MomB
+module
+
+public import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.MomB
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -66,7 +70,7 @@ theorem momB : MomB := by
   intro I _ α β c hα hβ hc
   refine ⟨(Measure.pi fun _ : I => (volume : Measure ℝ).restrict (Ioi 0)).withDensity
     fun y => ENNReal.ofReal (c * ∏ i, Real.exp (-α i * |y i|)), fun y => ∏ i, Real.exp (-β i * |y i|), by fun_prop,
-    fun y => ⟨Finset.prod_pos fun i _ => Real.exp_pos _, Finset.prod_le_one (fun i _ => (Real.exp_pos _).le) fun i _ =>
+    fun y => ⟨Finset.prod_pos fun i _ => Real.exp_pos _, Finset.prod_le_one₀ (fun i _ => (Real.exp_pos _).le) fun i _ =>
       Real.exp_le_one_iff.2 (by have := hβ i; have := abs_nonneg (y i); nlinarith)⟩, fun t => ?_⟩
   have hp : ∀ i, 0 < α i + t * β i := fun i => by have := hα i; have := hβ i; positivity
   have e1 : ∀ i, EqOn (fun x : ℝ => Real.exp (-(α i + t * β i) * |x|)) (fun x => Real.exp (-(α i + t * β i) * x)) (Ioi 0) :=

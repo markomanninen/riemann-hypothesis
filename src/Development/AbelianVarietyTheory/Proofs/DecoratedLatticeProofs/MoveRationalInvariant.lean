@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardPairAlongChainStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacuumCharacterPositiveDefiniteSource
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfExpIffHasInfQ
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisOApplyZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ForallEventuallyFinLocIff
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.StandardPairAlongChain
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacuumCharacterPositiveDefiniteSource
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfExpIffHasInfQ
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisOApplyZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.L2.Ker Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
@@ -46,7 +50,7 @@ theorem finG_congr (V : HSp D) {g g' : GA D V} (h : finHom V g = finHom V g') : 
 theorem toEAf_cA (a : AE D) : toEAf D (cA D a) = Formalism.UG.sigR D.sp.cm.sig (Af D.host.F) (toEAf D a) := by
   induction a using TensorProduct.induction_on with
   | zero => simp only [RingHom.map_zero]
-  | add a b ha hb => simp only [RingHom.map_add, ha, hb]
+  | add a b ha hb => simp only [RingHom.map_add (f := _), ha, hb]
   | tmul y e => rfl
 
 theorem sd_lat (V : HSp D) (hV : V.gram = 1) (g : GA D V) :
@@ -206,8 +210,8 @@ theorem xiN_rat {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} (hθ : IsInfFam
       ((congrFun (congrFun s1.1 i) j).trans (congrFun (congrFun t1 i) j).symm)
       fun τ => (congrFun (congrFun (t2 τ) i) j).symm
 
-open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.Mem.NatEqui in
 
+open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.Mem.NatEqui in
 theorem thMoved_rat {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Formalism.L2.Ker.Base D cc δ) (hc : IsCurveIdeal D cc)
     (hδ : IsDiscriminantTwelfthRootOfIdealLattice D cc δ) {n n' : ℕ} (hn : Even n) (hn' : Even n') {L L'} (hL : SD D L) (hL' : SD D L')
     (U : Matrix.unitaryGroup (Fin n) D.host.E) (U' : Matrix.unitaryGroup (Fin n') D.host.E) (z : VCx D.what₂.Tau n n') :
@@ -229,8 +233,8 @@ theorem thMoved_rat {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Formalism.L2.Ke
   change (∏ τ, tauE D τ U.1.det ^ _) * _ * ((∏ τ, tauE D τ U'.1.det ^ _) * _) = _
   ring
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem move_rat {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D} {a b : ℕ} (hS : S.rank = a) (hT : T.rank = b)
     {δ : ℂ} {sc : ℝ} (hp : StdPair θ S T δ sc ψ) {μ : (AE D)ˣ →* Circle} {om : Om S T} (hom : IsWeilDatumO ψ S T μ μ om)
     (e : D.what₂.Tau → ℤ) (he : ∀ τ, HasInfExp D μ τ (e τ)) {f : WO S T → ℂ} (hf : IsHol θ S T ψ f)
@@ -289,16 +293,5 @@ theorem move_rat {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : HSp D} 
 
 theorem curveIdeal_top (D : D7) : Formalism.MainNotions.TaylorLogMetric.IsCurveIdeal D ⊤ :=
   ⟨top_ne_bot, by rw [Ideal.absNorm_top]; exact Nat.coprime_one_left _⟩
-
-theorem moveAt_rat : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X) (l : I.Laws) (Z : TC.Later B (I.cols l)) (w : World I l Z) (u : B.Word) (A : ColDat I l Z u (w.C.herm.base.Ch u)) ψ θ, A.Is (w.C.forms u) ψ θ → ∀ (i : ℕ) (hi : i + 1 ≤ B.R.m), ∀ c₀ g h, g ∈ GfC _ → h ∈ GfC _ → A.MoveAt θ i hi c₀ g h → ∀ r r', IsRatFin _ r → IsRatFin _ r' → A.MoveAt θ i hi c₀ (r * g) (r' * h) := by
-  intro B X I l Z w u A ψ θ hA i hi c₀ g h hg hh H r r' hr hr'
-  have hp := (GlobalTheory.T.standard_pair_along_chain I l Z w u A ψ θ hA i hi).1
-  choose e he using fun τ => (B.hc τ).e_int ⟨i, hi⟩
-  have hexp := (GlobalTheory.HeckeInfExp.hasInfExp_iff_hasInfQ (I.rec7 l Z) _ _ _ (hA.chr ⟨i, hi⟩)).2 (I.C.isMu0 ⟨i, hi⟩).inf
-  have hv := (hA.vac i hi).2
-  exact move_rat _ _ hp (hA.om i hi) (fun τ => -e τ) (fun τ => by
-      have e1 : ((-e τ : ℤ) : ℚ) = -(B.hc τ).e ⟨i, hi⟩ := by rw [Int.cast_neg, ← he τ]
-      exact e1 ▸ hexp τ) ⟨hv.theta, hv.fock⟩ (Th.VacIn.toRec (D := I.rec7 l Z) I.J.V)
-    (curveIdeal_top _) w.ok.amb_ok.delta c₀ hg hh H hr hr'
 
 end GlobalTheory.AdForm.RatMove

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.NMeasInv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.NMeasInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,7 +155,7 @@ theorem A_spanLt (s : Fin r → ℝ) (k : ℕ) {v : Fin n → ℂ} (hv : v ∈ s
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨d, hd, rfl⟩)
   | zero => rw [← Alin_apply, map_zero]; exact Submodule.zero_mem _
   | add x y _ _ hx hy =>
-    rw [← Alin_apply, map_add, Alin_apply, Alin_apply]
+    rw [← Alin_apply, map_add (f := _), Alin_apply, Alin_apply]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [← Alin_apply, map_smul, Alin_apply]

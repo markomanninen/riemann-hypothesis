@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.GenMapEqOfFactor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.GenMapEqOfFactor
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 open GlobalTheory.CompanionTheory.Ar

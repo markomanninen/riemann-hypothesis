@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.HilbertRowConditions.AllJoin
-import Formalism.LocalToGlobal.GlobalTheory.ConcNWeight
-import Formalism.LocalToGlobal.GlobalTheory.ConcNP
-import Formalism.LocalToGlobal.ClassRec
+module
+
+public import Formalism.LocalToGlobal.HilbertRowConditions.AllJoin
+public import Formalism.LocalToGlobal.GlobalTheory.ConcNWeight
+public import Formalism.LocalToGlobal.GlobalTheory.ConcNP
+public import Formalism.LocalToGlobal.ClassRec
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,6 @@ section Rec
 
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {K : MainNotions.G.Consts} {Y : DivX D}
   {cX : ExtraC} {ex : Extra D L hT Gi Gl K Y cX}
-
-def AllJoin (_R : Formalism.L2.RecT ex) (A : AllRows D) : Prop := LabelCountGoodInjective A ∧ AllJoinA A
 
 end Rec
 

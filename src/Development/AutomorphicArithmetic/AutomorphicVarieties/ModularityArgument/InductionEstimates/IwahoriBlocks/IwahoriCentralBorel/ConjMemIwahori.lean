@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.ExistsPowerSums
-import GroundTheory.AutomorphicForms.IwahoriFactorization
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.ExistsPowerSums
+public import GroundTheory.AutomorphicForms.IwahoriFactorization
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -96,10 +100,9 @@ private theorem conj_mem_iwahori {ν : Fin n → ℤ} (hν : Antitone ν) {b : G
   have hle : ∀ i j, j ≤ i → valuation F
       (((GLnLocal.uniformizer F : 𝒪[F]) : F) ^ (ν j - ν i) * (b : Matrix (Fin n) (Fin n) F) i j) ≤
         valuation F ((b : Matrix (Fin n) (Fin n) F) i j) := fun i j hij => by
-    have := Parabolic.valuation_zpow_mul_le_pow_mul (F := F)
-      (x := (b : Matrix (Fin n) (Fin n) F) i j) (e := 0) (z := ν j - ν i)
-      (by have := hν hij; simp only [Nat.cast_zero]; omega)
-    simpa using this
+    have hz : 0 ≤ ν j - ν i := sub_nonneg.mpr (hν hij)
+    rw [← Int.toNat_of_nonneg hz, zpow_natCast, map_mul, map_pow]
+    exact mul_le_of_le_one_left' (pow_le_one' (GLnLocal.valuation_uniformizer_lt_one F).le _)
   refine (GLnLocal.mem_iwahori_iff F n).2 ⟨fun i j => ?_, fun i j hij => ?_, fun i => ?_⟩
   · rw [conj_apply]
     rcases lt_or_ge i j with h | h

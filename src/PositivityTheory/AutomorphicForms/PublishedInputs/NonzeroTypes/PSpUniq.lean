@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,8 @@ theorem avg_apply (ρ : Representation ℂ (LG G) W) (w : W) :
 theorem avg_intertwine {W' : Type} [AddCommGroup W'] [Module ℂ W'] {ρ : Representation ℂ (LG G) W}
     {ρ' : Representation ℂ (LG G) W'} (F : ρ.IntertwiningMap ρ') (w : W) :
     F (avg G U ρ w) = avg G U ρ' (F w) := by
-  rw [avg_apply, avg_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, avg_apply, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_smul, F.isIntertwining]
 
@@ -136,7 +141,8 @@ theorem avg_mem_etaSp (ρ : Representation ℂ (LG G) W) {w : W}
     have h2 := eta_ne_zero G m
     have h3 := eta_ne_zero G (c.out : LG G)
     field_simp
-  rw [avg_apply, map_sum, Finset.sum_congr rfl fun c _ => key c, ← Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, map_sum, Finset.sum_congr rfl fun c _ => key c, ← Finset.smul_sum]
   congr 1
   exact Fintype.sum_equiv (MulAction.toPerm m') _ _ (fun c => rfl)
 
@@ -153,7 +159,7 @@ theorem sup_inf_etaSp {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Represent
   let _ := Fintype.ofFinite (KG G ⧸ U)
   have hN : (Fintype.card (KG G ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   have h1 := avg_of_mem_etaSp G U ρ hvE
-  rw [map_add] at h1
+  rw [map_add (f := _)] at h1
   have hav : a + b = (Fintype.card (KG G ⧸ U) : ℂ)⁻¹ • (avg G U ρ a + avg G U ρ b) := by
     rw [h1, smul_smul, inv_mul_cancel₀ hN, one_smul]
   rw [hav]
@@ -177,7 +183,11 @@ variable {V : Type} [AddCommGroup V] [Module ℂ V] (I : Representation ℂ (GL 
 def jm {W W' : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
     {π : Representation ℂ (GL (Fin n) k) W} {τ : Representation ℂ (GL (Fin n) k) W'} (f : π.IntertwiningMap τ) :
     (jacU G.e π).IntertwiningMap (jacU G.e τ) :=
-  jacquetMap f (unipRad k G.e) (leviEmb k G.e) (leviEmb_mem_normalizer k G.e)
+  jacquetMap f (unipRad k G.e) (leviEmb k G.e) (by
+    intro g
+    have hg : leviEmb k G.e g ∈ parab k G.e := (mem_parab_iff (R := k)).2 fun a b i j h => by
+      simp [leviEmb, blockDiagonal'_apply, h.ne']
+    exact parab_le_normalizer k G.e hg)
 
 theorem jm_injective {W W' : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
     {π : Representation ℂ (GL (Fin n) k) W} {τ : Representation ℂ (GL (Fin n) k) W'} (hτ : IsSmooth τ)
@@ -333,8 +343,8 @@ end Jac
 
 end P_spUniq
 
-open P_spUniq in
 
+open P_spUniq in
 theorem step_spUniq {n : ℕ} (G : Grp k n) : G.SphericalVectorUniqueness := by
   intro hLat V _ _ I hI hfin hle A B _ _ _ _ α β hα hβ hsa hsb hηa hηb
   haveI := hfin

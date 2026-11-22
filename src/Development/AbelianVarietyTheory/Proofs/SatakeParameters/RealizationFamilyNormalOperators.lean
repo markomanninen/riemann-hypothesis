@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AdelicInnerDoubleCosetOpAdjoint
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ReprMemOfBasisRational
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DcOpCommOfCommute
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVectorStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeCombinationsCommuteFixedVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeConjPlaceEqDualLabelStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsDCOfMemDoubleCoset
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AdelicInnerDoubleCosetOpAdjoint
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ReprMemOfBasisRational
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DcOpCommOfCommute
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeCombinationsCommuteFixedVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeConjPlaceEqDualLabelStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
@@ -96,7 +100,8 @@ theorem dcOp_mem {Γ W : Type} [Group Γ] [NormedAddCommGroup W] [InnerProductSp
   have h1 : ∀ (k : J) (h : G), F (h * k) = (χ k : ℂ) • F h := fun k h => by simpa using hF 1 h k
   have h2 : ∀ h, F (ι γ * h) = ρ γ (F h) := fun h => by simpa using hF γ h 1
   rw [(GlobalTheory.HkB.dcOp_eq_and_level J L χ x x A A F hsp hχ hA hA hx hx ⟨1, 1, by simp⟩ h1).2 k]
-  simp only [Bridge.dcOp, map_sum, mul_assoc, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Bridge.dcOp, map_sum, mul_assoc, h2]
 
 theorem exists_lift {X : Type} [AddCommGroup X] [Module ℂ X] (M : HMod X) (U : Submodule ℂ X) (ip : X → X → ℂ)
     (hM : M.Is U ip) (S : Module.End ℂ X) (hS : ∀ F ∈ U, S F ∈ U) :
@@ -158,13 +163,13 @@ theorem exists_normalFam {D : D7} {X : Type} [AddCommGroup X] [Module ℂ X] (M 
   · have h0 : h P 0 = 0 := LinearMap.ext fun x => hM.1 (by
       rw [hh P _ hP, O0, LinearMap.zero_apply, LinearMap.zero_apply, map_zero])
     have ha : ∀ c c', h P (c + c') = h P c + h P c' := fun c c' => LinearMap.ext fun x => hM.1 (by
-      rw [LinearMap.add_apply, map_add, hh P _ hP, hh P _ hP, hh P _ hP, Oa, LinearMap.add_apply])
+      rw [LinearMap.add_apply, map_add (f := _), hh P _ hP, hh P _ hP, hh P _ hP, Oa, LinearMap.add_apply])
     have hs : ∀ d z, h P (Finsupp.single d z) = z • h P (Finsupp.single d 1) := fun d z => LinearMap.ext fun x => hM.1 (by
       rw [LinearMap.smul_apply, map_smul, hh P _ hP, hh P _ hP, Os, LinearMap.smul_apply])
     induction c using Finsupp.induction_linear with
     | zero => rw [Finsupp.mapRange_zero, dualC, Finsupp.mapDomain_zero, h0, map_zero]
     | add c c' e e' =>
-      rw [Finsupp.mapRange_add (star_add), dualC, Finsupp.mapDomain_add, ha, ha, map_add, e, e']
+      rw [Finsupp.mapRange_add (star_add), dualC, Finsupp.mapDomain_add, ha, ha, map_add (f := _), e, e']
       rfl
     | single d z =>
       rw [Finsupp.mapRange_single, dualC, Finsupp.mapDomain_single, hs d, hs (dualLab d), map_smulₛₗ]
@@ -197,12 +202,12 @@ theorem hkF_eq (V : HSp D) {W : Type} [AddCommGroup W] [Module ℂ W] (P : Pl D.
 
 theorem rep_spec {V : HSp D} {P : Pl D.host.E} {d : List ℤ} (h : IsLab V P d) : SphOp V P d (rep V P d) := by
   unfold Hk3.rep
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem rep_empty {V : HSp D} {P : Pl D.host.E} {d : List ℤ} (h : ¬ IsLab V P d) : rep V P d = ∅ := by
   unfold Hk3.rep
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem opOf_nonlab {V : HSp D} {M : Type} [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) {P : Pl D.host.E}
     {d : List ℤ} (h : ¬ IsLab V P d) : opOf π P (Finsupp.single d 1) = 0 := by

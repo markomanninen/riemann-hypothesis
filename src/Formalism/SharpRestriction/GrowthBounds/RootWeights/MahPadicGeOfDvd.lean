@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PadicGeMulNat
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PadicGeMulNat
+
+@[expose] public section
 
 noncomputable section
 

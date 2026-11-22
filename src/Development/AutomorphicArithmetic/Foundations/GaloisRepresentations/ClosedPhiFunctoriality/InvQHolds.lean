@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysOfCrystallineBreuilKisinFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsCrysOfCrystallineBreuilKisinFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,13 +55,24 @@ theorem invQ_holds : InvQ := by
   have h2 : fA bk.E ^ N • (ε' * (F.A.map fA).map σ) = σ (fA bk.E) ^ N • (F.A.map fA * ε'.map (phiA l)) := by
     have e := congrArg (fun M => M.map (ι.comp WittVector.frobenius)) (hE2 g)
     simp only [map_smul_ring, Matrix.map_mul, Matrix.map_map, map_pow, RingHom.comp_apply] at e
-    convert e using 3
-    · rw [hfr]
-    · ext i j; simp [hε']
-    · ext i j; simp only [Matrix.map_apply, Function.comp_apply, RingHom.comp_apply]; rw [hσf]
-    · rw [hσf]
-    · ext i j; simp only [Matrix.map_apply, Function.comp_apply, RingHom.comp_apply]; rw [hfr]
-    · ext i j; simp only [Matrix.map_apply, Function.comp_apply, RingHom.comp_apply, hε']; rw [hφι]
+    have hm1 : F.A.map (fun s => ι (WittVector.frobenius (Per.σA (g : GQ l) (bk.ev s)))) =
+        (F.A.map fA).map σ := by
+      ext i j
+      exact hσf _
+    have hm2 : F.A.map (fun s => ι (WittVector.frobenius (bk.ev s))) = F.A.map fA := by
+      ext i j
+      exact (hfr _).symm
+    have hm3 : (F.ε g).map (fun a => ι (WittVector.frobenius (WittVector.frobenius a))) =
+        ε'.map (phiA l) := by
+      ext i j
+      exact (hφι _).symm
+    change ι (WittVector.frobenius (bk.ev bk.E)) ^ N •
+      (ε' * F.A.map (fun s => ι (WittVector.frobenius (Per.σA (g : GQ l) (bk.ev s))))) =
+      ι (WittVector.frobenius (Per.σA (g : GQ l) (bk.ev bk.E))) ^ N •
+      (F.A.map (fun s => ι (WittVector.frobenius (bk.ev s))) *
+        (F.ε g).map (fun a => ι (WittVector.frobenius (WittVector.frobenius a)))) at e
+    rw [← hfr, hσf, hm1, hm2, hm3] at e
+    exact e
   have hL1 := GlobalTheory.T.frobenius_equation_of_twisted_cocycle_defect (Per.Acris l) (phiA l) σ d N k (l : Per.Acris l) (fA bk.E) (f0 bk.E) Q Q' (F.A.map fA) (F.A'.map fA)
     (F.A.map f0) (F.A'.map f0) ε' htf ⟨v, hv⟩ he₀ hcomm (map_natCast _ _) (map_natCast _ _) hσe₀ hσA₀ hQQ hBB hAA hQφ h2
   obtain ⟨w₀, hw₀⟩ := he₀

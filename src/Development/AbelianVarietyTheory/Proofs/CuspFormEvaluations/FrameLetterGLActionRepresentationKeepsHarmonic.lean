@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+
+@[expose] public section
 
 open NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.FrameRead
 open scoped Classical
@@ -15,8 +19,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
 noncomputable def IsEnum.idx (h : IsEnum H pl) (t : {τ : E →+* ℂ // InPsi H τ}) : Ix :=
   ((h.2 t.1).1 t.2).choose
 
-omit [Fintype Ix] in
 
+omit [Fintype Ix] in
 theorem IsEnum.pl_idx (h : IsEnum H pl) (t : {τ : E →+* ℂ // InPsi H τ}) : pl (h.idx t) = t.1 :=
   ((h.2 t.1).1 t.2).choose_spec
 
@@ -33,7 +37,8 @@ theorem rename_letAct (h : IsEnum H pl) {K : Type} [Field K] (g : Ix → GL (Fin
   rcases half_cases (Ψ := InPsi H) (ComplexEmbedding.involutive_conjugate E)
     (not_mem_hostType_iff H) τ with hτ | ⟨τ, hτ, rfl⟩
   · have h1 : ∃ t, pl t = τ := (h.2 τ).1 hτ
-    rw [dif_pos h1, thetaLetterEquiv_of_mem Dw hτ, colSubst_X_xVar, xForm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_left h1, thetaLetterEquiv_of_mem Dw hτ, colSubst_X_xVar, xForm_apply, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, rename_C, rename_X, thetaLetterEquiv_of_mem Dw hτ]
     rfl
@@ -44,7 +49,8 @@ theorem rename_letAct (h : IsEnum H pl) {K : Type} [Field K] (g : Ix → GL (Fin
     have h3 : h2.choose = h.idx ⟨τ, hτ⟩ := h.1 (by
       rw [h.pl_idx]
       exact (ComplexEmbedding.involutive_conjugate E).injective h2.choose_spec)
-    rw [dif_neg h1, dif_pos h2, thetaLetterEquiv_conjugate Dw hτ, colSubst_X_yVar, yForm_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_right h1, dite_eq_left h2, thetaLetterEquiv_conjugate Dw hτ, colSubst_X_yVar, yForm_apply,
       map_sum, h3]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, rename_C, rename_X, thetaLetterEquiv_conjugate Dw hτ]

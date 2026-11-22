@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.EvHtStatement
-import ReciprocityTheory.DualLattices.CharR
-import ReciprocityTheory.DualLattices.ThmAAll
-import ReciprocityTheory.DualLattices.DualPairInh
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.EvHtStatement
+public import ReciprocityTheory.DualLattices.CharR
+public import ReciprocityTheory.DualLattices.ThmAAll
+public import ReciprocityTheory.DualLattices.DualPairInh
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ private lemma htDualRing_π {R₀ : Type} [CommRing R₀] {Λ S : LAlg R₀} (Dq
   obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective x
   induction f using Polynomial.induction_on with
   | C a => rw [htDualRing_C, Dq.sect, DualNum.ev_mk, Polynomial.eval_C]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | monomial n a _ =>
     have h := htDualRing_X Dq ψ
     rw [DualNum.eta] at h
@@ -111,7 +115,8 @@ theorem evHt_of_lam :
     (fun i => B.isHeight_zsmul hB1 (Dt.Dp 0) _ hchar (hy2 i) (D.L.ht_spec i 0) _)
   have e1 : ∑ i, (((red p g t i).val : ℕ) : ℤ) • B.map (Tw.q 0) (D.L.τ i 0) =
       B.map (Tw.q 0) (ptOf B D.L.τ (red p g t)) := by
-    simp only [ptOf, map_sum, map_nsmul, natCast_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ptOf, map_sum, map_nsmul, natCast_zsmul]
   rw [e1] at H2
   have hyp : (p ^ (0 + 1)) • B.map (Tw.q 0) (ptOf B D.L.τ (red p g t)) = 0 := by
     rw [← map_nsmul, zero_add, pow_one, D.pt_p, map_zero]
@@ -125,14 +130,15 @@ theorem evHt_of_lam :
       exact (congrArg (fun u : LHom _ _ => u.1 (F (D.ptIdx (red p g t)))) hψμ).symm
     rw [e2]
     refine Eq.trans ?_ hU.symm
-    rw [LinearMap.sum_apply, Matrix.mulVec, dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, Matrix.mulVec, dotProduct, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have e3 : t i = ((red p g t i).val : ℤ_[p]) + p * b i := by
       rw [← hb i]
       show t i = ((PadicInt.toZMod (t i)).val : ℤ_[p]) + _
       ring
     rw [D.L.Ht_eq, Function.comp_apply, e3]
-    rw [map_add, map_mul (algebraMap ℤ_[p] (Tw.O : Type)), map_natCast, map_natCast, map_mul, map_add,
+    rw [map_add (f := _), map_mul (algebraMap ℤ_[p] (Tw.O : Type)), map_natCast, map_natCast, map_mul, map_add (f := _),
       map_mul (Tw.q 0).1, map_natCast, map_natCast, hp0, zero_mul, add_zero, natCast_zsmul,
       LinearMap.smul_apply, nsmul_eq_mul, mul_comm]
     rfl

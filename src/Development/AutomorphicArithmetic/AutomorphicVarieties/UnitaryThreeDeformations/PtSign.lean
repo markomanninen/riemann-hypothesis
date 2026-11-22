@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.WPresEx
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -19,7 +23,7 @@ private theorem wtPart_decomp {O σ : Type} [CommRing O] (wt : σ → ℤ) (j : 
   · rw [hg]
     split_ifs
     · apply hf
-      rw [map_add]
+      rw [map_add (f := _)]
       intro h
       apply hm
       have : (Finsupp.weight wt) (Finsupp.single i 1) = wt i := by
@@ -39,7 +43,8 @@ private theorem wtPart_decomp {O σ : Type} [CommRing O] (wt : σ → ℤ) (j : 
           exact Nat.one_le_iff_ne_zero.mpr h.choose_spec.2
         rw [if_neg hle, if_neg hP]
     ext n
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [key]
     by_cases h : ∃ k ∈ s, n k ≠ 0
     · have hP : ∀ i, P n i ↔ h.choose = i := fun i => ⟨fun ⟨_, e⟩ => e, fun e => ⟨h, e⟩⟩
@@ -51,13 +56,13 @@ private theorem wtPart_decomp {O σ : Type} [CommRing O] (wt : σ → ℤ) (j : 
       exact hs n h
 
 private theorem vanish_of_entries {O : Type} [CommRing O] [IsLocalRing O] {G Γ ι : Type} [Group G] [Group Γ]
-    (F : Frame O G Γ ι) {R : Type} [CommRing R] [Algebra O R] (u : Γ →* GG 3 R) (W : WPres O ℤ R)
-    (hW : F.Adapted u W) {K : Type} [CommRing K] [Algebra O K] (ξ : Sring O u →ₐ[O] K) (M : AddSubmonoid ℤ)
+    (F : Frame O G Γ ι) {R : Type} [CommRing R] [Algebra O R] (u : Γ →* GG (m := 3) (R := R)) (W : WPres O ℤ R)
+    (hW : F.Adapted u W) {K : Type} [CommRing K] [Algebra O K] (ξ : Sring (O := O) u →ₐ[O] K) (M : AddSubmonoid ℤ)
     (h : ∀ g, F.η g = 1 → ∀ a b, wt a b ∉ M → ptMat u ξ g a b = 0) (j : ℤ) (hj : j ∉ M) (x : R)
-    (hx : x ∈ wpart O u j) : ξ ⟨x, mem_Sring u hx⟩ = 0 := by
+    (hx : x ∈ wpart (O := O) u j) : ξ ⟨x, mem_Sring u hx⟩ = 0 := by
   classical
   haveI := W.fin
-  have hmemz : ∀ i, W.z i ∈ Sring O u := fun i =>
+  have hmemz : ∀ i, W.z i ∈ Sring (O := O) u := fun i =>
     mem_Sring u (j := W.wt i) (by rw [← hW.part]; exact W.z_mem i)
   have hzero : ∀ i, W.wt i ∉ M → ξ ⟨W.z i, hmemz i⟩ = 0 := by
     intro i hi
@@ -91,13 +96,15 @@ private theorem vanish_of_entries {O : Type} [CommRing O] [IsLocalRing O] {G Γ 
     · exact nsmul_mem hcM _
     · exact absurd (hn c (by simp [s, hcM])) (Finsupp.mem_support_iff.mp hc)
   obtain ⟨g, hg, hfg⟩ := wtPart_decomp W.wt j s f hf hs
-  have hmemg : ∀ i, W.π (g i) ∈ Sring O u := fun i =>
+  have hmemg : ∀ i, W.π (g i) ∈ Sring (O := O) u := fun i =>
     mem_Sring u (j := j - W.wt i) (by rw [← hW.part]; exact ⟨g i, hg i, rfl⟩)
-  have hsum : (⟨W.π.toLinearMap f, mem_Sring u (by rw [← hW.part]; exact ⟨f, hf, rfl⟩)⟩ : Sring O u) =
-      ∑ i ∈ s, (⟨W.z i, hmemz i⟩ : Sring O u) * ⟨W.π (g i), hmemg i⟩ := by
+  have hsum : (⟨W.π.toLinearMap f, mem_Sring u (by rw [← hW.part]; exact ⟨f, hf, rfl⟩)⟩ : Sring (O := O) u) =
+      ∑ i ∈ s, (⟨W.z i, hmemz i⟩ : Sring (O := O) u) * ⟨W.π (g i), hmemg i⟩ := by
     apply Subtype.ext
-    simp [hfg, map_sum, WPres.z]
-  rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hfg, map_sum, WPres.z]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum]
   refine Finset.sum_eq_zero fun i hi => ?_
   rw [map_mul, hzero i (Finset.mem_filter.mp hi).2, zero_mul]
 
@@ -105,9 +112,12 @@ theorem UpperTheory.V.UnitaryThreeInertia.isPtHom_sign :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R] (u : Γ →* GG 3 R), F.IsUniv g₁ u →
-    ∀ {K : Type} [CommRing K] [Algebra O K] (ξ : Sring O u →ₐ[O] K) (r : Γ →* GG 3 K), IsPtHom u ξ r →
-      (Upper F.η r ↔ ∀ j < 0, ∀ x (hx : x ∈ wpart O u j), ξ ⟨x, mem_Sring u hx⟩ = 0) ∧ (Lower F.η r ↔ ∀ j > 0, ∀ x (hx : x ∈ wpart O u j), ξ ⟨x, mem_Sring u hx⟩ = 0) := by
+    ∀ (g₁ : Γ), F.Marked g₁ → ∀ {R : Type} [CommRing R] [Algebra O R] [IsCO O R]
+    (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u →
+    ∀ {K : Type} [CommRing K] [Algebra O K] (ξ : Sring (O := O) u →ₐ[O] K)
+    (r : Γ →* GG (m := 3) (R := K)), IsPtHom u ξ r →
+      (Upper F.η r ↔ ∀ j < 0, ∀ x (hx : x ∈ wpart (O := O) u j), ξ ⟨x, mem_Sring u hx⟩ = 0) ∧
+      (Lower F.η r ↔ ∀ j > 0, ∀ x (hx : x ∈ wpart (O := O) u j), ξ ⟨x, mem_Sring u hx⟩ = 0) := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF g₁ hg₁ R _ _ _ u hu K _ _ ξ r hr
   obtain ⟨W, hW, _⟩ := exists_adapted F hF g₁ hg₁ u hu
   have hent : ∀ g a b, (r g).mat a b = ptMat u ξ g a b := fun g a b => by rw [(hr g).2]

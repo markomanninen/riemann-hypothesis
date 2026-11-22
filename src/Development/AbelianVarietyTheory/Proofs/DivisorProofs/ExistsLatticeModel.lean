@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.FiniteCohPushforwardIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsSubsingletonCohTwistTensLbPow
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.LogDR
@@ -25,8 +30,8 @@ variable (M : X → AddSubgroup V)
 
 theorem val_eq_zero {U : X.Opens} (h : genericPoint X ∉ U) (s : secGrp M U) : (s : V) = 0 := s.2.2 h
 
-open Classical in
 
+open Classical in
 def resHom {U W : X.Opens} (e : W ≤ U) : secGrp M U →+ secGrp M W where
   toFun s := if h : genericPoint X ∈ W then ⟨(s : V), fun y hy => s.2.1 y (e hy), fun h' => (h' h).elim⟩
     else 0
@@ -113,8 +118,8 @@ theorem isSheaf_pre : (pre M).IsSheaf := by
 variable {M}
 variable (hM : ∀ y (f : X.functionField) (v : V), RegAt y f → v ∈ M y → f • v ∈ M y)
 
-open Classical in
 
+open Classical in
 def smulSec (U : X.Opens) (r : Γ(X, U)) (s : secGrp M U) : secGrp M U :=
   if h : genericPoint X ∈ U then
     ⟨fnOf U h r • (s : V), fun y hy => hM y _ _ (regAt_fnOf hy h r) (s.2.1 y hy), fun h' => (h' h).elim⟩
@@ -122,7 +127,7 @@ def smulSec (U : X.Opens) (r : Γ(X, U)) (s : secGrp M U) : secGrp M U :=
 
 theorem val_smulSec {U : X.Opens} (h : genericPoint X ∈ U) (r : Γ(X, U)) (s : secGrp M U) :
     (smulSec hM U r s : V) = fnOf U h r • (s : V) := by
-  rw [smulSec, dif_pos h]
+  rw [smulSec, dite_eq_left h]
 
 def secModule (U : X.Opens) : Module Γ(X, U) (secGrp M U) where
   smul := smulSec hM U
@@ -141,7 +146,7 @@ def secModule (U : X.Opens) : Module Γ(X, U) (secGrp M U) where
       smul_add]
   add_smul a b s := sec_ext M fun h => by
     change (smulSec hM U (a + b) s : V) = ((smulSec hM U a s + smulSec hM U b s : secGrp M U) : V)
-    rw [AddSubgroup.coe_add, val_smulSec hM h, val_smulSec hM h, val_smulSec hM h, map_add, add_smul]
+    rw [AddSubgroup.coe_add, val_smulSec hM h, val_smulSec hM h, val_smulSec hM h, map_add (f := _), add_smul]
   zero_smul s := sec_ext M fun h => by
     change (smulSec hM U 0 s : V) = ((0 : secGrp M U) : V)
     rw [val_smulSec hM h, map_zero, zero_smul, ZeroMemClass.coe_zero]

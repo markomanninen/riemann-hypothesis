@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpleadLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpleadLemmas
+
+@[expose] public section
 
 open MvPolynomial
 open scoped MonomialOrder
@@ -9,25 +13,17 @@ namespace Formalism.GradedWeylDivisibility
 
 private theorem toLex_lt_of_eq_of_lt_at {N : ℕ} {a b : Fin N →₀ ℕ} (i : Fin N)
     (h1 : ∀ i', i' < i → a i' = b i') (h2 : a i < b i) : toLex a < toLex b := by
-  first
-  | exact Finsupp.lex_lt_iff.2 ⟨i, h1, h2⟩
-  | exact Finsupp.lex_def.2 ⟨i, h1, h2⟩
-  | exact ⟨i, h1, h2⟩
+  exact Finsupp.lex_def.2 ⟨i, h1, h2⟩
 
 private theorem domCongr_cmIdx_apply_eq {r n : ℕ} (m : Fin r × Fin n →₀ ℕ)
     (x : Fin r × Fin n) :
     Finsupp.domCongr (cmIdx r n) m (cmIdx r n x) = m x := by
-  first
-  | (simp [Finsupp.domCongr_apply, Finsupp.equivMapDomain_apply]; done)
-  | (simp [Finsupp.domCongr_apply]; done)
-  | rfl
+  simp [Finsupp.domCongr_apply, Finsupp.equivMapDomain_apply]
 
 private theorem toSyn_le_toSyn_degree_of_mem_support {σ R : Type*} [CommSemiring R] (M : MonomialOrder σ)
     {f : MvPolynomial σ R} {d : σ →₀ ℕ} (hd : d ∈ f.support) :
     M.toSyn d ≤ M.toSyn (M.degree f) := by
-  first
-  | exact M.le_degree hd
-  | (unfold MonomialOrder.degree; rw [AddEquiv.apply_symm_apply]; exact Finset.le_sup hd)
+  exact M.le_degree hd
 
 theorem sliceLeading : PeelLead := by
   unfold PeelLead
@@ -73,14 +69,11 @@ theorem sliceLeading : PeelLead := by
       have hm_eq := lcplead_recon hlj' a0 hg hm
       rw [heq] at hm_eq
       rw [hm_eq, hm0_eq]
-      simp only [map_add]
-      first
-      | exact add_le_add le_rfl hle
-      | exact add_le_add_left hle _
-      | gcongr
+      simp only [map_add (f := _)]
+      exact add_le_add le_rfl hle
     · exfalso
       have hc := lcplead_coeff_peel hlj' a0 hg hm
-      rw [htop _ hgt, coeff_zero] at hc
+      simp only [htop _ hgt, AddMonoidAlgebra.coeff_zero] at hc
       exact mem_support_iff.1 hm hc.symm
   exact (colLex r n).toSyn.injective
     (le_antisymm (hup _ ((colLex r n).degree_mem_support hg0))

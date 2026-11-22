@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HupsTwCoeffCoeff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.MinkSat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SatDegLe
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HupsChooseRatio
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HupsTwCoeffCoeff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.MinkSat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.SatDegLe
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HupsChooseRatio
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -51,7 +55,8 @@ theorem hups_span_transfer {K : Type} [Field K] (σ : K →+* ℂ) {α β : Type
   refine ⟨fun b => ∑ a, z a * σ (c a b), fun i => ?_⟩
   have hu : ∀ a, u a i = ∑ b, c a b * v b i := fun a => by
     rw [← hc a, Finset.sum_apply]; simp [smul_eq_mul]
-  simp only [hu, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hu, map_sum, map_mul, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun a _ => by ring
 

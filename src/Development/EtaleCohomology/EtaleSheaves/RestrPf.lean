@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerInduction
-import Mathlib.AlgebraicGeometry.AffineTransitionLimit
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerInduction
+public import Mathlib.AlgebraicGeometry.AffineTransitionLimit
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut LateralTheory.E.ContPf LateralTheory.E.ContStepPf LateralTheory.E.StepKPf

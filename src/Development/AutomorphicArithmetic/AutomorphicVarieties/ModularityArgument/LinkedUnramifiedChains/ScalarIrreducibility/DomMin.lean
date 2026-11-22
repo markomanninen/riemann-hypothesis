@@ -1,10 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J
 
 theorem UpperTheory.V.J.domMin :
     ∀ (A : Type) [CommRing A] (q : Ideal A) [q.IsPrime], IsDomain (Localization.AtPrime q) → ∀ P ∈ minimalPrimes A, P ≤ q → ∀ a ∈ P, ∃ s ∉ P, s * a = 0 := by
   intro A _ q _ hD P hP hPq a ha
+  letI : Nontrivial (Localization.AtPrime q) := hD.toNontrivial
+  letI : NoZeroDivisors (Localization.AtPrime q) :=
+    isCancelMulZero_iff_noZeroDivisors.mp hD.toIsCancelMulZero
   have hK : (RingHom.ker (algebraMap A (Localization.AtPrime q))).IsPrime := RingHom.ker_isPrime _
   have hle : RingHom.ker (algebraMap A (Localization.AtPrime q)) ≤ P := by
     intro x hx

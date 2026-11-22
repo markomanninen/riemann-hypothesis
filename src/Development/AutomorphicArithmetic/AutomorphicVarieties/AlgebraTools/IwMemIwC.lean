@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools
 
@@ -84,7 +88,9 @@ private theorem factor [IsLocalRing R] (C : Subgroup (IsLocalRing.ResidueField R
   have hd : diagT R n d = leviEmb R (points n) (leviProj R (points n) ⟨h * L, hL3⟩) := by
     change leviEmb R (points n) ((leviTorus R n) ((leviTorus R n).symm _)) = _
     rw [MulEquiv.apply_symm_apply]
-  have hp' : h * L = diagT R n d * u := by rw [hd]; exact hp
+  have hp' : h * L = diagT R n d * u := by
+    rw [hd]
+    exact hp
   have heq : h = diagT R n d * u * L⁻¹ := by rw [← hp', mul_inv_cancel_right]
   have hLb : GeneralLinearGroup.map (n := n) (IsLocalRing.residue R) L ∈
       borel (IsLocalRing.ResidueField R) n := by

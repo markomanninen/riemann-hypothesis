@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,10 +119,5 @@ def HasDens {m : ℕ} (S : Set (Matrix (Fin m) (Fin m) ℂ)) (μ : Measure (Fin 
     (nhdsWithin 0 (Set.Ioi 0)) (nhds c)
 
 def volUn (j : ℕ) : ℝ := ∏ i ∈ Finset.range j, (2 * Real.pi) ^ (i + 1) / (i.factorial : ℝ)
-
-example : upper (r := 2) (fun _ => 3) = !![1, 3; 0, 1] := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [upper]
-
-example : volUn 1 = 2 * Real.pi := by simp [volUn]
 
 end GlobalTheory.Amp

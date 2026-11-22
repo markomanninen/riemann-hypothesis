@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LadicH0LocallyConstant
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -69,11 +73,11 @@ variable {q : ℕ} {E : Spc} {n m r : ℤ} (h : n + m = r)
 
 theorem cc_add_left (a a' : Ht q E n 0) (b : Ht q E m 0) :
     Ht.cast h (add_zero 0) (cup q (a + a') b) = Ht.cast h (add_zero 0) (cup q a b) + Ht.cast h (add_zero 0) (cup q a' b) := by
-  rw [map_add, AddMonoidHom.add_apply, cast_add]
+  rw [map_add (f := _), AddMonoidHom.add_apply, cast_add]
 
 theorem cc_add_right (a : Ht q E n 0) (b b' : Ht q E m 0) :
     Ht.cast h (add_zero 0) (cup q a (b + b')) = Ht.cast h (add_zero 0) (cup q a b) + Ht.cast h (add_zero 0) (cup q a b') := by
-  rw [map_add, cast_add]
+  rw [map_add (f := _), cast_add]
 
 theorem zsmul_nat [NeZero q] (z : ZMod q) {n i : ℤ} (a : Ht q E n i) : z • a = z.val • a := by
   conv_lhs => rw [← ZMod.natCast_zmod_val z]
@@ -139,7 +143,7 @@ theorem ext1 {f g : A ⊗[R] M →ₗ[A] P} (H : ∀ x, f ((1 : A) ⊗ₜ x) = g
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [tmul_eq, map_smul, map_smul, H]
-  | add u u' hu hu' => rw [map_add, map_add, hu, hu']
+  | add u u' hu hu' => rw [map_add (f := _), map_add (f := _), hu, hu']
 
 theorem ext2 {f g : A ⊗[R] M →ₗ[A] A ⊗[R] N →ₗ[A] P}
     (H : ∀ x y, f ((1 : A) ⊗ₜ x) ((1 : A) ⊗ₜ y) = g ((1 : A) ⊗ₜ x) ((1 : A) ⊗ₜ y)) : f = g := by
@@ -147,7 +151,7 @@ theorem ext2 {f g : A ⊗[R] M →ₗ[A] A ⊗[R] N →ₗ[A] P}
   induction u using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [tmul_eq, map_smul, map_smul]; congr 1; exact ext1 (H x)
-  | add u u' hu hu' => rw [map_add, map_add, hu, hu']
+  | add u u' hu hu' => rw [map_add (f := _), map_add (f := _), hu, hu']
 
 end Ext
 

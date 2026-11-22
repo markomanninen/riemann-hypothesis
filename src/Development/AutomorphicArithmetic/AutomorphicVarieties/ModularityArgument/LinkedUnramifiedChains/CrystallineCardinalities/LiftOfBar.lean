@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrOfbox
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrOfbox
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -8,15 +12,18 @@ private theorem sq_exp {C Q : Type} [CommRing C] [CommRing Q] (n : ℕ) (π : C 
     (hm : ∀ a c, μ (π a * c) = a * μ c) (h0 : ∀ c, π (μ c) = 0) :
     ∃ e : Matrix (Fin n) (Fin n) Q → GL (Fin n) C, (∀ X, (e X : Matrix (Fin n) (Fin n) C) = 1 + X.map μ) ∧
       (∀ X Y, e (X + Y) = e X * e Y) ∧ (∀ X, (e X)⁻¹ = e (-X)) ∧
-      ∀ (x : GG n C) (X : Matrix (Fin n) (Fin n) Q), x * GG.ofGL (e X) = GG.ofGL (e ((GG.map π x).adFun X)) * x := by
+      ∀ (x : GG (m := n) (R := C)) (X : Matrix (Fin n) (Fin n) Q),
+        x * GG.ofGL (e X) = GG.ofGL (e ((GG.map π x).adFun X)) * x := by
   have hL : ∀ (A : Matrix (Fin n) (Fin n) C) (X : Matrix (Fin n) (Fin n) Q),
       A * X.map μ = (A.map π * X).map μ := fun A X => by
     ext i j
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hm]
   have hR : ∀ (A : Matrix (Fin n) (Fin n) C) (X : Matrix (Fin n) (Fin n) Q),
       X.map μ * A = (X * A.map π).map μ := fun A X => by
     ext i j
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [mul_comm (X i k), hm, mul_comm]
   have h1 : ∀ X Y : Matrix (Fin n) (Fin n) Q, X.map μ * Y.map μ = 0 := fun X Y => by
@@ -109,7 +116,7 @@ private theorem box_def {l : ℕ} [Fact l.Prime] {κ : Type} [Field κ] {F : Fra
     have := e2 0 0
     rw [add_zero] at this
     exact left_eq_mul.1 this
-  let r : F.Γ →* GG n C :=
+  let r : F.Γ →* GG (m := n) (R := C) :=
     { toFun := fun s => GG.ofGL (e (z s)) * B.r s
       map_one' := by rw [z1, e0, map_one, map_one, mul_one]
       map_mul' := fun s t => by
@@ -183,7 +190,8 @@ private theorem ac_lc {X C : Type} [TopologicalSpace X] [CommRing C] {n : ℕ} (
     Filter.eventually_all.2 fun p => Filter.eventually_all.2 fun q =>
       (IsLocallyConstant.iff_eventually_eq _).1 (hm p q N) x
   refine (h.and ((IsLocallyConstant.iff_eventually_eq _).1 ha x)).mono fun y hy => ?_
-  simp only [Matrix.mul_apply, map_sum, map_mul, hy.1, hy.2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, map_sum, map_mul, hy.1, hy.2]
 
 private theorem lift_of_bar {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalRing O] {F : Frame l (ResidueField O)}
     {n : ℕ} {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R']
@@ -250,9 +258,15 @@ theorem UpperTheory.V.Z.J.derOf :
     rw [← h1.psi, ← h1.res]
     refine (b2 v s i).trans ?_
     congr 1
-    have := (hB.map (ι : O →+* C)).psi v i s
-    rw [← (hB.map (ι : O →+* C)).res] at this
-    exact this
+    have hψ := hB.psi v i s
+    rw [← hB.res] at hψ
+    calc
+      _ = ((ι : O →+* C).mapMatrix
+          ((B.g v : Matrix (Fin 3) (Fin 3) O) * (B.r (F.loc v s)).mat *
+            (((B.g v)⁻¹ : GL (Fin 3) O) : Matrix (Fin 3) (Fin 3) O))) i i := by
+        rw [map_mul, map_mul]
+        rfl
+      _ = _ := congrArg ι hψ
   have h3 : ρ'.map (φ : C →+* O) = S.ρ.map (ξ : S.R →+* O) := by
     refine NRep.ext (MonoidHom.ext fun s => Matrix.ext fun i j => ?_)
       (funext fun v => funext fun i => MonoidHom.ext fun s => Units.ext ?_)

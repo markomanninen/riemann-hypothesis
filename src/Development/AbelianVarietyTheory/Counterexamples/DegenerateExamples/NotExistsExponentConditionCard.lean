@@ -1,17 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.AgreementAtAlmostAllSplitPrimes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.AgreementAtAlmostAllSplitPrimes
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions
 namespace GlobalTheory.ToricDenomCheck
 variable {D : D7} {N : NData D.R D.host D.what₂} (X : NTw D.R D.host D.what₂ D.LL0 N)
-
-abbrev scaleTh (c : ∀ i, X.abelian₂ i → FractionRing (X.O i)) : NTw D.R D.host D.what₂ D.LL0 N :=
-  { X with th := fun i Q lam δ => c i lam * X.th i Q lam δ }
-
-abbrev constTh (c : ∀ i, Finset (HeightOneSpectrum (𝓞 D.host.E)) → FractionRing (X.O i)) : NTw D.R D.host D.what₂ D.LL0 N :=
-  { X with th := fun i Q _ _ => c i Q }
 
 theorem conj_conj' {R : Ranks} (H : Host R) (x : H.E) : H.conj (H.conj x) = x := by
   apply H.φ₀.injective

@@ -1,9 +1,11 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
-import Development.AbelianVarietyTheory.Definitions.Divisors.PlacesOverU
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealRepTmul
+module
 
-open NumberField Matrix GlobalTheory.UPel.HT
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
+open NumberField Matrix
 open scoped TensorProduct ComplexConjugate
 
 namespace GlobalTheory.UPel.HT.RealRepBij
@@ -49,13 +51,14 @@ theorem span_range_eq_top {F B : Type} [Field F] [Ring B] [Algebra F B] [Algebra
       rw [Algebra.ofId_apply, Algebra.smul_def]; rfl
     rw [this]
     exact Submodule.smul_mem _ c (Submodule.subset_span ⟨b, rfl⟩)
-  | add x y hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
 
 end GlobalTheory.UPel.HT.RealRepBij
 
 namespace GlobalTheory.UPel.HT.RealRepBij
 
-variable {K F : Type} [Field K] [NumberField K] [IsCMField K] [Field F] [NumberField F] [IsCMField F]
+variable {K F : Type} [Field K] [NumberField K] [NumberField.IsCMField K]
+  [Field F] [NumberField F] [NumberField.IsCMField F]
   [Algebra K F] {p : ℕ} [Fact p.Prime]
 
 end GlobalTheory.UPel.HT.RealRepBij

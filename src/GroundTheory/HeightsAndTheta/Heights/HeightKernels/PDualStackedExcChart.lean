@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChartParts
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcCycle
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChartParts
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualStackedExcCycle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -73,7 +78,8 @@ theorem chart_firstForm_sub (t : T) (e : T → ℤ) :
     intro s
     rw [C_sub, C_mul, sub_mul, mul_assoc, map_sub, map_mul (excChartMap b' a v u) (C (e s)), first_eq_zero,
       mul_zero, sub_zero]
-  rw [graphFirstForm, map_sum, Finset.sum_congr rfl fun s _ => h1 s, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [graphFirstForm, map_sum, Finset.sum_congr rfl fun s _ => h1 s, ← map_sum]
   congr 1
   rw [Finset.sum_eq_single t (fun s _ hs => by rw [Pi.single_eq_of_ne hs, C_0, zero_mul])
     (fun h => absurd (Finset.mem_univ t) h), Pi.single_eq_same, C_1, one_mul]
@@ -84,15 +90,15 @@ section Lattice
 
 variable {F F' : HermLattice K i}
 
-omit [DecidableEq T] in
 
+omit [DecidableEq T] in
 theorem latCombo_eq (b' : Module.Basis T ℤ (dualLattice F')) (c : T → ℤ) :
     latCombo b' c = ((b'.equivFun.symm c : dualLattice F') : Fin i → K) := by
   rw [Module.Basis.equivFun_symm_apply, latCombo, Submodule.coe_sum]
   rfl
 
-omit [DecidableEq T] in
 
+omit [DecidableEq T] in
 theorem exists_latCombo (b : Module.Basis T ℤ (dualLattice F)) (b' : Module.Basis T ℤ (dualLattice F'))
     {a : T → ℤ} (hab : ∀ t, (b t : Fin i → K) = a t • (b' t : Fin i → K)) {ψ : Fin i → K}
     (hψ : ψ ∈ dualLattice F) : ∃ e : T → ℤ, ψ = latCombo b' fun s => e s * a s := by
@@ -114,8 +120,8 @@ end Lattice
 
 end StackedExceptionalChart
 
-open StackedExceptionalChart in
 
+open StackedExceptionalChart in
 theorem DualStackedExcChart.proof (hC : DualStackedExcChartForms.Statement) : DualStackedExcChart.Statement := by
   intro K _ _ i F F' T _ _ b b' a hi hlt hcov hab k _ ρ π y₀ m g α M hX v u
   have hX' := hX
@@ -170,7 +176,8 @@ theorem DualStackedExcChart.proof (hC : DualStackedExcChartForms.Statement) : Du
           simp only [σ, eval₂Hom_C, eval₂Hom_X', Option.elim]
           exact hfirst t
         · show σ (linPointMap α M (graphSecond t)) = excChartMap b' a v u (graphSecond t)
-          rw [LinPrimeExample.linPointMap_second, map_sum, ← hW t]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [LinPrimeExample.linPointMap_second, map_sum, ← hW t]
           refine Finset.sum_congr rfl fun j _ => ?_
           simp only [σ, map_mul, eval₂Hom_C, eval₂Hom_X', Option.elim]
     rw [← key, RingHom.comp_apply, RingHom.mem_ker.mp he, map_zero]

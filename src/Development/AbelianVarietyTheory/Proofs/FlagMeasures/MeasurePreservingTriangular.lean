@@ -1,8 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.RowRawRange
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.CokernelPairSum
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.T2SpaceOfIsNonarchimedeanLocalFieldFlagMeasures
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.T2SpaceOfIsNonarchimedeanLocalFieldFlagMeasures
+
+@[expose] public section
 
 open ValuativeRel MeasureTheory ComplexConjugate Formalism.MainNotions.S.Loc GlobalTheory.SgLoc
 open scoped ComplexOrder
@@ -31,7 +33,7 @@ private lemma measurePreserving_update_add_of_indep [DecidableEq ι] (i : ι)
     measurePreserving_piEquivPiSubtypeProd (fun _ : ι => μ) p
   let c : ({j // p j} → G) → ({j // ¬ p j} → G) := fun y _ => g (e.symm (y, 0))
   have hc : Measurable c :=
-    measurable_pi_lambda _ fun _ =>
+    Measurable.of_eval fun _ =>
       hg.comp (e.symm.measurable.comp (measurable_id.prodMk measurable_const))
   have hT : MeasurePreserving
       (fun q : ({j // p j} → G) × ({j // ¬ p j} → G) => (id q.1, q.2 + c q.1))
@@ -49,12 +51,12 @@ private lemma measurePreserving_update_add_of_indep [DecidableEq ι] (i : ι)
     exact hgi _ _ fun k hk => by simp [hk]
   · simp [e, c, p, hj]
 
+
 open ValuativeRel MeasureTheory ComplexConjugate in
 open scoped ComplexOrder in
 variable {G : Type} [AddGroup G] [MeasurableSpace G] [MeasurableAdd₂ G]
   (μ : Measure G) [SigmaFinite μ] [μ.IsAddRightInvariant]
   {ι : Type} [Fintype ι] in
-
 theorem _root_.GlobalTheory.SgLoc.TriShift.measurePreserving_triangular (rk : ι → ℕ) (f : ι → (ι → G) → G)
     (hf : ∀ i, Measurable (f i))
     (hd : ∀ i x y, (∀ j, rk j < rk i → x j = y j) → f i x = f i y) :

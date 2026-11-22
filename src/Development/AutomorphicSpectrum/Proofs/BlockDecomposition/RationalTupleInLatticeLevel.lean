@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatTuple
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SchwartzBruhatEqSumPure
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AdelicCharacterArchimedeanFormStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdeleHaarMapEqScaledVolumeStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsNatMulMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaPartD
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermInf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermOf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleTopologyStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatTuple
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.SchwartzBruhatEqSumPure
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AdelicCharacterArchimedeanFormStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardAdelicCharacterStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdeleHaarMapEqScaledVolumeStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsNatMulMem
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -67,7 +72,8 @@ theorem exists_clear_family {F E : Type} [Field F] [NumberField F] [Field E] [Nu
   refine ⟨∑ l, (B.repr o l) • r l, ?_⟩
   have ho : (o : E) = ∑ l, ((B.repr o l : ℤ) : E) * (B l : E) := by
     have h3 := congrArg (algebraMap (𝓞 E) E) (B.sum_repr o)
-    rw [map_sum] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h3
     rw [show (o : E) = algebraMap (𝓞 E) E o from rfl, ← h3]
     refine Finset.sum_congr rfl fun l _ => ?_
     simp [zsmul_eq_mul]
@@ -77,9 +83,11 @@ theorem exists_clear_family {F E : Type} [Field F] [NumberField F] [Field E] [Nu
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← intCast_mul_eq_smul]
     ring
-  rw [hsum, map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum, Finsupp.finsetSum_apply]
   have h4 : ((∑ l, (B.repr o l) • r l : 𝓞 F) : F) = ∑ l, ((B.repr o l : ℤ) : F) * (r l : F) := by
-    rw [show ((∑ l, (B.repr o l) • r l : 𝓞 F) : F)
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ l, (B.repr o l) • r l : 𝓞 F) : F)
       = algebraMap (𝓞 F) F (∑ l, (B.repr o l) • r l) from rfl, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     simp [zsmul_eq_mul]
@@ -106,10 +114,12 @@ theorem ratTuple_mem_latN : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
         = (N : F) • ∑ i, (D : E) * (J⁻¹ j i * (ρ i a : E)) := by
       rw [← natCast_mul_eq_smul, Nat.cast_mul, Matrix.mulVec, dotProduct, ← Finset.mul_sum,
         mul_assoc]
-    rw [h1, map_smul, Finsupp.smul_apply, smul_eq_mul, map_sum, Finsupp.finsetSum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_smul, Finsupp.smul_apply, smul_eq_mul, map_sum, Finsupp.finsetSum_apply,
       map_mul, map_natCast]
     congr 2
-    rw [show ((∑ i, r i : 𝓞 F) : F) = algebraMap (𝓞 F) F (∑ i, r i) from rfl, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ i, r i : 𝓞 F) : F) = algebraMap (𝓞 F) F (∑ i, r i) from rfl, map_sum]
     exact Finset.sum_congr rfl fun i _ => (hr i).symm
 
 end GlobalTheory.CompanionTheory.SiegelND.Integ.Weyl.RatMem

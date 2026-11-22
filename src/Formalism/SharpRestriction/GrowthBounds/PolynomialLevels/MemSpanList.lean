@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.CommPresIsoSub
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.CommPresIsoSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem jproj_eq (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
       rw [if_neg hno]
       exact he.2 lam h x hxj
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | smul c a _ ha => rw [map_smul, map_smul, ha]
 
 theorem jproj_ne (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
@@ -117,7 +121,7 @@ theorem jproj_ne (hee : ∀ i mu, IsIsoProj (E i) mu (ee i mu))
       · exact (hee i (ka i)).1 x (by rw [← h i (Finset.mem_toList.mpr (Finset.mem_univ i))]; exact hx' i)
       · exact map_zero _
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     | smul c a _ ha => rw [map_smul, map_smul, ha]
   have hc : Commute (ee i (ka i)) (jointE ee ka) := by
     unfold jointE

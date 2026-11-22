@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationSplitKaehlerDSmoothStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BertiniGeneralMembersNoDerivativeRelationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationSplitKaehlerDSmoothStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BertiniGeneralMembersNoDerivativeRelationStatement
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,7 +18,7 @@ theorem derivation_mem_of_mem_sq {k A : Type} [CommRing k] [CommRing A] [Algebra
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     exact q.add_mem (q.mul_mem_right _ hm) (q.mul_mem_right _ hn)
   · intro x y hx hy
-    rw [map_add]; exact q.add_mem hx hy
+    rw [map_add (f := _)]; exact q.add_mem hx hy
 
 theorem residue_algebraMap_eq_zero_iff_mem {A R : Type} [CommRing A] [CommRing R] [IsLocalRing R]
     [Algebra A R] (q : Ideal A) [q.IsPrime] [IsLocalization.AtPrime R q] (x : A) :
@@ -47,7 +51,8 @@ theorem cotangent_relation_derivation {k A R : Type} [CommRing k] [CommRing A] [
 
   have hT : (maximalIdeal R).toCotangent
       (∑ j ∈ J, algebraMap A R (a j) • (⟨_, hg j⟩ : maximalIdeal R)) = 0 := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have : ∀ j ∈ J, (maximalIdeal R).toCotangent (algebraMap A R (a j) • (⟨_, hg j⟩ : maximalIdeal R))
         = ψ b • (c j • (maximalIdeal R).toCotangent ⟨_, hg j⟩) := by
       intro j hj
@@ -57,7 +62,8 @@ theorem cotangent_relation_derivation {k A R : Type} [CommRing k] [CommRing A] [
   rw [Ideal.toCotangent_eq_zero] at hT
   have hcoe : ((∑ j ∈ J, algebraMap A R (a j) • (⟨_, hg j⟩ : maximalIdeal R) : maximalIdeal R) : R)
       = algebraMap A R y := by
-    simp [hy, Submodule.coe_sum, map_sum, map_mul, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hy, Submodule.coe_sum, map_sum, map_mul, Algebra.smul_def]
   rw [hcoe, ← IsLocalization.AtPrime.map_eq_maximalIdeal q R, ← Ideal.map_pow,
     IsLocalization.mem_map_algebraMap_iff q.primeCompl R] at hT
   obtain ⟨⟨x, s⟩, hxs⟩ := hT
@@ -69,11 +75,12 @@ theorem cotangent_relation_derivation {k A R : Type} [CommRing k] [CommRing A] [
   have ht0 : ψ t ≠ 0 := fun h => t.2 ((hψ _).1 h)
   have hy0 : ψ y = 0 := (hψ _).2 hyq
   have hδy : ψ (δ y) = 0 := by
-    simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, hy0] at hδz
+    simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, hy0] at hδz
     simpa [hs0, ht0] using hδz
   have hg0 : ∀ j, ψ (g j) = 0 := fun j => (hψ _).2 (hgq j)
-  rw [hy, map_sum, map_sum] at hδy
-  simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, hg0, zero_mul, add_zero] at hδy
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hy, map_sum, map_sum] at hδy
+  simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, hg0, zero_mul, add_zero] at hδy
   rw [Finset.sum_congr rfl (fun j hj => by rw [hψa j hj, mul_assoc]), ← Finset.mul_sum] at hδy
   exact (mul_eq_zero.1 hδy).resolve_left hb0
 

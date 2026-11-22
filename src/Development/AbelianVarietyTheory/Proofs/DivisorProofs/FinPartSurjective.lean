@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateFixesThetaDeepLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergFinitePointReadsClassicalTranslation
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaIntertwinerEqNormalisedAdelicSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdelicWeilVacuumFixedAndTranslatesSpanStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdelicWeilRepresentationModelStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualImageOrthonormalFrameLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVacuumMovedThetaVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDifferentLatticeProductHermitianIsSelfDualStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeOIffScaleMulFinitePartMemIdealLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartQuadraticPhaseEqCmThetaExpStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitSupportedEqIntertwinerMulHalfDetChStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartRationalTensorZeroAtPrimeIffPlaceIdemStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeIffNonSplitPlaceIdempotentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormPeriodSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLsB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteWeilRepEqLatticeIntertwinerMulCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergTranslateFixesThetaDeepLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergFinitePointReadsClassicalTranslation
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaIntertwinerEqNormalisedAdelicSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AdelicWeilVacuumFixedAndTranslatesSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAdelicWeilRepresentationModelStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualImageOrthonormalFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsVacuumMovedThetaVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvDifferentLatticeProductHermitianIsSelfDualStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatticeOIffScaleMulFinitePartMemIdealLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartQuadraticPhaseEqCmThetaExpStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitSupportedEqIntertwinerMulHalfDetChStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinitePartRationalTensorZeroAtPrimeIffPlaceIdemStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeIffNonSplitPlaceIdempotentStatement
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain
 open scoped Classical
@@ -176,7 +180,7 @@ theorem reads_opF (hset : Setup ψ θ S T cc δ r) {w w' : 𝓞 D.host.E} (hw : 
   obtain ⟨l, rfl⟩ := back_surjective (S := S) (T := T) hr a
   have hl := (back_mem_iff hset.gS hset.crv.1.1 hset.scale l).1 ha
   have e : ratX S T r z = x + m • n • l := back_injective hr (by
-    rw [back_ratX hr, hz, map_add, map_nsmul, map_nsmul, mul_smul])
+    rw [back_ratX hr, hz, map_add (f := _), map_nsmul, map_nsmul, mul_smul])
   have e1 : WA (back S T r x) F = WA (z.map (Formalism.MainNotions.StandardLatticesGL3.inc D)) F := by
     rw [hz, mul_comm, mul_smul, hnx _ (nsmul_mem ha m)]
   rw [e1, ← hmx _ (nsmul_mem hl n), ← e, hM.2.2.2.1, coe_opF, hph]
@@ -255,7 +259,7 @@ theorem cA_cA' (a : AE D) : cA D (cA D a) = a := by
   | tmul x e =>
     show TensorProduct.tmul D.host.F x (star (star e)) = _
     rw [star_star]
-  | add a b ha hb => rw [RingHom.map_add, RingHom.map_add, ha, hb]
+  | add a b ha hb => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), ha, hb]
 
 theorem zeroAt_half {ε : AE D} (hε : GlobalTheory.RatAut.IsHalfIdem D ε) {q : ℕ} (hq : q.Prime) (hi : Formalism.MainNotions.StandardLatticesGL3.InertQ D q)
     (b : AE D) : Formalism.MainNotions.StandardLatticesGL3.ZeroAt D q (finQ D (ε * b)) :=
@@ -300,8 +304,8 @@ theorem cut_conj {R : Type} [CommRing R] {e e' z z' : R} (h : (1 - (e + e')) * z
     e * z + (1 - e) = z * (e' * z' + (1 - e')) := by
   linear_combination -h - e' * h'
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_half_det {ε : AE D} (hε : GlobalTheory.RatAut.IsHalfIdem D ε) (V : HSp D) (gV : V.gram = 1) {g : GA D V}
     {x : Formalism.MainNotions.StandardLatticesGL3.GA D V.rank} (hg : IsFinPt V g x) (sx : Formalism.MainNotions.StandardLatticesGL3.SuppSplit D (x : GL (Fin V.rank) (Formalism.MainNotions.StandardLatticesGL3.AE D))) :
     SuppAt ε V g ∧ ∃ (u : (AE D)ˣ) (x₀ : (Formalism.MainNotions.StandardLatticesGL3.AE D)ˣ), IsDetAt ε V g u ∧ IsFinIdl u x₀ ∧
@@ -332,7 +336,7 @@ theorem exists_half_det {ε : AE D} (hε : GlobalTheory.RatAut.IsHalfIdem D ε) 
     rw [RingHom.map_det, ← hfin]
     rfl
   refine ⟨hs, u, Units.map (finQ D).toMonoidHom u, hu, ⟨?_, ?_⟩, fun q hq hi => ?_, Units.ext ?_⟩
-  · rw [hu, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, hε.2.2.1, RingHom.map_one, zero_mul, sub_zero, zero_add]
+  · rw [hu, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, hε.2.2.1, RingHom.map_one, zero_mul, sub_zero, zero_add]
   · show _ = GlobalTheory.BotFormula.toFinE D (finQ D u)
     rw [← finAdEquiv_toAfE, toAfE_finQ]
     rfl
@@ -340,7 +344,7 @@ theorem exists_half_det {ε : AE D} (hε : GlobalTheory.RatAut.IsHalfIdem D ε) 
     rw [show ε * ((Formalism.L2.Theta.mt V g).det - 1) = u - 1 from cut_sub_one hu, RingHom.map_sub, RingHom.map_one] at this
     exact this
   · have e1 : (u : AE D) = (Formalism.L2.Theta.mt V g).det * cA D (u : AE D) := by
-      rw [hu, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
+      rw [hu, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one]
       exact cut_conj hout hun
     have e2 := congrArg (finQ D) e1
     have e5 : finQ D (cA D (u : AE D)) = Formalism.MainNotions.StandardLatticesGL3.sgA D (finQ D u) := finQ_sigR (u : AE D)

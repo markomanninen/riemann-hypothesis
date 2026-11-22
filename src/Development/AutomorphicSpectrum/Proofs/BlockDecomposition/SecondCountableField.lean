@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ theorem unif_ne_zero : (uniformizer F : F) ≠ 0 := by
   intro h0
   exact (irreducible_uniformizer F).ne_zero (Subtype.ext h0)
 
-variable (F) in
 
+variable (F) in
 def scal (m M : ℕ) : GL (Fin m) F where
   val := ((uniformizer F : F)⁻¹ ^ M) • (1 : Matrix (Fin m) (Fin m) F)
   inv := ((uniformizer F : F) ^ M) • (1 : Matrix (Fin m) (Fin m) F)
@@ -111,7 +115,7 @@ theorem exists_char (hψ : Continuous ψ) (hlat : ∀ M, IsCompact (lat F (k + 1
     rw [smul_eq_mul, ← integral_const_mul]
     congr 1
     funext x
-    simp only [map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]
+    simp
     ring
   · intro a v w
     let M := max (m (v + w) a) (max (m v a) (m w a))
@@ -129,7 +133,7 @@ theorem exists_char (hψ : Continuous ψ) (hlat : ∀ M, IsCompact (lat F (k + 1
     rw [smul_eq_mul, ← integral_const_mul]
     congr 1
     funext x
-    simp only [map_smul, smul_eq_mul, RingHom.id_apply]
+    simp
     ring
   · intro u u'
     exact ⟨m u u', fun M hM => hf u' u M hM⟩

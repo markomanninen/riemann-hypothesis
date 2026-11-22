@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ThetaQuasiPeriods.Change
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ThetaQuasiPeriods.Change
+
+@[expose] public section
 
 open ReciprocityTheory.PTheta Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -17,7 +21,7 @@ theorem eval_mvPolynomialOnLine {d : ℕ} (q : MvPolynomial (Fin d) ℂ) (a b : 
   unfold mvPolynomialOnLine
   induction q using MvPolynomial.induction_on with
   | C c => simp
-  | add p r hp hr => rw [map_add, Polynomial.eval_add, hp, hr, map_add]
+  | add p r hp hr => rw [map_add (f := _), Polynomial.eval_add, hp, hr, map_add (f := _)]
   | mul_X p i hp =>
     simp only [map_mul, Polynomial.eval_mul, hp, MvPolynomial.aeval_X, MvPolynomial.eval_X,
       Polynomial.eval_add, Polynomial.eval_C, Polynomial.eval_X, Pi.add_apply, Pi.smul_apply,
@@ -52,7 +56,7 @@ private theorem joinedIn_setOf_eval_ne_zero {d : ℕ} (q : MvPolynomial (Fin d) 
   have h0 : (0 : ℂ) ∈ {t : ℂ | MvPolynomial.eval (a + t • (b - a)) q = 0}ᶜ := by simpa using ha
   have h1 : (1 : ℂ) ∈ {t : ℂ | MvPolynomial.eval (a + t • (b - a)) q = 0}ᶜ := by simpa using hb
   have hf : Continuous fun t : ℂ => a + t • (b - a) := by fun_prop
-  have hj := (hpc.joinedIn 0 h0 1 h1).map hf
+  have hj := (hpc.joinedIn 0 h0 1 h1).map hf.continuousOn
   simp only [zero_smul, add_zero, one_smul, add_sub_cancel] at hj
   refine hj.mono ?_
   rintro _ ⟨t, ht, rfl⟩

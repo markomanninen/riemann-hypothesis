@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK
 open Polynomial
@@ -6,7 +10,7 @@ open Polynomial
 private theorem exp_cong (w : ℕ) (g : ℤ[X]) : (X ^ w - 1 : ℤ[X]) ∣ expand ℤ (1 + w) g - g := by
   induction g using Polynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact dvd_add hp hq
   | monomial n a =>
     rw [expand_monomial, ← C_mul_X_pow_eq_monomial, ← C_mul_X_pow_eq_monomial, ← mul_sub]
@@ -104,7 +108,8 @@ private theorem alg_dvd (q w M : ℕ) :
       AddMonoidAlgebra.single ((1 + (w : ZMod q)) ^ i)
         ((∏ j ∈ Finset.range M, (X - C ((1 + (w : ℤ)) ^ j)) : ℤ[X]).coeff i) := by
   have h := map_dvd (aeval (R := ℤ) (AddMonoidAlgebra.single (1 : ZMod q) (1 : ℤ))) (exp_dvd w M)
-  simp only [map_sum, map_zsmul, map_pow, map_sub, map_one, aeval_X, AddMonoidAlgebra.single_pow, one_pow,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, map_pow, map_sub, map_one, aeval_X, AddMonoidAlgebra.single_pow, one_pow,
     nsmul_one, AddMonoidAlgebra.smul_single', mul_one, Nat.cast_pow, Nat.cast_add, Nat.cast_one] at h
   simpa only [map_pow] using h
 
@@ -134,7 +139,7 @@ theorem UpperTheory.V.ZK.sEta :
     AddMonoidAlgebra.mapDomainRingHom ℤ (AddMonoidHom.inl (ZMod (l ^ ν)) (ZMod (l ^ ν)))
   have hφι : ∀ t y, φ t (ι y) = y := by
     intro t y
-    refine AddMonoidAlgebra.induction_linear y (by simp) (fun a b ha hb => by rw [map_add, map_add, ha, hb])
+    refine AddMonoidAlgebra.induction_linear y (by simp) (fun a b ha hb => by rw [map_add (f := _), map_add (f := _), ha, hb])
       (fun m r => ?_)
     simp only [ι, AddMonoidAlgebra.mapDomainRingHom_apply, AddMonoidAlgebra.mapDomain_single, hφ]
     simp

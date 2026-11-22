@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -102,14 +106,5 @@ def ProductIsoIff : Prop :=
       (Nonempty ((parInd b σ).Equiv (parInd b' σ')) ↔ SameFactorSet b σ b' σ')
 
 def CuspidalProduct : Prop := ProductIrreducible ∧ ProductIsoIff
-
-example (σ : Representation ℂ (blockTri (κ := F) (fun _ : Fin r => 0)) V) : DistinctFactors (fun _ => 0) σ := by
-  rintro _ ⟨_, rfl⟩ _ ⟨_, rfl⟩ h
-  exact absurd rfl h
-
-example (b : Fin r → ℕ) (σ : Representation ℂ (blockTri (κ := F) b) V) (c c' : ℕ)
-    (h : Fintype.card (Block b c) ≠ Fintype.card (Block b c')) : ¬ SameFactor b σ c b σ c' := by
-  rintro ⟨d, h1, h2, -⟩
-  exact h (h1.trans h2.symm)
 
 end GlobalTheory.IndefiniteRowSideFullHecke.BlockEmbeddingFactors

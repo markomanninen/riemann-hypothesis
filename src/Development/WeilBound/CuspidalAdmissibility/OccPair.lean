@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SmoothRep
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SmoothRep
+
+@[expose] public section
 
 open GroundTheory.Automorphic
 
@@ -103,7 +107,7 @@ theorem admissible_and_equiv (σ : Representation ℂ G X) (π : Representation 
   choose T0 hT0 using hex
   let T : X →ₗ[ℂ] Y :=
     { toFun := T0
-      map_add' := fun x x' => huniq _ _ (by rw [hT0, map_add, map_add, hT0, hT0])
+      map_add' := fun x x' => huniq _ _ (by rw [hT0, map_add (f := _), map_add (f := _), hT0, hT0])
       map_smul' := fun c x => huniq _ _ (by rw [hT0, map_smul, map_smul, hT0, RingHom.id_apply]) }
   have hTint : ∀ g x, T (σ g x) = π g (T x) := by
     intro g x

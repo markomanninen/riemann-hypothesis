@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdStd
-import Formalism.LocalToGlobal.NumberFieldFamilies.GamCSpec
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNdStd
+public import Formalism.LocalToGlobal.NumberFieldFamilies.GamCSpec
+
+@[expose] public section
 
 noncomputable section
 

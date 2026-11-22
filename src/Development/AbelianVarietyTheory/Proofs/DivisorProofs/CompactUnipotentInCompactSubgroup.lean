@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LongWConjApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyDeepSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsGenericIffIsGenericFor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ParIndJacPlacing
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EventuallyDeepSubset
+
+@[expose] public section
 
 noncomputable section
 
-open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.WhitHered Matrix GlobalTheory.InertSupp
+open GlobalTheory.PRep GlobalTheory.SmGL Matrix GlobalTheory.InertSupp
 
 namespace GlobalTheory.UnipCptSub
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
@@ -44,15 +49,15 @@ theorem pairA_mul_eq_zero_iff_fst' (a : AF F) : pairA F 1 0 * a = 0 ↔ fstA F a
 
 def incFin : Af F →ₗ[F] AF F where
   toFun y := pairA F 0 y
-  map_add' y y' := af_ext' (by rw [map_add, fstA_pairA', fstA_pairA', fstA_pairA', add_zero])
-    (by rw [map_add, sndA_pairA', sndA_pairA', sndA_pairA'])
+  map_add' y y' := af_ext' (by rw [map_add (f := _), fstA_pairA', fstA_pairA', fstA_pairA', add_zero])
+    (by rw [map_add (f := _), sndA_pairA', sndA_pairA', sndA_pairA'])
   map_smul' c y := af_ext' (by rw [map_smul, fstA_pairA', fstA_pairA', RingHom.id_apply, smul_zero])
     (by rw [map_smul, sndA_pairA', sndA_pairA', RingHom.id_apply])
 
 def incInf : Ainf F →ₗ[F] AF F where
   toFun y := pairA F y 0
-  map_add' y y' := af_ext' (by rw [map_add, fstA_pairA', fstA_pairA', fstA_pairA'])
-    (by rw [map_add, sndA_pairA', sndA_pairA', sndA_pairA', add_zero])
+  map_add' y y' := af_ext' (by rw [map_add (f := _), fstA_pairA', fstA_pairA', fstA_pairA'])
+    (by rw [map_add (f := _), sndA_pairA', sndA_pairA', sndA_pairA', add_zero])
   map_smul' c y := af_ext' (by rw [map_smul, fstA_pairA', fstA_pairA', RingHom.id_apply])
     (by rw [map_smul, sndA_pairA', sndA_pairA', RingHom.id_apply, smul_zero])
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+
+@[expose] public section
 
 noncomputable section
 

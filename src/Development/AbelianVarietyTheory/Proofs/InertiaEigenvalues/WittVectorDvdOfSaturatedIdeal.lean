@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -30,7 +34,7 @@ theorem wittVector_coeff_add_pow_mul {l : ℕ} [hl : Fact l.Prime] {R : Type} [C
     rw [WittVector.coeff_truncate, TruncatedWittVector.coeff_zero]
     exact wittVector_coeff_pow_mul_eq_zero m t i i.2
   have h1 : truncate m (x + (l : WittVector l R) ^ m * t) = truncate m x := by
-    rw [map_add, h0, add_zero]
+    rw [map_add (f := _), h0, add_zero]
   have := congrArg (fun y => TruncatedWittVector.coeff ⟨j, hj⟩ y) h1
   simpa only [WittVector.coeff_truncate] using this
 
@@ -109,7 +113,7 @@ theorem wittVector_dvd_of_saturated_ideal : ∀ (l : ℕ) [Fact l.Prime] (R : Ty
       rw [WittVector.coeff_truncate, TruncatedWittVector.coeff_zero]
       exact wittVector_coeff_pow_mul_eq_zero _ _ i i.2
     conv_lhs => rw [e]
-    rw [map_add, h0, add_zero, map_mul, map_mul, htc]
+    rw [map_add (f := _), h0, add_zero, map_mul, map_mul, htc]
   have := congrArg (fun y => TruncatedWittVector.coeff ⟨k, Nat.lt_succ_self k⟩ y) hta
   simpa only [WittVector.coeff_truncate] using this
 

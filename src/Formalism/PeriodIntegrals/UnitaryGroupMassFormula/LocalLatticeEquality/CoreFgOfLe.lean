@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocLatEq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Imports
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.CoreGenIdeal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocLatEq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Imports
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.CoreGenIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,8 @@ private theorem exists_linearMap_eq_cons_zero (R M : Type*) [Semiring R] [AddCom
        funext i
        cases i using Fin.cases <;> simp }, fun _ => rfl⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem core_ind (hU : UnitP) (hA : AvoidP) (hI : IntP) (h2 : Module.finrank F E = 2)
     (A : LocAt F E sig p) : ∀ (n : ℕ) (Λ : Submodule (𝓞 E) (Fin n → E)), Λ.FG →
     ∀ y : Fin n → E, bc A y ∈ latL A Λ →

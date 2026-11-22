@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJGlobalHaar
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicDistribution
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJGlobalHaar
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicDistribution
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Filter Set IsDedekindDomain NumberField
 
@@ -39,6 +43,7 @@ theorem isMulRightInvariant_finite (μ : Measure (AdelicGLn.FiniteAdelicGL K n))
     rw [Measure.map_map (measurable_mul_const p) he, hcomp,
       ← Measure.map_map he (measurable_mul_const _), map_mul_right_eq_self]
 
+  set_option synthInstance.maxHeartbeats 400000 in
   set c := haarScalarFactor (ν.map e) P
   have hc : ν.map e = c • P := isMulLeftInvariant_eq_smul (ν.map e) P
   have hc0 : c ≠ 0 := by
@@ -50,7 +55,7 @@ theorem isMulRightInvariant_finite (μ : Measure (AdelicGLn.FiniteAdelicGL K n))
   have hP : ∀ p, P.map (· * p) = P := by
     intro p
     have h1 : P = c⁻¹ • ν.map e := by rw [hc, smul_smul, inv_mul_cancel₀ hc0, one_smul]
-    rw [h1, Measure.map_smul, hν']
+    rw [h1, Measure.map_smul _ (measurable_mul_const p).aemeasurable, hν']
   refine ⟨fun g => ?_⟩
   have hprod : P.map (· * ((1 : AdelicGLn.InfiniteAdelicGL K n), g)) = μi.prod (μ.map (· * g)) := by
     have hf : (· * ((1 : AdelicGLn.InfiniteAdelicGL K n), g)) = Prod.map id (· * g) := by

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LamFormula
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IsStdCharFOfIsGoodK
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LamFormula
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.IsStdCharFOfIsGoodK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -100,11 +104,12 @@ theorem lam_formula_k {σ : E →ₐ[F] E} {B : Base F E} (hB : _root_.UpperTheo
         obtain ⟨x₀, rfl⟩ := hr
         obtain ⟨η, hη⟩ := hr1 x₀
         have hr' : β ((incAF F E).toAddMonoidHom.mapMatrix x₀) = GlobalTheory.SWQ.rat η := hη
-        simp only [hch, map_add, hr', dotProduct_add, AddChar.map_add_eq_mul]
-        rw [show emb ζ ⬝ᵥ GlobalTheory.SWQ.rat η = algebraMap F (AF F) (ζ ⬝ᵥ η) by
+        simp only [hch, map_add (f := _), hr', dotProduct_add, AddChar.map_add_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [show emb ζ ⬝ᵥ GlobalTheory.SWQ.rat η = algebraMap F (AF F) (ζ ⬝ᵥ η) by
           subst hemb; simp [dotProduct, map_sum, map_mul, GlobalTheory.SWQ.rat], htriv, one_mul]
       · intro u
-        simp only [hch, map_add, LinearEquiv.apply_symm_apply, dotProduct_add, AddChar.map_add_eq_mul]
+        simp only [hch, map_add (f := _), LinearEquiv.apply_symm_apply, dotProduct_add, AddChar.map_add_eq_mul]
         congr 2
         rw [dotProduct_single, hemb]
         simp only

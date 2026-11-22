@@ -1,21 +1,27 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicGLNormOneSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicGLNormOneSplit
+
+@[expose] public section
+
 open NumberField MeasureTheory Topology GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.OpTrace GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.UnitaryBC
 
 namespace GlobalTheory.CompanionTheory.HaarSplit
 
-open GroundTheory.Automorphic.Reduction in
 
-theorem map_prod_eq_smul (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ha : 0 < a)
-    (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL E a)) [ν.IsHaarMeasure] :
+open GroundTheory.Automorphic.Reduction in
+theorem map_prod_eq_smul (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ha : 0 < a)
+    (μ : Measure (GA E a)) [μ.IsHaarMeasure] (ν : Measure (normOneGL (K := E) (n := a))) [ν.IsHaarMeasure] :
     ∃ c : ENNReal, c ≠ 0 ∧ c ≠ ⊤ ∧
-      Measure.map (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ := by
+      Measure.map (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) (ν.prod volume) = c • μ := by
+  set_option synthInstance.maxHeartbeats 200000 in
   obtain ⟨e, he⟩ := GlobalTheory.CompanionTheory.SplitHomeo.exists_homeomorph E a ha
-  have hfun : (fun p : normOneGL E a × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) = e := by
+  have hfun : (fun p : normOneGL (K := E) (n := a) × ℝ => splitCentre E a p.2 * (p.1 : GA E a)) = e := by
     funext p
     exact (he p.1 p.2).symm
   rw [hfun]
@@ -30,7 +36,7 @@ theorem map_prod_eq_smul (E : Type) [Field E] [NumberField E] [IsTotallyComplex 
       simp only [Function.comp, Prod.map, he]
       rw [splitCentre_add, Subgroup.coe_mul]
       rw [mul_assoc, mul_assoc, ← mul_assoc (y : GA E a), ← splitCentre_comm, mul_assoc]
-    have hpres : MeasurePreserving (Prod.map (fun x : normOneGL E a => y * x) (fun t : ℝ => s + t))
+    have hpres : MeasurePreserving (Prod.map (fun x : normOneGL (K := E) (n := a) => y * x) (fun t : ℝ => s + t))
         (ν.prod volume) (ν.prod volume) :=
       (measurePreserving_mul_left ν y).prod (measurePreserving_add_left volume s)
     rw [hm, Measure.map_map (by fun_prop) hemeas, hcomp, ← Measure.map_map hemeas hpres.measurable, hpres.map_eq]

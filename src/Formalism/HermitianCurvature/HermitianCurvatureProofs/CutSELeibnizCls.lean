@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveOperatorLeL2Subspace
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEOuterLeib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WaveOperatorLeL2Subspace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEOuterLeib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEPairAtDeriv
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -100,9 +104,9 @@ theorem slDom_add (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) {Φ Ψ : RadSp k
     have hs := hadd Φ Ψ (Φ + Ψ) p hΦ hΨ (add_mem hΦ hΨ)
     have hd := hsub Φ Ψ (Φ - Ψ) p hΦ hΨ (sub_mem hΦ hΨ)
     have e1 : pairAt μ Φ (Φ + Ψ) p = pairAt μ Φ Φ p + pairAt μ Φ Ψ p := by
-      rw [hconj, hadd Φ Ψ Φ p hΦ hΨ hΦ, map_add, ← hconj, ← hconj]
+      rw [hconj, hadd Φ Ψ Φ p hΦ hΨ hΦ, map_add (f := _), ← hconj, ← hconj]
     have e2 : pairAt μ Ψ (Φ + Ψ) p = pairAt μ Ψ Φ p + pairAt μ Ψ Ψ p := by
-      rw [hconj, hadd Φ Ψ Ψ p hΦ hΨ hΨ, map_add, ← hconj, ← hconj]
+      rw [hconj, hadd Φ Ψ Ψ p hΦ hΨ hΨ, map_add (f := _), ← hconj, ← hconj]
     have e3 : pairAt μ Φ (Φ - Ψ) p = pairAt μ Φ Φ p - pairAt μ Φ Ψ p := by
       rw [hconj, hsub Φ Ψ Φ p hΦ hΨ hΦ, map_sub, ← hconj, ← hconj]
     have e4 : pairAt μ Ψ (Φ - Ψ) p = pairAt μ Ψ Φ p - pairAt μ Ψ Ψ p := by
@@ -153,7 +157,7 @@ def sgSub (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) : Submodule ℂ (RadSp k
   add_mem' := by
     rintro Φ Ψ ⟨h1, h1'⟩ ⟨h2, h2'⟩
     refine ⟨(lcSub k r z z' π π').add_mem h1 h2, fun js => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact slDom_add μ l c hμ (wOp_lc X l js Φ h1) (wOp_lc X l js Ψ h2) (h1' js) (h2' js)
   smul_mem' := by
     rintro a Φ ⟨h1, h1'⟩
@@ -173,27 +177,6 @@ theorem sliceGood_dTb {Φ : RadSp k r z z' π π'} (h : SliceGood X μ l c Φ) :
 
 end Clos
 
-theorem clsE_sliceGood_of (hJ : JSliceGen) {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
-    (S : Type) [Fintype S] [DecidableEq S]
-    (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq) (hD : IsData P z z' π π' X μ L st l0) (h1 : 1 ≤ l0) (h2 : l0 ≤ P.k)
-    (hz : D.z = z) (hz' : D.z' = z') (hπ : D.π = π) (hπ' : D.π' = π') (l : Fin P.r) (hl : l.val = 0)
-    (c : Fin P.r → ℂ) (hc : c ∈ OmX P.r) (Φ : RadSp P.k P.r z z' π π')
-    (hΦ : Φ ∈ ClsE S P z z' π π' X L st l0 D l) : SliceGood X μ l c Φ := by
-  have hμ : B.IsHaarOn (Glev P.k P.r (Fin.last P.r)) μ := hD.2.1
-  have hle : ClsE S P z z' π π' X L st l0 D l ≤ sgSub X μ l c hμ := by
-    apply opClos_le X l
-    · refine (base_le_wave_operator P z z' π π' X μ L st l0 D hD hz hz' hπ hπ' l hl).trans
-        (Submodule.span_le.mpr ?_)
-      intro Ψ hΨ
-      exact hJ Wp Wq S P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl c hc Ψ hΨ
-    · intro j Ψ hΨ
-      exact sliceGood_op X μ l c hΨ j
-  exact hle hΦ
-
 theorem wirt_of_hasFDerivAt {F : ℂ → ℂ} {A B t : ℂ} (h : HasFDerivAt F (wl A B) t) :
     wirt true F t = A ∧ wirt false F t = B := by
   have hf := h.fderiv
@@ -204,15 +187,6 @@ theorem wirt_of_hasFDerivAt {F : ℂ → ℂ} {A B t : ℂ} (h : HasFDerivAt F (
   · first
       | linear_combination ((A - B) / 2) * Complex.I_sq
       | linear_combination ((B - A) / 2) * Complex.I_sq
-
-theorem leibnizCls_of (hO : OuterLeib) (hJ : JSliceGen) : LeibnizCls := by
-  intro Wp Wq _ _ _ _ _ _ S _ _ P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl u v hu hv c hc t ht
-  have hμ : B.IsHaarOn (Glev P.k P.r (Fin.last P.r)) μ := hD.2.1
-  have hsu : ∀ b, SliceGood X μ l c (u b) := fun b =>
-    clsE_sliceGood_of hJ S P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl c hc (u b) (hu b)
-  have hsv : ∀ b, SliceGood X μ l c (v b) := fun b =>
-    clsE_sliceGood_of hJ S P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl c hc (v b) (hv b)
-  exact wirt_of_hasFDerivAt (hO P.k P.r z z' Wp Wq π π' X μ hμ l S u v c hc hsu hsv t ht)
 
 theorem levelSquareIntegrable_succ_update_of_sliceGood {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [NormedAddCommGroup Wp]
     [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp]
@@ -277,32 +251,5 @@ theorem form_contDiffOn (hO : OuterLeib) {k r : ℕ} {z z' : Fin (2 * r + k + 1)
           ⟨fun t ht => (hd t ht).differentiableAt.differentiableWithinAt, fun h => by simp at h, hF⟩
       | exact (contDiffOn_succ_iff_fderiv_of_isOpen hs).2
           ⟨fun t ht => (hd t ht).differentiableAt.differentiableWithinAt, hF⟩
-
-theorem densSmoothCls_of (hO : OuterLeib) (hJ : JSliceGen) : DensSmoothCls := by
-  intro Wp Wq _ _ _ _ _ _ S _ _ P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl u v hu hv c hc
-  have hμ : B.IsHaarOn (Glev P.k P.r (Fin.last P.r)) μ := hD.2.1
-  have hsu : ∀ b, SliceGood X μ l c (u b) := fun b =>
-    clsE_sliceGood_of hJ S P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl c hc (u b) (hu b)
-  have hsv : ∀ b, SliceGood X μ l c (v b) := fun b =>
-    clsE_sliceGood_of hJ S P z z' π π' X μ L st l0 D hD h1 h2 hz hz' hπ hπ' l hl c hc (v b) (hv b)
-  haveI : IsFiniteMeasureOnCompacts μ := ⟨hμ.finite_compact⟩
-  haveI : SFinite μ := by
-    first
-      | infer_instance
-      | exact (sigmaFinite_of_locallyFinite (μ := μ)).toSFinite
-  refine ⟨fun n => ?_, fun t ht b => ⟨levelSquareIntegrable_succ_update_of_sliceGood X μ l c (hsu b) ht, levelSquareIntegrable_succ_update_of_sliceGood X μ l c (hsv b) ht⟩⟩
-  exact (contDiffOn_inverse_norm_sq n).mul (form_contDiffOn hO X μ hμ l S c hc n u v hsu hsv)
-
-theorem leibnizCls_of_leaves (hP : PairAtDeriv) (hJ : JSliceGen) : LeibnizCls :=
-  leibnizCls_of (outerLeib_of hP) hJ
-
-theorem densSmoothCls_of_leaves (hP : PairAtDeriv) (hJ : JSliceGen) : DensSmoothCls :=
-  densSmoothCls_of (outerLeib_of hP) hJ
-
-theorem leibnizCls_of_jSlice (hJ : JSliceGen) : LeibnizCls :=
-  leibnizCls_of_leaves pairing_derivative_formula hJ
-
-theorem densSmoothCls_of_jSlice (hJ : JSliceGen) : DensSmoothCls :=
-  densSmoothCls_of_leaves pairing_derivative_formula hJ
 
 end Formalism.FourierDecayAlt.P.CutSE

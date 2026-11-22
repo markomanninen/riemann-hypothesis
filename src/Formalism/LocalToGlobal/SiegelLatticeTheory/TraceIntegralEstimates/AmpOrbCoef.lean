@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpNZFinal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpOrbClosed
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpTrans
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.HzOfInWb
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.AmpNZFinal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AmpOrbClosed
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpTrans
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.HzOfInWb
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal
@@ -31,7 +35,7 @@ theorem fdegH_pos {k r : ℕ} {ε : Fin (2 * r + k + 1) → Bool} {lam : Fin (2 
     simp only [Complex.ofReal_re] at this
     rw [this]
     rw [show (1 : ℂ) / (d : ℂ) = ((1 / d : ℝ) : ℂ) by push_cast; rfl, Complex.ofReal_re]
-  unfold PI.BesselPeriodGGP.fdegH
+  delta PI.BesselPeriodGGP.fdegH
   rw [hI, hw]
   simp only [one_pow, one_div, inv_inv]
   exact hd
@@ -75,10 +79,10 @@ theorem B_ne {k r : ℕ} {H Wp : Type} [NormedAddCommGroup H] [InnerProductSpace
   have hae0 : ∀ᵐ y ∂νS, Matrix.of y ∈ UH (Hpk k r) := by
     rw [ae_iff]; simpa using Formalism.MainNotions.S.Pv.AmpTrans.quot_meas_not_mem_UH_eq_zero hG hS0 (muS_conc hWa hN) hq
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hσU := Formalism.MainNotions.LowestKTypeMultiplicity.urep_of_DS hσ
   have hz0 : l2SG νS (fun g => B (σ g v0)) = 0 := by
-    unfold l2SG
+    delta l2SG
     refine (lintegral_congr_ae ?_).trans lintegral_zero
     filter_upwards [hae0] with y hy
     show (‖B (σ (Matrix.of y) v0)‖₊ : ℝ≥0∞) ^ 2 = 0
@@ -88,14 +92,16 @@ theorem B_ne {k r : ℕ} {H Wp : Type} [NormedAddCommGroup H] [InnerProductSpace
   have hm0 : 0 < c * (Module.finrank ℂ Wp : ℝ) := mul_pos hc (by exact_mod_cast Module.finrank_pos)
   exact (ENNReal.ofReal_pos.2 hm0).ne' hz0
 
-variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] [Fact Formalism.L2.SG.LitS.PfNVG.BesselNVG] in
 
+variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] [Fact Formalism.L2.SG.LitS.PfNVG.BesselNVG] in
 theorem ampOrbCoefDD_of (hJ : PI.BesselMapUniq.BesselMapUniq) : Formalism.MainNotions.S.Pv.LemmaJ.AmpOrbCoefDD := by
   intro Cg cb Cu cT CT C0
   refine ⟨0, 1000, fun C' Cl _ hCl D large₂ hH τ w w' hTT θ W hW A hA hT hT' => ?_⟩
   have hI : Formalism.FourierDecayAlt.ThreeDimData.Inputs := Formalism.MainNotions.BridgeCS3dClosed.inputs_of Formalism.L2.SG.BesselDiscreteSeries.decInf hJ
   have hAt := Formalism.FourierDecayAlt.P.admissible_atomic_form_one
-  have hl0 : l1dist (lamD D τ) (lamD D τ) ≤ 0 * D.R.k * (D.R.m : ℝ) ^ 3 := by unfold l1dist; simp
+  have hl0 : l1dist (lamD D τ) (lamD D τ) ≤ 0 * D.R.k * (D.R.m : ℝ) ^ 3 := by
+    delta l1dist
+    simp
   obtain ⟨h, hg, hok, hcell⟩ :=
     Formalism.MainNotions.S.Pv.AmpDDPf.gap_of_hypotheses D large₂ C' Cl Cg cb Cu cT CT C0 0 hCl (by linarith) hH τ (lamD D τ) hl0
   set L := toBessel D τ w w' θ W (lamD D τ) A hW hA hT hT' with hL
@@ -219,11 +225,5 @@ theorem ampOrbCoefDD_of (hJ : PI.BesselMapUniq.BesselMapUniq) : Formalism.MainNo
     ring
   exact e2.trans hO.symm
 
-variable [Fact Formalism.FourierDecayAlt.ThreeDimData.DecLow] [Fact Formalism.L2.SG.LitS.PfNVG.BesselNVG] in
-
-theorem amplitude_uniform_of_bessel_uniq (hJ : PI.BesselMapUniq.BesselMapUniq) (hKD : Formalism.MainNotions.S.Pv.AmpDD.KDense)
-    (hRJ : Formalism.MainNotions.S.Pv.LemmaJ.RootJac) (hRH : Formalism.MainNotions.S.Pv.LemmaJ.RootHaar) (hOQ : Formalism.MainNotions.S.Pv.LemmaJ.OrbQuotEx)
-    (hRA : Formalism.MainNotions.S.Pv.LemmaJ.RelAtPt) (hBI : Formalism.MainNotions.S.Pv.BetaCut.BetaInfCoefNZ) : Formalism.MainNotions.S.Pv.LemmaJ.AmpUnif :=
-  Formalism.MainNotions.S.Pv.LemmaJ.amplitude_uniform_of_coefficients hJ hKD hRJ hRH hOQ hRA (ampOrbCoefDD_of hJ) hBI
 
 end Formalism.L2.S.Pv.AmpOrbCoef

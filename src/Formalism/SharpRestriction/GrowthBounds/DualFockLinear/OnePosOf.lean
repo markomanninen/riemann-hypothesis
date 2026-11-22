@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.LetterRowOperator
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -23,8 +27,8 @@ theorem Ed_comm_eq (K : Type) [Field K] (m : ℕ) (vec : Bool) (d : ℕ) (a b : 
       abel
   · simp [letterRowOperator]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem onePos_of (hOB : OpBound) (hAdj : RestAdj) (hSt : RestStab) (hT : RestTheta) (hW : RestWt) (hR : RestRep)
     (hR2 : RestRep2) : OnePos := by
   intro K _ _ m hm vec d c ν hν hνc β hβ s hs
@@ -40,7 +44,7 @@ theorem onePos_of (hOB : OpBound) (hAdj : RestAdj) (hSt : RestStab) (hT : RestTh
     intro x x' y
     apply huniq
     intro P Q
-    rw [LinearMap.add_apply, map_add, fR_add_left, hA, hA, hA, mul_add, fR_add_right]
+    rw [LinearMap.add_apply, map_add (f := _), fR_add_left, hA, hA, hA, mul_add, fR_add_right]
   have hsmul1 : ∀ (t : K) x y, A (t • x) y = t • A x y := by
     intro t x y
     apply huniq
@@ -50,7 +54,7 @@ theorem onePos_of (hOB : OpBound) (hAdj : RestAdj) (hSt : RestStab) (hT : RestTh
     intro x y y'
     apply huniq
     intro P Q
-    rw [LinearMap.add_apply, map_add, fR_add_left, hA, hA, hA, mul_add, fR_add_left]
+    rw [LinearMap.add_apply, map_add (f := _), fR_add_left, hA, hA, hA, mul_add, fR_add_left]
   have hsmul2 : ∀ (t : K) x y, A x (t • y) = t • A x y := by
     intro t x y
     apply huniq

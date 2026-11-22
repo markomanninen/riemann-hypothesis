@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementB
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.FlagMeas GlobalTheory.GKModule GlobalTheory.RealInd GlobalTheory.OpTrace
 open GlobalTheory.SmoothGlob (lieSet)
 open GlobalTheory.Dec (IsHaarSub HasInfChar UEquiv gelfVal)
@@ -23,7 +28,7 @@ theorem exists_partner {n : ℕ} {ε : Fin n → Bool} {H : Type} [NormedAddComm
     obtain ⟨hvS, hvU⟩ := Submodule.mem_inf.mp hv
     obtain ⟨u, hu, t, ht, rfl⟩ := Submodule.mem_sup.mp hvU
     refine Submodule.mem_inf.mpr ⟨hS g hg _ hvS, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hU g hg u hu) (hS' g hg t ht)
   rcases irr _ inf_le_left hT with h | h
   · exfalso
@@ -90,7 +95,7 @@ theorem exists_kMap_onto : ∀ (n : ℕ) (ε : Fin n → Bool) (H : Type) [Norme
     have hku : ρ k u ∈ S := hS k hk u hu
     rw [hφ _ hku, hφ u hu]
     refine uniq _ hku _ (hg _ hku).1 _ (hS' k hk _ (hg u hu).1) (hg _ hku).2 ?_
-    rw [← map_add]
+    rw [← map_add (f := _)]
     exact hU k hk _ (hg u hu).2
   · apply le_antisymm
     · rintro _ ⟨u, hu, rfl⟩

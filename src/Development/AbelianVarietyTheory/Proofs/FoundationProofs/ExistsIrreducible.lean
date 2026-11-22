@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+
+@[expose] public section
+
 open Formalism.MainNotions.S.Loc NumberField IsDedekindDomain ValuativeRel
 
 namespace GlobalTheory.LocSplit
@@ -127,7 +132,7 @@ theorem exists_sqrt (F E : Type) [Field F] [NumberField F] [Field E] [NumberFiel
   have hαs : sig α = -α := by rw [hα, map_sub, hss]; ring
   obtain ⟨a, ha⟩ := hfix (α ^ 2) (by rw [map_pow, hαs]; ring)
   have hai : IsIntegral ℤ a := by
-    rw [← isIntegral_algebraMap_iff (algebraMap F E).injective, ha]
+    rw [← isIntegral_algebraMap_iff (B := E), ha]
     exact hint.pow 2
   refine ⟨⟨α, hint⟩, ⟨a, hai⟩, hα0, hαs, ?_, fun y => ?_⟩
   · ext; exact ha
@@ -153,7 +158,7 @@ theorem exists_equiv {K A : Type} [Field K] [CharZero K] [CommRing A] [Algebra K
           simp; ring
         have h2 : ((x + y).1 - (x + y).2) / (2 * β) =
             (x.1 - x.2) / (2 * β) + (y.1 - y.2) / (2 * β) := by simp; ring
-        rw [h1, h2, map_add, map_add]; ring
+        rw [h1, h2, map_add (f := _), map_add (f := _)]; ring
       map_smul' := fun c x => by
         have h1 : ((c • x).1 + (c • x).2) / 2 = c * ((x.1 + x.2) / 2) := by simp; ring
         have h2 : ((c • x).1 - (c • x).2) / (2 * β) = c * ((x.1 - x.2) / (2 * β)) := by simp; ring
@@ -168,7 +173,7 @@ theorem exists_equiv {K A : Type} [Field K] [CharZero K] [CommRing A] [Algebra K
       ((x.1 - x.2) / (2 * β)) * ((y.1 + y.2) / 2) := by
       simp only [Prod.fst_mul, Prod.snd_mul]; field_simp; ring
     rw [hgl, hgl, hgl, h1, h2]
-    simp only [map_add, map_mul, ← ht]
+    simp only [map_add (f := _), map_mul, ← ht]
     ring)
   have hsurj : Function.Surjective gl := by
     intro y
@@ -185,7 +190,7 @@ theorem exists_equiv {K A : Type} [Field K] [CharZero K] [CommRing A] [Algebra K
   obtain ⟨z, rfl⟩ := e.surjective x
   rw [e.symm_apply_apply, AlgEquiv.symm_apply_eq]
   change cj (gl z) = gl z.swap
-  rw [hgl, hgl, map_add, map_mul, cj.commutes, cj.commutes, hc]
+  rw [hgl, hgl, map_add (f := _), map_mul, cj.commutes, cj.commutes, hc]
   have h2 : (z.swap.1 - z.swap.2) / (2 * β) = -((z.1 - z.2) / (2 * β)) := by simp; ring
   rw [h2, map_neg, Prod.fst_swap, Prod.snd_swap, add_comm z.2]
   ring
@@ -196,8 +201,8 @@ variable {F : Type} [Field F] [NumberField F] (p : HeightOneSpectrum (𝓞 F))
   (ι : F →+* K) (hd : DenseRange ι)
   (hv : ∀ x y : F, valuation K (ι x) ≤ valuation K (ι y) ↔ p.valuation F x ≤ p.valuation F y)
 
-include hd in
 
+include hd in
 theorem exists_val_eq (x : K) (hx : x ≠ 0) :
     ∃ y : F, y ≠ 0 ∧ valuation K (ι y) = valuation K x := by
   have h0 : valuation K x ≠ 0 := by simpa using hx
@@ -206,8 +211,8 @@ theorem exists_val_eq (x : K) (hx : x ≠ 0) :
   rintro rfl
   exact h0 (by simpa using (show valuation K (ι 0) = valuation K x from hy).symm)
 
-include hd hv in
 
+include hd hv in
 theorem exists_irreducible (g : F) (hg : p.valuation F g = WithZero.exp (-1 : ℤ)) :
     ∃ q : 𝒪[K], Irreducible q ∧ (q : K) = ι g := by
   have hlt : ∀ x y : F, valuation K (ι x) < valuation K (ι y) ↔
@@ -245,8 +250,8 @@ theorem exists_irreducible (g : F) (hg : p.valuation F g = WithZero.exp (-1 : �
   rw [← WithZero.exp_add, WithZero.exp_le_exp] at h5
   omega
 
-include hd hv in
 
+include hd hv in
 theorem exists_sq_eq (a : 𝓞 F) (ha : ∀ n : ℕ, ∃ m : ℤ, a - (m : 𝓞 F) ^ 2 ∈ p.asIdeal ^ n) :
     ∃ β : K, β ^ 2 = ι a := by
   haveI : T2Space K := IsTopologicalAddGroup.t2Space_of_zero_sep fun x hx =>
@@ -306,7 +311,7 @@ theorem nonempty_splitAt : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     rw [Ideal.map_pow, map_natCast] at this
     exact Ideal.pow_right_mono (Ideal.map_le_iff_le_comap.2 hPl.over.le) 2 this)
   have hpv := val_eq_of p _ hgp hp2
-  have he : p.asIdeal.ramificationIdx' w.asIdeal = 1 := by
+  have he : w.asIdeal.ramificationIdx (𝓞 F) = 1 := by
     have := hrel (resChar p)
     rw [map_natCast (algebraMap (𝓞 F) (𝓞 E)), hw, hpv, ← WithZero.exp_nsmul, WithZero.exp_inj] at this
     simpa using this
@@ -333,12 +338,12 @@ theorem nonempty_splitAt : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
       | mem x hx =>
         obtain ⟨x, rfl⟩ := hx
         obtain ⟨u, v, rfl⟩ := hsp x
-        exact ⟨L.ιF u, L.ιF v, by rw [map_add, map_mul, L.compat, L.compat]⟩
+        exact ⟨L.ιF u, L.ιF v, by rw [map_add (f := _), map_mul, L.compat, L.compat]⟩
       | zero => exact ⟨0, 0, by simp⟩
       | add x y _ _ hx hy =>
         obtain ⟨u, v, rfl⟩ := hx
         obtain ⟨u', v', rfl⟩ := hy
-        exact ⟨u + u', v + v', by rw [map_add, map_add]; ring⟩
+        exact ⟨u + u', v + v', by rw [map_add (f := _), map_add (f := _)]; ring⟩
       | smul c x _ hx =>
         obtain ⟨u, v, rfl⟩ := hx
         exact ⟨c * u, c * v, by rw [map_mul, map_mul, Algebra.smul_def]; ring⟩)

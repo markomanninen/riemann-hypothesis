@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemHomogeneousIdealOfEvalZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.GeoDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemHomogeneousIdealOfEvalZero
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor CrystallineSemistableComparison.Pb
 attribute [local instance] MvPolynomial.gradedAlgebra
@@ -19,7 +24,7 @@ theorem shiftE_zero {d : ℕ} (D : ℕ) (α : Fin d →₀ ℕ) : shiftE D α 0 
 theorem shiftE_succ {d : ℕ} (D : ℕ) (α : Fin d →₀ ℕ) (k : Fin d) : shiftE D α k.succ = α k := rfl
 
 def homogP {K : Type} [Field K] {d : ℕ} (D : ℕ) (P : MvPolynomial (Fin d) K) : MvPolynomial (Fin (d + 1)) K :=
-  ∑ α ∈ P.support, monomial (shiftE D α) (coeff α P)
+  ∑ α ∈ P.support, monomial (shiftE D α) (AddMonoidAlgebra.coeff P α)
 
 theorem degree_le_of_mem {K : Type} [Field K] {d D : ℕ} {P : MvPolynomial (Fin d) K} (hD : P.totalDegree ≤ D)
     {α : Fin d →₀ ℕ} (hα : α ∈ P.support) : α.degree ≤ D := by
@@ -41,7 +46,8 @@ theorem aeval_homogP {K : Type} [Field K] {d D : ℕ} {P : MvPolynomial (Fin d) 
     {R : Type} [CommRing R] [Algebra K R] (u : R) (t : Fin d → R) :
     aeval (Fin.cons u (fun k => u * t k) : Fin (d + 1) → R) (homogP D P) = u ^ D * aeval t P := by
   conv_rhs => rw [← support_sum_monomial_coeff P]
-  rw [homogP, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [homogP, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun α hα => ?_
   have h := degree_le_of_mem hD hα
   rw [aeval_monomial, aeval_monomial, Finsupp.prod_fintype _ _ (by simp), Finsupp.prod_fintype _ _ (by simp),

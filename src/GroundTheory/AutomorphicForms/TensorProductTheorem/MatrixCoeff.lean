@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem orbitMap_mapDomain (ρ : Representation ℂ G V) (v : V) (h : G) (c : G 
     orbitMap ρ v (Finsupp.mapDomain (h * ·) c) = ρ h (orbitMap ρ v c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp [orbitMap]
-  | add c d hc hd => rw [Finsupp.mapDomain_add, map_add, hc, hd, map_add, map_add]
+  | add c d hc hd => rw [Finsupp.mapDomain_add, map_add (f := _), hc, hd, map_add (f := _), map_add (f := _)]
   | single g a => simp [Finsupp.mapDomain_single, orbitMap_single, map_mul]
 
 theorem range_orbitMap (ρ : Representation ℂ G V) (v : V) :

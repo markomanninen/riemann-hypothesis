@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+
+@[expose] public section
+
 open GlobalTheory.Cong
 
 noncomputable section
@@ -19,7 +24,7 @@ theorem opOf_single (g : G) (c : ℂ) (v : V) : opOf ρ (Finsupp.single g c) v =
   simp [opOf, Finsupp.sum_single_index]
 
 theorem opOf_add (F F' : G →₀ ℂ) (v : V) : opOf ρ (F + F') v = opOf ρ F v + opOf ρ F' v := by
-  simp only [← opHom_apply, map_add]
+  simp only [← opHom_apply, map_add (f := _)]
 
 theorem opOf_smul (F : G →₀ ℂ) (c : ℂ) (v : V) : opOf ρ F (c • v) = c • opOf ρ F v := by
   simp [opOf, Finsupp.smul_sum, smul_comm c]
@@ -29,7 +34,9 @@ def conv (F f : G →₀ ℂ) : G →₀ ℂ :=
 
 theorem opOf_conv (F f : G →₀ ℂ) (v : V) : opOf ρ (conv F f) v = opOf ρ F (opOf ρ f v) := by
   rw [← opHom_apply]
-  simp only [conv, Finsupp.sum, map_sum, opHom_apply, opOf_single]
-  simp only [opOf, Finsupp.sum, map_sum, map_smul, Finset.smul_sum, mul_smul, map_mul, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [conv, Finsupp.sum, map_sum, opHom_apply, opOf_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opOf, Finsupp.sum, map_sum, map_smul, Finset.smul_sum, mul_smul, map_mul, Module.End.mul_apply]
 
 end GlobalTheory.Cong.OpPoly

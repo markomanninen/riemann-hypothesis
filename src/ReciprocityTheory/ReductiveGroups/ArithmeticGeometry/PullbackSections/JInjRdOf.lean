@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SpanSteps
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.IndepPts
-import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameProofs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.SpanSteps
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.IndepPts
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameProofs
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,12 @@ section Frames
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 
-open Classical in
 
+open Classical in
 theorem rdU_apply_dom {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ} (U : Unf Xo c σ r)
     (f : Rul Xo c) (k : U.Comp) (x : (U.X k).dom) : rdU U f k x.1 = toC (evR Xo c f (U.un k x)) := by
   show (if h : x.1 ∈ (U.X k).dom then toC (evR Xo c f (U.un k ⟨x.1, h⟩)) else 0) = _
-  rw [dif_pos x.2]
+  rw [dite_eq_left x.2]
 
 theorem rel_of_frames {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {r : ℕ} (U : Unf Xo c σ r)
     {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ}
@@ -47,6 +51,7 @@ theorem jInjRd_of_wt {D : D7} (T : Top D) (hM : LawsM T.toCore) {j : ℕ} (hj : 
     JInjRd T j a n := by
   intro m b hb
   have hU : IsUnf (T.U j T.σ₀) := hM.unf j hj T.σ₀ T.good_σ₀
+  set_option synthInstance.maxHeartbeats 200000 in
   have hb' := hb.map' (cusp (T.Q.Xo j) T.Q.c (T.U j) a n).subtype (Submodule.ker_subtype _)
   have hfs : ∀ i, (⇑(cusp (T.Q.Xo j) T.Q.c (T.U j) a n).subtype ∘ b) i ∈ sec (T.Q.Xo j) T.Q.c a n :=
     fun i => cusp_le_sec (T.Q.Xo j) T.Q.c (T.U j) a n (b i).2
@@ -68,10 +73,5 @@ theorem jInjRd_of_wt {D : D7} (T : Top D) (hM : LawsM T.toCore) {j : ℕ} (hj : 
     _ (fun i => (hfs i).1) hb' g (fun z hz => hall z hz)
   intro i
   exact congrFun hc i
-
-theorem jInjRd_of_bcex {D : D7} (T : Top D) (hM : LawsM T.toCore) {j : ℕ} (hj : InR D j)
-    (a : (D.host.E →+* ℂ) × ℕ → ℕ) (n : ℕ)
-    (hA : BCEx (T.Q.Xo j) T.Q.c T.σ₀) (hD : BorDesc (T.Q.Xo j) T.Q.c) : JInjRd T j a n :=
-  jInjRd_of_wt T hM hj a n hA (wtField_of hD)
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

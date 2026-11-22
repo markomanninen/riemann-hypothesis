@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTopologicalGeneratorTauTowerStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisDenseTauPowMulFixingQRootsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFiniteLevelApproxOfGeometricInvariantModPoStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerIntegerDecompositionByTauStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisCoboundaryCongZeroModPrimePowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTopologicalGeneratorTauTowerStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisDenseTauPowMulFixingQRootsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricH1ZetaSubOneKillsStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFiniteLevelApproxOfGeometricInvariantModPoStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerTowerIntegerDecompositionByTauStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricGaloisCoboundaryCongZeroModPrimePowStatement
+
+@[expose] public section
 
 open GlobalTheory.K5
 
@@ -14,51 +18,51 @@ namespace GlobalTheory.K5.TopGeo
 section
 variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
-theorem isInt_natCast (n : ℕ) : IsInt p (n : Ω) := by
+theorem isInt_natCast (n : ℕ) : IsInt (p := p) (n : Ω) := by
   have h := isIntegral_algebraMap (R := O0 p) (A := Ω) (x := (n : O0 p))
   rwa [map_natCast] at h
 
-theorem isInt_map (g : Gal p Ω) {x : Ω} (hx : IsInt p x) : IsInt p (g x) := hx.map g
+theorem isInt_map (g : Gal p Ω) {x : Ω} (hx : IsInt (p := p) x) : IsInt (p := p) (g x) := hx.map g
 
-theorem cong_refl (k : ℕ) (x : Ω) : Cong p k x x := ⟨0, isIntegral_zero, by simp⟩
+theorem cong_refl (k : ℕ) (x : Ω) : Cong (p := p) k x x := ⟨0, isIntegral_zero, by simp⟩
 
-theorem cong_symm {k : ℕ} {x y : Ω} (h : Cong p k x y) : Cong p k y x := by
+theorem cong_symm {k : ℕ} {x y : Ω} (h : Cong (p := p) k x y) : Cong (p := p) k y x := by
   obtain ⟨z, hz, e⟩ := h
   exact ⟨-z, hz.neg, by rw [mul_neg, ← e]; ring⟩
 
-theorem cong_trans {k : ℕ} {x y w : Ω} (h1 : Cong p k x y) (h2 : Cong p k y w) : Cong p k x w := by
+theorem cong_trans {k : ℕ} {x y w : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k y w) : Cong (p := p) k x w := by
   obtain ⟨z1, hz1, e1⟩ := h1
   obtain ⟨z2, hz2, e2⟩ := h2
   exact ⟨z1 + z2, hz1.add hz2, by rw [mul_add, ← e1, ← e2]; ring⟩
 
-theorem cong_add {k : ℕ} {x y x' y' : Ω} (h1 : Cong p k x y) (h2 : Cong p k x' y') :
-    Cong p k (x + x') (y + y') := by
+theorem cong_add {k : ℕ} {x y x' y' : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k x' y') :
+    Cong (p := p) k (x + x') (y + y') := by
   obtain ⟨z1, hz1, e1⟩ := h1
   obtain ⟨z2, hz2, e2⟩ := h2
   exact ⟨z1 + z2, hz1.add hz2, by rw [mul_add, ← e1, ← e2]; ring⟩
 
-theorem cong_sub {k : ℕ} {x y x' y' : Ω} (h1 : Cong p k x y) (h2 : Cong p k x' y') :
-    Cong p k (x - x') (y - y') := by
+theorem cong_sub {k : ℕ} {x y x' y' : Ω} (h1 : Cong (p := p) k x y) (h2 : Cong (p := p) k x' y') :
+    Cong (p := p) k (x - x') (y - y') := by
   obtain ⟨z1, hz1, e1⟩ := h1
   obtain ⟨z2, hz2, e2⟩ := h2
   exact ⟨z1 - z2, hz1.sub hz2, by rw [mul_sub, ← e1, ← e2]; ring⟩
 
-theorem cong_mul_left {k : ℕ} {c x y : Ω} (hc : IsInt p c) (h : Cong p k x y) :
-    Cong p k (c * x) (c * y) := by
+theorem cong_mul_left {k : ℕ} {c x y : Ω} (hc : IsInt (p := p) c) (h : Cong (p := p) k x y) :
+    Cong (p := p) k (c * x) (c * y) := by
   obtain ⟨z, hz, e⟩ := h
   exact ⟨c * z, hc.mul hz, by rw [← mul_sub, e]; ring⟩
 
-theorem cong_map (g : Gal p Ω) {k : ℕ} {x y : Ω} (h : Cong p k x y) : Cong p k (g x) (g y) := by
+theorem cong_map (g : Gal p Ω) {k : ℕ} {x y : Ω} (h : Cong (p := p) k x y) : Cong (p := p) k (g x) (g y) := by
   obtain ⟨z, hz, e⟩ := h
   refine ⟨g z, isInt_map g hz, ?_⟩
   rw [← map_sub, e, map_mul, map_pow, map_natCast]
 
-theorem cong_congr {k : ℕ} {x y x' y' : Ω} (hx : x = x') (hy : y = y') (h : Cong p k x y) :
-    Cong p k x' y' := hx ▸ hy ▸ h
+theorem cong_congr {k : ℕ} {x y x' y' : Ω} (hx : x = x') (hy : y = y') (h : Cong (p := p) k x y) :
+    Cong (p := p) k x' y' := hx ▸ hy ▸ h
 
-theorem cong_of_eq' {k : ℕ} {x y : Ω} (h : x = y) : Cong p k x y := h ▸ cong_refl k x
+theorem cong_of_eq' {k : ℕ} {x y : Ω} (h : x = y) : Cong (p := p) k x y := h ▸ cong_refl k x
 
-theorem cong_zero_k {x y : Ω} (h : IsInt p (x - y)) : Cong p 0 x y := ⟨x - y, h, by simp⟩
+theorem cong_zero_k {x y : Ω} (h : IsInt (p := p) (x - y)) : Cong (p := p) 0 x y := ⟨x - y, h, by simp⟩
 
 theorem mem_ggeo_apply {g : Gal p Ω} (hg : g ∈ Ggeo p Ω) {x : Ω} (hx : IsAlgZp p x) : g x = x :=
   (show ∀ x : Ω, IsAlgZp p x → g x = x from hg) x hx
@@ -69,7 +73,7 @@ theorem fix_zeta (T : Tower p Ω) (n : ℕ) {g : Gal p Ω} (hg : g ∈ Ggeo p Ω
   · exact Polynomial.X_pow_sub_C_ne_zero (pow_pos (Fact.out : p.Prime).pos n) 1
   · simp [(T.prim n).pow_eq_one]
 
-theorem isInt_zeta (T : Tower p Ω) (n : ℕ) : IsInt p (T.ζ n) := by
+theorem isInt_zeta (T : Tower p Ω) (n : ℕ) : IsInt (p := p) (T.ζ n) := by
   apply IsIntegral.of_pow (pow_pos (Fact.out : p.Prime).pos n)
   rw [(T.prim n).pow_eq_one]
   exact isIntegral_one
@@ -77,15 +81,16 @@ theorem isInt_zeta (T : Tower p Ω) (n : ℕ) : IsInt p (T.ζ n) := by
 theorem fix_pi (T : Tower p Ω) {g : Gal p Ω} (hg : g ∈ Ggeo p Ω) : g (T.ζ 1 - 1) = T.ζ 1 - 1 := by
   rw [map_sub, map_one, fix_zeta T 1 hg]
 
-theorem isInt_pi (T : Tower p Ω) : IsInt p (T.ζ 1 - 1) := (isInt_zeta T 1).sub isIntegral_one
+theorem isInt_pi (T : Tower p Ω) : IsInt (p := p) (T.ζ 1 - 1) := (isInt_zeta T 1).sub isIntegral_one
 
-theorem p_eq (T : Tower p Ω) : ∃ r : Ω, IsInt p r ∧ (∀ g ∈ Ggeo p Ω, g r = r) ∧
+theorem p_eq (T : Tower p Ω) : ∃ r : Ω, IsInt (p := p) r ∧ (∀ g ∈ Ggeo p Ω, g r = r) ∧
     (p : Ω) = (T.ζ 1 - 1) * r := by
   have hζ : IsPrimitiveRoot (T.ζ 1) p := by simpa using T.prim 1
   refine ⟨-∑ i ∈ Finset.range p, ∑ m ∈ Finset.range i, T.ζ 1 ^ m, ?_, ?_, ?_⟩
   · exact (IsIntegral.sum _ fun i _ => IsIntegral.sum _ fun m _ => (isInt_zeta T 1).pow m).neg
   · intro g hg
-    simp only [map_neg, map_sum, map_pow, fix_zeta T 1 hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_neg, map_sum, map_pow, fix_zeta T 1 hg]
   · have h1 := hζ.geom_sum_eq_zero (Fact.out : p.Prime).one_lt
     rw [mul_neg, Finset.mul_sum]
     have : ∀ i ∈ Finset.range p, (T.ζ 1 - 1) * ∑ m ∈ Finset.range i, T.ζ 1 ^ m = T.ζ 1 ^ i - 1 :=
@@ -134,8 +139,8 @@ theorem kum_add (T : Tower p Ω) {k : ℕ} {κ : Gal p Ω → ZMod (p ^ k)}
   rw [this, zpow_val, pow_add]
   ring
 
-theorem cong_val_add {k : ℕ} (a b : ZMod (p ^ k)) {o : Ω} (ho : IsInt p o) :
-    Cong p k (o * ((a + b).val : Ω)) (o * (a.val : Ω) + o * (b.val : Ω)) := by
+theorem cong_val_add {k : ℕ} (a b : ZMod (p ^ k)) {o : Ω} (ho : IsInt (p := p) o) :
+    Cong (p := p) k (o * ((a + b).val : Ω)) (o * (a.val : Ω) + o * (b.val : Ω)) := by
   haveI : NeZero (p ^ k) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
   rw [ZMod.val_add]
   refine ⟨-(o * (((a.val + b.val) / p ^ k : ℕ) : Ω)), (ho.mul (isInt_natCast _)).neg, ?_⟩
@@ -204,26 +209,45 @@ theorem L_dense : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Fie
 
 theorem L_tate : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ c : Gal p Ω → Ω, IntegralLocallyConstCochainModPow k (Ggeo p Ω ⊓ ⨅ n, Gn T n) c →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (c (g * h)) (c g + g (c h))) →
-  Cob1 k (Ggeo p Ω ⊓ ⨅ n, Gn T n) (fun g => (T.ζ j - 1) * c g) := GlobalTheory.T.geometric_h1_zeta_sub_one_kills
+  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (c (g * h)) (c g + g (c h))) →
+  Cob1 k (Ggeo p Ω ⊓ ⨅ n, Gn T n) (fun g => (T.ζ j - 1) * c g) :=
+  GlobalTheory.T.geometric_h1_zeta_sub_one_kills
 
 theorem L_inv : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
-  ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ x : Ω, IsInt p x →
-  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (g x) x) →
-  ∃ y : Ω, IsInt p y ∧ (∃ N, ∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) ∧
-    Cong p k ((T.ζ j - 1) * x) y := GlobalTheory.T.exists_finiteLevel_approx_of_geometric_invariant_modPow
+  ∀ (T : Tower p Ω) (k j : ℕ), 1 ≤ j → ∀ x : Ω, IsInt (p := p) x →
+  (∀ g ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (g x) x) →
+  ∃ y : Ω, IsInt (p := p) y ∧ (∃ N, ∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) ∧
+    Cong (p := p) k ((T.ζ j - 1) * x) y := by
+  intro p _ hp Ω _ _ hΩ T k j hj x hx hfix
+  obtain ⟨y₀, E, hy₀, hEH, huniq, hsum⟩ :=
+    GlobalTheory.T.smallTraces_subgroup_galois_towerTop p Ω hp hΩ T
+      (Ggeo p Ω ⊓ ⨅ n, Gn T n) inf_le_right {x} j hj
+  have hlevel := GlobalTheory.K5.GeoLevel.exists_level_of_fixed hΩ T _
+    (GlobalTheory.K5.FinLevel.sum_fixed _ E y₀ x hEH huniq)
+  refine ⟨∑ g ∈ E, g (y₀ * x), IsIntegral.sum _ (fun g _ => isInt_map g (hy₀.mul hx)), hlevel, ?_⟩
+  have hz : ∀ g ∈ E, ∃ z : Ω, IsInt (p := p) z ∧ g x - x = (p : Ω) ^ k * z :=
+    fun g hg => hfix g (hEH g hg)
+  choose! z hzi hzx using hz
+  refine ⟨-∑ g ∈ E, g y₀ * z g, ?_, ?_⟩
+  · exact (IsIntegral.sum _ fun g hg => (isInt_map g hy₀).mul (hzi g hg)).neg
+  · rw [← hsum, Finset.sum_mul, ← Finset.sum_sub_distrib, mul_neg, Finset.mul_sum,
+      ← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl fun g hg => ?_
+    rw [map_mul]
+    linear_combination (-(g y₀)) * hzx g hg
 
 theorem L_decomp : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo p Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
-  ∀ (N : ℕ) (y : Ω), IsInt p y → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) →
-  ∃ o w : Ω, IsInt p o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧ IsInt p w ∧
+  ∀ (N : ℕ) (y : Ω), IsInt (p := p) y → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g y = y) →
+  ∃ o w : Ω, IsInt (p := p) o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧ IsInt (p := p) w ∧
     (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g w = w) ∧
     (T.ζ 1 - 1) * y = (T.ζ 1 - 1) * o + (τ w - w) := GlobalTheory.T.kummerTower_integer_decomposition_by_tau
 
 theorem L_kern : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (τ : Gal p Ω), τ ∈ Ggeo p Ω → (∀ n, τ (T.qq n) = T.ζ n * T.qq n) →
-  ∀ (k N : ℕ) (w o : Ω), IsInt p w → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g w = w) →
-  (∀ g ∈ Ggeo p Ω, g o = o) → Cong p k (τ w - w) o → Cong p k o 0 := GlobalTheory.T.geometricGalois_coboundary_cong_zero_modPrimePow
+  ∀ (k N : ℕ) (w o : Ω), IsInt (p := p) w → (∀ g ∈ Ggeo p Ω ⊓ MulAction.stabilizer (Gal p Ω) (T.qq N), g w = w) →
+  (∀ g ∈ Ggeo p Ω, g o = o) → Cong (p := p) k (τ w - w) o → Cong (p := p) k o 0 :=
+  GlobalTheory.T.geometricGalois_coboundary_cong_zero_modPrimePow
 
 end GlobalTheory.K5.TopGeo
 
@@ -235,9 +259,9 @@ variable {p : ℕ} [Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) (hk : 1 ≤ k)
     (κ : Gal p Ω → ZMod (p ^ k)) (hκ : IsKum T k (Ggeo p Ω) (T.qq k) κ)
     (a : Gal p Ω → Ω) (ha : IntegralLocallyConstCochainModPow k (Ggeo p Ω) a)
-    (hcoc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong p k (a (g * h)) (a g + g (a h))) :
-    ∃ o : Ω, IsInt p o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧ ∃ X : Ω, IsInt p X ∧
-      ∀ g ∈ Ggeo p Ω, Cong p k ((p : Ω) ^ 3 * a g - o * ((κ g).val : Ω)) (g X - X) := by
+    (hcoc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong (p := p) k (a (g * h)) (a g + g (a h))) :
+    ∃ o : Ω, IsInt (p := p) o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧ ∃ X : Ω, IsInt (p := p) X ∧
+      ∀ g ∈ Ggeo p Ω, Cong (p := p) k ((p : Ω) ^ 3 * a g - o * ((κ g).val : Ω)) (g X - X) := by
   have hπ := isInt_pi (p := p) T
   set π : Ω := T.ζ 1 - 1 with hπdef
 
@@ -249,27 +273,27 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     (fun g hg h hh => hcoc g (mem_Hi hg).1 h (mem_Hi hh).1)
   obtain ⟨τ, hτG, hτq⟩ := L_tau p hp Ω hΩ T
   set a1 : Gal p Ω → Ω := fun g => π * a g - (g x1 - x1) with ha1
-  have a1coc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong p k (a1 (g * h)) (a1 g + g (a1 h)) := by
+  have a1coc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong (p := p) k (a1 (g * h)) (a1 g + g (a1 h)) := by
     intro g hg h hh
     have e : a1 g + g (a1 h) = π * (a g + g (a h)) - (g (h x1) - x1) := by
       simp only [ha1, map_sub, map_mul, hπdef, fix_pi T hg]; ring
     rw [e]
     exact cong_congr (by simp [ha1, AlgEquiv.mul_apply]) rfl
       (cong_sub (cong_mul_left hπ (hcoc g hg h hh)) (cong_refl k _))
-  have a1Hi : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (a1 h) 0 :=
+  have a1Hi : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (a1 h) 0 :=
     fun h hh => cong_congr rfl (sub_self _) (cong_sub (hx1c h hh) (cong_refl k (h x1 - x1)))
-  have isInt_a1 : ∀ g ∈ Ggeo p Ω, IsInt p (a1 g) := fun g hg =>
+  have isInt_a1 : ∀ g ∈ Ggeo p Ω, IsInt (p := p) (a1 g) := fun g hg =>
     (hπ.mul (ha.1 g hg)).sub ((isInt_map g hx1).sub hx1)
 
   set z := a1 τ with hz
-  have hzInt : IsInt p z := isInt_a1 τ hτG
-  have hzinv : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (h z) z := by
+  have hzInt : IsInt (p := p) z := isInt_a1 τ hτG
+  have hzinv : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (h z) z := by
     intro h hh
     have hG := (mem_Hi hh).1
     have h' := conj_Hi T hτG hτq hh
-    have e1 : Cong p k (a1 (h * τ)) (h z) :=
+    have e1 : Cong (p := p) k (a1 (h * τ)) (h z) :=
       cong_trans (a1coc h hG τ hτG) (cong_congr rfl (zero_add _) (cong_add (a1Hi h hh) (cong_refl k _)))
-    have e2 : Cong p k (a1 (τ * (τ⁻¹ * h * τ))) z :=
+    have e2 : Cong (p := p) k (a1 (τ * (τ⁻¹ * h * τ))) z :=
       cong_trans (a1coc τ hτG _ (mem_Hi h').1)
         (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add (cong_refl k z) (cong_map τ (a1Hi _ h'))))
     have e3 : τ * (τ⁻¹ * h * τ) = h * τ := by group
@@ -277,9 +301,9 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     exact cong_trans (cong_symm e1) e2
   obtain ⟨y, hy, ⟨N, hyN⟩, hyc⟩ := L_inv p hp Ω hΩ T k 1 le_rfl z hzInt hzinv
   obtain ⟨o, w, ho, hoG, hw, hwN, hdec⟩ := L_decomp p hp Ω hΩ T τ hτG hτq N y hy hyN
-  have hpo : IsInt p (π * o) := hπ.mul ho
+  have hpo : IsInt (p := p) (π * o) := hπ.mul ho
   set b : Gal p Ω → Ω := fun g => π ^ 2 * a1 g - (g w - w) - π * o * ((κ g).val : Ω) with hb
-  have bcoc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong p k (b (g * h)) (b g + g (b h)) := by
+  have bcoc : ∀ g ∈ Ggeo p Ω, ∀ h ∈ Ggeo p Ω, Cong (p := p) k (b (g * h)) (b g + g (b h)) := by
     intro g hg h hh
     have e : b g + g (b h) = π ^ 2 * (a1 g + g (a1 h)) - (g (h w) - w) -
         (π * o * ((κ g).val : Ω) + π * o * ((κ h).val : Ω)) := by
@@ -288,19 +312,19 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     refine cong_sub (cong_sub (cong_mul_left (hπ.pow 2) (a1coc g hg h hh)) (cong_of_eq' ?_)) ?_
     · simp [AlgEquiv.mul_apply]
     · rw [kum_add T hκ hg hh]; exact cong_val_add _ _ hpo
-  have bHi : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (b h) 0 := by
+  have bHi : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (b h) 0 := by
     intro h hh
     have hw' : h w = w := hwN h (mem_HN_of hh N)
     have := cong_mul_left (hπ.pow 2) (a1Hi h hh)
     refine cong_congr ?_ (by ring) this
     simp [hb, hw', kum_Hi T hκ hh]
-  have bτ : Cong p k (b τ) 0 := by
-    have h1 : Cong p k (π ^ 2 * z) (π * o + (τ w - w)) := by
+  have bτ : Cong (p := p) k (b τ) 0 := by
+    have h1 : Cong (p := p) k (π ^ 2 * z) (π * o + (τ w - w)) := by
       rw [← hdec]; exact cong_congr (by ring) rfl (cong_mul_left hπ hyc)
     have := cong_sub h1 (cong_refl k ((τ w - w) + π * o))
     refine cong_congr ?_ (by ring) this
     simp only [hb, kum_tau T hk hκ hτG hτq, hz]; ring
-  have bpow : ∀ s : ℕ, Cong p k (b (τ ^ s)) 0 := by
+  have bpow : ∀ s : ℕ, Cong (p := p) k (b (τ ^ s)) 0 := by
     intro s
     induction s with
     | zero => exact bHi 1 (one_mem _)
@@ -308,13 +332,13 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
       rw [pow_succ]
       exact cong_trans (bcoc _ (pow_mem hτG s) τ hτG)
         (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add ih (cong_map _ bτ)))
-  have bG : ∀ g ∈ Ggeo p Ω, Cong p k (b g) 0 := by
+  have bG : ∀ g ∈ Ggeo p Ω, Cong (p := p) k (b g) 0 := by
     classical
     intro g hg
     obtain ⟨S, hS⟩ := ha.2 g hg
     obtain ⟨s, h, hh, hag⟩ := L_dense p hp Ω hΩ T τ hτG hτq g hg (insert x1 (insert w (insert (T.qq k) S)))
     have hg' : τ ^ s * h ∈ Ggeo p Ω := mul_mem (pow_mem hτG s) (mem_Hi hh).1
-    have e0 : Cong p k (b (τ ^ s * h)) 0 :=
+    have e0 : Cong (p := p) k (b (τ ^ s * h)) 0 :=
       cong_trans (bcoc _ (pow_mem hτG s) h (mem_Hi hh).1)
         (cong_congr rfl (by rw [map_zero, add_zero]) (cong_add (bpow s) (cong_map _ (bHi h hh))))
     have hx1' := hag x1 (by simp)
@@ -322,7 +346,7 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
     have hq' := hag (T.qq k) (by simp)
     have ha' := hS _ hg' (fun x hx => hag x (by simp [hx]))
     have hκ' : κ (τ ^ s * h) = κ g := kum_eq T hκ hg' (κ g) (by rw [hq']; exact hκ g hg)
-    have e1 : Cong p k (b (τ ^ s * h)) (b g) := by
+    have e1 : Cong (p := p) k (b (τ ^ s * h)) (b g) := by
       simp only [hb, ha1, hx1', hw', hκ']
       exact cong_sub (cong_sub (cong_mul_left (hπ.pow 2)
         (cong_sub (cong_mul_left hπ ha') (cong_refl k _))) (cong_refl k _)) (cong_refl k _)
@@ -335,26 +359,26 @@ theorem coker_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) 
   · have := cong_mul_left (hr.pow 3) (bG g hg)
     have e := cong_add this (cong_refl k (g (r ^ 3 * (π ^ 2 * x1 + w)) - r ^ 3 * (π ^ 2 * x1 + w)))
     refine cong_congr ?_ (by ring) e
-    simp only [hb, ha1, map_mul, map_pow, map_add, hrG g hg, hπdef, fix_pi T hg, hpr]
+    simp only [hb, ha1, map_mul, map_pow, map_add (f := _), hrG g hg, hπdef, fix_pi T hg, hpr]
     ring
 
 theorem kern_part (hp : p ≠ 2) (hΩ : IsClo p Ω) (T : Tower p Ω) (k : ℕ) (hk : 1 ≤ k)
     (κ : Gal p Ω → ZMod (p ^ k)) (hκ : IsKum T k (Ggeo p Ω) (T.qq k) κ)
-    (o : Ω) (ho : IsInt p o) (hoG : ∀ g ∈ Ggeo p Ω, g o = o) (x : Ω) (hx : IsInt p x)
-    (hxc : ∀ g ∈ Ggeo p Ω, Cong p k (o * ((κ g).val : Ω)) (g x - x)) :
-    Cong p k ((p : Ω) ^ 3 * o) 0 := by
+    (o : Ω) (ho : IsInt (p := p) o) (hoG : ∀ g ∈ Ggeo p Ω, g o = o) (x : Ω) (hx : IsInt (p := p) x)
+    (hxc : ∀ g ∈ Ggeo p Ω, Cong (p := p) k (o * ((κ g).val : Ω)) (g x - x)) :
+    Cong (p := p) k ((p : Ω) ^ 3 * o) 0 := by
   have hπ := isInt_pi (p := p) T
   set π : Ω := T.ζ 1 - 1 with hπdef
   obtain ⟨τ, hτG, hτq⟩ := L_tau p hp Ω hΩ T
-  have hxinv : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong p k (h x) x := by
+  have hxinv : ∀ h ∈ Ggeo p Ω ⊓ ⨅ n, Gn T n, Cong (p := p) k (h x) x := by
     intro h hh
     have := cong_add (cong_symm (hxc h (mem_Hi hh).1)) (cong_refl k x)
     exact cong_congr (by ring) (by rw [kum_Hi T hκ hh]; simp) this
   obtain ⟨y, hy, ⟨N, hyN⟩, hyc⟩ := L_inv p hp Ω hΩ T k 1 le_rfl x hx hxinv
-  have h1 : Cong p k o (τ x - x) := by
+  have h1 : Cong (p := p) k o (τ x - x) := by
     have := hxc τ hτG
     rwa [kum_tau T hk hκ hτG hτq, mul_one] at this
-  have h2 : Cong p k (τ y - y) (π * o) := by
+  have h2 : Cong (p := p) k (τ y - y) (π * o) := by
     have e := cong_sub (cong_map τ hyc) hyc
     have e' : τ (π * x) - π * x = π * (τ x - x) := by
       rw [map_mul, hπdef, fix_pi T hτG]; ring
@@ -371,10 +395,10 @@ end
 theorem top : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (k : ℕ) (χ κ : Gal p Ω → ZMod (p ^ k)), IsKum T k (Ggeo p Ω) (T.qq k) κ →
   (∀ a : Gal p Ω → Ω, IntegralLocallyConstCochainModPow k (Ggeo p Ω) a → IsTwistedOneCocycle 0 k (Ggeo p Ω) χ a →
-      ∃ o : Ω, IsInt p o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧
+      ∃ o : Ω, IsInt (p := p) o ∧ (∀ g ∈ Ggeo p Ω, g o = o) ∧
         IsTwistedOneCoboundary 0 k (Ggeo p Ω) χ (fun g => (p : Ω) ^ c * a g - o * ((κ g).val : Ω))) ∧
-  (∀ o : Ω, IsInt p o → (∀ g ∈ Ggeo p Ω, g o = o) →
-      IsTwistedOneCoboundary 0 k (Ggeo p Ω) χ (fun g => o * ((κ g).val : Ω)) → Cong p k ((p : Ω) ^ c * o) 0) := by
+  (∀ o : Ω, IsInt (p := p) o → (∀ g ∈ Ggeo p Ω, g o = o) →
+      IsTwistedOneCoboundary 0 k (Ggeo p Ω) χ (fun g => o * ((κ g).val : Ω)) → Cong (p := p) k ((p : Ω) ^ c * o) 0) := by
   intro p _ hp
   refine ⟨3, fun Ω _ _ hΩ T k χ κ hκ => ?_⟩
   rcases Nat.eq_zero_or_pos k with rfl | hk

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasCompactSupportDescend
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasCompactSupportDescend
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,6 @@ variable [ValuativeRel k]
 def cell (ϖ : kˣ) (a : Fin m → ℤ) : Set (GL (Fin m) k) :=
   {g | ∃ u ∈ unipB k (Fin m), ∃ κ ∈ KO k (Fin m), g = u * tD ϖ a * κ}
 
-variable (m) in
-
-def wt (a : Fin m → ℤ) : ℤ := ∑ i : Fin m, ((m : ℤ) - 1 - 2 * (i : ℕ)) * a i
 
 theorem val_tD (ϖ : kˣ) (a : Fin m → ℤ) : (tD ϖ a).val = Matrix.diagonal fun i => ((ϖ ^ a i : kˣ) : k) :=
   val_diagT k _
@@ -31,9 +32,6 @@ theorem tD_add (ϖ : kˣ) (a b : Fin m → ℤ) : tD ϖ (a + b) = tD ϖ a * tD �
   congr 1
   funext i
   simp [_root_.zpow_add]
-
-theorem mul_mem_cell {ϖ : kˣ} {a : Fin m → ℤ} {u : GL (Fin m) k} (hu : u ∈ unipB k (Fin m)) {κ : GL (Fin m) k}
-    (hκ : κ ∈ KO k (Fin m)) : u * tD ϖ a * κ ∈ cell ϖ a := ⟨u, hu, κ, hκ, rfl⟩
 
 variable [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
@@ -87,7 +85,7 @@ theorem eq_of_mem_cell {ϖ : kˣ} (hϖ : ord k ϖ = 1) {a b : Fin m → ℤ} {g 
     rw [Units.val_inv_eq_inv_val, map_inv₀] at v2
     have hpos : 0 < valuation k (y : k) := zero_lt_iff.2 (by simp)
     exact le_antisymm v1 ((inv_le_one₀ hpos).1 v2)
-  have h3 := ord_eq_zero hv
+  have h3 : ord k y = 0 := by simp [ord, hv]
   rw [ord_zpow, hϖ, mul_one] at h3
   omega
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory Filter Topology
@@ -105,9 +109,10 @@ lemma dual_mem {ι : Type} [Fintype ι] (c : ι → Z →L[ℝ] ℂ) (hsep : ∀
       funext j
       simp only [Finset.sum_apply, Pi.add_apply, Pi.smul_apply, Pi.single_apply]
       simp [T, Finset.sum_add_distrib, Complex.re_add_im]
-    rw [h0, h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h0, h1, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have : (fun z => ((ℓ z : ℝ) : ℂ)) = ∑ k, (((φ (Pi.single k 1) : ℝ) : ℂ) • (fun z => (((c k z).re : ℝ) : ℂ)) +
       ((φ (Pi.single k Complex.I) : ℝ) : ℂ) • (fun z => (((c k z).im : ℝ) : ℂ))) := by
     funext z
@@ -165,7 +170,7 @@ lemma char_zero (lam : Measure Z) [lam.IsAddHaarMeasure] (h : Z → ℝ) (hc : C
       push_cast
       rw [mul_pow]
       ring
-    rw [hF, integral_finset_sum]
+    rw [hF, integral_finsetSum]
     · refine Finset.sum_eq_zero fun n _ => ?_
       rw [integral_const_mul, integral_complex_ofReal, hm ℓ n]
       simp

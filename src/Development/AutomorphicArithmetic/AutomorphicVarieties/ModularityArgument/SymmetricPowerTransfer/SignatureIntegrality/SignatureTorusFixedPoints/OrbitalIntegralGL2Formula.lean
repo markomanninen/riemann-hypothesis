@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ScalarComm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.Contract
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ConjDiag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ScalarComm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.Contract
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.ConjDiag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -186,10 +190,10 @@ theorem UpperTheory.V.Z.Sym.Sig.orbital_integral_degree_one : UpperTheory.V.Z.Sy
             group
         by_cases hm : y⁻¹ * (g₀ * dg ![a, a⁻¹] * g₀⁻¹) * MonoidHom.id _ y ∈ V.DC ![t, t⁻¹]
         · simp only [Lev.quaternionDoubleCosetIndicator, Lev.fZ, Glob.one]
-          rw [if_pos hm, dif_pos (hiff.mp hm)]
+          rw [if_pos hm, dite_eq_left (hiff.mp hm)]
           simp
         · simp only [Lev.quaternionDoubleCosetIndicator, Lev.fZ, Glob.one]
-          rw [if_neg hm, dif_neg (mt hiff.mpr hm)]
+          rw [if_neg hm, dite_eq_right (mt hiff.mpr hm)]
       rw [orb_congr' ι _ _ _ _ hX, E]
       have hsq : a / a⁻¹ / (![t, t⁻¹] 0 / ![t, t⁻¹] 1) = (a / t) * (a / t) := by
         ext
@@ -226,7 +230,7 @@ theorem UpperTheory.V.Z.Sym.Sig.orbital_integral_degree_one : UpperTheory.V.Z.Sy
     by_contra hn
     apply hg
     simp only [Lev.twistedCentralTestFunction, Lev.fZ]
-    rw [dif_neg hn, mul_zero]
+    rw [dite_eq_right hn, mul_zero]
   · have hχH : ∀ u ∈ V.H, χ u = 1 := fun u hu => hχ u (V.H_le hu)
     have E := (orbZ k V χ hχH ![t, 1] ht1 T p q hpq g₀ ι hι (a * b) b habb).2
     have hfk : V.twistedCentralTestFunction χ t = fun g => (((χ t)⁻¹ : ℂˣ) : ℂ) * V.fZ χ ![t, 1] g := rfl

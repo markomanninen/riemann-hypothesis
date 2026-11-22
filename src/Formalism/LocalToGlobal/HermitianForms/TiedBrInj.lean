@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
 
 noncomputable section
 

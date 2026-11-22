@@ -1,4 +1,8 @@
-import Formalism.RankGapBounds.RandomSubsetCounterexample
+module
+
+public import Formalism.RankGapBounds.RandomSubsetCounterexample
+
+@[expose] public section
 
 namespace Formalism.RankGapBounds.LocalQuadraticParts
 
@@ -92,8 +96,6 @@ lemma pm_key_Y (m x y Y : ℝ) (hx : 1 ≤ x) (hy : 1 ≤ y) (h1 : x * y / 2 ≤
   apply div_le_div_of_mul_le_mul_of_pos' hm0 (mul_pos hx0 hy0)
   nlinarith [mul_le_mul_of_nonneg_right hlmY (mul_pos hx0 hy0).le,
     mul_le_mul_of_nonneg_left h1 hlY]
-
-noncomputable def pmW (k : ℕ) : ℝ := (1 + Real.log ((k : ℝ) + 1)) / ((k : ℝ) + 1) ^ 2
 
 private theorem natCast_zmod_eq_zero_of_dvd {M a : ℕ} (h : M ∣ a) : (a : ZMod M) = 0 := by
   exact (CharP.cast_eq_zero_iff (ZMod M) M a).mpr h

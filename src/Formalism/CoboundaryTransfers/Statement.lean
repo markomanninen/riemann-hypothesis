@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +22,11 @@ namespace Base
 
 variable {O A : Type} [CommRing O] [CommRing A] [Algebra O A] (B : Base O A)
 
-def QLin : Prop := B.Q = B.X + (B.p : A)
-
 def PhiX (k : ℕ) : Prop := ∃ v : A, B.φ B.X = B.X * B.Q ^ k * v
 
 def GammaQ : Prop := ∃ v : A, IsUnit v ∧ (∃ t : A, v = 1 + B.X * t) ∧ B.γ B.Q = v * B.Q
 
 def GammaX (u : O) : Prop := ∃ t : A, B.γ B.X = B.X * (algebraMap O A u + B.X * t)
-
-def GammaModX : Prop := ∀ a : A, ∃ t : A, B.γ a - a = B.X * t
 
 end Base
 
@@ -51,9 +51,6 @@ namespace WachMod
 variable {B : Base O A} {M : ℕ} {D : Type} [AddCommGroup D] [Module A D] [Module O D]
   [IsScalarTower O A D] (W : WachMod B M D)
 
-def HeightLower (k : ℕ) : Prop :=
-  ∀ y ∈ W.N, B.Q ^ k • y ∈ Submodule.span A (W.φ '' (W.N : Set D))
-
 def QInv (y : D) : Prop := B.Q ^ M • y ∈ W.N
 
 def XN (z : D) : Prop := ∃ n ∈ W.N, z = B.X • n
@@ -61,8 +58,6 @@ def XN (z : D) : Prop := ∃ n ∈ W.N, z = B.X • n
 def C1 (y z : D) : Prop := W.QInv y ∧ W.XN z
 
 def C2 (ω : D) : Prop := ∃ y, W.QInv y ∧ ω = B.X • y
-
-def d0 (x : D) : D × D := (W.φ x - x, W.γ x - x)
 
 def d1 (y z : D) : D := (W.γ y - y) - (W.φ z - z)
 
@@ -86,9 +81,6 @@ def IntRep (pr : D × D) : Prop := (∃ k : ℕ, B.Q ^ k • pr.1 ∈ W.N) ∧ W
 def Zf : Submodule O (D × D) :=
   Submodule.span O {pr | pr ∈ W.Z1 ∧ ∃ a : ℕ, ∃ b ∈ W.B1, W.IntRep ((B.p ^ a : ℕ) • pr + b)} ⊔ W.B1
 
-def FIN (g : ℕ) : Prop :=
-  ∃ s : Finset (D × D), s.card ≤ g ∧ Submodule.span O (s : Set (D × D)) ⊔ W.B1 = W.Zf
-
 end WachMod
 
 variable {B : Base O A} {M : ℕ}
@@ -106,19 +98,6 @@ structure Hom (W : WachMod B M D) (W' : WachMod B M D') where
   N_le : ∀ x ∈ W.N, f x ∈ W'.N
 
 namespace Hom
-
-def id (W : WachMod B M D) : Hom W W where
-  f := LinearMap.id
-  φ_comm := fun _ => rfl
-  γ_comm := fun _ => rfl
-  N_le := fun _ hx => hx
-
-def comp {W : WachMod B M D} {W' : WachMod B M D'} {W'' : WachMod B M D''}
-    (g : Hom W' W'') (f : Hom W W') : Hom W W'' where
-  f := g.f.comp f.f
-  φ_comm := fun x => by simp [f.φ_comm, g.φ_comm]
-  γ_comm := fun x => by simp [f.γ_comm, g.γ_comm]
-  N_le := fun x hx => g.N_le _ (f.N_le x hx)
 
 variable {W : WachMod B M D} {W' : WachMod B M D'} (F : Hom W W')
 
@@ -153,8 +132,6 @@ variable {D₀ D₁ D₂ : Type}
     [AddCommGroup D₂] [Module A D₂] [Module O D₂] [IsScalarTower O A D₂]
     {W₀ : WachMod B M D₀} {W₁ : WachMod B M D₁} {W₂ : WachMod B M D₂}
 
-def SES.Surj (S : SES W₀ W₁ W₂) : Prop := Function.Surjective S.π.f
-
 def CokerKilled (S : SES W₀ W₁ W₂) (e : ℕ) : Prop :=
   ∀ n ∈ W₂.N, ∃ n₁ ∈ W₁.N, S.π.f n₁ = ((B.p : O) ^ e) • n
 
@@ -172,22 +149,6 @@ namespace WachMod
 
 variable {D : Type} [AddCommGroup D] [Module A D] [Module O D] [IsScalarTower O A D]
   (W : WachMod B M D)
-
-def QInvSub : Submodule A D := W.N.comap (B.Q ^ M • LinearMap.id)
-
-def XNSub : Submodule A D := W.N.map (B.X • LinearMap.id)
-
-def ZInt : Submodule O (D × D) :=
-  ((W.QInvSub.restrictScalars O).prod (W.XNSub.restrictScalars O)) ⊓ W.Z1
-
-def BInt : Submodule O (D × D) :=
-  (W.N.restrictScalars O).map ((W.φ - LinearMap.id).prod (W.γ - LinearMap.id))
-
-abbrev integralCohomology : Type := ↥W.ZInt ⧸ W.BInt.comap W.ZInt.subtype
-
-abbrev H1 : Type := ↥W.Z1 ⧸ W.B1.comap W.Z1.subtype
-
-abbrev finiteCohomology : Type := ↥W.Zf ⧸ W.B1.comap W.Zf.subtype
 
 end WachMod
 

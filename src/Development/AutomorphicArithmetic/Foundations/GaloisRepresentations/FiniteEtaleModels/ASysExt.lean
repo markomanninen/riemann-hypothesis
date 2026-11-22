@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.GalOfKer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.GalOfKer
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -174,7 +178,7 @@ private theorem sys_ext_of_split {G : GDatum} {p : ℕ} {f : ℕ → G.La →+ G
       have hQd : Q n ∣ Q (n * m) := by
         rw [hQnm]
         exact dvd_mul_right _ _
-      have cQ : (Q n * Q m).Coprime p := Nat.Coprime.mul (hQp n hn) (hQp m hm)
+      have cQ : (Q n * Q m).Coprime p := Nat.Coprime.mul_left (hQp n hn) (hQp m hm)
       obtain ⟨s2a, s2b⟩ := s2 (Q n) (Q m) (hQpos n hn) (hQpos m hm) cQ
       refine ⟨fun x => eq_of_dv (key n hn _ ?_ ?_), keyZ n hn _ ?_ ?_⟩
       · have h := Dv.sub (Dv.of_dvd hPd (LP (n * m) hnm x)) (LP n hn x)
@@ -242,7 +246,7 @@ private theorem sys_ext_of_split {G : GDatum} {p : ℕ} {f : ℕ → G.La →+ G
         have h2 : Dv (Q n) (e₂ n • f (Q n) (x - y₀)) := Dv.of_int (hQ n hn) _
         have h3 : Dv (Q n) (f (Q n) y₀ - κ • x) := dv_of_eq ⟨z₀, hy⟩
         convert Dv.add (Dv.add h1 h2) h3 using 1
-        simp only [map_add, map_zsmul, map_sub, he₂ n hn]
+        simp only [map_add (f := _), map_zsmul, map_sub, he₂ n hn]
         module
   · intro n hn hnp x
     apply eq_of_dv

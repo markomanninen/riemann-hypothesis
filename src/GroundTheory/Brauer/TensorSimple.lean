@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Brauer
@@ -17,7 +22,7 @@ theorem coeff_tmul_one_mul (a : A) (x : A ⊗[K] B) (i : κ) :
   | zero => simp
   | tmul a' b =>
     simp [Algebra.TensorProduct.tmul_mul_tmul]
-  | add x y hx hy => simp only [mul_add, map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [mul_add, map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem coeff_mul_tmul_one (a : A) (x : A ⊗[K] B) (i : κ) :
     TensorProduct.equivFinsuppOfBasisRight 𝒞 (x * (a ⊗ₜ[K] (1 : B))) i =
@@ -26,7 +31,7 @@ theorem coeff_mul_tmul_one (a : A) (x : A ⊗[K] B) (i : κ) :
   | zero => simp
   | tmul a' b =>
     simp [Algebra.TensorProduct.tmul_mul_tmul]
-  | add x y hx hy => simp only [add_mul, map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [add_mul, map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem support_coeff_tmul_one_mul (a : A) (x : A ⊗[K] B) :
     (TensorProduct.equivFinsuppOfBasisRight 𝒞 ((a ⊗ₜ[K] (1 : B)) * x)).support ⊆
@@ -108,11 +113,6 @@ theorem center_tensorProduct_eq_map_includeLeft [Algebra.IsCentral K A] :
   rw [← e.apply_symm_apply x, ← hbx]
   simp [e]
 
-instance isCentral_tensorProduct [Algebra.IsCentral K A] [Algebra.IsCentral K B] :
-    Algebra.IsCentral K (A ⊗[K] B) where
-  out := by
-    rw [center_tensorProduct_eq_map_includeRight, Algebra.IsCentral.center_eq_bot, Algebra.map_bot]
-
 end Central
 
 section Simple
@@ -146,7 +146,7 @@ theorem exists_one_tmul_mem_of_ne_bot [Algebra.IsCentral K A] [IsSimpleRing A]
     (by
       rintro _ _ ⟨y, hy, hys, rfl⟩ ⟨z, hz, hzs, rfl⟩
       refine ⟨y + z, I.add_mem hy hz, ?_, by simp⟩
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Finsupp.support_add.trans (Finset.union_subset hys hzs))
     (by
       rintro _ ⟨y, hy, hys, rfl⟩
@@ -228,12 +228,6 @@ section CSA
 universe u v
 
 variable {K : Type u} [Field K]
-
-noncomputable def tensorCSA (A B : CSA.{u, v} K) : CSA.{u, v} K where
-  toAlgCat := AlgCat.of K (A ⊗[K] B)
-
-@[simp]
-theorem tensorCSA_carrier (A B : CSA.{u, v} K) : (tensorCSA A B : Type v) = (A ⊗[K] B) := rfl
 
 end CSA
 

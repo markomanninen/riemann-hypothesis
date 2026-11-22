@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionLocallyIffOfPresheafFacts
+module
+
+public import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionLocallyIffOfPresheafFacts
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
@@ -29,7 +33,8 @@ theorem ring_core {R K : Type} [CommRing R] [Field K] (φ : R →+* K) (q : ℕ)
   refine ⟨n, hn, ∑ i ∈ Finset.range q, t ^ i, ?_, ?_, hζK⟩
   · have h1 : φ t = 1 := by
       rw [ht, map_mul, map_pow, ← hnx, ← pow_add, Nat.add_sub_cancel' hn.le, hζK.pow_eq_one]
-    simp [map_sum, map_pow, h1, hqK]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_pow, h1, hqK]
   · have hg : (∑ i ∈ Finset.range q, t ^ i) * (t - 1) = 0 := by
       rw [geom_sum_mul, ht, mul_pow, hx, ← pow_mul, mul_comm (q - n) q, pow_mul, hζq, one_pow,
         one_mul, sub_self]

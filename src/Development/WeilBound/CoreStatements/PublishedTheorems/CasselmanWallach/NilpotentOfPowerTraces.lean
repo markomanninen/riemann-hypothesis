@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
-import GroundTheory.GlobalFields.Artin.LogCharpoly
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+public import GroundTheory.GlobalFields.Artin.LogCharpoly
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem coeff_succ {R : Type} [CommRing R] {n : ℕ} (N : Matrix (Fin n) (Fin n)
     have hc := GroundTheory.Global.coe_derivative_charpolyRev N
     rw [hps, mul_zero] at hc
     exact Polynomial.coe_eq_zero_iff.mp hc
-  have hm := congrArg (fun p => Polynomial.coeff p m) hd
+  have hm := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p m) hd
   simp only [Polynomial.coeff_derivative, Polynomial.coeff_zero] at hm
   rw [mul_comm]
   exact hm

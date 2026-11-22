@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RealisedOfCoordArc
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RealisedOfCoordArc
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineMapLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem jb_FilV_sep (y : V ⊗[Qp] BdR) (hy : ∀ a, y ∈ FilV PD (LL := LL) (V
         TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
       exact (PD.Fil a).smul_of_tower_mem _ f.2
     | add x y hx hy =>
-      rw [map_add, map_add, Finsupp.add_apply]
+      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
       exact add_mem hx hy
   have h0 : e y = 0 := by
     ext i

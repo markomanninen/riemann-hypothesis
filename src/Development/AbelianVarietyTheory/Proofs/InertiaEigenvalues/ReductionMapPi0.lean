@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CardLeOfSpan
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present GlobalTheory.RedFun Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries TensorProduct
 
@@ -16,14 +21,15 @@ theorem map_pi0 : ∀ {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Typ
         PowerSeries.coeff_map, PowerSeries.coeff_zero_eq_constantCoeff_apply,
         PowerSeries.binomialSeries_constantCoeff, map_one, sub_self]
     unfold GlobalTheory.IndefiniteRowSideFullHecke.OnePlusPowerCharacters.deltaPi
-    rw [← PowerSeries.coe_substAlgHom ha, map_add, map_one, PowerSeries.substAlgHom_X ha]
+    rw [← PowerSeries.coe_substAlgHom ha, map_add (f := _), map_one, PowerSeries.substAlgHom_X ha]
     ring
 
   have hl : (l : k⟦X⟧) = 0 := by
     rw [← map_natCast (PowerSeries.C : k →+* k⟦X⟧), CharP.cast_eq_zero, map_zero]
   unfold LocWach.π₀₁
-  rw [map_add, map_sub, map_one, map_natCast, hp, hl, sub_zero, map_sum, ← Finset.sum_coe_sort W.DelF,
-    Finset.sum_congr rfl fun δ _ => by rw [he, map_add, map_one, PowerSeries.map_X, hsub],
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), map_sub, map_one, map_natCast, hp, hl, sub_zero, map_sum, ← Finset.sum_coe_sort W.DelF,
+    Finset.sum_congr rfl fun δ _ => by rw [he, map_add (f := _), map_one, PowerSeries.map_X, hsub],
     ← finsum_comp_equiv e, finsum_eq_sum_of_fintype]
 
 end GlobalTheory.RedFun

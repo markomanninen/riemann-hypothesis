@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.LocalSaturationContraction
 
@@ -19,10 +23,6 @@ def satAt (b : B) (P : Ideal B) [hP : P.IsPrime] : Ideal B where
     have : s * (c • x) = c * (s * x) := by rw [smul_eq_mul]; ring
     rw [this]
     exact Ideal.mul_mem_left _ _ hx
-
-def contrAt (b : B) (P : Ideal B) [P.IsPrime] : Ideal B :=
-  (Ideal.span {algebraMap B (Localization.AtPrime P) b}).comap
-    (algebraMap B (Localization.AtPrime P))
 
 variable (b : B) (P : Ideal B) [P.IsPrime]
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BoundedDenominatorsOfBeta
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsHeckeLOfHasInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactorsStatement
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ClassTermBoundBetaOfToricDenominator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BoundedDenominatorsOfBeta
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsHeckeLOfHasInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToricSumEqHeckeLValueMulAuxiliaryFactorsStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ClassTermBoundBetaOfToricDenominator
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem not_isNormPow {E : Type} [Field E] [NumberField E] {I : Type} [Fintype I
   have hv : v.asIdeal ∣ 𝔣 := Ideal.dvd_iff_le.2 hle
   obtain ⟨P, -, -, hP, -⟩ := (hb.2.2 v hv).1
   exact GlobalTheory.HeckeOne.not_isNormPow_of_not_unrAt
-    (((hχ.2.2.2 v P hP).2 (Finset.notMem_empty v)).not_unrAt (multiplicity_ne_zero.2 hv))
+    (((hχ.2.2.2 v P hP).2 (Finset.notMem_empty v)).not_unrAt ((multiplicity_ne_zero (Ideal.finiteMultiplicity hM.ne_top hb.1)).2 hv))
 
 section Record
 
@@ -54,7 +58,8 @@ theorem sum_ne_zero_at (hL : ToricSumFormula) {i : X.Tw} {ι : ℂ →+* Kbar X 
     t1.unique ((isToricSum_iff _ _ _ _ _ _).2 ⟨hfin, T, hT, (finsum_eq_sum_of_fintype _).symm⟩)
   intro hz
   have h1 := congrArg (algebraMap (FractionRing (X.O i)) (Kbar X i)) hz
-  rw [map_sum, map_zero, Finset.sum_congr rfl fun δ _ => hδ δ, ← Finset.mul_sum, ← map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero, Finset.sum_congr rfl fun δ _ => hδ δ, ← Finset.mul_sum, ← map_sum] at h1
   refine mul_ne_zero hu ((map_ne_zero ι).2 ?_) h1
   rw [e, ← Finset.sum_fiberwise Finset.univ (fun q => π q⁻¹)] at h0
   convert h0 using 2 with δ

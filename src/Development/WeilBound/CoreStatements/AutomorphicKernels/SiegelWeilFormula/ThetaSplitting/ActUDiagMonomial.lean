@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.NullSec
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,14 +28,15 @@ theorem actU_X (u : Matrix (Fin m) (Fin m) ℂ) (a : Fin m) (i : Fin n) (b : Boo
 
 theorem lin_lf (φ : PX m n →ₗ[ℂ] PX m n) (b : Bool) (N M : Matrix (Fin m) (Fin m) ℂ) (a : Fin m) (i : Fin n)
     (h : ∀ c, φ (X (c, i, b)) = lf b N c i) : φ (lf b M a i) = lf b (M * N) a i := by
-  simp only [lf, C_mul', map_sum, map_smul, h, Finset.smul_sum, smul_smul, mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lf, C_mul', map_sum, map_smul, h, Finset.smul_sum, smul_smul, Matrix.mul_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun e _ => ?_
   rw [Finset.sum_mul]
   exact Finset.sum_congr rfl fun x _ => C_mul'.symm
 
 theorem mstar_mul (A B : Matrix (Fin m) (Fin m) ℂ) : (A * B).map star = A.map star * B.map star := by
-  ext i j; simp [mul_apply, star_sum]
+  ext i j; simp [Matrix.mul_apply, star_sum]
 
 theorem am_mul (b : Bool) (A B : Matrix (Fin m) (Fin m) ℂ) : am b (A * B) = am b A * am b B := by
   cases b <;> simp [am, mstar_mul]
@@ -51,7 +56,7 @@ theorem actU_one (P : PX m n) : actU 1 P = P := by
   have h : actU (n := n) (1 : Matrix (Fin m) (Fin m) ℂ) = AlgHom.id ℂ _ := by
     apply MvPolynomial.algHom_ext
     rintro ⟨a, i, b⟩
-    cases b <;> simp [actU, one_apply]
+    cases b <;> simp [actU, Matrix.one_apply]
   rw [h]; rfl
 
 theorem evX_actU (u : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) (v : Matrix (Fin m) (Fin n) ℂ) :
@@ -62,8 +67,8 @@ theorem evX_actU (u : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) (v : Matrix (Fin 
     apply MvPolynomial.algHom_ext
     rintro ⟨a, i, b⟩
     cases b
-    · simp [actU, mul_apply]
-    · simp [actU, mul_apply, star_sum]
+    · simp [actU, Matrix.mul_apply]
+    · simp [actU, Matrix.mul_apply, star_sum]
   have e := congrArg (fun f : PX m n →ₐ[ℂ] ℂ => f P) h
   simp only [AlgHom.comp_apply, coe_aeval_eq_eval] at e
   exact e
@@ -111,7 +116,7 @@ theorem actU_dY_actU (V : Matrix (Fin m) (Fin m) ℂ) (hV : V ∈ unitaryGroup (
   | C a =>
     have : actU (n := n) (star V) (C a) = C a := by simp [actU]
     rw [this, derivation_C, map_zero, derivation_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p k hp =>
     have key : actU V (dY Y (actU (star V) (X k))) = dY (star V * Y * V) (X k) := by
       obtain ⟨a, i, b⟩ := k
@@ -122,7 +127,7 @@ theorem actU_dY_actU (V : Matrix (Fin m) (Fin m) ℂ) (hV : V ∈ unitaryGroup (
       · have h1 : (star V).map star = Vᵀ := by ext c e; simp [star_eq_conjTranspose]
         have h2 : V.map star = (star V)ᵀ := by ext c e; simp [star_eq_conjTranspose]
         simp only [am, dm, if_true, h1, h2, transpose_mul, Matrix.mul_neg, Matrix.neg_mul, Matrix.mul_assoc]
-    rw [map_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, hid, hid, hp, key,
+    rw [map_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, hid, hid, hp, key,
       Derivation.leibniz, smul_eq_mul, smul_eq_mul]
 
 theorem der_monomial (D : Derivation ℂ (PX m n) (PX m n)) (w : Fin m × Fin n × Bool → ℂ)
@@ -135,7 +140,7 @@ theorem der_monomial (D : Derivation ℂ (PX m n) (PX m n)) (w : Fin m × Fin n 
       rw [X_pow_eq_monomial (R := ℂ), monomial_mul, one_mul]
     rw [e1, Derivation.leibniz, Derivation.leibniz_pow, hD, ih, Finsupp.sum_add_index' (fun _ => by simp)
       (fun _ _ _ => by push_cast; ring), Finsupp.sum_single_index (by simp)]
-    simp only [smul_eq_mul, nsmul_eq_mul, map_add, map_mul, map_natCast]
+    simp only [smul_eq_mul, nsmul_eq_mul, map_add (f := _), map_mul, map_natCast]
     rcases Nat.eq_zero_or_pos e with h0 | hpos
     · subst h0; simp
     · have : (X k : PX m n) ^ e = X k ^ (e - 1) * X k := by
@@ -239,9 +244,10 @@ theorem kill_diag (Λ : PX m n →ₗ[ℂ] ℂ) (hΛ : ∀ u ∈ unitaryGroup (F
     · push Not at h
       obtain ⟨a, ha⟩ := h
       rw [kill_charged Λ hΛ s a ha, mul_zero]
-  rw [P.as_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, map_sum]
   refine Finset.sum_eq_zero fun s _ => ?_
-  rw [show (monomial s (coeff s P) : PX m n) = coeff s P • monomial s 1 by rw [smul_monomial, smul_eq_mul, mul_one],
+  rw [show (monomial s (AddMonoidAlgebra.coeff P s) : PX m n) = AddMonoidAlgebra.coeff P s • monomial s 1 by rw [smul_monomial, smul_eq_mul, mul_one],
     (dY (diagonal d)).map_smul, map_smul, hmon, smul_zero]
 
 theorem kill_herm (Λ : PX m n →ₗ[ℂ] ℂ) (hΛ : ∀ u ∈ unitaryGroup (Fin m) ℂ, ∀ P, Λ (actU u P) = Λ P)
@@ -275,7 +281,7 @@ theorem kill_dY (Λ : PX m n →ₗ[ℂ] ℂ) (hΛ : ∀ u ∈ unitaryGroup (Fin
       simp only [Matrix.add_apply, Matrix.smul_apply, Matrix.sub_apply, smul_eq_mul]
       field_simp
       ring
-  rw [eY, dY_add, dY_smul, Derivation.add_apply, Derivation.smul_apply, map_add, map_smul, kill_herm Λ hΛ _ h1,
+  rw [eY, dY_add, dY_smul, Derivation.add_apply, Derivation.smul_apply, map_add (f := _), map_smul, kill_herm Λ hΛ _ h1,
     kill_herm Λ hΛ _ h2, smul_zero, add_zero]
 
 theorem dsum_apply {ι : Type} (s : Finset ι) (D : ι → Derivation ℂ (PX m n) (PX m n)) (P : PX m n) :

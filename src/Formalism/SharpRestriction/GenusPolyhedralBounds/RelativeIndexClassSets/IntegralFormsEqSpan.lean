@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.SectionMonomialGenerators
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.SectionMonomialGenerators
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem isBaseChange_span {K K' V : Type*} [Field K] [Field K'] [Algebra K K'] [
       rw [LinearMap.liftBaseChange_tmul, LinearMap.baseChange_tmul, Submodule.coe_smul, hf, TensorProduct.smul_tmul',
         smul_eq_mul, mul_one]
       rfl
-    | add x y hx hy => rw [map_add, map_add, Submodule.coe_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), Submodule.coe_add, hx, hy]
   have hbij : Function.Bijective (f.liftBaseChange K') := by
     constructor
     · intro x y hxy
@@ -70,10 +74,6 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
 variable (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ) (ka : WeightFamilies.Wt D j)
 
 def embV (F : B.Cusp j ka) : ↥(Vw X la N ka) := ⟨emb X la N (X.inc ka F), emb_mem_Vw X la N ka F⟩
-
-theorem coe_embV (F : B.Cusp j ka) : (embV X la N ka F : Rp X la N) = emb X la N (X.inc ka F) := rfl
-
-theorem jW_toW (F : B.Mlat j ka) : jW X la N ka (toW X la ka F) = embV X la N ka F := rfl
 
 theorem inW_loc_eq_span (M : Submodule (𝓞 B.KO) X.Forms) (hM : M ≤ X.Msup ka) :
     T0.inW X ka la (X.loc la M) =

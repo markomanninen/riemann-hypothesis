@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenMapStalkSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtFractionNoetherianClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
@@ -59,7 +63,7 @@ theorem exists_pow_mul_mem {U : X.Opens} (hU : IsAffineOpen U) (hg : genPt ξ �
     { carrier := {u | ∃ t, val U hg t = val U hg u * a}
       add_mem' := by
         rintro u v ⟨t, ht⟩ ⟨s, hs⟩
-        exact ⟨t + s, by rw [map_add, map_add, ht, hs, add_mul]⟩
+        exact ⟨t + s, by rw [map_add (f := _), map_add (f := _), ht, hs, add_mul]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro c u ⟨t, ht⟩
@@ -292,7 +296,7 @@ theorem coordTie_int_of_finite : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ
     · rw [map_zero]
       exact S.zero_mem
     · intro a b _ _ ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact S.add_mem ha hb
     · intro k a _ ha
       have e : algebraMap o Ω (k • a) = k • algebraMap o Ω a := map_zsmul _ _ _

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaRecognitionLabelsAgreeOfIso
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaRecognitionLabelsAgreeOfIso
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+
+@[expose] public section
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex
 open scoped BigOperators
 set_option maxHeartbeats 1000000 in

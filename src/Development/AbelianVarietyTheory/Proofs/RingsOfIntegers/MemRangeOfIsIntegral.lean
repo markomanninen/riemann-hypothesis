@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PushMemHarmK
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ColumnMapShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FFVMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PushMemHarmK
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ColumnMapShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FFVMap
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -20,7 +24,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : D
 
 theorem push_letB (ga : Matrix (Fin n) (Fin n) E) (σ : E →+* ℂ) (i : Fin (Dw.mult σ)) (v : Fin n → E) :
     GlobalTheory.IndefiniteRowSideFullHecke.UnitaryDetClass.push c ga (letB c σ i v) = letB c σ i (ga.mulVec v) := by
-  simp only [letB, map_sum, map_mul, MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, GlobalTheory.PushHarm.push_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [letB, map_sum, map_mul, MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, GlobalTheory.PushHarm.push_X,
     Matrix.mulVec, dotProduct, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun j _ => ?_
@@ -83,7 +88,8 @@ theorem aeval_smul_of_degree {J K A : Type} [CommRing K] [CommRing A] [Algebra K
     (P : MvPolynomial J K) (d : ℕ) (hP : ∀ s ∈ P.support, (s.sum fun _ e => e) = d) :
     MvPolynomial.aeval (fun i => t * f i) P = t ^ d * MvPolynomial.aeval f P := by
   classical
-  rw [P.as_sum, map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [MvPolynomial.aeval_monomial, MvPolynomial.aeval_monomial, ← hP s hs]
   simp only [Finsupp.prod, Finsupp.sum, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum]

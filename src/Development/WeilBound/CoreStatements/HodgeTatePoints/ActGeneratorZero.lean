@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CdUniv
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FrRatio
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.HtPt.Cd

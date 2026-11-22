@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NLevelHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.BridgeKHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.NLevelHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.BridgeKHolds
+
+@[expose] public section
 
 noncomputable section
 

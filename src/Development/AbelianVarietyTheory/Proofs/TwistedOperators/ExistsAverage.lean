@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviEmbMulSingle
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeviEmbMulSingle
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLocallyConstantOrbit
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem _root_.GlobalTheory.WordGrowth.exists_average
     · intro v _
       rfl
   · intro f hf
-    rw [map_smul, map_sum, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, smul_eq_mul]
     rw [Finset.sum_congr rfl (g := fun _ => f u) ?_]
     · rw [Finset.sum_const, nsmul_eq_mul]
       field_simp

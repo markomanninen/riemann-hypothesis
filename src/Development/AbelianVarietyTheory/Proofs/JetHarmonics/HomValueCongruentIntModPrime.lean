@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -47,7 +51,7 @@ theorem hom_value_congruent_int_mod_prime :
     simp only [not_exists] at hno
     classical
     have hpoly : (Polynomial.X ^ g - Polynomial.X : Polynomial (IsLocalRing.ResidueField O)) ≠ 0 :=
-      FiniteField.X_pow_card_sub_X_ne_zero _ hg.one_lt
+      Polynomial.X_pow_sub_X_ne_zero hg.one_lt
     have hnot : IsLocalRing.residue O (σ x) ∉
         Finset.univ.image (ZMod.castHom (dvd_refl g) (IsLocalRing.ResidueField O)) := by
       intro h
@@ -66,7 +70,7 @@ theorem hom_value_congruent_int_mod_prime :
       · obtain ⟨b, -, rfl⟩ := Finset.mem_image.mp h
         rw [← map_pow, ZMod.pow_card]
     have hcard := Polynomial.card_le_degree_of_subset_roots hsub
-    rw [FiniteField.X_pow_card_sub_X_natDegree_eq _ hg.one_lt, Finset.card_insert_of_notMem hnot,
+    rw [Polynomial.natDegree_X_pow_sub_X hg.one_lt, Finset.card_insert_of_notMem hnot,
       Finset.card_image_of_injective _ (RingHom.injective _), Finset.card_univ, ZMod.card] at hcard
     omega
   have ha' : IsLocalRing.residue O (σ x) = IsLocalRing.residue O ((a.val : ℕ) : O) := by

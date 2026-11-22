@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameOpenNeighbourhoodStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeClosureStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtLocalOrderFractionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GlueApplyOfNotInFibre
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FrameOpenNeighbourhoodStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoherentLatticeClosureStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegAtLocalOrderFractionStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField
 
 noncomputable section
@@ -34,7 +39,8 @@ theorem eq_zero_of_mem {V : Submodule Ω E} {s : ℕ} {e : Fin s → E}
   obtain ⟨a, rfl⟩ := (mem_span_range_iff_exists_fun Ω).1 hy
   have h0 : ∑ i, a i • V.mkQ (e i) = 0 := by
     have h := (Submodule.Quotient.mk_eq_zero V).2 hyV
-    rw [← Submodule.mkQ_apply, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum] at h
     simpa using h
   have ha := Fintype.linearIndependent_iff.1 hc a h0
   simp [ha]
@@ -88,7 +94,8 @@ theorem exists_frame (R : Subring Ω) [IsLocalRing R] {V W : Submodule Ω E} (hV
     have hy : ∑ i, a i • e i ∈ Q := sum_mem fun i _ => Q.smul_mem _ (subset_span ⟨i, rfl⟩)
     refine ⟨_, hy, x - ∑ i, a i • e i, ⟨P.sub_mem hx (hQP hy), ?_⟩, by abel⟩
     change x - ∑ i, a i • e i ∈ V
-    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, ← ha, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, ← ha, map_sum]
     simp [hec, Subring.smul_def]
   have hdisj : ∀ x, x ∈ Q → x ∈ N → x = 0 := fun x hx hxN =>
     eq_zero_of_mem hc' (span_le_restrictScalars R Ω _ hx) hxN.2

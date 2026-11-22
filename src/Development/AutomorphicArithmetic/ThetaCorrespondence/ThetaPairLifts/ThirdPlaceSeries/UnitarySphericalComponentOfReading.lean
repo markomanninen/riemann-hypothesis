@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarySphericalComponentOfReading
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Laws
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnitarySphericalComponentOfReading
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.Laws
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -16,7 +20,7 @@ theorem unitarySphericalComponent_of_reading_alt : GlobalTheory.Published.Bernst
   intro hBZ R H what₂ N A T S hL hU i σ hσ w hw hu
   have hloc := (S i w hw).locW σ hσ
   have hsph : IsSpherical ((S i w hw).row σ).π := by
-    rw [← (hL i w hw).sph, ← hloc, ← T.unr]
+    rw [← (hL i w hw).sph _ _, ← hloc, ← T.unr]
     exact hu
   obtain ⟨α, hα⟩ := GlobalTheory.T.sphericalRepGL_exists_satakeParameters hBZ _ _ _ hsph
   have hfrob : A.frobEig (A.locW i σ w) =

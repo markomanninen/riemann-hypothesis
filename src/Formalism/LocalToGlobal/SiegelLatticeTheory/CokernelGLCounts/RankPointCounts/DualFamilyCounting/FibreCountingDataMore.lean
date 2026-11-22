@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FibreCountingDataTer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FibreCountingDataTer
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -109,9 +113,8 @@ theorem E_eq_of (Y Y' : Matrix (Fin m) (Fin m) (𝓞 K)) (hY hY')
     (hd : ∀ i j, haveI := J.max.isPrime; jK (Y i j - Y' i j) / jK (ι (a j)) ∈ HU.SP K 𝔭) :
     J.E Y hY = J.E Y' hY' := by
   have := J.max.isPrime
-  apply Submodule.linearMap_qext
-  ext x
-  simp only [LinearMap.comp_apply, Submodule.mkQ_apply, E_mk]
+  refine Submodule.quot_hom_ext _ _ _ fun x => ?_
+  simp only [E_mk]
   rw [Submodule.Quotient.eq, Submodule.mem_comap, Submodule.subtype_apply, Submodule.coe_sub]
   rw [J.memB]
   intro k
@@ -137,8 +140,8 @@ theorem u_mem (j : Fin m) : phi (K := K) b a (Pi.single j 1) ∈ locF 𝔭 (dual
 theorem sum_crd_u (f : Fin m → K) (j : Fin m) :
     ∑ l, f l * crd h b a (phi (K := K) b a (Pi.single j 1)) l = f j / jK (ι (a j)) := by
   rw [Finset.sum_eq_single j]
-  · rw [J.crd_u, if_pos rfl, mul_one_div]
-  · intro l _ hl; rw [J.crd_u, if_neg hl, mul_zero]
+  · rw [J.crd_u, ite_eq_left rfl, mul_one_div]
+  · intro l _ hl; rw [J.crd_u, ite_eq_right hl, mul_zero]
   · intro hj; exact absurd (Finset.mem_univ j) hj
 
 theorem entry_of_E_eq (Y Y' : Matrix (Fin m) (Fin m) (𝓞 K)) (hY hY') (he : J.E Y hY = J.E Y' hY')

@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.LocalToGlobal.ProjectiveLattices.ConjNeSelfOfCM
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSEqJetMap
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqPf
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThreePointSeriesExponentialOfDefect
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValPullbackMonomial
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ExistsSecTieFOfTies
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.LocalToGlobal.ProjectiveLattices.ConjNeSelfOfCM
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSEqJetMap
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IntegralChartDirectionsAreEigenvectors
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqPf
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThreePointSeriesExponentialOfDefect
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NabValPullbackMonomial
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -136,8 +140,8 @@ section Global
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}
 variable {Xo : Moduli Dw l}
 
-open Formalism.MainNotions.ModuliIntegralCharts.H1.ExpGC in
 
+open Formalism.MainNotions.ModuliIntegralCharts.H1.ExpGC in
 theorem exists_gen_norm (wP : PrimTy H Xo) (hwP : wP.IsGen) (β : 𝓞 E) (N : ℕ) (hN : β * H.bar β = (N : 𝓞 E))
     (wL : AdTy Xo β) (hwL : wL.IsGen) :
     ∃ mu : LB.Gen (LB.LinComb Xo.univ.t.PP.L (K := Fin 2) ![𝟙 Xo.univ.t.G.left, (Xo.univ.t.act.act β).left]
@@ -185,8 +189,8 @@ theorem exists_gen_norm (wP : PrimTy H Xo) (hwP : wP.IsGen) (β : 𝓞 E) (N : �
 
 theorem one_left (T : Over Xo.X) : (1 : T ⟶ Xo.univ.t.G).left = (toUnit T).left ≫ eSec Xo.univ.t.G := rfl
 
-open Formalism.MainNotions.ModuliIntegralCharts.H1.ExpGC in
 
+open Formalism.MainNotions.ModuliIntegralCharts.H1.ExpGC in
 theorem val_norm (wP : PrimTy H Xo) (hwP : IsPrim wP) (β : 𝓞 E) (N k : ℕ) (hN : β * H.bar β = (N : 𝓞 E))
     (wL : AdTy Xo β) (hwL : wL.IsGen)
     (α : LB.Gen (LB.LinComb Xo.univ.t.PP.L (K := Fin 2) ![𝟙 Xo.univ.t.G.left, (Xo.univ.t.act.act β).left]
@@ -210,8 +214,13 @@ theorem val_norm (wP : PrimTy H Xo) (hwP : IsPrim wP) (β : 𝓞 E) (N k : ℕ) 
   have o : ∀ b, (1 : T ⟶ Xo.univ.t.G) ≫ Xo.univ.t.act.act b = 1 := fun b => by
     haveI := Xo.univ.t.act.hom b
     exact MonObj.one_comp _
+  have face (x y : T ⟶ Xo.univ.t.G) : cubV Xo.univ.t.cub z J 1 x y = 1 := by
+    have e := val_corr hJ (Xo.univ.t.cub.face 0) (lift x y).left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub Xo.univ.t.cub (lift x y) hJ (pzero Xo.univ.t.G _) (x2 Xo.univ.t.G 0) (x2 Xo.univ.t.G 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have v₁ := hv T 1 z J hJ
-  simp only [o, h1, (isCub_cubV Xo.univ.t.cub hJ).face, Finset.prod_const_one, _root_.mul_one] at v₁
+  simp only [o, h1, face, Finset.prod_const_one, _root_.mul_one] at v₁
   have v₂ := (val_pull hJ _ _ _).symm.trans (val_corr hJ hwP.2 (toUnit T).left)
   have v₃ := (val_pull hJ _ _ _).symm.trans (val_corr hJ hn (toUnit T).left)
   rw [val_mul hJ, ExpGE.val_rigPow, ExpGE.val_rigPow, ← v₂, ← one_left] at v₃
@@ -450,15 +459,20 @@ theorem frame_eq (β : 𝓞 E) (N : ℕ) (hN : β * H.bar β = (N : 𝓞 E)) (wL
       simp only [Units.val_mul] at ih ⊢
       linear_combination (cubV Xo.univ.t.cub (T := jO y C.d m 1) z J (px C m ((n : 𝓞 E) * H.w0))
         (px C m H.w0) (px C m 1)).val * (ea C z J 1 H.w0).val * ih
+  have face (x x' : jO y C.d m 1 ⟶ Xo.univ.t.G) : cubV Xo.univ.t.cub z J 1 x x' = 1 := by
+    have e := val_corr hJ (Xo.univ.t.cub.face 0) (lift x x').left
+    rw [val_one] at e
+    refine (Eq.trans ?_ (val_cub Xo.univ.t.cub (lift x x') hJ (pzero Xo.univ.t.G _) (x2 Xo.univ.t.G 0) (x2 Xo.univ.t.G 1)).symm).trans e
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
   have h3 := cub_eq C hJ 1 0 0
-  rw [show px C m 0 = 1 by rw [px, ExpGC.act_zero, MonObj.comp_one], (isCub_cubV _ hJ).face, _root_.one_mul, add_zero,
+  rw [show px C m 0 = 1 by rw [px, ExpGC.act_zero, MonObj.comp_one], face, _root_.one_mul, add_zero,
     Units.val_mul, Units.mul_left_inj] at h3
   rw [h1, ← Units.mul_left_inj (ea C z J 1 0), _root_.mul_assoc (jv C m z w), ← Units.val_mul, h2, ← _root_.mul_assoc,
     ← map_mul, hw, map_mul, ← h3]
   ring
 
-omit hJ in
 
+omit hJ in
 theorem germ_eq (β : 𝓞 E) (N k : ℕ) (hN : β * H.bar β = (N : 𝓞 E)) (w : PS S 1 C.d)
     (hw : w * ∏ i ∈ Finset.range N, ev ![C.B.A.act 1, C.B.A.act ((i : 𝓞 E) * H.w0), C.B.A.act H.w0] C.B.ph2 =
       ev ![C.B.A.act 1, C.B.A.act (H.w0 * β)] (C.B.ad β) * ev ![C.B.A.act 1, C.B.A.act 0, C.B.A.act 0] C.B.ph2)

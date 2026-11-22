@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ExistsIntAddConjEqOneOfBaseGood
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.ExistsIntAddConjEqOneOfBaseGood
+
+@[expose] public section
 
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -216,19 +220,21 @@ theorem acts_indicator {κ : Type} [Fintype κ] {W : Type} [AddCommGroup W] [Mod
   set O := v.adicCompletionIntegers F
   by_cases hx : ∀ k, evFin F v (x k) ∈ O
   · have hx' : ∀ k, evFin F v ((x + w.1) k) ∈ O := fun k => by
-      rw [Pi.add_apply, map_add]; exact add_mem (hx k) (hi1 k)
+      rw [Pi.add_apply, map_add (f := _)]; exact add_mem (hx k) (hi1 k)
     rw [Set.indicator_of_mem (show (fun i => evFin F v ((x + w.1) i)) ∈ {y : κ → Fv F v | ∀ k, y k ∈ O} from hx'),
       Set.indicator_of_mem (show (fun i => evFin F v (x i)) ∈ {y : κ → Fv F v | ∀ k, y k ∈ O} from hx)]
     have hat : At (evFin F v) (x ⬝ᵥ w.2 + ⅟(2 : AF F) * (w.1 ⬝ᵥ w.2)) :=
       at_add (at_sum _ _ fun k => at_mul_left (ha2 k)) (at_mul_left (at_sum _ _ fun k => at_mul_left (ha2 k)))
     rw [psi_of_at ψ hat, hψ]
     · simp
-    · rw [map_add, map_mul, invOf_two_eq, evFin_algebraMap]
+    · rw [map_add (f := _), map_mul, invOf_two_eq, evFin_algebraMap]
       refine add_mem ?_ (mul_mem h2 ?_)
-      · simp only [dotProduct, map_sum, map_mul]
-        exact sum_mem fun k _ => mul_mem (hx k) (hi2 k)
-      · simp only [dotProduct, map_sum, map_mul]
-        exact sum_mem fun k _ => mul_mem (hi1 k) (hi2 k)
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp only [dotProduct, map_sum, map_mul]
+          exact sum_mem fun k _ => mul_mem (hx k) (hi2 k)
+      set_option synthInstance.maxHeartbeats 100000 in
+        · simp only [dotProduct, map_sum, map_mul]
+          exact sum_mem fun k _ => mul_mem (hi1 k) (hi2 k)
   · have hx' : ¬ ∀ k, evFin F v ((x + w.1) k) ∈ O := fun h => hx fun k => by
       have := sub_mem (h k) (hi1 k)
       rwa [Pi.add_apply, map_add, add_sub_cancel_right] at this
@@ -258,7 +264,8 @@ theorem hTens_smul_incM (σ : E →ₐ[F] E) (A : Matrix (Fin n) (Fin n) E) (B :
     (a a' : AF F) (x y : Matrix (Fin n) (Fin d) E) :
     hTens (cA σ) (incM F A) (incM F B) (a • incM F x) (a' • incM F y) =
       (a * a') • inclR (F := F) (AF F) (hTens σ A B x y) := by
-  simp only [hTens, incM, Matrix.smul_apply, Matrix.map_apply, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, incM, Matrix.smul_apply, Matrix.map_apply, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ =>
     Finset.sum_congr rfl fun l _ => ?_
   rw [cA_smul, cA_inclR, map_mul, map_mul, map_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
@@ -283,11 +290,11 @@ variable {R E' : Type} [CommRing R] [CommRing E'] [Algebra R E'] (c : E' →ₐ[
 
 theorem symp_add_left (x x' y : Matrix α β E') :
     symp c ξ JA JB (x + x') y = symp c ξ JA JB x y + symp c ξ JA JB x' y := by
-  simp only [symp, hTens, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add]
+  simp only [symp, hTens, Matrix.add_apply, add_mul, Finset.sum_add_distrib, mul_add, map_add (f := _)]
 
 theorem symp_add_right (x y y' : Matrix α β E') :
     symp c ξ JA JB x (y + y') = symp c ξ JA JB x y + symp c ξ JA JB x y' := by
-  simp only [symp, hTens, Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [symp, hTens, Matrix.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem symp_neg_left (x y : Matrix α β E') : symp c ξ JA JB (-x) y = -symp c ξ JA JB x y := by
   simp only [symp, hTens, Matrix.neg_apply, neg_mul, Finset.sum_neg_distrib, mul_neg, map_neg]
@@ -389,7 +396,7 @@ theorem isVac_indicator_of_theta {σ : E →ₐ[F] E} (B : Base F E) (hB : B.IsG
       (Set.indicator {x | ∀ k, x k ∈ v.adicCompletionIntegers F} 1) := by
   classical
   obtain ⟨θ, hθ⟩ := hθ
-  obtain ⟨G, hG⟩ := exists_gen X.L Y.L hX.lat hY.lat
+  obtain ⟨G, hG⟩ := exists_gen X.L Y.L hX.lat.toIsLattice hY.lat.toIsLattice
   choose yc zc hc using hrat
   have e1 := eventually_psiLoc_eq_one B.ψ hB.std.1
   have e2 := eventually_int (F := F) (1 / 2)
@@ -422,7 +429,7 @@ theorem isVac_indicator_of_theta {σ : E →ₐ[F] E} (B : Base F E) (hB : B.IsG
       exact ⟨at_zero, at_zero, zero_mem _, zero_mem _⟩
     | add z z' _ _ h h' =>
       intro k
-      simp only [map_add, Prod.fst_add, Prod.snd_add, Pi.add_apply]
+      simp only [map_add (f := _), Prod.fst_add, Prod.snd_add, Pi.add_apply]
       exact ⟨at_add (h k).1 (h' k).1, at_add (h k).2.1 (h' k).2.1, add_mem (h k).2.2.1 (h' k).2.2.1,
         add_mem (h k).2.2.2 (h' k).2.2.2⟩
     | neg z _ h =>
@@ -440,7 +447,7 @@ theorem isVac_indicator_of_theta {σ : E →ₐ[F] E} (B : Base F E) (hB : B.IsG
       rw [hS, symp_smul_incM, map_mul, map_mul, evFin_algebraMap]
       exact ⟨at_mul_right (at_mul_right ha), mul_mem (mul_mem hai hai') (h4 g hg g' hg')⟩
     | zero => rw [hS, symp_zero_right, map_zero]; exact ⟨at_zero, zero_mem _⟩
-    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_right, map_add]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
+    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_right, map_add (f := _)]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
     | neg z₁ _ h => rw [hS, symp_neg_right, map_neg]; exact ⟨at_neg h.1, neg_mem h.2⟩
   have hB2 : ∀ z ∈ AddSubgroup.closure T, ∀ z' ∈ AddSubgroup.closure T,
       At (evFin F v) (S z z') ∧ evFin F v (S z z') ∈ O := by
@@ -448,7 +455,7 @@ theorem isVac_indicator_of_theta {σ : E →ₐ[F] E} (B : Base F E) (hB : B.IsG
     induction hz using AddSubgroup.closure_induction with
     | mem z hz => exact hB1 z hz z' hz'
     | zero => rw [hS, symp_zero_left, map_zero]; exact ⟨at_zero, zero_mem _⟩
-    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_left, map_add]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
+    | add z₁ z₂ _ _ h h' => rw [hS, symp_add_left, map_add (f := _)]; exact ⟨at_add h.1 h'.1, add_mem h.2 h'.2⟩
     | neg z₁ _ h => rw [hS, symp_neg_left, map_neg]; exact ⟨at_neg h.1, neg_mem h.2⟩
   refine ⟨indicator_int_mem_SB v, indicator_int_ne_zero v, θ, hθ, fun γ hγ => ?_⟩
   have hγ' := latAtV_le X Y G hG v hγ

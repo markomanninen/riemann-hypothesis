@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -74,8 +78,8 @@ def thickHom {U V : AffOp X₀} (a : U ⟶ V) (α : S.F.obj U →ₐ[R] S'.F.obj
 def thick : AffOp X₀ ⥤ Thick (divided₂ hI) (s₀ ≫ spMap π) where
   obj := S.thickObj hI
   map a := S.thickHom S hI a (mp S.F a) (S.nat a)
-  map_id U := Thick.hom_ext (mp_id S.F U)
-  map_comp a b := Thick.hom_ext (mp_comp S.F a b)
+  map_id U := Thick.Hom.ext' (AlgHom.ext (mp_id S.F U))
+  map_comp a b := Thick.Hom.ext' (AlgHom.ext (mp_comp S.F a b))
 
 def coef : CoefMap (RingHom.id R) (O (divided₂ hI) (s₀ ≫ spMap π)) S.F where
   G := S.thick hI
@@ -125,13 +129,13 @@ def Presents.ofSurjective {X : Scheme.{0}} {s : X ⟶ Sp R} {i : X₀ ⟶ X} (hi
     (red : ∀ U, spMap (S.p U) ≫ y U = affPt s₀ U.unop ≫ i) : S.Presents s i :=
   ⟨y, isOpen, base, nat, red, S.cover_of_surjective hi y red⟩
 
-include hI in
 
+include hI in
 theorem surjective_spMap_p (U : AffOp X₀) : Surjective (spMap (S.p U)) :=
   surjective_spMap_sqZero (S.p U) (S.surj U) (map_sq hI _) fun b hb ↦ (S.ker U b).1 hb
 
-include hI in
 
+include hI in
 theorem Presents.surjective {X : Scheme.{0}} {s : X ⟶ Sp R} {i : X₀ ⟶ X} (P : S.Presents s i) : Surjective i := by
   refine ⟨fun x ↦ ?_⟩
   obtain ⟨U, q, rfl⟩ := P.cover x
@@ -167,12 +171,11 @@ def Sys.LocIso.IsDefect {S S' : Sys I π s₀} (Φ : S.LocIso S')
 def Sys.LocIso.refl (S : Sys I π s₀) : S.LocIso S := ⟨fun _ ↦ AlgEquiv.refl, fun _ _ ↦ rfl⟩
 
 theorem redMor (hI : I ^ 2 = 0) (hk : RingHom.ker π = I) (s₀ : X₀ ⟶ Sp R₀) :
-    IsMor (divided₂ hI) (s₀ ≫ spMap π) (dp0 R₀) s₀ π (𝟙 X₀) where
-  dp := by
-    have z : ∀ a ∈ I, π a = 0 := fun a ha ↦ RingHom.mem_ker.1 (hk ▸ ha)
-    refine (isDPMorphism_iff _ _ _).2 ⟨Ideal.map_le_iff_le_comap.2 fun a ha ↦ z a ha, fun n hn a ha ↦ ?_⟩
-    rw [z a ha, z _ ((divided₂ hI).dpow_mem hn ha), dpow_eval_zero _ hn]
-  w := Category.id_comp _
+    IsMor (divided₂ hI) (s₀ ≫ spMap π) (dp0 R₀) s₀ π (𝟙 X₀) := by
+  refine ⟨?_, Category.id_comp _⟩
+  have z : ∀ a ∈ I, π a = 0 := fun a ha ↦ RingHom.mem_ker.1 (hk ▸ ha)
+  refine (isDPMorphism_iff _ _ _).2 ⟨Ideal.map_le_iff_le_comap.2 fun a ha ↦ z a ha, fun n hn a ha ↦ ?_⟩
+  rw [z a ha, z _ ((divided₂ hI).dpow_mem hn ha), dpow_eval_zero _ hn]
 
 def rho (hI : I ^ 2 = 0) (hk : RingHom.ker π = I) (s₀ : X₀ ⟶ Sp R₀) : Cr hI π s₀ →ₛₗ[π] FirstDeRham s₀ :=
   (redMor hI hk s₀).pull1
@@ -218,19 +221,6 @@ def Sys.self [Smooth s] : Sys (⊥ : Ideal R) (RingHom.id R) s where
   surj _ := Function.surjective_id
   ker U b := by simp [Ideal.map_bot]
   smooth U := smooth_sec_affine s U.unop
-
-def Sys.selfPresents [Smooth s] : (Sys.self s).Presents s (𝟙 X) :=
-  Sys.Presents.ofSurjective _ inferInstance (fun U ↦ affPt s U.unop)
-    (fun U ↦ IsAffineOpen.isOpenImmersion_fromSpec U.unop.2) (fun U ↦ affPt_w s U.unop)
-    (fun _ _ a ↦ affPt_res s (leOfHom a.unop)) fun U ↦ by
-      change spMap (RingHom.id _) ≫ affPt s U.unop = affPt s U.unop ≫ 𝟙 X
-      rw [Category.comp_id, Cris.spMap_id, Category.id_comp]
-
-example [Smooth s] : (Sys.LocIso.refl (Sys.self s)).IsDefect (fun _ _ _ ↦ 0) := fun _ _ _ ↦ isTheta_zero _ _ _
-
-example [Smooth s] {Y : Scheme.{0}} (t : Y ⟶ Sp R) (i : X ⟶ Y) (hi : ¬ Surjective i) :
-    IsEmpty ((Sys.self s).Presents t i) :=
-  ⟨fun P ↦ hi (P.surjective _ (by simp))⟩
 
 end Self
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementF
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
-import GroundTheory.LocalFields.FilteredSurj
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementF
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
+public import GroundTheory.LocalFields.FilteredSurj
+
+@[expose] public section
+
 open Polynomial Matrix Formalism.UG
 
 noncomputable section
@@ -65,29 +70,33 @@ variable {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : Globa
 
 theorem mem_piPow_iff {N : ℕ} {a : GlobalTheory.UTr.Alg P} :
     a ∈ piPow h P N ↔ ∀ i, Valued.v (((GlobalTheory.UTr.powBasis P).repr a i : intL L) : L) ≤ Valued.v ϖ ^ N := by
-  have hϖ0 : ϖ ≠ 0 := fun h0 => by
-    have := h.2.2.2.1; rw [h0, map_zero] at this; exact WithZero.zero_ne_coe this
-  constructor
-  · intro ha i
-    obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp ha
-    rw [← map_pow, mul_comm, ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul, Subring.coe_mul,
-      SubmonoidClass.coe_pow, coe_piO, map_mul, map_pow]
-    calc _ ≤ Valued.v ϖ ^ N * 1 := mul_le_mul' le_rfl (((GlobalTheory.UTr.powBasis P).repr c i).2)
-      _ = _ := mul_one _
-  · intro ha
-    have hϖN : ϖ ^ N ≠ 0 := pow_ne_zero _ hϖ0
-    let d : Fin P.1.natDegree → intL L := fun i => ⟨((GlobalTheory.UTr.powBasis P).repr a i : L) / ϖ ^ N, by
-      change Valued.v (((GlobalTheory.UTr.powBasis P).repr a i : L) / ϖ ^ N) ≤ 1
-      rw [map_div₀, map_pow]
-      exact (div_le_one₀ (zero_lt_iff.mpr (pow_ne_zero _ ((Valued.v).ne_zero_iff.mpr hϖ0)))).mpr (ha i)⟩
-    refine Ideal.mem_span_singleton'.mpr ⟨(GlobalTheory.UTr.powBasis P).equivFun.symm d, ?_⟩
-    refine (GlobalTheory.UTr.powBasis P).ext_elem fun i => ?_
-    have hd : (GlobalTheory.UTr.powBasis P).repr ((GlobalTheory.UTr.powBasis P).equivFun.symm d) i = d i := by
-      rw [← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply]
-    rw [← map_pow, mul_comm, ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul, hd]
-    apply Subtype.ext
-    rw [Subring.coe_mul, SubmonoidClass.coe_pow, coe_piO]
-    exact mul_div_cancel₀ _ hϖN
+  with_unfolding_all
+    unfold GlobalTheory.UTr.Alg at *
+    have hϖ0 : ϖ ≠ 0 := fun h0 => by
+      have := h.2.2.2.1; rw [h0, map_zero] at this; exact WithZero.zero_ne_coe this
+    constructor
+    · intro ha i
+      obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp ha
+      set_option backward.isDefEq.respectTransparency false in
+        rw [← map_pow, mul_comm, ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul, Subring.coe_mul,
+        SubmonoidClass.coe_pow, coe_piO, map_mul, map_pow]
+      calc _ ≤ Valued.v ϖ ^ N * 1 := mul_le_mul' le_rfl (((GlobalTheory.UTr.powBasis P).repr c i).2)
+        _ = _ := mul_one _
+    · intro ha
+      have hϖN : ϖ ^ N ≠ 0 := pow_ne_zero _ hϖ0
+      let d : Fin P.1.natDegree → intL L := fun i => ⟨((GlobalTheory.UTr.powBasis P).repr a i : L) / ϖ ^ N, by
+        change Valued.v (((GlobalTheory.UTr.powBasis P).repr a i : L) / ϖ ^ N) ≤ 1
+        rw [map_div₀, map_pow]
+        exact (div_le_one₀ (zero_lt_iff.mpr (pow_ne_zero _ ((Valued.v).ne_zero_iff.mpr hϖ0)))).mpr (ha i)⟩
+      refine Ideal.mem_span_singleton'.mpr ⟨(GlobalTheory.UTr.powBasis P).equivFun.symm d, ?_⟩
+      refine (GlobalTheory.UTr.powBasis P).ext_elem fun i => ?_
+      have hd : (GlobalTheory.UTr.powBasis P).repr ((GlobalTheory.UTr.powBasis P).equivFun.symm d) i = d i := by
+        rw [← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply]
+      set_option backward.isDefEq.respectTransparency false in
+        rw [← map_pow, mul_comm, ← Algebra.smul_def, map_smul, Finsupp.smul_apply, smul_eq_mul, hd]
+      apply Subtype.ext
+      rw [Subring.coe_mul, SubmonoidClass.coe_pow, coe_piO]
+      exact mul_div_cancel₀ _ hϖN
 
 theorem eq_zero_of_forall_mem_piPow {z : GlobalTheory.UTr.Alg P} (hz : ∀ N, z ∈ piPow h P N) : z = 0 := by
   refine (GlobalTheory.UTr.powBasis P).ext_elem fun i => ?_
@@ -123,51 +132,53 @@ end GlobalTheory.NormEq.Cmpl
 
 namespace GlobalTheory.NormEq
 
-open Cmpl in
 
+open Cmpl in
 theorem filtrationComplete_filt : ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] [CompleteSpace L]
     (σ : L →+* L) (ϖ : L) (q : ℕ) (h : IsUnramInv ϖ σ q) (P : GlobalTheory.UTr.Csr (GlobalTheory.NormEq.sigO σ h.2.1)),
     GroundTheory.LocalField.FiltrationComplete (GlobalTheory.NormEq.filt h P) := by
-  intro L _ _ _ σ ϖ q h P x hx
-  have ha : ∀ N, ∃ M, ∀ m ≥ M, ∀ n ≥ M, ((x n : GlobalTheory.UTr.Alg P) - x m) ∈ piPow h P N := by
-    intro N
-    obtain ⟨M, hM⟩ := hx N
-    refine ⟨M, fun m hm n hn => ?_⟩
-    have h1 : ((x n / x m : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - 1 ∈ piPow h P N := hM m hm n hn
-    have e : (x n : GlobalTheory.UTr.Alg P) - x m = (x m : GlobalTheory.UTr.Alg P) * (((x n / x m : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - 1) := by
-      rw [div_eq_mul_inv, Units.val_mul]
-      linear_combination (-(x n : GlobalTheory.UTr.Alg P)) * (x m).mul_inv
-    rw [e]; exact Ideal.mul_mem_left _ _ h1
-  have hb : ∀ N, ∃ M, ∀ m ≥ M, ∀ n ≥ M,
-      (((x n)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - ((x m)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) ∈ piPow h P N := by
-    intro N
-    obtain ⟨M, hM⟩ := hx N
-    refine ⟨M, fun m hm n hn => ?_⟩
-    have h1 : ((x n / x m : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - 1 ∈ piPow h P N := hM m hm n hn
-    have e : (((x n)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - ((x m)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) =
-        -(((x n)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) * (((x n / x m : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - 1) := by
-      rw [div_eq_mul_inv, Units.val_mul]
-      linear_combination (((x m)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) * (x n).inv_mul
-    rw [e]; exact Ideal.mul_mem_left _ _ h1
-  obtain ⟨y, hy⟩ := exists_lim_alg h P _ ha
-  obtain ⟨y', hy'⟩ := exists_lim_alg h P _ hb
-  have hyy : y * y' = 1 := by
-    rw [← sub_eq_zero]
-    refine eq_zero_of_forall_mem_piPow h P fun N => ?_
-    obtain ⟨n, hn1, hn2⟩ := ((hy N).and (hy' N)).exists
-    have e : y * y' - 1 = -((x n : GlobalTheory.UTr.Alg P) - y) * y' -
-        (x n : GlobalTheory.UTr.Alg P) * ((((x n)⁻¹ : (GlobalTheory.UTr.Alg P)ˣ) : GlobalTheory.UTr.Alg P) - y') := by
-      linear_combination (x n).mul_inv
+  with_unfolding_all
+    intro L _ _ _ σ ϖ q h P x hx
+    have ha : ∀ N, ∃ M, ∀ m ≥ M, ∀ n ≥ M, (((x n).val : (AdjoinRoot P.1)) - (x m).val) ∈ piPow h P N := by
+      intro N
+      obtain ⟨M, hM⟩ := hx N
+      refine ⟨M, fun m hm n hn => ?_⟩
+      have h1 : ((x n / x m : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - 1 ∈ piPow h P N := hM m hm n hn
+      have e : ((x n).val : (AdjoinRoot P.1)) - x m = ((x m).val : (AdjoinRoot P.1)) * (((x n / x m : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - 1) := by
+        rw [div_eq_mul_inv, Units.val_mul]
+        linear_combination (-((x n).val : (AdjoinRoot P.1))) * (x m).mul_inv
+      rw [e]; exact Ideal.mul_mem_left _ _ h1
+    have hb : ∀ N, ∃ M, ∀ m ≥ M, ∀ n ≥ M,
+        (((x n)⁻¹ : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - ((x m)⁻¹ : ((AdjoinRoot P.1))ˣ) ∈ piPow h P N := by
+      intro N
+      obtain ⟨M, hM⟩ := hx N
+      refine ⟨M, fun m hm n hn => ?_⟩
+      have h1 : ((x n / x m : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - 1 ∈ piPow h P N := hM m hm n hn
+      have e : (((x n)⁻¹ : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - ((x m)⁻¹ : ((AdjoinRoot P.1))ˣ) =
+          -(((x n)⁻¹ : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) * (((x n / x m : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - 1) := by
+        rw [div_eq_mul_inv, Units.val_mul]
+        linear_combination (((x m)⁻¹ : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) * (x n).inv_mul
+      rw [e]; exact Ideal.mul_mem_left _ _ h1
+    obtain ⟨y, hy⟩ := exists_lim_alg h P _ ha
+    obtain ⟨y', hy'⟩ := exists_lim_alg h P _ hb
+    unfold GlobalTheory.UTr.Alg at y y' hy hy'
+    have hyy : y * y' = 1 := by
+      rw [← sub_eq_zero]
+      refine eq_zero_of_forall_mem_piPow h P fun N => ?_
+      obtain ⟨n, hn1, hn2⟩ := ((hy N).and (hy' N)).exists
+      have e : y * y' - 1 = -(((x n).val : (AdjoinRoot P.1)) - y) * y' -
+          ((x n).val : (AdjoinRoot P.1)) * ((((x n)⁻¹ : ((AdjoinRoot P.1))ˣ) : (AdjoinRoot P.1)) - y') := by
+        linear_combination (x n).mul_inv
+      rw [e]
+      exact (piPow h P N).sub_mem ((piPow h P N).mul_mem_right _ ((piPow h P N).neg_mem hn1))
+        ((piPow h P N).mul_mem_left _ hn2)
+    refine ⟨⟨y, y', hyy, by rw [mul_comm]; exact hyy⟩, fun N => ?_⟩
+    obtain ⟨M, hM⟩ := eventually_atTop.mp (hy N)
+    refine ⟨M, fun n hn => ?_⟩
+    rw [mem_filt, div_eq_mul_inv, Units.val_mul, Units.inv_mk, Units.val_mk]
+    have e : ((x n).val : (AdjoinRoot P.1)) * y' - 1 = (((x n).val : (AdjoinRoot P.1)) - y) * y' := by
+      linear_combination hyy
     rw [e]
-    exact (piPow h P N).sub_mem ((piPow h P N).mul_mem_right _ ((piPow h P N).neg_mem hn1))
-      ((piPow h P N).mul_mem_left _ hn2)
-  refine ⟨⟨y, y', hyy, by rw [mul_comm]; exact hyy⟩, fun N => ?_⟩
-  obtain ⟨M, hM⟩ := eventually_atTop.mp (hy N)
-  refine ⟨M, fun n hn => ?_⟩
-  rw [mem_filt, div_eq_mul_inv, Units.val_mul, Units.inv_mk, Units.val_mk]
-  have e : (x n : GlobalTheory.UTr.Alg P) * y' - 1 = ((x n : GlobalTheory.UTr.Alg P) - y) * y' := by
-    linear_combination hyy
-  rw [e]
-  exact (piPow h P N).mul_mem_right _ (hM n hn)
+    exact (piPow h P N).mul_mem_right _ (hM n hn)
 
 end GlobalTheory.NormEq

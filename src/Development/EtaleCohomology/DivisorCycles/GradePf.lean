@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div Polynomial
 namespace LateralTheory.DivDb.GradePf
@@ -22,7 +26,7 @@ lemma aeval_mem (f : Module.End C (Mat C N)) (g : Submodule C (Mat C N))
     (hf : ∀ Y ∈ g, f Y ∈ g) (q : C[X]) : ∀ Y ∈ g, aeval f q Y ∈ g := by
   induction q using Polynomial.induction_on' with
   | add p q hp hq =>
-    intro Y hY; simp only [map_add, LinearMap.add_apply]; exact g.add_mem (hp Y hY) (hq Y hY)
+    intro Y hY; simp only [map_add (f := _), LinearMap.add_apply]; exact g.add_mem (hp Y hY) (hq Y hY)
   | monomial k a =>
     intro Y hY
     rw [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
@@ -37,7 +41,7 @@ lemma pow_eig (f : Module.End C (Mat C N)) (Z : Mat C N) (c : C) (h : f Z = c �
 lemma aeval_eig (f : Module.End C (Mat C N)) (Z : Mat C N) (c : C) (h : f Z = c • Z) (q : C[X]) :
     aeval f q Z = q.eval c • Z := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, LinearMap.add_apply, hp, hq, eval_add, add_smul]
+  | add p q hp hq => simp only [map_add (f := _), LinearMap.add_apply, hp, hq, eval_add, add_smul]
   | monomial k a =>
     rw [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply, pow_eig f Z c h, smul_smul,
       eval_monomial]
@@ -113,7 +117,8 @@ theorem Grade_of : Grade := by
   let q : C[X] := ∏ kl ∈ (Finset.univ : Finset (Fin n × Fin n)).erase (i, j), (Polynomial.X - Polynomial.C (e kl.1 - e kl.2))
   have hq : aeval (adX X) q Y = q.eval (e i - e j) • (p i * Y * p j) := by
     conv_lhs => rw [hdec]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [aeval_eig (adX X) _ _ (heig _)]
     rw [Finset.sum_eq_single (i, j)]
     · intro b _ hb

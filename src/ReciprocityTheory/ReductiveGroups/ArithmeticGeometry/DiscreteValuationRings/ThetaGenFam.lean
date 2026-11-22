@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGenFibre
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGenFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,8 @@ theorem exists_fe_gen (hϖ : Irreducible ϖ) {Q : D.toPre.X → ℤ} (hQ : IsQ D
         (DegPre.famMult D.toPre F k mu α) := by
   classical
   have hL := D.toPre.P.isLB
-  obtain ⟨Ix, _, φV, εV, e', he', hC, c₀, hc₀, hval⟩ := famMult_data D hϖ hQ k mu α
+  obtain ⟨Ix, _, φV, εV, e', he', hC, c₀, hc₀, hval⟩ :=
+    ReciprocityTheory.ChartRestriction.G.DVR.SectionScalarValuation.famMult_data D hϖ hQ k mu α
   obtain ⟨eB, heB, veB⟩ := exists_eB D.toPre k α mu e' he' hC
   have hc0 : c₀ ≠ 0 := ne_zero_of_hasVal hϖ hc₀
   set c : F := algebraMap (FractionRing V) F c₀ with hc
@@ -66,11 +71,32 @@ theorem exists_fe_gen (hϖ : Irreducible ϖ) {Q : D.toPre.X → ℤ} (hQ : IsQ D
   have z₂ : DegPre.zF D.toPre F ≫ DegPre.prB D.toPre F = 1 := lift_snd _ _
   have hcorr : LB.Gen.Corr D.toPre.P.L _ _ _ _ (LB.pullGen D.toPre.P.L _ _ u (DegPre.zF D.toPre F).left)
       (DegPre.famMult D.toPre F k mu α) := corr_of_val hL fun y J hJ => Units.ext (by
-    have C : IsCub (cubV D.toPre.cub (T := TF (R := V) F) y J) := isCub_cubV D.toPre.cub hJ
+    have face1 (x y' : TF (R := V) F ⟶ D.toPre.P.A) : cubV D.toPre.cub y J 1 x y' = 1 := by
+      have H := val_corr hJ (D.toPre.cub.face 0) (lift x y').left
+      rw [val_one] at H
+      refine Eq.trans ?_ H
+      refine Eq.trans ?_ (val_cub D.toPre.cub (lift x y') hJ (pzero D.toPre.P.A _) (x2 D.toPre.P.A 0) (x2 D.toPre.P.A 1)).symm
+      congr 1 <;> simp [x2, pzero, Hom.one_def]
+    have face2 (x y' : TF (R := V) F ⟶ D.toPre.P.A) : cubV D.toPre.cub y J x 1 y' = 1 := by
+      have H := (val_corr hJ D.toPre.cub.cubeSymmetric_swap_first (lift x (lift 1 y')).left).trans
+        (val_cub D.toPre.cub (lift x (lift 1 y')) hJ _ _ _)
+      have E : cubV D.toPre.cub y J x 1 y' = cubV D.toPre.cub y J 1 x y' := by
+        refine Eq.trans H ?_
+        congr 1 <;> simp [x3]
+      rw [E, face1]
+    have N_one (k : ℕ) (a m : TF (R := V) F ⟶ D.toPre.P.A) : cubN (cubV D.toPre.cub y J) k a m 1 = 1 := by
+      apply Finset.prod_eq_one
+      intro i hi
+      have H := (val_corr hJ D.toPre.cub.cubeSymmetric_swap_last (lift (a * m ^ i) (lift m 1)).left).trans
+        (val_cub D.toPre.cub (lift (a * m ^ i) (lift m 1)) hJ _ _ _)
+      have E : cubV D.toPre.cub y J (a * m ^ i) m 1 = cubV D.toPre.cub y J (a * m ^ i) 1 m := by
+        refine Eq.trans H ?_
+        congr 1 <;> simp [x3]
+      rw [E, face2]
     have E2 : val eB ((DegPre.zF D.toPre F).left ≫ (DegPre.prB D.toPre F).left) y J =
         val e' (DegPre.jFR (R := V) F) y J := by
       have E1 := veB (TF (R := V) F) (DegPre.zF D.toPre F ≫ DegPre.prB D.toPre F) y J hJ
-      rw [z₂, C.N_one, C.face₂, inv_one, _root_.one_mul, _root_.one_mul] at E1
+      rw [z₂, N_one, face2, inv_one, _root_.one_mul, _root_.one_mul] at E1
       have e3 : (1 : TF (R := V) F ⟶ D.toPre.P.A).left ≫ D.toPre.P.A.hom = DegPre.jFR (R := V) F := Over.w _
       rw [e3] at E1
       have e4 : (DegPre.zF D.toPre F).left ≫ (DegPre.prB D.toPre F).left = (1 : TF (R := V) F ⟶ D.toPre.P.A).left := by
@@ -85,7 +111,7 @@ theorem fam_eq_zero (hϖ : Irreducible ϖ) (G : Fam D.toPre F 1)
     (h0 : ∀ j : Fin 4 → D.toPre.P.L.ι, (G.s 0).f j = 0) :
     ∀ (mu : D.toPre.X) (j : Fin 4 → D.toPre.P.L.ι), (G.s mu).f j = 0 := by
   classical
-  choose Q hQ using fun χ => QForm.exists_QVal hϖ D χ
+  choose Q hQ using QForm.exists_QVal hϖ D
   intro mu j
   obtain ⟨u, hu, hc⟩ := exists_fe_gen (F := F) hϖ (Q := Q) hQ 1 mu 0
   have hrel := G.fe mu 0 u hu hc

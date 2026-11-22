@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremLattice
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFrobenius
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremIdeles
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticUniformizationClassification
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremLattice
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFrobenius
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremIdeles
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticUniformizationClassification
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -58,8 +63,8 @@ theorem exists_constMap_eq (A : WeierstrassCurve L) (P : (A.baseChange ℂ).toAf
       (A.toAffine.baseChange_nonsingular (f := Algebra.ofId L ℂ) (algebraMap L ℂ).injective a b).1 h
     exact ⟨.some a b h', rfl⟩
 
-omit [DecidableEq L] in
 
+omit [DecidableEq L] in
 theorem baseChange_map_eq (A : WeierstrassCurve L) (τ : L →+* L) (σ : ℂ →+* ℂ)
     (hτσ : ∀ a : L, σ (algebraMap L ℂ a) = algebraMap L ℂ (τ a)) :
     (A.baseChange ℂ).map σ = (A.map τ).baseChange ℂ := by
@@ -69,8 +74,8 @@ theorem baseChange_map_eq (A : WeierstrassCurve L) (τ : L →+* L) (σ : ℂ �
   ext a
   exact hτσ a
 
-omit [Algebra L ℂ] in
 
+omit [Algebra L ℂ] in
 theorem constMap_eq_pointMapRing {M : Type} [Field M] [Algebra L M] [DecidableEq M]
     (A : WeierstrassCurve L) (t : A.toAffine.Point) :
     constMap A M t = pointMapRing (algebraMap L M) A t := by
@@ -130,10 +135,10 @@ end Ideals
 section Level
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 include hK in
-
 theorem exists_uniformization_of_data (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K)
     (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {E : WeierstrassCurve ℂ} [E.IsElliptic]
     {f : ℂ →+ E.toAffine.Point} (hf : IsAnalyticUniformization (idealLattice (algebraMap K ℂ) 𝔞) f)
@@ -220,7 +225,7 @@ theorem exists_uniformization_of_data (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K
     refine map_mem_idealLattice _ ?_
     rw [← neg_sub]
     exact Submodule.neg_mem _ h1
-  rw [← sub_add_cancel (algebraMap K ℂ y) (algebraMap K ℂ ((x⁻¹ : K) * t)), map_add,
+  rw [← sub_add_cancel (algebraMap K ℂ y) (algebraMap K ℂ ((x⁻¹ : K) * t)), map_add (f := _),
     (hf'.map_eq_zero_iff _).2 hdiff, zero_add]
 
   set z := algebraMap K ℂ t with hz

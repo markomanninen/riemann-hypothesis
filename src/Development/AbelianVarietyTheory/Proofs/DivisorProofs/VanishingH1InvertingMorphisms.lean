@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -73,7 +77,7 @@ theorem coboundary_of_restrict {E : C → Type w} (act : ∀ {S S'}, E S → (S 
           have k1 := hz _ _ _ _ e φ u ψ hq
           have k2 := hg T e hq S S' (φ ≫ u) ψ (by rwa [hact])
           have k3 := hg T' _ (hQ _ _ e φ hq) S S' u ψ hp
-          simp only [map_sub, map_add, hact, Category.assoc] at k2 ⊢
+          simp only [map_sub, map_add (f := _), hact, Category.assoc] at k2 ⊢
           linear_combination k2 - k1 - k3
       exact ⟨x, fun _ ↦ hx⟩
     · exact ⟨0, fun h ↦ absurd h hq⟩
@@ -84,16 +88,16 @@ theorem coboundary_of_restrict {E : C → Type w} (act : ∀ {S S'}, E S → (S 
   have k2 := hh T T' e φ hq S (ψ ≫ u) (by rwa [hact])
   have k3 := hh T T'' e (φ ≫ ψ) hq S u (by rwa [hact])
   have k4 := hh T' T'' _ ψ (hQ _ _ e φ hq) S u hp
-  simp only [map_sub, map_add, hact, Category.assoc, mp_comp] at k2 k3 ⊢
+  simp only [map_sub, map_add (f := _), hact, Category.assoc, mp_comp] at k2 k3 ⊢
   linear_combination k2 - k3 + k4 - k1
 
-open Classical in
 
+open Classical in
 theorem pull_restrict_small_injective (P : ObjectProperty C) (hP : ∀ S S', (S ⟶ S') → P S → P S')
     (sep : ∀ T, Sep F fun S (_ : T ⟶ S) ↦ P S) (glue : ∀ T, Glue F fun S (_ : T ⟶ S) ↦ P S)
     (van : ∀ T, Van1 F fun S (_ : T ⟶ S) ↦ P S) :
     Function.Injective (CoefMap.restrict F P.ι).pull2 := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   obtain ⟨z, rfl⟩ := H2.mk_surjective F c
   rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_zero] at hc
@@ -111,8 +115,8 @@ theorem pull_restrict_small_injective (P : ObjectProperty C) (hP : ∀ S S', (S 
   funext S S' S'' ψ χ
   exact hh S S' S'' PUnit.unit ψ χ trivial
 
-open Classical in
 
+open Classical in
 theorem descent_H2_surjective (P : ObjectProperty C) (hP : ∀ S S', (S ⟶ S') → P S → P S')
     (sep : ∀ T, Sep F fun S (_ : T ⟶ S) ↦ P S) (glue : ∀ T, Glue F fun S (_ : T ⟶ S) ↦ P S)
     (van : ∀ T, Van1 F fun S (_ : T ⟶ S) ↦ P S) (van2 : ∀ T, Van2 F fun S (_ : T ⟶ S) ↦ P S) :
@@ -164,7 +168,7 @@ theorem descent_H2_surjective (P : ObjectProperty C) (hP : ∀ S S', (S ⟶ S') 
     have k1 := hb T T' φ _ _ (ψ ≫ u) χ hp
     have k2 := hb T' T'' ψ _ _ u χ hp
     have k3 := hb T T'' (φ ≫ ψ) _ _ u χ hp
-    simp only [map_sub, map_add, Category.assoc] at k1 k3 ⊢
+    simp only [map_sub, map_add (f := _), Category.assoc] at k1 k3 ⊢
     linear_combination k1 + k2 - k3
   choose c hc using h3
   refine ⟨H2.mk F ⟨c, fun T T' T'' T''' φ ψ χ ↦ sub_eq_zero.1 (sep T''' _ fun S u hp ↦ ?_)⟩, ?_⟩
@@ -172,7 +176,7 @@ theorem descent_H2_surjective (P : ObjectProperty C) (hP : ∀ S S', (S ⟶ S') 
     have k2 := hc _ _ _ (φ ≫ ψ) χ S u hp
     have k3 := hc _ _ _ φ (ψ ≫ χ) S u hp
     have k4 := hc _ _ _ ψ χ S u hp
-    simp only [map_sub, map_add, Category.assoc, mp_comp] at k1 k2 k3 ⊢
+    simp only [map_sub, map_add (f := _), Category.assoc, mp_comp] at k1 k2 k3 ⊢
     linear_combination k1 + k2 - k3 - k4
   · rw [CoefMap.pullCohomologyTwo_class]
     congr 1
@@ -194,20 +198,20 @@ variable {F} {T : C} {P Q : ∀ S, (T ⟶ S) → Prop} (hPQ : ∀ S u, P S u →
   (glue : ∀ S u, Q S u → Glue F fun S' (ψ : S ⟶ S') ↦ P S' (u ≫ ψ))
   (van : ∀ S u, Q S u → Van1 F fun S' (ψ : S ⟶ S') ↦ P S' (u ≫ ψ))
 
-include hPQ in
 
+include hPQ in
 theorem Sep.mono (h : Sep F P) : Sep F Q := fun x hx ↦ h x fun S u hp ↦ hx S u (hPQ S u hp)
 
-include hPQ sep in
 
+include hPQ sep in
 theorem Glue.mono (h : Glue F P) : Glue F Q := by
   intro s hs
   obtain ⟨x, hx⟩ := h s fun S S' u ψ hp ↦ hs S S' u ψ (hPQ S u hp)
   refine ⟨x, fun S u hq ↦ sub_eq_zero.1 (sep S u hq _ fun S' ψ hp ↦ ?_)⟩
   rw [map_sub, ← mp_comp, hx _ _ hp, hs _ _ _ _ hq, sub_self]
 
-include hPQ hQ sep glue in
 
+include hPQ hQ sep glue in
 theorem Van1.mono (h : Van1 F P) : Van1 F Q := by
   intro a ha
   obtain ⟨b, hb⟩ := h a fun S S' S'' u ψ χ hp ↦ ha S S' S'' u ψ χ (hPQ S u hp)
@@ -230,8 +234,8 @@ theorem Van1.mono (h : Van1 F P) : Van1 F Q := by
   simp only [map_sub, Category.assoc, mp_comp] at k2 k3 ⊢
   linear_combination k2 - k3 + k1
 
-include hPQ hQ sep glue van in
 
+include hPQ hQ sep glue van in
 theorem Van2.mono (h : Van2 F P) : Van2 F Q := by
   intro z hz
   obtain ⟨f, hf⟩ := h z fun S S' S'' S''' u ψ χ ω hp ↦ hz S S' S'' S''' u ψ χ ω (hPQ S u hp)
@@ -250,8 +254,8 @@ section Basic
 variable {F} (H : HasLoc F) {T : C} {P : ∀ S, (T ⟶ S) → Prop} {b : F.obj T}
   (hP : ∀ S u, P S u ↔ IsUnit (mp F u b))
 
-include H hP in
 
+include H hP in
 theorem exists_initial : ∃ (T' : C) (l : T ⟶ T') (p : ∀ S (u : T ⟶ S), P S u → (T' ⟶ S)), P T' l ∧
     (∀ S u h, l ≫ p S u h = u) ∧
     ∀ S S' u (ψ : S ⟶ S') h, ∃ h', p S' (u ≫ ψ) h' = p S u h ≫ ψ := by
@@ -263,9 +267,9 @@ theorem exists_initial : ∃ (T' : C) (l : T ⟶ T') (p : ∀ S (u : T ⟶ S), P
   · beta_reduce
     rw [← Category.assoc, hp]
 
+
 open Classical in
 include H hP in
-
 theorem vanishing_H1_inverting_morphisms : Van1 F P := by
   obtain ⟨T', l, p, hl, h1, h2⟩ := exists_initial H hP
   intro a ha
@@ -274,9 +278,9 @@ theorem vanishing_H1_inverting_morphisms : Van1 F P := by
   simp only [dif_pos h, dif_pos h', e]
   rw [ha _ _ _ _ _ _ hl, h1, add_sub_cancel_left]
 
+
 open Classical in
 include H hP in
-
 theorem vanishing_H2_inverting_morphisms : Van2 F P := by
   obtain ⟨T', l, p, hl, h1, h2⟩ := exists_initial H hP
   intro z hz
@@ -288,8 +292,8 @@ theorem vanishing_H2_inverting_morphisms : Van2 F P := by
   rw [h1] at this
   linear_combination this
 
-include H hP in
 
+include H hP in
 theorem IsSec.frac {s : ∀ S, (T ⟶ S) → F.obj S} (hs : IsSec F P s) :
     ∃ (n : ℕ) (x : F.obj T), ∀ S u, P S u → s S u * mp F u b ^ n = mp F u x := by
   obtain ⟨T', l, h1, h2, -, h4⟩ := H T b
@@ -298,8 +302,8 @@ theorem IsSec.frac {s : ∀ S, (T ⟶ S) → F.obj S} (hs : IsSec F P s) :
   obtain ⟨v, rfl, -⟩ := h4 S u ((hP _ _).1 h)
   rw [hs _ _ _ _ ((hP _ _).2 h1), mp_comp, mp_comp, ← e, map_mul, map_pow]
 
-include H hP in
 
+include H hP in
 theorem IsSec.extend (c : F.obj T) {s : ∀ S, (T ⟶ S) → F.obj S}
     (hs : IsSec F (fun S u ↦ P S u ∧ IsUnit (mp F u c)) s) :
     ∀ᶠ N : ℕ in atTop, ∃ s', IsSec F P s' ∧
@@ -320,8 +324,8 @@ theorem IsSec.extend (c : F.obj T) {s : ∀ S, (T ⟶ S) → F.obj S}
     rw [← e S u ⟨h, h'⟩, map_mul]
     linear_combination (s S u * mp F u c ^ (n + m)) * k'
 
-include H hP in
 
+include H hP in
 theorem IsSec.kill (c : F.obj T) {s : ∀ S, (T ⟶ S) → F.obj S} (hs : IsSec F P s)
     (h0 : ∀ S u, P S u → IsUnit (mp F u c) → s S u = 0) :
     ∀ᶠ M : ℕ in atTop, ∀ S u, P S u → mp F u c ^ M * s S u = 0 := by
@@ -343,8 +347,8 @@ section Cech
 variable {F} (H : HasLoc F) {T : C} {ι : Type} [Fintype ι] {b : ι → F.obj T}
   (hb : Ideal.span (Set.range b) = ⊤)
 
-include hb in
 
+include hb in
 theorem exists_partition (N : ℕ) : ∃ r : ι → F.obj T, ∀ S (u : T ⟶ S),
     ∑ l, mp F u (r l) * mp F u (b l) ^ N = 1 := by
   have := Ideal.span_pow_eq_top _ hb N
@@ -353,8 +357,8 @@ theorem exists_partition (N : ℕ) : ∃ r : ι → F.obj T, ∀ S (u : T ⟶ S)
   refine ⟨r, fun S u ↦ ?_⟩
   simpa using congrArg (mp F u) hr
 
-include H hb in
 
+include H hb in
 theorem sep_std : Sep F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) := by
   intro x hx
   obtain ⟨M, hM⟩ := (eventually_all.2 fun l ↦ IsSec.kill H (P := fun _ _ ↦ True) (b := 1)
@@ -364,8 +368,8 @@ theorem sep_std : Sep F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) := 
   rw [← mp_id F T x, ← one_mul (mp F _ x), ← hr T (𝟙 T), Finset.sum_mul]
   exact Finset.sum_eq_zero fun l _ ↦ by rw [mul_assoc, hM l T _ trivial, mul_zero]
 
-include H hb in
 
+include H hb in
 theorem glue_std : Glue F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) := by
   intro s hs
   obtain ⟨N, hN⟩ := (eventually_all.2 fun l ↦ IsSec.extend H (P := fun _ _ ↦ True) (b := 1)
@@ -379,13 +383,14 @@ theorem glue_std : Glue F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) :
       fun S u _ hl ↦ by rw [hh' l S u trivial hl, sub_self]).exists
   obtain ⟨r, hr⟩ := exists_partition hb (M + N)
   refine ⟨∑ l, r l * b l ^ M * h l T (𝟙 T), fun S u ⟨i, hi⟩ ↦ ?_⟩
-  rw [← one_mul (s S u), ← hr S u, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← one_mul (s S u), ← hr S u, Finset.sum_mul, map_sum]
   refine Finset.sum_congr rfl fun l _ ↦ ?_
   rw [map_mul, map_mul, map_pow, ← hh l _ _ _ u trivial, Category.id_comp]
   linear_combination -mp F u (r l) * hM l i S u hi
 
-include H hb in
 
+include H hb in
 theorem cech1 (c : ι → ι → ∀ S, (T ⟶ S) → F.obj S)
     (hs : ∀ i j, IsSec F (fun S u ↦ IsUnit (mp F u (b i)) ∧ IsUnit (mp F u (b j))) (c i j))
     (hc : ∀ i j k S u, IsUnit (mp F u (b i)) → IsUnit (mp F u (b j)) → IsUnit (mp F u (b k)) →
@@ -409,14 +414,15 @@ theorem cech1 (c : ι → ι → ∀ S, (T ⟶ S) → F.obj S)
   obtain ⟨r, hr⟩ := exists_partition hb (M + N)
   refine ⟨fun i S u ↦ ∑ l, mp F u (r l * b l ^ M) * h l i S u, fun i S S' u ψ hu ↦ ?_,
     fun i j S u hi hj ↦ ?_⟩
-  · simp only [map_sum, map_mul, mp_comp, fun l ↦ hh l i S S' u ψ hu]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_mul, mp_comp, fun l ↦ hh l i S S' u ψ hu]
   · rw [← one_mul (c i j S u), ← hr S u, Finset.sum_mul, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun l _ ↦ ?_
     rw [map_mul, map_pow]
     linear_combination mp F u (r l) * hM l i j S u ⟨hi, hj⟩
 
-include H hb in
 
+include H hb in
 theorem cech2 (c : ι → ι → ι → ∀ S, (T ⟶ S) → F.obj S)
     (hs : ∀ i j k, IsSec F (fun S u ↦ (IsUnit (mp F u (b i)) ∧ IsUnit (mp F u (b j))) ∧
       IsUnit (mp F u (b k))) (c i j k))
@@ -446,22 +452,23 @@ theorem cech2 (c : ι → ι → ι → ∀ S, (T ⟶ S) → F.obj S)
   obtain ⟨r, hr⟩ := exists_partition hb (M + N)
   refine ⟨fun i j S u ↦ ∑ l, mp F u (r l * b l ^ M) * h l i j S u, fun i j S S' u ψ hu ↦ ?_,
     fun i j k S u hi hj hk ↦ ?_⟩
-  · simp only [map_sum, map_mul, mp_comp, fun l ↦ hh l i j S S' u ψ hu]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [map_sum, map_mul, mp_comp, fun l ↦ hh l i j S S' u ψ hu]
   · rw [← one_mul (c i j k S u), ← hr S u, Finset.sum_mul, ← Finset.sum_sub_distrib,
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun l _ ↦ ?_
     rw [map_mul, map_pow]
     linear_combination mp F u (r l) * hM l i j k S u ⟨⟨hi, hj⟩, hk⟩
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem isUnit_comp {S S' : C} {u : T ⟶ S} (ψ : S ⟶ S') {x : F.obj T} (h : IsUnit (mp F u x)) :
     IsUnit (mp F (u ≫ ψ) x) := by
   rw [mp_comp]; exact h.map _
 
+
 open Classical in
 include H hb in
-
 theorem vanishing_H1_standard_cover : Van1 F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) := by
   intro a ha
   choose β hβ using fun i ↦ vanishing_H1_inverting_morphisms H (P := fun S u ↦ IsUnit (mp F u (b i))) (fun _ _ ↦ Iff.rfl) a
@@ -482,9 +489,9 @@ theorem vanishing_H1_standard_cover : Van1 F fun S (u : T ⟶ S) ↦ ∃ i, IsUn
   rw [hγ i _ _ hi, hγ i _ _ (isUnit_comp ψ hi), he i _ _ _ _ hi, map_sub]
   linear_combination hβ i S S' u ψ hi
 
+
 open Classical in
 include H hb in
-
 theorem vanishing_H2_standard_cover : Van2 F fun S (u : T ⟶ S) ↦ ∃ i, IsUnit (mp F u (b i)) := by
   intro z hz
   choose a ha using fun i ↦ vanishing_H2_inverting_morphisms H (P := fun S u ↦ IsUnit (mp F u (b i))) (fun _ _ ↦ Iff.rfl) z
@@ -497,7 +504,7 @@ theorem vanishing_H2_standard_cover : Van2 F fun S (u : T ⟶ S) ↦ ∃ i, IsUn
       linear_combination ha i S S' S'' u ψ χ h.1 - ha j S S' S'' u ψ χ h.2
   obtain ⟨e, he, he'⟩ := cech2 H hb (fun i j k S u ↦ β j k S u - β i k S u + β i j S u)
     (fun i j k S S' u ψ h ↦ by
-      rw [map_add, map_sub]
+      rw [map_add (f := _), map_sub]
       linear_combination hβ j k S S' u ψ ⟨h.1.2, h.2⟩ - hβ i k S S' u ψ ⟨h.1.1, h.2⟩ +
         hβ i j S S' u ψ h.1)
     (fun _ _ _ _ _ _ _ _ _ _ ↦ by ring)

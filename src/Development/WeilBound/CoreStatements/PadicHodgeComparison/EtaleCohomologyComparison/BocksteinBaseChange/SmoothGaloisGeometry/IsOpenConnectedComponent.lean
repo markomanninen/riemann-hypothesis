@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.SmoothGaloisGeometry.ExistsGalMapApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.SmoothGaloisGeometry.ExistsGalMapApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem isOpen_connectedComponent {X : Type*} [TopologicalSpace X] [NoetherianSp
       exact hZ.1.isConnected.subset_connectedComponent hy
   rw [← isClosed_compl_iff, h]
   refine Set.Finite.isClosed_biUnion
-    (NoetherianSpace.finite_irreducibleComponents.subset fun Z hZ => hZ.1) fun Z hZ => ?_
+    (NoetherianSpace.finite_irreducibleComponents.subset (by exact fun Z hZ => hZ.1)) fun Z hZ => ?_
   exact isClosed_of_mem_irreducibleComponents Z hZ.1
 
 theorem image_connectedComponent {X : Type*} [TopologicalSpace X] (h : X ≃ₜ X) (x : X) :

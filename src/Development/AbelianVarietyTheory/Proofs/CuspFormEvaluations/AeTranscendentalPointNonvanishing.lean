@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.AeBlockSphereEvalNeZero
+
+@[expose] public section
 
 open MeasureTheory
 

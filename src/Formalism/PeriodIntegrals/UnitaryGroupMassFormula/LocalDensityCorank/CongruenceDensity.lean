@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFL
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FlbHZeroRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalDensityCorank.SplitCount
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensGFL
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.FlbHZeroRight
+
+@[expose] public section
 
 open ValuativeRel Classical
 
@@ -32,7 +36,8 @@ theorem act_map {R N N' ι : Type} [CommRing R] [AddCommGroup N] [Module R N] [A
     [Module R N'] [Fintype ι] (f : N →ₗ[R] N') (P : Matrix ι ι R) (v : ι → N) :
     (fun a => f (act P v a)) = act P (fun a => f (v a)) := by
   funext a
-  simp [act, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [act, map_sum, map_smul]
 
 section
 
@@ -110,7 +115,7 @@ theorem gram_act (H : Loc.HermSp M V) (ϖE : E) {ι : Type} [Fintype ι]
       ∈ Submodule.span M.L.O {ϖE} := by
   have hR : ∀ x y y', H.h x (y + y') = H.h x y + H.h x y' := by
     intro x y y'
-    rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm y x, ← H.h_herm y' x]
+    rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm y x, ← H.h_herm y' x]
   have hS : ∀ (c : E) x y, H.h x (c • y) = M.L.cj c * H.h x y := by
     intro c x y
     rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm y x]

@@ -1,11 +1,15 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalCorollaryOfDeRham
-import Formalism.SharpRestriction.LevelLetterCocycles.Realised2Pf
-import Development.AutomorphicArithmetic.BlochKatoExtensions.BkExtHolds
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfUTieRec
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfComplMax
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeEveryTheory
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Formalism.SharpRestriction.LevelLetterCocycles.BoundedNumeratorPowerSummability
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalCorollaryOfDeRham
+public import Formalism.SharpRestriction.LevelLetterCocycles.Realised2Pf
+public import Development.AutomorphicArithmetic.BlochKatoExtensions.BkExtHolds
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfUTieRec
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfComplMax
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeEveryTheory
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Formalism.SharpRestriction.LevelLetterCocycles.BoundedNumeratorPowerSummability
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ def levBOfSit {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} {K : 
   mem := S.tie.levB_mem
   supp := S.tie.levB_supp
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem local_theorem_of_inputs (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (C : ℝ)
     (hP3 : Formalism.MainNotions.DeltaInvariantLattices.P3 D HW F Cm) (hP4 : Formalism.MainNotions.DeltaInvariantLattices.P4 D HW F Cm) (hP5 : Formalism.MainNotions.DeltaInvariantLattices.P5 D HW F)

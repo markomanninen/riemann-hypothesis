@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.VacOfShape
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HzUnit
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.VacOfShape
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CosInj
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PairForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.StabOrd
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsTwIffCanonEq
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -31,8 +35,8 @@ structure XGeo (D : D7) where
   bT : GA D D.sp.X'
   LT : GlobalTheory.FinPl.Lat D.sp.X'
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure YRat (a : XGeo D) where
   bes : ∀ j ρ, j + 2 * ρ + 2 = D.R.m → BesAt (Yc D j) (D.sp.X j) ρ
   jac : ∀ j ρ, j + 2 * ρ + 2 = D.R.m → JacAt (Yc D (j + 1)) (D.sp.X (j + 1)) ρ
@@ -66,7 +70,7 @@ structure LocX (a : XGeo D) (βT : GL (Fin D.sp.X'.rank) (Lev.EAf D)) (PP : Pl D
   [bor : BorelSpace k]
   q : GlobalTheory.FinPl.SplitPt D k
   idem : Formalism.L2.NTheta.IsIdemAt q.e PP
-  under : q.v = PP.under (𝓞 D.host.F)
+  under : q.v = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)
   unit : q.UnitAA
   s : ℕ
   hs : s + 1 + 1 = D.R.m
@@ -118,45 +122,17 @@ structure PkHyp : Prop where
   gap : GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.NodeGap D
   fin : Finite W.P.T
 
-  sel : ∀ PP PP', QAll W PP → QAll W PP' → PP.under (𝓞 D.host.F) = PP'.under (𝓞 D.host.F) → PP = PP'
+  sel : ∀ PP PP', QAll W PP → QAll W PP' → (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP') → PP = PP'
 
   aa : ∀ PP : Pl D.host.E, (QAll W PP ∨ PP ∈ (pk W).Pg ∨ ∃ u, (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) ∈ PP.asIdeal) →
     ((Ideal.absNorm D.host.ccK : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal
 
 variable {W} {u : D.what₂.Word} (f : FamCh W u)
 
-structure FamCh.RowOK : Prop where
-  meas : GeoMeas (pk W) f.g
-  last : f.c.VolLast
-  x : ∀ j, j ≤ D.R.m → (f.g.x j).Is
-  row : ∀ t, (f.row t).Is
-  same : ∀ t t', (f.row t).Same (f.row t')
-
-structure FamCh.ColOK : Prop where
-  kom : ∀ t j, j < D.R.m → IsWeilDatumO (pk W).ψ _ _ ((pk W).toLevCh.mu t (j + 1)) ((pk W).toLevCh.mu t (j + 1)) ((f.col t).kom j)
-  ker : ∀ t j, j < D.R.m → ∀ α γ, ((f.t t).ker j α γ).Is f.c.ψ f.c.θ (f.c.x j) (f.c.x (j + 1))
-  e : ∀ t j α, ∀ g ∈ ((f.col t).e j α).support, g ∈ GfC (Yc D j)
-  eT : ∀ t n h β, ∀ g ∈ ((f.col t).eT n h β).support, g ∈ GfC D.sp.X'
-  stabK : ∀ t j, j < D.R.m → ∀ ψ ∈ (f.col t).Ram j, (f.t t).K j ψ ∈ (f.col t).Ram (j + 1)
-  stabS : ∀ t j, j ≤ D.R.m → ∀ ψ ∈ (f.col t).Ram j, (f.col t).S j ψ ∈ (f.col t).Ram j
-
-def FamCh.RowAt : Prop :=
-  ∀ t n (h : 2 * n + 2 * 0 + 2 = D.R.m) F', ∃ G : (f.t t).CT, G.1 = topOf W t F' ∧
-    ((f.t t).dn (2 * n + 1) ((f.t t).ioT (2 * n) h G)).1 = GlobalTheory.MiTop.rowAt W t F'
-
-def FamCh.Onto : Prop :=
-  ∀ n (h : 2 * n + 2 * 0 + 2 = D.R.m), ∀ T ∈ GlobalTheory.MiTop.ThetaLiftSpaceZero W, ∃ G : (f.t W.P.A3.A.μ0).CT,
-    ((f.t W.P.A3.A.μ0).dn (2 * n + 1) ((f.t W.P.A3.A.μ0).ioT (2 * n) h G)).1 = T
-
-def FamCh.Tail : Prop :=
-  ∀ t (F : Fin ((W.P.A3.side3 W.P.Ps W.P.ψs W.P.Zs).nV t) → D.what₂.LL) F', HEq F F' → ∀ G : (f.t t).CT, G.1 = topOf W t F' →
-    ∀ φ : D.what₂.Mu u, (f.t t).tail D.R.m rfl (GlobalTheory.Core.Rk.colTo (D.chTw u (W.P.I.tup t)) D.R.m (D.e0Tw u _ (D.eMu u φ).1)) G =
-      D.what₂.perCol u (W.P.I.tup t) φ (W.P.I.jA t ((rV0 D W.P.A3.A W.P.Ps W.P.ψs t).mulVec F))
-
 structure VTie (v : VCom f.c) : Prop where
   b : ∀ j, v.b j = f.g.b j
   bT : v.bT = f.g.bT ∧ v.NT = f.g.LT
-  gP : ∀ p, p ∈ v.gP ↔ ∃ PP ∈ (pk W).Pg, p = PP.under (𝓞 D.host.F)
+  gP : ∀ p, p ∈ v.gP ↔ ∃ PP ∈ (pk W).Pg, p = (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP)
   tP : ∀ p, p ∈ v.tP ↔ (((D.mem u).A.T : ℕ) : 𝓞 D.host.F) ∈ p.asIdeal
   moves : ∀ j, j < D.R.m → ∀ P : GlobalTheory.FinPl.Pl D → Prop, (∀ p, P p → p ∉ v.gP) →
     GlobalTheory.FinPl.Moves (Yc D j) (f.g.b j) ((pk W).ΛY j) (v.N j) P
@@ -168,30 +144,6 @@ structure VTie (v : VCom f.c) : Prop where
     (omT (pk W) W.P.A3.A.μ0 j h (f.g.b (j + 1), f.g.bT) (pureTensorO f.c.ψ f.c.θ (Yc D (j + 1)) D.sp.X'
       (cart ((pk W).MY (j + 1))) (cart (pk W).MX) (onb ((pk W).MY (j + 1))) (onb (pk W).MX) (vacT (pk W) j h) P))
   nz : (∀ j, j + 1 < D.R.m → ∃ P, v.Ψ j P 1 1 ≠ 0) ∧ ∀ j h, ∃ P, v.ΨT j h P ≠ 0
-
-def IsDG (W : RealPack ex) (j : ℕ) {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (Λ : GlobalTheory.FinPl.Lat V)
-    (β : GL (Fin V.rank) (Lev.EAf D)) (vac : WO (Yc D j) V → ℂ) (d : WO (Yc D j) V →₀ ℂ) : Prop :=
-  GlobalTheory.FinPl.CombAt (fun p => ∃ PP ∈ (pk W).Pg, p = PP.under (𝓞 D.host.F)) d ∧
-    IsStepVecOf (pk W).ψ (pk W).θ (Yc D j) V (cart ((pk W).MY j)) (cart M) ((pk W).ΛY j) Λ ((pk W).βY j) β
-      (datY _ D.R.r D.R.t j (r_le_Y j) (pk W).Pg ∅ (lvP W) (pk W).chi (fun _ => 1) Frm.B) ((pk W).chi (j + 1)) ∅ (fun _ => 1) vac
-      (comb (pk W).ψ _ _ d vac)
-
-def IsDQ (W : RealPack ex) (t : W.P.T) (j : ℕ) {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (Λ : GlobalTheory.FinPl.Lat V)
-    (β : GL (Fin V.rank) (Lev.EAf D)) (vac : WO (Yc D j) V → ℂ) (d : WO (Yc D j) V →₀ ℂ) : Prop :=
-  GlobalTheory.FinPl.CombAt (fun p => ∃ PP ∈ (pk W).Q t, p = PP.under (𝓞 D.host.F)) d ∧
-    IsStepVecOf (pk W).ψ (pk W).θ (Yc D j) V (cart ((pk W).MY j)) (cart M) ((pk W).ΛY j) Λ ((pk W).βY j) β
-      (datY _ D.R.r D.R.t j (r_le_Y j) ∅ ((pk W).Q t) (LevelP.triv _ _ _) (pk W).chi ((pk W).xiR t) Frm.B) ((pk W).chi (j + 1))
-      ((pk W).Q t) ((pk W).xiR t) vac (comb (pk W).ψ _ _ d vac)
-
-def QVec {t : W.P.T} (w : VTup (f.t t)) : Prop :=
-  (∀ j, j + 1 < D.R.m → ∀ d, IsDQ W t j ((pk W).MY (j + 1)) ((pk W).ΛY (j + 1)) ((pk W).βY (j + 1)) ((pk W).vac j) d →
-    ∀ g, GlobalTheory.FinPl.Vac f.c.ψ _ _ ((pk W).ΛY j) ((pk W).ΛY (j + 1)) (· ∈ w.Q) g →
-      (f.t t).om j (f.g.b j, f.g.b (j + 1)) (comb f.c.ψ _ _ d g) =
-        comb f.c.ψ _ _ (w.eQ j) ((f.t t).om j (f.g.b j, f.g.b (j + 1)) g)) ∧
-  ∀ j h d, IsDQ W t (j + 1) (pk W).MX (pk W).ΛX (pk W).βX (vacT (pk W) j h) d →
-    ∀ g, GlobalTheory.FinPl.Vac f.c.ψ _ _ ((pk W).ΛY (j + 1)) (pk W).ΛX (· ∈ w.Q) g →
-      (f.t t).omT j h (f.g.b (j + 1), f.g.bT) (comb f.c.ψ _ _ d g) =
-        comb f.c.ψ _ _ (w.eQT j h) ((f.t t).omT j h (f.g.b (j + 1), f.g.bT) g)
 
 structure GRead {v : VCom f.c} {n : ℕ} (G : Fin n → GLoc v) (pl : Fin n ≃ (pk W).Pg) : Prop where
   idem : ∀ i, Formalism.L2.NTheta.IsIdemAt (G i).q.e (pl i).1 ∧ (G i).q.v = (pl i).1.under (𝓞 D.host.F)
@@ -223,14 +175,6 @@ open GlobalTheory.Mem GlobalTheory.Mem.Col2
 variable {B : GlobalTheory.Mem.Base} {X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {L : SizeData₂ (I.rec7 l Z)}
   {hT : GatTies (I.rec7 l Z)} {Gi : Formalism.MainNotions.G.Inst (I.rec7 l Z) L} {Gl : Formalism.MainNotions.G.LatInst (I.rec7 l Z)} {Kc : Formalism.MainNotions.G.Consts}
   {Yd : DivX (I.rec7 l Z)} {cX : ExtraC} {ex : Extra (I.rec7 l Z) L hT Gi Gl Kc Yd cX}
-
-structure TrueW (W : RealPack ex) : Prop where
-  ok : I.Ok
-  pins : Nonempty (TC.Pins B X)
-  tw : I.IsTw
-  std : Nonempty (I.StdC l Z W.R.T.cols)
-  chr : ∀ j : Fin B.R.m, ChrEq ((pk W).mu0 ((j : ℕ) + 1)) (I.C.mu0 j)
-  top : TopRead W
 
 end True
 

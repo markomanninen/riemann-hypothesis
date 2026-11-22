@@ -1,4 +1,8 @@
-import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
+module
+
+public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.FrobeniusPowerSeries.WeierS
 
@@ -9,11 +13,11 @@ variable {O : Type*} [CommRing O] [IsLocalRing O] [IsAdicComplete (IsLocalRing.m
 def T (O : Type*) [CommRing O] [IsLocalRing O] (N : ℕ) : Ideal O⟦X⟧ where
   carrier := {x | ∀ m, coeff m x ∈ (IsLocalRing.maximalIdeal O) ^ (N - m)}
   add_mem' {a b} ha hb m := by
-    simpa only [map_add] using Ideal.add_mem _ (ha m) (hb m)
+    simpa only [map_add (f := _)] using Ideal.add_mem _ (ha m) (hb m)
   zero_mem' m := by simp
   smul_mem' c x hx m := by
     rw [smul_eq_mul, coeff_mul]
-    refine Ideal.sum_mem _ fun p hp => Ideal.mul_mem_left _ _ ?_
+    refine Submodule.sum_mem _ fun p hp => Ideal.mul_mem_left _ _ ?_
     have h2 : p.2 ≤ m := by have := Finset.mem_antidiagonal.mp hp; omega
     exact Ideal.pow_le_pow_right (by omega) (hx p.2)
 
@@ -29,7 +33,7 @@ theorem T_mul {a b : ℕ} {x y : O⟦X⟧} (hx : x ∈ T O a) (hy : y ∈ T O b)
   rw [mem_T] at hx hy ⊢
   intro m
   rw [coeff_mul]
-  refine Ideal.sum_mem _ fun p hp => ?_
+  refine Submodule.sum_mem _ fun p hp => ?_
   have h := Finset.mem_antidiagonal.mp hp
   have h2 := Ideal.mul_mem_mul (hx p.1) (hy p.2)
   rw [← pow_add] at h2
@@ -76,7 +80,7 @@ theorem pow_mem_coeffFiltration (hg : constantCoeff g ∈ IsLocalRing.maximalIde
 theorem aeval_mem_coeffFiltration (hg : constantCoeff g ∈ IsLocalRing.maximalIdeal O) {N : ℕ} {p : Polynomial O}
     (hp : ∀ d < N, p.coeff d = 0) : Polynomial.aeval g p ∈ T O N := by
   rw [Polynomial.aeval_eq_sum_range]
-  refine Ideal.sum_mem _ fun d _ => ?_
+  refine Submodule.sum_mem _ fun d _ => ?_
   by_cases hd : d < N
   · rw [hp d hd, zero_smul]
     exact Submodule.zero_mem _
@@ -140,7 +144,7 @@ theorem subst_eq (hg : constantCoeff g ∈ IsLocalRing.maximalIdeal O) (f y : O�
 private theorem truncEval_add (N : ℕ) (f f' : O⟦X⟧) :
     S g N (f + f') = S g N f + S g N f' := by
   have h : trunc N (f + f') = trunc N f + trunc N f' := map_add (trunc N) f f'
-  simp only [S, h, map_add]
+  simp only [S, h, map_add (f := _)]
 
 theorem subst_add (hg : constantCoeff g ∈ IsLocalRing.maximalIdeal O) (f f' : O⟦X⟧) :
     subst hg (f + f') = subst hg f + subst hg f' := by

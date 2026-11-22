@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.WindowSums.Statement
-import Formalism.FrobeniusContraction.Statement
-import Formalism.LagrangeIdealLifts.Statement
+module
+
+public import Mathlib
+public import Formalism.WindowSums.Statement
+public import Formalism.FrobeniusContraction.Statement
+public import Formalism.LagrangeIdealLifts.Statement
+
+@[expose] public section
 
 noncomputable section
 

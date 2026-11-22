@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCharDescent
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCharDescent
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,14 +19,16 @@ section Semilinear
 theorem exists_equiv_map_lattice {O K U U' : Type} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] [Field K]
     [Algebra O K] [IsFractionRing O K] [AddCommGroup U] [Module K U] [Module O U] [IsScalarTower O K U]
     [AddCommGroup U'] [Module K U'] [Module O U'] [IsScalarTower O K U']
-    (A : Submodule O U) (B : Submodule O U') [A.IsLattice K] [B.IsLattice K]
+    (A : Submodule O U) (B : Submodule O U') [A.IsFullLattice K] [B.IsFullLattice K]
     (h : Module.finrank K U = Module.finrank K U') :
     ∃ g : U ≃ₗ[K] U', A.map (g.toLinearMap.restrictScalars O) = B := by
   have key : ∀ {V : Type} [AddCommGroup V] [Module K V] [Module O V] [IsScalarTower O K V] (C : Submodule O V)
-      [C.IsLattice K], ∃ c : Module.Basis (Fin (Module.finrank K V)) K V, Submodule.span O (Set.range c) = C := by
+      [C.IsFullLattice K], ∃ c : Module.Basis (Fin (Module.finrank K V)) K V, Submodule.span O (Set.range c) = C := by
     intro V _ _ _ _ C _
+    haveI := Submodule.IsLattice.free K C
+    haveI := Submodule.IsLattice.finite K C
     let c₀ := Module.finBasis O C
-    let c₁ := c₀.extendOfIsLattice K
+    let c₁ := c₀.extendOfIsFullLattice K
     have hn : Module.finrank K V = Module.finrank O C := by
       rw [Module.finrank_eq_card_basis c₁, Fintype.card_fin]
     refine ⟨c₁.reindex (finCongr hn.symm), ?_⟩
@@ -31,7 +37,7 @@ theorem exists_equiv_map_lattice {O K U U' : Type} [CommRing O] [IsDomain O] [Is
       rw [← Set.range_comp]
       congr 1
       funext i
-      exact c₀.extendOfIsLattice_apply K i
+      exact c₀.extendOfIsFullLattice_apply K i
     rw [h1, ← Submodule.map_span, c₀.span_eq, Submodule.map_top, Submodule.range_subtype]
   obtain ⟨a, ha⟩ := key A
   obtain ⟨b, hb⟩ := key B
@@ -39,12 +45,12 @@ theorem exists_equiv_map_lattice {O K U U' : Type} [CommRing O] [IsDomain O] [Is
   rw [← ha, ← hb, Submodule.map_span, ← Set.range_comp, ← (finCongr h).surjective.range_comp b]
   congr 2
   funext i
-  simp
+  exact Module.Basis.equiv_apply _ _ _ _
 
 theorem exists_semilinear {L V O K U : Type} [Field L] [AddCommGroup V] [Module L V] [Module.Finite L V]
     [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] [Field K] [Algebra O K] [IsFractionRing O K]
     [AddCommGroup U] [Module K U] [Module O U] [IsScalarTower O K U] (e : L →+* K)
-    (S : Set V) (hS : S.Finite) (hspan : Submodule.span L S = ⊤) (B : Submodule O U) [B.IsLattice K]
+    (S : Set V) (hS : S.Finite) (hspan : Submodule.span L S = ⊤) (B : Submodule O U) [B.IsFullLattice K]
     (h : Module.finrank L V = Module.finrank K U) :
     ∃ f : V →ₛₗ[e] U,
       (∀ (ι : Type) (b : Module.Basis ι L V), LinearIndependent K (fun i => f (b i)) ∧
@@ -62,21 +68,20 @@ theorem exists_semilinear {L V O K U : Type} [Field L] [AddCommGroup V] [Module 
       induction hx using Submodule.span_induction with
       | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
       | zero => rw [map_zero]; exact Submodule.zero_mem _
-      | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+      | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
       | smul c y _ hy => rw [LinearMap.map_smulₛₗ]; exact Submodule.smul_mem _ _ hy
-    rw [eq_top_iff, ← (Pi.basisFun K (Fin (Module.finrank L V))).span_eq, Submodule.span_le]
+    apply eq_top_iff.mpr
+    rw [← (Pi.basisFun K (Fin (Module.finrank L V))).span_eq, Submodule.span_le]
     rintro _ ⟨i, rfl⟩
-    have h2 : Pi.basisFun K (Fin (Module.finrank L V)) i = f₀ (b₀ i) := by
-      funext j
-      show _ = e (b₀.repr (b₀ i) j)
-      by_cases hij : i = j
-      · subst hij; simp
-      · simp [hij, Ne.symm hij]
-    rw [h2]
-    exact h1 _
+    have heq : (Pi.basisFun K (Fin (Module.finrank L V))) i = f₀ (b₀ i) := by
+      ext j
+      simp [f₀, Pi.basisFun_apply, Pi.single_apply, Finsupp.single_apply, eq_comm]
+    rw [heq]
+    exact h1 (b₀ i)
   let A : Submodule O (Fin (Module.finrank L V) → K) := Submodule.span O (f₀ '' S)
-  haveI : A.IsLattice K :=
-    ⟨Submodule.fg_span (hS.image _), by rw [Submodule.span_span_of_tower, hf₀ S hspan]⟩
+  haveI : A.IsFullLattice K :=
+    { toIsLattice := Submodule.IsLattice.of_fg _ (Submodule.fg_span (hS.image _))
+      span_eq_top := by rw [show A = Submodule.span O (f₀ '' S) from rfl, Submodule.span_span_of_tower, hf₀ S hspan] }
   obtain ⟨g, hg⟩ := exists_equiv_map_lattice (K := K) A B (by rw [← h]; simp)
   refine ⟨g.toLinearMap.comp f₀, fun ι b => ?_, ?_⟩
   · haveI : Finite ι := Module.Finite.finite_basis b
@@ -104,7 +109,8 @@ theorem form_gen {L V M ι : Type} [Field L] [AddCommGroup V] [Module L V] [AddC
     refine ⟨B.constr ℂ fun i => σ (l (b i)), fun x => ?_⟩
     conv_lhs => rw [← b.sum_repr x]
     conv_rhs => rw [← b.sum_repr x]
-    simp only [map_sum, LinearMap.map_smulₛₗ, ← hB, Module.Basis.constr_basis, smul_eq_mul, map_mul, RingHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, ← hB, Module.Basis.constr_basis, smul_eq_mul, map_mul, RingHom.id_apply]
   have hinj : Function.Injective j := fun x y hxy => by
     refine b.ext_elem fun i => σ.injective ?_
     obtain ⟨l', hl'⟩ := key (b.coord i)
@@ -131,16 +137,17 @@ theorem baseChange_lattice {A B V : Type} [CommRing A] [IsDomain A] [CommRing B]
     [IsScalarTower A (FractionRing A) V] (Λ : Submodule A V) (hfg : Λ.FG)
     (hspan : Submodule.span (FractionRing A) (Λ : Set V) = ⊤) :
     Module.finrank (FractionRing B) (FractionRing B ⊗[A] V) = Module.finrank (FractionRing A) V ∧
-      (Submodule.span B ((TensorProduct.mk A (FractionRing B) V 1) '' (Λ : Set V))).IsLattice (FractionRing B) := by
+      (Submodule.span B ((TensorProduct.mk A (FractionRing B) V 1) '' (Λ : Set V))).IsFullLattice (FractionRing B) := by
   haveI : FaithfulSMul A B := (faithfulSMul_iff_algebraMap_injective A B).2 hinj
   letI : Algebra (FractionRing A) (FractionRing B) := FractionRing.liftAlgebra A (FractionRing B)
   haveI : IsScalarTower A (FractionRing A) (FractionRing B) := FractionRing.isScalarTower_liftAlgebra A (FractionRing B)
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, { toIsLattice := Submodule.IsLattice.of_fg _ ?_, span_eq_top := ?_ }⟩
   · rw [← (TensorProduct.AlgebraTensorModule.cancelBaseChange A (FractionRing A) (FractionRing B) (FractionRing B) V).finrank_eq,
       Module.finrank_baseChange, (NChoice.fracEquiv A V).finrank_eq]
   · obtain ⟨T, rfl⟩ := hfg
     rw [← Submodule.map_coe, ← Submodule.span_image, Submodule.span_span_of_tower]
     exact Submodule.fg_span (T.finite_toSet.image _)
+
   · rw [Submodule.span_span_of_tower, eq_top_iff]
     rintro x -
     induction x using TensorProduct.induction_on with

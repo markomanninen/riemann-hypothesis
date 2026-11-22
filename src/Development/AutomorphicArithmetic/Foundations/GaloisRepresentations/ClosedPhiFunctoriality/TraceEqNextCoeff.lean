@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IsOp2One
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotSemistableOfPotCrystallineDecompositionGroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariant
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PstExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IsOp2One
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotSemistableOfPotCrystallineDecompositionGroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicHodgePropertiesConjInvariant
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommuteIsNilpotentOfUnipotent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PstExact
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong GlobalTheory.WeilDeligne Matrix
 open scoped Formalism.Per NNReal
 open UpperTheory.Gal.ClosedPhiFromClosedTrace
@@ -75,7 +80,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.tie_holds :
     rw [GlobalTheory.ConjLocal.repE_apply]
     simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Pi.smul_apply, Matrix.mul_apply, Matrix.sum_apply, Matrix.smul_apply,
       smul_eq_mul] at this ⊢
-    rw [AddSubmonoidClass.coe_finset_sum, AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum, AddSubmonoidClass.coe_finsetSum]
     refine (Finset.sum_congr rfl fun x _ => ?_).trans (this.trans (Finset.sum_congr rfl fun x _ => ?_))
     · rw [MulMemClass.coe_mul, hr]
       rfl
@@ -91,7 +96,7 @@ theorem UpperTheory.Gal.ClosedPhiFromClosedTrace.tie_holds :
         rfl
       · rw [Matrix.one_apply_ne hjk, Matrix.one_apply_ne hjk]
         rfl
-    rw [h1, ← this, Matrix.sum_apply, Matrix.sum_apply, AddSubmonoidClass.coe_finset_sum]
+    rw [h1, ← this, Matrix.sum_apply, Matrix.sum_apply, AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [Matrix.smul_apply, Matrix.smul_apply, Algebra.smul_def, smul_eq_mul, MulMemClass.coe_mul]
     rfl

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
-import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoordHomMapTrace
+public import Formalism.SharpRestriction.LevelLetterCocycles.DeltaInvariantLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,13 +59,13 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} [NeZero n] {W : LocWach PD LL O v n}
 
-variable (W) in
 
+variable (W) in
 abbrev Ring9 : Prop :=
   Formalism.MainNotions.DeltaInvariantLattices.wachRingRelations W 1 (PD.p - 1) W.π₀ (fun _ => Polynomial.X + Polynomial.C ((PD.p : ℕ) : O))
 
-variable (W) in
 
+variable (W) in
 def Inv1 (a : PowerSeries O) : Prop := ∀ δ ∈ W.DelF, W.γ₀ δ a = a
 
 theorem diag_mem_AΔ {a : PowerSeries O} (h : Inv1 W a) : (fun _ => a : LetA O n) ∈ W.AΔ := by
@@ -157,14 +161,14 @@ theorem ComΔ.inv {ψ : PowerSeries O →ₐ[O] PowerSeries O} (hψ : ComΔ W ψ
   intro δ hδ
   rw [hψ.comm δ hδ a, ha δ hδ]
 
-theorem comΔ_φ : ComΔ W W.φ₀ where
-  const := by rw [W.φ₀_X, map_mul, PowerSeries.constantCoeff_X, zero_mul]
-  comm δ _ a := (W.γ₀_comm δ a).symm
+theorem comΔ_φ : ComΔ W W.φ₀ := by
+  refine ⟨?_, fun δ _ a => (W.γ₀_comm δ a).symm⟩
+  rw [W.φ₀_X, map_mul, PowerSeries.constantCoeff_X, zero_mul]
 
-theorem comΔ_γ (g : W.Gam) : ComΔ W (W.γ₀ g) where
-  const := (W.γ₀_X g).1
-  comm δ _ a := by
-    rw [← AlgHom.mul_apply, ← AlgHom.mul_apply, ← map_mul, ← map_mul, mul_comm]
+theorem comΔ_γ (g : W.Gam) : ComΔ W (W.γ₀ g) := by
+  refine ⟨(W.γ₀_X g).1, ?_⟩
+  intro δ _ a
+  rw [← AlgHom.mul_apply, ← AlgHom.mul_apply, ← map_mul, ← map_mul, mul_comm]
 
 theorem pre_const (hR : Ring9 W) {ψ : PowerSeries O →ₐ[O] PowerSeries O} (hψ : ComΔ W ψ) :
     PowerSeries.constantCoeff (pre hR (ψ W.π₀₁) (hψ.inv (π₀₁_inv hR))) = 0 := by
@@ -212,37 +216,13 @@ theorem baseIdOf_full (hR : Ring9 W) : (baseIdOf hR).Full := by
   intro a ha
   exact ιOf_full hR a ha
 
-theorem Inv1.mul {a b : PowerSeries O} (ha : Inv1 W a) (hb : Inv1 W b) : Inv1 W (a * b) := by
-  intro δ hδ
-  rw [map_mul, ha δ hδ, hb δ hδ]
-
-theorem Inv1.add {a b : PowerSeries O} (ha : Inv1 W a) (hb : Inv1 W b) : Inv1 W (a + b) := by
-  intro δ hδ
-  rw [map_add, ha δ hδ, hb δ hδ]
-
-theorem Inv1.sub {a b : PowerSeries O} (ha : Inv1 W a) (hb : Inv1 W b) : Inv1 W (a - b) := by
-  intro δ hδ
-  rw [map_sub, ha δ hδ, hb δ hδ]
-
-theorem Inv1.pow {a : PowerSeries O} (ha : Inv1 W a) (k : ℕ) : Inv1 W (a ^ k) := by
-  intro δ hδ
-  rw [map_pow, ha δ hδ]
-
-theorem invariant_natCast (k : ℕ) : Inv1 W ((k : ℕ) : PowerSeries O) := by
-  intro δ _
-  exact map_natCast _ k
 
 variable (W) in
-
 def qP₁ : PowerSeries O := W.π₀₁ + ((PD.p : ℕ) : PowerSeries O)
-
-theorem qP₁_inv (hR : Ring9 W) : Inv1 W (qP₁ W) := by
-  rw [qP₁]
-  exact (π₀₁_inv hR).add (invariant_natCast _)
 
 theorem ι_q (hR : Ring9 W) : ιOf hR (baseIdOf hR).Bs.q = qP₁ W := by
   show ιOf hR (PowerSeries.X + PowerSeries.C ((PD.p : ℕ) : O)) = W.π₀₁ + ((PD.p : ℕ) : PowerSeries O)
-  rw [map_add, ιOf_X, map_natCast, map_natCast]
+  rw [map_add (f := _), ιOf_X, map_natCast, map_natCast]
 
 section Dom
 
@@ -256,7 +236,7 @@ theorem π₀₁_ne (hR : Ring9 W) : W.π₀₁ ≠ 0 := by
 theorem qP₁_ne (hR : Ring9 W) : qP₁ W ≠ 0 := by
   intro h
   have h1 := congrArg PowerSeries.constantCoeff h
-  rw [qP₁, map_add, π₀₁_const hR, zero_add, map_natCast, map_zero] at h1
+  rw [qP₁, map_add (f := _), π₀₁_const hR, zero_add, map_natCast, map_zero] at h1
   have h2 := W.v_l
   have h3 : ((PD.p : ℕ) : LL) = 0 := by
     rw [← map_natCast (algebraMap O LL), h1, map_zero]
@@ -295,7 +275,7 @@ theorem frobenius_uniformizer_identity (hR : Ring9 W) : (baseIdOf hR).Bs.E3 := b
   have hw0 : IsUnit ((w : LetA O n) 0) :=
     w.isUnit.map (Pi.evalRingHom (fun _ : ZMod n => PowerSeries O) 0)
   have e : Polynomial.aeval W.π₀₁ (Polynomial.X + Polynomial.C ((PD.p : ℕ) : O)) = qP₁ W := by
-    rw [qP₁, map_add, Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]
+    rw [qP₁, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]
   have key : W.φ₀ W.π₀₁ = (w : LetA O n) 0 * (W.π₀₁ * qP₁ W ^ (PD.p - 1)) := by
     have h0 : W.φ₀ W.π₀₁ = (w : LetA O n) 0 * W.π₀₁ *
         Polynomial.aeval W.π₀₁ (Polynomial.X + Polynomial.C ((PD.p : ℕ) : O)) ^ (PD.p - 1) := by
@@ -328,7 +308,7 @@ theorem fourth_lefschetz_of_first (hR : Ring9 W) (hγ : W.gamK = W.gam) : (baseI
   have hw0 : IsUnit ((w : LetA O n) 0) :=
     w.isUnit.map (Pi.evalRingHom (fun _ : ZMod n => PowerSeries O) 0)
   have e : Polynomial.aeval W.π₀₁ (Polynomial.X + Polynomial.C ((PD.p : ℕ) : O)) = qP₁ W := by
-    rw [qP₁, map_add, Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]
+    rw [qP₁, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, map_natCast]
   have key : W.γ₀ W.gamK W.π₀₁ - W.π₀₁ = (w : LetA O n) 0 * (W.π₀₁ * qP₁ W) := by
     have h0 : W.γ₀ W.gam W.π₀₁ - W.π₀₁ = (w : LetA O n) 0 * W.π₀₁ *
         Polynomial.aeval W.π₀₁ (Polynomial.X + Polynomial.C ((PD.p : ℕ) : O)) := by
@@ -352,21 +332,22 @@ theorem fourth_lefschetz_of_first (hR : Ring9 W) (hγ : W.gamK = W.gam) : (baseI
   refine ⟨u, ιOf_inj hR ?_⟩
   have hr : ιOf hR (PowerSeries.X * (1 + (u : PowerSeries O) * (baseIdOf hR).Bs.q)) =
       W.π₀₁ * (1 + (w : LetA O n) 0 * qP₁ W) := by
-    rw [map_mul, map_add, map_one, map_mul, hu, ιOf_X, ι_q]
+    rw [map_mul, map_add (f := _), map_one, map_mul, hu, ιOf_X, ι_q]
   rw [hγX, hr]
   linear_combination key
 
 theorem primBase_of (hR : Ring9 W) (hγ : W.gamK = W.gam) (h3 : 3 ≤ PD.p) {ϖ : O} {eO : ℕ}
     (he : 1 ≤ eO) (hass : Associated (((PD.p : ℕ) : O)) (ϖ ^ eO))
     (hcomp : IsAdicComplete (Ideal.span {(((PD.p : ℕ) : O))}) O) :
-    Formalism.ExponentWindows.E.PrimBase (baseIdOf hR).Bs ϖ eO where
-  prime := PD.hp
-  three_le := h3
-  one_le_e := he
-  assoc := hass
-  complete := hcomp
-  e3 := frobenius_uniformizer_identity hR
-  e4 := fourth_lefschetz_of_first hR hγ
+    Formalism.ExponentWindows.E.PrimBase (baseIdOf hR).Bs ϖ eO := by
+  exact
+    { prime := PD.hp
+      three_le := h3
+      one_le_e := he
+      assoc := hass
+      complete := hcomp
+      e3 := frobenius_uniformizer_identity hR
+      e4 := fourth_lefschetz_of_first hR hγ }
 
 end Dom
 
@@ -465,7 +446,7 @@ theorem u_eq_of (W : LocWach PD LL O v n) (hV : ValRing O v) (hs : W.s = 1) :
   obtain ⟨x, hx⟩ := hsurj _ hz.ge
   have hxu : IsUnit x := isUnit_of_v_zero hV x (by rw [hx, hz])
   refine ⟨hxu.unit, hinj ?_⟩
-  rw [IsUnit.unit_spec, map_add, map_one, map_mul, map_natCast, hx, e, map_sub, map_one]
+  rw [IsUnit.unit_spec, map_add (f := _), map_one, map_mul, map_natCast, hx, e, map_sub, map_one]
   ring
 
 theorem ground_of [IsDomain O] [IsDiscreteValuationRing O] (hR : Ring9 W) (hs : W.s = 1)
@@ -554,7 +535,7 @@ theorem precomplete_of_surj {M N : Type} [AddCommGroup M] [Module R M] [AddCommG
     induction n with
     | zero => rw [hh, Finset.sum_range_zero, add_zero, hx0]
     | succ n ih =>
-      rw [hh, Finset.sum_range_succ, ← add_assoc, map_add, ← hh, ih, hdf]
+      rw [hh, Finset.sum_range_succ, ← add_assoc, map_add (f := _), ← hh, ih, hdf]
       abel
   have hcauchy : ∀ {m n : ℕ}, m ≤ n → h m ≡ h n [SMOD (J ^ m • ⊤ : Submodule R M)] := by
     intro m n hmn

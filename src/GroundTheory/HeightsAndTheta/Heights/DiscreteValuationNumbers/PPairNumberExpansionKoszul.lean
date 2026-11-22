@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMixedDiffLinear
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMixedDiffLinear
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.OfSteps
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -53,7 +58,7 @@ theorem exists_sub_rename_pairCollapse (p : Fin n) (G : MvPolynomial (Fin n ⊕ 
     obtain ⟨Q₁, h₁⟩ := hG
     obtain ⟨Q₂, h₂⟩ := hH
     refine ⟨Q₁ + Q₂, ?_⟩
-    rw [map_add, mul_add, ← h₁, ← h₂]
+    rw [map_add (f := _), mul_add, ← h₁, ← h₂]
     ring
   | mul_X G s hG =>
     obtain ⟨Q, hQ⟩ := hG
@@ -131,7 +136,8 @@ theorem koszul_finset (s : Finset (Fin n)) :
 
     have hcol : ∑ i, (if i = p then 0 else pairDiff i * G' i) = 0 := by
       have h := congrArg (rename (pairCollapse p)) hrel'
-      rw [map_sum, map_zero] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h
       refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) h
       rw [map_mul, rename_pairCollapse_pairDiff]
       by_cases hip : i = p
@@ -182,7 +188,8 @@ theorem koszul_homogeneous {m : ℕ} (G : Fin n → MvPolynomial (Fin n ⊕ Fin 
     · exact isHomogeneous_zero _ _ _
     · exact homogeneousComponent_isHomogeneous _ _
   · have h := congrArg (homogeneousComponent (m - 1)) (hGK i)
-    rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr (hG i)), if_pos rfl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).mpr (hG i)), if_pos rfl,
       map_sum] at h
     simp only [homogeneousComponent_linear_mul (isHomogeneous_pairDiff _)] at h
     rw [h]
@@ -211,8 +218,8 @@ theorem vNum_vecCons_eq (W : Ideal (MRing ι O)) {k : ℕ} (b : K → ℤ) (L : 
   rw [List.ofFn_succ]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_succ]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem foldr_diffStep_perm {l₁ l₂ : List (K → ℤ)} (hl : l₁.Perm l₂) (h : (K → ℤ) → ℤ) :
     l₁.foldr diffStep h = l₂.foldr diffStep h := by
   induction hl with
@@ -227,8 +234,8 @@ theorem vNumL_perm (W : Ideal (MRing ι O)) {l₁ l₂ : List (K → ℤ)} (hl :
     vNumL W l₁ = vNumL W l₂ := by
   rw [vNumL_eq_foldr, vNumL_eq_foldr, foldr_diffStep_perm hl]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem classList_single_add_perm {σ : Type*} (cls : σ → K → ℤ) (s : σ) (μ : σ →₀ ℕ) :
     (classList cls (Finsupp.single s 1 + μ)).Perm (cls s :: classList cls μ) := by
   rw [← Multiset.coe_eq_coe]
@@ -236,8 +243,8 @@ theorem classList_single_add_perm {σ : Type*} (cls : σ → K → ℤ) (s : σ)
   rw [Multiset.coe_toList, ← Multiset.cons_coe, Multiset.coe_toList]
   simp [Finsupp.toMultiset_single]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem classList_length_of_mem_support {σ : Type*} (cls : σ → K → ℤ) {H : MvPolynomial σ ℤ}
     {t : ℕ} (hH : H.IsHomogeneous t) {μ : σ →₀ ℕ} (hμ : μ ∈ H.support) :
     (classList cls μ).length = t := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.ParamsWindow
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.ParamsWindow
+
+@[expose] public section
 
 open Finset
 

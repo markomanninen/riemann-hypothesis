@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ShapiroDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ShapiroDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -81,26 +86,18 @@ variable [TopologicalSpace G] [IsTopologicalGroup G] [TopologicalSpace H]
   (V : OpenSubgroup G) {ι} (hι : Continuous ι)
 
 include hι in
-
 theorem isOpen_mackeySubgroup (x : G) : IsOpen (mackeySubgroup (V : Subgroup G) ι x : Set H) :=
   V.isOpen.preimage ((continuous_const.mul hι).mul continuous_const)
 
 def mackeyOpenSubgroup (x : G) : OpenSubgroup H :=
   ⟨mackeySubgroup (V : Subgroup G) ι x, isOpen_mackeySubgroup V hι x⟩
 
-@[simp]
-theorem coe_mackeyOpenSubgroup (x : G) :
-    (mackeyOpenSubgroup V hι x : Subgroup H) = mackeySubgroup (V : Subgroup G) ι x :=
-  rfl
-
 include hι in
-
 theorem continuous_mackeyConj (x : G) : Continuous (mackeyConj (V : Subgroup G) ι x) :=
   Continuous.subtype_mk ((continuous_const.mul (hι.comp continuous_subtype_val)).mul
     continuous_const) _
 
 include hι in
-
 theorem isDiscreteRep_mackeyRep (N : Rep.{u} k (V : Subgroup G)) [IsDiscreteRep N] (x : G) :
     IsDiscreteRep (mackeyRep (V : Subgroup G) ι N x) :=
   IsDiscreteRep.res (continuous_mackeyConj V hι x) N

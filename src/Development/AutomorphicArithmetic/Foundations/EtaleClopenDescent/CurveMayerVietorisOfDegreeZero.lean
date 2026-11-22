@@ -1,7 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafCurveCut
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMayerVietorisConnectingExact
-import Development.EtaleCohomology.EtaleTrace.LocalSplitting.Cover2
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafCurveCut
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMayerVietorisConnectingExact
+public import Development.EtaleCohomology.EtaleTrace.LocalSplitting.Cover2
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
 

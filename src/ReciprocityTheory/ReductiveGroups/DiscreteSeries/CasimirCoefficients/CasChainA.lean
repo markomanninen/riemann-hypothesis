@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ lemma cca_contAt [FiniteDimensional ℂ X] {F : X → E} {U : Set X} (hU : IsOpe
   · refine Filter.Eventually.of_forall (fun θ _ => ?_)
     have hmem : z₀ + a θ • u ∈ U := hsub z₀ (mem_closedBall_self hδ.le) θ
     exact continuousAt_const.smul (ContinuousAt.comp (g := F) (f := fun z => z + a θ • u)
-      (hF.continuousAt (hU.mem_nhds hmem)) (continuous_add_right _).continuousAt)
+      (hF.continuousAt (hU.mem_nhds hmem)) (continuous_add_const _).continuousAt)
 
 lemma cca_hasFDerivAt [FiniteDimensional ℂ X] {F : X → E} {U : Set X} (hU : IsOpen U)
     (hF : DifferentiableOn ℂ F U) (hD : ContinuousOn (fderiv ℂ F) U) {κ a : ℝ → ℂ}

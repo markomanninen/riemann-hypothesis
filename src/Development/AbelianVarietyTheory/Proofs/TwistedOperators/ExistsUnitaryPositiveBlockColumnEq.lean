@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+
+@[expose] public section
+
 open Matrix Finset Formalism.MainNotions.S Formalism.REAL GlobalTheory.SepReal
 
 noncomputable section

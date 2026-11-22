@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HermitianOrthogonal
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentCoordProper
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HermitianOrthogonal
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentCoordProper
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -72,7 +76,7 @@ end UnipotentCoordProper
 open UnipotentCoordProper
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem UnipotentCoordProper.proof (h : HermitianForm F E W) (v : Basis ι E W) :

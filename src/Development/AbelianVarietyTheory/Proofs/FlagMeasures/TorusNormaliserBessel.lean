@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SmoothMapsClosure
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGroupMatGroupUnimodular
-import Formalism.PeriodIntegrals.QuotSetU
-import Formalism.PeriodIntegrals.QuotInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.OnePlaceKF
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LeadMinorK
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SmoothMapsClosure
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryGroupMatGroupUnimodular
+public import Formalism.PeriodIntegrals.QuotSetU
+public import Formalism.PeriodIntegrals.QuotInv
+
+@[expose] public section
+
 open BranchingSupport GlobalTheory.CellAmp Formalism.BasicNotions Formalism.MainNotions.S Formalism.QuantumDeterminants Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
 
@@ -106,18 +111,17 @@ theorem dsigW_sigma (hR : IsURepOn (GG k r) R.σ) {g : MM k r} (hg : g ∈ GG k 
     rw [ih hW', dsig_sigma hR hg (hW X List.mem_cons_self)]
 
 theorem smMap_sigma (hR : IsURepOn (GG k r) R.σ) {g : MM k r} (hg : g ∈ GG k r) :
-    SmMap R R (fun v => R.σ g v) where
-  mem v hv := sig_sm hR hg hv
-  add v _ w _ := map_add _ _ _
-  smul a v _ := map_smul _ _ _
-  cont W hW := by
-    refine ⟨1, [W.map fun X => g⁻¹ * X * g], ?_, fun v hv => ?_⟩
-    · intro w hw Y hY
-      rw [List.mem_singleton.mp hw] at hY
-      obtain ⟨Z, hZ, rfl⟩ := List.mem_map.mp hY
-      exact GlobalTheory.SmMapAct.inLie_conj hg (hW Z hZ)
-    · simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, one_mul]
-      rw [dsigW_sigma hR hg W hW v, hR.2.1 g hg]
+    SmMap R R (fun v => R.σ g v) := by
+  refine ⟨fun v hv => sig_sm hR hg hv, fun v _ w _ => map_add (R.σ g) v w,
+    fun a v _ => map_smul (R.σ g) a v, ?_⟩
+  intro W hW
+  refine ⟨1, [W.map fun X => g⁻¹ * X * g], ?_, fun v hv => ?_⟩
+  · intro w hw Y hY
+    rw [List.mem_singleton.mp hw] at hY
+    obtain ⟨Z, hZ, rfl⟩ := List.mem_map.mp hY
+    exact GlobalTheory.SmMapAct.inLie_conj hg (hW Z hZ)
+  · simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, one_mul]
+    rw [dsigW_sigma hR hg W hW v, hR.2.1 g hg]
 
 theorem sig_TK (hR : IsURepOn (GG k r) R.σ) {g : MM k r} (hg : g ∈ GG k r) {v : R.H} (hv : v ∈ R.TK) :
     R.σ g v ∈ R.TK := by
@@ -127,7 +131,7 @@ theorem sig_TK (hR : IsURepOn (GG k r) R.σ) {g : MM k r} (hg : g ∈ GG k r) {v
     obtain ⟨a, ha, v₀, hv₀, rfl⟩ := hx
     exact Submodule.subset_span ⟨g * a, mul_mem' hg ha, v₀, hv₀, (sig_mul hR hg ha v₀).symm⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem sig_inner (hR : IsURepOn (GG k r) R.σ) {g : MM k r} (hg : g ∈ GG k r) (v w : R.H) :
@@ -144,7 +148,7 @@ theorem bessel_transport (hR : IsURepOn (GG k r) R.σ) {Wp : Type} [NormedAddCom
   refine ⟨fun v hv w hw => ?_, fun a v hv => ?_, fun h hh m hm v hv => ?_,
     GlobalTheory.SmMapAct.cw_comp (smMap_sigma hR ht) h4⟩
   · show B (R.σ t (v + w)) = _
-    rw [map_add, h1 _ (sig_sm hR ht hv) _ (sig_sm hR ht hw)]
+    rw [map_add (f := _), h1 _ (sig_sm hR ht hv) _ (sig_sm hR ht hw)]
   · show B (R.σ t (a • v)) = _
     rw [map_smul, h2 _ _ (sig_sm hR ht hv)]
   · show B (R.σ t (R.σ (h * m) v)) = _

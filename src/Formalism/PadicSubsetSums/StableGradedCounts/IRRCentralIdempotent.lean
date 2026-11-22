@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+
+@[expose] public section
 
 open Finset
 
@@ -65,7 +69,8 @@ theorem conv_char [Nontrivial V] (ρ : Representation ℂ G V)
   obtain ⟨μ, hμ⟩ := schur_scalar ρ h a ha
   refine ⟨μ, fun k => ?_⟩
   have h2 := congrArg (fun T : Module.End ℂ V => LinearMap.trace ℂ V (T * ρ k)) hμ
-  simp only [Finset.sum_mul, smul_mul_assoc, ← map_mul, map_sum, map_smul, one_mul, smul_eq_mul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, smul_mul_assoc, ← map_mul, map_sum, map_smul, one_mul, smul_eq_mul] at h2
   exact h2
 
 theorem sum_of_mul_sum_of (A B : G → ℂ) :

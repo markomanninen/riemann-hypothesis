@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1))) {v : HeightOneSpectrum (𝓞 K.1)}
   (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1))
@@ -28,6 +33,14 @@ theorem embUnitsMorZ_hom_apply (y : Additive (maxUnramifiedOutside K.1 ℚ̄ S)�
       AlgebraicClosure (v.adicCompletion K.1)) =
       ι ((y.toMul : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) : ℚ̄) :=
   rfl
+
+local instance gsLocalResDiscreteUnits (K : FiniteSubfield)
+    (S : Set (HeightOneSpectrum (𝓞 K.1))) :
+    IsDiscreteRep (uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))) := by
+  let : Algebra.IsAlgebraic K.1 ℚ̄ := Algebra.IsAlgebraic.tower_top (K := ℚ) K.1
+  let : IsDiscreteRep (galUnits.{0} K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) :=
+    isDiscreteRep_galUnits
+  exact isDiscreteRep_uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))
 
 def gsLocalRes (n : ℕ) :
     cohomology (uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))) n ⟶

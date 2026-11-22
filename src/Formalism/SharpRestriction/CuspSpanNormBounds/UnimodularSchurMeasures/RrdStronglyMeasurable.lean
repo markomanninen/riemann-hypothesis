@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -327,7 +331,7 @@ theorem rr_cont_of_meas' [SigmaFinite μ] [IsLocallyFiniteMeasure μ] (hμ : μ 
     exact (memW x).1 h1
   refine continuous_iff_continuousAt.2 fun g0 => ?_
   have t1 : Tendsto (fun g => g0⁻¹ * g) (𝓝 g0) (𝓝 1) := by
-    simpa using (continuous_mul_left g0⁻¹).tendsto g0
+    simpa using (continuous_const_mul g0⁻¹).tendsto g0
   have t2 := ((π g0).continuous.tendsto x).comp ((hx x).comp t1)
   refine t2.congr fun g => ?_
   have e : π g = π g0 ∘L π (g0⁻¹ * g) := by rw [← hmul, mul_inv_cancel_left]

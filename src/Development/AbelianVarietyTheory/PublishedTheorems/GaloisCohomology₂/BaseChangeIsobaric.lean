@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ structure IsBaseChange (π : Submodule ℂ (UA E n → ℂ)) {c : ℕ} {N : Fin 
 
   sub : ∀ w, GlobalTheory.SmGL.IsSubquotient (P w).ρ (locProd h w (σ · w))
 
-  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (P w).ρ (GlobalTheory.LFun.KGL w n)
+  unram : ∀ w, IsUnramU π w → GlobalTheory.LGrp.IsSpherical (P w).ρ (GlobalTheory.LFun.KGL w (n := n))
 
   inert : ∀ (w : HeightOneSpectrum (𝓞 E)) (s : w.adicCompletion E →+* w.adicCompletion E) (ϖ : w.adicCompletion E)
     (q : ℕ), (∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x)) → IsUnramInv ϖ s q →

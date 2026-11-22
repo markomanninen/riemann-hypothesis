@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,10 +189,10 @@ theorem continuous_charpoly_coeff_of_fintype (k : ℕ) :
   have hentry : ∀ i j : m, ContCoeff fun A : Matrix m m F => A.charmatrix i j := by
     intro i j
     simp only [Matrix.charmatrix_apply]
-    refine (ContCoeff.const _).add ?_
+    have hconst : ContCoeff (fun _ : Matrix m m F => (Matrix.diagonal fun _ : m => (X : F[X])) i j) := ContCoeff.const _
     have hc : Continuous fun A : Matrix m m F => A i j := continuous_id.matrix_elem i j
     have := ContCoeff.C (α := Matrix m m F) (f := fun A => -A i j) hc.neg
-    simpa [sub_eq_add_neg] using this
+    simpa [sub_eq_add_neg] using hconst.add this
   have : ContCoeff fun A : Matrix m m F => A.charpoly := by
     simp only [Matrix.charpoly, Matrix.det_apply]
     refine ContCoeff.sum _ fun σ _ => ?_

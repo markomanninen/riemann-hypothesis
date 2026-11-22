@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
-import Formalism.LocalRingCardinality.DataExtra
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+public import Formalism.LocalRingCardinality.DataExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,9 +21,6 @@ variable (D : D7) {Gp : Type} [Group Gp] [Fintype Gp] {Pl0 T : Type} {m : ℕ}
 def rOp (P : Subgroup Gp) (ψ : P →* D.what₂.LLˣ) (t : T) (a : MonoidAlgebra D.what₂.LL Gp) :
     Matrix (Fin (rDim D A P ψ t)) (Fin (rDim D A P ψ t)) D.what₂.LL :=
   (A.fam.R t).S.lvlOp (A.fam.R t).r (A.fam.lvl P ψ).P (A.fam.lvl P ψ).ψ a
-
-theorem rE_eq_rOp (P : Subgroup Gp) (ψ : P →* D.what₂.LLˣ) (t : T) :
-    rE D A P ψ t = rOp D A P ψ t (idemOf A.X) := rfl
 
 def CenTie {EE : Type} [NormedAddCommGroup EE] [InnerProductSpace ℂ EE] [FiniteDimensional ℂ EE]
     (X : RowSide D EE) (P : Subgroup Gp) (ψ : P →* D.what₂.LLˣ) (eG : Gp ≃* G0g D.nd) (tup : T → D.what₂.Tup)
@@ -117,12 +118,6 @@ variable {D : D7} {Gp : Type} [Group Gp] [Fintype Gp] {Pl0 T : Type} {A : FamIn 
   {Dc : DefCols (A.side Ps ψs Zs)} {Sp : SPer Dc} {C : ColData Dc Sp S1}
   {NuC : ∀ u, Submodule (𝓞 D.what₂.LL) (Fin (Dc.a u) → D.what₂.LL)} {I : DivisionCompatibilityData D A P0 ψ0 Ps ψs Zs S0 S1 p0 Dc}
   {JA : AmbIds D A p0.s a0 P0 ψ0 I.tup} {JM : MjHIds D A Y S0}
-
-theorem BaseDivisionAmbientCompatibility.center_idempotent_action (H : BaseDivisionAmbientCompatibility D A Y p0 a0 P0 ψ0 Ps ψs Zs S0 S1 C NuC I JA JM) (t : T)
-    (h : D.ntypes.e0 ∈ Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) (x : Fin (rDim D A P0 ψ0 t) → D.what₂.LL) :
-    p0.s.cen (I.tup t) ⟨D.ntypes.e0, h⟩ (I.jA0 t x) = p0.s.eOp (I.tup t) (I.jA0 t x) := by
-  rw [(H.div.base.forms t).op_eq x]
-  exact H.cen0 t ⟨D.ntypes.e0, h⟩ (idemOf A.X) H.div.grp.e0 x
 
 end Consistency
 

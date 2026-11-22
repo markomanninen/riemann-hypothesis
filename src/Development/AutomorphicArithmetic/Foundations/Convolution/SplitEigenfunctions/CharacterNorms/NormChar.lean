@@ -1,16 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
-import GroundTheory.GlobalFields.ExistenceTheorem.ExistsIsAbelianGaloisRangeIdeleClassNormEqOfFini
-import GroundTheory.GlobalFields.HasseNorm
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
+public import GroundTheory.GlobalFields.ExistenceTheorem.ExistsIsAbelianGaloisRangeIdeleClassNormEqOfFini
+public import GroundTheory.GlobalFields.HasseNorm
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.Hilbert90AdeleRingTensorQuadratic
+
+@[expose] public section
 
 noncomputable section
 
 open NumberField IsDedekindDomain GroundTheory.Global Formalism.L2.Host
 
 namespace UpperTheory.ConvolutionTheory.RankTwoDescent.A
-
-local notation "𝔸[" K "]" => AdeleRing (𝓞 K) K
 
 section Ext
 
@@ -76,6 +78,7 @@ private theorem gal_eq (hE : Module.finrank ℚ E = 2) :
 
 theorem exists_galois_quotient_of_ideleNorm_eq_one_quadratic (hE : Module.finrank ℚ E = 2) (z : IdeleGroup E) (hz : ideleNorm ℚ E z = 1) :
     ∃ (c : E ≃ₐ[ℚ] E) (y : IdeleGroup E), z = y * (c • y)⁻¹ := by
+  open scoped NumberField.AdeleRing in
   classical
   haveI := (isGalois_isCyclic_of_finrank_eq_two (K := ℚ) (L := E) hE).1
   obtain ⟨c, hc1, hcc, hall⟩ := gal_eq hE
@@ -118,7 +121,7 @@ theorem exists_galois_quotient_of_ideleNorm_eq_one_quadratic (hE : Module.finran
       rw [map_mul, ← mul_assoc, h2, one_mul]
       exact ha.symm
     · have := hun.map am
-      simpa only [map_add, map_mul, map_sub, map_one] using this
+      simpa only [map_add (f := _), map_mul, map_sub, map_one] using this
   obtain ⟨x, hx⟩ := key
   refine ⟨c, x, ?_⟩
   have hcx : (((c • x : IdeleGroup E)) : 𝔸[E]) = σ x := coe_smul_idele c x

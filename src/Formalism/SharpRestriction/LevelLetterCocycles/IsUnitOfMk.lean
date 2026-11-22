@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.InvLevCoreOfParts
-import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvLevCoreOfParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.LemmasUnramifiedOfRingCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem isUnit_of_mk {R : Type} [CommRing R] (I : Ideal R) [IsAdicComplete I R] 
 theorem aeval_X_coe {R : Type} [CommRing R] (r : Polynomial R) :
     Polynomial.aeval (PowerSeries.X : PowerSeries R) r = (r : PowerSeries R) := by
   induction r using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, hp, hq, Polynomial.coe_add]
+  | add p q hp hq => rw [map_add (f := _), hp, hq, Polynomial.coe_add]
   | monomial k c =>
     rw [Polynomial.aeval_monomial, Polynomial.coe_monomial, PowerSeries.monomial_eq_mk]
     ext m
@@ -142,7 +146,7 @@ theorem levDiv_of (W : LocWach PD LL O v n) (hR : ToolsR.RingP W) (hT : Formalis
   have hroots : ∀ ζ : Rs hB.F PD.p s, Polynomial.eval ((ζ : hB.F) - 1) (r.map (algebraMap O hB.F)) = 0 := by
     intro ζ
     have h1 := congrArg (hB.ev ζ) key
-    rw [map_mul, hB.ev_letE, one_mul, hev ζ, map_add, map_mul, hB.ev_ps, zero_mul, zero_add, map_mul,
+    rw [map_mul, hB.ev_letE, one_mul, hev ζ, map_add (f := _), map_mul, hB.ev_ps, zero_mul, zero_add, map_mul,
       hB.ev_letE, one_mul, ev_aeval hB] at h1
     rw [Polynomial.eval_map, ← Polynomial.aeval_def]
     exact h1.symm

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,38 +44,12 @@ theorem HostVal.log_cond_le_three {s : Scale} {C8 : ℝ} {R : Ranks} {H : Host R
 theorem HostVal.modRow {s : Scale} {C8 : ℝ} {R : Ranks} {H : Host R} (h : HostVal s C8 H) : ModRow s H.condN H.d :=
   modRow_host H h.log_cond_le_three
 
-theorem modRow_of_rowq {s : Scale} {Y : ℝ} {n q d : ℕ} (hY : PairWin s Y) (hn : 1 ≤ n) (hd : 100 ≤ d)
-    (h : Rowq Y s.eps n q d) : ModRow s (4 * n * q * d) d := by
-  obtain ⟨hq, -, -, -, hd', hd16, -, -, -, -, hN⟩ := h
-  have h0 : 0 ≤ s.x ^ (s.eps / 5) * Real.log s.x ^ 2 :=
-    mul_nonneg (Real.rpow_nonneg (by linarith [s.one_lt_alt]) _) (sq_nonneg _)
-  have h1 := hY.z_log_sq_le
-  have hq0 := hq.pos
-  refine ⟨hd', by omega, hd, by positivity, Dvd.intro_left _ rfl, ?_⟩
-  push_cast
-  nlinarith
-
-def RealBox {φ : Formalism.HC.Frame} (H : Formalism.HC.HostRaw φ) : Prop :=
-  ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N), H.IsCharE χ → GlobalTheoryTheory.IsRealChar χ → (H.q ∣ N ∨ H.d ∣ N) →
-    ∀ β : ℝ, 1 - 1 / 400 < β → β < 1 → DirichletCharacter.LFunction χ β ≠ 0
-
-theorem BoxH.realBox {R : Ranks} {H : Host R} {Y eps : ℝ} (h : BoxH H Y eps) : RealBox H.toHostRaw :=
-  fun _ _ χ hχ hr hN β hβ _ => h.real_ne_zero χ ((isCharH_iff H χ).2 hχ) hr hN β hβ
-
-theorem BoxW.realBox {s : Scale} {R : Ranks} {H : Host R} (h : BoxW s H) : RealBox H.toHostRaw :=
-  fun _ _ χ hχ hr hN β hβ _ => h.real_ne_zero χ hχ hr hN β hβ
-
 def QDChoice : Prop :=
   ∀ eps : ℝ, 0 < eps → eps < 1 / 52 → ∃ C5 x0 : ℝ, 0 < C5 ∧ ∀ x ≥ x0, ∀ n : ℕ, 1 ≤ n → (n : ℝ) ≤ 2 * x ^ (2 + 8 * eps) →
     ∃ q d : ℕ, Rowq x eps n q d ∧ QDq x eps C5 q d ∧ Boxq x eps q d
 
-def ThinChoice : Prop :=
-  ∀ eps : ℝ, 0 < eps → eps < 1 / 52 → ∃ c : ℝ, 0 < c ∧ ∀ Co : ℝ, ∃ x0 : ℝ, ∀ (s : Scale) (R : Ranks) (H : Host R),
-    s.eps = eps → x0 ≤ s.x → RankVal s R → (R.o : ℝ) ≤ Co → (H.QS : ℝ) ≤ Co * R.n →
-    Real.log ((H.QS : ℝ) * H.q * H.d) ≤ 3 * s.x ^ (s.eps / 5) * Real.log s.x ^ 2 → RealBox H.toHostRaw → ThinOK s c H
 
 open Classical in
-
 def NormPrimes : Prop :=
   ∀ eps : ℝ, 0 < eps → eps < 1 / 52 → ∃ x0 : ℝ, ∀ (s : Scale) (R : Ranks) (N d : ℕ), s.eps = eps → x0 ≤ s.x → RankVal s R →
     ModRow s N d →
@@ -86,22 +64,6 @@ def LevelPrime : Prop :=
 
 def SmallPrimeOne : Prop := ∃ A : ℝ, 1 ≤ A ∧ ∀ M : ℕ, 2 ≤ M → ∃ p : ℕ, p.Prime ∧ p % M = 1 ∧ (p : ℝ) ≤ (M : ℝ) ^ A
 
-def TopsChoice : Prop :=
-  ∀ eps Co : ℝ, 0 < eps → eps < 1 / 52 → ∃ Cb x0 : ℝ, 0 < Cb ∧ ∀ (s : Scale) (R : Ranks) (H : Host R), s.eps = eps → x0 ≤ s.x →
-    RankVal s R → s.J ≤ Co → (R.o : ℝ) ≤ Co → ⌊s.x ^ (s.ez / 5)⌋₊ ≤ H.splitBound →
-    ∃ TT : Finset (R.A), s.delta1 * R.n / 2 ≤ (TT.card : ℝ) ∧ (TT.card : ℝ) ≤ 2 * s.delta1 * R.n ∧
-      BadOK s Cb { H with TT := TT } ∧ R.toFrame.Shares TT (s.x ^ (-1 + s.eps))
-
-open Classical in
-
-def ShareMean : Prop :=
-  ∀ eps C8 : ℝ, 0 < eps → eps < 1 / 52 → ∃ K0 : TransportedAlt, ∀ C : FC, Std C → C.Large K0 C.P.CF → ∀ cD ch : ℝ, 0 ≤ cD → ∃ x0 : ℝ,
-    ∀ (s : Scale) (R : Ranks) (H : Host R), s.eps = eps → x0 ≤ s.x → RankVal s R → HostVal s C8 H →
-      ∀ W : Finset ((R.A → ℤ) × (R.A → ℤ)),
-        (∀ w, w ∈ W ↔ (∀ t, t ∉ H.TT → w.1 t = 0 ∧ w.2 t = 0) ∧ WinOK s C.GK H w.1 w.2) →
-        ∀ p, Arith.Loc.Cand (baseOf s cD ch H) C.GK (hPH H p) p →
-          ∑ w ∈ W, Arith.Loc.Sig (baseOf s cD ch H) (Arith.ins (baseOf s cD ch H) C.GK 1) C.GK w.1 w.2 (hPH H p) p ≤
-            (W.card : ℝ) * ((R.m : ℝ) * H.TT.card * s.x ^ (-12 : ℝ))
 
 end GlobalTheory.EX
 

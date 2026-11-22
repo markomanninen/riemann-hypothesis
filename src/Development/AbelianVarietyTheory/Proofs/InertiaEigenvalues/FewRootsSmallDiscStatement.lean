@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FewRootsSmallDisc
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FewRootsSmallDisc
+
+@[expose] public section
+
 open Polynomial
 open Classical
 set_option maxHeartbeats 1000000 in

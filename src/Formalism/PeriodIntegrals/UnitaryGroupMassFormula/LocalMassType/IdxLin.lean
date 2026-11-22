@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.Development
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanMulMem
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.Development
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanMulMem
+
+@[expose] public section
 
 noncomputable section
 

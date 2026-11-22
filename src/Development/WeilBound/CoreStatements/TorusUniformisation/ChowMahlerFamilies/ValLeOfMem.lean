@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.MulMemPInt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.MulMemPInt
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR PositivityTheory.HtPt.Ra
 open scoped Matrix
@@ -50,14 +54,16 @@ theorem tl_est (hv : v.Integers R) (hp : v (p : C) < 1) {ζ : C} (hζ : IsPrimit
     rw [← Ideal.Quotient.eq]
     have hE' : ∀ m m', Ideal.Quotient.mk (Ideal.span {(p : R)}) (Eg m m') = zq p R (ε m m') := fun m m' => by
       rw [zq_val, Ideal.Quotient.eq]; exact hE m m'
-    simp only [map_sum, map_mul, ← zq_val, Matrix.mulVec, Matrix.vecMul, dotProduct, hE', Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, ← zq_val, Matrix.mulVec, Matrix.vecMul, dotProduct, hE', Finset.mul_sum,
       Finset.sum_mul, mul_assoc]
     exact Finset.sum_comm
   have e : ∑ m, algebraMap R C (y m) * tl p (ζ ^ ((ε *ᵥ z) m).val) -
       algebraMap R C c * algebraMap R C (∑ i, (y ᵥ* Eg) i * ((z i).val : R)) =
       ∑ m, algebraMap R C (y m) * (tl p (ζ ^ ((ε *ᵥ z) m).val) - tl p ζ * (((ε *ᵥ z) m).val : C)) +
         tl p ζ * algebraMap R C ((∑ m, y m * (((ε *ᵥ z) m).val : R)) - ∑ i, (y ᵥ* Eg) i * ((z i).val : R)) := by
-    rw [hc, map_sub, map_sum (algebraMap R C) fun m => y m * _]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sub, map_sum (algebraMap R C) fun m => y m * _]
     simp only [mul_sub, Finset.sum_sub_distrib, map_mul, map_natCast, Finset.mul_sum]
     have : ∀ m, algebraMap R C (y m) * (tl p ζ * (((ε *ᵥ z) m).val : C)) =
       tl p ζ * (algebraMap R C (y m) * (((ε *ᵥ z) m).val : C)) := fun m => by ring
@@ -92,7 +98,7 @@ theorem slice {N : Type} {M : Submodule R (N → C)} (hM : M ≤ intFun R N) {Q 
     refine ⟨f + f', M.add_mem hf hf', fun x => ?_⟩
     obtain ⟨h1, r, e1, e2⟩ := ha x
     obtain ⟨h1', r', e1', e2'⟩ := hb x
-    exact ⟨M.add_mem h1 h1', r + r', by simp [e1, e1'], by rw [map_add, ← e2, ← e2', ← map_add]; rfl⟩
+    exact ⟨M.add_mem h1 h1', r + r', by simp [e1, e1'], by rw [map_add (f := _), ← e2, ← e2', ← map_add (f := _)]; rfl⟩
   | smul a b _ hb =>
     obtain ⟨f, hf, hb⟩ := hb
     refine ⟨a • f, M.smul_mem a hf, fun x => ?_⟩
@@ -191,8 +197,10 @@ theorem core (hv : v.Integers R) (hp : v (p : C) < 1) (hp2 : p ≠ 2) (AA : Hopf
       rw [Finset.sum_eq_single m (fun k _ hk => by simp [Pi.single_eq_of_ne hk]) (by simp)]
       simp [ZMod.val_one]
     funext k
-    simp only [T, map_sum, map_smul, this, Finset.sum_apply, Pi.smul_apply]
-    simp only [Matrix.mulVec, dotProduct, map_mul, map_sum, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, map_sum, map_smul, this, Finset.sum_apply, Pi.smul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_mul, map_sum, Algebra.smul_def, Ideal.Quotient.algebraMap_eq, mul_comm]
   have hF1 : ∀ (y : I → R) (f : AA.carrier),
       (∀ x, f.1 x - algebraMap R C (∑ i, (y ᵥ* Eg) i * ((x i).val : R)) ∈ pInt (C := C) R p) →
       (fun k => Ideal.Quotient.mk _ ((Hm *ᵥ y) k)) = c • Dv f := fun y f hf => by
@@ -226,10 +234,12 @@ theorem core (hv : v.Integers R) (hp : v (p : C) < 1) (hp2 : p ≠ 2) (AA : Hopf
       convert Submodule.sum_mem _ fun j (_ : j ∈ Finset.univ) => Submodule.smul_mem _ (a j) (hl j x) using 1
       simp only [Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply, smul_sub,
         Finset.sum_sub_distrib, smul_eq_mul]
-      simp only [Algebra.smul_def, ← map_mul, ← map_sum, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Algebra.smul_def, ← map_mul, ← map_sum, Finset.sum_mul, Finset.mul_sum, mul_assoc]
       rw [Finset.sum_comm]
     have h2 := hF1 _ _ h1
-    rw [map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h2
     simp only [map_smul] at h2
     rw [ha, hf] at h2
     have h3 : ∀ k, ∃ b, b * (p : R) = (Hm *ᵥ ((∑ j, a j • l j) ᵥ* Ei)) k - c * u k := fun k => by

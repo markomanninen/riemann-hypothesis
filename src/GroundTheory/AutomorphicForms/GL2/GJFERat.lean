@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJLocalZeta
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJLocalZeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ theorem eq_of_eval_qs_eq_left {R₁ R₂ : RatFunc ℂ} {s₁ : ℝ}
   have : (0 : ℝ) ≤ t := Nat.cast_nonneg t
   linarith
 
-variable (F) in
 
+variable (F) in
 def RatFE (γ : RatFunc ℂ) (a b : ℂ → ℂ) : Prop :=
   ∃ (R : RatFunc ℂ) (s₁ : ℝ), (∀ s : ℂ, s₁ < s.re → a s = R.eval (RingHom.id ℂ) (qs F s)) ∧
     ∀ s : ℂ, s.re < -s₁ → b s = (γ * R).eval (RingHom.id ℂ) (qs F s)

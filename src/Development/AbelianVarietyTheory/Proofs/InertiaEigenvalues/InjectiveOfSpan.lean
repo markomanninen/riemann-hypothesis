@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRescaleEigenSeriesZero
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsRescaleEigenSeriesZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem pow_dvd_of_map {O F : Type} [CommRing O] [Field F] [Algebra O F] (Λ : O
         rw [PowerSeries.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply]
       rw [h1, AlgHom.commutes, PowerSeries.algebraMap_apply]
     conv_lhs => rw [hd]
-    rw [map_add, map_mul, hC, hX, map_add, constantCoeff_C, map_mul, map_mul, constantCoeff_X,
+    rw [map_add (f := _), map_mul, hC, hX, map_add (f := _), constantCoeff_C, map_mul, map_mul, constantCoeff_X,
       zero_mul, zero_mul, add_zero]
   induction m generalizing c with
   | zero => simp
@@ -124,7 +128,7 @@ theorem tr_surjective (F : Type) [Field F] (r m : ℕ) : Function.Surjective (tr
 def opD {F : Type} [Field F] {r : ℕ} (p : F⟦X⟧) (χ : F) (κ : Fin r → F) :
     (Fin r → F⟦X⟧) →ₗ[F] (Fin r → F⟦X⟧) where
   toFun y := fun u => p⁻¹ * (C (κ u) * rescale χ (y u) - y u)
-  map_add' y z := by funext u; simp only [Pi.add_apply, map_add]; ring
+  map_add' y z := by funext u; simp only [Pi.add_apply, map_add (f := _)]; ring
   map_smul' a y := by
     funext u
     have : rescale χ (C a : F⟦X⟧) = C a := by
@@ -251,15 +255,15 @@ theorem diagWith_trunc : ∀ {O F P : Type} [CommRing O] [Field F] [Algebra O F]
   obtain ⟨L, hL⟩ : ∃ L : (Fin r → F⟦X⟧) →ₗ[F] (Fin r × Fin m → F),
       ∀ y, L y = tr F r m (M.mulVec y) :=
     ⟨{ toFun := fun y => tr F r m (M.mulVec y)
-       map_add' := fun y z => by simp only [Matrix.mulVec_add, map_add]
+       map_add' := fun y z => by simp only [Matrix.mulVec_add, map_add (f := _)]
        map_smul' := fun b y => by simp only [Matrix.mulVec_smul, map_smul, RingHom.id_apply] },
      fun _ => rfl⟩
   obtain ⟨Ψ0, hΨ0⟩ : ∃ Ψ0 : P →ₗ[O] (Fin r × Fin m → F),
       ∀ x, Ψ0 x = L (fun k => Λ (θ.symm x k)) :=
     ⟨{ toFun := fun x => L (fun k => Λ (θ.symm x k))
        map_add' := fun x y => by
-         simp only [map_add, Pi.add_apply]
-         rw [← map_add]
+         simp only [map_add (f := _), Pi.add_apply]
+         rw [← map_add (f := _)]
          rfl
        map_smul' := fun a x => by
          simp only [RingHom.id_apply]
@@ -348,8 +352,8 @@ theorem diagWith_trunc : ∀ {O F P : Type} [CommRing O] [Field F] [Algebra O F]
     | add x y hx hy =>
       obtain ⟨y1, h1, h2⟩ := hx
       obtain ⟨y2, h3, h4⟩ := hy
-      exact ⟨y1 + y2, by rw [map_add, h1, h3, map_add],
-        by rw [map_add, map_add, h2, h4, map_add, map_add]⟩
+      exact ⟨y1 + y2, by rw [map_add (f := _), h1, h3, map_add (f := _)],
+        by rw [map_add (f := _), map_add (f := _), h2, h4, map_add (f := _), map_add (f := _)]⟩
   exact diag_of_model r m p χ κ hp hχ0 hχ hκ _ Ψ ⟨hinjΨ, hsurj⟩ hI
 
 end GlobalTheory.TruncDiag

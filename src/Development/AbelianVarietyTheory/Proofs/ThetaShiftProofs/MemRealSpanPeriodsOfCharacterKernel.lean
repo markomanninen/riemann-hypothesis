@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TopLeWchartNsmul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames CategoryTheory.MonObj GlobalTheory.AbelianLetters
 open scoped LaurentSeries
@@ -134,7 +139,8 @@ theorem mem_span_periods : ∀ (g n : ℕ) (S : Finset (Fin g)) (h τ : Matrix (
     intro k
     by_cases hk : k ∈ S
     · have h0 := hz k hk
-      rw [hzr, map_add, map_sum, Finset.sum_eq_single k] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hzr, map_add (f := _), map_sum, Finset.sum_eq_single k] at h0
       · have h1 := congrArg Complex.re h0
         rw [map_smul, hℓe k hk k hk, Complex.add_re, hre r hrR k hk] at h1
         simpa [Real.pi_ne_zero, hn.ne'] using h1

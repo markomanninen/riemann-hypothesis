@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableInfMeasure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableOnAbsDetRpowLeOneFundamentalDomainStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FourierTransformUniformRapidDecayFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableNonzeroRationalVectorLeShortestVectorStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MellinIntegralRapidDecayEntireOfLeOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableInfMeasure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegrableOnAbsDetRpowLeOneFundamentalDomainStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FourierTransformUniformRapidDecayFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SummableNonzeroRationalVectorLeShortestVectorStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MellinIntegralRapidDecayEntireOfLeOneStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,22 +17,22 @@ open GlobalTheory.RSTheta GlobalTheory.ShortVecDecay GlobalTheory.Petersson Glob
 
 namespace GlobalTheory.RSThetaLow
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def rsHat (ℓ : Fin a) (φ φ' : GA E a → ℂ) (Φ : (Fin a → Cinf E) → ℂ) (J : (FractionalIdeal (𝓞 E)⁰ E)ˣ)
     (η : Fin a → Af E) (g : GA E a) (y : Fin a → Ad E) : ℂ :=
   adelicFourierPi E (rsPsi ℓ φ φ' Φ J η g) y
 
-omit [IsTotallyComplex E] in
-variable (E a) in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
+variable (E a) in
 def lowSet : Set (GA E a) := {g | (ideleModule E (GeneralLinearGroup.det g) : ℝ) ≤ 1}
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_absDet : Continuous fun g : GA E a => (ideleModule E (GeneralLinearGroup.det g) : ℝ) :=
   continuous_subtype_val.comp (continuous_ideleModule.comp GeneralLinearGroup.continuous_det)
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem absDet_invT (g : GA E a) : (ideleModule E (GeneralLinearGroup.det (invT a (Ad E) g)) : ℝ) =
     (ideleModule E (GeneralLinearGroup.det g) : ℝ)⁻¹ := by
   have h : GeneralLinearGroup.det (invT a (Ad E) g) = GeneralLinearGroup.det g⁻¹ := Units.ext (det_transpose _)
@@ -43,7 +47,7 @@ theorem rsPsi_zero (φ φ' : GA E a → ℂ) (hs : tsupport Φ ⊆ rowSet E ℓ)
   simp only [rsPsi, thetaFn, rsInf, e, h, mul_zero, zero_mul]
 
 theorem rsPsi_mem (F F' : Sm E a) (hΦ : IsTest (rowSet E ℓ) Φ) (g : GA E a) :
-    rsPsi ℓ F.1 F'.1 Φ J η g ∈ schwartzBruhatPi E (Fin a) :=
+    rsPsi ℓ F.1 F'.1 Φ J η g ∈ schwartzBruhatPi (K := E) (ι := Fin a) :=
   thetaFn_mem ((isTest_rsInf F F' hΦ g).2.1.toSchwartzMap (isTest_rsInf F F' hΦ g).1) J η
 
 theorem rsHat_eq (F F' : Sm E a) (hΦ : IsTest (rowSet E ℓ) Φ) (g : GA E a) (y : Fin a → Ad E) :
@@ -67,14 +71,14 @@ theorem stronglyMeasurable_rsHat {F F' : Sm E a} (h : Continuous F.1) (h' : Cont
   have h4 : Continuous fun p : GA E a × (Fin a → Cinf E) => rsInf ℓ F.1 F'.1 Φ p.1 p.2 *
       (Real.fourierChar (-∑ i, ∑ w, 2 * (p.2 i w * pInf E (y p.1 i) w).re) : ℂ) := by
     refine (continuous_rsInf h h' hΦ.1.continuous hΦ.2.2).mul (continuous_subtype_val.comp
-      (Real.continuous_fourierChar.comp (Continuous.neg (continuous_finset_sum _ fun i _ =>
-        continuous_finset_sum _ fun w _ => continuous_const.mul (Complex.continuous_re.comp (Continuous.mul ?_ ?_))))))
+      (Real.continuous_fourierChar.comp (Continuous.neg (continuous_finsetSum _ fun i _ =>
+        continuous_finsetSum _ fun w _ => continuous_const.mul (Complex.continuous_re.comp (Continuous.mul ?_ ?_))))))
     · fun_prop
     · exact (continuous_apply w).comp ((h1 i).comp continuous_fst)
   refine ((h4.stronglyMeasurable.integral_prod_right'.mul (Continuous.stronglyMeasurable ?_)).mul
     (h3.comp (continuous_pi h2)).stronglyMeasurable).mul stronglyMeasurable_const
   exact continuous_subtype_val.comp (continuous_finiteAdelicChar.comp
-    (continuous_finset_sum _ fun i _ => continuous_const.mul (h2 i)))
+    (continuous_finsetSum _ fun i _ => continuous_const.mul (h2 i)))
 
 theorem exists_norm_rsHat_le {ι : Type} {S S' : Submodule ℂ (Sm E a)} {g : ι → GA E a} {w : ι → ℝ}
     (hL : ∀ X, ∀ F ∈ S, lie E a X F ∈ S) (hL' : ∀ X, ∀ F ∈ S', lie E a X F ∈ S')

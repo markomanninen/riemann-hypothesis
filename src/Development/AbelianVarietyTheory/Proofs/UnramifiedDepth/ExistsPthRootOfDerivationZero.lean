@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators
 open Polynomial IntermediateField
@@ -50,7 +54,7 @@ theorem exists_pow_eq_of_forall_derivation_eq_zero (K : Type) [Field K] (p : ℕ
   have hrank : ∀ x : K, x ∉ M → Module.finrank M M⟮x⟯ = p := by
     intro x hx
     rw [adjoin.finrank (isIntegral_of_pow_mem_subfield p M hMp x),
-      minpoly_eq_X_pow_sub_C_of_pow_mem p M hMp x hx, natDegree_X_pow_sub_C]
+      minpoly_eq_X_pow_sub_C_of_pow_mem p M hMp x hx, natDegree_X_pow_sub_C _]
   have htop : ∀ x : K, x ∈ M⟮f⟯ := by
     intro x
     by_cases hx : x ∈ M

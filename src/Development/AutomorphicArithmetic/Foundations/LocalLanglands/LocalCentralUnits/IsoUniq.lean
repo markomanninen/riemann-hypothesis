@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.DiscreteGroups.GlobalIrreducibility.DzLcIso
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLcIso
+
+@[expose] public section
 
 open ValuativeRel Filter
 

@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 open NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.AdeleBaseChange
 open scoped NumberField.AdeleRing TensorProduct

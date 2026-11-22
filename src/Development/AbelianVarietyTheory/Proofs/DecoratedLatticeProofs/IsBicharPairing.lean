@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LinearIndependentWave
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.PlaceModel Filter
@@ -31,10 +35,12 @@ theorem exists_fixed {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module ℂ 
   have hz : ∀ y ∈ A, ∑ q : L ⧸ K.addSubgroupOf L, χ (q.out : L) y • ρ (q.out : L) f = 0 := fun y hy => by
     have hfix : ∀ κ ∈ K, ρ κ (σ y f) = σ y f := fun κ hκ => by rw [hc, hy κ hκ, hK κ hκ, one_smul]
     refine hσ y _ ?_
-    simp only [map_sum, map_smul, ← hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, ← hc]
     by_contra hne
     refine hcon ⟨_, P.sum_mem fun q _ => hP _ (q.out : L).2 _ (hP' y f hf), hne, fun u hu => ?_⟩
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Fintype.sum_equiv (Equiv.addLeft (QuotientAddGroup.mk (⟨u, hu⟩ : L))) _ _ fun q => ?_
     rw [hρ]
     refine hcl _ hfix (⟨u, hu⟩ + q.out) _ ?_
@@ -57,7 +63,8 @@ theorem exists_fixed {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module ℂ 
   have := hli (fun q => ℓ (ρ (q.out : L) f)) (by
     funext y
     have := congrArg ℓ (hz _ y.toAdd.2)
-    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
     rw [Finset.sum_apply]
     refine Eq.trans (Finset.sum_congr rfl fun q _ => ?_) this
     simp [ch, mul_comm]) (QuotientAddGroup.mk 0)
@@ -67,7 +74,6 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
   {Y Y' : Type} [Fintype Y] [DecidableEq Y] [Fintype Y'] [DecidableEq Y']
 
 variable (Y Y') in
-
 def box (a : kˣ) : AddSubgroup (Matrix Y Y' k) where
   carrier := {x | ∀ r q, valuation k (x r q) ≤ valuation k (a : k)}
   zero_mem' := fun r q => by simp
@@ -108,11 +114,16 @@ def pairing (ψ : AddChar k Circle) (t b : Matrix Y Y' k) : ℂ := ψ (∑ r, �
 theorem pairing_comm (ψ : AddChar k Circle) (t b : Matrix Y Y' k) : pairing ψ t b = pairing ψ b t := by
   simp only [pairing, mul_comm]
 
-theorem isBichar_pairing (ψ : AddChar k Circle) : IsBichar (pairing (Y := Y) (Y' := Y') ψ) where
-  left a b y := by simp [pairing, mul_add, Finset.sum_add_distrib, AddChar.map_add_eq_mul]
-  right a b y := by simp [pairing, add_mul, Finset.sum_add_distrib, AddChar.map_add_eq_mul]
-  zero_left y := by simp [pairing]
-  zero_right y := by simp [pairing]
+theorem isBichar_pairing (ψ : AddChar k Circle) : IsBichar (pairing (Y := Y) (Y' := Y') ψ) := by
+  constructor
+  · intro a b y
+    simp [pairing, Matrix.add_apply, mul_add, Finset.sum_add_distrib, AddChar.map_add_eq_mul]
+  · intro a y z
+    simp [pairing, Matrix.add_apply, add_mul, Finset.sum_add_distrib, AddChar.map_add_eq_mul]
+  · intro y
+    simp [pairing]
+  · intro a
+    simp [pairing]
 
 theorem pairing_single (ψ : AddChar k Circle) (t : Matrix Y Y' k) (r : Y) (q : Y') (c : k) :
     pairing ψ t (Matrix.single r q c) = ψ (c * t r q) := by
@@ -182,7 +193,7 @@ theorem exists_vacuum {V : Type} [AddCommGroup V] [Module ℂ V] {ψ : AddChar k
   let Q : Submodule ℂ V :=
     { carrier := {v | v ∈ P ∧ ∀ x ∈ box Y Y' (1 : kˣ), ρ x v = v}
       zero_mem' := ⟨P.zero_mem, fun _ _ => map_zero _⟩
-      add_mem' := fun h h' => ⟨P.add_mem h.1 h'.1, fun x hx => by rw [map_add, h.2 x hx, h'.2 x hx]⟩
+      add_mem' := fun h h' => ⟨P.add_mem h.1 h'.1, fun x hx => by rw [map_add (f := _), h.2 x hx, h'.2 x hx]⟩
       smul_mem' := fun c _ h => ⟨P.smul_mem c h.1, fun x hx => by rw [map_smul, h.2 x hx]⟩ }
   have hb2 : IsBichar fun y x : Matrix Y Y' k => pairing ψ (-x) y :=
     ⟨fun a b y => hb.right _ _ _, fun a y z => by rw [neg_add, hb.left], fun y => hb.zero_right _,

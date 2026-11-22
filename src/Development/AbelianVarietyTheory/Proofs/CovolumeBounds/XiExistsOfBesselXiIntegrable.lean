@@ -1,8 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.BesselIntegrals.BesselXiIntegrable
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SphericalFunctionFunctionalEq
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SphericalFunctionLeOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.BesselIntegrals.BesselXiIntegrable
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsUnitaryOfGramEq
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsQr
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelLiftBasics.LevelGroupUnitaryHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CmHalfIntegralGeneratorMemAlgebraicClosure
+public import Formalism.FormalDegreeBessel.StatementRP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+
+@[expose] public section
 
 namespace GlobalTheory.HCXi
 

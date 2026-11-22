@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 open scoped TensorProduct
 
@@ -36,11 +41,12 @@ theorem ksForm_tensor_linearIndependent : ∀ (Ks L0 L WL : Type) [Field Ks] [Fi
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul d f => rw [TensorProduct.smul_tmul', hι, hι, smul_eq_mul, map_mul, mul_smul]
-    | add y z hy hz => rw [smul_add, map_add, map_add, hy, hz, smul_add]
+    | add y z hy hz => rw [smul_add, map_add (f := _), map_add (f := _), hy, hz, smul_add]
   have hx_eq : ∀ a, ι (x a) = ∑ b, algebraMap L0 L (M a b) • bs b := by
     intro a
     conv_lhs => rw [← B0.sum_equivFun (x a)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [hιs, Algebra.TensorProduct.basis_apply, hι]
     simp [bK, Module.Basis.span_apply, M]

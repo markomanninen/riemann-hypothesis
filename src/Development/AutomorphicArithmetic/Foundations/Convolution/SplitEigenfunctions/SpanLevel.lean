@@ -1,15 +1,19 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.PairEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEigAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SatPair
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.InfPair
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.ContMkE
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Cap
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Smooth
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.SatLocFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RDual2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.PairEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SplitEigAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.SatPair
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.InfPair
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.ContMkE
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Cap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.Smooth
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HeckeAdjoints.SatLocFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RDual2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -31,7 +35,7 @@ private theorem sat_below (π : TR.CuspSub ℚ 2) {E : Type} [Field E] [NumberFi
     obtain ⟨v, hv, hn⟩ := hw
     exact Set.mem_biUnion (show v ∈ {v | ¬ ∃ B, π.HasSat v B} from hn) hv
 
-private theorem span_level {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D) (M : Meas ℚ)
+private theorem span_level {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D) (M : Meas ℚ)
     (π : TR.CuspSub ℚ 2) (w : P E) (Φ : Sm E 2) (hΦ : Φ ∈ span W M π) :
     ∀ᶠ y in 𝓝 (1 : GL (Fin 2) (Kv w)), ∀ g, Φ.1 (g * lc w y) = Φ.1 g := by
   induction hΦ using Submodule.span_induction with

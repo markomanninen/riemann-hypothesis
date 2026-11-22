@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.CommuteTheta
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CommuteTheta
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -23,7 +27,7 @@ theorem commute_theta_k (hB : _root_.UpperTheory.TP.W.GoodK σ B) (h : Y.IsHerm 
 theorem stab_iff_k (hB : _root_.UpperTheory.TP.W.GoodK σ B) (h : Y.IsHerm σ B r s) (h0 : min r s = 0) {K : Subgroup (UA σ Y.J)} (hK : IsStab B K)
     {g : UA σ Y.J} : g ∈ K ↔ ∀ v, IntAt v g :=
   (hK g).trans ⟨fun a _ z hz _ => a.2 z hz, fun a => ⟨fun w => _root_.GlobalTheory.ThK.Dbl.Bad.commute_theta_k hB h h0 w _, fun _ hz =>
-    ⟨mulVec_mem h.lat (fun v z h1 h2 => (a v z h1 h2).1) hz, mulVec_mem h.lat (fun v z h1 h2 => (a v z h1 h2).2) hz⟩⟩⟩
+    ⟨mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (a v z h1 h2).1) hz, mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (a v z h1 h2).2) hz⟩⟩⟩
 theorem emb_mem_k (hB : _root_.UpperTheory.TP.W.GoodK σ B) (h : Y.IsHerm σ B r s) (h0 : min r s = 0) {K : Subgroup (G2 σ Y)} (hK : IsStab2 B K)
     {e : UA σ Y.J × UA σ Y.J →* G2 σ Y} (he : ∀ g g', IsEmb g g' (e (g, g'))) {g : UA σ Y.J} (hg : ∀ v, IntAt v g) :
     e (g, 1) ∈ K := by
@@ -33,8 +37,8 @@ theorem emb_mem_k (hB : _root_.UpperTheory.TP.W.GoodK σ B) (h : Y.IsHerm σ B r
       (_root_.GlobalTheory.ThK.Dbl.Bad.commute_theta_k hB h h0 w _).eq, (_root_.GlobalTheory.ThK.Dbl.Bad.commute_theta_k hB h h0 w _).neg_right.eq]
   · obtain ⟨g', e1, hg'⟩ : ∃ g', k = e (g', 1) ∧ mat g' *ᵥ z ∈ latHat Y := by
       rcases hk with rfl | rfl
-      · exact ⟨g, rfl, mulVec_mem h.lat (fun v z h1 h2 => (hg v z h1 h2).1) hz⟩
-      · exact ⟨g⁻¹, by rw [← map_inv, Prod.inv_mk, inv_one], mulVec_mem h.lat (fun v z h1 h2 => (hg v z h1 h2).2) hz⟩
+      · exact ⟨g, rfl, mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (hg v z h1 h2).1) hz⟩
+      · exact ⟨g⁻¹, by rw [← map_inv, Prod.inv_mk, inv_one], mulVec_mem h.lat.toIsLattice (fun v z h1 h2 => (hg v z h1 h2).2) hz⟩
     rw [e1, he g' 1, Matrix.fromBlocks_mulVec, show mat (1 : UA σ Y.J) = 1 from rfl]
     simpa using ⟨hg', hz'⟩
 end GlobalTheory.ThK.Dbl.Bad

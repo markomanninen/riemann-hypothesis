@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AxisPderivComp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.AxisPderivComp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,44 +53,77 @@ theorem dof_hom (G G' : FGLaw k d) (α : Pt k 1 d) (hα : ∀ i, constantCoeff (
       rw [eF] at hom
       exact hom
     rw [this]
-  rw [dof_eq _ G.const (law_right_unit G), dof_eq _ G'.const (law_right_unit G'), key,
+  have pderiv_ev {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j))
+      (f : PS k m d) (v : Fin n × Fin d) :
+      pderiv (R := k) v (ev V f) =
+        ∑ j : Fin m, ∑ l : Fin d, ev V (pderiv (R := k) (j, l) f) * pderiv (R := k) v (V j l) := by
+    unfold ev
+    rw [GlobalTheory.FormalCalc.pderiv_subst (gt_hasSubst V hV), Fintype.sum_prod_type]
+  have dof_eq (L : FGLaw k d) (v : Fin d → k) (f : PS k 1 d) :
+      Dof L.F v f = ∑ i, C (v i) *
+        ev ![pt k (n := 1) d 0, 0] (pderiv (R := k) ((1 : Fin 2), i) (ev ![L.F] f)) := by
+    have hL := single_point_zero_constant L.const
+    have eval_axis (h : PS k 1 d) : ev ![pt k (n := 1) d 0, 0] (ev ![L.F] h) = h := by
+      rw [gt_ev_ev' _ _ axis_GP hL, vec1,
+        show evP ![pt k (n := 1) d 0, 0] L.F = pt k d 0 from funext (law_right_unit L),
+        gt_ev_pt_self]
+    unfold Dof
+    simp only [pderiv_ev _ hL, Fin.sum_univ_one, ev_sum _ axis_GP, gt_ev_mul _ axis_GP,
+      eval_axis, Finset.mul_sum, Finset.sum_mul, Matrix.cons_val_zero]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+    ring
+  have axis_pderiv_comp (H : PS k 2 d) (i : Fin d) :
+      ev ![pt k (n := 1) d 0, 0] (pderiv (R := k) ((1 : Fin 2), i)
+        (ev ![comp1 α (pt k (n := 2) d 0), comp1 α (pt k (n := 2) d 1)] H)) =
+      ∑ l, C (dLin α l i) *
+        ev ![α] (ev ![pt k (n := 1) d 0, 0] (pderiv (R := k) ((1 : Fin 2), l) H)) := by
+    have eval_comp (K : PS k 2 d) :
+        ev ![pt k (n := 1) d 0, 0]
+          (ev ![comp1 α (pt k (n := 2) d 0), comp1 α (pt k (n := 2) d 1)] K) =
+        ev ![α] (ev ![pt k (n := 1) d 0, 0] K) := by
+      rw [gt_ev_ev' _ _ axis_GP hΦ, eval_pair_points, evP_comp1 _ axis_GP α _ (gp_pt 0),
+        evP_comp1 _ axis_GP α _ (gp_pt 1), evP_pt _ axis_GP, evP_pt _ axis_GP,
+        gt_ev_ev' _ _ (single_point_zero_constant hφ) axis_GP, eval_pair_points,
+        evP_pt _ (single_point_zero_constant hφ), evP_zero _ (single_point_zero_constant hφ)]
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+      rw [gt_comp1_pt_right, gt_comp1_zero α hφ]
+    have pderiv_comp_pt (b : Fin 2) (l : Fin d) :
+        pderiv (R := k) ((1 : Fin 2), i) (comp1 α (pt k (n := 2) d b) l) =
+          if (1 : Fin 2) = b then
+            ev ![pt k (n := 2) d b] (pderiv (R := k) ((0 : Fin 1), i) (α l)) else 0 := by
+      change pderiv (R := k) ((1 : Fin 2), i) (ev ![pt k (n := 2) d b] (α l)) = _
+      rw [pderiv_ev _ (single_point_zero_constant (gp_pt b)), Fin.sum_univ_one]
+      simp only [Matrix.cons_val_zero, pt]
+      split_ifs with h
+      · subst b
+        rw [Finset.sum_eq_single i]
+        · simp
+        · intro j _ hj
+          rw [pderiv_X_of_ne (by simpa using hj), mul_zero]
+        · simp
+      · refine Finset.sum_eq_zero fun j _ => ?_
+        rw [pderiv_X_of_ne (fun h' => h (congrArg Prod.fst h').symm), mul_zero]
+    have eval_linear (l : Fin d) : ev ![pt k (n := 1) d 0, 0]
+        (ev ![pt k (n := 2) d 1] (pderiv (R := k) ((0 : Fin 1), i) (α l))) = C (dLin α l i) := by
+      rw [gt_ev_ev' _ _ axis_GP (single_point_zero_constant (gp_pt 1)), vec1, evP_pt _ axis_GP]
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+      rw [ev_at_zero, ← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
+      simp [dLin]
+    rw [pderiv_ev _ hΦ, Fin.sum_univ_two]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_comp_pt,
+      one_ne_zero, if_false, if_true, mul_zero, Finset.sum_const_zero, zero_add]
+    rw [ev_sum _ axis_GP]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    rw [gt_ev_mul _ axis_GP, eval_comp, eval_linear, mul_comm]
+  rw [dof_eq G, dof_eq G', key,
     ev_sum _ (single_point_zero_constant hφ)]
-  simp only [axis_pderiv_comp α hφ, ev_C_mul _ (single_point_zero_constant hφ)]
-  simp only [Matrix.mulVec, dotProduct, map_sum,
+  simp only [axis_pderiv_comp, ev_C_mul _ (single_point_zero_constant hφ)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum,
     map_mul, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
-
-theorem dpolyOf_hom :
-    ∀ (k : Type) [CommRing k] (d : ℕ) (G G' : FGLaw k d) (α : Pt k 1 d),
-      (∀ i, constantCoeff (α i) = 0) →
-      comp1 α (G.add (pt k (n := 2) d 0) (pt k (n := 2) d 1)) =
-        G'.add (comp1 α (pt k (n := 2) d 0)) (comp1 α (pt k (n := 2) d 1)) →
-      ∀ (Λ : Type) [Fintype Λ] (u : Λ → Fin d → k) (Q : MvPolynomial Λ k) (g : PS k 1 d),
-        DpolyOf G.F u Q (ev (n := 1) ![α] g) =
-          ev (n := 1) ![α] (DpolyOf G'.F (fun l => (dLin α).mulVec (u l)) Q g) := by
-  intro k _ d G G' α hα hom ι _ u P g
-  have hφ : GP α := hα
-  have hit : ∀ (v : Fin d → k) (n : ℕ) (g : PS k 1 d),
-      (Dof G.F v)^[n] (ev (n := 1) ![α] g) =
-        ev (n := 1) ![α] ((Dof G'.F ((dLin α).mulVec v))^[n] g) := by
-    intro v n
-    induction n with
-    | zero => intro g; rfl
-    | succ n ih =>
-      intro g
-      rw [Function.iterate_succ_apply, Function.iterate_succ_apply, dof_hom G G' α hα hom, ih]
-  have hmon : ∀ m : ι →₀ ℕ, DmonOf G.F u m (ev (n := 1) ![α] g) =
-      ev (n := 1) ![α] (DmonOf G'.F (fun l => (dLin α).mulVec (u l)) m g) := by
-    intro m
-    unfold DmonOf
-    induction (Finset.univ : Finset ι).toList with
-    | nil => rfl
-    | cons a L ih => rw [List.foldr_cons, List.foldr_cons, ih, hit]
-  unfold DpolyOf
-  rw [ev_sum _ (single_point_zero_constant hφ)]
-  refine Finset.sum_congr rfl fun m _ => ?_
-  rw [ev_C_mul _ (single_point_zero_constant hφ), hmon]
 
 end GlobalTheory.HomChain

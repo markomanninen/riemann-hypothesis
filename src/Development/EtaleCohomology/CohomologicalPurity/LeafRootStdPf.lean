@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafRootPf
-import Mathlib.RingTheory.Etale.StandardEtale
-import Mathlib.RingTheory.RingHom.Etale
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafRootPf
+public import Mathlib.RingTheory.Etale.StandardEtale
+public import Mathlib.RingTheory.RingHom.Etale
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -99,13 +103,13 @@ theorem LeafRootStd_of : LeafRootStd := by
     have hin : ∀ c : A[X], π (mkP (C c)) ∈ R' := by
       intro c
       refine Polynomial.induction_on c (fun a0 => ⟨a0, rfl⟩) ?_ ?_
-      · intro p1 p2 h1 h2; rw [C_add, map_add, map_add]; exact add_mem h1 h2
+      · intro p1 p2 h1 h2; rw [C_add, map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
       · intro n a0 ih
         rw [pow_succ, ← mul_assoc, C_mul, map_mul, map_mul]; exact mul_mem ih hXm
     have hall : ∀ p : A[X][X], π (mkP p) ∈ R' := by
       intro p
       refine Polynomial.induction_on p hin ?_ ?_
-      · intro p1 p2 h1 h2; rw [map_add, map_add]; exact add_mem h1 h2
+      · intro p1 p2 h1 h2; rw [map_add (f := _), map_add (f := _)]; exact add_mem h1 h2
       · intro n a0 ih
         rw [pow_succ, ← mul_assoc, map_mul, map_mul]; exact mul_mem ih hY
     intro s

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ClozelConjCOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CobordismLinearRelations.ClozelConjCOfSteps
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.LFun
 open UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Cj
@@ -71,7 +75,7 @@ theorem UpperTheory.V.Cj.irrAbs :
       exact ⟨Finsupp.single f s, Finsupp.lsum_single ℕ F f s⟩
     · exact ⟨0, map_zero Φ⟩
     · rintro a b ⟨za, ha⟩ ⟨zb, hb⟩
-      exact ⟨za + zb, by rw [map_add, ha, hb]; rfl⟩
+      exact ⟨za + zb, by rw [map_add (f := _), ha, hb]; rfl⟩
   have hΦ : Function.Surjective Φ := by
     intro v
     exact key v (by rw [hsup]; exact Submodule.mem_top)

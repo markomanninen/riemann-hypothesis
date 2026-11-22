@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.LocalRingCardinality.DataCoeff
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain
 open scoped Matrix
@@ -37,7 +41,7 @@ def fockL : MvPolynomial σ K →ₗ⋆[K] MvPolynomial σ K →ₗ[K] K :=
         fockS_eq_sum f g (f.support ∪ f'.support) Finset.subset_union_left,
         fockS_eq_sum f' g (f.support ∪ f'.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun m _ => ?_
-      rw [coeff_add, star_add]; ring)
+      rw [MvPolynomial.coeff_add, star_add]; ring)
     (by
       intro c f g
       rw [fockS_eq_sum (c • f) g f.support (support_smul), fockS, smul_eq_mul, Finset.mul_sum]
@@ -45,7 +49,7 @@ def fockL : MvPolynomial σ K →ₗ⋆[K] MvPolynomial σ K →ₗ[K] K :=
       rw [coeff_smul, smul_eq_mul, star_mul', starRingEnd_apply]; ring)
     (by
       intro f g g'
-      simp only [fockS, coeff_add, mul_add, add_mul, Finset.sum_add_distrib])
+      simp only [fockS, MvPolynomial.coeff_add, mul_add, add_mul, Finset.sum_add_distrib])
     (by
       intro c f g
       simp only [fockS, coeff_smul, smul_eq_mul, RingHom.id_apply, Finset.mul_sum]
@@ -79,7 +83,8 @@ theorem blockAct_comp (g h : ι → Matrix (Fin n) (Fin n) K) :
     (Formalism.GradedWeylDivisibility.blockAct K (n := n) g).comp (Formalism.GradedWeylDivisibility.blockAct K h) = Formalism.GradedWeylDivisibility.blockAct K fun τ => h τ * g τ := by
   apply MvPolynomial.algHom_ext
   intro v
-  simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.blockAct, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply]
   simp only [algebraMap_eq, Finset.mul_sum, Finset.sum_mul, ← C_mul]
   rw [Finset.sum_comm]
   simp [C_mul, mul_assoc]

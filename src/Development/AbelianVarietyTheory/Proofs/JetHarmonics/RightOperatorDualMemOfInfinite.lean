@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
@@ -14,23 +18,11 @@ section module
 
 variable {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
-theorem IsPol.map {f : ℂ → V} (hf : IsPol f) (φ : V →ₗ[ℂ] W) : IsPol fun y => φ (f y) := by
-  induction hf with
-  | const a => exact IsPol.const _
-  | add _ _ h1 h2 => simpa only [map_add] using h1.add h2
-  | xsmul _ h => simpa only [map_smul] using h.xsmul
-
 end module
 
 section alg
 
 variable {A : Type} [Ring A] [Algebra ℂ A]
-
-theorem IsPol.mul {f g : ℂ → A} (hf : IsPol f) (hg : IsPol g) : IsPol fun y => f y * g y := by
-  induction hf with
-  | const a => exact hg.map (LinearMap.mulLeft ℂ a)
-  | add _ _ h1 h2 => simpa only [add_mul] using h1.add h2
-  | xsmul _ h => simpa only [smul_mul_assoc] using h.xsmul
 
 end alg
 
@@ -73,7 +65,8 @@ private lemma isPol_linearMap_eval {ι : Type} [Fintype ι] [DecidableEq ι] (g 
     intro y
     ext ρ'
     simp [Finset.sum_apply, Pi.single_apply]
-  simp only [h, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, map_sum, map_smul]
   exact isPol_finset_sum _ fun ρ _ => isPol_eval_smul _ _
 
 open MeasureTheory in
@@ -82,7 +75,7 @@ private lemma isPol_linearMap_comp (g : V →ₗ[ℂ] W) {f : ℂ → V} (hf : _
     _root_.GlobalTheory.RhvPoly.IsPol fun y => g (f y) := by
   induction hf with
   | const a => exact .const _
-  | add _ _ ihf ihg => simpa only [map_add] using ihf.add ihg
+  | add _ _ ihf ihg => simpa only [map_add (f := _)] using ihf.add ihg
   | xsmul _ ih => simpa only [map_smul] using ih.xsmul
 
 open MeasureTheory in
@@ -156,8 +149,8 @@ private lemma isPol_eq_zero_of_infinite_zeros {f : ℂ → V} (hf : _root_.Globa
     (hS.mono fun x hx => by simp [← hp, h0 x hx])
   simp [hp, this]
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem _root_.GlobalTheory.RhvPoly.rhv_mem_of_infinite : ∀ (P : _root_.Formalism.FourierDecayAlt.M.Par) (A : Type) [Ring A] [StarRing A] [Algebra ℂ A]
     (d : _root_.Formalism.FourierDecayAlt.Q.NFData P A) (K : Submodule ℂ A) (S : Set ℂ), S.Infinite →
     (∀ y ∈ S, _root_.GlobalTheory.HatNF.rhv d y ∈ K) → ∀ y : ℂ, _root_.GlobalTheory.HatNF.rhv d y ∈ K := by

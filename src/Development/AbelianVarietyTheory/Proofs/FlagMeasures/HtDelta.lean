@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinprodModKLocalGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FinprodModKLocalGen
+
+@[expose] public section
 
 namespace GlobalTheory.DiffModProd
 

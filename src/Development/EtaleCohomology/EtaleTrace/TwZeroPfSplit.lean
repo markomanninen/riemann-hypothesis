@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.TwZeroPf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.TwZeroPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Opposite
@@ -30,7 +34,8 @@ theorem splitLoc : SplitLoc := by
     have hm : ∀ i, U.presheaf.germ ⊤ x trivial (e i) ∈ IsLocalRing.maximalIdeal (U.presheaf.stalk x) := fun i =>
       (IsLocalRing.mem_maximalIdeal _).2 (mem_nonunits_iff.2 ((Scheme.mem_basicOpen_top _ _ x).not.1 (hx i)))
     have hsum := Ideal.sum_mem (IsLocalRing.maximalIdeal _) (t := Finset.univ) (fun i _ => hm i)
-    rw [← map_sum, hs, map_one] at hsum
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hs, map_one] at hsum
     exact (IsLocalRing.maximalIdeal.isMaximal _).ne_top ((Ideal.eq_top_iff_one _).2 hsum)
   let 𝒰 := U.openCoverOfIsOpenCover W hW
   refine ⟨Sieve.ofArrows 𝒰.X 𝒰.f, ?_, ?_⟩

@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantAntiHomomorphismStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CommutingLocallyNilpotentCommonKernelStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HasCharSub
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantAntiHomomorphismStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CommutingLocallyNilpotentCommonKernelStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,18 @@ theorem exists_raised : StepChar → TensDecomp → ∀ {m : ℕ} (M : GMod m) (
   have hcomm : ∀ Y Y', Commute (D Y) (D Y') := by
     intro Y Y'
     have h0 : Commute (qdet E (Y + ((m : ℂ) - 1) / 2)) (qdet E (Y' + ((m : ℂ) - 1) / 2)) :=
-      GlobalTheory.CentreFin.commute_qdet (fun a b => qDetCentral _ m E hE _ a b) _
+      by
+        unfold qdet qminor
+        refine Commute.sum_right _ _ _ fun σ _ => ?_
+        refine Commute.mul_right (Int.cast_commute _ _).symm ?_
+        refine Commute.list_prod_right _ _ fun x hx => ?_
+        rw [List.mem_ofFn] at hx
+        obtain ⟨k, rfl⟩ := hx
+        unfold Tm
+        refine Commute.add_right ?_ (qDetCentral _ m E hE _ _ _)
+        split_ifs
+        · exact Algebra.commute_algebraMap_right _ _
+        · exact Commute.zero_right _
     refine Commute.sub_left (Commute.sub_right h0 ((Commute.one_right _).smul_right _)) ?_
     exact ((Commute.one_left _).smul_left _).sub_right ((Commute.one_left _).smul_left _ |>.smul_right _)
   have hst : ∀ Y, ∀ x ∈ LinearMap.range f, D Y x ∈ LinearMap.range f := by
@@ -63,13 +78,54 @@ theorem exists_raised : StepChar → TensDecomp → ∀ {m : ℕ} (M : GMod m) (
     have e := pow_lin f _ (D Y) (hsh Y) N x
     rw [hN Y] at e
     simpa using e.symm
-  obtain ⟨c, -, -, hc, -⟩ := GlobalTheory.CentreFin.exists_coef E (-(((m : ℂ) - 1) / 2)) (B := ⊤) (fun _ => trivial)
+  let t : ℕ → Fin m → Fin m → Polynomial (Module.End ℂ V) := fun k a b =>
+    (if a = b then Polynomial.X + Polynomial.C (algebraMap ℂ (Module.End ℂ V) (((m : ℂ) - 1) / 2 - k)) else 0) + Polynomial.C (E a b)
+  let p : Polynomial (Module.End ℂ V) := ∑ σ : Equiv.Perm (Fin m), Polynomial.C ((Equiv.Perm.sign σ : ℤ) : Module.End ℂ V) * (List.ofFn fun k : Fin m => t k (σ k) k).prod
+  have ht : ∀ k a b, (t k a b).natDegree ≤ 1 := by
+    intro k a b
+    dsimp [t]
+    split_ifs
+    · exact (Polynomial.natDegree_add_le _ _).trans (max_le ((Polynomial.natDegree_add_le _ _).trans (max_le Polynomial.natDegree_X_le (by rw [Polynomial.natDegree_C]; omega))) (by simp))
+    · simp
+  have hp : p.natDegree ≤ m := by
+    dsimp [p]
+    refine Polynomial.natDegree_sum_le_of_forall_le _ _ fun σ _ => (Polynomial.natDegree_C_mul_le _ _).trans ?_
+    refine (Polynomial.natDegree_list_prod_le _).trans ?_
+    rw [List.map_ofFn, List.sum_ofFn]
+    calc _ ≤ ∑ _k : Fin m, 1 := Finset.sum_le_sum fun k _ => ht _ _ _
+      _ = m := by simp
+  let ev (Y : ℂ) : Polynomial (Module.End ℂ V) →+* Module.End ℂ V :=
+    Polynomial.eval₂RingHom' (RingHom.id _) (algebraMap ℂ _ Y) (fun a => (Algebra.commutes Y a).symm)
+  have hc : ∀ Y, qdet E (Y + ((m : ℂ) - 1) / 2) = ∑ j ∈ Finset.range (m + 1), Y ^ j • p.coeff j := by
+    intro Y
+    have he : ev Y p = qdet E (Y + ((m : ℂ) - 1) / 2) := by
+      dsimp [p]
+      unfold qdet qminor
+      rw [map_sum]
+      refine Finset.sum_congr rfl fun σ _ => ?_
+      rw [map_mul, map_list_prod, List.map_ofFn]
+      congr 1
+      · simp [ev]
+      · congr 1
+        congr 1
+        funext k
+        simp only [Function.comp_apply]
+        dsimp [t, Tm]
+        split_ifs <;> change Polynomial.eval₂ (RingHom.id _) (algebraMap ℂ _ Y) _ = _ <;>
+          simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    rw [← he]
+    change Polynomial.eval₂ (RingHom.id _) (algebraMap ℂ _ Y) p = _
+    rw [Polynomial.eval₂_eq_sum_range' _ (Nat.lt_succ_of_le hp)]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    simp only [RingHom.id_apply, ← map_pow]
+    rw [Algebra.smul_def]
+    exact (Algebra.commutes _ _).symm
+  let c := p.coeff
   obtain ⟨a, ha⟩ := exists_capelliPoly_eq_sum (χ + Pi.single r 1)
   have hD : ∀ Y, D Y = ∑ j ∈ Finset.range (m + 1), Y ^ j • (c j - a j • (1 : Module.End ℂ V)) := by
     intro Y
     have h1 := hc Y
-    rw [sub_neg_eq_add] at h1
-    simp only [D, h1, ha Y, smul_sub, Finset.sum_sub_distrib, Finset.sum_smul, mul_smul]
+    simp only [D, h1, ha Y, c, smul_sub, Finset.sum_sub_distrib, Finset.sum_smul, mul_smul]
   obtain ⟨w, hw, hw0, hwD⟩ := GlobalTheory.T.commuting_locally_nilpotent_common_kernel _ hI D hcomm hst hnil (m + 1) _ hD
   obtain ⟨x, rfl⟩ := hw
   refine ⟨r, f x, ⟨_, rfl⟩, hw0, fun Y => ?_⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImportsAlt
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImportsAlt
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.CutBP2 Formalism.QuantumDeterminants
 

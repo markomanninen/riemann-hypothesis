@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,20 +124,6 @@ structure Corr (l : ℕ) (Y : Scheme.{0}) : Type 1 where
   et : Etale (p ∣_ Y.basicOpen (l : Γ(Y, ⊤)))
   deg : ∀ (K : Type) [Field K] [IsAlgClosed K], (l : K) ≠ 0 → ∀ y : Spec (CommRingCat.of K) ⟶ Y,
     Nat.card {z : Spec (CommRingCat.of K) ⟶ Z // z ≫ p = y} = d
-
-def Corr.graph (l : ℕ) {Y : Scheme.{0}} (z : Y ⟶ Y) : Corr l Y where
-  Z := Y
-  p := 𝟙 Y
-  r := z
-  d := 1
-  fin := inferInstance
-  et := inferInstance
-  deg K _ _ _ y := by
-    have : Unique {z : Spec (CommRingCat.of K) ⟶ Y // z ≫ 𝟙 Y = y} :=
-      ⟨⟨⟨y, Category.comp_id y⟩⟩, fun a => Subtype.ext ((Category.comp_id a.1).symm.trans a.2)⟩
-    exact Nat.card_unique
-
-instance (l : ℕ) (Y : Scheme.{0}) : Inhabited (Corr l Y) := ⟨Corr.graph l (𝟙 Y)⟩
 
 def Corr.Sec {l : ℕ} {Y : Scheme.{0}} (T : Corr l Y) {X : Scheme.{0}} (y : X ⟶ Y) : Type := {z : X ⟶ T.Z // z ≫ T.p = y}
 

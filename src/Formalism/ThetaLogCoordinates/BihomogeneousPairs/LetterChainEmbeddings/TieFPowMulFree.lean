@@ -1,6 +1,10 @@
-import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
-import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.ScalSum
+module
+
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.LevelDecomp
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.KP.LL
 
@@ -68,9 +72,10 @@ theorem harmonicProjection_expand (hz : ∀ c, w c ≠ zv ∧ e c ≠ zv) (o n z
 private lemma add_single_mem_support_of_mem_support_pderiv (i : σ) (p : MvPolynomial σ k) (t : σ →₀ ℕ) (ht : t ∈ (pderiv i p).support) :
     t + Finsupp.single i 1 ∈ p.support := by
   classical
-  have hp : pderiv i p = ∑ s ∈ p.support, pderiv i (monomial s (coeff s p)) := by
+  have hp : pderiv i p = ∑ s ∈ p.support, pderiv i (monomial s (AddMonoidAlgebra.coeff p s)) := by
     conv_lhs => rw [p.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   rw [MvPolynomial.mem_support_iff, hp, MvPolynomial.coeff_sum] at ht
   obtain ⟨s, hs, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero ht
   rw [pderiv_monomial, MvPolynomial.coeff_monomial] at hne

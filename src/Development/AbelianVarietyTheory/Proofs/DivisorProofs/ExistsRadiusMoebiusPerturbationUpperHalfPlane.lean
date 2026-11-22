@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+
+@[expose] public section
 
 namespace GlobalTheory.HilbFam
 
@@ -10,7 +14,7 @@ theorem exists_radius_moebius_perturbation :
   intro τ c t hτ
   have h1 : ContinuousAt (fun z : ℂ => ‖1 + z * c‖) 0 := by fun_prop
   have h2' : ContinuousAt (fun z : ℂ => τ + t * z / (1 + z * c)) 0 := by
-    refine continuousAt_const.add (ContinuousAt.div (by fun_prop) (by fun_prop) (by simp))
+    refine continuousAt_const.add (ContinuousAt.div₀ (by fun_prop) (by fun_prop) (by simp))
   have h2 : ContinuousAt (fun z : ℂ => (τ + t * z / (1 + z * c)).im) 0 :=
     Complex.continuous_im.continuousAt.comp h2'
   have e1 : ∀ᶠ z in nhds (0 : ℂ), (1 / 2 : ℝ) < ‖1 + z * c‖ :=

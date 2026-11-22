@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.CornerStable
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.BkAbEmb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.Factor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.RelKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.BkAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.CornerStable
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.BkAbEmb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.Factor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.EigenbasisLifts.RelKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.BkAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DecEmb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.HV GlobalTheory.GalOfCusp UpperTheory.V.Th
 
@@ -49,7 +53,7 @@ private theorem adL_above {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Ch
     | zero => simp
     | tmul v b =>
       simp only [Loc.actC, TensorProduct.AlgebraTensorModule.map_tmul, MonoidHom.comp_apply, hψ', adL_rho, LinearMap.id_apply]
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
   have h2 := congrArg (TensorProduct.AlgebraTensorModule.map (ρ γ) LinearMap.id) (hx h)
   rw [map_sub, e, TensorProduct.AlgebraTensorModule.map_tmul] at h2
   have h3 : Loc.actC φ (ρ.comp ψ) h (c γ ⊗ₜ[ℚ_[l]] 1) = ρ (ψ h) (c γ) ⊗ₜ[ℚ_[l]] 1 := by simp [Loc.actC]
@@ -100,7 +104,8 @@ private theorem adL_desc {n : ℕ} {A G H : Type} [CommRing A] [Group G] [Group 
     rw [map_sub]
     simp
   unfold W.GDet.lam
-  rw [← e, hD, (AlgebraTools.Det.repApi _).2.1, (AlgebraTools.Det.repApi _).2.1]
+  rw [← e, hD, (AlgebraTools.Det.repApi (W.mat (ρ.comp φ))).2.1,
+    (AlgebraTools.Det.repApi (W.mat ρ)).2.1]
   rfl
 
 private theorem adL_triv {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω]
@@ -109,51 +114,3 @@ private theorem adL_triv {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [Numbe
     ∀ u, ∀ g ∈ r.Ip u, ρ g = 1 :=
   (Ws.Eb.relKill B x ρ ((AlgebraTools.Det.irrIffSpan (W.mat ρ)).1 fun N hN => H.irr N fun g _ v hv => hN g v hv)
     (adL_desc x.D V.pr (adL_pr V) ρ H.rep)).2
-
-theorem UpperTheory.V.Th.adL_of :
-    Loc.LocalPublishedTheorems → Core → AdL := by
-  intro hP hC l _ L Ω _ _ _ _ _ _ s V hS hζ c hL n hn hn' r hr B ι x ρ H hpar P R hform hR z hz hb
-  haveI : CharZero Ω := charZero_of_injective_algebraMap (algebraMap L Ω).injective
-  have hz' : (fun g => z (toGS Ω V.S' g)) ∈ Z1 (R.comp (toGS Ω V.S') :
-      Representation (Qbar l) (G (W.Lp L) Ω) (Matrix (Fin n) (Fin n) (Qbar l))) :=
-    ⟨hz.1.comp (continuous_toGS Ω _), fun g h => (congrArg z (map_mul _ g h)).trans (hz.2 _ _)⟩
-  have he : V.frame.eps c.O (Qbar l) = V.frame.eps ℤ_[l] (Qbar l) := by
-    unfold W.GFrame.eps
-    rw [← IsScalarTower.algebraMap_eq, ← IsScalarTower.algebraMap_eq]
-  refine hC l L Ω s V hS hζ c hL n hn hn' r hr B ι x ρ H P R (fun g => he ▸ hform g) hR z hz ⟨fun u g hg => ?_, fun v => ?_⟩
-  · obtain ⟨X, hX⟩ := adL_away _ _ hz' hb u.1 (s.St_l u.1 u.2) (s.A u.1) (s.hA u.1)
-    have h1 := adL_triv H u g hg
-    obtain ⟨g', hg', rfl⟩ := hg.1
-    have h2 := hX (W.resP L Ω g') hg'
-    have h3 : ∀ g : V.frame.G₀, ρ g = 1 → Loc.adGL ρ g X = X := fun g h => by simp [Loc.adGL, h]
-    exact h2.trans (sub_eq_zero.2 ((hR.ad (V.pr g') X).trans (h3 _ h1)))
-  · obtain ⟨j, hj⟩ := (Loc.decEmb (F := W.Lp L) (Ω := Ω) (v := l)).1 (s.A v.1) v.1 (s.hA v.1) v.2
-    have key : ∃ φ : ↥(Dec (F := L) (s.A v.1)) →* Formalism.BasicNotions.Loc.GQ l, Topology.IsOpenEmbedding φ ∧
-        (∀ g y, φ g (j y) = j ((g : G L Ω) y)) ∧ (∀ g, φ g ∈ Loc.Iq l ↔ (g : G L Ω) ∈ Ine (F := L) (s.A v.1)) ∧
-        (∀ g, Loc.cyc l l (φ g) = cycZ L Ω l (g : G L Ω)) := by
-      rw [← hj]
-      obtain ⟨φ, a, b, -, c, d, -⟩ := ((Loc.decEmb (F := L) (Ω := Ω) (v := l)).2 j).2
-      exact ⟨φ, a, b, c, d l⟩
-    obtain ⟨φ, a, b, hi, d⟩ := key
-    have d' : ∀ g, Loc.cycA l l (Qbar l) (φ g) = cycBar L Ω l (g : G L Ω) := fun g => congrArg (Units.map _) (d g)
-    have h3 := adL_above (F := W.Lp L) j φ ((W.resP L Ω).comp (Dec (F := L) (s.A v.1)).subtype) a
-      (W.continuous_resP.comp continuous_subtype_val) b _ _ hz' hb
-    have e : ((R.comp (toGS Ω V.S')).comp ((W.resP L Ω).comp (Dec (F := L) (s.A v.1)).subtype) :
-        Representation (Qbar l) (Dec (F := L) (s.A v.1)) (Matrix (Fin n) (Fin n) (Qbar l))) =
-        Loc.adGL (ρ.comp (V.frame.φ v)) :=
-      MonoidHom.ext fun g => LinearMap.ext fun X => hR.ad (V.frame.φ v g) X
-    rw [e] at h3
-    obtain ⟨m, k, hm, hk, hψ⟩ := hpar v
-    obtain ⟨g₀, hg₀, hf⟩ := H.free v
-    have hI : V.frame.Iv v = (Loc.Iq l).comap φ := Subgroup.ext fun g => (hi g).symm
-    rw [hI]
-    haveI : CompactSpace (Dec (F := L) (s.A v.1)) := V.frame.cv v
-    refine bkOrd hP l (Dec (F := L) (s.A v.1)) φ a n _ _ m k (H.cont.comp (V.frame.φ_cont v)) (H.flag v) hm hk
-      (fun i i' g hg => ?_) ⟨g₀, ?_, hf⟩ _ h3
-    · rw [d']
-      exact hψ i i' g ((hi g).1 hg)
-    · have h4 : cycZ (W.Lp L) Ω l (W.resP L Ω g₀.1) = 1 := by
-        rw [← V.hε]
-        exact hg₀
-      have h5 : Loc.cyc l l (φ g₀) = 1 := (d g₀).trans h4
-      exact (congrArg (Units.map _) h5).trans (map_one _)

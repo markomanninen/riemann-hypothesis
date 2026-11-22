@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.NegOnePowMulSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,9 +19,10 @@ theorem blk_lt : ∀ (bs : List (ℂ × ℕ)) (i j : ℕ), i < j → j < (bs.map
     by_cases hi : i < s
     · by_cases hjs : j < s
       · simp [hi, hjs] at hne
-      · rw [if_pos hi, if_neg hjs]; omega
+      · rw [ite_eq_left hi, ite_eq_right hjs]
+        omega
     · have hjs : ¬ j < s := by omega
-      rw [if_neg hi, if_neg hjs] at hne ⊢
+      simp only [ite_eq_right hi, ite_eq_right hjs] at hne ⊢
       have := blk_lt bs (i - s) (j - s) (by omega) (by omega) (fun e => hne (by rw [e]))
       omega
 

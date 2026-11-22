@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionPointValue
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionPointValue
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionBounded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -77,7 +82,7 @@ theorem val_spec {y : (Σ k, ι k) → Ω} {A : HermLine ι} {n : ℕ} {s : Ω} 
     eval z (map (Int.castRingHom ℂ) g) =
       val y A n s z * eval z (map (Int.castRingHom ℂ) h) * (A.h z : ℂ) ^ n := by
   have H := (exists_rep_at hs hz).choose_spec
-  rw [val, dif_pos ⟨hs, hz⟩]
+  rw [val, dite_eq_left ⟨hs, hz⟩]
   have hc := cross hr H.1 hz
   have h1 := H.2
   have h2 := metric_ne (A := A) hz n
@@ -105,7 +110,7 @@ theorem rep_add {y : (Σ k, ι k) → Ω} {a : K → ℤ} {n : ℕ} {s t : Ω} {
   · simp only [Pi.add_apply]
     push_cast
     linear_combination hd₁ k
-  · rw [map_add, map_mul, map_mul, map_mul, hy₁, hy₂]
+  · rw [map_add (f := _), map_mul, map_mul, map_mul, hy₁, hy₂]
     ring
 
 theorem rep_mul {y : (Σ k, ι k) → Ω} {a : K → ℤ} {n m : ℕ} {s t : Ω} {g₁ h₁ g₂ h₂ : MRing ι}
@@ -130,7 +135,7 @@ def w (y : (Σ k, ι k) → Ω) (A : HermLine ι) (n : ℕ) : chartLat y A.a n �
       have hT := metric_ne (A := A) hz n
       rw [AddSubgroup.coe_add, val_eq (add_mem s.2 t.2) hz (rep_add r₁ r₂) (by simpa using mul_ne_zero n₁ n₂),
         val_eq s.2 hz r₁ n₁, val_eq t.2 hz r₂ n₂]
-      simp only [map_add, map_mul]
+      simp only [map_add (f := _), map_mul]
       field_simp
     · simp [val, hz]
 
@@ -143,7 +148,7 @@ theorem val_continuousOn {y : (Σ k, ι k) → Ω} {A : HermLine ι}
     fun f => MvPolynomial.continuous_eval _
   have hAc : ContinuousWithinAt (fun z => (A.h z : ℂ) ^ n) (mcPts (mCoordIdeal y)) z₀ :=
     (Complex.continuous_ofReal.continuousAt.comp_continuousWithinAt
-      ((hA z₀ hz₀.1).mono fun z hz => hz.1)).pow n
+      ((hA z₀ hz₀.1).mono fun z (hz : z ∈ mcPts (mCoordIdeal y)) => hz.1)).pow n
   have hF : ContinuousWithinAt (fun z => eval z (map (Int.castRingHom ℂ) g) /
       (eval z (map (Int.castRingHom ℂ) h) * (A.h z : ℂ) ^ n)) (mcPts (mCoordIdeal y)) z₀ :=
     (hcont g).continuousWithinAt.div ((hcont h).continuousWithinAt.mul hAc)
@@ -227,8 +232,8 @@ theorem common_denom {y : (Σ k, ι k) → Ω} {a : K → ℤ} {n r : ℕ} (hrel
 
 end SectionPointValue
 
-open SectionPointValue in
 
+open SectionPointValue in
 theorem SectionPointValue.proof : SectionPointValue.Statement := by
   intro K _ ι _ Ω _ y A hrel hA
   refine ⟨fun n => w y A n, fun n s => val_continuousOn hA s.2, ?_, ?_, ?_, ?_⟩

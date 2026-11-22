@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeneralizedEigenPartProjectorMemHeckeAlgebraStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.RowsExhaust
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverEta
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeneralizedEigenPartProjectorMemHeckeAlgebraStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.DIV Formalism.L2.Indef NumberField IsDedekindDomain GlobalTheory.EtaJoin
 
@@ -22,7 +26,8 @@ theorem form_gen_span {L V M ι : Type} [Field L] [AddCommGroup V] [Module L V] 
     refine ⟨B.constr ℂ fun i => σ (l (b i)), fun x => ?_⟩
     conv_lhs => rw [← b.sum_repr x]
     conv_rhs => rw [← b.sum_repr x]
-    simp only [map_sum, LinearMap.map_smulₛₗ, ← hB, Module.Basis.constr_basis, smul_eq_mul, map_mul, RingHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ, ← hB, Module.Basis.constr_basis, smul_eq_mul, map_mul, RingHom.id_apply]
   have hinj : Function.Injective j := fun x y hxy => by
     refine b.ext_elem fun i => σ.injective ?_
     obtain ⟨l', hl'⟩ := key (b.coord i)
@@ -64,7 +69,7 @@ theorem latLoc_span (B : NLocBase D M) (j : ℕ) (w : D.what₂.places.Pl) :
     induction hx using Submodule.span_induction with
     | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul c y _ hy => rw [LinearMap.map_smulₛₗ]; exact Submodule.smul_mem _ _ hy
   let b := Module.Free.chooseBasis D.what₂.LL (D.what₂.MtL (D.what₂.muTw w) j)
   rw [eq_top_iff, ← (B.iV_basis j w b).2, Submodule.span_le]
@@ -95,7 +100,7 @@ theorem proj_facts {K V : Type} [Field K] [AddCommGroup V] [Module K V] {P Q : S
     (t : Module.End K V) (hP : ∀ x ∈ P, t x = x) (hQ : ∀ x ∈ Q, t x = 0) (y : V) : t y ∈ P ∧ y - t y ∈ Q := by
   have hy : y ∈ P ⊔ Q := hc.sup_eq_top ▸ Submodule.mem_top
   obtain ⟨p, hp, q, hq, rfl⟩ := Submodule.mem_sup.1 hy
-  rw [map_add, hP p hp, hQ q hq, add_zero, add_sub_cancel_left]
+  rw [map_add (f := _), hP p hp, hQ q hq, add_zero, add_sub_cancel_left]
   exact ⟨hp, hq⟩
 
 theorem part_le_off {O K V : Type} [CommRing O] [Field K] [Algebra O K] [AddCommGroup V] [Module K V]
@@ -134,7 +139,7 @@ theorem main : ∀ (D : D7) (M : MtFam D) (T : NormalizedLocalCompatibility D M)
     obtain ⟨hxP, hxL⟩ := Submodule.mem_inf.1 hx
     obtain ⟨l, hlL, q, hq, rfl⟩ := Submodule.mem_sup.1 hxL
     have e : tp I (l + q) = l + q := hpart I _ hxP
-    rw [map_add, hoff I q hq, add_zero] at e
+    rw [map_add (f := _), hoff I q hq, add_zero] at e
     rw [← e]
     exact alg_stable T.B hl _ (htp I) l hlL
   constructor
@@ -151,13 +156,13 @@ theorem main : ∀ (D : D7) (M : MtFam D) (T : NormalizedLocalCompatibility D M)
       exact ⟨z, hz, e⟩
     refine ⟨fun i => if h : i ∈ D.nd.locs j w then (ex i h).choose else 0, fun i => ?_, ?_⟩
     · by_cases h : i ∈ D.nd.locs j w
-      · dsimp only; rw [dif_pos h]; exact (ex i h).choose_spec.1
-      · dsimp only; rw [dif_neg h]; exact Submodule.zero_mem _
+      · dsimp only; rw [dite_eq_left h]; exact (ex i h).choose_spec.1
+      · dsimp only; rw [dite_eq_right h]; exact Submodule.zero_mem _
     · have hsum : ∑ i ∈ (D.nd.locs j w).attach,
           T.Psi j w i.1 i.2 (if h : i.1 ∈ D.nd.locs j w then (ex i.1 h).choose else 0) =
           ∑ i ∈ (D.nd.locs j w).attach, tp (T.mx j w i.1) y := by
         refine Finset.sum_congr rfl fun i _ => ?_
-        rw [dif_pos i.2]
+        rw [dite_eq_left i.2]
         exact (ex i.1 i.2).choose_spec.2
       rw [hsum, ← sub_eq_zero]
       refine NCov.eq_zero_of_forall_mem_off hinj hS hsplit hint ((D.nd.locs j w).image (T.mx j w))

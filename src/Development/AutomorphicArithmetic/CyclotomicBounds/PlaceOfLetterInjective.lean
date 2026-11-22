@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,13 +16,6 @@ variable {φ : Frame}
 theorem cc_mul_cc : φ.cc * φ.cc = 1 := by
   show ((c0, (1 : φ.MA)) : G0 × φ.MA) * (c0, 1) = 1
   simp [c0]
-
-theorem cc_ne_one : φ.cc ≠ 1 := by
-  intro h
-  have := congrArg (fun g : φ.GG => g.1.2) h
-  simp [Frame.cc, c0] at this
-
-theorem orderOf_cc : orderOf φ.cc = 2 := orderOf_eq_prime (by rw [pow_two, cc_mul_cc]) cc_ne_one
 
 theorem orderOf_moving (g : φ.GG) (h : g.1.2 = -1) : orderOf g = Nat.lcm 2 (orderOf g.2) := by
   have h1 : orderOf g.1 = 2 := by

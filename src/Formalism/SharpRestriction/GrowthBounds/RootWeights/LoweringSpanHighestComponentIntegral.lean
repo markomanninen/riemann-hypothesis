@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanLowerDividedPowerMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.LoweringSpanLowerDividedPowerMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem loweringSpan_divided_power_stable [CharZero (KK O)] {E : GLOps n (KK O) 
       rw [this, algebraMap_smul]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨nu, hnu⟩)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ _ hx
 
 theorem loweringSpan_highest_component_integral {E : GLOps n (KK O) V} (hE : IsGLRep E) {lam : Fin n → ℤ} {v : V}
@@ -78,7 +82,7 @@ theorem loweringSpan_highest_component_integral {E : GLOps n (KK O) V} (hE : IsG
     refine ⟨c1 + c2, ?_⟩
     have : x + y - algebraMap O (KK O) (c1 + c2) • v =
         (x - algebraMap O (KK O) c1 • v) + (y - algebraMap O (KK O) c2 • v) := by
-      rw [map_add, add_smul]; abel
+      rw [map_add (f := _), add_smul]; abel
     rw [this]; exact Submodule.add_mem _ h1 h2
   | smul a x _ hx =>
     obtain ⟨c, h⟩ := hx

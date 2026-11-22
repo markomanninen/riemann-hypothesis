@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FlagEEqHyperbolic
+
+@[expose] public section
 
 noncomputable section
 

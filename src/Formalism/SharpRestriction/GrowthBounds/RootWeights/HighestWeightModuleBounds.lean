@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.StableSubspaceCompleteReducibility
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.StableSubspaceCompleteReducibility
+
+@[expose] public section
 
 noncomputable section
 

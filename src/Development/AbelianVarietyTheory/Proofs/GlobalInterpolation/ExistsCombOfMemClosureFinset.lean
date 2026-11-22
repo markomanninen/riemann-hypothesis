@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataRows
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataRows
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField
 
 namespace GlobalTheory
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.exists_oLat_of_fg_ringOfIntegers : ∀ (O K : Type) [CommRing O] [Field K] [NumberField K] (o : O →+* K) (e : K →+* ℂ) (V : Type) [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (W : Type) [AddCommGroup W] [Module ℂ W] (j : V →ₛₗ[e] W) (N : Submodule (𝓞 K) V), (∀ z, IsIntegral ℤ (o z)) → N.FG → Submodule.span ℂ (j '' (N : Set V)) = ⊤ → ∃ L : _root_.Formalism.BasicNotions.Rows.OLat O (e.comp o) W, L.carrier = j '' (N : Set V) ∧ (∀ v ∈ L.gen, v ∈ j '' (N : Set V)) ∧ (∀ y, (∃ c : W → 𝓞 K, y = ∑ v ∈ L.gen, e (c v : K) • v) ↔ y ∈ j '' (N : Set V)) ∧ ∀ (a : 𝓞 K), ∀ y ∈ L.carrier, e (a : K) • y ∈ L.carrier := by
   intro O K _ _ _ o e V _ _ _ _ W _ _ j N ho hN hspan
   have hNZ : (N.restrictScalars ℤ).FG := hN.restrictScalars

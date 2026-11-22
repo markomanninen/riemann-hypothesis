@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.DivPlus
+module
+
+public import Development.EtaleCohomology.DivisorCycles.DivPlus
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb

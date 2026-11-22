@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHasCentChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,10 +16,10 @@ open Central
 
 section
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem norm_of_pow (χ : HChar E) (z : Ideles E) {n : ℕ} (hn : 0 < n) (h : ‖((χ.1 (z ^ n) : ℂˣ) : ℂ)‖ = 1) :
     ‖((χ.1 z : ℂˣ) : ℂ)‖ = 1 := by
   rw [map_pow, Units.val_pow_eq_pow_val, norm_pow] at h
@@ -78,13 +82,14 @@ theorem norm_chiInf (χ : HChar E) (h : ∀ z, star z = z → dchi χ z = 0) (y 
       Complex.smul_re, smul_eq_mul] at h3
     exact (mul_eq_zero.1 h3).resolve_left (by positivity)
   have h3 : ∀ z : Cinf E, (dchi χ z).re = 0 := fun z => by
-    rw [← Finset.univ_sum_single z, map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.univ_sum_single z, map_sum, Complex.re_sum]
     refine Finset.sum_eq_zero fun w _ => ?_
     have e : (Pi.single w (z w) : Cinf E) =
         (z w).re • (Pi.single w 1 : Cinf E) + (z w).im • (Pi.single w Complex.I : Cinf E) := by
       rw [← Pi.single_smul, ← Pi.single_smul, ← Pi.single_add]
       simp
-    rw [e, map_add, map_smul, map_smul, h1, smul_zero, zero_add, Complex.smul_re, h2, smul_zero]
+    rw [e, map_add (f := _), map_smul, map_smul, h1, smul_zero, zero_add, Complex.smul_re, h2, smul_zero]
   rw [← expU_log y, chiInf_expU, Complex.norm_exp, h3, Real.exp_zero]
 
 theorem lie_scL {π : CuspSub E a} {ω : HChar E} (h : π.HasCentral ω) (z : Cinf E) {ψ : Sm E a} (hψ : ψ ∈ π.V) :

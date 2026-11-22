@@ -1,15 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.NonemptyLocalFramesOfGoodData
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SmoothPtPartOfSmoothPtAssociatedGraded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.NonemptyCoverOfRelativePresentationSmoothPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsSmoothQuotientByWeightedEquations
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsPointDerivationFramedCommutatorTangent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsQuotientDerivationOfShaCocycle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SixBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ResidueCharMemLevelPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.NonemptyLocalFramesOfGoodData
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SmoothPtPartOfSmoothPtAssociatedGraded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.NonemptyCoverOfRelativePresentationSmoothPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsSmoothQuotientByWeightedEquations
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsPointDerivationFramedCommutatorTangent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExistsQuotientDerivationOfShaCocycle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SixBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 namespace UpperTheory.V.GradeZeroInterpolatingElement.ExM
@@ -143,7 +148,7 @@ private theorem tower {O X B U : Type} [CommRing O] [IsDomain O] [IsLocalRing O]
           · simp only [eq, Sum.elim_inl]; rw [hδ, d3, pg, map_zero]
           · simp only [eq, Sum.elim_inr]; rw [hδ, d3, hgs2, k4]
         | zero => simp
-        | add x y _ _ hx hy => rw [map_add, map_add, hx, hy, add_zero]
+        | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
         | smul b x hx' hx =>
           rw [smul_eq_mul, d4 b x, hI x hx', zero_smul, add_zero, smul_eq_mul, map_mul, hx, mul_zero]
       obtain ⟨y, rfl⟩ := hq f
@@ -290,7 +295,7 @@ private theorem sEq_mem (k) : sEq F k ∈ F.W.part (wEq D k) ∧ F.W.origin F.or
     exact sub_self _
   · simp only [sEq, hEl_apply]
     refine ⟨add_mem (F.homr _ _ _) (Submodule.smul_mem _ _ (F.homr _ _ _)), ?_⟩
-    rw [map_add, map_smul, F.at0r, F.at0r, diagonal_rep_off_diagonal_zero _ (weight_pairs_two_distinct _), diagonal_rep_off_diagonal_zero _ (weight_pairs_two_distinct _), smul_zero, add_zero]
+    rw [map_add (f := _), map_smul, F.at0r, F.at0r, diagonal_rep_off_diagonal_zero _ (weight_pairs_two_distinct _), diagonal_rep_off_diagonal_zero _ (weight_pairs_two_distinct _), smul_zero, add_zero]
 
 private theorem ph_ne (hD : D.Good) (k : Fin 6) : (D.ps (p6 k).2 D.ph : c.O) - (D.ps (p6 k).1 D.ph : c.O) ≠ 0 := by
   obtain ⟨-, h2, -, -, -, -, -, -, -, h3, -⟩ := facts D hD
@@ -513,7 +518,7 @@ theorem UpperTheory.V.GradeZeroInterpolatingElement.exModel :
       rintro (k | k)
       · exact b8 _ _ _
       · simp only [sEq, hEl_apply]
-        rw [map_add, map_smul, b7, b7, hz.g0, z2, mul_zero, mul_zero, smul_zero, add_zero])
+        rw [map_add (f := _), map_smul, b7, b7, hz.g0, z2, mul_zero, mul_zero, smul_zero, add_zero])
     refine ⟨δ, d1, d2, fun f hf => Ideal.Quotient.eq_zero_iff_mem.1 ?_, fun g f => ⟨fun e => ?_, fun e => ?_⟩⟩
     · rw [d3 f 0 (hf.trans (map_zero σ).symm), map_zero]
     · rw [d3 f _ e, b7, show Xm c.O 2 0 = 1 by simp [Xm], one_mul]; rfl

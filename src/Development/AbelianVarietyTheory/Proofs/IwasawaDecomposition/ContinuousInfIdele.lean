@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,9 @@ theorem exists_ext {L : Type} [Field L] (φ : L →+* ℂ) :
     ∃ e : (InfinitePlace.mk φ).Completion →+* ℂ, Continuous e ∧
       ∀ k : L, e (algebraMap L _ k) = φ k := by
   have h0 : ∀ k : L, InfinitePlace.Completion.extensionEmbedding (InfinitePlace.mk φ) (algebraMap L _ k) =
-      (InfinitePlace.mk φ).embedding k := fun k =>
-    InfinitePlace.Completion.extensionEmbedding_coe (InfinitePlace.mk φ) (WithAbs.toAbs _ k)
+      (InfinitePlace.mk φ).embedding k := fun k => by
+    rw [InfinitePlace.Completion.algebraMap_apply]
+    simpa using InfinitePlace.Completion.extensionEmbedding_coe (InfinitePlace.mk φ) (WithAbs.toAbs _ k)
   have hc := (InfinitePlace.Completion.isometry_extensionEmbedding (InfinitePlace.mk φ)).continuous
   rcases InfinitePlace.embedding_mk_eq φ with h | h
   · exact ⟨_, hc, fun k => by rw [h0, h]⟩
@@ -46,8 +51,8 @@ theorem exists_ext {L : Type} [Field L] (φ : L →+* ℂ) :
     rw [RingHom.comp_apply, h0, h]
     simp
 
-open Classical in
 
+open Classical in
 theorem infType_iff_local : ∀ (L : Type) [Field L] [NumberField L] (I : Type) [Fintype I] (φ : I → L →+* ℂ), (Function.Bijective fun i => InfinitePlace.mk (φ i)) → ∀ (ψ : Ideles L →* ℂˣ), Continuous ψ → ∀ n : I → ℤ, ((∀ k : Lˣ, ((ψ (infDiag k) : ℂˣ) : ℂ) = ∏ i, (φ i (k : L) / ((‖φ i (k : L)‖ : ℝ) : ℂ)) ^ n i) ↔ ∀ i (k : Lˣ), ((ψ (infIdele L (InfinitePlace.mk (φ i)) (atInf _ k)) : ℂˣ) : ℂ) = (φ i (k : L) / ((‖φ i (k : L)‖ : ℝ) : ℂ)) ^ n i) := by
   intro L _ _ I _ φ hφ ψ hψ n
   have hd : ∀ k : Lˣ, ((ψ (infDiag k) : ℂˣ) : ℂ) = ∏ w, ((ψ (infIdele L w (atInf w k)) : ℂˣ) : ℂ) := by

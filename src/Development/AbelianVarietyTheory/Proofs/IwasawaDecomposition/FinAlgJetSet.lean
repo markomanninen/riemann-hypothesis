@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivAt0CompMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetSdLatReps
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSemilocalHomLatticeClassesMod
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivAt0CompMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinsetSdLatReps
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteSemilocalHomLatticeClassesMod
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem.Col2.JetEx
 
 namespace GlobalTheory.Mem.Col2.JetFin
@@ -16,7 +21,8 @@ theorem finAlg_range {E : Type} [Field E] [NumberField E] (f : E →+* ℂ) : Fi
   · rintro _ ⟨i, rfl⟩
     exact (Algebra.IsAlgebraic.isAlgebraic (R := ℚ) (b i)).algHom f.toRatAlgHom
   · rintro _ ⟨x, rfl⟩
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_rat_smul, Rat.smul_def]
     exact mul_mem (SubfieldClass.ratCast_mem _ _) (Subfield.subset_closure ⟨i, rfl⟩)

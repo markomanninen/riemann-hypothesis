@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CompletionDegrees.IsEquivAdicAbvNormAbv
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CompletionDegrees.IsEquivAdicAbvNormAbv
+
+@[expose] public section
 
 namespace PI.CompDegEF
 
@@ -69,7 +73,7 @@ private theorem norm_le_one_of_isIntegral_int' {l : ℕ} [Fact l.Prime] (z : Om 
       | (rcases Int.eq_nat_or_neg c with ⟨m, rfl | rfl⟩ <;>
           simp [IsUltrametricDist.norm_natCast_le_one])
   rw [hmon.as_sum] at hp
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_finset_sum, Polynomial.eval₂_mul,
+  simp only [Polynomial.eval₂_add, Polynomial.eval₂_finsetSum, Polynomial.eval₂_mul,
     Polynomial.eval₂_C, Polynomial.eval₂_X_pow, eq_intCast] at hp
   have hcast : ∀ c : ℤ, Polynomial.eval₂ (algebraMap ℤ (Om l)) z (c : Polynomial ℤ) = (c : Om l) :=
     fun c => map_intCast (Polynomial.eval₂RingHom (algebraMap ℤ (Om l)) z) c
@@ -125,7 +129,7 @@ theorem denseSurj : DenseSurj := by
   let P : Ideal (𝓞 E) :=
     { carrier := {x | ‖φ (algebraMap (𝓞 E) E x)‖ < 1}
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_setOf_eq, map_add] at ha hb ⊢
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at ha hb ⊢
         exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
       zero_mem' := by simp
       smul_mem' := fun c {x} hx => by
@@ -164,7 +168,7 @@ theorem denseSurj : DenseSurj := by
   let I : Ideal (𝓞 E) :=
     { carrier := {x | ‖φ (algebraMap (𝓞 E) E x)‖ ≤ ‖((l : ℕ) : Om l)‖}
       add_mem' := fun {a b} ha hb => by
-        simp only [Set.mem_setOf_eq, map_add] at ha hb ⊢
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at ha hb ⊢
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ha hb)
       zero_mem' := by simp
       smul_mem' := fun c {x} hx => by

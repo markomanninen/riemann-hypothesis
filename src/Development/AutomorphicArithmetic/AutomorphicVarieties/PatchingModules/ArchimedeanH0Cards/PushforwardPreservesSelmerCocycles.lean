@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ThetaCoefficientMapEq
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ThetaCoefficientMapEq
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ def selmerSecondCocycles : Submodule A D.C2 where
     rintro p q ⟨a1, a2⟩ ⟨b1, b2⟩
     refine ⟨add_mem a1 b1, fun w => ⟨(a2 w).1.add (b2 w).1, fun g h => ?_⟩⟩
     have e : (p + q).2 w = p.2 w + q.2 w := rfl
-    rw [e, map_add, Prod.fst_add, Pi.add_apply, map_add, (a2 w).2, (b2 w).2, Pi.add_apply]
+    rw [e, map_add (f := _), Prod.fst_add, Pi.add_apply, map_add (f := _), (a2 w).2, (b2 w).2, Pi.add_apply]
   smul_mem' := by
     rintro c p ⟨a1, a2⟩
     refine ⟨Submodule.smul_mem _ c a1, fun w => ⟨(a2 w).1.const_smul c, fun g h => ?_⟩⟩
@@ -67,7 +71,7 @@ def abelian₂ (w : P.ι) : Submodule A (P.G w → (D.Q w).X) where
   zero_mem' := ⟨zero_mem _, 0, fun g _ => by simp⟩
   add_mem' := by
     rintro y y' ⟨a, Y, hY⟩ ⟨b, Y', hY'⟩
-    exact ⟨add_mem a b, Y + Y', fun g hg => by rw [Pi.add_apply, hY g hg, hY' g hg, map_add]; abel⟩
+    exact ⟨add_mem a b, Y + Y', fun g hg => by rw [Pi.add_apply, hY g hg, hY' g hg, map_add (f := _)]; abel⟩
   smul_mem' := by
     rintro c y ⟨a, Y, hY⟩
     exact ⟨Submodule.smul_mem _ c a, c • Y, fun g hg => by rw [Pi.smul_apply, hY g hg, map_smul, smul_sub]⟩
@@ -79,7 +83,7 @@ def selmerSecondCoboundaries : Submodule A D.C2 where
     convert (D.abelian₂ w).zero_mem using 1; funext g; simp⟩
   add_mem' := by
     rintro p q ⟨x, a1, a2, a3⟩ ⟨x', b1, b2, b3⟩
-    refine ⟨x + x', a1.add b1, by rw [Prod.fst_add, a2, b2, map_add], fun w => ?_⟩
+    refine ⟨x + x', a1.add b1, by rw [Prod.fst_add, a2, b2, map_add (f := _)], fun w => ?_⟩
     convert add_mem (a3 w) (b3 w) using 1
     funext g; simp; abel
   smul_mem' := by
@@ -123,18 +127,18 @@ theorem Hom.lineCoeffQuadratic_mem (u : Hom D D') {p : D.C2} (hp : p ∈ D.selme
   refine ⟨⟨(continuous_of_discreteTopology (f := u.f)).comp hc, fun g h k => ?_⟩,
     fun w => ⟨(continuous_of_discreteTopology (f := u.fq w)).comp (hloc w).1, fun g h => ?_⟩⟩
   · show D'.M.ρ g (u.f (p.1 (h, k))) - u.f (p.1 (g * h, k)) + u.f (p.1 (g, h * k)) - u.f (p.1 (g, h)) = 0
-    rw [← u.equiv, ← map_sub, ← map_add, ← map_sub, hcoc, map_zero]
+    rw [← u.equiv, ← map_sub, ← map_add (f := _), ← map_sub, hcoc, map_zero]
   · show D'.π w (u.f (p.1 (P.φ w g, P.φ w h))) =
       (D'.Q w).ρ g (u.fq w (p.2 w h)) - u.fq w (p.2 w (g * h)) + u.fq w (p.2 w g)
     rw [← u.comm, (hloc w).2]
     show u.fq w ((D.Q w).ρ g (p.2 w h) - p.2 w (g * h) + p.2 w g) = _
-    rw [map_add, map_sub, u.equivq]
+    rw [map_add (f := _), map_sub, u.equivq]
 
 theorem Hom.lam_mem (u : Hom D D') (w : P.ι) {y} (hy : y ∈ D.abelian₂ w) : (fun g => u.fq w (y g)) ∈ D'.abelian₂ w := by
   obtain ⟨⟨hc, hcoc⟩, Y, hY⟩ := hy
   refine ⟨⟨(continuous_of_discreteTopology (f := u.fq w)).comp hc, fun g h => ?_⟩, u.fq w Y, fun g hg => ?_⟩
   · show u.fq w (y (g * h)) = u.fq w (y g) + (D'.Q w).ρ g (u.fq w (y h))
-    rw [hcoc, map_add, u.equivq]
+    rw [hcoc, map_add (f := _), u.equivq]
   · show u.fq w (y g) = (D'.Q w).ρ g (u.fq w Y) - u.fq w Y
     rw [hY g hg, map_sub, u.equivq]
 

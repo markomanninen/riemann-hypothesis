@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.WdDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharAbove
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial Module Matrix UpperTheory.V.W UpperTheory.V.Hi
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -25,7 +30,8 @@ private theorem UpperTheory.fixed_vector_descends_finite_image {Γ L D W : Type}
     by_contra hx
     obtain ⟨g, hg⟩ := hn _ hx
     refine hg ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft (g : Γ ⧸ a.ker)) _ _ fun q => ?_
     rw [Equiv.coe_mulLeft, map_mul, Module.End.mul_apply]
     rfl
@@ -33,7 +39,8 @@ private theorem UpperTheory.fixed_vector_descends_finite_image {Γ L D W : Type}
     refine LinearMap.ext_on_range hs fun x => ?_
     rw [LinearMap.sum_apply, LinearMap.zero_apply]
     simp only [hc, ha]
-    rw [← map_sum, h0, map_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h0, map_zero]
   have h2 := LinearMap.congr_fun h1 y
   rw [LinearMap.sum_apply, LinearMap.zero_apply] at h2
   simp only [hi, Finset.sum_const, Finset.card_univ] at h2
@@ -64,5 +71,5 @@ theorem UpperTheory.exists_invariant_vector_of_finite_image_averaging :
     have h3 := h2 (wdMk P ι ρ ((phiD P ρ ^ n) x)) (fun s => by rw [wdRho_mk, hc', hx]) σ
     rw [wdRho_mk, hc'] at h3
     have h4 := wdMk_add P ι ρ ((phiD P ρ ^ n) (weilD Bw h P ρ σ x - x)) ((phiD P ρ ^ n) x)
-    rw [← map_add, sub_add_cancel, h3] at h4
+    rw [← map_add (f := _), sub_add_cancel, h3] at h4
     exact left_eq_add.mp (h4.trans (add_comm _ _))

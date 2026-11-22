@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -17,7 +21,6 @@ theorem UpperTheory.V.CA.d_poly_ext :
     | smul a z _ hz => rw [tmul_smul]; exact Submodule.smul_of_tower_mem _ a hz
   have h2 : y ∈ Submodule.span S ((fun z : E => (1 : S) ⊗ₜ[A] z) '' M) := by
     induction y with
-    | zero => simp
     | add a b ha hb => exact add_mem ha hb
     | tmul s x =>
       have : s ⊗ₜ[A] x = s • ((1 : S) ⊗ₜ[A] x) := by simp [smul_tmul']
@@ -26,7 +29,8 @@ theorem UpperTheory.V.CA.d_poly_ext :
   choose x hxM hx using fun a => (g a).2
   have h3 : ∑ a, s a • (g a : S ⊗[A] E) =
       Algebra.TensorProduct.map (MvPolynomial.aeval s) (AlgHom.id A E) (Det.gen x) := by
-    simp only [Det.gen, map_sum, Algebra.TensorProduct.map_tmul, MvPolynomial.aeval_X, AlgHom.id_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Det.gen, map_sum, Algebra.TensorProduct.map_tmul, MvPolynomial.aeval_X, AlgHom.id_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [← hx a]; simp [smul_tmul']
   rw [h3, D.nat, D'.nat]

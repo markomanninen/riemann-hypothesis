@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableParabolic
+module
+
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableParabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ section Box
 
 variable {ι : Type} [Fintype ι]
 
-variable (K ι) in
 
+variable (K ι) in
 def B_lat : AddSubgroup (ι → 𝔸[K]) := (AddMonoidHom.compLeft (algebraMap K 𝔸[K]).toAddMonoidHom ι).range
 
 instance B_countable : Countable (B_lat K ι) := by

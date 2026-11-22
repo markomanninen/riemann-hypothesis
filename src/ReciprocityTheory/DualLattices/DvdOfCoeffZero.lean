@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -213,7 +217,7 @@ theorem kerTheta : KerThetaStatement p O := by
     intro x
     obtain ⟨z, hz⟩ := witt_exists_eq_teichmuller_coeff_zero_add_p_mul x
     conv_lhs => rw [hz]
-    rw [map_add, map_mul, map_natCast, hθt, map_add, map_mul, hmkp, zero_mul, add_zero]
+    rw [map_add (f := _), map_mul, map_natCast, hθt, map_add (f := _), map_mul, hmkp, zero_mul, add_zero]
     exact mk_sh (x.coeff 0) 0
   have hfac : ∀ x : WittVector p (PreTilt O p),
       Ideal.Quotient.mk (span {(p : O)}) (fontaineTheta O p x) = 0 →
@@ -236,7 +240,7 @@ theorem kerTheta : KerThetaStatement p O := by
       have e : (p : WittVector p (PreTilt O p)) * (teichmuller p d + z) =
           x + ((p : WittVector p (PreTilt O p)) - teichmuller p pflat) * teichmuller p d := by
         rw [hdz]; ring
-      rw [← map_natCast (fontaineTheta O p) p, ← map_mul, e, map_add, map_mul, hx0, hξ, zero_mul,
+      rw [← map_natCast (fontaineTheta O p) p, ← map_mul, e, map_add (f := _), map_mul, hx0, hξ, zero_mul,
         add_zero]
   · have hu0 : PreTilt.untilt (0 : PreTilt O p) = 0 := by
       have e := map_mul PreTilt.untilt (0 : PreTilt O p) pflat

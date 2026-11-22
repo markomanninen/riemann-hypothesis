@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EvenDefect
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelToroidalPolCharts
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SecCmp
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TauBimultOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValuesNatural
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PrimitiveCocycle
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.StalkMapInjectiveOfFlat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EvenDefect
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelToroidalPolCharts
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SecCmp
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TauBimultOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ValuesNatural
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PrimitiveCocycle
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.StalkMapInjectiveOfFlat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg
@@ -257,7 +262,7 @@ theorem half_baseChange : ∀ (R : Type) [CommRing R] [IsDomain R] (Q : Data R) 
     have K := (key _ (lift (toUnit (TK R₂) ≫ D₂.c a) (toUnit (TK R₂) ≫ D₂.c b)).left z J J₁ J' hJ hJ₁ hJ').trans
       (congrArg₂ (· * ·) (congrArg (fun q => lamVal w₁ q z J J₁) hP)
         (prod_lam (DVR.cP D₂ (TK R₂) a) (DVR.cP D₂ (TK R₂) b) h))
-    rw [TauPull.val_tau _ hJ₁, ← map_add, vψ, vψ, vψ, vρ, DVR.cPoint_add] at A
+    rw [TauPull.val_tau _ hJ₁, ← map_add (f := _), vψ, vψ, vψ, vρ, DVR.cPoint_add] at A
     refine Eq.trans ?_ (congrArg₂ (· * ·) K.symm rfl)
     rw [TauPull.val_tau _ hJ']
     refine Eq.trans ?_ (mul_right_comm _ _ _)

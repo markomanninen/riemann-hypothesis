@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.Coarse
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.Coarse
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem map_phSeg {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (K p : 
     MvPolynomial.map f (phSeg R K p F j P) = phSeg S K p F j (MvPolynomial.map f P) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [phSeg]
-  | add u v hu hv => simp only [map_add, hu, hv]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv]
   | mul_X q v h =>
     simp only [map_mul, h, map_X]
     simp [phSeg]

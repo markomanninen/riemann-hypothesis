@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PhiGam
@@ -148,8 +152,8 @@ theorem IsLat.shift {N : Submodule k⟦X⟧ V} (h : IsLat N) (a : ℤ) : IsLat (
     Submodule.subset_span (mem_sh_iff_exists.2 ⟨y, hy, rfl⟩)
   exact (Submodule.smul_mem_iff _ (zpow_ne_zero a (vv_ne_zero k))).1 h1
 
-omit [IsScalarTower k⟦X⟧ k⸨X⸩ V] in
 
+omit [IsScalarTower k⟦X⟧ k⸨X⸩ V] in
 theorem pull_le_pull [Module k V] (f : V →ₗ[k] V) {N N' : Submodule k⟦X⟧ V} (h : N ≤ N') :
     pull f N ≤ pull f N' :=
   Submodule.span_mono (Set.image_mono h)
@@ -174,7 +178,7 @@ theorem ModPG.span_φ (D : ModPG R n V) (i : ZMod n) {ι : Type} (b : Module.Bas
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨j, rfl⟩ := hy; exact Submodule.subset_span ⟨j, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   | smul a y _ hy => rw [D.φ_semi i a y]; exact Submodule.smul_mem _ _ hy
 
 theorem ModPG.linearIndependent_φ (D : ModPG R n V) (i : ZMod n) {ι : Type} (b : Module.Basis ι k⸨X⸩ V) :
@@ -196,14 +200,6 @@ theorem summable_sg {l n : ℕ} [NeZero n] (hl : 2 ≤ l) (h : ZMod n → ℕ) (
   rw [div_eq_mul_inv, inv_pow]
   gcongr
   exact Finset.single_le_sum (f := h) (fun _ _ => Nat.zero_le _) (Finset.mem_univ _)
-
-example : sg 5 (fun _ : ZMod 1 => 9) 0 = 2 := by
-  have h : ∑' j : ℕ, ((9 : ℕ) : ℝ) / ((5 : ℕ) : ℝ) ^ (j + 1) = 9 / 4 := by
-    have : ∀ j : ℕ, ((9 : ℕ) : ℝ) / ((5 : ℕ) : ℝ) ^ (j + 1) = 9 / 5 * (1 / 5) ^ j := fun j => by
-      push_cast; rw [pow_succ, one_div, inv_pow]; field_simp
-    simp_rw [this]
-    rw [tsum_mul_left, tsum_geometric_of_lt_one (by norm_num) (by norm_num)]; norm_num
-  rw [sg, h, Nat.floor_eq_iff (by norm_num)]; norm_num
 
 namespace Inh
 variable {k : Type} [Field k]
@@ -255,7 +251,7 @@ theorem mob_X_ne (c : k) : mob c PowerSeries.X ≠ 0 := by
 theorem mob_mob (c : k) (f : k⟦X⟧) : mob c (mob (-c) f) = f := by
   have key : mob c (PowerSeries.X * inv1 (-c)) = PowerSeries.X := by
     have h1 := congrArg (mob c) (powerSeries_oneAddConstMulX_mul_inv (-c))
-    rw [map_mul, map_add, map_one, map_mul, mob_C, mob_X, map_neg] at h1
+    rw [map_mul, map_add (f := _), map_one, map_mul, mob_C, mob_X, map_neg] at h1
     have h2 := powerSeries_oneAddConstMulX_mul_inv c
     rw [map_mul, mob_X]
     linear_combination PowerSeries.X * h1 + PowerSeries.X * mob c (inv1 (-c)) * h2
@@ -293,7 +289,7 @@ theorem frob_mob (l : ℕ) [Fact l.Prime] [CharP k l] (f : k⟦X⟧) :
     have h0 := powerSeries_oneAddConstMulX_mul_inv (1 : k)
     rw [map_one, one_mul] at h0
     have h1 := congrArg (frob k l) h0
-    rw [map_mul, map_add, map_one, frob_X] at h1
+    rw [map_mul, map_add (f := _), map_one, frob_X] at h1
     have h2 := congrArg (· ^ l) h0
     simp only [mul_pow, add_pow_char, one_pow] at h2
     rw [map_mul, frob_X, map_pow, mob_X, mul_pow]
@@ -329,20 +325,6 @@ def lin (σ : k⸨X⸩ →ₐ[k] k⸨X⸩) : k⸨X⸩ →ₗ[k] k⸨X⸩ where
 
 @[simp] theorem lin_apply (σ : k⸨X⸩ →ₐ[k] k⸨X⸩) (x : k⸨X⸩) : lin σ x = σ x := rfl
 
-def unitMod {l : ℕ} (R : RingPG k l) (hγ : Function.Bijective R.γ) (n : ℕ) : ModPG R n k⸨X⸩ where
-  φ _ := lin R.φ
-  γ _ := lin R.γ
-  φ_semi _ a x := map_mul R.φ a x
-  γ_semi _ a x := map_mul R.γ a x
-  etale _ := by
-    rw [eq_top_iff]
-    intro x _
-    have : x = x • (lin R.φ 1) := by change x = x * R.φ 1; simp
-    rw [this]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨1, rfl⟩)
-  γ_bij _ := hγ
-  comm _ x := R.comm x
-
 def powMod {l : ℕ} (R : RingPG k l) (hγ : Function.Bijective R.γ) (n r : ℕ) : ModPG R n (Fin r → k⸨X⸩) where
   φ _ := (lin R.φ).compLeft (Fin r)
   γ _ := (lin R.γ).compLeft (Fin r)
@@ -357,9 +339,6 @@ def powMod {l : ℕ} (R : RingPG k l) (hγ : Function.Bijective R.γ) (n r : ℕ
   γ_bij _ := hγ.comp_left
   comm _ x := funext fun j => R.comm (x j)
 
-def stdMod (k : Type) [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (n : ℕ) : ModPG (stdRing k l) n k⸨X⸩ :=
-  unitMod _ gam_bijective n
-
 def stdLat (k : Type) [Field k] : Submodule k⟦X⟧ k⸨X⸩ := Submodule.span k⟦X⟧ {1}
 
 theorem mem_stdLat {x : k⸨X⸩} : x ∈ stdLat k ↔ ∃ a : k⟦X⟧, (a : k⸨X⸩) = x := by
@@ -370,92 +349,6 @@ theorem isLat_stdLat : IsLat (stdLat k) := by
   have h1 : (1 : k⸨X⸩) ∈ Submodule.span k⸨X⸩ (stdLat k : Set k⸨X⸩) :=
     Submodule.subset_span (Submodule.mem_span_singleton_self _)
   simpa using Submodule.smul_mem _ x h1
-
-theorem pull_stdLat {l : ℕ} (R : RingPG k l) : pull (lin R.φ) (stdLat k) = stdLat k := by
-  apply le_antisymm
-  · refine Submodule.span_le.2 ?_
-    rintro _ ⟨x, hx, rfl⟩
-    obtain ⟨a, rfl⟩ := mem_stdLat.1 hx
-    obtain ⟨b, hb⟩ := R.φ_int a
-    exact mem_stdLat.2 ⟨b, hb.symm⟩
-  · refine Submodule.span_le.2 ?_
-    rintro _ rfl
-    exact Submodule.subset_span ⟨1, Submodule.mem_span_singleton_self _, map_one R.φ⟩
-
-theorem condAB_stdLat {l : ℕ} (R : RingPG k l) (hγ : Function.Bijective R.γ) (n : ℕ) :
-    CondAB (unitMod R hγ n).φ (fun _ => 0) (fun _ => 0) (fun _ => stdLat k) := by
-  intro i
-  change pull (lin R.φ) _ ≤ _ ∧ _ ≤ pull (lin R.φ) _
-  simp [pull_stdLat, sh_zero_eq]
-
-theorem condC_stdLat {l : ℕ} (R : RingPG k l) : CondC (lin R.γ) (stdLat k) := by
-  intro x hx
-  obtain ⟨a, rfl⟩ := mem_stdLat.1 hx
-  obtain ⟨κ, -, hκ⟩ := R.γ_v
-  set s : k⟦X⟧ := PowerSeries.mk fun n => PowerSeries.coeff (n + 1) a
-  obtain ⟨t, ht⟩ := R.γ_int s
-  have ha : (a : k⸨X⸩) = vv k * (s : k⸨X⸩) + algebraMap k k⸨X⸩ (PowerSeries.constantCoeff a) := by
-    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const a, map_add, map_mul, ← vv_eq_coe_X]
-    rfl
-  refine mem_sh_iff_exists.2 ⟨_, mem_stdLat.2 ⟨(1 - κ * PowerSeries.X) * t - s, rfl⟩, ?_⟩
-  rw [lin_apply, ha, map_add R.γ, map_mul R.γ, AlgHom.commutes, hκ, ht, zpow_one, smul_eq_mul, map_sub, map_mul,
-    map_sub, map_mul, map_one, ← vv_eq_coe_X]
-  ring
-
-theorem nab_vv {l : ℕ} (R : RingPG k l) :
-    ∃ κ : k⟦X⟧, PowerSeries.constantCoeff κ = 1 ∧ nab (lin R.γ) (vv k) = -((κ : k⸨X⸩) * vv k) := by
-  obtain ⟨κ, h1, h2⟩ := R.γ_v
-  refine ⟨κ, h1, ?_⟩
-  have hv := vv_ne_zero k
-  rw [nab_apply_eq, lin_apply, h2, smul_eq_mul]
-  field_simp
-  ring
-
-theorem nab_mem_stdLat {l : ℕ} (R : RingPG k l) {x : k⸨X⸩} (hx : x ∈ stdLat k) :
-    nab (lin R.γ) x ∈ sh 1 (stdLat k) := by
-  obtain ⟨a, rfl⟩ := mem_stdLat.1 hx
-  obtain ⟨κ, -, hκ⟩ := R.γ_v
-  set s : k⟦X⟧ := PowerSeries.mk fun n => PowerSeries.coeff (n + 1) a
-  obtain ⟨t, ht⟩ := R.γ_int s
-  obtain ⟨y, hy, hy'⟩ := mem_sh_iff_exists.1 (condC_stdLat R _ (mem_stdLat.2 ⟨s, rfl⟩))
-  have ha : (a : k⸨X⸩) = vv k * (s : k⸨X⸩) + algebraMap k k⸨X⸩ (PowerSeries.constantCoeff a) := by
-    conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const a, map_add, map_mul, ← vv_eq_coe_X]
-    rfl
-  refine mem_sh_iff_exists.2 ⟨_, Submodule.sub_mem _ hy (mem_stdLat.2 ⟨κ * t, rfl⟩), ?_⟩
-  have hv := vv_ne_zero k
-  rw [lin_apply, ht, zpow_one, smul_eq_mul] at hy'
-  rw [nab_apply_eq, lin_apply, ha, map_add R.γ, map_mul R.γ, AlgHom.commutes, hκ, ht, zpow_one, smul_eq_mul,
-    smul_eq_mul, map_mul, eq_inv_mul_iff_mul_eq₀ hv]
-  linear_combination vv k * hy'
-
-theorem sen_stdLat_zero {l : ℕ} (R : RingPG k l) : sen (lin R.γ) (stdLat k) 0 = 1 := by
-  rw [sen, qmult, gmult]
-  have hP : (stdLat k).restrictScalars k ⊓ ⨆ m : ℕ, ((sh 1 (stdLat k)).restrictScalars k).comap
-      ((nab (lin R.γ) - algebraMap k (Module.End k k⸨X⸩) 0) ^ m) = (stdLat k).restrictScalars k := by
-    refine inf_eq_left.2 fun y hy => Submodule.mem_iSup_of_mem 1 ?_
-    rw [Submodule.mem_comap, pow_one, map_zero, sub_zero]
-    exact nab_mem_stdLat R hy
-  rw [hP]
-  let f : (stdLat k).restrictScalars k →ₗ[k] k := (HahnSeries.coeff.linearMap (0 : ℤ)) ∘ₗ Submodule.subtype _
-  have h0 : ∀ a : k⟦X⟧, (a : k⸨X⸩).coeff 0 = PowerSeries.constantCoeff a := fun a => by
-    rw [PowerSeries.coeff_coe]; simp
-  have hk : ((sh 1 (stdLat k)).restrictScalars k).submoduleOf ((stdLat k).restrictScalars k) = f.ker := by
-    ext ⟨y, hy⟩
-    obtain ⟨a, rfl⟩ := mem_stdLat.1 hy
-    change (a : k⸨X⸩) ∈ sh 1 (stdLat k) ↔ (a : k⸨X⸩).coeff 0 = 0
-    rw [h0, mem_sh_iff_exists, ← PowerSeries.X_dvd_iff, zpow_one, vv_eq_coe_X]
-    constructor
-    · rintro ⟨z, hz, h⟩
-      obtain ⟨b, rfl⟩ := mem_stdLat.1 hz
-      exact ⟨b, HahnSeries.ofPowerSeries_injective (Γ := ℤ) (by rw [map_mul]; exact h.symm)⟩
-    · rintro ⟨b, rfl⟩
-      exact ⟨b, mem_stdLat.2 ⟨b, rfl⟩, (map_mul _ _ _).symm⟩
-  have hs : Function.Surjective f := fun c =>
-    ⟨⟨_, mem_stdLat.2 ⟨PowerSeries.C c, rfl⟩⟩, (h0 _).trans (PowerSeries.constantCoeff_C c)⟩
-  rw [hk, (f.quotKerEquivOfSurjective hs).finrank_eq, Module.finrank_self]
-
-example (l : ℕ) [Fact l.Prime] [CharP k l] (N : Submodule k⟦X⟧ (Fin 2 → k⸨X⸩)) : ℕ :=
-  sen ((powMod (stdRing k l) gam_bijective 3 2).γ 0) N 0
 
 end Inh
 

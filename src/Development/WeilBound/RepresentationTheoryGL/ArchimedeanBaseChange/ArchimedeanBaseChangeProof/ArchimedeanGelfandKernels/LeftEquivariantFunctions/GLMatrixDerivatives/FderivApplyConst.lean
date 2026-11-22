@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.EpowCongr
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.EpowCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,9 +37,10 @@ theorem hasDerivAt_fst' {U : ℝ × Mat n → W} {s : ℝ} {x : Mat n} (hU : Dif
 
 theorem fderiv_apply_const' {F : ℝ × Mat n → (ℝ × Mat n →L[ℝ] W)} {q : ℝ × Mat n} (hF : DifferentiableAt ℝ F q)
     (w d : ℝ × Mat n) : fderiv ℝ (fun q' => F q' w) q d = fderiv ℝ F q d w := by
-  have h : HasFDerivAt (fun q' => F q' w) ((ContinuousLinearMap.apply ℝ W w).comp (fderiv ℝ F q)) q :=
-    (ContinuousLinearMap.apply ℝ W w).hasFDerivAt.comp q hF.hasFDerivAt
-  exact congrFun (congrArg DFunLike.coe h.fderiv) d
+  set_option backward.isDefEq.respectTransparency false in
+   have h := fderiv_clm_apply hF (show DifferentiableAt ℝ (fun _ : ℝ × Mat n => w) q from differentiableAt_const w)
+   rw [fderiv_const_apply, ContinuousLinearMap.comp_zero, zero_add] at h
+   exact congrArg (fun L : ℝ × Mat n →L[ℝ] W => L d) h
 
 theorem mixed' {U : ℝ × Mat n → W} {O : Set (ℝ × Mat n)} (hO : IsOpen O) (hU : ContDiffOn ℝ ∞ U O) {q : ℝ × Mat n}
     (hq : q ∈ O) (a b : ℝ × Mat n) :
@@ -43,7 +48,7 @@ theorem mixed' {U : ℝ × Mat n → W} {O : Set (ℝ × Mat n)} (hO : IsOpen O)
   have hd := hU.fderiv_of_isOpen hO (m := ∞) (by simp)
   have hdq : DifferentiableAt ℝ (fderiv ℝ U) q :=
     (hd.contDiffAt (hO.mem_nhds hq)).differentiableAt (by simp)
-  have hs := (hU.contDiffAt (hO.mem_nhds hq)).isSymmSndFDerivAt (by simp; exact ENat.LEInfty.out)
+  have hs := (hU.contDiffAt (hO.mem_nhds hq)).isSymmSndFDerivAt (by simp)
   rw [fderiv_apply_const' hdq, fderiv_apply_const' hdq]
   exact hs b a
 
@@ -66,7 +71,7 @@ theorem dc_add_smul (hG : GelComm) {E : KMod n} {Fr : Mat n → (E.V →L[ℂ] E
   rw [← Finset.sum_add_distrib, Finset.smul_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [GlobalTheory.CompanionTheory.RCalc.Rd_smul c (hb p) hs hx, Pi.smul_apply, GlobalTheory.CompanionTheory.RCalc.Rd_add (hb p) h₁ h₂ hx, Pi.add_apply]
-  simp only [Pi.smul_apply, Pi.add_apply, map_add, map_smul, smul_add]
+  simp only [Pi.smul_apply, Pi.add_apply, map_add (f := _), map_smul, smul_add]
   abel
 
 theorem om_DC (hG : GelComm) {lam : Fin n → ℤ} {E : KMod n} {Fr : Mat n → (E.V →L[ℂ] E.V)}

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StIntClosureLocFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRelAlgClosureFinite
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StIntClosureLocFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRelAlgClosureFinite
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

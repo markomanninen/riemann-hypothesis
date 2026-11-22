@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmB
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.DetAdmB
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,8 +147,8 @@ section Main
 variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] [FiniteDimensional F E]
   {a M : ℕ}
 
-variable (F E a M) in
 
+variable (F E a M) in
 def psiH : (Fin a → Fin M → AF F ⊗[F] E) ≃ₜ
     (Fin a × Fin M × Fin (Module.finrank F E) → Ainf F) ×
       (Fin a × Fin M × Fin (Module.finrank F E) → Af F) :=

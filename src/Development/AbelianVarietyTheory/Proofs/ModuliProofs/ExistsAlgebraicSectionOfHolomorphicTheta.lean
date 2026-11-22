@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.EqZeroOfForallAlgHomComplex
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsIntegralOfIsAbelianSchemeField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLinearLiftOfIsMonHomPolAVStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEqMulOfContinuousOnQuotientStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecLbPowDivNeZeroStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsRegularFnIffOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsUniquePointOfRingHom
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.EqZeroOfForallAlgHomComplex
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.IsIntegralOfIsAbelianSchemeField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLinearLiftOfIsMonHomPolAVStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsEqMulOfContinuousOnQuotientStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecLbPowDivNeZeroStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,8 +176,8 @@ def divUnif {L N : LB A.left} (u₀ : HolUnif A L g) (u : HolUnif A N g) (hu : u
     have h2 : ∀ z, ⊤ ≤ (u₀.ex z).left ⁻¹ᵁ (LB.div (lbPow L n) N).U p →
         ⊤ ≤ (u.ex z).left ⁻¹ᵁ N.U p.2 := fun z hz =>
       hu ▸ ((top_le_preimage_inf _ _ _).1 hz).2
-    exact (((u₀.fr_hol _).mono h1).pow n).mul
-      (((u.fr_hol _).mono h2).inv fun z hz => u.fr_ne _ z (h2 z hz))
+    exact (((u₀.fr_hol (p.1 PUnit.unit)).mono (fun z hz => h1 z hz)).pow n).mul
+      (((u.fr_hol p.2).mono (fun z hz => h2 z hz)).inv fun z hz => u.fr_ne _ z (h2 z hz))
   fr_ne p z hz := by
     obtain ⟨h1, h2⟩ := (top_le_preimage_inf _ _ _).1 hz
     exact mul_ne_zero (pow_ne_zero _ (u₀.fr_ne _ z (Cartier.lbPow_U L n p.1 ▸ h1)))
@@ -311,8 +315,8 @@ end GlobalTheory.HolSecAlg
 
 namespace GlobalTheory
 
-open HolSecAlg in
 
+open HolSecAlg in
 theorem exists_sec_isFn_of_differentiable :
     Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) (P : Out.PolAV S) (M : LB P.A.left), M.IsLB → ∃ t : LB.Gen (Theta P.A M), t.IsGen) → ThetaUnifAV → ∀ (P : Out.PolAV (Sp ℂ)) (N : LB P.A.left) (u : HolUnif P.A N P.g) (ϑ : (Fin P.g → ℂ) → ℂ), N.IsLB → Differentiable ℂ ϑ → (∀ (l : u.Λ) i z, ⊤ ≤ (u.ex z).left ⁻¹ᵁ N.U i → ϑ (z + l) * u.fr i (z + l) = ϑ z * u.fr i z) → ∃ s : N.Sec, u.IsFn s ϑ := by
   intro hL _ _ hT P N u ϑ hN hϑ hper
@@ -325,7 +329,7 @@ theorem exists_sec_isFn_of_differentiable :
     (hϑ.comp (LinearMap.toContinuousLinearMap F).differentiable) (fun l i z hz => by
       have hl : F l ∈ u.Λ := by rw [← u.ker, hF, u₀.ker]; exact l.2
       change ϑ (F (z + l)) * u.fr i (F (z + l)) = ϑ (F z) * u.fr i (F z)
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hper ⟨F l, hl⟩ i (F z) (by rw [hF]; exact hz))
   refine ⟨s, fun i z hz => ?_⟩
   obtain ⟨w, hw⟩ := u₀.ex_onto (u.ex z)

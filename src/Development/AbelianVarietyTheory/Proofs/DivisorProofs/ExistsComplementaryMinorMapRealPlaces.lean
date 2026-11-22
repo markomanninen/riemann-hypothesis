@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplTupBijective
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDetCharInvariantsLeSpanProdMaximalMinors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PluckerMinorsProportional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinPt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplTupBijective
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HoweDualityReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdMinorsMemInv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDetCharInvariantsLeSpanProdMaximalMinors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PluckerMinorsProportional
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open Formalism.DivisionValues (vw)
@@ -185,7 +190,8 @@ theorem exists_star (n : ι → ℕ) (h : a + a' = a + a') :
     Fintype.linearCombination ℂ (fun T => (((sgn h T : ℤˣ) : ℤ) : ℂ) • GlobalTheory.MinorFrame.prodMinors (cTup h T))
   have key : ∀ c N, (∀ τ, (N τ).det ≠ 0) → eval (xPt N) (A c) = lam n N * eval (yPt N) (B c) := by
     intro c N hN
-    simp only [A, B, Fintype.linearCombination_apply, map_sum, smul_eq_C_mul, eval_mul, eval_C, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [A, B, Fintype.linearCombination_apply, map_sum, smul_eq_C_mul, eval_mul, eval_C, Finset.mul_sum,
       eval_xPt_prodMinors h N hN]
     refine Finset.sum_congr rfl fun T _ => ?_
     ring

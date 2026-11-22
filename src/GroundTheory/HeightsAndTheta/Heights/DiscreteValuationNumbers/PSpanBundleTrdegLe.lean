@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSpanBundleTrdegLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSpanBundleTrdegLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -8,8 +13,8 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo IntermediateField.alg
 
 noncomputable section
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
   intro F _ Ω _ _ K _ ι y M i G c a H _hc hH hGH Φ _ _ s
 
@@ -119,7 +124,8 @@ theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
       calc G l m' = Matrix.of G l m' := rfl
         _ = _ := h.symm
         _ = _ := Finset.sum_congr rfl fun m _ => by rw [hGm]
-    simp_rw [hG, map_sum, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [hG, map_sum, map_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun m _ => Finset.sum_congr rfl fun m' _ => by ring
   have hnone : ∀ l : Fin M, gz ⟨none, l⟩ = ∑ m, κ (g l m) * w m := by
@@ -130,7 +136,8 @@ theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
     have e2 : gz ⟨none, l⟩ = κΦ (∑ m', s m' * algebraMap Ω Φ (G l m')) * Xo none := by
       simp only [gz, e1, map_mul]
       rfl
-    rw [e2, hΦ l, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, hΦ l, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun m _ => ?_
     simp only [w, κ, RingHom.comp_apply, map_mul]
     ring
@@ -142,7 +149,8 @@ theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
     rintro ⟨_ | k, j⟩
     · rw [hnone j]
       refine ⟨∑ m, C ⟨κ (g j m), hgL j m⟩ * X m, ?_⟩
-      simp
+      set_option synthInstance.maxHeartbeats 200000 in
+        simp
     · rw [hsome k j]
       exact ⟨C ⟨gy ⟨k, j⟩, IntermediateField.subset_adjoin _ _ ⟨_, rfl⟩⟩, by simp⟩
 
@@ -181,7 +189,7 @@ theorem SpanBundleTrdegLe.proof : SpanBundleTrdegLe.Statement := by
   have hAz : Algebra.trdeg F (MRing (bundleIdx ι M) F ⧸ projIdeal F y (Pi.basisFun Ω (Fin i))
       (fun l => LinearMap.proj l ∘ₗ (Matrix.of G).mulVecLin) s) ≤ Algebra.trdeg F T := by
     refine trdeg_le_of_injective (Ideal.Quotient.liftₐ _ φT fun f hf => (hmem f).2 hf) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective x
     exact Ideal.Quotient.eq_zero_iff_mem.2 ((hmem f).1 hx)

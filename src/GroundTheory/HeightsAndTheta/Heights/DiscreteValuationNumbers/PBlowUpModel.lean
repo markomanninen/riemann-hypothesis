@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsReesAlgebraDim
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsReesAlgebraDim
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -17,7 +22,8 @@ variable {σ : Type*} {R : Type*} [CommRing R]
 
 theorem weight_comp_addMonoidHom_apply {M M' : Type*} [AddCommMonoid M] [AddCommMonoid M'] (w : σ → M)
     (f : M →+ M') (d : σ →₀ ℕ) : Finsupp.weight (fun v => f (w v)) d = f (Finsupp.weight w d) := by
-  simp [Finsupp.weight_apply, Finsupp.sum, map_sum, map_nsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finsupp.weight_apply, Finsupp.sum, map_sum, map_nsmul]
 
 theorem weightedHomogeneousComponent_monomial' {M : Type*} [AddCommMonoid M] [DecidableEq M]
     (w : σ → M) (n : M) (d : σ →₀ ℕ) (c : R) :
@@ -47,9 +53,9 @@ theorem coeff_aeval_C_mul_X_pow {B : Type*} [CommRing B] [Algebra R B] (a : σ �
       ring
     rw [h, Polynomial.coeff_C_mul_X_pow, weightedHomogeneousComponent_monomial']
     by_cases hd : Finsupp.weight ω d = n
-    · rw [if_pos hd.symm, if_pos hd]
-    · rw [if_neg (Ne.symm hd), if_neg hd, map_zero]
-  | add p q hp hq => simp only [map_add, Polynomial.coeff_add, hp, hq]
+    · simp only [hd, ↓reduceIte]
+    · simp only [hd, Ne.symm hd, ↓reduceIte, map_zero]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.coeff_add, hp, hq]
 
 theorem aeval_weightedHomogeneousComponent_of_forms {K : Type*} [DecidableEq K] {ι : K → Type*}
     (ω : σ → K → ℕ) (e : σ → MRing ι R) (he : ∀ v, IsMultiHomog (e v) (ω v)) (m : K → ℕ)
@@ -72,7 +78,7 @@ theorem aeval_weightedHomogeneousComponent_of_forms {K : Type*} [DecidableEq K] 
     · rw [(isWeightedHomogeneous_monomial ω d c
         (m := Finsupp.weight ω d) rfl).weightedHomogeneousComponent_ne m
         (Ne.symm hdm), hmon.weightedHomogeneousComponent_ne m (Ne.symm hdm), map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 end Graded
 
@@ -157,14 +163,15 @@ theorem isMultiHomogIdeal_blowUpOf {P : Ideal (MRing ι R)} (hP : IsMultiHomogId
       subst hn
       by_cases h1 : Finsupp.weight w d none = m none <;> by_cases h2 : L (Finsupp.weight w d) = L m <;>
         simp [h1, h2]
-    · simp only [coeff_weightedHomogeneousComponent, hT, key (Finsupp.weight w d) m, coeff_zero]
+    · simp only [coeff_weightedHomogeneousComponent, hT, key (Finsupp.weight w d) m, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       by_cases h1 : Finsupp.weight w d none = n
       · have : ¬ Finsupp.weight w d none = m none := fun h => hn (h1.symm.trans h)
         simp [h1, hn]
       · simp [h1]
   intro p hp m
   rw [blowUpOf, RingHom.mem_ker] at hp ⊢
-  refine Polynomial.ext fun n => ?_
+  apply AddMonoidAlgebra.ext
+  ext n
   rw [hcoeff, Polynomial.coeff_zero, Ideal.Quotient.eq_zero_iff_mem, hsplit]
   split_ifs with hn
   · rw [aeval_weightedHomogeneousComponent_of_forms ωL _ hθ]
@@ -230,7 +237,7 @@ theorem BlowUpModel.proof (h₁ : ReesAlgebraDim.Statement.{u}) : BlowUpModel.St
           rw [aeval_C, Polynomial.algebraMap_apply]
           exact (reesAlgebra I).algebraMap_mem _
         | add p q hp hq =>
-          rw [map_add]
+          rw [map_add (f := _)]
           exact add_mem hp hq
         | mul_X p v hp =>
           rw [map_mul]
@@ -261,7 +268,7 @@ theorem BlowUpModel.proof (h₁ : ReesAlgebraDim.Statement.{u}) : BlowUpModel.St
             rw [map_zero]
             exact zero_mem _
           | add a b _ _ ha hb =>
-            rw [map_add]
+            rw [map_add (f := _)]
             exact add_mem ha hb
           | smul c a _ ha =>
             rw [LinearMap.map_smul, Polynomial.smul_eq_C_mul]

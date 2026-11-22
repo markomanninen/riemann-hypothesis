@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotMeasExists
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TopsChoicePartA
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LocWSOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotMeasExists
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeLemma3
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.TopsChoicePartA
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.BesselFrame
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonemptyParameterModels.NumericSettingWithGapSatisfiable
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem measurable_mulF :
   apply Continuous.measurable
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [Matrix.mul_apply, Matrix.of_apply]
-  exact continuous_finset_sum _ fun l _ => by fun_prop
+  exact continuous_finsetSum _ fun l _ => by fun_prop
 
 theorem haarLie_eq_smul (S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)) (κ : ℝ≥0∞) :
     Formalism.MainNotions.S.haarLie S κ = κ • Formalism.MainNotions.S.haarLie S 1 := by
@@ -39,7 +43,7 @@ theorem measurable_aff (A B : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1))
   apply Continuous.measurable
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [aff, Matrix.mul_apply, Matrix.of_apply]
-  exact continuous_finset_sum _ fun l _ => (continuous_finset_sum _ fun m _ =>
+  exact continuous_finsetSum _ fun l _ => (continuous_finsetSum _ fun m _ =>
     continuous_const.mul ((continuous_apply l).comp (continuous_apply m))).mul continuous_const
 
 theorem uw_inv_eq {z : Fin (2 * r + k + 1) → ℂ} {h : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ}
@@ -96,6 +100,7 @@ theorem conj_haarLie {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0
   rw [haarLie_eq_smul, Measure.map_smul,
     Formalism.FourierDecayAlt.P.b2_conjInvRaw_proof k r z (Formalism.MainNotions.S.haarLie (Nset k r) 1) hz hT
       (Formalism.MainNotions.BridgeLemma₃.lbHaarUp_proved.2 k r _ (Formalism.MainNotions.BridgeCSB.haarLieN k r 1 one_ne_zero ENNReal.one_ne_top)) h hh]
+  exact (measurable_aff h h⁻¹).aemeasurable
 
 theorem isHaarOn_muS_gen {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hT : 0 < Tz k r z)
     {μW : Measure (Mt k r)} (hW : Formalism.MainNotions.S.IsHaarOn (UWset k r z) μW) (hW1 : μW Set.univ = 1)
@@ -954,7 +959,7 @@ theorem rootCoord_tr {v : InfinitePlace X.B.I.F} {lam : ℂ} (hlam : lam ≠ 0)
   dsimp only
   rw [hf, hJ_smul_left', star_star]
   by_cases h : a.val + 1 < D.R.rS
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     set b : Fin D.R.rS := ⟨a.val + 1, h⟩
     have he : rv X.B.I v (X.eR b) = (lam ^ (D.R.rS - (b : ℕ)))⁻¹ • (Q *ᵥ Pi.single (eI D.R.k D.R.rS b) 1) := by
       rw [(hcol b b rfl).1, smul_smul, inv_mul_cancel₀ (hp b), one_smul]
@@ -967,7 +972,7 @@ theorem rootCoord_tr {v : InfinitePlace X.B.I.F} {lam : ℂ} (hlam : lam ≠ 0)
     have hexp : D.R.rS - (a : ℕ) = (D.R.rS - (b : ℕ)) + 1 := by simp only [b]; omega
     rw [hexp, pow_succ]
     field_simp [hp b]
-  · rw [dif_neg h, dif_neg h]
+  · rw [dite_eq_right h, dite_eq_right h]
     have hz : rv X.B.I v (X.zR u) = Q *ᵥ (Qi *ᵥ rv X.B.I v (X.zR u)) := by
       rw [Matrix.mulVec_mulVec, h2, Matrix.one_mulVec]
     have hQiQ : ∀ y, Qi *ᵥ (Q *ᵥ y) = y := fun y => by rw [Matrix.mulVec_mulVec, h1, Matrix.one_mulVec]

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairNormPadicValuationBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JetsTorsionTranslatesCmThetaProductStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefiniteThetaPairNormPadicValuationBound
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -14,12 +18,13 @@ theorem split_of_dvd {D : D7} {Q Q' p : ℕ} [hp : Fact p.Prime] (hQ : GoodLevel
     (h : padicValNat p Q' ≤ padicValNat p Q) (hd : p ∣ Q') : SplitIn D p := by
   have hpp : p.Prime := hp.out
   obtain ⟨hQ0, hQs⟩ := hQ
-  have h1 : 1 ≤ padicValNat p Q' := one_le_padicValNat_of_dvd h0.ne' hd
-  have hpQ : p ^ 1 ∣ Q := (padicValNat_dvd_iff_le hQ0.ne').2 (h1.trans h)
+  have h1 : 1 ≤ padicValNat p Q' := by
+    simpa only [Nat.padicValNat_def] using one_le_padicValNat_of_dvd h0.ne' hd
+  have hpQ : p ^ 1 ∣ Q := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hQ0.ne').2 (h1.trans h)
   exact hQs p hpp (by simpa using hpQ)
 
-open GlobalTheory.NormSum.Term in
 
+open GlobalTheory.NormSum.Term in
 theorem term_bound_of_jets (hJ : type_of% @GlobalTheory.T.jets_torsion_translates_cm_theta_product) (D : D7) (hI : Inp D) (S : Finset ℕ) (dl : ℕ → ℝ) (hL : Letters D S dl) (δ t0 : ℂ) (Q : ℕ)
     (P : Pair D ⊤ δ t0 Q) (p : ℕ) [Fact p.Prime] (hQ : p ∣ Q → SplitIn D p) (lam : Qbar →+* ℂ_[p]) (g : GA D P.a)
     (g' k' : GA D P.d) (hk : k' ∈ intG D P.d) (hg : TrivAt D p (g : GL (Fin P.a) (AE D)))
@@ -35,10 +40,11 @@ theorem term_bound_of_jets (hJ : type_of% @GlobalTheory.T.jets_torsion_translate
   have hQ0 : Q ≠ 0 := P.level_pos.ne'
   have hM0' : M ≠ 0 := hM0.ne'
   have hpM : ¬ p ∣ M := fun h => hpp.one_lt.ne' (hMp.symm.eq_one_of_dvd h)
-  have hvM : padicValNat p M = 0 := padicValNat.eq_zero_of_not_dvd hpM
+  have hvM : padicValNat p M = 0 := by
+    simpa only [Nat.padicValNat_def] using padicValNat.eq_zero_of_not_dvd hpM
   have hnQ : ‖(Q : ℂ_[p])‖⁻¹ = (p : ℝ) ^ (padicValNat p Q : ℝ) := norm_natCast_inv p hQ0
   have hnMQ : ‖((M * Q : ℕ) : ℂ_[p])‖⁻¹ = (p : ℝ) ^ (padicValNat p Q : ℝ) := by
-    rw [norm_natCast_inv p (Nat.mul_ne_zero hM0' hQ0), padicValNat.mul hM0' hQ0, hvM, zero_add]
+    rw [norm_natCast_inv p (Nat.mul_ne_zero hM0' hQ0), (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hM0' hQ0, hvM, zero_add]
   have hsplit : p ∣ M * Q → SplitIn D p := fun h =>
     (hpp.dvd_mul.1 h).elim (fun h' => absurd h' hpM) hQ
   set B : ℝ := (p : ℝ) ^ (((P.a * ∑ τ, P.n τ : ℕ) : ℝ) * (dl p + (if p = D.host.d then 1 / 4 else 0) +
@@ -88,9 +94,9 @@ private theorem bd_finsum {p : ℕ} [Fact p.Prime] {ι : Type*} {r : ℝ} (hr : 
   · rw [finsum_of_infinite_support hf]
     exact GlobalTheory.NormVal.Bd.zero hr
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.NormVal in
-
 theorem coordInt_of_jets (hJ : type_of% @GlobalTheory.T.jets_torsion_translates_cm_theta_product) (D : D7) (hI : Inp D) (S : Finset ℕ) (dl : ℕ → ℝ) (hL : Letters D S dl) (Q N : ℕ) (B : ℝ)
     (hQ : GoodLevel D Q) (_hB : 0 ≤ B) :
     CoordInt D N B Q (fun p => (padicValNat p (8 ^ (4 * fF D * N) * (8 * fF D * N).factorial) : ℝ) +
@@ -109,7 +115,7 @@ theorem coordInt_of_jets (hJ : type_of% @GlobalTheory.T.jets_torsion_translates_
   have hMN0 : 8 ^ (4 * fF D * N) * (8 * fF D * N).factorial ≠ 0 := by positivity
   have hvle : ∀ m : ℕ, m ∣ 8 ^ (4 * fF D * N) * (8 * fF D * N).factorial →
       padicValNat p m ≤ padicValNat p (8 ^ (4 * fF D * N) * (8 * fF D * N).factorial) := fun m hm =>
-    (padicValNat_dvd_iff_le hMN0).1 ((pow_padicValNat_dvd (p := p) (n := m)).trans hm)
+    ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) hMN0).1 (((fun {p n : ℕ} => _root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat p n)) (p := p) (n := m)).trans hm)
   have hvQ : (padicValNat p Q' : ℝ) ≤ padicValNat p Q := by exact_mod_cast hQ'
   have hite : (0 : ℝ) ≤ (if p = D.host.d then 1 / 4 else 0) := by split_ifs <;> norm_num
   have hX : 0 ≤ dl p + (if p = D.host.d then 1 / 4 else 0) + (padicValNat p Q : ℝ) := by
@@ -133,7 +139,7 @@ theorem coordInt_of_jets (hJ : type_of% @GlobalTheory.T.jets_torsion_translates_
       have hγ' : γA ∈ ratG D P.a := (mem_ratG γA).2 ⟨γ, hγ⟩
       have hk' : k ∈ intG D P.a := (mem_intG k).2 hk
       have hq : DoubleCoset.mk (ratG D P.a) (intG D P.a) q.out = q := Quotient.out_eq' q
-      exact ((DoubleCoset.eq (ratG D P.a) (intG D P.a) q.out (γA * q.out * k)).2
+      exact ((@DoubleCoset.eq _ _ (ratG D P.a) (intG D P.a) q.out (γA * q.out * k)).2
         ⟨γA, hγ', k, hk', rfl⟩).symm.trans hq
     choose s hs htr using hrep
     rw [(GlobalTheory.T.definiteThetaPair_terms_norms_independent_representatives D hI ⊤ δ t0 Q' P.crv P.pt0 P P.level_pos).2.2.1 s hs h T]

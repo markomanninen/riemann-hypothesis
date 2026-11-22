@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
-import Development.AutomorphicArithmetic.ThickFrames.TailLe
-import Development.AutomorphicArithmetic.ThickFrames.TilesLe
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Development.AutomorphicArithmetic.ThickFrames.expectationSpec
+public import Development.AutomorphicArithmetic.ThickFrames.TailLe
+public import Development.AutomorphicArithmetic.ThickFrames.TilesLe
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 

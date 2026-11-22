@@ -1,20 +1,19 @@
-import Formalism.FockGram.FockGramProofs.FockHerm
-import Formalism.FockGram.FockGramProofs.FockSesq
-import Formalism.FockGram.FockGramProofs.FockPerm
-import Formalism.FockGram.FockGramProofs.DetSymPow
-import Formalism.FockGram.FockGramProofs.SubIndexNorm
-import Mathlib
-import Formalism.FockGram.FockGramProofs.CovolGram
-import Formalism.FockGram.FockGramProofs.HermDualOf
-import Formalism.FockGram.FockGramProofs.HermitianTensorMulHermitian
-import Formalism.FockGram.StatementSymPos
-import Mathlib.Analysis.Matrix.Order
-import Mathlib.Analysis.Matrix.PosDef
-import Mathlib.Analysis.InnerProductSpace.Positive
+module
+
+public import Formalism.FockGram.StatementFock
+public import Formalism.FockGram.FockGramProofs.FockSesq
+public import Formalism.FockGram.FockGramProofs.SubIndexNorm
+public import Mathlib
+public import Formalism.FockGram.FockGramProofs.CovolGram
+public import Formalism.FockGram.FockGramProofs.HermDualOf
+public import Formalism.FockGram.StatementLat
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.Matrix.PosDef
+public import Mathlib.Analysis.InnerProductSpace.Positive
+
+@[expose] public section
 
 namespace Formalism.E
-
-theorem fockHerm : FockHerm := fischerInnerConjSymm_holds
 
 theorem subIndexNorm : SubIndexNorm := indexEqNormDet
 

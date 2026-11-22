@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.OrbRestrOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.KillSubst
+module
+
+public import Formalism.PeriodIntegrals.OrbRestrOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitPowerSeriesCoefficients.KillSubst
+
+@[expose] public section
 
 noncomputable section
 

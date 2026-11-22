@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ end CxPts
 theorem AlgChart.holo_map (hm : ∀ z, (m z).1 = z.1 ≫ f) (c' : AlgChart p' σ' D')
     (c : AlgChart p σ D) : DifferentiableOn ℂ (c.e ∘ m ∘ c'.e.symm)
       (c'.e.target ∩ c'.e.symm ⁻¹' (m ⁻¹' c.e.source)) :=
-  differentiableOn_euclidean.2 fun a => ((c'.holo _ (f.app _ (c.x a))).mono fun _ hv =>
+  differentiableOn_euclidean.2 fun a => ((c'.holo _ (f.app _ (c.x a))).mono fun x (hv : x ∈ c'.e.target ∩ c'.e.symm ⁻¹' (m ⁻¹' c.e.source)) =>
     ⟨hv.1, (mem_ptsIn_preimage hm).2 (c.source_subset hv.2)⟩).congr fun _ hv =>
       (c.apply_eq _ hv.2 a).trans (ev_of_comp hm _ _ _)
 
@@ -138,39 +142,12 @@ theorem isConj_fsBasis_of_unitary {α : Type*} [Fintype α] [DecidableEq α] (hB
   simp only [RCLike.norm_conj] at this
   refine Eq.trans (Finset.sum_congr rfl fun a _ => ?_) this
   congr 2
-  simp only [e, hv, Matrix.mul_apply, Matrix.map_apply, Matrix.vecMul, dotProduct, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e, hv, Matrix.mul_apply, Matrix.map_apply, Matrix.vecMul, dotProduct, map_sum, map_mul,
     Finset.sum_mul]
   exact Finset.sum_comm.trans (Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring)
 
-theorem isConj_fsBasis {α : Type*} [Fintype α] [DecidableEq α] (hB : B.IsLB)
-    (b : α → B.Sec) (hb : ⨆ j, nonzeroLocus (b j) = ⊤) {M M' : Matrix α α ℂ}
-    (hM : M.det ≠ 0) (hM' : M'.det ≠ 0) (e : M' = M.map (starRingEnd ℂ)) :
-    (fsBasis p σ hB b hb M hM).IsConj (fsBasis p σ' hB b hb M' hM') :=
-  isConj_fsBasis_of_unitary hB b hb hM hM' (one_mem _) (e.trans (Matrix.mul_one _).symm)
-
 variable {φ : Weight p σ B} {φ' : Weight p σ' B}
-
-theorem IsConj.tens {ψ : Weight p σ A} {ψ' : Weight p σ' A} (h' : ψ.IsConj ψ') (h : φ.IsConj φ') :
-    (ψ.tens φ).IsConj (ψ'.tens φ') := fun c y y' e hy =>
-  congrArg₂ (· + ·) (h' c.1 y y' e (mem_ptsIn_inf.1 hy).1) (h c.2 y y' e (mem_ptsIn_inf.1 hy).2)
-
-theorem IsConj.dual (h : φ.IsConj φ') : φ.dual.IsConj φ'.dual := fun i y y' e hy =>
-  congrArg Neg.neg (h i y y' e hy)
-
-theorem IsConj.linComb (h : φ.IsConj φ') {k' : Type} [CommRing k'] {Y' : Scheme.{0}}
-    {q : Y' ⟶ Sp k'} {τ τ' : k' →+* ℂ} {κ : Type} [Fintype κ] (f : κ → (Y' ⟶ Y)) (ε : κ → ℤ)
-    (m : κ → CxPts q τ → CxPts p σ) (hm : ∀ a z, (m a z).1 = z.1 ≫ f a)
-    (m' : κ → CxPts q τ' → CxPts p σ') (hm' : ∀ a z, (m' a z).1 = z.1 ≫ f a) :
-    (φ.linComb f ε m hm).IsConj (φ'.linComb f ε m' hm') := fun j z z' e hz =>
-  Finset.sum_congr rfl fun a _ => congrArg (_ * ·) (h (j a) _ _
-    (by rw [hm, hm', e, Category.assoc]) (mem_of_mem_linComb (hm · z) hz a))
-
-theorem IsConj.zpow (h : φ.IsConj φ') (n : ℤ) : (φ.zpow n).IsConj (φ'.zpow n) :=
-  h.linComb _ _ _ _ _ _
-
-theorem IsConj.pull (h : φ.IsConj φ') {Y' : Scheme.{0}} {q : Y' ⟶ Sp k} (f : Y' ⟶ Y)
-    (hf : f ≫ p = q) : (φ.pull f hf).IsConj (φ'.pull f hf) :=
-  h.linComb _ _ _ _ _ _
 
 end Weight
 

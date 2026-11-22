@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusOfSpec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralSummandGoodPlaceIndicator
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat GlobalTheory.KapOrb
 open scoped Classical
 
@@ -46,7 +51,7 @@ theorem pullLat_stable_iff_cong : ∀ (E : Type) [Field E] [NumberField E] [IsCM
     rw [hval, het] at h1
     have hv0 : Valued.v et ≠ 0 := (Valuation.ne_zero_iff _).2 het0
     unfold ordL at h1
-    rw [dif_neg hv0] at h1
+    rw [dite_eq_right hv0] at h1
     rw [← WithZero.coe_unzero hv0, WithZero.exp]
     congr 1
     apply Multiplicative.toAdd.injective
@@ -55,7 +60,7 @@ theorem pullLat_stable_iff_cong : ∀ (E : Type) [Field E] [NumberField E] [IsCM
   have hkey : ∀ y, ψ (B.g * y) = et⁻¹ • (γ.val *ᵥ ψ y - ψ y) := by
     intro y
     have h1 := hmul y
-    rw [hu, add_mul, one_mul, mul_assoc, map_add, IsScalarTower.algebraMap_apply K.O K.E B.A, ← Algebra.smul_def,
+    rw [hu, add_mul, one_mul, mul_assoc, map_add (f := _), IsScalarTower.algebraMap_apply K.O K.E B.A, ← Algebra.smul_def,
       hsemi, het] at h1
     rw [← h1, add_sub_cancel_left, smul_smul, inv_mul_cancel₀ het0, one_smul]
   have hmem : ∀ (h : GLw n w) y, y ∈ pullLat w B ψ h ↔

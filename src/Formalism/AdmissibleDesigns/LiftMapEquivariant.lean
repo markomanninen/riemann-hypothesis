@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.FinDimOfLat
-import Formalism.AdmissibleDesigns.LenComapSurj
+module
+
+public import Formalism.AdmissibleDesigns.FinDimOfLat
+public import Formalism.AdmissibleDesigns.LenComapSurj
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -72,8 +76,6 @@ def psiR : (Γ → Dt.T') →ₛₗ[(eO : O →+* Ow)] (G → TrV e VT') where
     show tr e (a • ((c (ι g) : VT'))) = eO a • tr e ((c (ι g) : VT'))
     rw [smul_eO heO]
 
-theorem psiR_apply (c : Γ → Dt.T') (g : G) : psiR e eO heO ι Dt c g = tr e ((c (ι g) : VT')) := rfl
-
 theorem psiR_inj (hι : Function.Bijective ι) : Function.Injective (psiR e eO heO ι Dt) := by
   intro a b h
   funext γ
@@ -85,8 +87,6 @@ variable [Module (FractionRing O) (ReciprocityTheory.Gal.H1 Dt.ρT')] [IsScalarT
 def FsG : Submodule O (ReciprocityTheory.Gal.H1 Dt.ρTl') :=
   ((Submodule.span (FractionRing O) (finiteClassesContinuous e PD ι Dt.ρT' Dt.ρT' LinearMap.id :
     Set (ReciprocityTheory.Gal.H1 Dt.ρT'))).restrictScalars O).comap Dt.j'
-
-theorem coe_rhoTl' (γ : Γ) (t : Dt.T') : ((Dt.ρTl' γ t : Dt.T') : VT') = Dt.ρT' γ t := rfl
 
 theorem mem_FsG (hcob : ∀ v : VT', (fun γ => Dt.ρT' γ v - v) ∈ finZ e PD Dt.ρT' ι)
     (x : ReciprocityTheory.Gal.Z1 Dt.ρTl') :
@@ -251,7 +251,7 @@ theorem im_iff (hι : Function.Bijective ι)
     have hcoc : ∀ γ δ, c0 (γ * δ) = c0 γ + ρ₁ γ (c0 δ) := by
       intro γ δ
       apply mkK_inj (O := O)
-      rw [map_add, ← locRep_mkK, hc0, hc0, hc0, hσmul]
+      rw [map_add (f := _), ← locRep_mkK, hc0, hc0, hc0, hσmul]
       have h2 := hd₁.1.1.2 (σ γ) (σ δ)
       show untr e (d₁ (σ γ * σ δ)) = untr e (d₁ (σ γ)) + locRep ρ₁ γ (untr e (d₁ (σ δ)))
       rw [h2]

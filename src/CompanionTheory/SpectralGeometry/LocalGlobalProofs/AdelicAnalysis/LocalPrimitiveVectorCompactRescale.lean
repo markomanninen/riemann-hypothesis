@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LocAtA
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,12 +85,14 @@ theorem primitiveCompact_of_ringEquiv {A B : Type*} [CommRing A] [CommRing B] [T
   rintro y ⟨z, hz⟩
   have h1 : (fun i => e (z i)) ⬝ᵥ (fun i => e (y i)) = 1 := by
     have := congrArg e hz
-    simpa [dotProduct, map_sum, map_mul] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [dotProduct, map_sum, map_mul] using this
   obtain ⟨a, w, m1, m2, m3⟩ := p _ ⟨_, h1⟩
   refine ⟨Units.map (e.symm : B →* A) a, fun i => e.symm (w i), ⟨_, m1, ?_⟩, ⟨w, m2, rfl⟩, ?_⟩
   · ext i; simp
   · apply e.injective
-    simpa [dotProduct, map_sum, map_mul] using m3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [dotProduct, map_sum, map_mul] using m3
 
 section Quad
 
@@ -96,7 +102,7 @@ def gg (d : K) (p : L × L) : K := p.1 • (1 : K) + p.2 • d
 
 theorem gg_mul {d : K} {D : L} (hd : d * d = algebraMap L K D) (p q : L × L) :
     gg d p * gg d q = gg d (p.1 * q.1 + D * (p.2 * q.2), p.1 * q.2 + p.2 * q.1) := by
-  simp only [gg, Algebra.smul_def, map_add, map_mul, mul_one]
+  simp only [gg, Algebra.smul_def, map_add (f := _), map_mul, mul_one]
   linear_combination (algebraMap L K p.2 * algebraMap L K q.2) * hd
 
 variable (bs : Module.Basis (Fin 2) L K)
@@ -341,7 +347,7 @@ theorem exists_delta [CharZero F] (h2 : Module.finrank F E = 2) :
     rintro ⟨c, hc⟩
     apply hx
     refine ⟨c + p / 2, ?_⟩
-    rw [map_add, hc]
+    rw [map_add (f := _), hc]
     ring
   obtain ⟨b, hb0, hb1⟩ := basis_of_not_mem h2 hδ
   have h2F : algebraMap F E 2 = 2 := map_ofNat _ 2
@@ -350,7 +356,7 @@ theorem exists_delta [CharZero F] (h2 : Module.finrank F E = 2) :
       rw [← h2F, ← map_mul]
       congr 1
       ring
-    rw [hb1, map_add, map_mul]
+    rw [hb1, map_add (f := _), map_mul]
     linear_combination hxx + x * hp2
   refine ⟨b, q + p / 2 * (p / 2), hb0, hsq, fun h0 => ?_⟩
   rw [h0, map_zero, hb1] at hsq

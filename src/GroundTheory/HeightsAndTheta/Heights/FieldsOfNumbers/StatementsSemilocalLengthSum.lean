@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalLength
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsSemilocalLength
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -34,21 +39,22 @@ theorem exists_fibreLift (P' : Ideal (MRing ι' F)) [P'.IsPrime]
   have hm : contractFracMap j P' (α : _) ∈ degZeroLoc P' {W'} :=
     degZeroLoc_anti P' (Set.singleton_subset_iff.mpr hW')
       (map_degZeroLoc_le j P' W (Subalgebra.mem_map.mpr ⟨_, α.2, rfl⟩))
-  simp only [dif_pos hm]
+  simp only [dite_eq_left hm]
 
 theorem exists_relDegFn :
     ∃ d : Ideal (MRing ι' F) → ℕ, ∀ W' (hW' : IsMultiProjPrime W'),
-      haveI := hW'.isPrime
-      d W' = relDeg j W' := by
+      d W' = (haveI : W'.IsPrime := hW'.isPrime; relDeg j W') := by
   classical
   exact ⟨fun W' => if hp : W'.IsPrime then haveI := hp; relDeg j W' else 0,
-    fun W' hW' => dif_pos hW'.isPrime⟩
+    fun W' hW' => dite_eq_left hW'.isPrime⟩
 
 end Fibre
 
+
+open scoped Classical in
+set_option synthInstance.maxHeartbeats 100000 in
 open Classical in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def SemilocalLengthSum.Statement : Prop :=
   ∀ (F : Type u) [Field F] (K K' : Type) [Fintype K] [DecidableEq K] [Fintype K']
     [DecidableEq K'] (j : K ↪ K') (ι' : K' → Type) [∀ k, Fintype (ι' k)]

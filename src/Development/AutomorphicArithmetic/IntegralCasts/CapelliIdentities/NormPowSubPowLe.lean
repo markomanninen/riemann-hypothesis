@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi18.norm_pow_sub_pow_le.{u_1} :
     ∀ {K : Type u_1} [inst : NormedField K]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianForms.TiedTwGen
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwGen
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.RationalPointsLeHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,9 +40,6 @@ def scaleE {α β : Type} (a : α → β → ℂ) (ha : ∀ x z, a x z ≠ 0) : 
   left_inv g := by funext x z; simp [ha x z]
   right_inv g := by funext x z; simp [ha x z]
 
-@[simp] theorem scaleE_apply {α β : Type} (a : α → β → ℂ) (ha : ∀ x z, a x z ≠ 0) (g : α → β → ℂ) (x : α) (z : β) :
-    scaleE a ha g x z = a x z * g x z := rfl
-
 variable {S : StepLevel F E σ J T f bad} {emb : Tau → E →+* ℂ} {c : ℤ}
 
 def DetTw.fac (X : DetTw S emb c) (x : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (z : Frames (gramC J emb)) : ℂ :=
@@ -55,14 +56,6 @@ def nrmA (X : DetTw S emb c) :
 def nrm (X : DetTw S emb c) {cls : Type} (yc : cls → UPts σ J (FiniteAdeleRing (𝓞 F) F)) :
     (cls → Frames (gramC J emb) → ℂ) ≃ₗ[ℂ] (cls → Frames (gramC J emb) → ℂ) :=
   scaleE (fun cl z => X.fac (yc cl) z) (fun cl z => X.fac_ne (yc cl) z)
-
-theorem nrmA_apply (X : DetTw S emb c) (g : UPts σ J (FiniteAdeleRing (𝓞 F) F) → Frames (gramC J emb) → ℂ)
-    (x : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (z : Frames (gramC J emb)) :
-    nrmA X g x z = (X.ch x : ℂ) * detF c z * g x z := rfl
-
-theorem nrm_apply (X : DetTw S emb c) {cls : Type} (yc : cls → UPts σ J (FiniteAdeleRing (𝓞 F) F))
-    (φ : cls → Frames (gramC J emb) → ℂ) (cl : cls) (z : Frames (gramC J emb)) :
-    nrm X yc φ cl z = (X.ch (yc cl) : ℂ) * detF c z * φ cl z := rfl
 
 theorem res_nrmA (X : DetTw S emb c) {cls : Type} (yc : cls → UPts σ J (FiniteAdeleRing (𝓞 F) F))
     (g : UPts σ J (FiniteAdeleRing (𝓞 F) F) → Frames (gramC J emb) → ℂ) :
@@ -159,33 +152,6 @@ theorem mem_ValC_shW (hn : 0 < n) (G : Tau → Matrix (Fin n) (Fin n) ℂ) (lam 
     have h2 : detF c z * fnOf G (shiftOf (fun τ => shW (lam τ) c)) 1 P z = detF c z * (a * h z) := by rw [h1]; ring
     rw [mul_left_cancel₀ (detF_ne c z) h2, ← mul_assoc, inv_mul_cancel₀ ha, one_mul]
 
-theorem nrmA_mem_AdForms (hn : 0 < n) (X : DetTw S emb c) (lam : Tau → DomWeight n)
-    (g : UPts σ J (FiniteAdeleRing (𝓞 F) F) → Frames (gramC J emb) → ℂ) :
-    nrmA X g ∈ AdForms S emb lam ↔ g ∈ AdForms S emb (fun τ => shW (lam τ) c) := by
-  unfold AdForms
-  rw [Submodule.mem_inf, Submodule.mem_inf, nrmA_mem_AdFun, Submodule.mem_pi, Submodule.mem_pi]
-  refine and_congr Iff.rfl (forall_congr' fun x => forall_congr' fun _ => ?_)
-  exact (mem_ValC_shW hn (gramC J emb) lam c (X.ch x : ℂ) (Units.ne_zero _) (g x)).symm
-
-theorem FiC_nrm (hn : 0 < n) (X : DetTw S emb c) (lam : Tau → DomWeight n) {cls : Type}
-    (yc : cls → UPts σ J (FiniteAdeleRing (𝓞 F) F)) (φ : cls → Frames (gramC J emb) → ℂ) :
-    nrm X yc φ ∈ FiC S emb lam yc ↔ φ ∈ FiC S emb (fun τ => shW (lam τ) c) yc := by
-  unfold FiC
-  constructor
-  · rintro ⟨g', hg', h⟩
-    refine ⟨(nrmA X).symm g', (nrmA_mem_AdForms hn X lam _).1 (by rw [LinearEquiv.apply_symm_apply]; exact hg'), ?_⟩
-    apply (nrm X yc).injective
-    rw [← res_nrmA, LinearEquiv.apply_symm_apply]
-    exact h
-  · rintro ⟨g, hg, rfl⟩
-    exact ⟨nrmA X g, (nrmA_mem_AdForms hn X lam g).2 hg, res_nrmA X yc g⟩
-
-theorem nrm_val_one (hn : 0 < n) (a : ℂ) (G : Tau → Matrix (Fin n) (Fin n) ℂ) (lam : Tau → DomWeight n) (c : ℤ)
-    (Q : MvPolynomial (Tau × Fin n × Fin n) ℂ) (z : Frames G) (v : ℂ)
-    (hv : v = fnOf G (shiftOf (fun τ => shW (lam τ) c)) 1 Q z) :
-    a * detF c z * v = a * fnOf G (shiftOf lam) 1 Q z := by
-  rw [hv, mul_assoc, detF_fnOf_one hn]
-
 theorem nrm_val_M (hn : 0 < n) (a : ℂ) (G : Tau → Matrix (Fin n) (Fin n) ℂ) (lam : Tau → DomWeight n) (c : ℤ)
     (M : Tau → Matrix (Fin n) (Fin n) ℂ) (hM : ∀ τ, IsUnit (M τ).det)
     (Q : MvPolynomial (Tau × Fin n × Fin n) ℂ) (z : Frames G) (v : ℂ)
@@ -212,8 +178,6 @@ def cTw (D : D7) (i : ℕ) : ℤ := ((i * (D.R.t + 1) / 2 : ℕ) : ℤ)
 
 theorem cTw_zero (D : D7) : cTw D 0 = 0 := by simp [cTw]
 
-theorem lamTG_eq (i : ℕ) : lamTG M i = fun τ => shW (M.lam i τ) (cTw D i) := rfl
-
 theorem atInf_det_unit {E : Type} [Field E] {Tau : Type} {n : ℕ} (emb : Tau → E →+* ℂ) (B : GL (Fin n) E) (τ : Tau) :
     IsUnit (atInf emb (B : Matrix (Fin n) (Fin n) E) τ).det := by
   have h : (atInf emb (B : Matrix (Fin n) (Fin n) E) τ).det = emb τ (B : Matrix (Fin n) (Fin n) E).det :=
@@ -228,7 +192,7 @@ variable {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))} {i : ℕ} {hi
 
 def embCh (β : Ch) : (M.lat i).V →ₛₗ[D.what₂.embLL] ({c // chOf c = β} → Fr D i hi → ℂ) where
   toFun x := fun cl z => M.emb i x cl.1 (eY.symm z)
-  map_add' x y := by funext cl z; rw [map_add]; rfl
+  map_add' x y := by funext cl z; rw [map_add (f := _)]; rfl
   map_smul' a x := by funext cl z; rw [LinearMap.map_smulₛₗ]; rfl
 
 def embN (β : Ch) (X : DetTw (K β).lev (embT D) (cTw D i)) :
@@ -239,59 +203,9 @@ theorem embN_apply (β : Ch) (X : DetTw (K β).lev (embT D) (cTw D i)) (x : (M.l
     (z : Fr D i hi) :
     embN M eY chOf K β X x cl z = (X.ch ((K β).y cl) : ℂ) * detF (cTw D i) z * M.emb i x cl.1 (eY.symm z) := rfl
 
-theorem embN_inj (X : ∀ β, DetTw (K β).lev (embT D) (cTw D i)) (x y : (M.lat i).V)
-    (h : ∀ β, embN M eY chOf K β (X β) x = embN M eY chOf K β (X β) y) : x = y := by
-  apply M.emb_inj i
-  funext c z
-  have h1 := congrFun (congrFun (h (chOf c)) ⟨c, rfl⟩) (eY z)
-  rw [embN_apply, embN_apply, Equiv.symm_apply_apply] at h1
-  exact mul_left_cancel₀ ((X (chOf c)).fac_ne _ _) h1
-
 variable {M eY chOf K}
 
-theorem embN_mem_FiC (V : ValuationCompatibleChart M eY okW chOf K) (β : Ch) (X : DetTw (K β).lev (embT D) (cTw D i)) (x : (M.lat i).V) :
-    embN M eY chOf K β X x ∈ FiC (K β).lev (embT D) (M.lam i) (K β).y :=
-  (FiC_nrm (D.R.N_pos i) X (M.lam i) (K β).y _).2 ((V.Fi _).1 ((V.rat _).1 ⟨x, rfl⟩).1 β)
 
-set_option maxHeartbeats 1000000 in
-
-theorem embN_rat (V : ValuationCompatibleChart M eY okW chOf K) (β : Ch) (X : DetTw (K β).lev (embT D) (cTw D i)) (x : (M.lat i).V)
-    (cl : {c // chOf c = β}) : ∃ Q ∈ RatSpan D (M.lam i), ∀ z : Fr D i hi,
-      embN M eY chOf K β X x cl z =
-        (X.ch ((K β).y cl) : ℂ) * fnOf (gramC (gramN D i hi) (embT D)) (shiftOf (M.lam i)) 1 Q z := by
-  obtain ⟨Q, hQ, hz⟩ := ((V.rat _).1 ⟨x, rfl⟩).2 cl.1
-  refine ⟨Q, hQ, fun z => ?_⟩
-  exact (embN_apply M eY chOf K β X x cl z).trans
-    (nrm_val_one (D.R.N_pos i) _ (gramC (gramN D i hi) (embT D)) (M.lam i) (cTw D i) Q z _
-      ((hz (eY.symm z)).trans (congrArg _ (eY.apply_symm_apply z))))
-
-set_option maxHeartbeats 2000000 in
-
-theorem embN_lat (V : ValuationCompatibleChart M eY okW chOf K) (X : ∀ β, DetTw (K β).lev (embT D) (cTw D i)) (w : D.what₂.places.Pl)
-    (hw : okW w) (x : (M.lat i).V) :
-    x ∈ M.S i w ↔ ∀ (β : Ch) (cl : {c // chOf c = β}) (B : GL (Fin (D.R.N i)) D.host.E),
-      IsLocBasis (D.what₂.places.resChar w) (dualSet (sigD D : D.host.E →+* D.host.E) (gramN D i hi) (lat cl.1)) B →
-      ∃ Q ∈ IntSpan D w (M.lam i), ∀ z : Fr D i hi,
-        embN M eY chOf K β (X β) x cl z =
-          ((X β).ch ((K β).y cl) : ℂ) *
-            ((∏ τ, (atInf (embT D) (B⁻¹ : GL (Fin (D.R.N i)) D.host.E).1 τ).det ^ (-(cTw D i))) *
-              fnOf (gramC (gramN D i hi) (embT D)) (shiftOf (M.lam i))
-                (atInf (embT D) (B⁻¹ : GL (Fin (D.R.N i)) D.host.E).1) Q z) := by
-  rw [V.lat w hw x]
-  constructor
-  · intro h β cl B hB
-    obtain ⟨Q, hQ, hz⟩ := h cl.1 B hB
-    refine ⟨Q, hQ, fun z => ?_⟩
-    exact (embN_apply M eY chOf K β (X β) x cl z).trans
-      (nrm_val_M (D.R.N_pos i) _ (gramC (gramN D i hi) (embT D)) (M.lam i) (cTw D i) _ (atInf_det_unit (embT D) B⁻¹) Q z _
-        ((hz (eY.symm z)).trans (congrArg _ (eY.apply_symm_apply z))))
-  · intro h c B hB
-    obtain ⟨Q, hQ, hz⟩ := h (chOf c) ⟨c, rfl⟩ B hB
-    refine ⟨Q, hQ, fun z => ?_⟩
-    have h1 := (embN_apply M eY chOf K (chOf c) (X (chOf c)) x ⟨c, rfl⟩ (eY z)).symm.trans (hz (eY z))
-    have h2 := nrm_val_M' (D.R.N_pos i) _ (Units.ne_zero _) (gramC (gramN D i hi) (embT D)) (M.lam i) (cTw D i) _
-      (atInf_det_unit (embT D) B⁻¹) Q (eY z) _ h1
-    exact (congrArg (M.emb i x c) (eY.symm_apply_apply z)).symm.trans h2
 
 end Rec
 

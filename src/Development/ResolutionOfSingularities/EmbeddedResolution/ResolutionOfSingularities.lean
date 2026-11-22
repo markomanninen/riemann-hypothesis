@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+
+@[expose] public section
+
 section
 
 universe u v

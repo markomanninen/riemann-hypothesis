@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix Complex MeasureTheory
 open scoped ComplexConjugate ComplexOrder MatrixOrder
 
@@ -480,7 +485,7 @@ theorem integrableOn_minor (ι κ : Type*) [Fintype ι] [DecidableEq ι] [Fintyp
         ∑ c, y (Sum.inr c) r * conj (y (Sum.inr c) s) := by
     intro y r s
     rw [Matrix.mul_assoc, Matrix.mul_apply, Fintype.sum_sum_type]
-    simp [Matrix.mul_apply, Fintype.sum_sum_type, one_apply, sub_eq_add_neg, neg_ite]
+    simp [Matrix.mul_apply, Fintype.sum_sum_type, Matrix.one_apply, sub_eq_add_neg, neg_ite]
   have hUm : MeasurableSet U := by
     refine IsOpen.measurableSet ?_
     simp only [hU, Set.setOf_forall, Matrix.sub_apply, hent]
@@ -554,7 +559,10 @@ theorem integrableOn_minor (ι κ : Type*) [Fintype ι] [DecidableEq ι] [Fintyp
   rw [volume_pi_pi, Finset.prod_const, Finset.card_univ]
   refine mul_le_mul' ?_ (pow_le_pow_left'
     (hslice _ _ fun i j => (hx i j).trans_le (min_le_left _ _)) _)
-  exact Set.indicator_le_indicator_of_subset
-    (fun x hx i j => (hx i j).trans_le (min_le_right _ _)) (fun _ => zero_le) x
+  have hx' : x ∈ {x : (ι → ι → ℂ) × (κ → ι → ℂ) | ∀ i j,
+      ‖((Matrix.of x.1)ᵀᴴ * (Matrix.of x.1)ᵀ - (Matrix.of x.2)ᴴ * Matrix.of x.2 - 1 :
+        Matrix ι ι ℂ) i j‖ < δ₂} :=
+    fun i j => (hx i j).trans_le (min_le_right _ _)
+  rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx']
 
 end GlobalTheory.MinorInt

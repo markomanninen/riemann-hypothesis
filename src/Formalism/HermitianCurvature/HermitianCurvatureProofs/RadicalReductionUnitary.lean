@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedL
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedL
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 open scoped ContDiff
@@ -149,8 +153,9 @@ theorem locLogOp (z : Fin (2 * r + k + 1) → ℂ) :
   have hΦ0c : ContDiffAt ℝ ∞ Φ 0 := hΦc 0 (by rw [he0]; exact hu1)
   have hΦ0d : HasFDerivAt Φ ((ContinuousLinearEquiv.refl ℝ L : L ≃L[ℝ] L) : L →L[ℝ] L) 0 := by
     have hE : HasFDerivAt (fun Y : L => NormedSpace.exp (Y : Q.Mx k r))
-        ((1 : Q.Mx k r →L[ℝ] Q.Mx k r).comp L.subtypeL) 0 :=
-      (hasFDerivAt_exp_zero (𝕂 := ℝ)).comp (0 : L) L.subtypeL.hasFDerivAt
+        ((1 : Q.Mx k r →L[ℝ] Q.Mx k r).comp L.subtypeL) 0 := by
+      convert HasFDerivAt.comp_continuousLinearMap L.subtypeL (0 : L)
+        (hasFDerivAt_exp_zero (𝕂 := ℝ)) using 1 <;> rfl
     have hC : HasFDerivAt (cinv : Q.Mx k r → Q.Mx k r)
         (ContinuousLinearMap.mul ℝ (Q.Mx k r) ((1 / 2 : ℂ) • 1))
         (NormedSpace.exp ((0 : L) : Q.Mx k r)) := by

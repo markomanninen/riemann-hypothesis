@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PushInvertibleModelOfIso
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSecPullNonzeroOnFibres
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPolAVGenericFibre
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.ExistsIsAddFundamentalDomain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PushInvertibleModelOfIso
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsSecPullNonzeroOnFibres
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsPolAVGenericFibre
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.ExistsIsAddFundamentalDomain
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,9 +72,7 @@ theorem smoothOfRelativeDimension_fibre {K : Type} [Field K] {z : Sp K ⟶ Y.X} 
     (h : Set.range z ⊆ Set.range Y.j) :
     SmoothOfRelativeDimension (Module.finrank ℚ E / 2 * (Dw.p + Dw.q)) t.G.hom := by
   obtain ⟨K', _, i, y, e⟩ := GlobalTheory.GenericPol.exists_lift z Y.j h
-  obtain ⟨PP', cub, sym, adj, prim, m₁, -⟩ := sabPull Out.CubePf.cubePull (Out.specOf i) t
-  generalize (⟨(Over.pullback (Out.specOf i)).obj t.G, IsSemiAbelian.pullback _ t.G t.semi,
-    Geo.Tor.OAct.pullback _ t.G t.act, PP', cub, sym, adj, prim⟩ : SAB H _) = t' at m₁
+  obtain ⟨t', ⟨m₁⟩⟩ := GlobalTheory.ModFam.exists_sabPull (Out.specOf i) t
   obtain ⟨n, -⟩ := sabComp pullCubComp E H _ _ _ _ _ _ _ _ m m₁
   obtain ⟨m', -⟩ := sabCancel pullCubCancel E H _ _ _ Y.t Y.oF.t t' Y.j y Y.m (e ▸ n)
   have h₁ : SmoothOfRelativeDimension (Module.finrank ℚ E / 2 * (Dw.p + Dw.q)) t'.G.hom :=
@@ -90,9 +92,7 @@ theorem smoothOfRelativeDimension_fibre {K : Type} [Field K] {z : Sp K ⟶ Y.X} 
 theorem exists_keyAt_model (M : GChart Y) {K : Type} [Field K] (z : Sp K ⟶ Y.X) (hz : ⊤ ≤ z ⁻¹ᵁ M.U)
     (h : Set.range z ⊆ Set.range Y.j) (hpos : 1 ≤ Module.finrank ℚ E / 2 * (Dw.p + Dw.q)) :
     ∃ x : KeyIn K, x.P.g = Module.finrank ℚ E / 2 * (Dw.p + Dw.q) ∧ KeyAt M z hz x := by
-  obtain ⟨PP', cub, sym, adj, prim, m, -⟩ := sabPull Out.CubePf.cubePull z Y.t
-  generalize (⟨(Over.pullback z).obj Y.t.G, IsSemiAbelian.pullback _ Y.t.G Y.t.semi,
-    Geo.Tor.OAct.pullback _ Y.t.G Y.t.act, PP', cub, sym, adj, prim⟩ : SAB H _) = t at m
+  obtain ⟨t, ⟨m⟩⟩ := GlobalTheory.ModFam.exists_sabPull z Y.t
   obtain ⟨hp, hA, hK⟩ := GlobalTheory.GenericPol.proper_ample_kTriv Y.m Y.oF.proper Y.oF.ample Y.oF.ktriv m h
   have hg := smoothOfRelativeDimension_fibre m h
   obtain ⟨v, hv⟩ := GlobalTheory.KeyPow.exists_isLieBasis t.G hg
@@ -101,18 +101,5 @@ theorem exists_keyAt_model (M : GChart Y) {K : Type} [Field K] (z : Sp K ⟶ Y.X
     simpa using Fintype.card_congr (b.indexEquiv (GlobalTheory.FlagMod.lieBasis M.toMChart z hz))
   rw [hn] at hg hpos ⊢
   exact exists_keyAt_of_sabMap M z hz m hp hA hK hg hpos
-
-theorem exists_keyAt : ∀ (D : D7) (A : Amb D) (N j : ℕ) (S : Sig A N j) (κ : Lv A) (p : ℕ) (ct : At S κ p) (M : ct.KeyChart) (K : Type) [Field K] (z : Sp K ⟶ ct.Xm.X) (hz : ⊤ ≤ z ⁻¹ᵁ M.U), Set.range z ⊆ ct.Xm.opn → ∃ x : KeyIn K, x.P.g = D.R.f * N ∧ KeyAt M z hz x := by
-  intro D A N j S κ p ct M K _ z hz h
-  have hd : Module.finrank ℚ D.host.E / 2 * (S.Dw.p + S.Dw.q) = D.R.f * N := by
-    rw [GlobalTheory.PinNum.finrank_host, S.rank_eq, Nat.mul_div_cancel_left _ two_pos]
-  have hf : 1 ≤ D.R.f := by
-    have h₁ : 0 < Module.finrank ℚ D.host.E := Module.finrank_pos
-    rw [GlobalTheory.PinNum.finrank_host] at h₁
-    omega
-  have hN := S.two_le
-  rw [← hd]
-  exact exists_keyAt_model (Y := ct.base) M z hz (ct.range_base_j ▸ h)
-    (hd ▸ Nat.mul_pos hf (by omega))
 
 end GlobalTheory.KeyAtEx

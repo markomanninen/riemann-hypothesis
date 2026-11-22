@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.FrameExists2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
+module
+
+public import Formalism.HermitianCurvature.FrameExists2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AnisotropicColumnSums
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 

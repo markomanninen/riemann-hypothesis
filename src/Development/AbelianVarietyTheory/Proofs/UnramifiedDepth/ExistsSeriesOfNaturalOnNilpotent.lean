@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
+
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -14,7 +19,7 @@ private noncomputable abbrev serNatI (R₀ κ : Type) [CommRing R₀] (N : ℕ) 
 
 private lemma serNat_coeff {R₀ κ : Type} [CommRing R₀] [DecidableEq κ] {N : ℕ}
     {q : MvPolynomial κ R₀} (hq : q ∈ serNatI R₀ κ N) :
-    ∀ m : κ →₀ ℕ, (∀ j, m j < N) → MvPolynomial.coeff m q = 0 := by
+    ∀ m : κ →₀ ℕ, (∀ j, m j < N) → AddMonoidAlgebra.coeff q m = 0 := by
   refine Submodule.span_induction ?_ ?_ ?_ ?_ hq
   · rintro _ ⟨j, rfl⟩ m hm
     simp only [MvPolynomial.coeff_X_pow]
@@ -42,11 +47,11 @@ private lemma serNat_nil {R₀ κ : Type} [CommRing R₀] (N : ℕ) (j : κ) :
 private lemma serNat_aeval {R₀ κ : Type} [CommRing R₀] [Fintype κ] [DecidableEq κ]
     {S : Type} [CommRing S] [Algebra R₀ S] {N : ℕ} {a : κ → S} (ha : ∀ i, a i ^ N = 0)
     (q : MvPolynomial κ R₀) :
-    MvPolynomial.aeval a q = ∑ e : κ → Fin N, algebraMap R₀ S (MvPolynomial.coeff
-      (Finsupp.equivFunOnFinite.symm fun i => (e i : ℕ)) q) * ∏ i, a i ^ (e i : ℕ) := by
+    MvPolynomial.aeval a q = ∑ e : κ → Fin N, algebraMap R₀ S (AddMonoidAlgebra.coeff
+      q (Finsupp.equivFunOnFinite.symm fun i => (e i : ℕ))) * ∏ i, a i ^ (e i : ℕ) := by
   induction q using MvPolynomial.induction_on' with
   | add p q hp hq =>
-    simp only [map_add, MvPolynomial.coeff_add, add_mul, Finset.sum_add_distrib, hp, hq]
+    simp only [map_add (f := _), MvPolynomial.coeff_add, add_mul, Finset.sum_add_distrib, hp, hq]
   | monomial m r =>
     rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
     by_cases hm : ∀ j, m j < N
@@ -105,7 +110,7 @@ theorem exists_series_of_natural_on_nilpotent :
     simp only [hφ, MvPolynomial.aeval_X] at h
     exact h.symm
   have compat : ∀ N M : ℕ, N ≤ M → ∀ m : κ →₀ ℕ, (∀ j, m j < N) →
-      MvPolynomial.coeff m (p M) = MvPolynomial.coeff m (p N) := by
+      AddMonoidAlgebra.coeff (p M) m = AddMonoidAlgebra.coeff (p N) m := by
     intro N M h m hm
     have h1 := key M _ (fun j => Ideal.Quotient.mk (serNatI R₀ κ N) (MvPolynomial.X j))
       (fun j => pow_eq_zero_of_le h (serNat_nil N j))
@@ -117,7 +122,7 @@ theorem exists_series_of_natural_on_nilpotent :
     have h3 := serNat_coeff h1 m hm
     rw [MvPolynomial.coeff_sub, sub_eq_zero] at h3
     exact h3.symm
-  refine ⟨fun m => MvPolynomial.coeff m (p (Finset.univ.sup m + 1)), ?_⟩
+  refine ⟨fun m => AddMonoidAlgebra.coeff (p (Finset.univ.sup m + 1)) m, ?_⟩
   intro S _ _ a ha
   choose n hn using ha
   have hN : ∀ i, a i ^ (Finset.univ.sup n) = 0 := fun i =>
@@ -129,7 +134,7 @@ theorem exists_series_of_natural_on_nilpotent :
   refine Finset.sum_congr rfl fun e _ => ?_
   congr 2
   set m : κ →₀ ℕ := Finsupp.equivFunOnFinite.symm fun i => (e i : ℕ) with hm
-  change _ = MvPolynomial.coeff m (p (Finset.univ.sup m + 1))
+  change _ = AddMonoidAlgebra.coeff (p (Finset.univ.sup m + 1)) m
   rw [← compat N (max N (Finset.univ.sup m + 1)) (le_max_left _ _) m (fun j => by simp [hm]),
     compat _ _ (le_max_right _ _) m
       (fun j => Nat.lt_succ_of_le (Finset.le_sup (f := m) (Finset.mem_univ j)))]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RootsOfUnityInjectiveInertiaEigenvalues
 
@@ -12,7 +16,8 @@ theorem rootsOfUnity_inj {O k : Type} [CommRing O] [IsDomain O] [Field k] (f : O
     · exfalso
       apply hM
       have h2 := congrArg f h1
-      simpa [map_sum, map_pow, hfz] using h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, map_pow, hfz] using h2
     · exact sub_eq_zero.mp h1
   have hM0 : M ≠ 0 := by
     rintro rfl

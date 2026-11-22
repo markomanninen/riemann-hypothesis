@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsMoriwakiBigCurve
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveCountLower
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallPacking
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsMoriwakiBigCurve
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveCountLower
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallPacking
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

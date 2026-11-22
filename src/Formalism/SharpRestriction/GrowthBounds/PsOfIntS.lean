@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,8 @@ theorem inV_sum (j : Fin 2) {ι : Type} (s : Finset ι) (f : ι → PowerSeries 
   unfold inV
   have hS : PowerSeries.HasSubst (MvPowerSeries.X j : MvPowerSeries (Fin 2) C) :=
     PowerSeries.HasSubst.of_constantCoeff_zero (MvPowerSeries.constantCoeff_X j)
-  rw [← PowerSeries.coe_substAlgHom hS, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← PowerSeries.coe_substAlgHom hS, map_sum]
 
 theorem log_rel (X : RawChart C d I κ) (j : Fin 2) {l n : ℕ} (hn : 0 < n) {ζ : C} {γ δ : κ → PowerSeries C}
     (hγ : ∀ i, PowerSeries.constantCoeff (γ i) = 0) (hδ : ∀ i, PowerSeries.constantCoeff (δ i) = 0)

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.Bridge
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CardSubspacesOfFinrankMulCardBases
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.Bridge
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CardSubspacesOfFinrankMulCardBases
+
+@[expose] public section
 
 open Formalism.IndefR.Bridge Formalism.L2.DIV Formalism.DivisionValues Formalism.L2.Col NumberField MeasureTheory Polynomial
 
@@ -17,7 +21,7 @@ theorem gaussBin_self (q n : ℕ) : gaussBin q n n = 1 := by
 
 theorem coeff_heckePolyOf {L : Type} [Field L] (n q : ℕ) (a : ℕ → L) (ha : ∀ j, n < j → a j = 0)
     (d : ℕ) : (heckePolyOf n q a).coeff d = (-1) ^ d * (q : L) ^ (d * (d - 1) / 2) * a d := by
-  simp only [heckePolyOf, finset_sum_coeff, coeff_C_mul_X_pow]
+  simp only [heckePolyOf, finsetSum_coeff, coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   split_ifs with h
   · rfl

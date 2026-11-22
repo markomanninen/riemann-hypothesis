@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRCentre
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRSec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRODE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRWirt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRMatFrom
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRFinFrom
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRCentre
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRSec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRODE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRWirt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRMatFrom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTRRFinFrom
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 

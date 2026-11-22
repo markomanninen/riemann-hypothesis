@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+module
+
+public import ReciprocityTheory.L2DbarEstimates.NormFibrations.MvBlowup
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.HE
 
@@ -49,12 +53,12 @@ theorem ext_glue (hU : IsOpen U) (g G : V n → ℂ) (hg : DifferentiableOn ℂ 
     have heq : (fun y => if hy : y ∈ U then F y hy y else 0) =ᶠ[𝓝 y] F y hy := by
       filter_upwards [hnb] with x hx
       have hxU : x ∈ U := hsub y hy hx
-      rw [dif_pos hxU]
+      rw [dite_eq_left hxU]
       exact agree x hxU y hy x (mem_ball_self (hρ x hxU)) hx
     exact (((hF y hy).differentiableAt hnb).congr_of_eventuallyEq heq).differentiableWithinAt
   · intro y hy
     show (if h : y ∈ U then F y h y else 0) = G y
-    rw [dif_pos hy.1]
+    rw [dite_eq_left hy.1]
     exact hFeq y hy.1 ⟨mem_ball_self (hρ y hy.1), hy.2⟩
 
 end

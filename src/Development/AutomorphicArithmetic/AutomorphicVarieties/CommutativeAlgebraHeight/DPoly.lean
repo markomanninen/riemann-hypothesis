@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -20,7 +24,7 @@ private theorem scale_coeff {A ι : Type} [CommRing A] (P : MvPolynomial ι A) (
     rw [aeval_X_mul_C_X_monomial, Polynomial.coeff_X_pow_mul',
       MvPolynomial.homogeneousComponent_of_mem (MvPolynomial.isHomogeneous_monomial c rfl), Polynomial.coeff_C]
     split_ifs <;> first | rfl | omega
-  | add p q hp hq => rw [map_add, Polynomial.coeff_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq, map_add (f := _)]
 
 theorem UpperTheory.V.CA.d_poly :
     ∀ {n : ℕ} {A E : Type} [CommRing A] [Ring E] [Algebra A E] (D : Det n A E) {ι : Type} [Fintype ι] (x : ι → E), (D.poly x).IsHomogeneous n ∧ ∀ (S : Type) [CommRing S] [Algebra A S] (s : ι → S), D.D S (∑ a, s a ⊗ₜ x a) = MvPolynomial.aeval s (D.poly x) := by
@@ -30,7 +34,8 @@ theorem UpperTheory.V.CA.d_poly :
     intro S _ _ f
     rw [Det.poly, ← D.nat]
     congr 1
-    simp [Det.gen, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Det.gen, map_sum]
   refine ⟨?_, fun S _ _ s => by simpa using key S (MvPolynomial.aeval s)⟩
   let g : MvPolynomial ι A →ₐ[A] (MvPolynomial ι A)[X] := MvPolynomial.aeval fun a => X * C (MvPolynomial.X a)
   let t : MvPolynomial ι A →ₐ[A] (MvPolynomial ι A)[X] := IsScalarTower.toAlgHom A (MvPolynomial ι A) (MvPolynomial ι A)[X]

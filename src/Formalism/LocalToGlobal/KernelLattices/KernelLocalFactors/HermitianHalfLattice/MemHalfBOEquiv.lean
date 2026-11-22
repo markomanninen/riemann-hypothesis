@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.HermitianHalfLattice.ConjHSymmApply
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivGen
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.HermitianHalfLattice.ConjHSymmApply
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivGen
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

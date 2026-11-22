@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentVectorsUniversalBasis
-import Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentVectorsUniversalBasis
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocFrLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,8 @@ theorem finrank_range_idem' {V k : Type} [CommRing V] [IsLocalRing V] [CommRing 
     rw [← (LinearMap.IsIdempotentElem.isProj_range e he).trace, LinearMap.trace_eq_matrix_trace R (Pi.basisFun R (Fin n))]
     simp [Matrix.trace, LinearMap.toMatrix_apply]
   refine Nat.cast_injective (R := k) ?_
-  rw [← tr e' he', ← map_natCast f, ← tr e he, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← tr e' he', ← map_natCast f, ← tr e he, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [show (Pi.single i 1 : Fin n → k) = f ∘ Pi.single i 1 from funext fun j => by
     by_cases hj : j = i <;> simp [hj, Pi.single_apply], h]
@@ -174,7 +179,7 @@ theorem eig_bc {L : Type} [CommRing L] [IsLocalRing L] (φ : c.F →+* L) {x : S
       algebraMap L k ∘ Polynomial.aeval (rho hx α) (Q.map (algebraMap c.F L)) cc := fun Q cc => by
     induction Q using Polynomial.induction_on' with
     | add p q hp hq =>
-      rw [Polynomial.map_add, Polynomial.map_add, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hp, hq]
+      rw [Polynomial.map_add (f := _), Polynomial.map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hp, hq]
       funext j; simp
     | monomial j a =>
       rw [Polynomial.map_monomial, Polynomial.map_monomial, Polynomial.aeval_monomial, Polynomial.aeval_monomial,
@@ -237,9 +242,9 @@ theorem spMap_inj {A B : Type} [CommRing A] [CommRing B] {f g : A →+* B} (h : 
 
 end GlobalTheory.ShFam.EigLoc
 
+
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.L2.Pj
   GlobalTheory.Toroidal GlobalTheory.Cartier GlobalTheory.ShFam GlobalTheory.ShFam.EigLoc in
-
 theorem GlobalTheory.ShFam.EigLoc.exists_eigFrame : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Z : Model Xo c β) (R : Type) [CommRing R] [IsLocalRing R] (φ : c.F →+* R) (x : Sp R ⟶ gen Z), x ≫ genStr Z = spMap φ → Nonempty (EigFrame Z φ (x ≫ genι Z)) := by
   intro E _ _ _ H Dw l Xo c O _ β Z R _ _ φ x hφ
   have : IsProper Z.s := projProper O Z.X Z.s Z.proj

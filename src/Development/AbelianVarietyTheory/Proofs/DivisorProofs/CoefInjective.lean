@@ -1,15 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.HookProductDictionary
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.AdelicScalarSectionLift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitDetOfSplitDetermines
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCentralIdempotentOfGoodSeriesIdempotent
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.MemCuspSpaceIffOfFinite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLiftFormsFiniteGroupAction
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfOfBasePins
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.AdelicScalarSectionLift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitDetOfSplitDetermines
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCentralIdempotentOfGoodSeriesIdempotent
+public import Formalism.LocalToGlobal.ProjectiveLattices.JFDFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.ModerateCoefficientPositivity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TransvectionPeriodicity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfS
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassPresBasic
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLiftFormsFiniteGroupAction
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsHalfOfBasePins
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,10 +58,6 @@ section Coord
 
 variable {V : HSp D} (c : CoefA V) {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.host.E ℂ V.rank}
 
-def cx (ℓ : c.W →ₗ[ℂ] ℂ) : (Bridge.Gf V → c.W) →ₗ[ℂ] (GA D V → ℂ) := ℓ.compLeft (GA D V) ∘ₗ c.ext
-
-theorem cx_apply (ℓ : c.W →ₗ[ℂ] ℂ) (f : Bridge.Gf V → c.W) (h : GA D V) : cx c ℓ f h = ℓ (c.ρ h⁻¹ (f (fin V h))) := rfl
-
 variable {c}
 
 end Coord
@@ -62,7 +68,8 @@ theorem adjoint_idem {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   set E : H →ₗ[ℂ] H := ∑ g, a g • ρ g with hE
   have hin : ∀ g u w, ⟪ρ g u, ρ g w⟫_ℂ = ⟪u, w⟫_ℂ := fun g => LinearIsometry.inner_map_map ⟨ρ g, hu g⟩
   have hcomm : ∀ g u, E (ρ g u) = ρ g (E u) := fun g u => by
-    simp only [hE, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, ← Module.End.mul_apply, ← map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hE, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, ← Module.End.mul_apply, ← map_mul]
     refine (Fintype.sum_equiv (MulAut.conj g).toEquiv _ _ fun h => ?_).symm
     show _ = a (g * h * g⁻¹) • ρ (g * h * g⁻¹ * g) u
     rw [ha.1, inv_mul_cancel_right]
@@ -70,7 +77,8 @@ theorem adjoint_idem {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     have h1 : E u = ∑ g, ∑ h, (a h * a (h⁻¹ * g)) • ρ g u := by
       simp only [← Finset.sum_smul, ha.2, hE, LinearMap.sum_apply, LinearMap.smul_apply]
     have h2 : E (E u) = ∑ h, ∑ g, (a h * a g) • ρ h (ρ g u) := by
-      simp only [hE, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum, smul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hE, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
       simp only [mul_comm]
     rw [h2, h1, Finset.sum_comm (f := fun g h => (a h * a (h⁻¹ * g)) • ρ g u)]
@@ -85,7 +93,8 @@ theorem adjoint_idem {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
       mul_inv_cancel, map_one, Module.End.one_apply]
     simp
   have hfix : E (LinearMap.adjoint E x) = LinearMap.adjoint E x := by
-    rw [hadj, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hadj, map_sum]
     simp only [map_smul, hcomm, hx]
 
   have hz : LinearMap.adjoint E x - x = 0 := by

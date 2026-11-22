@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.FormsTied
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+
+@[expose] public section
 
 namespace Formalism.L2.Forms
 open Formalism.BasicNotions

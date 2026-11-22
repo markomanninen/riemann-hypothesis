@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLiftConvergesContinuousGrowthDerivStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GelfandOperatorAdjointDecayingStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivativesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOneP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaKernelLiftConvergesContinuousGrowthDerivStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GelfandOperatorAdjointDecayingStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmoothFunctionsOfClosedRightDerivativesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,8 +50,8 @@ theorem isMod_ker (hθ : IsInfFam θ) (hκ : IsKerSys θ V W κ) (f : M) (h : GA
     refine ⟨hc f', N, C * (height θ W h : ℝ) ^ N, fun g => (hC g h).trans_eq ?_⟩
     ring
 
-variable (κ) in
 
+variable (κ) in
 def lift (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (f : M) (F : GA D V → ℂ) : GA D W → ℂ :=
   fun h => ∫ g in 𝓕, κ f g h * F g ∂μ
 
@@ -57,7 +61,7 @@ theorem lift_add_left (hθ : IsInfFam θ) (hκ : IsKerSys θ V W κ) (hq : IsQuo
     (hF : F ∈ Decay θ V) (f f' : M) : lift κ μ 𝓕 (f + f') F = lift κ μ 𝓕 f F + lift κ μ 𝓕 f' F := by
   have I := (GlobalTheory.T.thetaKernelLift_converges_continuous_growth_deriv D θ hθ V W M κ hκ μ 𝓕 hq F hF).1
   funext h
-  simp only [lift, map_add, Pi.add_apply, add_mul]
+  simp only [lift, map_add (f := _), Pi.add_apply, add_mul]
   exact integral_add (I f h) (I f' h)
 
 theorem lift_add_right (hθ : IsInfFam θ) (hκ : IsKerSys θ V W κ) (hq : IsQuot V μ 𝓕) {F F' : GA D V → ℂ}
@@ -78,8 +82,8 @@ theorem lift_smul_right (c : ℂ) (F : GA D V → ℂ) (f : M) : lift κ μ 𝓕
   simp only [lift, Pi.smul_apply, smul_eq_mul, mul_left_comm _ c]
   exact integral_const_mul _ _
 
-variable (θ κ μ 𝓕) in
 
+variable (θ κ μ 𝓕) in
 def Compat (T : (GA D W → ℂ) → (GA D W → ℂ)) : Prop :=
   ∀ f, ∃ f', (∀ g, T (κ f g) = κ f' g) ∧ ∀ F ∈ Decay θ V, T (lift κ μ 𝓕 f F) = lift κ μ 𝓕 f' F
 
@@ -96,7 +100,7 @@ theorem Compat.add (hθ : IsInfFam θ) (hκ : IsKerSys θ V W κ) (hq : IsQuot V
     Compat θ κ μ 𝓕 fun φ => S φ + T φ := fun f => by
   obtain ⟨f', a, b⟩ := hS f
   obtain ⟨f'', c, d⟩ := hT f
-  exact ⟨f' + f'', fun g => by simp only [a, c, map_add, Pi.add_apply],
+  exact ⟨f' + f'', fun g => by simp only [a, c, map_add (f := _), Pi.add_apply],
     fun F hF => by simp only [b F hF, d F hF, lift_add_left hθ hκ hq hF]⟩
 
 theorem Compat.smul (c : ℂ) {T : (GA D W → ℂ) → (GA D W → ℂ)} (hT : Compat θ κ μ 𝓕 T) :

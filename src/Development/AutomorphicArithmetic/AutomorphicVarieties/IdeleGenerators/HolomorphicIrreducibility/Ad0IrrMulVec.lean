@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+
+@[expose] public section
 
 open UpperTheory.V.Af UpperTheory.V.Sd Matrix
 
@@ -287,7 +291,7 @@ theorem UpperTheory.V.Sd.ad0Irr :
         ext i
         fin_cases i <;> simp
       conv_lhs => rw [hv]
-      simp only [map_add, map_smul, smul_eq_mul]
+      simp only [map_add (f := _), map_smul, smul_eq_mul]
       ring
     apply key (f (Pi.single 0 1)) (f (Pi.single 1 1)) (f (Pi.single 2 1))
     · rintro ⟨e1, e2, e3⟩

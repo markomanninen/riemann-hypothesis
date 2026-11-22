@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LineModelKappaTransformIsLocalModel
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLinearModelLatticeVacuumBase
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LineModelKappaTransformIsLocalModel
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceLinearModelLatticeVacuumBase
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PadOneMemSecondBlockTriangular
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing
@@ -36,12 +40,15 @@ theorem isModel_ext : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolo
   have hζ0 : ζ ≠ 0 := by
     rintro rfl
     exact hζ.2 (by simp)
-  have hlat : Submodule.IsLattice D.host.E
-      (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) := by
-    refine ⟨Submodule.fg_span_singleton ζ, ?_⟩
-    rw [Submodule.span_span_of_tower]
-    apply Submodule.eq_top_of_finrank_eq
-    rw [finrank_span_singleton hζ0, Module.finrank_fin_fun, hζ.1]
+  letI : Submodule.IsLattice D.host.E
+      (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) :=
+    Submodule.IsLattice.of_fg _ (Submodule.fg_span_singleton ζ)
+  letI : Submodule.IsFullLattice D.host.E
+      (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) :=
+    ⟨by
+      rw [Submodule.span_span_of_tower]
+      exact (finrank_eq_one_iff_of_ne_zero ζ hζ0).1 (by rw [Module.finrank_fin_fun, hζ.1])⟩
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S LS hS
   have hA : ∀ u ∈ latO L S ((Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) : Set _) (LS : Set _)
       (fun _ => True), IsHalf p.e u →
       u ∈ latO L S ((Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) : Set _) (LS : Set _) (· = p.v) :=
@@ -54,11 +61,17 @@ theorem isModel_ext : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topolo
       (latO L S ((Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) : Set _) (LS : Set _) (· = p.v))
       (GlobalTheory.LocMod.Witness.ext (GlobalTheory.LocMod.Place.ofSplitPt p) FL FS Φ) := fun Φ => by
     have h0 := GlobalTheory.LocMod.Witness.ext_sb (GlobalTheory.LocMod.Place.ofSplitPt p) FL FS dL hS Φ
-    obtain ⟨M₁, p₁, h₁⟩ := GlobalTheory.DiagLiftFix.exists_nsmul_latO (S := L) (T := S) hlat.fg hS.1.fg dL.1 hS.1
-    obtain ⟨M₂, p₂, h₂⟩ := GlobalTheory.DiagLiftFix.exists_nsmul_latO (S := L) (T := S) dL.1.fg hS.1.fg hlat hS.1
+    letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ dL
+    have hfg : (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L).FG :=
+      Submodule.fg_span_singleton ζ
+    obtain ⟨M₁, p₁, h₁⟩ := GlobalTheory.DiagLiftFix.exists_nsmul_latO (ΛS' := GlobalTheory.PlaceModel.latFrame L)
+      (ΛT' := LS) hfg hS.1.fg inferInstance inferInstance
+    obtain ⟨M₂, p₂, h₂⟩ := GlobalTheory.DiagLiftFix.exists_nsmul_latO
+      (ΛS' := Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ}) (ΛT' := LS)
+      dL.1.fg hS.1.fg inferInstance inferInstance
     exact (GlobalTheory.SplitLinAt.sbHalf_congr hA hle).2 (sbHalf_of_nsmul p₁ p₂ h₁ h₂ h0)
   refine ⟨fun Φ => ?_, fun x Φ Φ' h => ?_, fun y hy Φ Φ' h => ?_⟩
-  · exact GlobalTheory.DiagLiftFix.isTheta_placeModel hψ hlat hS.1 he.1 he.2.1 (GlobalTheory.PlaceCoord.infPart_split he) hg₁ T₁ hT' _
+  · exact GlobalTheory.DiagLiftFix.isTheta_placeModel hψ inferInstance inferInstance he.1 he.2.1 (GlobalTheory.PlaceCoord.infPart_split he) hg₁ T₁ hT' _
       ((GlobalTheory.SplitLinAt.sbHalf_congr hA hle).1 (hsb Φ))
   · rw [LinearMap.comp_apply, LinearMap.comp_apply]
     refine Eq.trans (congrArg T₁ ?_) (hT.trans _ (hsb Φ) _ (GlobalTheory.LocMod.Witness.up_half (GlobalTheory.LocMod.Place.ofSplitPt p) FL FS x))

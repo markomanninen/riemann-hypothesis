@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg
 
@@ -33,14 +37,15 @@ theorem UpperTheory.height_ker_section_le_of_cotangent_generators :
       rw [smul_eq_mul, ← Localization.AtPrime.map_eq_maximalIdeal, ← Ideal.map_mul, ← pow_two]
       exact Ideal.mem_map_of_mem _ hmem
     have h3 : algebraMap S L (∑ i, o i • t i) ∈ T := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Ideal.sum_mem _ (fun i _ => ?_)
       rw [Algebra.smul_def, map_mul]
       refine Ideal.mul_mem_left _ _ (Ideal.subset_span ?_)
       simp
     have h4 : algebraMap S L (algebraMap O S e) * algebraMap S L a ∈ T ⊔ maximalIdeal L • maximalIdeal L := by
       have : algebraMap S L (algebraMap O S e) * algebraMap S L a = algebraMap S L (∑ i, o i • t i) + algebraMap S L (e • a - ∑ i, o i • t i) := by
-        rw [← map_mul, ← Algebra.smul_def, ← map_add]
+        rw [← map_mul, ← Algebra.smul_def, ← map_add (f := _)]
         congr 1
         abel
       rw [this]

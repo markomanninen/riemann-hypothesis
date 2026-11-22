@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LogNormNormaliserEqHalfDegreeLog
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RamifiedPrimePowersSizeBounds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.LogNormNormaliserEqHalfDegreeLog
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RamifiedPrimePowersSizeBounds
+
+@[expose] public section
 
 open NumberField IsDedekindDomain AlgebraicGeometry CategoryTheory Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.DivisionValues Formalism.EigenvalueLevelCeiling
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Datum Level Moduli Coeff SABMap)
@@ -34,7 +38,7 @@ theorem spanK_fg_of_subset [Module (𝓞 F) C] [IsScalarTower (𝓞 F) F C] (N :
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
     | add x y _ _ hx hy =>
-      simp only [TensorProduct.tmul_add, map_add]
+      simp only [TensorProduct.tmul_add, map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       have e : z.symm (1 ⊗ₜ[F] (a • x)) =
@@ -57,7 +61,7 @@ theorem span_spanK_eq_top (s : Set C) (hs : Submodule.span F s = ⊤) :
     | mem x hx => exact Submodule.subset_span (Submodule.subset_span ⟨x, hx, rfl⟩)
     | zero => simp
     | add x y _ _ hx hy =>
-      simp only [TensorProduct.tmul_add, map_add]
+      simp only [TensorProduct.tmul_add, map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [TensorProduct.tmul_smul, ← algebraMap_smul K, map_smul]
@@ -73,7 +77,7 @@ theorem span_spanK_eq_top (s : Set C) (hs : Submodule.span F s = ⊤) :
     rw [e, map_smul]
     exact Submodule.smul_mem _ _ (h1 f)
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ (hx trivial) (hy trivial)
 
 end General
@@ -98,23 +102,37 @@ theorem theta_spans_isLatIn : ∀ (D : D7) (B : WeightFamilies.Prov D) (P6 : Mod
     exact X.inc_inj ka e ▸ hg
   · rw [ht.Th_eq]
     apply span_spanK_eq_top
-    rw [eq_top_iff, ← hSp, Submodule.span_le]
-    intro g hg
-    set c : 𝓞 B.KO := (scalOfP B hinj EX p ka wL wF T).sK *
-      ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 B.KO) ^ (D.R.f * D.R.r * ka.n) with hc
-    have hc0 : c ≠ 0 := mul_ne_zero (scalOfP_sK_ne_zero B hinj EX p hp ka wL wF T)
-      (pow_ne_zero _ (Nat.cast_ne_zero.2
-        (Nat.mul_ne_zero (D.host.g_prime 0).ne_zero (D.host.g_prime 1).ne_zero)))
-    have hc1 : algebraMap (𝓞 B.KO) B.KO c ≠ 0 := fun h0 => hc0 (RingOfIntegers.coe_eq_zero_iff.1 h0)
-    have hmem : c • g ∈ X.Thc (scalOfP B hinj EX p ka wL wF T).sK ka :=
-      ⟨_, ⟨g, hg, rfl⟩, by rw [hc, mul_smul]; rfl⟩
-    have e : g = (algebraMap (𝓞 B.KO) B.KO c)⁻¹ • (c • g) := by
-      rw [← algebraMap_smul B.KO c g, smul_smul, inv_mul_cancel₀ hc1, one_smul]
-    rw [e]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span (Submodule.mem_sup_right ⟨_, hmem, rfl⟩))
-  · rw [eq_top_iff, ← span_spanK_eq_top z {F | X.inc ka F ∈ thetaPlain X ka wL wF T}]
-    · exact Submodule.span_mono ht.ThK_ge
-    · rw [eq_top_iff, ← hSp]
-      exact Submodule.span_mono fun g hg => Submodule.mem_sup_right ⟨g, hg, rfl⟩
-
+    apply top_unique
+    rw [← hSp]
+    apply Submodule.span_le.2
+    intro f hf
+    let a : 𝓞 B.KO := (scalOfP B hinj EX p ka wL wF T).sK
+    let b : 𝓞 B.KO := ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 B.KO) ^ (D.R.f * D.R.r * ka.n)
+    have ha : (a : B.KO) ≠ 0 := by
+      exact_mod_cast scalOfP_sK_ne_zero B hinj EX p hp ka wL wF T
+    have hb : (b : B.KO) ≠ 0 := by
+      dsimp [b]
+      exact_mod_cast pow_ne_zero (D.R.f * D.R.r * ka.n) (mul_ne_zero (D.host.g_prime 0).ne_zero (D.host.g_prime 1).ne_zero)
+    have hm : X.inc ka (a • (b • f)) ∈ X.Theta (scalOfP B hinj EX p ka wL wF T) ka wL wF T := by
+      apply (le_sup_right : X.emb ka (X.Thc a ka) ≤ X.Theta (scalOfP B hinj EX p ka wL wF T) ka wL wF T)
+      apply Submodule.mem_map.2
+      refine ⟨a • (b • f), ?_, rfl⟩
+      exact Submodule.mem_map.2 ⟨b • f, Submodule.mem_map.2 ⟨f, hf, rfl⟩, rfl⟩
+    have hs := Submodule.subset_span (R := B.KO) (s := {F | X.inc ka F ∈ X.Theta (scalOfP B hinj EX p ka wL wF T) ka wL wF T}) hm
+    have he : a • (b • f) = ((a : B.KO) * (b : B.KO)) • f := by
+      rw [← algebraMap_smul B.KO a (b • f), ← algebraMap_smul B.KO b f, smul_smul]
+    rw [he] at hs
+    have := (Submodule.span B.KO {F | X.inc ka F ∈ X.Theta (scalOfP B hinj EX p ka wL wF T) ka wL wF T}).smul_mem (((a : B.KO) * (b : B.KO))⁻¹) hs
+    change f ∈ Submodule.span B.KO {F | X.inc ka F ∈ X.Theta (scalOfP B hinj EX p ka wL wF T) ka wL wF T}
+    simpa only [smul_smul, inv_mul_cancel₀ (mul_ne_zero ha hb), one_smul] using this
+  · apply top_unique
+    have hs : Submodule.span K (spanK z (X.shortTh ka : Set _) : Set (Fin (O.nZ i) → K)) = ⊤ := span_spanK_eq_top z _ hSp
+    rw [← hs]
+    apply Submodule.span_mono
+    intro x hx
+    apply ht.ThK_ge
+    exact spanK_mono z (fun f hf => by
+      change X.inc ka f ∈ thetaPlain X ka wL wF T
+      apply (le_sup_right : X.emb ka (X.shortTh ka) ≤ thetaPlain X ka wL wF T)
+      exact Submodule.mem_map.2 ⟨f, hf, rfl⟩) hx
 end GlobalTheory.FormTies

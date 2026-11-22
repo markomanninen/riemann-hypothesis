@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.V.LinAlg.simEig :
     ∀ {K M : Type} [Field K] [IsAlgClosed K] [AddCommGroup M] [Module K M] [FiniteDimensional K M]
@@ -37,7 +41,7 @@ theorem UpperTheory.V.LinAlg.simEig :
   refine ⟨v, hSU hv, hv0, fun j => ?_⟩
   let t : A := ⟨T j, Algebra.subset_adjoin ⟨j, rfl⟩⟩
   let f : Module.End A S :=
-    { toFun := fun x => t • x
+    { toFun := fun x => ⟨t • (x : M), S.smul_mem t x.property⟩
       map_add' := fun x y => smul_add t x y
       map_smul' := fun a x => by
         apply Subtype.ext
@@ -45,4 +49,5 @@ theorem UpperTheory.V.LinAlg.simEig :
   obtain ⟨c, hc⟩ := (IsSimpleModule.algebraMap_end_bijective_of_isAlgClosed K (A := A) (V := S)).2 f
   refine ⟨c, ?_⟩
   have h := congrArg Subtype.val (LinearMap.congr_fun hc ⟨v, hv⟩)
+  change c • v = T j v at h
   exact h.symm

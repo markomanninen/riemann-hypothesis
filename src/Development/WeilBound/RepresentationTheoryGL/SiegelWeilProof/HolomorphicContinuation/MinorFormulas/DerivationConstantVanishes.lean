@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.CayDivOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.CayDivOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,10 @@ theorem sum_eq (s : ℂ) (b : Bool) (k l : Fin n) (p : Fm n) :
       rw [show ((∑ a : Fin n, ∑ d : Fin n, (k0 s b * (yv b a k * yv b l d)) • MvPolynomial.pderiv (b, a, d) :
           Derivation (Polynomial ℂ) (Fm n) (Fm n)) q) =
           Derivation.coeFnAddMonoidHom (∑ a : Fin n, ∑ d : Fin n, (k0 s b * (yv b a k * yv b l d)) • MvPolynomial.pderiv (b, a, d)) q from rfl]
-      rw [map_sum]
-      simp only [map_sum, Finset.sum_apply, Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.sum_apply, Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, smul_eq_mul]
     rw [this]
     simp only [smul_eq, k0]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun d _ => ?_
@@ -127,17 +133,17 @@ theorem key2 (s : ℂ) (b b' : Bool) (k l k' l' : Fin n) : ⁅dl s b k l, dl s b
 
 end CommPf
 
-open CommPf in
 
+open CommPf in
 theorem comm : Comm := by
   intro n s m b b' k l k' l'
   apply LinearMap.ext
   intro p
-  simp only [LinearMap.comp_apply, opH_apply, Derivation.leibniz, map_add, smul_eq_mul]
-  have h2 : dl s b k l (dl s b' k' l' p) = dl s b' k' l' (dl s b k l p) := by
-    have := congrArg (fun D : Derivation (Polynomial ℂ) (Fm n) (Fm n) => D p) (key2 s b b' k l k' l')
+  simp only [LinearMap.comp_apply, CommPf.opH_apply, Derivation.leibniz, map_add (f := _), smul_eq_mul]
+  have h2 : CommPf.dl s b k l (CommPf.dl s b' k' l' p) = CommPf.dl s b' k' l' (CommPf.dl s b k l p) := by
+    have := congrArg (fun D : Derivation (Polynomial ℂ) (Fm n) (Fm n) => D p) (CommPf.key2 s b b' k l k' l')
     simpa [Derivation.commutator_apply, sub_eq_zero] using this
-  rw [h2, key1 s m b b' k l k' l']
+  rw [h2, CommPf.key1 s m b b' k l k' l']
   ring
 
 end PositivityTheory.Rg.Sw.SP

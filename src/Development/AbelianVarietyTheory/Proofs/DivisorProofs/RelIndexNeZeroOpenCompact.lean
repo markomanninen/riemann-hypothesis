@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolConjEqOneOfMassCNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MassMulVolumeCommensurable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolEqIdxRatio
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumDoubleCosetFoldIntermediateSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedCentralizerMassNeZeroOfMemSupportStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointSide
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolConjEqOneOfMassCNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MassMulVolumeCommensurable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VolEqIdxRatio
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinsumDoubleCosetFoldIntermediateSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedCentralizerMassNeZeroOfMemSupportStatement
+
+@[expose] public section
 
 open GlobalTheory.LKCount
 

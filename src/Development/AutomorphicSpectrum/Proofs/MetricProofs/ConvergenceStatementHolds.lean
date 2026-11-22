@@ -1,13 +1,18 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.CompactPartIntegralsTendsto
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsCompactRWSublevel
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MaMeasureEqOfConst
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHolds
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedEnergyRegularizationBoundStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.LeviForms.ConvExpandStatement
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.CompactPartIntegralsTendsto
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsCompactRWSublevel
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MaMeasureEqOfConst
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHolds
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedEnergyRegularizationBoundStatement
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 

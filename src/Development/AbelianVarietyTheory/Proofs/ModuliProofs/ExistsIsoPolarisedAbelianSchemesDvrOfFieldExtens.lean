@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SemiAbelianHomExtensionDvr
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LineBundleIsoDescendsFieldToDedekindDomain
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsMonHomIffOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SemiAbelianHomExtensionDvr
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LineBundleIsoDescendsFieldToDedekindDomain
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsSchemeTheoreticallyDominantSpecOfInjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsMonHomIffOfIsGrpPullback
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -130,8 +134,25 @@ theorem exists_iso_over_dvr : Laws → Laws2 → ∀ (V : Type) [CommRing V] [Is
   have hm : IsMonHom f.hom := hl.rigidity _ _ _ (isAbelianScheme_pullback _ _ P.isAb)
     (isAbelianScheme_pullback _ _ P'.isAb) f.hom hf₁
   have hm' : IsMonHom f.inv := inferInstance
-  have hs := isSemiAbelian_of_isAbelianScheme P.A P.isAb
-  have hs' := isSemiAbelian_of_isAbelianScheme P'.A P'.isAb
+  have semi_of_ab {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsAbelianScheme B) : IsSemiAbelian B := by
+    have := h.proper
+    refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
+    intro Ω _ _ p
+    have hab := isAbelianScheme_pullback p B h
+    refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
+              q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
+              i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · have := hab.comm; infer_instance
+    · have hident : 𝟙 (splitTorus (Spec (CommRingCat.of Ω)) PUnit) = 1 := by
+        rw [← Diag.diagMap_id, ← Diag.diagMap_zero]
+        congr 1
+      have : IsIso (toUnit (splitTorus (Spec (CommRingCat.of Ω)) PUnit)) := ⟨η, hident.symm, toUnit_unique _ _⟩
+      exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
+  have hs := semi_of_ab P.A P.isAb
+  have hs' := semi_of_ab P'.A P'.isAb
   obtain ⟨F, ⟨hF, eF⟩, -⟩ := homExtension_semiAbelian_dvr_unconditional V (FractionRing V) P.A P'.A hs hs' f.hom hm
   obtain ⟨G, ⟨-, eG⟩, -⟩ := homExtension_semiAbelian_dvr_unconditional V (FractionRing V) P'.A P.A hs' hs f.inv hm'
   obtain ⟨_, _⟩ := ExtUnique.spec_fractionRing V (FractionRing V)
@@ -145,6 +166,20 @@ theorem exists_iso_over_dvr : Laws → Laws2 → ∀ (V : Type) [CommRing V] [Is
     rw [← hf, ← eF, Over.comp_left, ← toBase_fst (jFK (R := V) C) (jK V) P.A, Category.assoc]
     exact congrArg (_ ≫ ·) (ExtUnique.pullback_map_left_fst (jK V) F)
   refine ⟨asIso F, hF, e, ?_⟩
+  have pull_isLB {X Y : Scheme.{0}} {L : LB X} (hL : L.IsLB) (F : Y ⟶ X) : (L.pull F).IsLB := by
+    refine { cover := top_le_iff.1 ?_, g_self := ?_, cocycle := ?_ }
+    · intro y _
+      obtain ⟨i, hi⟩ := exists_chart hL (F y)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
+    · intro J
+      refine unit_ext fun y hy => ?_
+      rw [gm_res (𝟙 Y) y _ hy, map_one, gm_pull_g L F (𝟙 Y) y J J hy hy]
+      exact gm_self hL _ y (mem_pull.1 hy)
+    · intro I J K
+      refine unit_ext fun y hy => ?_
+      rw [map_mul, gm_res (𝟙 Y) y _ hy, gm_res (𝟙 Y) y _ hy, gm_res (𝟙 Y) y _ hy, gm_pull_g L F (𝟙 Y) y I J hy.1.1 hy.1.2,
+        gm_pull_g L F (𝟙 Y) y J K hy.1.2 hy.2, gm_pull_g L F (𝟙 Y) y I K hy.1.1 hy.2]
+      exact gm_cocycle hL _ y (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
   have hN := pull_isLB P'.isLB F.left
   have hβ : jFK (R := V) C ≫ jK V =
       spMap ((algebraMap (FractionRing V) C).comp (algebraMap V (FractionRing V))) := (Spec.map_comp _ _).symm
@@ -152,12 +187,21 @@ theorem exists_iso_over_dvr : Laws → Laws2 → ∀ (V : Type) [CommRing V] [Is
     ((algebraMap (FractionRing V) C).injective.comp (IsFractionRing.injective V (FractionRing V))) P.A P.isAb _
     (snd (TF (R := V) C) P.A).left (fst (TF (R := V) C) P.A).left (hβ ▸ isPullback_snd (TF (R := V) C) P.A)
     P.L (P'.L.pull F.left) P.isLB hN ?_ ?_
+  all_goals
+    obtain ⟨Pic, groups, cl, pl, iso_iff, gen_iff, -, comp, linComb, -⟩ := CechPicMul.exists_picardGroup
+    let _ := groups
+    have pull_class {S T : Scheme.{0}} (f : T ⟶ S) {L : LB S} (hL : L.IsLB) :
+        (L.pull f).IsLB ∧ cl (L.pull f) = pl f (cl L) := by
+      simpa only [Fintype.prod_unique, zpow_one] using
+        linComb S T L hL PUnit (fun _ => f) (fun _ => 1)
   · have eF' : eSec P.A ≫ F.left = eSec P'.A := congrArg (·.left) (IsMonHom.one_hom F)
-    rw [← CechPic.cls_eq_iff (pull_isLB P.isLB _) (pull_isLB hN _),
-      (CechPic.cls_eq_zero_iff _).2 P.rigid, CechPic.cls_pull hN, CechPic.cls_pull P'.isLB, ← CechPic.pull_comp, eF',
-      ← CechPic.cls_pull P'.isLB _ (pull_isLB P'.isLB _), (CechPic.cls_eq_zero_iff _).2 P'.rigid]
-  · rw [← CechPic.cls_eq_iff (pull_isLB P.isLB _) (pull_isLB P'.isLB _), CechPic.cls_pull P'.isLB, e] at hL
-    rw [← CechPic.cls_eq_iff (pull_isLB P.isLB _) (pull_isLB hN _), hL, CechPic.cls_pull hN,
-      CechPic.cls_pull P'.isLB, ← CechPic.pull_comp, Over.comp_left]
+    apply (iso_iff _ _ _ (pull_isLB P.isLB _) (pull_isLB hN _)).1
+    rw [(gen_iff _ _ (pull_isLB P.isLB _)).2 P.rigid,
+      (pull_class _ hN).2, (pull_class _ P'.isLB).2, ← comp, eF',
+      ← (pull_class _ P'.isLB).2, (gen_iff _ _ (pull_isLB P'.isLB _)).2 P'.rigid]
+  · apply (iso_iff _ _ _ (pull_isLB P.isLB _) (pull_isLB hN _)).1
+    have hL' := (iso_iff _ _ _ (pull_isLB P.isLB _) (pull_isLB P'.isLB _)).2 hL
+    rw [(pull_class _ P'.isLB).2, e] at hL'
+    rw [hL', (pull_class _ hN).2, (pull_class _ P'.isLB).2, ← comp, Over.comp_left]
 
 end GlobalTheory.IsoOverField

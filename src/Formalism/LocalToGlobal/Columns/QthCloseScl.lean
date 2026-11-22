@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.QthExistsBound
+module
+
+public import Formalism.LocalToGlobal.Columns.QthExistsBound
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

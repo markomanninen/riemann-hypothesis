@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CthFac
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CthFac
+
+@[expose] public section
 
 noncomputable section
 

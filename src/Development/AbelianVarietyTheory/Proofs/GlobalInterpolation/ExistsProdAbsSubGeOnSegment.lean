@@ -1,10 +1,15 @@
-import Mathlib
-open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology
+module
+
+public import Mathlib
+
+@[expose] public section
+
+open Complex DirichletCharacter ArithmeticFunction MeasureTheory Filter Topology Polynomial
 
 namespace GlobalTheory
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_prod_abs_sub_ge_on_segment : ∀ (N : ℕ) (x : Fin N → ℝ) (a δ : ℝ), 0 < δ →
     ∃ r : ℝ, a ≤ r ∧ r ≤ a + δ ∧ (δ / (2 * Real.exp 1)) ^ N ≤ ∏ i, |r - x i| := by
   intro N x a δ hδ

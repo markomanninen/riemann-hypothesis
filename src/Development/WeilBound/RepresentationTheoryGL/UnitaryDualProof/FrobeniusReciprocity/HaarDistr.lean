@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
-import GroundTheory.AutomorphicForms.LocallyConstantCompact
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.FrobeniusReciprocity.PowNear
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
+public import GroundTheory.AutomorphicForms.LocallyConstantCompact
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.FrobeniusReciprocity.PowNear
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,11 +52,6 @@ def mulLC (ψ : G → ℂ) (hψ : IsLocallyConstant ψ) : SB G →ₗ[ℂ] SB G 
     show ψ x * (c * (α : G → ℂ) x) = c * (ψ x * (α : G → ℂ) x)
     ring
 
-@[simp]
-theorem mulLC_apply (ψ : G → ℂ) (hψ : IsLocallyConstant ψ) (α : SB G) (x : G) :
-    ((mulLC ψ hψ α : SB G) : G → ℂ) x = ψ x * (α : G → ℂ) x :=
-  rfl
-
 def ind (K : OpenSubgroup G) (hK : IsCompact (K : Set G)) : SB G :=
   ⟨(K : Set G).indicator (fun _ => (1 : ℂ)),
     indicator_mem_locallyConstantCompactSupport (R := ℂ) hK K.isOpen 1⟩
@@ -66,7 +65,7 @@ theorem exists_sum_eq (K : OpenSubgroup G) (hKc : IsCompact (K : Set G)) (f : SB
   set t := (finite_image_mk_tsupport K hf).toFinset with ht
   have key : f = ∑ x ∈ t, ((f : G → ℂ) x.out) • transl x.out (ind K hKc) := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     refine (eq_sum_indicator_coset K hf hK).trans (Finset.sum_congr rfl fun x _ => ?_)
     funext y
     show (x.out • (K : Set G)).indicator (fun _ => (f : G → ℂ) x.out) y =
@@ -78,7 +77,8 @@ theorem exists_sum_eq (K : OpenSubgroup G) (hKc : IsCompact (K : Set G)) (f : SB
       rw [Set.indicator_of_notMem hy, Set.indicator_of_notMem hy', mul_zero]
   refine ⟨∑ x ∈ t, (f : G → ℂ) x.out, fun Φ hΦ => ?_⟩
   conv_lhs => rw [key]
-  rw [_root_.map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [_root_.map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_smul, hΦ, smul_eq_mul]
 

@@ -1,18 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
-import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.MulLatMulLat
-import Formalism.LocalToGlobal.Columns.TiedValBwG
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FnOfMapInjective
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ClassLatticeSelfDual
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsIsLocBasisClsP
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoMTSOfGaInv
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PtCoMemIntSpan
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPtEmbOfCoordInt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HilbertRowConditions.RowPin
+public import Formalism.LocalToGlobal.KernelLattices.InterlaceAll
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.GlobalSchurBounds.FiniteModelOfAdmissibleTransports
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NfAllSmulReB
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.MulLatMulLat
+public import Formalism.LocalToGlobal.Columns.TiedValBwG
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FnOfMapInjective
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ClassLatticeSelfDual
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsIsLocBasisClsP
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.CoMTSOfGaInv
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PtCoMemIntSpan
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsPtEmbOfCoordInt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Forms
 
 namespace GlobalTheory.RedPt0Pend
@@ -77,7 +82,7 @@ theorem cols_mulVec {E : Type} [Field E] {N n : ℕ} (hN : n + 1 = N) (A : Matri
 
 theorem hform_add_left' {E : Type} [Field E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E) (x x' y : Fin n → E) :
     Formalism.UG.hform σ J (x + x') y = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x' y := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_add_right' {E : Type} [Field E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E) (x y y' : Fin n → E) :
     Formalism.UG.hform σ J x (y + y') = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x y' := by
@@ -89,8 +94,8 @@ section Dual
 
 open Matrix Formalism.L2.GlobalTheoryTheory.Br Formalism.UG
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem mem_dual_tilde_iff {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
     (Tf : FormsTiedSym D u Ch chOf) (c : (D.fm u).clsP) (a : Fin (D.R.N D.R.m - 1) → D.host.E) (t : D.host.E) :
     iXc D a + (t / ((D.mem u).A.T : D.host.E)) • Tf.til.z0 ∈
@@ -127,8 +132,8 @@ theorem mem_dual_tilde_iff {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {ch
     refine add_mem (hSD.1 ha x hx) (mul_mem ?_ ht)
     exact ⟨⟨_, r.2.map (sigD D : D.host.E →+* D.host.E).toIntAlgHom⟩, rfl⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_isLocBasis_dual (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type) (chOf : ∀ i, (D.mem u).C.cls i → Ch i)
     (Tf : FormsTiedSym D u Ch chOf) (w : D.what₂.places.Pl) (c : (D.fm u).clsP) (B : GL (Fin (D.R.N D.R.m - 1)) D.host.E)
     (hB : IsLocBasis (D.what₂.places.resChar w) (Tf.clsP.lat c : Set (Fin (D.R.N D.R.m - 1) → D.host.E)) B) :
@@ -179,7 +184,7 @@ theorem mem_localization_delAtr_of_basis {E K : Type} [Field E] [NumberField E] 
     {ι : Type} [Fintype ι] {n : ℕ} (emb : ι → E →+* K) (s : K →+* ℂ) (eT : ι → E →+* ℂ)
     (he : embAt s emb = eT) (J : Matrix (Fin n) (Fin n) E)
     (lam lam' : ι → DomWeight n) (hn : ∀ τ, (lam τ).natW = (lam' τ).natW)
-    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsLattice E M) (F : VV K lam) (w : Pl.Pl) (B : GL (Fin n) E)
+    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsFullLattice E M) (F : VV K lam) (w : Pl.Pl) (B : GL (Fin n) E)
     (hB : IsLocBasis (Pl.resChar w) (M : Set (Fin n → E)) B)
     (h : Formalism.L2.Forms.fnInv (gramC J eT) (shiftOf lam) (atInf eT (B : Matrix (Fin n) (Fin n) E)⁻¹)
       (fnOf (gramC J eT) (shiftOf lam) 1 (MvPolynomial.map s F.1)) ∈ vlIntSpan s Pl w lam') :
@@ -198,16 +203,21 @@ theorem local_of_mem_delAtr {E K : Type} [Field E] [NumberField E] [Field K] [Nu
     {ι : Type} [Fintype ι] {n : ℕ} (emb : ι → E →+* K) (s : K →+* ℂ) (eT : ι → E →+* ℂ)
     (he : embAt s emb = eT) (hpw : Function.Surjective pw) (J : Matrix (Fin n) (Fin n) E)
     (lam lam' : ι → DomWeight n) (hn : ∀ τ, (lam τ).natW = (lam' τ).natW)
-    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsLattice E M) (F : VV K lam) (hF : F ∈ delAtr emb lam M)
+    (M : Submodule (𝓞 E) (Fin n → E)) (hM : Submodule.IsFullLattice E M) (F : VV K lam) (hF : F ∈ delAtr emb lam M)
     (w : Pl.Pl) (B : GL (Fin n) E) (hB : IsLocBasis (Pl.resChar w) (M : Set (Fin n → E)) B) :
     ∃ P ∈ vlIntSpan s Pl w lam',
       fnOf (gramC J eT) (shiftOf lam) 1 (MvPolynomial.map s F.1) =
         fnOf (gramC J eT) (shiftOf lam) (atInf eT (B⁻¹ : GL (Fin n) E).1) P := by
   subst he
-  exact (vl_mem_delAtr_iff Pl pw hval emb s hpw J lam lam' hn M hM F).1 hF w B hB
+  have hbas : ∀ τ, IsBasisAt (pw w) (dualFr (tauLat emb τ M)) (vlBd emb B τ) := fun τ =>
+    pb_isBasisAt_dualFr (pw w) _ (tauLatticeLattice_holds E K ι n emb τ M hM).fg _
+      (vl_isBasisAt_tauLat Pl pw hval emb τ w M B hB)
+  change F.1 ∈ transLat lam (delStd K lam) (fun τ => dualFr (tauLat emb τ M)) at hF
+  rw [nb_mem_transLat] at hF
+  exact ⟨_, vl_map_mem_intSpan Pl pw hval s w lam lam' hn (hF (pw w) _ hbas), vl_coord emb s J lam B F⟩
+
 
 set_option maxHeartbeats 1000000 in
-
 theorem mem_SP_of_coord_integral (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type) (chOf : ∀ i, (D.mem u).C.cls i → Ch i)
     (Tf : FormsTiedSym D u Ch chOf) (B : D.what₂.places.Pl → (D.fm u).clsP → GL (Fin (D.R.N D.R.m - 1)) D.host.E)
     (hB : ∀ w c, IsLocBasis (D.what₂.places.resChar w) (Tf.clsP.lat c : Set (Fin (D.R.N D.R.m - 1) → D.host.E)) (B w c))
@@ -217,7 +227,8 @@ theorem mem_SP_of_coord_integral (D : D7) (u : D.what₂.Word) (Ch : ℕ → Typ
         Formalism.MainNotions.product_first_zeroth_parts.IntSpan D w (D.fm u).sg) : y ∈ (D.fm u).SP w := by
   classical
   obtain ⟨val, hval⟩ := GlobalTheory.Core.exists_ptVal D u Tf.clsP Tf.valP
-  have hK := fun c => (GlobalTheory.ClassLatticeSelfDual.classLattice_selfDual D u Tf.clsP c).1
+  have hK := fun c => Formalism.MainNotions.G.ChF.isLattice_of_hat Tf.clsP.lev.Lb
+    (Tf.clsP.lat c) Tf.clsP.lev.Lb_fin Tf.clsP.lev.Lb_span (Tf.clsP.y c).1 (Tf.clsP.y_lat c)
   have he : embAt D.what₂.embLL (fun τ : D.what₂.Tau =>
       D.embE.comp (D.host.sigmaOf (D.eTau τ : D.R.GG) : D.host.E →+* D.host.E)) = embT D := by
     funext τ
@@ -286,8 +297,8 @@ theorem root_mem_intW (D : D7) (w : D.what₂.places.Pl) (r : D.what₂.LL) (n :
   rw [h1] at this
   exact lt_irrefl _ this
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_integralPendingObject_symmetricFormsLevel : ∀ (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type) (chOf : ∀ i, (D.mem u).C.cls i → Ch i) (Tf : FormsTiedSym D u Ch chOf), Formalism.L2.Rows.LowerMapTieS Tf → Formalism.L2.Ker.BeOnTie D u → (∃ n : ℕ, 0 < n ∧ ∀ x : (Tf.cls D.R.m le_rfl (Or.inr rfl)).lev.U, (((Tf.cls D.R.m le_rfl (Or.inr rfl)).lev.chi x : ℂˣ) : ℂ) ^ n = 1 ∧ ∃ r : D.what₂.LL, D.what₂.embLL r = (((Tf.cls D.R.m le_rfl (Or.inr rfl)).lev.chi x : ℂˣ) : ℂ)) → ∃ P : Formalism.MainNotions.product_first_zeroth_parts.Pend D u, Formalism.MainNotions.product_first_zeroth_parts.ArchimedeanSignatureMatching P := by
   intro D u Ch chOf Tf hMap hBe hχ
   choose B hB using GlobalTheory.ClsPLocBasis.exists_isLocBasis_clsP D u Ch chOf Tf
@@ -319,7 +330,7 @@ theorem exists_integralPendingObject_symmetricFormsLevel : ∀ (D : D7) (u : D.w
       rw [GlobalTheory.coMTS_of_gaInv D u Ch chOf Tf Bm w c B' (hBu w c) hB'eq _ P hPv, hχr]
       exact intSpan_smul' D w _ _ hri P hP
     | zero => rw [map_zero, Pi.zero_apply, map_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [map_add, Pi.add_apply, map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _), Pi.add_apply, map_add (f := _)]; exact add_mem hy hz
     | smul a y _ hy =>
       have e : a • y = (a : D.what₂.LL) • y := rfl
       rw [e, LinearMap.map_smulₛₗ, Pi.smul_apply, map_smul]

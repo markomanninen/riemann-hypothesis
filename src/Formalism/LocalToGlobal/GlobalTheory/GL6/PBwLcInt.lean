@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwDecomp
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompact
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwDecomp
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompact
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsScale
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,9 @@ theorem bwL_descent (F E : Type) [Field F] [NumberField F] [Field E] [NumberFiel
 
 variable (D : D7) (u : D.what₂.Word)
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem bwL_lcInt (Tt : FormsTied D u) : BwLcInt D u := by
   intro i hi c x hx
   apply Submodule.subset_span

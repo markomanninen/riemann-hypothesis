@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,9 +25,6 @@ structure Core5 (R : RealDat D A Ks) (F : Face D A) : Prop where
   fam : R.IsFam
   models : R.IsModels
   thP : R.IsThP
-
-theorem Core5.of_char {R : RealDat D A Ks} {F : Face D A} (h : R.Char F) : Core5 R F :=
-  ⟨h.lev, h.grp, h.fam, h.models, h.thP⟩
 
 theorem Core5.of_core {R : RealDat D A Ks} {F : Face D A} (h : GlobalTheory.Hk3.Core R F) : Core5 R F :=
   ⟨h.lev, h.grp, h.fam, h.models, h.thP⟩

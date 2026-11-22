@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagGramRestriction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagGramRestriction
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -66,8 +70,9 @@ theorem co_abs {W : Type 1} [AddCommGroup W] [Module B W] {m r : ℕ} (hr : r < 
           obtain ⟨b, hb⟩ := h1 _ n
           rw [hg, ← (e a ha).apply_symm_apply x, he a ha n b _ hb]
           exact hgen a ha b _
-      | add t t' ht ht' => rw [Pi.single_add, map_add]; exact hadd _ _ ht ht'
-    rw [← g.apply_symm_apply w, ← Finset.univ_sum_single (g.symm w), map_sum]
+      | add t t' ht ht' => rw [Pi.single_add, map_add (f := _)]; exact hadd _ _ ht ht'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← g.apply_symm_apply w, ← Finset.univ_sum_single (g.symm w), map_sum]
     exact Finset.sum_induction _ P hadd h0 (fun i _ => key i _)
   · let coT : (∀ i, N i ⊗[K] M i) →+ ∀ a, Module.Dual K (H a) →+ E :=
       { toFun := fun T a => if ha : a ≤ r then
@@ -103,6 +108,6 @@ theorem co_abs {W : Type 1} [AddCommGroup W] [Module B W] {m r : ℕ} (hr : r < 
     · intro a ha w
       show coT (g.symm w) a = 0
       simp only [coT, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
-      rw [dif_neg (by omega)]
+      rw [dite_eq_right (by omega)]
 
 end CrystallineSemistableComparison.HT.CoA

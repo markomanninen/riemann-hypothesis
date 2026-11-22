@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
-open Topology Filter in
 
+open Topology Filter in
 theorem exists_subfield_valuation_closure :
     ∀ (U : Type) [Field U] (v : Valuation U (WithZero (Multiplicative ℤ))) (S : Subfield U),
       ∃ S' : Subfield U, ∀ u, u ∈ S' ↔

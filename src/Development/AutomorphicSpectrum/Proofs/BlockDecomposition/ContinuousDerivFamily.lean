@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.EisensteinGrowthForms.LocFinType
-import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.EisensteinGrowthForms.LocFinType
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
+
+@[expose] public section
 
 noncomputable section
 

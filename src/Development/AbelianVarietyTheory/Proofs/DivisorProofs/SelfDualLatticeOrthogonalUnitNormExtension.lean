@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjRelEquiv
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ValIrreducible
+
+@[expose] public section
+
 open NumberField GlobalTheory.UnitaryBC IsDedekindDomain Matrix Polynomial GlobalTheory.CuspRep Formalism.UG GlobalTheory.BCT GlobalTheory.KapLat
 open scoped Classical
 
@@ -18,7 +23,7 @@ theorem selfDual_orthogonal_unit_step : ∀ (K : GlobalTheory.UnitLemma.UQ) (V :
   have alg_inj : Function.Injective (algebraMap K.O K.E) := IsFractionRing.injective K.O K.E
   have hadd2 : ∀ y z z', h y (z + z') = h y z + h y z' := by
     intro y z z'
-    rw [hsym (z + z') y, hadd, map_add, ← hsym, ← hsym]
+    rw [hsym (z + z') y, hadd, map_add (f := _), ← hsym, ← hsym]
   have hsmul2 : ∀ (a : K.E) y z, h y (a • z) = K.c a * h y z := by
     intro a y z
     rw [hsym (a • z) y, hsmul, map_mul, ← hsym]

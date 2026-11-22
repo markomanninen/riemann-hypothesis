@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ReadsMove
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsChartsReadingStepZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ReadsMove
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsChartsReadingStepZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepZeroClassesBijectiveSameDeco
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix GlobalTheory.TwU GlobalTheory.TwU.AtTrue
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -17,7 +22,7 @@ theorem latAt_eCls0 (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (c : (I.stp
     I.latAt u a 0 (I.eCls0 l u a c) = I.latAt u I.mu0 0 c := by
   have e : I.eCls0 l u a c = I.cl0 u a (l.idx0 a).some c := rfl
   unfold TC.latAt
-  rw [dif_pos (Nat.zero_le _), dif_pos (Nat.zero_le _), e, ClsZero.stepZero_corresponding_representatives_same_deco hI]
+  rw [dite_eq_left (Nat.zero_le _), dite_eq_left (Nat.zero_le _), e, ClsZero.stepZero_corresponding_representatives_same_deco hI]
 
 theorem range_eCls0 (hI : I.Ok) (l : I.Laws) (u : B.Word) (a : I.ι) (c : (I.stp u I.mu0 0).Cl)
     (γ : GL (Fin (B.R.N 0)) B.host.E) :
@@ -48,8 +53,8 @@ namespace GlobalTheory.TwU.AtTrue.ZeroChart
 
 open scoped TensorProduct
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chart_of_member : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) (Q : Finset (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))) (K : ClsTied (D := (I.rec7 l Z)) u 0 (Nat.zero_le _)) (κ : (I.stp u I.mu0 0).Cl → K.lev.U), (∀ c s, (K.stabI c s).1 = (I.stp u I.mu0 0).gam c.1 s.1) → ∃ K0 : Fam I l Z u a 0 (Nat.zero_le _) (badQ (I.rec7 l Z) Q) (fun _ => ()), (K0 ()).lev.Lb = K.lev.Lb ∧ (K0 ()).lev.Uloc = K.lev.Uloc ∧ (K0 ()).lev.U = K.lev.U ∧ (∀ (x : (K0 ()).lev.U) (x' : K.lev.U), x.1 = x'.1 → (K0 ()).lev.chi x = K.lev.chi x') ∧ (∀ c, ((K0 ()).y ⟨I.eCls0 l u a c, rfl⟩).1 = (K.y c).1 * (κ c).1) ∧ ∀ c s, ((K0 ()).stabI c s).1 = (I.stp u a 0).gam c.1.1 s.1 := by
   intro B X I hI hP l Z u a Q K κ hK
   have hi : 0 ≤ B.R.m := Nat.zero_le _
@@ -82,7 +87,7 @@ theorem chart_of_member : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok �
     exact (congrArg (fun g => g ∈ UJ (sigD (I.rec7 l Z) : (I.rec7 l Z).host.E →+* (I.rec7 l Z).host.E) (gramN (I.rec7 l Z) 0 hi))
       (hK (e.symm c'') t)).mp (K.stabI (e.symm c'') t).2
   have hcls : ∀ c, (Quotient.mk'' (K.y c * κU c) : Cls K.lev) = Quotient.mk'' (K.y c) := fun c => by
-    refine (DoubleCoset.eq _ _ _ _).2 ⟨1, one_mem _, (κU c)⁻¹, ?_, by group⟩
+    refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨1, one_mem _, (κU c)⁻¹, ?_, by group⟩
     exact inv_mem (κ c).2
   refine ⟨fun _ =>
     { lev :=
@@ -103,7 +108,11 @@ theorem chart_of_member : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok �
     rw [hlat c'.1]
     refine (K.y_lat (e.symm c'.1) x).trans ?_
     show _ ↔ ((((K.y (e.symm c'.1)).1 * (κ (e.symm c'.1)).1)⁻¹).1 *ᵥ x ∈ _)
-    rw [_root_.mul_inv_rev, Units.val_mul, ← Matrix.mulVec_mulVec]
+    have hm : ∀ (g h : GL (Fin ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.N 0)) ((_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).host.E ⊗[(_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).host.F] FiniteAdeleRing (𝓞 (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).host.F) (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).host.F)),
+        ((g * h)⁻¹).1 *ᵥ x = (h⁻¹).1 *ᵥ ((g⁻¹).1 *ᵥ x) := by
+      intro g h
+      rw [_root_.mul_inv_rev, Units.val_mul, Matrix.mulVec_mulVec]
+    rw [hm (K.y (e.symm c'.1)).1 (κ (e.symm c'.1)).1]
     exact (inv_mem (hL _)).2 _
   · intro c' γ
     have h1 : γ ∈ ((MemChart.stM (Chart0.lvG I a) (Chart0.lvQ I a) ((I.Tp a).pref u 0) (I.pref u a 0) c'.1).codRestrict _ (hmem c'.1)).range ↔

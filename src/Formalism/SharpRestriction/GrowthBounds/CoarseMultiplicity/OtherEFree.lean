@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ChainEmbInj
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.ChainEmbInj
+
+@[expose] public section
 
 noncomputable section
 

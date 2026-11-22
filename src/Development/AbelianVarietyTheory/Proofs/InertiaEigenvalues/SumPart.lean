@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnitDualParts
-import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.UnitsOfFieldDD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfWachMonoidal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.UnitDualParts
+public import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.UnitsOfFieldDD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitSumTensorDualOfWachMonoidal
+
+@[expose] public section
 
 namespace GlobalTheory.WachSum
 

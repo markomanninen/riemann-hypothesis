@@ -1,16 +1,20 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LieSkewAdjointMatrix
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNonnegBump
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalConvolutionCompactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalKTypeFiniteStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSmoothModuleUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspFiniteVectorsHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleCuspidalFormL2Mem
-import GroundTheory.PAdicHodge.ACrisBdR
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.CuspDiscreteDecompositionOfTraceClass
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LieSkewAdjointMatrix
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNonnegBump
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalConvolutionCompactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NormalisedCuspFormL2Bounded
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalKTypeFiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSmoothModuleUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspFiniteVectorsHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleCuspidalFormL2Mem
+public import GroundTheory.PAdicHodge.ACrisBdR
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ open scoped InnerProductSpace
 
 namespace GlobalTheory.CompanionTheory.FinitePart
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
   {μ : Measure (GA E a)} [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
 
 theorem enoughCompact_Rcusp : EnoughCompact (Rcusp μ) := by
@@ -42,10 +46,10 @@ theorem exists_irred_le {C : Submodule ℂ (L2 (latticeGL E a) μ)} (hC : IsSubr
   obtain ⟨X, hX, hi⟩ := enoughCompact_Rcusp.exists_irred_le (isUnitaryRep_Rcusp μ) hW hW0
   exact ⟨X.map (L2cusp μ).subtype, e ▸ Submodule.map_mono hX, isIrredSubrep_map hi⟩
 
-open GlobalTheory.ExpDeriv in
 
+open GlobalTheory.ExpDeriv in
 theorem lie_mem {Z : Submodule ℂ (L2 (latticeGL E a) μ)} (hZ : IsSubrep (R (latticeGL E a) μ) Z)
-    {W : Submodule ℂ (Sm E a)} (h : ∀ φ ∈ W, MemL2Quotient (latticeGL E a) μ φ.1) (hW : IsStable W)
+    {W : Submodule ℂ (Sm E a)} (h : ∀ φ ∈ W, MemL2Quotient (latticeGL E a) μ φ.1) (hW : _root_.GlobalTheory.CuspRep.IsStable W)
     (hA : ∀ φ ∈ W, IsAutForm φ) (X : Lie E a) (φ : W) (hφ : toL2ₗ μ W h φ ∈ Z) :
     toL2ₗ μ W h ⟨_, hW (.lie X) φ.1 φ.2⟩ ∈ Z := by
   have := hZ.completeSpace
@@ -77,7 +81,7 @@ theorem eq_zero_of_mem_orthogonal {π : CuspSub E a} (hm : ∀ φ ∈ π.V, MemL
     (hle : H ≤ (classes π.V μ).topologicalClosure) (ψ : π.V) (hψ : toL2ₗ μ π.V hm ψ ∈ Hᗮ) : ψ = 0 := by
   have hZ : IsSubrep (R (latticeGL E a) μ) Hᗮ := hH.orthogonal (isUnitaryRep_R (latticeGL E a) μ)
   let N : Submodule ℂ (Sm E a) := (Hᗮ.comap (toL2ₗ μ π.V hm)).map π.V.subtype
-  have hNs : IsStable N := by
+  have hNs : _root_.GlobalTheory.CuspRep.IsStable N := by
     rintro o _ ⟨θ, hθ, rfl⟩
     cases o with
     | fin k =>
@@ -106,7 +110,7 @@ theorem eq_zero_of_mem_orthogonal {π : CuspSub E a} (hm : ∀ φ ∈ π.V, MemL
       have := (Submodule.mem_orthogonal' _ _).1 (hcl' (hle hx)) x hx
       exact (Submodule.mem_bot ℂ).2 (inner_self_eq_zero.1 this))
 
-theorem mem_of_toL2_mem_irreducible {W : Submodule ℂ (Sm E a)} (hW : IsStable W) (hWa : ∀ φ ∈ W, IsAutForm φ)
+theorem mem_of_toL2_mem_irreducible {W : Submodule ℂ (Sm E a)} (hW : _root_.GlobalTheory.CuspRep.IsStable W) (hWa : ∀ φ ∈ W, IsAutForm φ)
     (hWm : ∀ φ ∈ W, MemL2Quotient (latticeGL E a) μ φ.1) {C H : Submodule ℂ (L2 (latticeGL E a) μ)}
     (hC : IsSubrep (R (latticeGL E a) μ) C) (hcl : (classes W μ).topologicalClosure = C)
     (hcusp : H ≤ L2cusp μ) (hirr : IsIrredSubrep (R (latticeGL E a) μ) H) (hHC : H ≤ C)
@@ -225,8 +229,8 @@ theorem mem_of_toL2_mem_irreducible {W : Submodule ℂ (Sm E a)} (hW : IsStable 
   rwa [show φ = ψ from Subtype.ext ((Continuous.ae_eq_iff_eq μ (ContAut.continuous_of_isOpen_stab E a φ hφ.level)
     (ContAut.continuous_of_isOpen_stab E a ψ (hWa ψ hψ).level)).1 (h.lift_toL2_ae_eq.symm.trans e))]
 
-variable (μ) in
 
+variable (μ) in
 theorem exists_isFinitePartOf (π : CuspSub E a) (hπ : IsNormalised π) :
     ∃ H, IsIrredSubrep (R (latticeGL E a) μ) H ∧ IsFinitePartOf μ π H := by
   have hm : ∀ φ ∈ π.V, MemL2Quotient (latticeGL E a) μ φ.1 := fun φ hφ =>
@@ -246,7 +250,7 @@ theorem exists_isFinitePartOf (π : CuspSub E a) (hπ : IsNormalised π) :
   have hφπ : φ ∈ π.V := mem_of_toL2_mem_irreducible π.stable hWa hm hC rfl hcusp hi hHC
     (fun ψ hψ => eq_zero_of_mem_orthogonal hm hi.1 hi.2.1 hHC ψ hψ) φ (π₀.cusp φ hφ).1 (hf.finitePartMemL2 φ hφ)
     (hf.classes_le (toL2_mem_classes hφ (hf.finitePartMemL2 φ hφ)))
-  have hs : IsStable (π₀.V ⊓ π.V) := fun o ψ h => ⟨π₀.stable o ψ h.1, π.stable o ψ h.2⟩
+  have hs : _root_.GlobalTheory.CuspRep.IsStable (π₀.V ⊓ π.V) := fun o ψ h => ⟨π₀.stable o ψ h.1, π.stable o ψ h.2⟩
   have hne : π₀.V ⊓ π.V ≠ ⊥ := (Submodule.ne_bot_iff _).2 ⟨φ, ⟨hφ, hφπ⟩, h0⟩
   have e0 := (π₀.irred _ inf_le_left hs).resolve_left hne
   have e1 := (π.irred _ inf_le_right hs).resolve_left hne

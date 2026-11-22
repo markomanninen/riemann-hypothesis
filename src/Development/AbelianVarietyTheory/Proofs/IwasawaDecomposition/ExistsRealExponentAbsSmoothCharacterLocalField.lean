@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasNormGroups
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityNormalizedBorelJacquetUn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix MeasureTheory TensorProduct Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocDict
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 namespace GlobalTheory.SmoothCharNorm
@@ -72,7 +77,25 @@ theorem GlobalTheory.SmoothCharNorm.norm_eq_nabs_rpow : ∀ (k : Type) [Field k]
     rw [map_mul, Units.val_mul, norm_mul,
       GlobalTheory.SmoothCharNorm.norm_eq_one_of_valuation_eq_one χ hχ _ hw, mul_one, map_zpow,
       Units.val_zpow_eq_zpow_val, norm_zpow]
-  rw [hz, GlobalTheory.LGrp.nabs_eq_zpow, ← Real.rpow_intCast, ← Real.rpow_intCast,
+  have hϖabs : nabs k ϖ = (resCard k : ℝ)⁻¹ := by
+    have hlt : valuation k (ϖ : k) < 1 := hϖ ▸ uniformizer_lt_one
+    refine (nabs_properties k).2.2.2.2.1 ⟨ϖ, hlt.le⟩ ϖ ?_ rfl
+    rw [IsDiscreteValuationRing.irreducible_iff_uniformizer]
+    ext x
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
+      Valuation.Integer.not_isUnit_iff_valuation_lt_one, Ideal.mem_span_singleton,
+      (Valuation.integer.integers (valuation k)).dvd_iff_le, ← le_uniformizer_iff, ← hϖ]
+    rfl
+  have hn : nabs k z = (resCard k : ℝ) ^ (-ord k z) := by
+    have hw : valuation k ((ϖ ^ (-ord k z) * z : kˣ) : k) = 1 := by
+      rw [← ord_eq_zero_iff, ord_mul, GlobalTheory.SmoothCharNorm.ord_zpow, hord]; ring
+    have hdec : z = ϖ ^ (ord k z) * (ϖ ^ (-ord k z) * z) := by group
+    conv_lhs => rw [hdec]
+    rw [nabs_mul, (nabs_eq_one_iff _).2 hw, mul_one]
+    have hp : nabs k (ϖ ^ ord k z) = nabs k ϖ ^ ord k z := by
+      simp [nabs, map_zpow]
+    rw [hp, hϖabs, _root_.inv_zpow, _root_.zpow_neg]
+  rw [hz, hn, ← Real.rpow_intCast, ← Real.rpow_intCast,
     ← Real.rpow_mul (by positivity), Real.rpow_def_of_pos ha,
     Real.rpow_def_of_pos (by positivity)]
   congr 1

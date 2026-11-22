@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConjBis
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.WitApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConjBis
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.WitApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SignAgreement.ExistsCompositumWithPrimeDegreeGalois
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,8 @@ def Keeps (r : G F Ω →* GL (Fin n) (Qbar l)) (L : Type) [Field L] [NumberFiel
 def RowT : Prop := UpperTheory.GalStar.Row0b fun h rc => IsRecT h rc
 
 def PlainRec : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), IsRecT h rc →
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
+    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion E) → WD h), IsRecT h rc →
     ∀ (a : ℕ) (π : CuspSub E a) (t : ℝ), WinAt π t w → ∀ σ, π.IsLocComp w σ →
       GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred) ∧ UpperTheory.GalStar.Tor (rc (algNorm σ)) ∧ (rc (algNorm σ)).mono0
 
@@ -94,22 +98,5 @@ def AUpDown : Prop :=
     IsIrr (r.comp (AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω)) → Sol.Pol ι r → IsRegAlgAutomorphicAttached ι r → Flagged r →
       (WitA ι r → WitA ι (r.comp (AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω))) ∧
       (IneAb r → Keeps r K → WitA ι (r.comp (AlgEquiv.restrictScalarsHom F : G K Ω →* G F Ω)) → WitA ι r)
-
-def ARead : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [IsCMField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime]
-    (ι : Qbar l ≃+* ℂ) (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)) (π : CuspSub F n), (CG.mk π).IsRegAlg → AttC ι r π → WitA ι r →
-    ∀ w : HeightOneSpectrum (𝓞 F), (((l : ℕ) : 𝓞 F) ∉ w.asIdeal ∨ Unl1 r w) → ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w)
-      (rc : IrrGL (w.adicCompletion F) → WD h), IsRecT h rc → ∀ σ, π.IsLocComp w σ →
-      GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred) ∧ ∀ x : WD h, UpperTheory.GalStar.AwayB x (rc (algNorm σ)) → x = rc (algNorm σ)
-
-theorem aRead_of (H : PlainRec) : ARead := by
-  intro F Ω _ _ _ _ _ _ l _ ι n r π hreg ha hW w hw A h rc hrc σ hσ
-  obtain ⟨t, ht⟩ := hW.2 π hreg ha
-  have hwin : WinAt π t w := ht w (by
-    by_cases e : ((l : ℕ) : 𝓞 F) ∈ w.asIdeal
-    · exact Or.inr (hW.1 w e (hw.resolve_left fun k => k e))
-    · exact Or.inl e)
-  obtain ⟨h1, h2, h3⟩ := H F Ω A w h rc hrc n π t hwin σ hσ
-  exact ⟨h1, fun x k => k.tor h2 h3⟩
 
 end UpperTheory.V.Z.Win

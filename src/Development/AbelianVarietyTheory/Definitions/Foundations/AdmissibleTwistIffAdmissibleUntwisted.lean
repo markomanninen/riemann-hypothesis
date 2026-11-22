@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ChiK
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ChiK
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,16 +42,5 @@ def AdmT {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (e : ℕ) (gN : Newfor
 
 def unTw {l : ℕ} [Fact l.Prime] (W : R2 Ω l) (e : ℕ) (χ : G ℚ Ω →* (Qbar l)ˣ) : R2 Ω l :=
   tw W (cycBar ℚ Ω l ^ e * χ⁻¹)
-
-example {l : ℕ} [Fact l.Prime] (s : Ω ≃ₐ[ℚ] Ω) : psiCyc (fun _ : ZMod l => (1 : Qbar l)) s = 1 := rfl
-
-example {l : ℕ} [Fact l.Prime] (e : ℕ) (ψ : ZMod l → Qbar l) (h1 : ψ 1 = 1) :
-    (cycBar ℚ Ω l 1 : Qbar l) ^ e * (psiCyc (Ω := Ω) ψ 1)⁻¹ = 1 := by
-  have : Fact (1 < l ^ 1) := ⟨by simpa using (Fact.out : l.Prime).one_lt⟩
-  simp [psiCyc, ZMod.val_one, h1]
-
-example {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (gN : Newform (2 * 0 + 1)) (W : R2 Ω l) (X : Tower Ω ε)
-    (pr : X.Fn l → Fin 2 → Qbar l) (N : ℕ) [NeZero N] (x : ZMod N) (c d : ℕ) (gm : (ZMod l)ˣ → SL(2, ℤ))
-    (ψ : ZMod l → Qbar l) : ¬ AdmT ι 0 gN W X pr N x c d gm ψ := fun h => absurd h.1 (by omega)
 
 end GlobalTheory.K4

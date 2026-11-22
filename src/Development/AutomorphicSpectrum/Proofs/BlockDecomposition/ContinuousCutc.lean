@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobiMapsExist
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientDataExists
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBoundFiniteInfinite
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsClosedHermSVal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousThetaKernelComponents
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacobiMapsExist
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientDataExists
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzBoundFiniteInfinite
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsClosedHermSVal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousThetaKernelComponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem cutc_jn (hn : r + t = n) (x : Mx D a r) (v : Mx D a t) : cutc hn (jn hn 
 
 theorem intOff_smul {S : Finset (Pl D)} {e : AE D} (hS : IsIdem S e) (x : Mx D a b) : IntOff S (e • x) := by
   intro v hv i j
-  have h0 : cv D v e = 0 := by rw [hS.2 v, if_neg hv]
+  have h0 : cv D v e = 0 := by rw [hS.2 v, ite_eq_right hv]
   simp only [Matrix.smul_apply, smul_eq_mul, map_mul, h0, zero_mul]
   exact zero_mem _
 
@@ -93,22 +97,32 @@ theorem pch_smul {ψ : AddChar (AF D.host.F) ℂ} {e : AE D} {x : Mx D t t} (hx 
   simp only [pch, this]
 
 theorem isOrb_smul {V : HSp D} {b₀ : HermE D r} {e : AE D} {ν : Measure (Mx D V.rank r × Mx D V.rank t)}
-    (h : IsOrb V b₀ e ν) (c : ℝ≥0) : IsOrb V b₀ e (c • ν) where
-  fin := ⟨fun K hK => by
-    have := h.fin.lt_top_of_isCompact hK
-    rw [Measure.smul_apply]
-    exact ENNReal.mul_lt_top (by simp) this⟩
-  supp := by rw [Measure.smul_apply, h.supp, smul_zero]
-  invU := fun g hg => by rw [Measure.map_smul, h.invU g hg]
-  invS := fun y hy => by rw [Measure.map_smul, h.invS y hy]
-  cov := fun g hg => by rw [Measure.map_smul, h.cov g hg, smul_comm]
+    (h : IsOrb V b₀ e ν) (c : ℝ≥0) : IsOrb V b₀ e (c • ν) := by
+  have := h.fin
+  have : SecondCountableTopologyEither (Mx D V.rank r) (Mx D V.rank t) :=
+    ⟨Or.inl (lattice_Mx D V.rank r).2.2.1⟩
+  have : BorelSpace (Mx D V.rank r) := ⟨rfl⟩
+  have : BorelSpace (Mx D V.rank t) := ⟨rfl⟩
+  have : BorelSpace (Mx D V.rank r × Mx D V.rank t) := Prod.borelSpace
+  have : OpensMeasurableSpace (Mx D V.rank r × Mx D V.rank t) := BorelSpace.opensMeasurable
+  refine ⟨inferInstance, ?_, ?_, ?_, ?_⟩
+  · rw [smul_apply, h.supp, smul_zero]
+  · intro g hg
+    rw [Measure.map_smul, h.invU g hg]
+    apply Continuous.aemeasurable
+    exact (continuous_const.matrix_mul continuous_fst).prodMk
+      (continuous_const.matrix_mul continuous_snd)
+  · intro y hy
+    rw [Measure.map_smul, h.invS y hy]
+    apply Continuous.aemeasurable
+    exact continuous_fst.prodMk (continuous_snd.add (continuous_fst.matrix_mul continuous_const))
+  · intro g hg
+    rw [Measure.map_smul, h.cov g hg, smul_comm]
+    apply Continuous.aemeasurable
+    exact continuous_fst.prodMk (continuous_snd.matrix_mul continuous_const)
 
-theorem isOrb_zero {V : HSp D} {b₀ : HermE D r} {e : AE D} : IsOrb (t := t) V b₀ e 0 where
-  fin := ⟨fun K _ => by simp⟩
-  supp := by simp
-  invU := fun g _ => by simp
-  invS := fun y _ => by simp
-  cov := fun g _ => by simp
+theorem isOrb_zero {V : HSp D} {b₀ : HermE D r} {e : AE D} : IsOrb (t := t) V b₀ e 0 := by
+  refine ⟨inferInstance, ?_, ?_, ?_, ?_⟩ <;> simp
 
 end GlobalTheory.CompanionTheory.EisE
 

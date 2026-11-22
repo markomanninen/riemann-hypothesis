@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSpanSingle
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSpanSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,17 +40,17 @@ theorem rowFlag_iff' (m : Matrix (Idx r k) (Idx r k) K) :
 theorem pf_castSucc (i : Fin r) : pf (k := k) (Fin.castSucc i) = Sum.inr (Sum.inr (Fin.rev i)) := by
   have h : ((Fin.castSucc i : Fin (r + 1)) : ℕ) < r := i.isLt
   unfold pf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem pf_last : pf (r := r) (k := k) (Fin.last r) = zI := by
   unfold pf
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
 
 theorem pf_of_lt {a b : Fin (r + 1)} (h : a < b) :
     pf (k := k) a = Sum.inr (Sum.inr (Fin.rev ⟨a, by have := b.isLt; omega⟩)) := by
   unfold pf
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
 
 theorem rowFlag_iff (m : Matrix (Idx r k) (Idx r k) K) : RowFlag m ↔ RowC m := by
   classical

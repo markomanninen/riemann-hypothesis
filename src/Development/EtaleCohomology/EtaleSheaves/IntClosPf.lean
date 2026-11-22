@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleBaseChangeFractionFieldIndEtaleOverPolynomi
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory LateralTheory.E.t_E3Cut

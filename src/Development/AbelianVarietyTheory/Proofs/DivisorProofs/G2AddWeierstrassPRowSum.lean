@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Legendre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZetaActRefl
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Legendre
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ private lemma latticeEquivProd_symm_coe (L : PeriodPair) (p : ℤ × ℤ) :
   simp [PeriodPair.latticeEquivProd, Finsupp.linearCombination_apply, Finsupp.sum_fintype,
     PeriodPair.latticeBasis]
 
-open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 
+open scoped UpperHalfPlane MatrixGroups Matrix ModularForm ComplexConjugate in
 lemma _root_.GlobalTheory.WpFam.hasSum_rows_G2_add_weierstrassP (τ : ℍ) (z : ℂ) :
     HasSum (fun n : ℤ => ∑' m : ℤ, 1 / (z + n * τ + m) ^ 2)
       (EisensteinSeries.G2 τ + (_root_.GlobalTheory.QFam.tauPair τ).weierstrassP z) := by
@@ -44,8 +48,7 @@ lemma _root_.GlobalTheory.WpFam.hasSum_rows_G2_add_weierstrassP (τ : ℍ) (z : 
     have := (L.latticeEquivProd.symm.toEquiv.hasSum_iff).mpr hg
     convert this using 1
     funext p
-    simp only [Function.comp_apply, LinearEquiv.coe_toEquiv, latticeEquivProd_symm_coe, hω₁, hω₂,
-      hfdef, mul_one]
+    simp [hfdef, latticeEquivProd_symm_coe, hω₁, hω₂]
   have hrow : HasSum (fun n : ℤ => ∑' m : ℤ, f (n, m)) (L.weierstrassP z) :=
     hf.prod_fiberwise fun n => (hf.summable.prod_factor n).hasSum
   have hG : HasSum (fun n : ℤ => EisensteinSeries.e2Summand n τ) (EisensteinSeries.G2 τ) := by
@@ -74,11 +77,10 @@ lemma _root_.GlobalTheory.WpFam.hasSum_rows_G2_add_weierstrassP (τ : ℍ) (z : 
   have hneg := (Equiv.neg ℤ).hasSum_iff.mpr hF
   convert hneg using 1
   funext n
-  simp only [Function.comp_apply, Equiv.neg_apply]
   rw [← (Equiv.neg ℤ).tsum_eq]
   congr 1
   funext m
-  simp only [Equiv.neg_apply, Int.cast_neg]
-  ring_nf
+  simp only [Equiv.neg_apply, Int.cast_neg, Function.comp_apply]
+  ring
 
 end GlobalTheory.WpFam

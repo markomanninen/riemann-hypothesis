@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelElt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStarNe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdAtEntryEqOneOfNotOver
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsPtOfOfRat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicMatrixCongruenceBadPrimeIffCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelElt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStarNe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdAtEntryEqOneOfNotOver
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsPtOfOfRat
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 open scoped TensorProduct
@@ -33,8 +38,8 @@ theorem mul_comp_eq {M N : Type} [Monoid M] [Monoid N] (f : M →* N) (y a b c k
 theorem entry_eq_of_eq {M : Type} [Monoid M] {n : ℕ} {R : Type} [Semiring R] (f : M →* Matrix (Fin n) (Fin n) R) (b c : M)
     (h : f b = f c) (r s : Fin n) : f b r s = f c r s := by rw [h]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 16000000 in
 theorem exists_level_elt : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : Charts I l Z u a i hi bad chOf) (k : Ch → GA B (B.R.N i)), ReadsAt I l Z K k → ∀ (c : (I.stp u a i).Cl), ChiFin I l Z (K (chOf c)).lev → ∀ κ : (K (chOf c)).lev.U, ∃ x : (K (chOf c)).lev.U, (K (chOf c)).lev.chi x = (K (chOf c)).lev.chi κ ∧ (∃ q : ChPt (Pr := B.primes X) (R := B.R) I.sel (I.tup a) u i, PtOf ((show GA B (B.R.N i) from ((K (chOf c)).y ⟨c, rfl⟩).1) * (show GA B (B.R.N i) from x.1) * k (chOf c)) q) ∧ ∀ P : SBof I a, GlobalTheory.TwU.CongAt (GlobalTheory.TwU.seamP (sm I l Z) P.1) ((I.cst a).D P) (κ.1⁻¹ * x.1) := by
   intro B X I hOk hPins l Z u a i hi bad Ch chOf K k hR c hChi κ
   classical
@@ -74,12 +79,18 @@ theorem exists_level_elt : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok 
     | cons P L ih =>
       intro hL P'
       rw [List.nodup_cons] at hL
-      rw [List.map_cons, List.prod_cons, map_mul, map_mul, ih hL.2]
-      by_cases h : P = P'
-      · subst h
-        simp [hL.1]
-      · rw [hone P P' (Ne.symm h)]
-        simp [Ne.symm h]
+      change cP P'.1 (ι (zf P * (L.map zf).prod)) = _
+      calc
+        cP P'.1 (ι (zf P * (L.map zf).prod)) = cP P'.1 (ι (zf P)) * cP P'.1 (ι (L.map zf).prod) := by
+          rw [map_mul ι, map_mul (cP P'.1)]
+        _ = cP P'.1 (ι (zf P)) * (if P' ∈ L then cP P'.1 (ι (zf P')) else 1) :=
+          congrArg (fun x => cP P'.1 (ι (zf P)) * x) (ih hL.2 P')
+        _ = _ := by
+          by_cases h : P = P'
+          · subst h
+            simp [hL.1]
+          · rw [hone P P' (Ne.symm h)]
+            simp [Ne.symm h]
   obtain ⟨w, hw⟩ : ∃ w : (K (chOf c)).lev.U, w = ((Finset.univ : Finset (SBof I a)).toList.map zf).prod := ⟨_, rfl⟩
   have hwP : ∀ P : SBof I a, cP P.1 (ι w) = cP P.1 (ι (zf P)) := fun P => by
     rw [hw, hlist _ (Finset.nodup_toList _) P, if_pos (Finset.mem_toList.2 (Finset.mem_univ _))]

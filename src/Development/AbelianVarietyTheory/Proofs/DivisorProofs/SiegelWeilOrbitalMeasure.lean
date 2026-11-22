@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -28,7 +33,8 @@ theorem norm_conj_le_one_of_bounded_coords :
     rw [← norm_pow, ← map_pow, ← hgf (a ^ k)]
     have hv : f (a ^ k) = ∑ i, f (a ^ k) i • (Pi.single i 1 : ι → ℚ) := by
       ext j; simp [Finset.sum_apply, Pi.single_apply]
-    rw [hv, map_sum, map_sum, hC, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, map_sum, map_sum, hC, Finset.mul_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [map_smul, hsmul, norm_mul, padicAlgCl_norm_ratCast]
     exact mul_le_mul_of_nonneg_right (hB k i) (norm_nonneg _)

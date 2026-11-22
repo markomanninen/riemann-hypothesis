@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksDefs
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.InfInd2Holds
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksDefs
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.InfInd2Holds
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem qdet_slice {n : Fin 2 → ℕ} (h : ∑ i, n i = n 0 + n 1) (τ : E →+* ℂ) (i : Fin 2) (w : ℂ)
     (ψ : Sm E (n 0 + n 1)) (m : ∀ j, GA E (n j)) (θ : Sm E (n i))
@@ -55,7 +59,8 @@ theorem capR_expand {n : Fin 2 → ℕ} (τ : E →+* ℂ) (w : ℂ) (G : Sm E (
     rw [CapFactor.std_zero, CapFactor.std_zero]
   rw [e1, ← CapFactor.lev_eq_leviEmb n h] at key
   change (capR (n 0) (n 1) τ w G).1 _ = (cap τ w θ).1 p.1 at key
-  rw [key, hθ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, hθ, map_sum]
   simp [Finset.sum_apply, mul_comm]
 
 theorem capS_expand {n : Fin 2 → ℕ} (τ : E →+* ℂ) (w : ℂ) (G : Sm E (n 0 + n 1)) {k : ℕ}
@@ -73,7 +78,8 @@ theorem capS_expand {n : Fin 2 → ℕ} (τ : E →+* ℂ) (w : ℂ) (G : Sm E (
     rw [CapFactor.std_one, CapFactor.std_one]
   rw [e1, ← CapFactor.lev_eq_leviEmb n h] at key
   change (capS (n 0) (n 1) τ w G).1 _ = (cap τ w θ).1 p.2 at key
-  rw [key, hθ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, hθ, map_sum]
   simp [Finset.sum_apply]
 
 end PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli

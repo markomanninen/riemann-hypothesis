@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,8 +24,8 @@ lemma qf_smul {ι : Type} [Fintype ι] (Y : Matrix ι ι ℝ) (c : ℝ) (x : ι 
 
 end PSymplShortPrim
 
-open PSymplShortPrim in
 
+open PSymplShortPrim in
 theorem SymplShortPrim.proof : SymplShortPrim.Statement := by
   intro ι _ _ G hG v w m hvw hv hmin
   have hm : m ≠ 0 := by

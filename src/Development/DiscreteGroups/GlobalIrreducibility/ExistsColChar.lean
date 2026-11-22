@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.DotjUpdate
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.DotjUpdate
+
+@[expose] public section
 
 noncomputable section
 

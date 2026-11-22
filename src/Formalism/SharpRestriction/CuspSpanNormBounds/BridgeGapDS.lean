@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PlaceDegreeData
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem Sz.mul {z z' : ℂ} {B B' : ℝ} (h : Sz ι τ z B) (h' : Sz ι τ z' B'
 theorem Sz.add {z z' : ℂ} {B B' : ℝ} (h : Sz ι τ z B) (h' : Sz ι τ z' B') : Sz ι τ (z + z') (B + B') := by
   obtain ⟨y, e, hy⟩ := h
   obtain ⟨y', e', hy'⟩ := h'
-  exact ⟨y + y', by rw [map_add, e, e'], by rw [map_add]; exact (norm_add_le _ _).trans (add_le_add hy hy')⟩
+  exact ⟨y + y', by rw [map_add (f := _), e, e'], by rw [map_add (f := _)]; exact (norm_add_le _ _).trans (add_le_add hy hy')⟩
 
 theorem Sz.pow {z : ℂ} {B : ℝ} (h : Sz ι τ z B) (n : ℕ) : Sz ι τ (z ^ n) (B ^ n) := by
   induction n with

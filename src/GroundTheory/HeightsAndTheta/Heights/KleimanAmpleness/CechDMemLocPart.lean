@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsHomogOfMemQuotPartAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsHomogOfMemQuotPartAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -25,8 +30,8 @@ theorem face_subset (I : ∀ k, Finset (ι k)) (k : K) (i : ι k) (l : K) :
     exact Finset.erase_subset _ _
   · rw [Function.update_of_ne hl]
 
-open Classical in
 
+open Classical in
 theorem cechD_apply' {M : Type} [AddCommGroup M] [Module (MRingOver S ι) M] (n : ℕ) (f : CechC S ι M n)
     (I : Cell K ι (n + 1)) :
     cechD S ι M n f I = ∑ k, ∑ i ∈ I.1 k,
@@ -69,10 +74,12 @@ theorem evC_cechD (n : ℕ) (w : CechC S ι (MRingOver S ι ⧸ mIdealOver S y) 
   funext I
   rw [evC_apply]
   by_cases hI : CellMeets y I.1
-  · rw [cechD_apply', map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [cechD_apply', map_sum]
     simp only [cellD, LinearMap.pi_apply, hI, if_true, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun k _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     split_ifs with hc
     · rw [map_zsmul]

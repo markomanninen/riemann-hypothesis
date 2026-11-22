@@ -1,10 +1,14 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.TranslInv
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceEqZeroOfQZ
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceNilpotentConeProjection
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharConductorIntegersContinuousNeOneStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.TranslInv
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceEqZeroOfQZ
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.TraceNilpotentConeProjection
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBoxInvariantSnd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AddCharConductorIntegersContinuousNeOneStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem E_mem (u : Fin (dd Z) → k) : E Z u ∈ Bz Z := ((bas Z).equivFun.symm 
 theorem ee_mem (j : Fin (dd Z)) : ee Z j ∈ Bz Z := (bas Z j).2
 
 theorem E_add (u u' : Fin (dd Z) → k) : E Z (u + u') = E Z u + E Z u' := by
-  simp only [E, map_add, Submodule.coe_add]
+  simp only [E, map_add (f := _), Submodule.coe_add]
 
 theorem E_smul (c : k) (u : Fin (dd Z) → k) : E Z (c • u) = c • E Z u := by
   simp only [E, map_smul, Submodule.coe_smul]
@@ -72,11 +76,13 @@ theorem exists_E {w : Matrix (Fin n) (Fin n) k} (hw : w ∈ Bz Z) : ∃ u, E Z u
   ⟨(bas Z).equivFun ⟨w, hw⟩, by simp [E]⟩
 
 theorem dot_D (u : Fin (dd Z) → k) (x : Matrix (Fin n) (Fin n) k) : u ⬝ᵥ D τ Z x = τ (E Z u * x) := by
-  simp [E_apply, D, dotProduct, Finset.sum_mul, map_sum, smul_mul_assoc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [E_apply, D, dotProduct, Finset.sum_mul, map_sum, smul_mul_assoc]
 
 theorem D_E (u : Fin (dd Z) → k) : D τ Z (E Z u) = G τ Z *ᵥ u := by
   funext i
-  simp [D, G, E_apply, mulVec, dotProduct, Finset.mul_sum, map_sum, mul_smul_comm, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [D, G, E_apply, mulVec, dotProduct, Finset.mul_sum, map_sum, mul_smul_comm, mul_comm]
 
 theorem D_add (x y : Matrix (Fin n) (Fin n) k) : D τ Z (x + y) = D τ Z x + D τ Z y := by
   funext j; simp [D, mul_add]
@@ -148,7 +154,7 @@ theorem tau_conj (h : Hyp τ Z) {g : GL (Fin n) k} (hg : g ∈ Gz Z) {y : Matrix
 def adL {g : GL (Fin n) k} (hg : g ∈ Gz Z) : (Fin (dd Z) → k) →ₗ[k] (Fin (dd Z) → k) where
   toFun u := (bas Z).equivFun ⟨g.val * E Z u * g⁻¹.val, PositivityTheory.RgUd.T.Nil.Four.Phi2.conj_mem_Bz hg (E_mem Z u)⟩
   map_add' u u' := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext1
     simp [E_add, mul_add, add_mul]

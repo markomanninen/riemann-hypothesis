@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CardFilterValLt
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CardFilterValLt
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 open MvPolynomial
 

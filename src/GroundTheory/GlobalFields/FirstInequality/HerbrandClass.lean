@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleHerbrand
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnits
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleHerbrand
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnits
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.CompletionAtPlace.Degree
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -27,7 +31,8 @@ theorem map_cycSubOne {ρA : Representation ℤ G A} {ρB : Representation ℤ G
 theorem map_cycNorm [Fintype G] {ρA : Representation ℤ G A} {ρB : Representation ℤ G B}
     {f : A →+ B} (hf : ∀ g a, f (ρA g a) = ρB g (f a)) (a : A) :
     f (cycNorm ρA a) = cycNorm ρB (f a) := by
-  rw [cycNorm_apply, cycNorm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cycNorm_apply, cycNorm_apply, map_sum]
   simp only [hf]
 
 end Equivariant
@@ -36,9 +41,8 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 namespace IdeleGroup
 
-omit [NumberField K] [NumberField L] in
-open scoped Classical in
 
+open scoped Classical in
 theorem finrank_infiniteCompletion_eq_ite [IsGalois K L] (v : InfinitePlace K)
     (w : InfinitePlace L) [w.LiesOver v] :
     (finrank v.Completion w.Completion : ℚ) = if v.IsUnramifiedIn L then 1 else 2 := by
@@ -54,8 +58,8 @@ theorem finrank_infiniteCompletion_eq_ite [IsGalois K L] (v : InfinitePlace K)
       exact h this
     rw [if_neg hn, h.finrank_eq_two v, Nat.cast_ofNat]
 
-open AdicLiesOver in
 
+open AdicLiesOver in
 theorem finrank_adicCompletion_eq_ramificationIdxIn_mul [IsGalois K L]
     (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v) :
     finrank (v.adicCompletion K) (w.1.adicCompletion L) =
@@ -68,8 +72,8 @@ end IdeleGroup
 
 namespace IdeleGroup
 
-open AdeleBaseChange in
 
+open AdeleBaseChange in
 theorem exists_finset_unramified_sup_sIdeles_eq_top :
     ∃ S : Finset (HeightOneSpectrum (𝓞 K)),
       (∀ v ∉ (S : Set (HeightOneSpectrum (𝓞 K))), ∀ w : PlacesOver L v,
@@ -88,8 +92,8 @@ theorem exists_finset_unramified_sup_sIdeles_eq_top :
 
 variable [IsGalois K L]
 
-open AdeleBaseChange AdicLiesOver in
 
+open AdeleBaseChange AdicLiesOver in
 theorem cycHerbrand_ideleClassGroup (σ : Gal(L/K)) (hσ : ∀ g, g ∈ Subgroup.zpowers σ) :
     HasHerbrandQuotient
         (cycSubOne (Representation.ofMulDistribMulAction Gal(L/K) (IdeleClassGroup L)) σ)
@@ -132,7 +136,8 @@ theorem cycHerbrand_ideleClassGroup (σ : Gal(L/K)) (hσ : ∀ g, g ∈ Subgroup
   have hpS : ∀ b, p (cycSubOne ρB σ b) = cycSubOne ρC σ (p b) := fun b ↦ by
     rw [cycSubOne_apply, cycSubOne_apply, map_sub, hpG]
   have hpN : ∀ b, p (cycNorm ρB b) = cycNorm ρC (p b) := fun b ↦ by
-    rw [cycNorm_apply, cycNorm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cycNorm_apply, cycNorm_apply, map_sum]
     simp only [hpG]
   obtain ⟨wFin⟩ : Nonempty (∀ v : HeightOneSpectrum (𝓞 K), PlacesOver L v) :=
     ⟨fun v ↦ (nonempty_placesOver_of_finite (L := L) v).some⟩

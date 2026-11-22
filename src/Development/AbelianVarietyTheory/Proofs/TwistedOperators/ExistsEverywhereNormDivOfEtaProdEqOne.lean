@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvenCardOfNotLone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSquareMulInfinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EvenCardOfNotLone
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.QNorm GlobalTheory.QuadSymbol.NormIndex
 
@@ -128,8 +132,10 @@ theorem isSquare_completion {σ : K →+* ℝ} {δ : K} (h : IsSquare (σ δ)) :
     IsSquare (algebraMap K (realPlace σ).Completion δ) := by
   have hw := isReal_realPlace σ
   let f := InfinitePlace.Completion.ringEquivRealOfIsReal hw
-  have hf : f (algebraMap K (realPlace σ).Completion δ) = InfinitePlace.embedding_of_isReal hw δ :=
-    InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv _).symm δ)
+  have hf : f (algebraMap K (realPlace σ).Completion δ) = InfinitePlace.embedding_of_isReal hw δ := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
+    simpa [f] using InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv _).symm δ)
   rw [embedding_realPlace] at hf
   rw [← hf] at h
   simpa using h.map f.symm
@@ -160,8 +166,8 @@ theorem div_mem_normGroup {A : Type} [CommRing A] [Algebra K A]
 
 end Converse
 
-open Converse in
 
+open Converse in
 theorem exists_everywhereNorm_div_of_etaProd_eq_one :
     ∀ (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
       [Algebra.IsQuadraticExtension K L], ∀ (x : FinFam K) (y : InfFam K),

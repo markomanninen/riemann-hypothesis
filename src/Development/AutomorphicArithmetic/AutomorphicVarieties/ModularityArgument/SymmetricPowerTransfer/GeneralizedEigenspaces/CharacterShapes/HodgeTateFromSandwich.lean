@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.GlobIn
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.BridgeEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ToUnitsTheta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.GlobIn
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.BridgeEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ToUnitsTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ def IsCong {n : ℕ} (m : ℕ) (U : Subgroup (UA L n)) : Prop :=
 
 def OffS {n : ℕ} (S : Finset (Plc L)) (x : UA L n) : Prop := ∀ w ∈ S, ∀ u, un u = un w → cLoc u x = 1
 
-def OnS {n : ℕ} (S : Finset (Plc L)) (x : UA L n) : Prop := x ∈ finU L n ∧ ∀ u, (∀ w ∈ S, un u ≠ un w) → cLoc u x = 1
+def OnS {n : ℕ} (S : Finset (Plc L)) (x : UA L n) : Prop := x ∈ finU (E := L) (n := n) ∧ ∀ u, (∀ w ∈ S, un u ≠ un w) → cLoc u x = 1
 
 def Full {n : ℕ} (U₀ : Subgroup (UA L n)) (S : Finset (Plc L)) : Prop := U₀ ≤ Kall L n ∧ ∀ w ∈ S, locU n w ⊓ Kall L n ≤ U₀
 
@@ -94,7 +98,7 @@ def ProdEig : Prop :=
 
 def TorUA : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (U₀ : Subgroup (UA L 2)) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)), Places (S : Set (Plc L)) → Full U₀ S →
-    ∀ u ∈ lev U₀ S VL, ∃ c ∈ lev U₀ S VL, u * c⁻¹ ∈ finU L 2 ⊓ SUA L ∧ c⁻¹ * u ∈ finU L 2 ⊓ SUA L ∧
+    ∀ u ∈ lev U₀ S VL, ∃ c ∈ lev U₀ S VL, u * c⁻¹ ∈ finU (E := L) (n := 2) ⊓ SUA L ∧ c⁻¹ * u ∈ finU (E := L) (n := 2) ⊓ SUA L ∧
       ∀ (x : UA L 2) (d : ∀ w : Plc L, Fin 2 → (Kw w)ˣ), OnS S x → (∀ w ∈ S, cLoc w x = Sig.dg (d w)) → c * x = x * c
 
 def WeakOne : Prop :=
@@ -104,7 +108,7 @@ def WeakOne : Prop :=
 def Translate : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)), Places (S : Set (Plc L)) → ∀ (V : Type) [AddCommGroup V] [Module ℂ V]
     (R : Representation ℂ (InfinitePlace L → GL (Fin 2) ℂ) V) (φ : UA L 2 → V), IsAF R (lev (Kall L 2) S VL) φ → φ ≠ 0 →
-    ∃ x ∈ finU L 2, OffS S x ∧ ∃ s ∈ finU L 2 ⊓ SUA L, φ (s * x) ≠ 0
+    ∃ x ∈ finU (E := L) (n := 2), OffS S x ∧ ∃ s ∈ finU (E := L) (n := 2) ⊓ SUA L, φ (s * x) ≠ 0
 
 def InS : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (B : Bridge L), B.Ok → ∀ (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ), A.Ok → Fit T S VL A → ∀ (j : ℕ) (e : InfinitePlace L → ℤ) (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)), FitCh T S a b →
@@ -113,11 +117,11 @@ def InS : Prop :=
       ∃ ψ ∈ C.Forms, ψ ≠ 0 ∧ A.EigS C.U ψ b
 
 def FinToAF : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (R : Representation ℂ (InfinitePlace L → GL (Fin n) ℂ) V) (U : Subgroup (UA L n)), U ≤ finU L n →
-    ∀ Φ : finU L n → V, (∀ (f : finU L n), ∀ k ∈ infU L n, (f : UA L n) * k ∈ ratU L n → ∀ g, Φ (f * g) = R (infC L n k) (Φ g)) →
-    (∀ u : finU L n, (u : UA L n) ∈ U → ∀ g, Φ (g * u) = Φ g) →
-    ∃ φ : UA L n → V, IsAF R U φ ∧ (∀ g : finU L n, φ g = Φ g) ∧ ∀ (x : finU L n) (c : ℂ), AlgebraTools.FinOrb U U (x : UA L n) →
-      dcF (U.subgroupOf (finU L n)) x Φ = c • Φ → dcF U (x : UA L n) φ = c • φ
+  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (R : Representation ℂ (InfinitePlace L → GL (Fin n) ℂ) V) (U : Subgroup (UA L n)), U ≤ finU (E := L) (n := n) →
+    ∀ Φ : finU (E := L) (n := n) → V, (∀ (f : finU (E := L) (n := n)), ∀ k ∈ infU L n, (f : UA L n) * k ∈ ratU L n → ∀ g, Φ (f * g) = R (infC L n k) (Φ g)) →
+    (∀ u : finU (E := L) (n := n), (u : UA L n) ∈ U → ∀ g, Φ (g * u) = Φ g) →
+    ∃ φ : UA L n → V, IsAF R U φ ∧ (∀ g : finU (E := L) (n := n), φ g = Φ g) ∧ ∀ (x : finU (E := L) (n := n)) (c : ℂ), AlgebraTools.FinOrb U U (x : UA L n) →
+      dcF (U.subgroupOf (finU (E := L) (n := n))) x Φ = c • Φ → dcF U (x : UA L n) φ = c • φ
 
 def OutG : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (B : Bridge L), B.Ok → ∀ (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ), A.Ok → Fit T S VL A → ∀ (j : ℕ) (a : ∀ w : Plc L, (Kw w)ˣ →* ℂˣ) (b : Chs (Lp L)), FitCh T S a b →
@@ -152,7 +156,7 @@ def LevExt : Prop :=
     ∀ g : SA B.Δ, (B.bS g : UA L 2) ∈ lev U S₁ iw → g ∈ A.lvS y
 
 def DetRoot : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (m : ℕ), 3 ≤ m → ∀ U : Subgroup (UA L 2), IsCong m U → ∀ f ∈ finU L 2, ∀ k ∈ infU L 2, f * k ∈ ratU L 2 →
+  ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (m : ℕ), 3 ≤ m → ∀ U : Subgroup (UA L 2), IsCong m U → ∀ f ∈ finU (E := L) (n := 2), ∀ k ∈ infU L 2, f * k ∈ ratU L 2 →
     ∀ u ∈ U, f * u ∈ SUA L → f ∈ SUA L ∧ k ∈ SUA L
 
 def ExtF : Prop :=
@@ -167,7 +171,7 @@ def SLev : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (B : Bridge L), B.Ok → ∀ (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ), A.Ok → Fit T S VL A → ∀ w ∈ S, ∀ (h : IsSplitAt w) (S₁ : Finset (Plc L)), w ∈ S₁ → S₁ ⊆ S → VL w = iw w → ∀ U : Subgroup (UA L 2), Full U {w} →
     ∀ y : DA B.Δ, A.dat.Off y → (∀ g : SA B.Δ, (B.bS g : UA L 2) ∈ lev U S₁ iw → g ∈ A.lvS y) →
     ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (ψ : SA B.Δ → V), (∀ u ∈ A.lvS y, ∀ g, ψ (g * u) = ψ g) → ∀ (g : SA B.Δ) (d : Fin 2 → (Kw w)ˣ), (B.bS g : UA L 2) = secW 2 w (Sig.dg d) →
-    dcF (((lev U S₁ iw).subgroupOf (finU L 2 ⊓ SUA L)).comap B.bS.toMonoidHom) g ψ = dcF (A.lvS y) g ψ
+    dcF (((lev U S₁ iw).subgroupOf (finU (E := L) (n := 2) ⊓ SUA L)).comap B.bS.toMonoidHom) g ψ = dcF (A.lvS y) g ψ
 
 def OutS : Prop :=
   ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (B : Bridge L), B.Ok → ∀ (T : Spl B) (S : Finset (Plc L)) (VL : ∀ w : Plc L, Lev (Kw w)) (A : SD B.Δ), A.Ok → Fit T S VL A → ∀ (S₁ : Finset (Plc L)), S₁ ⊆ S → (∀ w ∈ S₁, VL w = iw w) → ∀ (m : ℕ) (U : Subgroup (UA L 2)), 3 ≤ m → IsCong m U → Full U S₁ →

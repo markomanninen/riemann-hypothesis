@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GapN
-import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
-import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRingHomComplexCompEqOfCountable
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointComponentLocalRing
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFibreNormDehomRoots
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EmbedsGeneric
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.FlatLineGenerator
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CardComapMulFinsumEqFinsumFibres
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GapN
+public import Development.WeilBound.CoreStatements.VolumeEquality.ChartMeetsPoint
+public import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRingHomComplexCompEqOfCountable
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericPointComponentLocalRing
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PFibreNormDehomRoots
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.ExRefEff
 
@@ -25,19 +30,19 @@ variable {K : Type} [Fintype K] {J : K → Type} [∀ k, Fintype (J k)]
 
 def bdeg (m : (Σ k, J k) →₀ ℕ) : K → ℕ := fun k => ∑ i, m ⟨k, i⟩
 
-open Classical in
 
+open Classical in
 def bcomp (g : MRing J) (d : K → ℕ) : MRing J :=
-  ∑ m ∈ g.support.filter (fun m => bdeg m = d), monomial m (coeff m g)
+  ∑ m ∈ g.support.filter (fun m => bdeg m = d), monomial m (AddMonoidAlgebra.coeff g m)
 
 open Classical in
 theorem coeff_bcomp (g : MRing J) (d : K → ℕ) (m : (Σ k, J k) →₀ ℕ) :
-    coeff m (bcomp g d) = if bdeg m = d then coeff m g else 0 := by
+    AddMonoidAlgebra.coeff (bcomp g d) m = if bdeg m = d then AddMonoidAlgebra.coeff g m else 0 := by
   rw [bcomp, coeff_sum]
   simp only [coeff_monomial]
   rw [Finset.sum_ite_eq']
   simp only [Finset.mem_filter, mem_support_iff]
-  by_cases h : bdeg m = d <;> by_cases h' : coeff m g = 0 <;> simp [h, h']
+  by_cases h : bdeg m = d <;> by_cases h' : AddMonoidAlgebra.coeff g m = 0 <;> simp [h, h']
 
 theorem bcomp_homog (g : MRing J) (d : K → ℕ) : IsMultiHomog (bcomp g d) d := by
   classical
@@ -52,7 +57,7 @@ theorem sum_bcomp [DecidableEq (K → ℕ)] (g : MRing J) : ∑ d ∈ g.support.
   classical
   ext m
   rw [coeff_sum]
-  by_cases h : coeff m g = 0
+  by_cases h : AddMonoidAlgebra.coeff g m = 0
   · rw [h]
     refine Finset.sum_eq_zero fun d _ => ?_
     rw [coeff_bcomp]
@@ -69,7 +74,7 @@ theorem sum_bcomp [DecidableEq (K → ℕ)] (g : MRing J) : ∑ d ∈ g.support.
 theorem bcomp_eq_zero [DecidableEq (K → ℕ)] (g : MRing J) {d : K → ℕ} (h : d ∉ g.support.image bdeg) : bcomp g d = 0 := by
   classical
   ext m
-  rw [coeff_bcomp, coeff_zero]
+  rw [coeff_bcomp, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   split_ifs with e
   · by_contra h0
     exact h (e ▸ Finset.mem_image_of_mem _ (mem_support_iff.2 h0))
@@ -78,7 +83,8 @@ theorem bcomp_eq_zero [DecidableEq (K → ℕ)] (g : MRing J) {d : K → ℕ} (h
 theorem exists_aeval_bcomp_ne {Ω : Type} [Field Ω] (t : (Σ k, J k) → Ω) (g : MRing J) (h : aeval t g ≠ 0) :
     ∃ d : K → ℕ, aeval t (bcomp g d) ≠ 0 := by
   classical
-  rw [← sum_bcomp g, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_bcomp g, map_sum] at h
   obtain ⟨d, -, hd⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   exact ⟨d, hd⟩
 
@@ -91,7 +97,8 @@ theorem aeval_bcomp_eq_zero (w : (Σ k, J k) → ℂ) (g : MRing J)
     rw [map_zero, GroundTheory.Heights₂.Heights.HilbertSamuel.FibreNormDehomRoots.eval_mConeMap]
     exact h c fun k => hc k (Set.mem_univ k)
   have h1 : mConeMap w g = ∑ d' ∈ g.support.image bdeg, C (aeval w (bcomp g d')) * ∏ k, X k ^ d' k := by
-    conv_lhs => rw [← sum_bcomp g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← sum_bcomp g, map_sum]
     exact Finset.sum_congr rfl fun d' _ =>
       GroundTheory.Heights₂.Heights.HilbertSamuel.ProjLine.mConeMap_eq_of_isMultiHomog w (bcomp_homog g d')
   have hm : ∀ d' : K → ℕ, (∏ k, (X k : MvPolynomial K ℂ) ^ d' k) = monomial (Finsupp.equivFunOnFinite.symm d') 1 := by
@@ -99,8 +106,8 @@ theorem aeval_bcomp_eq_zero (w : (Σ k, J k) → ℂ) (g : MRing J)
     rw [monomial_eq, C_1, _root_.one_mul, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
     rfl
   by_cases hd : d ∈ g.support.image bdeg
-  · have h2 := congrArg (coeff (Finsupp.equivFunOnFinite.symm d)) (h1.symm.trans h0)
-    rw [coeff_sum, coeff_zero] at h2
+  · have h2 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm d)) (h1.symm.trans h0)
+    rw [coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
     simp only [hm, coeff_C_mul, coeff_monomial, mul_ite, _root_.mul_one, mul_zero, EmbeddingLike.apply_eq_iff_eq] at h2
     rwa [Finset.sum_ite_eq', if_pos hd] at h2
   · rw [bcomp_eq_zero g hd, map_zero]

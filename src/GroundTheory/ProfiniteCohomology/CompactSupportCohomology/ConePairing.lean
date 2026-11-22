@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.Pairing
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ShiftNegOneHomologyIsoSymmHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.Pairing
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.ShiftNegOneHomologyIsoSymmHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -59,18 +64,12 @@ noncomputable def coconeLeftμ {r s n : ℕ} (h : r + s = n) :
     (fun c p z => Prod.ext (LinearMap.map_smul₂ _ _ _ _) (LinearMap.map_smul₂ _ _ _ _))
     (fun p z z' => Prod.ext (map_add _ _ _) (by
       change μL.shiftLeft r s n h p.2 ((ρ.f s).hom (z + z')) = _
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       rfl))
     (fun c p z => Prod.ext (map_smul _ _ _) (by
       change μL.shiftLeft r s n h p.2 ((ρ.f s).hom (c • z)) = _
       rw [map_smul, map_smul]
       rfl))
-
-theorem coconeLeftμ_apply {r s n : ℕ} (h : r + s = n) (x : K.X r) (y : shiftNegOneX L r)
-    (z : N.X s) :
-    coconeLeftμ μL ρ μK (f := f) (f' := f') h ((x, y) : K.X r × shiftNegOneX L r) z =
-      ((μK.μ h x z, μL.shiftLeft r s n h y ((ρ.f s).hom z)) : K'.X n × shiftNegOneX L' n) :=
-  rfl
 
 noncomputable def coconeLeft (hc : ∀ {r s n : ℕ} (h : r + s = n) (x : K.X r) (z : N.X s),
     (f'.f n).hom (μK.μ h x z) = μL.μ h ((f.f r).hom x) ((ρ.f s).hom z)) :
@@ -186,7 +185,7 @@ noncomputable def coconeRightμ {r s n : ℕ} (h : r + s = n) :
         K'.X n × shiftNegOneX L' n))
     (fun x x' p => Prod.ext (LinearMap.map_add₂ _ _ _ _) (by
       change (-1 : k) ^ r • μR.shiftRight r s n h ((ρ.f r).hom (x + x')) p.2 = _
-      rw [map_add, LinearMap.map_add₂, smul_add]
+      rw [map_add (f := _), LinearMap.map_add₂, smul_add]
       rfl))
     (fun c x p => Prod.ext (LinearMap.map_smul₂ _ _ _ _) (by
       change (-1 : k) ^ r • μR.shiftRight r s n h ((ρ.f r).hom (c • x)) p.2 = _
@@ -194,19 +193,12 @@ noncomputable def coconeRightμ {r s n : ℕ} (h : r + s = n) :
       rfl))
     (fun x p q => Prod.ext (map_add _ _ _) (by
       change (-1 : k) ^ r • μR.shiftRight r s n h ((ρ.f r).hom x) (p.2 + q.2) = _
-      rw [map_add, smul_add]
+      rw [map_add (f := _), smul_add]
       rfl))
     (fun c x p => Prod.ext (map_smul _ _ _) (by
       change (-1 : k) ^ r • μR.shiftRight r s n h ((ρ.f r).hom x) (c • p.2) = _
       rw [map_smul, smul_comm]
       rfl))
-
-theorem coconeRightμ_apply {r s n : ℕ} (h : r + s = n) (x : M.X r) (y : K.X s)
-    (c : shiftNegOneX L s) :
-    coconeRightμ μR ρ μK (f := f) (f' := f') h x ((y, c) : K.X s × shiftNegOneX L s) =
-      ((μK.μ h x y, (-1 : k) ^ r • μR.shiftRight r s n h ((ρ.f r).hom x) c) :
-        K'.X n × shiftNegOneX L' n) :=
-  rfl
 
 noncomputable def coconeRight (hc : ∀ {r s n : ℕ} (h : r + s = n) (x : M.X r) (y : K.X s),
     (f'.f n).hom (μK.μ h x y) = μR.μ h ((ρ.f r).hom x) ((f.f s).hom y)) :

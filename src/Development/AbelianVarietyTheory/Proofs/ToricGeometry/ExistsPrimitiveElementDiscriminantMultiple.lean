@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ThetaQuasiPeriods.Change
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.Imports
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ThetaQuasiPeriods.Change
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.Integral
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.Imports
+
+@[expose] public section
 
 namespace GlobalTheory.NoetherPrimitive
 
@@ -26,7 +30,7 @@ theorem exists_C_mem_span {R K : Type*} [CommRing R] [IsDomain R] [Field K] [Alg
   refine ⟨s * t, mul_ne_zero hs ht, Ideal.mem_span_pair.2 ⟨C t * U, C s * V, ?_⟩⟩
   apply Polynomial.map_injective (algebraMap R K) (IsFractionRing.injective R K)
   rw [derivative_map] at huv
-  simp only [Polynomial.map_add, Polynomial.map_mul, map_C, hU, hV, map_mul]
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, map_C, hU, hV, map_mul]
   linear_combination (C (algebraMap R K s) * C (algebraMap R K t)) * huv
 
 theorem exists_common_denominator {R A : Type*} [CommRing R] [IsDomain R] [CommRing A]

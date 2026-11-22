@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -49,7 +53,7 @@ private theorem key (l : ℕ) [Fact l.Prime] (K : Type) [Field K] (hl : (l : K) 
   have hdc : ∀ k, d.coeff k ∈ I := by
     intro k
     rw [hI, Ideal.mem_span_singleton, PowerSeries.X_dvd_iff]
-    have := congrArg (fun q => Polynomial.coeff q k) hdmap
+    have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q k) hdmap
     simpa [Polynomial.coeff_map] using this
   have hev : Polynomial.aeval P d = -(P - 1) ^ n := by
     rw [hd, map_sub, Matrix.aeval_self_charpoly, map_pow, map_sub, Polynomial.aeval_X, map_one,

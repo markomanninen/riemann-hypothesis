@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenC
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.OpGenC
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,10 +65,10 @@ theorem opGen_of' (hU : UnipTau) (hLv : LeviTau) (hW : WEx) (hS : SchOps) (hF : 
       obtain ⟨-, -, e5, -⟩ := hfs' _ sP
       obtain ⟨-, -, e6, -⟩ := hfs' _ s2
       constructor
-      · rw [hy', map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e1, e4]
+      · rw [hy', map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, e1, e4]
         exact e5
       · have hid : ω w (ω w⁻¹ ⟨tens θ τ fr f Ψ, hΨ.2 f hf⟩) = ⟨tens θ τ fr f Ψ, hΨ.2 f hf⟩ := by
-          rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+          rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
         rw [e1] at hid
         rw [← e6, hid]
     refine ⟨fun g u => (κ * ftLoc ε (tLoc l τ) (fun u' => κ⁻¹ * ftLoc ε (-tLoc l τ) f₁ u') 0)⁻¹ *

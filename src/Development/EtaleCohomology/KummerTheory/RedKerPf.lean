@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.BockCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.BockCut
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -10,8 +14,8 @@ theorem sepLoc {R : Type} [CommRing R] {F : Shv R} {U : Scheme.{0}} (y z : Sec F
     (h : Loc U fun V g => Sec.res g y = Sec.res g z) : y = z := by
   obtain ⟨S, hS, hh⟩ := h
   have h1 := (isSheaf_iff_isSheaf_of_type _ _).1
-    ((Presheaf.isSheaf_iff_isSheaf_forget _ F.obj (forget (ModuleCat.{1} (ULift.{1} R)))).1 F.cond)
-  exact (h1 S hS).isSeparatedFor.ext (fun V g hg => hh V g hg)
+    ((Presheaf.isSheaf_iff_isSheaf_forget _ F.obj (forget (ModuleCat.{1} (ULift.{1} R)))).1 F.property)
+  exact (h1 S hS).isSeparatedFor.ext (fun {V} {g} hg => hh V g hg)
 
 theorem locZero {R : Type} [CommRing R] {F : Shv R} {U : Scheme.{0}} (hL : LateralTheory.EtaleFoundations.EtaleLocalPropertyBasicClosure)
     (y : Sec F U) (h : Loc U fun V g => Sec.res g y = 0) : y = 0 := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlueLineBundles
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WhiskerLeftEqLift
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GlueLineBundles
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -27,8 +31,8 @@ theorem gm_ext_g {Z : Scheme.{0}} (r : Z ⟶ X') (z : Z) (a b : L.ι) (ha : r z 
   exact (gm_res (r ≫ f) z (image_inf_le f L a b) hm _).trans
     (GlobalTheory.GlueLineBundle.gm_imU f r z (L.U a ⊓ L.U b) ⟨ha, hb⟩ _)
 
-variable {f} in
 
+variable {f} in
 theorem gm_eq_map {Y : Scheme.{0}} (g : Y ⟶ X) (y : Y) (U : X.Opens) (h : g y ∈ U) (a : Γ(X, U)ˣ) :
     gm g y U a = Units.map (g.stalkMap y).hom.toMonoidHom (gm (𝟙 X) (g y) U a) := by
   apply Units.ext
@@ -41,15 +45,16 @@ namespace GlobalTheory.PicGlue.OpenExt
 
 variable {X X' : Scheme.{0}} (f : X' ⟶ X) [IsOpenImmersion f] (L : LB X')
 
-theorem isOn_extLB (hL : L.IsLB) : IsOn f.opensRange (extLB f L) where
-  le a x hx := by
+theorem isOn_extLB (hL : L.IsLB) : IsOn f.opensRange (extLB f L) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro a x hx
     obtain ⟨w, -, rfl⟩ := hx
     exact ⟨w, rfl⟩
-  cov x hx := by
+  · intro x hx
     obtain ⟨w, rfl⟩ := hx
     obtain ⟨a, ha⟩ := exists_chart hL w
     exact ⟨a, f.apply_mem_image_iff.2 ha⟩
-  coc x a b c hxa hxb hxc := by
+  · intro x a b c hxa hxb hxc
     obtain ⟨w, ha, rfl⟩ := hxa
     have hb : w ∈ L.U b := f.apply_mem_image_iff.1 hxb
     have hc : w ∈ L.U c := f.apply_mem_image_iff.1 hxc
@@ -68,8 +73,8 @@ theorem isOn_extLB (hL : L.IsLB) : IsOn f.opensRange (extLB f L) where
 
 end GlobalTheory.PicGlue.OpenExt
 
-open GlobalTheory.PicGlue.OpenExt in
 
+open GlobalTheory.PicGlue.OpenExt in
 theorem GlobalTheory.PicGlue.exists_isOn_of_openImmersion : ∀ (X X' : Scheme.{0}) (f : X' ⟶ X) [IsOpenImmersion f] (L : LB X'),
     L.IsLB → ∃ L' : LB X, IsOn f.opensRange L' ∧ LBIso (L'.pull f) L := by
   intro X X' f _ L hL

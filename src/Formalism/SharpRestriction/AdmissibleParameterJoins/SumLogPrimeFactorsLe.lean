@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+module
+
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Pointwise
 
@@ -331,7 +335,7 @@ theorem sum_log_primes_le (N : ℕ) :
     intro p hp
     exact Nat.cast_ne_zero.mpr (Finset.mem_filter.mp hp).2.ne_zero
   rw [← h1]
-  have h2 : ((primorial N : ℕ) : ℝ) ≤ (4 : ℝ) ^ N := by exact_mod_cast primorial_le_4_pow N
+  have h2 : ((primorial N : ℕ) : ℝ) ≤ (4 : ℝ) ^ N := by exact_mod_cast primorial_le_four_pow N
   have h3 : (0 : ℝ) < ((primorial N : ℕ) : ℝ) := by exact_mod_cast primorial_pos N
   calc Real.log ((primorial N : ℕ) : ℝ) ≤ Real.log ((4 : ℝ) ^ N) := Real.log_le_log h3 h2
     _ = N * Real.log 4 := by rw [Real.log_pow]
@@ -396,8 +400,8 @@ theorem mu_diff (D : D7) (L : SizeData₂ D) (hdef : DV.NprimeDef D L) (u : D.wh
   rw [Finset.sum_congr rfl this, ← Finset.sum_div, ← Finset.mul_sum]
   ring
 
-open Classical in
 
+open Classical in
 theorem round_le (D : D7) (L : SizeData₂ D) (hdef : DV.NprimeDef D L) (u : D.what₂.Word)
     (hX : ∀ v, IsUnit ((D.div.Nu u).X v).det)
     (hfg : (D.div.Nu u).L.FG) (hne : (D.div.Nu u).L ≠ ⊥) :
@@ -581,8 +585,8 @@ theorem log_T_le (hT : SizeTu L) (u : D.what₂.Word) :
     _ ≤ 2 * D.R.n * L.sc.x := mul_le_mul_of_nonneg_right hm hx.le
     _ ≤ 2 * L.sc.X'' D.R.n := by linarith
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem fN_le (hN : SizeN L) (hEta : SizeEta L) (hNodes : SizeNodes L) :
     (D.R.f : ℝ) * D.R.N D.R.m * Real.log ((D.R.f : ℝ) * D.R.N D.R.m) ≤ 10 * L.sc.X'' D.R.n ∧
     0 ≤ (D.R.f : ℝ) * D.R.N D.R.m * Real.log ((D.R.f : ℝ) * D.R.N D.R.m) := by

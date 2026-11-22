@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,8 +40,8 @@ def ContainsTh (nab : NabV Xo c) (s : c.F) (P : MvPolynomial (LtN Dw n) c.F) {J 
   ∃ jb : (Fin n → LevQ Dw l) → J, Function.Injective jb ∧
     ∀ q, ∃ f : Rul Xo c, IsThRule Xo c nab (fun b => levRep (q b)) P f ∧ ∀ (p : TRing c.F) (y : FrPt Xo c p.R), w (jb q) p y = algebraMap c.F p.R s * f p y
 
-variable (E) in
 
+variable (E) in
 def p14 (r n m : ℕ) : ℝ :=
   (Real.log Real.pi + n * (Real.log 24 + (I2.dstar (E := E) m : ℝ) / 2 * Real.log (2 * (I2.dstar (E := E) m : ℝ))) +
     (r + 2) * Real.log 2) / 2

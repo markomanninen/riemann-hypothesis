@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnimodOneGenus
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -23,7 +27,8 @@ theorem hT_sub_sum_left {r : ℕ} (x w : S.V) (c : Fin r → E) (y : Fin r → S
 
 theorem hT_sub_sum_right {r : ℕ} (x w : S.V) (c : Fin r → E) (y : Fin r → S.V) :
     S.hT w (x - ∑ d, c d • y d) = S.hT w x - ∑ d, c d * S.hT w (y d) := by
-  simp [map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sub, map_sum, map_smul, smul_eq_mul]
 
 theorem coord_surj {r : ℕ} {T : E} (F0 : FlagG S r T) :
     Function.Surjective (LinearMap.pi (fun a => S.hT (F0.e a)) : S.V →ₗ[E] (Fin r → E)) := by
@@ -42,7 +47,8 @@ theorem coord_surj {r : ℕ} {T : E} (F0 : FlagG S r T) :
         = ∑ a, S.hT (F0.e a) x • (Pi.single a 1 : Fin r → E) := by
       ext i
       simp [Finset.sum_apply, Pi.single_apply]
-    rw [hdec, map_sum] at hx
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hdec, map_sum] at hx
     simpa [map_smul, smul_eq_mul, mul_comm] using hx
   have hv : (∑ a, star (ψ (Pi.single a 1)) • F0.e a) = 0 := by
     apply S.nondeg.1

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasInfCharInfCharOfCommute
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,8 +75,8 @@ theorem eq_zero_of_mem_nullPart {ρ : Representation ℂ G V} (hρ : IsSmooth ρ
   rw [map_one] at h3
   exact Submodule.disjoint_def.1 (LocGL.isCompl_fixed_twKer hρ hK).disjoint x h1 h3
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem exists_irred {ρ : Representation ℂ G V} (hρ : IsSmooth ρ) {K : Subgroup G} (hK : IsOpen (K : Set G))
     (h2 : ∀ W : Submodule ℂ V, (∀ g, ∀ v ∈ W, ρ g v ∈ W) → W ⊓ fixed ρ K = ⊥ → W = ⊥)
     (U : Submodule ℂ V) (hU : ∀ g, ∀ v ∈ U, ρ g v ∈ U) (h0 : U ≠ ⊥)
@@ -133,7 +137,7 @@ theorem map_pLoc_inv_mul (w : HeightOneSpectrum (𝓞 E)) (k : GL (Fin a) (Af E)
     GeneralLinearGroup.map (pLoc E w) ((locGL E a w (GeneralLinearGroup.map (pLoc E w) k))⁻¹ * k) = 1 := by
   rw [map_mul, map_inv, pLoc_locGL, inv_mul_cancel]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem nullPart_op (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) (K : Subgroup (GL (Fin a) (w.adicCompletion E)))
     (o : Op E a) {x : π.V} (hx : x ∈ nullPart (π.locRep w) K) : π.op o x ∈ nullPart (π.locRep w) K := by
@@ -202,7 +206,7 @@ def typePart (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)) (L : Subgroup (
     {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (Kinf E a) W) : Submodule ℂ π.V where
   carrier := {ψ | (∀ k ∈ L, GeneralLinearGroup.map (pLoc E w) k = 1 → π.finPart k ψ = ψ) ∧
     ∀ g : GA E a, (fun k : Kinf E a => (cptRep E a k ψ.1).1 g) ∈ AutFin.coeffSpan ρ}
-  add_mem' := fun hx hy => ⟨fun k h1 h2 => by rw [map_add, hx.1 k h1 h2, hy.1 k h1 h2],
+  add_mem' := fun hx hy => ⟨fun k h1 h2 => by rw [map_add (f := _), hx.1 k h1 h2, hy.1 k h1 h2],
     fun g => add_mem (hx.2 g) (hy.2 g)⟩
   zero_mem' := ⟨fun _ _ _ => map_zero _, fun _ => zero_mem _⟩
   smul_mem' := fun c _ hx => ⟨fun k h1 h2 => by rw [map_smul, hx.1 k h1 h2],
@@ -245,7 +249,7 @@ theorem finiteDimensional_typePart (h : AutomorphicFormsFiniteGL) (π : CuspSub 
     exact h2
   exact congrArg Subtype.val h3
 
-theorem exists_isLocComp (h : AutomorphicFormsFiniteGL) : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+theorem exists_isLocComp (h : AutomorphicFormsFiniteGL) : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
     (a : ℕ) (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E)),
     ∃ σ : SmIrr (GL (Fin a) (w.adicCompletion E)), π.IsLocComp w σ ∧ IsAdmissible σ.ρ := by
   intro E _ _ _ a π w

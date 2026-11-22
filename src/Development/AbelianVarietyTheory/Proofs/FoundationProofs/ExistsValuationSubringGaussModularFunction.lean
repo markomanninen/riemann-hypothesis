@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderPfA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderPfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,6 @@ def redH : HahnSeries ℚ V →+* HahnSeries ℚ (IsLocalRing.ResidueField V) wh
   map_add' _ _ := HahnSeries.map_add (IsLocalRing.residue V).toAddMonoidHom
 
 lemma incH_coeff (x : HahnSeries ℚ V) (r : ℚ) : (incH V x).coeff r = (x.coeff r : Ω) := rfl
-
-lemma redH_coeff (x : HahnSeries ℚ V) (r : ℚ) :
-    (redH V x).coeff r = IsLocalRing.residue V (x.coeff r) := rfl
 
 lemma incH_injective : Function.Injective (incH V) := by
   intro x y h
@@ -114,7 +115,7 @@ lemma orderTop_aeval {k : Type} [Field k] (J : HahnSeries ℚ k) (hJ : J.orderTo
       rw [Polynomial.natDegree_divX_eq_natDegree_tsub_one, hn]; rfl
     have hsplit := Polynomial.X_mul_divX_add Q
     have hR := ih Q.divX hd hdn
-    rw [← hsplit, map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C]
+    rw [← hsplit, map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C]
     have hm : (J * Polynomial.aeval J Q.divX).orderTop = ((-((n + 1 : ℕ) : ℚ) : ℚ) : WithTop ℚ) := by
       rw [HahnSeries.orderTop_mul, hJ, hR, ← WithTop.coe_add]
       congr 1

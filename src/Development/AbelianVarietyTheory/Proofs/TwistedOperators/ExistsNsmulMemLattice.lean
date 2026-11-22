@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NatMultipleInLattice
 
@@ -24,7 +28,7 @@ theorem exists_nat_mul_integral {E : Type} [Field E] [NumberField E] (a : E) :
     exact h1.neg
 
 theorem exists_nsmul_mem_lattice {E : Type} [Field E] [NumberField E] {n : ℕ}
-    (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsLattice E L)
+    (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (x : Fin n → E) : ∃ D : ℕ, D ≠ 0 ∧ D • x ∈ L := by
   have hx : x ∈ Submodule.span E (L : Set (Fin n → E)) := by
     rw [hL.span_eq_top]; exact Submodule.mem_top

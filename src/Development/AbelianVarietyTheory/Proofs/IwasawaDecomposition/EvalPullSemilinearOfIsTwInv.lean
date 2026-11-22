@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem eval_pull_semilinear_of_isTwInv : ∀ (E : Type) [Field E] [NumberField 
     { toFun := fun a => f (r (twv τ.symm a))
       map_add' := fun a b => by
         have e : twv τ.symm (a + b) = twv τ.symm a + twv τ.symm b := funext fun _ => map_add τ.symm _ _
-        rw [e, map_add, map_add]
+        rw [e, map_add (f := _), map_add (f := _)]
       map_smul' := fun c a => by
         rw [twv_smul, map_smul, hsm, RingEquiv.apply_symm_apply]
         rfl }

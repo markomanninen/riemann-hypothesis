@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ theorem pr_eq_zero_of_degenerate :
     · rfl
     · exact h01
   have h := congrArg (GlobalTheory.CompanionTheory.HopfC.pr F (GlobalTheory.CompanionTheory.HopfC.cst (1 + 1) (e 0))) hx
-  rw [map_zero (GlobalTheory.CompanionTheory.HopfC.pr F (GlobalTheory.CompanionTheory.HopfC.cst (1 + 1) (e 0))),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero (GlobalTheory.CompanionTheory.HopfC.pr F (GlobalTheory.CompanionTheory.HopfC.cst (1 + 1) (e 0))),
     GlobalTheory.CompanionTheory.HopfC.dn_eq, map_sum] at h
   simp only [map_smul, map_zsmul, GlobalTheory.CompanionTheory.HopfC.pr_pr] at h
   simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, add_zero, key] at h

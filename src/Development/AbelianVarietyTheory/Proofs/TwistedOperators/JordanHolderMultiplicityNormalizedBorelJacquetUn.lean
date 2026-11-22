@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,12 +56,13 @@ private lemma pres_iterate_zero {G V : Type} [Group G] [TopologicalSpace G] [IsT
   refine ⟨GlobalTheory.LocGL.idem hρ hH v, GlobalTheory.LocGL.idem_mem hρ hH v, ?_, ?_⟩
   · rw [GlobalTheory.LocGL.idem_eq_cosetSum hρ hH U hUv]
     exact S.toSubmodule.smul_mem _ (S.toSubmodule.sum_mem fun q _ => S.apply_mem_toSubmodule _ hv)
-  · rw [GlobalTheory.LocGL.idem_eq_cosetSum hρ hH U hUv, map_smul, map_sum]
-    have hq : ∀ q : H ⧸ U, f (ρ (q.out : H) v) = f v := fun q => by
-      rw [hf _ v hv, ofChar_apply, hθ _ (q.out).2, Units.val_one, one_mul]
-    have hc : (Fintype.card (H ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
-    simp only [hq, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, smul_eq_mul]
-    rw [← mul_assoc, inv_mul_cancel₀ hc, one_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [GlobalTheory.LocGL.idem_eq_cosetSum hρ hH U hUv, map_smul, map_sum]
+      have hq : ∀ q : H ⧸ U, f (ρ (q.out : H) v) = f v := fun q => by
+        rw [hf _ v hv, ofChar_apply, hθ _ (q.out).2, Units.val_one, one_mul]
+      have hc : (Fintype.card (H ⧸ U) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
+      simp only [hq, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, smul_eq_mul]
+      rw [← mul_assoc, inv_mul_cancel₀ hc, one_mul]
 
 theorem jhMult_onFixed {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V} (hρ : IsSmooth ρ) {H : Subgroup G}

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourTermExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FiniteSumLocalExpansion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FourTermExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FiniteSumLocalExpansion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

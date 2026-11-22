@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.InducedDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.InducedDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

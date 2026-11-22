@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.Imports
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.Imports
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -32,7 +36,8 @@ theorem UpperTheory.V.AlgebraTools.ULim.mem_smul_top_iff :
     obtain ⟨q, hq⟩ := exists_sum_of_mem_span_smul_top g _ hp
     choose q' hq' using fun c => ULim.mk_surjective F I M (q c)
     have h0 : ULim.mk F I M (p - ∑ c, g c • q' c) = 0 := by
-      rw [map_sub, map_sum, hq]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, hq]
       simp only [map_smul, hq', sub_self]
     filter_upwards [ULim.mk_eq_zero.1 h0 j] with N hN
     have h1 : (∑ c, g c • q' c) N ∈ ((a ⊔ I j) • ⊤ : Submodule R (M N)) := by
@@ -64,7 +69,8 @@ theorem UpperTheory.V.AlgebraTools.ULim.mem_smul_top_iff :
       have := Submodule.smul_mono_left (hI hj) (hq N (hN _ le_rfl))
       simpa [Finset.sum_apply] using this
     rw [map_sub, sub_eq_zero] at h0
-    rw [h0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h0, map_sum]
     refine Submodule.sum_mem _ fun c _ => ?_
     rw [map_smul]
     exact Submodule.smul_mem_smul (hga c) Submodule.mem_top

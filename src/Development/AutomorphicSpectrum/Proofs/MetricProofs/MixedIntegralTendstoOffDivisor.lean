@@ -1,20 +1,25 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.AnalyticForms.LeviForms.MixedIntegralInclusionExclusion
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
-import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCEqZeroOfEventuallyEqZero
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalDensityInclusionExclusionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedEnergyUniformBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralRegularizedConvergenceStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.AnalyticForms.LeviForms.MixedIntegralInclusionExclusion
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeInt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasureB
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCEqZeroOfEventuallyEqZero
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensAddOfFunContinuousOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocalDensityInclusionExclusionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RegularChartDataPropertiesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedEnergyUniformBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedIntegralRegularizedConvergenceStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ContDiff
 
@@ -139,8 +144,8 @@ theorem expand_on {e : ℕ} {X : Type} [TopologicalSpace X] (A : FinHolAtlas e X
     refine Finset.sum_congr rfl fun T _ => ?_
     ring
   have hint := fun T (_ : T ∈ (Finset.univ : Finset (Finset (Fin e)))) => (hI T).const_mul ((-1 : ℝ) ^ (e - T.card))
-  refine ⟨(integrable_finset_sum _ hint).congr hae.symm, ?_⟩
-  rw [integral_congr_ae hae, integral_finset_sum _ hint]
+  refine ⟨(integrable_finsetSum _ hint).congr hae.symm, ?_⟩
+  rw [integral_congr_ae hae, integral_finsetSum _ hint]
   simp_rw [integral_const_mul]
 
 theorem mIntegrable_of_logBound {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpace X] [T2Space X]
@@ -193,7 +198,7 @@ theorem mIntegrable_of_logBound {e : ℕ} {X : Type} [TopologicalSpace X] [Compa
     by_cases hr : Real.exp 1 ≤ R.r ((A.chart j).symm y)
     · rw [Set.indicator_of_mem (show _ ∈ tail R.Yo R.r (Real.exp 1) from ⟨hy.2, hr⟩)]
       nlinarith
-    · rw [Set.indicator_of_notMem (fun h => hr h.2)]
+    · rw [Set.indicator_of_notMem (by exact fun h => hr h.2)]
       have hl1 : Real.log (R.r ((A.chart j).symm y)) ≤ 1 := by
         rw [Real.log_le_iff_le_exp (lt_of_lt_of_le one_pos (R.one_le_r _ hy.2))]
         exact (not_le.1 hr).le
@@ -208,8 +213,8 @@ end GlobalTheory.CompanionTheory.Ar.Giv.Conv
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
 
-open GlobalTheory.CompanionTheory.Ar.Giv.Conv GroundTheory.Heights₂.Heights.AnalyticLimit in
 
+open GlobalTheory.CompanionTheory.Ar.Giv.Conv GroundTheory.Heights₂.Heights.AnalyticLimit in
 theorem mixed_integral_tendsto_of_C2_off_divisor : ∀ (e : ℕ) (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X] (A : FinHolAtlas e X) (R : GroundTheory.Heights₂.Heights.Regular.RegChartData A) (Θ : LocPot X), IsPotential A Θ → IsPosPot A Θ → ∀ (P : Fin e → LocPot X) (f : Fin e → X → ℝ) (fT : Fin e → ℝ → X → ℝ) (G : X → ℝ) (GT : ℝ → X → ℝ) (C : ℝ), (∀ i, IsPotential A (P i)) → (∀ i, A.SmoothOn R.Yo (f i)) → (∀ᶠ t in 𝓝[>] (0 : ℝ), ∀ i, A.Smooth (fT i t) ∧ IsPsh A (P i + LocPot.ofFun (fT i t) + Θ) ∧ ∀ x ∈ R.Yo, |fT i t x| ≤ C + C * Real.log (R.r x) ∧ fT i t x ≤ C) → (∀ i, ∀ j, ∀ K' ⊆ (A.chart j).target ∩ (A.chart j).symm ⁻¹' R.Yo, IsCompact K' → TendstoUniformlyOn (fun t => fT i t ∘ (A.chart j).symm) (f i ∘ (A.chart j).symm) (𝓝[>] 0) K' ∧ TendstoUniformlyOn (fun t => fderiv ℝ (fT i t ∘ (A.chart j).symm)) (fderiv ℝ (f i ∘ (A.chart j).symm)) (𝓝[>] 0) K' ∧ TendstoUniformlyOn (fun t => fderiv ℝ (fderiv ℝ (fT i t ∘ (A.chart j).symm))) (fderiv ℝ (fderiv ℝ (f i ∘ (A.chart j).symm))) (𝓝[>] 0) K') → (∀ᶠ t in 𝓝[>] (0 : ℝ), @Measurable X ℝ (borel X) _ (R.Yo.indicator (GT t)) ∧ ∀ x ∈ R.Yo, |GT t x| ≤ C + C * Real.log (R.r x)) → (∀ K' ⊆ R.Yo, IsCompact K' → TendstoUniformlyOn GT G (𝓝[>] 0) K') → MIntegrable A (fun i => P i + LocPot.ofFun (f i)) G ∧ (∀ᶠ t in 𝓝[>] (0 : ℝ), MIntegrable A (fun i => P i + LocPot.ofFun (fT i t)) (GT t)) ∧ Tendsto (fun t => mInt A (fun i => P i + LocPot.ofFun (fT i t)) (GT t)) (𝓝[>] 0) (𝓝 (mInt A (fun i => P i + LocPot.ofFun (f i)) G)) := by
   intro e X _ _ _ A R Θ hΘ hΘp P f fT G GT C hP hf hfT hC hGT hGc
   obtain ⟨hYo, hnull, -, -⟩ := GlobalTheory.T.regular_chart_data_properties e X A R
@@ -295,9 +300,9 @@ theorem mixed_integral_tendsto_of_C2_off_divisor : ∀ (e : ℕ) (X : Type) [Top
       (fun k y hy _ => locDens_nonneg_of_psh A _ hpot (hevt T).2.1 k hy) (hevt T).2.2 hg.1 hg.2
       j K hK hKc
   · have hne : Nonempty (ChartPartition A) := existsPartition A
-    simp_rw [mInt_eq_integralWith A _ hne]
+    simp_rw [mInt, dif_pos hne]
     unfold integralWith
-    refine tendsto_finset_sum _ fun j _ => ?_
+    refine tendsto_finsetSum _ fun j _ => ?_
     letI : MeasurableSpace X := borel X
     haveI : BorelSpace X := ⟨rfl⟩
     have hSc : IsCompact ((A.chart j) '' tsupport (hne.some.χ j)) :=
@@ -334,6 +339,6 @@ theorem mixed_integral_tendsto_of_C2_off_divisor : ∀ (e : ℕ) (X : Type) [Top
         (fun y => hne.some.χ j ((A.chart j).symm y) * GT t ((A.chart j).symm y)) hI).2
     rw [hlim]
     refine Tendsto.congr' (hfin.mono fun t h => h.symm) ?_
-    exact tendsto_finset_sum _ fun T _ => ((hterm T).2.2).const_mul _
+    exact tendsto_finsetSum _ fun T _ => ((hterm T).2.2).const_mul _
 
 end GlobalTheory.CompanionTheory.Ar.Giv

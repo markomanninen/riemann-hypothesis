@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RealTransport.RealTransport
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp UpperTheory.V.Published
 open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc
@@ -20,7 +25,7 @@ theorem UpperTheory.quadratic_complex_multiplication :
     have hm : (X ^ 2 - C d : F[X]).Monic := monic_X_pow_sub_C d (by norm_num)
     have h1 := minpoly.min F δ hm (by simp [hδ])
     have h2 := natDegree_le_natDegree h1
-    rwa [natDegree_X_pow_sub_C] at h2
+    rwa [natDegree_X_pow_sub_C _] at h2
   have hne : (minpoly F δ).natDegree ≠ 1 := by
     intro h
     obtain ⟨c, hc⟩ := (minpoly.natDegree_eq_one_iff).1 h
@@ -53,5 +58,5 @@ theorem UpperTheory.quadratic_complex_multiplication :
   refine ⟨f.coeff 0, f.coeff 1, ?_⟩
   rw [hx, IntermediateField.adjoin.powerBasis_gen]
   conv_lhs => rw [eq_X_add_C_of_natDegree_le_one (p := f) (by omega)]
-  simp only [map_add, map_mul, aeval_C, aeval_X]
+  simp only [map_add (f := _), map_mul, aeval_C, aeval_X]
   exact add_comm _ _

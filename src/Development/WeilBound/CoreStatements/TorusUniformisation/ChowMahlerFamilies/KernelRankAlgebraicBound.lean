@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.JordanBasisNilpotent
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.JordanBasisNilpotent
+
+@[expose] public section
+
 open NumberField
 
 namespace PositivityTheory.Xgn.KernelRankAlgebraic
@@ -357,8 +362,8 @@ theorem arith_pi {E : Type} [Field E] [NumberField E] (p : ℕ) [hp : Fact p.Pri
     rw [h, Ideal.span_singleton_zero] at hI
     exact mul_ne_zero hw0 hI0 hI.symm
   · rw [← Ideal.absNorm_span_singleton, hI, map_mul, Ideal.absNorm_apply w,
-      Submodule.cardQuot_apply, hf, padicValNat.mul (pow_ne_zero _ hp.out.ne_zero) hN0,
-      padicValNat.prime_pow, padicValNat.eq_zero_of_not_dvd hnd, add_zero]
+      Submodule.cardQuot_apply, hf, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hp.out.ne_zero) hN0,
+      (show padicValNat p (p ^ f) = f from by simpa only [← Nat.padicValNat_def] using Nat.multiplicity_prime_pow f), (show padicValNat p (Ideal.absNorm I) = 0 from by simpa only [← Nat.padicValNat_def] using multiplicity_eq_zero_of_not_dvd hnd), add_zero]
 
 theorem arith_theta {E : Type} [Field E] [NumberField E] (p : ℕ) [hp : Fact p.Prime]
     (w : Ideal (𝓞 E)) [hw : w.IsMaximal] (hw0 : w ≠ ⊥) :
@@ -501,7 +506,8 @@ theorem PositivityTheory.Xgn.kernel_rank_algebraic_bound : ∀ (E : Type) [Field
       ρ (RingOfIntegers.basis E q.2) (x q.1)) with hS
     have hR : ∀ (a : 𝓞 E) (i : Fin r), ρ a (x i) ∈ S := by
       intro a i
-      rw [← (RingOfIntegers.basis E).sum_repr a, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← (RingOfIntegers.basis E).sum_repr a, map_sum, LinearMap.sum_apply]
       refine S.sum_mem fun q _ => ?_
       rw [map_zsmul, LinearMap.smul_apply]
       exact S.toAddSubgroup.zsmul_mem (Submodule.subset_span ⟨(i, q), rfl⟩) _

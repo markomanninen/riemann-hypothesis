@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsSmulInteger
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsMulVec
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsSmulInteger
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.SecondCoordsMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem latCrd_of (hL : LatBasis X p θ (reindex₂ X p Q)) (x : Fin X.B.I.n →
     intro w
     rw [Matrix.transpose_reindex, Matrix.reindex_apply, Matrix.submatrix_mulVec_equiv]
     congr 2
-    funext j
+    funext i
     simp
   rw [hL x]
   unfold IntVec crd1 crd2

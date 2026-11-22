@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
-import Formalism.EllipticTorsion.WChordSeries
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+public import Formalism.EllipticTorsion.WChordSeries
+
+@[expose] public section
 
 open PowerSeries
 
@@ -32,8 +36,9 @@ def FormalGroupPointsParametrisation : Prop :=
       0 < ‖-x / y‖ ∧ ‖-x / y‖ < 1 ∧
         x = (-x / y) / evalPS w (-x / y) ∧ y = -1 / evalPS w (-x / y))
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def FormalGroupPointsHomomorphism : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
     (W : WeierstrassCurve K) (w : PowerSeries K) (F₂ : MvPowerSeries (Fin 2) K),

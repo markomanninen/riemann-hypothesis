@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -80,9 +84,10 @@ theorem mem_subfield_of_bilinForm_monomials :
           = ∑ j, (ε j : LinearMap.BilinForm ℤ X) a b • (Pi.single j 1 : I → ℤ) := by
         funext i
         simp [Finset.sum_apply, Pi.single_apply]
-      rw [h1, map_sum, map_sum] at h0
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_sum, map_sum] at h0
       simp only [map_smul, smul_eq_mul] at h0
-      simp only [AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul, LinearMap.sum_apply,
+      simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, LinearMap.sum_apply,
         LinearMap.smul_apply, smul_eq_mul, ZeroMemClass.coe_zero, LinearMap.zero_apply]
       rw [← h0]
       exact Finset.sum_congr rfl fun j _ => mul_comm _ _

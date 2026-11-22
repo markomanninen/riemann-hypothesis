@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchDefs
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealInputOfBranching
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryStabiliserEmbeddingNormLawsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProjectionSmooth
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.BranchDefs
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealInputOfBranching
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnitaryStabiliserEmbeddingNormLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ProjectionSmooth
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Ell GlobalTheory.SepReal UpperTheory.Lit.Branch
 open scoped InnerProductSpace

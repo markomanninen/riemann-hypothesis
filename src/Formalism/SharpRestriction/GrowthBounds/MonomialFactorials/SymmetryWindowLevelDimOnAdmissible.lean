@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfCoefficientFunction
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestLjjFinProved
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfCoefficientFunction
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestLjjFinProved
+
+@[expose] public section
 
 noncomputable section
 

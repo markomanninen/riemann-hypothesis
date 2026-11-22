@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.UnitTestFunctions.LiftUnit
+
+@[expose] public section
 
 open PositivityTheory.RgEis PositivityTheory.RgEis.TF
 
@@ -12,7 +16,7 @@ variable {ι : Type} [Fintype ι]
 def nsq (y : ι → ℂ) : ℝ := ∑ j, ‖y j‖ ^ 2
 
 lemma contDiff_coordSq (i : ι) {n : WithTop ℕ∞} : ContDiff ℝ n fun y : ι → ℂ => ‖y i‖ ^ 2 :=
-  (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ i)
+  (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) i)
 
 lemma contDiff_nsq {n : WithTop ℕ∞} : ContDiff ℝ n (nsq : (ι → ℂ) → ℝ) :=
   ContDiff.sum fun j _ => contDiff_coordSq j
@@ -96,8 +100,8 @@ lemma hasCompactSupport_smallF : HasCompactSupport smallF := by
 
 end GlobalTheory.CompanionTheory.TestBump
 
-open GlobalTheory.CompanionTheory.TestBump in
 
+open GlobalTheory.CompanionTheory.TestBump in
 theorem GlobalTheory.CompanionTheory.TestBump.cplxBump : CplxBump := by
   classical
   intro ι _ _ i₀ δ hδ

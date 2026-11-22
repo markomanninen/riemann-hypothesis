@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TrueWeightConsecutiveStepsPartitionStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaDistributionUnfolded
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsAre
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TrueWeightConsecutiveStepsPartitionStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaDistributionUnfolded
+
+@[expose] public section
 
 noncomputable section
 

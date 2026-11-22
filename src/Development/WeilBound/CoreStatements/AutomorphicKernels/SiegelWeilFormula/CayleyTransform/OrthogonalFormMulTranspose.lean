@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DenseC
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.RDIota
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneIso
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DenseC
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.RDIota
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,8 +38,6 @@ theorem QR_det_ne (K : Type) [Field K] (ε : ℤˣ) : (QR K n ε).det ≠ 0 := b
 theorem QR_map {K L : Type} [Field K] [Field L] (f : K →+* L) (ε : ℤˣ) : (QR K n ε).map f = QR L n ε := by
   ext i j
   rcases i with i | i <;> rcases j with j | j <;> rcases eq_or_ne i j with rfl | hij <;> simp [QR, Matrix.one_apply, *]
-
-theorem Qc_eq (ε : ℤˣ) : Qc n ε = QR ℂ n ε := rfl
 
 theorem inU_iff (ε : ℤˣ) (h : M2 n) : InU (Qc n ε)ᵀ h ↔ hᵀ * Qc n ε * h.map star = Qc n ε := by
   have e : ∀ A : M2 n, (hᴴ * A * h)ᵀ = hᵀ * Aᵀ * h.map star := fun A => by

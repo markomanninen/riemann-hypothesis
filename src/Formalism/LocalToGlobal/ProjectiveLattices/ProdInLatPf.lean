@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHLAM
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHLAM
+
+@[expose] public section
 
 noncomputable section
 

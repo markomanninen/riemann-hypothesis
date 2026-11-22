@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupLift
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.LatSpanLeSpan
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.TupLift
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.LatSpanLeSpan
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,8 +125,8 @@ include hff hef in
 theorem psiF_f' (U U' : Matrix (Fin r) (Fin r) E) (j : Fin r) : psiF e f U U' (f j) = ∑ c, U' c j • f c := by
   simp [psiF, hff, hef, ite_smul]
 
-include hee hff hef in
 
+include hee hff hef in
 theorem levi_exists (U : Matrix (Fin r) (Fin r) E) (hdet : U.det = 1) :
     ∃ ν : S.V ≃ₗ[E] S.V, (∀ x y, S.hT (ν x) (ν y) = S.hT x y) ∧ (∀ j, ν (e j) = ∑ c, U c j • e c) ∧
       (∀ j, ν (f j) = ∑ c, (U.conjTranspose)⁻¹ c j • f c) ∧
@@ -253,7 +257,8 @@ theorem split_mem {Λ A L B : Submodule (𝓞 E) S.V} (h : Λ = A ⊔ L ⊔ B) {
 theorem frame_symm {n : ℕ} (φ : S.V ≃ₗ[E] S.V) (e : Fin n → S.V) (M N : Matrix (Fin n) (Fin n) E)
     (hMN : M * N = 1) (hφ : ∀ j, φ (e j) = ∑ c, M c j • e c) (j : Fin n) :
     φ.symm (e j) = ∑ c, N c j • e c := by
-  rw [LinearEquiv.symm_apply_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearEquiv.symm_apply_eq, map_sum]
   simp_rw [map_smul, hφ, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul]
@@ -267,7 +272,8 @@ theorem hT_span_span (f : Fin r → S.V) (hff : ∀ a b, S.hT (f a) (f b) = 0) {
     (hx : x ∈ Submodule.span E (Set.range f)) (hy : y ∈ Submodule.span E (Set.range f)) : S.hT x y = 0 := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hx
   obtain ⟨d, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hy
-  simp [map_sum, hff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hff]
 
 variable {Λ : Submodule (𝓞 E) S.V} (aa : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E)
   (e f : Fin r → S.V) (L : Submodule (𝓞 E) S.V)
@@ -292,8 +298,8 @@ theorem B_le : latSpan (fun a => (aa a)⁻¹) f ≤ Λ := by
   rw [hΛeq]
   exact le_sup_right
 
-include hΛeq hff hL hint in
 
+include hΛeq hff hL hint in
 theorem levi_keeps (hUn : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) (U : Matrix (Fin r) (Fin r) E)
     (hU0 : ∀ c b, b < c → U c b = 0) (hU1 : ∀ c, U c c = 1)
     (hg : ∀ c b, c < b → ∀ x ∈ (aa b : Submodule (𝓞 E) E), x * U c b ∈ (aa c : Submodule (𝓞 E) E))
@@ -361,12 +367,12 @@ theorem levi_keeps (hUn : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ
     have h0 : S.hT (ν.symm b') b = 0 :=
       hT_span_span f hff (hfspan _ (latSpan_le_spanE _ f hb')) (latSpan_le_spanE _ f hb)
     have hw' : ν.symm (a' + l' + b') = (ν.symm a' + l') + ν.symm b' := by
-      rw [map_add, map_add, hfixLs l' hl']
+      rw [map_add (f := _), map_add (f := _), hfixLs l' hl']
     calc S.hT (ν.symm a' + l') b = S.hT (ν.symm (a' + l' + b')) b := by
           rw [hw', map_add S.hT (ν.symm a' + l') (ν.symm b'), LinearMap.add_apply, h0, add_zero]
       _ = S.hT (ν (ν.symm (a' + l' + b'))) (ν b) := (hiso _ _).symm
       _ = S.hT (a' + l' + b') (ν b) := by rw [LinearEquiv.apply_symm_apply]
-  rw [map_add, map_add, hfixL l hl]
+  rw [map_add (f := _), map_add (f := _), hfixL l hl]
   exact Λ.add_mem (Λ.add_mem (hA' a ha) (L_le aa e f L hΛeq hl)) hbΛ
 
 end Split
@@ -399,11 +405,6 @@ theorem sE_herm (α : E) (hα : α + star α = 1) (y₀ : S.V) (v : Fin r → E)
   simp only [sE, star_neg, star_mul', star_star, hh]
   linear_combination (-(v c * star (v d) * S.hT y₀ y₀)) * hα
 
-theorem nilF_f' (e a f : Fin r → S.V) (s : Matrix (Fin r) (Fin r) E)
-    (hef : ∀ c b, S.hT (e c) (f b) = if c = b then 1 else 0) (b : Fin r) (ha : ∀ c, S.hT (a c) (f b) = 0) :
-    nilF e a s (f b) = a b + ∑ c, s c b • e c := by
-  simp [nilF, hef, ha, ite_smul, add_smul, Finset.sum_add_distrib]
-
 theorem nilF_orth (e a : Fin r → S.V) (s : Matrix (Fin r) (Fin r) E) (x : S.V) (hx : ∀ c, S.hT (e c) x = 0) :
     nilF e a s x = ∑ c, (-(S.hT (a c) x)) • e c := by
   simp [nilF, hx]
@@ -421,8 +422,8 @@ variable {Λ : Submodule (𝓞 E) S.V} (aa : Fin r → FractionalIdeal (nonZeroD
   (hL : ∀ x ∈ L, ∀ a, S.hT (e a) x = 0 ∧ S.hT (f a) x = 0)
   (hint : ∀ x ∈ Λ, ∀ y ∈ Λ, ∃ o : 𝓞 E, (o : E) = S.hT x y)
 
-include hΛeq hee hef hL hint in
 
+include hΛeq hee hef hL hint in
 theorem eich_keeps (y₀ : S.V) (hy₀ : y₀ ∈ L) (v : Fin r → E) (hv : ∀ c, v c ∈ aa c) (α : 𝓞 E) :
     ∀ w ∈ Λ, nilF e (aE y₀ v) (sE (α : E) y₀ v) w ∈ Λ := by
   intro w hw
@@ -461,8 +462,8 @@ theorem eich_keeps (y₀ : S.V) (hy₀ : y₀ ∈ L) (v : Fin r → E) (hv : ∀
     rw [e2]
     exact A_le aa e f L hΛeq (Submodule.subset_span ⟨c, _, mem_aa_mul (hv c) _, rfl⟩)
 
-include hΛeq hL hint in
 
+include hΛeq hL hint in
 theorem exists_eigenvalueGLOne_eq_cuspidalLabel_gen (hUn : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) (z : S.V) (hzL : z ∈ L) (hzz : S.hT z z ≠ 0)
     (he_z : ∀ a, S.hT (e a) z = 0) (hprim : ∀ c : E, c • z ∈ Λ → ∃ o : 𝓞 E, (o : E) = c) :
     ∃ y₀ ∈ L, S.hT y₀ z = 1 := by
@@ -481,10 +482,11 @@ theorem exists_eigenvalueGLOne_eq_cuspidalLabel_gen (hUn : Formalism.HermitianLa
       ∀ x ∈ Submodule.span E (Set.range g), S.hT x z = 0 := by
     intro g hg x hx
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hx
-    simp [map_sum, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hg]
   have ha0 := hzero e he_z a (latSpan_le_spanE aa e ha)
   have hb0 := hzero f (fun i => (hL z hzL i).2) b (latSpan_le_spanE _ f hb)
-  rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, ha0, hb0] at hσz
+  rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, ha0, hb0] at hσz
   simpa using hσz
 
 end Eich2
@@ -556,7 +558,7 @@ theorem nLamOnto_holds : TupLift.NLamOnto := by
           rw [h0, zero_smul]
           exact Submodule.zero_mem _
       | zero => simp
-      | add x y _ _ h h' => rw [map_add, add_sub_add_comm]; exact Submodule.add_mem _ h h'
+      | add x y _ _ h h' => rw [map_add (f := _), add_sub_add_comm]; exact Submodule.add_mem _ h h'
       | smul c x _ h => rw [map_smul, ← smul_sub]; exact Submodule.smul_mem _ _ h
     · intro x hx
       have hφ : ∀ a, (VS D).hT (G.e a) x = 0 := fun a =>
@@ -594,10 +596,11 @@ theorem nLamOnto_holds : TupLift.NLamOnto := by
     congr 1
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hT_aE_left, hy₀z, mul_one, neg_neg]
-  · rw [hfc, LinearEquiv.mul_apply, heX j, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hfc, LinearEquiv.mul_apply, heX j, map_sum,
       (hU (Fin.last _) j.castSucc).1 (Fin.castSucc_lt_last j), zero_smul, add_zero]
-    refine Finset.sum_congr rfl fun c _ => ?_
-    rw [map_smul, hez]
+      refine Finset.sum_congr rfl fun c _ => ?_
+      rw [map_smul, hez]
 
 end D7
 

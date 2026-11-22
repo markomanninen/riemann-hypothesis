@@ -1,28 +1,32 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GaussianFieldRangeEqKerQuarticChar
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DiagonalMultiplication
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GaussianFieldRangeEqKerQuarticChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.GalEmbFam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.PlacesQ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DiagonalMultiplication
+
+@[expose] public section
 
 open NumberField Matrix IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
 
-private theorem conj_left {R : Type} [CommRing R] (x y : GG 3 R) (hy : y.right = 1) :
+private theorem conj_left {R : Type} [CommRing R] (x y : GG (m := 3) (R := R)) (hy : y.right = 1) :
     (x * y * x⁻¹).left = x.left * sgnAct 3 R x.right y.left * x.left⁻¹ := by
   simp only [SemidirectProduct.mul_left, SemidirectProduct.mul_right, SemidirectProduct.inv_left, hy, mul_one]
   rw [← MulAut.mul_apply, ← map_mul, mul_inv_cancel, map_one, MulAut.one_apply]
 
-private theorem conjBy_left {D R : Type} [Group D] [CommRing R] (h : GL (Fin 3) R) (r : D →* GG 3 R) (d : D)
+private theorem conjBy_left {D R : Type} [Group D] [CommRing R] (h : GL (Fin 3) R) (r : D →* GG (m := 3) (R := R)) (d : D)
     (hd : (r d).right = 1) : (conjBy h r d).left = h * (r d).left * h⁻¹ := by
   have := conj_left (GG.ofGL h) (r d) hd
   rw [SemidirectProduct.left_inl, SemidirectProduct.right_inl, sgnAct_one] at this
   exact this
 
-private theorem conjBy_right {D R : Type} [Group D] [CommRing R] (h : GL (Fin 3) R) (r : D →* GG 3 R) (d : D) :
+private theorem conjBy_right {D R : Type} [Group D] [CommRing R] (h : GL (Fin 3) R) (r : D →* GG (m := 3) (R := R)) (d : D) :
     (conjBy h r d).right = (r d).right := by
   show (GG.ofGL h * r d * (GG.ofGL h)⁻¹).right = _
   simp
@@ -80,8 +84,8 @@ private theorem unit_sep {R : Type} [CommRing R] [IsLocalRing R] (u : Rˣ) (hu :
   exact (residue_eq_zero_iff _).1 h6 hu
 
 private theorem key {O K G Γ ι A : Type} [CommRing O] [IsLocalRing O] [Field K] [Algebra O K] [Group G] [Group Γ]
-    [TopologicalSpace Γ] (F : Frame O G Γ ι) (g₁ : Γ) (r : Γ →* GG 3 K) [CommRing A] [IsLocalRing A] [Algebra O A]
-    [IsLocalHom (algebraMap O A)] (val : A →ₐ[O] K) (hval : Function.Injective val) (t : Kˣ) (r' : Γ →* GG 3 A)
+    [TopologicalSpace Γ] (F : Frame O G Γ ι) (g₁ : Γ) (r : Γ →* GG (m := 3) (R := K)) [CommRing A] [IsLocalRing A] [Algebra O A]
+    [IsLocalHom (algebraMap O A)] (val : A →ₐ[O] K) (hval : Function.Injective val) (t : Kˣ) (r' : Γ →* GG (m := 3) (R := A))
     (hpt : F.IsPt g₁ r') (hpush : push val r' = conjBy (tor K t) r) (γ : Γ) :
     ∃ P : GL (Fin 3) K, ∀ d : F.D F.vl, F.ηv _ d = 1 → ∀ X, X = P * (r (γ * F.loc _ d * γ⁻¹)).left * P⁻¹ →
       (∀ i j, j < i → X i j = 0) ∧ (d ∈ F.Iv _ → ∀ a, X a a = algebraMap O K (psi (F.Ψv _) a d)) ∧
@@ -172,7 +176,7 @@ open UpperTheory.V.Base in
 theorem UpperTheory.V.UnitaryThreeInertia.levelAt_of_pt :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (c : Coef l) {N : ℕ} [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (o₁ : ℕ), HostData l e ψ o₁ →
     ∀ (S : Finset Pl) (A : S → ValuationSubring Ω) (F : Frame c.O (Formalism.ConjugateSelfDual.G ℚ Ω) (Gam Ω S) S), IsHostFrame Ω c e ψ S A F →
-    ∀ (K : Type) [Field K] [NumberField K] [Algebra K Ω] [IsScalarTower ℚ K Ω], IsQi K → ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG 3 (PadicAlgCl l), F.IsCharZeroPt g₁ r → ∀ ρ : G K Ω →* GL (Fin 3) (Qbar l), (∀ s : G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat) → Af.LevelAt l N ![(e : ℤ), 0, -(e : ℤ)] ρ := by
+    ∀ (K : Type) [Field K] [NumberField K] [Algebra K Ω] [IsScalarTower ℚ K Ω], IsQi K → ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l), F.IsCharZeroPt g₁ r → ∀ ρ : G K Ω →* GL (Fin 3) (Qbar l), (∀ s : G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat) → Af.LevelAt l N ![(e : ℤ), 0, -(e : ℤ)] ρ := by
   intro Ω _ _ _ l hl c N _ e ψ o₁ hD S A F hF K _ _ _ _ hK g₁ _ r hr ρ hρ w hw
   obtain ⟨A', _, _, t, r', hpt, hpush⟩ := hr
   have := loc_hom (O := c.O) Subtype.val_injective A'

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalReductionUnitary
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalReductionUnitary
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff

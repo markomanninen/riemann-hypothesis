@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelOneUniformizerCoeffVanish
-import Formalism.SharpRestriction.LevelLetterCocycles.CoeffAlgMul
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelOneUniformizerCoeffVanish
+public import Formalism.SharpRestriction.LevelLetterCocycles.CoeffAlgMul
+
+@[expose] public section
 
 noncomputable section
 

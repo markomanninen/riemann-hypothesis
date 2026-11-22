@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
+
+@[expose] public section
 
 noncomputable section
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
@@ -18,39 +22,7 @@ def Good (g g' : Fin (r + 1) → S.V) (j : ℕ) (b : S.V) : Prop :=
   ∃ al al' : Fin (r + 1) → E, b = ∑ i, al i • g i + ∑ i, al' i • g' i ∧
     ∀ i : Fin (r + 1), j ≤ (i : ℕ) → S.RR (al i) (al' i)
 
-theorem RR_add {x y x' y' : E} (h : S.RR x y) (h' : S.RR x' y') : S.RR (x + x') (y + y') := by
-  obtain ⟨h1, c, hc, e⟩ := h
-  obtain ⟨h1', c', hc', e'⟩ := h'
-  exact ⟨L.O.add_mem h1 h1', c + c', L.O.add_mem hc hc', by linear_combination e + e'⟩
-
-theorem RR_mul {x y a : E} (ha : a ∈ L.O) (h : S.RR x y) : S.RR (a * x) (a * y) := by
-  obtain ⟨h1, c, hc, e⟩ := h
-  exact ⟨L.O.mul_mem ha h1, a * c, L.O.mul_mem ha hc, by linear_combination a * e⟩
-
 variable {S} {g g' : Fin (r + 1) → S.V}
-
-theorem Good.mono {j j' : ℕ} {b : S.V} (h : Good S g g' j b) (hj : j ≤ j') : Good S g g' j' b := by
-  obtain ⟨al, al', e, H⟩ := h
-  exact ⟨al, al', e, fun i hi => H i (hj.trans hi)⟩
-
-theorem Good.add {j : ℕ} {b b' : S.V} (h : Good S g g' j b) (h' : Good S g g' j b') :
-    Good S g g' j (b + b') := by
-  obtain ⟨al, al', e, H⟩ := h
-  obtain ⟨be, be', e', H'⟩ := h'
-  refine ⟨fun i => al i + be i, fun i => al' i + be' i, ?_, fun i hi => RR_add S (H i hi) (H' i hi)⟩
-  rw [e, e']
-  simp only [add_smul, Finset.sum_add_distrib]
-  abel
-
-theorem Good.smul {j : ℕ} {b : S.V} {a : E} (ha : a ∈ L.O) (h : Good S g g' j b) :
-    Good S g g' j (a • b) := by
-  obtain ⟨al, al', e, H⟩ := h
-  refine ⟨fun i => a * al i, fun i => a * al' i, ?_, fun i hi => RR_mul S ha (H i hi)⟩
-  rw [e]
-  simp only [mul_smul, smul_add, Finset.smul_sum]
-
-theorem spanTo_mono (g : Fin (r + 1) → S.V) {j j' : ℕ} (h : j ≤ j') : S.spanTo g j ≤ S.spanTo g j' :=
-  Submodule.span_mono (Set.image_mono fun _ hi => lt_of_lt_of_le hi h)
 
 end GlobalTheory.HL.LevelRep
 
@@ -163,7 +135,8 @@ private lemma lev_le_iff_levelRep_good {b : S.V}
   rw [hset]
   constructor
   · intro hj
-    exact levelRep_good_mono (Nat.sInf_mem h) hj
+    exact levelRep_good_mono
+      (Nat.sInf_mem (s := {j | _root_.GlobalTheory.HL.LevelRep.Good S g g' j b}) h) hj
   · intro hj
     exact Nat.sInf_le hj
 
@@ -236,9 +209,9 @@ private lemma eq_and_eq_of_sum_elim_linearIndependent (hli : LinearIndependent E
   · have := h0 (Sum.inr i)
     simpa [sub_eq_zero] using this
 
+
 open ValuativeRel MeasureTheory in
 open scoped Pointwise ENNReal Classical in
-
 theorem _root_.GlobalTheory.HL.LevelRep.level_rep : ∀ {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [CharZero F] {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] (L : _root_.Formalism.MainNotions.S.Loc.LocE F E), ∀ (r k : ℕ) (S : _root_.GlobalTheory.HL.Frames L r k), ∀ (d : S.Datum) (Λ : Submodule L.O S.V), S.IsTerm d Λ → (∀ y ∈ S.sat Λ, S.levC d Λ y = 0 ↔ y ∈ S.M d Λ) ∧ (∀ y ∈ S.sat Λ, ∀ j, S.levC d Λ y ≤ j ↔ ∃ y₁ ∈ (S.spanTo S.f j ⊔ S.spanTo S.f' j), y - y₁ ∈ S.M d Λ) ∧ (∀ y ∈ S.sat Λ, ∀ m ∈ S.M d Λ, S.levC d Λ (y + m) = S.levC d Λ y) ∧ ∀ (al al' : Fin (r + 1) → E) (j : ℕ), S.lev (S.fr d Λ) (S.fr' d Λ) (∑ i, al i • S.fr d Λ i + ∑ i, al' i • S.fr' d Λ i) ≤ j ↔ ∀ i : Fin (r + 1), j ≤ (i : ℕ) → S.RR (al i) (al' i) := by
   intro F _ _ _ _ _ E _ _ _ L r k S d Λ hT
   obtain ⟨-, hW, hMsat, -, -, hli, -⟩ := _root_.GlobalTheory.HL.TermBasic.term_basic L r k S d Λ hT

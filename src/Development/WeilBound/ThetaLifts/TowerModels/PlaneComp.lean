@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,24 +52,11 @@ theorem fg_comap {V W : Type} [AddCommGroup V] [Module (𝓞 E) V] [AddCommGroup
   Submodule.fg_of_fg_map_injective f hf (hL.of_le (Submodule.map_comap_le f L))
 
 theorem isLattice_comap (n n₁ : ℕ) (L : Submodule (𝓞 E) (Fin n → E)) (ι : Matrix (Fin n) (Fin n₁) E)
-    (P : Matrix (Fin n₁) (Fin n) E) (hP : P * ι = 1) (hL : L.IsLattice E) :
-    (L.comap ((Matrix.mulVecLin ι).restrictScalars (𝓞 E))).IsLattice E where
-  fg := fg_comap _ (fun u u' e => by
+    (P : Matrix (Fin n₁) (Fin n) E) (hP : P * ι = 1) (hL : L.IsFullLattice E) :
+    (L.comap ((Matrix.mulVecLin ι).restrictScalars (𝓞 E))).IsLattice E :=
+  Submodule.IsLattice.of_fg E (fg_comap _ (fun u u' e => by
     have := congrArg (P *ᵥ ·) (show ι *ᵥ u = ι *ᵥ u' from e)
-    simpa [Matrix.mulVec_mulVec, hP] using this) L hL.fg
-  span_eq_top := by
-    rw [eq_top_iff]
-    intro u _
-    obtain ⟨t, ht⟩ := multiple_mem_span_of_mem_localization_span (𝓞 E)⁰ E (L : Set (Fin n → E)) (ι *ᵥ u)
-      (by rw [hL.span_eq_top]; trivial)
-    rw [Submodule.span_eq] at ht
-    have h0 : ((t : 𝓞 E) : E) ≠ 0 := by simpa using nonZeroDivisors.coe_ne_zero t
-    have : u = ((t : 𝓞 E) : E)⁻¹ • (((t : 𝓞 E) : E) • u) := by rw [inv_smul_smul₀ h0]
-    rw [this]
-    refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
-    change ι *ᵥ (((t : 𝓞 E) : E) • u) ∈ L
-    rw [Matrix.mulVec_smul]
-    exact ht
+    simpa [Matrix.mulVec_mulVec, hP] using this) L hL.fg)
 
 theorem exists_ideal (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E) (x : Fin n → E) (hx : x ≠ 0) :
     ∃ 𝔟 : FractionalIdeal (𝓞 E)⁰ E, ∀ s : E, s ∈ 𝔟 ↔ s • x ∈ L :=

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartMax
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartLocDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartMax
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartLocDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -24,12 +29,13 @@ theorem ChartDehomog.proof : ChartDehomog.Statement := by
     fun hg => by rw [← hφ]; exact ChartLocDomain.aeval_mul_of_isHomogeneous hg _ _
   have hle : W ⊔ Ideal.span {linForm t - 1} ≤ RingHom.ker ψ := by
     refine sup_le (fun g hg => ?_) ?_
-    · rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
-      refine Finset.sum_eq_zero fun k _ => ?_
-      rw [hhom (homogeneousComponent_isHomogeneous k g)]
-      have : φ (homogeneousComponent k g) = 0 := by
-        simp [φ, Ideal.Quotient.eq_zero_iff_mem.mpr (hH g hg k)]
-      rw [this, mul_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [RingHom.mem_ker, ← sum_homogeneousComponent g, map_sum]
+        refine Finset.sum_eq_zero fun k _ => ?_
+        rw [hhom (homogeneousComponent_isHomogeneous k g)]
+        have : φ (homogeneousComponent k g) = 0 := by
+          simp [φ, Ideal.Quotient.eq_zero_iff_mem.mpr (hH g hg k)]
+        rw [this, mul_zero]
     · rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, RingHom.mem_ker, map_sub, map_one,
         hhom (ChartLocDomain.linForm_isHomogeneous t), pow_one]
       have : φ (linForm t) = algebraMap _ A a := rfl

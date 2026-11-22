@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.SumFinsuppAntidiagProdPowDivMultiFactorial
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsMinorProdEqSmulColActBasePoly
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.SumFinsuppAntidiagProdPowDivMultiFactorial
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsMinorProdEqSmulColActBasePoly
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 open MvPolynomial Matrix Topology Filter
 open GlobalTheory.MvPoly
@@ -32,11 +36,11 @@ theorem pderiv_algHom_of_linear {R : Type*} [CommRing R]
     rw [map_mul, Derivation.leibniz, hP, h1, smul_eq_mul, smul_eq_mul, ← h2, Finset.mul_sum,
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [Derivation.leibniz, map_add, smul_add, smul_eq_mul, smul_eq_mul, map_mul G (X k),
+    rw [Derivation.leibniz, map_add (f := _), smul_add, smul_eq_mul, smul_eq_mul, map_mul G (X k),
       mul_smul_comm]
 
-omit [Fintype τ] in
 
+omit [Fintype τ] in
 theorem constantCoeff_algHom_of_linear {R : Type*} [CommRing R]
     (G : MvPolynomial τ R →ₐ[R] MvPolynomial σ R) (M : σ → τ → R)
     (hG : ∀ j, G (X j) = ∑ i, M i j • X i) (Q : MvPolynomial τ R) :
@@ -57,9 +61,10 @@ theorem fockInner_algHom_of_linear (F : MvPolynomial σ ℂ →ₐ[ℂ] MvPolyno
     rw [algHom_C, algebraMap_eq, C_apply, C_apply, fockInner_monomial_left,
       fockInner_monomial_left, this]
     simp [constantCoeff_eq]
-  | add P P' hP hP' => rw [map_add, fockInner_add_left, fockInner_add_left, hP, hP']
+  | add P P' hP hP' => rw [map_add (f := _), fockInner_add_left, fockInner_add_left, hP, hP']
   | mul_X P k hP =>
-    rw [mul_comm P, fockInner_X_mul_left, pderiv_algHom_of_linear G _ hG, map_mul, hF,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_comm P, fockInner_X_mul_left, pderiv_algHom_of_linear G _ hG, map_mul, hF,
       Finset.sum_mul, ← fockInnerₛₗ_apply, ← fockInnerₛₗ_apply, map_sum, map_sum,
       LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -99,14 +104,16 @@ theorem exists_fockInner_sub_eq_zero {σ : Type*} (W : Submodule ℂ (MvPolynomi
     LinearMap.pi fun i => (fockInnerₛₗ σ ℂ).flip (b i)
   have hL (P) (h : L P = 0) (w) (hw : w ∈ W) : fockInner P w = 0 := by
     have := congrArg W.subtype (b.sum_repr ⟨w, hw⟩)
-    rw [map_sum, Submodule.subtype_apply] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Submodule.subtype_apply] at this
     change _ = w at this
-    rw [← this, ← fockInnerₛₗ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, ← fockInnerₛₗ_apply, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [map_smul, fockInnerₛₗ_apply, fockInner_smul_right]
     exact mul_eq_zero_of_right _ (congrFun h i)
   have hinj : Function.Injective (L ∘ₗ W.subtype) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have := hL x hx x x.2
     rw [fockInner_self] at this

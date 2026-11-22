@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtCompl
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartCount
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartGraded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtCompl
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TorAut
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartCount
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartGraded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ChartSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSqz
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 private theorem count_weights_eq_local_dims (w : Fin 12 → ℤ) (h : ∀ j, Nat.card {i // w i = j} ≤ locDims j) (j : ℤ) :
     Nat.card {i // w i = j} = locDims j := by
@@ -39,7 +44,7 @@ private theorem count_weights_eq_local_dims (w : Fin 12 → ℤ) (h : ∀ j, Nat
   all_goals (try subst_vars); omega
 
 theorem UpperTheory.V.Loc.rtChart :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∃ (w : Fin 12 → ℤ) (φ : U.R →ₐ[O] MvPowerSeries (Fin 12) E), UpperTheory.V.Loc.IsCompl (D.It U) x φ ∧ (∀ j, Nat.card {i // w i = j} = locDims j) ∧ ∀ g a b, φ ((U.r.hom g).mat a b) ∈ wtPart E w (wt a b) := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∃ (w : Fin 12 → ℤ) (φ : U.R →ₐ[O] MvPowerSeries (Fin 12) E), UpperTheory.V.Loc.IsCompl (D.It U) x φ ∧ (∀ j, Nat.card {i // w i = j} = locDims j) ∧ ∀ g a b, φ ((U.r.hom g).mat a b) ∈ wtPart E w (wt a b) := by
   intro hP l _ O _ _ _ _ _ _ _ D U E _ _ _ _ _ _ _ _ x hx
   obtain ⟨-, φ₀, h₀⟩ := UpperTheory.V.Loc.rtCompl hP D U E x hx
   obtain ⟨t, θ, ht, hθx, hθI, hθ⟩ := torAut hP D U x hx
@@ -56,7 +61,7 @@ theorem UpperTheory.V.Loc.rtChart :
     exact this)
   obtain ⟨φ, hφ, hz⟩ := chartChange 12 (D.It U) x φ₀ (fun i => e (u i)) h₀ (fun i => by simp [e]) hu
   have hxe : ∀ g a b, x ((U.r.hom g).mat a b) = (r0 D.η D.Ψ g).mat a b := fun g a b =>
-    congrArg (fun r : GQ l →* GG 3 O => (r g).mat a b) hx
+    congrArg (fun r : GQ l →* GG (m := 3) (R := O) => (r g).mat a b) hx
   let w : Fin 12 → ℤ := fun i => wt (u i).2.1 (u i).2.2
   have hgr := chartGraded 12 (D.It U) x φ (fun i => e (u i)) w θ t hφ hz hθx hθI ht (fun i => by
     simp only [e, w, map_sub, AlgHom.commutes, hθ, mul_sub]
@@ -69,6 +74,6 @@ theorem UpperTheory.V.Loc.rtChart :
   refine ⟨w, φ, hφ, count_weights_eq_local_dims w (chartCount hP D U E x hx 12 w φ u hφ hg fun i j => ?_), hg⟩
   have h1 := hz i
   simp only [e, map_sub, AlgHom.commutes, sub_eq_iff_eq_add] at h1
-  rw [h1, map_add, MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, if_neg (by simp), add_zero,
+  rw [h1, map_add (f := _), MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, if_neg (by simp), add_zero,
     MvPowerSeries.coeff_X]
   simp [Finsupp.single_left_inj, eq_comm]

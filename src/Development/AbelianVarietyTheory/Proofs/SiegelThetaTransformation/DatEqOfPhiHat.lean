@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsQuotEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.DatEqZero
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsQuotEquiv
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -55,7 +59,7 @@ private theorem dvd_EF_cSep_of_mem_Mb_right {E : Type} [Field E] [NumberField E]
     exact dvd_EF_M_mul_smul_right Dw l.M γ u y
   · intro a b ha hb
     show (l.M : ℤ) ∣ Dw.EF u (cSep l • (a + b))
-    rw [smul_add, map_add]
+    rw [smul_add, map_add (f := _)]
     exact dvd_add ha hb
 
 private theorem dvd_EF_cSep_of_mem_Mfr_left {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -71,7 +75,7 @@ private theorem dvd_EF_cSep_of_mem_Mfr_left {E : Type} [Field E] [NumberField E]
     exact dvd_EF_M_mul_smul_right Dw l.M γ y v
   · intro a b ha hb
     show (l.M : ℤ) ∣ Dw.EF (a + b) (cSep l • v)
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact dvd_add ha hb
 
 private theorem sim_f_sub_mem_Mb_of_inGam_dvd {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -119,7 +123,7 @@ private theorem dvd_EF_add_nsmul_sub {E : Type} [Field E] [NumberField E] [IsCMF
     (M : ℤ) ∣ Dw.EF (x + M • c) (y + M • c') - Dw.EF x y := by
   have e : Dw.EF (x + M • c) (y + M • c') - Dw.EF x y =
       Dw.EF x (M • c') + (Dw.EF (M • c) y + Dw.EF (M • c) (M • c')) := by
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     abel
   rw [e]
   refine dvd_add ?_ (dvd_add ?_ ?_)
@@ -178,8 +182,8 @@ private theorem quotient_mk_levRep {E : Type} [Field E] [NumberField E] [IsCMFie
     (Submodule.Quotient.mk (levRep q) : LevQ Dw l) = q :=
   Classical.choose_spec (Submodule.Quotient.mk_surjective _ q)
 
-open GlobalTheory.DatumInverseCharacter in
 
+open GlobalTheory.DatumInverseCharacter in
 theorem datEq_of_phiHat : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (n : ℕ) (d : DeltaDat Xo c n), d.IsLev → ∀ (ψ : (LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) →* c.Fˣ) (φ : (Fin n → LevQc Dw d.l₂) → c.F) (w : (Fin n → LevQ Dw d.l₂) → c.F), (∀ q, d.eF (w q) = phiHat d.c₂ (fun x => d.eF (φ x)) q) → (∀ (kI : LaI Xo c d ≃ₗ[𝓞 E] LaI Xo c d) (σq : LevQ Dw d.l₂ ≃ₗ[𝓞 E] LevQ Dw d.l₂) (σc : LevQc Dw d.l₂ ≃ₗ[𝓞 E] LevQc Dw d.l₂), (∀ a b : Dw.La, σq (Submodule.Quotient.mk a) = Submodule.Quotient.mk b → a - b ∈ l.Mb • (⊤ : Submodule (𝓞 E) Dw.La) ∧ kI (Submodule.Quotient.mk a) = Submodule.Quotient.mk b) → (∀ (x : LevQc Dw d.l₂) (q : LevQ Dw d.l₂), (d.l₂.M : ℤ) ∣ Dw.EF (qRep (σc x)) (cSep d.l₂ • levRep (σq q)) - Dw.EF (qRep x) (cSep d.l₂ • levRep q)) → ∀ x, φ (fun b => σc.symm (x b)) = (((ψ kI)⁻¹ : c.Fˣ) : c.F) * φ x) → DatEq d ψ w := by
   intro E _ _ _ H Dw l Xo c n d hLev ψ φ w hw hφ
   obtain ⟨hDvd, -, -, hMb2, -⟩ := hLev
@@ -195,7 +199,7 @@ theorem datEq_of_phiHat : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
         obtain ⟨b, rfl⟩ := Submodule.Quotient.mk_surjective _ y
         show σq (Submodule.Quotient.mk a + Submodule.Quotient.mk b) =
           σq (Submodule.Quotient.mk a) + σq (Submodule.Quotient.mk b)
-        rw [← Submodule.Quotient.mk_add, hσq, hσq, hσq, map_add, Submodule.Quotient.mk_add]
+        rw [← Submodule.Quotient.mk_add, hσq, hσq, hσq, map_add (f := _), Submodule.Quotient.mk_add]
       map_smul' := by
         intro r x
         obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x

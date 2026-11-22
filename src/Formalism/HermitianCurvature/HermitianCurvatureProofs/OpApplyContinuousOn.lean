@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff ComplexConjugate ENNReal
@@ -108,10 +112,11 @@ theorem orbJ_dom : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddComm
   set μR := D.muR Bs γ w with hμR
   set cR : ℝ := ∫ x, B.gN (Matrix.of x) ^ (-M) ∂μR with hcRdef
   have hone : Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ B.GV k r := by
-    simpa using (P.unitary_group_closed k r).one_mem
+    rw [Equiv.apply_symm_apply]
+    exact (P.unitary_group_closed k r).one_mem
   have hcR : 0 < cR := by
     have := Dx3.om_pos hR hM0 hI hone
-    simpa [Dx3.Om] using this
+    simpa only [Dx3.Om, Equiv.apply_symm_apply, mul_one, hcRdef] using this
   obtain ⟨KW, hKW1, hKW⟩ := Dx3.UW_bound Bs.z Bs.z_mem Bs.T_pos
   obtain ⟨KW', hKW1', hKW'⟩ := Dx3.UW_bound Bs.z' Bs.z'_mem Bs.T'_pos
   set K1 := KW * KW' with hK1
@@ -674,7 +679,7 @@ theorem vecV_cut_op : ∃ c₃ : ℝ, ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddC
     apply opApply_continuousOn
     intro T hT
     have h1 : ContinuousOn T.coef (B.GPos Bs) :=
-      (ckOn_continuousOn' (fun g hg => hg.1) (hIn.1 T hT).1).mono
+      (ckOn_continuousOn' (UU := C6.domL Bs ∅) (fun g hg => hg.1) (hIn.1 T hT).1).mono
         (fun g hg => ⟨hg.1, hg.2, fun l hl => by simp at hl⟩)
     have h2 : ContinuousOn (B.Rw T.word G) (B.GPos Bs) :=
       (P.B5.ckOn_continuousOn (P.JFxG.ckOn_Rw_top hG T.word T.word_lie)).mono hGPG
@@ -849,9 +854,9 @@ theorem formLimit_top (Cb : ℝ) : ∃ Cc : ℝ, ∀ (Wp Wq : Type) [NormedAddCo
       exact hc₂ P0.k P0.r Wp Wq p.T.base p.ν' p.m₀ q _ cut nf fib o κ Dop (ε * δ)
         (A - 2 * ((P0.r : ℝ) + 1) * o) bF hfib hIn (mul_pos hε hδ) hFv hFck hbF hcut'
         (hmono c₂ (le_max_right _ _) _ (by linarith [hthr]))
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro e _
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro ρ _
     apply Tendsto.const_mul
     have hcomp : ∀ q, Tendsto (fun n => (p.TP.E ρ).comp

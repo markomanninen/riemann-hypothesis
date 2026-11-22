@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeightGoodReductionAtPrime
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistDef
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WeightGoodReductionAtPrime
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistDef
+
+@[expose] public section
 
 noncomputable section
 

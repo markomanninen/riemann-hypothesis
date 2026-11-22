@@ -1,15 +1,19 @@
-import Mathlib
-import GroundTheory.GlobalFields.GlobalReciprocity.NormSquare
-import GroundTheory.GlobalFields.CyclotomicCharacters.DegreeDecomposition
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.GlobalReciprocity.NormSquare
+public import GroundTheory.GlobalFields.CyclotomicCharacters.DegreeDecomposition
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open IsDedekindDomain NumberField IntermediateField
 open scoped Pointwise
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 namespace FiniteSubfield
 
@@ -32,8 +36,8 @@ instance liesOver_placeBelow {F E : FiniteSubfield} [Fact (F ≤ E)] :
 
 variable {P}
 
-omit [P.IsPrime] in
 
+omit [P.IsPrime] in
 theorem comap_smul {F E : FiniteSubfield} [Fact (F ≤ E)]
     [(E.1.fixingSubgroup.subgroupOf F.1.fixingSubgroup).Normal] (g : F.1.fixingSubgroup) :
     ((g : ℚ̄ ≃ₐ[ℚ] ℚ̄) • P).comap (algebraMap (𝓞 E.1) (𝓞 ℚ̄)) =
@@ -82,15 +86,15 @@ theorem exists_placeBelow_eq (K : FiniteSubfield) (v : HeightOneSpectrum (𝓞 K
   have hinj : Function.Injective (algebraMap (𝓞 K.1) (𝓞 ℚ̄)) := fun a b hab ↦
     RingOfIntegers.ext (Subtype.ext (congrArg (fun z : 𝓞 ℚ̄ ↦ (z : ℚ̄)) hab))
   obtain ⟨Q, -, hQ, hQv⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 ℚ̄) v.asIdeal ⊥
-    (by rw [Ideal.comap_bot_of_injective _ hinj]; exact bot_le)
+    (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]; exact bot_le)
   have hQ0 : Q ≠ ⊥ := by
     rintro rfl
     apply v.ne_bot
-    rw [← hQv, Ideal.comap_bot_of_injective _ hinj]
+    rw [← hQv, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]
   exact ⟨Q, hQ, hQ0, HeightOneSpectrum.ext hQv⟩
 
-include hP in
 
+include hP in
 theorem exists_liesOver_prime : ∃ p : ℕ, p.Prime ∧ P.LiesOver (Ideal.span {(p : ℤ)}) := by
   have : Algebra.IsIntegral ℤ (𝓞 ℚ̄) := inferInstanceAs (Algebra.IsIntegral ℤ (integralClosure ℤ ℚ̄))
   have hI : (P.comap (algebraMap ℤ (𝓞 ℚ̄))).IsPrime := Ideal.comap_isPrime _ _

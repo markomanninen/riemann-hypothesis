@@ -1,11 +1,15 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementKap
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.DetMemOfEntries
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NormLeOneOfRoot
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ChoiceOfModulusAndDiscriminant
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementKap
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OneLetterGaussSharpTranslateHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.DetMemOfEntries
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.NormLeOneOfRoot
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ChoiceOfModulusAndDiscriminant
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -56,7 +60,7 @@ theorem kap_one_le_norm (l : ℕ) [Fact l.Prime] (d : ℕ) (hj : jacobiSym (-(d 
     have hmem : (1 : ℤ_[l]) + (d : ℤ_[l]) * W ^ 2 ∈ RingHom.ker (PadicInt.toZMod (p := l)) := by
       rw [PadicInt.ker_toZMod, IsLocalRing.mem_maximalIdeal, PadicInt.mem_nonunits]
       exact hZ
-    rw [RingHom.mem_ker, map_add, map_one, map_mul, map_pow, map_natCast] at hmem
+    rw [RingHom.mem_ker, map_add (f := _), map_one, map_mul, map_pow, map_natCast] at hmem
     set z := PadicInt.toZMod W with hzdef
     have hz : z ≠ 0 := by
       intro h0
@@ -106,7 +110,7 @@ theorem kap_norm_of_normOne {a : ℕ} {b c : ℤ} {d : ℕ} (hok : PI.UnitDetRoo
   have hsq := PI.UnitaryGroupMassFormula.UnitDetRoot.theta_sq hok
   set t := PI.UnitDetRootDefs.cmTheta b d with ht
   have hc : conj ((u : ℂ) + v * t) = (u : ℂ) + v * ((b : ℂ) - t) := by
-    rw [map_add, map_mul, map_ratCast, map_ratCast, ht, PI.UnitaryGroupMassFormula.UnitDetRoot.conj_theta]
+    rw [map_add (f := _), map_mul, map_ratCast, map_ratCast, ht, PI.UnitaryGroupMassFormula.UnitDetRoot.conj_theta]
   rw [hc] at h1
   have hNC : (((u ^ 2 + b * u * v + a * c * v ^ 2 : ℚ)) : ℂ) = 1 := by
     push_cast
@@ -127,7 +131,7 @@ theorem kap_norm_of_normOne {a : ℕ} {b c : ℤ} {d : ℕ} (hok : PI.UnitDetRoo
   have hsum : ‖X + Y‖ = ‖(T : ℚ_[l])‖ := by
     have e : (u : ℂ) + v * t + ((u : ℂ) + v * ((b : ℂ) - t)) = ((T : ℚ) : ℂ) := by
       rw [hT]; push_cast; ring
-    rw [hX, hY, ← map_add, e, kap_norm_ratCast]
+    rw [hX, hY, ← map_add (f := _), e, kap_norm_ratCast]
   by_contra hne
   have hn : ‖X‖ * ‖Y‖ = 1 := by rw [← norm_mul, hXY, norm_one]
   have hbig : 1 < ‖X + Y‖ := by
@@ -365,12 +369,5 @@ theorem kappa_K1_hypothesis : KappaFirstKernelHypothesis := by
   obtain ⟨c, hc8, hc⟩ := kernelRatio _ _ D.what₂.Tau _ B.lamM _ _ B.gC (B.gC.trans u) D0 D1 hfix
   exact ⟨B.gC.trans u, B.kappa * c, D1, jl, KR.norm_mul_eq_one ι B.kappa c _ hc8 hκu, hmem,
     by rw [h2, hc, smul_smul]; rfl⟩
-
-theorem K1_theta_inert_prime : FirstKernelThetaInert := by
-  intro D cc δ B hcc hδ a₀ b₀ c₀ ha hd lam hlam hcm hB l _ h5 hj ι
-  obtain ⟨g, e, hS, hidx, he, hmem, ht⟩ := kappa_K1_hypothesis D cc δ B hcc hδ a₀ b₀ c₀ ha hd lam hlam hcm hB l h5 hj ι
-  refine ⟨g, hS, hidx, fun g2 g3 ε s2 hN hg2 hg3 hD hε hth t N hN0 hlN hNt σ γ B' hF => ?_⟩
-  exact Formalism.L2.Th1.Top.local_kappa_shape_holds l h5 B.L ι g2 g3 ε s2 hN hg2 hg3 hD hε hth B.ω₀ hS.per hS.half D.what₂.Tau
-    (hOne B.L D.what₂.Tau) B.lamM _ _ g hS hidx e he.le B.thMM hmem ht t N hN0 hlN hNt σ γ B' hF
 
 end Formalism.L2.KerInert.Kap

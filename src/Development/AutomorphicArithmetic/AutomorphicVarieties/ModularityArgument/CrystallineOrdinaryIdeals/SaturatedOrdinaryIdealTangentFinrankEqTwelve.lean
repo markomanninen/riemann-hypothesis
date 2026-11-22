@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.SaturatedOrdinaryIdealCutsOutCrystallineLocusStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.UnramifiedLiftDeformation
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DualCr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsTypeAndIsLocallyCrystallineRz
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FinrankLocalCocyclesAdjointUnitaryThreeEqTwelve
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.SaturatedOrdinaryIdealCutsOutCrystallineLocusStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.UnramifiedLiftDeformation
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.DualCr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsTypeAndIsLocallyCrystallineRz
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FinrankLocalCocyclesAdjointUnitaryThreeEqTwelve
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DefCoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.EntInMulRight
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 
 namespace GlobalTheory.OrdLoc.TangentDual
@@ -37,10 +42,10 @@ private theorem mR_inj {X Y : Matrix (Fin 3) (Fin 3) E} (h : mR X = mR Y) : X = 
 private theorem theta_mR (X : Matrix (Fin 3) (Fin 3) E) : thetaLie (mR X) = mR (thetaLie X) := by
   have h : (mR X).transpose = mR X.transpose := rfl
   unfold thetaLie
-  rw [h, ← Jmat_map (algebraMap E (DualNumber E)), mul_mR, mR_mul]
+  rw [h, ← Jmat_map (algebraMap E (DualNumber E)) 3, mul_mR, mR_mul]
   ext a b <;> simp [mR]
 
-private theorem ad_mR (r : G →* GG 3 E) (g : G) (X : Matrix (Fin 3) (Fin 3) E) :
+private theorem ad_mR (r : G →* GG (m := 3) (R := E)) (g : G) (X : Matrix (Fin 3) (Fin 3) E) :
     adRep ((GG.map (algebraMap E (DualNumber E))).comp r) g (mR X) = mR (adRep r g X) := by
   show (GG.map (algebraMap E (DualNumber E)) (r g)).adFun (mR X) = mR ((r g).adFun X)
   unfold GG.adFun
@@ -59,21 +64,22 @@ private theorem sq_ker : RingHom.ker (TrivSqZeroExt.fstHom E E E : DualNumber E 
   rw [Ideal.mem_bot]
   ext <;> simp [ha', hb']
 
-private theorem dualDef_of (r : G →* GG 3 E) (γ : G → Matrix (Fin 3) (Fin 3) E) (r' : G →* GG 3 (DualNumber E))
+private theorem dualDef_of (r : G →* GG (m := 3) (R := E)) (γ : G → Matrix (Fin 3) (Fin 3) E)
+    (r' : G →* GG (m := 3) (R := DualNumber E))
     (h : IsDeform ((GG.map (algebraMap E (DualNumber E))).comp r) (fun g => mR (γ g)) r') : DualDef r γ r' := by
   intro g
   refine ⟨(h g).1, fun a b => ?_⟩
   rw [(h g).2, MonoidHom.comp_apply, GG.map_mat, Matrix.add_mul, Matrix.one_mul, mR_mul]
   ext <;> simp [mR, TrivSqZeroExt.algebraMap_eq_inl]
 
-private theorem dualEx (r : G →* GG 3 E) (γ : G → Matrix (Fin 3) (Fin 3) E) (hγ : IsCoc r γ) :
+private theorem dualEx (r : G →* GG (m := 3) (R := E)) (γ : G → Matrix (Fin 3) (Fin 3) E) (hγ : IsCoc r γ) :
     ∃ r', DualDef r γ r' := by
   obtain ⟨r', h⟩ := exists_isDeform (RingHom.ker (TrivSqZeroExt.fstHom E E E : DualNumber E →+* E))
     ((GG.map (algebraMap E (DualNumber E))).comp r) (fun g => mR (γ g)) sq_ker (fun g a b => rfl)
     (fun g h => by simp only [hγ g h, mR_add, ad_mR])
   exact ⟨r', dualDef_of r γ r' h⟩
 
-private theorem dualCoc (r : G →* GG 3 E) (r' : G →* GG 3 (DualNumber E))
+private theorem dualCoc (r : G →* GG (m := 3) (R := E)) (r' : G →* GG (m := 3) (R := DualNumber E))
     (h : (GG.map (TrivSqZeroExt.fstHom E E E : DualNumber E →+* E)).comp r' = r) :
     ∃ γ, IsCoc r γ ∧ DualDef r γ r' := by
   obtain ⟨γ, h1, h2, h3⟩ := exists_isCoc (RingHom.ker (TrivSqZeroExt.fstHom E E E : DualNumber E →+* E))
@@ -98,7 +104,7 @@ end Dual
 section Main
 
 variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O]
-  [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ)
+  [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ))
   (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E]
   [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E]
   (x : U.R →ₐ[O] O) (hx : IsBase D.η D.Ψ U.r.hom x)
@@ -130,11 +136,8 @@ private theorem push_red (f : U.R →ₐ[O] B) (hf : ∀ a, π (f a) = algebraMa
 
 include hx hPC in
 private theorem inDcr_push (f : U.R →ₐ[O] B) (hf : ∀ a, π (f a) = algebraMap O E (x a))
-    (hI : GlobalTheory.OrdLoc.IY D U ≤ RingHom.ker f) : D.InDcr (π : B →+* E) (push f U.r.hom) where
-  mult := U.r.hasMult
-  red := push_red D U E x hx π f hf
-  cont := push_cont D U f
-  cr := hPC B f hI
+    (hI : GlobalTheory.OrdLoc.IY D U ≤ RingHom.ker f) : D.InDcr (π : B →+* E) (push f U.r.hom) :=
+  ⟨U.r.hasMult, push_red D U E x hx π f hf, push_cont D U f, hPC B f hI⟩
 
 variable (hπ : ∀ a, π a = 0 → IsNilpotent a)
 
@@ -145,7 +148,7 @@ private theorem push_inj (f f' : U.R →ₐ[O] B) (hf : ∀ a, π (f a) = algebr
     ((push_red D U E x hx π f hf).trans (push_base D U E x hx).symm) (push_cont D U f)).unique h rfl
 
 include hx hCP hπ in
-private theorem exists_push (r : GQ l →* GG 3 B) (hr : D.InDcr (π : B →+* E) r) :
+private theorem exists_push (r : GQ l →* GG (m := 3) (R := B)) (hr : D.InDcr (π : B →+* E) r) :
     ∃ f : U.R →ₐ[O] B, push f U.r.hom = r ∧ GlobalTheory.OrdLoc.IY D U ≤ RingHom.ker f ∧ ∀ a, π (f a) = algebraMap O E (x a) := by
   obtain ⟨f, hf, -⟩ := unramified_lift_deformation D U E B π hπ ((Algebra.ofId O E).comp x) r hr.mult
     (hr.red.trans (push_base D U E x hx).symm) hr.cont
@@ -237,8 +240,48 @@ private theorem tangent (T : Submodule E (U.R →ₗ[O] E))
       ∀ a ∈ GlobalTheory.OrdLoc.IY D U, δ a = 0) (hle : GlobalTheory.OrdLoc.IY D U ≤ RingHom.ker x) :
     finrank E ↥T = finrank E ↥(finiteCocycles (MonoidHom.id _) (adRep (D.rz E))) := by
   have hm : HasMult D.η (D.rz E) := fun _ => rfl
+  have hcr (γ : GQ l → Matrix (Fin 3) (Fin 3) E) (hγ : γ ∈ Z1 (adRep (D.rz E)))
+      (r' : GQ l →* GG (m := 3) (R := DualNumber E)) (hd : DualDef (D.rz E) γ r') :
+      D.IsLCr r' ↔ D.IsLCr (D.rz E) ∧ γ ∈ finiteCocycles (MonoidHom.id _) (adRep (D.rz E)) := by
+    have : IsModuleTopology ℚ_[l] (Matrix (Fin 3) (Fin 3) E) :=
+      inferInstanceAs (IsModuleTopology ℚ_[l] (Fin 3 → Fin 3 → E))
+    have hη : IsOpen (D.η.ker : Set (GQ l)) := by
+      rw [show D.η.ker = GK D.Kv from Subgroup.ext fun g => D.η_ker g]
+      have := D.Kv.2
+      exact IntermediateField.fixingSubgroup_isOpen D.Kv.1
+    have hH : IsOpen (D.HL : Set (GQ l)) := hη.inter D.τ_open
+    have : D.HL.Normal := inferInstanceAs (D.η.ker ⊓ D.τ.ker).Normal
+    have : Finite (GQ l ⧸ D.HL) := Subgroup.quotient_finite_of_isOpen _ hH
+    have : D.HL.FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
+    let glOn {B : Type} [CommRing B] (r : GQ l →* GG (m := 3) (R := B))
+        (h : ∀ g : D.HL, (r g).right = 1) : D.HL →* GL (Fin 3) B :=
+      { toFun := fun g => (r g).left
+        map_one' := by simp
+        map_mul' := fun g g' => by simp [h g] }
+    have isLCr_iff {B : Type} [CommRing B] [Algebra O B] [Algebra ℚ_[l] B]
+        (r : GQ l →* GG (m := 3) (R := B)) (h : ∀ g : D.HL, (r g).right = 1) :
+        D.IsLCr r ↔ IsCr D.HL.subtype (colRep (glOn r h)) := by
+      refine ⟨fun ⟨ρ, hρ, hc⟩ => ?_, fun hc => ⟨glOn r h, fun _ => rfl, hc⟩⟩
+      have e : ρ = glOn r h := MonoidHom.ext hρ
+      exact e ▸ hc
+    have h1 (g : D.HL) : (D.rz E g).right = 1 := (hm g).trans g.2.1
+    have h1' (g : D.HL) : (r' g).right = 1 := (hd g).1.trans (h1 g)
+    have had : ((adRep (D.rz E)).comp D.HL.subtype : Representation E D.HL _) =
+        adGL (glOn (D.rz E) h1) := by
+      refine MonoidHom.ext fun g => LinearMap.ext fun X => ?_
+      change (D.rz E g).adFun X = _
+      rw [GG.adFun, ite_eq_left (h1 g)]
+      rfl
+    have hy : (fun g : D.HL => γ g) ∈ Z1 (adGL (glOn (D.rz E) h1)) := by
+      rw [← had]
+      exact ⟨hγ.1.comp continuous_subtype_val, fun g h => hγ.2 g h⟩
+    have hdeform := deformCr D.HL.subtype hH.isOpenEmbedding_subtypeVal (glOn (D.rz E) h1)
+      ((rz_cont D U E x hx).comp continuous_subtype_val) _ hy (glOn r' h1')
+      (fun g i j => (hd g).2 i j) ⊤ (by simp)
+    rw [isLCr_iff r' h1', isLCr_iff (D.rz E) h1, ← crOn_top, ← crOn_top, hdeform,
+      z1fDesc (MonoidHom.id _) (adRep (D.rz E)) D.HL γ hγ, had, MonoidHom.id_comp]
   have hinj : Function.Injective ((cochain D U E).domRestrict T) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨δ, hδ⟩ h0
     have h1 : ∀ g, (U.r.hom g).mat.map δ = 0 := fun g => by
       rw [← cochain_mul, show cochain D U E δ = 0 from h0, Pi.zero_apply, Matrix.zero_mul]
@@ -265,7 +308,7 @@ private theorem tangent (T : Submodule E (U.R →ₗ[O] E))
     have hc : Continuous (cochain D U E δ) := continuous_pi_iff.2 <| continuous_pi_iff.1 <|
       (continuous_matrix fun a b => ((qcont_dual E _).1 (hF.cont a b)).2).matrix_mul (rz_inv_cont D U E x hx)
     rw [e] at hc ⊢
-    exact ((dualCr D E _ hm (rz_cont D U E x hx) γ ⟨hc, hγ⟩ _ hd).1 hF.cr).2
+    exact ((hcr γ ⟨hc, hγ⟩ _ hd).1 hF.cr).2
   · obtain ⟨r', hd⟩ := dualEx (D.rz E) γ hγ.1.2
     have hr' : D.InDcr (TrivSqZeroExt.fstHom E E E : DualNumber E →+* E) r' :=
       { mult := fun g => (hd g).1
@@ -277,7 +320,7 @@ private theorem tangent (T : Submodule E (U.R →ₗ[O] E))
           rw [qcont_dual]
           simp only [fun g => (hd g).2 a b]
           exact ⟨(rz_cont D U E x hx).matrix_elem a b, (hγ.1.1.matrix_mul (rz_cont D U E x hx)).matrix_elem a b⟩
-        cr := (dualCr D E _ hm (rz_cont D U E x hx) γ hγ.1 _ hd).2 ⟨(isType_and_isLocallyCrystalline_rz D E).2, hγ⟩ }
+        cr := (hcr γ hγ.1 _ hd).2 ⟨(isType_and_isLocallyCrystalline_rz D E).2, hγ⟩ }
     obtain ⟨F, hF, hFI, hFx⟩ := exists_push D U E x hx hCP (TrivSqZeroExt.fstHom E E E) (nil_fst E) r' hr'
     refine ⟨(TrivSqZeroExt.sndHom E E).restrictScalars O ∘ₗ F.toLinearMap, (hT _).2 ⟨fun a b => ?_, fun a ha => ?_⟩,
       cochain_eq D U E _ γ fun g => ?_⟩
@@ -296,7 +339,7 @@ end Main
 end GlobalTheory.OrdLoc.TangentDual
 
 theorem GlobalTheory.OrdLoc.tangent_finrank_eq_twelve :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∀ T : Submodule E (U.R →ₗ[O] E), (∀ δ, δ ∈ T ↔ (∀ a b, δ (a * b) = algebraMap O E (x a) * δ b + algebraMap O E (x b) * δ a) ∧ ∀ a ∈ GlobalTheory.OrdLoc.IY D U, δ a = 0) → finrank E ↥T = 12 := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)) (E : Type) [Field E] [Algebra ℚ_[l] E] [Module.Finite ℚ_[l] E] [Algebra O E] [Algebra ℤ_[l] E] [IsScalarTower ℤ_[l] O E] [IsScalarTower ℤ_[l] ℚ_[l] E] [IsFractionRing O E] (x : U.R →ₐ[O] O), IsBase D.η D.Ψ U.r.hom x → ∀ T : Submodule E (U.R →ₗ[O] E), (∀ δ, δ ∈ T ↔ (∀ a b, δ (a * b) = algebraMap O E (x a) * δ b + algebraMap O E (x b) * δ a) ∧ ∀ a ∈ GlobalTheory.OrdLoc.IY D U, δ a = 0) → finrank E ↥T = 12 := by
   intro hL l _ O _ _ _ _ _ _ _ D U E _ _ _ _ _ _ _ _ x hx T hT
   obtain ⟨hPC, hCP⟩ := GlobalTheory.T.saturatedOrdinaryIdeal_cuts_out_crystalline_locus hL D U
   letI : TopologicalSpace E := moduleTopology ℚ_[l] E

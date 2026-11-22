@@ -1,4 +1,8 @@
-import Formalism.PairingDivisors.StatementN
+module
+
+public import Formalism.PairingDivisors.StatementN
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -37,14 +41,16 @@ theorem cmValues_minPadicVal_bound : MinVal := by
   haveI := Fact.mk hl
   have hn0 : n ≠ 0 := by omega
   unfold mE
+  simp only [Nat.padicValNat_def]
   by_cases h2 : l = 2
   · subst h2
     refine ⟨3, by norm_num, by norm_num, ?_⟩
     have h := padicValNat.pow_two_sub_one (x := 3) (n := n) (by norm_num) (by norm_num) hn0 hne
-    have h4 : padicValNat 2 (3 + 1) = 2 := by
+    have h4 : multiplicity 2 (3 + 1) = 2 := by
       norm_num
       rw [show (4:ℕ) = 2 ^ 2 by norm_num, padicValNat.prime_pow]
-    have h2' : padicValNat 2 (3 - 1) = 1 := by norm_num
+    have h2' : multiplicity 2 (3 - 1) = 1 := by
+      norm_num
     rw [h4, h2'] at h
     simp only [if_true]
     omega

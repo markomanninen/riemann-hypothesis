@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistE
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocDistE
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

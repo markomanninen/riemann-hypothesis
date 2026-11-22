@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace UpperTheory.Reformulated.B.KleimanIntersectionNumberCut.SlopeTestRemainingChoices
@@ -394,7 +399,7 @@ private theorem sup_homog {A B : Ideal (Poly k N)}
     ∀ p ∈ A ⊔ B, ∀ d : ℕ, homogeneousComponent d p ∈ A ⊔ B := by
   intro p hp d
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hp
-  rw [map_add]
+  rw [map_add (f := _)]
   exact add_mem (Ideal.mem_sup_left (hA a ha d)) (Ideal.mem_sup_right (hB b hb d))
 
 open Classical in
@@ -436,8 +441,8 @@ private theorem sum_eq_finsum (x : Fin (N + 1) → Ω) (n : ℕ) (J : Ideal (Pol
   · have hm := hmin j h
     haveI : (P j).IsPrime := h.isPrime
     have hc := hcard (P j) hm
-    rw [if_pos h, dif_pos ⟨hm, h⟩, ← hc, ENat.toNat_coe, nsmul_eq_mul]
-  · rw [if_neg h, dif_neg (fun h' => h h'.2), smul_zero]
+    rw [if_pos h, dite_eq_left ⟨hm, h⟩, ← hc, ENat.toNat_coe, nsmul_eq_mul]
+  · rw [if_neg h, dite_eq_right (fun h' => h h'.2), smul_zero]
 
 private theorem main : CycleSplit.Filt.Statement.{u, w} → CutRestrLenExact.Statement.{u, w} →
     MixedTwistShift.Statement.{u, w} → InterNumCut.Statement.{u, w} := by

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FiniteSupportHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -49,7 +54,8 @@ theorem height_standard_le (z : Cone n (AlgebraicClosure ℚ)) (hz : BlockNonzer
     (hδ : 0 < δ) {R : ℝ} (hR : 0 < R)
     (hint : ∀ k i, IsIntegral ℤ ((δ : AlgebraicClosure ℚ) * z k i))
     (harch : ∀ (σ : AlgebraicClosure ℚ →+* ℂ) k i, ‖σ (z k i)‖ ≤ R) :
-    height (HermLine.standard n) z ≤ ∑ k, (Real.log δ + Real.log (Real.sqrt (n k + 1) * R)) := by
+    height (HermLine.standard (n := n)) z ≤
+      ∑ k, (Real.log δ + Real.log (Real.sqrt (n k + 1) * R)) := by
   set K := coordField z
   set d : ℝ := (Module.finrank ℚ K : ℝ) with hd_def
   have hd : 0 < d := by rw [hd_def]; exact_mod_cast Module.finrank_pos (R := ℚ) (M := K)
@@ -80,14 +86,14 @@ theorem height_standard_le (z : Cone n (AlgebraicClosure ℚ)) (hz : BlockNonzer
           field_simp
       _ ≤ (v (δ : K))⁻¹ * 1 := mul_le_mul_of_nonneg_left h3 (inv_pos.mpr hδv).le
       _ = (v (δ : K))⁻¹ := mul_one _
-  have hsupp1 := finite_support_height (HermLine.standard n) z hz
+  have hsupp1 := finite_support_height (HermLine.standard (n := n)) z hz
   have hsupp2 : (Function.support fun v : FinitePlace K ↦ Real.log (v (δ : K))).Finite := by
     refine (FinitePlace.hasFiniteMulSupport hne).subset fun v hv h ↦ hv ?_
     have h' : v (δ : K) = 1 := h
     show Real.log (v (δ : K)) = 0
     rw [h', Real.log_one]
   set T := (hsupp1.union hsupp2).toFinset
-  have hfin : (∑ᶠ v : FinitePlace K, ∑ k, ((HermLine.standard n).deg k : ℝ) *
+  have hfin : (∑ᶠ v : FinitePlace K, ∑ k, ((HermLine.standard (n := n)).deg k : ℝ) *
       Real.log (⨆ i, v (coordVec z k i))) ≤ Fintype.card ι * (d * Real.log δ) := by
     rw [finsum_eq_sum_of_support_subset (s := T) _
       (fun v hv ↦ Finset.mem_coe.mpr ((Set.Finite.mem_toFinset _).mpr (Or.inl hv)))]
@@ -96,7 +102,7 @@ theorem height_standard_le (z : Cone n (AlgebraicClosure ℚ)) (hz : BlockNonzer
         (fun v hv ↦ Finset.mem_coe.mpr ((Set.Finite.mem_toFinset _).mpr (Or.inr hv)))
     have h3 := finsum_log_finitePlace_natCast (K := K) hδ
     rw [h2] at h3
-    calc ∑ v ∈ T, ∑ k, ((HermLine.standard n).deg k : ℝ) * Real.log (⨆ i, v (coordVec z k i))
+    calc ∑ v ∈ T, ∑ k, ((HermLine.standard (n := n)).deg k : ℝ) * Real.log (⨆ i, v (coordVec z k i))
         ≤ ∑ v ∈ T, ∑ _k : ι, -Real.log (v (δ : K)) := by
           refine Finset.sum_le_sum fun v _ ↦ Finset.sum_le_sum fun k _ ↦ ?_
           simp only [HermLine.standard, Int.cast_one, one_mul]
@@ -108,7 +114,7 @@ theorem height_standard_le (z : Cone n (AlgebraicClosure ℚ)) (hz : BlockNonzer
   have : Algebra.IsAlgebraic ℚ (AlgebraicClosure ℚ) := by
     convert AlgebraicClosure.isAlgebraic ℚ <;> rfl
   have : Algebra.IsAlgebraic K (AlgebraicClosure ℚ) := Algebra.IsAlgebraic.tower_top (K := ℚ) K
-  have harchK : ∀ σ : K →+* ℂ, Real.log ((HermLine.standard n).metric
+  have harchK : ∀ σ : K →+* ℂ, Real.log ((HermLine.standard (n := n)).metric
       fun k i ↦ σ (coordVec z k i)) ≤ ∑ k, Real.log (Real.sqrt (n k + 1) * R) := by
     intro σ
     let σ' : AlgebraicClosure ℚ →+* ℂ := ComplexEmbedding.lift (AlgebraicClosure ℚ) σ
@@ -131,7 +137,7 @@ theorem height_standard_le (z : Cone n (AlgebraicClosure ℚ)) (hz : BlockNonzer
     refine Finset.sum_le_sum fun k _ ↦ Real.log_le_log (hpos k) ?_
     have := vectorL2Norm_le_sqrt_card_mul (fun i ↦ σ (coordVec z k i)) hR.le (fun i ↦ by rw [hσ]; exact harch σ' k i)
     simpa using this
-  have harchSum : ∑ σ : K →+* ℂ, Real.log ((HermLine.standard n).metric
+  have harchSum : ∑ σ : K →+* ℂ, Real.log ((HermLine.standard (n := n)).metric
       fun k i ↦ σ (coordVec z k i)) ≤ d * ∑ k, Real.log (Real.sqrt (n k + 1) * R) := by
     refine (Finset.sum_le_sum fun σ _ ↦ harchK σ).trans ?_
     rw [Finset.sum_const, Finset.card_univ, NumberField.Embeddings.card, nsmul_eq_mul]

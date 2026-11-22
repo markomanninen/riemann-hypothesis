@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarScaling
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingExistence
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HaarScaling
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.DS.Xi
 

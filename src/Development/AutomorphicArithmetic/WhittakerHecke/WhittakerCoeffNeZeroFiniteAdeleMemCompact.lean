@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.ThInf
-import Development.AutomorphicArithmetic.WhittakerHecke.WhittakerUnipotentMulEqAdditiveCharMul
-import Development.AutomorphicArithmetic.WhittakerHecke.ExistsLevelUnipotentInvarianceAutomorphicForm
-import Development.AutomorphicArithmetic.WhittakerHecke.ExistsIsCompactAnnihilatorScaledIntegralAdeles
-import Development.AutomorphicArithmetic.WhittakerHecke.EmbedGL2DiagMulUnipotentThetaEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.ThInf
+public import Development.AutomorphicArithmetic.WhittakerHecke.WhittakerUnipotentMulEqAdditiveCharMul
+public import Development.AutomorphicArithmetic.WhittakerHecke.ExistsLevelUnipotentInvarianceAutomorphicForm
+public import Development.AutomorphicArithmetic.WhittakerHecke.ExistsIsCompactAnnihilatorScaledIntegralAdeles
+public import Development.AutomorphicArithmetic.WhittakerHecke.EmbedGL2DiagMulUnipotentThetaEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -11,7 +15,7 @@ open UpperTheory.ConvolutionTheory.R2.G (FS2 nE)
 open scoped Classical
 
 theorem UpperTheory.whittakerCoeff_ne_zero_finiteAdele_mem_compact :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (D : Dat ℚ E) (f : Sm E 2), IsAutForm f → Pp.Lf f.1 →
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (D : Dat ℚ E) (f : Sm E 2), IsAutForm f → Pp.Lf f.1 →
         ∀ C : Set (GL (Fin 2) (A E)), IsCompact C → ∃ K : Set (FiniteAdeleRing (𝓞 ℚ) ℚ), IsCompact K ∧
           ∀ (y : (A ℚ)ˣ), ∀ k ∈ C, Wo D f.1 (em E (aE y) * k) ≠ 0 → (y : A ℚ).2 ∈ K := by
   intro E _ _ _ D f hf hL C hC

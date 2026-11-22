@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
+
 open Matrix Finset MeasureTheory
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
@@ -16,7 +21,7 @@ open GlobalTheory.CompanionTheory.ModelS
 variable {n : ℕ}
 
 theorem ini_injective (j : Fin n) : Function.Injective (ini j) :=
-  Fin.castLE_injective _
+  Fin.castLE_injective j.isLt
 
 theorem rows_mul (j : Fin n) (p g : Mat n) (hz : ∀ a b : Fin n, a ≤ j → j < b → p a b = 0) :
     (p * g).submatrix (ini j) id = p.submatrix (ini j) (ini j) * g.submatrix (ini j) id := by
@@ -44,17 +49,19 @@ theorem lm_mul (j : Fin n) (p g : Mat n) (hz : ∀ a b : Fin n, a ≤ j → j < 
       p.submatrix (ini j) (ini j) * g.submatrix (ini j) (ini j) := by
     ext a c
     exact congrFun (congrFun (rows_mul j p g hz) a) (ini j c)
-  rw [lm, h, Matrix.det_mul, lm, lm]
+  delta lm
+  rw [h, Matrix.det_mul]
 
 theorem gm_mul (j : Fin n) (p g : Mat n) (hz : ∀ a b : Fin n, a ≤ j → j < b → p a b = 0) :
     gm j (p * g) = lm j p * star (lm j p) * gm j g := by
-  rw [gm, rows_mul j p g hz, Matrix.conjTranspose_mul]
+  delta gm lm
+  rw [rows_mul j p g hz, Matrix.conjTranspose_mul]
   have h : p.submatrix (ini j) (ini j) * g.submatrix (ini j) id *
       ((g.submatrix (ini j) id)ᴴ * (p.submatrix (ini j) (ini j))ᴴ) =
       p.submatrix (ini j) (ini j) * (g.submatrix (ini j) id * (g.submatrix (ini j) id)ᴴ) *
         (p.submatrix (ini j) (ini j))ᴴ := by
     simp only [Matrix.mul_assoc]
-  rw [h, Matrix.det_mul, Matrix.det_mul, Matrix.det_conjTranspose, lm, gm]
+  rw [h, Matrix.det_mul, Matrix.det_mul, Matrix.det_conjTranspose]
   ring
 
 theorem gm_one (j : Fin n) : gm j (1 : Mat n) = 1 := by
@@ -62,7 +69,8 @@ theorem gm_one (j : Fin n) : gm j (1 : Mat n) = 1 := by
     rw [Matrix.conjTranspose_submatrix, Matrix.conjTranspose_one,
       ← Matrix.submatrix_mul _ _ _ _ _ Function.bijective_id, Matrix.mul_one,
       Matrix.submatrix_one _ (ini_injective j)]
-  rw [gm, h, Matrix.det_one]
+  delta gm
+  rw [h, Matrix.det_one]
 
 theorem gm_left (j : Fin n) (p : Mat n) (hz : ∀ a b : Fin n, a ≤ j → j < b → p a b = 0) :
     gm j p = lm j p * star (lm j p) := by
@@ -74,12 +82,15 @@ theorem dif_eq_zero (lam : Fin n → ℤ) (lev : Fin n → ℕ) (hl : IsLev lam 
   obtain ⟨-, hl⟩ := hl
   have hlam := hl _ _ he
   have hmu : muZ lam lev j = muZ lam lev ⟨j + 1, h⟩ := by
-    simp only [muZ, hlam, he]
+    delta muZ
+    simp only [hlam, he]
   have hy : yZ lam lev j = yZ lam lev ⟨j + 1, h⟩ := by
-    simp only [yZ, hlam, hmu]
+    delta yZ
+    simp only [hlam, hmu]
+  delta dif
   constructor
-  · simp only [dif, dif_pos h, hmu, sub_self]
-  · simp only [dif, dif_pos h, hy, sub_self]
+  · simp only [dite_eq_left h, hmu, sub_self]
+  · simp only [dite_eq_left h, hy, sub_self]
 
 theorem fRaw_mul : ∀ (n : ℕ) (lam : Fin n → ℤ), Antitone lam → ∀ lev : Fin n → ℕ, IsLev lam lev →
     ∀ p ∈ GlobalTheory.CompanionTheory.ModelS.Pb lev, ∀ g ∈ GLs n,
@@ -90,13 +101,14 @@ theorem fRaw_mul : ∀ (n : ℕ) (lam : Fin n → ℤ), Antitone lam → ∀ lev
     show (p * g).det ≠ 0
     rw [Matrix.det_mul]
     exact mul_ne_zero hp1 hg
-  simp only [fRaw, Set.indicator_of_mem hpg, Set.indicator_of_mem hp1, Set.indicator_of_mem hg]
+  delta fRaw
+  simp only [Set.indicator_of_mem hpg, Set.indicator_of_mem hp1, Set.indicator_of_mem hg]
   rw [← Finset.prod_mul_distrib]
   refine Finset.prod_congr rfl fun j _ => ?_
   by_cases hgood : ∀ a b : Fin n, a ≤ j → j < b → lev a < lev b
   · have hz : ∀ a b : Fin n, a ≤ j → j < b → p a b = 0 := fun a b h1 h2 => hp2 a b (hgood a b h1 h2)
     rw [lm_mul j p g hz, gm_mul j p g hz, ← gm_left j p hz, mul_zpow, mul_zpow, mul_mul_mul_comm]
-  · push_neg at hgood
+  · push Not at hgood
     obtain ⟨a, b, haj, hjb, hba⟩ := hgood
     have hmono := hl.1
     have hb : (j : ℕ) < b := Fin.lt_def.1 hjb

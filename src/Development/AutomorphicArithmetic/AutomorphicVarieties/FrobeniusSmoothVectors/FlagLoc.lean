@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.OrdExt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagTriangular
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 

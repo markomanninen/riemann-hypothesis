@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.IrreducibleOfCountSizes
-import Formalism.PadicSubsetSums.StableGradedCounts.PropertyWOfEstimates
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.IrreducibleOfCountSizes
+public import Formalism.PadicSubsetSums.StableGradedCounts.PropertyWOfEstimates
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+
+@[expose] public section
 
 open Finset Polynomial
 
@@ -39,7 +43,7 @@ theorem sum_eSer (k : Fin 2) :
     intro c i
     unfold Formalism.CyclotomicNorms.monicOf
     rw [Polynomial.coeff_add, Polynomial.coeff_X_pow, if_neg i.isLt.ne, zero_add,
-      Polynomial.finset_sum_coeff]
+      Polynomial.finsetSum_coeff]
     simp only [Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single i]
     · simp
@@ -50,7 +54,7 @@ theorem sum_eSer (k : Fin 2) :
   have hinj : Function.Injective (fun c : Fin D.R.r → ZMod (D.host.g k) => Formalism.CyclotomicNorms.monicOf c) := by
     intro c c' h
     funext i
-    have := congrArg (fun p => Polynomial.coeff p (i : ℕ)) h
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p (i : ℕ)) h
     simpa [hcoeff] using this
   have hsurj : ∀ f ∈ S, f = Formalism.CyclotomicNorms.monicOf (fun i : Fin D.R.r => f.coeff (i : ℕ)) := by
     intro f hf

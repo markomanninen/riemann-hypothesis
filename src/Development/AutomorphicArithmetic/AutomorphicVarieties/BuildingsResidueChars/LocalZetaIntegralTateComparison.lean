@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
-import GroundTheory.AutomorphicForms.GL2.GJFEBlockConv
-import GroundTheory.AutomorphicForms.GL2.GJUnramified
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LaurentBlockInduction.LdDefs
+public import GroundTheory.AutomorphicForms.GL2.GJFEBlockConv
+public import GroundTheory.AutomorphicForms.GL2.GJUnramified
+
+@[expose] public section
 
 noncomputable section
 

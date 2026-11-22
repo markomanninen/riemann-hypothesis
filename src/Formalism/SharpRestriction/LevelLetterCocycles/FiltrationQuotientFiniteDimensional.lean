@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.MemZeroSubCoe
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpRules
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,9 +30,7 @@ theorem filtrationLevel_antitone (T : LocLat G Qp LL O) (i : ZMod n) {a b : ℤ}
     Formalism.MainNotions.WachCoordinates.FilLev W T i 0 b ≤ Formalism.MainNotions.WachCoordinates.FilLev W T i 0 a := by
 
   have hF : PD.Fil b ≤ PD.Fil a := by
-    induction b, hab using Int.le_induction with
-    | base => exact le_rfl
-    | succ k _ ih => exact (PD.Fil_anti k).trans ih
+    exact (antitone_int_of_succ_le PD.Fil_anti) hab
   unfold Formalism.MainNotions.WachCoordinates.FilLev Formalism.WeaklyAdmissibleFiltrations.FilCris
   apply Submodule.map_mono
   apply Submodule.map_mono
@@ -42,7 +44,7 @@ theorem filtrationLevel_antitone (T : LocLat G Qp LL O) (i : ZMod n) {a b : ℤ}
   | zero => simp
   | tmul v f => exact LinearMap.mem_range.mpr ⟨v ⊗ₜ ⟨f.1, hF f.2⟩, by simp⟩
   | add y z hy hz =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem _ (hy (LinearMap.mem_range_self _ _)) (hz (LinearMap.mem_range_self _ _))
 
 theorem filtration_quotient_finiteDimensional [NeZero n] (hD : Sh.FilDim W) {d : ℕ} {T₁ T₂ : LocLat G Qp LL O}
@@ -190,7 +192,7 @@ theorem passage_to_quotient [NeZero n] (hK : Sh.LemK W) (hD : Sh.FilDim W) (hR :
       { toFun := fun f => bas.equivFun (φ0 f), map_add' := ?_, map_smul' := ?_ }, hrk, ?_⟩
     · intro f g
       show bas.equivFun (φ0 (f + g)) = bas.equivFun (φ0 f) + bas.equivFun (φ0 g)
-      rw [hφadd, map_add]
+      rw [hφadd, map_add (f := _)]
     · intro a f
       show bas.equivFun (φ0 (a • f)) = a • bas.equivFun (φ0 f)
       rw [hφsmul, LinearEquiv.map_smul, algebraMap_smul]

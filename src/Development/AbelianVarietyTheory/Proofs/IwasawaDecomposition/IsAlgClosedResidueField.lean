@@ -1,4 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EmbeddingMemCoefficientField
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteTwistFrameExtraExcludedOverSmallPrimes
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +54,7 @@ theorem isAlgebraic_residueField {Ω : Type} [Field Ω] [CharZero Ω] (A : Valua
     have hdvd : Polynomial.C (g : ℤ) ∣ p.primPart := by
       rw [Polynomial.C_dvd_iff_dvd_coeff]
       intro i
-      have hi := congrArg (fun r => Polynomial.coeff r i) h
+      have hi := congrArg (fun r => _root_.AddMonoidAlgebra.coeff (M := ℕ) r i) h
       simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at hi
       exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ g).mp hi
     have hu := Polynomial.isPrimitive_primPart p _ hdvd

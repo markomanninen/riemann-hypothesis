@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualCotangentKer
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualCotangentKer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,8 +50,8 @@ theorem mulMap_mem (F : HermLattice K i) {k : Type} [Field k] (ρ : 𝓞 K →+*
 
 end DualCotangentKernel
 
-open DualCotangentKernel in
 
+open DualCotangentKernel in
 theorem DualCotangentKer.proof : DualCotangentKer.Statement := by
   intro K _ _ i F T _ _b k _ ρ σ hρ hσ hsl ψ hψ
   classical
@@ -78,7 +83,8 @@ theorem DualCotangentKer.proof : DualCotangentKer.Statement := by
       _ = 0 := by rw [hg, smul_zero]
   have hσχ : ∀ x, σ (χ x) = ρ (c x) • σ (w x) := fun x => hsl (c x) (w x) (χ x) rfl
   have hσsum : ∑ x, ρ (c x) • σ (w x) = 0 := by
-    rw [← map_zero σ, ← hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_zero σ, ← hsum, map_sum]
     exact Finset.sum_congr rfl fun x _ => (hσχ x).symm
 
   have hsome : ∀ j, ρ (c (some j)) = 0 := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.MapUgAlgebraMap
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -40,8 +44,8 @@ def rtW (k : ℕ) : Ainf l := WittVector.teichmuller l (rt l k)
 
 def InWm (s : Ainf l) : Prop := ∀ i, ¬ IsUnit (s.coeff i)
 
-variable {l} in
 
+variable {l} in
 abbrev Des {R : Type} [CommRing R] (F : PAlg l ⥤ ModuleCat.{0} R) (s : R) : Prop := DesJ (testι l) F s
 
 def ObFacts : Prop :=

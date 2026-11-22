@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ end P_spRes
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {n : ℕ} (G : Grp k n)
 
-open P_spRes in
 
+open P_spRes in
 theorem step_spRes : G.SpecialRestrictionProp := by
   intro ν hν i
   refine MonoidHom.ext fun u => ?_

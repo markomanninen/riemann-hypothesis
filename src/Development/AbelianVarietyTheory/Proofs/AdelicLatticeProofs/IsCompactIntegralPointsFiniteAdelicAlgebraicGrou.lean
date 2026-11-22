@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 open NumberField IsDedekindDomain
@@ -13,7 +18,7 @@ theorem continuous_aeval_family {F A X σ : Type} [CommRing F] [CommRing A] [Alg
     Continuous fun x => MvPolynomial.aeval (f x) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simpa using continuous_const
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p s hp => simp only [map_mul, MvPolynomial.aeval_X]; exact hp.mul (hf s)
 
 theorem isClosed_of_equations {F A ι : Type} [CommRing F] [CommRing A] [Algebra F A]

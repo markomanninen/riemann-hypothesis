@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,11 +50,12 @@ theorem ord_wfr_nonneg (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum
   simpa using le_of_coe_le_toE key
 
 theorem one_eq_sum_wfr (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) :
-    (1 : ↥(Frac0 X la G.w)) = ∑ k, (algebraMap (Op X la G.N) (Kp X la G.N) (Tv X la G.N (0, k))) • wfr G la k := by
+    (1 : ↥(Frac0 X la G.w)) = ∑ k, (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (Tv X la G.N (0, k))) • wfr G la k := by
   have h1 : frac X la G.w 1 (sec X la G.w 0) = 1 := by rw [frac_apply, pow_one, section_mul_inverse_eq_one]
-  have h2 : frac X la G.w 1 (sec X la G.w 0) = ∑ k, (algebraMap (Op X la G.N) (Kp X la G.N) (Tv X la G.N (0, k))) •
+  have h2 : frac X la G.w 1 (sec X la G.w 0) = ∑ k, (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ (Tv X la G.N (0, k))) •
       frac X la G.w 1 (emb X la G.N (X.inc wL (G.w k))) := by
-    rw [sec, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sec, map_sum]
     simp only [map_smul]
   apply Subtype.ext
   rw [OneMemClass.coe_one, ← h1, h2, AddSubmonoidClass.coe_finsetSum]
@@ -60,7 +65,8 @@ theorem one_eq_sum_wfr (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum
 theorem one_eq_sum_toOsK (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) :
     (1 : OsK X la G.w) = ∑ k, algebraMap (Op X la G.N) (OsK X la G.w) (Tv X la G.N (0, k)) *
       toOsK X la G.w (wfr G la k) := by
-  rw [← map_one (toOsK X la G.w), one_eq_sum_wfr G la, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_one (toOsK X la G.w), one_eq_sum_wfr G la, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, Algebra.smul_def, (IsScalarTower.algebraMap_apply (Op X la G.N) (Kp X la G.N) (OsK X la G.w) _).symm]
 

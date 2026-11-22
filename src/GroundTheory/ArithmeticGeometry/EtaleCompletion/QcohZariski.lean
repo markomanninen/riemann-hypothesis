@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.EtaleCompletion.QcohPresheaf
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.EtaleCompletion.ModulesPullback
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.Etale
@@ -78,37 +83,6 @@ end Unit
 section Opens
 
 variable {X : Scheme.{u}} (F : X.Modules) (U : X.Etale)
-
-noncomputable abbrev openObj (O : U.left.Opens) : X.Etale := Scheme.Etale.mk (O.ι ≫ U.hom)
-
-noncomputable def openIncl (O : U.left.Opens) : openObj U O ⟶ U :=
-  MorphismProperty.Over.homMk O.ι rfl trivial
-
-noncomputable def openInclLE {O' O : U.left.Opens} (h : O' ≤ O) : openObj U O' ⟶ openObj U O :=
-  MorphismProperty.Over.homMk (U.left.homOfLE h)
-    (by
-      change U.left.homOfLE h ≫ (O.ι ≫ U.hom) = O'.ι ≫ U.hom
-      rw [← Category.assoc, Scheme.homOfLE_ι]) trivial
-
-@[simp]
-lemma openInclLE_left {O' O : U.left.Opens} (h : O' ≤ O) :
-    (openInclLE U h).left = U.left.homOfLE h := rfl
-
-@[simp]
-lemma openIncl_left (O : U.left.Opens) : (openIncl U O).left = O.ι := rfl
-
-instance {Y Z : Scheme.{u}} (a : Y ⟶ Z) (b : Z ⟶ X) (c : Y ⟶ X) (h : a ≫ b = c) :
-    IsIso (compHom F a b c h) := by
-  unfold compHom
-  infer_instance
-
-noncomputable def openSection (O : U.left.Opens) :
-    Γ((Scheme.Modules.pullback U.hom).obj F, O) →+
-      Γ((Scheme.Modules.pullback (O.ι ≫ U.hom)).obj F, ⊤) :=
-  ((compHom F O.ι U.hom _ rfl).app ⊤).hom.comp
-    ((((Scheme.Modules.pullback O.ι).obj ((Scheme.Modules.pullback U.hom).obj F)).presheaf.map
-      (homOfLE (by rw [Scheme.Opens.ι_preimage_self]) : (⊤ : O.toScheme.Opens) ⟶ O.ι ⁻¹ᵁ O).op).hom.comp
-      (pullbackUnitApp O.ι _ O))
 
 end Opens
 

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddnessConditionHolds
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationVacuumSignInertPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddnessConditionHolds
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationVacuumSignInertPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem split_part {e : AE D} (h1 : e * e = e) (h2 : sgA D e = e)
     ring
   · rw [Units.val_mul, det_cutG, ← hdef]
     change e * x + (1 - e) * 1 = _ * sgA D (e * x + (1 - e) * 1)
-    rw [map_add, map_mul, map_mul, map_sub, map_one, h2]
+    rw [map_add (f := _), map_mul, map_mul, map_sub, map_one, h2]
     linear_combination e * hxv + ((d - 1) * (1 - sgA D x)) * h1
   · have hsplit : x = Units.map (cut e h1) x * Units.map (cut (1 - e) (compl_idem h1)) x :=
       Units.ext (cut_mul_cut e h1 (x : AE D)).1.symm
@@ -82,7 +86,7 @@ theorem vacuum_exact : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Crv
   have h1 : (ε + sgA D ε) * (ε + sgA D ε) = ε + sgA D ε := by
     have a3 : sgA D ε * sgA D ε = sgA D ε := by rw [← map_mul, a1]
     linear_combination a1 + a3 + 2 * a2
-  have h2 : sgA D (ε + sgA D ε) = ε + sgA D ε := by rw [map_add, VacMove.sgA_sgA, add_comm]
+  have h2 : sgA D (ε + sgA D ε) = ε + sgA D ε := by rw [map_add (f := _), VacMove.sgA_sgA, add_comm]
   generalize ε + sgA D ε = e at h1 h2 h3
   obtain ⟨y, b1, b2, b3⟩ := split_part h1 h2 h3 g hx
   obtain ⟨y', c1, c2, c3⟩ := split_part h1 h2 h3 g' hx'

@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QaRowStrictMono
+module
+
+public import Formalism.ThetaLogCoordinates.DualWeylCoordinates.DualWeylProofs.QaRowStrictMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,6 @@ lemma qa_Slt {n : ℕ} (m : Fin n × Fin n →₀ ℕ) (a p : Fin n) :
     refine ⟨⟨k, by omega⟩, by simp [Fin.lt_def], ?_⟩
     unfold qa_S
     congr 1
-    ext b
-    simp only [mem_filter, mem_univ, true_and, Fin.lt_def, Fin.le_def]
-    omega
 
 lemma qa_of_cum {n : ℕ} (m m' : Fin n × Fin n →₀ ℕ) (h : ∀ a p, qa_S m a p = qa_S m' a p) : m = m' := by
   ext ⟨a, p⟩
@@ -110,7 +111,7 @@ lemma qa_g_le_iff {n : ℕ} [NeZero n] (m : Fin n × Fin n →₀ ℕ) (k : ℤ)
     have := NeZero.pos n
     omega
   unfold qa_g
-  rw [dif_pos hn, Fin.le_def]
+  rw [dite_eq_left hn, Fin.le_def]
   have h1 := hl a
   constructor
   · intro h

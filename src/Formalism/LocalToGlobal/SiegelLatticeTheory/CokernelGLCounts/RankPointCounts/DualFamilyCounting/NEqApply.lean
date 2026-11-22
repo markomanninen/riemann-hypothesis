@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.IsoGenLeft
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.IsoGenLeft
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,8 @@ theorem nL_isom (hinv : X0⁻¹ * X0 = 1) (hxs : ∀ b, InW X (xs b)) (hM : M + 
       (fun w' hw' => g_ww X X0 xs M hxs hw hw') y
   conv_lhs => rw [decomp X x]
   conv_rhs => rw [decomp X x]
-  simp only [map_add, map_sum, map_smul, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
     LinearMap.smul_apply, smul_eq_mul]
   simp only [he, hf, hw _ (inW_pW X x)]
 
@@ -48,8 +53,5 @@ theorem nL_inj (hinv : X0⁻¹ * X0 = 1) (hxs : ∀ b, InW X (xs b)) (hM : M + M
 def nEq (hinv : X0⁻¹ * X0 = 1) (hxs : ∀ b, InW X (xs b)) (hM : M + Mᴴ = -Gp D X0 xs) :
     (VS D).V ≃ₗ[D.host.E] (VS D).V :=
   LinearEquiv.ofInjectiveEndo (nL X X0 xs M) (nL_inj X X0 xs M hinv hxs hM)
-
-theorem nEq_apply (hinv : X0⁻¹ * X0 = 1) (hxs : ∀ b, InW X (xs b)) (hM : M + Mᴴ = -Gp D X0 xs) (y : (VS D).V) :
-    nEq X X0 xs M hinv hxs hM y = nL X X0 xs M y := rfl
 
 end Formalism.L2.SG.Pf.NcReal.JX.NOf.Ex

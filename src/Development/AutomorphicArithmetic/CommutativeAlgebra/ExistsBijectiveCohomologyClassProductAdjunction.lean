@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexDifferentialValuesStatement
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexDifferentialValuesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Bc
 
 namespace UpperTheory.Adj
@@ -56,7 +61,7 @@ end Gen
 
 private theorem map_res {A B : Spc} (f : A ⟶ B) {p : ℕ} {V U : Scheme.{0}} (g : V ⟶ U) (x : Sx A p U) :
     (x.res g).map f = (x.map f).res g :=
-  FunctorToTypes.naturality (f.app (op (SimplexCategory.mk p))) g.op x
+  (f.app (op (SimplexCategory.mk p))).naturality_apply g.op x
 
 private theorem map_face {A B : Spc} (f : A ⟶ B) {p : ℕ} {U : Scheme.{0}} (x : Sx A (p + 1) U) (i : Fin (p + 2)) :
     (x.face i).map f = (x.map f).face i :=
@@ -67,7 +72,7 @@ private def evF (p : ℕ) (T : Scheme.{0}) : Spc ⥤ Type :=
 
 private theorem pair_bij (A B : Spc) (p : ℕ) (T : Scheme.{0}) :
     Function.Bijective (fun y : Sx (A ⨯ B) p T => ((y.map prod.fst : Sx A p T), (y.map prod.snd : Sx B p T))) := by
-  haveI : PreservesLimit (pair A B) (evF p T) := by unfold evF; infer_instance
+  have : PreservesLimit (pair A B) (evF p T) := by unfold evF; infer_instance
   let e := PreservesLimitPair.iso (evF p T) A B ≪≫ Types.binaryProductIso _ _
   have h : (fun y : Sx (A ⨯ B) p T => ((y.map prod.fst : Sx A p T), (y.map prod.snd : Sx B p T))) = e.hom := by
     funext y
@@ -167,24 +172,56 @@ private theorem upL_d (I : Cx R) {T : Scheme.{0}} (g : T ⟶ W) (s t : ℤ) (a :
 
 private theorem ev_nat' {E : Spc} {I : Cx R} {n : ℤ} (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ)
     (h : -(p : ℤ) + n = s) {V U : Scheme.{0}} (g : V ⟶ U) (x : Sx E p U) :
-    Sec.res g (ev α p s h U x) = ev α p s h V (x.res g) :=
-  (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).2.1 α p s h V U g x
+    Sec.res g (ev α p s h U x) = ev α p s h V (x.res g) := by
+  let f := (chainsXIso R E p).inv ≫ α.v _ _ h
+  change Sec.res g (Sec.map f (freeGen R _ U x)) = _
+  rw [CupSpec.map_res, CupSpec.freeGen_res]
+  rfl
 
 private theorem ev_ext' {E : Spc} {I : Cx R} {n : ℤ} {α β : Cochain ((chains R).obj E) I n}
-    (h : ∀ p s h U x, ev α p s h U x = ev β p s h U x) : α = β :=
-  (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).2.2.1 α β h
+    (h : ∀ p s h U x, ev α p s h U x = ev β p s h U x) : α = β := by
+  ext i j hij : 1
+  by_cases hi : i ≤ 0
+  · obtain ⟨p, rfl⟩ : ∃ p : ℕ, i = -(p : ℤ) := ⟨(-i).toNat, by omega⟩
+    rw [← cancel_epi (chainsXIso R E p).inv]
+    exact CupSpec.free_ext _ _ (fun U x => h p j hij U x)
+  · exact (CupSpec.isZero_chains E i (by omega)).eq_of_src _ _
+
+private theorem cochain_of_natural_values {A : Spc} {J : Cx R} {n : ℤ}
+    (a : ∀ (p : ℕ) (s : ℤ), -(p : ℤ) + n = s → ∀ T : Scheme.{0}, Sx A p T → Sec (J.X s) T)
+    (ha : ∀ p s h (V U : Scheme.{0}) (g : V ⟶ U) (x : Sx A p U),
+      Sec.res g (a p s h U x) = a p s h V (x.res g)) :
+    ∃ α : Cochain ((chains R).obj A) J n, ∀ p s h U x, ev α p s h U x = a p s h U x := by
+  have components : ∀ (i j : ℤ) (hij : i + n = j), ∃ φ : ((chains R).obj A).X i ⟶ J.X j,
+      ∀ (p : ℕ) (hp : i = -(p : ℤ)) U x,
+        Sec.map ((chainsXIso R A p).inv ≫ eqToHom (congrArg ((chains R).obj A).X hp.symm) ≫ φ)
+          (freeGen R _ U x) = a p j (hp ▸ hij) U x := by
+    intro i j hij
+    by_cases hi : i ≤ 0
+    · obtain ⟨k, rfl⟩ : ∃ k : ℕ, i = -(k : ℤ) := ⟨(-i).toNat, by omega⟩
+      obtain ⟨φ, hφ⟩ := CupSpec.free_exists (R := R) _ _ (a k j hij) (ha k j hij)
+      refine ⟨(chainsXIso R A k).hom ≫ φ, fun p hp U x => ?_⟩
+      obtain rfl : k = p := by omega
+      rw [eqToHom_refl, Category.id_comp, Iso.inv_hom_id_assoc]
+      exact hφ U x
+    · exact ⟨0, fun p hp => by omega⟩
+  choose φ hφ using components
+  refine ⟨Cochain.mk φ, fun p s h U x => ?_⟩
+  have hEval := hφ _ _ h p rfl U x
+  rw [eqToHom_refl, Category.id_comp] at hEval
+  exact hEval
 
 private theorem up_ex {I : Cx R} {n : ℤ} (γ : Cochain ((chains R).obj E) (Bc W I) n) :
     ∃ β : Cochain ((chains R).obj (sch.obj W ⨯ E)) I n,
       ∀ p s h T y, ev β p s h T y = upL I (fstW y) s (ev γ p s h T (sndE y)) :=
-  GlobalTheory.T.exists_cochain_ev_eq_of_natural' R (fun p s h T y => upL I (fstW y) s (ev γ p s h T (sndE y))) (by
+  cochain_of_natural_values (fun p s h T y => upL I (fstW y) s (ev γ p s h T (sndE y))) (by
     intro p s h V U g y
     rw [upL_nat, ev_nat', fst_res, snd_res])
 
 private theorem down_ex {I : Cx R} {n : ℤ} (β : Cochain ((chains R).obj (sch.obj W ⨯ E)) I n) :
     ∃ γ : Cochain ((chains R).obj E) (Bc W I) n, ∀ p s h T x, ev γ p s h T x =
       (show Sec ((Bc W I).X s) T from ev β p s h (W ⨯ T) (mkP prod.fst (x.res prod.snd))) :=
-  GlobalTheory.T.exists_cochain_ev_eq_of_natural' R (fun p s h T x =>
+  cochain_of_natural_values (fun p s h T x =>
                (show Sec ((Bc W I).X s) T from ev β p s h (W ⨯ T) (mkP prod.fst (x.res prod.snd)))) (by
     intro p s h V U g x
     change Sec.res (Limits.prod.map (𝟙 W) g) (ev β p s h (W ⨯ U) (mkP prod.fst (x.res prod.snd))) =
@@ -240,8 +277,10 @@ private theorem up_add {I : Cx R} {n : ℤ} (a b : Cochain ((chains R).obj E) (B
     up (a + b) = up a + up b := by
   apply ev_ext'
   intro p s h T y
-  rw [(GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).1 (up a) (up b) p s h T y |>.1, ev_up, ev_up, ev_up,
-    ((GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties R).1 a b p s h T (sndE y)).1, map_add]
+  have ev_add {A : Spc} {J : Cx R} (u v : Cochain ((chains R).obj A) J n) (x : Sx A p T) :
+      ev (u + v) p s h T x = ev u p s h T x + ev v p s h T x := by
+    simp [ev, Cochain.add_v]
+  rw [ev_add, ev_up, ev_up, ev_up, ev_add, map_add]
 
 private def upE (W : Scheme.{0}) (I : Cx R) (E : Spc) (n : ℤ) :
     Cochain ((chains R).obj E) (Bc W I) n ≃+ Cochain ((chains R).obj (sch.obj W ⨯ E)) I n where
@@ -253,20 +292,46 @@ private def upE (W : Scheme.{0}) (I : Cx R) (E : Spc) (n : ℤ) :
 
 private theorem up_δ {I : Cx R} {n m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains R).obj E) (Bc W I) n) :
     δ n m (up α) = up (δ n m α) := by
+  have ev_def {A : Spc} {J : Cx R} {k : ℤ} (β : Cochain ((chains R).obj A) J k)
+      (p : ℕ) (s : ℤ) (h : -(p : ℤ) + k = s) (T : Scheme.{0}) (x : Sx A p T) :
+      ev β p s h T x = Sec.map ((chainsXIso R A p).inv ≫ β.v _ _ h) (freeGen R _ T x) := rfl
   apply ev_ext'
   intro p t ht T y
   rw [ev_up]
   cases p with
   | zero =>
     obtain rfl : m = t := by simpa using ht
-    refine ((GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values R hm (up α) T).1 y).trans ?_
-    rw [(GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values R hm α T).1 (sndE y), ev_up, upL_d]
+    have hs : -((0 : ℕ) : ℤ) + n = n := by simp
+    have hzero {A : Spc} {J : Cx R} (β : Cochain ((chains R).obj A) J n) (x : Sx A 0 T) :
+        ev (δ n m β) 0 m ht T x = Sec.map (J.d n m) (ev β 0 n hs T x) := by
+      rw [ev_def, δ_v n m hm β _ m ht n 1 (by omega) (by simp),
+        (CupSpec.isZero_chains (R := R) A 1 one_pos).eq_of_tgt (((chains R).obj A).d _ 1) 0,
+        zero_comp, smul_zero, add_zero]
+      rfl
+    rw [hzero, hzero, ev_up, upL_d]
   | succ p =>
     have hs : -((p + 1 : ℕ) : ℤ) + n = t - 1 := by omega
-    refine ((GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values R hm (up α) T).2 p (t - 1) t hs ht y).trans ?_
-    rw [(GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values R hm α T).2 p (t - 1) t hs ht (sndE y), map_add, ev_up, upL_d]
+    have hsucc {A : Spc} {J : Cx R} (β : Cochain ((chains R).obj A) J n) (x : Sx A (p + 1) T) :
+        ev (δ n m β) (p + 1) t ht T x =
+          Sec.map (J.d (t - 1) t) (ev β (p + 1) (t - 1) hs T x) +
+            m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • ev β p t (by omega) T (x.face i) := by
+      rw [ev_def, δ_v n m hm β _ t ht (t - 1) (-(p : ℤ)) (by omega) (by omega), Preadditive.comp_add,
+        Units.smul_def, Preadditive.comp_zsmul, ← Category.assoc _ (((chains R).obj A).d _ _),
+        CupSpec.chains_d, Category.assoc, Preadditive.sum_comp]
+      refine (map_add (CupSpec.mapHom _ _ (freeGen R _ T x)) _ _).trans ?_
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zsmul, map_sum, Units.smul_def]
+      refine congrArg₂ (· + ·) rfl (congrArg _ (Finset.sum_congr rfl fun i _ => ?_))
+      rw [Preadditive.zsmul_comp, map_zsmul]
+      congr 1
+      change Sec.map ((chainsXIso R A p).inv ≫ β.v _ _ _)
+        (Sec.map ((free R).map _) (freeGen R _ T x)) = _
+      rw [CupSpec.freeGen_map]
+      rfl
+    rw [hsucc, hsucc, map_add (f := _), ev_up, upL_d]
     congr 1
-    simp only [Units.smul_def, map_zsmul, map_sum, ev_up, fst_face, snd_face]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Units.smul_def, map_zsmul, map_sum, ev_up, fst_face, snd_face]
 
 end UpperTheory.Adj
 end

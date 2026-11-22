@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementC
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.BiextensionHypothesesOfLevelOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementC
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FinalS
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -21,7 +25,7 @@ theorem poly_id (l : ℕ) (hl : l.Prime) : ∃ Q : Polynomial ℤ,
       (Polynomial.X ^ l - Polynomial.X : Polynomial (ZMod l)) := by
     have hr := FiniteField.roots_X_pow_card_sub_X (ZMod l)
     rw [ZMod.card] at hr
-    have hdeg := FiniteField.X_pow_card_sub_X_natDegree_eq (ZMod l) hl.one_lt
+    have hdeg := Polynomial.natDegree_X_pow_sub_X (R := (ZMod l)) hl.one_lt
     have hmon : (Polynomial.X ^ l - Polynomial.X : Polynomial (ZMod l)).Monic := by
       apply Polynomial.monic_X_pow_sub
       rw [Polynomial.degree_X]
@@ -51,7 +55,7 @@ theorem poly_id (l : ℕ) (hl : l.Prime) : ∃ Q : Polynomial ℤ,
       Polynomial.map_prod]
     simp only [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_natCast]
     rw [hrange, hprod, sub_self]
-  have h := congrArg (fun P => Polynomial.coeff P i) hmap
+  have h := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P i) hmap
   simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at h
   exact h
 
@@ -190,7 +194,7 @@ theorem fixed_is_limit : FixedIsLimit := by
       exact absurd (norm_le_inv_of_lt_one hp.one_lt hval (not_le.1 hlt)) (not_le.2 (hc n))
     have h5 : (1 : ℝ) ≤ ‖∏ n ∈ Finset.range l, (x - (n : K))‖ := by
       rw [norm_prod]
-      have := Finset.prod_le_prod (s := Finset.range l) (f := fun _ => (1 : ℝ))
+      have := Finset.prod_le_prod₀ (s := Finset.range l) (f := fun _ => (1 : ℝ))
         (g := fun n : ℕ => ‖x - (n : K)‖) (fun _ _ => zero_le_one) h4
       simpa using this
     linarith

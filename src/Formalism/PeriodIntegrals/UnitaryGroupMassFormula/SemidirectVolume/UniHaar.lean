@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,6 +95,7 @@ theorem uni_haar {A : Type} [CommRing A] [TopologicalSpace A] [IsTopologicalRing
     Measure.pi.isAddHaarMeasure _
   rw [Measure.isAddLeftInvariant_eq_smul μ (Measure.pi fun _ : Fin k => (Measure.addHaar : Measure A)),
     Measure.map_smul, (uni_measurePreserving (Measure.addHaar : Measure A) k U hU).map_eq]
+  exact (uni_measurePreserving (Measure.addHaar : Measure A) k U hU).aemeasurable
 
 theorem transvection_uni {A : Type} [CommRing A] {k : ℕ} (i j : Fin k) (hij : i ≠ j) (c : A) :
     IsLowUni (Matrix.transvection i j c) ∨ IsLowUni (Matrix.transvection i j c).transpose := by

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.FunctionFieldPoint
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -265,7 +269,7 @@ theorem isSeparable_of_quadratic {L K : Type*} [Field L] [Field K] [Algebra L K]
     (hD' : algebraMap L K b ^ 2 + 4 * algebraMap L K c ≠ 0) :
     IsSeparable L y := by
   have hD : b ^ 2 + 4 * c ≠ 0 := fun h => hD' (by
-    rw [← map_pow, ← map_ofNat (algebraMap L K) 4, ← map_mul, ← map_add, h, map_zero])
+    rw [← map_pow, ← map_ofNat (algebraMap L K) 4, ← map_mul, ← map_add (f := _), h, map_zero])
   have hq' : derivative (X ^ 2 + C b * X - C c : L[X]) = C 2 * X + C b := by
     simp only [derivative_sub, derivative_add, derivative_X_pow, derivative_C_mul_X, derivative_C]
     simp
@@ -273,14 +277,14 @@ theorem isSeparable_of_quadratic {L K : Type*} [Field L] [Field K] [Algebra L K]
     rw [Polynomial.separable_def, hq']
     refine ⟨C (-4 * (b ^ 2 + 4 * c)⁻¹), C (b ^ 2 + 4 * c)⁻¹ * (C 2 * X + C b), ?_⟩
     have e : (C 2 * X + C b) ^ 2 - 4 * (X ^ 2 + C b * X - C c) = C (b ^ 2 + 4 * c) := by
-      simp only [map_add, map_pow, map_mul, map_ofNat]; ring
+      simp only [map_add (f := _), map_pow, map_mul, map_ofNat]; ring
     calc C (-4 * (b ^ 2 + 4 * c)⁻¹) * (X ^ 2 + C b * X - C c) +
           C (b ^ 2 + 4 * c)⁻¹ * (C 2 * X + C b) * (C 2 * X + C b)
         = C (b ^ 2 + 4 * c)⁻¹ * ((C 2 * X + C b) ^ 2 - 4 * (X ^ 2 + C b * X - C c)) := by
           simp only [map_mul, map_neg, map_ofNat]; ring
       _ = 1 := by rw [e, ← C_mul, inv_mul_cancel₀ hD, C_1]
   have hq : aeval y (X ^ 2 + C b * X - C c : L[X]) = 0 := by
-    simp only [map_sub, map_add, map_mul, map_pow, aeval_X, aeval_C]
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, aeval_X, aeval_C]
     exact hy
   exact hsep.of_dvd (minpoly.dvd L y hq)
 
@@ -307,7 +311,7 @@ theorem isSeparable_genY (L : IntermediateField F E.toAffine.FunctionField)
     simp only [IntermediateField.algebraMap_apply] at h'
     have : aeval (genX E) E.Ψ₂Sq = 0 := by
       rw [← h']
-      simp only [Ψ₂Sq, map_add, map_mul, map_pow, aeval_C, aeval_X, b₂, b₄, b₆, map_ofNat]
+      simp only [Ψ₂Sq, map_add (f := _), map_mul, map_pow, aeval_C, aeval_X, b₂, b₄, b₆, map_ofNat]
       ring
     rw [aeval_genX_eq_zero_iff] at this
     exact Ψ₂Sq_ne_zero E this

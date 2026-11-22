@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.ZeroDimA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem.Col2.JetEx
 open scoped ContDiff
@@ -64,7 +68,8 @@ theorem derivAt0_comp_mem : ∀ (ι : Type) [Fintype ι] (a b n : ℕ) (K₀ : S
     have h2 : (fun i => L (coordX (g i))) =
         fun i => ∑ k : DVar ι a b, L (coordX (g i)) k.1 k.2.1 k.2.2 • coordX k :=
       funext fun i => eq_sum_coordX _
-    rw [h2, ContinuousMultilinearMap.map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, ContinuousMultilinearMap.map_sum, Finset.mul_sum]
     refine sum_mem fun f _ => ?_
     rw [ContinuousMultilinearMap.map_smul_univ, smul_eq_mul, mul_left_comm]
     refine mul_mem (prod_mem fun i _ => hL _ _ _ _) ?_

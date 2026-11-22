@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
-import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FirstDeriv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TopsChoicePartA
+public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,14 +172,6 @@ section Norm
 
 variable {K : Type} [NormedField K] [IsUltrametricDist K]
 
-theorem integral_mul {ι : Type} {f g : MvPowerSeries ι K} (hf : Integral f) (hg : Integral g) :
-    Integral (f * g) := by
-  classical
-  intro n
-  rw [MvPowerSeries.coeff_mul]
-  exact IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one
-    (fun q _ => by rw [norm_mul]; exact mul_le_one₀ (hf _) (norm_nonneg _) (hg _))
-
 end Norm
 
 section Top
@@ -187,13 +183,6 @@ end Top
 section Additive
 
 variable {K : Type} [Field K]
-
-theorem cob_add {F : MvPowerSeries (Fin 2) K} (hF : MvPowerSeries.constantCoeff F = 0)
-    (f g : PowerSeries K) : cob F (f + g) = cob F f + cob F g := by
-  unfold cob at1
-  rw [PowerSeries.subst_add (PowerSeries.HasSubst.of_constantCoeff_zero hF),
-    PowerSeries.subst_add (PowerSeries.HasSubst.X 0), PowerSeries.subst_add (PowerSeries.HasSubst.X 1)]
-  ring
 
 theorem coeff_one_lgF {p : ℕ} (hp : 2 ≤ p) : PowerSeries.coeff 1 (lgF K p) = 1 := by
   rw [lgF, PowerSeries.coeff_mk, Finset.sum_range_succ, Finset.sum_range_one]
@@ -218,9 +207,6 @@ theorem coeff_swap2 (H : MvPowerSeries (Fin 2) K) (i k : ℕ) :
     simp only [Equiv.coe_toEmbedding, Equiv.swap_apply_left, Equiv.swap_apply_right]
     exact add_comm _ _
   rw [← hu, coeff_rename_map_lemma _ (Equiv.swap (0 : Fin 2) 1).toEmbedding.injective]
-
-def asm (R : ℕ → PowerSeries K) : MvPowerSeries (Fin 2) K :=
-  fun n => PowerSeries.coeff (n 0) (R (n 1))
 
 theorem pow_parity {p : ℕ} (hp : 2 ≤ p) (i j : ℕ) : p * (p ^ 2) ^ i ≠ (p ^ 2) ^ j := by
   intro h
@@ -254,30 +240,14 @@ theorem norm_sub_le_one {x y : K} (hx : ‖x‖ ≤ 1) (hy : ‖y‖ ≤ 1) : �
   rw [sub_eq_add_neg]
   exact (IsUltrametricDist.norm_add_le_max x (-y)).trans (max_le hx (by rwa [norm_neg]))
 
-theorem eq_zero_of_div {p : ℕ} (hp : 2 ≤ p) (hnp : ‖(p : K)‖ = (p : ℝ)⁻¹) {x : K}
-    (h : ∀ N : ℕ, ∃ i, N ≤ i ∧ ‖((p : K) ^ i)⁻¹ * x‖ ≤ 1) : x = 0 := by
-  by_contra hx
-  have hxpos : 0 < ‖x‖ := norm_pos_iff.2 hx
-  have hp1 : ((p : ℝ))⁻¹ < 1 := inv_lt_one_of_one_lt₀ (by exact_mod_cast (by omega : 1 < p))
-  obtain ⟨N, hN⟩ := exists_pow_lt_of_lt_one hxpos hp1
-  obtain ⟨i, hi, hle⟩ := h N
-  have hpos : (0 : ℝ) < (p : ℝ) ^ i := by positivity
-  rw [norm_mul, norm_inv, norm_pow, hnp, inv_pow, inv_inv] at hle
-  have h1 : ‖x‖ ≤ ((p : ℝ)⁻¹) ^ i := by
-    rw [inv_pow]
-    calc ‖x‖ = ((p : ℝ) ^ i)⁻¹ * ((p : ℝ) ^ i * ‖x‖) := by field_simp
-      _ ≤ ((p : ℝ) ^ i)⁻¹ * 1 := by gcongr
-      _ = ((p : ℝ) ^ i)⁻¹ := mul_one _
-  have h2 : ((p : ℝ)⁻¹) ^ i ≤ ((p : ℝ)⁻¹) ^ N := pow_le_pow_of_le_one (by positivity) hp1.le hi
-  linarith
-
 end Norm
 
 end LemTwo
 
-open LemTwo in
 
+open LemTwo in
 theorem LemmaTwo_of (h1 : LemmaOne) (hL : LawSymm) : LemmaTwo := by
+  open LemTwo in
   intro K _ _ _ _ p σ hU F hF H hH hd hd'
   obtain ⟨hp, -, hnp, -, -⟩ := id hU
   have hp2 : 2 ≤ p := hp.two_le
@@ -370,14 +340,14 @@ theorem LemmaTwo_of (h1 : LemmaOne) (hL : LawSymm) : LemmaTwo := by
     intro i m
     have h3 := congrArg (PowerSeries.coeff i) (hsl m)
     rw [sl, PowerSeries.coeff_mk] at h3
-    rw [h3, map_add, map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul]
+    rw [h3, map_add (f := _), map_add (f := _), PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul]
   have cH' : ∀ i m, MvPowerSeries.coeff (Finsupp.single 0 i + Finsupp.single 1 m) H =
       α' i * PowerSeries.coeff m (g0F K p) + β' i * PowerSeries.coeff m (lgF K p) +
         PowerSeries.coeff m (R' i) := by
     intro i m
     have h3 := congrArg (PowerSeries.coeff m) (hsl' i)
     rw [sl, PowerSeries.coeff_mk, LemTwo.coeff_swap2] at h3
-    rw [h3, map_add, map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul]
+    rw [h3, map_add (f := _), map_add (f := _), PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul]
   have star : ∀ i m, ‖(α m * PowerSeries.coeff i (g0F K p) + β m * PowerSeries.coeff i (lgF K p)) -
       (α' i * PowerSeries.coeff m (g0F K p) + β' i * PowerSeries.coeff m (lgF K p))‖ ≤ 1 := by
     intro i m

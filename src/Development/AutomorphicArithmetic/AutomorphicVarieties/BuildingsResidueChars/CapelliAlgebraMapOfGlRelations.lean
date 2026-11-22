@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CenterTensorProductLeSupMapCenter
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.CenterTensorProductLeSupMapCenter
+
+@[expose] public section
 
 open UpperTheory.V.Af.CuspFin
 

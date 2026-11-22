@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Imports
+
+@[expose] public section
 
 open NumberField UpperTheory.V UpperTheory.V.KT UpperTheory.V.Af.BA in
 theorem UpperTheory.good_real_form_of_real_part_of_real_involution :

@@ -1,10 +1,14 @@
-import Development.EtaleCohomology.TateTwists.KumAddPf
-import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
-import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
-import Development.EtaleCohomology.TateTwists.EtaleCochainExistsOfNaturalEvaluation
-import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationCoboundaryFormula
-import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
+module
+
+public import Development.EtaleCohomology.TateTwists.KumAddPf
+public import Development.EtaleCohomology.TateTwists.EtaleKummerTriangleExists
+public import Development.EtaleCohomology.TateTwists.EtalePrimitiveRootsExistLocally
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsSeparatedAndGlue
+public import Development.EtaleCohomology.TateTwists.EtaleCochainExistsOfNaturalEvaluation
+public import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationCoboundaryFormula
+public import Development.EtaleCohomology.TateTwists.EtaleCochainEvaluationLinear
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory.CompanionTheory.LatticeCount
@@ -63,7 +68,7 @@ theorem summable_of_lattice_decay (ι : Type) (d : ℕ) (w : ι → ℂ) (f : ι
           ∏ k : Fin d, ((N : ℝ) ^ 2 * (1 + f a.1 k ^ 2)) := by
         rw [Finset.prod_mul_distrib]; simp
       rw [this]
-      refine Finset.prod_le_prod (fun k _ => by positivity) (fun k _ => ?_)
+      refine Finset.prod_le_prod₀ (fun k _ => by positivity) (fun k _ => ?_)
       rw [← hn a k]
       have : (1 : ℝ) ≤ (N : ℝ) ^ 2 := by nlinarith
       nlinarith

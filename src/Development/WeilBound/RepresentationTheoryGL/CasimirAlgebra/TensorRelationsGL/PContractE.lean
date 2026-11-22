@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,8 @@ private theorem sum_smul_R0_sum_E_eq_of_unitary_of_adjoint (K : Matrix (Fin n) (
     have h := congrFun (congrFun hu i) d
     rw [Matrix.mul_apply, Matrix.one_apply] at h
     simpa [Matrix.conjTranspose_apply] using h
-  simp_rw [map_sum, h1, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [map_sum, h1, Finset.smul_sum, smul_smul]
   conv_lhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [Finset.sum_comm]
@@ -143,7 +148,8 @@ theorem actT_Om {ι Γ : Type} {m : ℕ} (τ : ι) (κ : ι → Γ → Matrix (F
           E a (I j) (ρ γ (f (omcGlue j b R))) := by
       intro a
       rw [omc_sum j]
-      simp only [hQ, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hQ, map_sum, map_smul]
     simp only [hR]
     symm
     conv_lhs => rw [Finset.sum_comm]

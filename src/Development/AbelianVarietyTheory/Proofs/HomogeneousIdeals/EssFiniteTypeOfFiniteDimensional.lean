@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIntegralRatioRingIffMemAdjoin
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIntegralRatioRingIffMemAdjoin
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ValRPullbackTwistingSheafTransition
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ namespace GlobalTheory.TupleNorm
 
 variable {L : Type} [Field L]
 
-open Polynomial in
 
+open Polynomial in
 theorem pow_mem_forms (o : Type*) [CommRing o] {L : Type*} [Field L] [Algebra o L] {σ : Type*}
     (t : σ → L) [IsDedekindDomain o] [CharZero L] [Algebra.EssFiniteType o L] [Fintype σ] {e : ℕ}
     (he : 0 < e) (hv : ∀ j, 0 < j → piece o t (j * e) = piece o t e ^ j) {a : L}
@@ -37,7 +41,7 @@ theorem pow_mem_forms (o : Type*) [CommRing o] {L : Type*} [Field L] [Algebra o 
     | add x _ y _ hx hy =>
       obtain ⟨q, hq, hx⟩ := hx
       obtain ⟨q', hq', hy⟩ := hy
-      exact ⟨q + q', add_mem hq hq', by rw [AddMemClass.coe_add, hx, hy, map_add, add_mul]⟩
+      exact ⟨q + q', add_mem hq hq', by rw [AddMemClass.coe_add, hx, hy, map_add (f := _), add_mul]⟩
     | mem_mul_mem x hx y hy =>
       induction hx using Submodule.span_induction with
       | mem x hx =>
@@ -51,7 +55,7 @@ theorem pow_mem_forms (o : Type*) [CommRing o] {L : Type*} [Field L] [Algebra o 
         obtain ⟨q, hq, hx⟩ := hx
         obtain ⟨q', hq', hy⟩ := hx'
         exact ⟨q + q', add_mem hq hq',
-          by rw [AddMemClass.coe_add, hx, hy, add_mul, map_add, add_mul]⟩
+          by rw [AddMemClass.coe_add, hx, hy, add_mul, map_add (f := _), add_mul]⟩
       | smul c x _ hx =>
         obtain ⟨q, hq, hx⟩ := hx
         refine ⟨algebraMap (cone o t) A (algebraMap o _ c) * q, I.radical.mul_mem_left _ hq, ?_⟩
@@ -167,8 +171,8 @@ theorem iSup_preimage_chart :
   exact ⟨⟨i, ne_zero_of_le (nmPoint_toProj o t ht)
     (le_preimage_of_mem (W := toProj o t ht ⁻¹ᵁ chart o r i) _ hi) le_rfl⟩, hi⟩
 
-variable {o t ht} in
 
+variable {o t ht} in
 theorem mem_range_valMap_iff {i : Fin (r + 1)} {W : (Nm o t ht).Opens}
     (hW : W = toProj o t ht ⁻¹ᵁ chart o r i) (h : ⊤ ≤ nmPoint o t ht ⁻¹ᵁ W) (a : L) :
     a ∈ Set.range (valMap (nmPoint o t ht) W h).hom ↔ IsIntegral (ratioRing o t i) a := by
@@ -199,28 +203,12 @@ theorem exists_hom_of_isIntegral {z : Fin (m + 1) → L} (hz : z ≠ 0)
   exact exists_hom_of_coords _ _ (nmPoint_str o t ht) _ (iSup_preimage_chart o t ht) hη hz c hc u
     fun i k => (valR_eq _ _ (hη i) _).trans (hu i k)
 
-theorem exists_hom_Cl_of_factor {z : Fin (m + 1) → L} (hz : z ≠ 0) {τ : Type*} (z' : τ → L)
-    (p : Fin (r + 1) ≃ Fin (m + 1) × τ) (hp : ∀ i, t i = z (p i).1 * z' (p i).2) :
-    ∃ φ : Nm o t ht ⟶ Cl o z hz, nmPoint o t ht ≫ φ = clPoint o z hz ∧
-      φ ≫ clι o z hz ≫ PSpace.str o m = str o t ht := by
-  obtain ⟨φ, h₁, h₂, -⟩ := exists_hom_of_isIntegral o t ht hz (fun i => (p i.1).1)
-    (fun i => left_ne_zero_of_mul (hp i.1 ▸ i.2)) fun i k => by
-      have : z k / z (p i.1).1 = t (p.symm (k, (p i.1).2)) / t i.1 := by
-        rw [hp, hp i.1, Equiv.apply_symm_apply,
-          mul_div_mul_right _ _ (right_ne_zero_of_mul (hp i.1 ▸ i.2))]
-      rw [this]
-      exact isIntegral_algebraMap
-        (x := (⟨_, Algebra.subset_adjoin ⟨_, rfl⟩⟩ : ratioRing o t i.1))
-  have := IsSchemeTheoreticallyDominant.of_isDominant (nmPoint o t ht)
-  refine ⟨closureLift _ φ (nmPoint o t ht) (𝟙 _) (by simpa using h₁), by simp, ?_⟩
-  rw [closureLift_imageι_assoc, h₂]
-
 def ratioField : Subfield L :=
   Subfield.closure (Set.range (algebraMap o L) ∪
     Set.range fun p : Fin (r + 1) × Fin (r + 1) => t p.1 / t p.2)
 
-variable {t} in
 
+variable {t} in
 theorem ratioField_eq {i : Fin (r + 1)} (hi : t i ≠ 0) :
     ratioField o t = Subfield.closure (ratioRing o t i : Set L) := by
   refine le_antisymm (Subfield.closure_le.mpr ?_) (Subfield.closure_le.mpr fun x hx => ?_)
@@ -238,8 +226,8 @@ theorem ratioField_eq {i : Fin (r + 1)} (hi : t i ≠ 0) :
     | add x y _ _ hx hy => exact add_mem hx hy
     | mul x y _ _ hx hy => exact mul_mem hx hy
 
-variable {t} in
 
+variable {t} in
 theorem isAlgebraic_and_essFiniteType [FiniteDimensional (ratioField o t) L] {i : Fin (r + 1)}
     (hi : t i ≠ 0) :
     Algebra.IsAlgebraic (ratioRing o t i) L ∧ Algebra.EssFiniteType (ratioRing o t i) L := by
@@ -261,8 +249,8 @@ theorem isAlgebraic_and_essFiniteType [FiniteDimensional (ratioField o t) L] {i 
   exact ⟨(IsFractionRing.comap_isAlgebraic_iff (K := ratioField o t)).mpr inferInstance,
     .comp _ (ratioField o t) _⟩
 
-include ht in
 
+include ht in
 theorem essFiniteType_of_finiteDimensional [FiniteDimensional (ratioField o t) L] :
     Algebra.EssFiniteType o L := by
   obtain ⟨i, hi⟩ := Function.ne_iff.mp ht
@@ -387,8 +375,12 @@ theorem exists_iso_Cl : ∃ (e : ℕ) (_ : 0 < e) (M : ℕ) (z : Fin (M + 1) →
   obtain ⟨φ, _, h₁, h₂, h₃⟩ := exists_isClosedImmersion o t ht he hv hz hs c hc
   have := IsSchemeTheoreticallyDominant.of_isDominant (nmPoint o t ht)
   let ν := (asIso (closureToClosed (point o z hz) (nmPoint o t ht) φ h₁)).symm
-  have hν : ν.hom ≫ clι o z hz = φ := by simp [ν, IsIso.inv_comp_eq]
-  refine ⟨e, he, M, z, hz, hv, hs, fun j => ⟨c j, hc j⟩, ν, by simp [ν, IsIso.comp_inv_eq], ?_⟩
+  have hν : ν.hom ≫ clι o z hz = φ := by
+    simp only [ν, Iso.symm_hom, asIso_inv, IsIso.inv_comp_eq]
+    exact (closureToClosed_comp (point o z hz) (nmPoint o t ht) φ h₁).symm
+  refine ⟨e, he, M, z, hz, hv, hs, fun j => ⟨c j, hc j⟩, ν, by
+    simp only [ν, Iso.symm_hom, asIso_inv, IsIso.comp_inv_eq]
+    exact (toImage_closureToClosed (point o z hz) (nmPoint o t ht) φ h₁).symm, ?_⟩
   rw [hν]
   refine ⟨h₂, fun j k hk => ?_,
     exists_iso_lbPow (nmPoint_toProj o t ht) h₁ c hc fun j => (h₃ j).ge⟩
@@ -402,12 +394,6 @@ theorem exists_iso_Cl : ∃ (e : ℕ) (_ : 0 < e) (M : ℕ) (z : Fin (M + 1) →
 theorem isProjOver_str : IsProjOver (str o t ht) := by
   obtain ⟨e, -, M, z, hz, -, -, -, ν, -, h, -⟩ := exists_iso_Cl o t ht
   exact ⟨M, ν.hom ≫ clι o z hz, inferInstance, h⟩
-
-theorem exists_pow_twist_veryAmple : ∃ (e : ℕ) (_ : 0 < e) (M : ℕ) (φ : Nm o t ht ⟶ PSpace o M),
-    IsClosedImmersion φ ∧ φ ≫ PSpace.str o M = str o t ht ∧
-      LBIso (lbPow (twist o t ht) e) ((O1 o M).pull φ) := by
-  obtain ⟨e, he, M, z, hz, -, -, -, ν, -, h, -, w, hw, -⟩ := exists_iso_Cl o t ht
-  exact ⟨e, he, M, ν.hom ≫ clι o z hz, inferInstance, h, w, hw⟩
 
 end Dedekind
 
@@ -452,17 +438,5 @@ theorem normalization_closure_projective [IsDedekindDomain o] [CharZero o] [Fait
     fun i hi f => (isIntegral_ratioRing_iff_mem_adjoin he h₂ h₁ hi).symm,
     fun k => h₂ ▸ pow_mem_forms o t he h₁ (h₂ ▸ Submodule.subset_span ⟨k, rfl⟩), h₇,
     ν, h₄, h₅, h₆, w, hw⟩
-
-example (K : Type) [Field K] [NumberField K] (t : Fin (r + 1) → K) (ht : t ≠ 0) :
-    IsProjOver (str ℤ t ht) :=
-  have : FiniteDimensional (ratioField ℤ t) K := Module.Finite.of_restrictScalars_finite ℚ _ _
-  (normalization_closure_projective ℤ t ht).2.2.2.2.2.2.2.2.2.1
-
-example : let K := FractionRing (Polynomial ℤ)
-    let x : K := algebraMap (Polynomial ℤ) K Polynomial.X
-    ∃ ht : ![1, x ^ 2, x ^ 3] ≠ 0, IsProjOver (str ℤ ![1, x ^ 2, x ^ 3] ht) := by
-  intro K x
-  have : Algebra.EssFiniteType ℤ K := .comp ℤ (Polynomial ℤ) K
-  exact ⟨Function.ne_iff.mpr ⟨0, one_ne_zero⟩, isProjOver_str _ _ _⟩
 
 end GlobalTheory.TupleNorm

@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
-import Development.EtaleCohomology.WeilConjectures.ContinCut
-import Development.EtaleCohomology.WeilConjectures.FinQCut
-import Development.EtaleCohomology.WeilConjectures.AdicKerPf
-import Development.EtaleCohomology.EtaleDuality.FinAdicFin
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AffineProperBaseChange
+module
+
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+public import Development.EtaleCohomology.WeilConjectures.ContinCut
+public import Development.EtaleCohomology.WeilConjectures.FinQCut
+public import Development.EtaleCohomology.WeilConjectures.AdicKerPf
+public import Development.EtaleCohomology.EtaleDuality.FinAdicFin
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AffineProperBaseChange
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC

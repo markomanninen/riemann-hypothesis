@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
-import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsTermOver
+public import Formalism.SharpRestriction.CuspSpanNormBounds.KappaEndpoints
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc
 
 noncomputable section
@@ -14,7 +19,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 variable {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] {H : HermSp M V} {r : ℕ}
 
 theorem hR_add (x y z : V) : H.h x (y + z) = H.h x y + H.h x z := by
-  rw [H.h_herm (y + z) x, H.h_add_left, map_add, ← H.h_herm, ← H.h_herm]
+  rw [H.h_herm (y + z) x, H.h_add_left, map_add (f := _), ← H.h_herm, ← H.h_herm]
 
 theorem hR_smul (c : E) (x y : V) : H.h x (c • y) = M.L.cj c * H.h x y := by
   rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm]
@@ -230,7 +235,7 @@ theorem swap_mem_N (hf : B.f = A.f) : swapEquiv A B hf ∈ A.N := by
         obtain ⟨a, -, rfl⟩ := hx
         exact swap_fix A B hf a.castSucc
       | zero => exact map_zero _
-      | add x y _ _ hx hy => rw [map_add, hx, hy]
+      | add x y _ _ hx hy => rw [map_add (f := _), hx, hy]
       | smul c x _ hx => rw [map_smul, hx]
     rw [hfix, sub_self]; exact Submodule.zero_mem _
   · intro v hv

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StManifoldZerosComplementConnected
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StManifoldZerosComplementConnected
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -136,7 +141,7 @@ theorem ManifoldZerosComplementConnected.proof : ManifoldZerosComplementConnecte
     obtain ⟨ε, hε, hεO⟩ := Metric.isOpen_iff.mp hO (A x) hxO
     refine ⟨d, Metric.ball (A x) ε, V ∩ A ⁻¹' Metric.ball (A x) ε, g, Metric.isOpen_ball,
       convex_ball _ _, hV.inter (Metric.isOpen_ball.preimage A.continuous),
-      ⟨hxV, Metric.mem_ball_self hε⟩, hg.mono hεO, ?_⟩
+      ⟨hxV, Set.mem_preimage.mpr (Metric.mem_ball_self hε)⟩, hg.mono hεO, ?_⟩
     ext z
     constructor
     · rintro ⟨hzR, hzV, hzB⟩

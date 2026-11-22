@@ -1,22 +1,26 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousInvAddChar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrrRepInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairingTwistedDeterminantSubquotientStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhitImgMono
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverse
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityOfEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeJacquetTwistedQuotientStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerKernelPullbackJacquetStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetThetaReverseBlocksStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerTwoBlockInjectiveIrreducibleStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerTwoBlockSubquotientTensorStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothIterPhi
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousInvAddChar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIrrRepInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairingTwistedDeterminantSubquotientStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhitImgMono
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverse
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JhMultSubAddQuot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalLanglandsOfIrreducibleAdmissible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityOfEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DerivativeJacquetTwistedQuotientStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerKernelPullbackJacquetStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetThetaReverseBlocksStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerTwoBlockInjectiveIrreducibleStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerTwoBlockSubquotientTensorStatement
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZSeg GlobalTheory.BZMir Zc GlobalTheory.CompanionTheory.BZNuPair Zc.Cos GlobalTheory.CompanionTheory.ThetaProd GlobalTheory.JHMult
@@ -106,9 +110,9 @@ theorem thetaL_surjective {h : ℕ} (d : Fin h → ℕ) : Function.Surjective (t
     rfl
   exact key _ (Fin.rev_rev a) _
 
-set_option maxHeartbeats 1000000 in
 
-theorem jm_contra_gen (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (u : Fin h → IrrGL k)
+set_option maxHeartbeats 1000000 in
+theorem jm_contra_gen (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N : ℕ} (u : Fin h → IrrGL (k := k))
     (hd : ∑ a, (u a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hi : π.IsIrreducible)
     (H : jm u hd (contra π) ≠ 0) : jm (dualRev hA u) (sum_dualRev hA u hd) π ≠ 0 := by
@@ -128,11 +132,11 @@ theorem jm_contra_gen (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {h N
   exact jhMult_ne_zero_iff.2 (isSubquotient_of_comp _ (thetaL_surjective _) h4)
 
 theorem jm_contra (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (N : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V]
-    (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hi : π.IsIrreducible) (x y : IrrGL k)
+    (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hi : π.IsIrreducible) (x y : IrrGL (k := k))
     (hd : ∑ a, (![x, y] a).1 = N) (h : 1 ≤ jm ![x, y] hd (contra π)) :
     ∃ hd' : ∑ a, (![dualCl y, dualCl x] a).1 = N, 1 ≤ jm ![dualCl y, dualCl x] hd' π := by
   have h6 := jm_contra_gen hA ![x, y] hd π hs hi (ENat.one_le_iff_ne_zero.1 h)
-  have key : ∀ (u w : Fin 2 → IrrGL k), u = w → ∀ hu : ∑ a, (u a).1 = N, jm u hu π ≠ 0 →
+  have key : ∀ (u w : Fin 2 → IrrGL (k := k)), u = w → ∀ hu : ∑ a, (u a).1 = N, jm u hu π ≠ 0 →
       ∃ hw : ∑ a, (w a).1 = N, 1 ≤ jm w hw π := by
     rintro u _ rfl hu h
     exact ⟨hu, ENat.one_le_iff_ne_zero.2 h⟩
@@ -195,7 +199,7 @@ theorem deriv_irr_sub (ψ : AddChar k Circle) (hc : Continuous ψ) (n j : ℕ) {
 theorem deriv_jm (ψ : AddChar k Circle) (hc : Continuous ψ) (n j : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin (n + j + 1)) k) V) (hs : IsSmooth π) (hi : π.IsIrreducible)
     (S : IrrRep (GL (Fin n) k)) (hS : IsSubquotient S.ρ (GlobalTheory.BZMir.deriv k ψ j π)) :
-    ∃ (y : IrrGL k) (hd : ∑ a, (![(IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)), y] a).1 = n + j + 1),
+    ∃ (y : IrrGL (k := k)) (hd : ∑ a, (![(IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)), y] a).1 = n + j + 1),
       y.1 = j + 1 ∧ 1 ≤ jm ![(IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)), y] hd π := by
   have hd := sumTwo n j
   obtain ⟨E⟩ := deriv_equiv ψ n j π hd
@@ -213,7 +217,7 @@ theorem deriv_jm (ψ : AddChar k Circle) (hc : Continuous ψ) (n j : ℕ) {V : T
     hS.trans (IsSubquotient.of_injective E.toIntertwiningMap E.injective)
   have h2 := isSubquotient_untwist h1 hmul
   obtain ⟨s, hsub, ⟨e0⟩⟩ := GlobalTheory.T.whittaker_two_block_subquotient_tensor k ψ hc ![n, j + 1] _ _ hJs hJf (irrTwist S χ' hχ') h2
-  let x : Fin 2 → IrrGL k := fun a => IrrGL.of (N := ![n, j + 1] a) (s a).ρ (s a).smooth (s a).irr
+  let x : Fin 2 → IrrGL (k := k) := fun a => IrrGL.of (N := ![n, j + 1] a) (s a).ρ (s a).smooth (s a).irr
   have hx0 : x 0 = (IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2)) := by
     rw [IrrGL.nu, IrrGL.tw_of]
     exact IrrGL.of_eq_of.2 ⟨e0⟩
@@ -222,7 +226,7 @@ theorem deriv_jm (ψ : AddChar k Circle) (hc : Continuous ψ) (n j : ℕ) {V : T
     have Ψ : (piTensor fun a => (s a).ρ).Equiv (piTensor fun a => (x a).rep) :=
       piTensorEquiv fun a => IrrGL.equivOf (N := ![n, j + 1] a) (s a).ρ (s a).smooth (s a).irr
     exact (IsSubquotient.of_surjective Ψ.toIntertwiningMap Ψ.surjective).trans hsub
-  have key : ∀ (u w : Fin 2 → IrrGL k), u = w → ∀ hu : ∑ a, (u a).1 = n + j + 1, jm u hu π ≠ 0 →
+  have key : ∀ (u w : Fin 2 → IrrGL (k := k)), u = w → ∀ hu : ∑ a, (u a).1 = n + j + 1, jm u hu π ≠ 0 →
       ∃ hw : ∑ a, (w a).1 = n + j + 1, 1 ≤ jm w hw π := by
     rintro u _ rfl hu h
     exact ⟨hu, ENat.one_le_iff_ne_zero.2 h⟩
@@ -230,7 +234,7 @@ theorem deriv_jm (ψ : AddChar k Circle) (hc : Continuous ψ) (n j : ℕ) {V : T
     (by funext a; fin_cases a; exacts [hx0, rfl]) hd hjm
   exact ⟨x 1, hw, rfl, hjw⟩
 
-theorem cls_arith' (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (u : IrrGL k) (j : ℕ) :
+theorem cls_arith' (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (u : IrrGL (k := k)) (j : ℕ) :
     dualCl (((dualCl u).nu (j : ℂ)).nu (-(((j : ℂ) + 1) / 2))) = (u.nu (-(((j : ℂ) + 1) / 2))).nu 1 := by
   rw [IrrGL.nu_nu, GlobalTheory.CompanionTheory.ZcDual.dualCl_nu hA, GlobalTheory.CompanionTheory.Zcore.dualCl_dualCl hA, IrrGL.nu_nu]
   congr 1
@@ -281,7 +285,7 @@ theorem nuPair : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] 
       ((IrrGL.of S.ρ S.smooth S.irr).nu (-(((j : ℂ) + 1) / 2))).nu 1 := by
     rw [hQcl]
     exact cls_arith' hA _ j
-  have key : ∀ (z w : IrrGL k), z = w → ∀ hz : ∑ a, (![dualCl β₂, z] a).1 = n + 1 + j + 1,
+  have key : ∀ (z w : IrrGL (k := k)), z = w → ∀ hz : ∑ a, (![dualCl β₂, z] a).1 = n + 1 + j + 1,
       1 ≤ jm ![dualCl β₂, z] hz ω →
       ∃ hw : ∑ a, (![dualCl β₂, w] a).1 = n + 1 + j + 1, 1 ≤ jm ![dualCl β₂, w] hw ω := by
     rintro z _ rfl hz h

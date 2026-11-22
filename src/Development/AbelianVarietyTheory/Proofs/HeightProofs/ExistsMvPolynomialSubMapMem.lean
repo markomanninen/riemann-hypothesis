@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -36,7 +40,7 @@ theorem gaussRing_isDVR {σ : Type} [Finite σ] (O₁ : Type) [CommRing O₁] [I
     have h2 : g = 0 := by simpa using h1
     apply IsDiscreteValuationRing.not_a_field O₁
     rw [hg', h2]; simp
-  refine ((IsDiscreteValuationRing.TFAE O₂ hnf).out 0 4).mpr ?_
+  refine ((IsDiscreteValuationRing.TFAE O₂ hnf).out 1 5).mpr ?_
   rw [hmax]
   exact ⟨⟨_, rfl⟩⟩
 
@@ -56,7 +60,7 @@ theorem exists_mvPolynomial_sub_map_mem {σ R S : Type} [CommRing R] [CommRing S
     refine ⟨a + b, ?_⟩
     have := Ideal.add_mem _ ha hb
     convert this using 1
-    rw [map_add]; ring
+    rw [map_add (f := _)]; ring
   | mul_X p n hp =>
     obtain ⟨a, ha⟩ := hp
     refine ⟨a * MvPolynomial.X n, ?_⟩
@@ -94,7 +98,7 @@ theorem gaussRing_completion :
   have hinj₂ := IsLocalization.injective O₂ (M := P.primeCompl) P.primeCompl_le_nonZeroDivisors
   have hginj : Function.Injective g := hinj₂.comp (MvPolynomial.map_injective _ hinj)
   have hfinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨⟨p, s⟩, h⟩ := IsLocalization.surj (laT D N la).primeCompl x
     have h1 := congrArg f h

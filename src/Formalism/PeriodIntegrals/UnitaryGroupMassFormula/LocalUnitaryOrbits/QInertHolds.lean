@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.EtaVCases
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.EtaVCases
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem fix_int (h : IsCMExt F E σ) (y : 𝓞 E) (hy : sigO σ y = y) :
   have hy' : σ (y : E) = y := by rw [← sigO_coe, hy]
   obtain ⟨c, hc⟩ := fix_range σ h hy'
   have hint : IsIntegral ℤ c := by
-    rw [← isIntegral_algebraMap_iff (A := F) (B := E) (FaithfulSMul.algebraMap_injective F E), hc]
+    rw [← isIntegral_algebraMap_iff (A := F) (B := E) , hc]
     exact y.isIntegral_coe
   refine ⟨⟨c, (mem_integralClosure_iff ℤ F).2 hint⟩, RingOfIntegers.ext ?_⟩
   exact hc
@@ -79,10 +83,10 @@ theorem qInert_holds : QInert σ J ψ v := by
     have hs : Ideal.Quotient.mk (IE (E := E) v) (sigO σ y) = Ideal.Quotient.mk _ y := by
       rw [← sigQ_mk]; exact hsig _
     have hss : sigO σ (sigO σ y) = y := RingOfIntegers.ext (by simp only [sigO_coe]; exact sig_sig σ hstd.1 _)
-    obtain ⟨a, ha⟩ := fix_int σ hstd.1 (y + sigO σ y) (by rw [map_add, hss, add_comm])
+    obtain ⟨a, ha⟩ := fix_int σ hstd.1 (y + sigO σ y) (by rw [map_add (f := _), hss, add_comm])
     obtain ⟨b, hb⟩ := fix_int σ hstd.1 (y * sigO σ y) (by rw [map_mul, hss, mul_comm])
     refine ⟨⟨Ideal.Quotient.mk _ a, ?_⟩, ⟨Ideal.Quotient.mk _ b, ?_⟩⟩
-    · rw [Ideal.Quotient.algebraMap_quotient_map_quotient, ha, map_add, hs]
+    · rw [Ideal.Quotient.algebraMap_quotient_map_quotient, ha, map_add (f := _), hs]
     · rw [Ideal.Quotient.algebraMap_quotient_map_quotient, hb, map_mul, hs]
   haveI : Module.Finite (𝓞 F ⧸ v.asIdeal) (QE (E := E) v) := Module.finite_of_finrank_pos (by omega)
   haveI : Finite (QE (E := E) v) := Module.finite_of_finite (𝓞 F ⧸ v.asIdeal)

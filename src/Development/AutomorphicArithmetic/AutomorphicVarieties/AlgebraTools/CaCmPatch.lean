@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDepthCat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDimFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaEquidim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDepthCat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDimFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaEquidim
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 

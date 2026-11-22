@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.NsmulKerZero
+module
+
+public import ReciprocityTheory.DualLattices.NsmulKerZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ lemma coordK_lTensor {M M' : Type u} [AddCommGroup M] [Module R₀ M] [AddCommGr
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul g m => simp [coordK]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 lemma sum_coordK (M : Type u) [AddCommGroup M] [Module R₀ M] (x : B.gg ⊗[R₀] M) :
     ∑ k, (Module.Free.chooseBasis R₀ B.gg k) ⊗ₜ[R₀] B.coordK M k x = x := by
@@ -83,7 +87,7 @@ lemma sum_coordK (M : Type u) [AddCommGroup M] [Module R₀ M] (x : B.gg ⊗[R�
     simp_rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul']
     rw [← TensorProduct.sum_tmul, Module.Basis.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
 
 lemma exists_lim_tensor (Tw : ATowerL R₀ p) (wb : ∀ n, B.gg ⊗[R₀] (Tw.R n : Type u))
     (hwb : ∀ n, LinearMap.lTensor B.gg (Tw.r n).1.toLinearMap (wb (n + 1)) = wb n) :
@@ -92,7 +96,8 @@ lemma exists_lim_tensor (Tw : ATowerL R₀ p) (wb : ∀ n, B.gg ⊗[R₀] (Tw.R 
     rw [← hwb n, B.coordK_lTensor]
     rfl)
   refine ⟨∑ k, (Module.Free.chooseBasis R₀ B.gg k) ⊗ₜ[R₀] a k, fun n => ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [LinearMap.lTensor_tmul]
   conv_rhs => rw [← B.sum_coordK _ (wb n)]
   refine Finset.sum_congr rfl fun k _ => ?_

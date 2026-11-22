@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LettersAtUPos
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FockGramWindow.LettersAtUPos
+
+@[expose] public section
 
 noncomputable section
 

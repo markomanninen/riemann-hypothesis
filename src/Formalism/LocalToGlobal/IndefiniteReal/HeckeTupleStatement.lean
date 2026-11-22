@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefSide
+
+@[expose] public section
 
 namespace Formalism.IndefR.HeckeTupleConditions
 

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.SUnitsEulerDifference
-import Formalism.GaussIdealIdentity.GaussIdealPrimality.GaussLocalizationLengthHolds
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.SUnitsEulerDifference
+public import Formalism.GaussIdealIdentity.GaussIdealPrimality.GaussLocalizationLengthHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,6 @@ instance Op.algOl : Algebra (X.Ol la) (Op X la N) :=
 instance Op.towPol : IsScalarTower (X.Ol la) (Pol X la N) (Op X la N) :=
   inferInstanceAs (IsScalarTower (X.Ol la) (Pol X la N) (Localization.AtPrime (gI X la N)))
 instance Op.isLocalHom : IsLocalHom (algebraMap (X.Ol la) (Op X la N)) := Formalism.DV.GaussP.isLocalHom_A _ _
-instance Op.flat : Module.Flat (X.Ol la) (Op X la N) := Formalism.DV.GaussP.flat_A _ _
 
 theorem Op.algebraMap_injective : Function.Injective (algebraMap (X.Ol la) (Op X la N)) :=
   Formalism.DV.GaussP.algebraMap_injective _ _
@@ -59,9 +62,8 @@ instance Kp.algOp : Algebra (Op X la N) (Kp X la N) :=
   inferInstanceAs (Algebra (Op X la N) (FractionRing (Op X la N)))
 instance Kp.isFrac : IsFractionRing (Op X la N) (Kp X la N) :=
   inferInstanceAs (IsFractionRing (Op X la N) (FractionRing (Op X la N)))
-instance Kp.torsionFreeOp : Module.IsTorsionFree (Op X la N) (Kp X la N) := inferInstance
 instance Kp.algOl : Algebra (X.Ol la) (Kp X la N) :=
-  ((algebraMap (Op X la N) (Kp X la N)).comp (algebraMap (X.Ol la) (Op X la N))).toAlgebra
+  ((@algebraMap (Op X la N) (Kp X la N) _ _ _).comp (algebraMap (X.Ol la) (Op X la N))).toAlgebra
 instance Kp.towOp : IsScalarTower (X.Ol la) (Op X la N) (Kp X la N) :=
   IsScalarTower.of_algebraMap_eq fun _ => rfl
 
@@ -96,19 +98,8 @@ instance Rp.towOlOp : IsScalarTower (X.Ol la) (Op X la N) (Rp X la N) :=
 instance Rp.towOlKl : IsScalarTower (X.Ol la) (X.Kl la) (Rp X la N) :=
   inferInstanceAs (IsScalarTower (X.Ol la) (X.Kl la) (Kp X la N ⊗[X.Kl la] X.Vl la))
 
-instance Rp.torsionFreeOp : Module.IsTorsionFree (Op X la N) (Rp X la N) where
-  isSMulRegular r hr := by
-    have h0 : algebraMap (Op X la N) (Kp X la N) r ≠ 0 := by
-      rw [Ne, IsFractionRing.to_map_eq_zero_iff]
-      exact hr.ne_zero
-    intro x y hxy
-    simp only [← algebraMap_smul (Kp X la N) r] at hxy
-    exact smul_right_injective _ h0 hxy
-
 def bcV : X.Vl la →ₐ[X.Kl la] Rp X la N :=
   (Algebra.TensorProduct.includeRight : X.Vl la →ₐ[X.Kl la] Kp X la N ⊗[X.Kl la] X.Vl la)
-
-theorem bcV_apply (v : X.Vl la) : bcV X la N v = ((1 : Kp X la N) ⊗ₜ[X.Kl la] v : Kp X la N ⊗[X.Kl la] X.Vl la) := rfl
 
 theorem bcV_isBaseChange : IsBaseChange (Kp X la N) (bcV X la N).toLinearMap :=
   TensorProduct.isBaseChange (X.Kl la) (X.Vl la) (Kp X la N)
@@ -139,16 +130,11 @@ theorem Vw_eq_span_image (u : WeightFamilies.Wt D j) {s : Set (B.Cusp j u)} (hs 
   induction hF using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
   | zero => simp only [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => simp only [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => simp only [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     simp only [map_smul, emb_smul]
     rw [← algebraMap_smul (Kp X la N) (algebraMap B.KO (X.Kl la) a)]
     exact Submodule.smul_mem _ _ hx
-
-instance Vw.finiteDimensional (u : WeightFamilies.Wt D j) : FiniteDimensional (Kp X la N) ↥(Vw X la N u) := by
-  obtain ⟨s, hs⟩ := Module.Finite.fg_top (R := B.KO) (M := B.Cusp j u)
-  rw [Vw_eq_span_image X la N u hs]
-  exact FiniteDimensional.span_of_finite _ (s.finite_toSet.image _)
 
 theorem Vw_mul_le (u u' : WeightFamilies.Wt D j) : Vw X la N u * Vw X la N u' ≤ Vw X la N (wadd u u') := by
   unfold Vw
@@ -180,7 +166,7 @@ section
 variable (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.KO)) {N : ℕ} {wL : WeightFamilies.Wt D j} (w : Fin N → B.Cusp j wL)
 
 def sec (i : Fin (WeightFamilies.dimY D j + 1)) : Rp X la N :=
-  ∑ k, (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i, k))) • emb X la N (X.inc wL (w k))
+  ∑ k, (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i, k))) • emb X la N (X.inc wL (w k))
 
 theorem sec_mem_Vw (i : Fin (WeightFamilies.dimY D j + 1)) : sec X la w i ∈ Vw X la N wL :=
   Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (emb_mem_Vw X la N wL (w k))
@@ -231,8 +217,6 @@ def Fil (u : WeightFamilies.Wt D j) (a : ℕ) : Submodule (Kp X la N) (Rp X la N
 
 theorem mem_Fil {u : WeightFamilies.Wt D j} {a : ℕ} {f : Rp X la N} : f ∈ Fil X la w u a ↔
     f ∈ Vw X la N u ∧ ∃ k, a ≤ k ∧ sec X la w 0 ^ k * f ∈ Mon X la w u a (k - a) := Iff.rfl
-
-theorem Fil_le_Vw (u : WeightFamilies.Wt D j) (a : ℕ) : Fil X la w u a ≤ Vw X la N u := fun _ h => h.1
 
 end
 

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.Eisenstein
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Eisenstein
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,14 +21,14 @@ theorem residue_aeval_integer (p : 𝒪[K][X]) (x : 𝒪[L]) :
   rw [aeval_def, aeval_def, eval₂_map, hom_eval₂]
   congr 1
 
-variable (K) in
 
+variable (K) in
 theorem adjoin_eq_top_of_residue_of_addVal_eq_one {x : 𝒪[L]}
     (hx : Algebra.adjoin 𝓀[K] {residue 𝒪[L] x} = ⊤) {π : 𝒪[L]}
     (hπA : π ∈ Algebra.adjoin 𝒪[K] {x}) (hπ : addVal 𝒪[L] π = 1) :
     Algebra.adjoin 𝒪[K] {x} = ⊤ := by
   set A := Algebra.adjoin 𝒪[K] {x}
-  set e := ramificationIndex K L
+  set e := (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K)))
 
   have hres : ∀ w : 𝒪[L], ∃ a ∈ A, ∃ w', w = a + π * w' := by
     intro w
@@ -73,8 +77,8 @@ theorem adjoin_eq_top_of_residue_of_addVal_eq_one {x : 𝒪[L]}
   intro z _
   exact hnak Submodule.mem_top
 
-variable (K L) in
 
+variable (K L) in
 theorem exists_integer_adjoin_eq_top : ∃ x : 𝒪[L], Algebra.adjoin 𝒪[K] {x} = ⊤ := by
   classical
   obtain ⟨ξ, hξ⟩ := Field.exists_primitive_element_of_finite_top 𝓀[K] 𝓀[L]
@@ -98,7 +102,7 @@ theorem exists_integer_adjoin_eq_top : ∃ x : 𝒪[L], Algebra.adjoin 𝒪[K] {
     · obtain ⟨ϖ, hϖ⟩ := exists_irreducible 𝒪[L]
       have hϖ1 : addVal 𝒪[L] ϖ = 1 := addVal_uniformizer hϖ
       refine ⟨x₀ + ϖ, ?_, ?_⟩
-      · rw [map_add, hx₀, (residue_eq_zero_iff ϖ).mpr hϖ.not_isUnit, add_zero]
+      · rw [map_add (f := _), hx₀, (residue_eq_zero_iff ϖ).mpr hϖ.not_isUnit, add_zero]
       obtain ⟨k, hk⟩ := binomExpansion (P₀.map (algebraMap 𝒪[K] 𝒪[L])) x₀ ϖ
       rw [eval_map_algebraMap, eval_map_algebraMap, derivative_map, eval_map_algebraMap] at hk
       have hϖm : ϖ ∈ IsLocalRing.maximalIdeal 𝒪[L] := hϖ.not_isUnit

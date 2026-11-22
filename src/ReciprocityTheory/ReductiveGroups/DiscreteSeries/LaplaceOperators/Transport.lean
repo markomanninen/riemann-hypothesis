@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.EquivariantL2Space
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Unique
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportGeo
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.EquivariantL2Space
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Unique
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ToMKMulInv
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.TransportGeo
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentHeisenbergDecomposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -408,7 +412,8 @@ theorem transport (hIC : IntCoefStatement) {k r : ℕ} (hk : 1 ≤ k) {ε : Fin 
     unfold aaFun sInt psiCoef
     congr 1
     funext p
-    simp only [hU₁, LinearIsometryEquiv.inner_map_map]
+    dsimp only
+    rw [hU₁, U₁.inner_map_map]
 
   set ψ := Formalism.MainNotions.S.psiGen k r z c with hψ
   let F : T.V → T.V → Vp → Mat k r → Mat k r → Mt k r × Mt k r → Vp := fun w₁ w₂ ξ Y₀ Y p =>
@@ -425,7 +430,7 @@ theorem transport (hIC : IntCoefStatement) {k r : ℕ} (hk : 1 ≤ k) {ε : Fin 
     intro b w w' w₂ ξ Y₀ Y h₀ h₁
     have e : F (b • w + w') w₂ ξ Y₀ Y = fun p => b • F w w₂ ξ Y₀ Y p + F w' w₂ ξ Y₀ Y p := by
       funext p
-      simp only [F, psiCoef, map_add, map_smul, inner_add_right, inner_smul_right, add_smul, mul_smul]
+      simp only [F, psiCoef, map_add (f := _), map_smul, inner_add_right, inner_smul_right, add_smul, mul_smul]
     have i1 : Integrable (fun p => b • F w w₂ ξ Y₀ Y p) (μW.prod μN) := (hint w w₂ ξ h₀ h₁).smul b
     rw [hA, hA, hA, e, integral_add i1 (hint w' w₂ ξ h₀ h₁), integral_smul]
   have hlin₂ : ∀ (b : ℂ) (w₁ w w' : T.V) ξ {Y₀ Y : Mat k r}, Y₀ ∈ UH (Hpk k r) → Y ∈ UH (Hpk k r) →

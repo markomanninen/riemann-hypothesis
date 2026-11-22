@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,7 +145,7 @@ def Term : Prop := ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalG
 def ZetaK : Prop := ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G] (K : Subgroup G), IsCompact (K : Set G) →
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (π : G →* GL ι 𝔸[k]) (Γ P : Subgroup G)
   (i : ι) (ω : HeckeCharacter k) (d : ι → IdeleGroup k) (c : G → ℂ) (η : G → ℝ), Side π Γ K P i ω d c η →
-    ∀ Ψ ∈ GJMatrix.schwartzBruhatPi k ι,
+    ∀ Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι),
       (∀ κ : K, DifferentiableOn ℂ (fun s => zt π d i Ψ ω s κ) {s | 1 < s.re}) ∧
       ContinuousOn (fun y : ℂ × K => zt π d i Ψ ω y.1 y.2) ({s | 1 < s.re} ×ˢ Set.univ) ∧
       ∀ a b : ℝ, 1 < a → ∃ M : ℝ, ∀ s : ℂ, a ≤ s.re → s.re ≤ b → ∀ κ : K, ‖zt π d i Ψ ω s κ‖ ≤ M
@@ -149,7 +153,7 @@ def ZetaK : Prop := ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopological
 def SideUnfold : Prop := ForRep fun {G} _ _ {W} _ _ K ρ => ∀ [MeasurableSpace K] [BorelSpace K] (μ : Measure K), μ.IsHaarMeasure → IsProbabilityMeasure μ →
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (π : G →* GL ι 𝔸[k]) (Γ P : Subgroup G)
   (i : ι) (ω : HeckeCharacter k) (d : ι → IdeleGroup k) (c : G → ℂ) (η : G → ℝ), Side π Γ K P i ω d c η →
-    ∀ Ψ ∈ GJMatrix.schwartzBruhatPi k ι, ∀ s : ℂ, (Fintype.card ι : ℝ) < s.re → ∀ (g : G) (w : W),
+    ∀ Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι), ∀ s : ℂ, (Fintype.card ι : ℝ) < s.re → ∀ (g : G) (w : W),
       avg μ ρ (fun κ => epstein Ψ ω s (π (g * κ) * dgl d)) w =
         ((ω.toIdele (d i) : ℂ) * modPow (d i) s) •
           eis Γ K P c ρ (fun x => s * η x) g (avg μ ρ (fun κ => zt π d i Ψ ω s κ) w)
@@ -163,20 +167,20 @@ def TestK : Prop := ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopological
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (π : G →* GL ι 𝔸[k]) (Γ P : Subgroup G)
   (i : ι) (ω : HeckeCharacter k) (d : ι → IdeleGroup k) (c : G → ℂ) (η : G → ℝ), Side π Γ K P i ω d c η →
     ∀ V ∈ 𝓝 (1 : K), ∃ (Ψ : (ι → 𝔸[k]) → ℂ) (Ψ₁ : (Unit → 𝔸[k]) → ℂ) (φ : K → ℂ),
-      Ψ ∈ GJMatrix.schwartzBruhatPi k ι ∧ Ψ₁ ∈ GJMatrix.schwartzBruhatPi k Unit ∧ Continuous φ ∧ φ 1 = 1 ∧ Law K P c φ ∧
+      Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) ∧ Ψ₁ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := Unit) ∧ Continuous φ ∧ φ 1 = 1 ∧ Law K P c φ ∧
       Near K P V φ ∧ (∀ s (κ : K), zt π d i Ψ ω s κ = tate Ψ₁ ω s * φ κ) ∧
       (∃ z : ℂ, (Fintype.card ι : ℝ) < z.re ∧ tate Ψ₁ ω z ≠ 0) ∧ (ω = 1 → ∀ x : ℝ, 1 < x → tate Ψ₁ ω x ≠ 0)
 
 def ZetaOne : Prop :=
   ∀ (k : Type) [Field k] [NumberField k] (Ψ₁ : (Unit → 𝔸[k]) → ℂ) (ω : HeckeCharacter k),
-    Ψ₁ ∈ GJMatrix.schwartzBruhatPi k Unit → ω * ω = 1 →
+    Ψ₁ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := Unit) → ω * ω = 1 →
     ∃ a : ℂ → ℂ, PolyEnt a ∧ ∀ z : ℂ, 1 < z.re → a z = z * (z - 1) * tate Ψ₁ ω z
 
 def Core : Prop := ForRep fun {G} _ _ {W} _ _ K ρ => ∀ [MeasurableSpace K] [BorelSpace K] (μ : Measure K), μ.IsHaarMeasure → IsProbabilityMeasure μ →
   ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι] (π : G →* GL ι 𝔸[k]) (Γ : Subgroup G)
   (i₀ i₁ : ι) (ω : HeckeCharacter k) (d : ι → IdeleGroup k) (c : G → ℂ) (η η' l : G → ℝ), MirData π Γ K i₀ i₁ ω d c η η' l →
     ∀ (Ψ : (ι → 𝔸[k]) → ℂ) (Ψ₁ : (Unit → 𝔸[k]) → ℂ) (φ : K → ℂ) (L : Submodule ℂ W) (J : L →L[ℂ] W),
-    Ψ ∈ GJMatrix.schwartzBruhatPi k ι → Ψ₁ ∈ GJMatrix.schwartzBruhatPi k Unit →
+    Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) → Ψ₁ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := Unit) →
     (∀ s (κ : K), zt π d i₀ Ψ ω s κ = tate Ψ₁ ω s * φ κ) → (∃ z : ℂ, (Fintype.card ι : ℝ) < z.re ∧ tate Ψ₁ ω z ≠ 0) →
     L ≤ secSp K ((stab 𝔸[k] {i₀}).comap π) c ρ → (∀ w, avg μ ρ φ (J w) = w) →
     ∃ R D Op H, Wall Γ K ((stab 𝔸[k] {i₀}).comap π) ((stab 𝔸[k] {i₁}ᶜ).comap π) c η η'

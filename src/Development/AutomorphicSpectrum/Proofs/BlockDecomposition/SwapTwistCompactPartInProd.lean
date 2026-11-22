@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.LocCompareSplit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemTwCentSwTw
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open PositivityTheory.Rg.BcB.G8 PositivityTheory.Rg.BcB.G8.Fin GlobalTheory.CompanionTheory.LocalHypotheses
@@ -37,8 +42,8 @@ theorem main : ∀ {H : Type} [Group H] [TopologicalSpace H] [IsTopologicalGroup
     exact K.mul_mem (K.mul_mem hd' (hK _ hg)) (K.inv_mem hd')
   · rintro ⟨x₁, x₂⟩ hy
     have hy' := Subgroup.mem_prod.1 hy
-    have hz₁ : x₁⁻¹ * d * σ x₂ ∈ K := by simpa using hy'.1
-    have hz₂ : x₂⁻¹ * d' * σ x₁ ∈ K := by simpa using hy'.2
+    have hz₁ : x₁⁻¹ * d * σ x₂ ∈ K := by simpa [swTw] using hy'.1
+    have hz₂ : x₂⁻¹ * d' * σ x₁ ∈ K := by simpa [swTw] using hy'.2
     have hN : x₁⁻¹ * (d * σ d') * MonoidHom.id H x₁ ∈ K := by
       have e : x₁⁻¹ * (d * σ d') * MonoidHom.id H x₁ = (x₁⁻¹ * d * σ x₂) * σ (x₂⁻¹ * d' * σ x₁) := by
         simp only [map_mul, map_inv, hσ, MonoidHom.id_apply]

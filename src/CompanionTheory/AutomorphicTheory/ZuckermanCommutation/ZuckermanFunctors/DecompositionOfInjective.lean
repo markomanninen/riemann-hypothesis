@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.IsFRepDualStandardUnitaryRep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
+module
+
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.IsFRepDualStandardUnitaryRep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -40,7 +44,8 @@ theorem decomposition_of_injective : DecOfInj := by
   rw [LinearMap.id_apply, eq_comm, ← sub_eq_zero]
   refine hj _ fun t q hq => ?_
   have h0 : p t (x - (∑ s, i s ∘ₗ p s) x) = 0 := by
-    rw [map_sub, LinearMap.sum_apply, map_sum, Finset.sum_eq_single t]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, LinearMap.sum_apply, map_sum, Finset.sum_eq_single t]
     · exact sub_eq_zero.2 (LinearMap.congr_fun (hpi t) (p t x)).symm
     · intro s _ hst
       exact LinearMap.congr_fun (hne t s (Ne.symm hst)) (p s x)

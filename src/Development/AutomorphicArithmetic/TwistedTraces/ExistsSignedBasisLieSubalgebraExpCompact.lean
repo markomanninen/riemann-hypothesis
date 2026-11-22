@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
-import Development.AutomorphicArithmetic.TwistedTraces.ExistsSignedOrthonormalBasisOfIsCompl
-import Development.AutomorphicArithmetic.TwistedTraces.TrFormDefiniteOnArchSkewArchHerm
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.TwistedTraces.ExistsSignedOrthonormalBasisOfIsCompl
+public import Development.AutomorphicArithmetic.TwistedTraces.TrFormDefiniteOnArchSkewArchHerm
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.GKStableCartan
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C Polynomial Topology
@@ -17,11 +21,11 @@ theorem UpperTheory.exists_signed_basis_lieSubalgebra_exp_compact :
   let B : LinearMap.BilinForm ℝ (isExpLieAlgebra K n).lieSubalgebra :=
     LinearMap.mk₂ ℝ (fun X Y => trForm K n X Y)
       (fun X₁ X₂ Y => by
-        simp only [hmk, mat_coe_add, Matrix.add_mul, Matrix.trace_add, map_add])
+        simp only [hmk, mat_coe_add, Matrix.add_mul, Matrix.trace_add, map_add (f := _)])
       (fun r X Y => by
         simp only [hmk, mat_coe_smul, Matrix.smul_mul, Matrix.trace_smul, map_smul])
       (fun X Y₁ Y₂ => by
-        simp only [hmk, mat_coe_add, Matrix.mul_add, Matrix.trace_add, map_add])
+        simp only [hmk, mat_coe_add, Matrix.mul_add, Matrix.trace_add, map_add (f := _)])
       (fun r X Y => by
         simp only [hmk, mat_coe_smul, Matrix.mul_smul, Matrix.trace_smul, map_smul])
   have hB : ∀ X Y, B X Y = trForm K n X Y := fun _ _ => rfl

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.EmbeddingSecondComponent
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitShiftSplitting.EmbeddingSecondComponent
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,10 @@ theorem e_llMap (Z : M.Mat (r + 1)) (TT : M.R) (m : Fin (r + 1) → M.R) (b : Fi
   by_cases hb : b = Fin.last r
   · subst hb
     refine Prod.ext ?_ ?_ <;>
-      simp [llMap, Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, Prod.snd_sum, e_dgR, trO_coe]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [llMap, Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, Prod.snd_sum, e_dgR, trO_coe]
   · refine Prod.ext ?_ ?_ <;>
-      simp [hb, llMap, Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, Prod.snd_sum, e_dgR, trO_coe]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hb, llMap, Matrix.mulVec, dotProduct, map_sum, Prod.fst_sum, Prod.snd_sum, e_dgR, trO_coe]
 
 end Formalism.L2.SG.LocalCountModules.AlgGSplit

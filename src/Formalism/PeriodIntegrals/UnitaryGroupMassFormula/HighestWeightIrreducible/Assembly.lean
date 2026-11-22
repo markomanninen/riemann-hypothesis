@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.HwIrred
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
+module
+
+public import Formalism.PeriodIntegrals.HwIrred
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.ClosedEqNablaC
+
+@[expose] public section
 
 noncomputable section
 

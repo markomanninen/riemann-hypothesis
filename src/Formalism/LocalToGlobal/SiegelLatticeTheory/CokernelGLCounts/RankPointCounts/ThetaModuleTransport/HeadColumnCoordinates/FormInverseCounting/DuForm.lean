@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ZzMinusSecondProjTranspose
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ZzMinusSecondProjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem map_gramG (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F) :
     add_zero, zero_add]
   congr 1 <;> ext a b <;>
     by_cases h : a = Fin.last r ∧ b = Fin.last r <;>
-    simp [cor, h, splitFirstProj_conj, splitFirstProj_algebraMap, map_mul, map_add, map_neg, map_sub, Matrix.add_apply, Matrix.smul_apply, Matrix.neg_apply] <;>
+    simp [cor, h, splitFirstProj_conj, splitFirstProj_algebraMap, map_mul, map_add (f := _), map_neg, map_sub, Matrix.add_apply, Matrix.smul_apply, Matrix.neg_apply] <;>
     ring
 
 end Formalism.L2.SG.LocalCountModules.ThetaMbe0GWork

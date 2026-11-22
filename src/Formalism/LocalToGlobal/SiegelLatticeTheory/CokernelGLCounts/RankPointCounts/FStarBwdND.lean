@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdNC
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ theorem stepD (X : Submodule E S.V) (hXiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y 
     have key : S.hT (B₁ v) = -(star c) • (S.hT (B₀ v) + S.hT v ∘ₗ B₀) := by
       apply b.ext
       intro k'
-      rw [hB₁app, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hB₁app, map_sum, LinearMap.sum_apply]
       simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, starRingEnd_apply, smul_eq_mul,
         LinearMap.add_apply, LinearMap.comp_apply]
       rw [Finset.sum_eq_single k']
@@ -80,11 +85,11 @@ theorem stepD (X : Submodule E S.V) (hXiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y 
   have hBB : ∀ v, B (B v) = 0 := fun v => hBo _ (hXo (hBX v))
   have hBiso : ∀ v v', S.hT (v + B v) (v' + B v') = S.hT v v' := fun v v' => by
     have expand : S.hT (v + B v) (v' + B v') = S.hT v v' + S.hT (B v) v' + S.hT v (B v') + S.hT (B v) (B v') := by
-      simp only [map_add, LinearMap.add_apply]; ring
+      simp only [map_add (f := _), LinearMap.add_apply]; ring
     have f1 : S.hT (B v) v' = S.hT (B₀ v) v' + (-(star c) * (S.hT (B₀ v) v' + S.hT v (B₀ v'))) := by
-      rw [hBapp, map_add, LinearMap.add_apply, hB₁]
+      rw [hBapp, map_add (f := _), LinearMap.add_apply, hB₁]
     have f2 : S.hT v (B v') = S.hT v (B₀ v') + (-c * (S.hT (B₀ v) v' + S.hT v (B₀ v'))) := by
-      rw [hBapp, map_add, hsw S (B₁ v') v, hB₁, star_mul, star_neg, star_add, ← hsw S (B₀ v') v,
+      rw [hBapp, map_add (f := _), hsw S (B₁ v') v, hB₁, star_mul, star_neg, star_add, ← hsw S (B₀ v') v,
         ← hsw S v' (B₀ v), star_star]
       ring
     rw [expand, hXiso _ (hBX v) _ (hBX v'), f1, f2]
@@ -102,7 +107,7 @@ theorem stepD (X : Submodule E S.V) (hXiso : ∀ x ∈ X, ∀ y ∈ X, S.hT x y 
         rw [hB₀ x hx, hB₀ y hy]; exact sd_int hSD (hδΛ ⟨y, hy⟩) (hδΛ ⟨x, hx⟩)
       have h2 : IsIntegral ℤ (S.hT x y) := sd_int hSD₃ hy hx
       have e : S.hT (B₀ x) y + S.hT x (B₀ y) = S.hT (x + B₀ x) (y + B₀ y) - S.hT x y := by
-        rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hXiso _ (hB₀X x) _ (hB₀X y)]
+        rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hXiso _ (hB₀X x) _ (hB₀X y)]
         ring
       rw [e]; exact h1.sub h2
     rw [hsw S (B₁ x) y, hB₁, star_mul, star_neg, star_star]

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceBundleRadicalAway
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceBundleRadicalAway
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -73,10 +78,12 @@ def backMap : MvPolynomial (Fin d × Fin n) (Base J q k) →+* Tot J d q k :=
   eval₂Hom (baseToTot J d q k) fun ij => toTot J d q k (C (X ij))
 
 theorem backMap_rowForm (i : Fin d) : backMap J d q k (rowForm J d q k i) = 0 := by
-  simp only [rowForm, map_sum, map_mul, backMap, eval₂Hom_X', eval₂Hom_C, baseToTot_toBase]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowForm, map_sum, map_mul, backMap, eval₂Hom_X', eval₂Hom_C, baseToTot_toBase]
   rw [← toTot_eq_zero J d q k (x := ∑ j, C (X (i, j)) * (X j - C (C (q j))))
     (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩))]
-  simp [map_sum, map_mul, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_mul, map_sub]
 
 theorem backMap_comp_solveMap : (backMap J d q k).comp (solveMap J d q k) = toTot J d q k := by
   have hc : (backMap J d q k).comp (coeffMap J d q k) = (toTot J d q k).comp C := by
@@ -117,7 +124,8 @@ theorem solveMap_gen (i : Fin d) :
     rw [map_mul, this]
     congr 1
     rw [solveMap, eval₂Hom_C, coeffMap, eval₂Hom_X']
-  rw [map_sum, Finset.sum_congr rfl fun j _ => h j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun j _ => h j]
   simp only [sub_mul, Finset.sum_sub_distrib, ite_mul, zero_mul, Finset.sum_ite_eq',
     Finset.mem_univ, if_true]
   rw [← rowForm, mul_assoc, mul_comm (rowForm J d q k i), ← mul_assoc, ← map_mul]

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 set_option autoImplicit false
@@ -9,18 +14,18 @@ open MvPolynomial
 
 variable {B : Type} [CommRing B] {L : Type} [AddCommGroup L] [Module B L] {q : ℕ}
 
-def rels (φ : MultilinearMap B (fun _ : Fin q => L) B) : Set (MvPolynomial L B) :=
+def rels (φ : (Π _ : Fin q, L) →ₘₗ[B] B) : Set (MvPolynomial L B) :=
   Set.range (fun p : L × L => X (p.1 + p.2) - X p.1 - X p.2) ∪
   Set.range (fun p : B × L => X (p.1 • p.2) - C p.1 * X p.2) ∪
   Set.range (fun ℓ : Fin q → L => ∏ i, X (ℓ i) - C (φ ℓ))
 
-def ideal (φ : MultilinearMap B (fun _ : Fin q => L) B) : Ideal (MvPolynomial L B) :=
+def ideal (φ : (Π _ : Fin q, L) →ₘₗ[B] B) : Ideal (MvPolynomial L B) :=
   Ideal.span (rels φ)
 
-abbrev Alg (φ : MultilinearMap B (fun _ : Fin q => L) B) : Type :=
+abbrev Alg (φ : (Π _ : Fin q, L) →ₘₗ[B] B) : Type :=
   MvPolynomial L B ⧸ ideal φ
 
-variable (φ : MultilinearMap B (fun _ : Fin q => L) B)
+variable (φ : (Π _ : Fin q, L) →ₘₗ[B] B)
 
 theorem algebraMap_eq_mk (c : B) : algebraMap B (Alg φ) c = Ideal.Quotient.mk _ (C c) := rfl
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.dvr_of_norm_integral :
     ∀ {l : ℕ} [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K], (∀ x : PadicAlgCl l, ‖x‖ ≤ 1 → IsIntegral ℤ_[l] x) → IsDiscreteValuationRing (integralClosure ℤ_[l] K) := by
@@ -30,4 +34,4 @@ theorem UpperTheory.dvr_of_norm_integral :
   have hnf : ¬ IsField (integralClosure ℤ_[l] K) := fun hf =>
     IsDiscreteValuationRing.not_isField ℤ_[l]
       ((Algebra.IsIntegral.isField_iff_isField hinj).mpr hf)
-  exact ((IsDiscreteValuationRing.TFAE (integralClosure ℤ_[l] K) hnf).out 0 1).mpr hval
+  exact ((IsDiscreteValuationRing.TFAE (integralClosure ℤ_[l] K) hnf).out 1 2).mpr hval

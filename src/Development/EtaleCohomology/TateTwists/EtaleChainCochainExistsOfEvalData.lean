@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.EtaleCohomology.TateTwists.EtaleCochainExistsOfNaturalEvaluation
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.EtaleCohomology.TateTwists.EtaleCochainExistsOfNaturalEvaluation
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -17,7 +21,6 @@ noncomputable def psiOf (P : PSh) (F : Shv R) (a : ∀ U : Scheme.{0}, P.obj (op
     refine ModuleCat.free_hom_ext (fun x => ?_)
     have := ha V.unop U.unop g.unop x.down
     simp [freeP] at this ⊢
-    erw [ModuleCat.free_map_apply, ModuleCat.freeDesc_apply]
     exact this.symm
 
 theorem free_hom_exists (P : PSh) (F : Shv R) (a : ∀ U : Scheme.{0}, P.obj (op U) → Sec F U)
@@ -58,7 +61,7 @@ theorem LateralTheory.EtaleFoundations.etale_chain_cochain_exists_of_eval_data :
     simp
   have hv : α.v (-(p:ℤ)) s h = f p s h := by
     simp only [α, Cochain.mk_v]
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     exact gen _ (by omega) _ _
   simp only [GlobalTheory.EtC.ev]
   rw [hv]

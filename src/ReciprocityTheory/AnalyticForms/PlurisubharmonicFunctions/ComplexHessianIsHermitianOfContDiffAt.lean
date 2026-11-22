@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
+module
+
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A.TraceConjugationCover
 
@@ -17,12 +21,12 @@ theorem hessC_eq_lv {D : ℕ} (f : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) 
 variable {D : ℕ} (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ)
 
 theorem lv_add_left (a a' b : Fin D → ℂ) : lv H (a + a') b = lv H a b + lv H a' b := by
-  simp only [lv, smul_add, map_add, ContinuousLinearMap.add_apply]
+  simp only [lv, smul_add, map_add (f := _), ContinuousLinearMap.add_apply]
   push_cast
   ring
 
 theorem lv_add_right (a b b' : Fin D → ℂ) : lv H a (b + b') = lv H a b + lv H a b' := by
-  simp only [lv, smul_add, map_add]
+  simp only [lv, smul_add, map_add (f := _)]
   push_cast
   ring
 
@@ -42,7 +46,7 @@ theorem lv_smul_left (c : ℂ) (a b : Fin D → ℂ) : lv H (c • a) b = c * lv
   obtain ⟨h1, h2⟩ := smul_decomp c a
   unfold lv
   rw [h2, h1]
-  simp only [map_add, map_sub, map_smul, ContinuousLinearMap.add_apply,
+  simp only [map_add (f := _), map_sub, map_smul, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
   apply Complex.ext <;> simp <;> ring
 
@@ -51,7 +55,7 @@ theorem lv_smul_right (c : ℂ) (a b : Fin D → ℂ) :
   obtain ⟨h1, h2⟩ := smul_decomp c b
   unfold lv
   rw [h2, h1]
-  simp only [map_add, map_sub, map_smul, smul_eq_mul]
+  simp only [map_add (f := _), map_sub, map_smul, smul_eq_mul]
   apply Complex.ext <;> simp <;> ring
 
 theorem vec_eq_sum (v : Fin D → ℂ) : v = ∑ i, v i • (Pi.single i 1 : Fin D → ℂ) := by
@@ -83,7 +87,8 @@ theorem lv_sum_right (a v : Fin D → ℂ) :
   rw [← vec_eq_sum] at this
   simp only [map_smul, smul_eq_mul] at this
   have h := congrArg (starRingEnd ℂ) this
-  simp only [ℓ, LinearMap.coe_mk, AddHom.coe_mk, Complex.conj_conj, map_sum, map_mul] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ℓ, LinearMap.coe_mk, AddHom.coe_mk, Complex.conj_conj, map_sum, map_mul] at h
   exact h
 
 theorem lv_expand (u v : Fin D → ℂ) :

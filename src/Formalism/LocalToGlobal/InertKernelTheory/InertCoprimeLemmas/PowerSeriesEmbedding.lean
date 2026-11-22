@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
-import ReciprocityTheory.ReductiveGroups.LatticeEmbeddings.IotaPlaceB
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+public import ReciprocityTheory.ReductiveGroups.LatticeEmbeddings.IotaPlaceB
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,10 +26,10 @@ theorem lattice_embedding : LamCIota := by
   intro p _ lam ι h
   refine ⟨fun x hx => ?_, fun x hx => ?_⟩
   · unfold Formalism.MainNotions.TaylorLogMetric.lamC
-    rw [dif_pos hx]
+    rw [dite_eq_left hx]
     exact (h ⟨x, hx⟩).symm
   · unfold Formalism.MainNotions.TaylorLogMetric.lamC
-    rw [dif_neg hx]
+    rw [dite_eq_right hx]
 
 theorem power_series_embedding : PSerIota := by
   intro D N N' p _ lam ι h G hG
@@ -36,6 +40,5 @@ theorem power_series_embedding : PSerIota := by
 
 theorem lamExt : LamExt := lattice_extension
 theorem lamCIota : LamCIota := lattice_embedding
-theorem pSerIota : PSerIota := power_series_embedding
 
 end Formalism.L2.KerInert

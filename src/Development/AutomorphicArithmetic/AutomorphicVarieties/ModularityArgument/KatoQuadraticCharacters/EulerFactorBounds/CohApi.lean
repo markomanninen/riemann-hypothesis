@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.InvApi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.GalAct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.HeckeInv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.HeckeGal
-import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KatoTwistedClassNormCompatibleCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.KmapComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.InvApi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.GalAct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.HeckeInv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.EulerFactorBounds.HeckeGal
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix Classical
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym UpperTheory.Kd.K4 UpperTheory.V.Z.Kato.Nb
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Z.Kato.Nb.sCohApi :
       ∀ z z', CohB X l N w n κ z z' → CohB X l N w n κ (fun s y => T (z s y)) (fun s y => T (z' s y)) := by
     rintro T h1 h2 h3 z z' ⟨b, hb, hz⟩
     refine ⟨fun y => T (b y), fun y => h2 _ (hb y), fun s y => ?_⟩
-    refine he.trans (cast (h1 _ _ (hz s y)) (by rw [map_add, map_sub])) ?_
+    refine he.trans (cast (h1 _ _ (hz s y)) (by rw [map_add (f := _), map_sub])) ?_
     exact (hadd _ _ _ _ (he.refl _) (hadd _ _ _ _ (he.symm (h3 s _ (hb _))) (he.refl _)).2).1
   have ofCg : ∀ z z' : (Ω ≃ₐ[ℚ] Ω) → A → X.Fn l, (∀ s y, CgF X l n (z s y) (z' s y)) → CohB X l N w n κ z z' :=
     fun z z' h => ⟨fun _ => 0, fun _ => i0, fun s y => cast (h s y) (by simp)⟩
@@ -34,12 +38,12 @@ theorem UpperTheory.V.Z.Kato.Nb.sCohApi :
   · rintro z z' z'' ⟨b, hb, hz⟩ ⟨c, hc, hz'⟩
     refine ⟨fun y => b y + c y, fun y => (iadd _ _ (hb y) (hc y)).1, fun s y => ?_⟩
     refine he.trans (hz s y) (cast (hadd _ _ _ _ (hz' s y) (he.refl _)).1 ?_)
-    simp only [map_add]; abel
+    simp only [map_add (f := _)]; abel
   · rintro z z' v v' ⟨b, hb, hz⟩ ⟨c, hc, hv⟩
     refine ⟨⟨fun y => b y + c y, fun y => (iadd _ _ (hb y) (hc y)).1, fun s y => ?_⟩,
       ⟨fun y => b y - c y, fun y => (iadd _ _ (hb y) (hc y)).2, fun s y => ?_⟩⟩
     · refine cast (hadd _ _ _ _ (hz s y) (hv s y)).1 ?_
-      simp only [map_add, Pi.add_apply]; abel
+      simp only [map_add (f := _), Pi.add_apply]; abel
     · refine cast (hadd _ _ _ _ (hz s y) (hv s y)).2 ?_
       simp only [map_sub, Pi.sub_apply]; abel
   · rintro k t z z' ⟨b, hb, hz⟩
@@ -58,7 +62,8 @@ theorem UpperTheory.V.Z.Kato.Nb.sCohApi :
       symm
       refine Finset.sum_equiv (Equiv.mulRight (κ s)) (fun y => ?_) (fun y _ => rfl)
       simp
-    simp only [GlobalTheory.KA.push, e, Finset.sum_add_distrib, Finset.sum_sub_distrib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GlobalTheory.KA.push, e, Finset.sum_add_distrib, Finset.sum_sub_distrib, map_sum]
   · intro p hp hc z z' h
     have hd := (GlobalTheory.KZ.Betti.isDiam_sgD (l := l) hN.ne' hl.out.ne_zero (Nat.Coprime.coprime_mul_left_right hc)).1
     refine ⟨lin _ (fun a b hab => ?_) (sHeckeInv Ω ε X l N w n p hN hp hc) (sHeckeGal Ω ε X l N w n p hN hp hc) z z' h,

@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsAlg
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsAlg
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -132,8 +136,8 @@ theorem hessC_eq_hessMat {D : ℕ} (φ : (Fin D → ℂ) → ℝ) (y : Fin D →
 theorem continuous_mdisc {D : ℕ} :
     Continuous (fun A : Fin D → Matrix (Fin D) (Fin D) ℂ => mdisc A) := by
   unfold mdisc
-  refine continuous_const.mul (continuous_finset_sum _ fun S _ => continuous_const.mul ?_)
-  exact (continuous_finset_sum _ fun k _ => continuous_apply k).matrix_det
+  refine continuous_const.mul (continuous_finsetSum _ fun S _ => continuous_const.mul ?_)
+  exact (continuous_finsetSum _ fun k _ => continuous_apply k).matrix_det
 
 theorem hessCof_eq {n : ℕ} (φ : Fin n → (Fin (n + 1) → ℂ) → ℝ) (y : Fin (n + 1) → ℂ) (j k : Fin (n + 1)) :
     hessCof φ y j k = mdisc (Fin.cons (Matrix.single j k 1) fun i => hessMat (fderiv ℝ (fderiv ℝ (φ i)) y)) := by
@@ -142,8 +146,16 @@ theorem hessCof_eq {n : ℕ} (φ : Fin n → (Fin (n + 1) → ℂ) → ℝ) (y :
 private theorem exists_continuousMultilinearMap_eq_mdisc (D : ℕ) :
     ∃ Mc : ContinuousMultilinearMap ℝ (fun _ : Fin D => Fin D → Fin D → ℂ) ℂ,
       ∀ x : Fin D → Matrix (Fin D) (Fin D) ℂ, Mc x = mdisc x := by
-  obtain ⟨M, hM⟩ := exists_multilinearMap_eq_mdisc (D := D)
-  let Mr : MultilinearMap ℝ (fun _ : Fin D => Fin D → Fin D → ℂ) ℂ := M.restrictScalars ℝ
+  obtain ⟨M, hM⟩ := (by
+    show ∃ F : MultilinearMap (RingHom.id ℂ)
+        (fun _ : Fin D => Matrix (Fin D) (Fin D) ℂ) ℂ,
+        ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+    refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+      _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+    intro A k c B
+    simpa only [RingHom.id_apply, smul_eq_mul] using
+      (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
+  let Mr : MultilinearMap (RingHom.id ℝ) (fun _ : Fin D => Fin D → Fin D → ℂ) ℂ := M.restrictScalars ℝ
   have hMr : ∀ x : Fin D → Matrix (Fin D) (Fin D) ℂ, Mr x = mdisc x := fun x => congrFun hM x
   exact ⟨⟨Mr, by
     have : (⇑Mr : (Fin D → Fin D → Fin D → ℂ) → ℂ) = fun x => mdisc x := funext hMr
@@ -213,7 +225,15 @@ theorem mdisc_update_expand {D : ℕ} (A : Fin D → Matrix (Fin D) (Fin D) ℂ)
     (X : Matrix (Fin D) (Fin D) ℂ) :
     mdisc (Function.update A q X) =
       ∑ a, ∑ b, X a b * mdisc (Function.update A q (Matrix.single a b 1)) := by
-  obtain ⟨M, hM⟩ := exists_multilinearMap_eq_mdisc (D := D)
+  obtain ⟨M, hM⟩ := (by
+    show ∃ F : MultilinearMap (RingHom.id ℂ)
+        (fun _ : Fin D => Matrix (Fin D) (Fin D) ℂ) ℂ,
+        ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+    refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+      _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+    intro A k c B
+    simpa only [RingHom.id_apply, smul_eq_mul] using
+      (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
   have hX : X = ∑ a, ∑ b, X a b • Matrix.single a b (1 : ℂ) := by
     ext i j
     simp only [Matrix.sum_apply, Matrix.smul_apply, Matrix.single_apply, smul_eq_mul, mul_ite, mul_one,
@@ -225,7 +245,8 @@ theorem mdisc_update_expand {D : ℕ} (A : Fin D → Matrix (Fin D) (Fin D) ℂ)
     rw [MultilinearMap.toLinearMap_apply, hM]
   rw [h]
   conv_lhs => rw [hX]
-  simp only [map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul]
   simp only [← h]
 
 theorem mdisc_sum_row {D : ℕ} (A : Fin D → Matrix (Fin D) (Fin D) ℂ) (p q : Fin D) (hpq : p ≠ q)

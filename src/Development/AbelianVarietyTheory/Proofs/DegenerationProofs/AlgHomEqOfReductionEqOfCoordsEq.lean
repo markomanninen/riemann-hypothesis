@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -23,7 +28,7 @@ theorem algHom_eq_of_reduction_eq_of_coords_eq :
     | algebraMap r => simp
     | add x y _ _ hx hy =>
       have : s' (x + y) - s (x + y) = (s' x - s x) + (s' y - s y) := by
-        simp only [map_add]; ring
+        simp only [map_add (f := _)]; ring
       rw [this]; exact N.add_mem hx hy
     | mul x y _ _ hx hy =>
       have : s' (x * y) - s (x * y) = s' x * (s' y - s y) + s y * (s' x - s x) := by
@@ -44,7 +49,7 @@ theorem algHom_eq_of_reduction_eq_of_coords_eq :
       intro c
       have : s' (c * (x + y)) - s (c * (x + y))
           = (s' (c * x) - s (c * x)) + (s' (c * y) - s (c * y)) := by
-        simp only [map_add, map_mul]; ring
+        simp only [map_add (f := _), map_mul]; ring
       rw [this]; exact Ideal.add_mem _ (hx c) (hy c)
     | smul a x _ hx =>
       intro c
@@ -77,8 +82,8 @@ theorem algHom_eq_of_reduction_eq_of_coords_eq :
     obtain ⟨j1, j2⟩ := h3 j hj
     have e1 := congrArg s hjy
     have e2 := congrArg s' hjy
-    rw [map_add, map_mul, hb, j1] at e1
-    rw [map_add, map_mul, hb', j2] at e2
+    rw [map_add (f := _), map_mul, hb, j1] at e1
+    rw [map_add (f := _), map_mul, hb', j2] at e2
     have h5 := h2 y hy 1
     rw [_root_.one_mul] at h5
     have : s' y - s y = s' t * (s' x - s x) := by

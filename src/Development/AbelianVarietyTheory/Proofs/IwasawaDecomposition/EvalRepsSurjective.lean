@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 open MvPolynomial Formalism.MainNotions.G Formalism.GradedWeylDivisibility
 
@@ -13,7 +17,8 @@ variable {p : ℕ} {O Kf : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationR
 theorem gPos_mul (v : Fin P.nV) (s : Fin (P.n' v)) (A B : Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) (P.Qq v)) :
     P.gPos v s (A * B) = P.gPos v s A * P.gPos v s B := by
   ext a b
-  simp only [Places.gPos, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Places.gPos, Matrix.mul_apply, map_sum, map_mul]
 
 theorem gPos_one (v : Fin P.nV) (s : Fin (P.n' v)) : P.gPos v s 1 = 1 := by
   ext a b
@@ -23,7 +28,8 @@ theorem subst_comp (G H : ∀ v, Fin (P.n' v) → Matrix (Fin (P.m + 1)) (Fin (P
     (P.subst G).comp (P.subst H) = P.subst fun v s => H v s * G v s := by
   apply MvPolynomial.algHom_ext
   intro x
-  simp only [Places.subst, AlgHom.comp_apply, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Places.subst, AlgHom.comp_apply, aeval_X, map_sum, map_mul, algHom_C, algebraMap_eq,
     Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   simp only [mul_assoc]
@@ -106,7 +112,7 @@ def evalReps (Hv : P.Tup → Submodule O P.Xsp) {ι : Type} {rep : ι → P.Tup}
 
 theorem evalReps_injective (Hv : P.Tup → Submodule O P.Xsp) {ι : Type} {rep : ι → P.Tup} (hr : IsReps C rep) :
     Function.Injective (evalReps C Hv hr) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro F hF
   obtain ⟨-, h0, hγ⟩ := (mem_funMod_iff C Hv F.1).1 F.2
   apply Subtype.ext

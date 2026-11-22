@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlockMatrixTwoByTwoFinEq
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ComplementSubspace
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsBlockMatrixTwoByTwoFinEq
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ComplementSubspace
+
+@[expose] public section
 
 noncomputable section
 

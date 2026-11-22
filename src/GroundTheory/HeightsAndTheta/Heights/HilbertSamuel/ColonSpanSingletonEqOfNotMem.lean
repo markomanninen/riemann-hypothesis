@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ProjectiveSpaceIncrementHyp
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ProjectiveSpaceIncrementHyp
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PHilbExactDivide
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HilbertSamuel
@@ -72,11 +77,6 @@ theorem HilbertIncrement.closed : HilbertIncrement.Statement.{u} := by
     have hn : d + Fintype.card K = (d - 1 + Fintype.card K) + 1 := by omega
     rw [hn] at hstep
     exact le_of_add_one_le_natCast_add_one hstep
-
-theorem HilbertIncrement.hilbertIncrement_alt_of_statement :
-    _root_.GroundTheory.Heights₂.Heights.HilbertSamuel.HilbertIncrement.Statement.{u} →
-      HilbertIncrement.Statement.{u} :=
-  fun _ => HilbertIncrement.closed
 
 end
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.IsCompactBoxSet
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.CosetSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.SpecialLinearCosets.IsCompactBoxSet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -27,7 +31,7 @@ private theorem ind_mem_SB (U : Subgroup G) (ho : IsOpen (U : Set G)) (hc : IsCo
 private theorem translate_mem_SB (a : SB G) (g : G) : (fun m => a.1 (m * g)) ∈ SB G := by
   obtain ⟨h1, h2⟩ := GroundTheory.LocalField.mem_schwartzBruhat.mp a.2
   exact GroundTheory.LocalField.mem_schwartzBruhat.mpr
-    ⟨h1.comp_continuous (continuous_mul_right g), h2.comp_homeomorph (Homeomorph.mulRight g)⟩
+    ⟨h1.comp_continuous (continuous_mul_const g), h2.comp_homeomorph (Homeomorph.mulRight g)⟩
 
 private theorem scale (B : SB G →ₗ[ℂ] ℂ) (U U' : Subgroup G) (s : Finset G) (hs : ∀ g ∈ s, g ∈ U)
     (hsum : ∀ x, ind U x = ∑ g ∈ s, ind U' (x * g⁻¹)) (a a' : SB G) (ha : a.1 = ind U)
@@ -44,7 +48,8 @@ private theorem scale (B : SB G →ₗ[ℂ] ℂ) (U U' : Subgroup G) (s : Finset
     rw [ha']
   have ht : ∀ g ∈ s, B (t g) = B a' := fun g hg =>
     hB g⁻¹ (U.inv_mem (hs g hg)) a' (t g) fun _ => rfl
-  rw [hat, map_sum, Finset.sum_congr rfl ht, Finset.sum_const, nsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hat, map_sum, Finset.sum_congr rfl ht, Finset.sum_const, nsmul_eq_mul]
 
 variable [T2Space G]
 
@@ -125,7 +130,7 @@ private theorem core {V : Type} [AddCommGroup V] [Module ℂ V] (hL : Lgrp G) (a
     have hIa : I a ≠ 0 := hne U a ho rfl
     apply mul_left_cancel₀ hIa
     have hf : ∀ g ∈ U, act g (f + f') = f + f' := fun g hg => by
-      rw [map_add, h₁ g hg, h₂ g hg]
+      rw [map_add (f := _), h₁ g hg, h₂ g hg]
     rw [mul_add, ← key f U a ho rfl h₁, ← key f' U a ho rfl h₂, ← key (f + f') U a ho rfl hf,
       map_add, LinearMap.add_apply]
   have hsmul : ∀ (c : ℂ) f, Λ₀ (c • f) = c * Λ₀ f := by

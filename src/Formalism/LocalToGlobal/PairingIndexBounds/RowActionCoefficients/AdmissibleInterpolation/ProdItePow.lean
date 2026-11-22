@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.EvalIdFrameRowAct
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.CoefficientProductHolds
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.ShapeEvenHolds
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.HighestVectorFullHolds
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.EvalIdFrameRowAct
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.CoefficientProductHolds
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.ShapeEvenHolds
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.HighestVectorFullHolds
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -33,16 +37,17 @@ theorem map_rowAct {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) {r n 
     rw [map_C, show (C a : MvPolynomial (Fin r × Fin n) R) = algebraMap R _ a from rfl, AlgHom.commutes,
       show (C (f a) : MvPolynomial (Fin r × Fin n) S) = algebraMap S _ (f a) from rfl, AlgHom.commutes]
     exact map_C f a
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, map_X]
     congr 1
     unfold rowAct
     rw [aeval_X, aeval_X]
-    simp [map_sum, map_mul, map_C, map_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_mul, map_C, map_X]
 
 theorem sum_C_mul {σ K : Type*} [CommRing K] (κ : K) (R0 : MvPolynomial σ K) (d : (σ →₀ ℕ) → K) :
-    ∑ n ∈ (C κ * R0).support, d n * coeff n (C κ * R0) = κ * ∑ n ∈ R0.support, d n * coeff n R0 := by
+    ∑ n ∈ (C κ * R0).support, d n * AddMonoidAlgebra.coeff (C κ * R0) n = κ * ∑ n ∈ R0.support, d n * AddMonoidAlgebra.coeff R0 n := by
   classical
   have hsub : (C κ * R0).support ⊆ R0.support := by
     intro n hn
@@ -262,7 +267,8 @@ theorem mulC_diag (δ : Fin n → K) (w : Fin n → ℕ → K) : mulC (Matrix.di
 theorem map_mulC {S : Type*} [CommRing S] (f : K →+* S) (B : Matrix (Fin n') (Fin n) K) (x : Fin n → ℕ → K) :
     (fun a i => f (mulC B x a i)) = mulC (B.map f) fun a i => f (x a i) := by
   funext a i
-  simp [mulC, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mulC, map_sum, map_mul]
 
 end Mat
 
@@ -427,7 +433,8 @@ theorem eval_colFac (j : ℕ) (Ist : X.ColCh j) (v : X.Pl) (s : Fin (X.G.P.n' v)
   rw [RingHom.map_det, RingHom.map_det]
   congr 1
   refine Matrix.ext fun i i' => ?_
-  simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, map_C, map_X, eval_C, eval_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul, map_C, map_X, eval_C, eval_X,
     coe_eval₂Hom, eval₂_X, mulC, dM, xB, Matrix.transpose_apply]
   exact Finset.sum_congr rfl fun a _ => mul_comm _ _
 
@@ -455,7 +462,7 @@ theorem IstOf_apply (j : ℕ) (J : ∀ b : BX X, Fin (cX X j b) → ℕ → Fin 
     IstOf X j J b.1 b.2 k.val i' = J b k i' := by
   obtain ⟨v, s⟩ := b
   unfold IstOf
-  rw [dif_pos k.isLt]
+  rw [dite_eq_left k.isLt]
 
 omit [Algebra (K0 p) Kc] [CharZero Kc] in
 theorem map_tgt (j : ℕ) (i0 : X.Pl → ℕ) (H : BX X → Matrix (Fin (NJ X (j + 1))) (Fin (NJ X (j + 1))) X.G.Kf)
@@ -516,7 +523,7 @@ theorem xMid_of (hS : XShape) (hA : XA) (hB : XB) (hB2 : TransposedFrameImageBlo
   rw [hsrc, map_smul, LinearMap.smul_apply, delF_apply, hA p X Kc j, map_tgt, ← algebraMap_smul Kc, fockR_smul_left]
   rw [pair_of_hyp X Kc hB hG j La La' φ _ f _
     (∏ b : BX X, (ε b * (if IsOddPos b.2 then
-        ((mF X (j + 1) b (φ.g' b.1)).map (algebraMap X.G.Kf Kc) * DgX X Kc j i0 b.1).det ^ (cX X j b)
+        ((mF X (j + 1) b (φ.g' b.1).val).map (algebraMap X.G.Kf Kc) * DgX X Kc j i0 b.1).det ^ (cX X j b)
       else (p : Kc) ^ (-((∑ k : Fin (cX X j b), min (X.colHt b.1 (j + 1) b.2 k.val) (i0 b.1) : ℕ) : ℤ))) *
         cN Kc (nuT X j b))) (IstOf X j J) i0 (fun t => algebraMap X.G.Kf Kc (x t))]
   · rw [← mul_assoc]
@@ -524,7 +531,7 @@ theorem xMid_of (hS : XShape) (hA : XA) (hB : XB) (hB2 : TransposedFrameImageBlo
     unfold numericalIdentityScalar
     rw [map_prod, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun b _ => ?_
-    have hs := scal X Kc j b (mF X j b (φ.g b.1)) (mF X j b ((φ.g b.1)⁻¹ : GL _ _)) (mF X (j + 1) b (φ.g' b.1))
+    have hs := scal X Kc j b (mF X j b (φ.g b.1)) (mF X j b ((φ.g b.1)⁻¹ : GL _ _)) (mF X (j + 1) b (φ.g' b.1).val)
       (mF_inv X j b (φ.g b.1)) i0
       ((p : Kc) ^ (-((∑ k : Fin (cX X j b), min (X.colHt b.1 (j + 1) b.2 k.val) (i0 b.1) : ℕ) : ℤ)))
     linear_combination (ε b * cN Kc (nuT X j b)) * hs
@@ -535,8 +542,8 @@ theorem xMid_of (hS : XShape) (hA : XA) (hB : XB) (hB2 : TransposedFrameImageBlo
     rw [hB2 p X Kc j La La' φ d0 b, map_xT]
     have h := hblk b ((mF X j b (φ.g b.1)).map (algebraMap X.G.Kf Kc))
       ((mF X j b ((φ.g b.1)⁻¹ : GL _ _)).map (algebraMap X.G.Kf Kc))
-      ((mF X (j + 1) b (φ.g' b.1)).map (algebraMap X.G.Kf Kc))
-      ((mF X (j + 1) b ((φ.g' b.1)⁻¹ : GL _ _)).map (algebraMap X.G.Kf Kc))
+      ((mF X (j + 1) b (φ.g' b.1).val).map (algebraMap X.G.Kf Kc))
+      ((mF X (j + 1) b ((φ.g' b.1)⁻¹).val).map (algebraMap X.G.Kf Kc))
       (by rw [← Matrix.map_mul, mF_inv, Matrix.map_one _ (map_zero _) (map_one _)])
       (by rw [← Matrix.map_mul, mF_inv, Matrix.map_one _ (map_zero _) (map_one _)])
       (dM X Kc j b d0) (fun a i => algebraMap X.G.Kf Kc (xB X j x b a i))

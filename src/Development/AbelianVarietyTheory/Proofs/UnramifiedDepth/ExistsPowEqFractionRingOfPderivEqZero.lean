@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPthRootOfDerivationZeroStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsPthRootOfDerivationZeroStatement
+
+@[expose] public section
+
 open scoped BigOperators
 
 namespace GlobalTheory.CubeFib
 
 theorem exists_pow_eq_of_pderiv_eq_zero {k : Type} [Field k] [PerfectField k] (p : ℕ)
     [Fact p.Prime] [CharP k p] {σ : Type} [DecidableEq σ] (F : MvPowerSeries σ k)
-    (hF : ∀ i, MvPowerSeries.pderiv k i F = 0) : ∃ g : MvPowerSeries σ k, g ^ p = F := by
+    (hF : ∀ i, MvPowerSeries.pderiv (R := k) i F = 0) : ∃ g : MvPowerSeries σ k, g ^ p = F := by
   have hp : p ≠ 0 := (Fact.out : p.Prime).ne_zero
   haveI : ExpChar k p := ExpChar.prime Fact.out
   haveI : PerfectRing k p := PerfectField.toPerfectRing p
@@ -52,7 +57,8 @@ theorem derivation_mem_pow_smul_top {R A M : Type} [CommRing R] [CommRing A] [Al
       rw [pow_succ', ← smul_eq_mul, Submodule.smul_assoc]
       exact Submodule.smul_mem_smul hy (ih x hx)
     · intro x y hx hy
-      rw [map_add]; exact add_mem hx hy
+      rw [map_add]
+      exact add_mem hx hy
 
 theorem derivation_algebraMap_perfect {k K : Type} [Field k] [PerfectField k] (p : ℕ)
     [Fact p.Prime] [CharP k p] [Field K] [Algebra k K] (D : Derivation ℤ K K) (c : k) :
@@ -70,7 +76,7 @@ theorem derivation_eq_zero_of_kaehler {k A K : Type} [Field k] [PerfectField k] 
     D (algebraMap A K f) = 0 := by
   let L : A →ₗ[k] K :=
     { toFun := fun a => D (algebraMap A K a)
-      map_add' := fun a b => by rw [map_add, map_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun c a => by
         rw [Algebra.smul_def, map_mul, Derivation.leibniz,
           ← IsScalarTower.algebraMap_apply, derivation_algebraMap_perfect p D c, smul_zero,
@@ -84,7 +90,7 @@ theorem derivation_eq_zero_of_kaehler {k A K : Type} [Field k] [PerfectField k] 
   rw [hd, map_zero] at h
   exact h.symm
 
-theorem exists_pow_eq_fractionRing_of_pderiv_eq_zero : ∀ (k : Type) [Field k] [PerfectField k] (p : ℕ) [Fact p.Prime] [CharP k p] (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [Algebra k A] [Algebra.EssFiniteType k A] (σ : Type) [Fintype σ] [DecidableEq σ] (j : A →ₐ[k] MvPowerSeries σ k), (∀ (m : ℕ) (a : A), j a ∈ Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ k)) ^ m ↔ a ∈ IsLocalRing.maximalIdeal A ^ m) → (∀ (m : ℕ) (s : MvPowerSeries σ k), ∃ a : A, j a - s ∈ Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ k)) ^ m) → ∀ f : A, (∀ i, MvPowerSeries.pderiv k i (j f) = 0) → ∃ h : FractionRing A, h ^ p = algebraMap A (FractionRing A) f := by
+theorem exists_pow_eq_fractionRing_of_pderiv_eq_zero : ∀ (k : Type) [Field k] [PerfectField k] (p : ℕ) [Fact p.Prime] [CharP k p] (A : Type) [CommRing A] [IsDomain A] [IsLocalRing A] [Algebra k A] [Algebra.EssFiniteType k A] (σ : Type) [Fintype σ] [DecidableEq σ] (j : A →ₐ[k] MvPowerSeries σ k), (∀ (m : ℕ) (a : A), j a ∈ Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ k)) ^ m ↔ a ∈ IsLocalRing.maximalIdeal A ^ m) → (∀ (m : ℕ) (s : MvPowerSeries σ k), ∃ a : A, j a - s ∈ Ideal.span (Set.range (MvPowerSeries.X : σ → MvPowerSeries σ k)) ^ m) → ∀ f : A, (∀ i, MvPowerSeries.pderiv (R := k) i (j f) = 0) → ∃ h : FractionRing A, h ^ p = algebraMap A (FractionRing A) f := by
   intro k _ _ p _ _ A _ _ _ _ _ σ _ _ j hj hsurj f hf
   have hp : p ≠ 0 := (Fact.out : p.Prime).ne_zero
   haveI : IsNoetherianRing A := Algebra.EssFiniteType.isNoetherianRing k A

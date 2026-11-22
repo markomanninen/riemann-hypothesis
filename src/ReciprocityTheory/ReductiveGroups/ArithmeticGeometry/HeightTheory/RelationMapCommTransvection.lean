@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FZEqConstMulIrreduciblePow
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FZEqConstMulIrreduciblePow
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -57,11 +61,14 @@ theorem relation_map_comm_transvection (c : ι) (i k : Fin (d.D + 1)) (hik : i �
             X (r', l) * C (ratio (Ω := Ω c) (d.w l c) (d.w (d.jc c) c)) := by
           intro r'
           simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, eq_self_iff_true, if_true]
-        rw [e1 r, e1 k, map_neg, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [e1 r, e1 k, map_neg, map_sum]
         by_cases h1 : r = i
-        · simp only [h1, eq_self_iff_true, if_true, map_mul, hX, hC, map_neg, map_sum, add_mul,
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp only [h1, eq_self_iff_true, if_true, map_mul, hX, hC, map_neg, map_sum, add_mul,
             Finset.sum_add_distrib, mul_neg, Finset.mul_sum, mul_assoc, neg_add]
-        · simp only [h1, if_false, add_zero, map_mul, hX, hC, map_neg, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp only [h1, if_false, add_zero, map_mul, hX, hC, map_neg, map_sum]
       · have e1 : ∀ r', φ r' = X (r', b) := by
           intro r'
           simp only [hφ, Data.relationEliminateColumn, MvPolynomial.aeval_X, h2, if_false]
@@ -71,7 +78,7 @@ theorem relation_map_comm_transvection (c : ι) (i k : Fin (d.D + 1)) (hik : i �
     change _ = trv (R := Ω c) (D := d.D) (N := d.N) i k Polynomial.X (φ a)
     rw [hφtrv a]
     by_cases h1 : a = i
-    · simp only [h1, eq_self_iff_true, if_true, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C,
+    · simp only [h1, eq_self_iff_true, if_true, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C,
         Polynomial.map_X]
       rfl
     · simp only [h1, if_false, add_zero, Polynomial.map_C]
@@ -82,7 +89,7 @@ theorem transvection_fix_generator (c : ι) (F0 : KTp K d.D d.N) (hF0 : F0 ≠ 0
     trv i k Polynomial.X F0 = Polynomial.C F0 := by
   classical
   have h1 : ∀ n, F0 ∣ (trv i k Polynomial.X F0).coeff n := fun n => (hker _).1 (by
-    have h2 := congrArg (fun p => Polynomial.coeff p n)
+    have h2 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p n)
       (congrArg (fun f => f F0) (d.relation_map_comm_transvection c i k hik))
     simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
       Polynomial.coe_mapRingHom, Polynomial.coeff_map] at h2

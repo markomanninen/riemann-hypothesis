@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -21,7 +25,7 @@ theorem UpperTheory.V.CA.d_ker_ss :
     have h3 : (Det.repS r k (1 + (1 ⊗ₜ (-u)) * (1 ⊗ₜ x) * 1)).det = (Det.repS r k 1).det :=
       hx k 1 (1 ⊗ₜ (-u)) 1
     have h4 : Det.repS r k (1 + (1 ⊗ₜ (-u)) * (1 ⊗ₜ x) * 1) = 1 - (e : Matrix ι ι k) := by
-      rw [map_add, map_mul, map_mul, map_one, Det.repS_tmul, Det.repS_tmul, ← ha']
+      rw [map_add (f := _), map_mul, map_mul, map_one, Det.repS_tmul, Det.repS_tmul, ← ha']
       simp [sub_eq_add_neg]
     rw [h4, map_one, Matrix.det_one] at h3
     have h5 : IsUnit (1 - (e : Matrix ι ι k)) := by
@@ -32,5 +36,5 @@ theorem UpperTheory.V.CA.d_ker_ss :
     rw [← hb', h6, mul_zero]
   · intro hx S _ _ y u v
     show (Det.repS r S (y + u * (1 ⊗ₜ x) * v)).det = (Det.repS r S y).det
-    rw [map_add, map_mul, map_mul, Det.repS_tmul, hx]
+    rw [map_add (f := _), map_mul, map_mul, Det.repS_tmul, hx]
     simp

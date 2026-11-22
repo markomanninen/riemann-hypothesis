@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -29,7 +33,8 @@ private lemma not_le_span_image {k P : Type*} [Field k] [AddCommGroup P] [Module
       have h : ((∑ i, b.repr ⟨y, hy⟩ i • b i : K) : P) = y := by rw [b.sum_repr]
       rw [Submodule.coe_sum] at h
       simpa only [Submodule.coe_smul] using h.symm
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [hA]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -169,7 +174,7 @@ private lemma exists_not_mem {k C P : Type*} [Field k] [IsAlgClosed k] [CommRing
       rw [hfix, ← congrFun h c]
     · simp
     · intro y z hy hz
-      rw [map_add]
+      rw [map_add (f := _)]
       exact H.add_mem hy hz
   have hεG : ∀ x ∈ G, ρ ε x = x := by
     have aux : ∀ (n : ℕ) (x : P), ((ρ ε - (1 : k) • 1) ^ n) x = 0 → ρ ε x = x := by
@@ -212,7 +217,7 @@ private lemma exists_not_mem {k C P : Type*} [Field k] [IsAlgClosed k] [CommRing
     rintro _ ⟨z, rfl⟩
     have hz : z ∈ G ⊔ H := hsup ▸ Submodule.mem_top
     obtain ⟨z1, h1, z2, h2, rfl⟩ := Submodule.mem_sup.1 hz
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (Submodule.subset_span ⟨z1, h1, rfl⟩) (hAH z2 h2)
   have hstep : ∀ u ∈ G, ∃ w ∈ Wd, ∃ u' ∈ G, u = w + ρ a u' := by
     intro u hu
@@ -224,7 +229,7 @@ private lemma exists_not_mem {k C P : Type*} [Field k] [IsAlgClosed k] [CommRing
     obtain ⟨v1, hv1, v2, hv2, rfl⟩ := Submodule.mem_sup.1 (d v')
     have e0 : ρ (1 - ε) v1 = 0 := h1εG v1 hv1
     have e1 : u - w - ρ a u1 = h + ρ a u2 + ρ (1 - ε) v2 := by
-      simp only [map_add, e0] at hx
+      simp only [map_add (f := _), e0] at hx
       have h' := sub_eq_iff_eq_add.1 hx
       rw [h']
       abel
@@ -252,7 +257,7 @@ private lemma exists_not_mem {k C P : Type*} [Field k] [IsAlgClosed k] [CommRing
       obtain ⟨w, hw, u', hu', e⟩ := ih u hu
       obtain ⟨w2, hw2, u'', hu'', e2⟩ := hstep u' hu'
       refine ⟨w + (ρ a ^ n) w2, Wd.add_mem hw (hpow n _ hw2), u'', hu'', ?_⟩
-      rw [pow_succ, Module.End.mul_apply, e, e2, map_add, add_assoc]
+      rw [pow_succ, Module.End.mul_apply, e, e2, map_add (f := _), add_assoc]
   obtain ⟨e, he⟩ := hnil
   have hGW : G ≤ Wd := by
     intro u hu

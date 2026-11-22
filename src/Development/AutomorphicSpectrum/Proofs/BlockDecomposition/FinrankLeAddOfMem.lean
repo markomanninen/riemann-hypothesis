@@ -1,40 +1,45 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNefSectionsAsymptotic
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionBound
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFujitaOne
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.Imports
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AmpleSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.TargetSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefPlusAmpleDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsLinearIndependentOfGenerates
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSubEqChartSecOver
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RelDimMIdealOverEqTrdeg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfWeight
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeSegreLift
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KleimanInputUniverseZero
-import Development.WeilBound.CoreStatements.HodgeTatePoints.KTwins
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuKodaira
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaNum
-import Development.WeilBound.CoreStatements.HodgeTatePoints.SiubOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalChartLattice
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinrankChartLatQMono
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsShiftSectionBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GeneratedModOfSubsingleton
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AmpleSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NefRR
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.TargetSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.GenericPointSectionHypotheses
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLiftBirationalNef
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefPlusAmpleDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsLinearIndependentOfGenerates
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PCutRegular
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistSubEqChartSecOver
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RelDimMIdealOverEqTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfWeight
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeSegreLift
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KleimanInputUniverseZero
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.KTwins
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuKodaira
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiuaNum
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.SiubOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalChartLattice
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinrankChartLatQMono
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.ArakelovGeometry GroundTheory.Heights₂.Heights.HilbertSamuel Filter Topology
 
 namespace GlobalTheory.CompanionTheory.NefLower
 
 open PositivityTheory.HtPt.Siua in
-
 theorem num_lower {M : Type} [AddCommGroup M] (d : ℕ)
-    (f : MultilinearMap ℤ (fun _ : Fin (d + 1) => M) ℤ) (μ e : M) (δ : ℚ) (hδ : 0 < δ) :
+    (f : MultilinearMap (RingHom.id ℤ) (fun _ : Fin (d + 1) => M) ℤ) (μ e : M) (δ : ℚ) (hδ : 0 < δ) :
     ∃ t : ℚ, 0 < t ∧ ∀ (a : ℕ) (m : ℤ), 1 ≤ a → (m : ℚ) = a * t →
       ((f (fun _ => μ) : ℚ) - δ) * (a : ℚ) ^ (d + 1) ≤
         (f (fun _ => a • μ + m • e) : ℚ) - ((d + 1 : ℕ) : ℚ) *
@@ -179,8 +184,8 @@ theorem pow_mem_chartLatQ (y : (Σ k, ι k) → Ω) (γ : K → ℤ) (e : Ω) (h
 
 end Sections
 
-open GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2 GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization in
 
+open GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2 GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization in
 theorem count_lower (hK : VeryAmpleNefPlusAmple.Statement) (hS : SectionCount.Statement)
     (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω] [CharZero Ω]
     (y : (Σ k, ι k) → Ω) (d : ℕ) (a : K → ℤ) (hV : IsArithVar (mCoordIdeal y) (d + 1 + 1))
@@ -251,8 +256,8 @@ theorem count_lower (hK : VeryAmpleNefPlusAmple.Statement) (hS : SectionCount.St
   simp only [mul_div_assoc] at h1 ⊢
   linarith
 
-open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2 in
 
+open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Kleiman2 in
 theorem lower_of_pos (hK : VeryAmpleNefPlusAmple.Statement) (hS : SectionCount.Statement)
     (hKod : KodairaGeneric.Statement)
     (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] (Ω : Type) [Field Ω] [CharZero Ω]

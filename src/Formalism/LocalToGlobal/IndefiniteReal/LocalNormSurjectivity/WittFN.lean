@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNormSurjectivity.FinNormSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem finNormSurj : FinNormSurj := by
         rw [hψv, Units.val_mk0]
         have hx0 : (x : k) ≠ 0 := x.ne_zero
         have hτx : τ (x : k) = (x : k)⁻¹ := eq_inv_of_mul_eq_one_left hTx
-        rw [map_add, map_one, hτx]
+        rw [map_add (f := _), map_one, hτx]
         have h1 : (1 : k) + (x : k)⁻¹ = (1 + (x : k)) * (x : k)⁻¹ := by field_simp; ring
         rw [h1, mul_inv, inv_inv, ← mul_assoc, mul_inv_cancel₀ hy0, one_mul]
   have hle : N.range ≤ ψ.ker := by

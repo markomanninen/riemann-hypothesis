@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiltrationHilbSum
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFiltrationStepHilb
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGradedPieceQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsFiltrationHilbSum
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFiltrationStepHilb
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PGradedPieceQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -43,7 +48,7 @@ theorem monomial_smul_mem (hM : IsMultigrading ι M piece) (d : (Σ k, ι k) →
     have h2 := hpow k _ _ (ih hy)
     convert h2 using 2
     funext k'
-    simp only [map_add, Finsupp.weight_single, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
+    simp only [map_add (f := _), Finsupp.weight_single, Pi.add_apply, Pi.smul_apply, smul_eq_mul,
       Nat.cast_add, Nat.cast_mul, blockWeight, unitDeg, Pi.single_apply]
     split_ifs <;> push_cast <;> ring
 
@@ -54,7 +59,7 @@ theorem form_smul_mem (hM : IsMultigrading ι M piece) {b : K → ℕ} {f : MRin
   refine Submodule.sum_mem _ fun d hd => ?_
   have hw : Finsupp.weight (blockWeight ι) d = b :=
     (mem_weightedHomogeneousSubmodule _ _ _ _).mp hf (mem_support_iff.mp hd)
-  have h := monomial_smul_mem hM d (coeff d f) hy
+  have h := monomial_smul_mem hM d (AddMonoidAlgebra.coeff f d) hy
   rwa [hw] at h
 
 def comp [DirectSum.Decomposition piece] (m : K → ℤ) : M →ₗ[F] M :=
@@ -65,17 +70,18 @@ omit [DecidableEq K] in
 theorem comp_apply [DirectSum.Decomposition piece] (m : K → ℤ) (y : M) :
     comp (piece := piece) m y = (DirectSum.decompose piece y m : M) := rfl
 
-open Classical in
 
+open Classical in
 theorem comp_smul (hM : IsMultigrading ι M piece) [DirectSum.Decomposition piece] {c : K → ℤ}
     {x : M} (hx : x ∈ piece c) (s : MRing ι F) (m : K → ℤ) :
     comp (piece := piece) m (s • x) =
       (∑ d ∈ s.support with (fun k => (Finsupp.weight (blockWeight ι) d k : ℤ)) = m - c,
-        monomial d (coeff d s)) • x := by
+        monomial d (AddMonoidAlgebra.coeff s d)) • x := by
   conv_lhs => rw [s.as_sum]
-  rw [Finset.sum_smul, map_sum, Finset.sum_filter, Finset.sum_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_smul, map_sum, Finset.sum_filter, Finset.sum_smul]
   refine Finset.sum_congr rfl fun d _ => ?_
-  have h := monomial_smul_mem hM d (coeff d s) hx
+  have h := monomial_smul_mem hM d (AddMonoidAlgebra.coeff s d) hx
   rw [comp_apply]
   split_ifs with hd
   · rw [hd, add_sub_cancel] at h
@@ -92,19 +98,19 @@ theorem comp_mem_span (hM : IsMultigrading ι M piece) [DirectSum.Decomposition 
   rw [comp_smul hM hx]
   exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self x)
 
-omit [DecidableEq K] [IsScalarTower F (MRing ι F) M] in
 
+omit [DecidableEq K] [IsScalarTower F (MRing ι F) M] in
 theorem comp_mem_sup [DirectSum.Decomposition piece] {N₁ N₂ : Submodule (MRing ι F) M}
     (h₁ : ∀ y ∈ N₁, ∀ m, comp (piece := piece) m y ∈ N₁)
     (h₂ : ∀ y ∈ N₂, ∀ m, comp (piece := piece) m y ∈ N₂) :
     ∀ y ∈ N₁ ⊔ N₂, ∀ m, comp (piece := piece) m y ∈ N₁ ⊔ N₂ := by
   intro y hy m
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hy
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (h₁ a ha m) (h₂ b hb m)
 
-open Classical in
 
+open Classical in
 theorem step [∀ k, Fintype (ι k)] (hM : IsMultigrading ι M piece) [DirectSum.Decomposition piece]
     {N N' : Submodule (MRing ι F) M} {x : M} {c : K → ℤ} {q : Ideal (MRing ι F)}
     (hx : x ∈ piece c) (hN' : N' = N ⊔ Submodule.span (MRing ι F) {x})
@@ -129,7 +135,7 @@ theorem step [∀ k, Fintype (ι k)] (hM : IsMultigrading ι M piece) [DirectSum
       exact Submodule.coe_mem _
     · have h := DirectSum.decompose_of_mem_same piece hy2
       rw [← comp_apply] at h
-      rw [← map_add, h]
+      rw [← map_add (f := _), h]
   by_cases hb : ∀ k, 0 ≤ (m - c) k
   · set b : K → ℕ := fun k => ((m - c) k).toNat with hbdef
     have hbm : m = c + fun k => (b k : ℤ) := by

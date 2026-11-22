@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoefIntegralEq
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoefIntegralEq
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.CovolOneIntegralAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,13 +30,14 @@ theorem cplx_zero : cplx V W B 0 = 0 := by
 
 theorem continuous_cplx : Continuous (cplx V W B) := by
   unfold cplx
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   exact (continuous_id.matrix_elem 0 i).smul continuous_const
 
 theorem cplx_rat (c : Matrix (Fin 1) (Fin k) D.host.E) :
     cplx V W B (c.map (incA D)) = (∑ i, c 0 i • B i).map (incA D) := by
   ext p q
-  simp [cplx, Matrix.sum_apply, map_sum, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [cplx, Matrix.sum_apply, map_sum, smul_eq_mul]
 
 end
 

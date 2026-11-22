@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
-import Mathlib
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.LimitMultiplicityWeights.RegularClassIntegrals.ClosedGraph
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology
 

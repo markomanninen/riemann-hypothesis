@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Formalism.SatakeDualWeyl.StatementE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Formalism.SatakeDualWeyl.StatementE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.LGrp Matrix
 open scoped NNReal
@@ -97,7 +101,7 @@ theorem coord_mul (u x : (borelGL k (Fin n)).U) :
     u.1.val i j
   rw [← Finset.sum_subtype (Finset.univ.filter fun p : Fin n × Fin n => p.1 < p.2) (by simp)
     (fun q : Fin n × Fin n => (if q.2 = j then u.1.val i q.1 else 0) * x.1.val q.1 q.2),
-    Finset.sum_filter, Fintype.sum_prod_type, mul_apply]
+    Finset.sum_filter, Fintype.sum_prod_type, Matrix.mul_apply]
   have : u.1.val i j = ∑ l, if l = j then u.1.val i l else 0 := by simp
   rw [this, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun l _ => ?_
@@ -143,6 +147,7 @@ theorem delta_eq (q : (borelGL k (Fin n)).Q) :
   have hm : ∀ A : Matrix (Pos n) (Pos n) k, Measurable A.mulVec := fun A =>
     (continuous_const.matrix_mulVec continuous_id).measurable
   have hes : Measurable e.symm := e.symm.continuous.measurable
+  haveI : π.Regular := Measure.Regular.of_sigmaCompactSpace_of_isLocallyFiniteMeasure π
   haveI : μ.Regular := Measure.Regular.map e.symm
   haveI : μ.IsOpenPosMeasure := e.symm.continuous.isOpenPosMeasure_map e.symm.surjective
   haveI : μ.IsMulLeftInvariant := ⟨fun u => by
@@ -173,6 +178,7 @@ theorem delta_eq (q : (borelGL k (Fin n)).Q) :
       (∏ p : Pos n, (t p.1.1 * (t p.1.2)⁻¹)) (by rw [det_diagonal, Units.coe_prod])
     rw [Measure.map_map hc.measurable hes, h1, ← Measure.map_map hes (hm _),
       ← Measure.map_smul, h2]
+    exact hes.aemeasurable
   haveI : LocallyCompactSpace (borelGL k (Fin n)).U := (borelGL k (Fin n)).closed_U.locallyCompactSpace
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : (borelGL k (Fin n)).U)
   have h4 := modulus_measure _ (borelGL k (Fin n)).closed_U μ g K

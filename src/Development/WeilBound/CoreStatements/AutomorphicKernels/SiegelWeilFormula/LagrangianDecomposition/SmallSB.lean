@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SmallSA
-import Development.AutomorphicArithmetic.LocalEmbeddings.OppLagr
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SmallSA
+public import Development.AutomorphicArithmetic.LocalEmbeddings.OppLagr
+
+@[expose] public section
 
 noncomputable section
 

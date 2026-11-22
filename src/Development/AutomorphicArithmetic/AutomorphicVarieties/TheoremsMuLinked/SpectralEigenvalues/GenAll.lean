@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsMore
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.Dlam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsBis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsMore
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.Dlam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.ImportsBis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.SpectralEigenvalues.Imports
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.Lev UpperTheory.V.AlgebraTools UpperTheory.V.Th
 open scoped TensorProduct
@@ -63,7 +67,7 @@ private theorem core {O Λ R T M Γ X ι : Type} [CommRing O] [CommRing Λ] [Com
     intro σ x
     induction σ using MonoidAlgebra.induction_linear with
     | zero => rw [zero_smul, map_zero, map_zero, zero_mul]
-    | add f g hf hg => rw [add_smul, map_add, hf, hg, map_add, add_mul]
+    | add f g hf hg => rw [add_smul, map_add (f := _), hf, hg, map_add (f := _), add_mul]
     | single g a =>
       obtain ⟨τ, h1, h2⟩ := hτ g
       rw [hS1, hlam'e, hlam'e, LinearEquiv.apply_symm_apply, hΛ, hlam, h2, hlam, h1, one_mul, hth, h₀]
@@ -83,7 +87,7 @@ private theorem core {O Λ R T M Γ X ι : Type} [CommRing O] [CommRing Λ] [Com
     { carrier := {w | ρ.asModuleEquiv.symm w ∈ (RingHom.ker th • ⊤ : Submodule (MonoidAlgebra Λ Γ) ρ.asModule)}
       add_mem' := by
         intro a b ha hb
-        simp only [Set.mem_setOf_eq, map_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _)] at *
         exact add_mem ha hb
       zero_mem' := by
         simp only [Set.mem_setOf_eq, map_zero]
@@ -101,7 +105,7 @@ private theorem core {O Λ R T M Γ X ι : Type} [CommRing O] [CommRing Λ] [Com
       (MonoidAlgebra.single (gen p) (1 : Λ) - 1) • ρ.asModuleEquiv.symm w := by
     intro p w
     have e : act (y p) w = ρ (gen p) w - w := by
-      rw [hρ, map_add, map_one, LinearMap.add_apply, Module.End.one_apply, add_sub_cancel_left]
+      rw [hρ, map_add (f := _), map_one, LinearMap.add_apply, Module.End.one_apply, add_sub_cancel_left]
     rw [e, map_sub, sub_smul, one_smul, hS1, one_smul, LinearEquiv.apply_symm_apply]
   have hker_y : ∀ p : ι, MonoidAlgebra.single (gen p) (1 : Λ) - 1 ∈ RingHom.ker th := by
     intro p
@@ -193,7 +197,7 @@ theorem UpperTheory.V.Th.Sp.derOp :
           rw [map_one, map_one]
           rfl⟩ }
     have hg := gen_all (Fact.out : l.Prime) A.a S (fun p => ⟨1 + yV A.R p.1 p.2,
-      by rw [map_add, map_one, hy, add_zero], A.ρ_gen p.1 p.2⟩) g
+      by rw [map_add (f := _), map_one, hy, add_zero], A.ρ_gen p.1 p.2⟩) g
     exact hg
   let th₀ : abelian₂ O Empty D →ₐ[O] O :=
     (xT.comp (IsScalarTower.toAlgHom O A.R (PUY A.R q n))).comp (IsScalarTower.toAlgHom O (abelian₂ O Empty D) A.R)
@@ -205,7 +209,7 @@ theorem UpperTheory.V.Th.Sp.derOp :
       obtain ⟨d0, hd0, hX⟩ := UpperTheory.V.Th.Sp.dlam O (Empty ⊕ Fin D) th₀ (.inr k0)
       refine ⟨(Ideal.Quotient.mkₐ O (maximalIdeal O ^ m)).toLinearMap.comp d0, ?_, ?_⟩
       · intro x y
-        simp only [LinearMap.comp_apply, hd0, map_add, map_smul]
+        simp only [LinearMap.comp_apply, hd0, map_add (f := _), map_smul]
       · intro k
         simp only [LinearMap.comp_apply, hX, Sum.inr.injEq, Sum.inl.injEq]
         split_ifs <;> simp

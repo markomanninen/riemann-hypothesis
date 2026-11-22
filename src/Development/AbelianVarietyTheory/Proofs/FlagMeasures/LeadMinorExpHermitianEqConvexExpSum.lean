@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.MulConjTransposeEqOneOfOrthonormal
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.MulConjTransposeEqOneOfOrthonormal
+
+@[expose] public section
 
 open Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants
 
@@ -17,7 +21,7 @@ theorem sum_dite_card {n l : ℕ} {M : Type*} [AddCommMonoid M] (f : Set.powerse
     exact hJ ⟨⟨J, h⟩, by simp, rfl⟩
   · intro S _
     have h : S.1.card = l := S.2
-    rw [dif_pos h]
+    rw [dite_eq_left h]
 
 theorem exp_smul_eq {n : ℕ} {Y : Matrix (Fin n) (Fin n) ℂ} (hY : Y.IsHermitian) (t : ℝ) :
     NormedSpace.exp ((t : ℂ) • Y) =

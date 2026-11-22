@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.TorsionDualDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

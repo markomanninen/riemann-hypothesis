@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,7 +45,7 @@ theorem delta_delta (c : Finset ι → E) : delta (delta c) = 0 := by
 
 theorem Dtot_add (d : E →+ E) (c c' : Finset ι → E) : Dtot d (c + c') = Dtot d c + Dtot d c' := by
   funext t
-  simp only [Dtot, delta_add, Pi.add_apply, map_add, smul_add]
+  simp only [Dtot, delta_add, Pi.add_apply, map_add (f := _), smul_add]
   abel
 
 theorem Dtot_sub (d : E →+ E) (c c' : Finset ι → E) : Dtot d (c - c') = Dtot d c - Dtot d c' := by
@@ -60,10 +64,11 @@ theorem Dtot_Dtot (d : E →+ E) (hd : ∀ x, d (d x) = 0) (c : Finset ι → E)
     rfl
   have e2 : d (delta c t) = ∑ i ∈ t, cubeSign t i • d (c (t.erase i)) := by
     show d (∑ i ∈ t, cubeSign t i • c (t.erase i)) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => map_zsmul d _ _
   show delta (Dtot d c) t + (-1 : ℤ) ^ t.card • d (Dtot d c t) = 0
-  rw [e1, delta_delta, hDt, map_add, map_zsmul, hd, smul_zero, add_zero, e2, Finset.smul_sum,
+  rw [e1, delta_delta, hDt, map_add (f := _), map_zsmul, hd, smul_zero, add_zero, e2, Finset.smul_sum,
     Pi.zero_apply, zero_add, ← Finset.sum_add_distrib]
   refine Finset.sum_eq_zero fun i hi => ?_
   have hc : (-1 : ℤ) ^ (t.erase i).card = -(-1 : ℤ) ^ t.card := by

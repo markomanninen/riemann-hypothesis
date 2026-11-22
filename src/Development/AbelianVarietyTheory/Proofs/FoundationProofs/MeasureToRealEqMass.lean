@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletedLatticeStabilizerCompactOpen
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ClassMassEqSumOfBijective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCompactAdele
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletedLatticeStabilizerCompactOpen
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem finite_stabAt_of_out {G : Type} [Group G] {Γ L : Subgroup G}
   haveI := h (DoubleCoset.mk Γ L g)
   haveI : Nonempty (stabAt Γ L (DoubleCoset.mk Γ L g).out) := ⟨⟨1, one_mem_stabAt _ _ _⟩⟩
   refine Nat.finite_of_card_ne_zero ?_
-  rw [← stabOrder_mk, ← DoubleCoset.out_eq' _ _ (DoubleCoset.mk _ _ g), stabOrder_mk]
+  rw [← stabOrder_mk, ← DoubleCoset.out_eq' (DoubleCoset.mk _ _ g), stabOrder_mk]
   exact Nat.card_pos.ne'
 
 variable {D : D7}
@@ -109,8 +113,8 @@ theorem comap_finE : K.comap (finE V) = levA V K ⊔ GinfC V := by
     rw [show finHom V g = 1 from hg, map_one]
     exact one_mem _
 
-variable {V K} in
 
+variable {V K} in
 theorem nonempty_gam_equiv (c : Cl D.sp.cm V.gram K) :
     Nonempty (Gam c ≃ stabAt (UQ D.sp.cm V.gram) (K.subgroupOf (UA D.sp.cm V.gram)) c.out) := by
   haveI : Nontrivial (Af D.host.F) := by
@@ -233,14 +237,11 @@ theorem latStab_compact_open : IsCompact (latStab V : Set (HA (Af D.host.F) D.sp
       rw [Module.Basis.equivFun_symm_apply]
       exact hv
   have hsp : Submodule.span D.host.E (L : Set (Fin V.rank → D.host.E)) = ⊤ := by
-    rw [eq_top_iff]
-    intro v _
-    obtain ⟨x, rfl⟩ := V.frame.equivFun.surjective v
-    have hx : x ∈ Submodule.span D.host.E (V.L0 : Set V.V) := by
-      rw [V.standardTuple_isLattice.span_eq_top]; trivial
-    have := Submodule.mem_map_of_mem (f := f) hx
-    rw [Submodule.map_span] at this
-    exact this
+    obtain ⟨M, _, hm, hM⟩ := GlobalTheory.Mem.VolExists.exists_lattice V
+    have : (L : Set (Fin V.rank → D.host.E)) = M := by
+      rw [hL, hM]
+      rfl
+    rw [this, hm]
   obtain ⟨S, hS, ho, hc⟩ := GlobalTheory.Mem.Vol.StabGroup.exists_compact_open_stab D.host.F D.host.E D.sp.cm.sig V.rank
     V.gram L (V.standardTuple_isLattice.fg.map _) hsp
   rw [hL] at hS

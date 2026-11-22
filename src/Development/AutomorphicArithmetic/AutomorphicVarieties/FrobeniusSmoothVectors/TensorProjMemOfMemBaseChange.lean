@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 open scoped TensorProduct
@@ -19,7 +23,8 @@ private theorem rank_eq_of_scalar_extension_data {H H' : Type} [AddCommGroup H] 
     rw [← Module.forall_dual_apply_eq_zero_iff k]
     intro l
     have h1 := congrArg (π l) hc
-    rw [map_sum, map_zero] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h1
     simp only [hπ] at h1
     exact linearIndependent_iff'.1 e.linearIndependent s (fun j => l (c j)) h1 j hj
   have hsp : ⊤ ≤ Submodule.span K (Set.range fun j => ι (e j)) := by
@@ -46,24 +51,21 @@ private theorem tensor_proj_smul_one_tmul (l : K →ₗ[k] k) (c : K) (x : W) : 
 
 private theorem tensor_proj_baseChange_map (l : K →ₗ[k] k) (f : W →ₗ[k] W) (x : K ⊗[k] W) :
     n4p l (f.baseChange K x) = f (n4p l x) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul c x => simp
   | add x y hx hy => simp [hx, hy]
 
 private theorem tensor_proj_mem_of_mem_baseChange (l : K →ₗ[k] k) (b : Submodule k W) (x : K ⊗[k] W) (hx : x ∈ b.baseChange K) :
     n4p l x ∈ b := by
   obtain ⟨y, rfl⟩ := hx
-  induction y using TensorProduct.induction_on with
-  | zero => simp
+  induction y using TensorProduct.inductionOn with
   | tmul c x => simpa using b.smul_mem _ x.2
   | add x y hx hy => simpa using add_mem hx hy
 
 private theorem baseChange_eq_sum_coord_basis {I : Type} (e : Module.Basis I k K) (x : K ⊗[k] W) :
     ∃ s : Finset I, ∀ t : Finset I, s ⊆ t → x = ∑ i ∈ t, e i • ((1 : K) ⊗ₜ[k] n4p (e.coord i) x) := by
   classical
-  induction x using TensorProduct.induction_on with
-  | zero => exact ⟨∅, fun t _ => by simp⟩
+  induction x using TensorProduct.inductionOn with
   | tmul c x =>
     refine ⟨(e.repr c).support, fun t ht => ?_⟩
     have h1 : c = ∑ i ∈ t, e.repr c i • e i := by

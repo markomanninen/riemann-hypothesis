@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocCocOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernCocycleTangentContractionCohomologousTorsorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCocCocOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChernCocycleTangentContractionCohomologousTorsorStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,16 +23,19 @@ theorem contr_chern_eq_tanCoc : ∀ (R : Type) [CommRing R] (A B : Over (Sp R)) 
   obtain ⟨i, hi, U, ℓ, hU, hℓ, hcl⟩ := hch
   rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_mk] at hcl
   obtain ⟨n, hn⟩ := hcl
-  refine ⟨cocOf P.U n, isCoc_cocOf P.U n ?_, GlobalTheory.T.chernCocycle_tangentContraction_cohomologous_torsor R A B P hP v hv j hj w hw i hi U ℓ hU hℓ n hn κ hκ⟩
-  intro T T' T'' a b h h' h''
-  have e := congrFun (congrFun (congrFun (congrFun (congrFun hn T) T') T'') a) b
-  rw [e]
-  have h0 : ℓ.1 T T' T'' a b = 0 := by
-    have := (hℓ T T' T'' a b).1
-    rw [h''] at this
-    exact (Ideal.mem_bot).1 this
-  change w.1 _ _ _ _ _ - ℓ.1 T T' T'' a b = 0
-  rw [h0, sub_zero]
-  exact hw _ _ _ _ _ h h' h''
+  refine ⟨cocOf P.U n, ?_, ?_⟩
+  · apply GlobalTheory.PtExt.isCoc_cocOf
+    intro T T' T'' a b h h' h''
+    have e := congrFun (congrFun (congrFun (congrFun (congrFun hn T) T') T'') a) b
+    rw [e]
+    have h0 : ℓ.1 T T' T'' a b = 0 := by
+      have hm := (hℓ T T' T'' a b).1
+      rw [h''] at hm
+      exact Ideal.mem_bot.mp hm
+    change w.1 _ _ _ _ _ - ℓ.1 T T' T'' a b = 0
+    rw [h0, sub_zero]
+    exact hw _ _ _ _ _ h h' h''
+  · exact GlobalTheory.T.chernCocycle_tangentContraction_cohomologous_torsor
+      R A B P hP v hv j hj w hw i hi U ℓ hU hℓ n hn κ hκ
 
 end GlobalTheory.PtExt

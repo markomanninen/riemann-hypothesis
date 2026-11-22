@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnivBasis
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EndoLbIsoSymmetryHypothesisExtendNormalModel
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPrimitiveRootUnitOnIff
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemiAbelianHomExtensionHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescendsToFinitelyGeneratedSubring
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MorphismDescendsToSubring
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsPolAVFiniteTypeSubring
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIntegralClosureOfEssFiniteTypeIntDomain
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnivBasis
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.EndoLbIsoSymmetryHypothesisExtendNormalModel
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPrimitiveRootUnitOnIff
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.GenericExistsUniqueOActOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemiAbelianHomExtensionHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeDescendsToFinitelyGeneratedSubring
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.MorphismDescendsToSubring
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsPolAVFiniteTypeSubring
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteIntegralClosureOfEssFiniteTypeIntDomain
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.ZH
@@ -40,7 +45,20 @@ theorem exists_model {R : Type} [CommRing R] (P : PolAV (Sp R)) :
   obtain ⟨R₁, h₁, s₁, ft₁⟩ := GlobalTheory.KeyTf.exists_finiteType_subring_adjoin R R₀ F₁ ft₀
   obtain ⟨A₁, _, φ₁, π₁, e₁, G₁, H₁⟩ := GlobalTheory.KeyTf.exists_model_of_le h₁ P.A A₀ φ₀ H₀
   obtain ⟨L₁, lb₁, iso₁⟩ := hF₁ R₁ h₁ s₁ _ A₁.hom π₁ φ₁ G₁.1 e₁ H₁.1.w
-  have ab₁ := PolPull.isAbelianScheme_of_isGrpPullback ab₀ G₁
+  have ab_pull {X Y : Scheme.{0}} {f : X ⟶ Y} {C : Over Y} {C' : Over X}
+      [GrpObj C] [GrpObj C'] {ψ : C'.left ⟶ C.left}
+      (hC : IsAbelianScheme C) (h : IsGrpPullback C' C f ψ) : IsAbelianScheme C' := by
+    have := hC.comm
+    have hcomm : IsCommMonObj C' := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hC.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hC.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hC.geomConnected⟩
+  have ab₁ := ab_pull ab₀ G₁
   let e : Sp R₁ ⟶ A₁.left := eSec A₁
   let e' : Sp R ⟶ P.A.left := eSec P.A
   have he : e ≫ A₁.hom = 𝟙 _ := Over.w η[A₁]
@@ -170,11 +188,24 @@ theorem hypS_normal {R Ω : Type} [CommRing R] [IsDomain R] [IsIntegrallyClosed 
   rw [Finset.coe_union, Set.union_subset_iff] at hF
   let G := (Over.pullback (spMap σ)).obj B
   have HG : IsGrpPullback G B (spMap σ) (pullback.fst B.hom (spMap σ)) := isGrpPullback_pullback B _
-  have abG := PolPull.isAbelianScheme_of_isGrpPullback ab HG
+  have ab_pull {X Y : Scheme.{0}} {f : X ⟶ Y} {C : Over Y} {C' : Over X}
+      [GrpObj C] [GrpObj C'] {ψ : C'.left ⟶ C.left}
+      (hC : IsAbelianScheme C) (h : IsGrpPullback C' C f ψ) : IsAbelianScheme C' := by
+    have := hC.comm
+    have hcomm : IsCommMonObj C' := by
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨hcomm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hC.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hC.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hC.geomConnected⟩
+  have abG := ab_pull ab HG
   have := abG.comm
   let A := (Over.pullback (spMap (algebraMap D K))).obj G
   have HA : IsGrpPullback A G (spMap (algebraMap D K)) (pullback.fst G.hom _) := isGrpPullback_pullback G _
-  have abA := PolPull.isAbelianScheme_of_isGrpPullback abG HA
+  have abA := ab_pull abG HA
   let κ : S →+* K := (algebraMap D K).comp σ
   have hκ : i.comp κ = q := by
     rw [← RingHom.comp_assoc, hi, RingHom.comp_assoc, hσ]

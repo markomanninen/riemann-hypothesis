@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricLevelChainPatternIterated
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainOneCouplingCosetOfPattern
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainSupportOneOfPattern
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricLevelChainPatternIterated
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainOneCouplingCosetOfPattern
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymmetricChainSupportOneOfPattern
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
@@ -36,9 +40,10 @@ theorem apply_mul_KOne {f : Matrix ι ι' k → ℂ} (hs : ∀ x, f x ≠ 0 → 
 theorem reGL_symm_mem_KOne (e : ι ≃ Y) {d : GL Y k} (hd : d ∈ KOne k Y) : (reGL e).symm d ∈ KOne k ι :=
   mem_KOne.2 fun i j => by simpa [reGL_symm_val, Matrix.one_apply] using mem_KOne.1 hd (e i) (e j)
 
-def Near (F G : LatFrame k ι Y) : Prop := G.ord = F.ord ∧ F.bas⁻¹ * G.bas ∈ KOne k Y
+def Near (F G : LatFrame (k := k) (ι := ι) (Y := Y)) : Prop :=
+  G.ord = F.ord ∧ F.bas⁻¹ * G.bas ∈ KOne k Y
 
-theorem Near.conj {F G : LatFrame k ι Y} (h : Near F G) :
+theorem Near.conj {F G : LatFrame (k := k) (ι := ι) (Y := Y)} (h : Near F G) :
     ∃ d ∈ KOne k ι, ∀ g, G.conj.symm g = d⁻¹ * F.conj.symm g * d := by
   refine ⟨_, reGL_symm_mem_KOne F.ord h.2, fun g => ?_⟩
   rw [MulEquiv.symm_apply_eq, LatFrame.conj_apply, h.1, map_mul, map_mul, map_inv, MulEquiv.apply_symm_apply]
@@ -47,20 +52,23 @@ theorem Near.conj {F G : LatFrame k ι Y} (h : Near F G) :
     group
   rw [this]; group
 
-theorem Near.J_eq {F G : LatFrame k ι Y} (h : Near F G) (P : TypeDatum k ι) :
+theorem Near.J_eq {F G : LatFrame (k := k) (ι := ι) (Y := Y)} (h : Near F G)
+    (P : TypeDatum (k := k) (a := ι)) :
     (P.toLevel.map G.conj).J = (P.toLevel.map F.conj).J := by
   obtain ⟨d, hd, e⟩ := h.conj
   ext g
   rw [Level.mem_map, Level.mem_map, e, P.J.mul_mem_cancel_right (P.KOne_le hd),
     P.J.mul_mem_cancel_left (inv_mem (P.KOne_le hd))]
 
-theorem Near.stabLat_eq {F G : LatFrame k ι Y} (h : Near F G) : stabLat G.bas = stabLat F.bas := by
+theorem Near.stabLat_eq {F G : LatFrame (k := k) (ι := ι) (Y := Y)} (h : Near F G) :
+    stabLat G.bas = stabLat F.bas := by
   ext g
   have hd := KOne_le_KO h.2
   have e : G.bas⁻¹ * g * G.bas = (F.bas⁻¹ * G.bas)⁻¹ * (F.bas⁻¹ * g * F.bas) * (F.bas⁻¹ * G.bas) := by group
   rw [mem_stabLat, mem_stabLat, e, (KO k Y).mul_mem_cancel_right hd, (KO k Y).mul_mem_cancel_left (inv_mem hd)]
 
-theorem Near.transport_eq {F G : LatFrame k ι Y} {F' G' : LatFrame k ι' Y'} (h : Near F G) (h' : Near F' G')
+theorem Near.transport_eq {F G : LatFrame (k := k) (ι := ι) (Y := Y)}
+    {F' G' : LatFrame (k := k) (ι := ι') (Y := Y')} (h : Near F G) (h' : Near F' G')
     {f : Matrix ι ι' k → ℂ} (hs : ∀ x, f x ≠ 0 → IntM x) (hp : ∀ x y, MaxM y → f (x + y) = f x) :
     G.transport G' f = F.transport F' f := by
   funext x
@@ -74,7 +82,7 @@ theorem Near.transport_eq {F G : LatFrame k ι Y} {F' G' : LatFrame k ι' Y'} (h
   rw [← Matrix.mul_assoc F.bas.val, Units.mul_inv, Matrix.one_mul, ← Matrix.mul_assoc F'.bas.val, Units.mul_inv,
     Matrix.one_mul]
 
-theorem near_refl (F : LatFrame k ι Y) : Near F F := ⟨rfl, by simp⟩
+theorem near_refl (F : LatFrame (k := k) (ι := ι) (Y := Y)) : Near F F := ⟨rfl, by simp⟩
 
 theorem val_pow_sub_one {u : k} (hu : valuation k (u - 1) < 1) (m : ℕ) : valuation k (u ^ m - 1) < 1 := by
   have h1 : valuation k u ≤ 1 := by
@@ -100,9 +108,20 @@ theorem val_div_sub_one (h : valuation k ((ϖ' : k) - (ϖ : k)) < valuation k (�
 theorem near_typeFrame {n : Type} [Fintype n] [DecidableEq n] {c : ℕ}
     (h : valuation k ((ϖ' : k) - (ϖ : k)) < valuation k (ϖ : k)) (o : ι ≃ n ⊕ Fin c) :
     Near (typeFrame ϖ o) (typeFrame ϖ' o) := by
+  have frameVal (u : kˣ) : (typeFrame u o).bas.val =
+      diagonal (Sum.elim (fun _ => 1) fun i : Fin c => (u : k) ^ (i.val + 1)) := by
+    change fromBlocks 1 0 0 (diagonal _) = _
+    rw [← fromBlocks_diagonal]
+    simp
+  have frameInvVal : ((typeFrame ϖ o).bas⁻¹).val =
+      diagonal (Sum.elim (fun _ => 1) fun i : Fin c => ((ϖ : k) ^ (i.val + 1))⁻¹) := by
+    refine Units.inv_eq_of_mul_eq_one_right ?_
+    rw [frameVal, diagonal_mul_diagonal, ← diagonal_one]
+    congr 1
+    funext i
+    rcases i with i | i <;> simp
   refine ⟨rfl, mem_KOne.2 fun i j => ?_⟩
-  rw [Units.val_mul, GlobalTheory.SymSupport.typeFrame_inv_val, GlobalTheory.SymSupport.typeFrame_val, diagonal_mul_diagonal,
-    ← diagonal_one, diagonal_sub, diagonal_apply]
+  rw [Units.val_mul, frameInvVal, frameVal, diagonal_mul_diagonal, ← diagonal_one, diagonal_sub, diagonal_apply]
   split_ifs
   · rcases i with i | i
     · simp
@@ -132,7 +151,8 @@ theorem psi_inv_mul {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) (hϖ : IsU
   rw [e, AddChar.map_add_eq_mul, hψ.eq_one (show _ ∈ cball (1 : kˣ) from hi), mul_one]
 
 theorem isSymLevel_of_near {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) (hϖ : IsUnif ϖ)
-    (h : valuation k ((ϖ' : k) - (ϖ : k)) < valuation k (ϖ : k)) {ρ κ l : ℕ} {P : TypeDatum k (Fin κ ⊕ Fin l)}
+    (h : valuation k ((ϖ' : k) - (ϖ : k)) < valuation k (ϖ : k)) {ρ κ l : ℕ}
+    {P : TypeDatum (k := k) (a := Fin κ ⊕ Fin l)}
     (hP : IsSymLevel ψ ϖ ρ P) : IsSymLevel ψ ϖ' ρ P := by
   refine ⟨hP.1, fun g => ?_⟩
   have hg := intM_of_mem_KO (P.le_KO g.2)
@@ -147,8 +167,10 @@ theorem isSymLevel_of_near {ψ : AddChar k Circle} (hψ : HasConductor ψ 1) (h�
 
 variable {r t : Type} [Fintype r] [DecidableEq r] [Fintype t] [DecidableEq t]
 
-theorem transport_iterPhi (P : TypeDatum k r) (μ : ℕ → kˣ →* ℂˣ) (hμ : ∀ j, IsTame (μ j)) (j : ℕ)
-    {F G : LatFrame k (Ix r t (j + 1)) Y} {F' G' : LatFrame k (Ix r t j) Y'} (h : Near F G) (h' : Near F' G') :
+theorem transport_iterPhi (P : TypeDatum (k := k) (a := r)) (μ : ℕ → kˣ →* ℂˣ)
+    (hμ : ∀ j, IsTame (μ j)) (j : ℕ)
+    {F G : LatFrame (k := k) (ι := Ix r t (j + 1)) (Y := Y)}
+    {F' G' : LatFrame (k := k) (ι := Ix r t j) (Y := Y')} (h : Near F G) (h' : Near F' G') :
     G.transport G' (P.iterPhi t μ hμ j) = F.transport F' (P.iterPhi t μ hμ j) :=
   h.transport_eq h'
     (fun x hx i l => by simpa using TypeDatum.intM_of_Phi_ne_zero _ _ hx ((ixSucc r t j).symm i) l)
@@ -184,11 +206,35 @@ theorem exists_symData_of_unif_congr : ∀ {k : Type} [Field k] [ValuativeRel k]
   · unfold Chain.entry xi volNat
     rw [hPhi, hJ, hB]
     rfl
-  · have := (oneCoupling k s κ S (Fin τ) (pattern_iter k s κ S (Fin τ))).2.1 x₀ _ hy
-    rw [← this]
-    unfold Chain.Psi
-    rw [hPhi]
-    rfl
+  · let t := Fin τ
+    let rowOrd := stdOrd (Fin κ) t (s + 1) 0 rfl
+    let colOrd := stdOrd (Fin κ) t s (0 + 1) rfl
+    have coords (u : kˣ) (y : XIx (Fin κ) t (s + 1) → k) :
+        (typeFrame u rowOrd).coords (typeFrame u colOrd) (withCol x₀ y) =
+          (withCol x₀ ((u : k) • y)).submatrix rowOrd colOrd := by
+      have rowBas : (typeFrame u rowOrd).bas = 1 := by
+        apply Units.ext
+        ext i j
+        rcases i with i | i
+        · rcases j with j | j
+          · simp [typeFrame, embA, Matrix.one_apply]
+          · exact j.elim0
+        · exact i.elim0
+      unfold LatFrame.coords
+      rw [rowBas]
+      congr 1
+      ext i j
+      rcases i with i | i
+      · rcases j with j | j
+        · simp [withCol, typeFrame, embA, Matrix.fromBlocks_multiply]
+        · simp [withCol, typeFrame, embA, Matrix.fromBlocks_multiply, Fin.eq_zero j, mul_comm]
+      · exact i.elim0
+    have scaled : (ϖ' : k) • S'.y0 t = (S.ϖ : k) • S.y0 t := by
+      ext i
+      simp only [SymData.y0, Pi.smul_apply, Pi.single_apply, smul_eq_mul]
+      split_ifs <;> simp [S']
+    simp only [Chain.Psi, om_one, SymData.T, typeChain, Chain.ofType, LatFrame.transport]
+    rw [coords ϖ', coords S.ϖ, scaled]
   · unfold Chain.xiTop
     rw [hTop, (Submodule.Quotient.eq _).2 hy]
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLatFin
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CompFintype
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TieLatFin
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CompFintype
+
+@[expose] public section
 
 noncomputable section
 

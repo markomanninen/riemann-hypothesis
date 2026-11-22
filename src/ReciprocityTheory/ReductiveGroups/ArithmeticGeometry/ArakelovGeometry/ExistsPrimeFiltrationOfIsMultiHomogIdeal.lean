@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DoubleBlock
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.EqSumMultihomogeneousComponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,7 +152,7 @@ theorem exists_colon_prime (J : Ideal (MRing ι)) (hJ : IsMultiHomogIdeal J) (hJ
     rw [← mul_assoc, mul_comm y x]
     exact hxy
 
-theorem isMultiHomogIdeal_sup_span {J : Ideal (MRing ι)} (hJ : IsMultiHomogIdeal J) {f : MRing ι}
+theorem isMultiHomogIdeal_sup_span_via_span_union {J : Ideal (MRing ι)} (hJ : IsMultiHomogIdeal J) {f : MRing ι}
     {c : K → ℕ} (hf : IsMultiHomog f c) : IsMultiHomogIdeal (J ⊔ Ideal.span {f}) := by
   obtain ⟨S, hS, rfl⟩ := hJ
   refine ⟨S ∪ {f}, ?_, (Ideal.span_union _ _).symm⟩

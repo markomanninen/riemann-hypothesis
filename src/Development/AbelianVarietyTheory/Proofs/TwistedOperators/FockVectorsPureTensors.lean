@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PureTensorLinearInFactorAndHeisenbergDerivRealStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.APlusComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PureTensorLinearInFactorAndHeisenbergDerivRealStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.APlusComm
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder Classical
@@ -14,8 +18,8 @@ section Generic
 
 variable {ι κ V : Type} [DecidableEq κ] [AddCommGroup V] [Module ℂ V] {Pu : (κ → V) → V → Prop}
 
-omit [DecidableEq κ] in
 
+omit [DecidableEq κ] in
 def IsMultiLin (Pu : (κ → V) → V → Prop) : Prop :=
   ∀ (x y z : κ → V) (f g : V) (q : κ) (c : ℂ), Pu x f → Pu y g → (∀ p, p ≠ q → y p = x p) → (∀ p, p ≠ q → z p = x p) →
     z q = c • x q + y q → Pu z (c • f + g)
@@ -140,11 +144,11 @@ private theorem constr_opPow_X_mul {X σ : Type} (A : σ → (X → ℂ) → (X 
     exact foldr_mem_of_invariant A Pth hth _ hg
   have hall : ∀ P, Pth (Φ P) := fun P =>
     MvPolynomial.induction_on' P (fun m a => by rw [hmono]; exact hsm a _ (hpow m))
-      (fun p q hp hq => by rw [map_add]; exact hadd _ _ hp hq)
+      (fun p q hp hq => by rw [map_add (f := _)]; exact hadd _ _ hp hq)
   refine MvPolynomial.induction_on' Q (fun u a => ?_) (fun p q hp hq => ?_)
   · rw [MvPolynomial.X, MvPolynomial.monomial_mul, one_mul, hmono, hmono,
       opPow_single_one_add A Pth hth hc y u hg, hAs y a _ (hpow u)]
-  · rw [mul_add, map_add, map_add, hp, hq, hA y _ _ (hall p) (hall q)]
+  · rw [mul_add, map_add (f := _), map_add (f := _), hp, hq, hA y _ _ (hall p) (hall q)]
 
 end Generic
 

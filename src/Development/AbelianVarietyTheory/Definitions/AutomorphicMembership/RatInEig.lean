@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimes
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyAllIff
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.EMtLevel
-import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroPlacesOverPrimes
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyAllIff
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SplitRep
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.EMtLevel
+public import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,14 +20,14 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.L2 Formalism.L2.Host
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def ratL {D : D7} (L : LocAll (lay0 D)) (S : RatDat D.ntw) : RatDat (withLoc L).ntw := { S with }
+
 
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 1000000 in
-
 structure NAt (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (cf : CharFrame D) (nch : NChoice D) (tp : TupTied D cf nch) :
     Type 1 where
   nt : NTrue hL D cf nch tp
@@ -54,10 +58,10 @@ section Rows
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m} {Ks : Type}
   [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 1000000 in
-
 structure NRow {hL : GlobalTheory.Published.LocalLanglandsGL} {cf : CharFrame D} {nch : NChoice D} {tp : TupTied D cf nch}
     (a : NAt hL D cf nch tp) (R : RealDat3 D A3 Ks) (F : Face3 D A3) (cG : G0 R.Pg D.R.r ≃* G0g D.nd) {X0 : BaseLevelRowSide D}
     (Y : R3.Read (A3 := A3) R.toRealDat F.lv2 X0) : Type 1 where
@@ -89,8 +93,6 @@ abbrev NExt (hL : GlobalTheory.Published.LocalLanglandsGL) : Type 2 :=
 
 def NX (hL : GlobalTheory.Published.LocalLanglandsGL) (E : NExt hL) : NCondition := fun K B f T w Z Wt p0 t nch n xd =>
   Σ c : NCore hL t n, E K B f T w Z Wt p0 t nch n xd c
-
-def NExt.none (hL : GlobalTheory.Published.LocalLanglandsGL) : NExt hL := fun _ _ _ _ _ _ _ _ _ _ _ _ _ => PUnit
 
 end GlobalTheory.Mem.Top.Bl
 

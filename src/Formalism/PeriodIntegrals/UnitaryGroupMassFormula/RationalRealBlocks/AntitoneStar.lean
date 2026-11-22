@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.EvenStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RationalRealBlocks.EvenStep
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -12,7 +16,7 @@ theorem reM_rfl {m : ℕ} (A : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ) : reM (m 
   rfl
 
 theorem detShift_eq {m : ℕ} (w : Fin (m + 1) → ℤ) : detShift w = w (Fin.last m) := by
-  rw [detShift, dif_pos (Nat.succ_pos m)]
+  rw [detShift, dite_eq_left (Nat.succ_pos m)]
   rfl
 
 theorem natW_eq {m : ℕ} (w : Fin (m + 1) → ℤ) : natW w = nuOf w := by

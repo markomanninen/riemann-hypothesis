@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.TorusAtExistsOfParts
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ConjEqNegOfSqEqNegNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.TorusAtExistsOfParts
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.ConjEqNegOfSqEqNegNat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -95,7 +99,7 @@ theorem exists_root (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.IsHermitian)
     rw [hermForm, ← hSS, ← mulVec_mulVec, dotProduct_mulVec, ← this]
     rfl
   have hinj : Function.Injective (S.vecMulLinear) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     by_contra h
     have := hpos z h
@@ -161,10 +165,10 @@ theorem coe_one_sub_w0 : ((1 - H.w0 : 𝓞 E) : E) = cc (H.w0 : E) := by
   apply τ.injective
   rw [cc, IsCMField.complexEmbedding_complexConj]
   have h := congrArg (τ.comp (algebraMap (𝓞 E) E)) H.two_weight_eq_one_add_root
-  rw [map_mul, map_add, map_one, map_ofNat] at h
+  rw [map_mul, map_add (f := _), map_one, map_ofNat] at h
   change 2 * τ (H.w0 : E) = 1 + τ (H.rt : E) at h
   have h' := congrArg (starRingEnd ℂ) h
-  rw [map_mul, map_add, map_one, map_ofNat, (conj_rt (H := H) τ).2] at h'
+  rw [map_mul, map_add (f := _), map_one, map_ofNat, (conj_rt (H := H) τ).2] at h'
   have : τ ((1 - H.w0 : 𝓞 E) : E) = 1 - τ (H.w0 : E) := by simp
   rw [this]
   linear_combination (-h - h') / 2
@@ -182,8 +186,8 @@ theorem exists_idxEquiv (D : Datum H) {g : ℕ} {ty : Fin g → (E →+* ℂ)} (
 
 end Host
 
-open TorusAtAssembly in
 
+open TorusAtAssembly in
 theorem exists_torusOf : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Pm : D.La →+ (Fin g → ℂ)) (Hm : Matrix (Fin g) (Fin g) ℂ), IsTypeFn H D.p D.q ty → IsPeriod D ty Pm → Hm.IsHermitian → (∀ z : Fin g → ℂ, z ≠ 0 → 0 < (hermForm Hm z z).re) → (∀ a b, (hermForm Hm (Pm a) (Pm b)).im = D.EF a b) → ∃ (T : I2.PT E) (ψ : (Fin g → ℂ) ≃ₗ[ℂ] I2.Vsp T.dim), IsTorusOf D ty Pm Hm T ψ := by
   intro E _ _ _ H D g ty Pm Hm hty hP hH hpos hEF
   obtain ⟨hlin, -, hdisc, hspan, -⟩ := hP

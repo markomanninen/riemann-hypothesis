@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisOfPolarized
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsUnitaryOfCharIff
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisOfPolarized
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL
 
 namespace GlobalTheory.DiscSpec
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N a c d : ℕ} {n : Fin c → ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N a c d : ℕ} {n : Fin c → ℕ}
 
 def finVec {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) : Submodule ℂ V where
   carrier := {v | FiniteDimensional ℂ (Submodule.span ℂ (Set.range fun k => ρ k v))}
@@ -21,7 +25,7 @@ def finVec {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (ρ : Represen
       (S₂ := Submodule.span ℂ (Set.range fun k => ρ k v) ⊔ Submodule.span ℂ (Set.range fun k => ρ k w))
       (Submodule.span_le.2 (by
         rintro _ ⟨k, rfl⟩
-        simp only [map_add]
+        simp only [map_add (f := _)]
         exact Submodule.add_mem_sup (Submodule.subset_span ⟨k, rfl⟩) (Submodule.subset_span ⟨k, rfl⟩)))
   zero_mem' := FiniteDimensional.span_of_finite ℂ ((Set.finite_singleton 0).subset (by
     rintro _ ⟨k, rfl⟩
@@ -61,8 +65,8 @@ def IsSpehOf (V : Submodule ℂ (Sm E N)) (π : CuspSub E a) (d : ℕ) : Prop :=
 
 def IsNormalised (π : CuspSub E a) : Prop := ∀ φ ∈ π.V, ∀ t g, φ.1 (splitCentre E a t * g) = φ.1 g
 
-attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 
+attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 structure HasSpehComp (V : Submodule ℂ (Sm E N)) (π : CuspSub E a) (d : ℕ) : Prop where
   exLoc : ∀ w, ∃ σ σ', π.IsLocComp w σ ∧ IsLocCompGL V w σ'
   loc : ∀ w σ σ', π.IsLocComp w σ → IsLocCompGL V w σ' →
@@ -107,7 +111,10 @@ theorem indForms_one (h : ∑ _ : Fin 1, a = a) (π : CuspSub E a) : indForms h 
     rw [stdBlocks_val, Subsingleton.elim b 0]; simp)
   have hl : ∀ m, leviEmb (Ad E) (stdBlocks (fun _ : Fin 1 => a) h) m = m 0 := fun m => by
     ext i j
-    have := leviEmb_apply_same (Ad E) (stdBlocks (fun _ : Fin 1 => a) h) m 0 i j
+    have : ((leviEmb (Ad E) (stdBlocks (fun _ : Fin 1 => a) h) m : GL (Fin a) (Ad E)) :
+        Matrix (Fin a) (Fin a) (Ad E)) (stdBlocks (fun _ : Fin 1 => a) h ⟨0, i⟩)
+        (stdBlocks (fun _ : Fin 1 => a) h ⟨0, j⟩) = (m 0 : Matrix (Fin a) (Fin a) (Ad E)) i j := by
+      simp [leviEmb, Matrix.blockDiagonal'_apply_eq]
     rwa [he, he] at this
   refine le_antisymm (fun φ hφ => ?_) fun φ hφ => ⟨fun u hu g => ?_, (π.cusp φ hφ).1.level, (π.cusp φ hφ).1.kfin,
     fun k g => Submodule.subset_span ⟨fun _ => ⟨_, π.stable (.cpt k) _ (π.stable (.fin g) φ hφ)⟩, funext fun m => ?_⟩⟩
@@ -132,26 +139,6 @@ theorem indForms_one (h : ∑ _ : Fin 1, a = a) (π : CuspSub E a) : indForms h 
   · rw [hl, Fin.prod_univ_one, ← mul_assoc]
     rfl
 
-theorem isSpehOf_one (π : CuspSub E a) : IsSpehOf π.V π 1 := by
-  refine ⟨by simp, fun _ => 1, fun i => ?_, LinearMap.id, ?_, fun _ _ _ => rfl⟩
-  · have : spehExp 1 i + a * spehExp 1 i = 0 := by simp [spehExp]
-    rw [this]
-    exact ⟨fun _ _ _ => rfl, fun _ => by simp [HChar.val, HChar.locK], fun _ => by simp [HChar.inf]⟩
-  · simp only [Submodule.map_id, CuspSub.twist_one]
-    exact indForms_one _ π
-
-theorem isNormalised_triv (ha : a ≤ 1) : IsNormalised (CuspSub.triv E ha) := fun φ hφ _ _ => by
-  obtain ⟨z, rfl⟩ := Submodule.mem_span_singleton.1 hφ
-  rfl
-
-theorem isNormalised_of_isDiscrete {π : CuspSub E a} (h : IsDiscrete π.V) : IsNormalised π :=
-  fun φ hφ => (h.sqInt φ hφ).1
-
-theorem isIsoGL_iff (π π' : CuspSub E a) : IsIsoGL π.V π'.V ↔ π.Iso π' := by
-  refine exists_congr fun T => ⟨fun h o φ => Subtype.ext (h o φ _ rfl), fun h o φ ψ e => ?_⟩
-  rw [show ψ = π.op o φ from Subtype.ext e, h]
-  rfl
-
 end GlobalTheory.DiscSpec
 
 namespace GlobalTheory.Published
@@ -159,7 +146,7 @@ namespace GlobalTheory.Published
 open GlobalTheory.DiscSpec
 
 def DiscreteSpectrumGL : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N : ℕ), 1 ≤ N →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N : ℕ), 1 ≤ N →
     (∀ V : Submodule ℂ (Sm E N), IsDiscrete V →
       ∃ (a d : ℕ) (π : CuspSub E a), π.IsUnitary ∧ IsNormalised π ∧ IsSpehOf V π d) ∧
     (∀ (a d : ℕ) (π : CuspSub E a), d * a = N → IsNormalised π →
@@ -171,7 +158,7 @@ def DiscreteSpectrumGL : Prop :=
     ∀ V : Submodule ℂ (Sm E N), IsDiscrete V → ∀ (a d : ℕ) (π : CuspSub E a),
       IsNormalised π → IsSpehOf V π d → HasSpehComp V π d
 
-theorem DiscreteSpectrumGL.iso (H : DiscreteSpectrumGL) {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+theorem DiscreteSpectrumGL.iso (H : DiscreteSpectrumGL) {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
     {N a d : ℕ} (hN : 1 ≤ N) {V : Submodule ℂ (Sm E N)} (hV : IsDiscrete V) {π π' : CuspSub E a} (h : IsNormalised π)
     (h' : IsNormalised π') (e : IsSpehOf V π d) (e' : IsSpehOf V π' d) : π.Iso π' :=
   Quotient.exact (eq_of_heq (Sigma.mk.inj ((H E N hN).2.2.1 V hV a d a d π π' h h' e e').2).2)

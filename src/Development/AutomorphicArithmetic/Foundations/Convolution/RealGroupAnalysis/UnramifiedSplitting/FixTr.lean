@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -13,7 +17,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.fixTr :
   intro K _ _ v f d hd
   have hl := (lcLaws K v).2.2.2.2.2.2 d
   set x := Matrix.GeneralLinearGroup.map (cp v) d with hx
-  have hd' : x ∈ GlobalTheory.LFun.KGL v 2 := hd
+  have hd' : x ∈ GlobalTheory.LFun.KGL v (n := 2) := hd
   refine ⟨fun hf g k hk => ?_, fun B hB g => ?_⟩
   · show f (g * lc v k * d) = f (g * d)
     rw [mul_assoc, hl, ← mul_assoc, hf _ _ (mul_mem (mul_mem (inv_mem hd') hk) hd')]

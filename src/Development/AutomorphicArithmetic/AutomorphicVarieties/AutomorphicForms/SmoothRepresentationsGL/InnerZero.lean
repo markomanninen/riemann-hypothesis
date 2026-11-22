@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
-import GroundTheory.AutomorphicForms.L2LocalComponents.Summand
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+public import GroundTheory.AutomorphicForms.L2LocalComponents.Summand
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -35,7 +39,7 @@ private theorem iso_of_compl {E : Type} [Field E] [NumberField E] [IsTotallyReal
     rintro o φ ⟨h1, h2⟩
     refine ⟨π.stable o φ h1, ?_⟩
     obtain ⟨x, hx, d, hd, rfl⟩ := Submodule.mem_sup.1 h2
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (π'.stable o x hx) (hD o d hd)
   have hge : π.V ≤ π'.V ⊔ D := by
     rcases π.irred _ inf_le_left hst with h0 | h0

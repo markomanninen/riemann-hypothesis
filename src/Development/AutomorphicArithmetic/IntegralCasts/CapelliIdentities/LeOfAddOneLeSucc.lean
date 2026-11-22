@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qn14.le_of_add_one_le_succ :
     ∀ {a : WithBot ℕ∞} {k : ℕ},

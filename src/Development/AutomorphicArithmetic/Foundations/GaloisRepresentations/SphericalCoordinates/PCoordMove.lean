@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -9,7 +13,7 @@ open UpperTheory.Gal.W2
 private theorem rd_add' {p : ℕ} [Fact (Nat.Prime p)] {D : UPel.HT.Datum p} {G : HTGroup p}
     (L : Link D G) (x : (AfP p ⊗[ℚ] G.C)ˣ) (h : G.GAf) (a b : VQ D) :
     rd L x h (a + b) = rd L x h a + rd L x h b := by
-  simp only [rd, TensorProduct.tmul_add, map_add]
+  simp only [rd, TensorProduct.tmul_add, map_add (f := _)]
 
 private theorem rd_nsmul' {p : ℕ} [Fact (Nat.Prime p)] {D : UPel.HT.Datum p} {G : HTGroup p}
     (L : Link D G) (x : (AfP p ⊗[ℚ] G.C)ˣ) (h : G.GAf) (N : ℕ) (a : VQ D) :
@@ -53,7 +57,7 @@ theorem UpperTheory.Gal.W2.coordMove_of :
     obtain ⟨w1, hw1, hw1e⟩ := hA2 a0
     have he' : rd L (trivX B) a.1.1 (j e) ∈ LaHat D := (hA1 (j e)).1 ⟨0, e, by simp⟩
     refine ⟨w1 + rd L (trivX B) a.1.1 (j e), add_mem hw1 he', ?_⟩
-    rw [hj, he, map_add, map_nsmul, rd_add', rd_nsmul', hw1e, smul_add, add_assoc]
+    rw [hj, he, map_add (f := _), map_nsmul, rd_add', rd_nsmul', hw1e, smul_add, add_assoc]
   · intro w0
     rw [← hloc w0]
     constructor

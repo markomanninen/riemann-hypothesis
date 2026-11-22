@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
+
+@[expose] public section
 
 open UpperTheory.V.Z.Kato.Joint
 
@@ -58,7 +62,7 @@ private theorem finSupp_comp_lift (k : ℕ) (χ : ℕ → Qbar l) (P : FreeAlgeb
     exact hb _ (ha lam h)
   | add a b ha hb =>
     intro lam h
-    rw [map_add, LinearMap.comp_add]
+    rw [map_add (f := _), LinearMap.comp_add]
     exact FinSupp.add (ha lam h) (hb lam h)
 
 private theorem exists_pow_mul_le (x : Qbar l) : ∃ k : ℕ, ‖((l : ℕ) : Qbar l) ^ k * x‖ ≤ 1 := by
@@ -80,7 +84,8 @@ theorem UpperTheory.V.Z.Kato.Joint.finP :
     ∑ n ∈ Finset.range B, ι.symm (cc n) • LinearMap.proj n
   have hlam₀ : ∀ a : ℕ → Qbar l, lam₀ a = ι.symm (GlobalTheory.EisM.lam B cc fun i => ι (a i)) := by
     intro a
-    simp [lam₀, GlobalTheory.EisM.lam, map_sum, map_mul, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [lam₀, GlobalTheory.EisM.lam, map_sum, map_mul, LinearMap.sum_apply]
   have hfs₀ : FinSupp lam₀ := by
     refine ⟨Finset.range B, fun f hf => ?_⟩
     rw [hlam₀, GlobalTheory.EisM.lam, Finset.sum_eq_zero, map_zero]

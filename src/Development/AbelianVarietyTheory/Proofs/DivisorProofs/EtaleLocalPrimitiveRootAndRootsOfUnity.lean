@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleAdjoinRootXPowSubC
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleLocallyIffAffineEtalePointCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleAdjoinRootXPowSubC
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -49,7 +54,7 @@ lemma loc_of_prod_eq_zero {U : Scheme.{0}} (y : Γ(U, ⊤)) (z : ℕ → Γ(U, �
     by_contra hnb
     have hun : IsUnit (γ (z a0 - z b)) := (hu a0 ha0 b hbS (Ne.symm hba)).map γ
     have e : γ (z a0 - z b) = γ (y - z b) + -(γ (y - z a0)) := by
-      rw [← map_neg, ← map_add]; congr 1; ring
+      rw [← map_neg, ← map_add (f := _)]; congr 1; ring
     rw [e] at hun
     exact (IsLocalRing.nonunits_add ((mem_nonunits_iff).2 hnb)
       ((mem_nonunits_iff).2 (fun h => hna (by simpa using h.neg)))) hun
@@ -127,7 +132,7 @@ lemma cyc_etale {A : Type} [CommRing A] (q : ℕ) [NeZero q] (hq : IsUnit (q : A
     rw [map_mul, AdjoinRoot.mk_self, zero_mul, map_sub, map_pow, AdjoinRoot.mk_X, map_one, sub_eq_zero] at this
     exact this
   have hd := congrArg (fun p => AdjoinRoot.mk (cyclotomic q A) (derivative p)) hG
-  simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_add, map_mul,
+  simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_add (f := _), map_mul,
     AdjoinRoot.mk_self, zero_mul, add_zero] at hd
   have hu : IsUnit (AdjoinRoot.mk (cyclotomic q A) (C (q : A)) * AdjoinRoot.mk (cyclotomic q A) (X ^ (q - 1))) := by
     rw [map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C]
@@ -210,7 +215,7 @@ theorem prim_loc : ∀ (q : ℕ) [NeZero q] (U : Scheme.{0}), (IsUnit (q : Γ(U,
       GlobalTheory.etale_adjoinRoot_X_pow_sub_C A q uA hqA uA.isUnit,
       adjoinRoot_surj _ (monic_X_pow_sub_C _ (NeZero.ne q)) ?_,
       ⟨Units.map (Scheme.ΓSpecIso (CommRingCat.of (AdjoinRoot (X ^ q - C (uA : A))))).inv.hom.toMonoidHom v, ?_⟩⟩
-    · rw [natDegree_X_pow_sub_C]
+    · rw [natDegree_X_pow_sub_C _]
       exact NeZero.ne q
     · ext
       have hu' : (uA : A) = (Scheme.ΓSpecIso A).hom.hom (f.appTop.hom (u : Γ(U, ⊤))) := by rw [huA]; rfl

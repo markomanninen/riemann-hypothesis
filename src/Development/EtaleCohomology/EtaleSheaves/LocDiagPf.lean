@@ -1,12 +1,16 @@
-import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite
 
 namespace LateralTheory.E.LocDiagPf
 
-open Classical in
 
+open Classical in
 def g {S : Type} [CommRing S] (p : PrimeSpectrum S) (s : Finset p.asIdeal.primeCompl) : S :=
   ∏ x ∈ s, (x : S)
 
@@ -88,8 +92,6 @@ def Cc : Cocone (Dg p) where
         simp only [Functor.const_obj_map, CommRingCat.hom_comp, CommRingCat.hom_ofHom, Dg]
         rw [RingHom.comp_assoc, tr_comp, toLoc_comp, RingHom.comp_assoc, toLoc_comp]
         rfl }
-
-theorem Cc_ι (s : Finset p.asIdeal.primeCompl) : ((Cc p).ι.app s).hom = toLoc p s := rfl
 
 def phi (c : Cocone (Dg p)) : S →+* c.pt :=
   (c.ι.app ∅).hom.comp (algebraMap S (Localization.Away (g p ∅)))

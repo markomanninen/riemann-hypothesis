@@ -1,14 +1,18 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ExpToSat
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SatBridge
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksExponent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpSat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SatBridge
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPowTendstoZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetQuotientEigenvector
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ExpToSat
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.SatakeSocle.SatBridge
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardBlocksExponent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExpSat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SatBridge
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformizerPowTendstoZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetQuotientEigenvector
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SatakeParameterSphericalProductSpehQuotients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem expToSat : PositivityTheory.Rg.BcB.F.Tail.PExp.ExpToSat := by
   have hu0 : u ≠ 0 := by
     rintro rfl
     exact hx.1 (by rw [← hfu, map_zero])
-  have hfix : u.1 ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w n) :=
+  have hfix : u.1 ∈ fixed (locProd h w σ) (GlobalTheory.LFun.KGL w (n := n)) :=
     GlobalTheory.LGrp.mem_fixed.2 fun g hg => congrArg Subtype.val (GlobalTheory.LGrp.mem_fixed.1 hu g hg)
   have hne : u.1 ≠ 0 := fun e => hu0 (Subtype.ext e)
   obtain ⟨B, hB, hBv⟩ := GlobalTheory.SatInd.exists_sat_multiProd h (π := fun i => (σ i).ρ)

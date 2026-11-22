@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
-import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComparisonMapIntertwinesGroupAlgebraActionStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemHeckeEigOfImageMovedByCentreStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CenterMonoidAlgebraLeSpanCentralIntegralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddValuationNonnegRingOfIntegersNumberFieldStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIntegralPreservesLocalisedLatticeImageStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+public import Formalism.SharpRestriction.LevelLetterCocycles.EndomorphismIndexBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComparisonMapIntertwinesGroupAlgebraActionStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemHeckeEigOfImageMovedByCentreStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CenterMonoidAlgebraLeSpanCentralIntegralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AddValuationNonnegRingOfIntegersNumberFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIntegralPreservesLocalisedLatticeImageStatement
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.L2 NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module Polynomial GlobalTheory.Pass GlobalTheory.PendOf Formalism.MainNotions.PairedCharacterCondition
 open scoped TensorProduct
 
@@ -39,13 +44,13 @@ theorem onMt_of_mem (μ : D.what₂.Tup) (j : ℕ) (z : MonoidAlgebra ℂ (G0g D
     (h : z ∈ Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) :
     D.ntypes.onMt μ j z = D.ntypes.cenMt μ j ⟨z, h⟩ := by
   unfold Formalism.BasicNotions.NTypes.onMt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 abbrev CenR (D : D7) (i : D.nd.Loc) : Subalgebra (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd)) :=
   Subalgebra.center (D.nd.O i) (MonoidAlgebra (D.nd.O i) (G0g D.nd))
 
-variable (D) in
 
+variable (D) in
 def psi (i : D.nd.Loc) (z : MonoidAlgebra (D.nd.O i) (G0g D.nd)) :
     Module.End ℂ (D.what₂.Mt (D.nd.mu i) (D.nd.j i)) :=
   D.ntypes.onMt (D.nd.mu i) (D.nd.j i) (mapCoef (iotaO D.nd D.naut i) z)
@@ -64,7 +69,7 @@ theorem psi_add (i : D.nd.Loc) (a b : MonoidAlgebra (D.nd.O i) (G0g D.nd)) (ha :
   have ha' := mapCoef_mem_center (iotaO D.nd D.naut i) a ha
   have hb' := mapCoef_mem_center (iotaO D.nd D.naut i) b hb
   unfold psi
-  rw [mapCoef_eq, map_add, ← mapCoef_eq, ← mapCoef_eq, onMt_of_mem _ _ _ (Subalgebra.add_mem _ ha' hb'),
+  rw [mapCoef_eq, map_add (f := _), ← mapCoef_eq, ← mapCoef_eq, onMt_of_mem _ _ _ (Subalgebra.add_mem _ ha' hb'),
     onMt_of_mem _ _ _ ha', onMt_of_mem _ _ _ hb', ← map_add]
   rfl
 
@@ -135,7 +140,7 @@ def zL (z : CenR D i) : Module.End (D.nd.O i) (D.nd.Mt i) where
     have h1 := (hL z z.2 (m + m')).choose_spec
     have h2 := (hL z z.2 m).choose_spec
     have h3 := (hL z z.2 m').choose_spec
-    rw [h1, J_add S m m', J_add, h2, h3, map_add])
+    rw [h1, J_add S m m', J_add, h2, h3, map_add (f := _)])
   map_smul' c m := J_inj S (by
     have h1 := (hL z z.2 (c • m)).choose_spec
     have h2 := (hL z z.2 m).choose_spec
@@ -184,7 +189,7 @@ theorem zA_bc (z : CenR D i) (v : TensorProduct (D.nd.O i) (KK D.nd i) (D.nd.Mt 
     rw [e, e, S.semi, S.semi, map_smul]
     congr 1
     exact zL_spec S hL z m
-  | add v w hv hw => rw [map_add, map_add, hv, hw, map_add, map_add]
+  | add v w hv hw => rw [map_add (f := _), map_add (f := _), hv, hw, map_add (f := _), map_add (f := _)]
 
 end Build
 
@@ -213,7 +218,7 @@ theorem zA_comm (h4 : ∀ (c : MonoidAlgebra ℂ (G0g D.nd)) (x : D.nd.X i)
       rw [e1, e2, map_smul]
     · simp
     · intro v w hv hw
-      rw [map_add, map_add, hv, hw, map_add, map_add]
+      rw [map_add (f := _), map_add (f := _), hv, hw, map_add (f := _), map_add (f := _)]
   apply end_ext S
   intro m
   simp only [Module.End.mul_apply]

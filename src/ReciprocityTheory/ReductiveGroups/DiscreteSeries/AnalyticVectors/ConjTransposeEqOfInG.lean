@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InPApplyEqZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InPApplyEqZero
+
+@[expose] public section
 
 noncomputable section
 

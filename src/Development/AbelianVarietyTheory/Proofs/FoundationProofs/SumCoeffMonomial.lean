@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialDerivCauchyBoundGaussianGrowthStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MonomialDerivCauchyBoundGaussianGrowthStatement
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -19,7 +23,7 @@ theorem card_strictMono_le (a d : ℕ) [Fintype {s : Fin a → Fin d // StrictMo
 
 theorem sum_coeff_monomial {σ : Type} (w : (σ →₀ ℕ) → ℂ) :
     ∃ L : MvPolynomial σ ℂ →ₗ[ℂ] ℂ, (∀ α c, L (MvPolynomial.monomial α c) = c * w α) ∧
-      ∀ P, L P = ∑ α ∈ P.support, MvPolynomial.coeff α P * w α := by
+      ∀ P, L P = ∑ α ∈ P.support, AddMonoidAlgebra.coeff P α * w α := by
   let L : MvPolynomial σ ℂ →ₗ[ℂ] ℂ := (MvPolynomial.basisMonomials σ ℂ).constr ℂ w
   have h1 : ∀ α c, L (MvPolynomial.monomial α c) = c * w α := by
     intro α c
@@ -27,7 +31,8 @@ theorem sum_coeff_monomial {σ : Type} (w : (σ →₀ ℕ) → ℂ) :
       simp [MvPolynomial.smul_monomial]
     rw [this, map_smul, Module.Basis.constr_basis, smul_eq_mul]
   refine ⟨L, h1, fun P => ?_⟩
-  conv_lhs => rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [P.as_sum, map_sum]
   simp only [h1]
 
 theorem prod_monomial {σ ι : Type} (s : Finset ι) (α : ι → σ →₀ ℕ) (c : ι → ℂ) :
@@ -68,7 +73,7 @@ theorem expo_le (D : D7) {a d : ℕ} {n : D.what₂.Tau → ℕ} (T : Tup D a d 
     (p : ∀ τ, Fin (n τ) → Equiv.Perm (Fin a)) (k : D.what₂.Tau × Fin d × Fin a) :
     expo D T p k ≤ n k.1 := by
   obtain ⟨τ0, r, c⟩ := k
-  simp only [expo, Finsupp.coe_finset_sum, Finset.sum_apply]
+  simp only [expo, Finset.sum_apply']
   rw [Finset.sum_eq_single τ0]
   · calc _ ≤ ∑ _j : Fin (n τ0), 1 := by
           refine Finset.sum_le_sum fun j _ => ?_
@@ -90,7 +95,8 @@ theorem expo_sum (D : D7) {a d : ℕ} {n : D.what₂.Tau → ℕ} (T : Tup D a d
     ((expo D T p).sum fun _ m => m) = a * ∑ τ, n τ := by
   have : ((expo D T p).sum fun _ m => m) = Finsupp.degree (expo D T p) := rfl
   rw [this]
-  simp only [expo, map_sum, Finsupp.degree_single]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [expo, map_sum, Finsupp.degree_single]
   simp [Finset.mul_sum, mul_comm]
 
 theorem minor_bound : ∀ (D : D7) (a d : ℕ) (n : D.what₂.Tau → ℕ) (G : VC D a d → ℂ) (S A B : ℝ), 0 < A → 1 ≤ B → 0 ≤ S → (∀ τ, (n τ : ℝ) ≤ 2 * B) → Differentiable ℂ G → (∀ z, ‖G z‖ ^ 2 ≤ S * Real.exp (Real.pi * (∑ τ, ∑ i, ∑ j, ‖z τ i j‖ ^ 2) / A)) → (Fintype.card (Tup D a d n) ≤ 2 ^ (d * ∑ τ, n τ)) ∧ ∀ T : Tup D a d n, ‖GL3Theta.applyAt0 D (minorPol D T) G‖ ^ 2 ≤ ((a.factorial : ℝ) ^ (∑ τ, n τ)) ^ 2 * (S * (2 * Real.exp 1 * Real.pi * B / A) ^ (a * ∑ τ, n τ)) := by
@@ -129,7 +135,8 @@ theorem minor_bound : ∀ (D : D7) (a d : ℕ) (n : D.what₂.Tau → ℕ) (G : 
         (a.factorial : ℝ) ^ (∑ τ, n τ) := by
       simp [Fintype.card_pi, Fintype.card_perm, Finset.prod_pow_eq_pow_sum]
     have hle : ‖L (minorPol D T)‖ ≤ (a.factorial : ℝ) ^ (∑ τ, n τ) * Real.sqrt M := by
-      rw [minorPol_eq, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [minorPol_eq, map_sum]
       refine (norm_sum_le _ _).trans ?_
       refine (Finset.sum_le_sum fun p _ => hterm p).trans ?_
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hcard]

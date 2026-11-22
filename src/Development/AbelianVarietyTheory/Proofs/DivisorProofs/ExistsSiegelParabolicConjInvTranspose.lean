@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkGLEpsPairMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlkGLEpsPairMem
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -69,8 +73,8 @@ theorem epsD_mul_self {D : D7} (S : HSp D) : epsD S * epsD S = 1 := by
   show Formalism.L2.Theta.mt (dblSp S) (epsD S) * Formalism.L2.Theta.mt (dblSp S) (epsD S) = 1
   rw [mt_epsD, blkMat_mul, neg_mul_neg, Matrix.one_mul, blkMat_one]
 
-open GlobalTheory.DiagThetaRule in
 
+open GlobalTheory.DiagThetaRule in
 theorem exists_siegel_conj (D : D7) (S : HSp D) (JB : Matrix (Fin S.rank) (Fin S.rank) D.host.E)
     (p : GlobalTheory.WeilM.UG (GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA D.sp.cm.sig) (GlobalTheory.WeilM.dbl (incM D.host.F JB)))
     (t : GL (Fin S.rank) (AF D.host.F ⊗[D.host.F] D.host.E))

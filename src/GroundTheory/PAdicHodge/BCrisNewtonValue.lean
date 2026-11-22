@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisNewtonSlope
-import GroundTheory.PAdicHodge.BCrisNewtonDom
-import GroundTheory.PAdicHodge.BCrisPlusInvariants
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewtonSlope
+public import GroundTheory.PAdicHodge.BCrisNewtonDom
+public import GroundTheory.PAdicHodge.BCrisPlusInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,11 +19,8 @@ open _root_.WittVector Laurent Polynomial WittTilt
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-local notation "𝔸" => Localization.Away (p : AInf ℂ_[p] p)
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
 
 variable (p) in
-
 def sig (ρ : ℝ) : ℝ := Real.log ρ / Real.log (p : ℝ)⁻¹
 
 theorem inv_p_pos : (0 : ℝ) < (p : ℝ)⁻¹ := inv_pos.2 (Nat.cast_pos.2 hp.out.pos)
@@ -51,7 +53,8 @@ theorem pow_rpow_comm {x : ℝ} (hx : 0 ≤ x) (n : ℕ) (s : ℝ) : (x ^ n) ^ s
   rw [← Real.rpow_natCast, ← Real.rpow_mul hx, mul_comm, Real.rpow_mul hx, Real.rpow_natCast]
 
 theorem gn_padicInt {ρ : ℝ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (c : ℤ_[p]) :
-    gn ℂ_[p] p ρ (algebraMap (AInf ℂ_[p] p) 𝔸 (IsPerfectoidField.padicIntToWitt (K := ℂ_[p]) p c)) =
+    gn ℂ_[p] p ρ (algebraMap (AInf ℂ_[p] p) (Localization.Away (p : AInf ℂ_[p] p))
+      (IsPerfectoidField.padicIntToWitt (K := ℂ_[p]) p c)) =
       ‖c‖ ^ sig p ρ := by
   by_cases hc : c = 0
   · subst hc

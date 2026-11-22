@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsOverVUnder
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowTypeOneAddPrimeSmulEqOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupModTypePrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntAtNatCast
-import Formalism.LocalToGlobal.Columns.QthExistsBound
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwistedK1BlockDecomposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsOverVUnder
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQFiniteIndexAndRoot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowTypeOneAddPrimeSmulEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLevelGroupModTypePrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntAtNatCast
+public import Formalism.LocalToGlobal.Columns.QthExistsBound
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TwistedK1BlockDecomposition
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.L2.Col Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.L2.Ker Formalism.MainNotions Formalism.L2.DIV Formalism.MainNotions.G GlobalTheory.TwU
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -69,7 +74,8 @@ theorem congAt_local {D : D7} {X : Fields} (s : Seam D X) (P : HeightOneSpectrum
   have ex : k x - x = ∑ b, x b • (k (Pi.single b 1) - Pi.single b 1) := by
     conv_lhs => rw [show x = ∑ b, x b • (Pi.single b (1 : X.E) : Sp X.E N) by
       funext m; simp [Finset.sum_apply, Pi.single_apply]]
-    simp only [map_sum, map_smul, ← Finset.sum_sub_distrib, smul_sub]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, ← Finset.sum_sub_distrib, smul_sub]
   rw [ex, Pi.smul_apply, Finset.sum_apply, smul_eq_mul, Finset.mul_sum]
   refine intAt_sum _ fun b _ => ?_
   have e2 : (((qOf P ^ n : ℕ) : X.E))⁻¹ * (x b • (k (Pi.single b 1) - Pi.single b 1) : Sp X.E N) l =
@@ -278,27 +284,5 @@ end GlobalTheory.TwU.MidIndep
 namespace GlobalTheory.TwU
 
 open GlobalTheory.CongLevel GlobalTheory.TwU.MidIndep
-
-theorem xiAt_cong_invariant : ∀ (D : D7) (L : SizeData₂ D) (hT : GatTies D) (Gi : Formalism.MainNotions.G.Inst D L) (Gl : Formalism.MainNotions.G.LatInst D) (Kc : Formalism.MainNotions.G.Consts) (Y : DivX D) (cX : ExtraC)
-    (ex : Extra D L hT Gi Gl Kc Y cX) (t : Formalism.L2.Ker.KerEntTied ex) (u : D.what₂.Word) (μ : D.what₂.Tup) (St : ChainCharts D u μ) (A : AdData t u μ St)
-    (dtU : (letI := D.host.cmStar; Formalism.L2.Herm.unitaryOneFiniteAdeles D.sp.cm) →* D.Dt) (a : 𝓞 D.host.E), AdPins A dtU → AdTie A dtU a → ∀ (i : ℕ) (hi : i + 1 < D.R.m), i < t.m2 → ∀ (β : (St i (Nat.le_of_succ_le hi.le)).Ch) (β' : (St (i + 1) hi.le).Ch) (P : SB t μ)
-    (k : Sp t.X.E (D.R.N i) ≃ₗ[t.X.E] Sp t.X.E (D.R.N i)) (k' : Sp t.X.E (D.R.N (i + 1)) ≃ₗ[t.X.E] Sp t.X.E (D.R.N (i + 1))),
-    CongAt (F := D.host.F) (seamP t.seam P.1) ((t.cst μ).D P) (ratA D.host.F (seamGL t.seam k)) →
-    CongAt (F := D.host.F) (seamP t.seam P.1) ((t.cst μ).D P) (ratA D.host.F (seamGL t.seam k')) → ∀ w,
-    XiAt t.Ch t.sel (t.tup μ) (t.cst μ) i P ((t.idx μ).h i (A.ib i (Nat.lt_of_succ_lt hi) β) P) ((t.idx μ).h (i + 1) (A.ib (i + 1) hi β') P) (inFr k k' w) =
-      XiAt t.Ch t.sel (t.tup μ) (t.cst μ) i P ((t.idx μ).h i (A.ib i (Nat.lt_of_succ_lt hi) β) P) ((t.idx μ).h (i + 1) (A.ib (i + 1) hi β') P) w := by
-  intro D L hT Gi Gl Kc Y cX ex t u μ St A dtU a hp _ i hi him β β' P k k' hk hk' w
-  have hL := t.idx_ok μ
-  have hD1 : 1 ≤ (t.cst μ).D P := hL.cst_ok.D_pos P
-  have c1 := congAt_local t.seam P.1 _ _ k hk
-  have c2 := congAt_local t.seam P.1 _ _ k' hk'
-  have m1 := extE_cong_mem hL i (by omega) (A.ib i (Nat.lt_of_succ_lt hi) β) P k c1 (cong_inv P.1 _ _ hD1 k c1)
-  have m2 := extE_cong_mem hL (i + 1) hi (A.ib (i + 1) hi β') P k' c2 (cong_inv P.1 _ _ hD1 k' c2)
-  have key := GlobalTheory.UnfoldTwoSided.xiAt_two_sided t.Ch t.sel (t.tup μ) (t.cst μ) (t.idx μ) t.glob t.m2 hp.fields t.pr_ok
-    hp.ch.ch_ok hp.sel hL i him (A.ib i (Nat.lt_of_succ_lt hi) β) (A.ib (i + 1) hi β') P _ _ k k' m1.1 m2.1
-    (GlobalTheory.CongLevel.extE_inX _ k) (GlobalTheory.CongLevel.extE_inX _ k') w
-  rw [m1.2, m2.2, muAt_det_cong t.Ch t.sel (t.tup μ) (t.cst μ) i P _ _ hD1 k c1,
-    muAt_det_cong t.Ch t.sel (t.tup μ) (t.cst μ) i P _ _ hD1 k' c2] at key
-  simpa using key
 
 end GlobalTheory.TwU

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,15 +93,9 @@ def St7 : Prop :=
     ∀ P ∈ Lab K n, ∀ P' ∈ Lab K n,
       (∃ e : τ P ≃ₗ[ℂ] τ P', ∀ g v, e ((τ P).ρ g v) = (τ P').ρ g (e v)) → P = P'
 
-def Fwd : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (A : ValuationSubring Ω)
-    (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), IsRecLit h rc →
-    ∀ x : IrrGL (w.adicCompletion E), x.IsCusp →
-      fixed x.rep (KOne (w.adicCompletion E) (Fin x.1)) ≠ ⊥ → IsTameWD (rc x)
-
 def St8a : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ), 0 < n →
-    ∀ ϖ : kˣ, ord k ϖ = 1 → ∀ c : ℂˣ, ∃ X : (𝓀[k])[X] → IrrGL k,
+    ∀ ϖ : kˣ, ord k ϖ = 1 → ∀ c : ℂˣ, ∃ X : (𝓀[k])[X] → IrrGL (k := k),
       (∀ P ∈ Lab 𝓀[k] n, (X P).1 = n ∧ (X P).IsCusp ∧ fixed (X P).rep (KOne k (Fin (X P).1)) ≠ ⊥ ∧
         ∃ ω : kˣ →* ℂˣ, HasCentralChar (X P).rep ω ∧ ω ϖ = c) ∧ Set.InjOn X (Lab 𝓀[k] n)
 

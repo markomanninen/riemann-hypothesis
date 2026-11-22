@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantCoeffResidueUXPow
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvdCoeffsOfMemSpanDistinguished
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ConstantCoeffResidueUXPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvdCoeffsOfMemSpanDistinguished
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem mem_pair_X_iff (a : O) (f : O⟦X⟧) (B : ℕ) :
   constructor
   · intro hf j hj
     obtain ⟨u, w, huw⟩ := Ideal.mem_span_pair.mp hf
-    rw [← huw, map_add, PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega), add_zero]
+    rw [← huw, map_add (f := _), PowerSeries.coeff_mul_C, PowerSeries.coeff_mul_X_pow', if_neg (by omega), add_zero]
     exact dvd_mul_left _ _
   · intro h
     choose c hc using h
@@ -24,7 +28,7 @@ theorem mem_pair_X_iff (a : O) (f : O⟦X⟧) (B : ℕ) :
     have hdvd : (X : O⟦X⟧) ^ B ∣ f - C a * g := by
       rw [PowerSeries.X_pow_dvd_iff]
       intro m hm
-      rw [map_sub, PowerSeries.coeff_C_mul, hg, PowerSeries.coeff_mk, dif_pos hm, ← hc m hm, sub_self]
+      rw [map_sub, PowerSeries.coeff_C_mul, hg, PowerSeries.coeff_mk, dite_eq_left hm, ← hc m hm, sub_self]
     obtain ⟨w, hw⟩ := hdvd
     rw [Ideal.mem_span_pair]
     exact ⟨g, w, by linear_combination (-1 : O⟦X⟧) * hw⟩

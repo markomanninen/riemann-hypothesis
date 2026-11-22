@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharpolySmulMap
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IdeleModuleInfIdDetLe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharpolySmulMap
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.IdeleModuleInfIdDetLe
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -36,7 +41,6 @@ private theorem norm_unif (v : H.P ℚ) :
   have h4 : ‖((atFin v (unif v) : (H.Kv v)ˣ) : H.Kv v)‖ = ‖FinitePlace.embedding v (unif v : ℚ)‖ := rfl
   rw [h4, h3, GlobalTheory.TwAtt.normV_eq, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
   simp
-  exact zpow_neg_one _
 
 private theorem ab_pv (v : H.P ℚ) : ab (pv v) = ((normV v : ℕ) : ℝ)⁻¹ := by
   rw [pv, ab_idl, norm_unif]
@@ -81,7 +85,7 @@ private theorem prod_norm {n : ℕ} (hn : 0 < n) :
       exact ⟨normV_surj (Nat.prime_of_mem_primeFactors hp), h⟩
   have h3 : ∏ p ∈ n.primeFactors, g p = (n : ℝ)⁻¹ := by
     have h4 : ((∏ p ∈ n.primeFactors, p ^ (n.factorization p) : ℕ) : ℝ) = n := by
-      have := Nat.factorization_prod_pow_eq_self hn.ne'
+      have := Nat.prod_factorization_pow_eq_self hn.ne'
       rw [Finsupp.prod, Nat.support_factorization] at this
       rw [this]
     rw [← h4]

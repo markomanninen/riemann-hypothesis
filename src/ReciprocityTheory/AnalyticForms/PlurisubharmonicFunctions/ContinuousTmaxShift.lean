@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.A
 
@@ -111,7 +115,7 @@ lemma kK_neg (h : ι → ℝ) : kK (-h) = kK h := by
   simp only [kK, Pi.neg_apply, kθ_neg]
 lemma kK_contDiff : ContDiff ℝ ∞ (kK : (ι → ℝ) → ℝ) := by
   show ContDiff ℝ ∞ (fun h : ι → ℝ => ∏ j, kθ (h j))
-  exact contDiff_prod fun j _ => kθ_contDiff.comp (contDiff_apply ℝ ℝ j)
+  exact contDiff_prod fun j _ => kθ_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) j)
 lemma norm_le_of_kK_ne {h : ι → ℝ} (hh : kK h ≠ 0) : ‖h‖ ≤ 1 / 2 := by
   have hh' : ∏ j, kθ (h j) ≠ 0 := hh
   have hj : ∀ j, kθ (h j) ≠ 0 := fun j => (Finset.prod_ne_zero_iff.1 hh') j (Finset.mem_univ j)
@@ -317,9 +321,9 @@ lemma tmax_scale {η : ℝ} (hη : 0 < η) (t h : ι → ℝ) :
   rw [← tmax_smul _ hη.le]
   congr 1
   funext j
-  simp only [Pi.smul_apply, smul_eq_mul]
+  simp only [Pi.smul_apply, smul_eq_mul, one_mul]
   rw [mul_add, ← mul_assoc η η⁻¹, mul_inv_cancel₀ hη.ne']
-  ring
+  rw [one_mul]
 
 lemma regMax_scale {η : ℝ} (hη : 0 < η) (t : ι → ℝ) : regMax η t = η * regMax 1 (η⁻¹ • t) := by
   rw [regMax_eq_kK, regMax_eq_kK]
@@ -346,8 +350,7 @@ lemma regMax_one_eq_conv :
   rw [kK_neg, mul_comm (tmax (fun j => x j + 1 * (-h) j)) (kK h)]
   congr 2
   funext j
-  simp only [Pi.sub_apply, Pi.neg_apply]
-  ring
+  simp only [one_mul, Pi.neg_apply, Pi.sub_apply, sub_eq_add_neg]
 
 lemma regMax_one_contDiff : ContDiff ℝ ∞ (regMax (ι := ι) 1) := by
   rw [regMax_one_eq_conv]

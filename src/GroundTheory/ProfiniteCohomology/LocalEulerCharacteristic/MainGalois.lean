@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.GroupStructure
-import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
-import GroundTheory.LocalFields.LubinTatePoints
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Vanishing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.GroupStructure
+public import GroundTheory.ProfiniteCohomology.GaloisModules.FixedField
+public import GroundTheory.LocalFields.LubinTatePoints
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Vanishing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

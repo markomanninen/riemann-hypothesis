@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullbackValuationInvarianceOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LevelFrameOfLaws
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBasisOfEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullbackValuationInvarianceOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.LevelFrameOfLaws
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBasisOfEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -103,7 +107,8 @@ theorem val_reflect {V F : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationR
   have := hM (fun j => l ⟨(a i₀)⁻¹ * a j, Submodule.subset_span ⟨j, rfl⟩⟩) (fun k => by
     have e : ∑ j, l ⟨(a i₀)⁻¹ * a j, Submodule.subset_span ⟨j, rfl⟩⟩ * M j k =
         l (∑ j, M j k • ⟨(a i₀)⁻¹ * a j, Submodule.subset_span ⟨j, rfl⟩⟩) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun j _ => by rw [map_smul, smul_eq_mul, _root_.mul_comm]
     rw [e]
     refine hl₂ _ ?_
@@ -122,7 +127,8 @@ theorem val_reflect {V F : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationR
 def secComb {X : Scheme.{0}} {L : LB X} {n : ℕ} (c : Fin n → Γ(X, ⊤)) (t : Fin n → LB.Sec L) : LB.Sec L where
   f := fun j => ∑ i, resTop _ (c i) * (t i).f j
   compat := fun i j => by
-    rw [map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.mul_sum]
     exact Finset.sum_congr rfl fun l _ => (SecOps.secScale (c l) (t l)).compat i j
 
 theorem cst_spMap {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) {Z : Scheme.{0}} (q : Z ⟶ Sp B) (z : Z) (a : A) :
@@ -131,7 +137,8 @@ theorem cst_spMap {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) {Z : Sc
 
 theorem cst_sum {V : Type} [CommRing V] {Z : Scheme.{0}} (q : Z ⟶ Sp V) (z : Z) {n : ℕ} (a : Fin n → V) :
     cst q z (∑ i, a i) = ∑ i, cst q z (a i) := by
-  rw [cst, map_sum, gs_sum q z ⊤ trivial]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cst, map_sum, gs_sum q z ⊤ trivial]; rfl
 
 variable {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
 

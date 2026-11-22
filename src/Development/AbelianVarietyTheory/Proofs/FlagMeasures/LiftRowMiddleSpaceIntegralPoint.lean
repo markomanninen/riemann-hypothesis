@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowEmbeddingMemIntegralOrthogonalGroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowIsometryEntriesInModelCoordinates
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralUnipotentAntidiagonalMemSkewLattice
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsVolData
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowEmbeddingMemIntegralOrthogonalGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowIsometryEntriesInModelCoordinates
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralUnipotentAntidiagonalMemSkewLattice
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,8 @@ theorem pair_isom {k r : ℕ} (σ : E →+* E) (τ : E →+* ℂ) (hτ : ∀ x, 
     funext i
     exact (RingHom.map_mulVec τ J x i).symm
   rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hB, hJg]
-  simp only [form, dotProduct, map_sum, map_mul, hτ, Pi.star_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, map_sum, map_mul, hτ, Pi.star_apply]
 
 theorem coord_zero {k r : ℕ} (σ : E →+* E) (τ : E →+* ℂ) (hτ : ∀ x, τ (σ x) = star (τ x))
     (J : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) E)
@@ -127,7 +132,7 @@ theorem exists_add_conj_eq_one (h : IsCMExt F E σ) (hu : Algebra.FormallyUnrami
     rw [hdual, FractionalIdeal.mem_one_iff] at hmem
     obtain ⟨z, hz⟩ := hmem
     have hint : IsIntegral ℤ a := by
-      rw [← isIntegral_algebraMap_iff (FaithfulSMul.algebraMap_injective F E), ← hz]
+      rw [← isIntegral_algebraMap_iff (B := E), ← hz]
       exact z.isIntegral_coe
     rw [FractionalIdeal.mem_one_iff]
     exact ⟨⟨a, hint⟩, rfl⟩
@@ -163,7 +168,8 @@ theorem lift_row : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberF
 
   have hfix : σ c = c := by
     have hJ : ∀ i j, σ (J i j) = J j i := fun i j => hND.1 j i
-    simp only [hc, form, dotProduct, Matrix.mulVec, map_sum, map_mul, RingHom.coe_coe, hσσ, hJ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hc, form, dotProduct, Matrix.mulVec, map_sum, map_mul, RingHom.coe_coe, hσσ, hJ]
     simp only [Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring

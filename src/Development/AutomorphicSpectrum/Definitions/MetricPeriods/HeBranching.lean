@@ -1,9 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedType
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.ExceptionalGroupG2.HarishChandraMultiplicityBound
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedType
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsNormEmbId
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +34,7 @@ def colSq {m : ℕ} (g : Matrix (Fin m) (Fin m) ℂ) (j : Fin m) : ℝ := ∑ i,
 def HeWord (ε : Fin (n + 1) → Bool) (lam : Fin (n + 1) → ℝ) (ε' : Fin n → Bool) (mu : Fin n → ℝ) : Prop :=
   ∀ x y : Fin (n + 1) ⊕ Fin n, Sum.elim lam mu y < Sum.elim lam mu x →
     (∀ z, ¬ (Sum.elim lam mu y < Sum.elim lam mu z ∧ Sum.elim lam mu z < Sum.elim lam mu x)) →
-    Xor' (x.isLeft = y.isLeft) (Sum.elim ε ε' x = Sum.elim ε ε' y)
+    Xor (x.isLeft = y.isLeft) (Sum.elim ε ε' x = Sum.elim ε ε' y)
 
 structure Par (ε : Fin (n + 1) → Bool) (lam : Fin (n + 1) → ℝ) (ε' : Fin n → Bool) (mu : Fin n → ℝ) (B : ℝ) : Prop where
   two : 2 ≤ n
@@ -85,15 +88,6 @@ def WordBd : Prop :=
       ∀ (S : ℕ) (W : List (Matrix (Fin m) (Fin m) ℂ)), W.length ≤ S → (∀ X ∈ W, hs X ≤ 1) →
         ‖dsigCW ε π W v‖ ≤ (8 * Real.sqrt m * (B + S)) ^ W.length * ‖v‖
 
-def HeBranching : Prop :=
-  ∀ (n : ℕ) (ε : Fin (n + 1) → Bool) (lam : Fin (n + 1) → ℝ) (ε' : Fin n → Bool) (mu : Fin n → ℝ)
-    (e : Fin n ⊕ Unit ≃ Fin (n + 1)) (H H' : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    [NormedAddCommGroup H'] [InnerProductSpace ℂ H']
-    (π : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ → (H →L[ℂ] H)) (σ : Matrix (Fin n) (Fin n) ℂ → (H' →L[ℂ] H')),
-    Fits ε ε' e → Formalism.QuantumDeterminants.IsHCParam lam → Formalism.QuantumDeterminants.IsHCParam mu → IsDS ε lam π → IsDS ε' mu σ → HeWord ε lam ε' mu →
-    ∃ i : H' →ₗᵢ[ℂ] H, (∀ h : UJ ε', ∀ x, i (σ (um h) x) = π (emb e (um h)) (i x)) ∧
-      ∀ j : H' →L[ℂ] H, (∀ h : UJ ε', ∀ x, j (σ (um h) x) = π (emb e (um h)) (j x)) → ∃ c : ℂ, ∀ x, j x = c • i x
-
 section Analysis
 
 open GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods Formalism.QuantumDeterminants
@@ -143,12 +137,6 @@ def Analysis : Prop := VolR ∧ Decay ∧ IntR ∧ HInt ∧ DUp ∧ Lip
 
 def incl (e : Fin n ⊕ Unit ≃ Fin (n + 1)) : Matrix (Fin (n + 1)) (Fin n) ℂ :=
   Matrix.of fun a b => if a = e (Sum.inl b) then 1 else 0
-
-def BigProj : Prop := ForPairs fun {n} ε lam ε' _ B e H H' _ _ _ _ _ _ π σ _ =>
-  ∀ i : H' →L[ℂ] H, (∀ x, ‖i x‖ = ‖x‖) → (∀ h : UJ ε', ∀ x, i (σ (um h) x) = π (emb e (um h)) (i x)) →
-    (∀ j : H' →L[ℂ] H, (∀ h : UJ ε', ∀ x, j (σ (um h) x) = π (emb e (um h)) (j x)) → ∃ c : ℂ, j = c • i) →
-    ∀ v ∈ lowKSub ε lam π, ‖v‖ = 1 → ∃ g₀ : UJ ε, hs (um g₀) ≤ (8 * ((n : ℝ) + 1) * B) ^ (20 * (n + 1)) ∧
-      Real.exp (-(100 * ((n : ℝ) + 1) ^ 3 * Real.log (8 * (n + 1) * B))) ≤ ‖ContinuousLinearMap.adjoint i (π (um g₀) v)‖
 
 end Analysis
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
-import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+public import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLim
+
+@[expose] public section
 
 open NumberField
 open scoped nonZeroDivisors

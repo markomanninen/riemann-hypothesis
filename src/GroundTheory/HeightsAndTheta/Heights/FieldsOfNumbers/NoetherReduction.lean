@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open scoped nonZeroDivisors
@@ -102,14 +107,5 @@ theorem finite_integralClosure_mvPolynomial_of_charZero (k : Type u) [Field k] [
       (FractionRing (MvPolynomial (Fin s) k))).comp (algebraMap k (MvPolynomial (Fin s) k))).injective).mp
       inferInstance
   exact finite_integralClosure_mvPolynomial_of_isSeparable k s L
-
-theorem finite_integralClosure_of_charZero
-    (k A : Type u) [Field k] [CharZero k] [CommRing A] [IsDomain A] [Algebra k A]
-    [Algebra.FiniteType k A] (K : Type u) [Field K] [Algebra A K] [IsFractionRing A K]
-    (L : Type u) [Field L] [Algebra K L] [FiniteDimensional K L] [Algebra A L]
-    [IsScalarTower A K L] :
-    Module.Finite A (integralClosure A L) :=
-  finite_integralClosure_of_forall_mvPolynomial k A K L fun s L' _ _ _ _ _ =>
-    finite_integralClosure_mvPolynomial_of_charZero k s L'
 
 end GroundTheory.Heights₂.Heights.FieldNumbers

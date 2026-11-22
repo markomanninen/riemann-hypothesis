@@ -1,7 +1,11 @@
-import Formalism.CharacterColumnKernels.StatGlobalModule
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.GlobalConcreteOf
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.GenFin
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.CupKillAdm
+module
+
+public import Formalism.CharacterColumnKernels.StatGlobalModule
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.GlobalConcreteOf
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.GenFin
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.CupKillAdm
+
+@[expose] public section
 
 open Finset
 

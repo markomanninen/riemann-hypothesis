@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+module
+
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLowerBoundOf
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+
+@[expose] public section
 
 noncomputable section
 

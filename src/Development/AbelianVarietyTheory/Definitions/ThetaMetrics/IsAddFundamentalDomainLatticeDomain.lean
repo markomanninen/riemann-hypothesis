@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Module Submodule Set
 
@@ -59,13 +63,6 @@ theorem latticeProb_eq (μ : Measure E) [μ.IsAddHaarMeasure] :
     smul_eq_mul, ENNReal.mul_inv (Or.inl hc0) (Or.inl ENNReal.coe_ne_top), mul_right_comm,
     ENNReal.inv_mul_cancel hc0 ENNReal.coe_ne_top, one_mul]
 
-instance isProbabilityMeasure_latticeProb : IsProbabilityMeasure (latticeProb L) := by
-  constructor
-  rw [latticeProb, Measure.smul_apply, Measure.restrict_apply_univ, smul_eq_mul]
-  refine ENNReal.inv_mul_cancel ?_ (latticeDomain_isBounded L).measure_lt_top.ne
-  rw [measure_latticeDomain]
-  simpa using ZLattice.covolume_pos L Measure.addHaar
-
 theorem integrable_latticeProb {f : E → G} (hf : Continuous f) : Integrable f (latticeProb L) := by
   have h0 : Measure.addHaar (latticeDomain L) ≠ 0 := by
     rw [measure_latticeDomain]
@@ -103,18 +100,6 @@ theorem latticeMean_eq [MeasurableSpace E] [BorelSpace E] (μ : Measure E)
   rintro ⟨a, ha⟩ x
   simpa [Submodule.vadd_def, add_comm] using hf a ha x
 
-@[simp] theorem latticeMean_const [CompleteSpace G] (c : G) :
-    latticeMean L (fun _ => c) = c := by
-  borelize E
-  simp [latticeMean_eq_integral]
-
-theorem latticeMean_finset_sum {ι : Type*} (s : Finset ι) {f : ι → E → G}
-    (hf : ∀ i ∈ s, Continuous (f i)) :
-    latticeMean L (fun x => ∑ i ∈ s, f i x) = ∑ i ∈ s, latticeMean L (f i) := by
-  borelize E
-  simp only [latticeMean_eq_integral]
-  exact integral_finset_sum s fun i hi => integrable_latticeProb L (hf i hi)
-
 theorem latticeMean_const_mul {𝕜 : Type*} [RCLike 𝕜] (c : 𝕜) (f : E → 𝕜) :
     latticeMean L (fun x => c * f x) = c * latticeMean L f := by
   borelize E
@@ -125,22 +110,6 @@ theorem latticeMean_nonneg {f : E → ℝ} (hf : ∀ x, 0 ≤ f x) : 0 ≤ latti
   borelize E
   simp only [latticeMean_eq_integral]
   exact integral_nonneg hf
-
-theorem latticeMean_comp_add {f : E → G} (hf : ∀ a ∈ L, ∀ x, f (x + a) = f x) (w : E) :
-    latticeMean L (fun x => f (x + w)) = latticeMean L f := by
-  borelize E
-  set μ : Measure E := Measure.addHaar
-  have hD : IsAddFundamentalDomain L ((fun x => x + w) ⁻¹' latticeDomain L) μ := by
-    refine IsAddFundamentalDomain.mk'
-      ((measurable_add_const w) (measurableSet_latticeDomain L)).nullMeasurableSet fun x => ?_
-    have := existsUnique_add_mem_latticeDomain L (x + w)
-    simpa [Submodule.vadd_def, add_comm, add_left_comm, add_assoc] using this
-  rw [latticeMean_eq L μ hD (f := fun x => f (x + w))
-    (fun a ha x => by simpa [add_right_comm] using hf a ha (x + w)),
-    latticeMean_eq_latticeDomain L μ]
-  congr 1
-  exact (measurePreserving_add_right μ w).setIntegral_preimage_emb
-    (measurableEmbedding_addRight w) f _
 
 theorem eq_zero_of_latticeMean_eq_zero {f : E → ℝ} (hc : Continuous f) (h0 : ∀ x, 0 ≤ f x)
     (hf : ∀ a ∈ L, ∀ x, f (x + a) = f x) (h : latticeMean L f = 0) : f = 0 := by
@@ -175,22 +144,6 @@ theorem exists_forall_le_of_periodic {f : E → ℝ} (hc : Continuous f)
   obtain ⟨a, ha, -⟩ := existsUnique_add_mem_latticeDomain L x
   rw [← hf a a.2 x]
   exact hx₀ (subset_closure ha)
-
-theorem latticeMean_eq_of_periodic (L' : Submodule ℤ E) [DiscreteTopology L'] [IsZLattice ℝ L']
-    [CompleteSpace G] {f : E → G} (hc : Continuous f) (hf : ∀ a ∈ L, ∀ x, f (x + a) = f x)
-    (hf' : ∀ a ∈ L', ∀ x, f (x + a) = f x) : latticeMean L f = latticeMean L' f := by
-  borelize E
-  obtain ⟨x₀, hx₀⟩ := exists_forall_le_of_periodic L hc.norm (fun a ha x => by rw [hf a ha x])
-  have hi : Integrable (Function.uncurry fun x y : E => f (x + y))
-      ((latticeProb L).prod (latticeProb L')) :=
-    Integrable.of_bound (hc.comp continuous_add).aestronglyMeasurable ‖f x₀‖
-      (ae_of_all _ fun p => hx₀ _)
-  have h := integral_integral_swap hi
-  simp only [← latticeMean_eq_integral] at h
-  have h1 : ∀ x, latticeMean L' (fun y => f (x + y)) = latticeMean L' f := fun x => by
-    simpa only [add_comm x] using latticeMean_comp_add L' hf' x
-  simp only [h1, latticeMean_comp_add L hf, latticeMean_const] at h
-  exact h.symm
 
 theorem latticeMean_comp_equiv {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
     [FiniteDimensional ℝ E'] (L' : Submodule ℤ E') [DiscreteTopology L'] [IsZLattice ℝ L']
@@ -227,44 +180,6 @@ section Pi
 variable {ι : Type*} [Fintype ι] {E : ι → Type*} [∀ i, NormedAddCommGroup (E i)]
   [∀ i, NormedSpace ℝ (E i)] (L : ∀ i, Submodule ℤ (E i))
 
-instance discreteTopology_submodulePi [∀ i, DiscreteTopology (L i)] :
-    DiscreteTopology (Submodule.pi Set.univ L) :=
-  DiscreteTopology.of_continuous_injective
-    (f := fun (x : Submodule.pi Set.univ L) (i : ι) => (⟨x.1 i, x.2 i trivial⟩ : L i))
-    (continuous_pi fun i => ((continuous_apply i).comp continuous_subtype_val).subtype_mk _)
-    (fun x y h => Subtype.ext (funext fun i => congrArg Subtype.val (congrFun h i)))
-
-instance isZLattice_submodulePi [∀ i, DiscreteTopology (L i)] [∀ i, IsZLattice ℝ (L i)] :
-    IsZLattice ℝ (Submodule.pi Set.univ L) where
-  span_top := by
-    classical
-    rw [eq_top_iff]
-    intro x _
-    rw [← Finset.univ_sum_single x]
-    refine Submodule.sum_mem _ fun i _ => ?_
-    have hx : x i ∈ span ℝ (L i : Set (E i)) := by rw [IsZLattice.span_top]; trivial
-    refine span_mono ?_ (Submodule.apply_mem_span_image_of_mem_span (LinearMap.single ℝ E i) hx)
-    rintro _ ⟨a, ha, rfl⟩ j -
-    by_cases h : j = i
-    · subst h; simpa using ha
-    · simp [Pi.single_eq_of_ne h]
-
-def piLpLattice : Submodule ℤ (PiLp 2 E) :=
-  ZLattice.comap ℝ (Submodule.pi Set.univ L) (PiLp.continuousLinearEquiv 2 ℝ E).toLinearMap
-
-@[simp] theorem mem_piLpLattice {x : PiLp 2 E} : x ∈ piLpLattice L ↔ ∀ i, x i ∈ L i :=
-  ⟨fun h i => h i trivial, fun h i _ => h i⟩
-
-instance discreteTopology_piLpLattice [∀ i, DiscreteTopology (L i)] :
-    DiscreteTopology (piLpLattice L) :=
-  inferInstanceAs (DiscreteTopology (ZLattice.comap ℝ (Submodule.pi Set.univ L)
-    (PiLp.continuousLinearEquiv 2 ℝ E).toLinearMap))
-
-instance isZLattice_piLpLattice [∀ i, DiscreteTopology (L i)] [∀ i, IsZLattice ℝ (L i)] :
-    IsZLattice ℝ (piLpLattice L) :=
-  inferInstanceAs (IsZLattice ℝ (ZLattice.comap ℝ (Submodule.pi Set.univ L)
-    (PiLp.continuousLinearEquiv 2 ℝ E).toLinearMap))
-
 end Pi
 
 section Prod
@@ -286,22 +201,6 @@ instance isZLattice_submoduleProd [DiscreteTopology L] [DiscreteTopology L'] [Is
   span_top := by
     rw [Submodule.prod_coe, Submodule.span_prod_eq ℝ L.zero_mem L'.zero_mem,
       IsZLattice.span_top, IsZLattice.span_top, Submodule.prod_top]
-
-def prodLpLattice : Submodule ℤ (WithLp 2 (E × E')) :=
-  ZLattice.comap ℝ (L.prod L') (WithLp.prodContinuousLinearEquiv 2 ℝ E E').toLinearMap
-
-@[simp] theorem mem_prodLpLattice {x : WithLp 2 (E × E')} :
-    x ∈ prodLpLattice L L' ↔ x.fst ∈ L ∧ x.snd ∈ L' := Iff.rfl
-
-instance discreteTopology_prodLpLattice [DiscreteTopology L] [DiscreteTopology L'] :
-    DiscreteTopology (prodLpLattice L L') :=
-  inferInstanceAs (DiscreteTopology (ZLattice.comap ℝ (L.prod L')
-    (WithLp.prodContinuousLinearEquiv 2 ℝ E E').toLinearMap))
-
-instance isZLattice_prodLpLattice [DiscreteTopology L] [DiscreteTopology L'] [IsZLattice ℝ L]
-    [IsZLattice ℝ L'] : IsZLattice ℝ (prodLpLattice L L') :=
-  inferInstanceAs (IsZLattice ℝ (ZLattice.comap ℝ (L.prod L')
-    (WithLp.prodContinuousLinearEquiv 2 ℝ E E').toLinearMap))
 
 end Prod
 

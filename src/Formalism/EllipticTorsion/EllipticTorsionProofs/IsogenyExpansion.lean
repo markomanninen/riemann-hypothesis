@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.IsoExpand
+module
+
+public import Formalism.EllipticTorsion.IsoExpand
+
+@[expose] public section
 
 open Finset
 
@@ -101,15 +105,18 @@ theorem expand_mk {N : AddSubgroup T} {bar : O → O} {nrm : O → S} {φ : M �
     · exact Finset.sum_congr rfl fun e _ => mk_nrm h _ _
     · refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun e' _ => ?_
       rw [H.adj, smul_smul]
-  rw [map_sum, Finset.sum_congr rfl fun i _ => e1 i, Finset.sum_add_distrib, map_add, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun i _ => e1 i, Finset.sum_add_distrib, map_add (f := _), map_sum,
     map_sum]
   congr 1
   · rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun e _ => ?_
-    rw [← map_sum, ← Finset.sum_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← Finset.sum_smul]
   · rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun e _ => ?_
-    rw [Finset.sum_comm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_comm, map_sum]
     refine Finset.sum_congr rfl fun e' _ => ?_
     rw [mk_quadDiff, Finset.sum_smul, sum2 H]
 

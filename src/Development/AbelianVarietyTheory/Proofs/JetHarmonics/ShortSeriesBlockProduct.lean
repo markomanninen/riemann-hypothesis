@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.BlockPolyLevelMove
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BlockHarmLevOfBlockHarm
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaValueExistsUniqueNaturalOfLaws
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaSumEqOfWitnessesCommonAlgebra
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFramedPointBaseChangeAlgHom
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.BlockPolyLevelMove
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BlockHarmLevOfBlockHarm
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaValueExistsUniqueNaturalOfLaws
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ShortThetaSumEqOfWitnessesCommonAlgebra
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFramedPointBaseChangeAlgHom
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.InZhGeoInjStable
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -113,14 +117,14 @@ theorem block_apply_left (m₁ : Letter T r n₁ →₀ ℕ) (m₂ : Letter T r 
       ⟨σ, i, Fin.castAdd n₂ b⟩ = m₁ ⟨σ, i, b⟩ := by
   rw [Finsupp.add_apply, Finsupp.mapDomain_of_notMem_range _ _
     (notMem_range_col (fun x => (castAdd_ne_natAdd b x).symm) σ i), add_zero]
-  exact Finsupp.mapDomain_apply (col_injective castAdd_inj') m₁ ⟨σ, (i, b)⟩
+  exact Finsupp.mapDomain_apply_of_injective (col_injective castAdd_inj') m₁ ⟨σ, (i, b)⟩
 
 theorem block_apply_right (m₁ : Letter T r n₁ →₀ ℕ) (m₂ : Letter T r n₂ →₀ ℕ) (σ : T) (i : Fin (r σ)) (b : Fin n₂) :
     (m₁.mapDomain (col (Fin.castAdd n₂)) + m₂.mapDomain (col (Fin.natAdd n₁)) : Letter T r (n₁ + n₂) →₀ ℕ)
       ⟨σ, i, Fin.natAdd n₁ b⟩ = m₂ ⟨σ, i, b⟩ := by
   rw [Finsupp.add_apply, Finsupp.mapDomain_of_notMem_range _ _
     (notMem_range_col (fun x => castAdd_ne_natAdd x b) σ i), zero_add]
-  exact Finsupp.mapDomain_apply (col_injective natAdd_inj') m₂ ⟨σ, (i, b)⟩
+  exact Finsupp.mapDomain_apply_of_injective (col_injective natAdd_inj') m₂ ⟨σ, (i, b)⟩
 
 theorem mul_mem_HHa (cc : T → T) (isX : T → Prop) {a₁ a₂ : T → ℕ → ℕ}
     {P₁ : MvPolynomial (Letter T r n₁) k} {P₂ : MvPolynomial (Letter T r n₂) k}
@@ -166,7 +170,8 @@ theorem mul_mem_HHa (cc : T → T) (isX : T → Prop) {a₁ a₂ : T → ℕ →
       rw [Derivation.leibniz, z, smul_zero, add_zero, smul_eq_mul, Derivation.leibniz, z, smul_zero,
         add_zero, smul_eq_mul, e1 τ i, e1 (cc τ) i', pderiv_rename (col_injective natAdd_inj'),
         pderiv_rename (col_injective natAdd_inj')]
-    rw [Finset.sum_congr rfl (fun x _ => hL x), Finset.sum_congr rfl (fun x _ => hR x),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl (fun x _ => hL x), Finset.sum_congr rfl (fun x _ => hR x),
       ← Finset.mul_sum, ← Finset.mul_sum, ← map_sum, ← map_sum, h₁H τ hτ i i', h₂H τ hτ i i',
       map_zero, map_zero, mul_zero, mul_zero, add_zero]
   · intro σ i i' hii' t
@@ -202,7 +207,7 @@ def pairing {σ S : Type} [CommRing S] [Algebra k S] (G : (σ →₀ ℕ) → S)
       fun R s hs => Finset.sum_subset hs fun x _ hx => by rw [notMem_support_iff.1 hx, map_zero, zero_mul]
     rw [h _ _ support_add, h P (P.support ∪ Q.support) Finset.subset_union_left,
       h Q (P.support ∪ Q.support) Finset.subset_union_right, ← Finset.sum_add_distrib]
-    simp only [coeff_add, map_add, add_mul]
+    simp only [MvPolynomial.coeff_add, map_add (f := _), add_mul]
 
 theorem pairing_monomial {σ S : Type} [CommRing S] [Algebra k S] (G : (σ →₀ ℕ) → S) (mo : σ →₀ ℕ) (a : k) :
     pairing G (monomial mo a) = algebraMap k S a * G mo := by
@@ -225,9 +230,9 @@ theorem pairing_mul {σ₁ σ₂ σ S : Type} [CommRing S] [Algebra k S] (f₁ :
         pairing_monomial, hG, map_mul]
       ring
     · intro p q hp hq
-      rw [map_add, mul_add, map_add, hp, hq, map_add, mul_add]
+      rw [map_add (f := _), mul_add, map_add (f := _), hp, hq, map_add (f := _), mul_add]
   · intro p q hp hq
-    rw [map_add, add_mul, map_add, hp, hq, map_add, add_mul]
+    rw [map_add (f := _), add_mul, map_add (f := _), hp, hq, map_add (f := _), add_mul]
 
 end Poly
 
@@ -365,7 +370,8 @@ theorem blockPoly_mem_harmL {n₁ n₂ : ℕ} {Λ₁ : GenLat E n₁} {Λ₂ : G
         simp [LinearMap.funLeft_apply, Fin.append_right]
     · intro σ i
       unfold letB
-      simp only [map_sum, map_mul, rename_C, rename_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, rename_C, rename_X]
       rw [Fin.sum_univ_add]
       simp [Fin.append_left, Fin.append_right, col]
   · refine rename_mem_symO (Fin.natAdd n₁) Λ₂ _ ?_ h₂.2
@@ -383,7 +389,8 @@ theorem blockPoly_mem_harmL {n₁ n₂ : ℕ} {Λ₁ : GenLat E n₁} {Λ₂ : G
         simp [LinearMap.funLeft_apply, Fin.append_right]
     · intro σ i
       unfold letB
-      simp only [map_sum, map_mul, rename_C, rename_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, rename_C, rename_X]
       rw [Fin.sum_univ_add]
       simp [Fin.append_left, Fin.append_right, col]
 

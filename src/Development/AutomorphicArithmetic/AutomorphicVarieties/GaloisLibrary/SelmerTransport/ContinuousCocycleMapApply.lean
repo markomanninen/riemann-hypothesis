@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ variable {R G M : Type} [CommRing R] [Group G] [TopologicalSpace G] [AddCommGrou
 def continuousCocycleMap : Z1U ρ U →ₗ[R] Z1U ρ' U where
   toFun z := ⟨fun u => j (z.1 u), (continuous_of_discreteTopology (f := j)).comp z.2.1, fun g h => by
     show j _ = j _ + ρ' g (j _)
-    rw [z.2.2, map_add, ← hj]
+    rw [z.2.2, map_add (f := _), ← hj]
     rfl⟩
   map_add' _ _ := Subtype.ext (funext fun _ => map_add j _ _)
   map_smul' _ _ := Subtype.ext (funext fun _ => map_smul j _ _)
@@ -106,7 +110,8 @@ theorem coordSum_z1Map (z : ι → Z1U ρ U) (u : U) :
 theorem coordSum_h1Map (z : ι → Z1U ρ U) :
     coordSum b (h1Map ρ ρ' j hj U) (fun i => Submodule.Quotient.mk (z i)) =
       Submodule.Quotient.mk (coordSum b (continuousCocycleMap ρ ρ' j hj U) z) := by
-  simp only [coordSum_apply, h1Map_mk, ← Submodule.mkQ_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordSum_apply, h1Map_mk, ← Submodule.mkQ_apply, map_sum, map_smul]
   rfl
 
 include hj in
@@ -136,7 +141,7 @@ theorem coordSum_z1Map_surjective [DiscreteTopology M'] (hb : IsBaseChange O j) 
     (continuous_of_discreteTopology (f := fun m => e.symm m i)).comp y.2.1, fun g h => ?_⟩, ?_⟩
   · have : e.symm (y.1 (g * h)) = e.symm (y.1 g) + fun i => ρ g (e.symm (y.1 h) i) := by
       apply hb.1
-      rw [map_add, ← map_coordSum b j (ρ g) (ρ' g) (hj g), he, he, he]
+      rw [map_add (f := _), ← map_coordSum b j (ρ g) (ρ' g) (hj g), he, he, he]
       exact y.2.2 g h
     exact congrFun this i
   · exact Subtype.ext (funext fun u => (coordSum_z1Map ρ ρ' j hj U b _ u).trans (he _))
@@ -172,14 +177,14 @@ theorem coordSum_mem_locSel (hb : IsBaseChange O j) (𝒟 : Set (Subgroup G)) (x
   rw [forall_comm]
   exact imp_congr_right fun _ => exists_cob_iff ρ ρ' j hj U b hb (fun u => u.1 ∈ D) fun i => (z i).1
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem isBaseChange_h1Map [Module.Free R O] [Module.Finite R O] [DiscreteTopology M'] (hb : IsBaseChange O j) :
     IsBaseChange O (h1Map ρ ρ' j hj U) :=
   isBaseChange_h1Map' ρ ρ' j hj U (Module.Free.chooseBasis R O) hb
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem isBaseChange_selMap [Module.Free R O] [Module.Finite R O] [DiscreteTopology M'] (hb : IsBaseChange O j)
     (𝒟 : Set (Subgroup G)) : IsBaseChange O (selMap ρ ρ' j hj U 𝒟) :=
   isBaseChange_restrict (Module.Free.chooseBasis R O) (isBaseChange_h1Map ρ ρ' j hj U hb) _ _

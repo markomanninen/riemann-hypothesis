@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HasCohomology
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HasCohomology
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,8 +134,8 @@ variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)} {
 
 private theorem map_heckeTj {σ : ℂ ≃+* ℂ} (p : V →+ V') (h1 : ∀ (c : ℂ) v, p (c • v) = σ c • p v)
     (h2 : ∀ g v, p (ρ g v) = ρ' g (p v)) {ϖ : w.adicCompletion E} (hϖ : Formalism.UG.IsUnifV E w ϖ) (j : ℕ) (x : V) :
-    p (heckeVec ρ (KGL w n) (Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j) x) =
-      heckeVec ρ' (KGL w n) (Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j) (p x) := by
+    p (heckeVec ρ (KGL w (n := n)) (Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j) x) =
+      heckeVec ρ' (KGL w (n := n)) (Formalism.UG.Tj ℂ n (Formalism.UG.Ov E w) ϖ j) (p x) := by
   refine (p.map_finsum (finite_heckeVec (Formalism.UG.Final.GLintComm E w n) (Tj_mem_hecke hϖ j) ρ x)).trans
     (finsum_congr fun c => ?_)
   rw [h1, h2]
@@ -150,7 +154,10 @@ theorem Sep.hasSatGL {σ : ℂ ≃+* ℂ} (h : Sep σ ρ ρ') (h' : Sep σ.symm 
     by_contra hne
     obtain ⟨p, h1, h2, h3⟩ := h' _ (sub_ne_zero.2 hne)
     refine h3 ?_
-    have e2 : satEig (Formalism.UG.qV E w) n B' j = σ (satEig (Formalism.UG.qV E w) n B j) := satEig_conj (qV_ne_zero w) e j
+    have hq : Formalism.UG.qV E w = normV w := by
+      simp [normV, Formalism.UG.qV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+    have e2 : satEig (Formalism.UG.qV E w) n B' j = σ (satEig (Formalism.UG.qV E w) n B j) :=
+      satEig_conj (qV_ne_zero w) (by rw [hq]; exact e) j
     rw [map_sub, map_heckeTj p h1 h2 hϖ, h1, e2, σ.symm_apply_apply, sub_eq_zero]
     by_cases hp : p y = 0
     · simp [hp, heckeVec]
@@ -158,7 +165,9 @@ theorem Sep.hasSatGL {σ : ℂ ≃+* ℂ} (h : Sep σ ρ ρ') (h' : Sep σ.symm 
 
 theorem Sep.exists_hasSatGL {σ : ℂ ≃+* ℂ} (h : Sep σ ρ ρ') (h' : Sep σ.symm ρ' ρ) {B : Multiset ℂˣ} (hB : HasSatGL w ρ B) :
     ∃ B', HasSatGL w ρ' B' ∧ algSat n (normV w) B' = (algSat n (normV w) B).map σ := by
-  obtain ⟨B', e⟩ := exists_algSat_conj (q := normV w) (qV_ne_zero w) n σ B
+  have hq : Formalism.UG.qV E w = normV w := by
+    simp [normV, Formalism.UG.qV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
+  obtain ⟨B', e⟩ := exists_algSat_conj (q := normV w) (hq ▸ qV_ne_zero w) n σ B
   exact ⟨B', h.hasSatGL h' hB e, e⟩
 
 theorem Sep.hasSatGL_refl (h : Sep (RingEquiv.refl ℂ) ρ ρ') (h' : Sep (RingEquiv.refl ℂ) ρ' ρ) {B : Multiset ℂˣ}
@@ -168,7 +177,7 @@ end Sat
 
 section Fin
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem act_fin_comm (k : GL (Fin a) (Af E)) (o : Op E a) (ho : ∀ k', o ≠ .fin k') :
     act o * act (.fin k) = act (.fin k) * act o := by

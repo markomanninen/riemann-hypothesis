@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,7 @@ theorem dense_genMap_preimage : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
   have he : genMap π = pullback.fst (π ≫ Y.s) (spMap (RingHom.id c.F)) ≫ π ≫
       inv (pullback.fst Y.s (spMap (RingHom.id c.F))) := by
     rw [← cancel_mono (pullback.fst Y.s (spMap (RingHom.id c.F)))]
-    simp only [genMap, Category.assoc, IsIso.inv_hom_id, Category.comp_id]
-    exact pullback.lift_fst _ _ _
+    simp only [genMap, Category.assoc, IsIso.inv_hom_id, Category.comp_id, pullback.lift_fst]
   have hgen : IsOpenMap (genMap π) := by
     rw [he]
     exact isOpenMap_scheme_comp (pullback.fst (π ≫ Y.s) (spMap (RingHom.id c.F))).isOpenEmbedding.isOpenMap

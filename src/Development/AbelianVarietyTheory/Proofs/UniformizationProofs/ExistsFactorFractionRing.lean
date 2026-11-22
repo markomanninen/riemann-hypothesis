@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry
 
@@ -65,7 +69,7 @@ theorem exists_finset_extends (V F : Type) [CommRing V] [Field F] [Algebra V F]
   have hcomp : ψ ≫ φ = CommRingCat.ofHom (algebraMap V F) := by
     apply Spec.map_injective
     rw [Spec.map_comp, hψ, ← Category.assoc, hφ, hx]
-  letI : Algebra V A := ψ.hom.toAlgebra
+  let : Algebra V A := ψ.hom.toAlgebra
   have hft' : Algebra.FiniteType V A := hft
   obtain ⟨s, hs⟩ := hft'.out
   let φa : A →ₐ[V] F :=

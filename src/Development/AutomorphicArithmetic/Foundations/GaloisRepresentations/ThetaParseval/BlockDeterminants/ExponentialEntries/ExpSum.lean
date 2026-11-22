@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyFinitePiTensorSumOfFactorOperators
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open Formalism.BasicNotions Formalism.BasicNotions.TH GlobalTheory.RealLift UpperTheory.TP.RP
@@ -44,7 +48,7 @@ private theorem Ex_add {A B : Module.End ℂ V} (h : Commute A B) : Ex (A + B) =
   haveI : CompleteSpace (Matrix (Fin (Module.finrank ℂ V)) (Fin (Module.finrank ℂ V)) ℂ) :=
     FiniteDimensional.complete ℂ _
   have hc : Commute (em A) (em B) := h.map em
-  simp only [Ex, map_add]
+  simp only [Ex, map_add (f := _)]
   exact (congrArg em.symm (NormedSpace.exp_add_of_commute hc)).trans (map_mul _ _ _)
 
 end FiniteDim
@@ -162,7 +166,7 @@ private theorem jointStable (L : ∀ i, Module.End ℂ (V i)) (hL : ∀ i, LocFi
     obtain ⟨N₂, h₂, hb₂, hs₂⟩ := hb
     refine ⟨N₁ ⊔ N₂, inferInstance, Submodule.add_mem_sup ha₁ hb₂, fun w y hy => ?_⟩
     obtain ⟨y₁, hy₁, y₂, hy₂, rfl⟩ := Submodule.mem_sup.1 hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hs₁ w y₁ hy₁) (hs₂ w y₂ hy₂)
 
 private theorem isExp_zero_one {W : Type} [AddCommGroup W] [Module ℂ W] :

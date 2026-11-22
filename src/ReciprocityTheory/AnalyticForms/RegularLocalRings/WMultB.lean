@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.WMult
 

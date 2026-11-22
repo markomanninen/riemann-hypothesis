@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoCubeLBOfWeilIsAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SectionsHaveFiniteDimension
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPrimitiveNormalisation
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LbIsoCubeLBOfWeilIsAdjoint
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,24 +23,6 @@ open GlobalTheory.ZV
 namespace GlobalTheory.PairingOfForm
 
 open ReciprocityTheory.ChartRestriction.G.Out CommutatorPairing DescentPairing PrimNorm AdjointOfPairing
-
-def chartUnflat {X Y Z : Scheme.{0}} {K K' : Type} [Fintype K] [Fintype K'] (L : LB X) (φ : K → (Y ⟶ X))
-    (ε : K → ℤ) (ψ : K' → (Z ⟶ Y)) (δ : K' → ℤ) :
-    ChartPull (LB.LinComb L (fun p : K' × K => ψ p.1 ≫ φ p.2) (fun p => ε p.2 * δ p.1))
-      (LB.LinComb (LB.LinComb L φ ε) ψ δ) (𝟙 Z) :=
-  have le : ∀ j : K' × K → L.ι, LB.wchart L (fun p : K' × K => ψ p.1 ≫ φ p.2) j ≤
-      LB.wchart (LB.LinComb L φ ε) ψ (fun a b => j (a, b)) := fun j y hy =>
-    Set.mem_iInter.2 fun a => Set.mem_iInter.2 fun b => Set.mem_iInter.1 hy (a, b)
-  { idx := fun j a b => j (a, b)
-    le := le
-    g := fun y p q hp hq => by
-      refine (gm_linComb L _ _ (𝟙 Z) y p q hp hq).trans (Eq.trans ?_
-        (gm_linComb (LB.LinComb L φ ε) ψ δ (𝟙 Z) y _ _ (le p hp) (le q hq)).symm)
-      rw [Fintype.prod_prod_type]
-      refine Finset.prod_congr rfl fun k _ => Eq.symm ?_
-      refine (congrArg (· ^ δ k) (gm_linComb L φ ε (𝟙 Z ≫ ψ k) y (fun b => p (k, b)) (fun b => q (k, b))
-        (Set.mem_iInter.1 (le p hp) k) (Set.mem_iInter.1 (le q hq) k))).trans ?_
-      simp only [← Finset.prod_zpow, zpow_mul, Category.assoc] }
 
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A]
 
@@ -52,10 +38,11 @@ theorem weilIs_swap {L : LB A.left} (hL : L.IsLB) {k : ℤ} {T : Over S} {x y : 
   simp only [val_mul hJ, H1.val_constGen, unitRes, map_inv] at e ⊢
   rw [e, mul_inv_cancel_right]
 
-abbrev fr {X Y : Scheme.{0}} (ψ : Y ⟶ X) : Abelianization (FreeGroup (Y ⟶ X)) := Abelianization.of (FreeGroup.of ψ)
+abbrev fr {X Y : Scheme.{0}} (ψ : Y ⟶ X) : Group.Abelianization (FreeGroup (Y ⟶ X)) :=
+  Group.Abelianization.of (FreeGroup.of ψ)
 
 def charSums (L : LB A.left) (hL : L.IsLB) {T : Over S} (x : T ⟶ A) :
-    Subgroup (Abelianization (FreeGroup ((T ⊗ A).left ⟶ A.left)) × Γ(T.left, ⊤)ˣ) where
+    Subgroup (Group.Abelianization (FreeGroup ((T ⊗ A).left ⟶ A.left)) × Γ(T.left, ⊤)ˣ) where
   carrier := {s | ∃ (K : Type) (_ : Fintype K) (φ : K → ((T ⊗ A).left ⟶ A.left)) (ε : K → ℤ)
     (u : LB.Gen (LB.LinComb L φ ε)), u.IsGen ∧ ∏ k, fr (φ k) ^ ε k = s.1 ∧
       ∀ (Z : Over S) (t : Z ⟶ T) (w : Z ⟶ A) (z : Z.left) (J), Good L z J →
@@ -81,7 +68,7 @@ theorem eq_one_of_mem (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {c : Γ(T.left
   obtain ⟨K, _, φ, ε, u, hu, hs, ht⟩ := h
   have key : ∀ (U : Type) [CommGroup U] (f : ((T ⊗ A).left ⟶ A.left) → U), ∏ k, f (φ k) ^ ε k = 1 := by
     intro U _ f
-    have e := congrArg (Abelianization.lift (FreeGroup.lift f)) hs
+    have e := congrArg (Group.Abelianization.lift (FreeGroup.lift f)) hs
     simpa [map_prod, map_zpow] using e
   set p := (fst T A).left with hp_def
   set e := (lift (𝟙 T) (1 : T ⟶ A)).left with he_def
@@ -228,8 +215,20 @@ theorem eq_prod (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {L : RigLB A} (cb : 
         (fun J => (-1) ^ (2 - J.down.card))) := by
     have hN : LBIso (abelian₂ A (LB.LinComb L.L (fun i => (φ i).left) ε))
         (LB.LinComb L.L (fun p : ULift.{0} (Finset (Fin 2)) × I =>
-          (psum A (x2 A) p.1.down).left ≫ (φ p.2).left) (fun p => ε p.2 * (-1) ^ (2 - p.1.down.card))) :=
-      lbIso_nested L.isLB _ _ _ _ _ _ (prod_flat _ _ _ _).symm
+          (psum A (x2 A) p.1.down).left ≫ (φ p.2).left) (fun p => ε p.2 * (-1) ^ (2 - p.1.down.card))) := by
+      have refl : ∀ {X : Scheme.{0}} {M : LB X}, M.IsLB → LBIso M M := by
+        intro X M hM
+        refine ⟨⟨fun p => M.g p.1 p.2⟩, fun (p q : M.ι × M.ι) => unit_ext fun z hz => ?_⟩
+        refine (gm_res (𝟙 X) z _ hz _).trans (Eq.symm ?_)
+        refine ((map_mul _ _ _).trans (congrArg₂ (· * ·) (gm_div M M (𝟙 X) z p q hz)
+          (gm_res (𝟙 X) z _ hz _))).trans ?_
+        have a := gm_cocycle hM (𝟙 X) z hz.1.1 hz.2.1 hz.2.2
+        have b := gm_cocycle hM (𝟙 X) z hz.1.1 hz.1.2 hz.2.2
+        change gm (𝟙 X) z _ (M.g p.1 q.1) * (gm (𝟙 X) z _ (M.g p.2 q.2))⁻¹ *
+          gm (𝟙 X) z _ (M.g q.1 q.2) = gm (𝟙 X) z _ (M.g p.1 p.2)
+        rw [mul_right_comm, a, ← b, mul_inv_cancel_right]
+      exact LBIso.chartPull (chartFlat L.L _ _ _ _) (chartPullId _)
+        (refl (LB.isLB_linComb L.isLB _ _))
     exact LBIso.trans (LB.isLB_linComb L.isLB _ _) (LB.isLB_linComb (LB.isLB_linComb L.isLB _ _) _ _)
       (LB.isLB_linComb L.isLB _ _) hN.symm hs
   obtain ⟨u, hu⟩ := NormRos.exists_gen_of_lbIso hflat
@@ -256,7 +255,7 @@ theorem eq_prod (hG : GlobalFnsSt) (hA : IsAbelianScheme A) {L : RigLB A} (cb : 
   have hQ := (charSums L.L L.isLB x).mul_mem ((charSums L.L L.isLB x).mul_mem hEd
     ((charSums L.L L.isLB x).inv_mem ((charSums L.L L.isLB x).prod_mem
       (fun i (_ : i ∈ (Finset.univ : Finset I)) => (charSums L.L L.isLB x).zpow_mem (hE i) (ε i))))) ((charSums L.L L.isLB x).inv_mem hF)
-  have hz1 : ∀ (a : Abelianization (FreeGroup ((T ⊗ A).left ⟶ A.left)) × (Γ(T.left, ⊤))ˣ) (m : ℤ),
+  have hz1 : ∀ (a : Group.Abelianization (FreeGroup ((T ⊗ A).left ⟶ A.left)) × (Γ(T.left, ⊤))ˣ) (m : ℤ),
       (a ^ m).1 = a.1 ^ m := fun _ _ => rfl
   have h1 := eq_one_of_mem L.isLB x hG hA (c := d⁻¹ * ∏ i, c i ^ ε i) (by
     convert hQ using 1
@@ -275,8 +274,8 @@ end GlobalTheory.PairingOfForm
 
 namespace GlobalTheory
 
-open PairingOfForm in
 
+open PairingOfForm in
 theorem weilIs_of_formIs_linComb : Out.Laws → Out.Laws2 → ∀ (K : Type) [Field K] [IsAlgClosed K] (P : Out.PolAV (Sp K)) (I : Type) [Fintype I] (φ : I → (P.A ⟶ P.A)) (ε : I → ℤ) (s : P.A ⟶ P.A) (k : ℕ) (x y : Out.baseOver (Sp K) ⟶ P.A) (c : I → Kˣ), (k : K) ≠ 0 → (∀ i, IsMonHom (φ i)) → FormIs P (LB.LinComb P.L (fun i => (φ i).left) ε) s → x ^ k = 1 → y ^ k = 1 → (∀ i, Out.WeilIs P.A P.L k (x ≫ φ i) (y ≫ φ i) (unitOn (c i))) → Out.WeilIs P.A P.L k x (y ≫ s) (unitOn (∏ i, c i ^ ε i)) := by
   intro hl hl2 K _ _ P I _ φ ε s k x y c hk hφ hF hx hy hc
   obtain ⟨t, ht⟩ := P.rigid

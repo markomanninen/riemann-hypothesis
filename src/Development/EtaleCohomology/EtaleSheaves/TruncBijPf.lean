@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.TruncPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.TruncPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -42,7 +46,7 @@ theorem preC_surj (g : K ⟶ K') (n : ℤ) (hg : ∀ p : ℤ, -(n + 1) ≤ p →
   by_cases hq : q < 0
   · exact (hL q hq).eq_of_tgt _ _
   · have hp : -(n + 1) ≤ p := by omega
-    rw [preC_v, Cochain.mk_v, dif_pos hp, IsIso.hom_inv_id_assoc]
+    rw [preC_v, Cochain.mk_v, dite_eq_left hp, IsIso.hom_inv_id_assoc]
 
 end General
 

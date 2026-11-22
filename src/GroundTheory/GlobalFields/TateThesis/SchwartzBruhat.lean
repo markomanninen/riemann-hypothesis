@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -29,8 +33,8 @@ theorem adelicChar_mul_eq (x y : 𝔸[K]) :
 def schwartzBruhatTensor (φ : 𝓢(mixedSpace K, ℂ)) (g : 𝔸ᶠ[K] → ℂ) : 𝔸[K] → ℂ :=
   fun x ↦ φ (homeomorphMixedSpace K x.1) * g x.2
 
-variable (K) in
 
+variable (K) in
 def schwartzBruhat : Submodule ℂ (𝔸[K] → ℂ) :=
   Submodule.span ℂ {F | ∃ φ : 𝓢(mixedSpace K, ℂ), ∃ g ∈ finiteSchwartzBruhat K,
     F = schwartzBruhatTensor φ g}
@@ -59,8 +63,8 @@ theorem integrable_of_mem_schwartzBruhat {F : 𝔸[K] → ℂ} (hF : F ∈ schwa
   | add G H _ _ hG hH => exact hG.add hH
   | smul c G _ hG => exact hG.smul c
 
-variable (K) in
 
+variable (K) in
 def adelicFourier (F : 𝔸[K] → ℂ) (y : 𝔸[K]) : ℂ :=
   ∫ x, F x * (adelicChar K (x * y) : ℂ) ∂adeleMeasure K
 

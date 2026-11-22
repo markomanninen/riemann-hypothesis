@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.JacqOfU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.JacqOfU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.AutomorphicFormHyp
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -38,7 +42,7 @@ private theorem fixed_coinv {A V : Type} [CommGroup A] [AddCommGroup V] [Module 
       obtain ⟨r, hr, e⟩ := ha
       obtain ⟨s, hs, e'⟩ := hb
       refine ⟨r * s, by simp [hr, hs], ?_⟩
-      rw [map_add, map_mul, Module.End.mul_apply, Module.End.mul_apply, e', map_zero, add_zero, ← Module.End.mul_apply,
+      rw [map_add (f := _), map_mul, Module.End.mul_apply, Module.End.mul_apply, e', map_zero, add_zero, ← Module.End.mul_apply,
         ← map_mul, mul_comm, map_mul, Module.End.mul_apply, e, map_zero]
     | smul c a _ ha =>
       obtain ⟨r, hr, e⟩ := ha
@@ -184,7 +188,7 @@ private theorem not_mem_ker (O : Subring K) (π : Kˣ) (hπ : (π : K) ∈ O) (h
     | zero => simp
     | add a b _ _ ha hb =>
       filter_upwards [ha, hb] with j h h'
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem h h'
     | smul c a _ ha =>
       filter_upwards [ha] with j h
@@ -197,7 +201,8 @@ private theorem not_mem_ker (O : Subring K) (π : Kˣ) (hπ : (π : K) ∈ O) (h
     | succ j ih =>
       intro h
       apply ih
-      rw [← W.smul_mem_iff lam.ne_zero, ← map_smul, ← hU, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← W.smul_mem_iff lam.ne_zero, ← map_smul, ← hU, map_sum]
       refine sum_mem fun u _ => ?_
       have e : ρ (aff (π ^ j) 0) (ρ (aff π (u : K)) v) = ρ (aff 1 ((π : K) ^ j * u)) (ρ (aff (π ^ (j + 1)) 0) v) := by
         simp only [← Module.End.mul_apply, ← map_mul, aff_mul]
@@ -238,7 +243,8 @@ private theorem gen (O : Subring K) (hO : ∀ x : K, x ∈ O ∨ x⁻¹ ∈ O) (
   have hy : N.mkQ v ≠ 0 := fun h =>
     not_mem_ker O π hπ hπ' ρ htor v hv hf S lam hU ((Submodule.Quotient.mk_eq_zero N).1 h)
   have he : (S.card : ℂ) • τ π (N.mkQ v) = (lam : ℂ) • N.mkQ v := by
-    rw [← map_smul N.mkQ, ← hU, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_smul N.mkQ, ← hU, map_sum]
     simp only [hq, Finset.sum_const, Nat.cast_smul_eq_nsmul]
   have hS : (S.card : ℂ) ≠ 0 := by
     intro h

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftOfEtaleSurjectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteEtaleSurjectiveProjStatement
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSigmaSpecPointsCoproduct
-import Development.AutomorphicArithmetic.CommutativeAlgebra.CardFiberEqRelIndexOfNormalQuotient
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftOfEtaleSurjectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteEtaleSurjectiveProj
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveSigmaSpecPointsCoproduct
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.CardFiberEqRelIndexOfNormalQuotient
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ attribute [local instance] Ideal.Quotient.field
 private theorem pow_pr {X Y : Scheme.{0}} {A : Over X} {B : Over Y} (f : X ⟶ Y) (φ : A.left ⟶ B.left)
     (u : φ ≫ B.hom = A.hom ≫ f) (k : ℕ) (i : Fin k) :
     GlobalTheory.KS.powMap f φ u k ≫ (GlobalTheory.KS.pr B i).left = (GlobalTheory.KS.pr A i).left ≫ φ := by
-  have h := congrArg CommaMorphism.left (Pi.lift_π (fun i : Fin k => (Over.homMk ((GlobalTheory.KS.pr A i).left ≫ φ) (by
+  have h := congrArg CommaMorphism.left (Pi.lift_comp_π (fun i : Fin k => (Over.homMk ((GlobalTheory.KS.pr A i).left ≫ φ) (by
     rw [Category.assoc, u, ← Category.assoc, Over.w]; rfl) : Over.mk ((GlobalTheory.KS.pow A k).hom ≫ f) ⟶ B)) i)
   exact h
 
@@ -123,7 +127,7 @@ private theorem KN_conj {p : ℕ} [Fact p.Prime] {D : Datum p} {G : HTGroup p} (
     refine ⟨L.actG u y, integ_of_mem hu y hy, ?_⟩
     have e2 : L.actG u (L.actG u⁻¹ x) = x := by
       rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
-    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e, map_add, e2, map_nsmul]
+    rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, e, map_add (f := _), e2, map_nsmul]
   refine ⟨key _ hv.1, ?_⟩
   have : (u * v * u⁻¹)⁻¹ = u * v⁻¹ * u⁻¹ := by group
   rw [this]

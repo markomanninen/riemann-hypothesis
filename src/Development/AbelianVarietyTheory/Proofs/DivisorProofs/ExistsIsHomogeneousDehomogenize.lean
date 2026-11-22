@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -26,7 +31,8 @@ theorem exists_isHomogeneous_dehomogenize : ∀ {D : ℕ} (T₀ : MvPolynomial (
       simp only [Finset.mem_range] at hx
       omega
     conv_rhs => rw [← hsum]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl ?_
     intro d _
     simp only [map_mul, map_pow, aeval_X, ha, one_pow, one_mul, aeval_rename]

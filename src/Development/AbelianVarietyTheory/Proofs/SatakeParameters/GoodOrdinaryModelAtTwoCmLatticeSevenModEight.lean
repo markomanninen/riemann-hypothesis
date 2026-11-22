@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.StatementH
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsUnitConjugateNormTwoPowerTwoAdic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.StatementH
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsUnitConjugateNormTwoPowerTwoAdic
+
+@[expose] public section
 
 namespace GlobalTheory.ThLoc
 

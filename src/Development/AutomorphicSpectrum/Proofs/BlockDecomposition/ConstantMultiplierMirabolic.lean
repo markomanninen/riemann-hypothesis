@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.DictInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,14 +73,14 @@ theorem bdet_map (e : R ≃+* R') (s : Set ι) (g : GL ι R) :
   · have h' : IsUnit (((Matrix.GeneralLinearGroup.map e.toRingHom g : GL ι R') : Matrix ι ι R').submatrix
         (Subtype.val : s → ι) Subtype.val).det := by
       rw [hd]; exact h.map e.toRingHom
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     ext
     simpa using hd
   · have h' : ¬ IsUnit (((Matrix.GeneralLinearGroup.map e.toRingHom g : GL ι R') : Matrix ι ι R').submatrix
         (Subtype.val : s → ι) Subtype.val).det := by
       rw [hd]; intro hu
       exact h ((isUnit_map_iff e _).1 hu)
-    rw [dif_neg h, dif_neg h', map_one]
+    rw [dite_eq_right h, dite_eq_right h', map_one]
 
 theorem bdet_tInv (s : Set ι) (g : GL ι R) : bdet s (tInv g) = bdet s g⁻¹ := by
   classical
@@ -133,8 +137,8 @@ section Data
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {ι : Type} [Fintype ι] [DecidableEq ι]
 
-variable (F E ι) in
 
+variable (F E ι) in
 abbrev mpp : GL ι (AE F E) →* GL ι 𝔸[E] := Matrix.GeneralLinearGroup.map (eqv F E).toRingHom
 
 theorem tInv_mem_kGL {E R : Type} [Field E] [CommRing R] (A : Ad E R) (κ : GL ι R) (h : κ ∈ A.kGL ι) :
@@ -200,23 +204,27 @@ end Data
 section Vals
 
 theorem isHt_sub {G : Type} [Group G] [TopologicalSpace G] {Γ K P : Subgroup G} {a b : G → ℝ} (h1 : IsHt Γ K P a)
-    (h2 : IsHt Γ K ⊤ b) : IsHt Γ K P fun g => a g - b g where
-  left p hp g := by
+    (h2 : IsHt Γ K ⊤ b) : IsHt Γ K P fun g => a g - b g := by
+  refine { left := ?_, right := ?_, rat := ?_, cont := h1.cont.sub h2.cont }
+  · intro p hp g
     have e1 := h1.left p hp g
     have e2 := h2.left p (Subgroup.mem_top p) g
     simp only [e1, e2]; ring
-  right g k hk := by simp only [h1.right g k hk, h2.right g k hk]
-  rat γ hγ hp := by simp only [h1.rat γ hγ hp, h2.rat γ hγ (Subgroup.mem_top γ), sub_zero]
-  cont := h1.cont.sub h2.cont
+  · intro g k hk
+    simp only [h1.right g k hk, h2.right g k hk]
+  · intro γ hγ hp
+    simp only [h1.rat γ hγ hp, h2.rat γ hγ (Subgroup.mem_top γ), sub_zero]
 
 theorem isHt_neg {G : Type} [Group G] [TopologicalSpace G] {Γ K : Subgroup G} {b : G → ℝ}
-    (h : IsHt Γ K ⊤ b) : IsHt Γ K ⊤ fun g => - b g where
-  left p hp g := by
+    (h : IsHt Γ K ⊤ b) : IsHt Γ K ⊤ fun g => - b g := by
+  refine { left := ?_, right := ?_, rat := ?_, cont := h.cont.neg }
+  · intro p hp g
     have e := h.left p hp g
     simp only [e]; ring
-  right g k hk := by simp only [h.right g k hk]
-  rat γ hγ hp := by simp only [h.rat γ hγ hp, neg_zero]
-  cont := h.cont.neg
+  · intro g k hk
+    simp only [h.right g k hk]
+  · intro γ hγ hp
+    simp only [h.rat γ hγ hp, neg_zero]
 
 theorem isHt_inv {G : Type} [Group G] [TopologicalSpace G] {Γ K P : Subgroup G} {a : G → ℝ} (h : IsHt Γ K P a)
     (p : G) (hp : p ∈ P) : a p⁻¹ = - a p := by

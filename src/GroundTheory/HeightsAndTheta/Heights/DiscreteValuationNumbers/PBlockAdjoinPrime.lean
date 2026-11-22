@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsCN
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -12,10 +17,12 @@ namespace BlockAdjoinPrime
 
 variable {R : Type*} [CommRing R] {K : Type*} {ι : K → Type*}
 
-open Classical in
 
+open Classical in
 def killB (B : Set K) : MRing ι R →ₐ[R] MRing ι R :=
-  aeval fun v => if v.1 ∈ B then 0 else X v
+  by
+    classical
+    exact aeval fun v => if v.1 ∈ B then 0 else X v
 
 def varIdeal (B : Set K) : Ideal (MRing ι R) :=
   Ideal.span {p | ∃ v : Σ k, ι k, v.1 ∈ B ∧ p = X v}
@@ -47,7 +54,7 @@ theorem killB_monomial (B : Set K) (d : (Σ k, ι k) →₀ ℕ) (a : R) :
 
 open Classical in
 theorem coeff_killB (B : Set K) (p : MRing ι R) (d : (Σ k, ι k) →₀ ℕ) :
-    coeff d (killB B p) = if ∀ v ∈ d.support, v.1 ∉ B then coeff d p else 0 := by
+    AddMonoidAlgebra.coeff (killB B p) d = if ∀ v ∈ d.support, v.1 ∉ B then AddMonoidAlgebra.coeff p d else 0 := by
   induction p using MvPolynomial.induction_on' with
   | monomial e a =>
     rw [killB_monomial]
@@ -56,7 +63,7 @@ theorem coeff_killB (B : Set K) (p : MRing ι R) (d : (Σ k, ι k) →₀ ℕ) :
       split_ifs <;> simp
     · split_ifs <;> simp [coeff_monomial, hed]
   | add p q hp hq =>
-    rw [map_add, coeff_add, hp, hq]
+    rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq]
     split_ifs <;> simp
 
 theorem sub_killB_mem (B : Set K) (p : MRing ι R) : p - killB B p ∈ varIdeal (R := R) B := by
@@ -64,7 +71,7 @@ theorem sub_killB_mem (B : Set K) (p : MRing ι R) : p - killB B p ∈ varIdeal 
   induction p using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq =>
-    rw [map_add, add_sub_add_comm]
+    rw [map_add (f := _), add_sub_add_comm]
     exact add_mem hp hq
   | mul_X p v hp =>
     have e : p * X v - killB B (p * X v) =
@@ -108,7 +115,7 @@ theorem killB_mem {Q : Ideal (MRing ι R)} (hQ : IsMultiHomogIdeal Q) (B : Set K
     rw [coeff_killB, coeff_sum]
     simp_rw [coeff_weightedHomogeneousComponent]
     rw [Finset.sum_ite_eq]
-    by_cases hd : coeff d q = 0
+    by_cases hd : AddMonoidAlgebra.coeff q d = 0
     · simp [hd]
     · have hmem : d ∈ q.support := mem_support_iff.mpr hd
       have hiff : Finsupp.weight (blockWeight ι) d ∈ M ↔ ∀ v ∈ d.support, v.1 ∉ B := by

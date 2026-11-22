@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteBruhat
-import GroundTheory.AutomorphicForms.InductionParabolicGroups
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteBruhat
+public import GroundTheory.AutomorphicForms.InductionParabolicGroups
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -32,7 +37,8 @@ theorem exists_mul_mul_eq_one_of_rank (A : Matrix m l K) :
     intro c
     rw [← Matrix.mulVec_mulVec, hRc]
     have : A *ᵥ (∑ i, c i • x i) = f (∑ i, c i • x i) := rfl
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     simp only [map_smul, hx]
   have hli : LinearIndependent K (fun i => (b i : m → K)) :=
     b.linearIndependent.map' (LinearMap.range f).subtype (Submodule.ker_subtype _)
@@ -95,7 +101,7 @@ theorem submatrix_mul_of_mem_blockUpper {p : GL (Fin n) F} (hp : p ∈ blockUppe
           (fun i : {i : Fin n // a ≤ β i} => (i : Fin n)) *
         M.submatrix (fun i : {i : Fin n // a ≤ β i} => (i : Fin n)) c := by
   ext i j
-  simp only [submatrix_apply, mul_apply]
+  simp only [submatrix_apply, Matrix.mul_apply]
   rw [← Fintype.sum_subtype_add_sum_subtype (fun k => a ≤ β k)]
   have h0 : ∑ k : {k : Fin n // ¬ a ≤ β k}, (p : Matrix (Fin n) (Fin n) F) i k * M k (c j) = 0 :=
     Finset.sum_eq_zero fun k _ => by
@@ -110,7 +116,7 @@ theorem mul_submatrix_of_mem_blockUpper {q : GL (Fin n) F} (hq : q ∈ blockUppe
         (q : Matrix (Fin n) (Fin n) F).submatrix (fun j : {j : Fin n // γ j ≤ b} => (j : Fin n))
           (fun j : {j : Fin n // γ j ≤ b} => (j : Fin n)) := by
   ext i j
-  simp only [submatrix_apply, mul_apply]
+  simp only [submatrix_apply, Matrix.mul_apply]
   rw [← Fintype.sum_subtype_add_sum_subtype (fun k => γ k ≤ b)]
   have h0 : ∑ k : {k : Fin n // ¬ γ k ≤ b}, M (r i) k * (q : Matrix (Fin n) (Fin n) F) k j = 0 :=
     Finset.sum_eq_zero fun k _ => by
@@ -440,8 +446,8 @@ theorem closure_doubleCoset_subset (g : GL (Fin n) F) :
   · exact Or.inl (mem_doubleCoset_of_cellRank_eq
       (cellRank_eq_of_le_of_cellHeight_le hxZ (not_lt.1 hlt)))
 
-omit [TopologicalSpace F] [IsTopologicalRing F] [T1Space F] in
 
+omit [TopologicalSpace F] [IsTopologicalRing F] [T1Space F] in
 theorem cellHeight_of_mem_doubleCoset {g x : GL (Fin n) F}
     (hx : x ∈ doubleCoset g (blockUpper F n β : Set (GL (Fin n) F)) (blockUpper F n γ)) :
     cellHeight β γ x = cellHeight β γ g := by

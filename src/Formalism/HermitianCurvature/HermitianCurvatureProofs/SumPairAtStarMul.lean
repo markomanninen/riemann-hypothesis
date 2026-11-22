@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.TopDensNonnegOfKappa
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsInnerAddSmulRight
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+module
+
+public import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HsInnerAddSmulRight
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate

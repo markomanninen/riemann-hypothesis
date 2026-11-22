@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsConeTrdegFnField
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsConeTrdegFnField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -114,7 +119,7 @@ theorem ConeTrdegFnField.proof : ConeTrdegFnField.Statement := by
           rw [e]
           exact isAlgebraic_algebraMap (⟨_, hXR ⟨q.1, q.2.1⟩⟩ : R)
     | one => rw [map_one]; exact isAlgebraic_one
-    | add x z _ _ hx hz => rw [map_add]; exact hx.add hz
+    | add x z _ _ hx hz => rw [map_add (f := _)]; exact hx.add hz
     | neg x _ hx => rw [map_neg]; exact hx.neg
     | inv x _ hx =>
       by_cases h0 : x = 0
@@ -129,7 +134,7 @@ theorem ConeTrdegFnField.proof : ConeTrdegFnField.Statement := by
     | C a =>
       rw [ConeTrdegFnField.coneMap_C]
       exact halgC a (ConeTrdegFnField.mem_fnField_of_mem_adjoin y a.2)
-    | add p q hp hq => rw [map_add]; exact hp.add hq
+    | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
     | mul_X p k hp =>
       rw [map_mul, ConeTrdegFnField.coneMap_X]
       exact hp.mul (isAlgebraic_algebraMap (⟨_, hXR ⟨k, c k⟩⟩ : R))

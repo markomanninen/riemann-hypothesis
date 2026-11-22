@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.ChainInst
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.ChainInst
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -30,8 +34,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R) (Ch : Ch
   (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K)))
 
-open Classical in
 
+open Classical in
 def PhiTopG (sharp : Bool) (i j n : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Loc.SF X.E X.K (R.N i + cOf R i) ((n - 1) + 0) :=
   if P ∈ Pr.vGs then
     (if sharp then LocE.PhiGS (qOf P) (psi0P Ch P) (chiP Ch P) R.k R.rS R.r R.t j (cOf R i) (R.N i) 0 (n - 1)
@@ -41,8 +45,8 @@ def PhiTopG (sharp : Bool) (i j n : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) : Lo
 def prXpG (E : Type) [Field E] (n : ℕ) : Sp E n →ₗ[E] Sp E ((n - 1) + 0) :=
   LinearMap.funLeft E E fun i : Fin ((n - 1) + 0) => (⟨i.1, by have := i.2; omega⟩ : Fin n)
 
-open Classical in
 
+open Classical in
 def frsG {n : ℕ} {ST : Finset (HeightOneSpectrum (𝓞 X.E))} (p : DecoF X.E n ST Pr.vGs (QE sel (mu : Chr X.F X.E X.K))) :
     Frs X.E n (rowSG Pr sel mu) := fun P =>
   if h : P.1 ∈ Pr.vGs then p.deco.1.liftFr ⟨P.1, h⟩ else p.fr ⟨P.1, (Finset.mem_union.mp P.2).resolve_left h⟩
@@ -61,14 +65,6 @@ def XiTop {u : Pr.Word} (i : ℕ) (p : ChPt (R := R) sel mu u i) (Y : Set (Sp X.
 
 variable {u : Pr.Word} {m2 : ℕ} (T : ChTh W sel mu u m2)
 
-open Classical in
-
-def cpTopK (i : ℕ) (p : ChPt (R := R) sel mu u i) (Y : Set (Sp X.E (R.N i))) (p' : ChPt (R := R) sel mu u (i + 1)) :
-    (colValF W sel mu u i).V →ₗ[X.K] (colValF W sel mu u (i + 1)).V :=
-  if Y ∈ ybSet sel mu cst p.deco.1.N then
-    kerOf (T.th i) (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p.deco.1.N (frsF sel mu p)
-      p'.deco.1.N (frsF sel mu p') (XiTop Ch sel mu cst i p Y p')
-  else 0
 
 end Top
 
@@ -101,7 +97,7 @@ private theorem mk_mul_reduction_eq_mk {P : HeightOneSpectrum (𝓞 E)} {a : E} 
       Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r :=
     ⟨b * Ideal.Quotient.mk P.asIdeal r, r, s, hs, hrs, by rw [← mul_assoc, hb, one_mul]⟩
   unfold redP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨r', s', hs', hrs', hc⟩ := hex.choose_spec
   have key : s * r' = s' * r := by
     apply IsFractionRing.injective (𝓞 E) E
@@ -236,7 +232,37 @@ theorem Deco.Ok.hasLift {d : Deco E n ST SG} (hd : d.Ok) (w : SG) : d.HasLift w 
     refine ⟨c, ?_⟩
     rw [map_smul, ← hc, ← algebraMap_smul E r z, smul_smul, inv_mul_cancel₀ hr0, one_smul]
   have hsurj : Function.Surjective g := by
-    rw [← LinearMap.range_eq_top, eq_top_iff, ← hd.lat.span_eq_top, Submodule.span_le]
+    have hfull : Submodule.IsFullLattice E d.N := by
+      let := hd.lat
+      refine { span_eq_top := ?_ }
+      let W := Submodule.span E (d.N : Set (Sp E n))
+      change W = ⊤
+      by_contra h
+      let e : Sp E n ≃ₗ⋆[E] Sp E n := starLinearEquiv E
+      let f : Sp E n →ₗ[E] Module.Dual E W :=
+        (LinearMap.domRestrict' W).comp ((hStd E n).comp e.toLinearMap)
+      have hdim : finrank E (Module.Dual E W) < finrank E (Sp E n) := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt h
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := f) hdim)
+      have hsmul (a : E) : a • e x ∈ d.N := by
+        rw [← hd.uni, dualBasic_mem_dual]
+        intro y hy
+        apply hStd_mem_one_symm
+        have hxy : hStd E n (e x) y = 0 :=
+          congrArg (fun k : Module.Dual E W => k ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+        simp [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hxy]
+      let i : E →ₗ[𝓞 E] d.N :=
+        ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict d.N hsmul
+      let : Module.Finite (𝓞 E) d.N := Module.Finite.iff_fg.mpr hd.lat.fg
+      let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    letI := hfull
+    rw [← LinearMap.range_eq_top, eq_top_iff,
+      ← Submodule.IsFullLattice.span_eq_top (A := E) (M := d.N), Submodule.span_le]
     intro z hz
     obtain ⟨c, hc⟩ := hNg z hz
     exact LinearMap.mem_range.mpr ⟨_, hc.symm⟩
@@ -289,27 +315,7 @@ theorem PhiTopG_eq (sharp : Bool) (m2 : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) 
 
 theorem frsG_eq {u : Pr.Word} {j : ℕ} (p : ChPt (R := R) sel mu u j) : frsG sel mu p = frsF sel mu p := rfl
 
-open Classical in
-
-def cpTopM {u : Pr.Word} {m2 : ℕ} (T : ChTh W sel mu u m2) (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1))))
-    (p' : DecoF X.E (R.N R.m) (Pr.vT u) Pr.vGs (QE sel (mu : Chr X.F X.E X.K))) :
-    (colValF W sel mu u (m2 + 1)).V →ₗ[X.K] (colVal W u R.m (Pr.vT u) (rowSG Pr sel mu)).V :=
-  if Y ∈ ybSet sel mu cst p.deco.1.N then
-    kerOf T.top (Sall sel mu u) (cAof sel mu cst) (cBof sel mu cst u) p.deco.1.N (frsF sel mu p)
-      p'.deco.1.N (frsG sel mu p') (XiTopG Ch sel mu cst (m2 + 1) R.m (R.N R.m) p Y p')
-  else 0
-
-def XiTopTil (m2 : ℕ) (u : Pr.Word) : Prop :=
-  ∀ (p : ChPt (R := R) sel mu u (m2 + 1)) (Y : Set (Sp X.E (R.N (m2 + 1)))) (d : RowPt Pr R sel mu)
-    (p' : DecoF X.E (R.N R.m) (Pr.vT u) Pr.vGs (QE sel (mu : Chr X.F X.E X.K))), p'.deco = tilC sel mu u d →
-    Y ∈ ybSet sel mu cst p.deco.1.N →
-      XiTopG Ch sel mu cst (m2 + 1) R.m (R.N R.m) p Y p' = XiCpl2 Ch sel mu cst m2 p Y d
 
 end Cmp
-
-def XiTopTilRef : Prop :=
-  ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E))
-    (S : Set ℕ) (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (m2 : ℕ) (u : Pr.Word), X.Ok → Pr.Ok → cst.Ok →
-    R.m = m2 + 2 → (∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs) → (∀ w : Pr.vGs, Pr.piT u ∉ w.1.asIdeal) → XiTopTil Ch sel mu cst m2 u
 
 end Formalism.L2.Col

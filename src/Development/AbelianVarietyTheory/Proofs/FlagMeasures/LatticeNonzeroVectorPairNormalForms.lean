@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase
 open scoped nonZeroDivisors
@@ -50,7 +54,7 @@ theorem exists_ideal_inv (𝔠 : Submodule (𝓞 E) E) (hfg : 𝔠.FG) (h1 : (1 
     rw [h0, FractionalIdeal.le_zero_iff] at hC1
     exact h10 hC1
   have hle : C⁻¹ ≤ 1 := by
-    simpa using FractionalIdeal.inv_anti_mono h10 hC0 hC1
+    simpa using FractionalIdeal.inv_anti_mono h10 hC1
   obtain ⟨𝔞, h𝔞⟩ := FractionalIdeal.le_one_iff_exists_coeIdeal.mp hle
   have ha : 𝔞 ≠ ⊥ := by
     rintro rfl
@@ -96,28 +100,41 @@ theorem exists_equiv_single {k : ℕ} (x : Fin (k + 1) → E) (hx : x ≠ 0) :
 theorem exists_extend {k : ℕ} (L : Submodule (𝓞 E) (Fin k → E)) (hL : Submodule.IsLattice E L)
     (l : L →ₗ[𝓞 E] E) : ∃ f : (Fin k → E) →ₗ[E] E, ∀ z : L, f z = l z := by
   obtain ⟨b, hbL, hbspan, hbli⟩ := exists_linearIndependent E (L : Set (Fin k → E))
-  have hsp : ⊤ ≤ Submodule.span E (Set.range ((↑) : b → Fin k → E)) := by
-    rw [Subtype.range_coe, hbspan, hL.span_eq_top]
-  set B := Module.Basis.mk hbli hsp with hB
-  have hBi : ∀ i, B i = (i : Fin k → E) := fun i => Module.Basis.mk_apply _ _ _
+  let P := Submodule.span E (Set.range ((↑) : b → Fin k → E))
+  let B := Module.Basis.span hbli
+  have hBi : ∀ i, (B i : Fin k → E) = i := fun i => Module.Basis.coe_span_apply hbli i
   have : Finite b := Module.Finite.finite_basis B
   let : Fintype b := Fintype.ofFinite _
-  refine ⟨B.constr E (fun i => l ⟨i.1, hbL i.2⟩), fun z => ?_⟩
+  obtain ⟨f, hf⟩ := (B.constr E (fun i => l ⟨i.1, hbL i.2⟩)).exists_extend
+  refine ⟨f, fun z => ?_⟩
+  have hz : (z : Fin k → E) ∈ P := by
+    change (z : Fin k → E) ∈ Submodule.span E (Set.range ((↑) : b → Fin k → E))
+    rw [Subtype.range_coe, hbspan]
+    exact Submodule.subset_span z.2
+  let z' : P := ⟨z, hz⟩
+  have hfz : f z = B.constr E (fun i => l ⟨i.1, hbL i.2⟩) z' :=
+    LinearMap.congr_fun hf z'
   obtain ⟨⟨d, hd⟩, hdint⟩ :=
-    IsLocalization.exist_integer_multiples (𝓞 E)⁰ Finset.univ (fun i => B.repr z i)
-  have hall : ∀ i, ∃ a : 𝓞 E, algebraMap (𝓞 E) E a = d • B.repr z i := fun i =>
+    IsLocalization.exist_integer_multiples (𝓞 E)⁰ Finset.univ (fun i => B.repr z' i)
+  have hall : ∀ i, ∃ a : 𝓞 E, algebraMap (𝓞 E) E a = d • B.repr z' i := fun i =>
     RingHom.mem_rangeS.mp (hdint i (Finset.mem_univ i))
   choose a ha using hall
   have hdz : (d • z : L) = ∑ i, a i • (⟨i.1, hbL i.2⟩ : L) := by
     apply Subtype.ext
-    rw [Submodule.coe_smul, ← B.sum_repr z, Finset.smul_sum, Submodule.coe_sum]
+    have hzrepr : (z : Fin k → E) = ∑ i, B.repr z' i • (B i : Fin k → E) := by
+      change (z' : Fin k → E) = _
+      simpa only [map_sum, Submodule.coe_sum, Submodule.coe_smul] using
+        congrArg (fun v : P => (v : Fin k → E)) (B.sum_repr z').symm
+    rw [Submodule.coe_smul, hzrepr, Finset.smul_sum, Submodule.coe_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Submodule.coe_smul, ← algebraMap_smul E (a i), ha, smul_assoc, hBi]
-  have key : d • (B.constr E (fun i => l ⟨i.1, hbL i.2⟩) z) = d • l z := by
-    rw [← l.map_smul, hdz, map_sum, Module.Basis.constr_apply_fintype, Finset.smul_sum]
+  have key : d • (B.constr E (fun i => l ⟨i.1, hbL i.2⟩) z') = d • l z := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← l.map_smul, hdz, map_sum, Module.Basis.constr_apply_fintype, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [l.map_smul, Module.Basis.equivFun_apply, ← algebraMap_smul E (a i), ha, smul_assoc]
   have hd0 : d ≠ 0 := nonZeroDivisors.ne_zero hd
+  rw [hfz]
   exact smul_right_injective E hd0 key
 
 theorem exists_section {k : ℕ} (Λ : Submodule (𝓞 E) (Fin (k + 1) → E)) (L : Submodule (𝓞 E) (Fin k → E))
@@ -147,13 +164,16 @@ theorem exists_section {k : ℕ} (Λ : Submodule (𝓞 E) (Fin (k + 1) → E)) (
   rw [this]
   exact (s ⟨z, hz⟩).2
 
-theorem isLattice_map {n m : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ)
+theorem isLattice_map {n m : ℕ} (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ)
     (f : (Fin n → E) →ₗ[E] (Fin m → E)) (hf : Function.Surjective f) :
-    Submodule.IsLattice E (Λ.map (f.restrictScalars (𝓞 E))) := by
-  refine ⟨hΛ.fg.map _, ?_⟩
-  have hc : ((Λ.map (f.restrictScalars (𝓞 E)) : Submodule (𝓞 E) (Fin m → E)) : Set (Fin m → E)) =
-      f '' (Λ : Set (Fin n → E)) := Submodule.map_coe _ _
-  rw [hc, Submodule.span_image, hΛ.span_eq_top, Submodule.map_top, LinearMap.range_eq_top.mpr hf]
+    Submodule.IsFullLattice E (Λ.map (f.restrictScalars (𝓞 E))) := by
+  refine { toIsLattice := Submodule.IsLattice.of_fg E (hΛ.toIsLattice.fg.map _), span_eq_top := ?_ }
+  rw [Submodule.map_coe]
+  change Submodule.span E (f '' (Λ : Set (Fin n → E))) = ⊤
+  rw [← Submodule.map_span, hΛ.span_eq_top]
+  exact eq_top_iff.mpr fun y _ => by
+    obtain ⟨x, rfl⟩ := hf y
+    exact Submodule.mem_map.mpr ⟨x, Submodule.mem_top, rfl⟩
 
 def consZero (k : ℕ) : (Fin k → E) →ₗ[E] (Fin (k + 1) → E) where
   toFun z := Fin.cons 0 z
@@ -176,7 +196,7 @@ theorem cons_eq {k : ℕ} (c : E) (z : Fin k → E) :
 theorem isLattice_sum {k : ℕ} (𝔞 : Ideal (𝓞 E)) (L : Submodule (𝓞 E) (Fin k → E))
     (Λ : Submodule (𝓞 E) (Fin (k + 1) → E))
     (h : ∀ y, y ∈ Λ ↔ (∀ t ∈ 𝔞, (t : E) * y 0 ∈ (algebraMap (𝓞 E) E).range) ∧ Fin.tail y ∈ L)
-    (ha : 𝔞 ≠ ⊥) (hL : Submodule.IsLattice E L) : Submodule.IsLattice E Λ ∧ Pi.single 0 1 ∈ Λ := by
+    (ha : 𝔞 ≠ ⊥) (hL : Submodule.IsFullLattice E L) : Submodule.IsFullLattice E Λ ∧ Pi.single 0 1 ∈ Λ := by
   have hzero : ∀ z ∈ L, consZero k z ∈ Λ := fun z hz =>
     (h _).mpr ⟨fun t _ => RingHom.mem_range.mpr ⟨0, by simp [consZero_apply]⟩,
       by simpa [consZero_apply] using hz⟩
@@ -187,7 +207,7 @@ theorem isLattice_sum {k : ℕ} (𝔞 : Ideal (𝓞 E)) (L : Submodule (𝓞 E) 
   have h1 : (Pi.single 0 1 : Fin (k + 1) → E) ∈ Λ :=
     (h _).mpr ⟨fun t _ => RingHom.mem_range.mpr ⟨t, by rw [Pi.single_eq_same, mul_one]⟩,
       by rw [htail0]; exact L.zero_mem⟩
-  refine ⟨⟨?_, ?_⟩, h1⟩
+  refine ⟨{ toIsLattice := Submodule.IsLattice.of_fg E ?_, span_eq_top := ?_ }, h1⟩
   · let C : Submodule (𝓞 E) E :=
       (((𝔞 : FractionalIdeal (𝓞 E)⁰ E))⁻¹ : FractionalIdeal (𝓞 E)⁰ E)
     have hCfg : C.FG := FractionalIdeal.fg_of_isUnit _
@@ -207,42 +227,40 @@ theorem isLattice_sum {k : ℕ} (𝔞 : Ideal (𝓞 E)) (L : Submodule (𝓞 E) 
         rw [← cons_eq]
         exact (h _).mpr ⟨by simpa using (mem_inv_coe_iff ha c).mp hc, by simpa using hz⟩
     rw [hΛeq]
-    exact (hCfg.prod hL.fg).map φ
-  · rw [eq_top_iff]
+    exact (hCfg.prod hL.toIsLattice.fg).map φ
+  · let P := Submodule.span E (Λ : Set (Fin (k + 1) → E))
+    have htail : (Submodule.span E (L : Set (Fin k → E))).map (consZero k) ≤ P := by
+      rw [Submodule.map_span]
+      exact Submodule.span_le.mpr (Set.image_subset_iff.mpr fun z hz =>
+        Submodule.subset_span (hzero z hz))
+    apply eq_top_iff.mpr
     intro y _
-    rw [← Fin.cons_self_tail y, cons_eq]
-    refine Submodule.add_mem _ ?_ ?_
-    · have hs : (Pi.single 0 (y 0) : Fin (k + 1) → E) = y 0 • Pi.single 0 1 := by
-        ext j
-        by_cases hj : j = 0
-        · subst hj
-          simp
-        · simp [Pi.single_eq_of_ne hj]
-      rw [hs]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
-    · have hy : Fin.tail y ∈ Submodule.span E (L : Set (Fin k → E)) := by
-        rw [hL.span_eq_top]
-        trivial
-      have hmap : (Submodule.span E (L : Set (Fin k → E))).map (consZero k) ≤
-          Submodule.span E (Λ : Set (Fin (k + 1) → E)) := by
-        rw [Submodule.map_span_le]
-        intro z hz
-        exact Submodule.subset_span (hzero z hz)
-      exact hmap ⟨_, hy, rfl⟩
-
-theorem exists_normal {k : ℕ} (Λ : Submodule (𝓞 E) (Fin (k + 1) → E)) (hΛ : Submodule.IsLattice E Λ)
+    have hy : consZero k (Fin.tail y) ∈ P :=
+      htail (Submodule.mem_map.mpr ⟨_, by rw [hL.span_eq_top]; trivial, rfl⟩)
+    have hs : y 0 • (Pi.single 0 1 : Fin (k + 1) → E) = Pi.single 0 (y 0) := by
+      ext i
+      by_cases hi : i = 0
+      · subst i
+        simp
+      · simp [Pi.single_eq_of_ne hi]
+    have hhead : Pi.single 0 (y 0) ∈ P := by
+      rw [← hs]
+      exact P.smul_mem _ (Submodule.subset_span h1)
+    have hy' := P.add_mem hhead hy
+    rwa [← cons_eq, Fin.cons_self_tail] at hy'
+theorem exists_normal {k : ℕ} (Λ : Submodule (𝓞 E) (Fin (k + 1) → E)) (hΛ : Submodule.IsFullLattice E Λ)
     (h1 : Pi.single 0 1 ∈ Λ) :
     ∃ (e : (Fin (k + 1) → E) ≃ₗ[E] (Fin (k + 1) → E)) (𝔞 : Ideal (𝓞 E)) (L : Submodule (𝓞 E) (Fin k → E)),
-      𝔞 ≠ ⊥ ∧ Submodule.IsLattice E L ∧ e (Pi.single 0 1) = Pi.single 0 1 ∧
+      𝔞 ≠ ⊥ ∧ Submodule.IsFullLattice E L ∧ e (Pi.single 0 1) = Pi.single 0 1 ∧
       ∀ y, ((∀ t ∈ 𝔞, (t : E) * e y 0 ∈ (algebraMap (𝓞 E) E).range) ∧ Fin.tail (e y) ∈ L) ↔ y ∈ Λ := by
   let tl : (Fin (k + 1) → E) →ₗ[E] (Fin k → E) := LinearMap.funLeft E E Fin.succ
   let L : Submodule (𝓞 E) (Fin k → E) := Λ.map (tl.restrictScalars (𝓞 E))
-  have hL : Submodule.IsLattice E L := isLattice_map Λ hΛ tl
+  have hL : Submodule.IsFullLattice E L := isLattice_map Λ hΛ tl
     (LinearMap.funLeft_surjective_of_injective _ _ _ (Fin.succ_injective k))
   have hLmem : ∀ z, z ∈ L ↔ ∃ y ∈ Λ, Fin.tail y = z := fun z => by
     rw [Submodule.mem_map]
     rfl
-  obtain ⟨f, hf⟩ := exists_section Λ L hL hLmem
+  obtain ⟨f, hf⟩ := exists_section Λ L hL.toIsLattice hLmem
   have htail0 : ∀ c : E, Fin.tail (Pi.single (0 : Fin (k + 1)) c : Fin (k + 1) → E) = 0 := fun c =>
     funext fun j => by
       show (Pi.single (0 : Fin (k + 1)) c : Fin (k + 1) → E) j.succ = 0
@@ -313,13 +331,13 @@ theorem mulVec_zero_tail {k : ℕ} (M : Matrix (Fin (k + 1)) (Fin (k + 1)) E)
     simp only [Matrix.mulVec, dotProduct, Fin.tail, Matrix.submatrix_apply]
     rw [Fin.sum_univ_succ, hs0, zero_mul, zero_add]
 
-theorem classes : ∀ (E : Type) [Field E] [NumberField E] (k : ℕ), ∀ Lf : Ideal (𝓞 E) → Submodule (𝓞 E) (Fin k → E) → Submodule (𝓞 E) (Fin (k + 1) → E), (∀ 𝔞 Λ' y, y ∈ Lf 𝔞 Λ' ↔ (∀ t ∈ 𝔞, (t : E) * y 0 ∈ (algebraMap (𝓞 E) E).range) ∧ Fin.tail y ∈ Λ') → (∀ 𝔞 Λ', 𝔞 ≠ ⊥ → Submodule.IsLattice E Λ' → Submodule.IsLattice E (Lf 𝔞 Λ') ∧ Pi.single 0 1 ∈ Lf 𝔞 Λ') ∧ (∀ Λ : Submodule (𝓞 E) (Fin (k + 1) → E), Submodule.IsLattice E Λ → ∀ x ∈ Λ, x ≠ 0 → ∃ (γ : GL (Fin (k + 1)) E) (𝔞 : Ideal (𝓞 E)) (Λ' : Submodule (𝓞 E) (Fin k → E)), 𝔞 ≠ ⊥ ∧ Submodule.IsLattice E Λ' ∧ (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ x = Pi.single 0 1 ∧ ∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ y ∈ Lf 𝔞 Λ' ↔ y ∈ Λ) ∧ ∀ 𝔞 𝔟 Λ₁ Λ₂, 𝔞 ≠ ⊥ → 𝔟 ≠ ⊥ → Submodule.IsLattice E Λ₁ → Submodule.IsLattice E Λ₂ → ∀ γ : GL (Fin (k + 1)) E, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ Pi.single 0 1 = Pi.single 0 1 → ((∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ y ∈ Lf 𝔟 Λ₂ ↔ y ∈ Lf 𝔞 Λ₁) ↔ 𝔞 = 𝔟 ∧ (∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E).submatrix Fin.succ Fin.succ *ᵥ y ∈ Λ₂ ↔ y ∈ Λ₁) ∧ ∀ y ∈ Λ₁, ∀ t ∈ 𝔞, (t : E) * ((fun b => (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) 0 b.succ) ⬝ᵥ y) ∈ (algebraMap (𝓞 E) E).range) := by
+theorem classes : ∀ (E : Type) [Field E] [NumberField E] (k : ℕ), ∀ Lf : Ideal (𝓞 E) → Submodule (𝓞 E) (Fin k → E) → Submodule (𝓞 E) (Fin (k + 1) → E), (∀ 𝔞 Λ' y, y ∈ Lf 𝔞 Λ' ↔ (∀ t ∈ 𝔞, (t : E) * y 0 ∈ (algebraMap (𝓞 E) E).range) ∧ Fin.tail y ∈ Λ') → (∀ 𝔞 Λ', 𝔞 ≠ ⊥ → Submodule.IsFullLattice E Λ' → Submodule.IsFullLattice E (Lf 𝔞 Λ') ∧ Pi.single 0 1 ∈ Lf 𝔞 Λ') ∧ (∀ Λ : Submodule (𝓞 E) (Fin (k + 1) → E), Submodule.IsFullLattice E Λ → ∀ x ∈ Λ, x ≠ 0 → ∃ (γ : GL (Fin (k + 1)) E) (𝔞 : Ideal (𝓞 E)) (Λ' : Submodule (𝓞 E) (Fin k → E)), 𝔞 ≠ ⊥ ∧ Submodule.IsFullLattice E Λ' ∧ (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ x = Pi.single 0 1 ∧ ∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ y ∈ Lf 𝔞 Λ' ↔ y ∈ Λ) ∧ ∀ 𝔞 𝔟 Λ₁ Λ₂, 𝔞 ≠ ⊥ → 𝔟 ≠ ⊥ → Submodule.IsFullLattice E Λ₁ → Submodule.IsFullLattice E Λ₂ → ∀ γ : GL (Fin (k + 1)) E, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ Pi.single 0 1 = Pi.single 0 1 → ((∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) *ᵥ y ∈ Lf 𝔟 Λ₂ ↔ y ∈ Lf 𝔞 Λ₁) ↔ 𝔞 = 𝔟 ∧ (∀ y, (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E).submatrix Fin.succ Fin.succ *ᵥ y ∈ Λ₂ ↔ y ∈ Λ₁) ∧ ∀ y ∈ Λ₁, ∀ t ∈ 𝔞, (t : E) * ((fun b => (γ : Matrix (Fin (k + 1)) (Fin (k + 1)) E) 0 b.succ) ⬝ᵥ y) ∈ (algebraMap (𝓞 E) E).range) := by
   intro E _ _ k Lf hLf
   refine ⟨fun 𝔞 Λ' ha hΛ' => isLattice_sum 𝔞 Λ' (Lf 𝔞 Λ') (hLf 𝔞 Λ') ha hΛ', ?_, ?_⟩
   · intro Λ hΛ x hx hx0
     obtain ⟨e₁, he₁⟩ := exists_equiv_single x hx0
     let Λ₁ := Λ.map ((e₁ : (Fin (k + 1) → E) →ₗ[E] (Fin (k + 1) → E)).restrictScalars (𝓞 E))
-    have hΛ₁ : Submodule.IsLattice E Λ₁ := isLattice_map Λ hΛ _ e₁.surjective
+    have hΛ₁ : Submodule.IsFullLattice E Λ₁ := isLattice_map Λ hΛ _ e₁.surjective
     have hmem₁ : ∀ y, e₁ y ∈ Λ₁ ↔ y ∈ Λ := fun y => by
       constructor
       · rintro ⟨y', hy', hyy⟩

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TateDualCrystalline
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Alternates
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.TateDualCrystalline
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.HTW Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.FrobeniusOrbits
 
 open TensorProduct Module
@@ -35,7 +40,7 @@ theorem rTensor_act (ρ : Representation LL G V) (σ : Representation LL G W) (f
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, hf]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 def Dmap (ρ : Representation LL G V) (σ : Representation LL G W) (f : V →ₗ[LL] W)
     (hf : ∀ g v, f (ρ g v) = σ g (f v)) : Dcris PD ρ →ₗ[LL] Dcris PD σ :=
@@ -53,7 +58,7 @@ theorem rTensor_eq (f : V →ₗ[LL] W) (x : V ⊗[Qp] B) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exact_Dmap (ρ : Representation LL G V) (σ : Representation LL G W)
     (τ : Representation LL G U) (f : V →ₗ[LL] W) (q : W →ₗ[LL] U)
@@ -128,14 +133,15 @@ theorem sum_le_finrank_piRep {m : ℕ} (ρ : Fin m → Representation LL G V)
       · subst h; simp
       · simp [h, Pi.single_eq_of_ne (Ne.symm h)]
     | add x y hx hy =>
-      simp only [map_add, hx, hy]
+      simp only [map_add (f := _), hx, hy]
       split_ifs <;> simp
   have hF : Function.Surjective F := by
     intro y
     refine ⟨∑ a, Dmap PD _ _ _ (hs a) (y a), ?_⟩
     funext b
     apply Subtype.ext
-    simp only [F, LinearMap.pi_apply, coe_Dmap, Submodule.coe_sum, map_sum, key]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, LinearMap.pi_apply, coe_Dmap, Submodule.coe_sum, map_sum, key]
     simp
   have h1 : Module.Finite LL (∀ a, Dcris PD (ρ a)) := Module.Finite.of_surjective F hF
   have h2 : ∀ a, Module.Finite LL (Dcris PD (ρ a)) := fun a =>

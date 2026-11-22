@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ExpansionFormAll
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ExistsAutPrim
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExpansionFormAll
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ExistsAutPrim
+
+@[expose] public section
 
 noncomputable section
 

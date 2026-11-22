@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.SatakeTriangular
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.SatakeTriangular
+
+@[expose] public section
 
 noncomputable section
 

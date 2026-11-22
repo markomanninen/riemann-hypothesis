@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
-import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyCoefficientFieldPrime
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.SubsingletonRankIndicatorIff
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyBoundaryLocalIff
+module
+
+public import Formalism.SharpRestriction.Divisibility.ModuliIntegralCharts
+public import Formalism.SharpRestriction.Divisibility.BoundaryLocalData
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyCoefficientFieldPrime
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.SubsingletonRankIndicatorIff
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.NonemptyBoundaryLocalIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,8 +52,6 @@ theorem ballC_eq_inf {C : Type} [NormedField C] [IsUltrametricDist C] (a : C) :
 def actT (C A : Type) [Field C] [Group A] : Cˣ × A →* Module.End C C :=
   (algebraMap C (Module.End C C)).toMonoidHom.comp ((Units.coeHom C).comp (MonoidHom.fst Cˣ A))
 
-theorem actT_apply (C A : Type) [Field C] [Group A] (g : Cˣ × A) (s : C) : actT C A g s = (g.1 : C) • s := rfl
-
 def rkB (ρ : ℕ) : Bool → ℕ
   | false => 0
   | true => min ρ 1
@@ -59,10 +61,6 @@ theorem rkB_le_one (ρ : ℕ) (y : Bool) : rkB ρ y ≤ 1 := by
 
 theorem rkB_le (ρ : ℕ) (y : Bool) : rkB ρ y ≤ ρ := by
   cases y <;> simp [rkB]
-
-theorem rkB_true_pos {ρ : ℕ} (h : 0 < ρ) : 0 < rkB ρ true := by
-  show 0 < min ρ 1
-  omega
 
 theorem le_choose_two (r : ℕ) : r - 1 ≤ r * (r - 1) / 2 := by
   rcases r with _ | _ | k
@@ -75,8 +73,8 @@ theorem le_choose_two (r : ℕ) : r - 1 ≤ r * (r - 1) / 2 := by
 theorem flDim_eq (f r : ℕ) : f * (r * (r - 1) / 2) - f * (r - 1) + f * (r - 1) = f * (r * (r - 1) / 2) :=
   Nat.sub_add_cancel (Nat.mul_le_mul_left _ (le_choose_two r))
 
-open Matrix in
 
+open Matrix in
 theorem pd_of_int {Y : Type} [AddCommGroup Y] (β : Y →ₗ[ℤ] Y →ₗ[ℤ] ℝ)
     (hsymm : ∀ a b, β a b = β b a) (hint : ∀ a b, ∃ z : ℤ, β a b = z) (hpos : ∀ a, a ≠ 0 → 0 < β a a)
     {n : ℕ} (b : Module.Basis (Fin n) ℤ Y) (x : Fin n → ℝ) (hx : x ≠ 0) :
@@ -94,7 +92,8 @@ theorem pd_of_int {Y : Type} [AddCommGroup Y] (β : Y →ₗ[ℤ] Y →ₗ[ℤ] 
       β (∑ i, z i • b i) (∑ i, z i • b i) := by
     intro z
     rw [← hq]
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by
       rw [hsymm (b k) (b i)]
       ring
@@ -192,11 +191,11 @@ theorem beK_bal (k : ℕ) (c c' : 𝓞 D.host.E) (h : (c' : D.host.E) = D.host.c
 
 theorem trZ_add_left (k : ℕ) (a a' b : Fin k → 𝓞 D.host.E) : trZ D k (a + a') b = trZ D k a b + trZ D k a' b := by
   apply Int.cast_injective (α := ℝ)
-  rw [Int.cast_add, trZ_cast, trZ_cast, trZ_cast, map_add, LinearMap.add_apply]
+  rw [Int.cast_add, trZ_cast, trZ_cast, trZ_cast, map_add (f := _), LinearMap.add_apply]
 
 theorem trZ_add_right (k : ℕ) (a b b' : Fin k → 𝓞 D.host.E) : trZ D k a (b + b') = trZ D k a b + trZ D k a b' := by
   apply Int.cast_injective (α := ℝ)
-  rw [Int.cast_add, trZ_cast, trZ_cast, trZ_cast, map_add]
+  rw [Int.cast_add, trZ_cast, trZ_cast, trZ_cast, map_add (f := _)]
 
 theorem trZ_symm (k : ℕ) (a b : Fin k → 𝓞 D.host.E) : trZ D k a b = trZ D k b a := by
   apply Int.cast_injective (α := ℝ)
@@ -216,8 +215,8 @@ theorem trZ_self_nonneg (k : ℕ) (a : Fin k → 𝓞 D.host.E) : 0 ≤ trZ D k 
 theorem trZ_zero_rank (a b : Fin 0 → 𝓞 D.host.E) : trZ D 0 a b = 0 := by
   simp [trZ]
 
-open Classical in
 
+open Classical in
 def pU (p : ℕ) (c : CF p) : (c.C)ˣ := if h : (p : c.C) = 0 then 1 else Units.mk0 (p : c.C) h
 
 theorem vU_pU_zpow (p : ℕ) (c : CF p) (z : ℤ) (h : 2 ≤ p ∨ z = 0) : BoundaryLocalData.vU p (pU p c ^ z) = z := by
@@ -514,8 +513,8 @@ variable (D : D7) (r j p : ℕ) (c : CF p) (ρ : ℕ)
   Pm_tail := fun d τ i _ _ => le_trans (neg_le_abs _)
     (abs_le_pmM D d (r + j) τ _ (Finset.Icc_subset_Icc (by omega) (by omega)))
 
-open Classical in
 
+open Classical in
 @[reducible] def locBT (hp : 2 ≤ p ∨ ρ = 0) (hd : ρ * (2 * D.R.f) ≤ D.R.f * r) :
     BoundaryLocalData.LocB D (locT D r j p c ρ) where
   chX := fun {_} y => XT D (Fin (rkB ρ y) → 𝓞 D.host.E)
@@ -527,7 +526,7 @@ open Classical in
     rw [this, XT.smul_mk]
   tau := fun {_} y a χ => pU p c ^ trZ D (rkB ρ y) a ((XT.mk D (Fin (rkB ρ y) → 𝓞 D.host.E)).symm χ)
   tau_add_left := fun {_} y a a' χ => by rw [trZ_add_left, zpow_add]
-  tau_add_right := fun {_} y a χ χ' => by rw [map_add, trZ_add_right, zpow_add]
+  tau_add_right := fun {_} y a χ χ' => by rw [map_add (f := _), trZ_add_right, zpow_add]
   tau_symm := fun {_} y a b => congrArg (fun z : ℤ => pU p c ^ z) (trZ_symm D (rkB ρ y) a b)
   tau_smul := fun {_} y e a χ => by rw [XT.symm_smul, trZ_bal]
   be_tau := fun {_} y a b => by
@@ -574,7 +573,7 @@ open Classical in
     rw [this, XT.smul_mk]
   taub := fun _ a χ => u2 ^ trZ D 1 a ((XT.mk D (Fin 1 → 𝓞 D.host.E)).symm χ)
   taub_add_left := fun _ a a' χ => by rw [trZ_add_left, zpow_add]
-  taub_add_right := fun _ a χ χ' => by rw [map_add, trZ_add_right, zpow_add]
+  taub_add_right := fun _ a χ χ' => by rw [map_add (f := _), trZ_add_right, zpow_add]
   taub_symm := fun _ a b => congrArg (fun z : ℤ => u2 ^ z) (trZ_symm D 1 a b)
   taub_smul := fun _ e a χ => by rw [XT.symm_smul, trZ_bal]
   taub_pos := fun _ a => two_adic_unit_zpow_mem _ (trZ_self_nonneg D 1 a)
@@ -610,7 +609,7 @@ open Classical in
   trB_norm := fun _ _ _ _ _ _ => rfl
   alp := fun n => if h : ModuliIntegralCharts.NHyp D p n then (exists_alp D p n h).choose else 0
   alp_spec := fun n h => by
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact (exists_alp D p n h).choose_spec
   th1 := fun _ _ => (1 : c.C)
   pbAl := fun _ _ _ => LinearMap.id
@@ -655,81 +654,7 @@ section Facts
 
 variable (D : D7) (r j p : ℕ) (c : CF p) (ρ : ℕ)
 
-theorem locT_not_good (h : 0 < ρ) : ¬ (locT D r j p c ρ).good (Z := ()) true :=
-  fun hs => (Nat.pos_iff_ne_zero.1 (rkB_true_pos h)) ((subsingleton_pow D (rkB ρ true)).1 hs)
-
-theorem locT_isChart (h : 0 < ρ) : IsChart (locT D r j p c ρ) (Z := ()) (y := true) (e := ()) () :=
-  ⟨trivial, trivial, rkB_true_pos h, trivial, trivial⟩
-
-theorem rhoJ_pos {r p : ℕ} (hr : 2 ≤ r) (hp : 2 ≤ p) : 0 < rhoJ r p := by
-  simp [rhoJ, hr, hp]
-
-theorem junkLocalData_bad {r p : ℕ} (hr : 2 ≤ r) (hp : 2 ≤ p) :
-    ∃ y : (junkLocalData D r j p).Pt (junkLocalData D r j p).Xm, ¬ (junkLocalData D r j p).good y :=
-  ⟨true, locT_not_good D r j p (cfJunk p) (rhoJ r p) (rhoJ_pos hr hp)⟩
-
-theorem junkLocalData_chart {r p : ℕ} (hr : 2 ≤ r) (hp : 2 ≤ p) :
-    ∃ (y : (junkLocalData D r j p).DVP) (e : (junkLocalData D r j p).Ext y)
-      (χ : (junkLocalData D r j p).Chart (junkLocalData D r j p).Xm y e),
-      0 < (junkLocalData D r j p).dvRho y ∧ IsChart (junkLocalData D r j p) χ :=
-  ⟨true, (), (), rkB_true_pos (rhoJ_pos hr hp), locT_isChart D r j p (cfJunk p) (rhoJ r p) (rhoJ_pos hr hp)⟩
-
-theorem junkLocalData_be_pd {Z : (junkLocalData D r j p).Mdl} (y : (junkLocalData D r j p).Pt Z) (n : ℕ)
-    (b : Module.Basis (Fin n) ℤ ((junkLocalData D r j p).Ylat y)) (x : Fin n → ℝ) :
-    x ≠ 0 → 0 < ∑ i, ∑ k, x i * x k * (junkLocalData D r j p).be y (b i) (b k) :=
-  fun hx => pd_of_int ((junkLocalData D r j p).be y) ((junkLocalData D r j p).be_symm y)
-    (fun a a' => beK_int D (rkB (rhoJ r p) y) a a') ((junkLocalData D r j p).be_pos y) b x hx
-
 variable {D r j p}
-
-theorem good_of_le_one {L : Loc D r j p} (B : BoundaryLocalData.LocB D L) (hp : p ≤ 1) {Z : L.Mdl} (y : L.Pt Z) : L.good y := by
-  have key : ∀ a : L.Ylat y, a = 0 := fun a => by
-    by_contra h
-    have h1 := L.be_pos y a h
-    rw [B.be_tau] at h1
-    have h2 : Real.log (p : ℝ) = 0 := by
-      interval_cases p <;> simp
-    simp [BoundaryLocalData.vU, Real.logb, h2] at h1
-  exact ⟨fun a b => by rw [key a, key b]⟩
-
-theorem good_of_rank_le_one {L : Loc D r j p} (B : BoundaryLocalData.LocB D L) (hr : r ≤ 1) (y : L.Pt L.Xm) : L.good y := by
-  by_contra hns
-  rw [Loc.good, not_subsingleton_iff_nontrivial] at hns
-  obtain ⟨a, ha⟩ := exists_ne (0 : L.Ylat y)
-  have htf : ∀ n : ℤ, n • a = 0 → n = 0 := by
-    intro n hn
-    by_contra h0
-    have h1 := L.be_pos y a ha
-    have h2 : L.be y (n • a) a = 0 := by
-      rw [hn]
-      simp
-    rw [map_smul, LinearMap.smul_apply, zsmul_eq_mul] at h2
-    have h3 : (n : ℝ) ≠ 0 := by exact_mod_cast h0
-    rcases mul_eq_zero.1 h2 with h | h
-    · exact h3 h
-    · exact h1.ne' h
-  let φ : 𝓞 D.host.E →ₗ[ℤ] L.Ylat y :=
-    (LinearMap.toSpanSingleton (𝓞 D.host.E) (L.Ylat y) a).restrictScalars ℤ
-  have hinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
-    intro e he
-    by_contra h0
-    obtain ⟨d, hd⟩ := Algebra.dvd_algebraMap_intNorm_self ℤ (𝓞 D.host.E) e
-    have h3 : Algebra.intNorm ℤ (𝓞 D.host.E) e • a = 0 := by
-      have h4 : e • a = 0 := he
-      rw [← algebraMap_smul (𝓞 D.host.E), hd, mul_comm, mul_smul, h4, smul_zero]
-    exact (Algebra.intNorm_ne_zero.2 h0) (htf _ h3)
-  have h4 := LinearMap.finrank_le_finrank_of_injective hinj
-  have h5 := B.dimB_add y
-  have h6 : L.dP y = Module.finrank ℤ (L.Ylat y) := rfl
-  have h7 : 0 < D.R.f := by
-    have := D.R.ord_pos
-    simp only [Ranks.f, Ranks.n]
-    omega
-  rw [finrank_OE] at h4
-  have h8 : D.R.f * r ≤ D.R.f := by
-    interval_cases r <;> simp
-  omega
 
 end Facts
 

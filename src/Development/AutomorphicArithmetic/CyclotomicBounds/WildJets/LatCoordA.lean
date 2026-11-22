@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapEqOfMemNabStd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMulAddEqOneOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TensorLatSpan
-import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.BvvInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMapEqOfMemNabStd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMulAddEqOneOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TensorLatSpan
+public import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.BvvInt
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
 open Formalism.DivisionValues (vw lw)
@@ -42,12 +47,12 @@ private theorem lca_coord {K : Type} [Field K] [NumberField K] {ι : Type} [Fint
     refine ⟨GlobalTheory.CoefModel.mapVV (φ.comp (Rat.castHom K)) lam ⟨y, hyV⟩, ?_, fun i => ?_⟩
     · rw [GlobalTheory.CoefModel.mapVV_coe, MvPolynomial.map_map]
     · obtain ⟨z, hz⟩ := UpperTheory.WildA.bvvInt lam (GlobalTheory.CoefModel.mapVV (φ.comp (Rat.castHom K)) lam ⟨y, hyV⟩) (fun m => by
-        refine ⟨Rat.ringOfIntegersEquiv (MvPolynomial.coeff m Q), ?_⟩
+        refine ⟨Rat.ringOfIntegersEquiv (AddMonoidAlgebra.coeff Q m), ?_⟩
         rw [GlobalTheory.CoefModel.mapVV_coe, MvPolynomial.coeff_map]
-        have h2 : MvPolynomial.coeff m y = ((MvPolynomial.coeff m Q : 𝓞 ℚ) : ℚ) := by
+        have h2 : AddMonoidAlgebra.coeff y m = ((AddMonoidAlgebra.coeff Q m : 𝓞 ℚ) : ℚ) := by
           rw [← hQ]; exact MvPolynomial.coeff_map _ _ _
-        change (φ.comp (Rat.castHom K)) (MvPolynomial.coeff m y) = _
-        have h3 : ((MvPolynomial.coeff m Q : 𝓞 ℚ) : ℚ) = ((Rat.ringOfIntegersEquiv (MvPolynomial.coeff m Q) : ℤ) : ℚ) :=
+        change (φ.comp (Rat.castHom K)) (AddMonoidAlgebra.coeff y m) = _
+        have h3 : ((AddMonoidAlgebra.coeff Q m : 𝓞 ℚ) : ℚ) = ((Rat.ringOfIntegersEquiv (AddMonoidAlgebra.coeff Q m) : ℤ) : ℚ) :=
           (Rat.ringOfIntegersEquiv_apply_coe _).symm
         rw [h2, h3, map_intCast]) i
       refine ⟨(z : 𝓞 K), ?_⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.NormalizedTrace
-import GroundTheory.PAdicHodge.CyclotomicField
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.NormalizedTrace
+public import GroundTheory.PAdicHodge.CyclotomicField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.PAdicHodge
@@ -114,8 +119,10 @@ instance finiteDimensional_cyclotomicLayer_cycl (n : ℕ) :
 theorem relDeg_pos (n : ℕ) : 0 < relDeg K n := Module.finrank_pos
 
 def traceBasis : Basis (Fin (relDeg K (stableIndex K))) (cycl p (stableIndex K))
-    (extendScalars (cycl_le_cyclotomicLayer K (stableIndex K))) :=
-  Module.finBasis _ _
+    (extendScalars (cycl_le_cyclotomicLayer K (stableIndex K))) := by
+  letI : Module.Free (cycl p (stableIndex K))
+      (extendScalars (cycl_le_cyclotomicLayer K (stableIndex K))) := Module.Free.of_divisionRing _ _
+  exact Module.finBasis _ _
 
 def traceDualBasis : Basis (Fin (relDeg K (stableIndex K))) (cycl p (stableIndex K))
     (extendScalars (cycl_le_cyclotomicLayer K (stableIndex K))) :=
@@ -248,8 +255,8 @@ theorem norm_normTrace_cyclotomicLayer_le {cF : ℝ} (hcF : 0 ≤ cF)
     _ ≤ ‖towerVec K i‖ * (cF * (‖y‖ * ‖towerDualVec K i‖)) := by gcongr
     _ = cF * (‖towerVec K i‖ * ‖towerDualVec K i‖) * ‖y‖ := by ring
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem cyclotomicLayer_map (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) (hσ : ∀ x ∈ K, σ x = x)
     (n : ℕ) :
     (cyclotomicLayer K n).map (σ : PadicAlgCl p →ₐ[ℚ_[p]] PadicAlgCl p) = cyclotomicLayer K n := by
@@ -278,15 +285,15 @@ theorem map_mem_cyclotomicLimit (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)
   obtain ⟨n, hn⟩ := (mem_cyclotomicLimit K).1 hx
   exact (mem_cyclotomicLimit K).2 ⟨n, map_mem_cyclotomicLayer K σ hσ hn⟩
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem normTrace_cyclotomicLayer_map (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)
     (hσ : ∀ x ∈ K, σ x = x) (n : ℕ) (y : PadicAlgCl p) :
     normTrace (cyclotomicLayer K n) (σ y) = σ (normTrace (cyclotomicLayer K n) y) :=
   normTrace_map_of_map_eq _ σ (cyclotomicLayer_map K σ hσ n) y
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem normTrace_cyclotomicLayer_gal (σ : Gal(PadicAlgCl p/K)) (n : ℕ) (y : PadicAlgCl p) :
     normTrace (cyclotomicLayer K n) (σ y) = σ (normTrace (cyclotomicLayer K n) y) :=
   normTrace_cyclotomicLayer_map K (σ.restrictScalars ℚ_[p]) (fun x hx => σ.commutes ⟨x, hx⟩) n y

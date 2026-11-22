@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CommonMult
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.CommonMult
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ theorem inW_add (D : Formalism.BasicNotions.D7) {x y : (VS D).V} (hx : InW D x) 
   unfold InW at *
   obtain ⟨h1, h2, h3⟩ := hx
   obtain ⟨k1, k2, k3⟩ := hy
-  exact ⟨fun a => by rw [map_add, h1 a, k1 a, add_zero], fun a => by rw [map_add, h2 a, k2 a, add_zero],
-    by rw [map_add, h3, k3, add_zero]⟩
+  exact ⟨fun a => by rw [map_add (f := _), h1 a, k1 a, add_zero], fun a => by rw [map_add (f := _), h2 a, k2 a, add_zero],
+    by rw [map_add (f := _), h3, k3, add_zero]⟩
 
 theorem inW_smul (D : Formalism.BasicNotions.D7) (k : D.host.E) {x : (VS D).V} (hx : InW D x) : InW D (k • x) := by
   unfold InW at *
@@ -138,7 +142,7 @@ private theorem hT_swap_eq_star' (D : Formalism.BasicNotions.D7) (p q : (VS D).V
 
 private theorem pW_add' (D : Formalism.BasicNotions.D7) (u v : (VS D).V) : pW D (u + v) = pW D u + pW D v := by
   unfold pW
-  simp only [map_add, add_smul, Finset.sum_add_distrib, add_div]
+  simp only [map_add (f := _), add_smul, Finset.sum_add_distrib, add_div]
   abel
 
 private theorem pW_smul' (D : Formalism.BasicNotions.D7) (c : D.host.E) (v : (VS D).V) :
@@ -169,11 +173,13 @@ private theorem hT_pW_self_of_hT_hypE_eq_zero (D : Formalism.BasicNotions.D7) (w
   set s := ∑ a, (VS D).hT (D.sp.hypF a) w • D.sp.hypE a with hsdef
   have hsy : ∀ y, (VS D).hT s y = ∑ a, star ((VS D).hT (D.sp.hypF a) w) * (VS D).hT (D.sp.hypE a) y := by
     intro y
-    simp only [hsdef, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hsdef, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
       starRingEnd_apply, LinearMap.map_sum₂, LinearMap.map_smulₛₗ₂]
   have hys : ∀ y, (VS D).hT y s = ∑ a, (VS D).hT (D.sp.hypF a) w * (VS D).hT y (D.sp.hypE a) := by
     intro y
-    simp only [hsdef, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hsdef, map_sum, map_smul, smul_eq_mul]
   have h1 : (VS D).hT s w = 0 := by rw [hsy]; simp [hw]
   have h2 : (VS D).hT s s = 0 := by rw [hsy]; simp [hys, hee]
   have h3 : (VS D).hT s D.sp.zm = 0 := by rw [hsy]; simp [hez]
@@ -181,7 +187,7 @@ private theorem hT_pW_self_of_hT_hypE_eq_zero (D : Formalism.BasicNotions.D7) (w
   have h5 : (VS D).hT D.sp.zm s = 0 := by rw [hys]; simp [hze]
   have h6 : (VS D).hT D.sp.zm w = (D.sp.T : D.host.E) * g := by
     rw [hg, mul_div_assoc', mul_comm, mul_div_assoc, div_self hT0, mul_one]
-  simp only [map_add, map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
     LinearMap.smul_apply, smul_eq_mul, RingHom.id_apply, h1, h2, h3, h4, h5, hzz, hwz, h6,
     starRingEnd_apply, star_mul', star_natCast]
   ring
@@ -216,20 +222,23 @@ theorem tv_norm (D : Formalism.BasicNotions.D7) {T : D.host.E} (T' : D.host.E) (
     intro a
     have h0 : (betaZ D Z * Pm D Z R) a b = 0 := by rw [beta_Pm D Z R hR]; rfl
     rw [Matrix.mul_apply] at h0
-    rw [hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw, map_sum]
     simp only [map_smul, smul_eq_mul, hEu]
     simpa [betaZ, Matrix.submatrix_apply, mul_comm] using h0
   have hww : (VS D).hT w w =
       ∑ b1, ∑ b2, star (Pm D Z R b1 b) * Pm D Z R b2 b * Gfl D T' b1 b2 := by
     rw [hw]
-    simp only [LinearMap.map_sum₂, LinearMap.map_smulₛₗ₂, map_sum, map_smul, map_smulₛₗ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.map_sum₂, LinearMap.map_smulₛₗ₂, map_sum, map_smul, map_smulₛₗ,
       LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun b1 _ => Finset.sum_congr rfl (fun b2 _ => ?_))
     rw [hGu b1 b2]
     ring
   have hzw : (VS D).hT D.sp.zm w = ∑ b', Pm D Z R b' b * (Z (Fin.last D.R.rS) b' / star c0) := by
-    rw [hw, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hw, map_sum]
     simp only [map_smul, smul_eq_mul, hzu]
   rw [htv, hT_pW_self_of_hT_hypE_eq_zero D w hEw]
   unfold kap gam

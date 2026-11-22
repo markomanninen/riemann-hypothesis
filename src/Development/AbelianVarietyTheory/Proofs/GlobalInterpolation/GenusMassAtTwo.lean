@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.DiscreteSeriesOfFormalDegree
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.DiscreteSeriesOfFormalDegree
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenusMassStdAll
+
+@[expose] public section
 
 namespace GlobalTheory
 

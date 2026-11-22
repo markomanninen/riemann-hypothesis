@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.ThStmt
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af GlobalTheory.UnitaryBC UpperTheory.V.Lit.Dr UpperTheory.V.Lit.Bor
 open scoped ContDiff
@@ -30,7 +35,7 @@ private theorem sm_at {y : Lie E a} (hy : IsUnit (Matrix.of y)) :
   unfold sc
   refine ((ContDiffAt.sum fun w _ => ?_).div_const _).neg.exp
   have h : ContDiff ℝ ∞ fun x : Lie E a => (Matrix.of x).det w :=
-    (contDiff_apply ℝ ℂ w).comp GlobalTheory.CuspRep.contDiff_det
+    (contDiff_apply ℝ (fun _ => ℂ) w).comp GlobalTheory.CuspRep.contDiff_det
   exact (h.contDiffAt.norm ℝ (det_ne hy w)).log (norm_ne_zero_iff.2 (det_ne hy w))
 
 private theorem det_line (X : Lie E a) (t : ℝ) (w : InfinitePlace E) :

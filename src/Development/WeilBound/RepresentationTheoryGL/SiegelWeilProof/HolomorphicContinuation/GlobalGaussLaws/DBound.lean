@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DetNeOfPosDef
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DetNeOfPosDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -144,14 +148,14 @@ omit [DecidableEq ι] in
 theorem entC_mul {S : Set T} {f g : T → Matrix ι ι ℂ} (hf : EntC S f) (hg : EntC S g) :
     EntC S (fun z => f z * g z) := fun i j => by
   simp only [Matrix.mul_apply]
-  exact continuousOn_finset_sum _ fun k _ => (hf i k).mul (hg k j)
+  exact continuousOn_finsetSum _ fun k _ => (hf i k).mul (hg k j)
 
 theorem det_cont {S : Set T} {f : T → Matrix ι ι ℂ} (hf : EntC S f) :
     ContinuousOn (fun z => (f z).det) S := by
   simp only [Matrix.det_apply]
-  refine continuousOn_finset_sum _ fun σ _ => ?_
+  refine continuousOn_finsetSum _ fun σ _ => ?_
   simp only [Units.smul_def, zsmul_eq_mul]
-  exact continuousOn_const.mul (continuousOn_finset_prod _ fun i _ => hf _ _)
+  exact continuousOn_const.mul (continuousOn_finsetProd _ fun i _ => hf _ _)
 
 theorem entC_adjugate {S : Set T} {f : T → Matrix ι ι ℂ} (hf : EntC S f) :
     EntC S (fun z => (f z).adjugate) := fun i j => by
@@ -170,7 +174,7 @@ omit [DecidableEq ι] in
 theorem trace_cont {S : Set T} {f : T → Matrix ι ι ℂ} (hf : EntC S f) :
     ContinuousOn (fun z => (f z).trace) S := by
   simp only [Matrix.trace, Matrix.diag]
-  exact continuousOn_finset_sum _ fun i _ => hf i i
+  exact continuousOn_finsetSum _ fun i _ => hf i i
 
 theorem mR_cont : Continuous fun y : GR n => mR y :=
   Units.continuous_val.comp continuous_subtype_val

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmLongContinuousOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectNonneg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmLongContinuousOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDefectNonneg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KloostermanDensityOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AeNeZeroComplex
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRateSplit
 

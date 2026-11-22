@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.LiftBoundOfHypotheses
-import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.LiftBoundOfHypotheses
+public import Formalism.SharpRestriction.GrowthBounds.Lemma5aAt
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem vQ_nat (hp : p.Prime) (S : Formalism.MainNotions.G.UniformizedDVR p O) (
 theorem dvrHyp (S : Formalism.MainNotions.G.UniformizedDVR p O) {n' : ℕ} (hG : Formalism.MainNotions.G.AdmissibleDVR p n' O) : DVRHyp (vQ p S) p := by
   haveI := Fact.mk hG.prime
   refine ⟨hG.prime, hG.five_le, ?_⟩
-  rw [vQ_nat hG.prime S p hG.prime.ne_zero, padicValNat_self]
+  rw [vQ_nat hG.prime S p hG.prime.ne_zero, Nat.padicValNat_def, Nat.Prime.multiplicity_self]
   simp
 
 theorem vQ_nonneg_iff (S : Formalism.MainNotions.G.UniformizedDVR p O) (x : Formalism.MainNotions.G.KK O) :
@@ -181,8 +185,6 @@ theorem valS_eq {L : Type} [DecidableEq L] {r : ℕ} [NeZero r] (sg : L → Bool
   exact Finset.min_eq_inf_withTop _
 
 theorem PolK_eq {L : Type} (r : ℕ) (d : L → ℕ) : PolK K r d = Formalism.MainNotions.G.Pol K r d := rfl
-
-theorem fock_eq {σ : Type} (F G : MvPolynomial σ K) : fock F G = Formalism.MainNotions.G.fock F G := rfl
 
 theorem ddiv_eq_divDer {σ : Type} (M : σ →₀ ℕ) (F : MvPolynomial σ K) : ddiv M F = Formalism.MainNotions.G.divDer M F := by
   unfold ddiv Formalism.MainNotions.G.divDer

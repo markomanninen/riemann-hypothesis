@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open ArithmeticFunction
 
@@ -17,8 +21,6 @@ abbrev Gal : Type := (ZMod E.N)ˣ ⧸ E.H
 
 def res : (ZMod E.N)ˣ →* E.Gal := QuotientGroup.mk' E.H
 
-def conj : E.Gal := E.res (-1)
-
 def IsReal : Prop := (-1 : (ZMod E.N)ˣ) ∈ E.H
 
 def inertiaUnits (p : ℕ) : Subgroup (ZMod E.N)ˣ :=
@@ -27,8 +29,6 @@ def inertiaUnits (p : ℕ) : Subgroup (ZMod E.N)ˣ :=
 def inertia (p : ℕ) : Subgroup E.Gal := (E.inertiaUnits p).map E.res
 
 def Ramified (p : ℕ) : Prop := E.inertia p ≠ ⊥
-
-def frob (p : ℕ) (hp : p.Coprime E.N) : E.Gal := E.res (ZMod.unitOfCoprime p hp)
 
 def IsModulus (M : ℕ) : Prop := ∃ h : M ∣ E.N, (ZMod.unitsMap h).ker ≤ E.H
 
@@ -53,14 +53,5 @@ noncomputable def quadCharNeg (d : ℕ) : DirichletCharacter ℂ d :=
 
 noncomputable def AbField.chOf (E : AbField) (d : ℕ) (h : d ∣ E.N) : DirichletCharacter ℂ E.N :=
   DirichletCharacter.changeLevel h (quadCharNeg d)
-
-noncomputable def logDerivAtOne {M : ℕ} [NeZero M] (ψ : DirichletCharacter ℂ M) : ℂ :=
-  deriv (DirichletCharacter.LFunction ψ) 1 / DirichletCharacter.LFunction ψ 1
-
-noncomputable def Gfun {M : ℕ} [NeZero M] (ψ : DirichletCharacter ℂ M) (y : ℝ) : ℂ :=
-  (∑ r ∈ Finset.range (⌊y⌋₊ + 1), (Λ r : ℂ) * ψ r * ((y / r - 1 : ℝ) : ℂ)) +
-    haveI := Classical.propDecidable (ψ = 1)
-    if ψ = 1 then ((-(y * Real.log y) + (1 + Real.eulerMascheroniConstant) * y : ℝ) : ℂ)
-    else (y : ℂ) * logDerivAtOne ψ
 
 end HostParam

@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.IsFrozenInv
+module
+
+public import Formalism.MahlerMeasure.IsFrozenInv
+
+@[expose] public section
 
 namespace Formalism.GM.M.FB
 
@@ -85,10 +89,11 @@ lemma ev_monomial (ρ : Fin r) (m : Fin (N + 1) × Fin r →₀ ℕ) (a : ℚ_[p
 
 lemma coeff_ev (ρ : Fin r) (n : ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) ℚ_[p])
     (hF : ∀ m ∈ F.support, ∑ c, m (Fin.last N, c) = n) (m' : Fin N × Fin r →₀ ℕ) :
-    coeff m' (ev p ρ F) = coeff (ext n ρ m') F := by
+    AddMonoidAlgebra.coeff (ev p ρ F) m' = AddMonoidAlgebra.coeff F (ext n ρ m') := by
   classical
   conv_lhs => rw [F.as_sum]
-  rw [map_sum, MvPolynomial.coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, MvPolynomial.coeff_sum]
   simp only [ev_monomial]
   rw [Finset.sum_eq_single (ext n ρ m')]
   · rw [if_pos (fun c hc => by rw [ext_last, if_neg hc]), res_ext, MvPolynomial.coeff_monomial, if_pos rfl]
@@ -110,9 +115,9 @@ lemma coeff_ev (ρ : Fin r) (n : ℕ) (F : MvPolynomial (Fin (N + 1) × Fin r) �
           · rw [ext_last, if_neg hc, hcond c hc]
         · rw [ext_castSucc, res_apply]
       rw [heq, hres]
-    · exact MvPolynomial.coeff_zero _
+    · simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   · intro hnot
-    have h0 : coeff (ext n ρ m') F = 0 := by simpa using hnot
+    have h0 : AddMonoidAlgebra.coeff F (ext n ρ m') = 0 := by simpa using hnot
     rw [h0]
     split_ifs <;> simp
 
@@ -162,7 +167,8 @@ lemma glAct_freezeSub (LL : Letters N) (n : ℕ) (ρ c : Fin r) (hc : c ≠ ρ) 
     glAct p (LL.snoc n) (N + 1) c ρ (freezeSub p LL ρ v) = 0 := by
   rcases v with ⟨i, c0⟩
   by_cases hv : LL.vec i <;> by_cases hc0 : c0 = ρ <;>
-    simp [freezeSub, hv, hc0, glAct_mul, glAct_X, map_sum, map_sub, Ne.symm hc, hc, mul_ite,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [freezeSub, hv, hc0, glAct_mul, glAct_X, map_sum, map_sub, Ne.symm hc, hc, mul_ite,
       Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq] <;> ring
 
 lemma glAct_aeval_freezeSub (LL : Letters N) (n : ℕ) (ρ c : Fin r) (hc : c ≠ ρ)
@@ -175,7 +181,7 @@ lemma glAct_aeval_freezeSub (LL : Letters N) (n : ℕ) (ρ c : Fin r) (hc : c �
       refine Finset.sum_eq_zero fun i _ => ?_
       split_ifs <;> simp
     rw [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq, MvPolynomial.C_eq_smul_one, map_smul, h1, smul_zero]
-  | add f g hf hg => rw [map_add, map_add, hf, hg, add_zero]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), hf, hg, add_zero]
   | mul_X f v hf =>
     rw [map_mul, MvPolynomial.aeval_X, glAct_mul, hf, glAct_freezeSub LL n ρ c hc v, mul_zero, mul_zero,
       add_zero]
@@ -227,7 +233,8 @@ lemma hom_aeval (LL : Letters N) (ρ : Fin r) (f : MvPolynomial (Fin N × Fin r)
     (hf : f ∈ Pol p r LL) :
     IsWeightedHomogeneous (wL N r) (aeval (freezeSub p LL ρ) f) LL.total := by
   have hsupp := (MvPolynomial.mem_restrictSupport_iff ℚ_[p]).1 hf
-  rw [f.as_sum, map_sum, ← MvPolynomial.mem_weightedHomogeneousSubmodule]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum, ← MvPolynomial.mem_weightedHomogeneousSubmodule]
   refine Submodule.sum_mem _ fun m hm => ?_
   rw [MvPolynomial.mem_weightedHomogeneousSubmodule, MvPolynomial.aeval_monomial]
   have hdeg : MultiDeg LL m := hsupp (Finset.mem_coe.2 hm)
@@ -235,7 +242,7 @@ lemma hom_aeval (LL : Letters N) (ρ : Fin r) (f : MvPolynomial (Fin N × Fin r)
       (m.prod fun v k => (freezeSub p LL ρ v) ^ k) (∑ v ∈ m.support, m v • 1) :=
     MvPolynomial.IsWeightedHomogeneous.prod _ _ _
       (fun v _ => (hom_freezeSub LL ρ v).pow (m v))
-  have hC := MvPolynomial.isWeightedHomogeneous_C (R := ℚ_[p]) (wL N r) (coeff m f)
+  have hC := MvPolynomial.isWeightedHomogeneous_C (R := ℚ_[p]) (wL N r) (AddMonoidAlgebra.coeff f m)
   have key := hC.mul hpr
   have hs : ∑ v ∈ m.support, m v • 1 = ∑ v, m v := by
     simp only [smul_eq_mul, mul_one]
@@ -286,14 +293,14 @@ open MvPolynomial Finset
 
 variable {p : ℕ} [Fact p.Prime] {N r : ℕ}
 
-def kk (ρ : Fin r) (m : Fin (N + 1) × Fin r →₀ ℕ) : ℕ :=
+noncomputable def kk (ρ : Fin r) (m : Fin (N + 1) × Fin r →₀ ℕ) : ℕ :=
   ∑ c ∈ Finset.univ.erase ρ, m (Fin.last N, c)
 
 lemma coeff_X_pderiv_castSucc (ρ : Fin r) (G : MvPolynomial (Fin (N + 1) × Fin r) ℚ_[p])
     (m : Fin (N + 1) × Fin r →₀ ℕ)
-    (hG : ∀ ν : Fin (N + 1) × Fin r →₀ ℕ, kk ρ ν = kk ρ m → coeff ν G = 0)
+    (hG : ∀ ν : Fin (N + 1) × Fin r →₀ ℕ, kk ρ ν = kk ρ m → AddMonoidAlgebra.coeff G ν = 0)
     (i : Fin N) (a b : Fin r) :
-    coeff m (X (Fin.castSucc i, a) * pderiv (Fin.castSucc i, b) G) = 0 := by
+    AddMonoidAlgebra.coeff (X (Fin.castSucc i, a) * pderiv (Fin.castSucc i, b) G) m = 0 := by
   classical
   rw [MvPolynomial.coeff_X_mul']
   split_ifs with h
@@ -304,14 +311,14 @@ lemma coeff_X_pderiv_castSucc (ρ : Fin r) (G : MvPolynomial (Fin (N + 1) × Fin
   · rfl
 
 theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N + 1) × Fin r) ℚ_[p])
-    (hinv : IsFrozenInv p LL ρ n G) (h0 : ∀ m, kk ρ m = 0 → coeff m G = 0) : G = 0 := by
+    (hinv : IsFrozenInv p LL ρ n G) (h0 : ∀ m, kk ρ m = 0 → AddMonoidAlgebra.coeff G m = 0) : G = 0 := by
   classical
   by_contra hne
-  have hex : ∃ k, ∃ m, kk ρ m = k ∧ coeff m G ≠ 0 := by
+  have hex : ∃ k, ∃ m, kk ρ m = k ∧ AddMonoidAlgebra.coeff G m ≠ 0 := by
     obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.1 hne
     exact ⟨_, m, rfl, hm⟩
   obtain ⟨m, hmk, hm⟩ := Nat.find_spec hex
-  have hmin : ∀ ν, kk ρ ν < Nat.find hex → coeff ν G = 0 := fun ν hν => by
+  have hmin : ∀ ν, kk ρ ν < Nat.find hex → AddMonoidAlgebra.coeff G ν = 0 := fun ν hν => by
     by_contra h
     exact Nat.find_min hex hν ⟨ν, rfl, h⟩
   obtain ⟨c, hcρ, hc⟩ : ∃ c, c ≠ ρ ∧ m (Fin.last N, c) ≠ 0 := by
@@ -332,9 +339,10 @@ theorem vanish (LL : Letters N) (n : ℕ) (ρ : Fin r) (G : MvPolynomial (Fin (N
       exact Nat.sub_le _ _
     · rw [hval c hcρ, if_pos rfl]
       omega
-  have hG' : ∀ ν, kk ρ ν = kk ρ m' → coeff ν G = 0 := fun ν hν => hmin ν (hν ▸ hmk ▸ hlt)
-  have hc0 := congrArg (coeff m') (hinv c hcρ)
-  simp only [glAct, LinearMap.sum_apply, MvPolynomial.coeff_sum, coeff_zero] at hc0
+  have hG' : ∀ ν, kk ρ ν = kk ρ m' → AddMonoidAlgebra.coeff G ν = 0 := fun ν hν => hmin ν (hν ▸ hmk ▸ hlt)
+  have hc0 := congrArg (AddMonoidAlgebra.coeff · m') (hinv c hcρ)
+  simp only [glAct, LinearMap.sum_apply, MvPolynomial.coeff_sum, AddMonoidAlgebra.coeff_zero,
+    Finsupp.zero_apply] at hc0
   rw [Fin.sum_univ_castSucc, Finset.sum_eq_zero (fun i _ => ?_), zero_add] at hc0
   · have hl : ((Fin.last N : Fin (N + 1)) : ℕ) < N + 1 := (Fin.last N).isLt
     rw [if_pos hl] at hc0
@@ -412,11 +420,11 @@ theorem extendBijOn : M.FreezeBij := by
       have := (hFsupp (Finset.mem_coe.2 hm)) (Fin.last N)
       rwa [snoc_deg_last] at this
     obtain ⟨f, hf⟩ : ∃ f, f = ev p ρ F := ⟨_, rfl⟩
-    have hcf : ∀ m', coeff m' f = coeff (ext n ρ m') F := fun m' => by rw [hf]; exact coeff_ev ρ n F hFn m'
+    have hcf : ∀ m', AddMonoidAlgebra.coeff f m' = AddMonoidAlgebra.coeff F (ext n ρ m') := fun m' => by rw [hf]; exact coeff_ev ρ n F hFn m'
     have hfpol : f ∈ M.Pol p r LL := by
       rw [M.Pol, MvPolynomial.mem_restrictSupport_iff]
       intro m' hm'
-      have hne : coeff (ext n ρ m') F ≠ 0 := by
+      have hne : AddMonoidAlgebra.coeff F (ext n ρ m') ≠ 0 := by
         rw [← hcf]
         exact MvPolynomial.mem_support_iff.1 hm'
       have hmd := hFsupp (Finset.mem_coe.2 (MvPolynomial.mem_support_iff.2 hne))
@@ -444,10 +452,10 @@ theorem extendBijOn : M.FreezeBij := by
           simp only [kk] at hkk
           exact (Finset.sum_eq_zero_iff.1 hkk) c (Finset.mem_erase.2 ⟨hc, Finset.mem_univ _⟩)
         rw [eq_ext_res n ρ m hZ hrow, ← coeff_ev ρ n _ hfz, ← coeff_ev ρ n F hFn, ev_freeze, hf]
-      · have h1 : coeff m (M.freeze p LL ρ n f) = 0 := by
+      · have h1 : AddMonoidAlgebra.coeff (M.freeze p LL ρ n f) m = 0 := by
           by_contra h
           exact hrow (hfz m (MvPolynomial.mem_support_iff.2 h))
-        have h2 : coeff m F = 0 := by
+        have h2 : AddMonoidAlgebra.coeff F m = 0 := by
           by_contra h
           exact hrow (hFn m (MvPolynomial.mem_support_iff.2 h))
         rw [h1, h2]

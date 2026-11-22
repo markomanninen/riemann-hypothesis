@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CocycleNormalForm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CocycleNormalForm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhSmall
+
+@[expose] public section
+
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
 private theorem exists_strictHenselian_absolutely_closed_local_ring {k A ι : Type} [CommRing k] [CommRing A] [Fintype ι] (π : A → k) (μ : k → A)
@@ -13,9 +18,11 @@ private theorem exists_strictHenselian_absolutely_closed_local_ring {k A ι : Ty
   have h3 : ∀ (a : A) c, m (π a * c) = a * m c := h2
   refine ⟨m.mapMatrix, fun Y => rfl, fun M Y => ?_, fun M Y => ?_⟩
   · ext a b
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum, h3]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum, h3]
   · ext a b
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [mul_comm (Y a c), h3, mul_comm]
 
@@ -78,7 +85,7 @@ theorem UpperTheory.V.Alg.obs_correct :
     obtain ⟨⟨y1, y2⟩, -⟩ := Y.2
     refine ⟨?_, fun a b e => ?_⟩
     · have : (T Y.1).transpose = T Y.1.transpose := by rw [← T0, ← T0, Matrix.transpose_map]
-      rw [this, Tl, Tr, Jres, ← map_add, y1, map_zero]
+      rw [this, Tl, Tr, Jres, ← map_add (f := _), y1, map_zero]
     · have : T 0 a b = 0 := by rw [map_zero]; rfl
       rw [← T0, Matrix.map_apply, y2 a b e, ← this, ← T0]
       rfl
@@ -103,7 +110,7 @@ theorem UpperTheory.V.Alg.obs_correct :
       simp only [mul_assoc]
     rw [hf]
     simp only
-    rw [sub_mul, mul_sub, mul_sub, TT, Tl, Tr, rtres, rtres, e, e', map_sub, map_add]
+    rw [sub_mul, mul_sub, mul_sub, TT, Tl, Tr, rtres, rtres, e, e', map_sub, map_add (f := _)]
     abel
   have fone : f 1 = 1 := by
     obtain ⟨u, -, hu, -⟩ := g3 _ (fH 1)

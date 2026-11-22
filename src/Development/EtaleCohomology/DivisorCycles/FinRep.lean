@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.MinCongr
+module
+
+public import Development.EtaleCohomology.DivisorCycles.MinCongr
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Rep
 theorem etale_representation_realization_instance : LateralTheory.DivDb.Rep := by

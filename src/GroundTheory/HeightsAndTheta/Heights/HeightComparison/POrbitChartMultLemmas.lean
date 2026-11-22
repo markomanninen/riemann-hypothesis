@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMult
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChartMult
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitCurve
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.POrbitChartQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -39,8 +44,8 @@ theorem chartEval_X_chart (hc : ∀ k, x k (c k) ≠ 0) (k : ι) :
 
 variable [Fintype ι] [DecidableEq ι]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem chartEval_chartMonomial (hc : ∀ k, x k (c k) ≠ 0) (d : ι → ℕ) :
     chartEval x c (chartMonomial c d) = 1 := by
   simp [chartMonomial, map_prod, chartEval_X_chart x c hc]
@@ -51,12 +56,13 @@ theorem chartCone_of_isWeightedHomogeneous (D : Type*) [CommRing D] [Algebra (ch
   classical
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm ↦ ?_
   have hm' : ∀ k, ∑ i, m ⟨k, i⟩ = d k := fun k ↦ by
     rw [← weight_coordDeg_apply, hF (mem_support_iff.mp hm)]
-  have hε : chartEval x c (monomial m (coeff m F)) =
-      algebraMap ℤ _ (coeff m F) * ∏ p, chartEval x c (X p) ^ m p := by
+  have hε : chartEval x c (monomial m (AddMonoidAlgebra.coeff F m)) =
+      algebraMap ℤ _ (AddMonoidAlgebra.coeff F m) * ∏ p, chartEval x c (X p) ^ m p := by
     rw [chartEval, aeval_monomial, Finsupp.prod_fintype _ _ (fun _ ↦ pow_zero _)]
     simp only [aeval_X]
   have hX : ∏ p : Coord n, (X p.1 : MvPolynomial ι D) ^ m p = ∏ k, X k ^ d k := by
@@ -69,8 +75,8 @@ theorem chartCone_of_isWeightedHomogeneous (D : Type*) [CommRing D] [Algebra (ch
     map_intCast]
   ring
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem chartCone_eq_zero_iff (hc : ∀ k, x k (c k) ≠ 0) (F : MvPolynomial (Coord n) ℤ) :
     chartCone x c (chartRing x c) F = 0 ↔ F ∈ orbitIdeal x := by
   let σ : MvPolynomial ι (AlgebraicClosure ℚ) →ₐ[AlgebraicClosure ℚ]
@@ -117,8 +123,8 @@ theorem mem_orbitIdeal_of_chartEval_eq_zero (hc : ∀ k, x k (c k) ≠ 0)
   rw [← chartCone_eq_zero_iff x c hc, chartCone_of_isWeightedHomogeneous x c _ hF, h0]
   simp
 
-attribute [local instance] MvPolynomial.weightedGradedAlgebra in
 
+attribute [local instance] MvPolynomial.weightedGradedAlgebra in
 theorem weightedHomogeneousComponent_mem_of_isMultiHomogIdeal
     {V : Ideal (MvPolynomial (Coord n) ℤ)} (hV : Geo.IsMultiHomogIdeal (ι := blockIdx n) V)
     {v : MvPolynomial (Coord n) ℤ} (hv : v ∈ V) (e : ι → ℕ) :
@@ -158,8 +164,10 @@ theorem mem_of_chartEval_mem_chartPoint (hc : ∀ k, x k (c k) ≠ 0)
         (isWeightedHomogeneous_chartMonomial c (E - e)).mul
           (weightedHomogeneousComponent_isWeightedHomogeneous e v)
   have hG0 : chartEval x c G = 0 := by
-    simp only [G, map_sub, map_sum, map_mul, chartEval_chartMonomial x c hc, one_mul]
-    rw [← map_sum, ← hvsum, hvF, sub_self]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [G, map_sub, map_sum, map_mul, chartEval_chartMonomial x c hc, one_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← hvsum, hvF, sub_self]
   have hGW := mem_orbitIdeal_of_chartEval_eq_zero x c hc hG hG0
   have hmem : chartMonomial c (E - d) * F ∈ V := by
     have e : chartMonomial c (E - d) * F = G +

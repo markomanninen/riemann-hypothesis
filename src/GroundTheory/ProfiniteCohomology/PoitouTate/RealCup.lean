@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.RealAbstract
-import GroundTheory.ProfiniteCohomology.RealPlaces.Induced
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.RealAbstract
+public import GroundTheory.ProfiniteCohomology.RealPlaces.Induced
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -95,8 +100,8 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
   [∀ w, IsTopologicalGroup (F w)] [∀ w, Fintype (F w)] (ψ : ∀ w, F w →ₜ* G)
   {A B C C' : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] [IsDiscreteRep C']
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem cochainsMap_normHomotopy {F' : Type u} [Group F'] [TopologicalSpace F'] [IsTopologicalGroup F'] [Fintype F'] {X Y Z Z' : Rep.{u} k F'}
     [IsDiscreteRep Y] [IsDiscreteRep Z] [IsDiscreteRep Z'] (μ : X ⊗ Y ⟶ Z) (g : Z ⟶ Z')
     {s m : ℕ} (h : s = m + 1) (e : X) (y : (cochainsComplex Y).X s) :
@@ -107,11 +112,12 @@ theorem cochainsMap_normHomotopy {F' : Type u} [Group F'] [TopologicalSpace F'] 
   change g.hom (cochainOf Z (normHomotopy μ h e y) σ) = _
   rw [cochainOf_normHomotopy]
   change g.hom (∑ a : F', Z.ρ a (μ.hom _)) = ∑ a : F', Z'.ρ a (g.hom (μ.hom _))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun a _ => Rep.hom_comm_apply g a _
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem tateCompactCochainsResMap_cup (μ : A ⊗ B ⟶ C) (g : C ⟶ C') {r s n : ℕ} (h : r + s = n)
     (p : (tateCompactCochains φ ψ A (fun v => Rep.res (φ v).toMonoidHom A) (fun _ => 𝟙 _)
       (fun w => Rep.res (ψ w).toMonoidHom A) (fun _ => 𝟙 _)).X r) (z : (cochainsComplex B).X s) :

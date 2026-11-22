@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBPEqWigMapsValueECas
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqZeroOfMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBPEqWigMapsValueECas
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

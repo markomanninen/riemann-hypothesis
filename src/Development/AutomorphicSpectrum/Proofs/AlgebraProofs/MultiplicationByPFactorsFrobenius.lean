@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.CbFrob
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+
+@[expose] public section
+
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj
 
 namespace GlobalTheory.CompanionTheory.Ar.Conj

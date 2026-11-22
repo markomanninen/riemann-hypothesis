@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ConsumerA
-import Formalism.PeriodIntegrals.ZuckTensor
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.ConsumerA
+public import Formalism.PeriodIntegrals.ZuckTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,8 @@ theorem cns_toSum_core (dual : Bool) {ε : Fin n → Bool} {μ : Fin n → ℝ} 
       (tensGrp dual (rreg ε) g (fun d => ((fb b d : smD ε (rreg ε)) : L2 ε)) c) ≠ 0 → fb b ≠ 0 := by
     intro b _ hne hb
     apply hne
-    simp [hb, tensGrp]
+    delta tensGrp
+    simp [hb]
   rw [cns_tens_sum, ← Finset.sum_filter_of_ne h0, ← Finset.sum_coe_sort]
   exact Finset.sum_congr rfl fun i _ => hEq i g hg
 

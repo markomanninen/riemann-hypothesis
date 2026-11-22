@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MemPeriodLatticeOfThetaTranslateEqUnitMul
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MemPeriodLatticeOfThetaTranslateEqUnitMul
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HasSumPolyDerivMulProdAddMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,14 +80,14 @@ def lawSubgroup {Λ V : Type*} [AddCommGroup Λ] [AddCommGroup V] (ι : Λ →+ 
     rw [add_zero, map_zero, add_zero] at h
     rw [map_zero, add_zero, (mul_eq_left₀ (hJ 0 z)).1 h.symm, one_mul]
   add_mem' := fun {l m} hl hm z => by
-    rw [map_add, add_comm (ι l), ← add_assoc, hl, hm, hc, mul_assoc]
+    rw [map_add (f := _), add_comm (ι l), ← add_assoc, hl, hm, hc, mul_assoc]
   neg_mem' := fun {l} hl z => by
     have h0 := hc 0 0 z
     rw [add_zero, map_zero, add_zero] at h0
     have h1 := hc l (-l) z
     rw [add_neg_cancel, (mul_eq_left₀ (hJ 0 z)).1 h0.symm] at h1
     have h2 := hl (z + ι (-l))
-    rw [add_assoc, ← map_add, neg_add_cancel, map_zero, add_zero] at h2
+    rw [add_assoc, ← map_add (f := _), neg_add_cancel, map_zero, add_zero] at h2
     rw [h2, ← mul_assoc, mul_comm (J (-l) z), ← h1, one_mul]
 
 theorem exists_half_of_sq_eq_one {c : ℂ} (hc : c ^ 2 = 1) :
@@ -127,7 +131,7 @@ theorem exists_half_char {d : ℕ} (Λ : Submodule ℤ (Fin d → ℂ)) (Hm : Ma
     obtain ⟨z, rfl⟩ := Φ.surjective z
     change canTh τ a b (Φ.symm (Φ z + l)) = χ l * cexp (π * hermForm Hm (Φ z) l + π / 2 * hermForm Hm l l) *
       canTh τ a b (Φ.symm (Φ z))
-    rw [hl, ← map_add, Φ.symm_apply_apply, Φ.symm_apply_apply, hform, hform,
+    rw [hl, ← map_add (f := _), Φ.symm_apply_apply, Φ.symm_apply_apply, hform, hform,
       canTh_add_period hs hp a b m n rfl, hm]
   have he : ∀ i, e i ∈ S := fun i => key _ (Pi.single i 1) 0
     (by rw [hsingle, hzero, mulVec_zero, add_zero]) (by
@@ -145,7 +149,8 @@ theorem exists_half_char {d : ℕ} (Λ : Submodule ℤ (Fin d → ℂ)) (Hm : Ma
     have h1 : ∀ m : Fin g → ℤ, (fun i => (m i : ℂ)) = ∑ i, m i • (Pi.single i 1 : Fin g → ℂ) := by
       intro m; ext k; simp [Finset.sum_apply, Pi.single_apply]
     rw [← Φ.apply_symm_apply l, hmn, h1 m, h1 n]
-    simp only [Matrix.mulVec_sum, Matrix.mulVec_smul, map_add, map_sum, map_zsmul, e, f]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec_sum, Matrix.mulVec_smul, map_add (f := _), map_sum, map_zsmul, e, f]
     simp
   have : l ∈ S := hl ▸ S.add_mem (S.sum_mem fun i _ => S.zsmul_mem (he i) _)
     (S.sum_mem fun i _ => S.zsmul_mem (hf i) _)

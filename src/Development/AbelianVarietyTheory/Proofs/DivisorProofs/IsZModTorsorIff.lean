@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenFibMapAlgebraMap
+
+@[expose] public section
 
 open CategoryTheory Limits TensorProduct
 
@@ -15,13 +19,13 @@ def bcAct (S : Type) {R A G : Type} [CommRing R] [CommRing S] [CommRing A] [Alge
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul s a => simp
-    | add x y hx hy => rw [map_add, hx, hy, map_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _)]
   map_mul' g h := by
     ext x
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul s a => simp
-    | add x y hx hy => rw [map_add, hx, hy, map_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, map_add (f := _)]
 
 @[simp]
 theorem bcAct_tmul (S : Type) {R A G : Type} [CommRing R] [CommRing S] [CommRing A] [Algebra R S]

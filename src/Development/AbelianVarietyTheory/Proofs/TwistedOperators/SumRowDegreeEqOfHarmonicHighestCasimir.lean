@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.Capelli Formalism.BasicNotions.TH GlobalTheory.JointHarm
 
@@ -164,7 +168,7 @@ theorem sum_row_degree_eq : ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (k l n
       have := hz h
       simp only [Prod.mk.injEq] at this
       exact (ne_of_lt hij) this.1
-    have := (rowAdd_invariant_iff (K := ℂ) (fun t => z (i, t)) (fun t => z (j, t)) hw huw P).out 1 2
+    have := (rowAdd_invariant_iff (K := ℂ) (fun t => z (i, t)) (fun t => z (j, t)) hw huw P).out 2 3
     exact this.mpr ((rowOp_apply z i j P).symm.trans (hzu i j hij))
   have hiy : ∀ i j : Fin l, i < j → ∀ t : ℂ,
       bind₁ (fun s => X s + ∑ t', if s = y (j, t') then C t * X (y (i, t')) else 0) P = P := by
@@ -175,7 +179,7 @@ theorem sum_row_degree_eq : ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (k l n
       have := hy h
       simp only [Prod.mk.injEq] at this
       exact (ne_of_lt hij) this.1
-    have := (rowAdd_invariant_iff (K := ℂ) (fun t => y (i, t)) (fun t => y (j, t)) hw huw P).out 1 2
+    have := (rowAdd_invariant_iff (K := ℂ) (fun t => y (i, t)) (fun t => y (j, t)) hw huw P).out 2 3
     exact this.mpr ((rowOp_apply y i j P).symm.trans (hyu i j hij))
   have ha0 : ∀ i : Fin k, n ≤ i → a i = 0 := row_degree_eq_zero z hz hP a hrz hiz
   have hb0 : ∀ i : Fin l, n ≤ i → b i = 0 := row_degree_eq_zero y hy hP b hry hiy

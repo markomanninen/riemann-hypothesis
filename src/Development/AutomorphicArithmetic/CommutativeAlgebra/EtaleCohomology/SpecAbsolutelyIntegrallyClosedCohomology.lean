@@ -1,149 +1,153 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGeneratedStatement
-import Development.AutomorphicArithmetic.CommutativeAlgebra.CohomologyPuncturedAffineLine
-import Development.AutomorphicArithmetic.CommutativeAlgebra.DescentOfIntegralDescentTruncation
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleFinitePresentationModelExists
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.CofilteredSchemeLimitExistsLocally
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.FiniteOverHenselianFibreIdempotentsLift
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleMayerVietorisLongExact
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleMayerVietorisShortExact
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.AugmentationMapBijective
-import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ProjectiveLineChartsOfHenselianFinite
-import Development.EtaleCohomology.EtaleSheaves.AICAcycPf
-import Development.EtaleCohomology.EtaleSheaves.AICOpenPf
-import Development.EtaleCohomology.EtaleSheaves.NonunitCase
-import Development.EtaleCohomology.EtaleSheaves.AugBijPf
-import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
-import Development.EtaleCohomology.EtaleSheaves.BaseIntPf
-import Development.EtaleCohomology.EtaleSheaves.BaseLocLocPf
-import Development.EtaleCohomology.EtaleSheaves.BinPfChains
-import Development.EtaleCohomology.EtaleSheaves.BuildCut
-import Development.EtaleCohomology.EtaleSheaves.ChartAcycPf
-import Development.EtaleCohomology.EtaleSheaves.ChartBCNnmPf
-import Development.EtaleCohomology.EtaleSheaves.ChartsGeomVpaPf
-import Development.EtaleCohomology.EtaleSheaves.ChaseBPf
-import Development.EtaleCohomology.EtaleSheaves.ChasePf
-import Development.EtaleCohomology.EtaleSheaves.ChowCut
-import Development.EtaleCohomology.EtaleSheaves.ChowGraphCut
-import Development.EtaleCohomology.EtaleSheaves.ChowLCut
-import Development.EtaleCohomology.EtaleSheaves.ColimHensPf
-import Development.EtaleCohomology.EtaleSheaves.CompCut
-import Development.EtaleCohomology.EtaleSheaves.ContAffPf
-import Development.EtaleCohomology.EtaleSheaves.ContIndPf
-import Development.EtaleCohomology.EtaleSheaves.ContPf
-import Development.EtaleCohomology.EtaleSheaves.ContStepPf
-import Development.EtaleCohomology.EtaleSheaves.AicschOfImm
-import Development.EtaleCohomology.EtaleSheaves.CoverCut
-import Development.EtaleCohomology.EtaleSheaves.CoverExistence
-import Development.EtaleCohomology.EtaleSheaves.DescEqvPf
-import Development.EtaleCohomology.EtaleSheaves.DiagCompPf
-import Development.EtaleCohomology.EtaleSheaves.DiagIdPf
-import Development.EtaleCohomology.EtaleSheaves.DiagNatPf
-import Development.EtaleCohomology.EtaleSheaves.EmbedNonDegOf
-import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding
-import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding.EmbedOfLines
-import Development.EtaleCohomology.EtaleSheaves.EmptyH2
-import Development.EtaleCohomology.EtaleSheaves.FMrangePfQc
-import Development.EtaleCohomology.EtaleSheaves.FibClosedPf
-import Development.EtaleCohomology.EtaleSheaves.FibCovPf
-import Development.EtaleCohomology.EtaleSheaves.FibMapRange
-import Development.EtaleCohomology.EtaleSheaves.FibClosed
-import Development.EtaleCohomology.EtaleSheaves.FibStalkPf
-import Development.EtaleCohomology.EtaleSheaves.FibreEqvPf
-import Development.EtaleCohomology.EtaleSheaves.FiltPf
-import Development.EtaleCohomology.EtaleSheaves.FlatMonoLimPf
-import Development.EtaleCohomology.EtaleSheaves.ResSmulGen
-import Development.EtaleCohomology.EtaleSheaves.EmbedNonDeg
-import Development.EtaleCohomology.EtaleSheaves.GeometricDataOfLines
-import Development.EtaleCohomology.EtaleSheaves.GluePf
-import Development.EtaleCohomology.EtaleSheaves.HZeroPf
-import Development.EtaleCohomology.EtaleSheaves.HasLimPf
-import Development.EtaleCohomology.EtaleSheaves.HensCut
-import Development.EtaleCohomology.EtaleSheaves.IdemLiftOf
-import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApprox
-import Development.EtaleCohomology.EtaleSheaves.IdemPartPf
-import Development.EtaleCohomology.EtaleSheaves.IdemSecPf
-import Development.EtaleCohomology.EtaleSheaves.ImageInPf
-import Development.EtaleCohomology.EtaleSheaves.ImgOf
-import Development.EtaleCohomology.EtaleSheaves.InjStepPf
-import Development.EtaleCohomology.EtaleSheaves.IntFibPf
-import Development.EtaleCohomology.EtaleSheaves.IntHensPf
-import Development.EtaleCohomology.EtaleSheaves.IntPBPf
-import Development.EtaleCohomology.EtaleSheaves.IterBCPf
-import Development.EtaleCohomology.EtaleSheaves.IterCompPf
-import Development.EtaleCohomology.EtaleSheaves.LCIsoPf
-import Development.EtaleCohomology.EtaleSheaves.LZARStepOf
-import Development.EtaleCohomology.EtaleSheaves.H1FiniteCoefficients
-import Development.EtaleCohomology.EtaleSheaves.LZHensFinitePf
-import Development.EtaleCohomology.EtaleSheaves.MulRightMem
-import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApproxYDDUPf
-import Development.EtaleCohomology.EtaleSheaves.NoetherianLocalChartOverlapFiniteComplement
-import Development.EtaleCohomology.EtaleSheaves.LiftPf
-import Development.EtaleCohomology.EtaleSheaves.LimIntPf
-import Development.EtaleCohomology.EtaleSheaves.LineChartPf
-import Development.EtaleCohomology.EtaleSheaves.LineExPf
-import Development.EtaleCohomology.EtaleSheaves.LineHighPf
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
-import Development.EtaleCohomology.EtaleSheaves.ProjectiveLineTwoAffineChartsPolynomialGenerated
-import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineZero
-import Development.EtaleCohomology.EtaleSheaves.LocACPf
-import Development.EtaleCohomology.EtaleSheaves.LocalIntegralClosureRoots
-import Development.EtaleCohomology.EtaleSheaves.LocalizationIntegralClosure
-import Development.EtaleCohomology.EtaleSheaves.AicOfIsLocalization
-import Development.EtaleCohomology.EtaleSheaves.LocPowPf
-import Development.EtaleCohomology.EtaleSheaves.MayerVietorisSequence
-import Development.EtaleCohomology.EtaleSheaves.MonicSplitsPf
-import Development.EtaleCohomology.EtaleSheaves.UliftSmulEq
-import Development.EtaleCohomology.EtaleSheaves.NbIsoPf
-import Development.EtaleCohomology.EtaleSheaves.NormACPf
-import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.NormAICOf
-import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.AicSubsingleton
-import Development.EtaleCohomology.EtaleSheaves.OpenCovPtaPf
-import Development.EtaleCohomology.EtaleSheaves.OverMVPf
-import Development.EtaleCohomology.EtaleSheaves.ChartMapBase
-import Development.EtaleCohomology.EtaleSheaves.PartAPf
-import Development.EtaleCohomology.EtaleSheaves.PartBPf
-import Development.EtaleCohomology.EtaleSheaves.PartCPfSplit
-import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
-import Development.EtaleCohomology.EtaleSheaves.PartDirectedPf
-import Development.EtaleCohomology.EtaleSheaves.SimplicialPieceDiscrete
-import Development.EtaleCohomology.EtaleSheaves.ProEqvPfA
-import Development.EtaleCohomology.EtaleSheaves.ProdAcycPf
-import Development.EtaleCohomology.EtaleSheaves.ProdPf
-import Development.EtaleCohomology.EtaleSheaves.ProdACFField
-import Development.EtaleCohomology.EtaleSheaves.QuotAcycCut
-import Development.EtaleCohomology.EtaleSheaves.RelNormPf
-import Development.EtaleCohomology.EtaleSheaves.ResBijPf
-import Development.EtaleCohomology.EtaleSheaves.RestrPf
-import Development.EtaleCohomology.EtaleSheaves.RootAICPf
-import Development.EtaleCohomology.EtaleSheaves.RootPf
-import Development.EtaleCohomology.EtaleSheaves.RootPowPf
-import Development.EtaleCohomology.EtaleSheaves.SpecAICPf
-import Development.EtaleCohomology.EtaleSheaves.StageBPf
-import Development.EtaleCohomology.EtaleSheaves.StageProdPf
-import Development.EtaleCohomology.EtaleSheaves.StalkAICRingPf
-import Development.EtaleCohomology.EtaleSheaves.StalkContPf
-import Development.EtaleCohomology.EtaleSheaves.StalkGermPf
-import Development.EtaleCohomology.EtaleSheaves.StalkSHSPf
-import Development.EtaleCohomology.EtaleSheaves.StdChartsOf
-import Development.EtaleCohomology.EtaleSheaves.FibreIdem
-import Development.EtaleCohomology.EtaleSheaves.SteinPf
-import Development.EtaleCohomology.EtaleSheaves.KummerInduction.StepKOf
-import Development.EtaleCohomology.EtaleSheaves.StepPf
-import Development.EtaleCohomology.EtaleSheaves.DiagramChase.StepSOfChase
-import Development.EtaleCohomology.EtaleSheaves.SurjStepPf
-import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
-import Development.EtaleCohomology.EtaleSheaves.SysOf
-import Development.EtaleCohomology.EtaleSheaves.TowerFinPf
-import Development.EtaleCohomology.EtaleSheaves.TruncationPieces
-import Development.EtaleCohomology.EtaleSheaves.TruncBijPf
-import Development.EtaleCohomology.EtaleSheaves.Truncation
-import Development.EtaleCohomology.EtaleSheaves.AugHolds
-import Development.EtaleCohomology.EtaleSheaves.TwTrivPf
-import Development.EtaleCohomology.EtaleSheaves.ZCovPf
-import Development.EtaleCohomology.EtaleSheaves.StalkGerm
-import Development.EtaleCohomology.EtaleSheaves.ZarIndPf
-import Development.EtaleCohomology.EtaleSheaves.LineHigh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateTwistSectionsLocallyGeneratedStatement
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.CohomologyPuncturedAffineLine
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.DescentOfIntegralDescentTruncation
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleFinitePresentationModelExists
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.CofilteredSchemeLimitExistsLocally
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.FiniteOverHenselianFibreIdempotentsLift
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleMayerVietorisLongExact
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleMayerVietorisShortExact
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.AugmentationMapBijective
+public import Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ProjectiveLineChartsOfHenselianFinite
+public import Development.EtaleCohomology.EtaleSheaves.AICAcycPf
+public import Development.EtaleCohomology.EtaleSheaves.AICOpenPf
+public import Development.EtaleCohomology.EtaleSheaves.NonunitCase
+public import Development.EtaleCohomology.EtaleSheaves.AugBijPf
+public import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
+public import Development.EtaleCohomology.EtaleSheaves.BaseIntPf
+public import Development.EtaleCohomology.EtaleSheaves.BaseLocLocPf
+public import Development.EtaleCohomology.EtaleSheaves.BinPfChains
+public import Development.EtaleCohomology.EtaleSheaves.BuildCut
+public import Development.EtaleCohomology.EtaleSheaves.ChartAcycPf
+public import Development.EtaleCohomology.EtaleSheaves.ChartBCNnmPf
+public import Development.EtaleCohomology.EtaleSheaves.ChartsGeomVpaPf
+public import Development.EtaleCohomology.EtaleSheaves.ChaseBPf
+public import Development.EtaleCohomology.EtaleSheaves.ChasePf
+public import Development.EtaleCohomology.EtaleSheaves.ChowCut
+public import Development.EtaleCohomology.EtaleSheaves.ChowGraphCut
+public import Development.EtaleCohomology.EtaleSheaves.ChowLCut
+public import Development.EtaleCohomology.EtaleSheaves.ColimHensPf
+public import Development.EtaleCohomology.EtaleSheaves.CompCut
+public import Development.EtaleCohomology.EtaleSheaves.ContAffPf
+public import Development.EtaleCohomology.EtaleSheaves.ContIndPf
+public import Development.EtaleCohomology.EtaleSheaves.ContPf
+public import Development.EtaleCohomology.EtaleSheaves.ContStepPf
+public import Development.EtaleCohomology.EtaleSheaves.AicschOfImm
+public import Development.EtaleCohomology.EtaleSheaves.CoverCut
+public import Development.EtaleCohomology.EtaleSheaves.CoverExistence
+public import Development.EtaleCohomology.EtaleSheaves.DescEqvPf
+public import Development.EtaleCohomology.EtaleSheaves.DiagCompPf
+public import Development.EtaleCohomology.EtaleSheaves.DiagIdPf
+public import Development.EtaleCohomology.EtaleSheaves.DiagNatPf
+public import Development.EtaleCohomology.EtaleSheaves.EmbedNonDegOf
+public import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding
+public import Development.EtaleCohomology.EtaleSheaves.EtaleEmbedding.EmbedOfLines
+public import Development.EtaleCohomology.EtaleSheaves.EmptyH2
+public import Development.EtaleCohomology.EtaleSheaves.FMrangePfQc
+public import Development.EtaleCohomology.EtaleSheaves.FibClosedPf
+public import Development.EtaleCohomology.EtaleSheaves.FibCovPf
+public import Development.EtaleCohomology.EtaleSheaves.FibMapRange
+public import Development.EtaleCohomology.EtaleSheaves.FibClosed
+public import Development.EtaleCohomology.EtaleSheaves.FibStalkPf
+public import Development.EtaleCohomology.EtaleSheaves.FibreEqvPf
+public import Development.EtaleCohomology.EtaleSheaves.FiltPf
+public import Development.EtaleCohomology.EtaleSheaves.FlatMonoLimPf
+public import Development.EtaleCohomology.EtaleSheaves.ResSmulGen
+public import Development.EtaleCohomology.EtaleSheaves.EmbedNonDeg
+public import Development.EtaleCohomology.EtaleSheaves.GeometricDataOfLines
+public import Development.EtaleCohomology.EtaleSheaves.GluePf
+public import Development.EtaleCohomology.EtaleSheaves.HZeroPf
+public import Development.EtaleCohomology.EtaleSheaves.HasLimPf
+public import Development.EtaleCohomology.EtaleSheaves.HensCut
+public import Development.EtaleCohomology.EtaleSheaves.IdemLiftOf
+public import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApprox
+public import Development.EtaleCohomology.EtaleSheaves.IdemPartPf
+public import Development.EtaleCohomology.EtaleSheaves.IdemSecPf
+public import Development.EtaleCohomology.EtaleSheaves.ImageInPf
+public import Development.EtaleCohomology.EtaleSheaves.ImgOf
+public import Development.EtaleCohomology.EtaleSheaves.InjStepPf
+public import Development.EtaleCohomology.EtaleSheaves.IntFibPf
+public import Development.EtaleCohomology.EtaleSheaves.IntHensPf
+public import Development.EtaleCohomology.EtaleSheaves.IntPBPf
+public import Development.EtaleCohomology.EtaleSheaves.IterBCPf
+public import Development.EtaleCohomology.EtaleSheaves.IterCompPf
+public import Development.EtaleCohomology.EtaleSheaves.LCIsoPf
+public import Development.EtaleCohomology.EtaleSheaves.LZARStepOf
+public import Development.EtaleCohomology.EtaleSheaves.H1FiniteCoefficients
+public import Development.EtaleCohomology.EtaleSheaves.LZHensFinitePf
+public import Development.EtaleCohomology.EtaleSheaves.MulRightMem
+public import Development.EtaleCohomology.EtaleSheaves.LZIdemSumApproxYDDUPf
+public import Development.EtaleCohomology.EtaleSheaves.NoetherianLocalChartOverlapFiniteComplement
+public import Development.EtaleCohomology.EtaleSheaves.LiftPf
+public import Development.EtaleCohomology.EtaleSheaves.LimIntPf
+public import Development.EtaleCohomology.EtaleSheaves.LineChartPf
+public import Development.EtaleCohomology.EtaleSheaves.LineExPf
+public import Development.EtaleCohomology.EtaleSheaves.LineHighPf
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineOne
+public import Development.EtaleCohomology.EtaleSheaves.ProjectiveLineTwoAffineChartsPolynomialGenerated
+public import Development.EtaleCohomology.EtaleSheaves.StandardChartsLineZero
+public import Development.EtaleCohomology.EtaleSheaves.LocACPf
+public import Development.EtaleCohomology.EtaleSheaves.LocalIntegralClosureRoots
+public import Development.EtaleCohomology.EtaleSheaves.LocalizationIntegralClosure
+public import Development.EtaleCohomology.EtaleSheaves.AicOfIsLocalization
+public import Development.EtaleCohomology.EtaleSheaves.LocPowPf
+public import Development.EtaleCohomology.EtaleSheaves.MayerVietorisSequence
+public import Development.EtaleCohomology.EtaleSheaves.MonicSplitsPf
+public import Development.EtaleCohomology.EtaleSheaves.UliftSmulEq
+public import Development.EtaleCohomology.EtaleSheaves.NbIsoPf
+public import Development.EtaleCohomology.EtaleSheaves.NormACPf
+public import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.NormAICOf
+public import Development.EtaleCohomology.EtaleSheaves.IntegralNormalization.AicSubsingleton
+public import Development.EtaleCohomology.EtaleSheaves.OpenCovPtaPf
+public import Development.EtaleCohomology.EtaleSheaves.OverMVPf
+public import Development.EtaleCohomology.EtaleSheaves.ChartMapBase
+public import Development.EtaleCohomology.EtaleSheaves.PartAPf
+public import Development.EtaleCohomology.EtaleSheaves.PartBPf
+public import Development.EtaleCohomology.EtaleSheaves.PartCPfSplit
+public import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+public import Development.EtaleCohomology.EtaleSheaves.PartDirectedPf
+public import Development.EtaleCohomology.EtaleSheaves.SimplicialPieceDiscrete
+public import Development.EtaleCohomology.EtaleSheaves.ProEqvPfA
+public import Development.EtaleCohomology.EtaleSheaves.ProdAcycPf
+public import Development.EtaleCohomology.EtaleSheaves.ProdPf
+public import Development.EtaleCohomology.EtaleSheaves.ProdACFField
+public import Development.EtaleCohomology.EtaleSheaves.QuotAcycCut
+public import Development.EtaleCohomology.EtaleSheaves.RelNormPf
+public import Development.EtaleCohomology.EtaleSheaves.ResBijPf
+public import Development.EtaleCohomology.EtaleSheaves.RestrPf
+public import Development.EtaleCohomology.EtaleSheaves.RootAICPf
+public import Development.EtaleCohomology.EtaleSheaves.RootPf
+public import Development.EtaleCohomology.EtaleSheaves.RootPowPf
+public import Development.EtaleCohomology.EtaleSheaves.SpecAICPf
+public import Development.EtaleCohomology.EtaleSheaves.StageBPf
+public import Development.EtaleCohomology.EtaleSheaves.StageProdPf
+public import Development.EtaleCohomology.EtaleSheaves.StalkAICRingPf
+public import Development.EtaleCohomology.EtaleSheaves.StalkContPf
+public import Development.EtaleCohomology.EtaleSheaves.StalkGermPf
+public import Development.EtaleCohomology.EtaleSheaves.StalkSHSPf
+public import Development.EtaleCohomology.EtaleSheaves.StdChartsOf
+public import Development.EtaleCohomology.EtaleSheaves.FibreIdem
+public import Development.EtaleCohomology.EtaleSheaves.SteinPf
+public import Development.EtaleCohomology.EtaleSheaves.KummerInduction.StepKOf
+public import Development.EtaleCohomology.EtaleSheaves.StepPf
+public import Development.EtaleCohomology.EtaleSheaves.DiagramChase.StepSOfChase
+public import Development.EtaleCohomology.EtaleSheaves.SurjStepPf
+public import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
+public import Development.EtaleCohomology.EtaleSheaves.SysOf
+public import Development.EtaleCohomology.EtaleSheaves.TowerFinPf
+public import Development.EtaleCohomology.EtaleSheaves.TruncationPieces
+public import Development.EtaleCohomology.EtaleSheaves.TruncBijPf
+public import Development.EtaleCohomology.EtaleSheaves.Truncation
+public import Development.EtaleCohomology.EtaleSheaves.AugHolds
+public import Development.EtaleCohomology.EtaleSheaves.TwTrivPf
+public import Development.EtaleCohomology.EtaleSheaves.ZCovPf
+public import Development.EtaleCohomology.EtaleSheaves.StalkGerm
+public import Development.EtaleCohomology.EtaleSheaves.ZarIndPf
+public import Development.EtaleCohomology.EtaleSheaves.LineHigh
+
+@[expose] public section
 
 namespace UpperTheory.Et.E2
 
@@ -487,15 +491,15 @@ theorem chow_lemma_normalization : LateralTheory.E.ChowCut.Norm := @LateralTheor
 
 theorem e2Cut_chow : LateralTheory.E.t_E2Cut.Chow := LateralTheory.E.ChowCut.goal_of chow_lemma_image chow_lemma_projective_cover chow_lemma_normalization
 
-open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut in
 
+open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut in
 theorem towers (H : Hyp) (q : ℕ) (i : ℤ) (B : Type) [CommRing B] [IsLocalRing B] (hB : SH B) (hq : IsUnit (q : B))
     {Y : Scheme.{0}} (r : Y ⟶ Spec (CommRingCat.of B)) (hr : IT r) : PB q i r := by
   have h := tower H n1 n9 n45 n49 n52 n74 proper_base_change_affine_space proper_base_change_integral_pullback proper_base_change_stein_factorization proper_base_change_fibre q i B hB hq r hr (𝟙 Y) inferInstance
   simpa using h
 
-open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut in
 
+open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.E.t_E2Cut in
 theorem main (H : Hyp) : E2 := by
   intro q A _ _ hA hq X p _ i
   show PB q i p

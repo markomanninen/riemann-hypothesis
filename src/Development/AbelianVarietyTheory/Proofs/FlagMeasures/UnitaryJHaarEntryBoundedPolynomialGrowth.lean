@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalInterConjugateClosedUnimodular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHaarMeasureOfSigmaFinite
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalInterConjugateClosedUnimodular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHaarMeasureOfSigmaFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,7 @@ theorem small_ball {S : Subgroup (Formalism.REAL.UJ ε)} {μ : Measure (Formalis
         · exact (mem_closedBall_iff_entries (by linarith)).1 h1 l j
     refine (Finset.sum_le_card_nsmul _ _ _ hb).trans ?_
     simpa using h
-  · rw [measure_mono_null (fun s hs (hS : s ∈ (S : Set (Formalism.REAL.UJ ε))) => hex ⟨s, hs, hS⟩) hμ.2.2.1]
+  · rw [measure_mono_null (t := (S : Set (Formalism.REAL.UJ ε))ᶜ) (fun s hs hS => hex ⟨s, hs, hS⟩) hμ.2.2.1]
     exact zero_le
 
 end GlobalTheory.UJGrowth

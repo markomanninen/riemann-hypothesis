@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.MemSplitSeqIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KAcyclicHomology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.MemSplitSeqIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KAcyclicHomology
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits GlobalTheory.HomStab GlobalTheory.SeqCx UpperTheory.V.KL
 
@@ -105,9 +109,9 @@ theorem pairAct_pmU (f g : Fin n → Fin n) (h1 : ∀ k, f (g k) = k) (h2 : ∀ 
 
 end GlobalTheory.HomStab.FacePerm
 
-open GlobalTheory.HomStab.FacePerm in
 
-theorem GlobalTheory.HomStab.exists_perm_face_stdSeq : ∀ (R : Type) [CommRing R] (n p : ℕ) (h : p + 1 ≤ n) (i : Fin (p + 1)), ∃ g : GL (Fin n) R, g • face R n p i (stdSeq R n (p + 1) h) = stdSeq R n p (by omega) ∧ ∀ x : GL (Fin (n - (p + 1))) R, g * stab R (n - (p + 1)) n (Nat.sub_le _ _) x = stab R (n - (p + 1)) n (Nat.sub_le _ _) x * g := by
+open GlobalTheory.HomStab.FacePerm in
+theorem GlobalTheory.HomStab.exists_perm_face_stdSeq : ∀ (R : Type) [CommRing R] (n p : ℕ) (h : p + 1 ≤ n) (i : Fin (p + 1)), ∃ g : GL (Fin n) R, g • face R n p i (stdSeq R n (p + 1) h) = stdSeq R n p (by omega) ∧ ∀ x : GL (Fin (n - (p + 1))) R, g * stab R (n - (p + 1)) n (Nat.sub_le _ _) x = stab R (n - (p + 1)) n (Nat.sub_le _ _) x * g := open GlobalTheory.HomStab.FacePerm in by
   intro R _ n p h i
   have hi := i.isLt
   have hmi : n - (p + 1) + (i : ℕ) < n := by omega
@@ -157,13 +161,13 @@ theorem GlobalTheory.HomStab.exists_perm_face_stdSeq : ∀ (R : Type) [CommRing 
     · by_cases hc : (c : ℕ) < n - (p + 1)
       · rw [fx2 a ha, fx1 c hc]
       · simp only [padMat, Matrix.of_apply]
-        rw [dif_neg, dif_neg]
+        rw [dite_eq_right, dite_eq_right]
         all_goals first
           | simp only [bij]
           | (rw [lo1]; omega)
           | (rw [lo2]; omega)
     · simp only [padMat, Matrix.of_apply]
-      rw [dif_neg, dif_neg]
+      rw [dite_eq_right, dite_eq_right]
       all_goals first
         | simp only [bij]
         | (rw [lo1]; omega)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LevelChainSharpColumnValuationOwnChainIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LevelChainSharpColumnValuationOwnChainIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ structure Raw.Ok (p : Raw Lc n) : Prop where
   off : ∀ x, x ∉ p.L → p.f x = 0
   ne : ∃ x, p.f x ≠ 0
 
-variable (Lc n) in
 
+variable (Lc n) in
 def PP : Type := {p : Raw Lc n // p.Ok}
 
 def PP.ker (p : PP Lc n) : Set (Fin n → Lc.K) := {x | x ∈ p.1.L ∧ p.1.f x = 0}
@@ -59,15 +63,6 @@ def PP.IsUp (p : PP Lc n) (x : Fin n → Lc.K) (p₁ : PP Lc n) : Prop :=
 def PP.IsDil (a : F) (p p' : PP Lc n) : Prop := p'.1.L = p.1.L ∧ ∀ x, p'.1.f x = a * p.1.f x
 
 def PP.Inc (p p₁ : PP Lc n) : Prop := ∃ x, p.1.f x = 1 ∧ p.IsUp x p₁
-
-example (p : PP Lc n) : p.IsAct 1 p := fun x => by simp
-
-example (p : PP Lc n) : PP.IsDil 1 p p := ⟨rfl, fun x => (one_mul _).symm⟩
-
-example (p : PP Lc n) : ¬ p.Inc p := by
-  rintro ⟨x, h1, h2, h3, -⟩
-  have : x ∈ p.ker := by rw [h3]; exact h2
-  exact one_ne_zero (h1.symm.trans this.2)
 
 end LocF
 
@@ -244,10 +239,6 @@ section
 
 variable {D : D7} {u : D.what₂.Word}
 
-def fnl {F V : Type} [Field F] [AddCommGroup V] [Module F V] {n : ℕ} (e : V ≃ₗ[F] (Fin n → F)) (f : Fin n → F) :
-    Module.Dual F V :=
-  (∑ a, f a • LinearMap.proj a : (Fin n → F) →ₗ[F] F) ∘ₗ e.toLinearMap
-
 structure Unf (X : Ch D u) (i : ℕ) (v : X.A.vT) where
   Lc : Type
   [fin : Fintype Lc]
@@ -263,40 +254,6 @@ attribute [instance] Unf.fin
 namespace Unf
 
 variable {X : Ch D u} {i : ℕ} {v : X.A.vT} (s : Unf X i v)
-
-def NLPos : Prop := ∀ Λ, 0 < s.nL Λ
-
-def CfSurj : Prop := ∀ c, ∃ Λ f, f ≠ 0 ∧ s.cf Λ f = c
-
-def CxSurj : Prop := ∀ c, ∃ Λ x, x ≠ 0 ∧ s.cx Λ x = c
-
-def UpTie : Prop := ∀ Λ f, f ≠ 0 → ∃ e : X.fm.lv i v (s.cf Λ f) ≃ₗ[X.A.Fv v] (Fin (D.R.N i) → X.A.Fv v),
-  X.fm.fv i v (s.cf Λ f) = fnl e f ∧
-  ∀ φ ∈ X.fm.Fi i, ∀ x : X.fm.lv i v (s.cf Λ f), X.fm.fv i v (s.cf Λ f) x = 1 →
-    s.tf Λ f (X.fm.upT i v (s.cf Λ f) x (φ (X.fm.up i v (s.cf Λ f) x))) = s.tx Λ (e x) (φ (s.cx Λ (e x)))
-
-def DnTie : Prop := ∀ Λ x, x ≠ 0 → ∃ e : X.fm.lk i v (s.cx Λ x) ≃ₗ[X.A.Fv v] (Fin (D.R.N i) → X.A.Fv v),
-  e (X.fm.te i v (s.cx Λ x)) = x ∧
-  ∀ φ ∈ X.fm.Fi i, ∀ f : Fin (D.R.N i) → X.A.Fv v, f ≠ 0 →
-    s.tx Λ x (X.fm.dnT i v (s.cx Λ x) (fnl e f) (φ (X.fm.dn i v (s.cx Λ x) (fnl e f)))) = s.tf Λ f (φ (s.cf Λ f))
-
-def DilF : Prop := ∀ Λ f, f ≠ 0 → ∀ a : (X.A.Fv v)ˣ, ∀ φ ∈ X.fm.Fi i,
-  s.tf Λ f (X.fm.dilT i v a (s.cf Λ f) (φ (X.fm.dil i v a (s.cf Λ f)))) =
-    s.tf Λ ((a : X.A.Fv v) • f) (φ (s.cf Λ ((a : X.A.Fv v) • f)))
-
-def DilX : Prop := ∀ Λ x, x ≠ 0 → ∀ a : (X.A.Fv v)ˣ, ∀ φ ∈ X.fm.Fi i,
-  s.tx Λ x (X.fm.dilT i v a (s.cx Λ x) (φ (X.fm.dil i v a (s.cx Λ x)))) =
-    s.tx Λ (((a⁻¹ : (X.A.Fv v)ˣ) : X.A.Fv v) • x) (φ (s.cx Λ (((a⁻¹ : (X.A.Fv v)ˣ) : X.A.Fv v) • x)))
-
-def IpF : Prop := ∀ φ ∈ X.fm.Fi i, ∀ ψ ∈ X.fm.Fi i, X.fm.ipC i φ ψ =
-  ∑ Λ, ((s.nL Λ : ℂ))⁻¹ * ∑ f ∈ Finset.univ.filter (fun f : Fin (D.R.N i) → X.A.Fv v => f ≠ 0),
-    s.ipL Λ (s.tf Λ f (φ (s.cf Λ f))) (s.tf Λ f (ψ (s.cf Λ f)))
-
-def IpX : Prop := ∀ φ ∈ X.fm.Fi i, ∀ ψ ∈ X.fm.Fi i, X.fm.ipC i φ ψ =
-  ∑ Λ, ((s.nL Λ : ℂ))⁻¹ * ∑ x ∈ Finset.univ.filter (fun x : Fin (D.R.N i) → X.A.Fv v => x ≠ 0),
-    s.ipL Λ (s.tx Λ x (φ (s.cx Λ x))) (s.tx Λ x (ψ (s.cx Λ x)))
-
-def Ok : Prop := s.NLPos ∧ s.CfSurj ∧ s.CxSurj ∧ s.UpTie ∧ s.DnTie ∧ s.DilF ∧ s.DilX ∧ s.IpF ∧ s.IpX
 
 end Unf
 
@@ -324,7 +281,5 @@ def Step0Tie (Tw : TwForms D) (u : D.what₂.Word) (μ : D.what₂.Tup) : Prop :
   ∀ w, Formalism.MainNotions.product_first_zeroth_parts.OverT D u w → (Tw.fm u μ).seenP w = (D.fm u).seenP w ∧
     ∀ x ∈ LT.Nlam D u w, Tw.e0 u μ x ∈ Nlam (tw Tw u μ) w
 
-def PtInt (X : Ch D u) : Prop :=
-  (∀ φ ∈ X.fm.Fi D.R.m, Pt X φ ∈ X.fm.ptC) ∧ ∃ h : X.fm.PRat, X.fm.PtilIntegral h
 end
 end GlobalTheory.LvT

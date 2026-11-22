@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.WithMargin
+module
+
+public import Formalism.MahlerMeasure.WithMargin
+
+@[expose] public section
 
 namespace Formalism.GM.M
 

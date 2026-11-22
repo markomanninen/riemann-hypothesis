@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IrreducibleStableContainsEqTop
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IrreducibleStableContainsEqTop
+
+@[expose] public section
 
 noncomputable section
 

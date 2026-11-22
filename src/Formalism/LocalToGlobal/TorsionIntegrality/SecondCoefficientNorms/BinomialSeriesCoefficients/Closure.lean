@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormClosed
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.PhNormClosed
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.BinomialSeriesCoefficients.Points
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.SecondCoeffConsistency
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -43,7 +47,7 @@ theorem CoeffCont.const (f : MvPowerSeries σ K) : CoeffCont (fun _ : T => f) :=
 
 theorem CoeffCont.add {f g : T → MvPowerSeries σ K} (hf : CoeffCont f) (hg : CoeffCont g) :
     CoeffCont fun t => f t + g t := fun n => by
-  simp only [map_add]
+  simp only [map_add (f := _)]
   exact (hf n).add (hg n)
 
 theorem CoeffCont.sub {f g : T → MvPowerSeries σ K} (hf : CoeffCont f) (hg : CoeffCont g) :
@@ -119,7 +123,7 @@ theorem cc_fadd {l linv : PowerSeries K} (hl : PowerSeries.constantCoeff l = 0)
     (hx : MvPowerSeries.constantCoeff x = 0) (hy : MvPowerSeries.constantCoeff y = 0) :
     MvPowerSeries.constantCoeff (fadd l linv x y) = 0 :=
   Pts.constantCoeff_subst
-    (by rw [map_add, Pts.constantCoeff_subst hx hl, Pts.constantCoeff_subst hy hl, add_zero]) hli
+    (by rw [map_add (f := _), Pts.constantCoeff_subst hx hl, Pts.constantCoeff_subst hy hl, add_zero]) hli
 
 theorem constantCoeff_addDefect {l linv ph : PowerSeries K} (hl : PowerSeries.constantCoeff l = 0)
     (hli : PowerSeries.constantCoeff linv = 0) (hph : PowerSeries.constantCoeff ph = 0)
@@ -139,7 +143,7 @@ theorem coeffContinuous_addDefect {l linv ph : PowerSeries K} (hl : PowerSeries.
     (CoeffCont.const _).add (hy.subst hy0 l)
   have h2 : CoeffCont fun t => fadd l linv x (y t) :=
     h1.subst (fun t => by
-      rw [map_add, Pts.constantCoeff_subst hx hl, Pts.constantCoeff_subst (hy0 t) hl, add_zero]) linv
+      rw [map_add (f := _), Pts.constantCoeff_subst hx hl, Pts.constantCoeff_subst (hy0 t) hl, add_zero]) linv
   exact ((h2.subst (fun t => cc_fadd hl hli hx (hy0 t)) ph).sub (CoeffCont.const _)).sub
     (hy.subst hy0 ph)
 
@@ -269,7 +273,7 @@ theorem endoAll_of (hN : NormAdjAll) : EndoAll := by
   have hE : ∀ α : O, EndInt R l linv (τ α) := by
     intro α
     obtain ⟨u, v, rfl⟩ := hsum α
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Pts.endInt_add h.1 h.2.1 (hEu u) (hEu v)
   have hPu : ∀ α : Oˣ, PhNormAt R l linv ph (τ α) (τ (star (α : O))) := by
     intro α

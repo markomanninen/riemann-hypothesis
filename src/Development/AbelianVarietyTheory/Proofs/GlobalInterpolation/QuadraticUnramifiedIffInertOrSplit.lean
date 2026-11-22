@@ -1,12 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
 
+
 open scoped TensorProduct in
 open NumberField IsDedekindDomain in
-
 theorem _root_.GlobalTheory.quadratic_unramified_iff_inert_or_split (F E : Type) [Field F] [NumberField F] [Field E]
     [NumberField E] [Algebra F E] (h2 : Module.finrank F E = 2) (v : HeightOneSpectrum (𝓞 F)) :
     ((∀ w : HeightOneSpectrum (𝓞 E), w.asIdeal.LiesOver v.asIdeal →
@@ -41,7 +46,7 @@ theorem _root_.GlobalTheory.quadratic_unramified_iff_inert_or_split (F E : Type)
     have hP' := (hs P).1 hP
     haveI : P.IsPrime := hP'.1
     haveI : P.LiesOver v.asIdeal := hP'.2
-    have h1 : 0 < P.ramificationIdx (𝓞 F) := Ideal.ramificationIdx_pos P (𝓞 F)
+    have h1 : 0 < P.ramificationIdx (𝓞 F) := Ideal.ramificationIdx_pos (R := 𝓞 F) P
     have h2 : 0 < v.asIdeal.inertiaDeg' P := Ideal.inertiaDeg'_pos v.asIdeal P
     exact Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero h1.ne' h2.ne')
   have hncard : (v.asIdeal.primesOver (𝓞 E)).ncard = s.card := by
@@ -105,7 +110,7 @@ theorem _root_.GlobalTheory.quadratic_unramified_iff_inert_or_split (F E : Type)
       have hP' := (hs P).1 hP
       haveI : P.IsPrime := hP'.1
       haveI : P.LiesOver v.asIdeal := hP'.2
-      have he : 0 < P.ramificationIdx (𝓞 F) := Ideal.ramificationIdx_pos P (𝓞 F)
+      have he : 0 < P.ramificationIdx (𝓞 F) := Ideal.ramificationIdx_pos (R := 𝓞 F) P
       have hf : 0 < v.asIdeal.inertiaDeg' P := Ideal.inertiaDeg'_pos v.asIdeal P
       have hge : 2 * 1 ≤ P.ramificationIdx (𝓞 F) * v.asIdeal.inertiaDeg' P :=
         Nat.mul_le_mul (by omega) hf

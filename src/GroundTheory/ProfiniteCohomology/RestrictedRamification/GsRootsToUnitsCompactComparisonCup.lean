@@ -1,20 +1,25 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupFormula
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupGlobal
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsDiscreteRepResIntRepTrivGs
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseClassIdele
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDelta
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupFormula
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseCupGlobal
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.IsDiscreteRepResIntRepTrivGs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseClassIdele
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseKummerDelta
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory MonoidalCategory IsDedekindDomain NumberField GroundTheory.Global GroundTheory.GroupCoh GroundTheory.Global.IdeleGroup
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 attribute [local instance 2000] Rep.hV2
 
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) (n : ℕ)
@@ -24,10 +29,10 @@ omit [NeZero n] in
 theorem linearMap_apply_add_apply {R M N P : Type*} [CommRing R] [AddCommGroup M] [AddCommGroup N] [AddCommGroup P]
     [Module R M] [Module R N] [Module R P] (f : M →ₗ[R] N →ₗ[R] P) (a b : M) (c : N) :
     f (a + b) c = f a c + f b c := by
-  rw [map_add, LinearMap.add_apply]
+  rw [map_add (f := _), LinearMap.add_apply]
+
 
 set_option maxHeartbeats 1600000 in
-
 theorem gsRootsToUnitsCompact_comparison_cup (h : gsUnitsCompact S ιs 1)
     (x : cohomology (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
     (gsRootsToUnitsCompact S ιs n 3).hom ((gsRootsComparison S ιs n 3).hom
@@ -55,8 +60,8 @@ theorem gsRootsToUnitsCompact_comparison_cup (h : gsUnitsCompact S ιs 1)
     compactCup (gsFinFamily S ιs) (gsZmodPairing S n) (gsZmodPairingᵥ S ιs n) (gsZmodPairing_hμ S ιs n)
       (show 2 + 1 = 3 from rfl) w x) ea'))).trans eb
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem gsRootsToUnitsCompact_cup_eq (ℓ k : ℕ) (hℓ : ℓ.Prime) (hnk : n = ℓ ^ k)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (d : GsUnitsDatum S) (z : cocycles (zmodRep.{0} (galUnramifiedOutside K.1 ℚ̄ S) n) 1) :
@@ -111,15 +116,15 @@ theorem prod_ofFinite_eq {M : Type*} [CommMonoid M] (f : S → M) :
   congr
   exact Subsingleton.elim _ _
 
-omit [NeZero n] in
 
+omit [NeZero n] in
 theorem sPresentation_fst (a : ∀ w : S, ((w : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)ˣ) :
     sPresentation S (a, 1) = ∏ w : S, SIdeleClassGroup.mk S (finiteEmbedding (w : HeightOneSpectrum (𝓞 K.1)) (a w)) := by
   rw [sPresentation_apply, toAdd_one, map_zero, toMul_zero, mul_one, placesIdele_apply, map_prod]
   exact prod_ofFinite_eq S _
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem zmodToQZ_charEquiv_gsUnitsClass
     (χ : ContinuousMonoidHom (galUnramifiedOutside K.1 ℚ̄ S) (Multiplicative (ZMod n))) (d : GsUnitsDatum S) :
     zmodToQZ n (Multiplicative.toAdd (charEquiv ℚ̄ (Set.toFinite S) hodd χ (Additive.toMul (gsUnitsClass S d)))) =

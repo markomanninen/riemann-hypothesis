@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SqMap
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.HStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,15 +13,13 @@ namespace GlobalTheory.CompanionTheory.Ar.Flat.FrGauge.BilQ
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl Formalism.L2.Pj GlobalTheory.CompanionTheory.Ar.Flat.FrGauge
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ (PS Pt ev pt comp1)
+open ReciprocityTheory.ChartRestriction.G.TB.WickVanishing (eXv eZ)
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
 variable {R : Type} [CommRing R] {d d' : ℕ}
 
-local notation "eX" => ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.eXv
-local notation "eZ'" => ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.eZ
-
-theorem eval_first_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 0] φ = MvPowerSeries.rename (eX d) φ := by
+theorem eval_first_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 0] φ = MvPowerSeries.rename (eXv d) φ := by
   rw [MvPowerSeries.rename_eq_subst]
   unfold ev
   congr 1
@@ -26,7 +28,7 @@ theorem eval_first_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 0] φ 
   fin_cases j
   rfl
 
-theorem eval_second_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 1] φ = MvPowerSeries.rename (eZ' d) φ := by
+theorem eval_second_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 1] φ = MvPowerSeries.rename (eZ d) φ := by
   rw [MvPowerSeries.rename_eq_subst]
   unfold ev
   congr 1
@@ -37,12 +39,12 @@ theorem eval_second_point_eq_rename (φ : PS R 1 d) : ev (n := 2) ![pt R d 1] φ
 
 theorem coeff_xz_rename (P Q : PS R 1 d) (a b : Fin d) :
     MvPowerSeries.coeff (Finsupp.single ((0 : Fin 2), a) 1 + Finsupp.single ((1 : Fin 2), b) 1)
-        (MvPowerSeries.rename (eX d) P * MvPowerSeries.rename (eZ' d) Q) =
+        (MvPowerSeries.rename (eXv d) P * MvPowerSeries.rename (eZ d) Q) =
       MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), a) 1) P *
         MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), b) 1) Q := by
   classical
   have hA : ∀ u : Fin 2 × Fin d →₀ ℕ, u ((1 : Fin 2), b) ≠ 0 →
-      MvPowerSeries.coeff u (MvPowerSeries.rename (eX d) P) = 0 := by
+      MvPowerSeries.coeff u (MvPowerSeries.rename (eXv d) P) = 0 := by
     intro u hu
     refine MvPowerSeries.coeff_rename_eq_zero _ _ ?_
     rintro ⟨w, hw⟩
@@ -53,7 +55,7 @@ theorem coeff_xz_rename (P Q : PS R 1 d) (a b : Fin d) :
     have h2 : (0 : Fin 2) = 1 := congrArg Prod.fst hp
     exact absurd h2 (by simp)
   have hB : ∀ v : Fin 2 × Fin d →₀ ℕ, v ((0 : Fin 2), a) ≠ 0 →
-      MvPowerSeries.coeff v (MvPowerSeries.rename (eZ' d) Q) = 0 := by
+      MvPowerSeries.coeff v (MvPowerSeries.rename (eZ d) Q) = 0 := by
     intro v hv
     refine MvPowerSeries.coeff_rename_eq_zero _ _ ?_
     rintro ⟨w, hw⟩
@@ -64,9 +66,9 @@ theorem coeff_xz_rename (P Q : PS R 1 d) (a b : Fin d) :
     have h2 : (1 : Fin 2) = 0 := congrArg Prod.fst hp
     exact absurd h2 (by simp)
   have hne : ((0 : Fin 2), a) ≠ ((1 : Fin 2), b) := fun e => absurd (congrArg Prod.fst e) (by simp)
-  have e0 : Finsupp.single ((0 : Fin 2), a) 1 = Finsupp.embDomain (eX d) (Finsupp.single ((0 : Fin 1), a) 1) := by
+  have e0 : Finsupp.single ((0 : Fin 2), a) 1 = Finsupp.embDomain (eXv d) (Finsupp.single ((0 : Fin 1), a) 1) := by
     rw [Finsupp.embDomain_single]; rfl
-  have e1 : Finsupp.single ((1 : Fin 2), b) 1 = Finsupp.embDomain (eZ' d) (Finsupp.single ((0 : Fin 1), b) 1) := by
+  have e1 : Finsupp.single ((1 : Fin 2), b) 1 = Finsupp.embDomain (eZ d) (Finsupp.single ((0 : Fin 1), b) 1) := by
     rw [Finsupp.embDomain_single]; rfl
   rw [MvPowerSeries.coeff_mul, Finset.sum_eq_single
     (Finsupp.single ((0 : Fin 2), a) 1, Finsupp.single ((1 : Fin 2), b) 1)]
@@ -248,9 +250,9 @@ theorem bil_subQ {Qs : Fin d' → PS R 1 d} (hQ : ∀ i, MvPowerSeries.constantC
     have hd := ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.degree_xz l m
     rw [e] at hd
     simp at hd
-  have e0 : ev (n := 2) ![pt R d ((0 : Fin 2), l).1] (Qs ((0 : Fin 2), l).2) = MvPowerSeries.rename (eX d) (Qs l) :=
+  have e0 : ev (n := 2) ![pt R d ((0 : Fin 2), l).1] (Qs ((0 : Fin 2), l).2) = MvPowerSeries.rename (eXv d) (Qs l) :=
     eval_first_point_eq_rename _
-  have e1 : ev (n := 2) ![pt R d ((1 : Fin 2), m).1] (Qs ((1 : Fin 2), m).2) = MvPowerSeries.rename (eZ' d) (Qs m) :=
+  have e1 : ev (n := 2) ![pt R d ((1 : Fin 2), m).1] (Qs ((1 : Fin 2), m).2) = MvPowerSeries.rename (eZ d) (Qs m) :=
     eval_second_point_eq_rename _
   rw [map_sub, MvPowerSeries.coeff_one, if_neg hl, sub_zero, e0, e1, coeff_xz_rename]
   show _ = linQ Qs l a * bil f 1 1 l m * linQ Qs m b

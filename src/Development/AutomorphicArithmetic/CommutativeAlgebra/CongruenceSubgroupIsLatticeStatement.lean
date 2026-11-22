@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmulStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmulStatement
+
+@[expose] public section
 
 open UpperTheory.Gal.Int.Geo
 open GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo
@@ -16,14 +20,14 @@ private theorem UpperTheory.grpLat_half {p : ℕ} [Fact p.Prime] {D : Datum p} {
   obtain ⟨x, w, hw, e₂⟩ := GlobalTheory.T.latticeCompletion_eq_latticeVector_add_nsmul p D M hM hc v' hv'
   obtain ⟨u, hu, e₃⟩ := e x ⟨v - L.actG h₂ w, sub_mem hv (i₂ w hw), by
     have h : L.actG h₂ v' = L.actG h₂ (inAf D x) + M • L.actG h₂ w := by
-      rw [e₂, map_add, map_nsmul]
+      rw [e₂, map_add (f := _), map_nsmul]
     rw [smul_sub, ← e₁, h]
     abel⟩
   have e₄ : M • L.actG (h₁ * h₂⁻¹) v = M • (u + L.actG h₁ w) := by
     have h : L.actG h₂⁻¹ (M • v) = v' := by
       rw [← e₁, ← Module.End.mul_apply, ← map_mul]
       simp
-    rw [← map_nsmul, map_mul, Module.End.mul_apply, h, e₂, map_add, map_nsmul, e₃, smul_add]
+    rw [← map_nsmul, map_mul, Module.End.mul_apply, h, e₂, map_add (f := _), map_nsmul, e₃, smul_add]
   have e₅ : L.actG (h₁ * h₂⁻¹) v = u + L.actG h₁ w := by
     rw [← Nat.cast_smul_eq_nsmul ℚ, ← Nat.cast_smul_eq_nsmul ℚ] at e₄
     exact smul_right_injective _ (Nat.cast_ne_zero.2 hM.ne' : (M : ℚ) ≠ 0) e₄

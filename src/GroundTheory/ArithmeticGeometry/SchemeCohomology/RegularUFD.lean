@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -36,7 +41,7 @@ theorem isPrincipal_of_isStablyFree {D : Type u} [CommRing D] [IsDomain D] [IsNo
   obtain ⟨N, _, _, _, _, hfree⟩ := IsStablyFree.exist_free_prod D P
   let n := Module.finrank D N
 
-  let 𝔭 : PrimeSpectrum D := ⟨⊥, Ideal.bot_prime⟩
+  let 𝔭 : PrimeSpectrum D := ⟨⊥, Ideal.isPrime_bot⟩
   have h1 : rankAtStalk P 𝔭 = 1 := by
     let Dp := Localization.AtPrime 𝔭.asIdeal
     let pc := 𝔭.asIdeal.primeCompl
@@ -74,8 +79,8 @@ theorem isPrincipal_of_isStablyFree {D : Type u} [CommRing D] [IsDomain D] [IsNo
   · rw [Submodule.span_le, Set.singleton_subset_iff]
     exact (f 1).2
 
-open CategoryTheory in
 
+open CategoryTheory in
 theorem isStablyFree_localizedModule {R : Type u} [CommRing R] [IsLocalRing R] [IsNoetherianRing R]
     (T : Submonoid R) (k : ℕ) (M : Type u) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (hM : HasProjectiveDimensionLT (ModuleCat.of R M) (k + 1))
@@ -251,7 +256,7 @@ theorem IsRegularLocalRing.uniqueFactorizationMonoid (R : Type u) [CommRing R]
   let f := Algebra.linearMap S A
   let gQ := Q.toLocalized' A T f
   have hloc : Q.localized' A T f = P := by
-    rw [Ideal.localized'_eq_map]; exact IsLocalization.map_comap T A P
+    rw [Ideal.localized'_eq_map]; exact IsLocalization.map_under T A P
   let eQ : LocalizedModule T Q ≃ₗ[A] P :=
     ((IsLocalizedModule.linearEquiv T (LocalizedModule.mkLinearMap T Q) gQ
       ).extendScalarsOfIsLocalization T A).trans (LinearEquiv.ofEq _ _ hloc)

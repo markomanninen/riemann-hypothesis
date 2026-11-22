@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordRatioDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CoordRatioDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

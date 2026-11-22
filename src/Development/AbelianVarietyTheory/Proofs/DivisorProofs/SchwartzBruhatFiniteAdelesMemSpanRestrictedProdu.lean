@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -10,18 +15,18 @@ namespace GlobalTheory.SBSpan
 
 variable {F : Type} [Field F] [NumberField F]
 
-def intG (v : Pl F) : AddSubgroup (Fv F v) := (v.adicCompletionIntegers F).toSubring.toAddSubgroup
+def intG (v : Pl (F := F)) : AddSubgroup (Fv F v) := (v.adicCompletionIntegers F).toSubring.toAddSubgroup
 
-theorem isOpen_intG (v : Pl F) : IsOpen (intG v : Set (Fv F v)) := Valued.isOpen_integer _
+theorem isOpen_intG (v : Pl (F := F)) : IsOpen (intG v : Set (Fv F v)) := Valued.isOpen_integer _
 
-theorem isCompact_intG (v : Pl F) : IsCompact (intG v : Set (Fv F v)) :=
+theorem isCompact_intG (v : Pl (F := F)) : IsCompact (intG v : Set (Fv F v)) :=
   isCompact_iff_compactSpace.2 (GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers F v)
 
-def IsBox (B : ∀ v : Pl F, AddSubgroup (Fv F v)) : Prop :=
+def IsBox (B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)) : Prop :=
   (∀ v, IsOpen (B v : Set (Fv F v))) ∧ (∀ v, B v ≤ intG v) ∧ ∀ᶠ v in cofinite, B v = intG v
 
 theorem exists_box_of_mem_nhds {N : Set (Af F)} (hN : N ∈ 𝓝 0) :
-    ∃ B : ∀ v : Pl F, AddSubgroup (Fv F v), IsBox B ∧ ∀ α : Af F, (∀ v, evalV F v α ∈ B v) → α ∈ N := by
+    ∃ B : ∀ v : Pl (F := F), AddSubgroup (Fv F v), IsBox B ∧ ∀ α : Af F, (∀ v, evalV F v α ∈ B v) → α ∈ N := by
   classical
   have hc := (RestrictedProduct.isEmbedding_structureMap
     (R := fun v : HeightOneSpectrum (𝓞 F) => v.adicCompletion F)
@@ -30,7 +35,7 @@ theorem exists_box_of_mem_nhds {N : Set (Af F)} (hN : N ∈ 𝓝 0) :
   have h' := mem_map.1 h
   rw [nhds_pi, mem_pi'] at h'
   obtain ⟨I, t, ht, hI⟩ := h'
-  have hW : ∀ v : Pl F, ∃ W : OpenAddSubgroup (Fv F v),
+  have hW : ∀ v : Pl (F := F), ∃ W : OpenAddSubgroup (Fv F v),
       ∀ x : (v.adicCompletionIntegers F : Set (v.adicCompletion F)), (x : Fv F v) ∈ W → x ∈ t v := by
     intro v
     obtain ⟨u, hu, hut⟩ := (mem_nhds_subtype _ _ _).1 (ht v)
@@ -68,7 +73,7 @@ theorem exists_box_of_mem_nhds {N : Set (Af F)} (hN : N ∈ 𝓝 0) :
       exact this.2
     exact hI hm
 
-theorem IsBox.inf {ι : Type} [Finite ι] {B : ι → ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : ∀ j, IsBox (B j)) :
+theorem IsBox.inf {ι : Type} [Finite ι] {B : ι → ∀ v : Pl (F := F), AddSubgroup (Fv F v)} (hB : ∀ j, IsBox (B j)) :
     IsBox (fun v => intG v ⊓ ⨅ j, B j v) := by
   refine ⟨fun v => ?_, fun v => inf_le_left, ?_⟩
   · rw [AddSubgroup.coe_inf, AddSubgroup.coe_iInf]
@@ -77,14 +82,14 @@ theorem IsBox.inf {ι : Type} [Finite ι] {B : ι → ∀ v : Pl F, AddSubgroup 
     exact inf_eq_left.2 (le_iInf fun j => (hv j).ge)
 
 theorem exists_box_pi {κ : Type} [Fintype κ] {N : Set (κ → Af F)} (hN : N ∈ 𝓝 0) :
-    ∃ B : ∀ v : Pl F, AddSubgroup (Fv F v), IsBox B ∧ ∀ y : κ → Af F, (∀ i v, evalV F v (y i) ∈ B v) → y ∈ N := by
+    ∃ B : ∀ v : Pl (F := F), AddSubgroup (Fv F v), IsBox B ∧ ∀ y : κ → Af F, (∀ i v, evalV F v (y i) ∈ B v) → y ∈ N := by
   rw [nhds_pi, mem_pi'] at hN
   obtain ⟨I, t, ht, hI⟩ := hN
   choose B hB hBN using fun i => exists_box_of_mem_nhds (ht i)
   refine ⟨fun v => intG v ⊓ ⨅ i, B i v, IsBox.inf hB, fun y hy => hI fun i _ => hBN i _ fun v => ?_⟩
   exact AddSubgroup.mem_iInf.1 (AddSubgroup.mem_inf.1 (hy i v)).2 i
 
-theorem IsBox.isOpen {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) :
+theorem IsBox.isOpen {B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)} (hB : IsBox B) :
     IsOpen {α : Af F | ∀ v, evalV F v α ∈ B v} := by
   classical
   have hfin : {v | ¬ B v = intG v}.Finite := hB.2.2
@@ -124,8 +129,8 @@ theorem exists_nhds_add_eq {X : Type} [TopologicalSpace X] [AddCommGroup X] [IsT
         (hK.of_isClosed_subset (hlc.isClosed_fiber c) hsub) (hlc.isOpen_fiber c) subset_rfl
       exact ⟨V, hV, fun _ y hy z hz => hKV (Set.add_mem_add hy hz)⟩
   choose V hV0 hVc using hV
-  refine ⟨⋂ c ∈ hfin.toFinset, (V c ∩ -V c), (Filter.biInter_finset_mem _).2 fun c _ =>
-    Filter.inter_mem (hV0 c) (neg_mem_nhds_zero X (hV0 c)), fun y z hz => ?_⟩
+  refine ⟨⋂ c ∈ hfin.toFinset, (V c ∩ (fun x : X => -x) ⁻¹' V c), (Filter.biInter_finset_mem _).2 fun c _ =>
+    Filter.inter_mem (hV0 c) ((continuous_neg.tendsto (0 : X)) (by simpa using hV0 c)), fun y z hz => ?_⟩
   have hz' : ∀ c ∈ g '' tsupport g, z ∈ V c ∧ -z ∈ V c := fun c hc => by
     have := Set.mem_iInter₂.1 hz c (hfin.mem_toFinset.2 hc)
     exact ⟨this.1, this.2⟩
@@ -151,11 +156,11 @@ theorem indicator_mem_SB {X : Type} [TopologicalSpace X] {C : Set X} (ho : IsOpe
   · filter_upwards [hc.isOpen_compl.mem_nhds hx] with y hy
     rw [Set.indicator_of_notMem hy, Set.indicator_of_notMem hx]
 
-def locInd (B : ∀ v : Pl F, AddSubgroup (Fv F v)) {κ : Type} (r : κ → Af F) (v : Pl F) : (κ → Fv F v) → ℂ :=
+def locInd (B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)) {κ : Type} (r : κ → Af F) (v : Pl (F := F)) : (κ → Fv F v) → ℂ :=
   Set.indicator {x | ∀ i, x i - evalV F v (r i) ∈ B v} 1
 
-theorem locInd_mem_SB {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Fintype κ]
-    (r : κ → Af F) (v : Pl F) : locInd B r v ∈ SB (κ → Fv F v) := by
+theorem locInd_mem_SB {B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Fintype κ]
+    (r : κ → Af F) (v : Pl (F := F)) : locInd B r v ∈ SB (κ → Fv F v) := by
   have hBc : IsClosed (B v : Set (Fv F v)) := AddSubgroup.isClosed_of_isOpen _ (hB.1 v)
   have e : {x : κ → Fv F v | ∀ i, x i - evalV F v (r i) ∈ B v} =
       (fun x => x - fun i => evalV F v (r i)) ⁻¹' Set.pi Set.univ (fun _ => (B v : Set (Fv F v))) := by
@@ -169,7 +174,7 @@ theorem locInd_mem_SB {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) {�
   exact (Homeomorph.subRight fun i => evalV F v (r i)).isCompact_preimage.2
     (isCompact_univ_pi fun _ => (isCompact_intG v).of_isClosed_subset hBc (hB.2.1 v))
 
-theorem locInd_eventually {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Finite κ]
+theorem locInd_eventually {B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Finite κ]
     (r : κ → Af F) : ∀ᶠ v in cofinite,
       locInd B r v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1 := by
   filter_upwards [hB.2.2, Filter.eventually_all.2 fun i => (r i).2] with v hv hr
@@ -182,7 +187,7 @@ theorem locInd_eventually {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B
   rwa [sub_add_cancel] at this
 
 open Classical in
-theorem finprod_locInd {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Finite κ]
+theorem finprod_locInd {B : ∀ v : Pl (F := F), AddSubgroup (Fv F v)} (hB : IsBox B) {κ : Type} [Finite κ]
     (r y : κ → Af F) : ∏ᶠ v, locInd B r v (fun i => evalV F v (y i)) =
       if ∀ i v, evalV F v (y i) - evalV F v (r i) ∈ B v then 1 else 0 := by
   classical
@@ -205,7 +210,7 @@ theorem finprod_locInd {B : ∀ v : Pl F, AddSubgroup (Fv F v)} (hB : IsBox B) {
         fun hx => hv (hx i)) _) hfin
 
 theorem mem_span_restrictedProd : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype κ], ∀ g ∈ SB (κ → Af F),
-    g ∈ Submodule.span ℂ {p : (κ → Af F) → ℂ | ∃ φ : ∀ v : Pl F, (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) ∧
+    g ∈ Submodule.span ℂ {p : (κ → Af F) → ℂ | ∃ φ : ∀ v : Pl (F := F), (κ → Fv F v) → ℂ, (∀ v, φ v ∈ SB (κ → Fv F v)) ∧
       (∀ᶠ v in cofinite, φ v = Set.indicator {x | ∀ i, x i ∈ v.adicCompletionIntegers F} 1) ∧
       p = fun y => ∏ᶠ v, φ v fun i => evalV F v (y i)} := by
   intro F _ _ κ _ g hg
@@ -214,7 +219,7 @@ theorem mem_span_restrictedProd : ∀ (F : Type) [Field F] [NumberField F] (κ :
   obtain ⟨B, hB, hBV⟩ := exists_box_pi hV
   let U : AddSubgroup (κ → Af F) :=
     { carrier := {y | ∀ i v, evalV F v (y i) ∈ B v}
-      add_mem' := fun ha hb i v => by simpa only [Pi.add_apply, map_add] using add_mem (ha i v) (hb i v)
+      add_mem' := fun ha hb i v => by simpa only [Pi.add_apply, map_add (f := _)] using add_mem (ha i v) (hb i v)
       zero_mem' := fun i v => by simpa only [Pi.zero_apply, map_zero] using zero_mem (B v)
       neg_mem' := fun ha i v => by simpa only [Pi.neg_apply, map_neg] using neg_mem (ha i v) }
   have hmemU : ∀ y, y ∈ U ↔ ∀ i v, evalV F v (y i) ∈ B v := fun y => Iff.rfl

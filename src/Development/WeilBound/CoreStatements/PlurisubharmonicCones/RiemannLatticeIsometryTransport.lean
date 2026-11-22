@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FiniteOfTorsion
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.FiniteOfTorsion
+
+@[expose] public section
 
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 
@@ -24,7 +28,7 @@ theorem exists_equiv (h1 : φ '' Set.range R.P = Set.range R'.P) (h3 : ∀ a x, 
   choose f hf using h4
   let α : Λ →ₗ[𝓞 E] Λ' :=
     { toFun := f
-      map_add' := fun v w => precomp_injective R' (by rw [map_add, hf, hf, hf, map_add, map_add])
+      map_add' := fun v w => precomp_injective R' (by rw [map_add (f := _), hf, hf, hf, map_add (f := _), map_add (f := _)])
       map_smul' := fun a v => precomp_injective R' (by rw [RingHom.id_apply, R'.act, hf, hf, R.act, h3]) }
   refine ⟨LinearEquiv.ofBijective α ⟨fun v w h => ?_, fun v' => ?_⟩, hf⟩
   · have h' : f v = f w := h
@@ -35,14 +39,15 @@ theorem exists_equiv (h1 : φ '' Set.range R.P = Set.range R'.P) (h3 : ∀ a x, 
 
 theorem proj_equiv (h3 : ∀ a x, φ (R.B a x) = R'.B a (φ x)) (s : 𝓞 E →+* ℂ) (x : Fin g → ℂ) :
     proj R'.B s (φ x) = φ (proj R.B s x) := by
-  simp only [proj_apply, map_sum, map_smul, h3]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [proj_apply, map_sum, map_smul, h3]
 
 theorem nz_map {σ : Ψ → (𝓞 E →+* ℂ)} (hσ : IsCMFam σ) (h2 : ∀ x y, R'.ip (φ x) (φ y) = R.ip x y)
     (h3 : ∀ a x, φ (R.B a x) = R'.B a (φ x)) (α : Λ ≃ₗ[𝓞 E] Λ') (hα : ∀ v, R'.P (α v) = φ (R.P v))
     (I : Submodule (𝓞 E) Λ) : R'.nz σ (I.map α.toLinearMap) = R.nz σ I := by
   by_cases hI : I = ⊥
   · subst hI
-    rw [Submodule.map_bot, RiemLat.nz, RiemLat.nz, dif_neg, dif_neg]
+    rw [Submodule.map_bot, RiemLat.nz, RiemLat.nz, dite_eq_right, dite_eq_right]
     · rintro ⟨r, v, h1, h4, h5, -⟩
       exact h5.ne_zero ⟨0, h1⟩ (h4 _)
     · rintro ⟨r, v, h1, h4, h5, -⟩

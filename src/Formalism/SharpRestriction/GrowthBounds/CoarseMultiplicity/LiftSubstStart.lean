@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.KeyMinorDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ theorem liftSubst_start (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDo
     liftSubst X.p X.n' O w 1 (hhLetters X.TT) g (MvPolynomial.X ((topStart X j, true), a)) =
       MvPolynomial.map (algebraMap O (KK O)) (xvL X O w g j a) := by
   rw [liftSubst_X_vec X.p X.n' O w (hhLetters X.TT) 1 g hg (topStart X j, true) a rfl]
-  simp only [xvL, map_sum, map_mul, map_C, map_X, sigMat_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [xvL, map_sum, map_mul, map_C, map_X, sigMat_apply]
   rfl
 
 theorem locR_lift (X : Loc) [Fact X.p.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra (WF X.p X.n') O] (w : O)

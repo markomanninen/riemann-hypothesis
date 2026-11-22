@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
-import Formalism.SharpRestriction.ParConsts
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnInParamKProd
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+public import Formalism.SharpRestriction.ParConsts
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsPlaceCofactorValuationLowerBound
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EnInParamKProd
+
+@[expose] public section
 
 noncomputable section
 

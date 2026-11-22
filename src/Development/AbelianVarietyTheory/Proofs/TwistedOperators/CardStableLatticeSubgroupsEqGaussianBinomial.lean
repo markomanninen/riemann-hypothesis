@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyTransferEquiv
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialFormula
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CycOfPrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyTransferEquiv
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialFormula
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GaussBinomMulProd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CycOfPrime
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.LatCountGauss
@@ -14,7 +19,7 @@ variable {R : Type} [CommRing R]
 theorem card_torsion_eq {A : Type} [AddCommGroup A] [Module R A] [Finite A] {c π : R} {J : Ideal R}
     (hJ : Ideal.span {c} ⊔ Ideal.span {π} = J) (hc : ∀ x : A, c • x = 0) :
     Nat.card (Submodule.torsionBySet R A (J : Set R)) = Nat.card (A ⧸ J • (⊤ : Submodule R A)) := by
-  let f : A →ₗ[R] A := DistribMulAction.toLinearMap R A π
+  let f : A →ₗ[R] A := π • LinearMap.id
   have hmem : ∀ a ∈ J, ∃ r s : R, a = r * c + s * π := by
     intro a ha
     rw [← hJ, Submodule.mem_sup] at ha
@@ -27,10 +32,10 @@ theorem card_torsion_eq {A : Type} [AddCommGroup A] [Module R A] [Finite A] {c �
     ext x
     rw [Submodule.mem_torsionBySet_iff, LinearMap.mem_ker]
     constructor
-    · intro h; exact h ⟨π, hπ⟩
+    · intro h; simpa [f] using h ⟨π, hπ⟩
     · rintro h ⟨a, ha⟩
       obtain ⟨r, s, rfl⟩ := hmem a ha
-      have h' : π • x = 0 := h
+      have h' : π • x = 0 := by simpa [f] using h
       simp only [add_smul, mul_smul, hc, h', smul_zero, add_zero]
   have h2 : J • (⊤ : Submodule R A) = LinearMap.range f := by
     apply le_antisymm
@@ -38,10 +43,10 @@ theorem card_torsion_eq {A : Type} [AddCommGroup A] [Module R A] [Finite A] {c �
       intro a ha n _
       obtain ⟨r, s, rfl⟩ := hmem a ha
       refine ⟨s • n, ?_⟩
-      show π • s • n = _
+      change π • (s • n) = _
       rw [add_smul, mul_smul, hc, smul_zero, zero_add, mul_smul, smul_comm]
     · rintro _ ⟨y, rfl⟩
-      exact Submodule.smul_mem_smul hπ trivial
+      simpa [f] using (Submodule.smul_mem_smul hπ (Submodule.mem_top : y ∈ (⊤ : Submodule R A)))
   rw [h1, h2]
   have e1 := Submodule.card_eq_card_quotient_mul_card (LinearMap.ker f)
   have e2 := Submodule.card_eq_card_quotient_mul_card (LinearMap.range f)

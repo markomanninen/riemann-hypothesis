@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsIsAdelicChain
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PostOnGaLMemGoodPart
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLevChiFlagLEqOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfAdjointIdempotentPosType
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsIsAdelicChain
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PostOnGaLMemGoodPart
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLevChiFlagLEqOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfAdjointIdempotentPosType
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem integral_act (hμ : μ.IsHaarMeasure) (h𝓕 : IsFundamentalDomain (GQ V
     rw [← h2]
     refine integral_congr_ae (.of_forall fun x => ?_)
     show star (actG0 V β L g φ x) * ψ x = star (φ (x * hk.choose)) * actG0 V β L g⁻¹ ψ (x * hk.choose)
-    rw [h1, levChi_inv hκ, mul_inv_cancel_right, actG0, dif_pos hk, star_mul']
+    rw [h1, levChi_inv hκ, mul_inv_cancel_right, actG0, dite_eq_left hk, star_mul']
     ring
   · have hk' : ¬ ∃ κ, IsLevelLift V β L g⁻¹ κ := fun ⟨κ, h⟩ => hk ⟨κ⁻¹, by simpa using isLiftFlagGroup_inv h⟩
     simp [actG0, dif_neg hk, dif_neg hk']
@@ -110,12 +114,6 @@ theorem eC_inv {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : Fam
   unfold RealDat.eC
   rw [h, h, map_inv]
   exact GlobalTheory.RowLev.GroupAlgPos.isSA_central _ h2 (fun a => (Subalgebra.mem_center_iff.1 h1 a).symm) _
-
-theorem ipM_e0 : GlobalTheory.Published.CuspRapidDecay → ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks), ∀ F : Face D A, R.toLevCh.Is A.μ0 → R.IsGrp F → R.IsModels → ∀ U ∈ Mult R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 R.triv)) (Formalism.IndefR.Lev.levChi _ (R.βY 0) (R.dat0 R.triv)), ∀ U' ∈ R.EEat R.triv, ipM (R.MY 0) R.ν0 R.fd0 (postOn (R.MY 0) R.e0 U) U' = ipM (R.MY 0) R.ν0 R.fd0 U U' := by
-  intro hP D G _ _ Pl0 T A Ks _ _ _ R F _ hG hM U hU U' hU'
-  have h : postOn (R.MY 0) R.e0 U' = U' := sub_eq_zero.1 (LinearMap.mem_ker.1 hU'.2)
-  exact (ipM_gaL (L := R.dat0 R.triv) hP hM.inf hM.ν0.1.1 hM.ν0.2 R.eG _ (eC_inv R hG.record) hU hU'.1).trans
-    (congrArg (ipM (R.MY 0) R.ν0 R.fd0 U) h)
 
 end GlobalTheory.ProjectorAdjoint
 

@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.MemSEOfFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaCmType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankSmulMemAdelesFiniteMultipleOfTensorCongru
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenIntegralTensorAdeleMultiples
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegerOfAlgebraMapMemAdelesFiniteMultiple
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.MemSEOfFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaCmType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankSmulMemAdelesFiniteMultipleOfTensorCongru
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenIntegralTensorAdeleMultiples
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegerOfAlgebraMapMemAdelesFiniteMultiple
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,7 +176,7 @@ theorem key {σ : E →ₐ[F] E} {B : Base F E} (hB : B.IsGood σ) {η : (AF F �
     rw [hp]
     show 1 - algebraMap (AF F) (AF F ⊗[F] E) (uFin F) + algebraMap (AF F) (AF F ⊗[F] E) (uFin F) *
       algebraMap (AF F) (AF F ⊗[F] E) (a' : AF F) = algebraMap (AF F) (AF F ⊗[F] E) (pairA F 1 (a' : AF F).2)
-    rw [← map_mul, ← map_one (algebraMap (AF F) (AF F ⊗[F] E)), ← map_sub, ← map_add, uFin_mul]
+    rw [← map_mul, ← map_one (algebraMap (AF F) (AF F ⊗[F] E)), ← map_sub, ← map_add (f := _), uFin_mul]
     congr 1
     refine Prod.ext ?_ ?_
     · show (1 : Ainf F) - 0 + 0 = 1

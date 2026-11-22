@@ -1,4 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RowsOneGenusOfCyclic
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RowsOneGenusOfCyclic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,44 +14,6 @@ open NumberField Formalism.HermitianLatticesTheory
 section Conj
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
-
-theorem natCast_repr (p : Ideal (𝓞 E)) (T : ℕ) (hT : T.Prime) (hN : Ideal.absNorm p = T) (x : 𝓞 E) :
-    ∃ n : ℕ, x - (n : 𝓞 E) ∈ p := by
-  have hc : Nat.card (𝓞 E ⧸ p) = T := by rw [← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, hN]
-  have : Finite (𝓞 E ⧸ p) := Nat.finite_of_card_ne_zero (by rw [hc]; exact hT.ne_zero)
-  let _ := Fintype.ofFinite (𝓞 E ⧸ p)
-  have : NeZero T := ⟨hT.ne_zero⟩
-  have hc' : Fintype.card (𝓞 E ⧸ p) = T := by rw [Fintype.card_eq_nat_card, hc]
-  let e := ZMod.ringEquivOfPrime (𝓞 E ⧸ p) hT hc'
-  obtain ⟨k, hk⟩ := e.surjective (Ideal.Quotient.mk p x)
-  refine ⟨k.val, ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_natCast, ← hk, ← map_natCast e k.val,
-    ZMod.natCast_zmod_val, sub_self]
-
-theorem split_conj_ne (hc : Formalism.BasicNotions.CMData F E) (T : ℕ) (hT : T.Prime) (hsp : Formalism.MainNotions.S.SplitsCompl E T)
-    (p : Ideal (𝓞 E)) (hp : p.IsMaximal) (hTp : ((T : ℕ) : 𝓞 E) ∈ p) : conjIdeal (K := E) p ≠ p := by
-  intro hconj
-  have hu : IsCMUnram E := hc.cmUnram
-  unfold IsCMUnram at hu
-  obtain ⟨_, _, h3⟩ := hu
-  obtain ⟨θ, t, hθt, hnot⟩ := h3 p hp
-  apply hnot
-  obtain ⟨n, hn⟩ := natCast_repr p T hT (hsp p hp hTp).1 θ
-  let σ : 𝓞 E →+* 𝓞 E := RingOfIntegers.mapRingHom (starRingEnd E)
-  have hσ : ∀ s : 𝓞 E, algebraMap (𝓞 E) E (σ s) = star (algebraMap (𝓞 E) E s) := fun s => rfl
-  have hσp : ∀ s ∈ p, σ s ∈ p := by
-    intro s hs
-    rw [← hconj]
-    unfold conjIdeal
-    exact Ideal.subset_span ⟨s, hs, hσ s⟩
-  have hσθ : σ θ = t := by
-    apply IsFractionRing.injective (𝓞 E) E
-    rw [hσ, hθt]
-  have h2 : σ (θ - (n : 𝓞 E)) ∈ p := hσp _ hn
-  rw [map_sub, map_natCast, hσθ] at h2
-  have e : θ - t = (θ - (n : 𝓞 E)) - (t - (n : 𝓞 E)) := by ring
-  rw [e]
-  exact p.sub_mem hn h2
 
 theorem unimodAt_of_unimod {V : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E) V] [IsScalarTower (𝓞 E) E V]
     (h : V →ₗ⋆[E] V →ₗ[E] E) (L : Submodule (𝓞 E) V) (hlat : Submodule.IsLattice E L) (hu : IsUnimodular h L)
@@ -63,10 +30,71 @@ theorem unimodAt_of_unimod {V : Type} [AddCommGroup V] [Module E V] [Module (�
   rw [hu] at e1 e2
   exact le_antisymm e2 e1
 
+private theorem rows_riesz (S : Formalism.BasicNotions.HSpace E) (φ : S.V →ₗ[E] E) : ∃ μ : S.V, ∀ v, S.hT μ v = φ v := by
+  classical
+  obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis S.hT S.nondeg S.frame
+  refine ⟨∑ j, star (φ (S.frame j)) • bs j, fun v => ?_⟩
+  have key : S.hT (∑ j, star (φ (S.frame j)) • bs j) = φ := by
+    apply S.frame.ext
+    intro i
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
+    have hs : ∀ j, S.hT (star (φ (S.frame j)) • bs j) (S.frame i) =
+        φ (S.frame j) * (if i = j then 1 else 0) := by
+      intro j
+      rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+      congr 1
+      rw [← S.herm.eq (S.frame i) (bs j), hbs]
+      split_ifs <;> simp
+    simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  rw [key]
+
+private theorem rows_span_eq_top_of_unimodular (S : Formalism.BasicNotions.HSpace E) {Λ : Submodule (𝓞 E) S.V}
+    (hL : Λ.FG) (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT Λ) :
+    Submodule.span E (Λ : Set S.V) = ⊤ := by
+  by_contra hspan
+  obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+  obtain ⟨μ, hμ⟩ := rows_riesz S φ
+  have hμ₀ : μ ≠ 0 := by
+    intro h
+    apply hφ₀
+    ext y
+    simpa [h] using (hμ y).symm
+  have hline (a : E) : a • μ ∈ Λ := by
+    rw [← hU]
+    change a • μ ∈ Formalism.E.hdual S.hT Λ
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+    intro y hy
+    have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+    simp [← S.herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+  obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+    (show μ ∉ (⊥ : Submodule E S.V) by simpa using hμ₀)
+  let f := ψ.restrictScalars (𝓞 E)
+  have hmap (x : E) : x ∈ Λ.map f := by
+    refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+    change ψ ((x / ψ μ) • μ) = x
+    rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+  obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+    (S := nonZeroDivisors (𝓞 E)) (hL.map f)
+  have hinj := IsFractionRing.injective (𝓞 E) E
+  have hne {a : 𝓞 E} (ha : a ≠ 0) : algebraMap (𝓞 E) E a ≠ 0 :=
+    fun h => ha (hinj (h.trans (map_zero _).symm))
+  have hinteger (x : E) : IsLocalization.IsInteger (𝓞 E) x := by
+    have hx := hd _ (hmap ((algebraMap (𝓞 E) E d)⁻¹ * x))
+    rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+      one_mul] at hx
+  apply RingOfIntegers.not_isField E
+  refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+  intro a ha
+  obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 E) E a)⁻¹)
+  refine ⟨b, hinj ?_⟩
+  rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
+
+
 theorem unimod_mem_genus (hU : LocUnimod) (hc : Formalism.BasicNotions.CMData F E) (S : Formalism.BasicNotions.HSpace E)
     (L M : Submodule (𝓞 E) S.V) (hL : Submodule.IsLattice E L) (hM : Submodule.IsLattice E M)
     (huL : IsUnimodular S.hT L) (huM : IsUnimodular S.hT M) : M ∈ genus S.hT L :=
-  ⟨hM, fun p hp => hU F E hc S L M hL hM p hp (unimodAt_of_unimod S.hT L hL huL p) (unimodAt_of_unimod S.hT M hM huM p)⟩
+  ⟨{ toIsLattice := hM, span_eq_top := rows_span_eq_top_of_unimodular S hM.fg huM }, fun p hp => hU F E hc S L M hL hM p hp (unimodAt_of_unimod S.hT L hL huL p) (unimodAt_of_unimod S.hT M hM huM p)⟩
 
 theorem unimodular_mem_genus (hU : LocUnimod) (hc : Formalism.BasicNotions.CMData F E) (S : Formalism.BasicNotions.HSpace E)
     (M : Submodule (𝓞 E) S.V) (hM : Submodule.IsLattice E M) (huM : IsUnimodular S.hT M) : M ∈ genus S.hT S.L0 :=
@@ -74,23 +102,9 @@ theorem unimodular_mem_genus (hU : LocUnimod) (hc : Formalism.BasicNotions.CMDat
 
 end Conj
 
-def CycLocType : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E],
-    Formalism.BasicNotions.CMData F E → ∀ (S : Formalism.BasicNotions.HSpace E) (T : ℕ), T.Prime → 3 ≤ T → Formalism.MainNotions.S.SplitsCompl E T →
-    ∀ L : Submodule (𝓞 E) S.V, IsCycT S.hT T L →
-    ∀ p : Ideal (𝓞 E), p.IsMaximal → ((T : ℕ) : 𝓞 E) ∈ p → LocTypeAt S.hT p L
-
-theorem cycSplitAt_of (h : CycLocType) : CycSplitAt :=
-  fun F E _ _ _ _ _ _ hc S T hT hT3 hsp L hL p hp hTp =>
-    ⟨split_conj_ne hc T hT hsp p hp hTp, h F E hc S T hT hT3 hsp L hL p hp hTp⟩
-
 section Rows
 
 open Formalism.BasicNotions Formalism.MainNotions.BridgeLemma₂
-
-theorem rows_one_genus_of_local_discriminant (hL : CycLocType) (hU : LocUnimod) (hS : LocSplitType) (D : D7) (u : D.what₂.Word) :
-    OrthLatticesOneGenus D u :=
-  rows_one_genus_of_local (cycSplitAt_of hL) hU hS D u
 
 end Rows
 

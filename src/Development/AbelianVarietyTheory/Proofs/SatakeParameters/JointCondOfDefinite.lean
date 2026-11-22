@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.IrreducibilityOfTheoremThree
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT NumberField IsDedekindDomain Polynomial GlobalTheory.HeightCounting GlobalTheory.RowTie GlobalTheory.SplitRead GlobalTheory.NPin
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -56,7 +61,7 @@ theorem hypEFK : Formalism.MainNotions.SphericalInertData.HypEFK D := by
   have hu : (x + c x) / 2 ∈ D.host.F := by
     rw [mem_F_iff]
     show c ((x + c x) / 2) = _
-    rw [map_div₀, map_add, hcc, map_ofNat, add_comm]
+    rw [map_div₀, map_add (f := _), hcc, map_ofNat, add_comm]
   have hv : (x - c x) / (2 * s) ∈ D.host.F := by
     rw [mem_F_iff]
     show c ((x - c x) / (2 * s)) = _
@@ -146,7 +151,7 @@ theorem isSplitPl_of_two_mem (w : PlE D.host) (h2 : ((2 : ℕ) : 𝓞 D.host.E) 
     rw [hd] at hss
     linear_combination (-1/4 : D.host.E) * hss
   have hcα : D.host.conj ((α : 𝓞 D.host.E) : D.host.E) = ((β : 𝓞 D.host.E) : D.host.E) := by
-    rw [hα, hβ, map_div₀, map_add, map_one, hcs, map_ofNat]
+    rw [hα, hβ, map_div₀, map_add (f := _), map_one, hcs, map_ofNat]
   have hcβ : D.host.conj ((β : 𝓞 D.host.E) : D.host.E) = ((α : 𝓞 D.host.E) : D.host.E) := by
     rw [← hcα, conj_conj]
   have hne : ∀ x y : 𝓞 D.host.E, x + y = 1 → x ∈ w.asIdeal → y ∉ w.asIdeal := by

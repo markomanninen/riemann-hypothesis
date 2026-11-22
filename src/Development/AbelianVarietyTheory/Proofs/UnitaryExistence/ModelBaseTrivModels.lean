@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OpenRowsFree
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.ModelFamilies
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.ModelFamilies
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,24 +45,5 @@ theorem isTypeFn_letters (c : Coeff l) (σ : c.F →+* ℂ) (hσ : GoodEmb c σ)
 
 variable {Xo : Moduli Dw l} {c : Coeff l} {σ : c.F →+* ℂ} {g : ℕ}
   {e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ)} {F : GlobalTheory.IndefiniteRowSideFullHecke.ModelFamilies.FamAt Xo c σ e} {r : ℕ}
-
-def modelsEquiv (F : GlobalTheory.IndefiniteRowSideFullHecke.ModelFamilies.FamAt Xo c σ e) (r : ℕ) :
-    Rows.ModelsOf F r ≃ GlobalTheory.IndefiniteRowSideFullHecke.ModelFamilies.ModelsOf F r where
-  toFun M := ⟨M.X, M.φ⟩
-  invFun M := ⟨M.X, M.φ⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-theorem modelsEquiv_φ (M : Rows.ModelsOf F r) : (modelsEquiv F r M).φ = M.φ := rfl
-
-def trivChar (X : Data E r) : Data E r :=
-  { X with
-    χ := fun _ _ => 1
-    χ_mul := fun _ _ _ _ _ => (one_mul 1).symm
-    χ_add := fun _ _ _ _ => (one_mul 1).symm
-    χ_fin := fun _ => ⟨1, one_pos, fun _ _ => one_pow 1⟩ }
-
-def trivModels (M : GlobalTheory.IndefiniteRowSideFullHecke.ModelFamilies.ModelsOf F r) : Rows.ModelsOf F r :=
-  ⟨fun k => trivChar (M.X k), M.φ⟩
 
 end GlobalTheory.PeriodRowsCompare

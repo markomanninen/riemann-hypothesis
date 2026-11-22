@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSPointwise
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPolyRadialCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSPointwise
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix
@@ -38,7 +42,7 @@ theorem PS.add {TT : ℝ} {f g : ℂ → ℂ} (hf : PS TT f) (hg : PS TT g) : PS
   obtain ⟨m, p, hp⟩ := hf
   obtain ⟨m', p', hp'⟩ := hg
   refine ⟨m + m', p * ggP TT ^ m' + p' * ggP TT ^ m, fun ζ hζ => ?_⟩
-  rw [map_add, map_mul, map_mul, map_pow, map_pow, gg_eval, ← hp ζ hζ, ← hp' ζ hζ]
+  rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, gg_eval, ← hp ζ hζ, ← hp' ζ hζ]
   ring
 
 theorem PS.sum {TT : ℝ} {ι : Type*} (s : Finset ι) (f : ι → ℂ → ℂ) (h : ∀ i ∈ s, PS TT (f i)) :
@@ -55,7 +59,8 @@ theorem PSV.apply {TT : ℝ} {V : Type*} [AddCommGroup V] [Module ℂ V] {f : �
   obtain ⟨n, a, v, ha, hf⟩ := hf
   refine PS.congr (PS.sum Finset.univ (fun i ζ => a i ζ * L (v i)) fun i _ => PS.mul (ha i) (PS.const TT _))
     fun ζ hζ => ?_
-  rw [hf ζ hζ, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hf ζ hζ, map_sum]
   simp only [map_smul, smul_eq_mul]
 
 end Asm

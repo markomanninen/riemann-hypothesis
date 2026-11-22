@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.ClassesLevelZeroNonempty
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ClassesLevelZeroNonempty
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,8 @@ theorem hT_self_of_on {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSp
     (b : Module.Basis (Fin S.rank) E S.V) (hb : ∀ a a', S.hT (b a) (b a') = if a = a' then 1 else 0) (y : S.V) :
     S.hT y y = ∑ a, star (b.repr y a) * b.repr y a := by
   conv_lhs => rw [← b.sum_repr y]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, hb,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, hb,
     smul_eq_mul, starRingEnd_apply]
   simp [mul_ite, Finset.sum_ite_eq]
   exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
@@ -34,13 +39,15 @@ theorem posFrame_of_std (D : D7) (h : Formalism.L2.Herm.IsStd (D.sp.X 0)) : PosF
       rw [← (D.sp.X 0).frame.toMatrix_mulVec_repr b y, RingHom.map_mulVec]
       rfl
     simp only [hrepr]
-    rw [hT_self_of_on (D.sp.X 0) b hb y, map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT_self_of_on (D.sp.X 0) b hb y, map_sum, Complex.re_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_mul, host_emb_star, Complex.conj_mul', ← Complex.ofReal_pow, Complex.ofReal_re]
 
 theorem colBase_of_sym {D : D7} (F : Formalism.L2.Forms.ColsTiedSym D) (u : D.what₂.Word)
     (rho : D.what₂.Tau → (D.host.E →+* D.what₂.LL)) : ∃ B : ColBase D u, B.rho = rho :=
   ColBase_exists D u (posFrame_of_std D (F.herm.std.1 0 (Nat.zero_le _))) rho
+    (fun c => (D.clsLat_lat u 0 c).span_eq_top)
 
 theorem colValOfTiedS_of_rest'
     (h : ∀ D : D7, Formalism.L2.Forms.ColsTiedSym D → Formalism.MainNotions.flipTwoThree.adm3 D → ∀ u : D.what₂.Word,

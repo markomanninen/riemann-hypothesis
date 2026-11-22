@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualOfDualSubgroups
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmallDualLattices
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdditiveCharConductorExists
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalComponentsNontrivialAdelicCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSelfDualOfDualSubgroups
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmallDualLattices
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdditiveCharConductorExists
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx Filter
 open scoped TensorProduct NNReal ENNReal
@@ -239,7 +243,7 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem sigR_smul (c : R) (z : R ⊗[F] E) : sigR R σ (c • z) = c • sigR R σ z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
   | tmul a e => rfl
 
 noncomputable def bilin (n : ℕ) : LinearMap.BilinForm R (Fin n → Fin M → R ⊗[F] E) :=
@@ -261,7 +265,8 @@ theorem sigR_hR (h : IsCMExt F E σ) (hJ : IsHermND σ J) (x y : Fin M → R ⊗
     intro i j
     show (1 : R) ⊗ₜ[F] σ (J j i) = (1 : R) ⊗ₜ[F] J i j
     rw [hJ.1]
-  simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, Formalism.UG.hform, map_sum, map_mul, sigR_sigR R h]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ']
@@ -323,9 +328,18 @@ theorem existsUnique_selfDual_finite : ∀ (F E : Type) [Field F] [NumberField F
   have hc : Continuous χ :=
     hψ.1.comp (Continuous.prodMk continuous_const (GlobalTheory.AdelicU.continuous_singleFin v))
   have hu : ∀ t, ‖χ t‖ = 1 := fun t => hψ.2.1 _
-  have hne : ∃ t, χ t ≠ 1 := (GlobalTheory.T.localComponents_nontrivial_adelic_character F ψ hψ).1 v
-  refine ⟨existsUnique_of_bilin v χ hc hu hne (Fv F v) (LinearMap.mul _ _) (fun x y => mul_comm x y)
-    (fun x hx => by simpa using hx 1), fun M J hJ => ?_⟩
-  exact existsUnique_of_bilin v χ hc hu hne _ (bilin (Fv F v) σ J 1) (BR_symm _ h hJ) (eq_zero_of_BR _ h hJ)
+  have hχ : (χ : Fv F v → ℂ) = psiV F ψ v := by
+    funext t
+    rfl
+  have hne : ∃ t, χ t ≠ 1 := by
+    rw [hχ]
+    exact (GlobalTheory.T.localComponents_nontrivial_adelic_character F ψ hψ).1 v
+  constructor
+  · simpa only [SdR, ← hχ, LinearMap.mul_apply_apply] using
+      (existsUnique_of_bilin v χ hc hu hne (Fv F v) (LinearMap.mul _ _) (fun x y => mul_comm x y)
+        (fun x hx => by simpa using hx 1))
+  · intro M J hJ
+    simpa only [SdW, ← hχ, bilin, LinearMap.mk₂_apply] using
+      (existsUnique_of_bilin v χ hc hu hne _ (bilin (Fv F v) σ J 1) (BR_symm _ h hJ) (eq_zero_of_BR _ h hJ))
 
 end GlobalTheory.SelfDualFinite

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.ParConsts
-import Formalism.SharpRestriction.GrowthBounds.Imports
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Formalism.SharpRestriction.GrowthBounds.DataGChain
-import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
-import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.SharpRestriction.GrowthBounds.Imports
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Formalism.SharpRestriction.GrowthBounds.DataGChain
+public import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -256,7 +260,7 @@ def atPi {σ R : Type} [CommRing R] (vp : R) (f : MvPowerSeries σ R) : MvPowerS
 def applyD {σ τ Kc : Type} [Field Kc] (P : MvPolynomial σ (MvPolynomial τ ℤ)) (f : MvPowerSeries σ Kc) :
     MvPolynomial τ Kc :=
   ∑ n ∈ P.support, ((∏ x ∈ n.support, ((n x).factorial : Kc)) * MvPowerSeries.coeff n f) •
-    MvPolynomial.map (Int.castRingHom Kc) (MvPolynomial.coeff n P)
+    MvPolynomial.map (Int.castRingHom Kc) (AddMonoidAlgebra.coeff P n)
 
 theorem Pj_nV {p : ℕ} {G : GAtP p} (Fl : Fills G) (j : ℕ) : (Fl.Pj j).nV = G.P.nV := by
   cases j <;> rfl
@@ -529,8 +533,8 @@ def inLatC (j : ℕ) (g : ℝ) (L : (X.Pj j).Tup) (y : XspC (X.Pj j) Y.Kc) : Pro
 def LowAt (j : ℕ) (v : X.Pl) (g : ℝ) : Prop :=
   ∀ U : MvPowerSeries (X.EA j ⊕ X.EA j) Y.Kc, IntR Y.Oc (inParamK p Y.Kc U) →
     ∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      Y.geC (MvPolynomial.coeff n (applyD (X.PIv j I v)
-        (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U)))) g
+      Y.geC (AddMonoidAlgebra.coeff (applyD (X.PIv j I v)
+        (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U))) n) g
 
 theorem geC_mono {x : Y.Kc} {g g' : ℝ} (h : g' ≤ g) (hx : Y.geC x g) : Y.geC x g' := by
   intro a b hb hab
@@ -558,7 +562,7 @@ def adm2c (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) 
 def adm3 (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) (Y : Pend X) : Prop :=
   ∀ j < X.mm, ∀ (La : X.Lt j) (La' : X.Lt (j + 1)), (X.Pj j).IsLatTup La.2 → (X.Pj (j + 1)).IsLatTup La'.2 →
     ∀ (φ : Y.Frm j La La') (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      Y.geC (MvPolynomial.coeff n (applyD (X.PI j I fun _ => 0) (X.ThZA Y.Kc j (Y.ThA j La La' φ)))) 0
+      Y.geC (AddMonoidAlgebra.coeff (applyD (X.PI j I fun _ => 0) (X.ThZA Y.Kc j (Y.ThA j La La' φ))) n) 0
 
 def adm3b (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) : Prop :=
   ∀ j < X.mm, ∀ F ∈ X.FQ j, X.Kz j F ∈ X.FQ (j + 1)
@@ -616,7 +620,7 @@ def adm7 (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) (
     (∀ v' : Fin (X.Pj (j + 1)).nV, (i0 (X.vB (j + 1) v') = 0 ∧ L'' v' = L' v') ∨
       (1 ≤ i0 (X.vB (j + 1) v') ∧ IsEdge p ((X.Pj (j + 1)).n' v') (i0 (X.vB (j + 1) v')) ⟨L'' v', L' v'⟩)) →
     ∃ φ : Y.Frm j La (c', L''), ∀ (f : MvPowerSeries (X.ZA j) Y.Kc) (g : ℝ),
-      (∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ), Y.geC (MvPolynomial.coeff n (applyD (X.PI j I i0) f)) g) →
+      (∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ), Y.geC (AddMonoidAlgebra.coeff (applyD (X.PI j I i0) f) n) g) →
       ∀ G ∈ (X.Pj j).HtupW La.2, Y.inLatC (j + 1) g L'
         ((∏ v : X.Pl, (p : X.G.Kf) ^ (Nprime (X.G.P.lam0 v) (X.w v) (j + 1) (i0 v))) •
           Y.kerF j La (c', L'') (linSub (Y.bc j La (c', L'') φ) f) G)
@@ -652,7 +656,7 @@ def Conclusion2 (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : S
 def projection_lemma_base_level (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) (Y : Pend X) : Prop :=
   ∀ j < X.mm, ∀ (La : X.Lt j) (La' : X.Lt (j + 1)), (X.Pj j).IsLatTup La.2 → (X.Pj (j + 1)).IsLatTup La'.2 →
     ∀ (φ : Y.Frm j La La') (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      Y.geC (MvPolynomial.coeff n (applyD (X.PI j I fun _ => 0) (X.ThZA Y.Kc j (Y.ThA j La La' φ))))
+      Y.geC (AddMonoidAlgebra.coeff (applyD (X.PI j I fun _ => 0) (X.ThZA Y.Kc j (Y.ThA j La La' φ))) n)
         (∑ v, X.g0v v (j + 1))
 
 def VolumeRatio₂ (_D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) (Y : Pend X) : Prop :=
@@ -753,20 +757,12 @@ def SmallResidueCharComparison (D : Formalism.BasicNotions.D7) (L : SizeData₂ 
                 ((Y.Fl u w hg).w (Y.vOf u w hg t0)) j ≤
         Formalism.MainNotions.G.Pr X K (bL L) (D.what₂.places.resChar w) j t0
 
-theorem NumCmp.k5 {D : Formalism.BasicNotions.D7} {L : SizeData₂ D} {X : Inst D L} {Y : LatInst D} {K : Consts}
-    (h : NumCmp D L X Y K) : SmallResidueCharComparison D L X Y K := fun hT hL u w hg _ => h hT hL u w hg
-
 def NumericalComparisonAt (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (C₀ : ℝ) : Prop :=
   ∀ K : Consts, C₀ ≤ K.dl1 → C₀ ≤ K.dl2 → C₀ ≤ K.Pr1 → Formalism.MainNotions.G.rG L.sc < D.R.k → 2 ≤ L.sc.x → Formalism.MainNotions.SizesAt L →
     SmallResidueCharComparison D L X Y K
 
-def NumericalComparison (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) : Prop := ∃ C₀, NumericalComparisonAt D L X Y C₀
-
 def NumericalComparisonUniform : Prop :=
   ∃ C₀ : ℝ, ∀ (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D), NumericalComparisonAt D L X Y C₀
-
-def NumericalComparisonFamily {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (C₀ : ℝ) : Prop :=
-  ∀ x (i : Fm.Ix x), NumericalComparisonAt (Fm.D x i) (Fm.L x i) (Fm.Gx x i) (Fm.Gy x i) C₀
 
 def admitted (D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : Sys p) (Y : Pend X) : Prop :=
   adm1 D ∧ adm2 D X Y ∧ adm2b D X Y ∧ adm2c D X Y ∧ adm3 D X Y ∧ adm3b D X ∧ ArchimedeanSignatureMatching D X Y ∧ adm5 D X Y ∧ MinkowskiCounting D X Y ∧ adm6 D X Y ∧
@@ -779,55 +775,17 @@ def Conclusion₂ (D : Formalism.BasicNotions.D7) {p : ℕ} [Fact p.Prime] (X : 
 def Stmt (D : Formalism.BasicNotions.D7) : Prop :=
   (∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Y : Pend X), admitted D X Y → Conclusion₂ D X Y) ∧ RelativePresentationLiterature D
 
-def DegreeDichotomyWithModelBounds (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (X : Sys p) (Y : Pend X), admitted D X Y → KernelCommutationUpToUnits D X
-
 def ErrorExponentStatement (D : Formalism.BasicNotions.D7) : Prop :=
   ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl) [Fact (D.what₂.places.resChar w).Prime]
     (h : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (X : Sys (D.what₂.places.resChar w)) (Y : Pend X),
     X.G = D.gat u w h → admitted D X Y → Conclusion₂ D X Y
 
-def ClosedFormOfAdmitted (D : Formalism.BasicNotions.D7) : Prop := Stmt D
-
-def KudlaFamilyStatement {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), Stmt (Fm.D x i)
-
-def FamilyClosedForm {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := KudlaFamilyStatement Fm
-
-def DegreeDichotomyWithModelBoundsFamily {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), DegreeDichotomyWithModelBounds (Fm.D x i)
-
 def adm9 (D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop := Formalism.MainNotions.SelectionLemmas.Conclusion1 D G
-
-def adm10 (_D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop := G.Sandwich
 
 def adm12 (_D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop :=
   (∀ v, ∀ F ∈ G.Mna, G.yv v F ∈ G.Mna) ∧ ∀ v, ∀ F ∈ G.M, G.yv v F ∈ G.M
 
 def adm13 (D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop := Formalism.MainNotions.SelectionLemmas.adm2 D G
-
-def Adm6 (D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop :=
-  adm9 D G ∧ adm10 D G ∧ adm12 D G ∧ adm13 D G ∧ Formalism.MainNotions.SelectionLemmas.adm3 D G
-
-def Conclusion6 (_D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : Prop :=
-  ∀ (VV : Finset (Fin G.P.nV)) (t Sv : Fin G.P.nV → ℕ) (Dd cStar S m : ℕ) (κ : Fin G.P.nV → ℝ)
-    (V' : Submodule G.O G.Fn),
-    1 ≤ m → (∀ v ∈ VV, Sv v ≤ S) →
-    (∀ v ∈ VV, LPprime (W := G.P.W v) (Qq := G.P.Qq v) (O := G.O) (Kf := G.Kf) p (G.P.n' v) (G.P.ι v) (G.P.σ v) G.P.w
-      G.P.r (G.P.lam0 v) (t v) Dd (κ v) cStar) →
-    Formalism.MainNotions.SelectionLemmas.IsSaturatedIn (G.M ⊓ V') G.M →
-    (m : ℝ) * ∑ v ∈ VV, κ v ≤ 1 / 2 →
-    let tauP : ℕ := G.e + Formalism.MainNotions.SelectionLemmas.tau VV m Dd t
-    let Mp := G.M ⊓ V'
-    let NPp := Formalism.MainNotions.SelectionLemmas.prodIdeal G VV m Sv G.M ⊓ (Ideal.span {(p : G.O) ^ tauP}) • G.M ⊓ V'
-    NPp ≤ (Ideal.span {(p : G.O) ^ tauP}) • Mp ∧
-    ∃ ℓ : ℕ, Module.length G.O (↥Mp ⧸ Submodule.comap Mp.subtype NPp) = ℓ ∧
-      (ℓ : ℝ) ≤ ((Module.length G.O (G.O ⧸ Ideal.span {(p : G.O)})).toNat : ℝ) *
-        ((G.d : ℝ) * ((tauP : ℝ) + 2 * S * ((m : ℝ) * ∑ v ∈ VV, κ v)))
-
-def ShareFromInputs (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-    0 < (D.gat u w h).P.nV → Adm6 D (D.gat u w h) → Conclusion6 D (D.gat u w h)
-
-def LocalServiceStatement (D : Formalism.BasicNotions.D7) : Prop := ∀ (p : ℕ) (G : GAtP p), 0 < G.P.nV → Adm6 D G → Conclusion6 D G
 
 def LemmaVVolumeGeneral (D : Formalism.BasicNotions.D7) (L : SizeData₂ D) (X : Inst D L) (Y : LatInst D) (K : Consts) : Prop :=
   ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
@@ -850,7 +808,5 @@ def RamifiedSublatticeVolumeOfAdmissible (D : Formalism.BasicNotions.D7) (L : Si
   (∀ (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
     adm9 D (D.gat u w h) ∧ adm12 D (D.gat u w h) ∧ adm13 D (D.gat u w h) ∧ Formalism.MainNotions.SelectionLemmas.adm3 D (D.gat u w h)) →
     LemmaVVolumeGeneral D L X Y K
-
-def ShareFromInputsFamily {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), ShareFromInputs (Fm.D x i)
 
 end Formalism.MainNotions.FormalGroupSystem

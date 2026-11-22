@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCRefTraceCut
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -118,6 +122,7 @@ def GTRRFinFrom : Prop := GTRRCentre → GTRRSec → GTRRWirt → GTRRFin
 
 theorem gTRRotK_of_mat_fin_centre_sec_ode_wirt (hM : GTRRMatFrom) (hF : GTRRFinFrom) (hC : GTRRCentre) (hS : GTRRSec) (hO : GTRRODE)
     (hW : GTRRWirt) : GTRRotK := by
+  unfold GTRRotK
   intro Wp Wq _ _ _ _ _ _ P Bs X d hyp hsec e he hk hc Rt s hRK hRt ρ
   obtain ⟨n, hn⟩ := hM hC hS hO Wp Wq P Bs X d hyp hsec e he hk hc Rt s hRK hRt
   exact ⟨n ρ + s, fun Φ => hF hC hS hW Wp Wq P Bs hyp.1 hyp.2.1 hsec e he hc n hn Rt s hRt ρ Φ⟩
@@ -141,7 +146,9 @@ def GTCRefTraceOfCutK : Prop :=
   GTRMove → GTRConst → GTRTopNF → GTRTopAct → GTRRotK → GTRInt → GTRTrans → GTCReal → GTCRefTrace
 
 theorem gTCRefTrace_of_cutK : GTCRefTraceOfCutK := by
-  intro hMove hConst hNF hAct hRot hInt hTrans hReal Wp Wq _ _ _ _ _ _ P Bs X d hyp
+  intro hMove hConst hNF hAct hRot hInt hTrans hReal
+  unfold GTCRefTrace
+  intro Wp Wq _ _ _ _ _ _ P Bs X d hyp
   obtain ⟨hpl, hk, hcs, hL, hS, hR, hQ⟩ := hyp
   have hcs0 := Formalism.FourierDecayAlt.P.TheSecStab.theSection_csec (k := P.k) (r := P.r) (by omega) Bs.z_mem Bs.z'_mem
     Bs.T_pos Bs.T'_pos

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -24,7 +28,7 @@ private theorem ext_a {a b : A K} (h1 : a.1 = b.1) (h2 : ∀ w : P K, a.2 w = b.
   Prod.ext h1 (FiniteAdeleRing.ext K h2)
 
 private theorem sg_add (v : P K) (x y : Kv v) : sg v (x + y) = sg v x + sg v y := by
-  refine ext_a (by simp [sg_fst]) fun w => ?_
+  refine ext_a (by change 0 = (sg v x).1 + (sg v y).1; simp [sg_fst]) fun w => ?_
   by_cases h : w = v
   · subst h
     change _ = (sg w x).2 w + (sg w y).2 w
@@ -119,7 +123,7 @@ private theorem ab_idl (v : P K) (x : (Kv v)ˣ) : ab (idl v x) = ‖(x : Kv v)�
 private theorem norm_of_val (v : P K) (x : Kv v) (n : ℤ) (h : Valued.v x = WithZero.exp n) :
     ‖x‖ = (Ideal.absNorm v.asIdeal : ℝ) ^ n := by
   rw [NumberField.FinitePlace.norm_def, h, WithZeroMulInt.toNNReal_neg_apply _ WithZero.exp_ne_zero]
-  simp [WithZero.exp]
+  rfl
 
 private theorem ab_unif (v : P K) (ϖ : (Kv v)ˣ) (h : IsU ϖ) :
     ab (idl v ϖ) = ((Ideal.absNorm v.asIdeal : ℕ) : ℝ)⁻¹ := by

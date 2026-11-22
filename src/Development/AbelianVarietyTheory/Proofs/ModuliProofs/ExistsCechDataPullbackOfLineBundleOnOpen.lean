@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueHom
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueHom
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -15,8 +19,8 @@ theorem gm_eq_one {X Z : Scheme.{0}} (κ : Z ⟶ X) [IsOpenImmersion κ] (z : Z)
     {a : Γ(X, U)ˣ} (e : gm κ z U a = 1) : gm (𝟙 X) (κ z) U a = 1 := by
   have hU : (𝟙 X) (κ z) ∈ U := h
   unfold gm pullU at e ⊢
-  rw [dif_pos h] at e
-  rw [dif_pos hU]
+  rw [dite_eq_left h] at e
+  rw [dite_eq_left hU]
   have e' := congrArg Units.val e
   apply Units.ext
   apply (ConcreteCategory.bijective_of_isIso (κ.stalkMap z)).1
@@ -29,7 +33,7 @@ theorem exists_unit_image {X Y : Scheme.{0}} (κ : Y ⟶ X) [IsOpenImmersion κ]
   refine ⟨Units.map (κ.appIso V).inv.hom a, fun Z r z hz => ?_⟩
   have h1 : (r ≫ κ) z ∈ κ ''ᵁ V := ⟨r z, hz, rfl⟩
   unfold gm pullU
-  rw [dif_pos hz, dif_pos h1]
+  rw [dite_eq_left hz, dite_eq_left h1]
   apply Units.ext
   refine (Scheme.Hom.germ_stalkMap_apply (r ≫ κ) (κ ''ᵁ V) z h1 _).symm.trans ?_
   refine Eq.trans ?_ (Scheme.Hom.germ_stalkMap_apply r V z hz (a : Γ(Y, V)))
@@ -43,7 +47,7 @@ theorem exists_unit_image {X Y : Scheme.{0}} (κ : Y ⟶ X) [IsOpenImmersion κ]
 private theorem gm_res_eq_gm {S T : Scheme.{0}} (f : T ⟶ S) (t : T) {U V : S.Opens} (hVU : V ≤ U) (a : Γ(S, U)ˣ)
     (ht : f t ∈ V) : gm f t V (res hVU a) = gm f t U a := by
   unfold gm pullU res
-  rw [dif_pos ht, dif_pos (hVU ht)]
+  rw [dite_eq_left ht, dite_eq_left (hVU ht)]
   apply Units.ext
   refine (Scheme.Hom.germ_stalkMap_apply f V t ht _).symm.trans ?_
   refine Eq.trans ?_ (Scheme.Hom.germ_stalkMap_apply f U t (hVU ht) (a : Γ(S, U)))
@@ -57,13 +61,13 @@ private theorem units_eq_of_gm_eq {S : Scheme.{0}} {W : S.Opens} {a b : Γ(S, W)
   intro x hx
   have := congrArg Units.val (h x hx)
   unfold gm pullU at this
-  rw [dif_pos (show (𝟙 S) x ∈ W from hx)] at this
+  rw [dite_eq_left (show (𝟙 S) x ∈ W from hx)] at this
   exact this
 
 private theorem gm_id_pullU' {S T : Scheme.{0}} (f : T ⟶ S) (t : T) (W : S.Opens) (c : Γ(S, W)ˣ) (ht : f t ∈ W) :
     gm (𝟙 T) t (f ⁻¹ᵁ W) (pullU f W c) = gm f t W c := by
   unfold gm
-  rw [dif_pos (show (𝟙 T) t ∈ f ⁻¹ᵁ W from ht), dif_pos ht]
+  rw [dite_eq_left (show (𝟙 T) t ∈ f ⁻¹ᵁ W from ht), dite_eq_left ht]
   rfl
 
 private theorem gm_inv_moduli {S T : Scheme.{0}} (f : T ⟶ S) (t : T) (U : S.Opens) (a : Γ(S, U)ˣ) :

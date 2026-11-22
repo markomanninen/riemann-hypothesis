@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMemThPsiOfMemSpan
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesIntegralSourceTranslationRightMulStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleConjugatePairPlacesEqOfTwistConditionAStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidueCharacterTwistUniversalCharAtChosenPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientRowsExteriorDetEqConstMulTopBlockDetStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitCardResidueFieldOffExceptionalPlacesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsMemThPsiOfMemSpan
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaSeriesIntegralSourceTranslationRightMulStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdmissibleConjugatePairPlacesEqOfTwistConditionAStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ResidueCharacterTwistUniversalCharAtChosenPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientRowsExteriorDetEqConstMulTopBlockDetStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitCardResidueFieldOffExceptionalPlacesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 namespace GlobalTheory.SpecSpan
 
-open Classical in
 
+open Classical in
 theorem series_sum {D : D7} {S T : HSp D} (B : Base S T) (hB : B.Good) (ω : PairRep S T) {τs : Type} (s : Finset τs)
     (c : τs → ℂ) (f : τs → WO S T → ℂ) (hf : ∀ τ, IsThetaFunO B.F.ψ S T (f τ)) (h : GA D S) (P : PolF D T.rank S.rank) :
     series B.F ω (∑ τ ∈ s, c τ • f τ) h P = ∑ τ ∈ s, c τ • series B.F ω (f τ) h P := by
@@ -42,15 +46,15 @@ theorem series_sum {D : D7} {S T : HSp D} (B : Base S T) (hB : B.Good) (ω : Pai
       (c a • f a + ∑ τ ∈ s, c τ • f τ) P) 0 = c a * ω (h, g) (pureTensorO B.F.ψ B.F.θ S T (fun _ => 1) B.F.sT (fun τ => (B.F.BS τ).val) B.F.BT
       (f a) P) 0 + ω (h, g) (pureTensorO B.F.ψ B.F.θ S T (fun _ => 1) B.F.sT (fun τ => (B.F.BS τ).val) B.F.BT
       (∑ τ ∈ s, c τ • f τ) P) 0
-    rw [GlobalTheory.FockFiniteHeis.pureTensorO_lin _ _ _ _ hB.frame.vac.1 hB.frame.vac.2.inf _ _ _ _ _ (hf a) (hθ s), map_add, map_smul]
+    rw [GlobalTheory.FockFiniteHeis.pureTensorO_lin _ _ _ _ hB.frame.vac.1 hB.frame.vac.2.inf _ _ _ _ _ (hf a) (hθ s), map_add (f := _), map_smul]
     rfl
 
 theorem theta_vecAt {D : D7} {S T : HSp D} {B : Base S T} (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : B.admitted Q)
     (φ : ∀ PP : ↥Q, Matrix (Fin T.rank) (Fin S.rank) (kP PP.1) → ℂ) : IsThetaFunO B.F.ψ S T (B.vecAt Q φ) :=
   GlobalTheory.GalLift.Vec.theta_of_thetaAt hB.frame.vac.1 hB.frame.vac.2.inf (Base.isThetaAt_vecAt hB hQ φ) hB.frame.vac.2.theta
 
-open Classical in
 
+open Classical in
 theorem twist_series_mem_span {D : D7} {S T : HSp D} (B : Base S T) (hB : B.Good) (hS : S.SigOK) (ω : PairRep S T)
     (hω : B.IsWeil 1 ω) (t : Twist D Circle) (hQ : B.admitted t.Q) (O : Subring ℂ) (ι : ↥t.Q → Type) [∀ PP, Fintype (ι PP)]
     (a : ∀ PP, ι PP → ℂ) (ha : ∀ PP u, a PP u ∈ O) (g : ∀ PP, ι PP → GL (Fin S.rank) (kP PP.1))
@@ -69,9 +73,11 @@ theorem twist_series_mem_span {D : D7} {S T : HSp D} (B : Base S T) (hB : B.Good
       rw [Finset.prod_mul_distrib]
       ring
     change B.F.vecL B.G _ (B.locFn t.Q loc) = ∑ τ : (∀ PP, ι PP), (∏ PP, a PP (τ PP)) • B.F.vecL B.G _ (B.locFn t.Q (φ τ))
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     simp only [map_smul]
-  rw [hvec, series_sum B hB ω _ _ _ (fun τ => theta_vecAt hB hQ (φ τ)), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hvec, series_sum B hB ω _ _ _ (fun τ => theta_vecAt hB hQ (φ τ)), map_sum]
   refine Submodule.sum_mem _ fun τ _ => ?_
   obtain ⟨hQτ, hsupp, hmove⟩ := GlobalTheory.T.thetaSeries_integralSourceTranslation_right_mul D S T B hB hS ω hω t.Q hQ (fun PP => g PP (τ PP))
   have e2 : series B.F ω (B.vecAt t.Q (φ τ)) h P = series B.F ω (B.vecFlat t) (h * hQτ) P :=
@@ -87,8 +93,8 @@ end GlobalTheory.SpecSpan
 
 namespace GlobalTheory.SpecSpan
 
-open Classical in
 
+open Classical in
 theorem univ_spec {k : Type} [Field k] [Finite k] {r n : ℕ} {C : Type} [AddCommGroup C] [Fintype C]
     [Fintype (Planes k r n)] (β : DetBases k r n) (κ : kˣ →* Multiplicative C) (ν : Multiplicative C →* ℂˣ)
     (g : Planes k r n → GL (Fin n) k) (c : Planes k r n → kˣ)
@@ -102,7 +108,7 @@ theorem univ_spec {k : Type} [Field k] [Finite k] {r n : ℕ} {C : Type} [AddCom
     intro U
     unfold univTerm
     by_cases hC : Compl U.1 y
-    · rw [dif_pos hC]
+    · rw [dite_eq_left hC]
       have hd : dU β U y ≠ 0 := (dU_ne_zero_iff β U y).2 hC
       have hdet : (topL r (y * (g U : Matrix (Fin n) (Fin n) k))).det ≠ 0 := by
         intro h0; apply hd; rw [hg, h0, mul_zero]
@@ -114,7 +120,7 @@ theorem univ_spec {k : Type} [Field k] [Finite k] {r n : ℕ} {C : Type} [AddCom
       · intro a _ ha
         rw [if_neg (Ne.symm ha), Rat.cast_zero, mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [dif_neg hC]
+    · rw [dite_eq_right hC]
       have hd : dU β U y = 0 := by
         by_contra h; exact hC ((dU_ne_zero_iff β U y).1 h)
       have hdet : ¬ IsUnit (topL r (y * (g U : Matrix (Fin n) (Fin n) k))).det := by

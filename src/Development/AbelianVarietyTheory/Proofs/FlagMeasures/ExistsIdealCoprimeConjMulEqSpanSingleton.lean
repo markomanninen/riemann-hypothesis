@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMemFractionalIdealPrimitiveLocalGeneratorAStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeMapComapOfLeConjMaximalCmDataStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsMemFractionalIdealPrimitiveLocalGeneratorAStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeMapComapOfLeConjMaximalCmDataStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -57,7 +61,7 @@ theorem exists_ideal_coprime_conj_mul_eq_spanSingleton :
       exact hx
     have h3 := GlobalTheory.T.le_map_comap_of_le_conj_maximal_cmData F E hcm P Q hQm h1 h2
     have hpm : (Q.comap (algebraMap (𝓞 F) (𝓞 E))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal Q
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := 𝓞 F) Q
     exact hp _ hpm (key _ h3)
   · have htop : P ⊔ Ideal.span {N} = ⊤ := by
       by_contra htop

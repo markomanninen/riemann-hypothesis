@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -107,7 +112,7 @@ theorem exists_degreeLT [Module.Finite R O] {ϖ : R} {π : O} (hπ : Irreducible
         have hk : ((k : ℕ) : WithBot ℕ) < ((k + 1 : ℕ) : WithBot ℕ) := by exact_mod_cast k.lt_succ_self
         exact (Polynomial.degree_add_le _ _).trans_lt
           (max_lt (hf.trans hk) ((Polynomial.degree_C_mul_X_pow_le _ _).trans_lt hk))
-      · simp only [map_add, map_mul, Polynomial.aeval_C, map_pow, Polynomial.aeval_X]
+      · simp only [map_add (f := _), map_mul, Polynomial.aeval_C, map_pow, Polynomial.aeval_X]
         rw [pow_succ, mul_assoc, ← ht]
         linear_combination hz
   have hmem : ϖ ∈ maximalIdeal R := by

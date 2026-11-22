@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityCup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityCup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -30,8 +35,8 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   {c : Gal(Ω/F)} (hG : ∀ g : Gal(Ω/F), g = 1 ∨ g = c) (hc : c ≠ 1)
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
 
-include hG hc in
 
+include hG hc in
 theorem realDualityPairing_two_zero_eq_zero (x : cohomology M 2)
     (y : cohomology (cartierDual F Ω M) 0) (hy : y ∈ normClasses (cartierDual F Ω M)) :
     realDualityPairing F Ω h2 hN M (show 2 + 0 = 2 from rfl) x y = 0 := by
@@ -47,8 +52,8 @@ theorem realDualityPairing_two_zero_eq_zero (x : cohomology M 2)
   change ((((cartierDual F Ω M).ρ.norm b) : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) a) = _
   rw [norm_apply _ hG hc, LinearMap.add_apply, cartierDual_ρ_apply, inv_eq_self hG hc, ha]
 
-include hG hc in
 
+include hG hc in
 theorem realDualityPairing_zero_two_eq_zero (x : cohomology M 0) (hx : x ∈ normClasses M)
     (y : cohomology (cartierDual F Ω M) 2) :
     realDualityPairing F Ω h2 hN M (show 0 + 2 = 2 from rfl) x y = 0 := by
@@ -67,7 +72,7 @@ theorem realDualityPairing_zero_two_eq_zero (x : cohomology M 0) (hx : x ∈ nor
     rw [cartierDual_ρ_apply, inv_eq_self hG hc, ← Module.End.mul_apply, ← map_mul,
       mul_self_eq_one hG hc, map_one, Module.End.one_apply]
   change (φ : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Ω) (M.ρ.norm b) = _
-  rw [norm_apply _ hG hc, map_add, hφb]
+  rw [norm_apply _ hG hc, map_add (f := _), hφb]
 
 end Generic
 
@@ -128,9 +133,9 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   (hroots : ∀ k : ℕ, 0 < k → Nonempty (galRootsOfUnity.{0} F Ω k ≃+ ZMod k))
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
 
+
 omit [IsDiscreteRep M] [Finite M] in
 include hneg in
-
 theorem realInv_cocycleTwo_eq_cartierDualToQZ {n : ℕ} [NeZero n] (hMn : ∀ m : M, n • m = 0)
     (e : galRootsOfUnity.{0} F Ω n ≃+ ZMod n) (φ : cartierDual F Ω M) (m : M)
     (hq : 2 • cartierDualToQZ M hMn e φ m = 0) (t : galUnits.{0} F Ω)
@@ -154,8 +159,8 @@ theorem realInv_cocycleTwo_eq_cartierDualToQZ {n : ℕ} [NeZero n] (hMn : ∀ m 
   · rw [ht0]
     exact cartierDualToQZ_apply_eq_zero_iff M hMn e φ m
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingTwoZero_eq_tatePair :
     ∃ (e : tateQuot (act M c) ≃+ cohomology M 2)
       (e' : tateQuot (dualInv (act M c)) ≃+ cohomologyTateZero (cartierDual F Ω M)),
@@ -189,8 +194,8 @@ theorem realDualityPairingTwoZero_eq_tatePair :
     (Or.inl rfl) ht).trans ?_
   rw [hTf]
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_eq_tatePair :
     ∃ (e : tateQuot (act M c) ≃+ cohomologyTateZero M)
       (e' : tateQuot (dualInv (act M c)) ≃+ cohomology (cartierDual F Ω M) 2),
@@ -227,8 +232,8 @@ theorem realDualityPairingZeroTwo_eq_tatePair :
     (Or.inl rfl) ht).trans ?_
   rw [hTf]
 
-include hG hc hneg hconj hroots in
 
+include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_eq_tatePair :
     ∃ (e : tateQuot (-act M c) ≃+ cohomology M 1)
       (e' : tateQuot (dualInv (-act M c)) ≃+ cohomology (cartierDual F Ω M) 1),
@@ -267,43 +272,43 @@ theorem realDualityPairing_one_eq_tatePair :
     (Or.inr (by rw [hβ]; rfl)) ht).trans ?_
   rw [hTf]
 
-include hG hc hneg hconj hroots in
 
+include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_bijective :
     Function.Bijective (realDualityPairing F Ω h2 hN M (show 1 + 1 = 2 from rfl)) := by
   obtain ⟨e, e', h⟩ := realDualityPairing_one_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
 
-include hG hc hneg hconj hroots in
 
+include hG hc hneg hconj hroots in
 theorem realDualityPairing_one_flip_bijective :
     Function.Bijective (realDualityPairing F Ω h2 hN M (show 1 + 1 = 2 from rfl)).flip := by
   obtain ⟨e, e', h⟩ := realDualityPairing_one_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_flip_of_pairing_eq _ _ e e' h tatePair_flip_bijective
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingTwoZero_bijective :
     Function.Bijective (realDualityPairingTwoZero h2 hN hG hc M) := by
   obtain ⟨e, e', h⟩ := realDualityPairingTwoZero_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingTwoZero_flip_bijective :
     Function.Bijective (realDualityPairingTwoZero h2 hN hG hc M).flip := by
   obtain ⟨e, e', h⟩ := realDualityPairingTwoZero_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_flip_of_pairing_eq _ _ e e' h tatePair_flip_bijective
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_bijective :
     Function.Bijective (realDualityPairingZeroTwo h2 hN hG hc M) := by
   obtain ⟨e, e', h⟩ := realDualityPairingZeroTwo_eq_tatePair h2 hN hG hc hneg hconj hroots M
   exact bijective_of_pairing_eq _ _ e e' h tatePair_bijective
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem realDualityPairingZeroTwo_flip_bijective :
     Function.Bijective (realDualityPairingZeroTwo h2 hN hG hc M).flip := by
   obtain ⟨e, e', h⟩ := realDualityPairingZeroTwo_eq_tatePair h2 hN hG hc hneg hconj hroots M
@@ -339,8 +344,8 @@ variable {F Ω : Type} [Field F] [Field Ω] [Algebra F Ω] [FiniteDimensional F 
   (hroots : ∀ k : ℕ, 0 < k → Nonempty (galRootsOfUnity.{0} F Ω k ≃+ ZMod k))
   (M : Rep.{0} (ULift.{0} ℤ) Gal(Ω/F)) [IsDiscreteRep M] [Finite M]
 
-include hneg hconj hroots in
 
+include hneg hconj hroots in
 theorem real_local_duality_of_orderTwo :
     (Function.Bijective (realDualityPairingZeroTwo h2 hN hG hc M) ∧
       Function.Bijective (realDualityPairingZeroTwo h2 hN hG hc M).flip) ∧

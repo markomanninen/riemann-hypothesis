@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapConstantCoeffEqOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachFreeLatticeEqWachLatticeInvertXStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MapConstantCoeffEqOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachFreeLatticeEqWachLatticeInvertXStatement
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices
 
 noncomputable section
@@ -149,7 +154,8 @@ theorem phiinv_matrix {r : ℕ} {S : Submodule (LetA O n) (W.DD T)} (bS : Module
     rw [φspan, Submodule.span_le]
     rintro _ ⟨x, hx, rfl⟩
     obtain ⟨c, rfl⟩ := coords bS hx
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [φD_smulA]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -193,7 +199,8 @@ theorem le_of_X_pow_smul_le
     refine matrix_eq_of_comb li fun j => ?_
     rw [comb_smul, comb_mul, comb_smul, comb_mul]
     have e1 : ∑ k, Bm.map (W.γA W.gam) k j • ∑ i, Gm i k • b i = W.γ T (W.X ^ a • b₁ j) := by
-      rw [hB j, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hB j, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [γ_smulA, ← hG k, Matrix.map_apply]
     have e2 : ∑ k, Gm₁ k j • ∑ i, Bm i k • b i = W.X ^ a • W.γ T (b₁ j) := by
@@ -214,7 +221,8 @@ theorem le_of_X_pow_smul_le
     refine matrix_eq_of_comb li fun j => ?_
     rw [Matrix.smul_mul, comb_smul, comb_mul, comb_smul, comb_mul]
     have e1 : ∑ k, Bm.map W.φA k j • ∑ i, F i k • b i = W.Q ^ hM • W.φD T (W.X ^ a • b₁ j) := by
-      rw [hB j, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hB j, map_sum, Finset.smul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [φD_smulA, ← hF k, Matrix.map_apply, smul_comm]
     have e2 : ∑ k, F₁ k j • ∑ i, Bm i k • b i = W.X ^ a • W.Q ^ h₁ • W.φD T (b₁ j) := by
@@ -241,9 +249,9 @@ theorem le_of_X_pow_smul_le
 
 end Key
 
+
 open Formalism.MainNotions.DeltaInvariantLattices in
 set_option maxHeartbeats 800000 in
-
 theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), WachCharacterisation D HW F := by
   intro D HW F l _ K s LL h T hT N₁ hfree hbc hγN₁ hγπ hφ hφinv
   obtain ⟨a, h1, h2⟩ := GlobalTheory.T.wachFreeLattice_eq_wachLattice_invert_X D HW F l K s LL h T hT N₁ hfree hbc hφ hφinv
@@ -252,7 +260,8 @@ theorem main : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf 
   haveI : Nontrivial ((HW l).W K s LL h).EE := ((HW l).W K s LL h).EE_inj.nontrivial
   have hr : r₁ = Module.finrank ↥(OL LL) ↥T.L.T := by
     have e := (hbc.basis b₁).indexEquiv ((((HW l).W K s LL h).N_base T hT).basis nb)
-    simpa using Fintype.card_congr e
+    set_option synthInstance.maxHeartbeats 200000 in
+      simpa using Fintype.card_congr e
   subst hr
   have hmat := fun r a m m' B G G₁ Pm P₁ P₁' =>
     GlobalTheory.NL.WachMat.X_pow_dvd_entry D HW l K s LL h r a m m' B G G₁ Pm P₁ P₁'

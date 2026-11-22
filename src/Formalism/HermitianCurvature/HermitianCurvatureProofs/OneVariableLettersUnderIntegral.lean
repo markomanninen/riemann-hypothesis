@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EntrywiseClassWordTransfer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EntrywiseClassWordTransfer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHB2
+
+@[expose] public section
 
 open MeasureTheory
 

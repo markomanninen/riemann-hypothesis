@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GaloisFromTraceFormula.DescWeakOfRunTh
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -53,7 +57,7 @@ theorem UpperTheory.V.Z.Tf.GaloisFromTraceFormula.twDataT :
         rw [h]
         exact (star_star τ).symm
       refine ⟨lam', ?_⟩
-      rw [hinf τ, hl, ← hlam (InfinitePlace.mk τ), Multiset.map_add, Multiset.map_map, Multiset.map_map]
+      rw [hinf τ, hl, ← hlam (InfinitePlace.mk τ), Multiset.map_add (f := _), Multiset.map_map, Multiset.map_map]
       have e1 := hcon D₁ l₁ b h₁ (InfinitePlace.mk τ)
       have e2 := hcon D₂ l₂ a h₂ (InfinitePlace.mk τ)
       rw [← hτ] at e1 e2

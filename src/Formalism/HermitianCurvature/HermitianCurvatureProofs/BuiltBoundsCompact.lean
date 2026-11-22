@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbBuiltBounds2CptOfMkTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTop
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PbBuiltBounds2CptOfMkTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTop
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

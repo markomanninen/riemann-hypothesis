@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenOfRangeGenericSubset
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.FiniteExtensionRamificationEmbedding
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenOfRangeGenericSubset
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.FiniteExtensionRamificationEmbedding
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain IsLocalRing ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Pj Formalism.MainNotions.DIV.Cons
 open scoped TensorProduct
@@ -32,7 +36,8 @@ theorem exists_ext_containing (T : CDVR) (hT : T.FinRes) {C : Type} [Field C] [C
     have h₁ : IsIntegral ℚ (f (b i)) := (Algebra.IsIntegral.isIntegral (R := ℚ) (b i)).map f.toRatAlgHom
     exact h₁.tower_top
   have hmem : ∀ x, f x ∈ L := fun x => by
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     refine sum_mem fun i _ => ?_
     rw [Rat.smul_def, map_mul, map_ratCast]
     exact mul_mem (SubfieldClass.ratCast_mem L _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)
@@ -46,7 +51,9 @@ theorem exists_ext_containing (T : CDVR) (hT : T.FinRes) {C : Type} [Field C] [C
   have : FaithfulSMul T.V (integralClosure T.V L) := (faithfulSMul_iff_algebraMap_injective _ _).2 hinj
   have hz : CharZero (integralClosure T.V L) := charZero_of_injective_ringHom hinj
   have hc := GlobalTheory.CompleteFiniteExtension.isAdicComplete_of_finite_local T.V (integralClosure T.V L)
-  have hr : Finite (ResidueField (integralClosure T.V L)) := Module.finite_of_finite (ResidueField T.V)
+  have hr : Finite (ResidueField (integralClosure T.V L)) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact Module.finite_of_finite (ResidueField T.V)
   let q : FractionRing (integralClosure T.V L) ≃ₐ[integralClosure T.V L] L := FractionRing.algEquiv _ L
   refine ⟨{ V := integralClosure T.V L }, algebraMap _ _, (algebraMap L C).comp q.toRingEquiv.toRingHom,
     q.symm.toRingEquiv.toRingHom.comp (f.codRestrict L hmem), hinj, RingHom.finite_algebraMap.2 hB, hr,

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselSecondStepFlatSupportRamified
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.JacobiToBesselSecondStepFlatSupportRamified
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValueDoubleExact
+
+@[expose] public section
+
 open Formalism.BasicNotions
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.jacobiToBessel_second_step_flat_support_ramified : ∀ D : D7, GlobalTheory.FinPl.SuppSecond D := by

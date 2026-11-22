@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCptGen
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormallySmoothSurjectiveDerivation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormallySmoothSectionStalk
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OneLeftCongr
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanLinearIndependentBase
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCptGen
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EtaleLocalizationAtPrimeTensorOfLowHeight
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormallySmoothSurjectiveDerivation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FormallySmoothSectionStalk
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OneLeftCongr
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanLinearIndependentBase
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.Ga4
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
-private structure Chart {X : Scheme.{0}} (G : Over X) [GrpObj G] (p : X) where
+private structure ValueChart {X : Scheme.{0}} (G : Over X) [GrpObj G] (p : X) where
   B : CommRingCat.{0}
   al : X.presheaf.stalk p ⟶ B
   sg : B ⟶ X.presheaf.stalk p
@@ -38,7 +42,7 @@ private structure Chart {X : Scheme.{0}} (G : Over X) [GrpObj G] (p : X) where
       ∃ c : Fin n → R, ∀ b, (g b).snd = ∑ i, φ (d b i) * c i
 
 private theorem chart_nonempty {X : Scheme.{0}} (G : Over X) [GrpObj G] [Smooth G.hom] (p : X) :
-    Nonempty (Chart G p) := by
+    Nonempty (ValueChart G p) := by
   let s : X ⟶ G.left := (η[G]).left
   have hs : s ≫ G.hom = 𝟙 X := Over.w (η[G])
   obtain ⟨B, al, sg, j, h1, h2, hm, ho, hsec, hfac⟩ := UpperTheory.formally_smooth_section_stalk G.hom s hs p
@@ -52,21 +56,23 @@ private theorem chart_nonempty {X : Scheme.{0}} (G : Over X) [GrpObj G] [Smooth 
   rw [Hom.one_def, Over.comp_left]
   simp [s]
 
-variable {X : Scheme.{0}} {G : Over X} [GrpObj G] {p : X} (C : Chart G p)
+variable {X : Scheme.{0}} {G : Over X} [GrpObj G] {p : X}
 
-private def Chart.Rep {R : Type} [CommRing R] (φ : X.presheaf.stalk p →+* R) (c : Fin C.n → R)
+private def ValueChart.Rep (C : ValueChart G p) {R : Type} [CommRing R] (φ : X.presheaf.stalk p →+* R) (c : Fin C.n → R)
     (v : Spec (CommRingCat.of (DualNumber R)) ⟶ G.left) : Prop :=
-  ∃ g : C.B →+* DualNumber R, (∀ b, (g b).fst = φ (C.sg.hom b)) ∧
-    (∀ b, (g b).snd = ∑ i, φ (C.d b i) * c i) ∧ v = Spec.map (CommRingCat.ofHom g) ≫ C.j
+  ∃ g : (C.B : Type) →+* DualNumber R,
+    (∀ b : (↑C.B), TrivSqZeroExt.fst (R := R) (M := R) (g b) = φ (C.sg.hom b)) ∧
+    (∀ b : (↑C.B), TrivSqZeroExt.snd (R := R) (M := R) (g b) = ∑ i, φ (C.d b i) * c i) ∧
+      v = Spec.map (CommRingCat.ofHom (R := C.B) g) ≫ C.j
 
-private theorem Chart.cancel {R : CommRingCat.{0}} {g g' : C.B ⟶ R}
+private theorem ValueChart.cancel (C : ValueChart G p) {R : CommRingCat.{0}} {g g' : C.B ⟶ R}
     (h : Spec.map g ≫ C.j = Spec.map g' ≫ C.j) : g = g' := by
   haveI := C.mono
   exact Spec.map_injective ((cancel_mono C.j).1 h)
 
 variable {R : Type} [CommRing R]
 
-private theorem Chart.rep_inj {φ : X.presheaf.stalk p →+* R} {c c' : Fin C.n → R}
+private theorem ValueChart.rep_inj (C : ValueChart G p) {φ : X.presheaf.stalk p →+* R} {c c' : Fin C.n → R}
     {v : Spec (CommRingCat.of (DualNumber R)) ⟶ G.left} (h : C.Rep φ c v) (h' : C.Rep φ c' v) : c = c' := by
   obtain ⟨g, -, h2, h3⟩ := h
   obtain ⟨g', -, h2', h3'⟩ := h'
@@ -77,14 +83,14 @@ private theorem Chart.rep_inj {φ : X.presheaf.stalk p →+* R} {c c' : Fin C.n 
   have := (h2 b).symm.trans (h2' b)
   simpa [hb, Pi.single_apply, apply_ite φ] using this
 
-private theorem Chart.rep_uniq {φ : X.presheaf.stalk p →+* R} {c : Fin C.n → R}
+private theorem ValueChart.rep_uniq (C : ValueChart G p) {φ : X.presheaf.stalk p →+* R} {c : Fin C.n → R}
     {v v' : Spec (CommRingCat.of (DualNumber R)) ⟶ G.left} (h : C.Rep φ c v) (h' : C.Rep φ c v') : v = v' := by
   obtain ⟨g, h1, h2, h3⟩ := h
   obtain ⟨g', h1', h2', h3'⟩ := h'
   have hg : g = g' := RingHom.ext fun b => TrivSqZeroExt.ext ((h1 b).trans (h1' b).symm) ((h2 b).trans (h2' b).symm)
   rw [h3, h3', hg]
 
-private theorem Chart.rep_base {R' : Type} [CommRing R'] (χ : R →+* R') {φ : X.presheaf.stalk p →+* R}
+private theorem ValueChart.rep_base (C : ValueChart G p) {R' : Type} [CommRing R'] (χ : R →+* R') {φ : X.presheaf.stalk p →+* R}
     {c : Fin C.n → R} {v : Spec (CommRingCat.of (DualNumber R)) ⟶ G.left} (h : C.Rep φ c v) :
     C.Rep (χ.comp φ) (fun i => χ (c i)) (Spec.map (CommRingCat.ofHom (dualMap χ)) ≫ v) := by
   obtain ⟨g, h1, h2, h3⟩ := h
@@ -93,7 +99,7 @@ private theorem Chart.rep_base {R' : Type} [CommRing R'] (χ : R →+* R') {φ :
   · simp [dualMap, h2]
   · rw [h3, CommRingCat.ofHom_comp, Spec.map_comp, Category.assoc]
 
-private theorem Chart.rep_smul (r : R) {φ : X.presheaf.stalk p →+* R}
+private theorem ValueChart.rep_smul (C : ValueChart G p) (r : R) {φ : X.presheaf.stalk p →+* R}
     {c : Fin C.n → R} {v : Spec (CommRingCat.of (DualNumber R)) ⟶ G.left} (h : C.Rep φ c v) :
     C.Rep φ (r • c) (Spec.map (CommRingCat.ofHom (epsMul r)) ≫ v) := by
   obtain ⟨g, h1, h2, h3⟩ := h
@@ -102,7 +108,7 @@ private theorem Chart.rep_smul (r : R) {φ : X.presheaf.stalk p →+* R}
   · simp [epsMul, h2, Finset.mul_sum, mul_left_comm]
   · rw [h3, CommRingCat.ofHom_comp, Spec.map_comp, Category.assoc]
 
-private theorem Chart.rep_exists (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
+private theorem ValueChart.rep_exists (C : ValueChart G p) (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
     (hx : x = Spec.map φ ≫ X.fromSpecStalk p) (c : Fin C.n → R) :
     ∃ v : epsAt x ⟶ G, IsTanAt G x v ∧ C.Rep φ.hom c v.left := by
   obtain ⟨g, h0, h1, h2⟩ := C.ex R φ.hom c
@@ -121,13 +127,14 @@ private theorem Chart.rep_exists (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) 
     change Spec.map _ ≫ Spec.map (CommRingCat.ofHom g) ≫ C.j = _
     rw [← Category.assoc, ← Spec.map_comp, this, Spec.map_comp, Category.assoc, C.sec, hx, Category.assoc]
 
-private theorem Chart.fac' [IsLocalRing R] {N : Type} [AddCommGroup N] [Module R N] [Module Rᵐᵒᵖ N]
+private theorem ValueChart.fac' (C : ValueChart G p) [IsLocalRing R] {N : Type} [AddCommGroup N] [Module R N] [Module Rᵐᵒᵖ N]
     [IsCentralScalar R N] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
     (hx : x = Spec.map φ ≫ X.fromSpecStalk p)
     (u : Spec (CommRingCat.of (TrivSqZeroExt R N)) ⟶ G.left)
     (hu : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom R R N).toRingHom) ≫ u = (1 : Over.mk x ⟶ G).left) :
-    ∃ g : C.B →+* TrivSqZeroExt R N, (∀ b, (g b).fst = φ.hom (C.sg.hom b)) ∧
-      u = Spec.map (CommRingCat.ofHom g) ≫ C.j := by
+    ∃ g : (C.B : Type) →+* TrivSqZeroExt R N,
+      (∀ b : (↑C.B), TrivSqZeroExt.fst (R := R) (M := N) (g b) = φ.hom (C.sg.hom b)) ∧
+      u = Spec.map (CommRingCat.ofHom (R := C.B) g) ≫ C.j := by
   rw [C.one, hx, Category.assoc] at hu
   obtain ⟨g, hg⟩ := C.fac (CommRingCat.of R) (CommRingCat.of (TrivSqZeroExt R N)) _ φ u
     (fun r => ⟨TrivSqZeroExt.inl r, rfl⟩) (fun y hy => by
@@ -137,9 +144,9 @@ private theorem Chart.fac' [IsLocalRing R] {N : Type} [AddCommGroup N] [Module R
   rw [hg, ← C.sec, ← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp] at hu
   exact congrArg (fun k => CommRingCat.Hom.hom k b) (C.cancel hu)
 
-private theorem Chart.rep_of_tan [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
+private theorem ValueChart.rep_of_tan (C : ValueChart G p) [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
     (hx : x = Spec.map φ ≫ X.fromSpecStalk p) (v : epsAt x ⟶ G) (hv : IsTanAt G x v) :
-    ∃ c, C.Rep φ.hom c v.left := by
+    ∃ c : Fin C.n → R, C.Rep φ.hom c v.left := by
   obtain ⟨g, h1, hg⟩ := C.fac' φ x hx v.left hv
   have hw : v.left ≫ G.hom = Spec.map (CommRingCat.ofHom (algebraMap R (DualNumber R))) ≫ x := Over.w v
   rw [hg, Category.assoc, C.ovr, hx, ← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp,
@@ -148,7 +155,7 @@ private theorem Chart.rep_of_tan [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ Co
   obtain ⟨c, hc⟩ := C.all R φ.hom g (fun a => congrArg (fun k => CommRingCat.Hom.hom k a) h0) h1
   exact ⟨c, g, h1, hc, hg⟩
 
-private theorem Chart.rep_mul [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
+private theorem ValueChart.rep_mul (C : ValueChart G p) [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
     (hx : x = Spec.map φ ≫ X.fromSpecStalk p) (v w : epsAt x ⟶ G) (hv : IsTanAt G x v)
     (hw : IsTanAt G x w) {c c' : Fin C.n → R} (h : C.Rep φ.hom c v.left) (h' : C.Rep φ.hom c' w.left) :
     C.Rep φ.hom (c + c') (v * w).left := by
@@ -172,9 +179,9 @@ private theorem Chart.rep_mul [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommR
   · simp [e1, e2, h2, h2', mul_add, Finset.sum_add_distrib]
   · rw [← u3, hu, CommRingCat.ofHom_comp, Spec.map_comp, Category.assoc]
 
-private theorem Chart.coords [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
+private theorem ValueChart.coords (C : ValueChart G p) [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRingCat.of R) (x : Spec (CommRingCat.of R) ⟶ X)
     (hx : x = Spec.map φ ≫ X.fromSpecStalk p) {E : Type} [AddCommGroup E] [Module R E]
-    (M : LieModel G x E) : ∃ κ : E ≃ₗ[R] (Fin C.n → R), ∀ e, C.Rep φ.hom (κ e) (M.pt e).left := by
+    (M : LieModel G x E) : ∃ κ : E ≃ₗ[R] (Fin C.n → R), ∀ e : E, C.Rep φ.hom (κ e) (M.pt e).left := by
   choose f hf using fun e => C.rep_of_tan φ x hx (M.pt e) (M.tan e)
   let l : E →ₗ[R] (Fin C.n → R) :=
     { toFun := f
@@ -189,7 +196,7 @@ private theorem Chart.coords [IsLocalRing R] (φ : X.presheaf.stalk p ⟶ CommRi
     obtain ⟨e, rfl⟩ := M.onto v hv
     exact ⟨e, C.rep_inj (hf e) hc⟩
 
-private theorem Chart.rep_val (χ : X.presheaf.stalk p ⟶ CommRingCat.of R) {a : Fin C.n → X.presheaf.stalk p}
+private theorem ValueChart.rep_val (C : ValueChart G p) (χ : X.presheaf.stalk p ⟶ CommRingCat.of R) {a : Fin C.n → X.presheaf.stalk p}
     {v : Spec (CommRingCat.of (DualNumber (X.presheaf.stalk p))) ⟶ G.left}
     (h : C.Rep (R := X.presheaf.stalk p) (CommRingCat.Hom.hom (𝟙 (X.presheaf.stalk p))) a v) :
     C.Rep χ.hom (fun i => χ.hom (a i)) (Spec.map (CommRingCat.ofHom (dualMap χ.hom)) ≫ v) :=
@@ -250,7 +257,7 @@ theorem UpperTheory.Reformulated.B.Ga4.exists_value_basis :
       obtain ⟨v, hv, -⟩ := hext e a ha
       exact ⟨v, hv⟩
     · rintro ⟨v, hv, he⟩
-      obtain ⟨a, ha⟩ := @Chart.rep_of_tan _ _ _ _ C (X.presheaf.stalk (centre z)) _
+      obtain ⟨a, ha⟩ := @ValueChart.rep_of_tan _ _ _ _ (X.presheaf.stalk (centre z)) _ C
         (X.toLocallyRingedSpace.isLocalRing (centre z)) (𝟙 (X.presheaf.stalk (centre z)))
         (X.fromSpecStalk (centre z)) hi v hv
       have h1 := hκ e

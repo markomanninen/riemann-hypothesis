@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
-import Formalism.GaloisCohomology.Statement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+public import Formalism.GaloisCohomology.Statement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA Formalism.GaloisCohomology
 

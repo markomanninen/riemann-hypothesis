@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qe18.hc_avg :
     ∀ {k D M : Type} [inst : Field k] [inst_1 : Group D]
@@ -31,7 +35,8 @@ theorem UpperTheory.Reformulated.B.Qe18.hc_avg :
     calc ∑ q : D ⧸ N, z q.out = ∑ q : D ⧸ N, z (g • q).out := h1.symm
       _ = ∑ q : D ⧸ N, (z g + ρ g (z q.out)) := Finset.sum_congr rfl fun q _ => h2 q
       _ = (N.index : k) • z g + ρ g (∑ q : D ⧸ N, z q.out) := by
-        rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, hcard, map_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, hcard, map_sum,
           Nat.cast_smul_eq_nsmul]
   refine ⟨-((N.index : k)⁻¹ • ∑ q : D ⧸ N, z q.out), fun g => ?_⟩
   have h3 : (N.index : k) • z g

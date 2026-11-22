@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJFEHeightsilinear
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJFEHeightsilinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -287,7 +291,7 @@ def blockBForm (μ : Measure (GL (Fin m) F)) (σ : Representation ℂ (GL (Fin m
     W →ₗ[ℂ] smoothVectors (Representation.dual σ) →ₗ[ℂ] ℂ :=
   LinearMap.mk₂ ℂ (fun w l => blockB μ σ Ψ w (l : Module.Dual ℂ W) s)
     (fun w₁ w₂ l => by
-      simp only [blockB, map_add, mul_add]
+      simp only [blockB, map_add (f := _), mul_add]
       exact integral_add (hint _ _ l.2) (hint _ _ l.2))
     (fun c w l => by
       simp only [blockB, map_smul, smul_eq_mul]
@@ -326,11 +330,10 @@ theorem blockB_indGL_smul (μ : Measure (GL (Fin m) F)) [μ.IsHaarMeasure] {ψ :
   rw [← integral_mul_right_eq_self _ x⁻¹, ← integral_const_mul]
   congr 1
   funext h
-  simp only [LinearMap.comp_apply]
   rw [Units.val_mul, Matrix.mul_assoc, ← Units.val_mul, inv_mul_cancel, Units.val_one,
     Matrix.mul_one, mul_inv_rev, inv_inv, detPow_mul,
     show ((x * h⁻¹, (1 : H)) : GL (Fin m) F × H) = (x, 1) * (h⁻¹, 1) by simp, map_mul,
-    Module.End.mul_apply, detPow_inv]
+    mul_apply_eq_comp, LinearMap.comp_apply, detPow_inv]
   have h2 : detPow x (m : ℂ) * detPow x (-((m : ℂ) - s)) = detPow x s := by
     rw [detPow_mul_detPow]; congr 1; ring
   rw [← h2]

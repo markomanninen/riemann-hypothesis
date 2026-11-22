@@ -1,8 +1,12 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HalfSumNormSubSq
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.ImportsTer
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HasCompactSupportDTw
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.HalfSumNormSubSq
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.ImportsTer
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.E
 
@@ -15,12 +19,12 @@ theorem integral_re_double_sum {M : Type*} [MeasurableSpace M] (μ : Measure M) 
     (h : Fin n → Fin n → M → ℂ) (hi : ∀ j k, Integrable (h j k) μ) :
     ∫ x, (∑ j, ∑ k, h j k x).re ∂μ = (∑ j, ∑ k, ∫ x, h j k x ∂μ).re := by
   have hint : Integrable (fun x => ∑ j, ∑ k, h j k x) μ :=
-    integrable_finset_sum _ fun j _ => integrable_finset_sum _ fun k _ => hi j k
+    MeasureTheory.integrable_finsetSum _ fun j _ => MeasureTheory.integrable_finsetSum _ fun k _ => hi j k
   have h1 := integral_re (𝕜 := ℂ) hint
   simp only [RCLike.re_to_complex] at h1
-  rw [h1, integral_finset_sum _ fun j _ => integrable_finset_sum _ fun k _ => hi j k]
+  rw [h1, MeasureTheory.integral_finsetSum _ fun j _ => MeasureTheory.integrable_finsetSum _ fun k _ => hi j k]
   congr 1
-  exact Finset.sum_congr rfl fun j _ => integral_finset_sum _ fun k _ => hi j k
+  exact Finset.sum_congr rfl fun j _ => MeasureTheory.integral_finsetSum _ fun k _ => hi j k
 
 theorem hasCompactSupport_of_vanish {M : Type*} [TopologicalSpace M] (u F : M → ℂ)
     (hu : HasCompactSupport u) (h : ∀ x, u x = 0 → F x = 0) : HasCompactSupport F :=

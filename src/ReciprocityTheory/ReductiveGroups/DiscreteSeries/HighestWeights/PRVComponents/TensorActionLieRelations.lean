@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.HighestWeightDifferencesNat
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PRVComponents.HighestWeightDifferencesNat
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,8 @@ lemma tensor_action_mul_apply (A : Fin n → Fin n → Module.End ℂ V) (D : Fi
     tensAct A D a b (tensAct A D c d x) i = A a b (A c d (x i)) + ∑ j, D c d i j • A a b (x j) +
       (∑ j, D a b i j • A c d (x j) + ∑ k, (D a b * D c d) i k • x k) := by
   rw [tensAct_apply_eq_add_sum_smul A D a b]
-  simp only [tensAct_apply_eq_add_sum_smul A D c d, map_add, map_sum, map_smul, smul_add, Finset.sum_add_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tensAct_apply_eq_add_sum_smul A D c d, map_add (f := _), map_sum, map_smul, smul_add, Finset.sum_add_distrib,
     Finset.smul_sum, smul_smul, Matrix.mul_apply, Finset.sum_smul]
   rw [Finset.sum_comm]
 

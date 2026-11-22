@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptIsoCompare
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.GenOfUnit
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptIsoCompare
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.GenOfUnit
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -129,7 +133,7 @@ theorem frame_mat (A : Subring Ω) {b b' : Fin r → V} (hb' : LinearIndependent
     have key : (fun l => ((P' * P) l k : Ω)) = (Pi.single k 1 : Fin r → Ω) := GrNorm.coeff_eq_of_li hb' (by
       have e1 : ∑ l, (Pi.single k 1 : Fin r → Ω) l • b' l = b' k := by simp [Pi.single_apply, ite_smul]
       rw [e1, ← hc k]
-      simp only [← hc', Finset.smul_sum, smul_smul, Matrix.mul_apply, P, P', Matrix.of_apply, AddSubmonoidClass.coe_finset_sum,
+      simp only [← hc', Finset.smul_sum, smul_smul, Matrix.mul_apply, P, P', Matrix.of_apply, AddSubmonoidClass.coe_finsetSum,
         Finset.sum_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun a' _ => ?_

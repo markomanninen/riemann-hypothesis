@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CoinducedModules
-import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CoinducedModules
+public import GroundTheory.ProfiniteCohomology.ContinuousCochains.Functoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -74,12 +79,6 @@ noncomputable def coindHomotopyApply {n : ℕ} (f : (Fin (n + 1) → G) → Loca
   ⟨fun x => f (Fin.cons x g) 1,
     (hf.comp_continuous (continuous_id.finCons continuous_const)).comp fun φ => φ 1⟩
 
-omit [IsTopologicalGroup G] [CompactSpace G] [AddCommGroup X] [Module k X] in
-@[simp]
-theorem coindHomotopyApply_apply {n : ℕ} (f : (Fin (n + 1) → G) → LocallyConstant G X)
-    (hf : IsLocallyConstant f) (g : Fin n → G) (x : G) :
-    coindHomotopyApply f hf g x = f (Fin.cons x g) 1 :=
-  rfl
 
 omit [IsTopologicalGroup G] [AddCommGroup X] [Module k X] in
 theorem isLocallyConstant_coindHomotopyApply {n : ℕ}
@@ -88,10 +87,11 @@ theorem isLocallyConstant_coindHomotopyApply {n : ℕ}
   rw [IsLocallyConstant.iff_eventually_eq]
   intro g₀
   filter_upwards [eventually_forall_cons_eq hf g₀] with g hg
-  exact LocallyConstant.ext fun x => by simp [hg x]
+  exact LocallyConstant.ext fun x =>
+    congrArg (fun φ : LocallyConstant G X => φ 1) (hg x)
+
 
 variable (k X) in
-
 noncomputable def coindHomotopy (n : ℕ) :
     locallyConstantCochains (discreteCoind k G X) (n + 1) →ₗ[k]
       locallyConstantCochains (discreteCoind k G X) n where
@@ -100,8 +100,8 @@ noncomputable def coindHomotopy (n : ℕ) :
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem coindHomotopy_identity_apply {n : ℕ}
     (f : (Fin (n + 1) → G) → LocallyConstant G X) (φ : (Fin n → G) → LocallyConstant G X)
     (ψ : (Fin (n + 1) → G) → LocallyConstant G X)
@@ -127,16 +127,17 @@ theorem coindHomotopy_identity_apply {n : ℕ}
 
 theorem coindHomotopy_identity (n : ℕ)
     (f : locallyConstantCochains (discreteCoind k G X) (n + 1)) :
-    (dLocallyConstant (discreteCoind k G X) n).hom (coindHomotopy k X n f) +
-      coindHomotopy k X (n + 1) ((dLocallyConstant (discreteCoind k G X) (n + 1)).hom f) = f := by
+    (dLocallyConstant (discreteCoind k G X) n).hom (coindHomotopy (k := k) (X := X) n f) +
+      coindHomotopy (k := k) (X := X) (n + 1)
+        ((dLocallyConstant (discreteCoind k G X) (n + 1)).hom f) = f := by
   apply Subtype.ext
   funext g
   apply LocallyConstant.ext
   intro x
   exact coindHomotopy_identity_apply (k := k) f.1 _ _ (fun _ _ => rfl) (fun _ _ => rfl) g x
 
-variable (k G X) in
 
+variable (k G X) in
 theorem isZero_cohomology_discreteCoind (n : ℕ) :
     Limits.IsZero (cohomology (discreteCoind k G X) (n + 1)) := by
   rw [cohomology, ← HomologicalComplex.exactAt_iff_isZero_homology,
@@ -148,17 +149,13 @@ theorem isZero_cohomology_discreteCoind (n : ℕ) :
     change ((cochainsComplex (discreteCoind k G X)).d (n + 1) (n + 2)).hom f = 0 at hf
     rw [cochainsComplex_d] at hf
     exact hf
-  refine ⟨coindHomotopy k X n f', ?_⟩
+  refine ⟨coindHomotopy (k := k) (X := X) n f', ?_⟩
   have := coindHomotopy_identity n f'
   rw [hf', map_zero, add_zero] at this
-  change ((cochainsComplex (discreteCoind k G X)).d n (n + 1)).hom (coindHomotopy k X n f') = f
+  change ((cochainsComplex (discreteCoind k G X)).d n (n + 1)).hom
+    (coindHomotopy (k := k) (X := X) n f') = f
   rw [cochainsComplex_d]
   exact this
 
-variable (k G X) in
-
-noncomputable def cohomologyZeroDiscreteCoindIso :
-    cohomology (discreteCoind k G X) 0 ≅ ModuleCat.of k X :=
-  H0Iso (discreteCoind k G X) ≪≫ (invariantsDiscreteCoindEquiv k G X).toModuleIso
 
 end GroundTheory.ProfCoh

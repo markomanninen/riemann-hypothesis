@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GenericCentreSpecializes
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LocalComponentsSurjective
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropZ
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace PositivityTheory.Xgn.CurveInFibre
@@ -20,7 +25,7 @@ theorem valAt_inv {X : Scheme.{0}} {Ω K : Type} [Field Ω] [Field K] {ξ : Spec
 theorem finite_not_integral {K O A : Type} [Field K] [CommRing O] [CommRing A] (C : Crv.ACurve K) (g : O →+* A)
     (hg : g.FiniteType) (φ : A →+* K) (hO : ∀ i a, φ (g a) ∈ (C.v i).valuationSubring) :
     {i | ¬ ∀ a, φ a ∈ (C.v i).valuationSubring}.Finite := by
-  letI := g.toAlgebra
+  let := g.toAlgebra
   obtain ⟨t, ht⟩ := (show Algebra.FiniteType O A from hg).out
   have hfin : ∀ a : A, {i | φ a ∉ (C.v i).valuationSubring}.Finite := by
     intro a
@@ -29,7 +34,7 @@ theorem finite_not_integral {K O A : Type} [Field K] [CommRing O] [CommRing A] (
     · exact (C.fin _ h0).subset fun i hi h1 => hi (le_of_eq h1)
   refine (t.finite_toSet.biUnion fun a _ => hfin a).subset fun i hi => ?_
   by_contra hc
-  simp only [Set.mem_iUnion, Set.mem_setOf_eq, not_exists, not_not] at hc
+  simp only [Set.mem_iUnion, Set.mem_ofPred_eq, not_exists, not_not] at hc
   refine hi fun a => ?_
   have ha : a ∈ Algebra.adjoin O (t : Set A) := ht ▸ Algebra.mem_top
   induction ha using Algebra.adjoin_induction with
@@ -67,7 +72,7 @@ theorem ae_centre {X : Scheme.{0}} {K O : Type} [Field K] [CommRing O] (s : X �
     exact ((ψ i).hom a).2
   · let χ : Γ(X, V) ⟶ CommRingCat.of (C.v i).valuationSubring :=
       CommRingCat.ofHom (φ.hom.codRestrict (C.v i).valuationSubring hc)
-    haveI : IsDominant (Spec.map (CommRingCat.ofHom (C.v i).valuationSubring.subtype)) :=
+    have : IsDominant (Spec.map (CommRingCat.ofHom (C.v i).valuationSubring.subtype)) :=
       ⟨(PrimeSpectrum.denseRange_comap_iff_ker_le_nilRadical (C.v i).valuationSubring.subtype).2 (by
         rw [(RingHom.injective_iff_ker_eq_bot _).1 Subtype.val_injective]
         exact bot_le)⟩

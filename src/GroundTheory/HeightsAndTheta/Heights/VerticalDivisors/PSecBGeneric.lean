@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -27,7 +32,8 @@ theorem parToFrac_parY (e n : ℕ) (v : HeightOneSpectrum (𝓞 K)) (p : Par e n
 
 theorem map_linForm {R S : Type*} [CommRing R] [CommRing S] {n : ℕ} (f : R →+* S) (u : Fin n → R) :
     MvPolynomial.map f (linForm u) = linForm (fun j => f (u j)) := by
-  simp [linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [linForm, map_sum]
 
 theorem map_integralModel {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K)) :
     (integralModel I).map (MvPolynomial.map (algebraMap (𝓞 K) K)) = I := by
@@ -40,7 +46,7 @@ theorem map_integralModel {n : ℕ} (I : Ideal (MvPolynomial (Fin n) K)) :
     intro x hx
     obtain ⟨m, hm, rfl⟩ := mem_coeffs_iff.mp hx
     rw [coeff_C_mul]
-    by_cases h0 : coeff m f = 0
+    by_cases h0 : AddMonoidAlgebra.coeff f m = 0
     · rw [h0, mul_zero]; exact ⟨0, map_zero _⟩
     · obtain ⟨y, hy⟩ := hb _ (coeff_mem_coeffs m h0)
       exact ⟨y, by rw [hy, Algebra.smul_def]⟩
@@ -69,7 +75,7 @@ theorem map_secIdeal {n : ℕ} (e : ℕ) (I : Ideal (MvPolynomial (Fin n) K)) (v
     rw [Ideal.map_span, ← Set.range_comp]
     congr 2
     funext i
-    simp only [Function.comp_apply, secForm, map_linForm, parToFrac_parY]
+    simp [secForm, map_linForm, parToFrac_parY]
   have h3 : (Ideal.span {chartForm (parY e n v) - 1}).map (MvPolynomial.map (parToFrac e n v)) =
       Ideal.span {chartForm (parYF K e n) - 1} := by
     rw [Ideal.map_span, Set.image_singleton, map_sub, map_one, chartForm, chartForm, map_linForm]
@@ -78,8 +84,8 @@ theorem map_secIdeal {n : ℕ} (e : ℕ) (I : Ideal (MvPolynomial (Fin n) K)) (v
 
 end SecBGeneric
 
-open SecBGeneric in
 
+open SecBGeneric in
 theorem SecBGeneric.proof : SecBGeneric.Statement := by
   intro K _ _ n e I v _
   have hJ := map_secIdeal e I v

@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AbsIrrCharRealiseOfPrimitiveRootCard
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AbsIrrCharRealiseOfPrimitiveRootCard
+
+@[expose] public section
+
 open Formalism.L2.DIV
 
 noncomputable section
@@ -15,7 +20,11 @@ theorem isAbsIrrChar_map : ∀ {K K' G : Type} [Field K] [Field K'] [CharZero K]
   let A := AlgebraicClosure K
   let A' := AlgebraicClosure K'
   letI : Algebra K A' := ((algebraMap K' A').comp φ).toAlgebra
-  let ψ : A →ₐ[K] A' := IsAlgClosed.lift
+  let ψ : A →ₐ[K] A' := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hψ : ∀ x : K, ψ (algebraMap K A x) = algebraMap K' A' (φ x) := fun x => by
     rw [AlgHom.commutes]; rfl
   let ρ' : Representation A' G (Fin n → A') := GlobalTheory.BrauerRealise.mapScalars (ψ : A →+* A') ρ
@@ -30,7 +39,8 @@ theorem isAbsIrrChar_map : ∀ {K K' G : Type} [Field K] [Field K'] [CharZero K]
     have hsum : ∑ g, ρ.character g * ρ.character g⁻¹ = (Nat.card G : A) := by
       field_simp at ho
       simpa using ho
-    simp only [hch, ← map_mul, ← map_sum, hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hch, ← map_mul, ← map_sum, hsum]
     exact map_natCast ψ _
   · rw [hch, hρ, hψ]
 

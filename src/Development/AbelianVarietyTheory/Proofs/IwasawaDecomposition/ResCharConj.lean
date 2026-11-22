@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsFurther
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsFurther
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top NumberField IsDedekindDomain
 
@@ -36,9 +40,12 @@ theorem mul_ne_one {R : Ranks} {H : Formalism.BasicNotions.Host R} {S : Set ℕ}
     have := Examples₂.PlacesToy.prime_mem_unique v hq hp (Ideal.absNorm_mem _) hv
     exact hnS (this ▸ hS)
   have h1 := (hδ.ine v hv 1).1 fun x hx => by
-    have h2 : (δ * ψ).loc v x = 1 := by rw [h, HChar.loc_one]
-    rw [HChar.loc_mul, hu x hx, mul_one] at h2
-    rw [h2, one_pow]
+    have h2 : (δ * ψ).loc v x = 1 := by
+      rw [h]
+      rfl
+    change δ.loc v x * ψ.loc v x = 1 at h2
+    rw [hu x hx, mul_one] at h2
+    simpa only [pow_one] using h2
   omega
 
 theorem resChar_conj (B : Base) (w : B.places.Pl) : B.places.resChar (B.places.conj w) = B.places.resChar w := by

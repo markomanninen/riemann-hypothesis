@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousCompOfIsOpenKer
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousCompOfIsOpenKer
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.FiniteDuality
 
@@ -71,7 +75,7 @@ theorem double_annihilator (n : ℕ) [NeZero n] (X Y : Type) [AddCommGroup X] [M
     simp [f2, (memW w).1 w.2 y hy]
   let P2 : (Y ⧸ A) →ₗ[ZMod n] W →ₗ[ZMod n] ZMod n := A.liftQ f2 hA2
   have hP2 : Function.Injective P2.flip := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro w hw
     have hz : B.flip (w : X) = 0 := by
       ext y

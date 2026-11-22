@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.FrobeniusCoeffSupportBddBelow
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.FrobeniusCoeffSupportBddBelow
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem locReg_holds {T : LocLat G Qp LL O} {C : Coord W (baseIdOf hR) T} {c : Z
       have e : (⟨x + y, hW _ (Submodule.add_mem _ hx hy)⟩ :
           ↥((latOf C).W c ell (Formalism.ExponentWindows.abelian₂ (baseIdOf hR).Bs.p H ell))) =
           ⟨x, hW x hx⟩ + ⟨y, hW y hy⟩ := rfl
-      rw [e, map_add]
+      rw [e, map_add (f := _)]
       convert add_mem ihx ihy using 1
       exact map_add (prL (hΔ := Hy.delta) (ell := ell) s) _ _
     | smul a x hx ih =>

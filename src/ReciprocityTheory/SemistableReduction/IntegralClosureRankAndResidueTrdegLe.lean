@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -93,7 +97,7 @@ theorem algebraicIndependent_of_residue_lift {F₁ F₂ : Type} [Field F₁] [Fi
     exact ⟨⟨_, hle m⟩, by simp [MvPolynomial.coeff_C_mul]⟩
   obtain ⟨qV, hqV⟩ := hpp
   have hcoeff : qV.coeff m₀ = 1 := by
-    have e := congrArg (MvPolynomial.coeff m₀) hqV
+    have e := congrArg (AddMonoidAlgebra.coeff · m₀) hqV
     rw [MvPolynomial.coeff_map, MvPolynomial.coeff_C_mul, inv_mul_cancel₀ hc] at e
     exact Subtype.ext e
   have h0 : MvPolynomial.eval₂ (comapInclusion V (algebraMap F₁ F₂)) y qV = 0 := by
@@ -120,7 +124,7 @@ theorem algebraicIndependent_of_residue_lift {F₁ F₂ : Type} [Field F₁] [Fi
       RingHom.ext fun r => IsLocalRing.ResidueField.map_residue _ r
     rw [e5]
     exact e4.symm
-  have e6 := congrArg (MvPolynomial.coeff m₀) (hx _ h1)
+  have e6 := congrArg (AddMonoidAlgebra.coeff · m₀) (hx _ h1)
   rw [MvPolynomial.coeff_map, hcoeff, map_one, MvPolynomial.coeff_zero] at e6
   exact one_ne_zero e6
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoefS
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.NonarchimedeanSelfdualMeasurePi
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CoefS
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.NonarchimedeanSelfdualMeasurePi
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,9 +119,5 @@ def boxS (S : Finset (HeightOneSpectrum (𝓞 F))) (U : ∀ v : HeightOneSpectru
     intro a ha
     exact ⟨fun v hv => (U v).neg_mem (ha.1 v hv),
       fun v hv => neg_mem (ha.2 v hv)⟩
-
-theorem coe_boxS (S : Finset (HeightOneSpectrum (𝓞 F)))
-    (U : ∀ v : HeightOneSpectrum (𝓞 F), AddSubgroup (Fv F v)) :
-    (boxS S U : Set (Af F)) = Coef.boxA S fun v => (U v : Set (Fv F v)) := rfl
 
 end GlobalTheory.CompanionTheory.Hypotheses₂.OneV.Coef.Test

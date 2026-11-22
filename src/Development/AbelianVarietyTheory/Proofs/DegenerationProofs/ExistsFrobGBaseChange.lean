@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -48,9 +53,6 @@ def absFrob (X : Scheme.{0}) (p r : ℕ) (hp : p.Prime) (h : (p : Γ(X, ⊤)) = 
     rw [e2] at ha'
     exact (isUnit_pow_iff (pow_ne_zero _ hp.ne_zero)).1 ha'⟩⟩⟩
 
-theorem absFrob_preimage (X : Scheme.{0}) (p r : ℕ) (hp : p.Prime) (h : (p : Γ(X, ⊤)) = 0) (U : X.Opens) :
-    absFrob X p r hp h ⁻¹ᵁ U = U := rfl
-
 theorem absFrob_appLE (X : Scheme.{0}) (p r : ℕ) (hp : p.Prime) (h : (p : Γ(X, ⊤)) = 0) (U : X.Opens)
     (e : U ≤ absFrob X p r hp h ⁻¹ᵁ U) (f : Γ(X, U)) :
     ((absFrob X p r hp h).appLE U U e).hom f = f ^ p ^ r := by
@@ -93,21 +95,21 @@ theorem Q.id {X : Scheme.{0}} (U : X.Opens) (f : Γ(X, U)) : Q (𝟙 X) 1 U f :=
   exact GlobalTheory.AbLaw.rs_self (X := X) le_rfl f
 
 theorem Q.pow {X : Scheme.{0}} {F : End X} {q m : ℕ} {U : X.Opens} {f : Γ(X, U)}
-    (a : Q (show X ⟶ X from F ^ m) (q ^ m) U f) (j : ℕ) :
-    Q (show X ⟶ X from F ^ (m * j)) (q ^ (m * j)) U f := by
+    (a : Q (F ^ m).asHom (q ^ m) U f) (j : ℕ) :
+    Q (F ^ (m * j)).asHom (q ^ (m * j)) U f := by
   induction j with
-  | zero => simpa using Q.id U f
+  | zero => simpa only [Nat.mul_zero, pow_zero, End.one_asHom] using Q.id U f
   | succ j ih =>
     have := a.comp ih
     rw [Nat.mul_succ, pow_add, pow_add, mul_comm (q ^ (m * j))]
     exact this
 
 def Good {X : Scheme.{0}} (F : End X) (q : ℕ) (U : X.Opens) (f : Γ(X, U)) : Prop :=
-  ∃ m, 1 ≤ m ∧ Q (show X ⟶ X from F ^ m) (q ^ m) U f
+  ∃ m, 1 ≤ m ∧ Q (F ^ m).asHom (q ^ m) U f
 
 theorem Good.two {X : Scheme.{0}} {F : End X} {q : ℕ} {U V : X.Opens} {f : Γ(X, U)} {g : Γ(X, V)}
     (a : Good F q U f) (b : Good F q V g) :
-    ∃ m, 1 ≤ m ∧ Q (show X ⟶ X from F ^ m) (q ^ m) U f ∧ Q (show X ⟶ X from F ^ m) (q ^ m) V g := by
+    ∃ m, 1 ≤ m ∧ Q (F ^ m).asHom (q ^ m) U f ∧ Q (F ^ m).asHom (q ^ m) V g := by
   obtain ⟨m, hm, a⟩ := a
   obtain ⟨n, hn, b⟩ := b
   refine ⟨m * n, Nat.mul_pos hm hn, a.pow n, ?_⟩
@@ -125,7 +127,7 @@ theorem Good.sup {X : Scheme.{0}} {F : End X} {q : ℕ} {U V W : X.Opens} (f : �
     (a : Good F q U ((X.presheaf.map (homOfLE hU).op).hom f))
     (b : Good F q V ((X.presheaf.map (homOfLE hV).op).hom f)) : Good F q W f := by
   obtain ⟨m, hm, ⟨h, e⟩, ⟨h', e'⟩⟩ := a.two b
-  have hh : W = (show X ⟶ X from F ^ m) ⁻¹ᵁ W := by
+  have hh : W = (F ^ m).asHom ⁻¹ᵁ W := by
     rw [hW, Scheme.Hom.preimage_sup, ← h, ← h']
   refine ⟨m, hm, hh, ?_⟩
   refine X.sheaf.eq_of_locally_eq₂ (homOfLE hU) (homOfLE hV) hW.le _ _ ?_ ?_
@@ -144,20 +146,20 @@ theorem Good.basic {X : Scheme.{0}} {F : End X} {q : ℕ} (hq : 0 < q) {U : X.Op
   have := hU.isLocalization_basicOpen g
   obtain ⟨n, a, ha⟩ := IsLocalization.Away.surj g f
   obtain ⟨m, hm, qa, qg⟩ := (H a).two (H g)
-  have hb : X.basicOpen g = (show X ⟶ X from F ^ m) ⁻¹ᵁ X.basicOpen g := by
+  have hb : X.basicOpen g = (F ^ m).asHom ⁻¹ᵁ X.basicOpen g := by
     obtain ⟨h, e⟩ := qg
-    have h1 := Scheme.basicOpen_appLE (show X ⟶ X from F ^ m) U U h.le g
+    have h1 := Scheme.basicOpen_appLE (F ^ m).asHom U U h.le g
     erw [e] at h1
     rw [Scheme.basicOpen_pow _ _ (pow_pos hq m)] at h1
     refine h1.trans (inf_eq_right.2 ?_)
-    exact ((show X ⟶ X from F ^ m).preimage_mono (X.basicOpen_le g)).trans h.ge
+    exact ((F ^ m).asHom.preimage_mono (X.basicOpen_le g)).trans h.ge
   obtain ⟨_, ea⟩ := qa.res (X.basicOpen_le g) hb
   obtain ⟨_, eg⟩ := qg.res (X.basicOpen_le g) hb
   refine ⟨m, hm, hb, ?_⟩
   change _ = algebraMap Γ(X, U) Γ(X, X.basicOpen g) a ^ _ at ea
   change _ = algebraMap Γ(X, U) Γ(X, X.basicOpen g) g ^ _ at eg
   have hu : IsUnit (algebraMap Γ(X, U) Γ(X, X.basicOpen g) g) := IsLocalization.Away.algebraMap_isUnit g
-  have h2 := congrArg ((show X ⟶ X from F ^ m).appLE _ _ hb.le).hom ha
+  have h2 := congrArg ((F ^ m).asHom.appLE _ _ hb.le).hom ha
   rw [map_mul, map_pow] at h2
   erw [ea, eg] at h2
   rw [← ha, mul_pow, ← pow_mul, ← pow_mul, mul_comm n] at h2
@@ -184,7 +186,7 @@ theorem good_of_cover {X : Scheme.{0}} {F : End X} {q : ℕ} (hq : 0 < q)
   exact g f
 
 def goodSubring {X : Scheme.{0}} (F : End X) (p r : ℕ) (hp : p.Prime) (U : X.Opens)
-    (hc : (p : Γ(X, U)) = 0) (h : U = (show X ⟶ X from F) ⁻¹ᵁ U) : Subring Γ(X, U) where
+    (hc : (p : Γ(X, U)) = 0) (h : U = F.asHom ⁻¹ᵁ U) : Subring Γ(X, U) where
   carrier := {f | Good F (p ^ r) U f}
   mul_mem' := fun a b => by
     obtain ⟨m, hm, ⟨h, e⟩, ⟨h', e'⟩⟩ := Good.two a b
@@ -192,7 +194,7 @@ def goodSubring {X : Scheme.{0}} (F : End X) (p r : ℕ) (hp : p.Prime) (U : X.O
   add_mem' := fun {x y} a b => by
     obtain ⟨m, hm, ⟨h, e⟩, ⟨h', e'⟩⟩ := Good.two a b
     refine ⟨m, hm, h, ?_⟩
-    rw [map_add, e, e', ← pow_mul]
+    rw [map_add (f := _), e, e', ← pow_mul]
     exact (map_add (powHom _ p (r * m) hp hc) x y).symm
   one_mem' := ⟨1, le_rfl, by rw [pow_one]; exact h, by rw [map_one, one_pow]⟩
   zero_mem' := ⟨1, le_rfl, by rw [pow_one]; exact h, by
@@ -210,7 +212,7 @@ theorem appLE_congr_hom {X Y : Scheme.{0}} {φ ψ : X ⟶ Y} (e : φ = ψ) (V : 
 theorem good_of_isPullback {X G S T : Scheme.{0}} [IsAffine S] [IsAffine T] {g : X ⟶ G} {s : X ⟶ T}
     {a : G ⟶ S} {b : T ⟶ S} (H : IsPullback g s a b) (p r : ℕ) (hp : p.Prime) (hc : (p : Γ(X, ⊤)) = 0)
     (hT : ∀ c : Γ(T, ⊤), ∃ m, 1 ≤ m ∧ c ^ ((p ^ r) ^ m) = c) (F : End X)
-    (hg : (show X ⟶ X from F) ≫ g = absFrob X p r hp hc ≫ g) (hs : (show X ⟶ X from F) ≫ s = s)
+    (hg : F.asHom ≫ g = absFrob X p r hp hc ≫ g) (hs : F.asHom ≫ s = s)
     (U : X.Opens) (hU : IsCompact (U : Set X)) (f : Γ(X, U)) : Good F (p ^ r) U f := by
   refine good_of_cover (pow_pos hp.pos r) (fun x => ?_) U hU f
   obtain ⟨_, ⟨V, hV, rfl⟩, hx, -⟩ := G.isBasis_affineOpens.exists_subset_of_mem_open
@@ -218,7 +220,7 @@ theorem good_of_isPullback {X G S T : Scheme.{0}} [IsAffine S] [IsAffine T] {g :
   have : IsAffineHom b := inferInstance
   have : IsAffineHom g := MorphismProperty.of_isPullback H.flip this
   refine ⟨g ⁻¹ᵁ V, hx, IsAffineOpen.preimage hV g, fun f => ?_⟩
-  have hF : g ⁻¹ᵁ V = (show X ⟶ X from F) ⁻¹ᵁ g ⁻¹ᵁ V := by
+  have hF : g ⁻¹ᵁ V = F.asHom ⁻¹ᵁ g ⁻¹ᵁ V := by
     rw [← Scheme.Hom.comp_preimage, hg]; rfl
   have po := (isIso_pushoutSection_iff H (US := ⊤) (UT := ⊤) (UX := V) (UY := g ⁻¹ᵁ V) le_top
     le_top (by simp)).mp (isIso_pushoutSection_of_isAffineOpen H _ _ _ (isAffineOpen_top _)
@@ -229,24 +231,24 @@ theorem good_of_isPullback {X G S T : Scheme.{0}} [IsAffine S] [IsAffine T] {g :
     · refine ⟨1, le_rfl, ?_⟩
       rw [pow_one, pow_one]
       refine ⟨hF, ?_⟩
-      have e1 := Scheme.Hom.appLE_comp_appLE (show X ⟶ X from F) g V (g ⁻¹ᵁ V) (g ⁻¹ᵁ V) le_rfl hF.le
+      have e1 := Scheme.Hom.appLE_comp_appLE F.asHom g V (g ⁻¹ᵁ V) (g ⁻¹ᵁ V) le_rfl hF.le
       have e2 := Scheme.Hom.appLE_comp_appLE (absFrob X p r hp hc) g V (g ⁻¹ᵁ V) (g ⁻¹ᵁ V) le_rfl le_rfl
       have e3 := (e1.trans (appLE_congr_hom hg _ _ _ _)).trans e2.symm
       exact (congrArg (fun φ => φ.hom y) e3).trans (absFrob_appLE X p r hp hc _ _ _)
     · obtain ⟨m, hm, hc'⟩ := hT c
-      have h1 : ∀ n : ℕ, (show X ⟶ X from F ^ n) ≫ s = s ∧
-          g ⁻¹ᵁ V = (show X ⟶ X from F ^ n) ⁻¹ᵁ g ⁻¹ᵁ V := by
+      have h1 : ∀ n : ℕ, (F ^ n).asHom ≫ s = s ∧
+          g ⁻¹ᵁ V = (F ^ n).asHom ⁻¹ᵁ g ⁻¹ᵁ V := by
         intro n
         induction n with
         | zero => exact ⟨Category.id_comp _, rfl⟩
         | succ n ih =>
           rw [pow_succ]
-          change ((show X ⟶ X from F) ≫ (show X ⟶ X from F ^ n)) ≫ s = s ∧
-            g ⁻¹ᵁ V = ((show X ⟶ X from F) ≫ (show X ⟶ X from F ^ n)) ⁻¹ᵁ g ⁻¹ᵁ V
+          change (F.asHom ≫ (F ^ n).asHom) ≫ s = s ∧
+            g ⁻¹ᵁ V = (F.asHom ≫ (F ^ n).asHom) ⁻¹ᵁ g ⁻¹ᵁ V
           rw [Category.assoc, ih.1, hs, Scheme.Hom.comp_preimage, ← ih.2, ← hF]
           exact ⟨rfl, rfl⟩
       refine ⟨m, hm, (h1 m).2, ?_⟩
-      have e1 := Scheme.Hom.appLE_comp_appLE (show X ⟶ X from F ^ m) s ⊤ (g ⁻¹ᵁ V) (g ⁻¹ᵁ V) le_top
+      have e1 := Scheme.Hom.appLE_comp_appLE (F ^ m).asHom s ⊤ (g ⁻¹ᵁ V) (g ⁻¹ᵁ V) le_top
         (h1 m).2.le
       have e3 := e1.trans (appLE_congr_hom (h1 m).1 _ _ _ le_top)
       refine (congrArg (fun φ => φ.hom c) e3).trans ?_
@@ -302,12 +304,11 @@ theorem isMonHom_app {C D : Type*} [Category C] [Category D] [CartesianMonoidalC
       Category.assoc]
 
 theorem over_pow_left {S : Scheme.{0}} {G : Over S} (F : End G) (m : ℕ) :
-    (show G ⟶ G from F ^ m).left = (show G.left ⟶ G.left from
-      (show End G.left from (show G ⟶ G from F).left) ^ m) := by
+    (F ^ m).asHom.left = (End.of F.asHom.left ^ m).asHom := by
   induction m with
   | zero => rfl
   | succ m ih =>
-    rw [pow_succ, pow_succ, End.mul_def, End.mul_def]
+    rw [pow_succ, pow_succ, End.mul_asHom, End.mul_asHom]
     exact (Over.comp_left _ _ _ _ _).trans (congrArg _ ih)
 
 end GlobalTheory.SS.FrobField
@@ -315,18 +316,20 @@ end GlobalTheory.SS.FrobField
 namespace GlobalTheory.SS
 open FrobField
 
-theorem exists_frobG_baseChange : ∀ (W k : Type) [CommRing W] [Field k] (ρ : W →+* k) (p r : ℕ) [Fact p.Prime] [CharP k p], 1 ≤ r → (∀ w, ρ w ^ (p ^ r) = ρ w) → (∀ c : k, ∃ m, 1 ≤ m ∧ c ^ ((p ^ r) ^ m) = c) → ∀ (G : Over (Sp W)) [GrpObj G], SmConn G → ∃ F : End ((Over.pullback (spMap ρ)).obj G), FrobG _ F (p ^ r) ∧ ∀ (x : 𝟙_ (Over (Sp k)) ⟶ (Over.pullback (spMap ρ)).obj G) (τ : k →+* k), (∀ c, τ c = c ^ (p ^ r)) → (x ≫ (show (Over.pullback (spMap ρ)).obj G ⟶ (Over.pullback (spMap ρ)).obj G from F)).left ≫ pullback.fst G.hom (spMap ρ) = spMap τ ≫ x.left ≫ pullback.fst G.hom (spMap ρ) := by
+theorem exists_frobG_baseChange : ∀ (W k : Type) [CommRing W] [Field k] (ρ : W →+* k) (p r : ℕ) [Fact p.Prime] [CharP k p], 1 ≤ r → (∀ w, ρ w ^ (p ^ r) = ρ w) → (∀ c : k, ∃ m, 1 ≤ m ∧ c ^ ((p ^ r) ^ m) = c) → ∀ (G : Over (Sp W)) [GrpObj G], SmConn G → ∃ F : End ((Over.pullback (spMap ρ)).obj G), FrobG _ F (p ^ r) ∧ ∀ (x : 𝟙_ (Over (Sp k)) ⟶ (Over.pullback (spMap ρ)).obj G) (τ : k →+* k), (∀ c, τ c = c ^ (p ^ r)) → (x ≫ F.asHom).left ≫ pullback.fst G.hom (spMap ρ) = spMap τ ≫ x.left ≫ pullback.fst G.hom (spMap ρ) := by
   intro W k _ _ ρ p r hp _ _ hρ hfin G _ _
   have hk : (p : k) = 0 := CharP.cast_eq_zero k p
-  refine ⟨(relNat ρ p r hp.out hk hρ).app G, ⟨isMonHom_app _ _ G, fun U hU f => ?_⟩, fun x τ hτ => ?_⟩
+  refine ⟨End.of ((relNat ρ p r hp.out hk hρ).app G), ⟨?_, fun U hU f => ?_⟩, fun x τ hτ => ?_⟩
+  · change IsMonHom ((relNat ρ p r hp.out hk hρ).app G)
+    exact isMonHom_app _ _ G
   · obtain ⟨m, hm, h⟩ := good_of_isPullback (IsPullback.of_hasPullback G.hom (spMap ρ)) p r hp.out
       (cast_zero_of_hom (pullback.snd _ _) (cast_zero_sp k hk)) (fun c => by
         obtain ⟨m, hm, h⟩ := hfin ((Scheme.ΓSpecIso (.of k)).hom.hom c)
         refine ⟨m, hm, (Scheme.ΓSpecIso (.of k)).commRingCatIsoToRingEquiv.injective ?_⟩
         rw [map_pow]; exact h)
-      (relLeft ρ p r hp.out hk hρ G) (pullback.lift_fst _ _ _) (pullback.lift_snd _ _ _) U hU.isCompact f
+      (End.of (relLeft ρ p r hp.out hk hρ G)) (pullback.lift_fst _ _ _) (pullback.lift_snd _ _ _) U hU.isCompact f
     refine ⟨m, hm, ?_⟩
-    have e := over_pow_left ((relNat ρ p r hp.out hk hρ).app G) m
+    have e := over_pow_left (End.of ((relNat ρ p r hp.out hk hρ).app G)) m
     exact (congrArg (fun φ => Q φ ((p ^ r) ^ m) U f) e).mpr h
   · have e := absFrob_nat (show Sp k ⟶ pullback G.hom (spMap ρ) from x.left) p r hp.out (cast_zero_sp k hk)
       (cast_zero_of_hom (pullback.snd _ _) (cast_zero_sp k hk))

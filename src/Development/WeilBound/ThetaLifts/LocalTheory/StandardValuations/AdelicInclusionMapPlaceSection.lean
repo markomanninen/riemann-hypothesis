@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.LocalSplittingLinearSkew
-import Development.WeilBound.ThetaLifts.LocalTheory.UatClosure
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.LocalSplittingLinearSkew
+public import Development.WeilBound.ThetaLifts.LocalTheory.UatClosure
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -19,15 +23,15 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
   {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc F E d} {X₁ : Spc F E n₁} {W₁ : Spc F E d₁}
 
-variable (σ t) in
 
+variable (σ t) in
 structure PE (J : Matrix (Fin n) (Fin n) E) (J₁ : Matrix (Fin n₁) (Fin n₁) E) (b : GL (Fin n) (Fv F v)) (b₁ : GL (Fin n₁) (Fv F v))
     (ι : Matrix (Fin n) (Fin n₁) E) (sk : Fin n₁ → Fin n) : Prop where
   p1 : (b⁻¹).1 * ι.map t = emb (Fv F v) sk * (b₁⁻¹).1
   p2 : b.1ᵀ * J.map t * ι.map (t.comp σ) = emb (Fv F v) sk * (b₁.1ᵀ * J₁.map t)
 
-variable (σ t) in
 
+variable (σ t) in
 structure PX (J : Matrix (Fin n) (Fin n) E) (b : GL (Fin n) (Fv F v)) (x y : Fin n → E) (j₀ j₁ : Fin n) (ε : Fv F v) : Prop where
   x1 : (b⁻¹).1 *ᵥ (fun i => t (x i)) = Pi.single j₀ 1
   y1 : (b⁻¹).1 *ᵥ (fun i => t (y i)) = Pi.single j₁ 1
@@ -35,12 +39,13 @@ structure PX (J : Matrix (Fin n) (Fin n) E) (b : GL (Fin n) (Fv F v)) (x y : Fin
   y2 : (b.1ᵀ * J.map t) *ᵥ (fun i => t (σ (y i))) = Pi.single j₀ 1
 
 theorem pe_one (J : Matrix (Fin n) (Fin n) E) (b : GL (Fin n) (Fv F v)) : PE σ t J J b b 1 id := by
-  have : emb (Fv F v) (id : Fin n → Fin n) = 1 := by ext i j; simp [emb, one_apply]
+  have : emb (Fv F v) (id : Fin n → Fin n) = 1 := by ext i j; by_cases h : i = j <;> simp [emb, Matrix.one_apply, h]
   refine ⟨?_, ?_⟩ <;> rw [this, Matrix.map_one _ (map_zero _) (map_one _), Matrix.mul_one, Matrix.one_mul]
 
 theorem form_swap (hσ : IsCMExt F E σ) {J : Matrix (Fin n) (Fin n) E} {ε : E} (hJ : ∀ i j, σ (J j i) = ε * J i j) (hε : ε * ε = 1)
     (p q : Fin n → E) : form σ J q p = ε * σ (form σ J p q) := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, hJ, Finset.mul_sum, PositivityTheory.ThK.Vac.sigma_sigma hσ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, hJ, Finset.mul_sum, PositivityTheory.ThK.Vac.sigma_sigma hσ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   linear_combination (-(q j * J j i * σ (p i))) * hε
@@ -62,12 +67,14 @@ theorem plane {B : Base F E} (hσ : IsCMExt F E σ) {H : Plane E n n₁} {i₀ i
   have R : ∀ (i : Fin n) (p q : Fin n → E), (∀ r, b.1 r i = t (p r)) →
       ((b.1ᵀ * X.J.map t) *ᵥ fun r => t (σ (q r))) i = t (form σ X.J p q) := fun i p q hp => by
     rw [← mulVec_mulVec]
-    simp only [form, dotProduct, mulVec, transpose_apply, hp, map_sum, map_mul, map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [form, dotProduct, mulVec, transpose_apply, hp, map_sum, map_mul, map_apply]
   have S : ∀ (j : Fin n₁) (q : Fin n → E), (∀ u, form σ X.J (H.ι *ᵥ u) q = 0) →
       ((b.1ᵀ * X.J.map t) *ᵥ fun r => t (σ (q r))) (sk j) = 0 := fun j q hq => by
     have a : ∀ k, ((H.ι.map t)ᵀ *ᵥ (X.J.map t *ᵥ fun r => t (σ (q r)))) k = 0 := fun k => by
       have := congrArg t (hq (Pi.single k 1))
-      simpa only [form, dotProduct, mulVec, transpose_apply, map_sum, map_mul, map_apply, map_zero, Pi.single_apply, mul_ite, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [form, dotProduct, mulVec, transpose_apply, map_sum, map_mul, map_apply, map_zero, Pi.single_apply, mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] using this
     have : ((b.1 * emb (Fv F w.1) sk)ᵀ *ᵥ (X.J.map t *ᵥ fun r => t (σ (q r)))) j = 0 := by
       rw [e1, transpose_mul, ← mulVec_mulVec, show (H.ι.map t)ᵀ *ᵥ _ = 0 from funext a, mulVec_zero]; rfl
@@ -125,12 +132,12 @@ theorem emb_c (h : IsSec σ t sec) {ι ι' jr jc} (a : PE σ t X.J X₁.J b b₁
           rw [a.p2, a'.p2]
           simp only [ext, cB, transpose_mul, transpose_transpose, Matrix.mul_assoc, Matrix.mul_neg, Matrix.neg_mul]
 
-variable (t) in
 
+variable (t) in
 def v1 (b : GL (Fin n) (Fv F v)) (p : Fin n → AE F E) : Fin n → Fv F v := (b⁻¹).1 *ᵥ fun i => piW t (p i)
 
-variable (σ t) in
 
+variable (σ t) in
 def v2 (J : Matrix (Fin n) (Fin n) E) (b : GL (Fin n) (Fv F v)) (p : Fin n → AE F E) : Fin n → Fv F v :=
   (b.1ᵀ * J.map t) *ᵥ fun i => piW (t.comp σ) (p i)
 
@@ -245,7 +252,7 @@ theorem inB_mem (h : IsSec σ t sec) {B : Base F E} (hb : IsSplitBasis t X.L b) 
       exact ⟨fun i => evFin F v a ⊗ₜ[F] x i, AddSubgroup.subset_closure ⟨_, ha v, x, hx, rfl⟩, funext fun i => by
         rw [Pi.smul_apply, (h.smul _ _).1, incV, (h.inc _).1]; rfl⟩
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-    | add a b _ _ ha hb => simp only [Pi.add_apply, map_add]; exact add_mem ha hb
+    | add a b _ _ ha hb => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem ha hb
     | neg a _ ha => simp only [Pi.neg_apply, map_neg]; exact neg_mem ha
   have fr : ∀ y ∈ latLoc F X.L v, ∃ z ∈ latHat X, (fun i => piW t (z i)) = splitVec t y := fun y hy => by
     induction hy using AddSubgroup.closure_induction with
@@ -261,7 +268,7 @@ theorem inB_mem (h : IsSec σ t sec) {B : Base F E} (hb : IsSplitBasis t X.L b) 
       obtain ⟨p, p1, p2⟩ := ha
       obtain ⟨q, q1, q2⟩ := hb
       exact ⟨p + q, add_mem p1 q1, funext fun i => by
-        rw [Pi.add_apply, map_add, congrFun p2 i, congrFun q2 i]; exact (map_add _ _ _).symm⟩
+        rw [Pi.add_apply, map_add (f := _), congrFun p2 i, congrFun q2 i]; exact (map_add _ _ _).symm⟩
     | neg a _ ha =>
       obtain ⟨p, p1, p2⟩ := ha
       exact ⟨-p, neg_mem p1, funext fun i => by rw [Pi.neg_apply, map_neg, congrFun p2 i]; exact (map_neg _ _).symm⟩

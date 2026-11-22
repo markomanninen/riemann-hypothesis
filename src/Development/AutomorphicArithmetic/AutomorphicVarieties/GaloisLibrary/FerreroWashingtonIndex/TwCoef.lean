@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HalfSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EvenTot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.HalfSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EvenTot
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -99,8 +103,9 @@ theorem UpperTheory.V.FW.twCoef :
       (fun s => piQ l n₀ h s = q), (g s : k) * (χ s : k) = 0 := by
     intro q
     have h1 := congrArg (fun x => MonoidAlgebra.coeff x q) htw
-    simp only [map_sum, toK, MonoidAlgebra.mapRingHom_single, eq_intCast, tw_single,
-      MonoidAlgebra.coeff_sum, Finsupp.finset_sum_apply, MonoidAlgebra.single_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, toK, MonoidAlgebra.mapRingHom_single, eq_intCast, tw_single,
+      MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, MonoidAlgebra.single_apply,
       MonoidAlgebra.coeff_zero, Finsupp.coe_zero, Pi.zero_apply] at h1
     rw [Finset.sum_filter]
     exact h1

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
-import Mathlib.RingTheory.Jacobson.Ring
-import Mathlib.RingTheory.Spectrum.Prime.Jacobson
-import Mathlib.Topology.JacobsonSpace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.IsInternalCongr
+public import Mathlib.RingTheory.Jacobson.Ring
+public import Mathlib.RingTheory.Spectrum.Prime.Jacobson
+public import Mathlib.Topology.JacobsonSpace
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -22,7 +26,7 @@ private theorem fibre_closed {B A : Type} [CommRing B] [CommRing A] [Algebra B A
   haveI : IsJacobsonRing (A ⧸ p.asIdeal) :=
     isJacobsonRing_of_finiteType (A := B ⧸ p.asIdeal.comap (algebraMap B A))
   have hbot : (⊥ : Ideal (A ⧸ p.asIdeal)).jacobson = ⊥ :=
-    isJacobsonRing_iff_prime_eq.1 ‹_› ⊥ Ideal.bot_prime
+    isJacobsonRing_iff_prime_eq.1 ‹_› ⊥ Ideal.isPrime_bot
   have hf0 : Ideal.Quotient.mk p.asIdeal f ∉ (⊥ : Ideal (A ⧸ p.asIdeal)).jacobson := by
     rw [hbot, Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem]
     exact (PrimeSpectrum.mem_basicOpen _ _).1 hpf

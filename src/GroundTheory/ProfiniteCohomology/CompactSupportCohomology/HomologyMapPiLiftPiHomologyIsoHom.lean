@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
-import GroundTheory.ProfiniteCohomology.FilteredHomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -31,7 +36,6 @@ theorem piProj_f_hom_apply (v : ι) (n : ℕ) (x : (piComplex K).X n) :
     ((piProj K v).f n).hom x = x v :=
   rfl
 
-@[reassoc (attr := simp)]
 theorem piLift_piProj {M : CochainComplex (ModuleCat.{u} k) ℕ} (g : ∀ v, M ⟶ K v) (v : ι) :
     piLift g ≫ piProj K v = g v :=
   HomologicalComplex.hom_ext _ _ fun _ => ModuleCat.hom_ext (LinearMap.ext fun _ => rfl)

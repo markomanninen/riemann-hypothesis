@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.SphericalFunctionFixedUnitaryEqOne
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.SphericalFunctionFixedUnitaryEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ private lemma measurable_phiA (k : ℕ) (A : ℝ) : Measurable (PhiA k A) := by
   have hc : Continuous fun g : Mt k 0 => gN (Matrix.of g) := by
     unfold gN
     apply Continuous.sqrt
-    refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
     exact Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i))
   unfold PhiA
   exact ENNReal.measurable_ofReal.comp (hc.measurable.pow_const (-A))
@@ -26,8 +30,8 @@ private def Gf (k : ℕ) (σ : ℝ) (h g h' : Mt k 0) : ℝ≥0∞ :=
   ENNReal.ofReal ((Real.sqrt 2)⁻¹ * ‖((Matrix.of h)ᴴ *ᵥ ((Matrix.of g * Matrix.of h') *ᵥ phiV' k 0 0)) (iW k) +
     ((Matrix.of g * Matrix.of h') *ᵥ phiV' k 0 0) (iK k)‖) ^ (-σ)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private lemma measurable_Gf (k : ℕ) (σ : ℝ) :
     Measurable (fun p : Mt k 0 × Mt k 0 × Mt k 0 => Gf k σ p.1 p.2.1 p.2.2) := by
   have hof : Continuous (fun M : Mt k 0 => (Matrix.of M : Mat k 0)) := continuous_id

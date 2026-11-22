@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSmoothOfNormalPf
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsNeZeroIsStandardSmoothOfRelativeDimension
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSmoothOfNormalPf
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsNeZeroIsStandardSmoothOfRelativeDimension
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4

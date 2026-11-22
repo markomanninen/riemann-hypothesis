@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ColengthSqBlockVandermonde
+module
+
+public import ReciprocityTheory.DualLattices.ColengthSqBlockVandermonde
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem conductor_mem {n h : ℕ} {a : Fin n → C} (ha : ∀ τ, v (a τ) ≤ 1
     (fun y : Fin n × Fin h => if y.1 = τ then fder a τ * u y.2 else 0) ∈ F.pts := by
   classical
   have hdeg : (∏ τ' ∈ Finset.univ.erase τ, (Polynomial.X - Polynomial.C (a τ'))).natDegree < n := by
-    rw [Polynomial.natDegree_finset_prod_X_sub_C_eq_card, Finset.card_erase_of_mem (Finset.mem_univ _),
+    rw [Polynomial.natDegree_finsetProd_X_sub_C_eq_card, Finset.card_erase_of_mem (Finset.mem_univ _),
       Finset.card_univ, Fintype.card_fin]
     exact Nat.sub_lt (Fin.pos τ) one_pos
   have heval : ∀ τ', (∏ τ'' ∈ Finset.univ.erase τ, (Polynomial.X - Polynomial.C (a τ''))).eval (a τ') =

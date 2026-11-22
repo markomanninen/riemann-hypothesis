@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.SymDist
-import Formalism.PeriodIntegrals.ExpTri
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+module
+
+public import Formalism.PeriodIntegrals.SymDist
+public import Formalism.PeriodIntegrals.ExpTri
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+
+@[expose] public section
 
 open Matrix
 

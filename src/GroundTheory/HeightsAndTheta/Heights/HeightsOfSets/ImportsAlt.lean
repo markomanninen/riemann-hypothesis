@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Comparison
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Comparison
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

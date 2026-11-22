@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.NumberFieldToModPSquared
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FiniteTypeToNumberField
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.NumberFieldToModPSquared
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.FiniteTypeToNumberField
+
+@[expose] public section
+
 open scoped TensorProduct Polynomial
 
 namespace GlobalTheory
@@ -22,7 +27,7 @@ theorem exists_ringHom_zmod_prime_sq_isUnit_of_finiteType :
       simp only [Finset.coe_insert, Finset.coe_image]
       exact Set.mem_insert_of_mem _ ⟨y, hy, rfl⟩
     | algebraMap r => simp
-    | add x y _ _ hx hy => rw [map_add]; exact R.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact R.add_mem hx hy
     | mul x y _ _ hx hy => rw [map_mul]; exact R.mul_mem hx hy
   have hinv : (χ₀ a)⁻¹ ∈ R := by
     apply Subring.subset_closure

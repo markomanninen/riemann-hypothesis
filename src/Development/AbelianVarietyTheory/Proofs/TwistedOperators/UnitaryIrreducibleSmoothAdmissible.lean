@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.DoubleCosetSetoidRelIffMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.DoubleCosetSetoidRelIffMem
+
+@[expose] public section
+
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes IsDedekindDomain NumberField Filter GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.AdelicU GlobalTheory.AutMult
 open GlobalTheory.PRep (IsAdmissible fixed)
 
@@ -37,16 +42,17 @@ theorem exists_mean (π : G →* (H →L[ℂ] H)) (hπ : ∀ g x, ‖π g x‖ =
   · refine Submodule.smul_mem _ _ (Submodule.sum_mem _ fun z hz => Submodule.subset_span ?_)
     obtain ⟨k, rfl⟩ := (hmem z).1 hz
     exact ⟨k, rfl⟩
-  · rw [map_smul, map_sum]
-    congr 1
-    refine Finset.sum_nbij' (fun z => π k z) (fun z => π k⁻¹ z) (fun z hz => ?_) (fun z hz => ?_)
-      (fun z _ => ?_) (fun z _ => ?_) (fun z _ => rfl)
-    · obtain ⟨k', rfl⟩ := (hmem z).1 hz
-      exact (hmem _).2 ⟨⟨k, hk⟩ * k', by simp⟩
-    · obtain ⟨k', rfl⟩ := (hmem z).1 hz
-      exact (hmem _).2 ⟨⟨k, hk⟩⁻¹ * k', by simp⟩
-    · simp [← ContinuousLinearMap.mul_apply, ← map_mul]
-    · simp [← ContinuousLinearMap.mul_apply, ← map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_smul, map_sum]
+      congr 1
+      refine Finset.sum_nbij' (fun z => π k z) (fun z => π k⁻¹ z) (fun z hz => ?_) (fun z hz => ?_)
+        (fun z _ => ?_) (fun z _ => ?_) (fun z _ => rfl)
+      · obtain ⟨k', rfl⟩ := (hmem z).1 hz
+        exact (hmem _).2 ⟨⟨k, hk⟩ * k', by simp⟩
+      · obtain ⟨k', rfl⟩ := (hmem z).1 hz
+        exact (hmem _).2 ⟨⟨k, hk⟩⁻¹ * k', by simp⟩
+      · simp [← ContinuousLinearMap.mul_apply, ← map_mul]
+      · simp [← ContinuousLinearMap.mul_apply, ← map_mul]
   · have h1 : ∀ z ∈ O, ⟪u, z⟫_ℂ = ⟪u, w⟫_ℂ := fun z hz => by
       obtain ⟨k, rfl⟩ := (hmem z).1 hz
       rw [← inner_map_map_of_norm hπ k u w, hu k k.2]
@@ -125,8 +131,8 @@ theorem exists_fixed_ne_zero : ∀ (G : Type) [Group G] (H : Type) [NormedAddCom
     have h6 : ‖y - z‖ = 0 := by nlinarith [norm_nonneg (y - z)]
     exact (sub_eq_zero.1 (norm_eq_zero.1 h6)).symm
 
-open GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.AutMult in
 
+open GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace GlobalTheory.AutMult in
 theorem isIrreducible_isAdmissible_smRep : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [NonarchimedeanGroup G] [LocallyCompactSpace G] (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (π : G →* (H →L[ℂ] H)), IsIrrUnitary π →

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Product
-import GroundTheory.GlobalFields.HerbrandQuotients.CycTateNegOneOrbitEquivSymmMk
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Product
+public import GroundTheory.GlobalFields.HerbrandQuotients.CycTateNegOneOrbitEquivSymmMk
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -30,21 +35,6 @@ theorem cohomology_pi_bijective (p : ∀ i, P ⟶ A i)
       funext fun i => Subtype.ext (funext fun g => ?_)⟩
     exact congrFun (Function.surjInv_eq hp.2 (fun i => (F i).1 g)) i
 
-noncomputable def cohomologyPiEquiv (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (n : ℕ) :
-    cohomology P n ≃ₗ[k] ∀ i, cohomology (A i) n :=
-  LinearEquiv.ofBijective
-    (LinearMap.pi fun i => (cohomologyMapAlong (MonoidHom.id G) continuous_id (p i) n).hom)
-    (cohomology_pi_bijective p hp n)
-
-@[simp]
-theorem cohomologyPiEquiv_apply (p : ∀ i, P ⟶ A i)
-    (hp : Function.Bijective fun (x : P) (i : ι) => (p i).hom x) (n : ℕ)
-    (x : cohomology P n) (i : ι) :
-    cohomologyPiEquiv p hp n x i =
-      (cohomologyMapAlong (MonoidHom.id G) continuous_id (p i) n).hom x :=
-  rfl
-
 end Product
 
 section Stabilizer
@@ -54,17 +44,16 @@ variable {k G X : Type u} [CommRing k] [Group G] [MulAction G X]
   {ρ : Representation k G (∀ x, M x)} (hρ : PermutesFactors ρ) {x₀ : X} {D : Subgroup G}
   (hD : ∀ g, g ∈ D ↔ g • x₀ = x₀)
 
-include hρ in
 
+include hρ in
 theorem _root_.GroundTheory.Global.PermutesFactors.apply_base_eq {g : G} (hg : g • x₀ = x₀) {f f' : ∀ x, M x}
     (h : f x₀ = f' x₀) : ρ g f x₀ = ρ g f' x₀ := by
   have := hρ.apply_eq g h
   rwa [hg] at this
 
-variable (ρ x₀ D) in
-include hρ hD in
-open Classical in
 
+variable (ρ x₀ D) in
+open Classical in
 noncomputable def stabRep : Representation k D (M x₀) where
   toFun d := (LinearMap.proj x₀).comp ((ρ d).comp (LinearMap.single k M x₀))
   map_one' := by
@@ -92,10 +81,6 @@ noncomputable def orbitProj :
   Rep.ofHom ⟨LinearMap.proj x₀, fun d => LinearMap.ext fun f =>
     apply_base_eq_stabRep hρ hD d f⟩
 
-@[simp]
-theorem orbitProj_hom_apply (f : ∀ x, M x) : (orbitProj hρ hD).hom f = f x₀ :=
-  rfl
-
 noncomputable def toCoindLinear :
     (∀ x, M x) →ₗ[k] Representation.coindV D.subtype (stabRep ρ hρ x₀ D hD) where
   toFun f := ⟨fun h => ρ h f x₀, fun d h => by
@@ -104,16 +89,11 @@ noncomputable def toCoindLinear :
   map_add' f f' := by
     apply Subtype.ext
     funext h
-    simp only [map_add, Pi.add_apply, Submodule.coe_add]
+    simp only [map_add (f := _), Pi.add_apply, Submodule.coe_add]
   map_smul' c f := by
     apply Subtype.ext
     funext h
     simp only [map_smul, Pi.smul_apply, RingHom.id_apply, Submodule.coe_smul]
-
-@[simp]
-theorem toCoindLinear_apply (f : ∀ x, M x) (h : G) :
-    (toCoindLinear hρ hD f).1 h = ρ h f x₀ :=
-  rfl
 
 variable [MulAction.IsPretransitive G X]
 
@@ -154,11 +134,6 @@ noncomputable def orbitCoindIso :
     fun g => LinearMap.ext fun f => Subtype.ext (funext fun h => by
       change ρ h (ρ g f) x₀ = ρ (h * g) f x₀
       rw [map_mul, Module.End.mul_apply]))
-
-@[simp]
-theorem orbitCoindIso_hom_apply (f : ∀ x, M x) (h : G) :
-    ((orbitCoindIso hρ hD).hom.hom f).1 h = ρ h f x₀ :=
-  rfl
 
 end Stabilizer
 
@@ -203,13 +178,6 @@ noncomputable def orbitShapiroIso (n : ℕ) :
     cohomology (Rep.of ρ) n ≅ cohomology (Rep.of (stabRep ρ hρ x₀ (U : Subgroup G) hU)) n :=
   asIso (cohomologyMapAlong (U : Subgroup G).subtype (continuous_subgroup_subtype _)
     (orbitProj hρ hU) n)
-
-@[simp]
-theorem orbitShapiroIso_hom (n : ℕ) :
-    (orbitShapiroIso hρ U hU n).hom =
-      cohomologyMapAlong (U : Subgroup G).subtype (continuous_subgroup_subtype _)
-        (orbitProj hρ hU) n :=
-  rfl
 
 end Shapiro
 

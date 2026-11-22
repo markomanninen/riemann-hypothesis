@@ -1,12 +1,18 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChange
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangePlaces
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeMackey
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain GroundTheory.Global
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -29,8 +35,8 @@ theorem placesOver_finite {S : Set (HeightOneSpectrum (𝓞 F))} (hS : S.Finite)
   rintro w ⟨v, hv, hwv⟩
   exact Set.mem_biUnion hv hwv
 
-omit [NumberField F] [NumberField L] in
 
+omit [NumberField F] [NumberField L] in
 theorem mem_placesOver_of_natCast_mem {S : Set (HeightOneSpectrum (𝓞 F))} {n : ℕ}
     (hn : ∀ v : HeightOneSpectrum (𝓞 F), ((n : ℕ) : 𝓞 F) ∈ v.asIdeal → v ∈ S)
     {w : HeightOneSpectrum (𝓞 L)} (hw : ((n : ℕ) : 𝓞 L) ∈ w.asIdeal) : w ∈ placesOver S := by
@@ -39,8 +45,8 @@ theorem mem_placesOver_of_natCast_mem {S : Set (HeightOneSpectrum (𝓞 F))} {n 
   rw [Ideal.mem_comap, map_natCast (algebraMap (𝓞 F) (𝓞 L))]
   exact hw
 
-omit [NumberField F] [NumberField L] in
 
+omit [NumberField F] [NumberField L] in
 theorem natCast_not_mem_of_not_mem_placesOver {S : Set (HeightOneSpectrum (𝓞 F))} {n : ℕ}
     (hn : ∀ v : HeightOneSpectrum (𝓞 F), ((n : ℕ) : 𝓞 F) ∈ v.asIdeal → v ∈ S) :
     ∀ w ∉ (placesOver S : Set (HeightOneSpectrum (𝓞 L))), ((n : ℕ) : 𝓞 L) ∉ w.asIdeal :=
@@ -49,6 +55,8 @@ theorem natCast_not_mem_of_not_mem_placesOver {S : Set (HeightOneSpectrum (𝓞 
 end Places
 
 section OpenSubgroups
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
 

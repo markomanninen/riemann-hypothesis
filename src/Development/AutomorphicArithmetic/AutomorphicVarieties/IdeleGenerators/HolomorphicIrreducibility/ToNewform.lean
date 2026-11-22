@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SimultaneousEigenvectors.SimEig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.HeckeEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.FinDim
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial CongruenceSubgroup UpperHalfPlane UpperTheory.V.Af
 open scoped MatrixGroups ModularForm
@@ -27,7 +31,7 @@ private theorem coef_smul {N : ℕ} {k : ℤ} (c : ℂ) (f : CuspForm (Gamma1 N)
 private theorem coef_add {N : ℕ} {k : ℤ} (f g : CuspForm (Gamma1 N) k) (n : ℕ) :
     coef (f + g : CuspForm (Gamma1 N) k) n = coef f n + coef g n := by
   unfold coef
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   exact ModularForm.qExpansion_add one_pos (one_mem_per N) f g
 
@@ -248,19 +252,11 @@ private theorem normV_surj {p : ℕ} (hp : p.Prime) : ∃ w : HeightOneSpectrum 
   exact ⟨⟨Ideal.span {((p : ℕ) : 𝓞 ℚ)}, (Ideal.span_singleton_prime h0.ne_zero).mpr h0,
     by rw [Ne, Ideal.span_singleton_eq_bot]; exact h0.ne_zero⟩, normV_rat hp _ (Ideal.mem_span_singleton_self _)⟩
 
-private theorem normV_finite {S : Set ℕ} (hS : S.Finite) : {w : HeightOneSpectrum (𝓞 ℚ) | normV w ∈ S}.Finite := by
-  refine (hS.biUnion fun n _ => (Ideal.finite_setOf_absNorm_eq (S := 𝓞 ℚ) n).preimage
-    (f := HeightOneSpectrum.asIdeal) (fun _ _ _ _ h => HeightOneSpectrum.ext h)).subset fun w hw => ?_
-  simp only [Set.mem_iUnion]
-  refine ⟨_, hw, ?_⟩
-  show Ideal.absNorm w.asIdeal = normV w
-  rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]; rfl
-
 private theorem tr_det {K : Type} [Field K] (ι : K ≃+* ℂ) {A : Matrix (Fin 2) (Fin 2) K} {a d : ℂ}
     (h : A.charpoly.map ι.toRingHom = X ^ 2 - C a * X + C d) : ι A.trace = a ∧ ι A.det = d := by
   rw [Matrix.charpoly_fin_two] at h
-  have h0 := congrArg (Polynomial.coeff · 0) h
-  have h1 := congrArg (Polynomial.coeff · 1) h
+  have h0 := congrArg (AddMonoidAlgebra.coeff · 0) h
+  have h1 := congrArg (AddMonoidAlgebra.coeff · 1) h
   simp at h0 h1
   exact ⟨h1, h0⟩
 
@@ -269,55 +265,4 @@ private theorem two_det {K : Type} [CommRing K] (A : Matrix (Fin 2) (Fin 2) K) :
   simp [Matrix.det_fin_two, Matrix.trace_fin_two, Matrix.mul_apply, Fin.sum_univ_two]
   ring
 
-private theorem char_eq (H : Published.HidaGal) {k N M : ℕ} [NeZero N] [NeZero M] (hk : 2 ≤ k) {χ : DirichletCharacter ℂ N}
-    {ψ : DirichletCharacter ℂ M} (g : Eigenform k N χ) (h : Eigenform k M ψ)
-    (he : ∀ᶠ p : ℕ in Filter.cofinite, p.Prime → h.a p = g.a p) {p : ℕ} (hp : p.Prime) (h1 : ¬ p ∣ 2 * N) (h2 : ¬ p ∣ 2 * M) :
-    χ (p : ZMod N) = ψ (p : ZMod M) := by
-  obtain ⟨ι⟩ : Nonempty (Qbar 2 ≃+* ℂ) := GlobalTheory.nonempty_padicAlgCl_ringEquiv_complex 2
-  obtain ⟨r, hr, -, hF⟩ := H k N hk χ g 2 (AlgebraicClosure ℚ) ι
-  obtain ⟨r', hr', -, hF'⟩ := H k M hk ψ h 2 (AlgebraicClosure ℚ) ι
-  have hfin := normV_finite (((Filter.eventually_cofinite.1 he).union
-    (Set.finite_le_nat (2 * N))).union (Set.finite_le_nat (2 * M)))
-  have htr : (fun s => (r s : Matrix (Fin 2) (Fin 2) (Qbar 2)).trace) = fun s => (r' s : Matrix (Fin 2) (Fin 2) (Qbar 2)).trace := by
-    refine GlobalTheory.Published.ChebotarevDegreeOne.eq_of_frob GlobalTheory.Published.chebotarevDegreeOne' hfin
-      (Units.continuous_val.comp hr).matrix_trace (Units.continuous_val.comp hr').matrix_trace ?_
-    intro v hv _ B hB σ hσ
-    simp only [Set.mem_setOf_eq, Set.mem_union, not_or, not_not] at hv
-    have e1 := (tr_det ι (((hF v B hB).1 fun hd => hv.1.2 (Nat.le_of_dvd (by have := NeZero.pos N; omega) hd)).2 σ hσ)).1
-    have e2 := (tr_det ι (((hF' v B hB).1 fun hd => hv.2 (Nat.le_of_dvd (by have := NeZero.pos M; omega) hd)).2 σ hσ)).1
-    exact ι.injective (by rw [e1, e2, hv.1.1 (normV_prime v)])
-  obtain ⟨w, rfl⟩ := normV_surj hp
-  obtain ⟨A, hA⟩ := exists_isPlaceOver (AlgebraicClosure ℚ) w
-  obtain ⟨σ, hσ⟩ := exists_isFrob hA
-  have e1 := (tr_det ι (((hF w A hA).1 h1).2 σ hσ)).2
-  have e2 := (tr_det ι (((hF' w A hA).1 h2).2 σ hσ)).2
-  have t1 := congrFun htr σ
-  have t2 := congrFun htr (σ * σ)
-  simp only [map_mul, Units.val_mul] at t1 t2
-  have hd : (r σ : Matrix (Fin 2) (Fin 2) (Qbar 2)).det = (r' σ : Matrix (Fin 2) (Fin 2) (Qbar 2)).det :=
-    mul_left_cancel₀ (two_ne_zero) (by rw [two_det, two_det, t1, t2])
-  rw [hd, e2] at e1
-  exact (mul_right_cancel₀ (pow_ne_zero _ (Nat.cast_ne_zero.2 hp.ne_zero)) e1).symm
-
 end UpperTheory.V.Sd
-
-theorem UpperTheory.V.Sd.toNewform :
-    UpperTheory.V.Sd.Hypotheses₂ → UpperTheory.V.Sd.ToNewform := by
-  intro H k N _ hk χ hχ g
-  refine ⟨⟨N, NeZero.pos N, g.f, χ, g.char, g.one, fun p hp _ => g.eig p hp, ?_⟩, rfl, fun _ => rfl, fun _ => rfl⟩
-  intro M hM hne f ψ hf he
-  by_contra hf0
-  haveI : NeZero M := ⟨fun h => NeZero.ne N (by simpa [h] using hM)⟩
-  obtain ⟨h, hh⟩ := exists_eigenform M k (by omega) ψ f hf hf0 (coef g.f)
-  have he' : ∀ᶠ p : ℕ in Filter.cofinite, p.Prime → h.a p = g.a p := he.mono fun p hp hpp => hh p hpp (hp hpp)
-  have hc : χ = DirichletCharacter.changeLevel hM ψ := by
-    ext a
-    obtain ⟨p, hp2, hp, hpa⟩ := Nat.forall_exists_prime_gt_and_eq_mod a.isUnit (2 * N)
-    have hN := NeZero.pos N
-    have hMN := Nat.le_of_dvd hN hM
-    have e := char_eq H.hida hk g h he' hp (fun hd => absurd (Nat.le_of_dvd (by omega) hd) (by omega))
-      (fun hd => absurd (Nat.le_of_dvd (by have := NeZero.pos M; omega) hd) (by omega))
-    rw [DirichletCharacter.changeLevel_eq_cast_of_dvd, ← hpa, ZMod.cast_natCast hM, e]
-  have h1 : χ.conductor ≤ M := Nat.sInf_le ⟨hM, ψ, hc⟩
-  rw [hχ] at h1
-  exact hne (le_antisymm (Nat.le_of_dvd (NeZero.pos N) hM) h1)

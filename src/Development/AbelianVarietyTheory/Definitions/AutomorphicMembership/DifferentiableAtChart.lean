@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfValuedEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsOpenKerFinIdele
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwConj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfValuedEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsOpenKerFinIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,8 +83,8 @@ def sFin : Af E →ₙ+* Ad E where
 def pLoc (w : HeightOneSpectrum (𝓞 E)) : Af E →+* w.adicCompletion E :=
   RestrictedProduct.evalRingHom (fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E) w
 
-open Classical in
 
+open Classical in
 def sLoc (w : HeightOneSpectrum (𝓞 E)) : w.adicCompletion E →ₙ+* Af E where
   toFun x := ⟨Pi.single w x, by
     filter_upwards [(Set.finite_singleton w).compl_mem_cofinite] with v hv
@@ -99,8 +103,8 @@ def locGL (a : ℕ) (w : HeightOneSpectrum (𝓞 E)) : GL (Fin a) (w.adicComplet
 
 def finId : (Af E)ˣ →* Ideles E := Units.map (corner (sFin E))
 
-variable {E} in
 
+variable {E} in
 theorem pLoc_locGL {a : ℕ} (w : HeightOneSpectrum (𝓞 E)) (g : GL (Fin a) (w.adicCompletion E)) :
     GeneralLinearGroup.map (pLoc E w) (locGL E a w g) = g := by
   classical
@@ -108,16 +112,16 @@ theorem pLoc_locGL {a : ℕ} (w : HeightOneSpectrum (𝓞 E)) (g : GL (Fin a) (w
     Pi.single_eq_same (M := fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E) w x]
   rfl
 
-variable {E} in
 
+variable {E} in
 theorem pLoc_locGL_of_ne {a : ℕ} {w v : HeightOneSpectrum (𝓞 E)} (h : v ≠ w) (g : GL (Fin a) (w.adicCompletion E)) :
     GeneralLinearGroup.map (pLoc E v) (locGL E a w g) = 1 := by
   classical
   exact map_cornerGL_of_zero _ _ (fun x =>
     Pi.single_eq_of_ne (M := fun v : HeightOneSpectrum (𝓞 E) => v.adicCompletion E) h x) g
 
-variable {E} in
 
+variable {E} in
 theorem finId_det_locGL {a : ℕ} (w : HeightOneSpectrum (𝓞 E)) (g : GL (Fin a) (w.adicCompletion E)) :
     finId E (GeneralLinearGroup.det (locGL E a w g)) = localIdele E w (GeneralLinearGroup.det g) := by
   classical
@@ -134,7 +138,7 @@ theorem continuous_finId : Continuous (finId E) :=
   Continuous.units_map _ (continuous_const.add (continuous_const.prodMk continuous_id :
     Continuous fun x : Af E => ((0, x) : InfiniteAdeleRing E × Af E)))
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def infEq : Cinf E ≃+* InfiniteAdeleRing E :=
   RingEquiv.piCongrRight fun w => (InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).symm
@@ -162,8 +166,11 @@ theorem continuous_infId : Continuous (infId E) :=
 
 variable {E} {a : ℕ}
 
-theorem pInf_algebraMap (x : E) (w : InfinitePlace E) : pInf E (algebraMap E (Ad E) x) w = w.embedding x :=
-  InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ x)
+theorem pInf_algebraMap (x : E) (w : InfinitePlace E) : pInf E (algebraMap E (Ad E) x) w = w.embedding x := by
+  change InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)
+    ((algebraMap E (Ad E) x).1 w) = _
+  rw [AdeleRing.algebraMap_fst_apply, InfinitePlace.Completion.ringEquivComplexOfIsComplex_apply]
+  exact InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ x)
 
 theorem ad_ext {x y : Ad E} (h1 : pInf E x = pInf E y) (h2 : pFin E x = pFin E y) : x = y :=
   Prod.ext ((infEq E).symm.injective h1) h2
@@ -182,7 +189,7 @@ theorem ga_ext {g h : GA E a} (h1 : GeneralLinearGroup.map (pInf E) g = GeneralL
 @[simp] theorem pInf_finGL (k : GL (Fin a) (Af E)) : GeneralLinearGroup.map (pInf E) (finGL E a k) = 1 :=
   map_cornerGL_of_zero _ _ (fun _ => map_zero (infEq E).symm) k
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 @[simp] theorem pFin_finGL (k : GL (Fin a) (Af E)) : GeneralLinearGroup.map (pFin E) (finGL E a k) = k := by
   rw [finGL, map_cornerGL_of_hom _ _ (RingHom.id _) fun x => rfl]; rfl
 
@@ -216,35 +223,35 @@ theorem det_finGL (k : GL (Fin a) (Af E)) :
     change _ = (1 : Af E) - 1 + (GeneralLinearGroup.det k : (Af E)ˣ)
     simp
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 abbrev toL (x : Matrix (Fin a) (Fin a) (Cinf E)) : Lie E a := Matrix.of.symm x
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 def invSet (E : Type) [Field E] (a : ℕ) : Set (Lie E a) := {x | IsUnit (Matrix.of x)}
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiff_det : ContDiff ℝ ∞ fun x : Lie E a => (Matrix.of x).det := by
   simp only [Matrix.det_apply', Matrix.of_apply]
   refine ContDiff.sum fun σ _ => contDiff_const.mul (contDiff_prod fun i _ => ?_)
   exact (contDiff_apply ℝ _ i).comp (contDiff_apply ℝ _ (σ i))
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem isOpen_invSet : IsOpen (invSet E a) := by
   have : invSet E a = (fun x : Lie E a => (Matrix.of x).det) ⁻¹' {u | IsUnit u} := by
     ext x; exact Matrix.isUnit_iff_isUnit_det _
   rw [this]
   exact Units.isOpen.preimage contDiff_det.continuous
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem val_mem_invSet (y : GL (Fin a) (Cinf E)) : (toL y.val) ∈ invSet E a := y.isUnit
 
-open Classical in
 
+open Classical in
 def chart (φ : GA E a → ℂ) (g : GA E a) (x : Lie E a) : ℂ :=
   if h : IsUnit (Matrix.of x) then φ (g * infGL E a h.unit) else 0
 
@@ -252,15 +259,15 @@ theorem chart_val (φ : GA E a → ℂ) (g : GA E a) (y : GL (Fin a) (Cinf E)) :
     chart φ g (toL y.val) = φ (g * infGL E a y) := by
   have h : IsUnit (Matrix.of (toL y.val)) := y.isUnit
   have e : h.unit = y := Units.ext h.unit_spec
-  rw [chart, dif_pos h, e]
+  rw [chart, dite_eq_left h, e]
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def lmul (y : Lie E a) : Lie E a →L[ℝ] Lie E a :=
   LinearMap.toContinuousLinearMap (LinearMap.mulLeft ℝ (Matrix.of y) : Matrix (Fin a) (Fin a) (Cinf E) →ₗ[ℝ] _)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def rmul (y : Lie E a) : Lie E a →L[ℝ] Lie E a :=
   LinearMap.toContinuousLinearMap (LinearMap.mulRight ℝ (Matrix.of y) : Matrix (Fin a) (Fin a) (Cinf E) →ₗ[ℝ] _)
 
@@ -273,7 +280,7 @@ theorem chart_mul (φ : GA E a → ℂ) (g : GA E a) (y : GL (Fin a) (Cinf E)) :
     rw [hx, chart_val, mul_assoc, ← map_mul, ← chart_val φ g]
     rfl
   · have h' : ¬ IsUnit (Matrix.of (lmul (toL y.val) x)) := fun h' => h ((Units.isUnit_units_mul y _).1 h')
-    rw [Function.comp_apply, chart, chart, dif_neg h, dif_neg h']
+    rw [Function.comp_apply, chart, chart, dite_eq_right h, dite_eq_right h']
 
 theorem chart_rt_inf (φ : GA E a → ℂ) (g : GA E a) (y : GL (Fin a) (Cinf E)) :
     chart (fun x => φ (x * infGL E a y)) g = chart φ g ∘ rmul (toL y.val) := by
@@ -284,15 +291,15 @@ theorem chart_rt_inf (φ : GA E a → ℂ) (g : GA E a) (y : GL (Fin a) (Cinf E)
     rw [hx, chart_val, mul_assoc, ← map_mul, ← chart_val φ g]
     rfl
   · have h' : ¬ IsUnit (Matrix.of (rmul (toL y.val) x)) := fun h' => h ((Units.isUnit_mul_units _ y).1 h')
-    rw [Function.comp_apply, chart, chart, dif_neg h, dif_neg h']
+    rw [Function.comp_apply, chart, chart, dite_eq_right h, dite_eq_right h']
 
 theorem chart_rt_fin (φ : GA E a → ℂ) (g : GA E a) (k : GL (Fin a) (Af E)) :
     chart (fun x => φ (x * finGL E a k)) g = chart φ (g * finGL E a k) := by
   funext x
   simp only [chart, mul_assoc, infGL_comm]
 
-variable (E a) in
 
+variable (E a) in
 def Sm : Submodule ℂ (GA E a → ℂ) where
   carrier := {φ | ∀ g, ContDiffOn ℝ ∞ (chart φ g) (invSet E a)}
   add_mem' := fun {φ ψ} h h' g => ((h g).add (h' g)).congr fun x hx => by
@@ -313,14 +320,14 @@ theorem rt_mem_Sm (h : GA E a) (φ : GA E a → ℂ) (hφ : φ ∈ Sm E a) : Glo
   rw [e, chart_rt_inf (fun x => φ (x * finGL E a k)), chart_rt_fin]
   exact (hφ _).comp (rmul (toL y.val)).contDiff.contDiffOn fun x hx => IsUnit.mul hx y.isUnit
 
-variable (E a) in
 
+variable (E a) in
 def rt : Representation ℂ (GA E a) (Sm E a) := GlobalTheory.PRep.sub (GlobalTheory.PRep.rightReg ℂ (GA E a) ℂ) (Sm E a) rt_mem_Sm
 
 @[simp] theorem rt_apply (h g : GA E a) (φ : Sm E a) : (rt E a h φ).1 g = φ.1 (g * h) := rfl
 
-omit [NumberField E] [IsTotallyComplex E] in
 
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 abbrev oneL (E : Type) [Field E] (a : ℕ) : Lie E a := toL 1
 
 def lieD (X : Lie E a) (φ : GA E a → ℂ) (g : GA E a) : ℂ := fderiv ℝ (chart φ g) (oneL E a) X
@@ -346,8 +353,8 @@ theorem lieD_mem_Sm (X : Lie E a) {φ : GA E a → ℂ} (hφ : φ ∈ Sm E a) : 
   (((hφ g).fderiv_of_isOpen isOpen_invSet (by simp)).clm_apply (rmul X).contDiff.contDiffOn).congr
     fun _ hx => chart_lieD hφ X g hx
 
-variable (E a) in
 
+variable (E a) in
 def lie : Lie E a →ₗ[ℝ] Module.End ℂ (Sm E a) where
   toFun X :=
     { toFun := fun φ => ⟨lieD X φ.1, lieD_mem_Sm X φ.2⟩
@@ -399,7 +406,7 @@ theorem lie_comm (X Y : Lie E a) :
     rw [e1, add_comm]
     rfl
   change lieD X (lieD Y φ.1) g - lieD Y (lieD X φ.1) g = lieD _ φ.1 g - lieD _ φ.1 g
-  rw [key, key, (hs.isSymmSndFDerivAt (by simp; norm_cast)).eq X Y]
+  rw [key, key, (hs.isSymmSndFDerivAt (by simp)).eq X Y]
   ring
 
 end GlobalTheory.CuspRep

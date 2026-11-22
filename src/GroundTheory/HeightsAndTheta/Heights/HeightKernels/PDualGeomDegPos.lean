@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -58,8 +63,8 @@ theorem isGoodProj (hOn : DualPtsOnPlane.Statement) {D : ℕ} {F : HermLattice K
 
 end DualGeometricDegreePositive
 
-open DualGeometricDegreePositive in
 
+open DualGeometricDegreePositive in
 theorem DualGeomDegPos.proof (hDeg : DegreeStatement) (hInd : PtsIndepStatement)
     (hArith : DualArithVar.Statement) (hSemi : DualLineSemipositive.Statement)
     (hOn : DualPtsOnPlane.Statement) (hMass : DualStdMassAt.Statement) :
@@ -96,7 +101,7 @@ theorem DualGeomDegPos.proof (hDeg : DegreeStatement) (hInd : PtsIndepStatement)
   have hm := hMass K D (stdLattice F) T b hb fun _ => rfl
   have hval : geomDeg (dualIdeal b) (dualLine (stdLattice F) b hb) D = Fintype.card (K →+* ℂ) := by
     unfold geomDeg ptsIntegral
-    rw [dif_pos hΨ]
+    rw [dite_eq_left hΨ]
     exact h.trans hm
   rw [hswap, hval]
   exact_mod_cast Fintype.card_pos

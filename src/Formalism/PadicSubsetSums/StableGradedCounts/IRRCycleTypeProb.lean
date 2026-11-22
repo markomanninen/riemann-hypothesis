@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+
+@[expose] public section
 
 open Finset
 

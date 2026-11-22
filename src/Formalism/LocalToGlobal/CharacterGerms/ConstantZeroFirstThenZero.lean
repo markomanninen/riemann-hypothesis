@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,11 +43,6 @@ theorem constant_zero_zero_first : Z0 (![0, pt C dd 0] : Fin 2 → Pt C 1 dd) :=
   intro k i
   fin_cases k <;> simp [pt]
 
-theorem constant_zero_singleton {a : Pt C 2 dd} (ha : ∀ i, MvPowerSeries.constantCoeff (a i) = 0) : Z0 (![a] : Fin 1 → Pt C 2 dd) := by
-  intro k i
-  fin_cases k
-  simpa using ha i
-
 theorem group_law_zero_right_one (G : FGLaw C dd) (i : Fin dd) :
     ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (G.F i) = pt C dd 0 i := by
   conv_lhs => rw [← G.comm i]
@@ -58,14 +57,14 @@ theorem group_law_zero_right_one (G : FGLaw C dd) (i : Fin dd) :
   exact G.unit i
 
 theorem const_dF (G : FGLaw C dd) (i j : Fin dd) :
-    MvPowerSeries.constantCoeff (MvPowerSeries.pderiv C ((1 : Fin 2), j) (G.F i)) = if j = i then 1 else 0 := by
-  have h := congrArg (fun f => MvPowerSeries.constantCoeff (MvPowerSeries.pderiv C ((0 : Fin 1), j) f)) (G.unit i)
+    MvPowerSeries.constantCoeff (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (G.F i)) = if j = i then 1 else 0 := by
+  have h := congrArg (fun f => MvPowerSeries.constantCoeff (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) f)) (G.unit i)
   simp only [pderiv_eval_pair constant_zero_zero_first] at h
-  have e0 : ∀ r, MvPowerSeries.pderiv C ((0 : Fin 1), j) ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 0 r) = 0 :=
+  have e0 : ∀ r, MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 0 r) = 0 :=
     fun r => by simp
-  have e1 : ∀ r, MvPowerSeries.pderiv C ((0 : Fin 1), j) ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 1 r) =
+  have e1 : ∀ r, MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) ((![0, pt C dd 0] : Fin 2 → Pt C 1 dd) 1 r) =
       if r = j then 1 else 0 := fun r => by
-    show MvPowerSeries.pderiv C ((0 : Fin 1), j) (MvPowerSeries.X ((0 : Fin 1), r)) = _
+    show MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) (MvPowerSeries.X ((0 : Fin 1), r)) = _
     split_ifs with hr
     · subst hr
       exact MvPowerSeries.pderiv_X_self
@@ -80,8 +79,8 @@ theorem const_dF (G : FGLaw C dd) (i j : Fin dd) :
 
 theorem pderiv_eval_single {n : ℕ} (a : Pt C n dd) (ha : ∀ i, MvPowerSeries.constantCoeff (a i) = 0) (f : PS C 1 dd)
     (q : Fin n × Fin dd) :
-    MvPowerSeries.pderiv C q (ev (n := n) ![a] f) =
-      ∑ r, ev (n := n) ![a] (MvPowerSeries.pderiv C ((0 : Fin 1), r) f) * MvPowerSeries.pderiv C q (a r) := by
+    MvPowerSeries.pderiv (R := C) q (ev (n := n) ![a] f) =
+      ∑ r, ev (n := n) ![a] (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) f) * MvPowerSeries.pderiv (R := C) q (a r) := by
   unfold ev
   rw [Formalism.G.LogCR.pderiv_subst (a := fun p : Fin 1 × Fin dd => (![a] : Fin 1 → Pt C n dd) p.1 p.2)
     (fun p => (z0_1 a ha) p.1 p.2) f q, Fintype.sum_prod_type, Fin.sum_univ_one]
@@ -92,19 +91,19 @@ theorem hadd (G : FGLaw C dd) : addOf G.F (pt C dd 0) (pt C dd 1) = G.F := by
   exact eval_points_two (G.F j)
 
 theorem E_D_cobd (G : FGLaw C dd) (A : PS C 1 dd) (j : Fin dd) :
-    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) (cobd G.F A)) =
-      ∑ r, MvPowerSeries.pderiv C ((0 : Fin 1), r) A *
-          ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) (G.F r)) -
+    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (cobd G.F A)) =
+      ∑ r, MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A *
+          ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (G.F r)) -
         ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd)
-          (ev (n := 2) ![pt C dd 1] (MvPowerSeries.pderiv C ((0 : Fin 1), j) A)) := by
+          (ev (n := 2) ![pt C dd 1] (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) A)) := by
   unfold cobd
   rw [hadd G, map_sub, map_sub, pderiv_eval_single G.F G.const, pderiv_eval_single (pt C dd 0) (z0_pt 0),
     pderiv_eval_single (pt C dd 1) (z0_pt 1)]
-  have e0 : ∀ r, MvPowerSeries.pderiv C ((1 : Fin 2), j) (pt C (n := 2) dd 0 r) = 0 := fun r =>
+  have e0 : ∀ r, MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (pt C (n := 2) dd 0 r) = 0 := fun r =>
     MvPowerSeries.pderiv_X_of_ne (fun h' => by simp at h')
-  have e1 : ∀ r, MvPowerSeries.pderiv C ((1 : Fin 2), j) (pt C (n := 2) dd 1 r) = if r = j then 1 else 0 := by
+  have e1 : ∀ r, MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (pt C (n := 2) dd 1 r) = if r = j then 1 else 0 := by
     intro r
-    show MvPowerSeries.pderiv C ((1 : Fin 2), j) (MvPowerSeries.X ((1 : Fin 2), r)) = _
+    show MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (MvPowerSeries.X ((1 : Fin 2), r)) = _
     split_ifs with hr
     · subst hr
       exact MvPowerSeries.pderiv_X_self
@@ -141,7 +140,7 @@ theorem maximal_eval_second_constant {g : PS C 1 dd} (hg : V.MM (MvPowerSeries.c
   · simpa using (mm_zero : V.MM (0 : C))
 
 theorem mms_pderiv_frobTw {σ : Type} {c : MvPowerSeries σ C} (hc : IntS V c) (s : σ) :
-    MMS V (MvPowerSeries.pderiv C s (frobTw V.l c)) := by
+    MMS V (MvPowerSeries.pderiv (R := C) s (frobTw V.l c)) := by
   intro μ
   rw [MvPowerSeries.coeff_pderiv, coeff_frobTw]
   split_ifs with h
@@ -157,15 +156,15 @@ variable (G : FGLaw C dd) {A : PS C 1 dd} {c : PS C 2 dd}
 
 theorem mms_dA_M (hc : IntS V c) (hlin : ∀ j : Fin dd, V.MM (MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), j) 1) A))
     (hfe : ∀ μ, V.MM (MvPowerSeries.coeff μ (cobd G.F A - frobTw V.l c))) (j : Fin dd) :
-    MMS V (∑ r, MvPowerSeries.pderiv C ((0 : Fin 1), r) A *
-      ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) (G.F r))) := by
+    MMS V (∑ r, MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A *
+      ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (G.F r))) := by
   have h1 : MMS V (ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd)
-      (MvPowerSeries.pderiv C ((1 : Fin 2), j) (cobd G.F A - frobTw V.l c))) :=
+      (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (cobd G.F A - frobTw V.l c))) :=
     MMS.ev_of constant_zero_first_then_zero integral_first_zero_points ((show MMS V (cobd G.F A - frobTw V.l c) from hfe).pderiv _)
   have h2 : MMS V (ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd)
-      (MvPowerSeries.pderiv C ((1 : Fin 2), j) (frobTw V.l c))) :=
+      (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (frobTw V.l c))) :=
     MMS.ev_of constant_zero_first_then_zero integral_first_zero_points (mms_pderiv_frobTw hc _)
-  have hcst : V.MM (MvPowerSeries.constantCoeff (MvPowerSeries.pderiv C ((0 : Fin 1), j) A)) := by
+  have hcst : V.MM (MvPowerSeries.constantCoeff (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), j) A)) := by
     rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_pderiv, zero_add]
     simpa using hlin j
   have h3 := maximal_eval_second_constant (dd := dd) hcst
@@ -176,10 +175,10 @@ theorem mms_dA_M (hc : IntS V c) (hlin : ∀ j : Fin dd, V.MM (MvPowerSeries.coe
 
 theorem mms_dA (hF : ∀ i, IntS V (G.F i)) (hc : IntS V c) (hlin : ∀ j : Fin dd, V.MM (MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), j) 1) A))
     (hfe : ∀ μ, V.MM (MvPowerSeries.coeff μ (cobd G.F A - frobTw V.l c))) (i : Fin dd) :
-    MMS V (MvPowerSeries.pderiv C ((0 : Fin 1), i) A) := by
+    MMS V (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), i) A) := by
   set M : Fin dd → Fin dd → PS C 1 dd := fun j r =>
-    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv C ((1 : Fin 2), j) (G.F r)) with hMdef
-  have hM : ∀ j, MMS V (∑ r, MvPowerSeries.pderiv C ((0 : Fin 1), r) A * M j r) :=
+    ev (n := 1) (![pt C dd 0, 0] : Fin 2 → Pt C 1 dd) (MvPowerSeries.pderiv (R := C) ((1 : Fin 2), j) (G.F r)) with hMdef
+  have hM : ∀ j, MMS V (∑ r, MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A * M j r) :=
     fun j => mms_dA_M G hc hlin hfe j
   have hMint : ∀ j r, IntS V (M j r) := fun j r =>
     intS_ev constant_zero_first_then_zero integral_first_zero_points (intS_pderiv (hF r) _)
@@ -188,24 +187,25 @@ theorem mms_dA (hF : ∀ i, IntS V (G.F i)) (hc : IntS V c) (hlin : ∀ j : Fin 
     simp only
     rw [constantCoeff_ev constant_zero_first_then_zero, const_dF G r j]
   suffices h : ∀ n, ∀ ν : Fin 1 × Fin dd →₀ ℕ, ν.degree = n → ∀ i,
-      V.MM (MvPowerSeries.coeff ν (MvPowerSeries.pderiv C ((0 : Fin 1), i) A)) from
+      V.MM (MvPowerSeries.coeff ν (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), i) A)) from
     fun ν => h _ ν rfl i
   intro n
   induction n using Nat.strong_induction_on with
   | _ n ih =>
     intro ν hν i
     have h := hM i ν
-    rw [map_sum] at h
-    have hsplit : ∀ r, MvPowerSeries.coeff ν (MvPowerSeries.pderiv C ((0 : Fin 1), r) A * M i r) =
-        MvPowerSeries.coeff ν (MvPowerSeries.pderiv C ((0 : Fin 1), r) A) * MvPowerSeries.constantCoeff (M i r) +
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
+    have hsplit : ∀ r, MvPowerSeries.coeff ν (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A * M i r) =
+        MvPowerSeries.coeff ν (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A) * MvPowerSeries.constantCoeff (M i r) +
           ∑ p ∈ (Finset.HasAntidiagonal.antidiagonal ν).erase (ν, 0),
-            MvPowerSeries.coeff p.1 (MvPowerSeries.pderiv C ((0 : Fin 1), r) A) * MvPowerSeries.coeff p.2 (M i r) := by
+            MvPowerSeries.coeff p.1 (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A) * MvPowerSeries.coeff p.2 (M i r) := by
       intro r
       rw [MvPowerSeries.coeff_mul, ← Finset.add_sum_erase _ _ (show ((ν, 0) : (Fin 1 × Fin dd →₀ ℕ) × (Fin 1 × Fin dd →₀ ℕ)) ∈ Finset.HasAntidiagonal.antidiagonal ν from
           Finset.HasAntidiagonal.mem_antidiagonal.2 (add_zero ν)),
         MvPowerSeries.coeff_zero_eq_constantCoeff_apply]
     have hrest : ∀ r, V.MM (∑ p ∈ (Finset.HasAntidiagonal.antidiagonal ν).erase (ν, 0),
-        MvPowerSeries.coeff p.1 (MvPowerSeries.pderiv C ((0 : Fin 1), r) A) * MvPowerSeries.coeff p.2 (M i r)) := by
+        MvPowerSeries.coeff p.1 (MvPowerSeries.pderiv (R := C) ((0 : Fin 1), r) A) * MvPowerSeries.coeff p.2 (M i r)) := by
       intro r
       refine mm_sum _ _ fun p hp => ?_
       obtain ⟨hne, hmem⟩ := Finset.mem_erase.1 hp
@@ -217,7 +217,7 @@ theorem mms_dA (hF : ∀ i, IntS V (G.F i)) (hc : IntS V c) (hlin : ∀ j : Fin 
         ext <;> simp [hmem, h0]
       have hdeg : p.1.degree < n := by
         have hd := congrArg Finsupp.degree hmem
-        rw [map_add] at hd
+        rw [map_add (f := _)] at hd
         have : p.2.degree ≠ 0 := fun h0 => h2 ((Finsupp.degree_eq_zero_iff _).1 h0)
         omega
       exact mm_mul_ge (ih _ hdeg p.1 rfl r) (hMint i r p.2)
@@ -296,8 +296,8 @@ theorem cobd_eq (X : PS C 1 dd) :
 
 end ZeroPointGroupLaw
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ PartialDerivEval MaximalIdealCongruence ZeroPointGroupLaw in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ PartialDerivEval MaximalIdealCongruence ZeroPointGroupLaw in
 theorem first_step_second_half : FirstStepSecondHalfCondition := by
   intro C _ _ V hac dd G hF A c hA hc hlin hfe
   have := hac
@@ -375,8 +375,5 @@ theorem first_step_second_half : FirstStepSecondHalfCondition := by
     rw [e]
     exact (mms_frobTw_sub hc hcB).add hFc
   exact mms_of_frobTw hFd
-
-theorem rank_maximal_of_first_half (hP : FirstStepFirstHalfCondition) : RankMaximalOfNondegenerate :=
-  rank_maximal_of_halves hP first_step_second_half
 
 end Formalism.L2.FormalSeriesBounds

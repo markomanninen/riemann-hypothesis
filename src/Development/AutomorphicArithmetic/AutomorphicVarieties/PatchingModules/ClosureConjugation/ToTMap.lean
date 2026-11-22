@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDetMap
-import Mathlib.LinearAlgebra.TensorProduct.RightExactness
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDetMap
+public import Mathlib.LinearAlgebra.TensorProduct.RightExactness
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
 
@@ -15,8 +20,7 @@ theorem UpperTheory.V.Pa.tens :
   let m : C ⊗[B] MonoidAlgebra B G →ₐ[C] C ⊗[B] E := Algebra.TensorProduct.map (AlgHom.id C C) π
   have hm : ∀ x, m x = π.toLinearMap.lTensor C x := fun x => by
     induction x with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul s y => rfl
   have h2 : ∀ y, m (toT B G C (MonoidAlgebra.mapRingHom G (algebraMap B C) y)) = 1 ⊗ₜ π y := fun y => by
     rw [toT_map]; rfl
@@ -28,8 +32,7 @@ theorem UpperTheory.V.Pa.tens :
     rw [← ofT_toT (A := B) y, ← hx]
     clear hx
     induction x with
-    | zero => simp
-    | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
     | tmul s z =>
       rw [LinearMap.lTensor_tmul, ofT_tmul, Algebra.smul_def]
       exact TwoSidedIdeal.mul_mem_left _ _ _ (TwoSidedIdeal.subset_span ⟨z, z.2, rfl⟩)
@@ -48,13 +51,11 @@ theorem UpperTheory.V.Pa.tens :
         Algebra.TensorProduct.map (AlgHom.id S S) π (Det.cancel B (MonoidAlgebra B G) C S
           (Algebra.TensorProduct.map (AlgHom.id S S) (toT B G C) x)) := by
       induction x with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | tmul s y =>
         rw [Algebra.TensorProduct.map_tmul, Algebra.TensorProduct.map_tmul, AlgHom.comp_apply]
         generalize toT B G C y = w
         induction w with
-        | zero => simp
-        | add a b ha hb => simp only [TensorProduct.tmul_add, map_add, ha, hb]
+        | add a b ha hb => simp only [TensorProduct.tmul_add, map_add (f := _), ha, hb]
         | tmul c z => simp [m, Det.cancel_tmul]
     exact congrArg (DE.D S) h

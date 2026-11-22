@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.MeasurableTripleProduct
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanCoefficientNonzero.MeasurableTripleProduct
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped InnerProductSpace ENNReal

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCyclotomicBlockCocyclesLeSha
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCyclotomicBlockCocyclesLeSha
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Bl
 
@@ -28,6 +32,55 @@ theorem UpperTheory.V.Ws.Bl.selToZc :
           (∀ z : Z1 (ρ.comp (locFam S Av v0)), (Submodule.Quotient.mk z : H1 (ρ.comp (locFam S Av v0))) ∈ L v0 → ∃ y, ∀ h, z.1 h - (ρ (locFam S Av v0 h) y - y) ∈ P) →
           ∃ f : Sel ρ (locFam S Av) (continuous_locFam S Av) L → Zc (fun g m => ρ (toGS Ω _ g) m) c (neSet l K) (Dec (F := ℚ) (Av v0)) P, Function.Injective f := by
   intro Ω _ _ _ l _ R M _ _ _ _ _ S ρ hρ hbij c hcneg Av hAv v0 hlv0 P K hK L hL hP
+  have val_top {Ω : Type} [Field Ω] {x : Ω} (h : (⊤ : ValuationSubring Ω).valuation x < 1) : x = 0 := by
+    by_contra hx
+    have h1 : (⊤ : ValuationSubring Ω).valuation x⁻¹ ≤ 1 :=
+      (ValuationSubring.valuation_le_one_iff _ _).2 (ValuationSubring.mem_top _)
+    have h2 := mul_lt_one_of_nonneg_of_lt_one_left zero_le h h1
+    rw [← map_mul, mul_inv_cancel₀ hx, map_one] at h2
+    exact lt_irrefl _ h2
+
+  have int_le {Ω : Type} [Field Ω] (A : ValuationSubring Ω) {b : Ω} (hb : IsIntegral ℤ b) :
+      A.valuation b ≤ 1 := by
+    have h : IsIntegral A b := hb.tower_top
+    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h
+    rw [A.valuation_le_one_iff, ← hy]
+    exact y.2
+
+  have exists_place (K Ω : Type) [Field K] [NumberField K] [Field Ω] [Algebra K Ω] [Algebra.IsAlgebraic K Ω]
+      (A : ValuationSubring Ω) (hA : A ≠ ⊤) : ∃ v : HeightOneSpectrum (𝓞 K),
+        ∀ x : 𝓞 K, A.valuation (algebraMap K Ω (x : K)) < 1 ↔ x ∈ v.asIdeal := by
+    have hm : ∀ x : 𝓞 K, algebraMap K Ω (x : K) ∈ A := fun x =>
+      (A.valuation_le_one_iff _).1 (int_le A (x.isIntegral_coe.map (algebraMap K Ω).toIntAlgHom))
+    let f : 𝓞 K →+* A := ((algebraMap K Ω).comp (algebraMap (𝓞 K) K)).codRestrict A hm
+    let P : Ideal (𝓞 K) := (IsLocalRing.maximalIdeal A).comap f
+    have hP : ∀ x : 𝓞 K, A.valuation (algebraMap K Ω (x : K)) < 1 ↔ x ∈ P := fun x =>
+      (A.valuation_lt_one_iff (f x)).symm
+    refine ⟨⟨P, inferInstance, fun h0 => hA ?_⟩, hP⟩
+    rw [eq_top_iff]
+    intro x _
+    have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap K Ω).injective
+    have h1 : Algebra.IsAlgebraic ℤ K := (IsFractionRing.comap_isAlgebraic_iff (A := ℤ) (K := ℚ) (C := K)).2 inferInstance
+    have h2 : Algebra.IsAlgebraic ℤ Ω := Algebra.IsAlgebraic.trans ℤ K Ω
+    obtain ⟨n, hn, hi⟩ := (h2.isAlgebraic x).exists_integral_multiple
+    have h3 : ¬ A.valuation (algebraMap K Ω ((n : 𝓞 K) : K)) < 1 := by
+      rw [hP, h0, Ideal.mem_bot]
+      exact Int.cast_ne_zero.2 hn
+    have h4 : A.valuation (n : Ω) = 1 :=
+      le_antisymm (int_le A (isIntegral_algebraMap (R := ℤ) (x := n))) (by simpa using h3)
+    have h5 := int_le A hi
+    rw [zsmul_eq_mul, map_mul, h4, one_mul] at h5
+    exact (A.valuation_le_one_iff x).1 h5
+
+  have placeDict : Ine (F := ℚ) (⊤ : ValuationSubring Ω) = ⊥ ∧
+      (∀ A : ValuationSubring Ω, A ≠ ⊤ → ∃ v : HeightOneSpectrum (𝓞 ℚ), IsPlaceOver A v) := by
+    refine ⟨?_, fun A hA => exists_place ℚ Ω A hA⟩
+    rw [eq_bot_iff]
+    intro g hg
+    rw [Subgroup.mem_bot]
+    ext x
+    have h := hg.2 x ((ValuationSubring.valuation_le_one_iff _ _).2 (ValuationSubring.mem_top _))
+    exact sub_eq_zero.1 (val_top h)
   have hex : ∀ x : H1 ρ, ∃ z : Z1 ρ, (Submodule.Quotient.mk z : H1 ρ) = x ∧ z.1 (toGS Ω _ c) = 0 :=
     fun x => exists_norm ρ hρ hbij.2 (toGS Ω _ c) hcneg x
   have hA : ∀ x : H1 ρ, x ∈ Sel ρ (locFam S Av) (continuous_locFam S Av) L → ∀ z : Z1 ρ,
@@ -54,9 +107,9 @@ theorem UpperTheory.V.Ws.Bl.selToZc :
       show z.1 (toGS Ω _ g) = 0
       by_cases hAtop : A = ⊤
       · subst hAtop
-        rw [(UpperTheory.V.Kum.placeDict ℚ Ω).1, Subgroup.mem_bot] at hgA
+        rw [(placeDict).1, Subgroup.mem_bot] at hgA
         rw [hgA, map_one, hz1]
-      obtain ⟨v, hAv'⟩ := (UpperTheory.V.Kum.placeDict ℚ Ω).2.1 A hAtop
+      obtain ⟨v, hAv'⟩ := (placeDict).2 A hAtop
       by_cases hvS : v ∈ S
       · set w : S := ⟨v, hvS⟩
         have hne : w ≠ v0 := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TermDefPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpInhab
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.TermDefPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermOpInhab
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+
+@[expose] public section
 
 noncomputable section
 
@@ -232,7 +236,7 @@ theorem ooFundIndepC_of (hN : NLamNinf) (hC : ChiTrivialC) : OOFundIndepC := by
   have hex : ∃ Ω, Formalism.L2.SG.HidaSetting.IsSFund X.B.I (ROinf t) Ω := hF t
   have hΩ' : Formalism.L2.SG.HidaSetting.IsSFund X.B.I (ROinf t) (FundOf t) := by
     unfold FundOf
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   haveI := ROsub_countable X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin
   simp only [OOt, OO]
@@ -305,13 +309,6 @@ theorem rankOneInnerOperator_smul_smul {V V' : Type*} [NormedAddCommGroup V] [In
   simp only [rk1, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply, inner_smul_left, ContinuousLinearMap.smul_apply, smul_smul]
   congr 1
   ring
-
-theorem conj_inv_of_norm {b : ℂ} (hb : ‖b‖ = 1) : starRingEnd ℂ b⁻¹ = b := by
-  have h : b * starRingEnd ℂ b = 1 := by
-    rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, hb]
-    simp
-  rw [map_inv₀]
-  exact inv_eq_of_mul_eq_one_left h
 
 end Amp
 
@@ -466,7 +463,7 @@ theorem psiInfU_cont {D : D7} (X : HidaSetting D) (u : D.what₂.Word) : Continu
   have h : X.psiInfU u = fun s => psiInf X.B.I X.B.g X.eR X.fR (X.zR u) s := rfl
   rw [h]
   simp only [psiInf]
-  refine continuous_finset_prod _ fun v _ => ?_
+  refine continuous_finsetProd _ fun v _ => ?_
   exact (psiR_cont_lemma _ _ _ _ _).comp (Units.continuous_val.comp (continuous_subtype_val.comp (continuous_apply v)))
 
 variable {D : D7} {X : HidaSetting D} {u u' : D.what₂.Word} {what₂ rows' : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
@@ -520,7 +517,7 @@ theorem ooVanish_of (hA : AvgCore) (hU : GinfUnimod) (hN : NLamNinf) (hC : ChiTr
   · simp only [OOt, OO, FundOf, dif_neg hex, Measure.restrict_empty, integral_zero_measure]
   have hΩ : IsSF (ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin : Set X.B.I.Ginf) (FundOf t) := by
     unfold FundOf
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   have hΓR : ROsub X (X.Fu u) (X.Fu u') t.lam t.lam' t.lin ≤ Rsub hG t := by
     intro s hs
@@ -586,58 +583,6 @@ section Chi
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open Formalism.L2.SG.Full Formalism.L2.SG.HidaSetting
-
-def ColPass : Prop :=
-  ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word) (Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V),
-    Λ ∈ Y.what₂ u → Λ' ∈ Y.what₂ u' → ∀ p : GCar X u u' (X.Fu u) (X.Fu u') Λ Λ',
-      ∃ (ρ : (Y.cs u).Cl) (ρ' : (Y.cs u').Cl), (Y.cs u).lamOf ρ = Λ ∧ (Y.cs u').lamOf ρ' = Λ' ∧
-        kOf X u u' ((Y.cs u).h ρ : X.B.I.Gf) ((Y.cs u').h ρ' : X.B.I.Gf) p.1.1 ∈ X.K2
-
-theorem chiTrivialC_of (hN : NLamNinf) (hNf : NLamNfin) (hK : NilradicalConjLevel) (hCol : ColPass)
-    (hP : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word), Formalism.L2.SG.PoincareInHH.Cut.PsiProd X u) :
-    ChiTrivialC := by
-  intro D X Y u u' Λ Λ' hΛ hΛ' p s hs
-  obtain ⟨x, n, hx, rfl, hn, hn'⟩ := hs
-  have hp : RatLink X p.1.1 p.1.2 := p.2.1
-  have hyl : RatLink X (p.1.1⁻¹ * x * p.1.1) (p.1.2⁻¹ * n * p.1.2) :=
-    ratLink_mul X (ratLink_mul X (ratLink_inv X hp) hx) hp
-  have hxN : x.1 ∈ X.NinfU u := hN D X u Λ x n hx hn
-  have hxF : x.2 ∈ X.NfinU u := hNf D X u Λ x n hx hn
-  have hyN : (p.1.1⁻¹ * x * p.1.1).1 ∈ X.NinfU u' := hN D X u' Λ' _ _ hyl hn'
-  have hyF : (p.1.1⁻¹ * x * p.1.1).2 ∈ X.NfinU u' := hNf D X u' Λ' _ _ hyl hn'
-  have hPx := hP D X u x (ratLink_mem X hx) hxN hxF
-  have hPy := hP D X u' _ (ratLink_mem X hyl) hyN hyF
-  obtain ⟨ρ, ρ', hρ, hρ', hk⟩ := hCol D X Y u u' Λ Λ' hΛ hΛ' p
-  rw [← hρ] at hn
-  obtain ⟨-, -, hkx⟩ := hK D X Y u ρ x n hn hx
-  obtain ⟨-, -, hky⟩ := hK D X Y u' ρ' _ _ (by rw [hρ']; exact hn') hyl
-  have hpsiE : ∀ a, X.psiEf a ≠ 0 := by
-    intro a h
-    have h1 : X.psiEf (a + -a) = X.psiEf a * X.psiEf (-a) := X.psiEf_add _ _
-    rw [add_neg_cancel, X.psiEf_int 0 (zero_mem _), h, zero_mul] at h1
-    exact one_ne_zero h1
-  have hcomm : (((Y.cs u).h ρ : X.B.I.Gf) * X.xu u)⁻¹ * x.2 * (((Y.cs u).h ρ : X.B.I.Gf) * X.xu u) *
-      kOf X u u' ((Y.cs u).h ρ : X.B.I.Gf) ((Y.cs u').h ρ' : X.B.I.Gf) p.1.1 =
-      kOf X u u' ((Y.cs u).h ρ : X.B.I.Gf) ((Y.cs u').h ρ' : X.B.I.Gf) p.1.1 *
-        ((((Y.cs u').h ρ' : X.B.I.Gf) * X.xu u')⁻¹ * (p.1.1⁻¹ * x * p.1.1).2 *
-          (((Y.cs u').h ρ' : X.B.I.Gf) * X.xu u')) := by
-    simp only [kOf, Prod.snd_mul, Prod.snd_inv]
-    group
-  have hF1 := (hkx _ hk).1
-  have hF2 := (hky _ hk).2
-  rw [hcomm] at hF1
-  have hne : chiN X (kOf X u u' ((Y.cs u).h ρ : X.B.I.Gf) ((Y.cs u').h ρ' : X.B.I.Gf) p.1.1) ≠ 0 := hpsiE _
-  have hψf : X.psiFinU u x.2 = X.psiFinU u' (p.1.1⁻¹ * x * p.1.1).2 := by
-    have h3 := hF1.symm.trans hF2
-    rw [mul_comm (chiN X _)] at h3
-    exact mul_right_cancel₀ hne h3
-  have e : (p.1.1⁻¹ * x * p.1.1).1 = p.1.1.1⁻¹ * x.1 * p.1.1.1 := rfl
-  rw [← e]
-  have hF0 : X.psiFinU u x.2 ≠ 0 := fun h => by
-    rw [h, mul_zero] at hPx
-    exact zero_ne_one hPx
-  rw [hψf] at hPx hF0
-  exact mul_right_cancel₀ hF0 (hPx.trans hPy.symm)
 
 end Chi
 

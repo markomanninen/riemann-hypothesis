@@ -1,4 +1,8 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem dvd_norm_sub_one (E : Type) [Field E] [NumberField E] (σ : E ≃ₐ[ℚ
   have h5 : ((M : ℤ) : 𝓞 E) ∣ (((T : ℤ) - 1 : ℤ) : 𝓞 E) := by
     refine ⟨α + α' + (M : 𝓞 E) * α * α', ?_⟩
     apply RingOfIntegers.ext
-    simp only [map_mul, map_add, map_natCast, map_intCast]
+    simp only [map_mul, map_add (f := _), map_natCast, map_intCast]
     push_cast
     exact e3
   exact intCast_dvd_of_dvd_integers E _ _ h5
@@ -74,8 +78,6 @@ theorem cond_dvd_modT : D.host.QS * D.host.q * D.host.d ∣ D.modT := Dvd.intro 
 theorem q_prime : D.host.q.Prime := D.host.hyp.1
 
 theorem d_prime : D.host.d.Prime := D.host.hyp.2.1
-
-theorem n_pos : 0 < D.R.n := by unfold Ranks.n; positivity
 
 theorem one_lt_cond : 1 < D.host.QS * D.host.q * D.host.d := by
   have h1 := D.host.QS_pos

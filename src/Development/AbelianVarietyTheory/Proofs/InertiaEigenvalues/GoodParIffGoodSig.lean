@@ -1,4 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N
 
 noncomputable section

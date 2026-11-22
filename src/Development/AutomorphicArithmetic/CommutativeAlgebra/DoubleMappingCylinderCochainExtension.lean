@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC LateralTheory.CohomologicalPurity LateralTheory.CohomologicalPurity.TubeCut UpperTheory.Et.Prd
 
@@ -44,14 +48,17 @@ private theorem fn (P : Arrow Spc) (p : ℕ) (U : Scheme.{0}) {T : Type 1} [Zero
 
 private theorem res_map {E E' : Spc} (f : E ⟶ E') {p : ℕ} {V U : Scheme.{0}} (g : V ⟶ U) (z : Sx E p U) :
     (z.map f).res g = (z.res g).map f := by
-  exact (FunctorToTypes.naturality (f.app _) g.op z).symm
+  exact (ConcreteCategory.congr_hom (CC := fun X => X) ((f.app _).naturality g.op) z).symm
 
 end UpperTheory.PushoutCovers
 
 open UpperTheory.PushoutCovers in
 theorem UpperTheory.doubleMappingCylinder_cochain_extension :
     ∀ (R : Type) [CommRing R] (P : Arrow Spc), (∀ (p : ℕ) (U : Scheme.{0}) (w : Sx (dbl P) p U), (∃ z : Sx P.right p U, z.map (dbl.inl P) = w) ∨ ∃ z : Sx P.right p U, z.map (dbl.inr P) = w) ∧
-    ∀ (K : Cx R) (m N : ℤ) (x : (famDC (Sub.img P.hom) K m).Tot), ∃ γ : Cochain ((chains R).obj (dbl P)) K N, Comp (dbl.inl P) γ x ∧ ∀ (p : ℕ) (s : ℤ) h (U : Scheme.{0}) (z : Sx P.right p U), ev γ p s h U (z.map (dbl.inr P)) = 0 := by
+    ∀ (K : Cx R) (m N : ℤ) (x : (famDC (Sub.img P.hom) K m).Tot),
+      ∃ γ : Cochain ((chains R).obj (dbl P)) K N, Comp (dbl.inl P) γ x ∧
+        ∀ (p : ℕ) (s : ℤ) h (U : Scheme.{0}) (z : Sx P.right p U),
+          ev (R := R) γ p s h U (z.map (dbl.inr P)) = 0 := by
   intro R _ P
   refine ⟨fun p U w => cover P p U w, ?_⟩
   intro K m N x
@@ -75,7 +82,26 @@ theorem UpperTheory.doubleMappingCylinder_cochain_extension :
       exact (x p s).2.1 V U g z
     · rw [(hφ p (s + m) U s rfl z).2, res_map, (hφ p (s + m) V s rfl _).2]
       exact map_zero _
-  obtain ⟨γ, hγ⟩ := GlobalTheory.T.exists_cochain_ev_eq_of_natural' R (E := dbl P) (I := K) (n := N) (fun p s' _ U => φ p s' U) nat
+  have components : ∀ (i j : ℤ) (hij : i + N = j), ∃ ψ : ((chains R).obj (dbl P)).X i ⟶ K.X j,
+      ∀ (p : ℕ) (hp : i = -(p : ℤ)) U z,
+        Sec.map ((chainsXIso R (dbl P) p).inv ≫ eqToHom (congrArg ((chains R).obj (dbl P)).X hp.symm) ≫ ψ)
+          (freeGen R _ U z) = φ p j U z := by
+    intro i j hij
+    by_cases hi : i ≤ 0
+    · obtain ⟨k, rfl⟩ : ∃ k : ℕ, i = -(k : ℤ) := ⟨(-i).toNat, by omega⟩
+      obtain ⟨ψ, hψ⟩ := CupSpec.free_exists (R := R) _ _ (φ k j) (nat k j hij)
+      refine ⟨(chainsXIso R (dbl P) k).hom ≫ ψ, fun p hp U z => ?_⟩
+      obtain rfl : k = p := by omega
+      rw [eqToHom_refl, Category.id_comp, Iso.inv_hom_id_assoc]
+      exact hψ U z
+    · exact ⟨0, fun p hp => by omega⟩
+  choose ψ hψ using components
+  let γ : Cochain ((chains R).obj (dbl P)) K N := Cochain.mk ψ
+  have hγ : ∀ p s h U z, ev γ p s h U z = φ p s U z := by
+    intro p s h U z
+    have he := hψ _ _ h p rfl U z
+    rw [eqToHom_refl, Category.id_comp] at he
+    exact he
   refine ⟨γ, fun p s h U z => ?_, fun p s h U z => ?_⟩
   · rw [hγ]
     exact ((hφ p (s + m) U s rfl z).1).symm

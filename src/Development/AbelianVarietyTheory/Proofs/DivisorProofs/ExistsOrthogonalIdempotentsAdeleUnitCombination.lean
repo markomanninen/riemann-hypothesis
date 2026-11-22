@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.QSA GlobalTheory.Published
 open Matrix
 open scoped Quaternion Topology TensorProduct
@@ -44,8 +49,8 @@ theorem compFin_ind (a : InfinitePlace F → ι) (b : HeightOneSpectrum (𝓞 F)
 
 end GlobalTheory.QSA.PickUnit
 
-open GlobalTheory.QSA.PickUnit in
 
+open GlobalTheory.QSA.PickUnit in
 theorem GlobalTheory.QSA.exists_idem_pick_unit : ∀ (F : Type) [Field F] [NumberField F] (ι : Type) [Fintype ι]
     (n u : ι → AF F), IsUnit (∑ i, u i * n i) → ∃ η : ι → AF F, (∀ i, η i * η i = η i) ∧
       (∀ i j, i ≠ j → η i * η j = 0) ∧ ∑ i, η i = 1 ∧ IsUnit (∑ i, η i * n i) := by
@@ -61,7 +66,8 @@ theorem GlobalTheory.QSA.exists_idem_pick_unit : ∀ (F : Type) [Field F] [Numbe
     by_contra h
     push_neg at h
     apply (hs.map (compInf w)).ne_zero
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun i _ => by rw [map_mul, h i, mul_zero]
   have hfin : ∀ v : HeightOneSpectrum (𝓞 F), ∃ i, ∀ j, Valued.v (compFin v (n j)) ≤ Valued.v (compFin v (n i)) := by
     intro v
@@ -90,13 +96,15 @@ theorem GlobalTheory.QSA.exists_idem_pick_unit : ∀ (F : Type) [Field F] [Numbe
     · intro v; rw [map_sum, map_one]; simp only [compFin_ind]; rw [Finset.sum_ite_eq]; simp
   · have hcInf : ∀ w, compInf w (∑ i, ind a b i * n i) = compInf w (n (a w)) := by
       intro w
-      rw [map_sum, Finset.sum_eq_single (a w)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single (a w)]
       · rw [map_mul, compInf_ind, if_pos rfl, one_mul]
       · intro j _ hj; rw [map_mul, compInf_ind, if_neg (Ne.symm hj), zero_mul]
       · intro h; exact absurd (Finset.mem_univ _) h
     have hcFin : ∀ v, compFin v (∑ i, ind a b i * n i) = compFin v (n (b v)) := by
       intro v
-      rw [map_sum, Finset.sum_eq_single (b v)]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single (b v)]
       · rw [map_mul, compFin_ind, if_pos rfl, one_mul]
       · intro j _ hj; rw [map_mul, compFin_ind, if_neg (Ne.symm hj), zero_mul]
       · intro h; exact absurd (Finset.mem_univ _) h
@@ -105,7 +113,8 @@ theorem GlobalTheory.QSA.exists_idem_pick_unit : ∀ (F : Type) [Field F] [Numbe
     · intro v h0
       rw [hcFin] at h0
       apply (hs.map (compFin v)).ne_zero
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_eq_zero fun j _ => ?_
       have h := hb v j
       rw [h0, map_zero] at h
@@ -121,7 +130,8 @@ theorem GlobalTheory.QSA.exists_idem_pick_unit : ∀ (F : Type) [Field F] [Numbe
       rw [hcFin]
       refine le_antisymm (hv2 _).2 ?_
       have hv1' : Valued.v (compFin v (∑ i, u i * n i)) = 1 := hv1
-      rw [← hv1', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hv1', map_sum]
       refine Valuation.map_sum_le _ fun j _ => ?_
       rw [map_mul, map_mul]
       exact (mul_le_of_le_one_left zero_le' (hv2 j).1).trans (hb v j)

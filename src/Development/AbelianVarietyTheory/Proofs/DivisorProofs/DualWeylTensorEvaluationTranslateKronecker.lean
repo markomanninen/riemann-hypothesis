@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Formalism.PolynomialDimension.WeylDim
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Formalism.PolynomialDimension.WeylDim
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Module Formalism.BasicNotions Formalism.L2.Pj GlobalTheory.DualWeyl GlobalTheory.AllWt GlobalTheory.FlatLine GlobalTheory.DefPt MvPolynomial
 open scoped Matrix
 
@@ -20,7 +25,8 @@ theorem evalAt_mul_intVec {n : ℕ} (la : Fin n → ℕ) {K S : Type} [Field K] 
     rw [coe_basis, map_map, RingHom.ext_int (φ.comp (Int.castRingHom K)) (Int.castRingHom S)]
   rw [coe_rho, Matrix.transpose_transpose] at h1
   rw [← hmap j, ← evalAt_rowAct, ← GlobalTheory.NabStab.map_rowAct, coe_basis, ← coe_basis, h1]
-  simp only [map_sum, map_smul, smul_eq_C_mul, map_mul, map_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_C_mul, map_mul, map_C]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [hmap i]
   simp [GlobalTheory.DualWeyl.evalAt]
@@ -29,7 +35,8 @@ theorem tval_translate : ∀ (T : Type) [Fintype T] [DecidableEq T] (N : T → �
   intro T _ _ N la K S _ _ _ φ x g y
   unfold tval
   simp only [evalAt_mul_intVec, Finset.prod_univ_sum]
-  simp only [Matrix.mulVec, dotProduct, kron, Matrix.of_apply, map_sum, map_mul, map_prod, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, kron, Matrix.of_apply, map_sum, map_mul, map_prod, Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun J _ => Finset.sum_congr rfl fun I _ => ?_
   rw [Finset.prod_mul_distrib]

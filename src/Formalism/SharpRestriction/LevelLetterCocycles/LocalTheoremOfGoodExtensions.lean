@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheoremOfExplicit
-import Formalism.PadicSubsetSums.StableGradedCounts.LiftingTheExponent
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LiftingTheoremOfExplicit
+public import Formalism.PadicSubsetSums.StableGradedCounts.LiftingTheExponent
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,8 @@ theorem leg (l n : ℕ) (hp : l.Prime) (hl : l ≠ 2) :
     ((n + padicValNat l n.factorial : ℕ) : ℝ) ≤ 3 / 2 * n := by
   have : Fact l.Prime := ⟨hp⟩
   have h3 : 3 ≤ l := by have := hp.two_le; omega
-  have h1 := sub_one_mul_padicValNat_factorial (p := l) n
+  have h1 := Nat.Prime.sub_one_mul_multiplicity_factorial (n := n) hp
+  rw [← Nat.padicValNat_def] at h1
   have h2 : 2 * padicValNat l n.factorial ≤ (l - 1) * padicValNat l n.factorial :=
     Nat.mul_le_mul_right _ (by omega)
   have h4 : 2 * padicValNat l n.factorial ≤ n := by omega

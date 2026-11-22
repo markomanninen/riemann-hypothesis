@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnChain
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddSSnChain
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.JA.SSn.ChainPf
 
@@ -238,7 +242,7 @@ theorem chain_bound_holds : Formalism.FourierDecayAlt.P.CutMP.JA.SSn.ChainBd := 
           ContinuousMultilinearMap.le_opNorm _ _
       _ ≤ Bs * ∏ i, (Cs * a ^ (t.ws i).length) := by
           apply mul_le_mul ((hBj t.j (F g) (hFb g hg)).trans (hBj' _ (by omega)))
-            (Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => hsub _ (hsl i)))
+            (Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => hsub _ (hsl i)))
             (Finset.prod_nonneg fun i _ => norm_nonneg _) hBs0
       _ = Bs * (Cs ^ t.j * a ^ (wL u ++ wR v).length) := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,

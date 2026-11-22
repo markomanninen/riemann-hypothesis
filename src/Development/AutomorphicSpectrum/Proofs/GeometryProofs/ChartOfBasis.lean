@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.WitnessIsFormalParam
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.WitnessIsFormalParam
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermBPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdAd
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.Conj.GermInh

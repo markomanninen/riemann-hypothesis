@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLeSpanSupPow
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLeSpanSupPow
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.ZH GlobalTheory.Poinc
 
@@ -9,7 +14,7 @@ namespace GlobalTheory.Izumi
 theorem exists_point_of_isLocalHom {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] (M : RatModel o Ω) (x : M.Z)
     {p : ℕ} [Fact p.Prime] (χ : M.O x →+* OO p) [IsLocalHom χ] :
     ∃ y : Sp (OO p) ⟶ M.Z, y (cPt p) = x ∧ ∀ a : M.O x,
-      M.val (gPt p ≫ y) a = ((χ a : OO p) : PadicAlgCl p) := by
+      RatModel.val M (gPt p ≫ y) (a : Ω) = ((χ a : OO p) : PadicAlgCl p) := by
   let χ' : M.Z.presheaf.stalk x ⟶ CommRingCat.of (OO p) :=
     CommRingCat.ofHom (χ.comp (M.stalkEquiv x).toRingHom)
   haveI : IsLocalHom χ'.hom := by
@@ -34,7 +39,8 @@ theorem exists_point_of_isLocalHom {o Ω : Type} [CommRing o] [Field Ω] [Algebr
 theorem exists_ne_zero_forall_exists_cen (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] (M : RatModel o Ω)
     (U : M.Z.Opens) (hU : (U : Set M.Z).Nonempty) (x : M.Z) :
     ∃ s : M.O x, s ≠ 0 ∧ ∀ (p : ℕ) [Fact p.Prime] (χ : M.O x →+* OO p), IsLocalHom χ → χ s ≠ 0 →
-      ∃ y : Sp (OO p) ⟶ M.Z, M.Cen U x y ∧ ∀ a : M.O x, M.val (gPt p ≫ y) a = ((χ a : OO p) : PadicAlgCl p) := by
+      ∃ y : Sp (OO p) ⟶ M.Z, M.Cen U x y ∧ ∀ a : M.O x,
+        RatModel.val M (gPt p ≫ y) (a : Ω) = ((χ a : OO p) : PadicAlgCl p) := by
   obtain ⟨V, hV, hxV, -⟩ := exists_isAffineOpen_mem_and_subset (U := ⊤) (x := x) trivial
   obtain ⟨w, hwU, hwV⟩ := M.nonempty_inf hU ⟨x, hxV⟩
   obtain ⟨t, htU, hwt⟩ := hV.exists_basicOpen_le (V := U) ⟨w, hwU⟩ hwV

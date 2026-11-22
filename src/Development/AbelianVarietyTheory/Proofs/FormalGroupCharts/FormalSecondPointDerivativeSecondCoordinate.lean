@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,14 +30,14 @@ theorem ev_C {m n : ℕ} (V : Fin m → Pt k n d) (r : k) : ev V (C r : PS k m d
 
 theorem pderiv_ev {l m : ℕ} (a : Fin l → Pt k m d) (ha : ∀ j, GP (a j)) (f : PS k l d)
     (s : Fin m × Fin d) :
-    pderiv k s (ev a f) = ∑ j, ∑ i, ev a (pderiv k (j, i) f) * pderiv k s (a j i) := by
+    pderiv s (ev a f) = ∑ j, ∑ i, ev a (pderiv (j, i) f) * pderiv s (a j i) := by
   unfold ev
   rw [GlobalTheory.FormalCalc.pderiv_subst (gt_hasSubst a ha), Fintype.sum_prod_type]
 
 theorem ev_pderiv_ev {l m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) (a : Fin l → Pt k m d)
     (ha : ∀ j, GP (a j)) (f : PS k l d) (s : Fin m × Fin d) :
-    ev V (pderiv k s (ev a f)) =
-      ∑ j, ∑ i, ev (fun j => evP V (a j)) (pderiv k (j, i) f) * ev V (pderiv k s (a j i)) := by
+    ev V (pderiv s (ev a f)) =
+      ∑ j, ∑ i, ev (fun j => evP V (a j)) (pderiv (j, i) f) * ev V (pderiv s (a j i)) := by
   rw [pderiv_ev a ha, ev_sum V hV]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [ev_sum V hV]
@@ -45,17 +49,17 @@ theorem vec1 {m n : ℕ} (V : Fin m → Pt k n d) (a : Pt k m d) :
   funext j; fin_cases j; rfl
 
 theorem pderiv_pt_ne {m : ℕ} {j j' : Fin m} (h : j' ≠ j) (i i' : Fin d) :
-    pderiv k (j, i) (pt k d j' i') = 0 :=
+    pderiv (j, i) (pt k d j' i') = 0 :=
   pderiv_X_of_ne fun e => h (congrArg Prod.fst e)
 
 theorem pderiv_pt_self {m : ℕ} (j : Fin m) (i i' : Fin d) :
-    pderiv k (j, i) (pt k d j i') = if i' = i then 1 else 0 := by
+    pderiv (j, i) (pt k d j i') = if i' = i then 1 else 0 := by
   split_ifs with h
   · subst h; exact pderiv_X_self
   · exact pderiv_X_of_ne fun e => h (congrArg Prod.snd e)
 
 theorem pderiv_ev_eq_zero {l m : ℕ} (a : Fin l → Pt k m d) (ha : ∀ j, GP (a j)) (f : PS k l d)
-    (s : Fin m × Fin d) (h : ∀ j i, pderiv k s (a j i) = 0) : pderiv k s (ev a f) = 0 := by
+    (s : Fin m × Fin d) (h : ∀ j i, pderiv s (a j i) = 0) : pderiv s (ev a f) = 0 := by
   rw [pderiv_ev a ha]
   simp [h]
 
@@ -72,24 +76,24 @@ theorem ev_zero_pts {l m : ℕ} (a : Fin l → Pt k m d) (ha : ∀ j, a j = 0) (
   rw [e', MvPowerSeries.subst_zero_of_constantCoeff_zero h0, add_zero]
 
 theorem const_pderiv {σ : Type} (s : σ) (f : MvPowerSeries σ k) :
-    constantCoeff (pderiv k s f) = coeff (Finsupp.single s 1) f := by
+    constantCoeff (pderiv s f) = coeff (Finsupp.single s 1) f := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_pderiv]
   simp
 
 def dy (v : Fin d → k) (f : PS k 2 d) : PS k 1 d :=
-  ∑ i, C (v i) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), i) f)
+  ∑ i, C (v i) * ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), i) f)
 
 def lin (v : Fin d → k) (f : PS k 1 d) : k :=
-  ∑ i, v i * constantCoeff (pderiv k ((0 : Fin 1), i) f)
+  ∑ i, v i * constantCoeff (pderiv ((0 : Fin 1), i) f)
 
 theorem hX0 : ∀ j, GP ((![pt k d 0, 0] : Fin 2 → Pt k 1 d) j) := pair_points_zero_constant (gp_pt 0) gp_zero₂
 
 theorem dy_add (v : Fin d → k) (f g : PS k 2 d) : dy v (f + g) = dy v f + dy v g := by
-  simp only [dy, map_add, gt_ev_add _ hX0, mul_add, Finset.sum_add_distrib]
+  simp only [dy, map_add (f := _), gt_ev_add _ hX0, mul_add, Finset.sum_add_distrib]
 
 theorem dy_ev {l : ℕ} (v : Fin d → k) (a : Fin l → Pt k 2 d) (ha : ∀ j, GP (a j)) (f : PS k l d) :
     dy v (ev a f) = ∑ j, ∑ i, dy v (a j i) *
-      ev (fun j => evP (n := 1) ![pt k d 0, 0] (a j)) (pderiv k (j, i) f) := by
+      ev (fun j => evP (n := 1) ![pt k d 0, 0] (a j)) (pderiv (j, i) f) := by
   simp only [dy, ev_pderiv_ev _ hX0 a ha, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -99,9 +103,9 @@ theorem dy_ev {l : ℕ} (v : Fin d → k) (a : Fin l → Pt k 2 d) (ha : ∀ j, 
 theorem formalSecondPointDerivative_formalSubst_two (v : Fin d → k) (a b : Pt k 2 d) (ha : GP a) (hb : GP b) (f : PS k 2 d) :
     dy v (ev ![a, b] f) =
       ∑ i, dy v (a i) * ev ![evP (n := 1) ![pt k d 0, 0] a, evP (n := 1) ![pt k d 0, 0] b]
-        (pderiv k ((0 : Fin 2), i) f) +
+        (pderiv ((0 : Fin 2), i) f) +
       ∑ i, dy v (b i) * ev ![evP (n := 1) ![pt k d 0, 0] a, evP (n := 1) ![pt k d 0, 0] b]
-        (pderiv k ((1 : Fin 2), i) f) := by
+        (pderiv ((1 : Fin 2), i) f) := by
   rw [dy_ev v _ (pair_points_zero_constant ha hb), Fin.sum_univ_two, eval_pair_points]
   rfl
 
@@ -122,7 +126,8 @@ theorem formalSecondPointDerivative_subst_first_point (v : Fin d → k) (f : PS 
 
 theorem formalSecondPointDerivative_subst_second_point (v : Fin d → k) (f : PS k 1 d) :
     dy v (ev (n := 2) ![pt k d 1] f) = C (lin v f) := by
-  rw [dy_ev v _ (single_point_zero_constant (gp_pt 1)), vec1, evP_pt _ hX0, lin, map_sum, Fin.sum_univ_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dy_ev v _ (single_point_zero_constant (gp_pt 1)), vec1, evP_pt _ hX0, lin, map_sum, Fin.sum_univ_one]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [ev_zero_pts _ (by intro j; fin_cases j; rfl), map_mul]
   congr 1
@@ -200,14 +205,14 @@ theorem down_up (a : Pt k 2 d) : evP (n := 2) ![pt k d 0, pt k d 1, 0] (up a) = 
   rw [gt_ev_ev' _ _ hDown hUp, eval_pair_points, evP_pt _ hDown, evP_pt _ hDown]
   exact congrFun (addOf_pt a) i
 
-theorem pderiv_up (a : Pt k 2 d) (i i' : Fin d) : pderiv k ((2 : Fin 3), i) (up a i') = 0 := by
+theorem pderiv_up (a : Pt k 2 d) (i i' : Fin d) : pderiv ((2 : Fin 3), i) (up a i') = 0 := by
   refine pderiv_ev_eq_zero _ hUp _ _ fun j l => ?_
   fin_cases j
   · exact pderiv_pt_ne (show (0 : Fin 3) ≠ 2 by decide) _ _
   · exact pderiv_pt_ne (show (1 : Fin 3) ≠ 2 by decide) _ _
 
 theorem sum_pt_self {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) (j : Fin m) (i : Fin d)
-    (A : Fin d → PS k n d) : ∑ i', A i' * ev V (pderiv k (j, i) (pt k d j i')) = A i := by
+    (A : Fin d → PS k n d) : ∑ i', A i' * ev V (pderiv (j, i) (pt k d j i')) = A i := by
   rw [Finset.sum_eq_single i]
   · simp [pderiv_pt_self]
   · intro b _ hb
@@ -215,8 +220,8 @@ theorem sum_pt_self {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) 
   · simp
 
 theorem dz_right (g : PS k 2 d) (a : Pt k 2 d) (ha : GP a) (i : Fin d) :
-    ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv k ((2 : Fin 3), i) (ev ![up a, pt k d 2] g)) =
-      ev ![a, 0] (pderiv k ((1 : Fin 2), i) g) := by
+    ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv ((2 : Fin 3), i) (ev ![up a, pt k d 2] g)) =
+      ev ![a, 0] (pderiv ((1 : Fin 2), i) g) := by
   rw [ev_pderiv_ev _ hDown _ (pair_points_zero_constant (constantCoeff_up_eq_zero₂ ha) (gp_pt 2)), Fin.sum_univ_two, eval_pair_points, down_up,
     evP_pt _ hDown]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_up, gt_ev_zero _ hDown, mul_zero,
@@ -225,8 +230,8 @@ theorem dz_right (g : PS k 2 d) (a : Pt k 2 d) (ha : GP a) (i : Fin d) :
   rfl
 
 theorem dz_left (g : PS k 2 d) (a : Pt k 2 d) (ha : GP a) (i : Fin d) :
-    ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv k ((2 : Fin 3), i) (ev ![pt k d 2, up a] g)) =
-      ev ![0, a] (pderiv k ((0 : Fin 2), i) g) := by
+    ev (n := 2) ![pt k d 0, pt k d 1, 0] (pderiv ((2 : Fin 3), i) (ev ![pt k d 2, up a] g)) =
+      ev ![0, a] (pderiv ((0 : Fin 2), i) g) := by
   rw [ev_pderiv_ev _ hDown _ (pair_points_zero_constant (gp_pt 2) (constantCoeff_up_eq_zero₂ ha)), Fin.sum_univ_two, eval_pair_points, down_up,
     evP_pt _ hDown]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_up, gt_ev_zero _ hDown, mul_zero,
@@ -243,8 +248,8 @@ theorem dz_add_left
     (h : ev (n := 3) ![pt k d 0, pt k d 2] g + ev (n := 3) ![pt k d 1, pt k d 2] g =
       ev (n := 3) ![addOf F (pt k d 0) (pt k d 1), pt k d 2] g)
     (a b : Pt k 2 d) (ha : GP a) (hb : GP b) (i : Fin d) :
-    ev ![addOf F a b, 0] (pderiv k ((1 : Fin 2), i) g) =
-      ev ![a, 0] (pderiv k ((1 : Fin 2), i) g) + ev ![b, 0] (pderiv k ((1 : Fin 2), i) g) := by
+    ev ![addOf F a b, 0] (pderiv ((1 : Fin 2), i) g) =
+      ev ![a, 0] (pderiv ((1 : Fin 2), i) g) + ev ![b, 0] (pderiv ((1 : Fin 2), i) g) := by
   rw [← dz_right g _ (gp_addOf F hF _ _ ha hb), ← dz_right g _ ha, ← dz_right g _ hb,
     ← gt_ev_add _ hDown, ← map_add, ← add_left F hF g h _ _ _ (constantCoeff_up_eq_zero₂ ha) (constantCoeff_up_eq_zero₂ hb) (gp_pt 2)]
   unfold up
@@ -254,8 +259,8 @@ theorem dz_add_right
     (h : ev (n := 3) ![pt k d 0, pt k d 1] g + ev (n := 3) ![pt k d 0, pt k d 2] g =
       ev (n := 3) ![pt k d 0, addOf F (pt k d 1) (pt k d 2)] g)
     (a b : Pt k 2 d) (ha : GP a) (hb : GP b) (i : Fin d) :
-    ev ![0, addOf F a b] (pderiv k ((0 : Fin 2), i) g) =
-      ev ![0, a] (pderiv k ((0 : Fin 2), i) g) + ev ![0, b] (pderiv k ((0 : Fin 2), i) g) := by
+    ev ![0, addOf F a b] (pderiv ((0 : Fin 2), i) g) =
+      ev ![0, a] (pderiv ((0 : Fin 2), i) g) + ev ![0, b] (pderiv ((0 : Fin 2), i) g) := by
   rw [← dz_left g _ (gp_addOf F hF _ _ ha hb), ← dz_left g _ ha, ← dz_left g _ hb,
     ← gt_ev_add _ hDown, ← map_add, ← add_right F hF g h _ _ _ (gp_pt 2) (constantCoeff_up_eq_zero₂ ha) (constantCoeff_up_eq_zero₂ hb)]
   unfold up
@@ -272,17 +277,18 @@ theorem formalComp_zero_left_point {n : ℕ} (a : Pt k n d) (ha : GP a) : comp1 
   evP_zero _ (single_point_zero_constant ha)
 
 theorem const_pderiv_pderiv (g : PS k 2 d) (i j : Fin d) :
-    constantCoeff (pderiv k ((0 : Fin 2), i) (pderiv k ((1 : Fin 2), j) g)) =
+    constantCoeff (pderiv ((0 : Fin 2), i) (pderiv ((1 : Fin 2), j) g)) =
       coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), j) 1) g := by
   rw [const_pderiv, coeff_pderiv, Finsupp.single_eq_of_ne (by simp)]
   simp
 
 theorem constantCoeff_pderiv_formalSubst_two (b c : Pt k 1 d) (hb : GP b) (hc : GP c) (f : PS k 2 d) (l : Fin d) :
-    constantCoeff (pderiv k ((0 : Fin 1), l) (ev ![b, c] f)) =
-      ∑ i, constantCoeff (pderiv k ((0 : Fin 2), i) f) * constantCoeff (pderiv k ((0 : Fin 1), l) (b i)) +
-      ∑ i, constantCoeff (pderiv k ((1 : Fin 2), i) f) * constantCoeff (pderiv k ((0 : Fin 1), l) (c i)) := by
+    constantCoeff (pderiv ((0 : Fin 1), l) (ev ![b, c] f)) =
+      ∑ i, constantCoeff (pderiv ((0 : Fin 2), i) f) * constantCoeff (pderiv ((0 : Fin 1), l) (b i)) +
+      ∑ i, constantCoeff (pderiv ((1 : Fin 2), i) f) * constantCoeff (pderiv ((0 : Fin 1), l) (c i)) := by
   rw [pderiv_ev _ (pair_points_zero_constant hb hc), Fin.sum_univ_two]
-  simp only [map_add, map_sum, map_mul, gt_const_ev_eq _ (pair_points_zero_constant hb hc)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_mul, gt_const_ev_eq _ (pair_points_zero_constant hb hc)]
   rfl
 
 theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0, 0] F = pt k d 0)
@@ -309,7 +315,7 @@ theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0,
   have c0 : constantCoeff g = 0 := by
     rw [← coeff_zero_eq_constantCoeff_apply]
     exact coeff_eq_zero_of_axes g h0 h1 0 (by simp)
-  have c1 : ∀ s, constantCoeff (pderiv k s g) = 0 := fun s => by
+  have c1 : ∀ s, constantCoeff (pderiv s g) = 0 := fun s => by
     rw [const_pderiv]
     exact coeff_eq_zero_of_axes g h0 h1 _ (by simp)
   have e0 : evP (n := 1) ![pt k d 0, 0] (pt k d 0) = pt k d 0 := evP_pt _ hX0 0
@@ -320,11 +326,11 @@ theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0,
     rw [evP_comp1 _ hX0 _ _ p1, e1, gt_comp1_zero w hw]
   have g0 : ∀ v i, dy v (comp1 w (pt k d 0) i) = 0 := fun v i => formalSecondPointDerivative_subst_first_point v _
   have g1 : ∀ v i, dy v (comp1 w (pt k d 1) i) = C (lin v (w i)) := fun v i => formalSecondPointDerivative_subst_second_point v _
-  have z : ∀ s, ev (n := 1) ![0, 0] (pderiv k s g) = 0 := fun s => by
+  have z : ∀ s, ev (n := 1) ![0, 0] (pderiv s g) = 0 := fun s => by
     rw [ev_zero_pts _ (by intro j; fin_cases j <;> rfl), c1, map_zero]
   have hD : ∀ v, Dof F v (ev (n := 1) ![pt k d 0, w] g) =
-      ∑ j, C (lin v (w j)) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) g) +
-      ∑ i, C (v i) * ev (n := 1) ![0, w] (pderiv k ((0 : Fin 2), i) g) := by
+      ∑ j, C (lin v (w j)) * ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) g) +
+      ∑ i, C (v i) * ev (n := 1) ![0, w] (pderiv ((0 : Fin 2), i) g) := by
     intro v
     rw [dof_eq F hF hU, formalSubst_single_of_formalSubst_two F hF _ _ q0 hw, gt_comp1_pt F hF, hom]
     have : ev ![F, addOf F (comp1 w (pt k (n := 2) d 0)) (comp1 w (pt k (n := 2) d 1))] g =
@@ -339,9 +345,10 @@ theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0,
       zero_add, add_zero]
   refine ⟨by rw [gt_const_ev_eq _ (pair_points_zero_constant q0 hw), c0], fun u => ?_, fun u v => ?_⟩
   · rw [hD]
-    simp only [map_add, map_sum, map_mul, gt_const_ev_eq _ hX0,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_mul, gt_const_ev_eq _ hX0,
       gt_const_ev_eq _ (pair_points_zero_constant gp_zero₂ hw), c1, mul_zero, Finset.sum_const_zero, add_zero]
-  · have hb : ∀ j, Dof F u (ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) g)) =
+  · have hb : ∀ j, Dof F u (ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) g)) =
         C (∑ i, u i * coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), j) 1) g) := by
       intro j
       rw [dof_additive F hF hU]
@@ -353,7 +360,7 @@ theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0,
           formalSubst_single_of_formalSubst_two _ p1 _ _ q0 gp_zero₂, gt_comp1_pt _ hF, gt_comp1_pt _ p0, gt_comp1_pt _ p1,
           formalComp_zero_left_point _ hF, formalComp_zero_left_point _ p0, formalComp_zero_left_point _ p1,
           ← dz_add_left F hF g hl _ _ p0 p1, addOf_pt]
-    have ha : ∀ i, Dof F u (ev (n := 1) ![0, w] (pderiv k ((0 : Fin 2), i) g)) =
+    have ha : ∀ i, Dof F u (ev (n := 1) ![0, w] (pderiv ((0 : Fin 2), i) g)) =
         C (∑ l, u l * ∑ j,
           coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), j) 1) g *
             coeff (Finsupp.single ((0 : Fin 1), l) 1) (w j)) := by
@@ -371,7 +378,8 @@ theorem quad (F : Fin d → PS k 2 d) (hF : GP F) (hU : evP (n := 1) ![pt k d 0,
           formalComp_zero_left_point _ hF, formalComp_zero_left_point _ p0, formalComp_zero_left_point _ p1,
           ← dz_add_right F hF g hr _ _ w0 w1, hom]
     rw [hD, GE.dof_add, GE.dof_sum, GE.dof_sum]
-    simp only [GE.dof_C_mul, ha, hb, ← map_mul, ← map_sum, ← map_add, lin, const_pderiv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GE.dof_C_mul, ha, hb, ← map_mul, ← map_sum, ← map_add (f := _), lin, const_pderiv]
 
 section BaseChange
 

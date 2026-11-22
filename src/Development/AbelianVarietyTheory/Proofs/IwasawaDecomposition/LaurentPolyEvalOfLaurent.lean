@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -16,7 +20,7 @@ theorem laurent_poly_eval_of_laurent :
     obtain ⟨N₁, P₁, h₁⟩ := hp
     obtain ⟨N₂, P₂, h₂⟩ := hq
     refine ⟨N₁ + N₂, Polynomial.X ^ N₂ * P₁ + Polynomial.X ^ N₁ * P₂, fun t ht => ?_⟩
-    simp only [map_add, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_X]
+    simp only [map_add (f := _), Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_X]
     rw [← h₁ t ht, ← h₂ t ht]
     ring
   · rename_i p a hp

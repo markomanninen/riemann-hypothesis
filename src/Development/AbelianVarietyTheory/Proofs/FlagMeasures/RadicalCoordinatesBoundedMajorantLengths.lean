@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonal
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonal
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ private theorem hadamard_lemma' {j : ℕ} (A : Matrix (Fin j) (Fin j) ℂ) :
     simpa [OrthonormalBasis.coe_toBasis] using this
   rw [← hS, hmul, norm_mul, S.det_to_matrix_orthonormalBasis B, one_mul,
     InnerProductSpace.gramSchmidtOrthonormalBasis_det, norm_prod]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => ?_
   calc ‖inner ℂ (B i) (f i)‖ ≤ ‖B i‖ * ‖f i‖ := norm_inner_le_norm _ _
     _ = ‖f i‖ := by rw [B.orthonormal.1 i, one_mul]
     _ = eucl (fun d => A d i) := (eucl_eq _).symm
@@ -84,7 +88,7 @@ theorem minor_le {r j : ℕ} (N : Matrix (Fin r) (Fin r) ℂ) (a : Fin r → ℝ
     rw [← hA, norm_mul, norm_prod] at h1
     have h2 : ∏ i, eucl (fun d => (Matrix.of fun i' i => (a (f i') : ℂ) * N (f i') (g i)) d i) ≤
         ∏ i, eucl (fun d => (a d : ℂ) * N d (g i)) :=
-      Finset.prod_le_prod (fun i _ => Real.sqrt_nonneg _)
+      Finset.prod_le_prod₀ (fun i _ => Real.sqrt_nonneg _)
         (fun i _ => eucl_comp_le f hf (fun d => (a d : ℂ) * N d (g i)))
     have hprod : ∏ i, ‖((a (f i) : ℂ))‖ = ∏ i, a (f i) :=
       Finset.prod_congr rfl fun i _ => by rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (ha _)]
@@ -102,7 +106,7 @@ theorem minor_le {r j : ℕ} (N : Matrix (Fin r) (Fin r) ℂ) (a : Fin r → ℝ
 
 theorem prod_le_pow' {n : ℕ} (f : Fin n → ℝ) (R : ℝ) (h0 : ∀ i, 0 ≤ f i) (h : ∀ i, f i ≤ R) :
     ∏ i, f i ≤ R ^ n := by
-  calc ∏ i, f i ≤ ∏ _i : Fin n, R := Finset.prod_le_prod (fun i _ => h0 i) (fun i _ => h i)
+  calc ∏ i, f i ≤ ∏ _i : Fin n, R := Finset.prod_le_prod₀ (fun i _ => h0 i) (fun i _ => h i)
     _ = R ^ n := by simp
 
 theorem inv_bound {r : ℕ} (N : Matrix (Fin r) (Fin r) ℂ) (a : Fin r → ℝ) (ha : ∀ b, 0 < a b) (R De : ℝ)
@@ -137,7 +141,7 @@ theorem inv_bound {r : ℕ} (N : Matrix (Fin r) (Fin r) ℂ) (a : Fin r → ℝ)
     rw [← Finset.mul_prod_erase Finset.univ (fun i => (a (id i))⁻¹) (Finset.mem_univ c)] at h1
     have hrest : ∏ i ∈ Finset.univ.erase c, (a (id i))⁻¹ ≤ R ^ n := by
       calc ∏ i ∈ Finset.univ.erase c, (a (id i))⁻¹ ≤ ∏ _i ∈ Finset.univ.erase c, R :=
-            Finset.prod_le_prod (fun _ _ => hainv0 _) (fun _ _ => hal _)
+            Finset.prod_le_prod₀ (fun _ _ => hainv0 _) (fun _ _ => hal _)
         _ = R ^ n := by rw [Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ _)]; simp
     have hrest0 : 0 ≤ ∏ i ∈ Finset.univ.erase c, (a (id i))⁻¹ :=
       Finset.prod_nonneg fun _ _ => hainv0 _

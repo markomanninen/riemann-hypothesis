@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuBasic
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.TotientLeOfCycPowEqOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuBasic
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.TotientLeOfCycPowEqOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction Formalism.MainNotions.BlochKatoReduction.Gen
 
@@ -25,7 +29,7 @@ theorem exists_eps_eq_pow_nu :
     (exists_cycZ_pow_ne_one X i)
   refine ⟨g, Units.map (algebraMap ℤ_[X.l i] (X.O0 i)).toMonoidHom u, ?_⟩
   have h := congrArg (algebraMap ℤ_[X.l i] (X.O0 i)) hu
-  rw [map_sub, map_pow, map_one, map_mul, map_pow, map_natCast] at h
+  rw [RingHom.map_sub, map_pow, map_one, map_mul, map_pow, map_natCast] at h
   exact h
 
 theorem nu_pos_of_res (K : Type) [CommRing K] [Nontrivial K] [Algebra (X.O0 i) K]

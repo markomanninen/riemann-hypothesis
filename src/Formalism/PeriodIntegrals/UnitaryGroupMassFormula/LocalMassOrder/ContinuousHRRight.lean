@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.IsTopRingTens
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassOrder.SelfDualMeasureSFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem exists_gens : ∃ (m : ℕ) (w : Fin m → Fv F v ⊗[F] E), (∀ k, w k
       push_cast
       simp [zsmul_eq_mul]
     beta_reduce
-    rw [SetLike.mem_coe, ha, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [SetLike.mem_coe, ha, map_sum]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_mul, map_intCast, ← zsmul_eq_mul]
     exact zsmul_mem (Submodule.subset_span (Set.mem_range_self k)) _
@@ -81,7 +86,7 @@ variable (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (v : Heig
 theorem continuous_hR_right (x : Fin n → Fv F v ⊗[F] E) :
     Continuous (fun y : Fin n → Fv F v ⊗[F] E => hR (Fv F v) σ J x y) := by
   simp only [hR, Formalism.UG.hform]
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact continuous_const.mul (continuous_apply j)
 
 theorem isClosed_latLoc (Λ : Set (Fin n → E)) (hSD : IsSDLoc σ J v Λ) :

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BiHomSum
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DegLESum
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.BiHomSum
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DegLESum
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ lemma shiftPoly_mul (b : κ → ι → K) (f g : MvPolynomial ι K) :
 
 lemma shiftPoly_add (b : κ → ι → K) (f g : MvPolynomial ι K) :
     shiftPoly b (f + g) = shiftPoly b f + shiftPoly b g := by
-  simp only [shiftPoly_eq, map_add]
+  simp only [shiftPoly_eq, map_add (f := _)]
 
 lemma shiftPoly_zero (b : κ → ι → K) : shiftPoly b (0 : MvPolynomial ι K) = 0 := by
   simp only [shiftPoly_eq, map_zero]
@@ -49,11 +53,12 @@ lemma shiftPoly_C (b : κ → ι → K) (a : K) :
 
 lemma shiftPoly_sum {α : Type*} (b : κ → ι → K) (s : Finset α) (f : α → MvPolynomial ι K) :
     shiftPoly b (∑ a ∈ s, f a) = ∑ a ∈ s, shiftPoly b (f a) := by
-  simp only [shiftPoly_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [shiftPoly_eq, map_sum]
 
 lemma hasseDir_zero_right (b : κ → ι → K) (β : κ →₀ ℕ) :
     hasseDir b β (0 : MvPolynomial ι K) = 0 := by
-  simp only [hasseDir, shiftPoly_zero, MvPolynomial.coeff_zero]
+  simp only [hasseDir, shiftPoly_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
 
 lemma hasseDir_mul [DecidableEq κ] (b : κ → ι → K) (β : κ →₀ ℕ) (f g : MvPolynomial ι K) :
     hasseDir b β (f * g) =
@@ -65,7 +70,7 @@ lemma hasseDir_zero_left (b : κ → ι → K) (Q : MvPolynomial ι K) : hasseDi
   rw [← MvPolynomial.constantCoeff_eq]
   induction Q using MvPolynomial.induction_on with
   | C a => rw [shiftPoly_C, MvPolynomial.constantCoeff_C]
-  | add p q hp hq => rw [shiftPoly_add, map_add, hp, hq]
+  | add p q hp hq => rw [shiftPoly_add, map_add (f := _), hp, hq]
   | mul_X p x hp =>
     rw [shiftPoly_mul, map_mul, hp, shiftPoly_X]
     simp [shiftGen]
@@ -77,7 +82,8 @@ lemma pderiv_shiftGen (b : κ → ι → K) (x : ι) (k : κ) :
     MvPolynomial.pderiv k (shiftGen b x) = MvPolynomial.C (MvPolynomial.C (b k x)) := by
   classical
   unfold shiftGen
-  rw [map_add, MvPolynomial.pderiv_C, zero_add, map_sum, Finset.sum_eq_single k]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_add (f := _), MvPolynomial.pderiv_C, zero_add, map_sum, Finset.sum_eq_single k]
   · rw [MvPolynomial.pderiv_C_mul, MvPolynomial.pderiv_X_self, mul_one]
   · intro k' _ hk'
     rw [MvPolynomial.pderiv_C_mul, MvPolynomial.pderiv_X_of_ne hk', mul_zero]
@@ -91,8 +97,8 @@ lemma shiftPoly_dirD [Fintype ι] (b : κ → ι → K) (k : κ) (Q : MvPolynomi
   | C a => simp [dirD, shiftPoly_C, shiftPoly_zero]
   | add p q hp hq =>
     have : dirD (b k) (p + q) = dirD (b k) p + dirD (b k) q := by
-      simp only [dirD, map_add, mul_add, Finset.sum_add_distrib]
-    rw [this, shiftPoly_add, shiftPoly_add, map_add, hp, hq]
+      simp only [dirD, map_add (f := _), mul_add, Finset.sum_add_distrib]
+    rw [this, shiftPoly_add, shiftPoly_add, map_add (f := _), hp, hq]
   | mul_X p x hp =>
     have : dirD (b k) (p * MvPolynomial.X x) =
         dirD (b k) p * MvPolynomial.X x + p * MvPolynomial.C (b k x) := by
@@ -137,7 +143,7 @@ lemma jetPair_X_mul (Q : MvPolynomial ι K) (x : ι) (G : MvPowerSeries ι K) :
   classical
   induction Q using MvPolynomial.induction_on' with
   | add p q hp hq =>
-    rw [map_add, Formalism.DworkPowerSeriesWeights.jetPair_add_left, Formalism.DworkPowerSeriesWeights.jetPair_add_left, hp, hq]
+    rw [map_add (f := _), Formalism.DworkPowerSeriesWeights.jetPair_add_left, Formalism.DworkPowerSeriesWeights.jetPair_add_left, hp, hq]
   | monomial κ a =>
     rw [MvPolynomial.pderiv_monomial, jetPair_monomial_left, jetPair_monomial_left]
     by_cases h : κ x = 0
@@ -252,19 +258,19 @@ section Expand
 variable {K ι κ : Type} [Field K] [Fintype κ]
 
 lemma shiftPoly_expand (b : κ → ι → K) (Q : MvPolynomial ι K) :
-    shiftPoly b Q = ∑ d ∈ Q.support, MvPolynomial.C (MvPolynomial.C (MvPolynomial.coeff d Q)) *
+    shiftPoly b Q = ∑ d ∈ Q.support, MvPolynomial.C (MvPolynomial.C (AddMonoidAlgebra.coeff Q d)) *
       ∏ i ∈ d.support, shiftGen b i ^ d i := by
   rw [shiftPoly_eq, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
   rfl
 
 def biHom (d : ℕ) (F : MvPolynomial κ (MvPolynomial ι K)) : Prop :=
-  ∀ β n, MvPolynomial.coeff n (MvPolynomial.coeff β F) ≠ 0 → n.degree + β.degree = d
+  ∀ β n, AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff F β) n ≠ 0 → n.degree + β.degree = d
 
 lemma biHom_add {d : ℕ} {F G : MvPolynomial κ (MvPolynomial ι K)} (hF : biHom d F)
     (hG : biHom d G) : biHom d (F + G) := by
   intro β n h
   rw [MvPolynomial.coeff_add, MvPolynomial.coeff_add] at h
-  by_cases h1 : MvPolynomial.coeff n (MvPolynomial.coeff β F) = 0
+  by_cases h1 : AddMonoidAlgebra.coeff (AddMonoidAlgebra.coeff F β) n = 0
   · rw [h1, zero_add] at h
     exact hG β n h
   · exact hF β n h1
@@ -284,7 +290,7 @@ lemma biHom_mul {d e : ℕ} {F G : MvPolynomial κ (MvPolynomial ι K)} (hF : bi
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx hy
   have h1 := hF x.1 y.1 (left_ne_zero_of_mul h)
   have h2 := hG x.2 y.2 (right_ne_zero_of_mul h)
-  rw [← hx, ← hy, map_add, map_add]
+  rw [← hx, ← hy, map_add (f := _), map_add (f := _)]
   omega
 
 lemma biHom_one : biHom 0 (1 : MvPolynomial κ (MvPolynomial ι K)) := by
@@ -356,7 +362,7 @@ lemma biHom_shiftPoly (b : κ → ι → K) {d : ℕ} {Q : MvPolynomial ι K} (h
   have h1 : n.degree = d := by
     rw [← weight_one_eq]
     exact hQ (MvPolynomial.mem_support_iff.mp hn)
-  have h2 := biHom_mul (biHom_C (κ := κ) (MvPolynomial.isHomogeneous_C ι (MvPolynomial.coeff n Q)))
+  have h2 := biHom_mul (biHom_C (κ := κ) (MvPolynomial.isHomogeneous_C ι (AddMonoidAlgebra.coeff Q n)))
     (biHom_prod n.support (fun i => n i * 1) (fun i => shiftGen b i ^ n i)
       fun i _ => biHom_pow (biHom_shiftGen b i) (n i))
   simp only [mul_one, zero_add] at h2
@@ -370,7 +376,7 @@ section Integral
 variable (K ι κ : Type) [NormedField K] [IsUltrametricDist K]
 
 def biInt : Subring (MvPolynomial κ (MvPolynomial ι K)) where
-  carrier := {F | ∀ β, MvPolynomial.coeff β F ∈ Formalism.DworkPowerSeriesWeights.opInt K ι}
+  carrier := {F | ∀ β, AddMonoidAlgebra.coeff F β ∈ Formalism.DworkPowerSeriesWeights.opInt K ι}
   mul_mem' := by
     intro P Q hP hQ β
     classical
@@ -432,7 +438,7 @@ lemma X_mem_opInt (x : ι) : (MvPolynomial.X x : MvPolynomial ι K) ∈ Formalis
   split_ifs <;> simp
 
 lemma shiftPoly_mem_biInt [Fintype κ] (b : κ → ι → K) (Q : MvPolynomial ι K)
-    (hQ : ∀ n, ‖MvPolynomial.coeff n Q‖ ≤ 1) (hb : ∀ k x, ‖b k x‖ ≤ 1) :
+    (hQ : ∀ n, ‖AddMonoidAlgebra.coeff Q n‖ ≤ 1) (hb : ∀ k x, ‖b k x‖ ≤ 1) :
     shiftPoly b Q ∈ biInt K ι κ := by
   rw [shiftPoly_expand]
   refine Subring.sum_mem _ fun n _ => Subring.mul_mem _ (C_mem_biInt (C_mem_opInt (hQ n)))
@@ -462,7 +468,7 @@ section DegLE
 variable {κ R : Type} [CommRing R]
 
 def degLE (W : Finset κ) (n : ℕ) (F : MvPolynomial κ R) : Prop :=
-  ∀ β, MvPolynomial.coeff β F ≠ 0 → ∑ k ∈ W, β k ≤ n
+  ∀ β, AddMonoidAlgebra.coeff F β ≠ 0 → ∑ k ∈ W, β k ≤ n
 
 lemma degLE_zero (W : Finset κ) (n : ℕ) : degLE W n (0 : MvPolynomial κ R) := by
   intro β h
@@ -475,7 +481,7 @@ lemma degLE_add {W : Finset κ} {n : ℕ} {F G : MvPolynomial κ R} (hF : degLE 
     (hG : degLE W n G) : degLE W n (F + G) := by
   intro β h
   rw [MvPolynomial.coeff_add] at h
-  by_cases h1 : MvPolynomial.coeff β F = 0
+  by_cases h1 : AddMonoidAlgebra.coeff F β = 0
   · rw [h1, zero_add] at h
     exact hG β h
   · exact hF β h1
@@ -715,7 +721,8 @@ lemma degLE_minor_row (W : Finset κ) (ξ0 : Fin r0 → K) (hW : ∀ k ∈ W, ξ
   convert key using 2
   refine Matrix.ext fun i c => ?_
   simp only [Matrix.of_apply, shiftGen]
-  rw [hφ, RingHom.comp_apply, map_sum, map_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hφ, RingHom.comp_apply, map_sum, map_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [← Finset.sum_add_sum_compl W, Finset.mul_sum, mul_add, mul_add, mul_add, Finset.mul_sum,
     Finset.mul_sum]

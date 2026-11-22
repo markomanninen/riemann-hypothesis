@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Core
 open scoped TensorProduct
@@ -50,7 +54,7 @@ private theorem fib_bij {R σ : Type} [CommRing R] (y : σ → R) (S BB : Type) 
       rw [← TensorProduct.add_tmul]
       apply hz
       have e : algebraMap S BB (sel (b1 + b2)) - algebraMap S BB (sel b1 + sel b2) = (b1 - algebraMap S BB (sel b1)) + (b2 - algebraMap S BB (sel b2)) - (b1 + b2 - algebraMap S BB (sel (b1 + b2))) := by
-        rw [map_add]
+        rw [map_add (f := _)]
         ring
       rw [e]
       exact sub_mem (add_mem (hsel b1) (hsel b2)) (hsel _))
@@ -78,7 +82,7 @@ private theorem fib_bij {R σ : Type} [CommRing R] (y : σ → R) (S BB : Type) 
       have e : algebraMap S BB (sel (algebraMap S BB s)) - algebraMap S BB s = -(algebraMap S BB s - algebraMap S BB (sel (algebraMap S BB s))) := by ring
       rw [e]
       exact neg_mem (hsel _)
-    | add u v hu hv => rw [map_add, map_add, hu, hv]
+    | add u v hu hv => rw [map_add (f := _), map_add (f := _), hu, hv]
   · intro t
     induction t using TensorProduct.induction_on with
     | zero => exact ⟨0, map_zero _⟩
@@ -90,7 +94,7 @@ private theorem fib_bij {R σ : Type} [CommRing R] (y : σ → R) (S BB : Type) 
     | add u v hu hv =>
       obtain ⟨a, ha⟩ := hu
       obtain ⟨c, hc⟩ := hv
-      exact ⟨a + c, by rw [map_add, ha, hc]⟩
+      exact ⟨a + c, by rw [map_add (f := _), ha, hc]⟩
 
 private theorem fib_dense {R σ : Type} [CommRing R] (y : σ → R) (f : R) (S BB : Type) [CommRing S] [Algebra R S]
     [IsLocalization.Away f S] [CommRing BB] [Algebra S BB] [Algebra R BB] [IsScalarTower R S BB]
@@ -147,7 +151,7 @@ theorem UpperTheory.V.Pa.Core.fibEquiv :
     | zero => rw [smul_zero, map_zero, smul_zero]
     | tmul s' x =>
       rw [TensorProduct.smul_tmul', smul_eq_mul, hrt, hrt, TensorProduct.smul_tmul', smul_eq_mul, map_mul]
-    | add u v hu hv => rw [smul_add, map_add, map_add, hu, hv, smul_add]
+    | add u v hu hv => rw [smul_add, map_add (f := _), map_add (f := _), hu, hv, smul_add]
   have hJ : Ideal.span (Set.range fun a => algebraMap R BB (y a)) = (Ideal.span (Set.range y)).map (algebraMap R BB) := by
     rw [Ideal.map_span, ← Set.range_comp]
     rfl
@@ -160,18 +164,18 @@ theorem UpperTheory.V.Pa.Core.fibEquiv :
     · intro m
       rw [zero_smul, map_zero]
     · intro a c _ _ ha hc m
-      rw [add_smul, map_add, ha, hc, add_zero]
+      rw [add_smul, map_add (f := _), ha, hc, add_zero]
     · intro a c _ hc m
       rw [smul_eq_mul, mul_comm, mul_smul, hc]
   let φ : MM →ₗ[BB] BB ⊗[R] X :=
     { toFun := fun m => rT (q m)
-      map_add' := fun a c => by rw [map_add, map_add]
+      map_add' := fun a c => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun b m => by
         obtain ⟨s, hs⟩ := fib_dense y f S BB hC b
         have e : b • m = s • m + (b - algebraMap S BB s) • m := by
           rw [← algebraMap_smul BB s m, ← add_smul, add_sub_cancel]
         show rT (q (b • m)) = b • rT (q m)
-        rw [e, map_add, map_smul, hL _ hs m, add_zero, hrtS]
+        rw [e, map_add (f := _), map_smul, hL _ hs m, add_zero, hrtS]
         conv_rhs => rw [show b = algebraMap S BB s + (b - algebraMap S BB s) by ring, add_smul, fib_tmul_zero y BB X hX _ hs, add_zero] }
   have hφ : Function.Surjective φ := by
     intro t

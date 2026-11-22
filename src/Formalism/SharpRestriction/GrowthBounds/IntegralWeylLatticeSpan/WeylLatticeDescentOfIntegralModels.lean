@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.RowActWeylMemDescentLattice
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.CoreDesc
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IsUnitDetBlockPreimage
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.RowActWeylMemDescentLattice
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.CoreDesc
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.IsUnitDetBlockPreimage
+
+@[expose] public section
 
 open MvPolynomial Matrix Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.Forms
 
@@ -55,7 +59,7 @@ theorem oddZ (m : ℕ) (lam : Fin (m + 1) → ℤ) (hlam : Antitone lam) (hodd :
 
 theorem detShift_eq {m : ℕ} (lam : DomWeight (m + 1)) : lam.detShift = lam.w (Fin.last m) := by
   unfold DomWeight.detShift
-  rw [dif_pos (Nat.succ_pos m)]
+  rw [dite_eq_left (Nat.succ_pos m)]
   rfl
 
 theorem natW_eq {m : ℕ} (lam : DomWeight (m + 1)) : lam.natW = nuOf lam.w := by
@@ -216,7 +220,7 @@ theorem span_to_int (hodd : ∀ (m : ℕ) (lam : Fin (m + 1) → ℤ), Antitone 
     obtain ⟨A, hA, e1⟩ := ha
     obtain ⟨B, hB, e2⟩ := hb
     exact ⟨A + B, add_mem hA hB, fun z => by
-      rw [map_add, map_add, map_add, Pi.add_apply, Pi.add_apply, e1 z, e2 z]⟩
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, e1 z, e2 z]⟩
   | smul r a _ ha =>
     obtain ⟨A, hA, e1⟩ := ha
     refine ⟨embLL r.1 • A, core_intSpanG_smul embLL R0 lam r.1 r.2 hA, fun z => ?_⟩
@@ -243,7 +247,7 @@ theorem int_to_span (hodd : ∀ (m : ℕ) (lam : Fin (m + 1) → ℤ), Antitone 
     obtain ⟨A, hA, e1⟩ := ha
     obtain ⟨B, hB, e2⟩ := hb
     exact ⟨A + B, add_mem hA hB, fun z => by
-      rw [map_add, map_add, map_add, Pi.add_apply, Pi.add_apply, e1 z, e2 z]⟩
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, e1 z, e2 z]⟩
   | neg a _ ha =>
     obtain ⟨A, hA, e1⟩ := ha
     exact ⟨-A, neg_mem hA, fun z => by

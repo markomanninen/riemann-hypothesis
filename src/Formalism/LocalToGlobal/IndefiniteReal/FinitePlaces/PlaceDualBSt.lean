@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceS
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceS
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ActSingleNeZero
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.EigenfunctionFiniteCoefficients
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.FirstSlotSliceSlotMixedCasimirZero
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IsCompactInvariantOrthogonalInf
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.DSId GlobalTheory.Jet
 open scoped InnerProductSpace ComplexOrder
@@ -112,7 +116,7 @@ theorem eword_coef (hσ : IsURepOn (UJset ε) σ) (hD : IsDer ε σ V E) (w : Li
         (Formalism.REAL.Eword ε w (fun x => ⟪y, σ x (v : H)⟫_ℂ)) g +
       Complex.I * Formalism.REAL.Rd (Formalism.REAL.cpart2 ε (Matrix.single p.1 p.2 1))
         (Formalism.REAL.Eword ε w (fun x => ⟪y, σ x (v : H)⟫_ℂ)) g = _
-    rw [r1, r2, key, Submodule.coe_add, Submodule.coe_smul, map_add, map_smul, inner_add_right,
+    rw [r1, r2, key, Submodule.coe_add, Submodule.coe_smul, map_add (f := _), map_smul, inner_add_right,
       inner_smul_right]
 
 theorem exp_zero_smul (X : Matrix (Fin n) (Fin n) ℂ) : NormedSpace.exp (((0 : ℝ) : ℂ) • X) = 1 := by
@@ -200,12 +204,14 @@ theorem flow_stable (hσ : IsURepOn (UJset ε) σ) (hD : IsDer ε σ V E) {X : M
       ∑ i, b.repr y i • σ g (((b i : W) : V) : H) = σ g ((y : V) : H) := by
     intro g y
     conv_rhs => rw [← b.sum_repr y]
-    simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
   have e2 : ∀ (g : Matrix (Fin n) (Fin n) ℂ) (y : W),
       ∑ i, b.repr y i • σ g ((act E X ((b i : W) : V) : V) : H) = σ g ((act E X (y : V) : V) : H) := by
     intro g y
     conv_rhs => rw [← b.sum_repr y]
-    simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
   have hφ : ∀ t : ℝ, HasDerivAt (fun s : ℝ => σ (NormedSpace.exp ((s : ℂ) • X)) (((u s : W) : V) : H)) 0 t := by
     intro t
     have hsum : HasDerivAt (fun s : ℝ => ∑ i, b.repr (u s) i • σ (NormedSpace.exp ((s : ℂ) • X)) (((b i : W) : V) : H))
@@ -279,9 +285,8 @@ theorem diag_inK (ε : Fin n → Bool) (θ : Fin n → ℝ) :
       Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, ← Matrix.diagonal_zero]
     congr 1
     funext a
-    simp only [Pi.star_apply, star_mul', Complex.star_def, Complex.conj_ofReal, Complex.conj_I, Pi.add_apply,
-      Pi.zero_apply]
-    ring
+    simp [star_mul, Complex.conj_ofReal, Complex.conj_I]
+    split_ifs <;> ring
   · rw [Formalism.REAL.Jm, Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
     congr 1
     funext a

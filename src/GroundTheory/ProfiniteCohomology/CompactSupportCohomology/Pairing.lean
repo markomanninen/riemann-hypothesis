@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
-import GroundTheory.ProfiniteCohomology.FilteredHomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CompactSupportCohomology.HomApplyHomApplyEqOfCompEq
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -201,7 +206,7 @@ theorem LeibnizPairing.homology_δ_add_homology_δ
   have e : μ₁.cycles h₁ x₁ y₃ + (-1 : k) ^ r • μ₃.cycles h₃ x₃ y₁ =
       (P.toCycles (r + s) (r + s + 1)).hom (μ.μ rfl x₂ y₂) := by
     apply iCycles_hom_injective P
-    rw [map_add, map_smul, LeibnizPairing.iCycles_cycles, LeibnizPairing.iCycles_cycles,
+    rw [map_add (f := _), map_smul, LeibnizPairing.iCycles_cycles, LeibnizPairing.iCycles_cycles,
       iCycles_toCycles_hom_apply, μ.leibniz, ← hx₁, ← hy₁, h₁₂, h₂₃, hx₂, hy₂]
   rw [e, homologyπ_toCycles_hom_apply]
 

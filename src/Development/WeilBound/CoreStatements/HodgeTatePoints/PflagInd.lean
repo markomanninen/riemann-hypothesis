@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PluckerCoord
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.TrivFlagKills
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHsymmShift
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwistedDualGensExist
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NumericalSegreClosed
-import Development.WeilBound.CoreStatements.IdealCycleValues.ProjIdealIndependentOfBasis
-import Development.WeilBound.CoreStatements.HodgeTatePoints.PflagZ
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TrivFlagMod
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.PluckerCoord
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBundles
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SameGenericSymm
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHsymmShift
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwistedDualGensExist
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSymmetricSpanHsymm
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NumericalSegreClosed
+public import Development.WeilBound.CoreStatements.IdealCycleValues.ProjIdealIndependentOfBasis
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.PflagZ
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
@@ -24,7 +28,8 @@ theorem aeval_neg_hsymm (N a : ℕ) :
   have hneg : (fun i : Fin N => (-X i : MvPolynomial (Fin N) ℝ)) = fun i => C (-1) * X i := by
     funext i
     simp
-  simp only [hsymm, map_sum, map_multiset_prod, Multiset.map_map, Function.comp_def, aeval_X,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hsymm, map_sum, map_multiset_prod, Multiset.map_map, Function.comp_def, aeval_X,
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [hneg, Multiset.prod_map_mul, Multiset.map_const', Multiset.prod_replicate, ← map_pow]
@@ -59,7 +64,7 @@ private theorem genNum_add {N : ℕ} (b : Fin N → K → ℤ) (P P' : MvPolynom
     genNum_eq_sum_of_support_subset F K ι V b P' Q (P.support ∪ P'.support) Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [coeff_add, add_mul]
+  rw [MvPolynomial.coeff_add, add_mul]
 
 private theorem genNum_monomial {N : ℕ} (b : Fin N → K → ℤ) (m : Fin N →₀ ℕ) (c : ℝ)
     (Q : List (K → ℤ)) : genNum F V b (monomial m c) Q = c * intNumL F V (classList b m ++ Q) := by
@@ -80,9 +85,11 @@ private theorem genNum_mul {N : ℕ} (b : Fin N → K → ℤ) (G H : MvPolynomi
       monomial μ (G.coeff μ) * monomial ν (H.coeff ν) := by
     conv_lhs => rw [G.as_sum, H.as_sum]
     rw [Finset.sum_mul_sum]
-  rw [hG, hL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hG, hL, map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   unfold genNum
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun ν _ => ?_
@@ -301,7 +308,8 @@ theorem field_flag_indep : ∀ (F : Type) [Field F] (Ω : Type) [Field Ω] [Alge
     obtain ⟨μ, rfl⟩ := hx
     have hm : MvPolynomial.map (Int.castRingHom ℝ) (hsymmPart (Fin N) ℤ μ) =
         (μ.parts.map (hsymm (Fin N) ℝ)).prod := by
-      simp only [hsymmPart, hsymm, map_multiset_prod, Multiset.map_map, Function.comp_def, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hsymmPart, hsymm, map_multiset_prod, Multiset.map_map, Function.comp_def, map_sum,
         MvPolynomial.map_X]
       rfl
     rw [hm]
@@ -309,7 +317,7 @@ theorem field_flag_indep : ∀ (F : Type) [Field F] (Ω : Type) [Field Ω] [Alge
       (by rw [μ.parts_sum]; omega)
   | zero => simp [genNum]
   | add x z _ _ hx hz =>
-    rw [map_add, genNum_add, genNum_add, hx, hz]
+    rw [map_add (f := _), genNum_add, genNum_add, hx, hz]
   | smul n x _ hx =>
     rw [map_zsmul, ← Int.cast_smul_eq_zsmul ℝ, genNum_smul, genNum_smul, hx]
 

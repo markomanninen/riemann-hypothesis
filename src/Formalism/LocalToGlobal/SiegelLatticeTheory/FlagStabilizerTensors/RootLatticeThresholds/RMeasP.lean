@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RelPtR
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotMeasExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RootHaarLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RelPtR
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.QuotMeasExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,6 +45,7 @@ theorem isHaarOn_smul' {k r : ℕ} {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (
   · rw [Measure.smul_apply, hnull, smul_zero]
   · intro s hs'
     rw [Measure.map_smul, hinv s hs']
+    exact (Formalism.L2.SG.Pf.WFL.measurable_lmulM s).aemeasurable
 
 theorem rMeas_exact (D : D7) (W : LocW D.R.k D.R.rS) (hz : inWb D.R.k D.R.rS W.z) (hT : 0 < Tz D.R.k D.R.rS W.z)
     (hz' : inWb D.R.k D.R.rS W.z') (hT' : 0 < Tz D.R.k D.R.rS W.z')
@@ -78,6 +83,15 @@ theorem rMeas_exact (D : D7) (W : LocW D.R.k D.R.rS) (hz : inWb D.R.k D.R.rS W.z
   have hH0 : Formalism.MainNotions.S.IsHaarOn (Formalism.MainNotions.S.Rset D.R.k D.R.rS g₀) μ₀ := isHaarOn_smul' hH hKc0 hKc1
   have hmap0 : μ₀.map (rootCoords D.R.k D.R.rS W.z' p) = K • volume := by
     rw [hμ₀, Measure.map_smul, hmap, smul_smul, mul_assoc, ENNReal.inv_mul_cancel hc0 hc1, mul_one]
+    apply Continuous.aemeasurable
+    unfold Formalism.MainNotions.S.rootCoords
+    refine continuous_pi (fun q => ?_)
+    unfold flagMat
+    by_cases hi : q.1.1.val < D.R.rS
+    · simp only [hi, ↓reduceDIte]
+      fun_prop
+    · simp only [hi, ↓reduceDIte]
+      exact continuous_const
   have hid : μ₀.map (fun x => fun i j => ((1 : MatKR D.R.k D.R.rS)⁻¹ * Matrix.of x * 1) i j) = μ₀ := by
     have : (fun x : Mt D.R.k D.R.rS => fun i j => ((1 : MatKR D.R.k D.R.rS)⁻¹ * Matrix.of x * 1) i j) = id := by
       funext x i j

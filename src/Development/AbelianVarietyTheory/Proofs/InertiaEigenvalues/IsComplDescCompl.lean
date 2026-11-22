@@ -1,8 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DeterminantInTorus
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.BaseChangeInertUnramified
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+
+@[expose] public section
 
 namespace GlobalTheory.RetractionComplement
 
@@ -20,7 +27,8 @@ theorem exists_retraction : ∃ l : k' →ₗ[k] k, ∀ c : k, l (algebraMap k k
 theorem form_mulVec (l : k' →ₗ[k] k) (A : Matrix (Fin n) (Fin n) k) (x : Fin n → k') :
     (fun i => l ((A.map (algebraMap k k')).mulVec x i)) = A.mulVec (fun i => l (x i)) := by
   funext i
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← Algebra.smul_def, map_smul, smul_eq_mul]
 
@@ -28,7 +36,8 @@ theorem ext_mulVec (A : Matrix (Fin n) (Fin n) k) (v : Fin n → k) :
     (A.map (algebraMap k k')).mulVec (fun i => algebraMap k k' (v i))
       = fun i => algebraMap k k' (A.mulVec v i) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 def extSub (k' : Type) [Field k'] [Algebra k k'] (W : Submodule k (Fin n → k)) :
     Submodule k' (Fin n → k') :=
@@ -90,12 +99,12 @@ def descCompl (l : k' →ₗ[k] k) (W : Submodule k (Fin n → k)) (U : Submodul
     · funext i
       have a := congrFun h1 i
       have b := congrFun h1' i
-      simp only [Pi.add_apply, map_add] at a b ⊢
+      simp only [Pi.add_apply, map_add (f := _)] at a b ⊢
       rw [← a, ← b]; ring
     · funext i
       have a := congrFun h2 i
       have b := congrFun h2' i
-      simp only [Pi.add_apply, map_add, Pi.zero_apply] at a b ⊢
+      simp only [Pi.add_apply, map_add (f := _), Pi.zero_apply] at a b ⊢
       rw [a, b, add_zero]
   smul_mem' := by
     rintro c v ⟨x, hx, u, hu, h1, h2⟩

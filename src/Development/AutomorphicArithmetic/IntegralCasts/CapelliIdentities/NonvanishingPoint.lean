@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.NonvanishingPoint.exists_point_nonvanishing_reduced :
     ∀ (k : Type) [inst : Field k] [IsAlgClosed k] (B : Type)
@@ -19,7 +23,11 @@ theorem UpperTheory.Reformulated.B.NonvanishingPoint.exists_point_nonvanishing_r
   obtain ⟨m, ⟨-, hm⟩, hcm⟩ := hcj
   letI : Field (B ⧸ m) := Ideal.Quotient.field m
   haveI : Module.Finite k (B ⧸ m) := finite_of_finite_type_of_isJacobsonRing k (B ⧸ m)
-  let f : (B ⧸ m) →ₐ[k] k := IsAlgClosed.lift
+  let f : (B ⧸ m) →ₐ[k] k := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨f.comp (Ideal.Quotient.mkₐ k m), ?_⟩
   intro h
   apply hcm

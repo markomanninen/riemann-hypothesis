@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffOneSubstOfConstantCoeffEqZero
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SemilinNormPowSubPow
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffOneSubstOfConstantCoeffEqZero
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.SemilinNormPowSubPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ theorem FrobField.funEqSetting_sq [CompleteSpace K] (h : FrobField K l σ) :
     FunctionalEquationSetting K l (l ^ 2) (σ.comp σ) :=
   ⟨h.prime, ⟨2, two_pos, rfl⟩, h.norm_l, fun a ha => h.norm_sq_sub_pow_le a ha⟩
 
-omit [IsUltrametricDist K] [CharZero K] in
 
+omit [IsUltrametricDist K] [CharZero K] in
 theorem ltLog_sub_eq_X (hl : 2 ≤ l) (τ : K →+* K) :
     ltLog K l - (l : K)⁻¹ • (PowerSeries.map τ (ltLog K l)).subst ((X : PowerSeries K) ^ (l ^ 2))
       = X := by
@@ -43,7 +47,7 @@ theorem ltLog_sub_eq_X (hl : 2 ≤ l) (τ : K →+* K) :
   have hpow : ∀ j, coeff ((l ^ 2) ^ j) (ltLog K l) = ((l : K) ^ j)⁻¹ := by
     intro j
     have hex : ∃ i : ℕ, (l ^ 2) ^ j = (l ^ 2) ^ i := ⟨j, rfl⟩
-    rw [Formalism.L2.Th1.CM.ltLog, PowerSeries.coeff_mk, dif_pos hex]
+    rw [Formalism.L2.Th1.CM.ltLog, PowerSeries.coeff_mk, dite_eq_left hex]
     have hf : Nat.find hex = j := (Nat.pow_right_injective hq (Nat.find_spec hex)).symm
     rw [hf]
   ext n
@@ -68,14 +72,14 @@ theorem ltLog_sub_eq_X (hl : 2 ≤ l) (τ : K →+* K) :
       rw [if_pos hd, hdiv, PowerSeries.coeff_map, hpow, hpow,
         if_neg hne, map_inv₀, map_pow, map_natCast, pow_succ (l : K) j, mul_inv]
       ring
-  · have h0 : coeff n (ltLog K l) = 0 := by rw [Formalism.L2.Th1.CM.ltLog, PowerSeries.coeff_mk, dif_neg hn]
+  · have h0 : coeff n (ltLog K l) = 0 := by rw [Formalism.L2.Th1.CM.ltLog, PowerSeries.coeff_mk, dite_eq_right hn]
     have hX : n ≠ 1 := fun h => hn ⟨0, by rw [h, pow_zero]⟩
     rw [h0, if_neg hX]
     split_ifs with hd
     · obtain ⟨m, rfl⟩ := hd
       have hm : ¬ ∃ j, m = (l ^ 2) ^ j := fun ⟨j, hj⟩ => hn ⟨j + 1, by rw [hj, pow_succ (l ^ 2) j, mul_comm]⟩
       rw [Nat.mul_div_cancel_left m (by omega), PowerSeries.coeff_map, Formalism.L2.Th1.CM.ltLog, PowerSeries.coeff_mk,
-        dif_neg hm, map_zero]
+        dite_eq_right hm, map_zero]
       simp
     · simp
 
@@ -84,8 +88,8 @@ theorem ltLog_type (hl : 2 ≤ l) (τ : K →+* K) : IsFunEqType l (l ^ 2) τ (l
   rw [ltLog_sub_eq_X hl τ]
   exact integralPS_X
 
-omit [IsUltrametricDist K] [CharZero K] in
 
+omit [IsUltrametricDist K] [CharZero K] in
 theorem isFunEqType_of_mv {p q : ℕ} (hq : q ≠ 0) (τ : K →+* K) (f : PowerSeries K)
     (h : IsFunEqTypeMv (ι := Unit) p q hq τ f) : IsFunEqType p q τ f := by
   unfold IsFunEqType IsFunEqTypeMv at *

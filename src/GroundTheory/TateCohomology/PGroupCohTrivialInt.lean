@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.PGroupCohTrivial
-import GroundTheory.TateCohomology.TateAddEquivAbelianizationTateClass
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.PGroupCohTrivial
+public import GroundTheory.TateCohomology.TateAddEquivAbelianizationTateClass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -36,7 +41,7 @@ theorem d₁₀_mapRange_addEquiv (e : A.V ≃+ B.V) (he : ∀ g a, e (A.ρ g a)
     (y : G →₀ A) : d₁₀ B (Finsupp.mapRange e (map_zero e) y) = e (d₁₀ A y) := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y₁ y₂ h₁ h₂ => simp only [Finsupp.mapRange_add (map_add e), map_add, h₁, h₂]
+  | add y₁ y₂ h₁ h₂ => simp only [Finsupp.mapRange_add (map_add e), map_add (f := _), h₁, h₂]
   | single g a => rw [Finsupp.mapRange_single, d₁₀_single, d₁₀_single, map_sub, he]
 
 theorem d₂₁_mapRange_addEquiv (e : A.V ≃+ B.V) (he : ∀ g a, e (A.ρ g a) = B.ρ g (e a))
@@ -44,7 +49,7 @@ theorem d₂₁_mapRange_addEquiv (e : A.V ≃+ B.V) (he : ∀ g a, e (A.ρ g a)
     d₂₁ B (Finsupp.mapRange e (map_zero e) c) = Finsupp.mapRange e (map_zero e) (d₂₁ A c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c₁ c₂ h₁ h₂ => simp only [Finsupp.mapRange_add (map_add e), map_add, h₁, h₂]
+  | add c₁ c₂ h₁ h₂ => simp only [Finsupp.mapRange_add (map_add e), map_add (f := _), h₁, h₂]
   | single g a =>
     rw [Finsupp.mapRange_single, d₂₁_single, d₂₁_single, Finsupp.mapRange_add (map_add e),
       Finsupp.mapRange_sub (map_sub e), Finsupp.mapRange_single, Finsupp.mapRange_single,

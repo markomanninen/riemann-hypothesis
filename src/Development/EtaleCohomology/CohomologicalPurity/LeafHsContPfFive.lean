@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafHsContPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafHsContPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -81,7 +85,7 @@ theorem leafHsFive : LeafHsFive := by
     refine ⟨IsFiltered.max k j2, hT _,
       Hs.pull q (opnMap (Spec.map (D.map (IsFiltered.leftToMax k j2))) _ _ (hD _)) (m + 1) i z +
       δ q _ m i (pull _ (opnMap (Spec.map (D.map (IsFiltered.rightToMax k j2))) _ _ (hD _)).left (tw q i) m w2), ?_⟩
-    rw [map_add, ← Hs.pull_comp',
+    rw [map_add (f := _), ← Hs.pull_comp',
       ← opnMap_tri (Spec.map (t.app _)) (Spec.map (D.map (IsFiltered.leftToMax k j2))) (eT _) _ _ _ (hT k) (hT _) (hD _),
       hδ.2.1 q _ _ _ (opn_mono _) (opn_mono _), ← pull_left_comp,
       ← opnMap_tri (Spec.map (t.app _)) (Spec.map (D.map (IsFiltered.rightToMax k j2))) (eT _) _ _ _ h2' (hT _) (hD _),

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightDerivativeRulePsi
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -42,13 +46,6 @@ theorem pl_lmul {t : ℕ} {f : ℂ → A} (c : A) (hf : PolyLe t f) : PolyLe t (
   dsimp only
   rw [hC, Finset.mul_sum]
   exact Finset.sum_congr rfl fun l _ => Algebra.left_comm _ _ _
-
-theorem pl_rmul {t : ℕ} {f : ℂ → A} (e : A) (hf : PolyLe t f) : PolyLe t (fun u => f u * e) := by
-  obtain ⟨C, hC⟩ := hf
-  refine ⟨fun l => C l * e, fun u => ?_⟩
-  dsimp only
-  rw [hC, Finset.sum_mul]
-  exact Finset.sum_congr rfl fun l _ => mul_assoc _ _ _
 
 theorem pl_mono {t : ℕ} {f : ℂ → A} (hf : PolyLe t f) : PolyLe (t + 1) f := by
   obtain ⟨C, hC⟩ := hf
@@ -109,7 +106,7 @@ theorem prod_poly : ∀ (t : ℕ) (c δ : Fin t → ℂ) (F : Fin t → A),
         algebraMap ℂ A (u ^ t) * ((algebraMap ℂ A (c 0 * δ 0) + F 0) *
           algebraMap ℂ A (∏ k : Fin t, δ k.succ)) := by
       rw [map_mul (algebraMap ℂ A) (u ^ t), Algebra.left_comm]
-    rw [add_mul u (c 0) (δ 0), map_add, add_assoc,
+    rw [add_mul u (c 0) (δ 0), map_add (f := _), add_assoc,
       mul_add (algebraMap ℂ A (u * δ 0) + (algebraMap ℂ A (c 0 * δ 0) + F 0)),
       add_mul (algebraMap ℂ A (u * δ 0)) _ (algebraMap ℂ A (u ^ t * ∏ k : Fin t, δ k.succ)),
       add_mul (algebraMap ℂ A (u * δ 0)) _ (Q u), e1, e2, e3]
@@ -136,10 +133,11 @@ theorem qminor_poly {n t : ℕ} (E : Fin n → Fin n → A) (a b : Fin t → Fin
   · unfold qminor
     refine Finset.sum_congr rfl fun σ _ => ?_
     simp only [hT]
-  · rw [Finset.mul_sum, map_sum]
-    refine Finset.sum_congr rfl fun σ _ => ?_
-    rw [mul_left_comm (u ^ t) (((Equiv.Perm.sign σ : ℤ) : ℂ)),
-      map_mul (algebraMap ℂ A) (((Equiv.Perm.sign σ : ℤ) : ℂ)), map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [Finset.mul_sum, map_sum]
+      refine Finset.sum_congr rfl fun σ _ => ?_
+      rw [mul_left_comm (u ^ t) (((Equiv.Perm.sign σ : ℤ) : ℂ)),
+        map_mul (algebraMap ℂ A) (((Equiv.Perm.sign σ : ℤ) : ℂ)), map_intCast]
 
 end poly
 

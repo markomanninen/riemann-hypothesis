@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignPermutationIdentity
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -53,7 +57,7 @@ theorem zb_det (i0 s : ℕ) (h : Matrix (Fin i0) (Fin i0) ℂ) (t : ℂ) :
       rw [hsub, ih, sgnW_succ']
       have he : Zb i0 (s + 1) h t i0 (i0 + s) = t := by
         simp only [Zb]
-        rw [dif_neg (lt_irrefl _), if_pos (by omega)]
+        rw [dite_eq_right (lt_irrefl _), if_pos (by omega)]
       simp only [Matrix.of_apply, Fin.val_last]
       rw [he]
       rw [show i0 + (i0 + s) = 2 * i0 + s by ring, pow_add, pow_mul]
@@ -64,7 +68,7 @@ theorem zb_det (i0 s : ℕ) (h : Matrix (Fin i0) (Fin i0) ℂ) (t : ℂ) :
       have he : Zb i0 (s + 1) h t i0 j = 0 := by
         have := j.isLt
         simp only [Zb]
-        rw [dif_neg (lt_irrefl _), if_neg (by omega)]
+        rw [dite_eq_right (lt_irrefl _), if_neg (by omega)]
       simp only [Matrix.of_apply]
       rw [he, mul_zero, zero_mul]
     · intro hn

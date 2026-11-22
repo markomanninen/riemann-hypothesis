@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DgMatOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.CtLevel
 open scoped Classical TensorProduct
 
@@ -29,8 +34,8 @@ theorem one_matrix_apply_mem_subring {R : Type} [CommRing R] (O : Subring R) {m 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 theorem character_det_integralGL_eq_one_of_unramified (w : Pl E) (μ : (w.adicCompletion E)ˣ →* ℂˣ)
-    (hμ : ∀ u ∈ GlobalTheory.LFun.KGL w 1, μ (GeneralLinearGroup.det u) = 1) {m : ℕ} (k : GLw m w)
-    (hk : k ∈ GlobalTheory.LFun.KGL w m) : μ (GeneralLinearGroup.det k) = 1 := by
+    (hμ : ∀ u ∈ GlobalTheory.LFun.KGL w (n := 1), μ (GeneralLinearGroup.det u) = 1) {m : ℕ} (k : GLw m w)
+    (hk : k ∈ GlobalTheory.LFun.KGL w (n := m)) : μ (GeneralLinearGroup.det k) = 1 := by
   set d := GeneralLinearGroup.det k
   let u : GL (Fin 1) (w.adicCompletion E) := Units.map (Matrix.scalar (Fin 1)).toMonoidHom d
   have hu : GeneralLinearGroup.det u = d := by
@@ -51,13 +56,13 @@ end GlobalTheory.BCT.CtLevel
 namespace GlobalTheory.BCT.CtLevel
 
 theorem lev_KGL_of_unram : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a b n : ℕ) (h : a + b = n)
-    (w : Pl E) (μ : (w.adicCompletion E)ˣ →* ℂˣ), (∀ u ∈ GlobalTheory.LFun.KGL w 1, μ (GeneralLinearGroup.det u) = 1) →
-    lev₁ h w (GlobalTheory.LFun.KGL w n) μ = GlobalTheory.LFun.KGL w a ∧ lev₂ h w (GlobalTheory.LFun.KGL w n) μ = GlobalTheory.LFun.KGL w b := by
+    (w : Pl E) (μ : (w.adicCompletion E)ˣ →* ℂˣ), (∀ u ∈ GlobalTheory.LFun.KGL w (n := 1), μ (GeneralLinearGroup.det u) = 1) →
+    lev₁ h w (GlobalTheory.LFun.KGL w (n := n)) μ = GlobalTheory.LFun.KGL w (n := a) ∧ lev₂ h w (GlobalTheory.LFun.KGL w (n := n)) μ = GlobalTheory.LFun.KGL w (n := b) := by
   intro E _ _ _ a b n h w μ hμ
   constructor
   · refine le_antisymm (fun x hx => hx.1.1) fun k hk => ⟨⟨hk, ?_⟩, character_det_integralGL_eq_one_of_unramified w μ hμ k hk⟩
     obtain ⟨h1, h2⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 hk
-    show dgM h w (k, 1) ∈ GlobalTheory.LFun.KGL w n
+    show dgM h w (k, 1) ∈ GlobalTheory.LFun.KGL w (n := n)
     refine GlobalTheory.AdelicU.mem_GLint_iff.2 ⟨fun i j => ?_, fun i j => ?_⟩
     · rw [dgM_val]
       exact blockDiagonalMatrixOfAddEq_entries_mem_subring _ h _ _ h1 (one_matrix_apply_mem_subring _) i j
@@ -65,7 +70,7 @@ theorem lev_KGL_of_unram : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
       exact blockDiagonalMatrixOfAddEq_entries_mem_subring _ h _ _ h2 (fun i j => by simpa using one_matrix_apply_mem_subring (Ov E w) i j) i j
   · refine le_antisymm (fun x hx => hx.1.1) fun k hk => ⟨⟨hk, ?_⟩, character_det_integralGL_eq_one_of_unramified w μ hμ k hk⟩
     obtain ⟨h1, h2⟩ := GlobalTheory.AdelicU.mem_GLint_iff.1 hk
-    show dgM h w (1, k) ∈ GlobalTheory.LFun.KGL w n
+    show dgM h w (1, k) ∈ GlobalTheory.LFun.KGL w (n := n)
     refine GlobalTheory.AdelicU.mem_GLint_iff.2 ⟨fun i j => ?_, fun i j => ?_⟩
     · rw [dgM_val]
       exact blockDiagonalMatrixOfAddEq_entries_mem_subring _ h _ _ (one_matrix_apply_mem_subring _) h1 i j

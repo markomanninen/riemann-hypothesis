@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import GroundTheory.GlobalFields.TateThesis.EulerFactors
-import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import GroundTheory.GlobalFields.TateThesis.EulerFactors
+public import GroundTheory.GlobalFields.TateThesis.FiniteOrderParams
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,11 +132,5 @@ def Supp : Prop :=
     ∃ (M : ℕ) (δ : ℝ), M ≠ 0 ∧ M₀ ∣ M ∧ 0 < δ ∧ ∀ κ : (adStd k).kGL ι,
       (∀ j, j ≠ i₀ → InM M (col i₀ κ.1 j).2) → (∀ w, 1 - δ < ‖(col i₀ κ.1 i₀).1 w‖ ^ 2) →
       ∃ p : (adStd k).kGL ι, p.1 ∈ stab 𝔸[k] {i₀} ∧ ∃ u ∈ U, κ = p * u
-
-def SphArch : Prop :=
-  ∀ (k : Type) [Field k] [NumberField k] (ι : Type) [Fintype ι] [DecidableEq ι],
-    ∃ (φ : 𝓢(ι → mixedSpace k, ℂ)) (φ₁ : 𝓢(Unit → mixedSpace k, ℂ)), φ 0 = 1 ∧ rd φ₁ (fun _ => 1) ≠ 0 ∧
-      (∀ t : InfiniteAdeleRing k, ∃ r : ℝ, 0 ≤ r ∧ rd φ₁ (fun _ => t) = r) ∧
-      ∀ v : ι → InfiniteAdeleRing k, UnitVec v → ∀ t : InfiniteAdeleRing k, rd φ (t • v) = rd φ₁ fun _ => t
 
 end PositivityTheory.RgEis.TF

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.VermaCoordEqZeroOfMemNPlusU
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -85,7 +90,8 @@ theorem exists_act {A : Type} [AddCommGroup A] [Module ℂ A] (G : Fin n → Fin
       map_lie' := fun {X Y} => by
         show L ⁅X, Y⁆ = ⁅L X, L Y⁆
         rw [eq_sum_E X, eq_sum_E Y]
-        simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, hE] }
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [sum_lie, lie_sum, smul_lie, lie_smul, map_sum, map_smul, hE] }
   refine ⟨UniversalEnvelopingAlgebra.lift ℂ ρ, fun i j => ?_⟩
   rw [e, UniversalEnvelopingAlgebra.lift_ι_apply]
   exact hL (i, j)

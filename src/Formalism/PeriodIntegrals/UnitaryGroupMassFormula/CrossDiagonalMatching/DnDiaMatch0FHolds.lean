@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DualSigmaApply
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DualSigmaApply
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,9 +14,9 @@ open NumberField IsDedekindDomain Matrix
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem dn_match_one (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (k : ℤ) (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hδ : IsDia T.cls0.lev (T.atT.eV v').1 (T.atT.eV v').2 k δ) (c c2 c1 c3 : (D.mem u).C.cls 0)
     (γd : GL (Fin (D.R.N 0)) D.host.E) (hγd : γd ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))) (κd : T.cls0.lev.U)
@@ -119,9 +123,9 @@ theorem dn_match_one (T : Forms0 D u) (v v' : (D.mem u).A.vT) (hvv : v ≠ v') (
   have hloc := local_unitary_of_matching_zero T v c3 c1 Γ hΓU hUΓ hPΓ hPdΓ hF
   exact matching_move_mem_level_zero T v c c1 c2 c3 γ.1 γ2.1 γd η η2 δ κ κ2 κd hs1 hs2 hδv h1 h2 hrel hloc
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem dnDiaMatch0F_holds (T : Forms0 D u) : DnDiaMatch0F T := by
   intro v v' hvv a k hk δ hδ c γd hγd κd hrel
   obtain ⟨hLc, hLd⟩ := diamond_lattice_transport T v' k δ hδ c ((D.fm u).dil 0 v' a c) γd hγd κd hrel

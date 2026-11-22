@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Pointwise
@@ -21,7 +25,7 @@ private lemma setIntegral_exp_linear_fundamentalDomain_eq_zero {V : Type}
     intro g v
     obtain ⟨z, hz⟩ := hint g g.2
     have hgv : (g +ᵥ v : V) = (g : V) + v := rfl
-    simp only [hf, hgv, map_add, hz]
+    simp only [hf, hgv, map_add (f := _), hz]
     push_cast
     rw [mul_add, Complex.exp_add]
     have : Complex.exp (2 * Real.pi * Complex.I * (z : ℂ)) = 1 := by
@@ -36,7 +40,7 @@ private lemma setIntegral_exp_linear_fundamentalDomain_eq_zero {V : Type}
     rw [hw, map_smul, smul_eq_mul]; field_simp
   have hshift : ∀ v, f (w + v) = -f v := by
     intro v
-    simp only [hf, map_add, hφw]
+    simp only [hf, map_add (f := _), hφw]
     push_cast
     rw [mul_add, Complex.exp_add]
     have : Complex.exp (2 * Real.pi * Complex.I * (1 / 2 : ℂ)) = -1 := by
@@ -63,9 +67,9 @@ private lemma setIntegral_exp_linear_fundamentalDomain_eq_zero {V : Type}
     rw [two_mul]; nth_rewrite 2 [h3]; ring
   simpa using h4
 
+
 open MeasureTheory in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.PoincareUnfold.unfold_poincare_fourier : ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V]
     [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] (μ : Measure V) [μ.IsAddHaarMeasure]
     (Γ : Type) [AddCommGroup Γ] (j : Γ →+ V), Function.Injective j → ∀ C : AddSubgroup Γ,
@@ -178,7 +182,7 @@ theorem _root_.GlobalTheory.PoincareUnfold.unfold_poincare_fourier : ∀ (V : Ty
       simp_rw [enorm_eq_nnnorm]
       refine ENNReal.tsum_coe_ne_top_iff_summable.2 ?_
       rw [← NNReal.summable_coe]
-      exact ha.subtype s
+      exact ha.subtype (· ∈ s)
   have hLHS : ∫ v in D, (∑' x, Q x * F (j x + v)) ∂μ = (∑ k, Q (t k)) * ∫ v, F v ∂μ := by
     have hDm : MeasurableSet D := ZSpan.fundamentalDomain_measurableSet _
     set e : Fin n × C → Γ := fun p => t p.1 + p.2 with he
@@ -200,7 +204,7 @@ theorem _root_.GlobalTheory.PoincareUnfold.unfold_poincare_fourier : ∀ (V : Ty
       intro v
       rw [← heinj.tsum_eq (hsupp v)]
       refine tsum_congr fun p => ?_
-      simp only [he, hg, map_add, hQper _ _ p.2.2, add_assoc]
+      simp only [he, hg, map_add (f := _), hQper _ _ p.2.2, add_assoc]
     have hunf : ∀ G : V → ℂ, Integrable G μ → ∫ v, G v ∂μ = ∑' c : C, ∫ v in D, G (j c + v) ∂μ := by
       intro G hG
       rw [hD.integral_eq_tsum' G hG,

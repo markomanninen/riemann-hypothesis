@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.BlockTypes
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacter
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TypedSecondBlockRestriction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.TwistStripLimits.BlockTypes
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAbsoluteCharacter
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TypedSecondBlockRestriction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,8 +211,8 @@ theorem hasType_of_tw {U : Submodule ℂ (Sm E N)} {z : ℂ} {K : Subgroup (GL (
   · have h1 := W.smul_mem (((chiDet N (Model.absC E z) g : ℂˣ) : ℂ))⁻¹ (hT.2 g)
     convert h1 using 1
     funext k
-    simp only [LinearEquiv.coe_coe, Pi.smul_apply, smul_eq_mul]
-    rw [hval, hinf, inv_mul_cancel_left₀ (Units.ne_zero _)]
+    simp only [Pi.smul_apply, smul_eq_mul, LinearEquiv.coe_coe, hval, hinf,
+      inv_mul_cancel_left₀ (Units.ne_zero _)]
 
 theorem blocks {K : Subgroup (GL (Fin (r + s)) (Af E))} {W : Submodule ℂ (Kinf E (r + s) → ℂ)}
     [FiniteDimensional ℂ W] {T : Finset (GL (Fin (r + s)) (Af E))}

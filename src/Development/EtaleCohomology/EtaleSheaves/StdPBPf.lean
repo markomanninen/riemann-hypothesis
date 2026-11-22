@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

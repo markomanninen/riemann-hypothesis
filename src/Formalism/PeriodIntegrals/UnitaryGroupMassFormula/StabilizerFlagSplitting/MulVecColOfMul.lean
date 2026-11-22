@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.PrjMulVecOfL
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.UnitR
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.SubFlag
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.PrjMulVecOfL
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerFlagSplitting.UnitR
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.C2
 
@@ -15,9 +19,6 @@ def Ym (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) :
 def Pm (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) : B.Mat k r :=
   Proj.prj (Hpk k r) (Ym k r z z' γ)
 
-lemma Ym_col (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (j) :
-    (fun i => Ym k r z z' γ i j) = gramVec k r z z' γ j := rfl
-
 lemma Ym_mulVec (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (c) :
     Ym k r z z' γ *ᵥ c = ∑ j, c j • gramVec k r z z' γ j := by
   ext i
@@ -25,7 +26,7 @@ lemma Ym_mulVec (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r
 
 lemma L_mulVec (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (v) (j) :
     (((Ym k r z z' γ)ᴴ * Hpk k r) *ᵥ v) j = herm (Hpk k r) v (gramVec k r z z' γ j) := by
-  simp only [herm, mulVec, dotProduct, mul_apply, conjTranspose_apply, Ym, of_apply, Finset.sum_mul,
+  simp only [herm, mulVec, dotProduct, Matrix.mul_apply, conjTranspose_apply, Ym, of_apply, Finset.sum_mul,
     Finset.mul_sum, mul_assoc]
   exact Finset.sum_comm
 
@@ -33,7 +34,7 @@ lemma gram_eq (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) 
     gramM k r z z' γ = (Ym k r z z' γ)ᴴ * Hpk k r * Ym k r z z' γ := by
   ext i j
   rw [gramM, ← L_mulVec]
-  simp only [mulVec, dotProduct, mul_apply, Ym, of_apply]
+  simp only [mulVec, dotProduct, Matrix.mul_apply, Ym, of_apply]
 
 lemma mem_U_iff (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (v) :
     v ∈ Uperp k r z z' γ ↔ ((Ym k r z z' γ)ᴴ * Hpk k r) *ᵥ v = 0 := by
@@ -82,14 +83,14 @@ lemma mul_eq_of_cols {m : Type*} [Fintype m] (k r : ℕ) (A : B.Mat k r)
     A * C = C := by
   ext i j
   have := congrFun (h j) i
-  simpa [mulVec, dotProduct, mul_apply] using this
+  simpa [mulVec, dotProduct, Matrix.mul_apply] using this
 
 lemma mulVec_col_of_mul {m : Type*} [Fintype m] (k r : ℕ) (A : B.Mat k r)
     (C : Matrix (Fin (2 * r + k + 1)) m ℂ) (h : A * C = C) (j : m) :
     A *ᵥ (fun i => C i j) = fun i => C i j := by
   ext i
   have := congrFun (congrFun h i) j
-  simpa [mulVec, dotProduct, mul_apply] using this
+  simpa [mulVec, dotProduct, Matrix.mul_apply] using this
 
 lemma flag_nilp {m N : ℕ} (g : Matrix (Fin N) (Fin N) ℂ) (v : Fin m → Fin N → ℂ)
     (hv : ∀ a, g *ᵥ v a - v a ∈ Submodule.span ℂ (Set.range fun b : {b : Fin m // b < a} => v b.1)) :
@@ -118,15 +119,21 @@ lemma flag_nilp_all {m N : ℕ} (g : Matrix (Fin N) (Fin N) ℂ) (v : Fin m → 
   rw [e, pow_add, ← mulVec_mulVec, flag_nilp g v hv a, mulVec_zero]
 
 lemma conj_pow {N : ℕ} (A G Gi : Matrix (Fin N) (Fin N) ℂ) (h1 : Gi * G = 1) (h2 : G * Gi = 1) :
-    ∀ p : ℕ, (Gi * A * G) ^ p = Gi * A ^ p * G
-  | 0 => by simp [h1]
-  | p + 1 => by
-    rw [pow_succ, conj_pow A G Gi h1 h2 p, pow_succ]
-    calc Gi * A ^ p * G * (Gi * A * G) = Gi * A ^ p * (G * Gi) * A * G := by noncomm_ring
-      _ = Gi * (A ^ p * A) * G := by rw [h2]; noncomm_ring
+    ∀ p : ℕ, (Gi * A * G) ^ p = Gi * A ^ p * G := by
+  intro p
+  induction p with
+  | zero => simp [h1]
+  | succ p ih =>
+    rw [pow_succ, ih, pow_succ]
+    calc
+      Gi * A ^ p * G * (Gi * A * G) = Gi * A ^ p * (G * Gi) * A * G := by
+        simp only [Matrix.mul_assoc]
+      _ = Gi * (A ^ p * A) * G := by
+        rw [h2]
+        simp only [Matrix.mul_one, Matrix.mul_assoc]
 
 lemma fvec_lt (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (a : Fin r) :
     fvec k r z ⟨a.val, by omega⟩ = bvec (eI k r a) := by
-  unfold fvec; rw [dif_pos a.isLt]
+  unfold fvec; rw [dite_eq_left a.isLt]
 
 end PI.StabSplit

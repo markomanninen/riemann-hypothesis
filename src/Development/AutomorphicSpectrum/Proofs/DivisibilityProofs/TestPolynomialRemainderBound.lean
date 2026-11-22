@@ -1,15 +1,19 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Imports
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.RestAt
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreePowerSumMulZeroStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RemainderTermSummableStatement
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TestPolynomialShiftTotalStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Antisymmetric.Statements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Imports
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.RestAt
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FlagDegreePowerSumMulZeroStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.RemainderTermSummableStatement
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TestPolynomialShiftTotalStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,7 +147,7 @@ variable {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ]
 def degFlL (N : ℕ) : RP Ψ N →ₗ[ℝ] ℝ where
   toFun := degFl
   map_add' a b := by
-    simp only [degFl, coeff_add, mul_add, Finset.sum_add_distrib]
+    simp only [degFl, MvPolynomial.coeff_add, mul_add, Finset.sum_add_distrib]
   map_smul' c a := by
     simp only [degFl, coeff_smul, smul_eq_mul, RingHom.id_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun _ _ => ?_
@@ -206,10 +210,6 @@ theorem rl_X (e : Ψ ≃ Fin f) (τ : Ψ) (i : Fin (j + k)) :
     rl e j k (X (τ, i)) = X (e τ, i) := by
   simp [rl]
 
-omit [Fintype Ψ] [DecidableEq Ψ] in
-theorem rli_X (e : Ψ ≃ Fin f) (τ : Fin f) (i : Fin (j + k)) :
-    rli e j k (X (τ, i)) = X (e.symm τ, i) := by
-  simp [rli]
 
 def flagI (e : Ψ ≃ Fin f) (j k : ℕ) : RestTerms.Roots f j k →ₗ[ℝ] ℝ :=
   (degFlL (j + k)).comp (rli e j k).toLinearMap
@@ -223,15 +223,16 @@ theorem flagI_rl (e : Ψ ≃ Fin f) (F : RP Ψ (j + k)) : flagI e j k (rl e j k 
 omit [Fintype Ψ] [DecidableEq Ψ] in
 theorem psumAt_eq (e : Ψ ≃ Fin f) (m : ℕ) (τ : Ψ) :
     RestTerms.psumAt f j k m (e τ) = rl e j k (pk τ m) := by
-  simp only [RestTerms.psumAt, pk, map_sum, map_pow, rl_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [RestTerms.psumAt, pk, map_sum, map_pow, rl_X]
 
-theorem isFlag (e : Ψ ≃ Fin f) (hf : Fintype.card Ψ = f) : RestTerms.IsFlagIntegral f j k (flagI e j k) where
-  kills m τ G h1 _ _ := by
+theorem isFlag (e : Ψ ≃ Fin f) (hf : Fintype.card Ψ = f) : RestTerms.IsFlagIntegral f j k (flagI e j k) := by
+  refine ⟨?_, ?_⟩
+  · intro m τ G h1 _ _
     obtain ⟨t, rfl⟩ := e.surjective τ
     rw [flagI_apply, psumAt_eq, map_mul, rli_rl]
     exact GlobalTheory.T.flag_degree_power_sum_mul_zero Ψ (j + k) t m _ h1
-  ne_zero := by
-    subst hf
+  · subst hf
     refine ⟨rl e j k (monomial (permExp fun _ => 1) 1), ?_, ?_⟩
     · have h := (isHomogeneous_monomial (R := ℝ) (1 : ℝ) (permExp_degree (Ψ := Ψ) (j + k))).rename_isHomogeneous
         (f := fun x : Ψ × Fin (j + k) => (e x.1, x.2))
@@ -248,10 +249,12 @@ theorem lie_eq (e : Ψ ≃ Fin f) (m : ℕ) (s : Ψ ⊕ Ψ) :
     RestTerms.lieClass f j k m (conv e s) = rl e j k (pLie j m s) := by
   cases s with
   | inl t =>
-    simp only [conv, RestTerms.lieClass, pLie, pkLow, sum_low, map_sum, map_pow, rl_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [conv, RestTerms.lieClass, pLie, pkLow, sum_low, map_sum, map_pow, rl_X]
     simp
   | inr t =>
-    simp only [conv, RestTerms.lieClass, pLie, sum_high, map_sum, map_pow, map_neg, rl_X, if_true]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [conv, RestTerms.lieClass, pLie, sum_high, map_sum, map_pow, map_neg, rl_X, if_true]
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun b _ => (neg_pow _ m).symm
 
@@ -263,10 +266,12 @@ theorem mu_eq (e : Ψ ≃ Fin f) (bot : Bool) (hbot : bot = decide (k ≤ j)) :
   by_cases h : k ≤ j
   · have hb : bot = true := by simp [hbot, h]
     rw [if_pos (by rw [hk]; exact h), hb]
-    simp only [RestTerms.smallPsum, if_true, sum_high, map_sum, rl_X, pow_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RestTerms.smallPsum, if_true, sum_high, map_sum, rl_X, pow_one]
   · have hb : bot = false := by simp [hbot, h]
     rw [if_neg (by rw [hk]; exact h), hb]
-    simp only [RestTerms.smallPsum, pkLow, sum_low, map_neg, map_sum, rl_X, pow_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [RestTerms.smallPsum, pkLow, sum_low, map_neg, map_sum, rl_X, pow_one]
     simp
 
 theorem fib_sg (e : Ψ ≃ Fin f) (bot : Bool) :
@@ -337,7 +342,8 @@ theorem finite_bound [Nonempty Ψ] (hj : 1 ≤ j) (hk : 1 ≤ k) (frob : ℕ →
       simp only [Q', smul_eq_C_mul]
       exact h3
     · rw [hrest, hQ.2, (Equiv.sum_comp e _).symm]
-      simp only [Q', map_sum, Finset.smul_sum, map_mul, Equiv.symm_apply_apply, psumAt_eq,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Q', map_sum, Finset.smul_sum, map_mul, Equiv.symm_apply_apply, psumAt_eq,
         mul_smul_comm]
   let σ : ℕ → ℕ → Fin (Fintype.card Ψ) → Fin (Fintype.card Ψ) × Bool :=
     fun p n τ => conv e (frob p (e.symm τ) (n - 1))
@@ -425,7 +431,7 @@ theorem testRest_bound : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ)
   have hlim : Tendsto (fun B : ℕ => ∑ τ, ∑ m ∈ Finset.Icc 1 (j + k),
       ∑ p ∈ (Finset.Ioc B₀ B).filter (fun p => p.Prime ∧ p ∉ bad), restTerm j p (frob p τ) m (Q τ m))
       atTop (𝓝 (∑ τ, ∑ m ∈ Finset.Icc 1 (j + k), restSum j bad frob B₀ τ m (Q τ m))) :=
-    tendsto_finset_sum _ fun τ _ => tendsto_finset_sum _ fun m _ =>
+    tendsto_finsetSum _ fun τ _ => tendsto_finsetSum _ fun m _ =>
       (GlobalTheory.T.remainder_term_summable Ψ (j + k) j bad frob τ m (Q τ m)).2 B₀
   refine le_of_tendsto hlim.abs (Eventually.of_forall fun B => ?_)
   have h := TestRest.finite_bound hj hk frob B₀ Q hB hQ

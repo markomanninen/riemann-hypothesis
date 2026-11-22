@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafThomCutDef
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafThomCutDef
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -49,19 +53,21 @@ def LeafExcP : Prop := Hyp → ∀ (q : ℕ) [NeZero q] (d : ℕ) (R : Type) [Co
   Φ.right = (prod.lift (Pj.pt (vec1 MvPolynomial.X)) (spMap MvPolynomial.C) :
     sp (MvPolynomial (Fin d) R) ⟶ PR (d + 1) 0 R) → Exc q Φ
 
-theorem inl_map {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl.inl P' ≫ dbl.map φ = φ.right ≫ dbl.inl P := pushout.inl_desc _ _ _
+theorem inl_map {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl.inl P' ≫ dbl.map φ = φ.right ≫ dbl.inl P := pushout.inl_desc (f := P'.hom) (g := P'.hom) _ _ _
 
-theorem inl_fold (P : Arrow Spc) : dbl.inl P ≫ dbl.fold P = 𝟙 _ := pushout.inl_desc _ _ _
+theorem inl_fold (P : Arrow Spc) : dbl.inl P ≫ dbl.fold P = 𝟙 _ := pushout.inl_desc (f := P.hom) (g := P.hom) _ _ _
 
 theorem map_comp {P'' P' P : Arrow Spc} (ψ : P'' ⟶ P') (φ : P' ⟶ P) : dbl.map (ψ ≫ φ) = dbl.map ψ ≫ dbl.map φ := by
-  refine pushout.hom_ext ?_ ?_
+  set_option synthInstance.maxHeartbeats 200000 in
+    refine pushout.hom_ext ?_ ?_
   · change dbl.inl _ ≫ _ = dbl.inl _ ≫ _
     rw [inl_map, ← Category.assoc, inl_map, Category.assoc, inl_map, Arrow.comp_right, Category.assoc]
   · change dbl.inr _ ≫ _ = dbl.inr _ ≫ _
     rw [dbl.inr_map, ← Category.assoc, dbl.inr_map, Category.assoc, dbl.inr_map, Arrow.comp_right, Category.assoc]
 
 theorem map_fold {P' P : Arrow Spc} (φ : P' ⟶ P) : dbl.map φ ≫ dbl.fold P = dbl.fold P' ≫ φ.right := by
-  refine pushout.hom_ext ?_ ?_
+  set_option synthInstance.maxHeartbeats 200000 in
+    refine pushout.hom_ext ?_ ?_
   · change dbl.inl _ ≫ _ = dbl.inl _ ≫ _
     rw [← Category.assoc, inl_map, Category.assoc, inl_fold, ← Category.assoc, inl_fold, Category.comp_id, Category.id_comp]
   · change dbl.inr _ ≫ _ = dbl.inr _ ≫ _

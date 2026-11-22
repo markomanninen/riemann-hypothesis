@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.TensorSpan
-import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
+module
+
+public import ReciprocityTheory.DualLattices.TensorSpan
+public import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
+
+@[expose] public section
 
 noncomputable section
 

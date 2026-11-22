@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxLengthLocalInvariantsTwistedFractionModIntege
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MaxLengthLocalInvariantsTwistedFractionModIntege
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations GlobalTheory.NLink
 open IsDiscreteValuationRing GlobalTheory.InvariantsKO
@@ -65,8 +69,9 @@ theorem h0_le (D : D7) (i : D.nd.Loc) (col : Finset (HeightOneSpectrum (𝓞 D.h
     obtain ⟨hw, hn⟩ := Finset.mem_product.mp hp
     obtain ⟨hn0, hnt⟩ := Finset.mem_Ioo.mp hn
     refine WithBot.coe_le_coe.mpr ((UpperTheory.N.lenUnit_invariants_le D i hl2 hs w (hcol w hw) n hn0).trans ?_)
-    have : padicValNat (D.nd.l i) n ≤ Nat.log (D.nd.l i) D.R.t :=
-      (padicValNat_le_nat_log _).trans (Nat.log_mono_right hnt.le)
+    have : padicValNat (D.nd.l i) n ≤ Nat.log (D.nd.l i) D.R.t := by
+      rw [Nat.padicValNat_def]
+      exact (multiplicity_le_nat_log n).trans (Nat.log_mono_right hnt.le)
     exact_mod_cast Nat.add_le_add_left this _
   exact_mod_cast key
 

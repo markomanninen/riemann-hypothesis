@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
-import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SkewExp
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.ClifMod
+public import Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.RealTraceClifford.SkewExp
+
+@[expose] public section
 
 noncomputable section
 
@@ -179,8 +183,10 @@ theorem UpperTheory.RealTr.derAt :
         have h1 := hcomp (X := X) x 0 _ (der0 hF' hγ x)
         simp only [hk] at h1
         have h2 := h1.unique (der0 hF hγ (t x))
-        rw [dX_apply, dX_apply, map_sum] at h2
-        simp only [map_sum, map_smul] at h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [dX_apply, dX_apply, map_sum] at h2
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul] at h2
         simp only [smul_sub, Finset.sum_sub_distrib]
         exact sub_eq_zero.2 h2) a b
       exact sub_eq_zero.1 this
@@ -188,8 +194,10 @@ theorem UpperTheory.RealTr.derAt :
       obtain ⟨X, hX, hkX⟩ := (skewExp n).2 k
       obtain ⟨γ, hγ, hm, h0⟩ := gam X hX
       have hI : ∀ y : N, t (dX F' X y) = dX F X (t y) := fun y => by
-        rw [dX_apply, dX_apply, map_sum]
-        simp only [map_sum, map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [dX_apply, dX_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul]
         exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by rw [ht a b y]
       have hz := zero_of hF hγ h0 (fun s => t (σ' (γ s) x) - σ (γ s) (t x))
         (fun s => by

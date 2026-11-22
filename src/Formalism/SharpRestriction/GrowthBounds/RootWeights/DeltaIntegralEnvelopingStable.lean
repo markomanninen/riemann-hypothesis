@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsIntegralWeightProjections
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsIntegralWeightProjections
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,8 +115,10 @@ theorem nabla_to_delta_maps_stable [CharZero (KK O)] [FiniteDimensional (KK O) V
           simp only [Module.End.mul_apply]
           rw [ih, hadx]
       obtain ⟨G, h, hh, hfy⟩ := mem_weight_sup_exists_finset_sum E (fun _ => True) (htop (f y))
-      rw [binomE, LinearMap.smul_apply, LinearMap.smul_apply, hprod, hfy, map_sum, Finset.smul_sum]
-      simp only [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [binomE, LinearMap.smul_apply, LinearMap.smul_apply, hprod, hfy, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.smul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun μ hμ => ?_
       have hμw := (hh μ hμ).2
@@ -146,7 +152,8 @@ theorem nabla_to_delta_maps_stable [CharZero (KK O)] [FiniteDimensional (KK O) V
       apply LinearMap.ext
       intro z
       obtain ⟨F, g, hg, rfl⟩ := mem_weight_sup_exists_finset_sum E (fun _ => True) (htop z)
-      rw [map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum]
       refine Finset.sum_congr rfl fun ν hν => ?_
       rw [hw ν _ (hg ν hν).2, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun ij _ => ?_

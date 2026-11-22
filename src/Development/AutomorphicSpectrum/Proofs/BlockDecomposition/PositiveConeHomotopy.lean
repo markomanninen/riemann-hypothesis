@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,13 +88,15 @@ theorem key_alg {W : Type*} [Ring W] [Algebra ℂ W] (tr : W →ₗ[ℂ] ℂ) (h
     rw [h, map_neg]
   have hsum : ∑ i, L2 i * e i = -∑ i, e i * L1 i := eq_neg_of_add_eq_zero_right hch
   have h3 : ∑ i, tr (Γ * Sv * (J * (L2 i * e i))) = -∑ i, tr (Γ * Sv * (J * (e i * L1 i))) := by
-    rw [← map_sum, ← map_sum, ← map_neg, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_sum, ← map_neg, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, hsum]
     simp only [mul_neg]
   have h4 : tr (Γ * Sv * ∑ i, x i • L1 i) =
       ∑ i, tr (Γ * Sv * (e i * J * L1 i)) + ∑ i, tr (Γ * Sv * (J * (e i * L1 i))) := by
     rw [← Finset.sum_add_distrib]
-    simp only [← map_add]
-    rw [← map_sum]
+    simp only [← map_add (f := _)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -100,12 +106,13 @@ theorem key_alg {W : Type*} [Ring W] [Algebra ℂ W] (tr : W →ₗ[ℂ] ℂ) (h
     rw [← mul_assoc J, ← add_mul, h]
     simp
   have h5 : tr (Γ * (∑ i, e i * Sv * c i) * k) = ∑ i, tr (Γ * e i * Sv * c i * k) := by
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     simp only [Finset.mul_sum, Finset.sum_mul, mul_assoc]
   rw [h5, h4, Finset.sum_add_distrib]
   congr 1
-  simp only [mul_add, map_add, h1, h2, Finset.sum_add_distrib, Finset.sum_neg_distrib, h3, neg_neg]
+  simp only [mul_add, map_add (f := _), h1, h2, Finset.sum_add_distrib, Finset.sum_neg_distrib, h3, neg_neg]
 
 section Analytic
 
@@ -144,7 +151,7 @@ theorem hasDerivAt_A (K : (I → ℝ) × (I → ℝ) → (V →L[ℂ] V)) (S : �
       (Γ * deriv S s * K (path o s v) + Γ * S s * fderiv ℝ K (path o s v) (v - o, 0)) s :=
     (hS.hasDerivAt.const_mul Γ).mul hKP
   have ht := trL.hasFDerivAt.comp_hasDerivAt s hm
-  rw [map_add] at ht
+  rw [map_add (f := _)] at ht
   exact ht
 
 set_option maxHeartbeats 1000000 in
@@ -174,7 +181,8 @@ theorem fderiv_b (K : (I → ℝ) × (I → ℝ) → (V →L[ℂ] V)) (A : V →
   have ht0 := (trL (V := V)).hasFDerivAt.comp v hm
   have ht : HasFDerivAt (fun v => trL (A * (∑ j, (v - o) j • c j) * K (path o s v))) _ v := ht0
   rw [ht.fderiv]
-  simp [hJa, hPd, add_comm]
+  set_option synthInstance.maxHeartbeats 400000 in
+    simp [hJa, hPd, add_comm]
 
 theorem contDiffOn_b {U : Set (I → ℝ)} (K : (I → ℝ) × (I → ℝ) → (V →L[ℂ] V)) (A : V →L[ℂ] V)
     (c : I → (V →L[ℂ] V)) (o : I → ℝ) (s : ℝ) (hK : ContDiffOn ℝ ∞ K (U ×ˢ U))
@@ -193,7 +201,8 @@ theorem clm_fst_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (L : (
     ext j
     · simp [Prod.fst_sum, Finset.sum_apply, Pi.single_apply]
     · simp [Prod.snd_sum]
-  rw [h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum]
   simp only [map_smul]
 
 end Analytic
@@ -245,7 +254,8 @@ theorem homot : PositivityTheory.RgBcC.Homot := by
     have h3 : (fun y => Γ * K y) = fun y => K y * Γ := funext hΓK
     rw [h3] at h1
     have h4 := congrArg (fun L => L w) (h1.unique h2)
-    simpa using h4
+    set_option synthInstance.maxHeartbeats 400000 in
+      simpa using h4
   have hdiv : ∀ s ∈ Icc (0 : ℝ) 1, ∫ v in C, D s v = 0 := by
     intro s hs
     set b : I → (I → ℝ) → ℂ := fun i v => trL (Γ * e i * S s * (∑ j, (v - o) j • c j) * K (path o s v)) with hb
@@ -274,7 +284,7 @@ theorem homot : PositivityTheory.RgBcC.Homot := by
           simp [Pi.single_apply]
         have h2 : fderiv ℝ K y (s • (Pi.single i 1 : I → ℝ), (Pi.single i 1 : I → ℝ)) =
             s • fderiv ℝ K y (Pi.single i 1, 0) + fderiv ℝ K y (0, Pi.single i 1) := by
-          rw [← map_smul, ← map_add]
+          rw [← map_smul, ← map_add (f := _)]
           simp
         rw [h1, ← hydef, h2] at h
         exact h
@@ -284,7 +294,7 @@ theorem homot : PositivityTheory.RgBcC.Homot := by
       rw [hSd s, ← hydef, clm_fst_eq]
     have hcalc : ∫ v in C, D s v = ∑ i, ∫ v in C, fderiv ℝ (b i) v (Pi.single i 1) := by
       rw [setIntegral_congr_fun hC.measurableSet (fun v hv => hpt v (hCU hv))]
-      refine integral_finset_sum _ fun i _ => ?_
+      refine MeasureTheory.integral_finsetSum _ fun i _ => ?_
       exact ((((hbd i).continuousOn_fderiv_of_isOpen hU le_rfl).clm_apply continuousOn_const).mono hCU).integrableOn_compact hC
     rw [hcalc]
     exact Finset.sum_eq_zero fun i _ => setIntegral_fderiv_eq_zero hU hCU hC (b i) (hbd i) (hz i) _

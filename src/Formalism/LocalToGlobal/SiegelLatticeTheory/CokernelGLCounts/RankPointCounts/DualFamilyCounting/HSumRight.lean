@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.PWOfInW
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.PWOfInW
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,28 +21,30 @@ variable {D : D7} (X : HidaSetting D) (X0 : Matrix (Fin D.R.rS) (Fin D.R.rS) D.h
 
 theorem h_sum_left (a : Fin D.R.rS → D.host.E) (x : Fin D.R.rS → (VS D).V) (y : (VS D).V) :
     (VS D).hT (∑ c, a c • x c) y = ∑ c, star (a c) * (VS D).hT (x c) y := by
-  simp [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, starRingEnd_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ₂, starRingEnd_apply]
 
 theorem h_sum_right (a : Fin D.R.rS → D.host.E) (x : Fin D.R.rS → (VS D).V) (y : (VS D).V) :
     (VS D).hT y (∑ c, a c • x c) = ∑ c, a c * (VS D).hT y (x c) := by
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem h_e_nF (hxs : ∀ b, InW X (xs b)) (c b : Fin D.R.rS) : (VS D).hT (X.eX c) (nF X X0 xs M b) = Ym X0 c b := by
   unfold nF om
-  rw [map_add, map_add, map_neg, h_sum_right, h_sum_right, h_sum_right]
+  rw [map_add (f := _), map_add (f := _), map_neg, h_sum_right, h_sum_right, h_sum_right]
   have hx1 : ∀ c d, (VS D).hT (X.eX c) (xs d) = 0 := fun c d => (hxs d c).1
   simp [X.ef, X.ee, hx1, Finset.sum_ite_eq]
 
 theorem h_f_nF (hxs : ∀ b, InW X (xs b)) (c b : Fin D.R.rS) : (VS D).hT (X.fY c) (nF X X0 xs M b) = (X0 * M) c b := by
   unfold nF om
-  rw [map_add, map_add, map_neg, h_sum_right, h_sum_right, h_sum_right]
+  rw [map_add (f := _), map_add (f := _), map_neg, h_sum_right, h_sum_right, h_sum_right]
   have hx2 : ∀ c d, (VS D).hT (X.fY c) (xs d) = 0 := fun c d => (hxs d c).2
   simp [X.ff, h_fe, hx2, Finset.sum_ite_eq]
 
 theorem h_xs_nF (hxs : ∀ b, InW X (xs b)) (c b : Fin D.R.rS) :
     (VS D).hT (xs c) (nF X X0 xs M b) = -∑ d, Ym X0 d b * (VS D).hT (xs c) (xs d) := by
   unfold nF om
-  rw [map_add, map_add, map_neg, h_sum_right, h_sum_right, h_sum_right]
+  rw [map_add (f := _), map_add (f := _), map_neg, h_sum_right, h_sum_right, h_sum_right]
   simp [(inW_left X (hxs c) _).1, (inW_left X (hxs c) _).2]
 
 theorem h_nF_left (a : Fin D.R.rS) (y : (VS D).V) :

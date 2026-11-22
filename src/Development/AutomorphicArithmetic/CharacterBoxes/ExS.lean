@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.DesignExistsOfChoices
-import Development.AutomorphicArithmetic.CharacterBoxes.Supply
+module
+
+public import Formalism.SharpRestriction.DesignExistsOfChoices
+public import Development.AutomorphicArithmetic.CharacterBoxes.Supply
+
+@[expose] public section
 
 noncomputable section
 

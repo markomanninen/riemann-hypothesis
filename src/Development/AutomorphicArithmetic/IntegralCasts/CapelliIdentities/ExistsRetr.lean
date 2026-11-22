@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace FiniteTypeOfFiniteProjectiveExtension
 
@@ -14,7 +18,8 @@ private lemma exists_retr {C D : Type*} [CommRing C] [CommRing D] [Algebra C D] 
         have := LinearMap.congr_fun hfg d
         simpa using this.symm
       conv_lhs => rw [e1, ← Finset.univ_sum_single (g d)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← map_smul]
       congr 1

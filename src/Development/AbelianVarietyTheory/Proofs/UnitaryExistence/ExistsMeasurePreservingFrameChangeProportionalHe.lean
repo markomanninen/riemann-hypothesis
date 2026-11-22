@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProbabilityMeasureAutQuotientNormalized
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProbabilityMeasureAutQuotientNormalized
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,15 +15,6 @@ open MeasureTheory Topology Matrix NumberField ReciprocityTheory.ChartRestrictio
 open scoped ENNReal
 
 variable {r : ℕ}
-
-def Sim (S g : Matrix (Fin r) (Fin r) ℂ) (c : ℂ) : Prop := gᵀ * S * g.map (starRingEnd ℂ) = c • S
-
-theorem Sim.mul {S g h : Matrix (Fin r) (Fin r) ℂ} {c d : ℂ} (hg : Sim S g c) (hh : Sim S h d) :
-    Sim S (g * h) (c * d) := by
-  unfold Sim at *
-  rw [Matrix.transpose_mul, Matrix.map_mul]
-  calc _ = hᵀ * (gᵀ * S * g.map (starRingEnd ℂ)) * h.map (starRingEnd ℂ) := by simp only [Matrix.mul_assoc]
-    _ = _ := by rw [hg, Matrix.mul_smul, Matrix.smul_mul, hh, smul_smul]
 
 set_option autoImplicit false in
 open MeasureTheory Topology Matrix NumberField in

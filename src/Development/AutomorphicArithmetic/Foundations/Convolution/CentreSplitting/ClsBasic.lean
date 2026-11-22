@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -14,14 +18,14 @@ theorem UpperTheory.ConvolutionTheory.Dp.clsBasic :
   refine ⟨fun φ hφ h => eq_zero_of_cuspVecL_eq_zero hφ (toLp_injective μ (h.trans (map_zero (toLp μ)).symm)),
     fun φ => (cuspToL2 μ φ).2, fun φ hφ ψ g h => ?_, fun φ _ => ?_⟩
   · have h1 := (hr φ).translate (retractOne g)
-    have e : (fun y : normOneGL K n => (φ : AdelicGLn.AdelicGL K n → ℂ) ((y * retractOne g : normOneGL K n) : AdelicGLn.AdelicGL K n)) =
-        fun y : normOneGL K n => (ψ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := funext fun y => by
+    have e : (fun y : normOneGL (K := K) (n := n) => (φ : AdelicGLn.AdelicGL K n → ℂ) ((y * retractOne g : normOneGL (K := K) (n := n)) : AdelicGLn.AdelicGL K n)) =
+        fun y : normOneGL (K := K) (n := n) => (ψ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := funext fun y => by
       have e1 : g = (retractOne g : AdelicGLn.AdelicGL K n) * centralSection K n (detModule K n g) := by
         rw [coe_retractOne, inv_mul_cancel_right]
       rw [h]
       conv_rhs => rw [e1, ← mul_assoc, apply_mul_centralSection_of_mem hφ]
       rfl
-    have h2 : IsContRep μ (RG μ g (clsL μ φ)) fun y : normOneGL K n => (ψ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := by
+    have h2 : IsContRep μ (RG μ g (clsL μ φ)) fun y : normOneGL (K := K) (n := n) => (ψ : AdelicGLn.AdelicGL K n → ℂ) (y : AdelicGLn.AdelicGL K n) := by
       rw [← e]
       exact h1
     exact Lp.ext ((hr ψ).ae_eq_quotFun.trans h2.ae_eq_quotFun.symm)

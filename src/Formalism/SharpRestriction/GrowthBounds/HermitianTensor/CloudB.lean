@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ProdMemHten
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LastNeZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ProdMemHten
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.LastNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ private theorem antitone_sub_wtPQ (mm ccl P Q : ℕ) (lam : Fin (mm + 1 + 1) →
   have hal' := a.isLt
   by_cases ha0 : a = 0
   · subst ha0
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     split_ifs with hb0 hbl
     · exact le_refl _
     · linarith
@@ -54,7 +58,7 @@ private theorem antitone_sub_wtPQ (mm ccl P Q : ℕ) (lam : Fin (mm + 1 + 1) →
       have ha2 : a.val < mm + 1 := by
         have : a.val ≠ mm + 1 := fun h => hal (Fin.ext (h.trans hlv.symm))
         omega
-      rw [if_neg ha0, if_neg hal]
+      rw [ite_eq_right ha0, ite_eq_right hal]
       split_ifs with hb0 hbl
       · exfalso
         have : b.val = 0 := by rw [hb0]; rfl
@@ -103,9 +107,9 @@ theorem restCloudLat_of (h1 : CloudOne) (hCO : CartanOnto) (hIso : CloudIsoP) : 
       (if s ∈ TT then weylDim mm (cloudAt lam0 s) else 1) (if s ∈ TT then ⌈kappaOneExponent p a (mm + 1)⌉₊ else 0) := by
     intro s
     by_cases hs : s ∈ TT
-    · rw [if_pos hs, if_pos hs]
+    · rw [ite_eq_left hs, ite_eq_left hs]
       exact posOK_at_top h1 R mm hmm TT a ccl aw bw lam0 A B hbase hdom hAB hc ⟨s, hs⟩
-    · rw [if_neg hs, if_neg hs, lamAt_dualW, lamAt_sub', tn_lamAt_zero lam0 s (hoff s hs),
+    · rw [ite_eq_right hs, ite_eq_right hs, lamAt_dualW, lamAt_sub', tn_lamAt_zero lam0 s (hoff s hs),
         lamAt_flat_off (mm + 1) A B s hs,
         lamAt_flat_off (mm + 1) (fun s : TT => A s + 2 * ccl) (fun s : TT => B s + 2 * ccl) s hs,
         lamAt_flat_off (mm + 1) (fun _ : TT => 2 * ccl) (fun _ : TT => 2 * ccl) s hs, sub_self, hdz]

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLm
-import Formalism.SharpRestriction.GlobalSchurBounds.AlcoveOf
+module
+
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLm
+public import Formalism.SharpRestriction.GlobalSchurBounds.AlcoveOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,7 +163,7 @@ theorem bTop_eq (D : D7) (u : D.what₂.Word) (τ : D.what₂.Tau) :
   have h := lam_entryR D u 0 (Nat.zero_le _) τ ⟨D.R.N 0 - 1, by omega⟩
   simp only [flipTwoThree.lamLiftN, Fin.val_mk, hk, ↓reduceIte] at h
   unfold MemberForms.bTop DomWeight.detShift
-  rw [dif_pos hN]
+  rw [dite_eq_left hN]
   push_cast
   rw [h, N_zero]
 

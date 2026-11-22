@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
-import GroundTheory.PAdicHodge.ACrisBdRInj
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AbsInvOf
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+public import GroundTheory.PAdicHodge.ACrisBdRInj
+
+@[expose] public section
 
 open CrystallineSemistableComparison UpperTheory.Ru.crystallineComparison
 
@@ -47,7 +51,8 @@ private theorem iC_galA {K : IntermediateField ℚ_[l] (PadicAlgCl l)} (g : K.fi
   exact PositivityTheory.LocInh.GaloisCommutant.cD_galCris g.1 a
 
 private theorem iC_zA (z : ℤ_[l]) : iC l (zA l z) = qQ l z := by
-  change algebraMap _ _ (ACris.iota ℂ_[l] l _) = algebraMap _ _ (algebraMap ℚ_[l] _ _)
+  change algebraMap (Formalism.Per6.BdRp l) (Formalism.Per6.BdR l) (ACris.iota ℂ_[l] l _) =
+    algebraMap (Formalism.Per6.BdRp l) (Formalism.Per6.BdR l) (algebraMap ℚ_[l] (Formalism.Per6.BdRp l) _)
   exact congrArg _ (ACris.iota_padicInt z)
 
 private theorem exists_lift {A C E : Type} [CommRing A] [CommRing C] [Field E] (t : A) (c : A →+* C)

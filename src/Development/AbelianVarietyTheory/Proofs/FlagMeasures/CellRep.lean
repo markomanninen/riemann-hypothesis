@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S
 open scoped ENNReal
 

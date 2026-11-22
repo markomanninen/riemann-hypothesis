@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,7 +10,7 @@ open NumberField MeasureTheory Matrix GlobalTheory.CuspRep GlobalTheory.JSW
 
 namespace GlobalTheory.JSW
 
-theorem measurable_smooth_comp_infGL {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+theorem measurable_smooth_comp_infGL {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     {X : Type} [MeasurableSpace X] (γ : X → GL (Fin a) (Cinf E))
     (hγ : Measurable (fun x => (γ x : Matrix (Fin a) (Fin a) (Cinf E)))) (φ : Sm E a) (g : GA E a) :
     Measurable (fun x => φ.1 (g * infGL E a (γ x))) := by
@@ -25,7 +29,7 @@ theorem measurable_smooth_comp_infGL {E : Type} [Field E] [NumberField E] [IsTot
   have h2 := hc.comp hγ'
   simpa [Function.comp_def, chart_val] using h2
 
-theorem kerOp_integrable_continuous : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (X : Type) [MeasurableSpace X] (ν : Measure X)
+theorem kerOp_integrable_continuous : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (X : Type) [MeasurableSpace X] (ν : Measure X)
     (k : X → ℂ) (γ : X → GL (Fin a) (Cinf E)), IsRapidInf ν k γ → ∀ φ : Sm E a, Continuous φ.1 →
     (∃ C : ℝ, ∀ g, ‖φ.1 g‖ ≤ C) →
       (∀ g, Integrable (fun x => k x * φ.1 (g * infGL E a (γ x))) ν) ∧ Continuous (kerOp ν k γ φ.1) := by
@@ -42,6 +46,7 @@ theorem kerOp_integrable_continuous : ∀ (E : Type) [Field E] [NumberField E] [
       rw [norm_mul]
       exact mul_le_mul_of_nonneg_left (hC _) (norm_nonneg _)
   refine ⟨fun g => Integrable.mono' hint (hm g) (hbd g), ?_⟩
+  set_option synthInstance.maxHeartbeats 200000 in
   exact continuous_of_dominated hm hbd hint (Filter.Eventually.of_forall fun x =>
     continuous_const.mul (hφc.comp (continuous_id.mul continuous_const)))
 

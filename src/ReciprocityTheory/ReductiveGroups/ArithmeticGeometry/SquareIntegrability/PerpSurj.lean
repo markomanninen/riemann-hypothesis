@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2.DimA
 
@@ -10,7 +14,7 @@ variable {H : Type*} [AddCommGroup H] (B : H →ₗ[ℤ] H →ₗ[ℤ] ℤ)
 
 theorem alt_swap (halt : ∀ h, B h h = 0) (x y : H) : B x y = -B y x := by
   have h := halt (x + y)
-  simp only [map_add, LinearMap.add_apply, halt, zero_add, add_zero] at h
+  simp only [map_add (f := _), LinearMap.add_apply, halt, zero_add, add_zero] at h
   linear_combination h
 
 def perp (e f : H) : Submodule ℤ H := LinearMap.ker (B.flip e) ⊓ LinearMap.ker (B.flip f)
@@ -28,7 +32,7 @@ theorem proj_mem (y : H) : y - B y f • e + B y e • f ∈ perp B e f := by
 
 def proj : H →ₗ[ℤ] perp B e f where
   toFun y := ⟨y - B y f • e + B y e • f, proj_mem B halt e f he y⟩
-  map_add' x y := by ext; simp only [map_add, LinearMap.add_apply, add_smul, Submodule.coe_add]; abel
+  map_add' x y := by ext; simp only [map_add (f := _), LinearMap.add_apply, add_smul, Submodule.coe_add]; abel
   map_smul' c x := by
     ext; simp only [map_smul, LinearMap.smul_apply, smul_eq_mul, Submodule.coe_smul, mul_smul,
       RingHom.id_apply, smul_add, smul_sub]
@@ -67,7 +71,7 @@ theorem perp_surj (hB : ∀ φ : H →ₗ[ℤ] ℤ, ∃ x, B x = φ) (φ : perp 
   have hxp : B x p = φ (proj B halt e f he p) := by
     rw [hx]; rfl
   rw [LinearMap.domRestrict₁₂_apply, proj_apply]
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply,
     LinearMap.smul_apply, hpe, hpf, smul_eq_mul, mul_zero, sub_zero, add_zero]
   rw [hxp, hproj]
 

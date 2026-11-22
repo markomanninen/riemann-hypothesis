@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GermSecRestrictGlobalAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GermSecRestrictGlobalAlgebraMap
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD GlobalTheory.CechDR GlobalTheory.HodgeCoh ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 open TensorProduct
@@ -21,7 +26,7 @@ private theorem beta_anti (x y : L ⊗[K] Ω[K⁄k]) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add, add_mul, mul_add]
+    rw [map_add (f := _), add_mul, mul_add]
     calc _ = (beta k K L a * beta k K L y + beta k K L y * beta k K L a) +
           (beta k K L b * beta k K L y + beta k K L y * beta k K L b) := by abel
       _ = 0 := by rw [ha, hb, add_zero]
@@ -29,7 +34,7 @@ private theorem beta_anti (x y : L ⊗[K] Ω[K⁄k]) :
     induction y using TensorProduct.induction_on with
     | zero => simp
     | add c d hc hd =>
-      rw [map_add, add_mul, mul_add]
+      rw [map_add (f := _), add_mul, mul_add]
       calc _ = (beta k K L (a ⊗ₜ ω) * beta k K L c + beta k K L c * beta k K L (a ⊗ₜ ω)) +
             (beta k K L (a ⊗ₜ ω) * beta k K L d + beta k K L d * beta k K L (a ⊗ₜ ω)) := by abel
         _ = 0 := by rw [hc, hd, add_zero]
@@ -45,7 +50,7 @@ private theorem beta_sq (x : L ⊗[K] Ω[K⁄k]) : beta k K L x * beta k K L x =
   induction x using TensorProduct.induction_on with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add, add_mul, mul_add, mul_add, ha, hb, zero_add, add_zero]
+    rw [map_add (f := _), add_mul, mul_add, mul_add, ha, hb, zero_add, add_zero]
     exact beta_anti k K L a b
   | tmul a ω =>
     simp only [beta, LinearMap.baseChange_tmul, Algebra.TensorProduct.tmul_mul_tmul]

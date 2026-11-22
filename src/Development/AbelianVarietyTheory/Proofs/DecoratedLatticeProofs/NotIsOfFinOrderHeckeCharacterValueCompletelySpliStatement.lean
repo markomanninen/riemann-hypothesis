@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NotIsOfFinOrderHeckeCharacterValueCompletelySpli
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IteratedLiftChains
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NotIsOfFinOrderHeckeCharacterValueCompletelySpli
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IteratedLiftChains
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions
 
 set_option maxHeartbeats 1000000 in

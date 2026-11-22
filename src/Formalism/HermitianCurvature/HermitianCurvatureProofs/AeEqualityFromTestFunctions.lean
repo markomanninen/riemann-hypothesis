@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementB
+module
+
+public import Formalism.HermitianCurvature.StatementB
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Set
 open scoped ENNReal

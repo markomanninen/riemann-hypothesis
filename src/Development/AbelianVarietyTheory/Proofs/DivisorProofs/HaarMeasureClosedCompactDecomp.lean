@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure Topology Pointwise
 open scoped ENNReal NNReal
@@ -155,9 +159,9 @@ end GlobalTheory.HaarQK
 
 namespace GlobalTheory
 
+
 open GlobalTheory.HaarQK in
 attribute [local instance] secondCountable_subgroup in
-
 theorem lintegral_haar_eq_mul_iterated_closed_compact :
     ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G]
     [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] (μ : Measure G) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]

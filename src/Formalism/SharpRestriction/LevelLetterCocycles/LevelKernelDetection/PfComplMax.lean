@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.TeichOnto
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.TeichOnto
+
+@[expose] public section
 
 noncomputable section
 

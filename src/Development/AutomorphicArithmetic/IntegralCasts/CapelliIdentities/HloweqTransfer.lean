@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Re4.Jm :
     {n : Nat} → (Fin n → Bool) → Matrix (Fin n) (Fin n) Complex :=

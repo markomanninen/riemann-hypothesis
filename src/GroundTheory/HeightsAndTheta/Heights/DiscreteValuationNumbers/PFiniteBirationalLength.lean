@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFiniteAlgebraLengthSum
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PLengthDecomp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreDegreeCut
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PFiniteAlgebraLengthSum
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PLengthDecomp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -18,7 +23,7 @@ namespace FiniteBirationalLength
 theorem length_quot_maximal_eq_inertiaDeg {A B : Type*} [CommRing A] [IsLocalRing A] [CommRing B]
     [Algebra A B] [Module.Finite A B] (𝔫 : Ideal B) [𝔫.IsMaximal] :
     Module.length A (B ⧸ 𝔫) = (𝔫.inertiaDeg A : ℕ∞) := by
-  have hmax : (𝔫.under A).IsMaximal := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal 𝔫
+  have hmax : (𝔫.under A).IsMaximal := Ideal.isMaximal_under_of_isIntegral_of_isMaximal 𝔫
   have hm : 𝔫.under A = maximalIdeal A := IsLocalRing.eq_maximalIdeal hmax
   have : 𝔫.LiesOver (maximalIdeal A) := ⟨hm.symm⟩
   let : Field (A ⧸ maximalIdeal A) := Ideal.Quotient.field _

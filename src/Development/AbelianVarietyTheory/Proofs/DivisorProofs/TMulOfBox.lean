@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.Mum
@@ -56,7 +61,7 @@ theorem tMul_of_box : ∀ (R : Type) [CommRing R] [IsDomain R] (D D₁ D₂ : De
   have B0 := B (χ + χ')
   have Ba := B χ
   have Bb := B χ'
-  rw [map_add, map_add, cPoint_add,
+  rw [map_add (f := _), map_add (f := _), cPoint_add,
     show P * (cP D T χ * cP D T χ') = cP D T χ * cP D T χ' * P from mul_comm _ _] at B0
   rw [show P * cP D T χ = cP D T χ * P from mul_comm _ _] at Ba
   rw [show P * cP D T χ' = cP D T χ' * P from mul_comm _ _] at Bb

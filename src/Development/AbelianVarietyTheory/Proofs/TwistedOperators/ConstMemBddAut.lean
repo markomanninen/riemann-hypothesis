@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 def KerGL {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) {r : ℕ} (N : ℕ) (z : ℂˣ)
     (φ : GL (Fin r) (w.adicCompletion E) → ℂ) : Prop :=
   ∀ ϖ, IsUnifV E w ϖ → ∀ (d : Fin r → ℤ) (t : GL (Fin r) (w.adicCompletion E)), t.1 = Matrix.diagonal (fun i => ϖ ^ d i) →
-    ∀ k₁ ∈ KGL w r, ∀ k₂ ∈ KGL w r,
+    ∀ k₁ ∈ KGL w (n := r), ∀ k₂ ∈ KGL w (n := r),
       φ (k₁ * t * k₂) = (z : ℂ) ^ (∑ i, d i) * (qV E w : ℂ) ^ (-((N : ℂ) / 2) * ((∑ i, |d i| : ℤ) : ℂ))
 
 def KerU {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] {σ : L →+* L} {r : ℕ} (ϖ : L) (q N : ℕ) (z : ℂˣ)
@@ -65,11 +69,8 @@ def bddRep (V : HSp D) : Representation ℂ (GA D V) (bddAut V) :=
 
 theorem coe_bddRep (V : HSp D) (g : GA D V) (f : bddAut V) : (bddRep V g f : GA D V → ℂ) = rTr V g f := rfl
 
-theorem const_mem_bddAut (V : HSp D) (c : ℂ) : (fun _ => c) ∈ bddAut V :=
-  ⟨continuous_const, fun _ _ _ => rfl, ‖c‖, fun _ => le_rfl⟩
 
 open Classical in
-
 def levDatum (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D)) (LT : LevDat D.host.E ℂ T.rank)
     (Q : Finset (Pl D.host.E)) (m : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) (e : AE D) : WO S T → ℂ :=
   fun x => if IsHalf (cA D e) x ∧ IsIntM (frMapAdj S T βS βT x) then
@@ -85,9 +86,6 @@ theorem isLevelVec_iff {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} {S T : H
       IsVacO ψ θ S T (fun _ => 1) sT ΛS ΛT f₀ ∧ ∃ e : AE D, IsIdemSum e (LT.Pg ∪ Q) ∧
         IsThetaAt ψ (symplO S T) (heisO ψ S T) (cA D e) (latO S T ΛS ΛT fun _ => True) 1 f₀ (levDatum S T βS βT LT Q m e) f :=
   Iff.rfl
-
-example {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (N : ℕ) (z : ℂˣ) :
-    KerGL (r := 0) w N z fun _ => 1 := fun _ _ _ _ _ _ _ _ _ => by simp
 
 end GlobalTheory.FinZeta
 

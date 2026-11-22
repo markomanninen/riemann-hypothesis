@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitProjAdeleComponentChartProperties
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceMatrixCoordinateOnHalf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitProjAdeleComponentChartProperties
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceMatrixCoordinateOnHalf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor GlobalTheory.StepVec
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -26,10 +31,10 @@ theorem gl_map_val {n : ℕ} {R S : Type} [CommRing R] [CommRing S] (f : R →+*
 
 end GlobalTheory.StepVec.HalfCmp
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.StepVec.HalfCmp in
-
 theorem GlobalTheory.StepVec.onHalf_viaRed_eq_locFn : ∀ (D : D7) (v : FinPl D) (φ : SplitProj D v) (e : AE D) (PP : Formalism.L2.DIV.Pl D.host.E)
     (r : v.adicCompletionIntegers D.host.F →+* Formalism.L2.DIV.kP PP), IsIdemOf φ e → IsProjAt φ PP → IsRedMap φ PP r →
     ∀ (S T : HSp D) (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D))
@@ -73,11 +78,11 @@ theorem GlobalTheory.StepVec.onHalf_viaRed_eq_locFn : ∀ (D : D7) (v : FinPl D)
       exact (hr.2.2.2 (N i j) (h i j)).1
   unfold viaRed
   by_cases hI : IsIntM N
-  · rw [dif_pos (hiff.2 hI), if_pos ⟨hh, hI⟩]
+  · rw [dite_eq_left (hiff.2 hI), if_pos ⟨hh, hI⟩]
     congr 1
     ext i j
     obtain ⟨hm, hm'⟩ := hr.2.2.2 (N i j) (hI i j)
     simp only [Matrix.of_apply, Matrix.map_apply]
     unfold redM
-    rw [dif_pos (hI i j), ← hm']
-  · rw [dif_neg (fun h => hI (hiff.1 h)), if_neg (fun h => hI h.2)]
+    rw [dite_eq_left (hI i j), ← hm']
+  · rw [dite_eq_right (fun h => hI (hiff.1 h)), if_neg (fun h => hI h.2)]

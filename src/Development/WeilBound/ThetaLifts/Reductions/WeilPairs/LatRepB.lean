@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+
+@[expose] public section
 
 noncomputable section
 

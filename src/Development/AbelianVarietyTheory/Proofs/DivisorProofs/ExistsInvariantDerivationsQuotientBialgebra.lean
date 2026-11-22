@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantDerivationOfCounitalComul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInvariantDerivationOfCounitalComul
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -43,10 +48,10 @@ theorem quotient_base_change_invariant_derivations :
         simp only [smul_eq_mul, smul_add, Algebra.smul_def]
         ring
       | add y₁ y₂ ih₁ ih₂ =>
-        rw [mul_add, map_add, ih₁, ih₂, map_add, map_add]
+        rw [mul_add, map_add (f := _), ih₁, ih₂, map_add (f := _), map_add (f := _)]
         ring
     | add x₁ x₂ ih₁ ih₂ =>
-      rw [add_mul, map_add, ih₁, ih₂, map_add, map_add]
+      rw [add_mul, map_add (f := _), ih₁, ih₂, map_add (f := _), map_add (f := _)]
       ring
   choose D hD using key
   refine ⟨D, fun i a => ?_⟩

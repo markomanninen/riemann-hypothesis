@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.CapTwo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.LieX0EqRaisingLowering
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.Sl2Low
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.RnStmt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.CapTwo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.LieX0EqRaisingLowering
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.Sl2Low
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,23 +42,23 @@ private theorem low_of {V : Type} [AddCommGroup V] [Module ℂ V] (A B C J : Mod
         rw [hJB, hJC]
         linear_combination (norm := module) -h3
       · have h3 := congrArg J h2
-        simp only [map_add, map_smul, map_zero] at h3
+        simp only [map_add (f := _), map_smul, map_zero] at h3
         rw [hJA, hJB, hJC]
         linear_combination (norm := module) (2 : ℂ) • h3
   · ext x
-    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add, map_sub, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add (f := _), map_sub, map_smul,
       hAB, hAC, hBC]
     match_scalars <;> grind
   · ext x
-    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add, map_sub, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add (f := _), map_sub, map_smul,
       hAB, hAC, hBC]
     match_scalars <;> grind
   · ext x
-    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add, map_sub, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add (f := _), map_sub, map_smul,
       Module.End.one_apply, hAB, hAC, hBC, hCas]
     match_scalars <;> grind
   · ext x
-    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add, map_sub, map_smul,
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply, map_add (f := _), map_sub, map_smul,
       Module.End.one_apply, hAB, hAC, hBC, hCas]
     match_scalars <;> grind
   · intro x y

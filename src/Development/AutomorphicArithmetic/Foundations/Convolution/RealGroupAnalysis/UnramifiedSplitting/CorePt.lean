@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdOm
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdHat
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WhTorus
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.FixTr
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdOm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.StdHat
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.WhTorus
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.HeckeExpl
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.FixTr
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.LcLaws
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -45,7 +49,7 @@ private theorem good_neg {K : Type} [Field K] [NumberField K] {v : P K} {χ : Kv
     fun x hx => h.2.2 x fun c hc => by simpa using hx (-c) (by simpa [IsInt] using hc)⟩
 
 private theorem kat_of_int {K : Type} [Field K] [NumberField K] {v : P K} {g : G1 K} (h : IntAt v g) :
-    Matrix.GeneralLinearGroup.map (cp v) (gl g) ∈ GlobalTheory.LFun.KGL v 2 := by
+    Matrix.GeneralLinearGroup.map (cp v) (gl g) ∈ GlobalTheory.LFun.KGL v (n := 2) := by
   refine GlobalTheory.AdelicU.mem_GLint_iff.2 ⟨fun i j => h i j, fun i j => ?_⟩
   rw [← map_inv, ← map_inv, Matrix.SpecialLinearGroup.SL2_inv_expl]
   have hn : ∀ i j, cp v (-g i j) ∈ Formalism.UG.Ov K v := fun i j => by
@@ -55,7 +59,7 @@ private theorem kat_of_int {K : Type} [Field K] [NumberField K] {v : P K} {g : G
   exacts [h 1 1, hn 0 1, hn 1 0, h 0 0]
 
 theorem UpperTheory.ConvolutionTheory.R2.H.corePt :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (v : P F) (ϖ : (Kv v)ˣ), IsU ϖ → Gd D.δ v → W.η.UnrAt v → W.η.val v = -1 →
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (v : P F) (ϖ : (Kv v)ˣ), IsU ϖ → Gd D.δ v → W.η.UnrAt v → W.η.val v = -1 →
       ∀ (Wt : GL (Fin 2) (A F) → ℂ) (α β : ℂˣ), EigAt v {α, β} Wt → (∀ b g, Wt (gl (nU b) * g) = ψ (-b) * Wt g) → ∀ φ : S4 F, Std v φ.1 →
       ∀ (a : (A F)ˣ), ∀ k ∈ KK F,
         ((ab (idl v ϖ ^ 2) : ℝ) : ℂ) * iw (fun g => Wt (dM (idl v ϖ ^ 2) * gl g) *
@@ -94,7 +98,7 @@ theorem UpperTheory.ConvolutionTheory.R2.H.corePt :
     rw [this]; field_simp
   have hηp' : ((W.η.1 (a * p⁻¹) : ℂˣ) : ℂ) = -W.η.1 a := by
     rw [map_mul, map_inv, Units.val_mul, Units.val_inv_eq_inv_val, hηp]; simp
-  have hcp : cp v (p : A F) = ϖ := by rw [s4, map_add, map_one, s3]; ring
+  have hcp : cp v (p : A F) = ϖ := by rw [s4, map_add (f := _), map_one, s3]; ring
   have hsc : dM (p ^ 2) * gl (mD (a * p) * k) = gl (mD a * k) * Matrix.GeneralLinearGroup.scalar (Fin 2) p := by
     have h2 : gl (mD a * k) * Matrix.GeneralLinearGroup.scalar (Fin 2) p = Matrix.GeneralLinearGroup.scalar (Fin 2) p * gl (mD a * k) :=
       Units.ext ((Matrix.scalar_commute _ (fun _ => Commute.all _ _) (gl (mD a * k)).val).eq.symm)

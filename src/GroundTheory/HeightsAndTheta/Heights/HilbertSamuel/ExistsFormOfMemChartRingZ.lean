@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingWeight
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwistIntersectionInt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsUnitApprox
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsConstantsRegular
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingWeight
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwistIntersectionInt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsUnitApprox
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsConstantsRegular
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -82,8 +87,8 @@ theorem coordProd_add (c : ∀ k, ι k) (d e : K → ℕ) :
   rw [← Finset.prod_mul_distrib]
   simp [pow_add]
 
-open Classical in
 
+open Classical in
 theorem exists_form_of_mem_chartRingZ {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω} {c : ∀ k, ι k}
     (hc : ∀ k, y ⟨k, c k⟩ ≠ 0) {s : Ω} (hs : s ∈ chartRingZ y c) :
     ∃ (d : K → ℕ) (G : MRing ι), IsMultiHomog G d ∧
@@ -111,7 +116,7 @@ theorem exists_form_of_mem_chartRingZ {Ω : Type} [Field Ω] {y : (Σ k, ι k) �
     · refine mh_add (mh_mul hG1 (mh_coordProd c d2)) ?_
       rw [add_comm d1 d2]
       exact mh_mul hG2 (mh_coordProd c d1)
-    · rw [coordProd_add, map_add, map_mul, map_mul, map_mul, e1, e2]
+    · rw [coordProd_add, map_add (f := _), map_mul, map_mul, map_mul, e1, e2]
       ring
   | mul s t _ _ hs ht =>
     obtain ⟨d1, G1, hG1, e1⟩ := hs

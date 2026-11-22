@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.PoincareConstantEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.RealObj
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,8 +48,11 @@ theorem sign_list_injective {K : Type} [Ring K] (r : ℕ) :
   | _, [], _ :: _, h => by simp [DataInst.signAux] at h
   | _, _ :: _, [], h => by simp [DataInst.signAux] at h
   | b, (s, t) :: xs, (s', t') :: ys, h => by
-    simp only [DataInst.signAux, List.cons.injEq, Prod.mk.injEq] at h
-    obtain ⟨⟨rfl, ht⟩, hr⟩ := h
+    change (s, (-1 : K) ^ (r + 1 - (b + s - 1)) * t) :: DataInst.signAux r (b + s) xs =
+      (s', (-1 : K) ^ (r + 1 - (b + s' - 1)) * t') :: DataInst.signAux r (b + s') ys at h
+    injection h with hst hr
+    injection hst with hs ht
+    subst s'
     have hu : IsUnit ((-1 : K) ^ (r + 1 - (b + s - 1))) := isUnit_one.neg.pow _
     rw [hu.mul_left_cancel ht, sign_list_injective r (b + s) xs ys hr]
 
@@ -54,14 +61,14 @@ theorem ptOfList_inj {D : Formalism.BasicNotions.D7} {i : ℕ} {x y : TB.Pt D.ho
   unfold DataInst.ptOfList at hx hy
   by_cases h1 : Formalism.L2.S.IsPtL (DataInst.signPt D.R.rS x) i
   · by_cases h2 : Formalism.L2.S.IsPtL (DataInst.signPt D.R.rS y) i
-    · rw [dif_pos h1] at hx
-      rw [dif_pos h2] at hy
+    · rw [dite_eq_left h1] at hx
+      rw [dite_eq_left h2] at hy
       have he := (Option.some.inj hx).trans (Option.some.inj hy).symm
       have hv := congrArg Subtype.val ((Formalism.L2.S.ptEquiv D.host.E i).symm.injective he)
       exact sign_list_injective D.R.rS 1 x y hv
-    · rw [dif_neg h2] at hy
+    · rw [dite_eq_right h2] at hy
       exact absurd hy (by simp)
-  · rw [dif_neg h1] at hx
+  · rw [dite_eq_right h1] at hx
     exact absurd hx (by simp)
 
 end Gen
@@ -72,18 +79,6 @@ variable {D : D7} (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word)
 
 def PtUniq : Prop :=
   ∀ (t : TermDef.Term D u u' (X.Fu u) (Y.what₂ u)) (w w' : Point D.host.E (D.R.rS + 1)), t.atPt w → t.atPt w' → w = w'
-
-def OONormLe (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (sc : ℝ) (i0 i0' : ∀ _ : InfinitePlace X.B.I.F, Fin D.R.k) (νq : X.B.I.Ginf → Measure X.B.I.Ginf) : Prop :=
-  ∀ (s : TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u')) (w : Point D.host.E (D.R.rS + 1)),
-    s.toTerm.generic → s.toTerm.G ≠ 0 → s.toTerm.atPt w →
-      |PairVal.vRdef D u u' (X.Fu u) (Y.what₂ u) δ M s.toTerm| *
-          ‖PackageTie.hsEmb (RealObj.unscaledOperatorAtPointRepresentative X u u' sc i0 i0' νq w)‖ ≤
-        ‖PackageTie.hsEmb (TermOp.OOt s)‖
-
-def AmpLower : Prop :=
-  ∃ c : ℝ, 0 < c ∧ ∀ s : TermOp.GTerm X u u' (X.Fu u) (X.Fu u') (Y.what₂ u) (Y.what₂ u'),
-    c * ‖PackageTie.hsEmb (TermOp.OOt s)‖ ≤ ‖(Y.tO u u').vec s‖
 
 def WeightBound (nc : ℝ) : Prop :=
   ∃ C : ℝ, ∀ (p : TB.Pt D.host.E) (w : Point D.host.E (D.R.rS + 1)), DataInst.ptOfList (D.R.rS + 1) p = some w →

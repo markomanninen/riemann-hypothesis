@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+
+@[expose] public section
 
 open NumberField
 open GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo UpperTheory.Gal.W2.Wit
@@ -15,7 +19,7 @@ private lemma den_coprime_of_mul_eq (p : ℕ) (u v : ℚ) (a b : ℕ) (hb : 0 < 
   have h1 : (Rat.divInt (a : ℤ) (b : ℤ)).den ∣ b := by exact_mod_cast Rat.den_dvd a b
   have h2 := Rat.mul_den_dvd u (Rat.divInt (a : ℤ) (b : ℤ))
   rw [← hv] at h2
-  exact Nat.Coprime.coprime_dvd_left (h2.trans (Nat.mul_dvd_mul_left _ h1)) (Nat.Coprime.mul hu hbp)
+  exact Nat.Coprime.coprime_dvd_left (h2.trans (Nat.mul_dvd_mul_left _ h1)) (Nat.Coprime.mul_left hu hbp)
 
 theorem UpperTheory.den_coprime_iff_of_mul_prime_to_p_ratio :
     ∀ (p : ℕ) [Fact p.Prime] (s s₁ : ℚ) (a b : ℕ), 0 < a → 0 < b → a.Coprime p → b.Coprime p → s₁ * a = s * b → ∀ y : ℚ, (s₁ * y).den.Coprime p ↔ (s * y).den.Coprime p := by

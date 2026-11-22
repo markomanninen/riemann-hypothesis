@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.FarguesExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTatePairingSandwich
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedInOfIntegers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSandwichOfPrismaticDieudonneStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupOmegaFiniteFreeAndPSqMemDlogSpanStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeAtOfPrismaticDieudonneAt
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCobOneOfIntegral
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.FarguesExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTatePairingSandwich
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedInOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateSandwichOfPrismaticDieudonneStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupOmegaFiniteFreeAndPSqMemDlogSpanStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PrismaticDieudonneAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCobOneOfIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem farguesExact_of_hodge (hP : GlobalTheory.Published.PrismaticDieudonneHod
       (TensorProduct.rid ℤ_[p] O) ((B₀.flip χ).baseChange O z) = B z (1 ⊗ₜ χ) := fun z χ => by
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
     | tmul c t =>
       obtain ⟨a, ha, hb⟩ := hB t χ
       have e : B₀ t χ = a := hζ.1 ((hB₀ t χ).symm.trans ha)
@@ -90,7 +94,7 @@ theorem farguesExact_of_hodge (hP : GlobalTheory.Published.PrismaticDieudonneHod
     have h2 : ∀ z, c * B x z = l (dlogLinear G z) := fun z => by
       induction z using TensorProduct.induction_on with
       | zero => simp
-      | add a b ha hb => simp only [map_add, mul_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), mul_add, ha, hb]
       | tmul d χ =>
         have h5 : (d ⊗ₜ χ : O ⊗[ℤ_[p]] G.dual.Tate) = d • (1 ⊗ₜ χ) := by
           rw [smul_tmul', smul_eq_mul, mul_one]

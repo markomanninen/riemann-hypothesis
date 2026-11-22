@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -98,8 +102,8 @@ theorem posDef_lower {κ : Type} [Fintype κ] (M : Matrix κ κ ℝ) (hM : M.Pos
 
 end GlobalTheory.TPos
 
-open GlobalTheory.TPos in
 
+open GlobalTheory.TPos in
 theorem GlobalTheory.HilbertThetaSeries.qf_totPos_proper : ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F] (κ : Type) [Fintype κ] [DecidableEq κ]
     (G : Matrix κ κ ℤ), EvenPos G → (∀ x : κ → F, x ≠ 0 → TP (QF G x)) ∧
       (∃ c : ℝ, 0 < c ∧ ∀ (x : κ → F) v, c * ∑ i, reAt v (x i) ^ 2 ≤ reAt v (QF G x)) ∧
@@ -146,15 +150,15 @@ theorem GlobalTheory.HilbertThetaSeries.qf_totPos_proper : ∀ (F : Type) [Field
     refine ⟨hzi, fun φ => ?_⟩
     rw [← NumberField.InfinitePlace.apply]
     set w := InfinitePlace.mk φ
-    have hxi : (DistribMulAction.toAddMonoidHom (κ → F) a z) i = a * z i := by simp
+    have hxi : (DistribSMul.toAddMonoidHom (κ → F) a z) i = a * z i := by simp
     have hwa : 0 < w a := (InfinitePlace.pos_iff).mpr ha
-    have hk := key (DistribMulAction.toAddMonoidHom (κ → F) a z) w
+    have hk := key (DistribSMul.toAddMonoidHom (κ → F) a z) w
     rw [hxξ] at hk
-    have h1 : reAt w ((DistribMulAction.toAddMonoidHom (κ → F) a z) i) ^ 2 ≤
-        ∑ j, reAt w ((DistribMulAction.toAddMonoidHom (κ → F) a z) j) ^ 2 :=
-      Finset.single_le_sum (f := fun j => reAt w ((DistribMulAction.toAddMonoidHom (κ → F) a z) j) ^ 2)
+    have h1 : reAt w ((DistribSMul.toAddMonoidHom (κ → F) a z) i) ^ 2 ≤
+        ∑ j, reAt w ((DistribSMul.toAddMonoidHom (κ → F) a z) j) ^ 2 :=
+      Finset.single_le_sum (f := fun j => reAt w ((DistribSMul.toAddMonoidHom (κ → F) a z) j) ^ 2)
         (fun j _ => sq_nonneg _) (Finset.mem_univ i)
-    have h2 : reAt w ((DistribMulAction.toAddMonoidHom (κ → F) a z) i) ^ 2 ≤ reAt w ξ / (c / 2) := by
+    have h2 : reAt w ((DistribSMul.toAddMonoidHom (κ → F) a z) i) ^ 2 ≤ reAt w ξ / (c / 2) := by
       rw [le_div_iff₀ (half_pos hc)]
       nlinarith
     have h3 := Real.abs_le_sqrt h2

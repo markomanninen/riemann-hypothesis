@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.KilEmpty
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.DixmierCommutants.KilEmpty
+
+@[expose] public section
 
 noncomputable section
 

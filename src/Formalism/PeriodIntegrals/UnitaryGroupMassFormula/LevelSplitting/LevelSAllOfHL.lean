@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LevelSAllOfSemiNHSHeisLev
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ModulusAllExtensions
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCAsmM
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.LevelSAllOfSemiNHSHeisLev
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.SemiTop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ModulusAllExtensions
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.NCAsmM
+
+@[expose] public section
 
 namespace PI.LevelKSplit.W.Top6
 

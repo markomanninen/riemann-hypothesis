@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BrStmt
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
-import Formalism.LocalToGlobal.GlobalTheory.EqGlobOfHat
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BrStmt
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+public import Formalism.LocalToGlobal.GlobalTheory.EqGlobOfHat
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGen
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocGlob
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,9 @@ theorem gramP_det_unit (D : D7) : IsUnit (gramP D).det := by
 
 theorem isLat_dlP (D : D7) (M : Submodule (𝓞 D.host.E) (Fin (D.R.N D.R.m - 1) → D.host.E)) (hM : Comp.IsLat M) :
     Comp.IsLat (Comp.dl (sigD D) (gramP D) M) := by
-  have hL : Submodule.IsLattice D.host.E M := ⟨Module.Finite.iff_fg.1 hM.1, hM.2⟩
-  obtain ⟨d, hd, hle⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.dual_le_bnd (sigD D : D.host.E →+* D.host.E) (gramP D) (gramP_det_unit D) M hL
+  have hL : Submodule.IsLattice D.host.E M := Submodule.IsLattice.of_fg _ (Module.Finite.iff_fg.1 hM.1)
+  have hFull : Submodule.IsFullLattice D.host.E M := { hL with span_eq_top := hM.2 }
+  obtain ⟨d, hd, hle⟩ := Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.dual_le_bnd (sigD D : D.host.E →+* D.host.E) (gramP D) (gramP_det_unit D) M hFull
   exact ⟨Module.Finite.iff_fg.2 (Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.fg_of_le_bnd hd hle),
     Formalism.L2.GlobalTheoryTheory.LocalLatticeBases.LocB.dual_span (sigD D : D.host.E →+* D.host.E) (gramP D) M hL⟩
 

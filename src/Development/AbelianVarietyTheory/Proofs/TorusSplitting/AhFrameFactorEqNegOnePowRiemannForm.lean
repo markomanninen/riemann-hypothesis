@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TorusSections.IsTorusOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.LocalToGlobal.ProjectiveLattices.NormsFree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.IsOrth
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TripleProductTorusPeriodicBounded
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree GlobalTheory.EtaForm GlobalTheory.EtaAn GlobalTheory.ArcQ
@@ -37,7 +41,7 @@ theorem prod_factor_eq_one {g : ℕ} {Ix K : Type} [Fintype K] {S : Set (Fin g �
     (LinearMap.toContinuousLinearMap (lam k)).differentiable
   let D : (K → Ix) → Set (Fin g → ℂ) := fun j => {z | ∀ k, lam k z ∈ W (j k)}
   have hDo : ∀ j, IsOpen (D j) := fun j => by
-    simp only [D, Set.setOf_forall]
+    simp only [D, Set.ofPred_forall]
     exact isOpen_iInter_of_finite fun k => (hWo (j k)).preimage (hld k).continuous
   have hcov : ∀ z, ∃ j, z ∈ D j := fun z => by
     choose a ha using hWc
@@ -71,7 +75,7 @@ theorem prod_factor_eq_one {g : ℕ} {Ix K : Type} [Fintype K] {S : Set (Fin g �
         Real.pi / 2 * ∑ k, (ε k : ℂ) * hermForm Hm (lam k l) (lam k l)) * ψ z := fun l hl z => by
     obtain ⟨j, hj⟩ := hcov z
     have hj' : z + l ∈ D j := fun k => by
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hWp _ (hΛ l hl k) _ _ (hj k)
     have c1 : F j z = (∏ k, χ (lam k l) ^ ε k) *
         Complex.exp (Real.pi * ∑ k, (ε k : ℂ) * hermForm Hm (lam k z) (lam k l) +
@@ -80,7 +84,7 @@ theorem prod_factor_eq_one {g : ℕ} {Ix K : Type} [Fintype K] {S : Set (Fin g �
       rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib, Complex.exp_sum,
         ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
       refine Finset.prod_congr rfl fun k _ => ?_
-      rw [hf _ (hΛ l hl k) (j k) (lam k z) (hj k), map_add, mul_zpow, mul_zpow,
+      rw [hf _ (hΛ l hl k) (j k) (lam k z) (hj k), map_add (f := _), mul_zpow, mul_zpow,
         ← Complex.exp_int_mul]
       congr 3
       ring
@@ -92,9 +96,9 @@ theorem prod_factor_eq_one {g : ℕ} {Ix K : Type} [Fintype K] {S : Set (Fin g �
     exact key _ _ _ _ (hF0 j z hj) (hF0 j _ hj') c1
   obtain ⟨h1, h2⟩ := form_eq_zero_and_const hS ψ hψ hψ0
     (fun z w => ∑ k, (ε k : ℂ) * hermForm Hm (lam k z) (lam k w))
-    (continuous_finset_sum _ fun k _ => continuous_const.mul
+    (continuous_finsetSum _ fun k _ => continuous_const.mul
       ((continuous_hermForm_self Hm).comp (hld k).continuous))
-    (fun z z' w => by simp only [map_add, hermForm_add_left, mul_add, Finset.sum_add_distrib])
+    (fun z z' w => by simp only [map_add (f := _), hermForm_add_left, mul_add, Finset.sum_add_distrib])
     (fun c z w => by
       simp only [map_smul, hermForm_smul_left, Finset.mul_sum]
       exact Finset.sum_congr rfl fun k _ => by ring)
@@ -177,8 +181,8 @@ theorem hol_slice {X : Scheme.{0}} {g : ℕ} (e : (Fin g → ℂ) → (Sp ℂ �
 
 end GlobalTheory.FrameSign
 
-open GlobalTheory.FrameSign GlobalTheory.CubeValues in
 
+open GlobalTheory.FrameSign GlobalTheory.CubeValues in
 theorem GlobalTheory.ahFrame_factor_eq_negOnePow : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (σ : KA l →+* ℂ) (g : ℕ) (ty : Fin g → (E →+* ℂ)) (Fu : FamilyUnif Xo σ ty) (i : Fin Fu.n) (Pm : (Fu.Di i).La →+ (Fin g → ℂ)) (Hm : Matrix (Fin g) (Fin g) ℂ) (χl : (Fin g → ℂ) → ℂ) (fr : Xo.univ.t.PP.L.ι → (Fin g → ℂ) → ℂ), IsPeriod (Fu.Di i) ty Pm → AHFrame Fu i Pm Hm χl fr → ∀ a, χl (Pm a) = ((Int.negOnePow ((Fu.Di i).EF a (H.w0 • a)) : ℤˣ) : ℤ) := by
   intro E _ _ _ H Dw l Xo σ g ty Fu i Pm Hm χl fr hP hF a
   obtain ⟨hH, -, him, hd, hne, hc, -, hf⟩ := hF
@@ -250,7 +254,8 @@ theorem GlobalTheory.ahFrame_factor_eq_negOnePow : ∀ (E : Type) [Field E] [Num
       rintro _ ⟨b, rfl⟩ (_ | ⟨I⟩)
       · exact ⟨b, rfl⟩
       · refine ⟨∑ s ∈ I.down, ![b, H.w0 • b] s, ?_⟩
-        simp only [lam0, Option.elim, map_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [lam0, Option.elim, map_sum, LinearMap.sum_apply]
         refine Finset.sum_congr rfl fun s _ => ?_
         fin_cases s
         · rfl
@@ -276,7 +281,7 @@ theorem GlobalTheory.ahFrame_factor_eq_negOnePow : ∀ (E : Type) [Field E] [Num
     have hj' : ⊤ ≤ (Fu.ex i Pm (Pm b)).left ⁻¹ᵁ Xo.univ.t.PP.L.U j := by
       rw [← zero_add (Pm b), hex]; exact hj
     have h3 := (hf (b + b') j 0).2 hj
-    rw [map_add] at h3 ⊢
+    rw [map_add (f := _)] at h3 ⊢
     exact factor_add hH (fr j) _ _ _ _ _ _ (him b b') (hne j 0 hj) ((hf b j 0).2 hj) ((hf b' j _).2 hj') h3
   have hn : ∀ b, χl (Pm b) ≠ 0 := fun b => by
     obtain ⟨j, -⟩ := hch 0

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -17,7 +21,7 @@ theorem exists_root_one (Ω : Type) [Field Ω] (p : ℕ) [hp : Fact p.Prime] [Ch
   let f : A →ₐ[Ω] AdjoinRoot P := IsScalarTower.toAlgHom Ω A (AdjoinRoot P)
   have hf : ∀ x, f x = AdjoinRoot.of P x := fun x => rfl
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     rw [hf, ← AdjoinRoot.mk_C, AdjoinRoot.mk_eq_zero] at hx
     by_contra hx0
@@ -76,7 +80,7 @@ theorem exists_root_one (Ω : Type) [Field Ω] (p : ℕ) [hp : Fact p.Prime] [Ch
       simp only [map_sub, map_mul, AdjoinRoot.mk_C, AdjoinRoot.mk_X, map_one] at this
       rw [hf, ← this]; ring
     have hx' : g (AdjoinRoot.mk P q) = 0 := hx
-    rw [h1, map_add, map_mul, map_sub, hgr, map_one, sub_self, zero_mul, add_zero, hg] at hx'
+    rw [h1, map_add (f := _), map_mul, map_sub, hgr, map_one, sub_self, zero_mul, add_zero, hg] at hx'
     rw [h1, Ideal.add_eq_sup]
     exact Submodule.add_mem_sup (Ideal.mem_map_of_mem _ hx')
       (Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _))

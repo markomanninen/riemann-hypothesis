@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuInf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.CyclotomicTotient.NuInf
+
+@[expose] public section
 
 namespace KStar.Tree
 
@@ -18,7 +22,7 @@ private theorem nuOf_mem (h : ∃ g, ε g ^ n ≠ 1) :
     intro h1
     apply hg
     ext
-    simpa using h1
+    exact congrArg (fun x : ℤ_[l] => (x : Padic l)) h1
   have hl0 : (l : ℤ_[l]) ≠ 0 := Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero
   obtain ⟨u, v, hxv⟩ : ∃ (u : ℤ_[l]ˣ) (v : ℕ), ((ε g : ℤ_[l]ˣ) : ℤ_[l]) ^ n - 1 = u * (l : ℤ_[l]) ^ v :=
     ⟨_, _, PadicInt.unitCoeff_spec hx⟩

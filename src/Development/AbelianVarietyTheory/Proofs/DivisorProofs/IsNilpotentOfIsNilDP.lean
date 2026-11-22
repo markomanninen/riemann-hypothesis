@@ -1,25 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubRedMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmallChartPairAlongLinearMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicPointExtOfIsSeparated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAnalyticChartsRealizationOfAffine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorPolynomialEvalAlgebraFormalProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdEqZeroOfSuccLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorPolynomialEvalAlgebraMulOfProdEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorHolomorphicExtOfValues
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CloseParamTaylorShift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Functor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TenFib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTaylorAlgHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TenContractTmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNilpotentOfComap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubRedMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmallChartPairAlongLinearMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolomorphicPointExtOfIsSeparated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAnalyticChartsRealizationOfAffine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorPolynomialEvalAlgebraFormalProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdEqZeroOfSuccLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TaylorPolynomialEvalAlgebraMulOfProdEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorHolomorphicExtOfValues
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CloseParamTaylorShift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Functor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TenFib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTaylorAlgHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TenContractTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsNilpotentOfComap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -80,7 +84,7 @@ theorem ev_red {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {W : Opens 
     π (Algebra.TensorProduct.lift (AlgHom.id ℂ D) ((Algebra.ofId ℂ D).comp (Hol.ev p hp)) (fun _ _ ↦ Commute.all _ _) x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul d c =>
     simp only [Algebra.TensorProduct.lift_tmul, map_mul, AlgHom.comp_apply, AlgHom.id_apply, Algebra.ofId_apply,
       AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply]
@@ -135,7 +139,8 @@ theorem main : ∀ {I : Type} [Fintype I] [DecidableEq I] {g : ℕ} {Λ : Type} 
     congrArg (algebraMap ℂ D') ((congrArg (Hol.ev z₀ hz₀) (hps i l)).trans ((Hol.ev z₀ hz₀).commutes _))
   have hfib := fun i => TenFib.ten_fib π' r₀ rfl κ hs' (io : D →+* D') hpio hnil (algebraMap ℂ D) φ hφ k io.commutes (cs i) (p i)
     (ps i) (q i) (hps i) (hq i) (hcs i K₀ r₀ hr₀)
-  rw [hdec, map_sum] at hfam
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hdec, map_sum] at hfam
   simp only [LinearMap.map_smulₛₗ, hfib] at hfam
   have hz : K₀.tenZ (∑ i, io (d i) • q i - τV.toAddMonoidHom.comp per) =
       ∑ i, io (d i) • K₀.tenZ (q i) - K₀.tenZ (τV.toAddMonoidHom.comp per) := by
@@ -146,16 +151,22 @@ theorem main : ∀ {I : Type} [Fintype I] [DecidableEq I] {g : ℕ} {Λ : Type} 
           funext T T' f
           exact (map_mul (algebraMap D' (T'.ten D')) _ _).trans (Algebra.smul_def _ _).symm) }
     change Z _ = ∑ i, io (d i) • Z _ - Z _
-    simp only [map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul]
   have := Charts.tenZ_eq_zero K₀ hrich ⟨z₀, hz₀⟩ (∑ i, io (d i) • q i - τV.toAddMonoidHom.comp per) (by
-    rw [hz, map_sub, ← hfam, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sub, ← hfam, map_sum]
     simp only [map_smul]
     exact sub_self _)
   have h1 := DFunLike.congr_fun (sub_eq_zero.1 this) l
   refine hio ?_
-  rw [← hT, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hT, map_sum]
   refine Eq.trans ?_ h1
-  rw [AddMonoidHom.finset_sum_apply]
-  exact Finset.sum_congr rfl fun i _ => by rw [map_mul, io.commutes, AddMonoidHom.smul_apply, hq, smul_eq_mul]
+  change _ = (AddMonoidHom.eval l) (∑ i, io (d i) • q i)
+  rw [map_sum]
+  exact Finset.sum_congr rfl fun i _ => by
+    change io (d i * algebraMap ℂ D (p i l)) = (io (d i) • q i) l
+    rw [map_mul, io.commutes, AddMonoidHom.smul_apply, hq, smul_eq_mul]
 
 end GlobalTheory.AnPer.TaylorCore

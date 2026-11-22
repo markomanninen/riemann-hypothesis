@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.HeisenbergActionAddOfOrthogonal
-import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.HeisenbergActionAddOfOrthogonal
+public import Development.WeilBound.ThetaLifts.FrameEstimates.GrpTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,16 +48,18 @@ theorem IsLift.ch (h : IsLift σ B lift) {a b : AE F E} (ha : At (evI F) a) {x y
 
 theorem pi_bA (h : IsLift σ B lift) (J : Matrix (Fin n) (Fin n) E) (x y : Fin n → AE F E) (w) : piInf (B.emb w) (bA σ J x y) =
     (fun i => piInf (B.emb w) (x i)) ⬝ᵥ J.map (B.emb w).1 *ᵥ fun i => conj (piInf (B.emb w) (y i)) := by
-  simp only [bA, dotProduct, Matrix.mulVec, map_sum, map_mul, h.conj, incM, Matrix.map_apply, h.incl]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [bA, dotProduct, Matrix.mulVec, map_sum, map_mul, h.conj, incM, Matrix.map_apply, h.incl]
+
 
 variable (B) in
-
 def xi (x : Fin n → E) {S : Subgroup (UA σ X.J)} (k : S) : InfinitePlace F → Fin n → ℂ :=
   fun w i => piInf (B.emb w) ((mat k.1⁻¹ *ᵥ incV F x) i)
 
 theorem cont_xi (h : IsLift σ B lift) (x : Fin n → E) (S : Subgroup (UA σ X.J)) : Continuous (xi B x (S := S)) := by
   refine continuous_pi fun w => continuous_pi fun i => ?_
-  simp only [xi, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [xi, Matrix.mulVec, dotProduct, map_sum, map_mul]
   refine continuous_finsetSum _ fun j _ => ((h.cont w).comp ?_).mul continuous_const
   have : Continuous fun k : S => (((k.1.1)⁻¹ : GL (Fin n) (AE F E)) : Matrix (Fin n) (Fin n) (AE F E)) :=
     Units.continuous_coe_inv.comp (continuous_subtype_val.comp continuous_subtype_val)
@@ -67,8 +73,8 @@ theorem xi_ne (h : IsLift σ B lift) {x y : Fin n → E} (hxy : form σ X.J x y 
   rw [h0, zero_dotProduct] at this
   exact one_ne_zero this
 
-variable (B X) in
 
+variable (B X) in
 def Yv (lift : (InfinitePlace F → ℂ) → AE F E) (η : XS (InfinitePlace F × Fin n)) : Fin n → AE F E :=
   fun i => lift fun w => conj (((X.J.map (B.emb w).1)⁻¹ *ᵥ fun j => conj (η (w, j))) i)
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.PairCalc
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -91,7 +95,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.uElt_of :
   have hx0b : z + D.bar z - 1 ∈ ub ^ e := by
     have h := hup _ hx0u
     have : D.bar (z + D.bar z - 1) = z + D.bar z - 1 := by
-      rw [map_sub, map_add, map_one, hbb]
+      rw [map_sub, map_add (f := _), map_one, hbb]
       ring
     rwa [this] at h
   exact ⟨z, fun a ha => hle (Ideal.mul_mem_mul ha hz), hinf (Ideal.mem_inf.mpr ⟨hx0u, hx0b⟩), hbz⟩

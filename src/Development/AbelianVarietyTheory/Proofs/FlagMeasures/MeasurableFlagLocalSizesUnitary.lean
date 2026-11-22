@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.FlagMeas
 
-open MeasureTheory NumberField Matrix Finset in
 
+open MeasureTheory NumberField Matrix Finset in
 theorem _root_.GlobalTheory.FlagMeas.measurable_detOn_comp {X : Type} [TopologicalSpace X] [MeasurableSpace X]
     [BorelSpace X] {n : ℕ}
     (f : X → Matrix (Fin n) (Fin n) ℂ) (hf : Continuous f) (V : Submodule ℂ (Fin n → ℂ)) :
@@ -34,7 +38,7 @@ theorem _root_.GlobalTheory.FlagMeas.measurable_detOn_comp {X : Type} [Topologic
     by_cases h : ∀ y ∈ V, (toLin' (f x)) y ∈ V
     · have h' : x ∈ {x | ∀ y ∈ V, f x *ᵥ y ∈ V} := fun y hy => by
         simpa [Matrix.toLin'_apply] using h y hy
-      rw [dif_pos h, if_pos h', ← LinearMap.det_toMatrix b]
+      rw [dite_eq_left h, if_pos h', ← LinearMap.det_toMatrix b]
       congr 2
       ext i k
       rw [LinearMap.toMatrix_apply, Matrix.of_apply]
@@ -45,12 +49,12 @@ theorem _root_.GlobalTheory.FlagMeas.measurable_detOn_comp {X : Type} [Topologic
       exact (Submodule.projectionOnto_apply_left hW _).symm
     · have h' : x ∉ {x | ∀ y ∈ V, f x *ᵥ y ∈ V} := fun hx => h fun y hy => by
         simpa [Matrix.toLin'_apply] using hx y hy
-      rw [dif_neg h, if_neg h']
+      rw [dite_eq_right h, if_neg h']
   rw [heq]
   exact Measurable.ite hS.measurableSet hg.norm.measurable measurable_const
 
-open MeasureTheory NumberField Matrix Finset in
 
+open MeasureTheory NumberField Matrix Finset in
 theorem _root_.GlobalTheory.FlagMeas.measurable_locSize_uMat (n : ℕ) (ε : Fin n → Bool) (a : ℕ) (j : Fin a → ℕ)
     (W : Fin (a + 1) → Submodule ℂ (Fin n → ℂ)) (i : Fin a) :
     Measurable fun g : _root_.Formalism.REAL.UJ ε => _root_.GlobalTheory.FlagMeas.locSize j W (_root_.Formalism.MainNotions.S.uMat g) i := by

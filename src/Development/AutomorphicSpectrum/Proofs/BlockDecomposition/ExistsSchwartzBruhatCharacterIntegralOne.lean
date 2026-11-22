@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
-import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
-import GroundTheory.AutomorphicForms.LocallyProfinite
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
+public import GroundTheory.GlobalFields.TateThesis.NoSmallSubgroups
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem exists_compact_open_subgroup_trivial {G : Type} [Group G] [TopologicalSp
   obtain ⟨N, hNc, hN1⟩ := exists_compact_mem_nhds (1 : G)
   have hW : interior N ∩ V ∈ 𝓝 (1 : G) :=
     Filter.inter_mem (interior_mem_nhds.mpr hN1) (hVo.mem_nhds h1V)
-  obtain ⟨s, hs, h1s, hsW⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (H := G)).mem_nhds_iff.mp hW
+  obtain ⟨s, hs, h1s, hsW⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (X := G)).mem_nhds_iff.mp hW
   have hsclo : IsClopen s := hs
   have hsc : IsCompact s :=
     hNc.of_isClosed_subset hsclo.isClosed
@@ -82,12 +86,12 @@ theorem exists_compact_open_subgroup_trivial {G : Type} [Group G] [TopologicalSp
         rw [inv_inv]
         exact ⟨(ha x hx).2, (ha x hx).1⟩ }
   have hHn : (H : Set G) ∈ 𝓝 (1 : G) := by
-    have hWW : W ∩ W⁻¹ ∈ 𝓝 (1 : G) := Filter.inter_mem hW1 (inv_mem_nhds_one G hW1)
+    have hWW : W ∩ {g | g⁻¹ ∈ W} ∈ 𝓝 (1 : G) := Filter.inter_mem hW1 (inv_mem_nhds_one G hW1)
     refine Filter.mem_of_superset hWW ?_
     rintro g ⟨hg, hg'⟩
     show ∀ x ∈ s, x * g ∈ s ∧ x * g⁻¹ ∈ s
     intro x hx
-    exact ⟨hWs (Set.mul_mem_mul hx hg), hWs (Set.mul_mem_mul hx (Set.mem_inv.mp hg'))⟩
+    exact ⟨hWs (Set.mul_mem_mul hx hg), hWs (Set.mul_mem_mul hx hg')⟩
   have hHo : IsOpen (H : Set G) := Subgroup.isOpen_of_mem_nhds H hHn
   have hHs : (H : Set G) ⊆ s := by
     intro g hg

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.MtRowRep
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedRowLoc
+module
+
+public import Formalism.LocalToGlobal.Columns.MtRowRep
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedRowLoc
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf12.lift_ex :
     ∀ {A M Q Q' : Type} [inst : CommRing A] [inst_1 : AddCommGroup M]

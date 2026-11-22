@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TrLatRange
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.TrLatRange
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem trBnd_den {K : Type} [Field K] (Q : Submodule (PowerSeries K) (FractionRing (PowerSeries K)))
@@ -21,7 +26,7 @@ private theorem trBnd_den {K : Type} [Field K] (Q : Submodule (PowerSeries K) (F
   | add y z _ _ hy hz =>
     obtain ⟨a, ha⟩ := hy
     obtain ⟨c, hc⟩ := hz
-    exact ⟨a + c, by rw [map_add, ha, hc, mul_add]⟩
+    exact ⟨a + c, by rw [map_add (f := _), ha, hc, mul_add]⟩
   | smul c z _ hz =>
     obtain ⟨a, ha⟩ := hz
     exact ⟨c * a, by rw [map_mul, ha, Algebra.smul_def]; ring⟩
@@ -47,7 +52,7 @@ theorem UpperTheory.V.Pa.trBnd :
       refine ⟨y * θ (p i j), hMP y hy _ (hPm p hp i j), ?_⟩
       rw [Matrix.smul_apply, Algebra.smul_def, map_mul, hby, smul_mul_assoc]
     · rintro a b ⟨z, hz, ha⟩ ⟨w, hw, hb⟩
-      exact ⟨z + w, P.add_mem hz hw, by rw [Matrix.add_apply, map_add, ha, hb, smul_add]⟩
+      exact ⟨z + w, P.add_mem hz hw, by rw [Matrix.add_apply, map_add (f := _), ha, hb, smul_add]⟩
   rw [IsLocallyConstant.iff_exists_open]
   intro g
   refine ⟨{y | g⁻¹ * y ∈ V}, V.toOpenSubgroup.isOpen.preimage (continuous_const.mul continuous_id), ?_, ?_⟩

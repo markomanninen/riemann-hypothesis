@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt GlobalTheory.DegAsm
 open scoped Pointwise ENNReal Classical
@@ -130,8 +134,8 @@ theorem exists_isH : ∀ (K V W : Type) [Field K] [NumberField K] [StarRing K] [
     obtain ⟨y₁, hy₁, hF₁, hG₁⟩ := hf w₁
     obtain ⟨y₂, hy₂, hF₂, hG₂⟩ := hf w₂
     refine ⟨y₁ + y₂, add_mem hy₁ hy₂, ?_, ?_⟩
-    · convert add_mem hF₁ hF₂ using 1; rw [map_add]; abel
-    · convert add_mem hG₁ hG₂ using 1; rw [map_add, map_add]; abel
+    · convert add_mem hF₁ hF₂ using 1; rw [map_add (f := _)]; abel
+    · convert add_mem hG₁ hG₂ using 1; rw [map_add (f := _), map_add (f := _)]; abel
   have hsmul : ∀ (c : K) (w : W), f (c • w) = c • f w := by
     intro c w
     apply hchar
@@ -230,7 +234,7 @@ theorem exists_isH : ∀ (K V W : Type) [Field K] [NumberField K] [StarRing K] [
       exact add_mem (Submodule.mem_sup_left hl) (Submodule.mem_sup_right this)
     · intro h1
       obtain ⟨l, hl, x, hx, hlx⟩ := Submodule.mem_sup.mp h1
-      rw [← hlx, map_add]
+      rw [← hlx, map_add (f := _)]
       refine add_mem (Submodule.mem_sup_left ?_) (Submodule.mem_sup_right (IndIsom.map_mem hG hx))
       rw [← LinearEquiv.smul_def]
       exact Submodule.smul_mem_pointwise_smul _ _ _ hl

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.BaseOnto
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.BaseOnto
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,8 @@ end
 
 def IsogG : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (R' : Type) [CommRing R'] [Algebra ℚ R'] (gb : GBase D.toG R')
-    (q : ℕ) [Fact q.Prime] (r : ℤ) (𝔴₀ 𝔴 : Ideal (𝓞 D.F)) (atq : AtPrime D q r 𝔴₀) (sp : _), D.m = 1 → 𝔴.IsMaximal → uId D q r ≤ 𝔴 →
+    (q : ℕ) [Fact q.Prime] (r : ℤ) (𝔴₀ 𝔴 : Ideal (𝓞 D.F)) (atq : AtPrime D q r 𝔴₀)
+    (sp : Nonempty ((D.O ⊗[ℤ] ℤ_[q]) ≃ₐ[𝓞 D.F] Matrix (Fin D.m) (Fin D.m) (𝓞 D.F ⊗[ℤ] ℤ_[q]))), D.m = 1 → 𝔴.IsMaximal → uId D q r ≤ 𝔴 →
     ∀ (R : Type) [CommRing R] (b : Base (datAt atq sp) R) (N₀ : ℕ), N₀.Coprime q → ∀ (i e : ℕ), Ideal.absNorm 𝔴 ^ i = q ^ e →
     ∀ (h u : G.GAf), IsTjElt L q r 𝔴 i h → Integ L h → u ∈ L.KN N₀ → ∀ (N' N : Lv p) (c' c : ℕ), N'.1 = N₀ * c' → N.1 = N₀ * c →
     ∀ (X : Scheme.{0}) (s : X ⟶ Sp R') (o' : GObj gb N'.1 s) (o : GObj gb N.1 s) (ψ : o'.A ⟶ o.A), IsTrans L (h * u) o' o ψ →

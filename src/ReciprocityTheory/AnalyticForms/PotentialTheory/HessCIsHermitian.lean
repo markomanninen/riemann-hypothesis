@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.MaIntEmpty
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
+module
+
+public import ReciprocityTheory.AnalyticForms.MaIntEmpty
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.MaDensCompEqZeroOfRankLt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -44,13 +48,6 @@ theorem hessC_add' (φ ψ : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) (hφ : 
   push_cast
   ring
 
-theorem mdisc_comp_perm' (M : Fin D → Matrix (Fin D) (Fin D) ℂ) (σ : Equiv.Perm (Fin D)) :
-    mdisc (M ∘ σ) = mdisc M := by
-  unfold mdisc
-  congr 1
-  exact Fintype.sum_equiv σ.finsetCongr _ _ fun S => by
-    simp [Equiv.finsetCongr_apply, Finset.sum_map, Finset.card_map]
-
 theorem mdisc_cons_add {e : ℕ} (B C : Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ)
     (F : Fin e → Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ) :
     mdisc (Fin.cons (B + C) F : Fin (e + 1) → Matrix (Fin (e + 1)) (Fin (e + 1)) ℂ) =
@@ -79,7 +76,7 @@ theorem hessC_isHermitian' (φ : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) (h
 
 theorem leviC_add_right (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) (a b b' : Fin D → ℂ) :
     leviC H a (b + b') = leviC H a b + leviC H a b' := by
-  simp only [leviC, smul_add, map_add]
+  simp only [leviC, smul_add, map_add (f := _)]
   push_cast
   ring
 
@@ -97,7 +94,7 @@ theorem leviC_smul_right (H : (Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ
     linear_combination ((c.im : ℂ) * b k) * Complex.I_sq
   unfold leviC
   rw [h2, h1]
-  simp only [map_add, map_sub, map_smul, ContinuousLinearMap.add_apply,
+  simp only [map_add (f := _), map_sub, map_smul, ContinuousLinearMap.add_apply,
     ContinuousLinearMap.sub_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
   apply Complex.ext <;> simp <;> ring
 

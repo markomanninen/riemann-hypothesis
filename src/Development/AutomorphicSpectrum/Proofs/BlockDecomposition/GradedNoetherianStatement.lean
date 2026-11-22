@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedNoetherian
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedNoetherian
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry GroundTheory.Arith.SchemeCoh GlobalTheory.CompanionTheory.GE
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.graded_noetherian : GradedNoeth := by

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNA
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.ExistsInsW
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNA
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.ExistsInsW
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ theorem psi_nU (b : Matrix (Fin d.n) (Fin d.n) ℂ) (hb : bᴴ = b) (β : Matrix
     intro w'
     rw [hz, Algebra.smul_def, map_mul, map_neg, map_neg, piInf_half, ← cw_mulR]
     congr 1
-    simp only [Matrix.trace, SD.cw, Matrix.map_apply, Matrix.diag, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.trace, SD.cw, Matrix.map_apply, Matrix.diag, map_sum]
   have hf : finOne F • z = 0 := by
     rw [hz, smul_comm, ← Matrix.trace_smul, ← Matrix.smul_mul, hβf, Matrix.zero_mul, Matrix.trace_zero, smul_zero]
   have ho : ∀ u, u ≠ w → piInf (d.B.emb u) z = 0 := by

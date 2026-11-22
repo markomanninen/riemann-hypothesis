@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHilbertSchmidtOfFiniteDimensional
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL
 
@@ -58,7 +62,7 @@ theorem glue (D : SB X →ₗ[ℂ] ℂ) (𝒞 : Set X → Prop) (hcl : ∀ C, �
         rw [hψ]
         ext x
         by_cases a : x ∈ C' <;> by_cases b : x ∈ C <;> simp [Set.indicator, a, b]
-      rw [this, map_add, a1, a2, add_zero]
+      rw [this, map_add (f := _), a1, a2, add_zero]
     · intro x hx
       obtain ⟨C, h1, h2, h3⟩ := h x hx
       exact ⟨C, mem_nhdsWithin_of_mem_nhds ((hcl _ h1).2.mem_nhds h2), C, h1, subset_rfl, h3⟩
@@ -83,8 +87,8 @@ theorem isClopen_of_invariant {K : Subgroup G} (hK : IsOpen (K : Set G)) {C : Se
   · exact (hC a ha 1 K.one_mem g).1 (by simpa using h)
   · simpa using (hC a ha 1 K.one_mem g).2 hg
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem doubleCoset_invariant (K : Subgroup G) (x : G) : ∀ a ∈ K, ∀ b ∈ K, ∀ g,
     a * g * b ∈ {g : G | ∃ a ∈ K, ∃ b ∈ K, g = a * x * b} ↔
       g ∈ {g : G | ∃ a ∈ K, ∃ b ∈ K, g = a * x * b} := by

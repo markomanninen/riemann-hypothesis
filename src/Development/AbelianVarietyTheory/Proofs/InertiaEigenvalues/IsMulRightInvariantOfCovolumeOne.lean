@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure Set
 open scoped ENNReal
@@ -57,7 +61,7 @@ theorem isInvInvariant_of_covolume_one (ν : Measure U) [SigmaFinite ν] [ν.IsM
   have h2 : ν = (c * c) • ν := by
     calc ν = ν.inv.inv := (Measure.inv_inv ν).symm
       _ = (c • ν).inv := by rw [← h]
-      _ = c • ν.inv := by simp only [Measure.inv, Measure.map_smul]
+      _ = c • ν.inv := Measure.map_smul c measurable_inv.aemeasurable
       _ = (c * c) • ν := by rw [h, smul_smul]
   have h3 : c * c = 1 := by
     have := congrArg (fun m : Measure U => m D) h2
@@ -71,8 +75,8 @@ theorem isInvInvariant_of_covolume_one (ν : Measure U) [SigmaFinite ν] [ν.IsM
       exact absurd h3 this.ne'
   exact ⟨by rw [h, h4, one_smul]⟩
 
-omit [MeasurableInv U] in
 
+omit [MeasurableInv U] in
 theorem tsum_setLIntegral_eq_index (ν : Measure U) [ν.IsMulLeftInvariant]
     (U₀ L : Subgroup U) [Countable U₀] (hle : U₀ ≤ L) {D : Set U} (hD : IsFundamentalDomain U₀ D ν)
     (ψ : U → ℝ≥0∞) :
@@ -93,8 +97,8 @@ section Average
 variable {G U : Type*} [Group G] [MeasurableSpace G] [MeasurableMul₂ G] [MeasurableInv G]
   [Group U] [MeasurableSpace U] [MeasurableMul₂ U] [MeasurableInv U]
 
-omit [MeasurableSpace G] [MeasurableMul₂ G] [MeasurableInv G] [MeasurableInv U] in
 
+omit [MeasurableSpace G] [MeasurableMul₂ G] [MeasurableInv G] [MeasurableInv U] in
 theorem tsum_setLIntegral_eq_cosets (ι : U →* G) (hι : Function.Injective ι) (ν : Measure U) [ν.IsMulLeftInvariant]
     (Γ : Subgroup G) (U₀ : Subgroup U) [Countable U₀] (hle : U₀ ≤ Γ.comap ι) {D : Set U}
     (hD : IsFundamentalDomain U₀ D ν) (φ : G → ℝ≥0∞) :
@@ -157,8 +161,8 @@ theorem tsum_setLIntegral_inv (ι : U →* G) (hι : Function.Injective ι) (hι
         refine lintegral_congr fun u => ?_
         rw [map_mul, hv']; congr 1; group
 
-omit [MeasurableInv G] in
 
+omit [MeasurableInv G] in
 theorem lintegral_mul_tsum_weight (μ : Measure G) [μ.IsMulLeftInvariant] (Γ : Subgroup G) [Countable Γ] {𝓕 : Set G}
     (h𝓕 : IsFundamentalDomain Γ 𝓕 μ) {β : G → ℝ≥0∞} (hβm : Measurable β)
     (hβ : ∀ f : G → ℝ≥0∞, ∫⁻ g in 𝓕, f g ∂μ = ∫⁻ g, β g * f g ∂μ) (ρ : G → ℝ≥0∞) (hρ : Measurable ρ) (w : G) :
@@ -214,9 +218,9 @@ theorem setLIntegral_average (ι : U →* G) (hι : Function.Injective ι) (hιm
     change β (w⁻¹ * (γ * g)) * F (w * (w⁻¹ * (γ * g))) = _
     rw [mul_inv_cancel_left, hinv _ γ.2, mul_comm, mul_assoc]
   have hm1 : Measurable fun p : G × U => ∑' γ : Γ, β ((ι p.2)⁻¹ * γ * p.1) :=
-    Measurable.ennreal_tsum fun γ => hβm.comp (((hιm.comp measurable_snd).inv.mul_const _).mul measurable_fst)
+    Measurable.tsum fun γ => hβm.comp (((hιm.comp measurable_snd).inv.mul_const _).mul measurable_fst)
   have hm2 : Measurable fun p : G × U => ∑' γ : Γ, β (γ * ι p.2 * p.1) :=
-    Measurable.ennreal_tsum fun γ => hβm.comp (((hιm.comp measurable_snd).const_mul _).mul measurable_fst)
+    Measurable.tsum fun γ => hβm.comp (((hιm.comp measurable_snd).const_mul _).mul measurable_fst)
   symm
   calc ∫⁻ g in 𝓕, ∫⁻ u in D, F (ι u * g) ∂ν ∂μ = ∫⁻ u in D, ∫⁻ g in 𝓕, F (ι u * g) ∂μ ∂ν :=
         lintegral_lintegral_swap (hF.comp ((hιm.comp measurable_snd).mul measurable_fst)).aemeasurable
@@ -225,13 +229,16 @@ theorem setLIntegral_average (ι : U →* G) (hι : Function.Injective ι) (hιm
         (lintegral_lintegral_swap ((hF.comp measurable_fst).mul hm1).aemeasurable).symm
     _ = ∫⁻ g in 𝓕, ∫⁻ u in D, F g * ∑' γ : Γ, β (γ * ι u * g) ∂ν ∂μ := by
         refine lintegral_congr fun g => ?_
-        rw [lintegral_const_mul (F g) (f := fun u => ∑' γ : Γ, β ((ι u)⁻¹ * γ * g))
-            (hm1.comp measurable_prodMk_left),
-          lintegral_const_mul (F g) (f := fun u => ∑' γ : Γ, β (γ * ι u * g)) (hm2.comp measurable_prodMk_left),
+        have hleft : ∀ γ : Γ, Measurable (fun u : U => β ((ι u)⁻¹ * γ * g)) := fun γ =>
+          hβm.comp ((hιm.inv.mul_const (γ : G)).mul_const g)
+        have hright : ∀ γ : Γ, Measurable (fun u : U => β (γ * ι u * g)) := fun γ =>
+          hβm.comp ((hιm.const_mul (γ : G)).mul_const g)
+        rw [lintegral_const_mul (F g) (Measurable.tsum hleft),
+          lintegral_const_mul (F g) (Measurable.tsum hright),
           lintegral_tsum (f := fun (γ : Γ) u => β ((ι u)⁻¹ * γ * g))
-            fun γ => (hβm.comp ((hιm.inv.mul_const _).mul_const _)).aemeasurable,
+            fun γ => (hleft γ).aemeasurable,
           lintegral_tsum (f := fun (γ : Γ) u => β (γ * ι u * g))
-            fun γ => (hβm.comp ((hιm.const_mul _).mul_const _)).aemeasurable,
+            fun γ => (hright γ).aemeasurable,
           tsum_setLIntegral_inv ι hι hιm ν Γ U₀ hle hD hconj' (fun x => β (x * g))
             (hβm.comp (measurable_mul_const g))]
     _ = ∫⁻ u in D, ∫⁻ g in 𝓕, F g * ∑' γ : Γ, β (γ * ι u * g) ∂μ ∂ν :=

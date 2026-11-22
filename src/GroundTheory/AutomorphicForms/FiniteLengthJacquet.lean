@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteLengthSubquotient
-import GroundTheory.AutomorphicForms.GeometricLemma
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteLengthSubquotient
+public import GroundTheory.AutomorphicForms.GeometricLemma
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -35,16 +40,16 @@ theorem eq_iff_eq_of_lt_iff (h : ∀ i j, β i < β j ↔ γ i < γ j) (i j : Fi
     · exact he
     · exact absurd ((h j i).1 hg) (by rw [e]; exact lt_irrefl _)
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem blockUpper_congr (h : ∀ i j, β i < β j ↔ γ i < γ j) :
     blockUpper F n β = blockUpper F n γ := by
   ext g
   simp only [mem_blockUpper, Matrix.BlockTriangular]
   exact forall_congr' fun i => forall_congr' fun j => imp_congr_left (h j i)
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 
+omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] in
 theorem unipotentRadical_congr (h : ∀ i j, β i < β j ↔ γ i < γ j) :
     unipotentRadical F n β = unipotentRadical F n γ := by
   ext g
@@ -130,45 +135,6 @@ section Irreducible
 
 variable {G : Type*} [Group G] {V W : Type*} [AddCommGroup V] [Module ℂ V] [AddCommGroup W]
   [Module ℂ W] {ρ : Representation ℂ G V} {π : Representation ℂ G W}
-
-theorem IsSubquotient.exists_bijective [π.IsIrreducible] [ρ.IsIrreducible]
-    (h : IsSubquotient π ρ) : ∃ e : Representation.IntertwiningMap π ρ, Bijective e := by
-  obtain ⟨C, p, hp⟩ := h
-  obtain ⟨x, hx⟩ := exists_ne_zero_of_isIrreducible (ρ := π)
-  have hC : C = ⊤ := (eq_bot_or_eq_top C).resolve_left fun hC => hx (by
-    obtain ⟨c, rfl⟩ := hp x
-    have hc : (c : V) ∈ (⊥ : Subrepresentation ρ).toSubmodule := by rw [← hC]; exact c.2
-    rw [show c = 0 from Subtype.ext ((Submodule.mem_bot ℂ).1 hc), map_zero])
-  have hCtop : ∀ v : V, v ∈ C.toSubmodule := fun v => by rw [hC]; trivial
-
-  let K : Subrepresentation ρ := ⟨(LinearMap.ker p.toLinearMap).map C.toSubmodule.subtype, by
-    rintro g _ ⟨c, hc, rfl⟩
-    refine ⟨C.toRepresentation g c, ?_, rfl⟩
-    have hc' : p c = 0 := hc
-    show p (C.toRepresentation g c) = 0
-    rw [Representation.IntertwiningMap.isIntertwining, hc', map_zero]⟩
-  have hK : K = ⊥ := (eq_bot_or_eq_top K).resolve_right fun hK => hx (by
-    obtain ⟨c, rfl⟩ := hp x
-    have hc : (c : V) ∈ K.toSubmodule := by rw [hK]; trivial
-    obtain ⟨c', hc', hcc'⟩ := hc
-    rw [show c = c' from Subtype.ext hcc'.symm]
-    exact hc')
-  have hpinj : Injective p := (injective_iff_map_eq_zero _).2 fun c hc => Subtype.ext (by
-    have hmem : (c : V) ∈ K.toSubmodule := ⟨c, hc, rfl⟩
-    rw [hK] at hmem
-    exact (Submodule.mem_bot ℂ).1 hmem)
-  let e₀ : C.toSubmodule ≃ₗ[ℂ] W := LinearEquiv.ofBijective p.toLinearMap ⟨hpinj, hp⟩
-  have he₀ : ∀ c, e₀ c = p c := fun c => rfl
-  refine ⟨⟨C.toSubmodule.subtype ∘ₗ e₀.symm.toLinearMap, fun g => LinearMap.ext fun y => ?_⟩,
-    ⟨?_, fun v => ⟨e₀ ⟨v, hCtop v⟩, by simp⟩⟩⟩
-  · obtain ⟨c, rfl⟩ := e₀.surjective y
-    have h1 : π g (e₀ c) = e₀ (C.toRepresentation g c) := by
-      rw [he₀, he₀, Representation.IntertwiningMap.isIntertwining]
-    simp only [LinearMap.coe_comp, comp_apply, LinearEquiv.coe_coe, h1,
-      LinearEquiv.symm_apply_apply, Submodule.coe_subtype]
-    rfl
-  · intro a b hab
-    exact e₀.symm.injective (Subtype.ext hab)
 
 end Irreducible
 

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableOfDecay4
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableOfDecay4
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StandardPairingDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBF
 
@@ -149,7 +153,7 @@ theorem const_one (Bs : B.RealPlaceData k r Wp Wq) (μ : Measure (Mt k r)) (C : 
   have h2 : μ.map (fun g : Mt k r => Q.zetaL k r Bs.z Bs.z' (Fin.last r) (Matrix.of g)) =
       ((C : ℝ≥0∞) * (Bs.μW Set.univ * Bs.μW' Set.univ)) •
         (volume : Measure ℂ).withDensity (rbW k (Tz k r Bs.z) (Tz k r Bs.z')) := by
-    rw [hmap, Measure.map_smul, rbP_map_zeta, smul_smul]
+    rw [hmap, Measure.map_smul _ (measurable_zetaM Bs).aemeasurable, rbP_map_zeta, smul_smul]
   rw [h1] at h2
   obtain ⟨hp, hf⟩ := weight_annulus k (T := Tz k r Bs.z) (T' := Tz k r Bs.z') (mul_pos Bs.T_pos Bs.T'_pos).le
   set A : Set ℂ := {ζ | Tz k r Bs.z * Tz k r Bs.z' < Complex.normSq ζ ∧
@@ -200,15 +204,23 @@ end formOne
 section exist
 
 theorem haar_smul {k r : ℕ} {U : Set (B.Mat k r)} {μ : Measure (Mt k r)} (h : B.IsHaarOn U μ) {c : ℝ≥0∞}
-    (hc0 : c ≠ 0) (hcT : c ≠ ∞) : B.IsHaarOn U (c • μ) where
-  conc := by rw [Measure.smul_apply, h.conc, smul_zero]
-  left a ha := by rw [Measure.map_smul, h.left a ha]
-  right a ha := by rw [Measure.map_smul, h.right a ha]
-  finite_compact K hK := by
+    (hc0 : c ≠ 0) (hcT : c ≠ ∞) : B.IsHaarOn U (c • μ) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [Measure.smul_apply, h.conc, smul_zero]
+  · intro a ha
+    have hcont : Continuous (lmulM a : Mt k r → Mt k r) := by
+      unfold lmulM
+      exact continuous_const.matrix_mul (continuous_id (X := B.Mat k r))
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, h.left a ha]
+  · intro a ha
+    have hcont : Continuous (B.rmulF a) := by
+      unfold B.rmulF
+      exact (continuous_id (X := B.Mat k r)).matrix_mul continuous_const
+    rw [Measure.map_smul c hcont.measurable.aemeasurable, h.right a ha]
+  · intro K hK
     rw [Measure.smul_apply, smul_eq_mul]
     exact ENNReal.mul_lt_top (lt_top_iff_ne_top.2 hcT) (h.finite_compact K hK)
-  ne_zero := by
-    intro h0
+  · intro h0
     apply h.ne_zero
     have := congrArg (fun ν : Measure (Mt k r) => c⁻¹ • ν) h0
     simpa [smul_smul, ENNReal.inv_mul_cancel hc0 hcT] using this
@@ -228,7 +240,7 @@ theorem zetaNormExists : Formalism.FourierDecayAlt.P.PBO.ZetaNormExists := by
     (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
   have hlaw : μb.map (fun g : Mt k r => Q.zetaL k r Bs.z Bs.z' (Fin.last r) (Matrix.of g)) =
       a • (volume : Measure ℂ).withDensity (rbW k (Tz k r Bs.z) (Tz k r Bs.z')) := by
-    rw [hmap, Measure.map_smul, rbP_map_zeta, smul_smul]
+    rw [hmap, Measure.map_smul _ (measurable_zetaM Bs).aemeasurable, rbP_map_zeta, smul_smul]
   refine ⟨a⁻¹ • μb, ?_, fun ψ hψ => ?_⟩
   · rw [Formalism.FourierDecayAlt.P.PBH.glev_last_eq]
     exact haar_smul hb (ENNReal.inv_ne_zero.2 haT) (ENNReal.inv_ne_top.2 ha0)

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -10,12 +14,13 @@ open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRes
 
 namespace GlobalTheory
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem natCard_quot_smul_top_of_projective {R N : Type} [CommRing R] [IsDomain R] [AddCommGroup N] [Module R N]
     [Module.Finite R N] [Module.Projective R N] (I : Ideal R) [Finite (R ⧸ I)] :
     Nat.card (N ⧸ (I • ⊤ : Submodule R N)) = Nat.card (R ⧸ I) ^ Module.finrank R N := by
   classical
+  open scoped TensorProduct in
   have hA : Finite (Ideal (R ⧸ I)) :=
     Finite.of_injective (fun J : Ideal (R ⧸ I) => (J : Set (R ⧸ I))) SetLike.coe_injective
   have hMS : Finite (MaximalSpectrum (R ⧸ I)) :=
@@ -52,7 +57,7 @@ theorem absNorm_level_half {E : Type} [Field E] [NumberField E] [IsCMField E] {H
     rw [this, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank]
     simp [Int.natAbs_pow]
   have hev : Module.finrank ℚ E = 2 * FD.fdeg E := by
-    have h := Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E
+    have h := (letI : Module.Free (maximalRealSubfield E) E := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ (maximalRealSubfield E) E)
     rw [Algebra.IsQuadraticExtension.finrank_eq_two (maximalRealSubfield E) E] at h
     unfold FD.fdeg
     omega

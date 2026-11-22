@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.CompleteTrivial
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.CompleteTrivial
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 

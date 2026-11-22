@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EpsVEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EpsVEqOne
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.RowUnf GlobalTheory.RowChain GlobalTheory.SeeSaw GlobalTheory.RowVal GlobalTheory.RowReal
@@ -21,7 +26,7 @@ theorem jacobiDualColumn_scalar_identity {K : Type} [Field K] (X : K) (hX : X �
 
 theorem mul_col_eq {ι' ι κ μ K : Type} [Fintype ι] [Field K] (P : Matrix ι' ι K) (Y : Matrix ι κ K) (Z : Matrix ι μ K)
     (c : κ) (c' : μ) (h : ∀ l, Y l c = Z l c') (r : ι') : (P * Y) r c = (P * Z) r c' := by
-  simp only [mul_apply, h]
+  simp only [Matrix.mul_apply, h]
 
 theorem hz_besAt {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) {t : T} {M : Vol G} (hM : M.Is t)
     (j σ : ℕ) (hj : j + 2 * σ + 2 = D.R.m) (vN : GlobalTheory.Unf.VolN (besDecAt G j σ hj)) {k : Type} [Field k] [ValuativeRel k]
@@ -43,9 +48,9 @@ theorem neg_mul_neg_one_eq_of_eq {K : Type} [Field K] (y a S : K) (h : S = a) : 
 
 end NormalJac
 
+
 open NormalJac in
 set_option maxHeartbeats 1600000 in
-
 theorem big_jacP : Big fun ch => JacP ch := by
   refine ⟨0, fun ε CF _ => ⟨0, fun D large₂ hε hx Γ _ _ Pl0 T A Ks _ _ _ R F s ch hch hsc => ?_⟩⟩
   clear hε hx hsc hch s
@@ -109,8 +114,8 @@ theorem big_jacP : Big fun ch => JacP ch := by
       (loc w (ch.S.βp (j + 1))).val.submatrix id (Fin.cast (topRank_eq ch.G t w h₁.le))) _ x (fun l => ?_) r).trans
       (congrFun (congrFun (T0' _) r) x)
     have e1 := congrFun (congrFun h1 l) (Sum.inl (Fin.cast (topRank_eq ch.G t w h₁.le) x))
-    simp only [submatrix_apply, id, fromCols_apply_inl, mul_apply, Matrix.map_apply] at e1
-    simp only [submatrix_apply, id, mul_apply, Matrix.map_apply, hpr]
+    simp only [submatrix_apply, id, fromCols_apply_inl, Matrix.mul_apply, Matrix.map_apply] at e1
+    simp only [submatrix_apply, id, Matrix.mul_apply, Matrix.map_apply, hpr]
     refine (congrArg _ (Fin.ext ?_)).trans e1
     simp [frame]
   · intro i jj hij r

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorOrderFaithfulLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorOrderFaithfulLatticeStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 open scoped TensorProduct InnerProductSpace
@@ -44,15 +49,15 @@ theorem trace_comp_pos_of_adjoint {V : Type} [AddCommGroup V] [Module ℝ V] [Fi
   exact Finset.sum_pos' (fun i _ => hnn i) ⟨i, Finset.mem_univ _, hp _ hi⟩
 
 theorem trace_mul_star_pos : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (x : D.O), x ≠ 0 →
-    0 < LinearMap.trace ℤ D.La (DistribMulAction.toLinearMap ℤ D.La (x * (D.star x).unop)) := by
+    0 < LinearMap.trace ℤ D.La (DistribSMul.toLinearMap ℤ D.La (x * (D.star x).unop)) := by
   intro p _ D x hx
   haveI := D.freeLa
   haveI := D.finLa
   obtain ⟨J, hJJ, hJinv, hpos, hcomm, -⟩ := D.dom
   let A : D.O → (ℝ ⊗[ℤ] D.La →ₗ[ℝ] ℝ ⊗[ℤ] D.La) := fun b =>
-    (DistribMulAction.toLinearMap ℤ D.La b).baseChange ℝ
+    (DistribSMul.toLinearMap ℤ D.La b).baseChange ℝ
   have hcomp : A x ∘ₗ A (D.star x).unop =
-      (DistribMulAction.toLinearMap ℤ D.La (x * (D.star x).unop)).baseChange ℝ := by
+      (DistribSMul.toLinearMap ℤ D.La (x * (D.star x).unop)).baseChange ℝ := by
     clear hcomm hpos hJinv hJJ
     simp only [A]
     rw [← LinearMap.baseChange_comp]
@@ -65,7 +70,7 @@ theorem trace_mul_star_pos : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel
   have hEF : ∀ y z : D.La, D.EF y z = - D.EF z y := by
     intro y z
     have h := D.alt (y + z)
-    simp only [map_add, LinearMap.add_apply, D.alt y, D.alt z, zero_add, add_zero] at h
+    simp only [map_add (f := _), LinearMap.add_apply, D.alt y, D.alt z, zero_add, add_zero] at h
     omega
   have hanti : ∀ u v, D.EF.baseChange ℝ u v = - D.EF.baseChange ℝ v u := by
     intro u v
@@ -79,11 +84,11 @@ theorem trace_mul_star_pos : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel
         simp only [zsmul_eq_mul, Int.cast_neg]
         ring
       | add v w hv hw =>
-        simp only [map_add, LinearMap.add_apply]
+        simp only [map_add (f := _), LinearMap.add_apply]
         rw [hv, hw]
         ring
     | add u w hu hw =>
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       rw [hu, hw]
       ring
   have hadjB : ∀ b u v, D.EF.baseChange ℝ (A b u) v = D.EF.baseChange ℝ u (A (D.star b).unop v) := by
@@ -95,8 +100,8 @@ theorem trace_mul_star_pos : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel
       | zero => simp
       | tmul s z =>
         rw [hA, hA, LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, D.adj]
-      | add v w hv hw => simp only [map_add, LinearMap.add_apply, hv, hw]
-    | add u w hu hw => simp only [map_add, LinearMap.add_apply, hu, hw]
+      | add v w hv hw => simp only [map_add (f := _), LinearMap.add_apply, hv, hw]
+    | add u w hu hw => simp only [map_add (f := _), LinearMap.add_apply, hu, hw]
   have hsym : ∀ u v, D.EF.baseChange ℝ (J u) v = D.EF.baseChange ℝ (J v) u := by
     intro u v
     rw [← hJinv (J v) u, hJJ, map_neg, LinearMap.neg_apply, hanti v (J u), neg_neg]

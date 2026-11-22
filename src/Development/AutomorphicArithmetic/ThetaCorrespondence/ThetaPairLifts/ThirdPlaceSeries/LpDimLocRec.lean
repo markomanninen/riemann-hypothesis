@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingHomExtAdicCompletion
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentralAlt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RingHomExtAdicCompletion
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentralAlt
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -46,18 +50,18 @@ theorem parameter_at_place_eq_reciprocity_of_local_component (σ : D.what₂.FT)
   classical
   have h : Nonempty (LocAt D rep σ s.w) := ⟨⟨⟨s, τ⟩, rfl, hτ⟩⟩
   unfold _root_.GlobalTheory.RowPar.weilDeligneParameterAtPlace
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact _root_.GlobalTheory.RowPar.parameter_of_local_datum_eq_reciprocity hL D rep _ s rfl τ hτ
 theorem dim_parameter_at_place_eq_rank (σ : D.what₂.FT) (w : PlE D.host) : (_root_.GlobalTheory.RowPar.weilDeligneParameterAtPlace hL D rep σ w).lpDim = D.R.r := by
   classical
   unfold _root_.GlobalTheory.RowPar.weilDeligneParameterAtPlace
   by_cases h : Nonempty (LocAt D rep σ w)
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     generalize h.some = p
     obtain ⟨⟨s0, τ0⟩, hw, hl⟩ := p
     subst hw
     exact _root_.GlobalTheory.RowPar.lpDim_locRec_alt hL _ τ0
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     exact (unrW D).dim σ w
 end Loc
 end GlobalTheory.RowPar

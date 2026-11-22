@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearFormsBoundedRepresentativesStatement
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearFormsBoundedRepresentativesStatement
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,7 +151,8 @@ theorem expand {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) 
     (hx : x ∈ Submodule.span E (Set.range e)) : x = ∑ a, S.hT (f a) x • e a := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hx
   refine Finset.sum_congr rfl fun a _ => ?_
-  simp [map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, h]
 
 theorem orth_span {E : Type} [Field E] [NumberField E] [StarRing E] (S : HSpace E) {s : Set S.V} {y : S.V}
     (h : ∀ x ∈ s, S.hT x y = 0) : y ∈ orth S (Submodule.span E s) := by
@@ -203,8 +208,9 @@ theorem mem_of_split {u : D.what₂.Word} {F0 : Fb D u} {Λ : LatV D} (hB : IsBa
     have h1 := orth_apply _ hw (Submodule.subset_span (Or.inl ⟨a, rfl⟩))
     have h2 : (hS D).hT (D.sp.hypE a) (x₁ + x) = 0 := by
       rw [expand (hS D) D.sp.hypE D.sp.hypF (hyp_fe D) hx2]
-      simp [map_sum, D.sp.hyp_ee]
-    rw [map_add, h2, zero_add] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, D.sp.hyp_ee]
+    rw [map_add (f := _), h2, zero_add] at h1
     rw [h1, zero_smul]
   rw [hy0, add_zero] at hw e'
   have hx0 : x₁ + x = 0 := by
@@ -217,7 +223,7 @@ theorem mem_of_split {u : D.what₂.Word} {F0 : Fb D u} {Λ : LatV D} (hB : IsBa
 
 theorem iXY_injective : Function.Injective (D.sp.iXY 0) := by
   have hm := D.R.two_le_m
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   refine (D.sp.X 0).nondeg.1 x fun y => ?_
   rw [← D.sp.iXY_isom 0 (by omega), hx, map_zero, LinearMap.zero_apply]
@@ -273,8 +279,8 @@ theorem fun_reps {u u' : D.what₂.Word} {F0 : Fb D u} {Λ : LatV D} (hSt : Stan
     simp only [LinearMap.sub_apply, LinearMap.add_apply, LinearMap.comp_apply, LinearEquiv.coe_coe]
     ring
 
-variable (D) in
 
+variable (D) in
 abbrev coefI (a : Fin D.R.rS) : FractionalIdeal (𝓞 D.host.E)⁰ D.host.E :=
   ddS D ^ (-((D.R.rS : ℤ) - (a : ℕ)))
 
@@ -289,7 +295,7 @@ theorem coef_mem {u : D.what₂.Word} {F0 : Fb D u} (hB : IsBase D u F0) (a : Fi
     · rw [smul_zero]; exact FractionalIdeal.zero_mem _
   | zero => rw [map_zero]; exact FractionalIdeal.zero_mem _
   | add y z _ _ h1 h2 =>
-    rw [map_add]; exact (coefI D a : Submodule (𝓞 D.host.E) D.host.E).add_mem h1 h2
+    rw [map_add (f := _)]; exact (coefI D a : Submodule (𝓞 D.host.E) D.host.E).add_mem h1 h2
   | smul c y _ h =>
     rw [LinearMap.map_smul_of_tower]
     exact (coefI D a : Submodule (𝓞 D.host.E) D.host.E).smul_mem c h
@@ -414,7 +420,7 @@ theorem main : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) (Λ : LatV D),
       rfl
     obtain ⟨-, n, hn, e⟩ := h2
     refine ⟨rep g, Finset.mem_image_of_mem _ (Fintype.mem_piFinset.2 hg), n, hn, fun p => ?_⟩
-    rw [map_add, e, integralUnipotentFixingFrame_fixes_isotropic hn (hφ p).2, LinearMap.sub_apply]
+    rw [map_add (f := _), e, integralUnipotentFixingFrame_fixes_isotropic hn (hφ p).2, LinearMap.sub_apply]
     abel
 
 end Record

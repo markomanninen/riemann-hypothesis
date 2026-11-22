@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterB
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.LetterB
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -14,11 +18,11 @@ theorem lin_comp {R : Type} [CommRing R] {k : ℕ} (M N : Matrix (Fin k) (Fin k)
   rw [← AlgHom.comp_apply, MvPolynomial.comp_aeval]
   apply congrArg (fun F : MvPolynomial (Fin k) R →ₐ[R] MvPolynomial (Fin k) R => F P)
   congr 1
-  funext c
-  simp only [map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq,
+  funext i
+  simp only [map_sum, map_mul, aeval_C, aeval_X,
     Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
-  simp only [mul_assoc]
+  simp only [mul_assoc, MvPolynomial.algebraMap_eq]
 
 theorem lin_one {R : Type} [CommRing R] {k : ℕ} (P : MvPolynomial (Fin k) R) : lin (1 : Matrix (Fin k) (Fin k) R) P = P := by
   simp [lin, Matrix.one_apply]
@@ -35,7 +39,8 @@ theorem scaleHd {R : Type} [CommRing R] {k d : ℕ} (q : MvPolynomial (Fin k) R)
   simp only [Hd, MvPolynomial.mem_restrictSupport_iff] at hP
   conv_lhs => rw [MvPolynomial.as_sum P]
   conv_rhs => rw [MvPolynomial.as_sum P]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hd : ∑ c, μ c = d := hP hμ
   rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
@@ -50,7 +55,8 @@ theorem lin_smul {R : Type} [CommRing R] {k d : ℕ} (a : R) (M : Matrix (Fin k)
   simp only [lin]
   conv_lhs => rw [MvPolynomial.as_sum P]
   conv_rhs => rw [MvPolynomial.as_sum P]
-  rw [map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hd : ∑ c, μ c = d := hP hμ
   have e : ∀ c, (∑ b, C ((a • M) c b) * X b : MvPolynomial (Fin k) R) = C a * ∑ b, C (M c b) * X b := by
@@ -83,7 +89,7 @@ theorem lin_Hd {R : Type} [CommRing R] {k d : ℕ} (M : Matrix (Fin k) (Fin k) R
     have h2 := Hd_prod (Finset.range (μ c)) (fun _ => 1) (fun _ => lin M (X c)) (fun _ _ => h1)
     simpa using h2
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem map_Nv {R R' : Type} [CommRing R] [CommRing R'] (f : R →+* R') (m : ℕ) (vec : Bool) (c : Fin (m + 1)) :
@@ -147,11 +153,11 @@ theorem Lin_comp {R : Type} [CommRing R] {k : ℕ} (M N : S → Matrix (Fin k) (
   rw [← AlgHom.comp_apply, MvPolynomial.comp_aeval]
   apply congrArg (fun F : MvPolynomial (S × Fin k) R →ₐ[R] MvPolynomial (S × Fin k) R => F P)
   congr 1
-  funext v
-  simp only [map_sum, map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq,
+  funext i
+  simp only [map_sum, map_mul, aeval_C, aeval_X,
     Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
-  simp only [mul_assoc]
+  simp only [mul_assoc, MvPolynomial.algebraMap_eq]
 
 theorem Lin_one {R : Type} [CommRing R] {k : ℕ} (P : MvPolynomial (S × Fin k) R) :
     Lin (fun _ : S => (1 : Matrix (Fin k) (Fin k) R)) P = P := by
@@ -209,7 +215,7 @@ theorem emb_Pol {R : Type} [CommRing R] {k a : ℕ} (s : S) (P : MvPolynomial (F
   · subst hi
     simp only [Pi.single_eq_same]
     rw [← hd]
-    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply hinj ν c
+    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply_of_injective hinj ν c
   · rw [Pi.single_eq_of_ne hi]
     exact Finset.sum_eq_zero fun c _ => Finsupp.mapDomain_notin_range _ _
       (by rintro ⟨c', hc'⟩; exact hi (congrArg Prod.fst hc').symm)
@@ -249,7 +255,8 @@ theorem scalePol {R : Type} [CommRing R] {k : ℕ} {d : S → ℕ} (Q : S → Mv
   rw [mem_Pol] at hF
   conv_lhs => rw [MvPolynomial.as_sum F]
   conv_rhs => rw [MvPolynomial.as_sum F]
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hd : ∀ s, ∑ c, μ (s, c) = d s := fun s => hF μ hμ s
   rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (fun _ => pow_zero _),
@@ -271,7 +278,7 @@ theorem Lin_Pol {R : Type} [CommRing R] {k : ℕ} {d : S → ℕ} (N : S → Mat
     simp only [Lin_emb]
     exact prod_emb_Pol d _ fun s => lin_Hd _ _ (partS_Hd R d μ hμ s)
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem Lin_smul {R : Type} [CommRing R] {k : ℕ} {d : S → ℕ} (a : S → R) (M : S → Matrix (Fin k) (Fin k) R)
@@ -282,7 +289,8 @@ theorem Lin_smul {R : Type} [CommRing R] {k : ℕ} {d : S → ℕ} (a : S → R)
   simp only [Lin]
   conv_lhs => rw [MvPolynomial.as_sum F]
   conv_rhs => rw [MvPolynomial.as_sum F]
-  rw [map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hd : ∀ s, ∑ c, μ (s, c) = d s := fun s => hF μ hμ s
   have e : ∀ v : S × Fin k, (∑ b, C ((a v.1 • M v.1) v.2 b) * X (v.1, b) : MvPolynomial (S × Fin k) R) =

@@ -1,9 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractBlocksSplitPrime
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameHilbFn
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameIntNum
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PfContractedHypothesesExample
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.HomFracDegZeroEqFunField
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsRename
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameHilbFn
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRenameIntNum
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PRelevantPrimeDimGe
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers

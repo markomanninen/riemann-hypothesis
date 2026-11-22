@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CptCoefContSupp
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CptCoefContSupp
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,13 +38,13 @@ theorem top_unipotent_integral_zero (Wp Wq : Type) [NormedAddCommGroup Wp] [Inne
     rw [← hν]
     funext i
     simp only [D.castV, liftVec]
-    rw [dif_pos (by simp; omega)]
+    rw [dite_eq_left (by simp; omega)]
     exact congrArg ν'r (Fin.ext (by simp))
   have e2 : p.m₀ = m₀r := by
     rw [← hm]
     ext i j
     simp only [D.castM, Matrix.reindex_apply, Matrix.submatrix_apply, ιLev]
-    rw [dif_pos (by simp; omega), dif_pos (by simp; omega)]
+    rw [dite_eq_left (by simp; omega), dite_eq_left (by simp; omega)]
     exact congrArg₂ m₀r (Fin.ext (by simp)) (Fin.ext (by simp))
   have e3 : D.castF (by simp) (D.sliceAt k 0 p.T.base.z p.T.base.z' F []) = F := by
     funext γ

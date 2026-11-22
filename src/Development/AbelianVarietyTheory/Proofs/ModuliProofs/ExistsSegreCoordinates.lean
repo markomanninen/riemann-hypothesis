@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -53,8 +58,8 @@ theorem gs_sec (s : M.Sec) {Y : Scheme.{0}} (r : Y ⟶ X) (z : Y) {j j' : M.ι} 
   exact (gs_res r z _ hm _).symm.trans ((congrArg (gs r z _) (s.compat j j')).trans ((gs_mul r z _ hm _ _).trans
     (congrArg₂ (· * ·) (gs_unit r z _ hm _) (gs_res r z _ hm _))))
 
-variable (M th) in
 
+variable (M th) in
 def Loc (x : Sp T ⟶ X) (v : σ → T) : Prop :=
   ∀ (y : Sp T) (j : M.ι), x y ∈ M.U j → ∃ u : ((Sp T).presheaf.stalk y)ˣ, ∀ i, gs x y _ ((th i).f j) = ev y (v i) * u
 
@@ -88,7 +93,8 @@ theorem secCoord_mk {x : Sp T ⟶ X} {v : σ → T} (t : ∀ j : PUnit → M.ι,
 
 theorem gs_sum {Y : Scheme.{0}} (f : Y ⟶ X) (y : Y) (U : X.Opens) (h : f y ∈ U) {κ : Type} (s : Finset κ)
     (a : κ → Γ(X, U)) : gs f y U (∑ i ∈ s, a i) = ∑ i ∈ s, gs f y U (a i) := by
-  simp only [gs_eq f y U h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gs_eq f y U h, map_sum]
 
 theorem exists_comb {v : σ → T} (hv : Ideal.span (Set.range v) = ⊤) :
     ∃ (s : Finset σ) (c : σ → T), ∑ i ∈ s, c i * v i = 1 := by
@@ -101,7 +107,8 @@ theorem secCoord_of_loc {x : Sp T ⟶ X} {v : σ → T} (hv : Ideal.span (Set.ra
   obtain ⟨s, c, hc⟩ := exists_comb hv
   have key : ∀ y j, x y ∈ M.U j → ∀ u : ((Sp T).presheaf.stalk y)ˣ, (∀ i, gs x y _ ((th i).f j) = ev y (v i) * u) →
       ∑ i ∈ s, ev y (c i) * gs x y _ ((th i).f j) = u := fun y j _ u hu => by
-    simp only [hu, ← mul_assoc, ← map_mul, ← Finset.sum_mul, ← map_sum, hc, map_one, one_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hu, ← mul_assoc, ← map_mul, ← Finset.sum_mul, ← map_sum, hc, map_one, one_mul]
   refine secCoord_mk (fun j => ∑ i ∈ s, resG (Sp T) le_top ((Scheme.ΓSpecIso (CommRingCat.of T)).inv.hom (c i)) *
     (x.appLE _ _ (fun z hz => mem_pull.1 hz)).hom ((th i).f (j PUnit.unit)))
     (fun y j => ∑ i ∈ s, ev y (c i) * gs x y _ ((th i).f j)) (fun j y hy => ?_) (fun y j hy => ?_)
@@ -156,8 +163,10 @@ theorem Loc.unique (hM : M.IsLB) {x : Sp T ⟶ X} {v w : σ → T} (h : Loc M th
     have e : ∀ i, ev y (w i) = (u * u'⁻¹ :).val * ev y (v i) := fun i => by
       rw [Units.val_mul, mul_comm, ← mul_assoc, ← hu, hu', Units.mul_inv_cancel_right]
     refine ⟨u * u'⁻¹, e, ?_⟩
-    simp only [map_sum, map_mul, e, mul_left_comm _ (u * u'⁻¹ :).val]
-    simp only [← map_mul, ← Finset.mul_sum, ← map_sum, hc, map_one, mul_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, e, mul_left_comm _ (u * u'⁻¹ :).val]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_mul, ← Finset.mul_sum, ← map_sum, hc, map_one, mul_one]
   refine ⟨∑ i ∈ s, c i * w i, isUnit_of_ev fun y => ?_, fun i => ev_ext fun y => ?_⟩
   · obtain ⟨u, -, e⟩ := key y
     rw [e]; exact u.isUnit
@@ -309,8 +318,8 @@ theorem gs_appLE' {Z : Scheme.{0}} (r : Z ⟶ Y) (z : Z) {U : X.Opens} {V : Y.Op
     (a : Γ(X, U)) : gs r z V ((p.appLE U V h).hom a) = gs (r ≫ p) z U a :=
   (gs_res r z h hz _).trans (gs_pull r p z U (h hz) a)
 
-variable (M) in
 
+variable (M) in
 abbrev boxLB : LB Y := LB.LinComb M (K := Fin 2) ![p, q] (fun _ => 1)
 
 def boxF (a b : M.Sec) (j : Fin 2 → M.ι) : Γ(Y, LB.wchart M ![p, q] j) :=
@@ -332,8 +341,8 @@ def boxSec (a b : M.Sec) : (boxLB M p q).Sec where
       Fin.prod_univ_two, zpow_one, zpow_one, Units.val_mul, mul_mul_mul_comm]
     rfl
 
-variable (th) in
 
+variable (th) in
 def boxTh (i : σ × σ) : (boxLB M p q).Sec := boxSec p q (th i.1) (th i.2)
 
 theorem loc_box {x : Sp T ⟶ Y} {v₁ v₂ : σ → T} (h₁ : Loc M th (x ≫ p) v₁) (h₂ : Loc M th (x ≫ q) v₂) :
@@ -348,8 +357,8 @@ end Box
 section Segre
 variable {R : Type} [CommRing R] (I : Ideal (MvPolynomial σ R))
 
-open MvPolynomial in
 
+open MvPolynomial in
 def segreIdeal : Ideal (MvPolynomial (σ × σ) R) :=
   Ideal.span ({G | ∃ a b c d, G = MvPolynomial.X (a, b) * MvPolynomial.X (c, d) -
       MvPolynomial.X (a, d) * MvPolynomial.X (c, b)} ∪

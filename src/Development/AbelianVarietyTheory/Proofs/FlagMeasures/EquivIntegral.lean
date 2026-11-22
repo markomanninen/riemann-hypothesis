@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsZEquivGramBoundedMinorsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniquePlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsZEquivGramBoundedMinorsStatement
+
+@[expose] public section
 
 open NumberField Module Matrix Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.Cnt GlobalTheory.LoopC
 open scoped ENNReal Classical
@@ -78,7 +82,7 @@ theorem one_mem_dd (n : ℕ) (a : Fin n) :
   rw [this]
   exact FractionalIdeal.one_mem_inv_coe_ideal (pow_ne_zero _ hI)
 
-theorem fvec_mem {T : D.host.E} (Λ : LatV D) (F : LFlag (hS D) D.R.rS T) (hz : IsLift Λ F)
+theorem fvec_mem {T : D.host.E} (Λ : LatV D) (F : LFlag (D.sp.Y 0) D.R.rS T) (hz : IsLift Λ F)
     (hX : XLam Λ F = XS D F.fl) (a : Fin (D.R.rS + 1)) : F.fl.fvec a ∈ Λ := by
   refine Fin.lastCases ?_ (fun i => ?_) a
   · simp only [FlagG.fvec, Fin.snoc_last]
@@ -90,7 +94,7 @@ theorem fvec_mem {T : D.host.E} (Λ : LatV D) (F : LFlag (hS D) D.R.rS T) (hz : 
     exact (Submodule.mem_inf.mp hmem).1
 
 theorem zhat_integral {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : LatV D) (hΛ : IsRowLat D F0 Λ)
-    (F' : LFlag (hS D) D.R.rS T') (hF : IsTermF D Λ (lf D F0) F') (a b : Fin (D.R.rS + 1)) :
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hF : IsTermF D Λ (lf D F0) F') (a b : Fin (D.R.rS + 1)) :
     IsIntegral ℤ (ZhatL (lf D F0) F' a b) := by
   have hu : Formalism.HermitianLatticesTheory.IsUnimodular (hS D).hT Λ := hΛ.2.1.2.1
   have hx : F'.fl.fvec b ∈ Λ := fvec_mem D Λ F' hF.1.1 hF.2.2 b
@@ -176,8 +180,8 @@ theorem QQ_le (Z : GramM D) {b C Y : ℝ} (hH : 1 ≤ b ^ (C * (D.R.m : ℝ) ^ 2
   calc QQ D Z = ∏ l ∈ Finset.Icc 1 (D.R.rS + 1), ∏ τ, max 1 ‖embS D τ (leadMinorE Z l)‖ := rfl
     _ ≤ ∏ l ∈ Finset.Icc 1 (D.R.rS + 1), ∏ τ,
           ((Y * b ^ (C * (D.R.m : ℝ) ^ 2)) * max 1 (absDl D Z l τ / b ^ (C * (D.R.m : ℝ) ^ 2))) :=
-        Finset.prod_le_prod (fun l _ => Finset.prod_nonneg (fun τ _ => le_trans zero_le_one (le_max_left _ _)))
-          (fun l hl => Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key l hl τ))
+        Finset.prod_le_prod₀ (fun l _ => Finset.prod_nonneg (fun τ _ => le_trans zero_le_one (le_max_left _ _)))
+          (fun l hl => Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key l hl τ))
     _ = (Y * b ^ (C * (D.R.m : ℝ) ^ 2)) ^ ((D.R.rS + 1) * D.R.f) * sizeZ D b C Z := by
         conv_rhs => rw [sizeZ, Finset.prod_comm]
         simp only [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard, Nat.card_Icc,
@@ -207,7 +211,7 @@ theorem G_le (Z : GramM D) {T T' : ℝ} (hT : 0 ≤ T) (hT' : 0 ≤ T') :
     rw [Finset.prod_singleton] at this
     exact this
   calc ∏ τ, max 1 (Gz D T T' Z τ) ≤ ∏ τ, (max 1 ‖embS D τ (leadMinorE Z (D.R.rS + 1))‖) ^ 2 :=
-        Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key τ)
+        Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key τ)
     _ = PP D (leadMinorE Z (D.R.rS + 1)) ^ 2 := by rw [Finset.prod_pow]; rfl
     _ ≤ QQ D Z ^ 2 := pow_le_pow_left₀ (le_trans zero_le_one (one_le_PP D _)) h1 2
 
@@ -288,7 +292,7 @@ theorem G_inv_le (Z : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (hr : 1 ≤
       refine max_le (by nlinarith) (abs_le.mpr ⟨by nlinarith, by nlinarith⟩)
     calc PP D (leadMinorE Z (D.R.rS + 1) * star (leadMinorE Z (D.R.rS + 1)) - ((T : D.host.E) * (T' : D.host.E)) * (leadMinorE Z D.R.rS * star (leadMinorE Z D.R.rS))) = ∏ τ, max 1 ‖embS D τ (leadMinorE Z (D.R.rS + 1) * star (leadMinorE Z (D.R.rS + 1)) - ((T : D.host.E) * (T' : D.host.E)) * (leadMinorE Z D.R.rS * star (leadMinorE Z D.R.rS)))‖ := rfl
       _ ≤ ∏ τ, ((2 * T * T') * ((max 1 ‖embS D τ (leadMinorE Z (D.R.rS + 1))‖) ^ 2 * (max 1 ‖embS D τ (leadMinorE Z D.R.rS)‖) ^ 2)) :=
-          Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => hτ τ)
+          Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => hτ τ)
       _ = (2 * T * T') ^ D.R.f * ((PP D (leadMinorE Z (D.R.rS + 1)) * PP D (leadMinorE Z D.R.rS)) ^ 2) := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard, Finset.prod_mul_distrib,
             Finset.prod_pow, Finset.prod_pow]
@@ -299,7 +303,7 @@ theorem G_inv_le (Z : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (hr : 1 ≤
             (pow_le_pow_left₀ (mul_nonneg (le_trans zero_le_one (one_le_PP D _)) (le_trans zero_le_one (one_le_PP D _))) hsub 2)
             (by positivity)
   calc ∏ τ, max 1 (Gz D T T' Z τ)⁻¹ ≤ ∏ τ, (Y ^ 2 * max 1 ‖embS D τ (leadMinorE Z (D.R.rS + 1) * star (leadMinorE Z (D.R.rS + 1)) - ((T : D.host.E) * (T' : D.host.E)) * (leadMinorE Z D.R.rS * star (leadMinorE Z D.R.rS)))‖⁻¹) :=
-        Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key τ)
+        Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => key τ)
     _ = (Y ^ 2) ^ D.R.f * ∏ τ, max 1 ‖embS D τ (leadMinorE Z (D.R.rS + 1) * star (leadMinorE Z (D.R.rS + 1)) - ((T : D.host.E) * (T' : D.host.E)) * (leadMinorE Z D.R.rS * star (leadMinorE Z D.R.rS)))‖⁻¹ := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard]
     _ ≤ (Y ^ 2) ^ D.R.f * ((2 * T * T') ^ D.R.f * QQ D Z ^ 2) :=
@@ -341,7 +345,7 @@ theorem minors_le (Z Z₂ : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (he :
     rw [Finset.prod_comm]
     simp only [Finset.prod_mul_distrib]
     have h2 : ∏ l ∈ Finset.Icc 1 (D.R.rS + 1), ∏ τ, max 1 ‖embS D τ (leadMinorE Z l)‖⁻¹ ≤ QQ D Z :=
-      Finset.prod_le_prod (fun l _ => Finset.prod_nonneg (fun τ _ => le_trans zero_le_one (le_max_left _ _)))
+      Finset.prod_le_prod₀ (fun l _ => Finset.prod_nonneg (fun τ _ => le_trans zero_le_one (le_max_left _ _)))
         (fun l _ => PP_inv_le D (hint l))
     rw [sq]
     exact mul_le_mul (le_of_eq rfl) h2
@@ -350,14 +354,14 @@ theorem minors_le (Z Z₂ : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (he :
   have hPPμ : PP D (Z₂.submatrix I J).det ≤ c ^ D.R.f * QQ D Z ^ 2 := by
     calc PP D (Z₂.submatrix I J).det = ∏ τ, max 1 ‖embS D τ (Z₂.submatrix I J).det‖ := rfl
       _ ≤ ∏ τ, (c * (∏ l ∈ Finset.Icc 1 (D.R.rS + 1), (max 1 ‖embS D τ (leadMinorE Z l)‖ * max 1 ‖embS D τ (leadMinorE Z l)‖⁻¹))) :=
-          Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _))
+          Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _))
             (fun τ _ => max_le (one_le_mul_of_one_le_of_one_le hc (hX1 τ)) (hb τ))
       _ = c ^ D.R.f * ∏ τ, (∏ l ∈ Finset.Icc 1 (D.R.rS + 1), (max 1 ‖embS D τ (leadMinorE Z l)‖ * max 1 ‖embS D τ (leadMinorE Z l)‖⁻¹)) := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hcard]
       _ ≤ c ^ D.R.f * QQ D Z ^ 2 := mul_le_mul_of_nonneg_left hXprod (by positivity)
   have hR0 : 0 < (∏ a, (rhoF D (I a) * rhoF D (J a))) := Finset.prod_pos (fun a _ => mul_pos (rho_bounds D _).1 (rho_bounds D _).1)
   have hR1 : (∏ a, (rhoF D (I a) * rhoF D (J a))) ≤ 1 := by
-    refine Finset.prod_le_one (fun a _ => mul_nonneg (rho_bounds D _).1.le (rho_bounds D _).1.le) (fun a _ => ?_)
+    refine Finset.prod_le_one₀ (fun a _ => mul_nonneg (rho_bounds D _).1.le (rho_bounds D _).1.le) (fun a _ => ?_)
     have h1 := rho_bounds D (I a)
     have h2 := rho_bounds D (J a)
     nlinarith [h1.1, h1.2.1, h2.1, h2.2.1]
@@ -365,7 +369,7 @@ theorem minors_le (Z Z₂ : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (he :
   have hRinv : (∏ a, (rhoF D (I a) * rhoF D (J a)))⁻¹ ≤ Y := by
     rw [← Finset.prod_inv_distrib]
     calc ∏ a, (rhoF D (I a) * rhoF D (J a))⁻¹ ≤ ∏ _a : Fin j, (D.host.rdE ^ (D.R.rS + 1) * D.host.rdE ^ (D.R.rS + 1)) := by
-          refine Finset.prod_le_prod (fun a _ => ?_) (fun a _ => ?_)
+          refine Finset.prod_le_prod₀ (fun a _ => ?_) (fun a _ => ?_)
           · exact inv_nonneg.mpr (mul_nonneg (rho_bounds D _).1.le (rho_bounds D _).1.le)
           · rw [mul_inv]
             exact mul_le_mul (rho_bounds D _).2.2 (rho_bounds D _).2.2 (inv_nonneg.mpr (rho_bounds D _).1.le) (by positivity)
@@ -375,7 +379,7 @@ theorem minors_le (Z Z₂ : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (he :
       _ ≤ Y := hY
   constructor
   · calc ∏ τ, max 1 (UnitaryVolumeMass.absMinor D Z₂ I J τ) ≤ ∏ τ, max 1 ‖embS D τ (Z₂.submatrix I J).det‖ := by
-          refine Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => max_le_max le_rfl ?_)
+          refine Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => max_le_max le_rfl ?_)
           simp only [UnitaryVolumeMass.absMinor]
           exact mul_le_of_le_one_right (norm_nonneg _) hR1
       _ = PP D (Z₂.submatrix I J).det := rfl
@@ -384,7 +388,7 @@ theorem minors_le (Z Z₂ : GramM D) (h : ∀ a b, IsIntegral ℤ (Z a b)) (he :
           rw [mul_pow]
           exact mul_le_mul_of_nonneg_right (le_mul_of_one_le_left (by positivity) (one_le_pow₀ hY1)) (by positivity)
   · calc ∏ τ, max 1 (UnitaryVolumeMass.absMinor D Z₂ I J τ)⁻¹ ≤ ∏ τ, (Y * max 1 ‖embS D τ (Z₂.submatrix I J).det‖⁻¹) := by
-          refine Finset.prod_le_prod (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => ?_)
+          refine Finset.prod_le_prod₀ (fun τ _ => le_trans zero_le_one (le_max_left _ _)) (fun τ _ => ?_)
           simp only [UnitaryVolumeMass.absMinor]
           rw [mul_inv, mul_comm]
           refine le_trans (max_mul_le ((one_le_inv₀ hR0).mpr hR1)) ?_

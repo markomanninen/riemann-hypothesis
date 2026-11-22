@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.IsAddHaarMeasureHausdorffMeasureEuclideanSpaceCo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.IsAddHaarMeasureHausdorffMeasureEuclideanSpaceCo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -158,8 +163,6 @@ theorem PolySublevel.proof : PolySublevel.Statement := by
       simp only [Set.mem_preimage, e, MeasurableEquiv.piFinSuccAbove_symm_apply, hS_def,
         Set.mem_ofPred_eq, mem_ball_zero_iff, pi_norm_lt_iff hR, Fin.forall_fin_succ]
       simp [← eval_eq_eval_mv_eval', hP_def]
-      intro _ _
-      rfl
     have hvol : volume S = (volume.prod (Measure.pi fun _ : Fin d => (volume : Measure ℂ)))
         (e.symm ⁻¹' S) := ((MeasurePreserving.symm e he).measure_preimage hS.nullMeasurableSet).symm
     set A := {y : Fin d → ℂ | y ∈ Metric.ball 0 R ∧ ‖eval y q‖ ≤ Real.sqrt η} with hA_def

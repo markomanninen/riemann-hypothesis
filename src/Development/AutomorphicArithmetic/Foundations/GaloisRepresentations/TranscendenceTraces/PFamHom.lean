@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -9,13 +13,6 @@ private noncomputable def postFam {Z S : Scheme.{0}} {p : Z ⟶ S} {R : Type} [C
   nat {A B} s a := by
     change Sec.res s.g (Sec.map m (t.app B a)) = Sec.map m (t.app A (Sec.res s.k a))
     rw [← t.nat s a, map_res]
-
-private noncomputable def preFam {Z S : Scheme.{0}} {p : Z ⟶ S} {R : Type} [CommRing R] {G K J : Shv R}
-    (d : G ⟶ K) (t : Fam0 p K J) : Fam0 p G J where
-  app A := (t.app A).comp ((d.hom.app (op A.V)).hom.toAddMonoidHom)
-  nat {A B} s a := by
-    change Sec.res s.g (t.app B (Sec.map d a)) = t.app A (Sec.map d (Sec.res s.k a))
-    rw [t.nat s, map_res]
 
 theorem UpperTheory.Gal.TranscendenceTraces.famHom_of :
     FamHom := by

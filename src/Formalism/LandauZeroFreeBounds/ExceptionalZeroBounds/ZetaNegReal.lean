@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaOneEqOneSubOfRePos
+module
+
+public import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.RiemannZetaOneEqOneSubOfRePos
+
+@[expose] public section
 
 open Complex
 

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjMemCompletedLatticeIffDualSplitPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoordLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjMemCompletedLatticeIffDualSplitPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoordLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,7 +61,7 @@ theorem split_move {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {n : �
   rw [← map_mulVec']
   funext i
   have h4 : (a + b) * ((M *ᵥ y) i - y i) = (M *ᵥ y) i - y i := congrFun h3 i
-  simp only [Pi.add_apply, Pi.sub_apply, ← map_add, ← map_sub]
+  simp only [Pi.add_apply, Pi.sub_apply, ← map_add (f := _), ← map_sub]
   congr 1
   linear_combination -h4
 
@@ -74,15 +78,47 @@ theorem finPart_surj (z : Af D.host.F ⊗[D.host.F] D.host.E) : ∃ a : AE D, fi
 
 theorem idem_mul_mem (V : HSp D) {a : AE D} (ha : a * a = a) {y : Fin V.rank → AE D}
     (hy : (fun i => finPart D (y i)) ∈ LamHat V) : (fun i => finPart D (a * y i)) ∈ LamHat V := by
-  have h := GlobalTheory.SplitHeckeLabel.smul_mem_latHat (GlobalTheory.PlaceModel.latFrame V) (x := finPart D a)
-    (y := fun i => finPart D (y i))
+  let Λ := GlobalTheory.PlaceModel.latFrame V
+  have hs : ∀ b ∈ intAE D, ∀ z ∈ latHat D.host.F D.host.E
+      (Λ : Set (Fin V.rank → D.host.E)),
+      (fun i => b * z i) ∈ latHat D.host.F D.host.E (Λ : Set (Fin V.rank → D.host.E)) := by
+    intro b hb z hz
+    change z ∈ GlobalTheory.AdLat.hat D.host.F (Λ : Set (Fin V.rank → D.host.E)) at hz
+    change _ ∈ GlobalTheory.AdLat.hat D.host.F (Λ : Set (Fin V.rank → D.host.E))
+    induction hb using AddSubgroup.closure_induction with
+    | mem b hb =>
+      obtain ⟨s, hs, o, rfl⟩ := hb
+      induction hz using AddSubgroup.closure_induction with
+      | mem z hz =>
+        obtain ⟨t, ht, x, hx, rfl⟩ := hz
+        refine AddSubgroup.subset_closure ⟨s * t, fun v => mul_mem (hs v) (ht v), o • x,
+          Λ.smul_mem o hx, ?_⟩
+        funext i
+        rw [Algebra.TensorProduct.tmul_mul_tmul]
+        rfl
+      | zero =>
+        simp only [Pi.zero_apply, mul_zero]
+        exact zero_mem _
+      | add u w _ _ hu hw =>
+        simp only [Pi.add_apply, mul_add]
+        exact add_mem hu hw
+      | neg u _ hu =>
+        simp only [Pi.neg_apply, mul_neg]
+        exact neg_mem hu
+    | zero =>
+      simp only [zero_mul]
+      exact zero_mem _
+    | add u w _ _ hu hw =>
+      simp only [add_mul]
+      exact add_mem hu hw
+    | neg u _ hu =>
+      simp only [neg_mul]
+      exact neg_mem hu
+  have h := hs (finPart D a)
     (GlobalTheory.AdIdem.idempotent_mem_intAE D _ (by rw [← RingHom.map_mul, ha]))
-    (by rw [GlobalTheory.PlaceModel.coe_latFrame]; exact hy)
+    (fun i => finPart D (y i)) (by rw [GlobalTheory.PlaceModel.coe_latFrame]; exact hy)
   rw [GlobalTheory.PlaceModel.coe_latFrame] at h
-  have e : (fun i => finPart D (a * y i)) = finPart D a • fun i => finPart D (y i) :=
-    funext fun i => RingHom.map_mul _ _ _
-  rw [e]
-  exact h
+  simpa only [RingHom.map_mul] using h
 
 theorem finMat_eq (V : HSp D) (g : GA D V) : finMat D.sp.cm.sig V.gram g = (mt V g).map (finPart D) := rfl
 
@@ -97,7 +133,7 @@ theorem suppAt_inv {e : AE D} {V : HSp D} {g : GA D V} (hg : SuppAt e V g) : Sup
 theorem mem_GfC {e : AE D} (he : IsSplitIdem D e) {V : HSp D} {g : GA D V} (hg : SuppAt e V g) : g ∈ GfC V := by
   refine Units.ext (Matrix.ext fun i j => ?_)
   have h : infPart D ((mt V g - 1) i j) = 0 := by
-    rw [← hg i j, RingHom.map_mul, RingHom.map_add, GlobalTheory.SplitScalar.infPart_splitIdem he,
+    rw [← hg i j, RingHom.map_mul, RingHom.map_add (f := _), GlobalTheory.SplitScalar.infPart_splitIdem he,
       GlobalTheory.SplitScalar.infPart_splitIdem (GlobalTheory.SplitScalar.isSplitIdem_conj he), add_zero, zero_mul]
   rw [Matrix.sub_apply, RingHom.map_sub, sub_eq_zero] at h
   show infPart D (mt V g i j) = (1 : Matrix _ _ _) i j

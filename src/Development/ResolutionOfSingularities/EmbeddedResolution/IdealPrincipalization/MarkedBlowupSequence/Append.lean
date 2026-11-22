@@ -1,13 +1,18 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.BlowupSequenceData
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -549,7 +554,7 @@ theorem center_support_subset_orderAtLeastLocus_appendIdeal (hinv : ComapIsoInva
       (t.ideal (i - s.toBlowupSequenceData.length))
       (t.center_order (i - s.toBlowupSequenceData.length) hsub)
 
-private theorem smooth_center_comp_appendProjectionToBase (hinv : ComapIsoInvariance.{u}) (i : ℕ)
+theorem smooth_center_comp_appendProjectionToBase (hinv : ComapIsoInvariance.{u}) (i : ℕ)
     (hi : i < (s.appendToBlowupSequenceData t).length) :
     AlgebraicGeometry.Smooth
       (((s.appendToBlowupSequenceData t).center i).subschemeι ≫ s.appendProjectionToBase t i ≫ p) := by
@@ -610,7 +615,7 @@ private theorem hasStrictNormalCrossingsWith_comap_iso_inv {K : Type u} [Field K
   rw [Iso.symm_hom, Iso.inv_hom_id_assoc, map_comap_hom_map_comap_inv e F] at h2
   exact h2
 
-private theorem hasStrictNormalCrossingsWith_appendBoundary (hinv : ComapIsoInvariance.{u}) (i : ℕ)
+theorem hasStrictNormalCrossingsWith_appendBoundary (hinv : ComapIsoInvariance.{u}) (i : ℕ)
     (hi : i < (s.appendToBlowupSequenceData t).length) :
     HasStrictNormalCrossingsWith (s.appendProjectionToBase t i ≫ p) ((s.appendToBlowupSequenceData t).center i)
       (s.appendBoundary t i) := by
@@ -747,7 +752,7 @@ private theorem map_strictTransform_comp_iso_hom (hinv : ComapIsoInvariance.{u})
       AlgebraicGeometry.Scheme.IdealSheafData.comap_comp, hZ]
   rw [hL1, List.map_map, hfun, hexc]
 
-private theorem appendBoundary_succ (hinv : ComapIsoInvariance.{u}) (i : ℕ)
+theorem appendBoundary_succ (hinv : ComapIsoInvariance.{u}) (i : ℕ)
     (hi : i < (s.appendToBlowupSequenceData t).length) :
     s.appendBoundary t (i + 1) =
       (s.appendBoundary t i).map
@@ -823,11 +828,6 @@ theorem append_toBlowupSequenceData (hinv : ComapIsoInvariance.{u}) :
 @[simp]
 theorem append_length (hinv : ComapIsoInvariance.{u}) :
     (s.append t hinv).toBlowupSequenceData.length =
-      s.toBlowupSequenceData.length + t.toBlowupSequenceData.length := rfl
-
-@[simp]
-theorem append_toMarkedSequence_length (hinv : ComapIsoInvariance.{u}) :
-    (s.append t hinv).toMarkedSequenceOfBlowups.toSequenceOfBlowups.length =
       s.toBlowupSequenceData.length + t.toBlowupSequenceData.length := rfl
 
 theorem append_projectionToBase (hinv : ComapIsoInvariance.{u}) (i : ℕ) :

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSmoothCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJfSmoothCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField MeasureTheory
 

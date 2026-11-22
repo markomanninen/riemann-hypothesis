@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementC
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.AbsorbLocalConditions
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.ErrSum
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.UnipotentNumeric
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsGlobalForm
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.WeightedPlaceLogSum
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementC
+public import Formalism.MirabolicMackeyTheory.StatementT
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsChain
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.UnipotentNumeric
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsGlobalForm
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.WeightedPlaceLogSum
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

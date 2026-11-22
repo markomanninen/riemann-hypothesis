@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
-import ReciprocityTheory.ThetaQuasiPeriods.NormInvSmulMemSphere
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsMatrix
+public import ReciprocityTheory.ThetaQuasiPeriods.NormInvSmulMemSphere
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open Matrix MeasureTheory Real

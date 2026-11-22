@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHeckeCapelliOperators
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.LeviCommutantWordReduction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingHeckeCapelliOperators
+
+@[expose] public section
 
 open Finset
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
@@ -337,10 +341,12 @@ theorem polyTopLocal {n : ℕ} (L : Fin n → ℝ) (hL : StrictAnti L) (lev : Fi
       have hne2 : (univ.filter fun a => π' a = j).Nonempty := Finset.card_pos.1 (hcj' ▸ Finset.card_pos.2 hne)
       have h := ht j hj
       have e1 : (Q j).coeff ((blk lev j).card - 1) = ψ (∑ a ∈ univ.filter (fun a => π a = j), (L a : ℂ)) := by
-        rw [hQ j hj, hcj, coeff_prod_top _ hne1, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hQ j hj, hcj, coeff_prod_top _ hne1, map_sum]
       have e2 : (Q' j).coeff ((blk lev j).card - 1) = ψ (∑ a ∈ univ.filter (fun a => π' a = j), (L a : ℂ)) := by
-        rw [hQ' j hj, hcj', coeff_prod_top _ hne2, map_sum]
-      rw [e1, e2, ← map_add] at h
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hQ' j hj, hcj', coeff_prod_top _ hne2, map_sum]
+      rw [e1, e2, ← map_add (f := _)] at h
       have h2 := hψ h
       apply Complex.ofReal_injective
       push_cast
@@ -374,18 +380,18 @@ theorem polyTop {n : ℕ} (L : Fin n → ℝ) (hL : StrictAnti L) (lev : Fin n �
       rw [(hm' j hj).1.natDegree_map φ]; exact (hm' j hj).2⟩)
     (by
       rw [← Polynomial.map_prod, hp, Polynomial.map_prod]
-      simp [Polynomial.map_add])
+      simp [Polynomial.map_add (f := _)])
     (by
       rw [← Polynomial.map_prod, hp', Polynomial.map_prod]
-      simp [Polynomial.map_add])
+      simp [Polynomial.map_add (f := _)])
     (fun j hj => by
-      rw [coeff_map, coeff_map, ← map_add, ht j hj]; rfl) j hj
+      rw [coeff_map, coeff_map, ← map_add (f := _), ht j hj]; rfl) j hj
   have h2 := congrArg (fun p => p.coeff k) key
   simp only [coeff_map] at h2
   rw [map_sub, sub_eq_zero]
   have h3 : (∏ a ∈ blk lev j, (X + C ((φ.comp (algebraMap ℂ B)) (L a : ℂ))) : A[X]) =
       (∏ a ∈ blk lev j, (X + C (algebraMap ℂ B (L a : ℂ)))).map φ := by
-    rw [Polynomial.map_prod]; simp [Polynomial.map_add]
+    rw [Polynomial.map_prod]; simp [Polynomial.map_add (f := _)]
   rw [h3, coeff_map] at h2
   exact h2
 
@@ -396,12 +402,13 @@ theorem coeffs_zero {V : Type*} [AddCommGroup V] [Module ℂ V] (N : ℕ) (d : �
   have hp : (∑ k ∈ range N, C (φ (d k)) * X ^ k : ℂ[X]) = 0 := by
     refine Polynomial.funext fun Y => ?_
     have := congrArg φ (h Y)
-    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
-    simp only [eval_finset_sum, eval_mul, eval_C, eval_pow, eval_X, eval_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, map_zero] at this
+    simp only [eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X, eval_zero]
     rw [← this]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
-  have h2 := congrArg (fun q => Polynomial.coeff q i) hp
-  simpa [finset_sum_coeff, coeff_C_mul, coeff_X_pow, hi] using h2
+  have h2 := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q i) hp
+  simpa [finsetSum_coeff, coeff_C_mul, coeff_X_pow, hi] using h2
 
 theorem poly_eq_zero_of_eval {B : Type} [CommRing B] [Algebra ℂ B] (p : B[X])
     (h : ∀ u : ℂ, p.eval (algebraMap ℂ B u) = 0) : p = 0 := by
@@ -418,7 +425,8 @@ theorem coeff_mem_of_values {A : Type} [AddCommGroup A] [Module ℂ A] (W : Subm
   intro k hk
   have := coeffs_zero N (fun i => W.mkQ (c i)) (fun Y => by
     have h0 := (Submodule.Quotient.mk_eq_zero W).2 (h Y)
-    rw [← Submodule.mkQ_apply, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.mkQ_apply, map_sum] at h0
     simpa only [map_smul] using h0) k hk
   exact (Submodule.Quotient.mk_eq_zero W).1 this
 
@@ -477,16 +485,17 @@ theorem capPoly {R : Type} [CommRing R] [Nontrivial R] [Algebra ℂ R] {A : Type
   set r : R[X] := ∑ k ∈ range t, C (d k) * X ^ k with hr
   have hcoef : ∀ k, r.coeff k = if k < t then d k else 0 := by
     intro k
-    simp only [hr, finset_sum_coeff, coeff_C_mul, coeff_X_pow]
+    simp only [hr, finsetSum_coeff, coeff_C_mul, coeff_X_pow]
     simp [Finset.sum_ite_eq, Finset.mem_range]
   have hdeg : r.degree < t := by
     rw [degree_lt_iff_coeff_zero]
     intro m hm
     rw [hcoef, if_neg (by omega)]
   refine ⟨X ^ t + r, monic_X_pow_add hdeg, by rw [natDegree_add_eq_left_of_degree_lt (by rwa [degree_X_pow]), natDegree_X_pow], fun u => ?_, fun k hk => ?_⟩
-  · rw [hq u, Finset.sum_range_succ, h1, eval_add, eval_pow, eval_X, map_add, map_pow, add_comm]
+  · rw [hq u, Finset.sum_range_succ, h1, eval_add, eval_pow, eval_X, map_add (f := _), map_pow, add_comm]
     congr 1
-    · rw [hr, eval_finset_sum, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [hr, eval_finsetSum, map_sum]
       refine Finset.sum_congr rfl fun k hk => ?_
       rw [eval_mul, eval_C, eval_pow, eval_X, map_mul, map_pow, hd k (by
         have := Finset.mem_range.1 hk
@@ -552,7 +561,7 @@ theorem core {R : Type} [CommRing R] [Algebra ℂ R] (ι : R →ₐ[ℂ] Module.
     { carrier := {r | ι r c = 0}
       add_mem' := fun {a b} ha hb => by
         simp only [Set.mem_setOf_eq] at ha hb ⊢
-        rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+        rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
       zero_mem' := by simp
       smul_mem' := fun a b hb => by
         simp only [Set.mem_setOf_eq, smul_eq_mul] at hb ⊢
@@ -577,7 +586,7 @@ theorem core {R : Type} [CommRing R] [Algebra ℂ R] (ι : R →ₐ[ℂ] Module.
     have a2 : ∀ a, (X + C (algebraMap ℂ (R ⧸ I) (L a : ℂ))).eval (algebraMap ℂ (R ⧸ I) u) =
         mk (algebraMap ℂ R (u + (L a : ℂ))) := by
       intro a
-      simp only [eval_add, eval_X, eval_C, AlgHom.commutes, map_add]
+      simp only [eval_add, eval_X, eval_C, AlgHom.commutes, map_add (f := _)]
     simp only [a1, a2]
     rw [← map_prod, ← map_prod, ← sub_eq_zero, ← map_sub, hmk, hI, map_sub, LinearMap.sub_apply, sub_eq_zero,
       ι_prod_levs, ← map_prod, hscal]
@@ -591,7 +600,7 @@ theorem core {R : Type} [CommRing R] [Algebra ℂ R] (ι : R →ₐ[ℂ] Module.
     intro j hj
     rw [coeff_map, coeff_map, ← mk.commutes]
     show mk _ + mk _ = mk _
-    rw [← map_add, ← sub_eq_zero, ← map_sub, hmk, hI, map_sub, map_add, LinearMap.sub_apply, LinearMap.add_apply,
+    rw [← map_add (f := _), ← sub_eq_zero, ← map_sub, hmk, hI, map_sub, map_add (f := _), LinearMap.sub_apply, LinearMap.add_apply,
       hp4 j hj, hp4' j hj, hscal, ← hsh j]
     have hs : ∑ a ∈ blk lev j, (F1 a a c + F2 a a c) = ∑ a ∈ blk lev j, (ν a : ℂ) • c :=
       Finset.sum_congr rfl fun a _ => by simpa using hsemi a a rfl
@@ -615,7 +624,7 @@ theorem core {R : Type} [CommRing R] [Algebra ℂ R] (ι : R →ₐ[ℂ] Module.
       mk (algebraMap ℂ R (∏ a ∈ blk lev j, (u + σ1 j + (L a : ℂ)))) := by
     rw [eval_prod, map_prod, map_prod]
     refine Finset.prod_congr rfl fun a _ => ?_
-    simp only [eval_add, eval_X, eval_C, AlgHom.commutes, map_add]
+    simp only [eval_add, eval_X, eval_C, AlgHom.commutes, map_add (f := _)]
   have h3 : mk ((p j).eval (algebraMap ℂ R (u + σ1 j))) =
       mk (algebraMap ℂ R (∏ a ∈ blk lev j, (u + σ1 j + (L a : ℂ)))) := by
     rw [← a1, ← a2]
@@ -678,10 +687,13 @@ theorem capScal : CapelliProductsScalar := by
       · exact (capComm n lev H F1 F2 hF p.1 q.1 p.2 q.2).2.2
       · exact (capComm n lev H F1 F2 hF q.1 p.1 q.2 p.2).2.2.symm
       · exact (capComm n lev H F1 F2 hF p.1 q.1 p.2 q.2).2.1
-    letI : CommRing (Algebra.adjoin ℂ Gs) := Algebra.adjoinCommRingOfComm ℂ hcomm
+    letI : IsMulCommutative (Algebra.adjoin ℂ Gs) :=
+      Algebra.isMulCommutative_adjoin ℂ (fun a ha b hb _ => hcomm a ha b hb)
+    letI : CommRing (Algebra.adjoin ℂ Gs) :=
+      { (inferInstance : Ring (Algebra.adjoin ℂ Gs)) with mul_comm := mul_comm' }
     exact core (Algebra.adjoin ℂ Gs).val L hL lev hlev ν σ1 σ2 hsh F1 F2
-      (fun j u => ⟨⟨_, Algebra.subset_adjoin (Or.inl ⟨(j, u), rfl⟩)⟩, rfl⟩)
-      (fun j u => ⟨⟨_, Algebra.subset_adjoin (Or.inr ⟨(j, u), rfl⟩)⟩, rfl⟩) c hsemi h1 h2 j hj u
+      (fun j u => ⟨⟨_, Algebra.subset_adjoin (show capS F1 lev j u ∈ Gs from Or.inl ⟨(j, u), rfl⟩)⟩, rfl⟩)
+      (fun j u => ⟨⟨_, Algebra.subset_adjoin (show capS F2 lev j u ∈ Gs from Or.inr ⟨(j, u), rfl⟩)⟩, rfl⟩) c hsemi h1 h2 j hj u
   · have hb : blk lev j = ∅ := Finset.filter_eq_empty_iff.2 fun a _ h => hj (h ▸ Finset.mem_image_of_mem _ (mem_univ a))
     have h0 : ∀ (t : ℕ), t = 0 → ∀ (e : Fin t → Fin n) (x : ℂ), Formalism.REAL.qminor F1 e e x = 1 := by
       rintro _ rfl e x

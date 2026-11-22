@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+
+@[expose] public section
+
 open NumberField MeasureTheory
 open scoped RealInnerProductSpace FourierTransform
 
@@ -13,7 +18,7 @@ noncomputable def quotCosetProdEquiv (R : Type) [CommRing R] (M : Ideal R) : (R 
   left_inv p := by
     obtain ⟨c, μ⟩ := p
     have hc : Ideal.Quotient.mk M (Quotient.out c + (μ : R)) = c := by
-      rw [map_add, Ideal.Quotient.mk_out, Ideal.Quotient.eq_zero_iff_mem.mpr μ.2, add_zero]
+      rw [map_add (f := _), Ideal.Quotient.mk_out, Ideal.Quotient.eq_zero_iff_mem.mpr μ.2, add_zero]
     ext
     · exact hc
     · simp only [hc]; ring

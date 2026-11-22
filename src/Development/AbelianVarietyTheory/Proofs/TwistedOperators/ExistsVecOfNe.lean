@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodProjectorSmallestSpaceForms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodProjectorSmallestSpaceForms
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
@@ -14,33 +18,6 @@ section Defs
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
-
-def StepLevAt (R : RealDat D A Ks) (F : Face D A) (b : Bool) (t : T) : Prop :=
-  ∀ (k : ℕ), k + 1 < D.R.m → ∀ y : R.CC t (k + 1),
-    y.1 ∈ MultT R.θ (R.MY (k + 1)) (levS _ (R.βY (k + 1)) (R.datYt t (k + 1) (R.levR F b)))
-        (levChi _ (R.βY (k + 1)) (R.datYt t (k + 1) (R.levR F b))) →
-      (R.ioY t k y).1 ∈ MultT R.θ (R.MY k) (levS _ (R.βY k) (R.datYt t k (R.levR F b)))
-        (levChi _ (R.βY k) (R.datYt t k (R.levR F b)))
-
-def TopLevAt (R : RealDat D A Ks) (F : Face D A) (b : Bool) (t : T) : Prop :=
-  ∀ (y : LinearMap.range (R.cX.toMap R.prX ∘ₗ (R.HX t).e)),
-    y.1 ∈ MultT R.θ R.MX (levS _ R.βX (datXP R t (R.levR F b))) (levChi _ R.βX (datXP R t (R.levR F b))) →
-      (R.ioX t y).1 ∈ MultT R.θ (R.MY (D.R.m - 1)) (levS _ (R.βY (D.R.m - 1)) (R.datYt t (D.R.m - 1) (R.levR F b)))
-        (levChi _ (R.βY (D.R.m - 1)) (R.datYt t (D.R.m - 1) (R.levR F b)))
-
-def RowProjAt (R : RealDat D A Ks) (F : Face D A) (b : Bool) (t : T) : Prop :=
-  ∀ (w : MMap (R.MY 0)),
-    w ∈ Mult R.θ (R.MY 0) (levS _ (R.βY 0) (R.datYt t 0 (R.levR F b))) (levChi _ (R.βY 0) (R.datYt t 0 (R.levR F b))) →
-      postOn (R.MY 0) R.e0 w ∈ goodPart R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 (R.levR F b)))
-          (levChi _ (R.βY 0) (R.dat0 (R.levR F b))) R.e0 ∧
-        ∀ c ∈ goodPart R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 (R.levR F b))) (levChi _ (R.βY 0) (R.dat0 (R.levR F b))) R.e0,
-          ipM (R.MY 0) (ENNReal.ofReal (RealDat.nP F b)⁻¹ • R.ν0) R.fd0 c w =
-            ipM (R.MY 0) (ENNReal.ofReal (RealDat.nP F b)⁻¹ • R.ν0) R.fd0 c (postOn (R.MY 0) R.e0 w)
-
-def TopAdjAt (R : RealDat D A Ks) (F : Face D A) (b : Bool) (t : T) : Prop :=
-  ∀ y : R.HE.H, R.HE.e y ∈ R.EEat (R.levR F b) →
-    R.cX.toMap R.prX ((R.HX t).e (LinearMap.adjoint (R.Th t) y)) ∈
-      MultT R.θ R.MX (levS _ R.βX (datXP R t (R.levR F b))) (levChi _ R.βX (datXP R t (R.levR F b)))
 
 theorem nP_pos' (F : Face D A) (b : Bool) : 0 < RealDat.nP F b := by
   have hcard : 0 < Nat.card (F.lvl b).P := Nat.card_pos
@@ -76,7 +53,7 @@ private theorem ipM_eq_of_isMultIP {M : DSModel V S} {μ : Measure (GA D V)} {�
     ipM M μ 𝓕 T T' = c := by
   have hex : ∃ c, IsMultIP M μ 𝓕 T T' c := ⟨c, h⟩
   unfold ipM
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact isMultIP_const_unique v hv hex.choose_spec h
 
 theorem ipM_smul_of_vec (M : DSModel V S) (μ : Measure (GA D V)) (𝓕 : Set (GA D V)) (T T' : MMap M) {a : ℝ}
@@ -93,7 +70,7 @@ theorem ipM_smul_of_vec (M : DSModel V S) (μ : Measure (GA D V)) (𝓕 : Set (G
         one_smul] at hb
       exact hex ⟨_, hb⟩
     unfold ipM
-    rw [dif_neg hex, dif_neg hex', mul_zero]
+    rw [dite_eq_right hex, dite_eq_right hex', mul_zero]
 
 theorem exists_vec_of_ne {M : DSModel V S} {T : MMap M} (hT : T ≠ 0) :
     ∃ v : M.Vec, ∏ τ, ⟪(v τ : M.H τ), (v τ : M.H τ)⟫_ℂ ≠ 0 := by

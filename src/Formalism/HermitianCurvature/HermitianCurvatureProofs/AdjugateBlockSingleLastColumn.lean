@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorVanishesBigCell
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DirectionsInParabolic
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 
@@ -72,17 +76,17 @@ theorem liftVec_eB (u : Fin (2 * 0 + k + 1) → ℂ) (x : Ix k j 0) :
   · have h1 : (eB k j 0 (Sum.inl (Sum.inl a))).val = a.val := by simp [U.eB]
     have ha := a.isLt
     simp only [liftVec, Sum.elim_inl]
-    rw [dif_neg (by rw [h1]; omega)]
+    rw [dite_eq_right (by rw [h1]; omega)]
   · have h1 : (eB k j 0 (Sum.inl (Sum.inr b))).val = j + b.val := by simp [U.eB]
     have hb := b.isLt
     simp only [liftVec, Sum.elim_inl, Sum.elim_inr]
-    rw [dif_pos (by rw [h1]; omega)]
+    rw [dite_eq_left (by rw [h1]; omega)]
     congr 1
     ext
     simp [h1]
   · have h1 : (eB k j 0 (Sum.inr a)).val = j + (2 * 0 + k + 1) + a.val := by simp [U.eB]
     simp only [liftVec, Sum.elim_inr]
-    rw [dif_neg (by rw [h1]; omega)]
+    rw [dite_eq_right (by rw [h1]; omega)]
 
 theorem mulVec_eB {ρ : ℕ} (M : B.Mat k (j + ρ)) (v : Fin (2 * (j + ρ) + k + 1) → ℂ) (x : Ix k j ρ) :
     (M *ᵥ v) (eB k j ρ x) = ∑ y, M (eB k j ρ x) (eB k j ρ y) * v (eB k j ρ y) := by
@@ -146,7 +150,7 @@ theorem prW_lift (a u : Fin (2 * 0 + k + 1) → ℂ) :
       if j + 0 ≤ i.val ∧ i.val ≤ j + 0 + k then liftVec k j 0 u i else 0) = liftVec k j 0 u := by
     funext i; split_ifs with h
     · rfl
-    · unfold liftVec; rw [dif_neg (by omega)]
+    · unfold liftVec; rw [dite_eq_right (by omega)]
   have hb0 : (fun i : Fin (2 * 0 + k + 1) => if 0 ≤ i.val ∧ i.val ≤ 0 + k then u i else 0) = u := by
     funext i; rw [if_pos ⟨Nat.zero_le _, by omega⟩]
   unfold D.prW
@@ -325,7 +329,7 @@ theorem fvec_last {r : ℕ} (z : Fin (2 * r + k + 1) → ℂ) : fvec k r z (Fin.
 
 theorem fvec_low {r : ℕ} (z : Fin (2 * r + k + 1) → ℂ) (a : Fin (r + 1)) (ha : a.val < r) :
     fvec k r z a = bvec (eI k r ⟨a.val, ha⟩) := by
-  rw [fvec, dif_pos ha]
+  rw [fvec, dite_eq_left ha]
 
 theorem adj_one (ζ : ℂ) (a b : Fin (0 + 1)) : (Matrix.of fun (_ _ : Fin (0 + 1)) => ζ).adjugate a b = 1 := by
   have hab : a = b := Subsingleton.elim a b

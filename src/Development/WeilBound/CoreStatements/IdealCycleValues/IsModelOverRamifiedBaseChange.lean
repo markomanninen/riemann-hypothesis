@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
-import Development.WeilBound.CoreStatements.IdealCycleValues.FlatColon
-import Development.WeilBound.CoreStatements.IdealCycleValues.OfIdealCycleNe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumBaseChange
+public import Development.WeilBound.CoreStatements.IdealCycleValues.FlatColon
+public import Development.WeilBound.CoreStatements.IdealCycleValues.OfIdealCycleNe
+
+@[expose] public section
 
 namespace BaseChangeColon.BC
 
@@ -24,7 +28,7 @@ omit [IsDiscreteValuationRing O'] in
 theorem flat_of (hϖ : Irreducible ϖ) (hϖ' : Irreducible ϖ') (h : algebraMap O O' ϖ = u * ϖ' ^ e) :
     Module.Flat O O' := by
   have hinj : Function.Injective (algebraMap O O') := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     by_contra h0
     obtain ⟨n, v, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible h0 hϖ

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSmoothOfNormalPf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSmoothOfNormalPf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 Order
@@ -35,7 +39,7 @@ theorem stalk_dvr {X : Scheme.{0}} [IsIntegral X] [IsLocallyNoetherian X] (y : X
   have : Ring.DimensionLEOne (X.presheaf.stalk y) :=
     ⟨fun hp hprime => hprime.isMaximal_of_ne_bot hp⟩
   have : IsDedekindDomain (X.presheaf.stalk y) := {}
-  exact ((IsDiscreteValuationRing.TFAE _ (stalk_not_isField y hy)).out 2 0).mp this
+  exact ((IsDiscreteValuationRing.TFAE _ (stalk_not_isField y hy)).out 3 1).mp this
 
 set_option backward.isDefEq.respectTransparency false in
 theorem LeafStalkSmoothClosed_of : LateralTheory.E.LeafSmoothOfNormalPf.LeafStalkSmoothClosed := by

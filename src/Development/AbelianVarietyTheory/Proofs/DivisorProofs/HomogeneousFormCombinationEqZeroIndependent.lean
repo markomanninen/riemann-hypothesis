@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
+
 open Filter Topology MvPolynomial GlobalTheory.HSAmp
 
 set_option autoImplicit false
@@ -12,7 +17,8 @@ theorem aeval_mul_hom {σ R A : Type} [CommRing R] [CommRing A] [Algebra R A] {P
     (c : A) (z : σ → A) : aeval (fun i => c * z i) P = c ^ q * aeval z P := by
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hd := hP (mem_support_iff.mp hm)
   simp only [aeval_monomial, mul_pow]
@@ -65,8 +71,8 @@ end GlobalTheory.HSAmp.HomInj
 
 namespace GlobalTheory.HSAmp
 
-open GlobalTheory.HSAmp.HomInj in
 
+open GlobalTheory.HSAmp.HomInj in
 theorem homogComb_eq_zero : ∀ (K : Type) [Field K] [CharZero K] (D : ℕ) (x : Fin (D + 1) → K), (∀ j, x j ≠ 0) →
     AlgebraicIndependent ℤ (fun j : Fin D => x j.succ / x 0) → FiniteDimensional (ratF x) K →
     ∀ (ι : Type) [Fintype ι] (g : ι → K), LinearIndependent (ratF x) g → ∀ (q : ℕ)

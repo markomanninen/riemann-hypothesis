@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDcvAlg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsUnitDetLeviM
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.Transp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsSplitFrame
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IdxDcvAlg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.IsUnitDetLeviM
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.Transp
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,12 +128,12 @@ theorem rel_ef (a b : Fin D.R.rS) :
   split_ifs <;> simp
 
 theorem rel_ez (u : D.what₂.Word) (a : Fin D.R.rS) : hA X.B.I (incl X.B.I (X.eR a)) (zv X u) = 0 := by
-  rw [← ev_fix X u a, zv, hA_unit]
+  rw [← ev_fix X u a, zv, hA_unit X (X.xu u)⁻¹]
   show hA X.B.I (incl X.B.I (X.crd (X.eX a))) (incl X.B.I (X.crd (X.zu u))) = 0
   rw [hA_crd, (X.zu_orth u a).1, map_zero, map_zero]
 
 theorem rel_fz (u : D.what₂.Word) (a : Fin D.R.rS) : hA X.B.I (incl X.B.I (X.fR a)) (zv X u) = 0 := by
-  rw [← fv_fix X u a, zv, hA_unit]
+  rw [← fv_fix X u a, zv, hA_unit X (X.xu u)⁻¹]
   show hA X.B.I (incl X.B.I (X.crd (X.fY a))) (incl X.B.I (X.crd (X.zu u))) = 0
   rw [hA_crd, (X.zu_orth u a).2, map_zero, map_zero]
 
@@ -245,8 +249,8 @@ theorem Z_hA_mL' {d w : VA X.B.I} (hd : d ∈ mL X.B.I X.B.g) (hw : w ∈ X.B.I.
   rw [hA_symm]
   exact Z_sig X.B.I X.B.g (Z_hA_mL X hd hw)
 
-omit hJ hE in
 
+omit hJ hE in
 theorem Z_pair {x x' y y' : VA X.B.I} (hx : x - x' ∈ mL X.B.I X.B.g) (hy : y - y' ∈ mL X.B.I X.B.g)
     (hyL : y ∈ X.B.I.Lf) (hx'L : x' ∈ X.B.I.Lf) :
     ZMod' X.B.I X.B.g (hA X.B.I x y - hA X.B.I x' y') := by
@@ -261,9 +265,12 @@ theorem N_cong : ZMod' X.B.I X.B.g (hA X.B.I (zh X e u) (zh X e u) + E1 X e) := 
   have h1 := Z_pair hc hc (zh_Lf hJ hE u) (smul_int_mem (integral_circleChar X hE.1) hz0)
   rw [hermitian_idempotent_smul hE.2.1] at h1
   have h2 := Z_smul X.B.I X.B.g (integral_circleChar X hE.1) X.formsAtZero.1
-  have := Z_add X.B.I X.B.g h1 h2
-  convert this using 1
-  ring
+  have hsum := Z_add X.B.I X.B.g h1 h2
+  have heq : (hA X.B.I (zh X e u) (zh X e u) - E1 X e * hA X.B.I X.z0 X.z0) +
+      E1 X e * (hA X.B.I X.z0 X.z0 + 1) =
+      hA X.B.I (zh X e u) (zh X e u) + E1 X e := by ring
+  rw [heq] at hsum
+  exact hsum
 
 theorem Qv_cong {y : VA X.B.I} (hy : y ∈ X.B.I.Lf) (he0 : ∀ a, ZMod' X.B.I X.B.g (hA X.B.I (X.e0 a) y))
     (hf0 : ∀ a, ZMod' X.B.I X.B.g (hA X.B.I (X.f0 a) y)) (hz0 : ZMod' X.B.I X.B.g (hA X.B.I X.z0 y)) :
@@ -300,11 +307,6 @@ namespace PI.UnitaryDimensionFormula.FrameX
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 open PI.UnitaryDimensionFormula
-
-def FrGramS : Prop := ∀ (D : D7) (X : HidaSetting D) (e : Af X.B.I.F), EgProp X.B.I.F X.B.g e →
-  ∀ G : Matrix (Fin D.R.k) (Fin D.R.k) (X.B.I.E ⊗[X.B.I.F] Af X.B.I.F), (∀ l j, G l j ∈ IntAf X.B.I.F X.B.I.E) →
-  (∀ l j, ZMod' X.B.I X.B.g (G l j - if l = j then epsX X e else 0)) →
-  ∃ y ∈ IntAf X.B.I.F X.B.I.E, epsX X e * G.det * y = epsX X e
 
 variable {D : D7} {X : HidaSetting D}
 

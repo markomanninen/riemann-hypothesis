@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.HeckeCharacterParameters
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SameBlockOfPosC
+
+@[expose] public section
+
 open Formalism.BasicNotions.TH GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.MatrixMinorProducts MeasureTheory
 open Formalism.MainNotions.SchurIrreducible (IrrU IrrGK IsHCMod)
 open scoped TensorProduct
@@ -66,9 +71,9 @@ theorem inner_eq_mul : ∀ (p q : ℕ) (M : GKMod p q) (H₁ : Type) [NormedAddC
   intro p q M H₁ _ _ H₂ _ _ j E₁ E₂ hj hE μ v hv hline hgen hnorm x y
   have := form_eq_zero M
     (fun x y => inner ℂ (E₁ x) (E₂ y) - inner ℂ (E₁ v) (E₂ v) * inner ℂ (j x) (j y))
-    (fun x x' y => by simp only [map_add, inner_add_left]; ring)
+    (fun x x' y => by simp only [map_add (f := _), inner_add_left]; ring)
     (fun c x y => by simp only [map_smul, inner_smul_left, starRingEnd_apply]; ring)
-    (fun x y y' => by simp only [map_add, inner_add_right]; ring)
+    (fun x y y' => by simp only [map_add (f := _), inner_add_right]; ring)
     (fun c x y => by simp only [map_smul, inner_smul_right]; ring)
     (fun Z x y => by simp only [hj, hE])
     μ v hv hline hgen (by simp [inner_self_eq_norm_sq_to_K, hnorm]) x y

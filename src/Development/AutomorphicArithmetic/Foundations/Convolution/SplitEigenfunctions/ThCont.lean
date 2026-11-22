@@ -1,23 +1,27 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ContinuousScalarFour
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ContinuousAb
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.EmbPiInjective
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ActCont
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ContinuousScalarFour
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ContinuousAb
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.EmbPiInjective
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.ActCont
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.R2.Ff UpperTheory.ConvolutionTheory.RankTwoDescent
 open scoped Classical
 
-private theorem om_L' {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D)
+private theorem om_L' {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D)
     (g : G1 ℚ) (h : GL (Fin 2) (A E)) (hh : nu ℚ h = 1) (φ : S4 ℚ) :
     W.Om g (W.L h φ) = W.L h (W.Om g φ) := by
   have e := congrArg (fun T : Module.End ℂ (S4 ℚ) => T φ) (W.comm h g)
   simp only [Module.End.mul_apply, hh] at e
   rw [e, UpperTheory.ConvolutionTheory.R2.M.cD_one]
 
-private theorem term_eq {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D)
+private theorem term_eq {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {D : Dat ℚ E} (W : Weil D)
     (g : G1 ℚ) (h : GL (Fin 2) (A E)) (hh : nu ℚ h = 1) (φ : S4 ℚ) (v : V4 ℚ) :
     (W.Om g (W.L h φ)).1 v = (W.Om g φ).1 (D.act h⁻¹ v) := by
   rw [om_L' W g h hh, W.L_apply, hh, ab_one]
@@ -46,7 +50,7 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.thCont :
       ((S₁ ×ˢ S₂) ∩ {p | nu ℚ p.2 = 1}) := by
     unfold ThOn
     refine continuousOn_tsum (u := fun ξ : S => B * wt K n (rp ξ.1)) (fun ξ => ?_)
-      ((hs.mul_left B).subtype S) fun ξ p hp => ?_
+      ((hs.mul_left B).subtype (fun x => x ∈ S)) fun ξ p hp => ?_
     · have hc : Continuous fun p : G1 ℚ × GL (Fin 2) (A E) =>
           (W.Om p.1 ph).1 ((ρ p.2⁻¹).val *ᵥ rp ξ.1) :=
         (W.cont ph).comp (continuous_fst.prodMk

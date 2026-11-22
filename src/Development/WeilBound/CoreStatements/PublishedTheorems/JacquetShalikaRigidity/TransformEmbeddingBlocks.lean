@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageMapLatticeEquiv
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.QuotientAverageMapLatticeEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -174,7 +178,7 @@ theorem mir_emb {m n : ℕ} (hkm : n + 1 ≤ m) (ι : GA E (n + 1) →* GA E m) 
   obtain ⟨q, rfl⟩ := hs x fun i c h => hx i c (by omega)
   refine ⟨q, fun i c h => ?_, rfl⟩
   have h1 := hx (Fin.castLE hkm i) (Fin.castLE hkm c) (by simpa using h)
-  rw [hι, embM, Matrix.of_apply, dif_pos ⟨i.2, c.2⟩] at h1
+  rw [hι, embM, Matrix.of_apply, dite_eq_left ⟨i.2, c.2⟩] at h1
   convert h1 using 1 <;> first | rfl | (rw [Matrix.one_apply, Matrix.one_apply]; simp only [Fin.ext_iff, Fin.val_castLE])
 
 theorem blkU_zero' {a j : ℕ} : (blkU (0 : UnipotentBlockColumnIndex a j j → Ad E) : GA E a) = 1 := posU_zero _
@@ -184,12 +188,6 @@ def sig {k m j : ℕ} (hkm : k ≤ m) (hj : j < k) : UnipotentBlockColumnIndex k
   invFun t := ⟨(⟨t.1.1, by have := t.2; omega⟩, ⟨t.1.2, by have := t.2; omega⟩), t.2⟩
   left_inv _ := rfl
   right_inv _ := rfl
-
-@[simp] theorem sig_fst {k m j : ℕ} (hkm : k ≤ m) (hj : j < k) (t : UnipotentBlockColumnIndex k j j) :
-    ((sig hkm hj t).1.1 : ℕ) = t.1.1 := rfl
-
-@[simp] theorem sig_snd {k m j : ℕ} (hkm : k ≤ m) (hj : j < k) (t : UnipotentBlockColumnIndex k j j) :
-    ((sig hkm hj t).1.2 : ℕ) = t.1.2 := rfl
 
 def eqv {k m j : ℕ} (hkm : k ≤ m) (hj : j < k) : (UnipotentBlockColumnIndex k j j → Ad E) ≃ₜ+ (UnipotentBlockColumnIndex m j j → Ad E) where
   toFun x t := x ((sig hkm hj).symm t)
@@ -224,7 +222,7 @@ theorem emb_blkU {k m j : ℕ} (hkm : k ≤ m) (hj : j < k) (ι : GA E k →* GA
     congr 1
     · simp [Matrix.one_apply, Fin.ext_iff]
     · refine Fintype.sum_equiv (sig hkm hj) _ _ fun t => ?_
-      simp [Fin.ext_iff]
+      simp [sig, Fin.ext_iff]
   · symm
     apply blkU_apply_of
     rintro t ⟨e1, e2⟩

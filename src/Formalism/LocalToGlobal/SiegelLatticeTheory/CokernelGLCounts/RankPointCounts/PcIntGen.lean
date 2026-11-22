@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCount
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem h_smul_right (x y : V) (c : E) : H.h x (c • y) = M.L.cj c * H.h x y :=
   rw [H.h_herm (c • y) x, H.h_smul_left, map_mul, ← H.h_herm y x]
 
 theorem h_add_right (x y y' : V) : H.h x (y + y') = H.h x y + H.h x y' := by
-  rw [H.h_herm (y + y') x, H.h_add_left, map_add, ← H.h_herm y x, ← H.h_herm y' x]
+  rw [H.h_herm (y + y') x, H.h_add_left, map_add (f := _), ← H.h_herm y x, ← H.h_herm y' x]
 
 theorem fst_mem {g : Loc.SplitG M.L} {x : E} (hx : x ∈ M.L.O) : (g.e x).1 ∈ 𝒪[F] := by
   rw [M.L.O_def] at hx
@@ -99,12 +103,12 @@ theorem zzplus_int {r : ℕ} {t : Loc.Term V M r} (ht : H.IsGeneric t) (a b : Fi
     have hC := fst_mem (g := g) (hint _ (hnL b) _ (hnL a))
     have hqq : q * q⁻¹ = 1 := mul_inv_cancel₀ hq
     have F1 : (g.e (H.h (t.f' b) (t.f a))).1 = (g.e (H.h (t.f b) (t.f a))).1 + q * (g.e (H.h (n b) (t.f a))).1 := by
-      rw [E1]; simp only [map_add, map_mul, hek, Prod.fst_add, Prod.fst_mul]
+      rw [E1]; simp only [map_add (f := _), map_mul, hek, Prod.fst_add, Prod.fst_mul]
     have F2 : (g.e (H.h (t.f' a) (t.f b))).2 = (g.e (H.h (t.f a) (t.f b))).2 + q * (g.e (H.h (n a) (t.f b))).2 := by
-      rw [E2]; simp only [map_add, map_mul, hek, Prod.snd_add, Prod.snd_mul]
+      rw [E2]; simp only [map_add (f := _), map_mul, hek, Prod.snd_add, Prod.snd_mul]
     have F3 : (g.e (H.h (t.f' b) (t.f' a))).1 = (g.e (H.h (t.f b) (t.f a))).1 + q * (g.e (H.h (n b) (t.f a))).1 +
         q * (g.e (H.h (n a) (t.f b))).2 + q * q * (g.e (H.h (n b) (n a))).1 := by
-      rw [E3, hswap]; simp only [map_add, map_mul, hek, Prod.fst_add, Prod.fst_mul]
+      rw [E3, hswap]; simp only [map_add (f := _), map_mul, hek, Prod.fst_add, Prod.fst_mul]
     generalize (g.e (H.h (n b) (t.f a))).1 = A at hA F1 F3
     generalize (g.e (H.h (n a) (t.f b))).2 = B at hB F2 F3
     generalize (g.e (H.h (n b) (n a))).1 = C at hC F3

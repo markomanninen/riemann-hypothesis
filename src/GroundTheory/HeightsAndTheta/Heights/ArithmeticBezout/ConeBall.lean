@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -36,12 +41,6 @@ def ConeHyperplaneNull.Statement : Prop :=
     IsProjPrime W → IsChowForm W (e + 1) f → linForm u ∉ W →
       Measure.hausdorffMeasure ((2 * (e + 1) : ℕ) : ℝ)
         (coneBall h W ∩ {y | ∑ j, u j * h.pointOf y j = 0}) = 0
-
-def ConeLogBound.Statement : Prop :=
-  ∀ (n e δ : ℕ) (h : HermNorm n) (W : Ideal (MvPolynomial (Fin n) ℂ))
-    (f : MvPolynomial (Fin (e + 1) × Fin n) ℂ) (u : Fin n → ℂ),
-    IsProjPrime W → IsChowForm W (e + 1) f → IsMultiHomog δ f → linForm u ∉ W →
-      coneIntegral h W e (fsLog h u) ≤ δ * Real.log (h.norm u)
 
 end
 

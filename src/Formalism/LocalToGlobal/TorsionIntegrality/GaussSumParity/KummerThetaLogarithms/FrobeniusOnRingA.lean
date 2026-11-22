@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.RingAFacts
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.RingAFacts
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -30,7 +34,7 @@ lemma evK_mem (k : ℕ) (r : MonoidAlgebra ℤ (muSub l)) : evK l k r ∈ ringA 
     rw [evK_of]
     exact Subring.pow_mem _ (Subring.subset_closure g.2) k
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Subring.add_mem _ hx hy
   | smul a x hx =>
     rw [zsmul_eq_mul, map_mul, map_intCast]
@@ -72,7 +76,7 @@ lemma exists_poly (r : MonoidAlgebra ℤ (muSub l)) :
       exacts [hln h, hln' h]
     · obtain ⟨P, hP⟩ := hP m (dvd_trans (dvd_mul_right _ _) hnm) hm ζ hζ
       obtain ⟨P', hP'⟩ := hP' m (dvd_trans (dvd_mul_left _ _) hnm) hm ζ hζ
-      exact ⟨P + P', fun k => by rw [Polynomial.eval₂_add, map_add, hP, hP']⟩
+      exact ⟨P + P', fun k => by rw [Polynomial.eval₂_add, map_add (f := _), hP, hP']⟩
   | smul a x hx =>
     obtain ⟨n, hn, hln, hP⟩ := hx
     refine ⟨n, hn, hln, fun m hnm hm ζ hζ => ?_⟩
@@ -139,7 +143,7 @@ lemma evA_congr (r : MonoidAlgebra ℤ (muSub l)) :
     obtain ⟨v, hv⟩ := hy
     obtain ⟨w, hw⟩ := exists_add_pow_prime_eq (Fact.out : l.Prime) (evA l 1 x) (evA l 1 y)
     refine ⟨u + v - evA l 1 x * evA l 1 y * w, ?_⟩
-    rw [map_add, map_add, hw]
+    rw [map_add (f := _), map_add (f := _), hw]
     linear_combination hu + hv
   | smul a x hx =>
     obtain ⟨u, hu⟩ := hx

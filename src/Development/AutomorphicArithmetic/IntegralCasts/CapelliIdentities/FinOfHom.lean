@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh10.fin_of_hom :
     ∀ {S R M : Type} [inst : CommRing S] [inst_1 : CommRing R]

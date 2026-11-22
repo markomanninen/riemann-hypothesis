@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.JointMultOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ theorem shapeProd_varMat_ne_zero {p q r s m k : ℕ} (ρ : Fin m → Ix p q) (κ
   apply pow_ne_zero
   have hc : t + 1 ≤ m ∧ t + 1 ≤ k := ⟨by omega, by omega⟩
   unfold PI.FJM.leadT
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   have hinj : Function.Injective
       (fun x : Fin (t + 1) × Fin (t + 1) => (ρ (Fin.castLE hc.1 x.1), κ (Fin.castLE hc.2 x.2))) := by
     rintro ⟨i, j⟩ ⟨i', j'⟩ hxy
@@ -84,9 +88,9 @@ private theorem pderiv_pderiv_comm_of_complex {σ : Type*} (i j : σ) (P : MvPol
   next a =>
     simp only [MvPolynomial.pderiv_C, map_zero]
   next P Q hP hQ =>
-    simp only [map_add, hP, hQ]
+    simp only [map_add (f := _), hP, hQ]
   next P n hP =>
-    simp only [Derivation.leibniz, map_add, smul_eq_mul, MvPolynomial.pderiv_X, Pi.single_apply]
+    simp only [Derivation.leibniz, map_add (f := _), smul_eq_mul, MvPolynomial.pderiv_X, Pi.single_apply]
     split_ifs <;>
       simp only [Derivation.map_one_eq_zero, map_zero, mul_zero, zero_mul, add_zero, zero_add,
         mul_one, one_mul, hP] <;> ring

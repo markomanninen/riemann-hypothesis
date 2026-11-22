@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -17,12 +22,6 @@ def ArithmeticVolumeDegreeZero.Statement : Prop :=
     II K ι (mCoordIdeal y) (D + 1) (fun _ => A) ≤ arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 D
 
 namespace ArithmeticVolumeDegreeZero
-
-def trivLine {K : Type} [Fintype K] (ι : K → Type) [∀ k, Fintype (ι k)] : HermLine ι where
-  a := 0
-  h _ := 1
-  pos _ _ := one_pos
-  smul c z hc := by simp
 
 end ArithmeticVolumeDegreeZero
 

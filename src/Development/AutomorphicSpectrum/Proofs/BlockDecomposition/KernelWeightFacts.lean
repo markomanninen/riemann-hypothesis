@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZOpMemCE
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthFunctionFactsHold
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.FriedrichsKernels.CalcSteps
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZOpMemCE
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LengthFunctionFactsHold
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,6 @@ theorem inv_inv_mat {x : Mat n} (hx : x ∈ GLs n) : x⁻¹⁻¹ = x :=
   Matrix.nonsing_inv_nonsing_inv x (isUnit_iff_ne_zero.2 hx)
 
 def toG {x : Mat n} (hx : x ∈ GLs n) : G n := Matrix.GeneralLinearGroup.mkOfDetNeZero x hx
-
-@[simp] theorem toG_val {x : Mat n} (hx : x ∈ GLs n) : (toG hx).val = x := rfl
 
 theorem val_inv (z : G n) : (z⁻¹ : G n).val = z.val⁻¹ := Matrix.coe_units_inv z
 
@@ -73,15 +75,11 @@ def mulLL : Mat n →L[ℝ] Mat n →L[ℝ] Mat n :=
       map_add' := fun a b => by ext1 v; simp [Matrix.add_mul]
       map_smul' := fun c a => by ext1 v; simp }
 
-@[simp] theorem mulLL_apply (a : Mat n) : mulLL a = mulL a := rfl
-
 section Core
 
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 def evL : V →L[ℝ] (V →L[ℂ] V) →L[ℝ] V := (ContinuousLinearMap.restrictScalarsL ℂ V V ℝ ℝ).flip
-
-@[simp] theorem evL_apply (v : V) (A : V →L[ℂ] V) : evL v A = A v := rfl
 
 abbrev CL (P W : Type) [NormedAddCommGroup P] [NormedSpace ℝ P] [NormedAddCommGroup W] [NormedSpace ℝ W] : Type :=
   P →L[ℝ] W

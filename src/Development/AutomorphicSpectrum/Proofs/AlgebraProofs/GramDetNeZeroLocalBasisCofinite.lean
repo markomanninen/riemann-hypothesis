@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
-import Development.WeilBound.CoreStatements.SesquilinearFractions.GramDetNeZeroLocalBasisCofinite
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsTransition
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.GramDetNeZeroLocalBasisCofinite
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,11 +22,13 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.gram_det_ne_zero_local_basis_c
       have hterm : ∀ k, Algebra.trace ℚ E (algebraMap (𝓞 E) E (RingOfIntegers.basis E j) * (((D.EF (RingOfIntegers.basis E k • x) y : ℤ) : E) * HT.dualInt E k)) = ((D.EF (RingOfIntegers.basis E k • x) y : ℤ) : ℚ) * (if j = k then 1 else 0) := by
         intro k
         rw [← HT.LatBasic.trace_dualInt k j, ← map_intCast (algebraMap ℚ E), mul_left_comm, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm (algebraMap (𝓞 E) E _), ← NumberField.integralBasis_apply]
-      simp only [sesq, Finset.mul_sum, map_sum, hterm, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [sesq, Finset.mul_sum, map_sum, hterm, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
       exact mul_one _
     conv_lhs => rw [← (RingOfIntegers.basis E).sum_repr c]
     conv_rhs => rw [← (RingOfIntegers.basis E).sum_repr c]
-    simp only [map_sum, Finset.sum_mul, Finset.sum_smul, LinearMap.sum_apply, Int.cast_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.sum_mul, Finset.sum_smul, LinearMap.sum_apply, Int.cast_sum]
     refine Finset.sum_congr rfl (fun j _ => ?_)
     rw [map_zsmul, smul_mul_assoc, map_zsmul, key j, smul_assoc, map_zsmul, LinearMap.smul_apply, zsmul_eq_mul, zsmul_eq_mul, Int.cast_mul]
     norm_cast
@@ -93,9 +99,11 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.gram_det_ne_zero_local_basis_c
       intro c n
       have h1 : c • ∑ i, a i • e i = ∑ m, (c * a m) • e m := by simp only [Finset.smul_sum, mul_smul]
       apply Int.cast_injective (α := ℚ)
-      rw [h1, map_sum, LinearMap.sum_apply, Int.cast_sum, Int.cast_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_sum, LinearMap.sum_apply, Int.cast_sum, Int.cast_zero]
       simp only [← T]
-      rw [← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum]
       have h2 : ∑ m, algebraMap (𝓞 E) E (c * a m) * sesq D (e m) (e n) = algebraMap (𝓞 E) E c * (algebraMap (𝓞 E) E b * (v ᵥ* gramE D e) n) := by
         simp only [Matrix.vecMul, dotProduct, gramE, Matrix.of_apply, map_mul, ha, Algebra.smul_def, Finset.mul_sum]
         refine Finset.sum_congr rfl (fun m _ => by ring)
@@ -104,7 +112,8 @@ theorem _root_.GlobalTheory.CompanionTheory.Relay.gram_det_ne_zero_local_basis_c
       intro y
       obtain ⟨g, hg⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 E)).mp (hNy y)
       have h2 : D.EF (∑ i, a i • e i) (Ideal.absNorm (Ideal.span {c}) • y) = 0 := by
-        rw [← hg, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hg, map_sum]
         refine Finset.sum_eq_zero (fun n _ => ?_)
         have := D.adj (H.bar.symm (g n)) (∑ i, a i • e i) (e n)
         rw [RingEquiv.apply_symm_apply] at this

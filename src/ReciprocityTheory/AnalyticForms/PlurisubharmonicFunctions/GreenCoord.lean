@@ -1,5 +1,9 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogInt
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LeviOneEqLaplacianThm
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LogInt
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Laplacian Pointwise
@@ -68,7 +72,7 @@ theorem contDiff_insertNth_pair {D : ℕ} (j : Fin (D + 1)) :
     have e : (fun q : ℂ × (Fin D → ℂ) => (Fin.insertNth j q.1 q.2 : Fin (D + 1) → ℂ) (j.succAbove i)) =
         fun q => q.2 i := funext fun q => Fin.insertNth_apply_succAbove _ _ _ _
     rw [e]
-    exact (contDiff_apply ℝ ℂ i).comp contDiff_snd
+    exact (contDiff_apply ℝ (fun _ => ℂ) i).comp contDiff_snd
 
 theorem uPair_contDiff {D : ℕ} (j : Fin (D + 1)) {u : (Fin (D + 1) → ℂ) → ℝ}
     (hu : ContDiff ℝ 2 u) : ContDiff ℝ 2 (uPair j u) := by

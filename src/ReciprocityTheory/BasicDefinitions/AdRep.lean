@@ -1,4 +1,8 @@
-import ReciprocityTheory.BasicDefinitions.ExistsUnique
+module
+
+public import ReciprocityTheory.BasicDefinitions.ExistsUnique
+
+@[expose] public section
 
 namespace ReciprocityTheory.Def
 
@@ -47,13 +51,5 @@ def B2 (π : Representation k G M) (N : Submodule k M) : Submodule k (G × G →
 abbrev H1 (π : Representation k G M) (N : Submodule k M) : Type _ := Z1 π N ⧸ (B1 π N).submoduleOf (Z1 π N)
 
 abbrev H2 (π : Representation k G M) (N : Submodule k M) : Type _ := Z2 π N ⧸ (B2 π N).submoduleOf (Z2 π N)
-
-def adRep {n : ℕ} (rbar : G →* GL (Fin n) k) : Representation k G (Matrix (Fin n) (Fin n) k) where
-  toFun g :=
-    { toFun := fun X => (rbar g).val * X * ((rbar g)⁻¹).val
-      map_add' := fun X Y => by simp [mul_add, add_mul]
-      map_smul' := fun c X => by simp }
-  map_one' := by ext X : 1; simp
-  map_mul' := fun g h => by ext X : 1; simp [mul_assoc]
 
 end ReciprocityTheory.Def

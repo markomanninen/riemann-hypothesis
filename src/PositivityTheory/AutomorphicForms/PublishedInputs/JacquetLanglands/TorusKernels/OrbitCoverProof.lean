@@ -1,6 +1,10 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreBis
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreBis
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace UpperTheory.Esk.OrbitCoverLemmas
 
 variable {G Y : Type} [Group G] [Countable G] [MeasurableSpace Y] [MulAction G Y]
 
-omit [Countable G] [MeasurableSpace Y] in
 
+omit [Countable G] [MeasurableSpace Y] in
 theorem orbit_tsum_smul (u : Y → ℝ) (g : G) (y : Y) :
     ∑' h : G, u (h • g • y) = ∑' h : G, u (h • y) := by
   simp only [smul_smul]
@@ -28,7 +32,7 @@ theorem exists_cut (hm : ∀ g : G, Measurable fun y : Y => g • y) (u : Y → 
     exact tsum_nonneg fun g => h0 _
   have hsm : Measurable fun y => ∑' g : G, u (g • y) := by
     rw [hsE]
-    exact (Measurable.ennreal_tsum fun g => (hu.comp (hm g)).ennreal_ofReal).ennreal_toReal
+    exact (Measurable.tsum fun g => (hu.comp (hm g)).ennreal_ofReal).ennreal_toReal
   have hspos : ∀ y, 0 < ∑' g : G, u (g • y) := by
     intro y
     obtain ⟨g, hg⟩ := hpos y

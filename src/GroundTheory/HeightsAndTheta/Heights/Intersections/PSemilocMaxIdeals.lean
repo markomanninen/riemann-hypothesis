@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocMaxIdeals
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocMaxIdeals
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocIntegral
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -51,7 +56,7 @@ theorem exists_frac (h𝒲 : ∀ W ∈ 𝒲, W.IsPrime) (x : semiLocRing P 𝒲)
       notMem_mul ‹_› hwP hwP', fun W hW => notMem_mul (h𝒲 W hW) (hwW W hW) (hwW' W hW), ?_⟩
     · rw [add_comm a a']
       exact homog_mul hu' hw
-    · simp only [map_add, map_mul]
+    · simp only [map_add (f := _), map_mul]
       rw [← hx, ← hy]
       ring
   | neg x _ hx =>
@@ -182,8 +187,8 @@ theorem exists_eq_of_isMaximal (hfin : 𝒲.Finite) (h𝒲 : ∀ W ∈ 𝒲, IsM
 
 end SemilocMaxIdeals
 
-open SemilocMaxIdeals regularityLocalFlat_holds in
 
+open SemilocMaxIdeals regularityLocalFlat_holds in
 theorem SemilocMaxIdeals.proof (hFin : FibreOverFinite.Statement) (hInc : FibreIncomp.Statement)
     (hInt : SemilocIntegral.Statement) (hDim : LocRingDimOne.Statement) : SemilocMaxIdeals.Statement := by
   intro K _ ι _ K' _ ι' _ κ v P' n s α W hv hP' hZ hs hsP hW

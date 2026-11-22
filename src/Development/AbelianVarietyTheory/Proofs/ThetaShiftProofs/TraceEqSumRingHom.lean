@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsSt
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfA
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.MaximalCuspKernels.MaxCuspsPfA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SublatticeCoefficients
+public import Formalism.LocalToGlobal.ProjectiveLattices.RdOrbIntOfLatZ
+
+@[expose] public section
 
 namespace GlobalTheory.TraceRealPartConjugateSum
 
@@ -24,7 +28,7 @@ theorem sum_re_add_conj {E : Type} [Field E] [NumberField E] [NumberField.IsCMFi
   have hconj : ∀ τ : E →+* ℂ,
       τ (x + ReciprocityTheory.ChartRestriction.G.FD.cc x) = τ x + (ComplexEmbedding.conjugate τ) x := by
     intro τ
-    rw [map_add, ComplexEmbedding.conjugate_coe_eq, ReciprocityTheory.ChartRestriction.G.FD.cc,
+    rw [map_add (f := _), ComplexEmbedding.conjugate_coe_eq, ReciprocityTheory.ChartRestriction.G.FD.cc,
       IsCMField.complexEmbedding_complexConj]
   have himg : Ψᶜ = Ψ.image ComplexEmbedding.conjugate := by
     ext τ

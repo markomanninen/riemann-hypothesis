@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import ReciprocityTheory.DualLattices.FischerSelfNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitary
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import ReciprocityTheory.DualLattices.FischerSelfNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TotalDegreeSubstFLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntertwinerOfSameHarishChandraParamUnitary
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace
@@ -58,7 +62,7 @@ theorem raising_eq_zero {k : ℕ} {W : Type} [NormedAddCommGroup W] [InnerProduc
       module
     have s1 := hskew (Z - Zᴴ) (by simp)
     have s2 := hskew (Complex.I • (Z + Zᴴ)) (by simp [conjTranspose_smul, add_comm])
-    rw [e, map_add, map_add, map_smul, map_smul (Ψ), s1, map_smul Φ (-Complex.I / 2), map_smul Ψ (-Complex.I / 2), s2]
+    rw [e, map_add (f := _), map_add (f := _), map_smul, map_smul (Ψ), s1, map_smul Φ (-Complex.I / 2), map_smul Ψ (-Complex.I / 2), s2]
   have h3 : Φ (Matrix.single a b 1) = E a b Δ := by
     show ∑ c, ∑ d, Matrix.single a b (1 : ℂ) c d • E c d Δ = _
     simp [Matrix.single_apply, ite_and, ite_smul]
@@ -77,8 +81,8 @@ theorem raising_eq_zero {k : ℕ} {W : Type} [NormedAddCommGroup W] [InnerProduc
   simp only [hab] at h5
   rw [← h3, hall, h5.unique (hasDerivAt_const _ _)]
 
-open Formalism.REAL in
 
+open Formalism.REAL in
 theorem exists_lie_map {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℂ V₁] [NormedAddCommGroup V₂]
     [InnerProductSpace ℂ V₂] [FiniteDimensional ℂ V₂] {n : ℕ}
     (E₁ : Fin n → Fin n → Module.End ℂ V₁) (E₂ : Fin n → Fin n → Module.End ℂ V₂) (ν : Fin n → ℂ)
@@ -113,7 +117,7 @@ theorem exists_lie_map {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℂ V₁] 
     obtain ⟨y, hy, z, hz, hyz⟩ := K.exists_add_mem_mem_orthogonal v₂
     have hyw : ∀ a, E₂ a a y = ν a • y := fun a => by
       have e := hw₂.1 a
-      rw [hyz, map_add, smul_add] at e
+      rw [hyz, map_add (f := _), smul_add] at e
       have e' : E₂ a a y - ν a • y = -(E₂ a a z - ν a • z) := by
         rw [neg_sub, sub_eq_sub_iff_add_eq_add, e, add_comm]
       rw [← sub_eq_zero]
@@ -158,8 +162,8 @@ theorem exists_lie_map {V₁ V₂ : Type} [AddCommGroup V₁] [Module ℂ V₁] 
     rw [LinearMap.comp_apply, LinearEquiv.coe_coe, (LinearEquiv.symm_apply_eq _).2 h]
     rfl
 
-open Formalism.MainNotions.S in
 
+open Formalism.MainNotions.S in
 theorem exists_intertwiner : ∀ (k : ℕ) (Λ : Fin k → ℝ) (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H] (τ : Matrix (Fin k) (Fin k) ℂ → (H →L[ℂ] H)) (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℂ E] [FiniteDimensional ℂ E] (π : Matrix (Fin k) (Fin k) ℂ → (E →L[ℂ] E)) (Δ : E), IsURepOn (UJset (allPos k)) τ → IsKTypeOf (allPos k) τ Λ ⊤ → IsURepOn (UJset (allPos k)) π → (∀ w : E, DifferentiableAt ℂ (fun g : Fin k → Fin k → ℂ => π (Matrix.of g) w) (fun i j => (1 : Matrix (Fin k) (Fin k) ℂ) i j)) → Δ ≠ 0 → (∀ a b : Fin k, a < b → ∀ s : ℂ, π (1 + Matrix.single a b s) Δ = Δ) → IsWtOn (Formalism.REAL.Kset (allPos k)) π Λ Δ → ∃ L : H →ₗ[ℂ] E, (∀ g ∈ UJset (allPos k), ∀ u, L (τ g u) = π g (L u)) ∧ ∃ v, L v = Δ := by
   intro k Λ H _ _ _ τ E _ _ _ π Δ hτ hK hπ hd _ hup hwt
   have : Nontrivial H := by

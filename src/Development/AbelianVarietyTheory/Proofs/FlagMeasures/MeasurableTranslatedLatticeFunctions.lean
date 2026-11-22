@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDualStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDualStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase
 
@@ -131,7 +135,7 @@ theorem countable_dualAt (L : Submodule ℤ (VecInf E j)) (hL : Submodule.span �
     | add y y' _ _ h1 h2 =>
       obtain ⟨a, ha⟩ := h1
       obtain ⟨c, hc⟩ := h2
-      exact ⟨a + c, by rw [map_add, ha, hc]; push_cast; ring⟩
+      exact ⟨a + c, by rw [map_add (f := _), ha, hc]; push_cast; ring⟩
     | smul n y _ h1 =>
       obtain ⟨a, ha⟩ := h1
       exact ⟨n * a, by rw [map_zsmul, ha, zsmul_eq_mul]; push_cast; ring⟩
@@ -163,14 +167,14 @@ theorem measurable_detNorm : Measurable (detNorm E j) := by
 
 theorem measurable_act_inv (x : VecInf E j) :
     Measurable fun g : MatInf E j => act (fun w => (Matrix.of (g w))⁻¹) x := by
-  refine measurable_pi_lambda _ fun w => ?_
+  refine Measurable.of_eval fun w => ?_
   simp only [act_apply]
   have hinv : ∀ M : Matrix (Fin j) (Fin j) ℂ, M⁻¹ = (M.det)⁻¹ • M.adjugate := fun M => by
     rw [Matrix.inv_def, Ring.inverse_eq_inv']
   simp only [hinv]
   have hd : Measurable fun g : MatInf E j => (Matrix.of (g w)).det :=
     measurable_of_continuous w (fun M => M.det) continuous_id.matrix_det
-  refine measurable_pi_lambda _ fun a => ?_
+  refine Measurable.of_eval fun a => ?_
   simp only [Matrix.mulVec, dotProduct, Matrix.smul_apply, smul_eq_mul]
   refine Finset.measurable_sum _ fun b _ => ?_
   exact (hd.inv.mul (measurable_of_continuous w (fun M => M.adjugate a b)
@@ -178,7 +182,7 @@ theorem measurable_act_inv (x : VecInf E j) :
 
 theorem measurable_act_transpose (x : VecInf E j) :
     Measurable fun g : MatInf E j => act (fun w => (Matrix.of (g w))ᵀ) x := by
-  refine measurable_pi_lambda _ fun w => ?_
+  refine Measurable.of_eval fun w => ?_
   simp only [act_apply]
   exact measurable_of_continuous w (fun M => Mᵀ *ᵥ x w)
     (continuous_id.matrix_transpose.matrix_mulVec continuous_const)
@@ -197,7 +201,7 @@ private lemma countable_nonzero_lattice_vectors (L : Submodule ℤ (VecInf E j))
   Function.Injective.countable (f := fun x : {x : VecInf E j // x ∈ L ∧ x ≠ 0} => (⟨x.1, x.2.1⟩ : L))
     fun _ _ hab => Subtype.ext (congrArg (fun y : L => (y : VecInf E j)) hab)
 
-theorem measurable_latFun : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, ∀ (w : ℝ → ENNReal) (Φ : VecInf E j → ENNReal), Measurable w → Measurable Φ → ∀ Λ : Submodule (𝓞 E) (Fin j → E), Submodule.IsLattice E Λ → Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => w (covAt E j (latAt E j Λ g))) g) ∧ Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => ∑' x : {x : VecInf E j // x ∈ latAt E j Λ g ∧ x ≠ 0}, Φ x.1) g) ∧ Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => ∑' x : {x : VecInf E j // x ∈ dualAt E j (latAt E j Λ g) ∧ x ≠ 0}, Φ x.1) g) := by
+theorem measurable_latFun : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, ∀ (w : ℝ → ENNReal) (Φ : VecInf E j → ENNReal), Measurable w → Measurable Φ → ∀ Λ : Submodule (𝓞 E) (Fin j → E), Submodule.IsFullLattice E Λ → Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => w (covAt E j (latAt E j Λ g))) g) ∧ Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => ∑' x : {x : VecInf E j // x ∈ latAt E j Λ g ∧ x ≠ 0}, Φ x.1) g) ∧ Measurable (fun g : MatInf E j => {g | 0 < detNorm E j g}.indicator (fun g => ∑' x : {x : VecInf E j // x ∈ dualAt E j (latAt E j Λ g) ∧ x ≠ 0}, Φ x.1) g) := by
   intro E _ _ hE j wt Φ hw hΦ Λ hΛ
   obtain ⟨κ, -, hK⟩ := (GlobalTheory.T.translatedLatticeAtInfinity_full_covolume_dual E hE j).1 Λ hΛ
   obtain ⟨⟨hd, hz⟩, -, -, -⟩ := hK (oneInf E j) (detNorm_oneInf E j)
@@ -218,13 +222,13 @@ theorem measurable_latFun : ∀ (E : Type) [Field E] [NumberField E], IsTotallyC
   · refine measurable_indicator_of_eqOn
       (f' := fun g => ∑' x : {x : VecInf E j // x ∈ latAt E j Λ (oneInf E j) ∧ x ≠ 0},
         Φ (act (fun w => (Matrix.of (g w))⁻¹) x.1))
-      (Measurable.ennreal_tsum fun x => hΦ.comp (measurable_act_inv x.1)) fun g hg => ?_
+      (Measurable.tsum fun x => hΦ.comp (measurable_act_inv x.1)) fun g hg => ?_
     try dsimp only
     rw [latAt_eq Λ g, tsum_map _ (hinv g hg) Φ]
   · refine measurable_indicator_of_eqOn
       (f' := fun g => ∑' x : {x : VecInf E j // x ∈ dualAt E j (latAt E j Λ (oneInf E j)) ∧ x ≠ 0},
         Φ (act (fun w => (Matrix.of (g w))ᵀ) x.1))
-      (Measurable.ennreal_tsum fun x => hΦ.comp (measurable_act_transpose x.1)) fun g hg => ?_
+      (Measurable.tsum fun x => hΦ.comp (measurable_act_transpose x.1)) fun g hg => ?_
     try dsimp only
     rw [latAt_eq Λ g, dualAt_map _ (hinv g hg), tsum_map _ (htr g hg) Φ]
 

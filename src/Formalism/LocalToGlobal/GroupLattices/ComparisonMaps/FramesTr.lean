@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValUniqOf
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValUniqOf
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem cmpC_inj (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x)) (he
     have h' : ∃ Q, IsVal S emb embLL G A pos embV yc x i
         (fun v => colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v))) Q := ⟨Q, hQ⟩
     unfold valC
-    rw [dif_pos h']
+    rw [dite_eq_left h']
     exact Classical.choose_spec h'
   have h0 : valC S emb embLL G A pos embV yc x i
       (fun v => colSpan (G.P.W v) (g v : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v))) = 0 := by
@@ -83,7 +87,7 @@ private theorem isVal_add {x y : V} {i : G.comp} {L : G.P.Tup} {Q Q' : XR G.P LL
     IsVal S emb embLL G A pos embV yc (x + y) i L (Q + Q') := by
   unfold IsVal at *
   refine ⟨Submodule.add_mem _ h.1 h'.1, fun g hg c γ hγ κ hpt z z' hz => ?_⟩
-  simp only [map_add, Pi.add_apply, mul_add]
+  simp only [map_add (f := _), Pi.add_apply, mul_add]
   rw [h.2 g hg c γ hγ κ hpt z z' hz, h'.2 g hg c γ hγ κ hpt z z' hz]
 
 private theorem isVal_smul {x : V} {i : G.comp} {L : G.P.Tup} {Q : XR G.P LL} (a : LL)
@@ -101,7 +105,7 @@ private theorem isVal_valC_of_isLatTup (hex : ValEx S emb embLL G A pos embV yc)
     (hL : G.P.IsLatTup L) : IsVal S emb embLL G A pos embV yc x i L (valC S emb embLL G A pos embV yc x i L) := by
   have h' := hex x i L hL
   unfold valC
-  rw [dif_pos h']
+  rw [dite_eq_left h']
   exact Classical.choose_spec h'
 
 theorem cmpC_li (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x)) (hex : ValEx S emb embLL G A pos embV yc)
@@ -140,14 +144,15 @@ theorem cmpC_li (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x)) (hex
     intro k
     apply hw s (fun a => β.repr (g a) k)
     ext i L m
-    have h1 := congrArg (MvPolynomial.coeff m) (congrFun (congrFun hg i) L.1)
+    have h1 := congrArg (AddMonoidAlgebra.coeff · m) (congrFun (congrFun hg i) L.1)
     simp only [Finset.sum_apply, Pi.smul_apply, MvPolynomial.coeff_sum, MvPolynomial.coeff_smul,
       smul_eq_mul, Pi.zero_apply, MvPolynomial.coeff_zero, cmpC, if_pos L.2, MvPolynomial.coeff_map] at h1
     have h2 := congrArg (fun y => β.repr y k) h1
-    simp only [map_sum, map_zero, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_zero, Pi.zero_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zero, Finset.sum_apply', Finset.sum_apply, Finsupp.coe_zero, Pi.zero_apply,
       hsm, map_smul, Finsupp.smul_apply, smul_eq_mul] at h2
     simp only [Finset.sum_apply, Pi.smul_apply, MvPolynomial.coeff_sum, MvPolynomial.coeff_smul,
-      smul_eq_mul, Pi.zero_apply, MvPolynomial.coeff_zero]
+      smul_eq_mul, Pi.zero_apply, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     rw [← h2]
     exact Finset.sum_congr rfl fun a _ => mul_comm _ _
   have h4 : β.repr (g a) = 0 := Finsupp.ext fun k => key k a ha

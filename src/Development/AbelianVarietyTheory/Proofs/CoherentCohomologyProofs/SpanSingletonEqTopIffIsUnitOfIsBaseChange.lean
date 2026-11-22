@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct
 
@@ -44,29 +48,6 @@ theorem projective [Module.Finite A' (A' ⊗[A] M)] [Module.Projective A' (A' �
   have : Module.FinitePresentation A M := finitePresentation A'
   have : Module.Flat A M := flat A'
   exact Module.Flat.projective_of_finitePresentation
-
-theorem rankAtStalk_eq [Module.Finite A' (A' ⊗[A] M)] [Module.Flat A' (A' ⊗[A] M)] {r : ℕ}
-    (h : ∀ q : PrimeSpectrum A', Module.rankAtStalk (A' ⊗[A] M) q = r) (p : PrimeSpectrum A) :
-    Module.rankAtStalk M p = r := by
-  have : Module.Finite A M := finite A'
-  have : Module.Flat A M := flat A'
-  obtain ⟨q, rfl⟩ := PrimeSpectrum.comap_surjective_of_faithfullyFlat (A := A) (B := A') p
-  rw [← Module.rankAtStalk_baseChange, h]
-
-theorem one_tmul_injective : Function.Injective fun m : M ↦ (1 : A') ⊗ₜ[A] m :=
-  Module.FaithfullyFlat.tensorProduct_mk_injective (A := A) (B := A') M
-
-theorem linearIndependent_iff {ι : Type*} (v : ι → M) :
-    LinearIndependent A v ↔ LinearIndependent A' fun i ↦ (1 : A') ⊗ₜ[A] v i := by
-  refine ⟨fun h ↦ Module.Flat.linearIndependent_one_tmul h, fun h ↦ ?_⟩
-  have h' : LinearIndependent A fun i ↦ (1 : A') ⊗ₜ[A] v i :=
-    h.restrict_scalars' A
-  exact LinearIndependent.of_comp (TensorProduct.mk A A' M 1) h'
-
-theorem algebraMap_dvd_iff (a b : A) : algebraMap A A' a ∣ algebraMap A A' b ↔ a ∣ b := by
-  rw [← Ideal.mem_span_singleton, ← Ideal.mem_span_singleton,
-    ← Ideal.comap_map_eq_self_of_faithfullyFlat (B := A') (Ideal.span {a}), Ideal.mem_comap,
-    Ideal.map_span, Set.image_singleton]
 
 end Algebra
 
@@ -186,8 +167,8 @@ theorem bijective_smul_stalk
     refine ⟨X.presheaf.germ V x hxV a, ?_⟩
     simp only [germ_smul, TopCat.Presheaf.germ_res_apply]
 
-variable (s) in
 
+variable (s) in
 noncomputable def sectionHom :
     @Quiver.Hom (U : Scheme.{u}).Modules _ (SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
       (F.restrict U.ι) :=
@@ -199,31 +180,32 @@ noncomputable def sectionHom :
         rw [← ConcreteCategory.comp_apply, ← F.presheaf.map_comp]
         rfl))
 
-variable (s) in
 
+variable (s) in
 theorem sectionHom_app (W : (U : Scheme.{u}).Opens) (a : Γ(X, U.ι ''ᵁ W)) :
-    ((sectionHom s).app W a : Γ(F, U.ι ''ᵁ W)) =
+    ((sectionHom (s := s)).app W a : Γ(F, U.ι ''ᵁ W)) =
       a • F.presheaf.map (homOfLE (U.ι_image_le W)).op s := by
-  have h1 : (sectionHom s).app W (1 : Γ((U : Scheme.{u}), W)) =
+  have h1 : (sectionHom (s := s)).app W (1 : Γ((U : Scheme.{u}), W)) =
       F.presheaf.map (homOfLE (U.ι_image_le W)).op s := by
-    have := SheafOfModules.unitHomEquiv_apply_coe (F.restrict U.ι) (sectionHom s) (op W)
+    have := SheafOfModules.unitHomEquiv_apply_coe (F.restrict U.ι) (sectionHom (s := s)) (op W)
     rw [sectionHom, Equiv.apply_symm_apply] at this
     exact this.symm
-  have h2 := Scheme.Modules.Hom.app_smul (sectionHom s) (U := W) a (1 : Γ((U : Scheme.{u}), W))
+  have h2 := Scheme.Modules.Hom.app_smul (sectionHom (s := s)) (U := W) a
+    (1 : Γ((U : Scheme.{u}), W))
   have h3 : a = a * 1 := (mul_one a).symm
-  refine (congrArg ((sectionHom s).app W) h3).trans (h2.trans ?_)
+  refine (congrArg ((sectionHom (s := s)).app W) h3).trans (h2.trans ?_)
   rw [h1]
   change ((U.ι.appIso W).inv a) • F.presheaf.map (homOfLE (U.ι_image_le W)).op s = _
   rw [Scheme.Opens.ι_appIso]
   rfl
 
 theorem isIso_sectionHom_iff :
-    IsIso (sectionHom s) ↔ ∀ (x : X) (hx : x ∈ U), Function.Bijective
+    IsIso (sectionHom (s := s)) ↔ ∀ (x : X) (hx : x ∈ U), Function.Bijective
       fun a : X.presheaf.stalk x ↦ a • F.presheaf.germ U x hx s := by
   refine Scheme.Modules.Hom.isIso_iff_isIso_app.trans ?_
-  have key (W : (U : Scheme.{u}).Opens) : IsIso ((sectionHom s).app W) ↔ Function.Bijective
+  have key (W : (U : Scheme.{u}).Opens) : IsIso ((sectionHom (s := s)).app W) ↔ Function.Bijective
       fun a : Γ(X, U.ι ''ᵁ W) ↦ a • F.presheaf.map (homOfLE (U.ι_image_le W)).op s := by
-    rw [ConcreteCategory.isIso_iff_bijective, ← funext (sectionHom_app s W)]
+    rw [ConcreteCategory.isIso_iff_bijective, ← funext (sectionHom_app (s := s) W)]
     rfl
   simp_rw [key]
   refine ⟨fun h ↦ bijective_smul_stalk fun V hV ↦ ?_, fun h W ↦ bijective_smul_of_stalk h _⟩
@@ -237,13 +219,7 @@ noncomputable def freeIso
       fun a : X.presheaf.stalk x ↦ a • F.presheaf.germ U x hx s) :
     @Iso (U : Scheme.{u}).Modules _ (SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
       (F.restrict U.ι) :=
-  @asIso _ _ _ _ (sectionHom s) (isIso_sectionHom_iff.mpr h)
-
-@[simp]
-theorem freeIso_hom
-    (h : ∀ (x : X) (hx : x ∈ U), Function.Bijective
-      fun a : X.presheaf.stalk x ↦ a • F.presheaf.germ U x hx s) :
-    (freeIso h).hom = sectionHom s := rfl
+  @asIso _ _ _ _ (sectionHom (s := s)) (isIso_sectionHom_iff.mpr h)
 
 end Scheme
 

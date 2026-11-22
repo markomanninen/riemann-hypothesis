@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.ChainLength
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SimpLemmas
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ChainLength
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SimpLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Formalism.MainNotions.S.Loc
 
@@ -46,7 +50,8 @@ theorem approx (A : ∀ p : HeightOneSpectrum (𝓞 F), LocAt F E sig p) (U : �
   haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
   obtain ⟨s, β, hβ⟩ := FiniteDimensional.exists_is_basis_integral (𝓞 F) F E
   have hsum : ∀ p (f : s → F), (A p).ιE (∑ i, f i • β i) = ∑ i, (A p).ιF (f i) • (A p).ιE (β i) := fun p f => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [Algebra.smul_def, map_mul, (A p).compat, Algebra.smul_def]
   have hb : ∀ p, ∃ b : s → (A p).Fp, ∑ i, b i • (A p).ιE (β i) = x p := fun p => by
     refine (Submodule.mem_span_range_iff_exists_fun _).1 (?_ : x p ∈ _)

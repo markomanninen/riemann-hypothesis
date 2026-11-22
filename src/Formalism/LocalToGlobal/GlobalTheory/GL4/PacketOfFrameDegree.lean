@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.NfAllSelfEq
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.NfAllSelfEq
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -22,7 +26,11 @@ section T
 variable {D : D7} {u : D.what₂.Word} (CV : ColVal D u)
 
 theorem MQ_lattice (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) : Submodule.IsLattice D.what₂.LL (MQ CV c τ) := by
-  refine ⟨(CV.Q_good c τ).2.1.map _, ?_⟩
+  exact Submodule.IsLattice.of_fg _ ((CV.Q_good c τ).2.1.map _)
+
+theorem MQ_fullLattice (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) :
+    Submodule.IsFullLattice D.what₂.LL (MQ CV c τ) := by
+  refine { toIsLattice := MQ_lattice CV c τ, span_eq_top := ?_ }
   unfold MQ
   rw [Submodule.map_coe, LinearMap.coe_restrictScalars]
   rw [show ⇑(crdQ CV c τ : (CV.Q c τ).V →ₗ[D.what₂.LL] (Fin (D.R.N 0) → D.what₂.LL)) = ⇑(crdQ CV c τ) from rfl]
@@ -63,7 +71,7 @@ theorem detShift_eq (τ : D.what₂.Tau) :
   have hn := rank_zero_pos D
   have hk := columnCount_pos D
   unfold DomWeight.detShift
-  rw [dif_pos hn]
+  rw [dite_eq_left hn]
   have := weight_eq_lamCol D u τ ⟨D.R.N 0 - 1, by omega⟩
   rw [this]
   congr 3
@@ -74,7 +82,7 @@ theorem classMapT_of (h : QFrameDeg D) : ClassMapT D := by
   obtain ⟨hyd, hli, -⟩ := hy
   have := (columnHypotheses D u).tc
   have hn : 0 < D.R.N 0 := rank_zero_pos D
-  have hM : ∀ τ, Submodule.IsLattice D.what₂.LL (MQ CV c τ) := MQ_lattice CV c
+  have hM : ∀ τ, Submodule.IsFullLattice D.what₂.LL (MQ CV c τ) := MQ_fullLattice CV c
   refine ⟨cfMap ((D.fm u).lam 0) (gG CV c y hli) ∘ₗ (LinearMap.proj c ∘ₗ (coE CV (hTV0 D u) : ((D.fm u).lat 0).V →ₗ[D.what₂.LL]
       ((D.mem u).C.cls 0 → VV D.what₂.LL ((D.fm u).lam 0)))), twIdeal ((D.fm u).lam 0) (MQ CV c) hM,
     fun v => ‖detTwK ((D.fm u).lam 0) (invFr CV v c)⁻¹‖ ^ 2, ?_, twIdeal_ne_zero _ _ hM, ?_, ?_, ?_, ?_⟩
@@ -104,12 +112,6 @@ theorem classMapT_of (h : QFrameDeg D) : ClassMapT D := by
     field_simp
 
 end T
-
-theorem Link6F_of_frameDeg (h : ∀ D, QFrameDeg D) : Link6F := by
-  exact third_link_of_archimedean fun D => classMapT_of (h D)
-
-theorem packet_of_frame_degree (h : ∀ D, QFrameDeg D) : KudlaFamilyOfMinkowskiTransference := by
-  exact packetFamily_of_classMapT fun D => classMapT_of (h D)
 
 end Formalism.L2.GlobalTheoryTheory.TraceIntegrality
 

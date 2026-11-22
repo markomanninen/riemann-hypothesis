@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsIntegralHalf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Col2 Matrix
 open scoped BigOperators
 
@@ -24,10 +29,12 @@ theorem exists_over (K : Type*) [Field K] [NumberField K] (p : ℕ) (hp : p.Prim
   have hpr : (Ideal.span {(p : ℤ)}).IsPrime :=
     (Ideal.span_singleton_prime (by exact_mod_cast hp.ne_zero)).2 (Nat.prime_iff_prime_int.1 hp)
   obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 K) (Ideal.span {(p : ℤ)}) ⊥ (by
-    rw [Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective ℤ (𝓞 K))]
+    rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective ℤ (𝓞 K)))]
     exact bot_le)
   have hmem : (p : 𝓞 K) ∈ Q := by
-    have : (p : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 K)) := hQc ▸ Ideal.mem_span_singleton_self _
+    have : (p : ℤ) ∈ Ideal.under ℤ Q := by
+      rw [hQc]
+      exact Ideal.mem_span_singleton_self _
     simpa using this
   refine ⟨⟨Q, hQ, ?_⟩, hmem⟩
   rintro rfl
@@ -46,10 +53,10 @@ theorem exists_elt {R : Ranks} (H : Host R) (p : ℕ) (hp : p.Prime) (hs : Th.Sp
       exact ⟨(H.d + 1) / 8, by omega⟩
     have hm' : (H.d : H.K) + 1 = 8 * m := by exact_mod_cast hm
     refine ⟨(1 + θ) / 2, 1, m, HostK.isIntegral_half H, ?_, ?_, isCoprime_one_right⟩
-    · rw [map_div₀, map_add, map_one, hcj, map_ofNat]
+    · rw [map_div₀, map_add (f := _), map_one, hcj, map_ofNat]
       push_cast
       linear_combination (-1 / 4 : H.K) * hsq + (1 / 4 : H.K) * hm'
-    · rw [map_div₀, map_add, map_one, hcj, map_ofNat]
+    · rw [map_div₀, map_add (f := _), map_one, hcj, map_ofNat]
       push_cast
       ring
   · have hj : jacobiSym (-(H.d : ℤ)) p = 1 := hs.resolve_left h2
@@ -77,9 +84,9 @@ theorem exists_elt {R : Ranks} (H : Host R) (p : ℕ) (hp : p.Prime) (hs : Th.Sp
       exact (isIntegral_natCast H.d).neg
     have hpi : Prime (p : ℤ) := Nat.prime_iff_prime_int.1 hp
     refine ⟨r + θ, 2 * r, m, (isIntegral_intCast r).add hθi, ?_, ?_, ?_⟩
-    · rw [map_add, map_intCast, hcj]
+    · rw [map_add (f := _), map_intCast, hcj]
       linear_combination hm' - hsq
-    · rw [map_add, map_intCast, hcj]
+    · rw [map_add (f := _), map_intCast, hcj]
       push_cast
       ring
     · refine (hpi.coprime_iff_not_dvd).2 fun h => ?_

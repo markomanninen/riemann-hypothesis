@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsEvaluation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TensorHomExt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsEvaluation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TensorHomExt
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh TensorProduct UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (FEt Cover gen piece IsHEig)
 universe u v

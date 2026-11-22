@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.ChainOne
-import Formalism.LocalToGlobal.Columns.ChainInstS
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainOne
+public import Formalism.LocalToGlobal.Columns.ChainInstS
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -11,8 +15,8 @@ open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV
 
 section Core
 
-open Classical in
 
+open Classical in
 def ocbChiV {k : Type} [Field k] (χ : kˣ →* ℂˣ) (x : k) : ℂ := if h : x = 0 then 0 else ((χ (Units.mk0 x h) : ℂˣ) : ℂ)
 
 def ocbEnt {k : Type} [Field k] {A B : ℕ} (k₀ cA nA cB nB : ℕ) (x : (Fin A → k) →ₗ[k] (Fin B → k)) (p p' : ℕ) : k :=
@@ -23,8 +27,8 @@ def ocbAllow (k₀ m t N p p' : ℕ) : Prop :=
   else if p' < k₀ + m - 1 then (k₀ ≤ p ∧ p < p') ∨ (m / 2 < p' + 1 - k₀ ∧ p < k₀)
   else p < k₀ + m - 1 ∨ (p < N ∧ (p - (k₀ + m - 1)) / t ≤ (p' - (k₀ + m - 1)) / t)
 
-open Classical in
 
+open Classical in
 def ocbPhiS {k : Type} [Field k] (ψ₀ : AddChar k ℂ) (χ : ℕ → kˣ →* ℂˣ) (k₀ m t j n' c n : ℕ) : Loc.SF k ℂ (n' + (c + 1)) (n + c) :=
   fun x =>
     let M := ocbEnt k₀ (c + 1) n' c n x
@@ -122,8 +126,8 @@ def ocbNeAt (σ : X.K →+* ℂ) (i : ℕ) (P : HeightOneSpectrum (𝓞 X.E))
   @ocbNe (𝓞 X.E ⧸ P.asIdeal) (resField P) (resFintype P) (ocbPsiC Ch σ P) (ocbChiC Ch σ P) R.k R.m R.t (i + 1) (R.N i) (cOf R (i + 1))
     (R.N (i + 1)) hbar
 
-variable (R) in
 
+variable (R) in
 def ocbInAt (i : ℕ) (P : HeightOneSpectrum (𝓞 X.E))
     (hbar : (Fin (R.N (i + 1) + cOf R (i + 1)) → 𝓞 X.E ⧸ P.asIdeal) ≃ₗ[𝓞 X.E ⧸ P.asIdeal] (Fin (R.N (i + 1) + cOf R (i + 1)) → 𝓞 X.E ⧸ P.asIdeal)) :
     Prop :=
@@ -147,20 +151,6 @@ def LiftFromResidueParabolicProduct (m2 : ℕ) : Prop :=
     ∀ h₀ ∈ stabL X.E _ (lamYat (Pr := Pr) (R := R) (i + 1) P.1), ∀ hbar, ocbIsRed P.1 (qOf P.1) (R.N (i + 1)) (cOf R (i + 1)) h₀ hbar →
       ocbInAt R i P.1 hbar → SameDC (Pr := Pr) cst.sharp (i + 1) P.1 1 h₀
 
-def OcbPatSubJ (m2 : ℕ) : Prop :=
-  OcbBase Ch sel mu cst m2 → ∀ j, j ≤ m2 + 1 → ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs → ∀ κ ∈ stabL X.E _ (lamYat (Pr := Pr) (R := R) j P.1),
-    (∀ p', p' < R.r → redP P.1 (LocE.entB (qOf P.1) R.k (cOf R j) (R.N j) (cOf R j) (R.N j) (fun i => i + 1) (fun i => i + 1) κ.toLinearMap p' p') = 1) →
-    (∀ p p', p < R.N j + cOf R j → p' < R.r → p ≠ p' →
-      (R.r ≤ p ∨ symIdx R.k R.rS p' < symIdx R.k R.rS p ∨ (p' = R.k + R.rS ∧ p < R.k)) →
-      redP P.1 (LocE.entB (qOf P.1) R.k (cOf R j) (R.N j) (cOf R j) (R.N j) (fun i => i + 1) (fun i => i + 1) κ.toLinearMap p p') = 0) →
-    (∀ p p', R.r ≤ p' → p' < R.N j + cOf R j → p < R.N j + cOf R j → (p' - R.r) / R.t < (p - R.r) / R.t →
-      redP P.1 (LocE.entB (qOf P.1) R.k (cOf R j) (R.N j) (cOf R j) (R.N j) (fun i => i + 1) (fun i => i + 1) κ.toLinearMap p p') = 0) →
-    κ ∈ Jat (Pr := Pr) true j P.1
-
-def OcbLamChar (m2 : ℕ) : Prop :=
-  OcbBase Ch sel mu cst m2 → ∀ j, j ≤ m2 + 1 → ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs →
-    LamGBSChar P.1 (qOf P.1) (psi0P Ch P.1) (chiP Ch P.1) R.k R.rS R.r R.t j (R.N j) (cOf R j)
-
 end Glob
 
 section Ent
@@ -177,8 +167,8 @@ def ocbXAllow (k₀ rS j t p p' : ℕ) : Prop :=
 def ocbXPat (k₀ rS j t : ℕ) (hbar : GL (Fin N) κ) : Prop :=
   (∀ p, p < k₀ + j → ocbM hbar p p = 1) ∧ ∀ p p', p < N → p' < N → p ≠ p' → ocbM hbar p p' ≠ 0 → ocbXAllow k₀ rS j t p p'
 
-open Classical in
 
+open Classical in
 def ocbChiK (χ : κˣ →* Kˣ) (x : κ) : K := if h : IsUnit x then ((χ h.unit : Kˣ) : K) else 0
 
 def ocbXLam (ψ₀ : AddChar κ K) (χ : ℕ → κˣ →* Kˣ) (k₀ j t : ℕ) (hbar : GL (Fin N) κ) : K :=
@@ -199,8 +189,8 @@ def OcbGrpGLoc (m2 : ℕ) : Prop :=
     (∃ g ∈ prCat (Pr := Pr) cst.sharp j w.1 (1 : AutY X R j),
       ∀ x ∈ stdAt X.E (R.N j) w.1, redV w.1 (g x) = hbar.1.mulVec (redV w.1 x)) ↔ ocbXPat R.k R.rS j R.t hbar
 
-open Classical in
 
+open Classical in
 def OcbChrGLoc (m2 : ℕ) : Prop :=
   OcbBase Ch sel mu cst m2 → ∀ j, j ≤ m2 + 1 → ∀ (w : {w // w ∈ Pr.vGs}) (hbar : GL (Fin (R.N j)) (𝓞 X.E ⧸ w.1.asIdeal))
     (g : Sp X.E (R.N j) ≃ₗ[X.E] Sp X.E (R.N j)) (r : AutY X R j),
@@ -220,7 +210,7 @@ variable {Ch sel mu cst}
 theorem ocbPsiC_ne (hCh : Ch.Ok) (σ : X.K →+* ℂ) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∈ Pr.vGs) : ocbPsiC Ch σ P ≠ 1 := by
   have h1 : psi0P Ch P ≠ 1 := by
     unfold psi0P
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
     exact hCh.psi_zero_nontrivial_character ⟨P, hP⟩
   obtain ⟨a, ha⟩ := (AddChar.ne_one_iff).1 h1
   refine (AddChar.ne_one_iff).2 ⟨a, fun h => ha ?_⟩
@@ -243,29 +233,17 @@ theorem ocbRanks_step {m2 i : ℕ} (hm : R.m = m2 + 2) (hi : i < m2) :
     rw [e2]
     omega
 
-theorem oneCoset_surj (σ : X.K →+* ℂ) {m2 : ℕ} (hB : OcbBase Ch sel mu cst m2) (hQ : ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs)
-    (c1 : ResidueFieldUnfoldingSupport) (b2 : ReductionExistsInLatticeStabilizer Ch sel mu cst σ m2) (b3 : LiftFromResidueParabolicProduct Ch sel mu cst m2) :
-    ∀ i, i < m2 → ∀ hh : rowSG Pr sel mu → AutY X R (i + 1),
-      (∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs → hh P ∈ stabL X.E _ (lamYat (Pr := Pr) (i + 1) P.1)) →
-      (∀ P, FiniteSumNonzeroLargeDepth Ch sel mu cst i P 1 (hh P)) → ∀ P, SameDC (Pr := Pr) cst.sharp (i + 1) P.1 1 (hh P) := by
-  intro i hi hh hs H P
-  obtain ⟨⟨hbar, hred⟩, hiff⟩ := b2 hB i hi P (hQ P) (hh P) (hs P (hQ P))
-  have hin : ocbInAt R i P.1 hbar :=
-    @c1 (𝓞 X.E ⧸ P.1.asIdeal) (resField P.1) (resFintype P.1) (ocbPsiC Ch σ P.1) (ocbChiC Ch σ P.1) R.k R.m R.t (i + 1) (R.N i)
-      (cOf R (i + 1)) (R.N (i + 1)) (ocbPsiC_ne hB.hCh σ (hQ P)) (ocbRanks_step hB.hm hi) hbar ((hiff hbar hred).1 (H P))
-  exact b3 hB i hi P (hQ P) (hh P) (hs P (hQ P)) hbar hred hin
-
 theorem ocbIsRed_one {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) (q n c : ℕ) : ocbIsRed P q n c 1 1 := by
   intro l s hl hs
   have h1 : Loc.atN ((1 : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) (Loc.eN E (n + c) s)) l = if l = s then 1 else 0 := by
     show Loc.atN (Loc.eN E (n + c) s) l = _
     unfold Loc.atN Loc.eN
-    rw [dif_pos hl]
+    rw [dite_eq_left hl]
   have h2 : Loc.atN ((1 : (Fin (n + c) → 𝓞 E ⧸ P.asIdeal) ≃ₗ[𝓞 E ⧸ P.asIdeal] (Fin (n + c) → 𝓞 E ⧸ P.asIdeal))
       (Loc.eN (𝓞 E ⧸ P.asIdeal) (n + c) s)) l = if l = s then 1 else 0 := by
     show Loc.atN (Loc.eN (𝓞 E ⧸ P.asIdeal) (n + c) s) l = _
     unfold Loc.atN Loc.eN
-    rw [dif_pos hl]
+    rw [dite_eq_left hl]
   rw [h1, h2]
   by_cases hls : l = s
   · subst hls
@@ -273,25 +251,6 @@ theorem ocbIsRed_one {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum
     exact ⟨⟨1, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h), by simp⟩, redP_one.symm⟩
   · rw [if_neg hls, if_neg hls, zero_mul]
     exact ⟨⟨0, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h), by simp⟩, redP_zero.symm⟩
-
-theorem nonVanSym_of (σ : X.K →+* ℂ) {m2 : ℕ} (hB : OcbBase Ch sel mu cst m2) (hQ : ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs)
-    (c2 : ResidueFieldUnfoldingNonzero) (b2 : ReductionExistsInLatticeStabilizer Ch sel mu cst σ m2) : NonVanSym Ch sel mu cst m2 := by
-  intro i hi P
-  have h := (b2 hB i hi P (hQ P) 1 (Subgroup.one_mem _)).2 1 (ocbIsRed_one P.1 (qOf P.1) _ _)
-  refine h.2 ?_
-  exact (@ocbNe_one (𝓞 X.E ⧸ P.1.asIdeal) (resField P.1) (resFintype P.1) (ocbPsiC Ch σ P.1) (ocbChiC Ch σ P.1) R.k R.m R.t (i + 1) (R.N i)
-    (cOf R (i + 1)) (R.N (i + 1))).2
-    (@c2 (𝓞 X.E ⧸ P.1.asIdeal) (resField P.1) (resFintype P.1) (ocbPsiC Ch σ P.1) (ocbChiC Ch σ P.1) R.k R.m R.t (i + 1) (R.N i)
-      (cOf R (i + 1)) (R.N (i + 1)) (ocbPsiC_ne hB.hCh σ (hQ P)) (ocbRanks_step hB.hm hi))
-
-theorem oneCosetSym_of (σ : X.K →+* ℂ) {m2 : ℕ} {Λ : ∀ j, LevFam X.E X.K (R.N j) Pr.vGs} (hB : OcbBase Ch sel mu cst m2)
-    (hQ : ∀ P : rowSG Pr sel mu, P.1 ∈ Pr.vGs) (c1 : ResidueFieldUnfoldingSupport) (c2 : ResidueFieldUnfoldingNonzero)
-    (b2 : ReductionExistsInLatticeStabilizer Ch sel mu cst σ m2) (b3 : LiftFromResidueParabolicProduct Ch sel mu cst m2) (hG : OcbGrpGLoc Ch sel mu cst m2) (hC : OcbChrGLoc Ch sel mu cst m2)
-    (hΛ : OcbLevIs Ch Λ m2) : OneCosetSym Ch sel mu cst Λ m2 ∧ NonVanSym Ch sel mu cst m2 :=
-  ⟨{ surj := oneCoset_surj σ hB hQ c1 b2 b3
-     grpG := fun j hj w hbar => (hΛ.H j hj w hbar).trans (hG hB j hj w hbar).symm
-     chrG := fun j hj w hbar g r hr hg hred => (hΛ.lam j hj w hbar).trans (hC hB j hj w hbar.1 g r hr hg hred).symm },
-    nonVanSym_of σ hB hQ c2 b2⟩
 
 end Lev
 

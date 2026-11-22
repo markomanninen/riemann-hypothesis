@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.CauchyIdentity.SchurJT
+
+@[expose] public section
 
 noncomputable section
 
@@ -103,7 +107,7 @@ theorem complete_homogeneous_generating : HGen := by
       intro k hk
       rw [Finset.Nat.mem_antidiagonalTuple] at hk
       rw [norm_prod, ← hk, ← Finset.prod_pow_eq_pow_sum]
-      refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => ?_
+      refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => ?_
       rw [norm_pow]
       exact pow_le_pow_left₀ (norm_nonneg _) (hα i) _
     calc ‖hN p α‖ ≤ ∑ k ∈ Finset.Nat.antidiagonalTuple m p, ‖∏ i, α i ^ k i‖ := norm_sum_le _ _

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.ExistsQuadraticGaussSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.ExistsQuadraticGaussSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -63,7 +67,7 @@ private theorem fx_two [IsAlgClosed Ω] (h : ∀ ζ : Ω, ζ ^ M = 1 → s ζ = 
   refine fx_of (x := η + η ^ 7) ?_ ?_
   · calc (η + η ^ 7) ^ 2 = η ^ 2 + 2 * η ^ 8 + η ^ 14 := by ring
       _ = ((2 : ℤ) : Ω) := by rw [hη, hη8, h14]; push_cast; ring
-  · rw [map_add, map_pow, hsη]
+  · rw [map_add (f := _), map_pow, hsη]
 
 private theorem fx_odd [IsAlgClosed Ω] [CharZero Ω] (h : ∀ ζ : Ω, ζ ^ M = 1 → s ζ = ζ) (n : ℕ) :
     n % 2 = 1 → n ∣ M → ∃ a : ℤ, a % 4 = 1 ∧ a.natAbs = n ∧ Fx s a := by
@@ -333,9 +337,9 @@ theorem UpperTheory.V.U3.eta_killsMu :
       intro x
       obtain ⟨a, b, hab⟩ := hspan x
       have e1 := congrArg (algebraMap K Ω) hab
-      simp only [map_mul, map_add, map_ratCast, map_ofNat] at e1
+      simp only [map_mul, map_add (f := _), map_ratCast, map_ofNat] at e1
       have e2 := congrArg s e1
-      simp only [map_mul, map_add, map_ratCast, map_ofNat, hsδ] at e2
+      simp only [map_mul, map_add (f := _), map_ratCast, map_ofNat, hsδ] at e2
       have hz : (s (algebraMap K Ω x) - algebraMap K Ω x) * (2 * algebraMap K Ω δ) = 0 := by
         linear_combination e2 - e1
       rcases mul_eq_zero.mp hz with h | h

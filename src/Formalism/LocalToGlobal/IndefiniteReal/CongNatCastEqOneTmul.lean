@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.PrincipalLevelFrame
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.PrincipalLevelFrame
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Levelaf
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ section Cong
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 theorem cong_natCast_eq_tmul_one (k : ℕ) : (k : ReciprocityTheory.Aut.AL L) = (k : L) ⊗ₜ[L⁺] (1 : ReciprocityTheory.Aut.AFplus L) := by
   rw [← Algebra.TensorProduct.includeLeftRingHom_apply, map_natCast]

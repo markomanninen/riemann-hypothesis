@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ExistsNatLocal
-import Lemmata.NatMulIsIntegral.ExistsNatMulIsIntegral
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnimodularity.ExistsNatLocal
+public import Lemmata.NatMulIsIntegral.ExistsNatMulIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem T_add {w w' : Fin n → E ⊗[F] Af F} (hw : w ∈ Tset (F := F) m) (hw'
   refine ⟨a + a', fun j => add_mem (ha j) (ha' j), ?_⟩
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [Pi.add_apply, map_add, add_smul]
+  simp only [Pi.add_apply, map_add (f := _), add_smul]
 
 theorem T_neg {w : Fin n → E ⊗[F] Af F} (hw : w ∈ Tset (F := F) m) : -w ∈ Tset (F := F) m := by
   obtain ⟨a, ha, rfl⟩ := hw
@@ -123,7 +127,8 @@ theorem T_sum {ι : Type} (s : Finset ι) (f : ι → Fin n → E ⊗[F] Af F)
 theorem ivec_zsum (z : Fin k → ℤ) :
     ivec (F := F) (∑ i, z i • m i) = ∑ i, incA F E (z i : Af F) • ivec (F := F) (m i) := by
   funext r
-  simp [ivec, Finset.sum_apply, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ivec, Finset.sum_apply, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
 
 theorem T_gen {L : Submodule (𝓞 E) (Fin n → E)}
     (hgen : ∀ l ∈ L, ∃ z : Fin k → ℤ, l = ∑ i, z i • m i) {x : Fin n → E} (hx : x ∈ L) :

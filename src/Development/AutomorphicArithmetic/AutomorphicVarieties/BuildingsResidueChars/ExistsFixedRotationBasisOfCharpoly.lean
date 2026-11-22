@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix
 
@@ -7,7 +11,7 @@ private lemma cayley_hamilton_rank_three_factored {K : Type} [Field K] (τ : K) 
     (M - 1) * (M * M - τ • M + 1) = 0 := by
   have h := Matrix.aeval_self_charpoly M
   rw [hM] at h
-  simp only [map_mul, map_sub, map_add, map_one, map_pow, Polynomial.aeval_X,
+  simp only [map_mul, map_sub, map_add (f := _), map_one, map_pow, Polynomial.aeval_X,
     Polynomial.aeval_C] at h
   rw [Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, sq] at h
   exact h
@@ -169,8 +173,7 @@ theorem UpperTheory.exists_fixed_rotation_basis_of_charpoly :
     have hEMv : E *ᵥ (M *ᵥ v) = 0 := by rw [Matrix.mulVec_mulVec, hEM, hEv]
     have hli : LinearIndependent K ![e, v, M *ᵥ v] := by
       change LinearIndependent K (Fin.cons e ![v, M *ᵥ v])
-      rw [linearIndependent_fin_cons]
-      refine ⟨hv, fun hmem => ?_⟩
+      refine linearIndependent_finCons.mpr ⟨hv, fun hmem => ?_⟩
       have hle : Submodule.span K (Set.range ![v, M *ᵥ v]) ≤ LinearMap.ker (Matrix.toLin' E) := by
         rw [Submodule.span_le]
         rintro _ ⟨i, rfl⟩

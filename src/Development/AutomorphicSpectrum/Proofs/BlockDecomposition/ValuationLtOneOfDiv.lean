@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem exists_mem_lat {m : ℕ} (x : Fin m → F) : ∃ M, x ∈ lat F m M := b
     (show (fun _ => x i) ∈ lat F 1 (M i) from fun _ => hM i) 0
 
 theorem mem_lat_iff_box {m M : ℕ} {x : Fin m → F} :
-    x ∈ lat F m M ↔ ((uniformizer F : F) ^ M • x) ∈ Measures.box F (Fin m) := by
+    x ∈ lat F m M ↔ ((uniformizer F : F) ^ M • x) ∈ Measures.box (F := F) (ι := Fin m) := by
   rw [Measures.mem_box]
   rfl
 
@@ -218,11 +222,11 @@ theorem continuous_of_periodic {m c' : ℕ} {f : (Fin m → F) → ℂ}
     Continuous f := by
   have hϖ : (uniformizer F : F) ^ c' ≠ 0 := pow_ne_zero _ (uniformizer_ne_zero F)
   have hU : IsOpen ((fun y : Fin m → F => ((uniformizer F : F) ^ c')⁻¹ • y) ⁻¹'
-      Measures.box F (Fin m)) :=
+      Measures.box (F := F) (ι := Fin m)) :=
     Measures.isOpen_box.preimage (continuous_const_smul _)
   refine (IsLocallyConstant.iff_eventually_eq f |>.2 fun x => ?_).continuous
   have h0 : ((fun y : Fin m → F => ((uniformizer F : F) ^ c')⁻¹ • y) ⁻¹'
-      Measures.box F (Fin m)) ∈ nhds (0 : Fin m → F) :=
+      Measures.box (F := F) (ι := Fin m)) ∈ nhds (0 : Fin m → F) :=
     hU.mem_nhds (by simpa using Measures.zero_mem_box)
   have h1 : Filter.Tendsto (fun z : Fin m → F => z - x) (nhds x) (nhds 0) := by
     have : Continuous fun z : Fin m → F => z - x := continuous_id.sub continuous_const

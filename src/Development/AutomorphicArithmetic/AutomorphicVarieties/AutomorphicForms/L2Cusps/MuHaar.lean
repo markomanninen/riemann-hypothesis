@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
+
+@[expose] public section
 
 open NumberField MeasureTheory GlobalTheory.AutomorphicL2Unitary GlobalTheory.DiscreteSum GlobalTheory.UnitaryBC GlobalTheory.DiscSpec GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.V.KernelIndexFullLattice
 
 section
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 private theorem one_lt_top (ha : 0 < a) : 1 < detModule E a (splitCentre E a 1) := by
   rw [splitEq_holds E a 1, detModule_centralSection ha]
@@ -36,7 +40,7 @@ private theorem muOne_apply (μ : Measure (GA E a)) {A : Set (G1 E a)} (hA : Mea
     muOne μ A = μ (retractOne ⁻¹' A ∩ band E a) := by
   rw [muOne, Measure.map_apply meas_retract hA, Measure.restrict_apply (meas_retract hA)]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem retract_mul_left (x : G1 E a) (g : GA E a) :
     retractOne ((x : GA E a) * g) = x * retractOne g := by
   ext1
@@ -47,7 +51,7 @@ private theorem band_mul_left (x : G1 E a) (g : GA E a) : (x : GA E a) * g ∈ b
   simp only [band, Set.mem_setOf_eq, map_mul, (mem_normOneGL_iff_detModule).1 x.2, one_mul]
 
 private theorem isCompact_posIcc (s t : {r : ℝ // 0 < r}) : IsCompact (Set.Icc s t) := by
-  refine Topology.IsInducing.subtypeVal.isCompact_iff.2 ?_
+  refine (Topology.IsInducing.subtypeVal (t := {r : ℝ | 0 < r})).isCompact_iff.2 ?_
   convert isCompact_Icc (a := (s : ℝ)) (b := (t : ℝ)) using 1
   ext x
   constructor

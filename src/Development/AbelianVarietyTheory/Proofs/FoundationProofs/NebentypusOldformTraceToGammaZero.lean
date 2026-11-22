@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlashToGLSmul
+
+@[expose] public section
+
 open GlobalTheory.HeckeFamilyMatrices UpperHalfPlane CongruenceSubgroup
 open scoped MatrixGroups ModularForm Manifold
 
@@ -125,8 +130,8 @@ end
 
 end GlobalTheory.HeckeFamilyMatrices.TrOld
 
-open GlobalTheory.HeckeFamilyMatrices.TrOld in
 
+open GlobalTheory.HeckeFamilyMatrices.TrOld in
 theorem GlobalTheory.HeckeFamilyMatrices.chiInv_trOld : ∀ (N l : ℕ) (k : ℤ) (a b : ℤ) (h : (l : ℤ) * b - N * a = 1)
     (χ : DirichletCharacter ℂ N) (G : ℍ → ℂ), 0 < N → l.Prime → ChiInv k N (N * l) χ G →
     ChiInv k N N χ (trOld k N l a b h G) := by

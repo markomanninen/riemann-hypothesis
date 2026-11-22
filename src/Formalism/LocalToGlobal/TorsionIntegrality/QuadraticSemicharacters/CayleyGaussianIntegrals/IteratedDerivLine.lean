@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.TaylorMvLinear
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -56,18 +60,19 @@ theorem LineUnique_of (h : LineCoeff) : LineUnique := by
     have h1 := h K n v T k
     have h2 := h K n v T' k
     rw [hv v, h2] at h1
-    simp only [p, q, map_sum, MvPolynomial.eval_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, q, map_sum, MvPolynomial.eval_monomial]
     simp only [Finsupp.prod_fintype _ _ (fun i => pow_zero _)]
     exact h1.symm
   have hν : ν ∈ Finset.finsuppAntidiag Finset.univ k := by simp [Finset.mem_finsuppAntidiag, hk]
-  have hc : ∀ S : MvPowerSeries n K, MvPolynomial.coeff ν (∑ μ ∈ Finset.finsuppAntidiag Finset.univ k,
-      MvPolynomial.monomial μ (MvPowerSeries.coeff μ S)) = MvPowerSeries.coeff ν S := by
+  have hc : ∀ S : MvPowerSeries n K, AddMonoidAlgebra.coeff (∑ μ ∈ Finset.finsuppAntidiag Finset.univ k,
+      MvPolynomial.monomial μ (MvPowerSeries.coeff μ S)) ν = MvPowerSeries.coeff ν S := by
     intro S
     rw [MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial]
     rw [Finset.sum_ite_eq' _ ν, if_pos hν]
   rw [← hc T, ← hc T']
-  exact congrArg _ hpq
+  exact congrArg (fun R => AddMonoidAlgebra.coeff R ν) hpq
 
 theorem lineUnique' : LineUnique := LineUnique_of lineCoeff'
 
@@ -113,7 +118,8 @@ theorem multilinear_diag {n : Type*} [Fintype n] [DecidableEq n] {k : ℕ}
     simp [Finset.sum_apply, Pi.single_apply]
   have h1 : D (fun _ => v) = D (fun _ : Fin k => ∑ i, v i • (Pi.single i (1 : ℂ) : n → ℂ)) := by
     rw [← hv]
-  rw [h1, D.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, D.map_sum]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [D.map_smul_univ (fun j => v (f j)) (fun j => Pi.single (f j) (1 : ℂ)), smul_eq_mul]
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.JNormal
+module
+
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.JNormal
+
+@[expose] public section
 
 open MvPolynomial AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap)

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PPshLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PPshLocal
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.AnForm.PshLocal
 

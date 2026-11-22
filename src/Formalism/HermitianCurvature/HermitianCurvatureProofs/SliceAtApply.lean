@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizePtG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableBlockIntegrand
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceIntCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.YGSlice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormLevLimit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCongrRight
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizePtG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableBlockIntegrand
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceIntCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.YGSlice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplySub
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormLevLimit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaCongrRight
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 
@@ -77,13 +81,6 @@ theorem arith_ma (m RR As a : ℝ) (hm : 0 ≤ m) (hR : m + 3 ≤ RR) (hAs : 1 �
     nlinarith
   linarith
 
-theorem arith_auser (RR As X a : ℝ) (hR1 : 1 ≤ RR) (hX0 : 0 ≤ X) (hX : 11 * X + 5 ≤ As)
-    (ha : 128 * RR ^ 3 * As ≤ a) : 127 * RR ^ 3 * X + 1 ≤ a := by
-  have hR3 : 1 ≤ RR ^ 3 := one_le_pow₀ hR1
-  have h1 : 128 * RR ^ 3 * (11 * X + 5) ≤ 128 * RR ^ 3 * As :=
-    mul_le_mul_of_nonneg_left hX (by positivity)
-  nlinarith
-
 theorem cccoef_congr {k ρ : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] {Bs : B.RealPlaceData k ρ Wp Wq} {A : ℝ} {mm : ℕ} {ε : ℝ}
     {F F' : B.Mat k ρ → (Wq →L[ℂ] Wp)} (h : ∀ g ∈ B.GV k ρ, F g = F' g) (hF : JC.CCCoefM Bs A mm ε F) :
@@ -101,7 +98,7 @@ theorem sliceAt_apply {k r : ℕ} {ι : Type} [Fintype ι] {E0 : Type} [NormedAd
       (U.muXi k (D.ptSize p) 0 (r - D.ptSize p) (D.ptPerm p))) :
     D.sliceAt k r z z' F p γ e = D.sliceAt k r z z' (fun g => F g e) p γ := by
   unfold D.sliceAt
-  rw [dif_pos hle, dif_pos hle]
+  rw [dite_eq_left hle, dite_eq_left hle]
   unfold U.PhiFun
   have := (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : ι => E0) e).integral_comp_comm hint
   exact this.symm ▸ rfl

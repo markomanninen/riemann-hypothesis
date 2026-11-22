@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -17,7 +21,7 @@ private theorem UpperTheory.V.Pa.dual_functionals_finite_separating_surjective {
     induction hy using Submodule.span_induction with
     | mem x hx => exact h0 x hx
     | zero => exact map_zero μ
-    | add x z _ _ hx hz => rw [map_add, hx, hz, add_zero]
+    | add x z _ _ hx hz => rw [map_add (f := _), hx, hz, add_zero]
     | smul b x _ hx => rw [(hL μ).1 hμ b x, hx, mul_zero]
   have hfin : Module.Finite F L := by
     obtain ⟨n, s, hsp⟩ := Module.Finite.exists_fin (R := R) (M := N)
@@ -67,7 +71,7 @@ private theorem UpperTheory.V.Pa.dual_functionals_finite_separating_surjective {
     { carrier := {a | ∃ y : N, ∀ μ : L, (μ : N →+ F) y = a μ}
       add_mem' := by
         rintro a b ⟨y, hy⟩ ⟨z, hz⟩
-        exact ⟨y + z, fun μ => by rw [map_add, hy, hz]; rfl⟩
+        exact ⟨y + z, fun μ => by rw [map_add (f := _), hy, hz]; rfl⟩
       zero_mem' := ⟨0, fun μ => by simp⟩
       smul_mem' := by
         rintro c a ⟨y, hy⟩
@@ -96,8 +100,8 @@ theorem UpperTheory.V.Pa.laDual :
     exact ⟨_, ho⟩
   haveI := S.U.fin
   haveI hN : Module.Finite S.Bh S.U.N :=
-    Module.Finite.of_surjective (Submodule.linearProjOfIsCompl S.U.N 1 S.U.compl.symm)
-      fun x => ⟨x, Submodule.linearProjOfIsCompl_apply_left _ x⟩
+    Module.Finite.of_surjective (Submodule.projectionOnto S.U.N 1 S.U.compl.symm)
+      (Submodule.projectionOnto_surjective S.U.compl.symm)
   obtain ⟨h1, h2, h3⟩ := UpperTheory.V.Pa.dual_functionals_finite_separating_surjective S.rF hs S.La (fun μ => Iff.rfl)
   refine ⟨h1, fun y hy => ?_, h3⟩
   rw [← S.rF_ker]

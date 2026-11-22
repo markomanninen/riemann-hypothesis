@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.DataHost
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+module
+
+public import Formalism.LocalRingCardinality.DataHost
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.ExplicitFormulaErrorOfHostConditions
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+
+@[expose] public section
 
 open NumberField Formalism.FrobeniusOrbits Formalism.TwoAdicCyclotomicDecomposition Formalism.HC Formalism.BasicNotions
 open scoped Pointwise
@@ -80,10 +84,6 @@ def HostNF.ofHost {R : Ranks} (H : Formalism.BasicNotions.Host R) : HostNF R :=
     qd_big := H.qd_big, sqq := H.sqq, sqq_sq := H.sqq_sq, gal_sqq := H.gal_sqq, φ₀ := H.φ₀, φ₀_mem := H.φ₀_mem
     𝔟 := H.𝔟, 𝔟_spec := H.𝔟_spec, 𝔟_stable := H.𝔟_stable, ch := { H with } }
 
-theorem HostNF.toHost_ofHost {R : Ranks} (H : Formalism.BasicNotions.Host R) : (HostNF.ofHost H).toHost = H := rfl
-
-theorem HostNF.ofHost_toHost {R : Ranks} (N : HostNF R) : HostNF.ofHost N.toHost = N := rfl
-
 theorem exists_cmType {φ : Frame} (H : HostAx φ) : ∃ ψ : H.E →+* ℂ, ψ ∈ H.toHostRaw.cmType := by
   have h := H.der.cmType.2.1
   have := φ.ord_pos
@@ -152,12 +152,6 @@ theorem nonempty_choices {φ : Frame} (H : HostRaw φ) : Nonempty (Choices φ H)
       second_set_range := by simp
       second_set_no_relation := by simp [NoRel]
       CT2 := 0 }⟩
-
-structure PairAt (T : HType) (X : ℝ) (q d : ℕ) : Prop where
-  hyp : HostHyp q d
-  log_q : T.z X / 2 < Real.log q ∧ Real.log q ≤ T.z X
-  log_d : T.z' X / 2 < Real.log d ∧ Real.log d ≤ T.z' X
-  split : ∀ p : ℕ, p.Prime → p ≠ 2 → (p : ℝ) ≤ T.z X → jacobiSym (-(d : ℤ)) p = 1
 
 end HostParam.Seam
 

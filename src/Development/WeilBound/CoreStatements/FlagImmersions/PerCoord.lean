@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.IpZeroRight
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicCoefficientsInFrameStatement
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.IpZeroRight
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicCoefficientsInFrameStatement
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GlobalTheory.CompanionTheory.Ar.PB
 
@@ -87,7 +91,8 @@ theorem perCoord : PerCoord := by
     let c : Ψ → Fin (p + q) → ℂ := fun τ k => if (k : ℕ) < q then star (α (.inr (τ, k))) else α (.inl (τ, k))
     have h1 : Pc b (R t₀) (io b a) = Pc b (R t₀) (∑ τ, ∑ k, (c τ k • η τ k + star (c τ k) • star (η τ k))) := by
       rw [Pc_io, ← hα, Fintype.sum_sum_type, ← Finset.sum_add_distrib, Fintype.sum_prod_type]
-      simp only [map_sum, map_add, map_smul, hη, hη', Sum.elim_inl, Sum.elim_inr]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_add (f := _), map_smul, hη, hη', Sum.elim_inl, Sum.elim_inr]
       refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun k _ => ?_
       by_cases h : (k : ℕ) < q <;> simp [u, u', c, h]
     refine ⟨c, ext_pair b (R t₀) h1 ?_⟩
@@ -115,7 +120,8 @@ theorem perCoord : PerCoord := by
       exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
     · exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [Complex.star_def]; ring
   · rw [← Pc_io b, hcc a]
-    simp only [map_sum, map_add, map_smul, fun τ k => hm τ k t ht, fun τ k => hm' τ k t ht, Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, fun τ k => hm τ k t ht, fun τ k => hm' τ k t ht, Finset.sum_add_distrib]
     simp only [Finset.smul_sum, smul_smul, mulVec, dotProduct, of_apply, Finset.sum_smul, Pi.star_apply]
     congr 1 <;> refine Finset.sum_congr rfl fun τ _ => ?_ <;> rw [Finset.sum_comm] <;> simp only [mul_comm]
   · have hs : Submodule.span ℂ (Set.range (Sum.elim (fun a : Ψ × Fin p => x a.1 a.2 t)

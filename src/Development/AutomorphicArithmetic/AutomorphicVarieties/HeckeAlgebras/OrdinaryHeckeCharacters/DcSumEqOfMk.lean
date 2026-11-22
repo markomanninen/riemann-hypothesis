@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Hi
 
 private theorem dcSum_eq_of_mk {A H M : Type} [CommRing A] [Group H] [AddCommGroup M] [Module A M]
@@ -35,7 +40,8 @@ theorem UpperTheory.V.Hi.dcSum :
     · intro y hy
       exact dcSum_eq_of_mk ρ K' hv (QuotientGroup.out_eq' _).symm
   · intro v hv u hu
-    rw [dcSum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dcSum_apply, map_sum]
     refine Fintype.sum_equiv (MulAction.toPerm (⟨u, hu⟩ : K)) _ _ ?_
     intro q
     have : ρ u (ρ (q : H ⧸ K').out v) = ρ (u * (q : H ⧸ K').out) v := by rw [map_mul]; rfl
@@ -46,7 +52,8 @@ theorem UpperTheory.V.Hi.dcSum :
     conv_rhs => rw [← QuotientGroup.out_eq' (q : H ⧸ K')]
     rfl
   · intro V hV v hv hvV u hu
-    rw [dcSum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dcSum_apply, map_sum]
     refine Finset.sum_congr rfl ?_
     rintro ⟨q, k, hk⟩ _
     have h1 : ρ q.out v = ρ ((k : H) * x) v := by
@@ -61,5 +68,6 @@ theorem UpperTheory.V.Hi.dcSum :
       _ = ρ ((k : H) * x) (ρ u v) := by rw [h2, map_mul ρ _ u]; rfl
       _ = _ := by rw [hvV u hu]
   · intro A' M' _ _ _ ρ' f hf v
-    rw [dcSum_apply, dcSum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dcSum_apply, dcSum_apply, map_sum]
     exact Finset.sum_congr rfl fun q _ => hf _ _

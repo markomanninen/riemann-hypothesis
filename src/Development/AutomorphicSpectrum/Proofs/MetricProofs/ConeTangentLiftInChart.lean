@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsAnalyticLogResolution
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.InverseDerivativeContinuity
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsAnalyticLogResolution
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.InverseDerivativeContinuity
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -24,7 +29,7 @@ def tanIdeal (w v : σ → ℂ) : Ideal (MvPolynomial σ ℂ) where
   add_mem' := by
     rintro a b ⟨ha, ha'⟩ ⟨hb, hb'⟩
     refine ⟨by simp [ha, hb], ?_⟩
-    simp only [map_add, add_mul, Finset.sum_add_distrib, ha', hb', add_zero]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, ha', hb', add_zero]
   zero_mem' := by simp
   smul_mem' := by
     rintro c f ⟨h, h'⟩
@@ -66,7 +71,7 @@ theorem pderiv_bind_scale (l : σ → ℂ) (q : σ) (F : MvPolynomial σ ℂ) :
   | C a => simp
   | add p r hp hr => simp [hp, hr, mul_add]
   | mul_X p r hp =>
-    rw [map_mul, bind₁_X_right, Derivation.leibniz, hp, Derivation.leibniz (pderiv q) p (X r), map_add,
+    rw [map_mul, bind₁_X_right, Derivation.leibniz, hp, Derivation.leibniz (pderiv q) p (X r), map_add (f := _),
       pderiv_C_mul]
     simp only [smul_eq_mul, map_mul, bind₁_X_right]
     by_cases h : r = q
@@ -231,7 +236,7 @@ theorem finrank_tanSub_le {I : Ideal (MvPolynomial (Σ k, J k) ℂ)}
     LinearMap.prod ((Φ₁.comp (tanSub I z).subtype).codRestrict Vp fun v => hmem v v.2)
       (Φ₂.comp (tanSub I z).subtype)
   have hinj : Function.Injective Φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     have h1 : Φ₁ v = 0 := congrArg Subtype.val (congrArg Prod.fst hv)
     have h2 : Φ₂ v = 0 := congrArg Prod.snd hv
@@ -312,7 +317,7 @@ theorem coneTangent_eq_fderiv_add_torusSmul : ∀ (K : Type) [Fintype K] (J : K 
     filter_upwards [Metric.isOpen_ball.mem_nhds ht] with t' ht'
     exact (D.chart a).mem t' ht'
   have hinj : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨u, c⟩ h
     rw [hL] at h
     have hu : u = 0 := (D.chart a).immersion t ht u ⟨fun k => -c k, by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,8 +102,9 @@ theorem cauchy_polydisc : ∀ (n : ℕ) (f : (Fin n → ℂ) → ℂ) (c : Fin n
   | n + 1, f, c, r, hr, hf, z, hz => by
     rw [torusIntegral_succ (torusIntegrable_kernel hr hf hz)]
     have hz0 : z 0 ∈ ball (c 0) r := (mem_ball_pi_iff hr).mp hz 0
-    have hz' : Fin.tail z ∈ ball (fun i => c (Fin.succ i)) r :=
-      (mem_ball_pi_iff hr).mpr fun i => (mem_ball_pi_iff hr).mp hz i.succ
+    have hz' : Fin.tail z ∈ ball (c ∘ Fin.succ) r :=
+      (mem_ball_pi_iff (c := c ∘ Fin.succ) (z := Fin.tail z) hr).mpr fun i =>
+        (mem_ball_pi_iff hr).mp hz i.succ
     have hcons : ∀ x ∈ closedBall (c 0) r, ∀ y ∈ closedBall (fun i => c (Fin.succ i)) r,
         (Fin.cons x y : Fin (n + 1) → ℂ) ∈ closedBall c r := by
       intro x hx y hy

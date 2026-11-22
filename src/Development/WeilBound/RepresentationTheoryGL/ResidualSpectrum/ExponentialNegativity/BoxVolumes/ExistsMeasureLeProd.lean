@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.MeasureBoxRingEquivLe
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.SumRangeSuccMulSubPred
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.MeasureBoxRingEquivLe
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.BoxVolumes.SumRangeSuccMulSubPred
+
+@[expose] public section
 
 open NumberField MeasureTheory Set Matrix
 open scoped NNReal ENNReal Pointwise
@@ -59,10 +63,14 @@ theorem boxvol_holds : An.BoxVol := by
   set F : Set (AdelicGLn.FiniteAdelicGL K (m + 1)) :=
     (p2 '' ω) * (p2 '' (maxCompact (K := K) (n := m + 1) : Set (AdelicGLn.AdelicGL K (m + 1)))) with hFdef
   have hF : IsCompact F := (hω.image hp2c).mul (isCompact_maxCompact.image hp2c)
-  choose C hC hCb using fun w : InfinitePlace K =>
+  have hex : ∀ w : InfinitePlace K, ∃ C : ℝ≥0∞, C ≠ ⊤ ∧ ∀ x,
+      (Measure.haar : Measure (GL (Fin (m + 1)) w.Completion))
+        (boxPlace w (infAt w '' ω) ((m + 1 : ℕ) : ℝ) x) ≤
+        C * ENNReal.ofReal (Real.exp (-((w.mult : ℝ) * pairSum m x))) := fun w =>
     measure_boxPlace_le w (Measure.haar : Measure (GL (Fin (m + 1)) w.Completion))
       (hω.image (continuous_infAt w))
       (by rintro _ ⟨b, hb, rfl⟩; exact infAt_isUpperTriangular (hωB hb)) ((m + 1 : ℕ) : ℝ)
+  choose C hC hCb using hex
   set D : ℝ≥0∞ := c * ((∏ w, C w) * (Measure.haar : Measure (AdelicGLn.FiniteAdelicGL K (m + 1))) F) with hDdef
   have hD : D ≠ ⊤ := ENNReal.mul_ne_top hc (ENNReal.mul_ne_top (ENNReal.prod_ne_top fun w _ => hC w)
     hF.measure_lt_top.ne)

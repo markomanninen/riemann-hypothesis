@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 namespace GlobalTheory.MultiHilbert
 
@@ -19,7 +23,7 @@ theorem EventuallyPoly.add {f g : (Fin r → ℕ) → ℚ} (hf : EventuallyPoly 
   obtain ⟨Φ, a, h⟩ := hf
   obtain ⟨Ψ, b, h'⟩ := hg
   refine ⟨Φ + Ψ, max a b, fun n hn => ?_⟩
-  rw [map_add, ← h n (fun k => (le_max_left _ _).trans (hn k)),
+  rw [map_add (f := _), ← h n (fun k => (le_max_left _ _).trans (hn k)),
     ← h' n (fun k => (le_max_right _ _).trans (hn k))]
 
 theorem eval_aeval_coord (x : Fin r → ℚ) (p : Fin r → MvPolynomial (Fin r) ℚ)
@@ -27,7 +31,7 @@ theorem eval_aeval_coord (x : Fin r → ℚ) (p : Fin r → MvPolynomial (Fin r)
     eval x (aeval p Φ) = eval (fun k => eval x (p k)) Φ := by
   induction Φ using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp => simp only [map_mul, hp, aeval_X, eval_X]
 
 theorem EventuallyPoly.shift_add {f : (Fin r → ℕ) → ℚ} (hf : EventuallyPoly f) (e : Fin r → ℕ) :
@@ -62,7 +66,7 @@ theorem EventuallyPoly.of_shift_add {f : (Fin r → ℕ) → ℚ} (e : Fin r →
 theorem eval_polynomial_aeval_X (x : Fin r → ℚ) (k : Fin r) (p : Polynomial ℚ) :
     eval x (Polynomial.aeval (X k : MvPolynomial (Fin r) ℚ) p) = p.eval (x k) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, hp, hq, Polynomial.eval_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, Polynomial.eval_add]
   | monomial n a => simp
 
 theorem eval_monomial_erase (x : Fin r → ℚ) (k : Fin r) (t : ℚ) (d : Fin r →₀ ℕ) (c : ℚ) :
@@ -97,7 +101,7 @@ theorem exists_antidifference (Φ : MvPolynomial (Fin r) ℚ) (k : Fin r) :
     obtain ⟨P, hP⟩ := hp
     obtain ⟨Q, hQ⟩ := hq
     refine ⟨P + Q, fun x => ?_⟩
-    rw [map_add, map_add, map_add, ← hP, ← hQ]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), ← hP, ← hQ]
     ring
 
 theorem EventuallyPoly.of_differences {f : (Fin r → ℕ) → ℚ}
@@ -172,7 +176,7 @@ theorem EventuallyPoly.of_differences {f : (Fin r → ℕ) → ℚ}
         intro u
         funext j
         split_ifs <;> simp
-      rw [map_sub, map_add, eval_aeval_coord, eval_aeval_coord, e3, e3, ← hP n hn]
+      rw [map_sub, map_add (f := _), eval_aeval_coord, eval_aeval_coord, e3, e3, ← hP n hn]
       linarith
   obtain ⟨P, hP⟩ := main Finset.univ
   exact ⟨P, N, fun n hn => by simpa using hP n hn⟩
@@ -200,7 +204,7 @@ theorem component_X_mul (i : σ) (n : M) (G : MvPolynomial σ K) :
       exact Nat.one_le_iff_ne_zero.2 (Finsupp.mem_support_iff.1 hi)
     have hw : Finsupp.weight w d = Finsupp.weight w (d - Finsupp.single i 1) + w i := by
       conv_lhs => rw [hd]
-      rw [map_add, Finsupp.weight_single, one_smul]
+      rw [map_add (f := _), Finsupp.weight_single, one_smul]
     simp only [hi, if_true, hw, add_left_inj]
   · simp only [hi, if_false, ite_self]
 
@@ -238,7 +242,7 @@ theorem component_mem_sup {I : Ideal (MvPolynomial σ K)}
       weightedHomogeneousComponent w n F ∈ I ⊔ Ideal.span {X i} := by
   intro F hF n
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hF
-  rw [map_add]
+  rw [map_add (f := _)]
   refine Submodule.add_mem_sup (hI a ha n) ?_
   rw [← Set.image_singleton] at hb ⊢
   exact component_mem_span_X w _ n hb
@@ -276,7 +280,7 @@ theorem finrank_sup_add_finrank_colonX {I : Ideal (MvPolynomial σ K)}
         (show F ∈ I ⊔ Ideal.span {X i} from hF')
       obtain ⟨G, rfl⟩ := Ideal.mem_span_singleton.1 hb
       have hc := IsWeightedHomogeneous.weightedHomogeneousComponent_same hF
-      rw [← hc, map_add, component_X_mul]
+      rw [← hc, map_add (f := _), component_X_mul]
       exact Submodule.add_mem_sup ⟨weightedHomogeneousComponent_mem _ _ _, hI a ha _⟩
         ⟨_, weightedHomogeneousComponent_mem _ _ _, rfl⟩
   have e2 : (weightedHomogeneousSubmodule K w (n + w i) ⊓ I.restrictScalars K) ⊓
@@ -325,7 +329,7 @@ theorem finite_colourPiece [Finite σ] (n : Fin r → ℕ) :
     intro F hF
     rw [F.as_sum]
     refine Submodule.sum_mem _ fun d hd => ?_
-    have : monomial d (coeff d F) = coeff d F • (monomial d (1 : K) : MvPolynomial σ K) := by
+    have : monomial d (AddMonoidAlgebra.coeff F d) = AddMonoidAlgebra.coeff F d • (monomial d (1 : K) : MvPolynomial σ K) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [this]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨d, hF (mem_support_iff.1 hd), rfl⟩)

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -11,8 +16,8 @@ namespace AffineChartTrdeg
 
 variable {F : Type} [Field F] {n : ℕ} (P : Ideal (MvPolynomial (Fin n) F)) [P.IsPrime]
 
-omit [P.IsPrime] in
 
+omit [P.IsPrime] in
 theorem aeval_genPt (f : MvPolynomial (Fin n) F) :
     aeval (genPt P) f = algebraMap (MvPolynomial (Fin n) F ⧸ P)
       (FractionRing (MvPolynomial (Fin n) F ⧸ P)) (Ideal.Quotient.mk P f) := by
@@ -22,8 +27,8 @@ theorem aeval_genPt (f : MvPolynomial (Fin n) F) :
   rw [h]
   rfl
 
-omit [P.IsPrime] in
 
+omit [P.IsPrime] in
 theorem aeval_genPt_eq_zero_iff (f : MvPolynomial (Fin n) F) :
     aeval (genPt P) f = 0 ↔ f ∈ P := by
   rw [aeval_genPt, IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem]
@@ -50,7 +55,7 @@ theorem exists_isHomogeneous (j : Fin n) (hj : genPt P j ≠ 0)
     refine ⟨max D₁ D₂, fun D' hD' => ?_⟩
     obtain ⟨f, hf, ef⟩ := h₁ D' (le_of_max_le_left hD')
     obtain ⟨g, hg, eg⟩ := h₂ D' (le_of_max_le_right hD')
-    exact ⟨f + g, hf.add hg, by rw [map_add, ef, eg, add_mul]⟩
+    exact ⟨f + g, hf.add hg, by rw [map_add (f := _), ef, eg, add_mul]⟩
   | mul x y _ _ hx hy =>
     obtain ⟨D₁, h₁⟩ := hx
     obtain ⟨D₂, h₂⟩ := hy
@@ -87,13 +92,15 @@ theorem transcendental (hP : IsHomogIdeal P) (j : Fin n) (hj : X j ∉ P) :
       rw [Polynomial.aeval_eq_sum_range]
       rfl
     calc aeval ξ G = ξ j ^ M * ∑ e ∈ Finset.range N, (p.coeff e : _) * ξ j ^ e := by
-          simp only [G, map_sum, map_mul, map_pow, aeval_X, heval, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [G, map_sum, map_mul, map_pow, aeval_X, heval, Finset.mul_sum]
           refine Finset.sum_congr rfl fun e _ => by ring
       _ = 0 := by rw [← h0, hpe, mul_zero]
   have hcoeff : ∀ e < N, p.coeff e = 0 := by
     intro e he
     have hcomp : homogeneousComponent (M + e) G = h e * X j ^ e := by
-      simp only [G, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [G, map_sum]
       rw [Finset.sum_eq_single e]
       · exact homogeneousComponent_eq_self ((hhom e).mul (isHomogeneous_X_pow j e))
       · intro b _ hb
@@ -148,16 +155,18 @@ theorem proof : AffineChartTrdeg.Statement := by
     | C c =>
       rw [aeval_C, IsScalarTower.algebraMap_apply F A' K]
       exact S.algebraMap_mem _
-    | add f g hf hg => rw [map_add]; exact S.add_mem hf hg
+    | add f g hf hg => rw [map_add (f := _)]; exact S.add_mem hf hg
     | mul_X f i hf => rw [map_mul, aeval_X]; exact S.mul_mem hf (hξS i)
 
+  letI : CommRing A' := Subalgebra.toCommRing A'
+  letI : CommRing S := Subalgebra.toCommRing S
   have halg : Algebra.IsAlgebraic S K := by
     refine ⟨fun x => ?_⟩
     obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) x
     have hb0 : algebraMap R K b ≠ 0 :=
       IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hb
-    refine ⟨Polynomial.C ⟨_, hRS b⟩ * Polynomial.X - Polynomial.C ⟨_, hRS a⟩, fun h => hb0 ?_, ?_⟩
-    · have := congrArg (Polynomial.coeff · 1) h
+    refine ⟨Polynomial.C (⟨_, hRS b⟩ : S) * Polynomial.X - Polynomial.C (⟨_, hRS a⟩ : S), fun h => hb0 ?_, ?_⟩
+    · have := congrArg (AddMonoidAlgebra.coeff · 1) h
       simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul_X, Polynomial.coeff_C, ↓reduceIte,
         one_ne_zero, Polynomial.coeff_zero] at this
       have h' := congrArg Subtype.val this

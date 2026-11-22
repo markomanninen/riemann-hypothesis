@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.KernInvariantSymmPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.KernInvariantSymmPos
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate Real Topology
@@ -85,7 +89,8 @@ theorem exists_majorant {ι : Type} (A : ι → ℂ) (B : ι → W →ₗ[ℂ] W
       (mul_le_mul_of_nonneg_left (hv.trans (le_abs_self R)) (norm_nonneg _))
   have e : B i v v = ∑ j, ∑ k, b.repr v j * b.repr v k * B i (b j) (b k) := by
     conv_lhs => rw [← b.sum_repr v]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
       Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring
@@ -98,7 +103,7 @@ theorem exists_majorant {ι : Type} (A : ι → ℂ) (B : ι → W →ₗ[ℂ] W
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← Finset.sum_add_distrib, Finset.sum_div]
     refine Finset.sum_congr rfl fun k _ => ?_
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
     ring
   rw [e', Finset.mul_sum]
   refine norm_sum_le_of_le _ fun j _ => ?_
@@ -202,7 +207,8 @@ theorem bd_prod (P Q : MvPolynomial σ ℂ) (u : σ → W) (hu : ∀ s, star (u 
     bd P (barP Q) u (fun p => f p.1 * conj (h (star p.2))) =
       polyDeriv P u f 0 * conj (polyDeriv Q u h 0) := by
   have h1 : polyDeriv (barP Q) u (fun w => conj (h (star w))) 0 = conj (polyDeriv Q u h 0) := by
-    rw [KernSym.polyDeriv_eq_sum_list _ _ (analyticAt_conj hh 0),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [KernSym.polyDeriv_eq_sum_list _ _ (analyticAt_conj hh 0),
       KernSym.polyDeriv_eq_sum_list _ _ (hh 0), map_sum, barP,
       MvPolynomial.support_map_of_injective _ (starRingEnd ℂ).injective]
     refine Finset.sum_congr rfl fun m _ => ?_
@@ -214,6 +220,37 @@ theorem bd_prod (P Q : MvPolynomial σ ℂ) (u : σ → W) (hu : ∀ s, star (u 
   simp only [bd, polyDeriv_const_mul _ _ _ (analyticAt_conj hh 0), h1]
   simp only [mul_comm (f _)]
   rw [polyDeriv_const_mul _ _ _ (hf 0), mul_comm]
+
+private noncomputable def quadPoint {r : ℕ} (κ : ℂ) (G S A : Matrix (Fin r) (Fin r) ℂ) :
+    Matrix (Fin r) (Fin r) ℂ := (κ / 4) • ((A⁻¹ * S * A)ᵀ * G)
+
+private noncomputable def quadMatrix {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
+    (X : Data E r) (x₁ x₂ : Frame X.Ψ r) (τ : X.Ψ) : Matrix (Fin r) (Fin r) ℂ :=
+  (-(τ.1 X.κ0 / 2) * (τ.1 X.κ0 / 2)) •
+    ((aLin X x₁ x₂ τ)⁻¹ᵀ * X.Gm.map τ.1 *
+      (imH (quadPoint (τ.1 X.κ0) (X.Gm.map τ.1) (-sgnM X) (aLin X x₁ x₂ τ)))⁻¹ *
+      X.Gm.map τ.1 * (aAnti X x₁ x₂ τ)⁻¹)
+
+private theorem kZero_quad_expansion {E : Type} [Field E] [NumberField E] [IsCMField E]
+    {r g n : ℕ} (X : Data E r) (idx : Fin g ≃ X.Ψ × Fin r)
+    (x₁ x₂ : Frame X.Ψ r) (z w : Fin n → Fin g → ℂ) :
+    kZero X idx x₁ x₂ z w =
+      ∏ τ : X.Ψ, (((aLin X x₁ x₂ τ).det * (aAnti X x₁ x₂ τ).det) ^ (n / 2))⁻¹ *
+        cexp (Real.pi * ∑ k, KernSym.mixV X idx τ (w k) (z k) ⬝ᵥ
+          quadMatrix X x₁ x₂ τ *ᵥ KernSym.mixV X idx τ (z k) (w k)) := by
+  refine Finset.prod_congr rfl fun τ _ => ?_
+  congr 3
+  refine Finset.sum_congr rfl fun k _ => ?_
+  have h : dblZ X x₁ x₂ τ = quadPoint (τ.1 X.κ0) (X.Gm.map τ.1) (-sgnM X)
+      (aLin X x₁ x₂ τ) := by
+    rw [quadPoint, sgnM, diagonal_neg]
+    rfl
+  rw [h, quadMatrix]
+  change ((τ.1 X.κ0 / 2) • ((_ *ᵥ KernSym.mixV X idx τ (w k) (z k)) ᵥ* _)) ⬝ᵥ _ *ᵥ
+    ((-(τ.1 X.κ0 / 2)) • (_ *ᵥ _ *ᵥ KernSym.mixV X idx τ (z k) (w k))) = _
+  rw [smul_dotProduct, mulVec_smul, dotProduct_smul, smul_mulVec, dotProduct_smul, smul_smul,
+    mul_comm, ← vecMul_transpose, ← dotProduct_mulVec, ← dotProduct_mulVec]
+  simp only [mulVec_mulVec, Matrix.mul_assoc]
 
 theorem kZero_quad {E : Type} [Field E] [NumberField E] [IsCMField E] {r g n : ℕ} (X : Data E r)
     (idx : Fin g ≃ X.Ψ × Fin r) (x₁ x₂ : Frame X.Ψ r) :
@@ -228,10 +265,10 @@ theorem kZero_quad {E : Type} [Field E] [NumberField E] [IsCMField E] {r g n : �
     funext a; simp only [KernSym.mixV, Pi.smul_apply]; split_ifs <;> rfl
   refine ⟨∏ τ : X.Ψ, (((aLin X x₁ x₂ τ).det * (aAnti X x₁ x₂ τ).det) ^ (n / 2))⁻¹,
     LinearMap.mk₂ ℂ (fun p q => ∑ τ : X.Ψ, Real.pi * ∑ k,
-    KernSym.mixV X idx τ (p.2 k) (p.1 k) ⬝ᵥ KernSym.kM X x₁ x₂ τ *ᵥ
+    KernSym.mixV X idx τ (p.2 k) (p.1 k) ⬝ᵥ quadMatrix X x₁ x₂ τ *ᵥ
       KernSym.mixV X idx τ (q.1 k) (q.2 k)) ?_ ?_ ?_ ?_, fun p => ?_⟩
   rotate_right
-  · rw [KernSym.kZero_eq, Finset.prod_mul_distrib, ← Complex.exp_sum]
+  · rw [kZero_quad_expansion, Finset.prod_mul_distrib, ← Complex.exp_sum]
     rfl
   · intro p p' q
     simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, ha, add_dotProduct,

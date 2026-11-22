@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLatticeDegreeNeg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLatticeDegreeNeg
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.UPel.HT.EtLev GlobalTheory.LKTrip GlobalTheory.LKGeo
@@ -32,7 +36,7 @@ private theorem mulF_add (c d : 𝓞 D.F) (v : AfP p ⊗[ℚ] VQ D) :
     mulF D (c + d) v = mulF D c v + mulF D d v := by
   have e : mulF D (c + d) = mulF D c + mulF D d :=
     GlobalTheory.AdelicSim.ext_inAf D fun x => by
-      rw [LinearMap.add_apply, mulF_inAf, mulF_inAf, mulF_inAf, map_add, add_smul, GlobalTheory.AdelicSim.inAf_add]
+      rw [LinearMap.add_apply, mulF_inAf, mulF_inAf, mulF_inAf, map_add (f := _), add_smul, GlobalTheory.AdelicSim.inAf_add]
   rw [e]; rfl
 
 private theorem mulF_mul (c d : 𝓞 D.F) (v : AfP p ⊗[ℚ] VQ D) :
@@ -90,7 +94,7 @@ private theorem fix_of_killed {h : G.GAf} {𝔠 : Ideal (𝓞 D.F)} (hc : CongId
     | add a b _ _ ha hb =>
       obtain ⟨w, hw, e⟩ := ha
       obtain ⟨w', hw', e'⟩ := hb
-      exact ⟨w + w', add_mem hw hw', by rw [map_add, e, e', smul_add]⟩
+      exact ⟨w + w', add_mem hw hw', by rw [map_add (f := _), e, e', smul_add]⟩
     | neg a _ ha =>
       obtain ⟨w, hw, e⟩ := ha
       exact ⟨-w, neg_mem hw, by rw [map_neg, e, smul_neg]⟩
@@ -159,13 +163,13 @@ private theorem gen_rep {a : 𝓞 D.F} {N : ℕ} {𝔟 : Ideal (𝓞 D.F)} (hN :
     · obtain ⟨w₁, h₁, w₁', h₁', e₁⟩ := hx
       obtain ⟨w₂, h₂, w₂', h₂', e₂⟩ := hy
       refine ⟨w₁ + w₂, add_mem h₁ h₂, w₁' + w₂', add_mem h₁' h₂', ?_⟩
-      rw [mulF_add, e₁, e₂, map_add, smul_add]; abel
+      rw [mulF_add, e₁, e₂, map_add (f := _), smul_add]; abel
   have hg' : (Ideal.span {a} ⊔ Ideal.span {(N : 𝓞 D.F)}) * 𝔟 = Ideal.span {(N : 𝓞 D.F)} := hg
   obtain ⟨w, hw, w', hw', e⟩ := key N (by rw [hg']; exact Ideal.mem_span_singleton_self _)
   rw [mulF_nat] at e
   obtain ⟨x, w'', hw'', ex⟩ := exists_inAf_add_nsmul_of_mem_laHat p D N hN hp w hw
   refine ⟨x, mulF D a w'' + w', add_mem (mulF_mem _ hw'') hw', ?_⟩
-  rw [e, ex, map_add, map_nsmul, mulF_inAf, smul_add, add_assoc]
+  rw [e, ex, map_add (f := _), map_nsmul, mulF_inAf, smul_add, add_assoc]
 
 end LatBProof
 
@@ -229,7 +233,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.latB_holds :
   have ku' : ∀ c ∈ 𝔟₁, mulF D c (mulF D β z + u₂) ∈ LaHat D := by
     intro c hc
     refine killed_mul (fun x hx y hy => ?_) c (hle' hc)
-    rw [map_add]
+    rw [map_add (f := _)]
     refine add_mem ?_ ?_
     · rw [mulF_mul]; exact mulF_mem _ (k₁ y hy)
     · rw [mul_comm, mulF_mul]; exact mulF_mem _ (ku x hx)
@@ -238,7 +242,7 @@ theorem UpperTheory.Gal.FiniteEtaleModels.latB_holds :
   have hlam : L.actG h (mulF D β z + u₂) - z ∈ LaHat D := by
     have e1 : L.actG h (mulF D β z + u₂) - z =
         (L.actG h (mulF D β z) - mulF D β z) + (L.actG h u₂ - mulF D α z) := by
-      rw [map_add]
+      rw [map_add (f := _)]
       calc L.actG h (mulF D β z) + L.actG h u₂ - z
           = L.actG h (mulF D β z) + L.actG h u₂ - (mulF D α z + mulF D β z) := by rw [hsum]
         _ = _ := by abel

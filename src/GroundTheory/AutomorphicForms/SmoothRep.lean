@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LocallyProfinite
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StabilizerOf
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StabilizerOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,11 +37,6 @@ variable {ρ} in
 theorem mem_fixedVectors_iff_le {H : Subgroup G} {v : V} :
     v ∈ fixedVectors ρ H ↔ H ≤ stabilizerOf ρ v := Iff.rfl
 
-theorem fixedVectors_eq_invariants (H : Subgroup G) :
-    fixedVectors ρ H = Representation.invariants (ρ.comp H.subtype) := by
-  ext v
-  simp [mem_fixedVectors, Representation.mem_invariants]
-
 theorem fixedVectors_antitone {H₁ H₂ : Subgroup G} (h : H₁ ≤ H₂) :
     fixedVectors ρ H₂ ≤ fixedVectors ρ H₁ :=
   fun _ hv g hg => hv g (h hg)
@@ -65,8 +64,8 @@ theorem map_coinvariantsKer_le {W : Type*} [AddCommGroup W] [Module ℂ W]
     f.isIntertwining]
   exact sub_mem_coinvariantsKer h.2 (f v)
 
-variable {ρ} in
 
+variable {ρ} in
 theorem coinvariantsKer_le_ker_of_invariant {W : Type*} [AddCommGroup W] [Module ℂ W]
     {K : Subgroup G} {f : V →ₗ[ℂ] W} (hf : ∀ k ∈ K, ∀ v, f (ρ k v) = f v) :
     coinvariantsKer ρ K ≤ LinearMap.ker f := by
@@ -82,10 +81,6 @@ def fixedMap {W : Type*} [AddCommGroup W] [Module ℂ W] {σ : Representation �
 theorem coe_fixedMap_apply {W : Type*} [AddCommGroup W] [Module ℂ W]
     {σ : Representation ℂ G W} (f : Representation.IntertwiningMap ρ σ) (H : Subgroup G)
     (v : fixedVectors ρ H) : (fixedMap ρ f H v : W) = f v := rfl
-
-theorem fixedVectors_sup_le_inf (K L : Subgroup G) :
-    fixedVectors ρ K ⊔ fixedVectors ρ L ≤ fixedVectors ρ (K ⊓ L) :=
-  sup_le (fixedVectors_antitone ρ inf_le_left) (fixedVectors_antitone ρ inf_le_right)
 
 section CosetSum
 
@@ -115,7 +110,8 @@ theorem cosetSum_mem_fixedVectors (hnorm : ∀ k ∈ K, ∀ n ∈ N, k * n * k�
   have : (N.subgroupOf K).Normal :=
     ⟨fun n hn g => Subgroup.mem_subgroupOf.2 (by simpa using hnorm g g.2 n hn)⟩
   intro k hk
-  rw [cosetSum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cosetSum_apply, map_sum]
   refine Fintype.sum_equiv (Equiv.mulLeft ((⟨k, hk⟩ : K) : K ⧸ N.subgroupOf K)) _ _ fun q => ?_
   rw [← Module.End.mul_apply, ← map_mul]
   have := act_eq_of_mk_eq ρ hv (a := ⟨k, hk⟩ * Quotient.out q)
@@ -175,10 +171,6 @@ variable {ρ} in
 theorem mem_smoothVectors {v : V} : v ∈ smoothVectors ρ ↔ IsOpen (stabilizerOf ρ v : Set G) :=
   Iff.rfl
 
-theorem isSmooth_iff_smoothVectors_eq_top : IsSmooth ρ ↔ smoothVectors ρ = ⊤ := by
-  rw [eq_top_iff]
-  exact ⟨fun h v _ => h v, fun h v => h Submodule.mem_top⟩
-
 theorem smooth_apply_mem {v : V} (hv : v ∈ smoothVectors ρ) (g : G) :
     ρ g v ∈ smoothVectors ρ := by
   rw [mem_smoothVectors] at hv ⊢
@@ -236,12 +228,6 @@ theorem isSmooth_iff_forall_exists :
       v ∈ fixedVectors ρ K :=
   forall_congr' fun _ => mem_smoothVectors_iff ρ
 
-theorem isSmooth_iff_iUnion_fixedVectors :
-    IsSmooth ρ ↔ ⋃ (K : Subgroup G) (_ : IsCompact (K : Set G)) (_ : IsOpen (K : Set G)),
-      (fixedVectors ρ K : Set V) = univ := by
-  rw [isSmooth_iff_forall_exists, eq_univ_iff_forall]
-  simp only [mem_iUnion, SetLike.mem_coe, exists_prop]
-
 section Average
 
 variable {K : Subgroup G}
@@ -264,8 +250,8 @@ section Decomposition
 
 variable {ρ} {K : Subgroup G}
 
-omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 theorem exists_nhds_cosetSum_eq_zero (hρ : IsSmooth ρ) {x : V} (hx : x ∈ coinvariantsKer ρ K) :
     ∃ U ∈ 𝓝 (1 : G), ∀ N : Subgroup G, (N : Set G) ⊆ U →
       (∀ k ∈ K, ∀ n ∈ N, k * n * k⁻¹ ∈ N) → ∀ _ : Fintype (K ⧸ N.subgroupOf K),
@@ -282,7 +268,7 @@ theorem exists_nhds_cosetSum_eq_zero (hρ : IsSmooth ρ) {x : V} (hx : x ∈ coi
     obtain ⟨U₁, hU₁, h₁⟩ := hx
     obtain ⟨U₂, hU₂, h₂⟩ := hy
     refine ⟨U₁ ∩ U₂, inter_mem hU₁ hU₂, fun N hNU hnorm hfin => ?_⟩
-    rw [map_add, h₁ N (hNU.trans inter_subset_left) hnorm hfin,
+    rw [map_add (f := _), h₁ N (hNU.trans inter_subset_left) hnorm hfin,
       h₂ N (hNU.trans inter_subset_right) hnorm hfin, add_zero]
   | smul c x _ hx =>
     obtain ⟨U, hU, h⟩ := hx
@@ -326,8 +312,8 @@ theorem isCompl_fixedVectors_coinvariantsKer (hρ : IsSmooth ρ) (hKc : IsCompac
   ⟨disjoint_fixedVectors_coinvariantsKer hρ hKc hKo,
     codisjoint_fixedVectors_coinvariantsKer hρ hKc hKo⟩
 
-variable (ρ) in
 
+variable (ρ) in
 def fixedProj (hρ : IsSmooth ρ) (hKc : IsCompact (K : Set G)) (hKo : IsOpen (K : Set G)) :
     V →ₗ[ℂ] fixedVectors ρ K :=
   Submodule.projectionOnto _ _ (isCompl_fixedVectors_coinvariantsKer hρ hKc hKo)
@@ -342,9 +328,6 @@ theorem fixedProj_apply_of_mem {v : V} (hv : v ∈ fixedVectors ρ K) :
 theorem fixedProj_apply_of_mem_coinvariantsKer {v : V} (hv : v ∈ coinvariantsKer ρ K) :
     fixedProj ρ hρ hKc hKo v = 0 :=
   (Submodule.projectionOnto_apply_eq_zero_iff _).2 hv
-
-theorem ker_fixedProj : LinearMap.ker (fixedProj ρ hρ hKc hKo) = coinvariantsKer ρ K :=
-  Submodule.ker_projectionOnto _
 
 theorem sub_fixedProj_mem (v : V) : v - fixedProj ρ hρ hKc hKo v ∈ coinvariantsKer ρ K := by
   have := Submodule.sub_projection_mem (isCompl_fixedVectors_coinvariantsKer hρ hKc hKo) v
@@ -377,9 +360,11 @@ theorem eq_of_invariant_of_eqOn {W : Type*} [AddCommGroup W] [Module ℂ W] {f g
     rw [← sub_eq_zero, ← map_sub]; exact coinvariantsKer_le_ker_of_invariant hg hs
   rw [e1, e2, h _ (fixedProj ρ hρ hKc hKo v).2]
 
-omit hρ in
 
+omit hρ hKc hKo in
+omit hρ in
 theorem fixedProj_map {W : Type*} [AddCommGroup W] [Module ℂ W] {σ : Representation ℂ G W}
+    (hKc : IsCompact (K : Set G)) (hKo : IsOpen (K : Set G))
     (hρ : IsSmooth ρ) (hσ : IsSmooth σ) (f : Representation.IntertwiningMap ρ σ) (v : V) :
     fixedProj σ hσ hKc hKo (f v) = fixedMap ρ f K (fixedProj ρ hρ hKc hKo v) := by
   rw [fixedProj_eq_iff, coe_fixedMap_apply, ← map_sub]
@@ -391,23 +376,6 @@ section Exactness
 
 variable {W X : Type*} [AddCommGroup W] [Module ℂ W] [AddCommGroup X] [Module ℂ X]
   {ρ} {σ : Representation ℂ G W} {τ : Representation ℂ G X} {K : Subgroup G}
-
-theorem exact_fixedMap (hρ : IsSmooth ρ) (hσ : IsSmooth σ) (hKc : IsCompact (K : Set G))
-    (hKo : IsOpen (K : Set G)) {f : Representation.IntertwiningMap ρ σ}
-    {g : Representation.IntertwiningMap σ τ} (hfg : Function.Exact f g) :
-    Function.Exact (fixedMap ρ f K) (fixedMap σ g K) := by
-  intro y
-  constructor
-  · intro hy
-    have hy' : g (y : W) = 0 := by simpa [Subtype.ext_iff, coe_fixedMap_apply] using hy
-    obtain ⟨v, hv⟩ := (hfg (y : W)).1 hy'
-    refine ⟨fixedProj ρ hρ hKc hKo v, ?_⟩
-    rw [← fixedProj_map hKc hKo hρ hσ f, hv]
-    exact Subtype.ext (fixedProj_apply_of_mem hσ hKc hKo y.2)
-  · rintro ⟨x, rfl⟩
-    apply Subtype.ext
-    simp only [coe_fixedMap_apply, ZeroMemClass.coe_zero]
-    exact (hfg _).2 ⟨x, rfl⟩
 
 theorem fixedMap_surjective (hρ : IsSmooth ρ) (hσ : IsSmooth σ) (hKc : IsCompact (K : Set G))
     (hKo : IsOpen (K : Set G)) {f : Representation.IntertwiningMap ρ σ}

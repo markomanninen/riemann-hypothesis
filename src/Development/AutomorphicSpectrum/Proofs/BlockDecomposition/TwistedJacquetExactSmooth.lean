@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.TwKerLeComapOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteSupport
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerEqMapOfSurjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.TwistedKernels.TwKerLeComapOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFiniteSupport
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwKerEqMapOfSurjective
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.BZMir
 

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,27 +49,27 @@ theorem ev_self3 (f : PS k 3 d) : ev (n := 3) ![pt k d 0, pt k d 1, pt k d 2] f 
 
 theorem pderiv_ev {m n : ℕ} (V : Fin m → Pt k n d) (hV : ∀ j, GP (V j)) (f : PS k m d)
     (v : Fin n × Fin d) :
-    pderiv k v (ev V f) = ∑ j : Fin m, ∑ l : Fin d, ev V (pderiv k (j, l) f) * pderiv k v (V j l) := by
+    pderiv (R := k) v (ev V f) = ∑ j : Fin m, ∑ l : Fin d, ev V (pderiv (R := k) (j, l) f) * pderiv (R := k) v (V j l) := by
   unfold ev
   rw [GlobalTheory.FormalCalc.pderiv_subst (gt_hasSubst V hV), Fintype.sum_prod_type]
 
 theorem pderiv_pt_ne {n : ℕ} {a b : Fin n} (h : b ≠ a) (i l : Fin d) :
-    pderiv k (a, i) (pt k d b l) = 0 := by
+    pderiv (R := k) (a, i) (pt k d b l) = 0 := by
   unfold pt
   rw [pderiv_X_of_ne]
   intro e
   exact h (congrArg Prod.fst e)
 
 theorem pderiv_addOf_zero {n : ℕ} (F : Fin d → PS k 2 d) (a b : Pt k n d) (ha : GP a) (hb : GP b)
-    (v : Fin n × Fin d) (h1 : ∀ l, pderiv k v (a l) = 0) (h2 : ∀ l, pderiv k v (b l) = 0) (l : Fin d) :
-    pderiv k v (addOf F a b l) = 0 := by
+    (v : Fin n × Fin d) (h1 : ∀ l, pderiv (R := k) v (a l) = 0) (h2 : ∀ l, pderiv (R := k) v (b l) = 0) (l : Fin d) :
+    pderiv (R := k) v (addOf F a b l) = 0 := by
   unfold addOf
   rw [pderiv_ev _ (pair_points_zero_constant ha hb), Fin.sum_univ_two]
   simp [h1, h2]
 
 theorem pderiv_ev_fst {n : ℕ} (a : Fin n) (y : Pt k n d) (hy : GP y) (i : Fin d)
-    (h : ∀ l, pderiv k (a, i) (y l) = 0) (f : PS k 2 d) :
-    pderiv k (a, i) (ev ![pt k d a, y] f) = ev ![pt k d a, y] (pderiv k ((0 : Fin 2), i) f) := by
+    (h : ∀ l, pderiv (R := k) (a, i) (y l) = 0) (f : PS k 2 d) :
+    pderiv (R := k) (a, i) (ev ![pt k d a, y] f) = ev ![pt k d a, y] (pderiv (R := k) ((0 : Fin 2), i) f) := by
   rw [pderiv_ev _ (pair_points_zero_constant (gp_pt a) hy), Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, h, mul_zero, Finset.sum_const_zero, add_zero]
   rw [Finset.sum_eq_single i]
@@ -85,16 +89,30 @@ theorem addOf_zero_left (G : FGLaw k d) {n : ℕ} (b : Pt k n d) (hb : GP b) : a
   exact this
 
 local macro "gp" : tactic =>
-  `(tactic| repeat' (first
-    | assumption | exact gp_pt _ | exact gp_zero₂ | apply gp_add | apply single_point_zero_constant | apply pair_points_zero_constant
-    | apply triple_points_zero_constant | apply gp4))
+  `(tactic| (
+    repeat' first
+      | assumption
+      | apply gp_pt
+      | apply gp_zero₂
+      | apply gp_addOf
+      | apply single_point_zero_constant
+      | apply pair_points_zero_constant
+      | apply triple_points_zero_constant
+      | apply gp4
+    done))
+
+private theorem ev_one_for_germ_points {m n : ℕ} (V : Fin m → Pt k n d)
+    (hV : ∀ j, GP (V j)) : ev V (1 : PS k m d) = 1 :=
+  GlobalTheory.FormalCalc.subst_one' (gt_hasSubst V hV)
 
 local macro "push_ev" loc:(Lean.Parser.Tactic.location)? : tactic =>
-  `(tactic| simp (disch := gp) only [germEv_germEv_two_points, germEv_germEv_three_points, gt_ev_add, gt_ev_sub, gt_ev_mul, gt_ev_zero, ev_one,
-    evP_pt, evP_addOf, evP_zero, Matrix.cons_val] $[$loc]?)
+  `(tactic| simp (discharger := gp) only [FGLaw.add, gt_ev_add, gt_ev_sub, gt_ev_mul,
+    gt_ev_zero, ev_one_for_germ_points, germEv_germEv_two_points, germEv_germEv_three_points,
+    evP_pt, evP_zero, evP_addOf, Matrix.cons_val, one_mul, mul_one] $[$loc]?)
 
-theorem exists_gauge_second_law : (∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (G : FGLaw k d) (c : PS k 3 d), ev (n := 2) ![0, pt k d 0, pt k d 1] c = 0 → ev (n := 3) ![pt k d 1, pt k d 0, pt k d 2] c = c → ev (n := 4) ![pt k d 0, pt k d 1, pt k d 3] c + ev (n := 4) ![addOf G.F (pt k d 0) (pt k d 1), pt k d 2, pt k d 3] c = ev (n := 4) ![pt k d 1, pt k d 2, pt k d 3] c + ev (n := 4) ![pt k d 0, addOf G.F (pt k d 1) (pt k d 2), pt k d 3] c → ∃ h : PS k 2 d, ev (n := 1) ![0, pt k d 0] h = 0 ∧ (∀ i, ev (n := 1) ![0, pt k d 0] (pderiv k ((0 : Fin 2), i) h) = 0) ∧ c = (ev (n := 3) ![pt k d 0, pt k d 2] h + ev (n := 3) ![pt k d 1, pt k d 2] h - ev (n := 3) ![addOf G.F (pt k d 0) (pt k d 1), pt k d 2] h)) → (∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (G : FGLaw k d) (q : ℕ) (g : PS k (q + 1) d), ev (n := q + 2) (Fin.cons (addOf G.F (pt k d 0) (pt k d 1)) (fun j : Fin q => pt k d j.succ.succ)) g = ev (n := q + 2) (Fin.cons (pt k d 0) (fun j : Fin q => pt k d j.succ.succ)) g + ev (n := q + 2) (Fin.cons (pt k d 1) (fun j : Fin q => pt k d j.succ.succ)) g → (∀ i, ev (n := q) (Fin.cons 0 (fun j : Fin q => pt k d j)) (pderiv k ((0 : Fin (q + 1)), i) g) = 0) → g = 0) → ∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (O : Type) [CommRing O] [StarRing O] (B : FB k d O), B.ph1 = 1 → ∃ h : PS k 2 d, (ev (n := 1) ![0, pt k d 0] h = 0 ∧ ev (n := 1) ![pt k d 0, 0] h = 0) ∧ (ev (n := 3) ![pt k d 0, pt k d 2] h + ev (n := 3) ![pt k d 1, pt k d 2] h - ev (n := 3) ![addOf B.G.F (pt k d 0) (pt k d 1), pt k d 2] h) = 0 ∧ B.ph2 = FB.expS k (ev (n := 3) ![pt k d 0, pt k d 1] h + ev (n := 3) ![pt k d 0, pt k d 2] h - ev (n := 3) ![pt k d 0, addOf B.G.F (pt k d 1) (pt k d 2)] h) := by
+theorem exists_gauge_second_law : (∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (G : FGLaw k d) (c : PS k 3 d), ev (n := 2) ![0, pt k d 0, pt k d 1] c = 0 → ev (n := 3) ![pt k d 1, pt k d 0, pt k d 2] c = c → ev (n := 4) ![pt k d 0, pt k d 1, pt k d 3] c + ev (n := 4) ![addOf G.F (pt k d 0) (pt k d 1), pt k d 2, pt k d 3] c = ev (n := 4) ![pt k d 1, pt k d 2, pt k d 3] c + ev (n := 4) ![pt k d 0, addOf G.F (pt k d 1) (pt k d 2), pt k d 3] c → ∃ h : PS k 2 d, ev (n := 1) ![0, pt k d 0] h = 0 ∧ (∀ i, ev (n := 1) ![0, pt k d 0] (pderiv (R := k) ((0 : Fin 2), i) h) = 0) ∧ c = (ev (n := 3) ![pt k d 0, pt k d 2] h + ev (n := 3) ![pt k d 1, pt k d 2] h - ev (n := 3) ![addOf G.F (pt k d 0) (pt k d 1), pt k d 2] h)) → (∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (G : FGLaw k d) (q : ℕ) (g : PS k (q + 1) d), ev (n := q + 2) (Fin.cons (addOf G.F (pt k d 0) (pt k d 1)) (fun j : Fin q => pt k d j.succ.succ)) g = ev (n := q + 2) (Fin.cons (pt k d 0) (fun j : Fin q => pt k d j.succ.succ)) g + ev (n := q + 2) (Fin.cons (pt k d 1) (fun j : Fin q => pt k d j.succ.succ)) g → (∀ i, ev (n := q) (Fin.cons 0 (fun j : Fin q => pt k d j)) (pderiv (R := k) ((0 : Fin (q + 1)), i) g) = 0) → g = 0) → ∀ (k : Type) [CommRing k] [Algebra ℚ k] (d : ℕ) (O : Type) [CommRing O] [StarRing O] (B : FB k d O), B.ph1 = 1 → ∃ h : PS k 2 d, (ev (n := 1) ![0, pt k d 0] h = 0 ∧ ev (n := 1) ![pt k d 0, 0] h = 0) ∧ (ev (n := 3) ![pt k d 0, pt k d 2] h + ev (n := 3) ![pt k d 1, pt k d 2] h - ev (n := 3) ![addOf B.G.F (pt k d 0) (pt k d 1), pt k d 2] h) = 0 ∧ B.ph2 = FB.expS k (ev (n := 3) ![pt k d 0, pt k d 1] h + ev (n := 3) ![pt k d 0, pt k d 2] h - ev (n := 3) ![pt k d 0, addOf B.G.F (pt k d 1) (pt k d 2)] h) := by
   intro H1 H2 k _ _ d O _ _ B hB
+  have hF := B.G.const
   have c1 : constantCoeff B.ph2 = 1 := by
     have := congrArg constantCoeff B.cocycleRight_zero_fst
     rwa [gt_const_ev_eq _ (by gp), map_one] at this
@@ -154,7 +172,7 @@ theorem exists_gauge_second_law : (∀ (k : Type) [CommRing k] [Algebra ℚ k] (
     have := congrArg (ev ![a, b, x]) hg
     push_ev at this
     exact this
-  have g1' : ∀ {n : ℕ} {x : Pt k n d}, GP x → ∀ i, ev ![0, x] (pderiv k ((0 : Fin 2), i) g) = 0 := by
+  have g1' : ∀ {n : ℕ} {x : Pt k n d}, GP x → ∀ i, ev ![0, x] (pderiv (R := k) ((0 : Fin 2), i) g) = 0 := by
     intro n x hx i
     have := congrArg (ev ![x]) (g1 i)
     push_ev at this
@@ -173,7 +191,7 @@ theorem exists_gauge_second_law : (∀ (k : Type) [CommRing k] [Algebra ℚ k] (
       have v : (Fin.cons 0 (fun j : Fin 2 => pt k d j) : Fin 3 → Pt k 2 d) =
           ![0, pt k d 0, pt k d 1] := by
         funext j; fin_cases j <;> rfl
-      rw [v, map_sub, map_add, pderiv_ev_fst _ _ (by gp) _ (pderiv_pt_ne (by decide) i),
+      rw [v, map_sub, map_add (f := _), pderiv_ev_fst _ _ (by gp) _ (pderiv_pt_ne (by decide) i),
         pderiv_ev_fst _ _ (by gp) _ (pderiv_pt_ne (by decide) i),
         pderiv_ev_fst _ _ (by gp) _ (pderiv_addOf_zero _ _ _ (by gp) (by gp) _
           (pderiv_pt_ne (by decide) i) (pderiv_pt_ne (by decide) i))]

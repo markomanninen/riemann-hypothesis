@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeUnipRad
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeUnipRad
+
+@[expose] public section
+
 open Matrix NumberField
 open scoped TensorProduct
 
@@ -142,7 +147,8 @@ theorem emb_hform (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) 
     I.φ v (Formalism.UG.hform (starRingEnd I.E) I.J x z) =
       star (fun i => I.φ v (x i)) ⬝ᵥ (I.J.map (I.φ v) *ᵥ fun i => I.φ v (z i)) := by
   rw [← Formalism.MainNotions.BridgeUnipRad.hform_eq]
-  simp only [Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, starRingEnd_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, starRingEnd_apply,
     Formalism.MainNotions.BridgeUnipRad.emb_star]
 
 theorem perp_mulVec (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) (x : Fin ρ → Fin I.n → I.E) (c : Fin ρ → I.E)

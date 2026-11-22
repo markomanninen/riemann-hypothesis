@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarBox
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.HaarBox
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,7 @@ theorem scale_box (b : Basis ι K E) (μ : Measure E) [μ.IsAddHaarMeasure] (i :
   have hrepr_add : ∀ (t : K) (x : E) (j : ι),
       b.repr (t • b i + x) j = (if i = j then t else 0) + b.repr x j := by
     intro t x j
-    rw [map_add, map_smul, Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply,
+    rw [map_add (f := _), map_smul, Basis.repr_self, Finsupp.add_apply, Finsupp.smul_apply,
       Finsupp.single_apply]
     split_ifs <;> simp
   haveI : ν.IsAddLeftInvariant := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKMOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKMOne
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.AdLat GlobalTheory.UCls
 
 noncomputable section

@@ -1,15 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
 
-noncomputable section
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.IsCoreMod
 
-open Matrix Finset MeasureTheory
-open scoped ContDiff ComplexConjugate InnerProductSpace
-open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
-open PositivityTheory.RgTw (Mat)
-open GlobalTheory.CompanionTheory.GLK (e1 e2 f1)
+@[expose] public section
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
+open scoped BigOperators
+open PositivityTheory.RgBcC.RealD (epow gelA)
 
 namespace GlobalTheory.CompanionTheory.ModelS
 
@@ -19,12 +16,12 @@ theorem commute_epow_of_units {n : ℕ} {V : Type} [NormedAddCommGroup V] [Inner
     Commute T (epow E m a b) := by
   induction m generalizing a b with
   | zero =>
-    simp only [epow]
+    change Commute T (if a = b then 1 else 0)
     split_ifs
     · exact Commute.one_right T
     · exact Commute.zero_right T
   | succ m ih =>
-    simp only [epow]
+    change Commute T (∑ c, E a c * epow E m c b)
     exact Commute.sum_right _ _ _ fun c _ => Commute.mul_right (hT a c) (ih c b)
 
 theorem gelA_commute_of_units : ∀ (n : ℕ) (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℂ V]

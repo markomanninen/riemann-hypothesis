@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatBasisAllOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ExistsGl
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanTopFamily
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LatBasisAllOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ExistsGl
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanTopFamily
+
+@[expose] public section
 
 noncomputable section
 

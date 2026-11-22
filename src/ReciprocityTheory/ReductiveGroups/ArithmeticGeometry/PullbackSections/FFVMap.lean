@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
-import Mathlib.Algebra.MvPolynomial.Funext
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PlaceBelow
+public import Mathlib.Algebra.MvPolynomial.Funext
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ theorem eval_aeval' {ι κ : Type} (g : ι → MvPolynomial κ k) (x : κ → k)
     eval x (aeval g Q) = eval (fun ℓ => eval x (g ℓ)) Q := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p ℓ hp => simp only [map_mul, hp, aeval_X, eval_X]
 
 theorem rowInv_map [Infinite k] (io : k →+* K) {P : MvPolynomial (Letter Ty r n) k} (hP : RowInv r n k P) :
@@ -38,7 +42,7 @@ theorem rowInv_map [Infinite k] (io : k →+* K) {P : MvPolynomial (Letter Ty r 
     intro Q
     induction Q using MvPolynomial.induction_on with
     | C a => simp [ψ]
-    | add p q hp hq => simp only [Polynomial.map_add, map_add, hp, hq]
+    | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), hp, hq]
     | mul_X p ℓ hp =>
       simp only [map_mul, hp, map_X, aeval_X]
       congr 1
@@ -60,7 +64,8 @@ theorem harmK_map (io : k →+* K) {cc : Ty → Ty} {isX : Ty → Prop} {P : MvP
   simp only [harmK, Submodule.mem_iInf, LinearMap.mem_ker] at hP ⊢
   intro τ hτ a a'
   have e : lap r n K 1 τ (cc τ) a a' (P.map io) = (lap r n k 1 τ (cc τ) a a' P).map io := by
-    simp only [lap, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, Derivation.coeFn_coe,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lap, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, Derivation.coeFn_coe,
       pderiv_map, map_sum, Matrix.one_apply, ite_smul, one_smul, zero_smul]
     refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ => ?_
     split_ifs <;> simp [pderiv_map]

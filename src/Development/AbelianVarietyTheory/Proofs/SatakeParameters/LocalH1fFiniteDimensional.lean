@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteContinuousCocyclesLocalGaloisRep
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientHomNonvanishingBound
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteContinuousCocyclesLocalGaloisRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,6 +49,7 @@ theorem finite_H1fV_matRep : Formalism.GaloisCohomology.LocalFinitenessK → ∀
     Module.Finite ↥LL.1 (FiniteCohomology (P.PD K) (matRep M)) := by
   intro hK l _ P K LL k M hM hi
   have h1 := finite_continuous_cocycles_matRep hK K LL M hM hi
+  set_option synthInstance.maxHeartbeats 200000 in
   have h2 : Module.Finite ↥LL.1 (finiteCocycles (P.PD K) (matRep M)) :=
     Module.Finite.of_injective (Submodule.inclusion (fun _ hx => hx.1 :
       finiteCocycles (P.PD K) (matRep M) ≤ continuousCocycles (matRep M))) (Submodule.inclusion_injective _)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+
+@[expose] public section
+
 open Formalism.Per GlobalTheory.PSer
 open scoped Formalism.Per
 
@@ -48,7 +53,7 @@ private lemma exists_orthogonal_family_in_span (l : ℕ) [Fact l.Prime] :
   | zero => intro μ _; exact ⟨Fin.elim0, fun i => i.elim0, fun i => i.elim0, fun _ j => j.elim0⟩
   | succ n ih =>
     intro μ hμ
-    rw [← Fin.snoc_init_self μ, linearIndependent_fin_snoc] at hμ
+    rw [← Fin.snoc_init_self μ, linearIndependent_finSnoc] at hμ
     obtain ⟨hμ₀, hx⟩ := hμ
     obtain ⟨u₀, hu₀S, hu₀, horth⟩ := ih _ hμ₀
     set W := Submodule.span ℚ_[l] (Set.range (Fin.init μ))

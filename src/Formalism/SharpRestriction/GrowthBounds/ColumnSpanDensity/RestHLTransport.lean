@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.LatticeCountPrimeMonoLevel
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem sl_symm (hΨ : ∀ (c : K₁) v, Ψ (c • v) = φK c • Ψ v) (c : K�
 
 def dT (hΨ : ∀ (c : K₁) v, Ψ (c • v) = φK c • Ψ v) (G : Module.Dual K₁ V₁) : Module.Dual K₂ V₂ where
   toFun v := φK (G (Ψ.symm v))
-  map_add' x y := by rw [map_add, map_add, map_add]
+  map_add' x y := by rw [map_add (f := _), map_add (f := _), map_add (f := _)]
   map_smul' c x := by
     rw [sl_symm φK Ψ hΨ, map_smul, smul_eq_mul, map_mul, RingEquiv.apply_symm_apply, RingHom.id_apply, smul_eq_mul]
 

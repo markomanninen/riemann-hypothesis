@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafLocCutAug
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafLocCutAug
+
+@[expose] public section
 
 set_option linter.unusedSimpArgs false
 noncomputable section
@@ -89,15 +93,25 @@ theorem lift_map {j k : J} (f : j ⟶ k) {V : Scheme.{0}} (a : V ⟶ D.obj j) (b
 theorem pb : IsPullback ((hocF J).map (α D c hc g)) (aug _ (hc' D c hc g)) (aug _ hc) (sch.map g) := by
   refine isPullback_of_app (sq D c hc g) fun n => isPullback_of_app ?_ fun U => ?_
   · exact NatTrans.congr_app (sq D c hc g) n
+  have elem_ext {F : J ⥤ Type} (a b : F.Elements)
+      (h : (⟨a.obj, a.val⟩ : Σ j, F.obj j) = ⟨b.obj, b.val⟩) : a = b := by
+    cases a
+    cases b
+    cases h
+    rfl
   refine (Types.isPullback_iff _ _ _ _).2 ⟨?_, ?_, ?_⟩
   · exact NatTrans.congr_app (NatTrans.congr_app (sq D c hc g) n) U
   · rintro x y ⟨h1, h2⟩
     change chn x = chn y
-    refine CategoryTheory.Functor.ext ?_ (fun _ _ _ => Subtype.ext (Subsingleton.elim _ _))
+    refine CategoryTheory.Functor.ext ?_ (fun _ _ _ => Functor.Elements.hom_ext (Subsingleton.elim _ _))
     intro i
-    refine pt_ext D c g _ _ ?_ ?_
-    · exact congrArg (fun z => (chn z).obj i) h1
-    · exact (snd_chain D c hc g (chn x) i).trans (h2.trans (snd_chain D c hc g (chn y) i).symm)
+    have he : (⟨((chn x).obj i).obj, ((chn x).obj i).val⟩ : Σ j, unop U ⟶ pullback (c j) g) =
+        ⟨((chn y).obj i).obj, ((chn y).obj i).val⟩ := by
+      refine pt_ext D c g _ _ ?_ ?_
+      · have hh := congrArg (fun z => (chn z).obj i) h1
+        exact congrArg (fun z => (⟨z.obj, z.val⟩ : Σ j, unop U ⟶ D.obj j)) hh
+      · exact (snd_chain D c hc g (chn x) i).trans (h2.trans (snd_chain D c hc g (chn y) i).symm)
+    exact elem_ext _ _ he
   · intro x₂ x₃ h
     have e : ∀ i, ((chn x₂).obj i).2 ≫ c ((chn x₂).obj i).1 = x₃ ≫ g := fun i =>
       (c_chain D c hc (chn x₂) i).trans h
@@ -105,8 +119,9 @@ theorem pb : IsPullback ((hocF J).map (α D c hc g)) (aug _ (hc' D c hc g)) (aug
       (fun i => pullback.lift ((chn x₂).obj i).2 x₃ (e i)) (fun i k f => ?_), ?_, ?_⟩
     · exact lift_map D c hc g _ _ _ x₃ _ _ ((chn x₂).map f).2
     · change chn _ = chn x₂
-      refine CategoryTheory.Functor.ext ?_ (fun _ _ _ => Subtype.ext (Subsingleton.elim _ _))
+      refine CategoryTheory.Functor.ext ?_ (fun _ _ _ => Functor.Elements.hom_ext (Subsingleton.elim _ _))
       intro i
+      apply elem_ext
       refine Sigma.ext rfl (heq_of_eq ?_)
       change pullback.lift _ _ _ ≫ pullback.fst (c ((chn x₂).obj i).1) g = _
       exact pullback.lift_fst _ _ _

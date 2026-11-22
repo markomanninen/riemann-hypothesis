@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsTransfer
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaHalf
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsHyp
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsTransfer
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsShaHalf
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsHyp
+
+@[expose] public section
 
 noncomputable section
 

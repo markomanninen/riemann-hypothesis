@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
-import GroundTheory.AutomorphicForms.AnisotropicHeight
-import GroundTheory.AutomorphicForms.AnisotropicOrbit
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MulEqOfRangeLe
+public import GroundTheory.AutomorphicForms.AnisotropicHeight
+public import GroundTheory.AutomorphicForms.AnisotropicOrbit
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MeasurableSdot
+
+@[expose] public section
 
 noncomputable section
 

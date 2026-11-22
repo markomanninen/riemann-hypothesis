@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopDegreeDensityPullbackEqNormSqDetMul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,7 @@ theorem eval_zero_of_const {A : Type} [CommRing A] [Algebra ℂ A] (l : A →ₗ
   have hc : Continuous fun x : ℂ => l (Q.eval (algebraMap ℂ A x)) := by
     clear h
     induction Q using Polynomial.induction_on' with
-    | add p q hp hq => simp only [Polynomial.eval_add, map_add]; exact hp.add hq
+    | add p q hp hq => simp only [Polynomial.eval_add, map_add (f := _)]; exact hp.add hq
     | monomial k a =>
       have : (fun x : ℂ => l ((Polynomial.monomial k a).eval (algebraMap ℂ A x))) = fun x => x ^ k * l a := by
         funext x
@@ -102,7 +106,7 @@ theorem dens_blockTri : ∀ (n d : ℕ) (J T : Type) [Fintype J] [Fintype T] (ε
   let Q : Polynomial (Ev n) := ∏ t, (∑ a, ∑ b, Polynomial.monomial (e t a b) (K t a b • sym (a, b))) ^ r t
   have hQ (x : ℂ) : Q.eval (algebraMap ℂ (Ev n) x) =
       ∏ t, (∑ a, ∑ b, (x ^ e t a b * K t a b) • (sym (a, b) : Ev n)) ^ r t := by
-    simp only [Q, Polynomial.eval_prod, Polynomial.eval_pow, Polynomial.eval_finset_sum, Polynomial.eval_monomial]
+    simp only [Q, Polynomial.eval_prod, Polynomial.eval_pow, Polynomial.eval_finsetSum, Polynomial.eval_monomial]
     refine Finset.prod_congr rfl fun t _ => congrArg (· ^ r t) ?_
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     rw [← map_pow, mul_comm, ← Algebra.smul_def, smul_smul]
@@ -143,7 +147,8 @@ theorem dens_blockTri : ∀ (n d : ℕ) (J T : Type) [Fintype J] [Fintype T] (ε
       simp only [← pow_mul, mul_right_comm _ (r _) 2] at h1
       refine mul_left_cancel₀ (Finset.prod_ne_zero_iff.2 fun t _ => pow_ne_zero _ (inv_ne_zero hx)) h1
     · intro t
-      simp only [AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul, map_sum, map_smul, scale_sym, Finset.smul_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_smul, map_sum, map_smul, scale_sym, Finset.smul_sum,
         smul_smul]
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       congr 1

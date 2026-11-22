@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalAtPlace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalAtPlace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
+
 open NumberField IsDedekindDomain IsDedekindDomain.HeightOneSpectrum IsLocalRing Polynomial
 
 namespace GlobalTheory.AdelicQuadSol

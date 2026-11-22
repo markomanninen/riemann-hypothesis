@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+
+@[expose] public section
 
 open UpperTheory.Gal.Int.Geo
 
@@ -25,14 +29,14 @@ private lemma act_sup {a b : A} {N : ℕ} (hb : b ∈ Ideal.span {a} ⊔ Ideal.s
     ∃ y z : M, algebraMap A O b • w = algebraMap A O a • y + N • z := by
   obtain ⟨r, s, rfl⟩ := exists_sup hb
   refine ⟨algebraMap A O r • w, algebraMap A O s • w, ?_⟩
-  rw [map_add, add_smul, map_mul, map_mul, mul_smul, mul_smul, act_comm r a, act_comm s (N : A), nat_act]
+  rw [map_add (f := _), add_smul, map_mul, map_mul, mul_smul, mul_smul, act_comm r a, act_comm s (N : A), nat_act]
 
 private lemma act_sup_of {a b : A} {N : ℕ} (hb : b ∈ Ideal.span {a} ⊔ Ideal.span {(N : A)})
     {y z : M} (hy : algebraMap A O a • y = N • z) :
     ∃ z' : M, algebraMap A O b • y = N • z' := by
   obtain ⟨r, s, rfl⟩ := exists_sup hb
   refine ⟨algebraMap A O r • z + algebraMap A O s • y, ?_⟩
-  rw [map_add, add_smul, map_mul, map_mul, mul_smul, mul_smul, hy, nat_act, smul_add,
+  rw [map_add (f := _), add_smul, map_mul, map_mul, mul_smul, mul_smul, hy, nat_act, smul_add,
     smul_comm N (algebraMap A O r) z, smul_comm N (algebraMap A O s) y]
 
 private lemma fwd {a : A} {N : ℕ} {𝔞 : Ideal A}
@@ -50,7 +54,7 @@ private lemma fwd {a : A} {N : ℕ} {𝔞 : Ideal A}
       rw [mul_comm b c, map_mul, mul_smul, hz']
       exact smul_comm _ _ _
     · rintro t t' ⟨u, hu, hu'⟩ ⟨v, hv, hv'⟩
-      exact ⟨u + v, W.add_mem hu hv, by rw [map_add, add_smul, hu', hv', smul_add]⟩
+      exact ⟨u + v, W.add_mem hu hv, by rw [map_add (f := _), add_smul, hu', hv', smul_add]⟩
   obtain ⟨u, hu, hu'⟩ := key (N : A) (by rw [h]; exact Ideal.mem_span_singleton_self _)
   rw [nat_act] at hu'
   rwa [inj y u hu']
@@ -96,7 +100,7 @@ private lemma part2 {a : A} {N : ℕ} {𝔞 : Ideal A}
       exact smul_comm _ _ _
     · rintro t t' ⟨y, z, h1⟩ ⟨y', z', h2⟩
       refine ⟨y + y', z + z', ?_⟩
-      rw [map_add, add_smul, h1, h2]
+      rw [map_add (f := _), add_smul, h1, h2]
       simp only [smul_add]
       abel
   obtain ⟨y, z, hyz⟩ := key (N : A) (by rw [h]; exact Ideal.mem_span_singleton_self _)

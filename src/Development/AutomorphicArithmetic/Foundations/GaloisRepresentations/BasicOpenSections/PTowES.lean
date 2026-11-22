@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PResClosed
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProperSemiAbelianFamily
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PResClosed
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProperSemiAbelianFamily
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et NumberField IsDedekindDomain TensorProduct
 open GlobalTheory.GalV (HTower Htot hop galV Splits IsCorrOp IsGalois pullTot galTot galTotRep pullTot_comp)
@@ -13,13 +17,6 @@ namespace UpperTheory.Gal.Mod.EtaleTowerBaseChange
 
 section Lin
 variable {R : Type*} [CommSemiring R] {ι : Type*} {M : ι → Type*} [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
-
-private theorem lmap_pow_lof [DecidableEq ι] (G : ∀ i, Module.End R (M i)) (m : ℕ) (k : ι) (x : M k) :
-    ((DirectSum.lmap G : Module.End R (DirectSum ι fun i => M i)) ^ m) (DirectSum.lof R ι M k x) =
-      DirectSum.lof R ι M k ((G k ^ m) x) := by
-  induction m with
-  | zero => simp
-  | succ m ih => rw [pow_succ', Module.End.mul_apply, ih, DirectSum.lmap_lof, pow_succ', Module.End.mul_apply]
 
 private theorem directSum_lmap_pow_apply (G : ∀ i, Module.End R (M i)) (m : ℕ) (x : DirectSum ι fun i => M i) (i : ι) :
     ((DirectSum.lmap G : Module.End R (DirectSum ι fun i => M i)) ^ m) x i = (G i ^ m) (x i) := by
@@ -34,7 +31,7 @@ private theorem lmap_sum_zero {J : Type*} [Fintype J] (c : J → R) (A : J → �
   refine LinearMap.ext fun x => DFinsupp.ext fun i => ?_
   have hk := congrArg (fun f : Module.End R (M i) => f (x i)) (h i)
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply, LinearMap.zero_apply] at hk ⊢
-  rw [DFinsupp.finset_sum_apply]
+  rw [DFinsupp.finsetSum_apply, DFinsupp.zero_apply]
   refine Eq.trans (Finset.sum_congr rfl fun j _ => ?_) hk
   rw [DFinsupp.smul_apply, DirectSum.lmap_apply, directSum_lmap_pow_apply]
 
@@ -101,7 +98,8 @@ private theorem core {n : ℕ} (P : B →ₗ[Q] A) (G : A →ₗ[Q] A) (G' : Mod
   have hsum := map_sum (LinearMap.baseChangeHom Q L B B)
     (fun j : Fin (n + 1) => (c j : Q) • (T j * G' ^ (n - (j : ℕ)))) Finset.univ
   simp only [LinearMap.baseChangeHom_apply] at hsum
-  rw [hsum, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [mul_smul, key j, LinearMap.baseChange_smul, LinearMap.smul_apply, Int.cast_smul_eq_zsmul Q, map_zsmul,
     Int.cast_smul_eq_zsmul L]

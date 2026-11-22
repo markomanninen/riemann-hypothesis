@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorColsBEqZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.MinorColsBEqZero
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -44,7 +49,7 @@ theorem chartMono_eDeg {z : (Σ k, ι k) → L} {c : ∀ k, ι k} (hc : ∀ k, z
     rw [zpow_sum' _ (hc k)]
     exact Finset.prod_congr rfl fun p _ => by rw [← _root_.zpow_mul, mul_comm]
   have e2 : z ⟨k₀, c k₀⟩ ^ 2 = ∏ k, z ⟨k, c k⟩ ^ (if k = k₀ then (2 : ℤ) else 0) := by
-    rw [Finset.prod_eq_single k₀ (fun k _ h => by rw [if_neg h, zpow_zero]) (by simp), if_pos rfl, zpow_ofNat]
+    rw [Finset.prod_eq_single k₀ (fun k _ h => by rw [ite_eq_right h, zpow_zero]) (by simp), ite_eq_left rfl, zpow_ofNat]
   rw [e1, e2, chartMono, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
   refine Finset.prod_eq_one fun k _ => ?_
   rw [← zpow_add₀ (hc k), ← zpow_add₀ (hc k), eDeg]
@@ -58,16 +63,16 @@ theorem chartMono_dy (z : (Σ k, ι k) → L) (c : ∀ k, ι k) (p : Ψ × Fin N
   congr 1
   · rw [Finset.prod_subtype (p := fun k => ∀ p', M.blk p' ≠ some k) _ (by simp)]
     refine Finset.prod_congr (by congr) fun k _ => ?_
-    rw [FlagModel.dy, dif_pos k.2, _root_.zpow_neg]
+    rw [FlagModel.dy, dite_eq_left k.2, _root_.zpow_neg]
   · cases hp : M.blk p with
     | none =>
       refine Finset.prod_eq_one fun k hk => ?_
-      rw [FlagModel.dy, dif_neg (Finset.mem_filter.1 hk).2, hp, if_neg (by simp), zpow_zero]
+      rw [FlagModel.dy, dite_eq_right (Finset.mem_filter.1 hk).2, hp, ite_eq_right (by simp), zpow_zero]
     | some k₁ =>
       have hk₁ : ¬ ∀ p', M.blk p' ≠ some k₁ := fun h => h p hp
       rw [Finset.prod_eq_single k₁ (fun k hk h => by
-        rw [FlagModel.dy, dif_neg (Finset.mem_filter.1 hk).2, hp, if_neg (by simpa using h.symm), zpow_zero])
-        (fun h => (h (Finset.mem_filter.2 ⟨Finset.mem_univ k₁, hk₁⟩)).elim), FlagModel.dy, dif_neg hk₁, if_pos hp,
+        rw [FlagModel.dy, dite_eq_right (Finset.mem_filter.1 hk).2, hp, ite_eq_right (by simpa using h.symm), zpow_zero])
+        (fun h => (h (Finset.mem_filter.2 ⟨Finset.mem_univ k₁, hk₁⟩)).elim), FlagModel.dy, dite_eq_right hk₁, ite_eq_left hp,
         zpow_one]
       rfl
 
@@ -90,7 +95,7 @@ theorem exists_flag_frame (τ : Ψ) {z : (Σ k, ι k) → L} (hz : IsPt y z) {F 
     ∃ (b : Matrix (Fin N) (Fin N) Φ) (H H' : Matrix (Fin N) (Fin N) (regO y z)), IsBlockDiag j b ∧
       b.BlockTriangular id ∧ (∀ a, b a a ≠ 0) ∧ IsBlockDiag j H ∧ H' * H = 1 ∧
       (F.T τ).map (algebraMap M.Ω Φ) * H.map (regO y z).subtype = M.g τ * b := by
-  haveI := isLocalRing_regO hz
+  have := isLocalRing_regO hz
   let am := algebraMap M.Ω Φ
   let h := (F.T τ)⁻¹.map am * M.g τ
   have hTh : (F.T τ).map am * h = M.g τ := CPts.map_mul_inv_map am (hF.1 τ).2 _
@@ -118,13 +123,14 @@ theorem exists_flag_frame (τ : Ψ) {z : (Σ k, ι k) → L} (hz : IsPt y z) {F 
       exact mul_div_mul_left _ _ hdet
     have hO : ∀ I, η * minorIJ h I (stepCols N j i) ∈ regO y z := fun I => by
       by_cases hI : IsStepRows N j i I
-      · rw [← dual_sum i (fun m I => am (F.u ⟨k, m⟩ I)) (fun I m => am (F.u' I ⟨k, m⟩)) (fun I I' h1 h2 => by
-          have := congrArg am (hF.2.2.1 (τ, i) k hk I I' h1 h2)
-          rw [map_sum] at this
-          simp only [map_mul] at this
-          rw [this]
-          split_ifs <;> simp) (fun I => minorIJ h I (stepCols N j i))
-          (fun I hI => minor_stepCols_eq_zero M.j_le h I hhb hI) I hI, Finset.mul_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [← dual_sum i (fun m I => am (F.u ⟨k, m⟩ I)) (fun I m => am (F.u' I ⟨k, m⟩)) (fun I I' h1 h2 => by
+            have := congrArg am (hF.2.2.1 (τ, i) k hk I I' h1 h2)
+            rw [map_sum] at this
+            simp only [map_mul] at this
+            rw [this]
+            split_ifs <;> simp) (fun I => minorIJ h I (stepCols N j i))
+            (fun I hI => minor_stepCols_eq_zero M.j_le h I hhb hI) I hI, Finset.mul_sum]
         refine sum_mem fun m _ => ?_
         rw [mul_left_comm, rel]
         exact mul_mem (hu' _ _) ⟨_, hasVal_ratio hz m c hc⟩
@@ -137,13 +143,14 @@ theorem exists_flag_frame (τ : Ψ) {z : (Σ k, ι k) → L} (hz : IsPt y z) {F 
       rw [← this]
       exact Finset.sum_congr rfl fun I _ => by ring)
     have h2 := congrArg (valO hz) h1
-    rw [map_sum, map_one] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h2
     obtain ⟨I, -, hI⟩ := Finset.exists_ne_zero_of_sum_ne_zero (h2.trans_ne one_ne_zero)
     rw [map_mul] at hI
     have h3 := hasVal_valO hz ⟨_, hO I⟩
     exact ⟨I, h3.ne_zero hz (right_ne_zero_of_mul hI), _, h3.inv hz (right_ne_zero_of_mul hI)⟩
   have hd : (h * b).det ≠ 0 := by
-    rw [det_mul, det_of_upperTriangular hbt]
+    rw [det_mul, det_of_isUpperTriangular hbt]
     exact mul_ne_zero hhd (Finset.prod_ne_zero_iff.2 fun a _ => hbd a)
   let H : Matrix (Fin N) (Fin N) (regO y z) := Matrix.of fun a c => ⟨_, hO a c⟩
   let H' : Matrix (Fin N) (Fin N) (regO y z) := Matrix.of fun a c => ⟨_, hO' a c⟩

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.SemilocalAlgebras.ContinuousCompletionMap
-import GroundTheory.GlobalFields.SemilocalAlgebras.Approximation
-import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SemilocalAlgebras.ContinuousCompletionMap
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Approximation
+public import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -33,7 +37,7 @@ open scoped Valued in
 theorem tensorMap_surjective : Function.Surjective (tensorMap L v) := by
   have hclosed : IsClosed (LinearMap.range (tensorMap L v).toLinearMap :
       Set (CompletionsOver L v)) :=
-    Submodule.closed_of_finiteDimensional _
+    Submodule.isClosed_of_finiteDimensional _
   have hdense : Dense (Set.range (tensorMap L v)) := by
     refine (denseRange_algebraMap_completionsOver L v).mono ?_
     rintro _ ⟨x, rfl⟩
@@ -123,25 +127,11 @@ theorem tensorEquiv'_tmul_mul (a : v.adicCompletion K) (y : L ⊗[K] v.adicCompl
       algebraMap (v.adicCompletion K) (CompletionsOver L v) a * tensorEquiv' L v y := by
   rw [map_mul, tensorEquiv'_tmul, map_one, one_mul]
 
-open scoped Valued in
 
+open scoped Valued in
 instance isModuleTopology_completionsOver :
     IsModuleTopology (v.adicCompletion K) (CompletionsOver L v) :=
-  isModuleTopologyOfFiniteDimensional
-
-def tensorHomeomorph [TopologicalSpace (v.adicCompletion K ⊗[K] L)]
-    [IsModuleTopology (v.adicCompletion K) (v.adicCompletion K ⊗[K] L)] :
-    v.adicCompletion K ⊗[K] L ≃ₜ CompletionsOver L v where
-  toEquiv := (tensorEquiv L v).toEquiv
-  continuous_toFun :=
-    IsModuleTopology.continuous_of_linearMap (tensorEquiv L v).toLinearEquiv.toLinearMap
-  continuous_invFun := by
-    have := IsModuleTopology.toContinuousAdd (v.adicCompletion K) (v.adicCompletion K ⊗[K] L)
-    exact IsModuleTopology.continuous_of_linearMap (tensorEquiv L v).symm.toLinearEquiv.toLinearMap
-
-@[simp] theorem tensorHomeomorph_apply [TopologicalSpace (v.adicCompletion K ⊗[K] L)]
-    [IsModuleTopology (v.adicCompletion K) (v.adicCompletion K ⊗[K] L)]
-    (y : v.adicCompletion K ⊗[K] L) : tensorHomeomorph L v y = tensorEquiv L v y := rfl
+  isModuleTopologyOfFiniteDimensional (𝕜 := v.adicCompletion K)
 
 end SemiLocal
 

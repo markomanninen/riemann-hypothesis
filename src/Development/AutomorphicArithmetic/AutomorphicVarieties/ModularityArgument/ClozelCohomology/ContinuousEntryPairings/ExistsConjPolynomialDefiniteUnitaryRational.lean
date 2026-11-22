@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
 namespace GlobalTheory.UnitaryBC
 
-private theorem polyConj_coord_pInf {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (τ : E →+* ℂ) (x : E) :
+private theorem polyConj_coord_pInf {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (τ : E →+* ℂ) (x : E) :
     coord τ (pInf E (algebraMap E (Ad E) x)) = τ x := by
   have h : ∀ w : InfinitePlace E, pInf E (algebraMap E (Ad E) x) w = w.embedding x := fun w => by
     first | exact pInf_algebraMap _ _ | exact pInf_algebraMap _ _ _ | simp [pInf_algebraMap]
@@ -40,7 +44,7 @@ theorem exists_conj_polyFun : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     obtain ⟨f', hf', hf⟩ := hf
     obtain ⟨g', hg', hg⟩ := hg
     refine ⟨f' + g', add_mem hf' hg', fun γ hγ k hk => ?_⟩
-    rw [Pi.add_apply, Pi.add_apply, map_add, hf γ hγ k hk, hg γ hγ k hk]
+    rw [Pi.add_apply, Pi.add_apply, map_add (f := _), hf γ hγ k hk, hg γ hγ k hk]
   | mul f g _ _ hf hg =>
     obtain ⟨f', hf', hf⟩ := hf
     obtain ⟨g', hg', hg⟩ := hg

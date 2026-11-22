@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.SectionOfLineBundleOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.SectionOfLineBundleOne
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 
@@ -130,6 +134,7 @@ theorem algebraic_const : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   · rw [hg, map_one, map_one]
   · rw [hg, map_mul, map_mul, hg, hg]
   · rw [hg, map_zero, map_zero]
-  · rw [hg, map_add, map_add, hg, hg]
+  · set_option synthInstance.maxHeartbeats 200000 in
+    rw [hg, map_add (f := _), map_add (f := _), hg, hg]
 
 end GlobalTheory.ArcConst

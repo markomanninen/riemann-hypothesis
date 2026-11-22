@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsFinTyp
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsFinTyp
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2.NG
 open scoped TensorProduct
@@ -11,7 +15,7 @@ namespace GlobalTheory.FinTypCount
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-local notation3 "L⁺" => NumberField.maximalRealSubfield L
+local notation3 "L⁺" => maximalRealSubfield L
 
 theorem countable_field : Countable L :=
   (Module.finBasis ℚ L).equivFun.toEquiv.injective.countable
@@ -35,8 +39,7 @@ theorem exists_nat_smul_int (e : L) : ∃ D : ℕ, 0 < D ∧ ∃ o : 𝓞 L, (o 
 
 theorem exists_approx (M : ℕ) (hM : 0 < M) (x : AL L) :
     ∃ c : L, ∃ y ∈ ALint L, x = c ⊗ₜ[L⁺] (1 : AFplus L) + M • y := by
-  induction x using TensorProduct.induction_on with
-  | zero => exact ⟨0, 0, zero_mem _, by simp⟩
+  induction x using TensorProduct.inductionOn with
   | add x x' hx hx' =>
     obtain ⟨c, y, hy, rfl⟩ := hx
     obtain ⟨c', y', hy', rfl⟩ := hx'
@@ -151,7 +154,8 @@ theorem countable_range_rt {f : GAf L n → ℂ} {N : ℕ} (hN : 0 < N)
     have e := hq.choose_spec
     have h3 := hp3 hq.choose
     rw [e] at h3
-    have hc : Cong L n N (g⁻¹ * hq.choose) := cong_of_code (hp2 g) (hp3 g) h3
+    have hc : Cong L n N (g⁻¹ * hq.choose) :=
+      cong_of_code (c := (p g).2) (hp2 g) (hp3 g) h3
     calc rt L n g f = rt L n g (rt L n (g⁻¹ * hq.choose) f) := by rw [hf _ hc]
       _ = rt L n hq.choose f := by rw [← rt_mul, mul_inv_cancel_left]
   refine (Set.countable_range Ψ).mono ?_
@@ -162,8 +166,8 @@ end GlobalTheory.FinTypCount
 
 namespace GlobalTheory
 
-open GlobalTheory.FinTypCount in
 
+open GlobalTheory.FinTypCount in
 theorem FinTyp.rank_le_aleph0 : ∀ {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
     (π : Formalism.L2.NG.FinTyp L n), Module.rank ℂ π.S ≤ Cardinal.aleph0 := by
   intro L _ _ _ n π

@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.Models
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.Models
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open Matrix GlobalTheory GlobalTheory.CM GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
@@ -35,7 +40,7 @@ def bK : epsAt (pK X) ⟶ epsR (𝓞 X.K) :=
     simp only [Over.mk_hom, Category.id_comp]
     rw [isogeny_decomposition_product.spMap_comp, isogeny_decomposition_product.spMap_comp]
     congr 1
-    ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl])
+    ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.inr_zero])
 
 theorem bK_left : (bK X).left = spMap (dualMap (algebraMap (𝓞 X.K) X.K)) := rfl
 
@@ -54,7 +59,7 @@ theorem wB_tan (b : Bool) (a : PureType.lat hP (sgnRt H b)) : IsTanAt X.B.t.G (p
     rw [show Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom X.K X.K X.K).toRingHom) =
       spMap (TrivSqZeroExt.fstHom X.K X.K X.K).toRingHom from rfl, isogeny_decomposition_product.spMap_comp, isogeny_decomposition_product.spMap_comp]
     congr 1
-    ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl]
+    ext a <;> simp [dualMap, TrivSqZeroExt.algebraMap_eq_inl, TrivSqZeroExt.inr_zero]
   rw [e1]
   simp only [Category.assoc]
   rw [← Category.assoc (spMap (TrivSqZeroExt.fstHom (𝓞 X.K) (𝓞 X.K) (𝓞 X.K)).toRingHom) (X.C b).v.left (X.ψ b a).left, hv,

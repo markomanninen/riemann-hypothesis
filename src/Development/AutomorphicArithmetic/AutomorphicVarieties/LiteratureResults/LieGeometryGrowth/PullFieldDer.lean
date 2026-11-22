@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullStmt
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,7 +10,7 @@ open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af
 
 namespace UpperTheory.V.Lit.Geo
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 private theorem lie_bound {φ : Sm E a} (h : BddDer φ) :
     ∃ B : ℝ, 0 ≤ B ∧ ∀ (X : Lie E a) (g : GA E a), ‖(lie E a X φ).1 g‖ ≤ B * ‖X‖ := by
@@ -18,11 +22,12 @@ private theorem lie_bound {φ : Sm E a} (h : BddDer φ) :
     Finset.sum_nonneg fun k _ => mul_nonneg (norm_nonneg _) (h0 k), fun X g => ?_⟩
   let L : Lie E a →ₗ[ℝ] ℂ :=
     { toFun := fun X => (lie E a X φ).1 g
-      map_add' := fun X X' => by rw [map_add]; rfl
+      map_add' := fun X X' => by rw [map_add (f := _)]; rfl
       map_smul' := fun r X => by rw [map_smul]; rfl }
   have e : L X = ∑ k, b.repr X k • L (b k) := by
     conv_lhs => rw [← b.sum_repr X]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   change ‖L X‖ ≤ _
   rw [e, Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k _ => ?_)

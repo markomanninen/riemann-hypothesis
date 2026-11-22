@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsLineBundleTwistMulOf
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleNefPlusAmple
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExistsLineBundleTwistMulOf
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PClaimVanish
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleNefPlusAmple
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.KtwS
 

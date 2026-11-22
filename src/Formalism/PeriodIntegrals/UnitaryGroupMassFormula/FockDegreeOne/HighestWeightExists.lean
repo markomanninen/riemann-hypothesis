@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.CoeffXMulPderivSelf
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockDegreeOne.CoeffXMulPderivSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -6,8 +10,8 @@ open Matrix FockH1Action MvPolynomial
 
 namespace PI.FockOneDegW.HwC
 
-open Classical in
 
+open Classical in
 theorem exists_wtvec {p q r s : ℕ} (U : Submodule ℂ (Pol p q r s))
     (hU : ∀ c : Ix p q, ∀ u ∈ U, fockAct1 p q r s (Eab c c) u ∈ U) :
     ∀ (n : ℕ) (u : Pol p q r s), u ∈ U → u ≠ 0 → (u.support.image wtv).card ≤ n →
@@ -30,8 +34,8 @@ theorem exists_wtvec {p q r s : ℕ} (U : Submodule ℂ (Pol p q r s))
       obtain ⟨β₁, h₁, β₂, h₂, hne⟩ := hall
       obtain ⟨c, hc⟩ := Function.ne_iff.1 hne
 
-      have hcoeff : ∀ β, coeff β (fockAct1 p q r s (Eab c c) u - ((wtv β₁ c : ℚ) : ℂ) • u) =
-          (((wtv β c : ℚ) : ℂ) - ((wtv β₁ c : ℚ) : ℂ)) * coeff β u := by
+      have hcoeff : ∀ β, AddMonoidAlgebra.coeff (fockAct1 p q r s (Eab c c) u - ((wtv β₁ c : ℚ) : ℂ) • u) β =
+          (((wtv β c : ℚ) : ℂ) - ((wtv β₁ c : ℚ) : ℂ)) * AddMonoidAlgebra.coeff u β := by
         intro β
         rw [coeff_sub, coeff_Ecc, coeff_smul, smul_eq_mul]
         ring
@@ -57,7 +61,7 @@ theorem exists_wtvec {p q r s : ℕ} (U : Submodule ℂ (Pol p q r s))
         intro w hw
         obtain ⟨β, hβ, rfl⟩ := Finset.mem_image.1 hw
         refine Finset.mem_erase.2 ⟨fun heq => ?_, Finset.mem_image_of_mem _ (hsub hβ)⟩
-        have h0 : coeff β (fockAct1 p q r s (Eab c c) u - ((wtv β₁ c : ℚ) : ℂ) • u) = 0 := by
+        have h0 : AddMonoidAlgebra.coeff (fockAct1 p q r s (Eab c c) u - ((wtv β₁ c : ℚ) : ℂ) • u) β = 0 := by
           rw [hcoeff, heq, sub_self, zero_mul]
         exact (MvPolynomial.mem_support_iff.1 hβ) h0
       have hcard' : ((fockAct1 p q r s (Eab c c) u - ((wtv β₁ c : ℚ) : ℂ) • u).support.image wtv).card ≤ n := by

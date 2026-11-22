@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Development.WeilBound.CoreStatements.FlagImmersions.MapProdLinear
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import Development.WeilBound.CoreStatements.FlagImmersions.MapProdLinear
+
+@[expose] public section
 
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
@@ -16,7 +20,7 @@ theorem abs_prod_sub_prod_le {ι : Type} (s : Finset ι) (a b : ι → ℝ) (δ 
     rw [Finset.prod_insert hi, Finset.prod_insert hi, Finset.card_insert_of_notMem hi]
     have hB : |∏ i ∈ s, b i| ≤ 1 := by
       rw [Finset.abs_prod]
-      exact Finset.prod_le_one (fun _ _ => abs_nonneg _) (fun i _ => hb i)
+      exact Finset.prod_le_one₀ (fun _ _ => abs_nonneg _) (fun i _ => hb i)
     have e : a i * ∏ i ∈ s, a i - b i * ∏ i ∈ s, b i =
         a i * (∏ i ∈ s, a i - ∏ i ∈ s, b i) + (a i - b i) * ∏ i ∈ s, b i := by ring
     rw [e]

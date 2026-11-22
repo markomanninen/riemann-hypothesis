@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+module
+
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,26 +70,6 @@ section xplus
 
 variable (X : PJ D B P j) (E : PtExt X) (hM : IntAtExt X E)
 
-theorem xplus_Pt (la : HeightOneSpectrum (𝓞 B.KO)) : (xplus X E hM).Pt la = (X.Pt la ⊕ E.Pt' la) := rfl
-
-theorem xplus_vAt_inl (la : HeightOneSpectrum (𝓞 B.KO)) (y : X.Pt la) (F : X.Forms) :
-    (xplus X E hM).vAt la (.inl y) F = X.vAt la y F := rfl
-
-theorem xplus_vAt_inr (la : HeightOneSpectrum (𝓞 B.KO)) (y : E.Pt' la) (F : X.Forms) :
-    (xplus X E hM).vAt la (.inr y) F = E.vAt' la y F := rfl
-
-theorem extended_points_left (la : HeightOneSpectrum (𝓞 B.KO)) (y : X.Pt la) :
-    (xplus X E hM).pt66 la (.inl y) = X.pt66 la y := rfl
-
-theorem extended_points_right (la : HeightOneSpectrum (𝓞 B.KO)) (y : E.Pt' la) :
-    (xplus X E hM).pt66 la (.inr y) = E.extendedPointBaseChange la y := rfl
-
-theorem xplus_depth_inl (s : 𝓞 B.KO) (w : WeightFamilies.Wt D j) (la : HeightOneSpectrum (𝓞 B.KO)) (y : X.Pt la) :
-    (xplus X E hM).depth s w la (.inl y) = X.depth s w la y := rfl
-
-theorem xplus_phiC_inl (la : HeightOneSpectrum (𝓞 B.KO)) (y : X.Pt la) :
-    (xplus X E hM).phiC la (.inl y) = X.phiC la y := rfl
-
 end xplus
 
 abbrev withNorm (B : WeightFamilies.Prov D) (N : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ)
@@ -143,12 +127,6 @@ variable (N : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ)
     (h3 : ∀ j ka σ F G, N j ka σ (F + G) ≤ N j ka σ F + N j ka σ G)
     (h4 : ∀ j ka σ F, N j ka σ F ≤ B.supN j ka σ F)
 
-set_option maxHeartbeats 4000000 in
-
-theorem concl_xplusN (X : PJ D B P j) (E : PtExt X) (hM : IntAtExt X E) (S : Scal B) (ka wL wF : WeightFamilies.Wt D j)
-    (T : ℕ) (nus : HeightOneSpectrum (𝓞 B.KO) → ℝ) (β : ℝ) :
-    Concl (xplusN N h0 h1 h2 h3 h4 X E hM) (scalarsWithNorm N h0 h1 h2 h3 h4 S) ka wL wF T nus β ↔
-      Concl X S ka wL wF T nus β := Iff.rfl
 
 theorem concl_xplus (X : PJ D B P j) (E : PtExt X) (hM : IntAtExt X E) (S : Scal B) (ka wL wF : WeightFamilies.Wt D j)
     (T : ℕ) (nus : HeightOneSpectrum (𝓞 B.KO) → ℝ) (β : ℝ) :
@@ -160,8 +138,8 @@ section On
 
 variable (cov : ∀ j, WeightFamilies.Wt D j → Prop) (Nn : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ)
 
-open Classical in
 
+open Classical in
 def l2nOn : ∀ j ka, (B.KO →+* ℂ) → B.Cusp j ka → ℝ :=
   fun j ka σ F => if cov j ka then Nn j ka σ F else B.supN j ka σ F
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SurjectiveCubeBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCubicalSymmetricExtension
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubeDescendsAlongEtaleIsogeny
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisInvariantFunctionsFlatBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SurjectiveCubeBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCubicalSymmetricExtension
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CubeDescendsAlongEtaleIsogeny
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsTorusAndQuotientHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -84,13 +88,32 @@ theorem isSymmetric_of_exists_gen {S : Scheme.{0}} {G : Over S} [GrpObj G] [IsCo
     L.IsSymmetric := by
   have e₂ : eSec G ≫ (ι[G]).left = eSec G := by
     rw [eSec, ← Over.comp_left, GrpObj.one_inv]
-  have z := (cls_eq_zero_iff (LB.isLB_linComb L.isLB _ _)).2 ⟨t, ht⟩
-  rw [cls_linComb L.isLB, Fin.sum_univ_two] at z
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul, pull_id, ← sub_eq_add_neg,
-    sub_eq_zero] at z
+  have hi : LBIso L.L (L.L.pull (ι[G]).left) := by
+    refine gen_chartPull (h := 𝟙 G.left) ⟨fun p => ![p.1 PUnit.unit, p.2], ?_, ?_⟩ t ht
+    · intro p y hy
+      exact Set.mem_iInter.2 fun k => by
+        fin_cases k
+        · exact mem_pull.1 hy.1
+        · exact hy.2
+    · intro y p q hp hq
+      have hp1 := mem_pull.1 hp.1
+      have hq1 := mem_pull.1 hq.1
+      have hm : ∀ (p : (L.L.pull (ι[G]).left).ι × L.L.ι),
+          y ∈ (LB.div (L.L.pull (ι[G]).left) L.L).U p →
+          y ∈ LB.wchart L.L ![(ι[G]).left, 𝟙 G.left] ![p.1 PUnit.unit, p.2] := by
+        intro p hp
+        exact Set.mem_iInter.2 fun k => by
+          fin_cases k
+          · exact mem_pull.1 hp.1
+          · exact hp.2
+      refine (gm_div L.L (L.L.pull (ι[G]).left) (𝟙 _) y p q ⟨hp, hq⟩).trans ?_
+      rw [gm_pull_g L.L (ι[G]).left (𝟙 _) y p.1 q.1 hp.1 hq.1]
+      refine Eq.trans ?_ (gm_linComb L.L ![(ι[G]).left, 𝟙 G.left] ![1, -1] (𝟙 _) y _ _ (hm p hp) (hm q hq)).symm
+      simp only [Fin.prod_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
+        zpow_one, zpow_neg, Category.id_comp]
+      rfl
   have he : eSec G ≫ (ι[G]).left = 𝟙 _ ≫ eSec G := e₂.trans (Category.id_comp _).symm
-  exact ⟨he, Unif.RigidifyIso.exists_rigidified_iso S S (𝟙 S) G G _ he L L
-    ((cls_eq_iff L.isLB (pull_isLB L.isLB _)).1 z.symm)⟩
+  exact ⟨he, Unif.RigidifyIso.exists_rigidified_iso S S (𝟙 S) G G _ he L L hi⟩
 
 theorem exists_sym_pull {S S' : Scheme.{0}} {G : Over S} [GrpObj G] [IsCommMonObj G] {G' : Over S'} [GrpObj G']
     [IsCommMonObj G'] {f : S' ⟶ S} {β : G'.left ⟶ G.left} (gp : IsGrpPullback G' G f β) {L : LB G.left} (hL : L.IsLB)

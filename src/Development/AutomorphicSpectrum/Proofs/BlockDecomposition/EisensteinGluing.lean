@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.IwasawaUnipotent.IwaU
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GaloisBoundFirst
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.IwasawaUnipotent.IwaU
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GaloisBoundFirst
+
+@[expose] public section
 
 open Filter Topology Set
 open PositivityTheory.Rg.SwEis

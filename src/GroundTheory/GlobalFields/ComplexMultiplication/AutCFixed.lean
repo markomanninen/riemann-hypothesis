@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ExistsRingEquivExtendOfIsTranscendenceBasis
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ExistsRingEquivExtendOfIsTranscendenceBasis
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -9,8 +13,8 @@ section General
 
 variable {Ω : Type*} [Field Ω] [IsAlgClosed Ω] {F : Type*} [Field F] [Algebra F Ω]
 
-omit [IsAlgClosed Ω] in
 
+omit [IsAlgClosed Ω] in
 theorem IsTranscendenceBasis.extendScalars_of_isAlgebraic {E : Type*} [Field E] [Algebra F E]
     [Algebra E Ω] [IsScalarTower F E Ω] [Algebra.IsAlgebraic F E] {ι : Type*} {v : ι → Ω}
     (hv : IsTranscendenceBasis F v) : IsTranscendenceBasis E v := by
@@ -89,15 +93,15 @@ theorem infinite_range_apply_of_transcendental {x : Ω} (hx : Transcendental ℚ
     induction n with
     | zero => simp
     | succ n ih =>
-      rw [pow_succ', AlgEquiv.mul_apply, ih, map_add, hσ, map_natCast]
+      rw [pow_succ', AlgEquiv.mul_apply, ih, map_add (f := _), hσ, map_natCast]
       push_cast; ring
   refine Set.infinite_of_injective_forall_mem (f := fun n : ℕ => x + n) ?_ fun n =>
     ⟨(σ ^ n).toRingEquiv, hpow n⟩
   intro m n hmn
   exact_mod_cast add_left_cancel hmn
 
-omit [IsAlgClosed Ω] in
 
+omit [IsAlgClosed Ω] in
 theorem finite_range_apply_of_isAlgebraic {x : Ω} (hx : IsAlgebraic ℚ x) :
     (Set.range fun σ : Ω ≃+* Ω => σ x).Finite := by
   refine ((minpoly ℚ x).rootSet_finite Ω).subset ?_

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
 set_option autoImplicit false
@@ -11,7 +16,8 @@ theorem defect_sum {O E : Type} [CommRing O] [CommRing E] [Algebra O E] {d : ℕ
     {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} (hμ : ∀ i, constantCoeff (μ i) = 0) (m : ℕ)
     {ι : Type} [Fintype ι] (a : ι → E) (f : ι → MvPowerSeries (Fin d) E) :
     defect μ m (∑ i, a i • f i) = ∑ i, a i • defect μ m (f i) := by
-  simp only [defect, ← coe_substAlgHom (hasSubst_up_nmul (Q := E) hμ m), map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [defect, ← coe_substAlgHom (hasSubst_up_nmul (Q := E) hμ m), map_sum, map_smul,
     Finset.smul_sum, smul_sub, Finset.sum_sub_distrib]
   congr 1
   exact Finset.sum_congr rfl fun i _ => smul_comm _ _ _
@@ -19,7 +25,8 @@ theorem defect_sum {O E : Type} [CommRing O] [CommRing E] [Algebra O E] {d : ℕ
 theorem map_sum_smul {O E : Type} [CommRing O] [CommRing E] [Algebra O E] {σ : Type}
     {ι : Type} [Fintype ι] (b : ι → O) (s : ι → MvPowerSeries σ O) :
     map (algebraMap O E) (∑ i, b i • s i) = ∑ i, algebraMap O E (b i) • map (algebraMap O E) (s i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   ext α
   rw [coeff_map, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_smul, coeff_map]
@@ -36,7 +43,8 @@ theorem Chart.isLie_comb : ∀ (p : ℕ) [Fact p.Prime] (O E : Type) [CommRing O
     exact Finset.sum_congr rfl fun i _ => by rw [hs i]
   · have : (∑ i, b i • l i) w - φ (c.ev n (∑ i, b i • s i)) =
         ∑ i, b i * (l i w - φ (c.ev n (s i))) := by
-      simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul,
         smul_eq_mul, mul_sub, Finset.sum_sub_distrib]
     rw [this]
     exact Finset.dvd_sum fun i _ => dvd_mul_of_dvd_right (hc i w φ hφ) _

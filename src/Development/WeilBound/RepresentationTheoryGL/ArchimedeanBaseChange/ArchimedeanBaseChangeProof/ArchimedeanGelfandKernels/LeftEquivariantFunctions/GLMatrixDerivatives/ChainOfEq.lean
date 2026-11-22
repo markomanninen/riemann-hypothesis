@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GLMatrixDerivatives.ChainOfSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem eu_equiv (A : V ≃L[ℂ] V) (s : Bool) (a b : Fin n) (f : Mat n → V) 
   unfold Eu
   rw [rd_equiv, rd_equiv]
   funext x
-  by_cases hs : s = true <;> simp [hs, map_add, map_smul]
+  by_cases hs : s = true <;> simp [hs, map_add (f := _), map_smul]
 
 theorem epow_equiv (A : V ≃L[ℂ] V) (s : Bool) (m : ℕ) : ∀ (a b : Fin n) (f : Mat n → V),
     Epow s m a b (fun x => A (f x)) = fun x => A (Epow s m a b f x) := by
@@ -51,20 +55,22 @@ theorem epow_equiv (A : V ≃L[ℂ] V) (s : Bool) (m : ℕ) : ∀ (a b : Fin n) 
     rw [Epow.eq_2]
     simp only [ih, eu_equiv]
     funext x
-    simp [Finset.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Finset.sum_apply, map_sum]
 
 theorem gel_equiv (A : V ≃L[ℂ] V) (s : Bool) (m : ℕ) (f : Mat n → V) :
     gel s m (fun x => A (f x)) = fun x => A (gel s m f x) := by
   unfold gel
   simp only [epow_equiv]
   funext x
-  simp [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finset.sum_apply, map_sum]
 
 theorem om_equiv (A : V ≃L[ℂ] V) (f : Mat n → V) : Om (fun x => A (f x)) = fun x => A (Om f x) := by
   unfold Om
   rw [gel_equiv, gel_equiv]
   funext x
-  simp [map_add, map_nsmul]
+  simp [map_add (f := _), map_nsmul]
 
 theorem zop_equiv (A : V ≃L[ℂ] V) : ∀ (w : List (Bool × ℕ)) (f : Mat n → V),
     zOp w (fun x => A (f x)) = fun x => A (zOp w f x) := by

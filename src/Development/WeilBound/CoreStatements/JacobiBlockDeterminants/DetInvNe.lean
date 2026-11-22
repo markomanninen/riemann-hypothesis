@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.JacobiBlockDeterminants.ExistsColFrame
+module
+
+public import Development.WeilBound.CoreStatements.JacobiBlockDeterminants.ExistsColFrame
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteIrrCharactersAndFinsumCentralIdempotentsEqStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteIrrCharactersAndFinsumCentralIdempotentsEqStatement
+
+@[expose] public section
+
 open GlobalTheory.GLq Formalism.MainNotions.ArithmeticCylinders Polynomial
 open scoped Classical
 
@@ -89,7 +94,8 @@ theorem class_eq_zero_of_orth {G : Type} [Group G] [Fintype G] (f : G → ℂ) (
     let T : V →ₗ[ℂ] V := ∑ x, f x • V.ρ x⁻¹
     have hcomm : ∀ h : G, ∀ v : V, T (V.ρ h v) = V.ρ h (T v) := by
       intro h v
-      simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul]
       have e1 : ∀ x, V.ρ x⁻¹ (V.ρ h v) = V.ρ (x⁻¹ * h) v := fun x => by rw [map_mul, Module.End.mul_apply]
       have e2 : ∀ x, V.ρ h (V.ρ x⁻¹ v) = V.ρ (h * x⁻¹) v := fun x => by rw [map_mul, Module.End.mul_apply]
       simp only [e1, e2]
@@ -114,7 +120,8 @@ theorem class_eq_zero_of_orth {G : Type} [Group G] [Fintype G] (f : G → ℂ) (
         rcases mul_eq_zero.1 h1 with h | h
         · exact absurd h (inv_ne_zero hG)
         · exact h
-      simp only [T, map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [T, map_sum, map_smul, smul_eq_mul]
       rw [← h2]
       refine Finset.sum_congr rfl fun x _ => ?_
       rw [← hV x⁻¹]
@@ -130,7 +137,8 @@ theorem class_eq_zero_of_orth {G : Type} [Group G] [Fintype G] (f : G → ℂ) (
       have hS' : T ∘ₗ V.ρ y = ∑ x, f x • (V.ρ x⁻¹ ∘ₗ V.ρ y) := LinearMap.ext fun v => by
         simp only [T, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply]
       rw [hS']
-      simp only [map_sum, map_smul, smul_eq_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul]
       refine Finset.sum_congr rfl fun x _ => ?_
       rw [← hV]
       congr 1
@@ -142,7 +150,7 @@ theorem class_eq_zero_of_orth {G : Type} [Group G] [Fintype G] (f : G → ℂ) (
   have hB : ∀ w : G, ∑ ρ ∈ hS.toFinset, ρ 1 / (Fintype.card G : ℂ) * ρ w⁻¹ = if w = 1 then 1 else 0 := by
     intro w
     have := congrArg (fun a : MonoidAlgebra ℂ G => a.coeff w) hsum
-    simp only [MonoidAlgebra.coeff_sum, zOf, Finsupp.finset_sum_apply, MonoidAlgebra.coeff_single,
+    simp only [MonoidAlgebra.coeff_sum, zOf, Finsupp.finsetSum_apply, MonoidAlgebra.coeff_single,
       Finsupp.single_apply, Finset.sum_ite_eq', Finset.mem_univ, if_true] at this
     rw [this, MonoidAlgebra.one_def, MonoidAlgebra.coeff_single, Finsupp.single_apply]
     simp [eq_comm]
@@ -249,8 +257,8 @@ theorem char_norm_one {G : Type} [Group G] [Fintype G] (χ : G → ℂ) (hχ : I
 
 end GlobalTheory.CharDec
 
-open GlobalTheory.CharDec in
 
+open GlobalTheory.CharDec in
 theorem GlobalTheory.charDec : ∀ (G : Type) [Group G] [Fintype G] (χ : G → ℂ), (IsChar χ → ∃ L : List (G → ℂ), (∀ ρ ∈ L, IsIrr ρ) ∧ χ = L.sum) ∧ (IsClass χ → χ = ∑ᶠ ρ ∈ {ρ : G → ℂ | IsIrr ρ}, ip χ ρ • ρ) ∧ (IsChar χ → IsClass χ) ∧ (IsChar χ → ip χ χ = 1 → IsIrr χ) ∧ (∀ L : List (G → ℂ), (∀ ρ ∈ L, IsChar ρ) → IsChar L.sum) := by
   intro G _ _ χ
   exact ⟨char_decomp χ, class_expand χ, fun h => isClass_of_isChar h, char_norm_one χ, isChar_list_sum⟩

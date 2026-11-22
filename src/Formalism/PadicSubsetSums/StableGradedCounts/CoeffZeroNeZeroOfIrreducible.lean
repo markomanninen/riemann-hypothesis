@@ -1,8 +1,12 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRFrobOrbitIrred
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRSamePartCount
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.EigenbasisOfDistinctRoots
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRFrobOrbitIrred
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRSamePartCount
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRIrredCountUpper
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+
+@[expose] public section
 
 open Finset Polynomial
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PositionOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TensSmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PositionOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ private theorem fin_prod {ι X : Type} [Fintype ι] {Y : ι → Type} (p : ∀ i
     FiniteDimensional ℂ (Submodule.span ℂ
       {f : X → ℂ | ∃ s : ∀ i, Y i → ℂ, (∀ i, s i ∈ S i) ∧ f = fun x => ∏ i, s i (p i x)}) := by
   classical
-  let T : MultilinearMap ℂ (fun i => Y i → ℂ) (X → ℂ) :=
+  let T : (∀ i, Y i → ℂ) →ₘₗ[ℂ] (X → ℂ) :=
     (MultilinearMap.mkPiAlgebra ℂ ι (X → ℂ)).compLinearMap (fun i => LinearMap.funLeft ℂ ℂ (p i))
   have hT : ∀ s x, T s x = ∏ i, s i (p i x) := by
     intro s x
@@ -37,12 +41,13 @@ private theorem fin_prod {ι X : Type} [Fintype ι] {Y : ι → Type} (p : ∀ i
       have h := (b i).sum_repr ⟨s i, hs' i⟩
       calc s i = ((⟨s i, hs' i⟩ : Submodule.span ℂ (S i)) : Y i → ℂ) := rfl
         _ = ((∑ j, c i j • b i j : Submodule.span ℂ (S i)) : Y i → ℂ) := by rw [h]
-        _ = _ := by rw [AddSubmonoidClass.coe_finset_sum]; rfl
+        _ = _ := by rw [AddSubmonoidClass.coe_finsetSum]; rfl
     have e : (fun x => ∏ i, s i (p i x)) = T s := funext fun x => (hT s x).symm
     have e2 : T s = T fun i => ∑ j, c i j • ((b i j : Submodule.span ℂ (S i)) : Y i → ℂ) :=
       congrArg T (funext hsum)
     show (fun x => ∏ i, s i (p i x)) ∈ (Submodule.span ℂ R : Set (X → ℂ))
-    rw [e, e2, MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, e2, MultilinearMap.map_sum]
     refine Submodule.sum_mem _ fun r _ => ?_
     rw [MultilinearMap.map_smul_univ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨r, rfl⟩)
@@ -101,7 +106,7 @@ private theorem tens_smooth (D : InfD σ m) (n : ℕ) (φ : Fin (m + 1) → TI F
   refine contDiff_prod fun i _ => ?_
   exact ((IsExpLieAlgebra.isSmoothFun_iff (isExpLieAlgebra F n)).1 (hφ i) _).comp (thetaL D n i).contDiff
 
-private theorem tens_fin [IsTotallyComplex F] (D : InfD σ m) (n : ℕ) (φ : Fin (m + 1) → TI F n) (β : TI E n)
+private theorem tens_fin [_root_.NumberField.IsTotallyComplex F] (D : InfD σ m) (n : ℕ) (φ : Fin (m + 1) → TI F n) (β : TI E n)
     (hβ : IsTens D φ β) (hφ : ∀ i, LeftFin (φ i)) : LeftFin β := by
   haveI := fin_prod (ι := Fin (m + 1)) (X := archGroup E n) (Y := fun _ => archGroup F n) (fun i => compA D n i)
     (fun i => Set.range fun k : archCompact F n => fun g : archGroup F n => φ i ((k : archGroup F n) * g)) hφ

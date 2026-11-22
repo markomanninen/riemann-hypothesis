@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCCA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCCA
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ lemma lie_map_conj {Y : Mat k r} (hY : inLie k r Y) : inLie k r (Y.map (starRing
   ext i j
   have hij : (Yᴴ * Hpk k r) i j + (Hpk k r * Y) i j = 0 := by
     rw [← Matrix.add_apply, h, Matrix.zero_apply]
-  simp only [Matrix.add_apply, Matrix.map_apply, Matrix.zero_apply, ← map_add, hij, map_zero]
+  simp only [Matrix.add_apply, Matrix.map_apply, Matrix.zero_apply, ← map_add (f := _), hij, map_zero]
 
 private lemma mul_Hpk_conjTranspose_Hpk_eq_one_of_mem_GV {g : Mat k r} (hg : g ∈ GV k r) : g * (Hpk k r * gᴴ * Hpk k r) = 1 :=
   by

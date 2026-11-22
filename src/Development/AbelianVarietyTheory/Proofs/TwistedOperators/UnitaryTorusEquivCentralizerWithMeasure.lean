@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TorusElementCharpolyRegularCentralizerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHasCls
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TorusElementCharpolyRegularCentralizerStatement
+
+@[expose] public section
 
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -16,8 +20,8 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] [FiniteDimensional F E] 
   {P : PPol σ r} {J : Matrix (Fin n) (Fin n) E}
   {k : Type} [CommRing k] [Algebra F k] [TopologicalSpace k] [IsTopologicalRing k]
 
-omit [FiniteDimensional F E] [TopologicalSpace k] [IsTopologicalRing k] in
 
+omit [FiniteDimensional F E] [TopologicalSpace k] [IsTopologicalRing k] in
 theorem isScalarTower_base : IsScalarTower k (k ⊗[F] E) (k ⊗[F] Fld P) :=
   IsScalarTower.of_algebraMap_eq fun c => by
     change c ⊗ₜ[F] (1 : Fld P) = Algebra.TensorProduct.map (AlgHom.id F k) (IsScalarTower.toAlgHom F E (Fld P)) (c ⊗ₜ[F] 1)

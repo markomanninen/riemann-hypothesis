@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+
+@[expose] public section
+
 open Matrix Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.LinRed GlobalTheory.FlagMeas GlobalTheory.RealInd GlobalTheory.CompanionTheory.Hypotheses₂ GlobalTheory.CompanionTheory.Hypotheses₂.HCA
 open scoped InnerProductSpace ContDiff
 
@@ -34,7 +39,7 @@ theorem contDiff_mul_right (X : Matrix (Fin n) (Fin n) ℂ) :
     simp [Matrix.mul_apply]
   rw [e]
   refine ContDiff.sum fun c _ => ContDiff.mul ?_ contDiff_const
-  exact (contDiff_apply ℝ ℂ c).comp (contDiff_apply ℝ (Fin n → ℂ) a)
+  exact (contDiff_apply ℝ (fun _ => ℂ) c).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) a)
 
 end GlobalTheory.CompanionTheory.Hypotheses₂.HCA.SmoothDeriv
 
@@ -61,7 +66,9 @@ theorem hasDerivAt_dRep_and_isSmoothVec : ∀ {n : ℕ} {G : Set (Matrix (Fin n)
     have h3 := h2.comp_hasDerivAt (0 : ℝ) (hasDerivAt_coord_mul_exp g X)
     refine h3.congr_of_eventuallyEq (Filter.Eventually.of_forall fun t => ?_)
     have hm : g * NormedSpace.exp (t • X) ∈ G := hG.mul_mem g hg _ (hX t)
-    have := hFG (Matrix.of.symm (g * NormedSpace.exp (t • X))) (by simpa using hm)
+    have := hFG (Matrix.of.symm (g * NormedSpace.exp (t • X))) (by
+      rw [Equiv.apply_symm_apply]
+      exact hm)
     simp only [Equiv.apply_symm_apply] at this
     simp only [Function.comp, coord_apply]
     rw [← this, hrep.2 g hg _ (hX t)]

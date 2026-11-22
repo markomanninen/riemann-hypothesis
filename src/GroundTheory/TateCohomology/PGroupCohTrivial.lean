@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.CohTrivialBasic
-import GroundTheory.TateCohomology.PGroupFree
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CohTrivialBasic
+public import GroundTheory.TateCohomology.PGroupFree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh

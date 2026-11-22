@@ -1,22 +1,30 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NuChain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.NuChainPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.NuExtDone
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OverExtOfPoints
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.Imports
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PullbackValuationNormPel
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionOfIntegralSectionIsIntegral
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntOfVgeZero
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SymmetricTranslatesMultiplicationPullbackDescrip
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.PremisesMetRankOne
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HypSEisensteinCurve
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueLiftSpecOfIsLocalizationAway
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NuChain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.NuChainPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.NuExtDone
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.VtUniq
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OverExtOfPoints
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ValuationMultiplicationInvariance
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullbackValuationInvarianceOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullExp
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.ExistsUniquePullExpands
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.PullbackValuationNormPel
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionOfIntegralSectionIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsIntOfVgeZero
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SymmetricTranslatesMultiplicationPullbackDescrip
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.PremisesMetRankOne
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HypSEisensteinCurve
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueLiftSpecOfIsLocalizationAway
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,6 +57,48 @@ theorem act_natCast (t : SAB H S) (n : ℕ) : t.act.act n = mulA t.G n := by
 theorem act_eq_one_of_gen (t : SAB H S) (hK : KTriv t.G t.PP.L) (π : 𝓞 E) (a b : ℕ)
     (α₀ : LB.Gen (LB.LinComb t.PP.L (K := Fin 2) ![𝟙 t.G.left, (t.act.act π).left] ![(a : ℤ), -(b : ℤ)]))
     (hα : α₀.IsGen) : t.act.act ((a : 𝓞 E) - b * (π * H.bar π)) = 1 := by
+  classical
+  have cubeCls_pair {T : Over S} (x y : T ⟶ t.G) (c : CechPic.Pic t.G.left) :
+      cubeCls ![x, y] c = pull (x * y).left c - pull x.left c - pull y.left c + pull (1 : T ⟶ t.G).left c := by
+    refine (Fintype.sum_equiv (Equiv.ulift : ULift.{0} (Finset (Fin 2)) ≃ Finset (Fin 2)) _
+      (fun I => ((-1 : ℤ) ^ (2 - I.card)) • pull (psum t.G ![x, y] I).left c) fun _ => rfl).trans ?_
+    have u : (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} := by decide
+    have p₀ : psum t.G ![x, y] ∅ = 1 := rfl
+    have p₁ : psum t.G ![x, y] {0} = x := _root_.mul_one x
+    have p₂ : psum t.G ![x, y] {1} = y := _root_.mul_one y
+    have p₄ : psum t.G ![x, y] {0, 1} = x * y := congrArg (x * ·) (_root_.mul_one y)
+    rw [u, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_singleton, p₀, p₁, p₂, p₄]
+    have c₁ : ({0, 1} : Finset (Fin 2)).card = 2 := by decide
+    simp only [c₁, Finset.card_singleton, Finset.card_empty]
+    norm_num
+    abel
+
+  have cubeCls_triple {T : Over S} (x y z : T ⟶ t.G) (c : CechPic.Pic t.G.left) :
+      cubeCls ![x, y, z] c = pull (x * y * z).left c - pull (x * y).left c - pull (x * z).left c -
+        pull (y * z).left c + pull x.left c + pull y.left c + pull z.left c - pull (1 : T ⟶ t.G).left c := by
+    refine (Fintype.sum_equiv (Equiv.ulift : ULift.{0} (Finset (Fin 3)) ≃ Finset (Fin 3)) _
+      (fun I => ((-1 : ℤ) ^ (3 - I.card)) • pull (psum t.G ![x, y, z] I).left c) fun _ => rfl).trans ?_
+    have u : (Finset.univ : Finset (Finset (Fin 3))) = {∅, {0}, {1}, {2}, {0, 1}, {0, 2}, {1, 2}, {0, 1, 2}} := by decide
+    have p₀ : psum t.G ![x, y, z] ∅ = 1 := rfl
+    have p₁ : psum t.G ![x, y, z] {0} = x := _root_.mul_one x
+    have p₂ : psum t.G ![x, y, z] {1} = y := _root_.mul_one y
+    have p₃ : psum t.G ![x, y, z] {2} = z := _root_.mul_one z
+    have p₄ : psum t.G ![x, y, z] {0, 1} = x * y := congrArg (x * ·) (_root_.mul_one y)
+    have p₅ : psum t.G ![x, y, z] {0, 2} = x * z := congrArg (x * ·) (_root_.mul_one z)
+    have p₆ : psum t.G ![x, y, z] {1, 2} = y * z := congrArg (y * ·) (_root_.mul_one z)
+    have p₇ : psum t.G ![x, y, z] {0, 1, 2} = x * y * z :=
+      (congrArg (fun w => x * (y * w)) (_root_.mul_one z)).trans (_root_.mul_assoc x y z).symm
+    rw [u, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton, p₀, p₁, p₂, p₃, p₄, p₅, p₆, p₇]
+    have c₁ : ({0, 1} : Finset (Fin 3)).card = 2 := by decide
+    have c₂ : ({0, 2} : Finset (Fin 3)).card = 2 := by decide
+    have c₃ : ({1, 2} : Finset (Fin 3)).card = 2 := by decide
+    have c₄ : ({0, 1, 2} : Finset (Fin 3)).card = 3 := by decide
+    simp only [c₁, c₂, c₃, c₄, Finset.card_singleton, Finset.card_empty]
+    norm_num
+    abel
   have hL := t.PP.isLB
   have := t.act.hom
   set c := cls t.PP.L hL with hc
@@ -83,7 +133,7 @@ theorem act_eq_one_of_gen (t : SAB H S) (hK : KTriv t.G t.PP.L) (π : 𝓞 E) (a
     have h := (cls_eq_zero_iff (LB.isLB_linComb hL _ _)).2 ⟨α₀, hα⟩
     rw [cls_linComb hL, Fin.sum_univ_two] at h
     have h' := congrArg (pull x.left) h
-    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, map_add, map_zsmul, map_zero, ← pull_comp, Category.comp_id,
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, map_add (f := _), map_zsmul, map_zero, ← pull_comp, Category.comp_id,
       ← Over.comp_left, neg_smul, natCast_zsmul, map_neg, map_nsmul] at h'
     exact add_neg_eq_zero.1 h'
   have Bab : ∀ {T : Over S} (x y : T ⟶ t.G), a • B x y = b • B (x ≫ t.act.act π) (y ≫ t.act.act π) := fun x y => by

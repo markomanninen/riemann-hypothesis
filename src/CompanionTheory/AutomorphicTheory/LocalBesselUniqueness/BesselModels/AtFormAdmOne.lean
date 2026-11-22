@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.DDForm
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.AtFormAdm
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingL2
+module
+
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.DDForm
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.AtFormAdm
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.BesselNonvanishingL2
+
+@[expose] public section
 
 namespace CompanionTheory.Lime.BM
 

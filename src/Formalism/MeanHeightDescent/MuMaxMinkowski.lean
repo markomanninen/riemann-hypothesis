@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.QuotientMetricDivisors.Statement
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.QuotientMetricDivisors.Statement
+
+@[expose] public section
 
 open Module NumberField
 
@@ -11,13 +15,13 @@ namespace Formalism.ExtensionFiltration
 open Formalism.HN
 
 def LcvMu : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] (d : ℕ), 0 < d →
+  ∀ (K : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] (d : ℕ), 0 < d →
     ∀ X : InfinitePlace K → Matrix (Fin d) (Fin d) ℂ, (∀ v, IsUnit (X v).det) →
-    ∀ M : Submodule (𝓞 K) (Fin d → K), Submodule.IsLattice K M →
+    ∀ M : Submodule (𝓞 K) (Fin d → K), Submodule.IsFullLattice K M →
       Formalism.DivisionValues.lcv X M = -((d : ℝ) * muDef (Pi.basisFun K (Fin d)) X M)
 
 def DescentSlope : Prop :=
-  ∀ (K V ι W κ : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K V ι W κ : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
     [DecidableEq ι] [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
@@ -30,7 +34,7 @@ def DescentSlope : Prop :=
         (rkK B : ℝ) * muDef b' X' B
 
 def SpanMuMin : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ (B : Submodule (𝓞 K) V) (Λ : ℝ), B.FG → B ≠ ⊥ →
@@ -39,7 +43,7 @@ def SpanMuMin : Prop :=
       -(2 * Λ) ≤ muMinDef b X B
 
 def GoodBadCut : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ (e : V →ₗ[K] V) (g : ℕ) (N : Submodule (𝓞 K) V), N.FG → 1 ≤ g →
@@ -60,7 +64,7 @@ def GoodBadCut : Prop :=
           (rkK (N ⊓ (LinearMap.ker e).restrictScalars (𝓞 K)) : ℝ) * muMaxDef b X M
 
 def TwistLower : Prop :=
-  ∀ (K V ι W κ : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+  ∀ (K V ι W κ : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
     [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
     [DecidableEq ι] [AddCommGroup W] [Module K W] [Module (𝓞 K) W] [IsScalarTower (𝓞 K) K W]
     [Fintype κ] [DecidableEq κ] (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
@@ -76,7 +80,7 @@ def TwistLower : Prop :=
         muDef b' X' B
 
 def MuMaxMinkowski : Prop :=
-  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K] [AddCommGroup V]
+  ∀ (K V ι : Type) [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K] [AddCommGroup V]
     [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι] [DecidableEq ι]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ), (∀ v, IsUnit (X v).det) →
     ∀ (B : Submodule (𝓞 K) V) (La : ℝ), B.FG → B ≠ ⊥ →

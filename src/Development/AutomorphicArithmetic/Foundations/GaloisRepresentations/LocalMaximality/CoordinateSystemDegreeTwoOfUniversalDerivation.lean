@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.LiftFactorization
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -74,7 +78,7 @@ theorem UpperTheory.Gal.productCup_of_system.coordinateSystem_degree_two_of_univ
     simp only [colA, Sys.colCx, kosT]
     congr 1
     funext L
-    simp only [A, mixF, lu1, ru1, lu2, ru2, hI, hJ, and_self, if_true]
+    simp [A, mixF, lu1, ru1, lu2, ru2, hI, hJ]
   have hbot : ∀ b : Finset (Two d), ¬ ((lft b).Nonempty ∧ (rgt b).Nonempty) → ∀ L,
       A (uni b L) = ⊥ := by
     intro b hb L

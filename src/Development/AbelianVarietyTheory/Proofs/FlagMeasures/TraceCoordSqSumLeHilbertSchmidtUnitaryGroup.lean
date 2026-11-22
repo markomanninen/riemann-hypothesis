@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IpLEqZeroOfMemSpan
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas Formalism.REAL
 
@@ -73,7 +77,8 @@ theorem sum_coord_sq_le_hs_and_hs_le (n d : ℕ) (ε : Fin n → Bool) (E : Fin 
       calc ipL (X - Y) (X - Y) = ipL (X - Y) (∑ i, ipL (E i) (X - Y) • E i) :=
             congrArg (fun Z => ipL (X - Y) Z) hexp
         _ = ∑ i, ipL (E i) (X - Y) * ipL (X - Y) (E i) := by
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             simp only [map_smul, smul_eq_mul]
         _ = ∑ i, ipL (E i) (X - Y) * ipL (E i) (X - Y) :=
             Finset.sum_congr rfl fun i _ => by rw [ipL_comm (E i) (X - Y)]

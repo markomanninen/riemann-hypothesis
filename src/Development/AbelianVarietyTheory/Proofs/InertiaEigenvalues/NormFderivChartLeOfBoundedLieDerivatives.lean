@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumLieCoord
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem norm_toL_mul_le {E : Type} [Field E] [NumberField E] {a : ℕ} (A : Matr
   calc ∑ k, ‖A i k * Matrix.of B k j‖ ≤ ∑ _k : Fin a, ‖toL A‖ * ‖B‖ := Finset.sum_le_sum fun k _ => hk k
     _ = _ := by simp
 
-theorem norm_fderiv_chart_le : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
+theorem norm_fderiv_chart_le : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a),
     (∀ i, ∃ C : ℝ, ∀ g, ‖(lie E a (lieBasis E a i) φ).1 g‖ ≤ C) →
       ∃ C : ℝ, ∀ (g : GA E a) (y : GL (Fin a) (Cinf E)), ‖fderiv ℝ (chart φ.1 g) (toL y.val)‖ ≤ C * ‖toL (y⁻¹).val‖ := by
   intro E _ _ _ a φ hC
@@ -32,7 +36,8 @@ theorem norm_fderiv_chart_le : ∀ (E : Type) [Field E] [NumberField E] [IsTotal
     intro X h
     have e : lieD X φ.1 h = ∑ i, ((lieBasis E a).coord i X) • lieD (lieBasis E a i) φ.1 h := by
       conv_lhs => rw [← sum_lieCoord X]
-      simp only [lieD, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lieD, map_sum, map_smul]
     rw [e, hDdef, Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [norm_smul]

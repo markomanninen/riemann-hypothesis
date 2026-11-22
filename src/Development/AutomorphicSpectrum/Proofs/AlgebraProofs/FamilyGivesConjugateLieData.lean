@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualLatticeDegreeNeg
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FrobeniusLatticeDegreeMulP
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalGroupActionRingHomStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalHermitianActionPairingStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaBetaAdjointExactStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaEquivariantFrobeniusStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BetaEquivariantFrobeniusStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalDataBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaBetaIsomorphismTransportStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalMatrixCoprimeDecompositionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.GermComp1ZeroPointLeft
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualLatticeDegreeNeg
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FrobeniusLatticeDegreeMulP
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalGroupActionRingHomStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalHermitianActionPairingStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaBetaAdjointExactStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaEquivariantFrobeniusStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.BetaEquivariantFrobeniusStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalDataBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FormalIsomorphismTransportStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.AlphaBetaIsomorphismTransportStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocalMatrixCoprimeDecompositionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,17 +141,17 @@ theorem frobLat_colLat (p : ℕ) [Fact p.Prime] [CharP K p] (g g' : C.I → Matr
   · rw [frame_apply, frame_apply]
     rfl
 
-local notation "VV" K:max d:max => ((Fin d → K) × (Fin d → K))
-
-def stdBasis (K : Type) [Field K] (d : ℕ) : Module.Basis (Fin d ⊕ Fin d) K (VV K d) :=
+def stdBasis (K : Type) [Field K] (d : ℕ) :
+    Module.Basis (Fin d ⊕ Fin d) K ((Fin d → K) × (Fin d → K)) :=
   (Pi.basisFun K (Fin d)).prod (Pi.basisFun K (Fin d))
 
-theorem forall_stdBasis (i : C.I) (y : VV K d) :
+theorem forall_stdBasis (i : C.I) (y : (Fin d → K) × (Fin d → K)) :
     (∀ q, C.v i ((stdBasis K d).repr y q) ≤ 1) ↔ y ∈ stdH C d i := by
   rw [mem_stdH, Sum.forall]
   simp [stdBasis, mem_trivLat]
 
-theorem isBun_imLat (T : C.I → VV K d →ₗ[K] VV K d) (hT : ∀ i, Function.Bijective (T i))
+theorem isBun_imLat (T : C.I → ((Fin d → K) × (Fin d → K)) →ₗ[K] (Fin d → K) × (Fin d → K))
+    (hT : ∀ i, Function.Bijective (T i))
     (hfin : {i | imLat C i (T i) ≠ stdH C d i}.Finite) : IsBun C fun i => imLat C i (T i) := by
   refine isBun_frames C (fun i => (stdBasis K d).map (LinearEquiv.ofBijective (T i) (hT i)))
     (stdBasis K d) _ (fun i x => ?_) (hfin.subset fun i hi h => hi ?_)
@@ -167,7 +171,7 @@ theorem isBun_imLat (T : C.I → VV K d →ₗ[K] VV K d) (hT : ∀ i, Function.
 
 theorem transH_mem_stdH {i : C.I} {φ ψ : Pt K 1 d} {lam : PS K 2 d}
     (hg : IntM C i (lin φ 1)) (hg' : IntM C i (lin ψ 1)) (hl : IntM C i (bil lam 1 1))
-    {w : VV K d} (hw : w ∈ stdH C d i) : transH φ ψ lam w ∈ stdH C d i := by
+    {w : (Fin d → K) × (Fin d → K)} (hw : w ∈ stdH C d i) : transH φ ψ lam w ∈ stdH C d i := by
   rw [mem_stdH] at hw ⊢
   rw [transH_apply]
   exact ⟨mulVec_mem_trivLat C hg hw.1, mulVec_mem_trivLat C (fun a b => hg' b a)
@@ -233,7 +237,8 @@ theorem hodge_family (φ ψ : C.I → Pt K 1 d) (lam : C.I → PS K 2 d)
       obtain ⟨w, hw, rfl⟩ := (mem_imLat C).1 hy
       exact ⟨w.1, ((mem_stdH C).1 hw).1, by rw [transH_apply]⟩
 
-structure LocSplit (i : C.I) (a : (Fin d → K) →ₗ[K] VV K d) (b : VV K d →ₗ[K] Fin d → K) : Prop where
+structure LocSplit (i : C.I) (a : (Fin d → K) →ₗ[K] (Fin d → K) × (Fin d → K))
+    (b : ((Fin d → K) × (Fin d → K)) →ₗ[K] Fin d → K) : Prop where
 
   a_int : ∀ u ∈ trivLat C d i, a u ∈ stdH C d i
 
@@ -241,15 +246,19 @@ structure LocSplit (i : C.I) (a : (Fin d → K) →ₗ[K] VV K d) (b : VV K d �
 
   zero : ∀ u, b (a u) = 0
 
-  split : ∃ (r : VV K d →ₗ[K] Fin d → K) (s : (Fin d → K) →ₗ[K] VV K d),
+  split : ∃ (r : ((Fin d → K) × (Fin d → K)) →ₗ[K] Fin d → K)
+    (s : (Fin d → K) →ₗ[K] (Fin d → K) × (Fin d → K)),
     (∀ y ∈ stdH C d i, r y ∈ trivLat C d i) ∧ (∀ z ∈ trivLat C d i, s z ∈ stdH C d i) ∧
       (∀ u, r (a u) = u) ∧ (∀ z, b (s z) = z) ∧ ∀ y, a (r y) + s (b y) = y
 
 theorem conj_family (p : ℕ) [Fact p.Prime] [CharP K p] (hI : Nonempty C.I)
     (g g' : C.I → Matrix (Fin d) (Fin d) K) (h₁ : ∀ i, g i * g' i = 1) (h₂ : ∀ i, g' i * g i = 1)
-    (T : C.I → VV K d →ₗ[K] VV K d) (hT : ∀ i, Function.Bijective (T i))
-    (α : (Fin d → K) →ₗ[K] VV K d) (β : VV K d →ₗ[K] Fin d → K)
-    (a : C.I → (Fin d → K) →ₗ[K] VV K d) (b : C.I → VV K d →ₗ[K] Fin d → K)
+    (T : C.I → ((Fin d → K) × (Fin d → K)) →ₗ[K] (Fin d → K) × (Fin d → K))
+    (hT : ∀ i, Function.Bijective (T i))
+    (α : (Fin d → K) →ₗ[K] (Fin d → K) × (Fin d → K))
+    (β : ((Fin d → K) × (Fin d → K)) →ₗ[K] Fin d → K)
+    (a : C.I → (Fin d → K) →ₗ[K] (Fin d → K) × (Fin d → K))
+    (b : C.I → ((Fin d → K) × (Fin d → K)) →ₗ[K] Fin d → K)
     (hα : ∀ i u, α (((g i).map (· ^ p)).mulVec u) = T i (a i u))
     (hβ : ∀ i y, β (T i y) = ((g' i).transpose.map (· ^ p)).mulVec (b i y))
     (hloc : ∀ i, LocSplit C i (a i) (b i)) :
@@ -356,9 +365,10 @@ theorem locSplit_of_mats (B : FB K d O) (p : ℕ) (i : C.I) (r₁ r₂ s₁ s₂
     exact sub_mem (mulVec_mem_trivLat C (fun a b => ih b a) hy'.2)
       (sub_mem (mulVec_mem_trivLat C ia hy'.1) (mulVec_mem_trivLat C (fun a b => ih b a)
         (mulVec_mem_trivLat C iS hy'.1)))
-  · let r : VV K d →ₗ[K] Fin d → K := Matrix.toLin' r₁ ∘ₗ LinearMap.fst K _ _ +
+  · let r : ((Fin d → K) × (Fin d → K)) →ₗ[K] Fin d → K := Matrix.toLin' r₁ ∘ₗ LinearMap.fst K _ _ +
       Matrix.toLin' r₂ ∘ₗ LinearMap.snd K _ _
-    let s : (Fin d → K) →ₗ[K] VV K d := LinearMap.prod (-Matrix.toLin' s₁) (-Matrix.toLin' s₂)
+    let s : (Fin d → K) →ₗ[K] (Fin d → K) × (Fin d → K) :=
+      LinearMap.prod (-Matrix.toLin' s₁) (-Matrix.toLin' s₂)
     have hr : ∀ y, r y = r₁.mulVec y.1 + r₂.mulVec y.2 := fun y => by simp [r]
     have hs : ∀ z, s z = (-(s₁.mulVec z), -(s₂.mulVec z)) := fun z => by simp [s]
     refine ⟨r, s, fun y hy => ?_, fun z hz' => ?_, fun u => ?_, fun z => ?_, fun y => ?_⟩
@@ -438,7 +448,7 @@ theorem locSplit {p : ℕ} [Fact p.Prime] [CharP K p] (F : Family C p d O) (i : 
   have c₄ := congrArg Φ e₄
   have c₅ := congrArg Φ e₅
   have c₆ := congrArg Φ e₆
-  simp only [map_add, map_sub, map_mul, map_one, map_zero, hT] at c₁ c₂ c₃ c₄ c₅ c₆
+  simp only [map_add (f := _), map_sub, map_mul, map_one, map_zero, hT] at c₁ c₂ c₃ c₄ c₅ c₆
   refine locSplit_of_mats C (F.BK i) p i (Φ r₁) (Φ r₂) (Φ s₁) (Φ s₂) ?_ ?_ ?_
     (intM_map C i _) (intM_map C i _) (intM_map C i _) (intM_map C i _)
     (fun u => LinearMap.congr_fun (GlobalTheory.T.alpha_beta_adjoint_exact K p d O (F.BK i)).2 u) ?_ ?_ ?_ ?_ ?_ ?_
@@ -449,7 +459,7 @@ theorem locSplit {p : ℕ} [Fact p.Prime] [CharP K p] (F : Family C p d O) (i : 
   exacts [c₁, c₂, c₃, c₄, c₅, c₆]
 
 theorem rhoH_mem_stdH (i : C.I) (B₀ : FB (C.v i).valuationSubring d O) (B : FB K d O)
-    (h : IsMapOf (C.v i).valuationSubring.subtype B₀ B) (a : O) {w : VV K d}
+    (h : IsMapOf (C.v i).valuationSubring.subtype B₀ B) (a : O) {w : (Fin d → K) × (Fin d → K)}
     (hw : w ∈ stdH C d i) : rhoH B a w ∈ stdH C d i := by
   obtain ⟨hm, -⟩ := GlobalTheory.T.formal_data_base_change _ _ (C.v i).valuationSubring.subtype d O B₀ B h
   have hr : ∀ b, IntM C i (rho B b) := fun b => by rw [(hm b).1]; exact intM_map C i _

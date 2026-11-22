@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SectionNormSquares.ExistsFormOfMemChartRingZ
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SectionNormSquares.ExistsFormOfMemChartRingZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -41,10 +46,10 @@ theorem hasFDerivAt_eval (P : MvPolynomial J ℂ) (x : J → ℂ) :
       rw [Derivation.leibniz, pderiv_X]
       by_cases hq : q = q0
       · subst hq
-        simp only [Pi.single_eq_same, smul_eq_mul, map_add, map_mul, eval_X, map_one, if_true]
+        simp only [Pi.single_eq_same, smul_eq_mul, map_add (f := _), map_mul, eval_X, map_one, if_true]
         ring
       · rw [Pi.single_eq_of_ne' hq]
-        simp only [smul_eq_mul, map_add, map_mul, eval_X, map_zero, if_neg hq]
+        simp only [smul_eq_mul, map_add (f := _), map_mul, eval_X, map_zero, if_neg hq]
         ring
     have e : (fun y : J → ℂ => eval y (p * X q0)) = fun y => eval y p * y q0 := by funext y; simp
     rw [e]
@@ -75,7 +80,7 @@ theorem analyticAt_eval (P : MvPolynomial J ℂ) (z : J → ℂ) : AnalyticAt �
     simp only [eval_C]
     exact analyticAt_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p v hp =>
     simp only [map_mul, eval_X]
@@ -176,18 +181,18 @@ section Graph
 
 variable {K : Type} [Fintype K] [DecidableEq K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : Type} [Field Ω]
 
-variable (ι) in
 
+variable (ι) in
 def oldEmb (N : ℕ) (p : Σ k, ι k) : Σ k, addIdx ι N k := ⟨some p.1, p.2⟩
 
-variable (ι) in
 
+variable (ι) in
 def oldL (N : ℕ) : ((Σ k, addIdx ι N k) → ℂ) →L[ℂ] ((Σ k, ι k) → ℂ) :=
   ContinuousLinearMap.pi fun p => ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, addIdx ι N k) => ℂ)
     (oldEmb ι N p)
 
-variable (ι) in
 
+variable (ι) in
 def newL (N : ℕ) : ((Σ k, addIdx ι N k) → ℂ) →L[ℂ] (Fin N → ℂ) :=
   ContinuousLinearMap.pi fun j => ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : (Σ k, addIdx ι N k) => ℂ)
     (⟨none, j⟩ : Σ k, addIdx ι N k)
@@ -205,7 +210,7 @@ theorem mConeMap_rename_old (y : (Σ k, ι k) → Ω) {N : ℕ} (v : Fin N → �
     mConeMap (addBlock y v) (rename (oldEmb ι N) F) = rename Option.some (mConeMap y F) := by
   induction F using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p q hp =>
     simp only [map_mul, hp]
     congr 1

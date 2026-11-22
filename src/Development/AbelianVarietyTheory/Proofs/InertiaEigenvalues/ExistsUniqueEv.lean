@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
-import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+public import ReciprocityTheory.AdicCompleteness.IsAdicCompleteComapConstantCoeff
+
+@[expose] public section
 
 namespace GlobalTheory.HWL.SeriesEval
 
@@ -32,7 +36,7 @@ theorem exists_div {c : O} (hc : c ∈ maximalIdeal O) (b : O⟦X⟧) :
   obtain ⟨s', hs'⟩ := exists_shift (neg_mem hc)
   have hC : ∀ r, s' (C r) = C r := fun r => s'.commutes r
   have hX : (s'.comp s) X = X := by
-    rw [AlgHom.comp_apply, hs, map_add, hs', hC, map_neg]; ring
+    rw [AlgHom.comp_apply, hs, map_add (f := _), hs', hC, map_neg]; ring
   have h : s'.comp s = AlgHom.id O O⟦X⟧ :=
     GlobalTheory.mvPowerSeries_algHom_ext_of_isHausdorff (σ := Unit) (maximalIdeal O⟦X⟧)
       (fun _ => by
@@ -42,7 +46,7 @@ theorem exists_div {c : O} (hc : c ∈ maximalIdeal O) (b : O⟦X⟧) :
   refine ⟨constantCoeff (s b), s' (mk fun p => coeff (p + 1) (s b)), ?_⟩
   have h1 : s' (s b) = b := DFunLike.congr_fun h b
   conv_lhs => rw [← h1, eq_X_mul_shift_add_const (s b)]
-  rw [map_add, map_mul, hs', hC, map_neg]
+  rw [map_add (f := _), map_mul, hs', hC, map_neg]
   ring
 
 variable {L : Type*} [CommRing L] [Algebra O L]
@@ -55,7 +59,7 @@ theorem exists_ev {c : O} (hc : c ∈ maximalIdeal O) (x : L⟦X⟧)
   refine ⟨(substAlgHom hy).comp s, ?_⟩
   have hC : (substAlgHom hy : O⟦X⟧ →ₐ[O] L⟦X⟧) (C c) = C (algebraMap O L c) :=
     ((substAlgHom hy : O⟦X⟧ →ₐ[O] L⟦X⟧).commutes c).trans (PowerSeries.algebraMap_apply (r := c))
-  rw [AlgHom.comp_apply, hs, map_add, substAlgHom_X, hC]
+  rw [AlgHom.comp_apply, hs, map_add (f := _), substAlgHom_X, hC]
   ring
 
 theorem ev_div {c : O} (hc : c ∈ maximalIdeal O) (x : L⟦X⟧)
@@ -67,7 +71,7 @@ theorem ev_div {c : O} (hc : c ∈ maximalIdeal O) (x : L⟦X⟧)
   refine ⟨r, q, fun ev hev => ?_⟩
   have hC : ∀ r, ev (C r) = C (algebraMap O L r) := fun r =>
     (ev.commutes r).trans PowerSeries.algebraMap_apply
-  rw [map_add, map_mul, map_sub, hC, hC, hev, ← hx, ← mul_assoc]
+  rw [map_add (f := _), map_mul, map_sub, hC, hC, hev, ← hx, ← mul_assoc]
   congr 2
   rw [sub_eq_iff_eq_add]
   exact eq_X_mul_shift_add_const x
@@ -105,7 +109,8 @@ theorem ev_bounded (hi : ∀ r : O, ‖i (algebraMap O L r)‖ ≤ 1) {c : O} (h
     · choose! B hB using ih
       refine ⟨∑ p ∈ Finset.HasAntidiagonal.antidiagonal k, ‖i (coeff p.1 z)‖ * B p.2, fun b => ?_⟩
       obtain ⟨r, q, hq⟩ := hz b
-      rw [hq ev h, map_add, coeff_succ_X_mul, coeff_C, if_neg k.succ_ne_zero, zero_add, coeff_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hq ev h, map_add (f := _), coeff_succ_X_mul, coeff_C, if_neg k.succ_ne_zero, zero_add, coeff_mul,
         map_sum]
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun p hp => ?_)
       rw [map_mul, norm_mul]
@@ -138,9 +143,9 @@ theorem ev_tendsto (hi : ∀ r : O, ‖i (algebraMap O L r)‖ ≤ 1) {c : O} (h
   have he : ev (X ^ (n + k) * b) = C (algebraMap O L c ^ n) * ev (u * b) +
       (x - C (algebraMap O L c)) ^ (k + 1) * ev (v * b) := by
     rw [← huv]
-    simp only [map_mul, map_add, map_pow, map_sub, hC, h]
+    simp only [map_mul, map_add (f := _), map_pow, map_sub, hC, h]
     ring
-  rw [← map_sub, ← map_sub, ← map_sub, hb, he, map_add, h0, add_zero, coeff_C_mul, map_mul,
+  rw [← map_sub, ← map_sub, ← map_sub, hb, he, map_add (f := _), h0, add_zero, coeff_C_mul, map_mul,
     norm_mul, map_pow, norm_pow]
   exact mul_le_mul_of_nonneg_left (hB _) (by positivity)
 

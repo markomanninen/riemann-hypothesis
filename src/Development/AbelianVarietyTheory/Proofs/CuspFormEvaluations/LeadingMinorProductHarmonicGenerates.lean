@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowHighestLeSpanColWordComplex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.LetAct
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaLetterEquivConjugate
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowHighestLeSpanColWordComplex
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,8 @@ theorem rename_letAct_invTranspose_eq_colAct {Ix : Type} [Fintype Ix] {pl : Ix �
   rcases half_cases (Ψ := InPsi H) (ComplexEmbedding.involutive_conjugate E)
     (not_mem_hostType_iff H) τ with h | ⟨τ, h, rfl⟩
   · have h₁ : ∃ t, pl t = τ := (hpl.2 τ).1 h
-    rw [dif_pos h₁, thetaLetterEquiv_of_mem Dw h, colSubst_X_xVar, xForm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_left h₁, thetaLetterEquiv_of_mem Dw h, colSubst_X_xVar, xForm_apply, map_sum]
     have e : (⟨pl h₁.choose, (hpl.2 _).2 ⟨_, rfl⟩⟩ : {τ : E →+* ℂ // InPsi H τ}) = ⟨τ, h⟩ :=
       Subtype.ext h₁.choose_spec
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -46,7 +51,8 @@ theorem rename_letAct_invTranspose_eq_colAct {Ix : Type} [Fintype Ix] {pl : Ix �
     have h₁ : ∃ t, ComplexEmbedding.conjugate (pl t) = ComplexEmbedding.conjugate τ := by
       obtain ⟨t, ht⟩ := (hpl.2 τ).1 h
       exact ⟨t, by rw [ht]⟩
-    rw [dif_neg h₀, dif_pos h₁, thetaLetterEquiv_conjugate Dw h, colSubst_X_yVar, yForm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_right h₀, dite_eq_left h₁, thetaLetterEquiv_conjugate Dw h, colSubst_X_yVar, yForm_apply, map_sum]
     have e : (⟨pl h₁.choose, (hpl.2 _).2 ⟨_, rfl⟩⟩ : {τ : E →+* ℂ // InPsi H τ}) = ⟨τ, h⟩ :=
       Subtype.ext ((ComplexEmbedding.involutive_conjugate E).injective h₁.choose_spec)
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -106,7 +112,7 @@ theorem rename_pG [Fintype {τ : E →+* ℂ // InPsi H τ}] (hn : Dw.p + Dw.q �
       (if InPsi H t.1 then minorPolynomial c t.1 i.val hi (Fin.castLE h)
         else minorPolynomial c t.1 i.val hi (fun b => Fin.cast (by omega) (Fin.natAdd (n - (i.val + 1)) b)))
       else 0) ^ aStep Dw a t.1 i.val) = _
-    rw [dif_pos hi', if_pos t.2, map_pow, rename_minorP_of_mem Dw c hn t.2]
+    rw [dite_eq_left hi', if_pos t.2, map_pow, rename_minorP_of_mem Dw c hn t.2]
     congr 1
     rw [aStep, diffOf, mult_of_mem Dw t.2]
     split_ifs <;> rfl
@@ -121,7 +127,7 @@ theorem rename_pG [Fintype {τ : E →+* ℂ // InPsi H τ}] (hn : Dw.p + Dw.q �
         else minorPolynomial c (ComplexEmbedding.conjugate t.1) i.val hi
           (fun b => Fin.cast (by omega) (Fin.natAdd (n - (i.val + 1)) b)))
       else 0) ^ aStep Dw a (ComplexEmbedding.conjugate t.1) i.val) = _
-    rw [dif_pos hi', if_neg h₀, map_pow, rename_minorP_conjugate Dw c hn t.2, ← mul_pow]
+    rw [dite_eq_left hi', if_neg h₀, map_pow, rename_minorP_conjugate Dw c hn t.2, ← mul_pow]
     congr 1
     have hq : Dw.mult (ComplexEmbedding.conjugate t.1) = Dw.q := mult_conjEmb_of_mem Dw t.2
     rw [aStep, diffOf, hq]

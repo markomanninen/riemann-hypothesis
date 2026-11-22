@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem max_map {O : Type} [CommRing O] [IsLocalRing O] {C : Type} [CommRing C] [Algebra O C] [IsCO O C]
     {C' : Type} [CommRing C'] [Algebra O C'] [IsCO O C'] (φ : C →ₐ[O] C') {c : C} (hc : c ∈ maximalIdeal C) :
     φ c ∈ maximalIdeal C' := by
-  rwa [← res_eq_zero_iff O, res_map φ, res_eq_zero_iff]
+  rwa [← res_eq_zero_iff O, UpperTheory.V.Alg.res_map φ, res_eq_zero_iff]
 
 private theorem pow_map {O : Type} [CommRing O] [IsLocalRing O] {C : Type} [CommRing C] [Algebra O C] [IsCO O C]
     {C' : Type} [CommRing C'] [Algebra O C'] [IsCO O C'] (φ : C →ₐ[O] C') (N : ℕ) {c : C}
@@ -21,7 +25,7 @@ private theorem span_map {C C' K K' : Type} [CommRing C] [CommRing C'] [CommRing
   induction hx using Submodule.span_induction with
   | mem x hx => exact hs x hx
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add f]; exact add_mem hx hy
   | smul a x _ hx => rw [Algebra.smul_def, map_mul, h, ← Algebra.smul_def]; exact M.smul_mem _ hx
 
 private theorem lc_of {X A B : Type} [TopologicalSpace X] {u : X → A} {v : X → B} (hu : IsLocallyConstant u)
@@ -37,7 +41,7 @@ theorem UpperTheory.V.Fr.frobenius_corner_cone_map :
     span_map φ f h (by rintro _ ⟨g, rfl⟩; exact Submodule.subset_span ⟨g, rfl⟩) hx
   refine ⟨fun g i => ?_, fun L hL hs => ?_, fun i j => ?_, fun i j N => ?_, ?_⟩
   · obtain ⟨c, h1, h2⟩ := H.dg g i
-    exact ⟨φ c, by rw [← h, h1, NRep.map_r], by rw [res_map, h2]⟩
+    exact ⟨φ c, by rw [← h, h1, NRep.map_r], by rw [UpperTheory.V.Alg.res_map, h2]⟩
   · obtain ⟨c, h1, h2⟩ := H.cyc L hL hs
     refine ⟨φ c, max_map φ h1, ?_⟩
     rw [← h, h2, map_list_prod, List.map_map]
@@ -58,12 +62,12 @@ theorem UpperTheory.V.Fr.frobenius_corner_cone_map :
     refine Submodule.smul_induction_on hxy (fun a ha z hz => ?_) (fun a b ha hb => ?_)
     · rw [Algebra.smul_def a z, map_mul, h, ← Algebra.smul_def (φ a) (f z)]
       exact Submodule.smul_mem_smul (pow_map φ N ha) (hsp i j z hz)
-    · rw [map_add]; exact add_mem ha hb
+    · rw [map_add f]; exact add_mem ha hb
   · obtain ⟨χ, h1, h2⟩ := H.psi
     refine ⟨fun v i g => φ (χ v i g), fun v i => ⟨fun N => ?_, fun g => ?_⟩, fun v i g => ?_⟩
     · refine lc_of ((h1 v i).1 N) fun x y hxy => ?_
       rw [Ideal.Quotient.eq] at hxy ⊢
       rw [← map_sub]
       exact pow_map φ N hxy
-    · rw [res_map, (h1 v i).2]
+    · rw [UpperTheory.V.Alg.res_map, (h1 v i).2]
     · rw [← h, h2, NRep.map_ψ]

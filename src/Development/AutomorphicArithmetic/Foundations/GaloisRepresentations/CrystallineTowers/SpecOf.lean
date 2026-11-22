@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.HodgeTateSpectral.HTSpecGood
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.SigCEq
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.HodgeTateSpectral.HTSpecGood
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.SigCEq
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -72,7 +76,7 @@ def invM (H : Matrix m (Fin d) R) : Matrix (Fin d) m R :=
 theorem invM_spec (H : Matrix m (Fin d) R) (h : ∃ Ψ : Matrix (Fin d) m R, Ψ * H = 1 ∧ H * Ψ = 1) :
     invM H * H = 1 ∧ H * invM H = 1 := by
   unfold invM
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem mul_inv_twist {n : Type} [Fintype n] [DecidableEq n] (H : Matrix m n R) (Φ : Matrix n m R) (ρ : Matrix n n R)
@@ -98,8 +102,6 @@ variable {l : ℕ} [Fact l.Prime] {K : Formalism.BasicNotions.Loc.FinExt l}
 
 theorem sigma_eq (g : Formalism.BasicNotions.Loc.GQ l) (y : ℂ_[l]) : GaloisFrobeniusFixed.σC g y = Formalism.Per.σC g y := UpperTheory.Gal.Seam.sigC_eq l g y
 
-example : CharZero K.1 := inferInstance
-
 end Dict
 
 section Build
@@ -113,8 +115,8 @@ theorem sm_q {M : CrystallineSemistableComparison.Model l K.1} (h : M.Sm) : IsPr
   have hs : Smooth M.p := h.2
   exact ⟨inferInstance, inferInstance⟩
 
-variable (K) in
 
+variable (K) in
 abbrev IsoFam : Type 1 := ∀ {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of K.1)) [Smooth q] [IsProper q] (a j : ℕ),
   CrystallineSemistableComparison.HT.Hdg q a (a + j) ≃ₗ[K.1] CrystallineSemistableComparison.Om.HodgeC q a j
 
@@ -167,13 +169,15 @@ theorem sum_e (e : IsoFam K) {M : CrystallineSemistableComparison.Model l K.1} (
 theorem h_dual (P : CrystallineSemistableComparison.HT.HTPre l K.1) (M : CrystallineSemistableComparison.Model l K.1) (a n : ℕ) (v : M.V n) {ι : Type} (s : Finset ι)
     (c : ι → K.1) (φ : ι → Module.Dual K.1 (CrystallineSemistableComparison.HT.Hdg M.q a n)) :
     P.h M a n v (∑ i ∈ s, c i • φ i) = ∑ i ∈ s, CrystallineSemistableComparison.HT.kC K.1 (c i) * P.h M a n v (φ i) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => P.lin' M a n (c i) v (φ i)
 
 theorem h_vec (P : CrystallineSemistableComparison.HT.HTPre l K.1) (M : CrystallineSemistableComparison.Model l K.1) (a n : ℕ) {ι : Type} (s : Finset ι) (r : ι → ℚ_[l])
     (v : ι → M.V n) (φ : Module.Dual K.1 (CrystallineSemistableComparison.HT.Hdg M.q a n)) :
     P.h M a n (∑ i ∈ s, r i • v i) φ = ∑ i ∈ s, CrystallineSemistableComparison.HT.qC l (r i) * P.h M a n (v i) φ := by
-  rw [map_sum, AddMonoidHom.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, AddMonoidHom.finsetSum_apply]
   exact Finset.sum_congr rfl fun i _ => P.lin M a n (r i) (v i) φ
 
 theorem hm_inj (P : CrystallineSemistableComparison.HT.HTPre l K.1) (e : IsoFam K) {M : CrystallineSemistableComparison.Model l K.1} (hM : M.Sm) {n : ℕ}
@@ -316,6 +320,7 @@ theorem frame_ex (P : CrystallineSemistableComparison.HT.HTPre l K.1) (e : IsoFa
     have := (P.fin M hM a n).1
     exact LinearEquiv.finiteDimensional (eqv e M.q a (n - a) n (add_sub_fin a))
   have : FiniteDimensional ℚ_[l] (EtV (K := K) M.q n) := hfd
+  set_option synthInstance.maxHeartbeats 200000 in
   exact ⟨⟨_, Module.finBasis ℚ_[l] (EtV (K := K) M.q n), fun a => _,
     fun a => Module.finBasis K.1 (HodgeV (K := K) M.q n a)⟩, sum_e e hM hr _⟩
 

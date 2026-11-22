@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.NuExtA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenInj
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.NuExtA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.GenInj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -115,7 +119,8 @@ theorem secB_dvd_of_vge {V : Type} [CommRing V] [IsDomain V] [IsDiscreteValuatio
     have e_sub : gs π y U (f.f j - constFn D.toPre.P.A.hom U r * ∑ i, constFn D.toPre.P.A.hom U (b i) * (σ i).f j) =
         gs π y U (f.f j) - gs π y U (constFn D.toPre.P.A.hom U r) *
           ∑ i, gs π y U (constFn D.toPre.P.A.hom U (b i)) * gs π y U ((σ i).f j) := by
-      simp only [gs_eq π y U hy, map_sub, map_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [gs_eq π y U hy, map_sub, map_mul, map_sum]
     rw [e_sub, e_f, hf', hE', gs_constFn _ _ _ _ hy]
     simp only [e_σ, hσ', c1, c2, gs_constFn _ _ _ _ hy]
     rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]

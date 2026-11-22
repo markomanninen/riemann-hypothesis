@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
-import Development.AbelianVarietyTheory.Counterexamples.PlaceInjectivity.StandardDeterminantUnits
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+public import Development.AbelianVarietyTheory.Counterexamples.PlaceInjectivity.StandardDeterminantUnits
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions GlobalTheory.CharVal GlobalTheory.IndefiniteRowSideFullHecke.CharacterValuation
 
@@ -59,7 +63,7 @@ theorem maxV_detLat (E : Type) [Field E] [NumberField E] [StarRing E] (n : ℕ) 
         obtain ⟨i, rfl⟩ := hx
         exact ht' i
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add, smul_add]; exact N.add_mem hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact N.add_mem hx hy
       | smul r x _ hx =>
         rw [← algebraMap_smul E r x, map_smul, algebraMap_smul, smul_comm]
         exact N.smul_mem r hx

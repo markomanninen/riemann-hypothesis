@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactAdelicIntegralDenominator
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactAdelicIntegralDenominator
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.compact_adelic_integral_denominator : ∀ (E : Type) [Field E] [NumberField E] (Q : Set (Af E)), IsCompact Q →

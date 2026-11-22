@@ -1,7 +1,11 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
-import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
+
+@[expose] public section
 
 open Module Submodule
 
@@ -67,7 +71,7 @@ theorem covol_pos_of_discrete {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] (L : Submodule ℤ E) [DiscreteTopology L] :
     0 < covol L := by
   classical
-  rw [covol, dif_pos (inferInstance : DiscreteTopology L)]
+  rw [covol, dite_eq_left (inferInstance : DiscreteTopology L)]
   exact Real.sqrt_pos.mpr (det_gram_basis_pos L _)
 
 theorem norm_sum_smul_le_of_int {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -164,7 +168,8 @@ theorem slopeInequality_of (h : SlopeLeMuMax.{v}) : SlopeInequality.{u, v} := by
       ‖∑ i, (n i : ℝ) • ((φ (b i) : M) : F)‖ ≤ C * ‖∑ i, (n i : ℝ) • (b i : E)‖ := by
     intro n
     have h2 := hC (∑ i, n i • b i)
-    simp only [map_sum, map_zsmul, Submodule.coe_sum, Submodule.coe_smul] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, Submodule.coe_sum, Submodule.coe_smul] at h2
     simpa only [Int.cast_smul_eq_zsmul] using h2
   have hreal := norm_sum_smul_le_of_int (fun i => (b i : E))
     (fun i => ((φ (b i) : M) : F)) C hint

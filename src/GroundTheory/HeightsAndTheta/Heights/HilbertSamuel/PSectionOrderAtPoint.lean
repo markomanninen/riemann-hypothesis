@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionOrderAtPoint
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionOrderAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals.MemMCoordIdealOfAevalEqZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -205,10 +210,10 @@ omit [Fintype K] in
 theorem isMultiHomog_pow' {f : MRing ι} {d : K → ℕ} (hf : IsMultiHomog f d) (m : ℕ) :
     IsMultiHomog (f ^ m) (m • d) := by
   induction m with
-  | zero => simpa using LocalRep.isMultiHomog_C (ι := ι) 1
+  | zero => simpa using LowerBoundFree.isMultiHomog_C_zero (ι := ι) 1
   | succ m ih =>
     rw [pow_succ, succ_nsmul]
-    exact LocalRep.isMultiHomog_mul ih hf
+    exact LowerBoundFree.isMultiHomog_mul ih hf
 
 omit [Fintype K] in
 theorem isMultiHomog_sum' {β : Type*} (s : Finset β) (f : β → MRing ι) {d : K → ℕ}
@@ -218,7 +223,7 @@ theorem isMultiHomog_sum' {β : Type*} (s : Finset β) (f : β → MRing ι) {d 
   | empty => simpa using LowerBoundFree.isMultiHomog_zero (ι := ι) d
   | insert b s hb ih =>
     rw [Finset.sum_insert hb]
-    exact LocalRep.isMultiHomog_add (hf b (Finset.mem_insert_self b s))
+    exact LowerBoundFree.isMultiHomog_add (hf b (Finset.mem_insert_self b s))
       (ih fun j hj => hf j (Finset.mem_insert_of_mem hj))
 
 theorem exists_rel (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hyc : ∀ k, y ⟨k, c k⟩ ≠ 0) {t : Ω}
@@ -277,7 +282,8 @@ theorem exists_rel (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (hyc : ∀ k, y �
       ring
     have hp' : t ^ n + ∑ i ∈ Finset.range n, (algebraMap (chartRingZ y c) Ω) (p.coeff i) * t ^ i = 0 :=
       hp
-    rw [map_add, map_sum, Finset.sum_congr rfl hsum, ← Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, Finset.sum_congr rfl hsum, ← Finset.mul_sum]
     simp only [map_mul, map_pow, map_prod, aeval_X, ← htB]
     rw [mul_pow]
     linear_combination ((∏ k, y ⟨k, c k⟩ ^ N k) * aeval y B ^ n) * hp'

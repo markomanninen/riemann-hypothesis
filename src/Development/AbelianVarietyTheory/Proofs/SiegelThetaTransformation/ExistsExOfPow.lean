@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInnerProductSelfNonnegBoundsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IMemSiegel
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SchwartzBruhatInnerProductSelfNonnegBoundsStatement
+
+@[expose] public section
+
 open Matrix Complex GlobalTheory.SW
 open scoped ComplexConjugate Real
 
@@ -88,7 +93,8 @@ theorem exists_pr (f : Matrix κ ι ℚ →ₗ[ℤ] ℚ) : ∃ x, ∀ v, f v = p
   refine ⟨fun k i => g (Matrix.single k i 1), fun v => ?_⟩
   change g v = _
   conv_lhs => rw [Matrix.matrix_eq_sum_single v]
-  simp only [map_sum, pr, dotProduct]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, pr, dotProduct]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
   have : Matrix.single k i (v k i) = v k i • Matrix.single k i (1 : ℚ) := by
     simp [Matrix.smul_single]
@@ -142,7 +148,8 @@ theorem exists_den (x : Matrix κ ι ℚ) : ∃ N : ℕ, 0 < N ∧ IntM ((N : �
 theorem exists_den_fg (M : AddSubgroup (Matrix κ ι ℚ)) (hM : M.FG) :
     ∃ N : ℕ, 0 < N ∧ ∀ x ∈ M, IntM ((N : ℚ) • x) := by
   classical
-  obtain ⟨S, rfl⟩ := hM
+  obtain ⟨S, hS⟩ := AddSubgroup.isAddFG_iff.mp hM
+  rw [← hS]
   choose d hd hd' using fun x : Matrix κ ι ℚ => exists_den x
   refine ⟨∏ x ∈ S, d x, Finset.prod_pos fun x _ => hd x, fun x hx => ?_⟩
   induction hx using AddSubgroup.closure_induction with
@@ -179,8 +186,9 @@ theorem ip_smul_self (c : ℂ) (hc : c ≠ 0) (φ : Matrix κ ι ℚ → ℂ) :
 theorem fg_map {G G' : Type} [AddCommGroup G] [AddCommGroup G'] {A : AddSubgroup G} (hA : A.FG)
     (f : G →+ G') : (A.map f).FG := by
   classical
-  obtain ⟨S, rfl⟩ := hA
-  exact ⟨S.image f, by rw [AddMonoidHom.map_closure, Finset.coe_image]⟩
+  obtain ⟨S, hS⟩ := AddSubgroup.isAddFG_iff.mp hA
+  apply AddSubgroup.isAddFG_iff.mpr
+  exact ⟨S.image f, by rw [Finset.coe_image, ← AddMonoidHom.map_closure, hS]⟩
 
 def fac (ε : Matrix κ ι ℚ × Matrix κ ι ℚ → ℂ) (y : Matrix κ ι ℚ × Matrix κ ι ℚ)
     (x : Matrix κ ι ℚ) : ℂ := ε y * ex (2 * pr x y.1 - pr y.1 y.2)

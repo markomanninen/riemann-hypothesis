@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.GeneralBFactRightVersion.Imports
+module
+
+public import Mathlib
+public import Lemmata.GeneralBFactRightVersion.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem fix_of_coprime {p m : ℕ} (hpA : A.valuation ((p : ℕ) : Ω) < 1) (hm 
   set T : Ω := ∑ i ∈ Finset.range m, (τ ^ i) y with hT
   have hτT : τ T = T := by
     have h1 : τ T = ∑ i ∈ Finset.range m, (τ ^ (i + 1)) y := by
-      rw [hT, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hT, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [pow_succ', AlgEquiv.mul_apply]
     have h2 := Finset.sum_range_succ' (fun i => (τ ^ i) y) m
@@ -145,7 +150,7 @@ theorem wildProP (E Ω : Type) [Field E] [Field Ω] [Algebra E Ω] : Formalism.M
   obtain ⟨L, hL, hLN⟩ := (krullTopology_mem_nhds_one_iff E Ω _).1 hnh
   obtain ⟨S, hS⟩ := (Module.finite_def.1 hL : (⊤ : Submodule E L).FG)
   have hint : ∀ s : L, IsIntegral E (s : Ω) := fun s =>
-    (isIntegral_algebraMap_iff (algebraMap L Ω).injective).2 (Algebra.IsIntegral.isIntegral s)
+    (isIntegral_algebraMap_iff ).2 (Algebra.IsIntegral.isIntegral s)
   choose a ha using fun s : L => exists_ppow_fix hp hpA (σ := σ) hσ (s : Ω) (hint s)
   refine ⟨S.sup a, hLN ?_⟩
   show σ ^ (p ^ S.sup a) ∈ L.fixingSubgroup
@@ -158,7 +163,7 @@ theorem wildProP (E Ω : Type) [Field E] [Field Ω] [Algebra E Ω] : Formalism.M
     | mem s hs => exact ha s _ (Finset.le_sup hs)
     | zero => simp
     | add u v _ _ hu hv =>
-      rw [IntermediateField.coe_add, map_add, hu, hv]
+      rw [IntermediateField.coe_add, map_add (f := _), hu, hv]
     | smul c u _ hu =>
       rw [IntermediateField.coe_smul, map_smul, hu]
   exact key ⟨x, hx⟩ hx'

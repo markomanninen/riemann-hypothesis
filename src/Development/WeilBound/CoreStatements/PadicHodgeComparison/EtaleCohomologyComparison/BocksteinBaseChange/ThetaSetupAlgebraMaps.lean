@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1000000
@@ -203,19 +207,19 @@ structure Pre (R : Per l K) where
         ∑ s, ∑ s', c M i (M.toV _ x) (b.coord s) * c M j (M.toV _ y) (b'.coord s') * R.o (φ (cupR M i j (b s) (b' s')))
   c1 : ∀ (M : Model l K), G M → ∀ d : ℕ, M.Conn d → ∃ v φ, R.IsU (R.tB ^ d * c M (2 * d) v φ)
 
-variable {G} in
 
+variable {G} in
 def Pre.Span (P : Pre G R) (M : Model l K) (n : ℕ) (S : Subring R.B) : Prop :=
   ∃ (r : ℕ) (w : Fin r → Module.Dual K (HdR M.q n) → R.B), (∀ i φ (σ : K.fixingSubgroup), R.σ σ (w i φ) = w i φ) ∧
     ∀ v, ∃ b : Fin r → R.B, (∀ i, b i ∈ S) ∧ ∀ φ, P.c M n v φ = ∑ i, b i * w i φ
 
-variable {G} in
 
+variable {G} in
 def Pre.Inj (P : Pre G R) (M : Model l K) (n : ℕ) : Prop :=
   ∀ {a : ℕ} (b : Module.Basis (Fin a) ℚ_[l] (M.V n)) (z : Fin a → R.B), (∀ φ, ∑ i, z i * P.c M n (b i) φ = 0) → z = 0
 
-variable {G} in
 
+variable {G} in
 def Pre.Strict (P : Pre G R) (M : Model l K) (n : ℕ) : Prop :=
   ∀ {a : ℕ} (b : Module.Basis (Fin a) ℚ_[l] (M.V n)) (z : Fin a → R.B),
     (∀ (r : ℕ) (φ : Module.Dual K (HdR M.q n)), (∀ x ∈ FilR M.q n (r + 1), φ x = 0) →

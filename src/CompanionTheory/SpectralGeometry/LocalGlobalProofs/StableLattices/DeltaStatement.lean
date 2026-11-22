@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -82,7 +86,7 @@ theorem exists_isDelta (L : Type) [NontriviallyNormedField L] [IsUltrametricDist
     hx₀max (by simpa using hx)
   obtain ⟨m, hm⟩ : ∃ m : L, m = x₀ * δ + s (x₀ * δ) := ⟨_, rfl⟩
   rw [← hm] at hfmax
-  have hmfix : s m = m := by rw [hm, map_add, hss, add_comm]
+  have hmfix : s m = m := by rw [hm, map_add (f := _), hss, add_comm]
   have hm1 : ‖m‖ ≤ 1 := by
     rw [hm, mul_comm]
     exact hδ x₀ hx₀'

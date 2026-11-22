@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.WeilConjectures.ContinCut
-import Mathlib.NumberTheory.Padics.ProperSpace
+module
+
+public import Development.EtaleCohomology.WeilConjectures.ContinCut
+public import Mathlib.NumberTheory.Padics.ProperSpace
+
+@[expose] public section
 
 namespace LateralTheory.EWeil.ChevPf
 
@@ -43,7 +47,7 @@ theorem Chev_of : LateralTheory.EWeil.ContinCut.Chev := by
     rw [Metric.mem_ball] at hz
     rw [Pi.sub_apply, ← dist_eq_norm]
     linarith
-  obtain ⟨k, hk⟩ := exists_subset_nhds_of_isCompact hdir hc hU
+  obtain ⟨k, hk⟩ := exists_subset_nhds_of_isCompact hdir hc (mem_nhdsSet_iff_forall.mpr hU)
   refine ⟨k, fun y hy => ?_⟩
   obtain ⟨x, rfl⟩ := hπ y
   obtain ⟨c, w, hc0, hw, rfl⟩ := hk (show x ∈ V k from hy)
@@ -55,6 +59,6 @@ theorem Chev_of : LateralTheory.EWeil.ContinCut.Chev := by
   choose u hu using hu
   refine ⟨π u, ?_⟩
   have : w = (l : ℤ_[l]) ^ N • u := funext fun i => by simp [hu i]
-  rw [map_add, hc0, zero_add, this, map_smul]
+  rw [map_add (f := _), hc0, zero_add, this, map_smul]
 
 end LateralTheory.EWeil.ChevPf

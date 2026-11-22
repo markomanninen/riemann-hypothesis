@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.CocycleZeroMemInvariants
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthExact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.CocycleZeroMemInvariants
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.LengthExact
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -18,7 +22,7 @@ theorem UpperTheory.V.Base.kerResCyc :
     intro m hm
     rw [memU] at hm ⊢
     intro u hu
-    have hc := Subgroup.Normal.conj_mem ‹(U'.subgroupOf U).Normal› ⟨u, h hu⟩
+    have hc := Subgroup.Normal.conj_mem (H := U'.subgroupOf U) ⟨u, h hu⟩
       (by simpa [Subgroup.mem_subgroupOf] using hu) (⟨γ, hγ⟩⁻¹)
     rw [Subgroup.mem_subgroupOf] at hc
     simp only [inv_inv, Subgroup.coe_mul, InvMemClass.coe_inv] at hc

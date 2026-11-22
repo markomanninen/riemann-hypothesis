@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.WpBridge
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.WpBridge
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,19 +23,19 @@ variable {K K' : Type*} [Field K] [Field K']
 
 theorem addX_map (φ : K →+* K') (x y x₂ y₂ : K) :
     φ (addX x y x₂ y₂) = addX (φ x) (φ y) (φ x₂) (φ y₂) := by
-  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add, map_neg, map_ofNat]
+  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add (f := _), map_neg, map_ofNat]
 
 theorem addY_map (φ : K →+* K') (x y x₂ y₂ : K) :
     φ (addY x y x₂ y₂) = addY (φ x) (φ y) (φ x₂) (φ y₂) := by
-  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add, map_neg, map_ofNat]
+  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add (f := _), map_neg, map_ofNat]
 
 theorem dblX_map (φ : K →+* K') (x y g : K) :
     φ (dblX x y g) = dblX (φ x) (φ y) (φ g) := by
-  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add, map_neg, map_ofNat]
+  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add (f := _), map_neg, map_ofNat]
 
 theorem dblY_map (φ : K →+* K') (x y g : K) :
     φ (dblY x y g) = dblY (φ x) (φ y) (φ g) := by
-  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add, map_neg, map_ofNat]
+  simp only [addX, addY, dblX, dblY, map_div₀, map_sub, map_pow, map_mul, map_add (f := _), map_neg, map_ofNat]
 
 end maps
 
@@ -261,62 +265,6 @@ theorem st_exists (hO : POnto) (hg2 : L.g₂ ∈ M) (hg3 : L.g₃ ∈ M)
     simpa [map_sub, map_mul, map_pow, map_ofNat] using this
   obtain ⟨z, hz, e1, e2⟩ := hO L' (ρ X) (ρ Y) curve'
   exact ⟨z, Or.inr ⟨h, hz, hx, hy, e1, e2⟩⟩
-
-theorem st_onto (hA : AddLaw) (hD : DblLaw) (hO : POnto) (hg2 : L.g₂ ∈ M) (hg3 : L.g₃ ∈ M)
-    (hg2' : L'.g₂ = ρ ⟨_, hg2⟩) (hg3' : L'.g₃ = ρ ⟨_, hg3⟩) (n : ℕ) (hn : 0 < n)
-    (hM : ∀ t, (n : ℂ) * t ∈ L.lattice → t ∉ L.lattice →
-      L.weierstrassP t ∈ M ∧ L.derivWeierstrassP t ∈ M)
-    (t' : ℂ) (ht' : (n : ℂ) * t' ∈ L'.lattice) :
-    ∃ t, (n : ℂ) * t ∈ L.lattice ∧ St L L' M ρ t t' := by
-  by_cases h0 : t' ∈ L'.lattice
-  · exact ⟨0, by simpa using L.lattice.zero_mem, Or.inl ⟨L.lattice.zero_mem, h0⟩⟩
-  have hα : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
-  have hst : ∀ K : PeriodPair, MulStable K (n : ℂ) := by
-    intro K ω hω
-    have : (n : ℂ) * ω = (n : ℤ) • ω := by simp
-    rw [this]
-    exact K.lattice.smul_mem _ hω
-  obtain ⟨S, hS⟩ := kerRepsExist L (n : ℂ) hα (hst L)
-  obtain ⟨S', hS'⟩ := kerRepsExist L' (n : ℂ) hα (hst L')
-  have c1 := kerRepsCard L (n : ℂ) S hα (hst L) hS
-  have c2 := kerRepsCard L' (n : ℂ) S' hα (hst L') hS'
-  have hcard : S'.card = S.card := by
-    have : (S'.card : ℝ) = S.card := by linarith
-    exact_mod_cast this
-  have key : ∀ P ∈ S, ∃ Q ∈ S', ∃ P', St L L' M ρ P P' ∧ P' - Q ∈ L'.lattice := by
-    intro P hP
-    obtain ⟨hnP, hPn⟩ := hS.1 P hP
-    obtain ⟨P', hP'⟩ := st_exists hO hg2 hg3 hg2' hg3' P (Or.inr (hM P hnP hPn))
-    have m1 : (n : ℂ) * P' ∈ L'.lattice :=
-      (st_mem_iff (st_nsmul hA hD hg2 hg2' hP' n)).1 hnP
-    have m2 : P' ∉ L'.lattice := fun h => hPn ((st_mem_iff hP').2 h)
-    obtain ⟨Q, hQ, hQ'⟩ := hS'.2.2 P' m1 m2
-    exact ⟨Q, hQ, P', hP', hQ'⟩
-  choose! g hgS f hf hfg using key
-  have hinj : Set.InjOn g S := by
-    intro P hP P₁ hP₁ he
-    have d : f P - f P₁ ∈ L'.lattice := by
-      have := L'.lattice.sub_mem (hfg P hP) (hfg P₁ hP₁)
-      rwa [he, sub_sub_sub_cancel_right] at this
-    have h1 : St L L' M ρ P₁ (f P) := by
-      have := st_add_right (hf P₁ hP₁) d
-      rwa [show f P₁ + (f P - f P₁) = f P by ring] at this
-    exact hS.2.1 P hP P₁ hP₁ (st_inj (hf P hP) h1)
-  have hsub : S.image g ⊆ S' := by
-    intro Q hQ
-    obtain ⟨P, hP, rfl⟩ := Finset.mem_image.1 hQ
-    exact hgS P hP
-  have heq : S.image g = S' :=
-    Finset.eq_of_subset_of_card_le hsub (by rw [Finset.card_image_of_injOn hinj, hcard])
-  obtain ⟨Q, hQ, hQ'⟩ := hS'.2.2 t' ht' h0
-  rw [← heq] at hQ
-  obtain ⟨P, hP, rfl⟩ := Finset.mem_image.1 hQ
-  refine ⟨P, (hS.1 P hP).1, ?_⟩
-  have d : t' - f P ∈ L'.lattice := by
-    have := L'.lattice.sub_mem hQ' (hfg P hP)
-    rwa [sub_sub_sub_cancel_right] at this
-  have := st_add_right (hf P hP) d
-  rwa [show f P + (t' - f P) = t' by ring] at this
 
 end rel
 

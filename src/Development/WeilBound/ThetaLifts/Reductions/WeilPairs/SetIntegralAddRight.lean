@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrIntRhoInv
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LagrIntRhoInv
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Pointwise
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels

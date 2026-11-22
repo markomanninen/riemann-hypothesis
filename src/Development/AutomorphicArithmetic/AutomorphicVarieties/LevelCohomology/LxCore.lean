@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsPowDvdSubOfTwoPowDvdSubOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.TwoPowDvdSubOneOrAddOneOfPowTwoPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SumFilterTwoPowRootsEqZeroOfSumEqZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.ExistsPowDvdSubOfTwoPowDvdSubOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.TwoPowDvdSubOneOrAddOneOfPowTwoPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SumFilterTwoPowRootsEqZeroOfSumEqZero
+
+@[expose] public section
 
 open Finset
 
@@ -168,7 +172,7 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
             rw [ZMod.intCast_zmod_eq_zero_iff_dvd]; exact_mod_cast h
           rw [hπ]; rw [Int.cast_add, Int.cast_natCast, Int.cast_one] at this; linear_combination this
       have hxs : x * (1 - s) = x + s := by
-        have := hker (x + 1) (by rw [map_add, hp', map_one, neg_add_cancel])
+        have := hker (x + 1) (by rw [map_add (f := _), hp', map_one, neg_add_cancel])
         linear_combination -this
       have hx' : x ≠ 1 := by
         rintro rfl
@@ -185,7 +189,7 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
         · intro hlt'
           apply hx1
           have := hsmall (x + s) (s - 1) (by omega) (by omega) (by
-            rw [map_add, hp', map_natCast, Nat.cast_sub (by omega)]; push_cast; ring)
+            rw [map_add (f := _), hp', map_natCast, Nat.cast_sub (by omega)]; push_cast; ring)
           rw [← hvs] at this
           exact add_right_cancel (ZMod.val_injective _ this)
   have hS := Finset.sum_congr rfl hT
@@ -200,7 +204,7 @@ theorem lx_core {k : Type} [Field k] (l : ℕ) [Fact l.Prime] [CharP k l] (hl : 
     rw [hz _ h] at hh
     simp at hh
   have hπ0 : π (1 + 2 ^ (m + e - 1)) = 1 := by
-    rw [map_add, map_one, map_pow, map_ofNat, add_eq_left]
+    rw [map_add (f := _), map_one, map_pow, map_ofNat, add_eq_left]
     have : ((2 ^ (m + e - 1) : ℕ) : ZMod (2 ^ m)) = 0 := by
       rw [ZMod.natCast_eq_zero_iff]; exact pow_dvd_pow 2 (by omega)
     exact_mod_cast this

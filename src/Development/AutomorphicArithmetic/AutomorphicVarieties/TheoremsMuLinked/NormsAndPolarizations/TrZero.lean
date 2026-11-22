@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.NormsAndPolarizations.CjApply
+
+@[expose] public section
+
 open IsLocalRing Matrix NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.HV UpperTheory.V.Th UpperTheory.V.Th.Nm GlobalTheory.GalOfCusp
 
 private theorem UpperTheory.V.Th.Nm.trZero_inner {K : Type} [Field K] {n : ℕ}
@@ -34,7 +39,8 @@ private theorem UpperTheory.V.Th.Nm.trZero_inner {K : Type} [Field K] {n : ℕ}
     rw [Finset.mul_sum, Finset.sum_congr rfl fun i _ => e1 i, Finset.sum_sub_distrib,
       ← Finset.mul_sum, h3, mul_one, Finset.sum_mul]
     congr 1
-    simp only [h1, map_sum, map_smul, Finset.sum_mul, mul_assoc, h2, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h1, map_sum, map_smul, Finset.sum_mul, mul_assoc, h2, Finset.mul_sum,
       smul_mul_assoc, mul_smul_comm]
     exact Finset.sum_comm
   rw [mul_neg, neg_mul, h4]; abel
@@ -63,7 +69,7 @@ theorem UpperTheory.V.Th.Nm.trZero :
       induction y using Finsupp.induction_linear with
       | zero => simp
       | add a b ha hb =>
-        simp only [map_add, mul_add, trace_add]
+        simp only [map_add (f := _), mul_add, trace_add]
         linear_combination ha + hb
       | single g a =>
         have := ht (h * g)
@@ -106,10 +112,10 @@ theorem UpperTheory.V.Th.Nm.trZero :
         obtain ⟨h, rfl⟩ := hx
         rw [← hmul, hDg, hDg, hDg, hd]
       | zero => simp
-      | add a b _ _ ha hb => simp only [mul_add, map_add, ha, hb]; abel
+      | add a b _ _ ha hb => simp only [mul_add, map_add (f := _), ha, hb]; abel
       | smul a b _ hb => simp only [mul_smul_comm, map_smul, hb, smul_add]
     | zero => simp
-    | add a b _ _ ha hb => simp only [add_mul, map_add, ha, hb]; abel
+    | add a b _ _ ha hb => simp only [add_mul, map_add (f := _), ha, hb]; abel
     | smul a b _ hb => simp only [smul_mul_assoc, map_smul, hb, smul_add]
   obtain ⟨Y, hY⟩ := UpperTheory.V.Th.Nm.trZero_inner D hD
   refine ⟨Y, fun g => ?_⟩

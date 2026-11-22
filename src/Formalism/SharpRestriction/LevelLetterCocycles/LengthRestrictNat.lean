@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeMapMemLattice
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangeMapMemLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,7 +152,7 @@ theorem prj_bρ (φ : LL' →ₗ[LL] LL) {V : Type} [AddCommGroup V] [Module LL 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a v => rw [bρ_tmul, prj_tmul, prj_tmul, map_smul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem prj_bf (φ : LL' →ₗ[LL] LL) {V V₂ : Type} [AddCommGroup V] [Module LL V] [AddCommGroup V₂]
     [Module LL V₂] (f : V →ₗ[LL] V₂) (x : LL' ⊗[LL] V) :
@@ -156,7 +160,7 @@ theorem prj_bf (φ : LL' →ₗ[LL] LL) {V V₂ : Type} [AddCommGroup V] [Module
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a v => simp [bf, prj_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 end Proj
 
@@ -172,7 +176,8 @@ theorem coord_alg (bO : Module.Basis ι O O') (bL : Module.Basis ι LL LL')
   have e : algebraMap O' LL' o = bL.equivFun.symm (fun i => algebraMap O LL (bO.repr o i)) := by
     rw [Module.Basis.equivFun_symm_apply]
     conv_lhs => rw [← bO.sum_repr o]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hb, Algebra.smul_def, map_mul, Algebra.smul_def, ← IsScalarTower.algebraMap_apply,
       ← IsScalarTower.algebraMap_apply]
@@ -194,7 +199,7 @@ theorem prj_bT (bO : Module.Basis ι O O') (bL : Module.Basis ι LL LL')
     rw [TensorProduct.smul_tmul', prj_tmul, Algebra.smul_def, mul_one, coord_alg bO bL hb,
       algebraMap_smul]
     exact T.smul_mem _ t.2
-  · rw [smul_add, map_add]; exact T.add_mem (ha c) (hb c)
+  · rw [smul_add, map_add (f := _)]; exact T.add_mem (ha c) (hb c)
   · rw [smul_smul]; exact ha _
 
 theorem prj_smul_one (bO : Module.Basis ι O O') (bL : Module.Basis ι LL LL')
@@ -217,8 +222,8 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     [Algebra Qp LL] [Algebra Qp LL'] [Algebra LL LL'] [IsScalarTower Qp LL LL']
     {V : Type} [AddCommGroup V] [Module LL V] [Module Qp V] [IsScalarTower Qp LL V]
 
-variable (LL') in
 
+variable (LL') in
 def mJ : V ⊗[Qp] B →ₗ[Qp] (LL' ⊗[LL] V) ⊗[Qp] B :=
   TensorProduct.map ((TensorProduct.mk LL LL' V 1).restrictScalars Qp) LinearMap.id
 
@@ -230,14 +235,14 @@ theorem mJ_act (ρ : Representation LL G V) (g : G) (y : V ⊗[Qp] B) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mJ, actVB, bρ_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem mapPoint_act (φ : LL' →ₗ[LL] LL) (ρ : Representation LL G V) (g : G) (y : (LL' ⊗[LL] V) ⊗[Qp] B) :
     mP (B := B) φ (actVB PD (bρ LL' ρ) g y) = actVB PD ρ g (mP φ y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [mP, actVB, prj_bρ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem mJ_eq (ρ : Representation LL G V) (g : G) (v : V) (x : V ⊗[Qp] B)
     (h : v ⊗ₜ[Qp] (1 : B) = actVB PD ρ g x - x) :
@@ -256,13 +261,13 @@ theorem mP_eq (φ : LL' →ₗ[LL] LL) (ρ : Representation LL G V) (g : G) (u :
 
 theorem prj_coc (φ : LL' →ₗ[LL] LL) (ρ : Representation LL G V) (g : G) (a b : LL' ⊗[LL] V) :
     prj φ V (a + bρ LL' ρ g b) = prj φ V a + ρ g (prj φ V b) := by
-  rw [map_add, prj_bρ]
+  rw [map_add (f := _), prj_bρ]
 
 theorem core_eq (φ : LL' →ₗ[LL] LL) {V₂ : Type} [AddCommGroup V₂] [Module LL V₂] (f : V →ₗ[LL] V₂)
     (ρ₂ : Representation LL G V₂) (g : G) (a : LL' ⊗[LL] V) (t : LL' ⊗[LL] V₂) :
     prj φ V₂ (bf (LL' := LL') f a + (bρ LL' ρ₂ g t - t)) =
       f (prj φ V a) + (ρ₂ g (prj φ V₂ t) - prj φ V₂ t) := by
-  rw [map_add, map_sub, prj_bf, prj_bρ]
+  rw [map_add (f := _), map_sub, prj_bf, prj_bρ]
 
 theorem jp_eq {V₂ : Type} [AddCommGroup V₂] [Module LL V₂] (f : V →ₗ[LL] V₂)
     (ρ₂ : Representation LL G V₂) (g : G) (a : V) (t : V₂) :
@@ -344,9 +349,9 @@ theorem cont_prj (T : LocLat G Qp LL O) (φ : LL' →ₗ[LL] LL) :
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [h1 j, mul_comm, mul_smul]
     | add x y hx hy =>
-      rw [map_add, hx, hy, ← Finset.sum_add_distrib]
+      rw [map_add (f := _), hx, hy, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [map_add, map_add, add_smul]
+      rw [map_add (f := _), map_add (f := _), add_smul]
   have hcj : ∀ j, Continuous (fun x : LL' ⊗[LL] T.V => e'.coord j x) := fun j =>
     IsModuleTopology.continuous_of_linearMap (e'.coord j)
   have : (fun x : LL' ⊗[LL] T.V => prj φ T.V x) = fun x => ∑ j, φ (e'.coord j x) • e j := funext key
@@ -377,7 +382,8 @@ theorem sum_eq {LL LL' O O' : Type} [Field LL] [Field LL'] [Algebra LL LL'] [Com
     (hb : ∀ i, bL i = algebraMap O' LL' (bO i)) {V : Type} [AddCommGroup V] [Module LL V]
     (c : ι → V) (k : ι) :
     prj (bL.coord k) V (∑ i, bO i • ((1 : LL') ⊗ₜ[LL] c i)) = c k := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp_rw [prj_smul_one bO bL hb]
   simp
 
@@ -398,8 +404,8 @@ variable (hc : Continuous (algebraMap LL LL')) (hO' : Function.Injective (algebr
     {ι : Type} [Fintype ι] (bO : Module.Basis ι O O') (bL : Module.Basis ι LL LL')
     (hb : ∀ i, bL i = algebraMap O' LL' (bO i)) (hlin : ∀ φ : LL' →ₗ[LL] LL, Continuous φ)
 
-include hb hlin in
 
+include hb hlin in
 theorem core (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L) (c : ι → G → T₂.V)
     (h : (∑ i, bO i • jp (O' := O') hc hO' T₂ (c i)) ∈ (bHom (O' := O') hc hO' F).ImF PD) (k : ι) :
     c k ∈ F.ImF PD := by
@@ -440,8 +446,8 @@ theorem index_nonempty_of (bO : Module.Basis ι O O') (hO' : Function.Injective 
     exact zero_ne_one h1
   exact bO.index_nonempty
 
-include hb hlin in
 
+include hb hlin in
 theorem descLift (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L) (e : ℕ)
     (h : (bHom (O' := O') hc hO' F).LiftF PD e) : F.LiftF PD e := by
   intro c hc2
@@ -455,8 +461,8 @@ theorem descLift (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L) (e : 
     (fun i => if i = k then ((PD.p : O) ^ e) • c else 0) (by rw [hs]; exact Submodule.smul_mem _ _ h1) k
   simpa using h2
 
-include hb hlin in
 
+include hb hlin in
 theorem jp_ImF (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L) (c : G → T₂.V) (h : c ∈ F.ImF PD) :
     jp (O' := O') hc hO' T₂ c ∈ (bHom (O' := O') hc hO' F).ImF PD := by
   obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 h
@@ -477,8 +483,8 @@ theorem jp_add (T : LocLat G Qp LL O) (a b : G → T.V) :
   show ((1 : LL') ⊗ₜ[LL] (a g + b g) : LL' ⊗[LL] T.V) = (1 : LL') ⊗ₜ[LL] a g + (1 : LL') ⊗ₜ[LL] b g
   rw [TensorProduct.tmul_add]
 
-include hb hlin in
 
+include hb hlin in
 theorem descCol [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) (T₁ T₂ : LocLat G Qp LL O)
     (F : LatHom T₁.L T₂.L) (x : ℝ) (h : Formalism.MainNotions.TruncatedSeriesCountingBounds.ColLeR PD (bHom (O' := O') hc hO' F) x) :
     Formalism.MainNotions.TruncatedSeriesCountingBounds.ColLeR PD F x := by
@@ -495,7 +501,7 @@ theorem descCol [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) (T₁ T₂ : L
   let jZ : Z →ₗ[O] (Z' ⧸ N') :=
     { toFun := fun z => N'.mkQ ⟨jp (O' := O') hc hO' T₂ z, hjZ z⟩
       map_add' := fun a b => by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         congr 1
         ext1
         exact jp_add hc hO' T₂ a b
@@ -508,7 +514,7 @@ theorem descCol [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) (T₁ T₂ : L
   let ψ : (ι → Z) →ₗ[O] (Z' ⧸ N') :=
     { toFun := fun q => ∑ i, bO i • jZ (q i)
       map_add' := fun q r => by
-        simp only [Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib]
+        simp only [Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib]
       map_smul' := fun a q => by
         simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
         rw [Finset.smul_sum]
@@ -517,7 +523,8 @@ theorem descCol [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) (T₁ T₂ : L
         rw [smul_smul, smul_smul, mul_comm] }
   have hψ : ∀ q, ψ q = N'.mkQ (∑ i, bO i • (⟨jp (O' := O') hc hO' T₂ (q i), hjZ (q i)⟩ : Z')) := by
     intro q
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul]
     rfl
@@ -560,14 +567,14 @@ theorem descCol [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) (T₁ T₂ : L
     hB1.symm hx
   exact ⟨mm, k, h1, h2, h3⟩
 
-include hb hlin in
 
+include hb hlin in
 theorem descLift_at : ∀ (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L), Formalism.MainNotions.WachCoordinates.CrysLat PD T₁ →
     Formalism.MainNotions.WachCoordinates.CrysLat PD T₂ → F.Onto → ∀ e, (bHom (O' := O') hc hO' F).LiftF PD e → F.LiftF PD e :=
   fun T₁ T₂ F _ _ _ e h => descLift PD hc hO' bO bL hb hlin T₁ T₂ F e h
 
-include hb hlin in
 
+include hb hlin in
 theorem descCol_at [IsLocalRing O'] (hk : lenOl PD (O := O) ≠ ⊤) :
     ∀ (T₁ T₂ : LocLat G Qp LL O) (F : LatHom T₁.L T₂.L), Formalism.MainNotions.WachCoordinates.CrysLat PD T₁ →
     Formalism.MainNotions.WachCoordinates.CrysLat PD T₂ → F.Onto → ∀ x, Formalism.MainNotions.TruncatedSeriesCountingBounds.ColLeR PD (bHom (O' := O') hc hO' F) x →

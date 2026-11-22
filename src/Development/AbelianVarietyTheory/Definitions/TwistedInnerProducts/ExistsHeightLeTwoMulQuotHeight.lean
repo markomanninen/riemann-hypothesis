@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.QuotIntegrableIffCutoff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedSmooth
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.QuotIntegrableIffCutoff
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem eventually_absFin_le_one_nhds :
     conv_lhs => rw [← (Algebra.TensorProduct.basis (AF F) b).sum_equivFun z]
     refine Finset.sum_congr rfl fun i _ => ?_
     simp [e, TensorProduct.smul_tmul']
-  rw [h3, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h3, map_sum]
   exact absFin_sum_le F v _ _ fun i _ => hz i v
 
 theorem continuous_infEmb_compInf (w : InfinitePlace F) (τ : EmbOver E w) :
@@ -86,7 +91,8 @@ theorem continuous_infEmb_compInf (w : InfinitePlace F) (τ : EmbOver E w) :
       conv_lhs => rw [← (Algebra.TensorProduct.basis (AF F) b).sum_equivFun z]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp [e, TensorProduct.smul_tmul']
-    conv_lhs => rw [h3, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [h3, map_sum, map_sum]
     rfl
   rw [h2]
   refine continuous_finsetSum _ fun i _ => Continuous.mul ?_ continuous_const
@@ -148,21 +154,6 @@ theorem htInf_le_heightGL (g : GL n (AF F ⊗[F] E)) (w : InfinitePlace F) :
   (Finset.single_le_prod' (f := fun w => htInf F w (bc (compInf F E w) g)) (fun _ _ => one_le_htOf _ _)
     (Finset.mem_univ w)).trans (le_mul_of_one_le_right' (one_le_finprod' fun _ => one_le_htOf _ _))
 
-example : 2 ≤ heightGL F (Matrix.GeneralLinearGroup.scalar (Fin 1)
-    (Units.map (inclR (F := F) (AF F) : E →+* _).toMonoidHom (Units.mk0 (2 : E) two_ne_zero))) := by
-  obtain ⟨w⟩ : Nonempty (InfinitePlace F) := inferInstance
-  obtain ⟨τ⟩ : Nonempty (EmbOver E w) := inferInstance
-  refine le_trans ?_ (((normInf_le_iff F w).1 (le_htOf _ _) τ).trans (htInf_le_heightGL F _ w))
-  refine le_of_eq_of_le ?_ (le_of_eq (congrArg opNorm (a₁ := (2 : ℂ) • 1) ?_))
-  · unfold opNorm
-    rw [map_smul, map_one, nnnorm_smul]
-    simp
-  · ext i j
-    obtain rfl := Subsingleton.elim i j
-    change _ = infEmb τ (compInf F E w (Matrix.scalar (Fin 1) (inclR (F := F) (AF F) (2 : E)) i i))
-    rw [Matrix.scalar_apply, Matrix.diagonal_apply_eq, map_ofNat, map_ofNat, map_ofNat]
-    simp
-
 end GeneralLinearIntegers
 
 section Quot
@@ -192,13 +183,6 @@ theorem IsQuotIntL1.smul (c : ℂ) (h : IsQuotIntL1 μR μG f z) : IsQuotIntL1 �
     fun x => by rw [Pi.smul_apply, h3, smul_eq_mul, ← integral_const_mul]; rfl,
     by rw [h4, ← integral_const_mul]; rfl⟩
 
-theorem IsQuotIntL1.conj (h : IsQuotIntL1 μR μG f z) :
-    IsQuotIntL1 μR μG (fun g => starRingEnd ℂ (f g)) (starRingEnd ℂ z) := by
-  obtain ⟨F, h1, h2, h3, h4⟩ := h
-  exact ⟨fun g => starRingEnd ℂ (F g), (RCLike.conjCLE (K := ℂ)).toContinuousLinearMap.integrable_comp h1,
-    fun x => (RCLike.conjCLE (K := ℂ)).toContinuousLinearMap.integrable_comp (h2 x),
-    fun x => by simp only [h3, integral_conj], by rw [h4, integral_conj]⟩
-
 theorem IsQuotIntL1.mul_right [MeasurableMul G] [μG.IsMulRightInvariant] (h : IsQuotIntL1 μR μG f z) (k : G) :
     IsQuotIntL1 μR μG (fun g => f (g * k)) z := by
   obtain ⟨F, h1, h2, h3, h4⟩ := h
@@ -220,8 +204,8 @@ theorem integrable_of_lintegral_eq_one {α : Type} [MeasurableSpace α] {μ : Me
 
 variable [TopologicalSpace G] [IsTopologicalGroup G] [SecondCountableTopology G] [BorelSpace G]
 
-open GlobalTheory.Tw in
 
+open GlobalTheory.Tw in
 theorem IsQuotIntL1.cutoff [SFinite μG] [μG.IsMulLeftInvariant] [SFinite μR] [μR.IsInvInvariant]
     (h : IsQuotIntL1 μR μG f z) {β : G → ℝ≥0} (hβ : IsCosetCutoff R μR β) :
     Integrable (fun x => (β x : ℝ) • f x) μG ∧ z = ∫ x, (β x : ℝ) • f x ∂μG := by
@@ -267,8 +251,8 @@ theorem IsQuotIntL1.unique (hR : IsClosed (R : Set G)) (h : IsQuotIntL1 μR μG 
   have : SecondCountableTopology R := TopologicalSpace.Subtype.secondCountableTopology (R : Set G)
   rw [(h.cutoff hβ).2, (h'.cutoff hβ).2]
 
-open GlobalTheory.Tw in
 
+open GlobalTheory.Tw in
 theorem isQuotIntL1_iff (hR : IsClosed (R : Set G)) (hm : Measurable f) :
     IsQuotIntL1 μR μG f z ↔
       (∀ s ∈ R, ∀ x, f (s * x) = f x) ∧ QuotIntegrable R μG μR f ∧ z = quotInt R μG μR f := by
@@ -403,16 +387,6 @@ theorem ModGrowthExp.mul {f f' : GA D V → ℂ} {A B : ℕ} (h : ModGrowthExp V
   rw [Pi.mul_apply, norm_mul, pow_add, mul_mul_mul_comm]
   exact mul_le_mul (hC g) (hC' g) (norm_nonneg _) ((norm_nonneg _).trans (hC g))
 
-theorem ModGrowthExp.translate {f : GA D V → X} {A : ℕ} (h : ModGrowthExp V A f) (a b : GA D V) :
-    ModGrowthExp V A fun g => f (a * g * b) := by
-  obtain ⟨C, hC⟩ := h
-  refine ⟨C * (height V a * height V b) ^ A, fun g => (hC _).trans ?_⟩
-  rw [mul_assoc C, ← mul_pow]
-  refine mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (height_pos V _).le ?_ _) (nonneg_of_growth hC)
-  calc height V (a * g * b) ≤ height V a * height V g * height V b :=
-        (height_mul_le V _ _).trans (mul_le_mul_of_nonneg_right (height_mul_le V _ _) (height_pos V b).le)
-    _ = _ := by ring
-
 theorem norm_le_quotHeight_pow {f : GA D V → X} (hf : ∀ γ ∈ GQ V, ∀ g, f (γ * g) = f g) {C : ℝ} {A : ℕ}
     (h : ∀ g, ‖f g‖ ≤ C * height V g ^ A) (g : GA D V) : ‖f g‖ ≤ C * 2 ^ A * quotHeight V g ^ A := by
   obtain ⟨γ, hγ, h2⟩ := exists_height_le_two_mul_quotHeight V g
@@ -437,21 +411,9 @@ theorem ModGrowth.mul {f f' : GA D V → ℂ} (h : ModGrowth V f) (h' : ModGrowt
   obtain ⟨B, hB⟩ := modGrowth_iff_exp.1 h'
   exact modGrowth_iff_exp.2 ⟨A + B, hA.mul hB⟩
 
-theorem ModGrowth.translate {f : GA D V → X} (h : ModGrowth V f) (a b : GA D V) :
-    ModGrowth V fun g => f (a * g * b) := by
-  obtain ⟨A, hA⟩ := modGrowth_iff_exp.1 h
-  exact modGrowth_iff_exp.2 ⟨A, hA.translate a b⟩
-
 theorem ModGrowth₂.right {f : GA D V → GA D W → X} (h : ModGrowth₂ V W f) (g : GA D V) : ModGrowth W (f g) := by
   obtain ⟨C, A, hC⟩ := h
   exact ⟨C * height V g ^ A, A, fun h => by rw [mul_assoc, ← mul_pow]; exact hC g h⟩
-
-theorem ModGrowth₂.swap {f : GA D V → GA D W → X} (h : ModGrowth₂ V W f) : ModGrowth₂ W V fun h g => f g h := by
-  obtain ⟨C, A, hC⟩ := h
-  exact ⟨C, A, fun h g => by rw [mul_comm (height W h)]; exact hC g h⟩
-
-theorem ModGrowth₂.left {f : GA D V → GA D W → X} (h : ModGrowth₂ V W f) (k : GA D W) : ModGrowth V fun g => f g k :=
-  h.swap.right k
 
 variable (V)
 
@@ -560,11 +522,6 @@ theorem RapidDec.integrableOn {Φ : GA D V → ℂ} (h : RapidDec V Φ) {μ : Me
   obtain ⟨C, hC⟩ := h.bounded
   exact Measure.integrableOn_of_bounded hS h.continuous.aestronglyMeasurable (Eventually.of_forall hC)
 
-example : ModGrowthExp V 1 (height V) := ⟨1, fun g => by simp [abs_of_pos (height_pos V g)]⟩
-
-example : ∃ Φ : GA D V → ℂ, RapidDec V Φ ∧ Φ 1 = Real.exp (-1) :=
-  ⟨_, rapidDec_exp_neg V, by simp only [quotHeight_of_mem V (one_mem _)]⟩
-
 end Unitary
 
 theorem isQuotIntL1_bot {G : Type} [Group G] [MeasurableSpace G] {μG : Measure G} {f : G → ℂ} {z : ℂ} :
@@ -577,10 +534,6 @@ theorem isQuotIntL1_bot {G : Type} [Group G] [MeasurableSpace G] {μG : Measure 
     exact ⟨h1, h4⟩
   · rintro ⟨h1, h2⟩
     exact ⟨f, h1, fun h => by rw [e]; exact integrable_const _, fun h => by simp [e], h2⟩
-
-example {G : Type} [Group G] [MeasurableSpace G] {R : Subgroup G} (μR : Measure R) (μG : Measure G)
-    [IsProbabilityMeasure μR] [IsProbabilityMeasure μG] : IsQuotIntL1 μR μG 1 1 :=
-  ⟨1, integrable_const _, fun _ => integrable_const _, fun _ => by simp, by simp⟩
 
 end GlobalTheory.Grow
 

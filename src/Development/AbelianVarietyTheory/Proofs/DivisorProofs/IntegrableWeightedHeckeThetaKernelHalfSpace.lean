@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+
+@[expose] public section
+
 open NumberField MeasureTheory
 
 noncomputable section
@@ -54,7 +59,7 @@ theorem norm_gauss_le (n : I → ℤ) (w : I → ℂ) :
     ‖gauss n w‖ ≤ gC n * Real.exp (-Real.pi * ∑ i, ‖w i‖ ^ 2) := by
   unfold gauss gC
   rw [norm_prod, Finset.mul_sum, Real.exp_sum, ← Finset.prod_mul_distrib]
-  apply Finset.prod_le_prod (fun i _ => norm_nonneg _)
+  apply Finset.prod_le_prod₀ (fun i _ => norm_nonneg _)
   intro i _
   rw [norm_mul, norm_hmon, Complex.norm_exp_ofReal]
   have := pow_mul_exp_le (n i).natAbs (norm_nonneg (w i))
@@ -115,7 +120,7 @@ theorem continuous_theta {ι : Type} (e : ι → I → ℂ) (a : ι → ℂ) (n 
     · apply Continuous.continuousOn
       apply continuous_const.mul
       unfold gauss
-      refine continuous_finset_prod _ fun i _ => ?_
+      refine continuous_finsetProd _ fun i _ => ?_
       have hd : Continuous fun y : I → ℝ => dil y (e j) i := by unfold dil; fun_prop
       exact ((continuous_hmon _).comp hd).mul (by fun_prop)
     · exact (ha _ (by positivity)).mul_left _
@@ -280,7 +285,7 @@ theorem integrable_weight_theta : ∀ (I : Type) [Fintype I] {ι : Type} (e : ι
         rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun i _ => by ring
       rw [e1, Real.exp_sum]
-      apply Finset.prod_le_prod (fun i _ => (Real.exp_pos _).le)
+      apply Finset.prod_le_prod₀ (fun i _ => (Real.exp_pos _).le)
       intro i _
       rw [← Real.exp_add]
       apply Real.exp_le_exp.mpr

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCyclotomicTowerLevelGeneratorProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,17 +45,17 @@ theorem exists_pair (a : G → M →ₗ[O] M) (hmul : ∀ g h x, a (g * h) x = a
       have e : g' = g * (g⁻¹ * g') := by group
       have h2 := h0 (g⁻¹ * g') (by rw [map_mul, map_inv, h, inv_mul_cancel])
       have h3 := congrArg (a g) h2
-      rw [map_add, map_sub, map_zero] at h3
+      rw [map_add (f := _), map_sub, map_zero] at h3
       rw [e, hc, hmul]
       linear_combination (norm := abel) -h3
     refine ⟨h1, fun g => decb _ (fun h hh => ?_) ⟨γD (r g) y - y, ?_⟩⟩
     · have h2 := h1 (h * g) g (by rw [map_mul, hh, one_mul])
       have h3 := h0 h hh
       rw [hc, hmul] at h2
-      rw [map_add, map_sub]
+      rw [map_add (f := _), map_sub]
       linear_combination (norm := abel) h2 - h3
     · rw [map_sub, hjγ, ← hb]
-      simp only [map_add, map_sub, hφ, hcφ]
+      simp only [map_add (f := _), map_sub, hφ, hcφ]
       abel
   obtain ⟨d, hd, y₁, hy₁⟩ := deca (φ (-b₀) - (-b₀)) (fun g hg => by
     have h1 := hcφ g
@@ -71,7 +75,7 @@ theorem exists_pair (a : G → M →ₗ[O] M) (hmul : ∀ g h x, a (g * h) x = a
   set m : D := u • ∑ δ ∈ Δ, e (s δ) with hm
   have hcoc : ∀ g h, j (e (g * h)) = j (e g) + a g (j (e h)) := by
     intro g h
-    rw [he, he, he, hc, hmul, map_add, map_sub]; abel
+    rw [he, he, he, hc, hmul, map_add (f := _), map_sub]; abel
   have hav : ∀ g, r g ∈ Δ → a g (j m) - j m = -j (e g) := by
     intro g hg
     have h1 : ∑ δ ∈ Δ, j (e (g * s δ)) = ∑ δ ∈ Δ, j (e (s δ)) := by
@@ -84,7 +88,8 @@ theorem exists_pair (a : G → M →ₗ[O] M) (hmul : ∀ g h x, a (g * h) x = a
         rw [he, he]
         exact k1 _ _ (by rw [map_mul, hs δ hδ, hs _ (hΔm _ hg _ hδ)])
     simp only [hcoc, Finset.sum_add_distrib, Finset.sum_const] at h1
-    rw [hm, map_smul, map_smul, map_sum, map_sum, ← smul_sub,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_smul, map_smul, map_sum, map_sum, ← smul_sub,
       show ∑ δ ∈ Δ, a g (j (e (s δ))) - ∑ δ ∈ Δ, j (e (s δ)) = -(Δ.card • j (e g)) by
         rw [← h1]; abel,
       smul_neg, ← Nat.cast_smul_eq_nsmul O, smul_smul, hu, one_smul]
@@ -92,10 +97,10 @@ theorem exists_pair (a : G → M →ₗ[O] M) (hmul : ∀ g h x, a (g * h) x = a
     intro g hg
     have h1 := hav g hg
     rw [he] at h1
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination (norm := abel) h1
   have hb₂ : φ (b₁ + j m) - (b₁ + j m) = j (y₁ + (φD m - m)) := by
-    rw [map_add, map_add, map_sub, hjφ, ← hb₁]; abel
+    rw [map_add (f := _), map_add (f := _), map_sub, hjφ, ← hb₁]; abel
   have hker : ∀ g, r g = 1 → c g + (a g (b₁ + j m) - (b₁ + j m)) = 0 := by
     intro g hg
     have h1 := hjγ g m
@@ -113,19 +118,19 @@ theorem exists_pair (a : G → M →ₗ[O] M) (hmul : ∀ g h x, a (g * h) x = a
   obtain ⟨z, hzz⟩ := k4 g₀
   refine ⟨y, z, b, hb₂, hj ?_, fun δ hδ => ⟨hj ?_, hj ?_⟩, fun g hg => ?_, fun g hg => ?_⟩
   · rw [map_sub, map_sub, ← hg₀, hjγ, hjφ, hzz, ← hb₂]
-    simp only [map_add, map_sub, hφ, hcφ]
+    simp only [map_add (f := _), map_sub, hφ, hcφ]
     abel
   · have h1 := hz (s δ) (by rw [hs δ hδ]; exact hδ)
     have h2 := congrArg φ h1
     rw [← hs δ hδ, hjγ, ← hb₂]
-    simp only [map_add, map_sub, hφ, hcφ, map_zero] at h2 ⊢
+    simp only [map_add (f := _), map_sub, hφ, hcφ, map_zero] at h2 ⊢
     linear_combination (norm := abel) h2 - h1
   · have h1 := hz (s δ) (by rw [hs δ hδ]; exact hδ)
     have h2 := congrArg (a g₀) h1
     have h3 := k3 (s δ * g₀) (g₀ * s δ) (by rw [map_mul, map_mul, mul_comm])
     rw [hc, hc, hmul, hmul] at h3
     rw [← hs δ hδ, hjγ, hzz]
-    simp only [map_add, map_sub, map_zero] at h2 ⊢
+    simp only [map_add (f := _), map_sub, map_zero] at h2 ⊢
     linear_combination (norm := abel) h3 + h2 - h1
   · linear_combination (norm := abel) hz g hg
   · rw [hzz, ← k3 g g₀ (by rw [hg, hg₀])]; abel
@@ -142,16 +147,16 @@ theorem exists_of_coboundary (a : G → M →ₗ[O] M) (φ : M →ₗ[O] M)
     ∃ m, (∀ δ ∈ Δ, γD δ m = m) ∧ y = φD m - m ∧ z = γD γ m - m := by
   have hf : ∀ g, r g ∈ Δ → a g (b + t) = b + t := by
     intro g hg
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination (norm := abel) h1 g hg
-  have hy : φ (b + t) - (b + t) = j y := by rw [map_add, ht, ← hb]; abel
+  have hy : φ (b + t) - (b + t) = j y := by rw [map_add (f := _), ht, ← hb]; abel
   obtain ⟨m, hm⟩ := decb (b + t) (fun g hg => hf g (hg ▸ h1Δ)) ⟨y, hy.symm⟩
   obtain ⟨g₀, hg₀⟩ := hγ
   refine ⟨m, fun δ hδ => hj ?_, hj ?_, hj ?_⟩
   · obtain ⟨g, rfl⟩ := hl δ hδ
     rw [hjγ, hm, hf g hδ]
   · rw [map_sub, hjφ, hm, hy]
-  · rw [map_sub, ← hg₀, hjγ, hm, map_add]
+  · rw [map_sub, ← hg₀, hjγ, hm, map_add (f := _)]
     linear_combination (norm := abel) -(h2 g₀ hg₀)
 
 end Algebra
@@ -206,7 +211,7 @@ theorem act_mul (hmul : ∀ g h x, S.gR (g * h) x = S.gR g (S.gR h x))
     TWact (S.gR (g * h)) T (g * h) x = TWact (S.gR g) T g (TWact (S.gR h) T h x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul w t =>
     simp only [TWact, TensorProduct.map_tmul, AlgHom.toLinearMap_apply, hmul]
     congr 1
@@ -219,7 +224,7 @@ theorem phi_act (hφ : ∀ g x, S.φR (S.gR g x) = S.gR g (S.φR x))
     TWmap S.φR T (TWact (S.gR g) T g x) = TWact (S.gR g) T g (TWmap S.φR T x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul w t => simp [TWact, TWmap, hφ]
 
 theorem one_tmul_inj (hinj : Function.Injective (algebraMap S.O S.RW))
@@ -368,13 +373,13 @@ theorem clK_natural (E : S.Comparison₂) (hinj : Function.Injective (algebraMap
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul w t => simp [hFd, TWmap]
   have hFg : ∀ g x, TWact (S.gR g) T' g (F x) = F (TWact (S.gR g) T g x) := by
     intro g x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul w t =>
       simp only [hFd, TWact, TensorProduct.map_tmul, LinearMap.id_apply]
       congr 1
@@ -576,7 +581,7 @@ theorem v_le_iff (P : LocPrime l) (LL : FinExt l) (x y : ℚ_[l]) :
     intro z
     rw [P.v_O]
     change IsIntegral ℤ_[l] (algebraMap ℚ_[l] ↥LL.1 z) ↔ _
-    rw [isIntegral_algebraMap_iff (algebraMap ℚ_[l] ↥LL.1).injective,
+    rw [isIntegral_algebraMap_iff ,
       IsIntegrallyClosed.isIntegral_iff]
     exact ⟨fun ⟨w, hw⟩ => hw ▸ w.2, fun h => ⟨⟨z, h⟩, rfl⟩⟩
   by_cases hx : x = 0
@@ -621,7 +626,7 @@ theorem map_id_comm {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algebra Z O]
@@ -630,7 +635,7 @@ theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem gRW_mul {P : LocPrime l} (AI : LocAinf l P) (LL : FinExt l) (g h : GQ l) (x : RW LL) :
@@ -717,8 +722,8 @@ theorem mem_herrCocycles_of_eq {O D : Type} [CommRing O] [AddCommGroup D] [Modul
     (y z : D) (h : γ y - y = φ z - z) : (y, z) ∈ herrCocycles γ φ := by
   simp [herrCocycles, h]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem herr_a : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW), adm9 D HW F → ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l) (h : Good K s LL), let S := sit D.loc HW l (D.locA l) K s LL h; let E : S.Comparison₂ := ((F l).E K s LL h).tie; HerrAat S ∧ HerrAsat S := by
   intro D HW F h9 l _ K s LL h S E
   obtain ⟨hF, hD⟩ := h9 l K s LL h

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtendByZeroTargetTensorRowProduct
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceDatumCarriedBackToBaseVacuum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNsmulHalf
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ScaledFiniteMatrixMemLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatIndLastKerRow
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExtendByZeroTargetTensorRowProduct
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceDatumCarriedBackToBaseVacuum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsNsmulHalf
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ScaledFiniteMatrixMemLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw ValuativeRel IsLocalRing
 open GlobalTheory.IndefiniteRowSideFullHecke.AppendedVectorData (lastKer lastPair cosetInd withRow)
@@ -21,7 +26,7 @@ variable {D : D7}
 theorem exists_nsmul_mulVec {m m' : ℕ} (M : Matrix (Fin m') (Fin m) D.host.E)
     {L : Submodule (NumberField.RingOfIntegers D.host.E) (Fin m → D.host.E)}
     {L' : Submodule (NumberField.RingOfIntegers D.host.E) (Fin m' → D.host.E)} (hL : L.FG)
-    (hL' : Submodule.IsLattice D.host.E L') : ∃ N : ℕ, 0 < N ∧ ∀ t ∈ L, N • M.mulVec t ∈ L' := by
+    (hL' : Submodule.IsFullLattice D.host.E L') : ∃ N : ℕ, 0 < N ∧ ∀ t ∈ L, N • M.mulVec t ∈ L' := by
   classical
   obtain ⟨s, rfl⟩ := hL
   choose N hN hm using fun t => GlobalTheory.VacUnique.Den.exists_nsmul_mem_lattice L' hL' (M.mulVec t)
@@ -36,8 +41,8 @@ theorem exists_nsmul_mulVec {m m' : ℕ} (M : Matrix (Fin m') (Fin m) D.host.E)
 
 theorem exists_nsmul_rat_mul (S : HSp D) {T T' : HSp D} (M : Matrix (Fin T'.rank) (Fin T.rank) D.host.E)
     (LS : Set (Fin S.rank → D.host.E)) {L : Lat T} {L' : Lat T'} (hL : L.FG)
-    (hL' : Submodule.IsLattice D.host.E L') (P : Pl D → Prop) :
-    ∃ N : ℕ, 0 < N ∧ ∀ u ∈ latO S T LS (L : Set _) P, N • (rat M ⬝ u : WO S T') ∈ latO S T' LS (L' : Set _) P := by
+    (hL' : Submodule.IsFullLattice D.host.E L') (P : Pl D → Prop) :
+    ∃ N : ℕ, 0 < N ∧ ∀ u ∈ latO S T LS (L : Set _) P, N • (rat M * u : WO S T') ∈ latO S T' LS (L' : Set _) P := by
   obtain ⟨N, hN, h⟩ := exists_nsmul_mulVec M hL hL'
   refine ⟨N, hN, fun u hu => ?_⟩
   induction hu using AddSubgroup.closure_induction with
@@ -62,14 +67,25 @@ theorem exists_nsmul_rat_mul (S : HSp D) {T T' : HSp D} (M : Matrix (Fin T'.rank
   | neg x _ hx => rw [Matrix.mul_neg, neg_nsmul]; exact neg_mem hx
 
 theorem isLattice_span {L : HSp D} {ζ : Fin L.rank → D.host.E} (h : IsLineVec L ζ) :
-    Submodule.IsLattice D.host.E (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) := by
-  refine ⟨Submodule.fg_span_singleton ζ, ?_⟩
-  have h0 : ζ ≠ 0 := fun h0 => h.2 (by simp [h0])
+    Submodule.IsFullLattice D.host.E (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) := by
+  haveI : Submodule.IsLattice D.host.E (Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ} : Lat L) :=
+    Submodule.IsLattice.of_fg D.host.E (Submodule.fg_span_singleton ζ)
+  refine ⟨?_⟩
   rw [Submodule.span_span_of_tower]
-  have hr : Module.finrank D.host.E (Fin L.rank → D.host.E) = 1 := by simp [h.1]
-  exact (finrank_eq_one_iff_of_nonzero ζ h0).1 hr
+  apply eq_top_iff.mpr
+  intro v _
+  let j : Fin L.rank := ⟨0, by have := h.1; omega⟩
+  have hs : Subsingleton (Fin L.rank) := by rw [h.1]; infer_instance
+  have hj : ζ j ≠ 0 := fun hz => h.2 (by
+    have : ζ = 0 := funext fun i => by rw [Subsingleton.elim i j, hz]; rfl
+    rw [this, Matrix.mulVec_zero, dotProduct_zero])
+  apply Submodule.mem_span_singleton.mpr
+  refine ⟨v j / ζ j, ?_⟩
+  funext i
+  rw [Subsingleton.elim i j]
+  simp [Pi.smul_apply, smul_eq_mul, div_mul_cancel₀ _ hj]
 
-theorem isHalf_mul {l m n : ℕ} {e : AE D} (M : Mx D l m) {u : Mx D m n} (hu : IsHalf e u) : IsHalf e (M ⬝ u : Mx D l n) :=
+theorem isHalf_mul {l m n : ℕ} {e : AE D} (M : Mx D l m) {u : Mx D m n} (hu : IsHalf e u) : IsHalf e (M * u : Mx D l n) :=
   fun i j => by
     rw [Matrix.mul_apply, Finset.mul_sum]
     exact Finset.sum_congr rfl fun a _ => by rw [mul_left_comm, hu a j]
@@ -86,7 +102,7 @@ def boxMap (o : OrthDec X T L) (S : HSp D) (T₂ : (WO S T → ℂ) →ₗ[ℂ] 
           fun w => T₂ (fun x => Φ' ((o.resT S).symm (x, w))) (o.resT S z).1 := by
       funext w
       exact congrFun (T₂.map_add (fun x => Φ ((o.resT S).symm (x, w))) fun x => Φ' ((o.resT S).symm (x, w))) _
-    rw [this, map_add]; rfl
+    rw [this, map_add (f := _)]; rfl
   map_smul' c Φ := by
     funext z
     have : (fun w => T₂ (fun x => (c • Φ) ((o.resT S).symm (x, w))) (o.resT S z).1) =
@@ -134,7 +150,7 @@ structure Near (o : OrthDec X T L) (ΛX : AddSubgroup (WO S X)) (ΛT : AddSubgro
   inr : ∀ u ∈ ΛL, N • (o.resT S).symm (0, u) ∈ ΛX
 
 theorem exists_near (o : OrthDec X T L) (LS : Set (Fin S.rank → D.host.E)) {LX : Lat X} {LT : Lat T} {LL : Lat L}
-    (hX : Submodule.IsLattice D.host.E LX) (hT : Submodule.IsLattice D.host.E LT) (hL : Submodule.IsLattice D.host.E LL)
+    (hX : Submodule.IsFullLattice D.host.E LX) (hT : Submodule.IsFullLattice D.host.E LT) (hL : Submodule.IsFullLattice D.host.E LL)
     (P : Pl D → Prop) :
     ∃ N, Near o (latO S X LS (LX : Set _) P) (latO S T LS (LT : Set _) P) (latO S L LS (LL : Set _) P) N := by
   obtain ⟨a, ha, h1⟩ := exists_nsmul_rat_mul S o.qA LS hX.fg hT P
@@ -158,11 +174,11 @@ variable {o : OrthDec X T L} {ΛX : AddSubgroup (WO S X)} {ΛT : AddSubgroup (WO
 
 theorem symm_add_left (o : OrthDec X T L) (x u : WO S T) (w : WO S L) (K : ℕ) :
     (o.resT S).symm (x + K • u, w) = (o.resT S).symm (x, w) + K • (o.resT S).symm (u, 0) := by
-  rw [← map_nsmul, ← map_add, Prod.smul_mk, Prod.mk_add_mk, nsmul_zero, add_zero]
+  rw [← map_nsmul, ← map_add (f := _), Prod.smul_mk, Prod.mk_add_mk, nsmul_zero, add_zero]
 
 theorem symm_add_right (o : OrthDec X T L) (x : WO S T) (w u : WO S L) (K : ℕ) :
     (o.resT S).symm (x, w + K • u) = (o.resT S).symm (x, w) + K • (o.resT S).symm (0, u) := by
-  rw [← map_nsmul, ← map_add, Prod.smul_mk, Prod.mk_add_mk, nsmul_zero, add_zero]
+  rw [← map_nsmul, ← map_add (f := _), Prod.smul_mk, Prod.mk_add_mk, nsmul_zero, add_zero]
 
 theorem sb_slice_left (h : Near o ΛX ΛT ΛL N) {Φ : WO S X → ℂ} (hΦ : IsSBHalf e ΛX Φ) (w : WO S L) :
     IsSBHalf e ΛT fun x => Φ ((o.resT S).symm (x, w)) := by
@@ -209,7 +225,7 @@ theorem sb_boxT (h : Near o ΛX ΛT ΛL N) {φ : WO S T → ℂ} {φ' : WO S L �
   · rw [← (o.resT S).symm_apply_apply t]
     exact half_symm o (a1 _ (left_ne_zero_of_mul ht)) (b1 _ (right_ne_zero_of_mul ht))
   · simp only [OrthDec.boxT]
-    rw [map_add, map_nsmul, Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd]
+    rw [map_add (f := _), map_nsmul, Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd]
     congr 1
     · rw [show N * a * b = N * b * a by ring, mul_nsmul, mul_nsmul]
       exact a2 _ (nsmul_mem (h.fst u hu) b)
@@ -220,7 +236,7 @@ theorem sb_boxT (h : Near o ΛX ΛT ΛL N) {φ : WO S T → ℂ} {φ' : WO S L �
   · have p1 := h.inl _ (nsmul_mem (a3 _ (left_ne_zero_of_mul ht)) b)
     have p2 := h.inr _ (nsmul_mem (b3 _ (right_ne_zero_of_mul ht)) a)
     have := add_mem p1 p2
-    rw [← nsmul_add, ← map_add, Prod.mk_add_mk, add_zero, zero_add, ← mul_nsmul, ← mul_nsmul, mul_comm b a,
+    rw [← nsmul_add, ← map_add (f := _), Prod.mk_add_mk, add_zero, zero_add, ← mul_nsmul, ← mul_nsmul, mul_comm b a,
       ← Prod.smul_mk, map_nsmul, Prod.mk.eta, AddEquiv.symm_apply_apply, ← mul_nsmul'] at this
     rwa [mul_assoc]
 
@@ -240,12 +256,12 @@ theorem isPlaceModel_boxMap {ψ : AddChar (AF D.host.F) ℂ} (h : Near o ΛX ΛT
           fun x' => (fun x' => Φ ((o.resT S).symm (x', w + (o.resT S x).2))) (x' + (o.resT S x).1) := by
         funext x'
         show _ = Φ ((o.resT S).symm ((x', w) + o.resT S x))
-        rw [map_add, AddEquiv.symm_apply_apply]
+        rw [map_add (f := _), AddEquiv.symm_apply_apply]
       rw [e2, h₂.trans _ (sb_slice_left h hΦ _) _ (half_fst o hx)]
       rfl
     rw [e1, map_smul, h₃.trans _ (sb_slice_right h hΦ T₂ _) _ (half_snd o hx)]
     simp only [heisO, Pi.smul_apply, smul_eq_mul]
-    rw [boxMap_apply, o.symplOH_resT, AddChar.map_add_eq_mul, map_add, Prod.fst_add, Prod.snd_add, mul_assoc]
+    rw [boxMap_apply, o.symplOH_resT, AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add, Prod.snd_add, mul_assoc]
   · funext z
     rw [boxMap_apply]
     have e1 : (fun w => T₂ (fun x' => ψ (symplO S X ((o.resT S).symm (x', w)) y) * Φ ((o.resT S).symm (x', w)))
@@ -265,7 +281,7 @@ theorem isPlaceModel_boxMap {ψ : AddChar (AF D.host.F) ℂ} (h : Near o ΛX ΛT
       ring
     rw [e1, map_smul, h₃.modul _ (sb_slice_right h hΦ T₂ _) _ (half_snd o hy)]
     simp only [heisO, Pi.smul_apply, smul_eq_mul]
-    rw [boxMap_apply, o.symplOH_resT, AddChar.map_add_eq_mul, map_add, Prod.fst_add, Prod.snd_add, mul_assoc]
+    rw [boxMap_apply, o.symplOH_resT, AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add, Prod.snd_add, mul_assoc]
 
 end Slices
 
@@ -275,13 +291,13 @@ theorem isTheta_comb {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)
   exact Finset.sum_induction _ (IsThetaFunO ψ S X) (fun _ _ => GlobalTheory.WeilVacMove.isTheta_add) GlobalTheory.WeilVacMove.isTheta_zero
     fun u _ => GlobalTheory.WeilVacMove.isTheta_smul _ (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hf u)
 
-open GlobalTheory.PlaceModel GlobalTheory.PlaceDatum GlobalTheory.FinPl.OverProof in
 
+open GlobalTheory.PlaceModel GlobalTheory.PlaceDatum GlobalTheory.FinPl.OverProof in
 theorem over_boxT : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (p : SplitPt D k) (n n'' : Type) [Fintype n] [DecidableEq n] [Fintype n''] [DecidableEq n''] (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → p.UnitAA → ∀ (S X T L'' : HSp D) (o'' : OrthDec X T L'') (ζ₀ : Fin L''.rank → D.host.E), IsLineVec L'' ζ₀ → ∀ (β : Frame p S n) (γ : Frame p T n'') (γ₀ : Frame p X (n'' ⊕ Fin 1)), IsSumFrame o'' ζ₀ γ γ₀ → ∀ (LS : Lat S) (LT : Lat T) (LX : Lat X), IsSelfDualC S LS → IsSelfDualC T LT → IsSelfDualC X LX → ∀ (f₂ F₂ : WO S T → ℂ) (Ψ₂ : Matrix n'' n k → ℂ), Over ψ β γ LS LT f₂ Ψ₂ F₂ → ∀ (b : (n → k) → ℂ) (g₃ : WO S L'' → ℂ) (T₃ : (WO S L'' → ℂ) →ₗ[ℂ] (WO S L'' → ℂ)), IsThetaFunO ψ S L'' g₃ → IsPlaceModel ψ (symplO S L'') (heisO ψ S L'') p.e (latO S L'' (LS : Set _) ((Submodule.span (NumberField.RingOfIntegers D.host.E) {ζ₀} : Lat L'') : Set _) (· = p.v)) 1 g₃ T₃ → GlobalTheory.FinPl.tensRow Ψ₂ b ∈ SB (Matrix (n'' ⊕ Fin 1) n k) → ∃ g, Over ψ β γ₀ LS LX g (GlobalTheory.FinPl.tensRow Ψ₂ b) (o''.boxT S F₂ (T₃ (rowFun β ζ₀ b))) := by
   intro D k _ _ _ _ p n n'' _ _ _ _ ψ hψ _ S X T L o ζ hζ β γ γ₀ hγ LS LT LX hS hT hX f₂ F₂ Ψ₂ hO b g₃ T₃ hg₃ h₃ hSB
   obtain ⟨T₂, h₂⟩ := hO.2.2.2.2.1
   have hF : F₂ = T₂ (extFun β γ Ψ₂) := hO.2.2.2.2.2 T₂ h₂
-  obtain ⟨N, hN⟩ := exists_near (S := S) o (LS : Set _) hX.1 hT.1 (isLattice_span hζ) (· = p.v)
+  obtain ⟨N, hN⟩ := exists_near (S := S) o (LS : Set _) (GlobalTheory.ProjXCols.selfDual_isFullLattice X LX hX) (GlobalTheory.ProjXCols.selfDual_isFullLattice T LT hT) (isLattice_span hζ) (· = p.v)
   have h₀ := isPlaceModel_boxMap hN h₂ h₃
   obtain ⟨ε, hε, heq⟩ := p.above
   have hs := p.split
@@ -291,7 +307,9 @@ theorem over_boxT : ∀ (D : D7) (k : Type) [Field k] [ValuativeRel k] [Topologi
   obtain ⟨hLL', hXX, -, hfin, hden⟩ := dualPair hψ hS hX hs hε heq
   have hdX : ∀ x ∈ half S X p.e, ∃ k : ℕ, 0 < k ∧ k • x ∈ latO S X (LS : Set _) (LX : Set _) (· = p.v) := by
     intro x hx
-    obtain ⟨k, hk, hkx⟩ := exists_nsmul_mem_latO' hS.1 hX.1 x (infPart_half hε heε hx)
+    obtain ⟨k, hk, hkx⟩ := exists_nsmul_mem_latO'
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hS)
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ hX) x (infPart_half hε heε hx)
     refine ⟨k, hk, ?_⟩
     have := (idem_smul_mem hε he heε hkx).1
     rwa [smul_comm, (mem_half S X).1 hx] at this

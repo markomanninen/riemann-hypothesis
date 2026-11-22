@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ResidualIrreducibilityFormsEquivalent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoAndThreeForFamily
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.AutomorphicGaloisAdmissible
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ResidualIrreducibilityFormsEquivalent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BoundAtTwoAndThreeForFamily
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.StepJumpDirect
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.AutomorphicGaloisAdmissible
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,26 +16,6 @@ open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotion
 def CutRec (D : D7) : Prop :=
   ∀ i : D.nd.Loc, ∀ P : D.naut.AV i, D.naut.ptV i P ≠ none →
     ∀ (k : Fin 2), ∀ w ∈ placesOver D.host.E (D.host.g k), UpperTheory.GalS.Nc D.nd D.naut (D.naut.locV i P w)
-
-structure Pre (D : D7) (C : NChoice D) : Prop where
-  what₂ : GlobalTheory.NRows.Rows D
-  adm : SumRepresentations.admitted D
-  Conclusion1 : SumRepresentations.Conclusion1 D
-  z : SumRepresentations.ConclusionZ D
-  rhoBar : ResidualIrreducibleRankR D
-  g3p : AdmissibleThreePrime.LabelDegreeHypotheses D
-  weight : GlobalTheory.IndefiniteRowSideFullHecke.JumpDictionary.WeightParam D
-  block : GlobalTheory.IndefiniteRowSideFullHecke.JumpDictionary.BlockCharParam D
-  muUnr : GlobalTheory.HubX.MuUnr D
-  depthG : GlobalTheory.HubX.DepthZeroG D
-  bc : SphericalInertData.Conclusion1 D
-  lam : GlobalTheory.NRows.LamUsed D
-  c2 : KillingConditions.LocalisationUniqueness D
-  large : GlobalTheory.CoefDuty.Large D
-  nct : NChTie D C
-  trip : GlobalTheory.PtCore.TriplesGood D
-  same : GlobalTheory.PtCore.SameTwist D C
-  good : GoodFTAll D
 
 def Tie4 (D : D7) : Prop :=
   PairedCharacterCondition.tieChi (D := D) ∧ (∃ Q : PairedCharacterCondition.Pend D, PairedCharacterCondition.admDZ Q ∧ GlobalTheory.Pass.EigSpan Q) ∧ GlobalTheory.Pass.TieInePoly D ∧ GlobalTheory.TypeLeaf.SerLoc D

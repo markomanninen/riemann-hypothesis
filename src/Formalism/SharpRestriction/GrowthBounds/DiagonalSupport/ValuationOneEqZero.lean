@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LevImgCoeffBigM
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.LevImgCoeffBigM
+
+@[expose] public section
 
 noncomputable section
 

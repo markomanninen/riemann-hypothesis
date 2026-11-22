@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsAmple
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsAmpleAffine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsAmple
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsAmpleAffine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

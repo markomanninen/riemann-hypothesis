@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {D : D7} {u : D.what₂.Word} {w : D.what₂.places.Pl}
   {T : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
   (S : StepLevel D.host.F D.host.E (sigD D) (gramN D (i + 1) hi) T D.R.f bad)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem chiUnit_of (hU : SameUlocJ hi S Uloc) (e : D.what₂.LL →+* (D.gat u w hg).Kf) (hψ : UnitCharacterChartCompatibility hi S e ψ)
     (hbad : ∀ w' ∈ bad, ((D.what₂.places.resChar w : ℕ) : 𝓞 D.host.F) ∉ w'.asIdeal)
     (hR0 : ∀ x, x ∈ intW D.what₂.places w ↔ e x ∈ Set.range (algebraMap (D.gat u w hg).O (D.gat u w hg).Kf)) (κ : S.U) :

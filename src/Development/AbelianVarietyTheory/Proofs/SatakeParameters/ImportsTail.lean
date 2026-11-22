@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.SatakeDualWeyl.StatementF
+module
+
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.SatakeDualWeyl.StatementF
+
+@[expose] public section
 
 namespace GlobalTheory.MatrixEntryBound
 

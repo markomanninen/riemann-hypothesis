@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegrableMulInner
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,12 +41,14 @@ theorem lower_bound_of_cyclic_coef : ∀ {Γ : Type} [Group Γ] [TopologicalSpac
     set z : B := c.sum fun y t => starRingEnd ℂ t • ρ y⁻¹ v with hz
     have h1' : ⟪v, i (c.sum fun x t => t • σ x w₀)⟫_ℂ = ⟪z, i w₀⟫_ℂ := by
       rw [hz]
-      simp only [Finsupp.sum, map_sum, map_smul, inner_sum, sum_inner, inner_smul_right,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finsupp.sum, map_sum, map_smul, inner_sum, sum_inner, inner_smul_right,
         inner_smul_left, hi', hadj, Complex.conj_conj, RCLike.conj_conj, starRingEnd_self_apply]
     have h2' : ⟪c.sum fun x t => t • σ x w₀, T (c.sum fun x t => t • σ x w₀)⟫_ℂ =
         starRingEnd ℂ ⟪z, E z⟫_ℂ := by
       rw [hz]
-      simp only [Finsupp.sum, map_sum, map_smul, inner_sum, sum_inner, inner_smul_right,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finsupp.sum, map_sum, map_smul, inner_sum, sum_inner, inner_smul_right,
         inner_smul_left, hTE', map_mul, Complex.conj_conj, RCLike.conj_conj, starRingEnd_self_apply]
     rw [Set.mem_setOf_eq, h1', h2', Complex.conj_re]
     exact hE z

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Objects
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsSemipositiveOn
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -217,7 +222,8 @@ theorem mapC_d (φ : ∀ I, G I →ₗ[R] G' I) (hφ : ∀ I J h m, φ J (ρ I J
   funext J
   rw [d_apply]
   change φ J.1 (d G ρ i s J) = _
-  rw [d_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [d_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul, hφ]
   rfl
@@ -260,7 +266,6 @@ variable {M : Type v} [AddCommGroup M] [Module (Poly S N) M] [Module S M]
 abbrev StdCell (N : ℕ) : Type := Cell (Finset.univ : Finset (Fin (N + 1)))
 
 variable (S N M) in
-
 abbrev locSys : StdCell N → Type (max u v) := fun I => LocMod S N M I.1
 
 def locResS (I J : StdCell N) (h : I.1 ⊆ J.1) : LocMod S N M I.1 →ₗ[S] LocMod S N M J.1 :=
@@ -275,12 +280,11 @@ def cohom (𝓜 : GradedPMod S N M) (i : ℕ) (c : ℤ) : Type (max u v) :=
   Cech.Hdeg (locSys S N M) (degLoc 𝓜 c) locResS i
 
 instance (𝓜 : GradedPMod S N M) (i : ℕ) (c : ℤ) : AddCommGroup (cohom 𝓜 i c) :=
-  inferInstanceAs (AddCommGroup (Cech.Hdeg _ _ _ _))
+  inferInstanceAs (AddCommGroup (Cech.Hdeg (locSys S N M) (degLoc 𝓜 c) locResS i))
 instance (𝓜 : GradedPMod S N M) (i : ℕ) (c : ℤ) : Module S (cohom 𝓜 i c) :=
-  inferInstanceAs (Module S (Cech.Hdeg _ _ _ _))
+  inferInstanceAs (Module S (Cech.Hdeg (locSys S N M) (degLoc 𝓜 c) locResS i))
 
 variable (M) in
-
 def locMk (I : Finset (Fin (N + 1))) : M →ₗ[Poly S N] LocMod S N M I :=
   LocalizedModule.mkLinearMap (monos (S := S) I) M
 
@@ -300,9 +304,6 @@ theorem constCochain_mem (𝓜 : GradedPMod S N M) (c : ℤ) (m : M) (hm : m ∈
 def toH0 (𝓜 : GradedPMod S N M) (c : ℤ) : 𝓜.piece c →ₗ[S] cohom 𝓜 0 c :=
   (Submodule.mkQ _).comp
     ((constCochain.comp (𝓜.piece c).subtype).codRestrict _ fun m => constCochain_mem 𝓜 c m m.2)
-
-def dP : Cech.Cochain (locSys S N M) 0 →ₗ[Poly S N] Cech.Cochain (locSys S N M) 1 :=
-  Cech.d (locSys S N M) (fun _ _ h => locRes h) 0
 
 variable {M' : Type w} [AddCommGroup M'] [Module (Poly S N) M'] [Module S M']
   [IsScalarTower S (Poly S N) M']
@@ -325,7 +326,8 @@ theorem locMap_mk (f : M →ₗ[Poly S N] M') (I : Finset (Fin (N + 1))) (m : M)
 
 def cohomMap {𝓜 : GradedPMod S N M} {𝓜' : GradedPMod S N M'} (f : GradedHom 𝓜 𝓜') (i : ℕ)
     (c : ℤ) : cohom 𝓜 i c →ₗ[S] cohom 𝓜' i c :=
-  Cech.mapHdeg (degLoc 𝓜 c) (degLoc 𝓜' c) (fun I => (locMap f.toLin I.1).restrictScalars S)
+  Cech.mapHdeg (ρ := locResS) (ρ' := locResS)
+    (degLoc 𝓜 c) (degLoc 𝓜' c) (fun I => (locMap f.toLin I.1).restrictScalars S)
     (fun I J h x => by
       induction x using LocalizedModule.induction_on with
       | h m s =>
@@ -355,7 +357,8 @@ theorem coneGen_of_isHomogeneous {σ : Type*} (y : σ → Ω) {g : MvPolynomial 
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  simp only [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hdeg : ∑ i ∈ s.support, s i = d := by
     have := hg (mem_support_iff.mp hs)
@@ -373,10 +376,11 @@ theorem coneGen_homogeneousComponent {σ : Type*} (y : σ → Ω) {g : MvPolynom
   · have hsum : coneGen y g = ∑ i ∈ Finset.range (g.totalDegree + 1),
         Polynomial.C (aeval y (homogeneousComponent i g)) * Polynomial.X ^ i := by
       conv_lhs => rw [← sum_homogeneousComponent g]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun i _ =>
         coneGen_of_isHomogeneous y (homogeneousComponent_isHomogeneous i g)
-    have hc := congrArg (fun p => Polynomial.coeff p d) hsum
+    have hc := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p d) hsum
     simp only [hg, Polynomial.coeff_zero, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
       Finset.sum_ite_eq, Finset.mem_range, hd, if_true] at hc
     rw [← hc, map_zero, zero_mul]
@@ -388,13 +392,9 @@ def cone : Poly S N →ₐ[S] Polynomial Ω := ReciprocityTheory.ChartRestrictio
 
 theorem cone_eq : cone (S := S) x = coneGen x := rfl
 
-def coordRing : Subalgebra S (Polynomial Ω) := ReciprocityTheory.ChartRestriction.G.Geo.coneRing S x
-
 def primeOf : Ideal (Poly S N) := ReciprocityTheory.ChartRestriction.G.Geo.coordIdeal S x
 
 theorem primeOf_eq : primeOf (S := S) x = RingHom.ker (cone (S := S) x) := rfl
-
-theorem coordRing_eq : coordRing (S := S) x = (cone (S := S) x).range := rfl
 
 instance : (primeOf (S := S) x).IsPrime := by rw [primeOf_eq]; exact RingHom.ker_isPrime _
 
@@ -407,7 +407,7 @@ theorem mem_primeOf_of_isHomogeneous {f : Poly S N} {d : ℕ} (hf : f.IsHomogene
   rw [primeOf_eq, RingHom.mem_ker, cone_of_isHomogeneous x hf]
   constructor
   · intro h
-    have := congrArg (fun p => Polynomial.coeff p d) h
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p d) h
     simpa only [Polynomial.coeff_C_mul_X_pow, if_true, Polynomial.coeff_zero] using this
   · intro h; rw [h, map_zero, zero_mul]
 
@@ -415,19 +415,20 @@ theorem homogeneousComponent_mem_primeOf {f : Poly S N} (hf : f ∈ primeOf x) (
     homogeneousComponent d f ∈ primeOf x :=
   coneGen_homogeneousComponent x hf d
 
-open NumbersDVR in
 
-def oneBlock : MRing (fun _ : Unit => Fin (N + 1)) S →ₐ[S] Poly S N := rename fun v => v.2
+open NumbersDVR in
+def oneBlock : NumbersDVR.MRing (fun _ : Unit => Fin (N + 1)) S →ₐ[S] Poly S N :=
+  rename fun v => v.2
 
 def primeOfOne : Ideal (NumbersDVR.MRing (fun _ : Unit => Fin (N + 1)) S) :=
   (primeOf (S := S) x).comap (oneBlock (S := S) (N := N))
 
-open NumbersDVR in
 
-theorem isMultiProjPrime_primeOfOne (hx : x ≠ 0) : IsMultiProjPrime (primeOfOne (S := S) x) where
-  isPrime := Ideal.comap_isPrime _ _
-  multiHomog := by
-    classical
+open NumbersDVR in
+theorem isMultiProjPrime_primeOfOne (hx : x ≠ 0) :
+    IsMultiProjPrime (primeOfOne (S := S) x) := by
+  refine ⟨Ideal.comap_isPrime _ _, ?_, ?_⟩
+  · classical
     intro f hf b
     have hw : ∀ d : (Σ _ : Unit, Fin (N + 1)) →₀ ℕ,
         Finsupp.weight (blockWeight (fun _ : Unit => Fin (N + 1))) d = fun _ => d.degree := by
@@ -451,8 +452,7 @@ theorem isMultiProjPrime_primeOfOne (hx : x ≠ 0) : IsMultiProjPrime (primeOfOn
     rw [primeOf_eq, RingHom.mem_ker] at hf ⊢
     rw [oneBlock, cone_eq, coneGen, aeval_rename] at hf ⊢
     exact coneGen_homogeneousComponent (fun v : Σ _ : Unit, Fin (N + 1) => x v.2) hf _
-  relevant := by
-    intro k
+  · intro k
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hx
     refine ⟨i, ?_⟩
     change oneBlock (X _) ∉ primeOf x
@@ -488,7 +488,6 @@ theorem eval_ne_zero_of_mem_monos (I : Chart x) {s : Poly S N} (hs : s ∈ monos
   | mul a b _ _ ha hb => rw [map_mul]; exact mul_ne_zero ha hb
 
 variable (S x) in
-
 def chartRing (I : Chart x) : Subalgebra S Ω where
   carrier := {a | ∃ (f s : Poly S N) (e : ℕ), s ∈ monos I.1 ∧ f.IsHomogeneous e ∧
     s.IsHomogeneous e ∧ a = aeval x f / aeval x s}
@@ -502,13 +501,12 @@ def chartRing (I : Chart x) : Subalgebra S Ω where
     refine ⟨f * s' + s * f', s * s', e + e', mul_mem hs hs', (hf.mul hse').add (hse.mul hf'),
       hse.mul hse', ?_⟩
     rw [div_add_div _ _ (eval_ne_zero_of_mem_monos I hs) (eval_ne_zero_of_mem_monos I hs')]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
   zero_mem' := ⟨0, 1, 0, one_mem _, isHomogeneous_zero _ _ _, isHomogeneous_one _ _, by simp⟩
   algebraMap_mem' r := ⟨C r, 1, 0, one_mem _, isHomogeneous_C _ _, isHomogeneous_one _ _, by
     simp [aeval_C]⟩
 
 variable (S x) in
-
 def twistMod (c : ℤ) (I : Chart x) : Submodule (chartRing S x I) Ω :=
   Submodule.span _ {a | ∃ (f s : Poly S N) (e e' : ℕ), s ∈ monos I.1 ∧ f.IsHomogeneous e' ∧
     s.IsHomogeneous e ∧ (e' : ℤ) = e + c ∧ a = aeval x f / aeval x s}
@@ -523,7 +521,6 @@ def funField (x : Fin (N + 1) → Ω) : IntermediateField k Ω :=
   IntermediateField.adjoin k {a | ∃ i j, x i ≠ 0 ∧ a = x j / x i}
 
 variable (k) in
-
 def dimCl (x : Fin (N + 1) → Ω) : Cardinal := Algebra.trdeg k (funField (k := k) x)
 
 end Dim
@@ -540,7 +537,6 @@ def chartIncl {I J : Chart x} (h : I.1 ⊆ J.1) : chartRing S x I →ₐ[S] char
   Subalgebra.inclusion (chartRing_mono h)
 
 variable (S x) in
-
 structure Family where
 
   F : Chart x → Type v
@@ -566,15 +562,9 @@ attribute [instance] Family.grp Family.modA Family.modS Family.tower
 
 def Family.H (F : Family.{u, v, w} S x) (i : ℕ) : Type v := Cech.H F.F F.res i
 
-instance (F : Family.{u, v, w} S x) (i : ℕ) : AddCommGroup (F.H i) :=
-  inferInstanceAs (AddCommGroup (Cech.H _ _ _))
-instance (F : Family.{u, v, w} S x) (i : ℕ) : Module S (F.H i) :=
-  inferInstanceAs (Module S (Cech.H _ _ _))
-
 variable (E : Type v) [AddCommGroup E] [Module Ω E] [Module S E] [IsScalarTower S Ω E]
 
 variable (S x) in
-
 structure SubSystem where
 
   sub : ∀ I : Chart x, Submodule (chartRing S x I) E
@@ -616,7 +606,6 @@ def twist (F : SubSystem S x E) (Q : SubSystem S x Ω) : SubSystem S x E where
 end SubSystem
 
 variable (S x) in
-
 def twistSys (c : ℤ) : SubSystem S x Ω where
   sub I := twistMod S x c I
   mono I J h z hz := by
@@ -633,30 +622,14 @@ def SubSystem.pow (Q : SubSystem S x Ω) : ℕ → SubSystem S x Ω
   | n + 1 => (Q.pow n).twist Q
 
 variable (S x) in
-
 structure SubFamily extends SubSystem S x E where
   mem_iff : ∀ (I J : Chart x) (h : I.1 ⊆ J.1) (y : E), y ∈ sub J ↔
     ∃ a : chartRing S x I, IsUnit (chartIncl h a) ∧ (a : Ω) • y ∈ sub I
 
 variable (S x) in
-
 structure LineBundle extends SubFamily S x Ω where
   fg : ∀ I, (sub I).FG
   invertible : ∀ I, ∃ Q' : Submodule (chartRing S x I) Ω, sub I * Q' = 1
-
-def SubFamily.toFamily (F : SubFamily S x E) : Family.{u, v, w} S x where
-  F I := F.sub I
-  res := F.res
-  res_smul _ _ _ _ _ := rfl
-  res_self _ _ := rfl
-  res_comp _ _ _ _ _ _ := rfl
-  exists_smul_eq_res I J h y := by
-    obtain ⟨a, ha, hay⟩ := (F.mem_iff I J h y).mp y.2
-    exact ⟨a, ⟨(a : Ω) • (y : E), hay⟩, ha, rfl⟩
-  exists_smul_eq_zero I J h m hm := by
-    refine ⟨1, by simp, ?_⟩
-    have : (m : E) = 0 := congrArg Subtype.val hm
-    rw [one_smul]; exact Subtype.ext this
 
 structure FinGradedSub where
 
@@ -669,14 +642,12 @@ structure FinGradedSub where
       f.IsHomogeneous e ∧ (e : ℤ) + deg j = c ∧ z = aeval x f • gen j}
 
 variable {E} in
-
 def FinGradedSub.tilde (M : FinGradedSub (S := S) (x := x) E) (c : ℤ) (I : Chart x) :
     Submodule (chartRing S x I) E :=
   Submodule.span _ {y | ∃ (m : E) (s : Poly S N) (a : ℤ) (e : ℕ), s ∈ monos I.1 ∧
     s.IsHomogeneous e ∧ m ∈ M.piece a ∧ a - e = c ∧ y = (aeval x s)⁻¹ • m}
 
 variable {E} in
-
 def SubSystem.gam (F : SubSystem S x E) (c : ℤ) : Submodule S E := (F.twist (twistSys S x c)).secs
 
 end Families
@@ -695,7 +666,6 @@ theorem isWeightedHomogeneous_int_of_isHomogeneous {p : Poly S N} {d : ℕ} (hp 
   exact Finset.sum_congr rfl fun _ _ => nsmul_one _
 
 variable (S N) in
-
 def polyGraded : GradedPMod S N (Poly S N) where
   piece c := weightedHomogeneousSubmodule S (fun _ => (1 : ℤ)) c
   isInternal := by
@@ -764,7 +734,6 @@ theorem exists_isUnit_mul_mem {I J : Chart x} (h : I.1 ⊆ J.1) (b : chartRing S
     field_simp
 
 variable (S x) in
-
 def twistBundle (c : ℤ) : LineBundle S x :=
   { twistSys S x c with
     mem_iff := fun I J h y => by
@@ -865,7 +834,6 @@ def ampleBase {r : ℕ} (h : Fin (r + 1) → Ω) (j : Fin (r + 1)) : Subalgebra 
   Algebra.adjoin S (Set.range fun l => h l / h j)
 
 variable (S x) in
-
 structure AmpleData (H : LineBundle S x) where
 
   m : ℕ
@@ -917,88 +885,11 @@ variable (k : Type u) [Field k]
 
 def lineX : Fin (1 + 1) → RatFunc k := ![1, RatFunc.X]
 
-theorem lineX_ne_zero (i : Fin (1 + 1)) : lineX k i ≠ 0 := by
-  fin_cases i
-  · simp [lineX]
-  · simp [lineX, RatFunc.X_ne_zero]
-
-theorem support_lineX : support (lineX k) = Finset.univ := by
-  ext i
-  simp [mem_support, lineX_ne_zero]
-
-theorem isMultiProjPrime_line :
-    NumbersDVR.IsMultiProjPrime (primeOfOne (S := k) (lineX k)) :=
-  isMultiProjPrime_primeOfOne _ fun h => lineX_ne_zero k 0 (congrFun h 0)
-
-def tautologicalLineBundle : LineBundle k (lineX k) := twistBundle k (lineX k) 1
-
-def lineChart0 : Chart (lineX k) := singleChart (lineX_ne_zero k 0)
-
-theorem lineO1_chart_nontrivial : Nontrivial ((tautologicalLineBundle k).toSubFamily.toFamily.F (lineChart0 k)) := by
-  have h1 : (1 : RatFunc k) ∈ (tautologicalLineBundle k).sub (lineChart0 k) := by
-    have := mem_twistMod_one (S := k) (lineChart0 k) 0
-    change (1 : RatFunc k) ∈ twistMod k (lineX k) 1 (lineChart0 k)
-    simpa [lineX] using this
-  exact ⟨⟨⟨1, h1⟩, 0, fun e => one_ne_zero (congrArg Subtype.val e)⟩⟩
-
 end Line
 
 section Generic
 
 variable (k : Type u) [Field k] (N : ℕ)
-
-def genericPt : Fin (N + 1) → FractionRing (Poly k N) :=
-  fun i => algebraMap (Poly k N) (FractionRing (Poly k N)) (X i)
-
-theorem aeval_genericPt (f : Poly k N) :
-    aeval (genericPt k N) f = algebraMap (Poly k N) (FractionRing (Poly k N)) f := by
-  induction f using MvPolynomial.induction_on with
-  | C a =>
-    rw [aeval_C, IsScalarTower.algebraMap_apply k (Poly k N) (FractionRing (Poly k N))]
-    rfl
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
-  | mul_X p i hp => rw [map_mul, map_mul, hp, aeval_X, genericPt]
-
-theorem primeOf_genericPt : primeOf (S := k) (genericPt k N) = ⊥ := by
-  rw [eq_bot_iff]
-  intro f hf
-  rw [Submodule.mem_bot]
-  have hc : ∀ d, homogeneousComponent d f = 0 := by
-    intro d
-    have h1 := homogeneousComponent_mem_primeOf _ hf d
-    rw [mem_primeOf_of_isHomogeneous _ (homogeneousComponent_isHomogeneous d f),
-      aeval_genericPt] at h1
-    exact (map_eq_zero_iff _ (IsFractionRing.injective (Poly k N) (FractionRing (Poly k N)))).mp h1
-  rw [← sum_homogeneousComponent f]
-  exact Finset.sum_eq_zero fun d _ => hc d
-
-def polyPrimeFilt : PrimeFilt (polyGraded k N) where
-  n := 1
-  step := fun i => if i = 0 then ⊥ else ⊤
-  gen := fun _ => 1
-  deg := fun _ => 0
-  prime := fun _ => ⊥
-  step_zero := by simp
-  step_last := by simp [Fin.last]
-  step_succ i := by
-    fin_cases i
-    simp [Ideal.span_singleton_one]
-  gen_mem _ := by
-    change (1 : Poly k N) ∈ weightedHomogeneousSubmodule k _ _
-    rw [mem_weightedHomogeneousSubmodule]
-    exact isWeightedHomogeneous_one _ _
-  mem_prime i p := by
-    fin_cases i
-    simp
-  isPrime _ := Ideal.isPrime_bot
-  isHomogeneous _ p hp d := by
-    rw [Submodule.mem_bot] at hp ⊢
-    rw [hp, map_zero]
-  ann_le _ p hp := by
-    rw [Module.mem_annihilator] at hp
-    have := hp 1
-    rw [smul_eq_mul, mul_one] at this
-    rw [this]; exact Submodule.zero_mem _
 
 end Generic
 
@@ -1049,7 +940,8 @@ theorem aeval_div_of_isHomogeneous {f : Poly S N} {e : ℕ} (hf : f.IsHomogeneou
   classical
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  simp only [map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_div]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hdeg : ∑ i ∈ s.support, s i = e := by
     have := hf (mem_support_iff.mp hs)
@@ -1075,7 +967,6 @@ theorem mem_ampleBase_of_mem_chartRing {j : Fin (N + 1)} (hj : x j ≠ 0) {a : �
   exact ⟨f, rfl⟩
 
 variable (S x) in
-
 def twistAmple : AmpleData S x (twistBundle S x 1) where
   m := 1
   m_pos := one_pos
@@ -1126,33 +1017,12 @@ section MoreInhabitants
 
 variable {S : Type u} [CommRing S] {N : ℕ}
 
-variable (S N) in
 
-def zeroGraded : GradedPMod S N PUnit where
-  piece _ := ⊥
-  isInternal := by
-    rw [DirectSum.isInternal_submodule_iff_iSupIndep_and_iSup_eq_top]
-    exact ⟨fun _ => by simp, Subsingleton.elim _ _⟩
-  smul_mem _ _ _ _ _ _ := (Submodule.mem_bot S).mpr (Subsingleton.elim _ _)
 
-variable (S N) in
-
-def polyGradedId : GradedHom (polyGraded S N) (polyGraded S N) where
-  toLin := LinearMap.id
-  map_piece _ _ h := h
-
-variable (S N) in
-
-def polyGradedToZero : GradedHom (polyGraded S N) (zeroGraded S N) where
-  toLin := 0
-  map_piece _ _ _ := by
-    change _ ∈ (⊥ : Submodule S PUnit)
-    exact (Submodule.mem_bot S).mpr (Subsingleton.elim _ _)
 
 variable {Ω : Type w} [Field Ω] [Algebra S Ω] (x : Fin (N + 1) → Ω)
 
 variable (S) in
-
 def coordGraded : FinGradedSub (S := S) (x := x) Ω where
   piece c := Submodule.span S {z | ∃ (f : Poly S N) (e : ℕ), f.IsHomogeneous e ∧ (e : ℤ) = c ∧
     z = aeval x f}

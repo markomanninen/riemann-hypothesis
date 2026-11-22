@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatZariskiClosurePointsIsGroupStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatMemRatZariskiClosurePointsStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BlockDiagPartOfRatIdempotentOneAndMulOfTriangulaStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPolynomialSectionBlockDiagonalRational
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteIntegralCosetsOfBoundedDenominator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatZariskiClosurePointsIsGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatMemRatZariskiClosurePointsStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BlockDiagPartOfRatIdempotentOneAndMulOfTriangulaStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPolynomialSectionBlockDiagonalRational
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteIntegralCosetsOfBoundedDenominator
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -34,7 +39,7 @@ private lemma exists_nat_mul_ev_mem {R : Type} [CommRing R] [Algebra ℚ R]
     have h : ((N₁ * N₂ : ℕ) : R) * _root_.GlobalTheory.ClassFin.ev (f + g) u =
         (N₂ : R) * ((N₁ : R) * _root_.GlobalTheory.ClassFin.ev f u) +
           (N₁ : R) * ((N₂ : R) * _root_.GlobalTheory.ClassFin.ev g u) := by
-      simp only [_root_.GlobalTheory.ClassFin.ev, map_add]
+      simp only [_root_.GlobalTheory.ClassFin.ev, map_add (f := _)]
       push_cast
       ring
     rw [h]
@@ -227,7 +232,7 @@ private lemma blk_map_algebraMap_eq_map_blk {R : Type} [CommRing R] [Algebra ℚ
     _root_.GlobalTheory.ClassFin.blk e (g.map (algebraMap ℚ R)) =
       (_root_.GlobalTheory.ClassFin.blk e g).map (algebraMap ℚ R) := by
   unfold _root_.GlobalTheory.ClassFin.blk
-  simp [Matrix.map_mul, Matrix.map_add, Matrix.map_sub, Matrix.map_one]
+  simp [Matrix.map_mul, Matrix.map_add (f := _), Matrix.map_sub, Matrix.map_one]
 
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
@@ -257,12 +262,13 @@ private lemma linExt_map_algebraMap {R : Type} [CommRing R] [Algebra ℚ R] (c :
     (X : Matrix ι ι ℚ) : (_root_.GlobalTheory.ClassFin.linExt c X).map (algebraMap ℚ R) =
       _root_.GlobalTheory.ClassFin.linExt c (X.map (algebraMap ℚ R)) := by
   ext i j
-  simp [_root_.GlobalTheory.ClassFin.linExt, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [_root_.GlobalTheory.ClassFin.linExt, map_sum, map_mul]
+
 
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
 variable {ι : Type} [Fintype ι] [DecidableEq ι] in
-
 theorem _root_.GlobalTheory.ClassFin.cf_of_cf_blk_image : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)) (e : Matrix ι ι ℚ) (R : Type) [CommRing R] [Algebra ℚ R] (R₀ : Subring R), _root_.GlobalTheory.ClassFin.IsQGroup Γ → e * e = e → (∀ g ∈ Γ, (1 - e.map (algebraMap ℚ ℂ)) * g * e.map (algebraMap ℚ ℂ) = 0) → _root_.GlobalTheory.ClassFin.AdelicPair R R₀ → _root_.GlobalTheory.ClassFin.CF (_root_.GlobalTheory.ClassFin.blk e '' Γ) R R₀ → _root_.GlobalTheory.ClassFin.CF Γ R R₀ := by
   intro ι _ _ Γ e R _ _ R₀ hΓ he hblock hR hCF
   classical

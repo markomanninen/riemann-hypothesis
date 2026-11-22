@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierOneParameterIntegral
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierOneParameterIntegral
+
+@[expose] public section
+
 open MeasureTheory
 
 set_option maxHeartbeats 1000000 in

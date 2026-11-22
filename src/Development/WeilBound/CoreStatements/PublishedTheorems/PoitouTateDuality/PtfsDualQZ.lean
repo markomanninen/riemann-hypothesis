@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PoitouTateNineTermGs
+
+@[expose] public section
 
 noncomputable section
 

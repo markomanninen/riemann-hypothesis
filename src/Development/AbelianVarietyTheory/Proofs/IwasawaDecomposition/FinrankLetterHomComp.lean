@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FiniteDimensionalWdSpace
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ResEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem finrank_dual_letter [Algebra L F] (τ : U →+* F) :
     finrank F (Dual F (Letter m F τ)) = finrank F ↥(letterHom m (algebraMap L F) τ) := by
   let e : Dual F (Letter m F τ) →ₗ[F] ↥(letterHom m (algebraMap L F) τ) :=
     { toFun := fun φ => ⟨AddMonoidHom.mk' (fun x => φ (letterMk m F τ x))
-          (fun x y => by rw [letterMk_add, map_add]),
+          (fun x y => by rw [letterMk_add, map_add (f := _)]),
         fun a x => by simp [letterMk_smul], fun c x => by simp [letterMk_mul]⟩
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
@@ -58,8 +62,12 @@ theorem finrank_letterHom_comp {F' : Type} [Field F'] (g : F ≃+* F') (s : L �
       left_inv := fun f => Subtype.ext (AddMonoidHom.ext fun x => by simp)
       right_inv := fun f => Subtype.ext (AddMonoidHom.ext fun x => by simp)
       map_add' := fun f f' => Subtype.ext (AddMonoidHom.ext fun x => by simp) }
-  rw [finrank, finrank, rank_eq_of_equiv_equiv g j g.bijective fun c f =>
-    Subtype.ext (AddMonoidHom.ext fun x => by simp [j])]
+  have h : Module.rank F ↥(letterHom m s τ) = Module.rank F' ↥(letterHom m s' τ') :=
+    rank_eq_of_equiv_equiv g j g.bijective fun c f =>
+      Subtype.ext (AddMonoidHom.ext fun x => by
+        change g (c * f.1 x) = g c * g (f.1 x)
+        exact g.map_mul _ _)
+  rw [finrank, finrank, h]
 
 theorem finrank_letterHom_frob (φ : End L D) (hφ : Function.Bijective φ) (σ : U → U)
     (hσ : ∀ c, φ * m c = m (σ c) * φ) (hσ' : Function.Surjective σ) (s : L →+* F) (τ τ' : U →+* F)

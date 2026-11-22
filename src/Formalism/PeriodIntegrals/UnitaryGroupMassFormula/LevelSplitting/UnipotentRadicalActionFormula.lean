@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ReflectionFixesNormal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ModVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ private theorem hRsum_lemma_5 (x : n → A) (g : Fin r → n → A) :
   exact map_sum _ _ _
 
 private theorem hswap_lemma_6 (H : D.Hyp) (x y : n → A) : D.h y x = D.σA (D.h x y) := by
-  simp only [Dat.h, Formalism.UG.hform, map_sum, map_mul, H.σσ, H.herm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Dat.h, Formalism.UG.hform, map_sum, map_mul, H.σσ, H.herm]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -80,7 +85,8 @@ private theorem hfe_lemma_7 (H : D.Hyp) (a b : Fin r) :
 
 private theorem hLsum_lemma_8 (H : D.Hyp) (g : Fin r → n → A) (y : n → A) :
     D.h (∑ i, g i) y = ∑ i, D.h (g i) y := by
-  rw [hswap_lemma_6 H, hRsum_lemma_5, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hswap_lemma_6 H, hRsum_lemma_5, map_sum]
   exact Finset.sum_congr rfl fun i _ => (hswap_lemma_6 H _ _).symm
 
 private theorem hLsub_lemma_9 (H : D.Hyp) (x x' y : n → A) :
@@ -116,10 +122,6 @@ theorem h_W_span' (H : D.Hyp) {w : n → A} (hw : IsWp D w) {x : n → A}
 theorem xp_add {v w : n → A} (hv : Xp D v) (hw : Xp D w) : Xp D (v + w) := by
   intro a
   rw [hRadd_lemma_2, hv a, hw a, add_zero]
-
-theorem xp_sub {v w : n → A} (hv : Xp D v) (hw : Xp D w) : Xp D (v - w) := by
-  intro a
-  rw [hRsub_lemma_3, hv a, hw a, sub_zero]
 
 theorem xp_sub_pXv (H : D.Hyp) (v : n → A) : Xp D (v - D.pXv v) := by
   intro a
@@ -169,9 +171,10 @@ private theorem hy3_lemma_14 (H : D.Hyp) {y : Fin r → n → A} (hy : ∀ a, Is
 theorem ext_Xp_f (H : D.Hyp) {Φ Ψ : (n → A) →ₗ[A] (n → A)} (h1 : ∀ v, Xp D v → Φ v = Ψ v)
     (h2 : ∀ a, Φ (D.f a) = Ψ (D.f a)) (v : n → A) : Φ v = Ψ v := by
   have e1 : v = (v - D.pXv v) + D.pXv v := (sub_add_cancel v _).symm
-  rw [e1, map_add, map_add, h1 _ (xp_sub_pXv H v)]
+  rw [e1, map_add (f := _), map_add (f := _), h1 _ (xp_sub_pXv H v)]
   congr 1
-  simp only [pXvap_lemma_11, map_sum, map_smul, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pXvap_lemma_11, map_sum, map_smul, h2]
 
 section Sec
 
@@ -204,7 +207,8 @@ theorem sL_span {x : n → A} (hx : x ∈ Submodule.span A (Set.range D.e)) : sL
   simp [hz]
 
 theorem pWp_sL_f (c : Fin r) : pWp D (sL D half y (D.f c)) = y c := by
-  rw [sL_f H hy, map_add, pWp_f H, zero_add, uv, map_add, pWp_of_isWp (hy c), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sL_f H hy, map_add (f := _), pWp_f H, zero_add, uv, map_add (f := _), pWp_of_isWp (hy c), map_sum]
   simp [pWp_e H]
 
 theorem h_tV_right (x x' : n → A) :

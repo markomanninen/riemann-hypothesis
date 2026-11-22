@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCutZeroNotLe
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistBundleToSubSystem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TensorSubInsertion
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StInterNumCut
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StCutRestrLenExact
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCutZeroNotLe
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistBundleToSubSystem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TensorSubInsertion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

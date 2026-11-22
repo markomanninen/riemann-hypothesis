@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.LatticeEmbeddings.IotaPlaceB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.LatticeEmbeddings.IotaPlaceB
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain
@@ -13,7 +17,7 @@ theorem norm_le_one_of_isIntegral_int {p : ℕ} [Fact p.Prime] {x : ℂ_[p]} (hx
   obtain ⟨f, hf, hfx⟩ := hx
   set n := f.natDegree with hn
   have hsum := hf.as_sum
-  rw [hsum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finset_sum] at hfx
+  rw [hsum, Polynomial.eval₂_add, Polynomial.eval₂_X_pow, Polynomial.eval₂_finsetSum] at hfx
   have key : x ^ n = -∑ i ∈ Finset.range n,
       Polynomial.eval₂ (algebraMap ℤ ℂ_[p]) x (Polynomial.C (f.coeff i) * Polynomial.X ^ i) := by
     rw [eq_neg_iff_add_eq_zero]
@@ -99,9 +103,6 @@ theorem norm_p_lt_one : ‖(p : ℂ_[p])‖ < 1 := by
     | exact Padic.norm_p_lt_one
     | (rw [Padic.norm_p]; exact inv_lt_one_of_one_lt₀ (by exact_mod_cast (Fact.out : p.Prime).one_lt))
     | (rw [padicNormE.norm_p]; exact inv_lt_one_of_one_lt₀ (by exact_mod_cast (Fact.out : p.Prime).one_lt))
-
-def vAdd (w : HeightOneSpectrum (𝓞 K)) (a : K) : ℤ :=
-  FractionalIdeal.count K w (FractionalIdeal.spanSingleton (nonZeroDivisors (𝓞 K)) a)
 
 end ReciprocityTheory.ChartRestriction.B3.IotaPl
 

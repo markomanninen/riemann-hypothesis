@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.LocalTraceForms.LocChi
-import GroundTheory.AutomorphicForms.WhittakerDistribution
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocalContinuity.LocalDescentHolds
-import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.LocalTraceForms.LocChi
+public import GroundTheory.AutomorphicForms.WhittakerDistribution
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocalContinuity.LocalDescentHolds
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem locChi_pf : PositivityTheory.RgUd.TP.Loc.LocChi k := by
             (fun x => (p ⁻¹' V).indicator 1 x * a x) + (fun x => (p ⁻¹' V).indicator 1 x * b x) := by
           funext x
           simp [mul_add]
-        rw [e, map_add, ha V hV, hb V hV, add_zero]
+        rw [e, map_add (f := _), ha V hV, hb V hV, add_zero]
       zero_mem' := fun V _ => by
         have e : (fun x => (p ⁻¹' V).indicator 1 x * (0 : Sp k n → ℂ) x) = 0 := by
           funext x

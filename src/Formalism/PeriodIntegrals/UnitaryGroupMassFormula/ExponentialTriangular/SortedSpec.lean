@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExpTri
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExpTri
+
+@[expose] public section
 
 open Matrix Finset
 

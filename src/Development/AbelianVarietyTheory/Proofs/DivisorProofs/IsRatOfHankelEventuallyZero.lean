@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 open scoped IntermediateField Polynomial RatFunc
 open GlobalTheory.Nef
@@ -22,7 +26,8 @@ theorem ev_monomial (n : ℕ) (a : F) : ev c (monomial n a) = c n * a := by
 theorem ev_expand (q p : F[X]) (n : ℕ) (hp : p.natDegree < n) :
     ev c (q * p) = ∑ j ∈ Finset.range n, p.coeff j * ev c (q * X ^ j) := by
   conv_lhs => rw [p.as_sum_range' n hp]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [← C_mul_X_pow_eq_monomial, show q * (C (p.coeff j) * X ^ j) = p.coeff j • (q * X ^ j) by
     rw [smul_eq_C_mul]; ring, map_smul, smul_eq_mul]
@@ -52,14 +57,15 @@ theorem exists_kill (n : ℕ) (h : hankel c n = 0) :
   · intro h0
     apply hv0
     funext k
-    have := congrArg (fun p => Polynomial.coeff p k) h0
-    simpa [Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Fin.val_inj] using this
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p k) h0
+    simpa [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, Finsupp.single_apply, Fin.val_inj] using this
   · exact natDegree_sum_le_of_forall_le _ _ fun k _ =>
       (natDegree_monomial_le _).trans (Nat.lt_succ_iff.1 k.2)
   · intro j hj
     have := congrFun hv ⟨j, Nat.lt_succ_of_le hj⟩
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply] at this
-    rw [Finset.sum_mul, map_sum, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum, ← this]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [monomial_mul_X_pow, ev_monomial, add_comm]
 
@@ -115,7 +121,7 @@ theorem exists_annihilator (N : ℕ) (hN : ∀ n, N ≤ n → hankel c n = 0) :
       exact (natDegree_sub_le _ _).trans (max_le hrd hr0s.le)
     have key := hrk (q * X ^ (s - d - r1.natDegree))
       (by rw [natDegree_mul_X_pow _ hqm.ne_zero, hqd]; omega)
-    rw [add_mul, map_add] at key
+    rw [add_mul, map_add (f := _)] at key
     have h0 : ev c (r0 * (q * X ^ (s - d - r1.natDegree))) = 0 := by
       rw [show r0 * (q * X ^ (s - d - r1.natDegree)) = q * (r0 * X ^ (s - d - r1.natDegree)) by ring]
       apply ev_zero_of_lt c q _ s hlt
@@ -143,8 +149,8 @@ theorem isRat_of_ann (φ : PowerSeries F) (q : F[X]) (hq : q ≠ 0)
   let R : F[X] := ∑ k ∈ Finset.range (q.natDegree + 1), C (q.coeff k) * X ^ (q.natDegree - k)
   refine ⟨PowerSeries.trunc q.natDegree ((R : PowerSeries F) * φ), R, ?_, ?_⟩
   · intro h0
-    have := congrArg (fun p => Polynomial.coeff p 0) h0
-    simp only [R, Polynomial.finset_sum_coeff, coeff_C_mul_X_pow, coeff_zero] at this
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 0) h0
+    simp only [R, Polynomial.finsetSum_coeff, coeff_C_mul_X_pow, coeff_zero] at this
     rw [Finset.sum_eq_single q.natDegree] at this
     · simp only [Nat.sub_self, if_true] at this
       exact hq (leadingCoeff_eq_zero.1 this)
@@ -160,9 +166,11 @@ theorem isRat_of_ann (φ : PowerSeries F) (q : F[X]) (hq : q ≠ 0)
       have hR : (R : PowerSeries F) = ∑ k ∈ Finset.range (q.natDegree + 1),
           PowerSeries.C (q.coeff k) * PowerSeries.X ^ (q.natDegree - k) := by
         show Polynomial.coeToPowerSeries.ringHom R = _
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp [Polynomial.coeToPowerSeries.ringHom_apply]
-      rw [hR, Finset.sum_mul, map_sum, ← h m, ev_X_pow_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hR, Finset.sum_mul, map_sum, ← h m, ev_X_pow_mul]
       refine Finset.sum_congr rfl fun k hk => ?_
       have hk' := Finset.mem_range.1 hk
       rw [mul_assoc, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul', if_pos (by omega)]

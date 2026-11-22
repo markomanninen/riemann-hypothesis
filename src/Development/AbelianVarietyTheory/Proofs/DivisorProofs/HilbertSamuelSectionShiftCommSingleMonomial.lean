@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InclEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InclEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -88,7 +92,7 @@ theorem acts_one : Acts G s 1 0 := fun j l h m => by
 
 theorem acts_mul {E₁ E₂ : Module.End F (Tot G)} {α₁ α₂ : Fin G.D →₀ ℕ} (h₁ : Acts G s E₁ α₁) (h₂ : Acts G s E₂ α₂) :
     Acts G s (E₁ * E₂) (α₁ + α₂) := fun j l h m => by
-  have h' : j + α₂.degree + α₁.degree = l := by rw [map_add] at h; omega
+  have h' : j + α₂.degree + α₁.degree = l := by rw [map_add (f := _)] at h; omega
   rw [Module.End.mul_apply, h₂ j (j + α₂.degree) rfl m, h₁ (j + α₂.degree) l h',
     ← mono_add G s α₁ α₂ (α₁ + α₂) rfl]
 

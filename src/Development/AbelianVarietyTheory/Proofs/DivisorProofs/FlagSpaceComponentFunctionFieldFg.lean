@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Formalism.LocalToGlobal.ProjectiveLattices.KapTrdegPf
-import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NormNegCmConstantEqAtAllEmbeddings
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Formalism.LocalToGlobal.ProjectiveLattices.KapTrdegPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.FnTrdegOf
+
+@[expose] public section
 
 set_option autoImplicit false
 

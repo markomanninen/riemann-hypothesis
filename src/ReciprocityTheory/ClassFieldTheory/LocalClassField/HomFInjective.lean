@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.CurriedCoboundaryEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.CurriedCoboundaryEq
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField.Deg2
 
@@ -41,7 +45,9 @@ theorem descend2 (hN : IsOpen (N : Set G)) (hP : IsInvRep M N Q P) (x : M.coch.X
     (h0 : ∀ n ∈ N, ∀ g, cur M x n g = 0 ∧ cur M x g n = 0) :
     ∃ z : Q.coch.X 2, Q.coch.d 2 z = 0 ∧ P.hom.f 2 z = x := by
   have : DiscreteTopology (G ⧸ N) := QuotientGroup.discreteTopology hN
-  have hC := fun n hn g h => stepC (isTwoCocycle_curried M x hx) (fun n hn g => (h0 n hn g).1) (fun n hn g => (h0 n hn g).2)
+  have hC := fun n hn g h => stepC (ρ := M.rho) (N := N) (c := cur M x)
+    (isTwoCocycle_curried M x hx)
+    (fun n hn g => (h0 n hn g).1) (fun n hn g => (h0 n hn g).2)
     n hn g h
   have hmem : ∀ g h, ∃ q, P.u q = cur M x g h := fun g h => (hP.2.2 _).2 fun n hn => (hC n hn g h).2.2
   choose F0 hF0 using hmem

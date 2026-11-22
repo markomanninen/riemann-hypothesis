@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzPointCountOneClassCommensurable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactOpenLevelConjCommensurableStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitarySimilitudeIntegralSubgroupCommensuratedFrStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDoubleCosetDefiniteHermitianFormLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefiniteFormStabilizerFiniteAwayFromPStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeTestProductSupportFiniteLeftCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudePairAdelicProdUnramifiedEmbeddingInjec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KottwitzPointCountOneClassCommensurable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompactOpenLevelConjCommensurableStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitarySimilitudeIntegralSubgroupCommensuratedFrStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteDoubleCosetDefiniteHermitianFormLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DefiniteFormStabilizerFiniteAwayFromPStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeTestProductSupportFiniteLeftCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudePairAdelicProdUnramifiedEmbeddingInjec
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -40,8 +45,9 @@ theorem finite_coset_preimage (ι : Γ →* H) (hι : Function.Injective ι) (K 
     have h2 := K.inv_mem h1
     rwa [_root_.mul_inv_rev, inv_inv] at h2
   · push_neg at hne
-    convert Set.finite_empty
-    ext w; simp [hne w]
+    have : {w : Γ | (QuotientGroup.mk (x⁻¹ * ι w * x) : H ⧸ K) = c} = ∅ := by
+      ext w; simp [hne w]
+    rw [this]; exact Set.finite_empty
 
 theorem finite_supp_cent (ι : Γ →* H) (hι : Function.Injective ι) (K : Subgroup H) (F₀ : H → ℂ) (y : Γ)
     (hbi : ∀ k ∈ K, ∀ k' ∈ K, ∀ g, F₀ (k * g * k') = F₀ g)
@@ -63,7 +69,7 @@ theorem finite_supp_cent (ι : Γ →* H) (hι : Function.Injective ι) (K : Sub
   intro q hq
   simp only [Set.mem_setOf_eq] at hq
   set x := Quotient.out q
-  obtain ⟨h, k, hh, hk, hd⟩ := DoubleCoset.mk_out_eq_mul ι.range K x
+  obtain ⟨h, hh, k, hk, hd⟩ := DoubleCoset.mk_out_eq_mul ι.range K x
   obtain ⟨γ₀, rfl⟩ := hh
   set d : D := DoubleCoset.mk ι.range K x
 
@@ -97,7 +103,7 @@ theorem finite_supp_cent (ι : Γ →* H) (hι : Function.Injective ι) (K : Sub
       _ = γ₀⁻¹ * w * γw⁻¹ := by rw [e]; group
       _ = y * (γ₀⁻¹ * γw⁻¹) := by rw [e2]; group
   show DoubleCoset.mk _ K (ι (cj w) * Quotient.out d) = q
-  rw [← DoubleCoset.out_eq' _ K q]
+  rw [← DoubleCoset.out_eq' q]
   rw [DoubleCoset.eq]
   refine ⟨ι (γ₀⁻¹ * γw⁻¹), ⟨_, hz, rfl⟩, k⁻¹, K.inv_mem hk, ?_⟩
   show x = _
@@ -147,8 +153,8 @@ theorem conjAct_smul_eq_map' {H : Type} [Group H] (g : H) (S : Subgroup H) :
   rfl
 end GlobalTheory.DefVanish
 
-open GlobalTheory.DefVanish in
 
+open GlobalTheory.DefVanish in
 theorem GlobalTheory.LKDef.DForm.centSum_eq_zero_of_orbK : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p), G.a = 1 →
     ∀ (L : G.Level) (f : G.GAf → ℂ), IsTest (MonoidHom.id _) L.K.toSubgroup L.K.toSubgroup f →
       (∀ k ∈ L.K.toSubgroup, ∀ k' ∈ L.K.toSubgroup, ∀ g, f (k * g * k') = f g) →
@@ -171,7 +177,7 @@ theorem GlobalTheory.LKDef.DForm.centSum_eq_zero_of_orbK : ∀ (p : ℕ) [Fact p
     have h1 : (K'.map (MulAut.conj g).toMonoidHom).Commensurable
         ((KHT p G.m G.n 1 G.Fw).map (MulAut.conj g).toMonoidHom) := by
       rw [← conjAct_smul_eq_map', ← conjAct_smul_eq_map']
-      exact (Subgroup.Commensurable.commensurable_conj _).1 hf'.1
+      exact hf'.1.smul (ConjAct.toConjAct g)
     exact (h1.trans ((GlobalTheory.T.unitarySimilitudeIntegralSubgroup_commensurated_frobenius p G 1 one_pos).1 g)).trans hf'.1.symm
   have hK : ∀ x : G.GAf × Gr G 1, (K.map (MulAut.conj x).toMonoidHom).Commensurable K :=
     GlobalTheory.LKCountComm.commensurable_prod _ _ (GlobalTheory.T.compactOpenLevel_conj_commensurable p G L) hK'c
@@ -217,10 +223,12 @@ theorem GlobalTheory.LKDef.DForm.centSum_eq_zero_of_orbK : ∀ (p : ℕ) [Fact p
     rw [GlobalTheory.LKCountPoint.stab_eq]
     change Nat.card (((K.map (MulAut.conj x).toMonoidHom).comap B.emb ⊓ Subgroup.centralizer {y} :
       Subgroup (GlobalTheory.LKCx.grp G B.β))) = _
-    refine Nat.card_congr ((Subgroup.equivMapOfInjective _ _ hι).toEquiv.trans (Equiv.setCongr ?_))
-    congr 1
-    rw [Subgroup.map_inf_eq _ _ _ hι, Subgroup.map_comap_eq, inf_comm B.emb.range, inf_assoc,
-      inf_eq_right.2 hrange, inf_comm]
+    have heq : ((K.map (MulAut.conj x).toMonoidHom).comap B.emb ⊓ Subgroup.centralizer {y}).map B.emb =
+        Γ' ⊓ K.map (MulAut.conj x).toMonoidHom := by
+      rw [Subgroup.map_inf_eq _ _ _ hι, Subgroup.map_comap_eq, inf_comm B.emb.range, inf_assoc,
+        inf_eq_right.2 hrange, inf_comm]
+    rw [← heq]
+    exact Nat.card_congr (Subgroup.equivMapOfInjective _ _ hι).toEquiv
   rw [← hcore]
   unfold centSum
   refine finsum_congr fun q => ?_

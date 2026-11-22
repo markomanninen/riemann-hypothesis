@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Finset
 open scoped InnerProductSpace
 
@@ -18,13 +23,13 @@ private lemma circleIntegral_finset_sum_of_continuousOn {E ι : Type*} [NormedAd
     have hs : ∀ i ∈ s, ContinuousOn (f i) (Metric.sphere c R) :=
       fun i hi => hf i (Finset.mem_insert_of_mem hi)
     have hsum : ContinuousOn (fun z => ∑ i ∈ s, f i z) (Metric.sphere c R) :=
-      continuousOn_finset_sum s hs
+      continuousOn_finsetSum s hs
     simp only [Finset.sum_insert ha]
     rw [circleIntegral.integral_add (ha'.circleIntegrable hR) (hsum.circleIntegrable hR), ih hs]
 
+
 open Finset Complex in
 open scoped InnerProductSpace in
-
 theorem _root_.GlobalTheory.norm_sum_eigenprojector_le_of_resolvent_bound :
     ∀ (H κ : Type) [NormedAddCommGroup H] [NormedSpace ℂ H] [Fintype κ] [DecidableEq κ]
     (VV : Submodule ℂ H) (T : H →ₗ[ℂ] H) (p : κ → H →ₗ[ℂ] H) (lam : κ → ℂ) (In : Finset κ)
@@ -54,7 +59,8 @@ theorem _root_.GlobalTheory.norm_sum_eigenprojector_le_of_resolvent_bound :
     have hcoe : ((F ζ : VV) : H) = ∑ i, (ζ - lam i)⁻¹ • p i x := by
       simp [F, v]
     have key : ζ • ((F ζ : VV) : H) - T ((F ζ : VV) : H) = x := by
-      rw [hcoe, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hcoe, map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
       conv_rhs => rw [← hsum x hx]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, (hp i x hx).2, smul_smul, smul_smul, ← sub_smul]

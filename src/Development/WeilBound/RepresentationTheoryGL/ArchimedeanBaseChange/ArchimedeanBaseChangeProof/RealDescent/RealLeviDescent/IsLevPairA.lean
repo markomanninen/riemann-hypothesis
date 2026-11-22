@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.NoSecondTypeWeight
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.NoSecondTypeWeight
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ def liftL (n : ℕ) {V' : Type} [AddCommGroup V'] [Module ℂ V'] (T : V →ₗ[
 def xL (E1 E2 : Fin n → Fin n → Module.End ℂ V) (l : Lt n) : Module.End ℂ V :=
   if l.1 then pA E1 E2 l.2.1.1 l.2.1.2 else kA E1 E2 l.2.1.1 l.2.1.2
 
-open Classical in
 
+open Classical in
 def bdL (S : Lt n → Prop) (E1 E2 : Fin n → Fin n → Module.End ℂ V) : Module.End ℂ (Cq n V) :=
   (∑ l : Lt n, if S l then (liftL n (xL E1 E2 l) : Module.End ℂ (Cq n V)) * annL l else 0) +
     ∑ l : Lt n, ∑ m : Lt n, ∑ k : Lt n,
@@ -67,7 +71,7 @@ def bdL (S : Lt n → Prop) (E1 E2 : Fin n → Fin n → Module.End ℂ V) : Mod
 
 def FtL (E1 E2 : Fin n → Fin n → Module.End ℂ V) (c : Fin n) : Module.End ℂ (Cq n V) where
   toFun x := fun A => kA E1 E2 c c (x A) + (wtL A c : ℂ) • x A
-  map_add' x y := by funext A; simp only [Pi.add_apply, map_add, smul_add]; abel
+  map_add' x y := by funext A; simp only [Pi.add_apply, map_add (f := _), smul_add]; abel
   map_smul' s x := by funext A; simp only [Pi.smul_apply, map_smul, RingHom.id_apply, smul_add, smul_comm s]
 
 def WtL (E1 E2 : Fin n → Fin n → Module.End ℂ V) (τ : Fin n → ℝ) (x : Cq n V) : Prop :=

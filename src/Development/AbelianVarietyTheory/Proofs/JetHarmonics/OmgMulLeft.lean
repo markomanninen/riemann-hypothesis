@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementD
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.BigCellVanishingOfCommute
-import Formalism.HermitianCurvature.StatementU
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SBasic
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.NilpotentSubgroup
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CasimirSplitting
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingMinorInvariant
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementD
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.BigCellVanishingOfCommute
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Development.AbelianVarietyTheory.Definitions.Jets.WigMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.SBasic
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.NilpotentSubgroup
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CasimirSplitting
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LeadingMinorInvariant
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
 
@@ -65,8 +69,8 @@ private lemma det_eq_one_of_upUni {n : ℕ} {U : Matrix (Fin n) (Fin n) ℂ}
   rw [det_of_upperTriangular (fun i j h => hU.1 i j h)]
   simp [hU.2]
 
-open Matrix in
 
+open Matrix in
 theorem _root_.GlobalTheory.WigSh.OmLeftN.omg_mul_left (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ)
     (g n : _root_.Formalism.FourierDecayAlt.Q.Mx k r) (hz : _root_.Formalism.QuantumDeterminants.inWb k r z)
     (hn : n ∈ _root_.Formalism.QuantumDeterminants.Nset k r) :

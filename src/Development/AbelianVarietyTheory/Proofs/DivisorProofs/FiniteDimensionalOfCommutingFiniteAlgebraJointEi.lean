@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep GlobalTheory.CuspQuot GlobalTheory.AutGrowth MeasureTheory Filter Topology
 
 namespace GlobalTheory.FinEig
@@ -124,10 +129,11 @@ theorem finiteDimensional_of_commuting_finite_eigen :
       FiniteDimensional ℂ M := by
   intro M _ _ S hS hB hE
   classical
-  letI : CommRing (Algebra.adjoin ℂ S) := Algebra.adjoinCommRingOfComm ℂ hS
+  letI : IsMulCommutative (Algebra.adjoin ℂ S) :=
+    Algebra.isMulCommutative_adjoin ℂ (fun x hx y hy _ => hS x hx y hy)
   have hcomm : ∀ x ∈ Algebra.adjoin ℂ S, ∀ y ∈ Algebra.adjoin ℂ S, x * y = y * x := by
     intro x hx y hy
-    exact congrArg Subtype.val (mul_comm (⟨x, hx⟩ : Algebra.adjoin ℂ S) ⟨y, hy⟩)
+    exact setLike_mul_comm hx hy
   obtain ⟨T, hT⟩ : (Algebra.adjoin ℂ S).FG :=
     Subalgebra.fg_of_fg_toSubmodule ((Submodule.fg_iff_finiteDimensional _).2 hB)
   have hTA : ∀ u ∈ T, u ∈ Algebra.adjoin ℂ S := fun u hu => hT ▸ Algebra.subset_adjoin hu

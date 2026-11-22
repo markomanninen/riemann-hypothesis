@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResChiBounds
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResChiSandwichLower
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResChiBounds
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsResolutionSup
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResChiSandwichLower
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ResSymGram
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

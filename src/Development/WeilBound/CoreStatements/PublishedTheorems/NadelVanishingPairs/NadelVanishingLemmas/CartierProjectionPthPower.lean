@@ -1,14 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationEqIteratePrimeCharP
-import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.KernelDifferentialPthPower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDerivationEqIteratePrimeCharP
+public import Development.WeilBound.CoreStatements.PublishedTheorems.NadelVanishingPairs.NadelVanishingLemmas.KernelDifferentialPthPower
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.LogDR
 
 namespace GlobalTheory.ProjFn
-
-def derEnd {K : Type} [Field K] (D : Derivation ℤ K K) : AddMonoid.End K :=
-  D.toLinearMap.toAddMonoidHom
 
 theorem list_prod_apply_fixed {M : Type} [AddCommMonoid M] (l : List (AddMonoid.End M)) (y : M)
     (h : ∀ f ∈ l, f y = y) : l.prod y = y := by
@@ -39,7 +40,8 @@ private theorem derivation_iterate_mul_antidiagonal {K : Type} [Field K] (D : De
   | succ n ih =>
     rw [Finset.sum_antidiagonal_choose_succ_nsmul
       (fun i j => (⇑D)^[i] a * (⇑D)^[j] b) n]
-    rw [Function.iterate_succ_apply', ih, map_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Function.iterate_succ_apply', ih, map_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun ij hij => ?_
     rw [map_nsmul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, Function.iterate_succ_apply',
       Function.iterate_succ_apply',
@@ -82,7 +84,8 @@ private theorem derivation_eq_zero_of_kills_coords {K : Type} [Field K] {n : ℕ
     (E : Derivation ℤ K K) (hE : ∀ k, E (x k : K) = 0) (c : K) : E c = 0 := by
   rw [← E.liftKaehlerDifferential_comp_D c]
   have hc : KaehlerDifferential.D ℤ K c = ∑ j, D j c • dlog (x j) := hd c
-  rw [hc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hc, map_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
   rw [map_smul]
   show D j c • E.liftKaehlerDifferential

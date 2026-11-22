@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -94,7 +98,7 @@ def zeroSubA {LL : Type} [Field LL] [Algebra O LL] {U : Type} [AddCommGroup U] [
     Submodule O ↥A where
   carrier := {x | φ x = 0}
   zero_mem' := by simp
-  add_mem' := fun {a b} ha hb => by simp only [Set.mem_setOf_eq] at *; rw [map_add, ha, hb, add_zero]
+  add_mem' := fun {a b} ha hb => by simp only [Set.mem_setOf_eq] at *; rw [map_add (f := _), ha, hb, add_zero]
   smul_mem' := fun c x hx => by simp only [Set.mem_setOf_eq] at *; rw [hφ, hx, smul_zero]
 
 def zeroSub {LL : Type} [Field LL] [Algebra O LL] {U : Type} [AddCommGroup U] [Module LL U]
@@ -169,7 +173,8 @@ theorem pstep_rank [IsDomain O] [IsPrincipalIdealRing O] {LL : Type} [Field LL] 
       exact ⟨a, ha⟩
     choose a ha using hint
     have hsum : φ (∑ j, a j • xr j) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hφ, ha]
       simp only [Algebra.smul_def, mul_smul]
       rw [← Finset.smul_sum]
@@ -179,7 +184,8 @@ theorem pstep_rank [IsDomain O] [IsPrincipalIdealRing O] {LL : Type} [Field LL] 
       have : K.mkQ (∑ j, a j • xr j) = 0 := by
         rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact hsum
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       simpa [hxr] using this
     have hai : a i = 0 := (Fintype.linearIndependent_iff.1 bQ.linearIndependent) a hQ i
     have hd0 : algebraMap O LL (d : O) ≠ 0 := by
@@ -198,7 +204,7 @@ theorem pstep_rank [IsDomain O] [IsPrincipalIdealRing O] {LL : Type} [Field LL] 
     induction hx using Submodule.span_induction with
     | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
     | smul r y _ hy => rw [hφ]; exact Submodule.smul_mem _ _ hy
   haveI : FiniteDimensional LL ↥(Submodule.span LL (φ '' (gA : Set ↥A))) :=
     FiniteDimensional.span_of_finite LL (gA.finite_toSet.image φ)

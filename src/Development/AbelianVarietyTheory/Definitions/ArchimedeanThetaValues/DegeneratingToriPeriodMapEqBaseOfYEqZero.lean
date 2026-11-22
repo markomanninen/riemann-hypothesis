@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,7 +134,8 @@ theorem H_neg_right (z w : Fin A.gB → ℂ) : A.H z (-w) = -A.H z w := by
 
 theorem H_conj (z w : Fin A.gB → ℂ) : starRingEnd ℂ (A.H z w) = A.H w z := by
   have h : ∀ i k, starRingEnd ℂ (A.Hm i k) = A.Hm k i := fun i k => A.Hm_herm.apply k i
-  simp only [H, hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, h, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [H, hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, h, Pi.star_apply,
     RCLike.star_def, Complex.conj_conj]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by ring
@@ -204,18 +209,12 @@ instance : FiniteDimensional ℂ (A.X →+ ℂ) := A.coord.symm.finiteDimensiona
 
 instance : FiniteDimensional ℝ (A.X →+ ℂ) := Module.Finite.trans ℂ _
 
-instance : CompleteSpace (A.X →+ ℂ) := FiniteDimensional.complete ℂ _
-
-theorem norm_eq_coord (l : A.X →+ ℂ) : ‖l‖ = ‖A.coord l‖ := rfl
-
 theorem finrank_hom : Module.finrank ℂ (A.X →+ ℂ) = Module.finrank ℤ A.X := by
   rw [A.coord.finrank_eq, Module.finrank_fintype_fun_eq_card, Module.finrank_eq_card_chooseBasisIndex]
 
 def evalCLM (x : A.X) : (A.X →+ ℂ) →L[ℂ] ℂ :=
   LinearMap.toContinuousLinearMap
     { toFun := fun l => l x, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
-
-@[simp] theorem evalCLM_apply (x : A.X) (l : A.X →+ ℂ) : A.evalCLM x l = l x := rfl
 
 abbrev V : Type := (A.X →+ ℂ) × (Fin A.gB → ℂ)
 
@@ -239,11 +238,7 @@ def actV : O →+* Module.End ℂ A.V where
     · simp [add_smul]
     · simp
 
-@[simp] theorem actV_fst_apply (a : O) (v : A.V) (x : A.X) : (A.actV a v).1 x = v.1 (star a • x) := rfl
-
 @[simp] theorem actV_snd (a : O) (v : A.V) : (A.actV a v).2 = A.F a v.2 := rfl
-
-abbrev moduleV : Module O A.V := Module.compHom A.V A.actV
 
 def La : Type := A.X × (A.X →+ ℤ) × A.abelian₂
 
@@ -267,8 +262,6 @@ def l (v : A.La) : A.abelian₂ := (Prod.snd v).2
 
 @[simp] theorem mk_l (y : A.X) (n : A.X →+ ℤ) (l : A.abelian₂) : (mk y n l).l = l := rfl
 
-@[simp] theorem mk_eta (v : A.La) : mk v.y v.n v.l = v := rfl
-
 @[ext] theorem ext {v v' : A.La} (hy : v.y = v'.y) (hn : v.n = v'.n) (hl : v.l = v'.l) : v = v' :=
   Prod.ext hy (Prod.ext hn hl)
 
@@ -284,29 +277,9 @@ def l (v : A.La) : A.abelian₂ := (Prod.snd v).2
 
 @[simp] theorem add_l (v v' : A.La) : (v + v').l = v.l + v'.l := rfl
 
-@[simp] theorem neg_y (v : A.La) : (-v).y = -v.y := rfl
-
-@[simp] theorem neg_n (v : A.La) : (-v).n = -v.n := rfl
-
-@[simp] theorem neg_l (v : A.La) : (-v).l = -v.l := rfl
-
 @[simp] theorem sub_y (v v' : A.La) : (v - v').y = v.y - v'.y := rfl
 
-@[simp] theorem sub_n (v v' : A.La) : (v - v').n = v.n - v'.n := rfl
-
-@[simp] theorem sub_l (v v' : A.La) : (v - v').l = v.l - v'.l := rfl
-
-@[simp] theorem zsmul_y (k : ℤ) (v : A.La) : (k • v).y = k • v.y := rfl
-
-@[simp] theorem zsmul_n (k : ℤ) (v : A.La) : (k • v).n = k • v.n := rfl
-
-@[simp] theorem zsmul_l (k : ℤ) (v : A.La) : (k • v).l = k • v.l := rfl
-
 @[simp] theorem nsmul_y (k : ℕ) (v : A.La) : (k • v).y = k • v.y := rfl
-
-@[simp] theorem nsmul_n (k : ℕ) (v : A.La) : (k • v).n = k • v.n := rfl
-
-@[simp] theorem nsmul_l (k : ℕ) (v : A.La) : (k • v).l = k • v.l := rfl
 
 theorem eq_add_parts (v : A.La) : v = mk v.y 0 0 + mk 0 v.n 0 + mk 0 0 v.l := by ext <;> simp
 
@@ -369,15 +342,15 @@ def P0 : A.La →+ A.V where
   toFun v :=
     ({ toFun := fun x => A.T v.y x + v.n x - A.H (A.ct x) v.l / (2 * Complex.I)
        map_zero' := by simp
-       map_add' := fun x x' => by simp only [map_add, H_add_left]; push_cast; ring },
+       map_add' := fun x x' => by simp only [map_add (f := _), H_add_left]; push_cast; ring },
       A.ct v.y + v.l)
   map_zero' := by ext <;> simp
   map_add' v v' := by
     refine Prod.ext (AddMonoidHom.ext fun x => ?_) ?_
-    · simp only [La.add_y, La.add_n, La.add_l, map_add, AddMonoidHom.add_apply, Submodule.coe_add, H_add_right,
+    · simp only [La.add_y, La.add_n, La.add_l, map_add (f := _), AddMonoidHom.add_apply, Submodule.coe_add, H_add_right,
         Prod.fst_add, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
       push_cast; ring
-    · simp only [La.add_y, La.add_l, map_add, Submodule.coe_add, Prod.snd_add]
+    · simp only [La.add_y, La.add_l, map_add (f := _), Submodule.coe_add, Prod.snd_add]
       abel
 
 @[simp] theorem degeneratingTori_basePeriodMap_fst_apply (v : A.La) (x : A.X) :
@@ -392,8 +365,6 @@ def N : A.La →+ A.V where
 
 @[simp] theorem N_fst_apply (v : A.La) (x : A.X) : (A.N v).1 x = A.be v.y x := rfl
 
-@[simp] theorem N_snd (v : A.La) : (A.N v).2 = 0 := rfl
-
 def Pw (w : ℂ) : A.La →+ A.V := A.P0 + w • A.N
 
 theorem Pw_apply (w : ℂ) (v : A.La) : A.Pw w v = A.P0 v + w • A.N v := rfl
@@ -402,23 +373,27 @@ theorem Pw_apply (w : ℂ) (v : A.La) : A.Pw w v = A.P0 v + w • A.N v := rfl
     (A.Pw w v).1 x = A.T v.y x + v.n x - A.H (A.ct x) v.l / (2 * Complex.I) + w * A.be v.y x := rfl
 
 @[simp] theorem Pw_snd (w : ℂ) (v : A.La) : (A.Pw w v).2 = A.ct v.y + v.l := by
-  simp [Pw_apply]
+  have h : (A.N v).2 = 0 := rfl
+  simp [Pw_apply, h]
 
 theorem degeneratingTori_periodMap_eq_base_of_y_eq_zero (w : ℂ) {v : A.La} (hv : v.y = 0) : A.Pw w v = A.P0 v := by
   ext <;> simp [hv]
 
 theorem degeneratingTori_basePeriodMap_smul (a : O) (v : A.La) : A.P0 (a • v) = A.actV a (A.P0 v) := by
   refine Prod.ext (AddMonoidHom.ext fun x => ?_) ?_
-  · simp [A.T_adj, A.ct_smul, H_F]
+  · have h : (A.actV a (A.P0 v)).1 x = (A.P0 v).1 (star a • x) := rfl
+    simp [h, A.T_adj, A.ct_smul, H_F]
   · simp [A.ct_smul]
 
 theorem N_smul (a : O) (v : A.La) : A.N (a • v) = A.actV a (A.N v) := by
   refine Prod.ext (AddMonoidHom.ext fun x => ?_) ?_
-  · simp [A.be_adj]
-  · simp
+  · have h : (A.actV a (A.N v)).1 x = (A.N v).1 (star a • x) := rfl
+    simp [h, A.be_adj]
+  · change 0 = A.F a 0
+    simp
 
 theorem Pw_smul (w : ℂ) (a : O) (v : A.La) : A.Pw w (a • v) = A.actV a (A.Pw w v) := by
-  rw [Pw_apply, Pw_apply, degeneratingTori_basePeriodMap_smul, N_smul, map_add, map_smul]
+  rw [Pw_apply, Pw_apply, degeneratingTori_basePeriodMap_smul, N_smul, map_add (f := _), map_smul]
 
 def nn : A.La →ₗ[O] A.La where
   toFun v := La.mk 0 (A.be v.y).toAddMonoidHom 0
@@ -427,19 +402,19 @@ def nn : A.La →ₗ[O] A.La where
 
 theorem nn_apply (v : A.La) : A.nn v = La.mk 0 (A.be v.y).toAddMonoidHom 0 := rfl
 
-theorem nn_nn (v : A.La) : A.nn (A.nn v) = 0 := by ext <;> simp [nn_apply]
+theorem degeneratingTori_basePeriodMap_nilpotentMap (v : A.La) : A.P0 (A.nn v) = A.N v := by
+  have h : (A.N v).2 = 0 := rfl
+  ext <;> simp [nn_apply, h]
 
-theorem degeneratingTori_basePeriodMap_nilpotentMap (v : A.La) : A.P0 (A.nn v) = A.N v := by ext <;> simp [nn_apply]
-
-def EF : LinearMap.BilinForm ℤ A.La :=
-  LinearMap.mk₂ ℤ (fun v v' => v'.n v.y - v.n v'.y + A.Ef v.l v'.l)
-    (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring)
-    (fun _ _ _ => by simp; ring)
+def EF : LinearMap.BilinForm ℤ A.La := by
+  have hy (k : ℤ) (v : A.La) : (k • v).y = k • v.y := rfl
+  have hn (k : ℤ) (v : A.La) : (k • v).n = k • v.n := rfl
+  have hl (k : ℤ) (v : A.La) : (k • v).l = k • v.l := rfl
+  exact LinearMap.mk₂ ℤ (fun v v' => v'.n v.y - v.n v'.y + A.Ef v.l v'.l)
+    (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp [hy, hn, hl]; ring) (fun _ _ _ => by simp; ring)
+    (fun _ _ _ => by simp [hy, hn, hl]; ring)
 
 theorem EF_apply (v v' : A.La) : A.EF v v' = v'.n v.y - v.n v'.y + A.Ef v.l v'.l := rfl
-
-theorem EF_n_y (n : A.X →+ ℤ) (y : A.X) : A.EF (La.mk 0 n 0) (La.mk y 0 0) = -n y := by
-  simp [EF_apply]
 
 theorem EF_n_left (n : A.X →+ ℤ) (v : A.La) : A.EF (La.mk 0 n 0) v = -n v.y := by
   simp [EF_apply]
@@ -476,21 +451,16 @@ def Theta (j : ℕ) (α : A.X) : Submodule ℂ ((Fin A.gB → ℂ) → ℂ) wher
   smul_mem' := fun c a ha => ⟨ha.1.const_smul c, fun l z => by
     simp only [Pi.smul_apply, smul_eq_mul, ha.2 l z]; ring⟩
 
-theorem mem_Theta {j : ℕ} {α : A.X} {th : (Fin A.gB → ℂ) → ℂ} : th ∈ A.Theta j α ↔
-    Differentiable ℂ th ∧ ∀ (l : A.abelian₂) z, th (z + l) =
-      (A.chi l * Complex.exp (Real.pi * A.H z l + Real.pi / 2 * A.H l l)) ^ j *
-        Complex.exp (Real.pi * A.H (A.ct α) l) * th z := Iff.rfl
-
 theorem mul_mem_Theta {j j' : ℕ} {α α' : A.X} {th th' : (Fin A.gB → ℂ) → ℂ} (h : th ∈ A.Theta j α)
     (h' : th' ∈ A.Theta j' α') : th * th' ∈ A.Theta (j + j') (α + α') :=
   ⟨h.1.mul h'.1, fun l z => by
-    simp only [Pi.mul_apply, h.2 l z, h'.2 l z, map_add, H_add_left, mul_add, Complex.exp_add]; ring⟩
+    simp only [Pi.mul_apply, h.2 l z, h'.2 l z, map_add (f := _), H_add_left, mul_add, Complex.exp_add]; ring⟩
 
 theorem translate_mem_Theta {j : ℕ} {α : A.X} {th : (Fin A.gB → ℂ) → ℂ} (h : th ∈ A.Theta j α) (μ : A.X) :
     (fun z => th (z + A.ct μ)) ∈ A.Theta j (α + j • μ) :=
   ⟨h.1.comp (differentiable_id.add_const _), fun l z => by
     have h1 : A.H (A.ct (α + j • μ)) l = A.H (A.ct α) l + j * A.H (A.ct μ) l := by
-      rw [map_add, map_nsmul, H_add_left, ← Nat.cast_smul_eq_nsmul ℂ, H_smul_left]
+      rw [map_add (f := _), map_nsmul, H_add_left, ← Nat.cast_smul_eq_nsmul ℂ, H_smul_left]
     show th (z + l + A.ct μ) = _ * _ * th (z + A.ct μ)
     rw [add_right_comm, h.2, ah_add, h1, mul_pow, ← Complex.exp_nat_mul, mul_add, Complex.exp_add,
       mul_left_comm (Real.pi : ℂ) (j : ℂ)]
@@ -518,7 +488,7 @@ theorem q_add (μ ν : A.X) : A.q (μ + ν) = A.q μ + A.q ν + A.be μ ν := by
   have h1 := A.two_mul_q (μ + ν)
   have h2 := A.two_mul_q μ
   have h3 := A.two_mul_q ν
-  simp only [map_add, LinearMap.add_apply, A.be_symm ν μ] at h1
+  simp only [map_add (f := _), LinearMap.add_apply, A.be_symm ν μ] at h1
   omega
 
 theorem be_self_nonneg (μ : A.X) : 0 ≤ A.be μ μ := by
@@ -558,7 +528,7 @@ theorem finite_be_le (R : ℤ) : {μ : A.X | A.be μ μ ≤ R}.Finite := by
     have h1 := A.be_self_nonneg (μ + b i)
     have h2 := A.be_self_nonneg (μ - b i)
     have h3 := A.be_self_nonneg (b i)
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply, A.be_symm (b i) μ] at h1 h2
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply, A.be_symm (b i) μ] at h1 h2
     constructor <;> omega
   exact ⟨fun i => (key i).1, fun i => (key i).2⟩
 
@@ -567,7 +537,7 @@ theorem be_le_exponent {j : ℕ} (hj : j ≠ 0) (α μ : A.X) :
   have h1 := A.two_mul_exponent j α μ
   have h2 := A.be_self_nonneg (μ + (α + α))
   have h0 := A.be_self_nonneg μ
-  simp only [map_add, LinearMap.add_apply, A.be_symm α μ] at h2
+  simp only [map_add (f := _), LinearMap.add_apply, A.be_symm α μ] at h2
   have hj' : (1 : ℤ) ≤ j := by exact_mod_cast Nat.one_le_iff_ne_zero.2 hj
   nlinarith [mul_le_mul_of_nonneg_right hj' h0]
 
@@ -715,53 +685,21 @@ theorem tate_Pw (τ₀ w : ℂ) (y : ℤ) (n : ℤ →+ ℤ) :
     w * (beInt y 1 : ℤ) = _
   simp [hermForm]; ring
 
-theorem tate_EF (τ₀ : ℂ) : (tate τ₀).EF (La.mk (A := tate τ₀) 0 (AddMonoidHom.id ℤ) 0)
-    (La.mk (A := tate τ₀) (1 : ℤ) 0 0) = -1 := (tate τ₀).EF_n_y _ _
-
 theorem tate_one_mem_Theta (τ₀ : ℂ) (j : ℕ) (α : (tate τ₀).X) :
     (1 : (Fin (tate τ₀).gB → ℂ) → ℂ) ∈ (tate τ₀).Theta j α :=
   ⟨differentiable_const 1, fun l z => by
     have hl : l = 0 := Subsingleton.elim (α := (⊥ : Submodule ℤ (Fin 0 → ℂ))) _ _
     simp [hl, ah]⟩
 
-theorem tate_exponent (τ₀ : ℂ) (μ : ℤ) : (tate τ₀).exponent 1 (0 : ℤ) μ = μ ^ 2 := by
-  change ((1 : ℕ) : ℤ) * (beInt μ μ / 2) + beInt μ 0 = _
-  simp [mul_assoc, sq]
-
-theorem tate_Sum (τ₀ w : ℂ) (v : (tate τ₀).V) : (tate τ₀).Sum 1 (0 : ℤ) 1 w v =
-    ∑' μ : ℤ, eTwoPi (μ ^ 2 * (τ₀ + 2 * w) / 2 + μ * v.1 (1 : ℤ)) := by
-  refine tsum_congr fun μ : ℤ => ?_
-  obtain ⟨l, z⟩ : (ℤ →+ ℂ) × (Fin 0 → ℂ) := v
-  have h1 : l (@HAdd.hAdd ℤ ℤ ℤ _ 0 ((1 : ℕ) • μ)) = μ * l 1 := by simpa using map_zsmul l μ 1
-  rw [tate_exponent]
-  change (psiInt τ₀ μ : ℂ) ^ 1 * eTwoPi (TInt τ₀ μ 0) * eTwoPi (l (@HAdd.hAdd ℤ ℤ ℤ _ 0 ((1 : ℕ) • μ))) * 1 *
-      eTwoPi (w * ((μ ^ 2 : ℤ) : ℂ)) =
-    eTwoPi (μ ^ 2 * (τ₀ + 2 * w) / 2 + μ * l 1)
-  rw [h1]
-  simp only [coe_psiInt, pow_one, mul_one, TInt_apply, ← e_add]
-  congr 1; push_cast; ring
-
-theorem tate_FSum_coeff_zero (τ₀ : ℂ) (v : (tate τ₀).V) : ((tate τ₀).FSum 1 0 1 v).coeff 0 = 1 := by
-  have h : (tate τ₀).level 1 0 0 = {0} := by
-    ext μ
-    rw [mem_level, Finset.mem_singleton]
-    exact (Eq.congr_left (tate_exponent τ₀ μ)).trans (pow_eq_zero_iff (M₀ := ℤ) two_ne_zero)
-  rw [coeff_FSum, h, Finset.sum_singleton]
-  simp [term]
-
 def gaussEmb : GaussianInt →ₗ[ℤ] (Fin 1 → ℂ) where
   toFun a _ := a
   map_add' a b := by ext; simp
   map_smul' k a := by ext; simp
 
-@[simp] theorem gaussEmb_apply (a : GaussianInt) (i : Fin 1) : gaussEmb a i = a := rfl
-
 def gaussLam : Submodule ℤ (Fin 1 → ℂ) := LinearMap.range gaussEmb
 
 def gaussEquiv : GaussianInt ≃ₗ[ℤ] gaussLam :=
   LinearEquiv.ofInjective gaussEmb fun _ _ h => GaussianInt.toComplex_injective (congrFun h 0)
-
-@[simp] theorem coe_gaussEquiv (a : GaussianInt) : (gaussEquiv a : Fin 1 → ℂ) = gaussEmb a := rfl
 
 theorem hermForm_one (z w : Fin 1 → ℂ) : hermForm 1 z w = z 0 * starRingEnd ℂ (w 0) := by
   simp [hermForm, dotProduct]
@@ -770,17 +708,16 @@ def gaussForm : LinearMap.BilinForm ℤ GaussianInt :=
   LinearMap.mk₂ ℤ (fun a b => a.im * b.re - a.re * b.im) (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring)
     (fun _ _ _ => by simp; ring) (fun _ _ _ => by simp; ring)
 
-@[simp] theorem gaussForm_apply (a b : GaussianInt) : gaussForm a b = a.im * b.re - a.re * b.im := rfl
-
 def gaussEf : LinearMap.BilinForm ℤ gaussLam := LinearMap.BilinForm.congr gaussEquiv gaussForm
 
 @[simp] theorem gaussEf_apply (a b : GaussianInt) :
-    gaussEf (gaussEquiv a) (gaussEquiv b) = a.im * b.re - a.re * b.im := by simp [gaussEf]
+    gaussEf (gaussEquiv a) (gaussEquiv b) = a.im * b.re - a.re * b.im := by simp [gaussEf, gaussForm]
 
 theorem gaussEf_eq (l m : gaussLam) : (gaussEf l m : ℝ) = (hermForm 1 (l : Fin 1 → ℂ) m).im := by
   obtain ⟨a, rfl⟩ := gaussEquiv.surjective l
   obtain ⟨b, rfl⟩ := gaussEquiv.surjective m
   rw [gaussEf_apply, hermForm_one]
+  change (↑(a.im * b.re - a.re * b.im) : ℝ) = ((a : ℂ) * starRingEnd ℂ (b : ℂ)).im
   simp; ring
 
 theorem gaussEf_bij : Function.Bijective gaussEf := by
@@ -798,7 +735,7 @@ theorem gaussEf_bij : Function.Bijective gaussEf := by
     obtain ⟨b, rfl⟩ := gaussEquiv.surjective m
     have hb : b = b.re • (1 : GaussianInt) + b.im • (⟨0, 1⟩ : GaussianInt) := by ext <;> simp
     rw [gaussEf_apply]
-    conv_rhs => rw [hb, map_add, map_add, map_zsmul, map_zsmul, map_zsmul, map_zsmul]
+    conv_rhs => rw [hb, map_add (f := _), map_add (f := _), map_zsmul, map_zsmul, map_zsmul, map_zsmul]
     simp; ring
 
 theorem gaussLam_discrete : DiscreteTopology gaussLam := by
@@ -818,6 +755,7 @@ theorem gaussLam_full : Submodule.span ℝ (gaussLam : Set (Fin 1 → ℂ)) = �
   have hz : z = (z 0).re • gaussEmb 1 + (z 0).im • gaussEmb ⟨0, 1⟩ := by
     funext i
     rw [Subsingleton.elim i 0]
+    change z 0 = (z 0).re • ((1 : GaussianInt) : ℂ) + (z 0).im • ((⟨0, 1⟩ : GaussianInt) : ℂ)
     simp [GaussianInt.toComplex_def']
   rw [hz]
   exact add_mem (Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩))
@@ -838,7 +776,8 @@ theorem gaussChi_add (l m : gaussLam) : gaussChi (l + m) =
   rw [gaussEf_apply, gaussChi, gaussChi, gaussChi, ← Complex.exp_add, ← Complex.exp_add,
     Complex.exp_eq_exp_iff_exists_int]
   refine ⟨a.re * b.im, ?_⟩
-  simp [← GaussianInt.intCast_re, ← GaussianInt.intCast_im]; ring
+  have h (x : GaussianInt) (i : Fin 1) : (gaussEquiv x : Fin 1 → ℂ) i = (x : ℂ) := rfl
+  simp [h, ← GaussianInt.intCast_re, ← GaussianInt.intCast_im]; ring
 
 theorem gaussChi_neg (l : gaussLam) : gaussChi (-l) = gaussChi l := by simp [gaussChi]
 
@@ -880,22 +819,6 @@ def gaussInt (c τ₀ : ℂ) : AnArc ℤ where
   be_adj a y x := by simp; ring
   be_even x := ⟨x * x, by simp only [beInt_apply]; ring⟩
 
-theorem gaussInt_ct_zero (τ₀ : ℂ) : (gaussInt 0 τ₀).ct = 0 := by
-  refine AddMonoidHom.ext fun x => funext fun i => ?_
-  exact mul_zero _
-
-theorem gaussInt_EF (c τ₀ : ℂ) : (gaussInt c τ₀).EF (La.mk (A := gaussInt c τ₀) 0 0 (gaussEquiv 1))
-    (La.mk (A := gaussInt c τ₀) 0 0 (gaussEquiv ⟨0, 1⟩)) = -1 := by
-  rw [EF_apply]
-  change (0 : ℤ) - 0 + gaussEf (gaussEquiv 1) (gaussEquiv ⟨0, 1⟩) = -1
-  simp
-
-theorem gaussian_integers_period_component (c τ₀ : ℂ) :
-    ((gaussInt c τ₀).P0 (La.mk (A := gaussInt c τ₀) 0 0 (gaussEquiv 1))).1 (1 : ℤ) = -(c / (2 * Complex.I)) := by
-  change TInt τ₀ 0 1 + ((0 : ℤ) : ℂ) -
-    hermForm 1 (fun _ : Fin 1 => ((1 : ℤ) : ℂ) * c) (gaussEmb 1) / (2 * Complex.I) = _
-  simp [hermForm_one]
-
 def gaussProd : (ℤ × ℤ) ≃ₗ[ℤ] GaussianInt where
   toFun p := ⟨p.1, p.2⟩
   invFun a := (a.re, a.im)
@@ -928,7 +851,7 @@ def gaussCM (c τ₀ : ℂ) : AnArc GaussianInt where
   F := (algebraMap ℂ _).comp GaussianInt.toComplex
   F_mem := by
     rintro a _ ⟨b, rfl⟩
-    exact ⟨a * b, by ext; simp⟩
+    exact ⟨a * b, funext fun _ => map_mul GaussianInt.toComplex a b⟩
   F_adj a z w := by simp [hermForm_one]; ring
   X := GaussianInt
   free := Module.Free.of_equiv gaussProd
@@ -957,23 +880,6 @@ def gaussCM (c τ₀ : ℂ) : AnArc GaussianInt where
     linarith
   be_adj a y x := by simp; ring
   be_even x := ⟨_, rfl⟩
-
-example (c τ₀ : ℂ) (v : (gaussCM c τ₀).La) :
-    ((⟨0, 1⟩ : GaussianInt) • v).n (1 : GaussianInt) = v.n (⟨0, -1⟩ : GaussianInt) := by
-  refine congrArg v.n ?_
-  show star (⟨0, 1⟩ : GaussianInt) * 1 = ⟨0, -1⟩
-  ext <;> simp
-
-example (τ₀ : ℂ) : Module.finrank ℂ (tate τ₀).V = 1 := by
-  rw [finrank_V]
-  exact congrArg (· + 0) (Module.finrank_self ℤ)
-
-example : (NormedSpace.toModule : Module ℝ A.V) =
-    @Prod.instModule ℝ _ _ _ _ _ AddMonoidHom.instModule (Pi.Function.module _ _ _) := by
-  with_reducible_and_instances rfl
-
-example : CompleteSpace A.V ∧ FiniteDimensional ℂ A.V ∧ FiniteDimensional ℝ A.V ∧ IsScalarTower ℝ ℂ A.V :=
-  ⟨inferInstance, inferInstance, inferInstance, inferInstance⟩
 
 end AnArc
 

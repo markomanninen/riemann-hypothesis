@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+
+@[expose] public section
 
 open PowerSeries
 
@@ -10,18 +14,18 @@ namespace Formalism.L2.Th1.A
 
 def LogSpec : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K),
-    constantCoeff (logSer W) = 0 ∧ coeff 1 (logSer W) = 1 ∧ derivative K (logSer W) = om W ∧
+    constantCoeff (logSer W) = 0 ∧ coeff 1 (logSer W) = 1 ∧ derivative (logSer W) = om W ∧
     D W (logSer W) = 1
 
 def ExpSpec : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K),
     constantCoeff (expSer W) = 0 ∧ coeff 1 (expSer W) = 1 ∧
     (logSer W).subst (expSer W) = X ∧ (expSer W).subst (logSer W) = X ∧
-    derivative K (expSer W) = (fw W).subst (expSer W)
+    derivative (expSer W) = (fw W).subst (expSer W)
 
 def ChainZ : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K) (f : K⟦X⟧),
-    derivative K (f.subst (expSer W)) = (D W f).subst (expSer W)
+    derivative (f.subst (expSer W)) = (D W f).subst (expSer W)
 
 def LogNeg : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K),
@@ -43,14 +47,6 @@ def WpShape : Prop :=
     wpL W = uPow (-2) + toL (wpReg W) ∧ coeff 0 (wpReg W) = 0 ∧
     (∀ n : ℕ, Odd n → coeff n (wpReg W) = 0) ∧
     coeff 2 (wpReg W) = g₂ W / 20 ∧ coeff 4 (wpReg W) = g₃ W / 28
-
-def WpUnique : Prop :=
-  ∀ (K : Type u) [Field K] [CharZero K] (g2 g3 : K) (r r' : K⟦X⟧),
-    dL (uPow (-2) + toL r) ^ 2 = 4 * (uPow (-2) + toL r) ^ 3
-      - HahnSeries.C g2 * (uPow (-2) + toL r) - HahnSeries.C g3 →
-    dL (uPow (-2) + toL r') ^ 2 = 4 * (uPow (-2) + toL r') ^ 3
-      - HahnSeries.C g2 * (uPow (-2) + toL r') - HahnSeries.C g3 →
-    r = r'
 
 def WpRecursion : Prop :=
   ∀ (K : Type u) [Field K] [CharZero K] (W : WeierstrassCurve K) (k : ℕ), 3 ≤ k →

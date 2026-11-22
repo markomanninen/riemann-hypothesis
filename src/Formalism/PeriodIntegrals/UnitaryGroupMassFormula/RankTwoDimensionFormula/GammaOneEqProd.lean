@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DimFormC
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem card_classes_eq (hK : X.LevelSubgroupCharacter) (cs : ColSys X u what₂
   refine Nat.card_eq_of_bijective
     (fun ρ => DoubleCoset.mk (iotaF X u).range (Ku X u hK) (cs.h ρ)) ⟨?_, ?_⟩
   · intro ρ ρ' he
-    obtain ⟨a, ha, b, hb, hab⟩ := (DoubleCoset.eq _ _ _ _).1 he
+    obtain ⟨a, ha, b, hb, hab⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 he
     obtain ⟨γ, rfl⟩ := ha
     obtain ⟨ρ₀, _, hu⟩ := hR (cs.h ρ')
     have e1 := hu ρ' ⟨1, 1, by simp⟩

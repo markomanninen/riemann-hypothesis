@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -104,6 +109,6 @@ theorem exists_artin_relation [Finite Γ] :
   refine Finset.sum_congr rfl fun D _ => ?_
   rw [Pi.smul_apply, smul_eq_mul]
   show c D * π D x = (if h : IsCyclic (D : Subgroup Γ) then c ⟨D, h⟩ else 0) * π D x
-  rw [dif_pos D.2]
+  rw [dite_eq_left D.2]
 
 end GroundTheory.ProfCoh

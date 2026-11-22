@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace FunctorialResolution.EmbeddedResolution
 
@@ -107,7 +111,7 @@ theorem derivIdeal_mul_le (k : Type*) [CommRing k] {S : Type*} [CommRing S] [Alg
       · exact Submodule.mem_sup_right
           (Ideal.mul_mem_mul hn (derivation_apply_mem_derivIdeal k I D hm))
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
 
 private theorem derivation_apply_mem_pow_mul_derivIdeal (k : Type*) [CommRing k] {S : Type*} [CommRing S]
@@ -168,7 +172,7 @@ private theorem derivation_apply_mem_pow_of_mem_pow_succ {k : Type*} [CommRing k
         rw [mul_comm b (D a)]
         exact hb'
       · intro a b ha hb
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ ha hb
 
 theorem derivIdeal_pow_succ_le_pow (k : Type*) [CommRing k] {S : Type*} [CommRing S] [Algebra k S]

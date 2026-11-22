@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZeroSetOpenMass
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteMapOpen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StZeroSetOpenMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteMapOpen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -59,7 +64,7 @@ theorem ZeroSetOpenMass.proof
     exact ⟨hw.1, hwO⟩
   have himg : (fun z => A.mulVec z) '' (g '' U') = U' := by
     rw [Set.image_image]
-    exact (Set.image_congr fun w hw => hAg w hw.1).trans (Set.image_id' _)
+    exact (Set.image_congr fun w (hw : w ∈ U') => hAg w hw.1).trans (Set.image_id' _)
   obtain ⟨K, hK⟩ : ∃ K, LipschitzWith K (fun z : Fin n → ℂ => A.mulVec z) :=
     ⟨_, (LinearMap.toContinuousLinearMap (Matrix.mulVecLin A)).lipschitz⟩
   have hpos : 0 < μH[((2 * d : ℕ) : ℝ)] U' := by

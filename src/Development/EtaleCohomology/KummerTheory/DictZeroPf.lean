@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.KummerTheory.DictPf
-import Development.EtaleCohomology.KummerTheory.CupAWCutEv
-import Development.EtaleCohomology.TateTwists.EtaleChainCochainExistsOfEvalData
-import Development.EtaleCohomology.TateTwists.EtaleSimplicialCochainExistsFromNaturalSections
+module
+
+public import Development.EtaleCohomology.KummerTheory.DictPf
+public import Development.EtaleCohomology.KummerTheory.CupAWCutEv
+public import Development.EtaleCohomology.TateTwists.EtaleChainCochainExistsOfEvalData
+public import Development.EtaleCohomology.TateTwists.EtaleSimplicialCochainExistsFromNaturalSections
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

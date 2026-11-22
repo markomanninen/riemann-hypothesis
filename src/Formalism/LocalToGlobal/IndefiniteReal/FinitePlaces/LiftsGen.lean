@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+module
+
+public import Formalism.LocalToGlobal.Divisibility.DefGroupLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem span_dualSet_eq (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E) (L : Sub
     clear hx hy hw
     refine ⟨a + b, ?_⟩
     unfold hform at ha hb ⊢
-    rw [map_add, ha, hb, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), ha, hb, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl (fun j _ => ?_)

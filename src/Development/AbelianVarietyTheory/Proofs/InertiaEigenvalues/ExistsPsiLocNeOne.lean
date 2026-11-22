@@ -1,7 +1,18 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.SegmentRepresentations.RapidDecayFamilies.WhittakerVanishingImpliesZero
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnipotentBlockColumnIndex
+public import GroundTheory.AutomorphicForms.MacdonaldWhittakerHecke
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsContinuousPadic
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CuspidalMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsGenericOfIsLocComp
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionHeisenbergInvariant
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +48,8 @@ theorem exists_psi_loc_ne_one (w : HeightOneSpectrum (𝓞 E)) :
   rw [AddChar.one_apply]
   exact (psi_loc_eq_one_iff w y).1 (h y)
 
-variable (E) in
 
+variable (E) in
 theorem stdPsi_psi : StdPsi (psi E) := by
   have hc : Continuous (psi E) := continuous_subtype_val.comp (GroundTheory.Global.continuous_adelicChar (K := E))
   have hr : ∀ c : E, psi E (algebraMap E (Ad E) c) = 1 := fun c => by

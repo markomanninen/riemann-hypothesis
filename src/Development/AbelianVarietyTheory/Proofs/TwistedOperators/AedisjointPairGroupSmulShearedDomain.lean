@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NullMeasurableSetShearImage
+
+@[expose] public section
+
 open MeasureTheory Function
 open scoped Pointwise
 
@@ -62,7 +67,7 @@ theorem aedisjoint_pairGroup_smul_shear_image : ∀ (H : Type) [Group H] [Topolo
       · apply Subtype.ext
         show v⁻¹ * u' * (n' : H) = v⁻¹ * a * v⁻¹⁻¹
         rw [inv_inv, mul_assoc v⁻¹ (a : H), av _ _ _ e1' e2', mul_assoc]
-    · exact le_antisymm ((Measure.prod_prod_le _ _).trans (by rw [hcW, zero_mul])) bot_le
+    · rw [Measure.prod_prod, hcW, zero_mul]
   · have hZ : ν ((⟨v, hv⟩ : Γ) • 𝓕 ∩ (⟨v', hv'⟩ : Γ) • 𝓕) = 0 :=
       h𝓕.aedisjoint (fun h => hvv (congrArg Subtype.val h))
     refine measure_mono_null (t := Set.univ ×ˢ ((⟨v, hv⟩ : Γ) • 𝓕 ∩ (⟨v', hv'⟩ : Γ) • 𝓕)) ?_ ?_
@@ -71,6 +76,6 @@ theorem aedisjoint_pairGroup_smul_shear_image : ∀ (H : Type) [Group H] [Topolo
       obtain ⟨n', hn', h', hh', e1', e2'⟩ := key _ _ h2
       exact ⟨Set.mem_univ _, Set.mem_smul_set.2 ⟨h, hh, by rw [e2]; rfl⟩,
         Set.mem_smul_set.2 ⟨h', hh', by rw [e2']; rfl⟩⟩
-    · exact le_antisymm ((Measure.prod_prod_le _ _).trans (by rw [hZ, mul_zero])) bot_le
+    · rw [Measure.prod_prod, hZ, mul_zero]
 
 end GlobalTheory.UnfoldNormal

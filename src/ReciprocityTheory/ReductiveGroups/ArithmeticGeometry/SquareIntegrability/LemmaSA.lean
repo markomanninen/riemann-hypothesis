@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -66,7 +70,8 @@ lemma lemSG_det {n : ℕ} (b : Module.Basis (Fin n) ℝ (EuclideanSpace ℂ ι))
         ∑ l, inner ℝ (b₀ j) ((lemSJ : EuclideanSpace ℂ ι →ₗ[ℝ] _) (b₀ l)) * inner ℝ (b₀ l) (b i) := by
       intro j
       conv_lhs => rw [← b₀.sum_repr' (b i)]
-      rw [map_sum, inner_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, inner_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_smul, real_inner_smul_right, mul_comm]
     rw [e1, ← b₀.sum_inner_mul_inner (b k) ((lemSJ : EuclideanSpace ℂ ι →ₗ[ℝ] _) (b i))]
@@ -81,8 +86,8 @@ lemma lemSG_det {n : ℕ} (b : Module.Basis (Fin n) ℝ (EuclideanSpace ℂ ι))
     LinearMap.det_toMatrix, Module.Basis.det_apply]
   ring
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 lemma lemSG_inv (Y : GT ι) :
     ∃ C : Matrix (Fin (2 * Fintype.card ι)) (Fin (2 * Fintype.card ι)) ℤ,
       (C.map (Int.cast : ℤ → ℝ)) * lemSG Y.b = 1 := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CardLiesOverEqIndex
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CardLiesOverEqIndex
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CoefficientFieldIntegersDedekindFractionField
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,6 @@ abbrev ι : c.sch ⟶ X := redι c.1
 
 instance isIntegral : IsIntegral c.sch := isIntegral_red c.2.1
 
-theorem dim_sch : topologicalKrullDim c.sch = 1 := (topologicalKrullDim_red c.1).trans c.2.2.1
-
 theorem natCast_eq_zero : (p : Γ(c.sch, ⊤)) = 0 := by
   refine eq_zero_of_basicOpen_eq_bot _ (eq_bot_iff.2 fun y hy => ?_)
   refine absurd hy ((c.sch.evaluation_eq_zero_iff_notMem_basicOpen (U := ⊤) y trivial _).1 ?_)
@@ -47,8 +49,6 @@ def ofImm {C : Scheme.{0}} (i : C ⟶ X) [IsClosedImmersion i] [IsIntegral C] (h
 variable [Fact p.Prime] {L M N H : LB X}
 
 def deg (L : LB X) : ℤ := interNumRed (ZMod p) (⊤ : Closeds c.sch) ![L.pull c.ι]
-
-abbrev str : c.sch ⟶ Sp (ZMod p) := strHom (ZMod p) c.sch
 
 theorem deg_eq_of_imm {C : Scheme.{0}} [Algebra (ZMod p) Γ(C, ⊤)] (i : C ⟶ X) [IsClosedImmersion i] [IsReduced C]
     (h : Set.range i = c.1) (hL : L.IsLB) : c.deg L = interNum (ZMod p) (structureModule C) ![L.pull i] := by
@@ -70,48 +70,6 @@ theorem deg_eq_of_imm {C : Scheme.{0}} [Algebra (ZMod p) Γ(C, ⊤)] (i : C ⟶ 
   refine interNum_congr_cls _ _ (fun a => LB.isLB_pull (isLB_vecOne hL' a) j) (isLB_vecOne (LB.isLB_pull hL i)) fun a => ?_
   fin_cases a
   exact ((CechPic.pull_comp j c.ι (cls L hL)).symm.trans (by rw [hj])).trans (CechPic.cls_pull hL i _).symm
-
-theorem isProper_str {O : Type} [CommRing O] [Finite (O ⧸ Ideal.span {(p : O)})] (s : X ⟶ Sp O) [IsProper s] :
-    IsProper c.str := by
-  let φ : O →+* Γ(c.sch, ⊤) := ((Scheme.ΓSpecIso (.of O)).inv ≫ (c.ι ≫ s).appTop).hom
-  let ψ : O ⧸ Ideal.span {(p : O)} →+* Γ(c.sch, ⊤) := Ideal.Quotient.lift _ φ fun a ha => by
-    obtain ⟨b, rfl⟩ := Ideal.mem_span_singleton'.1 ha
-    rw [map_mul, map_natCast, c.natCast_eq_zero, mul_zero]
-  letI : Algebra (ZMod p) (O ⧸ Ideal.span {(p : O)}) := ZMod.algebra' _ (ringChar _) (ringChar.dvd (by
-    rw [← map_natCast (Ideal.Quotient.mk _), Ideal.Quotient.eq_zero_iff_mem]
-    exact Ideal.mem_span_singleton_self _))
-  let g : c.sch ⟶ Sp (O ⧸ Ideal.span {(p : O)}) := c.sch.toSpecΓ ≫ Spec.map (CommRingCat.ofHom ψ)
-  have h₁ : g ≫ spMap (Ideal.Quotient.mk _) = c.ι ≫ s := by
-    have e : CommRingCat.ofHom (Ideal.Quotient.mk (Ideal.span {(p : O)})) ≫ CommRingCat.ofHom ψ =
-        (Scheme.ΓSpecIso (.of O)).inv ≫ (c.ι ≫ s).appTop := rfl
-    refine (Category.assoc _ _ _).trans ((congrArg (c.sch.toSpecΓ ≫ ·)
-      ((Spec.map_comp _ _).symm.trans (congrArg Spec.map e))).trans ?_)
-    rw [Spec.map_comp, ← Scheme.toSpecΓ_naturality_assoc, toSpecΓ_SpecMap_ΓSpecIso_inv, Category.comp_id]
-  have h₂ : c.str = g ≫ spMap (algebraMap (ZMod p) _) :=
-    ((Category.assoc _ _ _).trans (congrArg (c.sch.toSpecΓ ≫ ·) ((Spec.map_comp _ _).symm.trans
-      (congrArg (fun f => Spec.map (CommRingCat.ofHom f))
-        (RingHom.ext_zmod (ψ.comp (algebraMap (ZMod p) _)) (algebraMap _ _)))))).symm
-  have : IsProper (g ≫ spMap (Ideal.Quotient.mk _)) := h₁ ▸ inferInstance
-  have : IsProper g := IsProper.of_comp g (spMap (Ideal.Quotient.mk _))
-  have : IsFinite (spMap (algebraMap (ZMod p) (O ⧸ Ideal.span {(p : O)}))) :=
-    (IsFinite.SpecMap_iff _).2 (RingHom.finite_algebraMap.2 Module.Finite.of_finite)
-  rw [h₂]
-  infer_instance
-
-variable [IsProper c.str]
-
-theorem isCompleteCurve_top : IsCompleteCurve (ZMod p) (⊤ : Closeds c.sch) :=
-  (isCompleteCurve_iff (algebraMap_eq_strHom (ZMod p) c.sch)).2 ⟨IrreducibleSpace.isIrreducible_univ _,
-    (topologicalKrullDim_eq_of_isEmbedding Topology.IsEmbedding.id Set.range_id).trans c.dim_sch⟩
-
-theorem deg_of_cls_eq_add (hH : IsAmpleLB H) (hN : N.IsLB) (hL : L.IsLB) (hM : M.IsLB)
-    (e : cls N hN = cls L hL + cls M hM) : c.deg N = c.deg L + c.deg M :=
-  c.isCompleteCurve_top.interNumRed_of_cls_eq_add (hH.pull_of_isClosedImmersion c.ι) (LB.isLB_pull hN _)
-    (LB.isLB_pull hL _) (LB.isLB_pull hM _)
-    (by rw [CechPic.cls_pull hN, CechPic.cls_pull hL, CechPic.cls_pull hM, e, map_add])
-
-theorem deg_pos (hH : IsAmpleLB H) : 0 < c.deg H :=
-  (hH.pull_of_isClosedImmersion c.ι).interNumRed_pos c.isCompleteCurve_top
 
 end FibCrv
 
@@ -147,9 +105,6 @@ theorem natCast_eq_zero_iff (hp : p.Prime) (hW : (p : ℂ) ∈ W.nonunits) (Z : 
   have := (GlobalTheory.CoeffRings.isUnit_of_coprime _ (natCast_mem_nonunits Z.i.c hp.ne_zero hW) hc).map φ
   rw [map_natCast, ringChar.Nat.cast_ringChar] at this
   exact not_isUnit_zero this
-
-theorem exists_isAmpleLB (Z : LocM.Mdl Y i₀) : ∃ A : LB Z.X, IsAmpleLB A :=
-  ⟨_, (isAmple_projective_O_one _ Z.n).pull_of_isClosedImmersion Z.I.subschemeι⟩
 
 variable [Fact p.Prime]
 
@@ -191,22 +146,6 @@ theorem degree_twistingSheaf_line : (lineCrv p φ).deg (O1 O 1) = 1 := by
     interNum_congr_lbIso (ZMod p) _ (L' := fun _ => O1 (ZMod p) 1) (isLB_vecOne (LB.isLB_pull (O1_isLB O 1) _))
       (fun _ => O1_isLB _ 1) fun i => by fin_cases i; exact lbIso_pull_O1 1 φ]
   exact_mod_cast h
-
-example : (lineCrv p (Int.castRingHom _)).deg (O1 ℤ 1) = 1 ∧ (lineCrv p (Int.castRingHom _)).deg (LB.triv _) = 0 ∧
-    (lineCrv p (Int.castRingHom _)).deg (dual (O1 ℤ 1)) = -1 := by
-  have := isProper_str ℤ 1
-  have : Finite (ℤ ⧸ Ideal.span {(p : ℤ)}) :=
-    have : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-    Finite.of_equiv _ (Int.quotientSpanNatEquivZMod p).toEquiv.symm
-  have := (lineCrv p (Int.castRingHom _)).isProper_str (PSpace.str ℤ 1)
-  have hA := isAmple_projective_O_one ℤ 1
-  have h₀ : (lineCrv p (Int.castRingHom _)).deg (LB.triv _) = 0 :=
-    interNumRed_one_eq_zero (LB.isLB_pull (LB.isLB_triv _) _)
-      ((CechPic.cls_pull (LB.isLB_triv _) _ _).trans (map_zero _)) _
-  have h₁ := degree_twistingSheaf_line p (Int.castRingHom _)
-  have h₂ := (lineCrv p (Int.castRingHom _)).deg_of_cls_eq_add hA (LB.isLB_triv _) (CechPic.isLB_dual hA.isLB) hA.isLB
-    (CechPic.cls_dual_add hA.isLB).symm
-  omega
 
 end Line
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.GelfandKazhdanDualOfHyp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.GelfandKazhdanDualOfHyp
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open scoped InnerProductSpace
 
 namespace PositivityTheory.JMult1
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem paired_of_dualSubC_iso (hB : GlobalTheory.Published.CuspFormsBoundedGL) {π : CuspSub E a} (hπ : IsNormalised π)
     (h : (dualSubC π).Iso π) : Paired π π invTOp := by
@@ -42,9 +46,9 @@ theorem paired_of_dualSubC_iso (hB : GlobalTheory.Published.CuspFormsBoundedGL) 
     fun k x => (R_toL2ₗ hL x (π.stable (.cpt k) x.1 x.2)).symm
   have hinj : Function.Injective u := toL2ₗ_injective hL continuous_of_mem
   let B : π.V →ₗ[ℂ] π.V →ₗ[ℂ] ℂ := LinearMap.mk₂ ℂ (fun φ ψ => ⟪u (J ψ), u φ⟫_ℂ)
-    (fun φ φ' ψ => by simp only [map_add, inner_add_right])
+    (fun φ φ' ψ => by simp only [map_add (f := _), inner_add_right])
     (fun c φ ψ => by simp only [map_smul, inner_smul_right, smul_eq_mul])
-    (fun φ ψ ψ' => by simp only [Jadd, map_add, inner_add_left])
+    (fun φ ψ ψ' => by simp only [Jadd, map_add (f := _), inner_add_left])
     (fun c φ ψ => by simp only [Jsmul, map_smul, inner_smul_left, RingHomCompTriple.comp_apply, RingHom.id_apply,
       smul_eq_mul])
   have hB' : ∀ φ ψ, B φ ψ = ⟪u (J ψ), u φ⟫_ℂ := fun _ _ => rfl

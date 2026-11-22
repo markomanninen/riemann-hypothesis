@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocPart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocPart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveFrameDatumZetaIntegralEqSmaller
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes ValuativeRel
@@ -8,10 +12,6 @@ open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.Inde
 open GlobalTheory.Doubling (absE)
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
-
-noncomputable local instance measFvZetaB {F : Type} [Field F] [NumberField F] (v : Pl F) : MeasurableSpace (Fv F v) := borel _
-
-local instance borelFvZetaB {F : Type} [Field F] [NumberField F] (v : Pl F) : BorelSpace (Fv F v) := ⟨rfl⟩
 
 open GlobalTheory.SplitFlip GlobalTheory.SplitWeil
 
@@ -54,8 +54,8 @@ theorem isGLO_of_mem_KO {n : ℕ} {g : GL (Fin n) k} (h : g ∈ KO k (Fin n)) : 
 
 end GlobalTheory.StdPairZetaB
 
-open GlobalTheory.StdPairZetaB in
 
+open GlobalTheory.StdPairZetaB in
 theorem GlobalTheory.StdPairZetaB.smallF_stdB : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     [MeasurableSpace k] [BorelSpace k] (ν : kˣ →* ℂˣ) (ϖ : kˣ) (c a a' : ℕ),
     (∀ Y : Matrix (Fin a') (Fin (a + a')) k, (blk₂ Y).det = 0 →
@@ -68,7 +68,7 @@ theorem GlobalTheory.StdPairZetaB.smallF_stdB : ∀ {k : Type} [Field k] [Valuat
   refine ⟨fun Y hY => ?_, fun Y g₂ hg₂ => ?_⟩
   · have h0 : ∀ g : GL (Fin a') k, stdB ν ϖ c a a' (g.val * Y) = 0 := fun g => by
       unfold stdB
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨h0, -⟩
       apply h0
       rw [blk₂_mul_left, Matrix.det_mul, hY, mul_zero]
@@ -80,7 +80,7 @@ theorem GlobalTheory.StdPairZetaB.smallF_stdB : ∀ {k : Type} [Field k] [Valuat
     have hSm : @MeasurableSet (GL (Fin a') k) Units.instMeasurableSpace S := by
       letI : MeasurableSpace (GL (Fin a') k) := Units.instMeasurableSpace
       haveI : BorelSpace (GL (Fin a') k) := borel_GL
-      exact (isOpen_KO.preimage (continuous_mul_right _)).measurableSet
+      exact (isOpen_KO.preimage (continuous_mul_const _)).measurableSet
     have hS1 : (haarVol (KO k (Fin a'))).real S = 1 := by
       simp [hSdef, Measure.real, measure_preimage_mul_right, haarVol_self isOpen_KO le_rfl]
     have hint : ∀ g : GL (Fin a') k, stdB ν ϖ c a a' (g.val * Y) * (ν (gdet g) : ℂ) * apow (gdet g) d =
@@ -105,7 +105,7 @@ theorem GlobalTheory.StdPairZetaB.smallF_stdB : ∀ {k : Type} [Field k] [Valuat
               ∀ i j, blk₁ (g.val * Y) i j ∈ GlobalTheory.SplitWeil.cball (ϖ ^ c) := by
             rw [e₂, e₁]
             exact ⟨(g * g₂).det_ne_zero, hG, cball_mul_left hG.1 hP⟩
-          rw [dif_pos hcond, hC, Set.indicator_of_mem (show ((g₂⁻¹).val * blk₁ Y) ∈
+          rw [dite_eq_left hcond, hC, Set.indicator_of_mem (show ((g₂⁻¹).val * blk₁ Y) ∈
             {M : Matrix (Fin a') (Fin a) k | ∀ i j, M i j ∈ cball (ϖ ^ c)} from hP), Pi.one_apply, mul_one, hap]
           have hu : Units.mk0 _ hcond.1 = gdet g * gdet g₂ := Units.ext (by
             rw [Units.val_mk0, Units.val_mul, Matrix.GeneralLinearGroup.val_det_apply,
@@ -121,12 +121,12 @@ theorem GlobalTheory.StdPairZetaB.smallF_stdB : ∀ {k : Type} [Field k] [Valuat
             have hinv := (mem_KO_iff (g * g₂)).1 hκ
             have := cball_mul_left hinv.2 h3
             rwa [e₁, ← Matrix.mul_assoc, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.one_mul] at this
-          rw [dif_neg hcond, hC, Set.indicator_of_notMem (show ((g₂⁻¹).val * blk₁ Y) ∉
+          rw [dite_eq_right hcond, hC, Set.indicator_of_notMem (show ((g₂⁻¹).val * blk₁ Y) ∉
             {M : Matrix (Fin a') (Fin a) k | ∀ i j, M i j ∈ cball (ϖ ^ c)} from hP)]
           simp
       · rw [Set.indicator_of_notMem hg]
         unfold stdB
-        rw [dif_neg, zero_mul, zero_mul]
+        rw [dite_eq_right, zero_mul, zero_mul]
         rintro ⟨-, h2, -⟩
         apply hg
         show g * g₂ ∈ KO k (Fin a')

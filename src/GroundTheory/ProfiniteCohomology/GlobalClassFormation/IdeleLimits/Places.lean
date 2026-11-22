@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Components
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Components
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -74,8 +79,8 @@ theorem shapiro_placeProj_inl (v : InfinitePlace K.1) (p : GLevel K)
   rw [← placeProj_comp_infiniteShapiroIso (P.inf v p) n]
   rfl
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 def levelDecomposition : LevelDecomposition K n where
   L := P.localGroup n
   e := P.shapiro n

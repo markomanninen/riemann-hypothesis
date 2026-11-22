@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsProjSecDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsProjSecDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -20,7 +25,8 @@ abbrev S : Type :=
 theorem map_linPoly (k : Fin (e + 1)) :
     MvPolynomial.map (algebraMap ℂ (Kf e)) (ComplexSets.linPoly A k) =
       linForm fun j => algebraMap ℂ (Kf e) (A k j) := by
-  simp [ComplexSets.linPoly, linForm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ComplexSets.linPoly, linForm, map_sum]
 
 theorem projVar_ne_zero (k : Fin (e + 1)) : projVar e k ≠ 0 := by
   rw [projVar, ne_eq, IsFractionRing.to_map_eq_zero_iff]; exact X_ne_zero k
@@ -189,7 +195,7 @@ theorem proof : ProjSecDomain.Statement := by
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective s
     induction f using MvPolynomial.induction_on with
     | C c => exact isIntegral_algebraMap
-    | add p q hp hq => rw [map_add]; exact hp.add hq
+    | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
     | mul_X p j hp => rw [map_mul]; exact hp.mul (hint j)⟩
   have : Algebra.FiniteType (Kf e) (S W A) :=
     Algebra.FiniteType.of_surjective (Ideal.Quotient.mkₐ (Kf e) _)

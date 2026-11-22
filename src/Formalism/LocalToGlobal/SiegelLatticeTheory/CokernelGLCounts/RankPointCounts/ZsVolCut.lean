@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefVol
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IndexCocycleOrbits.IdxCocycle
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefVol
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.IndexCocycleOrbits.IdxCocycle
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {D : Formalism.BasicNotions.D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP 
   (F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
 
 def HypE (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : PairVal.MatR D) : Prop :=
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : PairVal.MatR D) : Prop :=
   (∀ p, Agree δ M p) ∧ (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Lat.gS D) ^ 2] ∧ IsRowReps D F0 what₂ ∧
     PrimeHyp D u (Tu D u') ∧ EligAt γ w ∧ PairVal.NormRep γ w F' L U
 
@@ -32,7 +36,7 @@ def CZ (Z L : PairVal.MatR D) : Subgroup (PairVal.GLR D) := Subgroup.closure (st
 
 def OrbStabE (C : PairVal.MatR D → PairVal.MatR D → Subgroup (PairVal.GLR D)) : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : PairVal.MatR D), HypE M δ u u' F0 what₂ γ w F' L U →
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : PairVal.MatR D), HypE M δ u u' F0 what₂ γ w F' L U →
     PairVal.stabAut D u u' F0 what₂ γ F' L ≤ C (ZhatL (lf D F0) F') L ∧
       (PairVal.stabAut D u u' F0 what₂ γ F' L).relIndex (C (ZhatL (lf D F0) F') L) =
         (PairVal.orbT D u u' F0 what₂ γ (ZhatL (lf D F0) F')).ncard ∧
@@ -40,7 +44,7 @@ def OrbStabE (C : PairVal.MatR D → PairVal.MatR D → Subgroup (PairVal.GLR D)
 
 def ProdE (C : PairVal.MatR D → PairVal.MatR D → Subgroup (PairVal.GLR D)) : Prop :=
   ∀ (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : PairVal.MatR D), HypE M δ u u' F0 what₂ γ w F' L U →
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : PairVal.MatR D), HypE M δ u u' F0 what₂ γ w F' L U →
     IdxRatio (PairVal.stabInt D u u' δ M w) (C (ZhatL (lf D F0) F') L) =
       ∏ᶠ p, wtL M δ (D.mem u).A.T (D.mem u').A.T p w
         (CntLocal.ZZP (M := M) δ u u' p (ZhatL (lf D F0) F') * sgnP p)

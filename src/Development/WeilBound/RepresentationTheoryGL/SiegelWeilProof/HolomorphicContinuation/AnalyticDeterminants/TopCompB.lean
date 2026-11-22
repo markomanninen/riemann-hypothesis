@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,8 @@ theorem ml_expand {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] {k : �
       ∑ f : Fin k → Fin 3, z ^ (∑ i, (f i : ℕ)) * A (fun i => Y i (f i)) := by
   have h : (fun i => Y i 0 + z • Y i 1 + z ^ 2 • Y i 2) = fun i => ∑ w : Fin 3, z ^ (w : ℕ) • Y i w := by
     funext i; simp [Fin.sum_univ_three]
-  rw [h, ContinuousMultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, ContinuousMultilinearMap.map_sum]
   refine Finset.sum_congr (by simp) fun f _ => ?_
   rw [ContinuousMultilinearMap.map_smul_univ, Finset.prod_pow_eq_pow_sum, smul_eq_mul]
 

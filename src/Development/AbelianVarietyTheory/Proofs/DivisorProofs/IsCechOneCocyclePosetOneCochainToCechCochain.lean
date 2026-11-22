@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictCapFBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Opposite
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.KS (rsT IsCoc IsCob)
@@ -24,7 +29,7 @@ theorem toCech_cocycle_read (f : GlobalTheory.CatCoh.C1 (capF s U hU hinf)) (hf 
   have hc : (homOfLE hxP).op ≫ (homOfLE hPK).op = (homOfLE hxK).op := Subsingleton.elim _ _
   rw [hc] at e
   have e' := congrArg (fun b => rsT (cv s U hU hinf (op K) b) W) e
-  simp only [map_add, GlobalTheory.KS.rsT_add] at e'
+  simp only [map_add (f := _), GlobalTheory.KS.rsT_add] at e'
   rw [cv_mp s U hU hinf (homOfLE hPK).op] at e'
   rw [GlobalTheory.KS.rsT_rsT (O₁ := cap U (op K).unop) (cap_mono U hPK) hW] at e'
   rw [e']

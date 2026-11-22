@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ClsZeroOfRep
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RSubOneMem
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LogarithmicDerivatives.CrystallineFirstChernExistsUnique
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueIsFirstChernTorsionFree
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FirstChernPullback
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ClsZeroOfRep
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.RSubOneMem
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LogarithmicDerivatives.CrystallineFirstChernExistsUnique
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueIsFirstChernTorsionFree
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FirstChernPullback
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -94,8 +98,8 @@ variable {γ q l s 𝒱}
 def zz {D : E.LineData X} (Λ : Lf γ q l s 𝒱 D) (t : ComposableArrows (TS γ q l s 𝒱).FullSubcategory 2) :
     (sP (TS γ q l s 𝒱)).A.obj (t.obj (Fin.last 2)) := ((show (t.obj (Fin.last 2)).obj.B from (Λ.r t).val) - 1 : (t.obj (Fin.last 2)).obj.B)
 
-variable (𝒱) in
 
+variable (𝒱) in
 abbrev resG (r j : ℕ) (z : HG (TS γ q l s {⊤}) r j) : HG (TS γ q l s 𝒱) r j :=
   ((incl (le_top' γ q l s 𝒱)).sq (incl_fil _ (r : ℤ)) (incl_fil _ ((r : ℤ) + 1))).pull j z
 

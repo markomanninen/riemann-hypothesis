@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyAbs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.EnergyAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem tens_unit (hσ : ∀ v, IsUnitRep (σ v)) (h : IsTensAbs σ σs tens) (g
       rw [h.2.1, h.2.1, h.1, h.1]
       exact Finset.prod_congr rfl fun v _ => (hσ v).2.2.1 (g v) (x v) (y v)
     | zero => simp
-    | add b c _ _ hb hc => rw [map_add, inner_add_right, inner_add_right, hb, hc]
+    | add b c _ _ hb hc => rw [map_add (f := _), inner_add_right, inner_add_right, hb, hc]
     | smul c b _ hb => rw [map_smul, inner_smul_right, inner_smul_right, hb]
   have hcl : IsClosed {b : Hs | ⟪σs g (tens x), σs g b⟫_ℂ = ⟪tens x, b⟫_ℂ} :=
     isClosed_eq (continuous_const.inner (σs g).continuous) (continuous_const.inner continuous_id)
@@ -66,7 +70,7 @@ theorem tens_unit_all (hσ : ∀ v, IsUnitRep (σ v)) (h : IsTensAbs σ σs tens
       obtain ⟨x, rfl⟩ := hc
       exact tens_unit hσ h g b x
     | zero => simp
-    | add c d _ _ hc hd => rw [map_add, inner_add_left, inner_add_left, hc, hd]
+    | add c d _ _ hc hd => rw [map_add (f := _), inner_add_left, inner_add_left, hc, hd]
     | smul t c _ hc => rw [map_smul, inner_smul_left, inner_smul_left, hc]
   have hcl : IsClosed {c : Hs | ⟪σs g c, σs g b⟫_ℂ = ⟪c, b⟫_ℂ} :=
     isClosed_eq ((σs g).continuous.inner continuous_const) (continuous_id.inner continuous_const)
@@ -88,7 +92,7 @@ theorem isUnitRep_tens (hσ : ∀ v, IsUnitRep (σ v)) (h : IsTensAbs σ σs ten
       rw [e]
       exact (continuous_tens h).comp (continuous_pi fun v => ((hσ v).2.2.2 (x v)).comp (continuous_apply v))
     | zero => simp only [map_zero]; exact continuous_const
-    | add b c _ _ hb hc => simp only [map_add]; exact hb.add hc
+    | add b c _ _ hb hc => simp only [map_add (f := _)]; exact hb.add hc
     | smul t b _ hb => simp only [map_smul]; exact hb.const_smul t
   refine ⟨?_, ?_, fun g a b => tens_unit_all hσ h g a b, ?_⟩
   · apply ContinuousLinearMap.ext_on h.2.2

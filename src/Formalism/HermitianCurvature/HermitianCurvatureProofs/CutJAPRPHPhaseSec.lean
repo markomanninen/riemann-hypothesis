@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRPhaseCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRDatumConst
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRPhaseCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRDatumConst
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q NumberField
 open scoped ComplexConjugate Matrix
@@ -43,7 +47,6 @@ theorem diag_mem (d : Fin (k + 1) → ℂ) (h : ∀ j, star (d j) * d j = 1) : M
   rw [Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
   congr 1
   funext j
-  simp only [Pi.star_apply]
   linear_combination (if j = Fin.last k then (-1 : ℂ) else 1) * h j
 
 theorem first_diagonal_phase_mem_unitary (θ : ℝ) : D1 k θ ∈ UH (Hb k) := by

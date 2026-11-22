@@ -1,15 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSteinberg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostEtaTildeCharacterExists
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NotIsobaricRigid
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharExponentOfInfinityType
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryRationalInfTypeSubgroupAndInfTypeUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharConjSelfDualFiniteIdelicIffLocalStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharConjSelfDualInfinityInfinitesimalIffFieStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CGTrue
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSteinberg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostEtaTildeCharacterExists
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqOfMapEq
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Mono0OfLpDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsEquivOfMapEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.TeichmullerInertiaLabelCondition
+public import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharExponentOfInfinityType
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryRationalInfTypeSubgroupAndInfTypeUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharConjSelfDualFiniteIdelicIffLocalStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharConjSelfDualInfinityInfinitesimalIffFieStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +30,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 section Char
 
-variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] [IsTotallyComplex E]
+variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] [_root_.NumberField.IsTotallyComplex E]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)}
 
 theorem locPar_unr (hL : GlobalTheory.Published.LocalLanglandsGL) (χ : HChar E) (h : IsPlaceOver A w) (hu : χ.UnrAt w) :
@@ -90,8 +98,8 @@ theorem prod_val (h : IsEtaT H χ) (v : HeightOneSpectrum (𝓞 H.F)) :
   have hP' : P.under (𝓞 H.F) = v := by simpa [aboveF] using hP
   rw [MonoidHom.comp_apply, GlobalTheory.HeckeProduct.locK_unr χ (h.unr P), hr, hP', ordF_unif, zpow_one]
 
-open Classical in
 
+open Classical in
 theorem above_eq {w w' : PlE H} (hc : IsConjPl H w w') : aboveF (L := H.E) H.F (w.under (𝓞 H.F)) = {w, w'} := by
   obtain ⟨c, hc', hcm, -⟩ := GlobalTheory.Mem.HostCM.host_cm R H
   have h1 : GlobalTheory.Mem.Chr.ConjPl c.toRingEquiv w w' :=
@@ -144,12 +152,17 @@ theorem eq_ofU {R : Ranks} {H : Formalism.BasicNotions.Host R} (σ : HostCGu H 1
     haveI := host_isCMField H; σ = ofU (CGu.equivChar H.E σ).1 (CGu.equivChar H.E σ).2 :=
   haveI := host_isCMField H; Subtype.ext (CGu.ofChar_equivChar σ).symm
 
-theorem unr_symm (w) (x) : D.naut.unr ((T.e w).symm x) ↔ x.unr := by rw [T.unr, Equiv.apply_symm_apply]
+theorem unr_symm (w : PlE D.host) (x : WD (D.nd.plOm.2 w)) :
+    D.naut.unr ((T.e w).symm x) ↔ x.unr := by
+  rw [T.unr, Equiv.apply_symm_apply]
 
-theorem frob_symm (w) (x) (h : x.unr) : D.naut.frobEig ((T.e w).symm x) = x.frobEig := by
+theorem frob_symm (w : PlE D.host) (x : WD (D.nd.plOm.2 w)) (h : x.unr) :
+    D.naut.frobEig ((T.e w).symm x) = x.frobEig := by
   rw [T.frobEig _ _ ((unr_symm T w x).2 h), Equiv.apply_symm_apply]
 
-theorem dim_symm (w) (x) : D.naut.lpDim ((T.e w).symm x) = x.lpDim := by rw [← T.dim, Equiv.apply_symm_apply]
+theorem dim_symm (w : PlE D.host) (x : WD (D.nd.plOm.2 w)) :
+    D.naut.lpDim ((T.e w).symm x) = x.lpDim := by
+  rw [← T.dim, Equiv.apply_symm_apply]
 
 theorem ofU_spec {χ : HChar D.host.E} (h : χ.IsUnitary) {w} (hu : χ.UnrAt w) :
     D.naut.unr ((T.e w).symm (ParLaws.locG hL D.nd.plOm (ofU χ h) w)) ∧
@@ -163,9 +176,9 @@ theorem ofU_unr_iff {χ : HChar D.host.E} (h : χ.IsUnitary) (w) :
   have := host_isCMField D.host
   exact (unr_symm T w _).trans (locPar_unr_iff hL χ (D.nd.plOm.2 w))
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def trueK {η : HChar D.host.E} (hη : IsEtaT D.host η) : CGK D.naut :=
   haveI := host_isCMField D.host
   have L := ParLaws.laws hL hF D.host D.nd.Om D.nd.plOm
@@ -173,7 +186,9 @@ def trueK {η : HChar D.host.E} (hη : IsEtaT D.host η) : CGK D.naut :=
     have := hη.unitary x
     change ‖(((η.1 x)⁻¹ : ℂˣ) : ℂ)‖ = 1
     rw [Units.val_inv_eq_inv_val, norm_inv, this, inv_one]
-  have hu : ∀ w, (η⁻¹).UnrAt w := fun w x hx => by rw [HChar.loc_inv, hη.unr w x hx, inv_one]
+  have hu : ∀ w, (η⁻¹).UnrAt w := fun w x hx => by
+    have hloc : (η⁻¹).loc w x = (η.loc w x)⁻¹ := rfl
+    rw [hloc, hη.unr w x hx, inv_one]
   { CG := fun a => {π : HostCGu D.host a // 0 < a}
     csd := fun π => π.1.IsCsd
     ralg := fun π => π.1.IsRegAlg
@@ -205,9 +220,9 @@ def trueK {η : HChar D.host.E} (hη : IsEtaT D.host η) : CGK D.naut :=
       rw [(ofU_spec hL T hη.unitary (hη.unr _)).2, Multiset.singleton_inj] at ha hb
       rw [← ha, ← hb, ← Units.val_mul, ← mul_inv, val_split hη hw hc, inv_one, Units.val_one] }
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def trueCG (hE : IsEmpty D.nd.Loc) {η : HChar D.host.E} (hη : IsEtaT D.host η) :
     CGTrue hL (setCG D hE (trueK hL hF T hη)) (wdCG hE _ T) where
   e := fun _ => ⟨Subtype.val, Subtype.val_injective⟩
@@ -272,9 +287,9 @@ theorem equivChar_ofU {R : Ranks} {H : Formalism.BasicNotions.Host R} (χ : HCha
 theorem exists_ofU {R : Ranks} {H : Formalism.BasicNotions.Host R} (σ : HostCGu H 1) : ∃ χ h, σ = ofU χ h :=
   ⟨_, _, eq_ofU σ⟩
 
+
 set_option maxHeartbeats 2000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def trueSide (hE : IsEmpty D.nd.Loc) (cf : CharFrame D) (hP : ∀ k v, cf.P.Div k (D.naut.plGw k v)) :
     CharSide (setCG D hE (trueK hL hF T cf.isEta)) (cfCG hE _ cf) :=
   haveI := host_isCMField D.host

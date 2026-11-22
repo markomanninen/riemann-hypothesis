@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+
+@[expose] public section
 
 open TensorProduct
 
@@ -7,11 +11,11 @@ private theorem ladder {X Y : Type} [DecidableEq X] [DecidableEq Y] (f : (X →�
     f' (TensorProduct.finsuppScalarRight ℤ ℤ ℂ X u) = TensorProduct.finsuppScalarRight ℤ ℤ ℂ Y (f.lTensor ℂ u) := by
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul c v =>
     induction v using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [tmul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [tmul_add, map_add (f := _), ha, hb]
     | single x n =>
       have e1 : TensorProduct.finsuppScalarRight ℤ ℤ ℂ X (c ⊗ₜ[ℤ] Finsupp.single x n)
           = ((n : ℂ) * c) • Finsupp.single x (1 : ℂ) := by

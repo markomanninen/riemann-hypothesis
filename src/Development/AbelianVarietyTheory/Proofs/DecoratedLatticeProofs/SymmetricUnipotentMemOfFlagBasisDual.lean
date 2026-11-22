@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -49,7 +54,7 @@ theorem gram_row (K : Type) [CommRing K] {n ρ k : ℕ} (hn : n = 2 * ρ + k + 1
 theorem gram_mul_gram (K : Type) [CommRing K] {n ρ k : ℕ} (hn : n = 2 * ρ + k + 1) :
     flagGram K n ρ k * flagGram K n ρ k = 1 := by
   ext i j
-  rw [mul_apply, Finset.sum_eq_single (tau hn i)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (tau hn i)]
   · rw [gram_row K hn i (tau hn i), if_pos rfl, gram_row K hn (tau hn i) j]
     have hii : tau hn (tau hn i) = i := Fin.ext (dualIdx_dualIdx hn i.2)
     rw [hii]
@@ -65,8 +70,8 @@ theorem gram_mul_gram (K : Type) [CommRing K] {n ρ k : ℕ} (hn : n = 2 * ρ + 
 theorem gram_conj_apply (K : Type) [CommRing K] {n ρ k : ℕ} (hn : n = 2 * ρ + k + 1)
     (A : Matrix (Fin n) (Fin n) K) (i j : Fin n) :
     (flagGram K n ρ k * A * flagGram K n ρ k) i j = sgn K ρ k i * sgn K ρ k j * A (tau hn i) (tau hn j) := by
-  rw [mul_apply, Finset.sum_eq_single (tau hn j)]
-  · rw [gram_col K hn (tau hn j) j, if_pos rfl, mul_apply, Finset.sum_eq_single (tau hn i)]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (tau hn j)]
+  · rw [gram_col K hn (tau hn j) j, if_pos rfl, Matrix.mul_apply, Finset.sum_eq_single (tau hn i)]
     · rw [gram_row K hn i (tau hn i), if_pos rfl]; ring
     · intro b _ hb; rw [gram_row K hn i b, if_neg hb, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h

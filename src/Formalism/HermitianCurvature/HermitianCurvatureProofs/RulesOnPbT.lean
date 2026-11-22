@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UwClosedSubgroup
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -141,34 +145,34 @@ theorem nL_eq {j ρ : ℕ} (hρ : 1 ≤ ρ) (a : Fin j → ℂ) :
       Matrix.fromCols_apply_inr, Matrix.zero_apply, Matrix.one_apply, Matrix.neg_apply, Matrix.of_apply,
       EmbeddingLike.apply_eq_iff_eq, Sum.inl.injEq, Sum.inr.injEq, reduceCtorEq, if_false, v1, v2, v3]
   · have := α.isLt; have := β.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := α.isLt; have := v.isLt
-    rw [wcH_apply hρ, dif_neg (by omega)]
+    rw [wcH_apply hρ, dite_eq_right (by omega)]
     by_cases hv : v.val = 0
-    · rw [dif_pos ⟨α.isLt, by omega⟩, if_pos hv]; simp
-    · rw [dif_neg (by omega), if_neg hv]; simp
+    · rw [dite_eq_left ⟨α.isLt, by omega⟩, if_pos hv]; simp
+    · rw [dite_eq_right (by omega), if_neg hv]; simp
   · have := α.isLt; have := β.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := u.isLt; have := β.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := u.isLt; have := v.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := u.isLt; have := β.isLt
-    rw [cL_last, dif_neg (show ¬(j + u.val < j ∧ j + (2 * ρ + k + 1) + β.val = j) by omega)]
+    rw [cL_last, dite_eq_right (show ¬(j + u.val < j ∧ j + (2 * ρ + k + 1) + β.val = j) by omega)]
     by_cases hu : u.val = 2 * ρ + k
-    · rw [dif_pos (show j + u.val = j + 2 * ρ + k ∧ j + 2 * ρ + k + 1 ≤ j + (2 * ρ + k + 1) + β.val by omega),
+    · rw [dite_eq_left (show j + u.val = j + 2 * ρ + k ∧ j + 2 * ρ + k + 1 ≤ j + (2 * ρ + k + 1) + β.val by omega),
         if_pos hu]
       have e : (⟨2 * (j + ρ) + k - (j + (2 * ρ + k + 1) + β.val), by omega⟩ : Fin j) = β.rev :=
         Fin.ext (by simp [Fin.rev]; omega)
       rw [e]; ring
-    · rw [dif_neg (show ¬(j + u.val = j + 2 * ρ + k ∧ j + 2 * ρ + k + 1 ≤ j + (2 * ρ + k + 1) + β.val) by omega),
+    · rw [dite_eq_right (show ¬(j + u.val = j + 2 * ρ + k ∧ j + 2 * ρ + k + 1 ≤ j + (2 * ρ + k + 1) + β.val) by omega),
         if_neg hu]; ring
   · have := α.isLt; have := β.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := α.isLt; have := v.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
   · have := α.isLt; have := β.isLt
-    rw [dif_neg (by omega), dif_neg (by omega)]; ring
+    rw [dite_eq_right (by omega), dite_eq_right (by omega)]; ring
 
 end nl
 
@@ -211,7 +215,7 @@ theorem minorDomain_mul_unipotent {r : ℕ} (Bs : B.RealPlaceData k r Wp Wq) (j 
   have hp : Bs.inSS ((Matrix.of.symm 1, Matrix.of.symm 1), (Matrix.of.symm 1, Matrix.of.symm m)) :=
     ⟨Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw _, Formalism.QuantumDeterminants.WeylGroupFacts.mem_n_one, Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw _, hm⟩
   have hs : B.sgs ((Matrix.of.symm 1, Matrix.of.symm 1), (Matrix.of.symm 1, Matrix.of.symm m)) g = g * m := by
-    simp [B.sgs]
+    simp only [B.sgs, Equiv.apply_symm_apply, inv_one, one_mul, mul_one]
   rw [← hs]
   exact domP_sgs Bs j hp hg
 
@@ -222,7 +226,8 @@ theorem domP_N_mul {r : ℕ} (Bs : B.RealPlaceData k r Wp Wq) (j : ℕ) {g : Q.M
     ⟨Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw _, hmi, Formalism.FourierDecayAlt.P.BigCellZetaMinors.one_uw _, Formalism.QuantumDeterminants.WeylGroupFacts.mem_n_one⟩
   have hu : IsUnit m.det := Formalism.QuantumDeterminants.WeylGroupFacts.isUnit_of_uh hm.1
   have hs : B.sgs ((Matrix.of.symm 1, Matrix.of.symm m⁻¹), (Matrix.of.symm 1, Matrix.of.symm 1)) g = m * g := by
-    simp [B.sgs, Matrix.nonsing_inv_nonsing_inv _ hu]
+    simp only [B.sgs, Equiv.apply_symm_apply, inv_one, one_mul, mul_one,
+      Matrix.nonsing_inv_nonsing_inv _ hu]
   rw [← hs]
   exact domP_sgs Bs j hp hg
 

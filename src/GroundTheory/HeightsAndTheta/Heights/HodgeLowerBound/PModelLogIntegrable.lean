@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelLogIntegrable
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelPtsIntegrable
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntPoly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelLogIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsModelPtsIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogIntPoly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -33,8 +38,8 @@ theorem target_inter_compl_Yo_subset {D : ℕ} {X : Type*} [TopologicalSpace X]
 
 end ModelLogIntegrableAlt
 
-open ModelLogIntegrableAlt in
 
+open ModelLogIntegrableAlt in
 theorem ModelLogIntegrable.proof (hM : ModelPtsIntegrable.Statement) : ModelLogIntegrable.Statement := by
   intro K _ ι _ P e M R L c N u C C' g hP hL hN hu hbd hg
   let _ : MeasurableSpace M.Xc := borel M.Xc

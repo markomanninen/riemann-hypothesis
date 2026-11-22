@@ -1,8 +1,12 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+
+@[expose] public section
 
 noncomputable section
 

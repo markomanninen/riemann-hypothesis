@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+
+@[expose] public section
 
 open Finset BranchingSupport Formalism.REAL Formalism.QuantumDeterminants
 open scoped InnerProductSpace
@@ -30,21 +34,20 @@ theorem algTens_wtNear : ∀ (M : Type) [NormedAddCommGroup M] [InnerProductSpac
         l1_shift_single_le ω Λ t (-1) (by simp) c hω, fun a => ?_⟩
       rw [← hT.pr_comm, ← map_smul]
       congr 1
-      funext i
-      simp only [dualTens, Pi.smul_apply]
+      ext i
       by_cases hi : i = c
       · subst hi
         by_cases ha : a = i
         · subst ha
-          simp [hx a, add_smul, sub_eq_add_neg]
+          simp [dualTens, hx a, add_smul, sub_eq_add_neg]
         · have : ¬ i = a := fun h => ha h.symm
-          simp [hx a, ha, this]
+          simp [dualTens, hx a, ha, this]
       · by_cases ha : i = a
         · subst ha
-          simp [hi]
-        · simp [hi, ha]
+          simp [dualTens, hi]
+        · simp [dualTens, hi, ha]
     | zero => simp
-    | add x y _ _ hx hy => rw [Pi.single_add, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [Pi.single_add, map_add (f := _)]; exact add_mem hx hy
     | smul r x _ hx => rw [Pi.single_smul, map_smul]; exact Submodule.smul_mem _ _ hx
   · induction hy using Submodule.span_induction with
     | mem x hx =>
@@ -62,7 +65,7 @@ theorem algTens_wtNear : ∀ (M : Type) [NormedAddCommGroup M] [InnerProductSpac
       · have : ¬ d = a := fun h => ha h.symm
         simp [ha, this]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, Pi.add_apply]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), Pi.add_apply]; exact add_mem hx hy
     | smul r x _ hx => rw [map_smul, Pi.smul_apply]; exact Submodule.smul_mem _ _ hx
 
 end GlobalTheory

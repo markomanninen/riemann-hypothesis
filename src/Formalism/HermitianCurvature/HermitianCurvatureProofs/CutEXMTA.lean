@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEXMkTopCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerParabolicCoordinates
+
+@[expose] public section
 
 noncomputable section
 

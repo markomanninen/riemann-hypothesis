@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.GlobalTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.GlobalTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -198,7 +202,8 @@ private theorem lam_eq_sum_coeff_mul_ga_mul_fact (p : ℕ) (F : MvPolynomial (D.
 private theorem lam_sum_right (p : ℕ) (F : MvPolynomial (D.OL × Fin D.r) K) {ι : Type} (s : Finset ι)
     (f : ι → MvPolynomial (D.ML × Fin D.r) K) :
     D.abelian₂ p F (∑ i ∈ s, f i) = ∑ i ∈ s, D.abelian₂ p F (f i) := by
-  simp only [lam_eq_sum_coeff_mul_ga_mul_fact, map_sum, MvPolynomial.coeff_sum, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lam_eq_sum_coeff_mul_ga_mul_fact, map_sum, MvPolynomial.coeff_sum, Finset.mul_sum, Finset.sum_mul]
   exact Finset.sum_comm
 
 private theorem lam_smul_right (p : ℕ) (F : MvPolynomial (D.OL × Fin D.r) K) (c : K)
@@ -277,7 +282,7 @@ theorem value_monomial {C0 : ℝ} (hD : DVRHyp v p) (h1 : 1 ≤ C0) (hV : D.Vali
       rw [coeff_monomial_mul, one_mul]
     have c2 : (D.GM F (D.tpE ζ)).coeff (D.collapseExponent p ζ') =
         Q0.coeff (eIn D.outP ζ') + E'.coeff (eIn D.outP ζ') := by
-      rw [← D.coeff_digitPart_eIn p hl, D.label_function_same_block hb, ← coeff_add, ← hQ]; rfl
+      rw [← D.coeff_digitPart_eIn p hl, D.label_function_same_block hb, ← MvPolynomial.coeff_add, ← hQ]; rfl
     have hu := D.v_gaP hV hdig hl
     have hu0 := ne_zero_of_v_eq_zero hu
     have c3 : e ζ' = (gm ζ' - (D.gaP p gam ζ')⁻¹) * D.gaP p gam ζ' *

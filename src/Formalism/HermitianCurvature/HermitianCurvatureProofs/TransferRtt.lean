@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementM
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MultiplicationOpHom
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelNablaStarRelations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
+module
+
+public import Formalism.HermitianCurvature.StatementM
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MultiplicationOpHom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelNablaStarRelations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
+
+@[expose] public section
 
 set_option linter.unusedSimpArgs false
 set_option linter.unusedVariables false
@@ -57,8 +61,7 @@ theorem star_kap (f : Ty P → ℂ) : star (kap P f) = kap P (fun π => star (f 
   rw [kap_eq, kap_eq, Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose]
   congr 1
   funext π
-  simp only [Pi.star_apply]
-  rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, star_smul, star_one]
+  simp only [Pi.star_apply, Algebra.algebraMap_eq_smul_one, star_smul, star_one]
 
 theorem S_shift (l : ℕ) (f g : Ty P → ℂ) (h : ∀ π π', Up P l π π' → g π' = f π) :
     kap P g * SS P l = SS P l * kap P f := by
@@ -833,15 +836,11 @@ theorem IsPoly.const (b : B) : IsPoly fun _ => b := ⟨C b, fun y => (ev_C y b).
 
 theorem IsPoly.add {f g : ℂ → B} (hf : IsPoly f) (hg : IsPoly g) : IsPoly fun y => f y + g y := by
   obtain ⟨p, hp⟩ := hf; obtain ⟨q, hq⟩ := hg
-  exact ⟨p + q, fun y => by show f y + g y = _; rw [hp, hq, map_add]⟩
+  exact ⟨p + q, fun y => by show f y + g y = _; rw [hp, hq, map_add (f := _)]⟩
 
 theorem IsPoly.sub {f g : ℂ → B} (hf : IsPoly f) (hg : IsPoly g) : IsPoly fun y => f y - g y := by
   obtain ⟨p, hp⟩ := hf; obtain ⟨q, hq⟩ := hg
   exact ⟨p - q, fun y => by show f y - g y = _; rw [hp, hq, map_sub]⟩
-
-theorem IsPoly.neg {f : ℂ → B} (hf : IsPoly f) : IsPoly fun y => -f y := by
-  obtain ⟨p, hp⟩ := hf
-  exact ⟨-p, fun y => by show -f y = _; rw [hp, map_neg]⟩
 
 theorem IsPoly.mul {f g : ℂ → B} (hf : IsPoly f) (hg : IsPoly g) : IsPoly fun y => f y * g y := by
   obtain ⟨p, hp⟩ := hf; obtain ⟨q, hq⟩ := hg
@@ -884,7 +883,8 @@ theorem IsPoly.dual {f : ℂ → B} (hf : IsPoly f) (φ : Module.Dual ℂ B) : I
   refine ⟨∑ n ∈ p.support, monomial n (φ (p.coeff n)), fun y => ?_⟩
   show φ (f y) = _
   rw [hp, ev_apply]
-  simp only [Polynomial.eval₂_eq_sum, Polynomial.sum_def, RingHom.id_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Polynomial.eval₂_eq_sum, Polynomial.sum_def, RingHom.id_apply,
     map_sum, eval_finsetSum, eval_monomial]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
@@ -910,7 +910,8 @@ variable (P : Par)
 
 theorem kap_sum (f : Ty P → ℂ) : kap P f = ∑ π, f π • kap P (Pi.single π 1) := by
   conv_lhs => rw [pi_eq_sum_univ' f]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
 
 theorem isPoly_kap {F : Ty P → ℂ → ℂ} (hF : ∀ π, IsPolyS (F π)) : IsPoly fun Y => kap P fun π => F π Y := by
   have : (fun Y => kap P fun π => F π Y) = fun Y => ∑ π, F π Y • kap P (Pi.single π 1) := by
@@ -1028,19 +1029,6 @@ theorem mul_Pf_apply (X : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) B) (p : Fin 2
   fin_cases j <;> fin_cases l <;> simp [Matrix.mul_apply, Pf, Fintype.sum_prod_type]
 
 end Entries
-
-theorem ofEntries : Formalism.FourierDecayAlt.M.QQRTTOfEntries := by
-  intro H P hP Y Y'
-  apply Matrix.ext
-  rintro ⟨i, k⟩ ⟨j, l⟩
-  rw [Matrix.mul_assoc, Matrix.sub_mul, Matrix.mul_sub, Matrix.smul_mul, Matrix.mul_smul,
-    Matrix.one_mul, Matrix.mul_one, Matrix.sub_apply, Matrix.sub_apply, Matrix.smul_apply,
-    Matrix.smul_apply, Pf_mul_apply, mul_Pf_apply, kronecker_E1_E2_apply, kronecker_E1_E2_apply, kronecker_embed_mul_apply,
-    kronecker_embed_mul_apply]
-  have h := H P hP Y' Y i j k l
-  rw [smul_sub] at h
-  rw [sub_eq_sub_iff_sub_eq_sub]
-  exact h
 
 end
 
@@ -1260,7 +1248,8 @@ variable (P : Par)
 
 theorem kap_sum' (s : Finset ℕ) (f : ℕ → Ty P → ℂ) :
     kap P (fun π => ∑ l ∈ s, f l π) = ∑ l ∈ s, kap P (f l) := by
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   funext π
   simp [Finset.sum_apply]
@@ -1335,8 +1324,7 @@ theorem T_eq (hP : P.OK) (hN : SSNorm) (u : ℂ) {l : ℕ} (hl : l ∈ Icc 1 (P.
   rw [E_Ss, mul_assoc, ← mul_assoc (kap P _) (kap P _), kap_mul, h1, ← mul_assoc, (hN P hP l hl).1, kap_mul]
   congr 1
   funext π
-  simp only [Pi.mul_apply, rr1]
-  rw [div_eq_mul_inv, mul_assoc]
+  simp only [Pi.mul_apply, rr1, div_eq_mul_inv, mul_assoc]
 
 theorem upper_sum_mul_lambda (hP : P.OK) {u : ℂ} (hu : Good P u) (hN : SSNorm) :
     S12 P u * abelian₂ P u = S4 P u + kap P fun π => ∑ l ∈ Icc 1 (P.k - 1),
@@ -1390,8 +1378,7 @@ theorem Lam4 (hP : P.OK) (u v : ℂ) (hN : SSNorm) (hM : SSMixed) :
     rw [h1, h2, ← map_sub]
     congr 1
     funext π
-    simp only [Pi.sub_apply, Pi.mul_apply, rr, rr1]
-    rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv, mul_inv]
+    simp only [Pi.sub_apply, Pi.mul_apply, rr, rr1, div_eq_mul_inv, mul_inv]
     ring
   · intro j hj hne
     rw [sub_eq_zero, hlam j hj]
@@ -1652,7 +1639,7 @@ theorem relD4core (hN : SSNorm) (hM : SSMixed) (hS : NabSS) (hK : Curvature) (hP
   have e2 : ∀ z : ℂ, z • (ggiA P * ggiA P) = kap P (fun _ => z) * (ggiA P * ggiA P) := fun z => by
     have : kap P (fun _ => z) = algebraMap ℂ (A P) z := (kap P).commutes z
     rw [this, Algebra.smul_def]
-  rw [e1, e2, ← add_mul, ← add_mul, ← map_add, ← map_add, ← smul_mul_assoc, ← map_smul]
+  rw [e1, e2, ← add_mul, ← add_mul, ← map_add (f := _), ← map_add (f := _), ← smul_mul_assoc, ← map_smul]
   congr 2
   funext π
   have hs := WB.scalar_partial_fraction_identity P hP π u v hu hv
@@ -1674,12 +1661,12 @@ theorem mixed_relation_diagonal_four (hN : SSNorm) (hM : SSMixed) (hS : NabSS) (
     rw [dA, smul_mul_assoc, mul_assoc, lc (kap_g P _), lc1 (Gg P), kap_mul, ← map_smul]
     congr 1
     funext π
-    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]; ring
+    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul, mul_assoc]
   have e4 : (ggA P * kap P fun π => xC P π v) * dA P u = kap P fun π => xC P π v * (qC P u * (xC P π (u + 1))⁻¹) := by
     rw [dA, mul_smul_comm, mul_assoc, lc (kap_G P _), lc1 (gG P), kap_mul, ← map_smul]
     congr 1
     funext π
-    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]; ring
+    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul, mul_left_comm]
   rw [e3, e4, kap_mul, kap_mul, ← map_sub]
   congr 1
   funext π
@@ -1787,7 +1774,7 @@ theorem nf11 (hN : SSNorm) (hP : P.OK) {u : ℂ} (hu : Good P u) :
     L4.upper_sum_mul_lambda P hP hu hN, t11, mul_add]
   have e : ggiA P * (kap P fun π => wC P π u) = dA P u + ggiA P * kap P fun π =>
       ∑ l ∈ Icc 1 (P.k - 1), ((Nrm P l π : ℝ) : ℂ) * xEx P {l} π u / (u + (rho P π l : ℂ) + 1) := by
-    rw [dA, ← mul_smul_comm, ← map_smul, ← mul_add, ← map_add]
+    rw [dA, ← mul_smul_comm, ← map_smul, ← mul_add, ← map_add (f := _)]
     congr 2
     funext π
     rw [WB.wC_eq P hP π u hu]
@@ -1853,9 +1840,5 @@ namespace Formalism.FourierDecayAlt.P
 
 theorem transfer_rtt_entries : Formalism.FourierDecayAlt.M.QQRTTEntries :=
   Mx6.entries_of shift_norm_relation shift_commute_relation shift_mixed_relation nabla_shift_relation m_curvature_proof
-
-theorem transfer_rtt_of_entries : Formalism.FourierDecayAlt.M.QQRTTOfEntries := Mx6.PC.ofEntries
-
-theorem transfer_rtt : Formalism.FourierDecayAlt.M.QQRTT := transfer_rtt_of_entries transfer_rtt_entries
 
 end Formalism.FourierDecayAlt.P

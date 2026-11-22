@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.WeilBound.ThetaLifts.Reductions.SiegelAbs
-import Development.WeilBound.ThetaLifts.Reductions.SiegelParMod
-import Development.WeilBound.ThetaLifts.Reductions.SiegelGood
-import Development.WeilBound.ThetaLifts.FrameEstimates.LintegralLeOfCover
-import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelAbs
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelParMod
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelGood
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LintegralLeOfCover
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LeHeightOfIsTorusElt
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -21,8 +25,8 @@ namespace PositivityTheory.ThKR
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
   {n r : ℕ} {J : Matrix (Fin n) (Fin n) E} {X Y : Matrix (Fin n) (Fin r) E}
 
-variable (σ J X Y) in
 
+variable (σ J X Y) in
 structure IsTorus (a : (Fin r → ℝ) → GAd σ J) : Prop where
   add : ∀ s t, a (s + t) = a s * a t
   cont : Continuous a
@@ -44,8 +48,8 @@ theorem inv_mem_minPar (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittFra
     (hp : p ∈ minPar σ J X) : p⁻¹ ∈ minPar σ J X :=
   inv_mem_minimal_parabolic h hJ hW hp
 
-variable (X) in
 
+variable (X) in
 def minParSub (h : IsCMExt F E σ) (hJ : IsHermND σ J) (hW : IsWittFrame σ J X Y) : Subgroup (GAd σ J) where
   carrier := minPar σ J X
   one_mem' := one_mem_minPar σ J X

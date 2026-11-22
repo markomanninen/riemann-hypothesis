@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRho
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRho
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.AllRowsRedKer
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,26 +41,6 @@ theorem rhoX_apply (x : KSub X.B.I) (kv : Σ k : Fin 2, D.nd.PlG k) : rhoX X x k
 theorem goodAt_rhoX (x : KSub X.B.I) : GoodAt X x (rhoX X x) := by
   intro kv
   exact (redMat_iff X _ _ _ _).mpr (redMat0_of (I := X.B.I) (hb := (redBX X kv).hb) (h := rhoB_spec (redBX X kv) x))
-
-theorem level_mem_wB (kv : Σ k : Fin 2, D.nd.PlG k) :
-    ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal := by
-  have hc : Nat.card (𝓞 X.B.I.E ⧸ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal) = D.host.g kv.1 :=
-    (redBX X kv).hcard
-  have h0 : ((D.host.g kv.1 : ℕ) : 𝓞 X.B.I.E ⧸ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal) = 0 := by
-    have h1 := card_nsmul_eq_zero' (G := 𝓞 X.B.I.E ⧸ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal) (x := 1)
-    rw [hc] at h1
-    simpa using h1
-  have hk : ((D.host.g kv.1 : ℕ) : 𝓞 X.B.I.E) ∈ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal := by
-    rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast]
-    exact h0
-  have key : ∀ k : Fin 2, ((D.host.g k : ℕ) : 𝓞 X.B.I.E) ∈ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal →
-      ((D.host.g 0 * D.host.g 1 : ℕ) : 𝓞 X.B.I.E) ∈ (wB X (D.naut.plGw kv.1 kv.2)).asIdeal := by
-    intro k hk'
-    fin_cases k
-    · simpa [Nat.cast_mul] using Ideal.mul_mem_right _ _ hk'
-    · simpa [Nat.cast_mul] using Ideal.mul_mem_left _ _ hk'
-  rw [X.g_eq]
-  exact key kv.1 hk
 
 theorem redMatB_one_of {I : AutInst} {m : ℕ} (R : RedB I m) {x : I.Gf}
     (h : ∀ i, I.fmat x *ᵥ iv I (R.b i) - iv I (R.b i) ∈ Lq I R.w) :
@@ -118,7 +102,7 @@ theorem egA_rhoX (a : MonoidAlgebra ℂ (G0g D.nd)) (ha : ∀ γ P : G0g D.nd, a
   have h : (x : X.B.I.Gf) ∈ X.B.I.Kset ∧ ∃ γ : G0g D.nd, GoodAt X x γ :=
     ⟨x.2, rhoX X x, goodAt_rhoX X x⟩
   unfold egA
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
   have hγ := Classical.choose_spec h.2
   have hP : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), ∃ P : GL (Fin D.R.r) (ZMod (D.host.g kv.1)),

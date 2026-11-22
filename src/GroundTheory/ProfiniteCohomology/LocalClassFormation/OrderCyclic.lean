@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
-import GroundTheory.TateCohomology.Herbrand
-import GroundTheory.TateCohomology.TateLow
-import GroundTheory.LocalFields.HerbrandLocal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
+public import GroundTheory.TateCohomology.Herbrand
+public import GroundTheory.TateCohomology.TateLow
+public import GroundTheory.LocalFields.HerbrandLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -22,8 +27,8 @@ theorem galUnits_norm_apply (x : Additive Lˣ) :
   rw [Representation.norm, LinearMap.sum_apply, GroundTheory.LocalField.tateNorm_apply, ofMul_prod]
   rfl
 
-omit [FiniteDimensional K L] in
 
+omit [FiniteDimensional K L] in
 theorem mem_invariants_galUnits_iff (x : Additive Lˣ) :
     x ∈ (galUnits.{u} K L).ρ.invariants ↔
       Additive.toMul x ∈ GroundTheory.LocalField.invariants Gal(L/K) Lˣ :=
@@ -70,10 +75,10 @@ theorem natCard_groupCohomology_two_galUnits_of_isCyclic [IsCyclic Gal(L/K)] :
   classical
   obtain ⟨σ, hσ⟩ := IsCyclic.exists_generator (α := Gal(L/K))
   let e : groupCohomology (galUnits.{u} K L) 2 ≅
-      (GroundTheory.GroupCoh.tateZeroFunctor (ULift.{u} ℤ) Gal(L/K)).obj (galUnits.{u} K L) :=
+      (GroundTheory.GroupCoh.tateZeroFunctor (R := ULift.{u} ℤ) (G := Gal(L/K))).obj (galUnits.{u} K L) :=
     ((TateCohomology.isoGroupCohomology 2).app (galUnits.{u} K L)).symm ≪≫
       GroundTheory.GroupCoh.tateCohomologyPeriodicIso (galUnits.{u} K L) hσ 0 ≪≫
-      (GroundTheory.GroupCoh.tateCohomologyZeroIso (ULift.{u} ℤ) Gal(L/K)).app (galUnits.{u} K L)
+      (GroundTheory.GroupCoh.tateCohomologyZeroIso (R := ULift.{u} ℤ) (G := Gal(L/K))).app (galUnits.{u} K L)
   rw [Nat.card_congr e.toLinearEquiv.toEquiv]
   rw [← GroundTheory.LocalField.natCard_tateZero_units (K := K) (L := L)]
   exact Nat.card_congr (tateZeroGalUnitsEquiv K L)

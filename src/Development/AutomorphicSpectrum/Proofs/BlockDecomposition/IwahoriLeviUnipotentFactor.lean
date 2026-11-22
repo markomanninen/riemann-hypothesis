@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MetaplecticLowRank.LowC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsJLeviMulJPlus
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MetaplecticLowRank.LowC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsJLeviMulJPlus
+
+@[expose] public section
 
 open PositivityTheory.LowerBoundConstant GlobalTheory GlobalTheory.Published GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.SplitRead Topology
 
@@ -41,18 +45,20 @@ theorem kone_factor : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpac
     | exact (Subgroup.mem_inf.1 hci).1
     | exact (Subgroup.mem_inf.1 hci).2
     | exact hci
-  obtain ⟨p, hp, u, hu, hpu⟩ :=
-    GlobalTheory.LocGL.IwahoriFactor.exists_jLevi_mul_jPlus e hgc (mul_mem hg hcP)
-  have hpP : p ∈ GlobalTheory.SplitWeil.KOne k (Fin n) :=
-    GlobalTheory.LocGL.jLevi_le_KOne e hp
-  obtain ⟨m, rfl⟩ : ∃ m, GlobalTheory.SmGL.leviEmb k e m = p := by
-    first
-    | exact hp.1
-    | exact hp.2
-    | exact hp
-    | (obtain ⟨m, -, hm⟩ := hp; exact ⟨m, hm⟩)
-    | (obtain ⟨⟨m, hm⟩, -⟩ := hp; exact ⟨m, hm⟩)
-    | (obtain ⟨-, ⟨m, hm⟩⟩ := hp; exact ⟨m, hm⟩)
+  obtain ⟨u, hu, hpu⟩ := GlobalTheory.SmGL.exists_levi_mul_unip k e ⟨g * c, hgc⟩
+  let m := GlobalTheory.SmGL.leviProj k e ⟨g * c, hgc⟩
+  have hpP : leviEmb k e m ∈ KOne k (Fin n) := by
+    apply StepData.mem_KOne.2
+    intro i j
+    obtain ⟨⟨a, i⟩, rfl⟩ := e.surjective i
+    obtain ⟨⟨b, j⟩, rfl⟩ := e.surjective j
+    by_cases hab : a = b
+    · subst b
+      have h := StepData.mem_KOne.1 (mul_mem hg hcP) (e ⟨a, i⟩) (e ⟨a, j⟩)
+      rw [Matrix.sub_apply, one_same] at h
+      simpa [Matrix.sub_apply, one_same, m] using h
+    · rw [Matrix.sub_apply, GlobalTheory.SmGL.leviEmb_apply_ne k e m hab, one_ne e hab, sub_zero, map_zero]
+      exact zero_lt_one
   refine ⟨m, hpP, u, ?_, c⁻¹, ?_, eq_mul_inv_of_mul_eq hpu⟩
   · have hug : (GlobalTheory.SmGL.leviEmb k e m)⁻¹ * (g * c) = u := inv_mul_eq_iff_eq_mul.2 hpu
     have huP : u ∈ GlobalTheory.SplitWeil.KOne k (Fin n) := by

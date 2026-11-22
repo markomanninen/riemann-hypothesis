@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierSuperposition
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableToGLEntry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzFourierSuperposition
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.JSW
 open scoped FourierTransform ContDiff
 

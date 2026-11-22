@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.LogVandermondeBounds.product_first_zeroth_parts
 
@@ -41,7 +45,8 @@ theorem length_quot_le_of_pow_smul (ϖ : R) (hϖ : Irreducible ϖ) (N : Type) [A
     simp only [ψ, LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.proj_apply, comp,
       Submodule.liftQ_apply, LinearMap.toSpanSingleton_apply]
     calc ∑ i, (b.repr n i) • T.mkQ (b i) = T.mkQ (∑ i, (b.repr n i) • b i) := by
-          rw [map_sum]; simp only [map_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]; simp only [map_smul]
       _ = Submodule.Quotient.mk n := by rw [b.sum_repr]; rfl
   have hlen := Module.length_le_of_surjective ψ hsurj
   rw [Module.length_pi, IsDiscreteValuationRing.length_quotient_pow_maximalIdeal] at hlen

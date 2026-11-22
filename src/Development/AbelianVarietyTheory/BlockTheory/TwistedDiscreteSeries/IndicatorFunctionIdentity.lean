@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HasConductorMulShift
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HasConductorMulShift
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+
+@[expose] public section
 
 open ValuativeRel Matrix IsLocalRing
 open scoped Pointwise
@@ -19,7 +23,7 @@ private lemma isOpen_stdLat : IsOpen (stdLat k n : Set (n → k)) := by
   rw [e]
   exact isOpen_set_pi Set.finite_univ fun _ _ => isOpen_int k
 
-theorem isOpen_lat (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] : IsOpen (L : Set (n → k)) := by
+theorem isOpen_lat (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] : IsOpen (L : Set (n → k)) := by
   obtain ⟨g, rfl⟩ := exists_smul_lat (stdLat k n) L
   have e : ((g • stdLat k n : Submodule 𝒪[k] (n → k)) : Set (n → k)) =
       (fun x => (g⁻¹ : GL n k).val *ᵥ x) ⁻¹' (stdLat k n : Set (n → k)) := by
@@ -75,8 +79,8 @@ private lemma isCompact_isOpen_isClosed_integral_matrices : IsCompact {x : Matri
     isOpen_set_pi Set.finite_univ fun _ _ => isOpen_set_pi Set.finite_univ fun _ _ => isOpen_int k,
     isClosed_set_pi fun _ _ => isClosed_set_pi fun _ _ => hc⟩
 
-private lemma exists_sideMul_preimage_integral (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsLattice k]
-    [L.IsLattice k] : ∃ (g : GL n' k) (h : GL n k), {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} =
+private lemma exists_sideMul_preimage_integral (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k))
+    [S.IsFullLattice k] [L.IsFullLattice k] : ∃ (g : GL n' k) (h : GL n k), {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} =
       (sideMul g h) ⁻¹' {x : Matrix n n' k | ∀ i j, x i j ∈ 𝒪[k]} := by
   obtain ⟨g, rfl⟩ := exists_smul_lat (stdLat k n') S
   obtain ⟨h, rfl⟩ := exists_smul_lat (stdLat k n) L
@@ -86,7 +90,7 @@ private lemma exists_sideMul_preimage_integral (S : Submodule 𝒪[k] (n' → k)
     ∀ i j, ((h⁻¹ : GL n k).val * x * g.val) i j ∈ 𝒪[k]
   rw [maps_smul_iff, maps_std_iff]
 
-theorem hom_lat (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsLattice k] [L.IsLattice k] :
+theorem hom_lat (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsFullLattice k] [L.IsFullLattice k] :
     IsCompact {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} ∧ IsOpen {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} := by
   obtain ⟨g, h, e⟩ := exists_sideMul_preimage_integral S L
   rw [e]
@@ -109,8 +113,8 @@ private lemma phiOne_congr_of_sub_mulVec_mem_ker {P : Pair k n'} {Q : Pair k n} 
   · rw [if_pos (key.2 hx), if_pos hx]
   · rw [if_neg (mt key.1 hx), if_neg hx]
 
-private lemma isClosed_setOf_mulVec_mem (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k)) [S.IsLattice k]
-    [L.IsLattice k] : IsClosed {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} := by
+private lemma isClosed_setOf_mulVec_mem (S : Submodule 𝒪[k] (n' → k)) (L : Submodule 𝒪[k] (n → k))
+    [S.IsFullLattice k] [L.IsFullLattice k] : IsClosed {x : Matrix n n' k | ∀ y ∈ S, x *ᵥ y ∈ L} := by
   obtain ⟨g, h, e⟩ := exists_sideMul_preimage_integral S L
   rw [e]
   exact isCompact_isOpen_isClosed_integral_matrices.2.2.preimage (sideMul g h).continuous
@@ -145,7 +149,7 @@ private lemma det_mem_of_integral_entries {u : GL n k} (hu : ∀ i j, u.val i j 
   rw [e, ← RingHom.map_det]
   exact (M.det).2
 
-theorem valuation_det_of_fix (L : Submodule 𝒪[k] (n → k)) [L.IsLattice k] {h : GL n k} (hh : h • L = L) :
+theorem valuation_det_of_fix (L : Submodule 𝒪[k] (n → k)) [L.IsFullLattice k] {h : GL n k} (hh : h • L = L) :
     valuation k ((Matrix.GeneralLinearGroup.det h : kˣ) : k) = 1 := by
   obtain ⟨g, rfl⟩ := exists_smul_lat (stdLat k n) L
   obtain ⟨u, hu⟩ : ∃ u : GL n k, u = g⁻¹ * h * g := ⟨_, rfl⟩
@@ -216,53 +220,13 @@ theorem K_apply (hμ : IsUnram μ) (hθ : IsEquivTheta μ π' π θ) (P₀ : Pai
   rw [formOf_smul]
   rfl
 
-open Classical in
 
+open Classical in
 def midInd (q : Unif k) (L : Submodule 𝒪[k] (n' → k)) (e₁ : n' → k) (Q : Pair k n) (x : Matrix n n' k) : ℂ :=
   if (∀ y ∈ L, x *ᵥ y ∈ Q.lat) ∧ Q.HasVal (x *ᵥ (q.1 • e₁)) 1 then 1 else 0
 
-open Classical in
-
-def IndicatorIdentity : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (n n' : Type) [Fintype n] [Fintype n'] (q : Unif k) (P₁ : Pair k n') (e₁ : n' → k) (_ : P₁.HasVal e₁ 1)
-    (Q : Pair k n) (x : Matrix n n' k),
-    ∑ Q₁ ∈ withKer Q.lat with cross q Q₁ Q = 1, phiOne P₁ Q₁ x = midInd q P₁.ker e₁ Q x ∧
-      midInd q P₁.ker e₁ Q x = ∑ P ∈ withLat P₁.ker with cross q P₁ P = 1, phiOne P Q x
 
 def scal (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (t : ℕ) : ℂ :=
   (((resCard k : ℝ) ^ (((t : ℝ) + 1) / 2) : ℝ) : ℂ)
-
-def OperatorRules : Prop :=
-  ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (t : ℕ)
-    (_ : Fintype.card n = Fintype.card n' + (t + 1))
-    (q : Unif k) (ψ : AddChar k Circle) (hψ : HasConductor ψ 1)
-    (μ : kˣ →* ℂˣ) (hμ : IsUnram μ) (_ : ∀ x, ‖(μ x : ℂ)‖ = 1)
-    (V' V : Type) [AddCommGroup V'] [Module ℂ V'] [AddCommGroup V] [Module ℂ V]
-    (π' : Representation ℂ (GL n' k) V') (π : Representation ℂ (GL n k) V) (_ : IsSmoothRep π') (_ : IsSmoothRep π)
-    (θ : V' →ₗ[ℂ] SB (Matrix n n' k) →ₗ[ℂ] V) (hθ : IsEquivTheta μ π' π θ) (P₀ : Pair k n') (Q₀ : Pair k n),
-    (∀ φ : EqForm π', U q (K hμ hθ P₀ Q₀ φ).1 =
-      scal k t • (K hμ hθ P₀ Q₀ ⟨U q φ.1, U_mem_EqForm q φ.2⟩).1) ∧
-    (∀ (s : 𝓀[k]ˣ) (φ : EqForm π'), (K hμ hθ P₀ Q₀ ⟨dia s φ.1, dia_mem_EqForm s φ.2⟩).1 =
-      dia s (K hμ hθ P₀ Q₀ φ).1) ∧
-    (∀ φ : EqForm π', φ.1 ∈ Mram k n' V' →
-      (K hμ hθ P₀ Q₀ φ).1 ∈ Mram k n V ∧
-      FF q (resChar ψ hψ q) (K hμ hθ P₀ Q₀ φ).1 =
-        scal k t • (K hμ hθ P₀ Q₀ ⟨FF q (resChar ψ hψ q) φ.1, FF_mem_EqForm q _ φ.2⟩).1 ∧
-      FFStar q (resChar ψ hψ q) (K hμ hθ P₀ Q₀ φ).1 =
-        scal k t • (K hμ hθ P₀ Q₀ ⟨FFStar q (resChar ψ hψ q) φ.1, FFStar_mem_EqForm q _ φ.2⟩).1)
-
-def KernelsCommute : Prop := IndicatorIdentity ∧ OperatorRules
-
-example (hμ : IsUnram μ) (hθ : IsEquivTheta μ π' π θ) (P₀ : Pair k n') (Q₀ : Pair k n) (φ : EqForm π') :
-    (K hμ hθ P₀ Q₀ φ).1 Q₀ = θ (φ.1 P₀) (phiOneSB P₀ Q₀) := by
-  simpa using K_apply hμ hθ P₀ Q₀ φ 1
-
-example (t : ℕ) : scal k t ^ 2 = (resCard k : ℂ) ^ (t + 1) := by
-  rw [scal, ← Complex.ofReal_pow, ← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg _)]
-  rw [show ((t : ℝ) + 1) / 2 * (2 : ℕ) = ((t + 1 : ℕ) : ℝ) by push_cast; ring, Real.rpow_natCast]
-  push_cast
-  rfl
 
 end GlobalTheory.IndefiniteRowSideFullHecke.IndicatorFunctionIdentity

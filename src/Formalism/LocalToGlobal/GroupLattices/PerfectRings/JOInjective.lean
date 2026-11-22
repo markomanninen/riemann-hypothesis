@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExistsSqEqIntCast
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.AlgebraMapFinite
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExistsSqEqIntCast
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.AlgebraMapFinite
+
+@[expose] public section
 
 noncomputable section
 

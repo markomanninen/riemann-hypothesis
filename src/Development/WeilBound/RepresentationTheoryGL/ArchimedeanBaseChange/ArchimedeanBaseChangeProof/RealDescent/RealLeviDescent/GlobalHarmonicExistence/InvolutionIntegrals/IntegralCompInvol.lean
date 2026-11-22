@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsThetaInvolution
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsThetaInvolution
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ theorem map_thetaR' {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (σ :
     τ (f (((g⁻¹ : GL (Fin n) A) : Matrix (Fin n) (Fin n) A) j i))
   exact h _
 
-variable (E n) in
 
+variable (E n) in
 def tF : GL (Fin n) (Af E) →* GL (Fin n) (Af E) := thetaR (GlobalTheory.ThetaPull.cFin E) n
 
 theorem thetaF_eq (g : GL (Fin n) (Af E)) : thetaF E n g = tF E n g := by

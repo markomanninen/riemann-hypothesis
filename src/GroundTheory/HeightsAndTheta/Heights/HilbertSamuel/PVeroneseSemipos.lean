@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecondVeronese
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSecondVeroneseParts
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ArithModel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecondVeronese
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -31,9 +36,9 @@ theorem leviForm_comp_clm {J : Type*} [Fintype J] (φ : (J → ℂ) → ℝ) (L 
   rw [key, key, hL]
 
 theorem contDiffAt_log_fs {J : Type} [Fintype J] {y : J → ℂ} (hy : y ≠ 0) :
-    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun y => Real.log ((fsMetric J).ρ y)) y :=
+    ContDiffAt ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (fun y => Real.log ((fsMetric (ι := J)).ρ y)) y :=
   ((ProjLine.isSmoothMetric_fs (J := J) y hy).contDiffAt (isOpen_ne.mem_nhds hy)).log
-    ((fsMetric J).pos y hy).ne'
+    ((fsMetric (ι := J)).pos y hy).ne'
 
 namespace Veronese
 
@@ -68,11 +73,11 @@ theorem VeroneseSemipos.proof : VeroneseSemipos.Statement := by
       obtain ⟨i, hi⟩ := hz.1 ()
       exact hi (congrFun h0 _)
     have e : (fun z => Real.log ((HermLine.ofCone (metric D)).h z)) =
-        (fun y => Real.log ((fsMetric (Ix (Idx D))).ρ y)) ∘ scaleL D := rfl
-    have hφ : ∀ᶠ y in 𝓝 z, DifferentiableAt ℝ (fun y => Real.log ((fsMetric (Ix (Idx D))).ρ y)) (scaleL D y) := by
+        (fun y => Real.log ((fsMetric (ι := Ix (Idx D))).ρ y)) ∘ scaleL D := rfl
+    have hφ : ∀ᶠ y in 𝓝 z, DifferentiableAt ℝ (fun y => Real.log ((fsMetric (ι := Ix (Idx D))).ρ y)) (scaleL D y) := by
       filter_upwards [isOpen_ne.mem_nhds hz0] with y hy
       exact (contDiffAt_log_fs (scale_ne_zero hy)).differentiableAt (by simp)
-    have hφ2 : DifferentiableAt ℝ (fderiv ℝ fun y => Real.log ((fsMetric (Ix (Idx D))).ρ y)) (scaleL D z) :=
+    have hφ2 : DifferentiableAt ℝ (fderiv ℝ fun y => Real.log ((fsMetric (ι := Ix (Idx D))).ρ y)) (scaleL D z) :=
       ((contDiffAt_log_fs (scale_ne_zero hz0)).fderiv_right (m := 1) (WithTop.coe_le_coe.mpr le_top)).differentiableAt
         one_ne_zero
     rw [e, leviForm_comp_clm _ _ (scaleL_I D) z hφ hφ2 w]

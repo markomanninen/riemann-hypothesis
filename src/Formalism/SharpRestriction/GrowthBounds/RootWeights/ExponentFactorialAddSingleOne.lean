@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ theorem fock_mul_adjoint_pderiv {σ : Type} [Fintype σ] (v : σ) (F G : MvPolyn
             exact Finsupp.single_le_iff.mpr (Nat.one_le_iff_ne_zero.mpr hv)
           simp [h', hv]
         · simp [h']
-    | add G1 G2 h1 h2 => rw [fock_form_add_right, map_add, fock_form_add_right, h1, h2]
+    | add G1 G2 h1 h2 => rw [fock_form_add_right, map_add (f := _), fock_form_add_right, h1, h2]
   | add F1 F2 h1 h2 => rw [mul_add, addL, addL, h1, h2]
 
 theorem fock_pderiv_adjoint_mul {σ : Type} [Fintype σ] (v : σ) (F G : MvPolynomial σ K) :
@@ -103,7 +107,8 @@ theorem fock_pderiv_adjoint_mul {σ : Type} [Fintype σ] (v : σ) (F G : MvPolyn
 theorem fock_form_contravariant (LL : Letters ι) (S : Set ι) (a b : Fin n) (F G : MvPolynomial (ι × Fin n) K) :
     fockBilinear K (ι × Fin n) (glOps K n LL S a b F) G = fockBilinear K (ι × Fin n) F (glOps K n LL S b a G) := by
   classical
-  simp only [glOps, glAct, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [glOps, glAct, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl (fun l _ => ?_)
   split_ifs with h1 h2
   · simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply, Derivation.coeFn_coe, fockBilinear_apply]

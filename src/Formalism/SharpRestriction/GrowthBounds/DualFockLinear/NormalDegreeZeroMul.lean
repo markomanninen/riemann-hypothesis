@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.NormDegUniv
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstSPtrue
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.NormDegUniv
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.SubstSPtrue
+
+@[expose] public section
 
 noncomputable section
 

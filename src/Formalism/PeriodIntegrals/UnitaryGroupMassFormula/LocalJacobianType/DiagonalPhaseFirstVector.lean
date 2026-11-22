@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ComponentsOfD1EqZero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ComponentsOfD1EqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem diagonal_phase_first_vector : (0 : Fv F v ⊗[F] E) ∈ D1 (E := E) v ψ
 theorem conductor_add_mem {y y' : Fv F v ⊗[F] E} (hy : y ∈ D1 (E := E) v ψ) (hy' : y' ∈ D1 (E := E) v ψ) :
     y + y' ∈ D1 (E := E) v ψ := by
   intro x hx
-  rw [mul_add, map_add, psiV_add', hy x hx, hy' x hx, mul_one]
+  rw [mul_add, map_add (f := _), psiV_add', hy x hx, hy' x hx, mul_one]
 
 theorem conductor_neg_mem {y : Fv F v ⊗[F] E} (hy : y ∈ D1 (E := E) v ψ) : -y ∈ D1 (E := E) v ψ := by
   intro x hx
@@ -83,7 +87,8 @@ theorem conductor_mem_nhds : D1 (E := E) v ψ ∈ 𝓝 (0 : Fv F v ⊗[F] E) := 
   refine Filter.mem_of_superset hN fun y hy x hx => ?_
   simp only [Set.mem_iInter, Set.mem_setOf_eq] at hy
   obtain ⟨c, hc, rfl⟩ := hgen x hx
-  rw [Finset.sum_mul, map_sum, psiV_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, psiV_sum]
   refine Finset.prod_eq_one fun k _ => ?_
   rw [smul_mul_assoc, map_smul, smul_eq_mul]
   exact hy k (c k) (hc k)

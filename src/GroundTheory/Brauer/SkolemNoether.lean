@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Brauer
@@ -87,8 +92,6 @@ instance : IsScalarTower K (A ⊗[K] Bᵐᵒᵖ) (Twist f) :=
     change bimoduleHom f (c • r) x.val = c • bimoduleHom f r x.val
     rw [map_smul]; rfl⟩
 
-@[simp] theorem val_of (x : A) : (of f x).val = x := rfl
-
 @[simp] theorem of_val (x : Twist f) : of f x.val = x := rfl
 
 variable {f} {g : B →ₐ[K] A}
@@ -141,11 +144,6 @@ theorem exists_unit_conj (f g : B →ₐ[K] A) :
   have h := (Twist.map_val e.toLinearMap (f x)).symm.trans (Twist.map_val_apply e.toLinearMap x)
   simp only [LinearEquiv.coe_coe, ← hu] at h
   simp only [Units.val_mk, Units.inv_mk, mul_assoc, h, ← mul_assoc v u, hvu, one_mul]
-
-theorem AlgEquiv.exists_unit_conj (σ : A ≃ₐ[K] A) :
-    ∃ a : Aˣ, ∀ x, σ x = a * x * ↑a⁻¹ := by
-  obtain ⟨a, ha⟩ := GroundTheory.Brauer.exists_unit_conj (AlgHom.id K A) σ.toAlgHom
-  exact ⟨a, fun x ↦ by simpa using ha x⟩
 
 end SkolemNoether
 

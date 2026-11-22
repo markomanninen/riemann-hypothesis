@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SecondColumnDegree
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.SecondColumnDegree
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,7 +29,7 @@ theorem trunc_apply (N : ℕ) (x : MvPolynomial σ k) :
 
 theorem trunc_deg (N : ℕ) (x : MvPolynomial σ k) : (trunc N x).totalDegree ≤ N := by
   rw [trunc_apply]
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun j hj => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun j hj => ?_)
   by_cases h0 : homogeneousComponent j x = 0
   · rw [h0, totalDegree_zero]
     exact Nat.zero_le _
@@ -45,7 +49,7 @@ theorem trunc_id (N : ℕ) (x : MvPolynomial σ k) (hx : x.totalDegree ≤ N) : 
 theorem so_coef_add (c1 c2 : σ → σ → k) (P : MvPolynomial σ k) :
     secondOrder k (fun p q => c1 p q + c2 p q) P = secondOrder k c1 P + secondOrder k c2 P := by
   unfold secondOrder
-  simp only [map_add, add_mul, Finset.sum_add_distrib]
+  simp only [map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem so_iter_smul (c : σ → σ → k) (r : k) :
     ∀ (i : ℕ) (y : MvPolynomial σ k), (secondOrder k c)^[i] (r • y) = r • (secondOrder k c)^[i] y
@@ -68,8 +72,9 @@ private theorem totalDegree_pderiv_le' (i : σ) (y : MvPolynomial σ k) :
     (pderiv i y).totalDegree ≤ y.totalDegree := by
   classical
   conv_lhs => rw [MvPolynomial.as_sum y]
-  rw [map_sum]
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun s hs => ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun s hs => ?_)
   rw [pderiv_monomial]
   refine le_trans ?_ (le_totalDegree hs)
   refine Finset.sup_le fun u hu => ?_
@@ -87,8 +92,8 @@ private theorem totalDegree_pderiv_le' (i : σ) (y : MvPolynomial σ k) :
 theorem deg_so_trunc (c : σ → σ → k) (N : ℕ) (x : MvPolynomial σ k) :
     (secondOrder k c (trunc N x)).totalDegree ≤ N := by
   unfold secondOrder
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun l _ => ?_)
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun l' _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l' _ => ?_)
   refine (totalDegree_mul _ _).trans ?_
   rw [totalDegree_C, zero_add]
   exact ((totalDegree_pderiv_le' _ _).trans (totalDegree_pderiv_le' _ _)).trans (trunc_deg N x)
@@ -165,12 +170,12 @@ def E1 (c : ι → ι → k) (t : k) (N : ℕ) (y : MvPolynomial ι k) : MvPolyn
 theorem totalDegree_second_exp_le (c : ι → ι → k) (t : k) (N : ℕ) (y : MvPolynomial ι k) :
     (E1 c t N y).totalDegree ≤ y.totalDegree := by
   unfold E1
-  refine (totalDegree_finset_sum _ _).trans (Finset.sup_le fun i _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun i _ => ?_)
   exact (totalDegree_smul_le _ _).trans (totalDegree_iterate_secondOrder_le c _ i y le_rfl)
 
 theorem prodQ_deg (Q : Fin n → MvPolynomial ι k) : (prodQ Q).totalDegree ≤ ∑ b, (Q b).totalDegree := by
   unfold prodQ
-  refine (totalDegree_finset_prod _ _).trans (Finset.sum_le_sum fun b _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetProd _ _).trans (Finset.sum_le_sum fun b _ => ?_)
   unfold colE
   exact totalDegree_rename_le _ _
 
@@ -194,7 +199,8 @@ theorem exp_col (c : ι → ι → k) (t : k) (N : ℕ) (Q : Fin n → MvPolynom
   have hR : ∀ l : ι, pderiv (l, b0) (∏ b ∈ univ.erase b0, colE b (Q b)) = 0 :=
     fun l => pderiv_prod_colE b0 _ (Finset.notMem_erase b0 _) Q l
   unfold E1
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [so_colB_iter c b0 _ hR i, map_smul, smul_mul_assoc]
 

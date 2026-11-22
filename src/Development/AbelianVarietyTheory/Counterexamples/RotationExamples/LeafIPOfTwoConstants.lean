@@ -1,8 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.FunctionalLowerBoundOfConditionsNumeric
-import Formalism.LocalToGlobal.IndefiniteForms.IndefExample
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.FreeLiftMetric
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMatrixMetricMeans
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.FunctionalLowerBoundOfConditionsNumeric
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefExample
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefUse
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.PassageScaleFree
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMatrixMetricMeans
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.DivisionValues Formalism.PairingDivisionLocalBalance Formalism.HN
@@ -13,18 +21,11 @@ namespace GlobalTheory.InfinitePlacesProbe
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs}
 
-def ClauseA (O : FunData K Df) (C b : ℝ) : Prop :=
-  ∀ vb : Matrix (Fin O.n) (Fin (Df.dQ Bs.μ0)) K, vb * Df.Pq Bs.μ0 = O.vmu Bs.μ0 →
-    htMap (Pi.basisFun K (Fin (Df.dQ Bs.μ0))) (Df.XQ Bs.μ0) (Pi.basisFun K (Fin O.n)) O.X'
-      (Matrix.mulVecLin vb) ≤ O.bIPa C b
-
 def ClauseB (S : IndefData Df) (O : FunData K Df) (C b : ℝ) : Prop :=
   ∃ g : InfinitePlace K → ℝ, (∀ v p, Df.Qp Bs.μ0 p ≠ ⊥ → g v ≤ ∑ j, Real.log (S.lam j Bs.μ0 p v)) ∧
     -(3 * C * O.f * O.m * (O.N : ℝ) ^ 2 * Real.log b) ≤ meanInf K g
 
-def scaleTest (O : FunData K Df) (t : InfinitePlace K → ℝ) : FunData K Df := { O with X' := scaleFrame t O.X' }
-
-theorem clauseB_of_lifts [IsTotallyComplex K] {Df' : DefSide Bs} (S : IndefData Df) (S' : IndefData Df') (N : IndefNum Bs)
+theorem clauseB_of_lifts [_root_.NumberField.IsTotallyComplex K] {Df' : DefSide Bs} (S : IndefData Df) (S' : IndefData Df') (N : IndefNum Bs)
     (O : FunData K Df) {C b : ℝ} (hC : 0 ≤ C) (hb : 1 ≤ b) (hl : LevelLink S S') (h6 : S'.L6 N)
     (hm : Fintype.card Bs.J ≤ O.m) (hN : ∀ j, -(3 * C * O.f * (O.N : ℝ) ^ 2 * Real.log b) ≤ N.l6 j) :
     ClauseB S O C b := by

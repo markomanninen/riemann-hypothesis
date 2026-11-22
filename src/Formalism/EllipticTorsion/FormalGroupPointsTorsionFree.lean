@@ -1,9 +1,15 @@
-import Mathlib
-import Formalism.EllipticTorsion.Statement
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.Statement
+
+@[expose] public section
 
 universe u
 
 noncomputable section
+
+local instance (α : Sort u) : DecidableEq α := Classical.decEq α
 
 namespace Formalism.ELL
 
@@ -13,22 +19,22 @@ def InFormalGroupPoints {K : Type u} [NormedField K] {W : WeierstrassCurve K} : 
   | .zero => True
   | .some x _ _ => 1 < ‖x‖
 
-open Classical in
 
+open Classical in
 def FormalGroupPointsSubgroup' : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] (W : WeierstrassCurve K),
     IntegralModel W → ‖W.Δ‖ = 1 →
     ∀ P Q : W.toAffine.Point, InFormalGroupPoints P → InFormalGroupPoints Q → InFormalGroupPoints (P + Q) ∧ InFormalGroupPoints (-P)
 
-open Classical in
 
+open Classical in
 def FormalGroupPointsTorsionFree : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] (W : WeierstrassCurve K),
     IntegralModel W → ‖W.Δ‖ = 1 →
     ∀ (n : ℕ), ‖(n : K)‖ = 1 → ∀ P : W.toAffine.Point, InFormalGroupPoints P → n • P = 0 → P = 0
 
-open Classical in
 
+open Classical in
 def TorsionIntegral : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] (W : WeierstrassCurve K),
     IntegralModel W → ‖W.Δ‖ = 1 →

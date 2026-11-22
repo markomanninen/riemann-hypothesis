@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RomNonunit
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterExists
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ProdDigits
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RomNonunit
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterExists
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ProdDigits
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix

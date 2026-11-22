@@ -1,10 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceAbsIndep
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeSheetGramLintegral
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConePolar
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeChartGram
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeSheetArea
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPlaneSliceMass
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StConeSheetGramLintegral
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConePolar
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeChartGram
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeSheetArea
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -113,7 +119,7 @@ theorem sheetSum_lintegral_eq {n e : ℕ} (h : HermNorm n) (J : Ideal (MvPolynom
   · rw [indicator_of_mem hx, indicator_of_mem hx]
     by_cases hs : ∃ s, IsSheetAt (J ⊔ Ideal.span {linForm ℓ - 1}) A x s
     · have hsT : sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A x = hs.choose := by
-        unfold sheetThrough; rw [dif_pos hs]
+        unfold sheetThrough; rw [dite_eq_left hs]
       obtain ⟨-, -, -, -, hsx, -⟩ := hs.choose_spec
       have hy : hs.choose y = x := by rw [← hx.2]; exact hsx
       have hx0 : x ≠ 0 := by
@@ -125,49 +131,17 @@ theorem sheetSum_lintegral_eq {n e : ℕ} (h : HermNorm n) (J : Ideal (MvPolynom
         pow_nonneg (by unfold HermNorm.dualNorm; positivity) _
       have hm := maDens_log_dualNorm_sheet h J ℓ A y x hs.choose hx hs.choose_spec
       beta_reduce at hm
-      rw [dif_pos hs, hsT, hy, lintegral_line_gram_abs (e + 1) h w hw x hx0 _ hG]
+      rw [dite_eq_left hs, hsT, hy, lintegral_line_gram_abs (e + 1) h w hw x hx0 _ hG]
       beta_reduce
       rw [hm, abs_mul,
         abs_of_nonneg (div_nonneg (mul_nonneg (by positivity) hG) hd),
         ← ENNReal.ofReal_mul (by positivity)]
     · have hsT : sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A x = 0 := by
-        unfold sheetThrough; rw [dif_neg hs]
-      rw [dif_neg hs, hsT]
+        unfold sheetThrough; rw [dite_eq_right hs]
+      rw [dite_eq_right hs, hsT]
       simp only [Pi.zero_apply, Matrix.mulVec_zero, gramVol_zero_map, mul_zero, ENNReal.ofReal_zero,
         lintegral_zero]
   · simp [indicator_of_notMem hx]
-
-theorem SliceAbsIndep.proof (hL : ConeSheetGramLintegral.Statement) (hD : ConeDimOfChowForm.Statement) :
-    SliceAbsIndep.Statement := by
-  intro n e h J F ℓ ℓ' A A' w hJ hF hℓ hℓ' hA hA' hwm hw
-  have hdim : ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = ((e + 1 + 1 : ℕ) : WithBot ℕ∞) :=
-    hD ℂ n (e + 2) J F hJ hF
-  have hpm : Continuous fun z : EuclideanSpace ℂ (Fin n) => h.pointOf z := by
-    unfold HermNorm.pointOf
-    exact continuous_const.matrix_mulVec (PiLp.continuous_ofLp 2 _)
-  have hFm : Measurable fun z : EuclideanSpace ℂ (Fin n) => ENNReal.ofReal
-      ((ball (0 : EuclideanSpace ℂ (Fin n)) 1).indicator (fun z => |w (h.pointOf z)|) z) :=
-    ENNReal.measurable_ofReal.comp
-      ((continuous_abs.measurable.comp (hwm.comp hpm.measurable)).indicator measurableSet_ball)
-  have hc0 : ENNReal.ofReal (Real.pi ^ (e + 1 + 1) / ((e + 1 + 1).factorial : ℝ)) ≠ 0 := by
-    rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]; positivity
-  have hR : ∀ (ℓ : Fin n → ℂ) (A : Matrix (Fin (e + 1)) (Fin n) ℂ),
-      (∫⁻ y, ∑ᶠ x ∈ ComplexSets.fibre (J ⊔ Ideal.span {linForm ℓ - 1}) A y, ∫⁻ t : ℂ,
-        ENNReal.ofReal ((ball (0 : EuclideanSpace ℂ (Fin n)) 1).indicator (fun z => |w (h.pointOf z)|)
-          (t • WithLp.toLp 2 ((h.matᵀ)⁻¹ *ᵥ sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A x y))) *
-        ENNReal.ofReal (‖t‖ ^ (2 * (e + 1)) * gramVol (fun y' =>
-          (h.matᵀ)⁻¹ *ᵥ sheetThrough (J ⊔ Ideal.span {linForm ℓ - 1}) A x y') y)) =
-      ENNReal.ofReal (Real.pi ^ (e + 1 + 1) / ((e + 1 + 1).factorial : ℝ)) *
-        ∫⁻ y, ENNReal.ofReal (chartAbsDens (J ⊔ Ideal.span {linForm ℓ - 1}) A w
-          (fun _ x => Real.log (h.dualNorm x)) y) := fun ℓ A => by
-    rw [← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
-    exact lintegral_congr fun y => sheetSum_lintegral_eq h J ℓ A w hw y
-  have k1 := (hL n (e + 1) h J ℓ A _ hJ hdim hℓ hA hFm).2
-  have k2 := (hL n (e + 1) h J ℓ' A' _ hJ hdim hℓ' hA' hFm).2
-  rw [hR] at k1 k2
-  obtain ⟨hM0, hMtop⟩ := coordBall_mass (n := n) (m := e + 1 + 1) (le_of_ringKrullDim_quotient J hdim)
-  have key := k1.symm.trans k2
-  rwa [ENNReal.mul_right_inj hM0.ne' hMtop.ne, ENNReal.mul_right_inj hc0 ENNReal.ofReal_ne_top] at key
 
 end
 

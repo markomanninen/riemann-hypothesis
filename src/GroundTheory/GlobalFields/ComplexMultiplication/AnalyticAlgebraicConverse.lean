@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicIsogeny
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenySeparable
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AnalyticAlgebraicIsogeny
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenySeparable
+
+@[expose] public section
 
 open Filter Topology Set Polynomial WeierstrassCurve.Affine GroundTheory.Arith.Abelian KaehlerDifferential
 open scoped PeriodPair
@@ -27,7 +31,7 @@ theorem homConst_ne_zero {Q : isogHom (weierstrassCurve L₁) (weierstrassCurve 
 
 theorem homConst_injective :
     Function.Injective (homConst (weierstrassCurve L₁) (weierstrassCurve L₂)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro Q h
   by_contra hQ
   exact homConst_ne_zero hQ h
@@ -121,14 +125,14 @@ theorem latticeToHom_homConst (Q : isogHom (weierstrassCurve L₁) (weierstrassC
 theorem latticeToHom_add (α β : latticeHom L₁ L₂) :
     latticeToHom (α + β) = latticeToHom α + latticeToHom β :=
   homConst_injective (by
-    rw [map_add, homConst_latticeToHom, homConst_latticeToHom, homConst_latticeToHom]
+    rw [map_add (f := _), homConst_latticeToHom, homConst_latticeToHom, homConst_latticeToHom]
     rfl)
 
 theorem ellEval_comp_translate (L : PeriodPair) (z : ℂ) :
     (ellEval L).comp (translate (weierstrassCurve L) (toPoint L z)) =
       (affineComp 1 z one_ne_zero).comp (ellEval L) := by
   apply algHom_eq_of_map_genericPoint' (E := weierstrassCurve L)
-  rw [← Point.map_map, map_translate_genericPoint, map_add, map_ellEval_genericPoint,
+  rw [← Point.map_map, map_translate_genericPoint, map_add (f := _), map_ellEval_genericPoint,
     show constPoint (weierstrassCurve L) (toPoint L z) =
       constMap (weierstrassCurve L) _ (toPoint L z) from rfl, map_constMap, basePoint_eq,
     affinePoint_add_constMap, ← Point.map_map, map_ellEval_genericPoint, basePoint_eq,

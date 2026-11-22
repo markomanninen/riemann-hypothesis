@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieIsHaarOnUnipotentRadical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Direct
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.PoincareInHH
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HaarLieIsHaarOnUnipotentRadical
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open Matrix MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.SG.LocWSOf Formalism.L2.SG.PoincareInHH.PoincareSetting GlobalTheory.CovDom
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -120,7 +125,7 @@ theorem norm_cjR_restrict {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k
 theorem haarLie_map_cjm {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ)}
     (hS : ∀ g ∈ S, g.map star ∈ S) (κ : ENNReal) : (haarLie S κ).map (cjmE (k := k) (r := r)) = haarLie S κ := by
   unfold haarLie
-  rw [Measure.map_smul]
+  rw [Measure.map_smul κ (cjmE (k := k) (r := r)).measurable.aemeasurable]
   congr 1
   set E : lieE S → Formalism.QuantumDeterminants.Mt k r := fun x => fun i j => NormedSpace.exp (unrealify (x : EuclideanSpace ℝ _)) i j with hE
   by_cases hm : AEMeasurable E volume
@@ -135,7 +140,25 @@ theorem haarLie_map_cjm {S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k +
       rfl
     rw [AEMeasurable.map_map_of_aemeasurable (cjmE (k := k) (r := r)).measurable.aemeasurable hm, e,
       ← AEMeasurable.map_map_of_aemeasurable (by rwa [hΦ.map_eq]) hΦ.measurable.aemeasurable, hΦ.map_eq]
-  · rw [Measure.map_of_not_aemeasurable hm, Measure.map_zero]
+  · exfalso
+    apply hm
+    have hu : Continuous (unrealify : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool) → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) := by
+      refine continuous_pi fun i => continuous_pi fun j => ?_
+      have he : (fun x : EuclideanSpace ℝ (Fin (2 * r + k + 1) × Fin (2 * r + k + 1) × Bool) => unrealify x i j) =
+          fun x => ((x (i, j, false) : ℝ) : ℂ) + ((x (i, j, true) : ℝ) : ℂ) * Complex.I := by
+        funext x
+        apply Complex.ext <;> simp [unrealify]
+      rw [he]
+      fun_prop
+    have hexp : Continuous (NormedSpace.exp : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ → Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) := by
+      open scoped Norms.Operator in exact NormedSpace.exp_continuous
+    apply Measurable.aemeasurable
+    apply measurable_pi_lambda
+    intro i
+    apply measurable_pi_lambda
+    intro j
+    exact ((continuous_apply j).comp ((continuous_apply i).comp
+      (hexp.comp (hu.comp continuous_subtype_val)))).measurable
 
 end Conj2
 

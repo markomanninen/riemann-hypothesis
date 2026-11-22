@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.TopLeftElemInv
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.TopLeftElemInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem KUS_stable (j : ℕ) (S : Finset (Fin n)) (ξ d : Fin n → k) {w : V} (
 theorem W_stable (j : ℕ) (S : Finset (Fin n)) (ξ d : Fin n → k) {w : V}
     (hw : w ∈ KN π ψ (j + 1) ⊔ KUS π ψ j S ξ) : π (colU j d) w ∈ KN π ψ (j + 1) ⊔ KUS π ψ j S ξ := by
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hw
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (KN_stable π ψ j _ (good_colU j d) (good_colU_inv j d) ha)
     (KUS_stable π ψ j S ξ d hb)
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+
+@[expose] public section
 
 noncomputable section
 

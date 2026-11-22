@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.InclRAlgebraMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.StLamOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.LocalSum
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.InclRAlgebraMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.StLamOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicUnitaryOrbits.LocalSum
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -33,32 +38,30 @@ theorem unitChoice_of_isArtinianRing_isReduced :
   refine ⟨fun i => φ.symm (E i), ?_, ?_, ?_, ?_⟩
   · intro i
     rw [← map_mul]
-    congr 1
+    apply congrArg φ.symm
     funext I
-    simp only [E, Pi.mul_apply]
-    split_ifs <;> simp
+    by_cases h : c I = i <;> simp [Pi.mul_apply, E, h]
   · intro i j hij
     rw [← map_mul, ← map_zero φ.symm]
-    congr 1
+    apply congrArg φ.symm
     funext I
-    simp only [E, Pi.mul_apply, Pi.zero_apply]
-    split_ifs with h1 h2 <;> simp_all
-  · rw [← map_sum, ← map_one φ.symm]
-    congr 1
-    funext I
-    simp only [E, Finset.sum_apply, Pi.one_apply]
-    rw [Finset.sum_ite_eq]
-    simp
-  · rw [← isUnit_map_iff φ, map_sum, Pi.isUnit_iff]
-    intro I
-    have hcomp : (∑ i, φ (φ.symm (E i) * f i)) I = φ (f (c I)) I := by
-      simp only [map_mul, AlgEquiv.apply_symm_apply, Finset.sum_apply, Pi.mul_apply, E, ite_mul,
-        one_mul, zero_mul]
-      rw [Finset.sum_ite_eq]
-      simp
-    rw [hcomp]
-    haveI : I.asIdeal.IsMaximal := I.isMaximal
-    letI := Ideal.Quotient.field I.asIdeal
-    exact isUnit_iff_ne_zero.2 (hc I)
+    by_cases hi : c I = i
+    · simp [Pi.mul_apply, E, hi, hij]
+    · simp [Pi.mul_apply, E, hi]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sum, ← map_one φ.symm]
+      apply congrArg φ.symm
+      funext I
+      simp [Finset.sum_apply, E]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← isUnit_map_iff φ, map_sum, Pi.isUnit_iff]
+      intro I
+      have hcomp : (∑ i, φ (φ.symm (E i) * f i)) I = φ (f (c I)) I := by
+        simp only [map_mul, AlgEquiv.apply_symm_apply, Finset.sum_apply, Pi.mul_apply, E, ite_mul,
+          one_mul, zero_mul, Fintype.sum_ite_eq]
+      rw [hcomp]
+      haveI : I.asIdeal.IsMaximal := I.isMaximal
+      letI := Ideal.Quotient.field I.asIdeal
+      exact isUnit_iff_ne_zero.2 (hc I)
 
 end GlobalTheory.CompanionTheory.SW

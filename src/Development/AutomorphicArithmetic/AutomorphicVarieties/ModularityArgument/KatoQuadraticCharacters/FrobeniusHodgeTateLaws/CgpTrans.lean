@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,7 @@ theorem thP : ThP := by
     obtain ⟨c, hc⟩ := hx
     obtain ⟨d, hd⟩ := hy
     refine ⟨c + d, fun n hn Θ hΘ b hb i => ?_⟩
-    simp only [map_add, LinearMap.add_apply, Pi.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply, Pi.add_apply]
     exact cgp_add (cg_mono (by omega) (hc n (by omega) Θ hΘ b hb i))
       (cg_mono (by omega) (hd n (by omega) Θ hΘ b hb i))
   | smul a x _ hx =>

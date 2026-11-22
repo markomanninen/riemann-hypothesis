@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PI.LevelKSplit.W.Loc
 
@@ -6,22 +10,7 @@ open Submodule
 
 variable {O B : Type} [CommRing O] [CommRing B] [Algebra O B] {n r : ℕ}
 
-def dl (c : Fin n → B) : (Fin n → B) →ₗ[B] B where
-  toFun y := c ⬝ᵥ y
-  map_add' x y := dotProduct_add c x y
-  map_smul' a y := by simp [dotProduct_smul]
 
-theorem dl_apply (c y : Fin n → B) : dl c y = c ⬝ᵥ y := rfl
-
-omit [CommRing O] [Algebra O B] in
-theorem dl_sum_ite (c : Fin n → B) (v : Fin r → Fin n → B) (d : Fin r → B) (b : Fin r)
-    (h : ∀ a, c ⬝ᵥ v a = if a = b then 1 else 0) : dl c (∑ a, d a • v a) = d b := by
-  simp [map_sum, dl_apply, dotProduct_smul, h]
-
-omit [CommRing O] [Algebra O B] in
-theorem dl_sum_zero (c : Fin n → B) (v : Fin r → Fin n → B) (d : Fin r → B)
-    (h : ∀ a, c ⬝ᵥ v a = 0) : dl c (∑ a, d a • v a) = 0 := by
-  simp [map_sum, dl_apply, dotProduct_smul, h]
 
 theorem mulVec_span_stable (A : Matrix (Fin n) (Fin n) B) (G : Set (Fin n → B))
     (hG : ∀ x ∈ G, A.mulVec x ∈ span O G) : ∀ x ∈ span O G, A.mulVec x ∈ span O G := by

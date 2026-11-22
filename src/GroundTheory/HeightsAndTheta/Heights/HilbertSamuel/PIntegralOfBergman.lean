@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBergman
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -140,7 +145,7 @@ lemma sectionL2NormSq_pos [CompactSpace X] (W : Weight L) (dV : SmoothVolume A) 
     rw [h, Complex.mul_conj, Complex.normSq_eq_norm_sq, ← Complex.ofReal_mul, Complex.ofReal_re]
   have hpos : ptNormSq W n s x ≠ 0 := by
     rw [hval]; positivity
-  exact (continuous_ptNormSq W hs).integral_pos_of_hasCompactSupport_nonneg_nonzero
+  exact (continuous_ptNormSq W hs).integral_pos_of_hasCompactSupport_nonneg_ne_zero
     (isClosed_tsupport _).isCompact (fun y => by unfold ptNormSq; positivity) hpos
 
 variable [CompactSpace X]
@@ -158,8 +163,8 @@ def l2InnerCore (W : Weight L) (dV : SmoothVolume A) (n : ℕ) (V : Submodule �
     rw [← integral_conj]
     congr 1
     funext x
-    simp only [ptInner, map_mul, Complex.conj_conj, Complex.conj_ofReal]
-    ring
+    simp only [ptInner, map_mul, starRingEnd_self_apply, Complex.conj_ofReal]
+    ac_rfl
   re_inner_nonneg s := by
     have h : 0 ≤ ∫ x, ptNormSq W n (s : Fin A.n → X → ℂ) x ∂dV.μ :=
       integral_nonneg fun x => by unfold ptNormSq; positivity
@@ -171,8 +176,7 @@ def l2InnerCore (W : Weight L) (dV : SmoothVolume A) (n : ℕ) (V : Submodule �
       (integrable_ptInner W dV (hV t.2) (hV s'.2))]
     congr 1
     funext x
-    simp only [ptInner, Submodule.coe_add, Pi.add_apply, map_add]
-    ring
+    simp only [ptInner, Submodule.coe_add, Pi.add_apply, map_add, mul_add, add_mul]
   smul_left s t r := by
     rw [← integral_const_mul]
     congr 1
@@ -187,8 +191,8 @@ def l2InnerCore (W : Weight L) (dV : SmoothVolume A) (n : ℕ) (V : Submodule �
       simpa using hne
     exact (sectionL2NormSq_pos W dV (hV s.2) hne').ne' h
 
-omit [BorelSpace X] [CompactSpace X] in
 
+omit [BorelSpace X] [CompactSpace X] in
 lemma integral_ptInner_self (W : Weight L) (dV : SmoothVolume A) (n : ℕ) (s : Fin A.n → X → ℂ) :
     ∫ x, ptInner W n s s x ∂dV.μ = ((sectionL2NormSq W dV n s : ℝ) : ℂ) := by
   simp_rw [ptInner_self]
@@ -203,7 +207,8 @@ lemma iSup_ratio_eq {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     intro s
     have hs : ℓ s = ∑ a, ⟪b a, s⟫_ℂ * ℓ (b a) := by
       conv_lhs => rw [← b.sum_repr' s]
-      simp [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, map_smul]
     have h1 : ‖ℓ s‖ ≤ ∑ a, ‖⟪b a, s⟫_ℂ‖ * ‖ℓ (b a)‖ := by
       rw [hs]
       exact (norm_sum_le _ _).trans (le_of_eq (by simp))
@@ -227,7 +232,8 @@ lemma iSup_ratio_eq {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     simp only [hc, RCLike.norm_conj]
     exact hSdef.symm
   have hl : ℓ s0 = (S : ℂ) := by
-    rw [hs0, map_sum, hSdef, Complex.ofReal_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs0, map_sum, hSdef, Complex.ofReal_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_smul, smul_eq_mul, Complex.conj_mul', Complex.ofReal_pow]
   apply le_antisymm (ciSup_le hbound)
@@ -239,8 +245,8 @@ lemma iSup_ratio_eq {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 end IntegralOfBergman
 
-open IntegralOfBergman in
 
+open IntegralOfBergman in
 theorem IntegralOfBergman.proof : IntegralOfBergman.Statement := by
   intro D X _ _ _ _ _ A L W dV n V _ hV
   have := dV.isProb

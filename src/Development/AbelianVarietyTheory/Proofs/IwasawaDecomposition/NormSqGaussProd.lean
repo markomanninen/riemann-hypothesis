@@ -1,17 +1,25 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateModelSameThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpace
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaInnerProductEqRealTorusMean
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatticeVacuaTensorCorrespondLine
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatOEqHatA
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.NsmulMemHatA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateModelSameThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProdLevelOneThetaEqVacuumTheta
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPeriodMapHomeomorphRiemannFormDensity
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpace
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaInnerProductEqRealTorusMean
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatticeVacuaTensorCorrespondLine
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatOEqHatA
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LevelStructureProperties
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +100,7 @@ theorem integral_prod_eq {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [
   have hi : Integrable φ (volume.restrict F) := Integrable.of_integral_ne_zero (hm ▸ hV)
   set P : Set (Fin n → Fin g → ℂ) := Set.univ.pi fun _ : Fin n => F with hP
   let Φ : (Fin n → Fin g → ℂ) → ℝ := fun z => ∏ b, φ (z b)
-  have hΦc : Continuous Φ := continuous_finset_prod _ fun b _ => hc.comp (continuous_apply b)
+  have hΦc : Continuous Φ := by fun_prop
   have hΦ0 : ∀ z, 0 ≤ Φ z := fun z => Finset.prod_nonneg fun b _ => h0 _
   have h1 : ∫⁻ z in P, ENNReal.ofReal (Φ z) = volume P := by
     have e1 : volume.restrict P = Measure.pi fun _ : Fin n => volume.restrict F := restrict_pi_pi _ _
@@ -107,7 +115,7 @@ theorem integral_prod_eq {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [
   have : (volume : Measure (Fin n → Fin g → ℂ)).IsAddHaarMeasure := pi.isAddHaarMeasure _
   obtain ⟨c, hc'⟩ : ∃ c : NNReal, μ.map e = c • volume := ⟨_, isAddLeftInvariant_eq_smul _ _⟩
   have hme := e.toHomeomorph.measurableEmbedding
-  have hq : QuasiMeasurePreserving e μ volume := ⟨e.continuous.measurable, by
+  have hq : QuasiMeasurePreserving e μ volume := ⟨e.continuous.measurable.aemeasurable, by
     rw [hc']; exact smul_absolutelyContinuous⟩
   let Bn := AddSubgroup.pi Set.univ fun _ : Fin n => A
   let B : AddSubgroup V := Bn.comap e.toLinearEquiv.toAddEquiv.toAddMonoidHom
@@ -121,7 +129,7 @@ theorem integral_prod_eq {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [
       simp
   have hle : Γ ≤ B := fun v hv i _ => hΓ v hv i
   have h2 := lintegral_sub hle hFd hB (fun v => ENNReal.ofReal (Φ (e v))) fun b hb v => by
-    simp only [Φ, map_add, Pi.add_apply]
+    simp only [Φ, map_add (f := _), Pi.add_apply]
     exact congrArg _ (Finset.prod_congr rfl fun i _ => hp _ (hb i trivial) _)
   have h3 := lintegral_sub hle hFd hB (fun _ => 1) fun _ _ _ => rfl
   have h4 : ∀ Ψ : (Fin n → Fin g → ℂ) → ℝ≥0∞, ∫⁻ v in e ⁻¹' P, Ψ (e v) ∂μ = c * ∫⁻ z in P, Ψ z := fun Ψ => by
@@ -322,7 +330,7 @@ theorem vac_eq_unit_mul : ∀ (D : D7) (S T : HSp D) (r g : ℕ) (hr : T.rank = 
         rw [mul_smul]
         exact nsmul_mem (hN' _ (hΛ ▸ hy b)) _
       | zero => simp
-      | add u u' _ _ hu hu' => exact fun b => by rw [map_add]; exact add_mem (hu b) (hu' b)
+      | add u u' _ _ hu hu' => exact fun b => by simpa only [map_add, Pi.add_apply] using add_mem (hu b) (hu' b)
       | neg u _ hu => exact fun b => by rw [map_neg]; exact neg_mem (hu b)) hFd
   have h3 := hN Fd hFd (fun u => ((‖a‖ ^ 2 * ∏ b, φ (e u b) : ℝ) : ℂ)) fun p hp => by
     rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, hfp p hp, norm_mul, mul_pow, norm_sq_gauss_prod, hJ]

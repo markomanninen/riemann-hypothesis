@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.DeterminantCokernelCount.CokernelIndexFactors.StatementB
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ImagQuadraticMaximalOrderArithmeticAtSplitPrime
+
+@[expose] public section
 
 open GlobalTheory.MomOne Formalism.L2.Ker.JMB
 open scoped ComplexConjugate BigOperators ComplexOrder
@@ -27,8 +31,6 @@ noncomputable def betaL (d : ℕ) (H : Matrix (Fin g) (Fin g) ℂ) (z : Fin g �
   toFun x := beta d H x z
   map_add' x y := beta_add_left d H x y z
   map_smul' c x := beta_smul_left d H c x z
-
-lemma rankOne_base_weight_eq_cmTheta (d : ℕ) : w0 d = wK d := rfl
 
 end GlobalTheory.MomOne.OrthFrame
 
@@ -65,7 +67,8 @@ open scoped ComplexConjugate BigOperators ComplexOrder in
 variable {g : ℕ} in
 private lemma conj_beta_eq_beta_swap (d : ℕ) {H : Matrix (Fin g) (Fin g) ℂ} (hH : H.IsHermitian)
     (x z : Fin g → ℂ) : conj (_root_.Formalism.L2.Ker.JMB.beta d H x z) = _root_.Formalism.L2.Ker.JMB.beta d H z x := by
-  simp only [_root_.Formalism.L2.Ker.JMB.beta, _root_.Formalism.L2.Ker.JMB.hf, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [_root_.Formalism.L2.Ker.JMB.beta, _root_.Formalism.L2.Ker.JMB.hf, map_mul, map_sum, Complex.conj_ofReal, Complex.conj_conj]
   congr 1
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -95,7 +98,8 @@ private lemma beta_sum_right' (d : ℕ) {H : Matrix (Fin g) (Fin g) ℂ} (hH : H
   rw [← conj_beta_eq_beta_swap d hH]
   have := map_sum (_root_.GlobalTheory.MomOne.OrthFrame.betaL d H x) f s
   simp only [_root_.GlobalTheory.MomOne.OrthFrame.betaL, LinearMap.coe_mk, AddHom.coe_mk] at this
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   exact Finset.sum_congr rfl fun i _ => conj_beta_eq_beta_swap d hH _ _
 
 open scoped ComplexConjugate BigOperators ComplexOrder in
@@ -147,7 +151,7 @@ open scoped ComplexConjugate BigOperators ComplexOrder in
 variable {g : ℕ} in
 private lemma beta_add_right' (d : ℕ) {H : Matrix (Fin g) (Fin g) ℂ} (hH : H.IsHermitian)
     (x y z : Fin g → ℂ) : _root_.Formalism.L2.Ker.JMB.beta d H x (y + z) = _root_.Formalism.L2.Ker.JMB.beta d H x y + _root_.Formalism.L2.Ker.JMB.beta d H x z := by
-  rw [← conj_beta_eq_beta_swap d hH, _root_.GlobalTheory.MomOne.OrthFrame.beta_add_left, map_add, conj_beta_eq_beta_swap d hH,
+  rw [← conj_beta_eq_beta_swap d hH, _root_.GlobalTheory.MomOne.OrthFrame.beta_add_left, map_add (f := _), conj_beta_eq_beta_swap d hH,
     conj_beta_eq_beta_swap d hH]
 
 open scoped ComplexConjugate BigOperators ComplexOrder in
@@ -277,7 +281,8 @@ private lemma exists_orthogonal_vector_norm_coprime {q : ℕ} (hq : q.Prime) (S 
   have hPorth : ∀ y j, _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm (P y) (x j) = 0 := by
     intro y j
     have e : _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm (P y) (x j) = _root_.GlobalTheory.MomOne.OrthFrame.betaL S.d S.Hm (x j) (P y) := rfl
-    rw [e, hP, map_sub, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, hP, map_sub, map_smul, map_sum]
     simp only [map_smul, smul_eq_mul, _root_.GlobalTheory.MomOne.OrthFrame.betaL, LinearMap.coe_mk,
       AddHom.coe_mk, horth, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
     rw [mul_assoc, mul_comm (_root_.Formalism.L2.Ker.JMB.beta S.d S.Hm y (x j)), ← mul_assoc, ← Nat.cast_mul,
@@ -306,8 +311,8 @@ private lemma exists_orthogonal_vector_norm_coprime {q : ℕ} (hq : q.Prime) (S 
     intro y hy z hz
     have hpol := div_mem_of_norms_dvd_lemma_9 hd hk hq hqd hH.1 (hint _ (hPL y hy) _ (hPL z hz))
       (hdivall y hy) (hdivall z hz)
-      (by rw [← map_add]; exact hdivall _ (S.La.add_mem hy hz))
-      (by rw [← LinearMap.map_smul, ← map_add]; exact hdivall _ (S.La.add_mem hy (hω z hz)))
+      (by rw [← map_add (f := _)]; exact hdivall _ (S.La.add_mem hy hz))
+      (by rw [← LinearMap.map_smul, ← map_add (f := _)]; exact hdivall _ (S.La.add_mem hy (hω z hz)))
     rw [hPP] at hpol
     exact div_mem_OK_of_mul_div_mem_of_coprime hd hq (hint _ (hPL y hy) z hz) hpol hAq
   have hdivL : ∀ y ∈ S.La, (q : ℂ)⁻¹ • P y ∈ S.La := by
@@ -382,9 +387,9 @@ private lemma exists_orthogonal_vector_norm_coprime {q : ℕ} (hq : q.Prime) (S 
     lt_of_lt_of_le (Nat.lt_pow_self hq.one_lt) (Nat.pow_le_pow_right hq.pos (by omega))
   omega
 
+
 open scoped ComplexConjugate BigOperators ComplexOrder in
 variable {g : ℕ} in
-
 theorem _root_.GlobalTheory.MomOne.exists_orthFrame : ∀ (q g : ℕ) (S : _root_.Formalism.L2.Ker.JMB.Setup g),
     q.Prime → S.Ok → ¬ q ∣ S.d → ∃ (x : Fin g → Fin g → ℂ) (a : Fin g → ℕ), (∀ i, x i ∈ S.La) ∧
       (∀ i j, _root_.Formalism.L2.Ker.JMB.beta S.d S.Hm (x i) (x j) = if i = j then (a i : ℂ) else 0) ∧

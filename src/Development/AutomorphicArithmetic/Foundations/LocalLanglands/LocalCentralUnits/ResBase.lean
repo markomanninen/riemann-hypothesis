@@ -1,8 +1,19 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.DiscreteGroups.GlobalIrreducibility.DzGalTR
-import Development.DiscreteGroups.GlobalIrreducibility.GalUnitCompat
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameRecAll
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzMatchCut
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGalRes
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTame
+public import Development.DiscreteGroups.GlobalIrreducibility.DzNormV
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIneEq
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsIneOfVEqOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.LocalLanglandsGL
+public import Development.DiscreteGroups.GlobalIrreducibility.DzGalW
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.FinrankK
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TameRecAll
+
+@[expose] public section
 
 noncomputable section
 

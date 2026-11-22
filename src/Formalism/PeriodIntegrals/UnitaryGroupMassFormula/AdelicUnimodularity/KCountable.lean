@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AdUnimod
-import Formalism.PeriodIntegrals.UnimodIdx
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AdUnimod
+public import Formalism.PeriodIntegrals.UnimodIdx
+
+@[expose] public section
 
 noncomputable section
 

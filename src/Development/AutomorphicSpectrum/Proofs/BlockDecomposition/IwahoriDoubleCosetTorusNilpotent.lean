@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagPairs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureCballZpow
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GindikinKarpelevich
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DiagPairs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureCballZpow
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GindikinKarpelevich
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,8 @@ theorem conj_apply (ϖ : kˣ) (x : Fin n → ℤ) (l : GL (Fin n) k) (i j : Fin 
 theorem val_zpow_lt_one {ϖ : kˣ} (hϖ : ord k ϖ = 1) {m : ℤ} (hm : 0 < m) :
     valuation k ((ϖ ^ m : kˣ) : k) < 1 := by
   have h := GlobalTheory.OrdShellInt.val_le_iff_ord (k := k) 1 (ϖ ^ m)
-  rw [GlobalTheory.OrdShellInt.ord_zpow, hϖ, ord_eq_zero (by simp)] at h
+  have h_one : ord k (1 : kˣ) = 0 := ord_eq_zero (k := k) (by simp)
+  rw [GlobalTheory.OrdShellInt.ord_zpow, hϖ, h_one] at h
   rw [Units.val_one, map_one] at h
   exact not_le.1 fun h' => absurd (h.1 h') (by omega)
 
@@ -76,20 +81,6 @@ theorem diagT_conj_tor (ϖ : kˣ) (x : Fin n → ℤ) (s : Fin n → kˣ) :
 end GlobalTheory.CompanionTheory.IwJac.DCoset
 
 namespace GlobalTheory.CompanionTheory.IwJac
-
-theorem iwahori_mul_tor_mul_iwahori : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] (n : ℕ) (ϖ : kˣ), ord k ϖ = 1 → ∀ x : Fin n → ℤ, StrictAnti x →
-    ∀ a ∈ iwahori k (Fin n), ∀ b ∈ iwahori k (Fin n), ∃ m ∈ nO k n, ∃ c ∈ iwahori k (Fin n),
-      a * tor ϖ x * b = m * tor ϖ x * c := by
-  intro k _ _ _ _ n ϖ hϖ x hx a ha b hb
-  obtain ⟨c, hc, τ, hτ, l, hl, rfl⟩ := GlobalTheory.CompanionTheory.IwahoriDatumGL.fact_up' k n ha
-  refine ⟨c, hc, τ * ((tor ϖ x)⁻¹ * l * tor ϖ x) * b,
-    mul_mem (mul_mem hτ.1 (DCoset.conj_mem_iwahori hϖ hx hl)) hb, ?_⟩
-  obtain ⟨s, rfl⟩ := hτ.2
-  calc c * diagT k (Fin n) s * l * tor ϖ x * b
-      = c * (tor ϖ x * diagT k (Fin n) s * (tor ϖ x)⁻¹) * l * tor ϖ x * b := by
-        rw [DCoset.diagT_conj_tor]
-    _ = c * tor ϖ x * (diagT k (Fin n) s * ((tor ϖ x)⁻¹ * l * tor ϖ x) * b) := by group
 
 end GlobalTheory.CompanionTheory.IwJac
 

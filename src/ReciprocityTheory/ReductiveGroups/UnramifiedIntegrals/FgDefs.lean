@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
-import Formalism.TorsionNormIteration.LubinTateExample
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
+public import Formalism.TorsionNormIteration.LubinTateExample
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ structure HD (σ : K →+* K) (lam : PowerSeries K) (Φ : MvPowerSeries (Fin 2) 
 structure QCls (l : ℕ) (Φ : MvPowerSeries (Fin 2) K) (A : PowerSeries K) (b : K)
     (D : PowerSeries K) : Prop where
   D0 : constantCoeff D = 0
-  dInt : IntegralPS (derivative K D)
+  dInt : IntegralPS (PowerSeries.derivative D)
   add : DivByMv (l : K) (D.subst Φ - atX D - atY D)
   eig : DivBy (l : K) (D.subst A - C b * D)
 
@@ -48,8 +52,8 @@ def d2 (Φ : MvPowerSeries (Fin 2) K) : PowerSeries K :=
 
 end Abstract
 
-open Classical in
 
+open Classical in
 def lgS {K : Type} [Field K] (g2 g3 : K) : PowerSeries K :=
   if h : ∃ t : PowerSeries K, constantCoeff t = 0 ∧ (uSer g2 g3).subst t = X then h.choose else 0
 

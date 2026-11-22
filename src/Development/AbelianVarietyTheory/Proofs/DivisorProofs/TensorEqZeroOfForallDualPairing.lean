@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct WithConv
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB RigLB CubicalStr Theta thφ thε thK x3)
@@ -22,7 +27,7 @@ theorem tensor_eq_zero_of_forall_dual_pairing {R : Type} [CommRing R] {M N : Typ
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul m n => simp [finsuppTensorFinsupp'_apply_apply]
-    | add v w hv hw => simp only [map_add, Finsupp.add_apply, hv, hw]
+    | add v w hv hw => simp only [map_add (f := _), Finsupp.add_apply, hv, hw]
   have h0 : TensorProduct.map s s' u = 0 := by
     apply (finsuppTensorFinsupp' R M N).injective
     rw [map_zero]
@@ -66,7 +71,8 @@ theorem tensor_mem_of_dualAnnihilator : ∀ (R : Type) [CommRing R] (M N : Type 
     simp only [sub_sub_cancel]
     apply tensor_eq_zero_of_forall_dual_pairing
     intro x y
-    simp only [map_sum, TensorProduct.lift.tmul, LinearMap.compl₁₂_apply, LinearMap.mul_apply']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, TensorProduct.lift.tmul, LinearMap.compl₁₂_apply, LinearMap.mul_apply']
     exact hab _ (ann x) _ (ann' y)
 
 end GlobalTheory

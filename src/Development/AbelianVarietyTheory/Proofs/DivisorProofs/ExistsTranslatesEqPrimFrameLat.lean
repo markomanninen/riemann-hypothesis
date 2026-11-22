@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open ValuativeRel Matrix
+open scoped Classical
 
 noncomputable section
 namespace GlobalTheory.SplitFlip
@@ -100,8 +105,8 @@ theorem isPrimFrame_succ_iff [Fintype D] {ϖ : kˣ} (hϖ : IsUnif ϖ) {Λ : Subm
       exact (add_mem_cancel_left h0).1 h5
     exact Fin.cases hc0 (h2 _ ((add_mem_cancel_left (smul_mem_of_int hc0 h0)).1 hc))
 
-open Classical in
 
+open Classical in
 theorem indicator_isPrimFrame_succ [Fintype D] [Fintype 𝓀[k]] {ϖ : kˣ} (hϖ : IsUnif ϖ)
     {Λ : Submodule 𝒪[k] (D → k)} (l : 𝓀[k] → 𝒪[k]) (hl : ∀ r, IsLocalRing.residue _ (l r) = r)
     (Y : Matrix (Fin (n + 1)) D k) :
@@ -140,8 +145,8 @@ theorem indicator_isPrimFrame_succ [Fintype D] [Fintype 𝓀[k]] {ϖ : kˣ} (hϖ
     simp only [h6]
     simp [hy]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def consBlock (u : k) (c : Fin n → k) (γ : Matrix (Fin n) (Fin n) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k :=
   Matrix.of (Fin.cons (Fin.cons u c) fun i => Fin.cons 0 (γ i))
 
@@ -154,8 +159,8 @@ theorem det_consBlock (u : k) (c : Fin n → k) (γ : Matrix (Fin n) (Fin n) k) 
   rfl
 
 theorem consBlock_mul_mem {Λ : Submodule 𝒪[k] (D → k)} (u : k) (c : Fin n → k) (γ : Matrix (Fin n) (Fin n) k)
-    (Y : Matrix (Fin (n + 1)) D k) : consBlock u c γ * Y ∈ matLat _ Λ ↔
-      γ * Y.submatrix Fin.succ id ∈ matLat _ Λ ∧ u • Y.row 0 + c ᵥ* Y.submatrix Fin.succ id ∈ Λ := by
+    (Y : Matrix (Fin (n + 1)) D k) : consBlock u c γ * Y ∈ matLat (Fin (n + 1)) Λ ↔
+      γ * Y.submatrix Fin.succ id ∈ matLat (Fin n) Λ ∧ u • Y.row 0 + c ᵥ* Y.submatrix Fin.succ id ∈ Λ := by
   rw [mem_matLat, mem_matLat, Fin.forall_fin_succ, and_comm, ← cons_vecMul_rows]
   refine and_congr (forall_congr' fun i => ?_) Iff.rfl
   have : (consBlock u c γ * Y).row i.succ = (γ * Y.submatrix Fin.succ id).row i := by
@@ -164,13 +169,13 @@ theorem consBlock_mul_mem {Λ : Submodule 𝒪[k] (D → k)} (u : k) (c : Fin n 
 
 end Step
 
-open Classical in
 
+open Classical in
 theorem exists_comb_isPrimFrame.{u} {k : Type u} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] [Fintype D] {ϖ : kˣ} (hϖ : IsUnif ϖ) (Λ : Submodule 𝒪[k] (D → k)) (n : ℕ) :
     ∃ (ι : Type u) (_ : Fintype ι) (m : ι → ℂ) (γ : ι → Matrix (Fin n) (Fin n) k) (j : ι → ℕ),
       (∀ i, (γ i).det = ((ϖ : k)⁻¹) ^ j i) ∧
-      (∀ Y : Matrix (Fin n) D k, ∑ i, m i * (if γ i * Y ∈ matLat _ Λ then 1 else 0) =
+      (∀ Y : Matrix (Fin n) D k, ∑ i, m i * (if γ i * Y ∈ matLat (Fin n) Λ then 1 else 0) =
         if IsPrimFrame Λ Y then 1 else 0) ∧
       ∀ x : ℂ, ∑ i, m i * x ^ j i = ∏ i ∈ Finset.range n, (1 - (resCard k : ℂ) ^ i * x) := by
   induction n with
@@ -190,7 +195,7 @@ theorem exists_comb_isPrimFrame.{u} {k : Type u} [Field k] [ValuativeRel k] [Top
       simp only [Sum.elim_inl, Sum.elim_inr, consBlock_mul_mem, smul_vecMul, ← smul_add, one_smul, zero_vecMul,
         add_zero, Finset.sum_mul, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
-      by_cases h : γ i * Y.submatrix Fin.succ id ∈ matLat _ Λ
+      by_cases h : γ i * Y.submatrix Fin.succ id ∈ matLat (Fin n) Λ
       · simp only [h, true_and, if_true, mul_one, mul_sub, Finset.mul_sum, neg_mul, Finset.sum_neg_distrib]
         ring
       · simp [h]
@@ -246,7 +251,8 @@ theorem exists_translates_eq_primFrame_lat {ϖ : kˣ} (hϖ : IsUnif ϖ) (ν α :
       mul_mul_mul_comm, ← Units.val_mul, ← map_mul, ← apow_mul]
     simp
   refine ⟨∑ i, Finsupp.single (g i) (m i * x ^ j i), ?_, ?_⟩
-  · rw [← Finsupp.linearCombination_apply ℂ, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finsupp.linearCombination_apply ℂ, map_sum]
     funext Y
     rw [Finset.sum_apply, show {Y : Matrix (Fin a') D k | IsPrimFrame Λ Y}.indicator 1 Y =
       if IsPrimFrame Λ Y then (1 : ℂ) else 0 by simp [Set.indicator_apply], ← h2]
@@ -256,15 +262,5 @@ theorem exists_translates_eq_primFrame_lat {ϖ : kˣ} (hϖ : IsUnif ϖ) (ν α :
     rw [mul_assoc, ← mul_assoc (x ^ j i), hf, one_mul]
   · rw [← Finsupp.sum_finsetSum_index (by simp) (by simp), ← h3]
     exact Finset.sum_congr rfl fun i _ => Finsupp.sum_single_index rfl
-
-theorem exists_translates_eq_primFrame {ϖ : kˣ} (hϖ : IsUnif ϖ) (ν α : kˣ →* ℂˣ) (a' : ℕ) :
-    ∃ z : GL (Fin a') k →₀ ℂ,
-      (z.sum fun g c => c • omB ν α g 1 ((matLat (Fin a') (stdLat k D) : Set (Matrix (Fin a') D k)).indicator 1)) =
-        {Y : Matrix (Fin a') D k | IsPrimFrame (stdLat k D) Y}.indicator 1 ∧
-      (z.sum fun _ c => c) = ∏ i ∈ Finset.range a',
-        (1 - (resCard k : ℂ) ^ i * ((ν ϖ : ℂ) * (resCard k : ℂ) ^ (-(Fintype.card D : ℂ) / 2))) ∧
-      (‖(ν ϖ : ℂ)‖ = 1 → (a' : ℝ) - 1 < (Fintype.card D : ℝ) / 2 → (z.sum fun _ c => c) ≠ 0) := by
-  obtain ⟨z, h1, h2⟩ := exists_translates_eq_primFrame_lat hϖ ν α (stdLat k D) a'
-  exact ⟨z, h1, h2, fun hν h => h2 ▸ prod_primFactor_ne_zero hν h⟩
 
 end GlobalTheory.SplitFlip

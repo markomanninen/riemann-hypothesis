@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNSandwich
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNSandwich
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ConjugationInvarianceEverySetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,16 +18,19 @@ open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData
 
 variable {k r : ℕ}
 
-private theorem lintegral_comp_eq_of_map_eq {α : Type*} [MeasurableSpace α] {μ : Measure α} {f : α → α}
+private theorem lintegral_comp_eq_of_map_eq {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] {μ : Measure α} {f : α → α}
     (hμ : μ.map f = μ) {G : α → ℝ≥0∞} (hG : Measurable G) :
     ∫⁻ x, G (f x) ∂μ = ∫⁻ x, G x ∂μ := by
   by_cases hf : AEMeasurable f μ
   · conv_rhs => rw [← hμ]
     rw [lintegral_map' hG.aemeasurable hf]
-  · have h0 : μ = 0 := by
-      rw [← hμ]
-      exact Measure.map_of_not_aemeasurable hf
-    simp [h0]
+  · by_cases h0 : μ = 0
+    · simp [h0]
+    · haveI : Nonempty α := Measure.nonempty_of_not_aemeasurable hf
+      have hd : μ = Measure.dirac (Classical.ofNonempty : α) :=
+        hμ.symm.trans (Measure.map_of_not_aemeasurable_of_ne_zero hf h0)
+      rw [hd] at hf
+      exact (hf aemeasurable_dirac).elim
 
 theorem lint_lmul {μ : Measure (Formalism.QuantumDeterminants.Mt k r)} {a : Mx k r} (hμ : μ.map (Formalism.QuantumDeterminants.lmulM a) = μ)
     {G : Formalism.QuantumDeterminants.Mt k r → ℝ≥0∞} (hG : Measurable G) :

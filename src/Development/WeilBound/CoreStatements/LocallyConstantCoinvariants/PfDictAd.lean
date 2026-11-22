@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ActEEqOfConjRelated
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.HermitianCharacters.SelfDualLatticeFiltrationCharacter
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivariance
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDictDef
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ActEEqOfConjRelated
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.HermitianCharacters.SelfDualLatticeFiltrationCharacter
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivariance
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagonalLagrangianInvariantForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,17 +125,20 @@ theorem lDiag_box_ne : ∃ f : SInf F κ, lDiag F κ (boxFun (pure f (stdF κ)) 
       (fun _ => norm_nonneg _) (by simp [g0])
 
 open Classical in
-theorem adjoint_statement : AdSt where
-  psi F _ _ ψ h := by
+theorem adjoint_statement : AdSt := by
+  refine {
+    psi := ?_
+    Heisenberg₂ := fun F _ _ κ _ ψ v w hw φ => ad_heis ψ w hw φ
+    rest := fun F _ _ κ _ v r φ₀ _ hne hr φ hφ => ad_rest r φ₀ hne hr φ hφ
+    act := fun F _ _ κ _ ψ hψ v T s L L' sv => ad_act ψ hψ T s L L' sv
+    diag := ?_ }
+  · intro F _ _ ψ h
     have hA := isCharAF_of_isStd h
     obtain ⟨x₀, hx₀⟩ := hA.2.2.2
     refine ⟨fun e => hx₀ (by rw [e]; rfl), fun v => ⟨hA.1.comp cont_at, fun e => ?_⟩⟩
     obtain ⟨y, hy⟩ := ((GlobalTheory.CompanionTheory.AdeleCharLocal.char_nontrivial_at_every_place F ψ hA).1 v).2
     exact hy (DFunLike.congr_fun e y)
-  Heisenberg₂ F _ _ κ _ ψ v w hw φ := ad_heis ψ w hw φ
-  rest F _ _ κ _ v r φ₀ _ hne hr φ hφ := ad_rest r φ₀ hne hr φ hφ
-  act F _ _ κ _ ψ hψ v T s L L' sv := ad_act ψ hψ T s L L' sv
-  diag F _ _ κ _ ψ v := by
+  · intro F _ _ κ _ ψ v
     obtain ⟨f, hf⟩ := lDiag_box_ne (F := F) (κ := κ)
     have hi := indep_pure (v := v) f (stdF (F := F) κ)
     have e : tens (evFin F v) (stdF κ v) (pure f (Function.update (stdF κ) v 1)) = pure f (stdF κ) := by

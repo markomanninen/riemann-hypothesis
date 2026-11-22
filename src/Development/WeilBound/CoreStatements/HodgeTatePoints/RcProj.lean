@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RangeSubtypeEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RangeSubtypeEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ lemma exists_inv_card {v : Valuation C NNReal} (hv : v.Integers R) (p : ℕ) [Fa
   exact hv.exists_of_le_one (by rw [map_inv₀, h1, inv_one])
 
 lemma projL_mem (hu : ∃ u : R, algebraMap R C u = (Fintype.card Fˣ : C)⁻¹) (χ : MulChar F R)
-    (S : Submodule R (N → C)) (hS : FStable F S) {g : N → C} (hg : g ∈ S) : projL χ g ∈ S := by
+    (S : Submodule R (N → C)) (hS : FStable (F := F) S) {g : N → C} (hg : g ∈ S) : projL χ g ∈ S := by
   obtain ⟨u, hu⟩ := hu
   have : projL χ g = u • ∑ a : Fˣ, χ⁻¹ (a : F) • (fun x => g ((a : F) • x)) := by
     funext x
@@ -55,8 +59,8 @@ lemma projL_mem (hu : ∃ u : R, algebraMap R C u = (Fintype.card Fˣ : C)⁻¹)
   exact S.smul_mem _ (S.sum_mem fun a _ => S.smul_mem _ (hS _ g hg))
 
 omit [Fintype F] [DecidableEq F] in
-lemma fstable_sq {M : Submodule R (N → C)} (hM : FStable F M) :
-    FStable F (sqIdeal (augIdeal M)) :=
+lemma fstable_sq {M : Submodule R (N → C)} (hM : FStable (F := F) M) :
+    FStable (F := F) (sqIdeal (augIdeal M)) :=
   fun a _ hg => sq_pull (LinearMap.lsmul F N a).toAddMonoidHom M M (hM a) hg
 
 omit [Fintype F] [DecidableEq F] in
@@ -72,7 +76,7 @@ lemma eig_le_aug (M : Submodule R (N → C)) (χ : MulChar F R) : eig M χ ≤ a
   rwa [zero_smul, MulChar.map_zero, map_zero, zero_mul] at this
 
 lemma projL_eig (hu : ∃ u : R, algebraMap R C u = (Fintype.card Fˣ : C)⁻¹) (χ : MulChar F R)
-    {M : Submodule R (N → C)} (hM : FStable F M) {g : N → C} (hg : g ∈ augIdeal M) :
+    {M : Submodule R (N → C)} (hM : FStable (F := F) M) {g : N → C} (hg : g ∈ augIdeal M) :
     projL χ g ∈ eig M χ := by
   rw [mem_aug] at hg
   refine ⟨projL_mem hu χ M hM hg.1, fun a x => ?_⟩
@@ -112,7 +116,8 @@ lemma projL_ne [IsDomain R] {χ χ' : MulChar F R} (hne : χ ≠ χ') {M : Submo
     exact DFunLike.congr_fun h1 a
   rw [projL_apply]
   simp only [h]
-  rw [← Finset.sum_mul, ← map_sum, h0, map_zero, zero_mul, mul_zero, Pi.zero_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_mul, ← map_sum, h0, map_zero, zero_mul, mul_zero, Pi.zero_apply]
 
 lemma sum_projL [CharZero C] [IsDomain R] (σ : MulChar F R)
     (hσ : ∀ a : Fˣ, σ (a : F) = 1 → a = 1) (g : N → C) :
@@ -137,7 +142,8 @@ lemma sum_projL [CharZero C] [IsDomain R] (σ : MulChar F R)
   rw [Finset.sum_apply]
   simp only [projL_apply]
   rw [← Finset.mul_sum, Finset.sum_comm]
-  simp only [← Finset.sum_mul, ← map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.sum_mul, ← map_sum, h]
   rw [Finset.sum_eq_single 1 (fun a _ ha => by simp [ha]) (by simp)]
   rw [if_pos rfl, map_natCast, Units.val_one, one_smul, ← mul_assoc,
     inv_mul_cancel₀ (Nat.cast_ne_zero.2 Fintype.card_ne_zero), one_mul]

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.LocDDQ
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UMatInvMul
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.LocDDQ
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.UMatInvMul
+
+@[expose] public section
 
 noncomputable section
 

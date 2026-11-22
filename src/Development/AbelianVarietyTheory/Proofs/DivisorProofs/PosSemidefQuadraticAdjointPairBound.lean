@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PosFormAdjoint
 
@@ -10,7 +14,7 @@ theorem int_cauchy_schwarz {X : Type} [AddCommGroup X] (F : X →+ X →+ ℤ)
     have h1 := hpos (a • u + b • v)
     have e : F (a • u + b • v) (a • u + b • v)
         = a ^ 2 * F u u + 2 * a * b * F u v + b ^ 2 * F v v := by
-      simp only [map_add, map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, smul_eq_mul]
+      simp only [map_add (f := _), map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.smul_apply, smul_eq_mul]
       rw [hsym v u]
       ring
     rw [e] at h1
@@ -188,8 +192,9 @@ theorem pos_form_adjoint_bound : ∀ (X : Type) [AddCommGroup X] [Module.Free �
       rw [LinearMap.aeval_self_charpoly]; rfl
     rw [Polynomial.aeval_eq_sum_range, Finset.sum_range_succ, hmonic.coeff_natDegree, one_smul] at hCH
     have h2 := congrArg (fun x => B x y) hCH
-    simp only [LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_add,
-      map_sum, map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.finset_sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_add (f := _),
+      map_sum, map_zsmul, AddMonoidHom.add_apply, AddMonoidHom.finsetSum_apply,
       AddMonoidHom.smul_apply, smul_eq_mul, map_zero, AddMonoidHom.zero_apply] at h2
     rw [add_comm]; exact h2
   have hb := seq_bound a (fun i => p.coeff i) p.natDegree apos alc hrec

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormula
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.MomentMatch
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.TraceFormula
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.MomentMatch
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,14 @@ theorem pm_pow_eig (A : Module.End ℂ W) {z : ℂ} {f : W} (h : A f = z • f) 
     (A ^ k) f = z ^ k • f := by
   induction k with
   | zero => simp
-  | succ k ih => rw [pow_succ', Module.End.mul_apply, ih, map_smul, h, smul_smul, pow_succ]
+  | succ k ih => rw [pow_succ', mul_apply_eq_comp, ih, map_smul, h, smul_smul, pow_succ]
 
 theorem pm_proj_decomp (A Q : Module.End ℂ W) (T : Submodule ℂ W) (B : Finset ℝ) (z : ℂ)
     (hQ1 : ∀ f ∈ T, A f = z • f → Q f = f) (hQ0 : ∀ f ∈ T, ∀ z' : ℂ, z' ≠ z → A f = z' • f → Q f = 0)
     (fb : ℝ → W) (hfb : ∀ b, fb b ∈ T ∧ A (fb b) = ((b : ℝ) : ℂ) • fb b) :
     Q (∑ b ∈ B, fb b) = ∑ b ∈ B, if ((b : ℝ) : ℂ) = z then fb b else 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   split_ifs with h
   · exact hQ1 _ (hfb b).1 (by rw [← h]; exact (hfb b).2)
@@ -47,7 +52,8 @@ theorem pm_agree (A : Module.End ℂ W) (T : Submodule ℂ W) (B : Finset ℝ)
     simp [Complex.ofReal_inj, hb]
   refine ⟨fun f hf k => ?_, fun Q z hQ1 hQ0 f hf => ?_⟩
   · obtain ⟨fb, hfb, rfl⟩ := hdec f hf
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b hb => ?_
     rw [hPb fb hfb b hb, pm_pow_eig A (hfb b).2]
   · obtain ⟨fb, hfb, rfl⟩ := hdec f hf
@@ -59,7 +65,7 @@ end Generic
 
 theorem pm_single_mem {M : Type*} [AddCommGroup M] [Module ℂ M] (S : Submodule ℂ M) {x : M} (hx : x ∈ S)
     (c : Fin n) : Pi.single c x ∈ tensSub (n := n) S := by
-  refine (Submodule.mem_pi).2 fun i _ => ?_
+  refine tset_mem.2 fun i => ?_
   by_cases h : i = c <;> simp [h, hx]
 
 theorem pm_ptr {M : Type*} [AddCommGroup M] [Module ℂ M] (S : Submodule ℂ M)

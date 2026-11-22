@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvSubOneMem
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsRiemannianHaarOnSubgroupMapMulRightUnitary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InvSubOneMem
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsRiemannianHaarOnSubgroupMapMulRightUnitary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 noncomputable section
@@ -74,9 +79,6 @@ def into (V V' : Submodule ℂ (Fin n → ℂ)) : Submodule ℝ (Matrix (Fin n) 
     intro c X hX y hy
     rw [Matrix.smul_mulVec]
     exact V'.smul_of_tower_mem c (hX y hy)
-
-theorem mem_perp {ε : Fin n → Bool} {V : Submodule ℂ (Fin n → ℂ)} {y : Fin n → ℂ} :
-    y ∈ perp ε V ↔ ∀ x ∈ V, star x ⬝ᵥ (Formalism.REAL.Jm ε *ᵥ y) = 0 := Iff.rfl
 
 theorem mem_into {V V' : Submodule ℂ (Fin n → ℂ)} {X : Matrix (Fin n) (Fin n) ℂ} :
     X ∈ into V V' ↔ ∀ y ∈ V, X *ᵥ y ∈ V' := Iff.rfl

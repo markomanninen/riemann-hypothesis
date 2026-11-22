@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NeZeroOfAn
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NeZeroOfAn
+
+@[expose] public section
 
 open Set Filter Topology Complex
 

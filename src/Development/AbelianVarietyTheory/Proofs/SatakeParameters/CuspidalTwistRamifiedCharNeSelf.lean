@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationDivZpowOrd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationDivZpowOrd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ section Gen
 variable {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V] [Module ℂ V]
   {ρ : Representation ℂ G V} (hρ : GlobalTheory.PRep.IsSmooth ρ) {H : Subgroup G} (hH : IsCompact (H : Set G))
 
-include hρ hH in
 
+include hρ hH in
 theorem idem_comm (T : Module.End ℂ V) (hT : ∀ g, T * ρ g = ρ g * T) (v : V) :
     T (GlobalTheory.LocGL.idem hρ hH v) = GlobalTheory.LocGL.idem hρ hH (T v) := by
   have h1 : v - GlobalTheory.LocGL.idem hρ hH v ∈ GlobalTheory.PRep.twKer ρ H 1 := (GlobalTheory.LocGL.idem_eq_zero_iff hρ hH).1 (by
@@ -29,14 +33,14 @@ theorem idem_comm (T : Module.End ℂ V) (hT : ∀ g, T * ρ g = ρ g * T) (v : 
     exact congrArg (· - _) (LinearMap.congr_fun (hT n) w)
   have h3 : T (GlobalTheory.LocGL.idem hρ hH v) ∈ GlobalTheory.PRep.fixed ρ H := GlobalTheory.LGrp.mem_fixed.2 fun k hk => by
     rw [← Module.End.mul_apply, ← hT, Module.End.mul_apply, GlobalTheory.LGrp.mem_fixed.1 (GlobalTheory.LocGL.idem_mem hρ hH v) k hk]
-  rw [show T v = T (GlobalTheory.LocGL.idem hρ hH v) + T (v - GlobalTheory.LocGL.idem hρ hH v) by rw [← map_add, add_sub_cancel],
+  rw [show T v = T (GlobalTheory.LocGL.idem hρ hH v) + T (v - GlobalTheory.LocGL.idem hρ hH v) by rw [← map_add (f := _), add_sub_cancel],
     map_add, GlobalTheory.LocGL.idem_of_mem hρ hH h3, (GlobalTheory.LocGL.idem_eq_zero_iff hρ hH).2 h2, add_zero]
 
 end Gen
 
 section Cusp
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem op_comm_fin (π : CuspSub E a) (o : Op E a) (ho : ∀ k, o ≠ .fin k) (g : GL (Fin a) (Af E)) (y : π.V) :
     π.op o (π.finPart g y) = π.finPart g (π.op o y) := by
@@ -73,10 +77,10 @@ variable {E : Type} [Field E] [NumberField E]
 
 theorem exists_conj_mem {a : ℕ} (ha : 1 ≤ a) (v : HeightOneSpectrum (𝓞 E)) (g : GL (Fin a) (v.adicCompletion E))
     (u : (v.adicCompletion E)ˣ) (hu : IsUnitAt v u) :
-    ∃ h ∈ GlobalTheory.LFun.KGL v a, g⁻¹ * h * g ∈ GlobalTheory.LFun.KGL v a ∧ GeneralLinearGroup.det h = u := by
+    ∃ h ∈ GlobalTheory.LFun.KGL v (n := a), g⁻¹ * h * g ∈ GlobalTheory.LFun.KGL v (n := a) ∧ GeneralLinearGroup.det h = u := by
   letI := GlobalTheory.LocalData.complRel v
   haveI := GlobalTheory.LocalData.isLocalField v
-  have hK : GlobalTheory.SplitWeil.KO (v.adicCompletion E) (Fin a) = GlobalTheory.LFun.KGL v a :=
+  have hK : GlobalTheory.SplitWeil.KO (v.adicCompletion E) (Fin a) = GlobalTheory.LFun.KGL v (n := a) :=
     GlobalTheory.SmGL.SphCompletion.KO_completion v a
   obtain ⟨x, hx, y, hy, t, rfl⟩ := GlobalTheory.LocalCartan.exists_diagT (n := Fin a) g
   rw [hK] at hx hy
@@ -87,7 +91,7 @@ theorem exists_conj_mem {a : ℕ} (ha : 1 ≤ a) (v : HeightOneSpectrum (𝓞 E)
     Subtype.ext (Units.mul_inv u), Subtype.ext (Units.inv_mul u)⟩
   let i₀ : Fin a := ⟨0, ha⟩
   let d := GlobalTheory.SmGL.diagT (v.adicCompletion E) (Fin a) (Pi.mulSingle i₀ u)
-  have hd : d ∈ GlobalTheory.LFun.KGL v a := by
+  have hd : d ∈ GlobalTheory.LFun.KGL v (n := a) := by
     refine ⟨GlobalTheory.SmGL.diagT (Formalism.UG.Ov E v) (Fin a) (Pi.mulSingle i₀ u'), Units.ext ?_⟩
     change ((Formalism.UG.Ov E v).subtype.mapMatrix (GlobalTheory.SmGL.diagT (Formalism.UG.Ov E v) (Fin a) (Pi.mulSingle i₀ u')).val :
       Matrix (Fin a) (Fin a) (v.adicCompletion E)) = (d : Matrix (Fin a) (Fin a) (v.adicCompletion E))
@@ -137,11 +141,11 @@ end GlobalTheory.TwistRamified
 
 namespace GlobalTheory.TwistRamified
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem no_eigvec (p : CuspSub E a) (ha : 1 ≤ a) (η : HChar E) (v : HeightOneSpectrum (𝓞 E)) (hη : ¬ η.UnrAt v)
-    {x : p.V} (hx : x ∈ GlobalTheory.PRep.fixed (p.locRep v) (GlobalTheory.LFun.KGL v a)) (hx0 : x ≠ 0) (y : p.V)
-    (hy : ∀ k ∈ GlobalTheory.LFun.KGL v a, p.locRep v k y = ((CuspSub.locDet a η v k : ℂˣ) : ℂ) • y) : y = 0 := by
+    {x : p.V} (hx : x ∈ GlobalTheory.PRep.fixed (p.locRep v) (GlobalTheory.LFun.KGL v (n := a))) (hx0 : x ≠ 0) (y : p.V)
+    (hy : ∀ k ∈ GlobalTheory.LFun.KGL v (n := a), p.locRep v k y = ((CuspSub.locDet a η v k : ℂˣ) : ℂ) • y) : y = 0 := by
   set χ := CuspSub.locDet a η v with hχdef
   have hχs : GlobalTheory.SmGL.IsSmoothChar χ⁻¹ := GlobalTheory.SmGL.IsSmoothChar.inv (CuspSub.isOpen_ker_locDet (a := a) η v)
   have hρ := p.isSmooth_locRep v
@@ -151,14 +155,14 @@ theorem no_eigvec (p : CuspSub E a) (ha : 1 ≤ a) (η : HChar E) (v : HeightOne
   have hρ'app : ∀ g z, GlobalTheory.SmGL.twist (p.locRep v) χ⁻¹ g z = ((χ g : ℂˣ) : ℂ)⁻¹ • p.locRep v g z := fun g z => by
     simp
 
-  have hPeq : ∀ k ∈ GlobalTheory.LFun.KGL v a, ∀ z, P (p.locRep v k z) = ((χ k : ℂˣ) : ℂ) • P z := fun k hk z => by
+  have hPeq : ∀ k ∈ GlobalTheory.LFun.KGL v (n := a), ∀ z, P (p.locRep v k z) = ((χ k : ℂˣ) : ℂ) • P z := fun k hk z => by
     have h1 := GlobalTheory.LocGL.idem_apply_mem hρ' hK hk z
     rw [hρ'app, map_smul] at h1
     rw [← h1, smul_smul, mul_inv_cancel₀ (Units.ne_zero _), one_smul]
   have hPfix : P y = y := by
     refine GlobalTheory.LocGL.idem_of_mem hρ' hK (GlobalTheory.LGrp.mem_fixed.2 fun k hk => ?_)
     rw [hρ'app, hy k hk, smul_smul, inv_mul_cancel₀ (Units.ne_zero _), one_smul]
-  have hPzero : ∀ z, ∀ h ∈ GlobalTheory.LFun.KGL v a, χ h ≠ 1 → p.locRep v h z = z → P z = 0 := fun z h hh hc hz => by
+  have hPzero : ∀ z, ∀ h ∈ GlobalTheory.LFun.KGL v (n := a), χ h ≠ 1 → p.locRep v h z = z → P z = 0 := fun z h hh hc hz => by
     have h1 := hPeq h hh z
     rw [hz] at h1
     have h2 : (((χ h : ℂˣ) : ℂ) - 1) • P z = 0 := by rw [sub_smul, ← h1, one_smul, sub_self]
@@ -190,7 +194,7 @@ theorem no_eigvec (p : CuspSub E a) (ha : 1 ≤ a) (η : HChar E) (v : HeightOne
 
   let W : Submodule ℂ p.V :=
     { carrier := {φ | ∀ g, P (p.finPart g φ) = 0}
-      add_mem' := fun {φ ψ} hφ hψ g => by rw [map_add, map_add, hφ g, hψ g, add_zero]
+      add_mem' := fun {φ ψ} hφ hψ g => by rw [map_add (f := _), map_add (f := _), hφ g, hψ g, add_zero]
       zero_mem' := fun g => by rw [map_zero, map_zero]
       smul_mem' := fun c φ hφ g => by
         change P (p.finPart g (c • φ)) = 0
@@ -215,9 +219,9 @@ theorem no_eigvec (p : CuspSub E a) (ha : 1 ≤ a) (η : HChar E) (v : HeightOne
 
 end GlobalTheory.TwistRamified
 
-open GlobalTheory.CuspRep in
 
-theorem GlobalTheory.TwistRamified.twist_ne : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a →
+open GlobalTheory.CuspRep in
+theorem GlobalTheory.TwistRamified.twist_ne : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a →
     ∀ (π : CG E a) (η : HChar E) (v : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ), π.HasSat v B → ¬ η.UnrAt v →
     π.twist η ≠ π := by
   intro E _ _ _ a ha π η v B hB hη
@@ -226,11 +230,12 @@ theorem GlobalTheory.TwistRamified.twist_ne : ∀ (E : Type) [Field E] [NumberFi
   obtain ⟨T, hT⟩ : CuspSub.Iso (p.twist η) p := Quotient.exact e
   have hB' : GlobalTheory.LFun.HasSatGL v (p.locRep v) B := hB
   obtain ⟨x, hx, hx0⟩ := (Submodule.ne_bot_iff _).1 hB'.1
-  have hy : ∀ k ∈ GlobalTheory.LFun.KGL v a, p.locRep v k (T (p.toTwist η x)) =
+  have hy : ∀ k ∈ GlobalTheory.LFun.KGL v (n := a), p.locRep v k (T (p.toTwist η x)) =
       ((CuspSub.locDet a η v k : ℂˣ) : ℂ) • T (p.toTwist η x) := fun k hk => by
     rw [CuspSub.locRep_eq, ← hT, CuspSub.op_toTwist, ← CuspSub.locRep_eq, GlobalTheory.LGrp.mem_fixed.1 hx k hk]
     simp only [opAdd, zero_smul, add_zero, map_smul]
     congr 2
     exact CuspSub.chiDet_locGL η v k
   have h0 := GlobalTheory.TwistRamified.no_eigvec p ha η v hη hx hx0 _ hy
-  exact hx0 ((p.toTwist η).injective (T.injective (h0.trans (map_zero T).symm) |>.trans (map_zero _).symm))
+  have ht : p.toTwist η x = 0 := T.injective (h0.trans T.map_zero.symm)
+  exact hx0 ((p.toTwist η).injective (ht.trans (p.toTwist η).map_zero.symm))

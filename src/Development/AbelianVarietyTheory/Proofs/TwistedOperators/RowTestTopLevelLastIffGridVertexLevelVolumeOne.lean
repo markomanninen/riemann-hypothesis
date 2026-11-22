@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
-import Development.AbelianVarietyTheory.Definitions.Divisors.MiddleNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevRowSuccInfUA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MiddleNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem embX_frame_int {a c b : ℕ} (h : a + c = b) (z : GL (Fin a) k) :
     · exact H r s
     · exact zero_mem _
     · exact zero_mem _
-    · rw [one_apply]; split_ifs
+    · rw [Matrix.one_apply]; split_ifs
       · exact one_mem _
       · exact zero_mem _
 
@@ -73,7 +77,7 @@ theorem elt_last {k : Type*} [Field k] {Γ : Grid k} {hs : 1 ≤ Γ.s} {J : Γ.L
     (hj : j + 2 = Γ.m) : ρ.elt β (Γ.m, j + 1) = 1 := by
   rw [Reps.elt, onColumn_apply]
   dsimp only
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
 

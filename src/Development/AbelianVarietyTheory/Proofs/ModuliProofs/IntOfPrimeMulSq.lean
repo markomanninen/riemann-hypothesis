@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.RationalIntegralCoordinates
 
@@ -83,7 +87,7 @@ theorem main {d : ℕ} (hd : Nat.Prime d) (hd4 : d % 4 = 3) {r : ℂ} (hr : r ^ 
   have hd0 : 0 < d := hd.pos
   obtain ⟨a, b, rfl⟩ := exists_coords hd0 hr hzK
   have hc : starRingEnd ℂ ((a : ℂ) + b * r) = a - b * r := by
-    rw [map_add, map_mul, conj_eq_neg hd0 hr, map_ratCast, map_ratCast]
+    rw [map_add (f := _), map_mul, conj_eq_neg hd0 hr, map_ratCast, map_ratCast]
     ring
   have hcz : IsIntegral ℤ (starRingEnd ℂ ((a : ℂ) + b * r)) := hz.map (starRingEnd ℂ).toIntAlgHom
   have htr : IsIntegral ℤ (((2 * a : ℚ)) : ℂ) := by

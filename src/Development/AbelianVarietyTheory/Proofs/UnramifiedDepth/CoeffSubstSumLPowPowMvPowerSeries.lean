@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.LogSubst
 
@@ -21,7 +25,8 @@ theorem coeff_subst_sum_pow_pow : ∀ (C : Type) [Field C] (σ τ I : Type) [Fin
     apply nat_le_order
     intro μ hμ
     rw [map_sub, hF μ, hG, sub_eq_zero]
-    simp only [map_sum, coeff_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_smul]
     refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) ?_
     intro s _ hs'
     rw [Finset.mem_range] at hs'
@@ -39,6 +44,7 @@ theorem coeff_subst_sum_pow_pow : ∀ (C : Type) [Field C] (σ τ I : Type) [Fin
     exact_mod_cast Nat.lt_succ_self _
   rw [← substAlgHom_apply hs, map_sub, map_sub, sub_eq_zero, substAlgHom_apply] at h3
   rw [h3, hG]
-  simp only [map_sum, map_smul, map_pow, substAlgHom_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_pow, substAlgHom_apply, smul_eq_mul]
 
 end GlobalTheory.LogSubst

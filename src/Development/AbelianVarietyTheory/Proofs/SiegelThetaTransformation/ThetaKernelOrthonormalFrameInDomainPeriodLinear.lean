@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeasurePreservingMulLeft
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.MeasurePreservingMulLeft
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Pj MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker
@@ -191,7 +195,8 @@ theorem zR_single {B : C.Bas} (hB : C.IsB B) (τ : D.what₂.Tau) (z : Matrix (F
       rw [Matrix.diagonal_mul]
       simp [ReciprocityTheory.ChartRestriction.G.FD.sgn, hj]
     · rw [inv_map_conj hu]
-      simp [Matrix.mulVec, dotProduct, Matrix.mul_apply, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.mulVec, dotProduct, Matrix.mul_apply, map_sum, map_mul]
   · rw [if_neg hσ, Pi.single_eq_of_ne hσ]
     split_ifs <;> simp [ReciprocityTheory.ChartRestriction.G.FD.hermC]
 
@@ -292,7 +297,8 @@ theorem sB_mvB {B : C.Bas} (hB : C.IsB B) (g : GA D T) (τ : D.what₂.Tau) :
 theorem xB_mvB (B : C.Bas) (g : GA D T) : C.xB (C.mvB g B) =
     C.X.lmulC (fun σ => (compAt C.θ (C.m.e.symm σ) (mt T g)).map conj) (C.xB B) := by
   funext σ a b
-  simp [GlobalTheory.Ker.Ctx.xB, GlobalTheory.Ker.Ctx.mvB, ReciprocityTheory.ChartRestriction.G.FD.Data.lmulC, ReciprocityTheory.ChartRestriction.G.FD.mat, Matrix.mul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [GlobalTheory.Ker.Ctx.xB, GlobalTheory.Ker.Ctx.mvB, ReciprocityTheory.ChartRestriction.G.FD.Data.lmulC, ReciprocityTheory.ChartRestriction.G.FD.mat, Matrix.mul_apply,
     map_sum, map_mul]
 
 theorem xB_rat (B : C.Bas) {g : GA D T} {ga : GL (Fin T.rank) D.host.E} (h : IsRatOf T ga g) :
@@ -327,8 +333,8 @@ theorem isONBasis {B : C.Bas} (hB : C.IsB B) (τ : D.what₂.Tau) :
 
 end GlobalTheory.Ker.ONBasis
 
-open GlobalTheory.Ker.ONBasis in
 
+open GlobalTheory.Ker.ONBasis in
 theorem GlobalTheory.Ker.onBasis_frame_period : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), (∃ B, C.IsB B) ∧ ∀ B, C.IsB B → IsONFr C.X (C.xB B) ∧ C.xB B ∈ C.X.dom ∧ (∀ τ, IsCartanInv (gramAt D T τ) (C.sB B τ) ∧ IsONBasis (gramAt D T τ) (C.sB B τ) (B τ) C.X.p0) ∧ (∀ (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ), zR C.X C.idx (C.xB B) (Pi.single (C.m.e τ) (fun k a => conj ((cplxO 1 (C.sB B τ) z) a k)) : WR C.X S.rank) = I • zR C.X C.idx (C.xB B) (Pi.single (C.m.e τ) (fun k a => conj (z a k)) : WR C.X S.rank)) ∧ (∀ (τ : D.what₂.Tau) (i : Fin T.rank) (j : Fin S.rank), zR C.X C.idx (C.xB B) (Pi.single (C.m.e τ) (fun k a => conj ((unitMap 1 (B τ) i j) a k)) : WR C.X S.rank) = letterDir C.X C.hr C.idx (C.m.e τ, (rowIdx C.hr).symm i, j)) ∧ ∀ g : GA D T, C.IsB (C.mvB g B) ∧ (∀ g', C.mvB (g' * g) B = C.mvB g' (C.mvB g B)) ∧ (g ∈ GfC T → C.mvB g B = B) ∧ (∀ τ, C.sB (C.mvB g B) τ * compAt C.θ τ (mt T g) = compAt C.θ τ (mt T g) * C.sB B τ) ∧ C.xB (C.mvB g B) = C.X.lmulC (fun σ => (compAt C.θ (C.m.e.symm σ) (mt T g)).map conj) (C.xB B) ∧ ∀ ga, IsRatOf T ga g → C.xB (C.mvB g B) = lact ga (C.xB B) := by
   intro D S T C
   refine ⟨exists_isB C, fun B hB => ⟨isONFr_xB C hB, mem_dom C.X (isONFr_xB C hB),

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -21,7 +26,8 @@ theorem map_secLin {R S : Type*} [CommRing R] [CommRing S] {n e : ℕ}
     (hc : ∀ j, ψ (secCoord Q y j) = secCoord Q' y' j)
     (hr : ∀ r : R, ψ (algebraMap R _ r) = algebraMap S _ (c r)) (w : Fin n → R) :
     ψ (secLin Q y w) = secLin Q' y' (fun j => c (w j)) := by
-  simp only [secLin, linForm, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [secLin, linForm, map_sum, map_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h1 : (Ideal.Quotient.mk (secIdeal Q y) (C (w j))) = algebraMap R (SecAlg Q y) (w j) := rfl
   have h2 : (Ideal.Quotient.mk (secIdeal Q' y') (C (c (w j)))) = algebraMap S (SecAlg Q' y') (c (w j)) :=
@@ -35,7 +41,7 @@ theorem SecBLinInj.proof (h1 : SecBGeneric.Statement) (h2 : SecBTorsionFree.Stat
   obtain ⟨φ, hφc, hφr, hloc⟩ := h1 K n e I v hI
   let _ : Algebra (SecB e I v) (SecAlg (idealF e I) (parYF K e n)) := φ.toAlgebra
   have hφinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     obtain ⟨⟨m, hm⟩, hmb⟩ := (IsLocalization.map_eq_zero_iff
       (Algebra.algebraMapSubmonoid (SecB e I v) (nonZeroDivisors (ParDVR e n v)))

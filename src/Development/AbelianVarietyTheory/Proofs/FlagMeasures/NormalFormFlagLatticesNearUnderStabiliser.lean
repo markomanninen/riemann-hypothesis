@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeadingMinorsProdDenominatorUnitriangularFactors
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesPairingStabilizerBlockDiagonal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeadingMinorsProdDenominatorUnitriangularFactors
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFramesPairingStabilizerBlockDiagonal
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
@@ -63,7 +67,8 @@ def sc {α β : Type} (M : Matrix α β K) (p : α → ℤ) (q : β → ℤ) : M
 theorem sc_mul {α : Type} [Fintype α] (M N : Matrix α α K) (p q q' s : α → ℤ) (hq : ∀ a, q a + q' a = 0) :
     sc M p q * sc N q' s = sc (M * N) p s := by
   ext1 a b
-  simp only [sc, Matrix.mul_apply, Matrix.of_apply, map_sum, Finset.sum_mul, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sc, Matrix.mul_apply, Matrix.of_apply, map_sum, Finset.sum_mul, map_mul]
   refine Finset.sum_congr rfl fun c _ => ?_
   have : p a + s b = (p a + q c) + (q' c + s b) := by linear_combination -hq c
   rw [this, T_add (p a + q c)]
@@ -403,7 +408,8 @@ variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V] (H : 
 
 theorem B_vec (e d : Fin j → V) (u v : Matrix (Fin j) (Fin j) K) (a b : Fin j) :
     H.B (vec e u a) (vec d v b) = (uᵀ * (Matrix.of fun a b => H.B (e a) (d b)) * v.map star) a b := by
-  simp only [vec, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vec, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, smul_eq_mul,
     Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, Matrix.map_apply, Finset.sum_mul, Finset.mul_sum,
     starRingEnd_apply]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -464,7 +470,7 @@ theorem exists_isom [FiniteDimensional K V] (e d : Fin j → V) (M M' : Matrix (
     rw [h4, h4] at h2
     rw [h1, h2]
   have hinj : Function.Injective g := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     refine H.nondeg x fun y => ?_
     rw [← hiso, hx]; simp
@@ -473,7 +479,8 @@ theorem exists_isom [FiniteDimensional K V] (e d : Fin j → V) (M M' : Matrix (
 omit [StarRing K] in
 theorem map_vec (s : V ≃ₗ[K] V) (e : Fin j → V) (S u : Matrix (Fin j) (Fin j) K)
     (hs : ∀ a, s (e a) = vec e S a) (a : Fin j) : s (vec e u a) = vec e (S * u) a := by
-  simp only [vec, map_sum, map_smul, hs, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [vec, map_sum, map_smul, hs, Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [mul_comm]
 
@@ -525,14 +532,16 @@ theorem transport [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K 
     have hx' : x = ∑ a, c a • vec (ej F hj) S' a := by
       apply s.injective
       change s • x = _
-      simp only [hc, map_sum, map_smul, map_vec s _ S S' hs, hS']
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hc, map_sum, map_smul, map_vec s _ S S' hs, hS']
       simp [vec, Matrix.one_apply]
     obtain ⟨c', hc', e⟩ := h2 x hx (hx' ▸ Submodule.sum_mem _ fun a _ =>
       Submodule.smul_mem _ _ (vec_mem F hj S' a le_rfl))
     refine ⟨c', hc', ?_⟩
     change s x = _
     rw [e]
-    simp only [map_sum, map_smul, map_vec s _ S u hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_vec s _ S u hs]
 
 end Isom
 
@@ -778,7 +787,8 @@ theorem ref_facts :
         simp [this])
       (fun b hb => by simp [e_ej' N b hb]) (fun b hb => by simp [(ist_ej N b hb _).2]) y hy
     rw [hx] at this
-    simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] using this
   · obtain ⟨x, -, hx⟩ := (mem_Xa N.F' N.j_le le_rfl y).1 hyX
     refine ⟨x, fun a => ?_, hx⟩
@@ -796,7 +806,8 @@ theorem ref_facts :
         · simp)
       (fun b _ => by simp [e_ej]) (fun b hb => by simp [(ist_ej N b hb _).1]) y hy
     rw [hx] at this
-    simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, hd, smul_eq_mul, mul_ite, mul_one,
       mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] using this
 
 theorem denom (𝔠 : Ideal (𝓞 K))
@@ -809,8 +820,57 @@ theorem denom (𝔠 : Ideal (𝓞 K))
       ipow N.𝔡 (((r : ℤ) - (a : ℕ)) + ((r : ℤ) - (b : ℕ)))) (a b : Fin N.j) :
     (∀ x ∈ 𝔠, (x : K) * A b a ∈ ipow N.𝔡 (((r : ℤ) - (a : ℕ)) - ((r : ℤ) - (b : ℕ)))) ∧
     ∀ x ∈ 𝔠, ∀ x' ∈ 𝔠, (x : K) * x' * star (B b a) ∈ ipow N.𝔡 (((r : ℤ) - (a : ℕ)) - ((r : ℤ) - (b : ℕ))) := by
+  have block_of : ∀ (bs : List (Kˣ × ℕ+)) (i : ℕ), i < (bs.map (fun b => (b.2 : ℕ))).sum →
+      ∃ (l' l : ℕ) (t : K), l' ≤ i ∧ i < l ∧ l ≤ (bs.map (fun b => (b.2 : ℕ))).sum ∧
+        (∀ a b, l' ≤ a → a < l → l' ≤ b → b < l → sameBlock bs a b = true) ∧
+        (∀ a b, l' ≤ a → a < l → ptEntryL bs a b = if a + b + 1 = l + l' then t else 0) ∧
+        (∀ a b, l ≤ a → b < l → ptEntryL bs a b = 0) ∧ (∀ a b, l' ≤ a → b < l' → ptEntryL bs a b = 0) := by
+    intro bs
+    induction bs with
+    | nil =>
+      intro i h
+      simp at h
+    | cons head bs ih =>
+      rcases head with ⟨t, s⟩
+      intro i h
+      simp only [List.map_cons, List.sum_cons] at h ⊢
+      by_cases h1 : i < s
+      · refine ⟨0, s, t, by omega, h1, by omega, ?_, ?_, ?_, ?_⟩
+        · intro a b _ ha _ hb
+          simp [sameBlock, ha, hb]
+        · intro a b _ ha
+          simp only [ptEntryL]
+          split_ifs <;> first | rfl | omega
+        · intro a b ha hb
+          simp only [ptEntryL]
+          split_ifs <;> first | rfl | omega
+        · intro a b ha hb
+          omega
+      · obtain ⟨l', l, t', e1, e2, e3, e4, e5, e6, e7⟩ := ih (i - s) (by omega)
+        refine ⟨s + l', s + l, t', by omega, by omega, by omega, ?_, ?_, ?_, ?_⟩
+        · intro a b ha' ha hb' hb
+          have := e4 (a - s) (b - s) (by omega) (by omega) (by omega) (by omega)
+          simp only [sameBlock, this, Bool.and_true, Bool.or_eq_true, decide_eq_true_eq]
+          omega
+        · intro a b ha' ha
+          simp only [ptEntryL, e5 (a - s) (b - s) (by omega) (by omega)]
+          split_ifs <;> first | rfl | omega
+        · intro a b ha hb
+          simp only [ptEntryL]
+          split_ifs
+          · omega
+          · omega
+          · exact e6 _ _ (by omega) (by omega)
+          · rfl
+        · intro a b ha hb
+          simp only [ptEntryL]
+          split_ifs
+          · omega
+          · omega
+          · exact e7 _ _ (by omega) (by omega)
+          · rfl
   obtain ⟨l', l, t, e1, e2, e3, e4, e5, e6, e7⟩ :=
-    GlobalTheory.OrbitDenom.block_of N.w.blocks b (by rw [N.w.size]; exact b.2)
+    block_of N.w.blocks b (by rw [N.w.size]; exact b.2)
   rw [N.w.size] at e3
   have e3' : l' ≤ N.j := by omega
   set W : Matrix (Fin N.j) (Fin N.j) K := Matrix.of fun a b => H.B (ej N.F N.j_le a) (ej N.F' N.j_le b) with hW

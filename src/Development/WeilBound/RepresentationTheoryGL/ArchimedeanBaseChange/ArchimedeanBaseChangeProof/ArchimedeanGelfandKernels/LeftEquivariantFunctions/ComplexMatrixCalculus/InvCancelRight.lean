@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.FrameZeroApply
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.FrameZeroApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,6 @@ open PositivityTheory.RgTw (Mat hb)
 
 variable {n : ℕ} {lam : Fin n → ℤ}
 
-local notation "𝟙W" => (1 : Matrix (Jd n lam × Jd n lam) (Jd n lam × Jd n lam) ℂ)
-local notation "𝟙Λ" => (1 : Matrix (Finset (Md n)) (Finset (Md n)) ℂ)
-
 theorem cj_smul_one (hu : IsUnit (sqQ lam)) (c : ℂ) : cjL lam (c • (1 : Matrix (Ix n lam) (Ix n lam) ℂ)) = c • 1 := by
   rw [map_smul, cj_one hu]
 
@@ -25,7 +26,7 @@ theorem herm_conj' {x H : Mat n} (hH : H.IsHermitian) : (xᴴ * H * x).IsHermiti
 
 theorem car_f (hu : IsUnit (sqQ lam)) (hB : Car) (hP : CfPair) (H H' : Mat n) (hH : H.IsHermitian)
     (hH' : H'.IsHermitian) : lefε n lam H * lefι n lam H' + lefι n lam H' * lefε n lam H = (H * H').trace • 1 := by
-  rw [lefε_apply, lefι_apply, cj_mul hu, cj_mul hu, ← map_add, ← mul_kronecker_mul, ← mul_kronecker_mul, mul_one,
+  rw [lefε_apply, lefι_apply, cj_mul hu, cj_mul hu, ← map_add (f := _), ← mul_kronecker_mul, ← mul_kronecker_mul, mul_one,
     ← add_kronecker, add_comm (creL n (cf n H) * annL n (cf n H')), hB n (cf n H) (cf n H')]
   have e : cf n H' ⬝ᵥ cf n H = (H * H').trace := by
     rw [← hP n H H' hH hH', dotProduct]

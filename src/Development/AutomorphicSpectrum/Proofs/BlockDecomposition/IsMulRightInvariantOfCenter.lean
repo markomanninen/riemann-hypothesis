@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralEqSmulIntegralAvg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIsometryFlagOfEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwCentPreservesFlag
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfCommuteOfSeparable
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableNilrad
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.KillingFormDiffCartanInvolution
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotVanish
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralEqSmulIntegralAvg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsIsometryFlagOfEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwCentPreservesFlag
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EqZeroOfCommuteOfSeparable
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableNilrad
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.KillingFormDiffCartanInvolution
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,6 +52,11 @@ theorem isMulRightInvariant_GL (n : ℕ) [MeasurableSpace (GL (Fin n) ℂ)] [Bor
 
 def uK (n : ℕ) : Subgroup (GL (Fin n) ℂ) := MonoidHom.eqLocus (thetaR (starRingEnd ℂ) n) (MonoidHom.id _)
 
+private theorem theta_conjTranspose_val (g : GL (Fin n) ℂ) :
+    (θc g).val = ((g⁻¹ : GL (Fin n) ℂ).val)ᴴ := by
+  ext i j
+  simp [thetaR_val, Matrix.conjTranspose_apply]
+
 theorem isCompact_uK (n : ℕ) : IsCompact (uK n : Set (GL (Fin n) ℂ)) := by
   have h := GlobalTheory.Tw.isCompact_unitary_GL n
   convert h using 1
@@ -56,7 +65,7 @@ theorem isCompact_uK (n : ℕ) : IsCompact (uK n : Set (GL (Fin n) ℂ)) := by
   change thetaR (starRingEnd ℂ) n k = k ↔ k.val * star k.val = 1
   constructor
   · intro hk
-    have h1 := GlobalTheory.CompanionTheory.NilChangeVar.theta_val k
+    have h1 := theta_conjTranspose_val k
     rw [hk] at h1
     have h2 : star k.val = (k⁻¹ : GL (Fin n) ℂ).val := by
       rw [Matrix.star_eq_conjTranspose]
@@ -66,7 +75,7 @@ theorem isCompact_uK (n : ℕ) : IsCompact (uK n : Set (GL (Fin n) ℂ)) := by
     exact Units.mul_inv k
   · intro hk
     refine Units.ext ?_
-    rw [GlobalTheory.CompanionTheory.NilChangeVar.theta_val]
+    rw [theta_conjTranspose_val]
     have : (k⁻¹ : GL (Fin n) ℂ).val = star k.val := Units.inv_eq_of_mul_eq_one_right hk
     rw [this, Matrix.star_eq_conjTranspose, Matrix.conjTranspose_conjTranspose]
 
@@ -201,10 +210,6 @@ theorem mulVec_inv_mulVec (g : GL (Fin n) ℂ) (y : Fin n → ℂ) :
     g.val *ᵥ ((g⁻¹ : GL (Fin n) ℂ).val *ᵥ y) = y := by
   rw [Matrix.mulVec_mulVec, ← Units.val_mul]; simp
 
-theorem inv_mulVec_mulVec (g : GL (Fin n) ℂ) (y : Fin n → ℂ) :
-    (g⁻¹ : GL (Fin n) ℂ).val *ᵥ (g.val *ᵥ y) = y := by
-  rw [Matrix.mulVec_mulVec, ← Units.val_mul]; simp
-
 theorem img_eq_of_mapsTo (g : GL (Fin n) ℂ) (W : Sb) (h₁ : ∀ y ∈ W, g.val *ᵥ y ∈ W)
     (h₂ : ∀ y ∈ W, (g⁻¹ : GL (Fin n) ℂ).val *ᵥ y ∈ W) : img g W = W := by
   ext y
@@ -300,10 +305,10 @@ theorem exists_proj {W₁ W₂ V₂ V₃ : Sb} (c₁ : W₁ ⊔ V₂ = W₂) (d�
   · rw [m2]
     obtain ⟨a, ha, b, hb, c, hc, rfl⟩ := exists_sum_along_flag c₁ c₂ y
     have f1 : E₁ (a + b + c) = a := by
-      rw [map_add, map_add, e1 a ha, e1' b (Submodule.mem_sup_left hb),
+      rw [map_add (f := _), map_add (f := _), e1 a ha, e1' b (Submodule.mem_sup_left hb),
         e1' c (Submodule.mem_sup_right hc), add_zero, add_zero]
     have f3 : E₃ (a + b + c) = c := by
-      rw [map_add, map_add, e3' a (hle₁ ha), e3' b (hle₂ hb), e3 c hc, zero_add, zero_add]
+      rw [map_add (f := _), map_add (f := _), e3' a (hle₁ ha), e3' b (hle₂ hb), e3 c hc, zero_add, zero_add]
     rw [f1, f3, show a + b + c - a - c = b by abel]
     exact hb
   · rw [m3]; exact Submodule.projection_apply_mem h3 y
@@ -331,7 +336,8 @@ variable {n : ℕ}
 local notation "Mx" => Matrix (Fin n) (Fin n) ℂ
 local notation "Sb" => Submodule ℂ (Fin n → ℂ)
 
-open GlobalTheory.CompanionTheory.NilChangeVar (eq_zero_of_mulVec)
+private theorem eq_zero_of_mulVec {M : Mx} (h : ∀ y, M *ᵥ y = 0) : M = 0 :=
+  Matrix.ext_iff_mulVec.mpr fun y => by simpa only [Matrix.zero_mulVec] using h y
 
 theorem levi_decomp {W₁ W₂ V₂ V₃ : Sb} (c₁ : W₁ ⊔ V₂ = W₂) (d₁ : W₁ ⊓ V₂ = ⊥) (c₂ : W₂ ⊔ V₃ = ⊤)
     (d₂ : W₂ ⊓ V₃ = ⊥) (q : GL (Fin n) ℂ) (hq₁ : img q W₁ = W₁) (hq₂ : img q W₂ = W₂) :

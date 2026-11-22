@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
-import Formalism.LocalToGlobal.IndefiniteReal.LinksComap
-import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksComap
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT Formalism.L2.Pj
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -19,9 +24,6 @@ structure NewLev (D : D7) (N : Type) where
   xi : N → (AE D)ˣ →* Circle
   Q : N → Finset (Pl D.host.E)
   xiR : N → ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ
-
-def NewLev.ofTuples (L : LevCh D T) (s : N → T) : NewLev D N :=
-  ⟨fun n => L.xiH (s n), fun n => L.xi (s n), fun n => L.Q (s n), fun n => L.xiR (s n)⟩
 
 def extL (L : LevCh D T) (V : NewLev D N) : LevCh D (T ⊕ N) :=
   { L with
@@ -58,15 +60,12 @@ def extA {K : Type} [Field K] [NumberField K] [StarRing K] {m : ℕ} (A : FamIn 
   leftGroupActionLift j τ := Sum.rec (A.leftGroupActionLift j) (X.actL j) τ
   heckeL j τ := Sum.rec (A.heckeL j) (X.opL j) τ
 
-theorem extA_comap {K : Type} [Field K] [NumberField K] [StarRing K] {m : ℕ} (A : FamIn K G Pl0 T m)
-    (X : NewFam A N) : (extA A X).comap Sum.inl A.μ0 = A := rfl
-
 variable {A : FamIn D.what₂.LL G Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
+
 
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
 set_option maxHeartbeats 2000000 in
-
 structure NewReal (R : RealDat D A Ks) (V : NewLev D N) (X : NewFam A N) where
   BR : ∀ n, Bridge.SideReal D D.sp.X'
     (Bridge.envOf R.cX.coef (levEnvOf D.sp.X' R.βX ((extL R.toLevCh V).datXt (.inr n)) R.pl (X.ok n)))
@@ -101,8 +100,8 @@ structure NewReal (R : RealDat D A Ks) (V : NewLev D N) (X : NewFam A N) where
   thF : ∀ i n, (HV i n).H →ₗ[ℂ] MMap (R.MW i (sg0 D A))
   thG : ∀ i n, (HV i n).H →ₗ[ℂ] (R.HW i (sg0 D A)).H
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def extR (R : RealDat D A Ks) {V : NewLev D N} {X : NewFam A N} (Y : NewReal R V X) : RealDat D (extA A X) Ks where
   toLevCh := extL R.toLevCh V
   hv0 := R.hv0
@@ -163,9 +162,6 @@ def extR (R : RealDat D A Ks) {V : NewLev D N} {X : NewFam A N} (Y : NewReal R V
   lam _ _ _ _ := 0
   err0 := R.err0
 
-set_option maxHeartbeats 4000000 in
-theorem extR_comap (R : RealDat D A Ks) {V : NewLev D N} {X : NewFam A N} (Y : NewReal R V X) :
-    (extR R Y).comap Sum.inl A.μ0 R.mu R.twPl R.FW R.kap R.lam R.err0 = R := rfl
 
 section Ties
 
@@ -194,8 +190,8 @@ variable {T : CoreJ D} [Algebra T.Q.c.F D.what₂.LL] {R : RealDat D A T.Q.c.F} 
   (Y : NewReal R V X) {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)}
   {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def fwExt (t : FWTie T R κ v₀) : FWTie T (extR R Y) κ v₀ where
   alg_eq := t.alg_eq
   e := t.e
@@ -210,8 +206,8 @@ def fwExt (t : FWTie T R κ v₀) : FWTie T (extR R Y) κ v₀ where
   ev0 := t.ev0
   ev := t.ev
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def omExt {i : Fin D.R.m} (O : OMDat T.toCore R i Unit (fun _ => A.μ0)) :
     OMDat T.toCore (extR R Y) i Unit (fun _ => (extA A X).μ0) where
   c' := O.c'

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.LiftSL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjective
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexStabilizer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LiftSL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpecialLinearGroupIntMapZmodSurjective
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIndexStabilizer
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem eval_liftK (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ)
 theorem eval_clsK (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) {w : X.K} (h : w ≠ 0) :
     AdicCompletion.eval (idl l) (X.Kl l) n (clsK X l n w) = X.cls l n (Units.mk0 w h) := by
   unfold clsK
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact eval_liftK X l n _
 
 theorem clsK_zero (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n : ℕ) : clsK X l n 0 = 0 := by
@@ -79,27 +83,11 @@ theorem cycMod_repC [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) (x 
     cycMod ℚ Ω l r (repC (Ω := Ω) l r x) = x :=
   Classical.epsilon_spec (cycMod_surjective Ω l r x)
 
-theorem rowSection_e₁ (l : ℕ) [Fact l.Prime] (u : Fin 2 → ℤ_[l]) : (![1, 0] : Fin 2 → ℤ_[l]) ⬝ᵥ u = u 0 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
-theorem rowSection_neg_e₂ (l : ℕ) [Fact l.Prime] (u : Fin 2 → ℤ_[l]) : (![0, -1] : Fin 2 → ℤ_[l]) ⬝ᵥ u = -u 1 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
 theorem galB_section_zero (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (s : Ω ≃ₐ[ℚ] Ω) (w : ℕ) (a : X.Khat l) :
     X.galB l s (fun u => (u 0) ^ w • a) = fun u => (u 0) ^ w • X.kmap l (X.gal s) a := by
   funext u
   show X.kmap l (X.gal s)
       (((![u 0, (cyclotomicCharacter Ω l s.toRingEquiv : ℤ_[l]) * u 1] : Fin 2 → ℤ_[l]) 0) ^ w • a) = _
   rw [map_smul, Matrix.cons_val_zero]
-
-example (l : ℕ) [Fact l.Prime] (ψ : ZMod l → Qbar l) (r : ℕ) (y : (ZMod (l ^ r))ˣ) :
-    chik4 l 0 ψ r y = ψ (((y : ZMod (l ^ r)).val : ℕ) : ZMod l) := by
-  simp [chik4]
-
-example (M : ℕ) : liftSL M 1 ∈ CongruenceSubgroup.Gamma M := by
-  simpa using liftSL_map_mul_inv_mem M 1
-
-example [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) : repC (Ω := Ω) l r 1 ∈ (cycMod ℚ Ω l r).ker :=
-  cycMod_repC l r 1
 
 end GlobalTheory.K4

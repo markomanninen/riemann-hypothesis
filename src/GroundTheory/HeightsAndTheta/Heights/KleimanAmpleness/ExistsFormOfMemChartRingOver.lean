@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideMore
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSideMore
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -10,8 +15,8 @@ section Forms
 
 variable {S : Type} [CommRing S] {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem RowSub.isMultiHomog_mul {f g : MRingOver S ι} {a b : K → ℕ} (hf : IsMultiHomog f a)
     (hg : IsMultiHomog g b) : IsMultiHomog (f * g) (a + b) := by
   classical
@@ -19,8 +24,8 @@ theorem RowSub.isMultiHomog_mul {f g : MRingOver S ι} {a b : K → ℕ} (hf : I
   obtain ⟨m1, hm1, m2, hm2, rfl⟩ := Finset.mem_add.mp (MvPolynomial.support_mul f g hm)
   simp only [Finsupp.add_apply, Finset.sum_add_distrib, Pi.add_apply, hf m1 hm1 k, hg m2 hm2 k]
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem RowSub.isMultiHomog_C (r : S) : IsMultiHomog (C r : MRingOver S ι) 0 := by
   classical
   intro m hm k
@@ -29,8 +34,8 @@ theorem RowSub.isMultiHomog_C (r : S) : IsMultiHomog (C r : MRingOver S ι) 0 :=
   · subst h; simp
   · exact absurd rfl hm
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem RowSub.isMultiHomog_X [DecidableEq K] (k : K) (i : ι k) :
     IsMultiHomog (X ⟨k, i⟩ : MRingOver S ι) (Pi.single k 1) := by
   classical
@@ -45,8 +50,8 @@ theorem RowSub.isMultiHomog_X [DecidableEq K] (k : K) (i : ι k) :
       simp [hk]
   · exact absurd rfl hm
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem RowSub.isMultiHomog_pow {f : MRingOver S ι} {a : K → ℕ} (hf : IsMultiHomog f a) (n : ℕ) :
     IsMultiHomog (f ^ n) (n • a) := by
   induction n with
@@ -55,8 +60,8 @@ theorem RowSub.isMultiHomog_pow {f : MRingOver S ι} {a : K → ℕ} (hf : IsMul
     rw [pow_succ, succ_nsmul]
     exact RowSub.isMultiHomog_mul ih hf
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem RowSub.isMultiHomog_prod {β : Type} (s : Finset β) (f : β → MRingOver S ι) (a : β → K → ℕ)
     (h : ∀ b ∈ s, IsMultiHomog (f b) (a b)) : IsMultiHomog (∏ b ∈ s, f b) (∑ b ∈ s, a b) := by
   classical
@@ -110,7 +115,7 @@ theorem RowSub.exists_form_of_mem_chartRingOver (y : (Σ k, ι k) → Ω) (c : �
       · exact h1 d hd k
       · exact h2 d hd k
     · rw [hPadd, div_add_div _ _ (hP m) (hP m')]
-      simp only [map_add, map_mul, map_prod, map_pow, aeval_X]
+      simp only [map_add (f := _), map_mul, map_prod, map_pow, aeval_X]
       ring
   | mul x x' _ _ ih ih' =>
     obtain ⟨m, h, hh, rfl⟩ := ih

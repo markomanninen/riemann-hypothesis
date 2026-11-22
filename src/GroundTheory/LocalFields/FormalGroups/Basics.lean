@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.FormalGroups.Inverse
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.FormalGroups.Inverse
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.FormalGroup
 
@@ -99,10 +103,10 @@ theorem substPoint_inv_subst {φ : PowerSeries R} (hφ : PowerSeries.constantCoe
   exact PowerSeries.subst_comp_subst_apply (PowerSeries.HasSubst.of_constantCoeff_zero' hφ)
     x.prop _
 
-variable (F G) in
 
+variable (F G) in
 @[ext]
-structure Hom where
+structure Hom (F G : FormalGroup R) where
 
   toPowerSeries : PowerSeries R
 
@@ -161,10 +165,6 @@ noncomputable def ofPoints (φ : PowerSeries R) (hφ : PowerSeries.constantCoeff
       substPoint_val] at this
     simpa [genPoint, subst_X_X] using this
 
-@[simp]
-theorem ofPoints_toPowerSeries (φ : PowerSeries R) (hφ) (h) :
-    (ofPoints (F := F) (G := G) φ hφ h).toPowerSeries = φ := rfl
-
 noncomputable def comp (g : Hom G H) (f : Hom F G) : Hom F H :=
   ofPoints (PowerSeries.subst f.toPowerSeries g.toPowerSeries)
     (constantCoeff_subst_of_powerSeries f.constantCoeff_eq_zero g.constantCoeff_eq_zero)
@@ -177,13 +177,9 @@ noncomputable def comp (g : Hom G H) (f : Hom F G) : Hom F H :=
 theorem toPowerSeries_comp (g : Hom G H) (f : Hom F G) :
     (g.comp f).toPowerSeries = PowerSeries.subst f.toPowerSeries g.toPowerSeries := rfl
 
-theorem apply_comp (g : Hom G H) (f : Hom F G) {σ : Type*} (x : F.Point σ) :
-    (g.comp f).apply x = g.apply (f.apply x) :=
-  (substPoint_substPoint _ _ _ x).symm
 
 variable (F) in
-
-noncomputable def id : Hom F F :=
+noncomputable def id (F : FormalGroup R) : Hom F F :=
   ofPoints PowerSeries.X PowerSeries.constantCoeff_X fun x y => by
     rw [substPoint_X, substPoint_X, substPoint_X]
 
@@ -213,8 +209,6 @@ noncomputable instance : Monoid (Hom F F) where
   mul_one := comp_id
 
 theorem mul_def (g f : Hom F F) : g * f = g.comp f := rfl
-
-theorem one_def : (1 : Hom F F) = id F := rfl
 
 noncomputable def toPoint (f : Hom F G) : G.Point Unit :=
   ⟨f.toPowerSeries, PowerSeries.HasSubst.of_constantCoeff_zero' f.constantCoeff_eq_zero⟩
@@ -269,9 +263,6 @@ noncomputable instance : SMul ℤ (Hom F G) where
 theorem toPowerSeries_add (f g : Hom F G) :
     (f + g).toPowerSeries = subst ![f.toPowerSeries, g.toPowerSeries] G.toPowerSeries := rfl
 
-theorem toPowerSeries_neg (f : Hom F G) :
-    (-f).toPowerSeries = PowerSeries.subst f.toPowerSeries (inv G) := rfl
-
 theorem toPoint_add (f g : Hom F G) : (f + g).toPoint = f.toPoint + g.toPoint := rfl
 
 theorem toPoint_neg (f : Hom F G) : (-f).toPoint = -f.toPoint := rfl
@@ -304,9 +295,6 @@ theorem add_apply (f g : Hom F G) {σ : Type*} (x : F.Point σ) :
     (f + g).apply x = f.apply x + g.apply x :=
   substPoint_subst_pair f.constantCoeff_eq_zero g.constantCoeff_eq_zero _ x
 
-theorem neg_apply (f : Hom F G) {σ : Type*} (x : F.Point σ) : (-f).apply x = -f.apply x :=
-  substPoint_inv_subst f.constantCoeff_eq_zero _ x
-
 theorem comp_add (g : Hom G H) [H.IsComm] (f₁ f₂ : Hom F G) :
     g.comp (f₁ + f₂) = g.comp f₁ + g.comp f₂ :=
   toPoint_injective (by rw [toPoint_comp, toPoint_add, apply_add, toPoint_add]; rfl)
@@ -316,10 +304,6 @@ theorem add_comp [H.IsComm] (g₁ g₂ : Hom G H) (f : Hom F G) :
     (g₁ + g₂).comp f = g₁.comp f + g₂.comp f :=
   toPoint_injective (by rw [toPoint_comp, add_apply, toPoint_add]; rfl)
 
-variable (F) in
-
-theorem toPowerSeries_neg_id [F.IsComm] : (-id F).toPowerSeries = inv F :=
-  PowerSeries.X_subst _
 
 end Comm
 
@@ -336,17 +320,6 @@ noncomputable instance : Ring (Hom F F) :=
     mul_zero := fun f => toPoint_injective (by
       rw [mul_def, toPoint_comp]
       exact (apply_zero f).trans rfl) }
-
-theorem one_apply {σ : Type*} (x : F.Point σ) : (1 : Hom F F).apply x = x :=
-  substPoint_X x _
-
-theorem intCast_apply (n : ℤ) {σ : Type*} (x : F.Point σ) : (n : Hom F F).apply x = n • x := by
-  induction n using Int.induction_on with
-  | zero => rw [Int.cast_zero, zero_apply, zero_zsmul]
-  | succ n ih => rw [Int.cast_add, Int.cast_one, add_apply, ih, one_apply, add_zsmul, one_zsmul]
-  | pred n ih =>
-    rw [Int.cast_sub, Int.cast_one, sub_eq_add_neg, add_apply, neg_apply, ih, one_apply,
-      sub_zsmul, one_zsmul]
 
 end Ring
 
@@ -365,7 +338,7 @@ theorem coeff_one_subst_pair (F : FormalGroup R) {f g : PowerSeries R}
       PowerSeries.coeff 1 f + PowerSeries.coeff 1 g := by
   change coeff (Finsupp.single () 1) (subst ![f, g] F.toPowerSeries) =
     coeff (Finsupp.single () 1) f + coeff (Finsupp.single () 1) g
-  rw [subst_eq_add_add_subst_higher F (hasSubst_pair hf hg), map_add, map_add,
+  rw [subst_eq_add_add_subst_higher F (hasSubst_pair hf hg), map_add (f := _), map_add (f := _),
     coeff_of_lt_order (lt_of_lt_of_le (by simp) (two_le_order_subst_higher F hf hg)), add_zero]
 
 theorem coeff_one_subst {f g : PowerSeries R} (hf : PowerSeries.constantCoeff f = 0)
@@ -385,7 +358,7 @@ theorem coeff_one_subst {f g : PowerSeries R} (hf : PowerSeries.constantCoeff f 
       (PowerSeries.subst g (f - PowerSeries.C c * PowerSeries.X)) :=
     h2.trans (PowerSeries.le_order_subst_left' hg)
   conv_lhs => rw [hdec]
-  rw [PowerSeries.subst_add hgs, PowerSeries.subst_mul hgs, PowerSeries.subst_X hgs, map_add,
+  rw [PowerSeries.subst_add hgs, PowerSeries.subst_mul hgs, PowerSeries.subst_X hgs, map_add (f := _),
     PowerSeries.coeff_of_lt_order 1 (lt_of_lt_of_le (by norm_num) h2'), add_zero]
   change PowerSeries.coeff 1 (PowerSeries.subst g (PowerSeries.C c) * g) = _
   rw [PowerSeries.subst_C]
@@ -408,21 +381,18 @@ theorem coeff_one_id : PowerSeries.coeff 1 (id F).toPowerSeries = 1 := by
 
 end Hom
 
-variable (F) in
 
-noncomputable def linearCoeff [F.IsComm] : Hom F F →+* R where
+variable (F) in
+noncomputable def linearCoeff (F : FormalGroup R) [F.IsComm] : Hom F F →+* R where
   toFun f := PowerSeries.coeff 1 f.toPowerSeries
   map_one' := Hom.coeff_one_id
   map_mul' g f := Hom.coeff_one_comp g f
   map_zero' := by simp [Hom.toPowerSeries_zero]
   map_add' f g := Hom.coeff_one_add f g
 
-theorem linearCoeff_apply [F.IsComm] (f : Hom F F) :
-    linearCoeff F f = PowerSeries.coeff 1 f.toPowerSeries := rfl
 
 variable (F G) in
-
-structure Iso where
+structure Iso (F G : FormalGroup R) where
 
   hom : Hom F G
 
@@ -432,9 +402,6 @@ structure Iso where
 
 namespace Iso
 
-variable (F) in
-
-noncomputable def refl : Iso F F := ⟨Hom.id F, Hom.id F, Hom.id_comp _, Hom.id_comp _⟩
 
 def symm (e : Iso F G) : Iso G F := ⟨e.inv, e.hom, e.inv_comp_hom, e.hom_comp_inv⟩
 
@@ -445,11 +412,6 @@ noncomputable def trans (e : Iso F G) (e' : Iso G H) : Iso F H where
     rw [Hom.comp_assoc, ← Hom.comp_assoc e.hom, e.hom_comp_inv, Hom.id_comp, e'.hom_comp_inv]
   inv_comp_hom := by
     rw [Hom.comp_assoc, ← Hom.comp_assoc e'.inv, e'.inv_comp_hom, Hom.id_comp, e.inv_comp_hom]
-
-theorem isUnit_coeff_one (e : Iso F G) : IsUnit (PowerSeries.coeff 1 e.hom.toPowerSeries) := by
-  have h := congrArg (fun f : Hom G G => PowerSeries.coeff 1 f.toPowerSeries) e.hom_comp_inv
-  simp only [Hom.coeff_one_comp, Hom.coeff_one_id] at h
-  exact IsUnit.of_mul_eq_one _ h
 
 noncomputable def ofIsUnit (f : Hom F G) (hf : IsUnit (PowerSeries.coeff 1 f.toPowerSeries)) :
     Iso F G :=
@@ -475,14 +437,6 @@ noncomputable def ofIsUnit (f : Hom F G) (hf : IsUnit (PowerSeries.coeff 1 f.toP
     hom_comp_inv := Hom.ext hfψ
     inv_comp_hom := Hom.ext hψf }
 
-@[simp]
-theorem ofIsUnit_hom (f : Hom F G) (hf : IsUnit (PowerSeries.coeff 1 f.toPowerSeries)) :
-    (ofIsUnit f hf).hom = f := rfl
-
 end Iso
-
-theorem Hom.exists_iso_iff (f : Hom F G) :
-    (∃ e : Iso F G, e.hom = f) ↔ IsUnit (PowerSeries.coeff 1 f.toPowerSeries) :=
-  ⟨fun ⟨e, he⟩ => he ▸ e.isUnit_coeff_one, fun hf => ⟨Iso.ofIsUnit f hf, rfl⟩⟩
 
 end GroundTheory.LocalField.FormalGroup

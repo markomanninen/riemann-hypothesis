@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportHfun
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqIntegralDiv
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandFactor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportHfun
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevOpMemFixed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HaarIntegralNormalizedOpenCompactEqIntegralDiv
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C
@@ -20,7 +24,7 @@ private theorem isLocallyConstant_of_right {U : Subgroup G} (hUo : IsOpen (U : S
     (hf : ∀ k ∈ U, ∀ x, f (x * k) = f x) : IsLocallyConstant f := by
   rw [IsLocallyConstant.iff_exists_open]
   intro g
-  refine ⟨(fun x => g⁻¹ * x) ⁻¹' (U : Set G), hUo.preimage (continuous_mul_left _), by simp [U.one_mem],
+  refine ⟨(fun x => g⁻¹ * x) ⁻¹' (U : Set G), hUo.preimage (continuous_const_mul _), by simp [U.one_mem],
     fun x hx => ?_⟩
   have := hf _ hx g
   simpa using this
@@ -51,7 +55,8 @@ private theorem smoothOp_eq_levOp (m : Measure G) [m.IsHaarMeasure] {U : Subgrou
     intro h0
     exact hq (by rw [h0, zero_smul]))]
   refine GlobalTheory.OpTrace.eq_of_forall_dual fun l => ?_
-  rw [hρ.map_smoothOp hlc hf.1 l v,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hρ.map_smoothOp hlc hf.1 l v,
     GlobalTheory.HaarSum.integral_eq_sum_cosets m U hUo hUc.measure_ne_top (fun g => f g • l (ρ g v)) ?_ hs.toFinset ?_,
     map_smul, map_sum]
   · simp
@@ -71,7 +76,7 @@ private theorem finRankTrace_smoothOp (m : Measure G) [m.IsHaarMeasure] {U : Sub
   have hmem : ∀ v ∈ fixed ρ U, GlobalTheory.BCT.levOp ρ U U f LinearMap.id v ∈ fixed ρ U := fun v hv =>
     GlobalTheory.TwTrLevel.levOp_mem_fixed ρ (MonoidHom.id G) (fun _ => rfl) LinearMap.id (fun _ => rfl) U U hUo
       (fun _ h => h) f hf v hv
-  rw [finRankTrace_eq _ (fixed ρ U) hW, GlobalTheory.BCT.twTr, dif_pos hmem, ← smul_eq_mul, ← map_smul]
+  rw [finRankTrace_eq _ (fixed ρ U) hW, GlobalTheory.BCT.twTr, dite_eq_left hmem, ← smul_eq_mul, ← map_smul]
   congr 1
   refine LinearMap.ext fun v => Subtype.ext ?_
   simpa using smoothOp_eq_levOp m hUo hUc hρ hf v.2

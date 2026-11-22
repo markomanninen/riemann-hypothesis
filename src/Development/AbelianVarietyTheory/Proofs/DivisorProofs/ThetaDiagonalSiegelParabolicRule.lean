@@ -1,16 +1,36 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUgReindex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDblCoordDblD
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDiagInt
+module
 
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionDegeneratePrincipalSeriesLaw
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittTarget
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusOfNormEqAbs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThetaFunctionThetaTransformRationalDarboux
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousUgReindex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDblCoordDblD
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDiagInt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilSectionDegeneratePrincipalSeriesLaw
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MixedModelFormulasWittTarget
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModulusOfNormEqAbs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThetaFunctionThetaTransformRationalDarboux
+
+namespace I195MixedCoordinates_7b6bb7feeb7e0cab6de7cdc9
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_7b6bb7feeb7e0cab6de7cdc9
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField
@@ -65,14 +85,14 @@ theorem isCovolOne_map {m n m' n' : ℕ} {μ : Measure (Mx D m n)} {𝓕 : Set (
         left_inv := fun γ => Subtype.ext (e.apply_symm_apply _)
         right_inv := fun γ => Subtype.ext (e.symm_apply_apply _) }
     refine h.2.1.image_of_equiv e.toEquiv ?_ g fun γ x => ?_
-    · refine ⟨he'.measurable, ?_⟩
+    · refine ⟨he'.measurable.aemeasurable, ?_⟩
       have : (μ.map e).map e.symm = μ := by
         rw [Measure.map_map he'.measurable he.measurable]
         have : (e.symm ∘ e : Mx D m n → Mx D m n) = id := funext e.symm_apply_apply
         rw [this, Measure.map_id]
       exact this.absolutelyContinuous
     · change e (e.symm γ + x) = γ + e x
-      rw [map_add, e.apply_symm_apply]
+      rw [map_add (f := _), e.apply_symm_apply]
   · rw [hemb.map_apply, Set.preimage_image_eq _ e.injective]
     exact h.2.2
 
@@ -190,6 +210,7 @@ theorem mixT_law (hP : GlobalTheory.Published.WeilRepresentationUnitaryPair) (ψ
   have e1 : ωd (1, h) f = ωd (1, (dblDec T).levi a) (ωd (1, (dblDec T).nC c) f) := by
     rw [hp, ← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, one_mul]
   have hq : (dblDec T).qT S c 0 = 0 := by rw [HypDec.qT, map_zero, symplOH_zero_left]
+  change _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target (dblDec T) S ψ μ 𝓕 (ωd (1, h) f) 0 0 = _ * _root_.I195MixedCoordinates_a63f0715cbf334f1e52c5d7b.target (dblDec T) S ψ μ 𝓕 f 0 0
   rw [e1, h1, Matrix.zero_mul, h2, hq, AddChar.map_zero_eq_one, one_smul, Pi.smul_apply, smul_eq_mul,
     ruleFac_eq χS S.rank a t (haP.symm.trans ht)]
 
@@ -197,8 +218,8 @@ end GlobalTheory.DblTargetTheta
 
 end
 
-open GlobalTheory.DblTargetTheta in
 
+open GlobalTheory.DblTargetTheta in
 theorem GlobalTheory.DblTargetTheta.thetaDiag_rule : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) →
     ∀ (S T : HSp D) (JB : Matrix (Fin S.rank) (Fin S.rank) D.host.E) (ξ : AF D.host.F ⊗[D.host.F] D.host.E),
         ξ • incM D.host.F JB = incM D.host.F (D.host.xi0 • S.gram⁻¹) →

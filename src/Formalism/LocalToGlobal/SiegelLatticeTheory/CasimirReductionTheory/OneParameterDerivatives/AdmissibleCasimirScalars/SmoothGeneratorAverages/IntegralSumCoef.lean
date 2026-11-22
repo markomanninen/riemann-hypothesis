@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace
@@ -20,7 +24,7 @@ variable {n : ℕ} {ε : Fin n → Bool} {H : Type} [NormedAddCommGroup H] [Inne
 theorem re_coef_ge {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {g : UJ ε} {v : H} (hv : ‖v‖ = 1)
     (h : ‖σ (umat g) v - v‖ ≤ ‖v‖ / 2) : (1 / 2 : ℝ) ≤ (coefOn σ v v g).re := by
   have h1 : coefOn σ v v g = ⟪v, v⟫_ℂ + ⟪v, σ (umat g) v - v⟫_ℂ := by
-    simp [coefOn, inner_sub_right]
+    simp [coefOn]
   have h2 : ‖⟪v, σ (umat g) v - v⟫_ℂ‖ ≤ 1 / 2 := by
     calc _ ≤ ‖v‖ * ‖σ (umat g) v - v‖ := norm_inner_le_norm _ _
       _ ≤ 1 / 2 := by rw [hv] at h ⊢; linarith
@@ -72,11 +76,11 @@ theorem integral_sumCoef {ι : Type} [Fintype ι] [DecidableEq ι] {σ : Matrix 
     · simp [h, Ne.symm h]
   refine ⟨?_, ?_⟩
   · rw [hexp]
-    exact integrable_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint i j
-  · rw [hexp, integral_finset_sum _ fun i _ => integrable_finset_sum _ fun j _ => hint i j]
+    exact integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint i j
+  · rw [hexp, integral_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint i j]
     calc _ = ∑ i, ∑ j, ∫ g, coefOn σ (v i) (v i) g * star (coefOn σ (v j) (v j) g) ∂(muG ε) := by
           refine Finset.sum_congr rfl fun i _ => ?_
-          exact integral_finset_sum _ fun j _ => hint i j
+          exact integral_finsetSum _ fun j _ => hint i j
       _ = _ := by
           simp only [hij, Finset.sum_ite_eq, Finset.mem_univ, if_true, Finset.sum_const,
             Finset.card_univ, nsmul_eq_mul]
@@ -94,7 +98,7 @@ theorem card_le {ι : Type} [Fintype ι] {σ : Matrix (Fin n) (Fin n) ℂ → (H
   let f : UJ ε → ℝ := fun g => (sumCoef σ v g * star (sumCoef σ v g)).re
   have hfint : Integrable f (muG ε) := hint.re
   have hfn : ∀ g, f g = Complex.normSq (sumCoef σ v g) := fun g => by
-    simp [f, Complex.star_def, Complex.mul_conj]
+    simp [f, Complex.mul_conj]
   have hf0 : ∀ g, 0 ≤ f g := fun g => by rw [hfn]; exact Complex.normSq_nonneg _
   have hm0 : 0 ≤ m := by positivity
   have hK' : ∀ g ∈ K, (m / 2) ^ 2 ≤ f g := by

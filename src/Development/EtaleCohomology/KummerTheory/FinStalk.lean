@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.FixStalk
+module
+
+public import Development.EtaleCohomology.KummerTheory.FixStalk
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Stalk
 theorem etale_cohomology_stalk_compatibility_finite_coefficients_holds : LateralTheory.KummerTheory.Stalk := by

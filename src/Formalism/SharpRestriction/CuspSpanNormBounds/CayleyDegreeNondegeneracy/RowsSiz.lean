@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem rows_sum_prod_le {α ι κ : Type} [Fintype ι] [Fintype κ] (Λ : ι �
   refine e2.trans ?_
   rw [e3]
   calc ∏ i, ∑ y ∈ T i, sumOfSquaredModuli y ≤ ∏ _i : ι, (41 : ℝ) ^ Fintype.card κ :=
-        Finset.prod_le_prod (fun i _ => Finset.sum_nonneg fun y _ => rows_psi_nonneg y) fun i _ =>
+        Finset.prod_le_prod₀ (fun i _ => Finset.sum_nonneg fun y _ => rows_psi_nonneg y) fun i _ =>
           rows_finsum_le (Λ i) (hΛ i) (T i) fun y hy => by
             obtain ⟨Z, hZ, rfl⟩ := Finset.mem_image.1 hy
             exact hx Z hZ i
@@ -155,7 +159,7 @@ theorem rows_sizeSum (X : TermTie D) {u u' : D.what₂.Word} (hE : wordPairEntri
     have hp : ((((B * sg Z ^ 4) ^ 3)⁻¹) ^ ((D.R.rS + 1) ^ 2)) ≤
         ∏ i : Fin (D.R.rS + 1) × Fin (D.R.rS + 1), sumOfSquaredModuli (gramEntryFunction D Z i) := by
       rw [← hcard, ← Finset.card_univ, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun i _ => by positivity) fun i _ => rows_psi_ge hrd Z _ hM (hred Z hZ) i
+      exact Finset.prod_le_prod₀ (fun i _ => by positivity) fun i _ => rows_psi_ge hrd Z _ hM (hred Z hZ) i
     have hB3 : 0 < (B ^ 3) ^ ((D.R.rS + 1) ^ 2) := by positivity
     refine le_trans ?_ (mul_le_mul_of_nonneg_left hp hB3.le)
     have e1 : (B ^ 3) ^ ((D.R.rS + 1) ^ 2) * (((B * sg Z ^ 4) ^ 3)⁻¹) ^ ((D.R.rS + 1) ^ 2) =
@@ -194,8 +198,8 @@ theorem rows_isTermF' (t : D.s.Term u u') (hG : D.s.Gterm t ≠ 0) :
     rw [← h]
     exact (map_ne_zero_iff _ (algebraMap D.host.F D.host.E).injective).2 hG
 
-include Y in
 
+include Y in
 theorem rows_reduced_exists {C' Cl Cg cb Cu cT CT C0 A C : ℝ} (hH : Cnt.Hyp D large₂ u u' C' Cl Cg cb Cu cT CT C0 A)
     (hHH : UnitaryVolumeMass.stHH D large₂ u u' C' Cl Cg cb Cu cT CT C0 A C) (t : D.s.Term u u') (hG : D.s.Gterm t ≠ 0)
     (hrel : D.s.relevant t) :

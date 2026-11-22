@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
-import Formalism.SharpRestriction.LevelLetterCocycles.CompleteOfPow
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegerSpanGenerators
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.CompleteOfPow
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IntegerSpanGenerators
+
+@[expose] public section
 
 open Classical
 
@@ -49,7 +53,8 @@ theorem γsum (T : LocLat G Qp LL O) (K : ℕ) (a : ℕ → ℕ) (c : ℕ → W.
     ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ a y • (W.γ T (W.π₀ ^ y • c y) - W.π₀ ^ y • c y) =
       W.γ T (∑ y ∈ Finset.range K, W.π₀ ^ y • (((PD.p : ℕ) : O) ^ a y • c y)) -
         ∑ y ∈ Finset.range K, W.π₀ ^ y • (((PD.p : ℕ) : O) ^ a y • c y) := by
-  rw [map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun y _ => ?_
   rw [smul_comm (W.π₀ ^ y) (((PD.p : ℕ) : O) ^ a y) (c y), (W.γ T).map_smul, smul_sub]
 
@@ -141,7 +146,8 @@ theorem ser_unique [NeZero n] (hinj : Function.Injective (algebraMap O LL))
       rw [(W.γ T).map_smul, smul_sub (W.π₀ ^ y) (c y) (c' y), map_sub]
       simp only [smul_sub]
       abel
-    rw [hE, map_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hE, map_sum, ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
     exact Finset.sum_congr rfl fun y _ => hy y
   set E2 : W.DD T := ((PD.p : ℕ) : O) ^ (j1 + j2) • E
   have hlet : ∀ y, (letE i : LetA O n) • (W.π₀ ^ y • (c y - c' y)) = W.π₀ ^ y • (c y - c' y) := by
@@ -201,8 +207,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} (W : LocWach PD LL O v n)
 
-include W in
 
+include W in
 theorem l_ne : ((PD.p : ℕ) : O) ≠ 0 := by
   intro h
   apply Formalism.MainNotions.LiftingTheory.tr_pLL_ne W
@@ -362,7 +368,8 @@ theorem red (hR : Formalism.MainNotions.LiftingTheory.lifta_Ring W) (T : LocLat 
       le_trans (eY_mono (PD := PD) (le_of_lt (Finset.mem_range.1 hy))) (Nat.le_add_right _ _)
     rw [LinearMap.map_smul_of_tower, φpow_smul, map_pow, lsmul_eq, lsmul_eq, lsmul_eq]
     exact term_id L _ _ _ _ _ hle (hrs y).2 (hg y) _
-  rw [hz, smul_sub, Finset.smul_sum, Finset.sum_congr rfl e1, Finset.sum_sub_distrib, map_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hz, smul_sub, Finset.smul_sum, Finset.sum_congr rfl e1, Finset.sum_sub_distrib, map_sub,
     LinearMap.map_smul_of_tower, map_sum, smul_sub, Finset.smul_sum, smul_comm (((PD.p : ℕ) : O) ^ N)]
   simp only [Finset.smul_sum]
   abel
@@ -422,7 +429,8 @@ theorem truncatedSeries_gamma_sub (T : LocLat G Qp LL O) (K : ℕ) (w : W.DD T) 
       ((PD.p : ℕ) : O) ^ Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K • (W.γ T w - w) -
         ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
           (W.γ T (W.π₀ ^ y • c y) - W.π₀ ^ y • c y) := by
-  rw [E0, map_sub, (W.γ T).map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [E0, map_sub, (W.γ T).map_smul, map_sum]
   simp only [(W.γ T).map_smul, smul_sub, Finset.sum_sub_distrib]
   abel
 
@@ -493,7 +501,7 @@ theorem gamma_sub_of_frobenius_power [IsDomain O] (hR : Formalism.MainNotions.Li
     have g2 : W.γ T (((W.φD T) ^ j) (((PD.p : ℕ) : O) ^ t • E0 W T K0 w c)) =
         ((W.φD T) ^ j) (((PD.p : ℕ) : O) ^ t • W.γ T (E0 W T K0 w c)) := by
       rw [← (W.γ T).map_smul]; exact γ_φpow W T W.gam j _
-    rw [smul_sub, ← (W.γ T).map_smul, hred, ← hva, map_add, (W.γ T).map_smul, g2, smul_sub (((PD.p : ℕ) : O) ^ t),
+    rw [smul_sub, ← (W.γ T).map_smul, hred, ← hva, map_add (f := _), (W.γ T).map_smul, g2, smul_sub (((PD.p : ℕ) : O) ^ t),
       map_sub, smul_sub]
     abel
   rw [e2]
@@ -555,7 +563,7 @@ theorem uniq_alt_alt [NeZero n] [IsDomain O] (hinj : Function.Injective (algebra
 theorem term_lin (T : LocLat G Qp LL O) (a a' : O) (y : ℕ) (x x' : W.DD T) :
     W.γ T (W.π₀ ^ y • (a • x + a' • x')) - W.π₀ ^ y • (a • x + a' • x') =
       a • (W.γ T (W.π₀ ^ y • x) - W.π₀ ^ y • x) + a' • (W.γ T (W.π₀ ^ y • x') - W.π₀ ^ y • x') := by
-  rw [smul_add, smul_comm (W.π₀ ^ y) a x, smul_comm (W.π₀ ^ y) a' x', map_add, (W.γ T).map_smul,
+  rw [smul_add, smul_comm (W.π₀ ^ y) a x, smul_comm (W.π₀ ^ y) a' x', map_add (f := _), (W.γ T).map_smul,
     (W.γ T).map_smul]
   simp only [smul_sub]
   abel
@@ -571,7 +579,7 @@ theorem ser_lin (T : LocLat G Qp LL O) (i : ZMod n) (a a' : O) {w w' : W.DD T} {
     refine ⟨j1 + j2, a • ((PD.p : ℕ) : O) ^ j2 • x1 + a' • ((PD.p : ℕ) : O) ^ j1 • x2,
       (W.N T).add_mem ((W.N T).smul_of_tower_mem _ ((W.N T).smul_of_tower_mem _ hx1))
         ((W.N T).smul_of_tower_mem _ ((W.N T).smul_of_tower_mem _ hx2)),
-      fun δ hδ => by simp only [map_add, map_smul, hx1Δ δ hδ, hx2Δ δ hδ], ?_⟩
+      fun δ hδ => by simp only [map_add (f := _), map_smul, hx1Δ δ hδ, hx2Δ δ hδ], ?_⟩
     have hs : ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
         (W.γ T (W.π₀ ^ y • (a • c y + a' • c' y)) - W.π₀ ^ y • (a • c y + a' • c' y)) =
         a • ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
@@ -581,7 +589,7 @@ theorem ser_lin (T : LocLat G Qp LL O) (i : ZMod n) (a a' : O) {w w' : W.DD T} {
       rw [Finset.smul_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun y _ => ?_
       rw [term_lin, smul_add, smul_comm _ a, smul_comm _ a']
-    rw [hs, map_add, (W.γ T).map_smul, (W.γ T).map_smul]
+    rw [hs, map_add (f := _), (W.γ T).map_smul, (W.γ T).map_smul]
     have e3 : ((PD.p : ℕ) : O) ^ (j1 + j2) •
         (((PD.p : ℕ) : O) ^ Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K • (a • W.γ T w + a' • W.γ T w' - (a • w + a' • w')) -
           (a • ∑ y ∈ Finset.range K, ((PD.p : ℕ) : O) ^ (Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K - Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y) •
@@ -646,7 +654,7 @@ theorem linear_of_frobenius_power [NeZero n] [IsDomain O] (hinj : Function.Injec
         a • ∑ y ∈ Finset.range K0, s y • ((W.φD T) ^ j) (c y) +
           a' • ∑ y ∈ Finset.range K0, s' y • ((W.φD T) ^ j) (c' y) -
           ∑ y ∈ Finset.range K0, s'' y • ((W.φD T) ^ j) (c'' y) := by
-      rw [hzd'', hzd, hzd', map_add, LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower,
+      rw [hzd'', hzd, hzd', map_add (f := _), LinearMap.map_smul_of_tower, LinearMap.map_smul_of_tower,
         smul_add, smul_sub, smul_sub, smul_comm _ a, smul_comm _ a']
       abel
     rw [e]
@@ -686,7 +694,8 @@ theorem ser_map {T T' : LocLat G Qp LL O} (F : LatHom T.L T'.L) (hT : IsCrys PD 
   obtain ⟨j, x, hx, hxΔ, e⟩ := hc.2.2 K
   refine ⟨j, W.map F x, W.map_N F hT hT' x hx, fun δ hδ => by rw [← W.map_γ, hxΔ δ hδ], ?_⟩
   have := congrArg (W.map F) e
-  simp only [map_sub, map_sum, LinearMap.map_smul_of_tower, hγm] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, LinearMap.map_smul_of_tower, hγm] at this
   exact this
 
 theorem hermFlagUnipotent_anisotropic_vector_sub_mem [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
@@ -703,7 +712,8 @@ theorem hermFlagUnipotent_anisotropic_vector_sub_mem [NeZero n] [IsDomain O] (hi
   obtain ⟨c, r, s, hc, hrs, hzd⟩ := hz
   have hzF : Formalism.MainNotions.CrystallineLiftingInputs.IsTrunc W T' i j M X σ (W.map F w₁) (W.map F z₁) := by
     refine ⟨fun y => W.map F (c y), r, s, ser_map W F hT hT' i hc, hrs, ?_⟩
-    rw [hzd, map_sub, map_sum, LinearMap.map_smul_of_tower, map_φpow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hzd, map_sub, map_sum, LinearMap.map_smul_of_tower, map_φpow]
     simp only [mapA_smul, map_φpow]
   exact uniq_alt_alt W hinj hO2 h9 hH hR hsp hA h2 T' hT' i hj hzF hz'
 
@@ -808,7 +818,7 @@ theorem Gd_res {l : ℕ} (hlm : ((l : ℕ) : O) ∈ IsLocalRing.maximalIdeal O) 
     rw [← map_natCast (PowerSeries.C (R := O ⧸ IsLocalRing.maximalIdeal O)),
       ← map_natCast (Ideal.Quotient.mk (IsLocalRing.maximalIdeal O)), Ideal.Quotient.eq_zero_iff_mem.2 hlm,
       map_zero]
-  simp only [Gd, map_mul, map_pow, map_add, PowerSeries.map_X, map_natCast, h0, add_zero, pow_add]
+  simp only [Gd, map_mul, map_pow, map_add (f := _), PowerSeries.map_X, map_natCast, h0, add_zero, pow_add]
 
 theorem Gd_ne {l : ℕ} (hlm : ((l : ℕ) : O) ∈ IsLocalRing.maximalIdeal O) (M X : ℕ) :
     PowerSeries.map (IsLocalRing.residue O) (Gd l M X) ≠ 0 := by
@@ -906,7 +916,7 @@ theorem rem_exists [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) 
   have h2 : ∀ i, (((PD.p : ℕ) : LetA O n) ^ σ * a) i = PowerSeries.subst (W.π₀ i)
       (((PD.p : ℕ) : PowerSeries O) ^ Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y * Fα i + Gd PD.p M X * Fβ i) := by
     intro i
-    rw [hιi, map_add, map_mul, map_mul, map_pow, map_natCast, ← hFα' i, ← hFβ' i, ← hG i, hαβ]
+    rw [hιi, map_add (f := _), map_mul, map_mul, map_pow, map_natCast, ← hFα' i, ← hFβ' i, ← hG i, hαβ]
     rfl
   have heq : ∀ i, ((PD.p : ℕ) : PowerSeries O) ^ σ * F =
       ((PD.p : ℕ) : PowerSeries O) ^ Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y * Fα i + Gd PD.p M X * Fβ i := by
@@ -1132,91 +1142,6 @@ namespace Formalism.MainNotions.CrystallineLiftingInputs.truncatedSeriesData
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.WachCoordinates.Br Formalism.MainNotions.UnusedSlot80.Relay2
 
-def HM {LL : Type} [Field LL] {d : ℕ} (sol : Fin d → ℕ → Fin d → LL) :
-    Matrix (Fin d) (Fin d) (PowerSeries LL) :=
-  Matrix.of fun m' k' => PowerSeries.mk fun r' => sol k' r' m'
-
-theorem HM_apply {LL : Type} [Field LL] {d : ℕ} (sol : Fin d → ℕ → Fin d → LL) (m' k' : Fin d) :
-    HM sol m' k' = PowerSeries.mk fun r' => sol k' r' m' := rfl
-
-theorem HM_inv {LL : Type} [Field LL] {d : ℕ} (sol : Fin d → ℕ → Fin d → LL)
-    (h0 : ∀ k, sol k 0 = Pi.single k 1) : HM sol * (HM sol)⁻¹ = 1 := by
-  apply Matrix.mul_nonsing_inv
-  rw [PowerSeries.isUnit_iff_constantCoeff, RingHom.map_det]
-  have : (PowerSeries.constantCoeff (R := LL)).mapMatrix (HM sol) = 1 := by
-    ext m' k'
-    simp only [RingHom.mapMatrix_apply, Matrix.map_apply, HM, Matrix.of_apply, PowerSeries.coeff_zero_eq_constantCoeff.symm,
-      PowerSeries.coeff_mk, h0, Matrix.one_apply, Pi.single_apply]
-  rw [this, Matrix.det_one]
-  exact isUnit_one
-
-theorem HM_coeff {LL : Type} [Field LL] {d : ℕ} (sol : Fin d → ℕ → Fin d → LL)
-    (h : HM sol * (HM sol)⁻¹ = 1) (N : ℕ) (m' m : Fin d) :
-    ∑ k, ∑ p ∈ Finset.HasAntidiagonal.antidiagonal N, sol k p.1 m' * PowerSeries.coeff p.2 ((HM sol)⁻¹ k m) =
-      if N = 0 ∧ m' = m then 1 else 0 := by
-  have e := congrArg (fun M : Matrix (Fin d) (Fin d) (PowerSeries LL) => PowerSeries.coeff N (M m' m)) h
-  simp only [Matrix.mul_apply, map_sum, PowerSeries.coeff_mul, HM_apply, PowerSeries.coeff_mk,
-    Matrix.one_apply] at e
-  rw [e]
-  by_cases h1 : m' = m
-  · by_cases h2 : N = 0 <;> simp [h1, h2, PowerSeries.coeff_one]
-  · simp [h1]
-
-theorem poly_cong {O LL : Type} [CommRing O] [Field LL] [Algebra O LL] {A : Type} [CommRing A] [Algebra O A]
-    (hinj : Function.Injective (algebraMap O LL)) (l : ℕ) {d : ℕ} (K0 E : ℕ) (sol : Fin d → ℕ → Fin d → LL)
-    (hHH : HM sol * (HM sol)⁻¹ = 1) (a bb : ℕ → Fin d → Fin d → O)
-    (ha : ∀ y < K0, ∀ k m, algebraMap O LL (a y k m) = (l : LL) ^ E * PowerSeries.coeff y ((HM sol)⁻¹ k m))
-    (hb : ∀ y < K0, ∀ k m', algebraMap O LL (bb y k m') = (l : LL) ^ E * sol k y m') (Φ : A) (m m' : Fin d) :
-    ∃ R0 : Polynomial O, ∑ k, (∑ y ∈ Finset.range K0, algebraMap O A (bb y k m') * Φ ^ y) *
-        (∑ y ∈ Finset.range K0, algebraMap O A (a y k m) * Φ ^ y) =
-      algebraMap O A (if m' = m then (l : O) ^ (2 * E) else 0) + Φ ^ K0 * Polynomial.aeval Φ R0 := by
-  set Pa : Fin d → Polynomial O := fun k => ∑ y ∈ Finset.range K0, Polynomial.C (a y k m) * Polynomial.X ^ y
-  set Pb : Fin d → Polynomial O := fun k => ∑ y ∈ Finset.range K0, Polynomial.C (bb y k m') * Polynomial.X ^ y
-  set c : O := if m' = m then (l : O) ^ (2 * E) else 0
-  set Q : Polynomial O := ∑ k, Pb k * Pa k - Polynomial.C c
-  have hca : ∀ k y, y < K0 → (Pa k).coeff y = a y k m := by
-    intro k y hy
-    simp only [Pa, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
-    rw [Finset.sum_eq_single y (fun b _ hb => if_neg (Ne.symm hb)) (fun h => absurd (Finset.mem_range.2 hy) h)]
-    simp
-  have hcb : ∀ k y, y < K0 → (Pb k).coeff y = bb y k m' := by
-    intro k y hy
-    simp only [Pb, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
-    rw [Finset.sum_eq_single y (fun b _ hb => if_neg (Ne.symm hb)) (fun h => absurd (Finset.mem_range.2 hy) h)]
-    simp
-  have hQ : ∀ N < K0, Q.coeff N = 0 := by
-    intro N hN
-    apply hinj
-    rw [map_zero]
-    simp only [Q, Polynomial.coeff_sub, Polynomial.finsetSum_coeff, Polynomial.coeff_mul, Polynomial.coeff_C]
-    have e1 : ∀ k, algebraMap O LL (∑ x ∈ Finset.HasAntidiagonal.antidiagonal N,
-        (Pb k).coeff x.1 * (Pa k).coeff x.2) = ∑ x ∈ Finset.HasAntidiagonal.antidiagonal N,
-          (l : LL) ^ E * sol k x.1 m' * ((l : LL) ^ E * PowerSeries.coeff x.2 ((HM sol)⁻¹ k m)) := by
-      intro k
-      rw [map_sum]
-      refine Finset.sum_congr rfl fun x hx => ?_
-      have hx' := Finset.HasAntidiagonal.mem_antidiagonal.1 hx
-      rw [hca k x.2 (by omega), hcb k x.1 (by omega), map_mul, ha x.2 (by omega), hb x.1 (by omega)]
-    rw [map_sub, map_sum]
-    simp only [e1]
-    have e2 : ∑ k, ∑ x ∈ Finset.HasAntidiagonal.antidiagonal N,
-        (l : LL) ^ E * sol k x.1 m' * ((l : LL) ^ E * PowerSeries.coeff x.2 ((HM sol)⁻¹ k m)) =
-        (l : LL) ^ (2 * E) * ∑ k, ∑ x ∈ Finset.HasAntidiagonal.antidiagonal N,
-          sol k x.1 m' * PowerSeries.coeff x.2 ((HM sol)⁻¹ k m) := by
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun k _ => ?_
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun x _ => ?_
-      ring
-    rw [e2, HM_coeff sol hHH N m' m]
-    by_cases h1 : N = 0 <;> by_cases h2 : m' = m <;> simp [h1, h2, c]
-  obtain ⟨R0, hR0⟩ := Polynomial.X_pow_dvd_iff.2 hQ
-  refine ⟨R0, ?_⟩
-  have hev := congrArg (Polynomial.aeval Φ) hR0
-  simp only [Q, map_sub, map_sum, map_mul, Polynomial.aeval_C, Polynomial.aeval_X_pow, Pa, Pb] at hev
-  rw [← hev]
-  ring
-
 variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
     {B BdR : Type} [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
@@ -1226,317 +1151,9 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {LL O : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] [CommRing O] [Algebra O LL]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} (W : LocWach PD LL O v n)
 
-def cH (T : LocLat G Qp LL O) {d : ℕ} (b : Fin d → W.DD T) (sh : ℕ → Fin d → O) : ℕ → W.DD T :=
-  fun y => if y = 0 then 0 else -Formalism.MainNotions.LiftingTheory.vecB W T b (sh y)
-
-theorem vecB_single (T : LocLat G Qp LL O) {d : ℕ} (b : Fin d → W.DD T) (k : Fin d) :
-    Formalism.MainNotions.LiftingTheory.vecB W T b (Pi.single k 1) = b k := by
-  simp [Formalism.MainNotions.LiftingTheory.vecB, Pi.single_apply]
-
-theorem ser_hor (hinj : Function.Injective (algebraMap O LL)) (hl : 2 ≤ PD.p) (T : LocLat G Qp LL O)
-    (i : ZMod n) {d : ℕ} {b : Fin d → W.DD T} (hb : Formalism.MainNotions.LiftingTheory.IsFrameΔ W T i b) (k : Fin d)
-    {sol : ℕ → Fin d → LL} (hsol : Formalism.MainNotions.LiftingTheory.IsSol W T i b 0 sol) (hs0 : sol 0 = Pi.single k 1)
-    (sh : ℕ → Fin d → O) (hsh : ∀ y m, algebraMap O LL (sh y m) = (PD.p : LL) ^ Ex PD.p y * sol y m) :
-    Formalism.MainNotions.CrystallineLiftingInputs.IsSer W T i (b k) (cH W T b sh) := by
-  have hsh0 : sh 0 = Pi.single k 1 := by
-    funext m
-    apply hinj
-    rw [hsh, hs0]
-    by_cases h : m = k
-    · subst h; simp [Ex]
-    · simp [h]
-  refine ⟨by simp [cH], fun y => ?_, fun K => ?_⟩
-  · by_cases h : y = 0
-    · simp only [cH, h, if_true]; exact DL_of W T i (InNΔi_zero W T i)
-    · simp only [cH, h, if_false]
-      have := Formalism.MainNotions.LiftingTheory.frame_vecB_mem W T i b hb (sh y)
-      exact DL_of W T i (by rw [← neg_one_smul O]; exact InNΔi_osmul W T i _ this)
-  · rcases Nat.eq_zero_or_pos K with rfl | hK
-    · have hbk := Formalism.MainNotions.LiftingTheory.frame_vecB_mem W T i b hb (Pi.single k 1)
-      rw [vecB_single] at hbk
-      have hγ := InNΔi_γ W T i hbk
-      refine ⟨0, W.γ T (b k) - b k, (W.N T).sub_mem hγ.1.1 hbk.1.1,
-        fun δ hδ => by rw [map_sub, hγ.1.2 δ hδ, hbk.1.2 δ hδ], ?_⟩
-      simp [Formalism.MainNotions.CrystallineLiftingInputs.eY]
-    · set yv : ℕ → Fin d → O := fun r m => ((PD.p : ℕ) : O) ^ (Ex PD.p K - Ex PD.p r) * sh r m
-      have hy : ∀ r < K, ∀ m, algebraMap O LL (yv r m) = (PD.p : LL) ^ Ex PD.p K * sol r m := by
-        intro r hr m
-        have hle := Ex_mono PD.p hl hr.le
-        simp only [yv, map_mul, map_pow, map_natCast, hsh]
-        rw [← mul_assoc, ← pow_add, Nat.sub_add_cancel hle]
-      obtain ⟨x, hx, hxe⟩ := hsol K (Ex PD.p K) yv hy
-      have hS : ∑ r ∈ Finset.range K, W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T b (yv r) = E0 W T K (b k) (cH W T b sh) := by
-        obtain ⟨K', rfl⟩ : ∃ K', K = K' + 1 := ⟨K - 1, by omega⟩
-        rw [E0, Finset.sum_range_succ', Finset.sum_range_succ']
-        have hv : ∀ r, Formalism.MainNotions.LiftingTheory.vecB W T b (yv r) =
-            ((PD.p : ℕ) : O) ^ (Ex PD.p (K' + 1) - Ex PD.p r) • Formalism.MainNotions.LiftingTheory.vecB W T b (sh r) :=
-          fun r => Formalism.MainNotions.LiftingTheory.frame_vecB_smul W T b _ (sh r)
-        simp only [hv, hsh0, vecB_single, cH, Nat.succ_ne_zero, if_false, if_true, smul_zero, pow_zero,
-          one_smul, smul_neg, Finset.sum_neg_distrib, sub_neg_eq_add, add_zero, Ex, Formalism.MainNotions.CrystallineLiftingInputs.eY]
-        rw [add_comm]
-        congr 1
-        all_goals first
-          | exact Finset.sum_congr rfl fun r _ => smul_comm _ _ _
-          | simp
-      refine ⟨0, x, hx.1.1, hx.1.2, ?_⟩
-      rw [hS, smul_zero, sub_zero] at hxe
-      rw [pow_zero, one_smul, ← truncatedSeries_gamma_sub, hxe]
-
-theorem InI_of (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) (hA : Formalism.MainNotions.LiftingTheory.CaseA W) (T : LocLat G Qp LL O)
-    (hT : IsCrys PD T.ρ) (i : ZMod n) {x : W.DD T} (hx : Formalism.MainNotions.LiftingTheory.InNΔi W T i x) :
-    Formalism.MainNotions.CrystallineLiftingInputs.InI W T i x := by
-  obtain ⟨x', hx', e⟩ := (Formalism.MainNotions.LiftingTheory.frame_p9A W h9 hA T hT).2.2 x hx.1
-  refine ⟨(DL_of W T i hx).1, ⟨0, by simpa [Formalism.BasicNotions.LocWach.InvN] using hx.1.1⟩, x', hx'.1, hx'.2, ?_⟩
-  rw [pow_one, e]
-
-theorem aeval_mem_AΔ (P : Polynomial O) {Φ : LetA O n} (hΦ : Φ ∈ W.AΔ) : Polynomial.aeval Φ P ∈ W.AΔ := by
-  rw [Polynomial.aeval_eq_sum_range]
-  exact W.AΔ.sum_mem fun i _ => W.AΔ.smul_mem (W.AΔ.pow_mem hΦ i) _
-
-theorem phiK (hπ : W.π₀ ∈ W.AΔ)
-    (h2 : ∀ j r : ℕ, ∃ u ∈ W.AΔ, ∃ u' ∈ W.AΔ, u * u' = 1 ∧
-      ((W.φA ^ j) W.π₀) ^ r = u * W.π₀ ^ r * ∏ k ∈ Finset.range j, Formalism.MainNotions.LiftingTheory.pk W k ^ ((PD.p - 1) * r))
-    {j : ℕ} (hj : 1 ≤ j) (M X : ℕ) :
-    ∃ e ∈ W.AΔ, ((W.φA ^ j) W.π₀) ^ (max M X + 1) = Formalism.MainNotions.CrystallineLiftingInputs.fMX W M X * e := by
-  have hl : 2 ≤ PD.p := PD.hp.two_le
-  set K0 := max M X + 1
-  obtain ⟨u, hu, -, -, -, h⟩ := h2 j K0
-  obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
-  have hX : X ≤ (PD.p - 1) * K0 := by
-    calc X ≤ K0 := by omega
-      _ = 1 * K0 := (one_mul _).symm
-      _ ≤ (PD.p - 1) * K0 := Nat.mul_le_mul_right _ (by omega)
-  refine ⟨u * W.π₀ ^ (K0 - M) * Formalism.MainNotions.LiftingTheory.qp W ^ ((PD.p - 1) * K0 - X) *
-      ∏ k ∈ Finset.range j', Formalism.MainNotions.LiftingTheory.pk W (k + 1) ^ ((PD.p - 1) * K0),
-    W.AΔ.mul_mem (W.AΔ.mul_mem (W.AΔ.mul_mem hu (W.AΔ.pow_mem hπ _))
-      (W.AΔ.pow_mem (Formalism.MainNotions.LiftingTheory.lifta_qΔ W hπ) _))
-      (W.AΔ.prod_mem fun k _ => W.AΔ.pow_mem (pk_mem_AΔ W hπ _) _), ?_⟩
-  rw [h, Finset.prod_range_succ', Formalism.MainNotions.CrystallineLiftingInputs.fMX]
-  have hp0 : Formalism.MainNotions.LiftingTheory.pk W 0 = Formalism.MainNotions.LiftingTheory.qp W := by simp [Formalism.MainNotions.LiftingTheory.pk]
-  rw [hp0]
-  have e1 : W.π₀ ^ K0 = W.π₀ ^ M * W.π₀ ^ (K0 - M) := by rw [← pow_add]; congr 1; omega
-  have e2 : Formalism.MainNotions.LiftingTheory.qp W ^ ((PD.p - 1) * K0) =
-      Formalism.MainNotions.LiftingTheory.qp W ^ X * Formalism.MainNotions.LiftingTheory.qp W ^ ((PD.p - 1) * K0 - X) := by rw [← pow_add]; congr 1; omega
-  rw [e1, e2]
-  ring
-
-theorem zterm {A : Type} [CommRing A] (L f Φ r s g c : A) {e σ E : ℕ} (hle : e ≤ E)
-    (hs : L ^ e * s = L ^ σ * r) (hg : Φ - r = f * g) :
-    L ^ E * (s * c) = L ^ σ * (L ^ (E - e) * c * Φ) - f * (L ^ (E - e) * L ^ σ * g * c) := by
-  obtain ⟨t, rfl⟩ : ∃ t, E = e + t := ⟨E - e, by omega⟩
-  rw [Nat.add_sub_cancel_left, pow_add]
-  linear_combination L ^ t * c * hs - L ^ t * L ^ σ * c * hg
-
-theorem zs_rel (T : LocLat G Qp LL O) {d : ℕ}
-    (b : Fin d → W.DD T) (k : Fin d) (j K0 σ : ℕ) (s : ℕ → LetA O n) (sh : ℕ → Fin d → O)
-    (hsh0 : sh 0 = Pi.single k 1) (hK : 0 < K0) :
-    ((PD.p : ℕ) : O) ^ σ • ((W.φD T) ^ j) (b k) -
-        ∑ y ∈ Finset.range K0, s y • ((W.φD T) ^ j) (cH W T b sh y) =
-      (((PD.p : ℕ) : LetA O n) ^ σ - s 0) • ((W.φD T) ^ j) (b k) +
-        ∑ m', (∑ y ∈ Finset.range K0, s y * algebraMap O (LetA O n) (sh y m')) • ((W.φD T) ^ j) (b m') := by
-  have h1 : ∑ m', (∑ y ∈ Finset.range K0, s y * algebraMap O (LetA O n) (sh y m')) • ((W.φD T) ^ j) (b m') =
-      ∑ y ∈ Finset.range K0, s y • ((W.φD T) ^ j) (Formalism.MainNotions.LiftingTheory.vecB W T b (sh y)) := by
-    simp only [Finset.sum_smul, mul_smul, algebraMap_smul]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun y _ => ?_
-    rw [← Finset.smul_sum, Formalism.MainNotions.LiftingTheory.vecB, map_sum]
-    simp only [LinearMap.map_smul_of_tower]
-  have h2 : ∀ y, s y • ((W.φD T) ^ j) (cH W T b sh y) =
-      -(s y • ((W.φD T) ^ j) (Formalism.MainNotions.LiftingTheory.vecB W T b (sh y))) +
-        if y = 0 then s 0 • ((W.φD T) ^ j) (b k) else 0 := by
-    intro y
-    by_cases hy : y = 0
-    · subst hy
-      simp [cH, hsh0, vecB_single]
-    · simp [cH, hy]
-  rw [h1, Finset.sum_congr rfl fun y _ => h2 y, Finset.sum_add_distrib, Finset.sum_neg_distrib,
-    Finset.sum_ite_eq' (Finset.range K0) 0, if_pos (Finset.mem_range.2 hK), lsmul_eq W T, sub_smul]
-  simp only [Formalism.MainNotions.ArcLiftingSetup.lA]
-  abel
-
 def Zspan (T : LocLat G Qp LL O) (i : ZMod n) (j M X σ : ℕ) : Submodule (LetA O n) (W.DD T) :=
   Submodule.span (LetA O n) {z | ∃ w, w ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.InI W T i w ∧
     Formalism.MainNotions.CrystallineLiftingInputs.IsTrunc W T i j M X σ w z}
-
-theorem span_frame [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
-    (hO2 : ∀ x : LL, 0 ≤ v x → ∃ o : O, algebraMap O LL o = x) (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W)
-    (hH : Formalism.MainNotions.LiftingTheory.coreH W) (hR : Formalism.MainNotions.LiftingTheory.lifta_Ring W) (hsp : Formalism.MainNotions.ArcLiftingSetup.SATPcore W)
-    (hA : Formalism.MainNotions.LiftingTheory.CaseA W)
-    (h2 : ∀ j r : ℕ, ∃ u ∈ W.AΔ, ∃ u' ∈ W.AΔ, u * u' = 1 ∧
-      ((W.φA ^ j) W.π₀) ^ r = u * W.π₀ ^ r * ∏ k ∈ Finset.range j, Formalism.MainNotions.LiftingTheory.pk W k ^ ((PD.p - 1) * r))
-    (T : LocLat G Qp LL O) (hT : IsCrys PD T.ρ) (i : ZMod n) {j M X σ : ℕ} (hj : 1 ≤ j)
-    (r s : ℕ → LetA O n)
-    (hrs : ∀ y, Formalism.MainNotions.CrystallineLiftingInputs.IsRem W j M X y (r y) ∧
-      ((PD.p : ℕ) : LetA O n) ^ Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p y * s y = ((PD.p : ℕ) : LetA O n) ^ σ * r y) :
-    ∃ (d : ℕ) (b : Fin d → W.DD T), Formalism.MainNotions.LiftingTheory.IsFrameΔ W T i b ∧ ∀ m, ∃ p' ∈ Formalism.MainNotions.ArcLiftingSetup.Pp W T i j,
-      ((PD.p : ℕ) : O) ^ (2 * σ) • ((W.φD T) ^ j) (b m) - Formalism.MainNotions.CrystallineLiftingInputs.fMX W M X • p' ∈
-        Zspan W T i j M X σ := by
-  have hl : 2 ≤ PD.p := PD.hp.two_le
-  set K0 := max M X + 1 with hK0
-  set E := Formalism.MainNotions.CrystallineLiftingInputs.eY PD.p K0
-  set L : LetA O n := ((PD.p : ℕ) : LetA O n)
-  set f := Formalism.MainNotions.CrystallineLiftingInputs.fMX W M X
-  set Φ := (W.φA ^ j) W.π₀
-  have hπ := hR.πΔ
-  have hΦ : Φ ∈ W.AΔ := Formalism.MainNotions.UnusedSlot80.PhiPowers.φA_pow_mem_AΔ W hπ j
-  have hLA : ∀ t, L ^ t ∈ W.AΔ := fun t => W.AΔ.pow_mem (W.AΔ.natCast_mem _) _
-  obtain ⟨d, b, hb⟩ := frame_exists W T i (Formalism.MainNotions.LiftingTheory.frame_p9A W h9 hA T hT).2
-  have esol := fun k : Fin d => ((hH hA T hT i).2.2.1 d b hb 0 ⟨0, InNΔi_zero W T i, (smul_zero _).symm⟩
-    (Pi.single k 1)).1
-  choose sol hsol hsol0 using esol
-  have hs0 : ∀ k, sol k 0 = Pi.single k 1 := by
-    intro k; funext m; rw [hsol0]
-    by_cases h : m = k
-    · subst h; simp
-    · simp [h]
-  have hbd := (hH hA T hT i).2.2.2.2 d b hb sol (fun k => ⟨hsol k, hs0 k⟩)
-  have hHH := HM_inv sol hs0
-  have h4 := (hH hA T hT i).2.2.2.1
-  have esh : ∀ k y m', ∃ o : O, algebraMap O LL o = (PD.p : LL) ^ Ex PD.p y * sol k y m' :=
-    fun k y m' => int_of_bd W hO2 y (h4 y) _ (hbd.1 k y m')
-  choose sh hsh using esh
-  have eiv : ∀ k m y, ∃ o : O, algebraMap O LL o =
-      (PD.p : LL) ^ Ex PD.p y * PowerSeries.coeff y ((HM sol)⁻¹ k m) :=
-    fun k m y => int_of_bd W hO2 y (h4 y) _ (hbd.2 k m y)
-  choose iv hiv using eiv
-  have hsh0 : ∀ k, sh k 0 = Pi.single k 1 := by
-    intro k; funext m; apply hinj
-    rw [hsh, hs0]
-    by_cases h : m = k
-    · subst h; simp [Ex]
-    · simp [h]
-
-  set zs : Fin d → W.DD T := fun k => ((PD.p : ℕ) : O) ^ σ • ((W.φD T) ^ j) (b k) -
-    ∑ y ∈ Finset.range K0, s y • ((W.φD T) ^ j) (cH W T b (sh k) y)
-  have hzs : ∀ k, zs k ∈ Zspan W T i j M X σ := fun k => Submodule.subset_span
-    ⟨b k, (hb.1 k).1.1, InI_of W h9 hA T hT i (hb.1 k),
-      cH W T b (sh k), r, s, ser_hor W hinj hl T i hb k (hsol k) (hs0 k) (sh k) (hsh k), hrs, rfl⟩
-  have hsA : ∀ y, s y ∈ W.AΔ := fun y => s_mem W (l_ne W) (rem_mem W hπ (hrs y).1) (hrs y).2
-  set Z : Fin d → Fin d → LetA O n := fun k m' => ∑ y ∈ Finset.range K0, s y * algebraMap O (LetA O n) (sh k y m')
-  set Z' : Fin d → Fin d → LetA O n := fun k m => ∑ y ∈ Finset.range K0, s y * algebraMap O (LetA O n) (iv k m y)
-  have hZA : ∀ k m', Z k m' ∈ W.AΔ := fun k m' =>
-    W.AΔ.sum_mem fun y _ => W.AΔ.mul_mem (hsA y) (W.AΔ.algebraMap_mem _)
-  have hZ'A : ∀ k m, Z' k m ∈ W.AΔ := fun k m =>
-    W.AΔ.sum_mem fun y _ => W.AΔ.mul_mem (hsA y) (W.AΔ.algebraMap_mem _)
-  have hrel : ∀ k, zs k = (L ^ σ - s 0) • ((W.φD T) ^ j) (b k) + ∑ m', Z k m' • ((W.φD T) ^ j) (b m') :=
-    fun k => zs_rel W T b k j K0 σ s (sh k) (hsh0 k) (by omega)
-  obtain ⟨g0, hg0A, hg0⟩ := g_mem W hR (hrs 0).1
-  have hs00 : L ^ σ - s 0 = f * (L ^ σ * g0) := by
-    have h0 := (hrs 0).2
-    simp only [Formalism.MainNotions.CrystallineLiftingInputs.eY, Nat.cast_zero, zero_mul, zero_div, Nat.ceil_zero, pow_zero, one_mul] at h0
-    rw [pow_zero] at hg0
-    rw [h0]
-    linear_combination (L ^ σ) * hg0
-
-  have eg := fun y => g_mem W hR (hrs y).1
-  choose g hgA hg using eg
-  have hEy : ∀ y ∈ Finset.range K0, Ex PD.p y ≤ E := fun y hy =>
-    Ex_mono PD.p hl (le_of_lt (Finset.mem_range.1 hy))
-  set P : Fin d → Fin d → LetA O n := fun k m' => ∑ y ∈ Finset.range K0,
-    algebraMap O (LetA O n) (((PD.p : ℕ) : O) ^ (E - Ex PD.p y) * sh k y m') * Φ ^ y
-  set P' : Fin d → Fin d → LetA O n := fun k m => ∑ y ∈ Finset.range K0,
-    algebraMap O (LetA O n) (((PD.p : ℕ) : O) ^ (E - Ex PD.p y) * iv k m y) * Φ ^ y
-  set U : Fin d → Fin d → LetA O n := fun k m' => ∑ y ∈ Finset.range K0,
-    L ^ (E - Ex PD.p y) * L ^ σ * g y * algebraMap O (LetA O n) (sh k y m')
-  set U' : Fin d → Fin d → LetA O n := fun k m => ∑ y ∈ Finset.range K0,
-    L ^ (E - Ex PD.p y) * L ^ σ * g y * algebraMap O (LetA O n) (iv k m y)
-  have hZ : ∀ k m', L ^ E * Z k m' = L ^ σ * P k m' - f * U k m' := by
-    intro k m'
-    simp only [Z, P, U, Finset.mul_sum, ← Finset.sum_sub_distrib]
-    refine Finset.sum_congr rfl fun y hy => ?_
-    rw [zterm L f (Φ ^ y) (r y) (s y) (g y) _ (hEy y hy) (hrs y).2 (show Φ ^ y - r y = f * g y from hg y),
-      map_mul, map_pow, map_natCast]
-  have hZ' : ∀ k m, L ^ E * Z' k m = L ^ σ * P' k m - f * U' k m := by
-    intro k m
-    simp only [Z', P', U', Finset.mul_sum, ← Finset.sum_sub_distrib]
-    refine Finset.sum_congr rfl fun y hy => ?_
-    rw [zterm L f (Φ ^ y) (r y) (s y) (g y) _ (hEy y hy) (hrs y).2 (show Φ ^ y - r y = f * g y from hg y),
-      map_mul, map_pow, map_natCast]
-  have hPA : ∀ k m', P k m' ∈ W.AΔ := fun k m' =>
-    W.AΔ.sum_mem fun y _ => W.AΔ.mul_mem (W.AΔ.algebraMap_mem _) (W.AΔ.pow_mem hΦ _)
-  have hP'A : ∀ k m, P' k m ∈ W.AΔ := fun k m =>
-    W.AΔ.sum_mem fun y _ => W.AΔ.mul_mem (W.AΔ.algebraMap_mem _) (W.AΔ.pow_mem hΦ _)
-  have hUA : ∀ k m', U k m' ∈ W.AΔ := fun k m' => W.AΔ.sum_mem fun y _ =>
-    W.AΔ.mul_mem (W.AΔ.mul_mem (W.AΔ.mul_mem (hLA _) (hLA _)) (hgA y)) (W.AΔ.algebraMap_mem _)
-  have hU'A : ∀ k m, U' k m ∈ W.AΔ := fun k m => W.AΔ.sum_mem fun y _ =>
-    W.AΔ.mul_mem (W.AΔ.mul_mem (W.AΔ.mul_mem (hLA _) (hLA _)) (hgA y)) (W.AΔ.algebraMap_mem _)
-  obtain ⟨eK, heKA, heK⟩ := phiK W hπ h2 hj M X
-  have hcong : ∀ m m', ∃ β ∈ W.AΔ, L ^ (2 * E) * ((if m' = m then L ^ (2 * σ) else 0) -
-      ∑ k, Z' k m * Z k m') = f * β := by
-    intro m m'
-    obtain ⟨R0, hR0⟩ := poly_cong hinj PD.p K0 E sol hHH (fun y k m => ((PD.p : ℕ) : O) ^ (E - Ex PD.p y) * iv k m y)
-      (fun y k m' => ((PD.p : ℕ) : O) ^ (E - Ex PD.p y) * sh k y m')
-      (fun y hy k m => by
-        rw [map_mul, map_pow, map_natCast, hiv, ← mul_assoc, ← pow_add,
-          Nat.sub_add_cancel (hEy y (Finset.mem_range.2 hy))])
-      (fun y hy k m' => by
-        rw [map_mul, map_pow, map_natCast, hsh, ← mul_assoc, ← pow_add,
-          Nat.sub_add_cancel (hEy y (Finset.mem_range.2 hy))])
-      Φ m m'
-    have hR0' : ∑ k, P k m' * P' k m = (if m' = m then L ^ (2 * E) else 0) +
-        f * (eK * Polynomial.aeval Φ R0) := by
-      have heK' : Φ ^ K0 = f * eK := heK
-      rw [hR0, heK', mul_assoc]
-      congr 1
-      split_ifs <;> simp [L]
-    have hsum : L ^ (2 * E) * ∑ k, Z' k m * Z k m' = L ^ (2 * σ) * ∑ k, P k m' * P' k m -
-        f * ∑ k, (L ^ σ * P' k m * U k m' + L ^ σ * U' k m * P k m' - f * U' k m * U k m') := by
-      rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
-      refine Finset.sum_congr rfl fun k _ => ?_
-      linear_combination (L ^ E * Z k m') * hZ' k m + (L ^ σ * P' k m - f * U' k m) * hZ k m'
-    refine ⟨-(L ^ (2 * σ) * (eK * Polynomial.aeval Φ R0)) +
-        ∑ k, (L ^ σ * P' k m * U k m' + L ^ σ * U' k m * P k m' - f * U' k m * U k m'), ?_, ?_⟩
-    · refine W.AΔ.add_mem (W.AΔ.neg_mem (W.AΔ.mul_mem (hLA _) (W.AΔ.mul_mem heKA (aeval_mem_AΔ W R0 hΦ))))
-        (W.AΔ.sum_mem fun k _ => W.AΔ.sub_mem (W.AΔ.add_mem
-          (W.AΔ.mul_mem (W.AΔ.mul_mem (hLA _) (hP'A k m)) (hUA k m'))
-          (W.AΔ.mul_mem (W.AΔ.mul_mem (hLA _) (hU'A k m)) (hPA k m')))
-          (W.AΔ.mul_mem (W.AΔ.mul_mem (f_mem W hπ M X) (hU'A k m)) (hUA k m')))
-    · rw [mul_sub, hsum, hR0']
-      split_ifs
-      · ring
-      · ring
-  refine ⟨d, b, hb, fun m => ?_⟩
-
-  set D : Fin d → LetA O n := fun m' => (if m' = m then L ^ (2 * σ) else 0) - ∑ k, Z' k m * Z k m'
-  have hDA : ∀ m', D m' ∈ W.AΔ := fun m' => W.AΔ.sub_mem (by split_ifs; exact hLA _; exact W.AΔ.zero_mem)
-    (W.AΔ.sum_mem fun k _ => W.AΔ.mul_mem (hZ'A k m) (hZA k m'))
-  set W1 := ∑ m', D m' • ((W.φD T) ^ j) (b m')
-  have hW1 : W1 ∈ Formalism.MainNotions.ArcLiftingSetup.Pp W T i j :=
-    (Formalism.MainNotions.ArcLiftingSetup.Pp W T i j).sum_mem fun m' _ => Pp_gen W T i j (hDA m') (hb.1 m')
-  have hW1f : Formalism.MainNotions.ArcLiftingSetup.InFP W T i j f W1 := by
-    refine sat W hsp hA T hT i j M X hW1 (2 * E) ?_
-    choose β hβA hβ using hcong m
-    refine ⟨∑ m', β m' • ((W.φD T) ^ j) (b m'),
-      (Formalism.MainNotions.ArcLiftingSetup.Pp W T i j).sum_mem fun m' _ => Pp_gen W T i j (hβA m') (hb.1 m'), ?_⟩
-    rw [lsmul_eq, Finset.smul_sum, Finset.smul_sum]
-    refine Finset.sum_congr rfl fun m' _ => ?_
-    rw [smul_smul, smul_smul]
-    congr 1
-    exact hβ m'
-  set G0 := ∑ k, (Z' k m * (L ^ σ * g0)) • ((W.φD T) ^ j) (b k)
-  have hG0 : G0 ∈ Formalism.MainNotions.ArcLiftingSetup.Pp W T i j := (Formalism.MainNotions.ArcLiftingSetup.Pp W T i j).sum_mem fun k _ =>
-    Pp_gen W T i j (W.AΔ.mul_mem (hZ'A k m) (W.AΔ.mul_mem (hLA _) hg0A)) (hb.1 k)
-  have hV : ((PD.p : ℕ) : O) ^ (2 * σ) • ((W.φD T) ^ j) (b m) - ∑ k, Z' k m • zs k = W1 - f • G0 := by
-    have e1 : ((PD.p : ℕ) : O) ^ (2 * σ) • ((W.φD T) ^ j) (b m) =
-        ∑ m', (if m' = m then L ^ (2 * σ) else 0) • ((W.φD T) ^ j) (b m') := by
-      rw [lsmul_eq]
-      simp only [ite_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-      rfl
-    have e2 : ∑ k, Z' k m • zs k = f • G0 + ∑ m', (∑ k, Z' k m * Z k m') • ((W.φD T) ^ j) (b m') := by
-      simp only [hrel, smul_add, Finset.sum_add_distrib, hs00, G0, Finset.smul_sum, smul_smul, Finset.sum_smul]
-      congr 1
-      · refine Finset.sum_congr rfl fun k _ => ?_
-        congr 1; ring
-      · rw [Finset.sum_comm]
-    rw [e1, e2]
-    simp only [W1, D, sub_smul, Finset.sum_sub_distrib]
-    abel
-  obtain ⟨p', hp', hVp⟩ := inMultiple_sub W T i j f hW1f (inMultiple_of_mem W T i j f hG0)
-  refine ⟨p', hp', ?_⟩
-  have : ((PD.p : ℕ) : O) ^ (2 * σ) • ((W.φD T) ^ j) (b m) - f • p' = ∑ k, Z' k m • zs k := by
-    rw [← hVp, ← hV]; abel
-  rw [this]
-  exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (hzs k)
 
 theorem span_gen [NeZero n] [IsDomain O] (hinj : Function.Injective (algebraMap O LL))
     (hO2 : ∀ x : LL, 0 ≤ v x → ∃ o : O, algebraMap O LL o = x) (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W)
@@ -1602,20 +1219,5 @@ end Formalism.MainNotions.CrystallineLiftingInputs.truncatedSeriesData
 namespace Formalism.MainNotions.CrystallineLiftingInputs.truncatedSeriesData
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
-
-theorem truncation_clause_of_tools (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F)
-    (h1 : Formalism.MainNotions.CrystallineLiftingInputs.adm1 D HW F Cm) (h8 : Formalism.MainNotions.CrystallineLiftingInputs.adm8 D HW F) (h9 : Formalism.MainNotions.CrystallineLiftingInputs.adm9 D HW F) :
-    Formalism.MainNotions.CrystallineLiftingInputs.adm15 D HW F Cm := by
-  refine ⟨Formalism.MainNotions.CrystallineLiftingInputs.TToolAlg_holds, fun l _ K LL hg _ => ?_⟩
-  have hP9 : Formalism.MainNotions.DeltaInvariantLattices.P9W ((HW l).W K 1 LL hg) := (h1 l K 1 LL hg).2.2.2.2.2.2.2.2.1
-  have hinj : Function.Injective (algebraMap ↥(OL LL) ↥LL.1) := Subtype.val_injective
-  have hO2 : ∀ x : ↥LL.1, 0 ≤ (D.loc l).v LL x → ∃ o : ↥(OL LL), algebraMap ↥(OL LL) ↥LL.1 o = x :=
-    fun x hx => ⟨⟨x, ((D.loc l).v_O LL x).1 hx⟩, rfl⟩
-  letI : IsLocalRing ↥(OL LL) := Formalism.MainNotions.LiftingTheory.lkd_local (D.loc l) LL
-  have : IsAdicComplete (IsLocalRing.maximalIdeal ↥(OL LL)) ↥(OL LL) := Formalism.MainNotions.CrystallineLiftingInputs.OL.OL_complete_max (D.loc l) LL
-  have hlm : (((((D.loc l).PD K).p : ℕ)) : ↥(OL LL)) ∈ IsLocalRing.maximalIdeal ↥(OL LL) := by
-    rw [(D.loc l).PD_p K]; exact Formalism.MainNotions.CrystallineLiftingInputs.OL.l_mem_max (D.loc l) LL
-  exact ⟨tTool1_of _ hinj hO2 hP9 (h8 l K 1 LL hg),
-    tTool2_of _ hinj hO2 hlm hP9 (h8 l K 1 LL hg) (h9 l K 1 LL hg)⟩
 
 end Formalism.MainNotions.CrystallineLiftingInputs.truncatedSeriesData

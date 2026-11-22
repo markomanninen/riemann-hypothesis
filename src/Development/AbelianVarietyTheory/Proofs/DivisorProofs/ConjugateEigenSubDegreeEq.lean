@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,7 +127,8 @@ theorem trace_pi (ι : Type) [Fintype ι] [DecidableEq ι] (V : Type) [AddCommGr
         have hs : (A ∘ₗ ∑ i : ι, LinearMap.single ℂ (fun _ => V) i ∘ₗ LinearMap.proj i) =
             ∑ i : ι, (A ∘ₗ LinearMap.single ℂ (fun _ => V) i) ∘ₗ LinearMap.proj i := by
           apply LinearMap.ext; intro v; simp
-        rw [hs, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hs, map_sum]
     _ = _ := by
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [LinearMap.trace_comp_comm']
@@ -139,7 +144,7 @@ theorem lift_add {Γ K : Subgroup G} (ξ : Representation ℂ Γ W)
     (v v' : DoubleCoset.Quotient (Γ : Set G) (K : Set G) → W) :
     lift Γ K ξ (v + v') = lift Γ K ξ v + lift Γ K ξ v' := by
   funext g
-  simp only [lift, Pi.add_apply, map_add]
+  simp only [lift, Pi.add_apply, map_add (f := _)]
   rw [← finsum_add_distrib (Set.toFinite _) (Set.toFinite _)]
   congr 1; funext q
   rw [finsum_mem_add_distrib (cosetSet_finite hloc _ g), smul_add]
@@ -166,7 +171,7 @@ theorem lift_ev {Γ K : Subgroup G} (ξ : Representation ℂ Γ W)
     lift Γ K ξ (fun q => φ (Quotient.out q)) g = φ g := by
   simp only [lift, sum_cosetSet_ev ξ hloc φ h1 h2]
   rw [finsum_eq_single _ (DoubleCoset.mk Γ K g)]
-  · obtain ⟨γ₀, hγ₀, k, hk, he⟩ := (DoubleCoset.eq Γ K _ _).1 (DoubleCoset.out_eq' Γ K (DoubleCoset.mk Γ K g))
+  · obtain ⟨γ₀, hγ₀, k, hk, he⟩ := (@DoubleCoset.eq _ _ Γ K _ _).1 (DoubleCoset.out_eq' (DoubleCoset.mk Γ K g))
     have hc := card_cosetSet Γ K (Quotient.out (DoubleCoset.mk Γ K g)) ⟨γ₀, hγ₀⟩ k hk
     rw [← he] at hc
     rw [hc, smul_smul]
@@ -223,7 +228,8 @@ theorem lift_mul_left {Γ K : Subgroup G} (ξ : Representation ℂ Γ W)
   have hin : ∀ x w, ∑ᶠ γ' ∈ cosetSet Γ K x ((γ : G) * g), ξ γ' w = ξ γ (∑ᶠ γ' ∈ cosetSet Γ K x g, ξ γ' w) := by
     intro x w
     have hfin := cosetSet_finite hloc x g
-    rw [cosetSet_mul_left, finsum_mem_image (mul_right_injective γ).injOn,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cosetSet_mul_left, finsum_mem_image (mul_right_injective γ).injOn,
       finsum_mem_eq_finite_toFinset_sum _ hfin, finsum_mem_eq_finite_toFinset_sum _ hfin, map_sum]
     refine Finset.sum_congr rfl fun γ' _ => ?_
     rw [map_mul, Module.End.mul_apply]
@@ -332,7 +338,8 @@ theorem finite_trace_formula : ∀ (G : Type) [Group G] (Γ K : Subgroup G) (W :
       by_contra hn
       have h0 : f ((Quotient.out q)⁻¹ * γ * Quotient.out q) = 0 := by_contra fun h => hn (hS γ h)
       exact hγ (by simp [h0])
-  rw [hblock, map_smul, map_sum, smul_eq_mul, one_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hblock, map_smul, map_sum, smul_eq_mul, one_div]
   congr 1
   rw [finsum_eq_sum_of_support_subset _ (s := S)]
   · simp [map_smul]

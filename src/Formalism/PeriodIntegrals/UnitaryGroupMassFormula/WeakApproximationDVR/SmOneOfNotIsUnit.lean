@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,11 @@ lemma Sm.mul (hϖ : Irreducible ϖ) {k l : ℤ} {a b : Q} (ha : Sm Q ϖ k a) (hb
 lemma Sm.add {k : ℤ} {a b : Q} (ha : Sm Q ϖ k a) (hb : Sm Q ϖ k b) : Sm Q ϖ k (a + b) := by
   obtain ⟨c, rfl⟩ := ha
   obtain ⟨d, rfl⟩ := hb
-  exact ⟨c + d, by rw [map_add]; ring⟩
+  exact ⟨c + d, by rw [map_add (f := _)]; ring⟩
 
 lemma Sm.neg {k : ℤ} {a : Q} (ha : Sm Q ϖ k a) : Sm Q ϖ k (-a) := by
   obtain ⟨c, rfl⟩ := ha
   exact ⟨-c, by rw [map_neg]; ring⟩
-
-lemma Sm.sub {k : ℤ} {a b : Q} (ha : Sm Q ϖ k a) (hb : Sm Q ϖ k b) : Sm Q ϖ k (a - b) := by
-  rw [sub_eq_add_neg]; exact ha.add hb.neg
 
 lemma Sm.zero (k : ℤ) : Sm Q ϖ k (0 : Q) := ⟨0, by simp⟩
 
@@ -113,7 +114,7 @@ lemma one_add_of_sm (hϖ : Irreducible ϖ) {t : Q} (ht : Sm Q ϖ 1 t) :
     exact Ideal.mul_mem_right _ _ ((IsLocalRing.mem_maximalIdeal _).mpr hϖ.not_isUnit)
   obtain ⟨u, hu⟩ := IsLocalRing.isUnit_one_sub_self_of_mem_nonunits _ hm
   have he : (1 : Q) + algebraMap W Q ϖ ^ (1 : ℤ) * algebraMap W Q c = algebraMap W Q (u : W) := by
-    rw [hu, zpow_one, sub_neg_eq_add, map_add, map_one, map_mul]
+    rw [hu, zpow_one, sub_neg_eq_add, map_add (f := _), map_one, map_mul]
   have hU : algebraMap W Q (u : W) ≠ 0 :=
     (map_ne_zero_iff _ (IsFractionRing.injective W Q)).mpr u.ne_zero
   refine ⟨he ▸ hU, ?_⟩
@@ -166,9 +167,5 @@ lemma small_one_add_pow (hϖ : Irreducible ϖ) {q : Q} (h : Sm Q ϖ 1 q) {r : �
   obtain ⟨h1, h2⟩ := one_add_of_sm hϖ (ht.mono hϖ (by exact_mod_cast hr))
   refine ⟨h1, ?_⟩
   simpa using ht.mul hϖ h2
-
-lemma Sm.of_toNat (hϖ : Irreducible ϖ) {k : ℤ} {a : Q} (ha : Sm Q ϖ (k.toNat : ℤ) a) :
-    Sm Q ϖ k a :=
-  ha.mono hϖ (Int.self_le_toNat k)
 
 end PI.WADVR

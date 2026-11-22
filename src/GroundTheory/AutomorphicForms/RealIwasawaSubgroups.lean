@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.RealGroups
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StrictlyUpperRank
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.RealGroups
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StrictlyUpperRank
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -14,7 +18,6 @@ variable {𝕜 : Type*} [RCLike 𝕜] {n : Type*} [Fintype n] [LinearOrder n]
 section StrictUpper
 
 variable (n) in
-
 abbrev StrictUpperIndex := {p : n × n // p.1 < p.2}
 
 def strictUpperMatrix (v : StrictUpperIndex n → 𝕜) : Matrix n n 𝕜 :=
@@ -27,13 +30,10 @@ def IsStrictUpper (X : Matrix n n 𝕜) : Prop := ∀ i j, j ≤ i → X i j = 0
 theorem strictUpperMatrix_apply (v : StrictUpperIndex n → 𝕜) (i j : n) :
     strictUpperMatrix v i j = if h : i < j then v ⟨(i, j), h⟩ else 0 := rfl
 
-@[simp] theorem strictUpperCoords_apply (X : Matrix n n 𝕜) (p : StrictUpperIndex n) :
-    strictUpperCoords X p = X p.1.1 p.1.2 := rfl
-
 @[simp] theorem strictUpperCoords_strictUpperMatrix (v : StrictUpperIndex n → 𝕜) :
     strictUpperCoords (strictUpperMatrix v) = v := by
   funext p
-  simp [strictUpperMatrix_apply, p.2]
+  simp [strictUpperCoords, strictUpperMatrix_apply, p.2]
 
 theorem isStrictUpper_strictUpperMatrix (v : StrictUpperIndex n → 𝕜) :
     IsStrictUpper (strictUpperMatrix v) := by
@@ -44,7 +44,7 @@ theorem strictUpperMatrix_strictUpperCoords {X : Matrix n n 𝕜} (hX : IsStrict
     strictUpperMatrix (strictUpperCoords X) = X := by
   ext i j
   by_cases h : i < j
-  · simp [strictUpperMatrix_apply, h]
+  · simp [strictUpperMatrix_apply, strictUpperCoords, h]
   · simp [strictUpperMatrix_apply, h, hX i j (not_lt.1 h)]
 
 theorem strictUpperMatrix_add (v w : StrictUpperIndex n → 𝕜) :
@@ -65,24 +65,15 @@ theorem strictUpperCoords_smul (c : 𝕜) (X : Matrix n n 𝕜) :
 
 @[simp] theorem strictUpperCoords_one : strictUpperCoords (1 : Matrix n n 𝕜) = 0 := by
   funext p
-  simp [one_apply, p.2.ne]
+  simp [strictUpperCoords, p.2.ne]
 
 theorem IsStrictUpper.isUpperTriangular {X : Matrix n n 𝕜} (hX : IsStrictUpper X) :
     X.IsUpperTriangular := fun _ _ h => hX _ _ h.le
 
-theorem IsStrictUpper.mul_left {X Y : Matrix n n 𝕜} (hX : X.IsUpperTriangular)
-    (hY : IsStrictUpper Y) : IsStrictUpper (X * Y) := by
-  intro i j hji
-  rw [mul_apply]
-  refine Finset.sum_eq_zero fun k _ => ?_
-  rcases lt_or_ge k i with hki | hik
-  · rw [hX hki, zero_mul]
-  · rw [hY k j (hji.trans hik), mul_zero]
-
 theorem IsStrictUpper.mul_right {X Y : Matrix n n 𝕜} (hX : IsStrictUpper X)
     (hY : Y.IsUpperTriangular) : IsStrictUpper (X * Y) := by
   intro i j hji
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   refine Finset.sum_eq_zero fun k _ => ?_
   rcases le_or_gt k i with hki | hik
   · rw [hX i k hki, zero_mul]
@@ -106,9 +97,6 @@ theorem IsStrictUpper.pow_card_eq_zero {X : Matrix n n 𝕜} (hX : IsStrictUpper
   have h1 := rank_add_le_of_pow_ne_zero hX _ i j h
   have h2 := rankBelow_lt_card j
   omega
-
-theorem IsStrictUpper.isNilpotent {X : Matrix n n 𝕜} (hX : IsStrictUpper X) : IsNilpotent X :=
-  ⟨_, hX.pow_card_eq_zero⟩
 
 theorem continuous_strictUpperMatrix :
     Continuous (strictUpperMatrix : (StrictUpperIndex n → 𝕜) → Matrix n n 𝕜) := by
@@ -202,7 +190,7 @@ def unipotentCoordsHomeomorph : (StrictUpperIndex n → 𝕜) ≃ₜ upperUnipot
     · exact continuous_const.add continuous_strictUpperMatrix
     · show Continuous fun v : StrictUpperIndex n → 𝕜 =>
         ∑ k ∈ Finset.range (Fintype.card n), (-strictUpperMatrix v) ^ k
-      exact continuous_finset_sum _ fun k _ => ((continuous_strictUpperMatrix (𝕜 := 𝕜) (n := n)).neg).pow k
+      exact continuous_finsetSum _ fun k _ => ((continuous_strictUpperMatrix (𝕜 := 𝕜) (n := n)).neg).pow k
   continuous_invFun :=
     continuous_pi fun p => (Units.continuous_val.comp continuous_subtype_val).matrix_elem _ _
 
@@ -242,8 +230,8 @@ def diagPosSubgroup (n 𝕜 : Type*) [RCLike 𝕜] [Fintype n] [DecidableEq n] :
       rw [diagonal_mul_diagonal, ← diagonal_one]
       congr 1
       funext i
-      simp only [Pi.inv_apply, RCLike.ofReal_inv]
-      exact mul_inv_cancel₀ (by exact_mod_cast (ha i).ne')
+      rw [Pi.inv_apply, RCLike.ofReal_inv]
+      exact mul_inv_cancel₀ (RCLike.ofReal_ne_zero.2 (ha i).ne')
     calc ((g⁻¹ : GL n 𝕜) : Matrix n n 𝕜)
         = ((g⁻¹ : GL n 𝕜) : Matrix n n 𝕜) * ((g : Matrix n n 𝕜) *
             (diagonal fun i => ((a⁻¹) i : 𝕜))) := by rw [hga, e1, Matrix.mul_one]
@@ -257,7 +245,7 @@ theorem diagPosSubgroup_le_upperPosSubgroup : diagPosSubgroup n 𝕜 ≤ upperPo
   · rw [hga]; exact blockTriangular_diagonal _
   · rw [hga, diagonal_apply_eq]; exact RCLike.ofReal_pos.2 (ha i)
 
-def diagPosOf (a : PosDiag n) : GL n 𝕜 where
+def diagPosOf (a : PosDiag (n := n)) : GL n 𝕜 where
   val := diagonal fun i => (a.1 i : 𝕜)
   inv := diagonal fun i => ((a.1 i)⁻¹ : 𝕜)
   val_inv := by
@@ -269,13 +257,13 @@ def diagPosOf (a : PosDiag n) : GL n 𝕜 where
     congr 1; funext i
     exact inv_mul_cancel₀ (by exact_mod_cast (a.2 i).ne')
 
-@[simp] theorem coe_diagPosOf (a : PosDiag n) :
+@[simp] theorem coe_diagPosOf (a : PosDiag (n := n)) :
     ((diagPosOf a : GL n 𝕜) : Matrix n n 𝕜) = diagonal fun i => (a.1 i : 𝕜) := rfl
 
-theorem coe_diagPosOf_inv (a : PosDiag n) :
+theorem coe_diagPosOf_inv (a : PosDiag (n := n)) :
     (((diagPosOf a)⁻¹ : GL n 𝕜) : Matrix n n 𝕜) = diagonal fun i => ((a.1 i)⁻¹ : 𝕜) := rfl
 
-theorem diagPosOf_mem (a : PosDiag n) : diagPosOf a ∈ diagPosSubgroup n 𝕜 := ⟨a.1, a.2, rfl⟩
+theorem diagPosOf_mem (a : PosDiag (n := n)) : diagPosOf a ∈ diagPosSubgroup n 𝕜 := ⟨a.1, a.2, rfl⟩
 
 theorem re_pos_of_pos {z : 𝕜} (hz : 0 < z) : 0 < RCLike.re z := (RCLike.pos_iff.1 hz).1
 
@@ -295,7 +283,7 @@ theorem eq_diagonal_of_mem_diagPos {g : GL n 𝕜} (hg : g ∈ diagPosSubgroup n
   congr 1; funext i
   simp
 
-def diagPosHomeomorph : PosDiag n ≃ₜ diagPosSubgroup n 𝕜 where
+def diagPosHomeomorph : PosDiag (n := n) ≃ₜ diagPosSubgroup n 𝕜 where
   toFun a := ⟨diagPosOf a, diagPosOf_mem a⟩
   invFun g := ⟨fun i => RCLike.re (((g : GL n 𝕜) : Matrix n n 𝕜) i i),
     fun i => re_pos_of_pos (diag_pos_of_mem_diagPos g.2 i)⟩
@@ -319,24 +307,24 @@ def diagPosHomeomorph : PosDiag n ≃ₜ diagPosSubgroup n 𝕜 where
     exact RCLike.continuous_re.comp
       ((Units.continuous_val.comp continuous_subtype_val).matrix_elem i i)
 
-@[simp] theorem coe_diagPosHomeomorph (a : PosDiag n) :
+@[simp] theorem coe_diagPosHomeomorph (a : PosDiag (n := n)) :
     ((diagPosHomeomorph a : diagPosSubgroup n 𝕜) : GL n 𝕜) = diagPosOf a := rfl
 
-theorem conj_unipotentOfCoords (a : PosDiag n) (v : StrictUpperIndex n → 𝕜) :
+theorem conj_unipotentOfCoords (a : PosDiag (n := n)) (v : StrictUpperIndex n → 𝕜) :
     diagPosOf a * unipotentOfCoords v * (diagPosOf a)⁻¹ =
       unipotentOfCoords (fun p => ((a.1 p.1.1 / a.1 p.1.2 : ℝ) : 𝕜) * v p) := by
   apply Units.ext
   rw [Units.val_mul, Units.val_mul, coe_diagPosOf, coe_diagPosOf_inv, coe_unipotentOfCoords,
     coe_unipotentOfCoords]
   ext i j
-  rw [mul_diagonal, diagonal_mul, Matrix.add_apply, Matrix.add_apply, one_apply, strictUpperMatrix_apply,
-    strictUpperMatrix_apply]
+  rw [mul_diagonal, diagonal_mul, Matrix.add_apply, Matrix.add_apply, Matrix.one_apply,
+    strictUpperMatrix_apply, strictUpperMatrix_apply]
   by_cases hij : i = j
   · subst hij
     have h0 : (a.1 i : 𝕜) ≠ 0 := by exact_mod_cast (a.2 i).ne'
     simp [h0]
   · by_cases h : i < j
-    · simp only [hij, h, if_false, dite_true, zero_add]
+    · simp only [hij, h, ite_false, dite_true, zero_add]
       push_cast
       ring
     · simp [hij, h]
@@ -365,7 +353,6 @@ theorem upperPosDiagPart_inv_mul_mem (b : upperPosSubgroup n 𝕜) :
   rw [mem_upperUnipotentSubgroup, e]
   refine ⟨(blockTriangular_diagonal _).mul b.2.1, fun i => ?_⟩
   rw [diagonal_mul]
-  push_cast
   rw [ofReal_re_of_pos (b.2.2 i)]
   exact inv_mul_cancel₀ (b.2.2 i).ne'
 
@@ -430,54 +417,33 @@ noncomputable def iwasawaDelta (g : GL n 𝕜) : ℝ≥0 :=
   ∏ p : StrictUpperIndex n,
     (‖(g : Matrix n n 𝕜) p.1.1 p.1.1‖₊ / ‖(g : Matrix n n 𝕜) p.1.2 p.1.2‖₊) ^ Module.finrank ℝ 𝕜
 
-theorem iwasawaDelta_mul {g h : GL n 𝕜} (hg : (g : Matrix n n 𝕜).IsUpperTriangular)
-    (hh : (h : Matrix n n 𝕜).IsUpperTriangular) :
-    iwasawaDelta (g * h) = iwasawaDelta g * iwasawaDelta h := by
-  simp only [iwasawaDelta, ← Finset.prod_mul_distrib, ← mul_pow]
-  refine Finset.prod_congr rfl fun p _ => ?_
-  rw [Units.val_mul, mul_apply_self_of_isUpperTriangular hg hh,
-    mul_apply_self_of_isUpperTriangular hg hh, nnnorm_mul, nnnorm_mul, mul_div_mul_comm]
-
-@[simp] theorem iwasawaDelta_one : iwasawaDelta (1 : GL n 𝕜) = 1 := by
-  simp [iwasawaDelta]
-
 theorem iwasawaDelta_ne_zero {g : GL n 𝕜} (hg : g ∈ upperPosSubgroup n 𝕜) :
     iwasawaDelta g ≠ 0 := by
   refine Finset.prod_ne_zero_iff.2 fun p _ => pow_ne_zero _ (div_ne_zero ?_ ?_)
-  · exact nnnorm_ne_zero_iff.2 (hg.2 _).ne'
-  · exact nnnorm_ne_zero_iff.2 (hg.2 _).ne'
+  · exact nnNorm_ne_zero_iff.2 (hg.2 _).ne'
+  · exact nnNorm_ne_zero_iff.2 (hg.2 _).ne'
 
-theorem iwasawaDelta_diagUnipotentMul [WellFoundedLT n] [LocallyFiniteOrderBot n]
-    (p : diagPosSubgroup n 𝕜 × upperUnipotentSubgroup n 𝕜) :
-    iwasawaDelta ((diagUnipotentMul p : upperPosSubgroup n 𝕜) : GL n 𝕜) =
-      iwasawaDelta (p.1 : GL n 𝕜) := by
-  rw [coe_diagUnipotentMul, iwasawaDelta_mul (diagPosSubgroup_le_upperPosSubgroup p.1.2).1
-    p.2.2.1]
-  have : iwasawaDelta (p.2 : GL n 𝕜) = 1 := by
-    simp [iwasawaDelta, p.2.2.2]
-  rw [this, mul_one]
-
-theorem iwasawaDelta_diagPosOf (a : PosDiag n) :
+theorem iwasawaDelta_diagPosOf (a : PosDiag (n := n)) :
     (iwasawaDelta (diagPosOf a : GL n 𝕜) : ℝ) =
       ∏ p : StrictUpperIndex n, (a.1 p.1.1 / a.1 p.1.2) ^ Module.finrank ℝ 𝕜 := by
   simp only [iwasawaDelta, coe_diagPosOf, diagonal_apply_eq, NNReal.coe_prod, NNReal.coe_pow,
-    NNReal.coe_div, coe_nnnorm, RCLike.norm_ofReal]
+    NNReal.coe_div, coe_nnNorm, RCLike.norm_ofReal]
   refine Finset.prod_congr rfl fun p _ => ?_
   rw [abs_of_pos (a.2 _), abs_of_pos (a.2 _)]
 
 theorem continuous_iwasawaDelta_diagPos :
     Continuous (fun a : diagPosSubgroup n 𝕜 => iwasawaDelta (a : GL n 𝕜)) := by
   have e : (fun a : diagPosSubgroup n 𝕜 => iwasawaDelta (a : GL n 𝕜)) =
-      (fun a : PosDiag n => iwasawaDelta (diagPosOf a : GL n 𝕜)) ∘ diagPosHomeomorph.symm := by
+      (fun a : PosDiag (n := n) => iwasawaDelta (diagPosOf a : GL n 𝕜)) ∘ diagPosHomeomorph.symm := by
     funext a
     conv_lhs => rw [← diagPosHomeomorph.apply_symm_apply a]
     rfl
   rw [e]
   refine Continuous.comp ?_ diagPosHomeomorph.symm.continuous
   refine continuous_induced_rng.2 ?_
-  show Continuous fun a : PosDiag n => (iwasawaDelta (diagPosOf a : GL n 𝕜) : ℝ)
+  show Continuous fun a : PosDiag (n := n) => (iwasawaDelta (diagPosOf a : GL n 𝕜) : ℝ)
   simp_rw [iwasawaDelta_diagPosOf]
-  refine continuous_finset_prod _ fun p _ => (Continuous.div ?_ ?_ fun a => (a.2 _).ne').pow _
+  refine continuous_finsetProd _ fun p _ => (Continuous.div ?_ ?_ fun a => (a.2 _).ne').pow _
   · exact (continuous_apply _).comp continuous_subtype_val
   · exact (continuous_apply _).comp continuous_subtype_val
 

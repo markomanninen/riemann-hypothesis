@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycGrp
+module
+
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.InertiaGaloisSymmetry.CycGrp
+
+@[expose] public section
 
 open NumberField IntermediateField
 
@@ -38,7 +42,11 @@ theorem image_mem_of_fixed {Ω : Type} [Field Ω] [IsAlgClosed Ω] (J : H.E →+
   have : IsScalarTower ℚ H.E (Cond.Cyc H.condN) := IsScalarTower.of_algebraMap_eq fun x => ((emb H).commutes x).symm
   have : Algebra.IsAlgebraic H.E (Cond.Cyc H.condN) := Algebra.IsAlgebraic.tower_top (K := ℚ) H.E
   let _ : Algebra H.E Ω := J.toAlgebra
-  let Ψ : Cond.Cyc H.condN →ₐ[H.E] Ω := IsAlgClosed.lift
+  let Ψ : Cond.Cyc H.condN →ₐ[H.E] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have h1 : Ψ (emb H x) = J x := Ψ.commutes x
   rw [← h1]
   have h2 := H.emb_mem_adjoin_of_fixed hm x hx
@@ -48,7 +56,7 @@ theorem image_mem_of_fixed {Ω : Type} [Field Ω] [IsAlgClosed Ω] (J : H.E →+
   | algebraMap r =>
     rw [eq_ratCast, map_ratCast]
     exact SubfieldClass.ratCast_mem M r
-  | add a b _ _ ha hb => rw [map_add]; exact M.add_mem ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact M.add_mem ha hb
   | inv a _ ha => rw [map_inv₀]; exact M.inv_mem ha
   | mul a b _ _ ha hb => rw [map_mul]; exact M.mul_mem ha hb
 

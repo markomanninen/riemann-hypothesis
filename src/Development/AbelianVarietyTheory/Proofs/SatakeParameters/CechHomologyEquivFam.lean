@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,8 @@ theorem famMap_d (hres : ∀ s t (h : s ⊆ t), s.Nonempty → ∀ x, g t (Cube.
   change _ = GlobalTheory.DI.delta (famMap g (m + 1) x) t
   unfold GlobalTheory.DI.delta
   by_cases ht : t.card = m + 1 + 1
-  · rw [famMap_of_eq g _ ht, Cube.d_apply_extend, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [famMap_of_eq g _ ht, Cube.d_apply_extend, map_sum]
     refine Finset.sum_congr rfl fun i hi => ?_
     have hn : (t.erase i).Nonempty := by
       rw [← Finset.card_pos, Finset.card_erase_of_mem hi, ht]; omega
@@ -52,7 +57,7 @@ theorem famMap_d (hres : ∀ s t (h : s ⊆ t), s.Nonempty → ∀ x, g t (Cube.
 
 theorem famMap_injective (hinj : ∀ s, s.Nonempty → Function.Injective (g s)) (m : ℕ) :
     Function.Injective (famMap g (m + 1)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   funext s
   have h := congrFun hx s.1
@@ -187,8 +192,8 @@ theorem ker_cocMap (hinj : ∀ s, s.Nonempty → Function.Injective (g s))
 
 end GlobalTheory.CechFam
 
-open GlobalTheory.CechFam in
 
+open GlobalTheory.CechFam in
 theorem GlobalTheory.cechHomologyEquivFam : ∀ (R : Type) [Field R] (ι : Type) [LinearOrder ι] (E : Type) [AddCommGroup E] [Module R E]
     (A : Finset ι → Submodule R E) (C : GlobalTheory.Cube ι R) (g : ∀ s, C.obj s →ₗ[R] E),
     (∀ s, s.Nonempty → Function.Injective (g s)) → (∀ s, s.Nonempty → LinearMap.range (g s) = A s) →

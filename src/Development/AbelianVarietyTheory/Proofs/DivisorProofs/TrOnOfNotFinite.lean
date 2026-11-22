@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexProd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrOnMapOfInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfIsOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexProd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EquivOfISupRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TrOnMapOfInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem trOn_map (j : X →ₗ[ℂ] V) (hj : Function.Injective j) (M : Submodul
 theorem trOn_of_not_finite (M : Submodule ℂ V) (L : V →ₗ[ℂ] V) (h : ¬ Module.Finite ℂ M) : trOn M L = 0 := by
   unfold trOn
   split_ifs with hL
-  · rw [LinearMap.trace, dif_neg]
+  · rw [LinearMap.trace, dite_eq_right]
     · rfl
     · rintro ⟨s, ⟨b⟩⟩
       exact h (Module.Finite.of_basis b)
@@ -126,16 +130,19 @@ theorem exists_factor (σ : Representation ℂ H W) [σ.IsIrreducible] (τ : Rep
   have hsum : ∀ x, x = ∑ i, (s i).toLinearMap ((p i).toLinearMap x) := fun x => by
     rw [← sub_eq_zero]
     refine hp _ fun i => ?_
-    simp only [map_sub, map_sum, hps]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, hps]
     simp
   choose b hb using fun i j => schur σ K h0 ((p j).comp (B.comp (s i)))
   have hb' : ∀ i j w, (p j).toLinearMap (B.toLinearMap ((s i).toLinearMap w)) = b i j • w := hb
   refine ⟨∑ i, b i i, fun A a ha hA => ?_⟩
   have hform : ∀ y, A (B.toLinearMap y) = ∑ i, ∑ j, b i j • (s j).toLinearMap (a ((p i).toLinearMap y)) := fun y => by
     conv_lhs => rw [hsum y]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [hsum (B.toLinearMap _), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum (B.toLinearMap _), map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hb', map_smul, map_smul, hA]
   have hY : ∀ y ∈ fixed τ K, (A ∘ₗ B.toLinearMap) y ∈ fixed τ K := fun y hy => by
@@ -145,7 +152,7 @@ theorem exists_factor (σ : Representation ℂ H W) [σ.IsIrreducible] (τ : Rep
   let sU : ι → (fixed σ K →ₗ[ℂ] fixed τ K) := fun i => (s i).toLinearMap.restrict fun v hv => map_fixed _ K hv
   let pU : ι → (fixed τ K →ₗ[ℂ] fixed σ K) := fun i => (p i).toLinearMap.restrict fun v hv => map_fixed _ K hv
   unfold trOn
-  rw [dif_pos hY, dif_pos ha]
+  rw [dite_eq_left hY, dite_eq_left ha]
   have h1 : (A ∘ₗ B.toLinearMap).restrict hY = ∑ i, ∑ j, b i j • (sU j ∘ₗ (a.restrict ha ∘ₗ pU i)) := by
     refine LinearMap.ext fun y => Subtype.ext ?_
     change A (B.toLinearMap y.1) = _
@@ -159,9 +166,11 @@ theorem exists_factor (σ : Representation ℂ H W) [σ.IsIrreducible] (τ : Rep
     split_ifs
     · rfl
     · exact map_zero a
-  rw [h1, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum, Finset.sum_eq_single i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single i]
   · rw [map_smul, LinearMap.trace_comp_comm', h2, if_pos rfl, smul_eq_mul]
   · intro j _ hj
     rw [map_smul, LinearMap.trace_comp_comm', h2, if_neg hj, map_zero, smul_zero]
@@ -189,7 +198,8 @@ theorem trOn_cross {V : Type} [AddCommGroup V] [Module ℂ V] (σ : Representati
   have hli : LinearIndependent ℂ fun i => (⟨(s i).toLinearMap u, map_fixed _ K hu⟩ : fixed τ K) := by
     refine LinearIndependent.of_comp (fixed τ K).subtype (linearIndependent_iff'.2 fun T g hg i hi => ?_)
     have := congrArg (p i).toLinearMap hg
-    simp only [Function.comp_apply, Submodule.subtype_apply, map_sum, map_smul, hps, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Function.comp_apply, Submodule.subtype_apply, map_sum, map_smul, hps, map_zero] at this
     rw [Finset.sum_eq_single i (fun j _ hj => by rw [if_neg hj, smul_zero]) (fun h => absurd hi h), if_pos rfl] at this
     exact (smul_eq_zero.1 this).resolve_right hu0
   haveI : Finite ι := hli.finite
@@ -210,18 +220,19 @@ theorem levOp_nat {X : Type} [AddCommGroup X] [Module ℂ X] (σ : Representatio
     levOp τ K₀ K a LinearMap.id (s w) = s (levOp σ K₀ K a LinearMap.id w) := by
   rw [LevOpTmul.levOp_apply τ K₀ K a _ ha.toFinset (fun q hq => by simpa using hq),
     LevOpTmul.levOp_apply σ K₀ K a _ ha.toFinset (fun q hq => by simpa using hq)]
-  simp only [map_smul, map_sum, hs, LinearMap.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum, hs, LinearMap.id_apply]
 
 variable (ι : H →* G) (r : G →* H) (hr : ∀ h, r (ι h) = h) (hc : ∀ x ∈ r.ker, ∀ h, Commute x (ι h))
   {U : Subgroup G} {K : Subgroup H} (hK1 : ∀ k ∈ K, ι k ∈ U) (hK2 : ∀ k ∈ U, r k ∈ K)
 
-include hr in
 
+include hr in
 theorem exists_split (g : G) : ∃ x : r.ker, g = ι (r g) * x :=
   ⟨⟨(ι (r g))⁻¹ * g, by rw [MonoidHom.mem_ker, map_mul, map_inv, hr, inv_mul_cancel]⟩, by simp⟩
 
-include hr hc hK1 hK2 in
 
+include hr hc hK1 hK2 in
 theorem mk_eq_iff (h h' : H) (x x' : r.ker) :
     ((ι h * x : G) : G ⧸ U) = (ι h' * x' : G) ↔
       (h : H ⧸ K) = h' ∧ (x : r.ker ⧸ U.subgroupOf r.ker) = x' := by
@@ -241,8 +252,8 @@ theorem mk_eq_iff (h h' : H) (x x' : r.ker) :
   · rintro ⟨h1, h2⟩
     exact U.mul_mem (hK1 _ h1) h2
 
-include hr hc hK1 hK2 in
 
+include hr hc hK1 hK2 in
 theorem levOp_split (ρ : Representation ℂ G V) (U₀ : Subgroup G) (K₀ : Subgroup H) (h0 : K.relIndex K₀ ≠ 0)
     (F : G → ℂ) (a : H → ℂ) (b : r.ker → ℂ) (hF : ∀ h (x : r.ker), F (ι h * x) = a h * b x)
     (hFr : ∀ k ∈ U, ∀ x, F (x * k) = F x) (har : ∀ k ∈ K, ∀ x, a (x * k) = a x)
@@ -271,7 +282,8 @@ theorem levOp_split (ρ : Representation ℂ G V) (U₀ : Subgroup G) (K₀ : Su
     LevOpTmul.levOp_apply _ _ _ b _ hb.toFinset (fun q hq => by simpa using hq),
     LevOpTmul.levOp_apply ρ _ _ _ _ ((ha.toFinset ×ˢ hb.toFinset).image e) ?_,
     Finset.sum_image (fun p _ q _ h => he h), Finset.sum_product]
-  · simp only [LinearMap.id_apply, Subgroup.relIndex_self, Nat.cast_one, inv_one, one_smul, map_smul, map_sum,
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [LinearMap.id_apply, Subgroup.relIndex_self, Nat.cast_one, inv_one, one_smul, map_smul, map_sum,
       Finset.smul_sum]
     refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
     simp only [e]
@@ -288,8 +300,8 @@ theorem levOp_split (ρ : Representation ℂ G V) (U₀ : Subgroup G) (K₀ : Su
     · conv_rhs => rw [← QuotientGroup.out_eq' q, hx]
       exact (mk_eq_iff ι r hr hc hK1 hK2 _ _ _ _).2 ⟨QuotientGroup.out_eq' _, QuotientGroup.out_eq' _⟩
 
-include hr hc hK1 hK2 in
 
+include hr hc hK1 hK2 in
 theorem trOn_levOp_cross (ρ : Representation ℂ G V) (X : Submodule ℂ V) (hX : ∀ g, ∀ v ∈ X, ρ g v ∈ X)
     (σ : Representation ℂ H W) [σ.IsIrreducible] (hiso : X ≤ LocUniq.isoPart σ (ρ.comp ι))
     (U₀ : Subgroup G) (K₀ : Subgroup H) (h0 : K.relIndex K₀ ≠ 0)

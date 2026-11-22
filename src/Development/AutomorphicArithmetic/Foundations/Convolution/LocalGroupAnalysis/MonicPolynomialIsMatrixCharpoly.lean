@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+
+@[expose] public section
 
 open PositivityTheory.Rg.Tf.Geo PositivityTheory.Rg.Tf.Loc Polynomial
 

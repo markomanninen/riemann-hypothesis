@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ESSymmApply
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.ESSymmApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ lemma Qm_integral [DecidableEq ι] (hfin : ∀ i, m i (L i) ≠ ⊤) (hT : TailH
       fun i => Pn_prob m L (h i.1 i.2)
     have hQ : Qm m L S = tl m L S • Measure.infinitePi (fun i : {i // i ∉ S} => Pn m L i.1) := by
       unfold Qm
-      rw [dif_pos h]
+      rw [dite_eq_left h]
     set J := T.subtype (fun i => i ∉ S) with hJ
     have hgP : ∀ j : J, Integrable (g j.1.1) (Pn m L j.1.1) := by
       intro j
@@ -74,7 +78,7 @@ lemma Qm_integral [DecidableEq ι] (hfin : ∀ i, m i (L i) ≠ ⊤) (hT : TailH
     ring
   · have hQ : Qm m L S = 0 := by
       unfold Qm
-      rw [dif_neg h]
+      rw [dite_eq_right h]
     rw [hQ]
     refine ⟨integrable_zero_measure, ?_⟩
     rw [integral_zero_measure]
@@ -114,10 +118,10 @@ lemma kap_integral [DecidableEq ι] (hfin : ∀ i, m i (L i) ≠ ⊤) (hT : Tail
     refine (mul_comm _ _).trans (congrArg₂ (· * ·) ?_ ?_)
     · rw [← Finset.prod_coe_sort S]
       refine Finset.prod_congr rfl (fun j _ => ?_)
-      rw [eS_symm_apply, dif_pos j.2]
+      rw [eS_symm_apply, dite_eq_left j.2]
     · rw [Finset.sdiff_eq_filter, ← Finset.subtype_map]
       refine Finset.prod_subtype_map_embedding (fun j _ => ?_)
-      rw [eS_symm_apply, dif_neg j.2]
+      rw [eS_symm_apply, dite_eq_right j.2]
   have hprod := hRi.mul_prod hQi
   refine ⟨?_, ?_⟩
   · unfold kap

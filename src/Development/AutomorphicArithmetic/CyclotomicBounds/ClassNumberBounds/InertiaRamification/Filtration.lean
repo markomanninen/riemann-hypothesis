@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Duality
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.BridgeDefs
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Duality
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -231,8 +235,9 @@ theorem rootWeight_eq_sum (g : (ZMod N)ˣ) (hg : g ≠ 1) :
     obtain ⟨s, -, hs⟩ := (Nat.dvd_prime_pow hl).mp h2
     exact ⟨s, hs⟩
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem sum_rootWeight_eq_avgCondExp (H : Subgroup (ZMod N)ˣ) :
     ∑ g ∈ Finset.univ.filter (fun g : (ZMod N)ˣ => g ∉ H),
         rootWeight l (addOrderOf ((g : ZMod N) - 1)) =

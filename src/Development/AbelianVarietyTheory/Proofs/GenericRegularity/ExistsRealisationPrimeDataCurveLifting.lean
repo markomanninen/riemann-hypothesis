@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftSec
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftModelHolds
-import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveModelExistsAllPrimesAllPoints
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveSectionStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LocStructStRecord
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SectionRatiosIntegral
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RealPtNZOfCurveHyp
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FiniteDimensionalOfModel
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftModelHolds
+public import Formalism.LocalToGlobal.ProjectiveLattices.SecPtRed
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveModelExistsAllPrimesAllPoints
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CurveSectionStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LocStructStRecord
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.SectionRatiosIntegral
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RealPtNZOfCurveHyp
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.FiniteDimensionalOfModel
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 4000000
@@ -47,6 +51,12 @@ theorem secQ_data_of_real (G : GlobalFamilyData (xplus X E hM) ka wL wF) (la : H
   · exact inLiftSec G la S Gc Prw y (fun ζ => (hw ζ).toSecPt) g0 Tn
       (liftModelSt_of G la (locRing_of h1 h2) y hw g0 Tn hC hg0)
 
+private theorem model_finiteDimensional {G : GlobalFamilyData (xplus X E hM) ka wL wF}
+    {la : HeightOneSpectrum (𝓞 B.KO)} {g0 : B.Cusp j wF} (C : CurveModel G la g0) :
+    FiniteDimensional (Kp (xplus X E hM) la G.N) (OsK (xplus X E hM) la G.w) := by
+  have : FiniteDimensional (Kp (xplus X E hM) la G.N) (↥C.A' ⧸ C.JA) := C.fin
+  exact LinearEquiv.finiteDimensional C.quotEquiv.toLinearEquiv
+
 end General
 
 theorem exists_real_primeData : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) (hT : GenFromTest (T.Q.Xo j) T.Q.c hG) (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (S : Scal (recB h.toLawsCore)) (g0 : (recB h.toLawsCore).Cusp j wF), CurveHyp h j hj hG ka wL wF G S g0 → GenValInjSt h j hG → CompSplitSt h j hG → BIRSt h j hj hG G → (∀ (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF), BigAt h j hj hG G → BIRSt h j hj hG G) → 0 < wL.n → (j < D.R.m → (recPlus h j hj).NonZeroComp _ G.et) → ∀ (Gc Prw : ℝ) (Tn : ℕ), ∃ (y : ∀ la, PtsG G la → (extAll h j hj).Pt' la) (hw : ∀ la ζ, FromW (E := extAll h j hj) (hM := intAtExt_extAll h j hj) ζ (y la ζ)), (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InCurve) ∧ (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InTie S) ∧ (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InLiftC S Gc Prw Tn) := by
@@ -60,8 +70,10 @@ theorem exists_real_primeData : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ)
     intro la
     have hM := GlobalTheory.CurveRecord.curveInst D T h j hj hG hT hV hC hB' hG ka wL wF G la S g0 hH.1 hH.2.1 hH.2.2.1 hH.2.2.2
     obtain ⟨C⟩ := id hM
-    have hfd := finiteDimensional_of_model (E := extAll h j hj) (hM := intAtExt_extAll h j hj) C
-    have hred := isReduced_of_model (E := extAll h j hj) (hM := intAtExt_extAll h j hj) C
+    have hfd := model_finiteDimensional (E := extAll h j hj) (hM := intAtExt_extAll h j hj) C
+    have hred : IsReduced (OsK (recPlus h j hj) la G.w) := by
+      have : IsReduced (↥C.A' ⧸ C.JA) := C.red
+      exact isReduced_of_injective C.quotEquiv.symm.toRingHom C.quotEquiv.symm.injective
     have hU : IsUnif (OsK (recPlus h j hj) la G.w) (unifO (recPlus h j hj) la G.N) := isUnif_of_ring hfd
     have hD : ∀ ζ : PtsG G la, IsDVRAt ζ := isDVRAt_of_ring hfd hred
     have hR := GlobalTheory.realPtNZ_of_curveHyp D T h j hj hG hT ka wL wF G S g0 la hH hV hC hB hn hU

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.HodgeTrAt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.AdicTopOf
-import Development.EtaleCohomology.WeilConjectures.StabPf
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.HodgeTrAt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.AdicTopOf
+public import Development.EtaleCohomology.WeilConjectures.StabPf
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SplitsSelfOfIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,15 +68,6 @@ theorem grEx_of (h1 : FlagEx) (h2 : FlagBasis) (h3 : FlagMove) (h4 : GrHom) (h5 
 def ContGL : Prop := ∀ (Γ k : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [Field k] [TopologicalSpace k]
   [IsTopologicalRing k] (d : ℕ) (ρ : Γ →* GL (Fin d) k),
   Continuous ρ ↔ ∀ i j, Continuous fun g => (ρ g : Matrix (Fin d) (Fin d) k) i j
-
-def GrKill : Prop := ∀ (Γ k : Type) [Group Γ] [Field k] (d : ℕ) (ρ₀ ρ : Γ →* GL (Fin d) k), IsGr ρ₀ ρ → ∀ g,
-  (ρ₀ g = 1 → ρ g = 1) ∧ (∀ Q : k[X], aeval (ρ₀ g : Matrix (Fin d) (Fin d) k) Q = 0 → aeval (ρ g : Matrix (Fin d) (Fin d) k) Q = 0) ∧
-    (ρ g : Matrix (Fin d) (Fin d) k).charpoly = (ρ₀ g : Matrix (Fin d) (Fin d) k).charpoly
-
-theorem IsGr.comp {Γ Γ' k : Type} [Group Γ] [Group Γ'] [Field k] {d : ℕ} {ρ₀ ρ : Γ →* GL (Fin d) k} (h : IsGr ρ₀ ρ) (f : Γ' →* Γ) :
-    IsGr (ρ₀.comp f) (ρ.comp f) := by
-  obtain ⟨c, hc⟩ := h
-  exact ⟨c, fun g => hc (f g)⟩
 
 def MatEx : Prop := ∀ (Γ L : Type) [Group Γ] [Field L] (M : Type 1) [AddCommGroup M] [Module L M] (a : Γ → M →ₗ[L] M),
   a 1 = LinearMap.id → (∀ g h, a (g * h) = a g ∘ₗ a h) → ∀ U : Submodule L M, (∀ g, ∀ x ∈ U, a g x ∈ U) →

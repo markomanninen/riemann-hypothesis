@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -67,8 +71,9 @@ theorem exists_algHom_ne_zero_of_countable (E : Type) [CommRing E] [IsDomain E] 
     rw [map_zero]
     exact h
   have h2 : r ∈ Q := Ideal.Quotient.eq_zero_iff_mem.1 h1
-  have h3 : n r ∈ Q.comap (algebraMap (MvPolynomial (Fin d) ℂ) E) :=
-    (Ideal.span_singleton_le_iff_mem Q).2 h2 (hnr r (hne r hr))
+  have h3 : n r ∈ Q.under (MvPolynomial (Fin d) ℂ) :=
+    (Ideal.mem_under (MvPolynomial (Fin d) ℂ) Q).2
+      ((Ideal.span_singleton_le_iff_mem Q).2 h2 (hnr r (hne r hr)))
   rw [hQp] at h3
   exact hc (n r) ⟨r, hr, rfl⟩ h3
 

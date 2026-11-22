@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 noncomputable section
@@ -20,21 +25,21 @@ private theorem actVB_tr (g : G) (x : V ⊗[ℚ_[l]] Bcr l) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVB, actC, tr_apply, (PP l).PD_actB]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem actVdR_tr (g : G) (x : V ⊗[ℚ_[l]] Bdr l) :
     actVdR ((PP l).PD K) (tr e ρ) (e g) x = actD ((GK K).subtype.comp e.toMonoidHom) ρ g x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actVdR, actD, tr_apply, (PP l).PD_actdR]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem actD_res (φ : G →* GQ l) (g : G) (x : V ⊗[ℚ_[l]] Bdr l) :
     actD φ (resCoef ℚ_[l] ρ) g x = actD φ ρ g x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [actD, resCoef]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem Ddr_res (φ : G →* GQ l) :
     Ddr φ (resCoef ℚ_[l] ρ) = (Ddr φ ρ).restrictScalars ℚ_[l] := by
@@ -58,7 +63,8 @@ private theorem h0V_tr_eq_restrictScalars_h0 : H0V (tr e ρ) = (H0 ρ).restrictS
 
 variable (K E V) in
 private theorem FilV_eq (a : ℤ) :
-    FilV ((PP l).PD K) (LL := ℚ_[l]) (V := V) a = (FilT (l := l) E V a).restrictScalars ℚ_[l] := by
+    FilV ((PP l).PD K) (LL := ℚ_[l]) (V := V) a =
+      (UpperTheory.V.Loc.FilT (l := l) E V a).restrictScalars ℚ_[l] := by
   have hF : (((PP l).PD K).Fil a).restrictScalars ℚ_[l] =
       (((PP l).PD (botExt l)).Fil a).restrictScalars ℚ_[l] :=
     SetLike.coe_injective ((PP l).PD_Fil K (botExt l) a)
@@ -68,10 +74,10 @@ private theorem FilV_eq (a : ℤ) :
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v b => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   ext x
   rw [FilV, hF]
-  simp only [FilT, Submodule.restrictScalars_mem, LinearMap.mem_range, h]
+  simp only [UpperTheory.V.Loc.FilT, Submodule.restrictScalars_mem, LinearMap.mem_range, h]
 
 variable [TopologicalSpace G] [TopologicalSpace V] [IsTopologicalAddGroup V] [ContinuousConstSMul E V]
   [ContinuousConstSMul ℚ_[l] V]
@@ -84,10 +90,7 @@ private theorem mem_Z1f_transport_iff (he : Continuous e) (he' : Continuous e.sy
     ((Continuous (c ∘ e) ∧ ∀ g h, c (e (g * h)) = c (e g) + ρ g (c (e h))) ∧
       ∃ x, ∀ g, c (e g) ⊗ₜ[ℚ_[l]] (1 : Bcr l) = actC ((GK K).subtype.comp e.toMonoidHom) ρ g x - x)
   refine and_congr (and_congr ⟨fun h => h.comp he, fun h => ?_⟩ ?_) (exists_congr fun x => ?_)
-  · have := h.comp he'
-    convert this using 1
-    funext g
-    simp
+  · simpa only [Function.comp_def, MulEquiv.apply_symm_apply] using h.comp he'
   · rw [e.surjective.forall₂]
     simp only [tr_apply, map_mul]
   · rw [e.surjective.forall]
@@ -131,7 +134,9 @@ end UpperTheory.V.Loc.BlochKatoDimension
 
 open UpperTheory.V.Loc.BlochKatoDimension in
 theorem UpperTheory.V.Loc.bkDim :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (φ : G →* GQ l) (hφ : IsOpenEmbedding φ) {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] {V : Type} [AddCommGroup V] [Module E V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] E V] [FiniteDimensional ℚ_[l] V] [TopologicalSpace V] [IsModuleTopology ℚ_[l] V] [IsTopologicalAddGroup V] [ContinuousConstSMul E V] (ρ : Representation E G V), ContAction ρ → IsDr φ ρ → Module.Finite E ↥(finiteCohomology φ ρ) ∧ finrank E ↥(finiteCohomology φ ρ) + finrank E ↥(FilD φ ρ 0) = finrank E ↥(H0 ρ) + φ.range.index * finrank E V := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] (φ : G →* GQ l) (hφ : IsOpenEmbedding φ) {E : Type} [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E] {V : Type} [AddCommGroup V] [Module E V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] E V] [FiniteDimensional ℚ_[l] V] [TopologicalSpace V] [IsModuleTopology ℚ_[l] V] [IsTopologicalAddGroup V] [ContinuousConstSMul E V] (ρ : Representation E G V), ContAction ρ → IsDr φ ρ → Module.Finite E ↥(finiteCohomology φ ρ) ∧
+      finrank E ↥(finiteCohomology φ ρ) + finrank E ↥(UpperTheory.V.Loc.FilD φ ρ 0) =
+        finrank E ↥(H0 ρ) + φ.range.index * finrank E V := by
   intro hP l _ G _ _ _ φ hφ E _ _ _ V _ _ _ _ _ _ _ _ _ ρ hc hdR
   obtain ⟨K, e, he, he', hφe, -, hind, -⟩ := openField φ hφ
   obtain ⟨T⟩ := tiedP l
@@ -156,7 +161,7 @@ theorem UpperTheory.V.Loc.bkDim :
     rw [h0V_tr_eq_restrictScalars_h0, finrank_mul_finrank]
     rfl
   have hF : finrank ℚ_[l] ↥(DdR ((PP l).PD K) (tr e ρ) ⊓ FilV ((PP l).PD K) (LL := ℚ_[l]) (V := V) 0) =
-      finrank ℚ_[l] E * finrank E ↥(FilD ((GK K).subtype.comp e.toMonoidHom) ρ 0) := by
+      finrank ℚ_[l] E * finrank E ↥(UpperTheory.V.Loc.FilD ((GK K).subtype.comp e.toMonoidHom) ρ 0) := by
     rw [DdR_tr, FilV_eq K E V, ← Submodule.restrictScalars_inf, finrank_mul_finrank]
     rfl
   rw [IsDR, ← finrank_mul_finrank ℚ_[l] E V] at hdR'
@@ -165,7 +170,7 @@ theorem UpperTheory.V.Loc.bkDim :
     exact_mod_cast (Module.finrank_pos (R := ℚ_[l]) (M := E)).ne'
   push_cast at hdim
   have : ((finrank E ↥(finiteCohomology ((GK K).subtype.comp e.toMonoidHom) ρ) +
-      finrank E ↥(FilD ((GK K).subtype.comp e.toMonoidHom) ρ 0) : ℕ) : ℤ) =
+      finrank E ↥(UpperTheory.V.Loc.FilD ((GK K).subtype.comp e.toMonoidHom) ρ 0) : ℕ) : ℤ) =
       ((finrank E ↥(H0 ρ) + finrank ℚ_[l] ↥K.1 * finrank E V : ℕ) : ℤ) := by
     push_cast
     refine mul_left_cancel₀ hd ?_

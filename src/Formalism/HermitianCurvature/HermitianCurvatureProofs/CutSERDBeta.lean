@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERD
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERD
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -23,7 +27,7 @@ theorem radial_beta_identity : RDBeta := by
     funext l
     simp only [glue]
     have h0 : ((0 : Fin (r + 1)) : ℕ) ≤ (l : ℕ) := Nat.zero_le _
-    rw [dif_pos h0, dif_pos h0]
+    rw [dite_eq_left h0, dite_eq_left h0]
   simp only [hg, Finset.univ_unique, Finset.sum_singleton]
 
 end Formalism.FourierDecayAlt.P.CutSE

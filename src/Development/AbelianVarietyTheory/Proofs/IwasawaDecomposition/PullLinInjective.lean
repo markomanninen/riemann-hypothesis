@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ def orad (β : LinearMap.BilinForm ℤ X) : Submodule O X where
   carrier := {x | ∀ (a : O) (y : X), β (a • x) y = 0}
   add_mem' := by
     intro x x' hx hx' a y
-    rw [smul_add, map_add, LinearMap.add_apply, hx a y, hx' a y, add_zero]
+    rw [smul_add, map_add (f := _), LinearMap.add_apply, hx a y, hx' a y, add_zero]
   zero_mem' := by
     intro a y
     rw [smul_zero, map_zero, LinearMap.zero_apply]
@@ -92,9 +96,6 @@ theorem orad_pull {r : X →ₗ[O] X₁} (hr : Function.Surjective r) (β : Line
 def qEquiv {r : X →ₗ[O] X₁} (hr : Function.Surjective r) (N : Submodule O X₁) : (X ⧸ N.comap r) ≃ₗ[O] (X₁ ⧸ N) :=
   (Submodule.quotEquivOfEq _ _ (by rw [LinearMap.ker_comp, Submodule.ker_mkQ])).trans
     ((N.mkQ ∘ₗ r).quotKerEquivOfSurjective (N.mkQ_surjective.comp hr))
-
-theorem qEquiv_mk {r : X →ₗ[O] X₁} (hr : Function.Surjective r) (N : Submodule O X₁) (x : X) :
-    qEquiv hr N (Submodule.Quotient.mk x) = Submodule.Quotient.mk (r x) := rfl
 
 end Rad
 
@@ -157,8 +158,8 @@ section Fun
 
 variable {O : Type} [CommRing O] (bar : O → O) (ψ : InvFun O)
 
-open Classical in
 
+open Classical in
 def carFun : InvFun O where
   toFun n B := if h : ∃ β : LinearMap.BilinForm ℤ (Fin n → O), β ∈ balForms bar (Fin n → O) ∧ (∀ y, 0 ≤ β y y) ∧
       ∀ a b, B a b = β a b then (cdimQ bar ψ (Fin n → O) (orad h.choose) h.choose : ℝ) else 0
@@ -170,7 +171,7 @@ def carFun : InvFun O where
     · have h' : ∃ β : LinearMap.BilinForm ℤ (Fin n → O), β ∈ balForms bar (Fin n → O) ∧ (∀ y, 0 ≤ β y y) ∧
           ∀ a b, B (r a) (r b) = β a b :=
         ⟨pull r h.choose, pull_mem r h.choose_spec.1, fun y => h.choose_spec.2.1 _, fun a b => h.choose_spec.2.2 _ _⟩
-      rw [dif_pos h, dif_pos h']
+      rw [dite_eq_left h, dite_eq_left h']
       have e : h'.choose = pull r h.choose := LinearMap.ext₂ fun a b => by
         have h1 := h'.choose_spec.2.2 a b
         have h2 := h.choose_spec.2.2 (r a) (r b)
@@ -183,7 +184,7 @@ def carFun : InvFun O where
           ∀ a b, B (r a) (r b) = β a b := by
         rintro ⟨β, h1, h2, h3⟩
         exact h ⟨pull s β, pull_mem s h1, fun y => h2 _, fun a b => by rw [pull_apply, ← h3, hrs, hrs]⟩
-      rw [dif_neg h, dif_neg h']
+      rw [dite_eq_right h, dite_eq_right h']
   zero B := by
     split_ifs with h
     · have := Nat.sInf_eq_zero.2 (Or.inl (zero_mem_cdimSet (bar := bar) (ψ := ψ) (orad h.choose) h.choose))

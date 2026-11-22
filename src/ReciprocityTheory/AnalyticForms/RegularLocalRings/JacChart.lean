@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChartC
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChartB
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -34,7 +39,7 @@ theorem locRing_isLocalRing_isNoetherian (K : Ideal (MvPolynomial (Fin n) ℂ)) 
     rw [Ideal.map_le_iff_le_comap]
     intro h hh
     have h2 : h ∈ ptIdeal p := (RingHom.mem_ker).2 (hp h hh)
-    rw [← Localization.AtPrime.comap_maximalIdeal (I := ptIdeal p)] at h2
+    rw [← Localization.AtPrime.under_maximalIdeal (I := ptIdeal p)] at h2
     exact h2
   have hne : Ideal.map (algebraMap (MvPolynomial (Fin n) ℂ) (locPt p)) K ≠ ⊤ :=
     ne_top_of_le_ne_top (IsLocalRing.maximalIdeal.isMaximal _).ne_top hK
@@ -57,13 +62,6 @@ theorem exists_jacobian_cut (K : Ideal (MvPolynomial (Fin n) ℂ)) (p : Fin n �
       ∃ h : MvPolynomial (Fin n) ℂ, eval p h ≠ 0 ∧ ∀ g ∈ K, h * g ∈ Ideal.span (Set.range F) := by
   exact @JacobianCriterionAlt.exists_jacobian_cut' n K p e
     (inferInstanceAs (IsRegularLocalRing (locRing K p))) he
-
-theorem isRegularLocalRing_of_jacobian (K : Ideal (MvPolynomial (Fin n) ℂ)) (p : Fin n → ℂ)
-    (hp : ∀ h ∈ K, eval p h = 0) {c : ℕ} (F : Fin c → MvPolynomial (Fin n) ℂ) (hF : ∀ i, F i ∈ K)
-    (hlin : LinearIndependent ℂ (fun i => grad p (F i)))
-    (hq : ∃ 𝔮 ∈ K.minimalPrimes, 𝔮 ≤ ptIdeal p ∧ 𝔮.height ≤ c) :
-    IsRegularLocalRing (locRing K p) ∧ ringKrullDim (locRing K p) = ((n - c : ℕ) : WithBot ℕ∞) := by
-  exact JacobianCriterionAlt.isRegularLocalRing_of_jacobian' K p hp F hF hlin hq
 
 end
 

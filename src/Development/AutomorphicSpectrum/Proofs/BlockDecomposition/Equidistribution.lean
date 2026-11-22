@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeCosetScaledRiemannSumStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantBoxApproximationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCongruenceRefinementStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetEmptyPlacesLatticeStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetUnitIdealIntegralStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetOff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LatticeCosetScaledRiemannSumStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocallyConstantBoxApproximationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetCongruenceRefinementStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetEmptyPlacesLatticeStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosetUnitIdealIntegralStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,10 +211,10 @@ theorem claim_insert {θ : ℝ →+* Ainf F} {li : Measure (Ainf F)} {lam : ∀ 
     fun ε => ∑ c ∈ C, ε ^ D * ∑' x : cosetOff S (I * v.asIdeal ^ k) (x1 k c),
       term θ S (fun y => |φ y|) (fun w y => |ψ w y|) ε x.1,
     ∑ c ∈ C, ψ v c * (Nf * q * M), ∑ c ∈ C, Nf * q * M', ?_, ?_, ?_, ?_, ?_⟩
-  · refine tendsto_finset_sum _ fun c _ => Tendsto.const_mul _ ?_
+  · refine tendsto_finsetSum _ fun c _ => Tendsto.const_mul _ ?_
     have := (hP k c).2
     rwa [hnorm] at this
-  · refine tendsto_finset_sum _ fun c _ => ?_
+  · refine tendsto_finsetSum _ fun c _ => ?_
     have := (hQ k c).2
     rwa [hnorm] at this
   · filter_upwards [self_mem_nhdsWithin] with ε hε

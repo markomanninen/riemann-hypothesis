@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExponentAndTwistData
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.FiniteAdeleRingNontrivial
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ def ratFun (γ : GQ L n) : GL (Fin n) L := (Subgroup.mem_map.1 (mem_incGL γ)).c
 
 theorem ratFun_mem (γ : GQ L n) : ratFun γ ∈ GQ0 L n := (Subgroup.mem_map.1 (mem_incGL γ)).choose_spec.1
 
-theorem incGL_ratFun (γ : GQ L n) : incGL (ratFun γ) = ((γ : GA L n) : GL (Fin n) (AL L)) :=
+theorem incGL_ratFun (γ : GQ L n) :
+    incGL (L := L) (n := n) (ratFun γ) = ((γ : GA L n) : GL (Fin n) (AL L)) :=
   (Subgroup.mem_map.1 (mem_incGL γ)).choose_spec.2
 
 def ratHom : GQ L n →* GL (Fin n) L where
@@ -43,13 +48,14 @@ def ratHom : GQ L n →* GL (Fin n) L where
   map_one' := incGL_injective (by rw [incGL_ratFun, map_one]; rfl)
   map_mul' γ δ := incGL_injective (by rw [map_mul, incGL_ratFun, incGL_ratFun, incGL_ratFun]; rfl)
 
-theorem ratHom_mem (γ : GQ L n) : ratHom γ ∈ GQ0 L n := ratFun_mem γ
+theorem ratHom_mem (γ : GQ L n) : ratHom (L := L) (n := n) γ ∈ GQ0 L n := ratFun_mem γ
 
 theorem ratHom_eq_of_match (γ : GQ L n) (γ₀ : GL (Fin n) L)
     (h : (((γ : GA L n) : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) =
-      (γ₀ : Matrix (Fin n) (Fin n) L).map (Algebra.TensorProduct.includeLeftRingHom)) : γ₀ = ratHom γ := by
+      (γ₀ : Matrix (Fin n) (Fin n) L).map (Algebra.TensorProduct.includeLeftRingHom)) :
+    γ₀ = ratHom (L := L) (n := n) γ := by
   apply incGL_injective
-  rw [show ratHom γ = ratFun γ from rfl, incGL_ratFun]
+  rw [show ratHom (L := L) (n := n) γ = ratFun γ from rfl, incGL_ratFun]
   exact (Units.ext h).symm
 
 end Rat

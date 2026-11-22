@@ -1,10 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerBF
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerBF
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BesselCharacterGenericCharacterLaws
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +29,11 @@ theorem form_vecX {D : D7} {V V₀ : HSp D} {ρ : ℕ} (d : HypDec V V₀ ρ) (b
   have h1 : (fun i => cA D (vecX d b i)) = (d.jX.map (cA D)) *ᵥ (fun i => cA D (b i)) := by
     funext i
     exact RingHom.map_mulVec (cA D) d.jX b i
-  rw [form, h1, ← Matrix.vecMul_transpose, ← Matrix.dotProduct_mulVec, d.pY_eq, ← Matrix.mulVec_mulVec]
+  rw [form, h1, ← Matrix.vecMul_transpose, ← Matrix.dotProduct_mulVec]
+  have hp : d.pY = adj d.jX * gA V := by
+    rw [HypDec.pY, HypDec.qY, HypDec.jX, gA, ← rat_conjTranspose]
+    exact Matrix.map_mul
+  conv_rhs => rw [hp, ← Matrix.mulVec_mulVec]
   rfl
 
 theorem mul_eq_of_cols {R : Type} [CommRing R] {n ρ : ℕ} (M : Matrix (Fin n) (Fin n) R) (E : Matrix (Fin n) (Fin ρ) R)
@@ -50,8 +60,13 @@ theorem transv_mem_flagN : ∀ (D : D7) (V V₀ : HSp D) (ρ : ℕ) (d : HypDec 
   have e1 : d.e.map (incA D) = d.jX := rfl
   rw [e1]
   refine mul_eq_of_cols _ _ _ fun k => ?_
+  have hp : d.pY * d.jX = 0 := by
+    have h := congrArg rat d.ee
+    rw [rat_zero] at h
+    rw [HypDec.pY, HypDec.qY, HypDec.jX]
+    simpa only [rat, Matrix.map_mul] using h
   have hk : d.pY *ᵥ vecX d (Pi.single k 1) = 0 := by
-    rw [vecX, Matrix.mulVec_mulVec, d.pY_jX, Matrix.zero_mulVec]
+    rw [vecX, Matrix.mulVec_mulVec, hp, Matrix.zero_mulVec]
   exact hperp _ hk
 
 end GlobalTheory.TransvFlag

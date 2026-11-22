@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgSFreeSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgSFreeSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -36,8 +41,8 @@ theorem monomial_negExp_mem (S : Type) [CommRing S] (I : ∀ k, Finset (ι k)) (
   show a p < 0
   omega
 
-open Classical in
 
+open Classical in
 def monoFrac (S : Type) [CommRing S] (I : ∀ k, Finset (ι k)) (a : (Σ k, ι k) → ℤ) :
     LocalizedModule (KH.cellMon S I) (MRingOver S ι ⧸ (⊥ : Ideal (MRingOver S ι))) :=
   if h : ∀ k, negSet a k ⊆ I k then
@@ -53,8 +58,8 @@ abbrev CombC (S : Type) (J : ∀ k, Finset (ι k)) (n : ℕ) : Type :=
 
 variable [LinearOrder K] [∀ k, LinearOrder (ι k)]
 
-open Classical in
 
+open Classical in
 def combD (S : Type) [CommRing S] (J : ∀ k, Finset (ι k)) (n : ℕ) :
     CombC S J n →ₗ[S] CombC S J (n + 1) :=
   LinearMap.pi fun I => ∑ k, ∑ i ∈ I.1.1 k,
@@ -75,13 +80,13 @@ namespace KHFree
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 def singOne (S : Type) [CommRing S] (J : ∀ k, Finset (ι k)) (n : ℕ) : CombC S J n :=
   fun I => if ∀ k, J k = ∅ → (I.1.1 k).card = 1 then 1 else 0
 
-open Classical in
 
+open Classical in
 def embed (S : Type) [CommRing S] (a : (Σ k, ι k) → ℤ) (n : ℕ) :
     CombC S (negSet a) n →ₗ[S] KH.CechC S ι (MRingOver S ι ⧸ (⊥ : Ideal (MRingOver S ι))) n :=
   LinearMap.pi fun I => if h : ∀ k, negSet a k ⊆ I.1 k then

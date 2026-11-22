@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Restricted
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Restricted
+
+@[expose] public section
 
 open GroundTheory.Automorphic.RestrictedTensor
 open scoped TensorProduct
@@ -17,7 +21,7 @@ theorem span_core {ι : Type} {W : ι → Type} [∀ v, AddCommGroup (W v)] [∀
     { carrier := {c | inner ℂ (Φ c) u = 0}
       add_mem' := fun {a b} ha hb => by
         simp only [Set.mem_setOf_eq] at ha hb ⊢
-        rw [map_add, inner_add_left, ha, hb, add_zero]
+        rw [map_add (f := _), inner_add_left, ha, hb, add_zero]
       zero_mem' := by
         simp only [Set.mem_setOf_eq]
         rw [map_zero, inner_zero_left]
@@ -38,7 +42,7 @@ theorem span_core {ι : Type} {W : ι → Type} [∀ v, AddCommGroup (W v)] [∀
         exact Z.zero_mem
     | add y z hy hz ihy ihz =>
         have e : (⟨y + z, add_mem hy hz⟩ : restrictedTensor ξ) = ⟨y, hy⟩ + ⟨z, hz⟩ := rfl
-        rw [e, map_add, TensorProduct.tmul_add, map_add]
+        rw [e, map_add (f := _), TensorProduct.tmul_add, map_add (f := _)]
         exact Z.add_mem ihy ihz
     | smul c y hy ihy =>
         have e : (⟨c • y, Submodule.smul_mem _ c hy⟩ : restrictedTensor ξ) = c • ⟨y, hy⟩ := rfl
@@ -51,7 +55,7 @@ theorem span_core {ι : Type} {W : ι → Type} [∀ v, AddCommGroup (W v)] [∀
     | tmul a b =>
         have := h2 a (Te b)
         rwa [LinearEquiv.symm_apply_apply] at this
-    | add s t hs ht => rw [map_add]; exact Z.add_mem hs ht
+    | add s t hs ht => rw [map_add (f := _)]; exact Z.add_mem hs ht
   have := h3 (E c)
   rwa [LinearEquiv.symm_apply_apply] at this
 

@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.DataMink
-import Formalism.LocalRingCardinality.DataErr
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsTer
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.DataMink
+public import Formalism.LocalRingCardinality.DataErr
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsTer
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions
 
 namespace GlobalTheory.AutLattice
@@ -46,7 +51,7 @@ theorem card_dvd_minkM : Formalism.HermitianLatticeCounting.S6.MinkowskiBound �
   intro hM E V _ _ _ _ _ _ _ L hfg hL G hG hGL
   have : Module.Finite (𝓞 E) L := Module.Finite.iff_fg.2 hfg
   have : Module.Finite ℤ L := Module.Finite.trans (𝓞 E) L
-  have : IsAddTorsionFree V := IsAddTorsionFree.of_isTorsionFree E V
+  have : HasUniqueDiv V := HasUniqueDiv.of_isTorsionFree E V
   have : Module.Free ℤ L := inferInstance
   rw [← finrank_int_eq L hL]
   let b := Module.finBasis ℤ L

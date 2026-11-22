@@ -1,19 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsGenericIffIsGenericFor
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviBlockSizesSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WittRankLeSkewSignature
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureFundDomLtTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TripSizesSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SmGL GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.LeviBlockExponent GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
-  GlobalTheory.UAut GlobalTheory.SiegelSet GlobalTheory.ThK.SquareIntegrability GlobalTheory.CuspBlock GlobalTheory.LFun.SplitTie
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToGAdMat
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsGenericIffIsGenericFor
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSplitChartSplitChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureFundDomLtTop
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SmGL GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
+  GlobalTheory.UAut GlobalTheory.SiegelSet GlobalTheory.ThK.SquareIntegrability GlobalTheory.LFun.SplitTie
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 open scoped TensorProduct
 open scoped TensorProduct
@@ -34,7 +37,7 @@ theorem compInf_eq_evTens (w : InfinitePlace F) (z : AF F ⊗[F] E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem map_sigR {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra F R'] (a : R →ₐ[F] R')
     (σ : E →ₐ[F] E) (z : R ⊗[F] E) :
@@ -43,7 +46,7 @@ theorem map_sigR {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem map_cT_sigR_map {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra F R'] (a : R →ₐ[F] R')
     (σ : E →ₐ[F] E) {m p : Type} (M : Matrix m p (R ⊗[F] E)) :
@@ -58,7 +61,7 @@ theorem map_inclR_map {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Al
   ext i k
   simp [inclR]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def rhoW (j : Ainf F ⊗[F] E ≃+* InfiniteAdeleRing E) (w : InfinitePlace F) : Cinf E →+* w.Completion ⊗[F] E :=
   (evTens w).comp (j.symm.toRingHom.comp (infEq E).toRingHom)
@@ -71,7 +74,7 @@ namespace GlobalTheory.BlockArch
 
 open GlobalTheory.CuspRep Formalism.UG
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex E]
 
 section Split
 
@@ -104,7 +107,8 @@ theorem map_star_of_continuous {ι : Type} [Fintype ι] (ψ : (ι → ℂ) →+*
     by_contra hc
     push_neg at hc
     have h1 : ψ 1 = ∑ i, ψ (Pi.single i 1) := by
-      rw [← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum]
       congr 1
       exact (Finset.univ_sum_single (1 : ι → ℂ)).symm
     rw [map_one, Finset.sum_eq_zero fun i _ => hc i] at h1
@@ -149,7 +153,7 @@ theorem evTens_rTensor_self (w : InfinitePlace F) (s : w.Completion ⊗[F] E) :
     change (GlobalTheory.AutFunCompare.evW w (GlobalTheory.AutFunCompare.sgW w a)) ⊗ₜ[F] x = a ⊗ₜ[F] x
     congr 1
     exact Pi.single_eq_same w a
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem evTens_rTensor_ne {w u : InfinitePlace F} (h : u ≠ w) (s : w.Completion ⊗[F] E) :
     evTens u (LinearMap.rTensor E (GlobalTheory.AutFunCompare.sgW w) s) = 0 := by
@@ -160,17 +164,18 @@ theorem evTens_rTensor_ne {w u : InfinitePlace F} (h : u ≠ w) (s : w.Completio
     change (GlobalTheory.AutFunCompare.evW u (GlobalTheory.AutFunCompare.sgW w a)) ⊗ₜ[F] x = 0
     rw [show GlobalTheory.AutFunCompare.evW u (GlobalTheory.AutFunCompare.sgW w a) = 0 from Pi.single_eq_of_ne h a]
     exact TensorProduct.zero_tmul _ _
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
 
 theorem evTens_pi_bijective : Function.Bijective (Pi.ringHom fun w : InfinitePlace F => (evTens w : Ainf F ⊗[F] E →+* _)) := by
   classical
   refine ⟨fun z z' h => GlobalTheory.AutFunCompare.infTens_ext fun w => congrFun h w, fun t => ?_⟩
   refine ⟨∑ w, LinearMap.rTensor E (GlobalTheory.AutFunCompare.sgW w) (t w), funext fun u => ?_⟩
   change evTens u (∑ w, LinearMap.rTensor E (GlobalTheory.AutFunCompare.sgW w) (t w)) = t u
-  rw [map_sum, Finset.sum_eq_single u (fun w _ hw => evTens_rTensor_ne (Ne.symm hw) _) (by simp),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single u (fun w _ hw => evTens_rTensor_ne (Ne.symm hw) _) (by simp),
     evTens_rTensor_self]
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 theorem rhoW_pi_bijective (j : Ainf F ⊗[F] E ≃+* InfiniteAdeleRing E) :
     Function.Bijective (Pi.ringHom fun w : InfinitePlace F => rhoW j w) :=
@@ -214,14 +219,14 @@ theorem map_blockForm {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) {n 
   simp only [Matrix.map_add f (map_add f), Matrix.map_sub f (map_sub f), Matrix.map_mul,
     Matrix.map_one f (map_zero f) (map_one f)]
 
-theorem continuous_sInf [IsTotallyComplex E] : Continuous (sInf E) :=
+theorem continuous_sInf [_root_.NumberField.IsTotallyComplex E] : Continuous (sInf E) :=
   (continuous_infEq E).prodMk continuous_const
 
 end GlobalTheory.BlockArch
 
-open GlobalTheory.CuspRep GlobalTheory.BlockArch in
 
-theorem GlobalTheory.BlockForms.exists_archComp_of_isBlockEmb : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [IsTotallyComplex E] [Algebra F E]
+open GlobalTheory.CuspRep GlobalTheory.BlockArch in
+theorem GlobalTheory.BlockForms.exists_archComp_of_isBlockEmb : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Algebra F E]
     (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (n : ℕ) (J : Matrix (Fin n) (Fin n) E)
     (r : ℕ) (Xf Yf : Matrix (Fin n) (Fin r) E) (l d : ℕ) (h : l + d ≤ r) (ι : GlobalTheory.CuspRep.GA E d →* GAd σ J),
     GlobalTheory.BlockForms.IsBlockEmb σ J Xf Yf h ι →

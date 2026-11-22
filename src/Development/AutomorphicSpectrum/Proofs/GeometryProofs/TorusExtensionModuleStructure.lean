@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,12 +16,11 @@ namespace GlobalTheory.CompanionTheory.TorusAct
 
 theorem isMonHom_of_comp_mono {C : Type*} [Category C] [CartesianMonoidalCategory C] {T G : C}
     [MonObj T] [MonObj G] (i : T ⟶ G) [IsMonHom i] [Mono i] (f : G ⟶ G) [IsMonHom f] (u : T ⟶ T)
-    (h : u ≫ i = i ≫ f) : IsMonHom u where
-  one_hom := by
-    rw [← cancel_mono i, Category.assoc, h, IsMonHom.one_hom_assoc, IsMonHom.one_hom, IsMonHom.one_hom]
-  mul_hom := by
-    rw [← cancel_mono i, Category.assoc, h, IsMonHom.mul_hom_assoc, Category.assoc, IsMonHom.mul_hom,
-      tensorHom_comp_tensorHom_assoc, ← h, ← tensorHom_comp_tensorHom_assoc, IsMonHom.mul_hom]
+    (h : u ≫ i = i ≫ f) : IsMonHom u := by
+  constructor
+  · rw [← cancel_mono i, Category.assoc, h, IsMonHom.one_hom_assoc, IsMonHom.one_hom, IsMonHom.one_hom]
+  · apply (cancel_mono i).1
+    simp only [Category.assoc, h, IsMonHom.mul_hom, tensorHom_comp_tensorHom_assoc]
 
 theorem diagMap_eq_torusMap {S : Scheme.{0}} {X Y : Type} [AddCommGroup X] [AddCommGroup Y] (u : Y →+ X) :
     GlobalTheory.Diag.diagMap S u = GlobalTheory.SplitTorus.torusMap S u :=

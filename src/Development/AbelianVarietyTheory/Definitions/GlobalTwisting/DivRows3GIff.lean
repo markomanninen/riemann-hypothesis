@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CountsIrreducibilityConstants
-import Formalism.LocalToGlobal.Divisibility.RecBridgeSel
-import Formalism.LocalToGlobal.Divisibility.TupUsed
-import Formalism.LocalToGlobal.GroupLattices.ServiceOfTiedSelection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.CountsIrreducibilityConstants
+public import Formalism.LocalToGlobal.Divisibility.RecBridgeSel
+public import Formalism.LocalToGlobal.Divisibility.TupUsed
+public import Formalism.LocalToGlobal.GroupLattices.ServiceOfTiedSelection
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -76,56 +80,9 @@ end Col
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : MainNotions.G.Inst D L} {Gl : MainNotions.G.LatInst D} {Kc : MainNotions.G.Consts} {Y : DivX D}
   {cX : ExtraC} {ex : Extra D L hT Gi Gl Kc Y cX}
 
-@[reducible] def SquareIntegrableColumnsCompatible.toS {T : TiedDataSK ex} {P : RowSideFamily ex} (K : GlobalTheory.Cp.SquareIntegrableColumnsCompatible T P) : Formalism.L2.DIV.SquareIntegrableColumnsCompatible T P where
-  X := K.X
-  e := K.e
-  c := K.c.toS
-  Sp := K.Sp
-  colTie := K.colTie
-  kerTie := K.kerTie
-  wTie := K.wTie
-  lvTie := K.lvTie
-  sgTie := K.sgTie
-  v0 := K.v0
-  TU := K.TU
-  xiVal := K.xiVal
-  trIv := K.trIv
-  famEq := K.famEq
-  gEq := K.gEq
-  plEq := K.plEq
-  i0Eq := K.i0Eq
-  tEq := K.tEq
-  muTie := K.muTie
-  ok1 := K.ok1
-
-@[reducible] def SquareIntegrableColumnsCompatible.ofS {T : TiedDataSK ex} {P : RowSideFamily ex} (K : Formalism.L2.DIV.SquareIntegrableColumnsCompatible T P) : GlobalTheory.Cp.SquareIntegrableColumnsCompatible T P where
-  X := K.X
-  e := K.e
-  c := ColRec3.ofS K.c
-  Sp := K.Sp
-  colTie := K.colTie
-  kerTie := K.kerTie
-  wTie := K.wTie
-  lvTie := K.lvTie
-  sgTie := K.sgTie
-  v0 := K.v0
-  TU := K.TU
-  xiVal := K.xiVal
-  trIv := K.trIv
-  famEq := K.famEq
-  gEq := K.gEq
-  plEq := K.plEq
-  i0Eq := K.i0Eq
-  tEq := K.tEq
-  muTie := K.muTie
-  ok1 := K.ok1
-
 theorem divRows3G_iff (P : RowSideFamily ex) : GlobalTheory.Cp.DivRows3G P ↔ Formalism.L2.DIV.DivRows3G P :=
   ⟨fun h => ⟨h.sharpRR, h.baseRR, h.divisionRows_rationalLift, h.thTheta, ⟨h.num.Ij, h.num.jw, h.num.etaJ⟩, h.colsBk⟩,
     fun h => ⟨h.sharpRR, h.baseRR, h.divisionRows_rationalLift, h.thTheta, ⟨h.num.Ij, h.num.jw, h.num.etaJ⟩, h.colsBk⟩⟩
-
-theorem servT_iff (𝒞 : FamClass) (sel : Formalism.L2.TSel 𝒞) : GlobalTheory.Cp.ServT 𝒞 sel ↔ Formalism.L2.G.ServT.ServT 𝒞 sel :=
-  ⟨fun h => ⟨h.twU, h.pdv⟩, fun h => ⟨h.twU, h.pdv⟩⟩
 
 end GlobalTheory.Cp
 

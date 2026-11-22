@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InLZeroIff
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InLZeroIff
+
+@[expose] public section
 
 open NumberField Module
 
@@ -22,7 +26,7 @@ theorem skewY_skew {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (u w : V) 
   have e1 : star (h u a) = h a u := hs.eq u a
   have e2 : star (h w a) = h a w := hs.eq w a
   rw [skewY_apply, skewY_apply]
-  simp only [map_add, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
+  simp only [map_add (f := _), map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul,
     starRingEnd_apply, star_sub, star_mul', e1, e2, hθ]
   ring
 
@@ -74,7 +78,7 @@ theorem exists_cayley [FiniteDimensional K V] {h : V →ₗ⋆[K] V →ₗ[K] K}
     obtain ⟨b, rfl⟩ := eS.surjective y
     simp only [LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply]
     rw [heS, heS, heT, heT]
-    simp only [map_add, map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
+    simp only [map_add (f := _), map_sub, map_smul, map_smulₛₗ, LinearMap.add_apply, LinearMap.sub_apply,
       LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
     linear_combination (l + star l) * hY a b
   · intro z
@@ -117,10 +121,10 @@ theorem mem_of_resolvent (h𝔭 : 𝔭.IsMaximal) (hF : IsFixF K F) {h : V →�
     abel
   have eb : b = h u z + c * a * h u u + c * b * h u w := by
     conv_lhs => rw [hb, e']
-    rw [map_add, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have ew : h w z' = h w z + c * a * h w u + c * b * h w w := by
     conv_lhs => rw [e']
-    rw [map_add, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_add (f := _), map_add (f := _), map_smul, map_smul, smul_eq_mul, smul_eq_mul]
   have Iν : InI 𝔭 0 (h u u) := hu.form hp hF hA hu
   have Ip : InI 𝔭 1 (h u w) := (hu.form hp hF hA hw).mono (by omega)
   have Ir : InI 𝔭 1 (h w u) := (hw.form hp hF hA hu).mono (by omega)

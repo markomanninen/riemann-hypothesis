@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.MonomialFactorizationLower
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.StdSlopeLowOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.GramMatrixDuality
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.MonomialFactorizationLower
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.StdSlopeLowOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StandardSlopeBound.GramMatrixDuality
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ open MvPolynomial Formalism.GradedWeylDivisibility Formalism.L2.DIV Matrix
 theorem det_mul_rect' {R : Type*} [CommRing R] {k : ℕ} {n : Type*} [Fintype n]
     (A : Matrix (Fin k) n R) (B : Matrix n (Fin k) R) :
     (A * B).det = ∑ f : Fin k → n, (∏ i, B (f i) i) * (A.submatrix id f).det := by
-  simp only [det_apply, mul_apply, Fintype.prod_sum, Finset.smul_sum, submatrix_apply, id]
+  simp only [det_apply, Matrix.mul_apply, Fintype.prod_sum, Finset.smul_sum, submatrix_apply, id]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [Finset.mul_sum]
@@ -92,7 +96,7 @@ theorem nabla_gram_lower_bound : NablaGramLow := by
           (Finset.mem_univ i))
     simp only [gramOf, Matrix.of_apply]
     rw [fockQ_eq_sum _ _ S hsub, Finset.sum_div, ← Finset.sum_coe_sort S]
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     simp only [mul_diagonal, transpose_apply, hV, hVz, map_apply, of_apply, hq, coeff_map, eq_intCast]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [← hh]
@@ -136,7 +140,7 @@ theorem nabla_gram_lower_bound : NablaGramLow := by
       exact mul_self_eq_zero.mp h3
     have h3 : ∑ i, v i • intQ N N (e i : MvPolynomial (Fin N × Fin N) ℤ) = 0 := by
       ext m
-      rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero]
+      rw [MvPolynomial.coeff_sum, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       simp only [MvPolynomial.coeff_smul, smul_eq_mul, we_intQ_apply, MvPolynomial.coeff_map, eq_intCast]
       by_cases hm : m ∈ S
       · have h4 := congrFun h2 ⟨m, hm⟩
@@ -164,7 +168,7 @@ theorem nabla_gram_lower_bound : NablaGramLow := by
   have hprod : ∀ f : Fin r → S, A ^ r ≤ ∏ i, q (f i) := by
     intro f
     calc A ^ r = ∏ _i : Fin r, A := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
-      _ ≤ ∏ i, q (f i) := Finset.prod_le_prod (fun _ _ => hA0) (fun i _ => hqA (f i))
+      _ ≤ ∏ i, q (f i) := Finset.prod_le_prod₀ (fun _ _ => hA0) (fun i _ => hqA (f i))
   have hmain : A ^ r * ((r.factorial : ℚ) * (Vᵀ * V).det) ≤
       (r.factorial : ℚ) * (Vᵀ * diagonal q * V).det := by
     rw [hid1, hid, Finset.mul_sum]

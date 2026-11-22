@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -82,8 +86,8 @@ structure Coord (g : ℕ)
 variable {G} {g : ℕ}
   {x : ∀ (S : Type) [CommRing S] [Algebra R₀ S], (Fin g → S) → (sp (R₀ := R₀) S ⟶ G)}
 
-open TrivSqZeroExt in
 
+open TrivSqZeroExt in
 theorem Coord.mul_inr (h : Coord G g x) {K : Type} [AddCommGroup K] [Module R₀ K]
     [Module R₀ᵐᵒᵖ K] [IsCentralScalar R₀ K] (a b : Fin g → K) :
     x (TrivSqZeroExt R₀ (K × K)) (fun i => inr (a i, 0)) *
@@ -124,8 +128,8 @@ theorem Coord.mul_inr (h : Coord G g x) {K : Type} [AddCommGroup K] [Module R₀
   simp only [snd_inr, snd_map, LinearMap.fst_apply, LinearMap.snd_apply] at e1 e2
   exact Prod.ext e1.symm e2.symm
 
-open TrivSqZeroExt in
 
+open TrivSqZeroExt in
 theorem Coord.mul_eq (h : Coord G g x) {S : Type} [CommRing S] [Algebra R₀ S]
     (K : Submodule R₀ S) (hK : ∀ a ∈ K, ∀ b ∈ K, a * b = 0) (a b : Fin g → K) :
     x S (fun i => a i) * x S (fun i => b i) = x S (fun i => (a i : S) + b i) := by
@@ -192,7 +196,7 @@ def ptTg (h : Coord G g x) {R S : LAlg R₀} (π : LHom R S) (hπ : π.SqZero) :
     rw [map_zero]
     exact congrArg Additive.ofMul (h.zero R)
   map_add' a b := by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact congrArg Additive.ofMul (h.mul_eq π.ker (mul_eq_zero_of_sqZero hπ) _ _).symm
 
 def ptBX [Smooth G.hom] (h : Coord G g x)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ComplementedSup
 
@@ -9,7 +13,7 @@ theorem complemented_sup :
   have hsup : ∀ A B : Submodule K V, d1 f A → d1 f B → d1 f (A ⊔ B) := by
     intro A B hA hB γ v hv
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hA γ a ha) (hB γ b hb)
   have hinf : ∀ A B : Submodule K V, d1 f A → d1 f B → d1 f (A ⊓ B) := by
     intro A B hA hB γ v hv

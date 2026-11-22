@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.NormLeOneOfInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResEqOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocFlat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocDim
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.RedDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.NormLeOneOfInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ResEqOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocFlat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocDim
+
+@[expose] public section
 
 set_option linter.overlappingInstances false
+set_option synthInstance.maxHeartbeats 200000
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr UpperTheory.V.Alg UpperTheory.V.J
 
@@ -37,7 +42,7 @@ private def nx {l : ℕ} [Fact l.Prime] {D : Type} [CommRing D] (ξ : D →+* Qb
   carrier := {a | ‖ξ a‖ < 1}
   add_mem' {a b} ha hb := by
     show ‖ξ (a + b)‖ < 1
-    rw [map_add]
+    rw [map_add (f := _)]
     exact lt_of_le_of_lt (PadicAlgCl.isNonarchimedean l _ _) (max_lt ha hb)
   zero_mem' := by
     show ‖ξ 0‖ < 1
@@ -69,7 +74,7 @@ private theorem nx_max {l : ℕ} [Fact l.Prime] {D : Type} [CommRing D] (ξ : D 
   haveI hpr := nx_prime ξ h
   haveI hnt : Nontrivial (D ⧸ nx ξ h) := Ideal.Quotient.nontrivial_iff.2 hpr.ne_top
   haveI hdom : IsDomain (D ⧸ nx ξ h) := Ideal.Quotient.isDomain _
-  haveI hbp : (⊥ : Ideal (D ⧸ nx ξ h)).IsPrime := Ideal.bot_prime
+  haveI hbp : (⊥ : Ideal (D ⧸ nx ξ h)).IsPrime := Ideal.isPrime_bot
   let f : ℤ_[l] →+* D ⧸ nx ξ h := (Ideal.Quotient.mk (nx ξ h)).comp φ
   have hf : f.IsIntegral := fun z => by
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective z
@@ -134,7 +139,7 @@ private theorem dim_ge {R : Type} [CommRing R] [IsLocalRing R] (Q : Ideal R) [Q.
   haveI hnt : Nontrivial (R ⧸ Q) := Ideal.Quotient.nontrivial_iff.2 (Ideal.IsPrime.ne_top inferInstance)
   haveI hdom : IsDomain (R ⧸ Q) := Ideal.Quotient.isDomain _
   have h0 : (0 : WithBot ℕ∞) < ringKrullDim (R ⧸ Q) := by
-    refine Order.krullDim_pos_iff.2 ⟨⟨⊥, Ideal.bot_prime⟩, ⟨_, hp⟩, ?_⟩
+    refine Order.krullDim_pos_iff.2 ⟨⟨⊥, Ideal.isPrime_bot⟩, ⟨_, hp⟩, ?_⟩
     refine (PrimeSpectrum.asIdeal_lt_asIdeal _ _).1 (bot_lt_iff_ne_bot.2 fun e => ?_)
     have h1 : Ideal.Quotient.mk Q z ∈ (maximalIdeal R).map (Ideal.Quotient.mk Q) := Ideal.mem_map_of_mem _ hz
     have e' : (maximalIdeal R).map (Ideal.Quotient.mk Q) = ⊥ := e

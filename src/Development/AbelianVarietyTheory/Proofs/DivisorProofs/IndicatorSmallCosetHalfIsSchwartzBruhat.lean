@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSBArgs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSBArgs
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,12 @@ variable {a b : ℕ}
 theorem frAt_add (w : Pl D.host.E) (β' : GL (Fin b) (Lev.EAf D)) (β : GL (Fin a) (Lev.EAf D)) (x y : Mx D b a) :
     frAt w β' β (x + y) = frAt w β' β x + frAt w β' β y := by
   unfold frAt
-  rw [Matrix.map_add _ (toEAf D).map_add, Comparison₂.fr_add, Matrix.map_add _ (cpt (D := D) w).map_add]
+  have h : (x + y).map (toEAf D) = x.map (toEAf D) + y.map (toEAf D) := by
+    ext i j
+    simp only [Matrix.map_apply, Matrix.add_apply, map_add]
+  rw [h, Comparison₂.fr_add]
+  ext i j
+  simp only [Matrix.map_apply, Matrix.add_apply, map_add]
 
 theorem frAt_sub (w : Pl D.host.E) (β' : GL (Fin b) (Lev.EAf D)) (β : GL (Fin a) (Lev.EAf D)) (x y : Mx D b a) :
     frAt w β' β (x - y) = frAt w β' β x - frAt w β' β y := by
@@ -111,18 +120,18 @@ theorem prod_pow_ne_bot {D : D7} (P : Finset (Pl D.host.E)) (n : ℕ) : (∏ w �
   rw [← Ideal.zero_eq_bot, Finset.prod_ne_zero_iff]
   exact fun w _ => pow_ne_zero _ (by rw [Ideal.zero_eq_bot]; exact w.ne_bot)
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
-
 theorem isSBHalf_cosLoc : ∀ {D : D7} (S T : HSp D) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E))
     (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) (βS : GL (Fin S.rank) (Lev.EAf D))
     (βT : GL (Fin T.rank) (Lev.EAf D)) (P : Finset (Pl D.host.E)) (e : AE D) (n : ℕ) (r : WO S T),
-    Submodule.IsLattice D.host.E ΛS → Submodule.IsLattice D.host.E ΛT → IsFrame βS ΛS → IsFrame βT ΛT →
+    Submodule.IsFullLattice D.host.E ΛS → Submodule.IsFullLattice D.host.E ΛT → IsFrame βS ΛS → IsFrame βT ΛT →
     IsIdemSum e P → IsHalf e r → IsSBHalf e (latO S T ΛS ΛT fun _ => True) (cosLoc P e βT βS n r) := by
   intro D S T ΛS ΛT βS βT P e n r hS hT hFS hFT he _
   classical
   obtain ⟨a, ha, h1⟩ := WeilOver.exists_hom_le hS hT
-  obtain ⟨b, hb, h2⟩ := WeilOver.exists_le_hom hS hT
+  obtain ⟨b, hb, h2⟩ := WeilOver.exists_le_hom hS.toIsLattice hT.toIsLattice
   obtain ⟨e0, e1, e2⟩ := Comparison₂.cpt_idemSum he
   have hM : 0 < Ideal.absNorm (∏ w ∈ P, w.asIdeal ^ n) :=
     Nat.pos_of_ne_zero fun h => prod_pow_ne_bot P n (Ideal.absNorm_eq_zero_iff.1 h)

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelOperatorMapsStabiliserEquivariantFormsStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassSumTermLawStabiliserTargetStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KerTieEntire
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemberFormsStableOfReferenceTuple
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelOperatorMapsStabiliserEquivariantFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ClassSumTermLawStabiliserTargetStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KerTieEntire
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemberFormsStableOfReferenceTuple
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker GlobalTheory.KerJ Classical
 

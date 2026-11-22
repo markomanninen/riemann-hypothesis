@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -78,7 +82,8 @@ theorem indep_pi {O : Type} [CommRing O] [IsDomain O] [IsPrincipalIdealRing O] {
     funext a t
     change ∑ i, (algebraMap O L (Y a (t, i))) • b (e i : M) = b (y a t)
     rw [← hΦ a]
-    simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sum, LinearMap.map_smulₛₗ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sum, LinearMap.map_smulₛₗ]
     rfl
   rw [hfam] at key
   exact key

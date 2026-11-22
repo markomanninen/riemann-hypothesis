@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.MemCenterOfCommuteE
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EMulSubMulCapelliMatrixPow
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.MemCenterOfCommuteE
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EMulSubMulCapelliMatrixPow
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -56,8 +60,5 @@ theorem capelli_eq_sum_word (k : ℕ) :
   induction t using Fin.lastCases with
   | last => simp [finRotate_apply]
   | cast s => simp [finRotate_apply, Fin.coeSucc_eq_succ]
-
-theorem capelli_one : capelli (n := n) 1 = ∑ i, e (i, i) := by
-  simp [capelli, capelliMatrix, Matrix.trace]
 
 end GroundTheory.Automorphic.HarishChandra

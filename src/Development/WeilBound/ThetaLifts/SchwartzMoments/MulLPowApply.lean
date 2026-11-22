@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.NormIteratedFDerivCexpCompLe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.NormIteratedFDerivCexpCompLe
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsEventuallyNormRiemannThetaTermLe
+
+@[expose] public section
 
 open Complex Matrix
 open scoped ContDiff BigOperators Real
@@ -29,7 +33,7 @@ noncomputable def wave (a : ℂ) (t : ℝ) : ℂ := a * cexp (2 * π * I * t)
 theorem hasDerivAt_wave (a : ℂ) (t : ℝ) :
     HasDerivAt (wave a) (wave (2 * π * I * a) t) t := by
   have h := (((hasDerivAt_id (t : ℂ)).const_mul (2 * π * I)).cexp.const_mul a).comp_ofReal
-  convert h using 1
+  convert (preTransparency := .reducible) h using 1
   · funext y
     simp [wave]
   · simp only [wave, id]
@@ -99,7 +103,7 @@ theorem summable_inv_pow (n : ℕ) :
   rw [Finset.prod_inv_distrib]
   apply inv_anti₀ (Finset.prod_pos fun k _ => by positivity)
   calc ∏ k, (1 + |(ν k : ℝ)|) ^ 2 ≤ ∏ _k : Fin n, (1 + ∑ k, |(ν k : ℝ)|) ^ 2 :=
-        Finset.prod_le_prod (fun k _ => by positivity) fun k _ =>
+        Finset.prod_le_prod₀ (fun k _ => by positivity) fun k _ =>
           pow_le_pow_left₀ (by positivity)
             (add_le_add le_rfl (Finset.single_le_sum (f := fun k => |(ν k : ℝ)|)
               (fun _ _ => abs_nonneg _) (Finset.mem_univ k))) 2
@@ -125,10 +129,12 @@ theorem hasFDerivAt_term {n : ℕ} (a : ℂ) (ν : Fin n → ℤ) (x : Fin n →
 
 end RapidFourier
 
-open RapidFourier in
 
+open RapidFourier in
 theorem contDiff_and_fderiv_tsum_fourier_of_rapid :
-    ∀ (n : ℕ) (c : (Fin n → ℤ) → ℂ), (∀ N : ℕ, ∃ C : ℝ, ∀ ν, ‖c ν‖ * (1 + ∑ k, |(ν k : ℝ)|) ^ N ≤ C) → ContDiff ℝ ∞ (fun x : Fin n → ℝ => ∑' ν, c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ))) ∧ ∀ (x : Fin n → ℝ) (j : Fin n), fderiv ℝ (fun x : Fin n → ℝ => ∑' ν, c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ))) x (Pi.single j 1) = ∑' ν, 2 * π * I * (ν j : ℂ) * c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ)) := by
+    ∀ (n : ℕ) (c : (Fin n → ℤ) → ℂ), (∀ N : ℕ, ∃ C : ℝ, ∀ ν, ‖c ν‖ * (1 + ∑ k, |(ν k : ℝ)|) ^ N ≤ C) → ContDiff ℝ ∞ (fun x : Fin n → ℝ => ∑' ν, c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ))) ∧ ∀ (x : Fin n → ℝ) (j : Fin n), fderiv ℝ (fun x : Fin n → ℝ => ∑' ν, c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ))) x (Pi.single j 1) = ∑' ν, 2 * π * I * (ν j : ℂ) * c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ)) :=
+  open RapidFourier in
+  by
   intro n c hc
   have hfun : (fun x : Fin n → ℝ => ∑' ν, c ν * cexp (2 * π * I * ∑ k, (ν k : ℂ) * (x k : ℂ))) =
       fun x => ∑' ν, (wave (c ν) ∘ linForm ν) x := by

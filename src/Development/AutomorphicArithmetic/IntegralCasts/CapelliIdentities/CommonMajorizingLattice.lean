@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.CommonMajorizingLattice.majLattice_common.{u_1} :
     ∀ {K : Type u_1} [inst : Field K] [NumberField K] (t : Finset K),

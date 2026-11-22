@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HaarSK
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHaarParabolicCoordinates
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineStabHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsArchUnimodular
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsMajorantStabCompact
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HaarSK
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsHaarParabolicCoordinates
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsLineStabHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsArchUnimodular
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsMajorantStabCompact
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -13,11 +17,11 @@ open scoped ENNReal NNReal
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem HaarParabolicCoordinates.proof (h : HermitianForm F E W) (v : Basis ι E W)
     (h₁ : ParabolicDecomposition.Statement h v) (h₂ : ArchUnimodular.Statement h v)
     (h₃ : MajorantStabCompact.Statement h v) (h₄ : LineStabHaar.Statement h v) :

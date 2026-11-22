@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GalSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GalSplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal PositivityTheory.Rg.Tf.Geo
 open scoped TensorProduct
@@ -11,7 +15,8 @@ private theorem pi_factor {ι : Type*} [Fintype ι] [DecidableEq ι] {k : ι →
     {K : Type*} [Field K] (φ : (∀ i, k i) →+* K) : ∃ w, ∀ b : ∀ i, k i, b w = 0 → φ b = 0 := by
   have h1 : ∑ i, φ (Pi.single i 1) = 1 := by
     have h : (∑ x, Pi.single x 1 : ∀ i, k i) = 1 := Finset.univ_sum_single (1 : ∀ i, k i)
-    rw [← map_sum, h, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, h, map_one]
   obtain ⟨w, hw⟩ : ∃ w, φ (Pi.single w 1) ≠ 0 := by
     by_contra! h
     simp [h] at h1
@@ -117,9 +122,8 @@ theorem UpperTheory.ConvolutionTheory.L1.finSplit :
     intro b
     obtain ⟨t, rfl⟩ := (tensorEquiv' E v).surjective b
     induction t with
-    | zero => simp
     | add x y hx hy =>
-      rw [map_add, map_add, Pi.add_apply, map_add, hx, hy, Pi.add_apply]
+      rw [map_add (f := _), map_add (f := _), Pi.add_apply, map_add (f := _), hx, hy, Pi.add_apply]
     | tmul x a =>
       rw [he, map_mul]
       simp only [Fin.val_zero, pow_zero]

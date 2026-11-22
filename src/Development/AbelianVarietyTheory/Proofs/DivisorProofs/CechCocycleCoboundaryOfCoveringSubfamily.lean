@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS Formalism.L2.Pj
 
@@ -32,8 +37,8 @@ theorem cocycle_coboundary_of_subcover : ∀ (Y : Scheme.{0}) (J : Type) (W : J 
     have e1 := congrArg (resG Y hPT) (hE i (σ k) (σ k'))
     have e2 := congrArg (resG Y (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right) :
       (W i ⊓ W (σ k)) ⊓ (W i ⊓ W (σ k')) ≤ W (σ k) ⊓ W (σ k'))) (hh' k k')
-    simp only [map_add, map_sub, resG_comp] at e1 e2
-    simp only [f, map_add, resG_comp]
+    simp only [map_add (f := _), map_sub, resG_comp] at e1 e2
+    simp only [f, map_add (f := _), resG_comp]
     linear_combination e1 - e2
   have hg : ∀ i, ∃ s : Γ(Y, W i), ∀ k, resG Y (inf_le_left : W i ⊓ W (σ k) ≤ W i) s = f i k := by
     intro i
@@ -57,7 +62,7 @@ theorem cocycle_coboundary_of_subcover : ∀ (Y : Scheme.{0}) (J : Type) (W : J 
   have B := congrArg (resG Y (le_inf (inf_le_left.trans inf_le_right) inf_le_right :
     W i ⊓ W i' ⊓ W (σ k) ≤ W i' ⊓ W (σ k))) (hh i' k)
   have C := hE i i' (σ k)
-  simp only [f, map_add, resG_comp] at A B
+  simp only [f, map_add (f := _), resG_comp] at A B
   simp only [map_sub, resG_comp]
   linear_combination C - A + B
 

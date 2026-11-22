@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.ExistsUnion
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JumpWindow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationLtOneIffNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankLeOfSubsetClosureRange
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.ExistsUnion
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JumpWindow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationLtOneIffNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinrankLeOfSubsetClosureRange
+
+@[expose] public section
 
 noncomputable section
 

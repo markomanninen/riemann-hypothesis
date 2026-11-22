@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThLInvolutive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChangeLevelFamilyIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThLInvolutive
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC
@@ -42,13 +46,5 @@ theorem nrmL_twConj {E : Type} [Field E] [NumberField E] [IsCMField E] (n : ℕ)
   · simp
   · simp only [map_mul, map_inv, hinv]
     group
-
-theorem exists_support_of_stTw_ne_zero (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (w : Pl E)
-    (Q : (w.adicCompletion E)[X]) (φ : GLw n w → ℂ) (h : stTw n w Q φ ≠ 0) :
-    ∃ y, φ y ≠ 0 ∧ (nrmL n w y).val.charpoly = Q := by
-  obtain ⟨δ, hδ, x, hx⟩ := exists_ne_zero_of_clSum_ne_zero _ _ _ _ _ h
-  refine ⟨_, hx, ?_⟩
-  rw [nrmL_twConj, ← (show (nrmL n w δ).val.charpoly = Q from hδ), Units.val_mul, Matrix.charpoly_mul_comm,
-    ← Units.val_mul, mul_inv_cancel_left]
 
 end GlobalTheory.BCT

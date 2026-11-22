@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Herglotz
+module
+
+public import Formalism.HermitianCurvature.StatementE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Herglotz
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.HLsc
 
@@ -13,17 +17,14 @@ noncomputable def tp (B : Finset (Fin d → ℤ)) (c : (Fin d → ℤ) → ℂ) 
 lemma continuous_ee (σ : Fin d → ℤ) : Continuous (fun y : Fin d → ℝ => ee y σ) := by
   unfold ee; fun_prop
 
-lemma continuous_tp (B : Finset (Fin d → ℤ)) (c : (Fin d → ℤ) → ℂ) : Continuous (tp B c) := by
-  unfold tp
-  exact continuous_finsetSum _ (fun σ _ => continuous_const.mul (continuous_ee σ))
-
 lemma normSq_tp (B : Finset (Fin d → ℤ)) (c : (Fin d → ℤ) → ℂ) (y : Fin d → ℝ) :
     ((‖tp B c y‖ ^ 2 : ℝ) : ℂ) =
       ∑ σ ∈ B, ∑ σ' ∈ B, ee y (σ - σ') * c σ * starRingEnd ℂ (c σ') := by
   push_cast
   rw [← Complex.mul_conj']
   unfold tp
-  rw [map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl (fun σ _ => Finset.sum_congr rfl (fun σ' _ => ?_))
   rw [← ee_mul_conj, map_mul]
   ring
@@ -124,7 +125,7 @@ lemma key_upper {N : (Fin d → ℝ) → ℝ} {A : (Fin d → ℤ) → ℂ} (hin
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum (fun σ' _ => ?_))
   rw [norm_mul, norm_mul, RCLike.norm_conj]
 
-def cube (d : ℕ) : Set (Fin d → ℝ) := Set.Icc (fun _ => -(1 / 2)) (fun _ => 1 / 2)
+def cube (d : ℕ) : Set (Fin d → ℝ) := {z | z ∈ Set.Icc (fun _ => -(1 / 2)) (fun _ => 1 / 2)}
 
 lemma integral_one_dim (m : ℤ) :
     ∫ t in Set.Icc (-(1 / 2) : ℝ) (1 / 2), Complex.exp (2 * π * Complex.I * (((m : ℝ) : ℂ) * (t : ℂ))) =
@@ -132,7 +133,7 @@ lemma integral_one_dim (m : ℤ) :
   rw [integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le (by norm_num)]
   by_cases hm : m = 0
   · simp [hm]; norm_num
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     have hc : (2 * π * Complex.I * ((m : ℝ) : ℂ)) ≠ 0 := by
       have hpi : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
       simp [hm, hpi]
@@ -201,7 +202,7 @@ lemma parseval (B : Finset (Fin d → ℤ)) (c : (Fin d → ℤ) → ℂ) :
     push_cast
     refine Finset.sum_congr rfl (fun σ hσ => ?_)
     simp_rw [ite_mul, zero_mul, one_mul]
-    rw [Finset.sum_ite_eq, if_pos hσ, Complex.mul_conj']
+    rw [Finset.sum_ite_eq, ite_eq_left hσ, Complex.mul_conj']
   rw [h3] at h
   exact_mod_cast h
 
@@ -279,7 +280,7 @@ lemma pk_lt (y : Fin d → ℝ) (hy : y ∈ cube d) (hy0 : y ≠ 0) : pk y < pk 
       by_contra hcon
       push Not at hcon
       exact hy0 (funext hcon)
-    refine Finset.prod_lt_prod (fun i _ => lt_of_le_of_ne (by positivity) (hz i).symm)
+    refine Finset.prod_lt_prod₀ (fun i _ => lt_of_le_of_ne (by positivity) (hz i).symm)
       (fun i _ => ?_) ⟨j, Finset.mem_univ j, ?_⟩
     · rw [fac_eq]; linarith [Real.cos_le_one (2 * π * y i)]
     · rw [fac_eq]
@@ -305,7 +306,7 @@ lemma pk_le (y : Fin d → ℝ) : pk y ≤ 4 ^ d := by
   have h4 : (4 : ℝ) ^ d = ∏ _j : Fin d, (4 : ℝ) := by simp
   rw [h4]
   unfold pk
-  refine Finset.prod_le_prod (fun i _ => by positivity) (fun i _ => ?_)
+  refine Finset.prod_le_prod₀ (fun i _ => by positivity) (fun i _ => ?_)
   rw [fac_eq]; linarith [Real.cos_le_one (2 * π * y i)]
 
 lemma normSq_prod (n : ℕ) (y : Fin d → ℝ) :

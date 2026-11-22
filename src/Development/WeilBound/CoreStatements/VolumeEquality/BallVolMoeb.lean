@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.Master
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallMobiusHolomorphicPotentialChangeStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallMobiusMulStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.Master
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallMobiusHolomorphicPotentialChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BallMobiusMulStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,6 @@ variable {Ψ : Type} [Fintype Ψ] {j j' n : ℕ}
 
 theorem sgI_sq : sgI j j' * sgI j j' = 1 := by
   simp [sgI, fromBlocks_multiply]
-
-theorem sgI_ct : (sgI j j')ᴴ = sgI j j' := by
-  simp [sgI, fromBlocks_conjTranspose]
 
 def sinv (u : Matrix (Sg j j') (Sg j j') ℂ) : Matrix (Sg j j') (Sg j j') ℂ := sgI j j' * uᴴ * sgI j j'
 
@@ -43,7 +44,7 @@ theorem moeb_one (q : Ψ × Fin j × Fin j' ≃ Fin n) (t : Fin n → ℂ) : moe
   have : ∀ W : Matrix (Fin j') (Fin j) ℂ, moebW (1 : Matrix (Sg j j') (Sg j j') ℂ) W = W := fun W => by
     rw [moebW, ← fromBlocks_one, toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂, toBlocks_fromBlocks₂₁, toBlocks_fromBlocks₂₂]
     simp
-  simp [moebBall, ballPt, this, ballMat]
+  simp [moebBall, ballPt, this, ballMat, Function.swap]
 
 theorem moeb_maps (q : Ψ × Fin j × Fin j' ≃ Fin n) {u : Ψ → Matrix (Sg j j') (Sg j j') ℂ} (hu : ∀ τ, IsSgU (u τ))
     {t : Fin n → ℂ} (ht : t ∈ ballDom q) : moebBall q u t ∈ ballDom q :=

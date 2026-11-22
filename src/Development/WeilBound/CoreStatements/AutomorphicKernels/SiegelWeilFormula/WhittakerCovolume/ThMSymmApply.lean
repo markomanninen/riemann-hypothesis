@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.ThInclRInjective
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.ThInclRInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,12 +67,14 @@ def thR (d : SD σ) {η : E} (hη : η ≠ 0) : HeckeCharacterZeroLocus.SiegelWe
 
 theorem th_haar (d : SD σ) {η : E} (hη : η ≠ 0) :
     HeckeCharacterZeroLocus.SiegelWeilU.IsHaarH F E σ d.m (Jd d η) (d.μ.map (thM d hη)) := by
+  let : IsTopologicalRing (AE F E) := IsModuleTopology.isTopologicalRing (AF F) _
+  let : IsTopologicalGroup (UA σ d.A.J) := Subgroup.instIsTopologicalGroupSubtypeMem _
   have := d.ok.haar
   exact th_haar_map d.μ (thE d hη) (thE_cont d hη) (thE_symm_cont d hη)
 
 theorem th_fd (d : SD σ) {η : E} (hη : η ≠ 0) :
     HeckeCharacterZeroLocus.SiegelWeilU.IsFDH F E σ d.m (Jd d η) (d.μ.map (thM d hη)) (thM d hη '' d.D) := by
-  refine d.ok.dom.image_of_equiv (thM d hη).toEquiv ⟨(thM d hη).symm.measurable, ?_⟩ (thR d hη) ?_
+  refine d.ok.dom.image_of_equiv (thM d hη).toEquiv ⟨(thM d hη).symm.measurable.aemeasurable, ?_⟩ (thR d hη) ?_
   · change Measure.map (thM d hη).symm (Measure.map (thM d hη) d.μ) ≪ d.μ
     rw [MeasurableEquiv.map_symm_map]
   · intro h x

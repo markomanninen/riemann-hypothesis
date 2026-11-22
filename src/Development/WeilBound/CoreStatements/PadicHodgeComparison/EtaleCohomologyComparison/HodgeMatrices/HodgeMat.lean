@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.HTSpecAllHodge
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.HTSpecAllHodge
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,13 +40,15 @@ theorem corr_ht (F : Frame q n) (F' : Frame q' n) (Φ : Matrix (Fin F.d) F.Col �
       Matrix.map_one _ (map_zero _) (map_one _)]
   · rw [Frame.etMat, ← Matrix.map_mul, ← LinearMap.toMatrix_comp, hV]
     ext i j
-    simp [Frame.etMat, Matrix.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Frame.etMat, Matrix.sum_apply, map_sum]
   · rw [Frame.hodgeMat, ← Matrix.map_mul, ← Matrix.blockDiagonal'_mul]
     simp only [← LinearMap.toMatrix_comp, hH]
     ext ⟨i, x⟩ ⟨j, y⟩
     by_cases hij : i = j
     · subst hij
-      simp [Frame.hodgeMat, Matrix.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Frame.hodgeMat, Matrix.sum_apply, map_sum]
     · rw [Matrix.map_apply, Matrix.blockDiagonal'_apply_ne _ _ _ hij, map_zero, Matrix.sum_apply]
       refine (Finset.sum_eq_zero fun k _ => ?_).symm
       rw [Matrix.smul_apply, Frame.hodgeMat, Matrix.map_apply, Matrix.blockDiagonal'_apply_ne _ _ _ hij, map_zero, smul_zero]

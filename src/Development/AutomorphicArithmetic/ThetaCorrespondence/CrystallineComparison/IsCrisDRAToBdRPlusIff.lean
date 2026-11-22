@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAIff
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.CrystallineComparison.IsCrisDRAIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Comparison
+
+@[expose] public section
 
 noncomputable section
 

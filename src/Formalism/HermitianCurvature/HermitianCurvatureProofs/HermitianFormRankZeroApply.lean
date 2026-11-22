@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ShearMeasurability
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZhatSectionExists
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.HC
 
@@ -55,7 +59,7 @@ lemma skewOf_add (q1 q2 : (G.UT j → ℂ) × (Fin j → ℝ)) : skewOf (q1 + q2
     simp only [Prod.snd_add, Pi.add_apply, Complex.ofReal_add]; ring
   · simp only [Matrix.add_apply]
     rw [skewOf_gt _ h, skewOf_gt _ h, skewOf_gt _ h, skewOf_lt _ h, skewOf_lt _ h, skewOf_lt _ h]
-    simp only [Prod.fst_add, Pi.add_apply, map_add]; ring
+    simp only [Prod.fst_add, Pi.add_apply, map_add (f := _)]; ring
 
 def kap (c1 c2 : Matrix (Fin (2 * ρ + k + 1)) (Fin j) ℂ) : (G.UT j → ℂ) × (Fin j → ℝ) :=
   skc ((1 / 2 : ℂ) • (c2ᴴ * Hpk k ρ * c1 - c1ᴴ * Hpk k ρ * c2))
@@ -87,9 +91,6 @@ end law
 section n0
 
 variable {k r : ℕ}
-
-lemma eB_ll' (a : Fin r) : eB k r 0 (Sum.inl (Sum.inl a)) = eI k r a := by
-  ext; rw [eB_ll]; rfl
 
 lemma mulVec_eB (M : B.Mat k (r + 0)) (y : Fin (2 * r + k + 1) → ℂ) (p : Ix k r 0) :
     (M *ᵥ y) (eB k r 0 p) = ∑ q : Ix k r 0, M (eB k r 0 p) (eB k r 0 q) * y (eB k r 0 q) := by
@@ -236,7 +237,8 @@ lemma cstr_iff {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) (c : Fin (
     · simp only [extC, Fin.lastCases_last, lastRow]
       rw [eq_div_iff hl']
       have := congrArg conj ha
-      simp only [Pi.zero_apply, map_add, map_sum, map_mul, Complex.conj_conj, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Pi.zero_apply, map_add (f := _), map_sum, map_mul, Complex.conj_conj, map_zero] at this
       linear_combination this
     · simp [extC]
   · intro h
@@ -246,7 +248,8 @@ lemma cstr_iff {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) (c : Fin (
       conv_lhs => rw [h]
       simp [extC]
     rw [hl2]
-    simp only [lastRow, map_div₀, map_neg, map_sum, map_mul, Complex.conj_conj, Pi.zero_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lastRow, map_div₀, map_neg, map_sum, map_mul, Complex.conj_conj, Pi.zero_apply]
     field_simp
     ring
 
@@ -324,7 +327,7 @@ theorem stabilizer_subset_range {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ 
     refine ⟨hn.1.1, fun i b hb => ?_, fun i b hb1 hb2 hi => hn.1.2.2 i b hb1 (by omega) hi⟩
     have hf := stabilizer_fixes_flag_vector hz hn ⟨b.val, by omega⟩
     unfold fvec at hf
-    rw [dif_pos hb] at hf
+    rw [dite_eq_left hb] at hf
     have := congrFun hf i
     have e : eI k r ⟨b.val, hb⟩ = b := Fin.ext rfl
     rw [e] at this
@@ -332,7 +335,7 @@ theorem stabilizer_subset_range {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ 
   obtain ⟨x, rfl⟩ := rset_sub_range hR
   have hz' : Rn k r 0 x *ᵥ z = z := by
     have := stabilizer_fixes_flag_vector hz hn (Fin.last r)
-    unfold fvec at this; rw [dif_neg (by simp)] at this; exact this
+    unfold fvec at this; rw [dite_eq_right (by simp)] at this; exact this
   have hc := (cstr_iff hz x.1).1 ((rn_fix_z_iff hz x).1 hz')
   refine ⟨(fun i a => x.1 i.castSucc a, x.2), ?_⟩
   unfold E embX
@@ -364,7 +367,7 @@ theorem cont_extC (z : Fin (2 * r + k + 1) → ℂ) : Continuous (extC (k := k) 
   refine Fin.lastCases ?_ (fun i => ?_) v
   · simp only [extC, Fin.lastCases_last, lastRow]
     refine (Continuous.neg ?_).div_const _
-    exact continuous_finset_sum _ fun i _ => (continuous_apply_apply i a).mul continuous_const
+    exact continuous_finsetSum _ fun i _ => (continuous_apply_apply i a).mul continuous_const
   · simp only [extC, Fin.lastCases_castSucc]
     exact continuous_apply_apply i a
 
@@ -389,9 +392,6 @@ instance instHaarQ : (volume : Measure ((G.UT r → ℂ) × (Fin r → ℝ))).Is
 
 instance instHaarC : (volume : Measure (Fin (2 * 0 + k) → Fin r → ℂ)).IsAddHaarMeasure :=
   Measure.instIsAddHaarMeasureForallVolumeOfMeasurableAddOfSigmaFinite
-
-instance instIsAddHaarCoordinates : (volume : Measure (X0 k r)).IsAddHaarMeasure := by
-  rw [Measure.volume_eq_prod]; exact Measure.prod.instIsAddHaarMeasure _ _
 
 def Et (z : Fin (2 * r + k + 1) → ℂ) (x : X0 k r) : Mt k r := Matrix.of.symm (E z x)
 
@@ -474,9 +474,6 @@ theorem Rd_Et (z : Fin (2 * r + k + 1) → ℂ) (x : X0 k r) : Rd (Et z x) = x :
   funext i a; rw [hc]; simp [extC]
 
 def mu0 (z : Fin (2 * r + k + 1) → ℂ) : Measure (Mt k r) := (volume : Measure (X0 k r)).map (Et z)
-
-theorem Et_mul (z : Fin (2 * r + k + 1) → ℂ) (x1 x2 : X0 k r) :
-    Matrix.of (Et z x1) * Matrix.of (Et z x2) = Matrix.of (Et z (mulX z x1 x2)) := E_mul z x1 x2
 
 theorem isHaar_stabilizer_measure {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) : B.IsHaarOn (C2.N0set k r z) (mu0 z) := by
   have hm : Measurable (Et (k := k) (r := r) z) := (cont_Et z).measurable
@@ -685,7 +682,7 @@ lemma mul_upper_sub {m : ℕ} {A : Matrix (Fin m) (Fin m) ℂ} (hA : A ∈ C2.UT
 theorem mp_UTleft {m : ℕ} {A : Matrix (Fin m) (Fin m) ℂ} (hA : A ∈ C2.UTset m) :
     MeasurePreserving (fun u : G.UT m → ℂ => StabilizerDisintegration.utc (A * G.upper u)) volume volume := by
   refine Formalism.FourierDecayAlt.P.ShearMeasurability.shear_mp (fun q : G.UT m => q.1.2.val - q.1.1.val) _ ?_ ?_
-  · refine measurable_pi_lambda _ fun q => ?_
+  · refine Measurable.of_eval fun q => ?_
     exact ((continuous_const.matrix_mul Formalism.FourierDecayAlt.P.Dx2.SL.cont_upper).matrix_elem q.1.1 q.1.2).measurable
   · intro q x y hxy
     show (A * G.upper x) q.1.1 q.1.2 - x q = (A * G.upper y) q.1.1 q.1.2 - y q
@@ -828,7 +825,7 @@ theorem disint {z : Fin (2 * r + k + 1) → ℂ} (hz : C2.StdZ k r z) {μ0 μN :
     refine (Measure.map_ne_zero_iff hPm.aemeasurable).mpr ?_
     intro h
     have := congrArg (fun μ : Measure ((G.UT (r + 1) → ℂ) × Mt k r) => μ Set.univ) h
-    simp only [Measure.coe_zero, Pi.zero_apply] at this
+    simp only [FunLike.coe_zero, Pi.zero_apply] at this
     rw [← Set.univ_prod_univ, Measure.prod_prod] at this
     have hv : (volume : Measure (G.UT (r + 1) → ℂ)) Set.univ ≠ 0 :=
       (Measure.IsOpenPosMeasure.open_pos Set.univ isOpen_univ Set.univ_nonempty)

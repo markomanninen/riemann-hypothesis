@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.GramMapSecondProjTranspose
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.GramMapSecondProjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,11 +35,13 @@ def lamV (g : SplitG M.L) (m : Fin (r + 1) → M.R) : Ix r → F :=
 
 theorem firstProj_ring_sum (s : Finset (Fin (r + 1))) (f : Fin (r + 1) → M.R) :
     ph1 g ((∑ j ∈ s, f j : M.R) : E) = ∑ j ∈ s, ph1 g (f j : E) := by
-  rw [AddSubmonoidClass.coe_finset_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AddSubmonoidClass.coe_finsetSum, map_sum]
 
 theorem secondProj_ring_sum (s : Finset (Fin (r + 1))) (f : Fin (r + 1) → M.R) :
     ph2 g ((∑ j ∈ s, f j : M.R) : E) = ∑ j ∈ s, ph2 g (f j : E) := by
-  rw [AddSubmonoidClass.coe_finset_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [AddSubmonoidClass.coe_finsetSum, map_sum]
 
 theorem firstProj_diagonalEmbed (hs : M.split = some g) (c : 𝒪[F]) : ph1 g ((dgR hs c : M.R) : E) = c := by
   show (g.e (algebraMap F E (c : F))).1 = c
@@ -46,10 +52,6 @@ theorem secondProj_diagonalEmbed (hs : M.split = some g) (c : 𝒪[F]) : ph2 g (
   show (g.e (algebraMap F E (c : F))).2 = c
   rw [AlgEquiv.commutes]
   rfl
-
-theorem sum_comm3 {n : Type} [Fintype n] (a b : n → F) (c : F) :
-    ∑ x, a x * b x * c = ∑ x, c * b x * a x := by
-  exact Finset.sum_congr rfl fun x _ => by ring
 
 theorem uV_llMap (hs : M.split = some g) (Zh : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (T T' : F)
     (Z : M.Mat (r + 1)) (TT : M.R) (hZ : Z.Z.map M.R.subtype = HermSp.ZZplusOf M Zh T T')

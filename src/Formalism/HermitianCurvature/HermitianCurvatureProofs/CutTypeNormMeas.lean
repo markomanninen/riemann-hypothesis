@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopFormTDM
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopFormTDM
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TNM
 

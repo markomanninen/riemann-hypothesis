@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.RowS
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.RowS
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,12 +38,12 @@ theorem of_sI (hm : m + 1 < a) (x : V ι a m) :
 
 theorem rowS_mm (hm : m + 1 < a) (x : V ι a m) : rowS hm x (mm hm) = x (t0 hm) := by
   unfold rowS
-  rw [dif_pos (by simp [mm])]
+  rw [dite_eq_left (by simp [mm])]
   rfl
 
 theorem rowT_mm (hm : m + 1 < a) (x : V ι a m) : rowT hm x (mm hm) = (x (t0 hm))⁻¹ := by
   unfold rowT
-  rw [dif_pos (by simp [mm]), if_pos (by simp [mm])]
+  rw [dite_eq_left (by simp [mm]), if_pos (by simp [mm])]
 
 theorem rowT_ne (hm : m + 1 < a) (x : V ι a m) {j : Fin a} (hj : j ≠ mm hm) :
     rowT hm x j = -(rowS hm x j * (x (t0 hm))⁻¹) := by
@@ -108,8 +112,8 @@ theorem sM_mul_sI (hm : m + 1 < a) {x : V ι a m} (hx : x ∈ O ι hm) :
     · subst hj; rw [Matrix.one_apply_ne hi]
     · rfl
 
-open Classical in
 
+open Classical in
 def uM (hm : m + 1 < a) (x : V ι a m) : GL (Fin a) (ι → ℂ) :=
   if hx : x ∈ O ι hm then ⟨Matrix.of (sM hm x), Matrix.of (sI hm x), sM_mul_sI hm hx, sI_mul_sM hm hx⟩ else 1
 
@@ -200,7 +204,7 @@ theorem orb_sI [Fintype ι] {X : Type} [NormedAddCommGroup X] [NormedSpace ℂ X
     (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) {x : V ι a m} (hx : x ∈ O ι hm) :
     orb ρ v (sI hm x) = ρ (uM hm x)⁻¹ v := by
   have hu : IsUnit (Matrix.of (sI hm x)) := ⟨(uM hm x)⁻¹, uM_inv_val hm hx⟩
-  rw [orb, dif_pos hu, show hu.unit = (uM hm x)⁻¹ from Units.ext (by rw [IsUnit.unit_spec, uM_inv_val hm hx])]
+  rw [orb, dite_eq_left hu, show hu.unit = (uM hm x)⁻¹ from Units.ext (by rw [IsUnit.unit_spec, uM_inv_val hm hx])]
 
 end PositivityTheory.jumpWindows.CornerBlockIndex
 

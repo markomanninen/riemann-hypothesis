@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.IsLatticeSpanO
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.GlueExistsOfOf
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -58,7 +62,7 @@ theorem nondegOn_of_compl {h : V →ₗ⋆[K] V →ₗ[K] K} (hnd : Nondeg h) {U
   have hz' : h x z = 0 := by
     have := (Submodule.mem_iInf _).1 ((Submodule.mem_iInf _).1 hz x) hx
     exact LinearMap.mem_ker.1 this
-  rw [map_add, hxU u hu, hz', add_zero]
+  rw [map_add (f := _), hxU u hu, hz', add_zero]
 
 theorem glueLocal_of_of (hJ : JordanExists) (hV : GlueVecs) (hA : GlueAssemble) :
     Formalism.L2.SG.Pf.G7.GlueLocal := by

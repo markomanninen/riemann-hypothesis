@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowHt
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowHt
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK

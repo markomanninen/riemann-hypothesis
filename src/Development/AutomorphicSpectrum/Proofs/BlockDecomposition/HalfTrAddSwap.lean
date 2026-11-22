@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixTwoByTwoFinTranspose
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMatrixMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockMatrixTwoByTwoFinTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem halfTr_add_swap (V : HSp D) (a b : Mx D V.rank n) :
     halfTr (Matrix.trace (inner V a b)) + halfTr (Matrix.trace (inner V b a)) =
       trA (Matrix.trace (inner V a b)) := by
   have h : algebraMap D.host.F (AF D.host.F) (1 / 2) + algebraMap D.host.F (AF D.host.F) (1 / 2) = 1 := by
-    rw [← map_add, add_halves, map_one]
+    rw [← map_add (f := _), add_halves, map_one]
   rw [halfTr, halfTr, ← GlobalTheory.SWLink.trA_inner_comm V a b, ← add_mul, h, one_mul]
 
 theorem phase (V : HSp D) (t x y z : Mx D V.rank n) :

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Additive
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ArtinDefs
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ArtinCount
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.PermLattice
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.OrbitInvariants
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Additive
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ArtinDefs
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ArtinCount
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.PermLattice
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.OrbitInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

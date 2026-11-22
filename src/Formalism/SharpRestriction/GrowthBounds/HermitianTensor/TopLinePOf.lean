@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DPsiMonomialIwh
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.BlockSubstitutionBlockEmb
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaNuNextAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.DPsiMonomialIwh
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.BlockSubstitutionBlockEmb
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.QaNuNextAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,14 +86,15 @@ theorem topCore (h2 : ExplicitMapOntoTwoLetters) (h5 : TwoLetterLatticeGaussInve
   classical
   rw [← tie3 h2 h5 hCO R m hm a b] at hΨ
   obtain ⟨f, hf, rfl⟩ := hΨ
-  refine ⟨coeff (vStar m a b) f, ?_⟩
-  have hT : coeff (vStar m a b) f • deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) 1)) =
-      deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) (coeff (vStar m a b) f))) := by
+  refine ⟨AddMonoidAlgebra.coeff f (vStar m a b), ?_⟩
+  have hT : AddMonoidAlgebra.coeff f (vStar m a b) • deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) 1)) =
+      deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) (AddMonoidAlgebra.coeff f (vStar m a b)))) := by
     rw [← map_smul, ← map_smul, smul_monomial, smul_eq_mul, mul_one]
   rw [hT]
-  have hsum : dPsi R.Kf m f = ∑ v ∈ f.support, deltaB R.Kf m (PsiXY R.Kf m (monomial v (coeff v f))) := by
+  have hsum : dPsi R.Kf m f = ∑ v ∈ f.support, deltaB R.Kf m (PsiXY R.Kf m (monomial v (AddMonoidAlgebra.coeff f v))) := by
     conv_lhs => rw [dPsi_apply, f.as_sum]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
   obtain ⟨s0, sl⟩ := qtW_vStar m a b hm
   ext u
   by_cases hu : rowDeg u 0 = a + b ∧ rowDeg u (Fin.last m) = 0
@@ -97,15 +102,16 @@ theorem topCore (h2 : ExplicitMapOntoTwoLetters) (h5 : TwoLetterLatticeGaussInve
     · intro v hv hne
       by_contra hc
       apply hne
-      have w0 := rowA_of_iwh (dPsi_monomial_iwh R.Kf m v (coeff v f)) 0 u hc
-      have wl := rowA_of_iwh (dPsi_monomial_iwh R.Kf m v (coeff v f)) (Fin.last m) u hc
+      have w0 := rowA_of_iwh (dPsi_monomial_iwh R.Kf m v (AddMonoidAlgebra.coeff f v)) 0 u hc
+      have wl := rowA_of_iwh (dPsi_monomial_iwh R.Kf m v (AddMonoidAlgebra.coeff f v)) (Fin.last m) u hc
       exact qt_comb m a b v (hf v hv).1 (hf v hv).2 (by rw [← w0, hu.1]) (by rw [← wl, hu.2])
     · intro hv
-      rw [notMem_support_iff.1 hv, monomial_zero, map_zero, map_zero, coeff_zero]
-  · have c1 : coeff u (dPsi R.Kf m f) = 0 := by
+      rw [notMem_support_iff.1 hv, monomial_zero, map_zero, map_zero, AddMonoidAlgebra.coeff_zero]
+      rfl
+  · have c1 : AddMonoidAlgebra.coeff (dPsi R.Kf m f) u = 0 := by
       by_contra hc
       exact hu ⟨h0 u hc, hl u hc⟩
-    have c2 : coeff u (deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) (coeff (vStar m a b) f)))) = 0 := by
+    have c2 : AddMonoidAlgebra.coeff (deltaB R.Kf m (PsiXY R.Kf m (monomial (vStar m a b) (AddMonoidAlgebra.coeff f (vStar m a b))))) u = 0 := by
       by_contra hc
       have w0 := rowA_of_iwh (dPsi_monomial_iwh R.Kf m _ _) 0 u hc
       have wl := rowA_of_iwh (dPsi_monomial_iwh R.Kf m _ _) (Fin.last m) u hc

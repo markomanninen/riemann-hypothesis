@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyDirectSumEquivOfFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSemisimpleRepresentationTprodOfIsIrreducibleAl
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching GlobalTheory.GLDuality
 open Formalism.REAL (fockF)
 open scoped DirectSum TensorProduct Kronecker Matrix
@@ -31,7 +36,7 @@ theorem matRep_diagGL_monomial {n n' : ℕ} (t : Fin n → ℂˣ) (d : Fin n' ×
     have he' := he 1
     rw [matRep_apply] at hd' he'
     rw [h1, matRep_apply, map_mul, hd', he', smul_mul_smul_comm, ← Finset.prod_mul_distrib]
-    simp only [map_add, Pi.add_apply, pow_add]
+    simp only [map_add (f := _), Pi.add_apply, pow_add]
   | single v k =>
     have h1 := hX v
     rw [matRep_apply] at h1
@@ -49,7 +54,8 @@ theorem matRep_diagGL_component {n n' : ℕ} (t : Fin n → ℂˣ) (μ : Fin n �
     matRep n n' (diagGL ℂ n t, 1) (weightedHomogeneousComponent (colW n' n) μ v) =
       (∏ s, (t s : ℂ) ^ μ s) • weightedHomogeneousComponent (colW n' n) μ v := by
   classical
-  rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [weightedHomogeneousComponent_apply, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   rw [matRep_diagGL_monomial, (Finset.mem_filter.1 hd).2]
 
@@ -91,7 +97,8 @@ theorem weightedHomogeneousComponent_colW_mem (n n' : ℕ) (M : Submodule ℂ (M
       (fun μ => l (weightedHomogeneousComponent (colW n' n) μ v)) ?_ ν hν
     funext t
     have h0 := (Submodule.mem_dualAnnihilator l).1 hl _ (hM t v hv)
-    rw [← hsum, map_sum, map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum, map_sum, map_sum] at h0
     rw [Finset.sum_apply, Pi.zero_apply, ← h0]
     refine Finset.sum_congr rfl fun μ _ => ?_
     rw [matRep_diagGL_component, map_smul, smul_eq_mul, mul_comm]

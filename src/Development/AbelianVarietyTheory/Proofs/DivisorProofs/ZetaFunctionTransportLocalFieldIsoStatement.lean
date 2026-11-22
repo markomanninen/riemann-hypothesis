@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZetaFunctionTransportLocalFieldIso
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousComplEquivSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZetaFunctionTransportLocalFieldIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousComplEquivSymm
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped Pointwise

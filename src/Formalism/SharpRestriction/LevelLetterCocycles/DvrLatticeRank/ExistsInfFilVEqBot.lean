@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -119,8 +123,8 @@ theorem Ub_anti {r : ℕ} (Fil : ℤ → Submodule LL E) (e : Fin r → ℤ → 
 variable {r : ℕ} {Fil : ℤ → Submodule LL E} (hFa : Antitone Fil) (D : Submodule LL E)
   [FiniteDimensional LL D] {e : Fin r → ℤ → E}
 
-include hFa in
 
+include hFa in
 theorem count_step (he : ∀ m k, e m k ∈ D ⊓ Fil (-k))
     (hS : ∀ k : ℤ, ∀ w ∈ D ⊓ Fil (-k), ∃ c : Fin r → LL,
       (∀ j < k, ∑ m, c m • e m j ∈ Fil (-j + 1)) ∧ ∑ m, c m • e m k - w ∈ Fil (-k + 1))
@@ -159,8 +163,8 @@ theorem count_step (he : ∀ m k, e m k ∈ D ⊓ Fil (-k))
     inf_eq_right.mpr (Ub_anti Fil e (by omega : j ≤ j + 1))] at hrk
   omega
 
-include hFa in
 
+include hFa in
 theorem indep_of_span (a₀ a₁ : ℤ) (h₀ : D ≤ Fil a₀) (h₁ : D ⊓ Fil a₁ = ⊥)
     (he : ∀ m k, e m k ∈ D ⊓ Fil (-k))
     (hS : ∀ k : ℤ, ∀ w ∈ D ⊓ Fil (-k), ∃ c : Fin r → LL,
@@ -195,8 +199,8 @@ theorem indep_of_span (a₀ a₁ : ℤ) (h₀ : D ≤ Fil a₀) (h₁ : D ⊓ Fi
   rw [h0, Submodule.mem_bot] at hcmem
   exact hcmem
 
-include hFa in
 
+include hFa in
 theorem smulS_sub_cc {M : ℤ} {f : ℤ → E} (hf : LB M f) (hfF : ∀ k, f k ∈ Fil (-k))
     (g : PowerSeries LL) (j : ℤ) :
     smulS g f j - PowerSeries.constantCoeff g • f j ∈ Fil (-j + 1) := by
@@ -206,8 +210,8 @@ theorem smulS_sub_cc {M : ℤ} {f : ℤ → E} (hf : LB M f) (hfF : ∀ k, f k �
   refine Submodule.sum_mem _ fun n _ => Submodule.smul_mem _ _ ?_
   exact hFa (show -j + 1 ≤ -(j - ((n + 1 : ℕ) : ℤ)) by omega) (hfF _)
 
-include hFa in
 
+include hFa in
 theorem dvd_of_dg (a₁ : ℤ) (h₁ : D ⊓ Fil a₁ = ⊥) (he : ∀ m k, e m k ∈ D ⊓ Fil (-k))
     (hind : ∀ c : Fin r → LL, (∀ j, ∑ m, c m • e m j ∈ Fil (-j + 1)) → c = 0) :
     ∀ (k : ℕ) (g : Fin r → PowerSeries LL),
@@ -261,7 +265,8 @@ theorem map_smulS {E' : Type} [AddCommGroup E'] [Module LL E'] (π : E →ₗ[LL
   obtain ⟨N, hN⟩ : ∃ N : ℕ, j - M < N := ⟨(j - M).toNat + 1, by omega⟩
   have hf' : LB M (fun k => π (f k)) := fun k hk => by
     simp only [hf k hk, map_zero]
-  rw [smulS_eq_sum hf g j N hN, smulS_eq_sum hf' g j N hN, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smulS_eq_sum hf g j N hN, smulS_eq_sum hf' g j N hN, map_sum]
   simp only [map_smul]
 
 private theorem mkQ_mem_map_mkQ_iff_mem_sup (R S : Submodule LL E) (x : E) :
@@ -292,7 +297,8 @@ theorem dvd_of_dg_mod {r : ℕ} {F : ℤ → Submodule LL E} (hFa : Antitone F) 
     exact Submodule.mem_inf.mpr ⟨Submodule.map_mono (hFD _) h, h⟩
   have hπ : ∀ (c : Fin r → LL) (j : ℤ), ∑ m, c m • R.mkQ (e m j) = R.mkQ (∑ m, c m • e m j) := by
     intro c j
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
   have hS' : ∀ i : ℤ, ∀ w ∈ D.map R.mkQ ⊓ (F (-i)).map R.mkQ, ∃ c : Fin r → LL,
       (∀ j < i, ∑ m, c m • R.mkQ (e m j) ∈ (F (-j + 1)).map R.mkQ) ∧
@@ -315,7 +321,8 @@ theorem dvd_of_dg_mod {r : ℕ} {F : ℤ → Submodule LL E} (hFa : Antitone F) 
   have hg' : ∀ j : ℤ, ∑ m, smulS (g m) (fun i => R.mkQ (e m i)) j ∈ (F ((k : ℤ) - j)).map R.mkQ := by
     intro j
     have hsum : ∑ m, smulS (g m) (fun i => R.mkQ (e m i)) j = R.mkQ (∑ m, smulS (g m) (e m) j) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       obtain ⟨M, hM⟩ := hLB m
       exact (map_smulS R.mkQ hM (g m) j).symm
@@ -356,7 +363,7 @@ theorem filVB_anti : Antitone (FilV PD (LL := LL) (V := V)) := by
   | tmul x y =>
     rw [AlgebraTensorModule.map_tmul]
     exact tmul_mem_FilV_of_mem_Fil PD a _ (filB_anti PD hab y.2)
-  | add u v hu hv => rw [map_add]; exact Submodule.add_mem _ hu hv
+  | add u v hu hv => rw [map_add (f := _)]; exact Submodule.add_mem _ hu hv
 
 theorem filV_exh (z : V ⊗[Qp] BdR) : ∃ a : ℤ, z ∈ FilV PD (LL := LL) (V := V) a := by
   induction z using TensorProduct.induction_on with
@@ -381,7 +388,7 @@ theorem coord_mem {ι : Type} (b : Basis ι Qp V) (a : ℤ) (z : V ⊗[Qp] BdR)
     rw [AlgebraTensorModule.map_tmul, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
     exact Submodule.smul_of_tower_mem _ _ y.2
   | add u v hu hv =>
-    rw [map_add, map_add, Finsupp.add_apply]
+    rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
     exact Submodule.add_mem _ hu hv
 
 theorem filV_sep (z : V ⊗[Qp] BdR) (hz : ∀ a : ℤ, z ∈ FilV PD (LL := LL) (V := V) a) : z = 0 := by

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.MapRepApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ abbrev Gp (p : ℕ) : Subgroup (G ℚ Ω) := Dec (F := ℚ) (D.pl p)
 
 abbrev Ip (p : ℕ) : Subgroup (G ℚ Ω) := Ine (F := ℚ) (D.pl p)
 
-open Classical in
 
+open Classical in
 def Sb : Finset ℕ := D.S.filter fun p => p ≠ l ∧ l ∣ Nat.card ((D.Ip p).map D.ψ)
 
 def T : Finset ℕ := insert l D.Sb

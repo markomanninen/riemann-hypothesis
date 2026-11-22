@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharacterArgumentFirstParabolicShift
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmulCompSmul
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharacterArgumentFirstParabolicShift
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.TopStep GlobalTheory.TopLaw
 
@@ -32,22 +36,22 @@ theorem joinCol_source (hc : c' = 1) (r : Sp E (n' + c') ≃ₗ[E] Sp E (n' + c'
     funext l
     rw [Pi.add_apply, CongLevel.inX_apply, Pi.smul_apply, Loc.eN, smul_eq_mul]
     by_cases hl : l.1 < n'
-    · rw [dif_pos hl, if_neg hl.ne, mul_zero, add_zero]
+    · rw [dite_eq_left hl, if_neg hl.ne, mul_zero, add_zero]
       rfl
     · obtain rfl : l = Fin.last n' := Fin.ext (by have := l.2; rw [Fin.val_last]; omega)
-      rw [dif_neg hl, if_pos (Fin.val_last _), mul_one, zero_add]
+      rw [dite_eq_right hl, if_pos (Fin.val_last _), mul_one, zero_add]
   have e1 : r v = Loc.inX E n' 1 (g (LinearMap.funLeft E E (Fin.castAdd 1) v)) + v (Fin.last n') • Loc.eN E (n' + 1) n' := by
     conv_lhs => rw [e]
-    rw [map_add, map_smul, h, hr.2.1]
+    rw [map_add (f := _), map_smul, h, hr.2.1]
   have e2 : LinearMap.funLeft E E (Fin.castAdd 1) (r v) = g (LinearMap.funLeft E E (Fin.castAdd 1) v) := by
     funext l
     rw [LinearMap.funLeft_apply, e1, Pi.add_apply, CongLevel.inX_apply, Pi.smul_apply, Loc.eN, smul_eq_mul,
-      dif_pos (show (Fin.castAdd 1 l).1 < n' from l.2), if_neg (show (Fin.castAdd 1 l).1 ≠ n' from l.2.ne), mul_zero, add_zero]
+      dite_eq_left (show (Fin.castAdd 1 l).1 < n' from l.2), if_neg (show (Fin.castAdd 1 l).1 ≠ n' from l.2.ne), mul_zero, add_zero]
     rfl
   have e3 : atNL E (n' + 1) n' (r v) = atNL E (n' + 1) n' v := by
     unfold atNL
-    rw [dif_pos (Nat.lt_succ_self _), LinearMap.proj_apply, LinearMap.proj_apply, e1, Pi.add_apply, CongLevel.inX_apply,
-      Pi.smul_apply, Loc.eN, smul_eq_mul, dif_neg (lt_irrefl _), if_pos rfl, mul_one, zero_add]
+    rw [dite_eq_left (Nat.lt_succ_self _), LinearMap.proj_apply, LinearMap.proj_apply, e1, Pi.add_apply, CongLevel.inX_apply,
+      Pi.smul_apply, Loc.eN, smul_eq_mul, dite_eq_right (lt_irrefl _), if_pos rfl, mul_one, zero_add]
     rfl
   unfold joinCol
   simp only [LinearMap.comp_apply, LinearMap.add_apply, LinearMap.smulRight_apply, LinearEquiv.coe_coe]
@@ -92,7 +96,7 @@ theorem exists_lift (hX : X.Ok) (hPr : Pr.Ok) (hL : L.Ok Ch sel mu cst G m2) {j 
 theorem muAt_unit (i : ℕ) (P : rowSG Pr sel mu) {a : X.E} (ha : IsUnit (redP P.1 a)) :
     muAt Ch sel mu cst i P a = rhoS Ch sel mu i P a := by
   unfold muAt rhoS
-  rw [LastSteps.locChar_unit _ _ ha]
+  exact LastSteps.locChar_unit _ _ ha
 
 theorem psiAt_source (hX : X.Ok) (hPr : Pr.Ok) (hL : L.Ok Ch sel mu cst G m2) {al : L.β m2} {P : rowSG Pr sel mu}
     {κ : GLint X.E (R.N m2) P.1} {a : X.Kˣ} (hk : LevAt (L.levG m2 al) (L.levQ m2 al) P κ a)
@@ -230,8 +234,8 @@ theorem xiCpl1_law {u : Pr.Word} {al : L.β m2} {b : L.β (m2 + 1)} (hX : X.Ok) 
   rw [e1, e2, Pi.inv_apply, Pi.inv_apply, rhoT_inv, mul_comm (rhoS _ _ _ _ _ _), ← mul_assoc, h2, mul_assoc, h1, h0, Units.val_mul,
     mul_assoc]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem firstCoupledKernel_equivariant_cosets {u : Pr.Word} {T : ChTh W sel mu u m2} (b : L.β (m2 + 1))
     (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hS : Pr.T u ∈ S ∧ ∀ i, Pr.g i ∈ S) (hL : L.Ok Ch sel mu cst G m2)
     (hT : ChTh.Ok (Ch := Ch) cst T) (al : L.β m2) (g : FrmG (L.levG m2 al) (L.levQ m2 al))
@@ -264,8 +268,8 @@ theorem cp1EquivOn {u : Pr.Word} {T : ChTh W sel mu u m2} (b : L.β (m2 + 1)) (h
 
 end Main
 
-open GlobalTheory.Mem.Col2 GlobalTheory.LvT GlobalTheory.LvT.Built in
 
+open GlobalTheory.Mem.Col2 GlobalTheory.LvT GlobalTheory.LvT.Built in
 theorem kAt_equiv : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (W : Wts X Pr.Word R) (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ) (mu : Tup X.F X.E X.K S) (cst : LocCst X (rowSG Pr sel mu)) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) (G : ChGlob X R.m) (m2 : ℕ) (u : Pr.Word) (i : ℕ) (A : Formalism.L2.Ker.Amb X), X.Ok → Pr.Ok → Ch.Ok → IsSel X sel → Pr.T u ∈ S → (∀ k, Pr.g k ∈ S) → L.Ok Ch sel mu cst G m2 → cst.sharp = true → ChTh.Ok (Ch := Ch) cst (Formalism.L2.Ker.chTh W Ch sel mu cst A u m2) → i + 2 = R.m → ∀ b b' (g : (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u i).G b) (g' : (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u (i + 1)).G b') (d : (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u i).D b) (d' : (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u (i + 1)).D b'), kAt W Ch sel mu cst L A u i b b' (letI := (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u i).actD b; g • d) (letI := (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u (i + 1)).actD b'; g' • d') = (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u (i + 1)).rho X.emb (W.lamTrue u (i + 1)) b' g' ∘ₗ kAt W Ch sel mu cst L A u i b b' d d' ∘ₗ (stepAt sel mu cst L (topLev Ch sel mu cst (rPsymF (R := R) Ch)) u i).rho X.emb (W.lamTrue u i) b g⁻¹ := by
   intro X Pr R W Ch sel S mu cst L G m2 u i A hX hPr _ hsel hT hg hL _ hTh hi b b' g g' d d'
   obtain rfl : m2 = i := by have := hL.hm; omega

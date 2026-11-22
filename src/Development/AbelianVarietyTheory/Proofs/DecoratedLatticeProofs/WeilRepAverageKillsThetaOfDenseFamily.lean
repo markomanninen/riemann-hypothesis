@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumThetaJointlyContinuous
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCommonHeisenbergLevelWeilTransformCompact
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LintegralCompactLe
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOMapHaar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumThetaJointlyContinuous
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsCommonHeisenbergLevelWeilTransformCompact
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisFC
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LintegralCompactLe
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ActOMapHaar
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -48,7 +53,7 @@ theorem lintegral_enorm_le_of_sq {α : Type} [MeasurableSpace α] (m : Measure �
     (h2 : ∫⁻ a, ‖u a‖ₑ ^ 2 ∂m ≤ m Set.univ * ENNReal.ofReal ε ^ 2) :
     ∫⁻ a, ‖u a‖ₑ ∂m ≤ m Set.univ * ENNReal.ofReal ε := by
   have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2) (by norm_num) hu
-  rw [eLpNorm_one_eq_lintegral_enorm, eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)] at h
+  rw [eLpNorm_one_eq_lintegral_eNorm hu, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hu] at h
   simp only [ENNReal.toReal_ofNat, ENNReal.toReal_one, ENNReal.rpow_two] at h
   refine h.trans ?_
   have e : (1 : ℝ) / 1 - 1 / 2 = 1 / 2 := by norm_num
@@ -67,7 +72,9 @@ theorem lintegral_enorm_le_of_sq {α : Type} [MeasurableSpace α] (m : Measure �
 theorem integral_om_actO_continuous : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : WRep S T), IsWeilDatumO ψ S T χS χT om → ∀ (X : Type) [TopologicalSpace X] [MeasurableSpace X] [BorelSpace X] [SecondCountableTopology X] (μ : Measure X) [IsFiniteMeasure μ] (p : X → GA D S × GA D T) (c : X → ℂ) (K : Set (GA D S × GA D T)), Continuous p → Continuous c → (∃ C : ℝ, ∀ x, ‖c x‖ ≤ C) → IsCompact K → (∀ᵐ x ∂μ, p x ∈ K) → ∀ f, IsThetaFunO ψ S T f → (∀ w, Integrable (fun x => c x * om (p x) f (actO S T (p x).1 (p x).2 w)) μ) ∧ Continuous (fun w => ∫ x, c x * om (p x) f (actO S T (p x).1 (p x).2 w) ∂μ) := by
   intro D ψ S T χS χT om hom X _ _ _ _ μ _ p c K hp hc hcb hK hpK f hf
   obtain ⟨C, hC⟩ := hcb
-  obtain ⟨-, -, i3, -, -, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T S
+  obtain ⟨i1, i2, i3, -, -, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T S
+  haveI : IsTopologicalAddGroup (WO S T) := i1
+  haveI : LocallyCompactSpace (WO S T) := i2
   haveI : SecondCountableTopology (WO S T) := i3
   haveI : FirstCountableTopology (WO S T) := TopologicalSpace.SecondCountableTopology.to_firstCountableTopology _
   have hG : Continuous fun z : (GA D S × GA D T) × WO S T => om z.1 f (actO S T z.1.1 z.1.2 z.2) :=
@@ -94,6 +101,7 @@ theorem integral_om_actO_continuous : ∀ (D : D7) (ψ : AddChar (AF D.host.F) �
 theorem lintegral_om_actO_le : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : WRep S T), IsWeilDatumO ψ S T χS χT om → ∀ (ν : Measure (WO S T)), ν.IsAddHaarMeasure → ∀ (K : Set (GA D S × GA D T)) (N : Set (WO S T)), IsCompact K → IsCompact N → ∃ B : ENNReal, B ≠ ⊤ ∧ ∀ h, IsThetaFunO ψ S T h → ∀ ε : ℝ, (∀ w, ‖h w‖ ≤ ε) → ∀ q ∈ K, ∫⁻ w in N, ‖om q h (actO S T q.1 q.2 w)‖ₑ ∂ν ≤ B * ENNReal.ofReal ε := by
   intro D ψ S T χS χT om hom ν hν K N hK hN
   obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.AdelicMatrixLattice.lattice D T S
+  haveI : IsTopologicalAddGroup (WO S T) := i1
   haveI : LocallyCompactSpace (WO S T) := i2
   haveI : SecondCountableTopology (WO S T) := i3
   haveI : T2Space (WO S T) := i4

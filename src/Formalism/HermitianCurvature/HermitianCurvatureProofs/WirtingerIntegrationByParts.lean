@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementG
+module
+
+public import Formalism.HermitianCurvature.StatementG
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.WirtingerIntegrationByParts
 
@@ -63,7 +67,8 @@ theorem hol_clm_decomp (L : (Fin d → ℂ) →L[ℂ] F) :
     · subst hik; simp
     · simp [Pi.single_eq_of_ne hik]
   conv_lhs => rw [hv]
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 theorem hol_radius {Ω : Set (Fin d → ℂ)} (hΩ : IsOpen Ω) {x₀ : Fin d → ℂ} (hx₀ : x₀ ∈ Ω) (v : Fin d → ℂ) :
     ∃ R r : ℝ, 0 < R ∧ 0 < r ∧ Metric.closedBall x₀ R ⊆ Ω ∧
@@ -505,7 +510,8 @@ theorem bkb_norm_le_sum {d : ℕ} (L : (Fin d → ℂ) →L[ℂ] ℂ) : ‖L‖ 
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [← Pi.single_smul]; simp
   conv_lhs => rw [hv]
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun l _ => ?_)
   rw [map_smul, norm_smul, mul_comm]
   exact mul_le_mul_of_nonneg_left (norm_le_pi_norm v l) (norm_nonneg _)
@@ -911,8 +917,6 @@ theorem nonStatPhase : NonStatPhase := by
 end Formalism.FourierDecayAlt.P.WirtingerIntegrationByParts
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem wirtinger_integration_by_parts : Formalism.FourierDecayAlt.G.WirtingerIBP := WirtingerIntegrationByParts.wirtingerIBP
 
 theorem nonstationary_phase : Formalism.FourierDecayAlt.G.NonStatPhase := WirtingerIntegrationByParts.nonStatPhase
 

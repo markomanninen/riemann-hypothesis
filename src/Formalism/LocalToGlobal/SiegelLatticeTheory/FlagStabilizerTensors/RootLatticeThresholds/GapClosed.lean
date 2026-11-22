@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LinkSGap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.LinkSGap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+
+@[expose] public section
 
 noncomputable section
 

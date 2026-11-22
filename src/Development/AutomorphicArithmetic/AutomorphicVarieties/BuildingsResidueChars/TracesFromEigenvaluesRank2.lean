@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Classifies
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Classifies
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial GlobalTheory.GalOfCusp UpperTheory.V.Af
 
 theorem UpperTheory.traces_from_eigenvalues_rank2 :
@@ -8,7 +13,7 @@ theorem UpperTheory.traces_from_eigenvalues_rank2 :
   · intro σ
     obtain ⟨u, hu⟩ := D.conj σ
     refine ⟨u, fun s => ?_⟩
-    rw [hu, map_add, map_one, map_multiset_sum, Multiset.map_map, Multiset.map_map]
+    rw [hu, map_add (f := _), map_one, map_multiset_sum, Multiset.map_map, Multiset.map_map]
     congr 2
     refine Multiset.map_congr rfl fun b _ => ?_
     simp only [Function.comp, map_pow, map_inv₀]

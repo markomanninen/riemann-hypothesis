@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFormsCl
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypFormsCl
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+
+@[expose] public section
 
 open MvPolynomial Matrix Formalism.GradedWeylDivisibility Formalism.MainNotions.G Formalism.BasicNotions Formalism.L2.Forms
 
@@ -113,8 +117,8 @@ theorem gen_mem (G : Tau → Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) ℂ) (M : Ta
   have h1 := Formalism.MainNotions.G.CmpJ.PFormsCl.foValC_tr lam (fun τ => (M τ : Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) ℂ)) hu h0
   rw [hX, hM, key, hK]
   convert h1 using 1
-  funext z
-  simp only [fnOf, Formalism.MainNotions.G.CmpJ.PFormsCl.foTr, LinearMap.coe_mk, AddHom.coe_mk, Pi.one_apply, Matrix.one_mul]
+  funext y
+  simp [fnOf, Formalism.MainNotions.G.CmpJ.PFormsCl.foTr]
 
 end Gen
 
@@ -137,11 +141,6 @@ theorem evC_le (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ Tau)
   | zero => rw [map_zero]; exact zero_mem _
   | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
   | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
-
-theorem evValC_le (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ Tau) (G : Tau → Matrix (Fin n) (Fin n) ℂ)
-    (M : Tau → GL (Fin n) ℂ) (lam : Tau → DomWeight n) (hw : WtTie P h pos lam) :
-    (VtupR P ℂ).map (evC P h pos G (fun τ => (M τ : Matrix (Fin n) (Fin n) ℂ))) ≤ ValC G lam :=
-  Submodule.map_le_iff_le_comap.2 fun Q hQ => evC_le P h pos G M lam hw Q hQ
 
 end Main
 

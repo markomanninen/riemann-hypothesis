@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+
+@[expose] public section
 
 universe u
 

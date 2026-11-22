@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.MemConePtsIffChartIdeal
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.MemConePtsIffChartIdeal
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -102,7 +106,8 @@ private lemma segre_isWH [DecidableEq K] {φ : MvPolynomial ((k : K) → ι k) �
     simp [Finset.sum_apply, Pi.single_apply]
   rw [← mem_weightedHomogeneousSubmodule]
   show aeval (fun p : (k : K) → ι k => ∏ k, (X ⟨k, p k⟩ : MvPolynomial (Σ k, ι k) ℂ)) φ ∈ _
-  rw [φ.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [φ.as_sum, map_sum]
   refine Submodule.sum_mem _ fun d hd => ?_
   rw [mem_weightedHomogeneousSubmodule, aeval_monomial, MvPolynomial.algebraMap_eq, Finsupp.prod]
   have hdeg : (0 : K → ℕ) + ∑ p ∈ d.support, d p • (fun _ : K => 1) = fun _ => n := by
@@ -141,7 +146,8 @@ theorem segreIdeal_isHomogeneous {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP
     MvPolynomial.weightedDecomposition.decompose'_apply ℂ _ _ _
   rw [hwdec] at h1
   have hsum : segreMap φ = ∑ m ∈ Finset.range (φ.totalDegree + 1), segreMap (homogeneousComponent m φ) := by
-    rw [← map_sum, sum_homogeneousComponent]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, sum_homogeneousComponent]
   have hterm : ∀ m, weightedHomogeneousComponent (fun q : Σ k, ι k => (Pi.single q.1 1 : K → ℕ)) (fun _ => n)
       (segreMap (homogeneousComponent m φ)) = if n = m then segreMap (homogeneousComponent m φ) else 0 := by
     intro m
@@ -154,7 +160,8 @@ theorem segreIdeal_isHomogeneous {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP
       intro he
       obtain ⟨k⟩ := ‹Nonempty K›
       exact h (congrFun he k)
-  rw [hsum, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum, map_sum] at h1
   simp only [hterm, Finset.sum_ite_eq] at h1
   split_ifs at h1 with hn
   · exact h1
@@ -204,7 +211,7 @@ theorem chartOpen_cover {P : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hP : IsMult
       exact hall p
     · simp
     · intro a b _ _ ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb
     · intro a b _ hb
       rw [smul_eq_mul, map_mul]

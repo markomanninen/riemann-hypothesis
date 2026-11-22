@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IntSOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GaugeBiadditiveSymmAdjointIntegralEnd
+
+@[expose] public section
 
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw GlobalTheory.RowVal ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
@@ -66,11 +70,11 @@ theorem diagonal_split : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (d : �
     (fun a => ⟨by simp only [(h0 a).1, map_zero], by simp only [(h0 a).2, map_zero]⟩)
     (fun a a' b ha ha' hb => by
       have := (hq _).2 (hadd a a' b ha ha' hb).1
-      rw [map_sub, map_add, sub_eq_zero] at this
+      rw [map_sub, map_add (f := _), sub_eq_zero] at this
       exact this.symm)
     (fun a a' b ha ha' hb => by
       have := (hq _).2 (hadd a a' b ha ha' hb).2
-      rw [map_sub, map_add, sub_eq_zero] at this
+      rw [map_sub, map_add (f := _), sub_eq_zero] at this
       exact this.symm)
     (fun a b ha hb => by
       have := (hq _).2 (hs a b ha hb)
@@ -80,7 +84,8 @@ theorem diagonal_split : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (d : �
       have := (hq _).2 (hadj W W' a b hE ha hb)
       rwa [map_sub, sub_eq_zero] at this)
     hWW π hπ (fun o g o' g' hn => (hq _).2 (horth o g o' g' hn))
-  rw [← hq, map_sub, map_sum, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hq, map_sub, map_sum, sub_eq_zero]
   exact key
 
 end GlobalTheory.RowVal.MapSumDiagonal

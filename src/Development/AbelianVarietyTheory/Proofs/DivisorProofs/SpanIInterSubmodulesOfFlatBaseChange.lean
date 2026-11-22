@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef
@@ -63,8 +68,8 @@ theorem tensorMap_tmul {R R₁ K L : Type} [CommRing R] [CommRing R₁] [CommRin
 
 end GlobalTheory.Desc.FlatInter
 
-open GlobalTheory.Desc.FlatInter in
 
+open GlobalTheory.Desc.FlatInter in
 theorem GlobalTheory.Desc.spanBy_iInter_of_flat : ∀ (R R₁ K L : Type) [CommRing R] [CommRing R₁] [CommRing K] [CommRing L] [Algebra R R₁] [Algebra R K] [Module.Flat R R₁] (θ : K →+* L) (c : R₁ →+* L), (∀ a : R, θ (algebraMap R K a) = c (algebraMap R R₁ a)) → (∀ (n : ℕ) (u : Fin n → K) (r : Fin n → R₁), ∑ j, c (r j) * θ (u j) = 0 → ∑ j, u j ⊗ₜ[R] r j = 0) → ∀ (J : Type) [Finite J] [Nonempty J] (N : J → Submodule R K), spanBy c (θ '' ⋂ j, (N j : Set K)) = ⋂ j, spanBy c (θ '' (N j : Set K)) := by
   intro R R₁ K L _ _ _ _ _ _ _ θ c hc hinj J _ _ N
   let Φ := tensorMap θ c hc
@@ -72,7 +77,8 @@ theorem GlobalTheory.Desc.spanBy_iInter_of_flat : ∀ (R R₁ K L : Type) [CommR
     intro x hx
     obtain ⟨n, u, r, rfl⟩ := exists_fin_sum x
     apply hinj n u r
-    simpa [Φ, map_sum, tensorMap_tmul] using hx
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Φ, map_sum, tensorMap_tmul] using hx
   ext v
   constructor
   · rintro ⟨n, r, t, ht, rfl⟩
@@ -83,7 +89,8 @@ theorem GlobalTheory.Desc.spanBy_iInter_of_flat : ∀ (R R₁ K L : Type) [CommR
       obtain ⟨n, r, t, ht, rfl⟩ := Set.mem_iInter.1 hv j
       choose u hu hut using ht
       refine ⟨(N j).subtype.rTensor R₁ (∑ i, (⟨u i, hu i⟩ : N j) ⊗ₜ[R] r i), LinearMap.mem_range_self _ _, ?_⟩
-      simp [Φ, map_sum, tensorMap_tmul, hut]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Φ, map_sum, tensorMap_tmul, hut]
     choose T hT hTv using key
     obtain ⟨j₀⟩ := ‹Nonempty J›
     have heq : ∀ j, T j = T j₀ := fun j => by
@@ -94,4 +101,5 @@ theorem GlobalTheory.Desc.spanBy_iInter_of_flat : ∀ (R R₁ K L : Type) [CommR
     refine ⟨n, s, fun i => θ (w i), fun i => ⟨w i, ?_, rfl⟩, ?_⟩
     · exact Set.mem_iInter.2 fun j => (Submodule.mem_iInf N).1 (w i).2 j
     · rw [← hTv j₀, ← hy]
-      simp [Φ, map_sum, tensorMap_tmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Φ, map_sum, tensorMap_tmul]

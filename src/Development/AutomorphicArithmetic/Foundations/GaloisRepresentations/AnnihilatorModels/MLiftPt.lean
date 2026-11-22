@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.OrdReadOf
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
@@ -25,7 +29,7 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.liftPt_of :
     · rw [← Algebra.commutes, ← Algebra.smul_def] at hx
       exact (smul_eq_zero.mp hx).resolve_left hv
   have hinj : Function.Injective (algebraMap V (B ⧸ q)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     by_contra hv0
     rw [← Ideal.Quotient.mk_algebraMap, Ideal.Quotient.eq_zero_iff_mem] at hv
@@ -41,14 +45,18 @@ theorem UpperTheory.Gal.crystallineComparison.Mod.liftPt_of :
     exact h.imp_left fun h => hK (by rw [h, map_zero])
   haveI : Algebra.IsIntegral V (B ⧸ q) := inferInstance
   haveI : Algebra.IsAlgebraic V (B ⧸ q) := Algebra.IsIntegral.isAlgebraic
-  let φ : (B ⧸ q) →ₐ[V] FractionRing V := IsAlgClosed.lift
+  let φ : (B ⧸ q) →ₐ[V] FractionRing V := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hker : RingHom.ker (φ : (B ⧸ q) →+* FractionRing V) = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := V)
     ext v
     simp only [Ideal.mem_comap, RingHom.mem_ker, Ideal.mem_bot, RingHom.coe_coe, AlgHom.commutes]
     exact map_eq_zero_iff _ hK
   have hφinj : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have : x ∈ RingHom.ker (φ : (B ⧸ q) →+* FractionRing V) := hx
     rwa [hker] at this

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackGamma
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackGamma
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ThetaQ
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ThetaQ
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
@@ -12,9 +16,10 @@ private theorem eval_comm {A E σ : Type} [CommRing A] [Ring E] [Algebra A E] (f
     ∃ φ : MvPolynomial σ A →ₐ[A] E, ∀ i, φ (MvPolynomial.X i) = f i := by
   classical
   let S := Algebra.adjoin A (Set.range f)
-  letI : CommRing S := Algebra.adjoinCommRingOfComm A (by
-    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
+  letI : IsMulCommutative S := Algebra.isMulCommutative_adjoin A (by
+    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
     exact h i j)
+  letI : CommRing S := { S.toRing with mul_comm := fun x y => mul_comm' x y }
   refine ⟨S.val.comp (MvPolynomial.aeval fun i => (⟨f i, Algebra.subset_adjoin ⟨i, rfl⟩⟩ : S)), fun i => ?_⟩
   simp
 
@@ -41,7 +46,7 @@ theorem UpperTheory.V.Pa.Lev.thEx :
   exact ⟨{ Θ1 := Θ1, h1 := h1, Θw := Θw, hw := hw, act1 := a1
            act_uVariable_eq_pow := fun j i => ha1 (.inl (j, i))
            act_yVariable := fun j i => by
-             rw [map_add, map_one, ha1]
+             rw [map_add (f := _), map_one, ha1]
              exact add_sub_cancel _ _
            actw := aw
            actw_u := fun j i => haw (j, i) }⟩

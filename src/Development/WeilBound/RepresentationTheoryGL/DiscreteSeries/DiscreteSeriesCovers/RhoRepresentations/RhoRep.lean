@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem rho_representation_holds : PositivityTheory.RgDs.K.RhoRep := by
     rfl
   · intro k k' a
     funext x'
-    simp only [rhoA, map_sum, map_smul, Finset.smul_sum, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [rhoA, map_sum, map_smul, Finset.smul_sum, smul_smul]
     refine Eq.trans ?_ (Finset.sum_comm (s := (Finset.univ : Finset (Fin x'.1 → Fin n × Fin n))) (t := (Finset.univ : Finset (Fin x'.1 → Fin n × Fin n)))).symm
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [← Finset.sum_smul, rr_op_mul]
@@ -68,7 +73,7 @@ theorem rho_representation_holds : PositivityTheory.RgDs.K.RhoRep := by
     ring
   · intro k a a'
     funext x'
-    simp only [rhoA, Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib]
+    simp only [rhoA, Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib]
   · intro k c a
     funext x'
     simp only [rhoA, Pi.smul_apply, map_smul, Finset.smul_sum]

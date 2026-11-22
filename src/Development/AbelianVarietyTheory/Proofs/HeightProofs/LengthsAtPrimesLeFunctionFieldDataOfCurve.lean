@@ -1,27 +1,31 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
-import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
-import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
-import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
-import Formalism.LocalToGlobal.ProjectiveLattices.HtXfer
-import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
-import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
-import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
-import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAD
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.PlacesRestrictInjective
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RangeMulStep
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RealisationValuesEqValuedPointOrdersStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.LengthQuotientLeOfOrderBound
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ValuationEqOrdAndEqZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.GaussRingCompletionRename
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsRingHomTensorOmSOfPoint
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsSectionMaps
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.RegXInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLocInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.LocRingPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.RealPtPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.HtXfer
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompTie
+public import Formalism.LocalToGlobal.ProjectiveLattices.AxHInst
+public import Formalism.LocalToGlobal.ProjectiveLattices.SupNDataOfNonneg
+public import Formalism.LocalToGlobal.ProjectiveLattices.CombAlgOfCombBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAD
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OpIsDVR
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import Development.AbelianVarietyTheory.Proofs.AlgebraicCurves.PlacesRestrictInjective
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RangeMulStep
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RealisationValuesEqValuedPointOrdersStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.LengthQuotientLeOfOrderBound
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ValuationEqOrdAndEqZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.GaussRingCompletionRename
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsRingHomTensorOmSOfPoint
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsSectionMaps
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ theorem sum_sImg (y : Fin (N + 1) → Ω) (hy : ∀ k, y (j₀.succAbove k) = x 
       algebraMap (MvPolynomial (SVar D N) Ω) (OmS Ω D N) (MvPolynomial.C a) := fun a =>
     IsScalarTower.algebraMap_apply Ω (MvPolynomial (SVar D N) Ω) (OmS Ω D N) a
   rw [Fin.sum_univ_succAbove _ j₀]
-  simp only [sImg, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sImg, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same,
     Fin.insertNth_apply_succAbove, hy, hC, ← map_mul, ← map_sum, ← map_add]
   congr 1
   split_ifs
@@ -71,7 +76,7 @@ theorem pos_of_mem_map {R R' C : Type} [CommRing R] [CommRing R'] [CommRing C] (
   induction hr using Submodule.span_induction with
   | mem r hr => obtain ⟨s, hs, rfl⟩ := hr; exact h1 s hs
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add]; exact lt_of_lt_of_le (lt_min ha hb) (u.map_add _ _)
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact lt_of_lt_of_le (lt_min ha hb) (u.map_add _ _)
   | smul a b _ hb =>
     rw [smul_eq_mul, map_mul, AddValuation.map_mul]
     exact lt_of_lt_of_le hb (le_add_of_nonneg_left (h0 a))
@@ -148,7 +153,7 @@ variable {D' N' : ℕ} (hD : D' = WeightFamilies.dimY D j) (eN : Fin (N' + 1) �
       algebraMap (X.Kl la) (Kp X la N) (algebraMap B.KO (X.Kl la) a))
   (hT : ∀ p, algebraMap (KTf B.KO D' N') (Kp X la N)
     (algebraMap (KTp B.KO D' N') (KTf B.KO D' N') (MvPolynomial.X p)) =
-      algebraMap (Op X la N) (Kp X la N) (Tv X la N (eVar hD eN p)))
+      @algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (eVar hD eN p)))
   {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω) (j₀ : Fin (N' + 1)) (x : Fin N' → Ω)
   [Algebra (KTf B.KO D' N') (OmS Ω D' N')]
   (hS : ∀ p : KTp B.KO D' N', algebraMap (KTf B.KO D' N') (OmS Ω D' N')
@@ -156,8 +161,8 @@ variable {D' N' : ℕ} (hD : D' = WeightFamilies.dimY D j) (eN : Fin (N' + 1) �
   (h0 : gF (X.inc wL (w (eN j₀))) ≠ 0)
   (hx : ∀ k, gF (X.inc wL (w (eN (j₀.succAbove k)))) = x k * gF (X.inc wL (w (eN j₀))))
 
-include hC hT hS h0 hx in
 
+include hC hT hS h0 hx in
 theorem exists_comp_maps (u : WeightFamilies.Wt D j) :
     ∃ (Θ : Rp X la N →ₐ[Kp X la N] Kp X la N ⊗[KTf B.KO D' N'] OmS Ω D' N')
       (ψ : OsK X la w →ₐ[Kp X la N] Kp X la N ⊗[KTf B.KO D' N'] OmS Ω D' N')
@@ -177,7 +182,7 @@ theorem exists_comp_maps (u : WeightFamilies.Wt D j) :
     rw [← Algebra.smul_def, algebraMap_smul, ← Algebra.smul_def, TensorProduct.tmul_smul]
   have hsum : ∀ i : Fin (WeightFamilies.dimY D j + 1),
       ∑ k, algebraMap (Kp X la N) (Kp X la N ⊗[KTf B.KO (WeightFamilies.dimY D j) N'] OmS Ω (WeightFamilies.dimY D j) N')
-        (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i, k))) *
+        (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i, k))) *
           (1 ⊗ₜ algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N') (gF (X.inc wL (w k)))) =
       1 ⊗ₜ ∑ k, sImg j₀ x (i, k) * algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N') (gF (X.inc wL (w (eN k)))) := by
     intro i
@@ -189,20 +194,22 @@ theorem exists_comp_maps (u : WeightFamilies.Wt D j) :
   refine GlobalTheory.SecEval.exists_section_maps D B P j X la N wL u w _
     (((Algebra.TensorProduct.includeRight : OmS Ω (WeightFamilies.dimY D j) N' →ₐ[KTf B.KO (WeightFamilies.dimY D j) N']
       Kp X la N ⊗[KTf B.KO (WeightFamilies.dimY D j) N'] OmS Ω (WeightFamilies.dimY D j) N').toRingHom.comp
-      (algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N'))).comp gF.toRingHom) (fun a f => ?_) (fun i => ?_) ?_
-  · show (1 : Kp X la N) ⊗ₜ algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N') (gF (a • f)) =
+      (algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N'))).comp gF.toRingHom) ?_ ?_ ?_
+  · intro a f
+    change (1 : Kp X la N) ⊗ₜ algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N') (gF (a • f)) =
       _ * (1 ⊗ₜ algebraMap Ω (OmS Ω (WeightFamilies.dimY D j) N') (gF f))
     rw [← hC, key, hS, map_smul, Algebra.smul_def, map_mul, ← MvPolynomial.algebraMap_eq, AlgHom.commutes,
       ← IsScalarTower.algebraMap_apply]
-  · refine (hsum i.succ).trans ?_
+  · intro i
+    refine (hsum i.succ).trans ?_
     rw [sum_sImg_succ j₀ x (fun k => gF (X.inc wL (w (eN k)))) hx, TensorProduct.tmul_zero]
   · refine (hsum 0).symm ▸ ?_
     exact (IsUnit.mk0 _ (sum_sImg_zero j₀ x (fun k => gF (X.inc wL (w (eN k)))) hx h0)).map
       (Algebra.TensorProduct.includeRight : OmS Ω (WeightFamilies.dimY D j) N' →ₐ[KTf B.KO (WeightFamilies.dimY D j) N']
         Kp X la N ⊗[KTf B.KO (WeightFamilies.dimY D j) N'] OmS Ω (WeightFamilies.dimY D j) N')
 
-include hC hT hS h0 hx in
 
+include hC hT hS h0 hx in
 theorem ev_eq_zero (htr : Algebra.trdeg B.KO Ω = D')
     (Θ : Rp X la N →ₐ[Kp X la N] Kp X la N ⊗[KTf B.KO D' N'] OmS Ω D' N')
     (hΘ : ∀ F, Θ (emb X la N F) = 1 ⊗ₜ algebraMap Ω (OmS Ω D' N') (gF F))
@@ -216,7 +223,7 @@ theorem ev_eq_zero (htr : Algebra.trdeg B.KO Ω = D')
     (k : ℕ) (g : Rp X la N) (hg : g ∈ Vw X la N (addL (wt0 D j) wL k)) (h : Θ g = 0) : ev g = 0 := by
   subst hD
   obtain ⟨χ, h1, h2⟩ := GlobalTheory.exists_ringHom_tensor_OmS_of_point B.KO Ω (Kp X la N) U (WeightFamilies.dimY D j) N' j₀ x (GlobalTheory.SecPoint.evK X la N ev) τ
-    (fun p => algebraMap (Op X la N) (Kp X la N) (Tv X la N (eVar rfl eN p))) htr hS hT
+    (fun p => @algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (eVar rfl eN p))) htr hS hT
     (fun a => by rw [hC, hτ]) (fun i => by
       have h3 := GlobalTheory.SecPoint.ev_sec X la N w gF ev τ σ hc i.succ
       rw [honS, eq_comm, mul_eq_zero, or_iff_left hσ, ← eN.sum_comp, Fin.sum_univ_succAbove _ j₀] at h3
@@ -229,7 +236,7 @@ theorem ev_eq_zero (htr : Algebra.trdeg B.KO Ω = D')
       obtain ⟨F, rfl⟩ := hy
       rw [hΘ, h2, hc k _ (emb_mem_Vw X la N _ F)]
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, map_add, map_add, ha, hb, add_mul]
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb, add_mul]
     | smul a b _ hb =>
       rw [GlobalTheory.SecPoint.ev_smul, hb, map_smul, Algebra.smul_def, map_mul, Algebra.TensorProduct.algebraMap_apply,
         Algebra.algebraMap_self, RingHom.id_apply, h1, mul_assoc]
@@ -247,6 +254,7 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
   {A : ι → Type} [∀ c, CommRing (A c)] [∀ c, Algebra (Ω c) (A c)] [∀ c, Algebra B.KO (A c)]
   [∀ c, Algebra (𝓞 B.KO) (A c)] {𝒜 : (c : ι) → WT → Submodule (Ω c) (A c)}
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem plOver_iff (d : Data B.KO ι Ω WT A) (hs : d.S1) (la : HeightOneSpectrum (𝓞 B.KO)) (c : ι)
     (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ)) :
     letI := d.algOp hs la c
@@ -254,6 +262,7 @@ theorem plOver_iff (d : Data B.KO ι Ω WT A) (hs : d.S1) (la : HeightOneSpectru
       w ∈ d.PlOver la c := by
   letI := d.algOp hs la c
   letI : Algebra (OT B.KO d.D d.N) (OmS (Ω c) d.D d.N) := (d.OTtoS c).toAlgebra
+  letI : Algebra (OT B.KO d.D d.N) (ReciprocityTheory.ChartRestriction.G.T0.Op d.D d.N la) := inferInstance
   haveI : IsScalarTower (OT B.KO d.D d.N) (ReciprocityTheory.ChartRestriction.G.T0.Op d.D d.N la) (OmS (Ω c) d.D d.N) :=
     IsScalarTower.of_algebraMap_eq fun x => by
       show _ = d.KTtoS hs c (ReciprocityTheory.ChartRestriction.G.T0.OpToKT d.D d.N la (algebraMap _ _ x))
@@ -264,9 +273,9 @@ theorem plOver_iff (d : Data B.KO ι Ω WT A) (hs : d.S1) (la : HeightOneSpectru
     (ReciprocityTheory.ChartRestriction.G.T0.laT d.D d.N la) w
   exact ⟨fun hw => ⟨hw.1, h.2 hw.2⟩, fun hw => ⟨hw.1, h.1 hw.2⟩⟩
 
+
 set_option maxHeartbeats 1600000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem ila_le (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B.KO)) (Q : LocalPointData G la)
     (gF : ∀ Z, X.Forms →ₐ[B.KO] Ω Z) (d : Data B.KO ι Ω WT A) (hd : d.AxH 𝒜) (hs : d.S1)
     (eN : Fin (d.N + 1) ≃ Fin G.N) (eD : Fin d.del ≃ Fin G.del) (hD : d.D = WeightFamilies.dimY D j)
@@ -303,7 +312,7 @@ theorem ila_le (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B
   letI := ReciprocityTheory.ChartRestriction.G.T0.algOpKT (K := B.KO) d.D d.N la
   haveI := ReciprocityTheory.ChartRestriction.G.T0.isFractionRing_Op (K := B.KO) d.D d.N la
   letI : Algebra (ReciprocityTheory.ChartRestriction.G.T0.Op d.D d.N la) (Kp X la G.N) :=
-    ((algebraMap (Op X la G.N) (Kp X la G.N)).comp f).toAlgebra
+    ((@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _).comp f).toAlgebra
   haveI : IsScalarTower (ReciprocityTheory.ChartRestriction.G.T0.Op d.D d.N la) (KTf B.KO d.D d.N) (Kp X la G.N) :=
     IsScalarTower.of_algebraMap_eq fun r => (hφ r).symm
   haveI : IsScalarTower (ReciprocityTheory.ChartRestriction.G.T0.Op d.D d.N la) (Op X la G.N) (Kp X la G.N) :=
@@ -403,7 +412,7 @@ theorem ila_le (G : GlobalFamilyData X ka wL wF) (la : HeightOneSpectrum (𝓞 B
     rw [← coord_smul_self hgen a, h1, zero_smul]
   · intro a ha c w hw u hu1 hu0
     have halg : ∀ r : Op X la G.N, ψ c (algebraMap (Op X la G.N) (OsK X la G.w) r) =
-        algebraMap (Op X la G.N) (Kp X la G.N) r ⊗ₜ 1 := fun r => by
+        @algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ r ⊗ₜ 1 := fun r => by
       rw [IsScalarTower.algebraMap_apply (Op X la G.N) (Kp X la G.N) (OsK X la G.w), AlgHom.commutes]
       rfl
     obtain ⟨ζ, hζ⟩ := hval (u.comap (ψ c).toRingHom) (fun r => by
@@ -504,16 +513,16 @@ theorem ratio_single_mul {Ω W : Type} [Field Ω] (G : W) (a : Ω) {b : Ω} (hb 
       (AddMonoidAlgebra.single G b) * b := by
   have h : ∃ r : Ω, (AddMonoidAlgebra.single G a : AddMonoidAlgebra Ω W) = r • AddMonoidAlgebra.single G b :=
     ⟨a / b, by rw [AddMonoidAlgebra.smul_single', div_mul_cancel₀ _ hb]⟩
-  rw [ReciprocityTheory.ChartRestriction.G.T0.ratio, dif_pos h]
+  rw [ReciprocityTheory.ChartRestriction.G.T0.ratio, dite_eq_left h]
   have h1 := h.choose_spec
   generalize h.choose = r at h1 ⊢
   rw [AddMonoidAlgebra.smul_single'] at h1
   exact AddMonoidAlgebra.single_right_injective h1
 
+
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem ilaTie_of_curveHyp : ∀ (D : D7) (T : Top D) (h : LawsP T) (j : ℕ) (hj : InR D j) (hG : GenFrEx (T.Q.Xo j) T.Q.c) [Fintype (Comp (T.Q.Xo j) T.Q.c)] (ka wL wF : WeightFamilies.Wt D j) (G : GlobalFamilyData (recPlus h j hj) ka wL wF) (S : Scal (recB h.toLawsCore)) (g0 : (recB h.toLawsCore).Cusp j wF), CurveHyp h j hj hG ka wL wF G S g0 → GenValInjSt h j hG → CompSplitSt h j hG → BIRSt h j hj hG G → ∀ (y : ∀ la, PtsG G la → (extAll h j hj).Pt' la) (hw : ∀ la ζ, FromW (E := extAll h j hj) (hM := intAtExt_extAll h j hj) ζ (y la ζ)), (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InCurve) → (∀ la, (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0).InTie S) → ∀ (δ : ∀ Z : Comp (T.Q.Xo j) T.Q.c, AddValuation (Om Z) (WithTop ℤ) → Ix (T.Q.Dw j) → ℤ), OrdTie hG δ (trivialClassCondition (T.Q.Xo j) T.Q.c) (fun _ => Unit) (fun _ _ _ _ _ => True) → ∀ (d : ReciprocityTheory.ChartRestriction.G.T0.Data T.Q.c.F (Comp (T.Q.Xo j) T.Q.c) (fun Z => Om Z) (WTZ D.host.E) (fun Z => AC Z)) (hd : d.AxH (fun Z => AG Z)) (hs : d.S1) (eN : Fin (d.N + 1) ≃ Fin G.N), d.D = WeightFamilies.dimY D j → (∀ Z v, d.ord Z v = ordC (δ Z v) v) → d.wL = wtZ (wtA wL) wL.n → d.wF = wtZ (wtA wF) wF.n → (∀ k, d.w k = valC hG (wtA wL) wL.n (G.w (eN k)).1) → ∀ (eD : Fin d.del ≃ Fin G.del), (∀ k, d.thp (hd.sel k) = valC hG (wtA wF) wF.n (G.th' (eD k)).1) → ∀ (Gc PH Prw Pet : ℝ), IlaTie (B := (recB h.toLawsCore)) d hd hs G (fun la => (secQ (E := extAll h j hj) (hM := intAtExt_extAll h j hj) (y la) (fun ζ => (hw la ζ).toSecPt) g0)) Gc PH Prw Pet := by
   intro D T h j hj hG _ ka wL wF G S g0 hH hInj hSplit hBIR y hw hCurve hTie δ hOrd d hd hs eN hD hdo hwL hwF hdw
     eD hth Gc PH Prw Pet la

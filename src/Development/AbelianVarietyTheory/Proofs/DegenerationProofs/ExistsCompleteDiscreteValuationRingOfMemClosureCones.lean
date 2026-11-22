@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteDiscreteValuationRingOfMemClosureC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteDiscreteValuationRingOfMemClosureC
+
+@[expose] public section
+
 open scoped BigOperators TensorProduct
 
 namespace GlobalTheory
@@ -38,7 +43,8 @@ theorem eval_eq_zero_of_aeval_tmul_eq_zero {F K J ι : Type} [Field F] [Field K]
   have key : ∀ (B : Type) [CommRing B] [Algebra F B] (u : J → B),
       MvPolynomial.aeval u (∑ s ∈ G.support, MvPolynomial.monomial s (l (G.coeff s))) =
         ∑ s ∈ G.support, l (G.coeff s) • ∏ j ∈ s.support, u j ^ s j := fun B _ _ u => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [MvPolynomial.aeval_monomial, Algebra.smul_def]
     rfl
@@ -49,7 +55,8 @@ theorem eval_eq_zero_of_aeval_tmul_eq_zero {F K J ι : Type} [Field F] [Field K]
     exact hG (MvPolynomial.mem_support_iff.mp hs)
   · rw [key]
     have h1 := congrArg ((TensorProduct.lid F (A i)).toLinearMap ∘ₗ l.rTensor (A i)) (h0 i)
-    rw [map_zero, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq, map_sum] at h1
     rw [← h1]
     refine Finset.sum_congr rfl fun s _ => ?_
     have h2 : algebraMap K (K ⊗[F] A i) (G.coeff s) * ∏ j ∈ s.support, ((1 : K) ⊗ₜ[F] w i j) ^ s j

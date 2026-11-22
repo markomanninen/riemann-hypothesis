@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropFiltSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropTermSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropHilbWSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropFiltSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropTermSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropHilbWSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -104,8 +109,8 @@ theorem interNum_fin_congr {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [A
 
 end SectionCount.Drop
 
-open Classical in
 
+open Classical in
 theorem SectionCount.Drop.proof (hF : SectionCount.Drop.Filt.Statement.{u, w})
     (hT : SectionCount.Drop.Term.Statement.{u, w}) (hH : SectionCount.Drop.HilbW.Statement.{u, w})
     (hR : GenericPointSectionInput.Statement.{u, w}) : SectionCount.Drop.Statement.{u, w} := by
@@ -156,8 +161,8 @@ theorem SectionCount.Drop.proof (hF : SectionCount.Drop.Filt.Statement.{u, w})
       rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
       by_cases hP : qq ∈ (primeOf (S := k) x ⊔ zeroIdeal (twistSys k x (b : ℤ)) β).minimalPrimes ∧
           IsSubvar x qq d
-      · rw [dif_pos hP]; rw [dif_pos hP] at hq; rw [hq]
-      · rw [dif_neg hP]; rw [dif_neg hP] at hq; rw [hq]; simp
+      · rw [dite_eq_left hP]; rw [dite_eq_left hP] at hq; rw [hq]
+      · rw [dite_eq_right hP]; rw [dite_eq_right hP] at hq; rw [hq]; simp
     rw [finsum_congr hTq, finsum_eq_sum_of_support_subset (s := Finset.univ.image pp)]
     · rw [Finset.sum_comm]
       refine Finset.sum_congr rfl (fun j _ => ?_)

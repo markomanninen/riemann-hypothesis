@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,6 +61,8 @@ theorem isOpen_ker_finIdele (E : Type) [Field E] [NumberField E] (ψ : (FiniteAd
       one_mem' := ⟨by simpa using mem_of_mem_nhds hP, by simpa using mem_of_mem_nhds hP⟩
       mul_mem' := fun {x y} hx hy => ⟨hmul _ _ hx.1 hy.1, by rw [mul_inv, Units.val_mul]; exact hmul _ _ hx.2 hy.2⟩ }
   have hH : (H : Set (FiniteAdeleRing (𝓞 E) E)ˣ) ∈ 𝓝 1 := by
+    change ({u : (FiniteAdeleRing (𝓞 E) E)ˣ | (u : FiniteAdeleRing (𝓞 E) E) - 1 ∈ P} ∩
+      {u : (FiniteAdeleRing (𝓞 E) E)ˣ | (↑u⁻¹ : FiniteAdeleRing (𝓞 E) E) - 1 ∈ P}) ∈ 𝓝 1
     refine Filter.inter_mem ?_ ?_
     · exact (Units.continuous_val.sub (continuous_const (y := 1))).continuousAt.preimage_mem_nhds (t := P) (by simpa using hP)
     · exact (Units.continuous_coe_inv.sub (continuous_const (y := 1))).continuousAt.preimage_mem_nhds (t := P) (by simpa using hP)
@@ -79,27 +85,27 @@ def expU (z : ι → ℂ) : (ι → ℂ)ˣ :=
   ⟨fun i => Complex.exp (z i), fun i => Complex.exp (-z i),
     by funext i; simp [← Complex.exp_add], by funext i; simp [← Complex.exp_add]⟩
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem expU_add (z z' : ι → ℂ) : expU (z + z') = expU z * expU z' :=
   Units.ext (funext fun i => Complex.exp_add (z i) (z' i))
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem expU_zero : expU (0 : ι → ℂ) = 1 := Units.ext (funext fun _ => Complex.exp_zero)
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem unit_ne_zero (u : (ι → ℂ)ˣ) (i : ι) : (u : ι → ℂ) i ≠ 0 :=
   left_ne_zero_of_mul_eq_one (congrFun u.mul_inv i)
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem expU_log (u : (ι → ℂ)ˣ) : expU (fun i => Complex.log ((u : ι → ℂ) i)) = u :=
   Units.ext (funext fun i => Complex.exp_log (unit_ne_zero u i))
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem continuous_expU : Continuous (expU : (ι → ℂ) → (ι → ℂ)ˣ) :=
   Units.continuous_iff.2 ⟨continuous_pi fun i => Complex.continuous_exp.comp (continuous_apply i),
     continuous_pi fun i => Complex.continuous_exp.comp (continuous_apply i).neg⟩
@@ -121,12 +127,14 @@ theorem exists_lin (ψ : (ι → ℂ)ˣ →* ℂˣ) (hψ : Continuous ψ) :
     rw [← this]; ring
   exact ⟨(AddMonoidHom.mk' F hadd).toRealLinearMap F.continuous, fun z => (hF' z).symm⟩
 
-open Classical in
 
-def extZero (ψ : (ι → ℂ)ˣ →* ℂˣ) (x : ι → ℂ) : ℂ := if h : IsUnit x then (ψ h.unit : ℂˣ) else 0
+open Classical in
+def extZero (ψ : (ι → ℂ)ˣ →* ℂˣ) (x : ι → ℂ) : ℂ := by
+  classical
+  exact if h : IsUnit x then (ψ h.unit : ℂˣ) else 0
+
 
 omit [Fintype ι] in
-
 theorem extZero_unit (ψ : (ι → ℂ)ˣ →* ℂˣ) (u : (ι → ℂ)ˣ) : extZero ψ u = (ψ u : ℂˣ) := by
   simp [extZero]
 
@@ -150,7 +158,8 @@ theorem contDiffAt_extZero (ψ : (ι → ℂ)ˣ →* ℂˣ) (hψ : Continuous ψ
   have h1 : ContDiffAt ℝ ∞ Complex.log ((u : ι → ℂ) i / (u : ι → ℂ) i) := by
     rw [div_self (unit_ne_zero u i)]
     exact (Complex.contDiffAt_log Complex.one_mem_slitPlane).restrict_scalars ℝ
-  exact h1.comp (f := fun x : ι → ℂ => x i / (u : ι → ℂ) i) _ ((contDiffAt_apply ℝ ℂ i _).div_const _)
+  exact h1.comp (f := fun x : ι → ℂ => x i / (u : ι → ℂ) i) _
+    ((contDiffAt_apply ℝ (fun _ : ι => ℂ) i _).div_const _)
 
 theorem fderiv_extZero {ψ : (ι → ℂ)ˣ →* ℂˣ} {L : (ι → ℂ) →L[ℝ] ℂ} (hψ : Continuous ψ)
     (hL : ∀ z, ((ψ (expU z) : ℂˣ) : ℂ) = Complex.exp (L z)) : fderiv ℝ (extZero ψ) 1 = L := by

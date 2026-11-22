@@ -1,5 +1,9 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.FilteredPoleLength
-import Formalism.GelfandTransference.HadamardGelfand.Hadamard
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.FilteredPoleLength
+public import Formalism.GelfandTransference.HadamardGelfand.Hadamard
+
+@[expose] public section
 
 noncomputable section
 

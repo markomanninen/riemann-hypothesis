@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
@@ -71,7 +76,7 @@ theorem quot_pow_maximal_charP_local_card : ∀ (L : Type) [Field L] [NumberFiel
   have hJtop : J.map q = ⊤ := by
     have : (1 : 𝓞 L) ∈ la ⊔ J := hJ ▸ Submodule.mem_top
     obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.mp this
-    have hz' : q z = 1 - q y := by rw [← map_one q, ← hyz, map_add]; ring
+    have hz' : q z = 1 - q y := by rw [← map_one q, ← hyz, map_add (f := _)]; ring
     exact Ideal.eq_top_of_isUnit_mem _ (Ideal.mem_map_of_mem q hz) (hz' ▸ (hnil y hy).isUnit_one_sub)
   have hlspan : Ideal.span {((l : ℕ) : 𝓞 L ⧸ la ^ n)} = (la.map q) ^ e := by
     have : ((l : ℕ) : 𝓞 L ⧸ la ^ n) = q (l : 𝓞 L) := (map_natCast q l).symm

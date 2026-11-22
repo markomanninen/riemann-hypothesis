@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -13,7 +17,8 @@ noncomputable def iterD {ι : Type} : (m : ℕ) → (Fin m → ι) → (MvPolyno
 
 theorem pderiv_linF {ι : Type} [Fintype ι] (x : ι → ℝ) (j : ι) :
     MvPolynomial.pderiv j (linF x) = MvPolynomial.C (x j) := by
-  rw [linF, map_sum, Finset.sum_eq_single j]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [linF, map_sum, Finset.sum_eq_single j]
   · simp
   · intro b _ hb
     simp [MvPolynomial.pderiv_X, Pi.single_apply, hb, hb.symm]
@@ -57,7 +62,8 @@ theorem GlobalTheory.MxDet.re_det_relation : ∀ (ι J : Type) [Fintype ι] [Fin
   obtain ⟨T, hT⟩ := GlobalTheory.MxDet.exists_functional e fun c : Fin e → ι =>
     (∑ σ : Equiv.Perm (Fin e), (Equiv.Perm.sign σ : ℂ) * ∏ l, H (c l) (σ l) l).re
   have h := congrArg T hrel
-  simp only [map_sum, map_zero, MvPolynomial.C_mul', LinearMap.map_smul, smul_eq_mul] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zero, MvPolynomial.C_mul', LinearMap.map_smul, smul_eq_mul] at h
   rw [← h]
   refine Finset.sum_congr rfl fun j _ => ?_
   congr 1

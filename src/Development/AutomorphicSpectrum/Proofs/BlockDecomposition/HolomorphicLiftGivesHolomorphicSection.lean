@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOnSourceIffOfDensity
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothHermCombLine
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOnSourceIffOfDensity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUniqueComplexPointUnder
+
+@[expose] public section
+
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace MvPolynomial MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,8 +23,8 @@ namespace GlobalTheory.CompanionTheory.MixZ.Holo
 
 variable {m : ℕ} {n : Fin (m + 1) → ℕ}
 
-open GlobalTheory.QCoh.Qcqs in
 
+open GlobalTheory.QCoh.Qcqs in
 theorem baseRingHom_toSpecΓ {Y : Scheme.{0}} {B : CommRingCat.{0}} (ψ : B ⟶ Γ(Y, ⊤)) :
     baseRingHom (Y.toSpecΓ ≫ Spec.map ψ) ⊤ = ψ := by
   rw [baseRingHom_comp_SpecMap, baseRingHom_top, Scheme.toSpecΓ_appTop, Iso.inv_hom_id, Category.comp_id]
@@ -83,7 +88,7 @@ theorem rho_coordVal (k : Fin (m + 1)) (j : Bk n k) :
   by_cases h : j = c k
   · subst h
     rw [coordVal_self, map_one, pullRatio_self]
-  · rw [coordVal, dif_neg h]
+  · rw [coordVal, dite_eq_right h]
     simp only [rho, RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, rename_X, dehomog, eval₂Hom_X']
     exact resG_pullRatio _
 
@@ -103,7 +108,7 @@ theorem tau_comp_rho :
     exact (map_intCast _ r).trans (map_intCast _ r).symm
   · obtain ⟨⟨k, j⟩, h⟩ := q
     have e : (X ⟨⟨k, j⟩, h⟩ : CRing c) = coordVal c k j := by
-      rw [coordVal, dif_neg (show ¬ j = c k from h)]
+      rw [coordVal, dite_eq_right (show ¬ j = c k from h)]
     rw [e]
     exact tau_rho_coordVal c k j
 
@@ -131,8 +136,8 @@ theorem toC_tau : toC c ≫ tau c = (mchart c).ι := by
 
 end Chart
 
-open GlobalTheory.QCoh.Qcqs in
 
+open GlobalTheory.QCoh.Qcqs in
 theorem affine_surj (c : ∀ k, Bk n k) : IsAffineOpen (mchart c) ∧ Function.Surjective (dehomog c) := by
   have hr : Set.range (tau c) ⊆ Set.range (mchart c).ι := by
     rintro _ ⟨x, rfl⟩
@@ -194,7 +199,7 @@ theorem differentiableOn_eval₂ {E ι : Type*} [NormedAddCommGroup E] [NormedSp
     DifferentiableOn ℂ (fun v => eval₂Hom (Int.castRingHom ℂ) (g v) P) T := by
   induction P using MvPolynomial.induction_on with
   | C a => simpa only [eval₂Hom_C] using differentiableOn_const _
-  | add p q hp hq => simpa only [map_add] using hp.fun_add hq
+  | add p q hp hq => simpa only [map_add (f := _)] using hp.fun_add hq
   | mul_X p q hp => simpa only [map_mul, eval₂Hom_X'] using hp.fun_mul (hg q)
 
 theorem holo_near (m : ℕ) (n : Fin (m + 1) → ℕ) (X : Scheme.{0}) (i : X ⟶ MP ℤ m n) [IsClosedImmersion i] (D : ℕ)

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.UnlinkedProductIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.UnlinkedProductIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.DepthZeroJacquetInjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem act_eigen (σ : Representation ℂ K X) (ψ : K →* ℂˣ) (y : X)
     σ.asAlgebraHom c y = aug ψ c • y := by
   induction c using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [map_add, map_add, LinearMap.add_apply, ha, hb, add_smul]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, ha, hb, add_smul]
   | single g r => rw [aug_single, Representation.asAlgebraHom_single, LinearMap.smul_apply, hy, smul_smul]
 
 theorem act_comm (σ : Representation ℂ K X) (τ : Representation ℂ K Y) (f : X →ₗ[ℂ] Y)
@@ -37,7 +41,7 @@ theorem act_comm (σ : Representation ℂ K X) (τ : Representation ℂ K Y) (f 
     f (σ.asAlgebraHom c x) = τ.asAlgebraHom c (f x) := by
   induction c using MonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
   | single g r => simp only [Representation.asAlgebraHom_single, LinearMap.smul_apply, map_smul, hf]
 
 theorem exists_kill [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
@@ -63,7 +67,8 @@ theorem exists_kill [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
     obtain ⟨x, rfl⟩ := (hO w).1 hw
     exact (hO _).2 ⟨g * x, by rw [map_mul, Module.End.mul_apply]⟩
   have hinv : ∀ g, π g (∑ w ∈ O, w) = ∑ w ∈ O, w := fun g => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_nbij' (fun w => π g w) (fun w => π g⁻¹ w) (hmem g) (hmem g⁻¹)
       (fun w _ => ?_) (fun w _ => ?_) (fun _ _ => rfl)
     · rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
@@ -76,11 +81,13 @@ theorem exists_kill [TopologicalSpace K] [IsTopologicalGroup K] [CompactSpace K]
     rw [smul_smul, Units.mul_inv, one_smul]
   choose s hs using fun w : O => (hO w).1 w.2
   refine ⟨∑ w : O, MonoidAlgebra.single (s w) ((ψ (s w))⁻¹ : ℂˣ).val, ?_, ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [aug_single, Units.inv_mul]
     have : O.Nonempty := ⟨z, (hO z).2 ⟨1, by simp⟩⟩
     simpa using this.ne_empty
-  · rw [map_sum, LinearMap.sum_apply, ← hz, ← Finset.sum_coe_sort O]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, ← hz, ← Finset.sum_coe_sort O]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [Representation.asAlgebraHom_single, LinearMap.smul_apply]
     exact hs w
@@ -130,7 +137,7 @@ theorem exists_kill_tensor (ψ : K →* ℂˣ)
     obtain ⟨d, hd, hd'⟩ := hw (c * b)
     refine ⟨d * c, by rw [map_mul]; exact mul_ne_zero hd hc, ?_⟩
     rw [map_mul, Module.End.mul_apply] at hd'
-    rw [map_mul, Module.End.mul_apply, map_add, map_add, hc', zero_add, hd']
+    rw [map_mul, Module.End.mul_apply, map_add (f := _), map_add (f := _), hc', zero_add, hd']
 
 end Tensor
 

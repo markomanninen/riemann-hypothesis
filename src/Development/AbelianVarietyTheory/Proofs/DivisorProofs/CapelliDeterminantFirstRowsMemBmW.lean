@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchMap
-import Formalism.LocalToGlobal.Columns.PolyFnLemmas
-import Development.AbelianVarietyTheory.Definitions.Foundations.TracePowApply
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaPhiBranchOperator
+module
+
+public import Mathlib
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchMap
+public import Formalism.LocalToGlobal.Columns.PolyFnLemmas
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TracePowApply
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaPhiBranchOperator
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BranchingDeterminantCap Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.Mem.Gelf GlobalTheory.Mem.GelfCheck
 
@@ -48,7 +52,8 @@ theorem fockB_X_mul {σ : Type} (v : σ) (f g : MvPolynomial σ K) : fockB (X v 
 
 theorem fockB_rowE {r m : ℕ} (a b : Fin r) (f g : MvPolynomial (Fin r × Fin m) K) :
     fockB (rowE K r m a b f) g = fockB f (rowE K r m b a g) := by
-  rw [rowE_apply, rowE_apply, ← fockBL_apply, ← fockBL_apply, map_sum, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rowE_apply, rowE_apply, ← fockBL_apply, ← fockBL_apply, map_sum, map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [fockBL_apply, fockBL_apply, fockB_X_mul, fockB_symm f, fockB_X_mul, fockB_symm]
 
@@ -89,7 +94,8 @@ theorem capDet_intertwine {M M' : Type} [AddCommGroup M] [Module K M] [AddCommGr
     induction l with
     | nil => simp
     | cons a l ih => simp only [List.map_cons, List.prod_cons, Module.End.mul_apply, ih, h1]
-  simp only [capDet, bmPi, bmM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, List.ofFn_eq_map, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [capDet, bmPi, bmM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_zsmul, List.ofFn_eq_map, h2]
 
 theorem capDet_mem {M : Type} [AddCommGroup M] [Module K M] {n : ℕ} (E : Fin n → Fin n → Module.End K M)
     (W : Submodule K M) (h : ∀ i j, ∀ x ∈ W, E i j x ∈ W) (u : ℤ) {x : M} (hx : x ∈ W) : capDet E u x ∈ W := by
@@ -102,10 +108,10 @@ theorem rE_emb (n : ℕ) (i j : Fin n) (f : MvPolynomial (Fin n × Fin n) K) :
   unfold rE
   induction f using MvPolynomial.induction_on with
   | C a => simp [emb, rowE_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     obtain ⟨a, s⟩ := v
-    rw [map_mul, rowE_mul, rowE_mul, hp, map_add, map_mul, map_mul, bmF_emb_X, rowE_X, rowE_X]
+    rw [map_mul, rowE_mul, rowE_mul, hp, map_add (f := _), map_mul, map_mul, bmF_emb_X, rowE_X, rowE_X]
     by_cases h : j = a <;> simp [h, bmF_emb_X]
 
 theorem rE_zmon (n : ℕ) (i j : Fin n) (b : Fin n → ℕ) : rE K n n i j (zmon K n b) = 0 := by
@@ -131,27 +137,12 @@ theorem rCap_lead (n : ℕ) (u : ℤ) (b : Fin n → ℕ) (f : MvPolynomial (Fin
   capDet_intertwine (fun i j => rowE K n n i j) (rE K n n)
     (LinearMap.mulLeft K (zmon K n b) ∘ₗ (emb K n).toLinearMap) (fun i j x => rE_lead n i j b x) u f
 
-theorem rE_incl (n : ℕ) (i j : Fin n) (f : BP K n) :
-    rE K n (n + 1) i j (incl K n f) = incl K n (rE K n n i j f) := by
-  unfold rE
-  induction f using MvPolynomial.induction_on with
-  | C a => simp [incl, rowE_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
-  | mul_X p v hp =>
-    obtain ⟨a, s⟩ := v
-    have hX : ∀ a s, incl K n (X (a, s)) = X (a, s.castSucc) := fun a s => rename_X _ _
-    rw [map_mul, rowE_mul, rowE_mul, hp, map_add, map_mul, map_mul, hX, rowE_X, rowE_X]
-    by_cases h : j.castSucc = a <;> simp [h, hX]
-
-theorem rCap_incl (n : ℕ) (u : ℤ) (f : BP K n) : rCap K n (n + 1) u (incl K n f) = incl K n (rCap K n n u f) :=
-  capDet_intertwine (rE K n n) (rE K n (n + 1)) (incl K n).toLinearMap (rE_incl n) u f
-
 theorem rowE_eq_deriv {r m : ℕ} (a b : Fin r) (f : MvPolynomial (Fin r × Fin m) K) :
     rowE K r m a b f = mkDerivation K (fun v : Fin r × Fin m =>
       if v.1 = b then (X (a, v.2) : MvPolynomial (Fin r × Fin m) K) else 0) f := by
   induction f using MvPolynomial.induction_on with
   | C c => rw [rowE_C, derivation_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     obtain ⟨c, s⟩ := v
     rw [rowE_mul, hp, Derivation.leibniz, mkDerivation_X, rowE_X]
@@ -193,7 +184,7 @@ theorem zcomp_comm_rCap (n : ℕ) (β : Fin n → ℤ) (u : ℤ) : Commute (zcom
   capDet_commute_of _ u _ (zcomp_comm_rE n β)
 
 theorem coeff_rowE_self {r m : ℕ} (a : Fin r) (f : MvPolynomial (Fin r × Fin m) K) (μ : Fin r × Fin m →₀ ℕ) :
-    coeff μ (rowE K r m a a f) = (rowDeg μ a : K) * coeff μ f := by
+    AddMonoidAlgebra.coeff (rowE K r m a a f) μ = (rowDeg μ a : K) * AddMonoidAlgebra.coeff f μ := by
   classical
   rw [rowE_apply, coeff_sum, rowDeg, Nat.cast_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun s _ => ?_
@@ -213,17 +204,17 @@ theorem rowWeight_iff [CharZero K] {r m : ℕ} (ρ : Fin r → ℕ) (f : MvPolyn
   · intro h a
     ext μ
     rw [coeff_rowE_self, coeff_smul, smul_eq_mul]
-    by_cases h0 : coeff μ f = 0
+    by_cases h0 : AddMonoidAlgebra.coeff f μ = 0
     · simp [h0]
     · rw [← bm_weight_rowW, h h0]
   · intro h μ h0
     funext a
-    have := congrArg (coeff μ) (h a)
+    have := congrArg (AddMonoidAlgebra.coeff · μ) (h a)
     rw [coeff_rowE_self, coeff_smul, smul_eq_mul] at this
     rw [bm_weight_rowW]
     exact_mod_cast mul_right_cancel₀ h0 this
 
-theorem fockB_eq_zero {σ : Type} (f g : MvPolynomial σ K) (h : ∀ μ, coeff μ f ≠ 0 → coeff μ g = 0) : fockB f g = 0 :=
+theorem fockB_eq_zero {σ : Type} (f g : MvPolynomial σ K) (h : ∀ μ, AddMonoidAlgebra.coeff f μ ≠ 0 → AddMonoidAlgebra.coeff g μ = 0) : fockB f g = 0 :=
   Finset.sum_eq_zero fun μ hμ => by rw [h μ (mem_support_iff.1 hμ)]; simp
 
 theorem fockB_rename {σ τ : Type} {e : σ → τ} (he : Function.Injective e) (f g : MvPolynomial σ K) :
@@ -234,7 +225,7 @@ theorem fockB_rename {σ τ : Type} {e : σ → τ} (he : Function.Injective e) 
     have h1 : ∀ {σ : Type} (g : MvPolynomial σ K), fockB (C a) g = a * constantCoeff g :=
       fun g => @fockL_C_left K _ starRingOfComm _ a g
     rw [rename_C, h1, h1, constantCoeff_rename]
-  | add p q hp hq => simp only [← fockBL_apply, map_add, LinearMap.add_apply] at *; rw [hp, hq]
+  | add p q hp hq => simp only [← fockBL_apply, map_add (f := _), LinearMap.add_apply] at *; rw [hp, hq]
   | mul_X p v hp => rw [mul_comm, map_mul, rename_X, fockB_X_mul, fockB_X_mul, pderiv_rename he, hp]
 
 theorem fockB_incl (n : ℕ) (f g : BP K n) : fockB (incl K n f) (incl K n g) = fockB f g :=

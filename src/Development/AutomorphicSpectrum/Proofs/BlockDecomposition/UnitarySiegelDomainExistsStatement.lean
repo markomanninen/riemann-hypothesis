@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitarySiegelDomainExists
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitarySiegelDomainExists
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR
 open Formalism.UG (cT)
 open scoped TensorProduct NNReal ENNReal

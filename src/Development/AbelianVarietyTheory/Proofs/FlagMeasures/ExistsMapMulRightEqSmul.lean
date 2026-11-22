@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -56,7 +60,7 @@ theorem exists_map_mul_right_eq_smul (P : Subgroup G) (hP : MeasurableSet (P : S
     rw [Measure.map_map (measurable_mul_const l) measurable_subtype_coe]
     have hc : ((fun g : G => g * l) ∘ Subtype.val) = Subtype.val ∘ (fun x : P => x * l') := rfl
     rw [hc, ← Measure.map_map measurable_subtype_coe (measurable_mul_const l'), ← hν', hEq,
-      Measure.map_smul, hmap]
+      Measure.map_smul D e.measurable.aemeasurable, hmap]
   have huniv : (ρ.map fun g => g * l) Set.univ ≠ 0 := by
     rw [Measure.map_apply (measurable_mul_const l) MeasurableSet.univ, Set.preimage_univ]
     exact fun h => hT0 (measure_mono_null (Set.subset_univ _) h)

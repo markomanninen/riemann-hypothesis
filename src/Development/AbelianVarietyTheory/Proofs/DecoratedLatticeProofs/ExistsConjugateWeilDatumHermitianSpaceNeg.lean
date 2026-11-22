@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsWeilDatumConjNegHermitianSpaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjWeilDatumViaAdjointExchangedPair
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsWeilDatumConjNegHermitianSpaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ConjWeilDatumViaAdjointExchangedPair
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont
@@ -75,7 +80,7 @@ noncomputable def reflEnd (X : Type) [AddGroup X] : Module.End ℂ (X → ℂ) �
     { toFun := fun f x => L (fun y => f (-y)) (-x)
       map_add' := fun f f' => by
         have : (fun y => (f + f') (-y)) = (fun y => f (-y)) + fun y => f' (-y) := rfl
-        rw [this, map_add]; rfl
+        rw [this, map_add (f := _)]; rfl
       map_smul' := fun c f => by
         have : (fun y => (c • f) (-y)) = c • fun y => f (-y) := rfl
         rw [this, map_smul]; rfl }
@@ -133,7 +138,7 @@ theorem weil_refl {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE 
     refine ⟨r, hr, fun ℓ hℓ f hf => ?_⟩
     let ℓ' : (WO S T → ℂ) →ₗ[ℂ] ℂ :=
       { toFun := fun F => ℓ fun z => F (-z)
-        map_add' := fun a b => by rw [← map_add]; rfl
+        map_add' := fun a b => by rw [← map_add (f := _)]; rfl
         map_smul' := fun c a => by rw [← map_smul]; rfl }
     have h1 : ℓ (fun z => om (g, h) (fun y => f (-y)) (-z)) =
         (r : ℂ) * (splitFacO χS χT x y : ℂ) * ℓ (fun z => f (- -z)) :=
@@ -165,7 +170,7 @@ theorem detA_val (V : HSp D) (g : GA D V) : ((detA V g : (AE D)ˣ) : AE D) = (Fo
 
 theorem conj_detAt {e : AE D} {V : HSp D} {g : GA D V} {x : (AE D)ˣ} (hx : IsDetAt e V g x) :
     cA D (x : AE D) = cA D e * cA D (Formalism.L2.Theta.mt V g).det + (1 - cA D e) := by
-  rw [hx, map_add, map_mul, map_sub, map_one]
+  rw [hx, map_add (f := _), map_mul, map_sub, map_one]
 
 theorem conj_idem {e : AE D} (he : IsSplitIdem D e) : cA D e * cA D e = cA D e := by rw [← map_mul, he.1]
 

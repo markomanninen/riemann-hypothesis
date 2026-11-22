@@ -1,9 +1,13 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.LenPiU
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.FkFilt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGenerators
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanLeBound
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HassePresH
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.LenPiU
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.FkFilt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGenerators
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanLeBound
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HassePresH
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem bcol_sum {N : ℕ} (jj : Fin N) (α : Fin (WeightFamilies.dimY D j) → 
   simp [bcol, Fintype.sum_prod_type, Fin.sum_univ_succ]
 
 theorem smulOp_HK (o : Op X la G.N) (x : ↥(HK X la G.w wF)) :
-    o • x = (algebraMap (Op X la G.N) (Kp X la G.N) o) • x := by
+    o • x = (@algebraMap (Op X la G.N) (Kp X la G.N) _ _ _ o) • x := by
   apply Subtype.ext
   rw [Submodule.coe_smul_of_tower, Submodule.coe_smul_of_tower, algebraMap_smul]
 
@@ -53,7 +57,7 @@ def dH (β : Idx D j G.N →₀ ℕ) : ↥(HK X la G.w wF) →+ SectionSheafQuot
     apply Subtype.ext
     exact (hasse X la G.w β).map_zero
   map_add' x y := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     apply Subtype.ext
     exact (hasse X la G.w β).map_add _ _
@@ -101,7 +105,7 @@ theorem vals_eq_U (hTH : TaylorHasse) (k : ℕ) (x : ↥(HK X la G.w wF)) (cf : 
 
 def psi (hHS : HasseSmul) (k : ℕ) : ↥(JKo G la k) →ₗ[Op X la G.N] Vg G la where
   toFun x := vals G la k x
-  map_add' x y := by rw [Submodule.coe_add, map_add]
+  map_add' x y := by rw [Submodule.coe_add, map_add (f := _)]
   map_smul' o x := by
     funext p
     rw [RingHom.id_apply, Pi.smul_apply, vals_apply, vals_apply]
@@ -145,7 +149,7 @@ def phi (hHS : HasseSmul) (hHV : HasseVan) (T k : ℕ) : ↥(Fk G la T k) →ₗ
 theorem phi_tau (hHS : HasseSmul) (hHV : HasseVan) (T k : ℕ) (hk : k < a0 D j T) (x : ↥(JKo G la k)) :
     phi G la hHS hHV T k (tau G la T k x) = psi G la hHS k x := by
   unfold phi
-  rw [dif_pos hk, LinearMap.comp_apply, LinearEquiv.coe_coe]
+  rw [dite_eq_left hk, LinearMap.comp_apply, LinearEquiv.coe_coe]
   have e : ((tau G la T k).quotKerEquivOfSurjective (tau_surj G la T k)).symm (tau G la T k x) =
       Submodule.Quotient.mk x := by
     rw [LinearEquiv.symm_apply_eq, LinearMap.quotKerEquivOfSurjective_apply_mk]
@@ -265,12 +269,14 @@ theorem grBound_of (hTR : TaylorRep) (hTH : TaylorHasse) (hHS : HasseSmul) (hHV 
     let Yo : ↥(JKo G la k) := ∑ a, ∑ i, cc a i • (⟨xg a i, hxJ a i⟩ : ↥(JKo G la k))
     have hN : ((tau G la T k Yo : ↥(Fk G la T k)) : WK X la G.w wF (a0 D j T)) ∈ firstLength_le_prime_bound G la T := by
       show toWKo G la (a0 D j T) (Yo : ↥(HK X la G.w wF)) ∈ firstLength_le_prime_bound G la T
-      simp only [Yo, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Yo, Submodule.coe_sum, Submodule.coe_smul, map_sum, map_smul]
       exact Submodule.sum_mem _ fun a _ => Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hxN a i)
     refine ⟨tau G la T k Yo, Submodule.mem_inf.2 ⟨hN, taylorSpanLeBound G la Q S CRm T c hOk hw hth hN⟩, ?_⟩
     rw [phi_tau G la hHS hHV T k hk]
     have hY : psi G la hHS k Yo = Uk G la k (∑ a, ∑ i, cc a i • Pi.single a (tL G la i)) := by
-      simp only [Yo, map_sum, map_smul, hpsi]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Yo, map_sum, map_smul, hpsi]
     rw [hY]
     congr 1
     funext a'

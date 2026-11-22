@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrincipalCongruenceFixedVectorsLeSmoothVectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrincipalCongruenceFixedVectorsLeSmoothVectors
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem sum_rho_eq_zero {G : Type} [Group G] [Fintype G] (τ : FDRep ℂ G) (U :
       _ = ∑ _u : U, E := Finset.sum_congr rfl fun u _ => hinv u
       _ = (Fintype.card U : ℂ) • E := by rw [Finset.sum_const, Finset.card_univ, Nat.cast_smul_eq_nsmul]
   have htE : LinearMap.trace ℂ τ E = 0 := by
-    rw [hE, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hE, map_sum]
     exact h
   have hc : (Fintype.card U : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   obtain ⟨P, hP⟩ : ∃ P : Module.End ℂ τ, P = (Fintype.card U : ℂ)⁻¹ • E := ⟨_, rfl⟩

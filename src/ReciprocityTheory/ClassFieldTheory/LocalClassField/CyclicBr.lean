@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.Herbrand
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsHerbrand
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsG
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.Herbrand
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnitsHerbrand
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ValUnitsG
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -43,13 +47,34 @@ theorem herbrand_layer (hK : FiniteDimensional ℚ_[p] K) (hL : FiniteDimensiona
   have he : 0 < eK p L := eK_pos p L hL
   obtain ⟨hU, hU1⟩ := herbrand_layerU hK hL h g₀ hg
   obtain ⟨hZ, -, -, hZ1⟩ := Herbrand.h_int (trivRep (GalLK p K L) ℤ).rho (fun _ _ => rfl) g₀
+  let v : (layer p K L).V →+ ℤ := (vOn p L).comp
+    { toFun := fun x => ⟨x.1, layer_val_mem h x⟩
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl }
+  have hv (x : (layer p K L).V) : (v x : ℝ) = eK p L * vbar p x.1 := vOn_spec p L _
+  have hv_surjective : Surjective v := by
+    intro n
+    obtain ⟨x, hx⟩ := vOn_surjective_of_pos p L he n
+    refine ⟨toLayer p x, Int.cast_injective (α := ℝ) ?_⟩
+    exact (hv _).trans ((vOn_spec p L x).symm.trans (congrArg (fun a : ℤ => (a : ℝ)) hx))
   obtain ⟨h1, h2⟩ := Herbrand.h_mul (layerU p K L).rho (layer p K L).rho (trivRep (GalLK p K L) ℤ).rho g₀
-    (layerUIncl p K L).u.toAddMonoidHom (vLayer p K L).u.toAddMonoidHom (layerUIncl_injective p)
+    (layerUIncl p K L).u.toAddMonoidHom v (layerUIncl_injective p)
     (fun x => by
-      have := ker_vLayer p he h
-      exact (LinearMap.mem_ker.symm.trans (by rw [this])).trans LinearMap.mem_range)
-    (vLayer_surjective p he h) (fun c a => (layerUIncl p K L).equiv c a)
-    (fun c b => (vLayer p K L).equiv c b) hU hZ
+      change v x = 0 ↔ x ∈ Set.range (layerUIncl p K L).u.toAddMonoidHom
+      have he' : (eK p L : ℝ) ≠ 0 := by positivity
+      rw [← Int.cast_inj (α := ℝ), hv, Int.cast_zero, mul_eq_zero, or_iff_right he']
+      constructor
+      · intro hx
+        exact ⟨⟨⟨x.1, hx⟩, fun g => Subtype.ext (x.2 g)⟩, Subtype.ext rfl⟩
+      · rintro ⟨y, rfl⟩
+        exact y.1.2)
+    hv_surjective (fun c a => (layerUIncl p K L).equiv c a)
+    (fun c x => by
+      change v ((layer p K L).rho c x) = v x
+      apply Int.cast_injective (α := ℝ)
+      rw [hv, hv]
+      induction c using QuotientGroup.induction_on with
+      | H σ => exact congrArg (fun t : ℝ => (eK p L : ℝ) * t) (vbar_kbarRep p K σ x.1)) hU hZ
   refine ⟨h1, ?_⟩
   rw [h2, hU1, one_mul]
   exact hZ1

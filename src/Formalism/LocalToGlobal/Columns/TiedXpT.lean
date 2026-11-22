@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.TiedXpV
-import Formalism.LocalToGlobal.Columns.TiedAtT
-import Formalism.LocalToGlobal.Columns.RowFormsGood
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedXpV
+public import Formalism.LocalToGlobal.Columns.TiedAtT
+public import Formalism.LocalToGlobal.Columns.RowFormsGood
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -17,8 +21,8 @@ section Gen
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 
-theorem xp_mulLat_L (hc : CMData F E) {n : ℕ} [NeZero n] {ST SG : Finset (Pl E)} {H : Subgroup (GLG E n SG)} (g : UF E n × H)
-    (e : DecoSet E n ST SG) :
+theorem xp_mulLat_L (hc : CMData F E) {n : ℕ} [NeZero n] {ST SG : Finset (Pl E)} {H : Subgroup (GLG (E := E) (n := n) (SG := SG))} (g : UF E n × H)
+    (e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     Formalism.L2.Forms.mulLat (((ratEquiv hc n).symm g.1 : GL (Fin n) E) : Matrix (Fin n) (Fin n) E) e.1.L = (g • e).1.L := by
   rw [rlc_smul_val, Deco.L_act]
   unfold Formalism.L2.Forms.mulLat gmap
@@ -42,7 +46,7 @@ def padL (E : Type) [Field E] (n N : ℕ) : (Fin n → E) →ₗ[E] (Fin N → E
 theorem padL_apply (E : Type) [Field E] (n N : ℕ) (x : Fin n → E) (j : Fin N) :
     padL E n N x j = if h : (j : ℕ) < n then x ⟨j, h⟩ else 0 := rfl
 
-theorem xp_tilH_L {N n : ℕ} (hN : N = n + 1) [NeZero N] {ST SG : Finset (Pl E)} (d : DecoSet E n ∅ SG) {pi : 𝓞 E}
+theorem xp_tilH_L {N n : ℕ} (hN : N = n + 1) [NeZero N] {ST SG : Finset (Pl E)} (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E}
     (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal) (hG : ∀ w : SG, pi ∉ w.1.asIdeal) (hpi : ∀ P : ST, pi ∈ P.1.asIdeal)
     (hdvd : ∀ r : 𝓞 E, (∀ P : ST, r ∈ P.1.asIdeal) → pi ∣ r)
     (iX : (Fin n → E) →ₗ[E] (Fin N → E))
@@ -77,9 +81,7 @@ theorem xp_crd_frame (i : ℕ) (hi : i ≤ d.R.m) (b : Fin (d.sp.X i).rank) :
     d.crd i hi ((d.sp.X i).frame b) = Pi.single (finCongr (d.sp.X_rank i hi) b) (1 : d.host.E) := by
   funext j
   show (d.sp.X i).frame.equivFun ((d.sp.X i).frame b) ((finCongr (d.sp.X_rank i hi)).symm j) = _
-  rw [Basis.equivFun_self, Pi.single_apply]
-  congr 1
-  exact propext ⟨fun h => by rw [h, Equiv.apply_symm_apply], fun h => by rw [h, Equiv.symm_apply_apply]⟩
+  simp only [Basis.equivFun_self, Pi.single_apply, Equiv.eq_symm_apply, eq_comm]
 
 def ColDat.z0 (d : ColDat) (u : d.what₂.Word) : Fin (d.R.N d.R.m) → d.host.E :=
   Pi.single (lastIdx (d.R.N d.R.m)) (d.piT u : d.host.E)
@@ -102,9 +104,6 @@ theorem zc_eq (hS : SpStd d.toColBase) :
     rw [hz, map_smul, xp_crd_frame, hb₀, Equiv.apply_symm_apply]
     funext j
     simp [Pi.single_apply]
-
-theorem piT_coe_ne_zero (u : d.what₂.Word) : (d.piT u : d.host.E) ≠ 0 :=
-  (basePi_of_ok (Pr := d.Pr) d.hX d.hPr u).coe_ne_zero
 
 theorem lastCoordinateUniformizerVector_spans_orthogonal_line (hS : SpStd d.toColBase) (u : d.what₂.Word) : ∃ c : d.host.E, d.z0 u = c • CF.zc (d.colRec a) := by
   obtain ⟨c, hc0, hc⟩ := zc_eq a hS
@@ -135,7 +134,7 @@ theorem hermitianForm_lastCoordinateUniformizerVector_self (hS : SpStd d.toColBa
     rw [Pi.single_eq_of_ne hj, mul_zero]
   · intro h; exact absurd (Finset.mem_univ _) h
 
-def ColDat.tilPt (d : ColDat) (u : d.what₂.Word) (c : PCl d) : DecoSet d.X.E (d.R.N d.R.m) (d.Pr.vT u) d.Pr.vGs :=
+def ColDat.tilPt (d : ColDat) (u : d.what₂.Word) (c : PCl d) : DecoSet (E := d.X.E) (n := d.R.N d.R.m) (ST := d.Pr.vT u) (SG := d.Pr.vGs) :=
   tilR (Pr := d.Pr) (R := d.R) (Finset.Subset.refl _) u (d.reprP c)
 
 def ColDat.tilMv (d : ColDat) (u : d.what₂.Word) (c : PCl d) : (stepGSD (Pr := d.Pr) d.W d.lev u d.R.m).G :=
@@ -156,9 +155,7 @@ theorem coordinates_frame_eq_single (b : Fin d.sp.X'.rank) :
     CF.crdP (d.colRec a) (d.sp.X'.frame b) = Pi.single (finCongr (CF.rankP (d.colRec a)) b) (1 : d.host.E) := by
   funext j
   show d.sp.X'.frame.equivFun (d.sp.X'.frame b) ((finCongr (CF.rankP (d.colRec a))).symm j) = _
-  rw [Basis.equivFun_self, Pi.single_apply]
-  congr 1
-  exact propext ⟨fun h => by rw [h, Equiv.apply_symm_apply], fun h => by rw [h, Equiv.symm_apply_apply]⟩
+  simp only [Basis.equivFun_self, Pi.single_apply, Equiv.eq_symm_apply, eq_comm]
 
 theorem iXc_eq (hS : SpStd d.toColBase) : CF.iXc (d.colRec a) = padL d.host.E (d.R.N d.R.m - 1) (d.R.N d.R.m) := by
   apply (Pi.basisFun d.host.E (Fin (d.R.N d.R.m - 1))).ext
@@ -173,11 +170,11 @@ theorem iXc_eq (hS : SpStd d.toColBase) : CF.iXc (d.colRec a) = padL d.host.E (d
   funext j
   rw [padL_apply, Pi.single_apply]
   by_cases h : (j : ℕ) < d.R.N d.R.m - 1
-  · rw [dif_pos h, Pi.single_apply]
+  · rw [dite_eq_left h, Pi.single_apply]
     congr 1
     exact propext ⟨fun e => Fin.ext (show (j : ℕ) = k from congrArg (fun z : Fin (d.R.N d.R.m) => (z : ℕ)) e),
       fun e => Fin.ext (show (j : ℕ) = k from congrArg (fun z : Fin (d.R.N d.R.m - 1) => (z : ℕ)) e)⟩
-  · rw [dif_neg h, if_neg]
+  · rw [dite_eq_right h, if_neg]
     rintro rfl
     exact h k.2
 
@@ -189,7 +186,7 @@ theorem til_lat (hS : SpStd d.toColBase) (u : d.what₂.Word) (c : PCl d) :
   refine (congrArg (Formalism.L2.Forms.mulLat (tieGa a hS u c).1.1) (clsCrd_eq a u d.R.m le_rfl _)).trans ?_
   refine (xp_mulLat_L d.sp.cm (d.tilMv u c) _).trans ?_
   have h := tilMv_smul u c
-  refine (congrArg (fun e : DecoSet d.X.E (d.R.N d.R.m) (d.Pr.vT u) d.Pr.vGs => e.1.L) h).trans ?_
+  refine (congrArg (fun e : DecoSet (E := d.X.E) (n := d.R.N d.R.m) (ST := d.Pr.vT u) (SG := d.Pr.vGs) => e.1.L) h).trans ?_
   exact xp_tilH_L (N_m_succ d.R) (d.reprP c) (fun P => conj_piT_notMem d.hPr u P) (a.piT_off u)
     (fun P => decoFin_mem_of_mem_divs P.2) (fun r hr => piT_dvd_of_mem d.hX d.hPr u r hr) _ (padL_apply _ _ _)
 

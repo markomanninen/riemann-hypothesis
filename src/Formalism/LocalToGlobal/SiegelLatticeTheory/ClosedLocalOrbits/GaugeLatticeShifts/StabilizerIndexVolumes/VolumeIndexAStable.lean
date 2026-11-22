@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.AtNormRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,12 +39,5 @@ theorem volume_index_a_stable (D : D7) (u u' : D.what₂.Word)
   apply closure_subset_StSet hSt
   rintro a ⟨h1, b, hb, hab, _⟩
   exact ⟨h1, b, hb, hab⟩
-
-example (D : D7) (u u' : D.what₂.Word)
-    (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E))
-    (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V))
-    (δ : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, (D.s.atP p).Fp)
-    (M : ∀ p : Formalism.MainNotions.S.LocalSplitGroups.PlF D, Formalism.MainNotions.S.Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) :
-    AinSt D u u' F0 what₂ δ M := volume_index_a_stable D u u' F0 what₂ δ M
 
 end Formalism.L2.SG.Pf.StabilizerIndexVolumes

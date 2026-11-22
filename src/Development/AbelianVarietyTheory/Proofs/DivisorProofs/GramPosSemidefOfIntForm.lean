@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -12,7 +16,8 @@ theorem gram_posSemidef_of_int_form {X : Type} [AddCommGroup X] {r : ℕ}
     intro m
     have key : (∑ i, ∑ j, m i * m j * b (v i) (v j) : ℤ)
         = b (∑ i, m i • v i) (∑ j, m j • v j) := by
-      simp only [map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply, map_zsmul, LinearMap.smul_apply, smul_eq_mul,
         Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [hsymm (v i) (v j)]; ring

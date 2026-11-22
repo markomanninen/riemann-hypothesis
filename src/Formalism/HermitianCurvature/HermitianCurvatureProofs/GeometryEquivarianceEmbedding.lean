@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomCut
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 
@@ -25,7 +29,7 @@ lemma X_le (z : Fin (2 * r + k + 1) → ℂ) : Xsp k r ≤ Fsp k r z := by
   rintro _ ⟨a, rfl⟩
   have h := fv_mem z (Fin.castSucc a)
   unfold fvec at h
-  rw [dif_pos (show ((Fin.castSucc a : Fin (r + 1)) : ℕ) < r from a.isLt)] at h
+  rw [dite_eq_left (show ((Fin.castSucc a : Fin (r + 1)) : ℕ) < r from a.isLt)] at h
   exact h
 
 lemma lift_unique' {z z' : Fin (2 * r + k + 1) → ℂ} {y : B.Mat k r} (hd : (Zhat k r z z' y).det ≠ 0)

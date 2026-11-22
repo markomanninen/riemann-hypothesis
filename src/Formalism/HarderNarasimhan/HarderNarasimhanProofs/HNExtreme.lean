@@ -1,14 +1,18 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
-import Lemmata.GeneralBFactLeftForm.Imports
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+public import Lemmata.GeneralBFactLeftForm.Imports
+
+@[expose] public section
 
 open Module Submodule
 

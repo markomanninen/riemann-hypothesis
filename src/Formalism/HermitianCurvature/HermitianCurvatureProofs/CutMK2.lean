@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LeftFubiniNormalizedTower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChartCoefficientHasCompactSupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,15 +104,6 @@ theorem coreRfl (hR : RightAvg) (hL : LeftAvg) (k p ρ : ℕ) (Wp Wq : Type) [No
     (kapR Bj.z' b') (Φ Z y) hb hbc
     (fun h hh a => hR k p ρ Wp Wq hρ Bj B0 hz' hπ' hW' hW0' hNj hN0 b b' β Φ hb' hbc' Z hZ hβi hβ1 y hy
       hΦL hΦU h hh a)
-
-private theorem embG_eq_ιLev (k p ρ : ℕ) (g : B.Mat k ρ) : U.embG k p ρ g = ιLev k p ρ g := by
-  ext i j
-  obtain ⟨x, rfl⟩ := (U.eB k p ρ).surjective i
-  obtain ⟨w, rfl⟩ := (U.eB k p ρ).surjective j
-  simp only [U.embG, U.blk3, ιLev, Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_apply_apply]
-  rcases x with (a | a) | a <;> rcases w with (c | c) | c <;>
-    simp [U.eB, Matrix.fromBlocks, Matrix.fromRows, Matrix.fromCols, Matrix.one_apply, Fin.ext_iff,
-      Sum.elim] <;> split_ifs <;> (try simp_all [Fin.ext_iff]) <;> (try omega)
 
 theorem coreN_of (hR : RightAvg) (hL : LeftAvg) : CoreN := by
   intro k p ρ n Wp Wq _ _ _ _ _ _ e hρ Bj B0 hz' hπ' hW hW' hW0' hNj hN0 b b' β Φ hb hbc hb' hbc' Z hZ hβi hβ1 y hy

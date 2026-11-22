@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsBasicOpenCover
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.Monomial
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultB
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsBasicOpenCover
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.Monomial
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.WMultB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -10,8 +14,8 @@ noncomputable section
 
 variable {W : Scheme.{0}}
 
-open Classical in
 
+open Classical in
 def ordAlong (G : W.IdealSheafData) (C : Set W) : ℕ :=
   if h : IsIrreducible C then
     (Module.length (W.presheaf.stalk h.genericPoint)
@@ -160,8 +164,7 @@ theorem stalkId_eq_monomial [IsNoetherian W] {Z G : W.IdealSheafData} (hG : Fina
       (IsLocalization.isLocalization_iff_of_ringEquiv (M := (Ideal.span {f' i}).primeCompl)
         (S := T) φ.symm.toRingEquiv).mp inferInstance
     have hgerm : ∀ a : Γ(W, U.1), W.presheaf.germ U.1 η hηU a =
-        algebraMap (W.presheaf.stalk y) (W.presheaf.stalk η) (W.presheaf.germ U.1 y hy a) :=
-by
+        algebraMap (W.presheaf.stalk y) (W.presheaf.stalk η) (W.presheaf.germ U.1 y hy a) := by
       intro a
       have h1 := (φ.symm.commutes a).symm
       rw [IsScalarTower.algebraMap_apply Γ(W, U.1) (W.presheaf.stalk y) T] at h1
@@ -181,7 +184,7 @@ by
         (m i : ℕ∞) := by
       rw [hGη, hγu]; exact hordS
     unfold ordAlong
-    rw [dif_pos hirr, ← hη, hlen]
+    rw [dite_eq_left hirr, ← hη, hlen]
     exact ENat.toNat_natCast (m i)
   rw [hGy, hγu]
   have hprod : ∏ i ∈ J, f' i ^ m i = ∏ i ∈ J, f' i ^ ordAlong G (σ i) :=
@@ -220,11 +223,34 @@ theorem monomial_chart [IsNoetherian W] [LocallyOfFiniteType s] {Z G : W.IdealSh
     show IsBranch _ _ x ((S.σ l).elim ∅ fun k => (c k : Set W))
     rw [hk]
     exact hb
-  have hmain : FinalTheorems.stalkId G x = Ideal.span {∏ l ∈ S.J,
-      W.presheaf.germ P.V x hx (P.secHom (S.r l)) ^ ordAlong G (σ' l)} :=
-    stalkId_eq_monomial (U := P.affOpen) hG hGZ x hx (fun l => P.secHom (S.r l)) S.J
-      (WMult.rsp_of_sncData P Z x hx hcl hdim S) (WMult.stalkId_eq_span_of_sncData P Z x hx hcl S)
-      σ' hσ'
+  have hrsp : FinalTheorems.Rsp (W.presheaf.stalk x) e
+      (fun l => W.presheaf.germ P.V x hx (P.secHom (S.r l))) := by
+    rw [P.rsp_iff x hx hcl]
+    refine ⟨?_, ?_⟩
+    · simpa only [hψ] using S.span_eq
+    · rw [← P.ringKrullDim_stalk x hx hcl, hdim]
+  have hZ : FinalTheorems.stalkId Z x =
+      Ideal.span {∏ l ∈ S.J, W.presheaf.germ P.V x hx (P.secHom (S.r l))} := by
+    let ψ : W.presheaf.stalk x →+* locRing P.K (P.coord x hx) := P.stalkEquiv x hx hcl
+    have hsecmap : Ideal.map P.secHom (P.bdIdeal Z) = Z.ideal P.affOpen :=
+      Ideal.map_comap_of_surjective _ (IrreducibleComponentPreimages.secHom_surjective P) _
+    have hZmap : FinalTheorems.stalkId Z x =
+        Ideal.map (W.presheaf.germ P.V x hx).hom (Ideal.map P.secHom (P.bdIdeal Z)) := by
+      rw [hsecmap]
+      exact WMult.stalkId_eq_map_germ Z x P.affOpen hx
+    have hcomp : (ψ.comp (W.presheaf.germ P.V x hx).hom).comp P.secHom =
+        algebraMap _ (locRing P.K (P.coord x hx)) := RingHom.ext hψ
+    have hmap : Ideal.map ψ (FinalTheorems.stalkId Z x) =
+        Ideal.map ψ (Ideal.span {∏ l ∈ S.J, W.presheaf.germ P.V x hx (P.secHom (S.r l))}) := by
+      rw [hZmap, Ideal.map_map, Ideal.map_map, hcomp, WMult.map_bd_eq_span S,
+        Ideal.map_span, Set.image_singleton, map_prod]
+      simp only [ψ, RingHom.coe_coe, hψ]
+    have := congrArg (Ideal.map ((P.stalkEquiv x hx hcl).symm :
+      locRing P.K (P.coord x hx) →+* W.presheaf.stalk x)) hmap
+    rwa [Ideal.map_of_equiv, Ideal.map_of_equiv] at this
+  have hmain : FinalTheorems.stalkId G x = Ideal.span {(∏ l ∈ S.J,
+      W.presheaf.germ P.V x hx (P.secHom (S.r l)) ^ ordAlong G (σ' l))} :=
+    stalkId_eq_monomial (U := P.affOpen) hG hGZ x hx (fun l => P.secHom (S.r l)) S.J hrsp hZ σ' hσ'
   rw [ha] at hmain
   obtain ⟨v, hv⟩ := Ideal.span_singleton_eq_span_singleton.mp hmain
   refine ⟨P.stalkEquiv x hx hcl ↑v⁻¹, (Units.isUnit v⁻¹).map _, ?_⟩

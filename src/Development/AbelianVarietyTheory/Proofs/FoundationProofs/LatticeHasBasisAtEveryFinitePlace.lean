@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.CoefModLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 
@@ -63,7 +67,10 @@ lemma mem_localization_iff_mem_span (w : HeightOneSpectrum (𝓞 K)) {d : ℕ} (
       rw [he]
       exact M.smul_mem r hsy
 
-theorem basisAtEx : Formalism.L2.DIV.BasisAtEx := by
+theorem basisAtEx :
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ)
+      (M : Submodule (𝓞 K) (Fin n → K)), Submodule.IsFullLattice K M →
+      ∀ w : HeightOneSpectrum (𝓞 K), ∃ B : GL (Fin n) K, Formalism.L2.DIV.IsBasisAt w M B := by
   intro K _ _ d L hL w
   haveI := w.isPrime
   have : IsDiscreteValuationRing (locRing w) :=

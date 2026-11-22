@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AmpComm
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.RepOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AmpRep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.AmpComm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CapZcMemOfE
+
+@[expose] public section
 
 open NumberField
 
@@ -94,7 +98,7 @@ theorem UpperTheory.ConvolutionTheory.BW.bandRep :
       obtain ⟨β, rfl⟩ := exists_add_of_le hle
       have hβ : β.degree = k := by
         have := hα
-        rw [map_add, Finsupp.degree_single] at this
+        rw [map_add (f := _), Finsupp.degree_single] at this
         omega
       obtain ⟨w, hw, hzw⟩ := ih β hβ (𝔞.Z x y)
       refine ⟨w, ?_, ?_⟩

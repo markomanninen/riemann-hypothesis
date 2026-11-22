@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.RootSumWOff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
 open scoped Matrix
@@ -37,7 +42,7 @@ private theorem diag_one {F : Type} [Field F] [NumberField F] {O : Type} [Ring O
   have hadd : ∀ c c', e (c + c') = e c + e c' := by
     intro c c'
     apply hinj
-    rw [← he, map_add, map_add, add_mul, he, he, ← mul_add, Matrix.diagonal_add]
+    rw [← he, map_add (f := _), map_add (f := _), add_mul, he, he, ← mul_add, Matrix.diagonal_add]
     try rfl
   have hmul : ∀ c c', e (c * c') = e c * e c' := by
     intro c c'

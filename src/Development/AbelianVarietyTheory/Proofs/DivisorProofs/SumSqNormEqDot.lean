@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Formalism.HarderNarasimhan.StatementPl
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Formalism.HarderNarasimhan.StatementPl
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory.CechPic GlobalTheory.CxPts GlobalTheory.HermTools GlobalTheory.Vanishing GlobalTheory.Adelic GlobalTheory.HilbertSamuel GlobalTheory.ChowHt GlobalTheory.TangentOrigin
@@ -29,13 +34,10 @@ theorem form_sum_right {K V : Type} [Field K] [AddCommGroup V] [Module K V] (nm 
 theorem form_sum_left {K V : Type} [Field K] [AddCommGroup V] [Module K V] (nm : HermFam K V)
     (σ : K →+* ℂ) (y : V) {ι : Type} (s : Finset ι) (a : ι → K) (w : ι → V) :
     nm.form σ (∑ i ∈ s, a i • w i) y = ∑ i ∈ s, starRingEnd ℂ (σ (a i)) * nm.form σ (w i) y := by
-  rw [← nm.conj_symm, form_sum_right, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← nm.conj_symm, form_sum_right, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, nm.conj_symm]
-
-def basisGram {K V : Type} [Field K] [AddCommGroup V] [Module K V] (nm : HermFam K V)
-    (σ : K →+* ℂ) {ι : Type} (b : Module.Basis ι K V) : Matrix ι ι ℂ :=
-  Matrix.of fun i j => nm.form σ (b i) (b j)
 
 end GlobalTheory.HermFamFrame
 

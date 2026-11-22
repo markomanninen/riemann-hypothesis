@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.EigenvalueSumLeClosedOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.EigenvalueSumLeClosedOf
+
+@[expose] public section
 
 noncomputable section
 

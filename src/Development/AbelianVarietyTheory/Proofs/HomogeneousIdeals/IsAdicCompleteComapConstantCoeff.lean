@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open PowerSeries
 
@@ -44,17 +48,17 @@ def evalMod (A : Type*) [CommRing A] [Algebra A S] (J : Ideal S) {s : S} (hs : s
   map_mul' f g := by
     rw [← map_mul, ← map_mul, Ideal.Quotient.eq]
     refine aeval_sub_mem_pow hs fun i hi => ?_
-    rw [coeff_trunc, if_pos hi, coeff_mul, Polynomial.coeff_mul]
+    rw [coeff_trunc, ite_eq_left hi, coeff_mul, Polynomial.coeff_mul]
     refine Finset.sum_congr rfl fun x hx => ?_
     have := Finset.HasAntidiagonal.mem_antidiagonal.1 hx
-    rw [coeff_trunc, coeff_trunc, if_pos (by omega), if_pos (by omega)]
+    rw [coeff_trunc, coeff_trunc, ite_eq_left (by omega), ite_eq_left (by omega)]
   map_zero' := by simp
   map_add' f g := by simp
   commutes' a := by
     rw [← Ideal.Quotient.mk_algebraMap, Ideal.Quotient.eq,
       ← (Polynomial.aeval (R := A) s).commutes a]
     refine aeval_sub_mem_pow hs fun i hi => ?_
-    simp [coeff_trunc, hi, Polynomial.coeff_C, coeff_C, PowerSeries.algebraMap_apply]
+    simp [coeff_trunc, hi, Polynomial.coeff_C, coeff_C]
 
 theorem factor_comp_evalMod (J : Ideal S) {s : S} (hs : s ∈ J) {m n : ℕ} (hle : m ≤ n) :
     (Ideal.Quotient.factorₐ A (Ideal.pow_le_pow_right hle)).comp (evalMod A J hs n) =
@@ -64,7 +68,7 @@ theorem factor_comp_evalMod (J : Ideal S) {s : S} (hs : s ∈ J) {m n : ℕ} (hl
     Ideal.Quotient.mk _ (Polynomial.aeval s (trunc m f))
   rw [Ideal.Quotient.eq]
   refine aeval_sub_mem_pow hs fun i hi => ?_
-  rw [coeff_trunc, coeff_trunc, if_pos hi, if_pos (by omega)]
+  rw [coeff_trunc, coeff_trunc, ite_eq_left hi, ite_eq_left (by omega)]
 
 def evalAdic (A : Type*) [CommRing A] [Algebra A S] (J : Ideal S) [IsAdicComplete J S] {s : S}
     (hs : s ∈ J) : A⟦X⟧ →ₐ[A] S :=
@@ -91,9 +95,6 @@ theorem eq_of_forall_sub_mem_pow {x y : S} (h : ∀ n, x - y ∈ J ^ n) : x = y 
     aeval_sub_mem_pow hs fun i hi => by
       simp [coeff_trunc, hi, coeff_X, Polynomial.coeff_X, eq_comm]
   simpa using add_mem h1 h2
-
-@[simp] theorem evalAdic_C (a : A) : evalAdic A J hs (C a) = algebraMap A S a :=
-  (evalAdic A J hs).commutes a
 
 theorem algHom_ext_of_isHausdorff (J : Ideal S) [IsHausdorff J S] {φ ψ : A⟦X⟧ →ₐ[A] S}
     (hφ : φ X ∈ J) (h : φ X = ψ X) : φ = ψ := by
@@ -122,7 +123,7 @@ theorem X_sub_C_dvd_sub_C (φ : A⟦X⟧ →ₐ[A] A) (f : A⟦X⟧) : X - C (φ
     intro n
     have h := (mk fun i => coeff (i + n) f).eq_X_mul_shift_add_const
     have hC : ∀ a, φ (C a) = a := fun a => φ.commutes a
-    rw [h, map_add, map_mul, hC]
+    rw [h, map_add (f := _), map_mul, hC]
     simp [add_assoc, add_comm 1 n]
   refine ⟨mk fun n => φ (mk fun i => coeff (i + (n + 1)) f), ?_⟩
   ext n
@@ -192,7 +193,8 @@ theorem mem_pow_comap_constantCoeff_iff (n : ℕ) (f : A⟦X⟧) :
     have hX : (X : A⟦X⟧) ∈ I.comap (constantCoeff (R := A)) := by simp
     rw [f.eq_X_pow_mul_shift_add_trunc n]
     refine add_mem (Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hX n)) ?_
-    rw [trunc_apply, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [trunc_apply, ← Polynomial.coeToPowerSeries.ringHom_apply, map_sum]
     refine sum_mem fun i hi => ?_
     have hi' : i < n := (Finset.mem_Ico.1 hi).2
     rw [Polynomial.coeToPowerSeries.ringHom_apply, Polynomial.coe_monomial,
@@ -243,7 +245,7 @@ theorem map_comap_constantCoeff_le {S : Type*} [CommRing S] [Algebra A S] (J : I
     (I.comap (constantCoeff (R := A))).map φ ≤ J := by
   rw [Ideal.map_le_iff_le_comap]
   intro f hf
-  rw [Ideal.mem_comap, f.eq_X_mul_shift_add_const, map_add, map_mul]
+  rw [Ideal.mem_comap, f.eq_X_mul_shift_add_const, map_add (f := _), map_mul]
   refine add_mem (Ideal.mul_mem_right _ _ hX) ?_
   have : φ (C (constantCoeff f)) = algebraMap A S (constantCoeff f) := φ.commutes _
   rw [this]

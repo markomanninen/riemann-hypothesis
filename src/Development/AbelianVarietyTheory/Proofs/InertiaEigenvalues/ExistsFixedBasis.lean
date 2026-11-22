@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Matrix MeasureTheory
 
 namespace GlobalTheory.GaloisDescentLattice
@@ -28,9 +33,9 @@ theorem exists_fixed_basis : ∀ (K : UQ) (B : InvAlg K) (M : Submodule K.O B.A)
     have hy' : B.σ y ∈ M := hσ y hy
     have h1m : y + B.σ y ∈ M := M.add_mem hy hy'
     have h2m : d • y + d' • B.σ y ∈ M := M.add_mem (M.smul_mem d hy) (M.smul_mem d' hy')
-    have h1f : B.σ (y + B.σ y) = y + B.σ y := by rw [map_add, B.σ_σ, add_comm]
+    have h1f : B.σ (y + B.σ y) = y + B.σ y := by rw [map_add (f := _), B.σ_σ, add_comm]
     have h2f : B.σ (d • y + d' • B.σ y) = d • y + d' • B.σ y := by
-      rw [map_add, sigma_smul B hdd', sigma_smul B hd'd, B.σ_σ, add_comm]
+      rw [map_add (f := _), sigma_smul B hdd', sigma_smul B hd'd, B.σ_σ, add_comm]
     have hmem1 : (⟨y + B.σ y, h1m⟩ : M) ∈ Submodule.span K.O (Set.range v) :=
       Submodule.subset_span ⟨⟨_, h1m, h1f⟩, rfl⟩
     have hmem2 : (⟨d • y + d' • B.σ y, h2m⟩ : M) ∈ Submodule.span K.O (Set.range v) :=

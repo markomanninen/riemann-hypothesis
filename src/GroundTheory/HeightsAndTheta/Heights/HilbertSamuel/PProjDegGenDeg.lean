@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjDegGenDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenericFibre
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsRank
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ChooseLePowDivFactorial
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjDegGenDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenericFibre
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsRank
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ChooseLePowDivFactorial
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -44,8 +49,8 @@ theorem eq_zero_of_isBigO (D : ℕ) (c : ℝ)
 
 end ProjDegGenDeg
 
-open ProjDegGenDeg in
 
+open ProjDegGenDeg in
 theorem ProjDegGenDeg.proof (hR : RankOfSections.Statement) : ProjDegGenDeg.Statement := by
   intro D Ω _ _ κ _ x e hA hF
   obtain ⟨hq, hdim⟩ := GenericFibre.proof Ω κ x D hA

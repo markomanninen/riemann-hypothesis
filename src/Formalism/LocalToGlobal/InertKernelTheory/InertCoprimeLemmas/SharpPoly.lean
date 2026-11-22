@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+
+@[expose] public section
 
 noncomputable section
 
@@ -330,11 +334,12 @@ theorem sp_eval_colSub (β : ι → Matrix (Fin a) (Fin a) ℂ) (x : ι → Matr
     eval (pt x) (colSub β P) = eval (pt (fun τ => x τ * β τ)) P := by
   induction P using MvPolynomial.induction_on with
   | C c => simp [colSub]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp =>
     rw [map_mul, map_mul, hp, map_mul]
     congr 1
-    simp only [colSub, aeval_X, map_sum, map_mul, eval_C, eval_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [colSub, aeval_X, map_sum, map_mul, eval_C, eval_X]
     exact Finset.sum_congr rfl fun r _ => mul_comm _ _
 
 theorem sp_det_bor {β : ι → Matrix (Fin a) (Fin a) ℂ} (hβ : IsBor β) (τ : ι) : (β τ).det = ∏ r, β τ r r :=

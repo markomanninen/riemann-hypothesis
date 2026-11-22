@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.UnitReal
@@ -40,7 +45,8 @@ theorem unit_real_of_congr_one : ∀ (E : Type) [Field E] [NumberField E] [IsCMF
       rw [← Units.val_pow_eq_pow_val, ht, Units.val_one, sub_self] at this
       exact (mul_eq_zero.mp this).resolve_left hne'
     have hmod := congrArg (Ideal.Quotient.mk I) hsum
-    simp only [map_sum, map_pow, hζ1, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_pow, hζ1, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
       mul_one, map_zero] at hmod
     have hmem : ((Nat.card (Units.torsion E) : ℕ) : 𝓞 E) ∈ I := by
       rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast]; exact hmod

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.UnlLoc
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TameSuppUniqueHolds
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
-import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredityGenericProduct
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.UnlLoc
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TameSuppUniqueHolds
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.GenericUnitaryDualGLOfTwo
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.LanglandsExhaustion.Outright
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredityGenericProduct
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerHeredity
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem unlinked_of_typeVec (k : Type) [Field k] [ValuativeRel k] [TopologicalSp
     (N c : ℕ) (d : Fin c → ℕ) (hd : ∑ b, d b = N) (hpos : ∀ b, 0 < d b) (V : Type) [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) (hs : IsSmooth π) (hi : π.IsIrreducible) (hg : IsGeneric π)
     (θ : Fin c → 𝓀[k]ˣ →* ℂˣ) (hθ : Function.Injective θ) (hv : HasTypeVec π (stdBlocks d hd) θ)
-    (s : Multiset (IrrGL k)) (hS : HasSupport π s) : GlobalTheory.RoadU.Unlinked s :=
+    (s : Multiset (IrrGL (k := k))) (hS : HasSupport π s) : GlobalTheory.RoadU.Unlinked s :=
   unlinked_of_tameSphProd loc_holds GlobalTheory.RgGu.Holds.genericUnlinkedGL_holds PositivityTheory.Exh.langlandsMultisegments_holds
     PositivityTheory.Exh.standardCosocleGL_holds
     (GlobalTheory.CompanionTheory.Leib.genericProdIff_of_whitHeredity _ (GlobalTheory.CompanionTheory.Rodier.whitHeredity _)) hg hθ

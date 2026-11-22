@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U2ringPfDMain
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.U2ringPfDMain
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem u2ringPfE_mem_max (p : ℕ) [hp : Fact p.Prime] (hpm : (p : O) ∈ IsLoc
     (CharP.charP_iff_prime_eq_zero hp.out).mpr (by
       rw [← map_natCast (IsLocalRing.residue O), IsLocalRing.residue_eq_zero_iff]; exact hpm)
   have h := congrArg (IsLocalRing.residue O) hroot
-  rw [map_pow, map_add, map_one, add_pow_char, one_pow] at h
+  rw [map_pow, map_add (f := _), map_one, add_pow_char, one_pow] at h
   have h2 : (IsLocalRing.residue O x) ^ p = 0 := by linear_combination h
   have h3 := (pow_eq_zero_iff hp.out.ne_zero).mp h2
   rwa [IsLocalRing.residue_eq_zero_iff] at h3
@@ -42,15 +46,11 @@ theorem u2ringPfE_val_unit {y c : O} (hy : y ∈ IsLocalRing.maximalIdeal O) {F 
 theorem u2ringPfE_mk_aeval {x y : O} {P : PowerSeries O} (hP : (mkI x) P = (mkI x) (PowerSeries.C y))
     (E : Polynomial O) :
     (mkI x) (Polynomial.aeval P E) = (mkI x) (PowerSeries.C (E.eval y)) := by
-  have h1 : (mkI x) (Polynomial.aeval P E) =
-      Polynomial.aeval ((mkI x) P) E := by
-    rw [← Ideal.Quotient.mkₐ_eq_mk O, Polynomial.aeval_algHom_apply]
-  rw [h1, hP, ← Ideal.Quotient.mkₐ_eq_mk O, Polynomial.aeval_algHom_apply]
-  congr 1
-  show Polynomial.aeval (PowerSeries.C y) E = PowerSeries.C (E.eval y)
-  rw [show (PowerSeries.C y : PowerSeries O) = algebraMap O (PowerSeries O) y by
-    rw [PowerSeries.algebraMap_apply]; rfl, Polynomial.aeval_algebraMap_apply]
-  rw [PowerSeries.algebraMap_apply]; rfl
+  let q := Ideal.Quotient.mkₐ O (DualFramesAlt.eigenRingInvariants.Ia x)
+  change q P = q (PowerSeries.C y) at hP
+  change q (Polynomial.aeval P E) = q (PowerSeries.C (E.eval y))
+  rw [← Polynomial.aeval_algHom_apply q, hP, Polynomial.aeval_algHom_apply q]
+  exact congrArg q (Polynomial.aeval_algebraMap_apply_eq_algebraMap_eval y E)
 
 end U2E
 

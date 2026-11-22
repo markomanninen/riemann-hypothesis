@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem main : JoinedTwo.{a, b} := by
     rw [θ.naturality φ] at e2
     rw [← m.G.map_comp] at e1
     rw [← m'.G.map_comp] at e3
-    simp only [map_add, j.e0, m'.compDegreeZero_natural] at e1 e2 e3
+    simp only [map_add (f := _), j.e0, m'.compDegreeZero_natural] at e1 e2 e3
     simp only [map_sub, m'.compDegreeZero_natural]
     linear_combination (norm := abel1) e1 - e2 + e3
   · change m'.a1 T' (w _ _ (θ.app T')) - K'.M1.map φ (m'.a1 T (w _ _ (θ.app T))) -
@@ -37,11 +41,11 @@ theorem main : JoinedTwo.{a, b} := by
       -m.a1 T' (w _ _ (m.G.map φ)) + m'.a1 T' (w _ _ (m'.G.map φ))
     have e := congrArg (m'.a1 T') ((h2 _ _ _ (m.G.map φ) (θ.app T')).symm.trans
       ((congrArg (w _ _) (θ.naturality φ)).trans (h2 _ _ _ (θ.app T) (m'.G.map φ))))
-    simp only [map_add, j.e1, m'.compDegreeOne_natural, m'.comp_commutes_diffZero] at e
+    simp only [map_add (f := _), j.e1, m'.compDegreeOne_natural, m'.comp_commutes_diffZero] at e
     simp only [map_sub]
     linear_combination (norm := abel1) e
   · change K'.d1 T (m'.a1 T (w _ _ (θ.app T))) = -m.a2 T (η _) + m'.a2 T (η _)
-    rw [h3 _ _ (θ.app T), map_add, j.e2, m'.comp_commutes_diffOne]; abel
+    rw [h3 _ _ (θ.app T), map_add (f := _), j.e2, m'.comp_commutes_diffOne]; abel
 
 theorem joinedTwo_inst : JoinedTwo.{1,1} ∧ JoinedTwo.{1,0} ∧ JoinedTwo.{0,0} := ⟨main, main, main⟩
 

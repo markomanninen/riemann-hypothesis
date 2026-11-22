@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -62,11 +67,11 @@ theorem bijective_lTensor_baseChange_of_bijective {B M N : Type*} [CommRing B]
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul c y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y z hy hz => simp only [tmul_add, map_add] at hy hz ⊢; rw [hy, hz]
+      | add y z hy hz => simp only [tmul_add, map_add (f := _)] at hy hz ⊢; rw [hy, hz]
       | tmul q m => simp [eM, eN]
   have : ⇑((φ.baseChange BQ).lTensor k) = eN.symm ∘ (φ.lTensor Q.ResidueField) ∘ eM := by
     funext x; simp [← key]
@@ -101,11 +106,11 @@ theorem exists_etale_away_of_bijective_mapBaseChange : ∀ (A C B : Type) [CommR
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul q y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y z hy hz => simp only [tmul_add, map_add] at hy hz ⊢; rw [hy, hz]
+      | add y z hy hz => simp only [tmul_add, map_add (f := _)] at hy hz ⊢; rw [hy, hz]
       | tmul b ω =>
         simp only [eM, eN, φ, AlgebraTensorModule.cancelBaseChange_tmul, mapBaseChange_tmul,
           LinearMap.baseChange_tmul]

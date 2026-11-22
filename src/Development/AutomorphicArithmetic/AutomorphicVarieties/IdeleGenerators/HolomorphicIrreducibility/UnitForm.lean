@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UnitFam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.UnitFam
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual CongruenceSubgroup UpperHalfPlane UpperTheory.V.Af
 open scoped MatrixGroups ModularForm
@@ -37,7 +41,7 @@ private theorem coef_comb {N : ℕ} {k : ℤ} {I : Type} (s : Finset I) (c : I �
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, ← ih, ← coef_smul]
     unfold coef
-    rw [ModularForm.coe_add, ModularFormClass.qExpansion_add one_pos (one_mem_per N), map_add,
+    rw [ModularForm.coe_add, ModularFormClass.qExpansion_add one_pos (one_mem_per N), map_add (f := _),
       ModularForm.coe_smul]
 
 private theorem slash_neg_one (k : ℕ) (f : ℍ → ℂ) : f ∣[(k : ℤ)] (-1 : SL(2, ℤ)) = ((-1 : ℂ) ^ k) • f := by
@@ -110,7 +114,8 @@ theorem UpperTheory.V.Sd.unitForm :
     simp only [hw, mul_inv_rev, inv_inv, Units.val_mul, map_mul]
     ring
   · intro n
-    rw [coef_comb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coef_comb, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one (fun a _ => ?_)
     rw [map_mul, norm_mul]
     have hwa : ‖ι.symm (w a)‖ = 1 := by

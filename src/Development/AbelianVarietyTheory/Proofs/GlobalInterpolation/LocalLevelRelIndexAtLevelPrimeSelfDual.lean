@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SplittingProjection
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsFrameCm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexConjLevelVL
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RingEquivAdicCompletionMemIntegersIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemIntVIffOfSplitting
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitStabGLIffMemRange
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexCongPre
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsUnitriGlEquiv
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabilizerIndex
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMemProjEqOnFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualStabiliserIndex
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SplittingProjection
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsFrameCm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexConjLevelVL
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RingEquivAdicCompletionMemIntegersIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemIntVIffOfSplitting
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitStabGLIffMemRange
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RelIndexCongPre
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsUnitriGlEquiv
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabilizerIndex
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMemProjEqOnFinset
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,9 @@ variable {F : Type} [Field F] [NumberField F]
 theorem card_residue (v : HeightOneSpectrum (𝓞 F)) :
     Nat.card (v.adicCompletionIntegers F ⧸ IsLocalRing.maximalIdeal (v.adicCompletionIntegers F)) =
       Nat.card (𝓞 F ⧸ v.asIdeal) :=
-  (Formalism.UG.P.tjcosets_card_residue v).trans rfl
+  by
+    apply (Formalism.UG.P.tjcosets_card_residue v).trans
+    simp [qV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
 
 theorem finite_over {p : ℕ} (hp : p.Prime) :
     {v : HeightOneSpectrum (𝓞 F) | (p : 𝓞 F) ∈ v.asIdeal}.Finite := by
@@ -325,8 +331,8 @@ theorem relIndex_level (hp : ∀ i, (gp i).Prime) (hne : gp 0 ≠ gp 1) {f : ℕ
 
 end Record
 
-open GlobalTheory.IndefiniteRowSideFullHecke.SelfDualStabiliserIndex GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.SelfDualStabiliserIndex GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection in
 theorem indexKU_of_selfDualOverBase (H : SelfDualOverBase) : IndexKU := by
   intro D Lv u
   letI := D.host.cmStar

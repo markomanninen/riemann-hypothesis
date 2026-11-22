@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DimYOvr
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DimYOvr
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,7 @@ theorem chain_eta (aTop : Fin X.s → ℕ) (b : SegBlock X.s X.r) (i : Fin (X.S 
     unfold uTop; simp
   unfold segChain
   simp only
-  rw [dif_neg h1, if_neg h2, h3, if_neg h4]
+  rw [dite_eq_right h1, if_neg h2, h3, if_neg h4]
 
 theorem lvlRoom_of {dl : DCl X} {a0 : Fin X.s → ℕ} (ha0 : a0 ∈ cbox C0 CE1 CE2 X dl) {x : Σ _ : SegBlock X.s X.r, Lv C0 CE1 CE2 X}
     (hb : x.1.ry = dl.2) (hx : ∀ a ∈ cbox C0 CE1 CE2 X dl, x ∈ idx C0 CE1 CE2 X dl a) :
@@ -119,9 +123,6 @@ theorem top_eq {dl : DCl X} (a : Fin X.s → ℕ) (b : SegBlock X.s X.r) {x : Lv
     1 * ((Nl C0 CE1 CE2 X dl x i).sup id - sInf ((Nl C0 CE1 CE2 X dl x i : Finset ℕ) : Set ℕ) + 1 - 1) = _
   simp only [id] at hle ⊢
   omega
-
-theorem kap_XMof (dl : DCl X) (a : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 CE2 X) :
-    (XMof C0 CE1 CE2 X dl a b x).κ = kapS X := rfl
 
 theorem exponent_matrix_first_depth_eq (dl : DCl X) (a : Fin X.s → ℕ) (b : SegBlock X.s X.r) (x : Lv C0 CE1 CE2 X) :
     (XMof C0 CE1 CE2 X dl a b x).D1 = D1r C0 CE1 CE2 X 1 := by

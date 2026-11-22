@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PetersonNormSubspace
+
+@[expose] public section
 
 noncomputable section
 

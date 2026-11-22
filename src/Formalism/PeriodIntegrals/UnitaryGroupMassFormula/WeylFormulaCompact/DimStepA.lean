@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ def commSub (ρ : ι → H →L[ℂ] H) : Submodule ℂ (H →ₗ[ℂ] H) where
     have hd : Comm ρ d := hd
     show Comm ρ (c + d)
     intro i v
-    simp only [LinearMap.add_apply, map_add, hc i v, hd i v]
+    simp only [LinearMap.add_apply, map_add (f := _), hc i v, hd i v]
   zero_mem' := by
     show Comm ρ 0
     intro i v

@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.IntegralGermIndependentOfSystem
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.UnitaryMatrixCoefficientDecay
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.Imports
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.ColSq
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.BigProjP
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.IntegralGermIndependentOfSystem
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.UnitaryMatrixCoefficientDecay
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.Imports
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.ColSq
+
+@[expose] public section
 
 noncomputable section
 

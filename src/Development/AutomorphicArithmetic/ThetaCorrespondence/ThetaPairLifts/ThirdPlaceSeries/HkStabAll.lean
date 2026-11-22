@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeStableRationalLattice
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeStableRationalLattice
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -9,10 +13,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 open scoped TensorProduct
 noncomputable section
 namespace GlobalTheory.HeightCounting.HeckeLat
-local instance  (D : D7) (T : TwR D.LL0 D.nd) (i : T.Tw) (b : Bool) : Algebra (T.O i) (KT D T i b) :=
-  inferInstanceAs (Algebra (T.O i) (FractionRing (T.O i)))
-local instance  (D : D7) (T : TwR D.LL0 D.nd) (i : T.Tw) (b : Bool) : IsFractionRing (T.O i) (KT D T i b) :=
-  inferInstanceAs (IsFractionRing (T.O i) (FractionRing (T.O i)))
 end GlobalTheory.HeightCounting.HeckeLat
 open GlobalTheory.HeightCounting.HeckeLat in
 theorem GlobalTheory.HeightCounting.FormsStep.hkStab_of_ringSpec_of_subset : ∀ (D : D7) (cf : CharFrame D) (jE : D.host.E →+* Qb) (A : _root_.GlobalTheory.HeightCounting.CharFrameHostEmbedding D cf jE) (S : RatDat D.ntw)
@@ -39,14 +39,14 @@ theorem GlobalTheory.HeightCounting.FormsStep.hkStab_of_ringSpec_of_subset : ∀
         refine ho ▸ Submodule.smul_mem _ o ?_
         exact Submodule.subset_span ⟨⟨y, hMW y hy⟩, hy, hw _⟩
       | zero => intro a; rw [smul_zero, map_zero]; exact zero_mem _
-      | add y z _ _ hy hz => intro a; rw [smul_add, map_add]; exact add_mem (hy a) (hz a)
+      | add y z _ _ hy hz => intro a; rw [smul_add, map_add (f := _)]; exact add_mem (hy a) (hz a)
       | smul a' y _ hy => intro a; rw [smul_smul]; exact hy _
     intro y hy
     simpa using key y hy 1
   have hhr : ∀ w : ↥(WKr D S j), (hLr D S In j k P w : S.WL j) = In.hL j k P w := by
     intro w
     unfold hLr
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
     rfl
   have hkΦ : ∀ y, hkT D T S In i j b k P (Φ y) = ((cHkT D T i b P : T.O i) ^ k) • Φ (In.hL j k P y) := by
     intro y
@@ -84,7 +84,8 @@ theorem GlobalTheory.HeightCounting.FormsStep.hkStab_of_ringSpec_of_subset : ∀
   haveI : Fintype ↥(Formalism.IndefR.NX.U D.nd) := Fintype.ofFinite _
   have hsol := hrel (fun t a => eqL D S In.θ j a (w t)) (fun t a => eqL_rational D S In j h1 h2 W0 hW0 hW0c a (w t)) o (by
     intro a
-    rw [← hx0 a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hx0 a, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [hET, LinearMap.map_smul_of_tower])
   clear hx0 hx
@@ -92,7 +93,8 @@ theorem GlobalTheory.HeightCounting.FormsStep.hkStab_of_ringSpec_of_subset : ∀
   | mem o ho =>
     obtain ⟨c, hc0, hco⟩ := ho
     have h3 : ∑ t, o t • Φ (w t) = Φ (∑ t, ((c t : ↥D.LL0) : D.what₂.LL) • (w t : S.WL j)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun t _ => ?_
       rw [hc, ← hco, algebraMap_smul]
     rw [h3]
@@ -101,11 +103,12 @@ theorem GlobalTheory.HeightCounting.FormsStep.hkStab_of_ringSpec_of_subset : ∀
         (RingOfIntegers.isIntegral_coe (c t)).map (algebraMap ↥D.LL0 D.what₂.LL).toIntAlgHom⟩
       have h4 := Submodule.smul_mem _ a (Submodule.subset_span (R := 𝓞 D.what₂.LL) (s := ((S.A j).MK : Set (S.WL j))) (hwM t))
       rwa [← algebraMap_smul D.what₂.LL a] at h4
-    · rw [map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simpa only [map_smul] using hc0 a
   | zero => simp
   | add o o' _ _ ho ho' =>
-    simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add]
+    simp only [Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add (f := _)]
     exact add_mem ho ho'
   | smul r o _ ho =>
     simp only [Pi.smul_apply, smul_eq_mul, mul_smul, ← Finset.smul_sum, LinearMap.map_smul_of_tower]

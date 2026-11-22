@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlkConjTranspose
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlkConjTranspose
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAdmOnOfFiniteDimensional
+
+@[expose] public section
 
 open Matrix
 
@@ -69,20 +73,21 @@ theorem blk_inv (e : Fin a × ι ≃ Fin n) {M : Matrix (Fin a) (Fin a) (ι → 
   refine Matrix.inv_eq_right_inv ?_
   rw [← blk_mul, Matrix.mul_nonsing_inv _ ((Matrix.isUnit_iff_isUnit_det _).1 hM), blk_one]
 
-theorem isLinRed_blkG (e : Fin a × ι ≃ Fin n) : GlobalTheory.LinRed.IsLinRed (blkG e) where
-  one_mem := ⟨1, isUnit_one, blk_one e⟩
-  mul_mem := by
-    rintro _ ⟨M, hM, rfl⟩ _ ⟨N, hN, rfl⟩
+theorem isLinRed_blkG (e : Fin a × ι ≃ Fin n) : GlobalTheory.LinRed.IsLinRed (blkG e) := by
+  refine
+    { one_mem := ⟨1, isUnit_one, blk_one e⟩
+      mul_mem := ?_
+      isUnit := fun g hg => ((mem_blkG_iff e).1 hg).1
+      inv_mem := ?_
+      closed := fun g hg hcl => (mem_blkG_iff e).2 ⟨hg, blk_unblk_of_mem_closure e hcl⟩
+      connected := isPreconnected_blkG e
+      star_mem := ?_ }
+  · rintro _ ⟨M, hM, rfl⟩ _ ⟨N, hN, rfl⟩
     exact ⟨M * N, IsUnit.mul hM hN, blk_mul e M N⟩
-  isUnit := fun g hg => ((mem_blkG_iff e).1 hg).1
-  inv_mem := by
-    rintro _ ⟨M, hM, rfl⟩
+  · rintro _ ⟨M, hM, rfl⟩
     refine ⟨M⁻¹, ?_, (blk_inv e hM).symm⟩
     exact (Matrix.isUnit_nonsing_inv_iff).2 hM
-  closed := fun g hg hcl => (mem_blkG_iff e).2 ⟨hg, blk_unblk_of_mem_closure e hcl⟩
-  connected := isPreconnected_blkG e
-  star_mem := by
-    rintro _ ⟨M, hM, rfl⟩
+  · rintro _ ⟨M, hM, rfl⟩
     refine ⟨Mᴴ, ?_, blk_conjTranspose e M⟩
     have : IsUnit (star M) := IsUnit.star hM
     exact this

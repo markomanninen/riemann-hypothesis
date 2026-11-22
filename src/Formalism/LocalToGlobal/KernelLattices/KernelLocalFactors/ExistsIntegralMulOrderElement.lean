@@ -1,14 +1,18 @@
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.EmbCInjective
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Formalism.LocalToGlobal.Columns.RowFormsSel
-import Formalism.LocalToGlobal.Columns.RecLevelLocP
-import Formalism.LocalToGlobal.Columns.RecLevelHost
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ColInst
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.EmbCInjective
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.LocNormAmbOfOf
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Formalism.LocalToGlobal.Columns.RowFormsSel
+public import Formalism.LocalToGlobal.Columns.RecLevelLocP
+public import Formalism.LocalToGlobal.Columns.RecLevelHost
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Pointwise
@@ -210,7 +214,8 @@ theorem nonempty_tau : Nonempty X.Tau := by
   have h : Nonempty D.what₂.Tau := Fintype.card_pos_iff.1 (by
     rw [D.what₂.card_Tau]
     unfold Ranks.f Ranks.n
-    positivity)
+    have := D.R.ord_pos
+    omega)
   exact h.map s.iT.symm
 
 theorem laHyp_ambOf (hok : s.Ok) (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) {a b : ℕ} (ha : Even a) (hb : Even b)
@@ -242,8 +247,8 @@ theorem mem_of_divs {A : Type} [CommRing A] [IsDedekindDomain A] {a : A} {P : He
   · exact hf.mem_toFinset.mp h
   · simp at h
 
-open Classical in
 
+open Classical in
 theorem bad_gen (hPr : Pr.Ok) (u : Pr.Word) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∈ Pr.vT u ∪ Pr.vGs) :
     ∃ (π : 𝓞 X.E) (p : ℕ), π ∈ P.asIdeal ∧ IsCoprime π (X.conjO π) ∧ π * X.conjO π = (p : 𝓞 X.E) ∧ p.Prime ∧
       (p = Pr.T u ∧ π = Pr.piT u ∨ ∃ i, p = Pr.g i ∧ π = X.conjO (Pr.piG i)) := by
@@ -259,8 +264,8 @@ theorem bad_gen (hPr : Pr.Ok) (u : Pr.Word) {P : HeightOneSpectrum (𝓞 X.E)} (
       (p = Pr.T u ∧ π = Pr.piT u ∨ ∃ i, p = Pr.g i ∧ π = X.conjO (Pr.piG i)))
     exact h.elim (key 0) (key 1)
 
-open Classical in
 
+open Classical in
 theorem tg_noConj (hPr : Pr.Ok) (u : Pr.Word) : ∀ P ∈ Pr.vT u ∪ Pr.vGs, conjPrime₂ P ∉ Pr.vT u ∪ Pr.vGs := by
   intro P hP hP'
   obtain ⟨π, p, hπ, hcop, hn, hp, hk⟩ := bad_gen hPr u hP
@@ -348,8 +353,8 @@ theorem conjP_twice (P : HeightOneSpectrum (𝓞 X.E)) : conjPrime₂ (conjPrime
   ext r
   rw [mem_conjP, mem_conjP, cO_cO]
 
-open Classical in
 
+open Classical in
 theorem sall_noConj (hX : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) (hT : Pr.T u ∈ S) (hg : ∀ i, Pr.g i ∈ S) :
     ∀ P ∈ Sall sel mu u, conjPrime₂ P ∉ Sall sel mu u := by
   have hsplit : ∀ P, P ∈ Sall sel mu u ↔ P ∈ Pr.vT u ∪ Pr.vGs ∨ P ∈ QE sel (mu : Chr X.F X.E X.K) := by
@@ -375,8 +380,8 @@ theorem sall_noConj (hX : X.AbelianUnramifiedExtensionConditions) (hPr : Pr.Ok) 
   · exact hmix (conjPrime₂ P) h' (by rw [conjP_twice]; exact h)
   · exact qe_noConj mu hX hsel P h h'
 
-open Classical in
 
+open Classical in
 theorem sall_nat (hPr : Pr.Ok) (hsel : IsSel X sel) (u : Pr.Word) {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∈ Sall sel mu u) :
     ∃ p : ℕ, p.Prime ∧ (p : 𝓞 X.E) ∈ P.asIdeal ∧ (p = Pr.T u ∨ (∃ i, p = Pr.g i) ∨ p ∉ S) := by
   have hP' : P ∈ Pr.vT u ∪ Pr.vGs ∨ P ∈ QE sel (mu : Chr X.F X.E X.K) := by

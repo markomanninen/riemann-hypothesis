@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LowersMulZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsComplOfSaturated
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasSignatureComplement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LowersMulZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsComplOfSaturated
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HasSignatureComplement
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase GlobalTheory.RadCov
 
 namespace GlobalTheory.RadCov
@@ -69,8 +74,9 @@ theorem exists_biorth {E : Type} [Field E] {n m : ℕ} {r : ℕ → ℕ}
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [← Matrix.mulVec_mulVec, H1]
 
-theorem exists_biorth_of_saturated_flag : ∀ (E : Type) [Field E] [NumberField E] (n m : ℕ) (F : ℕ → Submodule (𝓞 E) (Fin n → E)) (r : ℕ → ℕ), Monotone F → F 0 = ⊥ → (∀ b, m ≤ b → F b = F m) → Submodule.IsLattice E (F m) → (∀ b, ∀ y ∈ F m, y ∈ Submodule.span E (F b : Set (Fin n → E)) → y ∈ F b) → (∀ b, Formalism.HN.rkK (F (b + 1)) = Formalism.HN.rkK (F b) + r b) → ∃ (T : ∀ b, Matrix (Fin n) (Fin (r b)) E) (T' : ∀ b, Matrix (Fin (r b)) (Fin n) E) (Λ : ∀ b, Submodule (𝓞 E) (Fin (r b) → E)), Biorth r m T T' ∧ (∀ b, Submodule.IsLattice E (Λ b)) ∧ ∀ k y, y ∈ F k ↔ ∀ b, T' b *ᵥ y ∈ Λ b ∧ (k ≤ b → T' b *ᵥ y = 0) := by
+theorem exists_biorth_of_saturated_flag : ∀ (E : Type) [Field E] [NumberField E] (n m : ℕ) (F : ℕ → Submodule (𝓞 E) (Fin n → E)) (r : ℕ → ℕ), Monotone F → F 0 = ⊥ → (∀ b, m ≤ b → F b = F m) → Submodule.IsFullLattice E (F m) → (∀ b, ∀ y ∈ F m, y ∈ Submodule.span E (F b : Set (Fin n → E)) → y ∈ F b) → (∀ b, Formalism.HN.rkK (F (b + 1)) = Formalism.HN.rkK (F b) + r b) → ∃ (T : ∀ b, Matrix (Fin n) (Fin (r b)) E) (T' : ∀ b, Matrix (Fin (r b)) (Fin n) E) (Λ : ∀ b, Submodule (𝓞 E) (Fin (r b) → E)), Biorth r m T T' ∧ (∀ b, Submodule.IsFullLattice E (Λ b)) ∧ ∀ k y, y ∈ F k ↔ ∀ b, T' b *ᵥ y ∈ Λ b ∧ (k ≤ b → T' b *ᵥ y = 0) := by
   intro E _ _ n m F r hmono h0 hm hL hsat hrk
+  letI := hL
   have hle : ∀ b, F b ≤ F m := fun b => by
     rcases le_total b m with h | h
     · exact hmono h
@@ -123,11 +129,11 @@ theorem exists_biorth_of_saturated_flag : ∀ (E : Type) [Field E] [NumberField 
     | zero => rw [h0]; simp [Formalism.HN.rkK]
     | succ k ih => rw [hrk, ih, Finset.sum_range_succ]
   have hn : n = ∑ b ∈ Finset.range m, r b := by
-    rw [← hsum, Formalism.HN.rkK, hL.span_eq_top]
+    rw [← hsum, Formalism.HN.rkK, Submodule.IsFullLattice.span_eq_top (A := E) (M := F m)]
     simp
   obtain ⟨T', hB⟩ := exists_biorth T hr0 hn (fun y => by
     obtain ⟨c, hc, hcy⟩ := AdaptedExists.exists_smul_mem (L := F m) (x := y)
-      (by rw [hL.span_eq_top]; trivial)
+      (by rw [Submodule.IsFullLattice.span_eq_top (A := E) (M := F m)]; trivial)
     obtain ⟨u, -, hu⟩ := hdec m _ hcy
     have hc' : (c : E) ≠ 0 := by simpa using hc
     refine ⟨fun b => (c : E)⁻¹ • u b, ?_⟩

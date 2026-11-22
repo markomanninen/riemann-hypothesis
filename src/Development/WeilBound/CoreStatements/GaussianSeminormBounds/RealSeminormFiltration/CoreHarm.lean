@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
+module
+
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.CoreLie
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem hc_hc (d e : ℕ) (P : MvPolynomial σ ℂ) :
 
 theorem hc_ext {P Q : MvPolynomial σ ℂ} (h : ∀ d, homogeneousComponent d P = homogeneousComponent d Q) : P = Q := by
   ext m
-  have := congrArg (coeff m) (h m.degree)
+  have := congrArg (AddMonoidAlgebra.coeff · m) (h m.degree)
   simpa [coeff_homogeneousComponent] using this
 
 theorem mp_hc (A : Module.End ℂ (MvPolynomial σ ℂ)) (P : MvPolynomial σ ℂ) (d : ℕ) :
@@ -68,7 +72,7 @@ theorem mp_zero (g : MvPolynomial σ ℂ) : minusPart (0 : Module.End ℂ (MvPol
 theorem mp_add_right (A : Module.End ℂ (MvPolynomial σ ℂ)) (g g' : MvPolynomial σ ℂ) :
     minusPart A (g + g') = minusPart A g + minusPart A g' := by
   refine hc_ext fun d => ?_
-  simp only [map_add, mp_hc]
+  simp only [map_add (f := _), mp_hc]
 
 theorem mp_smul_right (A : Module.End ℂ (MvPolynomial σ ℂ)) (c : ℂ) (g : MvPolynomial σ ℂ) :
     minusPart A (c • g) = c • minusPart A g := by
@@ -152,7 +156,8 @@ theorem rename_first_lowering (a b : Ix p q) (P : Pol p q r s) :
       PI.FockOneDegW.lowOp (p := r) (q := s) a b (rename (sw p q r s) P) := by
   rw [PI.FockOneDegW.RedOps.lowOp_apply]
   unfold low1
-  rw [LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   have hl : linePos ((c, b) : Ln r s p q) = linePos ((b, c) : Ln p q r s) := linePos_sw (b, c)
   rw [hl]
@@ -168,7 +173,8 @@ theorem minus1_eq (Z : Mat p q) (hZ : IsPC Z) (P : Pol p q r s) :
   apply rename_sw_injective p q r s
   rw [minusPart_rename (sw p q r s) _ _ (fun Q => (rename_fockAct1 Z Q).symm) P,
     PI.FockOneDegW.minus2_eq _ hZ]
-  simp only [map_neg, map_sum, map_smul, rename_first_lowering]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_neg, map_sum, map_smul, rename_first_lowering]
 
 theorem first_lowering_commute_lowering (a b : Ix p q) (c d : Ix r s) :
     Commute (low1 (r := r) (s := s) a b) (PI.FockOneDegW.lowOp (p := p) (q := q) c d) := by
@@ -313,7 +319,8 @@ theorem harmonic_stable_lowering {c d : Ix r s} (hcd : ¬ sameBlock c d) {g : Po
       PI.FockOneDegW.lowOp (p := p) (q := q) c d (low1 a b g) :=
     fun a b => LinearMap.congr_fun (first_lowering_commute_lowering a b c d).eq g
   have h2 := congrArg (PI.FockOneDegW.lowOp (p := p) (q := q) c d) h
-  simpa only [map_neg, map_sum, map_smul, map_zero, e] using h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_neg, map_sum, map_smul, map_zero, e] using h2
 
 private theorem homogeneousComponent_fockAct1_of_isKC (Z : Mat p q) (hZ : IsKC Z) (e : ℕ) (P : Pol p q r s) :
     homogeneousComponent e (fockAct1 p q r s Z P) = fockAct1 p q r s Z (homogeneousComponent e P) := by
@@ -321,7 +328,8 @@ private theorem homogeneousComponent_fockAct1_of_isKC (Z : Mat p q) (hZ : IsKC Z
     conv_lhs => rw [Matrix.matrix_eq_sum_single Z]
     simp only [Eab, Matrix.smul_single, smul_eq_mul, mul_one]
   rw [hZs]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply]
   refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
   by_cases hab : sameBlock a b
   · rw [homogComponent_comm_first_action hab]
@@ -359,7 +367,8 @@ theorem low_homog_small (c d : Ix r s) {e : ℕ} (he : e < 2) {g : Pol p q r s}
 private theorem fockAct2_Eab_eq_sum_omE (c d : Ix r s) (P : Pol p q r s) :
     fockAct2 p q r s (Eab c d) P = ∑ a : Ix p q, omE (a, c) (a, d) P := by
   apply PI.FockOneDegW.Swap.rename_sw_injective p q r s
-  rw [PI.FockOneDegW.Swap.rename_fockAct2, PI.FockOneDegW.fockAct1_Eab_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [PI.FockOneDegW.Swap.rename_fockAct2, PI.FockOneDegW.fockAct1_Eab_apply, map_sum]
   refine Finset.sum_congr rfl (fun a _ => ?_)
   rw [PI.FockOneDegW.Swap.rename_omE]
   rfl

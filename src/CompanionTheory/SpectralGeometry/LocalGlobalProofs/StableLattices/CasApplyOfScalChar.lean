@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.TraceElementsActByGelfandValues
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GelfValTwoEqCvalR
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.TraceElementsActByGelfandValues
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GelfValTwoEqCvalR
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Formalism.REAL (GlRel IsUnitary KHighest Cas etr epow)

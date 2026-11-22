@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOmBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FubiniHeadLastPart
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixOneZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOmBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FubiniHeadLastPart
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixOneZero
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -73,8 +77,8 @@ theorem coreQ (σh : Equiv.Perm (Fin ph)) (dh : Fin ph → ℂ) (σb : Equiv.Per
   unfold U.PhiTop
   rw [show U.muXiH m 0 σb = volume from rfl]
   congr 1
-  funext w
-  simp only [g', g]
+  funext η
+  change (∫ x, U.psiH U.betaU σb η • _ ∂(μR.prod volume)) = _
   rw [integral_smul]
   rfl
 
@@ -186,7 +190,7 @@ theorem sliceOmBlock : SliceOmBlock := by
   have hc := coreQ (k := k) (ρ := r - D.ptSize (h ++ [(n + 1, t), (1, c)])) (D.ptPerm h) (D.ptDiag h) (Om.σB (n + 1))
     (Fub.dQ (fun _ : Fin (n + 1) => t) (fun _ : Fin 1 => c)) _ _ _ γ (hT1 hint)
   unfold D.sliceAt
-  rw [dif_pos hle, hT2, hc, Om.omBlock_eq, smul_smul, ← Complex.ofReal_mul]
+  rw [dite_eq_left hle, hT2, hc, Om.omBlock_eq, smul_smul, ← Complex.ofReal_mul]
   rw [kapB_mul n, Complex.ofReal_one, one_smul]
   simp only [Dx2.SL.castV_castV, Dx2.SL.castF_castF]
 

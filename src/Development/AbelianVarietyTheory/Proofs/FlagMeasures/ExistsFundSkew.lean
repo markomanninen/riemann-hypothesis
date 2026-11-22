@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFundIpow
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ConjStableLatticeRealImagCovolumeLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFundIpow
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ConjStableLatticeRealImagCovolumeLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FinrankMulDiscrRpowLeSumSqOfMemTraceDual
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.DegVol
 open scoped Pointwise ENNReal Classical nonZeroDivisors
@@ -129,7 +133,7 @@ theorem exists_fund_skew : ∀ (K : Type) [Field K] [NumberField K] [StarRing K]
     obtain ⟨u, -⟩ := (hσ.2 (Classical.arbitrary _)).exists
     refine absurd h1 (not_le.2 ?_)
     rw [pow_mul, ← Finset.card_univ, ← Finset.prod_const]
-    refine Finset.prod_lt_prod_of_nonempty (fun v _ => pow_pos (norm_pos_iff.2 ((map_ne_zero _).2 ht0)) _)
+    refine Finset.prod_lt_prod_of_nonempty₀ (fun v _ => pow_pos (norm_pos_iff.2 ((map_ne_zero _).2 ht0)) _)
       (fun v _ => pow_lt_pow_left₀ ?_ (norm_nonneg _) two_ne_zero) ⟨u, Finset.mem_univ _⟩
     have := hlt v
     rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg hc0.le] at this
@@ -137,7 +141,7 @@ theorem exists_fund_skew : ∀ (K : Type) [Field K] [NumberField K] [StarRing K]
   obtain ⟨u, -⟩ := (hσ.2 (Classical.arbitrary _)).exists
   have hre : ∀ t : K, t + star t = 0 → ∀ v, (σ v t).re = 0 := fun t ht v => by
     have := congrArg (fun x => (σ v x).re) ht
-    simp only [map_add, hσ.1, map_zero, Complex.add_re, Complex.conj_re, Complex.zero_re] at this
+    simp only [map_add (f := _), hσ.1, map_zero, Complex.add_re, Complex.conj_re, Complex.zero_re] at this
     linarith
   have hB' : ∀ y, y ∈ B ↔ ∃ t : K, (t ∈ ipow 𝔡 (-(2 * (n : ℤ))) ∧ t + star t = 0) ∧
       y = fun v => c * (σ v t).im := by
@@ -147,7 +151,7 @@ theorem exists_fund_skew : ∀ (K : Type) [Field K] [NumberField K] [StarRing K]
     · rintro ⟨t, ht, hy⟩
       refine ⟨t, ⟨ht, (σ u).injective ?_⟩, funext fun v => by simpa using congrArg Complex.im (congrFun hy v)⟩
       have h1 : (σ u t).re = 0 := by simpa [hc0.ne'] using congrArg Complex.re (congrFun hy u)
-      rw [map_add, hσ.1, map_zero]
+      rw [map_add (f := _), hσ.1, map_zero]
       apply Complex.ext <;> simp [h1]
     · rintro ⟨t, ⟨ht, ht'⟩, rfl⟩
       exact ⟨t, ht, funext fun v => by apply Complex.ext <;> simp [hre t ht']⟩

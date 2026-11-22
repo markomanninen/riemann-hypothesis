@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfA
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfA
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 
@@ -7,7 +11,7 @@ theorem mem_range_of_isIntegral {k B : Type} [Field k] [IsAlgClosed k] [CommRing
   have h : (minpoly k x).degree = 1 := IsAlgClosed.degree_eq_one_of_irreducible k (minpoly.irreducible hx)
   have hm : Polynomial.aeval x (minpoly k x) = 0 := minpoly.aeval k x
   have hq : (minpoly k x).leadingCoeff = 1 := minpoly.monic hx
-  rw [Polynomial.eq_X_add_C_of_degree_eq_one h, hq, Polynomial.C_1, one_mul, map_add,
+  rw [Polynomial.eq_X_add_C_of_degree_eq_one h, hq, Polynomial.C_1, one_mul, map_add (f := _),
     Polynomial.aeval_X, Polynomial.aeval_C, add_eq_zero_iff_eq_neg] at hm
   exact ⟨-(minpoly k x).coeff 0, by rw [map_neg]; exact hm.symm⟩
 

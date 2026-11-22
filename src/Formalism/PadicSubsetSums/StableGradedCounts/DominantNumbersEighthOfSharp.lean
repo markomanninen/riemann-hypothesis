@@ -1,6 +1,10 @@
-import Formalism.PadicSubsetSums.CentralIdempotents.StretchedExponentialDominance
-import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRLemmaLWeight
+module
+
+public import Formalism.PadicSubsetSums.CentralIdempotents.StretchedExponentialDominance
+public import Formalism.PadicSubsetSums.StableGradedCounts.LocalEstimateIVOfTypeSetWeight
+public import Formalism.PadicSubsetSums.CentralIdempotents.GaloisIrreducibility
+
+@[expose] public section
 
 open Finset
 

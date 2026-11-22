@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementQ
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -105,14 +109,14 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {k r : ℕ} {i : 
 
 abbrev Pt (k r : ℕ) (i : Fin (r + 1)) (D : Set (Mx k r)) : Type := {g : Mx k r // g ∈ Glev k r i ∩ D}
 
-open Classical in
 
+open Classical in
 def ext (k r : ℕ) (i : Fin (r + 1)) (D : Set (Mx k r)) (φ : Pt k r i D → E) : Mx k r → E :=
   fun g => if h : g ∈ Glev k r i ∩ D then φ ⟨g, h⟩ else 0
 
 lemma ext_at {φ : Pt k r i D → E} {g : Mx k r} (hg : g ∈ Glev k r i ∩ D) : ext k r i D φ g = φ ⟨g, hg⟩ := by
   unfold ext
-  rw [dif_pos hg]
+  rw [dite_eq_left hg]
 
 lemma lev_congr (hD : IsOpen D) {f f' : Mx k r → E} (h : ∀ g ∈ Glev k r i ∩ D, f g = f' g)
     (hf : SmoothLev k r i D f) : SmoothLev k r i D f' := by
@@ -141,8 +145,8 @@ lemma lev_smul {f : Mx k r → E} (c : ℂ) (hf : SmoothLev k r i D f) :
   show c • f g = c • F g
   rw [hfF g hg hgG]
 
-variable (E k r i D) in
 
+variable (E k r i D) in
 def Sm : Submodule ℂ (Pt k r i D → E) where
   carrier := {φ | SmoothLev k r i D (ext k r i D φ)}
   add_mem' {φ ψ} hφ hψ := by
@@ -178,13 +182,6 @@ def Tf (a b : Fin (mdim k r i)) (φ : Pt k r i D → E) : Pt k r i D → E :=
 lemma eh_zero (a b : Fin (2 * r + k + 1)) (g : Mx k r) :
     EH k r a b (fun _ : Mx k r => (0 : E)) g = 0 := by
   simp [EabH, RdV]
-
-lemma rep_sum {ι : Type*} [Fintype ι] (c : ι → ℂ) {F : ι → Mx k r → E}
-    {x : ι → Sm E k r i D} (h : ∀ j, Rep (F j) (x j).1) :
-    Rep (fun g => ∑ j, c j • F j g) (∑ j, c j • x j).1 := by
-  intro g hg
-  simp only [Submodule.coe_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply]
-  exact Finset.sum_congr rfl fun j _ => by rw [h j g hg]
 
 section Ops
 

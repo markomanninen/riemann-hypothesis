@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CMTraceForms.Places
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CMTraceForms.Places
+
+@[expose] public section
 
 open NumberField TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs Formalism.L2.Pj UpperTheory.Depth
@@ -27,7 +31,7 @@ private def restrEmb (hv : v.Integers O) (φ : E →ₐ[ℚ] C) : 𝓞 E →+* O
     rw [map_mul]; simp only [(exists_lift_val hv φ _).choose_spec]; simp)
   map_zero' := hv.hom_inj (by rw [(exists_lift_val hv φ _).choose_spec]; simp)
   map_add' a b := hv.hom_inj (by
-    rw [map_add]; simp only [(exists_lift_val hv φ _).choose_spec]; simp)
+    rw [map_add (f := _)]; simp only [(exists_lift_val hv φ _).choose_spec]; simp)
 
 private theorem restrEmb_spec (hv : v.Integers O) (φ : E →ₐ[ℚ] C) (a : 𝓞 E) :
     algebraMap O C (restrEmb hv φ a) = φ (a : E) :=
@@ -45,7 +49,7 @@ private theorem sig_sig (x : ℤ_[p] ⊗[ℤ] R) : sig p R (sig p R x) = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sig]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 private def sigEquiv : (ℤ_[p] ⊗[ℤ] R) ≃ₐ[ℤ_[p]] (ℤ_[p] ⊗[ℤ] R) :=
   AlgEquiv.ofAlgHom (sig p R) (sig p R) (AlgHom.ext sig_sig) (AlgHom.ext sig_sig)
@@ -82,7 +86,8 @@ private theorem e_mul_sig_sum (h3 : ∀ i j, (w i).e * (w j).bar = 0) (i : Fin s
     have h : (x j : ℤ_[p] ⊗[ℤ] R) ∈ (LinearMap.mulLeft ℤ_[p] (w j).e).range := (x j).2
     obtain ⟨y, hy⟩ := h
     exact ⟨y, hy⟩
-  rw [sumMap_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sumMap_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_eq_zero fun j _ => ?_
   obtain ⟨y, hy⟩ := hx j
   have hb : sig p R (w j).e = (w j).bar := rfl
@@ -115,7 +120,8 @@ private def splitEquiv (h1 : ∀ i j, i ≠ j → (w i).e * (w j).e = 0)
         refine ⟨(fun i => ⟨(w i).e * a, a, rfl⟩,
           fun i => ⟨(w i).e * sig p R a, sig p R a, rfl⟩), ?_⟩
         change sumMap w _ + sig p R (sumMap w _) = a
-        rw [sumMap_apply, sumMap_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [sumMap_apply, sumMap_apply, map_sum]
         change ∑ i, (w i).e * a + ∑ i, sig p R ((w i).e * sig p R a) = a
         simp only [map_mul, sig_sig]
         rw [← Finset.sum_mul, ← Finset.sum_mul, ← add_mul]
@@ -134,7 +140,7 @@ private theorem tauExt_comp_star_eq_tauExt_sig {p : ℕ} [Fact p.Prime] {R : Typ
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [tauExt, sig, starRingEnd_apply]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 private theorem eq_zero_or_one_of_idempotent_integers {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [CommRing O]
     [Algebra O C] (hv : v.Integers O) (x : O) (hx : x * x = x) : x = 0 ∨ x = 1 := by
@@ -157,7 +163,8 @@ private theorem det_linearForms_basis_change {A M O κ : Type} [CommRing A] [Add
     rw [Matrix.mul_apply]
     simp only [Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply]
     conv_lhs => rw [← γ.sum_toMatrix_smul_self γ' m]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Algebra.smul_def]
   rw [key, Matrix.det_mul, Matrix.det_transpose, RingHom.map_det, RingHom.mapMatrix_apply]
@@ -246,8 +253,8 @@ private theorem discr_CMDatum_eq_prod_places_lemma_6 {p : ℕ} [Fact p.Prime] {R
       LinearMap.inr_apply]
     rw [hsplit, map_zero, zero_add, hs]
 
-open UpperTheory.PlacesDiscr in
 
+open UpperTheory.PlacesDiscr in
 theorem UpperTheory.discr_CMDatum_eq_prod_places :
     ∀ (E : Type) [Field E] [NumberField E] [StarRing (𝓞 E)] (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C], v.Integers O → ∀ [Fact (¬ IsUnit (p : O))] [Algebra ℤ_[p] O]
       (s : ℕ) (w : Fin s → Place p (𝓞 E)), (∀ i j, i ≠ j → (w i).e * (w j).e = 0) → (∑ i, (w i).e) + (∑ i, (w i).bar) = 1 →
@@ -325,7 +332,8 @@ theorem UpperTheory.discr_CMDatum_eq_prod_places :
           simp only [ρ, Sum.elim_inr, Equiv.apply_symm_apply]
           exact hss τ
       have := congrArg (tauExt τ) h2
-      rw [map_add, map_sum, map_sum, map_one] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, map_sum, map_one] at this
       simp only [he0, hb0, Finset.sum_const_zero, add_zero] at this
       exact hO this
     have hinj : Function.Injective (UpperTheory.PlacesDiscr.restrEmb hv (E := E)) := by
@@ -369,7 +377,7 @@ theorem UpperTheory.discr_CMDatum_eq_prod_places :
       rw [Matrix.of_apply, Matrix.blockDiagonal'_apply]
       by_cases hij : j = i
       · subst hij
-        rw [dif_pos rfl]
+        rw [dite_eq_left rfl]
         simp only [cast_eq]
         rcases u with a | a <;> rcases c with b | b
         · rw [hγl, Matrix.fromBlocks_apply₁₁]
@@ -384,7 +392,7 @@ theorem UpperTheory.discr_CMDatum_eq_prod_places :
           simp only [ρ, Sum.elim_inr]
           rw [tauExt_comp_star_eq_tauExt_sig, UpperTheory.PlacesDiscr.sig_sig]
           rfl
-      · rw [dif_neg hij]
+      · rw [dite_eq_right hij]
         rcases u with a | a <;> rcases c with b | b
         · rw [hγl]
           exact hz2 _ i (hE i b) j hij (B j a)

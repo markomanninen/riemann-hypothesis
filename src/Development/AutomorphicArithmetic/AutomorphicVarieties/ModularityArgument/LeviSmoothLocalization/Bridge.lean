@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,17 +15,17 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 namespace UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 def PlainIff : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ (π : CuspSub K n) v,
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ (π : CuspSub K n) v,
     (∀ σ, π.IsLocComp v σ → GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred)) ↔
       TorAt π v ∧ ∀ s, SuppAt π v s → Unl (Ideal.absNorm v.asIdeal) s
 
 def WinOfP : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ π : CuspSub K n, ∃ t : ℝ, ∀ v,
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ), 1 ≤ n → ∀ π : CuspSub K n, ∃ t : ℝ, ∀ v,
     ((∀ σ, π.IsLocComp v σ → GlobalTheory.RoadU.PlainTor (IrrGL.of σ.ρ σ.smooth σ.irred)) → WinAt π t v) ∧
       ∀ B, (CG.mk π).HasSat v B → WinAt π t v
 
 def SuppSmo1 : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (π π' : CuspSub K 1),
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (π π' : CuspSub K 1),
     (∀ᶠ v : HeightOneSpectrum (𝓞 K) in Filter.cofinite, ∃ B, (CG.mk π).HasSat v B ∧ (CG.mk π').HasSat v B) →
     ∀ (t : ℝ) v, WinAt π t v → WinAt π' t v
 

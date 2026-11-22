@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
-import Development.AbelianVarietyTheory.Definitions.Foundations.IwSys2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedCocycleKillsRoots
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalConditionsIndependentOfPlaceOver
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsPlaceOverRat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RatUnramToIntUnram
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameOfShCoc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlobOfShapiroSystem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameClassLimitOfNormCompatibleShapiroSystemStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameShapiroSystemLimitUnramifiedAwayFromLStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IwSys2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedCocycleKillsRoots
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LocalConditionsIndependentOfPlaceOver
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsPlaceOverRat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RatUnramToIntUnram
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameOfShCoc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlobOfShapiroSystem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameClassLimitOfNormCompatibleShapiroSystemStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TameShapiroSystemLimitUnramifiedAwayFromLStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.KA
 open scoped Matrix
@@ -18,8 +22,8 @@ noncomputable section
 
 namespace GlobalTheory.KZ
 
-open GlobalTheory.KZGlobAsm in
 
+open GlobalTheory.KZGlobAsm in
 theorem glob_of_shapiro_system_noLayer (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω]
     (W : R2 Ω l) (c : Coef l) (A : ValuationSubring Ω) (e : ℕ) (χ : ∀ r : ℕ, (ZMod (l ^ r))ˣ → Qbar l)
     (θ : G ℚ Ω →* (Qbar l)ˣ) (ρ : G ℚ Ω → Matrix (Fin 2) (Fin 2) (Qbar l))
@@ -63,7 +67,7 @@ theorem glob_of_shapiro_system_noLayer (l : ℕ) [Fact l.Prime] (Ω : Type) [Fie
   have hac : ∀ r i, Continuous fun s => a r s i := by
     intro r i
     simp only [haE]
-    exact continuous_finset_sum _ fun x _ => continuous_const.mul (hYc r x i)
+    exact continuous_finsetSum _ fun x _ => continuous_const.mul (hYc r x i)
   have hyc : Continuous y := by
     refine continuous_pi fun i => ?_
     refine TendstoUniformly.continuous (F := fun r s => a r s i) (p := Filter.atTop) ?_

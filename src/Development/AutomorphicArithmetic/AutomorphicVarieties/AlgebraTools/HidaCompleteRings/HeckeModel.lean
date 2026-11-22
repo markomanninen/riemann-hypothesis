@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi
 
 theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.heckeModel :
@@ -11,8 +16,9 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.heckeModel :
     change (s (t y) : M) = t (s y)
     rw [hi, hj, hj, hi]
     exact h.2 i j y y.2
-  have hc : ∀ a b : heckeAlg Y op, a * b = b * a := fun a b =>
-    (Algebra.adjoinCommSemiringOfComm A key).mul_comm a b
+  have hc : ∀ a b : heckeAlg Y op, a * b = b * a := by
+    exact isMulCommutative_iff.mp
+      (Algebra.isMulCommutative_adjoin A (fun a ha b hb _ => key a ha b hb))
   let t : ι → heckeAlg Y op := fun i =>
     ⟨(op i).restrict (h.1 i), Algebra.subset_adjoin ⟨i, fun _ => rfl⟩⟩
   have htop : Algebra.adjoin A (Set.range t) = ⊤ := by

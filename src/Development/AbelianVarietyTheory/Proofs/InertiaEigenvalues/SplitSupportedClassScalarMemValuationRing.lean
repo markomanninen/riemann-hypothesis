@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SqrtPowOdd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValMulSqrtUnit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNumerator
-import ReciprocityTheory.GaloisValuations.GlobalA
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharLocPowEqOneOnLocalUnitsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationEmbeddingGeneratorEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationSqrtAbsNormEqOneStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharOnIdMulSqrtAbsNormInvMemSubringStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsElemStdLatticeSandwichSplitSupportStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SqrtPowOdd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValMulSqrtUnit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNumerator
+public import ReciprocityTheory.GaloisValuations.GlobalA
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharLocPowEqOneOnLocalUnitsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationEmbeddingGeneratorEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationSqrtAbsNormEqOneStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HeckeCharOnIdMulSqrtAbsNormInvMemSubringStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsElemStdLatticeSandwichSplitSupportStatement
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -139,8 +144,8 @@ end GlobalTheory.LevelSeriesScal
 
 namespace GlobalTheory.LevelSeriesScal
 
-open GlobalTheory.UnitOverP Formalism.L2.Host in
 
+open GlobalTheory.UnitOverP Formalism.L2.Host in
 theorem val_mul_sqrt_unit (D : D7) (c : (AE D)ˣ →* Circle) (χ : Formalism.L2.Host.HChar D.host.E) (hχ : ChrEq c χ)
     (ex : D.what₂.Tau → ℚ) (hex : ∀ τ, HasInfExp D c τ (ex τ)) (p : ℕ) (A : ValuationSubring ℂ) (hp : p.Prime)
     (hpA : (p : ℂ) ∈ A.nonunits) (P : HeightOneSpectrum (𝓞 D.host.E)) (hpP : ((p : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal) :
@@ -384,7 +389,7 @@ theorem GlobalTheory.LevelSeries.clsScal_mem_valRing : ∀ (D : D7) (ψ : AddCha
     exact (hval P hb hc).2
   obtain ⟨s, hs⟩ := hodd
   have hq : ((((Ideal.absNorm cc) ^ s * kk ^ (2 * s + 1) : ℕ) : ℂ))⁻¹ ∈ O :=
-    hO _ (Nat.Coprime.mul (hNcop.pow_left _) (hkcop.pow_left _))
+    hO _ (Nat.Coprime.mul_left (hNcop.pow_left _) (hkcop.pow_left _))
   unfold clsScal
   rw [hidx, hs, GlobalTheory.ClassScalarIn.sqrt_pow_odd, c4]
   convert O.mul_mem hv' hq using 1

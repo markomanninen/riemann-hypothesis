@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,7 +34,7 @@ theorem con_mul_left {I : Type} [Finite I] {R : Type} [CommRing R] (V : I → Ty
         (fun i ↦ (x i ⊗ₜ[R] (1 : M)) * u i) + fun i ↦ (x i ⊗ₜ[R] (1 : M)) * v i := by
       funext i
       simp [mul_add]
-    rw [h, map_add, map_add, hu, hv]
+    rw [h, map_add (f := _), map_add (f := _), hu, hv]
 
 theorem con_mul_right {I : Type} [Finite I] {R : Type} [CommRing R] (V : I → Type) [∀ i, CommRing (V i)]
     [∀ i, Algebra R (V i)] (M : Type) [CommRing M] [Algebra R M] (Ξ : (∀ i, V i) →ₗ[R] R) (y : M)
@@ -49,7 +53,7 @@ theorem con_mul_right {I : Type} [Finite I] {R : Type} [CommRing R] (V : I → T
     have h : (fun i ↦ ((1 : V i) ⊗ₜ[R] y) * (u + v) i) =
         (fun i ↦ ((1 : V i) ⊗ₜ[R] y) * u i) + (fun i ↦ ((1 : V i) ⊗ₜ[R] y) * v i) := by
       funext i; simp [mul_add]
-    rw [h, map_add, map_add, hu, hv, mul_add]
+    rw [h, map_add (f := _), map_add (f := _), hu, hv, mul_add]
 
 theorem con_products {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) {p q : ℕ}
     [Finite (Fin (p + 1) ⥤ C)] (Ξ : Cn F p →ₗ[R] R) (x : Cn F p) (y : Cn F q) (B : Bi F p q) :

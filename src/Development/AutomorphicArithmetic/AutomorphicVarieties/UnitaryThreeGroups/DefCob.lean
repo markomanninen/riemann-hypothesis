@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -25,7 +29,8 @@ private theorem UpperTheory.V.U3.defcob_entIn {C : Type} [CommRing C] {m : ℕ} 
   exact I.sum_mem fun l _ => I.mul_mem_left _ (hX k l)
 
 theorem UpperTheory.V.U3.isDeform_cob :
-    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C) (r : G →* GG m C) (X : Matrix (Fin m) (Fin m) C), I * I = ⊥ → EntIn I X →
+    ∀ {G C : Type} [Group G] [CommRing C] {m : ℕ} (I : Ideal C)
+      (r : G →* GG (m := m) (R := C)) (X : Matrix (Fin m) (Fin m) C), I * I = ⊥ → EntIn I X →
       ∃ h : GL (Fin m) C, (h : Matrix (Fin m) (Fin m) C) = 1 + X ∧ IsDeform r (cob r X) (conjBy h r) := by
   intro G C _ _ m I r X hI hX
   have hXX : X * X = 0 := by simpa using defcob_mul_zero hI hX hX 1
@@ -36,21 +41,22 @@ theorem UpperTheory.V.U3.isDeform_cob :
   have hi : ((h⁻¹ : GL (Fin m) C) : Matrix (Fin m) (Fin m) C) = 1 - X := rfl
   refine ⟨h, rfl, fun g => ⟨by simp [conjBy], ?_⟩⟩
   have hl : (conjBy h r g).mat = (1 + X) * (r g).mat *
-      ((sgnAct m C (r g).right h⁻¹ : GL (Fin m) C) : Matrix (Fin m) (Fin m) C) := by
+      ((sgnAct (m := m) (R := C) (r g).right h⁻¹ : GL (Fin m) C) : Matrix (Fin m) (Fin m) C) := by
     simp [conjBy, GG.mat, hv]
   have hc : cob r X g = X - (r g).adFun X := rfl
   have ha : (((r g).left⁻¹ : GL (Fin m) C) : Matrix (Fin m) (Fin m) C) * (r g).mat = 1 :=
     Units.inv_mul _
   rw [hl, hc, GG.adFun]
   rcases Int.units_eq_one_or (r g).right with hs | hs
-  · rw [hs, sgnAct_one, hi, if_pos rfl]
+  · rw [hs, sgnAct_one, hi, ite_eq_left rfl]
     simp only [Matrix.mul_sub, Matrix.add_mul, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_one]
     rw [defcob_mul_zero hI hX hX, Matrix.mul_assoc _ _ (r g).mat, ha, Matrix.mul_one]
     abel
-  · have hJ : Jmat C m * (1 + X)ᵀ * Jmat C m = 1 + Jmat C m * Xᵀ * Jmat C m := by
+  · have hJ : Jmat (R := C) m * (1 + X)ᵀ * Jmat (R := C) m =
+        1 + Jmat (R := C) m * Xᵀ * Jmat (R := C) m := by
       rw [Matrix.transpose_add, Matrix.transpose_one, Matrix.mul_add, Matrix.add_mul,
         Matrix.mul_one, Jmat_mul_Jmat]
-    rw [hs, sgnAct_neg_one, theta_val, inv_inv, hv, hJ, if_neg (by decide), thetaLie]
+    rw [hs, sgnAct_neg_one, theta_val, inv_inv, hv, hJ, ite_eq_right (by decide), thetaLie]
     simp only [Matrix.mul_add, Matrix.add_mul, Matrix.sub_mul, Matrix.one_mul, Matrix.mul_one]
     rw [defcob_mul_zero hI hX (defcob_entIn hX _ _), Matrix.mul_assoc _ _ (r g).mat, ha,
       Matrix.mul_one, Matrix.mul_neg]

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdaptedQuasiLogBasisPDivGroupLieDualStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentOfQuasiLogarithmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdaptedQuasiLogBasisPDivGroupLieDualStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentOfQuasiLogarithmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PDivGroupDualTangentLinearKillsIntegralStatement
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
 set_option autoImplicit false
@@ -35,7 +40,7 @@ theorem defect_add_smul {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O}
     (hμ : ∀ i, constantCoeff (μ i) = 0) (n : ℕ) (f g : MvPowerSeries (Fin d) E) (a : O) :
     defect μ n (f + a • g) = defect μ n f + a • defect μ n g := by
   have hs := hasSubst_up_nmul (Q := E) hμ n
-  simp only [defect, ← coe_substAlgHom hs, ← algebraMap_smul E a, map_add, map_smul]
+  simp only [defect, ← coe_substAlgHom hs, ← algebraMap_smul E a, map_add (f := _), map_smul]
   module
 
 theorem isLie_add_smul {p : ℕ} {G : PDivGroup p O} (c : QLog.Chart G d)
@@ -52,7 +57,7 @@ theorem isLie_add_smul {p : ℕ} {G : PDivGroup p O} (c : QLog.Chart G d)
     rw [LinearMap.map_smul] at this
     exact this
   · have := dvd_add (H w φ hφ) (dvd_mul_of_dvd_right (H' w φ hφ) a)
-    rw [LinearMap.add_apply, LinearMap.smul_apply, map_add, map_smul, map_add, map_smul,
+    rw [LinearMap.add_apply, LinearMap.smul_apply, map_add (f := _), map_smul, map_add (f := _), map_smul,
       smul_eq_mul, smul_eq_mul]
     convert this using 1
     ring
@@ -82,7 +87,8 @@ theorem mul_eq_one {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O} {ι κ : T
   have h2 : In (⊤ : Ideal O) (f l - comb (∑ m, P l m • R m) f) := by
     have e1 : f l - comb (∑ m, P l m • R m) f =
         (f l - comb (P l) g) + ∑ m, P l m • (g m - comb (R m) f) := by
-      simp only [comb_eq, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [comb_eq, map_sum, map_smul]
       simp only [Fintype.linearCombination_apply, smul_sub, Finset.sum_sub_distrib]
       abel
     rw [e1, in_top_iff]

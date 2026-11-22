@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -42,7 +46,8 @@ theorem intertwiner_mem_iSup_range_eq_sum_smul (G : Type) [Group G] (N X : Type)
   have hWg : ∀ g n, Wm (π g n) = fun j => π g (Wm n j) := by
     intro g n
     apply hΦinj
-    rw [hW, hΦ, ψ.isIntertwining, ← hW, hΦ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hW, hΦ, ψ.isIntertwining, ← hW, hΦ, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [(φ j).isIntertwining]
   have hc : ∀ j, ∃ c : ℂ, ∀ n, Wm n j = c • n := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf37.aOp :
     {G : Type} → [Group G] → Finset G → G → (G → ℂ) → G → ℂ :=

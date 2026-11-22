@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotMeas
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.QuotIndepPf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotMeas
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.QuotIndepPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -236,7 +240,7 @@ theorem locUni_of (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.what
       MeasurePreserving f (muStabV X w) (muStabV X w) := by
     intro f hf
     rw [heq]
-    exact ⟨hf.measurable, by rw [Measure.map_smul, hf.map_eq]⟩
+    exact ⟨hf.measurable, by rw [Measure.map_smul _ hf.measurable.aemeasurable, hf.map_eq]⟩
   obtain ⟨hσ, hne, hc, hleft, hinvν, hκm, b, hb, hbt, hb1⟩ :=
     chart_haar (StV X u u' (gamW X u u' w) v) (stCoordV X u' w (gamW X u u' w) v) φ (muStabV X w)
       (stCoordV_continuous X u' w _ v) hφ hφS hφκ hκφ h1 hmul hinv (fun s hs => hMP _ (hL s hs))
@@ -251,7 +255,7 @@ theorem globProd_of (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.wh
   haveI : ∀ v, SigmaFinite (μRv v) := fun v => (hRv v).1.1
   let Φ : (InfinitePlace X.B.I.F → FreeE w → ℂ) → X.B.I.Ginf := fun c v => φ v (c v)
   have hΦm : Measurable Φ :=
-    measurable_pi_lambda _ fun v => (hφc v).measurable.comp (measurable_pi_apply v)
+    Measurable.of_eval fun v => (hφc v).measurable.comp (measurable_pi_apply v)
   have hsc := stCoord_measurable X u' w (gamW X u u' w)
   have hleft : ∀ y ∈ StInf X u u' (gamW X u u' w), Φ (stCoord X u' w (gamW X u u' w) y) = y := by
     intro y hy

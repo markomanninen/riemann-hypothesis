@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointChartField
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartZeroTrdeg
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PAffineChartTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsClosedPointChartField
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PChartZeroTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PAffineChartTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -43,12 +48,14 @@ theorem ClosedPointChartField.proof : ClosedPointChartField.Statement := by
           rw [← map_one (Ideal.Quotient.mk _), Ideal.Quotient.eq]
           exact Ideal.subset_span rfl
         conv_lhs => rw [p.as_sum]
-        simp only [ChartZeroTrdeg.homogAt, map_sum, map_mul, map_pow, h1, one_pow, mul_one]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [ChartZeroTrdeg.homogAt, map_sum, map_mul, map_pow, h1, one_pow, mul_one]
       have := (I ⊔ Ideal.span {X i - 1}).add_mem (Ideal.mem_sup_left hH) (Ideal.mem_sup_right hd)
       simpa using this
     · refine sup_le ?_ ?_
       · intro f hf
-        rw [RingHom.mem_ker, ← sum_homogeneousComponent f, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [RingHom.mem_ker, ← sum_homogeneousComponent f, map_sum]
         refine Finset.sum_eq_zero fun d _ => ?_
         have hh : (homogeneousComponent d f).IsHomogeneous d :=
           homogeneousComponent_isHomogeneous d f

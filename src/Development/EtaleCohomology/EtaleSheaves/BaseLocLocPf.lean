@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 noncomputable section

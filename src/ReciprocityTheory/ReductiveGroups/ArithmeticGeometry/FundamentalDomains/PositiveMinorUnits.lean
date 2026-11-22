@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.GramDeterminantReal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.GramDeterminantReal
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.PositiveMinorUnits
 open Complex Matrix ReciprocityTheory.ChartRestriction.G.FD.GramDeterminantReal

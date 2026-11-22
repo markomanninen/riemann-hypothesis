@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocGoodLocJ
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpJMemSpan
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocGoodLocJ
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.CmpJMemSpan
+
+@[expose] public section
 
 noncomputable section
 

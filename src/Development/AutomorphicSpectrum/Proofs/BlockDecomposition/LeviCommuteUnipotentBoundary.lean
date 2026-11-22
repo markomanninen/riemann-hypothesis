@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionAction
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CanonicalAnticommutationRelationsConsequence
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.InjectiveDecompositionAction
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.FarRegularity.LKTExists
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.DifferentialBoundedSupport
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwLMulSelf
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CanonicalAnticommutationRelationsConsequence
+
+@[expose] public section
 
 open Finset PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.LvChain
 open CompanionTheory.D.LK (Pos)
@@ -370,7 +374,11 @@ theorem bd_two
 theorem bdL_eq (E1 E2 : Fin n → Fin n → Module.End ℂ V) :
     bdL (inUU lev) E1 E2 = Dd lev 1 E1 + Dd lev (-1) E2 := by
   unfold bdL
-  refine (congrArg₂ (· + ·) (bd_one (lev := lev) E1 E2) (bd_two (lev := lev))).trans ?_
+  refine (congrArg₂ (· + ·)
+    (bd_one (lev := lev) (dec := fun _ => Classical.propDecidable _) E1 E2)
+    (bd_two (lev := lev) (dec := fun _ _ _ =>
+      @instDecidableAnd _ _ (Classical.propDecidable _)
+        (@instDecidableAnd _ _ (Classical.propDecidable _) inferInstance)))).trans ?_
   simp only [Dd]
   abel
 

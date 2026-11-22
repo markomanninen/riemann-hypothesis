@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.FaceRes
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC LateralTheory.CohomologicalPurity LateralTheory.CohomologicalPurity.TubeCut UpperTheory.Et.Prd
 
@@ -8,8 +12,8 @@ namespace UpperTheory.DegreeAdditivity
 private theorem D_add {C : DC} (n : ℤ) (x y : C.Tot) : C.D n (x + y) = C.D n x + C.D n y := by
   funext p t
   rcases p with _ | p
-  · simp [DC.D, map_add]
-  · simp only [DC.D, Pi.add_apply, map_add, smul_add]
+  · simp [DC.D, map_add (f := _)]
+  · simp only [DC.D, Pi.add_apply, map_add (f := _), smul_add]
     abel
 
 private theorem D_sub {C : DC} (n : ℤ) (x y : C.Tot) : C.D n (x - y) = C.D n x - C.D n y := by
@@ -65,7 +69,7 @@ private theorem tot_D {C C' : DC} {Φ : C.Hom C'} (h : Φ.Ok) (n : ℤ) (x : C.T
   rcases p with _ | p
   · simp only [DC.D, DC.Hom.tot]
     exact hom_d h 0 (t - 1) t (by ring) _
-  · simp only [DC.D, DC.Hom.tot, map_add, Units.smul_def, map_zsmul]
+  · simp only [DC.D, DC.Hom.tot, map_add (f := _), Units.smul_def, map_zsmul]
     rw [hom_d h (p + 1) (t - 1) t (by ring), h.2]
 
 private theorem rel_zero {C : DC} {n : ℤ} {H : Type 1} [AddCommGroup H] {rel : C.Tot → H → Prop}

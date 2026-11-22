@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExpand
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmaller
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PBlocksCapB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsExpand
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermFiniteOfSmaller
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
 theorem cap_coeff (a : ℕ) (τ : E →+* ℂ) (d : ℂ) : ∃ f : ℕ → Module.End ℂ (Sm E a), f a = 1 ∧ (∀ k, f k ∈ Zalg E a) ∧
     ∀ u : ℂ, cap τ (u + d) = ∑ k ∈ Finset.range (a + 1), u ^ k • f k := by
@@ -52,20 +56,8 @@ theorem zspan_stable {a : ℕ} {k : ℕ} (b : Fin k → Sm E a) {z : Module.End 
     obtain ⟨_, ⟨i, rfl⟩, z', hz', rfl⟩ := hx
     exact Submodule.subset_span (Set.mem_iUnion.2 ⟨i, z * z', Subalgebra.mul_mem _ hz hz', rfl⟩)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
-
-theorem tensor_span_left_slice {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} {F : GA E r × GA E s → ℂ}
-    (hF : F ∈ tens2 U₁ U₂) (m₂ : GA E s) : ∃ θ ∈ U₁, ∀ y, F (y, m₂) = θ.1 y := by
-  obtain ⟨n, ψ₁, ψ₂, h₁, -, rfl⟩ := tensor_pair_finite_sum hF
-  refine ⟨∑ i, (ψ₂ i).1 m₂ • ψ₁ i, Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (h₁ i), fun y => ?_⟩
-  simp [Finset.sum_apply, mul_comm]
-
-theorem tensor_span_right_slice {U₁ : Submodule ℂ (Sm E r)} {U₂ : Submodule ℂ (Sm E s)} {F : GA E r × GA E s → ℂ}
-    (hF : F ∈ tens2 U₁ U₂) (m₁ : GA E r) : ∃ θ ∈ U₂, ∀ y, F (m₁, y) = θ.1 y := by
-  obtain ⟨n, ψ₁, ψ₂, -, h₂, rfl⟩ := tensor_pair_finite_sum hF
-  refine ⟨∑ i, (ψ₁ i).1 m₁ • ψ₂ i, Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (h₂ i), fun y => ?_⟩
-  simp [Finset.sum_apply]
 
 end PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.BlockCapelli
 

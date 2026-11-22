@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
-import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LineModel
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,25 +24,6 @@ section Models
 variable {F : Type} [Field F] [NumberField F]
 
 abbrev PtFn (Y : Var F) : Type := ∀ v : HeightOneSpectrum (𝓞 F), Ext v → AlgPt Y → ℝ
-
-def FromModel (Y : Var F) (Δ : Y.Dv) (t : Y.X → Y.Fnˣ) (φ : PtFn Y) : Prop :=
-  ∃ (M : GlobalTheory.TrueGeo.Model Y) (L : LB M.X) (m : ℕ+) (r : (L.pull M.j).ι → Y.Fnˣ), L.IsLB ∧
-    Presents ((m : ℕ) • Δ) (L.pull M.j) r ∧
-    ∀ (v : HeightOneSpectrum (𝓞 F)) (e : Ext v) (y : AlgPt Y) (yt : Sp e.O ⟶ M.X) (i : (L.pull M.j).ι),
-      spMap e.O.subtype ≫ yt = y.1 ≫ M.j → ⊤ ≤ yt ⁻¹ᵁ L.U (i PUnit.unit) →
-      ((m : ℕ) : ℝ) * φ v e y = Real.log (e.w (valAt y.1 (((t (below y.1))⁻¹ ^ (m : ℕ) * r i : Y.Fnˣ) : Y.Fn)))
-
-def Generates {Y : Var F} (M : GlobalTheory.TrueGeo.Model Y) (t : Y.X → Y.Fnˣ) (V : M.X.Opens) (d : ℕ) {n : ℕ}
-    (s : Fin n → Y.Fn) : Prop :=
-  ∀ y : Y.X, M.j y ∈ V → (∀ i, RegAt y (s i * (((t y)⁻¹ ^ d : Y.Fnˣ) : Y.Fn))) ∧
-    ∃ i, UnitAt y (s i * (((t y)⁻¹ ^ d : Y.Fnˣ) : Y.Fn))
-
-def LocMax {Y : Var F} (M : GlobalTheory.TrueGeo.Model Y) (t : Y.X → Y.Fnˣ) (φ : PtFn Y) (z : M.X) : Prop :=
-  ∃ (V : M.X.Opens) (d : ℕ+) (n : ℕ) (s : Fin n → Y.Fn), z ∈ V ∧ Generates M t V d s ∧
-    ∀ (v : HeightOneSpectrum (𝓞 F)) (e : Ext v) (y : AlgPt Y) (yt : Sp e.O ⟶ M.X),
-      spMap e.O.subtype ≫ yt = y.1 ≫ M.j → ⊤ ≤ yt ⁻¹ᵁ V →
-      ((d : ℕ) : ℝ) * φ v e y =
-        Real.log (⨆ i, e.w (valAt y.1 (s i * (((t (below y.1))⁻¹ ^ (d : ℕ) : Y.Fnˣ) : Y.Fn))))
 
 end Models
 
@@ -66,11 +51,6 @@ def DlogIs {O : Type} [CommRing O] {x : Sp O ⟶ X} (p n : ℕ) (c : TorsChar t 
         (c.χ _ w : DualNumber (O ⧸ Ideal.span {(p : O) ^ n})).snd =
           Ideal.Quotient.mk (Ideal.span {(p : O) ^ n}) (∑ i, h i * a i)
 
-def SplitTors {R : Type} [CommRing R] (x : Sp R ⟶ X) (q : ℕ) : Prop :=
-  ∀ (Ω : Type) [Field Ω] (io : FractionRing R →+* Ω)
-    (w : Over.mk (spMap (io.comp (algebraMap R (FractionRing R))) ≫ x) ⟶ t.G), w ^ q = 1 →
-      ∃ w₀ : Sp (FractionRing R) ⟶ t.G.left, spMap io ≫ w₀ = w.left
-
 def Thru {R B : Type} [CommRing R] [CommRing B] [Algebra R B] (u : Sp B ⟶ t.G.left) {S : Type} [CommRing S]
     (φ : R →+* S) (w : Sp S ⟶ t.G.left) : Prop :=
   ∃ β : B →+* S, β.comp (algebraMap R B) = φ ∧ spMap β ≫ u = w
@@ -93,28 +73,6 @@ structure IsFinPart {R : Type} [CommRing R] (x : Sp R ⟶ X) (q : ℕ) {B : Type
 
 variable {F : Type} [Field F] [NumberField F] {Y : Var F}
 
-open Classical in
-
-def stepLog (ρ : Y.X ⟶ X) {m : ℕ}
-    (f : ∀ y : Y.X, Fin m → (Sp (DualNumber (Y.X.presheaf.stalk y)) ⟶ t.G.left)) (q : ℕ) (i : Fin m) : PtFn Y :=
-  fun v ε y =>
-    if hp : (resP v).Prime then
-      haveI := Fact.mk hp
-      let ψ : Y.X.presheaf.stalk (below y.1) →+* ℂ_[resP v] := (ioOf (resP v) ε).comp (Scheme.stalkClosedPointTo y.1).hom
-      (-Real.log (ε.w (resP v)) / Real.log (resP v)) *
-        Real.log (grNorm t (spMap ψ ≫ stalkPt Y (below y.1) ≫ ρ)
-          (lat t (resP v) (spMap ψ ≫ stalkPt Y (below y.1) ≫ ρ) (decide (resP v = q)))
-          (fun l => spMap (dualMap ψ) ≫ f (below y.1) l) i)
-    else 0
-
-structure IsFlagFrame (ρ : Y.X ⟶ X) {m : ℕ} (u₀ : Fin m → (Sp (DualNumber Y.Fn) ⟶ t.G.left))
-    (f : ∀ y : Y.X, Fin m → (Sp (DualNumber (Y.X.presheaf.stalk y)) ⟶ t.G.left)) (d : Y.X → Fin m → Y.Fnˣ) : Prop where
-  tan : ∀ y l, IsTanAtG t (stalkPt Y y ≫ ρ) (f y l)
-  tri : ∀ y i, ∃ cf : Fin m → Y.Fn, cf i = d y i ∧ (∀ k, i < k → cf k = 0) ∧
-    IsCombAtG t (genericPt Y ≫ ρ)
-      (fun k => spMap (dualMap (algebraMap (Y.X.presheaf.stalk y) Y.X.functionField)) ≫ f y k) cf (u₀ i)
-  indep : ∀ y (k : Type) [Field k] (ψ : Y.X.presheaf.stalk y →+* k),
-    IsIndep t (spMap ψ ≫ stalkPt Y y ≫ ρ) (fun l => spMap (dualMap ψ) ≫ f y l)
 
 end Tangent
 

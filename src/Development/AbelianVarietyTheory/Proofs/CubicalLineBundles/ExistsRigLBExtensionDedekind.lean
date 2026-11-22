@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsRigidifiedExtensionOfGenericFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsRigidifiedExtensionOfGenericFibre
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -10,7 +14,6 @@ open GlobalTheory GlobalTheory.CM
 namespace GlobalTheory.CM
 
 open GlobalTheory.CechPic in
-
 theorem exists_rigLB_extension_dedekind :
     ∀ (R K : Type) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K] [IsFractionRing R K] (G : Over (Sp R)) [GrpObj G], IsAbelianScheme G → ∀ (X' : Scheme.{0}) (π : X' ⟶ G.left) (p : X' ⟶ Sp K), IsPullback π p G.hom (spMap (algebraMap R K)) → ∀ L : LB X', L.IsLB → ∃ L' : RigLB G, LBIso (L'.L.pull π) L := by
   intro R K _ _ _ _ _ A _ hA X' φ p hφ N hN
@@ -47,12 +50,12 @@ theorem exists_rigLB_extension_dedekind :
   have hM : (LB.div L (L.pull (A.hom ≫ e))).IsLB := LB.isLB_div hL hL'
   obtain ⟨t, ht⟩ : ∃ t : LB.Gen ((LB.div L (L.pull (A.hom ≫ e))).pull e), t.IsGen := by
     refine (cls_eq_zero_iff (pull_isLB hM e)).1 ?_
-    rw [cls_pull hM, cls_div hL hL', cls_pull hL, map_sub, ← pull_comp, ← Category.assoc, he,
+    rw [cls_pull hM e (pull_isLB hM e), cls_div hL hL' hM, cls_pull hL (A.hom ≫ e) hL', map_sub, ← pull_comp, ← Category.assoc, he,
       Category.id_comp, sub_self]
   refine ⟨⟨LB.div L (L.pull (A.hom ≫ e)), t, hM, ht⟩, (cls_eq_iff (pull_isLB hM φ) hN).1 ?_⟩
   have h0 : pull (spMap (algebraMap R K) ≫ e) (cls L hL) = 0 :=
     (cls_eq_zero_iff (pull_isLB hL _)).2 (DVR.exists_gen_of_local L hL _ _)
-  rw [cls_pull hM, cls_div hL hL', cls_pull hL, map_sub, ← pull_comp, ← Category.assoc, hφ.w,
+  rw [cls_pull hM φ (pull_isLB hM φ), cls_div hL hL' hM, cls_pull hL (A.hom ≫ e) hL', map_sub, ← pull_comp, ← Category.assoc, hφ.w,
     Category.assoc, pull_comp, h0, map_zero, sub_zero]
   exact (cls_eq_iff (pull_isLB hL φ) hN).2 hLN
 

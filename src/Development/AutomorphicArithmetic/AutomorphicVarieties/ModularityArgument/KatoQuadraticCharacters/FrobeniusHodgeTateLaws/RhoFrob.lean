@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ZetaElementsUnramifiedOrdinaryOfEulerSystemInert
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
-import Development.AbelianVarietyTheory.Definitions.Foundations.CycMOfNot
-import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.CuspidalUnitaryTwistsClaim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ZetaElementsUnramifiedOrdinaryOfEulerSystemInert
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CycMOfNot
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OpLDOneSubMemTriv
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.CuspidalUnitaryTwistsClaim
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {l : ℕ} [Fact l.Prime]
 
 def cyc1 (l : ℕ) [Fact l.Prime] (s : G ℚ Ω) : ZMod l := ((((cycMod (F := ℚ) (Ω := Ω) l 1 s : ZMod (l ^ 1))).val : ℕ) : ZMod l)
 
-open Classical in
 
+open Classical in
 def Expl (ι : Qbar l ≃+* ℂ) (e : ℕ) (A : ValuationSubring Ω) (c : Coef l) (Z : ∀ r : ℕ, G ℚ Ω → (ZMod (l ^ r))ˣ → Qbar l)
     (j : Ω →+* Qbar l) (s : ℂ) (u w : ℤ → ℂ) (α : ℂ) (B : ℕ) (cc : ℕ → ℂ) (n : ℕ) (β : Fin n → Qbar l) (t : Fin n → ℕ) : Prop :=
   ∃ (κ : Qbar l) (v : ℕ → Qbar l) (m₀ c₀ : ℕ), κ ≠ 0 ∧ (∀ m, ‖v m‖ = 1 ∧ Cg m (v (m + 1)) (v m)) ∧

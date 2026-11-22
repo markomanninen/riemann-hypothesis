@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+
+@[expose] public section
+
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
 
@@ -181,7 +186,8 @@ theorem conj_res : (starRingEnd ℂ) (𝓕.res χ) = 𝓕.res χ := by
   · exact map_zero _
 
 theorem conj_aChi (h : χ * χ = 1) (n : ℕ) : (starRingEnd ℂ) (𝓕.aChi χ n) = 𝓕.aChi χ n := by
-  rw [LFam.aChi, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LFam.aChi, map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   have h1 : χ g * χ g = 1 := by
     have := DFunLike.congr_fun h g
@@ -201,7 +207,8 @@ theorem mel_conj (h : χ * χ = 1) (s : ℂ) :
     have := cpow_conj (t : ℂ) (-s - 1) harg
     rw [conj_ofReal, map_sub, map_neg, map_one] at this
     exact this
-  simp only [map_mul, map_sub, map_sum, conj_aChi 𝓕 χ h, conj_res, conj_ofReal, h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_sub, map_sum, conj_aChi 𝓕 χ h, conj_res, conj_ofReal, h1]
 
 theorem continuation_growth : ∀ (𝓕 : LFam) (χ : AddChar 𝓕.G ℂ), AnalyticOnNhd ℂ (𝓕.F χ) {s | 1 / 2 < s.re} ∧ (∀ s : ℂ, 1 < s.re → LSeriesSummable (𝓕.aChi χ) s ∧ 𝓕.F χ s = (if χ = 1 then s - 1 else 1) * LSeries (𝓕.aChi χ) s) ∧ (∀ s : ℂ, 11 / 20 ≤ s.re → ‖𝓕.F χ s‖ ≤ 300 * 𝓕.B * (‖s‖ + 1) ^ 2) ∧ (χ * χ = 1 → ∀ s : ℂ, 𝓕.F χ ((starRingEnd ℂ) s) = (starRingEnd ℂ) (𝓕.F χ s)) := by
   intro 𝓕 χ

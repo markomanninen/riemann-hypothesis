@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.TwTrSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,9 +108,9 @@ structure Lv (a b : ℕ) (Z : Finset (Pl E)) where
   L₂ : ∀ w : Pl E, Subgroup (GLw b w)
   open₁ : ∀ w, IsOpen (L₁ w : Set (GLw a w))
   open₂ : ∀ w, IsOpen (L₂ w : Set (GLw b w))
-  le₁ : ∀ w, L₁ w ≤ KGL w a
-  le₂ : ∀ w, L₂ w ≤ KGL w b
-  off : ∀ w ∉ Z, L₁ w = KGL w a ∧ L₂ w = KGL w b
+  le₁ : ∀ w, L₁ w ≤ KGL w (n := a)
+  le₂ : ∀ w, L₂ w ≤ KGL w (n := b)
+  off : ∀ w ∉ Z, L₁ w = KGL w (n := a) ∧ L₂ w = KGL w (n := b)
 
 def Lv.ln {Z : Finset (Pl E)} (L : Lv a b Z) (w : Pl E) : LF a b w :=
   (((L.L₁ w).prod (L.L₂ w) : Subgroup _) : Set (GLw a w × GLw b w)).indicator

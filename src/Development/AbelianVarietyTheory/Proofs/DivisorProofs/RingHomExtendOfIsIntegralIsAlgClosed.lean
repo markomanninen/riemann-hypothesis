@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -24,7 +29,11 @@ theorem ringHom_extend_of_isIntegral_isAlgClosed (A C K : Type) [CommRing A] [Co
     Module.isTorsionFree_iff_algebraMap_injective.2 (FaithfulSMul.algebraMap_injective _ _)
   haveI : Module.IsTorsionFree (A ⧸ RingHom.ker h) K :=
     Module.isTorsionFree_iff_algebraMap_injective.2 (RingHom.kerLift_injective h)
-  let φ : (C ⧸ Q) →ₐ[A ⧸ RingHom.ker h] K := IsAlgClosed.lift
+  let φ : (C ⧸ Q) →ₐ[A ⧸ RingHom.ker h] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨φ.toRingHom.comp (Ideal.Quotient.mk Q), ?_⟩
   ext a
   have e1 : (Ideal.Quotient.mk Q) (algebraMap A C a) =

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianDualCrystal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrothendieckDeformationOfLifting
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianSchemeLiftWithPrincipalLineBundle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankEqOfRankAtStalk
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomIdPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatSurjectiveGeomFibre
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianDualCrystal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GrothendieckDeformationOfLifting
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAbelianSchemeLiftWithPrincipalLineBundle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankEqOfRankAtStalk
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomIdPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatSurjectiveGeomFibre
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdditiveLiftIff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.UPel.Sm GlobalTheory.Cris GlobalTheory.DeRham
@@ -60,7 +65,34 @@ theorem bijective_deRham (HR : GlobalTheory.Published.AbelianDeRham) (HD : Globa
   obtain ⟨μ', hμ', e₁, e₂⟩ := GlobalTheory.IsogenyQuasiInverse.exists_quasiInverse K A B g hA hB hg hBg lam hlam e he0 hkerl
   haveI := hlam
   haveI := hμ'
-  have hpush := GlobalTheory.PolPrimeTo.bijective_push (dp0 K) (𝟙 _) lam μ' e he e₁ e₂
+  have hpush : Function.Bijective (push (dp0 K) (𝟙 _) lam) := by
+    have hmon (X : Over (Sp K)) [GrpObj X] [IsCommMonObj X] (n : ℕ) : IsMonHom ((𝟙 X) ^ n : X ⟶ X) := by
+      induction n with
+      | zero => rw [pow_zero]; exact isMonHom_one X X
+      | succ n ih => rw [pow_succ]; exact inferInstanceAs (IsMonHom (lift ((𝟙 X) ^ n) (𝟙 X) ≫ μ[X]))
+    have hpow (X : Over (Sp K)) [GrpObj X] [IsCommMonObj X] (n : ℕ) :
+        haveI := hmon X n
+        push (dp0 K) (𝟙 _) ((𝟙 X) ^ n : X ⟶ X) = (n : K) • LinearMap.id := by
+      induction n with
+      | zero =>
+        haveI := hmon X 0
+        rw [push_congr (dp0 K) (𝟙 _) (pow_zero (𝟙 X)), push_one, Nat.cast_zero, zero_smul]
+      | succ n ih =>
+        haveI := hmon X n
+        haveI := hmon X (n + 1)
+        haveI : IsMonHom ((𝟙 X) ^ n * 𝟙 X) := inferInstanceAs (IsMonHom (lift ((𝟙 X) ^ n) (𝟙 X) ≫ μ[X]))
+        rw [push_congr (dp0 K) (𝟙 _) (pow_succ (𝟙 X) n), push_mul, ih, push_id, Nat.cast_succ, add_smul, one_smul]
+    haveI := hmon A e
+    haveI := hmon B e
+    have k₁ : ∀ x, push (dp0 K) (𝟙 _) μ' (push (dp0 K) (𝟙 _) lam x) = (e : K) • x := fun x ↦ by
+      rw [← LinearMap.comp_apply, ← push_comp, push_congr (dp0 K) (𝟙 _) e₁, hpow]; rfl
+    have k₂ : ∀ y, push (dp0 K) (𝟙 _) lam (push (dp0 K) (𝟙 _) μ' y) = (e : K) • y := fun y ↦ by
+      rw [← LinearMap.comp_apply, ← push_comp, push_congr (dp0 K) (𝟙 _) e₂, hpow]; rfl
+    refine ⟨fun x y hxy ↦ ?_, fun y ↦ ⟨push (dp0 K) (𝟙 _) μ' ((↑he.unit⁻¹ : K) • y), ?_⟩⟩
+    · have eq := congrArg (push (dp0 K) (𝟙 _) μ') hxy
+      rw [k₁, k₁] at eq
+      exact (he.smul_left_cancel).1 eq
+    · rw [k₂, smul_smul, he.mul_val_inv, one_smul]
 
   obtain ⟨⟨φ, hφ, -⟩, hperf⟩ := GlobalTheory.Published.AbelianDualCrystal.duality HR hA hg hB hBg (hd.isPerfect hd')
   have C := cupSquare_of_free HR.1 (AbelianSchemeGerms.isAbelianScheme_tensor A A hA hA) (smooth_prod hg hg)
@@ -87,8 +119,8 @@ namespace GlobalTheory.HTPerf
 
 open GlobalTheory.Published.GrothendieckMessing IsLocalRing
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem skew_bijective : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.Datum p) (R : Type) [CommRing R] (b : GlobalTheory.UPel.HT.Base D R) (N : ℕ) (C C₀ : Type) [CommRing C] [IsLocalRing C] [IsArtinianRing C] [CommRing C₀] (π : C →+* C₀), Function.Surjective π → ∀ (hsq : RingHom.ker π ^ 2 = 0) (tR : R →+* C) (o₀ : GlobalTheory.UPel.HT.Obj b N (spMap π ≫ spMap tR)), ∀ φ : Crys (divided₂ hsq) (spMap π) o₀.A →ₗ[C] Crys (divided₂ hsq) (spMap π) o₀.A →ₗ[C] C, GlobalTheory.AbDual.IsCorrForm (divided₂ hsq) (spMap π) o₀.A o₀.A o₀.P φ → (∀ x y, φ x y = -φ y x) ∧ Function.Bijective φ := by
   intro p _ D R _ b N C C₀ _ _ _ _ π hπ hsq tR o₀ φ hφ
   have hI2 : RingHom.ker π ^ 2 = ⊥ := hsq
@@ -116,7 +148,24 @@ theorem skew_bijective : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.
 
   have hsw : (swap o₀.P).IsLB := pull_isLB hP₀ _
   have hs : LBIso (swap o₀.P) o₀.P := (cls_eq_iff hsw hP₀).1 ((cls_eq_iff hP₀ hsw).2 o₀.symm).symm
-  have skew : ∀ x y, φ x y = -φ y x := GlobalTheory.SymmPoincare.skew_of_symm Cs hP₀ hs hφ
+  have skew : ∀ x y, φ x y = -φ y x := by
+    have hswap : IsCorrForm κ (spMap π) o₀.A o₀.A (swap o₀.P) (-φ.flip) := by
+      obtain ⟨n, a, b, hc, hφ⟩ := hφ
+      have m : IsMor κ ((o₀.A ⊗ o₀.A).hom ≫ spMap π) κ ((o₀.A ⊗ o₀.A).hom ≫ spMap π) (RingHom.id C) (lift (snd o₀.A o₀.A) (fst o₀.A o₀.A)).left :=
+        (homMor κ (spMap π) (lift (snd o₀.A o₀.A) (fst o₀.A o₀.A))).isMor
+      have k := isChern_pull m hc
+      rw [crystallinePull2_sum_cup] at k
+      refine ⟨n, fun i ↦ -b i, a, ?_, fun x y ↦ ?_⟩
+      · convert k using 2 with i
+        rw [pullOver_pullOver, pullOver_pullOver, lift_fst, lift_snd, Submodule.coe_neg, map_neg, map_neg,
+          LinearMap.neg_apply, neg_eq_of_add_eq_zero_right (cup_add_cup _ _ _)]
+      · simp only [LinearMap.neg_apply, LinearMap.flip_apply, hφ, map_neg, ← Finset.sum_neg_distrib, neg_mul]
+        exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_comm]
+    have hiso : IsCorrForm κ (spMap π) o₀.A o₀.A o₀.P (-φ.flip) := by
+      obtain ⟨n, a, b, hc, hf⟩ := hswap
+      exact ⟨n, a, b, (isChern_existsUnique_and_iso C _ κ _ _).2 _ _ hsw hP₀ hs _ hc, hf⟩
+    intro x y
+    exact LinearMap.congr_fun₂ (hφ.unique Cs hP₀ hiso) x y
   refine ⟨skew, ?_⟩
 
   have HC := (GD C (RingHom.ker π) κ hκ C₀ π hπ rfl).1

@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutGen
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutDef
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfiniteNormOneField
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutGen
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.RedWpAutDef
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfiniteNormOneField
+
+@[expose] public section
 
 section
 noncomputable section
@@ -27,7 +31,12 @@ theorem det_kron_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ �
   have hP : (JT ⊗ₖ JS⁻¹ᵀ).det ≠ 0 := by
     rw [det_kronecker, det_transpose]
     exact mul_ne_zero (pow_ne_zero _ C.hT.2) (pow_ne_zero _ (Matrix.isUnit_nonsing_inv_det JS hu).ne_zero)
-  exact GenA.det_unit_sig σ hP (GenA.kron_unit_sig σ hu ha.unitary hb.unitary)
+  have hunitary {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {g : GAF σ J} {a}
+      (h : IsRatF σ J g a) : (a.map σ)ᵀ * J * a = J := by
+    have e := GenA.mt_unitary σ J g
+    rw [show mtF σ J g = _ from h, GenA.map_unitary] at e
+    exact Matrix.map_injective GenA.incAF_injective e
+  exact GenA.det_unit_sig σ hP (GenA.kron_unit_sig σ hu (hunitary ha) (hunitary hb))
 namespace GenR
 theorem compAt_rat_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {g : GAF σ J} {a}
     (h : IsRatF σ J g a) (w : InfinitePlace F) : compAtF θ w (mtF σ J g) = a.map (tauB B w) := by
@@ -40,18 +49,17 @@ theorem cart_blk_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ �
     {sT : InfinitePlace F → Matrix (Fin nT) (Fin nT) ℂ}
     (hS : ∀ w, Formalism.IndefR.Datum.IsCartanInv (JS.map (tauB B w)) (sS w))
     (hT : ∀ w, Formalism.IndefR.Datum.IsCartanInv (((2 * (tauB B w ξ₀).im : ℝ) : ℂ) • JT.map (tauB B w)) (sT w)) :
-    CartF σ JS JT ξ₀ B θ (GlobalTheory.RealWeil.blk sT sS) where
-  sq := by
-    rw [GlobalTheory.RealWeil.blk_mul]
+    CartF σ JS JT ξ₀ B θ (GlobalTheory.RealWeil.blk sT sS) := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [GlobalTheory.RealWeil.blk_mul]
     simp only [fun w => (hS w).1, fun w => (hT w).1]
     exact GlobalTheory.RealWeil.blk_one
-  pos := by
-    unfold HMF
+  · unfold HMF
     rw [GlobalTheory.RealWeil.blk_mul]
     refine GlobalTheory.RealWeil.blk_posDef (fun w => (hT w).2.2) fun w => ?_
     rw [← GlobalTheory.RealSymplForm.cartan_inv_mul (hS w)]
     exact (hS w).2.2.inv
-  cen := fun k t hk => by
+  · intro k t hk
     rw [mMF_apply]
     refine GenA.blk_comm (fun w => ?_) (fun w => ?_)
     · rw [_root_.PositivityTheory.ThKW.GenR.compAt_rat_k C hk]
@@ -59,7 +67,9 @@ theorem cart_blk_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ �
         ext i j
         by_cases hij : i = j <;> simp [hij]
       rw [e, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, Matrix.one_mul]
-    · rw [inv_one, compAt_one, Matrix.one_mul, Matrix.mul_one]
+    · have hone : compAtF θ w (mtF σ JS 1) = 1 := by
+        rw [GenA.mt_one, compAtF, Matrix.map_one _ (map_zero _) (map_one _)]
+      rw [inv_one, hone, Matrix.one_mul, Matrix.mul_one]
 end GenR
 theorem rat_gen_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι) (Q : GAF σ JS × GAF σ JT → Prop)
     (hm : ∀ p q, p.1 ∈ GQF σ JS → p.2 ∈ GQF σ JT → q.1 ∈ GQF σ JS → q.2 ∈ GQF σ JT → Q p → Q q → Q (p * q))
@@ -71,6 +81,17 @@ theorem rat_gen_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι
   obtain ⟨c, hc⟩ : ∃ c : E ≃ₐ[F] E, (c : E →ₐ[F] E) = σ :=
     ⟨AlgEquiv.ofAlgHom σ σ (AlgHom.ext hσ) (AlgHom.ext hσ), rfl⟩
   subst hc
+  have hmem {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {g : GAF (c : E →ₐ[F] E) J} {a}
+      (hJ : IsHermND (c : E →ₐ[F] E) J) (h : IsRatF (c : E →ₐ[F] E) J g a) :
+      g ∈ GQF (c : E →ₐ[F] E) J := by
+    have e := GenA.mt_unitary (c : E →ₐ[F] E) J g
+    rw [show mtF (c : E →ₐ[F] E) J g = _ from h, GenA.map_unitary] at e
+    have hu : (a.map (c : E →ₐ[F] E))ᵀ * J * a = J :=
+      Matrix.map_injective GenA.incAF_injective e
+    exact ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero a (GenA.det_ne_of_unitary hJ hu), hu, Units.ext h.symm⟩
+  have hone {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (w : InfinitePlace F) :
+      compAtF θ w (mtF (c : E →ₐ[F] E) J 1) = 1 := by
+    rw [GenA.mt_one, compAtF, Matrix.map_one _ (map_zero _) (map_one _)]
   have hr : ∀ w, (2 * (tauB B w ξ₀).im : ℝ) ≠ 0 := fun w => mul_ne_zero two_ne_zero (GenA.im_ne hcm C.h0 C.hξ _)
   have hcS : ∀ w, ∃ s, Formalism.IndefR.Datum.IsCartanInv (JS.map (tauB B w)) s := fun w => by
     simpa using GenA.cart_exists _ (GenA.herm_map hcm C.hS (tauB B w)) (GenA.det_map_ne C.hS (tauB B w)) 1 one_ne_zero
@@ -90,12 +111,12 @@ theorem rat_gen_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι
         (GenA.det_map_ne C.hT (tauB B w)) _ (hr w) (tauB B w ∘ x)
         (by rw [GenA.quad_map hcm c rfl]; exact (map_ne_zero _).2 hx) (tauB B w ((u - 1) / GlobalTheory.UnRep.hermE c JTᵀ x x))
       choose sT hT1 hT2 using this
-      refine hs (1, g) (GlobalTheory.RealWeil.blk sT sS0) (one_mem _) hg.mem (_root_.PositivityTheory.ThKW.GenR.cart_blk_k C hS0 hT1) ?_
+      refine hs (1, g) (GlobalTheory.RealWeil.blk sT sS0) (one_mem _) (hmem C.hT hg) (_root_.PositivityTheory.ThKW.GenR.cart_blk_k C hS0 hT1) ?_
       rw [mMF_apply]
       refine GenA.blk_comm (fun w => ?_) (fun w => ?_)
       · rw [_root_.PositivityTheory.ThKW.GenR.compAt_rat_k C hg, GenA.refl_map hcm c rfl]
         exact hT2 w
-      · rw [inv_one, GenR.compAt_one, Matrix.one_mul, Matrix.mul_one]
+      · rw [inv_one, hone, Matrix.one_mul, Matrix.mul_one]
   have hS : ∀ g ∈ GQF (c : E →ₐ[F] E) JS, Q (g⁻¹, 1) := by
     refine GenR.rat_ind c hcm C.hS (fun g => Q (g⁻¹, 1)) (by rw [inv_one]; exact Q11) (fun g hg g' hg' a b => ?_)
       (fun g x u hx hg => ?_)
@@ -106,10 +127,10 @@ theorem rat_gen_k (C : _root_.PositivityTheory.ThKW.Ctx_k σ B JS JT ξ₀ θ ι
         (by rw [GenA.quad_map hcm c rfl]; exact (map_ne_zero _).2 hx) (tauB B w ((u - 1) / GlobalTheory.UnRep.hermE c JSᵀ x x))
       choose sS hS1 hS2 using this
       have hS1' : ∀ w, Formalism.IndefR.Datum.IsCartanInv (JS.map (tauB B w)) (sS w) := fun w => by simpa using hS1 w
-      refine hs (g⁻¹, 1) (GlobalTheory.RealWeil.blk sT0 sS) (inv_mem hg.mem) (one_mem _) (_root_.PositivityTheory.ThKW.GenR.cart_blk_k C hS1' hT0) ?_
+      refine hs (g⁻¹, 1) (GlobalTheory.RealWeil.blk sT0 sS) (inv_mem (hmem C.hS hg)) (one_mem _) (_root_.PositivityTheory.ThKW.GenR.cart_blk_k C hS1' hT0) ?_
       rw [mMF_apply, inv_inv]
       refine GenA.blk_comm (fun w => ?_) (fun w => ?_)
-      · rw [GenR.compAt_one, Matrix.one_mul, Matrix.mul_one]
+      · rw [hone, Matrix.one_mul, Matrix.mul_one]
       · rw [_root_.PositivityTheory.ThKW.GenR.compAt_rat_k C hg, GenA.refl_map hcm c rfl]
         exact (hS2 w).symm
   intro p h1 h2

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -12,7 +16,7 @@ theorem sub_C_mem_X {σ R : Type} [CommRing R] (f : MvPolynomial σ R) :
   | add p r hp hr =>
     have : p + r - MvPolynomial.C (MvPolynomial.constantCoeff (p + r)) =
       (p - MvPolynomial.C (MvPolynomial.constantCoeff p)) + (r - MvPolynomial.C (MvPolynomial.constantCoeff r)) := by
-      simp only [map_add]; ring
+      simp only [map_add (f := _)]; ring
     rw [this]; exact add_mem hp hr
   | mul_X p n _ =>
     simp only [map_mul, MvPolynomial.constantCoeff_X, mul_zero, map_zero, sub_zero]
@@ -24,7 +28,8 @@ theorem chart_nbhd {d : ℕ} {A B : Type} [CommRing A] [CommRing B] (I : Ideal A
     (hc : ∀ a : A, φ a - ψ (MvPolynomial.C (Ideal.Quotient.mk I a)) ∈ I.map φ) :
     Nbhd ψ (Ideal.span (Set.range MvPolynomial.X)) := by
   refine ⟨hψ, ?_, ?_⟩
-  · rw [injective_iff_map_eq_zero]
+  · set_option synthInstance.maxHeartbeats 200000 in
+    apply (injective_iff_map_eq_zero _).2
     intro f hf
     obtain ⟨f, rfl⟩ := Ideal.Quotient.mk_surjective f
     rw [Ideal.quotientMap_mk, Ideal.Quotient.eq_zero_iff_mem, hJ] at hf

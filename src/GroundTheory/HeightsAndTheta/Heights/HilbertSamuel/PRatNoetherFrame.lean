@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRatNoetherFrame
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodE
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRatNoetherFrame
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodE
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.StepTStB
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.IntToRat
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -36,13 +41,15 @@ theorem exists_intOver_start (v : J → R) :
 theorem algebraicIndependent_of_minimal [Infinite k] (hinj : Function.Injective (algebraMap k R))
     (v : J → R) : ∀ (r : ℕ) (L : Fin r → J → k), (∀ t, IntOver k (forms v L) (v t)) →
       (∀ r' < r, ∀ L' : Fin r' → J → k, ¬ ∀ t, IntOver k (forms v L') (v t)) →
-      AlgebraicIndependent k (forms v L)
-  | 0, _, _, _ => algebraicIndependent_empty_type_iff.mpr hinj
-  | r + 1, L, hL, hmin => by
-    by_contra hnot
-    rw [algebraicIndependent_iff] at hnot
-    push Not at hnot
-    obtain ⟨F, hF, hF0⟩ := hnot
+      AlgebraicIndependent k (forms v L) := by
+  intro r
+  cases r with
+  | zero => exact fun _ _ _ => algebraicIndependent_empty_type_iff.mpr hinj
+  | succ r =>
+    intro L hL hmin
+    apply algebraicIndependent_iff.mpr
+    intro F hF
+    by_contra hF0
     obtain ⟨lam, h0⟩ := exists_isIntegralElem_linear (forms v L) F hF0 hF
     refine hmin r (Nat.lt_succ_self r) (fun i s => L i.succ s - lam i * L 0 s) fun t => ?_
     have hf : forms v (fun i s => L i.succ s - lam i * L 0 s) =
@@ -69,7 +76,8 @@ variable {Ω : Type} [Field Ω] [CharZero Ω] {J : Type}
 theorem sum_smul_cone [Fintype J] (x : J → Ω) (c : J → ℚ) :
     ∑ t, c t • (Polynomial.C (x t) * Polynomial.X) =
       Polynomial.C (∑ t, (c t : Ω) * x t) * Polynomial.X := by
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [Algebra.smul_def, Polynomial.algebraMap_apply, ← mul_assoc, ← map_mul]
   simp
@@ -78,7 +86,7 @@ theorem coneMap_map_int (x : J → Ω) (f : MvPolynomial J ℤ) :
     coneMap ℚ x (MvPolynomial.map (Int.castRingHom ℚ) f) = coneMap ℤ x f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [coneMap]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, map_X, hp]; simp [coneMap]
 
 theorem ker_coneMap_rat (x : J → Ω) :
@@ -146,7 +154,7 @@ theorem ringKrullDim_coneRing_rat {κ : Type} [Fintype κ] (x : Ix κ → Ω) (D
 
 theorem ringKrullDim_mvPolynomial_rat (r : ℕ) :
     ringKrullDim (MvPolynomial (Fin r) ℚ) = (r : WithBot ℕ∞) := by
-  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field,
+  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field,
     Nat.card_eq_fintype_card, Fintype.card_fin, zero_add]
 
 theorem intOver_coneMap (x : J → Ω) {r : ℕ} (w : Fin r → Polynomial Ω)
@@ -159,7 +167,7 @@ theorem intOver_coneMap (x : J → Ω) {r : ℕ} (w : Fin r → Polynomial Ω)
     rw [h1]
     exact RingHom.isIntegralElem_map _
   | add p q hp hq =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact RingHom.IsIntegralElem.add _ hp hq
   | mul_X p i hp =>
     rw [map_mul]
@@ -228,7 +236,7 @@ theorem exists_completion [Fintype J] {n : ℕ} (L : Fin n → J → ℚ) (hL : 
     rw [Module.Basis.coe_extend] at h1
     exact h1
   have hdet : IsUnit B.det :=
-    (Matrix.isUnit_iff_isUnit_det B).mp (Matrix.linearIndependent_rows_iff_isUnit.mp hBrow)
+    (Matrix.isUnit_iff_isUnit_det B).mp (Matrix.linearIndependent_row_iff_isUnit.mp hBrow)
   refine ⟨B, fun k => σ ⟨L k, hsub k⟩,
     fun a c hac => hL.injective (congrArg Subtype.val (σ.injective hac)),
     ⟨B⁻¹, fun v => ⟨?_, ?_⟩⟩, fun k => ?_⟩

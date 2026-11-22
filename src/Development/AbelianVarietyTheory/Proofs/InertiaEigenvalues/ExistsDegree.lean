@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormSubLtOneOfFix
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.Cyc
 open scoped Topology
@@ -43,7 +47,7 @@ theorem exists_degree : ∀ (l : ℕ) [Fact l.Prime],
       refine (GlobalTheory.UnramifiedCrys.finite_fixedPow (p := l) (R := Om l) (hpos k)).eventually_all.2
         fun x _ => ?_
       have ho := (stabilizer_isOpen_of_isIntegral (K := ℚ_[l]) x).preimage
-        (continuous_mul_left σ₀⁻¹)
+        (continuous_const_mul σ₀⁻¹)
       filter_upwards [ho.mem_nhds (show σ₀ ∈ _ by simp)] with σ hσ
       have h : σ₀⁻¹ (σ x) = x := hσ
       have h' := congrArg σ₀ h
@@ -54,7 +58,7 @@ theorem exists_degree : ∀ (l : ℕ) [Fact l.Prime],
       RingHom.mem_ker, map_sub, sub_eq_zero, hz σ₀]
     exact key σ k _ fun x hx => by rw [hσ x hx, ha σ₀ k x hx]
   · refine PadicInt.ext_of_toZModPow.mp fun k => ?_
-    rw [map_add, hz σ, hz τ, ← Nat.cast_add]
+    rw [map_add (f := _), hz σ, hz τ, ← Nat.cast_add]
     refine key _ k _ fun x hx => ?_
     rw [AlgEquiv.mul_apply, ha τ k x hx, map_pow, ha σ k x hx, ← pow_mul, ← pow_add]
   · refine PadicInt.ext_of_toZModPow.mp fun k => ?_

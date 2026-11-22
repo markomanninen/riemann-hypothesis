@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.VolProofs
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.VolProofs
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.NonvanishingNearMaximum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsProbabilityMeasureMuPart
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.ModelLatB
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,9 +50,6 @@ variable {D : D7} {j : ℕ} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Ho
   {c : Coeff l} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ D.R.r}
   {dict : ∀ σ : c.F →+* ℂ, GA D (D.sp.W j) → Σ k, Frame ((U σ).X k).Ψ D.R.r}
 
-theorem Laws.evalWD (_ : Laws D j Xo c U dict) : EvalWD (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) :=
-  GlobalTheory.TransferCompare.evalWD_framed Xo c
-
 theorem Laws.unTest (_ : Laws D j Xo c U dict) : ∀ σ, GoodEmb c σ → ∀ k x,
     FromTest (K := c.F) (fun S _ _ => FrPt Xo c S) (fun φ y z => FrMap φ y z) ((U σ).un k x) := fun σ _ k x =>
   haveI : IsReduced (CAt σ) := inferInstanceAs (IsReduced ℂ)
@@ -77,21 +78,17 @@ theorem unif_of_space_eq {D : D7} {r : ℕ} {C : Type} {X : C → Data D.host.E 
   exact ⟨Kf, th, hr, hK, h1, h2, hu⟩
 
 theorem laws_core (D : D7) (T : CoreJ D) (j : ℕ) (h : LawsJ T) (hj : InR D j) :
-    Laws D j (T.Q.Xo j) T.Q.c (T.U j) (coreDict T.toCore j) where
-  inR := hj
-  host := h.pins.1
-  dat := h.pins.2.2.2 j hj
-  levA := h.pins.2.1.2
-  unf := h.unf j hj
-  chiTriv := h.chiTriv j hj
-  dictU := fun σ hσ => by
+    Laws D j (T.Q.Xo j) T.Q.c (T.U j) (coreDict T.toCore j) := by
+  refine ⟨hj, h.pins.1, h.pins.2.2.2 j hj, h.pins.2.1.2, h.unf j hj, h.chiTriv j hj, ?_, ?_⟩
+  · intro σ hσ
     have hV := h.spaceW j hj σ hσ
     have e : coreDict T.toCore j σ = fun g => T.dict j σ (hV ▸ g) := by
-      funext g; simp only [coreDict, dif_pos hV]
+      funext g
+      simp only [coreDict, dite_eq_left hV]
     rw [e, h.pins.2.1.1]
     exact unif_of_space_eq _ _ hV (T.dict j σ) _ (T.Kf j σ) (h.levelK j hj σ hσ) (h.dictU j hj σ hσ)
       (h.muUnit j hj σ hσ).2.2.2
-  modelW := fun σ hσ => by
+  · intro σ hσ
     have := h.modelW j hj σ hσ
     rw [h.spaceW j hj σ hσ] at this
     exact this
@@ -129,12 +126,6 @@ theorem one_le_multBd {ε : ℝ} (hε : 0 < ε) : 1 ≤ multBd E r ε := by
   refine one_le_pow₀ (le_add_of_nonneg_right ?_)
   have : 0 ≤ dE E := abs_nonneg _
   positivity
-
-example : dimFl E 1 = 0 := by simp [dimFl]
-
-example : dimFl E 2 = fdeg E := by simp [dimFl]
-
-example (d M : ℕ) (w : ℝ) : epsLev E d M w ≤ 1 := min_le_left _ _
 
 end Consts
 

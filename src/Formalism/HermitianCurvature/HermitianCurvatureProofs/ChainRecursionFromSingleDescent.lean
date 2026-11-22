@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.GeneratorCommutatorQuantumDet
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellConjTransposeMulApply
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 open scoped ContDiff
@@ -58,63 +62,6 @@ theorem firstColumnSplit_bijective (m : ℕ) : Function.Bijective (phi0 m) := by
   refine ⟨hinj, ?_⟩
   simp [Fintype.card_perm, Fintype.card_prod, Nat.factorial_succ]
 
-theorem rowExpFirst {A : Type*} [Ring A] [Algebra ℂ A] {n t : ℕ} (E : Fin n → Fin n → A)
-    (a b : Fin (t + 1) → Fin n) (u : ℂ) :
-    qminorRow E a b u = ∑ l : Fin (t + 1), (((-1 : ℤ) ^ (l : ℕ) : ℤ) : A) *
-        (Tm E (u - (t : ℂ)) (a 0) (b l) * qminorRow E (a ∘ Fin.succ) (b ∘ l.succAbove) u) := by
-  unfold qminorRow
-  rw [(Fintype.sum_bijective _ (firstColumnSplit_bijective t) _ _ (fun _ => rfl)).symm, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl (fun j _ => ?_)
-  rw [Finset.mul_sum, Finset.mul_sum]
-  refine Finset.sum_congr rfl (fun τ _ => ?_)
-  rw [List.ofFn_succ, List.prod_cons]
-  simp only [sign_insert_perm, firstColumnSplit_zero, firstColumnSplit_succ, Function.comp, Fin.val_zero, Fin.val_succ]
-  have e1 : u - ((t + 1 : ℕ) : ℂ) + 1 + ((0 : ℕ) : ℂ) = u - (t : ℂ) := by push_cast; ring
-  have e2 : ∀ i : Fin t, u - ((t + 1 : ℕ) : ℂ) + 1 + (((i : ℕ) + 1 : ℕ) : ℂ) = u - (t : ℂ) + 1 + ((i : ℕ) : ℂ) := by
-    intro i; push_cast; ring
-  simp only [e1, e2]
-  have hc : ∀ x : A, ((Equiv.Perm.sign τ : ℤ) : A) * x = x * ((Equiv.Perm.sign τ : ℤ) : A) :=
-    fun x => (Int.cast_commute _ _).eq
-  push_cast
-  simp only [mul_assoc]
-  rw [← mul_assoc (Tm E (u - (t : ℂ)) (a 0) (b j)), ← hc, mul_assoc]
-
-theorem rowExpLast {A : Type*} [Ring A] [Algebra ℂ A] {n t : ℕ} (E : Fin n → Fin n → A)
-    (a b : Fin (t + 1) → Fin n) (u : ℂ) :
-    qminorRow E a b u = ∑ l : Fin (t + 1), (((-1 : ℤ) ^ (t + (l : ℕ)) : ℤ) : A) *
-        (qminorRow E (a ∘ Fin.castSucc) (b ∘ l.succAbove) (u - 1) * Tm E u (a (Fin.last t)) (b l)) := by
-  unfold qminorRow
-  rw [(Fintype.sum_bijective _ (lastColumnSplit_bijective t) _ _ (fun _ => rfl)).symm, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl (fun j _ => ?_)
-  rw [Finset.sum_mul, Finset.mul_sum]
-  refine Finset.sum_congr rfl (fun τ _ => ?_)
-  rw [List.ofFn_succ', List.concat_eq_append, List.prod_append, List.prod_singleton]
-  simp only [lastColumnSplit, Equiv.Perm.sign_mul, sign_cycleToLast, sign_extendLast, Equiv.Perm.mul_apply,
-    extendLast_castSucc, cycleToLast_castSucc, extendLast_last, cycleToLast_last, Fin.val_castSucc, Fin.val_last,
-    Function.comp]
-  have e1 : u - ((t + 1 : ℕ) : ℂ) + 1 + (t : ℂ) = u := by push_cast; ring
-  have e2 : ∀ i : Fin t, u - ((t + 1 : ℕ) : ℂ) + 1 + ((i : ℕ) : ℂ) = u - 1 - (t : ℂ) + 1 + ((i : ℕ) : ℂ) := by
-    intro i; push_cast; ring
-  simp only [e1, e2]
-  have hj : (j : ℕ) ≤ t := Nat.lt_succ_iff.mp j.isLt
-  have hs : (-1 : ℤ) ^ (t + (j : ℕ)) = (-1) ^ (t - (j : ℕ)) := by
-    rw [show t + (j : ℕ) = (t - (j : ℕ)) + 2 * (j : ℕ) by omega, pow_add, pow_mul, neg_one_sq, one_pow, mul_one]
-  rw [hs]
-  push_cast
-  simp only [mul_assoc]
-
-theorem expRows : ExpRowsFromRowForm := by
-  intro hRF
-  refine ⟨?_, ?_⟩
-  · intro A _ _ n t E hE a b u
-    rw [hRF A n (t + 1) E hE a b u, rowExpFirst E a b u]
-    refine Finset.sum_congr rfl (fun l _ => ?_)
-    rw [hRF A n t E hE (a ∘ Fin.succ) (b ∘ l.succAbove) u]
-  · intro A _ _ n t E hE a b u
-    rw [hRF A n (t + 1) E hE a b u, rowExpLast E a b u]
-    refine Finset.sum_congr rfl (fun l _ => ?_)
-    rw [hRF A n t E hE (a ∘ Fin.castSucc) (b ∘ l.succAbove) (u - 1)]
-
 end
 
 section
@@ -166,21 +113,6 @@ theorem sign_pair_succAbove_right {t : ℕ} (b : Fin (t + 1)) (a : Fin t) :
     rw [if_neg h', Fin.val_succ]
     ring
 
-theorem sign_two_succAbove_left {t : ℕ} (b : Fin (t + 1)) (a : Fin t) :
-    sg2 (b.succAbove a) b = (-1) ^ ((b : ℕ) + (a : ℕ) + 1) := by
-  unfold sg2
-  rcases lt_or_ge (Fin.castSucc a) b with h | h
-  · rw [Fin.succAbove_of_castSucc_lt _ _ h]
-    have h1 : (a : ℕ) < (b : ℕ) := h
-    have h' : ¬ ((b : ℕ) < ((Fin.castSucc a : Fin (t + 1)) : ℕ)) := by rw [Fin.coe_castSucc]; omega
-    rw [if_neg h', Fin.coe_castSucc]
-    ring
-  · rw [Fin.succAbove_of_le_castSucc _ _ h]
-    have h1 : (b : ℕ) ≤ (a : ℕ) := h
-    have h' : (b : ℕ) < ((Fin.succ a : Fin (t + 1)) : ℕ) := by rw [Fin.val_succ]; omega
-    rw [if_pos h', Fin.val_succ]
-    ring
-
 section lists
 variable {n : ℕ}
 
@@ -195,10 +127,6 @@ theorem bE_comp_succ {m : ℕ} (e : Fin n) (v : Fin m → Fin n) : bE e v ∘ Fi
 theorem bS_comp_castSucc {m : ℕ} (e : Fin n) (v : Fin m → Fin n) : bS v e ∘ Fin.castSucc = v := by
   funext j
   simp [bS]
-
-theorem bE_bS {m : ℕ} (e es : Fin n) (v : Fin m → Fin n) : bE e (bS v es) = bS (bE e v) es := by
-  simp only [bE, bS]
-  exact Fin.cons_snoc_eq_snoc_cons _ _ _
 
 theorem bE_succAbove_zero {m : ℕ} (e : Fin n) (v : Fin m → Fin n) : bE e v ∘ (0 : Fin (m + 1)).succAbove = v := by
   funext j
@@ -298,15 +226,6 @@ theorem expFCE (hFC : ExpFirstCol) {t : ℕ} (f b' : Fin t → Fin n) (s c : Fin
   simp only [bE_zero, bE_succ, bE_comp_succ, bE_succAbove_zero, Fin.val_zero, Fin.val_succ, pow_zero,
     Int.cast_one, one_mul, zsmul_eq_mul]
 
-theorem expFCS (hFC : ExpFirstCol) {t : ℕ} (f b' : Fin t → Fin n) (s c : Fin n) (u : ℂ) :
-    qminor E (bS f s) (bE c b') u =
-      ∑ w : Fin t, ((-1 : ℤ) ^ (w : ℕ)) •
-        (Tm E u (f w) c * qminor E (bS f s ∘ w.castSucc.succAbove) b' (u - 1)) +
-      ((-1 : ℤ) ^ t) • (Tm E u s c * qminor E f b' (u - 1)) := by
-  rw [hFC A n t E (bS f s) (bE c b') u, Fin.sum_univ_castSucc]
-  simp only [bE_zero, bE_comp_succ, bS_castSucc, bS_last, bS_succAbove_last, Fin.coe_castSucc, Fin.val_last,
-    zsmul_eq_mul]
-
 theorem expLCS (hLC : ExpLastCol) {t : ℕ} (f b' : Fin t → Fin n) (s c : Fin n) (u : ℂ) :
     qminor E (bS f s) (bS b' c) u =
       ∑ w : Fin t, ((-1 : ℤ) ^ (t + (w : ℕ))) •
@@ -318,15 +237,6 @@ theorem expLCS (hLC : ExpLastCol) {t : ℕ} (f b' : Fin t → Fin n) (s c : Fin 
   rw [hLC A n t E (bS f s) (bS b' c) u, Fin.sum_univ_castSucc]
   simp only [bS_comp_castSucc, bS_last, bS_castSucc, bS_succAbove_last, Fin.coe_castSucc, Fin.val_last, h2,
     Int.cast_one, one_mul, zsmul_eq_mul]
-
-theorem expLCE (hLC : ExpLastCol) {t : ℕ} (f b' : Fin t → Fin n) (s c : Fin n) (u : ℂ) :
-    qminor E (bE s f) (bS b' c) u =
-      ((-1 : ℤ) ^ t) • (qminor E f b' u * Tm E (u - (t : ℂ)) s c) +
-      ∑ w : Fin t, ((-1 : ℤ) ^ (t + ((w : ℕ) + 1))) •
-        (qminor E (bE s f ∘ w.succ.succAbove) b' u * Tm E (u - (t : ℂ)) (f w) c) := by
-  rw [hLC A n t E (bE s f) (bS b' c) u, Fin.sum_univ_succ]
-  simp only [bS_comp_castSucc, bS_last, bE_zero, bE_succ, bE_succAbove_zero, Fin.val_zero, Fin.val_succ, add_zero,
-    zsmul_eq_mul]
 
 theorem qm_dropS (hFR : ExpFirstRow) (hSk : QSkewRow) (hE : GlRel E) : ∀ {m : ℕ} (v b : Fin m → Fin n) (s : Fin n)
     (w : Fin m) (u : ℂ),
@@ -352,35 +262,6 @@ theorem qm_dropE (hLR : ExpLastRow) (hSk : QSkewRow) (hE : GlRel E) : ∀ {m : �
 
 end exp
 
-theorem borderE_of (hFC : ExpFirstCol) (hLR : ExpLastRow) (hSk : QSkewRow) : BorderE := by
-  intro A _ _ n m E e es v hE hB u
-  obtain ⟨_, _, hve, _⟩ := hB
-  rw [expFCE E hFC]
-  refine add_eq_sub_of ?_
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl (fun w _ => ?_)
-  rw [qm_dropE E hLR hSk hE, Finset.mul_sum, Finset.smul_sum, ← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl (fun x _ => ?_)
-  rw [Tm_ne E _ (hve w), Tm_ne E _ (hve x).symm, ← zsmul_eq_mul, mul_smul_comm, smul_smul, ← pow_add, ← neg_smul,
-    show u - 1 - 1 = u - 2 by ring, mul_assoc]
-  congr 1
-  rw [show (w : ℕ) + 1 + (x : ℕ) = (w : ℕ) + (x : ℕ) + 1 by ring, pow_succ]
-  ring
-
-theorem borderS_of (hLC : ExpLastCol) (hFR : ExpFirstRow) (hSk : QSkewRow) : BorderS := by
-  intro A _ _ n m E e es v hE hB u
-  obtain ⟨_, _, _, hvs⟩ := hB
-  rw [expLCS E hLC, add_comm]
-  refine add_eq_sub_of ?_
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl (fun w _ => ?_)
-  rw [qm_dropS E hFR hSk hE, Finset.sum_mul, Finset.smul_sum, ← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl (fun x _ => ?_)
-  rw [Tm_ne E _ (hvs w), Tm_ne E _ (hvs x).symm, ← zsmul_eq_mul, smul_mul_assoc, smul_smul, ← pow_add, ← neg_smul]
-  congr 1
-  rw [sgn_congr (b := (w : ℕ) + (x : ℕ) + 1) (by omega), pow_succ]
-  ring
-
 end
 
 section
@@ -399,19 +280,6 @@ theorem sum_ne_succAbove {M : Type*} [AddCommMonoid M] {t : ℕ} (p : Fin (t + 1
   rw [Fin.sum_univ_succAbove _ p]
   simp [Fin.succAbove_ne]
 
-theorem sum3conv {M : Type*} [AddCommMonoid M] {t : ℕ} (w : Fin (t + 1)) (F : Fin (t + 1) → Fin (t + 1) → Fin (t + 1) → M) :
-    (∑ W, ∑ X, ∑ X', if W ≠ w ∧ X ≠ X' then F W X X' else 0) =
-      ∑ w', ∑ x', ∑ x, F (w.succAbove w') (x'.succAbove x) x' := by
-  rw [Fin.sum_univ_succAbove _ w]
-  have h0 : (∑ X, ∑ X', if w ≠ w ∧ X ≠ X' then F w X X' else (0 : M)) = 0 := by
-    simp
-  rw [h0, zero_add]
-  refine Finset.sum_congr rfl (fun w' _ => ?_)
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl (fun x' _ => ?_)
-  rw [Fin.sum_univ_succAbove _ x']
-  simp [Fin.succAbove_ne]
-
 theorem skip_two_comp_skip_one {n : ℕ} : ∀ {t : ℕ} (v : Fin (t + 1) → Fin n) (w : Fin (t + 1)) (w' : Fin t),
     (v ∘ skip2 (min (w.succAbove w') w) (max (w.succAbove w') w) : Fin (t + 1 - 2) → Fin n) =
       (v ∘ w.succAbove) ∘ skip1 w'
@@ -428,50 +296,6 @@ theorem skip_two_comp_skip_one {n : ℕ} : ∀ {t : ℕ} (v : Fin (t + 1) → Fi
 section full
 variable {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A)
 
-theorem qm_drop2 (hFR : ExpFirstRow) (hLR : ExpLastRow) (hSk : QSkewRow) (hE : GlRel E) {t : ℕ} (g : Fin t → Fin n)
-    (b : Fin (t + 1) → Fin n) (e s : Fin n) (w : Fin t) (u : ℂ) :
-    qminor E (bE e (bS g s) ∘ w.castSucc.succ.succAbove) b u =
-      ∑ x' : Fin (t + 1), ∑ x : Fin t, ((-1 : ℤ) ^ ((x' : ℕ) + (t + 1 + (x : ℕ)))) •
-        (Tm E (u - 1 - (t : ℂ) + 1) s (b (x'.succAbove x)) *
-          qminor E (g ∘ skip1 w) ((b ∘ x'.succAbove) ∘ skip1 x) (u - 1) * Tm E u e (b x')) := by
-  rw [bE_succAbove_succ, quantum_minor_expand_last_line E hLR hSk hE]
-  refine Finset.sum_congr rfl (fun x' _ => ?_)
-  rw [qm_dropS E hFR hSk hE, Finset.sum_mul, Finset.smul_sum]
-  refine Finset.sum_congr rfl (fun x _ => ?_)
-  rw [smul_mul_assoc, smul_smul, ← pow_add]
-  rfl
-
-theorem qm_rowW (hFC : ExpFirstCol) (hFR : ExpFirstRow) (hLR : ExpLastRow) (hSk : QSkewRow) (hE : GlRel E)
-    (e es : Fin n) : ∀ {m : ℕ} (v : Fin m → Fin n), IsBorder e es v → ∀ (w : Fin m) (u : ℂ),
-    qminor E (bE e (bS v es) ∘ w.castSucc.succ.succAbove) (bE e v) u =
-      Tm E u e e * qminor E (bS v es ∘ w.castSucc.succAbove) v (u - 1) +
-      ((-1 : ℤ) ^ m) • (E es e * qminor E (bE e v ∘ w.succ.succAbove) v (u - 1)) +
-      ∑ W : Fin m, ∑ X : Fin m, ∑ X' : Fin m, if W ≠ w ∧ X ≠ X' then
-        ((-1 : ℤ) ^ (m + 1 + (w : ℕ)) * (sg2 W w * sg2 X X')) •
-          (E (v W) e * E es (v X) *
-            qminor E (v ∘ skip2 (min W w) (max W w)) (v ∘ skip2 (min X X') (max X X')) (u - 2) * E e (v X'))
-        else 0
-  | 0, _, _, w, _ => w.elim0
-  | m + 1, v, hB, w, u => by
-    obtain ⟨_, hee, hve, hvs⟩ := hB
-    rw [sum3conv, bE_succAbove_succ, bS_succAbove_castSucc, expFCE E hFC, Fin.sum_univ_castSucc,
-      add_assoc (Tm E u e e * _)]
-    congr 1
-    rw [add_comm (Finset.sum _ _)]
-    congr 1
-    · rw [bS_last, Tm_ne E _ hee.symm, bE_succAbove_succ, bS_succAbove_last, bE_succAbove_succ, Fin.val_last]
-    · refine Finset.sum_congr rfl (fun w' _ => ?_)
-      rw [qm_drop2 E hFR hLR hSk hE, Finset.mul_sum, Finset.smul_sum]
-      refine Finset.sum_congr rfl (fun x' _ => ?_)
-      rw [Finset.mul_sum, Finset.smul_sum]
-      refine Finset.sum_congr rfl (fun x _ => ?_)
-      rw [bS_castSucc, Function.comp, Tm_ne E _ (hve _), Tm_ne E _ (hvs _).symm, Tm_ne E _ (hve _).symm,
-        mul_smul_comm, smul_smul, sign_two_succAbove_left, sign_two_succAbove_left, skip_two_comp_skip_one, skip_two_comp_skip_one, show u - 1 - 1 = u - 2 by ring,
-        Fin.val_castSucc, ← pow_add, ← pow_add, ← pow_add]
-      congr 1
-      · exact sgn_congr (by omega)
-      · simp only [mul_assoc]
-
 end full
 
 end
@@ -479,110 +303,6 @@ end
 section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.Q
-
-theorem snocCast_eq {n : ℕ} : ∀ {m : ℕ} (v : Fin m → Fin n) (es : Fin n) (w : Fin m) (h : m = m - 1 + 1),
-    (Fin.snoc (α := fun _ => Fin n) (v ∘ skip1 w) es ∘ Fin.cast h : Fin m → Fin n) =
-      bS v es ∘ w.castSucc.succAbove
-  | 0, _, _, w, _ => w.elim0
-  | m + 1, v, es, w, h => by
-    rw [bS_succAbove_castSucc]
-    rfl
-
-theorem borderFull_of (hFC : ExpFirstCol) (hLC : ExpLastCol) (hFR : ExpFirstRow) (hLR : ExpLastRow)
-    (hSk : QSkewRow) : BorderFull := by
-  intro A _ _ n m E e es v hE hB u
-  have hBE := borderE_of hFC hLR hSk A n m E e es v hE hB u
-  obtain ⟨hinj, hee, hve, hvs⟩ := id hB
-  have r0 : bS (bE e v) es ∘ (Fin.castSucc 0).succAbove = bS v es := by
-    rw [← bE_bS, Fin.castSucc_zero, bE_succAbove_zero]
-  have rW : ∀ w : Fin m, bS (bE e v) es ∘ w.succ.castSucc.succAbove =
-      bE e (bS v es) ∘ w.castSucc.succ.succAbove := by
-    intro w; rw [← bE_bS, Fin.succ_castSucc]
-  have e1 : u - ((m + 1 : ℕ) : ℂ) = u - (m : ℂ) - 1 := by push_cast; ring
-  simp only [snocCast_eq]
-  rw [bE_bS, expLCS E hLC, Fin.sum_univ_succ, r0, e1]
-  simp only [rW, bE_zero, bE_succ, Fin.val_zero, Fin.val_succ]
-  rw [Tm_ne E _ hee]
-  simp only [Tm_ne E _ (hvs _)]
-  set C := qminor E v v (u - 1) with hC
-  set Tee := Tm E u e e with hTee
-  set Tss := Tm E (u - (m : ℂ) - 1) es es with hTss
-  set Z : A := ∑ w : Fin m, ((-1 : ℤ) ^ (w : ℕ)) •
-    (E es e * qminor E (bE e v ∘ w.succ.succAbove) v (u - 1) * E (v w) es) with hZ
-  have L1 : ((-1 : ℤ) ^ (m + 1 + 0)) • (qminor E (bS v es) (bE e v) u * E e es) =
-      (∑ w : Fin m, (((-1 : ℤ) ^ ((w : ℕ) + 1 + m) : ℤ) : A) *
-            (E (v w) e * qminor E (bS v es ∘ w.castSucc.succAbove) v (u - 1) * E e es)) -
-        E es e * C * E e es := by
-    rw [expFCS E hFC, add_mul, smul_add, Finset.sum_mul, Finset.smul_sum, Tm_ne E _ hee.symm, smul_mul_assoc,
-      smul_smul, ← pow_add, sgn_congr (a := m + 1 + 0 + m) (b := 1) (by omega), pow_one, neg_one_smul, ← sub_eq_add_neg]
-    congr 1
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    rw [Tm_ne E _ (hve w), smul_mul_assoc, smul_smul, ← pow_add, ← zsmul_eq_mul,
-      sgn_congr (b := (w : ℕ) + 1 + m) (by omega)]
-  have L3 : qminor E (bE e v) (bE e v) u * Tss = Tee * C * Tss -
-      (∑ w : Fin m, ∑ x : Fin m, (((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ) : A) *
-            (E (v w) e * qminor E (v ∘ skip1 w) (v ∘ skip1 x) (u - 2) * Tss * E e (v x))) := by
-    rw [hBE, sub_mul, Finset.sum_mul]
-    congr 1
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    rw [Finset.sum_mul]
-    refine Finset.sum_congr rfl (fun x _ => ?_)
-    rw [mul_assoc, mul_assoc _ (E e (v x)) Tss, ← Tm_comm E hE _ hee.symm (hvs x), ← mul_assoc _ Tss]
-  have R5 : (((-1 : ℤ) ^ (m + 1) : ℤ) : A) * (E es e * qminor E (bE e v) (bS v es) (u - 1)) =
-      -(E es e * C * E e es) + Z := by
-    rw [expLCE E hLC, Tm_ne E _ hee, mul_add, mul_add, ← zsmul_eq_mul, mul_smul_comm, smul_smul, ← pow_add,
-      sgn_congr (a := m + 1 + m) (b := 1) (by omega), pow_one, neg_one_smul, mul_assoc]
-    congr 1
-    rw [Finset.mul_sum, ← zsmul_eq_mul, Finset.smul_sum]
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    rw [Tm_ne E _ (hvs w), mul_smul_comm, smul_smul, ← pow_add, sgn_congr (b := (w : ℕ)) (by omega), mul_assoc]
-  have L2 : (∑ w : Fin m, ((-1 : ℤ) ^ (m + 1 + ((w : ℕ) + 1))) •
-        (qminor E (bE e (bS v es) ∘ w.castSucc.succ.succAbove) (bE e v) u * E (v w) es)) =
-      -(∑ w : Fin m, ∑ x : Fin m, (((-1 : ℤ) ^ ((w : ℕ) + (x : ℕ)) : ℤ) : A) *
-            (E es (v x) * Tee * qminor E (v ∘ skip1 w) (v ∘ skip1 x) (u - 1) * E (v w) es)) + Z +
-      -(∑ w : Fin m, ∑ w' : Fin m, ∑ x : Fin m, ∑ x' : Fin m,
-            if w ≠ w' ∧ x ≠ x' then ((sg2 w w' * sg2 x x' : ℤ) : A) *
-              (E (v w) e * E es (v x) *
-                qminor E (v ∘ skip2 (min w w') (max w w')) (v ∘ skip2 (min x x') (max x x')) (u - 2) *
-                E e (v x') * E (v w') es)
-            else 0) := by
-    rw [Finset.sum_comm (f := fun w w' => ∑ x : Fin m, ∑ x' : Fin m,
-            if w ≠ w' ∧ x ≠ x' then ((sg2 w w' * sg2 x x' : ℤ) : A) *
-              (E (v w) e * E es (v x) *
-                qminor E (v ∘ skip2 (min w w') (max w w')) (v ∘ skip2 (min x x') (max x x')) (u - 2) *
-                E e (v x') * E (v w') es)
-            else 0), hZ, ← Finset.sum_neg_distrib, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib,
-      ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    rw [qm_rowW E hFC hFR hLR hSk hE e es v hB, add_mul, add_mul, smul_add, smul_add]
-    congr 1
-    · congr 1
-      · rw [qm_dropS E hFR hSk hE, Finset.mul_sum, Finset.sum_mul, Finset.smul_sum, ← Finset.sum_neg_distrib]
-        refine Finset.sum_congr rfl (fun x _ => ?_)
-        rw [Tm_ne E _ (hvs x).symm, mul_smul_comm, smul_mul_assoc, smul_smul, ← pow_add, ← zsmul_eq_mul, ← neg_smul,
-          ← mul_assoc, Tm_comm E hE _ hee (hve x)]
-        congr 1
-        rw [sgn_congr (b := (w : ℕ) + (x : ℕ) + 1) (by omega), pow_succ]
-        ring
-      · rw [smul_mul_assoc, smul_smul, ← pow_add, sgn_congr (b := (w : ℕ)) (by omega)]
-    · rw [Finset.sum_mul, Finset.smul_sum, ← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl (fun W _ => ?_)
-      rw [Finset.sum_mul, Finset.smul_sum, ← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl (fun X _ => ?_)
-      rw [Finset.sum_mul, Finset.smul_sum, ← Finset.sum_neg_distrib]
-      refine Finset.sum_congr rfl (fun X' _ => ?_)
-      split_ifs with h
-      · rw [smul_mul_assoc, smul_smul, ← zsmul_eq_mul, ← neg_smul, ← mul_assoc, ← pow_add]
-        congr 1
-        rw [sgn_congr (b := 1) (by omega)]
-        ring
-      · simp
-  rw [L1, L2, L3, R5]
-  abel
-
-theorem borderFromExpansions : BorderFromExpansions := by
-  intro hFC hLC hFR hLR hSk
-  exact ⟨borderE_of hFC hLR hSk, borderS_of hLC hFR hSk, borderFull_of hFC hLC hFR hLR hSk⟩
 
 end
 
@@ -601,7 +321,7 @@ variable {X : Type*} [AddCommGroup X] [Module ℂ X] (H : HatData X)
 def V : Submodule ℂ X where
   carrier := {x | x ∈ H.G ∧ H.N x = x}
   zero_mem' := ⟨H.G.zero_mem, map_zero _⟩
-  add_mem' := fun ha hb => ⟨H.G.add_mem ha.1 hb.1, by rw [map_add, ha.2, hb.2]⟩
+  add_mem' := fun ha hb => ⟨H.G.add_mem ha.1 hb.1, by rw [map_add (f := _), ha.2, hb.2]⟩
   smul_mem' := fun s _ ha => ⟨H.G.smul_mem s ha.1, by rw [map_smul, ha.2]⟩
 
 structure Good (T : X → X) : Prop where
@@ -632,8 +352,8 @@ theorem Good.map_add {T : X → X} (h : H.Good T) {x y : X} (hx : x ∈ H.G) (hy
 
 variable (H)
 
-open Classical in
 
+open Classical in
 def hat (T : X → X) : Module.End ℂ H.V :=
   if h : H.Good T then
     { toFun := fun x => H.toV (T x) (h.mem _ x.2.1)
@@ -653,30 +373,33 @@ theorem hat_toV {T : X → X} (h : H.Good T) {x : X} (hx : x ∈ H.G) :
   rw [hat_apply h]
   exact h.congr _ (H.N_mem x hx) _ hx (H.N_idem x)
 
-theorem Good.comp {T S : X → X} (hT : H.Good T) (hS : H.Good S) : H.Good (fun x => T (S x)) where
-  mem := fun x hx => hT.mem _ (hS.mem x hx)
-  congr := fun x hx y hy h => hT.congr _ (hS.mem x hx) _ (hS.mem y hy) (hS.congr x hx y hy h)
-  lin := fun x hx y hy s => by
-    have h1 : H.N (S (x + s • y)) = H.N (S x + s • S y) := by
-      rw [hS.lin x hx y hy s, _root_.map_add, _root_.map_smul]
-    rw [hT.congr _ (hS.mem _ (H.G.add_mem hx (H.G.smul_mem s hy))) _
-      (H.G.add_mem (hS.mem x hx) (H.G.smul_mem s (hS.mem y hy))) h1]
-    exact hT.lin _ (hS.mem x hx) _ (hS.mem y hy) s
+theorem Good.comp {T S : X → X} (hT : H.Good T) (hS : H.Good S) : H.Good (fun x => T (S x)) := by
+  exact
+    { mem := fun x hx => hT.mem _ (hS.mem x hx)
+      congr := fun x hx y hy h => hT.congr _ (hS.mem x hx) _ (hS.mem y hy) (hS.congr x hx y hy h)
+      lin := fun x hx y hy s => by
+        have h1 : H.N (S (x + s • y)) = H.N (S x + s • S y) := by
+          rw [hS.lin x hx y hy s, _root_.map_add (f := _), _root_.map_smul]
+        rw [hT.congr _ (hS.mem _ (H.G.add_mem hx (H.G.smul_mem s hy))) _
+          (H.G.add_mem (hS.mem x hx) (H.G.smul_mem s (hS.mem y hy))) h1]
+        exact hT.lin _ (hS.mem x hx) _ (hS.mem y hy) s }
 
-theorem Good.add {T S : X → X} (hT : H.Good T) (hS : H.Good S) : H.Good (fun x => T x + S x) where
-  mem := fun x hx => H.G.add_mem (hT.mem x hx) (hS.mem x hx)
-  congr := fun x hx y hy h => by
-    rw [_root_.map_add, _root_.map_add, hT.congr x hx y hy h, hS.congr x hx y hy h]
-  lin := fun x hx y hy s => by
-    rw [_root_.map_add, _root_.map_add, _root_.map_add, hT.lin x hx y hy s, hS.lin x hx y hy s, smul_add]
-    abel
+theorem Good.add {T S : X → X} (hT : H.Good T) (hS : H.Good S) : H.Good (fun x => T x + S x) := by
+  exact
+    { mem := fun x hx => H.G.add_mem (hT.mem x hx) (hS.mem x hx)
+      congr := fun x hx y hy h => by
+        rw [_root_.map_add (f := _), _root_.map_add (f := _), hT.congr x hx y hy h, hS.congr x hx y hy h]
+      lin := fun x hx y hy s => by
+        rw [_root_.map_add (f := _), _root_.map_add (f := _), _root_.map_add (f := _), hT.lin x hx y hy s, hS.lin x hx y hy s, smul_add]
+        abel }
 
-theorem Good.smul {T : X → X} (hT : H.Good T) (a : ℂ) : H.Good (fun x => a • T x) where
-  mem := fun x hx => H.G.smul_mem a (hT.mem x hx)
-  congr := fun x hx y hy h => by
-    rw [_root_.map_smul, _root_.map_smul, hT.congr x hx y hy h]
-  lin := fun x hx y hy s => by
-    rw [_root_.map_smul, _root_.map_smul, _root_.map_smul, hT.lin x hx y hy s, smul_add, smul_comm]
+theorem Good.smul {T : X → X} (hT : H.Good T) (a : ℂ) : H.Good (fun x => a • T x) := by
+  exact
+    { mem := fun x hx => H.G.smul_mem a (hT.mem x hx)
+      congr := fun x hx y hy h => by
+        rw [_root_.map_smul, _root_.map_smul, hT.congr x hx y hy h]
+      lin := fun x hx y hy s => by
+        rw [_root_.map_smul, _root_.map_smul, _root_.map_smul, hT.lin x hx y hy s, smul_add, smul_comm] }
 
 theorem Good.neg {T : X → X} (hT : H.Good T) : H.Good (fun x => -T x) := by
   have e : (fun x => -T x) = fun x => (-1 : ℂ) • T x := by
@@ -692,15 +415,17 @@ theorem Good.sub {T S : X → X} (hT : H.Good T) (hS : H.Good S) : H.Good (fun x
   rw [e]
   exact hT.add hS.neg
 
-theorem good_id : H.Good (fun x => x) where
-  mem := fun _ hx => hx
-  congr := fun _ _ _ _ h => h
-  lin := fun x _ y _ s => by rw [_root_.map_add, _root_.map_smul]
+theorem good_id : H.Good (fun x => x) := by
+  exact
+    { mem := fun _ hx => hx
+      congr := fun _ _ _ _ h => h
+      lin := fun x _ y _ s => by rw [_root_.map_add (f := _), _root_.map_smul] }
 
-theorem good_zero : H.Good (fun _ => (0 : X)) where
-  mem := fun _ _ => H.G.zero_mem
-  congr := fun _ _ _ _ _ => rfl
-  lin := fun _ _ _ _ _ => by simp
+theorem good_zero : H.Good (fun _ => (0 : X)) := by
+  exact
+    { mem := fun _ _ => H.G.zero_mem
+      congr := fun _ _ _ _ _ => rfl
+      lin := fun _ _ _ _ _ => by simp }
 
 theorem hat_comp {T S : X → X} (hT : H.Good T) (hS : H.Good S) :
     H.hat (fun x => T (S x)) = H.hat T * H.hat S := by
@@ -1309,8 +1034,8 @@ theorem fam_diff {Φ : Fn k r (Wq →L[ℂ] Wp)} (h : FamFF k r z z' π π' L Dc
   have hev : ∀ᶠ c' in 𝓝 c, ((c', g) : (Fin r → ℂ) × Mx k r) ∈ U := hcont.continuousAt.eventually_mem (hU.mem_nhds hxU)
   exact hev.mono fun c' hc' => hFe (c', g) hc' hg
 
-variable (z z' π π') in
 
+variable (z z' π π') in
 def RS (L : Fin (r + 1)) (Dc Dc₀ : (Fin r → ℂ) → Set (Mx k r)) (S : Set (Fin r → ℂ))
     (Φ Ψ : Fn k r (Wq →L[ℂ] Wp)) : Prop :=
   FamFF k r z z' π π' L Dc Φ ∧ FamFF k r z z' π π' L Dc₀ Ψ ∧
@@ -1327,12 +1052,13 @@ structure SData (L : Fin (r + 1)) (Dc Dc₀ : (Fin r → ℂ) → Set (Mx k r)) 
 
 variable {S : Set (Fin r → ℂ)}
 
-theorem RS_lin : LinRel (RS z z' π π' L Dc Dc₀ S) where
-  zero := ⟨fam_zero, fam_zero, fun _ _ _ _ _ => rfl⟩
-  add := fun h h' => ⟨fam_add h.1 h'.1, fam_add h.2.1 h'.2.1, fun c hc g hg hgD => by
-    simp only [Pi.add_apply, h.2.2 c hc g hg hgD, h'.2.2 c hc g hg hgD]⟩
-  smul := fun s _ _ h => ⟨fam_smul s h.1, fam_smul s h.2.1, fun c hc g hg hgD => by
-    simp only [Pi.smul_apply, h.2.2 c hc g hg hgD]⟩
+theorem RS_lin : LinRel (RS z z' π π' L Dc Dc₀ S) := by
+  exact
+    { zero := ⟨fam_zero, fam_zero, fun _ _ _ _ _ => rfl⟩
+      add := fun h h' => ⟨fam_add h.1 h'.1, fam_add h.2.1 h'.2.1, fun c hc g hg hgD => by
+        simp only [Pi.add_apply, h.2.2 c hc g hg hgD, h'.2.2 c hc g hg hgD]⟩
+      smul := fun s _ _ h => ⟨fam_smul s h.1, fam_smul s h.2.1, fun c hc g hg hgD => by
+        simp only [Pi.smul_apply, h.2.2 c hc g hg hgD]⟩ }
 
 theorem near_update {Dc : (Fin r → ℂ) → Set (Mx k r)} (ho : IsOpen (UU Dc)) {c : Fin r → ℂ} (hc : c ∈ OmX r)
     {g : Mx k r} (hgD : g ∈ Dc c) (l : Fin r) :
@@ -1524,23 +1250,24 @@ theorem step_fam (hCS : ChainStep) (hR : ResMem) (hFO : FamOps) (hTP : TPreserve
     exact hgD
   exact (hCS Wp Wq k r z z' π π' l D' Y a b hz hz' hdom' (Φ c₀) hJ₀ c₀ hc₀ g hg hgD').symm
 
-variable (z z' π π') in
 
+variable (z z' π π') in
 def RK (D : Set (Mx k r)) (l : Fin r) (Φ Ψ : Fn k r (Wq →L[ℂ] Wp)) : Prop :=
   FamFF k r z z' π π' l.castSucc (Dcell D l.castSucc) Φ ∧ Ind l.val Φ ∧
     FamFF k r z z' π π' l.succ (Dcell D l.succ) Ψ ∧
     ∀ c ∈ OmX r, ∀ g ∈ Glev k r l.succ, g ∈ Dcell D l.succ c → Ψ c g = Res k r l Φ c g
 
-theorem RK_lin (D : Set (Mx k r)) (l : Fin r) : LinRel (RK z z' π π' D l) where
-  zero := ⟨fam_zero, fun _ _ _ _ _ => rfl, fam_zero, fun _ _ _ _ _ => by simp [Res]⟩
-  add := fun h h' => ⟨fam_add h.1 h'.1, fun c hc c' hc' hcc => by
-      simp only [Pi.add_apply, h.2.1 c hc c' hc' hcc, h'.2.1 c hc c' hc' hcc],
-    fam_add h.2.2.1 h'.2.2.1, fun c hc g hg hgD => by
-      simp only [Pi.add_apply, h.2.2.2 c hc g hg hgD, h'.2.2.2 c hc g hg hgD, Res, smul_add]⟩
-  smul := fun s _ _ h => ⟨fam_smul s h.1, fun c hc c' hc' hcc => by
-      simp only [Pi.smul_apply, h.2.1 c hc c' hc' hcc],
-    fam_smul s h.2.2.1, fun c hc g hg hgD => by
-      simp only [Pi.smul_apply, h.2.2.2 c hc g hg hgD, Res, smul_comm s]⟩
+theorem RK_lin (D : Set (Mx k r)) (l : Fin r) : LinRel (RK z z' π π' D l) := by
+  exact
+    { zero := ⟨fam_zero, fun _ _ _ _ _ => rfl, fam_zero, fun _ _ _ _ _ => by simp [Res]⟩
+      add := fun h h' => ⟨fam_add h.1 h'.1, fun c hc c' hc' hcc => by
+          simp only [Pi.add_apply, h.2.1 c hc c' hc' hcc, h'.2.1 c hc c' hc' hcc],
+        fam_add h.2.2.1 h'.2.2.1, fun c hc g hg hgD => by
+          simp only [Pi.add_apply, h.2.2.2 c hc g hg hgD, h'.2.2.2 c hc g hg hgD, Res, smul_add]⟩
+      smul := fun s _ _ h => ⟨fam_smul s h.1, fun c hc c' hc' hcc => by
+          simp only [Pi.smul_apply, h.2.1 c hc c' hc' hcc],
+        fam_smul s h.2.2.1, fun c hc g hg hgD => by
+          simp only [Pi.smul_apply, h.2.2.2 c hc g hg hgD, Res, smul_comm s]⟩ }
 
 theorem RK_op (hR : ResMem) (hFO : FamOps) (hW : WeylLevelElementFacts) (hz : inWb k r z) (hz' : inWb k r z')
     {D : Set (Mx k r)} (hD : IsDom k r z z' 0 D) (l j : Fin r) (hj : j.val < l.val) (q : Fin 6) :
@@ -1662,8 +1389,8 @@ end Dom
 section Cut
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {L : Fin (r + 1)} {Dc : (Fin r → ℂ) → Set (Mx k r)}
 
-open Classical in
 
+open Classical in
 def cutP (L : Fin (r + 1)) (Dc : (Fin r → ℂ) → Set (Mx k r)) : Fn k r E →ₗ[ℂ] Fn k r E where
   toFun := fun Φ c g => if c ∈ OmX r ∧ g ∈ Glev k r L ∧ g ∈ Dc c then Φ c g else 0
   map_add' := fun Φ Ψ => by
@@ -1728,8 +1455,8 @@ theorem fam_congr (hS : SData z z' L Dc Dc (OmX r)) {Φ Ψ : Fn k r (Wq →L[ℂ
   ⟨Qx3.sf_congr_on hS.o (fun _ hx => hx) (fun x hx hxG => he x.1 hx.1 x.2 hxG hx.2) h.1,
     fun c hc => ff_congr (hS.d c hc) (h.2 c hc) (fun g hg => he c hc g hg.1 hg.2)⟩
 
-variable (π π') in
 
+variable (π π') in
 def famData (hS : SData z z' L Dc Dc (OmX r)) : HatData (Fn k r (Wq →L[ℂ] Wp)) :=
   mkData (E := Wq →L[ℂ] Wp) L Dc (FamFF k r z z' π π' L Dc) fam_zero (fun _ _ h h' => fam_add h h')
     (fun s _ h => fam_smul s h) (fun Φ h => fam_congr hS h (fun _ hc _ hg hgD => cutP_on Φ hc hg hgD))
@@ -1738,13 +1465,14 @@ theorem good_of (hS : SData z z' L Dc Dc (OmX r)) {T : Fn k r (Wq →L[ℂ] Wp) 
     (hP : Pres2 (RS z z' π π' L Dc Dc (OmX r)) T T)
     (hl : ∀ Φ Ψ, FamFF k r z z' π π' L Dc Φ → FamFF k r z z' π π' L Dc Ψ → ∀ s : ℂ, ∀ c ∈ OmX r,
       ∀ g ∈ Glev k r L, g ∈ Dc c → T (Φ + s • Ψ) c g = T Φ c g + s • T Ψ c g) :
-    (famData π π' hS).Good T where
-  mem := fun Φ h => (hP Φ Φ ⟨h, h, fun _ _ _ _ _ => rfl⟩).1
-  congr := fun Φ h Ψ h' he => (cutP_eq_iff _ _).2 (hP Φ Ψ ⟨h, h', (cutP_eq_iff _ _).1 he⟩).2.2
-  lin := fun Φ h Ψ h' s => by
-    show cutP L Dc _ = cutP L Dc _ + s • cutP L Dc _
-    rw [← map_smul, ← map_add]
-    exact (cutP_eq_iff _ _).2 (hl Φ Ψ h h' s)
+    (famData π π' hS).Good T := by
+  exact
+    { mem := fun Φ h => (hP Φ Φ ⟨h, h, fun _ _ _ _ _ => rfl⟩).1
+      congr := fun Φ h Ψ h' he => (cutP_eq_iff _ _).2 (hP Φ Ψ ⟨h, h', (cutP_eq_iff _ _).1 he⟩).2.2
+      lin := fun Φ h Ψ h' s => by
+        show cutP L Dc _ = cutP L Dc _ + s • cutP L Dc _
+        rw [← map_smul, ← map_add (f := _)]
+        exact (cutP_eq_iff _ _).2 (hl Φ Ψ h h' s) }
 
 theorem good_op (hFO : FamOps) (hz : inWb k r z) (hz' : inWb k r z') (hS : SData z z' L Dc Dc (OmX r))
     (l : Fin r) (q : Fin 6) : (famData π π' hS).Good (crd (opL l q)) := by
@@ -1827,16 +1555,21 @@ variable {H}
 
 theorem sandw_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ) (M : OM (Fn k r E)),
     (∀ a b, H.Good (M a b)) →
-    (∀ a b, H.Good (sandw k r Y j M a b)) ∧ hatM H (sandw k r Y j M) = Lp H Y j * hatM H M * Rp H Y j
-  | 0, M, hM => ⟨hM, by simp [sandw, Lp, Rp]⟩
-  | j + 1, M, hM => by
+    (∀ a b, H.Good (sandw k r Y j M a b)) ∧ hatM H (sandw k r Y j M) = Lp H Y j * hatM H M * Rp H Y j := by
+  intro j
+  induction j with
+  | zero =>
+    intro M hM
+    exact ⟨hM, by simp [sandw, Lp, Rp]⟩
+  | succ j ih =>
+    intro M hM
     by_cases hj : j < r
     · have e : sandw k r Y (j + 1) M = sandw k r Y j (oMul (TLs k ⟨j, hj⟩ Y) (oMul M (TL k ⟨j, hj⟩ Y))) := by
         show sandw k r Y j _ = _
         rw [dif_pos hj]
       have g1 := good_oMul hM (good_TL hop ⟨j, hj⟩ Y)
       have g2 := good_oMul (good_TLs hop ⟨j, hj⟩ Y) g1
-      obtain ⟨h1, h2⟩ := sandw_hat hop Y j _ g2
+      obtain ⟨h1, h2⟩ := ih _ g2
       rw [e]
       refine ⟨h1, ?_⟩
       rw [h2, hatM_oMul (good_TLs hop ⟨j, hj⟩ Y) g1, hatM_oMul hM (good_TL hop ⟨j, hj⟩ Y)]
@@ -1844,21 +1577,25 @@ theorem sandw_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : �
     · have e : sandw k r Y (j + 1) M = sandw k r Y j M := by
         show sandw k r Y j _ = _
         rw [dif_neg hj]
-      obtain ⟨h1, h2⟩ := sandw_hat hop Y j M hM
+      obtain ⟨h1, h2⟩ := ih M hM
       rw [e]
       refine ⟨h1, ?_⟩
       rw [h2]
       simp only [Lp, Rp, dif_neg hj, Matrix.mul_one, Matrix.one_mul]
 
 theorem vAB_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ) (b : Fin 2),
-    H.Good (crd (cmp (vAB (E := E) r Y j) b)) ∧ H.hat (crd (cmp (vAB (E := E) r Y j) b)) = Rp H Y j b 0
-  | 0, b => by
+    H.Good (crd (cmp (vAB (E := E) r Y j) b)) ∧ H.hat (crd (cmp (vAB (E := E) r Y j) b)) = Rp H Y j b 0 := by
+  intro j
+  induction j with
+  | zero =>
+    intro b
     fin_cases b
     · exact ⟨HatData.good_id, HatData.hat_id⟩
     · exact ⟨HatData.good_zero, HatData.hat_zero⟩
-  | j + 1, b => by
-    obtain ⟨gA, hA⟩ := vAB_hat hop Y j 0
-    obtain ⟨gB, hB⟩ := vAB_hat hop Y j 1
+  | succ j ih =>
+    intro b
+    obtain ⟨gA, hA⟩ := ih 0
+    obtain ⟨gB, hB⟩ := ih 1
     by_cases hj : j < r
     · have ev : vAB (E := E) r Y (j + 1) =
           (fun f => Y • (vAB r Y j).1 f + pOp ⟨j, hj⟩ ((vAB r Y j).1 f) - cOp ⟨j, hj⟩ ((vAB r Y j).2 f),
@@ -1915,17 +1652,21 @@ theorem vAB_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ
       have hR : Rp H Y (j + 1) = Rp H Y j := by
         simp only [Rp, dif_neg hj, Matrix.one_mul]
       rw [ev, hR]
-      exact vAB_hat hop Y j b
+      exact ih b
 
 theorem vABs_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : ℕ) (a : Fin 2),
-    H.Good (crd (cmp (vABs (E := E) r Y j) a)) ∧ H.hat (crd (cmp (vABs (E := E) r Y j) a)) = Lp H Y j 0 a
-  | 0, a => by
+    H.Good (crd (cmp (vABs (E := E) r Y j) a)) ∧ H.hat (crd (cmp (vABs (E := E) r Y j) a)) = Lp H Y j 0 a := by
+  intro j
+  induction j with
+  | zero =>
+    intro a
     fin_cases a
     · exact ⟨HatData.good_id, HatData.hat_id⟩
     · exact ⟨HatData.good_zero, HatData.hat_zero⟩
-  | j + 1, a => by
-    obtain ⟨gA, hA⟩ := vABs_hat hop Y j 0
-    obtain ⟨gB, hB⟩ := vABs_hat hop Y j 1
+  | succ j ih =>
+    intro a
+    obtain ⟨gA, hA⟩ := ih 0
+    obtain ⟨gB, hB⟩ := ih 1
     by_cases hj : j < r
     · have ev : vABs (E := E) r Y (j + 1) =
           (fun f => (vABs r Y j).1 (Y • f - pbOp ⟨j, hj⟩ f) - (vABs r Y j).2 (cbOp ⟨j, hj⟩ f),
@@ -1979,7 +1720,7 @@ theorem vABs_hat (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) : ∀ (j : �
       have hL : Lp H Y (j + 1) = Lp H Y j := by
         simp only [Lp, dif_neg hj, Matrix.mul_one]
       rw [ev, hL]
-      exact vABs_hat hop Y j a
+      exact ih a
 
 theorem rc_eq (hop : ∀ l q, H.Good (crd (opL l q))) (Y : ℂ) (j : ℕ) (M : OM (Fn k r E))
     (hM : ∀ a b, H.Good (M a b)) {Φ : Fn k r E} (hΦ : Φ ∈ H.G) :
@@ -2047,12 +1788,6 @@ end
 end Formalism.FourierDecayAlt.P.Qx6
 
 namespace Formalism.FourierDecayAlt.P
-
-theorem line_expansions_from_line_form : Formalism.FourierDecayAlt.Q.ExpRowsFromRowForm := by
-  exact Qx6.expRows
-
-theorem border_from_expansions : Formalism.FourierDecayAlt.Q.BorderFromExpansions := by
-  exact Qx6.borderFromExpansions
 
 theorem chain_recursion_from_single_descent : Formalism.FourierDecayAlt.Q.ChainFromStep := by
   exact Qx6.chainFromStep

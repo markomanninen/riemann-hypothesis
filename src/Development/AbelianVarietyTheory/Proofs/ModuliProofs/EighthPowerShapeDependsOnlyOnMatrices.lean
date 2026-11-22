@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxesStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitutionStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDefStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOfIsMinInClassTwoOfSameClassFour
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoIffBijectiveOverAlgClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxesStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitutionStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDefStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EqOfIsMinInClassTwoOfSameClassFour
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoIffBijectiveOverAlgClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -200,7 +204,8 @@ theorem pos_of_relAmple (hL : Out.Laws) (c : SiegPre h k ζ s) (hc : Out.RelAmpl
       Fintype.card_fin, Nat.mul_one, one_smul] at b
     obtain ⟨V, hV, hfV⟩ := exists_affine_of_nonpos hF (z.left (default : PrimeSpectrum K)) f' a'
       (isAmpleLB_of_relAmple P.A hM hA U hU) (isAmpleLB_of_relAmple c.A hD hc U hU) m (by
-        rw [cls_pull hM, cls_pull hD, ← pull_comp, ← pull_comp, hf', ha', e, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [cls_pull hM, cls_pull hD, ← pull_comp, ← pull_comp, hf', ha', e, map_sum]
         have e₁ : ∀ uv : Fin n × Fin n, pull f.left (W uv.1 uv.2 • pull (lift (pr uv.1) (pr uv.2)).left (cls c.P c.isLB)) =
             W uv.1 uv.2 • pull (lift ((gp ≫ pr v) ^ u uv.1) ((gp ≫ pr v) ^ u uv.2)).left
               (cls c.P c.isLB) := fun uv => by
@@ -301,7 +306,8 @@ theorem cls_shape (hF : Out.GlobalFnsSt) (c : SiegPre h k (b.ζ : o) s) (hc : Ou
     simp only [Matrix.transpose_mul, Matrix.transpose_transpose, Matrix.mul_add, Matrix.add_mul, Matrix.mul_assoc])
   have e₁ : pull F.left (cls t.L t.isLB) = ∑ uv : Fin 8 × Fin 8, (a.transpose * W * a) uv.1 uv.2 •
       pull (lift (pr uv.1) (pr uv.2)).left (cls c.P c.isLB) := by
-    rw [e, hL, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, hL, map_sum]
     refine Finset.sum_congr rfl fun uv _ => ?_
     rw [map_zsmul, ← pull_comp, ← Over.comp_left, comp_lift, hFa, hFa, List.prod_ofFn, List.prod_ofFn]
   rw [cls_linComb t.isLB, Fin.sum_univ_two]

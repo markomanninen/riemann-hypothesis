@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SignAtBasePlaceEqEmbedding
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,9 @@ section Defs
 
 variable {R : Ranks} {H : Host R}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RestRows (rows₀ : Rows.Data R) where
   LL : Type
   instLL : Field LL
@@ -219,9 +223,9 @@ def overRows (rows₀ : Rows.Data R) (r : RestRows rows₀) : Rows.Data R where
 
 variable {rows₀ : Rows.Data R}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RestN (N₀ : NData R H rows₀) (what₂ : Rows.Data R) where
   ldat : ∀ (p : ℕ) [Fact p.Prime], Formalism.GaloisCohomology.LData H.E N₀.Om p
   sha_eq : ∀ (p : ℕ) [Fact p.Prime] (e : ℕ), 0 < e → e < R.t → ∀ n : ℕ,
@@ -390,9 +394,9 @@ def overN (N₀ : NData R H rows₀) (what₂ : Rows.Data R) (r : RestN N₀ wha
 
 variable [NumberField rows₀.LL] [StarRing rows₀.LL] {LL₀ : IntermediateField ℚ rows₀.LL} {N₀ : NData R H rows₀}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RestX (X₀ : NTw R H rows₀ LL₀ N₀) (what₂ : Rows.Data R) [NumberField what₂.LL] [StarRing what₂.LL]
     (LL0 : IntermediateField ℚ what₂.LL) (nR : RestN N₀ what₂) where
   emb0 : ∀ i, LL0 →+* FractionRing (X₀.O0 i)
@@ -565,9 +569,9 @@ def overX (X₀ : NTw R H rows₀ LL₀ N₀) (what₂ : Rows.Data R) [NumberFie
 
 variable {X₀ : NTw R H rows₀ LL₀ N₀}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RestY (Y₀ : NExp R H rows₀ LL₀ N₀ X₀) (what₂ : Rows.Data R) [NumberField what₂.LL] [StarRing what₂.LL]
     (LL0 : IntermediateField ℚ what₂.LL) (n : RestN N₀ what₂) (x : RestX X₀ what₂ LL0 n) where
   eLL0 : G0g N₀ → LL0
@@ -634,9 +638,9 @@ def overY (Y₀ : NExp R H rows₀ LL₀ N₀ X₀) (what₂ : Rows.Data R) [Num
 
 end Defs
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure Rest (D : D7) where
   vol : @HSpace D.host.E _ _ D.host.cmStar → ℝ
   vol_pos : ∀ W, 0 < vol W
@@ -685,7 +689,7 @@ structure Rest (D : D7) where
   T_ne_pde : ∀ u, (mem u).A.T ≠ D.host.pde ∧ (mem u).A.T ≠ D.host.pde'
   Dstar_eq : ∀ u, (mem u).A.Dstar = (overRows D.what₂ rowsR).Dstar
   clsLat : letI := D.host.cmStar; ∀ u i, (mem u).C.cls i → Submodule (𝓞 D.host.E) (D.sp.X i).V
-  clsLat_lat : letI := D.host.cmStar; ∀ u i c, Submodule.IsLattice D.host.E (clsLat u i c)
+  clsLat_lat : letI := D.host.cmStar; ∀ u i c, Submodule.IsFullLattice D.host.E (clsLat u i c)
   eMu : ∀ u, (overRows D.what₂ rowsR).Mu u ≃ₗ[ℂ] (mem u).A.Mram
   eMt : ∀ u, (mem u).P.Mt ≃ₗ[ℂ] (overRows D.what₂ rowsR).Amb (overRows D.what₂ rowsR).mu0
   perCol_base_eq_PtilCol : ∀ u (φ : (overRows D.what₂ rowsR).Mu u) (F : (overRows D.what₂ rowsR).Amb (overRows D.what₂ rowsR).mu0),
@@ -1041,8 +1045,8 @@ theorem exists_restY {X₀ : NTw R H r₀ L₀ N₀} {x : RestX X₀ r L n} (Y�
 
 end Elim
 
-set_option maxRecDepth 100000 in
 
+set_option maxRecDepth 100000 in
 theorem CopyTw.exists_rest {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) :
     ∃ r, D' = overD D r := by
   have hT := h.instTau
@@ -1089,8 +1093,6 @@ theorem CopyTw.exists_rest {D D' : D7} {ι : D.what₂.LL →+* D'.what₂.LL} {
     aself_good, aloc_tie, abc_tie, arbar_tie, amtpar_tie, aZ_tie, aZgood_tie, aetaJ_tie, afm,
     aeMu_isom, anuIn, anuIn_inj, anuIn_range, anuIn_jN, anuIn_norm, ajEE_norm, as_Cu_isom, asEE, acd, ajet, ajetU,
     ajetL, ajetL', ajetW, ajetW_l, ajetTau, ajetW1, ajetW1_l, ajetTau1, ajetU1, ajetL1, ajetL1', agx, agat, agat_d⟩, rfl⟩
-
-example (D : D7) : Nonempty (Rest D) := let ⟨r, _⟩ := (CopyTw.refl D).exists_rest; ⟨r⟩
 
 end GlobalTheory.TwInputs.Move
 
@@ -1259,11 +1261,6 @@ theorem SameData.eq_up (r : Rest D) {ρ : Setup D.ntw} {ρ' : Setup (overD D r).
   · cases hi; cases Fin.ext hj
     exact (h.eG ((i)) i ((HEq.refl i)) ((j)) j ((@Eq.refl Nat (@Fin.val (overD D r).R.m j))) b).symm.trans
       (u.eG ((i)) i ((HEq.refl i)) ((j)) j ((@Eq.refl Nat (@Fin.val (overD D r).R.m j))) b)
-
-theorem CopyTw.exists_sameData {ι : D.what₂.LL →+* D'.what₂.LL} {e : ↥D'.LL0 ≃+* ↥D.LL0} (h : CopyTw D D' ι e) (ρ : Setup D.ntw) :
-    ∃ ρ' : Setup D'.ntw, SameData ρ ρ' := by
-  obtain ⟨r, rfl⟩ := h.exists_rest
-  exact ⟨setupUp r ρ, sameData_up r ρ⟩
 
 end GlobalTheory.TwInputs.Move
 

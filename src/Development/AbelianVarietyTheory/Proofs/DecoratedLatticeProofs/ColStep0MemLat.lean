@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ColMatchAll
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ColMatchAll
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
+
+@[expose] public section
 
 noncomputable section
 

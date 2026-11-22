@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.FinAtOfStatement
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CoreProofs
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.FinAtOfStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,15 +88,6 @@ def RecordAt (Dv : DvrFrame d w Z) (Fs : Set (T.R j)) : Prop :=
       (∀ x, ev (arcXR (T.Q.Dw j) Dv.Tv.V Dv.ϖ x) = Y x) →
       ‖ev (evR (T.Q.Xo j) T.Q.c F Dv.yR)‖ ≤ 1
 
-def FrameOfCutStatement (h : LawsCore T) (j : ℕ) (ka : WeightFamilies.Wt D j) : Prop :=
-  InR D j → AllTest (T.Q.Xo j) T.Q.c → WtField (T.Q.Xo j) T.Q.c → ∀ (K₁ : Type) [Field K₁] [NumberField K₁] [Algebra T.Q.c.F K₁]
-    (d : ArcDatumAt T j K₁) (w : HeightOneSpectrum (𝓞 K₁)) (Z : FinSite K₁ w) (Dv : DvrFrame d w Z)
-    (γ : Dv.Tv.Fr) (lam : ∀ τ : D.host.E →+* ℂ, Fin ((T.Q.Dw j).mult τ) → Dv.Tv.Fr)
-    (Bm : ∀ τ : D.host.E →+* ℂ, Matrix (Fin ((T.Q.Dw j).mult τ)) (Fin ((T.Q.Dw j).mult τ)) Dv.Tv.Fr),
-    γ ≠ 0 → (∀ τ k, lam τ k ≠ 0) →
-    BcRigidAt Dv γ lam Bm → RecordAt Dv (mlatRul h j ka) →
-    FrameBound Z (Dv.ιT γ) (fun τ k => Dv.ιT (lam τ k)) (fun τ => (Bm τ).map Dv.ιT) ka.n d (mlatRul h j ka)
-
 def FinLocalCutAt (d : ArcDatumAt T j K₁) (w : HeightOneSpectrum (𝓞 K₁)) (vth : ℤ)
     (vη : ∀ τ : D.host.E →+* ℂ, Fin ((T.Q.Dw j).mult τ) → ℤ) (m : ℕ) (Fs : Set (T.R j)) : Prop :=
   ∃ (Z : FinSite K₁ w) (Dv : DvrFrame d w Z) (γ : Dv.Tv.Fr)
@@ -102,11 +97,5 @@ def FinLocalCutAt (d : ArcDatumAt T j K₁) (w : HeightOneSpectrum (𝓞 K₁)) 
     (∀ τ k, lam τ k ≠ 0 ∧ ‖Dv.ιT (lam τ k)‖ = Z.r ^ vη τ k) ∧
     ((∀ τ, A τ * Bm τ = 1) ∧ ∀ τ k l, ‖Dv.ιT (A τ k l)‖ ≤ Z.r ^ (-(m : ℤ))) ∧
     BcRigidAt Dv γ lam Bm ∧ RecordAt Dv Fs
-
-def FinLocalOfCutStatement (h : LawsCore T) (j : ℕ) (ka : WeightFamilies.Wt D j) : Prop :=
-  InR D j → AllTest (T.Q.Xo j) T.Q.c → WtField (T.Q.Xo j) T.Q.c → ∀ (K₁ : Type) [Field K₁] [NumberField K₁] [Algebra T.Q.c.F K₁]
-    (d : ArcDatumAt T j K₁) (w : HeightOneSpectrum (𝓞 K₁)) (vth : ℤ)
-    (vη : ∀ τ : D.host.E →+* ℂ, Fin ((T.Q.Dw j).mult τ) → ℤ) (m : ℕ),
-    FinLocalCutAt d w vth vη m (mlatRul h j ka) → FinLocalAt d w ka.n vth vη m (mlatRul h j ka)
 
 end Formalism.L2.Pj.QAt

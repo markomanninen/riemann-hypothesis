@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EMatMulNegCol
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FibreMassEq
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal TensorProduct
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.WhitFree GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.AvgFree MeasureTheory
 
@@ -20,7 +25,8 @@ theorem gram_mem {F E : Type} [Field F] [Field E] [Algebra F E] {σ : E →ₐ[F
   intro a c
   have hi : ∀ y : E, sigR R σ (inclR R y) = inclR R (σ y) := fun y => by simp [sigR, inclR]
   change sigR R σ (hR R σ J (X c) (X a)) = hR R σ J (X a) (X c)
-  simp only [hR, hform, JR, map_sum, map_mul, Matrix.map_apply, sigR_sigR R σ hs, hi, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR, hform, JR, map_sum, map_mul, Matrix.map_apply, sigR_sigR R σ hs, hi, hJ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   ring
@@ -102,7 +108,7 @@ theorem GlobalTheory.CompanionTheory.AvgFree.free_fibre_masses : ∀ (F E : Type
     · rw [Set.indicator_of_mem hy]
       refine measure_congr ?_
       filter_upwards [hae y] with x hx
-      refine propext ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
+      refine ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩
       show q x ∈ Y
       rwa [hx]
     · rw [Set.indicator_of_notMem hy]

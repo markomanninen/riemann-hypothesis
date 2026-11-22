@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.FinrankAdjoinPowLe
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.SEps
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.FinrankAdjoinPowLe
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FrobeniusSections.SEps
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem rdata {k R : Type*} [Field k] [CommRing R] [Algebra k R] [FiniteDimensio
   have hsum : ∀ x : S, ∑ j, b.repr x j • ((b j : S) : R) = (x : R) := by
     intro x
     have h := congrArg S.val (b.sum_repr x)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simpa using h
   refine ⟨finrank k S, fun j => (b j : R), fun j j' t => b.repr (b j * b j') t, fun j => b.repr 1 j, ε, m,
     fun t j => b.repr (e t) j, ?_, ?_, hnil ε hεn, ?_, ?_, ?_, ?_, ?_⟩
@@ -48,7 +53,8 @@ theorem rdata {k R : Type*} [Field k] [CommRing R] [Algebra k R] [FiniteDimensio
     exact congrArg Subtype.val (he1 t)
   · simp only [hsum]
     have h := congrArg S.val he2
-    rw [map_sum, map_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one] at h
     simpa using h
   · intro t t' htt
     simp only [hsum]

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
-import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
-import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,7 +21,7 @@ section Complex
 variable {R : Type u} [Ring R] (K : CochainComplex (ModuleCat.{u} R) ℕ)
 
 theorem homologyπ_zero_injective : Function.Injective (K.homologyπ 0).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨w, hw⟩ := (homologyπ_eq_zero_iff K z).1 hz
   have hd : K.d ((ComplexShape.up ℕ).prev 0) 0 = 0 := K.shape _ _ (by simp)
@@ -85,7 +90,6 @@ section ShortComplex
 
 variable (A : Rep.{u} k G) [IsDiscreteRep A] (N : Subgroup G) [N.Normal]
 
-@[simps X₁ X₂ X₃ f g]
 noncomputable def infResShortComplex (n : ℕ) : ShortComplex (ModuleCat k) where
   X₁ := cohomology (A.quotientToInvariants N) (n + 1)
   X₂ := cohomology A (n + 1)
@@ -109,16 +113,9 @@ variable [CompactSpace G] (A : Rep.{u} k G) [IsDiscreteRep A] (N : Subgroup G) [
 
 theorem shortExact_map_quotientToInvariants_coindShortComplex
     (h1 : IsZero (cohomology (Rep.res N.subtype A) 1)) :
-    ((coindShortComplex A).map (Rep.quotientToInvariantsFunctor k N)).ShortExact where
-  mono_f := (Rep.mono_iff_injective _).2 fun x y h =>
-    Subtype.ext (coindEmbedding_injective A (congrArg Subtype.val h))
-  epi_g := (Rep.epi_iff_surjective _).2 fun y => by
-    obtain ⟨x₂, hx₂, hg⟩ := exists_mem_invariants_map_eq
-      (X := (coindShortComplex A).map (Rep.resFunctor N.subtype))
-      (shortExact_map_res N (coindShortComplex_shortExact A)) h1 y.1 y.2
-    exact ⟨⟨x₂, hx₂⟩, Subtype.ext hg⟩
-  exact := by
-    rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k (G ⧸ N)) (ModuleCat k)),
+    ((coindShortComplex A).map (Rep.quotientToInvariantsFunctor k N)).ShortExact := by
+  apply ShortComplex.ShortExact.mk'
+  · rw [← ShortComplex.exact_map_iff_of_faithful _ (forget₂ (Rep.{u} k (G ⧸ N)) (ModuleCat k)),
       ShortComplex.moduleCat_exact_iff_ker_sub_range]
     intro x hx
     have hrk := ((coindShortComplex_shortExact A).exact.map
@@ -133,6 +130,14 @@ theorem shortExact_map_quotientToInvariants_coindShortComplex
     refine (Rep.hom_comm_apply (coindEmbedding A) (s : G) a).trans ?_
     rw [ha']
     exact x.2 s
+  · exact (Rep.mono_iff_injective _).2 fun x y h =>
+      Subtype.ext (coindEmbedding_injective A (congrArg Subtype.val h))
+  · apply (Rep.epi_iff_surjective _).2
+    intro y
+    obtain ⟨x₂, hx₂, hg⟩ := exists_mem_invariants_map_eq
+      (X := (coindShortComplex A).map (Rep.resFunctor N.subtype))
+      (shortExact_map_res N (coindShortComplex_shortExact A)) h1 y.1 y.2
+    exact ⟨⟨x₂, hx₂⟩, Subtype.ext hg⟩
 
 instance isDiscreteRep_res_coindCokernel : IsDiscreteRep (Rep.res N.subtype (coindCokernel A)) :=
   isDiscreteRep_res_subtype _ N
@@ -159,8 +164,8 @@ theorem infRes_step (hN : IsClosed (N : Set G)) (n : ℕ)
   have hδQ := isIso_δ_of_isZero hQ n
     (isZero_cohomology_quotientToInvariants_discreteCoind (k := k) A N n)
     (isZero_cohomology_quotientToInvariants_discreteCoind (k := k) A N (n + 1))
-  have hδX := isIso_δ_of_isZero hX n (isZero_cohomology_discreteCoind k G A n)
-    (isZero_cohomology_discreteCoind k G A (n + 1))
+  have hδX := isIso_δ_of_isZero hX n (isZero_cohomology_discreteCoind (k := k) (G := G) (X := A) n)
+    (isZero_cohomology_discreteCoind (k := k) (G := G) (X := A) (n + 1))
   have hδS := isIso_δ_of_isZero hS n (isZero_cohomology_res_discreteCoind (k := k) A N hN n)
     (isZero_cohomology_res_discreteCoind (k := k) A N hN (n + 1))
   have h1 := δ_comp_cohomologyInfl N hX hQ (n + 1) (n + 1 + 1) rfl

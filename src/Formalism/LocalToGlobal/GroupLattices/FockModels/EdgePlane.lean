@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+
+@[expose] public section
 
 namespace Formalism.L2.G.Model
 

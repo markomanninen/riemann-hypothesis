@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
-import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaZJetsThree
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementIota
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Col Classical
 open Formalism.L2.Th1.H (cmL CmOK matH IsIsom taylorMv)
 open Formalism.L2.Th1.GD (LocNorm InMul frameM thetaLin)
@@ -23,7 +28,7 @@ def diagonalPowFourEquiv (φ : (n → ℂ) ≃ₗ[ℂ] (n → ℂ)) : (Fin 4 × 
   map_add' x y := by
     funext w
     have e : slice w.1 (x + y) = slice w.1 x + slice w.1 y := rfl
-    simp only [e, map_add, Pi.add_apply]
+    simp only [e, map_add (f := _), Pi.add_apply]
   map_smul' c x := by
     funext w
     have e : slice w.1 (c • x) = c • slice w.1 x := rfl

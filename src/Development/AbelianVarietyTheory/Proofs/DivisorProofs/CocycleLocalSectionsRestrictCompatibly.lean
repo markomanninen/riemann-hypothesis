@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,13 +27,14 @@ def resThk (T : TT s) {p q : Pair (pt T)} (hpq : p ≤ q) : thk T q ⟶ thk T p 
 
 theorem bM_resThk (T : TT s) {p q : Pair (pt T)} (hpq : p ≤ q) :
     bM T q ≫ resThk T hpq = bM T p :=
-  ObjectProperty.hom_ext _ (Thick.hom_ext fun b ↦ res_toSec R T.obj.B (homOfLE (Pair.le_fst hpq)).op b)
+  ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext fun b ↦
+    res_toSec R T.obj.B (homOfLE (Pair.le_fst hpq)).op b))
 
 theorem aM_resThk (T : TT s) {p q : Pair (pt T)} (hpq : p ≤ q) :
     aM T q ≫ resThk T hpq = (affF s).map (homOfLE (Pair.le_snd hpq)).op ≫ aM T p :=
-  ObjectProperty.hom_ext _ (Thick.hom_ext fun u ↦
+  ObjectProperty.hom_ext _ (Thick.Hom.ext' (AlgHom.ext fun u ↦
     (congrArg (fun t ↦ t.hom u) ((pt T).appLE_map q.2 (homOfLE (Pair.le_fst hpq)).op)).trans
-      (congrArg (fun t ↦ t.hom u) ((pt T).map_appLE p.2 (homOfLE (Pair.le_snd hpq)).op)).symm)
+      (congrArg (fun t ↦ t.hom u) ((pt T).map_appLE p.2 (homOfLE (Pair.le_snd hpq)).op)).symm))
 
 theorem hSec_res (f : Z1 ((IsTriv s).ι ⋙ O (dp0 R) s)) (g : C0 (OAff s))
     (hg : ∀ ⦃U V : AffOp X⦄ (a : U ⟶ V), g V - Sec.res s (leOfHom a.unop) (g U) = fv f ((affF s).map a))
@@ -51,7 +56,7 @@ theorem hSec_res (f : Z1 ((IsTriv s).ι ⋙ O (dp0 R) s)) (g : C0 (OAff s))
     (congrArg (fun m ↦ m.hom.φ u) (aM_resThk T hpq)).symm
   change ρ (secPullA T q (g (op q.1.2)) + fv f (aM T q) - fv f (bM T q)) =
     secPullA T p (g (op p.1.2)) + fv f (aM T p) - fv f (bM T p)
-  rw [map_sub, map_add, e1, e3, map_add, e4]
+  rw [map_sub, map_add (f := _), e1, e3, map_add (f := _), e4]
   linear_combination e2
 
 end GlobalTheory.CechDR.AffLoc

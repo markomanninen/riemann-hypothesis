@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GradedLineBundleExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MultiplicationLatticeSecond
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsIsoQuotToImOmegaLieOfSplit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GradedLineBundleExists
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,9 +50,9 @@ theorem le_preimage_of_eq {X : Scheme.{0}} {R : Type} [CommRing R] {U : X.Opens}
   subst hx
   exact le_preimage_specMap_fromSpec hU (CommRingCat.ofHom φ)
 
+
 open Classical in
 variable (Dw) in
-
 def oneAt (σ : E →+* ℂ) (n : ℕ) (σ' : E →+* ℂ) (a : Fin (Dw.mult σ')) : ℤ := if σ' = σ ∧ (a : ℕ) = n then 1 else 0
 
 theorem oneAt_eq_zero {σ : E →+* ℂ} {n : ℕ} (h : Dw.mult σ ≤ n) : oneAt Dw σ n = 0 := by
@@ -228,19 +232,6 @@ theorem isGrLB_grLB : IsGrLB Z e (grLB hZ e) := by
   rw [(diagAt_iff_chg hZ c c' φ φ' hx σ (d σ)).1 (hd σ)]
   rfl
 
-variable {e} in
-
-theorem IsGrLB.lbIso {L : LB Z.X} (h : IsGrLB Z e L) : LBIso L (grLB hZ e) := by
-  obtain ⟨-, hU, w, hw, hg⟩ := h
-  refine CechPic.iso_of_chart (isLB_grLB hZ e) ⟨fun i => ⟨_, hU i, w i, hw i⟩, fun _ => le_rfl, fun _ i j _ _ =>
-    congrArg _ (Units.ext (fn_ext Z fun k _ x h ho => ?_))⟩
-  have h₁ := spMap_valMap (hU i) x (le_preimage_mono x inf_le_left h)
-  have h₂ := spMap_valMap (hU j) x (le_preimage_mono x inf_le_right h)
-  have h₃ := hg i j k _ _ _ (h₁.trans h₂.symm) (by rw [h₁]; exact ho) fun σ =>
-    (diagAt_iff_chg hZ ⟨_, hU i, w i, hw i⟩ ⟨_, hU j, w j, hw j⟩ _ _ (h₁.trans h₂.symm) σ _).2 rfl
-  rw [h₁] at h₃
-  exact h₃.trans (valR_prod_zpow x h (fun σ a => (IntChart.isUnit_chg ⟨_, hU i, w i, hw i⟩ ⟨_, hU j, w j, hw j⟩ hZ σ a).unit)
-    e).symm
 
 def grCls : (∀ σ : E →+* ℂ, Fin (Dw.mult σ) → ℤ) →+ CechPic.Pic Z.X :=
   AddMonoidHom.mk' (fun e => cls _ (isLB_grLB hZ e)) fun e e' => by
@@ -249,10 +240,6 @@ def grCls : (∀ σ : E →+* ℂ, Fin (Dw.mult σ) → ℤ) →+ CechPic.Pic Z.
     refine .trans ?_ (CechPic.gm_tens (grLB hZ e) (grLB hZ e') (𝟙 _) y (c, c) (c', c') ⟨hc, hc⟩ ⟨hc', hc'⟩).symm
     exact (congrArg _ (IntChart.tr_add c c' hZ e e')).trans (map_mul _ _ _)
 
-variable {e} in
-
-theorem IsGrLB.cls_eq {L : LB Z.X} (h : IsGrLB Z e L) : cls L h.1 = grCls hZ e :=
-  (CechPic.cls_eq_iff _ _).2 (h.lbIso hZ)
 
 end Graded
 
@@ -290,59 +277,11 @@ theorem isSmoothProjCurve : VB.IsSmoothProjCurve k c.C :=
 
 theorem isProjCurve : VB.IsProjCurve k c.C := c.isSmoothProjCurve.toIsProjCurve
 
-theorem exists_iso {C : Scheme.{0}} [Algebra k Γ(C, ⊤)] (h : VB.IsSmoothProjCurve k C) (f : C ⟶ X) :
-    ∃ (c : Curve k X) (e : C ≅ c.C), e.hom ≫ c.f = f ∧ e.hom ≫ strHom k c.C = strHom k C := by
-  obtain ⟨n, i, _, hi⟩ := h.isProjOver
-  have hk : i.ker.subschemeι.ker = i.ker := Scheme.IdealSheafData.ker_subschemeι _
-  have := IsClosedImmersion.isIso_lift _ _ hk
-  let e := asIso (IsClosedImmersion.lift _ i hk.le)
-  have he : e.hom ≫ i.ker.subschemeι = i := IsClosedImmersion.lift_fac _ _ _
-  have hs : i.ker.subschemeι ≫ PSpace.str k n = e.inv ≫ strHom k C := by
-    rw [Iso.eq_inv_comp, reassoc_of% he, hi]
-  have := h.isIntegral
-  have := h.smooth
-  refine ⟨⟨n, i.ker, .of_isIso e.hom, ?_, hs ▸ inferInstance, e.inv ≫ f⟩, e, by simp, ?_⟩
-  · exact (IsHomeomorph.topologicalKrullDim_eq _ (Scheme.homeoOfIso e).isHomeomorph).symm.trans h.dim_eq
-  · rw [strHom_eq]
-    exact (congrArg (e.hom ≫ ·) hs).trans (by simp)
-
 def degOf (L : LB X) : ℤ := VB.degLB k (L.pull c.f)
 
 def degPic : CechPic.Pic X →+ ℤ := c.isProjCurve.degPic.comp (CechPic.pull c.f)
 
-theorem degPic_cls {L : LB X} (hL : L.IsLB) : c.degPic (cls L hL) = c.degOf L := rfl
 
-theorem degOf_eq {C : Scheme.{0}} [Algebra k Γ(C, ⊤)] [IsIntegral C] (h : VB.IsProjCurve k C) (e : C ≅ c.C)
-    (he : e.hom ≫ strHom k c.C = strHom k C) {L : LB X} (hL : L.IsLB) :
-    c.degOf L = VB.degLB k (L.pull (e.hom ≫ c.f)) := by
-  have h₁ := LB.isLB_pull hL c.f
-  have h₂ := LB.isLB_pull h₁ e.hom
-  have h₃ := LB.isLB_pull hL (e.hom ≫ c.f)
-  rw [VB.degLB_congr h₃ h₂ ((CechPic.cls_eq_iff _ _).1 (CechPic.pull_comp e.hom c.f (cls L hL))), degOf,
-    c.isProjCurve.degLB_eq_interNum h₁, h.degLB_eq_interNum h₂, ← interNumOn_id,
-    ← interNumOn_comp_of_isIso k e.hom, Category.comp_id, interNumOn_eq_interNum_pull (fun r => by
-      rw [algebraMap_eq_strHom, algebraMap_eq_strHom, ← he, Scheme.Hom.comp_appTop]; rfl) (isLB_vecOne h₁)]
-  congr 1
-  ext1 i
-  fin_cases i
-  rfl
-
-attribute [local instance] MvPolynomial.gradedAlgebra in
-open ProjSpace ProjCoh in
-
-theorem nonempty_of_point (x : Sp k ⟶ X) : Nonempty (Curve k X) :=
-  (exists_iso (VB.isSmoothProjCurve_line k) (PSpace.str k 1 ≫ x)).nonempty
-
-attribute [local instance] MvPolynomial.gradedAlgebra in
-open ProjSpace ProjCoh in
-
-theorem exists_degOf_On : ∃ c : Curve k (PSpace k 1), ∀ n : ℤ, c.degOf (ProjSpace.On k 1 n) = n := by
-  obtain ⟨c, e, he, hs⟩ := exists_iso (VB.isSmoothProjCurve_line k) (𝟙 _)
-  refine ⟨c, fun n => ?_⟩
-  have hL := ProjSpace.On_isLB k 1 n
-  rw [c.degOf_eq (VB.isSmoothProjCurve_line k).toIsProjCurve e hs hL, he]
-  exact (VB.degLB_congr (LB.isLB_pull hL _) hL ((CechPic.cls_eq_iff (LB.isLB_pull hL _) hL).1
-    (CechPic.pull_id (cls _ hL)))).trans (VB.degLB_On k n)
 
 end Curve
 
@@ -376,9 +315,6 @@ variable (hZ : HasDR Z)
 
 def degGr : (∀ σ : E →+* ℂ, Fin (Dw.mult σ) → ℤ) →+ ℤ := c.degPic.comp (grCls hZ)
 
-theorem degGr_eq {e : ∀ σ : E →+* ℂ, Fin (Dw.mult σ) → ℤ} {L : LB Z.X} (h : IsGrLB Z e L) :
-    c.degGr hZ e = VB.degLB k (L.pull c.f) := congrArg c.degPic (h.cls_eq hZ).symm
-
 def degStep (σ : E →+* ℂ) (n : ℕ) : ℤ := c.degGr hZ (-oneAt Dw σ n)
 
 theorem degStep_eq_zero {σ : E →+* ℂ} {n : ℕ} (h : Dw.mult σ ≤ n) : c.degStep hZ σ n = 0 := by
@@ -404,16 +340,12 @@ def Fbar (ct : At S κ p) : Type := haveI := Fact.mk ct.hp; AlgebraicClosure (ZM
 
 instance : Field ct.Fbar := haveI := Fact.mk ct.hp; inferInstanceAs (Field (AlgebraicClosure (ZMod p)))
 
-instance : IsAlgClosed ct.Fbar := haveI := Fact.mk ct.hp; inferInstanceAs (IsAlgClosed (AlgebraicClosure (ZMod p)))
-
-instance : CharP ct.Fbar p := haveI := Fact.mk ct.hp; inferInstanceAs (CharP (AlgebraicClosure (ZMod p)) p)
-
 abbrev Crv : Type := Curve ct.Fbar ct.YY.X
 
 abbrev CrvQ : Type := Curve (AlgebraicClosure κ.c.F) ct.YY.X
 
-open Classical in
 
+open Classical in
 def indWt (τ : PsiT D) (i : ℕ) : PsiT D → ℕ → ℤ := fun τ' i' => if τ' = τ ∧ i' = i then 1 else 0
 
 def degPiece {k : Type} [Field k] (c : Curve k ct.YY.X) (τ : PsiT D) (i : ℕ) : ℤ :=
@@ -455,8 +387,8 @@ namespace At
 
 variable (ct : At S κ p)
 
-open Classical in
 
+open Classical in
 theorem expo_indWt_apply (τ : PsiT D) (i : ℕ) (σ : D.host.E →+* ℂ) (a : Fin (S.Dw.mult σ)) :
     ct.expo (indWt τ i) σ a = (if σ = embOf D τ ∧ (a : ℕ) + 1 = i then 1 else 0) -
       if σ = conjEmb (embOf D τ) ∧ N - a = i then 1 else 0 := by
@@ -479,34 +411,7 @@ theorem expo_indWt (τ : PsiT D) {i : ℕ} (h₁ : 1 ≤ i) (h₂ : i ≤ N) :
   rw [expo_indWt_apply]
   exact congrArg₂ (· - ·) (if_congr (and_congr_right' e₁) rfl rfl) (if_congr (and_congr_right' e₂) rfl rfl)
 
-theorem expo_indWt_eq_zero (τ : PsiT D) {i : ℕ} (h : i = 0 ∨ N < i) : ct.expo (indWt τ i) = 0 := by
-  funext σ a
-  have := mult_le S σ
-  have := a.2
-  rw [expo_indWt_apply, if_neg (by omega), if_neg (by omega)]
-  rfl
-
-theorem expo_eq_sum (l : PsiT D → ℕ → ℤ) :
-    ct.expo l = ∑ t : D.what₂.Tau, ∑ i ∈ Finset.Icc 1 N, l (D.eTau t) i • ct.expo (indWt (D.eTau t) i) := by
-  funext σ a
-  have := mult_le S σ
-  have := a.2
-  have m₁ : (a : ℕ) + 1 ∈ Finset.Icc 1 N := Finset.mem_Icc.2 (by omega)
-  have m₂ : N - a ∈ Finset.Icc 1 N := Finset.mem_Icc.2 (by omega)
-  have key (P : Prop) [Decidable P] (m : ℕ) (hm : m ∈ Finset.Icc 1 N) (f : ℕ → ℤ) [∀ x, Decidable (P ∧ m = x)] :
-      (∑ x ∈ Finset.Icc 1 N, f x * if P ∧ m = x then 1 else 0) = if P then f m else 0 := by
-    by_cases h : P <;> simp [h, hm]
-  simp only [Finset.sum_apply, Pi.smul_apply, expo_indWt_apply, smul_eq_mul, mul_sub, Finset.sum_sub_distrib]
-  rw [expo, ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun t _ => ?_
-  classical
-  rw [key _ _ m₁, key _ _ m₂, embOf, Equiv.symm_apply_apply]
-  split_ifs <;> simp [sub_eq_add_neg]
-
 variable {k : Type} [Field k] (c : Curve k ct.YY.X) (τ : PsiT D) {i : ℕ}
-
-theorem degPiece_eq_zero (h : i = 0 ∨ N < i) : ct.degPiece c τ i = 0 := by
-  rw [degPiece, expo_indWt_eq_zero _ _ h, neg_zero, map_zero]
 
 theorem degPiece_of_le (h₁ : 1 ≤ i) (h₂ : i ≤ j) : ct.degPiece c τ i = c.degStep ct.hasDR (embOf D τ) (i - 1) := by
   have := mult_le S (embOf D τ)
@@ -539,12 +444,6 @@ theorem sum_degPiece_tail (h : j ≤ i) : -∑ m ∈ Finset.Icc (i + 1) N, ct.de
   · omega
   · omega
   · rw [ct.degPiece_of_lt c τ (by omega) hm.2, neg_neg]
-
-theorem degWt_intCast (l : PsiT D → ℕ → ℤ) {L : LB ct.YY.X} (h : IsGrLB ct.YY (ct.expo l) L) :
-    ct.degWt c (fun τ i => l τ i) = VB.degLB k (L.pull c.f) := by
-  rw [← c.degGr_eq ct.hasDR h, expo_eq_sum, degWt, ← finsum_comp_equiv D.eTau, finsum_eq_sum_of_fintype]
-  simp only [degPiece, map_sum, map_zsmul, map_neg]
-  simp
 
 end At
 

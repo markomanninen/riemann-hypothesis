@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.CokernelLengthComparisonStatement
-import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthStatement
+module
+
+public import ReciprocityTheory.DualLattices.CokernelLengthComparisonStatement
+public import ReciprocityTheory.DualLattices.UnramifiedCokernelLengthStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,5 @@ def UnramifiedCokernelLowerBoundStatement : Prop :=
     HasLen v R (cokE H.Ht U.εT U.εL i (U.cj i)) V1 →
     (v (algebraMap R C (p : R)) : ℝ) ^
       (((U.r i : ℝ) + U.r (U.cj i)) / (p - 1) - frobSum U i) ≤ V1
-
-def CokernelLowerBoundStatement : Prop := PermutedCokernelLowerBoundStatement ∧ UnramifiedCokernelLowerBoundStatement
 
 end ReciprocityTheory.PGsh.Up

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.Graded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistFiniteness.Graded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -152,7 +157,7 @@ def evalIdx (i0 : Fin (N + 1)) (hi0 : x i0 ≠ 0) :
   toFun z := locL x η S n0 d0 g0 (idx0 i0).1.1 (mem_chartCell_ne_zero x hi0)
     ((z : Cech.Cochain (locSys (Sy S r) N (TMod x η S n0 d0 g0)) 0) (idx0 i0))
   map_add' a b := by
-    rw [Submodule.coe_add, Pi.add_apply, map_add]
+    rw [Submodule.coe_add, Pi.add_apply, map_add (f := _)]
   map_smul' c z := by
     rw [Submodule.coe_smul, Pi.smul_apply, RingHom.id_apply]
     exact LinearMap.map_smul_of_tower _ _ _

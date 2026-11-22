@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CollapseExponent
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.CollapseExponent
+
+@[expose] public section
 
 noncomputable section
 

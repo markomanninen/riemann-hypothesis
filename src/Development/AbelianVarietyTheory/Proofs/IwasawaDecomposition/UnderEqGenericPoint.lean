@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,8 +31,8 @@ structure Const (T : HermLB p) (s : (k →+* ℂ) → ℝ) : Prop where
 variable {N L T T' : HermLB p} {π : N.B.ι → L.B.ι} {s s' : (k →+* ℂ) → ℝ}
 
 theorem Refines.pull (h : Refines N L π s) {q : Y ⟶ Sp k} (f : Y ⟶ X) (hf : f ≫ p = q) :
-    Refines (N.pull f hf) (L.pull f hf) (fun c a => π (c a)) s where
-  le c y hy := mem_iInter.2 fun a => h.le _ (mem_iInter.1 hy a)
+    Refines (N.pull f hf) (L.pull f hf) (fun c a => π (c a)) s := {
+  le _ _ hy := mem_iInter.2 fun a => h.le _ (mem_iInter.1 hy a)
   g Z r z c c' hc hc' := (gm_pull_g _ f r z c c' hc hc').trans
     ((h.g Z (r ≫ f) z _ _ (mem_iInter.1 hc PUnit.unit) (mem_iInter.1 hc' PUnit.unit)).trans
       (gm_pull_g _ f r z (fun a => π (c a)) (fun a => π (c' a))
@@ -37,6 +41,7 @@ theorem Refines.pull (h : Refines N L π s) {q : Y ⟶ Sp k} (f : Y ⟶ X) (hf :
   φ σ c y hy := ((N.φ σ).pull_φ f hf c y).trans ((h.φ σ _ _
     (mem_of_mem_linComb (m := fun _ => Points.PtsOver.map f hf _ y) (fun _ => rfl) hy PUnit.unit)).trans
       (congrArg (· + _) ((L.φ σ).pull_φ f hf (fun a => π (c a)) y).symm))
+  }
 
 theorem gm_pow (L : HermLB p) (m : ℕ) {Z : Scheme.{0}} (r : Z ⟶ X) (z : Z) (c c' : (L.pow m).B.ι)
     (hc : r z ∈ (L.pow m).B.U c) (hc' : r z ∈ (L.pow m).B.U c') :
@@ -46,8 +51,8 @@ theorem gm_pow (L : HermLB p) (m : ℕ) {Z : Scheme.{0}} (r : Z ⟶ X) (z : Z) (
     rw [Fintype.prod_unique, zpow_natCast, Category.comp_id])
 
 theorem Refines.pow (h : Refines N L π 0) (m : ℕ) :
-    Refines (N.pow m) (L.pow m) (fun c a => π (c a)) 0 where
-  le c y hy := mem_iInter.2 fun a => h.le _ (mem_iInter.1 hy a)
+    Refines (N.pow m) (L.pow m) (fun c a => π (c a)) 0 := {
+  le _ _ hy := mem_iInter.2 fun a => h.le _ (mem_iInter.1 hy a)
   g Z r z c c' hc hc' := (gm_pow N m r z c c' hc hc').trans
     ((congrArg (· ^ m) (h.g Z r z _ _ (mem_iInter.1 hc PUnit.unit) (mem_iInter.1 hc' PUnit.unit))).trans
       (gm_pow L m r z (fun a => π (c a)) (fun a => π (c' a))
@@ -55,6 +60,7 @@ theorem Refines.pow (h : Refines N L π 0) (m : ℕ) :
         (mem_iInter.2 fun a => h.le _ (mem_iInter.1 hc' a))).symm)
   φ σ c y hy := ((N.φ σ).zpow_φ m c y).trans ((congrArg _ ((h.φ σ _ _ (mem_pow_iff.1 hy)).trans (add_zero _))).trans
       (((L.φ σ).zpow_φ m (fun a => π (c a)) y).symm.trans (add_zero _).symm))
+  }
 
 theorem Refines.shift (h : Refines N L π fun σ => 2 * s σ) (hs : ∀ σ, s ((starRingEnd ℂ).comp σ) = s σ) :
     Refines N (L.shift s hs) π 0 :=
@@ -125,7 +131,7 @@ theorem under_eq_genericPoint (hX : IsArithVar p 0) {σ : k →+* ℂ} (y : CxPt
 end Rat
 
 theorem Refines.isArithHeight {D : ℕ} (hX : IsArithVar p D) (h : Refines N L π 0) {f : X → ℝ}
-    (H : N.IsArithHeight f) : L.IsArithHeight f where
+    (H : N.IsArithHeight f) : L.IsArithHeight f := {
   vertical Z i _ _ κ _ _ _ d hd := (H.vertical Z i κ d hd).trans (congrArg (fun n : ℤ => (n : ℝ) * _)
     (topSelf_congr κ (N.restr i).isLB (L.restr i).isLB (h.pull i rfl).lbIso d))
   point Z i _ _ _ hc hd r hr := by
@@ -146,6 +152,7 @@ theorem Refines.isArithHeight {D : ℕ} (hX : IsArithVar p D) (h : Refines N L �
       fun y hy => h''.logNorm hr hy, h₂.trans (congrArg _ (finsum_congr fun σ => ?_))⟩
     rw [h'.chernInt]
     exact Weight.chernInt_congr (isOpen_offSupp _).measurableSet fun y hy => h''.logNorm hr hy
+  }
 
 theorem Refines.congr (h : Refines N L π s) (e : ∀ σ, s σ = s' σ) : Refines N L π s' := funext e ▸ h
 
@@ -154,44 +161,51 @@ theorem Const.congr (h : Const T s) (e : ∀ σ, s σ = s' σ) : Const T s' := f
 theorem const_triv : Const (HermLB.triv p) 0 :=
   ⟨fun _ _ _ _ _ _ _ => map_one _, fun _ _ _ _ => rfl⟩
 
-theorem Const.pow (h : Const T s) (m : ℕ) : Const (T.pow m) fun σ => m * s σ where
+theorem Const.pow (h : Const T s) (m : ℕ) : Const (T.pow m) fun σ => m * s σ := {
   g Z r z c c' hc hc' := (gm_pow T m r z c c' hc hc').trans (by
     rw [h.g Z r z _ _ (mem_iInter.1 hc PUnit.unit) (mem_iInter.1 hc' PUnit.unit), one_pow])
   φ σ c y hy := ((T.φ σ).zpow_φ m c y).trans (by rw [h.φ σ _ _ (mem_pow_iff.1 hy), Int.cast_natCast])
+  }
 
-theorem const_pow_zero (L : HermLB p) : Const (L.pow 0) 0 where
+theorem const_pow_zero (L : HermLB p) : Const (L.pow 0) 0 := {
   g Z r z c c' hc hc' := (gm_pow L 0 r z c c' hc hc').trans (pow_zero _)
   φ σ c y _ := ((L.φ σ).zpow_φ (0 : ℕ) c y).trans (by simp)
+  }
 
-theorem refines_pow_one (L : HermLB p) : Refines (L.pow 1) L (fun c => c PUnit.unit) 0 where
+theorem refines_pow_one (L : HermLB p) : Refines (L.pow 1) L (fun c => c PUnit.unit) 0 := {
   le _ _ hy := mem_iInter.1 hy PUnit.unit
   g Z r z c c' hc hc' := (gm_pow L 1 r z c c' hc hc').trans (pow_one _)
   φ σ c y _ := ((L.φ σ).zpow_φ (1 : ℕ) c y).trans (by simp)
+  }
 
-theorem Const.dual (h : Const T s) : Const T.dual (-s) where
+theorem Const.dual (h : Const T s) : Const T.dual (-s) := {
   g Z r z c c' hc hc' := (map_inv _ _).trans (inv_eq_one.2 (h.g Z r z c c' hc hc'))
   φ σ c y hy := congrArg (- ·) (h.φ σ c y hy)
+  }
 
-theorem Const.tens (h : Const T s) (h' : Const T' s') : Const (T.tens T') (s + s') where
+theorem Const.tens (h : Const T s) (h' : Const T' s') : Const (T.tens T') (s + s') := {
   g Z r z c c' hc hc' := (gm_tens _ _ r z c c' hc hc').trans (by
     rw [h.g Z r z _ _ hc.1 hc'.1, h'.g Z r z _ _ hc.2 hc'.2, one_mul])
   φ σ c y hy := congrArg₂ (· + ·) (h.φ σ _ y (mem_ptsIn_inf.1 hy).1) (h'.φ σ _ y (mem_ptsIn_inf.1 hy).2)
+  }
 
 theorem Refines.tens_const (h : Refines N L π s) (h' : Const T s') :
-    Refines (N.tens T) L (fun c => π c.1) (s + s') where
+    Refines (N.tens T) L (fun c => π c.1) (s + s') := {
   le _ := inf_le_left.trans (h.le _)
   g Z r z c c' hc hc' := (gm_tens _ _ r z c c' hc hc').trans (by
     rw [h.g Z r z _ _ hc.1 hc'.1, h'.g Z r z _ _ hc.2 hc'.2, mul_one])
   φ σ c y hy := (congrArg₂ (· + ·) (h.φ σ _ y (mem_ptsIn_inf.1 hy).1)
     (h'.φ σ _ y (mem_ptsIn_inf.1 hy).2)).trans (add_assoc _ _ _)
+  }
 
 theorem Const.tens_refines (h' : Const T s') (h : Refines N L π s) :
-    Refines (T.tens N) L (fun c => π c.2) (s' + s) where
+    Refines (T.tens N) L (fun c => π c.2) (s' + s) := {
   le _ := inf_le_right.trans (h.le _)
   g Z r z c c' hc hc' := (gm_tens _ _ r z c c' hc hc').trans (by
     rw [h.g Z r z _ _ hc.2 hc'.2, h'.g Z r z _ _ hc.1 hc'.1, one_mul])
   φ σ c y hy := (congrArg₂ (· + ·) (h'.φ σ _ y (mem_ptsIn_inf.1 hy).1)
     (h.φ σ _ y (mem_ptsIn_inf.1 hy).2)).trans (add_left_comm _ _ _)
+  }
 
 theorem Const.zp (h : Const T s) (n : ℤ) : Const (zp T n) fun σ => n * s σ := by
   refine ((h.pow n.toNat).tens (h.pow (-n).toNat).dual).congr fun σ => ?_
@@ -227,17 +241,17 @@ theorem refines_comb {κ : Type} [Fintype κ] (M : κ → HermLB p) (n : κ → 
     (h : ∀ i, i ≠ i₀ → Const (M i) s) : ∃ π, Refines (comb M n) L π fun σ => (∑ i, n i - 1 : ℤ) * s σ := by
   classical
   obtain ⟨π, hπ⟩ := (refines_foldr (L := L) (fun i => zp (M i) (n i)) (fun i σ => if i = i₀ then 0 else n i * s σ) i₀
-    (by rw [h₀, hn]; exact (exists_refines_zp_one L).imp fun _ h => h.congr fun σ => (if_pos rfl).symm)
-    (fun i hi => by simpa only [if_neg hi] using (h i hi).zp (n i)) _ (Finset.nodup_toList Finset.univ)).2
+    (by rw [h₀, hn]; exact (exists_refines_zp_one L).imp fun _ h => h.congr fun σ => (ite_eq_left rfl).symm)
+    (fun i hi => by simpa only [ite_eq_right hi] using (h i hi).zp (n i)) _ (Finset.nodup_toList Finset.univ)).2
     (Finset.mem_toList.2 (Finset.mem_univ _))
   refine ⟨π, hπ.congr fun σ => Eq.symm ?_⟩
   rw [Finset.sum_map_toList, Finset.sum_apply, ← Finset.add_sum_erase _ _ (Finset.mem_univ i₀),
-    ← Finset.add_sum_erase _ _ (Finset.mem_univ i₀), if_pos rfl, hn, zero_add, add_sub_cancel_left, Int.cast_sum,
+    ← Finset.add_sum_erase _ _ (Finset.mem_univ i₀), ite_eq_left rfl, hn, zero_add, add_sub_cancel_left, Int.cast_sum,
     Finset.sum_mul]
-  exact Finset.sum_congr rfl fun i hi => (if_neg (Finset.ne_of_mem_erase hi)).symm
+  exact Finset.sum_congr rfl fun i hi => (ite_eq_right (Finset.ne_of_mem_erase hi)).symm
+
 
 open Polynomial in
-
 theorem step_of_linear {R : Type*} [CommRing R] [Algebra ℝ R] (Φ : R →ₗ[ℝ] ℝ) (x y z : R) (D : ℕ) (G : ℤ → ℝ) (c : ℝ)
     (hG : ∀ a b : ℤ, Φ (((a : ℝ) • x + ((b : ℝ) • y + z)) ^ (D + 1)) = G (a + b))
     (hc : ∀ b : ℤ, Φ (x * ((b : ℝ) • y + z) ^ D) = c) : G 1 = G 0 + (D + 1) * c := by
@@ -245,17 +259,18 @@ theorem step_of_linear {R : Type*} [CommRing R] [Algebra ℝ R] (Φ : R →ₗ[�
     monomial j (((D + 1).choose j : ℝ) * Φ (x ^ j * ((b : ℝ) • y + z) ^ (D + 1 - j)))
   have hinf : (Set.range (Int.cast : ℤ → ℝ)).Infinite := Set.infinite_range_of_injective Int.cast_injective
   have h₁ (a b : ℤ) : (P b).eval (a : ℝ) = G (a + b) := by
-    rw [← hG, add_pow, map_sum, eval_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hG, add_pow, map_sum, eval_finsetSum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [eval_monomial, _root_.smul_pow, mul_comm _ ((D + 1).choose j : R), ← nsmul_eq_mul (α := R), map_nsmul, smul_mul_assoc,
       map_smul, nsmul_eq_mul, smul_eq_mul]
     ring
   have h₂ (b : ℤ) : (P b).coeff 1 = (D + 1) * c := by
-    rw [finset_sum_coeff, Finset.sum_eq_single 1 (fun j _ hj => by rw [coeff_monomial, if_neg hj]) (by simp),
+    rw [finsetSum_coeff, Finset.sum_eq_single 1 (fun _ _ hj => coeff_monomial_of_ne _ hj.symm) (by simp),
       coeff_monomial_same, pow_one, Nat.add_sub_cancel, hc, Nat.choose_one_right, Nat.cast_succ]
   have h₃ (b : ℤ) : P b = taylor (b : ℝ) (P 0) := eq_of_infinite_eval_eq _ _ (hinf.mono (by
     rintro _ ⟨a, rfl⟩
-    rw [Set.mem_setOf_eq, taylor_eval, h₁, ← Int.cast_add, h₁, add_zero]))
+    rw [Set.mem_ofPred_eq, taylor_eval, h₁, ← Int.cast_add, h₁, add_zero]))
   have h₄ : derivative (P 0 - C ((D + 1) * c) * X) = 0 := eq_of_infinite_eval_eq _ _ (hinf.mono (by
     rintro _ ⟨b, rfl⟩
     have := h₂ b

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.MpUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.MpUnitary
+
+@[expose] public section
 
 noncomputable section
 open Matrix MeasureTheory
@@ -69,7 +73,7 @@ theorem cz_ne {k n : ℕ} (hk : 1 ≤ k) (z1 : Fin (2 * n + k + 1) → ℂ) (hT 
     herm (Hpk k n) (phiV k n ⟨0, by omega⟩) (fvec k n z1 ⟨0, by omega⟩) ≠ 0 := by
   by_cases hn : 0 < n
   · unfold phiV fvec
-    rw [dif_pos hn, dif_pos hn, herm_bb, hpk_apply]
+    rw [dite_eq_left hn, dite_eq_left hn, herm_bb, hpk_apply]
     rw [if_pos (show (esI k n ⟨0, hn⟩).val = sg k n (eI k n ⟨0, hn⟩).val by
         show 2 * n + k - 0 = sg k n 0; unfold sg; rw [if_pos (Or.inl hn)]),
       if_neg (show ¬ (eI k n ⟨0, hn⟩).val = n + k by show ¬ 0 = n + k; omega)]
@@ -77,7 +81,7 @@ theorem cz_ne {k n : ℕ} (hk : 1 ≤ k) (z1 : Fin (2 * n + k + 1) → ℂ) (hT 
   · have hn0 : n = 0 := by omega
     subst hn0
     unfold phiV fvec
-    rw [dif_neg (lt_irrefl 0), dif_neg (lt_irrefl 0)]
+    rw [dite_eq_right (lt_irrefl 0), dite_eq_right (lt_irrefl 0)]
     exact cz0 hk z1 hT
 
 def etaF (k n : ℕ) (w : Fin (2 * n + k + 1) → ℂ) : Fin (1 + n) → ℂ :=

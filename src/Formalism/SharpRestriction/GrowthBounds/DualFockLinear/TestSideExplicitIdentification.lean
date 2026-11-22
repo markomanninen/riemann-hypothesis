@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.PrimStep
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.PrimStep
+
+@[expose] public section
 
 noncomputable section
 

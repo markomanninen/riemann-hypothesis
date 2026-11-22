@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.ThetaA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.ThetaA
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem theta_series_existence : PI.ScRefExists.Sk.ThetaEx := by
   have key : (primesG I g hg).inf (fun P : HeightOneSpectrum (𝓞 I.E) => P.asIdeal ^ N) =
       (∏ P ∈ primesG I g hg, P.asIdeal) ^ N := by
     rw [← Finset.prod_pow]
-    exact IsDedekindDomain.inf_prime_pow_eq_prod _ _ _ (fun P _ => P.prime)
+    exact IsDedekindDomain.inf_pow_eq_prod_of_prime _ _ _ (fun P _ => P.prime)
       (fun P _ Q _ h e => h (HeightOneSpectrum.ext e))
   have hmem : ∀ z : 𝓞 I.E, (∀ P ∈ primesG I g hg, z ∈ P.asIdeal ^ N) →
       z ∈ Ideal.span {(g : 𝓞 I.E)} := by

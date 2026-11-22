@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.L2.Pj
 open scoped nonZeroDivisors
@@ -89,6 +93,9 @@ theorem exists_approx_matrix (Q : HeightOneSpectrum (𝓞 E)) {n : ℕ}
     simp [Valuation.restrict_lt_iff_lt_embedding]
   have hU : IsOpen {X : Matrix (Fin n) (Fin n) (Q.adicCompletion E) |
       (∀ i j, Valued.v ((h * X - 1) i j) < 1) ∧ Valued.v ((h * X).det - 1) < 1} := by
+    change IsOpen ({X : Matrix (Fin n) (Fin n) (Q.adicCompletion E) |
+      ∀ i j, Valued.v ((h * X - 1) i j) < 1} ∩
+      (fun X => (h * X).det - 1) ⁻¹' {z | Valued.v z < 1})
     refine IsOpen.inter ?_ (hb.preimage (hc.matrix_det.sub continuous_const))
     have : IsOpen (⋂ i, ⋂ j, {X : Matrix (Fin n) (Fin n) (Q.adicCompletion E) |
         Valued.v ((h * X - 1) i j) < 1}) :=
@@ -178,7 +185,8 @@ theorem mem_span_detSet_iff : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ)
             (fun k => algebraMap E (FiniteAdeleRing (𝓞 E) E) ((b : E) * X k j)) i) =
             algebraMap E _ (b : E) * comp P ((g⁻¹).1.mulVec
             (fun k => algebraMap E (FiniteAdeleRing (𝓞 E) E) (X k j)) i) := by
-          simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, comp_alg, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, comp_alg, Finset.mul_sum]
           exact Finset.sum_congr rfl fun k _ => by ring
         rw [e, map_mul, val_alg]
         exact (mul_le_mul' (hbc i j P) le_rfl).trans (hc i j P)

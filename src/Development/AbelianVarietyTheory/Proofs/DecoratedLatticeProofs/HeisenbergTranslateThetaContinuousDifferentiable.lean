@@ -1,15 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaMatrixCoeffRapidDecayRealFunctional
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnifModGrowthOfIsUnifModerate
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaMatrixCoeffRapidDecayRealFunctional
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CocompactTensor
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
@@ -49,14 +55,8 @@ theorem supN_ne_top (hψ : IsStdChar D ψ (-1)) {φ : WO S T → ℂ} (h : IsThe
   rw [← ofReal_norm_eq_enorm]
   exact ENNReal.ofReal_le_ofReal (hC w)
 
-theorem heisO_add' (u : WO S T) (φ φ' : WO S T → ℂ) : heisO ψ S T u (φ + φ') = heisO ψ S T u φ + heisO ψ S T u φ' := by
-  funext w; simp only [heisO, Pi.add_apply, mul_add]
-
 theorem heisO_sub' (u : WO S T) (φ φ' : WO S T → ℂ) : heisO ψ S T u (φ - φ') = heisO ψ S T u φ - heisO ψ S T u φ' := by
   funext w; simp only [heisO, Pi.sub_apply, mul_sub]
-
-theorem heisO_smul' (u : WO S T) (c : ℂ) (φ : WO S T → ℂ) : heisO ψ S T u (c • φ) = c • heisO ψ S T u φ := by
-  funext w; simp only [heisO, Pi.smul_apply, smul_eq_mul]; ring
 
 theorem supN_le_ofReal {φ : WO S T → ℂ} {C : ℝ} (h : ∀ w, ‖φ w‖ ≤ C) : supN φ ≤ ENNReal.ofReal C :=
   iSup_le fun w => by
@@ -86,8 +86,22 @@ def rem (ψ : AddChar (AF D.host.F) ℂ) (L : ℝ →+ WO S T) (t : ℝ) (f : WO
   (t⁻¹ : ℂ) • (heisO ψ S T (L t) f - f) - dLine ψ S T L f
 
 theorem theta_rem (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO S T} (hL : IsRealDir T S L)
-    {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (t : ℝ) : IsThetaFunO ψ S T (rem ψ L t f) :=
-  theta_sub (theta_smul _ (theta_sub (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hf _) hf)) (theta_dLine hθ hψ hL hf)
+    {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (t : ℝ) : IsThetaFunO ψ S T (rem ψ L t f) := by
+  have theta_smul (c : ℂ) {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) : IsThetaFunO ψ S T (c • g) := by
+    refine ⟨?_, ?_, hg.cont.const_smul c, ?_⟩
+    · intro γ w
+      simp only [Pi.smul_apply, smul_eq_mul]
+      rw [hg.quasi]
+      ring
+    · obtain ⟨U, hU, h1⟩ := hg.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    · intro k L h1 h2 w
+      exact contDiff_const.mul (hg.smooth k L h1 h2 w)
+  exact theta_sub (theta_smul _ (theta_sub (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hf _) hf)) (theta_dLine hθ hψ hL hf)
 
 theorem tendsto_supN_rem (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO S T} (hL : IsRealDir T S L)
     {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
@@ -139,7 +153,7 @@ theorem eq_zero_of_tendsto (hθ : IsInfFam θ) (hψ : IsStdChar D ψ (-1)) {L : 
     rw [edist_comm, edist_eq_enorm_sub]
     refine lt_of_le_of_lt ?_ hi
     rw [← supN_heisO hψ (L s), heisO_sub']
-    exact enorm_le_supN _ p
+    simpa only [enorm_eq_nnnorm, Pi.sub_apply] using enorm_le_supN (heisO ψ S T (L s) (dLine ψ S T L (h i)) - heisO ψ S T (L s) Λ) p
   · refine tendsto_iff_edist_tendsto_0.2
       (tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h0 (fun _ => zero_le) fun i => ?_)
     rw [edist_zero_right, ← supN_heisO hψ (L s)]
@@ -161,7 +175,7 @@ theorem cc_add (τ : D.what₂.Tau) (z : Matrix (Fin T.rank) (Fin S.rank) ℂ) (
   have e : compAt θ τ (u + v) = compAt θ τ u + compAt θ τ v := by
     ext i j
     show θ τ (infPart D (u i j + v i j)) = θ τ (infPart D (u i j)) + θ τ (infPart D (v i j))
-    rw [RingHom.map_add, RingHom.map_add]
+    rw [RingHom.map_add (f := _), RingHom.map_add (f := _)]
   simp only [cc, GlobalTheory.IndefiniteRowSideFullHecke.HermitianSymplecticScalars.symplAt, GlobalTheory.IndefiniteRowSideFullHecke.HermitianSymplecticScalars.hermAt, e, conjTranspose_add, Matrix.mul_add, Matrix.add_mul,
     trace_add, mul_add, Complex.add_re, Complex.ofReal_add]
 
@@ -208,6 +222,22 @@ theorem der_heisO (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) (a : D.what₂
 theorem tendsto_word_heisO (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
     (l : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool)) : ∀ {f : WO S T → ℂ}, IsThetaFunO ψ S T f →
     Filter.Tendsto (fun u : WO S T => supN (wordAct (heisDer ψ θ) l (heisO ψ S T u f - f))) (𝓝 0) (𝓝 0) := by
+  have theta_smul (c : ℂ) {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) : IsThetaFunO ψ S T (c • g) := by
+    refine ⟨?_, ?_, hg.cont.const_smul c, ?_⟩
+    · intro γ w
+      simp only [Pi.smul_apply, smul_eq_mul]
+      rw [hg.quasi]
+      ring
+    · obtain ⟨U, hU, h1⟩ := hg.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    · intro k L h1 h2 w
+      exact contDiff_const.mul (hg.smooth k L h1 h2 w)
+  have theta_add {g k : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) (hk : IsThetaFunO ψ S T k) : IsThetaFunO ψ S T (g + k) := by
+    simpa only [neg_one_smul, sub_neg_eq_add] using theta_sub hg (theta_smul (-1) hk)
   induction l using List.reverseRecOn with
   | nil => exact fun hf => tendsto_supN_heisO hψ hf
   | append_singleton l a ih =>
@@ -240,11 +270,25 @@ theorem der_rem (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {L : ℝ →+ WO
     (a : D.what₂.Tau × Fin T.rank × Fin S.rank × Bool) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) {t : ℝ} (ht : t ≠ 0) :
     heisDer ψ θ a (rem ψ L t f) - (ccA θ a (L 1) • f + dLine ψ S T L (heisDer ψ θ a f) - heisDer ψ θ a (dLine ψ S T L f)) =
       rem ψ L t (heisDer ψ θ a f) + ccA θ a (L 1) • (heisO ψ S T (L t) f - f) := by
+  have theta_smul (c : ℂ) {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) : IsThetaFunO ψ S T (c • g) := by
+    refine ⟨?_, ?_, hg.cont.const_smul c, ?_⟩
+    · intro γ w
+      simp only [Pi.smul_apply, smul_eq_mul]
+      rw [hg.quasi]
+      ring
+    · obtain ⟨U, hU, h1⟩ := hg.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    · intro k L h1 h2 w
+      exact contDiff_const.mul (hg.smooth k L h1 h2 w)
   have hu := GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hf (L t)
   have ht' : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.2 ht
   have e : ccA θ a (L t) = t * ccA θ a (L 1) := cc_line hθ _ _ hL.1 t
   have e2 : ∀ (c : ℂ) (g : WO S T → ℂ), heisDer ψ θ a (c • g) = c • heisDer ψ θ a g := word_smul [a]
-  unfold rem
+  simp only [rem]
   rw [der_sub hψ hθ a (theta_smul _ (theta_sub hu hf)) (theta_dLine hθ hψ hL hf), e2, der_sub hψ hθ a hu hf,
     der_heisO hψ hθ a _ hf, e]
   funext w
@@ -255,6 +299,20 @@ theorem der_rem (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {L : ℝ →+ WO
 theorem tendsto_word_rem (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {L : ℝ →+ WO S T} (hL : IsRealDir T S L)
     (l : List (D.what₂.Tau × Fin T.rank × Fin S.rank × Bool)) : ∀ {f : WO S T → ℂ}, IsThetaFunO ψ S T f →
     Filter.Tendsto (fun t : ℝ => supN (wordAct (heisDer ψ θ) l (rem ψ L t f))) (𝓝[≠] 0) (𝓝 0) := by
+  have theta_smul (c : ℂ) {g : WO S T → ℂ} (hg : IsThetaFunO ψ S T g) : IsThetaFunO ψ S T (c • g) := by
+    refine ⟨?_, ?_, hg.cont.const_smul c, ?_⟩
+    · intro γ w
+      simp only [Pi.smul_apply, smul_eq_mul]
+      rw [hg.quasi]
+      ring
+    · obtain ⟨U, hU, h1⟩ := hg.level
+      refine ⟨U, hU, fun u hu h0 => ?_⟩
+      funext w
+      have e1 := congrFun (h1 u hu h0) w
+      unfold heisO at e1 ⊢
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
+    · intro k L h1 h2 w
+      exact contDiff_const.mul (hg.smooth k L h1 h2 w)
   have hL0 : Filter.Tendsto L (𝓝[≠] 0) (𝓝 0) := by
     have := (hL.1.tendsto 0).mono_left (nhdsWithin_le_nhds (s := {0}ᶜ))
     rwa [map_zero] at this
@@ -292,8 +350,8 @@ theorem tendsto_word_rem (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ) {L : �
 theorem tendsto_supSob {ι : Type} {l : Filter ι} {h : ι → WO S T → ℂ} (k : ℕ)
     (H : ∀ m, Filter.Tendsto (fun i => supN (wordAct (heisDer ψ θ) m (h i))) l (𝓝 0)) :
     Filter.Tendsto (fun i => supSob ψ θ k (h i)) l (𝓝 0) := by
-  have := tendsto_finset_sum (Finset.range (k + 1)) fun j _ =>
-    tendsto_finset_sum (Finset.univ : Finset (Fin j → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
+  have := tendsto_finsetSum (Finset.range (k + 1)) fun j _ =>
+    tendsto_finsetSum (Finset.univ : Finset (Fin j → D.what₂.Tau × Fin T.rank × Fin S.rank × Bool))
       fun a _ => H (List.ofFn a)
   simp only [Finset.sum_const_zero] at this
   exact this

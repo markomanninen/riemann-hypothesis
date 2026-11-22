@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -37,7 +41,7 @@ private theorem finrank_skew {K : Type} [Field K] {n : ℕ} (h2 : (2 : K) ≠ 0)
     intro f
     ext i j
     simp only [M, Matrix.transpose_apply, Matrix.neg_apply, Matrix.of_apply]
-    split_ifs with h1 h2 h3 h4 <;> first | simp | (exfalso; omega)
+    split_ifs <;> first | simp | (exfalso; omega)
   let e : W ≃ₗ[K] ({p : Fin n × Fin n // p.1 < p.2} → K) :=
     { toFun := fun X p => ((X : Matrix (Fin n) (Fin n) K) * S) p.1.1 p.1.2
       map_add' := by
@@ -47,7 +51,7 @@ private theorem finrank_skew {K : Type} [Field K] {n : ℕ} (h2 : (2 : K) ≠ 0)
       map_smul' := by
         intro c X
         funext p
-        simp [Matrix.smul_mul]
+        simp
       invFun := fun f => ⟨M f * T, by
         rw [hW, Matrix.mul_assoc, hTS, Matrix.mul_one]
         exact hskew f⟩
@@ -83,38 +87,41 @@ private theorem finrank_skew {K : Type} [Field K] {n : ℕ} (h2 : (2 : K) ≠ 0)
   rw [e.finrank_eq, Module.finrank_fintype_fun_eq_card]
 
 theorem UpperTheory.V.Fr.pr_cfix :
-    ∀ (K : Type) [Field K] (n : ℕ) (x : GG n K), (2 : K) ≠ 0 → x * x = 1 → x.right = -1 → 2 * Module.finrank K (LinearMap.ker (GG.ad n K x - 1)) + n = n * n := by
+    ∀ (K : Type) [Field K] (n : ℕ) (x : GG (m := n) (R := K)),
+      (2 : K) ≠ 0 → x * x = 1 → x.right = -1 →
+        2 * Module.finrank K (LinearMap.ker (GG.ad (m := n) (R := K) x - 1)) + n = n * n := by
   intro K _ n x h2 hx hr
   have hg : x.left * theta x.left = 1 := by
     have h := congrArg SemidirectProduct.left hx
     simpa [SemidirectProduct.mul_left, hr, sgnAct_neg_one] using h
   have hG : (x.left : Matrix (Fin n) (Fin n) K)
-      = Jmat K n * (x.left : Matrix (Fin n) (Fin n) K)ᵀ * Jmat K n := by
+      = Jmat (R := K) n * (x.left : Matrix (Fin n) (Fin n) K)ᵀ * Jmat (R := K) n := by
     rw [← theta_inv_val, inv_eq_of_mul_eq_one_left hg]
-  have hGJ : (x.left : Matrix (Fin n) (Fin n) K) * Jmat K n
-      = Jmat K n * (x.left : Matrix (Fin n) (Fin n) K)ᵀ := by
+  have hGJ : (x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n
+      = Jmat (R := K) n * (x.left : Matrix (Fin n) (Fin n) K)ᵀ := by
     nth_rewrite 1 [hG]
     rw [Matrix.mul_assoc, Jmat_mul_Jmat, Matrix.mul_one]
-  have hST : ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n)
-      * (Jmat K n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)) = 1 := by
-    rw [Matrix.mul_assoc, ← Matrix.mul_assoc (Jmat K n), Jmat_mul_Jmat, Matrix.one_mul,
+  have hST : ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n)
+      * (Jmat (R := K) n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)) = 1 := by
+    rw [Matrix.mul_assoc, ← Matrix.mul_assoc (Jmat (R := K) n), Jmat_mul_Jmat, Matrix.one_mul,
       Units.mul_inv]
-  have hTS : (Jmat K n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K))
-      * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n) = 1 := by
+  have hTS : (Jmat (R := K) n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K))
+      * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n) = 1 := by
     rw [Matrix.mul_assoc, ← Matrix.mul_assoc ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K),
       Units.inv_mul, Matrix.one_mul, Jmat_mul_Jmat]
   have hne : x.right ≠ 1 := by
     rw [hr]; decide
-  have key : ∀ X : Matrix (Fin n) (Fin n) K, X ∈ LinearMap.ker (GG.ad n K x - 1) ↔
-      (X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n))ᵀ
-        = -(X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n)) := by
+  have key : ∀ X : Matrix (Fin n) (Fin n) K,
+      X ∈ LinearMap.ker (GG.ad (m := n) (R := K) x - 1) ↔
+      (X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n))ᵀ
+        = -(X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n)) := by
     intro X
     rw [LinearMap.mem_ker, LinearMap.sub_apply, sub_eq_zero, GG.ad_apply]
-    simp only [Module.End.one_apply, GG.adFun, GG.mat, if_neg hne, thetaLie]
-    have hL : (x.left : Matrix (Fin n) (Fin n) K) * -(Jmat K n * Xᵀ * Jmat K n)
+    simp only [one_apply_eq_self, GG.adFun, GG.mat, ite_eq_right hne, thetaLie]
+    have hL : (x.left : Matrix (Fin n) (Fin n) K) * -(Jmat (R := K) n * Xᵀ * Jmat (R := K) n)
         * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K)
-        * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n)
-        = -(X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n))ᵀ := by
+        * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n)
+        = -(X * ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n))ᵀ := by
       rw [Matrix.transpose_mul, Matrix.transpose_mul, Jmat_transpose, ← hGJ]
       simp only [Matrix.mul_assoc, Matrix.neg_mul, Matrix.mul_neg]
       rw [← Matrix.mul_assoc ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K),
@@ -126,8 +133,8 @@ theorem UpperTheory.V.Fr.pr_cfix :
       rw [neg_neg]
     · intro h
       rw [h, neg_neg] at hL
-      have h' := congrArg (· * (Jmat K n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K))) hL
-      rw [Matrix.mul_assoc _ ((x.left : Matrix (Fin n) (Fin n) K) * Jmat K n), hST, Matrix.mul_one,
+      have h' := congrArg (· * (Jmat (R := K) n * ((x.left⁻¹ : GL (Fin n) K) : Matrix (Fin n) (Fin n) K))) hL
+      rw [Matrix.mul_assoc _ ((x.left : Matrix (Fin n) (Fin n) K) * Jmat (R := K) n), hST, Matrix.mul_one,
         Matrix.mul_assoc X, hST, Matrix.mul_one] at h'
       exact h'
   rw [finrank_skew h2 _ _ _ hST hTS key]

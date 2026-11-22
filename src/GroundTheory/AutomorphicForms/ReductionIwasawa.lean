@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.ReductionHeight
-import GroundTheory.AutomorphicForms.Iwasawa
-import GroundTheory.AutomorphicForms.RealGroupsIwasawa
-import GroundTheory.GlobalFields.IdeleGroups.UnitBound
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.ReductionHeight
+public import GroundTheory.AutomorphicForms.Iwasawa
+public import GroundTheory.AutomorphicForms.RealGroupsIwasawa
+public import GroundTheory.GlobalFields.IdeleGroups.UnitBound
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix
 open scoped NumberField.AdeleRing RestrictedProduct
@@ -87,7 +91,8 @@ theorem exists_upper_mul_of_ringEquiv (φ : E ≃+* 𝕜) (hφ : ∀ x, ‖φ x�
         GL (Fin n) E) : Matrix (Fin n) (Fin n) E)) i)) =
         (fun i => φ.toRingHom (y i)) ᵥ* ((kU⁻¹ : GL (Fin n) 𝕜) : Matrix (Fin n) (Fin n) 𝕜) := by
       ext j
-      simp [vecMul, dotProduct, map_sum, map_mul, Matrix.GeneralLinearGroup.map]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [vecMul, dotProduct, map_sum, map_mul, Matrix.GeneralLinearGroup.map]
     rw [this, euclidNorm_vecMul_unitary hk']
   · rw [← map_mul, hb'', mul_assoc, mul_inv_cancel, mul_one, hh']
     ext i j

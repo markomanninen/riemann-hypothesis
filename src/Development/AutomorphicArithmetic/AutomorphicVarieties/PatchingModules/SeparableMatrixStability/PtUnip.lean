@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.UnipOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.UnipOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+
+@[expose] public section
+
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem chi_ofRep_single {n : ℕ} {A G : Type} [CommRing A] [Group G] (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G) :
@@ -49,7 +54,7 @@ theorem UpperTheory.V.Pa.pt_unip :
     ext k
     rw [Polynomial.coeff_map, Polynomial.coeff_zero]
     refine kills_max _ _ ((res_eq_zero_iff O B _).1 ?_)
-    have := congrArg (fun p => Polynomial.coeff p k) h4
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p k) h4
     simpa only [Polynomial.coeff_map, Polynomial.coeff_zero, RingHom.coe_coe] using this
   rw [Polynomial.map_sub, sub_eq_zero] at h5
   rw [h1, Polynomial.map_map, h5]

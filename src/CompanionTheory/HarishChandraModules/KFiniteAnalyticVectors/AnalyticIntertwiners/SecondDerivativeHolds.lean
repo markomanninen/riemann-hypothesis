@@ -1,6 +1,10 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.GrowthOfBasic
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Taylor
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.GrowthOfBasic
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.UniqueA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Taylor
+
+@[expose] public section
 
 open Matrix
 open scoped InnerProductSpace
@@ -86,8 +90,10 @@ theorem intertwiner_actM_pow_comm {W W' : Submodule ℂ (smD ε σ)} (hW : IsKSt
       by_cases hab : ε a = ε b
       · rw [resB_apply hW hab]
       · rw [inK_apply_eq_zero hZ hab, zero_smul, zero_smul]
-    rw [e1, map_sum]
-    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul]
     rw [pow_succ', Module.End.mul_apply, ← ih x]
     simp only [actM, LinearMap.sum_apply, LinearMap.smul_apply]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
@@ -108,12 +114,12 @@ theorem intertwiner_comm_kset (hσ : Formalism.MainNotions.S.IsURepOn (Formalism
   let e : W ≃ₗ[ℂ] Wh := Submodule.equivMapOfInjective _ Subtype.val_injective W
   let Φ : H →L[ℂ] H := ((smD ε σ).subtypeL.comp W'.subtypeL).comp
     ((LinearMap.toContinuousLinearMap φ).comp
-      ((LinearMap.toContinuousLinearMap (e.symm : Wh →ₗ[ℂ] W)).comp Wh.orthogonalProjection))
+      ((LinearMap.toContinuousLinearMap (e.symm : Wh →ₗ[ℂ] W)).comp Wh.orthogonalProjectionOnto))
   have hΦ : ∀ z : W, Φ ((z : smD ε σ) : H) = (((φ z : W') : smD ε σ) : H) := by
     intro z
     have hz : ((z : smD ε σ) : H) ∈ Wh := Submodule.mem_map_of_mem z.2
-    have h1 : Wh.orthogonalProjection ((z : smD ε σ) : H) = ⟨_, hz⟩ :=
-      Submodule.orthogonalProjection_mem_subspace_eq_self (⟨_, hz⟩ : Wh)
+    have h1 : Wh.orthogonalProjectionOnto ((z : smD ε σ) : H) = ⟨_, hz⟩ :=
+      Submodule.orthogonalProjectionOnto_mem_subspace_eq_self (⟨_, hz⟩ : Wh)
     have h2 : e.symm ⟨_, hz⟩ = z := by
       rw [LinearEquiv.symm_apply_eq]
       rfl

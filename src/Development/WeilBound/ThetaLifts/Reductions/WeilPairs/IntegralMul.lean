@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DCdE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicGLMulVecHaarEqModulusDetStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalMatricesDiscreteCocompactAdelicMatrixSpaStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.DCdE
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralAdelicGLMulVecHaarEqModulusDetStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalMatricesDiscreteCocompactAdelicMatrixSpaStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHalfAbstract
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionHeisenbergInvariant
+
+@[expose] public section
+
 open scoped TensorProduct Matrix Kronecker
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -63,8 +68,8 @@ theorem phase_move (JS : Matrix (Fin nS) (Fin nS) E) (J : Matrix (Fin nT) (Fin n
     ← Matrix.mul_assoc _ (s.1.map (cAF σ))ᵀ, ← Matrix.transpose_mul, ← Matrix.map_mul, Units.mul_inv,
     Matrix.map_one _ (map_zero _) (map_one _), Matrix.transpose_one, Matrix.one_mul]
 
-variable (F E nS nT) in
 
+variable (F E nS nT) in
 def vecE : WOF F E nS nT ≃+ (Fin (nT * nS) → AF F ⊗[F] E) where
   toFun w k := w (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
   invFun u i j := u (finProdFinEquiv (i, j))
@@ -162,7 +167,7 @@ theorem change : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberFie
         induction z using TensorProduct.induction_on with
         | zero => rw [map_zero, map_zero]
         | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (GlobalTheory.SplitDetCharF.sig_invol hB.cm x)
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       have hd : A.1.det = cAF σ s.1.det := by
         show ((s.1.map (cAF σ))ᵀ).det = _
         rw [Matrix.det_transpose, RingHom.map_det]; rfl

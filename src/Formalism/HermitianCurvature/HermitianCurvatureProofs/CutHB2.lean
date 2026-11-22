@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UpperMinorOfLevelPoint
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDomP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UpperMinorOfLevelPoint
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ContDiff
@@ -23,8 +27,8 @@ def phf {P : M.Par} (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)
     (e : Wd.Ix (Fin w.length)) (τ : ℂ) : Wq →L[ℂ] Wp :=
   D.uwG P.k P.r p.T.base.z p.T.base.z' (pbT p j (by omega) F) j (by omega) w e (x0 P.k P.r j hj (zxH h j hs v) τ γ)
 
-open Classical in
 
+open Classical in
 def phx {P : M.Par} (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (j : ℕ) (hj : j + 1 ≤ P.r)
     (w : List C.Letter) (h : C.LPt) (hs : D.ptSize h = j) (γ : B.Mat P.k (P.r - (j + 1))) (v : XH h)
     (e : Wd.Ix (Fin w.length)) : V1 (Wq →L[ℂ] Wp) :=
@@ -184,7 +188,7 @@ theorem cont_lhOf {p : ℕ} (σ : Equiv.Perm (Fin p)) : Continuous (LeftFubiniLe
 
 theorem cont_subS {p : ℕ} : Continuous (U.subS (p := p)) := by
   unfold U.subS
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   split_ifs
   · exact (continuous_apply i).comp (continuous_apply _)
   · exact continuous_const
@@ -246,7 +250,7 @@ theorem phx_eq (hW : WordSmooth) (hP : Pts) (hC : CurveSmooth) {P : M.Par} (p : 
     have hk := hj2.comp hg hm
     exact hk.congr fun τ _ => rfl
   unfold phx
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
 
 end asm
 

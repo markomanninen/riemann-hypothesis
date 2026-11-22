@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UopIsExt
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UopIsExt
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+
+@[expose] public section
+
 open Formalism.BasicNotions Classical NumberField GlobalTheory.LvT
 open Formalism.MainNotions.product_first_zeroth_parts (Ow tops wsum ten blk nfAll CSpan IntSpan Nm_succ wSh cTw)
 set_option maxHeartbeats 1000000 in

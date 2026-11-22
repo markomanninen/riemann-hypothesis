@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.SuppFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ section Loc
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-private theorem tw_eq_iff (y : IrrGL k) (χ ζ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
+private theorem tw_eq_iff (y : IrrGL (k := k)) (χ ζ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
     (∃ hζ, y.tw χ hχ = IrrGL.ofChar ζ hζ) ↔ ∃ ξ hξ, y = IrrGL.ofChar ξ hξ ∧ ζ = ξ * χ := by
   constructor
   · rintro ⟨hζ, e⟩
@@ -26,7 +30,7 @@ private theorem tw_eq_iff (y : IrrGL k) (χ ζ : kˣ →* ℂˣ) (hχ : IsSmooth
   · rintro ⟨ξ, hξ, rfl, rfl⟩
     exact ⟨hξ.mul hχ, IrrGL.tw_ofChar _ _ _ _⟩
 
-private theorem pol_tw (s : Multiset (IrrGL k)) (χ θ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
+private theorem pol_tw (s : Multiset (IrrGL (k := k))) (χ θ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
     pol (s.map (·.tw χ hχ)) θ = pol s (χ * θ) := by
   unfold pol
   rw [Multiset.map_map]
@@ -36,7 +40,7 @@ private theorem pol_tw (s : Multiset (IrrGL k)) (χ θ : kˣ →* ℂˣ) (hχ : 
   · have h' : ∃ ζ : kˣ →* ℂˣ, (∃ hζ, y.tw χ hχ = IrrGL.ofChar ζ hζ) ∧ IsUnram (ζ * θ) := by
       obtain ⟨ξ, ⟨hξ, e⟩, hu⟩ := h
       exact ⟨ξ * χ, (tw_eq_iff y χ _ hχ).2 ⟨ξ, hξ, e, rfl⟩, by rwa [mul_assoc]⟩
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     obtain ⟨ξ, hξ, e, e'⟩ := (tw_eq_iff y χ _ hχ).1 h'.choose_spec.1
     obtain ⟨hξ', e''⟩ := h.choose_spec.1
     have : ξ = h.choose := IrrGL.ofChar_inj.1 (e.symm.trans e'')
@@ -45,9 +49,9 @@ private theorem pol_tw (s : Multiset (IrrGL k)) (χ θ : kˣ →* ℂˣ) (hχ : 
       rintro ⟨ζ, hζ, hu⟩
       obtain ⟨ξ, hξ, e, rfl⟩ := (tw_eq_iff y χ _ hχ).1 hζ
       exact h ⟨ξ, ⟨hξ, e⟩, by rwa [← mul_assoc]⟩
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
 
-private theorem chars_tw (s : Multiset (IrrGL k)) (χ ζ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
+private theorem chars_tw (s : Multiset (IrrGL (k := k))) (χ ζ : kˣ →* ℂˣ) (hχ : IsSmoothChar χ) :
     ζ ∈ chars (s.map (·.tw χ hχ)) ↔ ∃ ξ ∈ chars s, ζ = ξ * χ := by
   constructor
   · rintro ⟨hζ, hm⟩
@@ -66,8 +70,8 @@ variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 private theorem smooth_loc (χ : HChar K) (v : HeightOneSpectrum (𝓞 K)) : IsSmoothChar (χ.loc v) :=
   GlobalTheory.HeckeComp.smooth_loc χ v
 
-private theorem supp_twist [IsTotallyComplex K] {v : HeightOneSpectrum (𝓞 K)} {σ : SmIrr (GL (Fin n) (v.adicCompletion K))} (χ : HChar K)
-    {s : Multiset (IrrGL (v.adicCompletion K))} (h : HasSupport σ.ρ s) :
+private theorem supp_twist [_root_.NumberField.IsTotallyComplex K] {v : HeightOneSpectrum (𝓞 K)} {σ : SmIrr (GL (Fin n) (v.adicCompletion K))} (χ : HChar K)
+    {s : Multiset (IrrGL (k := v.adicCompletion K))} (h : HasSupport σ.ρ s) :
     HasSupport (σ.twist (CuspSub.locDet n χ v) (CuspSub.isOpen_ker_locDet χ v)).ρ
       (s.map (·.tw (χ.loc v) (smooth_loc χ v))) :=
   h.tw (χ.loc v) (smooth_loc χ v)

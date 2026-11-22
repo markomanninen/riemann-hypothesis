@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate

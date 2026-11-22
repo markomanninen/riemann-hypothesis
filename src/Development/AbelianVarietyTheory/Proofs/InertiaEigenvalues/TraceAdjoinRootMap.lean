@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -39,7 +44,8 @@ theorem trace_adjoinRoot_map : ∀ (R S : Type) [CommRing R] [CommRing S] (g : R
       b'.repr z i = (AdjoinRoot.modByMonicHom hm' z).coeff i := fun z i => by
     simp only [b', Module.Basis.repr_reindex_apply]
     rfl
-  rw [Algebra.trace_eq_matrix_trace b, Algebra.trace_eq_matrix_trace b', Matrix.trace, Matrix.trace,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Algebra.trace_eq_matrix_trace b, Algebra.trace_eq_matrix_trace b', Matrix.trace, Matrix.trace,
     map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.diag]

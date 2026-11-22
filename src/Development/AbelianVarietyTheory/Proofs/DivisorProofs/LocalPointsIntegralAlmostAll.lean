@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormRootOfUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralPropertiesStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -11,7 +15,7 @@ noncomputable section
 
 namespace GlobalTheory.LocRatPt
 
-open scoped ComplexOrder
+open scoped ComplexOrder Matrix.Norms.L2Operator
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
@@ -35,7 +39,7 @@ theorem map_mem_UL (hU : Unr E) (w : Pl E) (γ : UE E n) :
 
 theorem locPt_val (hU : Unr E) (w : Pl E) (γ : UE E n) :
     (locPt w γ).1 = GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) γ.1 := by
-  rw [locPt, toSub, dif_pos (map_mem_UL hU w γ)]
+  rw [locPt, toSub, dite_eq_left (map_mem_UL hU w γ)]
 
 theorem eventually_valuation_le_one (x : E) :
     ∀ᶠ w in (cofinite : Filter (Pl E)), w.valuation E x ≤ 1 := by
@@ -77,14 +81,26 @@ theorem eventually_mem_KL (hU : Unr E) (γ : UE E n) :
 
 theorem norm_eq_one_of_root (γ : UE E n) (τ : E →+* ℂ) (z : ℂ)
     (hz : z ∈ ((γ.1 : GL (Fin n) E).val.charpoly.map τ).roots) : ‖z‖ = 1 := by
-  first
-  | (rename_i h_1 h_2 h_3; revert E h_1 h_2 h_3 n γ τ z hz; exact @_root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly)
-  | exact @_root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly
-  | exact _root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly
-  | (apply _root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly <;> assumption)
-  | (intros; apply _root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.UnitaryCharpolyRootNorm.norm_root_charpoly ..)
+  let A : Matrix (Fin n) (Fin n) ℂ := (γ.1 : GL (Fin n) E).val.map τ
+  have hγ : cT (IsCMField.complexConj E).toRingEquiv.toRingHom
+      (γ.1 : GL (Fin n) E).val * (γ.1 : GL (Fin n) E).val = 1 := by
+    have h : cT (IsCMField.complexConj E).toRingEquiv.toRingHom
+        (γ.1 : GL (Fin n) E).val * 1 * (γ.1 : GL (Fin n) E).val = 1 := γ.2
+    simpa only [Matrix.mul_one] using h
+  have hstar : star A * A = 1 := by
+    have hm := congrArg (fun M : Matrix (Fin n) (Fin n) E => M.map τ) hγ
+    rw [Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _)] at hm
+    convert hm using 1
+    apply congrArg (fun M : Matrix (Fin n) (Fin n) ℂ => M * A)
+    ext i j
+    simp [A, cT, IsCMField.complexEmbedding_complexConj]
+  have hu : A ∈ unitary (Matrix (Fin n) (Fin n) ℂ) := by
+    apply IsUnit.mem_unitary_of_star_mul_self _ hstar
+    exact ⟨GeneralLinearGroup.map τ γ.1, rfl⟩
+  apply spectrum.norm_eq_one_of_unitary hu
+  apply Matrix.mem_spectrum_of_isRoot_charpoly
+  apply Polynomial.isRoot_of_mem_roots
+  simpa [A, Matrix.charpoly_map] using hz
 
 theorem charpoly_mem_Ell (γ : UE E n) (hs : (γ.1 : GL (Fin n) E).val.charpoly.Separable) :
     (γ.1 : GL (Fin n) E).val.charpoly ∈ Ell E n :=

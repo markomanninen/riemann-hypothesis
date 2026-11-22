@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.NearArt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.SxLimPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.SxExtA
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.NearMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.NearArt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.SxLimPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.SxExtA
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.NearMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -41,16 +45,75 @@ private theorem isNilpotent_maxIdeal_quotient_maxIdeal_pow_succ {R : Type} [Comm
     _ = ⊥ := by rw [← Ideal.map_pow, Ideal.map_quotient_self]
 
 theorem UpperTheory.V.Ws.sxNearA :
-    ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] {Φ : Fr O Γ} {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] [IsAdicComplete (maximalIdeal Λ) Λ] {a : O →+* Λ} {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] {D : RD Φ R} {W : WPres Λ (ℤ × ℤ) R}, Φ.RUniv a D → D.Graded W → ∀ (D' : RD Φ W.A), D'.map (W.A.val : W.A →+* R) = D → ∀ (R' : Type) [CommRing R'] [Algebra Λ R'] [IsCO Λ R'] (τ : ℤ × ℤ →+ ℤ) (Q : RD Φ R'), Φ.Near a τ Q → ∃ f : W.A →ₐ[Λ] R', D'.map (f : W.A →+* R') = Q := by
+    ∀ {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] {Φ : Fr O Γ} {Λ : Type} [CommRing Λ] [IsLocalRing Λ] [IsNoetherianRing Λ] [IsAdicComplete (maximalIdeal Λ) Λ] {a : O →+* Λ} {R : Type} [CommRing R] [Algebra Λ R] [IsCO Λ R] {D : RD Φ R} {W : WPres Λ (ℤ × ℤ) R}, Φ.RUniv a D → RD.Graded D W → ∀ (D' : RD Φ W.A), D'.map (W.A.val : W.A →+* R) = D → ∀ (R' : Type) [CommRing R'] [Algebra Λ R'] [IsCO Λ R'] (τ : ℤ × ℤ →+ ℤ) (Q : RD Φ R'), Φ.Near a τ Q → ∃ f : W.A →ₐ[Λ] R', D'.map (f : W.A →+* R') = Q := by
   intro O Γ _ _ _ Φ Λ _ _ _ _ a R _ _ _ D W hU hG D' hD' R' _ _ _ τ Q hQ
   classical
+  have liftNilpotent : ∀ (T : Type) [CommRing T] [Algebra Λ T] [IsCO Λ T] (P : RD Φ T),
+      IsNilpotent (maximalIdeal T) → Φ.Near a τ P → ∃ f : W.A →ₐ[Λ] T, D'.map (f : W.A →+* T) = P := by
+    intro T _ _ _ P hnil hP
+    let c := ∑ p : Fin 4 × Fin 4, (τ (wt p.1 p.2)).natAbs
+    have hc : ∀ i j, -(c : ℤ) ≤ τ (wt i j) := by
+      intro i j
+      have h : (τ (wt i j)).natAbs ≤ c :=
+        Finset.single_le_sum (f := fun p : Fin 4 × Fin 4 => (τ (wt p.1 p.2)).natAbs)
+          (fun _ _ => Nat.zero_le _) (Finset.mem_univ (i, j))
+      omega
+    obtain ⟨S, _, _, _, e, he⟩ := sxLaur (Λ := Λ) hnil c
+    obtain ⟨P', hP', hr, hψ⟩ := sxScaleRD hnil he hc hP
+    obtain ⟨F, hF, -⟩ := hU.2 S P' hP'
+    have hFr : ∀ g i j, e (F (D.r g i j)) = HahnSeries.single (τ (wt i j)) (P.r g i j) := by
+      intro g i j
+      rw [← hr, ← hF]
+      rfl
+    have hFψ : ∀ v i s, e (F (D.ψ v i s)) = HahnSeries.single 0 (P.ψ v i s) := by
+      intro v i s
+      rw [← hψ, ← hF]
+      rfl
+    have hz : ∀ s, ∃ y, e (F (W.z s)) = HahnSeries.single (τ (W.wt s)) y := by
+      intro s
+      rcases hG.var s with ⟨g, i, j, x, h1, h2, h3⟩ | ⟨v, i, t, x, h1, h2⟩
+      · rw [h1, h2, map_sub, map_sub, hFr, AlgHom.commutes, he.alg]
+        by_cases hij : i = j
+        · rw [(wt_eq_zero i j).2 hij, map_zero]
+          exact ⟨_, (HahnSeries.single_sub _ _ _).symm⟩
+        · rw [h3 hij]
+          exact ⟨P.r g i j, by simp⟩
+      · rw [h1, h2, map_sub, map_sub, hFψ, AlgHom.commutes, he.alg, map_zero]
+        exact ⟨_, (HahnSeries.single_sub _ _ _).symm⟩
+    obtain ⟨f, hf⟩ := sxLaurDesc W he τ F (sxLaurPart W hG.max he τ F hz)
+    have er : ∀ g i j, ((D'.r g i j : W.A) : R) = D.r g i j := by
+      intro g i j
+      rw [← hD']
+      rfl
+    have eψ : ∀ v i s, ((D'.ψ v i s : W.A) : R) = D.ψ v i s := by
+      intro v i s
+      rw [← hD']
+      rfl
+    refine ⟨f, RD.ext ?_ ?_⟩
+    · ext g i j
+      have hm : D'.r g i j ∈ W.gr (wt i j) := by
+        show ((D'.r g i j : W.A) : R) ∈ W.part (wt i j)
+        rw [er]
+        exact hG.ent g i j
+      have h := hf _ _ hm
+      rw [er, hFr] at h
+      exact (HahnSeries.single_injective _ h).symm
+    · funext v i
+      ext s
+      have hm : D'.ψ v i s ∈ W.gr 0 := by
+        show ((D'.ψ v i s : W.A) : R) ∈ W.part 0
+        rw [eψ]
+        exact hG.chr v i s
+      have h := hf _ _ hm
+      rw [eψ, hFψ, map_zero] at h
+      exact (HahnSeries.single_injective _ h).symm
   have hlev : ∀ N : ℕ, ∃ f : W.A →ₐ[Λ] R' ⧸ maximalIdeal R' ^ (N + 1),
       D'.map (f : W.A →+* _) = Q.map (Ideal.Quotient.mk (maximalIdeal R' ^ (N + 1))) := by
     intro N
     haveI : Nontrivial (R' ⧸ maximalIdeal R' ^ (N + 1)) := nontrivial_quotient_maxIdeal_pow_succ N
     haveI : IsCO Λ (R' ⧸ maximalIdeal R' ^ (N + 1)) :=
       co_quot Λ R' _ (Ideal.Quotient.mkₐ Λ _) (Ideal.Quotient.mkₐ_surjective Λ _)
-    exact sxNearArt hU hG D' hD' _ τ _ (isNilpotent_maxIdeal_quotient_maxIdeal_pow_succ N)
+    exact liftNilpotent _ _ (isNilpotent_maxIdeal_quotient_maxIdeal_pow_succ N)
       (sxNearMap (Ideal.Quotient.mkₐ Λ (maximalIdeal R' ^ (N + 1))) hQ)
   have hval : ∀ s : W.σ, ∃ y : R', ∀ (N : ℕ) (f : W.A →ₐ[Λ] R' ⧸ maximalIdeal R' ^ (N + 1)),
       D'.map (f : W.A →+* _) = Q.map (Ideal.Quotient.mk (maximalIdeal R' ^ (N + 1))) →

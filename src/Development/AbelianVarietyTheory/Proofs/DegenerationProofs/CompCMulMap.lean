@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open PowerSeries
 
@@ -18,7 +22,8 @@ lemma coeff_comp {ι : Type} (b : Module.Basis ι O O₁) (j : ι) (f : PowerSer
 lemma decomp {ι : Type} [Fintype ι] (b : Module.Basis ι O O₁) (f : PowerSeries O₁) :
     f = ∑ j, C (b j) * map (algebraMap O O₁) (comp b j f) := by
   ext n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [coeff_C_mul, coeff_map, coeff_comp]
   conv_lhs => rw [← b.sum_repr (coeff n f)]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -36,7 +41,7 @@ noncomputable def ext : PowerSeries O₁ →+ K :=
   ∑ j, (AddMonoidHom.mulLeft (io (b j))).comp ((i : PowerSeries O →+ K).comp (comp b j))
 
 lemma ext_apply (f : PowerSeries O₁) : ext b i io f = ∑ j, io (b j) * i (comp b j f) := by
-  simp [ext, AddMonoidHom.finset_sum_apply]
+  simp [ext, AddMonoidHom.finsetSum_apply]
 
 variable {b i io}
 
@@ -45,16 +50,20 @@ lemma ext_C_mul_map (h : ∀ a : O, io (algebraMap O O₁ a) = i (C a)) (a : O�
   rw [ext_apply]
   simp only [comp_C_mul_map, map_mul, ← h, ← mul_assoc, ← Finset.sum_mul]
   congr 1
-  conv_rhs => rw [← b.sum_repr a, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← b.sum_repr a, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Algebra.smul_def, map_mul, mul_comm]
 
 lemma ext_mul (h : ∀ a : O, io (algebraMap O O₁ a) = i (C a)) (f g : PowerSeries O₁) :
     ext b i io (f * g) = ext b i io f * ext b i io g := by
-  conv_lhs => rw [decomp b f, decomp b g, Finset.sum_mul_sum, map_sum]
-  conv_rhs => rw [decomp b f, decomp b g, map_sum, map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [decomp b f, decomp b g, Finset.sum_mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [decomp b f, decomp b g, map_sum, map_sum, Finset.sum_mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   have e : C (b j) * map (algebraMap O O₁) (comp b j f) * (C (b k) * map (algebraMap O O₁) (comp b k g))
       = C (b j * b k) * map (algebraMap O O₁) (comp b j f * comp b k g) := by
@@ -83,5 +92,4 @@ theorem main (O O₁ K : Type) [CommRing O] [CommRing O₁] [CommRing K] [Algebr
     · exact Subring.subset_closure (Or.inr ⟨_, rfl⟩)
     · exact Subring.subset_closure (Or.inl ⟨_, rfl⟩)
 
-example : ∀ (O O₁ K : Type) [inst : CommRing O] [inst_1 : CommRing O₁] [inst_2 : CommRing K] [inst_3 : Algebra O O₁] [Module.Free O O₁] [Module.Finite O O₁] (i : PowerSeries O →+* K) (io : O₁ →+* K), (∀ (a : O), (io : O₁ → K) ((Algebra.algebraMap O O₁ : O → O₁) a) = (i : PowerSeries O → K) ((PowerSeries.C : O → PowerSeries O) a)) → ∃ (Φ : PowerSeries O₁ →+* K), (∀ (a : O₁), (Φ : PowerSeries O₁ → K) ((PowerSeries.C : O₁ → PowerSeries O₁) a) = (io : O₁ → K) a) ∧ (Φ : PowerSeries O₁ → K) PowerSeries.X = (i : PowerSeries O → K) PowerSeries.X ∧ ∀ (f : PowerSeries O₁), (Φ : PowerSeries O₁ → K) f ∈ Subring.closure (Set.range (⇑i : PowerSeries O → K) ∪ Set.range (⇑io : O₁ → K)) := main
 end GlobalTheory.PowerSeriesCompositionMap

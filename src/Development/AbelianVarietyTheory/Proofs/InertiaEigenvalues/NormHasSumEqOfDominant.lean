@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -28,7 +33,7 @@ theorem norm_hasSum_eq_of_dominant : ∀ (K : Type) [NormedField K] [IsUltrametr
     · simpa using hc
     · exact h i hi
   have hfin : {i | ¬ ‖f i‖ < ‖f i₀‖ / 2}.Finite := by
-    have := (NormedAddCommGroup.tendsto_nhds_zero.1 hf) (‖f i₀‖ / 2) (by positivity)
+    have := (NormedAddGroup.tendsto_nhds_zero.1 hf) (‖f i₀‖ / 2) (by positivity)
     exact Filter.eventually_cofinite.1 this
   obtain ⟨j, -, hj⟩ := Set.exists_max_image _ (fun i => ‖g i‖) hfin
     ⟨i₀, by simp only [Set.mem_setOf_eq]; linarith⟩

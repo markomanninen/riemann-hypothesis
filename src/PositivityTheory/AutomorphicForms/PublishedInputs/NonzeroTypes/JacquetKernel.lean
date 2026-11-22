@@ -1,6 +1,10 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,7 @@ theorem eventually_mem_twKer_NO {V : Type} [AddCommGroup V] [Module ℂ V]
   | zero => simp
   | add y z _ _ hy hz =>
     filter_upwards [hy, hz] with m h1 h2
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem h1 h2
   | smul a y _ hy =>
     filter_upwards [hy] with m h1

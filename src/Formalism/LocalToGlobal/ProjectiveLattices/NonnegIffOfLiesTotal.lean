@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.VAddIntNonneg
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAddIntNonneg
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+
+@[expose] public section
 
 noncomputable section
 

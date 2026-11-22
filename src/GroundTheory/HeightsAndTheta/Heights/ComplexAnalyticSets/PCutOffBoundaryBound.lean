@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryBound
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryParts
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
-import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryBound
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCutOffBoundaryParts
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompact
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.OsgoodSeparate
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.LocDens
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -194,8 +199,8 @@ theorem final_bound {X M C aI E Φ : ℝ} (hC : 0 ≤ C) (ha : 0 ≤ aI)
 
 end CutOffBoundaryBound
 
-open CutOffBoundaryBound in
 
+open CutOffBoundaryBound in
 theorem CutOffBoundaryBound.proof (hM : ChartMassCompact.Statement) (hL : MaDensLeibniz.Statement)
     (hN : EnergyDensNonneg.Statement) (hS : GradDensSheetBound.Statement) :
     CutOffBoundaryBound.Statement := by

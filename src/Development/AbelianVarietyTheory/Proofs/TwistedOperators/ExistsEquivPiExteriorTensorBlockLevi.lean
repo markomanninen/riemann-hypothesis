@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOpenNormalisedSubgroupSubset
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContractsTensorProductChain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchurAdmissibleAlt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivExteriorTensorOfIrreducibleProdRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveTensorLiftEquivariantMapsOfIrreducible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSmoothQuotient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SmRep
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOpenNormalisedSubgroupSubset
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContractsTensorProductChain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchurAdmissibleAlt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivExteriorTensorOfIrreducibleProdRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InjectiveTensorLiftEquivariantMapsOfIrreducible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSmoothQuotient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIrreducibleSecondFactorOfIrreducibleProduct
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ variable {G H V W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] 
 def FinFixed (ρ : Representation ℂ G V) : Prop :=
   ∀ K : Subgroup G, IsOpen (K : Set G) → FiniteDimensional ℂ (fixed ρ K)
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 
+omit [IsTopologicalGroup G] [IsTopologicalGroup H] in
 theorem FinFixed.comp {ρ : Representation ℂ G V} (h : FinFixed ρ) (φ : H →* G) (hφ : IsOpenMap φ) :
     FinFixed (ρ.comp φ : Representation ℂ H V) := by
   intro K hK
@@ -258,7 +262,7 @@ theorem exists_piTensor_fin : ∀ (n : ℕ) (Γ : Fin n → Type) [∀ j, Group 
       intro g z
       induction z using TensorProduct.induction_on with
       | zero => simp only [map_zero]
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | tmul a b =>
         rw [extTensor_tmul]
         show c (e' (σ.ρ g.1 a) ⊗ₜ ρ.ρ g.2 b) = _
@@ -288,7 +292,7 @@ theorem exists_piTensor {β : Type} [Fintype β] (Γ : β → Type) [∀ j, Grou
       piTensor (fun i => (s (ε.symm i)).ρ) (χ g) (r z) := by
     intro g z
     induction z using PiTensorProduct.induction_on with
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | smul_tprod c x =>
       simp only [map_smul, r, piTensor_tprod, PiTensorProduct.reindex_tprod]
       rfl

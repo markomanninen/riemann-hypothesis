@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogGaussNormSupportFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.IntToFracInjective
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.LogGaussNormSupportFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -66,8 +71,7 @@ theorem adicAbv_of_intValuation_eq (v : HeightOneSpectrum (𝓞 K)) {a : 𝓞 K}
       (Ideal.absNorm v.asIdeal : ℝ)⁻¹ := by
   rw [NumberField.HeightOneSpectrum.adicAbv_def, HeightOneSpectrum.valuation_of_algebraMap, ha,
     WithZeroMulInt.toNNReal_neg_apply _ exp_ne_zero]
-  have h1 : Multiplicative.toAdd (unzero (exp_ne_zero (a := (-1 : ℤ)))) = -1 := rfl
-  rw [h1, zpow_neg_one, NNReal.coe_inv, NNReal.coe_natCast]
+  rw [WithZero.log_exp, zpow_neg_one, NNReal.coe_inv, NNReal.coe_natCast]
 
 theorem irreducible_algebraMap_C (e n : ℕ) (v : HeightOneSpectrum (𝓞 K))
     [IsDiscreteValuationRing (ParDVR e n v)] {a : 𝓞 K} (ha : v.intValuation a = exp (-1 : ℤ)) :
@@ -140,7 +144,7 @@ theorem GaussDVR.proof (h1 : ParDVRIsDVR.Statement) : GaussDVR.Statement := by
   have hb0 : g.coeff d0 ≠ 0 := mem_support_iff.mp hd0
   have hh : h.coeff d0 ∉ v.asIdeal := by
     intro hmem
-    have hc := congrArg (coeff d0) hth
+    have hc := congrArg (AddMonoidAlgebra.coeff · d0) hth
     rw [coeff_C_mul, ← C_pow, coeff_C_mul] at hc
     have h3 : t * g.coeff d0 ∈ v.asIdeal ^ (m + 1) := by
       rw [hc, pow_succ]

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
-import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsBdd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WdParameterMonodromyZeroIffPotentiallyCrystallin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalFilDR
+public import Formalism.SharpRestriction.LevelLetterCocycles.JsetEmb
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfJumpsBdd
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.ConjugateSelfDual ReciprocityTheory.Gal NumberField IsDedekindDomain TensorProduct Module GlobalTheory.WeilDeligne GlobalTheory.Pst Polynomial
 
 section Gen
@@ -42,7 +47,7 @@ private theorem gen_fil [CharZero Qp] (PD : PeriodData G Qp K₀ K B BdR)
     · exact Ln03.Pf.jb_FilV_anti PD (LL := LL) (V := V) h hc
     · have key : ∀ d, c ≤ d → d ≤ a → x ∈ FilV PD (LL := LL) (V := V) d := by
         intro d hd
-        induction d, hd using Int.le_induction with
+        induction d, hd using Int.leInduction with
         | base => exact fun _ => hc
         | succ d hd ih =>
           intro hda
@@ -56,7 +61,7 @@ private theorem gen_fil [CharZero Qp] (PD : PeriodData G Qp K₀ K B BdR)
     refine Ln03.Pf.jb_FilV_sep PD (LL := LL) (V := V) x fun d => ?_
     rcases le_total d (b + 1) with h | h
     · exact Ln03.Pf.jb_FilV_anti PD (LL := LL) (V := V) h hx.2
-    · induction d, h using Int.le_induction with
+    · induction d, h using Int.leInduction with
       | base => exact hx.2
       | succ d hd ih =>
         have hm : x ∈ DdR PD ρ ⊓ FilV PD (LL := LL) (V := V) d := ⟨hx.1, ih⟩

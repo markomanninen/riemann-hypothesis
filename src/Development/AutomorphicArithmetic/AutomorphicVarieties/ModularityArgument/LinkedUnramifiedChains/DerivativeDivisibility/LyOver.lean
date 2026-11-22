@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
+
+@[expose] public section
 
 open Polynomial
 
@@ -11,7 +15,11 @@ private theorem ext_injective {R S K : Type} [CommRing R] [IsDomain R] [CommRing
   haveI : Module.IsTorsionFree R K := Module.isTorsionFree_iff_algebraMap_injective.2 hφ
   haveI : Algebra.IsIntegral R S := ⟨hf⟩
   haveI : Algebra.IsAlgebraic R S := Algebra.IsIntegral.isAlgebraic
-  let e : S →ₐ[R] K := IsAlgClosed.lift
+  let e : S →ₐ[R] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨e.toRingHom, RingHom.ext fun r => e.commutes r⟩
 
 private theorem ext_integral {R S K : Type} [CommRing R] [CommRing S] [Field K] [IsAlgClosed K]
@@ -30,7 +38,7 @@ private theorem ext_integral {R S K : Type} [CommRing R] [CommRing S] [Field K] 
     rw [hQc'] at ha
     exact ha)
   have hφ' : Function.Injective φ' := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
     rw [Ideal.Quotient.eq_zero_iff_mem, hQc']

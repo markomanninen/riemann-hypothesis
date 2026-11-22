@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.S
 open scoped InnerProductSpace
@@ -15,7 +19,7 @@ theorem congruence_normal_finite_index : ∀ (I : AutInst), (∃ K : Subgroup I.
   refine ⟨⟨H, hH⟩, hKgo, hnorm, ?_⟩
 
   have hopen : ∀ t ∈ I.Kset, IsOpen {x : I.Gf | t⁻¹ * x ∈ I.Kg g} := fun t _ =>
-    hKgo.preimage (continuous_mul_left t⁻¹)
+    hKgo.preimage (continuous_const_mul t⁻¹)
   have hsub : I.Kset ⊆ ⋃ t ∈ I.Kset, {x : I.Gf | t⁻¹ * x ∈ I.Kg g} := by
     intro x hx
     refine Set.mem_biUnion hx ?_

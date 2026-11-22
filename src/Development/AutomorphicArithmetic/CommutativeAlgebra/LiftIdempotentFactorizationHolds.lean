@@ -1,6 +1,11 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LIdemLiftPf
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsMonicFactorLiftOfPowMulSubOnePow
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LIdemLiftPf
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsMonicFactorLiftOfPowMulSubOnePow
+
+@[expose] public section
+
 noncomputable section
 
 theorem UpperTheory.liftIdempotentFactorization_holds :

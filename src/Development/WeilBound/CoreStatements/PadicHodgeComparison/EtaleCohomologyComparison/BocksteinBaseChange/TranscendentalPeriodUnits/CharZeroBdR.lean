@@ -1,6 +1,37 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.TranscendentalPeriodUnits.CrystallineSemistableComparison
-import GroundTheory.PAdicHodge.WAFracB
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.TranscendentalPeriodUnits.CrystallineSemistableComparison
+public import GroundTheory.PAdicHodge.BCrisNewtonLift
+public import GroundTheory.PAdicHodge.AInfGalois
+public import GroundTheory.PAdicHodge.AInfXi
+public import GroundTheory.PAdicHodge.TiltAlgClosed
+public import GroundTheory.PAdicHodge.TiltAlgebra
+public import GroundTheory.PAdicHodge.TateCpTwist
+public import GroundTheory.PAdicHodge.ExtRobbaBounded
+public import GroundTheory.PAdicHodge.RobbaSeries
+public import GroundTheory.PAdicHodge.HighIndexSingleZeroOne
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.SemilinearResidue
+public import GroundTheory.PAdicHodge.SlopeRobbaDegree
+public import GroundTheory.PAdicHodge.BCrisEigenWitt
+public import GroundTheory.PAdicHodge.BStPeriod
+public import GroundTheory.PAdicHodge.ACrisBdR
+public import GroundTheory.PAdicHodge.BdRGalois
+public import GroundTheory.PAdicHodge.ACrisBdRGalois
+public import GroundTheory.PAdicHodge.InstMulSemiringActionGalPlus
+public import GroundTheory.PAdicHodge.BCrisNewtonApprox
+public import GroundTheory.PAdicHodge.UnramifiedFrob
+public import GroundTheory.PAdicHodge.BdRTGalois
+public import GroundTheory.PAdicHodge.BCrisPlusInvariants
+public import GroundTheory.PAdicHodge.BCrisRegularFinal
+public import GroundTheory.PAdicHodge.ACrisGalois
+public import GroundTheory.PAdicHodge.FundamentalSeqSurj
+public import GroundTheory.PAdicHodge.FontaineLemmaInvariants
+public import GroundTheory.PAdicHodge.ExistsNormLeOfNormLtOneFinite
+public import GroundTheory.PAdicHodge.BCrisNewton
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -12,17 +43,9 @@ namespace CrystallineSemistableComparison
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
-instance charZero_bdR : CharZero (BdR l) := ⟨fun a b h => by
-  have : qQ l (a : ℚ_[l]) = qQ l (b : ℚ_[l]) := by rw [map_natCast, map_natCast]; exact h
-  exact Nat.cast_injective ((qQ l).injective this)⟩
 
 variable (l) in
-
 abbrev Fr : Subfield (BdR l) :=
   ACris.fracBCris (untilt_epsilon (p := l)) untilt_frobeniusEquiv_symm_epsilon_ne_one
-
-def cK (g : K.fixingSubgroup) : BdR l := qQ l (period_ring_base.κ g.1) * tQ l
-
-theorem σ_uQ (g : K.fixingSubgroup) : σD g.1 (uQ l) = uQ l + cK g := (period_ring_base.base l).σ_u g.1
 
 end CrystallineSemistableComparison

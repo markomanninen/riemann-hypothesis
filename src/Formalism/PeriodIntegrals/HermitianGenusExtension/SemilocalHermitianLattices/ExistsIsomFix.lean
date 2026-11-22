@@ -1,4 +1,8 @@
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 noncomputable section
 

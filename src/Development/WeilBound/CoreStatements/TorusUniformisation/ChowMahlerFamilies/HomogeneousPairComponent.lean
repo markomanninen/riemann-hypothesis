@@ -1,8 +1,11 @@
-import Mathlib
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsLatFlagPair
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -14,9 +17,10 @@ theorem comp_mul {σ M R : Type*} [CommRing R] [AddCancelCommMonoid M] (w : σ �
     weightedHomogeneousComponent w (b + bg) (s * g) = weightedHomogeneousComponent w b s * g := by
   conv_lhs => rw [s.as_sum, Finset.sum_mul]
   conv_rhs => rw [s.as_sum]
-  rw [map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl (fun d _ => ?_)
-  have hm : IsWeightedHomogeneous w (monomial d (coeff d s)) (Finsupp.weight w d) :=
+  have hm : IsWeightedHomogeneous w (monomial d (AddMonoidAlgebra.coeff s d)) (Finsupp.weight w d) :=
     isWeightedHomogeneous_monomial _ _ _ rfl
   by_cases h : Finsupp.weight w d = b
   · subst h
@@ -28,7 +32,8 @@ theorem comp_mul_zero {σ M R : Type*} [CommRing R] [AddCommMonoid M] (w : σ �
     (g : MvPolynomial σ R) (bg : M) (hg : IsWeightedHomogeneous w g bg) (c : M)
     (hc : ∀ b, c ≠ b + bg) (s : MvPolynomial σ R) :
     weightedHomogeneousComponent w c (s * g) = 0 := by
-  rw [s.as_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [s.as_sum, Finset.sum_mul, map_sum]
   refine Finset.sum_eq_zero (fun d _ => ?_)
   exact ((isWeightedHomogeneous_monomial _ _ _ rfl).mul hg).weightedHomogeneousComponent_ne _ (hc _)
 

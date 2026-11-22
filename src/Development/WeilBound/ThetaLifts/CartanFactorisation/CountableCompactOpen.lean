@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DixmierCommutantScalar
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsPureML
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DixmierCommutantScalar
+
+@[expose] public section
 
 noncomputable section
 

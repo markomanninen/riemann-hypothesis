@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormVZpowDegEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValSubLtIff
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.AdTransfer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormVZpowDegEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValSubLtIff
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.AdTransfer
+
+@[expose] public section
 
 noncomputable section
 

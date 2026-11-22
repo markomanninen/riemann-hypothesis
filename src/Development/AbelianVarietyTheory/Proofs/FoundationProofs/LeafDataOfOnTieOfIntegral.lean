@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwistTrivialOnRational
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDetOfMemSt
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightOnDatum
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.OrientationExclusive
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwistTrivialOnRational
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDetOfMemSt
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.WeightOnDatum
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAlgebraMapOfSigRFixed
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.OrientationExclusive
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,8 @@ theorem mem_eig_iff {y : Z} : y ∈ eig ρ U ψ ↔ ∀ u : U, ρ (u : P) y = ((
 
 theorem trace_mem_eig (hψ : ∀ a ∈ U, ∀ b ∈ U, ψ (a * b) = ψ a * ψ b) (y : Z) : trace ρ U ψ y ∈ eig ρ U ψ := by
   refine mem_eig_iff.2 fun a => ?_
-  simp only [trace, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [trace, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
   refine (Fintype.sum_equiv (Equiv.mulRight a) _ _ fun u => ?_).symm
   have e : ρ (a : P) (ρ ((u : P) * a)⁻¹ y) = ρ (u : P)⁻¹ y := by
     rw [← Module.End.mul_apply, ← map_mul, mul_inv_rev, mul_inv_cancel_left]
@@ -61,9 +66,6 @@ theorem trace_of_mem_eig (h1 : ψ 1 = 1) (hψ : ∀ a ∈ U, ∀ b ∈ U, ψ (a 
 end Trace
 
 variable {D : D7}
-
-def ShortSpanFG {B : WeightFamilies.Prov D} {P6 : ModuliIntegralCharts.Prov D} {j : ℕ} (X : WeightAlgebra.PJ D B P6 j) (w : WeightFamilies.Wt D j) : Prop :=
-  (X.shortTh w).FG
 
 section Coord
 
@@ -120,11 +122,9 @@ theorem spanK_spanIn_le [NumberField F] {R : ℕ → Type} [∀ j, CommRing (R j
     {M : Submodule (𝓞 K) (Fin n → K)} (hM : ∀ y : cutR C j w, y.1 ∈ s → z.symm (1 ⊗ₜ y) ∈ M) :
     spanK z (spanIn C j w s : Set (cutR C j w)) ≤ M := spanK_comap_span_le _ z hs hM
 
-theorem spanK_fg_cusp {B : WeightFamilies.Prov D} {P6 : ModuliIntegralCharts.Prov D} {j : ℕ} {X : WeightAlgebra.PJ D B P6 j} {w : WeightFamilies.Wt D j} [Algebra B.KO K]
-    (z : (Fin n → K) ≃ₗ[K] K ⊗[B.KO] B.Cusp j w) (h : ShortSpanFG X w) : (spanK z (X.shortTh w : Set _)).FG :=
-  spanK_fg_of_fg z h
-
 end Coord
+
+attribute [local instance 2000] Submodule.module
 
 section Forms
 
@@ -164,9 +164,9 @@ theorem trace_gen_mem (hT : LawsFull T) (hj : InR D j) (hxi : TwistTrivialOnRati
   exact Submodule.subset_span ⟨f', ⟨Λ, N, x₀, Q, x, h1, h2, h3, h4, by simpa [hn] using h5, h6,
     fun u => ⟨hx u, by simpa [hn] using ax u, (hf u).2.2⟩⟩, rfl⟩
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem trace_mem_thetaEig (hT : LawsFull T) (hj : InR D j) (hxi : TwistTrivialOnRational T j) (hn : w.n = D.R.nV)
     (hl : w.LastPos) (hρ : ∀ g F, ρ g (z.symm (1 ⊗ₜ F)) = z.symm (1 ⊗ₜ act g F)) (hact : IsLevAct T.toTop h j w ℓ act)
     (hdet : ∀ u ∈ U, DetOne (ℓ u)) {y : Fin n → K} (hy : y ∈ spanK z ((recPJ h j hj).shortTh w : Set _)) :
@@ -228,8 +228,8 @@ theorem clauses_of_onTie {T : Full D} [Algebra T.J.Q.c.F D.what₂.LL] {R : Real
     have := trace_mem_thetaEig (ψ := O.ψ) hT (inR_succ ι) hxi hn hl t.rho_eq t.act_eq hd hx
     rwa [trace_of_mem_eig h1 hψ he] at this
 
-variable (A) in
 
+variable (A) in
 def TiedAt (hinj : Function.Injective D.what₂.OtoLL) (EX : ErrX D) (O : OnObj S P oc) (inc : P →* G) (U : Subgroup G)
     (ψ : U →* D.what₂.LLˣ)
     (Q : ∀ (B : WeightFamilies.Prov D) (P6 : ModuliIntegralCharts.Prov D) (j : ℕ), WeightAlgebra.PJ D B P6 j → ℕ → (ka wL wF : WeightFamilies.Wt D j) → ℕ → Prop)
@@ -244,16 +244,6 @@ def TiedAt (hinj : Function.Injective D.what₂.OtoLL) (EX : ErrX D) (O : OnObj 
 variable {hinj : Function.Injective D.what₂.OtoLL} {EX : ErrX D} {O : OnObj S P oc} {inc : P →* G} {U : Subgroup G}
   {ψ : U →* D.what₂.LLˣ}
 
-theorem leafData_of_onTie
-    (H : AtPair S fun v => ∀ i, TiedAt A hinj EX O inc U ψ (fun _ _ _ X _ ka _ _ _ => ShortSpanFG X ka) v i) :
-    LeafData O := by
-  have key : ∀ v i, TiedAt A hinj EX O inc U ψ (fun _ _ _ X _ ka _ _ _ => ShortSpanFG X ka) v i →
-      (O.Th0 v i).FG ∧ O.Th0 v i ≤ (eig (O.ρ i) O.U O.ψ).restrictScalars (𝓞 D.what₂.LL) ∧
-        sc ((Nat.card O.U : ℕ) : D.what₂.LL) (cut (eig (O.ρ i) O.U O.ψ) (O.ThK v i)) ≤ O.Th0 v i := by
-    rintro v i ⟨T, _, R, κ, v₀, h, fw, p, ι, wL, wF, nT, z, act, ℓ, ph, y, t, hT, hxi, hn, hl, hdet, hfg⟩
-    exact clauses_of_onTie t hT hxi hn hl hdet (t.ThK_eq ▸ spanK_fg_cusp z hfg)
-  exact fun w hw => ⟨fun i => key w i ((H w hw).1 i), fun i => key _ i ((H w hw).2 i)⟩
-
 theorem leafData_of_onTie_of_leafSpan (hS : LeafSpan O)
     (H : AtPair S fun v => ∀ i, TiedAt A hinj EX O inc U ψ (fun _ _ _ _ _ _ _ _ _ => True) v i) : LeafData O := by
   have key : ∀ v i, TiedAt A hinj EX O inc U ψ (fun _ _ _ _ _ _ _ _ _ => True) v i → (O.ThK v i).FG →
@@ -263,17 +253,6 @@ theorem leafData_of_onTie_of_leafSpan (hS : LeafSpan O)
     exact clauses_of_onTie t hT hxi hn hl hdet hfg
   exact fun w hw => ⟨fun i => key w i ((H w hw).1 i) ((hS w hw).1 i).2.1,
     fun i => key _ i ((H w hw).2 i) ((hS w hw).2 i).2.1⟩
-
-theorem leafData_of_onTie_of_integral
-    (H : AtPair S fun v => ∀ i, TiedAt A hinj EX O inc U ψ (fun B _ j X p ka wL wF nT => 0 < p ∧
-      Formalism.MainNotions.Gaps.EtaleWeightGaps.LatAt B j ka ∧ WeightAlgebra.H2 X (scalOfP B hinj EX p ka wL wF nT) ka wL wF) v i) : LeafData O := by
-  have key : ∀ v i, TiedAt A hinj EX O inc U ψ (fun B _ j X p ka wL wF nT => 0 < p ∧
-      Formalism.MainNotions.Gaps.EtaleWeightGaps.LatAt B j ka ∧ WeightAlgebra.H2 X (scalOfP B hinj EX p ka wL wF nT) ka wL wF) v i →
-      TiedAt A hinj EX O inc U ψ (fun _ _ _ X _ ka _ _ _ => ShortSpanFG X ka) v i := by
-    rintro v i ⟨T, _, R, κ, v₀, h, fw, p, ι, wL, wF, nT, z, act, ℓ, ph, y, t, hT, hxi, hn, hl, hdet, hp, hL, hH⟩
-    exact ⟨T, _, R, κ, v₀, h, fw, p, ι, wL, wF, nT, z, act, ℓ, ph, y, t, hT, hxi, hn, hl, hdet,
-      shortTh_fg _ hinj EX hp _ _ _ _ hL hH⟩
-  exact leafData_of_onTie fun w hw => ⟨fun i => key w i ((H w hw).1 i), fun i => key _ i ((H w hw).2 i)⟩
 
 end Main
 
@@ -321,40 +300,9 @@ theorem kaR_lastPos (Tp : ParamsT D L Pm) (hK : DV.KapDef D) {j : ℕ} (hj : InR
 
 variable {Bs : DefBase D.what₂.LL} {Df : DefSide Bs} {S : IndefData Df} {P : Type} [Group P] [Finite P] {oc : OnConst}
 
-variable (A) in
-
-def PinnedAt (Tp : ParamsT D L Pm) (hK : DV.KapDef D) (hinj : Function.Injective D.what₂.OtoLL) (EX : ErrX D)
-    (O : OnObj S P oc) (inc : P →* G) (U : Subgroup G) (ψ : U →* D.what₂.LLˣ)
-    (Q : ∀ (B : WeightFamilies.Prov D) (P6 : ModuliIntegralCharts.Prov D) (j : ℕ), WeightAlgebra.PJ D B P6 j → ℕ → (ka wL wF : WeightFamilies.Wt D j) → ℕ → Prop)
-    (v : HeightOneSpectrum (𝓞 D.what₂.LL)) (i : Bs.J) : Prop :=
-  ∃ (T : Full D) (_ : Algebra T.J.Q.c.F D.what₂.LL) (R : RealDat D A T.J.Q.c.F)
-    (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
-    (h : LawsP T.toTop) (fw : FWTie T.J R κ v₀) (p : ℕ) (ι : Fin D.R.m) (wL wF : WeightFamilies.Wt D ((ι : ℕ) + 1)) (nT : ℕ),
-    ∃ z act ℓ ph y, OnTie h fw hinj EX p ι wL wF nT O v i z act inc ℓ U ψ ph y ∧ LawsFull T ∧
-      κ ι = kaR Tp hK ((ι : ℕ) + 1) ∧ RunPin R ι (κ ι).n v p ∧ LevelPin R ι ℓ ∧ HalfPin R ∧ UnipPin R U ∧
-      Q _ _ _ (recPJ h ((ι : ℕ) + 1) (inR_succ ι)) p (κ ι) wL wF nT
 
 variable {Tp : ParamsT D L Pm} {hK : DV.KapDef D} {hinj : Function.Injective D.what₂.OtoLL} {EX : ErrX D} {O : OnObj S P oc}
   {inc : P →* G} {U : Subgroup G} {ψ : U →* D.what₂.LLˣ}
-
-theorem PinnedAt.tiedAt {Q v i} (H : PinnedAt A Tp hK hinj EX O inc U ψ Q v i) : TiedAt A hinj EX O inc U ψ Q v i := by
-  obtain ⟨T, _, R, κ, v₀, h, fw, p, ι, wL, wF, nT, z, act, ℓ, ph, y, t, hT, hκ, hR, hℓ, hH, hU, hQ⟩ := H
-  exact ⟨T, _, R, κ, v₀, h, fw, p, ι, wL, wF, nT, z, act, ℓ, ph, y, t, hT, twistTrivial_of_runPin hT hR,
-    hκ ▸ kaWt_n _ _ _ _, hκ ▸ kaR_lastPos Tp hK (inR_succ ι), detOneOn_of_pins hT hℓ hH hU, hQ⟩
-
-theorem leafData_of_pins
-    (H : AtPair S fun v => ∀ i, PinnedAt A Tp hK hinj EX O inc U ψ (fun _ _ _ X _ ka _ _ _ => ShortSpanFG X ka) v i) :
-    LeafData O :=
-  leafData_of_onTie fun w hw => ⟨fun i => ((H w hw).1 i).tiedAt, fun i => ((H w hw).2 i).tiedAt⟩
-
-theorem leafData_of_pins_of_leafSpan (hS : LeafSpan O)
-    (H : AtPair S fun v => ∀ i, PinnedAt A Tp hK hinj EX O inc U ψ (fun _ _ _ _ _ _ _ _ _ => True) v i) : LeafData O :=
-  leafData_of_onTie_of_leafSpan hS fun w hw => ⟨fun i => ((H w hw).1 i).tiedAt, fun i => ((H w hw).2 i).tiedAt⟩
-
-theorem leafData_of_pins_of_integral
-    (H : AtPair S fun v => ∀ i, PinnedAt A Tp hK hinj EX O inc U ψ (fun B _ j X p ka wL wF nT => 0 < p ∧
-      Formalism.MainNotions.Gaps.EtaleWeightGaps.LatAt B j ka ∧ WeightAlgebra.H2 X (scalOfP B hinj EX p ka wL wF nT) ka wL wF) v i) : LeafData O :=
-  leafData_of_onTie_of_integral fun w hw => ⟨fun i => ((H w hw).1 i).tiedAt, fun i => ((H w hw).2 i).tiedAt⟩
 
 end Pins
 

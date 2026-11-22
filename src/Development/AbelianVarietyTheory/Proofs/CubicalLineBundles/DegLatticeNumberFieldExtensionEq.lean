@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthLocalizedModuleEqZeroOfNotAnnihilatorLe
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.OneMulConjFracOneEqInvDifferent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthLocalizedModuleEqZeroOfNotAnnihilatorLe
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.OneMulConjFracOneEqInvDifferent
+
+@[expose] public section
 
 open NumberField Module ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -13,12 +17,6 @@ variable {K K' : Type} [Field K] [NumberField K] [Field K'] [NumberField K'] [Al
   [Module (𝓞 K') V'] [IsScalarTower (𝓞 K) (𝓞 K') V'] (φ : V →ₗ[𝓞 K] V')
 
 variable [Module K V] [IsScalarTower (𝓞 K) K V] [Module K' V'] [IsScalarTower (𝓞 K') K' V']
-
-theorem form_eq_sum {L : Type} [Field L] {n : ℕ} (h : HermFam L (Fin n → L)) (s : L →+* ℂ) (x y : Fin n → L) :
-    h.form s x y = ∑ a, ∑ b, starRingEnd ℂ (s (x a)) * s (y b) * h.form s (Pi.single a 1) (Pi.single b 1) := by
-  conv_lhs => rw [pi_eq_sum_univ' x, pi_eq_sum_univ' y]
-  simp only [h.ds_form_sum_left, h.ds_form_sum_right, h.ds_form_smul_left, h.smul_right, Finset.mul_sum,
-    mul_assoc]
 
 end GlobalTheory.LatticeExtension
 
@@ -95,7 +93,8 @@ private lemma map_mem_span_range_map_of_mem_span {r : ℕ} {v : Fin r → Fin n 
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hx
   refine (Submodule.mem_span_range_iff_exists_fun K').2 ⟨fun a => j (c a), ?_⟩
   ext i
-  simp [Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Finset.sum_apply, map_sum]
 
 open NumberField Module in
 open scoped nonZeroDivisors in
@@ -212,7 +211,8 @@ private lemma span_range_inf_ker_eq_span_range_castSucc {R : Type} [CommRing R] 
   · rintro x ⟨hx, hk⟩
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).1 hx
     have hk' : f (∑ i, c i • v i) = 0 := hk
-    rw [Fin.sum_univ_castSucc, map_add, map_sum] at hk'
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Fin.sum_univ_castSucc, map_add (f := _), map_sum] at hk'
     simp only [LinearMap.map_smul_of_tower, h0, h1, smul_zero, Finset.sum_const_zero,
       zero_add] at hk'
     have hc : c (Fin.last r) = 0 := by
@@ -290,7 +290,8 @@ private lemma log_relIndex_map_lemma_4 (h : _root_.ReciprocityTheory.GeometryOfN
     have hf' : ∀ x : Fin n → K, f' (fun i => j (x i)) = j (f x) := by
       intro x
       conv_rhs => rw [eq_sum_apply_smul_single x]
-      simp [f', map_sum, mul_comm]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [f', map_sum, mul_comm]
     have h0' : ∀ i : Fin r, f' (fun k => j (v i.castSucc k)) = 0 := fun i => by
       rw [hf', h0, map_zero]
     have h1' : f' (fun k => j (v (Fin.last r) k)) = 1 := by rw [hf', h1, map_one]
@@ -371,7 +372,7 @@ private lemma log_relIndex_map_lemma_4 (h : _root_.ReciprocityTheory.GeometryOfN
           | zero => simp
           | add a b _ _ ha hb =>
             convert add_mem ha hb using 1
-            rw [map_add, add_smul]
+            rw [map_add (f := _), add_smul]
             abel
           | smul c a _ ha =>
             convert Submodule.smul_mem _ c ha using 1
@@ -398,9 +399,9 @@ private lemma log_relIndex_map_lemma_4 (h : _root_.ReciprocityTheory.GeometryOfN
       Real.log_mul (Nat.cast_ne_zero.2 ha') (Nat.cast_ne_zero.2 hb'), add_div, add_div, e1, e2,
       hIH, neg_div, neg_div, hN]
 
+
 open NumberField Module in
 open scoped nonZeroDivisors in
-
 theorem _root_.GlobalTheory.deg_span_image_eq :
     ∀ (K K' : Type) [Field K] [NumberField K] [Field K'] [NumberField K'] (j : K →+* K') (n : ℕ)
       (h : _root_.ReciprocityTheory.GeometryOfNumbersTheory.HermFam K (Fin n → K)) (h' : _root_.ReciprocityTheory.GeometryOfNumbersTheory.HermFam K' (Fin n → K')) (Λ : Submodule (𝓞 K) (Fin n → K)), Λ.FG →

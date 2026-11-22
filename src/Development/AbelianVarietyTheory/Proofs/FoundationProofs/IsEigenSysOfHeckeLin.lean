@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSatVecUOfDiag
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EqPlaceIdemOfIsPrimeIdem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IntegralTensorAdelesEqAdelicCompletionOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSatVecUOfDiag
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,15 +85,15 @@ section Component
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F) in
 
+variable (F) in
 def compAt (w : HeightOneSpectrum (𝓞 E)) : Af F ⊗[F] E →+* w.adicCompletion E :=
   (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV E w).toRingHom.comp (finAdEquiv F E).toRingHom
 
 theorem compAt_apply (w : HeightOneSpectrum (𝓞 E)) (y : Af F ⊗[F] E) : compAt F w y = finAdEquiv F E y w := rfl
 
-variable (F) in
 
+variable (F) in
 def singleAt (w : HeightOneSpectrum (𝓞 E)) (x : w.adicCompletion E) : Af F ⊗[F] E :=
   (finAdEquiv F E).symm (singleFin w x)
 
@@ -112,7 +117,7 @@ theorem singleAt_mul (w : HeightOneSpectrum (𝓞 E)) (x : w.adicCompletion E) (
   · simp only [map_mul, compAt_singleAt_ne e, zero_mul]
 
 theorem singleAt_add (w : HeightOneSpectrum (𝓞 E)) (x y : w.adicCompletion E) :
-    singleAt F w (x + y) = singleAt F w x + singleAt F w y := by simp only [singleAt, map_add]
+    singleAt F w (x + y) = singleAt F w x + singleAt F w y := by simp only [singleAt, map_add (f := _)]
 
 theorem singleAt_zero (w : HeightOneSpectrum (𝓞 E)) : singleAt F w 0 = 0 := by simp only [singleAt, map_zero]
 
@@ -127,7 +132,7 @@ theorem compAt_mem_latAt {n : ℕ} {L : Submodule (𝓞 E) (Fin n → E)} (w : H
     obtain ⟨a, ha, x, hx, rfl⟩ := hy
     exact (latAt w L).smul_mem ⟨_, GlobalTheory.AdeleBaseChange.locMap_int w _ (ha _)⟩ (Submodule.subset_span ⟨x, hx, rfl⟩)
   | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => simp only [Pi.add_apply, map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hy hz
   | neg y _ hy => simp only [Pi.neg_apply, map_neg]; exact neg_mem hy
 
 theorem finMat_map_compAt (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) {v : HeightOneSpectrum (𝓞 F)}
@@ -261,7 +266,7 @@ theorem offS_iff {S : Finset (HeightOneSpectrum (𝓞 D.host.F))} : OffS D S w �
   · intro h u hu
     have : ¬ u.asIdeal ≤ (w.under (𝓞 D.host.F)).asIdeal := fun hle =>
       h (HeightOneSpectrum.ext (u.isMaximal.eq_of_le (w.under _).isPrime.ne_top hle) ▸ hu)
-    obtain ⟨x, hx, hx'⟩ := SetLike.not_le_iff_exists.1 this
+    obtain ⟨x, hx, hx'⟩ := IsConcreteLE.not_le_iff_exists.1 this
     refine ⟨x, hx, fun y hy hw => hx' ?_⟩
     obtain rfl : y = algebraMap _ _ x := RingOfIntegers.ext hy
     exact hw
@@ -281,8 +286,8 @@ theorem exists_isHeckeOpFull (hJ : SphOff J χ S) (hv : v ∉ S) (h : w.under (�
   have hS : OffS D S w := offS_iff.2 (h ▸ hv)
   obtain ⟨e, f, hef, h1, h2⟩ := hJ w hS
   obtain ⟨ϖ, p1, p2⟩ : ∃ ϖ ∈ w.asIdeal, ϖ ∉ w.asIdeal ^ 2 :=
-    SetLike.exists_of_lt (Ideal.pow_lt_self w.asIdeal w.ne_bot w.isPrime.ne_top 2 le_rfl)
-  have := GlobalTheory.HeckeDual.isLattice_frameLat V
+    IsConcreteLE.exists_of_lt (Ideal.pow_lt_self w.asIdeal w.ne_bot w.isPrime.ne_top 2 le_rfl)
+  have := GlobalTheory.AdelicU.SelfDual.isLattice_frameLat V
   obtain ⟨R, r1, r2⟩ := GlobalTheory.HeckeDual.exists_rep _ (isOpen_stabLoc D.sp.cm.sig V.gram (frameLat V) v)
     (isCompact_stabLoc D.sp.cm.sig V.gram (frameLat V) v) g
   have hs := Supp.suppF_iff_of_isPrimeIdem V hef h
@@ -327,7 +332,8 @@ theorem fixed_of_level (hJ : SphOff J χ S) (hv : v ∉ S) {φ : GA D V → ℂ}
       rw [(RingHom.injective_iff_ker_eq_bot (algebraMap (𝓞 D.host.F) (𝓞 D.host.E))).1
         (FaithfulSMul.algebraMap_injective _ _)]; exact bot_le)
     exact ⟨⟨Q, hQ.isPrime, fun h0 => v.ne_bot (by
-      rw [← e, h0, Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _)])⟩,
+      rw [← e, h0]
+      exact Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective _ _))⟩,
       HeightOneSpectrum.ext e⟩
   obtain ⟨e, f, hef, h1, h2⟩ := hJ w (offS_iff.2 (h ▸ hv))
   have hs := (Supp.suppF_iff_of_isPrimeIdem V hef h _).2 ⟨k, rfl⟩

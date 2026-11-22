@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SqRootIdentity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCuspCoefficient
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddAllOfThetaSumOnCover
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisIntegralCoords
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefMapSmulMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PureTensorOTransSumLin
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRingEquivComplexCompEq
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDeltaDatumHigherLevel
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsUnf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModuliConsequenceOfAbelianSchemeLaws
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFormsFiniteDimensionalOf
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValRingLocRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SqRootIdentity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsCuspCoefficient
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddAllOfThetaSumOnCover
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBasisIntegralCoords
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefMapSmulMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PureTensorOTransSumLin
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsRingEquivComplexCompEq
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDeltaDatumHigherLevel
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsUnf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CmModuliConsequenceOfAbelianSchemeLaws
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HasseNormTheoremQuadraticExtension
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.AbelianSchemeLawsUnconditional
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFormsFiniteDimensionalOf
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+
+@[expose] public section
+
 open NumberField Matrix Complex IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -29,8 +34,8 @@ noncomputable section
 
 namespace GlobalTheory.LevelSeries.SerId
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem thetaSum_value_emb : ∀ (D : D7) (H : Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (σ : c.F →+* ℂ), (∀ τ, relab c σ τ = τ) → GoodEmb c σ → ∀ (U : Unf Xo c σ r), l.A = 1 → Odd r → ∀ (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (V W : HSp D) (χV χW : (AE D)ˣ →* Circle) (om : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)) (ΛV : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (ΛW : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)) (s : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ) (f₀ : WO V W → ℂ), VacPair ψ θ V W χV χW om ΛV ΛW s f₀ → ∀ (hr : W.rank = r) (dict : GA D W → Σ k, Frame (U.X k).Ψ r) (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin W.rank → D.host.E)) (x₀ : (D.host.E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ) (BW : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ) (mu : GA D W → ℂ) (cc : U.Comp → ℂ), IsDict U W hr dict ι x₀ → FrameTie U W hr x₀ s BW → CcIs θ V W hr U dict mu x₀ om f₀ cc → ∀ (d : DeltaDat Xo c V.rank), d.IsLev → d.l₂.A = 1 → (∃ _ : StarRing (𝓞 D.host.E), IsNab d.Xo₂ d.c₂ d.nab₂) → ∀ e : AE D, IsHalfIdem d.l₂ e → ∀ (bad N : ℕ) (h : GA D V) (Λ : GenLat D.host.E V.rank) (e' : AE D) (Ps : Finset (Formalism.L2.DIV.Pl D.host.E)) (y : (AE D)ˣ), d.l₂.M ∣ bad → IsIdemSum e' Ps → (∀ PP ∈ Ps, ((bad : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal) → h ∈ GfC V → SuppAt e' V h → IsDetAt e' V h y → (∀ v, v ∈ Λ.La ↔ (fun j => star (v j)) ∈ Bridge.hLat V (GlobalTheory.ExportSeries.finPt V h)) → Λ.Unimod → Λ.TrivAt d.l₂.M → Λ.LevOK N d.l₂.M → ∀ (lt : LtN Dw V.rank ≃ FVar D W.rank V.rank) (a : (D.host.E →+* ℂ) × ℕ → ℕ), IsLetters Dw lt → Dom a V.rank → ∀ (T : Type) [Fintype T] (w : T → (Fin V.rank → LevQ Dw d.l₂) → c.F) (P : T → MvPolynomial (LtN Dw V.rank) c.F) (f : Rul Xo c), (∀ t, P t ∈ HHa Dw.mult V.rank c.F ComplexEmbedding.conjugate (InPsi H) (fun τ i => a (τ, i))) → IsThetaSum d (fun _ => 1) w Λ N P f → ∀ g : GA D W, ∑ t, thetaKO om h g (pureTensorO ψ θ V W (fun _ => 1) s (fun _ => 1) BW (transSum ψ V W d.l₂ ι e f₀ (fun q => σ (w t q))) (MvPolynomial.rename lt (MvPolynomial.map σ (P t)))) = (-1) ^ degA Dw a * clsScal χW y Λ r * ((lieFac Dw (xiR D) a : ℂ) * (cc (dict g).1 * mu g * rdU U f (dict g).1 (dict g).2)) := by
   intro D H Dw l Xo c r σ hrel hσ U hA hodd ψ θ V W χV χW om ΛV ΛW s f₀ hVP hr dict ι x₀ BW mu cc hD hF hcc d hlev hA₂
     hnab e he bad N h Λ e' Ps y hbad he' hPs hh hs hy hΛ hun hT hN lt a hlt hDom T _ w P f hPH hth g
@@ -202,7 +207,8 @@ theorem exists_expansion (F : IntermediateField ℚ ℂ) [NumberField F] (σ : F
   ext mo
   simp only [MvPolynomial.coeff_sum, MvPolynomial.coeff_smul, MvPolynomial.coeff_map, smul_eq_mul, hPc]
   have h := congrArg τ (hlam' q mo).1
-  rw [τ.apply_symm_apply, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [τ.apply_symm_apply, map_sum] at h
   refine Eq.trans (Finset.sum_congr rfl fun k _ => ?_) h.symm
   rw [map_mul τ (β k), ← hτ]
   rfl
@@ -226,8 +232,8 @@ theorem exists_family {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Ge
   · rw [Function.update_of_ne h]
     exact hU₁ σ' hσ'
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_forms_of_transSum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (V W : HSp D) (χV χW : (AE D)ˣ →* Circle) (om : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)) (ΛV : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (ΛW : Submodule (𝓞 D.host.E) (Fin W.rank → D.host.E)) (sW : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ) (f₀ : WO V W → ℂ), VacPair ψ θ V W χV χW om ΛV ΛW sW f₀ → ∀ (H : Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Geo.Tor.Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (σ : c.F →+* ℂ), (∀ τ, relab c σ τ = τ) → GoodEmb c σ → ∀ (U : Unf Xo c σ r), l.A = 1 → Odd r → ∀ (hr : W.rank = r) (dict : GA D W → Σ k, Frame (U.X k).Ψ r) (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin W.rank → D.host.E)) (x₀ : (D.host.E →+* ℂ) → Matrix (Fin r) (Fin r) ℂ) (BW : D.what₂.Tau → Matrix (Fin W.rank) (Fin W.rank) ℂ) (mu : GA D W → ℂ) (cc : U.Comp → ℂ), IsDict U W hr dict ι x₀ → FrameTie U W hr x₀ sW BW → CcIs θ V W hr U dict mu x₀ om f₀ cc → ∀ e : AE D, IsHalfIdem l e → ∀ (bad N : ℕ) (h : GA D V) (Λ : GenLat D.host.E V.rank) (e' : AE D) (Ps : Finset (Formalism.L2.DIV.Pl D.host.E)) (y : (AE D)ˣ), l.M ∣ bad → IsIdemSum e' Ps → (∀ PP ∈ Ps, ((bad : ℕ) : 𝓞 D.host.E) ∉ PP.asIdeal) → h ∈ GfC V → SuppAt e' V h → IsDetAt e' V h y → (∀ v, v ∈ Λ.La ↔ (fun j => star (v j)) ∈ Bridge.hLat V (GlobalTheory.ExportSeries.finPt V h)) → Λ.Unimod → Λ.TrivAt l.M → Λ.LevOK N l.M → ∀ (lt : LtN Dw V.rank ≃ FVar D W.rank V.rank) (wa : (D.host.E →+* ℂ) × ℕ → ℕ), IsLetters Dw lt → Dom wa V.rank → LastPos Dw wa → ∀ (la : HeightOneSpectrum (𝓞 c.F)) (p : ℕ), p.Prime → (p : 𝓞 c.F) ∈ la.asIdeal → l.GoodAt p → ∀ O : Subring ℂ, ValRing σ la O → ∀ u : (Fin V.rank → LevQ Dw l) → ℂ, (∀ q, u q ∈ O) → ∀ Q ∈ HHa Dw.mult V.rank ℂ ComplexEmbedding.conjugate (InPsi H) (fun τ i => wa (τ, i)), (∀ mo, Q.coeff mo ∈ O) → ∃ (m : ℕ) (β : Fin m → ℂ) (f : Fin m → Rul Xo c), (∀ k, β k ∈ O ∧ f k ∈ sec Xo c wa V.rank ∧ rdU U (f k) ∈ Formalism.L2.Pj.holSub0 U.X (laU U wa V.rank) ∧ GlobalTheory.GoodPts.BddAll Xo c la (((Λ.mIdx N (Dw.p + Dw.q) * Nat.card (Fin V.rank → LevQ Dw l) : ℕ) : c.F) * ((2 * NumberField.discr D.host.E * N : ℤ) : c.F) ^ degA Dw wa) (f k)) ∧ ∀ g : GA D W, thetaKO om h g (stdF ψ θ V W sW BW (transSum ψ V W l ι e f₀ u) (MvPolynomial.rename lt Q)) = (-1) ^ degA Dw wa * clsScal χW y Λ r * ∑ k, β k * ((lieFac Dw (xiR D) wa : ℂ) * (cc (dict g).1 * mu g * rdU U (f k) (dict g).1 (dict g).2)) := by
   intro D ψ θ V W χV χW om ΛV ΛW s f₀ hP H Dw l Xo c r σ hrel hσ U hA hodd hr dict ι x₀ BW mu cc hD hF hcc e he bad N h Λ e' Ps y
     hbad he' hPs hh hs hy hΛ hun hT hN lt a hlt hDom hLast la p hp hpl hgood O hO u hu Q hQ hQO
@@ -276,10 +282,12 @@ theorem exists_forms_of_transSum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ)
     Finset.sum_congr rfl fun k _ => congrArg (β k * ·) (hv k).symm, stdF,
     pureTensorO_transSum_lin D H Dw ψ θ V W χV χW om ΛV ΛW s f₀ hP ι l e he]
   simp only [apply_ite σ, map_one, map_zero, Finset.mul_sum]
-  rw [Finset.sum_comm, thetaKO, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_comm, thetaKO, map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun q _ => ?_
   rw [← map_smul, ← map_smul, ← hsum]
-  simp only [thetaKO, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [thetaKO, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   rfl
 
 end GlobalTheory.LevelSeries.SerId

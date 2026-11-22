@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -51,7 +56,7 @@ lemma mem_Gamma_of_mul (M q : ℕ) (hqM : Nat.Coprime q M) (N : SL(2, ℤ)) (B m
 
 lemma sigma_diag_mod (M q : ℕ) (σ : SL(2, ℤ))
     (hσ : (en σ 0 1 : ZMod M) = 0 ∧ (en σ 1 0 : ZMod M) = 0 ∧ (en σ 1 1 : ZMod M) = q) :
-    let B := (σ : Matrix (Fin 2) (Fin 2) ℤ) * !![(q : ℤ), 0; 0, 1]
+    let B := (σ : Matrix (Fin 2) (Fin 2) ℤ) * !![(q : ℤ), 0; 0, 1];
     (B 0 0 : ZMod M) = 1 ∧ (B 0 1 : ZMod M) = 0 ∧ (B 1 0 : ZMod M) = 0 ∧ (B 1 1 : ZMod M) = q := by
   intro B
   obtain ⟨s01, s10, s11⟩ := hσ

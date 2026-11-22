@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LevelChange
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
@@ -9,10 +13,11 @@ open UpperTheory.Gal.W2
 private theorem aeval_inv_reverse_eq_zero_iff {K A : Type} [Field K] [Ring A] [Algebra K A] (u : Aˣ) (f : K[X]) :
     Polynomial.aeval (↑u⁻¹ : A) f.reverse = 0 ↔ Polynomial.aeval (u : A) f = 0 := by
   let S : Subalgebra K A := Algebra.adjoin K {(u : A), ↑u⁻¹}
-  letI : CommRing S := Algebra.adjoinCommRingOfComm K (by
-    intro a ha b hb
+  letI : IsMulCommutative S := Algebra.isMulCommutative_adjoin K (by
+    intro a ha b hb _
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb
     rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;> simp)
+  letI : CommRing S := { mul_comm := isMulCommutative_iff.mp inferInstance }
   let x : S := ⟨u, Algebra.subset_adjoin (by simp)⟩
   let y : S := ⟨↑u⁻¹, Algebra.subset_adjoin (by simp)⟩
   letI : Invertible x := ⟨y, Subtype.ext (by simp [x, y]), Subtype.ext (by simp [x, y])⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OmegaHermitianZ
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OmegaHermitianZ
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace Formalism.L2.SG.Pf.FrameGlobalPatching.FStar
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open SpanOmPf in
 
+open SpanOmPf in
 theorem spanOm_holds (D : Formalism.BasicNotions.D7) : SpanOm D := by
   intro T T' F F' hdet hG m hm
   set ω := Gom F.fvec F'.fvec with hω
@@ -41,18 +45,18 @@ theorem spanOm_holds (D : Formalism.BasicNotions.D7) : SpanOm D := by
     have hxX : ∀ y0 ∈ F'.X, (VS D).hT y0 x = 0 := by
       intro y0 hy0
       have := h1 y0 hy0
-      rw [map_add, map_add, SpanOmPf.iso_X F' hy0 hy', map_smul, SpanOmPf.isotropicSpan_orthogonal_anisotropicVector F' hy0, smul_zero, add_zero, add_zero] at this
+      rw [map_add (f := _), map_add (f := _), SpanOmPf.iso_X F' hy0 hy', map_smul, SpanOmPf.isotropicSpan_orthogonal_anisotropicVector F' hy0, smul_zero, add_zero, add_zero] at this
       exact this
     obtain ⟨c, rfl⟩ := SpanOmPf.om_uniq F F' hD (by rw [← SpanOmPf.Xplus_eq]; exact hx) hxX
     have hzo : (VS D).hT F'.z ω = star Dd := by rw [SpanOmPf.hsw', SpanOmPf.omega_hermitian_z]
     have e3 : c * star Dd + β * -T' = 0 := by
       have := h3
-      rw [map_add, map_add, map_smul, map_smul, hzo, SpanOmPf.z_orth_X F' hy', F'.z_norm, smul_eq_mul, smul_eq_mul,
+      rw [map_add (f := _), map_add (f := _), map_smul, map_smul, hzo, SpanOmPf.z_orth_X F' hy', F'.z_norm, smul_eq_mul, smul_eq_mul,
         zero_add] at this
       exact this
     have e4 : c * (-T * (Dr * star Dr)) + β * Dd = 0 := by
       have := h4
-      rw [map_add, map_add, map_smul, map_smul, SpanOmPf.om_om, SpanOmPf.om_X' F F' hy', SpanOmPf.omega_hermitian_z, smul_eq_mul, smul_eq_mul,
+      rw [map_add (f := _), map_add (f := _), map_smul, map_smul, SpanOmPf.om_om, SpanOmPf.om_X' F F' hy', SpanOmPf.omega_hermitian_z, smul_eq_mul, smul_eq_mul,
         zero_add] at this
       exact this
     have hc : c = 0 := by

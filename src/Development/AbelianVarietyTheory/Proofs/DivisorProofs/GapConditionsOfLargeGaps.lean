@@ -1,14 +1,28 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+module
 
-section
-open GlobalTheory.PsCo.PcEG
+public import Formalism.FormalDegreeBessel.StatementDS
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.BlockAnti
+
+@[expose] public section
 
 noncomputable section
 
 open ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.TRGap
 
+namespace GlobalTheory.PsCo.PcEG
+
+def GapNum : Prop :=
+  ∀ (r : ℕ), Odd r → ∀ (ε : Fin r → Bool) (lam : Fin r → ℤ),
+    (∀ i j : Fin r, (j : ℕ) = i + 1 → 100 * (r : ℤ) ^ 4 ≤ lam i - lam j) →
+    Formalism.QuantumDeterminants.IsHCParam (fun a => (lam a : ℝ)) ∧ StdGap ε (fun a => (lam a : ℝ)) ∧ Gap3 ε (fun a => (lam a : ℝ)) ∧
+      ∃ h : ℝ, GapAtLeast ε (fun a => (lam a : ℝ)) h ∧ thrStar ε < h
+
+end GlobalTheory.PsCo.PcEG
+
 namespace GlobalTheory.PsCo.PcEF
+
+open GlobalTheory.PsCo.PcEG (GapNum)
 
 namespace GapNumber
 
@@ -79,5 +93,4 @@ theorem gapConditions_of_largeGaps : GapNum := by
 
 end GlobalTheory.PsCo.PcEF
 
-end
 end

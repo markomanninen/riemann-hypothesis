@@ -1,13 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff
 
 namespace GlobalTheory
 
+
 open MeasureTheory Filter Topology in
 open scoped ContDiff in
-
 theorem _root_.GlobalTheory.contDiff_of_continuous_oneParameter (A : Type) [NormedRing A] [NormedAlgebra ℝ A]
     [CompleteSpace A] (T : ℝ → A) (hT : Continuous T) (h0 : T 0 = 1)
     (hadd : ∀ s t, T (s + t) = T s * T t) : ContDiff ℝ ∞ T := by

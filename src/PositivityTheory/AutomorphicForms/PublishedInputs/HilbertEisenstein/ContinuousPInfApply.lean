@@ -1,8 +1,12 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SSmooth
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.AdelePoissonUniform
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ namespace UpperTheory.HilbertEisensteinWeightOne.EisensteinIntegrability
 
 variable {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
 
-variable (F) in
 
+variable (F) in
 def gauss : 𝓢(NumberField.mixedEmbedding.mixedSpace F, ℂ) :=
   SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (mixedToEuclidean F)
     (gaussianSchwartz (NumberField.mixedEmbedding.euclidean.mixedSpace F))
@@ -26,8 +30,8 @@ def gJ (J : (FractionalIdeal (𝓞 F)⁰ F)ˣ) : Ad F → ℂ := schwartzBruhatT
 theorem gJ_mem (J : (FractionalIdeal (𝓞 F)⁰ F)ˣ) : gJ J ∈ schwartzBruhat F :=
   schwartzBruhatTensor_mem _ (cosetIndicator_mem_finiteSchwartzBruhat J 0)
 
-variable (F) in
 
+variable (F) in
 def invN (N : ℕ) : IdeleGroup F :=
   diagonal F (Units.mk0 ((N : F) + 1)⁻¹ (inv_ne_zero (Nat.cast_add_one_ne_zero N)))
 
@@ -45,7 +49,7 @@ theorem arch_norm_le (x y : UpperTheory.V.TR.Rinf F) :
     ‖arch x y‖ ≤ Real.exp (-(Real.pi - 1) * ∑ v, (x v ^ 2 + y v ^ 2)) := by
   unfold arch
   rw [norm_prod, Finset.mul_sum, Real.exp_sum]
-  refine Finset.prod_le_prod (fun v _ => norm_nonneg _) fun v _ => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => norm_nonneg _) fun v _ => ?_
   have he : -(Real.pi : ℂ) * (((x v : ℝ) : ℂ) ^ 2 + ((y v : ℝ) : ℂ) ^ 2) =
       ((-Real.pi * (x v ^ 2 + y v ^ 2) : ℝ) : ℂ) := by push_cast; ring
   rw [norm_mul, he, Complex.norm_exp_ofReal]
@@ -107,11 +111,11 @@ theorem norm_gJ_invN (J : (FractionalIdeal (𝓞 F)⁰ F)ˣ) (N : ℕ) (x : Ad F
 theorem pInf_vecMul (y : Fin 2 → Ad F) (A : Matrix (Fin 2) (Fin 2) (Ad F)) (i : Fin 2) (v : InfinitePlace F) :
     UpperTheory.V.TR.pInf F ((y ᵥ* A) i) v =
       UpperTheory.V.TR.pInf F (y 0) v * UpperTheory.V.TR.pInf F (A 0 i) v + UpperTheory.V.TR.pInf F (y 1) v * UpperTheory.V.TR.pInf F (A 1 i) v := by
-  simp [Matrix.vecMul, dotProduct, Fin.sum_univ_two, map_add, map_mul]
+  simp [Matrix.vecMul, dotProduct, Fin.sum_univ_two, map_add (f := _), map_mul]
 
 theorem pFin_vecMul (y : Fin 2 → Ad F) (A : Matrix (Fin 2) (Fin 2) (Ad F)) (i : Fin 2) :
     pFin F ((y ᵥ* A) i) = pFin F (y 0) * pFin F (A 0 i) + pFin F (y 1) * pFin F (A 1 i) := by
-  simp [Matrix.vecMul, dotProduct, Fin.sum_univ_two, map_add, map_mul]
+  simp [Matrix.vecMul, dotProduct, Fin.sum_univ_two, map_add (f := _), map_mul]
 
 private theorem sq_lin_le {a b p q H : ℝ} (hp : |p| ≤ H) (hq : |q| ≤ H) :
     (a * p + b * q) ^ 2 ≤ 2 * H ^ 2 * (a ^ 2 + b ^ 2) := by
@@ -122,8 +126,8 @@ private theorem sq_lin_le {a b p q H : ℝ} (hp : |p| ≤ H) (hq : |q| ≤ H) :
   nlinarith [sq_nonneg (a * p - b * q), mul_le_mul_of_nonneg_left hp2 (sq_nonneg a),
     mul_le_mul_of_nonneg_left hq2 (sq_nonneg b)]
 
-open Classical in
 
+open Classical in
 theorem dom_gen {Kc : Set (Matrix (Fin 2) (Fin 2) (Ad F))} (hK : IsCompact Kc) {L : Set (Af F)} (hL : IsCompact L) :
     ∃ (J : (FractionalIdeal (𝓞 F)⁰ F)ˣ) (N : ℕ), ∀ A ∈ Kc, ∀ y : Fin 2 → Ad F,
       ‖arch (UpperTheory.V.TR.pInf F (y 0)) (UpperTheory.V.TR.pInf F (y 1))‖ *

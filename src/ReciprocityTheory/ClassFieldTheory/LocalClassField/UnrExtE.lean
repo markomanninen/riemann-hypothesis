@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.UnrExtC
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

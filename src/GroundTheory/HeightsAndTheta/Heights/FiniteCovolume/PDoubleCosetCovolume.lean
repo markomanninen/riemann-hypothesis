@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsDoubleCoset
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsDoubleCoset
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -101,7 +105,7 @@ theorem sliceMeasure_eq_smul_haar (hV : IsOpen V) (hVc : IsCompact V) :
 theorem quasiMeasurePreserving_fst_comp (hV : IsOpen V) (hVc : IsCompact V) :
     Measure.QuasiMeasurePreserving (fun x => (Φ x).1) (μ.restrict (Φ ⁻¹' (univ ×ˢ V)))
       (Measure.haar : Measure G₁) := by
-  refine ⟨measurable_fst_comp Φ, fun A hA => ?_⟩
+  refine ⟨(measurable_fst_comp Φ).aemeasurable, fun A hA => ?_⟩
   change sliceMeasure Φ μ V A = 0
   obtain ⟨c, hc⟩ := sliceMeasure_eq_smul_haar (Φ := Φ) (μ := μ) hV hVc
   rw [hc, Measure.smul_apply, hA, smul_zero]
@@ -109,7 +113,7 @@ theorem quasiMeasurePreserving_fst_comp (hV : IsOpen V) (hVc : IsCompact V) :
 theorem measure_preimage_prod_null (hV : IsOpen V) (hVc : IsCompact V) {N : Set G₁}
     (hN : (Measure.haar : Measure G₁) N = 0) : μ (Φ ⁻¹' (N ×ˢ V)) = 0 := by
   rw [measure_preimage_prod_eq_restrict hV]
-  exact (quasiMeasurePreserving_fst_comp hV hVc).preimage_null hN
+  exact QuasiMeasurePreserving.preimage_null (quasiMeasurePreserving_fst_comp hV hVc) hN
 
 theorem nullMeasurableSet_preimage_prod (hV : IsOpen V) (hVc : IsCompact V) {A : Set G₁}
     (hA : NullMeasurableSet A (Measure.haar : Measure G₁)) :

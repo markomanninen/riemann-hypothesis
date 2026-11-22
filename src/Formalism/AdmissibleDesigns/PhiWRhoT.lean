@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.RowDROfWpIso
-import Formalism.AdmissibleDesigns.RhoContOf
+module
+
+public import Formalism.AdmissibleDesigns.RowDROfWpIso
+public import Formalism.AdmissibleDesigns.RhoContOf
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core] [hH0Fin : Fact Formalism.MainNotions.N.K.H0.FinCore]
 
@@ -38,13 +42,14 @@ theorem phiW_rhoT' (n : ℕ) (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l
   show eK (D.nbr i _ hn) ((((epsU D.nd i ((Br.iota D.nbr i _ hn g : _) : GE D.nd) : (D.nd.O i)ˣ) : D.nd.O i) •
       ((KLat.matK (Dd.ρk 0 (uElt Dd.r Dd.χ ((Br.iota D.nbr i _ hn g : _) : GE D.nd)⁻¹)))ᵀ *ᵥ
         (v : {a // RepresentationBoundsCohomology.blk D.R a = 0} → FractionRing (D.nd.O i)))) (H0.e0 a)) = _
-  simp only [Pi.smul_apply, Matrix.mulVec, dotProduct, Finset.smul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Pi.smul_apply, Matrix.mulVec, dotProduct, Finset.smul_sum, map_sum]
   refine (Equiv.sum_comp (H0.e0 (D := D)) _).symm.trans (Finset.sum_congr rfl fun b _ => ?_)
   rw [Matrix.transpose_apply, KLat.matK, Matrix.map_apply, Algebra.smul_def, ← mul_assoc, ← map_mul, map_mul]
   rfl
 
-variable {i dc Dd hK hε hM} in
 
+variable {i dc Dd hK hε hM} in
 theorem rowMat_at
     (hD : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0
       eB e₁ s Dd) (hN : RepresentationBoundsCohomology.NormAt D.nd r ρ π)
@@ -89,8 +94,8 @@ theorem rowMat_at
       show eK (D.nbr i _ hn) (v (H0.e0 ((H0.e0 (D := D)).symm b))) = _
       rw [Equiv.apply_symm_apply]
 
-variable {i dc Dd hK hε hM} in
 
+variable {i dc Dd hK hε hM} in
 theorem orbC_dat (n : ℕ) :
     KHf.OrbC i dc (n := n)
       (KLat.Dat Dd.r Dd.χ (RepresentationBoundsCohomology.blk D.R) Dd.ρk (epsU D.nd i) (K.Aw i dc) hK hε hM n).ρT' := by

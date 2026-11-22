@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasWeightAtOfTensorDualIntertwiner
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.InjectiveInfinitePlaceOfEmbAtSplitPlaces
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemMaximalCompactOfUnderEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsUnramifiedAtTotallyRealOfInertiaLeRestrictionR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLevelFixedVectorsDefiniteUnitaryEqProdStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntegralFixedVectorsEqOneAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasWeightAtOfTensorDualIntertwiner
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.InjectiveInfinitePlaceOfEmbAtSplitPlaces
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemMaximalCompactOfUnderEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsUnramifiedAtTotallyRealOfInertiaLeRestrictionR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankLevelFixedVectorsDefiniteUnitaryEqProdStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntegralFixedVectorsEqOneAlmostAll
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl)
 open UpperTheory.V.HV (Coef)
@@ -193,7 +198,7 @@ private theorem glob_dim (hU : GlobalTheory.BCT.Unr E) (hn : 1 ≤ n) {σ : Subm
     (sw : Plc (Lp E) → Plc E) (hsw : ∀ v, (sw v).under (𝓞 (Lp E)) = v) (T : Finset (Plc (Lp E)))
     (hsp : ∀ v ∈ T, IsSplitAt (sw v)) (hun : ∀ w : Plc E, w.under (𝓞 (Lp E)) ∉ T → IsUnramU σ w)
     (lam : InfinitePlace E → DomWeight n) (hlam : ∀ v, HasWeightAt σ v.embedding (lam v)) :
-    ∃ (K : ∀ w : Plc E, Subgroup (GLw n w)) (a : Plc (Lp E) → ℕ) (U : Subgroup (finU E n)),
+    ∃ (K : ∀ w : Plc E, Subgroup (GLw n w)) (a : Plc (Lp E) → ℕ) (U : Subgroup (finU (E := E) (n := n))),
       (∀ x ∈ U, ∀ v, cLoc (sw v) x.1 ∈ K (sw v)) ∧ (∀ w, K w ≤ KO (w.adicCompletion E) (Fin n)) ∧
       (∀ v ∈ T, ∀ τ, Cp σ (sw v) τ → Module.finrank ℂ (fixd τ.ρ (K (sw v))) = a v) ∧ (∀ v, 0 < a v) ∧
       (Module.finrank ℂ ↥(σ ⊓ fixed (GlobalTheory.BCT.RF E n) U) : ℂ) = GlobalTheory.BCT.dimW lam * (∏ v ∈ T, a v : ℕ) := by
@@ -245,7 +250,7 @@ variable {l : ℕ} [Fact l.Prime] {L Ω : Type} [Field L] [NumberField L] [IsCMF
 private theorem cmp_of {w : Plc L} (h : ((l : ℕ) : 𝓞 L) ∉ w.asIdeal) (x : UA L n) :
     cmp n w ((away l L n).rangeRestrict x) = cLoc w x := by
   unfold CaseU.cmp
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 private theorem l_under {u : Plc L} :
@@ -300,7 +305,7 @@ private theorem mem_KS {a : Ga l L n} (h1 : toGS n s a = 1)
 private theorem sec_spec (hb : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) (g : GS n s) :
     toGS n s (secS n s g) = g ∧ ∀ w : Plc L, w.under (𝓞 (Lp L)) ∉ s.S → cmp n w (secS n s g) = 1 := by
   unfold secS
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
   refine ⟨(MulEquiv.ofBijective _ hb).apply_symm_apply g, fun w hw => ?_⟩
   exact Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 ((MulEquiv.ofBijective _ hb).symm g).2 w)
     ⟨fun h => hw (Or.inr (Or.inl h)), fun h => hw (Or.inr (Or.inr h))⟩
@@ -365,7 +370,7 @@ private theorem span_form (σ : Submodule ℂ (UA L n → ℂ)) (F : Ga l L n ×
     intro ℓ
     have : toForm ι e (x + y) ℓ = toForm ι e x ℓ + toForm ι e y ℓ := by
       funext g
-      simp only [toForm, Pi.add_apply, map_add]
+      simp only [toForm, Pi.add_apply, map_add (f := _)]
     rw [this]; exact σ.add_mem (hx ℓ) (hy ℓ)
   | smul a x _ hx =>
     intro ℓ
@@ -374,7 +379,7 @@ private theorem span_form (σ : Submodule ℂ (UA L n → ℂ)) (F : Ga l L n ×
       simp only [toForm, Pi.smul_apply, map_smul]
     rw [this]; exact σ.smul_mem a (hx ℓ)
 
-private theorem infRep_fin {k : UA L n} (hk : k ∈ finU L n) : infRep (V := V) ι lam k = 1 := by
+private theorem infRep_fin {k : UA L n} (hk : k ∈ finU (E := L) (n := n)) : infRep (V := V) ι lam k = 1 := by
   have h1 : ∀ τ : L →+* ℂ, cEmb τ k = 1 := fun τ => by
     change Matrix.GeneralLinearGroup.map (coord τ) (cInf k) = 1
     rw [MonoidHom.mem_ker.1 hk, map_one]
@@ -427,7 +432,7 @@ private theorem form_unr
     · rw [show cLoc u x = 1 from GlobalTheory.DefU.LocRet.mem_locU_ne hx h]
       exact one_mem _
   have hl : (fun v : V.frame.Vl => cLoc (s.w v.1) x) = 1 := funext fun v => hS v.1 (Or.inl v.2)
-  rw [h3, hl, infRep_fin ι ((finU L n).inv_mem (Subgroup.mem_inf.1 hx).1)]
+  rw [h3, hl, infRep_fin ι ((finU (E := L) (n := n)).inv_mem (Subgroup.mem_inf.1 hx).1)]
   exact congrArg (fun G => toForm ι e G ℓ) (h1 _ hm)
 
 end Glob
@@ -461,13 +466,13 @@ private theorem model_rank [Fintype V.frame.Vl] (K : ∀ w : Plc L, Subgroup (GL
   exact (mul_le_mul' rl ((mul_le_mul' ru ro).trans (box_fix _ _ _ _))).trans (box_fix _ _ _ _)
 
 private theorem level_le (hb : Function.Bijective ((toGS n s).comp (GaS n s).subtype)) {d : ℕ}
-    (K : ∀ w : Plc L, Subgroup (GLw n w)) (hK : ∀ w, K w ≤ KO (w.adicCompletion L) (Fin n)) (U : Subgroup (finU L n))
+    (K : ∀ w : Plc L, Subgroup (GLw n w)) (hK : ∀ w, K w ≤ KO (w.adicCompletion L) (Fin n)) (U : Subgroup (finU (E := L) (n := n)))
     (hU : ∀ x ∈ U, ∀ v, cLoc (s.w v) x.1 ∈ K (s.w v)) (B : Submodule ℂ (Ga l L n × GL' n V → Fin d → ℂ)) :
     (B ⊓ fixd ((rtr ℂ (Ga l L n × GL' n V) (Fin d → ℂ)).comp (MonoidHom.inl _ _)) (KS n s)) ⊓
       fixd (actS n V d) ((Subgroup.pi Set.univ fun v : V.frame.Vl => K (s.w v.1)).prod
         ((Subgroup.pi Set.univ fun u : s.St => K (s.w u)).prod (K (s.w s.v0)))) ≤
     B ⊓ fixd (rtr ℂ (Ga l L n × GL' n V) (Fin d → ℂ)) (U.map ((MonoidHom.prod (away l L n).rangeRestrict
-      (Pi.monoidHom fun v : V.frame.Vl => cLoc (s.w v.1))).comp (finU L n).subtype)) := by
+      (Pi.monoidHom fun v : V.frame.Vl => cLoc (s.w v.1))).comp (finU (E := L) (n := n)).subtype)) := by
   refine fun G hG => ⟨hG.1.1, ?_⟩
   rintro _ ⟨x, hx, rfl⟩
   exact fix_J V hb K hK G hG.1.2 hG.2 x.1 (hU x hx)

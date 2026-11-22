@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate Topology
@@ -142,7 +146,7 @@ theorem translateProduct_of (h : SgStarAdd) : TranslateProduct := by
         * Complex.exp (-(Real.pi : ℂ) * herm L z P - (Real.pi : ℂ) * herm L P P / 2) ^ 2 := by
     rw [← Complex.exp_add, ← Complex.exp_nat_mul, ← Complex.exp_nat_mul, ← Complex.exp_add]
     congr 1
-    simp only [herm, map_add, map_sub]
+    simp only [herm, map_add (f := _), map_sub]
     push_cast
     ring
   linear_combination

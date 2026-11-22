@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -10,29 +14,33 @@ private theorem map_ofGL (f : R →+* R') (h : GL (Fin 3) R) :
     GG.map f (GG.ofGL h) = GG.ofGL (GeneralLinearGroup.map f h) := by
   simp only [GG.map, GG.ofGL, SemidirectProduct.map_inl]
 
-private theorem conj_push (φ : R →ₐ[O] R') (h : GL (Fin 3) R) (r : D →* GG 3 R) (g : D) :
-    conjBy (GeneralLinearGroup.map (φ : R →+* R') h)⁻¹ (push φ r) g =
+private theorem conj_push (φ : R →ₐ[O] R') (h : GL (Fin 3) R) (r : D →* GG (m := 3) (R := R)) (g : D) :
+    conjBy (GeneralLinearGroup.map (φ : R →+* R') h)⁻¹ (((GG.map (φ : R →+* R')).comp r)) g =
       GG.map (φ : R →+* R') (conjBy h⁻¹ r g) := by
-  simp only [conjBy, push, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_apply,
-    MulAut.conj_inv_apply, map_mul, map_inv, map_ofGL]
+  simp only [conjBy, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_inv_apply,
+    map_mul, map_inv, map_ofGL]
 
-private theorem conj_push_mat (φ : R →ₐ[O] R') (h : GL (Fin 3) R) (r : D →* GG 3 R) (g : D) (a b : Fin 3) :
-    (conjBy (GeneralLinearGroup.map (φ : R →+* R') h)⁻¹ (push φ r) g).mat a b =
+private theorem conj_push_mat (φ : R →ₐ[O] R') (h : GL (Fin 3) R) (r : D →* GG (m := 3) (R := R)) (g : D) (a b : Fin 3) :
+    (conjBy (GeneralLinearGroup.map (φ : R →+* R') h)⁻¹ (((GG.map (φ : R →+* R')).comp r)) g).mat a b =
       φ ((conjBy h⁻¹ r g).mat a b) := by
   rw [conj_push]
   simp [GG.mat, GG.map, SemidirectProduct.map_left]
 
 private theorem triIn_push (φ : R →ₐ[O] R') {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D}
-    {r : D →* GG 3 R} {h : GL (Fin 3) R} (H : TriIn η Ψ I r h) :
-    TriIn η Ψ I (push φ r) (GeneralLinearGroup.map (φ : R →+* R') h) where
-  tri g hg a b hab := by rw [conj_push_mat, H.tri g hg a b hab, map_zero]
-  ine s hs hη a := by rw [conj_push_mat, H.ine s hs hη a, AlgHom.commutes]
+    {r : D →* GG (m := 3) (R := R)} {h : GL (Fin 3) R} (H : TriIn η Ψ I r h) :
+    TriIn η Ψ I ((GG.map (φ : R →+* R')).comp r) (GeneralLinearGroup.map (φ : R →+* R') h) := by
+  refine ⟨?_, ?_⟩
+  · intro g hg a b hab
+    rw [conj_push_mat, H.tri g hg a b hab, map_zero]
+  · intro s hs hη a
+    rw [conj_push_mat, H.ine s hs hη a, AlgHom.commutes]
 
 private theorem diagIn_push (φ : R →ₐ[O] R') {η : D →* ℤˣ} {Ψ : D →* Oˣ} {I : Subgroup D}
-    {r : D →* GG 3 R} {h : GL (Fin 3) R} (H : DiagIn η Ψ I r h) :
-    DiagIn η Ψ I (push φ r) (GeneralLinearGroup.map (φ : R →+* R') h) where
-  toTriIn := triIn_push φ H.toTriIn
-  low g hg a b hab := by rw [conj_push_mat, H.low g hg a b hab, map_zero]
+    {r : D →* GG (m := 3) (R := R)} {h : GL (Fin 3) R} (H : DiagIn η Ψ I r h) :
+    DiagIn η Ψ I ((GG.map (φ : R →+* R')).comp r) (GeneralLinearGroup.map (φ : R →+* R') h) := by
+  refine ⟨triIn_push φ H.toTriIn, ?_⟩
+  intro g hg a b hab
+  rw [conj_push_mat, H.low g hg a b hab, map_zero]
 
 variable [IsLocalRing O] [IsCO O R] [IsCO O R']
 
@@ -46,14 +54,14 @@ private theorem inHat_push (φ : R →ₐ[O] R') {h : GL (Fin 3) R} (H : InHat h
   intro a b
   have e : ((GeneralLinearGroup.map (φ : R →+* R') h : Matrix (Fin 3) (Fin 3) R') - 1) a b =
       φ (((h : Matrix (Fin 3) (Fin 3) R) - 1) a b) := by
-    by_cases hab : a = b <;> simp [Matrix.sub_apply, Matrix.one_apply, hab]
+    by_cases hab : a = b <;> simp [Matrix.sub_apply, hab]
   rw [e]
   exact hm _ (H a b)
 
 end SlopeTestRemainingChoices
 
 theorem UpperTheory.locAt_push_of_locAt :
-    ∀ {O : Type} [CommRing O] [IsLocalRing O] {G Γ ι : Type} [Group G] [Group Γ] (F : Frame O G Γ ι) {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R'] (φ : R →ₐ[O] R') (v : ι) (r : F.D v →* GG 3 R), F.LocAt v r → F.LocAt v (push φ r) := by
+    ∀ {O : Type} [CommRing O] [IsLocalRing O] {G Γ ι : Type} [Group G] [Group Γ] (F : Frame O G Γ ι) {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R'] (φ : R →ₐ[O] R') (v : ι) (r : F.D v →* GG (m := 3) (R := R)), F.LocAt v r → F.LocAt v (((GG.map (φ : R →+* R')).comp r)) := by
   intro O _ _ G Γ ι _ _ F R R' _ _ _ _ _ _ φ v r hr
   unfold Frame.LocAt at hr ⊢
   obtain ⟨hT, hD, hU⟩ := hr
@@ -64,4 +72,4 @@ theorem UpperTheory.locAt_push_of_locAt :
     exact ⟨_, inHat_push φ hh, diagIn_push φ ht⟩
   · intro s hs
     have h1 := hU hv s hs
-    simp only [push, MonoidHom.comp_apply, h1, map_one]
+    simp only [MonoidHom.comp_apply, h1, map_one]

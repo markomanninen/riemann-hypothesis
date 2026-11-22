@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimitiveTuplesWithGramMatrixHenselCountStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardPrimitiveTuplesGramModNilpotentStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardHermitianMatricesDvdSqStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardPrimitiveTuplesWithGramMatrixResidueRingStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimOfIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PrimitiveTuplesWithGramMatrixHenselCountStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardPrimitiveTuplesGramModNilpotentStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardHermitianMatricesDvdSqStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NcardPrimitiveTuplesWithGramMatrixResidueRingStatement
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -117,10 +121,10 @@ theorem count_quot (c : O →+* O) (hc : ∀ u, c (c u) = u) (ω : O) (hω : IsU
       rw [hcBdef, quotInv_mk] at ht
       exact ht
     have hv : c (θ * u + c (θ * u)) = θ * u + c (θ * u) := by
-      rw [map_add, hc, add_comm]
+      rw [map_add (f := _), hc, add_comm]
     have hmk : Ideal.Quotient.mk (Ideal.span {p}) (θ * u + c (θ * u)) =
         Ideal.Quotient.mk _ u := by
-      rw [map_mul c, map_add, map_mul, map_mul, h', ← add_mul, ← map_add, hθ, map_one, one_mul]
+      rw [map_mul c, map_add (f := _), map_mul, map_mul, h', ← add_mul, ← map_add (f := _), hθ, map_one, one_mul]
     have hnd : ¬ p ∣ θ * u + c (θ * u) := by
       intro hd
       apply ht0
@@ -254,7 +258,7 @@ theorem primitive_gram_count : ∀ {F : Type} [Field F] [ValuativeRel F] [Topolo
     have hfix : c ((1 + p ^ j * v) * c (1 + p ^ j * v)) = (1 + p ^ j * v) * c (1 + p ^ j * v) := by
       rw [map_mul, hc, mul_comm]
     have hcv' : c (1 + p ^ j * v) = 1 + p ^ j * c v := by
-      rw [map_add, map_one, map_mul, map_pow, hp]
+      rw [map_add (f := _), map_one, map_mul, map_pow, hp]
     have hnd : ¬ p ∣ (1 + p ^ j * v) * c (1 + p ^ j * v) := by
       rintro ⟨s, hs⟩
       rw [hcv'] at hs

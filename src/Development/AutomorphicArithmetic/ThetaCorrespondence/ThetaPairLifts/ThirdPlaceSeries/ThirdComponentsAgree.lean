@@ -1,12 +1,17 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AgreeOfData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.GeometricGaloisRepCompatibility
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PublishedInputsThirdLayer
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ForcedByAutomorphicSemisimpleData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalMultiplicityFamily
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AgreeOfData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.GeometricGaloisRepCompatibility
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PublishedInputsThirdLayer
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ForcedByAutomorphicSemisimpleData
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalMultiplicityFamily
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -27,8 +32,27 @@ variable {B : Base} {C : Cols B} {a : Late B C} (b : Late B C) {px : PreX B.toPr
   {Wt : Set B.places.Pl}
 end Copy
 section Main
-set_option maxHeartbeats 4000000 in
-theorem third_components_agree_alt : ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists, _root_.GlobalTheory.HeightCounting.Up.PublishedInputsThirdLayerAlt → _root_.GlobalTheory.NRows.GeometricGaloisRepCompatibility → AllSt fun _ _ _ T w P x => ∀ (l : _root_.GlobalTheory.HeightCounting.Up.StrictHenselianAcyclicLevel hL x) (big : (Dof x).what₂.places.Pl → Finset ℂ) (L : LocAll (lay0 (Dof x))), _root_.GlobalTheory.CoefDuty.BuiltAlt l.a.A l.mt.M l.c.ch l.c.tp.tup big L → SumRepresentations.hypO (withLoc L) → ∀ (m : Moved (GlobalTheory.HeightCounting.Fin3.oL x L)), m.Copy → m.Coh → ∀ (s : Side0 (GlobalTheory.HeightCounting.Fin3.oL x L)) (r : ReadPk m s), r.Pin → ∀ (hC : m.z.R.C = cfL L (cfOf x)) (Xd : DivX (withLoc L)) (E : EigIdx (withLoc L) Xd) (labPi : E.Pi → (famR (w.st (GlobalTheory.HeightCounting.Fin3.oL x L).Z) w.I P.hX (usedOf w.I T P.Wt) m.z.Xg m.z.tr).A.fam.base.Ix) hb htup hg hf (rep : (withLoc L).what₂.FT → NG.FinTyp (withLoc L).host.E (withLoc L).R.r), HEq rep (repOf x.r.Y) → Nonempty (GlobalTheory.NJoin.Agree (GlobalTheory.HeightCounting.Up.RealOfReading.realOfRead m.z.R.toRealDat m.z.F.lv2 r.Y (tpL L l.c.tp) hC Xd E labPi hb htup hg hf) (mtL L l.mt.M) rep) := by
+open GlobalTheory.HeightCounting.Fin3
+
+theorem third_components_agree_alt :
+    ∀ hL : _root_.UpperTheory.Zero.LLC.RecTExists,
+      PublishedInputsThirdLayerAlt → GlobalTheory.NRows.GeometricGaloisRepCompatibility →
+      AllSt fun _ _ _ T w P x =>
+        ∀ (l : StrictHenselianAcyclicLevel hL x)
+          (big : (Dof x).what₂.places.Pl → Finset ℂ) (L : LocAll (lay0 (Dof x))),
+          GlobalTheory.CoefDuty.BuiltAlt l.a.A l.mt.M l.c.ch l.c.tp.tup big L →
+          SumRepresentations.hypO (withLoc L) →
+          ∀ (m : Moved (oL x L)), m.Copy → m.Coh →
+          ∀ (s : Side0 (oL x L)) (r : ReadPk m s), r.Pin →
+          ∀ (hC : m.z.R.C = cfD x L) (Xd : DivX (DL x L)) (E : EigIdx (DL x L) Xd)
+            (labPi : E.Pi → (famR (w.st (oL x L).Z) w.I P.hX
+              (usedOf w.I T P.Wt) m.z.Xg m.z.tr).A.fam.base.Ix) hb htup hg hf
+            (rep : (DL x L).what₂.FT → NG.FinTyp (DL x L).host.E (DL x L).R.r),
+            HEq rep (repOf x.r.Y) →
+            Nonempty (GlobalTheory.NJoin.Agree
+              (realOfRead (D := DL x L) m.z.R.toRealDat m.z.F.lv2 r.Y
+                (localCharacterTupleAgreement L l) hC Xd E labPi hb htup hg hf)
+              (localMultiplicityFamily L l) rep) := by
   intro hL _ _
   refine StepW.of_all ?_
   intro K B f T w _ _ _ P x l big L _ _ m hcp hco s r hpin hC Xd E labPi hb htup hg hf rep hrep
@@ -46,18 +70,22 @@ theorem third_components_agree_alt : ∀ hL : _root_.UpperTheory.Zero.LLC.RecTEx
     intro σ
     have a1 : (rep σ).Iso ((by with_unfolding_all exact ((repOf x.r.Y σ) :))) := (by with_unfolding_all exact ((iso_of_eq (congrFun eRep σ)) :))
     have a2 := x.pin.rep ((by with_unfolding_all exact (σ :)))
-    have a3 : ((by with_unfolding_all exact ((x.m.t.rep σ) :)) : NG.FinTyp (withLoc L).host.E (withLoc L).R.r).Iso ((by with_unfolding_all exact ((m.t.rep σ) :))) := (by with_unfolding_all exact ((iso_of_eq ((congrFun eR0 σ).trans (congrFun eR1 σ).symm)) :))
+    have a3 : ((by with_unfolding_all exact ((x.m.t.rep σ) :)) : NG.FinTyp (DL x L).host.E (DL x L).R.r).Iso ((by with_unfolding_all exact ((m.t.rep σ) :))) := (by with_unfolding_all exact ((iso_of_eq ((congrFun eR0 σ).trans (congrFun eR1 σ).symm)) :))
     have a4 := NG.IsoRep.symm (principalLevelFrame.rowRepR m.z.R.θ (r.Y.eFT σ)).stable (hpin.rep σ)
     exact (by with_unfolding_all exact ((NG.IsoRep.trans a1 (NG.IsoRep.trans a2 (NG.IsoRep.trans a3 a4))) :))
-  let DL := (w.st (GlobalTheory.HeightCounting.Fin3.oL x L).Z).toD7
+  let DL := DL x L
+  let pv : ∀ i : Fin DL.R.m, principalLevelFrame.RowPsi (Vc DL i) DL.R.nV := fun i => by
+    with_unfolding_all
+      exact (rowPsi (a := x.o.Z) (GlobalTheory.HeightCounting.Fin3.oL x L).Z (l.mt.ad.PV i) : _)
   let jm : ∀ μ, Used0 DL μ → ∀ i : Fin DL.R.m, DL.what₂.Mt μ (i.1 + 1) → GA DL (Vc DL i) →
       (cpV (GlobalTheory.HeightCounting.Fin3.oL x L).Z x.m.z.R.cV i).W :=
     fun μ h i y => (by with_unfolding_all exact ((x.r.Y.IL.jMt ((μ)) ((h)) ((i)) ((y))).1 : _))
   have hj : ∀ μ h i y, HEq (r.Y.IL.jMt μ h i y).1 (jm μ h i y) := fun μ h i y => (by with_unfolding_all exact (((hpin.jMt μ h i y).trans ((kJ μ i y).trans (x.pin.jMt μ h i y).symm)) :))
-  exact (by with_unfolding_all exact ((agree_of_data (D := DL) (R := m.z.R) (F := m.z.F) r.Y (cf := ((cfL L (cfOf x)))) (nch := ((chL L l.c.ch)))
-    (((tpL L l.c.tp))) ((hC)) ((Xd)) ((E)) ((labPi)) ((hb)) ((htup)) ((hg)) ((hf)) (((mtL L l.mt.M))) ((rep))
-    ((hrep')) _ ecV (_root_.GlobalTheory.HeightCounting.Fin3.psiVectorLocal L l) ((l.mt.ad.std)) ((l.mt.ad.eW)) jm hj ((l.mt.ad.read)) ((l.mt.ad.rat))
-    ((l.mt.ad.wt))) : _))
+  with_unfolding_all
+    exact agree_of_data (D := DL) (R := m.z.R) (F := m.z.F) r.Y
+      (localCharacterTupleAgreement L l) hC Xd E labPi hb htup hg hf
+      (localMultiplicityFamily L l) rep hrep' _ ecV pv l.mt.ad.std l.mt.ad.eW jm hj
+      l.mt.ad.read l.mt.ad.rat l.mt.ad.wt
 end Main
 end GlobalTheory.HeightCounting.Up.ThirdAgree
 end

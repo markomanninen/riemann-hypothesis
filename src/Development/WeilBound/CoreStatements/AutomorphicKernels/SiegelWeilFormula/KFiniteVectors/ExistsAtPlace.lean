@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.FirstFrameHalfEqMul
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.FirstFrameHalfEqMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem var_span' (R : RD d) (w : InfinitePlace F) (k : Fin d.m × Fin d.n × Bo
     simp only [P, Matrix.smul_mul, Matrix.mul_smul, smul_smul]
     have t1 : fiᵀ * fi.map star * (fr.map star * frᵀ) = 1 := by
       rw [Matrix.mul_assoc, ← Matrix.mul_assoc (fi.map star), ← mapStar_mul, hif]
-      rw [show (1 : Matrix (Fin d.m) (Fin d.m) ℂ).map star = 1 by ext i j; simp [one_apply, apply_ite]]
+      rw [show (1 : Matrix (Fin d.m) (Fin d.m) ℂ).map star = 1 by ext i j; simp only [Matrix.map_apply, Matrix.one_apply]; split_ifs <;> simp]
       rw [Matrix.one_mul, ← transpose_mul, hfi, transpose_one]
     rw [t1]
     have hs2 : ((R.sg w : ℤ) : ℂ) * R.ζ * (((R.sg w : ℤ) : ℂ) * star R.ζ) = 1 := by
@@ -100,8 +104,10 @@ theorem var_span' (R : RD d) (w : InfinitePlace F) (k : Fin d.m × Fin d.n × Bo
 
   have hM : ∀ (c : ℂ) (x : Matrix (Fin d.m) (Fin d.n) ℂ),
       trace (xᵀ * Matrix.of fun b j => if j = k.2.1 then c * fi k.1 b else 0) = c * (fi * x) k.1 k.2.1 := fun c x => by
-    simp only [trace, diag, mul_apply, transpose_apply, of_apply, mul_ite, mul_zero]
-    rw [Finset.sum_eq_single k.2.1 (fun j _ hj => by simp [hj]) (by simp)]
+    change (∑ j, ∑ b, x b j * (if j = k.2.1 then c * fi k.1 b else 0)) =
+      c * ∑ b, fi k.1 b * x b k.2.1
+    simp only [mul_ite, mul_zero]
+    rw [Finset.sum_eq_single k.2.1 (fun j _ hj => by simp only [if_neg hj, mul_zero, Finset.sum_const_zero]) (by simp)]
     simp only [if_pos rfl, Finset.mul_sum]
     exact Finset.sum_congr rfl fun b _ => by simp only [if_true]; ring
   obtain ⟨Z₁, h1, e1⟩ := key (Matrix.of fun b j => if j = k.2.1 then 1 * fi k.1 b else 0)

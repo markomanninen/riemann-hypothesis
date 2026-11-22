@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsProjIdealFormValue
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsProjIdealFormValue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -49,7 +54,8 @@ theorem proof : ProjIdealFormValue.Statement := by
         monomial (Finsupp.mapDomain Sigma.fst m₀) 1 := by
     conv_lhs => rw [x.as_sum]
     conv_rhs => rw [x.as_sum]
-    rw [eval₂_sum, eval₂_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eval₂_sum, eval₂_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun m hm => ?_
     rw [eval₂_monomial_cone, hD m hm]
   rw [key, mul_eq_zero, C_eq_zero, monomial_eq_zero]

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsJumpVIffOfExactCrystallineLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OfShortExact
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsJumpVIffOfExactCrystallineLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OfShortExact
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     (PD : PeriodData G Qp K₀ K B BdR) {LL : Type} [Field LL] [Algebra Qp LL]
 
 theorem fil_anti {a b : ℤ} (h : a ≤ b) : PD.Fil b ≤ PD.Fil a := by
-  induction b, h using Int.le_induction with
+  induction b, h using Int.leInduction with
   | base => exact le_rfl
   | succ n _ ih => exact (PD.Fil_anti n).trans ih
 
@@ -44,25 +48,23 @@ theorem ddR_of_trivial {V : Type} [AddCommGroup V] [Module Qp V] [Module LL V]
     (TensorProduct.lid Qp BdR).toLinearMap ∘ₗ (LinearMap.rTensor BdR (e.coord i))
   have hsum : ∀ y : V ⊗[Qp] BdR, y = ∑ i, e i ⊗ₜ[Qp] c i y := by
     intro y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul v b =>
       conv_lhs => rw [← e.sum_repr v, TensorProduct.sum_tmul]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp [c, TensorProduct.smul_tmul]
     | add a b ha hb =>
-      simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
+      simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, ← ha, ← hb]
   have hc : ∀ i g y, c i (actVdR PD ρ g y) = PD.actdR g (c i y) := by
     intro i g y
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul v b =>
       have := ((PD.actdR g).toAlgHom.toLinearMap.restrictScalars Qp).map_smul (e.coord i v) b
       have h2 : PD.actdR g (e.coord i v • b) = e.coord i v • PD.actdR g b := this
       simp only [c, actVdR, LinearMap.comp_apply, AlgebraTensorModule.map_tmul,
         LinearMap.rTensor_tmul, LinearEquiv.coe_coe, TensorProduct.lid_tmul, h2, hρ]
       simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   have hk : ∀ i, ∃ k : K, algebraMap K BdR k = c i x := fun i =>
     PD.invdR (c i x) fun g => by rw [← hc, hx]
   refine ⟨?_, fun a ha => ?_, fun a ha hF => ?_⟩
@@ -79,12 +81,11 @@ theorem ddR_of_trivial {V : Type} [AddCommGroup V] [Module Qp V] [Module LL V]
     exact ⟨e i ⊗ₜ ⟨c i x, this⟩, by simp⟩
   · have hF' : ∀ i, ∀ y ∈ FilV PD (LL := LL) (V := V) a, c i y ∈ PD.Fil a := by
       rintro i _ ⟨y, rfl⟩
-      induction y using TensorProduct.induction_on with
-      | zero => simp
+      induction y using TensorProduct.inductionOn with
       | tmul v b =>
         have : (e.coord i v) • (b : BdR) ∈ (PD.Fil a).restrictScalars Qp := Submodule.smul_mem _ _ b.2
         simpa [c] using this
-      | add y z hy hz => rw [map_add, map_add]; exact Submodule.add_mem _ hy hz
+      | add y z hy hz => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hy hz
     rw [hsum x]
     refine Finset.sum_eq_zero fun i _ => ?_
     obtain ⟨k, hk⟩ := hk i

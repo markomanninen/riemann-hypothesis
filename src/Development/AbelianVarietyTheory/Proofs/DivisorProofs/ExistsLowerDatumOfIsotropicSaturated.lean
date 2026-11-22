@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiltGraded
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntEqFinrankRingOfIntegersMul
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.PEqQOfNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiltGraded
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIntEqFinrankRingOfIntegersMul
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.PEqQOfNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,11 +60,11 @@ theorem exists_induced {V P V' : Type} [AddCommGroup V] [Module ℝ V] [AddCommG
   have hQ : ∀ x, Q x = x - p x + J (p (J x)) := fun x => rfl
   have QB : ∀ x, ∀ u ∈ U, B (Q x) u = 0 := fun x u hu => by
     rw [hQ]
-    simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+    simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
     rw [pB _ u hu, hJ, hUU _ (pU x) u hu]
     simp
   have QJ : ∀ x, Q (J x) = J (Q x) := fun x => by
-    simp only [hQ, hJ, map_neg, map_add, map_sub]; abel
+    simp only [hQ, hJ, map_neg, map_add (f := _), map_sub]; abel
   have Qi : ∀ x, Q (i x) = i x - p (i x) := fun x => by rw [hQ, pJ _ (hiU x), map_zero, add_zero]
   have QU : ∀ u ∈ U, Q u = 0 := fun u hu => by rw [hQ, pJ _ (hUU u hu), pid u hu]; simp
   have QW : ∀ w, (∀ u ∈ U, B w u = 0) → (∀ u ∈ U, B (J w) u = 0) → Q w = w := fun w h h' => by
@@ -115,7 +119,7 @@ theorem exists_induced {V P V' : Type} [AddCommGroup V] [Module ℝ V] [AddCommG
     change ρ (J (σ (A' x))) = _
     rw [σA]; rfl
   have e2 : (J ∘ₗ A ∘ₗ σ) ∘ₗ ρ = J ∘ₗ A - (J ∘ₗ A) ∘ₗ p + ((J ∘ₗ A) ∘ₗ J ∘ₗ p) ∘ₗ J := LinearMap.ext fun x => by
-    simp only [LinearMap.comp_apply, σρ, hQ, map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply]
+    simp only [LinearMap.comp_apply, σρ, hQ, map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply]
   have e3 : LinearMap.trace ℝ V ((J ∘ₗ A) ∘ₗ p) = 0 := by
     have a1 : (J ∘ₗ A) ∘ₗ p = ((J ∘ₗ A) ∘ₗ p) ∘ₗ p := LinearMap.ext fun x => by
       simp only [LinearMap.comp_apply, pid _ (pU x)]
@@ -123,7 +127,7 @@ theorem exists_induced {V P V' : Type} [AddCommGroup V] [Module ℝ V] [AddCommG
     rw [a1, LinearMap.trace_comp_comm', a2, map_zero]
   have e4 : J ∘ₗ ((J ∘ₗ A) ∘ₗ J ∘ₗ p) = -((J ∘ₗ A) ∘ₗ p) := LinearMap.ext fun x => by
     simp only [LinearMap.comp_apply, LinearMap.neg_apply, hJ, c, map_neg]
-  rw [e1, LinearMap.trace_comp_comm', e2, map_add, map_sub, e3, LinearMap.trace_comp_comm' J, e4, map_neg, e3]
+  rw [e1, LinearMap.trace_comp_comm', e2, map_add (f := _), map_sub, e3, LinearMap.trace_comp_comm' J, e4, map_neg, e3]
   simp
 
 theorem free_of_nsmul {M : Type} [AddCommGroup M] [Module.Finite ℤ M]
@@ -199,7 +203,8 @@ theorem trace_act {E : Type} [Field E] [NumberField E] (M : Type) [AddCommGroup 
     refine LinearMap.ext fun x => funext fun j => ?_
     simp [m, Pi.single_apply]
   have ht : LinearMap.trace ℤ _ m = n * Algebra.trace ℤ (𝓞 E) a := by
-    rw [hm, map_sum, Finset.sum_congr rfl (g := fun _ => Algebra.trace ℤ (𝓞 E) a)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_sum, Finset.sum_congr rfl (g := fun _ => Algebra.trace ℤ (𝓞 E) a)]
     · simp
     · intro k _
       rw [LinearMap.trace_comp_comm']
@@ -224,7 +229,7 @@ theorem mem_range_of_orth {L P : Type} [AddCommGroup L] [AddCommGroup P] (B : Li
   clear hy h2
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, Pi.add_apply, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, LinearMap.add_apply, ha, hb]
   | tmul r x => simp [g]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
@@ -253,22 +258,22 @@ theorem baseChange_form {L M N : Type} [AddCommGroup L] [AddCommGroup M] [AddCom
     B.baseChange ℝ (f.baseChange ℝ x) (f.baseChange ℝ y) = C.baseChange ℝ (g.baseChange ℝ x) (g.baseChange ℝ y) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
   | tmul r u =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul s v => simp [h]
 
 theorem baseChange_skew {L : Type} [AddCommGroup L] (B : LinearMap.BilinForm ℤ L) (h : ∀ x y, B x y = -B y x)
     (x y : ℝ ⊗[ℤ] L) : B.baseChange ℝ x y = -B.baseChange ℝ y x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
   | tmul r u =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
     | tmul s v => simp [h u v, mul_comm]
 
 def act (M : Type) [AddCommGroup M] [Module (𝓞 E) M] (a : 𝓞 E) : ℝ ⊗[ℤ] M →ₗ[ℝ] ℝ ⊗[ℤ] M :=
@@ -290,14 +295,14 @@ theorem act_comm {M N : Type} [AddCommGroup M] [Module (𝓞 E) M] [AddCommGroup
     f.baseChange ℝ (act M a x) = act N a (f.baseChange ℝ x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul r u => simp [act_tmul, h]
 
 theorem act_rt (H : Host E) (M : Type) [AddCommGroup M] [Module (𝓞 E) M] (x : ℝ ⊗[ℤ] M) :
     act M H.rt (act M H.rt x) = -((H.d : ℝ) • x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; module
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]; module
   | tmul r x =>
     rw [act_tmul, act_tmul, smul_smul, ← sq, H.rt_sq, neg_smul, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul,
       TensorProduct.tmul_neg, TensorProduct.tmul_smul]
@@ -345,7 +350,7 @@ theorem exists_datum (D : Datum H) (Z P L' : Type) [AddCommGroup Z] [Module (�
     obtain ⟨z, hz⟩ := hsf x
     obtain ⟨w, hw⟩ := hsf y
     change D.EF (i (s (f x))) (i (s (f y))) = _
-    rw [hw, map_add, map_add, hPZ, hz, map_add, map_add, LinearMap.add_apply, skew (i (k z)), hPZ]
+    rw [hw, map_add (f := _), map_add (f := _), hPZ, hz, map_add (f := _), map_add (f := _), LinearMap.add_apply, skew (i (k z)), hPZ]
     simp
   have uni : Function.Bijective B' := by
     constructor

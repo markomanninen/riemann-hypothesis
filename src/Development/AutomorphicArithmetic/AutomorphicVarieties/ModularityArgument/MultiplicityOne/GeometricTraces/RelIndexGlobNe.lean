@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.RCountAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.USide
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAutFormsWeightLevelFiniteSumFixedVectorsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorTestFamilyPreservesLevelFormsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryHeckeOperatorLevelIndicatorEqInvIndex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.MultiplicityOne.RCountAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.WeightRankUnits.USide
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryAutFormsWeightLevelFiniteSumFixedVectorsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeOperatorTestFamilyPreservesLevelFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryHeckeOperatorLevelIndicatorEqInvIndex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
+
+@[expose] public section
+
 open UpperTheory.V.Z.Mult UpperTheory.V.Z.Tf.GlobalTraceComparison UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 
 noncomputable section
@@ -38,7 +43,7 @@ private theorem trOn_eq_of_range (M₁ M₂ : Submodule ℂ V) [FiniteDimensiona
     rw [← he v hv]
     exact h v (hle hv)
   unfold trOn
-  rw [dif_pos h₁, dif_pos h₂]
+  rw [dite_eq_left h₁, dite_eq_left h₂]
   let g : M₁ →ₗ[ℂ] M₂ := L₁.restrict h
   let i : M₂ →ₗ[ℂ] M₁ := Submodule.inclusion hle
   have e₁ : L₁.restrict h₁ = i ∘ₗ g := by

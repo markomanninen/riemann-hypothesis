@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.KillOfEmpty
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.KillOfEmpty
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+
+@[expose] public section
 
 noncomputable section
 

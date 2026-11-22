@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DvdOfMemIk
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductFixedSubmoduleRestrictDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DvdOfMemIk
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CupProductFixedSubmoduleRestrictDual
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.Ord2.GwIneq
 open scoped Matrix
@@ -19,8 +23,10 @@ theorem cob_of_perp_transport {R : Type} [CommRing R] [TopologicalSpace R] [Disc
     (hf : ∀ a ∈ H1ur (rho.comp φ) J, cupH1H1TwistedDual μ rho φ h (Submodule.mkQ _ f) a = 0) :
     ∃ m : TDual R M, ∀ s ∈ J, f.1 s = twDual μ rho (φ s) m - m := by
   have heq : twDual (μ.comp φ) (rho.comp φ) = (twDual μ rho).comp φ := by
-    refine MonoidHom.ext fun s => LinearMap.ext fun ψ => TDual.ext fun x => ?_
-    simp only [MonoidHom.comp_apply, twDual_apply, map_inv φ]
+    refine MonoidHom.ext fun s => LinearMap.ext fun ψ => LinearMap.ext fun x => ?_
+    change ((μ (φ s) : Rˣ) : R) * ψ (rho (φ s⁻¹) x) =
+      ((μ (φ s) : Rˣ) : R) * ψ (rho (φ s)⁻¹ x)
+    rw [map_inv]
   have hf' : f.1 ∈ Z1 (twDual (μ.comp φ) (rho.comp φ)) := by rw [heq]; exact f.2
   have hy := key (Submodule.Quotient.mk ⟨f.1, hf'⟩) (by
     intro x hx

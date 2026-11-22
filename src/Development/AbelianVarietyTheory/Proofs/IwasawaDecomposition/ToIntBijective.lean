@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GeoTiedPGraft
-import Formalism.LocalToGlobal.HilbertRowConditions.KaTiedIffKapDef
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuationLtOneOfInvNotMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffZeroEqZeroIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GeoTiedPGraft
+public import Formalism.LocalToGlobal.HilbertRowConditions.KaTiedIffKapDef
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuationLtOneOfInvNotMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffZeroEqZeroIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ namespace GlobalTheory.GeoModel
 variable (D : D7)
 
 def fracO : IntermediateField ℚ D.what₂.LL := IntermediateField.adjoin ℚ (Set.range D.what₂.OtoLL)
-
-instance : NumberField (fracO D) := {}
 
 theorem otoLL_mem (y : D.what₂.O) : D.what₂.OtoLL y ∈ fracO D :=
   IntermediateField.subset_adjoin ℚ _ ⟨y, rfl⟩

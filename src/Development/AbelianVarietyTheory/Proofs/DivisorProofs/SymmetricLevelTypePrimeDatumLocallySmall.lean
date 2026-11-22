@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharMulInvEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharMulInvEqOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColNorms
 open scoped ComplexOrder
@@ -51,7 +55,8 @@ theorem maps_iff (hq : q ≠ 0) {N' N : ℕ} (e' e : ℕ → ℤ) (x : HomE E N'
     have h1 : y = ∑ l' : Fin N', y l' • eN E N' l'.1 := by
       funext i
       simp [Finset.sum_apply, eN, Fin.val_inj]
-    rw [h1, map_sum, Finset.sum_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum, Finset.sum_apply, Finset.mul_sum]
     refine intAt_sum' P _ _ fun l' _ => ?_
     convert (hy l').mul (h l l') using 1
     rw [map_smul, Pi.smul_apply, smul_eq_mul, zpow_sub₀ hq']
@@ -75,12 +80,12 @@ theorem maps_lamY_iff (hq : q ≠ 0) {k c' n' c n : ℕ} (hk' : k ≤ n') (hk : 
   · intro h p p' hp hp'
     have := h ⟨_, fIdx_lt hk hp⟩ ⟨_, fIdx_lt hk' hp'⟩
     unfold entB atN
-    rw [dif_pos (fIdx_lt hk hp)]
+    rw [dite_eq_left (fIdx_lt hk hp)]
     exact this
   · intro h l l'
     have := h _ _ (fIdx_fPos hk l.2).1 (fIdx_fPos hk' l'.2).1
     unfold entB atN at this
-    rw [(fIdx_fPos hk l.2).2, (fIdx_fPos hk' l'.2).2, dif_pos l.2] at this
+    rw [(fIdx_fPos hk l.2).2, (fIdx_fPos hk' l'.2).2, dite_eq_left l.2] at this
     exact this
 
 omit [NumberField E] [StarRing E] in
@@ -115,8 +120,9 @@ theorem redP_add_mul (hP : (q : 𝓞 E) ∈ P.asIdeal) (a : E) {b : E} (hb : Int
 variable {K : Type} [Field K]
 
 omit [StarRing E] in
-theorem unitV_congr (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a b : E} (h : redP P a = redP P b) : unitV χ a = unitV χ b := by
-  unfold unitV
+theorem unitV_congr (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a b : E} (h : redP P a = redP P b) :
+    Formalism.L2.Col.LocE.unitV χ a = Formalism.L2.Col.LocE.unitV χ b := by
+  unfold Formalism.L2.Col.LocE.unitV
   generalize redP P a = u at h
   generalize redP P b = v at h
   subst h
@@ -125,7 +131,7 @@ theorem unitV_congr (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a b : E} (h : redP
 omit [StarRing E] in
 theorem unitV_det_congr (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {t : ℕ} {A B : Matrix (Fin t) (Fin t) E}
     (hA : ∀ i j, IntAt P (A i j)) (hB : ∀ i j, IntAt P (B i j)) (h : ∀ i j, redP P (A i j) = redP P (B i j)) :
-    unitV χ A.det = unitV χ B.det := by
+    Formalism.L2.Col.LocE.unitV χ A.det = Formalism.L2.Col.LocE.unitV χ B.det := by
   apply unitV_congr
   rw [reduction_det P A hA, reduction_det P B hB]
   simp only [h]
@@ -135,8 +141,8 @@ theorem lamGvS_congr (ψ : AddChar (𝓞 E ⧸ P.asIdeal) K) (χ : ℕ → (𝓞
     {M M' : ℕ → ℕ → E} (hM : ∀ p p', p < r + j * t → p' < r + j * t → IntAt P (M p p'))
     (hM' : ∀ p p', p < r + j * t → p' < r + j * t → IntAt P (M' p p'))
     (h : ∀ p p', p < r + j * t → p' < r + j * t → redP P (M p p') = redP P (M' p p')) :
-    lamGvS ψ χ k r t j M = lamGvS ψ χ k r t j M' := by
-  unfold lamGvS
+    Formalism.L2.Col.LocE.lamGvS ψ χ k r t j M = Formalism.L2.Col.LocE.lamGvS ψ χ k r t j M' := by
+  unfold Formalism.L2.Col.LocE.lamGvS
   have key : ∀ A : ℕ → ℕ → E, (∀ p p', p < r + j * t → p' < r + j * t → IntAt P (A p p')) →
       redP P (∑ i ∈ Finset.range (k - 1), A i (i + 1) + ∑ i ∈ Finset.range (r - k - 1), A (k + i) (k + i + 1)) =
         ∑ i ∈ Finset.range (k - 1), redP P (A i (i + 1)) +
@@ -179,9 +185,9 @@ theorem finite_res : Finite (𝓞 E ⧸ P.asIdeal) := Ideal.finiteQuotientOfFree
 
 omit [StarRing E] in
 theorem norm_unitV (σ : K →+* ℂ) (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) (a : E) :
-    ‖σ (unitV χ a)‖ = 0 ∨ ‖σ (unitV χ a)‖ = 1 := by
+    ‖σ (Formalism.L2.Col.LocE.unitV χ a)‖ = 0 ∨ ‖σ (Formalism.L2.Col.LocE.unitV χ a)‖ = 1 := by
   have := finite_res P
-  unfold unitV
+  unfold Formalism.L2.Col.LocE.unitV
   split_ifs with h
   · exact Or.inr (norm_eq_one_of_finite (σ.toMonoidHom.comp ((Units.coeHom K).comp χ)) h.unit)
   · simp
@@ -198,18 +204,18 @@ theorem locSmall_phiGS (E K : Type) [Field E] [NumberField E] [StarRing E] [Fiel
     (hP : (q : 𝓞 E) ∈ P.asIdeal) (ha : n' + c' = r + (j - 1) * t) (hle : n' + c' ≤ n + c) (hk' : k ≤ n') (hk : k ≤ n)
     (hr : k ≤ r) :
     LocSmall q (LocE.lamY P q n' c' fun i => i + 1) (LocE.lamY P q n c fun i => i + 1)
-      (LocE.PhiGS q ψ χ k rS r t j c' n' c n) 1 := by
+      (Formalism.L2.Col.LocE.PhiGS q ψ χ k rS r t j c' n' c n) 1 := by
   have hq' : (q : E) ≠ 0 := Nat.cast_ne_zero.2 hq
   refine ⟨fun x hx => ?_, fun x z hz => ?_, fun σ x => ?_⟩
   · rw [maps_lamY_iff P q hq hk' hk]
-    unfold PhiGS at hx
+    unfold Formalism.L2.Col.LocE.PhiGS at hx
     simp only at hx
     split_ifs at hx with h
     · intro p p' hp hp'
       exact h.1 p p' hp (ha ▸ hp')
     · exact absurd rfl hx
   · rw [maps_lamY_iff P q hq hk' hk] at hz
-    unfold PhiGS
+    unfold Formalism.L2.Col.LocE.PhiGS
     have e := entB_add_smul q k c' n' c n (fun i => i + 1) (fun i => i + 1) x z (q : E)
     generalize entB q k c' n' c n (fun i => i + 1) (fun i => i + 1) (x + (q : E) • z) = M' at e
     generalize entB q k c' n' c n (fun i => i + 1) (fun i => i + 1) x = M at e
@@ -241,12 +247,12 @@ theorem locSmall_phiGS (E K : Type) [Field E] [NumberField E] [StarRing E] [Fiel
       congr 2
       exact unitV_det_congr P _ (fun s s' => hM' _ _ s.2 s'.2) (fun s s' => hM _ _ s.2 s'.2)
         (fun s s' => hR _ _ s.2 s'.2)
-  · unfold PhiGS
+  · unfold Formalism.L2.Col.LocE.PhiGS
     simp only
     split_ifs
-    · unfold lamGvS
+    · unfold Formalism.L2.Col.LocE.lamGvS
       rw [map_mul, map_mul, norm_mul, norm_mul, norm_addChar, one_mul, map_inv₀, norm_inv, map_prod, norm_prod]
-      refine mul_le_one₀ (Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => ?_) (by positivity) ?_
+      refine mul_le_one₀ (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => ?_) (by positivity) ?_
       · rcases norm_unitV P σ (χ i) _ with h | h <;> rw [h] <;> norm_num
       · rcases norm_unitV P σ (χ (j - 1)) _ with h | h <;> rw [h] <;> norm_num
     · simp

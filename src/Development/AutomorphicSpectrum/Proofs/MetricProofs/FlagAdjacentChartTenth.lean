@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatementStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecond
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatementStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPoints
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecond
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WMan
@@ -30,10 +35,10 @@ theorem normScale_ne (M : FlagModel y Ψ N j) {c : NonPluckerBlocks M.blk → �
   | some k =>
     by_cases h : ∀ p, M.blk p ≠ some k
     · show dite _ _ _ ≠ 0
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       exact hc ⟨k, h⟩
     · show dite _ _ _ ≠ 0
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       exact one_ne_zero
 
 theorem normScale_base (M : FlagModel y Ψ N j) (c : NonPluckerBlocks M.blk → ℂ) (k : NonPluckerBlocks M.blk) :
@@ -44,7 +49,7 @@ theorem normScale_step (M : FlagModel y Ψ N j) (c : NonPluckerBlocks M.blk → 
     (hp : M.blk p = some k) : normScale M c (some k) = 1 := by
   have h : ¬ ∀ p, M.blk p ≠ some k := fun h => h p hp
   show dite _ _ _ = 1
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 end Scale
 

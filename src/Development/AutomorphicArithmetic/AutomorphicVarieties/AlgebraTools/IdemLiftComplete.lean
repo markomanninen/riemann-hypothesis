@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 
@@ -151,6 +155,6 @@ theorem UpperTheory.V.AlgebraTools.idem_lift_complete :
   refine ⟨Q, ?_⟩
   have h : f N = z + (z * z - z) * aeval z Q := by
     simp only [f]
-    rw [hQ, map_add, map_mul, hD, aeval_X]
+    rw [hQ, map_add (f := _), map_mul, hD, aeval_X]
   rw [← h]
   exact hd N

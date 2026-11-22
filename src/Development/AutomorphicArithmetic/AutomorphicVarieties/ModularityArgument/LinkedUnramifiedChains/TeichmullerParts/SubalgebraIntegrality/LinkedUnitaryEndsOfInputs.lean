@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.GlBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartUR2MemSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.InfRepFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartUR2AtW
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.GlBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CLocConjAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsSplitAtOfDecompositionLeRestrictionRange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartUR2MemSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.InfRepFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PartUR2AtW
+
+@[expose] public section
 
 noncomputable section
 
@@ -238,7 +242,8 @@ private theorem zd_C {J : Type} [Fintype J] (Y : J → Submodule ℂ (Fin H.m �
   · rw [hlev]
     exact (hB i (hy i).1).2
   · have h := h3 v a z
-    rw [map_sum, Finset.smul_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum] at h
     refine sub_eq_zero.1 (zd_zero Y hY (fun i => H.X.rpF ℂ d H.m (eV n H.Sl v a z : H.X.I.T) (y i) -
       (ι (H.finPart θ x lam v a z))⁻¹ • y i) (fun i => (Y i).sub_mem (hrp i _ _ (hy i).1) ((Y i).smul_mem _ (hy i).1)) ?_ i)
     rw [Finset.sum_sub_distrib, h, sub_self]
@@ -270,7 +275,7 @@ private def wS (σ : Submodule ℂ (UA L n → ℂ)) :
   add_mem' {x y} hx hy i ℓ := by
     have : toForm ι e ((x + y) i) ℓ = toForm ι e (x i) ℓ + toForm ι e (y i) ℓ := by
       funext g
-      simp only [toForm, Pi.add_apply, map_add]
+      simp only [toForm, Pi.add_apply, map_add (f := _)]
     rw [this]
     exact σ.add_mem (hx i ℓ) (hy i ℓ)
   zero_mem' i ℓ := by

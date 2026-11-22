@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.UG Matrix
 open scoped TensorProduct
@@ -11,78 +15,9 @@ namespace GlobalTheory.Mem.LevDual
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-
-theorem sigR_int (σ : E →ₐ[F] E) (x : E ⊗[F] 𝔸)
-    (hx : x ∈ tensInt (F := F) 𝔸 (intOE E) (intAd F)) :
-    sigR σ 𝔸 x ∈ tensInt (F := F) 𝔸 (intOE E) (intAd F) := by
-  have hle : tensInt (F := F) 𝔸 (intOE E) (intAd F) ≤
-      (tensInt (F := F) 𝔸 (intOE E) (intAd F)).comap (sigR σ 𝔸) := by
-    conv_lhs => unfold tensInt
-    rw [Subring.closure_le]
-    rintro _ (⟨a, rfl⟩ | ⟨y, rfl⟩)
-    · rw [SetLike.mem_coe, Subring.mem_comap]
-      obtain ⟨a, r, hr⟩ := a
-      subst hr
-      have hi : IsIntegral ℤ (σ (r : E)) := map_isIntegral_int σ (RingOfIntegers.isIntegral_coe r)
-      change (σ (r : E)) ⊗ₜ[F] (1 : 𝔸) ∈ _
-      exact Subring.subset_closure (Or.inl ⟨⟨σ (r : E), ⟨⟨σ (r : E), hi⟩, rfl⟩⟩, rfl⟩)
-    · rw [SetLike.mem_coe, Subring.mem_comap]
-      change (σ (1 : E)) ⊗ₜ[F] (y : 𝔸) ∈ _
-      rw [map_one]
-      exact Subring.subset_closure (Or.inr ⟨y, rfl⟩)
-  exact hle hx
-
-theorem form_latS_int (σ : E →ₐ[F] E) {n : ℕ} (L' : Submodule (𝓞 E) (Fin n → E))
-    (z : Fin n → E) (hz : z ∈ dualSet (σ : E →+* E) (1 : Matrix (Fin n) (Fin n) E) L')
-    (u : Fin n → E ⊗[F] 𝔸)
-    (hu : u ∈ latS (F := F) 𝔸 (tensInt (F := F) 𝔸 (intOE E) (intAd F)) L') :
-    (fun i => sigR σ 𝔸 (u i)) ⬝ᵥ (fun a => inclE (F := F) 𝔸 (z a)) ∈
-      tensInt (F := F) 𝔸 (intOE E) (intAd F) := by
-  induction hu using Submodule.span_induction with
-  | mem u hu =>
-    obtain ⟨l, hl, rfl⟩ := hu
-    obtain ⟨r, hr⟩ := hz l hl
-    have e : (fun i => sigR σ 𝔸 (inclE (F := F) 𝔸 (l i))) ⬝ᵥ (fun a => inclE (F := F) 𝔸 (z a)) =
-        inclE (F := F) 𝔸 (hform (σ : E →+* E) (1 : Matrix (Fin n) (Fin n) E) l z) := by
-      have h1 : hform (σ : E →+* E) (1 : Matrix (Fin n) (Fin n) E) l z = ∑ i, σ (l i) * z i := by
-        unfold hform
-        refine Finset.sum_congr rfl fun i _ => ?_
-        simp [Matrix.one_apply]
-      rw [h1, map_sum]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [map_mul]
-      rfl
-    simp only [] at e ⊢
-    rw [e, ← hr]
-    exact Subring.subset_closure (Or.inl ⟨⟨_, ⟨r, rfl⟩⟩, rfl⟩)
-  | zero => simp
-  | add a b _ _ ha hb =>
-    have : (fun i => sigR σ 𝔸 ((a + b) i)) = (fun i => sigR σ 𝔸 (a i)) + (fun i => sigR σ 𝔸 (b i)) := by
-      funext i; simp
-    rw [this, add_dotProduct]
-    exact add_mem ha hb
-  | smul c a _ ha =>
-    have : (fun i => sigR σ 𝔸 ((c • a) i)) = sigR σ 𝔸 (c : E ⊗[F] 𝔸) • (fun i => sigR σ 𝔸 (a i)) := by
-      funext i
-      simp [Subring.smul_def]
-    rw [this, smul_dotProduct]
-    exact mul_mem (sigR_int σ _ c.2) ha
-
 end GlobalTheory.Mem.LevDual
 
 namespace GlobalTheory.Mem.LevDual
-
-theorem sigR_inclE {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (σ : E →ₐ[F] E) (e : E) :
-    sigR σ (FiniteAdeleRing (𝓞 F) F) (inclE (F := F) (FiniteAdeleRing (𝓞 F) F) e) =
-      inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (σ e) := rfl
-
-theorem hform_one {E : Type} [Field E] (σ : E →+* E) {n : ℕ} (x y : Fin n → E) :
-    hform σ (1 : Matrix (Fin n) (Fin n) E) x y = ∑ i, σ (x i) * y i := by
-  unfold hform
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp [Matrix.one_apply]
 
 open NumberField IsDedekindDomain Matrix in
 open scoped TensorProduct in
@@ -182,7 +117,8 @@ private lemma pairing_mem_intV_of_mem_dualSet (σ : E →ₐ[F] E) (w : HeightOn
   | mem v hv =>
     obtain ⟨y, hy, rfl⟩ := hv
     have h := inclE_mem_intV_of_mem_intOE (F := F) w (hz' y hy)
-    rw [hform_one_apply, map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hform_one_apply, map_sum] at h
     convert h using 2 with j
     rw [map_mul]
     congr 1
@@ -190,14 +126,14 @@ private lemma pairing_mem_intV_of_mem_dualSet (σ : E →ₐ[F] E) (w : HeightOn
   | zero => simp
   | add a b _ _ ha hb =>
     convert add_mem ha hb using 1
-    simp [map_add, add_mul, Finset.sum_add_distrib]
+    simp [map_add (f := _), add_mul, Finset.sum_add_distrib]
   | smul c a _ ha =>
     convert mul_mem (sigR_mem_intV' σ w c.2) ha using 1
     simp [Subring.smul_def, map_mul, Finset.mul_sum, mul_assoc]
 
+
 open NumberField IsDedekindDomain Matrix in
 open scoped TensorProduct in
-
 theorem _root_.GlobalTheory.Mem.LevDual.unitary_carry_dual : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (w : HeightOneSpectrum (𝓞 F)) (n : ℕ) (J : Matrix (Fin n) (Fin n) E) (L : Submodule (𝓞 E) (Fin n → E)) (p : 𝓞 E), J = 1 → p ≠ 0 → (∀ x, x ∈ L ↔ ∀ j : Fin n, ∃ r : 𝓞 E, x j = (r : E) ∧ (j.1 + 1 = n → p ∣ r)) → ∀ (L' : Submodule (𝓞 E) (Fin n → E)) (Y : GL (Fin n) (TensorProduct F E (FiniteAdeleRing (𝓞 F) F))), Y ∈ _root_.Formalism.UG.UPts σ J (FiniteAdeleRing (𝓞 F) F) → (∀ x : Fin n → TensorProduct F E (FiniteAdeleRing (𝓞 F) F), x ∈ _root_.Formalism.UG.latS (F := F) (FiniteAdeleRing (𝓞 F) F) (_root_.Formalism.UG.tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (_root_.Formalism.UG.intOE E) (_root_.Formalism.UG.intAd F)) L' ↔ ((Y⁻¹ : GL (Fin n) (TensorProduct F E (FiniteAdeleRing (𝓞 F) F))) : Matrix (Fin n) (Fin n) (TensorProduct F E (FiniteAdeleRing (𝓞 F) F))) *ᵥ x ∈ _root_.Formalism.UG.latS (F := F) (FiniteAdeleRing (𝓞 F) F) (_root_.Formalism.UG.tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (_root_.Formalism.UG.intOE E) (_root_.Formalism.UG.intAd F)) L) → ∀ z ∈ _root_.Formalism.BasicNotions.dualSet (σ : E →+* E) J L', ((_root_.Formalism.UG.bc (_root_.Formalism.UG.prV (E := E) w) Y)⁻¹).1 *ᵥ (fun a => _root_.Formalism.UG.inclE (F := F) (w.adicCompletion F) (z a)) ∈ _root_.Formalism.UG.latS (F := F) (w.adicCompletion F) (_root_.Formalism.BasicNotions.intV E w) (Submodule.span (𝓞 E) (_root_.Formalism.BasicNotions.dualSet (σ : E →+* E) J L)) := by
   intro F E _ _ _ _ _ σ w n J L p hJ hp hL L' Y hY hLat z hz
   subst hJ

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
-import Mathlib.Algebra.DualNumber
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.OrdinaryHeckeAlgebraIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.FinDefs
+public import Mathlib.Algebra.DualNumber
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace UpperTheory.V.Th.Coc
 
 variable {O R X : Type} [CommRing O] [CommRing R] [Algebra O R] [CommRing X] [Algebra O X] {n : ℕ}
 
-variable (X) in
 
+variable (X) in
 abbrev bar (Z : Matrix (Fin n) (Fin n) O) : Matrix (Fin n) (Fin n) X := Z.map (algebraMap O X)
 
 def repR {G : Type} [Group G] (x : R →ₐ[O] O) (ρ : G →* Matrix (Fin n) (Fin n) O) :

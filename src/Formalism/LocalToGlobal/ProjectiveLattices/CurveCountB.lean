@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveLoc
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem homog_isHomogeneous (a : Fin N) (Q : MvPolynomial (Fin N) K) :
   classical
   refine IsHomogeneous.sum _ _ _ fun m hm => isHomogeneous_monomial _ ?_
   have hle : m.degree ≤ Q.totalDegree := le_totalDegree hm
-  rw [map_add, Finsupp.degree_single]
+  rw [map_add (f := _), Finsupp.degree_single]
   omega
 
 theorem aeval_homog {L : Type*} [Field L] [Algebra K L] (a : Fin N) (Q : MvPolynomial (Fin N) K) (y : Fin N → L)
@@ -27,8 +31,10 @@ theorem aeval_homog {L : Type*} [Field L] [Algebra K L] (a : Fin N) (Q : MvPolyn
   have hQ : aeval (fun i => y i / y a) Q =
       ∑ m ∈ Q.support, aeval (fun i => y i / y a) (monomial m (Q.coeff m)) := by
     conv_lhs => rw [Q.as_sum]
-    rw [map_sum]
-  rw [hQ, homog, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hQ, homog, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hle : m.degree ≤ Q.totalDegree := le_totalDegree hm
   rw [aeval_monomial, aeval_monomial, Finsupp.prod_add_index' (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _),
@@ -63,25 +69,26 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
   (N : ℕ) {wL : WeightFamilies.Wt D j} (w : Fin N → B.Cusp j wL)
 
 theorem tv_indep :
-    AlgebraicIndependent (X.Kl la) (fun p : Idx D j N => algebraMap (Op X la N) (Kp X la N) (Tv X la N p)) := by
+    AlgebraicIndependent (X.Kl la) (fun p : Idx D j N => @algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N p)) := by
   have h0 := MvPolynomial.algebraicIndependent_X (Idx D j N) (X.Ol la)
   have hinj1 : Function.Injective (algebraMap (Pol X la N) (Op X la N)) :=
     IsLocalization.injective (Op X la N) (Ideal.primeCompl_le_nonZeroDivisors (gI X la N))
-  have hinj2 : Function.Injective (algebraMap (Op X la N) (Kp X la N)) := IsFractionRing.injective _ _
+  have hinj2 : Function.Injective (@algebraMap (Op X la N) (Kp X la N) _ _ _) := IsFractionRing.injective _ _
   let g : Pol X la N →ₐ[X.Ol la] Kp X la N :=
     (IsScalarTower.toAlgHom (X.Ol la) (Op X la N) (Kp X la N)).comp
       (IsScalarTower.toAlgHom (X.Ol la) (Pol X la N) (Op X la N))
   have h1 : AlgebraicIndependent (X.Ol la)
-      (fun p : Idx D j N => algebraMap (Op X la N) (Kp X la N) (Tv X la N p)) :=
+      (fun p : Idx D j N => @algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N p)) :=
     h0.map' (f := g) (hinj2.comp hinj1)
   have : Algebra.IsAlgebraic (X.Ol la) (X.Kl la) := IsLocalization.isAlgebraic (X.Kl la) (nonZeroDivisors (X.Ol la))
   exact h1.extendScalars (X.Kl la)
 
 theorem sfr_eq (i : Fin (WeightFamilies.dimY D j + 1)) :
     sfr X la w i = ∑ k, algebraMap (Kp X la N) ↥(Frac0 X la w)
-      (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i, k))) * xw X la N w k := by
+      (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (i, k))) * xw X la N w k := by
   apply Subtype.ext
-  rw [coe_sfr, Formalism.MainNotions.Gaps.EtaleWeightGaps.sec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coe_sfr, Formalism.MainNotions.Gaps.EtaleWeightGaps.sec, map_sum]
   push_cast
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, Algebra.smul_def]
@@ -94,9 +101,9 @@ theorem sfr_zero : sfr X la w 0 = 1 := by
 
 variable {Ω : Type} [Field Ω] [Algebra B.KO Ω] (gF : X.Forms →ₐ[B.KO] Ω)
 
+
 set_option synthInstance.maxHeartbeats 200000 in
 set_option maxHeartbeats 1000000 in
-
 theorem countQAt_of (v : Fin N → Ω) (hv : ∀ i, gF (X.inc wL (w i)) = v i)
     (htr : ∃ a₀, v a₀ ≠ 0 ∧
       Algebra.trdeg B.KO (IntermediateField.adjoin B.KO (Set.range fun i => v i / v a₀)) ≤ WeightFamilies.dimY D j) :
@@ -121,7 +128,7 @@ theorem countQAt_of (v : Fin N → Ω) (hv : ∀ i, gF (X.inc wL (w i)) = v i)
     @IsScalarTower.of_algebraMap_eq B.KO (X.Kl la) κ _ _ _ _ algKl algK (fun _ => rfl)
   let x : Fin N → κ := fun i => ρ (xw X la N w i)
   let t : Fin (WeightFamilies.dimY D j + 1) × Fin N → κ :=
-    fun p => ρK (algebraMap (Op X la N) (Kp X la N) (Tv X la N p))
+    fun p => ρK (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N p))
   have ht : AlgebraicIndependent B.KO t := by
     let g : Kp X la N →ₐ[X.Kl la] κ := { ρK with commutes' := fun _ => rfl }
     have h1 := (tv_indep X la N).map' (f := g) ρK.injective
@@ -132,13 +139,15 @@ theorem countQAt_of (v : Fin N → Ω) (hv : ∀ i, gF (X.inc wL (w i)) = v i)
   have hlin : ∀ i : Fin (WeightFamilies.dimY D j), ∑ k, t (i.succ, k) * x k = 0 := by
     intro i
     have h := congrArg ρ (sfr_eq X la N w i.succ)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_mul] at h
     rw [← (hρ _).mpr (hJ (sfr_succ_mem_Jid X la w i)), h]
     rfl
   have hlin0 : ∑ k, t (0, k) * x k = 1 := by
     have h := congrArg ρ (sfr_eq X la N w 0)
-    rw [map_sum, sfr_zero, map_one] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, sfr_zero, map_one] at h
     simp only [map_mul] at h
     rw [h]
     rfl

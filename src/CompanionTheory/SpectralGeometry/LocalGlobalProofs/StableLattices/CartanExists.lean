@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Cartan
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Cartan
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Dblock.CartanDVR
 

@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Formalism.PeriodIntegrals.IsLowUnitH
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Formalism.PeriodIntegrals.IsLowUnitH
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QdetTopThreeOrders
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.RhoEqRhoCAddRhoN
+
+@[expose] public section
+
 open Finset
 
 namespace GlobalTheory.CompanionTheory.Inh.CapelliCasimir
@@ -55,7 +60,7 @@ theorem scalar_core (n : ℕ) (hn : 2 ≤ n) (ρ μ a : Fin n → ℂ) (b : Fin 
     refine Set.Infinite.mono (s := {0}ᶜ) ?_ (Set.finite_singleton (0:ℂ)).infinite_compl
     intro t ht
     have ht : t ≠ 0 := ht
-    simp only [Set.mem_setOf_eq, eval_add, eval_mul, eval_C, eval_X, eval_pow, eval_finset_sum,
+    simp only [Set.mem_setOf_eq, eval_add, eval_mul, eval_C, eval_X, eval_pow, Polynomial.eval_finsetSum,
       eval_one, rev_eval _ _ _ ht, card_univ, Fintype.card_fin]
     have := congrArg (fun z => t ^ n * z) (h t⁻¹)
     simp only [mul_add, mul_sum] at this ⊢
@@ -90,7 +95,7 @@ theorem scalar_core (n : ℕ) (hn : 2 ≤ n) (ρ μ a : Fin n → ℂ) (b : Fin 
   have c2 : ∀ p : ℂ[X], (X * p).coeff 2 = p.coeff 1 := fun p => coeff_X_mul p 1
   rw [c1] at k1
   rw [c2] at k2
-  simp only [finset_sum_coeff, coeff_C_mul, (rev_coeff _ _).1, (rev_coeff _ _).2.1, le_refl, if_true,
+  simp only [Polynomial.finsetSum_coeff, coeff_C_mul, (rev_coeff _ _).1, (rev_coeff _ _).2.1, le_refl, if_true,
     Nat.sub_self, mul_one] at k1 k2
   norm_num at k1 k2
   constructor
@@ -149,75 +154,5 @@ theorem sq_sub_cas {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → 
   rw [two_smul, ← h1, ← sub_eq_zero.1 h2]
   abel
 
-theorem cvalR_eq {n : ℕ} (ε : Fin n → Bool) (lam : Fin n → ℝ) :
-    ((Formalism.REAL.cvalR ε lam : ℝ) : ℂ)
-      = ∑ l, (lam l : ℂ) ^ 2 - ∑ l : Fin n, (((n : ℂ) - 1) / 2 - ((l : ℕ) : ℂ)) ^ 2 := by
-  have h : Formalism.REAL.rhoC ε + Formalism.REAL.rhoN ε = ReciprocityTheory.ChartRestriction.DS.rho n :=
-    (ReciprocityTheory.ChartRestriction.DS.rho_eq_rhoC_add_rhoN ε).symm
-  rw [Formalism.REAL.cvalR, h]
-  simp only [Formalism.REAL.nsq, Formalism.REAL.dot, ReciprocityTheory.ChartRestriction.DS.rho]
-  push_cast
-  congr 1 <;> refine sum_congr rfl fun l _ => ?_ <;> ring
-
-open Formalism.REAL in
-
-theorem cas_of_capelli_vec : ∀ (n : ℕ) (ε : Fin n → Bool) (V : Type) [AddCommGroup V] [Module ℂ V] (E : Fin n → Fin n → Module.End ℂ V) (lam : Fin n → ℝ) (v : V), GlRel E → (∀ Y : ℂ, qdet E (Y + ((n : ℂ) - 1) / 2) v = Formalism.QuantumDeterminants.capP (fun s => (lam s : ℂ)) Y • v) → Cas E v = ((cvalR ε lam : ℝ) : ℂ) • v := by
-  intro n ε M _ _ E mu v hE h
-  rw [cvalR_eq]
-  obtain ⟨Rm, hR⟩ := _root_.GlobalTheory.qdet_top_three_orders (Module.End ℂ M) n E
-  by_cases hn : 2 ≤ n
-  swap
-  · have hn' : n = 0 ∨ n = 1 := by omega
-    rcases hn' with rfl | rfl
-    · simp [Cas]
-    · have h0 := h 0
-      rw [hR] at h0
-      have h1 : E 0 0 v = (mu 0 : ℂ) • v := by
-        simpa [Formalism.QuantumDeterminants.capP, Finset.filter_singleton] using h0
-      simp [Cas, h1, sq, mul_smul]
-  set ρ : Fin n → ℂ := fun l => ((n : ℂ) - 1) / 2 - ((l : ℕ) : ℂ) with hρ
-  have hρ0 : ∑ l, ρ l = 0 := by
-    have h1 : ∑ l, ρ l = ∑ l, ρ (Fin.rev l) := (Equiv.sum_comp Fin.revPerm ρ).symm
-    have h2 : ∑ l, ρ (Fin.rev l) = - ∑ l, ρ l := by
-      rw [← sum_neg_distrib]
-      refine sum_congr rfl fun l _ => ?_
-      have := l.2
-      simp only [hρ, Fin.val_rev]
-      rw [Nat.cast_sub (by omega)]; push_cast; ring
-    linear_combination (h1.trans h2) / 2
-  have core := fun φ : Module.Dual ℂ M =>
-    scalar_core n hn ρ (fun s => (mu s : ℂ)) (fun i => φ (E i i v))
-      (fun i j => φ ((E i i * E j j - E j i * E i j) v)) (fun d => φ (Rm d v)) (φ v)
-      (((n : ℂ) - 1) / 2)
-      (fun Y => by
-        have h1 := h Y
-        rw [hR] at h1
-        have h2 := congrArg φ h1
-        simp only [LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply,
-          Module.End.one_apply, map_add, map_sum, map_smul, smul_eq_mul, add_sub_assoc,
-          Formalism.QuantumDeterminants.capP] at h2
-        exact h2)
-  have e1 : (∑ i, E i i) v = (∑ l, (mu l : ℂ)) • v := by
-    rw [← sub_eq_zero, ← Module.forall_dual_apply_eq_zero_iff ℂ]
-    intro φ
-    have := (core φ).1
-    rw [hρ0] at this
-    simp only [LinearMap.sum_apply, map_sub, map_sum, map_smul, smul_eq_mul]
-    linear_combination this
-  rw [← sub_eq_zero, ← Module.forall_dual_apply_eq_zero_iff ℂ]
-  intro φ
-  have h2 := (core φ).2
-  have h3 := congrArg (fun T : Module.End ℂ M => φ (T v)) (sq_sub_cas E hE)
-  rw [LinearMap.sub_apply, Module.End.mul_apply, e1, map_smul, e1, LinearMap.sub_apply] at h3
-  simp only [sum_erase_eq_sub (mem_univ _), hρ0] at h2
-  simp only [LinearMap.sum_apply, LinearMap.smul_apply, map_sub φ, map_sum, map_smul,
-    smul_eq_mul] at h3 h2 ⊢
-  have h5 : ∑ i : Fin n, ((n : ℂ) - 1 - 2 * (i : ℕ)) * φ (E i i v)
-      = - (2 * ∑ i, (0 - ρ i) * φ (E i i v)) := by
-    rw [mul_sum, ← sum_neg_distrib]
-    refine sum_congr rfl fun i _ => ?_
-    simp only [hρ]; ring
-  rw [h5] at h3
-  linear_combination -h3 - h2
 
 end GlobalTheory.CompanionTheory.Inh.CapelliCasimir

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudPropOfMapsRetractionBasis
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DeltaPsiH
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.CloudPropOfMapsRetractionBasis
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.DeltaPsiH
+
+@[expose] public section
 
 noncomputable section
 

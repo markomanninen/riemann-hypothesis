@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ConeChartA
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeComponent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDatumAOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.AlgebraMapNormOfBasisOneSqrt
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,7 @@ def actF {A : Over S} [GrpObj A] (act : OActN G.O A) : OAct (𝓞 G.F) A where
   hom c := act.hom _
   one := by rw [map_one]; exact act.one
   mul b c := by rw [← act.mul, ← map_mul, mul_comm]
-  add b c := by rw [map_add]; exact act.add _ _
+  add b c := by rw [map_add (f := _)]; exact act.add _ _
 
 structure GObj (b : GBase G R) (N : ℕ) (s : S ⟶ Sp R) where
   A : Over S
@@ -183,34 +187,5 @@ structure GenModel (b : GBase G R) (N : ℕ) where
   s : X ⟶ Sp R
   univ : GObj b N s
   rep : ∀ (S : Scheme.{0}) (s' : S ⟶ Sp R) (o : GObj b N s'), ∃! f : S ⟶ X, f ≫ s = s' ∧ Nonempty (GObjMap o univ f)
-
-theorem exists_gDatum_one_one_one : ∃ G : GDatum, G.a = 1 ∧ G.n = 1 ∧ G.m = 1 := by
-  obtain ⟨_, D, ha, hn, hm⟩ := GlobalTheory.UPel.HT.exists_datum_a_one
-  exact ⟨D.toG, ha, hn, hm⟩
-
-instance nonempty_gDatum : Nonempty GDatum := ⟨exists_gDatum_one_one_one.choose⟩
-
-instance nonempty_gBase_complex (G : GDatum) : Nonempty (GBase G ℂ) := ⟨{
-  ρ := G.ρc
-  ρ_root := G.ρc_root
-  t i := (G.tau i).comp (algebraMap (𝓞 G.F) G.F)
-  t_ω i := G.tau_ω i
-  comax i j hij := by
-    have hne : (G.tau i).comp (algebraMap (𝓞 G.F) G.F) ≠ (G.tau j).comp (algebraMap (𝓞 G.F) G.F) := fun h =>
-      hij (G.tau.injective (IsLocalization.ringHom_ext (nonZeroDivisors (𝓞 G.F)) h))
-    obtain ⟨x, hx⟩ := DFunLike.ne_iff.mp hne
-    exact Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span ⟨x, rfl⟩)
-      (isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr hx)) }⟩
-
-example {p : ℕ} [Fact p.Prime] {D : Datum p} (b : Base D R) : GBase D.toG R :=
-  ⟨b.ρ, b.ρ_root, b.t, b.t_ω, b.comax⟩
-
-example {p : ℕ} [Fact p.Prime] (D : Datum p) :
-    D.toG.La = D.La ∧ D.toG.EF = D.EF ∧ D.toG.a = D.a ∧ D.toG.m = D.m ∧ D.toG.n = D.n :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-example {k : Type} [Field k] {Q : Type} [Group Q] {act : G.O → Q → Q} {e : ℕ → Q → Q → kˣ → Prop}
-    (I : GTateIso G k Q act e) (x : G.La) : I.ev 1 x = 1 :=
-  (I.ker 1 one_pos x).2 ⟨x, (one_nsmul x).symm⟩
 
 end GlobalTheory.UPel.HT.Gen

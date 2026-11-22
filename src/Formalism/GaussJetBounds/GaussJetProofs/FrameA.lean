@@ -1,7 +1,11 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementK
-import Formalism.GaussJetBounds.GaussJetProofs.NormDetLeOneOfEntries
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementK
+public import Formalism.GaussJetBounds.GaussJetProofs.NormDetLeOneOfEntries
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -106,11 +110,11 @@ theorem frameA_letter {K : Type u} [NormedField K] [IsUltrametricDist K] (J N0 :
     have hex : ∃ i', e i' = e i := ⟨i, rfl⟩
     have hch : hex.choose = i := he hex.choose_spec
     simp only [x]
-    rw [if_neg (htop i), dif_pos hex, hch]
+    rw [if_neg (htop i), dite_eq_left hex, hch]
   have hxn : ∀ k a, ¬ top k → (¬ ∃ i, e i = k) → x k a = y k a - ∑ i', c k i' * z i' a := by
     intro k a h1 h2
     simp only [x]
-    rw [if_neg h1, dif_neg h2]
+    rw [if_neg h1, dite_eq_right h2]
   have hsumT : ∀ i k, (∑ i', if k = e i' then c i i' else 0) = 0 ∨
       ∃ i', (∑ i', if k = e i' then c i i' else 0) = c i i' := by
     intro i k
@@ -209,13 +213,13 @@ theorem thmAFrame_of : ThmAGen.{u} → ThmAFrame.{u} := by
     have hex : ∃ i', e s i' = e s i := ⟨i, rfl⟩
     have hch : hex.choose = i := he s hex.choose_spec
     show (if h : ∃ i', e s i' = e s i then some (lab s h.choose) else none) = _
-    rw [dif_pos hex, hch]
+    rw [dite_eq_left hex, hch]
   have hspec_some : ∀ s k, spec (s, k) ≠ none → ∃ i, k = e s i := by
     intro s k h
     by_contra hcon
     apply h
     show (if h : ∃ i', e s i' = k then some (lab s h.choose) else none) = _
-    rw [dif_neg (fun ⟨i, hi⟩ => hcon ⟨i, hi.symm⟩)]
+    rw [dite_eq_right (fun ⟨i, hi⟩ => hcon ⟨i, hi.symm⟩)]
   refine hGen K l d N0 N1 hl hl3 hd hde hlK h0 K0 hK0 ζ hζ be hbe x (fun y => hxs _ _ _) g hg0 hg U hU
     ε hε TT colN p hp hp1 I T hT xg ?_ nu1 nu2 size hnu1 hnu2 hsize a ha hsa spec ?_ ?_ ?_
   · intro s i b

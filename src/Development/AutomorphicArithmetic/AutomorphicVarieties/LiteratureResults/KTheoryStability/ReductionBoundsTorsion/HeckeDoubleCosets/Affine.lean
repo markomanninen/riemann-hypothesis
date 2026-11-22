@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.HeckeDoubleCosets.PHeckeFormal
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,17 +40,17 @@ end Affine
 theorem aff_stab_low {R : Type} [CommRing R] (n r : ℕ) (g : GL (Fin n) R) (i : Fin r) (b : Fin (n + r)) :
     (stab R n (n + r) (Nat.le_add_right n r) g : Matrix (Fin (n + r)) (Fin (n + r)) R) (Fin.natAdd n i) b =
       (1 : Matrix (Fin (n + r)) (Fin (n + r)) R) (Fin.natAdd n i) b := by
-  rw [stab_apply, dif_neg (by simp only [Fin.val_natAdd]; omega), Matrix.one_apply]
+  rw [stab_apply, dite_eq_right (by simp only [Fin.val_natAdd]; omega), Matrix.one_apply]
 
 theorem aff_stab_lowc {R : Type} [CommRing R] (n r : ℕ) (g : GL (Fin n) R) (i : Fin r) (a : Fin (n + r)) :
     (stab R n (n + r) (Nat.le_add_right n r) g : Matrix (Fin (n + r)) (Fin (n + r)) R) a (Fin.natAdd n i) =
       (1 : Matrix (Fin (n + r)) (Fin (n + r)) R) a (Fin.natAdd n i) := by
-  rw [stab_apply, dif_neg (by simp only [Fin.val_natAdd]; omega), Matrix.one_apply]
+  rw [stab_apply, dite_eq_right (by simp only [Fin.val_natAdd]; omega), Matrix.one_apply]
 
 theorem aff_stab_top {R : Type} [CommRing R] (n r : ℕ) (g : GL (Fin n) R) (a b : Fin n) :
     (stab R n (n + r) (Nat.le_add_right n r) g : Matrix (Fin (n + r)) (Fin (n + r)) R) (Fin.castAdd r a)
       (Fin.castAdd r b) = (g : Matrix (Fin n) (Fin n) R) a b := by
-  rw [stab_apply, dif_pos (by simp only [Fin.val_castAdd]; exact ⟨a.2, b.2⟩)]
+  rw [stab_apply, dite_eq_left (by simp only [Fin.val_castAdd]; exact ⟨a.2, b.2⟩)]
   rfl
 
 theorem aff_conj {K : Type} [Field K] (n r : ℕ) (i : Fin r) (h : GL (Fin n) K) (y : Fin (n + r) → K)
@@ -126,7 +130,7 @@ theorem aff_gamma (π : 𝓞 L) (hπ : Prime π) (n r : ℕ) (hn : 1 ≤ n) (c :
     rw [hvL, Matrix.mulVec_single_one]; rfl
   have hyp : y p = (alg π)⁻¹ := by
     have h := congrArg alg hu
-    simp only [map_add, map_mul, map_one] at h
+    simp only [map_add (f := _), map_mul, map_one] at h
     rw [hy, Pi.add_apply, Pi.smul_apply, Pi.smul_apply, hvp, he, Pi.single_eq_same, smul_eq_mul, smul_eq_mul]
     field_simp
     try linear_combination h
@@ -172,7 +176,7 @@ theorem aff_gamma (π : 𝓞 L) (hπ : Prime π) (n r : ℕ) (hn : 1 ≤ n) (c :
       rw [RingHom.map_mulVec, hQ]
       congr 1
       try exact he'
-    rw [hzO, Pi.add_apply, Pi.smul_apply, map_add, smul_eq_mul, map_mul, h5, map_sub, map_one]
+    rw [hzO, Pi.add_apply, Pi.smul_apply, map_add (f := _), smul_eq_mul, map_mul, h5, map_sub, map_one]
     simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, Pi.single_apply]
     split_ifs
     · field_simp

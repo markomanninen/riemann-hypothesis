@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.BelowFiniteNonempty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FormsStable
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.BelowFiniteNonempty
+
+@[expose] public section
 
 noncomputable section
 
@@ -186,8 +190,5 @@ def KerIsTerm : Prop :=
           GlobalTheory.KerT.term W Ch sel mu cst A u i (i + 1) q.1.1.deco (frsF sel mu p.1.1) q'.1.1.deco (frsF sel mu p'.1.1) Ξ₀
 
 end Conc
-
-example {E : Type} [Field E] [NumberField E] [StarRing E] {n : ℕ} (ST : Finset (HeightOneSpectrum (𝓞 E)))
-    (N : Submodule (𝓞 E) (Sp E n)) : SameOff ST N N := fun _ _ => rfl
 
 end GlobalTheory.LvT.Built

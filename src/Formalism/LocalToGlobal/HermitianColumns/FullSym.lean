@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.HermitianColumns.StarConj
-import Formalism.LocalToGlobal.HermitianColumns.SymAll
-import Formalism.LocalToGlobal.HermitianColumns.BaseModelLevelEq
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.StarConj
+public import Formalism.LocalToGlobal.HermitianColumns.SymAll
+public import Formalism.LocalToGlobal.HermitianColumns.BaseModelLevelEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,16 +92,6 @@ def toErrXS {D : D7} (X : FullTiedS D) : ErrX D where
   vPl_inj := fun u a b h => (X.base.vT u).injective (Subtype.ext h)
   norm_mem_place_ideal := fun u v => (X.base.vT u v).2
 
-theorem piGLevelS {D : D7} (X : FullTiedS D) : PiGLevel D X.base.lev0 (toErrXS X) := by
-  intro u i v h
-  have h1 := (X.levelZeroCompatibility u).splitG_pi i v h
-  rw [X.piG u D.u₀] at h1
-  simpa [toErrXS, inclE, star_conj] using h1
-
-theorem piTLevelS {D : D7} (X : FullTiedS D) : PiTLevel D X.base.lev0 (toErrXS X) := by
-  intro u v z hz y
-  exact (X.levelZeroCompatibility u).fM_pi _ _ z (by first | exact hz | (simp only [toErrXS] at hz; exact hz)) y
-
 def SymmetricGroupCompatibleAtPlaces (D : D7) (H : HermColsCh D) (G : SymmetricGroupCompatibility D H) (Gt : GatTies D) : Prop :=
   ∀ u w hg (v : Fin (D.gat u w hg).P.nV) (s : Fin ((D.gat u w hg).P.n' v)) (x : 𝓞 D.host.F),
     x ∈ ((G u w hg).pl v).1.asIdeal ↔
@@ -129,96 +123,13 @@ structure SymmetricExtraCompatibility {D : D7} (X : FullTiedS D) {L : SizeData�
     haveI : Fact (D.what₂.places.resChar w).Prime := ⟨D.what₂.places.resChar_prime w⟩
     GIwPos u w h (ex.ker u w h)
 
-theorem JoinTiedS.piG_lev {D : D7} {X : FullTiedS D} {lev : LevelData D} {eX : ErrX D} {Gt : GatTies D}
-    (J : JoinTiedS X lev eX Gt) : PiGLevel D lev eX := by
-  obtain ⟨rfl, rfl, _⟩ := J
-  exact piGLevelS X
-
-theorem JoinTiedS.piT_lev {D : D7} {X : FullTiedS D} {lev : LevelData D} {eX : ErrX D} {Gt : GatTies D}
-    (J : JoinTiedS X lev eX Gt) : PiTLevel D lev eX := by
-  obtain ⟨rfl, rfl, _⟩ := J
-  exact piTLevelS X
-
 section Sub
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 
-def ClassTie.sub {hc : CMData F E} {S : HSpace E} {Lb : Submodule (𝓞 E) (Fin S.rank → E)}
-    {U : Subgroup (GL (Fin S.rank) (E ⊗[F] Af F))} {cls : Type} {stab : cls → Type} [∀ c, Group (stab c)]
-    {lat : cls → Submodule (𝓞 E) S.V} (T : ClassTie hc S Lb U stab lat) (p : cls → Prop) (hp : ∀ c, p c) :
-    ClassTie hc S Lb U (fun c : {c // p c} => stab c.1) (fun c => lat c.1) where
-  y := fun c => T.y c.1
-  y_bij := T.y_bij.comp (f := fun c : {c // p c} => c.1)
-    ⟨Subtype.val_injective, fun c => ⟨⟨c, hp c⟩, rfl⟩⟩
-  y_lat := fun c => T.y_lat c.1
-  stabI := fun c => T.stabI c.1
-  stabI_inj := fun c => T.stabI_inj c.1
-  stabI_range := fun c => T.stabI_range c.1
-
-def FvTie.sub {hc : CMData F E} {S : HSpace E} {Lb : Submodule (𝓞 E) (Fin S.rank → E)} {cls : Type}
-    {y : cls → UAf hc S} {lat : cls → Submodule (𝓞 E) S.V} {w : HeightOneSpectrum (𝓞 F)}
-    {k : Type} [AddCommGroup k] {fz : ∀ c, Formalism.HermitianLatticesTheory.dual S.hT (lat c) → k}
-    (T : FvTie hc S Lb y lat w k fz) (p : cls → Prop) :
-    FvTie hc S Lb (fun c : {c // p c} => y c.1) (fun c => lat c.1) w k (fun c z => fz c.1 z) where
-  fb := T.fb
-  fvI := fun c z t h => T.fvI c.1 z t h
-
 end Sub
 
-def HermCols.toCh {D : D7} (H : HermCols D) : HermColsCh D where
-  lev0 := H.lev0
-  Ch := fun _ _ => PUnit
-  ChFin := fun _ _ => inferInstance
-  Ch_m := fun _ => ⟨inferInstance⟩
-  chOf := fun _ _ _ => PUnit.unit
-  lev := fun u i h1 hm _ => H.lev u i h1 hm
-  cls := fun u i h1 hm β => (H.cls u i h1 hm).sub (fun _ => PUnit.unit = β) (fun _ => Subsingleton.elim _ _)
-  vT := H.vT
-  Fv := H.Fv
-
-def HermTied.toS {D : D7} (H : HermTied D) : SymmetricHermitianColumns D where
-  toHermColsCh := H.toHermCols.toCh
-  dt := H.dt
-  dt_surj := H.dt_surj
-  dt_ker := H.dt_ker
-  dt_open := H.dt_open
-  dt_UO := H.dt_UO
-  dt_rat := H.dt_rat
-  det0 := H.det0
-  detI := fun u i h1 hm c x h => H.detI u i h1 hm c x h
-
-def FullTied.toS {D : D7} (X : FullTied D) : FullTiedS D where
-  base := X.base.toS
-  atT := X.atT
-  vol := X.vol
-  levelZeroCompatibility := X.levelZeroCompatibility
-  g := X.g
-  ad := ⟨X.ad.up0, fun u i h1 hm v c y h => ⟨rfl, X.ad.upI u i h1 hm v c y h⟩, X.ad.dn0,
-    fun u i h1 hm v c g hg => ⟨rfl, X.ad.dnI u i h1 hm v c g hg⟩, X.ad.dil0,
-    fun u i h1 hm v a c => ⟨rfl, X.ad.dilI u i h1 hm v a c⟩⟩
-  cof := X.cof
-  piG := X.piG
-  stabMap := X.stabMap
-  fvI := fun u i h1 hm v β => (X.fvI u i h1 hm v).sub (fun _ => PUnit.unit = β)
-  relDet := X.relDet
-  std := X.std
-  vpos := X.vpos
-  baseL := fun u pb h => ⟨(X.baseL u pb h).1, fun i h1 hm _ => (X.baseL u pb h).2 i h1 hm⟩
-
-theorem FullTied.one_chart_model_base_level_eq {D : D7} (X : FullTied D) : X.toS.base.lev0 = X.base.lev0 := rfl
-
-theorem ExtraTied.toS {D : D7} {X : FullTied D} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L}
-    {Gl : Formalism.MainNotions.G.LatInst D} {K : Formalism.MainNotions.G.Consts} {Y : DivX D} {cX : ExtraC}
-    {ex : Extra D L hT Gi Gl K Y cX} (h : ExtraTied X ex) : SymmetricExtraCompatibility X.toS ex :=
-  ⟨⟨h.join.lev_eq, h.join.errX_eq, h.join.gpl⟩, h.iw, h.iw_pos⟩
-
 def FullTiedS.to0 {D : D7} (X : FullTiedS D) : Herm0 D := ⟨X.base.lev0, X.g⟩
-
-theorem FullTiedS.base_model_level_eq {D : D7} (X : FullTiedS D) : X.to0.lev0 = X.base.lev0 := rfl
-
-theorem FullTiedS.base_model_g_eq {D : D7} (X : FullTiedS D) : X.to0.g = X.g := rfl
-
-theorem FullTied.one_chart_model_base_eq {D : D7} (X : FullTied D) : X.toS.to0 = X.to0 := rfl
 
 end Formalism.L2.Herm
 

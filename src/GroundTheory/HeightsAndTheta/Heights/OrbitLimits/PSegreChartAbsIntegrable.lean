@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartAbsIntegrable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartSheetCompare
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsPosDensMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarIntAdd
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartAbsIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartSheetCompare
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PtsPosDensMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMassFinite
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetSumMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffGradient
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOff
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PVarIntAdd
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

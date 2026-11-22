@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -43,16 +47,13 @@ theorem archSmul_apply {h : HermitianForm F E W} {v : Basis ι E W} (g : archUni
     (y : InfinitePlace E → ι → ℂ) (w : InfinitePlace E) :
     (g • y) w = ((g : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ y w := rfl
 
-theorem invApply_eq_smul {h : HermitianForm F E W} {v : Basis ι E W} (g : archUnitary h v)
-    (y : InfinitePlace E → ι → ℂ) : invApply g y = g⁻¹ • y := rfl
-
 theorem continuous_len_inv_smul {h : HermitianForm F E W} {v : Basis ι E W} (M : Majorant h v)
     (y : InfinitePlace E → ι → ℂ) : Continuous fun g : archUnitary h v => M.len (g⁻¹ • y) := by
   have hw : ∀ w, Continuous fun g : archUnitary h v => (g⁻¹ • y) w := fun w =>
     (Units.continuous_val.comp ((continuous_apply w).comp
       (continuous_subtype_val.comp continuous_inv))).matrix_mulVec continuous_const
   unfold Majorant.len
-  refine Real.continuous_sqrt.comp (continuous_finset_sum _ fun w _ => ?_)
+  refine Real.continuous_sqrt.comp (continuous_finsetSum _ fun w _ => ?_)
   exact Complex.continuous_re.comp
     (((continuous_star.comp (hw w))).dotProduct (continuous_const.matrix_mulVec (hw w)))
 
@@ -70,8 +71,8 @@ theorem measurable_belowIndicator {h : HermitianForm F E W} {v : Basis ι E W}
     Measurable (belowIndicator M y t) :=
   measurable_one.indicator (measurableSet_below M y t)
 
-omit [Fintype ι] [DecidableEq ι] in
 
+omit [Fintype ι] [DecidableEq ι] in
 theorem vecAt_injective (v : Basis ι E W) : Function.Injective (vecAt v) := by
   intro x y hxy
   obtain ⟨w⟩ := (inferInstance : Nonempty (InfinitePlace E))
@@ -79,7 +80,7 @@ theorem vecAt_injective (v : Basis ι E W) : Function.Injective (vecAt v) := by
   ext i
   exact w.embedding.injective (congrFun (congrFun hxy w) i)
 
-variable [NumberField F] [IsTotallyReal F] [IsTotallyComplex E]
+variable [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 theorem archEmbed_smul_vecAt (h : HermitianForm F E W) (v : Basis ι E W) (γ : h.unitaryGroup)
     (x : W) : archEmbed h v γ • vecAt v x = vecAt v (γ • x) := by
@@ -208,9 +209,11 @@ theorem ScalingLaw.proof (h : HermitianForm F E W) (v : Basis ι E W) [FiniteDim
   have hm : ∀ t : ℝ, 0 < t → massBelow M μ FD VV t =
       ∑ o ∈ T, Cf (Y o) * ENNReal.ofReal (t ^ (2 * finrank ℚ F * (finrank E W - 1))) := by
     intro t ht
-    rw [massBelow, lintegral_congr fun g => hcount g t, lintegral_finset_sum]
+    rw [massBelow, lintegral_congr fun g => hcount g t, MeasureTheory.lintegral_finsetSum]
     · exact Finset.sum_congr rfl fun o ho => hCeq (Y o) (hSV (hYS o ho)) t ht
-    · exact fun o _ => @Measurable.ennreal_tsum _ _ _ (hQc _) _ fun q =>
+    · intro o ho
+      letI := hQc ((vecStabGroup h v La (Y o)).subgroupOf Γ)
+      exact Measurable.tsum fun q =>
         (measurable_belowIndicator M _ t).comp (measurable_const_mul _)
   refine ⟨FD, hFD, fun t ht => ⟨?_, fun θ hθ => ?_⟩⟩
   · rw [hm t ht]

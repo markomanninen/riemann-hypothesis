@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 open Matrix NumberField ComplexConjugate
 
@@ -41,13 +45,14 @@ theorem sf_expand (A : Matrix n n ℂ) (a b : ℂ) (u v : n → ℂ) :
   unfold hform
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   ring
 
 theorem sf_conj (A : Matrix n n ℂ) (hA : ∀ i j, conj (A j i) = A i j) (u v : n → ℂ) :
     conj (hform (starRingEnd ℂ) A u v) = hform (starRingEnd ℂ) A v u := by
   unfold hform
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   simp only [map_mul, Complex.conj_conj, hA]
@@ -68,7 +73,8 @@ theorem sf_map {E : Type} [CommRing E] (σ : E →+* E) (τ : E →+* ℂ)
     (hτ : τ.comp σ = (starRingEnd ℂ).comp τ) (J : Matrix n n E) (x y : n → E) :
     τ (hform σ J x y) = hform (starRingEnd ℂ) (J.map τ) (fun k => τ (x k)) (fun k => τ (y k)) := by
   unfold hform
-  simp only [map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Matrix.map_apply]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have h1 := RingHom.congr_fun hτ (x i)
   simp only [RingHom.comp_apply] at h1
@@ -114,7 +120,7 @@ theorem sf_sign {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F]
       map_one' := by simp
       map_mul' := fun a b => by simp [map_mul, Complex.mul_re, him a, him b]
       map_zero' := by simp
-      map_add' := fun a b => by simp [map_add] }
+      map_add' := fun a b => by simp [map_add (f := _)] }
   have hval : ∀ a : F, τ (algebraMap F E a) = ((ι a : ℝ) : ℂ) := fun a =>
     (Complex.conj_eq_iff_re.1 (hreal a)).symm
   have h00 : τ (hform (σ : E →+* E) J 0 0) = ((0 : ℝ) : ℂ) := by
@@ -186,7 +192,7 @@ theorem sf_bound {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F
   have hw : (fun k => τ (((J i i) • (fun k => g k j) + (-((J * g) i j)) • (Pi.single i 1 : n → E)) k)) =
       τ (J i i) • (fun k => τ (g k j)) + (-τ ((J * g) i j)) • (fun k => τ ((Pi.single i 1 : n → E) k)) := by
     funext k
-    simp [map_add, map_mul, map_neg]
+    simp [map_add (f := _), map_mul, map_neg]
   rw [hw, hau, hcu, sf_cs _ hA, ← hau, ← hcu, ← hbv, hta, htb] at htw
   rw [← Complex.normSq_eq_conj_mul_self] at htw
   have key : ta * (ta * tb - Complex.normSq (τ ((J * g) i j))) = tw := by exact_mod_cast htw

@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentCoprimeAtGoodPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorLatticeInertPlaceSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentCoprimeAtGoodPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 open scoped nonZeroDivisors
@@ -29,7 +34,7 @@ theorem sesq_add_left (x₁ x₂ y : Fin n → L) : sesq σL J (x₁ + x₂) y =
   simp only [sesq, Pi.add_apply, add_mul, Finset.sum_add_distrib]
 
 theorem sesq_add_right (x y₁ y₂ : Fin n → L) : sesq σL J x (y₁ + y₂) = sesq σL J x y₁ + sesq σL J x y₂ := by
-  simp only [sesq, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [sesq, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem sesq_neg_left (x y : Fin n → L) : sesq σL J (-x) y = -sesq σL J x y := by
   simp only [sesq, Pi.neg_apply, neg_mul, Finset.sum_neg_distrib]
@@ -55,7 +60,8 @@ theorem sesq_mem_of_closure (O : Subring L) (S : Set (Fin n → L))
 
 theorem sesq_skew (hσσ : ∀ x, σL (σL x) = x) (hJ : ∀ k l, σL (J k l) = -J l k) (x y : Fin n → L) :
     σL (sesq σL J x y) = -sesq σL J y x := by
-  simp only [sesq, map_sum, map_mul, hσσ, hJ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sesq, map_sum, map_mul, hσσ, hJ]
   rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [← Finset.sum_neg_distrib]
@@ -69,7 +75,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem sesq_smul_map {L : Type} [Field L] (σ : E →ₐ[F] E) (σL : L →+* L) (φ : E →+* L)
     (hφσ : ∀ e, σL (φ e) = φ (σ e)) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (t t' : L) (y y' : Fin n → E) :
     sesq σL (J.map φ) (t • fun i => φ (y i)) (t' • fun i => φ (y' i)) = t * σL t' * φ (form σ J y y') := by
-  simp only [sesq, form, Pi.smul_apply, smul_eq_mul, Matrix.map_apply, map_mul, hφσ, dotProduct, Matrix.mulVec,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sesq, form, Pi.smul_apply, smul_eq_mul, Matrix.map_apply, map_mul, hφσ, dotProduct, Matrix.mulVec,
     map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
   ring
@@ -85,7 +92,7 @@ def gens {L : Type} [Field L] (O : Subring L) (φ : E →+* L) {n : ℕ} (Lat : 
     Set (Fin n → L) :=
   {z | ∃ t ∈ O, ∃ y ∈ Lat, z = t • fun i => φ (y i)}
 
-theorem exists_mul_mem [Algebra.Unramified (𝓞 F) (𝓞 E)] (v : Pl F) (hv : ¬ differentIdeal ℤ (𝓞 F) ≤ v.asIdeal)
+theorem exists_mul_mem [Algebra.Unramified (𝓞 F) (𝓞 E)] (v : Pl (F := F)) (hv : ¬ differentIdeal ℤ (𝓞 F) ≤ v.asIdeal)
     (e : E) (he : ∀ o : 𝓞 E, IsIntegral ℤ (Algebra.trace ℚ E ((o : E) * e))) :
     ∃ d : 𝓞 F, d ∉ v.asIdeal ∧ algebraMap F E (algebraMap (𝓞 F) F d) * e ∈ (algebraMap (𝓞 E) E).range := by
   obtain ⟨d, hd, hdv⟩ := SetLike.not_le_iff_exists.mp hv
@@ -117,7 +124,7 @@ theorem exists_mul_mem [Algebra.Unramified (𝓞 F) (𝓞 E)] (v : Pl F) (hv : �
   rw [hy, mul_assoc, ← Algebra.smul_def (algebraMap (𝓞 F) F d) (e * (a : E)), map_smul, smul_eq_mul]
 
 theorem gram_skew_unimodular : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E), B.IsGood σ →
-    ∀ (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
     ∀ (n r s : ℕ) (X : Spc F E n), X.IsSkew σ B r s →
     ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ϖ : L) (σL : L →+* L) (q : ℕ) (δ : L) (ι : L →+ AE F E),
       Formalism.UG.IsUnramInv ϖ σL q → Odd q → (Valued.v δ = 1 ∧ σL δ = -δ) → Function.Injective ι → (∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z) → (∀ x y, ι (x * y) = ι x * ι y) → (∀ x, ι (σL x) = cA σ (ι x)) →

@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.Uniqueness
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.UnitsPowers
-import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.Uniqueness
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.UnitsPowers
+public import GroundTheory.LocalFields.UnramifiedRootsOfUnity
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,8 @@ variable {K L : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
 
 section Residue
 
-variable (L) in
 
+variable (L) in
 theorem natCast_residueField_ne_zero {m : ℕ} (hm : (m : 𝓀[K]) ≠ 0) : (m : 𝓀[L]) ≠ 0 := by
   rw [← map_natCast (algebraMap 𝓀[K] 𝓀[L])]
   exact (map_ne_zero_iff _ (algebraMap 𝓀[K] 𝓀[L]).injective).mpr hm
@@ -76,8 +80,8 @@ variable {m : ℕ} {ζ : L}
 private def rootInteger (hm : m ≠ 0) (hζ : ζ ^ m = 1) : 𝒪[L] :=
   ⟨ζ, mem_integer_of_pow_eq_one hm hζ⟩
 
-variable (K L) in
 
+variable (K L) in
 theorem residueAlgEquiv_injective_of_adjoin_eq_top (hm : (m : 𝓀[K]) ≠ 0) (hζ : ζ ^ m = 1)
     (htop : K⟮ζ⟯ = ⊤) : Function.Injective (residueAlgEquiv K L) := by
   have hmL := natCast_residueField_ne_zero L hm
@@ -93,10 +97,10 @@ theorem residueAlgEquiv_injective_of_adjoin_eq_top (hm : (m : 𝓀[K]) ≠ 0) (h
   simpa [z, rootInteger] using congrArg Subtype.val key
 
 theorem ramificationIndex_eq_one_of_adjoin_eq_top (hζ : IsPrimitiveRoot ζ m) (hm : (m : 𝓀[K]) ≠ 0)
-    (htop : K⟮ζ⟯ = ⊤) : ramificationIndex K L = 1 := by
+    (htop : K⟮ζ⟯ = ⊤) : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1 := by
   have := isGalois_of_adjoin_eq_top hζ (natCast_ne_zero_of_residueField (L := K) hm) htop
   have hinj := residueAlgEquiv_injective_of_adjoin_eq_top K L hm hζ.pow_eq_one htop
-  have hcard : Module.finrank K L ≤ residueDegree K L := by
+  have hcard : Module.finrank K L ≤ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
     rw [← IsGalois.card_aut_eq_finrank, residueDegree_eq_finrank, ← IsGalois.card_aut_eq_finrank]
     exact Nat.card_le_card_of_injective _ hinj
   have hf := residueDegree_pos K L
@@ -110,11 +114,11 @@ section Unramified
 
 variable (K L)
 
-theorem residueDegree_eq_finrank_of_unramified (h : ramificationIndex K L = 1) :
-    residueDegree K L = Module.finrank K L := by
-  rw [← ramificationIndex_mul_residueDegree K L, h, one_mul]
+theorem residueDegree_eq_finrank_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
+    ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) = Module.finrank K L := by
+  rw [← ramificationIndex_mul_residueDegree K L, ramificationIndex, h, one_mul]
 
-theorem exists_isPrimitiveRoot_adjoin_eq_top_of_unramified (h : ramificationIndex K L = 1) :
+theorem exists_isPrimitiveRoot_adjoin_eq_top_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     ∃ ζ : L, IsPrimitiveRoot ζ (Nat.card 𝓀[L] - 1) ∧ K⟮ζ⟯ = ⊤ := by
   obtain ⟨z, hz⟩ := exists_isPrimitiveRoot_card_residueField_sub_one (L := L)
   refine ⟨z, hz.map_of_injective (f := (𝒪[L]).subtype) Subtype.val_injective, ?_⟩
@@ -142,13 +146,13 @@ theorem exists_isPrimitiveRoot_adjoin_eq_top_of_unramified (h : ramificationInde
         adjoin.finrank (Algebra.IsIntegral.isIntegral _)
     _ ≤ _ := natDegree_minpoly_residue_le z
 
-theorem isGalois_of_unramified (h : ramificationIndex K L = 1) : IsGalois K L := by
+theorem isGalois_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) : IsGalois K L := by
   obtain ⟨ζ, hζ, htop⟩ := exists_isPrimitiveRoot_adjoin_eq_top_of_unramified K L h
   have hm := natCast_ne_zero_of_residueField (natCast_card_residueField_sub_one_ne_zero L)
   refine isGalois_of_adjoin_eq_top hζ (fun h0 ↦ hm ?_) htop
   rw [← map_natCast (algebraMap K L), h0, map_zero]
 
-theorem residueAlgEquiv_injective_of_unramified (h : ramificationIndex K L = 1) :
+theorem residueAlgEquiv_injective_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     Function.Injective (residueAlgEquiv K L) := by
   obtain ⟨ζ, hζ, htop⟩ := exists_isPrimitiveRoot_adjoin_eq_top_of_unramified K L h
   have hm := natCast_card_residueField_sub_one_ne_zero L
@@ -156,35 +160,30 @@ theorem residueAlgEquiv_injective_of_unramified (h : ramificationIndex K L = 1) 
     hζ.pow_eq_one htop
   rw [← map_natCast (algebraMap 𝓀[K] 𝓀[L]), h0, map_zero]
 
-theorem card_algEquiv_of_unramified (h : ramificationIndex K L = 1) :
+theorem card_algEquiv_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     Nat.card (L ≃ₐ[K] L) = Module.finrank K L := by
   have := isGalois_of_unramified K L h
   exact IsGalois.card_aut_eq_finrank K L
 
-theorem residueAlgEquiv_bijective_of_unramified (h : ramificationIndex K L = 1) :
+theorem residueAlgEquiv_bijective_of_unramified (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     Function.Bijective (residueAlgEquiv K L) := by
   refine (residueAlgEquiv_injective_of_unramified K L h).bijective_of_nat_card_le ?_
   rw [card_algEquiv_of_unramified K L h, IsGalois.card_aut_eq_finrank, ← residueDegree_eq_finrank,
     residueDegree_eq_finrank_of_unramified K L h]
 
-def galoisEquivResidue (h : ramificationIndex K L = 1) :
+def galoisEquivResidue (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     (L ≃ₐ[K] L) ≃* (𝓀[L] ≃ₐ[𝓀[K]] 𝓀[L]) :=
   MulEquiv.ofBijective (residueAlgEquiv K L) (residueAlgEquiv_bijective_of_unramified K L h)
-
-@[simp]
-theorem galoisEquivResidue_apply (h : ramificationIndex K L = 1) (σ : L ≃ₐ[K] L) :
-    galoisEquivResidue K L h σ = residueAlgEquiv K L σ :=
-  rfl
 
 theorem isCyclic_of_unramified (h : ramificationIndex K L = 1) : IsCyclic (L ≃ₐ[K] L) :=
   isCyclic_of_surjective (galoisEquivResidue K L h).symm.toMonoidHom
     (galoisEquivResidue K L h).symm.surjective
 
-def frobenius (h : ramificationIndex K L = 1) : L ≃ₐ[K] L :=
+def frobenius (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) : L ≃ₐ[K] L :=
   letI := Fintype.ofFinite 𝓀[K]
   (galoisEquivResidue K L h).symm (FiniteField.frobeniusAlgEquivOfAlgebraic 𝓀[K] 𝓀[L])
 
-theorem residueAlgEquiv_frobenius_apply (h : ramificationIndex K L = 1) (y : 𝓀[L]) :
+theorem residueAlgEquiv_frobenius_apply (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) (y : 𝓀[L]) :
     residueAlgEquiv K L (frobenius K L h) y = y ^ Nat.card 𝓀[K] := by
   let := Fintype.ofFinite 𝓀[K]
   have : residueAlgEquiv K L (frobenius K L h) =
@@ -192,22 +191,22 @@ theorem residueAlgEquiv_frobenius_apply (h : ramificationIndex K L = 1) (y : �
     (galoisEquivResidue K L h).apply_symm_apply _
   rw [this, FiniteField.coe_frobeniusAlgEquivOfAlgebraic, Fintype.card_eq_nat_card]
 
-theorem residue_frobenius_apply (h : ramificationIndex K L = 1) (x : 𝒪[L]) :
+theorem residue_frobenius_apply (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) (x : 𝒪[L]) :
     IsLocalRing.residue 𝒪[L] (integerAlgEquiv K L (frobenius K L h) x) =
       IsLocalRing.residue 𝒪[L] x ^ Nat.card 𝓀[K] := by
   rw [← residueAlgEquiv_residue, residueAlgEquiv_frobenius_apply]
 
-theorem frobenius_sub_pow_mem_maximalIdeal (h : ramificationIndex K L = 1) (x : 𝒪[L]) :
+theorem frobenius_sub_pow_mem_maximalIdeal (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) (x : 𝒪[L]) :
     integerAlgEquiv K L (frobenius K L h) x - x ^ Nat.card 𝓀[K] ∈ 𝓂[L] := by
   rw [← IsLocalRing.residue_eq_zero_iff, map_sub, map_pow, residue_frobenius_apply, sub_self]
 
-theorem orderOf_frobenius (h : ramificationIndex K L = 1) :
+theorem orderOf_frobenius (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     orderOf (frobenius K L h) = Module.finrank K L := by
   let := Fintype.ofFinite 𝓀[K]
   rw [frobenius, MulEquiv.orderOf_eq, FiniteField.orderOf_frobeniusAlgEquivOfAlgebraic,
     ← residueDegree_eq_finrank, residueDegree_eq_finrank_of_unramified K L h]
 
-theorem zpowers_frobenius (h : ramificationIndex K L = 1) :
+theorem zpowers_frobenius (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) :
     Subgroup.zpowers (frobenius K L h) = ⊤ := by
   let := Fintype.ofFinite 𝓀[K]
   rw [eq_top_iff]
@@ -221,7 +220,7 @@ theorem zpowers_frobenius (h : ramificationIndex K L = 1) :
 
 variable {K L}
 
-theorem frobenius_apply_of_pow_eq_one (h : ramificationIndex K L = 1) {m : ℕ}
+theorem frobenius_apply_of_pow_eq_one (h : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation L))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation K))) = 1) {m : ℕ}
     (hm : (m : 𝓀[K]) ≠ 0) {ξ : L} (hξ : ξ ^ m = 1) :
     frobenius K L h ξ = ξ ^ Nat.card 𝓀[K] := by
   have hmL := natCast_residueField_ne_zero L hm

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocSupStep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LocSupStep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.AvgFZero
+module
+
+public import ReciprocityTheory.DualLattices.AvgFZero
+
+@[expose] public section
 
 noncomputable section
 

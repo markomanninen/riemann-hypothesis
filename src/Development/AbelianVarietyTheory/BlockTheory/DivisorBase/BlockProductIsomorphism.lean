@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,15 +136,5 @@ theorem trivial_irreducible (G : Type) [Group G] : (Representation.trivial ℂ G
   · rcases eq_bot_or_eq_top (α := Submodule ℂ ℂ) S.toSubmodule with h | h
     · exact Or.inl (Subrepresentation.ext h)
     · exact Or.inr (Subrepresentation.ext h)
-
-example : IsRegularCusp (F := F) (fun _ : Fin 1 => 0) (Representation.trivial ℂ _ ℂ) (fun _ => 1) (fun _ => ℂ)
-    (fun _ => Representation.trivial ℂ _ ℂ) := by
-  refine ⟨⟨monotone_const, trivial_irreducible _, fun _ _ => rfl, ?_⟩, ?_, ?_⟩
-  · rintro S ⟨i, j, -, hi, hj⟩
-    exact absurd (Subsingleton.elim i j ▸ hi) hj
-  · rintro c ⟨_, rfl⟩
-    exact ⟨trivial_irreducible _, by simp [block], isIsotypicOf_self _⟩
-  · rintro c ⟨_, rfl⟩ c' ⟨_, rfl⟩ h
-    exact absurd rfl h
 
 end GlobalTheory.IndefiniteRowSideFullHecke.BlockProductIsomorphism

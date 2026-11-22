@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.TsupportDbSubset
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates
 
@@ -93,7 +97,7 @@ theorem exists_chart_bump {M : Type*} [TopologicalSpace M] [T2Space M] (n : ℕ)
     · simp [ψ, Set.indicator_apply, hys]
   · have h1 : IsOpen (e.source ∩ e ⁻¹' Metric.ball (e x) (r / 2)) :=
       e.isOpen_inter_preimage Metric.isOpen_ball
-    filter_upwards [h1.mem_nhds ⟨hxe, Metric.mem_ball_self (by positivity)⟩] with y hy
+    filter_upwards [h1.mem_nhds ⟨hxe, Set.mem_preimage.mpr (Metric.mem_ball_self (by positivity))⟩] with y hy
     simp only [ψ, Set.indicator_of_mem hy.1]
     exact φ.one_of_mem_closedBall (Metric.ball_subset_closedBall hy.2)
 

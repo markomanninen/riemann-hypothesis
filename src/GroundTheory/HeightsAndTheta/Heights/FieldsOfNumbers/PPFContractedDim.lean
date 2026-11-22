@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -26,7 +31,7 @@ theorem ringKrullDim_add_one_le {P Q : Ideal (MRing ι F)} [P.IsPrime] (hPQ : P 
 theorem ringKrullDim_lt_top [Finite K] [∀ k, Finite (ι k)] (Q : Ideal (MRing ι F)) :
     ringKrullDim (MRing ι F ⧸ Q) < ⊤ := by
   refine lt_of_le_of_lt (ringKrullDim_quotient_le Q) ?_
-  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field, zero_add]
+  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field, zero_add]
   exact WithBot.coe_lt_coe.mpr (ENat.natCast_lt_top _)
 
 end Drop
@@ -71,17 +76,19 @@ theorem killBlocks_monomial (T : Finset K) (d : (Σ k, ι k) →₀ ℕ) (c : F)
     rw [if_pos hT, zero_pow (Finsupp.mem_support_iff.mp hv)]
 
 theorem coeff_killBlocks (T : Finset K) (q : MRing ι F) (d : (Σ k, ι k) →₀ ℕ) :
-    coeff d (killBlocks T q) = if ∀ v ∈ d.support, v.1 ∉ T then coeff d q else 0 := by
+    AddMonoidAlgebra.coeff (killBlocks T q) d = if ∀ v ∈ d.support, v.1 ∉ T then AddMonoidAlgebra.coeff q d else 0 := by
   classical
   induction q using MvPolynomial.induction_on' with
   | monomial d' c =>
-    rw [killBlocks_monomial, apply_ite (coeff d), coeff_zero, coeff_monomial]
+    rw [killBlocks_monomial, apply_ite (AddMonoidAlgebra.coeff · d), AddMonoidAlgebra.coeff_zero, coeff_monomial]
     by_cases hd : d' = d
     · subst hd
       simp
     · simp [hd]
   | add p q hp hq =>
-    rw [map_add, coeff_add, hp, hq, coeff_add]
+    simp only [map_add, AddMonoidAlgebra.coeff_add]
+    change AddMonoidAlgebra.coeff (killBlocks T p) d + AddMonoidAlgebra.coeff (killBlocks T q) d = _
+    rw [hp, hq]
     split_ifs <;> simp
 
 theorem weight_apply_eq_zero_iff (d : (Σ k, ι k) →₀ ℕ) (k : K) :
@@ -101,7 +108,7 @@ theorem killBlocks_of_isMultiHomog (T : Finset K) {p : MRing ι F} {b : K → �
     (hp : IsMultiHomog p b) : killBlocks T p = if ∀ k ∈ T, b k = 0 then p else 0 := by
   ext d
   rw [coeff_killBlocks]
-  by_cases hd : coeff d p = 0
+  by_cases hd : AddMonoidAlgebra.coeff p d = 0
   · split_ifs <;> simp [hd]
   · have hw : Finsupp.weight (blockWeight ι) d = b := hp hd
     have key : (∀ v ∈ d.support, v.1 ∉ T) ↔ ∀ k ∈ T, b k = 0 := by
@@ -116,11 +123,13 @@ theorem killBlocks_of_isMultiHomog (T : Finset K) {p : MRing ι F} {b : K → �
         exact this v hv rfl
     by_cases hb : ∀ k ∈ T, b k = 0
     · rw [if_pos (key.mpr hb), if_pos hb]
-    · rw [if_neg (fun h => hb (key.mp h)), if_neg hb, coeff_zero]
+    · rw [if_neg (fun h => hb (key.mp h)), if_neg hb, AddMonoidAlgebra.coeff_zero]
+      rfl
 
 theorem killBlocks_mem_of_isMultiHomogIdeal {Q : Ideal (MRing ι F)} (hQ : IsMultiHomogIdeal Q)
     (T : Finset K) {q : MRing ι F} (hq : q ∈ Q) : killBlocks T q ∈ Q := by
-  rw [← sum_weightedHomogeneousComponent (blockWeight ι) q,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← sum_weightedHomogeneousComponent (blockWeight ι) q,
     finsum_eq_sum _ (weightedHomogeneousComponent_finsupp q), map_sum]
   refine Ideal.sum_mem _ fun b _ => ?_
   rw [killBlocks_of_isMultiHomog T (weightedHomogeneousComponent_isWeightedHomogeneous b q)]

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open MvPolynomial
 
@@ -47,7 +52,8 @@ theorem trace_map_derivation : ∀ (K F L : Type) [Field K] [CharZero K] [Field 
   have key : ∀ j, ∑ i, (N + M * C) i j • b i = ∑ i, (M.map D0 + C * M) i j • b i := by
     intro j
     have e := congrArg D (hmul y j)
-    rw [D.leibniz, map_sum] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [D.leibniz, map_sum] at e
     simp only [hsmul, Finset.sum_add_distrib, smul_eq_mul] at e
     simp only [Matrix.add_apply, add_smul, Finset.sum_add_distrib, h1, h2, Matrix.map_apply]
     rw [← hmul (D y) j]
@@ -63,7 +69,8 @@ theorem trace_map_derivation : ∀ (K F L : Type) [Field K] [CharZero K] [Field 
     rw [Matrix.trace_add, Matrix.trace_add, Matrix.trace_mul_comm M C] at this
     have h3 := add_right_cancel this
     rw [h3]
-    simp [Matrix.trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, map_sum]
   congr 1
   rw [Algebra.trace_eq_matrix_trace b y, Algebra.trace_eq_matrix_trace b (D y)]
   exact htr.symm

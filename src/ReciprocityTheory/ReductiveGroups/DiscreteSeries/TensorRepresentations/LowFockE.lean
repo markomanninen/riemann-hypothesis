@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DSymmHypsInhabited
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.LowFockB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.DSymmHypsInhabited
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,8 @@ theorem lfLift_mem_tensFock (ε : Fin n → Bool) {V : Submodule ℂ N} {x : LfI
 theorem lfLift_mem_physSub (ε : Fin n → Bool) (x : LfIdx ε → N) : lfLift ε x ∈ physicalSubspace (N := N) ε := by
   simp only [physicalSubspace, Submodule.mem_iInf, LinearMap.mem_ker]
   intro i a hia
-  simp only [lfLift, map_sum, cmT, TensorProduct.map_tmul, LinearMap.id_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lfLift, map_sum, cmT, TensorProduct.map_tmul, LinearMap.id_apply]
   refine Finset.sum_eq_zero fun S _ => ?_
   have hS : finProdFinEquiv (i, a) ∉ S.1 := by
     intro h
@@ -57,7 +62,8 @@ theorem lfLift_mem_physSub (ε : Fin n → Bool) (x : LfIdx ε → N) : lfLift �
 
 theorem lfLift_tcoef (ε : Fin n → Bool) (x : LfIdx ε → N) (S : LfIdx ε) :
     tcoef ((fockBasis n).coord S.1) (lfLift ε x) = x S := by
-  simp only [lfLift, map_sum, tcoef, LinearMap.coe_comp, Function.comp_apply, TensorProduct.map_tmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lfLift, map_sum, tcoef, LinearMap.coe_comp, Function.comp_apply, TensorProduct.map_tmul,
     LinearMap.id_apply, LinearEquiv.coe_coe, TensorProduct.rid_tmul, Module.Basis.coord_apply, Module.Basis.repr_self]
   rw [Finset.sum_eq_single S (fun T _ hT => by
     rw [Finsupp.single_apply, if_neg (fun h => hT (Subtype.ext h)), zero_smul]) (by simp)]
@@ -77,7 +83,8 @@ theorem lfLift_diagE (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End �
       lfLift ε (fun T => E a b (x T) + ∑ S, lfMat ε a b T S • x S) := by
   rw [lf_diagE_tensor, LinearMap.add_apply]
   unfold lfLift
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   simp only [TensorProduct.map_tmul, LinearMap.id_apply]
   simp only [lfMat_basis, TensorProduct.tmul_sum, TensorProduct.tmul_smul]
   simp only [TensorProduct.add_tmul, Finset.sum_add_distrib, TensorProduct.sum_tmul,

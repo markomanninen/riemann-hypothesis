@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.GLDenseRanges.KirCusp
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.Z.Desc.V0
 
@@ -75,24 +79,25 @@ private theorem rank_isotypic_character_projection {Q I W : Type} [Group Q] [Fin
     refine Submodule.mem_inf.2 ⟨?_, (Submodule.mem_iInf _).2 fun y => ?_⟩
     · rw [he_apply]
       exact Submodule.smul_mem V _ (Submodule.sum_mem V fun x _ => Submodule.smul_mem V _ (hV x v hv))
-    · rw [Module.End.mem_eigenspace_iff, he_apply, map_smul, map_sum]
-      have h1 : ∀ x, T y ((((χ t x)⁻¹ : ℂˣ) : ℂ) • T x v) = (((χ t x)⁻¹ : ℂˣ) : ℂ) • T (y * x) v := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [Module.End.mem_eigenspace_iff, he_apply, map_smul, map_sum]
+        have h1 : ∀ x, T y ((((χ t x)⁻¹ : ℂˣ) : ℂ) • T x v) = (((χ t x)⁻¹ : ℂˣ) : ℂ) • T (y * x) v := by
+          intro x
+          rw [map_smul, hmul y x v hv]
+        simp only [h1]
+        rw [smul_comm ((χ t y : ℂˣ) : ℂ) ((Fintype.card Q : ℂ)⁻¹)]
+        congr 1
+        rw [Finset.smul_sum]
+        refine Fintype.sum_equiv (Equiv.mulLeft y) (fun x => (((χ t x)⁻¹ : ℂˣ) : ℂ) • T (y * x) v)
+          (fun z => ((χ t y : ℂˣ) : ℂ) • ((((χ t z)⁻¹ : ℂˣ) : ℂ) • T z v)) ?_
         intro x
-        rw [map_smul, hmul y x v hv]
-      simp only [h1]
-      rw [smul_comm ((χ t y : ℂˣ) : ℂ) ((Fintype.card Q : ℂ)⁻¹)]
-      congr 1
-      rw [Finset.smul_sum]
-      refine Fintype.sum_equiv (Equiv.mulLeft y) (fun x => (((χ t x)⁻¹ : ℂˣ) : ℂ) • T (y * x) v)
-        (fun z => ((χ t y : ℂˣ) : ℂ) • ((((χ t z)⁻¹ : ℂˣ) : ℂ) • T z v)) ?_
-      intro x
-      simp only [Equiv.coe_mulLeft]
-      rw [smul_smul]
-      congr 1
-      have h2 := (χ t y).ne_zero
-      have h3 := (χ t x).ne_zero
-      simp only [map_mul, _root_.mul_inv_rev, Units.val_mul, Units.val_inv_eq_inv_val]
-      field_simp
+        simp only [Equiv.coe_mulLeft]
+        rw [smul_smul]
+        congr 1
+        have h2 := (χ t y).ne_zero
+        have h3 := (χ t x).ne_zero
+        simp only [map_mul, _root_.mul_inv_rev, Units.val_mul, Units.val_inv_eq_inv_val]
+        field_simp
   have hproj : ∀ s t, ∀ w ∈ V ⊓ ⨅ x, Module.End.eigenspace (T x) ((χ s x : ℂˣ) : ℂ),
       e t w = if s = t then w else 0 := by
     intro s t w hw
@@ -127,7 +132,8 @@ private theorem rank_isotypic_character_projection {Q I W : Type} [Group Q] [Fin
   have hsum : ∀ (w : ∀ t, ↥(V ⊓ ⨅ x, Module.End.eigenspace (T x) ((χ t x : ℂˣ) : ℂ))) t,
       e t (∑ s, (w s : W)) = w t := by
     intro w t
-    rw [map_sum, Finset.sum_eq_single t]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single t]
     · rw [hproj t t _ (w t).2, if_pos rfl]
     · intro s _ hst
       rw [hproj s t _ (w s).2, if_neg hst]
@@ -142,7 +148,7 @@ private theorem rank_isotypic_character_projection {Q I W : Type} [Group Q] [Fin
       map_add' := fun v w => by
         funext t
         apply Subtype.ext
-        simp [map_add]
+        simp [map_add (f := _)]
       map_smul' := fun a v => by
         funext t
         apply Subtype.ext
@@ -187,7 +193,7 @@ theorem UpperTheory.rank_fixed_inf_character_eigenspace :
       map_mul ι, map_mul τ, Module.End.mul_apply]
   have hE : opE τ (∑ x, Finsupp.single (ι (s x)) (c x)) = ∑ x, c x • τ (ι (s x)) := by
     unfold opE
-    rw [← Finsupp.sum_finset_sum_index (h := fun g (n : ℤ) => n • τ g)
+    rw [Finsupp.sum_finsetSum _ _ (fun g (n : ℤ) => n • τ g)
       (fun _ => zero_smul _ _) (fun _ _ _ => add_smul _ _ _)]
     simp [Finsupp.sum_single_index]
   have hR : ∀ t, fixd τ K ⊓ ⨅ y : A, Module.End.eigenspace (τ (ι y)) ((χ t (π y) : ℂˣ) : ℂ) =

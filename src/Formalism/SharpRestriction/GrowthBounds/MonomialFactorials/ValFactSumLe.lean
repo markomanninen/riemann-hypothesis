@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfNumericBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BlockValuationZpOfNumericBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,14 +32,13 @@ theorem val_fact_sum_le {ι : Type} (s : Finset ι) (f : ι → ℕ) (L : ℕ) (
     have hv : padicValNat p ((f a + T).choose (f a)) ≤ L := by
       have h1 := Nat.factorization_choose_le_log (p := p) (n := f a + T) (k := f a)
       rw [Nat.factorization_def _ hp.out] at h1
+      rw [← Nat.padicValNat_def] at h1
       exact h1.trans hL
     have hc0 : (f a + T).choose (f a) ≠ 0 := (Nat.choose_pos (Nat.le_add_right _ _)).ne'
     have hpr : (∏ i ∈ s, (f i)!) ≠ 0 := Finset.prod_ne_zero_iff.mpr (fun i _ => Nat.factorial_ne_zero _)
-    rw [← hC, padicValNat.mul (mul_ne_zero hc0 (Nat.factorial_ne_zero _)) (Nat.factorial_ne_zero _),
-      padicValNat.mul hc0 (Nat.factorial_ne_zero _), padicValNat.mul (Nat.factorial_ne_zero _) hpr]
+    rw [← hC, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (mul_ne_zero hc0 (Nat.factorial_ne_zero _)) (Nat.factorial_ne_zero _),
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hc0 (Nat.factorial_ne_zero _), (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.factorial_ne_zero _) hpr]
     nlinarith
-
-theorem fd {A B x y : ℕ} (hA : A ∣ x !) (hB : B ∣ y !) : A * B ∣ (x + y)! := (mul_dvd_mul hA hB).trans (Nat.factorial_mul_factorial_dvd_factorial_add x y)
 
 end Arith
 
@@ -67,9 +70,9 @@ theorem val_letters_le (μ : M.BVar N r G.T.t →₀ ℕ) (d : Fin (N + 1) → �
       padicValNat p (∏ i ∈ s, g i) = ∑ i ∈ s, padicValNat p (g i) := by
     intro α s g hg
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp [Nat.padicValNat_def, multiplicity_one_right]
     | @insert a s ha ih =>
-      rw [Finset.prod_insert ha, Finset.sum_insert ha, padicValNat.mul (hg a (Finset.mem_insert_self a s))
+      rw [Finset.prod_insert ha, Finset.sum_insert ha, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (hg a (Finset.mem_insert_self a s))
         (Finset.prod_ne_zero_iff.mpr (fun i hi => hg i (Finset.mem_insert_of_mem hi))),
         ih (fun i hi => hg i (Finset.mem_insert_of_mem hi))]
   have hμ : (μ.prod fun _ k => k !) = ∏ v, (μ v)! := Finsupp.prod_fintype _ _ (fun _ => rfl)

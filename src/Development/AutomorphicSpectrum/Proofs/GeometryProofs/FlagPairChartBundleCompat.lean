@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualRevDualRev
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualLatticeFlagFrameStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleFinitelyGeneratedStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleLatticeGeneratorsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleLocalGenerationStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsReversedDualBasisStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ReversedDualTriangularStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualRevDualRev
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualLatticeFlagFrameStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleFinitelyGeneratedStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleLatticeGeneratorsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ChartBundleLocalGenerationStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsReversedDualBasisStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ReversedDualTriangularStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Num.HodgeModel
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -51,17 +56,22 @@ theorem dotForm_flip_bijective (Ω : Type) [Field Ω] (r : ℕ) : Function.Bijec
 
 theorem isVerticalDivisor_swap {K : Type} [DecidableEq K] {ι : K → Type} {O : Type} [CommRing O]
     {P : Ideal (MvPolynomial (Σ k, ι k) O)} {ϖ : O} {b : K → ℤ} {f g : MvPolynomial (Σ k, ι k) O}
-    (h : IsVerticalDivisor P ϖ b f g) : IsVerticalDivisor P ϖ (-b) g f where
-  degrees := by
-    obtain ⟨bf, bg, hf, hg, hb⟩ := h.degrees
-    exact ⟨bg, bf, hg, hf, by rw [← hb]; funext k; simp⟩
-  num_not_mem := h.den_not_mem
-  den_not_mem := h.num_not_mem
-  vertical W hW := h.vertical W (by
-    intro h0; apply hW; simp only [ratDiv] at h0 ⊢; omega)
-  unit_off_special W hp hPW hrel hϖ := by
+    (h : IsVerticalDivisor P ϖ b f g) : IsVerticalDivisor P ϖ (-b) g f := by
+  refine ⟨?_, h.den_not_mem, h.num_not_mem, ?_, ?_⟩
+  · obtain ⟨bf, bg, hf, hg, hb⟩ := h.degrees
+    refine ⟨bg, bf, hg, hf, ?_⟩
+    rw [← hb]
+    funext k
+    simp
+  · intro W hW
+    apply h.vertical W
+    unfold ratDiv at hW ⊢
+    exact fun h0 => hW (sub_eq_zero.mpr (sub_eq_zero.mp h0).symm)
+  · intro W hp hPW hrel hϖ
     obtain ⟨u, v, hu, hv, h1⟩ := h.unit_off_special W hp hPW hrel hϖ
-    exact ⟨v, u, hv, hu, by rw [← neg_sub]; exact P.neg_mem h1⟩
+    refine ⟨v, u, hv, hu, ?_⟩
+    rw [← neg_sub]
+    exact P.neg_mem h1
 
 theorem dualPair : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (Ω : Type) [Field Ω]
     [Algebra O Ω] (K : Type) [Fintype K] [DecidableEq K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω)
@@ -89,8 +99,6 @@ theorem dualPair : ∀ (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuation
       h.flag' v' (fun i j => by rw [dotForm_apply]; exact hv' i j)
   · have := isVerticalDivisor_swap (h.vertical i.rev)
     convert this using 1
-    funext k
-    simp only [Pi.sub_apply, Pi.neg_apply]
     ring
   · show aeval y (g i.rev) = v.repr (v' i) i * aeval y (f i.rev)
     rw [h.generic i.rev, ← mul_assoc, hdiag i, one_mul]

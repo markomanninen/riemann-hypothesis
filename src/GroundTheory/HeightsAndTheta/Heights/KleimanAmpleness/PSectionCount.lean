@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountTopSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountTopSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountDropSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

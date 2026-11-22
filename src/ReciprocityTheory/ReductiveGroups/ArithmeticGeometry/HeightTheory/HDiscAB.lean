@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscAA
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -129,7 +133,8 @@ theorem lattice_main {ϖ : R} (hϖ : Irreducible ϖ) (g : ∀ c, L c) (hg : ∀ 
     ext p' q'
     simp only [Matrix.submatrix_apply, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply,
       Matrix.map_apply, H, hbexp]
-    simp only [Finset.sum_mul, Finset.mul_sum, map_sum, trace_term]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, Finset.mul_sum, map_sum, trace_term]
     rw [sum_three_comm, Finset.sum_comm]
   have hH : H = Matrix.blockDiagonal' fun c => Matrix.of fun i j => Algebra.trace F (L c)
       ((g c)⁻¹ * (g c)⁻¹ * ((a c i : integralClosure R (L c)) : L c) *

@@ -1,16 +1,21 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFrameRatio
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumFCalculus
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullUUnitsCompatGeneric
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFrameRatio
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumFCalculus
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionValueZero
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ProdSumReindex
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
 open scoped CategoryTheory.Obj
@@ -55,7 +60,8 @@ theorem sumI_map {R : Type} [CommRing R] (I : Ideal R) {E Ix : Type} [AddCommGro
   refine ⟨Submodule.map φ ⊤, (Module.Finite.fg_top).map φ, ⟨x, trivial, rfl⟩, fun i => ⟨a i, trivial, rfl⟩, fun n => ?_⟩
   obtain ⟨S, hS⟩ := h n
   refine ⟨S, fun T hT => ?_⟩
-  rw [← map_sum, ← map_sub, ← Submodule.map_smul'']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_sub, ← Submodule.map_smul'']
   refine Submodule.mem_map_of_mem ?_
   simpa using Submodule.smul_mem_smul (Ideal.pow_le_pow_right (Nat.le_succ n) (hS T hT)) (Submodule.mem_top (x := (1 : R)))
 
@@ -92,7 +98,6 @@ theorem eK_gen : eSec ((Over.pullback (jK R)).obj G) ≫ U.gen.hom.left = eSec A
 omit [IsDomain R] [IsCommMonObj G] in
 theorem eK_fst : eSec ((Over.pullback (jK R)).obj G) ≫ pullback.fst G.hom (jK R) = jK R ≫ eSec G := by
   simp [eSec]
-  rw [pullback.lift_fst, ← Category.assoc, ← pullback.condition, Category.comp_id]
 
 theorem exists_normW (ρ : LB.Gen (A.L.pull (eSec A.A))) (hρ : ρ.IsGen) : ∃ w₀, NormW U w₀ ρ := by
   obtain ⟨w, hw⟩ := U.ext
@@ -171,8 +176,8 @@ theorem val_rigT {S : Scheme.{0}} (B : Over S) [GrpObj B] (L : LB B.left) (ρ : 
   rw [Category.id_comp] at e
   exact (map_zpow _ _ _).trans ((zpow_natCast _ _).trans (congrArg (· ^ k) e))
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem cst_base (z : (TF (R := R) F).left) (a : R) :
     Geo.Tor.cst (jFK (R := R) F ≫ jK R) z a = cstH z (algebraMap (FractionRing R) F (algebraMap R _ a)) :=
   ((GlobalTheory.ExpansionValueZero.cst_comp _ _ z a).trans (H1.gs_spec _ z _)).trans (cst_eq z _)
@@ -192,7 +197,8 @@ theorem coef_comb {D : DegPre R} {k n : ℕ} (s : Fam D F k) (c : Fin n → F) (
       (jFK (R := R) F ≫ jK R) ≫ eSec D.P.A := GC.zF_prB D F
   have e₃ : (lift (𝟙 (TF (R := R) F)) (1 : _ ⟶ D.P.A)).left ≫ (fst (TF (R := R) F) D.P.A).left = 𝟙 _ := by
     rw [← Over.comp_left, lift_fst]; rfl
-  rw [hw.2 z J hJ, hv α z J hJ, e₁, secLin_val hs _ z hJ, e₂, Units.val_one, _root_.mul_one, _root_.mul_one, cst_eq,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hw.2 z J hJ, hv α z J hJ, e₁, secLin_val hs _ z hJ, e₂, Units.val_one, _root_.mul_one, _root_.mul_one, cst_eq,
     map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   have b : gs (lift (𝟙 (TF (R := R) F)) (1 : _ ⟶ D.P.A)).left z ⊤ (scal (fst (TF (R := R) F) D.P.A).left (c i)) =
@@ -255,7 +261,8 @@ theorem value_comb {w₀ : W0 U} {ρ : LB.Gen (A.L.pull (eSec A.A))} (h : NormW 
     exact (congrArg₂ (· * ·) (((gs_pull _ _ z ⊤ trivial _).trans (by rw [e₄]; rfl)).trans (cst_eq (R := R) z _))
       (hx i _ _ z JG hG)).trans (_root_.mul_assoc _ _ _).symm
   apply cstH_inj (R := R) z
-  rw [map_sum, ← cst_eq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← cst_eq]
   erw [e₅, e₆] at a₁
   exact alg_value a₁ a₂ a₃ a₄ a₅
 

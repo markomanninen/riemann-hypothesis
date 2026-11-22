@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -52,7 +56,7 @@ private theorem closed_stable [IsFiniteMeasure (quotientMeasure Γ μ)]
       obtain ⟨y, rfl⟩ := mk_surjective Γ q
       exact hΦb y)
   have hrepΦ : ∀ᵐ y ∂μ, ((hf2.toLp f : Lp ℂ 2 (quotientMeasure Γ μ)) : RightCosetSpace Γ → ℂ) (mk Γ y) = Φ y := by
-    have h := (quasiMeasurePreserving_mk Γ μ).ae (MemLp.coeFn_toLp hf2)
+    have h := QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk Γ μ) (MemLp.coeFn_toLp hf2)
     filter_upwards [h] with y hy
     rw [hy]
     rfl

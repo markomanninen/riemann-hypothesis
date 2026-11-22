@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PlaceB
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DescentCore
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PlaceB
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.DescentCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,8 +122,8 @@ theorem dvd_of_not_unit {o : X.G.O} (h : ¬ IsUnit o) : X.vp ∣ o := by
     Ideal.mem_span_singleton] at hm
   exact hm
 
-include Y in
 
+include Y in
 theorem RK_or (x : X.G.Kf) : x ∈ RK X ∨ ∃ o : X.G.O, x⁻¹ = vpK X * algebraMap X.G.O X.G.Kf o := by
   rcases RK_val Y x with h | h
   · exact Or.inl h

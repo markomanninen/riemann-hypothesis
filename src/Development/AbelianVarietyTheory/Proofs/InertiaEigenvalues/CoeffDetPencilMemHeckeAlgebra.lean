@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetGenericSumMemHeckeAlgebraStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ResidualConstruction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanRingCornerIdealModuleIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffDetGenericSumMemHeckeAlgebraStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N GlobalTheory.IndefiniteRowSideFullHecke.CongruenceModuleMatrices GlobalTheory.SpanRing
 
@@ -23,13 +27,14 @@ theorem coeff_aeval_of_isHomogeneous {R : Type} [CommRing R] {n : ℕ}
     (P : MvPolynomial (Fin 2) R) (h : P.IsHomogeneous n) (j : ℕ) :
     (MvPolynomial.aeval ![(Polynomial.X : Polynomial R), 1] P).coeff j =
       ∑ d ∈ Finset.finsuppAntidiag (Finset.univ : Finset (Fin 2)) n,
-        if d 0 = j then MvPolynomial.coeff d P else 0 := by
+        if d 0 = j then AddMonoidAlgebra.coeff P d else 0 := by
   conv_lhs => rw [MvPolynomial.as_sum P]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   have hterm : ∀ d : Fin 2 →₀ ℕ,
       (MvPolynomial.aeval ![(Polynomial.X : Polynomial R), 1]
-        (MvPolynomial.monomial d (MvPolynomial.coeff d P))).coeff j =
-        if d 0 = j then MvPolynomial.coeff d P else 0 := by
+        (MvPolynomial.monomial d (AddMonoidAlgebra.coeff P d))).coeff j =
+        if d 0 = j then AddMonoidAlgebra.coeff P d else 0 := by
     intro d
     rw [MvPolynomial.aeval_monomial, Finsupp.prod_fintype _ _ (by simp), Fin.prod_univ_two]
     simp [Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, eq_comm]
@@ -38,7 +43,7 @@ theorem coeff_aeval_of_isHomogeneous {R : Type} [CommRing R] {n : ℕ}
   · intro d hd
     rw [Finset.mem_finsuppAntidiag]
     refine ⟨?_, by simp⟩
-    have hd' : MvPolynomial.coeff d P ≠ 0 := MvPolynomial.mem_support_iff.mp hd
+    have hd' : AddMonoidAlgebra.coeff P d ≠ 0 := MvPolynomial.mem_support_iff.mp hd
     have := h hd'
     simpa [Finsupp.weight_apply, Finsupp.sum_fintype] using this
   · intro d _ hd
@@ -72,7 +77,7 @@ theorem coeff_det_pencil_mem : ∀ {Γ X O : Type} [Group Γ] [CommRing O] {n : 
   have hfun : (fun x => (Matrix.det ((Polynomial.X : Polynomial O) • (a x).map (Polynomial.C (R := O)) +
       (b x).map (Polynomial.C (R := O)))).coeff j) =
       ∑ d ∈ Finset.finsuppAntidiag (Finset.univ : Finset (Fin 2)) n,
-        (fun x => if d 0 = j then MvPolynomial.coeff d (P x) else 0) := by
+        (fun x => if d 0 = j then AddMonoidAlgebra.coeff (P x) d else 0) := by
     funext x
     rw [hdet x, coeff_aeval_of_isHomogeneous _ (hhom x) j, Finset.sum_apply]
   rw [hfun]

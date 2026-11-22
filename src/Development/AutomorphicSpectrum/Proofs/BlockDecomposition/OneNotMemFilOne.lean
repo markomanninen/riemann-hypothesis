@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitDetEmbMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitDetEmbMat
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem ev_actVdR (hact : ∀ g x, PD.actdR g (algebraMap Om BdR x) = algebraMap
     ev σ (actVdR PD ρ g z) = algebraMap Om BdR (σ (χ g : LL)) * PD.actdR g (ev (tw act g σ) z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
   | tmul v b =>
     have h1 : actVdR PD ρ g (v ⊗ₜ[Qp] b) = (ρ g v) ⊗ₜ[Qp] (PD.actdR g b) := rfl
     rw [h1, ev_tmul, ev_tmul, hρ, map_mul, hact]
@@ -52,7 +56,7 @@ theorem ev_mulVdR (c : K) (σ : LL →ₐ[Qp] Om)
     ev σ (mulVdR (K := K) (BdR := BdR) (V := Fin 1 → LL) (LL := LL) c z) = algebraMap K BdR c * ev σ z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
   | tmul v b =>
     have h1 : mulVdR (K := K) (BdR := BdR) (V := Fin 1 → LL) (LL := LL) c (v ⊗ₜ[Qp] b) =
       v ⊗ₜ[Qp] (algebraMap K BdR c * b) := rfl
@@ -85,7 +89,8 @@ theorem mem_filV_coord (hOm : ∀ x : Om, algebraMap Om BdR x ∈ PD.Fil 0) (a :
   · rintro ⟨y, rfl⟩ σ
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add]; exact Submodule.add_mem _ hx hy
+    | add x y hx hy =>
+      simpa only [map_add] using Submodule.add_mem (PD.Fil a) hx hy
     | tmul v c =>
       have h1 : AlgebraTensorModule.map (LinearMap.id : (Fin 1 → LL) →ₗ[LL] _)
         ((PD.Fil a).restrictScalars Qp).subtype (v ⊗ₜ[Qp] c) = v ⊗ₜ[Qp] (c : BdR) := rfl

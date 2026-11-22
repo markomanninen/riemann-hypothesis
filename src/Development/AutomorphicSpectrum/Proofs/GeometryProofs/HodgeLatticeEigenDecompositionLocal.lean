@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigProjMemOfFree
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigProjMemOfFree
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -109,7 +114,7 @@ theorem exists_frame {g p : ℕ} (ℓ : Fin g → V) (hℓ : LinearIndependent K
           have h7 := hge h6
           exact Submodule.span_subset_span A K _ h7
         | zero => simp
-        | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+        | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
         | smul r a _ ha => rw [map_smul]; exact Submodule.smul_mem _ _ ha
       rw [← heW x hx]
       exact h5 x
@@ -140,10 +145,12 @@ theorem comp_eigProj {bar : 𝓞 E ≃+* 𝓞 E} (hinr : ∀ a f, ρH a (0, f) =
     have h2 := congrArg Prod.snd h1
     exact LinearMap.congr_fun h2 z
   have h2 : ∑ k, σ' (HT.dualInt E k) * σ' ((RingOfIntegers.basis E k : 𝓞 E) : E) = 1 := by
-    rw [← map_one σ', ← HT.LatBasic.sum_dualInt_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_one σ', ← HT.LatBasic.sum_dualInt_mul, map_sum]
     simp
   ext z
-  simp only [HT.eigProj, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h3,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [HT.eigProj, LinearMap.comp_apply, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, h3,
     smul_smul]
   rw [← Finset.sum_smul, h2, one_smul]
 
@@ -235,7 +242,8 @@ theorem adapted_frames : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs : Type)
       exact ⟨hLs σ' hσ' z hz, HT.LatBasic.eigProj_mem ρ σ' z⟩
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun R').1 h1
     have h2 := LinearMap.congr_fun (hf3 j) z
-    rw [LinearMap.comp_apply, ← hc, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.comp_apply, ← hc, map_sum] at h2
     have h3 : f j z = c j := by
       rw [← h2]
       simp [Subring.smul_def, hf2]
@@ -294,7 +302,8 @@ theorem adapted_frames : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs : Type)
     have hd : w.2 = ∑ j, w.2 (b₂ j) • f j := by
       ext x
       have h1 := LinearMap.congr_fun hcomp x
-      rw [LinearMap.comp_apply, hf1, map_sum] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.comp_apply, hf1, map_sum] at h1
       rw [← h1]
       simp [LinearMap.sum_apply, mul_comm]
     refine ⟨Fin.addCases c (fun j => ⟨w.2 (b₂ j), hw2 _ (hm₂ j).1⟩), ?_⟩

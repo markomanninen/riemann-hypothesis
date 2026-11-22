@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsRename
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.IntNumRelabel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsRename
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.IntNumRelabel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.InPOfMemPow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.InPOfMemPow
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -26,7 +30,7 @@ theorem family_gram_holds : FamGram := by
     have h2 : InP 𝔭 (vF 𝔭 (a i)) (algebraMap F K ((a i : 𝓞 F) : F)) := inP_vF h𝔭 (ha0 i)
     have e : algebraMap F K (c (τ i)) =
         algebraMap F K ((a i : F) + c (τ i)) + -algebraMap F K ((a i : 𝓞 F) : F) := by
-      rw [map_add]; ring
+      rw [map_add (f := _)]; ring
     rw [e]; exact h1.add h2.neg
   have hcS : ∀ j, algebraMap F K (c j) ∈ SP K 𝔭 := by
     intro j
@@ -39,13 +43,13 @@ theorem family_gram_holds : FamGram := by
     rw [← jι_eq']; exact jK_mem_SP _
   have key_ii : ∀ i, h (b i + w (τ i)) (b i + w (τ i)) = algebraMap F K ((a i : F) + c (τ i)) := by
     intro i
-    simp only [map_add, LinearMap.add_apply, hbw, hwb, hbn, hwn1]
+    simp only [map_add (f := _), LinearMap.add_apply, hbw, hwb, hbn, hwn1]
     ring
   have key_ik : ∀ i k, i ≠ k → vF 𝔭 (a i) ≠ 0 → vF 𝔭 (a k) ≠ 0 →
       h (b i + w (τ i)) (b k + w (τ k)) = 0 := by
     intro i k hik hi hk
     have hτik : τ i ≠ τ k := fun e => hik (hτ i k hi hk e)
-    simp only [map_add, LinearMap.add_apply, hbw, hwb, hbo i k hik, hwo _ _ hτik]
+    simp only [map_add (f := _), LinearMap.add_apply, hbw, hwb, hbo i k hik, hwo _ _ hτik]
     ring
   suffices H : ∀ x y, h (glueFam K 𝔭 b a π w τ x) (glueFam K 𝔭 b a π w τ y) ∈ SP K 𝔭 by
     intro x y; rw [← mem_SP_iff_locF]; exact H x y
@@ -59,9 +63,9 @@ theorem family_gram_holds : FamGram := by
         exact mem_SP_of_inP hu (hcong i hi)
     · by_cases hi : vF 𝔭 (a i) = 0 <;> by_cases hk : vF 𝔭 (a k) = 0
       · rw [if_pos hi, if_pos hk, hbo i k hik]; exact (SP K 𝔭).zero_mem
-      · rw [if_pos hi, if_neg hk, form_smul_right, map_add, hbo i k hik, hbw, add_zero, mul_zero]
+      · rw [if_pos hi, if_neg hk, form_smul_right, map_add (f := _), hbo i k hik, hbw, add_zero, mul_zero]
         exact (SP K 𝔭).zero_mem
-      · rw [if_neg hi, if_pos hk, form_smul_left, map_add, LinearMap.add_apply, hbo i k hik, hwb,
+      · rw [if_neg hi, if_pos hk, form_smul_left, map_add (f := _), LinearMap.add_apply, hbo i k hik, hwb,
           add_zero, mul_zero]
         exact (SP K 𝔭).zero_mem
       · rw [if_neg hi, if_neg hk, form_smul_smul, key_ik i k hik hi hk, mul_zero]
@@ -69,14 +73,14 @@ theorem family_gram_holds : FamGram := by
   · simp only [glueFam, Sum.elim_inl, Sum.elim_inr]
     by_cases hi : vF 𝔭 (a i) = 0
     · rw [if_pos hi, hbw]; exact (SP K 𝔭).zero_mem
-    · rw [if_neg hi, form_smul_left, map_add, LinearMap.add_apply, hbw, zero_add, star_inv_pow hF]
+    · rw [if_neg hi, form_smul_left, map_add (f := _), LinearMap.add_apply, hbw, zero_add, star_inv_pow hF]
       by_cases hj : τ i = l
       · subst hj; rw [hwn1]; exact mem_SP_of_inP hu (hcP i hi)
       · rw [hwo _ _ hj, mul_zero]; exact (SP K 𝔭).zero_mem
   · simp only [glueFam, Sum.elim_inl, Sum.elim_inr]
     by_cases hk : vF 𝔭 (a k) = 0
     · rw [if_pos hk, hwb]; exact (SP K 𝔭).zero_mem
-    · rw [if_neg hk, form_smul_right, map_add, hwb, zero_add]
+    · rw [if_neg hk, form_smul_right, map_add (f := _), hwb, zero_add]
       by_cases hj : τ k = j
       · subst hj; rw [hwn1]; exact mem_SP_of_inP hu (hcP k hk)
       · rw [hwo _ _ (Ne.symm hj), mul_zero]; exact (SP K 𝔭).zero_mem

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianQuadricDensityExistsPosContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GaussianQuadricDensityExistsPosContinuous
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
@@ -17,20 +21,20 @@ theorem integral_lt_eq {n : ℕ} (ε : Fin n → Bool) {a : ℝ} (ha : a ≠ 0) 
   apply le_antisymm
   · exact setIntegral_mono_set (integrable_gauss n).integrableOn
       (Filter.Eventually.of_forall fun y => (gauss_pos y).le)
-      (HasSubset.Subset.eventuallyLE fun y (hy : qEps ε y < a) => hy.le)
+      (Filter.Eventually.of_forall fun y (hy : qEps ε y < a) => hy.le)
   · have hc : Tendsto (cdf ε) (𝓝[<] a) (𝓝 (cdf ε a)) :=
       (differentiableAt_cdf ε ha).continuousAt.tendsto.mono_left nhdsWithin_le_nhds
     refine le_of_tendsto hc ?_
     filter_upwards [self_mem_nhdsWithin] with t (ht : t < a)
     exact setIntegral_mono_set (integrable_gauss n).integrableOn
       (Filter.Eventually.of_forall fun y => (gauss_pos y).le)
-      (HasSubset.Subset.eventuallyLE fun y (hy : qEps ε y ≤ t) => lt_of_le_of_lt hy ht)
+      (Filter.Eventually.of_forall fun y (hy : qEps ε y ≤ t) => lt_of_le_of_lt hy ht)
 
 theorem integral_Icc_eq {n : ℕ} (ε : Fin n → Bool) {a c : ℝ} (ha : a ≠ 0) (hac : a ≤ c) :
     ∫ y in qEps ε ⁻¹' Set.Icc a c, gauss y = cdf ε c - cdf ε a := by
   have hm : MeasurableSet {y : Fin n → ℂ | qEps ε y < a} :=
     measurableSet_lt (continuous_qEps ε).measurable measurable_const
-  have h := integral_diff hm ((integrable_gauss n).integrableOn (s := {y | qEps ε y ≤ c}))
+  have h := setIntegral_sdiff hm ((integrable_gauss n).integrableOn (s := {y | qEps ε y ≤ c}))
     (fun y (hy : qEps ε y < a) => show qEps ε y ≤ c by linarith)
   rw [integral_lt_eq ε ha] at h
   rw [cdf, ← h]
@@ -103,7 +107,7 @@ theorem density_eq_prod (ι : Type) [Fintype ι] (n : ℕ) (ε : ι → Fin n �
     (b : ι → ℝ) (hb : ∀ v, b v ≠ 0) : G b = ((∏ v, gaussDens (ε v) (b v) : ℝ) : ℂ) := by
   have h1 : Tendsto (fun r : ℝ => ∏ v, r⁻¹ • (cdf (ε v) (b v + r) - cdf (ε v) (b v))) (𝓝[>] 0)
       (𝓝 (∏ v, gaussDens (ε v) (b v))) :=
-    tendsto_finset_prod _ fun v _ =>
+    tendsto_finsetProd _ fun v _ =>
       (differentiableAt_cdf (ε v) (hb v)).hasDerivAt.tendsto_slope_zero_right
   have h2 := (Complex.continuous_ofReal.tendsto _).comp h1
   refine tendsto_nhds_unique (tendsto_mean_cube hG b) (h2.congr' ?_)

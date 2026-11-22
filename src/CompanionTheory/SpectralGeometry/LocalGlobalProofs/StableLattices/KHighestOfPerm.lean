@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqIntIrrPerm
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SqIntIrrPerm
+
+@[expose] public section
 
 noncomputable section
 

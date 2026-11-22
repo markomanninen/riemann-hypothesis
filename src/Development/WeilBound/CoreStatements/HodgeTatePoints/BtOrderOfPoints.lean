@@ -1,12 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.Models
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
-import ReciprocityTheory.DualLattices.TensorSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.TranslateMemIndOrder
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.DualOrder
+public import ReciprocityTheory.DualLattices.TensorSpan
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
-open GlobalTheory.CompanionTheory.Ar.BT GroundTheory.PAdicHodge
+open GlobalTheory.CompanionTheory.Ar.BT
 
 namespace PositivityTheory.HtPt.Mk
 
@@ -76,9 +79,10 @@ theorem bt_pgsh : ∀ (R C : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [Fi
         have hgs : g = ∑ j, b.repr ⟨g, hg⟩ j • (b j : Multiplicative N → R) := by
           have h4 : ((⟨g, hg⟩ : A) : Multiplicative N → R)
               = ((∑ j, b.repr ⟨g, hg⟩ j • b j : A) : Multiplicative N → R) := congrArg Subtype.val hg'
-          rw [AddSubmonoidClass.coe_finset_sum] at h4
+          rw [AddSubmonoidClass.coe_finsetSum] at h4
           exact h4
-        rw [hgs, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hgs, map_sum]
         refine Submodule.sum_mem _ fun j _ => ?_
         rw [map_smul]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)

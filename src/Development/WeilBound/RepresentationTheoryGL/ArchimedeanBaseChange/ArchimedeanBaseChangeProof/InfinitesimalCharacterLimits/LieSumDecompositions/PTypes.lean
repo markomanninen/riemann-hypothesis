@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesW
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesK
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesW
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesK
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,11 @@ theorem main_ind {N : ℕ} (K : Subgroup (GL (Fin N) (Af E))) (hK : IsOpen (K : 
   | @node r s t₁ t₂ ih₁ ih₂ =>
     intro hN f hf hf0 hT
     rw [SpectralAccumulation.Tr.space] at hf
-    have hI : MemInd2 (tw t₁.space ((s : ℂ) / 2)) (tw t₂.space (-(r : ℂ) / 2)) f := memInd2_of_span (Submodule.span_mono (fun φ h => h.1) hf)
+    have hI : MemInd2 (tw t₁.space ((s : ℂ) / 2)) (tw t₂.space (-(r : ℂ) / 2)) f := by
+      apply memInd2_of_span
+      apply Submodule.span_mono _ hf
+      intro φ h
+      exact h.1
     obtain ⟨g₀, hg₀⟩ : ∃ g₀, f.1 g₀ ≠ 0 := by
       by_contra hc
       push Not at hc

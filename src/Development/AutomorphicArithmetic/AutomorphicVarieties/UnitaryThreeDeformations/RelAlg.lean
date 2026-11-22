@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -29,7 +33,8 @@ theorem exists_eq_sum_X {O σ : Type} [CommRing O] [Fintype σ] (p : MvPowerSeri
   refine ⟨g, ?_, fun i m => ?_⟩
   · ext n
     simp only [← hg]
-    rw [map_add, map_sum, coeff_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, coeff_C]
     simp only [hq]
     by_cases h : n ≠ 0
     · simp [dif_pos h, if_neg h]
@@ -62,18 +67,20 @@ theorem mem_pow_of_coeff {O σ : Type} [CommRing O] [Fintype σ] (a : Ideal O) (
       rcases h2 i n with h | h
       · rw [h]; exact zero_mem _
       · have := hf (Finsupp.single i 1 + n)
-        rw [map_add, Finsupp.degree_single, show N + 1 - (1 + Finsupp.degree n) = N - Finsupp.degree n by omega] at this
+        rw [map_add (f := _), Finsupp.degree_single, show N + 1 - (1 + Finsupp.degree n) = N - Finsupp.degree n by omega] at this
         rwa [h]
 
 def Tr {O : Type} (σ : Type) [CommRing O] (a : Ideal O) (N : ℕ) : Ideal (MvPowerSeries σ O) where
   carrier := {f | ∀ n, coeff n f ∈ a ^ (N - Finsupp.degree n)}
-  add_mem' ha hb n := by rw [map_add]; exact add_mem (ha n) (hb n)
+  add_mem' ha hb n := by
+    rw [map_add (coeff n)]
+    exact add_mem (ha n) (hb n)
   zero_mem' n := by simp
   smul_mem' g f hf n := by
     classical
     rw [smul_eq_mul, coeff_mul]
     refine Ideal.sum_mem _ fun p hp => Ideal.mul_mem_left _ _ (Ideal.pow_le_pow_right ?_ (hf p.2))
-    rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add]
+    rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_add (f := _)]
     omega
 
 theorem isHomog_Tr {O σ : Type} [CommRing O] (a : Ideal O) (N : ℕ) (wt : σ → ℤ) : IsHomog O wt (Tr σ a N) := by
@@ -119,7 +126,8 @@ theorem exists_sub_sum_mem_Tr {O σ : Type} [CommRing O] [Finite σ] (a : Ideal 
   classical
   refine ⟨(Finsupp.finite_of_degree_lt (σ := σ) N).toFinset.image (Finsupp.weight wt), fun n => ?_⟩
   by_cases hn : Finsupp.degree n < N
-  · rw [map_sub, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
     simp only [coeff_wcomp]
     rw [Finset.sum_eq_single (Finsupp.weight wt n), if_pos rfl, sub_self]
     · exact zero_mem _
@@ -244,7 +252,9 @@ theorem decompose_mem_of_mem_Kj [Finite A] {J : Ideal A} (hJ : J.IsHomogeneous �
     exact add_mem hx hy
   | smul c x hx h =>
     obtain ⟨d, hd⟩ := IsCO.res_surj (O := O) c
-    have hxJ : x ∈ J := (Ideal.span_le.2 fun _ hx => hx.1) hx
+    have hspan : Ideal.span {z | z ∈ J ∧ ∃ i, i ≠ j ∧ z ∈ 𝒜 i} ≤ J :=
+      Ideal.span_le.2 fun _ hz => hz.1
+    have hxJ : x ∈ J := hspan hx
     have e : c • x = d • x + (c - algebraMap O A d) * x := by rw [smul_eq_mul, Algebra.smul_def]; ring
     rw [e, DirectSum.decompose_add, DirectSum.add_apply, Submodule.coe_add, DirectSum.decompose_smul,
       DirectSum.smul_apply, Submodule.coe_smul]
@@ -286,8 +296,9 @@ theorem exists_gens_wt [Finite A] [Finite (ResidueField O)] {J : Ideal A} (hJ : 
   have h1 : (DirectSum.decompose 𝒜 x j : A) - ∑ i, c i • s (g i) ∈ Kj 𝒜 J j := by
     rw [← Ideal.Quotient.eq]
     have := congrArg Subtype.val hc
-    simp only [AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul_of_tower] at this
-    rw [← this, ← Ideal.Quotient.mkₐ_eq_mk O, map_sum]
+    simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul_of_tower] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← this, ← Ideal.Quotient.mkₐ_eq_mk O, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Ideal.Quotient.mkₐ_eq_mk, hs']
   have h2 := decompose_mem_of_mem_Kj 𝒜 hJ j h1
@@ -317,7 +328,8 @@ theorem nonempty_gradedAlgebra_quot {B : Type} [CommRing B] [Algebra O B] (φ : 
   rw [eq_top_iff]
   intro y _
   obtain ⟨x, rfl⟩ := hφ y
-  rw [← DirectSum.sum_support_decompose 𝒜 x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← DirectSum.sum_support_decompose 𝒜 x, map_sum]
   exact Submodule.sum_mem _ fun j _ => Submodule.mem_iSup_of_mem j ⟨_, SetLike.coe_mem _, rfl⟩
 
 end Fin

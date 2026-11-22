@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveOpen
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,9 +29,6 @@ def esecMul {w w' : WeightFamilies.Wt D j} (F : (recB h.toLawsCore).Cusp j w) (F
 theorem esecMul_coe {w w' : WeightFamilies.Wt D j} (F : (recB h.toLawsCore).Cusp j w)
     (F' : (recB h.toLawsCore).Cusp j w') :
     ((esecMul h hj F F' : (recB h.toLawsCore).Cusp j (wadd w w')) : T.R j) = (F : T.R j) * (F' : T.R j) := rfl
-
-theorem esec_inc_apply {w : WeightFamilies.Wt D j} (F : (recB h.toLawsCore).Cusp j w) :
-    (recPJ h j hj).inc w F = AddMonoidAlgebra.single (deg w) (F : T.R j) := rfl
 
 theorem esec_inc_mul {w w' : WeightFamilies.Wt D j} (F : (recB h.toLawsCore).Cusp j w)
     (F' : (recB h.toLawsCore).Cusp j w') :
@@ -94,7 +95,8 @@ theorem esec_hom_mem {N : ℕ} {wL : WeightFamilies.Wt D j} (x : Fin N → T.R j
     (P : MvPolynomial (Fin N) T.Q.c.F) {k : ℕ} (hP : P.IsHomogeneous (k + 1)) :
     MvPolynomial.aeval x P ∈ cutR T.C j (addL (wt0 D j) wL (k + 1)) := by
   classical
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   refine Submodule.sum_mem _ fun α hα => ?_
   rw [MvPolynomial.aeval_monomial, ← Algebra.smul_def]
   refine Submodule.smul_mem _ _ ?_

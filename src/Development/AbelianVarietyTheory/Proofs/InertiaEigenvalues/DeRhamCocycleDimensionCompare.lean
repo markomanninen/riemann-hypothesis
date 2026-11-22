@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CrystallineCocycles
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CupProductFiniteClassesCoboundary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CrystallineCocycles
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CupProductFiniteClassesCoboundary
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.HyodoDef GlobalTheory.Pst TensorProduct Module
 
@@ -29,7 +33,7 @@ theorem pairT_filV_right (P : V →ₗ[LL] V' →ₗ[LL] LL) (a : ℤ) (v : V) (
   obtain ⟨y, rfl⟩ := hz
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add y y' hy hy' => simp only [map_add]; exact add_mem hy hy'
+  | add y y' hy hy' => simp only [map_add (f := _)]; exact add_mem hy hy'
   | tmul v' f =>
     rw [AlgebraTensorModule.map_tmul, pairT_tmul, one_mul]
     exact ⟨P v v' ⊗ₜ[Qp] f, rfl⟩
@@ -37,7 +41,7 @@ theorem pairT_filV_right (P : V →ₗ[LL] V' →ₗ[LL] LL) (a : ℤ) (v : V) (
 theorem actVB_one (ρ : Representation LL G V) (x : V ⊗[Qp] B) : actVB PD ρ 1 x = x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul v b => simp [actVB_tmul]
 
 end Gen
@@ -54,8 +58,8 @@ theorem goodO_Zl (l : ℕ) [Fact l.Prime] : GoodO (Qp := ℚ_[l]) ℚ_[l] ℤ_[l
   refine ⟨⟨inferInstance, inferInstance, inferInstance⟩, inferInstance, inferInstance, inferInstance, ?_⟩
   exact (PadicInt.isOpenEmbedding_coe (p := l)).isOpen_range
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem orth_of_cont (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (hT : LocTied l P AI)
     (K : FinExt l) (V : Type) [AddCommGroup V] [Module ℚ_[l] V] [FiniteDimensional ℚ_[l] V]
     [TopologicalSpace V] [IsModuleTopology ℚ_[l] V] [ContinuousAdd V] [ContinuousConstSMul ℚ_[l] V]
@@ -103,7 +107,7 @@ theorem orth_of_cont (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
         (actVdR (P.PD K) (charRep (cycLL (P.PD K) ℚ_[l])) h w0 - w0) -
           pairT P.R.BdR m (c h ⊗ₜ[ℚ_[l]] (1 : P.R.BdR))
             (actVdR (P.PD K) ρ' h (ιV (P.PD K) (LL := ℚ_[l]) (V := V') β - d)) := by
-      simp only [F, map_sub, pairT_ιV, e1, GlobalTheory.CobCrisLift.ιV_act, hι1, map_add, e2]
+      simp only [F, map_sub, pairT_ιV, e1, GlobalTheory.CobCrisLift.ιV_act, hι1, map_add (f := _), e2]
       abel
     rw [s1]
     exact sub_mem (sub_mem (actVdR_filV (P.PD K) _ 0 h w0 hw0) hw0)
@@ -137,7 +141,8 @@ theorem orth_of_cont (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
         (actVB (P.PD K) (charRep (cycLL (P.PD K) ℚ_[l])) g⁻¹ we) = we := by
       rw [← actVB_mul, mul_inv_cancel, actVB_one]
     rw [ek]
-    simp only [F, map_sub, e3, e4, map_neg, ec, map_sum, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sub, e3, e4, map_neg, ec, map_sum, LinearMap.sum_apply,
       map_smul, LinearMap.smul_apply]
     abel
   have hk : Continuous k :=
@@ -179,7 +184,7 @@ theorem orth_of_cont (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
       pairT P.R.B m (c g ⊗ₜ[ℚ_[l]] (1 : P.R.B))
           (actVB (P.PD K) ρ' g (actVB (P.PD K) ρ' h β)) -
         pairT P.R.B m (c g ⊗ₜ[ℚ_[l]] (1 : P.R.B)) (actVB (P.PD K) ρ' g β) := by
-    simp only [F, map_sub, actVB_mul, hcoc, map_add, LinearMap.add_apply,
+    simp only [F, map_sub, actVB_mul, hcoc, map_add (f := _), LinearMap.add_apply,
       ← pairT_actVB (P.PD K) ρ ρ' m hD.1 g, hch]
     abel
   calc (ReciprocityTheory.Def.d1 (charRep (cycLL (P.PD K) ℚ_[l])) f (g, h)) ⊗ₜ[ℚ_[l]] (1 : P.R.B)

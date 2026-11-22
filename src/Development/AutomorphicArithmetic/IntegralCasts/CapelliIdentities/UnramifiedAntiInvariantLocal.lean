@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -58,7 +62,7 @@ theorem UpperTheory.unramified_anti_invariant_local :
     rw [this, map_sub, hinv, neg_sub]
   obtain ⟨c, hc⟩ := hfix ((a : E) * a) (by rw [map_mul, hσa, neg_mul_neg])
   have hci : IsIntegral ℤ c := by
-    rw [← isIntegral_algebraMap_iff (B := E) (algebraMap F E).injective, hc]
+    rw [← isIntegral_algebraMap_iff (B := E) , hc]
     exact a.isIntegral_coe.mul a.isIntegral_coe
   refine ⟨a, a, ⟨c, hci⟩, ?_, hσa, hc.symm⟩
   intro hn

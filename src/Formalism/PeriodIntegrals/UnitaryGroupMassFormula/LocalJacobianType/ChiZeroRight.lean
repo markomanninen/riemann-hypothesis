@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ContinuousPsiVOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.ContinuousPsiVOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem sdE_eq (ι : Type) [Fintype ι] :
 
 theorem chi_add_left (ι : Type) [Fintype ι] (x t y : ι → Fv F v ⊗[F] E) :
     chi (E := E) v ψ ι (t + x) y = chi (E := E) v ψ ι t y * chi (E := E) v ψ ι x y := by
-  simp only [chi, Pi.add_apply, add_mul, map_add, Finset.sum_add_distrib, psiV_add']
+  simp only [chi, Pi.add_apply, add_mul, map_add (f := _), Finset.sum_add_distrib, psiV_add']
 
 theorem chi_symm (ι : Type) [Fintype ι] (x y : ι → Fv F v ⊗[F] E) :
     chi (E := E) v ψ ι x y = chi (E := E) v ψ ι y x := by
@@ -105,7 +109,7 @@ theorem sd_test (ι : Type) [Fintype ι] (μ : Measure (ι → Fv F v ⊗[F] E))
   have hT : ∀ y, ∫ x, Φ x * chi (E := E) v ψ ι x y ∂μ =
       (Dbox (E := E) v ψ ι).indicator (fun _ => ((μ.real (Obox (E := E) v ι) : ℝ) : ℂ)) y := by
     intro y
-    have h := transform_indicator μ (chi (E := E) v ψ ι) hχ L hLo y
+    have h := PI.VolStabSW.SdUniqW.transform_indicator μ (chi (E := E) v ψ ι) hχ L hLo y
     rw [coe_ObS, ann_obox] at h
     exact h
   have hI : Integrable (fun y => ∫ x, Φ x * chi (E := E) v ψ ι x y ∂μ) μ := by

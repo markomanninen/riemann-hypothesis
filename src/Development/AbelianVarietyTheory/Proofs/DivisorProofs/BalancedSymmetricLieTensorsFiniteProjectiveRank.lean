@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EigRank
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -93,7 +98,8 @@ theorem eigRank_eq (h1 : ∑ τ, P τ = 1) (hl : ∀ τ a, A a * P τ = χ τ a 
         rw [← Matrix.vecMul_smul, ← hm, ← hl, Matrix.map_mul, ← Matrix.vecMul_vecMul, hc a, Matrix.smul_vecMul]
       have h2 : ∑ τ, (P τ).map φ = 1 := by
         have := congrArg φ.mapMatrix h1
-        rw [map_sum, map_one] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_one] at this
         exact this
       rw [Matrix.toLin'_apply, Matrix.mulVec_transpose]
       conv_rhs => rw [← Matrix.vecMul_one c, ← h2, Matrix.vecMul_sum]
@@ -113,7 +119,7 @@ theorem exists_retract (h1 : ∑ τ, P τ = 1) (hl : ∀ τ a, A a * P τ = χ �
     simp only [S, LinearMap.sum_apply]; rfl
   let q : Matrix (Fin n) (Fin n) R →ₗ[R] Matrix (Fin n) (Fin n) R := u • (S + S ∘ₗ T)
   have hq : ∀ Θ, q Θ = u • S (Θ + Θᵀ) := fun Θ => by
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   have hmem : ∀ Θ, q Θ ∈ balanced bar A := fun Θ => by
     rw [hq]
     refine Submodule.smul_mem _ _ ?_
@@ -140,7 +146,7 @@ theorem exists_retract (h1 : ∑ τ, P τ = 1) (hl : ∀ τ a, A a * P τ = χ �
       refine Finset.sum_congr rfl fun σ _ => ?_
       conv_rhs => rw [← Matrix.mul_one ((P σ)ᵀ * Θ), ← h1, Matrix.mul_sum]
       rw [Finset.sum_eq_single (c σ) (fun τ _ h => h0 σ τ h) (by simp)]
-    rw [hq, hΘ.1, map_add, h2, ← two_smul R, smul_smul, mul_comm, hu, one_smul]
+    rw [hq, hΘ.1, map_add (f := _), h2, ← two_smul R, smul_smul, mul_comm, hu, one_smul]
   refine ⟨q.codRestrict _ hmem, ?_, ?_⟩
   · ext1 x
     exact Subtype.ext (hfix x.1 x.2)
@@ -148,14 +154,16 @@ theorem exists_retract (h1 : ∑ τ, P τ = 1) (hl : ∀ τ a, A a * P τ = χ �
       have e : S ∘ₗ T = ∑ τ, sand (P τ) (P (c τ)) ∘ₗ T := by
         ext1 x
         simp only [S, LinearMap.sum_apply, LinearMap.comp_apply]
-      rw [e, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [e, map_sum]
       refine Finset.sum_eq_zero fun τ _ => ?_
       rw [trace_sand_transpose, orth hl hr hs (hc τ), Matrix.trace_zero]
     rw [LinearMap.subtype_comp_codRestrict]
     simp only [q]
-    rw [map_smul, map_add, hT, add_zero, smul_eq_mul, ← _root_.mul_assoc, hu, _root_.one_mul]
+    rw [map_smul, map_add (f := _), hT, add_zero, smul_eq_mul, ← _root_.mul_assoc, hu, _root_.one_mul]
     simp only [S]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun τ _ => trace_sand _ _
 
 end abstract
@@ -179,7 +187,7 @@ theorem exists_projectors {E : Type} [Field E] [NumberField E] (F : Intermediate
     rw [← e, ← RingHom.map_det, h, map_zero]
   let χ : (E →+* ℂ) → 𝓞 E → R := embR F hF iF
   have hχa : ∀ τ a a', χ τ (a + a') = χ τ a + χ τ a' := fun τ a a' => by
-    simp only [χ, embR]; rw [← map_add]; congr 1; ext; simp
+    simp only [χ, embR]; rw [← map_add (f := _)]; congr 1; ext; simp
   have hχm : ∀ τ a a', χ τ (a * a') = χ τ a * χ τ a' := fun τ a a' => by
     simp only [χ, embR]; rw [← map_mul]; congr 1; ext; simp
   have hχ1 : ∀ τ, χ τ 1 = 1 := fun τ => by
@@ -254,7 +262,8 @@ theorem balanced_finite_projective_rank : ∀ {E : Type} [Field E] [NumberField 
   have h2 := congrArg (algebraMap (R ⧸ m) m.ResidueField) (finrank_retract _ r hr1 (R ⧸ m))
   rw [map_natCast, ← IsScalarTower.algebraMap_apply] at h2
   push_cast
-  simp only [eigRank_eq hP hl hr hs, ← map_mul, ← map_sum, ← hr2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eigRank_eq hP hl hr hs, ← map_mul, ← map_sum, ← hr2]
   rw [map_mul, map_ofNat]
   exact congrArg _ h2
 

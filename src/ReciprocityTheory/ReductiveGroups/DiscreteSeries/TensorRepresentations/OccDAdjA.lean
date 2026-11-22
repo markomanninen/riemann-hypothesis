@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefBTensSubKStable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CoefBTensSubKStable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DataGenSubIrred
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,7 @@ theorem adjA_rep (dual : Bool) (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn 
     intro y hy hPy a b hab v hv c
     obtain ⟨c', r, hcr⟩ := adjA_tensF_single dual E a b c y
     have h1 : ps (Pi.single c (E a b y)) = E a b (ps (Pi.single c y)) - r • ps (Pi.single c' y) := by
-      rw [← hps a b _ (adjA_single_mem c hy), hcr, map_add, map_smul]
+      rw [← hps a b _ (adjA_single_mem c hy), hcr, map_add (f := _), map_smul]
       abel
     rw [h1, inner_sub_right, inner_smul_right, hPy v hv c', mul_zero, sub_zero, ← hUk b a hab.symm]
     exact hPy _ (hL'k b a hab.symm v hv) c
@@ -123,7 +127,8 @@ theorem adjA_rep (dual : Bool) (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn 
       funext x
       simp only [Pi.single_apply, Finset.sum_apply]
       split_ifs <;> simp
-    rw [this, map_sum, inner_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum, inner_sum]
     exact Finset.sum_eq_zero fun q hq => hg q hq v hv c
   have hcasP : ∀ y ∈ genSub E V, P y → P (casimirK ε E y) := by
     intro y hy hPy

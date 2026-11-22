@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermModerateGrowth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ExpNegGlue
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExpoConjOfIsCsd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantTermModerateGrowth
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {E : Type} [Field E] [NumberField E] {n : ℕ}
 def ext0 (x : Fin n → ℝ) (j : ℕ) : ℝ := if h : j < n then x ⟨j, h⟩ else 0
 
 theorem sr_eq (x : Fin n → ℝ) {r : ℕ} (h0 : 0 < r) (h1 : r < n) : An.sr x r = ext0 x (r - 1) - ext0 x r := by
-  rw [An.sr, dif_pos ⟨h0, h1⟩, ext0, ext0, dif_pos (by omega : r - 1 < n), dif_pos h1]
+  rw [An.sr, dite_eq_left ⟨h0, h1⟩, ext0, ext0, dite_eq_left (by omega : r - 1 < n), dite_eq_left h1]
 
 theorem abs_sr_le (x : Fin n → ℝ) (t₀ : ℝ) (hx : ∀ r, -t₀ ≤ An.sr x r) (r : ℕ) :
     |An.sr x r| ≤ An.sr x r + 2 * t₀ := by
@@ -35,7 +39,7 @@ theorem bound_nonneg (x : Fin n → ℝ) (t₀ : ℝ) (hx : ∀ r, -t₀ ≤ An.
 theorem abs_le_bound (x : Fin n → ℝ) (t₀ : ℝ) (hx : ∀ r, -t₀ ≤ An.sr x r)
     (hlast : ∀ i : Fin n, (i : ℕ) + 1 = n → x i = 0) (i : Fin n) :
     |x i| ≤ ∑ r ∈ Finset.range n, An.sr x r + 2 * (n : ℝ) * t₀ := by
-  have hXi : ext0 x i = x i := by rw [ext0, dif_pos i.2]
+  have hXi : ext0 x i = x i := by rw [ext0, dite_eq_left i.2]
   have hXl : ext0 x (n - 1) = 0 := by
     rw [ext0]; split_ifs with h
     · exact hlast _ (by show n - 1 + 1 = n; omega)
@@ -62,8 +66,7 @@ theorem tor_add (x y : Fin n → ℝ) : An.tor E (x + y) = An.tor E x * An.tor E
   rw [← map_mul]
   congr 1
   funext i
-  simp only [Pi.mul_apply]
-  rw [← GlobalTheory.CuspBoundSiegel.posIdele_mul]
+  rw [Pi.mul_apply, ← GlobalTheory.CuspBoundSiegel.posIdele_mul]
   exact GlobalTheory.CuspBoundSiegel.posIdele_congr _ _ (by rw [Pi.add_apply, Real.exp_add])
 
 theorem tor_const_comm (c : ℝ) (g : AdelicGLn.AdelicGL E n) :
@@ -84,14 +87,14 @@ theorem pFin_diag (r : Fin n → ℝ) (hr : ∀ i, 0 < r i) :
 theorem pFin_tor (x : Fin n → ℝ) : Matrix.GeneralLinearGroup.map (pFin E) (An.tor E x) = 1 :=
   pFin_diag (fun i => Real.exp (x i)) (fun i => Real.exp_pos _)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def dg (x : Fin n → ℝ) : GL (Fin n) (Cinf E) := diagUnits n fun i => expU fun _ : InfinitePlace E => ((x i : ℝ) : ℂ)
 
 theorem pInf_infId (v : (Cinf E)ˣ) : pInf E (infId E v) = v := by
   have h : ∀ x, pInf E (sInf E x) = x := fun x => (infEq E).symm_apply_apply x
   change pInf E (1 - sInf E 1 + sInf E _) = _
-  simp only [map_add, map_sub, map_one, h, sub_self, zero_add]
+  simp only [map_add (f := _), map_sub, map_one, h, sub_self, zero_add]
 
 theorem pInf_tor (x : Fin n → ℝ) : Matrix.GeneralLinearGroup.map (pInf E) (An.tor E x) = dg x := by
   refine Units.ext (Matrix.ext fun i j => ?_)
@@ -101,11 +104,11 @@ theorem pInf_tor (x : Fin n → ℝ) : Matrix.GeneralLinearGroup.map (pInf E) (A
   · rw [GlobalTheory.CuspBoundSiegel.posIdele_exp, pInf_infId]
   · exact map_zero _
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem height_inv' (y : GL (Fin n) (Cinf E)) : GlobalTheory.CuspRep.height y⁻¹ = GlobalTheory.CuspRep.height y := by
   unfold GlobalTheory.CuspRep.height; rw [inv_inv]; ring
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem height_dg (x : Fin n → ℝ) (R : ℝ) (hR : ∀ i, |x i| ≤ R) (hR0 : 0 ≤ R) :
     GlobalTheory.CuspRep.height (dg (E := E) x) ≤ 3 * Real.exp R := by
   have he : 0 ≤ Real.exp R := (Real.exp_pos R).le

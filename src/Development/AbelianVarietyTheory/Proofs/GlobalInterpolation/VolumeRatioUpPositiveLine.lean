@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.VolIndep
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DetNeZeroOfHasSignature
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.VolIndep
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DetNeZeroOfHasSignature
+
+@[expose] public section
+
 open NumberField MeasureTheory Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

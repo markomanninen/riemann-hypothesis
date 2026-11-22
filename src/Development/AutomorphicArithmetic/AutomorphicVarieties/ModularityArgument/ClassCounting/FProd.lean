@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK
 
@@ -27,7 +31,8 @@ private theorem F_coc (u : K → K → A) (v : K → A) (hu : ∀ a b c, u b c -
       rw [F]
       congr 2
       funext i
-      simp only [Fin.contractNth, Fin.val_succ, Nat.add_lt_add_iff_right, Nat.add_right_cancel_iff]
+      simp only [Fin.contractNth, Fin.val_succ, Nat.add_lt_add_iff_right,
+        Nat.add_right_cancel_iff]
       rfl
     have h0 : F u v (n + 2) (Fin.contractNth 0 (· * ·) g) = u (g 0 * g 1) (g 2) * F u v n fun i => g i.succ.succ.succ := by
       rw [F]; rfl
@@ -48,17 +53,35 @@ private theorem F_coc (u : K → K → A) (v : K → A) (hu : ∀ a b c, u b c -
 
 private theorem F_ins (u : K → K → A) (v : K → A) (hs : ∀ a b, u a b = u b a) (x : K) : ∀ (E : ℕ) (g : Fin (2 * E) → K),
     ∑ i : Fin (2 * E + 1), (-1 : A) ^ (i : ℕ) * F u v (2 * E + 1) (Fin.insertNth (α := fun _ => K) i x g) =
-      F u v (2 * E) g * v x
-  | 0, g => by simp [F]
-  | E + 1, g => by
-    obtain ⟨a, g, rfl⟩ : ∃ (a : K) (g' : Fin (2 * E + 1) → K), g = (Fin.cons a g' : Fin (2 * E + 1 + 1) → K) := ⟨_, _, (Fin.cons_self_tail (n := 2 * E + 1) g).symm⟩
-    obtain ⟨b, g, rfl⟩ : ∃ (b : K) (g' : Fin (2 * E) → K), g = (Fin.cons b g' : Fin (2 * E + 1) → K) := ⟨_, _, (Fin.cons_self_tail g).symm⟩
-    change ∑ i : Fin (2 * E + 1 + 1 + 1), (-1 : A) ^ (i : ℕ) * F u v (2 * E + 1 + 2)
-      (Fin.insertNth (α := fun _ => K) i x (Fin.cons a (Fin.cons b g : Fin (2 * E + 1) → K) : Fin (2 * E + 1 + 1) → K)) =
-      (u a b * F u v (2 * E) g) * v x
-    rw [Fin.sum_univ_succ, Fin.sum_univ_succ, mul_assoc (u a b), ← F_ins u v hs x E g, Finset.mul_sum]
-    simp only [Fin.insertNth_succ_cons, Fin.insertNth_zero', F, Fin.cons_zero, Fin.cons_one, Fin.cons_succ, Fin.val_zero,
-      Fin.val_succ, hs x a]
+      F u v (2 * E) g * v x := by
+  intro E
+  induction E with
+  | zero =>
+    intro g
+    simp [F]
+  | succ E ih =>
+    intro g
+    obtain ⟨a, b, rest, rfl⟩ : ∃ (a b : K) (rest : Fin (2 * E) → K),
+        g = (Fin.cons a (Fin.cons b rest) : Fin (2 * E + 1 + 1) → K) := by
+      let tail := Fin.tail (n := 2 * E + 1) (α := fun _ => K) g
+      let rest := Fin.tail (n := 2 * E) (α := fun _ => K) tail
+      refine ⟨g 0, tail 0, rest, ?_⟩
+      calc
+        g = Fin.cons (g 0) tail :=
+          (Fin.cons_self_tail (α := fun _ => K) g).symm
+        _ = Fin.cons (g 0) (Fin.cons (tail 0) rest) :=
+          congrArg (Fin.cons (α := fun _ => K) (g 0))
+            (Fin.cons_self_tail (α := fun _ => K) tail).symm
+    have hpair (n : ℕ) (c d : K) (f : Fin n → K) :
+        F u v (n + 2) (Fin.cons c (Fin.cons d f) : Fin (n + 2) → K) = u c d * F u v n f := by
+      rw [F]
+      simp only [Fin.cons_zero, Fin.cons_one, Fin.cons_succ]
+    change (∑ i : Fin (2 * E + 1 + 1 + 1), (-1 : A) ^ (i : ℕ) * F u v (2 * E + 1 + 2)
+      (Fin.insertNth (α := fun _ => K) i x (Fin.cons a (Fin.cons b rest)))) =
+      F u v (2 * E + 2) (Fin.cons a (Fin.cons b rest)) * v x
+    rw [hpair (2 * E) a b rest, Fin.sum_univ_succ, Fin.sum_univ_succ, mul_assoc (u a b),
+      ← ih rest, Finset.mul_sum]
+    simp only [Fin.insertNth_succ_cons, Fin.insertNth_zero', hpair, Fin.val_zero, Fin.val_succ, hs x a]
     rw [← add_assoc]
     refine (congrArg₂ (· + ·) (by ring : _ = (0 : A)) (Finset.sum_congr rfl fun j _ => by ring)).trans (zero_add _)
 
@@ -112,11 +135,12 @@ theorem UpperTheory.V.ZK.sCoc : UpperTheory.V.ZK.SCoc := by
   · rintro _ ⟨z, rfl⟩
     induction z using Finsupp.induction_linear with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb, add_zero]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb, add_zero]
     | single g c =>
       have := F_coc u w (fun a b c => by simp only [hu]; exact_mod_cast congrArg (Int.cast : ℤ → ZMod q) (hc a b c))
         (fun a b => by simp [hw]) _ g
-      simp only [bd, Finsupp.linearCombination_single, map_smul, map_add, map_sum, one_smul, smul_eq_mul, one_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [bd, Finsupp.linearCombination_single, map_smul, map_add (f := _), map_sum, one_smul, smul_eq_mul, one_mul]
       exact mul_eq_zero_of_right _ this
   · have key : ∑ j : ZMod q, u (chi q ζ hζ.pow_eq_one x (Multiplicative.ofAdd j))
         (chi q ζ hζ.pow_eq_one x (Multiplicative.ofAdd 1)) = x := by
@@ -138,10 +162,12 @@ theorem UpperTheory.V.ZK.sCoc : UpperTheory.V.ZK.SCoc := by
     have hp : ∀ h : Fin (2 * e + 1 + 1) → kˣ, Finsupp.linearCombination (ZMod q) (F u w _)
         (prism (ZMod q) g _ (Finsupp.single h 1)) = F u w (2 * (e + 1)) h * w g := fun h => by
       rw [← F_ins u w (fun a b => by simp only [hu, hs a b]) g (e + 1) h]
-      simp only [prism, Finsupp.linearCombination_single, one_smul, map_sum, map_smul, smul_eq_mul, mul_one, one_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [prism, Finsupp.linearCombination_single, one_smul, map_sum, map_smul, smul_eq_mul, mul_one, one_mul,
         inv_mul_cancel_comm, ite_self]
       rfl
-    simp only [zc, map_sum, cm, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, hp, F_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [zc, map_sum, cm, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, hp, F_prod]
     rw [← Finset.sum_mul, ← key, ← Fin.prod_const, Finset.prod_univ_sum, Fintype.piFinset_univ]
     refine congrArg (· * w g) (Finset.sum_congr rfl fun j _ => Finset.prod_congr rfl fun s _ => ?_)
     have a1 : 2 * (s : ℕ) % 2 = 0 := by omega

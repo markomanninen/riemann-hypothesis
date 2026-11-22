@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterExt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterExt
+
+@[expose] public section
 
 noncomputable section
 namespace ReciprocityTheory.ChartRestriction.G.Geo

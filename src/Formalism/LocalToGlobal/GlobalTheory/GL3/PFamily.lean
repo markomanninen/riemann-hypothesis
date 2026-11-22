@@ -1,8 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkChi
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.Statement
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.CardTrivialFirstComponent
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThU
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PThIndep
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,16 +36,9 @@ def ThetaNormConjugateIndependent (D : D7) (T : Tor D) (e : FamE D) : Prop :=
         normSq D (torConj D T M ρ) (La D (torConj D T M ρ) L₁ L₁') (fnConj D M ρ (e N N' L₁ L₁')) =
           normSq D (torConj D T M ρ) (La D (torConj D T M ρ) L₂ L₂') (fnConj D M ρ (e N N' L₂ L₂'))
 
-theorem theta_vector_family_iff_parts (D : D7) (T : Tor D) (e : FamE D) : vec22 D T e ↔ NonzeroThetaVectorFamily D T e ∧ TaylorCoeffsInNumberField D e :=
-  ⟨fun h => ⟨fun N N' L L' hA => ⟨(h N N' L L' hA).1, (h N N' L L' hA).2.1⟩, fun N N' L L' hA => (h N N' L L' hA).2.2⟩,
-    fun h N N' L L' hA => ⟨(h.1 N N' L L' hA).1, (h.1 N N' L L' hA).2, h.2 N N' L L' hA⟩⟩
-
-theorem theta_conditions_iff (D : D7) (T : Tor D) (C : ℝ) (e : FamE D) :
-    th22 D T C e ↔ ThetaNormIndependent D T e ∧ ThetaMeanBound D T C e ∧ ThetaNormConjugateIndependent D T e ∧ th22U D T e := Iff.rfl
-
 def EigenvectorPacketProperties {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ) (C : ℝ) (χ : IdE D → ℂ) : Prop :=
   TaylorCoeffsInNumberField D (B.eNat χ) ∧ ThetaMeanBound D (tor0 D cc δ) C (B.eNat χ) ∧ ThetaNormConjugateIndependent D (tor0 D cc δ) (B.eNat χ) ∧
-    B.EqP χ ∧ B.IntP χ ∧ B.MomP χ ∧ B.StrP χ
+    B.EqP χ ∧ (_root_.Formalism.MainNotions.TaylorLogMetric.int22 D B.tor (B.eNat χ)) ∧ (_root_.Formalism.MainNotions.TaylorLogMetric.mom22 D cc δ (B.eNat χ) ∧ _root_.Formalism.MainNotions.TaylorLogMetric.LargerSupportMomentCondition D cc δ (B.eNat χ)) ∧ (_root_.Formalism.MainNotions.TaylorLogMetric.str22 D B.tor (B.eNat χ))
 
 def LinkBaseNe : Prop :=
   ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), Base D cc δ → δ ≠ 0
@@ -52,24 +51,6 @@ def LinkThE : Prop :=
   ∀ D : D7, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
     ∀ B : Base D cc δ, B.StdOK → ∀ χ, IsChi D χ →
       ThetaNormIndependent D (tor0 D cc δ) (B.eNat χ) ∧ th22U D (tor0 D cc δ) (B.eNat χ)
-
-def SevenFamilyProperties : Prop :=
-  ∀ D : D7, ∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-    ∀ B : Base D cc δ, B.StdOK → ∀ (C : ℝ) (χ : IdE D → ℂ), IsChi D χ → EigenvectorPacketProperties B C χ → B.LateralTheory C χ
-
-def LinkStandardBase : Prop :=
-  ∀ (D : D7) (C : ℝ), AdmittedStatements D →
-    (∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ → per22 D (tor0 D cc δ)) →
-    (∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      ∃ B : Base D cc δ, B.StdOK ∧ ∀ χ, IsChi D χ → EigenvectorPacketProperties B C χ) →
-    aux₃ D C
-
-def LinkStandardBase' : Prop :=
-  LinkPer → ∀ (D : D7) (C : ℝ), AdmittedStatements D →
-    KroneckerLimit → Uniformization → CMTransitive D → DedekindFactor D →
-    (∀ cc : Ideal (𝓞 D.host.K), IsCurveIdeal D cc → ∀ δ : ℂ, IsDiscriminantTwelfthRootOfIdealLattice D cc δ →
-      ∃ B : Base D cc δ, B.StdOK ∧ ∀ χ, IsChi D χ → EigenvectorPacketProperties B C χ) →
-    aux₃ D C
 
 theorem lamOf_zero (D : D7) (cc : Ideal (𝓞 D.host.K)) : lamOf D cc 0 = ⊥ := by
   unfold lamOf
@@ -91,18 +72,6 @@ theorem vector_link_holds : LinkVecE :=
 theorem theta_link_holds : LinkThE :=
   fun D cc hcc δ hδ B hS χ hχ =>
     ⟨B.th_indep hcc hδ (base_linkage_nonempty D cc δ B) hS χ hχ, B.th_U hcc hδ (base_linkage_nonempty D cc δ B) hS χ hχ⟩
-
-theorem seven_family_properties : SevenFamilyProperties := by
-  intro D cc hcc δ hδ B hS C χ hχ ⟨r1, r2, r3, r4, r5, r6, r7⟩
-  have hT := theta_link_holds D cc hcc δ hδ B hS χ hχ
-  exact ⟨(theta_vector_family_iff_parts D _ _).2 ⟨vector_link_holds D cc hcc δ hδ B hS χ hχ, r1⟩, ⟨hT.1, r2, r3, hT.2⟩, r4, r5, r6, r7⟩
-
-theorem eigen_linkage_holds : LinkStandardBase := by
-  intro D C hA hper h
-  refine conclusion_of_hecke_commutation D C hper (character_linkage_holds D hA) ?_
-  intro cc hcc δ hδ
-  obtain ⟨B, hS, hB⟩ := h cc hcc δ hδ
-  exact ⟨B, fun χ hχ => seven_family_properties D cc hcc δ hδ B hS C χ hχ (hB χ hχ)⟩
 
 end Formalism.L2.GlobalTheoryTheory.IntegralLatticeDensity
 

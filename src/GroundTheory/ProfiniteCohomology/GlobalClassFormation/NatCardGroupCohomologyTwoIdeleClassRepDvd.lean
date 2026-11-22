@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelTower
-import GroundTheory.TateCohomology.TateResEqZeroOfNsmulEqZero
-import GroundTheory.TateCohomology.ResCoresPos
-import GroundTheory.TateCohomology.Annihilation
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelTower
+public import GroundTheory.TateCohomology.TateResEqZeroOfNsmulEqZero
+public import GroundTheory.TateCohomology.ResCoresPos
+public import GroundTheory.TateCohomology.Annihilation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -71,8 +76,8 @@ noncomputable def groupCohomologyResIdeleClassIso (H : Subgroup Gal(L/K)) (n : �
 
 variable [IsGalois K L]
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem isPGroup_gal_fixedField_sylow {p : ℕ} (P : Sylow p Gal(L/K)) :
     IsPGroup p Gal(L/fixedField (P : Subgroup Gal(L/K))) :=
   P.isPGroup'.of_equiv (subgroupEquivGalFixedField _)
@@ -142,11 +147,6 @@ theorem natCard_groupCohomology_two_ideleClassRep_dvd :
         rw [Finset.prod_coe_sort n.primeFactors (fun p => p ^ n.factorization p)]
         exact (Nat.prod_primeFactors_pow_factorization hn0).symm
     _ = finrank K L := IsGalois.card_aut_eq_finrank K L
-
-theorem finite_groupCohomology_two_ideleClassRep :
-    Finite (groupCohomology (ideleClassRep K L) 2) :=
-  Nat.finite_of_card_ne_zero fun h =>
-    Module.finrank_pos.ne' (Nat.eq_zero_of_zero_dvd (h ▸ natCard_groupCohomology_two_ideleClassRep_dvd))
 
 end Level
 

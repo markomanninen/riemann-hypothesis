@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.UnitaryBC
 open scoped ComplexConjugate
@@ -24,7 +28,11 @@ theorem exists_extension (K : Type) [Field K] [NumberField K] (φ : maximalRealS
       ψ (algebraMap (maximalRealSubfield K) K x) = (φ x : ℂ) := by
   letI : Algebra (maximalRealSubfield K) ℂ := (Complex.ofRealHom.comp φ).toAlgebra
   haveI : Algebra.IsAlgebraic (maximalRealSubfield K) K := Algebra.IsAlgebraic.tower_top (K := ℚ) _
-  let f : K →ₐ[maximalRealSubfield K] ℂ := IsAlgClosed.lift
+  let f : K →ₐ[maximalRealSubfield K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   exact ⟨f.toRingHom, fun x => f.commutes x⟩
 
 theorem exists_sqrt_totallyNegative : ∀ (K : Type) [Field K] [NumberField K] [IsCMField K],
@@ -47,7 +55,7 @@ theorem exists_sqrt_totallyNegative : ∀ (K : Type) [Field K] [NumberField K] [
   have hsq : (y : K) ^ 2 ∈ maximalRealSubfield K := by
     rw [← NumberField.IsCMField.complexConj_eq_self_iff, map_pow, hconj, neg_sq]
   have hint : IsIntegral ℤ (⟨(y : K) ^ 2, hsq⟩ : maximalRealSubfield K) := by
-    refine (isIntegral_algebraMap_iff (FaithfulSMul.algebraMap_injective (maximalRealSubfield K) K)).mp ?_
+    refine (isIntegral_algebraMap_iff (B := K)).mp ?_
     change IsIntegral ℤ ((y : K) ^ 2)
     exact (RingOfIntegers.isIntegral_coe y).pow 2
   refine ⟨⟨⟨(y : K) ^ 2, hsq⟩, hint⟩, (y : K), rfl, ?_, ?_⟩

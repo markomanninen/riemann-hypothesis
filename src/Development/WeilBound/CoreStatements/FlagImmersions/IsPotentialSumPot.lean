@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsTwiceDifferentiableAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffAtOfIsPotential
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftB
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,9 +158,9 @@ theorem compare_local {A : FinHolAtlas e X} {Ω Q : LocPot X} (hΩ : IsPotential
   have hcb : Metric.closedBall (c p) (r / 2) ⊆ O :=
     (Metric.closedBall_subset_ball (by linarith)).trans hrO
   have hΩs : ContDiffOn ℝ 2 (Ω.φ p ∘ c.symm) O :=
-    ((hΩ.1 p j).mono (fun y hy => ⟨hy.1, hy.2.1⟩)).of_le two_le_infty
+    ((hΩ.1 p j).mono (fun y (hy : y ∈ O) => ⟨hy.1, hy.2.1⟩)).of_le two_le_infty
   have hws : ContDiffOn ℝ 2 (Q.φ p ∘ c.symm) O :=
-    ((hQ.1 p j).mono (fun y hy => ⟨hy.1, hy.2.2⟩)).of_le two_le_infty
+    ((hQ.1 p j).mono (fun y (hy : y ∈ O) => ⟨hy.1, hy.2.2⟩)).of_le two_le_infty
   set K := Metric.closedBall (c p) (r / 2) ×ˢ Metric.sphere (0 : Fin e → ℂ) 1 with hK
   have hKc : IsCompact K := (isCompact_closedBall _ _).prod (isCompact_sphere _ _)
   have hKO : K ⊆ O ×ˢ Set.univ := Set.prod_mono hcb (Set.subset_univ _)
@@ -203,7 +207,7 @@ theorem compare_global [CompactSpace X] {A : FinHolAtlas e X} {Ω Q : LocPot X} 
   have hVo : ∀ p, IsOpen (V p) := fun p =>
     (A.chart _).continuousOn.isOpen_inter_preimage (A.chart _).open_source Metric.isOpen_ball
   obtain ⟨t, ht⟩ := isCompact_univ.elim_finite_subcover V hVo
-    (fun p _ => Set.mem_iUnion.2 ⟨p, hsrc p, Metric.mem_ball_self (hr p)⟩)
+    (fun p _ => Set.mem_iUnion.2 ⟨p, hsrc p, Set.mem_preimage.mpr (Metric.mem_ball_self (hr p))⟩)
   have hC0 : 0 ≤ ∑ p ∈ t, |m p| := Finset.sum_nonneg fun _ _ => abs_nonneg _
   refine ⟨(1 + ∑ p ∈ t, |m p|)⁻¹, by positivity, fun k y hy v => ?_⟩
   obtain ⟨p, hpt, hqV⟩ : ∃ p ∈ t, (A.chart k).symm y ∈ V p := by

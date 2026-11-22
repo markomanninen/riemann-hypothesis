@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open Matrix TensorProduct
@@ -39,14 +44,16 @@ def lmat (a : R ⊗[K] A) : Matrix κ κ R := fun k => coords b R (a * baseBasis
 
 theorem coords_mul (z x : R ⊗[K] A) : coords b R (z * x) = coords b R z ᵥ* rmat b R x := by
   conv_lhs => rw [eq_sum_coords b R z]
-  rw [Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum]
   funext l
   simp only [smul_mul_assoc, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, vecMul,
     dotProduct, rmat]
 
 theorem coords_mul_left (a z : R ⊗[K] A) : coords b R (a * z) = coords b R z ᵥ* lmat b R a := by
   conv_lhs => rw [eq_sum_coords b R z]
-  rw [Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.mul_sum, map_sum]
   funext l
   simp only [mul_smul_comm, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, vecMul,
     dotProduct, lmat]
@@ -97,7 +104,8 @@ theorem exists_rmat_eq (g : Matrix κ κ R)
     rw [hφ, coords_mul_left, coords_mul_left, hφ, vecMul_vecMul, vecMul_vecMul, hg]
   have ha : ∀ a z, φ (a * z) = a * φ z := by
     intro a z
-    rw [eq_sum_coords b R a, Finset.sum_mul, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eq_sum_coords b R a, Finset.sum_mul, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_mul_assoc, smul_mul_assoc, map_smul, hj]
   refine ⟨φ 1, ?_⟩
@@ -123,7 +131,8 @@ theorem coords_baseMap (f : R →ₐ[K] R') (z : R ⊗[K] A) :
     simp only [baseBasis_apply, baseMap, TensorProduct.smul_tmul', smul_eq_mul, mul_one,
       Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id_eq]
   conv_lhs => rw [eq_sum_coords b R z]
-  rw [map_sum, Finset.sum_congr rfl fun k _ => h k, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun k _ => h k, map_sum]
   funext l
   rw [Finset.sum_apply]
   simp only [map_smul, Pi.smul_apply, coords_baseBasis, smul_eq_mul, Pi.single_apply, mul_ite,
@@ -167,7 +176,8 @@ def coordsVec (x : ι → R ⊗[K] E) : ι × κ → R := fun p => coords b R (x
 theorem coordsVec_vecMul (x : ι → R ⊗[K] E) (M : Matrix ι ι (R ⊗[K] E)) :
     coordsVec b R (x ᵥ* M) = coordsVec b R x ᵥ* blockHom b R M := by
   funext ⟨j, l⟩
-  simp only [coordsVec, vecMul, dotProduct, map_sum, Finset.sum_apply, coords_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordsVec, vecMul, dotProduct, map_sum, Finset.sum_apply, coords_mul,
     Fintype.sum_prod_type, blockHom_apply]
 
 theorem exists_blockHom_eq (g : Matrix (ι × κ) (ι × κ) R)

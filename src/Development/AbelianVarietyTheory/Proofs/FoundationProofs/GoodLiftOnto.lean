@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 

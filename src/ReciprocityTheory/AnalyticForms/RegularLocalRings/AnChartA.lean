@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.ExistsAnalyticGraphChartMvPolynomial
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.JacChart
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.ExistsAnalyticGraphChartMvPolynomial
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 
@@ -23,10 +27,10 @@ theorem dualEv_fst_snd (p v : Fin n → ℂ) (h : MvPolynomial (Fin n) ℂ) :
     obtain ⟨h1, h2⟩ := hq
     obtain ⟨h3, h4⟩ := hr
     refine ⟨?_, ?_⟩
-    · rw [map_add, TrivSqZeroExt.fst_add, h1, h3, map_add]
-    · rw [map_add, TrivSqZeroExt.snd_add, h2, h4, ← Finset.sum_add_distrib]
+    · rw [map_add (f := _), TrivSqZeroExt.fst_add, h1, h3, map_add (f := _)]
+    · rw [map_add (f := _), TrivSqZeroExt.snd_add, h2, h4, ← Finset.sum_add_distrib]
       refine Finset.sum_congr rfl fun j _ => ?_
-      rw [map_add, map_add, add_mul]
+      rw [map_add (f := _), map_add (f := _), add_mul]
   next q i hq =>
     obtain ⟨h1, h2⟩ := hq
     have hX : dualEv p v (X i) = TrivSqZeroExt.inl (p i) + v i • DualNumber.eps := by

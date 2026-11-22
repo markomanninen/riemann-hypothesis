@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
-import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
-import Formalism.SharpRestriction.ParConsts
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DecompositionInvariantsCondition
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypeJumps
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.ParConsts
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DecompositionInvariantsCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,11 +73,6 @@ theorem starF_of (L : SizeData₂ D) (ρ : FamilyRepresentationConstants.RhoFam 
     · by_cases hs : D.nd.l i ∈ D.host.small
       · exact hS i hi hs h2 π hπ
       · exact h23 i hi (Or.inr ⟨hl.resolve_left hs, hs⟩) π hπ
-
-def At23 (L : SizeData₂ D) (C : ℝ) : Prop :=
-  TwistedPlaces.ShaFinOdd D → ∀ (r : FamilyRepresentationConstants.RFam D) (ρ : FamilyRepresentationConstants.RhoFam D), GlobalTheory.PtCore.PtFam D r ρ → KillingConditions.KillAt ρ → BoundAtTwoThree L ρ C
-
-def BoundAtTwoThreeFamily {eps : ℝ} (Fm : FamP eps) : Prop := ∃ C x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, At23 (Fm.L x i) C
 
 def StarG (L : SizeData₂ D) (ρ : FamilyRepresentationConstants.RhoFam D) (C : ℝ) : Prop :=
   ∀ i, TwistedPlaces.TwLoc D i → (D.nd.l i = D.host.q ∨ D.nd.l i = D.host.d) →

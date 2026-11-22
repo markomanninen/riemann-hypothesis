@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.Factor
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SpanKeep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SpanSph
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.Factor
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SpanKeep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.SmoothDepth.OpenLevelSubgroups.SpanSph
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL Formalism.BasicNotions
 open UpperTheory.V.W (Plc Lp)
@@ -11,8 +15,8 @@ open UpperTheory.V.Z.Sym.Al
 
 theorem UpperTheory.V.Z.Sym.Al.raise :
     ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] (R : Representation ℂ (InfinitePlace L → GL (Fin n) ℂ) V) (π : Submodule ℂ (UA L n → ℂ)), IsAutRepU π →
-        ∀ U : Subgroup (UA L n), U ≤ Kall L n → ∀ S : Finset (Plc L), Places (S : Set (Plc L)) →
-        (∀ w ∈ S, locU n w ⊓ Kall L n ≤ U ∧ IsUnramU π w) → ∀ (W : ∀ w : Plc L, Sig.Lev (Kw w)) (φ : UA L n → V), φ ≠ 0 → CoefIn φ π →
+        ∀ U : Subgroup (UA L n), U ≤ Kall (L := L) n → ∀ S : Finset (Plc L), Places (S : Set (Plc L)) →
+        (∀ w ∈ S, locU n w ⊓ Kall (L := L) n ≤ U ∧ IsUnramU π w) → ∀ (W : ∀ w : Plc L, Sig.Lev (Kw w)) (φ : UA L n → V), φ ≠ 0 → CoefIn φ π →
         IsAF R (lev U S W) φ → ∃ φ' : UA L n → V, φ' ≠ 0 ∧ CoefIn φ' π ∧ IsAF R U φ' := by
   classical
   intro L _ _ _ n V _ _ _ R π hπ U hU S
@@ -34,7 +38,7 @@ theorem UpperTheory.V.Z.Sym.Al.raise :
       (fun u hu => hK u (Finset.mem_insert_of_mem hu)) W φ' a0 (k1 π hπ hc) ⟨hA.left, hA.inf, fun u hu g => ?_⟩
     obtain ⟨-, f2, -, -, -, f6⟩ := factor L n w
     obtain ⟨x, hx, y, hy, rfl⟩ := f2 u
-    have hxK : x ∈ Kall L n := ((f6 x hx y hy).1 (hU hu.1)).1
+    have hxK : x ∈ Kall (L := L) n := ((f6 x hx y hy).1 (hU hu.1)).1
     have hxl : x ∈ lev U S W := by
       simp only [lev, Subgroup.mem_inf, Subgroup.mem_iInf]
       refine ⟨(hK w hwm).1 ⟨hx, hxK⟩, fun w' hw' => ?_⟩

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.EventuallyLevelPointMemOpen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLTorus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainFirstIdentity
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylCellRange.ReflectionMultiplicationOnBigCell
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PolyLiftOfSmoothComm
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.BasicLiftAll
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EventuallyLevelPointMemOpen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLTorus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableCsmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainFirstIdentity
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylCellRange.ReflectionMultiplicationOnBigCell
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PolyLiftOfSmoothComm
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.QuantumMinorSumPolynomialOperator
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF.CellRules
 
@@ -178,7 +182,7 @@ theorem ell_hX {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) {a b : Fin r}
     simp [hX, Matrix.single_apply, h1, h2]
   unfold ell
   rw [Finset.sum_eq_single b]
-  · rw [dif_pos (by omega), hrow]
+  · rw [dite_eq_left (by omega), hrow]
     simp [eI, Fin.ext_iff]
   · intro l _ hl
     split_ifs with h
@@ -202,8 +206,19 @@ theorem rdV_left {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (hg : g ∈
   set x := wCell k r (Fin.last r) c * g with hx
   have hdet : IsUnit x.det := WeylGroupFacts.isUnit_of_uh hxG.1
   have hu : IsUnit x := (Matrix.isUnit_iff_isUnit_det x).2 hdet
-  have h1 := HeadLetterLemmas.rdV_of_eq z hz (fun y => Ψ (y * x)) 1 (fun n hn => by simpa using hΨ n hn) b _
-    (pat_hX hab (-star (s * (c a / c b)))) (dag_hX _ _ _)
+  have h1 : RdV (hX k b a (-star (s * (c a / c b)))) (fun y => Ψ (y * x)) 1 =
+      (ell k r z (hX k b a (-star (s * (c a / c b)))) -
+        star (ell k r z (hX k b a (-star (s * (c a / c b)))))) • Ψ (1 * x) := by
+    unfold RdV
+    have hfun : (fun t : ℝ => Ψ ((1 * NormedSpace.exp ((t : ℂ) • hX k b a (-star (s * (c a / c b))))) * x)) =
+        fun t : ℝ => psi k r z cStd (NormedSpace.exp ((t : ℂ) • hX k b a (-star (s * (c a / c b))))) • Ψ (1 * x) := by
+      funext t
+      simp only [Matrix.one_mul]
+      apply hΨ
+      apply (Formalism.FourierDecayAlt.Q.QRR.exp_mem_nlev (Formalism.FourierDecayAlt.Q.QRR.pat_smul _ (pat_hX hab _)) _).1
+      rw [QRR.dag_smul, dag_hX, Complex.star_def, Complex.conj_ofReal, smul_neg]
+    rw [hfun]
+    exact ((Formalism.FourierDecayAlt.Q.QRR.hasDerivAt_psi z hz _).smul_const (Ψ (1 * x))).deriv
   have h2 : RdV (hX k a b s) Ψ x = RdV (hX k b a (-star (s * (c a / c b)))) (fun y => Ψ (y * x)) 1 := by
     unfold RdV
     congr 1

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdOfEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdOfEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -110,7 +114,7 @@ theorem complete (hv : v.Integers O) (hε : IsPrimitiveSystem ε) :
       | succ N ih =>
         have := hc N
         rw [huw N] at this
-        simp only [Finset.sum_range_succ, map_add, map_mul, map_pow, map_natCast] at ih ⊢
+        simp only [Finset.sum_range_succ, map_add (f := _), map_mul, map_pow, map_natCast] at ih ⊢
         linear_combination this + ih
     refine ⟨a ε LX + τ ε * a ε LY, fun n => (smod_iff _ _ _ _).2 ?_⟩
     obtain ⟨e1, he1⟩ := hX n
@@ -119,7 +123,7 @@ theorem complete (hv : v.Integers O) (hε : IsPrimitiveSystem ε) :
     rw [hf' n]
     have h1 := congrArg (a ε) he1
     have h2 := congrArg (a ε) he2
-    simp only [map_sub, map_mul, map_pow, map_natCast, map_add] at h1 h2 ⊢
+    simp only [map_sub, map_mul, map_pow, map_natCast, map_add (f := _)] at h1 h2 ⊢
     linear_combination h1 + τ ε * h2
 
 theorem sqz_pow {R : Type} [CommRing R] (s t : R) (ht : t * t = 0) (n : ℕ) :
@@ -143,9 +147,9 @@ theorem σ_pow (b : BR ε) : (p : BR ε) ∣ σ ε b - b ^ p := by
   obtain ⟨x, y, rfl⟩ := gen ε b
   obtain ⟨z, hz⟩ := frob_congr x
   obtain ⟨d, hd⟩ := frob_xi ε
-  rw [pow_gen, map_add, map_mul, σ_a, σ_a, σ_τ, hz, hd]
+  rw [pow_gen, map_add (f := _), map_mul, σ_a, σ_a, σ_τ, hz, hd]
   refine ⟨a ε z + τ ε * a ε (frobenius y) - a ε x ^ (p - 1) * (τ ε * a ε y), ?_⟩
-  simp only [map_add, map_mul, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast]
   linear_combination (-(τ ε * a ε d * a ε (frobenius y))) * p_τ ε +
     ((p : BR ε) * a ε d * a ε (frobenius y)) * τ_sq ε
 
@@ -159,14 +163,14 @@ theorem pd (hv : v.Integers O) (hε : IsPrimitiveSystem ε) (x : BR ε) (hx : θ
     exact this.symm
   obtain ⟨u, w, rfl⟩ := gen ε x
   have hu : fontaineTheta O p u = 0 := by
-    rw [map_add, map_mul, θ_a, θ_a, θ_τ, zero_mul, add_zero] at hx; exact hx
+    rw [map_add (f := _), map_mul, θ_a, θ_a, θ_τ, zero_mul, add_zero] at hx; exact hx
   obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.1
     (by rw [← GlobalTheory.AinfXi.ker_theta hv ε (prim hε)]; exact hu)
   obtain ⟨z, hz⟩ := frob_congr (xi ε)
   obtain ⟨d, hd⟩ := frob_xi ε
   have hxi : a ε (xi ε) ^ p = p + p * τ ε * a ε d - p * a ε z := by
     rw [← map_pow, show xi ε ^ p = frobenius (xi ε) - p * z by rw [hz]; ring, hd]
-    simp only [map_add, map_sub, map_mul, map_natCast]
+    simp only [map_add (f := _), map_sub, map_mul, map_natCast]
     rw [← p_τ]
   rw [pow_gen]
   refine ⟨a ε c ^ p * (1 + τ ε * a ε d - a ε z) + a ε (c * xi ε) ^ (p - 1) * (τ ε * a ε w), ?_⟩
@@ -182,23 +186,28 @@ theorem unit_coprime (n : ℕ) (h : Nat.Coprime n p) : IsUnit (n : BR ε) := by
     rwa [ZMod.coe_unitOfCoprime] at this
   simpa using hu.map (ZMod.castHom (dvd_refl p) (PreTilt O p))
 
-theorem isFrame (hv : v.Integers O) (hε : IsPrimitiveSystem ε) : QLog.IsFrame p (BQ ε) (θ hε) where
-  surj y := by
+theorem isFrame (hv : v.Integers O) (hε : IsPrimitiveSystem ε) : QLog.IsFrame p (BQ ε) (θ hε) := by
+  refine {
+    surj := ?_
+    inj := ?_
+    denom := ?_
+    unit_p := ?_
+    unit_coprime := unit_coprime
+    pd := pd hv hε
+    sat := sat hv
+    complete := complete hv hε }
+  · intro y
     obtain ⟨x, rfl⟩ := (GlobalTheory.AinfXi.ainf_local_xi_order p C v O hv ε (prim hε)).2.2.2.1 y
     exact ⟨a ε x, θ_a hε x⟩
-  inj := IsLocalization.injective (M := Submonoid.powers (p : BR ε)) _ (Submonoid.powers_le.2
-    (mem_nonZeroDivisors_iff.2 ⟨fun x hx => torsion_free hv hε x hx,
-      fun x hx => torsion_free hv hε x (by rw [mul_comm]; exact hx)⟩))
-  denom q := by
+  · exact IsLocalization.injective (M := Submonoid.powers (p : BR ε)) _ (Submonoid.powers_le.2
+      (mem_nonZeroDivisors_iff.2 ⟨fun x hx => torsion_free hv hε x hx,
+        fun x hx => torsion_free hv hε x (by rw [mul_comm]; exact hx)⟩))
+  · intro q
     obtain ⟨⟨b, ⟨_, k, rfl⟩⟩, hq⟩ := IsLocalization.surj (Submonoid.powers (p : BR ε)) q
     exact ⟨k, b, by rw [← hq, map_pow, map_natCast, mul_comm]⟩
-  unit_p := by
+  ·
     have := IsLocalization.Away.algebraMap_isUnit (S := BQ ε) (p : BR ε)
     rwa [map_natCast] at this
-  unit_coprime := unit_coprime
-  pd := pd hv hε
-  sat := sat hv
-  complete := complete hv hε
 
 theorem exists_bFrame : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C]
     (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)]

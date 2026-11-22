@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.PGapAvg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.MeasurableLift
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.PGapAvg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.MeasurableLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ variable {Λ S : Type} [Group Λ] [Group S] [MeasurableSpace S] (j : Λ →* S) 
 
 def R (E : Subgroup Λ) : Set (HL j B μ DB) :=
   {f | ∃ u, Good j B μ DB u ∧ Good j B μ DB (avg j B E u) ∧
-    f = cls j B μ DB (fun x => u x - avg j B E u x)}
+    f = cls (j := j) (B := B) (μ := μ) (DB := DB) (fun x => u x - avg j B E u x)}
 
 def W (E : Subgroup Λ) : Submodule ℝ (HL j B μ DB) := (Submodule.span ℝ (R j B μ DB E))ᗮ
 
@@ -219,51 +223,67 @@ theorem ip_zero {E : Subgroup Λ} (hBE : B ≤ E) (hi : (B.subgroupOf E).index �
 
 theorem mem_W_of_inv {E : Subgroup Λ} (hBE : B ≤ E) (hi : (B.subgroupOf E).index ≠ 0) {DE : Set S}
     (hDE : IsFundamentalDomain (E.map j) DE μ) {u : S → ℝ} (hu : Good j B μ DB u) (huE : LInv j E u) :
-    cls j B μ DB u ∈ W j B μ DB E := by
+    cls (j := j) (B := B) (μ := μ) (DB := DB) u ∈ W j B μ DB E := by
   unfold W
   rw [Submodule.mem_orthogonal]
   intro v hv
   induction hv using Submodule.span_induction with
   | mem x hx =>
     obtain ⟨r, hr, hr', rfl⟩ := hx
-    have hd : Good j B μ DB (fun x => r x - avg j B E r x) :=
-      ⟨hr.1.sub hr'.1, fun γ hγ x => by simp only [hr.2.1 γ hγ x, hr'.2.1 γ hγ x], hr.2.2.sub hr'.2.2⟩
-    rw [cls_inner hd hu]
-    calc ∫ x in DB, (r x - avg j B E r x) * u x ∂μ = ∫ x in DB, u x * (r x - avg j B E r x) ∂μ := by
-          congr 1
-          funext x
-          ring
-      _ = 0 := ip_zero hU hj hDB hBE hi hDE hu huE hr hr'
+    let d : S → ℝ := fun x => r x - avg j B E r x
+    have hd : Good j B μ DB d := good_sub hr hr'
+    have hdu :
+        ⟪cls (j := j) (B := B) (μ := μ) (DB := DB) d,
+          cls (j := j) (B := B) (μ := μ) (DB := DB) u⟫_ℝ = ∫ x in DB, u x * d x ∂μ := by
+      rw [L2.inner_def]
+      unfold cls
+      rw [dite_eq_left hd, dite_eq_left hu]
+      have hpoint : (fun q => ⟪(memLp_lift hd).toLp (lift j B d) q,
+          (memLp_lift hu).toLp (lift j B u) q⟫_ℝ) =ᵐ[nu j B μ DB]
+          fun q => lift j B u q * lift j B d q := by
+        filter_upwards [(memLp_lift hd).coeFn_toLp, (memLp_lift hu).coeFn_toLp] with q hqd hqu
+        rw [hqd, hqu]
+        simp only [RCLike.inner_apply, conj_trivial]
+      rw [integral_congr_ae hpoint]
+      have hm : Measurable (fun q => lift j B u q * lift j B d q) :=
+        (measurable_lift hu.1 hu.2.1).mul (measurable_lift hd.1 hd.2.1)
+      unfold nu
+      rw [integral_map measurable_pr.aemeasurable hm.aestronglyMeasurable]
+      simp only [lift_pr hu.2.1, lift_pr hd.2.1]
+    exact hdu.trans (ip_zero hU hj hDB hBE hi hDE hu huE hr hr')
   | zero => simp
   | add x y _ _ hx hy => rw [inner_add_left, hx, hy, add_zero]
   | smul c x _ hx => rw [inner_smul_left, hx, mul_zero]
 
 theorem ae_eq_cosetAvg_of_mem_invariantSubspace {E : Subgroup Λ} (hBE : B ≤ E) (hi : (B.subgroupOf E).index ≠ 0) {DE : Set S}
     (hDE : IsFundamentalDomain (E.map j) DE μ) {u : S → ℝ} (hu : Good j B μ DB u)
-    (hW : cls j B μ DB u ∈ W j B μ DB E) : u =ᵐ[μ.restrict DB] avg j B E u := by
+    (hW : cls (j := j) (B := B) (μ := μ) (DB := DB) u ∈ W j B μ DB E) : u =ᵐ[μ.restrict DB] avg j B E u := by
+  let toClass : (S → ℝ) → HL j B μ DB := cls (j := j) (B := B) (μ := μ) (DB := DB)
+  let d : S → ℝ := fun x => u x - avg j B E u x
   have hA : Good j B μ DB (avg j B E u) := good_avg hU hj hDB hBE hi hDE hu
   have hAE : LInv j E (avg j B E u) := u_inv μ hU hj hBE hi hu.2.1
-  have hd : Good j B μ DB (fun x => u x - avg j B E u x) :=
-    ⟨hu.1.sub hA.1, fun γ hγ x => by simp only [hu.2.1 γ hγ x, hA.2.1 γ hγ x], hu.2.2.sub hA.2.2⟩
-  have hR : cls j B μ DB (fun x => u x - avg j B E u x) ∈ R j B μ DB E := ⟨u, hu, hA, rfl⟩
-  have h1 : ⟪cls j B μ DB (fun x => u x - avg j B E u x), cls j B μ DB u⟫_ℝ = 0 :=
-    (Submodule.mem_orthogonal _ _).1 hW _ (Submodule.subset_span hR)
-  have h2 : ⟪cls j B μ DB (fun x => u x - avg j B E u x), cls j B μ DB (avg j B E u)⟫_ℝ = 0 := by
-    rw [cls_inner hd hA]
-    calc ∫ x in DB, (u x - avg j B E u x) * avg j B E u x ∂μ =
-          ∫ x in DB, avg j B E u x * (u x - avg j B E u x) ∂μ := by
-          congr 1
-          funext x
-          ring
-      _ = 0 := ip_zero hU hj hDB hBE hi hDE hA hAE hu hA
-  have hdd : cls j B μ DB (fun x => u x - avg j B E u x) =
-      cls j B μ DB u - cls j B μ DB (avg j B E u) := cls_sub hu hA
-  have h3 : ⟪cls j B μ DB (fun x => u x - avg j B E u x),
-      cls j B μ DB (fun x => u x - avg j B E u x)⟫_ℝ = 0 := by
+  have hR : toClass d ∈ R j B μ DB E := ⟨u, hu, hA, rfl⟩
+  have hspan := Submodule.subset_span (R := ℝ) hR
+  have h1 : ⟪toClass d, toClass u⟫_ℝ = 0 := (Submodule.mem_orthogonal _ _).1 hW _ hspan
+  have hWA : toClass (avg j B E u) ∈ W j B μ DB E := mem_W_of_inv hU hj hDB hBE hi hDE hA hAE
+  have h2 : ⟪toClass d, toClass (avg j B E u)⟫_ℝ = 0 := (Submodule.mem_orthogonal _ _).1 hWA _ hspan
+  have hdd : toClass d = toClass u - toClass (avg j B E u) := by
+    dsimp only [toClass]
+    unfold cls
+    rw [dite_eq_left (good_sub hu hA), dite_eq_left hu, dite_eq_left hA]
+    exact MemLp.toLp_sub (memLp_lift hu) (memLp_lift hA)
+  have h3 : ⟪toClass d, toClass d⟫_ℝ = 0 := by
     nth_rewrite 2 [hdd]
     rw [inner_sub_right, h1, h2, sub_self]
   rw [inner_self_eq_zero, hdd, sub_eq_zero] at h3
-  exact (cls_eq_iff hu hA).1 h3
+  dsimp only [toClass] at h3
+  unfold cls at h3
+  rw [dite_eq_left hu, dite_eq_left hA, MemLp.toLp_eq_toLp_iff] at h3
+  unfold nu Filter.EventuallyEq at h3
+  rw [ae_map_iff measurable_pr.aemeasurable
+    (measurableSet_eq_fun (measurable_lift hu.1 hu.2.1) (measurable_lift hA.1 hA.2.1))] at h3
+  change ∀ᵐ x ∂μ.restrict DB, u x = avg j B E u x
+  simpa only [lift_pr hu.2.1, lift_pr hA.2.1] using h3
 
 theorem W_anti {E K : Subgroup Λ} (hBE : B ≤ E) (hEK : E ≤ K) (hiK : (B.subgroupOf K).index ≠ 0)
     {DE DK : Set S} (hDE : IsFundamentalDomain (E.map j) DE μ)
@@ -274,25 +294,30 @@ theorem W_anti {E K : Subgroup Λ} (hBE : B ≤ E) (hEK : E ≤ K) (hiK : (B.sub
   apply Submodule.orthogonal_le
   rw [Submodule.span_le]
   rintro f ⟨r, hr, hr', rfl⟩
+  let toClass : (S → ℝ) → HL j B μ DB := cls (j := j) (B := B) (μ := μ) (DB := DB)
   have hK1 : Good j B μ DB (avg j B K r) := good_avg hU hj hDB hBK hiK hDK hr
   have hK2 : Good j B μ DB (avg j B K (avg j B E r)) := good_avg hU hj hDB hBK hiK hDK hr'
   have htow : avg j B K (avg j B E r) = avg j B K r := by
     rw [← u_trans μ hU hj hBK hiK hBE hEK hr'.2.1,
       u_id μ hU hj hBE hiE (u_inv μ hU hj hBE hiE hr.2.1),
       u_trans μ hU hj hBK hiK hBE hEK hr.2.1]
-  have hd1 : Good j B μ DB (fun x => r x - avg j B K r x) :=
-    ⟨hr.1.sub hK1.1, fun γ hγ x => by simp only [hr.2.1 γ hγ x, hK1.2.1 γ hγ x], hr.2.2.sub hK1.2.2⟩
-  have hd2 : Good j B μ DB (fun x => avg j B E r x - avg j B K (avg j B E r) x) :=
-    ⟨hr'.1.sub hK2.1, fun γ hγ x => by simp only [hr'.2.1 γ hγ x, hK2.2.1 γ hγ x], hr'.2.2.sub hK2.2.2⟩
-  have heq : cls j B μ DB (fun x => r x - avg j B E r x) =
-      cls j B μ DB (fun x => r x - avg j B K r x) -
-        cls j B μ DB (fun x => avg j B E r x - avg j B K (avg j B E r) x) := by
-    rw [← cls_sub hd1 hd2]
+  let d₁ : S → ℝ := fun x => r x - avg j B K r x
+  let d₂ : S → ℝ := fun x => avg j B E r x - avg j B K (avg j B E r) x
+  have hd1 : Good j B μ DB d₁ := good_sub hr hK1
+  have hd2 : Good j B μ DB d₂ := good_sub hr' hK2
+  have hsub : toClass (fun x => d₁ x - d₂ x) = toClass d₁ - toClass d₂ := by
+    dsimp only [toClass]
+    unfold cls
+    rw [dite_eq_left (good_sub hd1 hd2), dite_eq_left hd1, dite_eq_left hd2]
+    exact MemLp.toLp_sub (memLp_lift hd1) (memLp_lift hd2)
+  have heq : toClass (fun x => r x - avg j B E r x) = toClass d₁ - toClass d₂ := by
+    rw [← hsub]
     congr 1
     funext x
+    dsimp only [d₁, d₂]
     rw [htow]
     ring
-  show _ ∈ Submodule.span ℝ (R j B μ DB K)
+  show toClass (fun x => r x - avg j B E r x) ∈ Submodule.span ℝ (R j B μ DB K)
   rw [heq]
   exact Submodule.sub_mem _ (Submodule.subset_span ⟨r, hr, hK1, rfl⟩)
     (Submodule.subset_span ⟨avg j B E r, hr', hK2, rfl⟩)

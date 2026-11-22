@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.NumericalSegre
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.NumericalSegre
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Segre
 

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,18 +27,18 @@ theorem ringEquiv_posIdele (r : ℝ) (hr : 0 < r) :
   · show Completion.extensionEmbeddingOfIsReal w.2 ((posIdele (K := K) r hr : 𝔸[K]).1 w) = r
     rw [← GroundTheory.Global.IdeleGroup.coe_infiniteProj, infiniteProj_posIdele]
     show Completion.extensionEmbeddingOfIsReal w.2 (GroundTheory.Global.posRealElem w.1 (r ^ w.1.mult)) = r
-    rw [GroundTheory.Global.posRealElem, dif_pos w.2, w.2.mult_eq_one, pow_one,
+    rw [GroundTheory.Global.posRealElem, dite_eq_left w.2, w.2.mult_eq_one, pow_one,
       ← Completion.ringEquivRealOfIsReal_apply, RingEquiv.apply_symm_apply]
   · show Completion.extensionEmbedding w.1 ((posIdele (K := K) r hr : 𝔸[K]).1 w) = (r : ℂ)
     rw [← GroundTheory.Global.IdeleGroup.coe_infiniteProj, infiniteProj_posIdele]
     show Completion.extensionEmbedding w.1 (GroundTheory.Global.posRealElem w.1 (r ^ w.1.mult)) = r
     have hc : ¬ w.1.IsReal := not_isReal_iff_isComplex.2 w.2
-    rw [GroundTheory.Global.posRealElem, dif_neg hc, mult, if_neg hc,
+    rw [GroundTheory.Global.posRealElem, dite_eq_right hc, mult, if_neg hc,
       ← Completion.ringEquivComplexOfIsComplex_apply (not_isReal_iff_isComplex.1 hc),
       RingEquiv.apply_symm_apply, Real.sqrt_sq hr.le]
 
-variable (K n) in
 
+variable (K n) in
 def centralExp : ℝ := ((n * Module.finrank ℚ K : ℝ))⁻¹
 
 theorem coe_zInf (s : {r : ℝ // 0 < r}) :
@@ -53,8 +57,8 @@ theorem coe_zInf (s : {r : ℝ // 0 < r}) :
   · rw [Matrix.diagonal_apply_ne _ hab, Matrix.diagonal_apply_ne _ hab]
     exact map_zero _
 
-variable (K n) in
 
+variable (K n) in
 def centralZ : (isExpLieAlgebra K n).lieSubalgebra :=
   ⟨algebraMap ℝ (ArchMatrix K n) (centralExp K n), Submodule.mem_top⟩
 
@@ -152,7 +156,7 @@ theorem apply_mul_centralSection {φ : cuspForms K n} {c : ℂ}
   rw [← hfs, ← hconst, ← mul_assoc, ← Complex.exp_add]
   simp
 
-theorem eq_zero_of_cuspFormLp_eq_zero (μ : MeasureTheory.Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem eq_zero_of_cuspFormLp_eq_zero (μ : MeasureTheory.Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     {φ : cuspForms K n} {c : ℂ} (hφ : lieActionCusp K n (centralZ K n) φ = c • φ)
     (h0 : cuspToL2 μ φ = 0) : φ = 0 := by
   rw [cuspToL2_eq_zero_iff] at h0

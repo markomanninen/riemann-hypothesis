@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.NonemptyIsLimitBaseChange
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -21,10 +25,10 @@ variable (D : I ⥤ Scheme.{0}) {X : Scheme.{0}} (π : ∀ i, X ⟶ D.obj i)
   [∀ {i j} (f : i ⟶ j), IsAffineHom (D.map f)]
   [∀ i, CompactSpace (D.obj i)] [∀ i, QuasiSeparatedSpace (D.obj i)]
 
+
 omit [∀ i, CompactSpace (D.obj i)] in
 set_option backward.isDefEq.respectTransparency false in
 include hc in
-
 theorem exists_appLE_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s : Γ(X, π i ⁻¹ᵁ U)) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)),
@@ -45,9 +49,9 @@ theorem exists_appLE_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (
       Iso.inv_hom_id_apply]
   exact (e _ _ _ _ t).trans h
 
+
 omit [∀ i, CompactSpace (D.obj i)] in
 include hc in
-
 theorem exists_unit_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D.obj i)))
     (s : Γ(X, π i ⁻¹ᵁ U)ˣ) :
     ∃ (j : I) (f : j ⟶ i) (t : Γ(D.obj j, D.map f ⁻¹ᵁ U)ˣ), ∀ y : X, y ∈ π i ⁻¹ᵁ U →
@@ -79,7 +83,7 @@ theorem exists_unit_eq {i : I} {U : (D.obj i).Opens} (hU : IsCompact (U : Set (D
 
 theorem pull_isLB_of_germ {Y Z : Scheme.{0}} (M : LB Y) (F : Z ⟶ Y) (hcov : ∀ y : Y, ∃ a, y ∈ M.U a)
     (hco : ∀ (z : Z) a b c, F z ∈ M.U a → F z ∈ M.U b → F z ∈ M.U c →
-      gm F z _ (M.g a b) * gm F z _ (M.g b c) = gm F z _ (M.g a c)) : (M.pull F).IsLB where
+      gm F z _ (M.g a b) * gm F z _ (M.g b c) = gm F z _ (M.g a c)) : (M.pull F).IsLB := {
   cover := top_le_iff.1 fun y _ => by
     obtain ⟨i, hi⟩ := hcov (F y)
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨fun _ => i, mem_pull.2 hi⟩
@@ -90,11 +94,11 @@ theorem pull_isLB_of_germ {Y Z : Scheme.{0}} (M : LB Y) (F : Z ⟶ Y) (hcov : �
     rw [map_mul, gm_res (𝟙 Z) y _ hy, gm_res (𝟙 Z) y _ hy, gm_res (𝟙 Z) y _ hy,
       gm_pull_g M F (𝟙 Z) y I J hy.1.1 hy.1.2,
       gm_pull_g M F (𝟙 Z) y J K hy.1.2 hy.2, gm_pull_g M F (𝟙 Z) y I K hy.1.1 hy.2]
-    exact hco y _ _ _ (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2)
+    exact hco y _ _ _ (mem_pull.1 hy.1.1) (mem_pull.1 hy.1.2) (mem_pull.1 hy.2) }
+
 
 omit [∀ i, CompactSpace (D.obj i)] in
 include hc in
-
 theorem exists_cocycle {j : I} (M : LB (D.obj j)) [Finite M.ι]
     (hM : ∀ a, IsCompact (M.U a : Set (D.obj j)))
     (h : ∀ (y : X) a b c, π j y ∈ M.U a → π j y ∈ M.U b → π j y ∈ M.U c →
@@ -128,8 +132,8 @@ theorem exists_cocycle {j : I} (M : LB (D.obj j)) [Finite M.ι]
       (gm_id_pullU (D.map g) z _ hz _))
   rwa [map_mul, gm_res _ z _ hz, gm_res _ z _ hz, gm_res _ z _ hz] at e
 
-include hc in
 
+include hc in
 theorem exists_lb_of_isLimit (L : LB X) (hL : L.IsLB) :
     ∃ (k : I) (M : LB (D.obj k)), M.IsLB ∧ LBIso L (M.pull (π k)) := by
   have : CompactSpace X := Scheme.compactSpace_of_isLimit D _ hc

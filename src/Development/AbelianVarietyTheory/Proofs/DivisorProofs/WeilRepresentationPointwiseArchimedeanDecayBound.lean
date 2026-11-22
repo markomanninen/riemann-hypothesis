@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepFinitePeriodicityPolynomialHeightStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordActionSquareIntegrableBoundStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SobolevBoundPeriodicSchwartzStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneAddNormPowLeSumLinearFormPowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanDecayOperatorApplyMemAdelicSchwartzStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordAppend
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepFinitePeriodicityPolynomialHeightStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WordActionSquareIntegrableBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SobolevBoundPeriodicSchwartzStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneAddNormPowLeSumLinearFormPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanDecayOperatorApplyMemAdelicSchwartzStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 open scoped TensorProduct NNReal Matrix
@@ -36,7 +41,7 @@ theorem norm_word_rep {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype 
     (l : (κ → mixedEmbedding.mixedSpace F) →L[ℝ] ℝ) (f : (κ → AF F) → ℂ) (x : κ → AF F) (N : ℕ) :
     ‖word F (List.replicate N (Sum.inr l)) f x‖ = |l (arch F x)| ^ N * ‖f x‖ := by
   induction N with
-  | zero => simp
+  | zero => simp [word]
   | succ N ih =>
     rw [List.replicate_succ, word_cons]
     show ‖(l (arch F x) : ℂ) * word F (List.replicate N (Sum.inr l)) f x‖ = _
@@ -106,7 +111,7 @@ theorem om_bound_arch : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     nlinarith [norm_nonneg (word F w (om (g, h) Φ) x)]
   have hx := hpoly (arch F x)
   have k0 : ‖om (g, h) Φ x‖ ≤ A * H ^ (k1 * c + k2) := by
-    simpa using key [] (by simp) (by simp)
+    simpa [word] using key [] (by simp) (by simp)
   have kj : ∀ j, |l j (arch F x)| ^ N * ‖om (g, h) Φ x‖ ≤ A * H ^ (k1 * c + k2) := fun j => by
     have h4 := key (List.replicate N (Sum.inr (l j))) (by simp)
       (fun o ho => ⟨l j, List.eq_of_mem_replicate ho, hl j⟩)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralUnitBallRayAverageLeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeLintegralRayIteratedFDerivStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralUnitBallRayAverageLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeLintegralRayIteratedFDerivStatement
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Set Module
 open scoped ENNReal
 
@@ -22,6 +27,7 @@ theorem weighted_lintegral_sobolev_pointwise : ∀ {E : Type} [NormedAddCommGrou
   set S : Set E := B ∩ {v | 0 ≤ φ v} with hS
   have hSmeas : MeasurableSet S :=
     Metric.isClosed_closedBall.measurableSet.inter (measurableSet_le measurable_const φ.continuous.measurable)
+  open scoped Pointwise in
   have hβS : β ≤ 2 * μ S := by
     have hsub : B ⊆ S ∪ -S := by
       intro v hv
@@ -76,7 +82,7 @@ theorem weighted_lintegral_sobolev_pointwise : ∀ {E : Type} [NormedAddCommGrou
           have ht0 : (0:ℝ) ≤ t := le_of_lt ht
           have hmono : ‖x‖ ≤ ‖x + t • v‖ := by
             have h1 : φ x ≤ φ (x + t • v) := by
-              rw [map_add, map_smul, smul_eq_mul]
+              rw [map_add (f := _), map_smul, smul_eq_mul]
               have : 0 ≤ φ v := hvS.2
               nlinarith
             have h2 : φ (x + t • v) ≤ ‖x + t • v‖ := by

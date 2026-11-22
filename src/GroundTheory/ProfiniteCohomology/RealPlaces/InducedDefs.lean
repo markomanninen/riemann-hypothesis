@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalCohomologyIsoHomologyMapNormCochains
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalCohomologyIsoHomologyMapNormCochains
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -26,12 +31,6 @@ noncomputable def tateForget (n : ℕ) :
     tateCompactCohomology φ ψ A Aᵥ a Aᵣ ar n ⟶ compactCohomology φ A Aᵥ a n :=
   HomologicalComplex.homologyMap (tateForgetCochains φ ψ A Aᵥ a Aᵣ ar) n
 
-@[reassoc (attr := simp)]
-theorem tateForget_compactToGlobal (n : ℕ) :
-    tateForget φ ψ A Aᵥ a Aᵣ ar n ≫ compactToGlobal φ A Aᵥ a n = tateToGlobal φ ψ A Aᵥ a Aᵣ ar n := by
-  exact (HomologicalComplex.homologyMap_comp _ _ n).symm.trans
-    (congrArg (fun f => HomologicalComplex.homologyMap f n) (mappingCoconeNat.map_fst _ _ _))
-
 noncomputable def tateLocalFst (n : ℕ) :
     ModuleCat.of k ((∀ v, cohomology (Aᵥ v) n) × (∀ w, cohomology (Aᵣ w) n)) ⟶
       ModuleCat.of k (∀ v, cohomology (Aᵥ v) n) :=
@@ -51,7 +50,6 @@ theorem tateLocalCohomologyIso_inv_homologyMap_prodFst (n : ℕ) :
   rw [← h1]
   exact (hom_apply_hom_apply_of_comp_eq (Iso.hom_inv_id (localCohomologyIso Aᵥ n)) _).symm
 
-@[reassoc]
 theorem tateLocalToCompact_tateForget (n : ℕ) :
     tateLocalToCompact φ ψ A Aᵥ a Aᵣ ar n ≫ tateForget φ ψ A Aᵥ a Aᵣ ar (n + 1) =
       tateLocalFst Aᵥ Aᵣ n ≫ localToCompact φ A Aᵥ a n := by

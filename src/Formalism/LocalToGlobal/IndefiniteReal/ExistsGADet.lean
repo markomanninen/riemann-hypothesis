@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.WeilDatumUniqueOfDeterminants
-import Formalism.LocalToGlobal.IndefiniteReal.DeterminantProjection
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.WeilDatumUniqueOfDeterminants
+public import Formalism.LocalToGlobal.IndefiniteReal.DeterminantProjection
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
 
 noncomputable section
 

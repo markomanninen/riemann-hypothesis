@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsHaarStabilizer
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegrableUnipotentNormRpowNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,10 +70,11 @@ theorem conv0 (D : B.RealPlaceData k r Wp Wq) (γ : B.Mat k r) (w : Equiv.Perm (
   set μR := Formalism.FourierDecayAlt.D.muR D γ w with hμR
   set cR : ℝ := ∫ x, B.gN (Matrix.of x) ^ (-M) ∂μR with hcRdef
   have hone : Matrix.of (Matrix.of.symm (1 : B.Mat k r)) ∈ B.GV k r := by
-    simpa using (P.unitary_group_closed k r).one_mem
+    rw [Equiv.apply_symm_apply]
+    exact (P.unitary_group_closed k r).one_mem
   have hcR : 0 < cR := by
     have := om_pos hR hM0 hI hone
-    simpa [Om] using this
+    simpa only [Om, Equiv.apply_symm_apply, Matrix.mul_one] using this
 
   set cF := max sharpFunctionalExponent 0 with hcF
   have hFb : ∀ g ∈ B.GV k r, ‖F g‖ ≤ cF * B.gN g ^ (-A) := by

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace GlobalTheory.PtClosed
 def killIdeal {A : Type} [CommRing A] (Q : ∀ (R' : Type) [CommRing R'], (A →+* R') → Prop) :
     Ideal A where
   carrier := {a | ∀ (R' : Type) [CommRing R'] (f : A →+* R'), Q R' f → f a = 0}
-  add_mem' {a b} ha hb R' _ f hf := by rw [map_add, ha R' f hf, hb R' f hf, add_zero]
+  add_mem' {a b} ha hb R' _ f hf := by rw [map_add (f := _), ha R' f hf, hb R' f hf, add_zero]
   zero_mem' R' _ f _ := map_zero f
   smul_mem' c a ha R' _ f hf := by rw [smul_eq_mul, map_mul, ha R' f hf, mul_zero]
 

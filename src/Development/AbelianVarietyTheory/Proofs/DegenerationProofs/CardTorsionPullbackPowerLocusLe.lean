@@ -1,16 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QuasiAffineSubgroupContainingTorusEqTorusStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AmpleCubPullAndPullPow
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenConnectedComponentOfNoetherianSpace
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.QuasiAffineSubgroupContainingTorusEqTorusStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AmpleCubPullAndPullPow
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricallyReducedOfPerfectField
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenConnectedComponentOfNoetherianSpace
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -77,8 +81,18 @@ theorem torus_torsion (k : Type) [Field k] (X : Type) [AddCommGroup X] [Module.F
 theorem exists_lift {S : Scheme.{0}} {T N G : Over S} [IsReduced T.left] (ν : N ⟶ G)
     [IsClosedImmersion ν.left] (g : T ⟶ G) (h : Set.range g.left ⊆ Set.range ν.left) :
     ∃ l : T ⟶ N, l ≫ ν = g := by
+  open Scheme.IdealSheafData in
+  have hv : ∀ (Z : TopologicalSpace.Closeds G.left), Set.range g.left ⊆ Z → vanishingIdeal Z ≤ g.left.ker := by
+    intro Z hZ
+    refine le_ofIdeals_iff.mpr fun U a ha => ?_
+    rw [RingHom.mem_ker, ← basicOpen_eq_bot_iff, ← Scheme.preimage_basicOpen, eq_bot_iff]
+    intro t ht
+    have h1 : g.left t ∈ (vanishingIdeal Z).support := hZ ⟨t, rfl⟩
+    have h2 := ((coe_support_inter (vanishingIdeal Z) U).le
+      ⟨h1, G.left.basicOpen_le a ht⟩).1
+    exact ((Scheme.mem_zeroLocus_iff _ _ _).mp h2 a ha ht).elim
   have h2 : ν.left.ker ≤ g.left.ker := by
-    refine le_trans ?_ (ReducedSubgroup.vanishingIdeal_le_ker g.left ν.left.ker.support ?_)
+    refine le_trans ?_ (hv ν.left.ker.support ?_)
     · rw [Scheme.IdealSheafData.vanishingIdeal_support]
       exact Scheme.IdealSheafData.le_radical _
     · rw [Scheme.Hom.support_ker]
@@ -165,7 +179,7 @@ theorem exists_basicOpen_eq_of_pullPow {Y Z : Scheme.{0}} {L : LB Y} (hL : L.IsL
       apply Additive.ofMul.injective
       simp only [ofMul_mul, ofMul_zpow]
       module
-  refine exists_basicOpen_eq (pull_isLB hL ν) m n hm0 t.s (fun i j => (ht i j).trans ?_) s.f s.compat
+  refine exists_basicOpen_eq (M := L.pull ν) (LB.isLB_pull hL ν) m n hm0 t.s (fun i j => (ht i j).trans ?_) s.f s.compat
   refine congrArg₂ (· * ·) ?_ rfl
   have key : ∀ (U : Type) [CommGroup U] (g : PUnit.{1} → U),
       ∏ k, g k ^ (m : ℤ) = (∏ k, g k ^ (1 : ℤ)) ^ (m : ℤ) := fun U _ g => by simp

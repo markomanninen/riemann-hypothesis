@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkZeta
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumFConstMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TxFrameTranslate
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfFramedPointLiesOverTorusExtension
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueEqAdicSumAtImageOfZeroPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionPointLiesOverAfterFieldExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkZeta
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumFConstMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoefTwistPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionIdentificationWithPairing
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TxFrameTranslate
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfFramedPointLiesOverTorusExtension
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueEqAdicSumAtImageOfZeroPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusExtensionPointLiesOverAfterFieldExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.GtActIffEqGtSmul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -35,15 +39,10 @@ theorem exists_pair_of_liesOver : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLo
   have hA : AdmBase V (maximalIdeal V) := ⟨hCN.1, inferInstance, hCN.2.1, hCN.2.2.1⟩
   have hB := D.tau_bimult
   obtain ⟨o, ho₁, ho₂⟩ := hg
-  letI := GlobalTheory.TorusExt.gtGroup D.toPre (FractionRing V)
-  have hkg : N • g = GlobalTheory.TorusExt.iota hB (FractionRing V) 0 := by
-    rw [map_zero]
-    exact ((GlobalTheory.TorusExt.isNsmul_iff_eq _ _ _).1 ho₁).symm.trans ((GlobalTheory.TorusExt.isZero_iff_eq _).1 ho₂)
-  let p := GlobalTheory.TorusExt.qkMk hB 0 g hkg
-  have hf : (algebraMap (FractionRing V) (AlgebraicClosure (FractionRing V))).comp
-      (algebraMap (FractionRing V) (FractionRing V)) = algebraMap _ _ := RingHom.comp_id _
-  let pb := GlobalTheory.TorusExt.qkExt hB _ hf p
-  have hp := (GlobalTheory.TorusExt.qkExt_iff hB _ hf p _).2 rfl
+  let p : QkPt D.toPre (FractionRing V) N :=
+    ⟨0, g, o, ho₁, GlobalTheory.TorsionQk.isIota_zero hB ho₂⟩
+  obtain ⟨pb, hp⟩ := qkExtExists V D.toPre (FractionRing V)
+    (AlgebraicClosure (FractionRing V)) (algebraMap _ _) (fun r => by simp) N p
   let xb : TFK (R := V) (AlgebraicClosure (FractionRing V)) ⟶ A.A :=
     GlobalTheory.TorsionExt.fieldMap (FractionRing V) (AlgebraicClosure (FractionRing V)) ≫ x
   obtain ⟨wb, frb, hwb, hfrb, hlb⟩ := GlobalTheory.T.torusExtension_point_liesOver_after_field_extension V _ hA D A G hG U (AlgebraicClosure (FractionRing V)) w₀
@@ -51,9 +50,14 @@ theorem exists_pair_of_liesOver : ∀ (V : Type) [CommRing V] [IsDomain V] [IsLo
   obtain ⟨f', f₁, -⟩ := GlobalTheory.TorsionIso.torsion_eq hL V _ hA D A G hG U (AlgebraicClosure (FractionRing V)) N hN
   have hq := (f₁ pb (f' pb)).2 rfl
   obtain ⟨w', fr', hw', hfr', hl'⟩ := GlobalTheory.Poinc.Tors.ValPair.liesOver_of_qkToAkU V _ hA D A G hG U
-    (AlgebraicClosure (FractionRing V)) w₀ hw₀ _ hN pb (f' pb) rfl hq
+    (AlgebraicClosure (FractionRing V)) w₀ hw₀ _ hN pb (f' pb) hp.1 hq
+  have hpb := (GlobalTheory.TorusExt.eq_gtExt_iff _ (RingHom.comp_id _) _ _).2 hp.2
+  obtain ⟨wb₂, hwb₂, hlb₂⟩ : ∃ wb₂ : Frm D.toPre (AlgebraicClosure (FractionRing V)) 1 pb.g.b,
+      wb₂.IsGen ∧ LiesOver U.toUnifPre w₀ pb.g wb₂ xb frb := by
+    rw [hpb]
+    exact ⟨wb, hwb, hlb⟩
   have e := GlobalTheory.Poinc.Tors.OneOver.eq_of_liesOver hL V _ hA D A G hG U (AlgebraicClosure (FractionRing V)) w₀ hw₀
-    pb.g wb w' xb (f' pb) frb fr' hwb hw' hfrb hfr' hlb hl'
+    pb.g wb₂ w' xb (f' pb) frb fr' hwb₂ hw' hfrb hfr' hlb₂ hl'
   refine ⟨p, rfl, rfl, ?_⟩
   refine (GlobalTheory.TorsionExt.qkToAkU_iff_of_algebra hL.1.globalFns hL.1.kerPow U hN hp x).2 ?_
   rw [← e] at hq

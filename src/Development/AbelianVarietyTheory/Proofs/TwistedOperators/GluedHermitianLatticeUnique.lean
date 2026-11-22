@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,37 +21,46 @@ theorem exists_proj {K M : Type} [Field K] [AddCommGroup M] [Module K M] (U : Su
     ∃ Q : M →ₗ[K] M, (∀ x ∈ U, Q x = 0) ∧ ∀ x, x - Q x ∈ U := by
   obtain ⟨W, hW⟩ := U.exists_isCompl
   refine ⟨LinearMap.id - U.subtype ∘ₗ U.projectionOnto W hW, fun x hx => ?_, fun x => ?_⟩
-  · have := Submodule.linearProjOfIsCompl_apply_left hW ⟨x, hx⟩
+  · have := Submodule.projectionOnto_apply_left hW ⟨x, hx⟩
     simp [this]
   · simp
 
-theorem exists_lattice {O K : Type} [CommRing O] [Field K] [Algebra O K] {n : ℕ} (Λ : Submodule O (Fin n → K))
+theorem exists_lattice {O K : Type} [CommRing O] [Field K] [Algebra O K] [IsFractionRing O K] {n : ℕ} (Λ : Submodule O (Fin n → K))
     (h : Λ.FG) : ∃ (Q : (Fin n → K) →ₗ[K] (Fin n → K)) (Λ' : Submodule O (Fin n → K)),
-      Submodule.IsLattice K Λ' ∧ Λ ≤ Λ' ∧ (∀ x ∈ Λ, Q x = 0) ∧ ∀ x ∈ Λ', Q x = 0 → x ∈ Λ := by
+      Submodule.IsFullLattice K Λ' ∧ Λ ≤ Λ' ∧ (∀ x ∈ Λ, Q x = 0) ∧ ∀ x ∈ Λ', Q x = 0 → x ∈ Λ := by
+  classical
   obtain ⟨Q, h1, h2⟩ := exists_proj (Submodule.span K (Λ : Set (Fin n → K)))
   have h3 : ∀ x, Q (Q x) = Q x := fun x => by
     have := h1 _ (h2 x)
     rw [map_sub, sub_eq_zero] at this
     exact this.symm
-  refine ⟨Q, Λ ⊔ Submodule.span O (Set.range fun j : Fin n => Q (Pi.single j 1)), ⟨?_, ?_⟩, le_sup_left,
+  let N := Submodule.span O (Set.range fun j : Fin n => Q (Pi.single j 1))
+  have hfg : (Λ ⊔ N).FG := h.sup (Submodule.fg_span (Set.finite_range _))
+  refine ⟨Q, Λ ⊔ N, { toIsLattice := Submodule.IsLattice.of_fg K hfg, span_eq_top := ?_ }, le_sup_left,
     fun x hx => h1 x (Submodule.subset_span hx), fun x hx h0 => ?_⟩
-  · exact h.sup (Submodule.fg_span (Set.finite_range _))
-  · rw [eq_top_iff, ← (Pi.basisFun K (Fin n)).span_eq, Submodule.span_le]
-    rintro _ ⟨j, rfl⟩
-    rw [Pi.basisFun_apply, ← sub_add_cancel (Pi.single j 1 : Fin n → K) (Q (Pi.single j 1))]
-    refine add_mem (Submodule.span_mono ?_ (h2 _)) (Submodule.subset_span ?_)
-    · exact fun y hy => Submodule.mem_sup_left hy
-    · exact Submodule.mem_sup_right (Submodule.subset_span ⟨j, rfl⟩)
+  · apply Submodule.eq_top_iff'.2
+    intro x
+    have hQ : Q x ∈ Submodule.span K (N : Set (Fin n → K)) := by
+      have hx : (∑ j : Fin n, x j • Pi.single j (1 : K)) = x := by
+        ext i
+        simp [Finset.sum_apply, Pi.single_apply, mul_ite]
+      rw [← hx, map_sum]
+      exact Submodule.sum_mem _ fun j _ => by
+        rw [map_smul]
+        exact Submodule.smul_mem _ _ (Submodule.subset_span (Submodule.subset_span ⟨j, rfl⟩))
+    have hleft := Submodule.span_mono (R := K) (show Λ ≤ Λ ⊔ N from le_sup_left)
+    have hright := Submodule.span_mono (R := K) (show N ≤ Λ ⊔ N from le_sup_right)
+    simpa only [sub_add_cancel] using add_mem (hleft (h2 x)) (hright hQ)
   · obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
     have h4 : Q b = b := by
       refine Submodule.span_induction (p := fun b _ => Q b = b) ?_ (map_zero Q) ?_ ?_ hb
       · rintro _ ⟨j, rfl⟩
         exact h3 _
       · intro x y _ _ hx hy
-        rw [map_add, hx, hy]
+        rw [map_add (f := _), hx, hy]
       · intro c x _ hx
         rw [← algebraMap_smul K c x, map_smul, hx]
-    rw [map_add, h1 a (Submodule.subset_span ha), h4, zero_add] at h0
+    rw [map_add (f := _), h1 a (Submodule.subset_span ha), h4, zero_add] at h0
     rwa [h0, add_zero]
 
 theorem map_mulVec_gen {K A : Type} [CommRing K] [CommRing A] (f : K →+* A) {n : ℕ}
@@ -69,7 +82,8 @@ theorem inc_injective : Function.Injective (inc D) := by
 theorem mem_of_inc_mem_hat {n : ℕ} {Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)} (h : Λ.FG)
     {x : Fin n → D.host.E} (hx : (fun i => inc D (x i)) ∈ hat Λ) : x ∈ Λ := by
   obtain ⟨Q, Λ', h1, h2, h3, h4⟩ := exists_lattice Λ h
-  refine h4 x ((inc_mem_hat_iff h1 x).1 (hat_mono h2 hx)) ?_
+  have := h1
+  refine h4 x ((inc_mem_hat_iff (by infer_instance) x).1 (hat_mono h2 hx)) ?_
   have h5 : (LinearMap.toMatrix' Q).map (inc D) *ᵥ (fun i => inc D (x i)) = 0 := by
     refine hat_induction (p := fun y => (LinearMap.toMatrix' Q).map (inc D) *ᵥ y = 0) ?_ (mulVec_zero _) ?_ ?_ hx
     · intro y hy

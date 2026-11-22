@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.NearIdentityColengthStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.NearIdentityColengthStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 

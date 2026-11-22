@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmithNormalFormDiscreteValuationFieldStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SelfDualOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SmithNormalFormDiscreteValuationFieldStatement
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory.LatticeDuality
@@ -56,7 +61,7 @@ theorem diag_case {m n : ℕ} (d : Fin m → L) (z : Fin n → L)
       by_cases hj : (k : ℕ) = (j : ℕ)
       · have hk : (k : ℕ) < m := hj ▸ j.2
         have : (⟨k, hk⟩ : Fin m) = j := Fin.ext hj
-        rw [dif_pos hk, this] at hec
+        rw [dite_eq_left hk, this] at hec
         simpa [hj] using hec
       · simp [hj]
   choose a b ha hb hz using key
@@ -71,13 +76,13 @@ theorem diag_case {m n : ℕ} (d : Fin m → L) (z : Fin n → L)
     congr 1
     simp only [Matrix.mulVec, dotProduct, Matrix.transpose_apply, Matrix.of_apply]
     by_cases hk : (k : ℕ) < m
-    · rw [dif_pos hk, Finset.sum_eq_single (⟨k, hk⟩ : Fin m)]
+    · rw [dite_eq_left hk, Finset.sum_eq_single (⟨k, hk⟩ : Fin m)]
       · simp
       · intro j _ hj
         have : (k : ℕ) ≠ (j : ℕ) := fun e => hj (Fin.ext e.symm)
         simp [this]
       · simp
-    · rw [dif_neg hk, zero_mul]
+    · rw [dite_eq_right hk, zero_mul]
       symm
       refine Finset.sum_eq_zero fun j _ => ?_
       have : (k : ℕ) ≠ (j : ℕ) := fun e => hk (e ▸ j.2)

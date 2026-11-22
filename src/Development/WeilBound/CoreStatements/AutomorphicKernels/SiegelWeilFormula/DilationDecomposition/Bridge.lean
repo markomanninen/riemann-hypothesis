@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.FirstCountableGR
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnIteratedDerivFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StripOpenRealDiscs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CountableOfNumberField
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AesmIteratedDerivReal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowerMulJG
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.FirstCountableGR
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnIteratedDerivFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StripOpenRealDiscs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CountableOfNumberField
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AesmIteratedDerivReal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LowerMulJG
+
+@[expose] public section
 
 noncomputable section
 

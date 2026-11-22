@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ theorem exists_eq_nsmul_of_forall_ef_dvd {E : Type} [Field E] [NumberField E] [I
     {n : ℕ} (hn : 0 < n) (a : D.La) (h : ∀ b, (n : ℤ) ∣ D.EF a b) : ∃ e, a = n • e := by
   choose c hc using h
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn.ne'
-  let ψ : D.La →+ ℤ := AddMonoidHom.mk' c fun x y => mul_left_cancel₀ hn' (by rw [mul_add, ← hc, ← hc, ← hc, map_add])
+  let ψ : D.La →+ ℤ := AddMonoidHom.mk' c fun x y => mul_left_cancel₀ hn' (by rw [mul_add, ← hc, ← hc, ← hc, map_add (f := _)])
   obtain ⟨e, he⟩ := D.unimod.2 ψ.toIntLinearMap
   refine ⟨e, D.unimod.1 (LinearMap.ext fun b => ?_)⟩
   rw [map_nsmul, he, hc, LinearMap.smul_apply, nsmul_eq_mul]
@@ -36,7 +40,7 @@ theorem exists_shear_of_adjoint : ∀ {E : Type} [Field E] [NumberField E] [IsCM
       obtain ⟨b', hb', e, he⟩ := hσN b
       have h0 : D.EF z b' = 0 := by rw [ef_swap, hb' z hz, neg_zero]
       refine ⟨D.EF z e, ?_⟩
-      simp only [map_sub, LinearMap.sub_apply, hw, he, map_add, map_nsmul, h0, nsmul_eq_mul]
+      simp only [map_sub, LinearMap.sub_apply, hw, he, map_add (f := _), map_nsmul, h0, nsmul_eq_mul]
       ring
     refine ⟨e, mem_perp.2 fun b hb => ?_, (sub_eq_iff_eq_add'.1 he)⟩
     have h1 : D.EF (w z - z) b = 0 := by rw [map_sub, LinearMap.sub_apply, hw, hσb b hb, sub_self]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.PiLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -87,7 +91,7 @@ private theorem occ_abs (hu : ∀ a b, u (a * b) = u a * u b) (hc : Continuous u
   let c : ℝ → ℂ := fun t => Complex.exp (Complex.I * ((((n : ℤ) + 2 * q : ℤ) : ℂ) * t))
   let ρ : Submodule ℂ H :=
     { carrier := {x | x ∈ τ ∧ ∀ t : ℝ, R (u (tC t t)) x = c t • x}
-      add_mem' := fun {x y} hx hy => ⟨τ.add_mem hx.1 hy.1, fun t => by rw [map_add, hx.2, hy.2, smul_add]⟩
+      add_mem' := fun {x y} hx hy => ⟨τ.add_mem hx.1 hy.1, fun t => by rw [map_add (f := _), hx.2, hy.2, smul_add]⟩
       zero_mem' := ⟨τ.zero_mem, fun t => by simp⟩
       smul_mem' := fun a x hx => ⟨τ.smul_mem a hx.1, fun t => by rw [map_smul, hx.2, smul_comm]⟩ }
   have hρτ : ρ ≤ τ := fun x hx => hx.1
@@ -117,7 +121,7 @@ end Abstract
 
 section
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {ι : Type} [Fintype ι] (C : Co K ι)
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {ι : Type} [Fintype ι] (C : Co K ι)
 
 private theorem un_central (i : ι) (t : ℝ) (g : G1 K 2) : Commute (C.un i (tC t t)) g := by
   obtain ⟨-, -, hun, -, hmul, -, -, hdec, -⟩ := UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.coLaws K ι C
@@ -143,7 +147,7 @@ end
 end UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.minEx :
-    ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (LL μ)), CuspIrr μ τ → ∀ i, ∃ n q, C.MinAt μ τ i n q := by
+    ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (ι : Type) [Fintype ι] (C : Co K ι) (μ : Measure (G1 K 2)) [μ.IsHaarMeasure] (τ : Submodule ℂ (LL μ)), CuspIrr μ τ → ∀ i, ∃ n q, C.MinAt μ τ i n q := by
   intro K _ _ _ ι _ C μ _ τ hτ i
   obtain ⟨hP, -, -, hall⟩ := UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.EA.piLaws K ι C μ
   have hmem : ∀ (n : ℕ) (q : ℤ) (v : LL μ), v ∈ τ → C.Pi μ i n q v ∈ τ := by

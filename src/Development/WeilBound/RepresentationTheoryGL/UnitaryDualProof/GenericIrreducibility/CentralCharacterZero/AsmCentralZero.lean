@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverse
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.GenericIrreducibility.CentralProd2
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductTransposeInverseDualReverse
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitarisableSegmentTwistPrecedesAddOneLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NontrivialTwJacquetOfSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem asmZero (ω : kˣ →* ℂˣ) (m : ℕ) (hm : 0 < m) (s : ℝ)
   · exact (mul_eq_zero.1 h).resolve_left hm'
   · exact absurd h hL0
 
-theorem asmLower (hL : ExpLow k) (y z : IrrGL k) {N : ℕ} (hd2 : ∑ a, (![y, z] a).1 = N)
+theorem asmLower (hL : ExpLow k) (y z : IrrGL (k := k)) {N : ℕ} (hd2 : ∑ a, (![y, z] a).1 = N)
     (hG : IsGeneric (prodIrr ![y, z] hd2)) (hU : IsUnitarisable (prodIrr ![y, z] hd2)) (hy : 1 ≤ y.1)
     (ω : kˣ →* ℂˣ) (s : ℝ) (hm : 0 < z.1) (hω : HasCentralChar z.rep ω)
     (hn : ∀ w, ‖(ω w : ℂ)‖ = nabs k w ^ ((z.1 : ℝ) * s)) : -1 / 2 < s := by
@@ -84,7 +88,7 @@ theorem asmSmoothTheta {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (ρ 
     (h : IsSmooth ρ) : IsSmooth (ρ.comp (Zc.Cos.thetaW k n)) :=
   GlobalTheory.SmGL.isSmooth_comp h _ (GlobalTheory.CompanionTheory.ThetaProd.continuous_thetaW n)
 
-theorem asmPair (z y : IrrGL k) {N : ℕ} (hd3 : ∑ a, (![z, y] a).1 = N) (hG : IsGeneric (prodIrr ![z, y] hd3))
+theorem asmPair (z y : IrrGL (k := k)) {N : ℕ} (hd3 : ∑ a, (![z, y] a).1 = N) (hG : IsGeneric (prodIrr ![z, y] hd3))
     (hU : IsUnitarisable (prodIrr ![z, y] hd3)) :
     IsGeneric (prod₂ z.rep y.rep) ∧ IsUnitarisable (prod₂ z.rep y.rep) := by
   have h : z.1 + y.1 = N := (Fin.sum_univ_two _).symm.trans hd3
@@ -94,7 +98,7 @@ theorem asmPair (z y : IrrGL k) {N : ℕ} (hd3 : ∑ a, (![z, y] a).1 = N) (hG :
   obtain ⟨E⟩ := E
   exact asmInd h (asmGeneric hG E.symm) (GlobalTheory.GenericUnitary.isUnitarisable_of_equiv E.symm hU)
 
-theorem asmUpper (hL : ExpLow k) (hT : ThetaProd k) (hF : ThetaFacts k) (z y : IrrGL k) {N : ℕ}
+theorem asmUpper (hL : ExpLow k) (hT : ThetaProd k) (hF : ThetaFacts k) (z y : IrrGL (k := k)) {N : ℕ}
     (hd3 : ∑ a, (![z, y] a).1 = N) (hG : IsGeneric (prodIrr ![z, y] hd3))
     (hU : IsUnitarisable (prodIrr ![z, y] hd3)) (hy : 1 ≤ y.1) (ω : kˣ →* ℂˣ) (s : ℝ) (hm : 0 < z.1)
     (hω : HasCentralChar z.rep ω) (hn : ∀ w, ‖(ω w : ℂ)‖ = nabs k w ^ ((z.1 : ℝ) * s)) : -1 / 2 < -s := by

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompact
-import Formalism.LocalRingCardinality.PosOfIsomEmb
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EmbeddingTypeJumps
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Formalism.LocalToGlobal.GlobalTheory.GL1.CompactFixesLattice.ExistsDenOfIsCompact
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EmbeddingTypeJumps
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,13 +104,6 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 def crd (W : Formalism.BasicNotions.HSpace E) : Set (Fin W.rank → E) := {x | ∑ i, x i • W.frame i ∈ W.L0}
 
-theorem int_smul_mem (W : Formalism.BasicNotions.HSpace E) {e : E} (he : IsIntegral ℤ e) {w : W.V} (hw : w ∈ W.L0) :
-    e • w ∈ W.L0 := by
-  let r : 𝓞 E := ⟨e, he⟩
-  have h := W.L0.smul_mem r hw
-  have h1 : r • w = e • w := (algebraMap_smul E r w).symm
-  rw [← h1]; exact h
-
 theorem crd_up (W : Formalism.BasicNotions.HSpace E) :
     ∃ c : 𝓞 F, c ≠ 0 ∧ ∀ x ∈ crd W, ∀ i, IsIntegral ℤ ((c : F) • x i) := by
   classical
@@ -122,7 +119,7 @@ theorem crd_up (W : Formalism.BasicNotions.HSpace E) :
     | zero => intro i; simpa using isIntegral_zero
     | add y z _ _ hy hz =>
       intro i
-      rw [map_add, Finsupp.add_apply, smul_add]
+      rw [map_add (f := _), Finsupp.add_apply, smul_add]
       exact (hy i).add (hz i)
     | smul r y _ hy =>
       intro i
@@ -132,10 +129,6 @@ theorem crd_up (W : Formalism.BasicNotions.HSpace E) :
   have hx' : ∑ k, x k • W.frame k ∈ Submodule.span (𝓞 E) (s : Set W.V) := by rw [hs]; exact hx
   rw [hxi]
   exact key _ hx' i
-
-theorem alg_mul (a b : 𝓞 F) :
-    algebraMap F E ((a * b : 𝓞 F) : F) = algebraMap F E (a : F) * algebraMap F E (b : F) := by
-  rw [show ((a * b : 𝓞 F) : F) = (a : F) * (b : F) from rfl, map_mul]
 
 theorem crd_low (W : Formalism.BasicNotions.HSpace E) :
     ∃ c : 𝓞 F, c ≠ 0 ∧ ∀ i, ∀ e : E, IsIntegral ℤ e → Pi.single i ((c : F) • e) ∈ crd W :=
@@ -173,7 +166,8 @@ theorem unit_bound (W : Formalism.BasicNotions.HSpace E) (σ' : E →+* E) (hσ 
   have hrep : ∀ k, W.frame.repr v k = um k j := by
     intro k; simp only [v, W.frame.repr_sum_self]
   have e1 : W.hT v v = ∑ k, ∑ l, star (um k j) * (um l j * W.gram k l) := by
-    simp only [v, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [v, map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
       Finset.mul_sum, Formalism.BasicNotions.HSpace.gram, starRingEnd_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -272,7 +266,7 @@ theorem latHat_low (W : Formalism.BasicNotions.HSpace E) : ∃ c : 𝓞 F, c ≠
     | add w1 w2 _ _ h1 h2 =>
       intro x hx
       have hx' : x = (swp F E).symm w1 + (swp F E).symm w2 :=
-        (swp F E).injective (by rw [hx, map_add, AlgEquiv.apply_symm_apply, AlgEquiv.apply_symm_apply])
+        (swp F E).injective (by rw [hx, map_add (f := _), AlgEquiv.apply_symm_apply, AlgEquiv.apply_symm_apply])
       rw [hx', Pi.single_add, smul_add]
       exact add_mem (h1 _ (AlgEquiv.apply_symm_apply _ _)) (h2 _ (AlgEquiv.apply_symm_apply _ _))
     | neg w _ h1 =>
@@ -376,7 +370,7 @@ def crdF {ι : Type} (b : Module.Basis ι F E) (i : ι) : Af F ⊗[F] E →ₗ[A
     | tmul a' e =>
       rw [TensorProduct.smul_tmul']
       simp [smul_eq_mul]
-    | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 theorem crdF_tmul {ι : Type} (b : Module.Basis ι F E) (i : ι) (a : Af F) (e : E) :
     crdF b i (a ⊗ₜ[F] e) = b.repr e i • a := by
@@ -389,7 +383,7 @@ theorem sum_crdF {ι : Type} [Fintype ι] (b : Module.Basis ι F E) (x : Af F �
   | tmul a e =>
     simp only [crdF_tmul, TensorProduct.smul_tmul]
     rw [← TensorProduct.tmul_sum, Module.Basis.sum_repr]
-  | add x y hx hy => simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
 
 theorem isOpen_SI : IsOpen (SI F E : Set (Af F ⊗[F] E)) := by
   have := isModTopF (F := F) (E := E)
@@ -427,7 +421,7 @@ def finPr : AF F ⊗[F] E →ₛₗ[(sndA F : AF F →+* Af F)] Af F ⊗[F] E wh
     | tmul a' e =>
       rw [TensorProduct.smul_tmul']
       simp [Algebra.TensorProduct.map_tmul, TensorProduct.smul_tmul']
-    | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
+    | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
 
 theorem continuous_finPr : Continuous (finPr (F := F) (E := E)) := by
   have := Unfold.isModTop (F := F) (E := E)
@@ -545,7 +539,7 @@ theorem infEmb_sig (σ : E →ₐ[F] E) (hσ : ∀ a, σ a = star a)
     rw [h1 (σ e), h1 e]
     simp only [map_mul]
     rw [hθ.1, hθ.1, hσ, hτs, infEmb_real hfix τ hτs θ hθ a]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem infMat_unitary (σ : E →ₐ[F] E) (hσ : ∀ a, σ a = star a)
     (hfix : ∀ x : F, star (algebraMap F E x) = algebraMap F E x)
@@ -562,7 +556,7 @@ theorem infMat_unitary (σ : E →ₐ[F] E) (hσ : ∀ a, σ a = star a)
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul a e => simp [sigR, Algebra.TensorProduct.map_tmul]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     show θ (Algebra.TensorProduct.map (fstA F) (AlgHom.id F E) (sigR (AF F) σ x)) = _
     rw [e, infEmb_sig σ hσ hfix τ hτs θ hθ]
     rfl
@@ -646,15 +640,6 @@ open Formalism.BasicNotions Formalism.MainNotions.StandardLattice Formalism.Main
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-theorem stab_KSub_finite (D : D7) (W : HSpace D.host.E) (hW : W.SigOK)
-    (hsig : ∀ τ, W.sig τ = (W.rank, 0))
-    (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))
-    (A : D.what₂.Tau → Matrix (Fin W.rank ⊕ Fin 0) (Fin W.rank) ℂ)
-    (g : HA (AF D.host.F) D.sp.cm.sig W.gram) :
-    (Unfold.stab (GamA D W) (KSub D W W.rank 0 θ A) g).Finite :=
-  stab_finite W D.sp.cm.sig (fun _ => rfl) (fun τ => D.sp.cm.cmUnram.2.1 τ) hW hsig _
-    (fun k hk y hy => ((show k ∈ KSet D W W.rank 0 θ A from hk).1 y).mp hy) g
-
 theorem KSub_eq (D : D7) (W : HSpace D.host.E) (hW : W.SigOK) (hsig : ∀ τ, W.sig τ = (W.rank, 0))
     (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (hθ : ∀ ρ, IsInfEmb (embOf D ρ) (θ ρ))
     (A : D.what₂.Tau → Matrix (Fin W.rank ⊕ Fin 0) (Fin W.rank) ℂ)
@@ -668,15 +653,6 @@ theorem KSub_eq (D : D7) (W : HSpace D.host.E) (hW : W.SigOK) (hsig : ∀ τ, W.
     refine (show h ∈ KSet D W W.rank 0 θ A from ⟨hh, fun ρ => ?_⟩)
     exact inf_all D.sp.cm.sig (fun _ => rfl) (fun x => (D.sp.cm.fixed _).mpr ⟨x, rfl⟩) W hW (embOf D ρ)
       (D.sp.cm.cmUnram.2.1 _) (hsig _) (θ ρ) (hθ ρ) (A ρ) (hA ρ) h
-
-theorem measurableSet_KSub (D : D7) (W : HSpace D.host.E) (hW : W.SigOK) (hsig : ∀ τ, W.sig τ = (W.rank, 0))
-    (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (hθ : ∀ ρ, IsInfEmb (embOf D ρ) (θ ρ))
-    (A : D.what₂.Tau → Matrix (Fin W.rank ⊕ Fin 0) (Fin W.rank) ℂ)
-    (hA : ∀ ρ, (A ρ).conjTranspose * Formalism.UG.Jpq W.rank 0 * A ρ = W.gram.map (embOf D ρ)) :
-    MeasurableSet (KSub D W W.rank 0 θ A : Set (HA (AF D.host.F) D.sp.cm.sig W.gram)) := by
-  have := Unfold.borelHA D.sp.cm.sig W.gram
-  rw [KSub_eq D W hW hsig θ hθ A hA]
-  exact (isOpen_SFin W D.sp.cm.sig).measurableSet
 
 end Rec
 
@@ -700,24 +676,6 @@ def DefClassRest (D : D7) : Prop :=
       ∑ i, ((Nat.card (Unfold.stab (GamA D W) (StabFin.SFin D.sp.cm.sig W.gram (L0c D W)) (g i)) : ℝ))⁻¹ =
         Formalism.HermitianLatticesTheory.mass W.hT W.L0
 
-theorem defClassDecomp_of_rest (D : D7) (hR : DefClassRest D) : DefClassDecomp D := by
-  intro W hW hsig θ hθ A hA
-  have hK : KSub D W W.rank 0 θ A = StabFin.SFin D.sp.cm.sig W.gram (L0c D W) :=
-    SetLike.coe_injective (StabFin.KSub_eq D W hW hsig θ hθ A hA)
-  obtain ⟨n, g, hcov, hdisj, hsum⟩ := hR W hW hsig
-  have := Unfold.borelHA D.sp.cm.sig W.gram
-  rw [hK]
-  exact ⟨(StabFin.isOpen_SFin W D.sp.cm.sig).measurableSet, n, g, hcov, hdisj,
-    fun i => StabFin.stab_finite W D.sp.cm.sig (fun _ => rfl) (fun τ => D.sp.cm.cmUnram.2.1 τ) hW hsig _
-      (fun k hk y hy => (hk y).mp hy) (g i), hsum⟩
-
-theorem volume_mass_of_class_rest (D : D7) (hT : VolTie D) (hG : GenusMassStd D) (hR : DefClassRest D) : DefiniteVolumeEqMass D :=
-  mass_volume_identity_of_class_decomp D hT hG (defClassDecomp_of_rest D hR)
-
-theorem Link2_of_rest (hR : ∀ (eps : ℝ) (Fm : Formalism.MainNotions.FamP eps) x (i : Fm.Ix x), DefClassRest (Fm.D x i)) :
-    Link2 :=
-  Link2_of_decomp fun eps Fm x i => defClassDecomp_of_rest _ (hR eps Fm x i)
-
 def ClassFin (D : D7) : Prop :=
   ∀ W : HSpace D.host.E, W.SigOK → (∀ τ, W.sig τ = (W.rank, 0)) →
     ∃ (n : ℕ) (g : Fin n → HA (AF D.host.F) D.sp.cm.sig W.gram),
@@ -737,18 +695,5 @@ def ClassMass (D : D7) : Prop :=
           (γ' : HA (AF D.host.F) D.sp.cm.sig W.gram) * g j * k' → i = j) →
       ∑ i, ((Nat.card (Unfold.stab (GamA D W) (StabFin.SFin D.sp.cm.sig W.gram (L0c D W)) (g i)) : ℝ))⁻¹ =
         Formalism.HermitianLatticesTheory.mass W.hT W.L0
-
-theorem defClassRest_of (D : D7) (h2 : ClassFin D) (h4 : ClassMass D) : DefClassRest D := by
-  intro W hW hsig
-  obtain ⟨n, g, hcov, hdisj⟩ := h2 W hW hsig
-  exact ⟨n, g, hcov, hdisj, h4 W hW hsig n g hcov hdisj⟩
-
-theorem volume_mass_of_class_items (D : D7) (hT : VolTie D) (hG : GenusMassStd D) (h2 : ClassFin D)
-    (h4 : ClassMass D) : DefiniteVolumeEqMass D :=
-  volume_mass_of_class_rest D hT hG (defClassRest_of D h2 h4)
-
-theorem Link2_of_items (h2 : ∀ (eps : ℝ) (Fm : Formalism.MainNotions.FamP eps) x (i : Fm.Ix x), ClassFin (Fm.D x i))
-    (h4 : ∀ (eps : ℝ) (Fm : Formalism.MainNotions.FamP eps) x (i : Fm.Ix x), ClassMass (Fm.D x i)) : Link2 :=
-  Link2_of_rest fun eps Fm x i => defClassRest_of _ (h2 eps Fm x i) (h4 eps Fm x i)
 
 end Formalism.L2.GlobalTheoryTheory.GenusMassVolumes

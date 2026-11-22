@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.DatLam
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.DatLam
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -13,7 +17,6 @@ theorem UpperTheory.V.Z.Sym.Loc.datForm : UpperTheory.V.Z.Sym.Loc.DatForm := by
   have h1 := datLam K Δ τ c hD.reg hD.c_ne lam hn z hz
   have hs1 : sigL (1 : EL Δ τ) = 1 := by
     simp [sigL]
-    rfl
   have hdd := h1.m_sig
   rw [hs1, one_mul] at hdd
   have hsm := hD.m_sig

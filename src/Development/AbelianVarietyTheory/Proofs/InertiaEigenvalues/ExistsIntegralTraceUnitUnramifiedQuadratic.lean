@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -130,7 +134,7 @@ theorem exists_trace_unit : ∀ (F E : Type) [NontriviallyNormedField F] [Nontri
   have hfar : ∀ a : F, 1 ≤ ‖u - algebraMap F E a‖ := by
     intro a
     have e : u - algebraMap F E a = (y - algebraMap F E (x + t * a)) * (algebraMap F E t)⁻¹ := by
-      rw [hu, map_add, map_mul]
+      rw [hu, map_add (f := _), map_mul]
       field_simp
       ring
     rw [e, norm_mul, norm_inv, norm_algebraMap', ← ht, le_mul_inv_iff₀ hd, one_mul]

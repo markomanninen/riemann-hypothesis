@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.HeckeLAdicCharacterDeRham
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.DeRhamJacobian.IsdRJ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyClosedOfDictClosed
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,17 +35,17 @@ theorem ev_smul (σ : LL →ₐ[Qp] Om) (c : LL) (z : (Fin 1 → LL) ⊗[Qp] BdR
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => simp [TensorProduct.smul_tmul', mul_assoc]
-  | add x y hx hy => simp only [smul_add, map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy, mul_add]
 
 variable [FiniteDimensional Qp LL] [Algebra.IsSeparable Qp LL] [IsAlgClosed Om]
 
-variable (Qp Om LL) in
 
+variable (Qp Om LL) in
 def embBasis : Basis (LL →ₐ[Qp] Om) Qp LL :=
   (finBasis Qp LL).reindex (Fintype.equivFinOfCardEq (AlgHom.card Qp LL Om)).symm
 
-variable (Qp Om LL) in
 
+variable (Qp Om LL) in
 def embMat : Matrix (LL →ₐ[Qp] Om) (LL →ₐ[Qp] Om) Om :=
   Algebra.embeddingsMatrixReindex Qp Om (embBasis Qp Om LL) (Equiv.refl _)
 
@@ -67,12 +71,14 @@ theorem ev_coordInv (f : (LL →ₐ[Qp] Om) → BdR) (k : LL →ₐ[Qp] Om) :
     rw [Matrix.mul_apply, Matrix.one_apply] at this
     rw [← this]
     exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
-  simp only [coordInv, map_sum, ev_tmul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coordInv, map_sum, ev_tmul, Finset.mul_sum]
   rw [Finset.sum_comm]
   have h2 : ∀ j, ∑ i, algebraMap Om BdR (k (embBasis Qp Om LL i)) *
       (algebraMap Om BdR ((embMat Qp Om LL)⁻¹ j i) * f j) =
       algebraMap Om BdR (if j = k then 1 else 0) * f j := fun j => by
-    rw [← h1 j, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h1 j, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, embMat_apply, mul_assoc]
   simp only [h2]
@@ -91,14 +97,15 @@ theorem coordInv_ev (z : (Fin 1 → LL) ⊗[Qp] BdR) :
     rw [← coordInv_add]
     congr 1
     funext σ
-    simp
+    exact map_add (ev σ) x y
   | tmul v b =>
     have hM : embMat Qp Om LL * (embMat Qp Om LL)⁻¹ = 1 := Matrix.mul_nonsing_inv _ isUnit_det_embMat
     set a := (embBasis Qp Om LL).repr (v 0) with ha
     have hv : v 0 = ∑ k, a k • embBasis Qp Om LL k := ((embBasis Qp Om LL).sum_repr (v 0)).symm
     have h1 : ∀ i, ∑ j, (embMat Qp Om LL)⁻¹ j i * j (v 0) = algebraMap Qp Om (a i) := fun i => by
       have h2 : ∀ j : LL →ₐ[Qp] Om, j (v 0) = ∑ k, algebraMap Qp Om (a k) * embMat Qp Om LL k j := fun j => by
-        rw [hv, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hv, map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [map_smul, Algebra.smul_def, embMat_apply]
       simp only [h2, Finset.mul_sum]
@@ -113,7 +120,8 @@ theorem coordInv_ev (z : (Fin 1 → LL) ⊗[Qp] BdR) :
       simp
     have h4 : ∀ i, ∑ j, algebraMap Om BdR ((embMat Qp Om LL)⁻¹ j i) *
         (algebraMap Om BdR (j (v 0)) * b) = a i • b := fun i => by
-      rw [Algebra.smul_def, IsScalarTower.algebraMap_apply Qp Om BdR, ← h1, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Algebra.smul_def, IsScalarTower.algebraMap_apply Qp Om BdR, ← h1, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_mul, mul_assoc]
     simp only [coordInv, ev_tmul, h4, tmul_smul]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChangeOfVariablesDegree
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChangeOfVariablesDegreePiola
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChangeOfVariablesDegree
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PChangeOfVariablesDegreePiola
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open scoped ContDiff
@@ -40,7 +45,8 @@ theorem clm_apply_eq_sum {n : ℕ} (T : (Fin n → ℝ) →L[ℝ] ℝ) (v : Fin 
   have hv : v = ∑ k, v k • (Pi.single k 1 : Fin n → ℝ) := by
     ext m; simp [Pi.single_apply]
   conv_lhs => rw [hv]
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 variable {m : ℕ}
 
@@ -59,7 +65,7 @@ theorem integral_fderiv_comp_mul_det_eq_zero (φ : (Fin (m + 1) → ℝ) → Fin
     refine contDiff_pi.2 fun k => ?_
     by_cases hk : k = 0
     · subst hk; rw [hH0]; exact hg.comp hφ
-    · rw [hHk k hk]; exact (contDiff_apply ℝ ℝ k).comp hφ
+    · rw [hHk k hk]; exact (contDiff_apply ℝ (fun _ => ℝ) k).comp hφ
   have hHc : HasCompactSupport fun x => H x 0 := by
     rw [hH0]
     simpa using hasCompactSupport_comp_sub φ C hC g hgc 0

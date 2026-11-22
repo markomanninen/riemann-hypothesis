@@ -1,5 +1,9 @@
-import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.EqZeroOfForallMemCoeffFiltration
+module
+
+public import Mathlib.RingTheory.PowerSeries.WeierstrassPreparation
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.EqZeroOfForallMemCoeffFiltration
+
+@[expose] public section
 
 namespace Formalism.MainNotions.N.FrobeniusPowerSeries.WeierD
 
@@ -13,7 +17,8 @@ theorem constantCoeff_mem {g : O⟦X⟧} (hD : 1 ≤ wd g) :
     constantCoeff g ∈ IsLocalRing.maximalIdeal O := by
   have h0 : coeff 0 (g.map (IsLocalRing.residue O)) = 0 :=
     coeff_of_lt_order_toNat 0 (by unfold wd at hD; omega)
-  rwa [coeff_map, coeff_zero_eq_constantCoeff_apply, IsLocalRing.residue_eq_zero_iff] at h0
+  rw [coeff_map, coeff_zero_eq_constantCoeff_apply] at h0
+  exact Ideal.Quotient.eq_zero_iff_mem.mp h0
 
 noncomputable def poly {D : ℕ} (a : Fin D → O) : Polynomial O :=
   ∑ i : Fin D, Polynomial.C (a i) * Polynomial.X ^ (i : ℕ)
@@ -30,7 +35,8 @@ theorem coeff_poly {D : ℕ} (a : Fin D → O) (n : ℕ) :
 theorem coe_poly {D : ℕ} (a : Fin D → O) :
     ((poly a : Polynomial O) : O⟦X⟧) = ∑ i : Fin D, C (a i) * X ^ (i : ℕ) := by
   ext n
-  simp only [Polynomial.coeff_coe, poly, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Polynomial.coeff_coe, poly, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
     map_sum, PowerSeries.coeff_C_mul_X_pow]
 
 theorem degree_poly_lt {D : ℕ} (a : Fin D → O) : (poly a).degree < D :=
@@ -56,7 +62,7 @@ theorem sum_split {D : ℕ} (h : O⟦X⟧ →ₐ[O] O⟦X⟧) {g : O⟦X⟧} (hX
   rw [coe_poly, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   conv_lhs => rw [eq_X_mul_shift_add_const (c i)]
-  rw [map_add, map_mul, hX, h_C]
+  rw [map_add (f := _), map_mul, hX, h_C]
   ring
 
 variable {g : O⟦X⟧} (hg : g.map (IsLocalRing.residue O) ≠ 0)
@@ -77,7 +83,7 @@ theorem coeff_eq_zero_of_sum_eq_zero (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X
     obtain ⟨hq, hr⟩ := HW.eq_zero_of_mul_eq
       (by rw [Polynomial.degree_neg]; exact degree_poly_lt (D := wd g) _) h2
     refine ⟨fun i => ?_, hq⟩
-    have := congrArg (fun p => Polynomial.coeff p i) (neg_eq_zero.mp hr)
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p i) (neg_eq_zero.mp hr)
     simpa [coeff_poly] using this
   intro n
   induction n with
@@ -103,7 +109,7 @@ theorem decomp_unique (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X = g) (c c' : F
 
 theorem injective (hD : 1 ≤ wd g) (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X = g) :
     Function.Injective h := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have := eq_zero_of_sum_eq_zero hg h hX (fun i => if (i : ℕ) = 0 then a else 0) (by
     rw [Finset.sum_eq_single ⟨0, hD⟩ (fun j _ hj => by
@@ -111,8 +117,8 @@ theorem injective (hD : 1 ≤ wd g) (h : O⟦X⟧ →ₐ[O] O⟦X⟧) (hX : h X 
     simp [ha])
   simpa using congrFun this ⟨0, hD⟩
 
-omit hg in
 
+omit hg in
 noncomputable def cf (g : O⟦X⟧) (f : O⟦X⟧) (i : ℕ) : O⟦X⟧ :=
   mk fun n => ((fun q => q /ʷ g)^[n] f %ʷ g).coeff i
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem acyclic : Acyclic := by
   have hL : ∀ x, L x ∈ Representation.coindV S.subtype A.ρ := by
     intro x g h
     have hg : (g : Γ) = 1 := Subgroup.mem_bot.1 g.2
-    simp [L, hg]
+    simp [L, hg, A]
   let iL : Ω →ₗ[ℂ] Representation.coindV S.subtype A.ρ := LinearMap.codRestrict _ L hL
   let M : Representation.coindV S.subtype A.ρ →ₗ[ℂ] (Γ → Ω) :=
     LinearMap.pi fun g => ρ g ∘ₗ LinearMap.proj g⁻¹ ∘ₗ Submodule.subtype _

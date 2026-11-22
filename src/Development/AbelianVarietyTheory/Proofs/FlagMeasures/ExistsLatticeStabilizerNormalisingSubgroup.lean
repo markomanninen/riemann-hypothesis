@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.HermLat
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
@@ -62,7 +66,7 @@ theorem map_span {ι : Type} (g : ι → V) (h : V ≃ₗ[E] V) (Λ : Submodule 
   induction hx using Submodule.span_induction with
   | mem x hx => obtain ⟨i, rfl⟩ := hx; exact H i
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Λ.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Λ.add_mem hx hy
   | smul c x _ hx =>
     have : h (c • x) = c • h x := h.map_smul (c : E) x
     rw [this]; exact Λ.smul_mem c hx
@@ -72,7 +76,7 @@ theorem map_spanE {ι : Type} (g : ι → V) (h : V ≃ₗ[E] V) (Λ : Submodule
   induction hx using Submodule.span_induction with
   | mem x hx => obtain ⟨i, rfl⟩ := hx; exact H i
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact Λ.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Λ.add_mem hx hy
   | smul c x _ hx => rw [map_smul]; exact Λ.smul_mem c hx
 
 theorem map_mem_of_mem_sup_three_submodules (A A' B Λ : Submodule O V) (h : V ≃ₗ[E] V) (H1 : ∀ x ∈ A, h x ∈ Λ)
@@ -80,7 +84,7 @@ theorem map_mem_of_mem_sup_three_submodules (A A' B Λ : Submodule O V) (h : V �
   intro x hx
   obtain ⟨y, hy, w, hw, rfl⟩ := Submodule.mem_sup.1 hx
   obtain ⟨a, ha, a', ha', rfl⟩ := Submodule.mem_sup.1 hy
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   exact Λ.add_mem (Λ.add_mem (H1 a ha) (H2 a' ha')) (H3 w hw)
 
 theorem inter (A A' B : Submodule O V) (P P' W : Submodule E V) (hA : ∀ x ∈ A, x ∈ P)
@@ -118,7 +122,8 @@ theorem uni_mul {m : ℕ} {s t : Matrix (Fin m) (Fin m) E} (hs : IsUni s) (ht : 
 theorem map_comb {m : ℕ} (g : Fin m → V) (h : V ≃ₗ[E] V) (s t : Matrix (Fin m) (Fin m) E)
     (hs : ∀ j, h (g j) = ∑ i, s i j • g i) (j : Fin m) :
     h (∑ i, t i j • g i) = ∑ i, (s * t) i j • g i := by
-  simp only [map_sum, map_smul, hs, Matrix.mul_apply, Finset.smul_sum, Finset.sum_smul, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hs, Matrix.mul_apply, Finset.smul_sum, Finset.sum_smul, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun l _ => ?_
   rw [mul_comm]

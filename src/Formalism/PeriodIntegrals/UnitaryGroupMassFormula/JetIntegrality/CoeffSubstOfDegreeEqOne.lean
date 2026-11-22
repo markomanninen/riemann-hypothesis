@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem coeff_pow_eq_zero {σ : Type*} {A : MvPowerSeries σ K}
         intro h0
         exact hx1 ((Finsupp.degree_eq_zero_iff _).1 h0)
       have h2 : Finsupp.degree x.1 + Finsupp.degree x.2 = Finsupp.degree e := by
-        rw [← map_add, hx]
+        rw [← map_add (f := _), hx]
       rw [coeff_pow_eq_zero hA d x.2 (by omega), mul_zero]
 
 theorem const_subst {σ : Type*} {A : MvPowerSeries σ K} (hA : MvPowerSeries.constantCoeff A = 0)
@@ -73,7 +77,7 @@ abbrev bivariateExponentMonomial : Fin 2 →₀ ℕ := Finsupp.single 0 1 + Fins
 theorem degree_expX : Finsupp.degree E0 = 1 := Finsupp.degree_single _ _
 theorem degree_expY : Finsupp.degree E1 = 1 := Finsupp.degree_single _ _
 theorem degree_expXY : Finsupp.degree bivariateExponentMonomial = 2 := by
-  rw [map_add, Finsupp.degree_single, Finsupp.degree_single]
+  rw [map_add (f := _), Finsupp.degree_single, Finsupp.degree_single]
 
 theorem expXY_ne_zero : bivariateExponentMonomial ≠ 0 := by
   intro h

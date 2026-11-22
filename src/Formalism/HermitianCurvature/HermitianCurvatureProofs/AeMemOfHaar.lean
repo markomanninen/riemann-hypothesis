@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevAInv
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevAInv
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -110,23 +114,23 @@ theorem jfStep_of (hO : MCOm) : JFStep := by
 
   have w1 : ∀ᵐ x ∂B0.μW, Matrix.of x ∈ UWset k ρ B0.z := ae_mem_of_haar B0.haarW
   have w1' : ∀ᵐ x ∂B0.μW', Matrix.of x ∈ UWset k ρ B0.z' := ae_mem_of_haar B0.haarW'
-  have w2 : ∀ᵐ x ∂(D.muN k ρ), Matrix.of x ∈ Nset k ρ := ae_mem_of_haar (Dx2.MN.haar ρ)
-  have wH : ∀ᵐ x ∂(B2.μHeis k ρ), Matrix.of x ∈ Nset k (1 + ρ) := by
+  have w2 : ∀ᵐ x ∂(D.muN k ρ), Matrix.of x ∈ QuantumDeterminants.Nset k ρ := ae_mem_of_haar (Dx2.MN.haar ρ)
+  have wH : ∀ᵐ x ∂(B2.μHeis k ρ), Matrix.of x ∈ QuantumDeterminants.Nset k (1 + ρ) := by
     filter_upwards [ae_mem_of_haar (Formalism.FourierDecayAlt.P.heisenberg_haar_measure k ρ)] with x hx
     obtain ⟨p, hp⟩ := hx
     rw [← hp]; exact Formalism.FourierDecayAlt.P.heisenberg_mem_unipotent k ρ p
   set μO := (B0.μW.prod (D.muN k ρ)).prod (B0.μW'.prod (D.muN k ρ)) with hμO
   have o1 : ∀ᵐ o ∂μO, Matrix.of o.1.1 ∈ UWset k ρ B0.z :=
     Measure.quasiMeasurePreserving_fst.ae (Measure.quasiMeasurePreserving_fst.ae w1)
-  have o2 : ∀ᵐ o ∂μO, Matrix.of o.1.2 ∈ Nset k ρ :=
+  have o2 : ∀ᵐ o ∂μO, Matrix.of o.1.2 ∈ QuantumDeterminants.Nset k ρ :=
     Measure.quasiMeasurePreserving_fst.ae (Measure.quasiMeasurePreserving_snd.ae w2)
   have o3 : ∀ᵐ o ∂μO, Matrix.of o.2.1 ∈ UWset k ρ B0.z' :=
     Measure.quasiMeasurePreserving_snd.ae (Measure.quasiMeasurePreserving_fst.ae w1')
-  have o4 : ∀ᵐ o ∂μO, Matrix.of o.2.2 ∈ Nset k ρ :=
+  have o4 : ∀ᵐ o ∂μO, Matrix.of o.2.2 ∈ QuantumDeterminants.Nset k ρ :=
     Measure.quasiMeasurePreserving_snd.ae (Measure.quasiMeasurePreserving_snd.ae w2)
-  have i1 : ∀ᵐ i ∂((B2.μHeis k ρ).prod (B2.μHeis k ρ)), Matrix.of i.1 ∈ Nset k (1 + ρ) :=
+  have i1 : ∀ᵐ i ∂((B2.μHeis k ρ).prod (B2.μHeis k ρ)), Matrix.of i.1 ∈ QuantumDeterminants.Nset k (1 + ρ) :=
     Measure.quasiMeasurePreserving_fst.ae wH
-  have i2 : ∀ᵐ i ∂((B2.μHeis k ρ).prod (B2.μHeis k ρ)), Matrix.of i.2 ∈ Nset k (1 + ρ) :=
+  have i2 : ∀ᵐ i ∂((B2.μHeis k ρ).prod (B2.μHeis k ρ)), Matrix.of i.2 ∈ QuantumDeterminants.Nset k (1 + ρ) :=
     Measure.quasiMeasurePreserving_snd.ae wH
   apply integral_congr_ae
   filter_upwards [o1, o2, o3, o4] with o ho1 ho2 ho3 ho4

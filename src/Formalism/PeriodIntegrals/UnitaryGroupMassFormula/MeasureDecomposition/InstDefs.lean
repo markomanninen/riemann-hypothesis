@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScMuExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
-import Formalism.RealPlaceAnalysis.FinalF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScMuExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+public import Formalism.RealPlaceAnalysis.FinalF
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,10 +23,6 @@ def instFvec {I : Formalism.MainNotions.S.AutInst} {r : ℕ} (e f : Fin r → Fi
 def instBmat (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) {r : ℕ} (e f : Fin r → Fin I.n → I.E)
     (z : Fin I.n → I.E) : Matrix (Fin I.n) (Fin r ⊕ Fin r ⊕ Unit) ℂ :=
   Matrix.of fun i j => rv I v (instFvec e f z j) i
-
-def instMkUJ {n : ℕ} (ε : Fin n → Bool) (m : Matrix (Fin n) (Fin n) ℂ) (hm : Formalism.REAL.inUJ ε m) :
-    Formalism.REAL.UJ ε :=
-  ⟨⟨m, Formalism.REAL.Jm ε * mᴴ * Formalism.REAL.Jm ε, (Formalism.REAL.uJInv n ε m hm).1, (Formalism.REAL.uJInv n ε m hm).2⟩, hm⟩
 
 def InstExpFix : Prop :=
   ∀ (n : ℕ) (X : Matrix (Fin n) (Fin n) ℂ), X.IsHermitian → ∀ w : Fin n → ℂ,

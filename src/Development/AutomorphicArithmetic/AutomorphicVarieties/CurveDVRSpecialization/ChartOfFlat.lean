@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FlipTwoThree
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.FlipTwoThree
+
+@[expose] public section
 
 open PrimeSpectrum in
 private theorem UpperTheory.V.Pr.exp_product_chart_local {X : Type} [TopologicalSpace X] {C : Type} [CommRing C]

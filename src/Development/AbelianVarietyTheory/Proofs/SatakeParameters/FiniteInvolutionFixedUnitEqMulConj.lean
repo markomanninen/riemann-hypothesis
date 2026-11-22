@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -39,7 +43,7 @@ theorem finite_involution_hilbert90 {S : Type} [CommRing S] [Finite S] (c : S �
   have hce : c e = e := by
     rw [he, map_pow, map_mul, hc, mul_comm]
   have h1 : y * c (1 + y) = 1 + y := by
-    rw [map_add, map_one]; linear_combination hy
+    rw [map_add (f := _), map_one]; linear_combination hy
   refine ⟨e * (1 + y) + (1 - e) * (ω + y * c ω), ?_, ?_⟩
   · by_contra hx
     obtain ⟨m, hm, hxm⟩ := exists_max_ideal_of_mem_nonunits (mem_nonunits_iff.mpr hx)
@@ -80,7 +84,7 @@ theorem finite_involution_hilbert90 {S : Type} [CommRing S] [Finite S] (c : S �
       apply hem
       rw [he]
       exact Ideal.pow_mem_of_mem m (m.mul_mem_right _ hx1) M hM0
-  · simp only [map_add, map_mul, map_sub, map_one, hc, hce]
+  · simp only [map_add (f := _), map_mul, map_sub, map_one, hc, hce]
     linear_combination (-(e + (1 - e) * ω)) * hy
 
 theorem finite_involution_fixed_unit_isNorm :

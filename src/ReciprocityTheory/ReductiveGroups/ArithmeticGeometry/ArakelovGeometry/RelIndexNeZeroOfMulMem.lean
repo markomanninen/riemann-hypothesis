@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsMPrimeFiltration
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ChooseLePowDivFactorial
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ExistsMPrimeFiltration
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ABridgeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.ChooseLePowDivFactorial
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.ArakelovGeometry
 
@@ -32,10 +36,13 @@ theorem relIndex_ne_zero_of_mul_mem {H K : Submodule ℤ Ω} (hK : K.FG) {M : �
 
 theorem relIndex_chain {G : Type*} [AddGroup G] (H : ℕ → AddSubgroup G) (n : ℕ)
     (hle : ∀ j < n, H j ≤ H (j + 1)) :
-    ∀ k ≤ n, (H 0).relIndex (H k) = ∏ j ∈ Finset.range k, (H j).relIndex (H (j + 1)) ∧ H 0 ≤ H k
-  | 0, _ => by simp [AddSubgroup.relIndex_self]
-  | k + 1, hk => by
-    obtain ⟨h1, h2⟩ := relIndex_chain H n hle k (by omega)
+    ∀ k ≤ n, (H 0).relIndex (H k) = ∏ j ∈ Finset.range k, (H j).relIndex (H (j + 1)) ∧ H 0 ≤ H k := by
+  intro k
+  induction k with
+  | zero => simp [AddSubgroup.relIndex_self]
+  | succ k ih =>
+    intro hk
+    obtain ⟨h1, h2⟩ := ih (by omega)
     refine ⟨?_, h2.trans (hle k (by omega))⟩
     rw [Finset.prod_range_succ, ← h1]
     exact (AddSubgroup.relIndex_mul_relIndex (hHK := h2) (hKL := hle k (by omega))).symm

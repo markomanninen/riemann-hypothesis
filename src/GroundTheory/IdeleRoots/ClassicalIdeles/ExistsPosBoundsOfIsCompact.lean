@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SiegelSetsSL2Adelic
-import GroundTheory.AutomorphicForms.ReductionSiegel
-import GroundTheory.AutomorphicForms.ReductionSplitting
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SiegelSetsSL2Adelic
+public import GroundTheory.AutomorphicForms.ReductionSiegel
+public import GroundTheory.AutomorphicForms.ReductionSplitting
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open NumberField IsDedekindDomain Topology Filter Set Matrix

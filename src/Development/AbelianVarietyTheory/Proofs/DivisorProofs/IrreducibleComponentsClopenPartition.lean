@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsThetaCompact
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.SiegelTor
 
@@ -45,7 +50,7 @@ theorem isOpen_of_mem {Z : Scheme.{0}} [NoetherianSpace Z] (hd : ∀ x : Z, IsDo
     · rintro ⟨D, ⟨hD, hne⟩, hyD⟩ hyC
       exact hne (congrArg Subtype.val ((existsUnique_mem hd y).unique (y₁ := ⟨D, hD⟩) (y₂ := ⟨C, hC⟩) hyD hyC))
   rw [← isClosed_compl_iff, hcompl]
-  exact (hfin.subset fun D hD => hD.1).isClosed_biUnion fun D hD =>
+  exact (hfin.subset (by exact fun D hD => hD.1)).isClosed_biUnion fun D hD =>
     isClosed_of_mem_irreducibleComponents D hD.1
 
 end GlobalTheory.CompPart

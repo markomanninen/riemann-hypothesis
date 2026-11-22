@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLastX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ToOneSucc
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ValLastX
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false
@@ -66,8 +70,8 @@ def Dbl2.val (S : Dbl2 ψ σ) (c₁ : WO S.B.A S.J.W₀ →₀ ℂ) (c₂ : WO S
     (h₂ : GA D S.B'.V) : ℂ :=
   S.B'.per ψ (biLift S.oma S.omb S.B.vA S.J.v0 φ (biComb ψ _ _ _ c₁ c₂ (S.con Φ₁ Φ₂ g h₁ h₂))) (rTrans h₂ f)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure QStep (S : Dbl2 ψ σ) where
   k : Type
   [fld : Field k]

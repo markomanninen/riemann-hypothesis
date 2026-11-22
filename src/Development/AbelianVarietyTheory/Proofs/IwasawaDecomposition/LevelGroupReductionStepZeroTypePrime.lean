@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV GlobalTheory.QNormal GlobalTheory.Mem.Col2.IdxEx
 
@@ -90,9 +94,9 @@ theorem bvecS_eq (q rS c : ℕ) (f : Fin n) :
   unfold Loc.eN
   have := f.2
   by_cases h : l.1 < n
-  · rw [dif_pos h, Pi.single_apply]
+  · rw [dite_eq_left h, Pi.single_apply]
     simp [Fin.ext_iff]
-  · rw [dif_neg h, if_neg (by omega)]
+  · rw [dite_eq_right h, if_neg (by omega)]
 
 theorem inX_mem_flagS (q rS c : ℕ) (f : Fin n) (x : Sp E n) :
     Loc.inX E n c x ∈ LocE.flagS P q n rS n c (f.1 + rS) ↔
@@ -109,14 +113,14 @@ theorem inX_mem_flagS (q rS c : ℕ) (f : Fin n) (x : Sp E n) :
   constructor
   · intro h l
     have h1 := h (Fin.castAdd c l)
-    rw [key _ (by simp), CongLevel.inX_apply, dif_pos (by simp)] at h1
+    rw [key _ (by simp), CongLevel.inX_apply, dite_eq_left (by simp)] at h1
     exact h1
   · intro h l
     rw [CongLevel.inX_apply]
     by_cases hl : l.1 < n
-    · rw [dif_pos hl, key _ hl]
+    · rw [dite_eq_left hl, key _ hl]
       exact h ⟨l.1, hl⟩
-    · rw [dif_neg hl, mul_zero]
+    · rw [dite_eq_right hl, mul_zero]
       exact TopStep.intAt_zero
 
 theorem extE_mem_JGsym {q : ℕ} (hq : (q : E) ≠ 0) (rS r t c : ℕ) (A : GL (Fin n) (𝓞 E)) (hA : A ∈ uniUT n (𝓞 E) n []) :

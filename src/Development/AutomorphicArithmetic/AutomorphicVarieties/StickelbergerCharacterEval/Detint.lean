@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.ExistsIntHigherStickelbergerDenomSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.Detprod
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.Chcard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.NormCharEvalHigherStickelbergerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.GroupRingCharEvalStickelbergerYNeZeroOfParity
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.ExistsIntHigherStickelbergerDenomSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.Detprod
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.Chcard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.NormCharEvalHigherStickelbergerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerCharacterEval.GroupRingCharEvalStickelbergerYNeZeroOfParity
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5
 
@@ -34,7 +38,7 @@ theorem UpperTheory.V.B5.higherStickelberger_det_exists_int_bounded :
     · exact this (by rw [h, map_zero])
   · have h1 : ‖algebraMap ℚ ℂ (detR (π (-1)) ((-1) ^ k) (yEl k a ha π))‖ ≤ (sizeY N a k : ℝ) ^ (Nat.card Γ / 2) := by
       rw [hp, norm_prod, ← card_Qc' hcc hc, ← card_signedInvolutionChar_eq_card_involutionQuotient (Ω := ℂ) _ _ hcc hc hε, ← Finset.card_univ, ← Finset.prod_const]
-      exact Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun χ _ => norm_charEval_higherStickelberger_le π χ.1 a ha k hN (by omega)
+      exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun χ _ => norm_charEval_higherStickelberger_le π χ.1 a ha k hN (by omega)
     have h2 : (((detR (π (-1)) ((-1) ^ k) z).natAbs : ℕ) : ℝ) = ‖algebraMap ℚ ℂ ((detR (π (-1)) ((-1) ^ k) z : ℤ) : ℚ)‖ := by
       rw [map_intCast, Complex.norm_intCast, Nat.cast_natAbs, Int.cast_abs]
     have h3 : (((detR (π (-1)) ((-1) ^ k) z).natAbs : ℕ) : ℝ) ≤ ((bdX N a k ^ (Nat.card Γ / 2) : ℕ) : ℝ) := by

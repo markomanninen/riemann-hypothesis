@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentResolvent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LinearIndependentResolvent
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem rank_le_aleph0_of_isIrreducible {π : Representation ℂ G V} (hs : IsSm
     show π.asAlgebraHom f v ∈ _
     induction f using MonoidAlgebra.induction_on with
     | of g => exact Submodule.subset_span ⟨g, by simp⟩
-    | add a b ha hb => rw [map_add, LinearMap.add_apply]; exact add_mem (ha trivial) (hb trivial)
+    | add a b ha hb => rw [map_add (f := _), LinearMap.add_apply]; exact add_mem (ha trivial) (hb trivial)
     | smul c a ha => rw [map_smul, LinearMap.smul_apply]; exact Submodule.smul_mem _ _ (ha trivial)
   rw [← rank_top, ← ht]
   exact (rank_span_le _).trans (le_aleph0_iff_set_countable.2 (countable_orbit hs v))
@@ -77,8 +81,8 @@ end General
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {n : Type} [Fintype n] [DecidableEq n] {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
 
-variable (k n) in
 
+variable (k n) in
 theorem secondCountableTopology_GL : SecondCountableTopology (GL n k) := by
   have : SecondCountableTopology k := by
     letI := IsTopologicalAddGroup.rightUniformSpace k
@@ -103,14 +107,14 @@ theorem algebraMap_intertwiningMap_bijective_GL {π : Representation ℂ (GL n k
   haveI := secondCountableTopology_GL k n
   algebraMap_intertwiningMap_bijective_of_isSmooth hs hi
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem continuous_glScalar : Continuous (GeneralLinearGroup.scalar n : kˣ → GL n k) := by
   refine Units.continuous_map (f := (Matrix.scalar n : k →+* Matrix n n k).toMonoidHom) ?_
   exact (continuous_pi fun _ => continuous_id).matrix_diagonal
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem isSmoothChar_of_hasCentralChar [Nontrivial V] {π : Representation ℂ (GL n k) V} (hs : IsSmooth π)
     {ω : kˣ →* ℂˣ} (h : HasCentralChar π ω) : IsSmoothChar ω := by
   obtain ⟨v, hv⟩ := exists_ne (0 : V)
@@ -164,7 +168,7 @@ end CentralChar
 
 namespace IrrGL
 
-theorem pow_eq_of_tw_eq {x : IrrGL k} {χ ψ : kˣ →* ℂˣ} {hχ : IsSmoothChar χ} {hψ : IsSmoothChar ψ}
+theorem pow_eq_of_tw_eq {x : IrrGL (k := k)} {χ ψ : kˣ →* ℂˣ} {hχ : IsSmoothChar χ} {hψ : IsSmoothChar ψ}
     (h : x.tw χ hχ = x.tw ψ hψ) : χ ^ x.1 = ψ ^ x.1 := by
   have := Model.nontrivial_of_isIrreducible x.2.rep.irr
   obtain ⟨ω, -, hω⟩ := exists_smooth_hasCentralChar x.2.rep.smooth x.2.rep.irr
@@ -172,7 +176,7 @@ theorem pow_eq_of_tw_eq {x : IrrGL k} {χ ψ : kˣ →* ℂˣ} {hχ : IsSmoothCh
   have h1 := centralChar_unique (V := x.2.rep.V) (hasCentralChar_of_equiv φ (hasCentralChar_twist hω χ)) (hasCentralChar_twist hω ψ)
   simpa using h1
 
-theorem nu_ofReal_inj {x : IrrGL k} (hx : 0 < x.1) {s t : ℝ} : x.nu s = x.nu t ↔ s = t := by
+theorem nu_ofReal_inj {x : IrrGL (k := k)} (hx : 0 < x.1) {s t : ℝ} : x.nu s = x.nu t ↔ s = t := by
   refine ⟨fun h => ?_, fun h => by rw [h]⟩
   have h1 := pow_eq_of_tw_eq h
   have h2 : ∀ (s : ℂ) (m : ℕ), absPow k s ^ m = absPow k (m * s) := fun s m => by
@@ -185,13 +189,13 @@ theorem nu_ofReal_inj {x : IrrGL k} (hx : 0 < x.1) {s t : ℝ} : x.nu s = x.nu t
       mul_inv_cancel]
   exact sub_eq_zero.1 ((mul_eq_zero.1 (absPow_ofReal_eq_one.1 h3)).resolve_left (Nat.cast_ne_zero.2 hx.ne'))
 
-theorem nu_intCast_inj {x : IrrGL k} (hx : 0 < x.1) {a b : ℤ} : x.nu a = x.nu b ↔ a = b := by
+theorem nu_intCast_inj {x : IrrGL (k := k)} (hx : 0 < x.1) {a b : ℤ} : x.nu a = x.nu b ↔ a = b := by
   simpa using nu_ofReal_inj hx (s := a) (t := b)
 
-theorem nu_natCast_inj {x : IrrGL k} (hx : 0 < x.1) {a b : ℕ} : x.nu a = x.nu b ↔ a = b := by
+theorem nu_natCast_inj {x : IrrGL (k := k)} (hx : 0 < x.1) {a b : ℕ} : x.nu a = x.nu b ↔ a = b := by
   simpa using nu_ofReal_inj hx (s := a) (t := b)
 
-theorem nu_ofReal_eq_self {x : IrrGL k} (hx : 0 < x.1) {s : ℝ} : x.nu s = x ↔ s = 0 := by
+theorem nu_ofReal_eq_self {x : IrrGL (k := k)} (hx : 0 < x.1) {s : ℝ} : x.nu s = x ↔ s = 0 := by
   simpa using nu_ofReal_inj hx (s := s) (t := 0)
 
 end IrrGL
@@ -209,7 +213,7 @@ theorem term_injective (Δ : Segment k) : Function.Injective Δ.term := fun _ _ 
 
 theorem nodup_ms (Δ : Segment k) : Δ.ms.Nodup := Finset.univ.nodup.map Δ.term_injective
 
-theorem carrier_injective : Function.Injective (carrier : Segment k → Set (IrrGL k)) := fun Δ Δ' h => by
+theorem carrier_injective : Function.Injective (carrier : Segment k → Set (IrrGL (k := k))) := fun Δ Δ' h => by
   have key : ∀ D : Segment k, D.first ∈ D.carrier := fun D => mem_carrier.2 ⟨0, D.len_pos, by simp⟩
   obtain ⟨a, -, ha⟩ := mem_carrier.1 (h ▸ key Δ)
   obtain ⟨b, -, hb⟩ := mem_carrier.1 (h.symm ▸ key Δ')
@@ -227,9 +231,9 @@ theorem schur_and_segments (k : Type) [Field k] [ValuativeRel k] [TopologicalSpa
     (∀ (n : Type) [Fintype n] [DecidableEq n] (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL n k) V),
       IsSmooth π → π.IsIrreducible → Function.Bijective (algebraMap ℂ (π.IntertwiningMap π)) ∧
         ∃ ω, IsSmoothChar ω ∧ HasCentralChar π ω) ∧
-    (∀ x : IrrGL k, 0 < x.1 → ∀ s t : ℝ, x.nu s = x.nu t ↔ s = t) ∧
+    (∀ x : IrrGL (k := k), 0 < x.1 → ∀ s t : ℝ, x.nu s = x.nu t ↔ s = t) ∧
     (∀ Δ : Segment k, Function.Injective Δ.term ∧ Δ.ms.Nodup) ∧
-    Function.Injective (Segment.carrier : Segment k → Set (IrrGL k)) :=
+    Function.Injective (Segment.carrier : Segment k → Set (IrrGL (k := k))) :=
   ⟨fun _ _ _ _ _ _ _ hs hi => ⟨algebraMap_intertwiningMap_bijective_GL hs hi, exists_smooth_hasCentralChar hs hi⟩,
     fun _ hx _ _ => IrrGL.nu_ofReal_inj hx, fun Δ => ⟨Δ.term_injective, Δ.nodup_ms⟩, Segment.carrier_injective⟩
 

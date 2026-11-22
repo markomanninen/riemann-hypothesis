@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -104,7 +109,7 @@ theorem contDiff_eval_mvPolynomial {ι : Type*} [Fintype ι] (q : MvPolynomial �
   induction q using MvPolynomial.induction_on with
   | C a => simpa using contDiff_const
   | add p q hp hq => simpa using hp.add hq
-  | mul_X p i hp => simpa using hp.mul (contDiff_apply ℂ ℂ i)
+  | mul_X p i hp => simpa using hp.mul (contDiff_apply ℂ (fun _ => ℂ) i)
 
 def paramMap {n r : ℕ} (π : Fin r → MvPolynomial (Fin n) ℂ) (x : Fin n → ℂ) : Fin r → ℂ :=
   fun j => MvPolynomial.eval x (π j)

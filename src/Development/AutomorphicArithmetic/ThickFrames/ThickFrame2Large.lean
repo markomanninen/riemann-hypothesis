@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ThickExists
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.ThickExists
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 

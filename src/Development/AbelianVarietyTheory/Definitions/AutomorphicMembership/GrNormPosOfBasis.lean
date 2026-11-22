@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SystemPrimesDistinctLevelsGeThree
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreimageConnectedComponentMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntOIsLocalRing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatDRSubsetLatHT
-import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DegFrame
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.SystemPrimesDistinctLevelsGeThree
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LeftEqIffLieVecSmul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsStalkFactor
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PreimageConnectedComponentMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntOIsLocalRing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LatDRSubsetLatHT
+public import Development.AbelianVarietyTheory.Statements.HeightBoundStatement.HTBoundSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,30 +28,6 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheo
 
 theorem sp_comp {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (g : B →+* C) :
     spMap g ≫ spMap f = spMap (g.comp f) := (Spec.map_comp _ _).symm
-
-theorem sp_epsMul_one (R : Type) [CommRing R] : spMap (epsMul (1 : R)) = 𝟙 _ := by
-  rw [← Spec.map_id]
-  congr 1
-  ext r <;> simp [epsMul]
-
-abbrev torus (X : Scheme.{0}) : SAB H X :=
-  GlobalTheory.Models.Inhab.trivTriple H (splitTorus X (𝓞 E)) (GlobalTheory.Diag.isSemiAbelian _ _) (GlobalTheory.Diag.diagAct _ _ _)
-
-def charUnit {A : Type} [CommRing A] {g : Sp A ⟶ X} (w : Over.mk g ⟶ splitTorus X (𝓞 E)) (a : 𝓞 E) : Aˣ :=
-  ⟨GlobalTheory.Diag.charVal w a, GlobalTheory.Diag.charVal w (-a), by rw [← GlobalTheory.Diag.charVal_add, add_neg_cancel, GlobalTheory.Diag.charVal_zero],
-    by rw [← GlobalTheory.Diag.charVal_add, neg_add_cancel, GlobalTheory.Diag.charVal_zero]⟩
-
-def torusChar {O : Type} [CommRing O] (x : Sp O ⟶ X) (q : ℕ) (a : 𝓞 E) : TorsChar (torus H X) x q where
-  χ _ _ _ _ g := charUnit g a
-  mul _ _ _ _ g g' _ _ := Units.ext (GlobalTheory.Diag.charVal_mul g g' a)
-  nat B B' _ _ _ _ _ _ φ g g' _ h :=
-    (GlobalTheory.Diag.left_eq_iff φ.toRingHom (by rw [← Category.assoc, sp_comp]; congr 2; exact φ.comp_algebraMap.symm) g' g).1 h a
-
-theorem torusChar_epsVec {O : Type} [CommRing O] (x : Sp O ⟶ X) (q : ℕ) (a : 𝓞 E) (I : Ideal O) (c : 𝓞 E →+ O ⧸ I) :
-    (((torusChar H x q a).χ (DualNumber (O ⧸ I)) (GlobalTheory.Diag.epsVec _ c) : (DualNumber (O ⧸ I))ˣ) :
-      DualNumber (O ⧸ I)).snd = c a := by
-  refine (congrArg TrivSqZeroExt.snd (GlobalTheory.Diag.charVal_epsVec c a)).trans ?_
-  simp
 
 end Lat
 
@@ -78,8 +58,8 @@ theorem comb_smul (hu : ∀ k, IsTanAtG t x (u k)) {cf : Fin m → R} {w : Sp (D
   rw [← (isCombAtG_iff t x (fun j => ovT (hu j)) _ _).1 h]
   exact (isCombAtG_iff t x (fun j => ovT (hu j)) _ _).2 (by rw [← smT_combT]; rfl)
 
-variable (t x u) in
 
+variable (t x u) in
 def Indep : Prop := ∀ cf cf' w, IsCombAtG t x u cf w → IsCombAtG t x u cf' w → cf = cf'
 
 theorem indep_iff {n : ℕ} {v : Fin n → (Sp (DualNumber R) ⟶ t.G.left)} (hv : ∀ k, IsTanAtG t x (v k))
@@ -129,8 +109,8 @@ theorem Indep.map {K K' : Type} [Field K] [Field K'] (io : K →+* K') {x : Sp K
 variable {C : Type} [NontriviallyNormedField C] {x : Sp C ⟶ X} {Λ : Set (Sp (DualNumber C) ⟶ t.G.left)} {m : ℕ}
   {u u' : Fin m → (Sp (DualNumber C) ⟶ t.G.left)}
 
-variable (t x Λ u) in
 
+variable (t x Λ u) in
 def grSet (i : Fin m) : Set ℝ :=
   {r | ∃ cf : Fin m → C, cf i ≠ 0 ∧ (∀ k, i < k → cf k = 0) ∧ (∃ w ∈ Λ, IsCombAtG t x u cf w) ∧ r = ‖cf i‖⁻¹}
 
@@ -189,8 +169,8 @@ theorem tri_mulVec {K : Type} [Field K] {A : Matrix (Fin m) (Fin m) K} (hA : A.B
     · rw [hA (show id j < id i from hj), zero_mul]
     · rw [h j hj, mul_zero]
 
-open Pointwise in
 
+open Pointwise in
 theorem grNorm_tri (hu : ∀ k, IsTanAtG t x (u k)) {d : Fin m → C} (hd : ∀ i, d i ≠ 0)
     (h : ∀ i, ∃ cf : Fin m → C, cf i = d i ∧ (∀ k, i < k → cf k = 0) ∧ IsCombAtG t x u cf (u' i)) (i : Fin m) :
     grNorm t x Λ u' i = ‖d i‖ * grNorm t x Λ u i := by
@@ -233,18 +213,6 @@ section AnyBase
 
 variable {O : Type} [CommRing O] {β : O →+* c.F} (Z : Model Xo c β) (Ω : Type) [Field Ω]
 
-def flagPtEquiv : FlagPt Z Ω ≃
-    Σ (φ : c.F →+* Ω) (y : {y : Sp Ω ⟶ gen Z // y ≫ genStr Z = spMap φ}), EigFrame Z φ (y.1 ≫ genι Z) where
-  toFun y := ⟨y.fK, ⟨y.y, y.y_over⟩, y.frame⟩
-  invFun z := ⟨z.1, z.2.1.1, z.2.1.2, z.2.2.v, z.2.2.tan, z.2.2.eig, z.2.2.basis⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-theorem exists_flagPt (y : Sp Ω ⟶ gen Z) : ∃ z : FlagPt Z Ω, z.y = y := by
-  have h : y ≫ genStr Z = spMap (Spec.preimage (y ≫ genStr Z)).hom := (Spec.map_preimage _).symm
-  obtain ⟨f⟩ := GlobalTheory.ShFam.EigLoc.exists_eigFrame E H Dw l Xo c O β Z Ω _ y h
-  exact ⟨(flagPtEquiv Z Ω).symm ⟨_, ⟨y, h⟩, f⟩, rfl⟩
-
 variable {Z Ω}
 
 theorem indep_u (y : FlagPt Z Ω) (τ : E →+* ℂ) : Indep Z.t (y.y ≫ genι Z) (y.u τ) := by
@@ -257,24 +225,6 @@ theorem indep_u (y : FlagPt Z Ω) (τ : E →+* ℂ) : Indep Z.t (y.y ≫ genι 
 
 def SameFlags (y y' : FlagPt Z Ω) (d : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Ωˣ) : Prop :=
   y'.y = y.y ∧ y.frame.Tri (RingHom.id Ω) y'.frame d
-
-theorem SameFlags.refl (y : FlagPt Z Ω) : SameFlags y y 1 := ⟨rfl, y.frame.tri_refl⟩
-
-theorem SameFlags.grNorm {y y' : FlagPt Z Ω} {d : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Ωˣ} (h : SameFlags y y' d)
-    {C : Type} [NontriviallyNormedField C] (io : Ω →+* C) (Λ : Set (Sp (DualNumber C) ⟶ Z.t.G.left)) (τ : E →+* ℂ)
-    (i : Fin (Dw.mult τ)) :
-    grNorm Z.t (spMap io ≫ y'.y ≫ genι Z) Λ (fun k => spMap (dualMap io) ≫ y'.u τ k) i =
-      ‖io (d τ i)‖ * grNorm Z.t (spMap io ≫ y.y ≫ genι Z) Λ (fun k => spMap (dualMap io) ≫ y.u τ k) i := by
-  have h3 : spMap (dualMap (RingHom.id Ω)) = 𝟙 _ := by
-    rw [← Spec.map_id]
-    congr 1
-    ext r <;> simp [dualMap]
-  rw [h.1]
-  refine grNorm_tri (d := fun k => io (d τ k)) (fun k => GlobalTheory.FactorDepth.isTanAtG_map _ io (y.tan τ k))
-    (fun k => (map_ne_zero io).2 (d τ k).ne_zero) (fun k => ?_) i
-  obtain ⟨cf, e1, e2, e3⟩ := h.2.2.2 τ k
-  simp only [h3, Category.id_comp, h.1] at e3
-  exact ⟨fun a => io (cf a), congrArg io e1, fun a ha => (congrArg io (e2 a ha)).trans (map_zero io), GlobalTheory.LatDRFree.comb_map _ io e3⟩
 
 end AnyBase
 
@@ -369,45 +319,12 @@ theorem grNorm_lat_pos {Ω : Type} [Field Ω] (y : FlagPt Z Ω) (p : ℕ) [Fact 
 
 variable {Z}
 
-def diagAt {Ω : Type} [Field Ω] (d : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Ωˣ) (τ : E →+* ℂ) (k : ℕ) : Ωˣ :=
-  if h : k < Dw.mult τ then d τ ⟨k, h⟩ else 1
-
-def rootFac {Ω : Type} [Field Ω] (d : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Ωˣ) (τ : E →+* ℂ) (i : ℕ) : Ωˣ :=
-  if i < Dw.p then diagAt d τ i else (diagAt d (conjEmb τ) (Dw.p + Dw.q - 1 - i))⁻¹
-
 variable {Ω : Type} [Field Ω] {y y' : FlagPt Z Ω} {d : ∀ τ : E →+* ℂ, Fin (Dw.mult τ) → Ωˣ} (h : SameFlags y y' d)
   (p : ℕ) [Fact p.Prime] (io : Ω →+* ℂ_[p]) (b : Bool) (hB : b = true → HTBoundSt) (τ : E →+* ℂ)
 include h hB
 
-theorem SameFlags.lnLie (k : ℕ) : y'.lnLie io p b τ k = y.lnLie io p b τ k + Real.log ‖io (diagAt d τ k)‖ := by
-  unfold FlagPt.lnLie diagAt
-  split_ifs with hk
-  · rw [h.grNorm, h.1, Real.log_mul (norm_ne_zero_iff.2 ((map_ne_zero io).2 (d τ _).ne_zero))
-      (grNorm_lat_pos Z y p io b hB τ _).ne', add_comm]
-  · simp
-
-theorem SameFlags.lnRoot (i : ℕ) : y'.lnRoot io p b τ i = y.lnRoot io p b τ i + Real.log ‖io (rootFac d τ i)‖ := by
-  unfold FlagPt.lnRoot rootFac
-  by_cases hi : i < Dw.p
-  · simp only [if_pos hi, h.lnLie p io b hB]
-    ring
-  · simp only [if_neg hi, h.lnLie p io b hB, Units.val_inv_eq_inv_val, map_inv₀, norm_inv, Real.log_inv]
-    ring
-
 end Pts
 
 variable {D : D7} {A : Amb D} {N j : ℕ} {S : Sig A N j} {κ : Lv A} (s : FinalTheorems S κ)
-
-theorem exists_pt (k : s.Comp) : ∃ y : Pt s, compPt s y = k := PtComp.compPt_surjective s k
-
-instance nonempty_pt : Nonempty (Pt s) := (exists_pt s (compNe s).some).nonempty
-
-theorem lnAt_eq (p : ℕ) [hp : Fact p.Prime] (b : Bool) (y : Pt s) (x : DV.Rt D.what₂.Tau N) :
-    lnAt s p b y x = y.lnRoot (iotaP p) p b (DV.tauEmb D x.1) x.2 := dif_pos hp.out
-
-def detFac (d : ∀ τ, Fin (S.Dw.mult τ) → Qbˣ) (τ : D.what₂.Tau) : Qbˣ := ∏ i : Fin N, rootFac d (DV.tauEmb D τ) i
-
-def IsSec (sv : D.what₂.Tau → Pt s → Qb) : Prop :=
-  (∀ τ y, sv τ y ≠ 0) ∧ ∀ τ y y' d, SameFlags y y' d → sv τ y' * detFac d τ = sv τ y
 
 end GlobalTheory.ShFam.Pad.Guard

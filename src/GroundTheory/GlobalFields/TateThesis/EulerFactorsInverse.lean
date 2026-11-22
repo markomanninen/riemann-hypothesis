@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsArch
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFinite
+
+@[expose] public section
 
 open NumberField InfinitePlace InfinitePlace.Completion Complex
 open scoped Real
@@ -34,8 +38,8 @@ theorem eq_of_forall_exp_mul_I {a b : ℝ}
   have h5 : (1 : ℤ) = 2 * n := by exact_mod_cast h4
   omega
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem exists_extensionEmbedding_eq_ofReal (w : InfinitePlace K) (r : ℝ) :
     ∃ a : w.Completion, extensionEmbedding w a = r := by
   by_cases hw : w.IsReal
@@ -150,8 +154,8 @@ theorem conductor_inv : χ⁻¹.conductor = χ.conductor := by
     exact (χ⁻¹).map_idealLevel_conductor_le_ker
   exact le_antisymm (Ideal.le_of_dvd h2) (Ideal.le_of_dvd h1)
 
-open Classical in
 
+open Classical in
 theorem infiniteParams_inv (w : InfinitePlace K) :
     (χ⁻¹).infiniteParams w =
       (if w.IsReal then χ.infiniteWeight w else -χ.infiniteWeight w, -χ.infiniteTau w) := by

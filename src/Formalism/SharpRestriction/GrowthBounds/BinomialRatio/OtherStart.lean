@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
+
+@[expose] public section
 
 noncomputable section
 

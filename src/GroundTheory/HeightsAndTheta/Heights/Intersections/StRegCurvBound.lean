@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -13,6 +18,6 @@ def RegCurvBound.Statement : Prop :=
     (ht : ∃ a : K → ℕ, (∀ k, E.a k = a k) ∧ IsMultiHomog t a),
     IsSmoothHerm E → ∃ C : ℕ, ∀ ε : ℝ, 0 < ε →
       IsSemiPosHerm ((E.tensor (regLine E t ht ε)).tensor
-        (HermLine.ofMetrics (fun k => fsMetric (ι k)) (fun _ => (C : ℤ))))
+        (HermLine.ofMetrics (fun k => fsMetric (ι := ι k)) (fun _ => (C : ℤ))))
 
 end GroundTheory.Heights₂.Heights.Inter

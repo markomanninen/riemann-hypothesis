@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsAlgebraMapEqRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ private lemma coeff_eq_add_of_X_pow_succ_dvd_sub {f s g : K⟦X⟧} {c : K} {n :
     (h : (X : K⟦X⟧) ^ (n + 1) ∣ f - (s + c • g)) :
     coeff n f = coeff n s + c * coeff n g := by
   have h0 := (PowerSeries.X_pow_dvd_iff.mp h) n (Nat.lt_succ_self n)
-  rw [map_sub, map_add, PowerSeries.coeff_smul, smul_eq_mul, sub_eq_zero] at h0
+  rw [map_sub, map_add (f := _), PowerSeries.coeff_smul, smul_eq_mul, sub_eq_zero] at h0
   exact h0
 
 open PowerSeries Filter Topology Matrix in
@@ -44,11 +48,11 @@ private lemma norm_natCast_prime_lt_one_inertia_eigenvalues : ‖(l : K)‖ < 1 
   rw [← map_natCast (algebraMap ℚ_[l] K), norm_algebraMap']
   exact Padic.norm_p_lt_one
 
+
 open PowerSeries Filter Topology Matrix in
 variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
   [_root_.GlobalTheory.BK.IsUnitBall O K] {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι]
   [Fact l.Prime] [NormedAlgebra ℚ_[l] K] in
-
 theorem _root_.GlobalTheory.BK.mem_S_of_approx {f : K⟦X⟧}
     (h : ∀ k : ℕ, ∃ s ∈ _root_.GlobalTheory.BK.S O K e, ∀ m : ℕ,
       ∃ g ∈ _root_.GlobalTheory.BK.S O K e,
@@ -107,13 +111,13 @@ theorem _root_.GlobalTheory.BK.PhiMod.smul_mem_MM {f : K⟦X⟧}
 
 variable [NeZero e]
 
+
 open PowerSeries Filter Topology Matrix in
 variable {O K : Type} [CommRing O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
   [_root_.GlobalTheory.BK.IsUnitBall O K] {l e a : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι]
   [Fact l.Prime] [NormedAlgebra ℚ_[l] K] in
 variable (P : _root_.GlobalTheory.BK.PhiMod O K l e a ι) in
 variable [NeZero e] in
-
 theorem _root_.GlobalTheory.BK.PhiMod.l_pow_smul_phi_mem_MM {k : ℕ} {v : _root_.GlobalTheory.BK.Vec K a ι}
     (hv : _root_.GlobalTheory.BK.E K l e ^ k • v ∈
       P.Mext (_root_.GlobalTheory.BK.S O K e)) :
@@ -151,8 +155,6 @@ theorem _root_.GlobalTheory.BK.PhiMod.l_pow_smul_phi_mem_MM {k : ℕ} {v : _root
       ← Nat.cast_pow, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
   rw [heq]
   exact Submodule.smul_mem _ _ hmem
-
-def lphiU : Module.End K (Vec K a ι) := mulV K a ι (X ^ (l - 1)) * P.lphi
 
 variable {η : ℕ} (hη : ∀ v ∈ P.MM, (l : K) ^ η • P.phi v ∈ P.MM)
 

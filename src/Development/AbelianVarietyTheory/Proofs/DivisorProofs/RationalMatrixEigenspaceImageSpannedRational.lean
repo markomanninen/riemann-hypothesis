@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentIdealSmulMemSpanRational
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.RationalSpan
 
-open Classical in
 
+open Classical in
 theorem expand {K L : Type} [Field K] [Field L] [Algebra K L] {n : ℕ} {s : Type}
     (b : Module.Basis s K L) (v : Fin n → L) :
     v = ∑ j ∈ Finset.univ.biUnion (fun i => (b.repr (v i)).support),
@@ -26,7 +31,8 @@ theorem expand {K L : Type} [Field K] [Field L] [Algebra K L] {n : ℕ} {s : Typ
 theorem repr_coord {K L : Type} [Field K] [Field L] [Algebra K L] {n : ℕ} {s : Type}
     (b : Module.Basis s K L) (a : Fin n → K) (y : Fin n → L) (j : s) :
     b.repr (∑ k, algebraMap K L (a k) * y k) j = ∑ k, a k * b.repr (y k) j := by
-  simp [← Algebra.smul_def, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [← Algebra.smul_def, map_sum, Finsupp.finsetSum_apply]
 
 theorem map_mulVec_comp {K L : Type} [Field K] [Field L] [Algebra K L] {n : ℕ}
     (M : Matrix (Fin n) (Fin n) K) (x : Fin n → K) :
@@ -74,7 +80,8 @@ theorem GlobalTheory.rational_eigen_image_span : ∀ (K L : Type) [Field K] [Fie
       simp [f, Algebra.smul_def]
     exact hle h
   · obtain ⟨z, rfl⟩ := h
-    rw [GlobalTheory.RationalSpan.expand b z, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [GlobalTheory.RationalSpan.expand b z, map_sum]
     refine Submodule.sum_mem _ (fun j _ => ?_)
     rw [map_smul]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨e.mulVec (fun i => b.repr (z i) j), ⟨_, rfl⟩, ?_⟩)

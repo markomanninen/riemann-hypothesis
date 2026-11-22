@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.WittVectorTrivializingMatrix.zlW :
     (l : ℕ) → [inst : Fact (Nat.Prime l)] → (R : Type) → [inst_1 : CommRing R] → [CharP R l] → ℤ_[l] →+* WittVector l R :=
@@ -29,10 +33,12 @@ private lemma avg {G A C : Type} [Group G] [CommRing A] [CommRing C] {r : ℕ}
     intro g k; ext i j; simp [hσ]
   have h1 : P h * (∑ q : G ⧸ N, P q.out * B.map (σ q.out)).map (σ h)
       = ∑ q : G ⧸ N, P (h * q.out) * B.map (σ (h * q.out)) := by
-    rw [← RingHom.mapMatrix_apply, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← RingHom.mapMatrix_apply, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [RingHom.mapMatrix_apply, Matrix.map_mul, hfix, hP, hm, Matrix.mul_assoc]
-  rw [h1, ← RingHom.mapMatrix_apply, ← RingHom.mapMatrix_apply, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, ← RingHom.mapMatrix_apply, ← RingHom.mapMatrix_apply, map_sum, map_sum]
   refine sum_shift N (fun g => τ.mapMatrix (P g * B.map (σ g))) (fun g ν hν => ?_) h
   simp only [RingHom.mapMatrix_apply]
   rw [hm, hB ν hν, hP, Matrix.map_mul, Matrix.map_mul, hN ν hν, Matrix.mul_one, Matrix.map_mul]
@@ -66,7 +72,8 @@ private lemma det_field {T L Q : Type} [CommRing T] [Field L] [Fintype Q] {r : �
       have h1 : f (v (Pi.single j a)) = 0 :=
         hf (Submodule.subset_span ⟨_, rfl⟩)
       rw [← h1]
-      simp only [v, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [v, map_sum]
       refine Finset.sum_congr rfl fun q _ => ?_
       have : (χ q ∘ (Pi.single j a : Fin r → T)) = χ q a • (Pi.single j 1 : Fin r → L) := by
         funext i
@@ -82,7 +89,8 @@ private lemma det_field {T L Q : Type} [CommRing T] [Field L] [Fintype Q] {r : �
     generalize P'.mulVec w = u
     have hu : u = ∑ j, u j • (Pi.single j 1 : Fin r → L) := by
       funext i; simp [Finset.sum_apply, Pi.single_apply]
-    rw [hu, Matrix.mulVec_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu, Matrix.mulVec_sum, map_sum]
     simp only [Matrix.mulVec_smul, map_smul, hcol]
     simp
   have hex : ∃ f : Fin r → (Fin r → L), (∀ i, f i ∈ Set.range v) ∧ LinearIndependent L f := by
@@ -112,7 +120,8 @@ private lemma det_domain {T R Q : Type} [CommRing T] [CommRing R] [IsDomain R] [
       rw [← Matrix.map_mul, hP]; simp)
   refine ⟨B, fun h => hB ?_⟩
   have : (∑ q, (P q).map ι * B.map (ι.comp (χ q))) = ι.mapMatrix (∑ q, P q * B.map (χ q)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun q _ => ?_
     rw [RingHom.mapMatrix_apply, Matrix.map_mul]; rfl
   rw [this, ← RingHom.map_det, h, map_zero]
@@ -134,9 +143,6 @@ private def Nm (ρ : G →* R ≃+* R) (p m : ℕ) : Subgroup G where
       change (ρ a⁻¹ * ρ a) y = y
       rw [← map_mul, inv_mul_cancel, map_one]; rfl
     rwa [ha y hy] at this
-
-private lemma mem_Nm (ρ : G →* R ≃+* R) (p m : ℕ) (g : G) :
-    g ∈ Nm ρ p m ↔ ∀ y : R, y ^ p ^ m = y → ρ g y = y := Iff.rfl
 
 private lemma per_mul {p m : ℕ} {y : R} (h : y ^ p ^ m = y) (k : ℕ) : y ^ p ^ (m * k) = y := by
   induction k with
@@ -258,7 +264,8 @@ private lemma free_etale_sheaf_zmod_exists_hom_sending_generator (ρ : G →* R 
   set s := ∑ q : G ⧸ Nm ρ p m, sg p ρ q.out T with hs
   have hsS : s ∈ Sm p R m := Subring.sum_mem _ fun q _ => sg_mem ρ _ hT
   have hs0 : s.coeff 0 ≠ 0 := by
-    rw [← WittVector.constantCoeff_apply, hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← WittVector.constantCoeff_apply, hs, map_sum]
     simpa [sg_coeff, hTd, chi_apply] using ha
   obtain ⟨u, hu⟩ : IsUnit s := unit_of_coeff (unit_of_per hm ((mem_Sm m s).1 hsS 0) hs0)
   have hinv : ∀ φ : WittVector p R →+* WittVector p R, φ s = s → φ (↑u⁻¹) = ↑u⁻¹ := by
@@ -269,7 +276,8 @@ private lemma free_etale_sheaf_zmod_exists_hom_sending_generator (ρ : G →* R 
     exact (Units.inv_eq_of_mul_eq_one_right h1).symm
   have hfix : ∀ g, sg p ρ g s = s := by
     intro g
-    rw [hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, map_sum]
     simp only [← sg_mul]
     exact sum_shift (Nm ρ p m) (fun g => sg p ρ g T)
       (fun g ν hν => by simp only [sg_mul, sg_fix ρ hν hT]) g
@@ -345,9 +353,11 @@ private lemma step (ρ : G →* R ≃+* R) {r : ℕ} (M : G →* Matrix (Fin r) 
     rw [this, Matrix.mul_smul, ← hW g]
     ext1 i j
     simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul]
-  rw [← RingHom.mapMatrix_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← RingHom.mapMatrix_apply, map_sum]
   simp only [RingHom.mapMatrix_apply, h1]
-  rw [← Finset.sum_smul, ← map_sum, ht1, map_one, one_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_smul, ← map_sum, ht1, map_one, one_smul]
 
 private lemma base (ρ : G →* R ≃+* R) {r : ℕ} (M : G →* Matrix (Fin r) (Fin r) ℤ_[p])
     (hfin : ∀ m, 0 < m → Finite (G ⧸ Nm ρ p m))
@@ -367,12 +377,18 @@ private lemma base (ρ : G →* R ≃+* R) {r : ℕ} (M : G →* Matrix (Fin r) 
   · rw [Matrix.det_apply']
     exact Subring.sum_mem _ fun s _ => Subring.mul_mem _ (intCast_mem _ _)
       (Subring.prod_mem _ fun i _ => h2 _ _)
-  · rw [← WittVector.constantCoeff_apply, RingHom.map_det, map_sum]
-    convert hB using 3 with q
-    rw [RingHom.mapMatrix_apply, Matrix.map_mul]
-    refine congrArg₂ (· * ·) rfl ?_
-    ext i j
-    simp [sg_coeff, chi_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← WittVector.constantCoeff_apply, RingHom.map_det, map_sum]
+      have hs : (∑ q : G ⧸ Nm ρ p m,
+          c.mapMatrix (Mw p R M q.out *
+            (B.map fun a => WittVector.teichmuller p (a : R)).map (sg p ρ q.out))) =
+          ∑ q, (Mw p R M q.out).map c * B.map (chi ρ p m q) := by
+        apply Finset.sum_congr rfl
+        intro q hq
+        rw [RingHom.mapMatrix_apply, Matrix.map_mul]
+        congr 1
+      rw [hs]
+      exact hB
 
 private lemma core (ρ : G →* R ≃+* R) {r : ℕ} (M : G →* Matrix (Fin r) (Fin r) ℤ_[p])
     (hfin : ∀ m, 0 < m → Finite (G ⧸ Nm ρ p m))
@@ -461,7 +477,7 @@ private lemma level (ρ : G →* R ≃+* R)
     (fun m : ℕ+ => (Nm ρ p m : Set G))
     (fun m => Subgroup.isClosed_of_isOpen _ (Nm_open ρ h m.2))
     (by
-      rw [← Set.disjoint_iff_inter_eq_empty, Set.disjoint_left]
+      rw [Set.disjoint_left]
       intro g hg hg'
       apply hg
       rw [Set.mem_iInter] at hg'
@@ -474,7 +490,7 @@ private lemma level (ρ : G →* R ≃+* R)
   refine ⟨m, m.2, fun ν hν => ?_⟩
   have hν' : ν ∈ U := by
     by_contra hn
-    exact Set.disjoint_left.1 (Set.disjoint_iff_inter_eq_empty.2 hm) hn hν
+    exact Set.disjoint_left.1 hm hn hν
   simp only [U, Set.mem_iInter, Set.mem_setOf_eq] at hν'
   ext1 i j
   have := hν' i j
@@ -488,7 +504,7 @@ private lemma level (ρ : G →* R ≃+* R)
     intro k hk
     exact WittVector.mul_pow_charP_coeff_zero _ hk
   simp only [Mw, Matrix.map_apply]
-  rw [e, map_add, map_mul, map_pow, map_natCast, map_add, z, add_zero]
+  rw [e, map_add (f := _), map_mul, map_pow, map_natCast, map_add (f := _), z, add_zero]
   by_cases hij : i = j
   · subst hij; simp
   · simp [hij]

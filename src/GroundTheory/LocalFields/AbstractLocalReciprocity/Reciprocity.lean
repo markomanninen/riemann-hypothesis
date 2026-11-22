@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.UniqueQuotientSubgroupOfSelf
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Frobenius
-import GroundTheory.LocalFields.AbstractLocalReciprocity.Unramified
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.UniqueQuotientSubgroupOfSelf
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Frobenius
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.Unramified
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -31,7 +35,6 @@ theorem degree_ne_zero (s : D.FrobeniusLift K) : s.deg * inertiaDegree D.deg K �
   mul_ne_zero s.deg_pos.ne' (D.inertiaDegree_ne_zero K)
 
 omit [TotallyDisconnectedSpace G] in
-
 theorem mem_normalizer (hLK : L ≤ K) [hN : ((L : Subgroup G).subgroupOf K).Normal] {σ : G}
     (hσ : σ ∈ (K : Subgroup G)) :
     σ ∈ Subgroup.normalizer (((L : Subgroup G) ⊓ D.deg.ker : Subgroup G) : Set G) := by
@@ -54,7 +57,6 @@ theorem mem_normalizer (hLK : L ≤ K) [hN : ((L : Subgroup G).subgroupOf K).Nor
       rwa [mul_comm (D.deg σ), mul_assoc, mul_inv_cancel, mul_one] at this
 
 variable (L) in
-
 noncomputable def field (hLK : L ≤ K) [((L : Subgroup G).subgroupOf K).Normal]
     (s : D.FrobeniusLift K) : OpenSubgroup G where
   toSubgroup := frobeniusClosure D.deg L s.elt
@@ -91,18 +93,9 @@ theorem relDeg_field :
   rw [D.relDeg_pow, inertiaDegree_field, ← ofAdd_nsmul, nsmul_one]
   exact s.deg_eq
 
-theorem inf_ker_le_inf :
-    ((s.field L hLK : OpenSubgroup G) : Subgroup G) ⊓ D.deg.ker ≤
-      ((L ⊓ s.field L hLK : OpenSubgroup G) : Subgroup G) := by
-  intro x hx
-  have hx' := hx
-  rw [field_inf_ker] at hx'
-  exact ⟨hx'.1, hx.1⟩
-
 end FrobeniusLift
 
 omit [TotallyDisconnectedSpace G] in
-
 theorem exists_prime (K : OpenSubgroup G) :
     ∃ π : fixedModule A (K : Subgroup G), D.valuation K π = Multiplicative.ofAdd 1 := by
   have h := D.intCast_mem_range_val 1
@@ -112,12 +105,10 @@ theorem exists_prime (K : OpenSubgroup G) :
 section PrimeNorm
 
 variable (K L) in
-
 noncomputable def primeNorm (S : OpenSubgroup G) : tateZero A (K : Subgroup G) (L : Subgroup G) :=
   QuotientGroup.mk (norm A (K : Subgroup G) (S : Subgroup G) (D.exists_prime S).choose)
 
 omit [TotallyDisconnectedSpace G] in
-
 theorem norm_mem_range_of_mem_units (hax : ClassFieldAxiom G A) {S : OpenSubgroup G} (hSK : S ≤ K)
     (hLK : L ≤ K) (hu : (S : Subgroup G) ⊓ D.deg.ker ≤ L) {u : fixedModule A (S : Subgroup G)}
     (hu' : u ∈ D.units S) :
@@ -133,7 +124,6 @@ theorem norm_mem_range_of_mem_units (hax : ClassFieldAxiom G A) {S : OpenSubgrou
     norm_norm (fun x hx => hML hx) (fun x hx => hLK hx) w⟩
 
 omit [TotallyDisconnectedSpace G] in
-
 theorem mk_norm_eq_primeNorm (hax : ClassFieldAxiom G A) {S : OpenSubgroup G} (hSK : S ≤ K)
     (hLK : L ≤ K) (hu : (S : Subgroup G) ⊓ D.deg.ker ≤ L) {π : fixedModule A (S : Subgroup G)}
     (hπ : D.valuation S π = Multiplicative.ofAdd 1) :
@@ -158,7 +148,6 @@ section RecFrob
 variable (hLK : L ≤ K) [((L : Subgroup G).subgroupOf K).Normal]
 
 variable (L) in
-
 noncomputable def recFrob (s : D.FrobeniusLift K) : tateZero A (K : Subgroup G) (L : Subgroup G) :=
   D.primeNorm K L (s.field L hLK)
 

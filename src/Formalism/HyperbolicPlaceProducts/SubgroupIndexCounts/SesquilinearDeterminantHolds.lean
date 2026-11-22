@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HyperbolicPlaceProducts.Statement
-import Formalism.GelfandTransference.HadamardGelfand.Hadamard
+module
+
+public import Mathlib
+public import Formalism.HyperbolicPlaceProducts.Statement
+public import Formalism.GelfandTransference.HadamardGelfand.Hadamard
+
+@[expose] public section
 
 open Matrix Finset ComplexConjugate
 
@@ -19,12 +23,14 @@ lemma row_sq_le (B : V₁ →ₗ[ℂ] V₂ →ₗ⋆[ℂ] ℂ) (c : ℝ) (hB : �
   set S : ℝ := ∑ l, ‖a l‖ ^ 2 with hS
   have hS0 : 0 ≤ S := Finset.sum_nonneg fun l _ => by positivity
   have h1 : B x y = (S : ℂ) := by
-    rw [hy, map_sum, hS]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum, hS]
     push_cast
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [LinearMap.map_smulₛₗ, smul_eq_mul, Complex.conj_mul']
   have h2 : ‖y‖ ^ 2 = S := by
-    rw [@norm_sq_eq_re_inner ℂ, hy, hf.inner_sum, hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [@norm_sq_eq_re_inner ℂ, hy, hf.inner_sum, hS, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [Complex.conj_mul']
     norm_cast
@@ -47,7 +53,7 @@ lemma det_orth_sq_le (B : V₁ →ₗ[ℂ] V₂ →ₗ⋆[ℂ] ℂ) (c : ℝ) (h
     ‖(Matrix.of fun k l => B (e k) (f l)).det‖ ^ 2 ≤ c ^ (2 * m) := by
   refine le_trans (Formalism.HadamardInequality.P.hadamard_inequality_holds m _) ?_
   calc ∏ k, ∑ l, ‖(Matrix.of fun k l => B (e k) (f l)) k l‖ ^ 2 ≤ ∏ _k : Fin m, c ^ 2 :=
-        Finset.prod_le_prod (fun k _ => Finset.sum_nonneg fun l _ => by positivity)
+        Finset.prod_le_prod₀ (fun k _ => Finset.sum_nonneg fun l _ => by positivity)
           fun k _ => row_sq_le B c hB (e k) (he.1 k) f hf
     _ = c ^ (2 * m) := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, pow_mul]
 
@@ -84,7 +90,8 @@ lemma bmat_eq_of_decomp (B : V₁ →ₗ[ℂ] V₂ →ₗ⋆[ℂ] ℂ) {m : ℕ}
     (Matrix.of fun i j => B (u i) (w j)) = A * (Matrix.of fun k l => B (e k) (f l)) * Cᴴ := by
   ext i j
   rw [Matrix.of_apply, hu i, hw j, Matrix.mul_apply]
-  simp only [map_sum, LinearMap.map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ,
     Matrix.mul_apply, Matrix.of_apply, Matrix.conjTranspose_apply, smul_eq_mul, Finset.sum_mul, Finset.mul_sum,
     starRingEnd_apply, RingHom.id_apply]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
@@ -112,7 +119,8 @@ theorem sesquilinear_determinant_holds : Formalism.SLP.SesqDet := by
         · ext i
           simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply]
           have := congrArg (B (u i)) hg
-          simp only [map_sum, LinearMap.map_smulₛₗ, smul_eq_mul, map_zero, starRingEnd_apply] at this
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, LinearMap.map_smulₛₗ, smul_eq_mul, map_zero, starRingEnd_apply] at this
           rw [← this]
           exact Finset.sum_congr rfl fun j _ => mul_comm _ _
       rw [hdet, norm_zero]
@@ -124,7 +132,8 @@ theorem sesquilinear_determinant_holds : Formalism.SLP.SesqDet := by
       ext j
       simp only [Matrix.vecMul, dotProduct, Matrix.of_apply, Pi.zero_apply]
       have := congrArg (fun x => B x (w j)) hg
-      simp only [map_sum, LinearMap.map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
         map_zero, LinearMap.zero_apply] at this
       exact this
     rw [hdet, norm_zero]

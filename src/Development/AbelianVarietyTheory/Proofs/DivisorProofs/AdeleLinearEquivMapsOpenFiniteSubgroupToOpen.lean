@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MixedSpaceVecPairAsAdeles
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -62,7 +66,7 @@ theorem fintrans : ∀ (F : Type) [Field F] [NumberField F] (κ : Type) [Fintype
       map_zero' := by
         simp only [finiteAdelesVecPairAsAdeles_zero, map_zero]; rfl
       map_add' := fun a b => by
-        simp only [finiteAdelesVecPairAsAdeles_add, map_add]; rfl }
+        simp only [finiteAdelesVecPairAsAdeles_add, map_add (f := _)]; rfl }
   have hg : ∀ m', finE2 F (g m') = B.symm (finE2 F m') := by
     intro m'
     rw [finiteAdelesVecPairAsAdeles_eq_idempotent_smul F κ m', map_smul, finiteAdeleIdempotent_smul_eq_finiteAdelesVecPair]

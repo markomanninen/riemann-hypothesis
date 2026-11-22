@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.SettingExistsOfGap
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotProdK
-import Formalism.RealPlaceAnalysis.FinalF
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Closed
-import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuDecayAll
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.SettingExistsOfGap
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotProdK
+public import Formalism.RealPlaceAnalysis.FinalF
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalDegreeSquareIntegrable.Closed
+public import Formalism.SharpRestriction.CuspSpanNormBounds.ExpansionFromLemmaB
+
+@[expose] public section
 
 noncomputable section
 
@@ -224,8 +228,8 @@ theorem ennreal_mul_le_sq (a b : ℝ≥0∞) : a * b ≤ a ^ 2 + b ^ 2 := by
       _ = a ^ 2 := (sq a).symm
       _ ≤ a ^ 2 + b ^ 2 := le_self_add
 
-variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 
+variable [Fact Formalism.L2.SG.SplitPrimeNormLemmas.CoefWeightedLoc] in
 theorem local_scalar_reduction : LocScalarStep := by
   intro D hG X u μS νl C hQ v c hc0 hc
   set μ := Formalism.REAL.muG (X.B.I.ε v) with hμ

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct in
 private theorem UpperTheory.universal_derivation_surjective {A B : Type} [CommRing A] [IsLocalRing A] [CommRing B]
@@ -37,7 +41,6 @@ private theorem UpperTheory.universal_derivation_surjective {A B : Type} [CommRi
     intro x
     change x ∈ LinearMap.range D0.toLinearMap
     induction x with
-    | zero => simp
     | tmul a w => exact h1 w a
     | add x y hx hy => exact add_mem hx hy
   refine ⟨_, (e.equivFun.toLinearMap.restrictScalars B).compDer D0,
@@ -52,7 +55,8 @@ private theorem UpperTheory.universal_derivation_surjective {A B : Type} [CommRi
   have h2 : δ b = f (D0 b) := by
     simp [f, hD0]
   rw [h2]
-  conv_lhs => rw [← e.sum_equivFun (D0 b), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← e.sum_equivFun (D0 b), map_sum]
   simp only [map_smul]
   rfl
 

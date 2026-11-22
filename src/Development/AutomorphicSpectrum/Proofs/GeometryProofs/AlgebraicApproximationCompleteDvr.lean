@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
-import Development.WeilBound.CoreStatements.CommonZeroEvaluation.AlgebraicApproximationValued
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+public import Development.WeilBound.CoreStatements.CommonZeroEvaluation.AlgebraicApproximationValued
+
+@[expose] public section
+
 open Formalism.L2.Pj
 
 set_option maxHeartbeats 1000000 in

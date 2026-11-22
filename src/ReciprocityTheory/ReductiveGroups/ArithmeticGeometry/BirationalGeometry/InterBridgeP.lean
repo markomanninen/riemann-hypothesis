@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,11 +12,6 @@ open MvPolynomial
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {e : ℕ}
 
-open Classical in
-
-def linW (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ)) (j : Fin (e + 1)) :
-    MvPolynomial ((k : K) → ι k) ℂ :=
-  ∑ i, C (Ψ (fun i' => if i = i' then 1 else 0) j) * X i
 
 set_option maxHeartbeats 1600000 in
 theorem exists_monic_rel (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ))
@@ -55,9 +54,10 @@ theorem exists_monic_rel (Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e 
     induction d using Nat.strong_induction_on with
     | _ d ih =>
       intro f hf
-      rw [f.as_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [f.as_sum, map_sum]
       refine N.sum_mem fun s hs => ?_
-      rw [show monomial s (coeff s f) = C (coeff s f) * monomial s 1 by
+      rw [show monomial s (AddMonoidAlgebra.coeff f s) = C (AddMonoidAlgebra.coeff f s) * monomial s 1 by
         rw [C_mul_monomial, mul_one], map_mul]
       apply hC
       have hsdeg : (s.sum fun _ e => e) ≤ d := (le_totalDegree hs).trans hf

@@ -1,15 +1,19 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNonvanishingDense
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRatPrimeDense
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFiniteSeparatingModel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsNear
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNoetherProjection
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsLiftToZeros
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsBounded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolyNonvanishDense
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.ContinuousAtOfClosedRel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNonvanishingDense
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRatPrimeDense
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFiniteSeparatingModel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsNear
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNoetherProjection
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsLiftToZeros
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootsBounded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPolyNonvanishDense
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.PB Filter Topology
 open ReciprocityTheory.ChartRestriction.G.AI.I1 (IsBlockMap pullDeg)
@@ -49,7 +53,10 @@ private theorem rootsLiftToZeros_statement : GroundTheory.Heights₂.Heights.Hil
     exact hG)
   letI : Algebra (Polynomial (MvPolynomial (Fin e) ℚ) ⧸
       Q.comap (algebraMap (Polynomial (MvPolynomial (Fin e) ℚ)) (MvPolynomial σ ℚ ⧸ P))) ℂ :=
-    (Ideal.Quotient.lift _ φ (fun a ha => by rw [hQc] at ha; exact ha)).toAlgebra
+    (Ideal.Quotient.lift _ φ (fun a ha => by
+      change a ∈ Ideal.under _ Q at ha
+      rw [hQc] at ha
+      exact ha)).toAlgebra
   haveI : IsDomain ((MvPolynomial σ ℚ ⧸ P) ⧸ Q) := Ideal.Quotient.isDomain Q
   haveI : Module.IsTorsionFree (Polynomial (MvPolynomial (Fin e) ℚ) ⧸
       Q.comap (algebraMap (Polynomial (MvPolynomial (Fin e) ℚ)) (MvPolynomial σ ℚ ⧸ P))) ((MvPolynomial σ ℚ ⧸ P) ⧸ Q) :=
@@ -60,7 +67,9 @@ private theorem rootsLiftToZeros_statement : GroundTheory.Heights₂.Heights.Hil
     intro x hx
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
     rw [RingHom.mem_ker] at hx
-    rw [Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem, hQc]
+    rw [Ideal.mem_bot, Ideal.Quotient.eq_zero_iff_mem]
+    change a ∈ Ideal.under _ Q
+    rw [hQc]
     exact hx
   haveI : Algebra.IsIntegral (Polynomial (MvPolynomial (Fin e) ℚ) ⧸
       Q.comap (algebraMap (Polynomial (MvPolynomial (Fin e) ℚ)) (MvPolynomial σ ℚ ⧸ P))) ((MvPolynomial σ ℚ ⧸ P) ⧸ Q) :=
@@ -117,7 +126,7 @@ theorem nonvanishing_dense : NonvanishingDense.Statement := by
     rw [hhor, Ideal.mem_bot] at this
     exact nonZeroDivisors.ne_zero hn this
   have hP'prime := IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.map (C (σ := Σ k, ι k)) (nonZeroDivisors ℤ)) (MvPolynomial (Σ k, ι k) ℚ) P hprime hdisj
-  have hcomap := IsLocalization.comap_map_of_isPrime_disjoint (Submonoid.map (C (σ := Σ k, ι k)) (nonZeroDivisors ℤ)) (MvPolynomial (Σ k, ι k) ℚ) hprime hdisj
+  have hcomap := IsLocalization.under_map_of_isPrime_disjoint (Submonoid.map (C (σ := Σ k, ι k)) (nonZeroDivisors ℤ)) (MvPolynomial (Σ k, ι k) ℚ) hprime hdisj
   rw [halg] at hP'prime hcomap
   set P' := Ideal.map (MvPolynomial.map (Int.castRingHom ℚ)) P with hP'
   have hf' : MvPolynomial.map (Int.castRingHom ℚ) f ∉ P' := by

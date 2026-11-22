@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.OrderTwoTate
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
-import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
-import GroundTheory.ProfiniteCohomology.EulerCharDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.OrderTwoTate
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDualityPlace
+public import GroundTheory.ProfiniteCohomology.RealPlaces.GSDefs
+public import GroundTheory.ProfiniteCohomology.EulerCharDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -51,33 +56,33 @@ variable {k G : Type} [CommRing k] [Group G] [TopologicalSpace G] [IsTopological
   [DiscreteTopology G] (A : Rep.{0} k G) [IsDiscreteRep A] {c : G}
   (hG : ∀ g : G, g = 1 ∨ g = c) (hc : c ≠ 1)
 
+
 omit [TopologicalSpace G] [IsTopologicalGroup G] [DiscreteTopology G] [IsDiscreteRep A] in
 include hG hc in
-
 theorem act_act (x : A) : act A c (act A c x) = x := by
   change A.ρ c (A.ρ c x) = x
   rw [← Module.End.mul_apply, ← map_mul, mul_self_eq_one hG hc, map_one, Module.End.one_apply]
 
 variable [Finite A]
 
-include hG hc in
 
+include hG hc in
 theorem finite_cohomology_one : Finite (cohomology A 1) :=
   Finite.of_equiv _ (h1EquivOfOrderTwo A hG hc).toEquiv
 
-include hG hc in
 
+include hG hc in
 theorem finite_cohomology_two : Finite (cohomology A 2) :=
   Finite.of_equiv _ (h2EquivOfOrderTwo A hG hc).toEquiv
 
-include hG hc in
 
+include hG hc in
 theorem card_cohomology_one_eq_two : Nat.card (cohomology A 1) = Nat.card (cohomology A 2) := by
   rw [← Nat.card_congr (h1EquivOfOrderTwo A hG hc).toEquiv, ← Nat.card_congr (h2EquivOfOrderTwo A hG hc).toEquiv]
   exact Involution.card_tateQuot_neg (act_act A hG hc)
 
-include hG hc in
 
+include hG hc in
 theorem eulerChar_eq_card_cohomology_zero : eulerChar A = Nat.card (cohomology A 0) := by
   have := finite_cohomology_one A hG hc
   have h1 : (Nat.card (cohomology A 1) : ℚ) ≠ 0 := by
@@ -99,20 +104,15 @@ variable {K : FiniteSubfield} (v : InfinitePlace K.1) (hv : v.IsReal)
   (M : Rep.{0} (ULift.{0} ℤ) Gal(AlgebraicClosure v.Completion / v.Completion)) [IsDiscreteRep M]
   [Finite M]
 
-include hv in
 
-theorem card_cohomology_one_eq_two_of_isReal :
-    Nat.card (cohomology M 1) = Nat.card (cohomology M 2) :=
-  OrderTwo.card_cohomology_one_eq_two M (eq_one_or_eq_realConj v hv) (realConj_ne_one v hv)
 
 include hv in
-
 theorem eulerChar_eq_card_cohomology_zero_of_isReal :
     eulerChar M = Nat.card (cohomology M 0) :=
   OrderTwo.eulerChar_eq_card_cohomology_zero M (eq_one_or_eq_realConj v hv) (realConj_ne_one v hv)
 
-include hv in
 
+include hv in
 theorem finite_cohomology_of_isReal (n : ℕ) (hn : n ≤ 2) : Finite (cohomology M n) := by
   interval_cases n
   · exact Finite.of_equiv _ (H0Iso M).toLinearEquiv.toEquiv.symm
@@ -131,14 +131,6 @@ variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
   (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]
   (v : {v : InfinitePlace K.1 // v.IsReal})
-
-instance finite_res_gsRealFamily : Finite (Rep.res (gsRealFamily S ιr v).toMonoidHom M) :=
-  inferInstanceAs (Finite M)
-
-theorem gsReal_card_cohomology_one_eq_two :
-    Nat.card (cohomology (Rep.res (gsRealFamily S ιr v).toMonoidHom M) 1) =
-      Nat.card (cohomology (Rep.res (gsRealFamily S ιr v).toMonoidHom M) 2) :=
-  card_cohomology_one_eq_two_of_isReal v.1 v.2 _
 
 theorem gsReal_eulerChar_eq_card_cohomology_zero :
     eulerChar (Rep.res (gsRealFamily S ιr v).toMonoidHom M) =

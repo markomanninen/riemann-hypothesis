@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -13,7 +17,7 @@ private theorem prod_tri {C : Type} [CommRing C] {n : ℕ} (M : Fin n → Matrix
       have htake : (List.ofFn M).take (k + 1) = (List.ofFn M).take k ++ [M ⟨k, hk⟩] := by
         rw [List.take_succ]
         simp [show k < n by omega]
-      rw [htake, List.prod_append, List.prod_singleton, mul_apply]
+      rw [htake, List.prod_append, List.prod_singleton, Matrix.mul_apply]
       apply Finset.sum_eq_zero
       intro m _
       by_cases hm : (m : ℕ) < k

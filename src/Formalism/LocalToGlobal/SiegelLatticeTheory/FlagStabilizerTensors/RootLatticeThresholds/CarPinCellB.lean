@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCellS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCell
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeZhatTr
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEqMeas
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpOrbQuot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCellS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarPinCell
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.BridgeZhatTr
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocJEqMeas
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AmpOrbQuot
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,6 +45,7 @@ theorem orbQuot_exists (L : LocBessel k r) {g : Mx k r} (hg : g ∈ UH (Hpk k r)
   have hN : ∀ s ∈ Nset k r, L.μN.map (lmulM s) = L.μN := by
     intro s hs'
     rw [hs, Measure.map_smul, hν.2.2.2 s hs']
+    exact (Formalism.MainNotions.BridgeCSB.continuous_lmulM s).measurable.aemeasurable
   have hc : L.μN (PI.AmpOrbQuot.NS k r)ᶜ = 0 := by
     rw [hs, Measure.smul_apply, smul_eq_mul]
     have : haarLie (Nset k r) 1 (PI.AmpOrbQuot.NS k r)ᶜ = 0 := hν.2.2.1
@@ -160,7 +165,7 @@ theorem gf_pos_tr (hT : Formalism.L2.SG.Pf.Bridge.TrHyp F Qm Qim c) (hT' : Forma
   have hΛpos : 0 < Λ := Finset.prod_pos fun i _ => Complex.normSq_pos.mpr
     (Formalism.L2.SG.Pf.Bridge.lam_ne hT one_ne_zero _)
   unfold Gv Formalism.L2.SG.RealObj.Dl at h
-  rw [dif_pos le_rfl, dif_pos (Nat.le_succ r)] at h
+  rw [dite_eq_left le_rfl, dite_eq_left (Nat.le_succ r)] at h
   rw [← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq] at h
   have hΛ2 : 0 < Λ * Λ := mul_pos hΛpos hΛpos
   have key := mul_pos hΛ2 h

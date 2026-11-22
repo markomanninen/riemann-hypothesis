@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,6 @@ instance : TopologicalSpace P := inferInstanceAs (TopologicalSpace {z : ℂ // z
 instance : MeasurableSpace P := inferInstanceAs (MeasurableSpace {z : ℂ // z.im ≠ 0})
 instance : BorelSpace P := inferInstanceAs (BorelSpace {z : ℂ // z.im ≠ 0})
 instance : SecondCountableTopology P := inferInstanceAs (SecondCountableTopology {z : ℂ // z.im ≠ 0})
-instance : T2Space P := inferInstanceAs (T2Space {z : ℂ // z.im ≠ 0})
 
 instance : MeasureSpace P where
   volume := (Measure.comap (Subtype.val : {z : ℂ // z.im ≠ 0} → ℂ) volume).withDensity fun z => ENNReal.ofReal (1 / z.1.im ^ 2)
@@ -76,8 +79,8 @@ def q1 (k : ℕ) (z w : P) : ℂ :=
 
 def kap (z w : P) : ℝ := if 0 < z.1.im * w.1.im then 4 * (z.1.im * w.1.im) / ‖z.1 - conj w.1‖ ^ 2 else 0
 
-open Classical in
 
+open Classical in
 def ext1 (f : P → ℂ) (t : ℂ) : ℂ := if h : t.im ≠ 0 then f ⟨t, h⟩ else 0
 
 def Hol1 (f : P → ℂ) : Prop := DifferentiableOn ℂ (ext1 f) {t | t.im ≠ 0}

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.CountSpanEqZero
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.RelOfComap
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.ExistsOfFixed
-import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.LUnH
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.CountSpanEqZero
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.RelOfComap
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.ExistsOfFixed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HahnPowOrderLeadingCoeff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteDimensionalLevStatement
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.Kd.K4 Polynomial
 open scoped Matrix MatrixGroups
 
@@ -64,7 +69,7 @@ private theorem over_iff (X : Tower Ω ε) (H : Subgroup SL(2, ℤ)) (W : Valuat
     show ((jPoly X H p : lev X H) : X.K) ∈ W
     rw [coe_jPoly]
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => rw [map_add]; exact W.add_mem _ _ hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact W.add_mem _ _ hp hq
     | monomial n c =>
       rw [Polynomial.aeval_monomial]
       exact W.mul_mem _ _ (h1 c) (pow_mem h2 n)
@@ -194,8 +199,12 @@ private theorem prod_eq_norm [Algebra F F'] (ha : ∀ x : F, ((algebraMap F F' x
   have h1 := Algebra.norm_eq_prod_automorphisms F f'
   rw [← hbij.prod_comp (fun τ => τ f')] at h1
   have h2 := congrArg (fun y : F' => (y : L)) h1
-  simp only [ha, SubmonoidClass.coe_finset_prod, hσ] at h2
-  exact h2.symm
+  change F'.subtype (algebraMap F F' (Algebra.norm F f')) =
+    F'.subtype (∏ i, σ i f') at h2
+  rw [map_prod] at h2
+  change ((algebraMap F F' (Algebra.norm F f') : F') : L) =
+    ∏ i, ((σ i f' : F') : L) at h2
+  simpa only [ha, hσ] using h2.symm
 end
 
 private theorem abs_step {k L Γ : Type} [Field k] [IsAlgClosed k] [CharZero k] [Field L] [Group Γ] (a : Γ → L ≃+* L)

@@ -1,9 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DualLemmaOfWachHypotheses
-import Formalism.SharpRestriction.LevelLetterCocycles.LemmaDN0OfAdmits
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
-import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsInLetterOfEvenIndex
+public import Formalism.SharpRestriction.LevelLetterCocycles.At0HomApply
+public import Formalism.SharpRestriction.LevelLetterCocycles.DlOfQp
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+public import Formalism.SharpRestriction.LevelLetterCocycles.LemmaDN0OfAdmits
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,15 +59,15 @@ private theorem isPrecomplete_of_module_finite {R M : Type*} [CommRing R] [AddCo
   have h := SModEq.sub_mem.1 (hC i K)
   rwa [Ideal.smul_eq_mul, Ideal.mul_top] at h
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem complete_max {l : ℕ} [Fact l.Prime] (LL : FinExt l) :
     IsAdicComplete (IsLocalRing.maximalIdeal ↥(OL LL)) ↥(OL LL) := by
   classical
   haveI hmax : (IsLocalRing.maximalIdeal ↥(OL LL)).IsMaximal := IsLocalRing.maximalIdeal.isMaximal _
   have hcomap : (IsLocalRing.maximalIdeal ↥(OL LL)).comap (algebraMap ℤ_[l] ↥(OL LL)) =
       IsLocalRing.maximalIdeal ℤ_[l] :=
-    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal _)
+    IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := ℤ_[l]) _)
   have hl : ((l : ℤ_[l])) ∈ IsLocalRing.maximalIdeal ℤ_[l] :=
     by
     first

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertFixesRootOfUnitRatio
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GaloisOfPrimePowerDegree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInertiaElementRestrictingToFiniteGalois
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsFirstChernClassOfLineBundle
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertFixesRootOfUnitRatio
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCongOfCongOnFixed
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GaloisOfPrimePowerDegree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInertiaElementRestrictingToFiniteGalois
+
+@[expose] public section
+
 open GlobalTheory.NeedB Polynomial
 
 namespace GlobalTheory.KumVal
@@ -116,9 +121,9 @@ theorem cong_on_adjoin : ∀ (W K : Type) [CommRing W] [IsDomain W] [IsDiscreteV
     have := natDegree_modByMonic_lt p₀ hq (by
       intro h1
       have := congrArg natDegree h1
-      rw [natDegree_X_pow_sub_C, natDegree_one] at this
+      rw [natDegree_X_pow_sub_C _, natDegree_one] at this
       exact hl0 this)
-    rwa [natDegree_X_pow_sub_C] at this
+    rwa [natDegree_X_pow_sub_C _] at this
   change O.valuation (aeval x p₀) ≤ 1 at hb1
   change O.valuation (g (aeval x p₀) - aeval x p₀) < 1
   rw [← hp, aeval_eq_sum_range' hdeg] at hb1 ⊢
@@ -131,10 +136,11 @@ theorem cong_on_adjoin : ∀ (W K : Type) [CommRing W] [IsDomain W] [IsDiscreteV
       exact h0 (by simpa using he))
     exact hmod i j m n (Finset.mem_range.mp hi) (Finset.mem_range.mp hj) (by rw [← hm, ← hn, he])) hb1
   have hgx : O.valuation (g x) = t := by
-    refine pow_left_injective hl0 ?_
+    apply (pow_left_injective (M := O.ValueGroup) (n := l) hl0 : Function.Injective (fun a : O.ValueGroup => a ^ l))
     show _ ^ l = t ^ l
     rw [← map_pow, ← map_pow, hx', g.commutes, htl]
-  rw [map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib]
   refine Valuation.map_sum_lt _ one_ne_zero fun i hi => ?_
   rcases Nat.eq_zero_or_pos i with rfl | hi0
   · simp

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsSheetMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarSlabMeasure
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsSheetMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StChartMassCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarSlabMeasure
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -83,8 +88,8 @@ theorem lintegral_lt_top (hS : VarSlabMeasure.Statement) (hF : MassFinite.Statem
 
 end LogIntegrableProof
 
-open LogIntegrableProof in
 
+open LogIntegrableProof in
 theorem LogIntegrable.proof (hM : SheetSumMeasurable.Statement) (hD : ChartMassCompare.Statement)
     (hS : VarSlabMeasure.Statement) (hF : MassFinite.Statement) : LogIntegrable.Statement := by
   intro n d J A u φ R hJ hdim hA hu hφ

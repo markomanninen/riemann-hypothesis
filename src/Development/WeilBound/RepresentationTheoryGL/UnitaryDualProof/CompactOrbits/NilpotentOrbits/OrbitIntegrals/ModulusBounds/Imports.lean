@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MeasuresModulus
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ModulusBounds.HaarMeasureGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MeasuresModulus
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ModulusBounds.HaarMeasureGL
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PullbackDecomposition
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineAlgebraAlgebraMap
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TheoryEx
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumTransport
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PullbackDecomposition
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineAlgebraAlgebraMap
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TheoryEx
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumTransport
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -50,9 +54,12 @@ private lemma avg_gen (hLA : LocAvg) {C : Type 1} [Category.{0} C] (Pa : Parts C
     (m : CH.Mor (CategoryOfElements.π P ⋙ F) (CategoryOfElements.π Q ⋙ F) (RingHom.id R)) (j : ℕ)
     (hm : ∀ x, e Q j (m.pull j x) = T.pull p F' j (e P j x))
     (x : CH.H (CategoryOfElements.π P ⋙ F) j) (hx : m.pull j x = 0) : Fintype.card I • x = 0 := by
-  have h0 : T.pull p F' j (e P j x) = 0 := by rw [← hm, hx, map_zero]
+  have h0 : T.pull p F' j (e P j x) = 0 := by
+    simpa only [hx, AddEquiv.map_zero] using (hm x).symm
   apply (e P j).injective
-  rw [map_nsmul, hLA C Pa T F' hF Q P p I g hL j _ h0, map_zero]
+  change (e P j).toAddMonoidHom (Fintype.card I • x) = (e P j).toAddMonoidHom 0
+  rw [map_nsmul, map_zero]
+  exact hLA C Pa T F' hF Q P p I g hL j _ h0
 
 private def pullT {Q P : PAlg l ⥤ Type} (p : Q ⟶ P) (n : ℕ) :
     CH.Mor (CategoryOfElements.π (testι l ⋙ P) ⋙ coefT l n)

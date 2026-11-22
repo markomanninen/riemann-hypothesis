@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralUnitaryMatricesFiniteCardLeStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralUnitaryMatricesFiniteCardLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicCompletionRationalPointsAndApproximation
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Formalism.L2.Pj Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT
@@ -59,12 +63,42 @@ theorem mem_lattice_of_rational_mem_completion (V : HSp D) (v : Fin V.rank → D
       refine ⟨V.frame.equivFun.symm w, ?_, V.frame.equivFun.apply_symm_apply w⟩
       rw [Module.Basis.equivFun_symm_apply]
       exact hw
+  have hfull : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+    let W := Submodule.span D.host.E (V.L0 : Set V.V)
+    change W = ⊤
+    by_contra h
+    let e : V.V ≃ₗ⋆[D.host.E] V.V :=
+      (V.frame.equivFun.trans (starLinearEquiv D.host.E)).trans V.frame.equivFun.symm
+    let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+      (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
+    have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E V.V := by
+      rw [Subspace.dual_finrank_eq]
+      exact Submodule.finrank_lt h
+    obtain ⟨x, hx, hx₀⟩ :=
+      Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+    have hsmul (a : D.host.E) : a • e x ∈ V.L0 := by
+      rw [← V.baseLattice_isUnimodular]
+      rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+      intro y hy
+      have hxy : V.hT (e x) y = 0 :=
+        congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+      have hyx : V.hT y (e x) = 0 := by
+        rw [(V.herm.eq (e x) y).symm, hxy, map_zero]
+      simp [hyx]
+    let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+      ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
+    let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+    let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+      smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+    exact RingOfIntegers.not_isField D.host.E
+      (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
+        (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
   have hsp : Submodule.span D.host.E (L : Set (Fin V.rank → D.host.E)) = ⊤ := by
     rw [eq_top_iff]
     intro w _
     obtain ⟨x, rfl⟩ := V.frame.equivFun.surjective w
     have hx : x ∈ Submodule.span D.host.E (V.L0 : Set V.V) := by
-      rw [V.standardTuple_isLattice.span_eq_top]; trivial
+      rw [hfull]; trivial
     have := Submodule.mem_map_of_mem (f := f) hx
     rw [Submodule.map_span] at this
     exact this

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SltEqZeroOfCompact
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.SltEqZeroOfCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,8 @@ theorem crossOp_position_bound (hE : IsGlRep E) (hU : IsInfUnitary ε E) (hV : I
     exact_mod_cast h1
   have hc : RCLike.re (inner ℂ (crossOp ε E k i P) P) =
       ∑ r, RCLike.re (inner ℂ (crossOp ε E 1 0 (slt i r P)) (slt i r P)) := by
-    rw [slt_inner_eq_sum i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [slt_inner_eq_sum i, map_sum]
     simp only [slt_crossOp]
   rw [hn, hc, Finset.mul_sum, Finset.mul_sum]
   exact Finset.sum_le_sum fun r _ => Wp_bound hE hU hV hmono hh hbig (hr r)

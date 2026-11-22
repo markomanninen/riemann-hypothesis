@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TowerComplexLiftAndExtensionLemmasStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TowerComplexLiftAndExtensionLemmasStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,8 +29,8 @@ theorem cx_D1_D0_eq_zero (K : Cx C₁) (g : K.M0.c0) : K.D1 (K.D0 g) = 0 := by
 
 theorem first_diagonal_phase_mem_unitary (K : Cx C₁) (c : K.T1) : K.D1 c ∈ K.Z2 := by
   refine ⟨fun T T' T'' T''' φ ψ χ ↦ ?_, fun T T' T'' φ ψ ↦ ?_, fun T T' φ ↦ ?_, fun T ↦ ?_⟩
-  · simp [Cx.D1, Coef.map_comp, map_sub, map_add]; abel
-  · simp [Cx.D1, Coef.map_comp, map_sub, map_add, Cx.diffZero_natural]; abel
+  · simp [Cx.D1, Coef.map_comp, map_sub, map_add (f := _)]; abel
+  · simp [Cx.D1, Coef.map_comp, map_sub, map_add (f := _), Cx.diffZero_natural]; abel
   · simp [Cx.D1, map_sub, Cx.diffOne_natural, Cx.diffOne_diffZero]
   · simp [Cx.D1, Cx.diffTwo_comp_diffOne]
 
@@ -117,7 +121,7 @@ theorem level_p0_surjective (K : Cx C) {P P' : ObjectProperty C} (h : P ≤ P') 
   refine ⟨fun T ↦ if hT : P T.obj then g ⟨T.obj, hT⟩ else 0, ?_⟩
   funext T
   show (if hT : P T.obj then g ⟨T.obj, hT⟩ else 0) = g T
-  rw [dif_pos T.property]
+  rw [dite_eq_left T.property]
 
 theorem level_p1_surjective (K : Cx C) {P P' : ObjectProperty C} (h : P ≤ P') :
     Function.Surjective (lvl K h).p1 := by
@@ -129,9 +133,9 @@ theorem level_p1_surjective (K : Cx C) {P P' : ObjectProperty C} (h : P ≤ P') 
   refine Prod.ext (funext fun T ↦ funext fun T' ↦ funext fun φ ↦ ?_) (funext fun T ↦ ?_)
   · show (if hT : P T.obj ∧ P T'.obj then
       c.1 ⟨T.obj, hT.1⟩ ⟨T'.obj, hT.2⟩ (ObjectProperty.homMk φ.hom) else 0) = c.1 T T' φ
-    rw [dif_pos ⟨T.property, T'.property⟩]; rfl
+    rw [dite_eq_left ⟨T.property, T'.property⟩]; rfl
   · show (if hT : P T.obj then c.2 ⟨T.obj, hT⟩ else 0) = c.2 T
-    rw [dif_pos T.property]
+    rw [dite_eq_left T.property]
 
 end Lvl
 
@@ -235,8 +239,8 @@ theorem glueTwoCochain_apply_of_tower (g : ∀ n, (M.res (Q n).ι).c2)
 
 end Glue
 
-open ObjectProperty in
 
+open ObjectProperty in
 theorem tower_two : ∀ (C : Type 1) [Category.{0} C] (D : Type) [Category.{0} D] (K : Cx C)
     (P : ℕ → ObjectProperty C) (ℓ : D ⥤ C) (N₀ : ℕ), (∀ m n T, m ≤ n → P m T → P n T) →
     (∀ T, ∃ n, P n T) → (∀ N, N₀ ≤ N → ∃ h : ∀ U, P N (ℓ.obj U),

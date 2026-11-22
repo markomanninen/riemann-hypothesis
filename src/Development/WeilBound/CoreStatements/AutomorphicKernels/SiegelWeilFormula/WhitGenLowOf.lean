@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open scoped TensorProduct Matrix Classical Topology
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (E) in
 
+variable (E) in
 def eSp (v : HeightOneSpectrum (𝓞 F)) : ℂ := if IsField (Fv F v ⊗[F] E) then -1 else 1
 
 structure Dat0 (σ : E →ₐ[F] E) {M n d : ℕ} (J : Matrix (Fin M) (Fin M) E) (T : Matrix (Fin n) (Fin n) E)

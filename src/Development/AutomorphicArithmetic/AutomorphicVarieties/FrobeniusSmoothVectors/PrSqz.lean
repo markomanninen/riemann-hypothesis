@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 theorem UpperTheory.V.Fr.pr_sqz :
-    ∀ (O : Type) [CommRing O] [IsLocalRing O], ∀ (C : Type) [CommRing C] [Algebra O C] [IsCO O C] (n : ℕ) (μ : ResidueField O →+ C), IsSq O μ → ∃ e : Matrix (Fin n) (Fin n) (ResidueField O) → GL (Fin n) C, (∀ X, (e X : Matrix (Fin n) (Fin n) C) = 1 + X.map μ) ∧ (∀ X Y, e (X + Y) = e X * e Y) ∧ (∀ X, (e X)⁻¹ = e (-X)) ∧ (∀ (A : Matrix (Fin n) (Fin n) C) (X : Matrix (Fin n) (Fin n) (ResidueField O)), A * X.map μ = (A.map (res O C) * X).map μ ∧ X.map μ * A = (X * A.map (res O C)).map μ) ∧ ∀ (x : GG n C) (X : Matrix (Fin n) (Fin n) (ResidueField O)), x * GG.ofGL (e X) = GG.ofGL (e ((GG.map (res O C : C →+* ResidueField O) x).adFun X)) * x := by
+    ∀ (O : Type) [CommRing O] [IsLocalRing O], ∀ (C : Type) [CommRing C] [Algebra O C] [IsCO O C] (n : ℕ) (μ : ResidueField O →+ C), IsSq O μ → ∃ e : Matrix (Fin n) (Fin n) (ResidueField O) → GL (Fin n) C, (∀ X, (e X : Matrix (Fin n) (Fin n) C) = 1 + X.map μ) ∧ (∀ X Y, e (X + Y) = e X * e Y) ∧ (∀ X, (e X)⁻¹ = e (-X)) ∧ (∀ (A : Matrix (Fin n) (Fin n) C) (X : Matrix (Fin n) (Fin n) (ResidueField O)), A * X.map μ = (A.map (res O C) * X).map μ ∧ X.map μ * A = (X * A.map (res O C)).map μ) ∧ ∀ (x : GG (m := n) (R := C)) (X : Matrix (Fin n) (Fin n) (ResidueField O)), x * GG.ofGL (e X) = GG.ofGL (e ((GG.map (res O C : C →+* ResidueField O) x).adFun X)) * x := by
   intro O _ _ C _ _ _ n μ hμ
   have hsq : ∀ c d, μ c * μ d = 0 := by
     intro c d
@@ -14,12 +18,14 @@ theorem UpperTheory.V.Fr.pr_sqz :
       A * X.map μ = (A.map (res O C) * X).map μ := by
     intro A X
     ext i j
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hμ.mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum, hμ.mul]
   have hR : ∀ (A : Matrix (Fin n) (Fin n) C) (X : Matrix (Fin n) (Fin n) (ResidueField O)),
       X.map μ * A = (X * A.map (res O C)).map μ := by
     intro A X
     ext i j
-    simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, Matrix.map_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [mul_comm (X i k), hμ.mul, mul_comm]
   have hsqM : ∀ X Y : Matrix (Fin n) (Fin n) (ResidueField O), X.map μ * Y.map μ = 0 := by
@@ -57,34 +63,34 @@ theorem UpperTheory.V.Fr.pr_sqz :
     rw [Units.val_mul, Units.val_mul, he, he, Matrix.mul_add, Matrix.add_mul, Matrix.mul_one,
       Matrix.one_mul, hL, hR, hh, Matrix.mul_assoc ((h : Matrix (Fin n) (Fin n) (ResidueField O)) * Y),
       Units.inv_mul, Matrix.mul_one]
-  have hJ : (Jmat C n).map (res O C) = Jmat (ResidueField O) n :=
+  have hJ : (Jmat (R := C) n).map (res O C) = Jmat (R := ResidueField O) n :=
     Jmat_map (res O C : C →+* ResidueField O) n
   have htheta : ∀ Y, theta (e Y) = e (thetaLie Y) := by
     intro Y
     apply Units.ext
     rw [theta_val, heinv, he, he, Matrix.transpose_add, Matrix.transpose_one, Matrix.mul_add,
       Matrix.add_mul, Matrix.mul_one, Jmat_mul_Jmat, ← Matrix.transpose_map, hL, hJ, hR, hJ]
-    rw [show thetaLie Y = Jmat (ResidueField O) n * (-Y)ᵀ * Jmat (ResidueField O) n by
+    rw [show thetaLie Y = Jmat (R := ResidueField O) n * (-Y)ᵀ * Jmat (R := ResidueField O) n by
       simp [thetaLie, Matrix.transpose_neg]]
   refine ⟨e, he, hemul, heinv, fun A X => ⟨hL A X, hR A X⟩, ?_⟩
   intro x X
   obtain ⟨g, s⟩ := x
   have hh : (g : Matrix (Fin n) (Fin n) C).map (res O C) =
-      ((GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG n C)).left :
+      ((GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG (m := n) (R := C))).left :
         Matrix (Fin n) (Fin n) (ResidueField O)) := rfl
-  have had : GG.adFun (GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG n C)) X =
-      ((GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG n C)).left :
+  have had : GG.adFun (GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG (m := n) (R := C))) X =
+      ((GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG (m := n) (R := C))).left :
         Matrix (Fin n) (Fin n) (ResidueField O)) *
         (if s = 1 then X else thetaLie X) *
-        (↑(GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG n C)).left⁻¹ :
+        (↑(GG.map (res O C : C →+* ResidueField O) (⟨g, s⟩ : GG (m := n) (R := C))).left⁻¹ :
           Matrix (Fin n) (Fin n) (ResidueField O)) := rfl
   rw [had]
   refine SemidirectProduct.ext ?_ ?_
   · simp only [GG.ofGL, SemidirectProduct.mul_left, SemidirectProduct.left_inl,
       SemidirectProduct.right_inl, map_one, MulAut.one_apply]
     rcases Int.units_eq_one_or s with rfl | rfl
-    · rw [sgnAct_one, if_pos rfl]
+    · rw [sgnAct_one, ite_eq_left rfl]
       exact hconj _ _ X hh
-    · rw [sgnAct_neg_one, if_neg (by decide), htheta]
+    · rw [sgnAct_neg_one, ite_eq_right (by decide), htheta]
       exact hconj _ _ _ hh
   · simp only [GG.ofGL, SemidirectProduct.mul_right, SemidirectProduct.right_inl, mul_one, one_mul]

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueEqAdicSumAtImageOfZeroPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumFConvOfCrossAny
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExhaustOfLabels
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TxFrameTranslate
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionValueEqAdicSumAtImageOfZeroPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumFConvOfCrossAny
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExhaustOfLabels
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TxFrameTranslate
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.DVR
@@ -119,7 +123,8 @@ theorem sumF_field : LL → FieldD fun {R} _ _ {I} D F _ _ => ∀ (K : Type) [Fi
     have e₁ := fun j => gs_loc₀ P (hv' j) _ p hp hJ'
     rw [gs_eq _ p _ hp] at e₀
     simp only [gs_eq _ p _ hp] at e₁
-    rw [loc₀_sub_sum, gs_eq _ p _ hp, map_sub, map_sub, map_sum, map_sum, e₀, Finset.sum_congr rfl fun j _ => e₁ j,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [loc₀_sub_sum, gs_eq _ p _ hp, map_sub, map_sub, map_sum, map_sum, e₀, Finset.sum_congr rfl fun j _ => e₁ j,
       ← Finset.mul_sum]
     exact sub_eq_zero.2 (congrArg _ h₃)
 
@@ -207,7 +212,8 @@ theorem prodConv_field : LL → FieldUF fun {R} _ _ {I} {D} {A} {G} _ _ U F _ _ 
   have hs : ∀ β, famProj D.toPre F k'' β (∑ p : Fin n × Fin n', (c p.1 * c' p.2) • famPull D.toPre (FractionRing R) F hG k'' (Φ p)) =
       ∑ p : Fin n × Fin n', (c p.1 * c' p.2 * (algebraMap (FractionRing R) F (algebraMap R (FractionRing R) (r p)))⁻¹) •
         termPull D.toPre (FractionRing R) F k'' β (genericTerm D k'' β ((y p).2 β)) := fun β => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [d₂, map_smulₛₗ, map_smulₛₗ, smul_smul, inv_mul_cancel_right₀ (hr' p)]; rfl
   have hE := expandsG_of_fintype U.toUnifPre F k'' v'' _ _ y hy (hv.trans (Finset.sum_congr (M := GroupSec U.toUnifPre F k'') rfl fun p _ => by
@@ -238,13 +244,14 @@ theorem qkToAkU_level_field : LL → FieldUF fun {R} _ _ {I} {D} {A} {G} _ _ U F
   have hN1 : 1 ≤ N := hN ▸ Nat.mul_pos hk hn
   have hf : (algebraMap F (AlgebraicClosure F)).comp (algebraMap (FractionRing R) F) = algebraMap _ _ :=
     (IsScalarTower.algebraMap_eq _ _ _).symm
-  have hp := (TorusExt.qkExt_iff D.tau_bimult _ hf p _).2 rfl
-  have hq := (TorusExt.qkExt_iff D.tau_bimult _ hf q _).2 rfl
+  obtain ⟨p', hp⟩ := qkExtExists R D.toPre F (AlgebraicClosure F) (algebraMap F _) (fun r => DFunLike.congr_fun hf r) k p
+  obtain ⟨q', hq⟩ := qkExtExists R D.toPre F (AlgebraicClosure F) (algebraMap F _) (fun r => DFunLike.congr_fun hf r) N q
   refine (TorsionExt.qkToAkU_iff_of_algebra hL.1.globalFns hL.1.kerPow U hN1 hq x).2 ?_
   refine DvrAnyChar.qkToAkU_level_any hL R I hI D A G hG U _ k n N hk hn hN
-    (TorusExt.qkExt D.tau_bimult _ hf p) _ _ hy ?_
-    ((TorsionExt.qkToAkU_iff_of_algebra hL.1.globalFns hL.1.kerPow U hk hp x).1 hx)
-  exact congrArg (TorusExt.gtExt D.toPre _ hf) hg
+    p' q' _ ?_ ?_ ((TorsionExt.qkToAkU_iff_of_algebra hL.1.globalFns hL.1.kerPow U hk hp x).1 hx)
+  · rw [hq.1, hp.1, hy]
+  · exact ((TorusExt.eq_gtExt_iff _ hf _ _).2 hq.2).trans
+      (((TorusExt.eq_gtExt_iff _ hf _ _).2 hp.2).trans (congrArg (TorusExt.gtExt D.toPre _ hf) hg).symm).symm
 
 theorem exists_sumI_smul {R : Type} [CommRing R] {I : Ideal R} [IsAdicComplete I R] {E Ix : Type} [AddCommGroup E]
     [Module R E] {x : Ix → E} {s : E} (h : SumI I x s) (a : Ix → R) : ∃ s', SumI I (fun i => a i • x i) s' := by

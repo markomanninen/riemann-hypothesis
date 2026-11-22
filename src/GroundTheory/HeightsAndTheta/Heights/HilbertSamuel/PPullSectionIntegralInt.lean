@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullSectionIntegralInt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegral
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullSectionIntegralInt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullSectionIntegral
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -16,7 +21,7 @@ theorem aeval_mem_of_forall {σ Ω : Type} [Field Ω] (V : Subring Ω) (y' : σ 
     (b : MvPolynomial σ ℤ) : aeval y' b ∈ V := by
   induction b using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add]; exact V.add_mem hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact V.add_mem hp hq
   | mul_X p i hp => rw [map_mul, aeval_X]; exact V.mul_mem hp (hy i)
 
 theorem proof : PullSectionIntegralInt.Statement := by
@@ -84,9 +89,8 @@ theorem proof : PullSectionIntegralInt.Statement := by
   have ha' : ∀ i, IsMultiHomog (a i) (fun k => w * e k) := by
     intro i
     convert ha i using 1
-    funext k
-    simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
-    rw [add_mul, one_mul, Nat.add_sub_cancel]
+    ext k
+    simp [Pi.smul_apply, smul_eq_mul, add_mul]
   have hg : aeval y (xpow c ((w + 1) • e)) = Mc ^ (w + 1) := by
     simp only [xpow, map_prod, map_pow, aeval_X, Mc, ← Finset.prod_pow]
     refine Finset.prod_congr rfl fun k _ => ?_

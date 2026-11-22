@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.TateCohomology.PullbackExtension
-import GroundTheory.TateCohomology.AugTrivial
-import GroundTheory.TateCohomology.DeltaMap
-import GroundTheory.TateCohomology.DimensionShift
-import GroundTheory.TateCohomology.TateConnecting
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.PullbackExtension
+public import GroundTheory.TateCohomology.AugTrivial
+public import GroundTheory.TateCohomology.DeltaMap
+public import GroundTheory.TateCohomology.DimensionShift
+public import GroundTheory.TateCohomology.TateConnecting
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory Limits groupCohomology Rep
@@ -39,12 +44,12 @@ noncomputable def splittingSES : ShortComplex (Rep.{u} k G) :=
   pullbackSES (coindSES.obj M) (cocycleHom (splittingCocycle M u))
 
 theorem splittingSES_shortExact : (splittingSES M u).ShortExact :=
-  pullbackSES_shortExact _ (coindSES_shortExact M)
+  pullbackSES_shortExact (cocycleHom (splittingCocycle M u)) (coindSES_shortExact M)
 
 noncomputable abbrev splittingModule : Rep.{u} k G := (splittingSES M u).X₂
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem map_H1π_augCocycle {H : Type u} [Group H] (φ : H →* G) {A : Rep.{u} k G}
     (f : cocycles₁ A) :
     map (A := res φ (augIdeal k G)) (B := res φ A) (MonoidHom.id H)

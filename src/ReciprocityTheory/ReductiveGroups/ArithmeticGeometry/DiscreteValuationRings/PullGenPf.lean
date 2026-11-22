@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullbackValuationInvarianceOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullbackValuationInvarianceOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,14 +45,43 @@ theorem ros_right_one (hG : GlobalFnsSt) {f g : D.P.A ⟶ D.P.A} [IsMonHom f] [I
     (n : LB.Gen.Corr D.P.L _ _ _ _ (LB.pullGen D.P.L _ _ u (zero2 D.P.A)) (LB.oneGen D.P.L)) {T : Over (Sp R)} {z : T.left}
     {J} (hJ : Good D.P.L z J) (p q : D.P.A ⟶ D.P.A) (hq : (1 : T ⟶ D.P.A) ≫ q = 1) :
     val (LB.pullGen D.P.L _ _ u (lift p q).left) (1 : T ⟶ D.P.A).left z J = 1 := by
-  have C : IsCub (cubV D.cub z J) := isCub_cubV D.cub hJ
+  have C : IsCub (cubV D.cub z J) := by
+    refine {
+      face x y := by
+        have := val_corr hJ (D.cub.face 0) (lift x y).left
+        rw [val_one] at this
+        refine Eq.trans ?_ this
+        refine Eq.trans ?_ (val_cub D.cub (lift x y) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      s01 x y w := by
+        have := (val_corr hJ D.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+        refine Eq.trans this ?_
+        congr 1 <;> simp [x3]
+      s12 x y w := by
+        have := (val_corr hJ D.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+        refine Eq.trans this ?_
+        congr 1 <;> simp [x3]
+      coc x x' x'' y := by
+        have := val_corr hJ D.cub.cocycle (lift x (lift x' (lift x'' y))).left
+        have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))).symm.trans
+          (this.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))))
+        have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 0 = x := by simp [x4]
+        have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 1 = x' := by simp [x4]
+        have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 2 = x'' := by simp [x4]
+        have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 3 = y := by simp [x4]
+        have b₀ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 0) (x4 D.P.A 1) = x * x' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+        have b₁ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 1) (x4 D.P.A 2) = x' * x'' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+        rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
+    }
   have e := (ros_add D.cub hG D.P.isAb _ _ u hu n hJ 1 1 (1 ≫ p)).2
   rw [_root_.mul_one, MonObj.one_comp g, C.face₃, C.face₃, _root_.mul_one, _root_.one_mul] at e
   rw [val_pull hJ, ← Over.comp_left, comp_lift, hq]
   exact mul_eq_left.1 e.symm
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_sq (hG : GlobalFnsSt) (oa : D.OAct O) (w0 : O) (hw : TraceFormTwistIso D oa w0) (a : O) (N : ℕ)
     (haa : star a * a = ((N + 1 : ℕ) : O)) :
     ∃ s : LB.Gen (LB.LinComb D.P.L (K := Fin 3) ![(𝟙 D.P.A : D.P.A ⟶ D.P.A).left, (oa.onB.act a).left,
@@ -99,7 +132,36 @@ theorem exists_sq (hG : GlobalFnsSt) (oa : D.OAct O) (w0 : O) (hw : TraceFormTwi
       (powGen_isGen _ _ _ _ (pullGen_isGen _ _ _ _ hu₀ _) _))) (mulGen_isGen _ _ _ _ _ _ _
       (invGen_isGen _ _ _ _ (pullGen_isGen _ _ _ _ hu₂ _)) (invGen_isGen _ _ _ _ ht)))
   refine ⟨s, hs, fun T z J hJ => ?_⟩
-  have C : IsCub (cubV D.cub z J) := isCub_cubV D.cub hJ
+  have C : IsCub (cubV D.cub z J) := by
+    refine {
+      face x y := by
+        have := val_corr hJ (D.cub.face 0) (lift x y).left
+        rw [val_one] at this
+        refine Eq.trans ?_ this
+        refine Eq.trans ?_ (val_cub D.cub (lift x y) hJ (pzero D.P.A _) (x2 D.P.A 0) (x2 D.P.A 1)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      s01 x y w := by
+        have := (val_corr hJ D.cub.cubeSymmetric_swap_first (lift x (lift y w)).left).trans (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+        refine Eq.trans this ?_
+        congr 1 <;> simp [x3]
+      s12 x y w := by
+        have := (val_corr hJ D.cub.cubeSymmetric_swap_last (lift x (lift y w)).left).trans (val_cub D.cub (lift x (lift y w)) hJ _ _ _)
+        refine Eq.trans this ?_
+        congr 1 <;> simp [x3]
+      coc x x' x'' y := by
+        have := val_corr hJ D.cub.cocycle (lift x (lift x' (lift x'' y))).left
+        have e := ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))).symm.trans
+          (this.trans ((val_mul hJ _ _ _).trans (congrArg₂ (· * ·) (val_cub D.cub _ hJ _ _ _) (val_cub D.cub _ hJ _ _ _))))
+        have a₀ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 0 = x := by simp [x4]
+        have a₁ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 1 = x' := by simp [x4]
+        have a₂ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 2 = x'' := by simp [x4]
+        have a₃ : lift x (lift x' (lift x'' y)) ≫ x4 D.P.A 3 = y := by simp [x4]
+        have b₀ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 0) (x4 D.P.A 1) = x * x' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₀, a₁])
+        have b₁ : lift x (lift x' (lift x'' y)) ≫ padd D.P.A (x4 D.P.A 1) (x4 D.P.A 2) = x' * x'' :=
+          (MonObj.comp_mul _ _ _).trans (by rw [a₁, a₂])
+        rwa [b₀, b₁, a₀, a₁, a₂, a₃] at e
+    }
   have w₀ : val u₀ (1 : T ⟶ D.P.A).left z J = 1 :=
     (val_pull hJ u₀ (eSec D.P.A) T.hom).symm.trans ((val_corr hJ n₀ _).trans (val_one _))
   have g₁ : (1 : T ⟶ D.P.A).left ≫ g.left = (1 : T ⟶ D.P.A).left :=
@@ -113,8 +175,8 @@ theorem exists_sq (hG : GlobalFnsSt) (oa : D.OAct O) (w0 : O) (hw : TraceFormTwi
   rw [vs _ _ z J hJ, val_mul hJ, val_mul hJ, val_mul hJ, val_inv, val_inv, val_inv, val_pow, b₁, b₂, b₃, b₄]
   simp
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_pullGenB (hG : GlobalFnsSt) (oa : D.OAct O) (w0 : O) (hw : TraceFormTwistIso D oa w0) (a : O) (N : ℕ) (hN : 1 ≤ N)
     (haa : star a * a = (N : O)) (k : ℕ) (χ : D.X) :
     ∃ e : LB.Gen (LB.LinComb D.P.L (K := Fin 8) ![D.famφB (star a • χ) 0, D.famφB (star a • χ) 1, D.famφB (star a • χ) 2,
@@ -235,7 +297,7 @@ theorem pullback_generator_of_psi_weight (hG : GlobalFnsSt) {V : Type} [CommRing
     rw [Category.id_comp] at h1
     have hg : gs (𝟙 _) y ⊤ (gF D.toPre F (1 : F)) = 1 := by
       unfold gs
-      rw [dif_pos (by simp)]
+      rw [dite_eq_left (by simp)]
       simp only [map_one]
     rw [h1, hg, _root_.one_mul]
 

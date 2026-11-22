@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSliceB
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.KernelDerivativeFarZero
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSliceB
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.KernelDerivativeFarZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,7 +90,7 @@ theorem continuous_StB (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ :
   haveI : FirstCountableTopology (G b × RB E a b v) := inferInstance
   haveI : LocallyCompactSpace (G b × RB E a b v) := inferInstance
   unfold StB
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   obtain ⟨hc, hcs⟩ := cB_props v hka hkb hψ i j
   have e : (fun z : G b => ∫ r, cB v ka kb ψ i j r • RvB v μa μb ν ka kb ψ f j (p * ιB v z * σB v r) ∂restB μa μb ν v) =
       fun z => ∫ r in tsupport (cB v ka kb ψ i j),
@@ -100,9 +104,9 @@ theorem continuous_StB (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ :
     (φ := fun q : G b × RB E a b v => p * ιB v q.1 * σB v q.2)
     ((continuous_const.mul ((continuous_ιB v).comp continuous_fst)).mul ((continuous_σB v).comp continuous_snd)))
 
+
 set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem RvB_eq (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb ν) (v : InfinitePlace E) (ka : Kers Ma)
     (kb : Kers Mb) (ψ : Matrix κ κ (Hf E a b → ℂ)) (f : Io Ma Mb κ → H E a b → ℂ) (hT : IsTestM (tens ka kb ψ))
     (hf : ∀ i, Continuous (f i))
@@ -169,13 +173,14 @@ theorem RvB_eq (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb ν) (v : 
       c⁻¹ * ⟪ebB Mb v q, ∫ t, K t (StB v μa μb ν ka kb ψ f i q0 (p * ιB v t)) ∂μb⟫_ℂ := by
     intro q
     simp only [hI]
-    rw [← Finset.mul_sum, ← integral_finset_sum _ fun j _ => (hgi j).integral_prod_right]
+    rw [← Finset.mul_sum, ← integral_finsetSum _ fun j _ => (hgi j).integral_prod_right]
     congr 1
     rw [← integral_inner hWi]
     refine integral_congr_ae (ae_of_all _ fun t => ?_)
     beta_reduce
     rw [StB_indep v ka kb ψ f i q0 q]
-    simp only [StB, map_sum, inner_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [StB, map_sum, inner_sum]
     refine Finset.sum_congr rfl fun j hj => ?_
     have hjq : j.1.2 v = q := (Finset.mem_filter.1 hj).2
     obtain ⟨hc1, hcs1⟩ := cB_props v hka hkb hψ i j

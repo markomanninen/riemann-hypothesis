@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.SignatureConjugationInvariant
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ theorem hT_expand' (S : Formalism.BasicNotions.HSpace E) (x y : S.V) :
   have hx := S.frame.sum_repr x
   have hy := S.frame.sum_repr y
   conv_lhs => rw [← hx, ← hy]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, Finset.mul_sum, Formalism.BasicNotions.HSpace.gram]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
@@ -25,9 +30,11 @@ theorem hT_expand' (S : Formalism.BasicNotions.HSpace E) (x y : S.V) :
 theorem hT_map (S : Formalism.BasicNotions.HSpace E) (τ : E →+* ℂ) (hτ : ∀ a, τ (star a) = starRingEnd ℂ (τ a))
     (x y : S.V) :
     τ (S.hT x y) = ∑ a, ∑ b, star (τ (S.frame.repr x a)) * (S.gram.map τ) a b * τ (S.frame.repr y b) := by
-  rw [hT_expand', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hT_expand', map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [map_mul, map_mul, hτ, Matrix.map_apply, starRingEnd_apply]
 

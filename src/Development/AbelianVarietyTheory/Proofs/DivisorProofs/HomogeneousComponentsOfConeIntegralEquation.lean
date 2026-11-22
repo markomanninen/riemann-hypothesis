@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -32,7 +37,7 @@ theorem coeff_eval₂_C_mul_X {F K : Type} [Field F] [Field K] (φ : F →+* K) 
     · have h' : d ≠ Finsupp.degree u := fun e => h e.symm
       simp [h, h']
   | add p q hp hq =>
-    simp only [eval₂_add, Polynomial.coeff_add, map_add, hp, hq]
+    simp only [eval₂_add, Polynomial.coeff_add, map_add (f := _), hp, hq]
 
 theorem homogeneous_components_of_integral_equation (F K : Type) [Field F] [Field K] (φ : F →+* K)
     (r e m : ℕ) (w : Fin r → K) (τ : K) (b : Fin m → MvPolynomial (Fin r) F)

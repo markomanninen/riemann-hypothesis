@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZeroCocycleSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsZeroCocycleSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -106,13 +111,13 @@ variable {Ω : Type} [Field Ω] {y : (Σ k, ι k) → Ω}
 theorem map_int (f : MRing ι) : MvPolynomial.map (Int.castRingHom ℤ) f = f := by
   rw [show Int.castRingHom ℤ = RingHom.id ℤ from RingHom.ext_int _ _, MvPolynomial.map_id]
 
-variable (y) in
 
+variable (y) in
 theorem aeval_eq_eval_mConeMap (f : MRing ι) :
     aeval y f = MvPolynomial.eval (fun _ : K => (1 : Ω)) (mConeMap y f) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [mConeMap]
-  | add p q hp hq => rw [map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p n hp => rw [map_mul, map_mul, map_mul, hp]; simp [mConeMap]
 
 theorem aeval_eq_zero_of_mem {f : MRing ι} (hf : f ∈ idealOver y ℤ) : aeval y f = 0 := by
@@ -131,12 +136,13 @@ theorem cellMon_aeval_ne {I : ∀ k, Finset (ι k)} (hI : ∀ k, ∀ i ∈ I k, 
   | one => simp
   | mul x x' _ _ hx hx' => rw [map_mul]; exact mul_ne_zero hx hx'
 
-variable (y) in
 
+variable (y) in
 theorem aeval_div_mem (c : ∀ k, ι k) {g : MRing ι} {d : K → ℕ} (hg : IsMultiHomog g d) :
     aeval y g / ∏ k, y ⟨k, c k⟩ ^ d k ∈ chartRingZ y c := by
   classical
-  rw [g.as_sum, map_sum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [g.as_sum, map_sum, Finset.sum_div]
   refine Subalgebra.sum_mem _ fun m hm => ?_
   rw [aeval_monomial, mul_div_assoc]
   refine Subalgebra.mul_mem _ (Subalgebra.algebraMap_mem _ _) ?_
@@ -312,7 +318,7 @@ theorem res_faces {M : Type} [AddCommGroup M] [Module (MRing ι) M] (z : KH.Cech
     simp only [LinearMap.sum_apply]
     rw [Finset.sum_eq_single k0]
     · rw [Finset.sum_eq_add_of_mem i1 i2 hi1 hi2 (ne_of_lt hlt)]
-      · rw [dif_pos (hface i1 hi1), dif_pos (hface i2 hi2)]
+      · rw [dite_eq_left (hface i1 hi1), dite_eq_left (hface i2 hi2)]
         rfl
       · intro i hi hne'
         rw [hI] at hi
@@ -463,8 +469,8 @@ end Cocycle
 
 end ZeroCocycleSection
 
-open ZeroCocycleSection GenOnFibres in
 
+open ZeroCocycleSection GenOnFibres in
 theorem ZeroCocycleSection.proof : ZeroCocycleSection.Statement := by
   intro K _ _ ι _ _ Ω _ y a v hv
   classical

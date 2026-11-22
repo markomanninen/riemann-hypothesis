@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.Katz
@@ -39,7 +44,7 @@ private theorem prod_sub_prod_divisible_lemma_2 {σ τ : Type} (c : _root_.Globa
     obtain ⟨Y2, hY2⟩ := h i (Finset.mem_insert_self i S)
     refine ⟨U i ^ e i * Y1 + Y2 * ∏ j ∈ S, V j ^ e j, ?_⟩
     rw [Finset.prod_insert hi, Finset.prod_insert hi]
-    simp only [Algebra.smul_def, map_sub, map_mul, map_add, map_pow, map_prod] at hY1 hY2 ⊢
+    simp only [Algebra.smul_def, map_sub, map_mul, map_add (f := _), map_pow, map_prod] at hY1 hY2 ⊢
     linear_combination
       (MvPowerSeries.map (algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k)) (U i)) ^ e i * hY1 +
       (∏ j ∈ S, (MvPowerSeries.map (algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k)) (V j)) ^ e j) * hY2
@@ -108,7 +113,8 @@ private theorem map_add_p_mul_pow_sub_pow_eq_p_smul {τ : Type} (c : _root_.Glob
       ((V + (p : MvPowerSeries τ (WittVector p k)) * H) ^ n - V ^ n) =
         algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k) p •
           MvPowerSeries.map (algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k)) Y := by
-  rw [add_pow, Finset.sum_range_succ, Nat.sub_self, pow_zero, Nat.choose_self, Nat.cast_one, mul_one,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [add_pow, Finset.sum_range_succ, Nat.sub_self, pow_zero, Nat.choose_self, Nat.cast_one, mul_one,
     mul_one, add_sub_cancel_right, map_sum, Finset.smul_sum]
   have key : ∀ j ∈ Finset.range n, ∃ Y, c • MvPowerSeries.map (algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k))
       (V ^ j * ((p : MvPowerSeries τ (WittVector p k)) * H) ^ (n - j) * (n.choose j : MvPowerSeries τ (WittVector p k))) =
@@ -140,12 +146,12 @@ private theorem map_add_p_mul_pow_sub_pow_eq_p_smul {τ : Type} (c : _root_.Glob
     | insert j S hj ih =>
       obtain ⟨Y1, hY1⟩ := ih fun i hi => hS i (Finset.mem_insert_of_mem hi)
       obtain ⟨Y2, hY2⟩ := hS j (Finset.mem_insert_self j S)
-      exact ⟨Y2 + Y1, by rw [Finset.sum_insert hj, hY1, hY2, map_add, smul_add]⟩
+      exact ⟨Y2 + Y1, by rw [Finset.sum_insert hj, hY1, hY2, map_add (f := _), smul_add]⟩
   exact hsum _ key
+
 
 open CategoryTheory TensorProduct MvPowerSeries in
 variable {p : ℕ} [Fact p.Prime] {k : Type} [Field k] [CharP k p] [PerfectRing k p] in
-
 theorem _root_.GlobalTheory.Katz.subst_sub_subst_mem_intBy : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [PerfectRing k p] (σ τ : Type) [Finite σ] (u v : σ → MvPowerSeries (τ) (_root_.GlobalTheory.Katz.Fr p k)) (w : σ → MvPowerSeries τ k) (f : MvPowerSeries (σ) (_root_.GlobalTheory.Katz.Fr p k)), (∀ i, constantCoeff (u i) = 0) → (∀ i, constantCoeff (v i) = 0) → (∀ i, _root_.GlobalTheory.Katz.Red p (u i) (w i)) → (∀ i, _root_.GlobalTheory.Katz.Red p (v i) (w i)) → f ∈ _root_.GlobalTheory.Katz.quasiInt p k σ → subst u f - subst v f ∈ _root_.GlobalTheory.Katz.intBy p k τ p := by
   intro p _ k _ _ _ σ τ _ u v w f hu0 hv0 hu hv hf
   classical
@@ -160,7 +166,7 @@ theorem _root_.GlobalTheory.Katz.subst_sub_subst_mem_intBy : ∀ (p : ℕ) [Fact
     intro i; refine MvPowerSeries.ext fun β => ?_
     have e : (p : MvPowerSeries τ (WittVector p k)) * Hs i = (p : WittVector p k) • Hs i := by
       rw [Algebra.smul_def, map_natCast]
-    rw [e, map_add, map_smul, smul_eq_mul]
+    rw [e, map_add (f := _), map_smul, smul_eq_mul]
     show a i β = b i β + p * hh i β
     rw [← hhh]; ring
   have huM : u = fun i => MvPowerSeries.map (algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k)) (U i) := by
@@ -177,7 +183,7 @@ theorem _root_.GlobalTheory.Katz.subst_sub_subst_mem_intBy : ∀ (p : ℕ) [Fact
     ← finsum_sub_distrib (MvPowerSeries.coeff_subst_finite hsu f β)
       (MvPowerSeries.coeff_subst_finite hsv f β)]
   refine finsum_induction (fun x => ∃ w, x = algebraMap (WittVector p k) (_root_.GlobalTheory.Katz.Fr p k) (p * w))
-    ⟨0, by simp⟩ (fun x y ⟨w1, h1⟩ ⟨w2, h2⟩ => ⟨w1 + w2, by rw [h1, h2, mul_add, map_add]⟩) fun α => ?_
+    ⟨0, by simp⟩ (fun x y ⟨w1, h1⟩ ⟨w2, h2⟩ => ⟨w1 + w2, by rw [h1, h2, mul_add, map_add (f := _)]⟩) fun α => ?_
   obtain ⟨Y, hY⟩ := prod_sub_prod_divisible_lemma_2 (MvPowerSeries.coeff α f) U V α α.support fun i _ => by
     obtain ⟨mi, hmi⟩ := hf' α i
     rw [hUV i]

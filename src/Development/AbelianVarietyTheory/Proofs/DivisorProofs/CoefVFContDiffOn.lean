@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+
+@[expose] public section
+
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory
 open scoped ContDiff BoundedContinuousFunction
 
@@ -14,7 +19,8 @@ theorem dw_contDiffOn {U : Set (E d)} (hU : IsOpen U) {u : E d → ℂ} (hu : Co
     ∀ w : List (Fin d), ContDiffOn ℝ ∞ (dw w u) U
   | [] => hu
   | j :: w => by
-    have h := ((contDiffOn_infty_iff_fderiv_of_isOpen hU).1 (dw_contDiffOn hU hu w)).2
+    have h : ContDiffOn ℝ ∞ (fderiv ℝ (dw w u)) U :=
+      ((contDiffOn_infty_iff_fderiv_of_isOpen (𝕜 := ℝ) hU).mp (dw_contDiffOn hU hu w)).2
     exact h.clm_apply contDiffOn_const
 
 theorem diffAt_of {U : Set (E d)} (hU : IsOpen U) {f : E d → ℂ} (hf : ContDiffOn ℝ ∞ f U)

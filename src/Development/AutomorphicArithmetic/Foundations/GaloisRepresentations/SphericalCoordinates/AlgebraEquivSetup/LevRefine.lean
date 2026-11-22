@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.ApartOfNotMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.TypeSlice
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ def RelOf : Prop := ∀ (X M J : Type) [Group X] [Group M] (T : TyLev X M) (ψ :
   Spc.Rel (conv T.K₀) ψ (T.tf 1) (T.tf hu) u'
 
 def SphComm : Prop := ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (w : Plc E) (t t' : GL (Fin n) (w.adicCompletion E)),
-  conv (KGL w n) (dosetInd ℂ (KGL w n) t) (dosetInd ℂ (KGL w n) t') = conv (KGL w n) (dosetInd ℂ (KGL w n) t') (dosetInd ℂ (KGL w n) t)
+  conv (KGL w (n := n)) (dosetInd ℂ (KGL w (n := n)) t) (dosetInd ℂ (KGL w (n := n)) t') = conv (KGL w (n := n)) (dosetInd ℂ (KGL w (n := n)) t') (dosetInd ℂ (KGL w (n := n)) t)
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {A : Arith E} {n p : ℕ} [Fact p.Prime] {S : Setup A n p}
 
@@ -64,17 +68,11 @@ def AtApart : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A 
 def LevFact : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
   (T : Tr S) (hc : LocComm) (S₀ : Finset (Plc E)) (Kw : ∀ w : Plc E, Subgroup (GL (Fin n) (w.adicCompletion E)))
   (w : Plc E) (hw : IsSplitAt w) (hp : (p : 𝓞 E) ∉ w.asIdeal), CertificateRingHomMap.cj w ∉ S₀ →
-  (w ∈ S₀ → (T.at hc w hw hp).Fact (T.lv (lev S₀ Kw)) (Kw w)) ∧ (w ∉ S₀ → (T.at hc w hw hp).Fact (T.lv (lev S₀ Kw)) (KGL w n))
+  (w ∈ S₀ → (T.at hc w hw hp).Fact (T.lv (lev S₀ Kw)) (Kw w)) ∧ (w ∉ S₀ → (T.at hc w hw hp).Fact (T.lv (lev S₀ Kw)) (KGL w (n := n)))
 
 def IntConj : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (g : GUf E n) (w : Plc E), 0 < n →
-  (sim g ∈ ZU → comp w g ∈ KGL w n → comp (CertificateRingHomMap.cj w) g ∈ KGL (CertificateRingHomMap.cj w) n) ∧
-  ((∀ u, comp u g ∈ KGL u n) → sim g ∈ ZU) ∧ {u : Plc E | comp u g ∉ KGL u n}.Finite
-
-def LevRefine : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), 0 < n → ∀ (S₀ U : Finset (Plc E))
-  (Kw Kw' : ∀ w : Plc E, Subgroup (GL (Fin n) (w.adicCompletion E))), (∀ u ∈ U, u ∉ S₀ ∧ CertificateRingHomMap.cj u ∉ S₀) → (∀ w ∈ S₀, Kw' w = Kw w) →
-  (∀ u ∈ U, Kw' u ≤ KGL u n ∧ IsOpen (Kw' u : Set (GL (Fin n) (u.adicCompletion E)))) →
-  IsOpen (lev S₀ Kw : Set (GUf E n)) → IsCompact (lev S₀ Kw : Set (GUf E n)) →
-  lev (S₀ ∪ U) Kw' ≤ lev S₀ Kw ∧ IsOpen (lev (S₀ ∪ U) Kw' : Set (GUf E n)) ∧ IsCompact (lev (S₀ ∪ U) Kw' : Set (GUf E n))
+  (sim g ∈ ZU → comp w g ∈ KGL w (n := n) → comp (CertificateRingHomMap.cj w) g ∈ KGL (CertificateRingHomMap.cj w) (n := n)) ∧
+  ((∀ u, comp u g ∈ KGL u (n := n)) → sim g ∈ ZU) ∧ {u : Plc E | comp u g ∉ KGL u (n := n)}.Finite
 
 def KNOpen : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
   (T : Tr S) (N : ℕ), 0 < N → IsOpen (((S.L.KN N).comap T.j : Subgroup (GUf E n)) : Set (GUf E n))
@@ -83,9 +81,6 @@ def KNIdx : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : 
   (T : Tr S) (N : ℕ), 0 < N → IsCommensurated (S.L.KN N) ∧ ∀ K : Subgroup (GUf E n), IsCompact (K : Set (GUf E n)) →
     IsOpen (K : Set (GUf E n)) → (S.L.KN N).relIndex (T.lv K) ≠ 0
 
-def KNBasis : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
-  (T : Tr S) (O : Subgroup (GUf E n)), IsOpen (O : Set (GUf E n)) → ∃ N : ℕ, 0 < N ∧ N.Coprime p ∧ S.L.KN N ≤ T.lv O
-
 def PPart : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
   (T : Tr S) (g : GUf E n), ∃ k : GUf E n, g = T.sec (T.j g) * k ∧ (∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → comp w k = 1) ∧
     (∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w k = comp w g) ∧ ∀ h, T.sec h * k = k * T.sec h
@@ -93,9 +88,9 @@ def PPart : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : 
 def HasEigOf : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (A : Arith E) (n p : ℕ) [Fact p.Prime] (S : Setup A n p)
   (T : Tr S) (V : Type) [AddCommGroup V] [Module ℂ V] (ξ : Representation ℂ (GL (Fin n) E × ℚˣ) V) (Φ : GUf E n → V),
   (∀ (γ : Gam0 E n) g, Φ (rat γ * g) = ξ γ (Φ g)) →
-  (∀ k : GUf E n, (∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → comp w k = 1) → (∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w k ∈ KGL w n) →
+  (∀ k : GUf E n, (∀ w : Plc E, (p : 𝓞 E) ∉ w.asIdeal → comp w k = 1) → (∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w k ∈ KGL w (n := n)) →
     ∀ g, Φ (g * k) = Φ g) →
-  (∃ g₀, Φ g₀ ≠ 0 ∧ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g₀ ∈ KGL w n) →
+  (∃ g₀, Φ g₀ ≠ 0 ∧ ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g₀ ∈ KGL w (n := n)) →
   ∀ K₀ : Subgroup S.G.GAf, IsCommensurated K₀ → (∀ k ∈ K₀, ∀ h, Φ (T.sec (h * k)) = Φ (T.sec h)) →
   ∀ (J : Type) (ψ : J → S.G.GAf → ℂ) (θ : J → ℂ) (e : S.G.GAf → ℂ), (∀ j, ψ j ∈ Hecke ℂ K₀) → e ∈ Hecke ℂ K₀ →
     hAct K₀ e (fun h => Φ (T.sec h)) = (fun h => Φ (T.sec h)) →

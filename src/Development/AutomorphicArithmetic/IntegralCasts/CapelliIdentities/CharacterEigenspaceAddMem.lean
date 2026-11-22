@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Classical
 
@@ -9,7 +13,7 @@ theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux1 :
         b ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
           ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (a + b) = (↑((χ : ↥H → kˣ) h) : k) • (a + b) := by
   intro k G V _ _ _ _ ρ H χ a b ha hb h
-  rw [map_add, ha h, hb h, smul_add]
+  rw [map_add (f := _), ha h, hb h, smul_add]
 
 theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.aux2 :
     ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
@@ -288,7 +292,7 @@ theorem UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.trc_eq :
     push_cast
     field_simp
   unfold UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.twTr
-  rw [dif_pos h2, dif_pos h3, ← UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.trace_le hle _ h1]
+  rw [dite_eq_left h2, dite_eq_left h3, ← UpperTheory.Reformulated.B.trace_eq_twisted_trace_of_fixed.trace_le hle _ h1]
   congr 1
   ext v
   exact (h4 v v.2).symm

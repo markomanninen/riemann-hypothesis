@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormPrimeIffInertiaDegEqOneAndFiniteRamified
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormPrimeIffInertiaDegEqOneAndFiniteRamified
+
+@[expose] public section
 
 noncomputable section
 

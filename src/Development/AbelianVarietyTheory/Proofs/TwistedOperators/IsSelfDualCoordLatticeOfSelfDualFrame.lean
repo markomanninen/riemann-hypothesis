@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx GlobalTheory.Chain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -83,32 +87,6 @@ theorem isSelfDualC_of_isSDFrame : ∀ (D : D7) (V : HSp D) (β : GL (Fin V.rank
       rintro _ ⟨x, hx, rfl⟩
       rw [LinearMap.comp_apply, hs]
       exact hout' x hx
-    have h1 : ∀ x, f x ∈ V.L0 → x ∈ Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) := by
-      intro x hx
-      have hx' : x ∈ Formalism.MainNotions.StandardLattice.L0c D V := by
-        show ∑ i, x i • V.frame i ∈ V.L0
-        rw [← hf]
-        exact hx
-      have hxΛ := hin x hx'
-      rw [Nat.cast_smul_eq_nsmul] at hxΛ
-      have ex : x = (M : D.host.E)⁻¹ • (M • x) := by
-        rw [← Nat.cast_smul_eq_nsmul D.host.E, smul_smul, inv_mul_cancel₀ hME, one_smul]
-      rw [ex]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span hxΛ)
-    have h2 : Submodule.span D.host.E (V.frame.equivFun '' (V.L0 : Set V.V)) ≤
-        Submodule.span D.host.E (Λ : Set (Fin V.rank → D.host.E)) := by
-      rw [Submodule.span_le]
-      rintro _ ⟨w, hw, rfl⟩
-      apply h1
-      show V.frame.equivFun.symm (V.frame.equivFun w) ∈ V.L0
-      rw [LinearEquiv.symm_apply_apply]
-      exact hw
-    have h3 : Submodule.span D.host.E (V.frame.equivFun '' (V.L0 : Set V.V)) = ⊤ := by
-      have hm := Submodule.map_span (V.frame.equivFun : V.V →ₗ[D.host.E] (Fin V.rank → D.host.E)) (V.L0 : Set V.V)
-      rw [hL.span_eq_top, Submodule.map_top, LinearEquiv.range, LinearEquiv.coe_coe] at hm
-      exact hm.symm
-    refine ⟨hfg, ?_⟩
-    rw [eq_top_iff, ← h3]
-    exact h2
+    exact Submodule.IsLattice.of_fg D.host.E hfg
 
 end GlobalTheory.SDFrameLattice

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.IsMultiHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,8 @@ def SubstPol : Prop :=
 theorem deg_map {τ : Type} (mo : MonomialOrder τ) {R S : Type} [CommRing R] [CommRing S] [Nontrivial S] (f : R →+* S)
     (P : MvPolynomial τ R) (h : mo.leadingCoeff P = 1) :
     mo.degree (map f P) = mo.degree P ∧ mo.leadingCoeff (map f P) = 1 := by
-  have hP : MvPolynomial.coeff (mo.degree P) P = 1 := h
-  have h1 : MvPolynomial.coeff (mo.degree P) (map f P) = 1 := by
+  have hP : AddMonoidAlgebra.coeff P (mo.degree P) = 1 := h
+  have h1 : AddMonoidAlgebra.coeff (map f P) (mo.degree P) = 1 := by
     rw [MvPolynomial.coeff_map, hP, map_one]
   have hd : mo.degree (map f P) = mo.degree P := by
     apply mo.toSyn.injective

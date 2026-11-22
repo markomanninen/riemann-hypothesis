@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastVCastV
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AsmCastVCastV
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ContDiff

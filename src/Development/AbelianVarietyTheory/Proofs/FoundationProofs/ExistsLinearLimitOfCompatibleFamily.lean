@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.PAdicHodge.AxLemma
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.AxLemma
+
+@[expose] public section
 
 open Filter Topology
 

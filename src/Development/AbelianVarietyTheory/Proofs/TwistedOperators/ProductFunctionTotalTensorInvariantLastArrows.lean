@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacRowScalar
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfFunctionProductSumsEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCColumnLatticeOfOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RowShiftEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColPtInvMemStdLatIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GivenLevelInner
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColShiftVacEqSmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacRowScalar
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ActOMemLatOOfHat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExpansionSumProdLastVertexMovedEqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultilinearSumEqOfFunctionProductSumsEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualCColumnLatticeOfOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdempotentMulEqZeroOfOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilActionSchrodingerModelFiniteIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,8 @@ open GlobalTheory.LastVertexMove
 
 def prodForm {ι κ : Type} [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ] {X : ι → Type} {Y : κ → Type}
     (A : ∀ i, (X i → ℂ) →ₗ[ℂ] (X i → ℂ)) (B : ∀ j, (Y j → ℂ) →ₗ[ℂ] (Y j → ℂ)) (x : ∀ i, X i) (y : ∀ j, Y j) :
-    MultilinearMap ℂ (fun i => (⊤ : Submodule ℂ (X i → ℂ))) (MultilinearMap ℂ (fun j => (⊤ : Submodule ℂ (Y j → ℂ))) ℂ) :=
+    MultilinearMap (RingHom.id ℂ) (fun i => (⊤ : Submodule ℂ (X i → ℂ)))
+      (MultilinearMap (RingHom.id ℂ) (fun j => (⊤ : Submodule ℂ (Y j → ℂ))) ℂ) :=
   ((MultilinearMap.mkPiAlgebra ℂ ι ℂ).compLinearMap fun i =>
       (LinearMap.proj (R := ℂ) (φ := fun _ : X i => ℂ) (x i)) ∘ₗ A i ∘ₗ (⊤ : Submodule ℂ (X i → ℂ)).subtype).smulRight
     ((MultilinearMap.mkPiAlgebra ℂ κ ℂ).compLinearMap fun j =>

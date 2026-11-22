@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem dualSigma_apply {K V W : Type} [CommRing K] [AddCommGroup V] [Module K V
 
 variable {D : D7} {u : D.what₂.Word}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem dni_lk (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls 0)
     (g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E)
     (hL : mulLat g (clsCrd D u 0 (Nat.zero_le _) c) = clsCrd D u 0 (Nat.zero_le _) c')
@@ -86,8 +90,8 @@ theorem dniFun_prk (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls
   rw [← sub_eq_zero, ← map_sub, T.lv0.prk_ker]
   simpa [Matrix.mulVec_sub] using hg
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def dniLin (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls 0)
     (g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E)
     (hL : mulLat g (clsCrd D u 0 (Nat.zero_le _) c) = clsCrd D u 0 (Nat.zero_le _) c')
@@ -97,7 +101,7 @@ def dniLin (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls 0)
   map_add' w1 w2 := by
     obtain ⟨z1, rfl⟩ := T.lv0.prk_surj v c w1
     obtain ⟨z2, rfl⟩ := T.lv0.prk_surj v c w2
-    rw [← map_add, dniFun_prk, dniFun_prk, dniFun_prk, ← map_add]
+    rw [← map_add (f := _), dniFun_prk, dniFun_prk, dniFun_prk, ← map_add (f := _)]
     congr 1
     apply Subtype.ext
     show g *ᵥ (z1.1 + z2.1) = g *ᵥ z1.1 + g *ᵥ z2.1
@@ -132,8 +136,8 @@ theorem dni_inv_eq {E : Type} [Field E] [NumberField E] {n : ℕ} (g : GL (Fin n
   unfold mulLat
   rw [← Submodule.map_comp, hid, Submodule.map_id]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def dniEquiv (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls 0) (g : GL (Fin (D.R.N 0)) D.host.E)
     (hL : mulLat (g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c) =
       clsCrd D u 0 (Nat.zero_le _) c')
@@ -168,8 +172,8 @@ theorem dniEquiv_prk (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.c
       T.lv0.prk v c' ⟨(g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ z.1, dni_mem T v c c' _ hL hLd z.2⟩ :=
   dniLin_prk T v c c' _ hL hLd z
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem dniEquiv_te (T : Forms0 D u) (v : (D.mem u).A.vT) (c c' : (D.mem u).C.cls 0) (g : GL (Fin (D.R.N 0)) D.host.E)
     (hL : mulLat (g : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (clsCrd D u 0 (Nat.zero_le _) c) =
       clsCrd D u 0 (Nat.zero_le _) c')

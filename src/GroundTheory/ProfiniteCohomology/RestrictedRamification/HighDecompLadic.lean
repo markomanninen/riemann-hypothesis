@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighDecomp
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighProcyclic
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighDecomp
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighProcyclic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -50,45 +55,43 @@ theorem exists_localGaloisCohomology_order {ℓ : ℕ} (hℓ : ℓ.Prime) (w : H
   · refine dvd_of_nsmul_mk_one_div_eq_zero hN ?_
     rw [← ht, ← AddMonoidHom.map_nsmul, hm, AddMonoidHom.map_zero]
 
+
 set_option maxHeartbeats 8000000 in
 include hℓ hS in
-
 theorem exists_char_order_gsDecomp (b : ℕ) :
     ∃ χ : Additive Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1) →ₜ+ QZ,
       ℓ ^ b • χ = 0 ∧ (∀ m : ℕ, m • χ = 0 → ℓ ^ b ∣ m) ∧
         ∀ h, gsDecomp K S ιs v h = 1 → χ (Additive.ofMul h) = 0 := by
   obtain ⟨t, htk, htm⟩ := exists_localGaloisCohomology_order K hℓ v.1 b
   obtain ⟨x, hxk, hxt, -⟩ := exists_gsLocalRes_eq_single K S ℓ hℓ hS ιs v.1 v.2 t b htk
-  obtain ⟨x', hx'⟩ : ∃ x', cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2 x' = x :=
-    ⟨_, AddEquiv.apply_symm_apply _ x⟩
-  have hloc : gsLoc K S ιs v.1 x' = t := by
-    change (gsLocalRes S (ιs.fin v.1) 2).hom
-      ((cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2) x') = t
-    rw [hx']
-    exact hxt
-  refine ⟨gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1) (gsVal K S ιs v.1 v.2 x'), ?_, fun m hm => ?_, fun h hh =>
-    gvChar_decompHomS_eq_zero S (ιs.fin v.1) x' (ordEmbMor S (ιs.fin v.1) v.2) h hh⟩
-  · have hx'k : ℓ ^ b • x' = 0 := by
-      refine (cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2).injective ?_
-      refine ((cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2).toAddMonoidHom.map_nsmul
-        _ _).trans ?_
-      refine (congrArg (ℓ ^ b • ·) hx').trans ?_
-      exact hxk.trans (AddEquiv.map_zero _).symm
-    refine ((gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)).toAddMonoidHom.map_nsmul _ _).symm.trans ?_
-    refine (congrArg (gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)) ((AddMonoidHom.map_nsmul _ _ _).symm.trans
-      ((congrArg (gsVal K S ιs v.1 v.2) hx'k).trans (AddMonoidHom.map_zero _)))).trans ?_
-    exact AddEquiv.map_zero _
+  let lift := cohomologyULiftIntAddEquiv (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 2
+  let loc := (gsLocalRes S (ιs.fin v.1) 2).hom.toAddMonoidHom.comp lift.toAddMonoidHom
+  let val := (cohomologyMapAlong (decompHomS (v.1.adicCompletion K.1) S (ιs.fin v.1))
+    (continuous_decompHomS (Kv := v.1.adicCompletion K.1) S (ιs.fin v.1))
+    (ordEmbMor S (ιs.fin v.1) v.2) 2).hom.toAddMonoidHom
+  let equiv := gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)
+  let char := equiv.toAddMonoidHom.comp val
+  let x' := lift.symm x
+  have hloc : loc x' = t := by
+    change (gsLocalRes S (ιs.fin v.1) 2).hom (lift (lift.symm x)) = t
+    rw [lift.apply_symm_apply, hxt]
+  have hx'k : ℓ ^ b • x' = 0 := by
+    change ℓ ^ b • lift.symm x = 0
+    rw [← map_nsmul, hxk, map_zero]
+  refine ⟨char x', ?_, fun m hm => ?_, fun h hh => ?_⟩
+  · rw [← map_nsmul, hx'k, map_zero]
   · apply htm m
-    have h1 : gsVal K S ιs v.1 v.2 (m • x') = 0 := by
-      refine (gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)).injective ?_
-      refine (congrArg (gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)) (AddMonoidHom.map_nsmul _ _ _)).trans ?_
-      refine ((gvChar Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1)).toAddMonoidHom.map_nsmul _ _).trans ?_
-      exact hm.trans (AddEquiv.map_zero _).symm
-    have h2 := (gsLoc_eq_zero_iff K S ιs v.1 v.2 (m • x')).2 h1
-    exact ((congrArg (m • ·) hloc).symm.trans (AddMonoidHom.map_nsmul (gsLoc K S ιs v.1) m x').symm).trans h2
+    have hval : val (m • x') = 0 := by
+      apply equiv.injective
+      change char (m • x') = equiv 0
+      rw [map_nsmul, hm, map_zero]
+    have hloc_zero : loc (m • x') = 0 :=
+      (gsLocalRes_eq_zero_iff S (ιs.fin v.1) v.2 (m • x')).2 hval
+    rwa [map_nsmul, hloc] at hloc_zero
+  · exact gvChar_decompHomS_eq_zero S (ιs.fin v.1) x' (ordEmbMor S (ιs.fin v.1) v.2) h hh
+
 
 set_option maxHeartbeats 4000000 in
-
 theorem char_eq_proj_nsmul_of_gsDecomp {ℓ : ℕ} (hℓ : ℓ.Prime) (b : ℕ)
     (χ : Additive Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1) →ₜ+ QZ)
     (hχk : ℓ ^ b • χ = 0) (hB : ∀ h, gsDecomp K S ιs v h = 1 → χ (Additive.ofMul h) = 0)
@@ -120,8 +123,9 @@ theorem char_eq_proj_nsmul_of_gsDecomp {ℓ : ℕ} (hℓ : ℓ.Prime) (b : ℕ)
       exact (val_intCast_nsmul_eq_zsmul (n := ℓ ^ b) hc k).symm)
     (fun g hg h hh => by
       show χ (Additive.ofMul (g * h)) = _
-      rw [ofMul_mul, map_add, hB h (gsDecomp_eq_one_of_unramifiedDegree_eq_one K S ιs v h hh), add_zero,
-        map_mul, hh, mul_one]
+      have hh' : gsDecomp K S ιs v h = 1 :=
+        decompHomS_eq_one_of_unramifiedDegree_eq_one S (ιs.fin v.1) v.2 h hh
+      rw [ofMul_mul, map_add (f := _), hB h hh', add_zero, map_mul, hh, mul_one]
       exact hg)
   have hg : g ∈ {g | χ (Additive.ofMul g) = (ProfiniteInteger.proj ⟨ℓ ^ b, pow_pos hℓ.pos b⟩
       (Multiplicative.toAdd (unramifiedDegree
@@ -130,9 +134,9 @@ theorem char_eq_proj_nsmul_of_gsDecomp {ℓ : ℕ} (hℓ : ℓ.Prime) (b : ℕ)
     exact Set.mem_univ _
   exact hg
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem proj_unramifiedDegree_eq_zero_of_gsDecomp_eq_one (b : ℕ)
     (g : Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1))
     (hg : gsDecomp K S ιs v g = 1) :
@@ -159,9 +163,9 @@ theorem proj_unramifiedDegree_eq_zero_of_gsDecomp_eq_one (b : ℕ)
   rw [hz]
   exact (ZMod.val_eq_zero z).1 h0
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem exists_hom_zmod_pow_rangeRestrict_gsDecomp
     (σ : Gal(AlgebraicClosure (v.1.adicCompletion K.1)/v.1.adicCompletion K.1))
     (hσ : unramifiedDegree (v.1.adicCompletion K.1) (AlgebraicClosure (v.1.adicCompletion K.1)) σ =
@@ -191,7 +195,13 @@ theorem exists_hom_zmod_pow_rangeRestrict_gsDecomp
       ((gsDecomp K S ιs v).rangeRestrict g)) = ψ g
     rw [e, QuotientGroup.lift_mk]
   refine ⟨φ, ?_, ?_⟩
-  · rw [← (isQuotientMap_rangeRestrict_gsDecomp K S ιs v).isOpen_preimage]
+  · have hcont : Continuous (gsDecomp K S ιs v).rangeRestrict :=
+      (continuous_gsDecomp K S ιs v).subtype_mk _
+    have : T2Space (galUnramifiedOutside K.1 ℚ̄ S) :=
+      galois_t2Space K.1 (maxUnramifiedOutside K.1 ℚ̄ S)
+    have hquot : Topology.IsQuotientMap (gsDecomp K S ιs v).rangeRestrict :=
+      hcont.isClosedMap.isQuotientMap hcont (MonoidHom.rangeRestrict_surjective _)
+    rw [← hquot.isOpen_preimage]
     have e : (gsDecomp K S ιs v).rangeRestrict ⁻¹' (φ.ker : Set (gsDecomp K S ιs v).range) =
         (fun g => (ProfiniteInteger.proj ⟨ℓ ^ b, pow_pos hℓ.pos b⟩ (Multiplicative.toAdd (deg g)) : ZMod (ℓ ^ b))) ⁻¹' {0} := by
       ext g
@@ -203,15 +213,33 @@ theorem exists_hom_zmod_pow_rangeRestrict_gsDecomp
   · rw [hφ, hψ, hσ, toAdd_ofAdd, map_one]
     rfl
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem exists_isPrimePowGenerator_gsDecomp :
     ∃ σ : (gsDecomp K S ιs v).range, IsPrimePowGenerator ℓ σ := by
   obtain ⟨σ, hσ⟩ := exists_unramifiedDegree_eq_one (K := K) (v := v.1)
-  exact ⟨(gsDecomp K S ιs v).rangeRestrict σ,
-    ⟨isTopologicalGenerator_rangeRestrict_gsDecomp K S ιs v σ hσ,
-      fun b => exists_hom_zmod_pow_rangeRestrict_gsDecomp K S ιs v hℓ hS σ hσ b⟩⟩
+  have hgen : IsTopologicalGenerator ((gsDecomp K S ιs v).rangeRestrict σ) := by
+    let f := (gsDecomp K S ιs v).rangeRestrict
+    let C := closure (Subgroup.zpowers (f σ) : Set (gsDecomp K S ιs v).range)
+    have hcont : Continuous f := (continuous_gsDecomp K S ιs v).subtype_mk _
+    have hE := eq_univ_of_unramifiedDegree v.1 σ hσ (f ⁻¹' C)
+      (isClosed_closure.preimage hcont)
+      (fun k => subset_closure (by rw [map_zpow]; exact Subgroup.zpow_mem_zpowers _ k))
+      (fun g hg h hh => by
+        have hh' : gsDecomp K S ιs v h = 1 :=
+          decompHomS_eq_one_of_unramifiedDegree_eq_one S (ιs.fin v.1) v.2 h hh
+        have h1 : f h = 1 := Subtype.ext hh'
+        rw [Set.mem_preimage, map_mul, h1, mul_one]
+        exact hg)
+    rw [IsTopologicalGenerator, dense_iff_closure_eq]
+    change C = Set.univ
+    refine Set.eq_univ_of_forall fun z => ?_
+    obtain ⟨g, rfl⟩ := MonoidHom.rangeRestrict_surjective (gsDecomp K S ιs v) z
+    have hg : g ∈ f ⁻¹' C := by rw [hE]; exact Set.mem_univ _
+    exact hg
+  exact ⟨(gsDecomp K S ιs v).rangeRestrict σ, hgen,
+    fun b => exists_hom_zmod_pow_rangeRestrict_gsDecomp K S ιs v hℓ hS σ hσ b⟩
 
 instance isDiscreteRep_res_range_gsDecomp :
     IsDiscreteRep (Rep.res (gsDecomp K S ιs v).range.subtype (trivRep (galUnramifiedOutside K.1 ℚ̄ S) QZ)) :=
@@ -221,12 +249,16 @@ instance totallyDisconnectedSpace_range_gsDecomp : TotallyDisconnectedSpace (gsD
   have := galUnramifiedOutside_isProfinite (F := K.1) (Ω := ℚ̄) S
   inferInstance
 
+
 set_option maxHeartbeats 4000000 in
 include hℓ hS in
-
 theorem eq_zero_of_pow_nsmul_cohomology_range_gsDecomp {p : ℕ} (hp : 2 ≤ p)
     (x : cohomology (Rep.res (gsDecomp K S ιs v).range.subtype
       (trivRep (galUnramifiedOutside K.1 ℚ̄ S) QZ)) p) (k : ℕ) (hx : ℓ ^ k • x = 0) : x = 0 := by
+  have : CompactSpace (gsDecomp K S ιs v).range := by
+    refine isCompact_iff_compactSpace.mp ?_
+    rw [MonoidHom.coe_range]
+    exact isCompact_range (continuous_gsDecomp K S ιs v)
   obtain ⟨σ, hσ⟩ := exists_isPrimePowGenerator_gsDecomp K S ιs v hℓ hS
   exact hσ.eq_zero_of_pow_nsmul hℓ _ isAddTorsion_QZ hp x hx
 

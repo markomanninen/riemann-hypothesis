@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
-import Formalism.HermitianCurvature.StatementPB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolicBase
+public import Formalism.HermitianCurvature.StatementPB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GrowthOfBasic
+
+@[expose] public section
 
 namespace Formalism.L2.SG.GGMirabolic
 
@@ -21,8 +25,8 @@ variable {k}
 
 def psiNat (ψ₀ : AddChar F ℂ) (x : GL (Fin k) F) : ℂ := if IsUni k x then psiU ψ₀ x else 0
 
-variable (F k) in
 
+variable (F k) in
 def cardU : ℕ := Nat.card {x : GL (Fin k) F // IsUni k x}
 
 def gam (ψ₀ : AddChar F ℂ) (x : GL (Fin k) F) : ℂ :=

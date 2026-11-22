@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.Examples
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Examples
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -14,8 +18,8 @@ instance fact_prime_ringChar : Fact (ringChar 𝓀[K]).Prime :=
 
 variable (p : ℕ) [CharP 𝓀[K] p]
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem valuation_intCast_le_one (n : ℤ) : valuation K (n : K) ≤ 1 :=
   (Valuation.mem_integer_iff _ _).mp (intCast_mem _ n)
 
@@ -33,8 +37,8 @@ theorem valuation_intCast_eq_one_iff (n : ℤ) : valuation K (n : K) = 1 ↔ ¬ 
 
 variable [Fact p.Prime]
 
-omit [Fact p.Prime] in
 
+omit [Fact p.Prime] in
 theorem valuation_p_lt_one : valuation K (p : K) < 1 := by
   refine lt_of_le_of_ne (by exact_mod_cast valuation_intCast_le_one K p) fun h => ?_
   have := (valuation_intCast_eq_one_iff K p p).mp (by exact_mod_cast h)
@@ -187,14 +191,5 @@ theorem finiteDimensional_padicHom :
 end Embedding
 
 end CharZero
-
-theorem exists_padic_finiteDimensional_of_charZero (K : Type*) [Field K] [ValuativeRel K]
-    [TopologicalSpace K] [IsNonarchimedeanLocalField K] [CharZero K] :
-    ∃ (p : ℕ) (_ : Fact p.Prime) (_ : Algebra ℚ_[p] K), p = ringChar 𝓀[K] ∧
-      ValuativeExtension ℚ_[p] K ∧ FiniteDimensional ℚ_[p] K ∧
-        Continuous (algebraMap ℚ_[p] K) := by
-  let alg := (CharZero.padicHom K (ringChar 𝓀[K])).toAlgebra
-  exact ⟨ringChar 𝓀[K], inferInstance, alg, rfl, ⟨CharZero.padicHom_vle_iff K _⟩,
-    CharZero.finiteDimensional_padicHom K _, CharZero.continuous_padicHom K _⟩
 
 end GroundTheory.LocalField

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementQ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.FormalDegreeBessel.FinalWR
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.StatementQ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.FormalDegreeBessel.FinalWR
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix Finset Filter Topology
 open scoped ContDiff
@@ -692,7 +696,7 @@ theorem qminor_poly (hD : IsOpen D) {f : Mx k r → E} (hf : SmoothLev k r i D f
         List.ofFn (opF k r i Y ∘ fun l : Fin t => (s - ((l : ℕ) : ℂ), a (σ l), b l)) := by
       congr 1
       funext l
-      simp only [Function.comp, opF, add_sub_assoc]
+      simp only [Function.comp_apply, opF, add_sub_assoc]
     rw [e]
     rfl
   refine (polyAt_sum Finset.univ _ fun σ _ => (key σ).smul ((Equiv.Perm.sign σ : ℤ) : ℂ)).congr fun Y => ?_
@@ -897,13 +901,13 @@ theorem capelli_two_polynomial (hD : IsOpen D) {f : Mx k r → E} (hf : SmoothLe
   · simp only [if_neg hc]
     exact polyAt_zero _
 
-open Classical in
 
+open Classical in
 def coefOf (N : ℕ) (φ : ℂ → E) : ℕ → E := if h : PolyAt N φ then h.choose else 0
 
 theorem coefOf_spec {N : ℕ} {φ : ℂ → E} (h : PolyAt N φ) (Y : ℂ) :
     φ Y = ∑ j ∈ Finset.range N, Y ^ j • coefOf N φ j := by
-  rw [coefOf, dif_pos h]
+  rw [coefOf, dite_eq_left h]
   exact h.choose_spec Y
 
 def lowC (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (i : Fin (r + 1)) :

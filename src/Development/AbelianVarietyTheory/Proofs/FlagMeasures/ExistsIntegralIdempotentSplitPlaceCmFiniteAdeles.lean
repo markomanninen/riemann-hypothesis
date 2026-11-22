@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegerUnitSplitPlaceConjugatePrime
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteCosetsHeckeSetAtSplitPlaceOutsideLevel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegerUnitSplitPlaceConjugatePrime
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.Aut
 open scoped TensorProduct
 
@@ -16,7 +21,6 @@ variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 local notation3 "L⁺" => maximalRealSubfield L
 
 open Classical in
-
 def singleAt (v : HeightOneSpectrum (𝓞 L⁺)) (t : v.adicCompletion L⁺) : AFplus L :=
   RestrictedProduct.mk (Pi.single v t) (by
     filter_upwards [(Set.finite_singleton v).compl_mem_cofinite] with w hw
@@ -71,7 +75,7 @@ theorem exists_idem : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (s 
   have hvb : Valued.v b ≤ 1 := by
     rw [hb, map_mul, Valuation.map_neg, hva, mul_one]; exact he'.le
   have hT : cc ((e : L) + cc (e : L)) = (e : L) + cc (e : L) := by
-    rw [map_add, IsCMField.complexConj_apply_apply, add_comm]
+    rw [map_add (f := _), IsCMField.complexConj_apply_apply, add_comm]
   have hN : cc ((e : L) * cc (e : L)) = (e : L) * cc (e : L) := by
     rw [map_mul, IsCMField.complexConj_apply_apply, mul_comm]
   let T : maximalRealSubfield L := ⟨(e : L) + cc (e : L), (IsCMField.complexConj_eq_self_iff L _).1 hT⟩
@@ -79,7 +83,7 @@ theorem exists_idem : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (s 
   have hTL : algebraMap (maximalRealSubfield L) L T = (e : L) + cc (e : L) := rfl
   have hNL : algebraMap (maximalRealSubfield L) L N = (e : L) * cc (e : L) := rfl
   have hTv : algebraMap (maximalRealSubfield L) (s.v.adicCompletion (maximalRealSubfield L)) T = α + β := by
-    rw [hα, hβ, ← map_add, ← hTL, AlgHom.commutes]
+    rw [hα, hβ, ← map_add (f := _), ← hTL, AlgHom.commutes]
   have hNv : algebraMap (maximalRealSubfield L) (s.v.adicCompletion (maximalRealSubfield L)) N = α * β := by
     rw [hα, hβ, ← map_mul, ← hNL, AlgHom.commutes]
   set A : AFplus L := singleAt s.v a with hA
@@ -138,7 +142,7 @@ theorem exists_idem : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (s 
   have hP' := congrArg ι hP
   have hQ' := congrArg ι hQ
   have hR' := congrArg ι hR
-  simp only [map_add, map_mul, map_sub, map_zero] at hP' hQ' hR'
+  simp only [map_add (f := _), map_mul, map_sub, map_zero] at hP' hQ' hR'
   have hpE : s.proj E = α := by
     rw [hEdef]; unfold SplitPlace.proj
     erw [Algebra.TensorProduct.lift_tmul]
@@ -152,7 +156,7 @@ theorem exists_idem : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (s 
     erw [Algebra.TensorProduct.map_tmul]
     rfl
   have hconjε : conjAL L (E * ι A + ι B) = (ι (algebraMap _ _ T) - E) * ι A + ι B := by
-    rw [map_add, map_mul, hcE, hcι, hcι]
+    rw [map_add (f := _), map_mul, hcE, hcι, hcι]
   refine ⟨E * ι A + ι B, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · linear_combination (ι A) ^ 2 * hE + E * hP' + hQ'
   · rw [hconjε]
@@ -160,16 +164,16 @@ theorem exists_idem : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (s 
   · refine Subring.add_mem _ (Subring.mul_mem _ (Subring.subset_closure (Or.inl ⟨e, rfl⟩))
       (Subring.subset_closure (Or.inr ⟨A, singleAt_int _ _ hva.le, rfl⟩)))
       (Subring.subset_closure (Or.inr ⟨B, singleAt_int _ _ hvb, rfl⟩))
-  · rw [map_add, map_mul, hpE, hpι, hpι, hAv, hBv, hb]
+  · rw [map_add (f := _), map_mul, hpE, hpι, hpι, hAv, hBv, hb]
     linear_combination hinv
   · have h : E * ι A + ι B + conjAL L (E * ι A + ι B) = ι (algebraMap _ _ T * A + (B + B)) := by
-      rw [hconjε]; simp only [map_add, map_mul]; ring
+      rw [hconjε]; simp only [map_add (f := _), map_mul]; ring
     rw [h, hcomp, hS]; rfl
   · intro w hw
     rcases comp w with ⟨h1, h2⟩ | h
     · refine ⟨?_, ?_⟩
-      · rw [map_add, map_mul, hcomp, hcomp, h1, h2]; simp
-      · rw [hconjε, map_add, map_mul, hcomp, hcomp, h1, h2]; simp
+      · rw [map_add (f := _), map_mul, hcomp, hcomp, h1, h2]; simp
+      · rw [hconjε, map_add (f := _), map_mul, hcomp, hcomp, h1, h2]; simp
     · exact absurd h hw
 
 end GlobalTheory.SplitIdem

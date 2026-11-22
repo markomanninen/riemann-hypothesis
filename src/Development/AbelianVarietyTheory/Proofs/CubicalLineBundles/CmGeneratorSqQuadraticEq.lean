@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+
+@[expose] public section
 
 open NumberField
 

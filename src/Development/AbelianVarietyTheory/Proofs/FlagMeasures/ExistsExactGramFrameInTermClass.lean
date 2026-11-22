@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearFormsBoundedRepresentatives
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowMinor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IntegralOfUnimodular
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LinearFormsBoundedRepresentatives
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardBiUnionLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,8 @@ theorem frame_indep (hT : T ≠ 0) : LinearIndependent E (frame F) := by
     have h0 : ∀ a, S.hT F.fl.z (F.fl.e a) = 0 := fun a => by
       rw [herm S, F.fl.z_orth, star_zero]
     rw [Fin.sum_univ_castSucc] at this
-    simpa [frame_cast, frame_last, map_sum, h0, F.fl.z_norm, hT] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [frame_cast, frame_last, map_sum, h0, F.fl.z_norm, hT] using this
   rw [Fin.sum_univ_castSucc, h1, zero_smul, add_zero] at hc
   simp only [frame_cast] at hc
   have h2 := Fintype.linearIndependent_iff.1 F.fl.e_indep _ hc
@@ -87,7 +92,7 @@ theorem exists_partner (hlat : Submodule.IsLattice E Λ) (hΛ : Formalism.Hermit
     refine ⟨inf_le_left, le_antisymm (le_inf inf_le_left fun x hx => Submodule.subset_span hx) ?_⟩
     refine inf_le_inf_left _ ?_
     intro x hx
-    exact (Submodule.span_le (p := U)).2 (fun y hy => hy.2) hx
+    exact (Submodule.span_le (p := U)).2 (fun y (hy : y ∈ M0) => hy.2) hx
   have hint : ∀ x : M0, ∃ o : 𝓞 E, (o : E) = φ x := by
     rintro ⟨x, hx, hxU⟩
     obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hxU
@@ -95,7 +100,8 @@ theorem exists_partner (hlat : Submodule.IsLattice E Λ) (hΛ : Formalism.Hermit
     rw [mul_inv_cancel₀ (h0 b), FractionalIdeal.mem_one_iff] at h1
     obtain ⟨o, ho⟩ := h1
     refine ⟨o, ?_⟩
-    simp [map_sum, hφ', ← ho]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hφ', ← ho]
   choose ψ hψ using hint
   let ψ' : M0 →ₗ[𝓞 E] 𝓞 E :=
     { toFun := ψ
@@ -107,7 +113,9 @@ theorem exists_partner (hlat : Submodule.IsLattice E Λ) (hΛ : Formalism.Hermit
         simp only [hψ, RingHom.id_apply, smul_eq_mul, map_mul, Submodule.coe_smul]
         rw [← algebraMap_smul E c (x : S.V), map_smul]
         simp [hψ] }
-  obtain ⟨w, hw⟩ := FunIdx.exists_dual_vec S M0 Λ hlat hprim ψ'
+  have hfull : Submodule.IsFullLattice E Λ :=
+    { toIsLattice := hlat, span_eq_top := FunIdx.span_eq_top_of_unimodular Λ hlat hΛ }
+  obtain ⟨w, hw⟩ := FunIdx.exists_dual_vec S M0 Λ hfull hprim ψ'
   refine ⟨w, ?_, fun j => ?_⟩
   · have := w.2.1
     rwa [hΛ] at this
@@ -189,7 +197,7 @@ theorem exists_col (θ : 𝓞 E) (hθ : (θ : E) + star (θ : E) = 1) (hlat : Su
       · have : m w = w := ext_Xflag (m : S.V →ₗ[E] S.V) LinearMap.id b
           (fun a ha => e2 a fun h => by rw [h] at ha; exact lt_irrefl _ ha) w hw
         change m (n _) = _
-        rw [h1, map_add, map_smul, e1, this]; module
+        rw [h1, map_add (f := _), map_smul, e1, this]; module
       · change m (n _) = _
         rw [h2 j hj, e2 j hj]
   have := key 1 (by rw [mul_inv_cancel₀ (h0 b)]; exact FractionalIdeal.one_mem_one _)
@@ -213,7 +221,7 @@ theorem exists_cols (w : Fin (r + 1) → S.V) (hw : ∀ b : Fin (r + 1), w b ∈
         rcases lt_trichotomy b.val k with hb | hb | hb
         · have : m (w b) = w b := ext_Xflag (m : S.V →ₗ[E] S.V) LinearMap.id b
             (fun a ha => e2 a fun h => by rw [h] at ha; exact lt_asymm ha hb) _ (hw b)
-          rw [if_pos hb, if_pos (by omega), map_add, this, e2 b fun h => by rw [h] at hb; exact lt_irrefl _ hb]
+          rw [if_pos hb, if_pos (by omega), map_add (f := _), this, e2 b fun h => by rw [h] at hb; exact lt_irrefl _ hb]
         · have : b = ⟨k, hk⟩ := Fin.ext hb
           rw [if_neg (by omega), if_pos (by omega), add_zero, this, e1]
         · rw [if_neg (by omega), if_neg (by omega), add_zero,
@@ -338,7 +346,8 @@ theorem exists_moved (hT : T ≠ 0) (n : S.V ≃ₗ[E] S.V) (hn : n ∈ Formalis
     simpa using hx
   have ho : ∀ x ∈ Xsp F, ∀ b, S.hT x (g b) = 0 := by
     intro x hx b
-    simp [hg, frameAct, map_sum, X_orth_frame hx]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hg, frameAct, map_sum, X_orth_frame hx]
   have hli : LinearIndependent E g := by
     obtain ⟨η, -, -, e⟩ := uni_inv h1 h2
     have e' : η * B = 1 := mul_eq_one_comm.1 e
@@ -456,7 +465,7 @@ theorem exists_exact_frame : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) 
   obtain ⟨θ, hθ, -⟩ := GlobalTheory.TraceOne.exists_trace_one D 2 Nat.prime_two
   have hθ' : (θ : D.host.E) + star (θ : D.host.E) = 1 := by
     have := congrArg (algebraMap (𝓞 D.host.E) D.host.E) hθ
-    rw [map_add, map_one] at this
+    rw [map_add (f := _), map_one] at this
     rw [GlobalTheory.NormSum.AdLattice.star_eq_conj]
     exact this
   choose st hst using fun o : 𝓞 D.host.E => star_int (E := D.host.E) ⟨o, rfl⟩
@@ -486,7 +495,8 @@ theorem exists_exact_frame : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) 
     refine Matrix.ext fun a b => ?_
     change (hS D).hT (frame (lf D F0) a) (frame G b) = _
     rw [hG]
-    simp only [frameAct, map_sum, map_smul, hadj, hmf, Matrix.mul_apply, Matrix.map_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [frameAct, map_sum, map_smul, hadj, hmf, Matrix.mul_apply, Matrix.map_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [mul_comm]
     congr 1
@@ -502,11 +512,13 @@ theorem exists_exact_frame : ∀ (D : D7) (u u' : D.what₂.Word) (F0 : Fb D u) 
     refine Submodule.add_mem_sup ⟨(aut_mem_iff hn.1 _).2 hx, (mem_Hp_iff rfl hGz he hGe _).2 ⟨fun b => ?_, fun b => ?_⟩⟩
       (Submodule.neg_mem _ (hn.2.2 x (orth_X_of_frame h1)))
     · rw [hadj, hmf]
-      simp only [frameAct, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [frameAct, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
       refine Finset.sum_eq_zero fun c _ => ?_
       rw [h1, smul_zero]
     · rw [hG]
-      simp only [frameAct, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [frameAct, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply]
       refine Finset.sum_eq_zero fun c _ => ?_
       rw [hn.1.1, h2, smul_zero]
 

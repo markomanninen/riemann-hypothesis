@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GaloisCoverDescentAndCartesianSquares
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAffineCoverOfQuotient
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GaloisCoverDescentAndCartesianSquares
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAffineCoverOfQuotient
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -142,7 +146,7 @@ theorem exists_sec_nonzeroLocus_le {R : Type} [CommRing R] {N : ℕ} {s : Set (P
 theorem exists_sections_orbit_subset {Γ : Type} [Group Γ] [Finite Γ] {R : Type} [CommRing R] {X : Scheme.{0}}
     {s : X ⟶ Sp R} (ρ : Γ →* Aut X) (h : IsQProjOver s) :
     ∃ (L : LB X) (n : ℕ) (σ : Fin n → LB.Sec L), L.IsLB ∧ (∀ i, IsAffineOpen (Out.nonzeroLocus (σ i))) ∧
-      ∀ x : X, ∃ i, ∀ g, (ρ g).hom x ∈ Out.nonzeroLocus (σ i) := by
+      ∀ x : X, ∃ i, ∀ g, (ρ g).asIso.hom x ∈ Out.nonzeroLocus (σ i) := by
   classical
   obtain ⟨N, i, hi, hqc, he⟩ := h
   have : IsImmersion i := hi
@@ -163,18 +167,18 @@ theorem exists_sections_orbit_subset {Γ : Type} [Group Γ] [Finite Γ] {R : Typ
     have h2 := h1.preimage i.liftCoborder
     rwa [← Scheme.Hom.comp_preimage, i.liftCoborder_ι] at h2
   have key : ∀ x : X, ∃ n, 1 ≤ n ∧ ∃ t : (lbPow (ProjSpace.O1 R N) n).Sec,
-      Set.range (fun g => i ((ρ g).hom x)) ⊆ Out.nonzeroLocus t ∧
+      Set.range (fun g => i ((ρ g).asIso.hom x)) ⊆ Out.nonzeroLocus t ∧
         Out.nonzeroLocus t ≤ i.coborderRange ∧ IsAffineOpen (Out.nonzeroLocus t) :=
     fun x => exists_sec_nonzeroLocus_le (Set.finite_range _) _ (by rintro _ ⟨g, rfl⟩; exact hmem _)
   choose n hn t hts htU hta using key
-  let W : X → Set X := fun x => {y | ∀ g, i ((ρ g).hom y) ∈ Out.nonzeroLocus (t x)}
+  let W : X → Set X := fun x => {y | ∀ g, i ((ρ g).asIso.hom y) ∈ Out.nonzeroLocus (t x)}
   have hWo : ∀ x, IsOpen (W x) := fun x => by
-    have hW : W x = ⋂ g, ((ρ g).hom ≫ i) ⁻¹' (Out.nonzeroLocus (t x) : Set (PSpace R N)) := by
+    have hW : W x = ⋂ g, ((ρ g).asIso.hom ≫ i) ⁻¹' (Out.nonzeroLocus (t x) : Set (PSpace R N)) := by
       ext y
       simp [W]
     rw [hW]
     exact isOpen_iInter_of_finite fun g =>
-      (Out.nonzeroLocus (t x)).isOpen.preimage ((ρ g).hom ≫ i).continuous
+      (Out.nonzeroLocus (t x)).isOpen.preimage ((ρ g).asIso.hom ≫ i).continuous
   have hWx : ∀ x, x ∈ W x := fun x g => hts x ⟨g, rfl⟩
   obtain ⟨F, hF⟩ := isCompact_univ.elim_finite_subcover W hWo
     (fun y _ => Set.mem_iUnion.2 ⟨y, hWx y⟩)
@@ -231,14 +235,16 @@ theorem isQProjOver_of_isGaloisCover : ∀ (K : Type) [Field K] (X Y : Scheme.{0
     { toFun := fun a => ⟨ρ a⁻¹, ρ a, by rw [← hG.mul, inv_mul_cancel, hG.one], by rw [← hG.mul, mul_inv_cancel, hG.one]⟩
       map_one' := by
         ext1
+        ext1
         show ρ 1⁻¹ = _
         rw [inv_one, hG.one]
         rfl
       map_mul' := fun a c => by
         ext1
+        ext1
         show ρ (a * c)⁻¹ = ρ c⁻¹ ≫ ρ a⁻¹
         rw [mul_inv_rev, hG.mul] }
-  have hρ' : ∀ a, (ρ' a).hom = ρ a⁻¹ := fun a => rfl
+  have hρ' : ∀ a, (ρ' a).asIso.hom = ρ a⁻¹ := fun a => rfl
   have : OrbitsInAffineOpens ρ' := OrbitsInAffineOpens.of_isQProjOver hq ρ'
   obtain ⟨Y', q, hQ⟩ := (exists_isAffineQuotient_iff ρ').mpr inferInstance
   obtain ⟨L', hL'⟩ := exists_isAmpleLB_of_isAffineQuotient hQ hq
@@ -246,7 +252,7 @@ theorem isQProjOver_of_isGaloisCover : ∀ (K : Type) [Field K] (X Y : Scheme.{0
     have := hQ.comp_eq a⁻¹
     rwa [hρ', inv_inv] at this
   obtain ⟨f, hf, -⟩ := GlobalTheory.ZM.IsGaloisCover.existsUnique_desc hG q hqi
-  have hπi : ∀ a, (ρ' a).hom ≫ π = π := fun a => by rw [hρ']; exact hG.inv _
+  have hπi : ∀ a, (ρ' a).asIso.hom ≫ π = π := fun a => by rw [hρ']; exact hG.inv _
   have hfg : f ≫ hQ.desc π hπi = 𝟙 Y := by
     obtain ⟨u, -, hu⟩ := GlobalTheory.ZM.IsGaloisCover.existsUnique_desc hG π hG.inv
     have h1 := hu (f ≫ hQ.desc π hπi) (by

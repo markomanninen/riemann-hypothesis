@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -262,7 +266,7 @@ theorem hasSum_cosets_eulerProduct : ∀ {G ι : Type} [Group G] {L : ι → Typ
         refine mul_le_mul_of_nonneg_right ?_ (hΦ0 1 H.one_mem)
         calc ∏ v ∈ T, A v ≤ ∏ v ∈ T, |A v| := (le_abs_self _).trans (Finset.abs_prod _ _).le
           _ ≤ ∏ v ∈ T, Real.exp |A v - 1| :=
-              Finset.prod_le_prod (fun v _ => abs_nonneg _) fun v _ => by
+              Finset.prod_le_prod₀ (fun v _ => abs_nonneg _) fun v _ => by
                 have h1 := Real.add_one_le_exp |A v - 1|
                 have h2 := abs_sub_abs_le_abs_sub (A v) 1
                 rw [abs_one] at h2

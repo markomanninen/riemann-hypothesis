@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RhsInt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RhsInt
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,8 @@ theorem prim_map {R k : Type} [CommRing R] [IsDomain R] [Field k] (r : R →+* k
       (IsPrimitiveRoot.coe_units_iff.2 hζ).pow (pow_pos hl.pos _) (pow_succ l n)
     have h4 := congrArg r (h3.geom_sum_eq_zero hl.one_lt)
     have h5 : r ((ζ : R) ^ l ^ n) = 1 := by simpa using congrArg Units.val h
-    rw [map_sum] at h4
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h4
     simp only [map_pow r ((ζ : R) ^ l ^ n), h5] at h4
     apply hr
     simpa using h4

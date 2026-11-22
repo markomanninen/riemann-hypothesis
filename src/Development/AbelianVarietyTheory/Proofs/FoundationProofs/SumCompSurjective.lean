@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SumCompSurjective
 
@@ -22,7 +26,7 @@ theorem sum_comp_surjective {G Q : Type} [AddCommGroup G] [AddCommGroup Q] [Fint
       simp only [mem_filter, mem_univ, true_and] at hz
       refine ⟨z + a, ?_, by simp⟩
       simp only [mem_filter, mem_univ, true_and]
-      rw [map_add, hz, zero_add]
+      rw [map_add (f := _), hz, zero_add]
   refine ⟨(univ.filter fun y : G => π y = 0).card, ?_, ?_⟩
   · exact Finset.card_pos.2 ⟨0, by simp⟩
   · rw [← Finset.sum_fiberwise (s := univ) (g := fun y : G => π y) (f := fun y => g (π y)),

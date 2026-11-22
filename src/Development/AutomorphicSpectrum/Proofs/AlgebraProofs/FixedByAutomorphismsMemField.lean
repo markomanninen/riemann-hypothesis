@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ExtensionEmbeddings.ExtEmb
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ExtensionEmbeddings.ExtEmb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Cardinal Polynomial IntermediateField

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeakStatement
+
+@[expose] public section
 
 namespace Bl.SecondBlockLemmaG
 

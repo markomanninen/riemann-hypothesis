@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdEApply
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma GlobalTheory.StableLatCount Polynomial
 
 noncomputable section
@@ -82,7 +87,7 @@ theorem homLat_fg_and_span_eq_top (O : Type) [CommRing O] [IsDomain O] [IsDiscre
       induction hx using Submodule.span_induction with
       | mem y hy => rw [LinearMap.smul_apply]; exact hdψ _ (Finset.mem_image_of_mem _ hy)
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add]; exact M₁.add_mem hy hz
+      | add y z _ _ hy hz => rw [map_add (f := _)]; exact M₁.add_mem hy hz
       | smul o y _ hy => rw [LinearMap.map_smul_of_tower]; exact M₁.smul_mem o hy
     have hd' : algebraMap O E d ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hd
     have hψ : ψ = (algebraMap O E d)⁻¹ • (d • ψ) := by

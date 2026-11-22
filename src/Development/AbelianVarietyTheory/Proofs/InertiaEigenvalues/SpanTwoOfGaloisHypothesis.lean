@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
-import Development.AutomorphicArithmetic.CyclotomicBounds.CyclotomicOrders.ExistsCycZPowNeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsDualDualRep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TameInertiaElementActsByScalar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+public import Development.AutomorphicArithmetic.CyclotomicBounds.CyclotomicOrders.ExistsCycZPowNeOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -262,7 +266,8 @@ theorem spanTwo_of_galHyp : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D
     refine Fintype.linearIndependent_iff.mp hx e ?_ a
     obtain ⟨m, hm⟩ := he
     have : ∑ a, e a • cl (x a) = cl (∑ a, e a • x a) := by
-      simp only [cl, ← Submodule.mkQ_apply, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [cl, ← Submodule.mkQ_apply, map_sum, map_smul]
     rw [this, cl, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, mem_coboundaries1]
     refine ⟨m, fun g => ?_⟩
     rw [hred, ← hm]

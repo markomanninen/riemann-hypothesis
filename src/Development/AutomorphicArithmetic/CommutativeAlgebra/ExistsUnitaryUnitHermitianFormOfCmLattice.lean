@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ComplexUniformizationSigOne
-import Development.AutomorphicArithmetic.RealSpanData.RealData
-import Development.AutomorphicArithmetic.RealSpanData.JSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.PointsNonemptyUnitaryGaussian
+public import Development.AutomorphicArithmetic.RealSpanData.RealData
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,26 +54,26 @@ private theorem adj_bc {Λ : Type} [AddCommGroup Λ] (B : LinearMap.BilinForm �
     B.baseChange ℚ (f.baseChange ℚ u) w = B.baseChange ℚ u (g.baseChange ℚ w) := by
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
   | tmul q x =>
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul r y => simp [LinearMap.BilinForm.baseChange_tmul, h]
 
 private theorem anti_bc {Λ : Type} [AddCommGroup Λ] (B : LinearMap.BilinForm ℤ Λ) (h : ∀ x, B x x = 0)
     (u w : ℚ ⊗[ℤ] Λ) : B.baseChange ℚ u w = - B.baseChange ℚ w u := by
   have anti : ∀ x y, B x y = - B y x := fun x y => by
     have := h (x + y)
-    simp only [map_add, LinearMap.add_apply, h, zero_add, add_zero] at this
+    simp only [map_add (f := _), LinearMap.add_apply, h, zero_add, add_zero] at this
     linarith
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
   | tmul q x =>
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb]; ring
+    | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb]; ring
     | tmul r y =>
       simp only [LinearMap.BilinForm.baseChange_tmul]
       rw [anti x y]
@@ -80,7 +83,7 @@ private theorem exists_rep {V : Type} [AddCommGroup V] [Module ℚ V] [FiniteDim
     (E F : LinearMap.BilinForm ℚ V) (hE : ∀ a, (∀ w, E a w = 0) → a = 0) :
     ∃ b : Module.End ℚ V, ∀ u w, F u w = 2 * E (b u) w := by
   have inj : Function.Injective (E : V →ₗ[ℚ] Module.Dual ℚ V) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     exact hE a fun w => by rw [ha]; rfl
   let Φ : V ≃ₗ[ℚ] Module.Dual ℚ V :=
@@ -91,7 +94,7 @@ private theorem exists_rep {V : Type} [AddCommGroup V] [Module ℚ V] [FiniteDim
   ring
 
 theorem UpperTheory.exists_unitary_unit_hermitian_form_of_cm_lattice :
-    ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (Y : PLat D.O D.inv) (j : (ℚ ⊗[ℤ] Y.La) ≃ₗ[ℚ] VQ D), (∀ (c : D.O) (u : ℚ ⊗[ℤ] Y.La), j ((DistribMulAction.toLinearMap ℤ Y.La c).baseChange ℚ u) = actQ D c (j u)) → ∃ β : G.Cˣ, sh G β = β ∧ ∀ u w : ℚ ⊗[ℤ] Y.La, Y.EF.baseChange ℚ u w = 2 * D.EF.baseChange ℚ (L.rep ((β⁻¹ : G.Cˣ) : G.C) (j u)) (j w) := by
+    ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (Y : PLat D.O D.inv) (j : (ℚ ⊗[ℤ] Y.La) ≃ₗ[ℚ] VQ D), (∀ (c : D.O) (u : ℚ ⊗[ℤ] Y.La), j ((DistribSMul.toLinearMap ℤ Y.La c).baseChange ℚ u) = actQ D c (j u)) → ∃ β : G.Cˣ, sh G β = β ∧ ∀ u w : ℚ ⊗[ℤ] Y.La, Y.EF.baseChange ℚ u w = 2 * D.EF.baseChange ℚ (L.rep ((β⁻¹ : G.Cˣ) : G.C) (j u)) (j w) := by
   intro p _ D G L Y j hj
   haveI := D.finLa
   set E := D.EF.baseChange ℚ with hEdef
@@ -106,7 +109,7 @@ theorem UpperTheory.exists_unitary_unit_hermitian_form_of_cm_lattice :
   have hF : ∀ u w, F u w = Y.EF.baseChange ℚ (j.symm u) (j.symm w) := fun u w => rfl
   obtain ⟨b, hb⟩ := exists_rep E F sepE
   have hinj : Function.Injective b := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro u hu
     have : j.symm u = 0 := sepY _ fun w => by
       have h := hb u (j w)
@@ -116,9 +119,9 @@ theorem UpperTheory.exists_unitary_unit_hermitian_form_of_cm_lattice :
   have comm : ∀ c : D.O, b * actQ D c = actQ D c * b := by
     intro c
     refine LinearMap.ext fun u => eqE _ _ fun w => ?_
-    have hc : j.symm (actQ D c u) = (DistribMulAction.toLinearMap ℤ Y.La c).baseChange ℚ (j.symm u) := by
+    have hc : j.symm (actQ D c u) = (DistribSMul.toLinearMap ℤ Y.La c).baseChange ℚ (j.symm u) := by
       rw [LinearEquiv.symm_apply_eq, hj, j.apply_symm_apply]
-    have hc' : ∀ w, j.symm (actQ D (D.inv c) w) = (DistribMulAction.toLinearMap ℤ Y.La (D.inv c)).baseChange ℚ (j.symm w) := fun w => by
+    have hc' : ∀ w, j.symm (actQ D (D.inv c) w) = (DistribSMul.toLinearMap ℤ Y.La (D.inv c)).baseChange ℚ (j.symm w) := fun w => by
       rw [LinearEquiv.symm_apply_eq, hj, j.apply_symm_apply]
     have h1 : F (actQ D c u) w = F u (actQ D (D.inv c) w) := by
       rw [hF, hF, hc, hc']
@@ -139,7 +142,7 @@ theorem UpperTheory.exists_unitary_unit_hermitian_form_of_cm_lattice :
       exact anti_bc Y.EF Y.alt _ _
     have h4 : E (b w) u = - E u (b w) := anti_bc D.EF D.alt _ _
     linarith
-  obtain ⟨b₀, hb₀⟩ := (L.rep_range b).2 comm
+  obtain ⟨b₀, hb₀⟩ : ∃ x : G.C, L.rep x = b := (L.rep_range b).2 comm
   let e : VQ D ≃ₗ[ℚ] VQ D := LinearEquiv.ofInjectiveEndo b hinj
   have he : ∀ u, b (e.symm u) = u := fun u => e.apply_symm_apply u
   have he' : ∀ u, e.symm (b u) = u := fun u => e.symm_apply_apply u
@@ -149,7 +152,8 @@ theorem UpperTheory.exists_unitary_unit_hermitian_form_of_cm_lattice :
     have h := LinearMap.congr_fun (comm c) (e.symm u)
     simp only [Module.End.mul_apply, LinearEquiv.coe_coe, he] at h ⊢
     exact h.symm
-  obtain ⟨b₁, hb₁⟩ := (L.rep_range _).2 comm'
+  obtain ⟨b₁, hb₁⟩ : ∃ x : G.C, L.rep x = e.symm.toLinearMap :=
+    (L.rep_range e.symm.toLinearMap).2 comm'
   have h01 : b₀ * b₁ = 1 := by
     apply L.rep_inj
     rw [map_mul, map_one, hb₀, hb₁]

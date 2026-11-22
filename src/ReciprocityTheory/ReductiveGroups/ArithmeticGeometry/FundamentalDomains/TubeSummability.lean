@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMeanContinuity
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourIndep
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourBasic
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMeanContinuity
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourIndep
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourBasic
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD.TubeSummability
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemSubPtsCutBaseChangeIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,11 @@ theorem subset_of_forall_pt_mem : ∀ (k : Type) [Field k] (S : LinSys k), S.IsV
     exact this
   letI : Algebra k (S.Y.residueField y) := (S.baseHom (resPt y)).toAlgebra
   haveI : Algebra.IsIntegral k (S.Y.residueField y) := ⟨hφ⟩
-  let τ : S.Y.residueField y →ₐ[k] Ω := IsAlgClosed.lift
+  let τ : S.Y.residueField y →ₐ[k] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let x : S.Pt Ω := ⟨spMap τ.toRingHom ≫ resPt y, by
     rw [Category.assoc, S.comp_str, ← Spec.map_comp]
     congr 1

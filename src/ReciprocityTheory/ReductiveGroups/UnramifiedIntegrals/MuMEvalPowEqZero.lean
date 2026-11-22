@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,7 +152,7 @@ theorem rmu_sigma_congr (s : Rmu l →+* Rmu l)
       obtain ⟨u, hu⟩ := exists_add_pow_prime_eq hl (⟨a, ha⟩ : Rmu l) ⟨b, hb⟩
       refine ⟨r + t - ⟨a, ha⟩ * ⟨b, hb⟩ * u, ?_⟩
       have : (⟨a + b, add_mem ha hb⟩ : Rmu l) = ⟨a, ha⟩ + ⟨b, hb⟩ := rfl
-      rw [this, map_add, hu]
+      rw [this, map_add (f := _), hu]
       linear_combination hr + ht
     | neg a ha iha =>
       obtain ⟨r, hr⟩ := iha

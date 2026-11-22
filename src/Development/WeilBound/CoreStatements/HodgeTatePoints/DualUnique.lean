@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GaGram
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GaSurj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GaGram
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GaSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,8 @@ theorem dual_split [Module.Projective A M] (y : Fin N → M) (t : A) (G : Matrix
   conv_rhs => rw [← hs' x]
   rw [hs' x]
   nth_rewrite 2 [← hs' x]
-  simp only [hz, map_add, map_sum, map_smul, smul_eq_mul, add_mul, Finset.sum_add_distrib, mul_sub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hz, map_add (f := _), map_sum, map_smul, smul_eq_mul, add_mul, Finset.sum_add_distrib, mul_sub,
     Finset.mul_sum, mul_assoc]
   simp only [mul_comm (w _)]
   ring
@@ -94,13 +99,15 @@ theorem dual_map : ∀ (A K : Type) [CommRing A] [Field K] [Algebra A K] [CharZe
     · intro h w j
       obtain ⟨z, hz⟩ := h w j (y j) rfl
       refine ⟨z, hAK ?_⟩
-      rw [← hz, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hz, map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [map_mul, hG]
     · intro h w j y' hy'
       obtain rfl : y' = y j := Subtype.ext hy'
       obtain ⟨z, hz⟩ := h w j
       refine ⟨z, ?_⟩
-      rw [← hz, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hz, map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [map_mul, hG]
   simp only [key]
   refine ⟨dual_exists y _ G H _ hHG, fun i i' hi hi' w =>

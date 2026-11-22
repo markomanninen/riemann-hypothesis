@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -25,37 +30,9 @@ end ExtIso
 
 section Terminal
 
-noncomputable def freeYonedaTerminalIso {T : C} (hT : IsTerminal T) :
-    yoneda.obj T ⋙ AddCommGrpCat.free.{v} ≅
-      (Functor.const Cᵒᵖ).obj (AddCommGrpCat.of (ULift.{v} ℤ)) :=
-  NatIso.ofComponents (fun X =>
-    letI : Unique (X.unop ⟶ T) := ⟨⟨hT.from _⟩, fun _ => hT.hom_ext _ _⟩
-    ((FreeAbelianGroup.uniqueEquiv (X.unop ⟶ T)).trans AddEquiv.ulift.symm).toAddCommGrpIso)
-    (fun {X Y} f => by
-      ext x
-      change ULift.up (FreeAbelianGroup.lift (fun _ => (1 : ℤ))
-          (FreeAbelianGroup.map (fun g => f.unop ≫ g) x)) =
-        ULift.up (FreeAbelianGroup.lift (fun _ => (1 : ℤ)) x)
-      congr 1
-      induction x using FreeAbelianGroup.induction_on with
-      | zero => simp
-      | of a => simp
-      | neg a h => simp only [map_neg, h]
-      | add a b ha hb => simp only [map_add, ha, hb])
-
 variable [HasSheafify J AddCommGrpCat.{v}]
 
-noncomputable def freeSheafTerminalIso {T : C} (hT : IsTerminal T) :
-    (presheafToSheaf J AddCommGrpCat.{v}).obj (yoneda.obj T ⋙ AddCommGrpCat.free) ≅
-      (constantSheaf J AddCommGrpCat.{v}).obj (AddCommGrpCat.of (ULift.{v} ℤ)) :=
-  (presheafToSheaf J AddCommGrpCat.{v}).mapIso (freeYonedaTerminalIso hT)
-
 variable [HasExt.{w'} (Sheaf J AddCommGrpCat.{v})]
-
-noncomputable def cohomologyPresheafTerminalAddEquiv (F : Sheaf J AddCommGrpCat.{v}) (n : ℕ)
-    {T : C} (hT : IsTerminal T) :
-    (F.cohomologyPresheaf n).obj (op T) ≃+ Sheaf.H F n :=
-  extAddEquivOfIsoLeft (freeSheafTerminalIso (J := J) hT) F n
 
 end Terminal
 
@@ -70,27 +47,11 @@ lemma freeYonedaHomAddEquiv_apply (U : C) (P : Cᵒᵖ ⥤ AddCommGrpCat.{v})
     (g : yoneda.obj U ⋙ AddCommGrpCat.free.{v} ⟶ P) :
     freeYonedaHomAddEquiv U P g = g.app (op U) (FreeAbelianGroup.of (𝟙 U)) := rfl
 
-lemma freeYonedaHomAddEquiv_naturality_left {U V : C} (f : U ⟶ V) (P : Cᵒᵖ ⥤ AddCommGrpCat.{v})
-    (g : yoneda.obj V ⋙ AddCommGrpCat.free.{v} ⟶ P) :
-    freeYonedaHomAddEquiv U P (Functor.whiskerRight (yoneda.map f) AddCommGrpCat.free ≫ g) =
-      P.map f.op (freeYonedaHomAddEquiv V P g) := by
-  change yonedaEquiv (((AddCommGrpCat.adj.whiskerRight Cᵒᵖ).homEquiv (yoneda.obj U) P)
-      (((Functor.whiskeringRight _ _ _).obj AddCommGrpCat.free).map (yoneda.map f) ≫ g)) = _
-  rw [Adjunction.homEquiv_naturality_left, yonedaEquiv_comp, yonedaEquiv_yoneda_map]
-  have := NatTrans.naturality_apply
-    (((AddCommGrpCat.adj.whiskerRight Cᵒᵖ).homEquiv (yoneda.obj V) P) g) f.op (𝟙 V)
-  exact (congrArg _ (Category.comp_id f).symm).trans this
-
 variable [HasSheafify J AddCommGrpCat.{v}]
 
 noncomputable abbrev freeSheaf (J : GrothendieckTopology C) [HasSheafify J AddCommGrpCat.{v}]
     (U : C) : Sheaf J AddCommGrpCat.{v} :=
   (presheafToSheaf J AddCommGrpCat.{v}).obj (yoneda.obj U ⋙ AddCommGrpCat.free)
-
-noncomputable abbrev freeSheafMap (J : GrothendieckTopology C) [HasSheafify J AddCommGrpCat.{v}]
-    {U V : C} (f : U ⟶ V) : freeSheaf J U ⟶ freeSheaf J V :=
-  (presheafToSheaf J AddCommGrpCat.{v}).map
-    (Functor.whiskerRight (yoneda.map f) AddCommGrpCat.free)
 
 noncomputable def freeSheafHomAddEquiv (U : C) (F : Sheaf J AddCommGrpCat.{v}) :
     (freeSheaf J U ⟶ F) ≃+ F.obj.obj (op U) :=
@@ -103,14 +64,6 @@ lemma freeSheafHomAddEquiv_naturality (U : C) {F G : Sheaf J AddCommGrpCat.{v}}
   simp only [freeSheafHomAddEquiv, AddEquiv.trans_apply, Adjunction.homAddEquiv_apply,
     freeYonedaHomAddEquiv_apply, Adjunction.homEquiv_naturality_right]
   rfl
-
-lemma freeSheafHomAddEquiv_naturality_left {U V : C} (f : U ⟶ V) (F : Sheaf J AddCommGrpCat.{v})
-    (g : freeSheaf J V ⟶ F) :
-    freeSheafHomAddEquiv U F (freeSheafMap J f ≫ g) =
-      F.obj.map f.op (freeSheafHomAddEquiv V F g) := by
-  simp only [freeSheafHomAddEquiv, AddEquiv.trans_apply, Adjunction.homAddEquiv_apply,
-    Adjunction.homEquiv_naturality_left]
-  exact freeYonedaHomAddEquiv_naturality_left f F.obj _
 
 variable [HasExt.{w'} (Sheaf J AddCommGrpCat.{v})]
 
@@ -166,14 +119,8 @@ noncomputable def H.δ (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) : Sheaf.H S.X₃ 
 lemma H.δ_apply (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) (x : Sheaf.H S.X₃ n₀) :
     H.δ hS n₀ n₁ h x = x.comp hS.extClass h := rfl
 
-noncomputable def H.sequence (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
-    ComposableArrows AddCommGrpCat.{w'} 5 :=
-  ComposableArrows.mk₅ ((Sheaf.functorH J n₀).map S.f) ((Sheaf.functorH J n₀).map S.g)
-    (AddCommGrpCat.ofHom (H.δ hS n₀ n₁ h)) ((Sheaf.functorH J n₁).map S.f)
-    ((Sheaf.functorH J n₁).map S.g)
 
 include hS in
-
 theorem H.exact₂ {n : ℕ} (y : Sheaf.H S.X₂ n) (hy : Sheaf.H.map S.g n y = 0) :
     ∃ x : Sheaf.H S.X₁ n, Sheaf.H.map S.f n x = y :=
   Ext.covariant_sequence_exact₂ _ hS y hy
@@ -199,16 +146,6 @@ lemma H.map_f_δ {n₀ n₁ : ℕ} (h : n₀ + 1 = n₁) (x : Sheaf.H S.X₃ n�
     Sheaf.H.map S.f n₁ (H.δ hS n₀ n₁ h x) = 0 := by
   rw [H.δ_apply, Sheaf.H.map_apply, Ext.comp_assoc_of_third_deg_zero, hS.extClass_comp,
     Ext.comp_zero]
-
-noncomputable def H'.δ (U : C) (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) : S.X₃.H' n₀ U ⟶ S.X₁.H' n₁ U :=
-  AddCommGrpCat.ofHom (hS.extClass.postcomp (freeSheaf J U) h)
-
-noncomputable def H'.sequence (U : C) (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
-    ComposableArrows AddCommGrpCat.{w'} 5 :=
-  ComposableArrows.mk₅ (((Sheaf.cohomologyPresheafFunctor J n₀).map S.f).app (op U))
-    (((Sheaf.cohomologyPresheafFunctor J n₀).map S.g).app (op U)) (H'.δ hS U n₀ n₁ h)
-    (((Sheaf.cohomologyPresheafFunctor J n₁).map S.f).app (op U))
-    (((Sheaf.cohomologyPresheafFunctor J n₁).map S.g).app (op U))
 
 end LongExact
 

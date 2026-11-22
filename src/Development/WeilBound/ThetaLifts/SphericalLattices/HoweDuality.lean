@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.ThetaLifts.SphericalLattices.UnrAtDiv
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocDataV
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocDataVAlt
-import Development.WeilBound.ThetaLifts.SphericalLattices.GenOf
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.ThetaLifts.SphericalLattices.UnrAtDiv
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocDataV
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocDataVAlt
+public import Development.WeilBound.ThetaLifts.SphericalLattices.GenOf
+
+@[expose] public section
 
 noncomputable section
 

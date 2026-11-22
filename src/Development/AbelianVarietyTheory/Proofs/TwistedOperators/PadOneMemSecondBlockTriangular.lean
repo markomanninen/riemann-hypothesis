@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DiagonalPaddingLift
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedHomLatticeIffFrameStabiliserAction
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FrameMatrixMovedHomIntegralReduction
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesLocalDatumBlockTriangularLaw
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProduct
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeCharTrivialOnIdempotentIntegralUnits
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedHomLatticeIffFrameStabiliserAction
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FrameMatrixMovedHomIntegralReduction
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesLocalDatumBlockTriangularLaw
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeIntegralUnitsEqResidueCharProduct
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeCharTrivialOnIdempotentIntegralUnits
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +77,7 @@ theorem exists_dual_sep {G : Type} [AddCommGroup G] {χ : G → G → ℂ} (h : 
     have hex : ∃ u : W, ∃ v ∈ L₀, M • (u : G) = ((⟨r, hr⟩ : R) : G) + (M * M) • v := ⟨u, v, hv, e⟩
     refine ⟨⟨r, hr⟩, ?_⟩
     dsimp only [g]
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     obtain ⟨v', hv', e'⟩ := hex.choose_spec
     exact sameR _ _ r v' v hv' hv e' e
 
@@ -170,8 +175,11 @@ theorem isLattice_of_isFrame {β : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
     refine Submodule.sum_mem _ (fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, ?_, rfl⟩))
     exact Submodule.subset_span ⟨i, rfl⟩
   have hL0 := Formalism.BasicNotions.Examples₂.stdLat_isLattice (E := E) n
-  have hL' : Submodule.IsLattice E (Formalism.UG.CS.globLat (F := F) β (Formalism.BasicNotions.Examples₂.stdLat (E := E) n)) :=
-    Formalism.UG.P.csGlob_lattice _ (Module.Finite.iff_fg.mpr hL0.fg) hL0.span_eq_top β
+  have hstdSpan : Submodule.span E
+      (Formalism.BasicNotions.Examples₂.stdLat (E := E) n : Set (Fin n → E)) = ⊤ := by
+    rw [Formalism.BasicNotions.Examples₂.stdLat, Submodule.span_span_of_tower]
+    exact (Pi.basisFun E (Fin n)).span_eq
+  have hL' := Formalism.UG.P.csGlob_lattice _ (Module.Finite.iff_fg.mpr hL0.fg) hstdSpan β
   have hgen : ∀ x ∈ Λ, (fun i => ι (x i)) ∈ Formalism.L2.Herm.hatL (F := F) Λ := by
     intro x hx
     rw [hspan]
@@ -180,94 +188,13 @@ theorem isLattice_of_isFrame {β : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)}
   have hle : Λ ≤ Formalism.UG.CS.globLat (F := F) β (Formalism.BasicNotions.Examples₂.stdLat (E := E) n) := by
     intro x hx
     exact hstd _ ((hβ _).1 (hgen x hx))
-  refine ⟨Submodule.FG.of_le hL'.fg hle, ?_⟩
-
-  have hinj : Function.Injective ι := by
-    rw [injective_iff_map_eq_zero]
-    intro a ha
-    by_contra ha0
-    have hall : ∀ e : E, IsIntegral ℤ e := by
-      intro e
-      apply Formalism.UG.P.csGlob_int (F := F)
-      have he : ι e = 0 := by
-        have : e = a * (a⁻¹ * e) := by rw [← mul_assoc, mul_inv_cancel₀ ha0, one_mul]
-        rw [this, map_mul, ha, zero_mul]
-      show ι e ∈ Formalism.L2.Herm.intAf F E
-      rw [he]
-      exact Subring.zero_mem _
-    have h2 := hall (algebraMap ℚ E (1 / 2))
-    rw [isIntegral_algebraMap_iff (algebraMap ℚ E).injective] at h2
-    obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.mp h2
-    have hy' : (y : ℚ) = 1 / 2 := by simpa using hy
-    have h3 : ((2 * y : ℤ) : ℚ) = 1 := by push_cast; rw [hy']; norm_num
-    have h4 : (2 * y : ℤ) = 1 := by exact_mod_cast h3
-    omega
-
-  by_contra hne
-  obtain ⟨f, hf0, hf⟩ := Submodule.exists_dual_map_eq_bot_of_lt_top (lt_top_iff_ne_top.mpr hne) inferInstance
-  have hfΛ : ∀ x ∈ Λ, f x = 0 := by
-    intro x hx
-    have : f x ∈ (Submodule.span E (Λ : Set (Fin n → E))).map f := ⟨x, Submodule.subset_span hx, rfl⟩
-    rw [hf] at this
-    exact this
-  set c : Fin n → E := fun i => f (fun j => if i = j then 1 else 0) with hc
-  have hfx : ∀ x : Fin n → E, f x = ∑ i, x i * c i := by
-    intro x
-    rw [LinearMap.pi_apply_eq_sum_univ f x]
-    rfl
-  have hφ : ∀ y ∈ Formalism.L2.Herm.hatL (F := F) Λ, ∑ i, y i * ι (c i) = 0 := by
-    intro y hy
-    rw [hspan] at hy
-    induction hy using Submodule.span_induction with
-    | mem y hy =>
-      obtain ⟨x, hx, rfl⟩ := hy
-      calc ∑ i, ι (x i) * ι (c i) = ι (∑ i, x i * c i) := by simp [map_sum, map_mul]
-        _ = 0 := by rw [← hfx, hfΛ x hx, map_zero]
-    | zero => simp
-    | add y z _ _ hy hz => simp [add_mul, Finset.sum_add_distrib, hy, hz]
-    | smul s y _ hy =>
-      simp only [Pi.smul_apply, Subring.smul_def, smul_eq_mul, mul_assoc, ← Finset.mul_sum, hy, mul_zero]
-  have hcol : ∀ j, (fun i => (β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) i j) ∈
-      Formalism.L2.Herm.hatL (F := F) Λ := by
-    intro j
-    refine (hβ _).2 (fun i => ?_)
-    have h1 : ((β⁻¹ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) *
-        (β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = 1 := by
-      rw [← Units.val_mul, inv_mul_cancel, Units.val_one]
-    have h2 : ((β⁻¹ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)).mulVec
-        (fun i => (β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) i j) i =
-        (1 : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) i j := by
-      rw [← h1]
-      rfl
-    rw [h2, Matrix.one_apply]
-    split_ifs
-    · exact Subring.one_mem _
-    · exact Subring.zero_mem _
-  have hv : Matrix.vecMul (fun i => ι (c i)) (β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = 0 := by
-    ext j
-    simp only [Matrix.vecMul, dotProduct, Pi.zero_apply]
-    rw [← hφ _ (hcol j)]
-    exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
-  have hv0 : (fun i => ι (c i)) = 0 := by
-    have h1 : (β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) *
-        ((β⁻¹ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) = 1 := by
-      rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
-    calc (fun i => ι (c i)) = Matrix.vecMul (fun i => ι (c i))
-          ((β : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) *
-            ((β⁻¹ : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : Matrix (Fin n) (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F))) := by
-          rw [h1, Matrix.vecMul_one]
-      _ = 0 := by rw [← Matrix.vecMul_vecMul, hv, Matrix.zero_vecMul]
-  have hc0 : ∀ i, c i = 0 := fun i => hinj (by rw [map_zero]; exact congrFun hv0 i)
-  apply hf0
-  refine LinearMap.ext (fun x => ?_)
-  rw [hfx x, LinearMap.zero_apply]
-  simp [hc0]
+  exact Submodule.IsLattice.of_fg E (hL'.fg.of_le hle)
 
 end Frame
 
 section Mat
 
-open GlobalTheory.IndefiniteRowSideFullHecke.DiagonalPaddingLift GlobalTheory.StepLaw.TypeDatum
+open GlobalTheory.StepLaw.TypeDatum
 
 variable {κ : Type} [CommRing κ] {r a b : ℕ}
 
@@ -292,7 +219,8 @@ variable {D : D7} {S T : HSp D}
 
 def dualLat (ψ : AddChar (AF D.host.F) ℂ) (a : AE D) (Λ : AddSubgroup (WO S T)) : AddSubgroup (WO S T) where
   carrier := {w | a • w ∈ Λ ∧ (∀ u ∈ Λ, IsHalf a u → ψ (symplO S T u w) = 1) ∧ (a + cA D a) • w = w}
-  zero_mem' := ⟨by rw [smul_zero]; exact zero_mem _, fun u _ _ => (isBichar_symplO S T ψ).zero_right u, smul_zero _⟩
+  zero_mem' := ⟨by rw [smul_zero]; exact zero_mem _, fun u _ _ => by
+    rw [symplO_zero_right, AddChar.map_zero_eq_one], smul_zero _⟩
   add_mem' := by
     rintro x y ⟨x1, x2, x3⟩ ⟨y1, y2, y3⟩
     refine ⟨by rw [smul_add]; exact add_mem x1 y1, fun u hu hh => ?_, by rw [smul_add, x3, y3]⟩
@@ -394,8 +322,8 @@ theorem idem_smul_mem {a : AE D} (ha : a * a = a) {u : WO S T} (hu : u ∈ latO 
     a • u ∈ latO S T ΛS ΛT fun _ => True := by
   exact (AddSubgroup.mem_inf.1 (GlobalTheory.PlaceModelSum.idem_smul_half ha hu)).1
 
-theorem exists_nsmul_latO (hS : ΛS.FG) (hT : ΛT.FG) (hS' : Submodule.IsLattice D.host.E ΛS')
-    (hT' : Submodule.IsLattice D.host.E ΛT') :
+theorem exists_nsmul_latO (hS : ΛS.FG) (hT : ΛT.FG) (hS' : Submodule.IsFullLattice D.host.E ΛS')
+    (hT' : Submodule.IsFullLattice D.host.E ΛT') :
     ∃ M : ℕ, 0 < M ∧ ∀ u ∈ latO S T ΛS ΛT fun _ => True, M • u ∈ latO S T ΛS' ΛT' fun _ => True := by
   obtain ⟨M, hM, hMu⟩ := GlobalTheory.PlaceDatum.exists_den_latO (S := S) (T := T) hS hT
   obtain ⟨K, hK, hKt⟩ := GlobalTheory.PlaceDatum.exists_nsmul_mem_latO (S := S) (T := T) hS' hT'
@@ -428,16 +356,16 @@ private theorem symplO_nsmul_left_eq_nsmul_right (n : ℕ) (x y : WO S T) :
   | zero => simp only [zero_smul, GlobalTheory.PlaceModel.symplO_zero_left, GlobalTheory.PlaceModel.symplO_zero_right]
   | succ n ih => rw [succ_nsmul, succ_nsmul, GlobalTheory.PlaceModel.symplO_add_left, GlobalTheory.PlaceModel.symplO_add_right, ih]
 
-theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice D.host.E ΛS)
-    (hT : Submodule.IsLattice D.host.E ΛT) {a : AE D} (ha : a * a = a) (hinf : infPart D a = 0) (x : WO S T)
+theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsFullLattice D.host.E ΛS)
+    (hT : Submodule.IsFullLattice D.host.E ΛT) {a : AE D} (ha : a * a = a) (hinf : infPart D a = 0) (x : WO S T)
     (hx : IsHalf a x) (hn : x ∉ latO S T ΛS ΛT fun _ => True) :
     ∃ y, IsHalf (cA D a) y ∧ (∀ u ∈ latO S T ΛS ΛT fun _ => True, IsHalf a u → ψ (symplO S T u y) = 1) ∧
       ψ (symplO S T x y) ≠ 1 := by
   classical
   have hSf := GlobalTheory.PlaceModel.isSelfDualC_latFrame S
   have hTf := GlobalTheory.PlaceModel.isSelfDualC_latFrame T
-  have hSl : Submodule.IsLattice D.host.E (GlobalTheory.PlaceModel.latFrame S) := hSf.1
-  have hTl : Submodule.IsLattice D.host.E (GlobalTheory.PlaceModel.latFrame T) := hTf.1
+  have hSl := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S _ hSf
+  have hTl := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T _ hTf
   have hI := (GlobalTheory.T.self_dual_lattice_pairing_dual D ψ S T (GlobalTheory.PlaceModel.latFrame S) (GlobalTheory.PlaceModel.latFrame T) hψ hSf hTf).1
   have hmap : ∀ u : WO S T, IsHalf a u → u.map (infPart D) = 0 := by
     intro u hu
@@ -463,9 +391,9 @@ theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice D.host
     exact h _ (idem_smul_mem (ΛS := GlobalTheory.PlaceModel.latFrame S) (ΛT := GlobalTheory.PlaceModel.latFrame T) hcc hu')
       (half_smul hcc u')
   obtain ⟨M1, hM1, h1⟩ := exists_nsmul_latO (ΛS := ΛS) (ΛT := ΛT) (ΛS' := GlobalTheory.PlaceModel.latFrame S)
-    (ΛT' := GlobalTheory.PlaceModel.latFrame T) hS.fg hT.fg hSl hTl
+    (ΛT' := GlobalTheory.PlaceModel.latFrame T) hS.toIsLattice.fg hT.toIsLattice.fg hSl hTl
   obtain ⟨M2, hM2, h2⟩ := exists_nsmul_latO (ΛS := GlobalTheory.PlaceModel.latFrame S) (ΛT := GlobalTheory.PlaceModel.latFrame T)
-    (ΛS' := ΛS) (ΛT' := ΛT) hSl.fg hTl.fg hS hT
+    (ΛS' := ΛS) (ΛT' := ΛT) hSl.toIsLattice.fg hTl.toIsLattice.fg hS hT
   have hmul : ∀ u : WO S T, (M1 * M2) • u = M2 • (M1 • u) := fun u => by
     rw [mul_comm, mul_smul]
   have hmul' : ∀ u : WO S T, (M1 * M2) • u = M1 • (M2 • u) := fun u => mul_smul M1 M2 u
@@ -477,8 +405,17 @@ theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice D.host
   have hx' : x ∈ GlobalTheory.PlaceModel.half S T a := hXi x hx
   by_cases hxM : (M1 * M2) • x ∈ (latO S T (GlobalTheory.PlaceModel.latFrame S : Set (Fin S.rank → D.host.E))
       (GlobalTheory.PlaceModel.latFrame T : Set (Fin T.rank → D.host.E)) fun _ => True) ⊓ GlobalTheory.PlaceModel.half S T a
-  · obtain ⟨y, hyY, hyL, hxy⟩ := exists_dual_sep (χ := fun u v : WO S T => ψ (symplO S T u v))
-      (GlobalTheory.PlaceModel.isBichar_symplO S T ψ)
+  · have hχ : IsBichar (fun u v : WO S T => ψ (symplO S T u v)) := by
+      constructor
+      · intro u v w
+        rw [symplO_add_left, AddChar.map_add_eq_mul]
+      · intro u v w
+        rw [symplO_add_right, AddChar.map_add_eq_mul]
+      · intro v
+        rw [symplO_zero_left, AddChar.map_zero_eq_one]
+      · intro u
+        rw [symplO_zero_right, AddChar.map_zero_eq_one]
+    obtain ⟨y, hyY, hyL, hxy⟩ := exists_dual_sep hχ
       (X := GlobalTheory.PlaceModel.half S T a) (Y := GlobalTheory.PlaceModel.half S T (cA D a))
       (L₀ := (latO S T (GlobalTheory.PlaceModel.latFrame S : Set (Fin S.rank → D.host.E))
         (GlobalTheory.PlaceModel.latFrame T : Set (Fin T.rank → D.host.E)) fun _ => True) ⊓ GlobalTheory.PlaceModel.half S T a)
@@ -496,7 +433,7 @@ theorem latO_bidual (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice D.host
         have e := congrArg (fun z : WO S T => incA D ((k : D.host.E))⁻¹ • z) h
         simpa only [GlobalTheory.PlaceModel.inv_smul_nsmul S T hk] using e)
       (fun k hk => half_finite_mod (ΛS := GlobalTheory.PlaceModel.latFrame S) (ΛT := GlobalTheory.PlaceModel.latFrame T)
-        hSl.fg hTl.fg ha k hk)
+        hSl.toIsLattice.fg hTl.toIsLattice.fg ha k hk)
       inf_le_right hMpos
       (fun u hu => ⟨by rw [hmul]; exact AddSubgroup.nsmul_mem _ (h1 u hu.1) _,
         AddSubgroup.nsmul_mem _ hu.2 _⟩)
@@ -538,7 +475,7 @@ private theorem isThetaFunO_add_twisted_operators {f g : WO S T → ℂ} (hf : I
   case level =>
     refine ⟨U ⊓ V, ?_, fun u hu h0 => ?_⟩
     · rw [AddSubgroup.coe_inf]; exact hU.inter hV
-    · rw [← GlobalTheory.SplitScalar.heisL_apply, map_add, GlobalTheory.SplitScalar.heisL_apply, GlobalTheory.SplitScalar.heisL_apply,
+    · rw [← GlobalTheory.SplitScalar.heisL_apply, map_add (f := _), GlobalTheory.SplitScalar.heisL_apply, GlobalTheory.SplitScalar.heisL_apply,
         hUf u hu.1 h0, hVg u hu.2 h0]
   case cont => exact hf.cont.add hg.cont
   case smooth => intro k L hL hL0 w; exact (hf.smooth k L hL hL0 w).add (hg.smooth k L hL hL0 w)
@@ -552,8 +489,8 @@ private theorem isThetaFunO_smul_twisted_operators (c : ℂ) {f : WO S T → ℂ
   case cont => exact hf.cont.const_smul c
   case smooth => intro k L hL hL0 w; exact (hf.smooth k L hL hL0 w).const_smul c
 
-theorem isTheta_placeModel (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice D.host.E ΛS)
-    (hT : Submodule.IsLattice D.host.E ΛT) {a : AE D} (ha : a * a = a) (hc : a * cA D a = 0) (hinf : infPart D a = 0)
+theorem isTheta_placeModel (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsFullLattice D.host.E ΛS)
+    (hT : Submodule.IsFullLattice D.host.E ΛT) {a : AE D} (ha : a * a = a) (hc : a * cA D a = 0) (hinf : infPart D a = 0)
     {f₀ : WO S T → ℂ} (hf₀ : IsThetaFunO ψ S T f₀) (Tm : (WO S T → ℂ) →ₗ[ℂ] (WO S T → ℂ))
     (hTm : IsPlaceModel ψ (symplO S T) (heisO ψ S T) a (latO S T ΛS ΛT fun _ => True) 1 f₀ Tm) (Φ : WO S T → ℂ)
     (hΦ : IsSBHalf a (latO S T ΛS ΛT fun _ => True) Φ) : IsThetaFunO ψ S T (Tm Φ) := by
@@ -566,11 +503,11 @@ theorem isTheta_placeModel (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice
     simp [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, hb]
   have hSf := GlobalTheory.PlaceModel.isSelfDualC_latFrame S
   have hTf := GlobalTheory.PlaceModel.isSelfDualC_latFrame T
-  have hSl : Submodule.IsLattice D.host.E (GlobalTheory.PlaceModel.latFrame S) := hSf.1
-  have hTl : Submodule.IsLattice D.host.E (GlobalTheory.PlaceModel.latFrame T) := hTf.1
+  have hSl := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S _ hSf
+  have hTl := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T _ hTf
   have hI := (GlobalTheory.T.self_dual_lattice_pairing_dual D ψ S T (GlobalTheory.PlaceModel.latFrame S) (GlobalTheory.PlaceModel.latFrame T) hψ hSf hTf).1
   obtain ⟨M1, hM1, h1⟩ := exists_nsmul_latO (ΛS := ΛS) (ΛT := ΛT) (ΛS' := GlobalTheory.PlaceModel.latFrame S)
-    (ΛT' := GlobalTheory.PlaceModel.latFrame T) hS.fg hT.fg hSl hTl
+    (ΛT' := GlobalTheory.PlaceModel.latFrame T) hS.toIsLattice.fg hT.toIsLattice.fg hSl hTl
   have hTd := isPlaceModel_dualLat (ψ := ψ) hc hTm
   have hΦd := (isSBHalf_dualLat (ψ := ψ) (Λ := latO S T ΛS ΛT fun _ => True) hc Φ).2 hΦ
   refine GlobalTheory.SchrTheta.placeModel_induction ψ (e := a) (dualLat ψ a (latO S T ΛS ΛT fun _ => True))
@@ -585,7 +522,7 @@ theorem isTheta_placeModel (hψ : IsStdChar D ψ (-1)) (hS : Submodule.IsLattice
     obtain ⟨y, hy, hyL, hxy⟩ := latO_bidual hψ hS hT ha hinf x hxh hn
     exact hxy (h y ⟨(mem_dualLat_conj (ψ := ψ) hc hy).2 hyL, (GlobalTheory.PlaceModel.isHalf_iff S T).1 hy⟩)
   · intro k hk
-    obtain ⟨R, hR, hRt⟩ := half_finite_mod hS.fg hT.fg ha k hk
+    obtain ⟨R, hR, hRt⟩ := half_finite_mod hS.toIsLattice.fg hT.toIsLattice.fg ha k hk
     refine ⟨R, hR, fun t ht => ?_⟩
     have ht' : t ∈ (latO S T ΛS ΛT fun _ => True) ⊓ GlobalTheory.PlaceModel.half S T a :=
       ⟨(mem_dualLat_half (ψ := ψ) hc ((GlobalTheory.PlaceModel.isHalf_iff S T).2 ht.2)).1 ht.1, ht.2⟩
@@ -667,8 +604,8 @@ private theorem exists_int_resS_eq_one_mul_idem_eq_zero_of_ne (ha : IsIdemSum a 
   rw [mul_add, h1, zero_add, h4, ← h2]
   calc es Q * a * (cA D a * cA D e) = (a * cA D a) * (es Q * cA D e) := by ring
     _ = 0 := by rw [hac, zero_mul]
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redFn_eq_one_of_ne (ha : IsIdemSum a P) (hP : PP ∈ P) (he : Formalism.L2.NTheta.IsIdemAt e PP) {V : HSp D}
     {β : GL (Fin V.rank) (Formalism.IndefR.Lev.EAf D)} {g : GA D V} (hg : SuppAt e V g) (hβ : finE V g ∈ St β) {Q : Pl D.host.E}
     (hQ : Q ∈ P) (hne : PP ≠ Q) : redFn β Q (finE V g) = 1 := by
@@ -685,8 +622,8 @@ theorem redFn_eq_one_of_ne (ha : IsIdemSum a P) (hP : PP ∈ P) (he : Formalism.
     have h5 := congrArg (toEAf D) (hg i j)
     by_cases hij : i = j
     · subst hij
-      simpa [Matrix.sub_apply, Matrix.map_apply] using h5
-    · simpa [Matrix.sub_apply, Matrix.map_apply, Matrix.one_apply_ne hij] using h5
+      simpa only [Matrix.sub_apply, Matrix.map_apply, Matrix.one_apply_eq, map_mul, map_sub, map_one] using h5
+    · simpa only [Matrix.sub_apply, Matrix.map_apply, Matrix.one_apply_ne hij, map_mul, map_sub, map_zero] using h5
   rw [St, MonoidHom.mem_range] at hβ
   obtain ⟨y, hy⟩ := hβ
   have hfr : (frGL β y).val = β.val * (intGL D.host.F D.host.E V.rank y).val * (β⁻¹).val := by
@@ -714,10 +651,12 @@ theorem redFn_eq_one_of_ne (ha : IsIdemSum a P) (hP : PP ∈ P) (he : Formalism.
   by_cases hij : i = j
   · subst hij
     rw [Matrix.one_apply_eq]
-    have h7 := key ((y : Matrix (Fin V.rank) (Fin V.rank) _) i i - 1) (by simpa using hw)
+    have h7 := key ((y : Matrix (Fin V.rank) (Fin V.rank) _) i i - 1)
+      (by simpa only [Matrix.one_apply_eq, Subring.subtype_apply, AddSubgroupClass.coe_sub,
+        OneMemClass.coe_one] using hw)
     rwa [map_sub, map_one, sub_eq_zero] at h7
   · rw [Matrix.one_apply_ne hij]
-    exact key _ (by simpa [Matrix.one_apply_ne hij] using hw)
+    exact key _ (by simpa only [Matrix.one_apply_ne hij, Subring.subtype_apply, sub_zero] using hw)
 
 end Idem
 

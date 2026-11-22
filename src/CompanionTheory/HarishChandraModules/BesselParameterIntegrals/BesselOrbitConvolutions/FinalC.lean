@@ -1,9 +1,14 @@
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.WeylGroupActions.TorusMovesCharacter
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.DDFormC
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.AtFormC
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.AtFormAdmC
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.JacquetFunctionalNormalization
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SecondCountableQuotients.ModExists
+module
+
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.WeylGroupActions.TorusMovesCharacter
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.DDFormC
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.AtFormAdmOneOfSteps
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiscreteSeriesFormOneReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleAtomicFormOneReduction
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.BesselOrbitConvolutions.JacquetFunctionalNormalization
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SecondCountableQuotients.ModExists
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace
@@ -68,7 +73,9 @@ theorem isHaarOn_map_cjE {b : Mx k r} (hb : b ∈ UH (Hpk k r)) {N : Set (Mx k r
   refine ⟨(cjE hb).toMeasurableEquiv.sigmaFinite_map, fun h0 => h2 ?_, ?_, fun s hs => ?_⟩
   · rwa [Measure.map_eq_zero_iff hE.measurable.aemeasurable] at h0
   · rw [hE.map_apply]
-    exact measure_mono_null (fun x hx hx' => hx (hN _ hx').1) h3
+    refine measure_mono_null ?_ h3
+    intro x hx hx'
+    exact hx (hN _ hx').1
   · have hl : ∀ a : Mx k r, Measurable (lmulM (k := k) (r := r) a) := fun a =>
       ModEx.measurable_lmulQ a
     have e : lmulM s ∘ cjE hb = cjE hb ∘ lmulM (b⁻¹ * s * b) := by
@@ -159,16 +166,6 @@ theorem dDForm_scale (hS : Side k r ε lam h σ w0 z c u π μW μN μG νq) :
   DDSmoothness.GC.discrete_form_one_side psi_constant schur_hermitian norm_inverse_bound
     growth_spherical_bound growth_group_bound decDD beConv normIdSm beBessel shapeC inputs_holds
     k r ε lam h H σ w0 Wp z c u π μW μN μG νq hS
-
-theorem atForm_scale (hS : Side k r ε lam h σ w0 z c u π μW μN μG νq) :
-    AtForm z c π μW μN μG νq σ :=
-  DDSmoothness.GC.smooth_K_finite_form_one_side schur_hermitian beConv normIdSm beBessel shapeC kFinForm zeroCase
-    inputs_holds k r ε lam h H σ w0 Wp z c u π μW μN μG νq hS
-
-theorem atFormAdm_scale (hS : Side k r ε lam h σ w0 z c u π μW μN μG νq) :
-    AtFormAdm z c π μW μN μG νq σ w0 :=
-  UnipotentHaarMeasurability.GC.smooth_admissible_form_one_side schur_hermitian beConv normIdSm beBessel shapeC kFinForm
-    zeroCase zeroCaseDD inputs_holds k r ε lam h H σ w0 Wp z c u π μW μN μG νq hS
 
 end Forms
 

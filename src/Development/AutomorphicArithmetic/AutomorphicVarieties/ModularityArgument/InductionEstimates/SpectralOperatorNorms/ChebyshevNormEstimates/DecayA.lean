@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspCentral
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import GroundTheory.AutomorphicForms.UnitaryAdmissible.CuspCentral
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Uniform
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci PositivityTheory.Rg.Fx
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg.Tf.IntegralApplyAeEq UpperTheory.V.Z.IntegralApplyAeEq UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial
 
-private theorem archP_inf {K : Type} [Field K] [NumberField K] {n : ℕ} (g : normOneGL K n)
+private theorem archP_inf {K : Type} [Field K] [NumberField K] {n : ℕ} (g : normOneGL (K := K) (n := n))
     (hg : CuspidalSpectrum.finPart K n (g : AdelicGLn.AdelicGL K n) = 1) :
     archP K n (infPart K n (g : AdelicGLn.AdelicGL K n)) = g := by
   have h := infEmb_infPart_mul_finEmb_finPart (g : AdelicGLn.AdelicGL K n)

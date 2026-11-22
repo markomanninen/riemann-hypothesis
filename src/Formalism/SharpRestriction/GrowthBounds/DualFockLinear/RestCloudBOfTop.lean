@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.VFlatSupported
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.VFlatSupported
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.ChirpQ
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.FtBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.MapMulInvEqOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.NApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.ChirpQ
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianForms.FtBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaReindexing.MapMulInvEqOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -28,20 +32,20 @@ private theorem norm_psi (x : A F) : ‖ψ x‖ = 1 := Circle.norm_coe _
 private theorem continuous_quaternaryForm_left (δ : F) (v : V4 F) : Continuous fun y : V4 F => B4 δ y v := by
   exact continuous_form (v 2) (rt δ) (v 3) (v 0) (v 1)
 
-private theorem integrable_ft (δ : F) {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) (v : V4 F) :
+private theorem integrable_ft (δ : F) {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (v : V4 F) :
     Integrable (fun y => φ y * ψ (B4 δ y v)) (adeleMeasurePi F) := by
   refine (integrable_of_mem_schwartzBruhatPi hφ).mul_bdd (c := 1) ?_ ?_
   · exact (continuous_psi.comp (continuous_quaternaryForm_left δ v)).aestronglyMeasurable
   · exact Eventually.of_forall fun y => (norm_psi _).le
 
-private theorem quaternaryFourier_add (δ : F) {φ φ' : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4))
-    (hφ' : φ' ∈ schwartzBruhatPi F (Fin 4)) (v : V4 F) :
+private theorem quaternaryFourier_add (δ : F) {φ φ' : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
+    (hφ' : φ' ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (v : V4 F) :
     ft4 δ (φ + φ') v = ft4 δ φ v + ft4 δ φ' v := by
   unfold ft4
   rw [← integral_add (integrable_ft δ hφ v) (integrable_ft δ hφ' v)]
   congr 1
   funext y
-  simp only [Pi.add_apply, add_mul]
+  simp [add_mul]
 
 private theorem quaternaryFourier_smul (δ : F) (c : ℂ) (φ : V4 F → ℂ) (v : V4 F) :
     ft4 δ (c • φ) v = c * ft4 δ φ v := by
@@ -49,7 +53,7 @@ private theorem quaternaryFourier_smul (δ : F) (c : ℂ) (φ : V4 F → ℂ) (v
   rw [← integral_const_mul]
   congr 1
   funext y
-  simp only [Pi.smul_apply, smul_eq_mul, mul_assoc]
+  simp [mul_assoc]
 
 private def opN (δ : F) (b : A F) : Module.End ℂ (S4 F) where
   toFun φ := ⟨fun v => ψ (b * q4 δ v) * φ.1 v, by

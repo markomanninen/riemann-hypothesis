@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SgBasics
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import GroundTheory.AutomorphicForms.ReductionHeight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.HeckeShiftSums.SgBasics
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import GroundTheory.AutomorphicForms.ReductionHeight
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -19,7 +24,7 @@ private theorem sd_ent {n : ℕ} (h : AdelicGLn.AdelicGL K n) (i j : Fin n) (y :
     (hy : (y : 𝔸[K]) = (h : Matrix (Fin n) (Fin n) 𝔸[K]) i j) :
     (GroundTheory.Global.IdeleGroup.ideleModule K y : ℝ) ≤ AutomorphicForm.height h := by
   rw [GroundTheory.Global.IdeleGroup.ideleModule_eq, AutomorphicForm.height]
-  refine mul_le_mul (Finset.prod_le_prod (fun w _ => by positivity) fun w _ => ?_)
+  refine mul_le_mul (Finset.prod_le_prod₀ (fun w _ => by positivity) fun w _ => ?_)
     (finprod_le_finprod_of_nonneg (GroundTheory.Global.IdeleGroup.finite_mulSupport_norm y) (finite_mulSupport_locHeight_finAt h)
       (fun v => norm_nonneg _) fun v => ?_) (finprod_nonneg fun v => norm_nonneg _)
     (Finset.prod_nonneg fun w _ => pow_nonneg (locHeight_pos _).le _)
@@ -92,7 +97,7 @@ private theorem sd_lv (s : ℝ) : ∃ a : Fin (2 + 2) → GroundTheory.Global.Id
   rw [Matrix.fromBlocks_diagonal, Matrix.reindex_apply, Matrix.submatrix_diagonal_equiv, coe_diagUnits]
   congr 1
   funext i
-  simp only [Function.comp_apply]
+  dsimp only [Function.comp_apply]
   rcases finSumFinEquiv.symm i with i | i <;> rfl
 
 private theorem sd_key (δ : GL (Fin (2 + 2)) K) (b : AdelicGLn.AdelicGL K (2 + 2)) (hb : b ∈ adelicBorel)
@@ -118,15 +123,18 @@ private theorem sd_key (δ : GL (Fin (2 + 2)) K) (b : AdelicGLn.AdelicGL K (2 + 
     field_simp
   · obtain ⟨β, hβ⟩ := isUnit_apply_self_of_mem_adelicBorel (inv_mem hb) 3
     have h1 := sd_row δ⁻¹ _ (inv_mem hT) ((r 3)⁻¹ * (β * (a 3)⁻¹)) (by
-      rw [mul_inv_rev, mul_inv_rev, ← map_inv, ← map_inv]
+      rw [show (diagUnits (2 + 2) a * b * diagUnits (2 + 2) r)⁻¹ =
+        (diagUnits (2 + 2) r)⁻¹ * (b⁻¹ * (diagUnits (2 + 2) a)⁻¹) by group, ← map_inv, ← map_inv]
       simp only [Units.val_mul, coe_diagUnits, Matrix.mul_diagonal, Matrix.diagonal_mul, hβ, Pi.inv_apply])
     have h2 := sd_ent b 3 3 β⁻¹ (by
       have := upper_triangular_mul_last_row b.val (b⁻¹ : AdelicGLn.AdelicGL K (2 + 2)).val (inv_mem hb : b⁻¹ ∈ adelicBorel) 3
       rw [Units.inv_mul, Matrix.one_apply_eq, ← hβ] at this
       exact Units.inv_eq_of_mul_eq_one_right this.symm)
     rw [map_inv, Positive.coe_inv] at h2
-    rw [map_inv (AdelicGLn.diagonal K (2 + 2)), ← mul_inv_rev, height_inv, map_mul, map_mul, map_inv, map_inv, Positive.val_mul,
-      Positive.val_mul, Positive.coe_inv, Positive.coe_inv] at h1
+    rw [map_inv (AdelicGLn.diagonal K (2 + 2)) δ] at h1
+    rw [← mul_inv_rev (AdelicGLn.diagonal K (2 + 2) δ) (diagUnits (2 + 2) a * b * diagUnits (2 + 2) r)] at h1
+    rw [height_inv] at h1
+    rw [map_mul, map_mul, map_inv, map_inv, Positive.val_mul, Positive.val_mul, Positive.coe_inv, Positive.coe_inv] at h1
     have hp := (GroundTheory.Global.IdeleGroup.ideleModule K β).2
     have hp1 := (GroundTheory.Global.IdeleGroup.ideleModule K (a 3)).2
     have hp2 := (GroundTheory.Global.IdeleGroup.ideleModule K (r 3)).2

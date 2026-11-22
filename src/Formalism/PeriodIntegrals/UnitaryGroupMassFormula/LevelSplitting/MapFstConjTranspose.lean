@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ConjDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelSplitting.ConjDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,8 @@ def p1 : (R1 × R2) ⊗[F] E →+* R1 ⊗[F] E :=
 def p2 : (R1 × R2) ⊗[F] E →+* R2 ⊗[F] E :=
   (Algebra.TensorProduct.map (AlgHom.snd F R1 R2) (AlgHom.id F E)).toRingHom
 
-theorem fst_tmul (r : R1 × R2) (e : E) : p1 (F := F) (E := E) R1 R2 (r ⊗ₜ e) = r.1 ⊗ₜ e := rfl
-
-theorem snd_tmul (r : R1 × R2) (e : E) : p2 (F := F) (E := E) R1 R2 (r ⊗ₜ e) = r.2 ⊗ₜ e := rfl
 
 variable {R1 R2} in
-
 def crd (R : Type) [CommRing R] [Algebra F R] :
     R ⊗[F] E ≃ₗ[R] (Fin (Module.finrank F E) → R) :=
   (Algebra.TensorProduct.basis R (Module.finBasis F E)).equivFun
@@ -39,13 +39,15 @@ theorem crd_symm (R : Type) [CommRing R] [Algebra F R] (c : Fin (Module.finrank 
 theorem fst_coordinates (x : (R1 × R2) ⊗[F] E) :
     p1 R1 R2 x = (crd R1).symm (fun k => (crd (R1 × R2) x k).1) := by
   conv_lhs => rw [← (crd (E := E) (R1 × R2)).symm_apply_apply x]
-  rw [crd_symm, crd_symm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [crd_symm, crd_symm, map_sum]
   rfl
 
 theorem snd_coordinates (x : (R1 × R2) ⊗[F] E) :
     p2 R1 R2 x = (crd R2).symm (fun k => (crd (R1 × R2) x k).2) := by
   conv_lhs => rw [← (crd (E := E) (R1 × R2)).symm_apply_apply x]
-  rw [crd_symm, crd_symm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [crd_symm, crd_symm, map_sum]
   rfl
 
 def qq (a : R1 ⊗[F] E) (b : R2 ⊗[F] E) : (R1 × R2) ⊗[F] E :=
@@ -77,14 +79,14 @@ theorem fst_conj_bis (x : (R1 × R2) ⊗[F] E) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem snd_conj_alt (x : (R1 × R2) ⊗[F] E) :
     p2 R1 R2 (sigR (R1 × R2) σ x) = sigR R2 σ (p2 R1 R2 x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem fst_inclusion (e : E) : p1 R1 R2 (inclR (F := F) (R1 × R2) e) = inclR (F := F) R1 e := rfl
 
@@ -164,9 +166,6 @@ def psiE : (Fin M → (R1 × R2) ⊗[F] E) ≃+ (Fin M → R1 ⊗[F] E) × (Fin 
   right_inv y := Prod.ext (funext fun i => fst_pair R1 R2 _ _) (funext fun i => snd_pair R1 R2 _ _)
   map_add' x y := by
     refine Prod.ext (funext fun i => ?_) (funext fun i => ?_) <;> simp
-
-theorem psiE_symm_eq :
-    ⇑(psiE (F := F) (E := E) (M := M) R1 R2).symm = fun y i => qq R1 R2 (y.1 i) (y.2 i) := rfl
 
 theorem psi_lin (g : HA R2 σ J) (x : Fin M → (R1 × R2) ⊗[F] E) :
     psiE R1 R2 (lin (R1 × R2) σ J (lift R1 R2 σ J g) x) =

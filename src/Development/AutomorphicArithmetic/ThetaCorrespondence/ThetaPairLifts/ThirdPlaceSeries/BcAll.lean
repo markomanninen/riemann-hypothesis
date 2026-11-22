@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTypeLocus
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalGlobalCompatibility
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.BcPerm
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTypeLocus
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalGlobalCompatibility
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.BcPerm
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -17,7 +21,6 @@ variable (D : D7)
 end AtPlace
 section OnMt
 variable (D : D7) (μ : D.what₂.Tup) (j : ℕ)
-local notation "CZ" => Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))
 end OnMt
 section Record
 variable {D : D7}
@@ -30,7 +33,6 @@ theorem isBCV_of_isBCV_of_same_ptV (hT0 : SumRepresentations.tie0 D) (hG : _root
 end Record
 section Series
 variable {D : D7}
-local notation "CZ" => Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))
 end Series
 section Main
 end Main
@@ -42,6 +44,52 @@ theorem main_alt_alt : ∀ (D : D7) (P : Pend D), GlobalTheory.TypeLeaf.SerLoc D
   obtain ⟨P0, hP0, hB0⟩ := hSig
   let s : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), (ZMod (D.host.g kv.1))[X] := fun kv => D.ntypes.labPar kv.1 σ' kv.2
   obtain ⟨z, L, hLnd, hLall, hz⟩ := hCE i s
+  have onMt_coe (μ : D.what₂.Tup) (j : ℕ) (c : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd)))) :
+      D.ntypes.onMt μ j (c : MonoidAlgebra ℂ (G0g D.nd)) = D.ntypes.cenMt μ j c := by
+    unfold NTypes.onMt
+    rw [dite_eq_left c.2]
+  have onMt_sum (μ : D.what₂.Tup) (j : ℕ) {ι : Type} (S : Finset ι)
+      (a : ι → MonoidAlgebra ℂ (G0g D.nd))
+      (ha : ∀ i ∈ S, a i ∈ Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) :
+      D.ntypes.onMt μ j (∑ i ∈ S, a i) = ∑ i ∈ S, D.ntypes.onMt μ j (a i) := by
+    induction S using Finset.induction_on with
+    | empty =>
+      unfold NTypes.onMt
+      rw [Finset.sum_empty, Finset.sum_empty, dite_eq_left (Subalgebra.zero_mem _)]
+      exact map_zero (D.ntypes.cenMt μ j)
+    | insert i S hi ih =>
+      have h₁ := ha i (Finset.mem_insert_self i S)
+      have h₂ := Subalgebra.sum_mem (Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) (fun x hx => ha x (Finset.mem_insert_of_mem hx))
+      rw [Finset.sum_insert hi, Finset.sum_insert hi, ← ih (fun x hx => ha x (Finset.mem_insert_of_mem hx))]
+      unfold NTypes.onMt
+      rw [dite_eq_left (Subalgebra.add_mem _ h₁ h₂), dite_eq_left h₁, dite_eq_left h₂]
+      exact map_add (D.ntypes.cenMt μ j) ⟨a i, h₁⟩ ⟨∑ x ∈ S, a x, h₂⟩
+  let ef (s : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), (ZMod (D.host.g kv.1))[X]) (kv : Σ k : Fin 2, D.nd.PlG k) : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) :=
+    ⟨Formalism.MainNotions.ArithmeticCylinders.atPlace D kv.1 kv.2 (D.ntypes.eSer kv.1 (s kv)), atPlace_mem_center D kv.1 kv.2 _ (D.ntypes.eSer_central kv.1 (s kv))⟩
+  have list_prod_eq (s : ∀ kv : (Σ k : Fin 2, D.nd.PlG k), (ZMod (D.host.g kv.1))[X])
+      (L : List (Σ k : Fin 2, D.nd.PlG k)) (hnd : L.Nodup) (hall : ∀ kv, kv ∈ L) :
+      (L.map fun kv => Formalism.MainNotions.ArithmeticCylinders.atPlace D kv.1 kv.2 (D.ntypes.eSer kv.1 (s kv))).prod =
+        ((∏ kv, ef s kv : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd)))) : MonoidAlgebra ℂ (G0g D.nd)) := by
+    have h1 : (L.map fun kv => Formalism.MainNotions.ArithmeticCylinders.atPlace D kv.1 kv.2 (D.ntypes.eSer kv.1 (s kv))) =
+        (L.map (ef s)).map (Subalgebra.val _) := by rw [List.map_map]; rfl
+    have h2 : L.toFinset = Finset.univ := Finset.eq_univ_of_forall fun kv => List.mem_toFinset.2 (hall kv)
+    rw [h1, ← map_list_prod (Subalgebra.val _), ← List.prod_toFinset (ef s) hnd, h2]
+    rfl
+  have cen_prod_fix {M : Type} [AddCommGroup M] [Module ℂ M]
+      (cen : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) →ₐ[ℂ] Module.End ℂ M)
+      {ι : Type} (e : ι → ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd)))) (S : Finset ι) (F : M) (h : ∀ a ∈ S, cen (e a) F = F) :
+      cen (∏ a ∈ S, e a) F = F := by
+    induction S using Finset.induction_on with
+    | empty => rw [Finset.prod_empty, map_one]; rfl
+    | insert a S ha ih =>
+      rw [Finset.prod_insert ha, map_mul, Module.End.mul_apply, ih (fun b hb => h b (Finset.mem_insert_of_mem hb)), h a (Finset.mem_insert_self a S)]
+  have cen_prod_ne {M : Type} [AddCommGroup M] [Module ℂ M]
+      (cen : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd))) →ₐ[ℂ] Module.End ℂ M)
+      {ι : Type} [DecidableEq ι] (e : ι → ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd)))) (S : Finset ι) (F : M) (hne : cen (∏ a ∈ S, e a) F ≠ 0)
+      (a : ι) (ha : a ∈ S) : cen (e a) F ≠ 0 := by
+    intro h0
+    apply hne
+    rw [← Finset.prod_erase_mul S e ha, map_mul, Module.End.mul_apply, h0, map_zero]
   have hz' : ∀ F, D.ntypes.onMt (D.nd.mu i) (D.nd.j i)
       (PairedCharacterCondition.mapCoef (iotaO D.nd D.naut i) (z : MonoidAlgebra (D.nd.O i) (G0g D.nd))) F =
       (D.what₂.restRowsFiniteGroupCard : ℂ) • D.ntypes.cenMt (D.nd.mu i) (D.nd.j i) (∏ kv, ef s kv) F := by
@@ -146,7 +194,7 @@ theorem main_alt_alt : ∀ (D : D7) (P : Pend D), GlobalTheory.TypeLeaf.SerLoc D
         · exact atPlace_mem_center D k v _ fun b => (P.lz k).idem_central τ b
         · rw [atPlace_zero]
           exact Subalgebra.zero_mem _
-      rw [P.eSer_eq k, atPlace_sum, onMt_sum D _ _ _ _ hc, LinearMap.sum_apply] at h1
+      rw [P.eSer_eq k, atPlace_sum, onMt_sum _ _ _ _ hc, LinearMap.sum_apply] at h1
       obtain ⟨τ, -, hτ⟩ := Finset.exists_ne_zero_of_sum_ne_zero h1
       by_cases hlab : (P.lz k).lab τ = s ⟨k, v⟩
       · rw [if_pos hlab] at hτ
@@ -155,7 +203,7 @@ theorem main_alt_alt : ∀ (D : D7) (P : Pend D), GlobalTheory.TypeLeaf.SerLoc D
         apply hτ
         rw [if_neg hlab, atPlace_zero]
         unfold NTypes.onMt
-        rw [dif_pos (Subalgebra.zero_mem _)]
+        rw [dite_eq_left (Subalgebra.zero_mem _)]
         have e0 : (⟨0, Subalgebra.zero_mem _⟩ : ↥(Subalgebra.center ℂ (MonoidAlgebra ℂ (G0g D.nd)))) = 0 := rfl
         rw [e0, map_zero]
         rfl

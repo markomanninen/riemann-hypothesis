@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantUnipotentTranslate
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TsumMeas
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PartialConstantTermBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantUnipotentTranslate
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,14 +31,15 @@ theorem chz_facts : ∀ {D : D7} {ρ : ℕ} (ψ : AddChar (AF D.host.F) ℂ), Is
         (HMul.hMul (b₀.1.map (incA D)) z.1 : Mx D ρ ρ) + (HMul.hMul (b₀.1.map (incA D)) z'.1 : Mx D ρ ρ) :=
       Matrix.mul_add _ _ _
     have hadd : ∀ a c : AE D, halfTr (a + c) = halfTr a + halfTr c := fun a c => by
-      simp only [halfTr, trA, map_add, mul_add]
+      simp only [halfTr, trA, map_add (f := _), mul_add]
     unfold chz
     rw [e, Matrix.trace_add, hadd, AddChar.map_add_eq_mul]
   · obtain ⟨Z, hZ⟩ := hz
     have hZ' : Z.map (incA D) = z.1 := hZ
     have e : Matrix.trace (HMul.hMul (b₀.1.map (incA D)) z.1 : Mx D ρ ρ) = incA D (Matrix.trace (b₀.1 * Z)) := by
       rw [← hZ', ← Matrix.map_mul]
-      simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
     unfold chz
     rw [e, GlobalTheory.CompanionTheory.ThetaInv.halfTr_incA]
     exact hψ.2.2.1 _

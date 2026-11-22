@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TwistTermsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.NotAllMatchRankZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TwistTermsStatement
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Ex
 open scoped BigOperators
@@ -13,37 +17,14 @@ variable {C : Type} [NontriviallyNormedField C] [CompleteSpace C]
 def AbsSumAt (u : C) (f : PowerSeries C) (c : C) : Prop :=
   (Summable fun n => ‖PowerSeries.coeff n f * u ^ n‖) ∧ ∑' n, PowerSeries.coeff n f * u ^ n = c
 
-omit [CompleteSpace C] in
-theorem AbsSumAt.const (u a : C) : AbsSumAt u (PowerSeries.C a) a := by
-  constructor
-  · refine summable_of_ne_finset_zero (s := {0}) fun n hn => ?_
-    simp [PowerSeries.coeff_C, Finset.notMem_singleton.1 hn]
-  · rw [tsum_eq_single 0 fun n hn => by simp [PowerSeries.coeff_C, hn]]
-    simp
-
 theorem AbsSumAt.add {u : C} {f g : PowerSeries C} {a b : C} (hf : AbsSumAt u f a) (hg : AbsSumAt u g b) :
     AbsSumAt u (f + g) (a + b) := by
   constructor
   · refine (hf.1.add hg.1).of_nonneg_of_le (fun _ => norm_nonneg _) fun n => ?_
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
     exact norm_add_le _ _
   · rw [← hf.2, ← hg.2, ← hf.1.of_norm.tsum_add hg.1.of_norm]
-    simp only [map_add, add_mul]
-
-theorem AbsSumAt.mul {u : C} {f g : PowerSeries C} {a b : C} (hf : AbsSumAt u f a) (hg : AbsSumAt u g b) :
-    AbsSumAt u (f * g) (a * b) := by
-  have e : ∀ n, PowerSeries.coeff n (f * g) * u ^ n = ∑ kl ∈ Finset.HasAntidiagonal.antidiagonal n,
-      (PowerSeries.coeff kl.1 f * u ^ kl.1) * (PowerSeries.coeff kl.2 g * u ^ kl.2) := fun n => by
-    rw [PowerSeries.coeff_mul, Finset.sum_mul]
-    refine Finset.sum_congr rfl fun kl h => ?_
-    rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 h, pow_add]
-    ring
-  constructor
-  · simp only [e]
-    exact summable_norm_sum_mul_antidiagonal_of_summable_norm (f := fun n => PowerSeries.coeff n f * u ^ n)
-      (g := fun n => PowerSeries.coeff n g * u ^ n) hf.1 hg.1
-  · rw [← hf.2, ← hg.2, tsum_mul_tsum_eq_tsum_sum_antidiagonal_of_summable_norm hf.1 hg.1]
-    simp only [e]
+    simp only [map_add (f := _), add_mul]
 
 open scoped BigOperators in
 variable {C : Type} [NontriviallyNormedField C] [CompleteSpace C] in
@@ -66,7 +47,7 @@ private theorem absSumAt_add {u : C} {f g : PowerSeries C} {a b : C}
     _root_.GlobalTheory.BddArc.AbsSumAt u (f + g) (a + b) := by
   have h : ∀ n, PowerSeries.coeff n (f + g) * u ^ n =
       PowerSeries.coeff n f * u ^ n + PowerSeries.coeff n g * u ^ n := fun n => by
-    rw [map_add, add_mul]
+    rw [map_add (f := _), add_mul]
   refine ⟨?_, ?_⟩
   · refine Summable.of_nonneg_of_le (fun n => norm_nonneg _) (fun n => ?_) (Summable.add hf.1 hg.1)
     rw [h]
@@ -101,7 +82,7 @@ theorem _root_.GlobalTheory.BddArc.AbsSumAt.aeval {u : C} {ι : Type} {f : ι �
     rw [MvPolynomial.aeval_C, MvPolynomial.eval_C]
     exact absSumAt_algebraMap u c
   | add p q hp hq =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact absSumAt_add hp hq
   | mul_X p i hp =>
     rw [map_mul, map_mul, MvPolynomial.aeval_X, MvPolynomial.eval_X]
@@ -125,7 +106,8 @@ private theorem finite_setOf_bilin_self_le_of_posDef {X : Type} [AddCommGroup X]
     intro y z
     rw [Matrix.toBilin'_apply]
     conv_lhs => rw [← b.sum_repr y, ← b.sum_repr z]
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, Int.cast_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul, Int.cast_sum,
       Int.cast_mul, Finset.mul_sum, M, φ, Matrix.of_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -165,7 +147,8 @@ private theorem finite_setOf_bilin_self_le_of_posDef {X : Type} [AddCommGroup X]
   have hexp : ∀ v, Bq v v = ∑ k, (w.repr v k) ^ 2 * Bq (w k) (w k) := by
     intro v
     conv_lhs => rw [← w.sum_repr v]
-    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Finset.sum_eq_single k]
     · ring
@@ -343,8 +326,8 @@ private theorem absSumAt_arcTx_twist_tx {C : Type} [NontriviallyNormedField C]
   · rw [htw]
     exact hfib.tsum_eq
 
-open scoped BigOperators in
 
+open scoped BigOperators in
 theorem _root_.GlobalTheory.eval_twist_tx_eq_zero_of_aeval_arcTx : ∀ (C : Type) [NontriviallyNormedField C]
     [IsUltrametricDist C] [CompleteSpace C] (N : _root_.GlobalTheory.Ex.NumD C) (k : ℕ)
     (β : N.Form k) (m : ℕ) (hm : m ^ 2 ∣ k), Odd m →

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
@@ -19,7 +23,7 @@ lemma w_sq {d k : ℕ} (hk : 4 * k = d + 1) : wK d ^ 2 = wK d - k := by
 
 lemma conj_w (d : ℕ) : conj (wK d) = 1 - wK d := by
   unfold wK
-  simp only [map_div₀, map_add, map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
+  simp only [map_div₀, map_add (f := _), map_one, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
   ring
 
 lemma conj_el (d : ℕ) (u v : ℤ) : conj ((u : ℂ) + (v : ℂ) * wK d) = u + v * (1 - wK d) := by
@@ -137,7 +141,7 @@ lemma exists_r {d k : ℕ} (hk : 4 * k = d + 1) (hs : Split d q) (ι : ℂ ≃+*
     exact (isUnit_pow_iff two_ne_zero).1 h2
   have h1 := congrArg ι (w_sq hk)
   have h2 := congrArg (zcHom q) hz
-  simp only [map_pow, map_sub, map_add, map_natCast, map_zero] at h1 h2
+  simp only [map_pow, map_sub, map_add (f := _), map_natCast, map_zero] at h1 h2
   have : (ι (wK d) - zcHom q z) * (ι (wK d) - (1 - zcHom q z)) = 0 := by
     linear_combination h1 - h2
   rcases mul_eq_zero.1 this with h | h
@@ -172,8 +176,8 @@ lemma int_dvd {n : ℕ} {a : ℤ} (h : (q : ℤ_[q]) ^ n ∣ (a : ℤ_[q])) : (q
 
 end GlobalTheory.MomOne.OKArith
 
-open GlobalTheory.MomOne.OKArith in
 
+open GlobalTheory.MomOne.OKArith in
 theorem GlobalTheory.MomOne.okArith : ∀ (d q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]), d.Prime → d % 16 = 7 → Split d q → (InOK d 1 ∧ InOK d (wK d) ∧ ∀ α β, InOK d α → InOK d β → InOK d (α + β) ∧ InOK d (α * β) ∧ InOK d (-α) ∧ InOK d (conj α)) ∧ (∀ α, InOK d α → (∃ a : ℤ_[q], ι α = zc a) ∧ (∃ N : ℕ, (N : ℂ) = α * conj α) ∧ α ∈ algebraicClosure ℚ ℂ) ∧ (∀ (α : ℂ) (n : ℕ), InOK d α → ‖ι α‖ ≤ (q : ℝ) ^ (-(n : ℤ)) → ‖ι (conj α)‖ ≤ (q : ℝ) ^ (-(n : ℤ)) → InOK d (α / (q : ℂ) ^ n)) ∧ (∀ m s : ℕ, Nat.Coprime s q → ∃ e, InOK d e ∧ ‖ι ((s : ℂ) * e) - 1‖ ≤ (q : ℝ) ^ (-(m : ℤ)) ∧ ‖ι (conj e)‖ ≤ (q : ℝ) ^ (-(m : ℤ))) ∧ (∀ n : ℕ, ∃ α, InOK d α ∧ ‖ι α‖ ≤ (q : ℝ) ^ (-(n : ℤ)) ∧ ¬ InOK d (α / 2)) ∧ (∀ x y, InOK d x → InOK d y → ∃ k : ℤ, (h1 d x y).im = k) ∧ ¬ q ∣ d := by
   intro d q hq ι hd h16 hs
   obtain ⟨k, hk⟩ : ∃ k, 4 * k = d + 1 := ⟨(d + 1) / 4, by omega⟩

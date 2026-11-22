@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ def afLat (p : ℕ) {ι : Type} [Fintype ι] (M : Submodule R ((ι → ZMod p) �
     rintro l l' ⟨g, hg, h⟩ ⟨g', hg', h'⟩
     refine ⟨g + g', M.add_mem hg hg', fun x => ?_⟩
     convert Submodule.add_mem _ (h x) (h' x) using 1
-    simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add]; ring
+    simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]; ring
   zero_mem' := ⟨0, M.zero_mem, fun x => by simp⟩
   smul_mem' := by
     rintro c l ⟨g, hg, h⟩

@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSeq
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicFinite
-import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.StabilizersFinite
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.UnitsDefs
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Additive
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.KummerSeq
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SInvariantToInvariantsEqZeroIff
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.SPicFinite
+public import GroundTheory.GlobalFields.HerbrandQuotients.SUnitsRep
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.StabilizersFinite
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.UnitsDefs
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Additive
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -206,9 +211,71 @@ variable {F L Ω : Type u} [Field F] [NumberField F] [Field L] [NumberField L] [
 theorem finite_gsH1SUnits :
     Finite (cohomology (Rep.res (gsSubtype S hL) (galSUnitsMax F Ω S)) 1) := by
   have : IsGalois L Ω := IsGalois.tower_top_of_isGalois F L Ω
-  have : Finite (cohomology (galSUnitsMax L Ω (placesOver S : Set (HeightOneSpectrum (𝓞 L)))) 1) :=
-    Finite.of_injective _ (h1SUnitsToSPic_injective (F := L) (Ω := Ω)
-      (placesOver S : Set (HeightOneSpectrum (𝓞 L))))
+  let T : Set (HeightOneSpectrum (𝓞 L)) := placesOver S
+  have heq (x : Additive (sInvariantSubgroup Ω T)) :
+      sInvariantToInvariants (Ω := Ω) T x = 0 ↔
+        ((Additive.toMul x : sInvariantSubgroup Ω T) : (maxUnramifiedOutside L Ω T)ˣ) ∈ sUnitsMax L Ω T := by
+    rw [Subtype.ext_iff]
+    exact Submodule.Quotient.mk_eq_zero _
+  have hker (q : (galUnitsModSUnits L Ω T).ρ.invariants) :
+      invariantsToH1 (Ω := Ω) T q = 0 ↔ ∃ a : Lˣ,
+        sInvariantToInvariants (Ω := Ω) T
+          (Additive.ofMul ⟨_, map_algebraMap_mem_sInvariantSubgroup (Ω := Ω) T a⟩) = q := by
+    refine (δ_H0Iso_inv_eq_zero_iff (sUnitsQuotSequence_shortExact L Ω T) q).trans ?_
+    constructor
+    · rintro ⟨w, rfl⟩
+      obtain ⟨a, rfl⟩ := unitsToInvariants_surjective L (maxUnramifiedOutside L Ω T) w
+      exact ⟨Additive.toMul a, rfl⟩
+    · rintro ⟨a, rfl⟩
+      exact ⟨unitsToInvariants L (maxUnramifiedOutside L Ω T) (Additive.ofMul a), rfl⟩
+  let f : (galUnitsModSUnits L Ω T).ρ.invariants →+ sPic T :=
+    (QuotientAddGroup.lift (sInvariantToInvariants (Ω := Ω) T).ker ((sPicMk T).comp (divAbove T))
+      (fun x hx => by
+        rw [AddMonoidHom.mem_ker, AddMonoidHom.comp_apply]
+        have h := divAbove_eq_zero_of_mem T ((heq x).1 (AddMonoidHom.mem_ker.1 hx))
+        rw [ofMul_toMul] at h
+        rw [h, map_zero])).comp
+      (QuotientAddGroup.quotientKerEquivOfSurjective _
+        (sInvariantToInvariants_surjective (Ω := Ω) T)).symm.toAddMonoidHom
+  have hf (x : Additive (sInvariantSubgroup Ω T)) :
+      f (sInvariantToInvariants (Ω := Ω) T x) = sPicMk T (divAbove T x) := by
+    have h : (QuotientAddGroup.quotientKerEquivOfSurjective _
+        (sInvariantToInvariants_surjective (Ω := Ω) T)).symm (sInvariantToInvariants (Ω := Ω) T x) =
+        (x : Additive (sInvariantSubgroup Ω T) ⧸ (sInvariantToInvariants (Ω := Ω) T).ker) :=
+      (AddEquiv.symm_apply_eq _).2 rfl
+    simp only [f, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, h]
+    rfl
+  let g : cohomology (galSUnits T (maxUnramifiedOutside L Ω T)) 1 →+ sPic T :=
+    (QuotientAddGroup.lift (invariantsToH1 (Ω := Ω) T).ker f (fun q hq => by
+      obtain ⟨a, rfl⟩ := (hker q).1 (AddMonoidHom.mem_ker.1 hq)
+      rw [AddMonoidHom.mem_ker, hf, divAbove_algebraMap]
+      exact (sPicMk_eq_zero_iff T _).2 ⟨a, rfl⟩)).comp
+      (QuotientAddGroup.quotientKerEquivOfSurjective _
+        (invariantsToH1_surjective (Ω := Ω) T)).symm.toAddMonoidHom
+  have hg (q : (galUnitsModSUnits L Ω T).ρ.invariants) :
+      g (invariantsToH1 (Ω := Ω) T q) = f q := by
+    have h : (QuotientAddGroup.quotientKerEquivOfSurjective _
+        (invariantsToH1_surjective (Ω := Ω) T)).symm (invariantsToH1 (Ω := Ω) T q) =
+        (q : (galUnitsModSUnits L Ω T).ρ.invariants ⧸ (invariantsToH1 (Ω := Ω) T).ker) :=
+      (AddEquiv.symm_apply_eq _).2 rfl
+    simp only [g, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, h]
+    rfl
+  have hinj : Function.Injective g := by
+    refine (injective_iff_map_eq_zero _).2 fun h hh => ?_
+    obtain ⟨q, rfl⟩ := invariantsToH1_surjective (Ω := Ω) T h
+    obtain ⟨x, rfl⟩ := sInvariantToInvariants_surjective (Ω := Ω) T q
+    rw [hg, hf, sPicMk_eq_zero_iff] at hh
+    obtain ⟨a, ha⟩ := hh
+    let y : Additive (sInvariantSubgroup Ω T) :=
+      Additive.ofMul ⟨_, map_algebraMap_mem_sInvariantSubgroup (Ω := Ω) T a⟩
+    have hxy : divAbove T (x - y) = 0 := by
+      rw [map_sub, divAbove_algebraMap, ha, sub_self]
+    have hmem := mem_sUnitsMax_of_divAbove_eq_zero T (x := Additive.toMul (x - y)) hxy
+    have h0 : sInvariantToInvariants (Ω := Ω) T (x - y) = 0 := (heq _).2 hmem
+    rw [map_sub, sub_eq_zero] at h0
+    rw [h0]
+    exact (hker _).2 ⟨a, rfl⟩
+  have : Finite (cohomology (galSUnitsMax L Ω T) 1) := Finite.of_injective g hinj
   exact Finite.of_equiv _ (gsSUnitsCohomologyIso S hL 1).toLinearEquiv.toEquiv
 
 end H1

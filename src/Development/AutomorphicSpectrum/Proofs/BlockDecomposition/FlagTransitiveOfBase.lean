@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsHermRingRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem herm_sub_right (H : IsHerm c h) (x y z : V) : h x (y - z) = h x y - h x 
   rw [sub_eq_add_neg, H.add_right, herm_neg_right H, sub_eq_add_neg]
 
 theorem herm_add_left (H : IsHerm c h) (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [H.symm z (x + y), H.add_right, map_add, ← H.symm, ← H.symm]
+  rw [H.symm z (x + y), H.add_right, map_add (f := _), ← H.symm, ← H.symm]
 
 theorem herm_smul_left (H : IsHerm c h) (a : R) (x y : V) : h (a • x) y = c a * h x y := by
   rw [H.symm y (a • x), H.smul_right, map_mul, ← H.symm]
@@ -37,8 +41,6 @@ def linForm (H : IsHerm c h) (x : V) : V →ₗ[R] R where
   map_add' := H.add_right x
   map_smul' a y := by simp [H.smul_right]
 
-@[simp] theorem linForm_apply (H : IsHerm c h) (x y : V) : linForm H x y = h x y := rfl
-
 structure IsHyp (h : V → V → R) (x y : V) : Prop where
   xx : h x x = 0
   yy : h y y = 0
@@ -48,21 +50,19 @@ def perp (H : IsHerm c h) (x y : V) : Submodule R V :=
   LinearMap.ker (linForm H x) ⊓ LinearMap.ker (linForm H y)
 
 theorem mem_perp (H : IsHerm c h) {x y z : V} : z ∈ perp H x y ↔ h x z = 0 ∧ h y z = 0 := by
-  simp [perp, LinearMap.mem_ker]
+  simp [perp, LinearMap.mem_ker, linForm]
 
 def projV (H : IsHerm c h) (x y : V) : V →ₗ[R] V :=
   LinearMap.id - (linForm H y).smulRight x - (linForm H x).smulRight y
 
 theorem projV_apply (H : IsHerm c h) (x y z : V) :
     projV H x y z = z - h y z • x - h x z • y := by
-  simp [projV]
+  simp [projV, linForm]
 
 def resForm (h : V → V → R) (W : Submodule R V) : W → W → R := fun a b => h a b
 
-theorem isHerm_resForm (H : IsHerm c h) (W : Submodule R V) : IsHerm c (resForm h W) where
-  add_right a b d := H.add_right _ _ _
-  smul_right a b d := H.smul_right _ _ _
-  symm a b := H.symm _ _
+theorem isHerm_resForm (H : IsHerm c h) (W : Submodule R V) : IsHerm c (resForm h W) :=
+  ⟨fun a b d => H.add_right a b d, fun a b d => H.smul_right a b d, fun a b => H.symm a b⟩
 
 def resLat (𝔬 : Subring R) (W : Submodule R V) (L : Submodule 𝔬 V) : Submodule 𝔬 W :=
   L.comap (W.subtype.restrictScalars 𝔬)
@@ -221,7 +221,7 @@ theorem exists_partner (hR : IsHermRing c 𝔬) (H : IsHerm c h) {L : Submodule 
       refine ⟨b + c a * h w l, 𝔬.add_mem hb (𝔬.mul_mem (hR.conj_mem _ ha) (hwl l hl)), ?_⟩
       simp only [herm_add_left H, H.add_right, herm_smul_left H, H.smul_right, hww, mul_zero,
         add_zero]
-      rw [e1, map_add, map_mul, hinv, ← H.symm]
+      rw [e1, map_add (f := _), map_mul, hinv, ← H.symm]
       ring
   have hwL : w ∈ L := hL.2.2 _ key le_sup_left
     (Submodule.mem_sup_right (Submodule.mem_span_singleton_self w))
@@ -256,13 +256,14 @@ theorem projP_coe (H : IsHerm c h) {x y : V} (hy : IsHyp h x y) (m : perp H x y)
   simp
 
 theorem isPerfect_resForm (H : IsHerm c h) (P : IsPerfect h) {x y : V} (hy : IsHyp h x y) :
-    IsPerfect (resForm h (perp H x y)) where
-  nondeg m hm := by
+    IsPerfect (resForm h (perp H x y)) := by
+  constructor
+  · intro m hm
     apply Subtype.ext
     refine P.nondeg _ fun w => ?_
     rw [← herm_perp_right H m.2 w]
     exact hm (projP H hy w)
-  repr f := by
+  · intro f
     obtain ⟨v, hv⟩ := P.repr (f ∘ₗ projP H hy)
     refine ⟨projP H hy v, fun m => ?_⟩
     change h (projV H x y v) m = _
@@ -281,17 +282,10 @@ theorem isMaxEven_pullLat (H : IsHerm c h) {p : V ≃ₗ[R] V} (hp : ∀ a b, h 
       simpa using ht
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ?_⟩
   · rw [hEq]; exact hL.1.1.map _
-  · rw [eq_top_iff]
-    intro z _
-    have h1 : p z ∈ Submodule.span R (L : Set V) := hL.1.2 ▸ Submodule.mem_top
-    have h2 := Submodule.mem_map_of_mem (f := p.symm.toLinearMap) h1
-    rw [Submodule.map_span] at h2
-    have h3 : p.symm.toLinearMap '' (L : Set V) ⊆ (pullLat 𝔬 p L : Set V) := by
-      rintro _ ⟨t, ht, rfl⟩
-      change p (p.symm t) ∈ L
-      simpa using ht
-    have h4 := Submodule.span_mono h3 h2
-    simpa using h4
+  · rw [hEq]
+    change Submodule.span R (p.symm.toLinearMap '' (L : Set V)) = ⊤
+    rw [Submodule.span_image, hL.1.2, Submodule.map_top, LinearMap.range_eq_top]
+    exact p.symm.surjective
   · intro s hs t ht
     rw [← hp]
     exact hL.2.1.1 _ hs _ ht
@@ -326,14 +320,10 @@ theorem isMaxEven_resLat (hR : IsHermRing c 𝔬) (H : IsHerm c h) {x y : V} (hy
       exact hprojL t ht
   refine ⟨⟨?_, ?_⟩, ⟨fun s hs t ht => hL.2.1.1 _ hs _ ht, fun s hs => hL.2.1.2 _ hs⟩, ?_⟩
   · rw [hEq]; exact hL.1.1.map _
-  · rw [eq_top_iff]
-    intro m _
-    have h1 : (m : V) ∈ Submodule.span R (L : Set V) := hL.1.2 ▸ Submodule.mem_top
-    have h2 := Submodule.mem_map_of_mem (f := projP H hy) h1
-    rw [Submodule.map_span, projP_coe] at h2
-    refine Submodule.span_mono ?_ h2
-    rintro _ ⟨t, ht, rfl⟩
-    exact hprojL t ht
+  · rw [hEq]
+    change Submodule.span R (projP H hy '' (L : Set V)) = ⊤
+    rw [Submodule.span_image, hL.1.2, Submodule.map_top, LinearMap.range_eq_top]
+    exact fun m => ⟨m, projP_coe H hy m⟩
   · intro M hM hLM
     let L' : Submodule 𝔬 V :=
       { carrier := {z | h y z ∈ 𝔬 ∧ h x z ∈ 𝔬 ∧ projP H hy z ∈ M}
@@ -341,7 +331,7 @@ theorem isMaxEven_resLat (hR : IsHermRing c 𝔬) (H : IsHerm c h) {x y : V} (hy
           refine ⟨?_, ?_, ?_⟩
           · rw [H.add_right]; exact 𝔬.add_mem hs.1 ht.1
           · rw [H.add_right]; exact 𝔬.add_mem hs.2.1 ht.2.1
-          · rw [map_add]; exact M.add_mem hs.2.2 ht.2.2
+          · rw [map_add (f := _)]; exact M.add_mem hs.2.2 ht.2.2
         zero_mem' := by
           refine ⟨?_, ?_, ?_⟩
           · rw [herm_zero_right H]; exact 𝔬.zero_mem
@@ -366,7 +356,7 @@ theorem isMaxEven_resLat (hR : IsHermRing c 𝔬) (H : IsHerm c h) {x y : V} (hy
       · obtain ⟨a, ha, e⟩ := hM.2 _ hz.2.2
         have e' : h (projV H x y z) (projV H x y z) = a + c a := e
         refine ⟨a + c (h y z) * h x z, 𝔬.add_mem ha (𝔬.mul_mem (hR.conj_mem _ hz.1) hz.2.1), ?_⟩
-        rw [hform, e', map_add, map_mul, hR.invol]
+        rw [hform, e', map_add (f := _), map_mul, hR.invol]
         ring
     have hLL' : L ≤ L' := fun z hz =>
       ⟨hL.2.1.1 y hyL z hz, hL.2.1.1 x hx z hz, hLM (hprojL z hz)⟩
@@ -383,7 +373,7 @@ theorem exists_glue (hR : IsHermRing c 𝔬) [Module.Finite R V] (H : IsHerm c h
     ∃ p : V ≃ₗ[R] V, (∀ a b, h (p a) (p b) = h a b) ∧ p x = x' ∧ p y = y' ∧
       ∀ a : perp H x y, p a = ψ a := by
   let f : V →ₗ[R] V := (linForm H y).smulRight x' + (linForm H x).smulRight y' + ψ ∘ₗ projP H hy
-  have fa : ∀ z, f z = h y z • x' + h x z • y' + ψ (projP H hy z) := fun z => by simp [f]
+  have fa : ∀ z, f z = h y z • x' + h x z • y' + ψ (projP H hy z) := fun z => by simp [f, linForm]
   have hR1 : ∀ s t, h x' (ψ s) = 0 ∧ h y' (ψ s) = 0 ∧ h (ψ t) x' = 0 ∧ h (ψ t) y' = 0 := fun s t => by
     have e1 := (mem_perp H).1 (hψ' s)
     have e2 := (mem_perp H).1 (hψ' t)
@@ -487,7 +477,7 @@ theorem flag_step (hR : IsHermRing c 𝔬) [Module.Finite R V] (H : IsHerm c h) 
 
   let ψ : perp H a b →ₗ[R] V :=
     (perp H a b).subtype - ((linForm H b') ∘ₗ (perp H a b).subtype).smulRight a'
-  have ψa : ∀ m : perp H a b, ψ m = (m : V) - h b' m • a' := fun m => by simp [ψ]
+  have ψa : ∀ m : perp H a b, ψ m = (m : V) - h b' m • a' := fun m => by simp [ψ, linForm]
   have mpa : ∀ m : perp H a b, h a' m = 0 := fun m => a'perp _ ((mem_perp H).1 m.2).1
   have hψ : ∀ s t, h (ψ s) (ψ t) = h s t := fun s t => by
     have : h s a' = 0 := by rw [H.symm a' s, mpa, map_zero]
@@ -505,7 +495,7 @@ theorem flag_step (hR : IsHermRing c 𝔬) [Module.Finite R V] (H : IsHerm c h) 
 
   have hax : ∀ j : Fin r, h a (x j.succ) = 0 := fun j => aperp _ (hf.xx _ _)
   have hay : ∀ j : Fin r, h a (y j.succ) = 0 := fun j => aperp _ (by
-    rw [hf.xy, if_neg (Fin.succ_ne_zero j).symm])
+    rw [hf.xy, ite_eq_right (Fin.succ_ne_zero j).symm])
   let w : Fin r → perp H a b := fun j => ⟨projV H a b (x j.succ), projV_mem H hyp _⟩
   let v : Fin r → perp H a b := fun j => ⟨projV H a b (y j.succ), projV_mem H hyp _⟩
   have fr : IsFrame (resForm h (perp H a b)) w v := {
@@ -549,7 +539,7 @@ theorem flag_step (hR : IsHermRing c 𝔬) [Module.Finite R V] (H : IsHerm c h) 
       exact Submodule.smul_mem _ _ (a'F _)
     | succ j =>
       have e := decomp H a b (x j.succ)
-      rw [e, map_add, map_add, map_smul, map_smul, hTa, hTb, hax, zero_smul, add_zero]
+      rw [e, map_add (f := _), map_add (f := _), map_smul, map_smul, hTa, hTb, hax, zero_smul, add_zero]
       obtain ⟨m, hm⟩ : ∃ m : perp H a b, (m : V) = projV H a b (x j.succ) :=
         ⟨⟨_, projV_mem H hyp _⟩, rfl⟩
       have hmF : (m : V) ∈ Submodule.span R (x '' {k | k ≤ j.succ}) := by
@@ -567,7 +557,7 @@ theorem flag_step (hR : IsHermRing c 𝔬) [Module.Finite R V] (H : IsHerm c h) 
       exact Submodule.smul_mem _ _ (aF _)
     | succ j =>
       have e := decomp H a b (x j.succ)
-      rw [e, map_add, map_add, map_smul, map_smul, hqa, hqb, hax, zero_smul, add_zero]
+      rw [e, map_add (f := _), map_add (f := _), map_smul, map_smul, hqa, hqb, hax, zero_smul, add_zero]
       have := hqz ⟨_, projV_mem H hyp (x j.succ)⟩
       refine Submodule.add_mem _ (Submodule.smul_mem _ _ (aF _)) ?_
       rw [this]
@@ -623,7 +613,7 @@ theorem good_all (hR : IsHermRing c 𝔬) (hB : HasBase c 𝔬) (k : ℕ∞) :
       by_cases hn : ∀ s t, h s s = 0 → h s t ≠ 1
       · obtain ⟨p, hp⟩ := hB V h H P hn L L' hL hL'
         exact ⟨p, hp, fun j => j.elim0⟩
-      · push_neg at hn
+      · push Not at hn
         obtain ⟨s, t, hs, hst⟩ := hn
         obtain ⟨two, htwo⟩ := hR.two.exists_left_inv
         have hc2 : c two = two := by
@@ -646,7 +636,7 @@ theorem good_all (hR : IsHermRing c 𝔬) (hB : HasBase c 𝔬) (k : ℕ∞) :
             linear_combination (- h t t) * htwo
           xy := fun i j => by
             have : i = j := Subsingleton.elim _ _
-            simp only [t', this, if_true]
+            simp only [t', this, ite_true]
             rw [herm_sub_right H, H.smul_right, hs, hst]; ring }
         obtain ⟨p, hp, -⟩ := flag_step hR H P hperp _ _ f1 hL hL'
         exact ⟨p, hp, fun j => j.elim0⟩

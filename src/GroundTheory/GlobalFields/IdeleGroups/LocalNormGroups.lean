@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.LocalNorms
-import GroundTheory.GlobalFields.KummerTheory.Splitting
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
-import GroundTheory.LocalFields.UnramifiedNorms
-import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNorms
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+public import GroundTheory.LocalFields.UnramifiedNorms
+public import GroundTheory.GlobalFields.CompletionAtPlace.Integers
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -26,9 +30,9 @@ theorem finiteLocalNorm_mulSingle (v : HeightOneSpectrum (𝓞 K)) [DecidableEq 
     rw [Pi.mulSingle_eq_of_ne hw', Units.val_one, map_one], Pi.mulSingle_eq_same,
     LocalField.coe_normUnits]
 
+
 omit [NumberField K] in
 open scoped Classical in
-
 theorem infiniteLocalNorm_mulSingle (v : InfinitePlace K) (w : v.placesOver L)
     (z : ((w : InfinitePlace L).Completion)ˣ) :
     infiniteLocalNorm L v (Pi.mulSingle w z) =
@@ -38,8 +42,8 @@ theorem infiniteLocalNorm_mulSingle (v : InfinitePlace K) (w : v.placesOver L)
     rw [Pi.mulSingle_eq_of_ne hw', Units.val_one, map_one], Pi.mulSingle_eq_same,
     LocalField.coe_normUnits]
 
-variable (L) in
 
+variable (L) in
 theorem nonempty_infinitePlacesOver (v : InfinitePlace K) : Nonempty (v.placesOver L) := by
   obtain ⟨w, hw⟩ : ∃ w : InfinitePlace L, w.comap (algebraMap K L) = v :=
     InfinitePlace.comap_surjective v

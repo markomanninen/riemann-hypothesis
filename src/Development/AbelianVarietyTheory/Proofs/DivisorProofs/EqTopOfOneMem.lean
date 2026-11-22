@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCompletedLatticeHalfIffFrameMatrixIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TranslateSumVacuumMovedByAdelicPair
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCompletedLatticeConjugateHalfIffDual
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalFinitePartMemHomLatticeCompletionIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardPairLatticeLocallyOrthonormalBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinTensAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitBlockCosetIffMaximalLevelCongruentConjIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodIdemEmpty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardLatticeDoubleCosetClassesStabilisers
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionStandardPairSecond
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCompletedLatticeHalfIffFrameMatrixIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLevelDatumReferenceTupleSmallField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TranslateSumVacuumMovedByAdelicPair
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemCompletedLatticeConjugateHalfIffDual
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RationalFinitePartMemHomLatticeCompletionIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardPairLatticeLocallyOrthonormalBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinTensAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentSumInfPartIntegralOneSubMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitBlockCosetIffMaximalLevelCongruentConjIdeal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta IsDedekindDomain NumberField Finset MeasureTheory
 open Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open Formalism.DivisionValues (vw)
@@ -132,12 +137,12 @@ theorem approx (hψ : IsStdChar D ψ (-1)) (hcc : D.host.ccK = ⊤) (gS : S.gram
       have h2 : infPart D (v i j) = 0 := congrFun (congrFun hv' i) j
       have h3 : infPart D (GlobalTheory.VacUnique.finRat S T M i j) = 0 := congrFun (congrFun (GlobalTheory.VacUnique.finRat_inf S T M) i) j
       change infPart D (incA D (k : D.host.E)⁻¹ * u i j) = infPart D (GlobalTheory.VacUnique.finRat S T M i j + v i j)
-      rw [RingHom.map_mul, RingHom.map_add, h1, h2, h3, mul_zero, add_zero]
+      rw [RingHom.map_mul, RingHom.map_add (f := _), h1, h2, h3, mul_zero, add_zero]
     · have h1 : finPart D (incA D (k : D.host.E)⁻¹ * u i j - incA D (M i j) - v i j) = 0 := congrFun (congrFun h i) j
       have h3 : finPart D (GlobalTheory.VacUnique.finRat S T M i j) = finPart D (incA D (M i j)) := rfl
       change finPart D (incA D (k : D.host.E)⁻¹ * u i j) = finPart D (GlobalTheory.VacUnique.finRat S T M i j + v i j)
       rw [RingHom.map_sub, RingHom.map_sub, sub_sub, sub_eq_zero] at h1
-      rw [RingHom.map_add, h3, h1]
+      rw [RingHom.map_add (f := _), h3, h1]
   have e2 : u = GlobalTheory.VacUnique.finRat S T (k • M) + k • v := by
     rw [map_nsmul, ← smul_add, ← e1, smul_comm, GlobalTheory.PlaceModel.inv_smul_nsmul S T hk]
   refine ⟨k • M, (finRat_mem_iff hψ hcc gS hLS hLT hS hT _).1 ?_, v, hv, e2⟩

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FlatSpaceComponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FlatSpaceComponents
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -51,7 +56,8 @@ theorem form_sumMap {Y X : HSp D} {ι : X.V →ₗ[D.host.E] Y.V} {a ρ : ℕ} {
     rw [hT_swap, fe]; split_ifs <;> simp
   have xx : ∀ x y, Y.hT (ι x) (ι y) = X.hT x y := h.isom
   rw [sumMap_apply, sumMap_apply]
-  simp only [map_add, map_sum, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.sum_apply,
     LinearMap.smul_apply, zz, zx, xz, ex, xe, fx, xf, ez, ze, fz, zf, ee, ff, fe, ef, xx, smul_eq_mul, mul_zero,
     Finset.sum_const_zero, add_zero, zero_add, mul_ite, Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ,
     if_true, mul_one, RingHom.id_apply, starRingEnd_apply]
@@ -63,7 +69,7 @@ theorem form_sumMap {Y X : HSp D} {ι : X.V →ₗ[D.host.E] Y.V} {a ρ : ℕ} {
 
 theorem sumMap_injective {Y X : HSp D} {ι : X.V →ₗ[D.host.E] Y.V} {a ρ : ℕ} {z : Fin a → Y.V} {c : D.host.E}
     {e f : Fin ρ → Y.V} (h : IsDec Y X ι z c e f) (hc : c ≠ 0) : Function.Injective (sumMap Y X ι z e f) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   rintro ⟨x, α, β, γ⟩ hp
   have H := fun q => form_sumMap h (x, α, β, γ) q
   simp only [hp, map_zero, LinearMap.zero_apply] at H
@@ -107,27 +113,34 @@ theorem exists_isom {Y Y' X : HSp D} {ι : X.V →ₗ[D.host.E] Y.V} {ι' : X.V 
 theorem isDec_rescale {Y X X' : HSp D} {ι : X'.V →ₗ[D.host.E] Y.V} {a ρ : ℕ} {z : Fin a → Y.V} {c : D.host.E}
     {e f : Fin ρ → Y.V} (h : IsDec Y X' ι z c e f) (φ : X.V →ₗ[D.host.E] X'.V) (hφ : HSpace.IsIsomEmb X X' φ)
     (hr : X.rank = X'.rank) (π : D.host.E) :
-    IsDec Y X (ι ∘ₗ φ) (fun i => π • z i) (c * (π * star π)) e f where
-  isom x y := (h.isom _ _).trans (hφ x y)
-  a_le := h.a_le
-  rank := by rw [hr, h.rank]
-  z_norm i := by
+    IsDec Y X (ι ∘ₗ φ) (fun i => π • z i) (c * (π * star π)) e f := by
+  refine
+    { isom := fun x y => (h.isom _ _).trans (hφ x y)
+      a_le := h.a_le
+      rank := ?_
+      z_norm := ?_
+      z_X := ?_
+      ee := h.ee
+      ff := h.ff
+      ef := h.ef
+      hyp_X := fun i x => h.hyp_X i (φ x)
+      hyperbolicDecomp_hyp_orthogonal_line := ?_ }
+  · rw [hr, h.rank]
+  · intro i
     have := h.z_norm i
     simp only [HSpace.hD, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, RingHom.id_apply,
       starRingEnd_apply] at this ⊢
-    rw [this]; ring
-  z_X i x := by
+    rw [this]
+    ring
+  · intro i x
     have := h.z_X i (φ x)
     simp only [HSpace.hD, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, LinearMap.comp_apply] at this ⊢
     rw [this, mul_zero]
-  ee := h.ee
-  ff := h.ff
-  ef := h.ef
-  hyp_X i x := h.hyp_X i (φ x)
-  hyperbolicDecomp_hyp_orthogonal_line i j := by
+  · intro i j
     have := h.hyperbolicDecomp_hyp_orthogonal_line i j
     simp only [HSpace.hD, LinearMap.map_smulₛₗ, smul_eq_mul] at this ⊢
-    rw [this.1, this.2, mul_zero]; exact ⟨rfl, rfl⟩
+    rw [this.1, this.2, mul_zero]
+    exact ⟨rfl, rfl⟩
 
 theorem stdIsomSt_of_rationalSt : ∀ D : D7, GlobalTheory.IndefiniteRowSideFullHecke.FlatSpaceComponents.RationalSt D → GlobalTheory.IndefiniteRowSideFullHecke.FlatSpaceComponents.StdIsomSt D := by
   intro D hR u

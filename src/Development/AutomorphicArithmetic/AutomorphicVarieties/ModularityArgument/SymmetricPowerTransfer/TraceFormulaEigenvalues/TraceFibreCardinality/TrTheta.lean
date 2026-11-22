@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
 
 open Module
 
@@ -55,7 +59,7 @@ private theorem trTheta_nil {Λ M : Type} [AddCommGroup M] [Module ℂ M] [Finit
           obtain ⟨y1, hy1, g1, hg1, rfl⟩ := Submodule.mem_sup.mp (hF hy)
           obtain ⟨y2, hy2, rfl⟩ := Submodule.mem_map.mp hy1
           refine ⟨y2, hy2, (n c ^ k) g1 + g, G.add_mem (powinv k g1 hg1) hg, ?_⟩
-          rw [map_add, show (n c ^ k) (n c y2) = (n c ^ (k + 1)) y2 by
+          rw [map_add (f := _), show (n c ^ k) (n c y2) = (n c ^ (k + 1)) y2 by
             rw [pow_succ, Module.End.mul_apply], add_assoc]
       obtain ⟨m, hm⟩ := hn c
       intro x hx
@@ -111,7 +115,7 @@ private theorem trTheta_ext {ι M : Type} [AddCommGroup M] [Module ℂ M] {V : �
   ext x
   have hx : x ∈ ⨆ i, V i := by rw [htop]; exact Submodule.mem_top
   exact Submodule.iSup_induction V (motive := fun x => f x = g x) hx (fun i y hy => h i y hy)
-    (by simp) (fun y z hy hz => by simp only [map_add, hy, hz])
+    (by simp) (fun y z hy hz => by simp only [map_add (f := _), hy, hz])
 
 private theorem trTheta_proj {ι M : Type} [AddCommGroup M] [Module ℂ M] {V : ι → Submodule ℂ M}
     (hind : iSupIndep V) (htop : ⨆ i, V i = ⊤) (i : ι) :
@@ -204,7 +208,8 @@ theorem UpperTheory.V.Z.Sym.Tf.trTheta :
   · intro a
     have decomp : u a * Θ = ∑ χ ∈ F, u a * Θ * P χ := by
       rw [← Finset.mul_sum, sumP, mul_one]
-    rw [decomp, map_sum, Finset.sum_filter]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [decomp, map_sum, Finset.sum_filter]
     refine Finset.sum_congr rfl fun χ hχ => ?_
     split_ifs with hfix
     · have hg : ∀ ψ, Set.MapsTo (u a * Θ * P χ) (V ψ) (V ψ) := by
@@ -260,7 +265,7 @@ theorem UpperTheory.V.Z.Sym.Tf.trTheta :
           change P χ (Θ ((u b - χ b • (1 : End ℂ M)) y)) = (u (σ b) - χ (σ b) • (1 : End ℂ M)) (P χ (Θ y))
           rw [hP1 χ _ m1, hP1 χ _ m2]
           exact LinearMap.congr_fun hE y
-        rw [hEq, add_mul, map_add, smul_mul_assoc, one_mul, map_smul, smul_eq_mul,
+        rw [hEq, add_mul, map_add (f := _), smul_mul_assoc, one_mul, map_smul, smul_eq_mul,
           trTheta_nil N T σ hcN hnN hTN a, add_zero, mul_comm]
       · intro ψ _ hne
         have hz : (u a * Θ * P χ).restrict (hg ψ) = 0 := by

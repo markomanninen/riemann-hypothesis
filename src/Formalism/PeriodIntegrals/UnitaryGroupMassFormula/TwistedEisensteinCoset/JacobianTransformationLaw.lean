@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IsUnitRedP
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IsUnitRedP
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedNormLattice.UniformContinuityGaloisGroup
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -80,12 +84,13 @@ theorem apply_sum' {N : ℕ} (f : Sp E N ≃ₗ[E] Sp E N) (v : Sp E N) (i : Fin
     funext l
     simp [eN, Finset.sum_apply, Fin.val_inj]
   conv_lhs => rw [hv]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp [Finset.sum_apply, map_smul]
 
 theorem atN_of_lt {N : ℕ} (v : Fin N → E) {i : ℕ} (hi : i < N) : atN v i = v ⟨i, hi⟩ := by
   unfold atN
-  rw [dif_pos hi]
+  rw [dite_eq_left hi]
 
 theorem row_tr {N' n c k₀ : ℕ} (hk : k₀ ≤ n) (g : Sp E (n + c) ≃ₗ[E] Sp E (n + c)) (y : HomE E N' (n + c))
     (s p : ℕ) (hp : p < n + c) :
@@ -265,7 +270,7 @@ private theorem unitV_eq_mul_of_redP_eq_mul (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* 
   by_cases hb : IsUnit (redP P b)
   · have hd' : IsUnit (redP P d) := by rw [hd]; exact ha.mul hb
     unfold unitV
-    rw [dif_pos hd', dif_pos ha, dif_pos hb, ← Units.val_mul, ← map_mul]
+    rw [dite_eq_left hd', dite_eq_left ha, dite_eq_left hb, ← Units.val_mul, ← map_mul]
     congr 2
     ext
     simp [hd]
@@ -274,7 +279,7 @@ private theorem unitV_eq_mul_of_redP_eq_mul (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* 
       intro h
       exact hb (isUnit_of_mul_isUnit_right h)
     unfold unitV
-    rw [dif_neg hd', dif_neg hb, mul_zero]
+    rw [dite_eq_right hd', dite_eq_right hb, mul_zero]
 
 theorem jacobian_transformation_law : JLawP := by
   intro E K _ _ _ _ P hp hq ξ k₀ r c' n' c n kj h1 h2 h3 h4 h5 κ hκ
@@ -340,7 +345,7 @@ theorem jacobian_transformation_law : JLawP := by
     ⟨⟨_, _, by rw [mul_comm]; exact hd2.symm, hd2.symm⟩, rfl⟩
   refine ⟨unitV ξ (GA k₀ r c n κ.symm).det, ?_, fun y => ?_⟩
   · unfold unitV
-    rw [dif_pos hGA]
+    rw [dite_eq_left hGA]
     exact Units.ne_zero _
   rw [phi_eq, phi_eq]
   by_cases hy : CondQ P (qOf P) k₀ r c' n' c n y

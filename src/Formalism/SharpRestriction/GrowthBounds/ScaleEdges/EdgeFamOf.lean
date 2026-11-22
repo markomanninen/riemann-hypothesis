@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeLatticeMulOfWeightSum
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.AevalDiagMonomial
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.AevalDiagMonomial
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThetaSwapFirstTwo
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeBilinearTermEqNegDoubleSum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -257,7 +261,7 @@ private theorem mem_degLE_lemma {κ : Type} [Fintype κ] [DecidableEq κ] {n : �
   simp
 
 private theorem coeff_psTrunc_lemma_2 {κ : Type} [Fintype κ] [DecidableEq κ] (f : MvPowerSeries κ S) (n : ℕ)
-    (x : κ →₀ ℕ) : coeff x (psTrunc n f) = if x.degree ≤ n then MvPowerSeries.coeff x f else 0 := by
+    (x : κ →₀ ℕ) : AddMonoidAlgebra.coeff (psTrunc n f) x = if x.degree ≤ n then MvPowerSeries.coeff x f else 0 := by
   unfold psTrunc
   rw [coeff_sum]
   simp only [coeff_monomial, Finset.sum_ite_eq', Finset.sum_ite_eq]
@@ -332,11 +336,11 @@ theorem sil_inj {i l i0 l0 : Fin d} : sil i l = sil i0 l0 ↔ i = i0 ∧ l = l0 
     rfl
 
 theorem coeff_XX (e : Fin 2 × Fin d →₀ ℕ) (i l : Fin d) :
-    coeff e (X ((0 : Fin 2), i) * X ((1 : Fin 2), l) : MvPolynomial (Fin 2 × Fin d) S) =
+    AddMonoidAlgebra.coeff (X ((0 : Fin 2), i) * X ((1 : Fin 2), l) : MvPolynomial (Fin 2 × Fin d) S) e =
       if sil i l = e then 1 else 0 := by
   rw [MvPolynomial.X, MvPolynomial.X, MvPolynomial.monomial_mul, one_mul, MvPolynomial.coeff_monomial]
 
-theorem coeff_bil (M : Fin d → Fin d → S) (i0 l0 : Fin d) : coeff (sil i0 l0) (bil M) = M i0 l0 := by
+theorem coeff_bil (M : Fin d → Fin d → S) (i0 l0 : Fin d) : AddMonoidAlgebra.coeff (bil M) (sil i0 l0) = M i0 l0 := by
   simp only [bil, coeff_sum, coeff_C_mul, coeff_XX, sil_inj]
   rw [Finset.sum_eq_single i0]
   · rw [Finset.sum_eq_single l0]
@@ -354,7 +358,7 @@ theorem coeff_bil (M : Fin d → Fin d → S) (i0 l0 : Fin d) : coeff (sil i0 l0
 
 theorem bil_ext {M M' : Fin d → Fin d → S} (h : bil M = bil M') : M = M' := by
   funext i l
-  have h' := congrArg (coeff (sil i l)) h
+  have h' := congrArg (AddMonoidAlgebra.coeff · (sil i l)) h
   rw [coeff_bil, coeff_bil] at h'
   exact h'
 
@@ -400,7 +404,8 @@ open Formalism.MainNotions.ModuliIntegralCharts.H1.CIndFrExp1
 
 theorem eval_pair_bilinear {τ : Type} (M : Fin d → Fin d → S) (u v : Fin d → MvPolynomial τ S) :
     ev2 (bil M) u v = ∑ i, ∑ l, C (M i l) * (u i * v l) := by
-  simp [ev2, bil, map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ev2, bil, map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq]
 
 theorem lead_bil {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (hm : 2 ≤ m)
     (fF : Fin d → MvPolynomial (Fin 3 × Fin d) S)
@@ -408,15 +413,15 @@ theorem lead_bil {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (hm : 2 ≤ m)
     (hph1 : ev2 P fF (xs S d 2) - ev2 P (xs S d 0) (xs S d 2) * ev2 P (xs S d 1) (xs S d 2) ∈
       Io S (Fin 3 × Fin d) ^ (m + 1))
     (hsym : ev2 P (xs S d 1) (xs S d 0) - P ∈ Io S (Fin 2 × Fin d) ^ (m + 1))
-    (hu : IsUnit (coeff 0 P)) :
+    (hu : IsUnit (AddMonoidAlgebra.coeff P 0)) :
     P - 1 ∈ Io S (Fin 2 × Fin d) ^ 2 ∧
-      P - 1 - bil (fun i l => coeff (sil i l) (homogeneousComponent 2 (P - 1))) ∈ Io S (Fin 2 × Fin d) ^ 3 ∧
-      ∀ i l, coeff (sil i l) (homogeneousComponent 2 (P - 1)) = coeff (sil l i) (homogeneousComponent 2 (P - 1)) := by
+      P - 1 - bil (fun i l => AddMonoidAlgebra.coeff (homogeneousComponent 2 (P - 1)) (sil i l)) ∈ Io S (Fin 2 × Fin d) ^ 3 ∧
+      ∀ i l, AddMonoidAlgebra.coeff (homogeneousComponent 2 (P - 1)) (sil i l) = AddMonoidAlgebra.coeff (homogeneousComponent 2 (P - 1)) (sil l i) := by
   have h1 := const_one fF hF hph1 hu
   have h2 : P - 1 ∈ Io S _ ^ 2 := stepNo2 le_rfl (by omega) (by omega) fF hF hph1 hsym h1
   obtain ⟨hA1, hs⟩ := lead_biadd (j := 2) (by omega) hm fF hF hph1 hsym h2
   have hb := bilin_of_biadd hA1 hs
-  set B := fun i l => coeff (sil i l) (homogeneousComponent 2 (P - 1)) with hB
+  set B := fun i l => AddMonoidAlgebra.coeff (homogeneousComponent 2 (P - 1)) (sil i l) with hB
   have hbB : homogeneousComponent 2 (P - 1) = bil B := hb
   refine ⟨h2, ?_, ?_⟩
   · rw [← hbB]; exact sub_homogeneousComponent_mem h2
@@ -430,10 +435,10 @@ theorem lead_bil {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (hm : 2 ≤ m)
     exact this
 
 theorem coeff_linL (A B : Fin d → Fin d → S) (i0 l0 : Fin d) :
-    coeff (sil i0 l0) (∑ i, ∑ l, C (B i l) * (PairEvaluation.lin A (0 : Fin 2) i * xs S d (1 : Fin 2) l)) =
+    AddMonoidAlgebra.coeff (∑ i, ∑ l, C (B i l) * (PairEvaluation.lin A (0 : Fin 2) i * xs S d (1 : Fin 2) l)) (sil i0 l0) =
       ∑ i, A i i0 * B i l0 := by
-  have key : ∀ i l j, coeff (sil i0 l0) (C (B i l) * (C (A i j) * X ((0 : Fin 2), j) * X ((1 : Fin 2), l)) :
-      MvPolynomial (Fin 2 × Fin d) S) = if j = i0 ∧ l = l0 then B i l * A i j else 0 := by
+  have key : ∀ i l j, AddMonoidAlgebra.coeff (C (B i l) * (C (A i j) * X ((0 : Fin 2), j) * X ((1 : Fin 2), l)) :
+      MvPolynomial (Fin 2 × Fin d) S) (sil i0 l0) = if j = i0 ∧ l = l0 then B i l * A i j else 0 := by
     intro i l j
     rw [show (C (B i l) * (C (A i j) * X ((0 : Fin 2), j) * X ((1 : Fin 2), l)) : MvPolynomial (Fin 2 × Fin d) S) =
       C (B i l * A i j) * (X ((0 : Fin 2), j) * X ((1 : Fin 2), l)) by rw [map_mul]; ring]
@@ -447,10 +452,10 @@ theorem coeff_linL (A B : Fin d → Fin d → S) (i0 l0 : Fin d) :
   rw [Finset.sum_eq_single i0 (fun j _ hj => by simp [hj]) (by simp), if_pos ⟨rfl, rfl⟩, mul_comm]
 
 theorem coeff_linR (Ab B : Fin d → Fin d → S) (i0 l0 : Fin d) :
-    coeff (sil i0 l0) (∑ i, ∑ l, C (B i l) * (xs S d (0 : Fin 2) i * PairEvaluation.lin Ab (1 : Fin 2) l)) =
+    AddMonoidAlgebra.coeff (∑ i, ∑ l, C (B i l) * (xs S d (0 : Fin 2) i * PairEvaluation.lin Ab (1 : Fin 2) l)) (sil i0 l0) =
       ∑ l, B i0 l * Ab l l0 := by
-  have key : ∀ i l j, coeff (sil i0 l0) (C (B i l) * (X ((0 : Fin 2), i) * (C (Ab l j) * X ((1 : Fin 2), j))) :
-      MvPolynomial (Fin 2 × Fin d) S) = if i = i0 ∧ j = l0 then B i l * Ab l j else 0 := by
+  have key : ∀ i l j, AddMonoidAlgebra.coeff (C (B i l) * (X ((0 : Fin 2), i) * (C (Ab l j) * X ((1 : Fin 2), j))) :
+      MvPolynomial (Fin 2 × Fin d) S) (sil i0 l0) = if i = i0 ∧ j = l0 then B i l * Ab l j else 0 := by
     intro i l j
     rw [show (C (B i l) * (X ((0 : Fin 2), i) * (C (Ab l j) * X ((1 : Fin 2), j))) : MvPolynomial (Fin 2 × Fin d) S) =
       C (B i l * Ab l j) * (X ((0 : Fin 2), i) * X ((1 : Fin 2), j)) by rw [map_mul]; ring]
@@ -518,7 +523,7 @@ theorem psIn_act_sub_mem (φ : Fin d → PS S 1 d) (hφ : ∀ i, MvPowerSeries.c
   have h3 := hmap _ (psTrunc_act_sub_mem φ hφ hm i)
   have hc0 : constantCoeff (psIn d m ![k] (φ i)) = 0 := by
     rw [psIn, constantCoeff_rename]
-    have h0 : constantCoeff (psTrunc m (φ i)) = coeff 0 (psTrunc m (φ i)) := by
+    have h0 : constantCoeff (psTrunc m (φ i)) = AddMonoidAlgebra.coeff (psTrunc m (φ i)) 0 := by
       first
         | rfl
         | simp [constantCoeff_eq]

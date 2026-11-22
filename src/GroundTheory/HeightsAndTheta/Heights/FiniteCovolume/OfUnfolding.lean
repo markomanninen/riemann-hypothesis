@@ -1,23 +1,27 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PReducedBasisBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchCovolumeBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoordEmbedBasis
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegralFormCovolume
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTraceHermNondegenerate
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDualLatticeMultiple
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoordLatticeFullRank
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantTransport
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementExtension
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineNormalForm
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementLattice
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldAlongSubgroup
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHaarParabolicCoordinates
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerCovolume
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLatticePointsBelowFinite
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchimedeanUnitaryEquiv
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdelicLatticeDictionary
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDoubleCosetCovolume
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PReducedBasisBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchCovolumeBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoordEmbedBasis
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PIntegralFormCovolume
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PTraceHermNondegenerate
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDualLatticeMultiple
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCoordLatticeFullRank
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantTransport
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementExtension
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineNormalForm
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PComplementLattice
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnfoldAlongSubgroup
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHaarParabolicCoordinates
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerCovolume
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLatticePointsBelowFinite
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchimedeanUnitaryEquiv
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PAdelicLatticeDictionary
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PDoubleCosetCovolume
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -33,38 +37,38 @@ theorem ReducedBasisBound.full : ReducedBasisBound.Statement := ReducedBasisBoun
 section Closed
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 section OneSpace
 
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (h : HermitianForm F E W) (v : Basis ι E W)
 
-omit [NumberField F] [IsTotallyReal F] [DecidableEq ι] in
 
+omit [NumberField F] [IsTotallyReal F] [DecidableEq ι] in
 theorem ArchCovolumeBound.full : ArchCovolumeBound.Statement h v :=
   ArchCovolumeBound.proof h v (CoordEmbedBasis.proof E ι) (IntegralFormCovolume.proof _ _ _)
     (TraceHermNondegenerate.proof h v) (DualLatticeMultiple.proof h) (CoordLatticeFullRank.proof v)
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem MajorantTransport.full : MajorantTransport.Statement h v := MajorantTransport.proof h v
 
-omit [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem ComplementExtension.full : ComplementExtension.Statement h := ComplementExtension.proof h
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem LineNormalForm.full : LineNormalForm.Statement h := LineNormalForm.proof h
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem ComplementLattice.full [FiniteDimensional E W] : ComplementLattice.Statement h :=
   ComplementLattice.proof h
 
-omit [NumberField F] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem LatticePointsBelowFinite.full : LatticePointsBelowFinite.Statement h v :=
   LatticePointsBelowFinite.proof h v
 
@@ -73,13 +77,6 @@ theorem ArchimedeanUnitaryEquiv.full : ArchimedeanUnitaryEquiv.Statement h v :=
 
 theorem AdelicLatticeDictionary.full : AdelicLatticeDictionary.Statement h v :=
   AdelicLatticeDictionary.proof h v
-
-theorem MahlerCompactness.full : MahlerCompactness.Statement h v :=
-  MahlerCompactness.full_of h v ReducedBasisBound.full (ArchCovolumeBound.full h v)
-    (MajorantTransport.full h v)
-
-theorem AdaptedReduction.full [FiniteDimensional E W] : AdaptedReduction.Statement h :=
-  AdaptedReduction.full_of h (LineNormalForm.full h) (ComplementLattice.full h)
 
 end OneSpace
 
@@ -114,7 +111,7 @@ end Closed
 section Adelic
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem AdelicCovolumeFinite.of_covolume (h : HermitianForm F E W) (v : Basis ι E W)
@@ -133,7 +130,7 @@ end Adelic
 section Open
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 variable
     (hAU : ∀ (W : Type u) [AddCommGroup W] [Module E W] [FiniteDimensional E W]

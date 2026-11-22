@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
@@ -49,7 +53,8 @@ theorem UpperTheory.Gal.Gen.algC_pf :
     refine rank_eq_of_equiv_equiv (fun z => ι.symm z) j ι.symm.bijective ?_
     intro r m
     ext h
-    simp [j, smul_eq_mul, map_mul]
+    change ι.symm (r * m.1 h) = ι.symm r * ι.symm (m.1 h)
+    exact map_mul ι.symm r (m.1 h)
   have hfin : Module.finrank ℂ P = Module.finrank (Qbar l) P' := by
     unfold Module.finrank
     rw [hrank]

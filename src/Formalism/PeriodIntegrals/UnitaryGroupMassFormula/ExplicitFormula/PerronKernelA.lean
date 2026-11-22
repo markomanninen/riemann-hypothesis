@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.GoodHeightExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.RectInv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.GoodHeightExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.RectInv
+
+@[expose] public section
 
 namespace PI.EF.PK
 

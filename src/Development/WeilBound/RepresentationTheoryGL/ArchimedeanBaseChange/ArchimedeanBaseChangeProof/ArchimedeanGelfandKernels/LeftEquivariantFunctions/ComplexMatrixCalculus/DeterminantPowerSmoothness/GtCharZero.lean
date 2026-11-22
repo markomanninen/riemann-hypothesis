@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.DeterminantPowerSmoothness.DetPowSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.DeterminantPowerSmoothness.DetPowSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,9 +67,9 @@ theorem rmChar' : RmChar := by
   obtain ⟨f, hf, htr⟩ := ReciprocityTheory.ChartRestriction.TR.Weyl.sqChar n (dw lam) (Matrix.nonsingInvUnit (diagonal t) hu) t rfl
   have hfe : f = GlobalTheory.Branching.sqRep ℂ n (dw lam) (Matrix.nonsingInvUnit (diagonal t) hu) :=
     LinearMap.ext fun x => Subtype.ext (by rw [hf x, GlobalTheory.Branching.sqRep_coe])
-  have hdw : (dw lam).w = lam := by unfold dw; rw [dif_pos hlam]
+  have hdw : (dw lam).w = lam := by unfold dw; rw [dite_eq_left hlam]
   unfold Rm
-  rw [dif_pos hu, ← LinearMap.trace_eq_matrix_trace ℂ (wb lam), ← hfe, htr, hdw]
+  rw [dite_eq_left hu, ← LinearMap.trace_eq_matrix_trace ℂ (wb lam), ← hfe, htr, hdw]
   exact gt_eq_weyl lam hlam t ht hinj
 
 end PositivityTheory.RgBcC.Cxc

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ReferenceCharactersFactorTame
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem mul_kMat (P : HeightOneSpectrum (𝓞 E)) (g : GL (Fin n) (AfE F E)) (f 
     unfold pullV
     rw [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.one_mulVec]
   have e2 := congrArg (fun y => adAt F P (y i)) e
-  simp only [adAt_inclE, Matrix.mulVec, dotProduct, map_sum, map_mul] at e2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [adAt_inclE, Matrix.mulVec, dotProduct, map_sum, map_mul] at e2
   simp only [Matrix.mul_apply, RingHom.mapMatrix_apply, Matrix.map_apply, LinearMap.toMatrix'_apply, kMat]
   rw [e2]
   congr 2
@@ -74,7 +79,8 @@ theorem det_kMat (P : HeightOneSpectrum (𝓞 E)) (g : GL (Fin n) (AfE F E)) (f 
 
 theorem adAt_pullV_smul (P : HeightOneSpectrum (𝓞 E)) (g : GL (Fin n) (AfE F E)) (s : 𝓞 E) (x : Sp E n) (i : Fin n) :
     adAt F P (pullV g (s • x) i) = algebraMap E _ (algebraMap (𝓞 E) E s) * adAt F P (pullV g x i) := by
-  simp only [pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, Pi.smul_apply, Algebra.smul_def, adAt_inclE, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pullV, Matrix.mulVec, dotProduct, map_sum, map_mul, Pi.smul_apply, Algebra.smul_def, adAt_inclE, Finset.mul_sum]
   exact Finset.sum_congr rfl fun _ _ => by ring
 
 variable [StarRing E]
@@ -90,7 +96,7 @@ theorem val_le_of_mem_hatL (P : HeightOneSpectrum (𝓞 E)) {y : Fin n → AfE F
     exact P.valuation_le_one r
   | zero => simp
   | add a b _ _ ha hb =>
-    rw [Pi.add_apply, map_add]
+    rw [Pi.add_apply, map_add (f := _)]
     exact Valuation.map_add_le _ ha hb
   | smul c a _ ha =>
     show Valued.v (adAt F P (c.1 * a i)) ≤ 1
@@ -145,8 +151,8 @@ theorem compAt_eq {g : GL (Fin n) (AfE F E)} {a : Ideles E} (h : IsDetLift hc g 
   rw [← map_mul, ← adAt_finAf F]
   exact congrArg (fun u : (AfE F E)ˣ => adAt F P u) e
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem val_compAt_ne (P : HeightOneSpectrum (𝓞 E)) (a : Ideles E) : Valued.v (compAt P a) ≠ 0 :=
   (Valuation.ne_zero_iff _).2 ((Group.isUnit a).map (compAt P)).ne_zero
 
@@ -178,8 +184,26 @@ theorem val_compAt_detIdl {SB : Finset (HeightOneSpectrum (𝓞 E))} (hSB : ∀ 
   · rw [if_pos h1, if_neg (hSB P h1), if_pos h1, map_one, mul_one, valued_algebraMap]
   by_cases h2 : conjPrime₂ P ∈ SB
   · rw [if_neg h1, if_pos h2, if_pos h2, map_one, valued_algebraMap, k3]
+  have hfull : Submodule.IsFullLattice E N := by
+    letI : Submodule.IsLattice E N := hN.1
+    refine ⟨?_⟩
+    · apply top_unique
+      rw [← ((Pi.basisFun E (Fin n)).map (fr P)).span_eq]
+      refine Submodule.span_le.2 ?_
+      rintro _ ⟨i, rfl⟩
+      obtain ⟨s, hs, hx⟩ := (mem_locP _ _ _).1 ((hf P _).2 (CharValCompare.single_mem_stdAt P i))
+      have hs0 : (algebraMap (𝓞 E) E s) ≠ 0 := by
+        intro h
+        have : s = 0 := (FaithfulSMul.algebraMap_injective (𝓞 E) E) (by simpa using h)
+        exact hs (this ▸ P.asIdeal.zero_mem)
+      have hx' : (algebraMap (𝓞 E) E s) • fr P (Pi.single i 1) ∈ N := by
+        rwa [IsScalarTower.algebraMap_smul]
+      have hm := Submodule.smul_mem (Submodule.span E (N : Set (Sp E n)))
+        (algebraMap (𝓞 E) E s)⁻¹ (Submodule.subset_span hx')
+      rw [← mul_smul, inv_mul_cancel₀ hs0, one_smul] at hm
+      simpa only [Module.Basis.map_apply, Pi.basisFun_apply, SetLike.mem_coe] using hm
   rw [if_neg h1, if_neg h2, if_neg h2, if_neg h1, map_pow, map_pow, valued_algebraMap, valued_algebraMap,
-    ordSub_detSub_eq hN.1 (hf P), ordSub_detSub_eq hN.1 (hf (conjPrime₂ P))]
+    ordSub_detSub_eq hfull (hf P), ordSub_detSub_eq hfull (hf (conjPrime₂ P))]
   have ex : ∀ (w : HeightOneSpectrum (𝓞 E)) (u : Eˣ), w.valuation E (u : E) = WithZero.exp (-ordF w u) := fun w u => by
     unfold ordF
     rw [neg_neg, WithZero.exp_log (by simp)]

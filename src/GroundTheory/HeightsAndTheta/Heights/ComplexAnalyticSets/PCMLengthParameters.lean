@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLengthParameters
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRegularElement
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLengthLocalizedQuotient
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLengthParameters
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMRegularElement
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLengthLocalizedQuotient
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.SumRescaleTySTwo
-import Formalism.SharpRestriction.GrowthBounds.ConstantCoeffUnshiftLogarithm
-import Formalism.SharpRestriction.GrowthBounds.R1sExpLowHolds
-import Formalism.LocalToGlobal.CharacterGerms.FrobPowSmul
-import Formalism.LocalToGlobal.CharacterGerms.MmMulSeries
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SumRescaleTySTwo
+public import Formalism.SharpRestriction.GrowthBounds.ConstantCoeffUnshiftLogarithm
+public import Formalism.SharpRestriction.GrowthBounds.R1sExpLowHolds
+public import Formalism.LocalToGlobal.CharacterGerms.FrobPowSmul
+public import Formalism.LocalToGlobal.CharacterGerms.MmMulSeries
+
+@[expose] public section
 
 noncomputable section
 

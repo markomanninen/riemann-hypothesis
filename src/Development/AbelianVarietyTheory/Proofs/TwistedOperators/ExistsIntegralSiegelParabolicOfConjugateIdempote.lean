@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemAdelicSchwartzSpaceNumberField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftVAlgebraMapMul
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemAdelicSchwartzSpaceNumberField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LiftVAlgebraMapMul
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -69,7 +74,7 @@ end FinTwoTypeFamily
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem evFin_half_mem (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
+theorem evFin_half_mem (v : Pl (F := F)) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
     evFin F v (⅟2 : AF F) ∈ v.adicCompletionIntegers F := by
   have hv2 : Valued.v (2 : Fv F v) = 1 := by
     have e : ((algebraMap (𝓞 F) (v.adicCompletionIntegers F) 2 : v.adicCompletionIntegers F) : Fv F v) = 2 := by
@@ -86,7 +91,7 @@ theorem evFin_half_mem (v : Pl F) (h2 : (2 : 𝓞 F) ∉ v.asIdeal) :
   rw [map_mul, hv2, one_mul, map_one] at this
   exact this.le
 
-theorem symmetricScalarBlockMatrix_mulVec_mem_doubledLattice {d : ℕ} {W : Spc F E d} {v : Pl F} {a b : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a)
+theorem symmetricScalarBlockMatrix_mulVec_mem_doubledLattice {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} {a b : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a)
     (hb : GlobalTheory.SplitConj.Mult W v b) (z : Fin d ⊕ Fin d → AE F E) (hz : z ∈ GlobalTheory.InertDbl.latAtD W v) :
     blk2 d a b *ᵥ z ∈ GlobalTheory.InertDbl.latAtD W v := by
   constructor
@@ -95,20 +100,20 @@ theorem symmetricScalarBlockMatrix_mulVec_mem_doubledLattice {d : ℕ} {W : Spc 
   · simp only [symmetricScalarBlockMatrix_mulVec_inr]
     exact add_mem (hb _ hz.1) (ha _ hz.2)
 
-theorem mult_neg {d : ℕ} {W : Spc F E d} {v : Pl F} {a : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a) :
+theorem mult_neg {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} {a : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a) :
     GlobalTheory.SplitConj.Mult W v (-a) := fun z hz => by
   have : (fun i => -a * z i) = -(fun i => a * z i) := by ext i; simp
   rw [this]; exact neg_mem (ha z hz)
 
-theorem mult_sub {d : ℕ} {W : Spc F E d} {v : Pl F} {a b : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a)
+theorem mult_sub {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} {a b : AE F E} (ha : GlobalTheory.SplitConj.Mult W v a)
     (hb : GlobalTheory.SplitConj.Mult W v b) : GlobalTheory.SplitConj.Mult W v (a - b) := by
   rw [sub_eq_add_neg]; exact GlobalTheory.SplitConj.mult_add ha (mult_neg hb)
 
-theorem mult_one {d : ℕ} (W : Spc F E d) (v : Pl F) : GlobalTheory.SplitConj.Mult W v 1 := fun z hz => by
+theorem mult_one {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) : GlobalTheory.SplitConj.Mult W v 1 := fun z hz => by
   simpa using hz
 
 theorem exists_par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
-    B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl F), (2 : 𝓞 F) ∉ v.asIdeal →
+    B.IsGood σ → ∀ (d : ℕ) (W : Spc F E d) (v : Pl (F := F)), (2 : 𝓞 F) ∉ v.asIdeal →
     ∀ Eid : AE F E, Eid * Eid = Eid → Eid + cA σ Eid = algebraMap (AF F) (AE F E) (GlobalTheory.LatVac.liftV v 1) →
     Eid * cA σ Eid = 0 →
     (∀ z ∈ GlobalTheory.InertSph.latAt W v, (fun i => Eid * z i) ∈ GlobalTheory.InertSph.latAt W v) →
@@ -133,7 +138,7 @@ theorem exists_par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
   have hx : (1 - h * A) * (1 + A) = 1 := by linear_combination (-h) * hA - A * h2h
   have hy : (1 + A') * (1 - h * A') = 1 := by linear_combination (-h) * hA'A' - A' * h2h
   have cx : cA σ (1 - h * A) = 1 - h * A' := by rw [map_sub, map_one, map_mul, ch]
-  have cy : cA σ (1 + A') = 1 + A := by rw [map_add, map_one, cA']
+  have cy : cA σ (1 + A') = 1 + A := by rw [map_add (f := _), map_one, cA']
   have Mh : GlobalTheory.SplitConj.Mult W v h := GlobalTheory.SplitConj.mult_algebraMap W v _ (evFin_half_mem v h2)
   have Me : GlobalTheory.SplitConj.Mult W v e := GlobalTheory.SplitConj.mult_algebraMap W v _ (by
     rw [GlobalTheory.LatVac.evFin_liftV]; exact one_mem _)
@@ -166,7 +171,7 @@ theorem exists_par : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     linear_combination i1
   have i4 : h * (x' + y') * (h * (x - y)) + h * (x' - y') * (h * (x + y)) = 0 := by
     linear_combination i2
-  have ca : cA σ (h * (x + y)) = h * (x' + y') := by rw [map_mul, map_add, ch, cx, cy, add_comm]
+  have ca : cA σ (h * (x + y)) = h * (x' + y') := by rw [map_mul, map_add (f := _), ch, cx, cy, add_comm]
   have cb : cA σ (h * (x - y)) = -(h * (x' - y')) := by rw [map_mul, map_sub, ch, cx, cy]; ring
   have hmem : (blk2 d (h * (x + y)) (h * (x - y)))ᵀ * dbl (incM F W.J) *
       (blk2 d (h * (x + y)) (h * (x - y))).map (cA σ) = dbl (incM F W.J) := by

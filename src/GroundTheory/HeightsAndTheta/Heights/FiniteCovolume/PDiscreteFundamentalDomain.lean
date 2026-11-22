@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -19,8 +23,8 @@ theorem DiscreteFundamentalDomain.proof (G : Type*) [Group G] [TopologicalSpace 
     simpa using this
 
   obtain ⟨V, hVo, hV1, hVV⟩ := exists_open_nhds_one_split (ht.mem_nhds h1t)
-  let U : Set G := V ∩ V⁻¹
-  have hUo : IsOpen U := hVo.inter hVo.inv
+  let U : Set G := V ∩ Inv.inv ⁻¹' V
+  have hUo : IsOpen U := hVo.inter (hVo.preimage continuous_inv)
   have hU1 : (1 : G) ∈ U := ⟨hV1, by simpa using hV1⟩
   have key : ∀ u ∈ U, ∀ w ∈ U, ∀ γ : Γ, (γ : G) = u * w⁻¹ → γ = 1 := by
     intro u hu w hw γ hγ

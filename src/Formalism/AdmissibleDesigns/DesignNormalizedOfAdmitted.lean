@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.GlobalIndexTheoremPlacesOfRNAdm
-import Formalism.AdmissibleDesigns.DesignOfAdmittedObjects
+module
+
+public import Formalism.AdmissibleDesigns.GlobalIndexTheoremPlacesOfRNAdm
+public import Formalism.AdmissibleDesigns.DesignOfAdmittedObjects
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem cInt_spec {P Q : Matrix (Fin D.R.nV) (Fin D.R.nV) (KK D.nd i)} {A : MatN
     (h : ∃ M : MatN D.nd i, M.map (toK D.nd i) = P * A.map (toK D.nd i) * Q) :
     (cInt i P Q A).map (toK D.nd i) = P * A.map (toK D.nd i) * Q := by
   unfold cInt
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 def phiC (P Q : Matrix (Fin D.R.nV) (Fin D.R.nV) (KK D.nd i)) (a : D.nd.X i → MatN D.nd i) :
@@ -84,7 +88,8 @@ theorem inR_phiC {P Q : Matrix (Fin D.R.nV) (Fin D.R.nV) (KK D.nd i)}
     simp only [Finset.sum_apply]
     change (toK D.nd i).mapMatrix (∑ k, f k π • rO D.nd i (rN i r ρ π) π (g k)) =
       P * (toK D.nd i).mapMatrix (∑ k, f k π • rO D.nd i r π (g k)) * Q
-    rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun k _ => ?_)
     rw [RingHom.mapMatrix_apply, RingHom.mapMatrix_apply, map_smul_toK, map_smul_toK, hconj, Matrix.mul_smul,
       Matrix.smul_mul]
@@ -329,19 +334,10 @@ theorem design_normalized (S : IdempotentChoiceData D.nd i) (hG : GoodCongruence
   rw [← blockPoly_map, blockPoly_eq, ← hroots x', prod_Icc_fin D.nd D.R.t, Polynomial.map_prod]
   refine Finset.prod_congr rfl (fun c _ => ?_)
   simp only [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C]
-  try rfl
 
 theorem design_normalized_of_admitted (hA : LargeLevelLemmas.adm51 i r ρ π) (hZ : π ∈ D.nd.Z i) : InertiaElementIdempotentChoice D.nd (rN i r ρ π) π := by
   obtain ⟨S, hG⟩ := hA hZ
   exact design_normalized i r ρ π S hG
-
-theorem inputs_normalized (hA : LargeLevelLemmas.admitted i r ρ π) (hZ : π ∈ D.nd.Z i) :
-    NormAt D.nd (rN i r ρ π) ρ π ∧
-      (∀ (γ : GE D.nd) (k : ℕ), (fun x : D.nd.X i => ((rO D.nd i (rN i r ρ π) x γ).charpolyRev).coeff k) ∈ D.nd.T i) ∧
-      Submodule.span (kk D.nd i) (Set.range (mapM (IsLocalRing.residue (D.nd.O i)) (rhoO D.nd i ρ π))) = ⊤ ∧
-      InertiaElementIdempotentChoice D.nd (rN i r ρ π) π := by
-  obtain ⟨a51, -, -, -, g1, -, g3, -, -, -, -, -, -, -, -, -, dcm, -⟩ := hA
-  exact ⟨normAt_rN i r ρ π, admG1_rN i r ρ π dcm g1, g3.2.2, design_normalized_of_admitted i r ρ π a51 hZ⟩
 
 end D51b
 

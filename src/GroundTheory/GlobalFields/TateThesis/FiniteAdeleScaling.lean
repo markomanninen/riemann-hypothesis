@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.AdeleMeasure
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -38,7 +42,7 @@ theorem measure_eq_card_mul_measure_ker {A Q : Type*} [AddGroup A] [TopologicalS
         add_neg_cancel_left _ _⟩
       have : (⟨-(t (φ ⟨y, hy⟩) : A) + y, L.add_mem (L.neg_mem (t _).2) hy⟩ : L) =
           -t (φ ⟨y, hy⟩) + ⟨y, hy⟩ := rfl
-      rw [this, map_add, map_neg, ht, neg_add_cancel]
+      rw [this, map_add (f := _), map_neg, ht, neg_add_cancel]
     · rintro ⟨q, n, hn, rfl⟩
       obtain ⟨hnL, -⟩ := (hmemN n).1 hn
       exact L.add_mem (t q).2 hnL
@@ -74,13 +78,12 @@ theorem finiteAdeleEval_apply (x : HeightOneSpectrum (𝓞 K)) (a : 𝔸ᶠ[K]) 
     finiteAdeleEval x a = a x :=
   rfl
 
-open scoped Classical in
 
+open scoped Classical in
 theorem coe_prod_finiteSingleUnits_apply (T : Finset (HeightOneSpectrum (𝓞 K)))
     (f : ∀ v : HeightOneSpectrum (𝓞 K), (v.adicCompletion K)ˣ) (x : HeightOneSpectrum (𝓞 K)) :
     ((∏ v ∈ T, finiteSingleUnits v (f v) : (𝔸ᶠ[K])ˣ) : 𝔸ᶠ[K]) x =
       if x ∈ T then ((f x : (x.adicCompletion K)ˣ) : x.adicCompletion K) else 1 := by
-  classical
   rw [Units.coe_prod]
   rw [← finiteAdeleEval_apply, map_prod]
   simp only [finiteAdeleEval_apply, coe_finiteSingleUnits]
@@ -199,7 +202,7 @@ def residueAt (v : HeightOneSpectrum (𝓞 K)) :
     rw [← map_zero (IsLocalRing.residue (v.adicCompletionIntegers K))]
     rfl
   map_add' a b := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     rfl
 
 theorem residueAt_surjective (v : HeightOneSpectrum (𝓞 K)) :

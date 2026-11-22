@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsTest
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TransW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.Unimod
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.UnimodS
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.BallConj
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.RhsTest
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TransW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.Unimod
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.UnimodS
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.BallConj
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -56,7 +60,7 @@ theorem uwb_emb {p : Mat k r} (hp : p ∈ UWb k r) :
     rw [MB.mulVec_bvec, MB.bvec_apply] at h1
     rw [h1]
     unfold embWb
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     by_cases hij : i = j
     · subst hij; rw [if_pos rfl, if_pos ⟨rfl, by omega⟩]
     · rw [if_neg hij, if_neg (fun h => hij h.1)]
@@ -93,7 +97,7 @@ theorem uwb_emb {p : Mat k r} (hp : p ∈ UWb k r) :
       rw [MB.mulVec_bvec] at hw
       rw [hw]
       unfold embWb
-      rw [dif_neg (by omega), if_neg (fun h => by have := congrArg Fin.val h.1; simp only [wI] at this; omega)]
+      rw [dite_eq_right (by omega), if_neg (fun h => by have := congrArg Fin.val h.1; simp only [wI] at this; omega)]
     · push Not at hi
       obtain ⟨i', rfl⟩ : ∃ i' : Fin (k + 1), wI k r i' = i :=
         ⟨⟨i.val - r, by omega⟩, by apply Fin.ext; simp only [wI]; omega⟩
@@ -144,7 +148,7 @@ theorem boost_herm (y : Fin k → ℂ) (n : ℝ) (hn : 0 < n) : (boost y (n : �
     induction j using Fin.lastCases with
     | last => simp [boost, hnn, hn0, abs_of_pos hn, div_self hn0]
     | cast j =>
-      simp only [boost, Fin.lastCases_castSucc, hnn, map_add, map_div₀, map_mul, Complex.conj_conj,
+      simp only [boost, Fin.lastCases_castSucc, hnn, map_add (f := _), map_div₀, map_mul, Complex.conj_conj,
         Complex.conj_ofReal, map_one]
       by_cases h : i = j
       · subst h; simp; ring

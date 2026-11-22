@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPolyRep
+
+@[expose] public section
+
 open Matrix Formalism.L2.NG ReciprocityTheory.Aut Formalism.AUTREP NumberField GlobalTheory.AlgWtHW
 
 noncomputable section
@@ -38,7 +43,7 @@ theorem expand {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι] (Φ : GL (Fin
   refine ⟨fun a => ∑ b, MvPolynomial.aeval g (Q a b) * C (w b), ?_⟩
   intro s T hT
   funext a
-  simp only [mulVec, dotProduct, eval_finset_sum, eval_mul, eval_C, eval_evalRingHom]
+  simp only [mulVec, dotProduct, eval_finsetSum, eval_mul, eval_C, eval_evalRingHom]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [hQ a b T]
   congr 2
@@ -166,11 +171,11 @@ theorem isWtVec_coeff {n : ℕ} {ι : Type} [Fintype ι] [DecidableEq ι]
     intro s
     have e := congrFun (hs s) a
     simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at e
-    simp only [eval_finset_sum, eval_mul, eval_C, eval_comp, eval_X]
+    simp only [eval_finsetSum, eval_mul, eval_C, eval_comp, eval_X]
     rw [e, mul_comm c s]
   funext a
-  have e := congrArg (fun p => Polynomial.coeff p k) (hpoly a)
-  simp only [finset_sum_coeff, coeff_C_mul, comp_C_mul_X_coeff] at e
+  have e := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p k) (hpoly a)
+  simp only [finsetSum_coeff, coeff_C_mul, comp_C_mul_X_coeff] at e
   simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul]
   rw [e, prod_zpow_shiftWt _ hd]
   ring

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.PadicLogHom
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.PadicLogHom
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -19,18 +23,18 @@ theorem expSeries_zero : expSeries (0 : K) = 1 := by
   · intro k hk
     simp [zero_pow hk]
 
-theorem expSeries_nsmul {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) (m : ℕ) :
+theorem expSeries_nsmul {a : ℤ} {x : K} (hx : x ∈ valBall (K := K) a)
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) (m : ℕ) :
     expSeries (m • x) = expSeries x ^ m := by
   induction m with
   | zero => simp [expSeries_zero]
   | succ m ih =>
     rw [succ_nsmul, expSeries_add p (nsmul_mem hx m) hx ha, ih, pow_succ]
 
-theorem expSeries_mul_sub_one_sub_mem {a d : ℤ} {x c : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) (hc : c ∈ valBall K d) (hd : 0 ≤ d) :
-    expSeries (c * x) - 1 - c * x ∈ valBall K (2 * d + a + 1) := by
-  have hcx : c * x ∈ valBall K a := by
+theorem expSeries_mul_sub_one_sub_mem {a d : ℤ} {x c : K} (hx : x ∈ valBall (K := K) a)
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) (hc : c ∈ valBall (K := K) d) (hd : 0 ≤ d) :
+    expSeries (c * x) - 1 - c * x ∈ valBall (K := K) (2 * d + a + 1) := by
+  have hcx : c * x ∈ valBall (K := K) a := by
     simpa using valBall_antitone (by omega : a ≤ d + a) (mul_mem_valBall hc hx)
   have hs := summable_expSeries p hcx ha
   rw [expSeries, hs.tsum_eq_zero_add, ((summable_nat_add_iff 1).mpr hs).tsum_eq_zero_add]
@@ -48,11 +52,11 @@ theorem expSeries_mul_sub_one_sub_mem {a d : ℤ} {x c : K} (hx : x ∈ valBall 
   refine valBall_antitone ?_ (mul_mem_valBall hck hxk)
   have h0 := sub_one_mul_padicValNat_factorial_lt_of_ne_zero p (by omega : k + 1 + 1 ≠ 0)
   set v := padicValNat p (k + 1 + 1).factorial
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have hp2 : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
   have hp1 : ((p - 1 : ℕ) : ℤ) = (p : ℤ) - 1 := by
     rw [Nat.cast_sub hp.out.one_le]; simp
-  have h0' : (((p - 1) * v : ℕ) : ℤ) < k + 1 + 1 := by exact_mod_cast h0
+  have h0' : (((p - 1) * v : ℕ) : ℤ) < k + 1 + 1 := by exact_mod_cast (by simpa only [v, Nat.padicValNat_def] using h0)
   push_cast [hp1] at h0'
   have he : (0 : ℤ) ≤ e := by positivity
   have h0'' : ((p : ℤ) - 1) * v ≤ k + 1 := by linarith
@@ -62,11 +66,11 @@ theorem expSeries_mul_sub_one_sub_mem {a d : ℤ} {x c : K} (hx : x ∈ valBall 
   push_cast
   nlinarith [mul_le_mul_of_nonneg_left h0'' he, mul_le_mul_of_nonneg_left ha' hk]
 
-theorem logSeries_expSeries_sub_one {a : ℤ} {x : K} (hx : x ∈ valBall K a)
-    (ha : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * a) :
+theorem logSeries_expSeries_sub_one {a : ℤ} {x : K} (hx : x ∈ valBall (K := K) a)
+    (ha : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * a) :
     logSeries (expSeries x - 1) = x := by
   have ha1 := one_le_of_lt_sub_one_mul p ha
-  have hy : expSeries x - 1 ∈ valBall K 1 :=
+  have hy : expSeries x - 1 ∈ valBall (K := K) 1 :=
     valBall_antitone ha1 (expSeries_sub_one_mem p hx ha)
   have h1 := tendsto_logSeries p hy
   simp only [add_sub_cancel] at h1
@@ -74,7 +78,7 @@ theorem logSeries_expSeries_sub_one {a : ℤ} {x : K} (hx : x ∈ valBall K a)
   rw [← tendsto_sub_nhds_zero_iff, tendsto_zero_iff_valBall]
   intro N
   rw [eventually_atTop]
-  set e := absRamificationIndex K
+  set e := absRamificationIndex (K := K)
   have he := one_le_absRamificationIndex (K := K) p
   refine ⟨N.toNat, fun k hk ↦ ?_⟩
   have hm0 : p ^ k ≠ 0 := pow_ne_zero _ hp.out.ne_zero
@@ -88,7 +92,7 @@ theorem logSeries_expSeries_sub_one {a : ℤ} {x : K} (hx : x ∈ valBall K a)
     (by positivity)
   have hdiv := div_natCast_mem_valBall p hmem hm0
   refine valBall_antitone ?_ hdiv
-  rw [padicValNat.prime_pow]
+  rw [Nat.padicValNat_def, Nat.multiplicity_prime_pow]
   have h2 : N ≤ (N.toNat : ℤ) := Int.self_le_toNat N
   have h3 : (N.toNat : ℤ) ≤ k := by exact_mod_cast hk
   have he' : (1 : ℤ) ≤ e := by exact_mod_cast he
@@ -99,7 +103,7 @@ end ExpLog
 section Iso
 
 theorem mem_maximalIdeal_pow_iff_valBall {n : ℕ} {y : 𝒪[K]} :
-    y ∈ 𝓂[K] ^ n ↔ (y : K) ∈ valBall K n := by
+    y ∈ 𝓂[K] ^ n ↔ (y : K) ∈ valBall (K := K) n := by
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[K]
   have hset := hϖ.maximalIdeal_pow_eq_setOfPred_le_v_coe_pow (v := valuation K) n
   have : y ∈ 𝓂[K] ^ n ↔ y ∈ ((𝓂[K] ^ n : Ideal 𝒪[K]) : Set 𝒪[K]) := Iff.rfl
@@ -109,15 +113,15 @@ theorem mem_maximalIdeal_pow_iff_valBall {n : ℕ} {y : 𝒪[K]} :
     ← WithZero.exp_nsmul]
   simp
 
-theorem mem_integer_of_mem_valBall {n : ℤ} (hn : 0 ≤ n) {x : K} (hx : x ∈ valBall K n) :
+theorem mem_integer_of_mem_valBall {n : ℤ} (hn : 0 ≤ n) {x : K} (hx : x ∈ valBall (K := K) n) :
     x ∈ 𝒪[K] := by
   rw [← normalizedValuation_le_one_iff]
   exact hx.trans (by rw [← WithZero.exp_zero, WithZero.exp_le_exp]; omega)
 
-variable (K) in
 
+variable (K) in
 noncomputable def valBallEquivMaximalIdealPow (n : ℕ) :
-    valBall K n ≃ₜ+ (𝓂[K] ^ n : Ideal 𝒪[K]) where
+    valBall (K := K) n ≃ₜ+ (𝓂[K] ^ n : Ideal 𝒪[K]) where
   toFun x := ⟨⟨x, mem_integer_of_mem_valBall (by positivity) x.2⟩,
     mem_maximalIdeal_pow_iff_valBall.mpr x.2⟩
   invFun y := ⟨((y : 𝒪[K]) : K), mem_maximalIdeal_pow_iff_valBall.mp y.2⟩
@@ -130,17 +134,17 @@ noncomputable def valBallEquivMaximalIdealPow (n : ℕ) :
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p] [CharZero K]
 
 theorem one_le_of_lt_sub_one_mul_nat {n : ℕ}
-    (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) : 1 ≤ n := by
+    (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n) : 1 ≤ n := by
   have := one_le_of_lt_sub_one_mul p hn
   omega
 
 omit [CharZero K] in
 theorem sub_one_mem_valBall_of_mem {n : ℕ} (hn1 : 1 ≤ n) (u : unitFiltrationUnits K n) :
-    ((u : Kˣ) : K) - 1 ∈ valBall K n :=
+    ((u : Kˣ) : K) - 1 ∈ valBall (K := K) n :=
   (mem_unitFiltrationUnits_iff_valBall hn1).mp u.2
 
-noncomputable def logValBallHom (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) :
-    Additive (unitFiltrationUnits K n) →+ valBall K n where
+noncomputable def logValBallHom (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n) :
+    Additive (unitFiltrationUnits K n) →+ valBall (K := K) n where
   toFun u := ⟨logSeries ((((Additive.toMul u : unitFiltrationUnits K n) : Kˣ) : K) - 1),
     logSeries_mem_valBall p
       (sub_one_mem_valBall_of_mem (one_le_of_lt_sub_one_mul_nat p hn) (Additive.toMul u)) hn⟩
@@ -153,14 +157,14 @@ noncomputable def logValBallHom (n : ℕ) (hn : (absRamificationIndex K : ℤ) <
         unitFiltrationUnits_antitone (one_le_of_lt_sub_one_mul_nat p hn) (Additive.toMul w).2⟩)
     exact Subtype.ext h
 
-theorem coe_logValBallHom (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n)
+theorem coe_logValBallHom (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n)
     (u : Additive (unitFiltrationUnits K n)) :
     (logValBallHom p n hn u : K) =
       logSeries ((((Additive.toMul u : unitFiltrationUnits K n) : Kˣ) : K) - 1) := rfl
 
-theorem logValBallHom_injective (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) :
+theorem logValBallHom_injective (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n) :
     Function.Injective (logValBallHom p n hn) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro u hu
   have h := congrArg Subtype.val hu
   rw [coe_logValBallHom] at h
@@ -171,44 +175,44 @@ theorem logValBallHom_injective (n : ℕ) (hn : (absRamificationIndex K : ℤ) <
   simpa [sub_eq_zero] using hx
 
 omit [CharZero K] in
-theorem expSeries_ne_zero {n : ℕ} (hn1 : 1 ≤ n) {x : K} (hx : expSeries x - 1 ∈ valBall K n) :
+theorem expSeries_ne_zero {n : ℕ} (hn1 : 1 ≤ n) {x : K} (hx : expSeries x - 1 ∈ valBall (K := K) n) :
     expSeries x ≠ 0 := by
   intro h
   rw [h, zero_sub, mem_valBall, Valuation.map_neg, map_one, ← WithZero.exp_zero,
     WithZero.exp_le_exp] at hx
   omega
 
-noncomputable def expUnit (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n)
-    (x : valBall K n) : unitFiltrationUnits K n :=
+noncomputable def expUnit (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n)
+    (x : valBall (K := K) n) : unitFiltrationUnits K n :=
   ⟨Units.mk0 (expSeries (x : K))
     (expSeries_ne_zero (one_le_of_lt_sub_one_mul_nat p hn) (expSeries_sub_one_mem p x.2 hn)),
     (mem_unitFiltrationUnits_iff_valBall (one_le_of_lt_sub_one_mul_nat p hn)).mpr
       (expSeries_sub_one_mem p x.2 hn)⟩
 
-theorem logValBallHom_expUnit (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n)
-    (x : valBall K n) : logValBallHom p n hn (Additive.ofMul (expUnit p n hn x)) = x :=
+theorem logValBallHom_expUnit (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n)
+    (x : valBall (K := K) n) : logValBallHom p n hn (Additive.ofMul (expUnit p n hn x)) = x :=
   Subtype.ext (logSeries_expSeries_sub_one p x.2 hn)
 
 theorem continuous_expSeries_valBall (n : ℕ)
-    (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) :
-    Continuous fun x : valBall K n ↦ expSeries (x : K) := by
+    (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n) :
+    Continuous fun x : valBall (K := K) n ↦ expSeries (x : K) := by
   rw [continuous_iff_continuousAt]
   intro x0
   rw [ContinuousAt, ← tendsto_sub_nhds_zero_iff, tendsto_zero_iff_valBall]
   intro N
   set r : ℤ := max N n
-  have hr : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * r :=
+  have hr : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * r :=
     sub_one_le_of_lt p hn (le_max_right _ _)
   have hopen := (isOpen_valBall r).preimage
-    (continuous_subtype_val.sub continuous_const : Continuous fun x : valBall K n ↦ (x : K) - x0)
+    (continuous_subtype_val.sub continuous_const : Continuous fun x : valBall (K := K) n ↦ (x : K) - x0)
   filter_upwards [hopen.mem_nhds (by simp)] with x hx
-  have hx' : (x : K) - x0 ∈ valBall K r := hx
-  have hxn : (x : K) - x0 ∈ valBall K n := valBall_antitone (le_max_right _ _) hx'
+  have hx' : (x : K) - x0 ∈ valBall (K := K) r := hx
+  have hxn : (x : K) - x0 ∈ valBall (K := K) n := valBall_antitone (le_max_right _ _) hx'
   have heq : expSeries (x : K) = expSeries (x0 : K) * expSeries ((x : K) - x0) := by
     rw [← expSeries_add p x0.2 hxn hn, add_sub_cancel]
-  have h0 : expSeries (x0 : K) ∈ valBall K 0 := by
+  have h0 : expSeries (x0 : K) ∈ valBall (K := K) 0 := by
     have h1 := valBall_antitone (by positivity : (0 : ℤ) ≤ n) (expSeries_sub_one_mem p x0.2 hn)
-    have h2 : (1 : K) ∈ valBall K 0 := by simp [mem_valBall]
+    have h2 : (1 : K) ∈ valBall (K := K) 0 := by simp [mem_valBall]
     simpa using add_mem h1 h2
   rw [heq, show expSeries (x0 : K) * expSeries ((x : K) - x0) - expSeries (x0 : K) =
     expSeries (x0 : K) * (expSeries ((x : K) - x0) - 1) by ring]
@@ -216,8 +220,8 @@ theorem continuous_expSeries_valBall (n : ℕ)
   refine valBall_antitone hNr (mul_mem_valBall h0 ?_)
   exact expSeries_sub_one_mem p hx' hr
 
-noncomputable def logValBallEquiv (n : ℕ) (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) :
-    Additive (unitFiltrationUnits K n) ≃ₜ+ valBall K n where
+noncomputable def logValBallEquiv (n : ℕ) (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n) :
+    Additive (unitFiltrationUnits K n) ≃ₜ+ valBall (K := K) n where
   toFun := logValBallHom p n hn
   invFun x := Additive.ofMul (expUnit p n hn x)
   left_inv u := logValBallHom_injective p n hn (logValBallHom_expUnit p n hn _)
@@ -235,12 +239,7 @@ noncomputable def logValBallEquiv (n : ℕ) (hn : (absRamificationIndex K : ℤ)
     rw [Units.isEmbedding_val₀.continuous_iff]
     exact continuous_expSeries_valBall p n hn
 
-noncomputable def unitFiltrationLogEquiv (n : ℕ)
-    (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n) :
-    Additive (unitFiltrationUnits K n) ≃ₜ+ (𝓂[K] ^ n : Ideal 𝒪[K]) :=
-  (logValBallEquiv p n hn).trans (valBallEquivMaximalIdealPow K n)
-
-theorem expSeries_logSeries {n : ℕ} (hn : (absRamificationIndex K : ℤ) < (p - 1 : ℤ) * n)
+theorem expSeries_logSeries {n : ℕ} (hn : (absRamificationIndex (K := K) : ℤ) < (p - 1 : ℤ) * n)
     (u : unitFiltrationUnits K n) :
     expSeries (logSeries (((u : Kˣ) : K) - 1)) = ((u : Kˣ) : K) := by
   have := congrArg (fun v ↦ (((Additive.toMul v : unitFiltrationUnits K n) : Kˣ) : K))

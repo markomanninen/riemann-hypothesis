@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped NNReal ENNReal
 
@@ -21,6 +26,7 @@ theorem modularCharacterFun_eq_of_map_left_mul :
   have hmap : Measure.map (fun x : Q => x * q) ρ.inv = δ q • ρ.inv := by
     rw [Measure.inv_def, Measure.map_map (measurable_mul_const q) measurable_inv, hcomp,
       ← Measure.map_map measurable_inv (measurable_const_mul q⁻¹), h q⁻¹, Measure.map_smul, hδ]
+    exact measurable_inv.aemeasurable
   rw [Measure.modularCharacterFun_eq_haarScalarFactor ρ.inv q]
   simp only [hmap, Measure.haarScalarFactor_smul, Measure.haarScalarFactor_self, smul_eq_mul, mul_one]
 

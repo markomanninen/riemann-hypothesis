@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeilRepresentationContinuous
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.WeilRepresentationContinuous
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
@@ -29,9 +33,9 @@ variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE 
 
 def thetaSpace (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Submodule ℂ (WO S T → ℂ) where
   carrier := {f | IsThetaFunO ψ S T f}
-  add_mem' := theta_add
-  zero_mem' := theta_zero
-  smul_mem' := fun a _ hf => theta_smul a hf
+  add_mem' := GlobalTheory.OrientedHeis.theta_add
+  zero_mem' := GlobalTheory.OrientedHeis.theta_zero
+  smul_mem' := fun a _ hf => GlobalTheory.OrientedHeis.theta_smul a hf
 
 theorem ipTh_eq (f f' : WO S T → ℂ) : ipTh μ 𝓕 f f' = GlobalTheory.Ker.ipO μ 𝓕 f f' := rfl
 
@@ -62,7 +66,7 @@ theorem continuousOn_ip (hω : IsWeilDatumO ψ S T χS χT ω) (hμ : μ.IsAddHa
   obtain ⟨C, hC⟩ := bound_near hω hF (γ x₀)
   obtain ⟨CE, hCE⟩ := theta_bounded hω.std hE
   have hfin : μ 𝓕 ≠ ⊤ := (measure_dom hμ h𝓕).2
-  haveI : IsFiniteMeasure (μ.restrict 𝓕) :=
+  have : IsFiniteMeasure (μ.restrict 𝓕) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hfin.lt_top⟩
   unfold ipTh
   refine continuousWithinAt_of_dominated (bound := fun _ => C * CE) ?_ ?_ (integrable_const _) ?_
@@ -82,24 +86,22 @@ theorem weaklyContinuous_unitaryAction_of_realUnitaryHom (hω : IsWeilDatumO ψ 
     (hc : ContinuousOn γ (Formalism.QuantumDeterminants.UH G)) (pt : MvPolynomial ι ℂ →ₗ[ℂ] (WO S T → ℂ))
     (hpt : ∀ P, IsThetaFunO ψ S T (pt P))
     (hd : ∀ X : Mn n, Xᴴ * G + G * X = 0 → ∀ P, ∃ F', DerAll ψ ω (fun t => γ (NormedSpace.exp (t • X))) (pt P) F') :
-    L2UnitaryRepresentationData G (fun g F => ω (γ g) F) pt (ipTh μ 𝓕) (thetaSpace ψ S T) where
+    L2UnitaryRepresentationData G (fun g F => ω (γ g) F) pt (ipTh μ 𝓕) (thetaSpace ψ S T) := {
   mem := hpt
-  pt_lin := fun z P Q => by rw [map_add, map_smul]
+  pt_lin := fun z P Q => by rw [map_add (f := _), map_smul]
   ip_lin := fun z F hF F' hF' E hE => by
-    rw [ipTh_eq, ipTh_eq, ipTh_eq, ipO_add_left hω.std hμ h𝓕 (theta_smul z hF) hF' hE, ipO_smul_left]
+    rw [ipTh_eq, ipTh_eq, ipTh_eq, ipO_add_left hω.std hμ h𝓕 ((thetaSpace ψ S T).smul_mem z hF) hF' hE,
+      ipO_smul_left]
   ip_symm := fun F _ E _ => by rw [ipTh_eq, ipTh_eq, ipO_conj]
   ip_pos := fun F hF hne => by
-    have hc : Continuous F := by
-      have h1 : Continuous fun w : WO S T => ω 1 F w :=
-        (GlobalTheory.ThetaJointCont.continuous_om_oriented hω hF).comp
-          (by fun_prop : Continuous fun w : WO S T => ((1 : GA D S × GA D T), w))
-      simpa only [map_one, Module.End.one_apply] using h1
+    have htheta : IsThetaFunO ψ S T F := hF
+    have hc : Continuous F := htheta.cont
     have h0 : GlobalTheory.Ker.ipO μ 𝓕 F F ≠ 0 := fun h => hne ((ipO_self_eq_zero_iff hω.std hμ h𝓕 hF).1 h)
     rw [ipO_self, sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 hc] at h0
     rw [ipTh_eq, ipO_self, sqNormIntegralFundamentalDomain_eq_l2Norm_sq μ 𝓕 hc, Complex.ofReal_re]
     exact lt_of_le_of_ne (sq_nonneg _) (fun h => h0 (by rw [← h]; simp))
   stable := fun g _ F hF => hω.om_pres _ F hF
-  lin := fun g _ z F _ F' _ => by simp only [map_add, map_smul]
+  lin := fun g _ z F _ F' _ => by simp only [map_add (f := _), map_smul]
   one := fun F _ => by
     show ω (γ 1) F = F
     rw [h1, map_one]
@@ -110,9 +112,9 @@ theorem weaklyContinuous_unitaryAction_of_realUnitaryHom (hω : IsWeilDatumO ψ 
     rfl
   unit := fun g _ F hF E hE => by
     show ipTh μ 𝓕 (ω (γ g) F) (ω (γ g) E) = ipTh μ 𝓕 F E
-    rw [ipTh_eq, ipTh_eq, ipO_om hω hμ h𝓕 hF hE]
+    rw [ipTh_eq, ipTh_eq, ipO_om hω hμ h𝓕 hF hE (γ g)]
   cont := fun F hF E hE => by
-    haveI : FirstCountableTopology (Mn n) :=
+    have : FirstCountableTopology (Mn n) :=
       inferInstanceAs (FirstCountableTopology (Fin n → Fin n → ℂ))
     exact continuousOn_ip hω hμ h𝓕 hc hF hE
   der := fun X hX P P' hPP' E hE => by
@@ -120,11 +122,11 @@ theorem weaklyContinuous_unitaryAction_of_realUnitaryHom (hω : IsWeilDatumO ψ 
     have heq : F' = pt P' := by
       funext z
       have hz := hF'1 1 z
-      simp only [one_mul, map_one, Module.End.one_apply] at hz
+      simp only [one_mul, map_one, one_apply_eq_self] at hz
       exact hz.unique (hPP' z)
     have hder := hF'2 μ 𝓕 hμ h𝓕 E hE
     rw [heq] at hder
-    exact hder
+    exact hder }
 
 theorem exists_l2_unitary_theta_of_fundamentalDomain : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (ω : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (τ : D.what₂.Tau), IsInfFam θ → IsWeilDatumO ψ S T χS χT ω → ∀ (frS : Mn S.rank) (εS : Fin S.rank → Bool) (frT : Mn T.rank) (εT : Fin T.rank → Bool) (aS aT : ℚ) (pt : LPol T.rank S.rank →ₗ[ℂ] (WO S T → ℂ)), (∀ P, IsThetaFunO ψ S T (pt P)) → LieAt ψ θ τ ω εS frS εT frT aS aT pt → ∀ (μ : Measure (WO S T)) (𝓕 : Set (WO S T)), μ.IsAddHaarMeasure → IsAddFundamentalDomain (ratL T S) 𝓕 μ → ∃ Θ, L2UnitaryRepresentationData (gramAt D S τ) (actSrc θ ω τ) pt (ipTh μ 𝓕) Θ ∧ L2UnitaryRepresentationData (gramAt D T τ) (actTgt θ ω τ) pt (ipTh μ 𝓕) Θ := by
   intro D ψ θ S T χS χT ω τ hθ hω frS εS frT εT aS aT pt hpt hL μ 𝓕 hμ h𝓕

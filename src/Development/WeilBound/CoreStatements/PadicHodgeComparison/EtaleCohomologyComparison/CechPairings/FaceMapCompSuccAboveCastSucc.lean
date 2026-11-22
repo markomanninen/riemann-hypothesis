@@ -1,10 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PiHBijective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CochainExt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ElementsBijectiveOfBijectiveAppStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InitialObjectAugmentedResolutionStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ElementsBijectiveOfBijectiveAppStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InitialObjectAugmentedResolutionStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Opposite CrystallineSemistableComparison CrystallineSemistableComparison.CH
 open GlobalTheory.CatH (face toLast)
@@ -66,19 +69,18 @@ def Th {G G' : C' ⥤ C} (η : G ⟶ G') : C' × Fin 2 ⥤ C :=
 
 theorem cylinder_map_upper {G G' : C' ⥤ C} (η : G ⟶ G') {T T' : C'} (f : T ⟶ T') (g : (1 : Fin 2) ⟶ 1) :
     (Th η).map ((f, g) : (T, (1 : Fin 2)) ⟶ (T', 1)) = G'.map f := by
-  rw [Subsingleton.elim g (𝟙 _)]; simp [Th]; exact Category.id_comp _
+  rw [Subsingleton.elim g (𝟙 _)]; simp [Th]
 
 theorem cylinder_map_across {G G' : C' ⥤ C} (η : G ⟶ G') {T T' : C'} (f : T ⟶ T') (g : (0 : Fin 2) ⟶ 1) :
     (Th η).map ((f, g) : (T, (0 : Fin 2)) ⟶ (T', 1)) = G.map f ≫ η.app T' := by
   simp [Th]
-  rfl
 
 def ch {n k : ℕ} (s : ComposableArrows C' n) {a : Fin (k+1) → Fin (n+1)} {b : Fin (k+1) → Fin 2}
     (ha : Monotone a) (hb : Monotone b) : ComposableArrows (C' × Fin 2) k :=
   Functor.prod' (ha.functor ⋙ s) hb.functor
 
-open Classical in
 
+open Classical in
 def tm (m' : Mor F F' σ) {G : C' ⥤ C} (η : G ⟶ m'.G) {n k : ℕ} (s : ComposableArrows C' n) (f : Cn F k)
     (a : Fin (k+1) → Fin (n+1)) (b : Fin (k+1) → Fin 2) : F'.obj (s.obj (Fin.last n)) :=
   if h : Monotone a ∧ Monotone b then
@@ -106,7 +108,8 @@ theorem tm_d (m' : Mor F F' σ) {G : C' ⥤ C} (η : G ⟶ m'.G) {n k : ℕ} (s 
   rw [dif_pos ⟨ha, hb⟩]
   simp only [dif_pos (hs _)]
   change m'.τ _ ((F.map _).hom (∑ i : Fin (k+2), (-1:ℤ)^(i:ℕ) • (F.map (toLast i (ch s ha hb ⋙ Th η))).hom (f (face i (ch s ha hb ⋙ Th η))))) = _
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, map_zsmul]
   erw [Fmc]
@@ -135,7 +138,7 @@ theorem tm_face (m' : Mor F F' σ) {G : C' ⥤ C} (η : G ⟶ m'.G) {n k : ℕ} 
     · apply Subsingleton.elim
   · have h' : ¬ (Monotone (j.succAbove ∘ a) ∧ Monotone b) := fun h' =>
       h ⟨fun x y hxy => (Fin.strictMono_succAbove j).le_iff_le.1 (h'.1 hxy), h'.2⟩
-    rw [dif_neg h, dif_neg h', map_zero]
+    rw [dite_eq_right h, dite_eq_right h', map_zero]
 
 end CrystallineSemistableComparison.Auxfc
 
@@ -145,7 +148,7 @@ variable {R R' : Type} [CommRing R] [CommRing R'] {σ : R →+* R'} {C : Type u}
 
 theorem cylinder_map_lower {G G' : C' ⥤ C} (η : G ⟶ G') {T T' : C'} (f : T ⟶ T') (g : (0 : Fin 2) ⟶ 0) :
     (Th η).map ((f, g) : (T, (0 : Fin 2)) ⟶ (T', 0)) = G.map f := by
-  rw [Subsingleton.elim g (𝟙 _)]; simp [Th]; exact Category.id_comp _
+  rw [Subsingleton.elim g (𝟙 _)]; simp [Th]
 
 theorem cylinder_map_upper_heq {G G' : C' ⥤ C} (η : G ⟶ G') {T T' : C'} (f : T ⟶ T') {b b' : Fin 2} (g : b ⟶ b')
     (hb : b = 1) (hb' : b' = 1) : HEq ((Th η).map ((f, g) : (T, b) ⟶ (T', b'))) (G'.map f) := by
@@ -224,22 +227,60 @@ theorem vpA {n : ℕ} (p : Fin n) (x : Fin (n+1)) : (p.predAbove x : ℕ) = if (
 theorem vbb {n : ℕ} (i : Fin (n+1)) (x : Fin (n+2)) : bb i x = if (i:ℕ) < x then 1 else 0 := by
   unfold bb; simp [Fin.lt_def]
 
-macro "fin_tac" : tactic => `(tactic| (funext x; first | (apply Fin.ext; simp only [Function.comp_apply, vsA, vpA, Fin.val_succ, Fin.val_castSucc, Fin.val_zero, Fin.val_last, id]; split_ifs <;> omega) | (simp only [Function.comp_apply, vbb, vsA, Fin.val_succ, Fin.val_castSucc, Fin.val_zero, Fin.val_last]; split_ifs <;> first | rfl | (exfalso; omega))))
-
 theorem E1 {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (j:ℕ) ≤ i) :
-    j.succAbove ∘ i.predAbove = i.succ.predAbove ∘ j.castSucc.succAbove := by fin_tac
-theorem faceMap_comp_succAbove_castSucc {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (j:ℕ) ≤ i) : bb i = bb i.succ ∘ j.castSucc.succAbove := by fin_tac
+    j.succAbove ∘ i.predAbove = i.succ.predAbove ∘ j.castSucc.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem faceMap_comp_succAbove_castSucc {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (j:ℕ) ≤ i) : bb i = bb i.succ ∘ j.castSucc.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
 theorem E2 {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (i:ℕ) < j) :
-    j.succAbove ∘ i.predAbove = i.castSucc.predAbove ∘ j.succ.succAbove := by fin_tac
-theorem E2b {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (i:ℕ) < j) : bb i = bb i.castSucc ∘ j.succ.succAbove := by fin_tac
+    j.succAbove ∘ i.predAbove = i.castSucc.predAbove ∘ j.succ.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem E2b {n : ℕ} (i : Fin (n+1)) (j : Fin (n+2)) (h : (i:ℕ) < j) : bb i = bb i.castSucc ∘ j.succ.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
 theorem E3 {n : ℕ} (i : Fin (n+1)) :
-    i.castSucc.predAbove ∘ i.succ.castSucc.succAbove = i.succ.predAbove ∘ i.succ.castSucc.succAbove := by fin_tac
+    i.castSucc.predAbove ∘ i.succ.castSucc.succAbove = i.succ.predAbove ∘ i.succ.castSucc.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
 theorem faceMap_castSucc_comp_eq_succ {n : ℕ} (i : Fin (n+1)) :
-    bb i.castSucc ∘ i.succ.castSucc.succAbove = bb i.succ ∘ i.succ.castSucc.succAbove := by fin_tac
-theorem E4 {n : ℕ} : (0 : Fin (n+2)).predAbove ∘ (0 : Fin (n+3)).succAbove = id := by fin_tac
-theorem faceMap_zero_comp_eq_one {n : ℕ} : bb (0 : Fin (n+2)) ∘ (0 : Fin (n+3)).succAbove = fun _ => 1 := by fin_tac
-theorem E5 {n : ℕ} : (Fin.last (n+1)).predAbove ∘ (Fin.last (n+2)).succAbove = id := by fin_tac
-theorem faceMap_last_comp_eq_zero {n : ℕ} : bb (Fin.last (n+1)) ∘ (Fin.last (n+2)).succAbove = fun _ => 0 := by fin_tac
+    bb i.castSucc ∘ i.succ.castSucc.succAbove = bb i.succ ∘ i.succ.castSucc.succAbove := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem E4 {n : ℕ} : (0 : Fin (n+2)).predAbove ∘ (0 : Fin (n+3)).succAbove = id := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem faceMap_zero_comp_eq_one {n : ℕ} : bb (0 : Fin (n+2)) ∘ (0 : Fin (n+3)).succAbove = fun _ => 1 := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem E5 {n : ℕ} : (Fin.last (n+1)).predAbove ∘ (Fin.last (n+2)).succAbove = id := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
+theorem faceMap_last_comp_eq_zero {n : ℕ} : bb (Fin.last (n+1)) ∘ (Fin.last (n+2)).succAbove = fun _ => 0 := by
+  funext x
+  apply Fin.ext
+  simp only [Function.comp_apply, vsA, vpA, vbb, Fin.val_succ, Fin.val_castSucc, Fin.val_last, Fin.val_zero, id_eq]
+  split_ifs <;> simp_all <;> omega
 
 end CrystallineSemistableComparison.Auxfc
 
@@ -313,7 +354,8 @@ theorem htpy_succ (m m' : Mor F F' σ) (η : m.G ⟶ m'.G) (hτ : ∀ T x, m'.τ
     change ∑ j : Fin (n+2), (-1:ℤ)^(j:ℕ) • (F'.map (toLast j s)).hom
       (∑ i : Fin (n+1), (-1:ℤ)^(i:ℕ) • tm m' η (face j s) f i.predAbove (bb i)) = _
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, tm_face]
   have h2 : (0 : F'.obj (s.obj (Fin.last (n+1)))) = ∑ i : Fin (n+2), ∑ k : Fin (n+3),
@@ -376,7 +418,3 @@ theorem CrystallineSemistableComparison.P.adj_mor : ∀ {R R' : Type} [CommRing 
 theorem CrystallineSemistableComparison.P.initial : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F : C ⥤ ModuleCat.{w} R) (T₀ : C) (h : Limits.IsInitial T₀), (cx F).ResUpTo 1 (aug F fun T => (F.map (h.to T)).hom) := GlobalTheory.T.initial_object_augmented_resolution
 
 theorem CrystallineSemistableComparison.P.el_iso : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {E' E : C ⥤ Type t} (p : E' ⟶ E) (F : C ⥤ ModuleCat.{w} R), (∀ T, Function.Bijective (p.app T)) → ∀ n, Function.Bijective ((elMor p F).hom.f n) := GlobalTheory.T.elements_bijective_of_bijective_app
-
-theorem CrystallineSemistableComparison.P.pi_H : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] {ι : Type w} (F : ι → (C ⥤ ModuleCat.{w} R)) (n : ℕ), Function.Bijective fun (x : H (piF F) n) (i : ι) => (piProj F i).pull n x := GlobalTheory.CompanionTheory.CatCohProd.piH_bijective
-
-theorem CrystallineSemistableComparison.P.sigma_H : ∀ {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F : C ⥤ ModuleCat.{w} R) {ι : Type t} (c : C → ι), (∀ {T T' : C}, (T ⟶ T') → c T = c T') → ∀ n, Function.Bijective fun (x : H F n) (i : ι) => (Mor.restrict F (ObjectProperty.ι fun T => c T = i)).pull n x := GlobalTheory.CompanionTheory.CatPieces.sigmaH

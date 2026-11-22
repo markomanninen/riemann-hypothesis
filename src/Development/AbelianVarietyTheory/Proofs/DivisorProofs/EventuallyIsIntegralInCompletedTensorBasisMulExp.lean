@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -13,14 +18,15 @@ theorem basV_repr_mul (G : HTGroup p) (v : AwayP p) (a b : Qv v ⊗[ℚ] G.C) (k
       algebraMap ℚ (Qv v) ((Module.finBasis ℚ G.C).repr
         (Module.finBasis ℚ G.C i * Module.finBasis ℚ G.C j) k) := by
   conv_lhs => rw [← (basV G v).sum_repr a, ← (basV G v).sum_repr b]
-  simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul, map_sum, map_smul, Finset.sum_apply',
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul, map_sum, map_smul, Finset.sum_apply',
     Finsupp.smul_apply, smul_eq_mul, basV, Algebra.TensorProduct.basis_apply,
     Algebra.TensorProduct.tmul_mul_tmul, one_mul, Algebra.TensorProduct.basis_repr_tmul,
     Finsupp.mapRange_apply]
   rw [Finset.sum_comm]
 
-omit [Fact p.Prime] in
 
+omit [Fact p.Prime] in
 theorem eventually_rat_mem_integers (q : ℚ) :
     ∀ᶠ v in (Filter.cofinite : Filter (AwayP p)),
       algebraMap ℚ (Qv v) q ∈ v.1.adicCompletionIntegers ℚ := by

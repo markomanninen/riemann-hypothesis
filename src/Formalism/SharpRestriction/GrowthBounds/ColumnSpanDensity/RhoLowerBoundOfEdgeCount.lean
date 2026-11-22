@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.IsUnitDetOfOneAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.IsUnitDetOfOneAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -234,7 +238,8 @@ theorem rho_lower_bound_of_edge_count (hcnt : RestEdgeCount) : RhoLowerBoundLarg
       choose b hb using hb
       refine ⟨∑ l', b l' * P j' l' l, ?_⟩
       have hs' : (⟨j, i⟩ : Σ j, Fin (k j)) ≠ ⟨j', l⟩ := fun h => hj (congrArg Sigma.fst h)
-      rw [if_neg hs', zero_add, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [if_neg hs', zero_add, Finset.mul_sum, map_sum]
       refine Finset.sum_congr rfl fun l' _ => ?_
       rw [hb l', ← map_mul, mul_assoc]
   choose B hB using hkey

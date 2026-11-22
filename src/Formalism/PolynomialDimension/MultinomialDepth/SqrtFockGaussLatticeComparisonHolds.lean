@@ -1,6 +1,10 @@
-import Formalism.PolynomialDimension.StatementHar
-import Formalism.PolynomialDimension.MultinomialDepth.HarmonicDecompositionHolds
-import Formalism.PolynomialDimension.MultinomialDepth.DiagLaplacianDivPowMemSqrtFockLattice
+module
+
+public import Formalism.PolynomialDimension.StatementHar
+public import Formalism.PolynomialDimension.MultinomialDepth.HarmonicDecompositionHolds
+public import Formalism.PolynomialDimension.MultinomialDepth.DiagLaplacianDivPowMemSqrtFockLattice
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -9,32 +13,18 @@ open Finset MvPolynomial
 namespace Formalism.CountingSumsFrames
 namespace Har4
 
-theorem pairingPrime_holds : HPrime := by
-  intro F _ k hk
-  classical
-  have hirr : Irreducible (hXY F k) := by
-    have h := MvPolynomial.irreducible_sumSMulXSMulY (R := F) (n := Fin k)
-      (Finsupp.equivFunOnFinite.symm (fun _ => (1:F))) ?_ ?_
-    · convert h using 1
-      simp [hXY, sumSMulXSMulY, Finsupp.linearCombination_apply, Finsupp.sum_fintype]
-    · refine ⟨⟨0, by omega⟩, by simp, ⟨1, by omega⟩, by simp, ?_⟩
-      simp [Fin.ext_iff]
-    · intro r hr
-      exact isUnit_of_dvd_one (by simpa using hr ⟨0, by omega⟩)
-  exact hirr.prime
-
 theorem coeff_mem_of_h_mul {K : Type} [Field K] {k : ℕ} (R : Subring K) (i0 : Fin k) (G : PolXY K k)
-    (hG : ∀ m, coeff m (hXY K k * G) ∈ R) : ∀ m, coeff m G ∈ R := by
+    (hG : ∀ m, AddMonoidAlgebra.coeff (hXY K k * G) m ∈ R) : ∀ m, AddMonoidAlgebra.coeff G m ∈ R := by
   classical
   by_contra hcon
   push Not at hcon
   obtain ⟨m0, hm0⟩ := hcon
-  set S := G.support.filter (fun m => coeff m G ∉ R) with hS
+  set S := G.support.filter (fun m => AddMonoidAlgebra.coeff G m ∉ R) with hS
   have hne : S.Nonempty := ⟨m0, by
     rw [hS, Finset.mem_filter, MvPolynomial.mem_support_iff]
     exact ⟨fun h => hm0 (h ▸ R.zero_mem), hm0⟩⟩
   obtain ⟨m, hmS, hmax⟩ := Finset.exists_max_image S (fun m => m (Sum.inl i0)) hne
-  have hbig : ∀ m' : XY k →₀ ℕ, m (Sum.inl i0) < m' (Sum.inl i0) → coeff m' G ∈ R := by
+  have hbig : ∀ m' : XY k →₀ ℕ, m (Sum.inl i0) < m' (Sum.inl i0) → AddMonoidAlgebra.coeff G m' ∈ R := by
     intro m' hlt
     by_contra hc
     have : m' ∈ S := by
@@ -42,14 +32,14 @@ theorem coeff_mem_of_h_mul {K : Type} [Field K] {k : ℕ} (R : Subring K) (i0 : 
       exact ⟨fun h => hc (h ▸ R.zero_mem), hc⟩
     have := hmax m' this
     omega
-  have hmR : coeff m G ∉ R := (Finset.mem_filter.1 hmS).2
+  have hmR : AddMonoidAlgebra.coeff G m ∉ R := (Finset.mem_filter.1 hmS).2
   apply hmR
   set M : XY k →₀ ℕ := Finsupp.single (Sum.inl i0) 1 + (Finsupp.single (Sum.inr i0) 1 + m) with hM
   have h1 := hG M
   rw [hXY, Finset.sum_mul, coeff_sum, ← Finset.add_sum_erase _ _ (Finset.mem_univ i0)] at h1
-  have h2 : coeff M (X (Sum.inl i0) * X (Sum.inr i0) * G) = coeff m G := by
+  have h2 : AddMonoidAlgebra.coeff (X (Sum.inl i0) * X (Sum.inr i0) * G) M = AddMonoidAlgebra.coeff G m := by
     rw [mul_assoc, hM, coeff_X_mul, coeff_X_mul]
-  have h3 : ∑ i ∈ Finset.univ.erase i0, coeff M (X (Sum.inl i) * X (Sum.inr i) * G) ∈ R := by
+  have h3 : ∑ i ∈ Finset.univ.erase i0, AddMonoidAlgebra.coeff (X (Sum.inl i) * X (Sum.inr i) * G) M ∈ R := by
     refine R.sum_mem fun i hi => ?_
     have hi' : i ≠ i0 := Finset.ne_of_mem_erase hi
     rw [mul_assoc, coeff_X_mul']
@@ -83,7 +73,8 @@ theorem glAct_hXY {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) : glAct g (h
     rw [e, Units.inv_mul, Matrix.one_apply]
     split_ifs <;> simp
   unfold hXY
-  simp only [map_sum, map_mul, glAct_X_inl, glAct_X_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, glAct_X_inl, glAct_X_inr]
   calc ∑ i : Fin k, (∑ j : Fin k, C ((g : Matrix (Fin k) (Fin k) K) i j) * X (Sum.inl j)) *
         (∑ l : Fin k, C (((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) l i) * X (Sum.inr l))
       = ∑ i : Fin k, ∑ j : Fin k, ∑ l : Fin k, (C ((g : Matrix (Fin k) (Fin k) K) i j) * X (Sum.inl j)) *
@@ -95,7 +86,8 @@ theorem glAct_hXY {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) : glAct g (h
     _ = ∑ j : Fin k, ∑ l : Fin k, C (∑ i : Fin k, (g : Matrix (Fin k) (Fin k) K) i j * ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) l i) *
           (X (Sum.inl j) * X (Sum.inr l)) := by
         refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun l _ => ?_
-        rw [map_sum, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_mul]
         exact Finset.sum_congr rfl fun i _ => by rw [map_mul]; ring
     _ = ∑ i : Fin k, X (Sum.inl i) * X (Sum.inr i) := by
         simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.sum_ite_eq,
@@ -106,7 +98,8 @@ theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : P
   have key : (glAct g⁻¹).comp (glAct g) = AlgHom.id K (PolXY K k) := by
     apply MvPolynomial.algHom_ext
     rintro (i | i)
-    · simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inl, map_sum, map_mul,
+    · set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inl, map_sum, map_mul,
         MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq]
       have hm : ∀ l : Fin k, C (∑ j : Fin k, (g : Matrix (Fin k) (Fin k) K) i j *
           ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j l) = (if i = l then 1 else 0 : PolXY K k) := by
@@ -117,11 +110,13 @@ theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : P
             ∑ l : Fin k, C (((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j l) * X (Sum.inl l)
           = ∑ l : Fin k, C (∑ j : Fin k, (g : Matrix (Fin k) (Fin k) K) i j *
               ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j l) * X (Sum.inl l) := by
-            simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
             rw [Finset.sum_comm]
         _ = X (Sum.inl i) := by
           simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
-    · simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inr, map_sum, map_mul,
+    · set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AlgHom.comp_apply, AlgHom.id_apply, glAct_X_inr, map_sum, map_mul,
         MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq, inv_inv]
       have hm : ∀ l : Fin k, C (∑ j : Fin k, ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j i *
           (g : Matrix (Fin k) (Fin k) K) l j) = (if i = l then 1 else 0 : PolXY K k) := by
@@ -139,7 +134,8 @@ theorem glAct_inv_glAct {K : Type} [Field K] {k : ℕ} (g : GL (Fin k) K) (f : P
             ∑ l : Fin k, C ((g : Matrix (Fin k) (Fin k) K) l j) * X (Sum.inr l)
           = ∑ l : Fin k, C (∑ j : Fin k, ((g⁻¹ : GL (Fin k) K) : Matrix (Fin k) (Fin k) K) j i *
               (g : Matrix (Fin k) (Fin k) K) l j) * X (Sum.inr l) := by
-            simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [map_sum, Finset.sum_mul, map_mul, mul_assoc, Finset.mul_sum]
             rw [Finset.sum_comm]
         _ = X (Sum.inr i) := by
           simp only [hm, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
@@ -201,7 +197,8 @@ theorem glAct_mem_PolAB {K : Type} [Field K] {k A B : ℕ} (g : GL (Fin k) K) (f
         (isWeightedHomogeneous_X (R := K) (wXY k) (Sum.inr j))
       convert h using 1
       simp [wXY]
-  rw [hgl, f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hgl, f.as_sum, map_sum]
   apply IsWeightedHomogeneous.sum
   intro m hm
   rw [aeval_monomial, MvPolynomial.algebraMap_eq]
@@ -213,7 +210,7 @@ theorem glAct_mem_PolAB {K : Type} [Field K] {k A B : ℕ} (g : GL (Fin k) K) (f
     intro v _
     exact (hσ v).pow (m v)
   rw [← zero_add (Finsupp.weight (wXY k) m)]
-  exact (isWeightedHomogeneous_C (wXY k) (coeff m f)).mul hp
+  exact (isWeightedHomogeneous_C (wXY k) (AddMonoidAlgebra.coeff f m)).mul hp
 
 theorem pow_mul_inv_mem {K : Type} [Field K] [CharZero K] (R : Subring K) {p : ℕ} (hp : p.Prime)
     (hR : PLocal R p) {M e : ℕ} (hM : M ≠ 0) (hv : M.factorization p ≤ e) :
@@ -289,16 +286,16 @@ section std
 variable {K : Type} [Field K] [CharZero K] {k A B : ℕ} (R : Subring K)
 
 theorem coeff_cases {f : PolXY K k} (hf : f ∈ PolAB K k A B) (m : XY k →₀ ℕ) :
-    coeff m f = 0 ∨ (xDeg m = A ∧ yDeg m = B) := by
-  by_cases h : coeff m f = 0
+    AddMonoidAlgebra.coeff f m = 0 ∨ (xDeg m = A ∧ yDeg m = B) := by
+  by_cases h : AddMonoidAlgebra.coeff f m = 0
   · exact Or.inl h
   · exact Or.inr ((show ∀ m ∈ f.support, xDeg m = A ∧ yDeg m = B from hf) m
       (MvPolynomial.mem_support_iff.2 h))
 
 theorem fock_to_gauss {f : PolXY K k} (hf : f ∈ PolAB K k A B) (h : f ∈ FockLat R) :
     (A.factorial : K) • f ∈ GaussLat R := by
-  have h' : ∀ m, (xFact m : K) * coeff m f ∈ R := h
-  show ∀ m, coeff m ((A.factorial : K) • f) ∈ R
+  have h' : ∀ m, (xFact m : K) * AddMonoidAlgebra.coeff f m ∈ R := h
+  show ∀ m, AddMonoidAlgebra.coeff ((A.factorial : K) • f) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   rcases coeff_cases hf m with h0 | ⟨hx, -⟩
@@ -310,8 +307,8 @@ theorem fock_to_gauss {f : PolXY K k} (hf : f ∈ PolAB K k A B) (h : f ∈ Fock
 theorem gauss_to_fock {p : ℕ} (hp : p.Prime) (hR : PLocal R p) {f : PolXY K k} (hf : f ∈ PolAB K k A B)
     (h : f ∈ GaussLat R) :
     ((p : K) ^ ((k - 1) * Nat.log p A) * (A.factorial : K)⁻¹) • f ∈ FockLat R := by
-  have h' : ∀ m, coeff m f ∈ R := h
-  show ∀ m, (xFact m : K) * coeff m (((p : K) ^ ((k - 1) * Nat.log p A) * (A.factorial : K)⁻¹) • f) ∈ R
+  have h' : ∀ m, AddMonoidAlgebra.coeff f m ∈ R := h
+  show ∀ m, (xFact m : K) * AddMonoidAlgebra.coeff (((p : K) ^ ((k - 1) * Nat.log p A) * (A.factorial : K)⁻¹) • f) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   rcases coeff_cases hf m with h0 | ⟨hx, -⟩
@@ -322,33 +319,33 @@ theorem gauss_to_fock {p : ℕ} (hp : p.Prime) (hR : PLocal R p) {f : PolXY K k}
     have hmem := pow_mul_inv_mem R hp hR hxm (xMul_factorization_le p m)
     rw [← hx, ← xFact_mul_xMul, Nat.cast_mul, mul_inv]
     have e : (xFact m : K) * ((p : K) ^ ((k - 1) * Nat.log p (xDeg m)) *
-        ((xFact m : K)⁻¹ * (xMul m : K)⁻¹) * coeff m f) =
-        ((p : K) ^ ((k - 1) * Nat.log p (xDeg m)) * (xMul m : K)⁻¹) * coeff m f := by
+        ((xFact m : K)⁻¹ * (xMul m : K)⁻¹) * AddMonoidAlgebra.coeff f m) =
+        ((p : K) ^ ((k - 1) * Nat.log p (xDeg m)) * (xMul m : K)⁻¹) * AddMonoidAlgebra.coeff f m := by
       field_simp
     rw [e]
     exact R.mul_mem hmem (h' m)
 
 theorem dual_to_fock {f : PolXY K k} (hf : f ∈ PolAB K k A B) (h : f ∈ DualLat R) :
     (B.factorial : K) • f ∈ FockLat R := by
-  have h' : ∀ m, ((xFact m : K) * (yFact m : K)) * coeff m f ∈ R := h
-  show ∀ m, (xFact m : K) * coeff m ((B.factorial : K) • f) ∈ R
+  have h' : ∀ m, ((xFact m : K) * (yFact m : K)) * AddMonoidAlgebra.coeff f m ∈ R := h
+  show ∀ m, (xFact m : K) * AddMonoidAlgebra.coeff ((B.factorial : K) • f) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   rcases coeff_cases hf m with h0 | ⟨-, hy⟩
   · rw [h0, mul_zero, mul_zero]
     exact R.zero_mem
   · rw [← hy, ← yFact_mul_yMul, Nat.cast_mul]
-    have e : (xFact m : K) * (((yFact m : K) * (yMul m : K)) * coeff m f) =
-        (yMul m : K) * (((xFact m : K) * (yFact m : K)) * coeff m f) := by ring
+    have e : (xFact m : K) * (((yFact m : K) * (yMul m : K)) * AddMonoidAlgebra.coeff f m) =
+        (yMul m : K) * (((xFact m : K) * (yFact m : K)) * AddMonoidAlgebra.coeff f m) := by ring
     rw [e]
     exact R.mul_mem (natCast_mem R _) (h' m)
 
 theorem fock_to_dual {p : ℕ} (hp : p.Prime) (hR : PLocal R p) {f : PolXY K k} (hf : f ∈ PolAB K k A B)
     (h : f ∈ FockLat R) :
     ((p : K) ^ ((k - 1) * Nat.log p B) * (B.factorial : K)⁻¹) • f ∈ DualLat R := by
-  have h' : ∀ m, (xFact m : K) * coeff m f ∈ R := h
+  have h' : ∀ m, (xFact m : K) * AddMonoidAlgebra.coeff f m ∈ R := h
   show ∀ m, ((xFact m : K) * (yFact m : K)) *
-    coeff m (((p : K) ^ ((k - 1) * Nat.log p B) * (B.factorial : K)⁻¹) • f) ∈ R
+    AddMonoidAlgebra.coeff (((p : K) ^ ((k - 1) * Nat.log p B) * (B.factorial : K)⁻¹) • f) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   rcases coeff_cases hf m with h0 | ⟨-, hy⟩
@@ -359,55 +356,11 @@ theorem fock_to_dual {p : ℕ} (hp : p.Prime) (hR : PLocal R p) {f : PolXY K k} 
     have hmem := pow_mul_inv_mem R hp hR hym (yMul_factorization_le p m)
     rw [← hy, ← yFact_mul_yMul, Nat.cast_mul, mul_inv]
     have e : ((xFact m : K) * (yFact m : K)) * ((p : K) ^ ((k - 1) * Nat.log p (yDeg m)) *
-        ((yFact m : K)⁻¹ * (yMul m : K)⁻¹) * coeff m f) =
-        ((p : K) ^ ((k - 1) * Nat.log p (yDeg m)) * (yMul m : K)⁻¹) * ((xFact m : K) * coeff m f) := by
+        ((yFact m : K)⁻¹ * (yMul m : K)⁻¹) * AddMonoidAlgebra.coeff f m) =
+        ((p : K) ^ ((k - 1) * Nat.log p (yDeg m)) * (yMul m : K)⁻¹) * ((xFact m : K) * AddMonoidAlgebra.coeff f m) := by
       field_simp
     rw [e]
     exact R.mul_mem hmem (h' m)
-
-theorem sqrtFock_to_sqrtGauss {f : PolXY K k} (hf : f ∈ PolAB K k A B) (h : f ∈ SqrtFockLat R) :
-    f ∈ SqrtGaussLat R (A.factorial * B.factorial) := by
-  have h' : ∀ m, ((xFact m : K) * (yFact m : K)) * coeff m f ^ 2 ∈ R := h
-  show ∀ m, ((A.factorial * B.factorial : ℕ) : K) * coeff m f ^ 2 ∈ R
-  intro m
-  rcases coeff_cases hf m with h0 | ⟨hx, hy⟩
-  · rw [h0]
-    simp
-  · rw [← hx, ← hy, ← xFact_mul_xMul, ← yFact_mul_yMul]
-    push_cast
-    have e : (xFact m : K) * (xMul m : K) * ((yFact m : K) * (yMul m : K)) * coeff m f ^ 2 =
-        ((xMul m : K) * (yMul m : K)) * (((xFact m : K) * (yFact m : K)) * coeff m f ^ 2) := by ring
-    rw [e]
-    exact R.mul_mem (R.mul_mem (natCast_mem R _) (natCast_mem R _)) (h' m)
-
-theorem sqrtGauss_to_sqrtFock {p : ℕ} (hp : p.Prime) (hR : PLocal R p) {f : PolXY K k}
-    (hf : f ∈ PolAB K k A B) (h : f ∈ SqrtGaussLat R (A.factorial * B.factorial)) :
-    ((p : K) ^ ((k - 1) * Nat.log p (A + B + k))) • f ∈ SqrtFockLat R := by
-  have h' : ∀ m, ((A.factorial * B.factorial : ℕ) : K) * coeff m f ^ 2 ∈ R := h
-  show ∀ m, ((xFact m : K) * (yFact m : K)) * coeff m (((p : K) ^ ((k - 1) * Nat.log p (A + B + k))) • f) ^ 2 ∈ R
-  intro m
-  rw [MvPolynomial.coeff_smul, smul_eq_mul]
-  rcases coeff_cases hf m with h0 | ⟨hx, hy⟩
-  · rw [h0]
-    simp
-  · have hxb : (xMul m).factorization p ≤ (k - 1) * Nat.log p (A + B + k) :=
-      le_trans (xMul_factorization_le p m) (Nat.mul_le_mul_left _ (Nat.log_mono_right (by omega)))
-    have hyb : (yMul m).factorization p ≤ (k - 1) * Nat.log p (A + B + k) :=
-      le_trans (yMul_factorization_le p m) (Nat.mul_le_mul_left _ (Nat.log_mono_right (by omega)))
-    have hx1 := pow_mul_inv_mem R hp hR (xMul_ne_zero m) hxb
-    have hy1 := pow_mul_inv_mem R hp hR (yMul_ne_zero m) hyb
-    have hxf : (xMul m : K) ≠ 0 := by exact_mod_cast xMul_ne_zero m
-    have hyf : (yMul m : K) ≠ 0 := by exact_mod_cast yMul_ne_zero m
-    have hm := h' m
-    rw [← hx, ← hy, ← xFact_mul_xMul, ← yFact_mul_yMul] at hm
-    push_cast at hm
-    have e : ((xFact m : K) * (yFact m : K)) * (((p : K) ^ ((k - 1) * Nat.log p (A + B + k))) * coeff m f) ^ 2 =
-        ((((p : K) ^ ((k - 1) * Nat.log p (A + B + k))) * (xMul m : K)⁻¹) * (((p : K) ^ ((k - 1) * Nat.log p (A + B + k))) * (yMul m : K)⁻¹)) *
-        ((xFact m : K) * (xMul m : K) * ((yFact m : K) * (yMul m : K)) * coeff m f ^ 2) := by
-      first | (field_simp; ring) | field_simp
-    rw [e]
-    first | exact R.mul_mem (R.mul_mem hx1 hy1) hm |
-      (convert R.mul_mem (R.mul_mem hx1 hy1) hm using 2; ring)
 
 end std
 
@@ -423,18 +376,6 @@ theorem fockGaussLatticeComparison_holds : FockGaussXY := by
     rw [mem_latOf_iff] at h ⊢
     rw [map_smul]
     exact gauss_to_fock R hp hR hf' h
-
-theorem sqrtFockGaussLatticeComparison_holds : SqrtFockGaussXY := by
-  intro K _ _ k A B p O g hk hp hR f hf
-  have hf' : glAct g⁻¹ f ∈ PolAB K k A B := glAct_mem_PolAB g⁻¹ f hf
-  constructor
-  · intro h
-    rw [mem_latOf_iff] at h ⊢
-    exact sqrtFock_to_sqrtGauss O.toSubring hf' h
-  · intro h
-    rw [mem_latOf_iff] at h ⊢
-    rw [map_smul]
-    exact sqrtGauss_to_sqrtFock O.toSubring hp hR hf' h
 
 theorem coeff_mem_of_h_pow_mul {K : Type} [Field K] {k : ℕ} (R : Subring K) (i0 : Fin k) (j : ℕ)
     (G : PolXY K k) (hG : hXY K k ^ j * G ∈ GaussLat R) : G ∈ GaussLat R := by
@@ -452,8 +393,8 @@ theorem gaussLemmaPairing_holds : GaussLemmaH := by
 
 theorem h_mul_mem_gauss {K : Type} [Field K] {k : ℕ} (R : Subring K) (G : PolXY K k) (hG : G ∈ GaussLat R) :
     hXY K k * G ∈ GaussLat R := by
-  have hG' : ∀ m, coeff m G ∈ R := hG
-  show ∀ m, coeff m (hXY K k * G) ∈ R
+  have hG' : ∀ m, AddMonoidAlgebra.coeff G m ∈ R := hG
+  show ∀ m, AddMonoidAlgebra.coeff (hXY K k * G) m ∈ R
   intro m
   rw [MvPolynomial.coeff_mul]
   refine R.sum_mem fun x _ => R.mul_mem ?_ (hG' _)
@@ -501,7 +442,7 @@ section deg
 variable {K : Type} [Field K] {k : ℕ}
 
 private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth (v : XY k) (F : PolXY K k) (m : XY k →₀ ℕ) :
-    coeff m (pderiv v F) = coeff (m + Finsupp.single v 1) F * ((m v : K) + 1) := by
+    AddMonoidAlgebra.coeff (pderiv v F) m = AddMonoidAlgebra.coeff F (m + Finsupp.single v 1) * ((m v : K) + 1) := by
   refine MvPolynomial.induction_on' F ?_ ?_
   · intro s a
     rw [MvPolynomial.pderiv_monomial, MvPolynomial.coeff_monomial, MvPolynomial.coeff_monomial]
@@ -523,17 +464,17 @@ private theorem coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth (v : XY k
         simp [hsv]
       · rfl
   · intro p q hp hq
-    rw [map_add, MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add, add_mul]
+    rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, MvPolynomial.coeff_add, add_mul]
 
 theorem coeff_ctrF (f : PolXY K k) (m : XY k →₀ ℕ) :
-    coeff m (ctrF K k f) = ∑ i : Fin k,
-      coeff (m + Finsupp.single (Sum.inl i) 1 + Finsupp.single (Sum.inr i) 1) f *
+    AddMonoidAlgebra.coeff (ctrF K k f) m = ∑ i : Fin k,
+      AddMonoidAlgebra.coeff f (m + Finsupp.single (Sum.inl i) 1 + Finsupp.single (Sum.inr i) 1) *
         ((m (Sum.inr i) : K) + 1) * ((m (Sum.inl i) : K) + 1) := by
   unfold ctrF
   rw [LinearMap.sum_apply, MvPolynomial.coeff_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [LinearMap.comp_apply]
-  show coeff m (pderiv (R := K) (Sum.inl i : XY k) (pderiv (R := K) (Sum.inr i : XY k) f)) = _
+  show AddMonoidAlgebra.coeff (pderiv (R := K) (Sum.inl i : XY k) (pderiv (R := K) (Sum.inr i : XY k) f)) m = _
   rw [coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, coeff_pderiv_eq_coeff_add_single_mul_multinomial_depth, Finsupp.add_apply, Finsupp.single_apply, if_neg Sum.inl_ne_inr,
     add_zero]
 
@@ -543,7 +484,7 @@ theorem ctrF_mem_PolAB {a b : ℕ} {f : PolXY K k} (hf : f ∈ PolAB K k a b) :
   intro m hm
   rw [MvPolynomial.mem_support_iff, coeff_ctrF] at hm
   obtain ⟨i, -, hi⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
-  have hc : coeff (m + Finsupp.single (Sum.inl i) 1 + Finsupp.single (Sum.inr i) 1) f ≠ 0 := by
+  have hc : AddMonoidAlgebra.coeff f (m + Finsupp.single (Sum.inl i) 1 + Finsupp.single (Sum.inr i) 1) ≠ 0 := by
     intro h0
     apply hi
     rw [h0]
@@ -625,9 +566,9 @@ theorem levelProj_mem_PolAB {A B j : ℕ} (hj : j ≤ min A B) {f : PolXY K k} (
 theorem smul_mem_latOf_gauss (R : Subring K) (g : GL (Fin k) K) {r : K} (hr : r ∈ R) {f : PolXY K k}
     (hf : f ∈ latOf g (GaussLat R)) : r • f ∈ latOf g (GaussLat R) := by
   obtain ⟨h, hh, rfl⟩ := hf
-  have hh' : ∀ m, coeff m h ∈ R := hh
+  have hh' : ∀ m, AddMonoidAlgebra.coeff h m ∈ R := hh
   refine ⟨r • h, ?_, by rw [map_smul]⟩
-  show ∀ m, coeff m (r • h) ∈ R
+  show ∀ m, AddMonoidAlgebra.coeff (r • h) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul]
   exact R.mul_mem hr (hh' m)
@@ -635,9 +576,9 @@ theorem smul_mem_latOf_gauss (R : Subring K) (g : GL (Fin k) K) {r : K} (hr : r 
 theorem smul_mem_latOf_dual (R : Subring K) (g : GL (Fin k) K) {r : K} (hr : r ∈ R) {f : PolXY K k}
     (hf : f ∈ latOf g (DualLat R)) : r • f ∈ latOf g (DualLat R) := by
   obtain ⟨h, hh, rfl⟩ := hf
-  have hh' : ∀ m, ((xFact m : K) * (yFact m : K)) * coeff m h ∈ R := hh
+  have hh' : ∀ m, ((xFact m : K) * (yFact m : K)) * AddMonoidAlgebra.coeff h m ∈ R := hh
   refine ⟨r • h, ?_, by rw [map_smul]⟩
-  show ∀ m, ((xFact m : K) * (yFact m : K)) * coeff m (r • h) ∈ R
+  show ∀ m, ((xFact m : K) * (yFact m : K)) * AddMonoidAlgebra.coeff (r • h) m ∈ R
   intro m
   rw [MvPolynomial.coeff_smul, smul_eq_mul, mul_left_comm]
   exact R.mul_mem hr (hh' m)
@@ -716,65 +657,6 @@ theorem gaussProj_of (H : FockProj) : GaussProj := by
   exact ⟨fun hG => ⟨hhar.1 hG, fun j hj => (lev j hj).1 hG⟩,
     fun hD => ⟨hhar.2 hD, fun j hj => (lev j hj).2 hD⟩⟩
 
-theorem exponent_le {k A B a p e : ℕ} (hk : 1 ≤ k) (hp : p.Prime) (hA : A ≤ 8 * a) (hB : B ≤ 8 * a)
-    (he : 3 * (Real.logb p (8 * (a : ℝ) + k - 1) + 1) + 4 * (k : ℝ) * (Real.logb p (8 * (a : ℝ) + k - 1) + 1)
-      ≤ (e : ℝ)) : (k + 1) * Nat.log p (A + B + k) ≤ e := by
-  have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
-  set L := Nat.log p (A + B + k) with hLdef
-  set x : ℕ := 8 * a + k - 1 with hxdef
-  have hxr : (x : ℝ) = 8 * (a : ℝ) + k - 1 := by
-    rw [hxdef, Nat.cast_sub (by omega)]
-    push_cast
-    ring
-  rw [← hxr] at he
-  have hLX : (L : ℝ) ≤ Real.logb p x + 1 := by
-    rcases Nat.eq_zero_or_pos L with hL0 | hLpos
-    · rw [hL0]
-      push_cast
-      rcases Nat.eq_zero_or_pos x with hx0 | hxpos
-      · rw [hx0]
-        simp
-      · have h0 : (0 : ℝ) ≤ Real.logb p x := Real.logb_nonneg hp1 (by exact_mod_cast hxpos)
-        linarith
-    · have hN : A + B + k ≠ 0 := by omega
-      have hpow : p ^ L ≤ A + B + k := Nat.pow_log_le_self p hN
-      have h2 : 2 * p ^ (L - 1) ≤ p ^ L := by
-        have e1 : p ^ L = p * p ^ (L - 1) := by
-          rw [← pow_succ']
-          congr 1
-          omega
-        rw [e1]
-        exact Nat.mul_le_mul_right _ hp.two_le
-      have hy : p ^ (L - 1) ≤ x := by omega
-      have hyR : ((p ^ (L - 1) : ℕ) : ℝ) ≤ (x : ℝ) := by exact_mod_cast hy
-      have hposR : (0 : ℝ) < ((p ^ (L - 1) : ℕ) : ℝ) := by exact_mod_cast pow_pos hp.pos _
-      have hlog := (Real.logb_le_logb hp1 hposR (lt_of_lt_of_le hposR hyR)).2 hyR
-      rw [Nat.cast_pow, Real.logb_pow, Real.logb_self_eq_one hp1, mul_one] at hlog
-      have e2 : ((L - 1 : ℕ) : ℝ) = (L : ℝ) - 1 := by
-        rw [Nat.cast_sub hLpos]
-        simp
-      linarith
-  have hX1 : 0 ≤ Real.logb p x + 1 := le_trans (Nat.cast_nonneg L) hLX
-  have hk0 : (0 : ℝ) ≤ k := Nat.cast_nonneg k
-  have hfin : ((k : ℝ) + 1) * (L : ℝ) ≤ (e : ℝ) := by
-    nlinarith [mul_le_mul_of_nonneg_left hLX (by positivity : (0 : ℝ) ≤ (k : ℝ) + 1),
-      mul_nonneg (by positivity : (0 : ℝ) ≤ 2 + 3 * (k : ℝ)) hX1]
-  exact_mod_cast hfin
-
-theorem gaussProjText_of (H : GaussProj) : GaussProjText := by
-  intro K _ _ k A B a p e R g hk hp hR hA hB he f hf j hj
-  have hE := exponent_le hk hp hA hB he
-  have hpe : (p : K) ^ e = (p : K) ^ (e - (k + 1) * Nat.log p (A + B + k)) *
-      (p : K) ^ ((k + 1) * Nat.log p (A + B + k)) := by
-    rw [← pow_add, Nat.sub_add_cancel hE]
-  have hmem : (p : K) ^ (e - (k + 1) * Nat.log p (A + B + k)) ∈ R := R.pow_mem (natCast_mem R p) _
-  obtain ⟨h1, h2⟩ := H K k A B p R g hk hp hR f hf
-  refine ⟨fun hG => ?_, fun hD => ?_⟩
-  · rw [hpe, mul_smul]
-    exact smul_mem_latOf_gauss R g hmem ((h1 hG).2 j hj)
-  · rw [hpe, mul_smul]
-    exact smul_mem_latOf_dual R g hmem ((h2 hD).2 j hj)
-
 attribute [local instance] MvPolynomial.weightedGradedAlgebra in
 open DirectSum in
 theorem exists_cofactor {K : Type} [Field K] {k A B : ℕ} (hA : 1 ≤ A) (hB : 1 ≤ B) {w G : PolXY K k}
@@ -795,7 +677,7 @@ theorem h_mul_eq_zero_of_deg {K : Type} [Field K] {k A B : ℕ} (hAB : A = 0 ∨
   subst h
   ext m
   rw [MvPolynomial.coeff_zero]
-  by_cases h0 : coeff m (hXY K k * G) = 0
+  by_cases h0 : AddMonoidAlgebra.coeff (hXY K k * G) m = 0
   · exact h0
   · obtain ⟨hx, hy⟩ := (show ∀ m ∈ (hXY K k * G).support, xDeg m = A ∧ yDeg m = B from hw) m
       (MvPolynomial.mem_support_iff.2 h0)
@@ -838,10 +720,10 @@ theorem harQuot_of (H1 : HarProj) (H2 : GaussProj) : HarQuot := by
       have hf1 := smul_mem_latOf_gauss _ g hEO hfl
       rw [mem_latOf_iff] at hf1 hw ⊢
       rw [map_sub]
-      have h1' : ∀ m, coeff m (glAct g⁻¹ (((p : K) ^ ((k + 1) * Nat.log p (A + B + k))) • f)) ∈ O.toSubring := hf1
-      have h2' : ∀ m, coeff m (glAct g⁻¹ (((p : K) ^ ((k + 1) * Nat.log p (A + B + k))) •
-        harProj K k A B f)) ∈ O.toSubring := hw
-      show ∀ m, coeff m (_ - _) ∈ O.toSubring
+      have h1' : ∀ m, AddMonoidAlgebra.coeff (glAct g⁻¹ (((p : K) ^ ((k + 1) * Nat.log p (A + B + k))) • f)) m ∈ O.toSubring := hf1
+      have h2' : ∀ m, AddMonoidAlgebra.coeff (glAct g⁻¹ (((p : K) ^ ((k + 1) * Nat.log p (A + B + k))) •
+        harProj K k A B f)) m ∈ O.toSubring := hw
+      show ∀ m, AddMonoidAlgebra.coeff (_ - _) m ∈ O.toSubring
       intro m
       rw [MvPolynomial.coeff_sub]
       exact O.toSubring.sub_mem (h1' m) (h2' m)
@@ -851,12 +733,9 @@ theorem harQuot_of (H1 : HarProj) (H2 : GaussProj) : HarQuot := by
 end Har4
 
 theorem fockGaussLatticeComparison_holds : FockGaussXY := Har4.fockGaussLatticeComparison_holds
-theorem sqrtFockGaussLatticeComparison_holds : SqrtFockGaussXY := Har4.sqrtFockGaussLatticeComparison_holds
 theorem gaussLemmaPairing_holds : GaussLemmaH := Har4.gaussLemmaPairing_holds
-theorem pairingPrime_holds : HPrime := Har4.pairingPrime_holds
 theorem isotypicLattice_holds : LevelLattice := Har4.isotypicLattice_holds
 theorem gaussLatticeProjection_holds : GaussProj := Har4.gaussProj_of fockLatticeProjection_holds
-theorem gaussLatticeProjectionExponent_holds : GaussProjText := Har4.gaussProjText_of gaussLatticeProjection_holds
 theorem harmonicQuotient_holds : HarQuot := Har4.harQuot_of harmonicProjection_holds gaussLatticeProjection_holds
 
 end Formalism.CountingSumsFrames

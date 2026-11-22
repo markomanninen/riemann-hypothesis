@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableHermC
+
+@[expose] public section
+
 open MeasureTheory
 open GlobalTheory.CompanionTheory.SiegelND.Integ.Arch
 
@@ -8,11 +13,11 @@ theorem continuous_phaseM_X {W : Type} [Fintype W] {n M : ℕ}
     (J : W → Matrix (Fin M) (Fin M) ℂ) (B : W → Matrix (Fin n) (Fin n) ℂ) :
     Continuous (phaseM J B) := by
   unfold phaseM
-  refine continuous_finset_sum _ fun w _ => Complex.continuous_re.comp ?_
+  refine continuous_finsetSum _ fun w _ => Complex.continuous_re.comp ?_
   simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply, gramC]
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun c _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun c _ => ?_
   refine continuous_const.mul ?_
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   have h1 : Continuous fun X : W → Fin n → Fin M → ℂ => X w c i := by fun_prop
   have h2 : Continuous fun X : W → Fin n → Fin M → ℂ => X w a j := by fun_prop
   first
@@ -24,9 +29,9 @@ theorem continuous_phaseM_b {W : Type} [Fintype W] {n M : ℕ}
     Continuous fun b : W → hermC n =>
       phaseM J (fun w => (b w : Matrix (Fin n) (Fin n) ℂ)) X := by
   unfold phaseM
-  refine continuous_finset_sum _ fun w _ => Complex.continuous_re.comp ?_
+  refine continuous_finsetSum _ fun w _ => Complex.continuous_re.comp ?_
   simp only [Matrix.trace, Matrix.diag, Matrix.mul_apply]
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun c _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun c _ => ?_
   refine Continuous.mul ?_ continuous_const
   have h0 : Continuous fun b : W → hermC n => (b w : Matrix (Fin n) (Fin n) ℂ) :=
     continuous_subtype_val.comp (continuous_apply w)

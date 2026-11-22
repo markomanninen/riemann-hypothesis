@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddCharNegEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddCharNegEqOne
+
+@[expose] public section
 
 open Filter Topology
 
@@ -14,7 +18,7 @@ theorem SB.exists_periodic {X : Type} [AddCommGroup X] [TopologicalSpace X] [IsT
   have key : ∀ Y : X, ∃ i, ∀ C ∈ L i, f (Y + C) = f Y := by
     intro Y
     have h1 : f ⁻¹' {f Y} ∈ 𝓝 (Y + 0) := by rw [add_zero]; exact (hlc.isOpen_fiber _).mem_nhds rfl
-    have h2 : {C : X | f (Y + C) = f Y} ∈ 𝓝 (0 : X) := (continuous_add_left Y).continuousAt.preimage_mem_nhds h1
+    have h2 : {C : X | f (Y + C) = f Y} ∈ 𝓝 (0 : X) := (continuous_const_add Y).continuousAt.preimage_mem_nhds h1
     obtain ⟨i, hi⟩ := hb _ h2
     exact ⟨i, fun C hC => hi hC⟩
   choose g hg using key

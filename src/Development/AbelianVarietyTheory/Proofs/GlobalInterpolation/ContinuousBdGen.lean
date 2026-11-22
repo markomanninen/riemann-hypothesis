@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal
@@ -12,7 +16,7 @@ variable {F : Type} [Field F] [NumberField F] {N : ℕ}
 
 theorem re_add (x y : Ainf F) (w : InfinitePlace F) : re (x + y) w = re x w + re y w := by
   have : (x + y) w = x w + y w := rfl
-  simp only [re, this, map_add, Complex.add_re]
+  simp only [re, this, map_add (f := _), Complex.add_re]
 
 theorem re_neg (x : Ainf F) (w : InfinitePlace F) : re (-x) w = -re x w := by
   have : (-x) w = -x w := rfl
@@ -38,13 +42,13 @@ theorem sz_nonneg (u : Fin N → AF F) : 0 ≤ sz u :=
   Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => abs_nonneg _
 
 theorem inf_add (u v : Fin N → AF F) : inf (u + v) = inf u + inf v := by
-  funext l; simp [inf, map_add]
+  funext l; simp [inf, map_add (f := _)]
 
 theorem inf_neg (u : Fin N → AF F) : inf (-u) = -inf u := by
   funext l; simp [inf, map_neg]
 
 theorem fin_add (u v : Fin N → AF F) : fin (u + v) = fin u + fin v := by
-  funext l; simp [fin, map_add]
+  funext l; simp [fin, map_add (f := _)]
 
 theorem sz_add_le (u v : Fin N → AF F) : sz (u + v) ≤ sz u + sz v := by
   unfold sz
@@ -61,7 +65,8 @@ theorem sz_neg (u : Fin N → AF F) : sz (-u) = sz u := by
 
 theorem inf_mulVec (M : Matrix (Fin N) (Fin N) (AF F)) (u : Fin N → AF F) (l : Fin N) :
     inf (M.mulVec u) l = ∑ m, fstA F (M l m) * inf u m := by
-  simp only [inf, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [inf, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem sz_mulVec_le [IsTotallyReal F] (M : Matrix (Fin N) (Fin N) (AF F)) :
     ∃ A : ℝ, 0 ≤ A ∧ ∀ u, sz (M.mulVec u) ≤ A * sz u := by
@@ -207,15 +212,13 @@ theorem decay_ops : ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) (ψ : Add
   · let g : GL (Fin N) (AF F) := Units.map (Matrix.scalar (Fin N) : AF F →+* Matrix (Fin N) (Fin N) (AF F)).toMonoidHom ht.unit
     have h := hGL g
     convert h using 1
-    funext u
-    simp only [Da]
     congr 1
     funext l
-    simp [g, Matrix.mulVec_diagonal]
+    simp [Da, g, Matrix.mulVec_diagonal]
   · have h := decay_of_comp hΦ id continuous_id (fun _ => c) continuous_const ‖c‖ (fun _ => le_rfl)
       (fun K hK => ⟨K, hK, fun u h => h⟩) 1 0 zero_le_one le_rfl (fun u => by simp)
     convert h using 1
     funext u
-    simp
+    rfl
 
 end GlobalTheory.SWQ

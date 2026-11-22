@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Polynomial
 
@@ -137,12 +141,12 @@ theorem norm_embedding_le_mulHeight₁ (φ : K →+* ℂ) (c : K) : ‖φ c‖ �
     _ ≤ max (w c) 1 ^ w.mult := le_self_pow₀ (le_max_right _ _) w.mult_ne_zero
     _ ≤ ∏ v : InfinitePlace K, max (v c) 1 ^ v.mult := by
       rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w)]
-      exact le_mul_of_one_le_right (by positivity) (Finset.one_le_prod fun v _ => h1 v)
+      exact le_mul_of_one_le_right (by positivity) (Finset.one_le_prod₀ fun v _ => h1 v)
     _ ≤ _ := le_mul_of_one_le_right (Finset.prod_nonneg fun v _ => by positivity)
         (one_le_finprod fun _ => le_max_right _ _)
 
-variable (K) in
 
+variable (K) in
 theorem exists_ncard_mulHeight₁_le : ∃ (C : ℝ) (k : ℕ), ∀ B : ℝ, 1 ≤ B →
     {c : K | Height.mulHeight₁ c ≤ B}.Finite ∧
       (({c : K | Height.mulHeight₁ c ≤ B}.ncard : ℕ) : ℝ) ≤ C * B ^ k := by
@@ -198,8 +202,8 @@ theorem finite_and_ncard_minpoly_height_le : ∀ (F E : Type) [Field F] [NumberF
         C * B ^ k := by
   intro F E _ _ _ _ _
   classical
-  haveI : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  obtain ⟨C₁, k₁, h₁⟩ := exists_ncard_mulHeight₁_le F
+  have : FiniteDimensional F E := Module.Finite.of_restrictScalars_finite ℚ F E
+  obtain ⟨C₁, k₁, h₁⟩ := exists_ncard_mulHeight₁_le (K := F)
   set m := Module.finrank F E with hm
   refine ⟨m * C₁ ^ (m + 1), k₁ * (m + 1), fun B hB => ?_⟩
   obtain ⟨hSfin, hScard⟩ := h₁ B hB

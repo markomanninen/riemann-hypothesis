@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlaceNotIsSquareAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLocalNonnormOfNonsquareAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.QuadraticClassFieldTheory
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlaceNotIsSquareAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLocalNonnormOfNonsquareAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.QuadraticExtNormFormOverAlgebra
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -51,11 +55,11 @@ private theorem exists_basis_one_sqrt_nonsquare_of_finrank_two (K L : Type) [Fie
   clear_value p q
   have hθ' : θ - algebraMap K L (p / 2) ∉ Set.range (algebraMap K L) := by
     rintro ⟨c, hc⟩
-    exact hθ ⟨c + p / 2, by rw [map_add, hc]; ring⟩
+    exact hθ ⟨c + p / 2, by rw [map_add (f := _), hc]; ring⟩
   have hp2 : algebraMap K L (p / 2) * 2 = algebraMap K L p := by
     rw [← map_ofNat (algebraMap K L) 2, ← map_mul, div_mul_cancel₀ p two_ne_zero]
   have hδeq : algebraMap K L (q + p ^ 2 / 4) = algebraMap K L q + algebraMap K L (p / 2) ^ 2 := by
-    rw [show q + p ^ 2 / 4 = q + (p / 2) ^ 2 by ring, map_add, map_pow]
+    rw [show q + p ^ 2 / 4 = q + (p / 2) ^ 2 by ring, map_add (f := _), map_pow]
   refine ⟨basisOfLinearIndependentOfCardEqFinrank (linearIndependent_one_of_notMem_range hθ')
     (by simp [h2]), q + p ^ 2 / 4, ?_, ?_, ?_⟩
   · simp [coe_basisOfLinearIndependentOfCardEqFinrank]
@@ -124,8 +128,8 @@ private theorem exists_place_notMem_not_isSquare (F : Type) [Field F] [NumberFie
     (Finset.mem_image_of_mem _ (Finset.mem_univ _)))))
     (Subgroup.mem_sup_right (hle (Subgroup.inv_mem _ h.2)))
 
-open NumberField IsDedekindDomain in
 
+open NumberField IsDedekindDomain in
 theorem _root_.GlobalTheory.QuadSymbol.exists_almostNorm_etaProd_eq_neg_one :
     ∀ (K L : Type) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
       [Algebra.IsQuadraticExtension K L],

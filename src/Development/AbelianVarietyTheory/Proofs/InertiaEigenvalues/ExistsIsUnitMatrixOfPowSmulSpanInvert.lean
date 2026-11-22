@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -13,7 +17,7 @@ def powDenomSubring {S EE : Type} [CommRing S] [CommRing EE] (a : S →+* EE) (Q
   add_mem' := by
     rintro e f ⟨n, t, ht⟩ ⟨m, r, hr⟩
     refine ⟨n + m, Q ^ m * t + Q ^ n * r, ?_⟩
-    rw [map_add, map_mul, map_mul, map_pow, map_pow, ← ht, ← hr]; ring
+    rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, ← ht, ← hr]; ring
   zero_mem' := ⟨0, 0, by simp⟩
   neg_mem' := by
     rintro e ⟨n, t, ht⟩
@@ -92,7 +96,8 @@ theorem exists_isUnit_matrix_of_pow_smul_span : ∀ (S EE W RW Y : Type) [CommRi
         · simp
       rw [h1]
       conv_rhs => rw [hB i]
-      simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, Matrix.of_apply, map_sum, Finset.sum_smul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [hA j, Finset.smul_sum]

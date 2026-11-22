@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueWeightDecompositionRaynaudAffineStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueWeightDecompositionRaynaudAffineStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionMulStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -26,8 +31,8 @@ variable {X A : Type} [AddCommGroup X] [CommRing A] (P : X → A → Prop)
   (hmul : ∀ χ ψ a b, P χ a → P ψ b → P (χ + ψ) (a * b))
   (hdec : ∀ f : A, ∃! F : X →₀ A, (∀ χ, P χ (F χ)) ∧ f = F.sum (fun _ t => t))
 
-include hdec in
 
+include hdec in
 def dec (f : A) : X →₀ A := (hdec f).exists.choose
 
 include hdec in
@@ -63,7 +68,7 @@ theorem dec_mul {χ : X} {f : A} (hf : P χ f) (h : A) (ψ : X) :
   set G : X →₀ A := Finsupp.mapDomain (fun ψ => χ + ψ) ((dec P hdec h).mapRange (f * ·) (mul_zero f)) with hG
   have hinj : Function.Injective (fun ψ : X => χ + ψ) := add_right_injective χ
   have hGv : ∀ ψ, G (χ + ψ) = f * dec P hdec h ψ := fun ψ => by
-    rw [hG, Finsupp.mapDomain_apply hinj, Finsupp.mapRange_apply]
+    rw [hG, Finsupp.mapDomain_apply_of_injective hinj, Finsupp.mapRange_apply]
   have key : dec P hdec (f * h) = G := by
     refine dec_eq P hdec (fun ω => ?_) ?_
     · have e : ω = χ + (ω - χ) := by abel
@@ -91,8 +96,8 @@ theorem proj_of_wt (hz : δ₀ 0 = 0) {α : X} {f : A} (hf : P α f) : proj P hd
   unfold proj; rw [dec_single P hzero hdec hf, Finsupp.sum_single_index]
   rw [hz, dec_zero P hzero hdec]; rfl
 
-include hzero hdec in
 
+include hzero hdec in
 theorem induction_wt (Qp : A → Prop) (q0 : Qp 0) (qadd : ∀ a b, Qp a → Qp b → Qp (a + b))
     (qw : ∀ χ a, P χ a → Qp a) (f : A) : Qp f := by
   rw [(dec_spec P hdec f).2, Finsupp.sum]

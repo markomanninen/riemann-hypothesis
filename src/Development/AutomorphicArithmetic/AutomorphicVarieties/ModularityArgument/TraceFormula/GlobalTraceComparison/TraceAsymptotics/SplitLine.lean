@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalSatakeAlmostAll
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.L2.Host GlobalTheory.CuspRep
 open Formalism.UG GlobalTheory.PRep GlobalTheory.LFun GlobalTheory.LGrp GlobalTheory.LFun.SatCompare
@@ -56,14 +60,14 @@ end
 theorem splitLine : SplitLine := by
   intro E _ _ _ n w τ hne
   rcases τ with @⟨V, _, _, ρ, hs, hi⟩
-  change fixed ρ (KGL w n) ≠ ⊥ at hne
+  change fixed ρ (KGL w (n := n)) ≠ ⊥ at hne
   obtain ⟨v, hv, hv0⟩ := (Submodule.ne_bot_iff _).1 hne
   have hc := (isOpen_isCompact_KGL w n).2
   have hK := Final.GLintComm E w n
   have hcomm := Final.HeckeCommGL E w n ℂ
   have hline := fixed_eq_span hs hi hc hK hcomm hv hv0
   refine ⟨?_, GlobalTheory.CompanionTheory.SatAe.exists_hasSatGL_of_scalar (fun h hh => ?_) hne⟩
-  · change Module.finrank ℂ (fixed ρ (KGL w n)) = 1
+  · change Module.finrank ℂ (fixed ρ (KGL w (n := n))) = 1
     rw [hline]
     exact finrank_span_singleton hv0
   · exact GlobalTheory.CompanionTheory.SatAe.exists_scalar hs hc hK hcomm (fun S h1 _ => eq_bot_or_top hi S h1)

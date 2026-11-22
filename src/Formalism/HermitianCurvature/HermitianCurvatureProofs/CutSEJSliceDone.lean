@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SpectralSobolevSecondOrder
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSMeas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSWordNF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JslHsInnerSelfNorm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeibnizClsC
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSliceAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SpectralSobolevSecondOrder
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSMeas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEJSWordNF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JslHsInnerSelfNorm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSELeibnizClsC
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientRingIntegersCompactAdicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsTail
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetFixedMemInvariants
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoefficientRingIntegersCompactAdicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsTail
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetFixedMemInvariants
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 namespace GlobalTheory.GrowthOfInvariants
@@ -121,7 +126,8 @@ theorem exists_basis_comap {O LL V : Type} [CommRing O] [IsDomain O] [IsPrincipa
       let t0 : T₀ := ⟨⟨d • x, hdx⟩, hdxW⟩
       have hmem : d • x ∈ Submodule.span O (Set.range v) := by
         have ht : ι t0 = d • x := rfl
-        rw [← ht, ← b0.sum_repr t0, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← ht, ← b0.sum_repr t0, map_sum]
         exact Submodule.sum_mem _ fun i _ => by
           rw [map_smul]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
       have hmemLL : d • x ∈ Submodule.span LL (Set.range v) :=

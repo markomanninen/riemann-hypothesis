@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeCharEqOfLAdicRealisation
-import ReciprocityTheory.Hypotheses.GalCoh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.HeckeCharEqOfLAdicRealisation
+public import ReciprocityTheory.Hypotheses.GalCoh
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.ConjugateSelfDual Formalism.MainNotions Formalism.MainNotions.N Polynomial NumberField IsDedekindDomain ReciprocityTheory.Gal GlobalTheory.StringRepresentationDecomposition
 
@@ -35,7 +39,8 @@ theorem tame_vanish : LocalFiniteness → LocalTateDuality → LocalEulerChar �
     have key : ∀ φ ∈ H0 ((twDual χ rho).comp (MonoidHom.id _)), φ = 0 := by
       intro φ hφ
       have h1 : twDual χ rho γ φ = φ := (Representation.mem_invariants _ φ).mp hφ γ
-      ext x
+      apply DFunLike.ext
+      intro x
       obtain ⟨m, rfl⟩ := hγ.2 x
       have h3 := congrArg (fun ψ : TDual (ZMod (l ^ 1)) M => ψ (rho γ m)) h1
       simp only [twDual_apply, hχ, Units.val_one, one_mul] at h3

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
 
@@ -38,10 +43,10 @@ private lemma isom_apply_mem_of_smul_eq {h : V →ₗ⋆[K] V →ₗ[K] K} {g : 
   rw [← hg, _root_.GlobalTheory.Mass.StabSplit.smul_eq_map]
   exact Submodule.mem_map_of_mem hx
 
+
 open NumberField Matrix in
 open scoped ENNReal Classical in
 variable {K V : Type} [Field K] [StarRing K] [AddCommGroup V] [Module K V] in
-
 theorem _root_.GlobalTheory.Mass.StabSplit.smul_perp (h : V →ₗ⋆[K] V →ₗ[K] K) (g : _root_.Formalism.HermitianLatticesTheory.isom h)
     (U : Submodule K V) (hg : g • U = U) :
     g • _root_.GlobalTheory.Mass.perp h U = _root_.GlobalTheory.Mass.perp h U := by
@@ -67,9 +72,6 @@ theorem _root_.GlobalTheory.Mass.StabSplit.smul_perp (h : V →ₗ⋆[K] V →�
 noncomputable def res (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) (g : isom h)
     (hg : g • U = U) : isom (hRes h U) :=
   ⟨g.1.ofSubmodules U U hg, fun x y => g.2 x y⟩
-
-@[simp] theorem res_apply (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) (g : isom h)
-    (hg : g • U = U) (x : U) : (((res h U g hg).1 x : U) : V) = g.1 x := rfl
 
 open NumberField Matrix in
 open scoped ENNReal Classical in
@@ -173,12 +175,12 @@ private lemma apply_add_add_of_mem_perp {h : V →ₗ⋆[K] V →ₗ[K] K} (hs :
   have h2 : h w u' = 0 := by
     rw [← hs.eq u' w, (_root_.GlobalTheory.Mass.StabSplit.mem_perp h U w).1 hw u' hu',
       map_zero]
-  simp only [map_add, LinearMap.add_apply, h1, h2]
+  simp only [map_add (f := _), LinearMap.add_apply, h1, h2]
   ring
+
 
 open NumberField Matrix in
 open scoped ENNReal Classical in
-
 theorem _root_.GlobalTheory.Mass.StabSplit.main : ∀ (K V : Type) [Field K] [NumberField K]
     [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
     [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), _root_.Formalism.HermitianLatticesTheory.IsCMUnram K → h.IsSymm →
@@ -207,7 +209,7 @@ theorem _root_.GlobalTheory.Mass.StabSplit.main : ∀ (K V : Type) [Field K] [Nu
     intro v
     have hv : v ∈ U ⊔ W := by rw [hc.sup_eq_top]; exact Submodule.mem_top
     obtain ⟨u, hu, w, hw, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add, map_add, eU u hu, eW w hw]
+    rw [map_add (f := _), map_add (f := _), eU u hu, eW w hw]
   have hsurj : Function.Surjective (_root_.GlobalTheory.Mass.StabSplit.resHom h U) := by
     rintro ⟨a, c⟩
     let e := Submodule.prodEquivOfIsCompl U W hc
@@ -218,7 +220,7 @@ theorem _root_.GlobalTheory.Mass.StabSplit.main : ∀ (K V : Type) [Field K] [Nu
       simp [g, e, Submodule.prodEquivOfIsCompl_symm_apply_right]
     have gsum : ∀ (u : U) (w : W), g ((u : V) + w) = ((a.1 u : U) : V) + (c.1 w : W) := by
       intro u w
-      rw [map_add, gU, gW]
+      rw [map_add (f := _), gU, gW]
     have hiso : g ∈ _root_.Formalism.HermitianLatticesTheory.isom h := by
       intro x y
       obtain ⟨⟨u, w⟩, rfl⟩ := e.surjective x

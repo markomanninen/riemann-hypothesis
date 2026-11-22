@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexOpenCompactNeZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCharacterSeparatingLattice
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RelIndexOpenCompactNeZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCharacterSeparatingLattice
+
+@[expose] public section
 
 open Matrix
 open scoped Topology
@@ -42,7 +46,7 @@ theorem relIndex_le_of_pairing {X Y : Type} [AddCommGroup X] [AddCommGroup Y]
   let χ : R₀ → AddChar (H ⧸ H₀.addSubgroupOf H) Circle := fun x =>
     { toFun := fun q => Additive.toMul (g x q)
       map_zero_eq_one' := by simp
-      map_add_eq_mul' := fun q q' => by simp [map_add] }
+      map_add_eq_mul' := fun q q' => by simp [map_add (f := _)] }
   have hχ : ∀ (x : R₀) (y : H), χ x (QuotientAddGroup.mk y) = b x y := fun x y => rfl
   let Ψ : R₀ →+ AddChar (H ⧸ H₀.addSubgroupOf H) Circle :=
     { toFun := χ

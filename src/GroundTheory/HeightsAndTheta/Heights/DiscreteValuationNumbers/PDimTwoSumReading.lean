@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.SwapLoc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -69,8 +74,8 @@ theorem mem_minimalPrimes_iff {a : A} (ha : a ≠ 0) (W : Ideal A) [W.IsPrime] :
       exact absurd this (by decide)
     · exact hQ
 
-omit [IsDomain A] [IsNoetherianRing A] in
 
+omit [IsDomain A] [IsNoetherianRing A] in
 theorem max_mem_minimalPrimes [IsLocalRing A] (h2 : ringKrullDim A = 2) (W : Ideal A) [hW : W.IsPrime]
     (h1 : W.height = 1) {b : A} (hbW : b ∉ W) (hbm : b ∈ maximalIdeal A) :
     maximalIdeal A ∈ (W ⊔ Ideal.span {b}).minimalPrimes := by
@@ -93,8 +98,8 @@ theorem max_mem_minimalPrimes [IsLocalRing A] (h2 : ringKrullDim A = 2) (W : Ide
 
 end DimTwoSumReading
 
-open DimTwoSumReading in
 
+open DimTwoSumReading in
 theorem DimTwoSumReading.proof : DimTwoSumReading.Statement := by
   intro A _ _ _ _ h2 a b ha hab
   classical
@@ -110,20 +115,20 @@ theorem DimTwoSumReading.proof : DimTwoSumReading.Statement := by
     have hmin := (mem_minimalPrimes_iff ha p.asIdeal).mpr hp
     have hlA := length_loc_eq_ordLoc p.asIdeal a
     refine ⟨⟨?_, ?_⟩, ?_⟩
-    · unfold locCycle; rw [dif_pos hmin]; exact congrArg (fun x : ℕ∞ => (x.toNat : ℤ)) hlA
+    · unfold locCycle; rw [dite_eq_left hmin]; exact congrArg (fun x : ℕ∞ => (x.toNat : ℤ)) hlA
     · rw [← hlA]; exact ReciprocityTheory.ChartRestriction.G.AI.I1.locLen_ne_top hmin
     by_cases hbm : b ∈ maximalIdeal A
     · have hmm := max_mem_minimalPrimes h2 p.asIdeal hp.1 (hab _ p.isPrime hp.1 hp.2) hbm
       have hlB := length_max_eq_ordMod p.asIdeal b
       refine ⟨?_, ?_⟩
-      · unfold locCycle; rw [dif_pos hmm]; exact congrArg (fun x : ℕ∞ => (x.toNat : ℤ)) hlB
+      · unfold locCycle; rw [dite_eq_left hmm]; exact congrArg (fun x : ℕ∞ => (x.toNat : ℤ)) hlB
       · rw [← hlB]; exact ReciprocityTheory.ChartRestriction.G.AI.I1.locLen_ne_top hmm
     · have h0 : ordMod p b = 0 := Ring.ord_of_isUnit ((notMem_maximalIdeal.mp hbm).map _)
       have hnm : maximalIdeal A ∉ (p.asIdeal ⊔ Ideal.span {b}).minimalPrimes := fun h =>
         hbm (h.1.2 (Ideal.mem_sup_right (Ideal.subset_span rfl)))
       rw [h0]
       refine ⟨?_, ENat.zero_ne_top⟩
-      unfold locCycle; rw [dif_neg hnm]; rfl
+      unfold locCycle; rw [dite_eq_right hnm]; rfl
   have hsupp : Function.support (fun W : Ideal A => locCycle (Ideal.span {a}) W *
       locCycle (W ⊔ Ideal.span {b}) (maximalIdeal A)) ⊆
       (hT.toFinset.map ⟨PrimeSpectrum.asIdeal, by intro p q h; exact PrimeSpectrum.ext h⟩ : Finset (Ideal A)) := by
@@ -131,7 +136,7 @@ theorem DimTwoSumReading.proof : DimTwoSumReading.Statement := by
     have hne : locCycle (Ideal.span {a}) W ≠ 0 := left_ne_zero_of_mul hW
     have hmin : W ∈ (Ideal.span {a}).minimalPrimes := by
       by_contra h
-      exact hne (by unfold locCycle; rw [dif_neg h])
+      exact hne (by unfold locCycle; rw [dite_eq_right h])
     have := hmin.1.1
     rw [Finset.coe_map, Set.Finite.coe_toFinset]
     exact ⟨⟨W, hmin.1.1⟩, (mem_minimalPrimes_iff ha W).mp hmin, rfl⟩

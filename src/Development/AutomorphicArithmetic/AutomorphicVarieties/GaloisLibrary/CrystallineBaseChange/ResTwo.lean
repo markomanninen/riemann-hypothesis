@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.CqStmt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.CrystallineBaseChange.CqStmt
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.Af
 
@@ -137,7 +141,7 @@ private theorem part_one {Γ Γ' k : Type} [Group Γ] [Group Γ'] [Field k] {n :
     intro s v hv
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hv
     show ρ s (a + b) ∈ _
-    rw [map_add]
+    rw [map_add (f := _)]
     rcases h2 s with hs | hs
     · exact Submodule.add_mem_sup (a1 s hs a ha) (a3 s hs b hb)
     · rw [add_comm]; exact Submodule.add_mem_sup (a4 s hs b hb) (a2 s hs a ha)

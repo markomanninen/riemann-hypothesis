@@ -1,11 +1,16 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicPrimitiveVectorCompactRescaleStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramOrbitCompactRepresentativeStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicAndBlockOneNondegenerateStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicPrimitiveVectorCompactRescaleStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramOrbitCompactRepresentativeStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HyperbolicAndBlockOneNondegenerateStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -40,7 +45,8 @@ theorem hform_smul_left (s : K →+* K) (L : Matrix (Fin N) (Fin N) K) (c : K) (
 theorem hform_conj (s : K →+* K) (L : Matrix (Fin N) (Fin N) K) (hs : ∀ x, s (s x) = x)
     (hL : ∀ i j, s (L j i) = L i j) (x y : Fin N → K) :
     s (hform s L x y) = hform s L y x := by
-  simp only [hform, map_sum, map_mul, hs]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hs]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hL]; ring
@@ -90,7 +96,7 @@ variable [TopologicalSpace K] [IsTopologicalRing K]
 theorem continuous_hform (s : K →+* K) (hs : Continuous s) (L : Matrix (Fin N) (Fin N) K) :
     Continuous fun p : (Fin N → K) × (Fin N → K) => hform s L p.1 p.2 := by
   unfold hform
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   have h1 : Continuous fun p : (Fin N → K) × (Fin N → K) => p.1 i :=
     (continuous_apply i).comp continuous_fst
   have h2 : Continuous fun p : (Fin N → K) × (Fin N → K) => p.2 j :=
@@ -121,9 +127,8 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E]
 theorem sigR_invol (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x)
     (a : R ⊗[F] E) : sigR R σ (sigR R σ a) = a := by
   induction a with
-  | zero => simp
   | tmul r e => simp [sigR, hσ]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem sigR_incl (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) (e : E) :
     sigR R σ (inclR R e) = inclR R (σ e) := by
@@ -133,14 +138,9 @@ theorem gramR_ratTup (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) 
     (J : Matrix (Fin N) (Fin N) E) (X : Fin n → Fin N → E) :
     gramR R σ J (ratTup R X) = (gramE σ J X).map (inclR R) := by
   ext a b
-  simp only [gramR, hR, hform, ratTup, JR, sigR_incl, Matrix.map_apply, gramE, hE, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramR, hR, hform, ratTup, JR, sigR_incl, Matrix.map_apply, gramE, hE, map_sum, map_mul]
   rfl
-
-theorem actW_smul (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {N n : ℕ}
-    (J : Matrix (Fin N) (Fin N) E) (g : HA R σ J) (a : R ⊗[F] E) (X : Fin n → Fin N → R ⊗[F] E) :
-    actW R σ J g (a • X) = a • actW R σ J g X := by
-  funext i
-  simp [actW, actTup, Matrix.mulVec_smul]
 
 end Tens
 

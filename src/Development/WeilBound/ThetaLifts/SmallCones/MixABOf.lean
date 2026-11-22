@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.KerPol
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
-import Development.WeilBound.ThetaLifts.SmallCones.ConeBasic
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.KerPol
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+public import Development.WeilBound.ThetaLifts.SmallCones.ConeBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem mixAB_of (hW : MixW) (hX : MixX) (hZ : EvZero) (hP : PairEx) (hE : Theta
   refine ⟨fun e he => ?_, fun e he => ?_⟩
   · obtain ⟨⟨M₁, g₁⟩, h1⟩ := hP F E σ B hB n d₁ X W₁ _ _ _ _ hp.herm hp₀.skew
     obtain ⟨om₁, hp₁⟩ := h1 χX χW hp.hX hp.hW hp.resX hp₀.resW M₁ g₁
-    obtain ⟨⟨e₀, he₀⟩, -⟩ := hZ F E σ B n d X W M χX χW om _ _ _ _ hp d₁ X W₁ H' i₀ i₁ M₁ rfl hH' g₁
+    have hz := hZ F E σ B n d X W M χX χW om _ _ _ _ hp d₁ X W₁ H' i₀ i₁ M₁ rfl hH' g₁
+    obtain ⟨⟨e₀, he₀⟩, -⟩ := hz
     obtain ⟨⟨e₁, he₁⟩, h2⟩ := hX F E σ B n d₁ X W₁ M₁ χX χW om₁ _ _ _ _ hp₁ n₁ X₁ H j₀ j₁ M₀ om₀ _ _ hH hp₀
     have hc := isEv_comp hψ hp.good g₁ hp₀.good he₀ he₁
       (comp_ne (polX p (skew_det hp₀.skew)) hE hB hp.good g₁ hp₀.good he₀ he₁) (K := isoA H H') (by
@@ -38,7 +43,8 @@ theorem mixAB_of (hW : MixW) (hX : MixX) (hZ : EvZero) (hP : PairEx) (hE : Theta
   · obtain ⟨⟨M₁, g₁⟩, h1⟩ := hP F E σ B hB n₁ d X₁ W _ _ _ _ hp₀.herm hp.skew
     obtain ⟨om₁, hp₁⟩ := h1 χX χW hp.hX hp.hW hp₀.resX hp.resW M₁ g₁
     obtain ⟨⟨e₀, he₀⟩, h2⟩ := hX F E σ B n d X W M χX χW om _ _ _ _ hp n₁ X₁ H j₀ j₁ M₁ om₁ _ _ hH hp₁
-    obtain ⟨⟨e₁, he₁⟩, -⟩ := hZ F E σ B n₁ d X₁ W M₁ χX χW om₁ _ _ _ _ hp₁ d₁ X₁ W₁ H' i₀ i₁ M₀ rfl hH' hp₀.good
+    have hz := hZ F E σ B n₁ d X₁ W M₁ χX χW om₁ _ _ _ _ hp₁ d₁ X₁ W₁ H' i₀ i₁ M₀ rfl hH' hp₀.good
+    obtain ⟨⟨e₁, he₁⟩, -⟩ := hz
     have hc := isEv_comp hψ hp.good g₁ hp₀.good he₀ he₁
       (comp_ne (pol0 (herm_det hp₀.herm) p') hE hB hp.good g₁ hp₀.good he₀ he₁) (K := isoB H H') (by
         rintro u (h | ⟨z, rfl⟩)

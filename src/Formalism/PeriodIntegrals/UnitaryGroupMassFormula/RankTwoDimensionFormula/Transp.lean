@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfSteps
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.DimFormCOfSteps
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.InclusionInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,13 +39,15 @@ theorem tr_crd_lin (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) (y : (VS D).
   rw [← tr_repr_eq]
   show X.bas.repr (Matrix.toLin X.bas X.bas (M.map X.ιE) y) i = _
   rw [← h]
-  simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, tr_repr_eq]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, tr_repr_eq]
 
 theorem tr_lin_mul (M N : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) :
     (trLin X M).comp (trLin X N) = trLin X (M * N) := by
   have hm : (M * N).map X.ιE = M.map X.ιE * N.map X.ιE := by
     ext i j
-    simp [Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mul_apply, map_sum, map_mul]
   unfold trLin
   rw [hm, Matrix.toLin_mul X.bas X.bas X.bas]
 
@@ -74,7 +80,8 @@ theorem tr_star (a : X.B.I.E) : star (X.ιE a) = X.ιE (star a) :=
 theorem tr_hT (x y : (VS D).V) :
     (VS D).hT x y = X.ιE (star (X.crd x) ⬝ᵥ (X.B.I.J *ᵥ X.crd y)) := by
   conv_lhs => rw [← X.bas.sum_repr x, ← X.bas.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul,
     smul_eq_mul, starRingEnd_apply, tr_repr_eq, tr_star, ← X.J_eq, dotProduct, Matrix.mulVec,
     Pi.star_apply, map_mul]
   simp only [Finset.mul_sum]

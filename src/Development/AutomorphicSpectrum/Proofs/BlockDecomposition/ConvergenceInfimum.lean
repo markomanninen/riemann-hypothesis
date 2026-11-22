@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem convInf_of_discInf_topInf : DiscInf → TopInf → ConvInf := by
     obtain ⟨b₀, b, hb₀, hb, hbt⟩ := ih₂ hs.2
     refine ⟨a₀ + b₀, fun k => a k + b k, ⟨a₀, b₀, ha₀, hb₀, rfl⟩,
       fun k => ⟨a k, b k, ha k, hb k, rfl⟩, fun u => ?_⟩
-    simp only [Multiset.map_add, Multiset.prod_add]
+    simp only [Multiset.map_add (f := _), Multiset.prod_add]
     exact (hat u).mul (hbt u)
 
 end GlobalTheory.CompanionTheory.EGlue.ConvInfProof

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetAverageProdFundamentalDomainPlaneLatticePow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SetAverageProdFundamentalDomainPlaneLatticePow
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -27,7 +32,7 @@ theorem mean_transport {A A₁ : AddSubgroup W} (hA : DiscreteTopology A)
       Module.Basis.mem_span_iff_repr_mem, Module.Basis.mem_span_iff_repr_mem]
     simp
   rw [mean_eq μ b hb hf, mean_eq μ (b.map e) hb₁ fun x hx z => by
-    rw [map_add, hf _ ((he _).2 (by simpa using hx))]]
+    rw [map_add (f := _), hf _ ((he _).2 (by simpa using hx))]]
   let ec : W ≃L[ℝ] W := e.toContinuousLinearEquiv
   let em : W ≃ᵐ W := ec.toHomeomorph.toMeasurableEquiv
   have hpre : ZSpan.fundamentalDomain b = em ⁻¹' ZSpan.fundamentalDomain (b.map e) := by
@@ -91,7 +96,7 @@ theorem theta_transport : ∀ (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ), 
   · obtain ⟨x, rfl⟩ := u.surjective x
     obtain ⟨z, rfl⟩ := u.surjective z
     have := hth.2 x ((hA x).2 hx) z
-    simp only [al, U, hu, ← map_add, LinearEquiv.symm_apply_apply] at this ⊢
+    simp only [al, U, hu, ← map_add (f := _), LinearEquiv.symm_apply_apply] at this ⊢
     exact this
   · have := mean_transport volume t₁ s₁ (u.restrictScalars ℝ) hA hper
     refine Eq.trans ?_ this

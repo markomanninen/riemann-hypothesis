@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasInfCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,9 @@ theorem evI_apply (v : InfinitePlace I.F) (a : Formalism.MainNotions.GlobalTheor
 theorem evI_algebraMap (v : InfinitePlace I.F) (a : I.F) :
     evI I v (algebraMap I.F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf I.F) a) = v.embedding a := by
   change InfinitePlace.Completion.extensionEmbedding v (algebraMap I.F v.Completion a) = _
-  exact InfinitePlace.Completion.extensionEmbedding_coe v ((WithAbs.equiv v.1).symm a)
+  rw [AbsoluteValue.Completion.algebraMap_def, InfinitePlace.Completion.extensionEmbedding_coe,
+    WithAbs.algebraMap_right_apply, Algebra.algebraMap_self_apply, WithAbs.equiv_apply,
+    WithAbs.ofAbs_toAbs]
 
 def thI (v : InfinitePlace I.F) : TI I →+* ℂ :=
   letI : Algebra I.F ℂ := v.embedding.toAlgebra
@@ -48,7 +54,7 @@ theorem thI_kap (v : InfinitePlace I.F) (y : TT I) : thI I v (kap I y) = thetaV 
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => rw [kap_tmul, thI_tmul, thetaV_tmul]; rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem kap_surj (y : TI I) : ∃ y0 : TT I, kap I y0 = y ∧ tauF I y0 = 0 := by
   induction y using TensorProduct.induction_on with
@@ -61,7 +67,7 @@ theorem kap_surj (y : TI I) : ∃ y0 : TT I, kap I y0 = y ∧ tauF I y0 = 0 := b
   | add x y hx hy =>
     obtain ⟨x0, hx0, hx1⟩ := hx
     obtain ⟨y0, hy0, hy1⟩ := hy
-    exact ⟨x0 + y0, by rw [map_add, hx0, hy0], by rw [map_add, hx1, hy1, add_zero]⟩
+    exact ⟨x0 + y0, by rw [map_add (f := _), hx0, hy0], by rw [map_add (f := _), hx1, hy1, add_zero]⟩
 
 theorem thI_inj (y : TI I) (h : ∀ v, thI I v y = 0) : y = 0 := by
   obtain ⟨y0, rfl, hτ⟩ := kap_surj I y
@@ -94,7 +100,7 @@ theorem thI_sigR (v : InfinitePlace I.F) (x : TI I) :
     · have hv : v.IsReal := I.cm.totReal.isReal v
       rw [evI_apply, ← InfinitePlace.Completion.extensionEmbeddingOfIsReal_apply hv, Complex.conj_ofReal]
     · exact I.cm.cmUnram.2.1 (I.φ v) y
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 instance imtTI : IsModuleTopology (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Ainf I.F) (TI I) := ⟨rfl⟩
 

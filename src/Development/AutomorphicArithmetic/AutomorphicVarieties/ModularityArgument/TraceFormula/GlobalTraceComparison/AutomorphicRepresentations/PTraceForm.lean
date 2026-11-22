@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUnique
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.SlotBasic
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TraceUnique
+
+@[expose] public section
 
 namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi
 

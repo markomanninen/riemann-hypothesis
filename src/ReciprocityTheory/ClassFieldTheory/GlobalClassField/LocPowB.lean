@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ResidueCardinality.ArtinOntoB
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.TwistSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.TwistSeries
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.InertiaEigenvalues.UnramPlace
@@ -26,7 +31,7 @@ theorem exists_place_below : ∀ (K L : Type) [Field K] [NumberField K] [Field L
       · rw [pow_one]; exact Ideal.map_comap_le
       · exact hu
     have h := HeightOneSpectrum.valuation_liesOver L (la.under (𝓞 K)) la x
-    rw [he, pow_one] at h
+    rw [← Ideal.ramificationIdx'_eq_ramificationIdx _ _ (la.under (𝓞 K)).ne_bot, he, pow_one] at h
     exact h.symm
 
 end GlobalTheory.InertiaEigenvalues.UnramPlace

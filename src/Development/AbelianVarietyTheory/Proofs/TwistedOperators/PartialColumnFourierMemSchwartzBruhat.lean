@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PartialFourierInversion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PartialFourierInversion
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip GlobalTheory.ColFourier
 open scoped Topology
@@ -11,14 +15,14 @@ namespace GlobalTheory.ColFourier
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {A C : Type} [Fintype A] [DecidableEq C]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype A] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype A] in
 theorem setCols_eq_add_offBlock (P : Finset C) (Y Y' : Matrix A C k) (T : Matrix A P k) :
     setCols P Y' T = setCols P Y T + setCols P (Y' - Y) 0 := by
   ext i j; by_cases h : j ∈ P <;> simp [setCols, h]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype A] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype A] in
 theorem setCols_of_add (P : Finset C) (Y : Matrix A C k) (x t : (Σ _ : A, P) → k) :
     setCols P Y (Matrix.of fun i j => (x + t) ⟨i, j⟩) =
       setCols P Y (Matrix.of fun i j => x ⟨i, j⟩) + setCols P 0 (Matrix.of fun i j => t ⟨i, j⟩) := by
@@ -48,7 +52,7 @@ omit [DecidableEq C] in
 theorem continuous_pairCols_pair (P : Finset C) :
     Continuous fun q : Matrix A C k × Matrix A P k => pairCols P q.1 q.2 := by
   unfold pairCols
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact (continuous_snd.matrix_elem i j).mul (continuous_fst.matrix_elem i (j : C))
 
 end GlobalTheory.ColFourier

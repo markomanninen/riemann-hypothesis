@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandG
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLandG
+
+@[expose] public section
 
 open NumberField Module
 
@@ -14,7 +18,8 @@ theorem gram_eq_conjTranspose_mul {K V : Type*} [Field K] [StarRing K] [AddCommG
   simp only [gram, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply,
     Basis.toMatrix_apply]
   conv_lhs => rw [← b'.sum_repr (b i), ← b'.sum_repr (b j)]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul,
     starRingEnd_apply, RingHom.id_apply, Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun m _ => ?_
   ring

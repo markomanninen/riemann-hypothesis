@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.MemIntOEOfIsIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryApproximation.MemIntOEOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,10 +60,6 @@ theorem MS_adjugate {M : Matrix n n (E ⊗[F] v.adicCompletion F)} (hM : MS E v 
   rw [← map_toS hM, ← RingHom.map_adjugate]
   exact ((toS hM).adjugate i j).2
 
-theorem det_mem {M : Matrix n n (E ⊗[F] v.adicCompletion F)} (hM : MS E v M) : M.det ∈ Sv E v := by
-  rw [← map_toS hM, ← RingHom.map_det]
-  exact (toS hM).det.2
-
 private lemma dv_mem_Sv' (d : 𝓞 F) : dv E v d ∈ Sv E v := by
   apply Subring.subset_closure
   left
@@ -77,13 +77,13 @@ theorem det_one_add (π : 𝓞 F) {A : Matrix n n (E ⊗[F] v.adicCompletion F)}
     ext i j
     simp [hp0]
   have hmap : (Ideal.Quotient.mk I).mapMatrix (1 + p • B) = 1 := by
-    rw [map_add, map_one, h0, add_zero]
+    rw [map_add (f := _), map_one, h0, add_zero]
   have hdet : Ideal.Quotient.mk I ((1 + p • B).det - 1) = 0 := by
     rw [map_sub, RingHom.map_det, hmap, Matrix.det_one, map_one, sub_self]
   obtain ⟨t, ht⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq_zero_iff_mem.1 hdet)
   refine ⟨(t : E ⊗[F] v.adicCompletion F), t.2, ?_⟩
   have h2 : (Sv E v).subtype.mapMatrix (1 + p • B) = 1 + dv E v π • A := by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     congr 1
   have h4 : (1 + p • B).det = 1 + p * t := by
     rw [mul_comm, ht]

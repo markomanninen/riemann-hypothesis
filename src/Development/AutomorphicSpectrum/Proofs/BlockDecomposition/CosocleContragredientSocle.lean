@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosocleOfContragredientSocle
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleOfIsAtom
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.GKLocal
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CosocleOfContragredientSocle
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleOfIsAtom
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,7 @@ end General
 theorem isSocle_contra_of_isCosocle : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], GlobalTheory.Published.IrreducibleAdmissibleGL → ∀ {N : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (GL (Fin N) k) W) (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → HasFiniteLength π → IsCosocle σ π → IsSocle (contra σ) (contra π) := by
   intro k _ _ _ _ hA N V W _ _ _ _ σ π hπ _ hc
   obtain ⟨hi, f, hf, hu⟩ := hc
-  have hG := GlobalTheory.SqIntUnit.compactOpen_basis k N
+  have hG := GlobalTheory.SqIntUnit.compactOpen_basis (k := k) N
   have hσ : IsSmooth σ := (IsSubquotient.of_surjective f hf).isSmooth hπ
   have hci : (contra σ).IsIrreducible := GlobalTheory.ContraRefl.contra_isIrreducible hG (hA k N _ _ hσ hi) hi
   refine ⟨hci, pullForm f, pullForm_injective f hf, fun S hS => ?_⟩

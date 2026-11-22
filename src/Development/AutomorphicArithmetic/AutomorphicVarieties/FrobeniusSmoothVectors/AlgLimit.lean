@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgFamily
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgGlue
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgFamily
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgGlue
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -33,7 +37,7 @@ theorem UpperTheory.V.Fr.alg_limit :
         exact ⟨c * c', fun N => by simp only [map_mul, hc, hc']⟩
       add_mem' := by
         rintro a b ⟨c, hc⟩ ⟨c', hc'⟩
-        exact ⟨c + c', fun N => by simp only [map_add, hc, hc']⟩
+        exact ⟨c + c', fun N => by simp only [map_add (f := _), hc, hc']⟩
       algebraMap_mem' := fun a => ⟨algebraMap O C a, fun N => by
         rw [AlgHom.commutes, ← IsScalarTower.algebraMap_apply]
         rfl⟩ }
@@ -44,7 +48,7 @@ theorem UpperTheory.V.Fr.alg_limit :
         exact ⟨c * c', fun N => by simp only [map_mul, hc, hc']⟩
       add_mem' := by
         rintro a b ⟨c, hc⟩ ⟨c', hc'⟩
-        exact ⟨c + c', fun N => by simp only [map_add, hc, hc']⟩
+        exact ⟨c + c', fun N => by simp only [map_add (f := _), hc, hc']⟩
       algebraMap_mem' := fun a => ⟨algebraMap O D a, fun N => by
         rw [AlgHom.commutes]
         rfl⟩ }

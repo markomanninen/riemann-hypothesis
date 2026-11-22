@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaK
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdN
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaK
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdN
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D)
 
 section Frame
 
-variable (p : PlF D) {T' : D.host.E} (G : LFlag (VS D) D.R.rS T')
+variable (p : PlF D) {T' : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T')
 
 theorem locF'_eq (b : Fin (D.R.rS + 1)) : locF' Zd p G b = sF' Zd p b • baseChange₂ D p (frame G b) := rfl
 
@@ -71,19 +75,15 @@ theorem baseChangeAt_perp' {m : (VS D).V} (hm : m ∈ orth (VS D) (Xsp G)) :
 
 end Frame
 
-theorem z_memG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (𝓞 D.host.E) (VS D).V}
-    (hΛ : Submodule.IsLattice D.host.E Λ) (h : ∀ p, (locH Zd p).Prim (lattice₂ D Zd.M p Λ) (locF' Zd p G)) :
-    G.fl.z ∈ Λ :=
-  mem_of_bcP Zd hΛ fun p => by rw [← locF'_last Zd p G]; exact (h p).1 _
-
-theorem coef_intG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (𝓞 D.host.E) (VS D).V}
+theorem coef_intG {T' : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T') {Λ : Submodule (𝓞 D.host.E) (VS D).V}
     (hprim : ∀ p, (locH Zd p).Prim (lattice₂ D Zd.M p Λ) (locF' Zd p G)) (c : Fin (D.R.rS + 1) → D.host.E)
     (hc : ∑ a, c a • frame G a ∈ Λ) : IsIntegral ℤ (c (Fin.last D.R.rS)) := by
   refine int_of_loc Zd fun p => ?_
   set m := ∑ a, c a • frame G a with hm
   have hbm : baseChange₂ D p m = ∑ a, ((D.s.atP p).ιE (c a) *
       ((((isUnit_sF' Zd p a).unit⁻¹ : ((D.s.atP p).Ep)ˣ)) : (D.s.atP p).Ep)) • locF' Zd p G a := by
-    rw [hm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [Formalism.L2.SG.Pf.LocalDenominators.baseChange_smul₂, bcP_frameG Zd p G, smul_smul]
   have hspan : baseChange₂ D p m ∈ Submodule.span (D.s.atP p).Ep (Set.range (locF' Zd p G)) := by
@@ -111,7 +111,7 @@ theorem coef_intG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (
   rw [← h3]
   exact (o (Fin.last D.R.rS)).2
 
-theorem exists_yG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (𝓞 D.host.E) (VS D).V}
+theorem exists_yG {T' : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T') {Λ : Submodule (𝓞 D.host.E) (VS D).V}
     (hΛ : Submodule.IsLattice D.host.E Λ) (hSD : BwdNA.SD (VS D) Λ)
     (hprim : ∀ p, (locH Zd p).Prim (lattice₂ D Zd.M p Λ) (locF' Zd p G)) (hzX : G.fl.z ∉ Xsp G) :
     ∃ y ∈ Λ, y ∈ orth (VS D) (Xsp G) ∧ (VS D).hT y G.fl.z = 1 := by
@@ -133,7 +133,8 @@ theorem exists_yG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (
   have hint : ∀ m ∈ Λ, m ∈ U → IsIntegral ℤ ((VS D).hT m v) := fun m hm hmU => by
     obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun D.host.E).1 hmU
     have hρm : ρ m = c (Fin.last D.R.rS) := by
-      rw [← hc, map_sum, Fin.sum_univ_castSucc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum, Fin.sum_univ_castSucc]
       simp only [map_smul, smul_eq_mul, hρe, mul_zero, Finset.sum_const_zero, zero_add, hρl, mul_one]
     rw [BwdNA.hsw (VS D) v m, hv, hρm]
     exact BwdNA.isInt_star (coef_intG Zd G hprim c (by rw [hc]; exact hm))
@@ -149,7 +150,7 @@ theorem exists_yG {T' : D.host.E} (G : LFlag (VS D) D.R.rS T') {Λ : Submodule (
       obtain ⟨i, rfl⟩ := hx
       rw [BwdNA.hsw (VS D) w (G.fl.e i), ← frame_csG, hw, hρe, star_zero]
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
     | smul c x _ hx => rw [BwdNA.hT_smulL, hx, mul_zero]
   · rw [← frame_lastG, hw, hρl]
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.InertiaQuadraticRamification.InertiaGenAlt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmSubfieldsCompositumClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ private theorem exists_algEquiv_map_eq_conj_of_exists_conj {F Ω : Type} [Field 
       map_one' := inj (by rw [hc0, map_one, map_one])
       map_mul' := fun a b => inj (by rw [hc0, map_mul, map_mul, map_mul, hc0, hc0])
       map_zero' := inj (by rw [hc0, map_zero, map_zero])
-      map_add' := fun a b => inj (by rw [hc0, map_add, map_add, map_add, hc0, hc0])
+      map_add' := fun a b => inj (by rw [hc0, map_add (f := _), map_add (f := _), map_add (f := _), hc0, hc0])
       commutes' := fun a => inj (by rw [hc0, hF]) }
   exact ⟨AlgEquiv.ofBijective cf (Algebra.IsAlgebraic.algHom_bijective cf), fun x => hc0 x⟩
 

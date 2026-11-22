@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TraceDualLocal.IsIntegralNatCast
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TraceOfKer
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.T2SpaceOfNonarchimedeanLocalField
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TraceDualLocal.IsIntegralNatCast
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.TraceOfKer
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.T2SpaceOfNonarchimedeanLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem main {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.Prime] {
     have hc0 : ∀ j, BD.repr γ j = 0 := by
       intro j
       have h := hγ j
-      rw [← hexp, Finset.sum_mul, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hexp, Finset.sum_mul, map_sum] at h
       simpa only [smul_mul_assoc, map_smul, hBD, htb, smul_eq_mul, mul_ite, mul_one, mul_zero,
         Finset.sum_ite_eq, Finset.mem_univ, if_true] using h
     rw [← hexp]
@@ -53,7 +58,8 @@ theorem main {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.Prime] {
       rw [BA_apply, LinearMap.comp_apply, LinearMap.mulLeft_apply]
       have htb' : ∀ i, Algebra.trace ℚ_[ℓ] (ℚ_[ℓ] ⊗[ℚ] K) ((1 ⊗ₜ bd i) * (1 ⊗ₜ integralBasis K j)) =
           if j = i then 1 else 0 := fun i => htb i j
-      simp only [β, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, htb', smul_eq_mul, mul_ite, mul_one,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [β, Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, htb', smul_eq_mul, mul_ite, mul_one,
         mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
       rfl
     intro x
@@ -126,7 +132,8 @@ theorem main {K : Type} [Field K] [NumberField K] {ℓ : ℕ} [Fact ℓ.Prime] {
   have e : Algebra.trace ℚ_[ℓ] (ℚ_[ℓ] ⊗[ℚ] K) (σ c * (1 ⊗ₜ t)) =
       ∑ i, (BA K ℓ).repr (σ c) i * algebraMap ℚ ℚ_[ℓ] (Algebra.trace ℚ K (integralBasis K i * t)) := by
     conv_lhs => rw [← (BA K ℓ).sum_repr (σ c)]
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, BA_apply, Algebra.TensorProduct.tmul_mul_tmul, one_mul, trace_one_tmul,
       smul_eq_mul]

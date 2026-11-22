@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+
+@[expose] public section
 
 open GlobalTheory GlobalTheory.LogDR
 
@@ -104,7 +108,7 @@ private theorem exists_inclusion_mul_eq_mul_inclusion_of_normal (p : ℕ) [Fact 
     intro P
     induction P using Polynomial.induction_on with
     | C a => simp [φ, ev, hfst]
-    | add P Q hP hQ => simp only [map_add, fst_add, hP, hQ]
+    | add P Q hP hQ => simp only [map_add (f := _), fst_add, hP, hQ]
     | monomial n a _ =>
       simp [φ, ev, hfst, fst_pow]
   have hpow : (inl x + inr v : TrivSqZeroExt K K) ^ p = inl (x ^ p) := by
@@ -131,7 +135,7 @@ private theorem exists_inclusion_mul_eq_mul_inclusion_of_normal (p : ℕ) [Fact 
     by_contra h
     obtain ⟨a, b, hab⟩ := (hirr.coprime_iff_not_dvd).2 h
     have := congrArg ev hab
-    simp [map_add, map_mul, hevm, hP] at this
+    simp [map_add (f := _), map_mul, hevm, hP] at this
   refine ⟨φ.range, ?_, ?_, ?_, ?_⟩
   · rintro _ ⟨P, rfl⟩ h
     obtain ⟨Q, rfl⟩ := hdvd P (by rw [← hfstφ]; exact h)
@@ -143,7 +147,7 @@ private theorem exists_inclusion_mul_eq_mul_inclusion_of_normal (p : ℕ) [Fact 
     obtain ⟨a, b, hab⟩ := (hirr.coprime_iff_not_dvd).2 hnd
     refine ⟨φ b, ⟨b, rfl⟩, ?_⟩
     have := congrArg φ hab
-    rw [map_add, map_mul, map_mul, hφm, mul_zero, zero_add, map_one] at this
+    rw [map_add (f := _), map_mul, map_mul, hφm, mul_zero, zero_add, map_one] at this
     rw [mul_comm]; exact this
   · intro a
     exact ⟨Polynomial.C a, by simp [φ]⟩

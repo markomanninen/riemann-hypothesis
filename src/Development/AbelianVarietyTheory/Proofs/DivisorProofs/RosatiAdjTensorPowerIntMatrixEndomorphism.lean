@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomOfMulComp
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RosatiAdjOfPoints
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsLocalRingQuotientPow
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullGenLBIsGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomOfMulComp
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RosatiAdjOfPoints
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsLocalRingQuotientPow
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullGenLBIsGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -90,7 +95,8 @@ theorem formEq_of_eq {K K' : Type} [Fintype K] [Fintype K'] {φ : K → (Y ⟶ X
     FormEq φ ε φ' ε' := by
   intro U _ h
   have := congrArg (FreeAbelianGroup.lift (fun m => Additive.ofMul (h m))) H
-  simp only [map_sum, map_zsmul, FreeAbelianGroup.lift_apply_of] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, FreeAbelianGroup.lift_apply_of] at this
   apply Additive.ofMul.injective
   simpa only [ofMul_prod, ofMul_zpow] using this
 
@@ -298,7 +304,8 @@ variable {S : Scheme.{0}} {A A' : Over S} [GrpObj A] [IsCommMonObj A] [GrpObj A'
 
 theorem mk_qf (H : AddSubgroup (FreeAbelianGroup (T.left ⟶ A.left))) (W : Matrix (Fin r) (Fin r) ℤ) (u : T ⟶ A') :
     QuotientAddGroup.mk' H (qf pr W u) = ∑ i, ∑ j, W i j • ell H (u ≫ pr i) (u ≫ pr j) := by
-  simp only [qf, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qf, map_sum, map_zsmul]
   rfl
 
 theorem total_mem (hp : ∀ i, IsMonHom (pr i)) (H : AddSubgroup (FreeAbelianGroup (T.left ⟶ A.left)))
@@ -311,7 +318,8 @@ theorem total_mem (hp : ∀ i, IsMonHom (pr i)) (H : AddSubgroup (FreeAbelianGro
   refine (QuotientAddGroup.eq_zero_iff _).1 ?_
   change QuotientAddGroup.mk' H _ = 0
   rw [Fintype.sum_prod_type]
-  simp only [mul_smul, ← Finset.smul_sum, flat_eq, map_sum, map_zsmul, Fin.sum_univ_six]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mul_smul, ← Finset.smul_sum, flat_eq, map_sum, map_zsmul, Fin.sum_univ_six]
   have v0 : (![(x ≫ f) * y, x ≫ f, y, x * (y ≫ g), x, y ≫ g] : Fin 6 → (T ⟶ A')) 0 = (x ≫ f) * y := rfl
   have v1 : (![(x ≫ f) * y, x ≫ f, y, x * (y ≫ g), x, y ≫ g] : Fin 6 → (T ⟶ A')) 1 = x ≫ f := rfl
   have v2 : (![(x ≫ f) * y, x ≫ f, y, x * (y ≫ g), x, y ≫ g] : Fin 6 → (T ⟶ A')) 2 = y := rfl
@@ -321,7 +329,7 @@ theorem total_mem (hp : ∀ i, IsMonHom (pr i)) (H : AddSubgroup (FreeAbelianGro
   rw [v0, v1, v2, v3, v4, v5, show rosatiε 0 = 1 from rfl, show rosatiε 1 = -1 from rfl,
     show rosatiε 2 = -1 from rfl, show rosatiε 3 = -1 from rfl, show rosatiε 4 = 1 from rfl,
     show rosatiε 5 = 1 from rfl]
-  simp only [map_add, map_zsmul, one_smul, neg_smul, map_neg, mk_qf]
+  simp only [map_add (f := _), map_zsmul, one_smul, neg_smul, map_neg, mk_qf]
   have hm : ∀ (a b : T ⟶ A') (i : Fin r), (a * b) ≫ pr i = (a ≫ pr i) * (b ≫ pr i) := fun a b i => by
     have := hp i
     exact MonObj.mul_comp a b (pr i)

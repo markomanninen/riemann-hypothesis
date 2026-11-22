@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
-import Formalism.PolynomialDimension.MultinomialKLog
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.FamilyFourthBound
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdLowerBounds
+public import Formalism.PolynomialDimension.MultinomialKLog
+
+@[expose] public section
 
 noncomputable section
 

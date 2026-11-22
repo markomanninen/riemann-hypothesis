@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.Transference
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.Transference
+
+@[expose] public section
 
 open Module
 

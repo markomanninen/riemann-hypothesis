@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ContinuousAevalMvPolynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ContinuousAevalMvPolynomial
+
+@[expose] public section
 
 namespace GlobalTheory.AffinePoints
 
@@ -17,7 +21,7 @@ theorem analyticAt_aevalTower {σ ι : Type*} [Fintype σ] [Fintype ι]
     exact AnalyticAt.aeval_mvPolynomial (A := 𝕜) (f := fun w : (σ → 𝕜) × (ι → 𝕜) => w.1)
       (fun i => ((ContinuousLinearMap.proj (R := 𝕜) (φ := fun _ : σ => 𝕜) i).comp
         (ContinuousLinearMap.fst 𝕜 (σ → 𝕜) (ι → 𝕜))).analyticAt w) a
-  | add P Q hP hQ => simp only [map_add]; exact hP.add hQ
+  | add P Q hP hQ => simp only [map_add (f := _)]; exact hP.add hQ
   | mul_X P i hP =>
     simp only [map_mul, aevalTower_X]
     exact hP.mul (((ContinuousLinearMap.proj (R := 𝕜) (φ := fun _ : ι => 𝕜) i).comp
@@ -31,7 +35,7 @@ theorem hasDerivAt_aevalTower_line {R ι : Type*} [CommRing R] [Algebra 𝕜 R] 
   induction q using MvPolynomial.induction_on with
   | C a => simpa using hasDerivAt_const (0 : 𝕜) (φ a)
   | add P Q hP hQ =>
-    simp only [map_add, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib]
     exact hP.add hQ
   | mul_X P i hP =>
     have hX : HasDerivAt (fun t : 𝕜 => y i + t * v i) (v i) 0 := by
@@ -107,7 +111,7 @@ theorem exists_chart_of_etale (g : MvPolynomial (Fin d) 𝕜 →ₐ[𝕜] A) (hg
     intro q
     refine MvPolynomial.algHom_ext' ?_ ?_
     · ext i
-      simp [ev, j, π, RingHom.algebraMap_toAlgebra]
+      simp [ev, j, π, coords, RingHom.algebraMap_toAlgebra]
     · intro i; simp [ev, j, π]
   have hker : ∀ a, π a = 0 ↔ a ∈ Ideal.span (range P.relation) := by
     intro a
@@ -122,7 +126,7 @@ theorem exists_chart_of_etale (g : MvPolynomial (Fin d) 𝕜 →ₐ[𝕜] A) (hg
       exact this ((hker a).1 ha)
     refine ⟨q, ?_, hq⟩
     ext i
-    · simpa [ev, π, j, RingHom.algebraMap_toAlgebra] using DFunLike.congr_fun hq (C (X i))
+    · simpa [ev, π, j, coords, RingHom.algebraMap_toAlgebra] using DFunLike.congr_fun hq (C (X i))
     · simpa [ev, π, j] using DFunLike.congr_fun hq (X i)
   have hjinj : Function.Injective j := by
     intro q q' h
@@ -142,7 +146,7 @@ theorem exists_chart_of_etale (g : MvPolynomial (Fin d) 𝕜 →ₐ[𝕜] A) (hg
   have hΨan : AnalyticAt 𝕜 Ψ (j p) :=
     analyticAt_fst.prod (analyticAt_pi_iff.2 fun r => analyticAt_aevalTower _ _)
   have hinj : Function.Injective (fderiv 𝕜 Ψ (j p)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨u, v⟩ huv
     have hline : HasDerivAt (fun t : 𝕜 => Ψ (j p + t • (u, v))) 0 0 := by
       have h1 : HasDerivAt (fun t : 𝕜 => j p + t • (u, v)) (u, v) 0 := by
@@ -229,10 +233,5 @@ theorem exists_chart_of_etale (g : MvPolynomial (Fin d) 𝕜 →ₐ[𝕜] A) (hg
   · have := Φ.right_inv hz
     rw [← (hs z hz).1, hΦ, hΨj] at this
     exact congrArg Prod.fst this
-
-theorem isLocalHomeomorph_coords_of_etale (g : MvPolynomial (Fin d) 𝕜 →ₐ[𝕜] A) (hg : g.Etale) :
-    IsLocalHomeomorph (coords g : (A →ₐ[𝕜] 𝕜) → Fin d → 𝕜) := fun p => by
-  obtain ⟨e, h1, h2, -⟩ := exists_chart_of_etale g hg p
-  exact ⟨e, h1, h2.symm⟩
 
 end GlobalTheory.AffinePoints

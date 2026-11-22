@@ -1,9 +1,13 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PNoLogSt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PSliceUA
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.ExpChar
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSlice
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PNoLogSt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PSliceUA
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.ExpChar
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSlice
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.NormalisedExistence.ExistsNormed
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.DiagonalInfinityValues.InfGLValDiag
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.UnitaryBC Globa
 
 namespace PositivityTheory.Rg.BcB.SpectralAccumulation.Cz.SliceUniqueness
 
-open LieSumUnipotentSlice PositivityTheory.Rg.Rs.SliceClasses in
 
+open LieSumUnipotentSlice PositivityTheory.Rg.Rs.SliceClasses in
 theorem sliceU_of_noLog2 (hNL : NoLog) : SliceU := by
   intro E _ _ _ r s hr hs U hU hFG hSI hReg φ hφU c hc
   have hD := dict_holds
@@ -69,12 +73,12 @@ theorem sliceU_of_noLog2 (hNL : NoLog) : SliceU := by
   let W : Submodule ℂ (Sm E (r + s)) :=
     { carrier := {ψ | ψ ∈ U ∧ ∀ (t : ℝ) g, (T ψ).1 (aT E (r + s) r t * g) = Complex.exp (c * t) * (T ψ).1 g}
       add_mem' := fun {φ ψ} hφ hψ => ⟨U.add_mem hφ.1 hψ.1, fun t g => by
-        simp only [map_add, Submodule.coe_add, Pi.add_apply, hφ.2 t g, hψ.2 t g, mul_add]⟩
+        simp only [map_add (f := _), Submodule.coe_add, Pi.add_apply, hφ.2 t g, hψ.2 t g, mul_add]⟩
       zero_mem' := ⟨U.zero_mem, fun t g => by simp⟩
       smul_mem' := fun b φ hφ => ⟨U.smul_mem b hφ.1, fun t g => by
         simp only [map_smul, Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, hφ.2 t g]
         ring⟩ }
-  have hWst : IsStable W := by
+  have hWst : _root_.GlobalTheory.CuspRep.IsStable W := by
     rintro o ψ ⟨hψ, he⟩
     refine ⟨hU.1 o ψ hψ, fun t g => ?_⟩
     have e1 : ltS (aT E (r + s) r t) (T ψ) = Complex.exp (c * t) • T ψ := Subtype.ext (funext fun g => he t g)

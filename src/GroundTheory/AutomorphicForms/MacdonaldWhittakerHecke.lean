@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldWhittaker
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldWhittaker
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ open scoped ValuativeRel Pointwise
 variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   {n : ℕ}
 
-local notation "π" => (GLnLocal.uniformizer F : F)
-
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
   {μ : Measure (GL (Fin n) F)} [μ.IsHaarMeasure]
 
@@ -24,7 +26,7 @@ theorem integrable_hecke_mul {f : GL (Fin n) F → ℂ}
     Integrable (fun x => (h : HeckeAlgebra μ) x * f (g * x)) μ := by
   refine Continuous.integrable_of_hasCompactSupport ?_ (h : HeckeAlgebra μ).mem.2.mul_right
   exact (h : HeckeAlgebra μ).mem.1.continuous.mul
-    ((continuous_of_mul_right_invariant hf).comp (continuous_mul_left g))
+    ((continuous_of_mul_right_invariant hf).comp (continuous_const_mul g))
 
 theorem integral_one_mul {f : GL (Fin n) F → ℂ}
     (hf : ∀ g, ∀ k ∈ integralGL F n, f (g * k) = f g) (g : GL (Fin n) F) :
@@ -97,8 +99,8 @@ theorem integral_mul_mul_eigen (z : Fin n → ℂˣ) {f : GL (Fin n) F → ℂ}
   rw [integral_congr_ae (Filter.Eventually.of_forall hinner), integral_mul_const, hh₁ g]
   ring
 
-variable (μ) in
 
+variable (μ) in
 def eigenSubalgebra (z : Fin n → ℂˣ) (f : GL (Fin n) F → ℂ)
     (hf : ∀ g, ∀ k ∈ integralGL F n, f (g * k) = f g) :
     Subalgebra ℂ (SphericalHecke μ (F := F) (n := n)) where
@@ -121,8 +123,9 @@ def eigenSubalgebra (z : Fin n → ℂˣ) (f : GL (Fin n) F → ℂ)
     rw [integral_const_mul, integral_one_mul hf g]
 
 omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
-theorem polyEmb_esymm (k : ℕ) : polyEmb n (MvPolynomial.esymm (Fin n) ℂ k) = esymmL n k := by
-  rw [MvPolynomial.esymm, map_sum, esymmL]
+theorem polyEmb_esymm (k : ℕ) : polyEmb (n := n) (MvPolynomial.esymm (Fin n) ℂ k) = esymmL n k := by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.esymm, map_sum, esymmL]
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [map_prod]
   simp only [polyEmb_X, monomial]
@@ -147,8 +150,8 @@ theorem sum_rho_coeff : ∑ i : Fin n, ((n : ℤ) - 1 - 2 * (i : ℕ)) = 0 := by
   simp only [nsmul_eq_mul]
   linarith
 
-omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 
+omit [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)] in
 theorem halfModulus_const (c : ℤ) : halfModulus F (fun _ : Fin n => c) = 1 := by
   rw [halfModulus_eq, rhoPair]
   simp only [mul_comm _ c, ← Finset.mul_sum, sum_rho_coeff, mul_zero, neg_zero, zpow_zero]
@@ -174,7 +177,7 @@ theorem eigenSubalgebra_eq_top (z : Fin n → ℂˣ) {f : GL (Fin n) F → ℂ}
   have hK : (μ.real (integralGL F n : Set (GL (Fin n) F)) : ℂ) ≠ 0 :=
     Complex.ofReal_ne_zero.2
       (measureReal_compactOpen_pos μ (isCompact_integralGL F n) (isOpen_integralGL F n)).ne'
-  have h1 : ∀ k, polyEmb n (MvPolynomial.esymm (Fin n) ℂ k) ∈ A := by
+  have h1 : ∀ k, polyEmb (n := n) (MvPolynomial.esymm (Fin n) ℂ k) ∈ A := by
     intro k
     rw [polyEmb_esymm]
     by_cases hk : k ≤ n
@@ -195,88 +198,9 @@ theorem eigenSubalgebra_eq_top (z : Fin n → ℂˣ) {f : GL (Fin n) F → ℂ}
   obtain ⟨e, he, hSe⟩ := Subalgebra.mem_map.1 (hsym (satakeTransform_mem_symmetric h))
   rwa [← satakeTransform_injective hSe]
 
-theorem antitone_add_const_iff (l : Fin n → ℤ) (c : ℤ) :
-    Antitone (l + fun _ => c) ↔ Antitone l := by
-  constructor
-  · intro h i j hij
-    have := h hij
-    simp only [Pi.add_apply] at this
-    linarith
-  · intro h i j hij
-    simp only [Pi.add_apply]
-    linarith [h hij]
-
-theorem schur_add_const (l : Fin n → ℤ) (c : ℤ) :
-    schur (l + fun _ => c) = monomial (fun _ : Fin n => c) * schur l := by
-  rw [schur, schur, show l + (fun _ => c) + staircase n = (fun _ => c) + (l + staircase n) by abel,
-    monomial_add, altQuot_mul_of_symm (permAct_monomial_const c)]
-
-theorem sphericalWhittaker_mul_const {ψ₀ : AddChar F ℂ} (hψ₀ : ∀ x ∈ 𝒪[F], ψ₀ x = 1)
-    (z : Fin n → ℂˣ) (g : GL (Fin n) F) (c : ℤ) :
-    sphericalWhittaker ψ₀ z (g * torusPow F n (fun _ => c)) =
-      monomialChar (fun _ : Fin n => c) z * sphericalWhittaker ψ₀ z g := by
-  have hg := eq_iwasawa g
-  have hu := iwasawaUnip_mem g
-  have hk := iwasawaInt_mem g
-  set u := iwasawaUnip g
-  set e := iwasawaExponent F n g
-  set k := iwasawaInt g
-  have : g * torusPow F n (fun _ => c) = u * torusPow F n (e + fun _ => c) * k := by
-    rw [hg, torusPow_add, mul_assoc, ← torusPow_const_comm c k]
-    group
-  rw [this, sphericalWhittaker_apply hψ₀ z hu hk, hg, sphericalWhittaker_apply hψ₀ z hu hk]
-  by_cases he : Antitone e
-  · rw [if_pos ((antitone_add_const_iff e c).2 he), if_pos he, halfModulus_add, halfModulus_const,
-      schur_add_const, map_mul, monomial, evalAt_single, one_mul]
-    ring
-  · rw [if_neg (fun h => he ((antitone_add_const_iff e c).1 h)), if_neg he, mul_zero]
-
-theorem integral_centralHecke_mul_sphericalWhittaker {ψ₀ : AddChar F ℂ}
-    (hψ₀ : ∀ x ∈ 𝒪[F], ψ₀ x = 1) (z : Fin n → ℂˣ) (g : GL (Fin n) F) :
-    ∫ x, (centralHecke μ : HeckeAlgebra μ) x * sphericalWhittaker ψ₀ z (g * x) ∂μ =
-      evalAt z (satakeTransform μ (centralHecke μ)) * sphericalWhittaker ψ₀ z g := by
-  set g₀ := torusPow F n (fun _ : Fin n => (-1 : ℤ))
-  have e := integral_mul_left_eq_self (μ := μ)
-    (fun x => (centralHecke μ : HeckeAlgebra μ) x * sphericalWhittaker ψ₀ z (g * x)) g₀
-  rw [← e]
-  have hpt : (fun y => (centralHecke μ : HeckeAlgebra μ) (g₀ * y) *
-      sphericalWhittaker ψ₀ z (g * (g₀ * y))) = (integralGL F n : Set (GL (Fin n) F)).indicator
-        (fun _ => sphericalWhittaker ψ₀ z (g * g₀)) := by
-    funext y
-    rw [centralHecke_apply]
-    by_cases hy : y ∈ integralGL F n
-    · have hm : g₀ * y ∈ centralSet F n := by
-        rw [mem_centralSet, inv_mul_cancel_left]
-        exact hy
-      rw [Set.indicator_of_mem hm, Set.indicator_of_mem (show y ∈ (integralGL F n : Set (GL (Fin n) F))
-        from hy), one_mul, ← mul_assoc, sphericalWhittaker_mul_right hψ₀ z _ hy]
-    · have hm : g₀ * y ∉ centralSet F n := by
-        rw [mem_centralSet, inv_mul_cancel_left]
-        exact hy
-      rw [Set.indicator_of_notMem hm, Set.indicator_of_notMem (show y ∉ (integralGL F n :
-        Set (GL (Fin n) F)) from hy), zero_mul]
-  rw [hpt, integral_indicator (isOpen_integralGL F n).measurableSet, setIntegral_const,
-    Complex.real_smul, sphericalWhittaker_mul_const hψ₀, satakeTransform_centralHecke, map_smul,
-    monomial, evalAt_single, one_mul, smul_eq_mul]
-  ring
-
-theorem integral_mul_sphericalWhittaker {ψ₀ : AddChar F ℂ} (hψ₀ : ∀ x ∈ 𝒪[F], ψ₀ x = 1)
-    (hψ₁ : ∃ x : F, π * x ∈ 𝒪[F] ∧ ψ₀ x ≠ 1) (z : Fin n → ℂˣ)
-    (h : SphericalHecke μ (F := F) (n := n)) (g : GL (Fin n) F) :
-    ∫ x, (h : HeckeAlgebra μ) x * sphericalWhittaker ψ₀ z (g * x) ∂μ =
-      evalAt z (satakeTransform μ h) * sphericalWhittaker ψ₀ z g := by
-  have htop := eigenSubalgebra_eq_top (μ := μ) z
-    (fun g k hk => sphericalWhittaker_mul_right hψ₀ z g hk)
-    (fun r hr g => integral_minusculeHecke_mul_sphericalWhittaker hψ₀ hψ₁ z hr g)
-    (fun g => integral_centralHecke_mul_sphericalWhittaker hψ₀ z g)
-  have hmem : h ∈ eigenSubalgebra μ z (sphericalWhittaker ψ₀ z)
-      (fun g k hk => sphericalWhittaker_mul_right hψ₀ z g hk) := by
-    rw [htop]
-    exact Algebra.mem_top
-  exact hmem g
-
 theorem eq_smul_sphericalWhittaker {ψ₀ : AddChar F ℂ} (hψ₀ : ∀ x ∈ 𝒪[F], ψ₀ x = 1)
-    (hψ₁ : ∃ x : F, π * x ∈ 𝒪[F] ∧ ψ₀ x ≠ 1) (z : Fin n → ℂˣ) {W : GL (Fin n) F → ℂ}
+    (hψ₁ : ∃ x : F, (GLnLocal.uniformizer F : F) * x ∈ 𝒪[F] ∧ ψ₀ x ≠ 1)
+    (z : Fin n → ℂˣ) {W : GL (Fin n) F → ℂ}
     (hWN : ∀ u ∈ unipotent F n, ∀ g, W (u * g) = Whittaker.psiN ψ₀ u * W g)
     (hWK : ∀ g, ∀ k ∈ integralGL F n, W (g * k) = W g)
     (heig : ∀ (h : SphericalHecke μ (F := F) (n := n)) (g : GL (Fin n) F),

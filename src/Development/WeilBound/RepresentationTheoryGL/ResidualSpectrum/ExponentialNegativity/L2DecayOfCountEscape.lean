@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Reduction
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsSiegel
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Reduction
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsSiegel
+
+@[expose] public section
 
 noncomputable section
 

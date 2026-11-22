@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafExciseCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafExciseCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC Pretriangulated

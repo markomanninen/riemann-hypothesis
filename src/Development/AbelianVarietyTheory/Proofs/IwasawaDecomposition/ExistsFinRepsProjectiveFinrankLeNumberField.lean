@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -49,15 +54,19 @@ noncomputable def consLin {r : ℕ} (d : ClassGroup R) (c : Fin r → ClassGroup
 
 theorem exists_equiv_model : ∀ (r : ℕ) (X : Type) [AddCommGroup X] [Module R X] [Module.Finite R X]
     [Module.Projective R X], Module.finrank R X = r →
-    ∃ c : Fin r → ClassGroup R, Nonempty (X ≃ₗ[R] Model c)
-  | 0, X, _, _, _, _, h => by
+    ∃ c : Fin r → ClassGroup R, Nonempty (X ≃ₗ[R] Model c) := by
+  intro r
+  induction r with
+  | zero =>
+    intro X _ _ _ _ h
     have : Subsingleton X := by
       by_contra hX
       rw [not_subsingleton_iff_nontrivial] at hX
       have := (Module.finrank_pos_iff (R := R) (M := X)).2 hX
       omega
     exact ⟨Fin.elim0, ⟨LinearEquiv.ofSubsingleton _ _⟩⟩
-  | r + 1, X, _, _, _, _, h => by
+  | succ r ih =>
+    intro X _ _ _ _ h
     have hX : Nontrivial X := (Module.finrank_pos_iff (R := R) (M := X)).1 (by omega)
     obtain ⟨x, hx⟩ := exists_ne (0 : X)
     obtain ⟨f, hf⟩ := Module.Projective.exists_dual_ne_zero R hx
@@ -94,7 +103,7 @@ theorem exists_equiv_model : ∀ (r : ℕ) (X : Type) [AddCommGroup X] [Module R
       rw [Cardinal.toNat_add (Module.rank_lt_aleph0 R I) (Module.rank_lt_aleph0 R K)] at this
       change Module.finrank R I + Module.finrank R K = Module.finrank R X at this
       omega
-    obtain ⟨c, ⟨eK⟩⟩ := exists_equiv_model r K hK
+    obtain ⟨c, ⟨eK⟩⟩ := ih K hK
     have hmem : I ∈ nonZeroDivisors (Ideal R) := mem_nonZeroDivisors_of_ne_zero hI
     obtain ⟨eI⟩ := nonempty_equiv_of_mk0_eq (I := ⟨I, hmem⟩)
       (J := ⟨rep (ClassGroup.mk0 ⟨I, hmem⟩), rep_mem _⟩) (mk0_rep _).symm
@@ -102,8 +111,8 @@ theorem exists_equiv_model : ∀ (r : ℕ) (X : Type) [AddCommGroup X] [Module R
       ⟨e.trans ((LinearEquiv.prodComm R K I).trans ((eI.prodCongr eK).trans (consLin _ c)))⟩⟩
 
 end ProjModClasses
-open ProjModClasses in
 
+open ProjModClasses in
 theorem exists_fin_reps_projective_finrank_le :
     ∀ (E : Type) [Field E] [NumberField E] (q : ℕ), ∃ (n : ℕ) (R : Fin n → ModuleCat.{0} (𝓞 E)),
     (∀ k, Module.Finite (𝓞 E) (R k) ∧ Module.Projective (𝓞 E) (R k) ∧ Module.finrank (𝓞 E) (R k) ≤ q) ∧

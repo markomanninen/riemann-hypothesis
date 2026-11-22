@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CoordOfHasWeight
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsKernelVector
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.TrivBasicOpenOfTrivFibre
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.VeryAmpleCompactQuasiSeparatedAffineCharts
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ThreeTermComplexOfProjectiveCechModel
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechLBHomologyFiniteOfAffineCover
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProjByBaseChange
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.UnifPreGenericFibreSurjectiveAppTopAndIsIntegral
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CechLBExactAtOfDimLt
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CechComplexAcyclicPrimitiveNontrivialAlgClosedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsInKNeOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CoordOfHasWeight
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsKernelVector
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.TrivBasicOpenOfTrivFibre
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.VeryAmpleCompactQuasiSeparatedAffineCharts
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ThreeTermComplexOfProjectiveCechModel
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechLBHomologyFiniteOfAffineCover
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsProjByBaseChange
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.UnifPreGenericFibreSurjectiveAppTopAndIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CechLBExactAtOfDimLt
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.CechComplexAcyclicPrimitiveNontrivialAlgClosedStatement
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.KernelYoneda
@@ -31,7 +35,8 @@ def gen {a b : ℕ} (D : Matrix (Fin b) (Fin a) A) (k : Fin a) : Coker D :=
 theorem mk_eq_sum {a b : ℕ} (D : Matrix (Fin b) (Fin a) A) (x : Fin a → A) :
     (Submodule.Quotient.mk x : Coker D) = ∑ k, x k • gen D k := by
   conv_lhs => rw [pi_eq_sum_univ' x]
-  rw [← Submodule.mkQ_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Submodule.mkQ_apply, map_sum]
   exact Finset.sum_congr rfl fun k _ => by rw [map_smul]; rfl
 
 theorem sum_gen {a b : ℕ} (D : Matrix (Fin b) (Fin a) A) (j : Fin b) :
@@ -43,14 +48,16 @@ theorem hom_ext {a b : ℕ} (D : Matrix (Fin b) (Fin a) A) {N : Type} [AddCommGr
     {α β : Coker D →ₗ[A] N} (h : ∀ k, α (gen D k) = β (gen D k)) : α = β := by
   refine LinearMap.ext fun x => ?_
   obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ x
-  simp only [mk_eq_sum, map_sum, map_smul, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mk_eq_sum, map_sum, map_smul, h]
 
 theorem exists_hom {a b : ℕ} (D : Matrix (Fin b) (Fin a) A) {N : Type} [AddCommGroup N] [Module A N]
     (n : Fin a → N) (hn : ∀ j, ∑ k, D j k • n k = 0) :
     ∃ α : Coker D →ₗ[A] N, ∀ k, α (gen D k) = n k := by
   refine ⟨Submodule.liftQ _ (Fintype.linearCombination A n) ?_, fun k => ?_⟩
   · rintro _ ⟨y, rfl⟩
-    rw [LinearMap.mem_ker, pi_eq_sum_univ' y, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.mem_ker, pi_eq_sum_univ' y, map_sum, map_sum]
     refine Finset.sum_eq_zero fun j _ => ?_
     rw [map_smul, map_smul]
     have : Fintype.linearCombination A n (D.transpose.mulVecLin (Pi.single j 1)) = 0 := by
@@ -125,7 +132,8 @@ theorem comp_eq_id {a b a' b' : ℕ} (D : Matrix (Fin b) (Fin a) A) (D' : Matrix
   rw [hp] at h₁
   simp only [Function.comp_def, hi] at h₁
   have h₂ := un _ _ _ _ _ ((mulVec_inr_iff D fun k => α (β (gen D k))).2 fun j => by
-    simp only [← map_smul, ← map_sum, sum_gen, map_zero]) ((mulVec_inr_iff D _).2 (sum_gen D)) h₁ hα
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum, sum_gen, map_zero]) ((mulVec_inr_iff D _).2 (sum_gen D)) h₁ hα
   exact hom_ext D fun k => inr_injective (congrFun h₂ k)
 
 theorem nonempty_equiv {a b a' b' : ℕ} (D : Matrix (Fin b) (Fin a) A) (D' : Matrix (Fin b') (Fin a') A)
@@ -149,8 +157,8 @@ theorem nonempty_equiv {a b a' b' : ℕ} (D : Matrix (Fin b) (Fin a) A) (D' : Ma
     (comp_eq_id D' D (fun R _ g w v => Rel R g v w) (fun R S _ _ g h w v => nat R S g h v w)
       (fun R _ g w w' v => un R g v w w') β α hβ hα)⟩
 
-open TensorProduct in
 
+open TensorProduct in
 theorem bijOn_basis {P₀ P₁ : Type} [AddCommGroup P₀] [Module A P₀] [AddCommGroup P₁] [Module A P₁]
     {a b : ℕ} (b₀ : Module.Basis (Fin a) A P₀) (b₁ : Module.Basis (Fin b) A P₁) (d : P₀ →ₗ[A] P₁)
     (R : Type) [CommRing R] [Algebra A R] :
@@ -212,7 +220,8 @@ def Computes (f : X ⟶ Spec (CommRingCat.of A)) (M : LB X) {a b : ℕ} (D : Mat
 theorem rs_loc {R : Type} [CommRing R] {X' : Scheme.{0}} (π : X' ⟶ X) (f' : X' ⟶ Spec (CommRingCat.of R))
     {a : ℕ} {V W : X.Opens} (h : V ≤ W) (u : Fin a → Γ(X, W)) (v : Fin a → R) :
     rs X' (π.preimage_mono h) (loc π f' W u v) = loc π f' V (fun k => rs X h (u k)) v := by
-  rw [loc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [loc, map_sum]
   refine Finset.sum_congr rfl fun k _ => (map_mul _ _ _).trans (congrArg₂ (· * ·) (rs_cst f' _ _) ?_)
   rw [Scheme.Hom.app_eq_appLE, Scheme.Hom.app_eq_appLE]
   exact (GlobalTheory.LB.resG_appLE π _ _ _).trans (GlobalTheory.LB.appLE_resG π _ _ _).symm
@@ -224,7 +233,8 @@ theorem appLE_loc {R S : Type} [CommRing R] [CommRing S] {X' X'' : Scheme.{0}} (
     {a : ℕ} (V : X.Opens) (e : π' ⁻¹ᵁ V ≤ ψ ⁻¹ᵁ π ⁻¹ᵁ V) (u : Fin a → Γ(X, V)) (v : Fin a → R) :
     (ψ.appLE _ _ e).hom (loc π f' V u v) = loc π' f'' V u (h ∘ v) := by
   subst e₁
-  rw [loc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [loc, map_sum]
   refine Finset.sum_congr rfl fun k _ => (map_mul _ _ _).trans (congrArg₂ (· * ·) (appLE_cst e₂ e _) ?_)
   rw [Scheme.Hom.app_eq_appLE, Scheme.Hom.app_eq_appLE]
   exact congrArg (fun q => q.hom (u k)) (Scheme.Hom.appLE_comp_appLE ψ π V _ _ le_rfl e)
@@ -297,8 +307,8 @@ theorem Computes.nonempty_equiv {a b a' b' : ℕ} {D : Matrix (Fin b) (Fin a) A}
     exact congrArg Subtype.val (e.injective ((he ⟨v', hv'⟩ _).1
       fun i => (h₂ i).trans ((h₁ i).symm.trans (h₃ i))).symm)
 
-open PerfOfModel in
 
+open PerfOfModel in
 theorem computes_of_model {κ : Type} [LinearOrder κ] [Fintype κ] {D : κ → X.Opens}
     {K : CochainComplex (ModuleCat.{0} A) ℕ} (φ : K ⟶ cechLB f M D) (hM : M.IsLB) (hc : ⨆ i, D i = ⊤)
     (hD : ∀ I : Finset κ, I.Nonempty → IsAffineOpen (⨅ i ∈ I, D i))
@@ -320,7 +330,8 @@ theorem computes_of_model {κ : Type} [LinearOrder κ] [Fintype κ] {D : κ → 
       termMap M D H.w 0 (∑ k, v.1 k ⊗ₜ[A] (φ.f 0).hom (b₀ k)) := by
     rw [S.apply_symm_apply]
     change termMap M D H.w 0 ((φ.f 0).hom.baseChange R (∑ k, v.1 k ⊗ₜ[A] b₀ k)) = _
-    rw [map_sum ((φ.f 0).hom.baseChange R)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum ((φ.f 0).hom.baseChange R)]
     rfl
   have hle : π ⁻¹ᵁ ((⨅ i ∈ ({p.1} : Finset κ), D i) ⊓ M.U p.2) ≤
       (⨅ i ∈ ({p.1} : Finset κ), π ⁻¹ᵁ D i) ⊓ (M.pull π).U fun _ => p.2 :=

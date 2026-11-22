@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,6 @@ structure IsEtaT (χ : HChar H.E) : Prop where
   inf : χ.HasInf (embPsi H) (fun _ => 1)
 
 def etaAlg (χ : HChar H.E) (v : HeightOneSpectrum (𝓞 H.E)) : ℂ := χ.valTw (1 / 2) v
-
-def IsEtaAlg (χa : HChar H.E) : Prop := ∃ χ : HChar H.E, IsEtaT H χ ∧ χ.IsUnitaryNormOf χa (1 / 2)
 
 def EtaTExists : Prop := ∃ χ : HChar H.E, IsEtaT H χ
 

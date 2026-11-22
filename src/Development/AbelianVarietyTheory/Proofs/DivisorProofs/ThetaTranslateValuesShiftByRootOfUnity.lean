@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WtChar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalLab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInverseNatCast
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WtChar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GalLab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapInverseNatCast
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,30 @@ namespace GlobalTheory.UPoinc.USum
 
 theorem uSame_self {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] {S : ThetaSys o Ω} (ρ : S.Real) :
     USame ρ ρ (fun b => b) (RingHom.id Ω) := by
-  let P₀ := GlobalTheory.StrictPull.polPull ρ.P (spMap S.R.val.toRingHom)
+  let f := spMap S.R.val.toRingHom
+  let P := ρ.P
+  let P₀ : PolAV (Sp Ω) := {
+    A := (Over.pullback f).obj P.A
+    isAb := TLinPf.isAb_pullback f P.A P.isAb
+    g := P.g
+    smoothDim := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback
+      (isGrpPullback_pullback P.A f).1 P.smoothDim
+    L := P.L.pull (pullback.fst P.A.hom f)
+    isLB := pull_isLB P.isLB _
+    rigid := GlobalTheory.PolBaseChange.rigidified_pull (isGrpPullback_pullback P.A f) P.rigid
+    sym := GlobalTheory.PolBaseChange.sym_pull (isGrpPullback_pullback P.A f) P.sym
+    ample := by
+      letI := P.isAb.proper
+      exact GlobalTheory.AmpleBaseChange.relAmple_of_isPullback P.isLB P.ample (IsPullback.of_hasPullback P.A.hom f)
+    ktriv := by
+      obtain ⟨w, hw⟩ := GlobalTheory.PolBaseChange.lbIso_refl (pull_isLB P.isLB (pullback.fst P.A.hom f))
+      exact kTriv_pull (isGrpPullback_pullback P.A f) P.isLB (pull_isLB P.isLB _) ((isGen_iff w).1 hw) P.ktriv }
   refine ⟨P₀, pullback.fst ρ.P.A.hom (spMap S.R.val.toRingHom), pullback.fst ρ.P.A.hom (spMap S.R.val.toRingHom),
     isGrpPullback_pullback _ _, isGrpPullback_pullback _ _, GlobalTheory.PolBaseChange.lbIso_refl P₀.isLB,
     GlobalTheory.PolBaseChange.lbIso_refl P₀.isLB, fun b => ?_⟩
   refine ⟨pullback.lift (spMap S.R.val.toRingHom ≫ (ρ.pt b).left) (𝟙 _) ?_, pullback.lift_fst _ _ _,
     pullback.lift_fst _ _ _⟩
-  rw [Category.assoc, Over.w]; simp
+  rw [Category.assoc, Over.w]; simp [f]
 
 theorem sum_ev_shift : ∀ {o Ω : Type} [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] {S : ThetaSys o Ω}
     (ρ : S.Real) (H : AddSubgroup S.Gam) (m : ℕ), S.N = m ^ 2 → ∀ h h' : S.Gam, m • h = m • h' → h' - h ∈ H →

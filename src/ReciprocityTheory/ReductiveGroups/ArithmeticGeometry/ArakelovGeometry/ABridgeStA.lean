@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsBergDensity
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsBergDensity
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem eval_smul_of_homog {R : Type*} [CommRing R] {φ : MvPolynomial J R} {d :
     (hφ : φ.IsHomogeneous d) (c : R) (z : J → R) : eval (c • z) φ = c ^ d * eval z φ := by
   conv_lhs => rw [φ.as_sum]
   conv_rhs => rw [φ.as_sum]
-  simp only [map_sum, Finset.mul_sum, eval_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum, eval_monomial]
   refine Finset.sum_congr rfl fun s hs => ?_
   have hd : ∑ i ∈ s.support, s i = d := by
     have := hφ (mem_support_iff.mp hs)
@@ -82,12 +87,12 @@ def conjEquiv (J : Type) [Fintype J] : (J → ℂ) ≃ᵐ (J → ℂ) where
   measurable_toFun := continuous_conjPt.measurable
   measurable_invFun := continuous_conjPt.measurable
 
-theorem wgt_conjPt {m : ConeMetric ℂ J} (hm : IsConjInvariant m) (n : ℕ) (z : J → ℂ) :
+theorem wgt_conjPt {m : ConeMetric (C := ℂ) (ι := J)} (hm : IsConjInvariant m) (n : ℕ) (z : J → ℂ) :
     wgt m n (conjPt z) = wgt m n z := by
   unfold wgt conjPt
   rw [hm z]
 
-theorem conj_bGram {m : ConeMetric ℂ J} {μ : Measure (J → ℂ)} (hm : IsConjInvariant m)
+theorem conj_bGram {m : ConeMetric (C := ℂ) (ι := J)} {μ : Measure (J → ℂ)} (hm : IsConjInvariant m)
     (hμ : μ.map conjPt = μ) (n : ℕ) {r : ℕ} (b : Fin r → MvPolynomial J ℚ) (i j : Fin r) :
     starRingEnd ℂ (bGram μ (fun k => secFun (b k)) (wgt m n) i j) =
       bGram μ (fun k => secFun (b k)) (wgt m n) i j := by
@@ -100,30 +105,6 @@ theorem conj_bGram {m : ConeMetric ℂ J} {μ : Measure (J → ℂ)} (hm : IsCon
   congr 1
   funext x
   simp [he, secFun_conjPt, wgt_conjPt hm]
-  try ring
-
-theorem realGram_eq (m : ConeMetric ℂ J) (μ : Measure (J → ℂ)) (n : ℕ) {r : ℕ}
-    (b : Fin r → MvPolynomial J ℚ) (k l : Fin r) :
-    realGram (K := ℚ) (fun _ => m) (fun _ => μ) n b k l =
-      (bGram μ (fun k => secFun (b k)) (wgt m n) k l).re := by
-  have hsub : ∀ w₁ w₂ : NumberField.InfinitePlace ℚ, w₁ = w₂ := by
-    rintro ⟨_, φ₁, rfl⟩ ⟨_, φ₂, rfl⟩
-    exact Subtype.ext (by rw [RingHom.ext_rat φ₁ φ₂])
-  let w₀ : NumberField.InfinitePlace ℚ := NumberField.InfinitePlace.mk (algebraMap ℚ ℂ)
-  have hemb : w₀.embedding = algebraMap ℚ ℂ := RingHom.ext_rat _ _
-  have hmult : (w₀.mult : ℝ) = 1 := by
-    have hr : w₀.IsReal := NumberField.InfinitePlace.isReal_iff.mpr
-      (NumberField.ComplexEmbedding.isReal_iff.mpr (RingHom.ext_rat _ _))
-    simp [NumberField.InfinitePlace.mult, hr]
-  simp only [realGram]
-  rw [Fintype.sum_eq_single w₀ (fun w hw => absurd (hsub w w₀) hw), hmult, one_mul, hemb,
-    ← Complex.conj_re (bGram μ (fun k => secFun (b k)) (wgt m n) k l)]
-  congr 1
-  simp only [bGram, Matrix.of_apply]
-  rw [← integral_conj]
-  congr 1
-  funext z
-  simp [secFun, wgt, div_eq_mul_inv]
   try ring
 
 end ReciprocityTheory.ChartRestriction.G.ArakelovGeometry

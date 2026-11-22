@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExOneEqSelf
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRealPlaceSymplecticFormPositiveComplexStru
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsRealFam
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PlaceAtIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExOneEqSelf
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsRealPlaceSymplecticFormPositiveComplexStru
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaPureTensorO
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevels
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim
@@ -29,7 +33,7 @@ variable {D : D7}
 theorem finPart_eInf_smul (a : AE D) : finPart D (eInf D • a) = 0 := by
   induction a using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
-  | add a b ha hb => rw [smul_add, RingHom.map_add, ha, hb, add_zero]
+  | add a b ha hb => rw [smul_add, RingHom.map_add (f := _), ha, hb, add_zero]
   | tmul a x =>
     rw [TensorProduct.smul_tmul']
     show (sndA D.host.F (eInf D • a)) ⊗ₜ[D.host.F] x = 0
@@ -38,7 +42,7 @@ theorem finPart_eInf_smul (a : AE D) : finPart D (eInf D • a) = 0 := by
 theorem infPart_eInf_smul (a : AE D) : infPart D (eInf D • a) = infPart D a := by
   induction a using TensorProduct.induction_on with
   | zero => simp only [smul_zero]
-  | add a b ha hb => rw [smul_add, RingHom.map_add, ha, hb, RingHom.map_add]
+  | add a b ha hb => rw [smul_add, RingHom.map_add (f := _), ha, hb, RingHom.map_add (f := _)]
   | tmul a x =>
     rw [TensorProduct.smul_tmul']
     show (fstA D.host.F (eInf D • a)) ⊗ₜ[D.host.F] x = (fstA D.host.F a) ⊗ₜ[D.host.F] x
@@ -118,7 +122,7 @@ theorem eq_zero_of_fixed (hψ : IsStdChar D ψ (-1)) (hθ : IsInfFam θ)
     rw [Matrix.mul_zero, Matrix.zero_mul, smul_zero]
   have a3 := key ((om z (J z))⁻¹ • z + J z) fun τ' h => by rw [Pi.add_apply, a1 τ' h, a2 τ' h, add_zero]
   have e := heisO_heisO S T ψ (iotaW σ T S ((om z (J z))⁻¹ • z)) (iotaW σ T S (J z)) g
-  rw [map_add] at a3
+  rw [map_add (f := _)] at a3
   rw [key _ a2, key _ a1, h1 _ _ (hσ.real_iota T S _), hσ.pi_iota, hσ.pi_iota, map_smul, LinearMap.smul_apply,
     smul_eq_mul, inv_mul_cancel₀ hp.ne', Complex.ofReal_one, mul_one, Complex.exp_neg, Complex.exp_pi_mul_I] at e
   erw [a3] at e

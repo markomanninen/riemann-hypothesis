@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.UTopVal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.UTopVal
+
+@[expose] public section
 
 noncomputable section
 

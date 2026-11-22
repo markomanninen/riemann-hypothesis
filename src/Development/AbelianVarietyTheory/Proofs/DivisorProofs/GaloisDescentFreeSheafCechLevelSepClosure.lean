@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeSheafHomValueAtCechNerveSimplexBijectiveStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisLocallyConstantTupleRingTensorPowerUniversStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsLimitWidePullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecLocallyConstantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisActionFinitarySheafSectionLocallyConstantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeSheafHomValueAtCechNerveSimplexBijectiveStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisLocallyConstantTupleRingTensorPowerUniversStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpecWidePushoutIsLimitWidePullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecLocallyConstantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaloisActionFinitarySheafSectionLocallyConstantStatement
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -24,7 +28,7 @@ theorem val_nat {R : Type} [CommRing R] {P : PSh} {F : Shv R} (s : (free R).obj 
   unfold val freeGen
   calc _ = (s.hom.app (op V)).hom (((toSheafify Scheme.etaleTopology ((freeP R).obj P)).app (op V)).hom
         ((((freeP R).obj P).map g.op).hom (ModuleCat.freeMk (ULift.up x)))) := by
-          rw [freePresheaf_map_freeMk]; rfl
+          rw [freePresheaf_map_freeMk]
     _ = _ := ?_
   have e1 := congrArg (fun φ => φ.hom (ModuleCat.freeMk (ULift.up x)))
     ((toSheafify Scheme.etaleTopology ((freeP R).obj P)).naturality g.op)
@@ -117,7 +121,71 @@ theorem gal_sec_of (TopsChoicePartA : ∀ (K Ω : Type) [Field K] [Field Ω] [Al
   intro R _ F hF K Ω _ _ _ _ k
   obtain ⟨hlim⟩ := TopsChoiceSecondBound (k + 1) K Ω (LCRing K Ω k) (algebraMap K Ω) (baseHom K Ω k) (legHom K Ω k)
     (legHom_comp K Ω k) (TopsChoicePartA K Ω k)
-  have hbij := GlobalTheory.T.freeSheafHomValueAt_cechNerveSimplex_bijective R F _ _ _ k _ _ _ _ hlim
+  let f := Spec.map (CommRingCat.ofHom (algebraMap K Ω))
+  let Z := Spec (CommRingCat.of (LCRing K Ω k))
+  let x : Z ⟶ _ := Spec.map (CommRingCat.ofHom (baseHom K Ω k))
+  let y (i : Fin (k + 1)) : Z ⟶ _ := Spec.map (CommRingCat.ofHom (legHom K Ω k i))
+  have h (i : Fin (k + 1)) : y i ≫ f = x := by
+    dsimp [y, f, x]
+    rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, legHom_comp]
+  let P := (cech f).obj (op ⦋k⦌)
+  let p : P.obj (op Z) := cechPt f k x y h
+  have hbij : Function.Bijective (fun s : (free R).obj P ⟶ F => val s Z p) := by
+    have e (U : Scheme.{0}) : Function.Bijective (fun g : U ⟶ Z => P.map g.op p) := by
+      have hb := CechPts.bij f k x y h hlim U
+      constructor
+      · intro g g' hg
+        apply hb.1
+        exact (CechPts.map_cechPt f k x y h g).symm.trans
+          (hg.trans (CechPts.map_cechPt f k x y h g'))
+      · intro v
+        obtain ⟨g, hg⟩ := hb.2 v
+        exact ⟨g, (CechPts.map_cechPt f k x y h g).trans hg⟩
+    have hval (s : (free R).obj P ⟶ F) (U : Scheme.{0}) (v : P.obj (op U)) :
+        val s U v = ((toSheafify Scheme.etaleTopology ((freeP R).obj P) ≫ s.hom).app (op U)).hom
+          (ModuleCat.freeMk (ULift.up v)) := rfl
+    constructor
+    · intro s s' hs
+      apply Sheaf.hom_ext
+      apply sheafify_hom_ext _ _ _ F.property
+      apply NatTrans.ext
+      funext U
+      apply ModuleCat.free_hom_ext
+      rintro ⟨v⟩
+      obtain ⟨g, rfl⟩ := (e U.unop).2 v
+      change val s U.unop (P.map g.op p) = val s' U.unop (P.map g.op p)
+      change val s Z p = val s' Z p at hs
+      rw [val_nat, val_nat, hs]
+    · intro a
+      choose c hc using fun (U : Scheme.{0}) (v : P.obj (op U)) => (e U).2 v
+      dsimp only at hc
+      let φ (U : Scheme.{0}) (v : P.obj (op U)) := Sec.res (c U v) a
+      have hφ (V U : Scheme.{0}) (g : V ⟶ U) (v : P.obj (op U)) :
+          φ V (P.map g.op v) = Sec.res g (φ U v) := by
+        have hccomp : c V (P.map g.op v) = g ≫ c U v := by
+          apply (e V).1
+          dsimp only
+          rw [hc, op_comp, Functor.map_comp_apply, hc]
+        dsimp [φ]
+        rw [hccomp, res_comp]
+      refine ⟨FreeHom.desc P F φ hφ, ?_⟩
+      have hcid : c Z p = 𝟙 Z := by
+        apply (e Z).1
+        dsimp only
+        rw [hc, op_id, Functor.map_id_apply]
+      change val (FreeHom.desc P F φ hφ) Z p = a
+      rw [hval]
+      have hdesc : toSheafify Scheme.etaleTopology ((freeP R).obj P) ≫
+          (FreeHom.desc P F φ hφ).hom = FreeHom.descP P F φ hφ := by
+        have he := ((sheafificationAdjunction Scheme.etaleTopology.{0}
+          (ModuleCat.{1} (ULift.{1} R))).homEquiv _ _).apply_symm_apply (FreeHom.descP P F φ hφ)
+        rw [Adjunction.homEquiv_unit] at he
+        exact he
+      rw [hdesc]
+      change (ModuleCat.freeDesc _).hom (ModuleCat.freeMk (ULift.up p)) = a
+      erw [ModuleCat.freeDesc_apply]
+      change Sec.res (c Z p) a = a
+      rw [hcid, res_id]
   obtain ⟨hloc, hinj, hsurj⟩ := S2 R F hF (Fin k → (Ω ≃ₐ[K] Ω)) Ω
   refine ⟨?_, ?_, ?_⟩
   · intro s s' hss
@@ -154,8 +222,95 @@ end GlobalTheory.EtC.GalSec
 
 namespace GlobalTheory.EtC.GalSec
 
-theorem gal_sec : ∀ (R : Type) [CommRing R] (F : Shv R), Finitary F → ∀ (K Ω : Type) [Field K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω] (k : ℕ), Function.Injective (fun (s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F) (σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω)) => val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x))) ∧ (∀ s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F, IsLocallyConstant (fun σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω) => val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x)))) ∧ ∀ φ : (Fin (k + 1) → (Ω ≃ₐ[K] Ω)) → Sec F (Spec (CommRingCat.of Ω)), IsLocallyConstant φ → (∀ (τ : Ω ≃ₐ[K] Ω) (σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω)), φ (fun i => τ * σ i) = Sec.res (Spec.map (CommRingCat.ofHom (τ : Ω →+* Ω))) (φ σ)) → ∃ s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F, ∀ σ, val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x)) = φ σ :=
-  gal_sec_of GlobalTheory.T.galoisLocallyConstantTupleRing_tensorPower_universal GlobalTheory.T.spec_widePushout_isLimit_widePullback GlobalTheory.T.sec_exists_of_isLocallyConstant_locallyConstant GlobalTheory.T.galoisAction_finitarySheafSection_locallyConstant
+theorem gal_sec : ∀ (R : Type) [CommRing R] (F : Shv R), Finitary F → ∀ (K Ω : Type) [Field K] [Field Ω] [Algebra K Ω] [IsSepClosure K Ω] (k : ℕ), Function.Injective (fun (s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F) (σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω)) => val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x))) ∧ (∀ s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F, IsLocallyConstant (fun σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω) => val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x)))) ∧ ∀ φ : (Fin (k + 1) → (Ω ≃ₐ[K] Ω)) → Sec F (Spec (CommRingCat.of Ω)), IsLocallyConstant φ → (∀ (τ : Ω ≃ₐ[K] Ω) (σ : Fin (k + 1) → (Ω ≃ₐ[K] Ω)), φ (fun i => τ * σ i) = Sec.res (Spec.map (CommRingCat.ofHom (τ : Ω →+* Ω))) (φ σ)) → ∃ s : (free R).obj ((cech (Spec.map (CommRingCat.ofHom (algebraMap K Ω)))).obj (op ⦋k⦌)) ⟶ F, ∀ σ, val s (Spec (CommRingCat.of Ω)) (cechPt (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) k (Spec.map (CommRingCat.ofHom (algebraMap K Ω))) (fun i => Spec.map (CommRingCat.ofHom ((σ i : Ω ≃ₐ[K] Ω) : Ω →+* Ω))) (fun i => by rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]; congr 2; exact RingHom.ext fun x => (σ i).commutes x)) = φ σ := by
+  have hsections : ∀ (R : Type) [CommRing R] (F : Shv R), Finitary F →
+      ∀ (X : Type) [TopologicalSpace X] [CompactSpace X] (B : Type) [CommRing B],
+        (∀ t : Sec F (Spec (CommRingCat.of (LocallyConstant X B))),
+          IsLocallyConstant (fun x : X =>
+            Sec.res (Spec.map (CommRingCat.ofHom (LocallyConstant.evalRingHom x))) t)) ∧
+        Function.Injective (fun (t : Sec F (Spec (CommRingCat.of (LocallyConstant X B)))) (x : X) =>
+          Sec.res (Spec.map (CommRingCat.ofHom (LocallyConstant.evalRingHom x))) t) ∧
+        ∀ ψ : X → Sec F (Spec (CommRingCat.of B)), IsLocallyConstant ψ →
+          ∃ t : Sec F (Spec (CommRingCat.of (LocallyConstant X B))), ∀ x,
+            Sec.res (Spec.map (CommRingCat.ofHom (LocallyConstant.evalRingHom x))) t = ψ x := by
+    intro R _ F hF X _ _ B _
+    have hfin := (GlobalTheory.T.preservesFilteredColimits_moduleCat_iff_forget_iff_elements
+      (ULift.{1} R) (onRings F)).2.mp hF _ (LCSec.stage X B) (LCSec.lcCocone X B)
+        (LCSec.lcCoconeIsColimit X B)
+    have hrep (t : Sec F (Spec (CommRingCat.of (LocallyConstant X B)))) :
+        ∃ (S : DiscreteQuotient X) (y : Sec F (Spec (CommRingCat.of (S → B)))),
+          Sec.res (Spec.map (CommRingCat.ofHom (LCSec.pullQ X B S))) y = t := by
+      obtain ⟨S, y, hy⟩ := hfin.1 t
+      exact ⟨S.unop, y, hy⟩
+    have hzero (t : Sec F (Spec (CommRingCat.of (LocallyConstant X B))))
+        (ht : ∀ x, Sec.res (Spec.map (CommRingCat.ofHom (LocallyConstant.evalRingHom x))) t = 0) :
+        t = 0 := by
+      obtain ⟨S, y, rfl⟩ := hrep t
+      have hy : y = 0 := by
+        apply (LCSec.sec_pi_bijective R F B S).1
+        funext s
+        obtain ⟨x, rfl⟩ := S.proj_surjective s
+        exact ((LCSec.res_eval_pullQ R F X B S y x).symm.trans (ht x)).trans (map_zero _).symm
+      rw [hy]
+      exact map_zero _
+    refine ⟨fun t => ?_, fun t₁ t₂ h => ?_, fun ψ hψ => ?_⟩
+    · obtain ⟨S, y, rfl⟩ := hrep t
+      have he : (fun x : X => Sec.res (Spec.map (CommRingCat.ofHom (LocallyConstant.evalRingHom x)))
+          (Sec.res (Spec.map (CommRingCat.ofHom (LCSec.pullQ X B S))) y)) =
+          (fun s : S => Sec.res (Spec.map (CommRingCat.ofHom (Pi.evalRingHom (fun _ : S => B) s))) y) ∘ S.proj :=
+        funext (LCSec.res_eval_pullQ R F X B S y)
+      rw [he]
+      exact S.proj_isLocallyConstant.comp _
+    · apply sub_eq_zero.mp (hzero (t₁ - t₂) fun x => ?_)
+      change (F.obj.map _).hom (t₁ - t₂) = 0
+      rw [map_sub]
+      exact sub_eq_zero.mpr (congrFun h x)
+    · let q : LocallyConstant X (Sec F (Spec (CommRingCat.of B))) := ⟨ψ, hψ⟩
+      obtain ⟨y, hy⟩ := (LCSec.sec_pi_bijective R F B q.discreteQuotient).2 (⇑q.lift)
+      refine ⟨Sec.res (Spec.map (CommRingCat.ofHom (LCSec.pullQ X B q.discreteQuotient))) y, fun x => ?_⟩
+      rw [LCSec.res_eval_pullQ]
+      exact congrFun hy (q.discreteQuotient.proj x)
+  have haction : ∀ (R : Type) [CommRing R] (F : Shv R), Finitary F →
+      ∀ (K Ω : Type) [Field K] [Field Ω] [Algebra K Ω] [Algebra.IsAlgebraic K Ω]
+        (x : Sec F (Spec (CommRingCat.of Ω))),
+        IsLocallyConstant (fun τ : Ω ≃ₐ[K] Ω =>
+          Sec.res (Spec.map (CommRingCat.ofHom (τ : Ω →+* Ω))) x) := by
+    intro R _ F hF K Ω _ _ _ _ x
+    classical
+    have elements := (GlobalTheory.T.preservesFilteredColimits_moduleCat_iff_forget_iff_elements
+      (ULift.{1} R) (onRings F)).2.mp hF
+    obtain ⟨s, y, hy⟩ := (elements (Finset Ω) (GalSmooth.diag Ω) (GalSmooth.cocone Ω)
+      (GalSmooth.coconeIsColimit Ω)).1 x
+    have restrict_eq (τ : Ω ≃ₐ[K] Ω) :
+        Sec.res (Spec.map (CommRingCat.ofHom (τ : Ω →+* Ω))) x =
+          ((onRings F).map (CommRingCat.ofHom ((τ : Ω →+* Ω).comp (GalSmooth.sr Ω s).subtype))).hom y := by
+      rw [← hy, GalSmooth.cocone_ι]
+      show _ = ((onRings F).map (CommRingCat.ofHom (GalSmooth.sr Ω s).subtype ≫
+        CommRingCat.ofHom (τ : Ω →+* Ω))).hom y
+      rw [Functor.map_comp]
+      rfl
+    rw [IsLocallyConstant.iff_eventually_eq]
+    intro τ₀
+    have : FiniteDimensional K (IntermediateField.adjoin K (s : Set Ω)) :=
+      IntermediateField.finiteDimensional_adjoin (fun a _ => Algebra.IsIntegral.isIntegral a)
+    let H := (IntermediateField.adjoin K (s : Set Ω)).fixingSubgroup
+    have hopen : IsOpen (Set.ofPred fun σ : Ω ≃ₐ[K] Ω => τ₀⁻¹ * σ ∈ H) :=
+      (IntermediateField.fixingSubgroup_isOpen _).preimage (continuous_const.mul continuous_id)
+    have hmem : τ₀⁻¹ * τ₀ ∈ H := by
+      rw [inv_mul_cancel]
+      exact H.one_mem
+    filter_upwards [hopen.mem_nhds hmem] with τ hτ
+    have hs : Set.EqOn (τ : Ω →+* Ω) (τ₀ : Ω →+* Ω) (s : Set Ω) := fun b hb => by
+      have hfix := (IntermediateField.mem_fixingSubgroup_iff _ _).1 hτ b
+        (IntermediateField.subset_adjoin K _ hb)
+      simpa [AlgEquiv.mul_apply] using congrArg τ₀ hfix
+    have hc : (τ : Ω →+* Ω).comp (GalSmooth.sr Ω s).subtype =
+        (τ₀ : Ω →+* Ω).comp (GalSmooth.sr Ω s).subtype := by
+      ext a
+      exact RingHom.eqOn_set_closure hs a.2
+    rw [restrict_eq τ, restrict_eq τ₀, hc]
+  exact gal_sec_of GlobalTheory.T.galoisLocallyConstantTupleRing_tensorPower_universal
+    GlobalTheory.T.spec_widePushout_isLimit_widePullback hsections haction
 
 end GlobalTheory.EtC.GalSec
 

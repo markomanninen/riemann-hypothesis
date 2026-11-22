@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.IsMultiHomogXpow
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,9 +114,11 @@ theorem dmap_cover (W : Ideal (MRing ι)) (i : ∀ k, ι k) (y : MRing ι ⧸ de
   show Ideal.Quotient.mk (dehomI W i)
       (∑ m ∈ f.support, monomial m (f.coeff m) * xpow i (fun k => a k - deg m k)) =
     Ideal.Quotient.mk (dehomI W i) f
-  simp only [map_sum, map_mul, mk_xpow, mul_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, mk_xpow, mul_one]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
 
 theorem card_dehom {W : Ideal (MRing ι)} (hWp : W.IsPrime) (hWm : IsMultiHomogIdeal W)
     {i : ∀ k, ι k} (hi : ∀ k, (X ⟨k, i k⟩ : MRing ι) ∉ W) {a₁ c0 : ℕ}

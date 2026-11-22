@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProjectiveCohomology.TwistingSheaf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open AlgebraicGeometry CategoryTheory Limits Opposite HomogeneousLocalization
@@ -89,8 +94,8 @@ lemma corr_comp {Y : Scheme.{u}} (h : Y ⟶ X) (g : X ⟶ Proj 𝒜) (r : A) {V 
   rw [corr, corr, ← Scheme.Hom.resLE_comp_resLE, Category.assoc, Scheme.Hom.comp_appTop,
     Category.assoc]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 lemma isUnit_of_basicOpen_eq_top {Y : Scheme.{u}} (s : Γ(Y, ⊤)) (h : Y.basicOpen s = ⊤) :
     IsUnit s := by
   have hu : IsUnit (Y.presheaf.map (homOfLE (Y.basicOpen_le s)).op s) :=
@@ -146,8 +151,8 @@ theorem hom_ext {ι : Type*} (r : ι → A) (d : ι → ℕ) (hd : ∀ i, 0 < d 
   change (V i).ι ≫ g = (V i).ι ≫ g'
   rw [← Scheme.Hom.resLE_comp_ι g (hV i).ge, ← Scheme.Hom.resLE_comp_ι g' (hV' i).ge, h2]
 
-variable {𝒜} in
 
+variable {𝒜} in
 theorem eq_fromOfGlobalSections {ι : Type*} (r : ι → A) (d : ι → ℕ) (hd : ∀ i, 0 < d i)
     (hr : ∀ i, r i ∈ 𝒜 (d i)) (hcov : ⨆ i, Proj.basicOpen 𝒜 (r i) = ⊤) (g : X ⟶ Proj 𝒜)
     (hg : ∀ i, g ⁻¹ᵁ Proj.basicOpen 𝒜 (r i) = X.basicOpen (f (r i)))
@@ -163,8 +168,8 @@ theorem eq_fromOfGlobalSections {ι : Type*} (r : ι → A) (d : ι → ℕ) (hd
   exact ((isUnit_ι_appTop (f (r i))).pow k).mul_left_injective
     ((hc i k a ha).trans (corr_fromOfGlobalSections 𝒜 f hf (hd i) (hr i) k a ha).symm)
 
-variable {𝒜} in
 
+variable {𝒜} in
 theorem comp_fromOfGlobalSections {ι : Type*} (r : ι → A) (d : ι → ℕ) (hd : ∀ i, 0 < d i)
     (hr : ∀ i, r i ∈ 𝒜 (d i)) (hcov : ⨆ i, Proj.basicOpen 𝒜 (r i) = ⊤) {Y : Scheme.{u}}
     (h : Y ⟶ X) :
@@ -187,8 +192,8 @@ theorem comp_fromOfGlobalSections {ι : Type*} (r : ι → A) (d : ι → ℕ) (
     ConcreteCategory.comp_apply]
   exact transfer _ (hι _) (hι _) k (corr_fromOfGlobalSections 𝒜 f hf (hd i) (hr i) k a ha)
 
-variable {𝒜} in
 
+variable {𝒜} in
 theorem fromOfGlobalSections_eq_of_twist {ι : Type*} (r : ι → A) (d : ι → ℕ) (hd : ∀ i, 0 < d i)
     (hr : ∀ i, r i ∈ 𝒜 (d i)) (hcov : ⨆ i, Proj.basicOpen 𝒜 (r i) = ⊤)
     (f' : A →+* Γ(X, ⊤)) (hf' : (HomogeneousIdeal.irrelevant 𝒜).toIdeal.map f' = ⊤)

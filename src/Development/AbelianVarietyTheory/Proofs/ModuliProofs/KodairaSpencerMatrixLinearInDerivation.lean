@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAnalyticKodairaSpencerClassStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FderivFnAddLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsAnalyticKodairaSpencerClassStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FderivFnAddLattice
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct ContDiff
@@ -20,37 +25,45 @@ variable {g : ℕ} {A₀ : Over (Sp ℂ)} [GrpObj A₀] {L₀ : LB A₀.left} {u
 theorem ksRel_add {D D' : R → ℂ} {Θ Θ' : Matrix (Fin g) (Fin g) ℂ}
     {s s' : (Fin g → ℂ) → ∀ W : X.Opens, Γ(X, W) → ℂ}
     (h : KSRel u p m D Θ s) (h' : KSRel u p m D' Θ' s') :
-    KSRel u p m (fun r => D r + D' r) (Θ + Θ') (fun z W f => s z W f + s' z W f) where
-  der z :=
-    { add := fun W hW f f' => by
-        simp only [(h.der z).add W hW, (h'.der z).add W hW]
-        ring
-      mul := fun W hW f f' => by
-        simp only [(h.der z).mul W hW, (h'.der z).mul W hW]
-        ring
-      res := fun W W' hle hW' f => by
-        simp only [(h.der z).res W W' hle hW', (h'.der z).res W W' hle hW'] }
-  base z r := by simp only [h.base, h'.base]
-  hol W f := (h.hol W f).add (h'.hol W f)
-  per l W f z hz := by
-    simp only [h.per l W f z hz, h'.per l W f z hz, Matrix.add_mulVec, map_add]
+    KSRel u p m (fun r => D r + D' r) (Θ + Θ') (fun z W f => s z W f + s' z W f) := by
+  refine { der := ?_, base := ?_, hol := ?_, per := ?_ }
+  · intro z
+    refine { add := ?_, mul := ?_, res := ?_ }
+    · intro W hW f f'
+      simp only [(h.der z).add W hW, (h'.der z).add W hW]
+      ring
+    · intro W hW f f'
+      simp only [(h.der z).mul W hW, (h'.der z).mul W hW]
+      ring
+    · intro W W' hle hW' f
+      simp only [(h.der z).res W W' hle hW', (h'.der z).res W W' hle hW']
+  · intro z r
+    simp only [h.base, h'.base]
+  · intro W f
+    exact (h.hol W f).add (h'.hol W f)
+  · intro l W f z hz
+    simp only [h.per l W f z hz, h'.per l W f z hz, Matrix.add_mulVec, map_add (f := _)]
     ring
 
 theorem ksRel_smul (c : ℂ) {D : R → ℂ} {Θ : Matrix (Fin g) (Fin g) ℂ}
     {s : (Fin g → ℂ) → ∀ W : X.Opens, Γ(X, W) → ℂ} (h : KSRel u p m D Θ s) :
-    KSRel u p m (fun r => c * D r) (c • Θ) (fun z W f => c * s z W f) where
-  der z :=
-    { add := fun W hW f f' => by
-        simp only [(h.der z).add W hW]
-        ring
-      mul := fun W hW f f' => by
-        simp only [(h.der z).mul W hW]
-        ring
-      res := fun W W' hle hW' f => by
-        simp only [(h.der z).res W W' hle hW'] }
-  base z r := by simp only [h.base]
-  hol W f := (h.hol W f).const_mul c
-  per l W f z hz := by
+    KSRel u p m (fun r => c * D r) (c • Θ) (fun z W f => c * s z W f) := by
+  refine { der := ?_, base := ?_, hol := ?_, per := ?_ }
+  · intro z
+    refine { add := ?_, mul := ?_, res := ?_ }
+    · intro W hW f f'
+      simp only [(h.der z).add W hW]
+      ring
+    · intro W hW f f'
+      simp only [(h.der z).mul W hW]
+      ring
+    · intro W W' hle hW' f
+      simp only [(h.der z).res W W' hle hW']
+  · intro z r
+    simp only [h.base]
+  · intro W f
+    exact (h.hol W f).const_mul c
+  · intro l W f z hz
     simp only [h.per l W f z hz, Matrix.smul_mulVec, map_smul, smul_eq_mul]
     ring
 end
@@ -69,14 +82,14 @@ theorem ks_linear : ∀ (P₀ : Out.PolAV (Sp ℂ)) (u : HolUnif P₀.A P₀.L P
   refine ⟨{ toFun := Θ, map_add' := ?_, map_smul' := ?_ }, fun D => ⟨s D, hΘ D⟩⟩
   · intro D D'
     apply huniq (D + D')
-    have e : (fun r => (D + D') r) = fun r => D r + D' r := funext fun _ => Derivation.add_apply _
+    have e : (fun r => (D + D') r) = fun r => D r + D' r := funext (add_apply D D')
     rw [e]
     exact ksRel_add (hΘ D) (hΘ D')
   · intro c D
     rw [RingHom.id_apply]
     apply huniq (c • D)
     have e : (fun r => (c • D) r) = fun r => c * D r := funext fun r => by
-      rw [Derivation.smul_apply, smul_eq_mul]
+      rw [smul_apply, smul_eq_mul]
     rw [e]
     exact ksRel_smul c (hΘ D)
 

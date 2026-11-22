@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinrankEqOfInjectiveOfSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FinrankEqOfInjectiveOfSpan
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD
 open scoped Matrix nonZeroDivisors TensorProduct
@@ -42,7 +46,7 @@ theorem exists_factor {E V L L' : Type} [Field E] [NumberField E] [AddCommGroup 
     (by rw [LinearMap.coe_range]; exact hs)
   choose g hg using fun x : L' => h (φ' x) ⟨x, rfl⟩
   refine ⟨N, ⟨⟨g, fun x y => hφ ?_⟩, fun a x => hφ ?_⟩, hN, hg⟩
-  · rw [map_add, hg, hg, hg, map_add, smul_add]
+  · rw [map_add (f := _), hg, hg, hg, map_add (f := _), smul_add]
   · rw [map_smul, hg, hg, map_smul, smul_comm]; rfl
 
 theorem transport_complexStructure {O L L' : Type} [CommRing O] [AddCommGroup L] [Module O L]
@@ -70,25 +74,25 @@ theorem transport_complexStructure {O L L' : Type} [CommRing O] [AddCommGroup L]
   have hfg : ∀ x, f (g x) = x := fun x => by
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul s x =>
       rw [hg, map_smul, hf, h1, ← TensorProduct.mk_apply, map_nsmul, ← Nat.cast_smul_eq_nsmul ℝ, smul_smul,
         inv_mul_cancel₀ hK', one_smul, TensorProduct.mk_apply]
   have hgf : ∀ x, g (f x) = x := fun x => by
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | tmul s x =>
       rw [hf, hg, h2, ← TensorProduct.mk_apply, map_nsmul, ← Nat.cast_smul_eq_nsmul ℝ, smul_smul,
         inv_mul_cancel₀ hK', one_smul, TensorProduct.mk_apply]
   have hBf : ∀ x y, B.baseChange ℝ (f x) (f y) = c * B'.baseChange ℝ x y := fun x y => by
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [map_add, LinearMap.add_apply, hx, hx', mul_add]
+    | add x x' hx hx' => simp only [map_add (f := _), LinearMap.add_apply, hx, hx', mul_add]
     | tmul s x =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y y' hy hy' => simp only [map_add, hy, hy', mul_add]
+      | add y y' hy hy' => simp only [map_add (f := _), hy, hy', mul_add]
       | tmul u y =>
         rw [hf, hf, LinearMap.BilinForm.baseChange_tmul, LinearMap.BilinForm.baseChange_tmul, hB]
         simp only [zsmul_eq_mul]; push_cast; ring
@@ -124,11 +128,11 @@ theorem herm_add_left (G : Matrix (Fin r) (Fin r) E) (x x' y : Fin r → E) :
 
 noncomputable def traceHerm (ξ : E) (G : Matrix (Fin r) (Fin r) E) : (Fin r → E) →+ (Fin r → E) →+ ℚ :=
   AddMonoidHom.mk' (fun x => AddMonoidHom.mk' (fun y => Algebra.trace ℚ E (ξ * herm G x y))
-    fun y y' => by rw [HermModel.herm_add_right, mul_add, map_add])
+    fun y y' => by rw [HermModel.herm_add_right, mul_add, map_add (f := _)])
     fun x x' => AddMonoidHom.ext fun y => by
       change Algebra.trace ℚ E (ξ * herm G (x + x') y) =
         Algebra.trace ℚ E (ξ * herm G x y) + Algebra.trace ℚ E (ξ * herm G x' y)
-      rw [herm_add_left, mul_add, map_add]
+      rw [herm_add_left, mul_add, map_add (f := _)]
 
 theorem exists_datum_of_embedding (H : Host E) (D : Datum H) (ξ : E) (Gm : Matrix (Fin r) (Fin r) E)
     (φ : D.La →ₗ[𝓞 E] (Fin r → E)) (hinj : Function.Injective φ)
@@ -150,11 +154,11 @@ theorem exists_datum_of_embedding (H : Host E) (D : Datum H) (ξ : E) (Gm : Matr
   choose n hn using fun x : L => (hdual (φ' x)).mpr ⟨x, rfl⟩
   have hl : ∀ x x' y, n (x + x') y = n x y + n x' y := fun x x' y => by
     have := hn (x + x') y
-    rw [map_add, map_add, AddMonoidHom.add_apply, hn, hn] at this
+    rw [map_add (f := _), map_add (f := _), AddMonoidHom.add_apply, hn, hn] at this
     exact_mod_cast this.symm
   have hr : ∀ x y y', n x (y + y') = n x y + n x y' := fun x y y' => by
     have := hn x (y + y')
-    rw [map_add, map_add, hn, hn] at this
+    rw [map_add (f := _), map_add (f := _), hn, hn] at this
     exact_mod_cast this.symm
   let B : LinearMap.BilinForm ℤ L :=
     (AddMonoidHom.mk' (fun x => (AddMonoidHom.mk' (n x) (hr x)).toIntLinearMap)

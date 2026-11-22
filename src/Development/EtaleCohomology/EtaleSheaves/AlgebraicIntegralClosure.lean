@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.FibreEqvPf
-import Development.EtaleCohomology.EtaleSheaves.AICOpenPf
-import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure.AicLoc
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.FibreEqvPf
+public import Development.EtaleCohomology.EtaleSheaves.AICOpenPf
+public import Development.EtaleCohomology.EtaleSheaves.AlgebraicIntegralClosure.AicLoc
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Polynomial LateralTheory.E.t_E2Cut LateralTheory.E.AICOpenPf

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.PtMatIsUnit
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.PtMatIsUnit
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -30,13 +35,13 @@ lemma dl_swap (F : FlagG S r T) (F' : FlagG S r T') (l : ℕ) : Dl F' F l = star
 
 lemma dl_top (F : FlagG S r T) (F' : FlagG S r T') : Dl F F' (r + 1) = (Zhat F F').det := by
   unfold Dl leadMinorE
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 lemma dl_adj (F : FlagG S r T) (F' : FlagG S r T') :
     (Zhat F F').adjugate (Fin.last r) (Fin.last r) = Dl F F' r := by
   unfold Dl leadMinorE
-  rw [dif_pos (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last]
+  rw [dite_eq_left (Nat.le_succ r), Matrix.adjugate_fin_succ_eq_det_submatrix, Fin.succAbove_last]
   rw [Even.neg_one_pow ⟨_, rfl⟩, one_mul]
   congr 1
 
@@ -49,7 +54,8 @@ lemma pair_apply (F : FlagG S r T) (x : S.V) (a) : pair F x a = S.hT (F.fvec a) 
 lemma pair_comb (F : FlagG S r T) (F' : FlagG S r T') (c : Fin (r + 1) → E) :
     pair F (comb F' c) = (Zhat F F').mulVec c := by
   ext a
-  simp [pair_apply, comb, Fintype.linearCombination_apply, map_sum, Matrix.mulVec, dotProduct, Zhat, brS,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [pair_apply, comb, Fintype.linearCombination_apply, map_sum, Matrix.mulVec, dotProduct, Zhat, brS,
     mul_comm]
 
 lemma fvec_cast (F : FlagG S r T) (a : Fin r) : F.fvec a.castSucc = F.e a := by simp [FlagG.fvec]
@@ -60,15 +66,17 @@ lemma pair_comb_self (F : FlagG S r T) (c : Fin (r + 1) → E) :
   have hz : ∀ a, S.hT F.z (F.e a) = 0 := fun a => by rw [hsymm, F.z_orth]; simp
   ext a
   refine Fin.lastCases ?_ (fun a => ?_) a
-  · simp [pair_apply, comb, Fintype.linearCombination_apply, Fin.sum_univ_castSucc, fvec_cast, fvec_last,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [pair_apply, comb, Fintype.linearCombination_apply, Fin.sum_univ_castSucc, fvec_cast, fvec_last,
       map_sum, hz, F.z_norm]
-  · simp [pair_apply, comb, Fintype.linearCombination_apply, Fin.sum_univ_castSucc, fvec_cast, fvec_last,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp [pair_apply, comb, Fintype.linearCombination_apply, Fin.sum_univ_castSucc, fvec_cast, fvec_last,
       map_sum, F.e_iso, F.z_orth, Fin.castSucc_ne_last]
 
 lemma cramer_last (F : FlagG S r T) (F' : FlagG S r T') (c c' : Fin (r + 1) → E)
     (h : pair F (comb F c + comb F' c') = 0) :
     (Zhat F F').det • c' = fun b => (Zhat F F').adjugate b (Fin.last r) * (c (Fin.last r) * T) := by
-  rw [map_add, pair_comb_self, pair_comb] at h
+  rw [map_add (f := _), pair_comb_self, pair_comb] at h
   have h2 : (Zhat F F').mulVec c' = Pi.single (Fin.last r) (c (Fin.last r) * T) := by
     rw [eq_neg_of_add_eq_zero_right h, ← Pi.single_neg, neg_neg]
   have h3 := congrArg ((Zhat F F').adjugate.mulVec) h2
@@ -166,7 +174,8 @@ lemma Stab.sub_Xa {s : S.V ≃ₗ[E] S.V} {F : FlagG S r T} (hs : Stab s F) (j :
 lemma Stab.sub_comb {s : S.V ≃ₗ[E] S.V} {F : FlagG S r T} (hs : Stab s F) (x : S.V)
     (hx : x ∈ LinearMap.range (comb F)) : s x - x ∈ F.X := by
   obtain ⟨c, rfl⟩ := hx
-  simp only [comb, Fintype.linearCombination_apply, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [comb, Fintype.linearCombination_apply, map_sum, map_smul, ← Finset.sum_sub_distrib, ← smul_sub]
   exact Submodule.sum_mem _ fun a _ => Submodule.smul_mem _ _ (Xa_le_X F _ (hs a))
 
 lemma surj_of_stable (s : S.V ≃ₗ[E] S.V) (U : Submodule E S.V) (hU : ∀ u ∈ U, s u ∈ U) :
@@ -190,12 +199,13 @@ lemma map_M {s : S.V ≃ₗ[E] S.V} {F : FlagG S r T} {F' : FlagG S r T'} (hs : 
   have h2 := hs'.sub_comb _ ⟨c', rfl⟩
   have e : s (((comb F).coprod (comb F')) (c, c')) = (s (comb F c) - comb F c) + (s (comb F' c') - comb F' c')
       + ((comb F).coprod (comb F')) (c, c') := by
-    simp only [LinearMap.coprod_apply, map_add]; abel
+    simp only [LinearMap.coprod_apply, map_add (f := _)]; abel
   rw [e]
   exact add_mem (add_mem (range_le_M F F' (X_le_range F h1)) (range_le_M' F F' (X_le_range F' h2))) ⟨_, rfl⟩
 
 lemma orth_comb (F : FlagG S r T) (w : S.V) (hw : pair F w = 0) (c) : S.hT (comb F c) w = 0 := by
-  simp only [comb, Fintype.linearCombination_apply, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [comb, Fintype.linearCombination_apply, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ,
     LinearMap.smul_apply]
   refine Finset.sum_eq_zero fun a _ => ?_
   have : S.hT (F.fvec a) w = 0 := congrFun hw a
@@ -207,7 +217,7 @@ lemma mem_W (F : FlagG S r T) (F' : FlagG S r T') (w : S.V) :
   · rintro hw _ ⟨⟨c, c'⟩, rfl⟩
     have h1 : pair F w = 0 := congrArg Prod.fst hw
     have h2 : pair F' w = 0 := congrArg Prod.snd hw
-    rw [LinearMap.coprod_apply, map_add, LinearMap.add_apply, orth_comb F w h1, orth_comb F' w h2, add_zero]
+    rw [LinearMap.coprod_apply, map_add (f := _), LinearMap.add_apply, orth_comb F w h1, orth_comb F' w h2, add_zero]
   · intro h
     refine Prod.ext (funext fun a => ?_) (funext fun a => ?_)
     · exact h _ (range_le_M F F' (fvec_mem F a))
@@ -252,7 +262,7 @@ lemma half {s : S.V ≃ₗ[E] S.V} (hi : s ∈ Formalism.HermitianLatticesTheory
   rw [h5, map_zero] at hd
   have e : s (comb F c + comb F' c') - (comb F c + comb F' c') =
       (s (comb F c) - comb F c) + (s (comb F' c') - comb F' c') := by
-    rw [map_add]; abel
+    rw [map_add (f := _)]; abel
   rw [e, ← hd, add_zero]
   exact hs.sub_comb _ ⟨c, rfl⟩
 
@@ -269,7 +279,8 @@ lemma mem_orth (U : Submodule E S.V) (x : S.V) : x ∈ orth S U ↔ ∀ u ∈ U,
 lemma Fix.onM {F : FlagG S r T} {F' : FlagG S r T'} {h : S.V ≃ₗ[E] S.V} (hh : Fix F F' h) :
     ∀ m ∈ Msp F F', h m = m := by
   rintro _ ⟨⟨c, c'⟩, rfl⟩
-  simp [comb, Fintype.linearCombination_apply, map_sum, hh.2.1, hh.2.2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [comb, Fintype.linearCombination_apply, map_sum, hh.2.1, hh.2.2]
 
 lemma unip_of {s h : S.V ≃ₗ[E] S.V} (hi : s ∈ Formalism.HermitianLatticesTheory.isom S.hT) (hh : h ∈ Formalism.HermitianLatticesTheory.isom S.hT)
     {F : FlagG S r T} (hs : Stab s F) (M W : Submodule E S.V) (hc : IsCompl M W) (hX : F.X ≤ M)
@@ -292,7 +303,7 @@ lemma unip_of {s h : S.V ≃ₗ[E] S.V} (hi : s ∈ Formalism.HermitianLatticesT
       rwa [sub_add_cancel] at this
     have h5 : h⁻¹ (s w) = w := by
       rw [LinearEquiv.coe_inv, LinearEquiv.symm_apply_eq, hW w hw]
-    rw [LinearEquiv.mul_apply, map_add, map_add, hM' _ h4, h5, add_sub_add_right_eq_sub]
+    rw [LinearEquiv.mul_apply, map_add (f := _), map_add (f := _), hM' _ h4, h5, add_sub_add_right_eq_sub]
     exact h3
 
 theorem inter_gen (F : FlagG S r T) (F' : FlagG S r T') (hD : (Zhat F F').det ≠ 0) (hG : Gflag F F' ≠ 0)
@@ -317,7 +328,7 @@ theorem inter_gen (F : FlagG S r T) (F' : FlagG S r T') (hD : (Zhat F F').det �
     intro x y
     obtain ⟨m, hm, w, hw, rfl⟩ := hdec x
     obtain ⟨m', hm', w', hw', rfl⟩ := hdec y
-    simp only [map_add, LinearMap.add_apply, h0M _ hm, h0M _ hm', h0W _ hw, h0W _ hw', hi w w',
+    simp only [map_add (f := _), LinearMap.add_apply, h0M _ hm, h0M _ hm', h0W _ hw, h0W _ hw', hi w w',
       hMW _ hw' _ hm, hMW _ (hsW _ hw') _ hm, hWM _ hw _ hm', hWM _ (hsW _ hw) _ hm']
   have hinj : Function.Injective h0 := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
@@ -346,7 +357,7 @@ theorem inter_gen (F : FlagG S r T) (F' : FlagG S r T') (hD : (Zhat F F').det �
     have h3 : g⁻¹ (s w) - w = 0 := Submodule.disjoint_def.mp hc.disjoint _ (hXM h2) (sub_mem h1 hw)
     rw [sub_eq_zero, LinearEquiv.coe_inv, LinearEquiv.symm_apply_eq] at h3
     show g (m + w) = h0 (m + w)
-    rw [map_add, map_add, h0M m hm, h0W w hw, hg.onM m hm, h3]
+    rw [map_add (f := _), map_add (f := _), h0M m hm, h0W w hw, hg.onM m hm, h3]
 
 lemma det_ne_of_om {Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (h : (ZhatOM Z).det ≠ 0) : Z.det ≠ 0 := by
   intro h0
@@ -356,7 +367,7 @@ lemma det_ne_of_om {Z : Matrix (Fin (r + 1)) (Fin (r + 1)) E} (h : (ZhatOM Z).de
 
 end Gen
 
-theorem common_stabiliser : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), ∀ (F : LFlag (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (w : Point D.host.E (D.R.rS + 1)), ZhatOM (ZhatL F F') = ptMat w → Gval F F' ≠ 0 → ∀ s, Adapt s F F → Adapt s F' F' → ∃! h, h ∈ H0 F F' ∧ h⁻¹ * s ∈ NRat F ∧ h⁻¹ * s ∈ NRat F' := by
+theorem common_stabiliser : ∀ (D : D7) (X : HidaSetting D) (Y : Full X) (u u' : D.what₂.Word), ∀ (F : LFlag (D.sp.Y 0) D.R.rS (((D.mem u).A.T : ℕ) : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (w : Point D.host.E (D.R.rS + 1)), ZhatOM (ZhatL F F') = ptMat w → Gval F F' ≠ 0 → ∀ s, Adapt s F F → Adapt s F' F' → ∃! h, h ∈ H0 F F' ∧ h⁻¹ * s ∈ NRat F ∧ h⁻¹ * s ∈ NRat F' := by
   intro D X Y u u' F F' w hZ hG s hs hs'
   exact inter_gen F.fl F'.fl (det_ne_of_om (by rw [hZ]; exact Formalism.L2.SG.Pf.StabilizerIndexVolumes.ptMat_det w)) hG s hs.1 hs.2 hs'.2
 

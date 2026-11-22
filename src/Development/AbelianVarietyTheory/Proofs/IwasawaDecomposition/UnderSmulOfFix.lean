@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.MemFIffReal
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Host Formalism.FrobeniusOrbits
 open scoped Pointwise
 

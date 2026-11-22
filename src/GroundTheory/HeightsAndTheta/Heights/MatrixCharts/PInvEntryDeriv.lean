@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.Statements
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -51,7 +56,7 @@ theorem InvEntryDeriv.proof (h₁ : InvEntryBound.Statement) : InvEntryDeriv.Sta
     have hconst : (fun q => ∑ s, Y q j s * (Y q)⁻¹ s m) =ᶠ[𝓝 p]
         fun _ => (1 : Matrix (Fin g) (Fin g) ℝ) j m := by
       filter_upwards [hnear] with q hq
-      rw [← mul_apply, mul_nonsing_inv _ (isUnit_iff_ne_zero.mpr hq)]
+      rw [← Matrix.mul_apply, mul_nonsing_inv _ (isUnit_iff_ne_zero.mpr hq)]
     have h1 : fderiv ℝ (fun q => ∑ s, Y q j s * (Y q)⁻¹ s m) p =
         ∑ s, (Y p j s • fderiv ℝ (fun q => (Y q)⁻¹ s m) p +
           (Y p)⁻¹ s m • fderiv ℝ (fun q => Y q j s) p) := by
@@ -66,9 +71,10 @@ theorem InvEntryDeriv.proof (h₁ : InvEntryBound.Statement) : InvEntryDeriv.Sta
     have hZY : (Y p)⁻¹ * Y p = 1 := nonsing_inv_mul _ (isUnit_iff_ne_zero.mpr hdet)
     calc fderiv ℝ (fun q => (Y q)⁻¹ j l) p
         = ∑ s, ((Y p)⁻¹ * Y p) j s • fderiv ℝ (fun q => (Y q)⁻¹ s l) p := by
-          rw [hZY]; simp [one_apply]
+          simp only [hZY, Matrix.one_apply, ite_smul, one_smul, zero_smul,
+            Finset.sum_ite_eq, Finset.mem_univ, ite_true]
       _ = ∑ m, (Y p)⁻¹ j m • ∑ s, Y p m s • fderiv ℝ (fun q => (Y q)⁻¹ s l) p := by
-          simp only [mul_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]
+          simp only [Matrix.mul_apply, Finset.sum_smul, Finset.smul_sum, smul_smul]
           exact Finset.sum_comm
       _ = _ := by
           simp only [key, smul_neg, Finset.smul_sum, smul_smul, Finset.sum_neg_distrib]

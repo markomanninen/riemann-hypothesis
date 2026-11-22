@@ -1,8 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsIsFundU
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.QuasiOfFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,20 +29,20 @@ theorem fourierBesselBasePoint_last_column (i : Fin B.V.rank) : x0 B i (Fin.last
   simp [x0, xLast, Fin.snoc_last]
 
 theorem mul_fourierBesselBasePoint_castSucc_column {m : ℕ} (M : Mx D m B.V.rank) (i : Fin m) (j : Fin σ) :
-    (M ⬝ x0 B) i (Fin.castSucc j) = (M ⬝ B.d.jX) i j := by
+    (M * x0 B) i (Fin.castSucc j) = (M * B.d.jX) i j := by
   simp only [Matrix.mul_apply, fourierBesselBasePoint_castSucc_column]
 
 theorem mul_fourierBesselBasePoint_last_column {m : ℕ} (M : Mx D m B.V.rank) (i : Fin m) :
-    (M ⬝ x0 B) i (Fin.last σ) = (M *ᵥ (B.d.j0 *ᵥ ratV (vecB B.o B.ζ))) i := by
+    (M * x0 B) i (Fin.last σ) = (M *ᵥ (B.d.j0 *ᵥ ratV (vecB B.o B.ζ))) i := by
   simp only [Matrix.mul_apply, Matrix.mulVec, dotProduct, fourierBesselBasePoint_last_column]
 
 theorem fourierBesselBasePoint_mul_eq (U : Mx D (σ + 1) (σ + 1)) (i : Fin B.V.rank) (j : Fin (σ + 1)) :
-    (x0 B ⬝ U) i j = ∑ k : Fin σ, B.d.jX i k * U (Fin.castSucc k) j +
+    (x0 B * U) i j = ∑ k : Fin σ, B.d.jX i k * U (Fin.castSucc k) j +
       (B.d.j0 *ᵥ ratV (vecB B.o B.ζ)) i * U (Fin.last σ) j := by
   rw [Matrix.mul_apply, Fin.sum_univ_castSucc]
   simp only [fourierBesselBasePoint_castSucc_column, fourierBesselBasePoint_last_column]
 
-theorem besselAnisotropicEmbedding_fixes_basePoint (h : GA D B.A) : mt B.V (embA B.d B.o h) ⬝ x0 B = x0 B := by
+theorem besselAnisotropicEmbedding_fixes_basePoint (h : GA D B.A) : mt B.V (embA B.d B.o h) * x0 B = x0 B := by
   ext i j
   refine Fin.lastCases ?_ (fun j => ?_) j
   · rw [mul_fourierBesselBasePoint_last_column, fourierBesselBasePoint_last_column, embA_apply, Matrix.mulVec_mulVec, B.d.wittDecomp_anisotropicEmbedding_inclAnisotropic, ← Matrix.mulVec_mulVec, vecB, ratV_mulVec,
@@ -62,7 +68,7 @@ theorem upSum_succ (U : Mx D (σ + 1) (σ + 1)) :
   · rw [if_pos h, if_pos h.symm]
   · rw [if_neg h, if_neg (Ne.symm h)]
 
-theorem besselFlagProjection_mul_fourierBesselBasePoint_apply (i : Fin σ) (k : Fin (σ + 1)) : (B.d.pX ⬝ x0 B) i k = if k = Fin.castSucc i then 1 else 0 := by
+theorem besselFlagProjection_mul_fourierBesselBasePoint_apply (i : Fin σ) (k : Fin (σ + 1)) : (B.d.pX * x0 B) i k = if k = Fin.castSucc i then 1 else 0 := by
   refine Fin.lastCases ?_ (fun j => ?_) k
   · rw [mul_fourierBesselBasePoint_last_column, Matrix.mulVec_mulVec, B.d.pX_j0, Matrix.zero_mulVec, if_neg (Fin.castSucc_lt_last i).ne']
     rfl
@@ -72,26 +78,26 @@ theorem besselFlagProjection_mul_fourierBesselBasePoint_apply (i : Fin σ) (k : 
     · rw [if_neg h, if_neg (fun e => h (Fin.castSucc_injective _ e).symm)]
 
 theorem besselFlagProjection_mul_basePoint_mul_apply (U : Mx D (σ + 1) (σ + 1)) (i : Fin σ) (k : Fin (σ + 1)) :
-    (B.d.pX ⬝ (x0 B ⬝ U)) i k = U (Fin.castSucc i) k := by
+    (B.d.pX * (x0 B * U)) i k = U (Fin.castSucc i) k := by
   rw [← Matrix.mul_assoc, Matrix.mul_apply]
   simp only [besselFlagProjection_mul_fourierBesselBasePoint_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
-theorem simpleSum_eq_upSum {n : GA D B.V} {U : Mx D (σ + 1) (σ + 1)} (e : mt B.V n ⬝ x0 B = x0 B ⬝ U) :
+theorem simpleSum_eq_upSum {n : GA D B.V} {U : Mx D (σ + 1) (σ + 1)} (e : mt B.V n * x0 B = x0 B * U) :
     simpleSum B.d (vecB B.o B.ζ) n = upSum U := by
   have hb : blockX B.d n = fun i j : Fin σ => U (Fin.castSucc i) (Fin.castSucc j) := by
     ext i j
-    have h := mul_fourierBesselBasePoint_castSucc_column B (B.d.pX ⬝ mt B.V n) i j
+    have h := mul_fourierBesselBasePoint_castSucc_column B (B.d.pX * mt B.V n) i j
     rw [Matrix.mul_assoc, Matrix.mul_assoc] at h
     rw [blockX, ← besselFlagProjection_mul_basePoint_mul_apply B U i, ← e, h]
   have hc : coefX B.d (vecB B.o B.ζ) n = fun i => U (Fin.castSucc i) (Fin.last σ) := by
     ext i
-    have h := mul_fourierBesselBasePoint_last_column B (B.d.pX ⬝ mt B.V n) i
+    have h := mul_fourierBesselBasePoint_last_column B (B.d.pX * mt B.V n) i
     rw [Matrix.mul_assoc] at h
     rw [coefX, ← besselFlagProjection_mul_basePoint_mul_apply B U i, ← e, h, Matrix.mulVec_mulVec, Matrix.mul_assoc]
   rw [simpleSum, hb, hc, upSum_succ]
 
 theorem psiBes_eq_psiUni (ψ : AddChar (AF D.host.F) ℂ) {n : GA D B.V} (h : GA D B.A) (u : UX D (σ + 1))
-    (e : mt B.V (n * embA B.d B.o h) ⬝ x0 B = x0 B ⬝ u.1.1) :
+    (e : mt B.V (n * embA B.d B.o h) * x0 B = x0 B * u.1.1) :
     psiBes ψ B.d 1 (vecB B.o B.ζ) n = psiUni ψ u.1 := by
   rw [mt_mul, Matrix.mul_assoc, besselAnisotropicEmbedding_fixes_basePoint] at e
   rw [psiBes, simpleSum_eq_upSum B e, map_one, one_mul, psiUni]
@@ -167,11 +173,11 @@ theorem blkU_rat {U : Mx D (σ + 1) (σ + 1)} (hU : ∀ i j : Fin (σ + 1), (j <
     rw [map_one, RingHom.map_det]
     have e : (incA D).mapMatrix (blkQ γ) = blk U := by rw [← hγ, blk_rat]; rfl
     rw [e, det_blk hU]
-  have e : rat (blkQ γ)⁻¹ ⬝ (blkU hU).1 = 1 := by
+  have e : rat (blkQ γ)⁻¹ * (blkU hU).1 = 1 := by
     rw [ha1, ← rat_mul, Matrix.nonsing_inv_mul _ (by rw [hdet]; exact isUnit_one), rat_one]
   refine ⟨by rw [ha1]; exact rat_mem _, ?_⟩
   have hinv : ((blkU hU)⁻¹).1 = rat (blkQ γ)⁻¹ := by
-    calc ((blkU hU)⁻¹).1 = (rat (blkQ γ)⁻¹ ⬝ (blkU hU).1) ⬝ ((blkU hU)⁻¹).1 := by rw [e, Matrix.one_mul]
+    calc ((blkU hU)⁻¹).1 = (rat (blkQ γ)⁻¹ * (blkU hU).1) * ((blkU hU)⁻¹).1 := by rw [e, Matrix.one_mul]
       _ = rat (blkQ γ)⁻¹ := by rw [Matrix.mul_assoc, Units.mul_inv, Matrix.mul_one]
   rw [hinv]; exact rat_mem _
 
@@ -183,10 +189,10 @@ theorem rat_vecMulVec {m k : ℕ} (w : Fin m → D.host.E) (r : Fin k → D.host
 theorem besselFlagElement_mul_basePoint_eq_basePoint_mul {U : Mx D (σ + 1) (σ + 1)} (hU : ∀ i j : Fin (σ + 1), (j < i → U i j = 0) ∧ U i i = 1)
     (a : GL (Fin σ) (AE D)) (ha : a.1 = blk U) (b : Mx D σ B.V₀.rank)
     (hbz : a.1 *ᵥ (b *ᵥ ratV (vecB B.o B.ζ)) = fun i => U (Fin.castSucc i) (Fin.last σ)) :
-    mt B.V (B.d.levi a * B.d.nB b) ⬝ x0 B = x0 B ⬝ U := by
-  have hX : mt B.V (B.d.levi a * B.d.nB b) ⬝ B.d.jX = B.d.jX ⬝ a.1 := by
+    mt B.V (B.d.levi a * B.d.nB b) * x0 B = x0 B * U := by
+  have hX : mt B.V (B.d.levi a * B.d.nB b) * B.d.jX = B.d.jX * a.1 := by
     rw [mt_mul, Matrix.mul_assoc, B.d.nB_jX, B.d.levi_jX]
-  have h0 : mt B.V (B.d.levi a * B.d.nB b) ⬝ B.d.j0 = B.d.j0 + B.d.jX ⬝ (a.1 ⬝ b) := by
+  have h0 : mt B.V (B.d.levi a * B.d.nB b) * B.d.j0 = B.d.j0 + B.d.jX * (a.1 * b) := by
     rw [mt_mul, Matrix.mul_assoc, B.d.nB_j0, Matrix.mul_add, B.d.wittDecomp_levi_inclAnisotropic, ← Matrix.mul_assoc, B.d.levi_jX,
       Matrix.mul_assoc]
   ext i j
@@ -199,7 +205,7 @@ theorem besselFlagElement_mul_basePoint_eq_basePoint_mul {U : Mx D (σ + 1) (σ 
     rfl
 
 theorem exists_flag (u : UX D (σ + 1)) :
-    ∃ n ∈ flagN B.d, mt B.V n ⬝ x0 B = x0 B ⬝ u.1.1 ∧ (u ∈ UXQ D (σ + 1) → n ∈ GQ B.V) := by
+    ∃ n ∈ flagN B.d, mt B.V n * x0 B = x0 B * u.1.1 ∧ (u ∈ UXQ D (σ + 1) → n ∈ GQ B.V) := by
   have hU : ∀ i j : Fin (σ + 1), (j < i → u.1.1 i j = 0) ∧ u.1.1 i i = 1 := u.2
   obtain ⟨r₀, hr⟩ := exists_form B
   obtain ⟨c, hc⟩ : ∃ c : Fin σ → AE D, c = fun i => u.1.1 (Fin.castSucc i) (Fin.last σ) := ⟨_, rfl⟩
@@ -223,7 +229,7 @@ end GlobalTheory.Unf.FB.UniRad
 
 namespace GlobalTheory.Unf.FB
 
-theorem uniRad_surj_psi : ∀ (D : D7) (σ : ℕ) (B : BesLev D σ), (∀ u : UX D (σ + 1), ∃ n ∈ flagN B.d, mt B.V n ⬝ x0 B = x0 B ⬝ u.1.1 ∧ (u ∈ UXQ D (σ + 1) → n ∈ GQ B.V)) ∧ ∀ (ψ : AddChar (AF D.host.F) ℂ), ∀ n ∈ flagN B.d, ∀ (h : GA D B.A) (u : UX D (σ + 1)), mt B.V (n * embA B.d B.o h) ⬝ x0 B = x0 B ⬝ u.1.1 → psiBes ψ B.d 1 (vecB B.o B.ζ) n = psiUni ψ u.1 :=
+theorem uniRad_surj_psi : ∀ (D : D7) (σ : ℕ) (B : BesLev D σ), (∀ u : UX D (σ + 1), ∃ n ∈ flagN B.d, mt B.V n * x0 B = x0 B * u.1.1 ∧ (u ∈ UXQ D (σ + 1) → n ∈ GQ B.V)) ∧ ∀ (ψ : AddChar (AF D.host.F) ℂ), ∀ n ∈ flagN B.d, ∀ (h : GA D B.A) (u : UX D (σ + 1)), mt B.V (n * embA B.d B.o h) * x0 B = x0 B * u.1.1 → psiBes ψ B.d 1 (vecB B.o B.ζ) n = psiUni ψ u.1 :=
   fun _ _ B => ⟨UniRad.exists_flag B, fun ψ _ _ h u e => UniRad.psiBes_eq_psiUni B ψ h u e⟩
 
 end GlobalTheory.Unf.FB

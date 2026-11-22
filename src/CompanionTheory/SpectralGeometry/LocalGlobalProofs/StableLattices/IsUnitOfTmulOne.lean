@@ -1,9 +1,14 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContinuousHermScal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresUniqueAe
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ContinuousHermScal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresUniqueAe
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.HermitianMatricesLocallyCompactBorel
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -37,8 +42,8 @@ def hermAdd {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Al
 
 end GlobalTheory.CompanionTheory.SW.QTie
 
-open GlobalTheory.CompanionTheory.SW.OneHerm GlobalTheory.CompanionTheory.SW.QTie in
 
+open GlobalTheory.CompanionTheory.SW.OneHerm GlobalTheory.CompanionTheory.SW.QTie in
 theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ (M : ℕ) (J : Matrix (Fin M) (Fin M) E), IsHermND σ J → ∀ (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [MeasurableSpace R] [BorelSpace R], IsLocR R → ∀ (μ : Measure (Fin 1 → Fin M → R ⊗[F] E)) (ν : Measure R), μ.IsAddHaarMeasure → ν.IsAddHaarMeasure → ν {c | ¬ IsUnit c} = 0 → μ {X | ¬ IsUnit ((fun X : Fin 1 → Fin M → R ⊗[F] E => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR (R) σ J (X 0)) X)} = 0 → ∀ fib, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsFibreFamily μ (fun X : Fin 1 → Fin M → R ⊗[F] E => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR (R) σ J (X 0)) id Set.univ ν {c | IsUnit c} fib → ∀ m, IsGramFib R σ J 1 μ (ν.map (hermScal R σ)) m → ∀ c : R, IsUnit c → fib c = m (hermScal R σ c) := by
   intro F E _ _ _ _ _ σ hσ M J hJ R _ _ _ _ _ hR μ ν hμ hν hνu hμu fib hfib m hm c hc
   classical
@@ -61,22 +66,22 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
   obtain ⟨g, hgc, hgf⟩ := hg M J hJ
   obtain ⟨hf1, hf2, hf3⟩ := hfib
   let q : (Fin 1 → Fin M → R ⊗[F] E) → R := fun X => Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.qR R σ J (X 0)
-  have hq : ∀ X, q X = hermHalf R σ (g X) := by
+  have hq : ∀ X, q X = OneHerm.hermHalf R σ (g X) := by
     intro X
     change _ = algebraMap F R (1 / 2) * Algebra.trace R (R ⊗[F] E) ((g X : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)) 0 0)
     rw [← hgf X]
     rfl
   have hgq : ∀ X, g X = hermScal R σ (q X) := by
     intro X
-    rw [hq, hermScal_hermHalf R hσ]
-  have hdet : ∀ S : HermR R σ 1, IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det ↔ IsUnit (hermHalf R σ S) := by
+    rw [hq, OneHerm.hermScal_hermHalf R hσ]
+  have hdet : ∀ S : HermR R σ 1, IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det ↔ IsUnit (OneHerm.hermHalf R σ S) := by
     intro S
-    have hS : ((S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E))).det = (hermHalf R σ S) ⊗ₜ[F] (1 : E) := by
-      conv_lhs => rw [← hermScal_hermHalf R hσ S]
+    have hS : ((S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E))).det = (OneHerm.hermHalf R σ S) ⊗ₜ[F] (1 : E) := by
+      conv_lhs => rw [← OneHerm.hermScal_hermHalf R hσ S]
       rw [Matrix.det_fin_one]
       rfl
     rw [hS]
-    refine ⟨isUnit_of_tmul_one hσ, fun h => ?_⟩
+    refine ⟨QTie.isUnit_of_tmul_one hσ, fun h => ?_⟩
     exact h.map (Algebra.TensorProduct.includeLeftRingHom : R →+* R ⊗[F] E)
   have hU : {X | IsUnit (gramR R σ J X).det} = {X | IsUnit (q X)} := by
     ext X
@@ -85,27 +90,27 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
   have hUnull : μ ({X | IsUnit (gramR R σ J X).det}ᶜ) = 0 := by
     rw [hU]
     exact hμu
-  have hemb : MeasurableEmbedding (hermScal R σ) := (hermHomeo R hσ).measurableEmbedding
+  have hemb : MeasurableEmbedding (hermScal R σ) := (OneHerm.hermHomeo R hσ).measurableEmbedding
   have hν' : (ν.map (hermScal R σ)).IsAddHaarMeasure :=
-    (hermAdd hσ R).isAddHaarMeasure_map ν (continuous_hermScal R σ) (continuous_hermHalf R σ)
+    (QTie.hermAdd hσ R).isAddHaarMeasure_map ν (OneHerm.continuous_hermScal R σ) (OneHerm.continuous_hermHalf R σ)
   let m' : HermR R σ 1 → Measure (Fin 1 → Fin M → R ⊗[F] E) := fun S =>
-    if IsUnit (hermHalf R σ S) then fib (hermHalf R σ S) else 0
+    if IsUnit (OneHerm.hermHalf R σ S) then fib (OneHerm.hermHalf R σ S) else 0
   have hm'u : ∀ s : R, IsUnit s → m' (hermScal R σ s) = fib s := by
     intro s hs
-    simp only [m', hermHalf_hermScal R hσ, hs, if_true]
+    simp only [m', OneHerm.hermHalf_hermScal R hσ, hs, if_true]
   have hm' : IsGramFib R σ J 1 μ (ν.map (hermScal R σ)) m' := by
     refine ⟨?_, ?_, ?_⟩
     · intro S
-      by_cases hS : IsUnit (hermHalf R σ S)
-      · have : m' S = fib (hermHalf R σ S) := by simp only [m', hS, if_true]
+      by_cases hS : IsUnit (OneHerm.hermHalf R σ S)
+      · have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS, if_true]
         rw [this]
-        refine measure_mono_null ?_ (hf1 (hermHalf R σ S))
+        refine measure_mono_null ?_ (hf1 (OneHerm.hermHalf R σ S))
         intro X hX hX'
         apply hX
-        have hqX : q X = hermHalf R σ S := by simpa using hX'.1
+        have hqX : q X = OneHerm.hermHalf R σ S := by simpa using hX'.1
         refine ⟨?_, ?_⟩
         · change gramR R σ J X = (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E))
-          rw [hgf X, hgq X, hqX, hermScal_hermHalf R hσ]
+          rw [hgf X, hgq X, hqX, OneHerm.hermScal_hermHalf R hσ]
         · change IsUnit (gramR R σ J X).det
           rw [hgf X, hdet, ← hq, hqX]
           exact hS
@@ -128,16 +133,16 @@ theorem GlobalTheory.CompanionTheory.SW.QTie.fib_eq_gramFib : ∀ (F E : Type) [
     · intro φ hφ hφc hφs
       obtain ⟨hi, hcont⟩ := hf3 φ hφ hφc (Set.subset_univ _)
       refine ⟨fun S hS => ?_, ?_⟩
-      · have hS' : IsUnit (hermHalf R σ S) := (hdet S).mp hS
-        have : m' S = fib (hermHalf R σ S) := by simp only [m', hS', if_true]
+      · have hS' : IsUnit (OneHerm.hermHalf R σ S) := (hdet S).mp hS
+        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', if_true]
         rw [this]
         exact hi _ hS'
-      · have hmaps : Set.MapsTo (hermHalf R σ) {S : HermR R σ 1 | IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det} {c | IsUnit c} :=
+      · have hmaps : Set.MapsTo (OneHerm.hermHalf R σ) {S : HermR R σ 1 | IsUnit (S : Matrix (Fin 1) (Fin 1) (R ⊗[F] E)).det} {c | IsUnit c} :=
           fun S hS => (hdet S).mp hS
-        refine (hcont.comp (continuous_hermHalf R σ).continuousOn hmaps).congr ?_
+        refine (hcont.comp (OneHerm.continuous_hermHalf R σ).continuousOn hmaps).congr ?_
         intro S hS
-        have hS' : IsUnit (hermHalf R σ S) := (hdet S).mp hS
-        have : m' S = fib (hermHalf R σ S) := by simp only [m', hS', if_true]
+        have hS' : IsUnit (OneHerm.hermHalf R σ S) := (hdet S).mp hS
+        have : m' S = fib (OneHerm.hermHalf R σ S) := by simp only [m', hS', if_true]
         simp only [this, Function.comp]
   have := GlobalTheory.CompanionTheory.SW.GramFib.fibre_unique F E σ hσ M J hJ R hR 1 μ (ν.map (hermScal R σ)) m hμ hν' hm m' hm'
     (hermScal R σ c)

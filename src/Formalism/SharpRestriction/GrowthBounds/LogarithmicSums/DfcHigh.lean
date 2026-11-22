@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.PrimeRpowNegLevelLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.PrimeRpowNegLevelLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ namespace Formalism.MainNotions.AuxBlock8.Pf.G5
 
 variable {D : D7} {L : SizeData₂ D}
 
-open Classical in
 
+open Classical in
 def dropI (X : Inst D L) (K : Consts) (a b : HH D → ℤ) (p : ℕ) : ℝ :=
   if L.sc.x ^ (-L.sc.eps) < Sig X K a b p then 1 else 0
 
@@ -214,7 +218,7 @@ theorem dfc_high (P : ParameterChoice' D L) (X : Inst D L) (K : Consts) {a b : H
     intro j; unfold gainP; rw [if_pos (Or.inr hpX)]
   have ht : tauP X K a b p = 0 := by unfold tauP; rw [if_pos hVV]
   have hi : ioP X K a b p = 0 := by
-    unfold ioP; rw [dif_neg (by rw [hVV]; simp)]
+    unfold ioP; rw [dite_eq_right (by rw [hVV]; simp)]
   unfold Dfc
   rw [ht, hi]
   simp only [hg, Finset.sum_const_zero, sub_zero]

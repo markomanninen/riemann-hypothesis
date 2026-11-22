@@ -1,4 +1,8 @@
-import Formalism.TorsionNormIteration.InvIntegralOfClass
+module
+
+public import Formalism.TorsionNormIteration.InvIntegralOfClass
+
+@[expose] public section
 
 noncomputable section
 

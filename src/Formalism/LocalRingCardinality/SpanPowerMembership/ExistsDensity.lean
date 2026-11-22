@@ -1,5 +1,9 @@
-import Formalism.LocalRingCardinality.SpanPowerMembership.LeOfEventuallyDown
-import Formalism.LocalRingCardinality.SpanPowerMembership.HasStrictFDerivAtExpZero
+module
+
+public import Formalism.LocalRingCardinality.SpanPowerMembership.LeOfEventuallyDown
+public import Formalism.LocalRingCardinality.SpanPowerMembership.HasStrictFDerivAtExpZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,11 +52,12 @@ theorem expG_cont : Continuous C.expG := by
   exact hc.comp continuous_subtype_val
 
 theorem exists_rho : ∃ ρ > 0, ∀ Z : 𝔸, ‖Z‖ < ρ →
-    logA 𝔸 (exp Z) = Z ∧ ((∃ g, C.mat g = exp Z) → Z ∈ V) := by
-  obtain ⟨ε, hε, h⟩ := Metric.eventually_nhds_iff.1 ((logA_exp (𝔸 := 𝔸)).and C.H2)
+    logA (𝔸 := 𝔸) (exp Z) = Z ∧ ((∃ g, C.mat g = exp Z) → Z ∈ V) := by
+  obtain ⟨ε, hε, h⟩ := Metric.eventually_nhds_iff.1
+    ((logA_exp (𝔸 := 𝔸)).and C.H2)
   exact ⟨ε, hε, fun Z hZ => h (by simpa [dist_zero_right] using hZ)⟩
 
-variable {ρ : ℝ} (hR : ∀ Z : 𝔸, ‖Z‖ < ρ → logA 𝔸 (exp Z) = Z ∧ ((∃ g, C.mat g = exp Z) → Z ∈ V))
+variable {ρ : ℝ} (hR : ∀ Z : 𝔸, ‖Z‖ < ρ → logA (𝔸 := 𝔸) (exp Z) = Z ∧ ((∃ g, C.mat g = exp Z) → Z ∈ V))
 
 include hR in
 theorem injOn : InjOn C.expG (ball (0 : V) ρ) := by
@@ -115,11 +120,12 @@ theorem nu_finite : IsFiniteMeasure (C.nu ρ μ) := by
 include hR in
 theorem nu_pos (hρ : 0 < ρ) (r : ℝ) (hr : 0 < r) : 0 < C.nu ρ μ (closedBall (0 : V) r) := by
   have ht : 0 < min r ρ := lt_min hr hρ
-  have hcont : ContinuousAt (logA 𝔸) 1 := (hasStrict_logA (𝔸 := 𝔸)).hasFDerivAt.continuousAt
-  have hlim : Tendsto (logA 𝔸) (𝓝 1) (𝓝 0) := by
+  have hcont : ContinuousAt (logA (𝔸 := 𝔸)) 1 :=
+    (hasStrict_logA (𝔸 := 𝔸)).hasFDerivAt.continuousAt
+  have hlim : Tendsto (logA (𝔸 := 𝔸)) (𝓝 1) (𝓝 0) := by
     have h := hcont.tendsto
     rwa [logA_one] at h
-  have hev : ∀ᶠ h in 𝓝 (1 : 𝔸), exp (logA 𝔸 h) = h ∧ ‖logA 𝔸 h‖ < min r ρ := by
+  have hev : ∀ᶠ h in 𝓝 (1 : 𝔸), exp (logA (𝔸 := 𝔸) h) = h ∧ ‖logA (𝔸 := 𝔸) h‖ < min r ρ := by
     refine (exp_logA (𝔸 := 𝔸)).and ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) _ ht] with h hh
     simpa [dist_zero_right] using hh
@@ -132,9 +138,9 @@ theorem nu_pos (hρ : 0 < ρ) (r : ℝ) (hr : 0 < r) : 0 < C.nu ρ μ (closedBal
   have hsub : C.mat ⁻¹' W ⊆ C.expG '' (closedBall 0 r ∩ ball 0 ρ) := by
     intro g hg
     obtain ⟨he, hn⟩ := hWsub hg
-    have hZρ : ‖logA 𝔸 (C.mat g)‖ < ρ := lt_of_lt_of_le hn (min_le_right _ _)
-    have hZV : logA 𝔸 (C.mat g) ∈ V := (hR _ hZρ).2 ⟨g, he.symm⟩
-    refine ⟨⟨logA 𝔸 (C.mat g), hZV⟩, ⟨?_, ?_⟩, ?_⟩
+    have hZρ : ‖logA (𝔸 := 𝔸) (C.mat g)‖ < ρ := lt_of_lt_of_le hn (min_le_right _ _)
+    have hZV : logA (𝔸 := 𝔸) (C.mat g) ∈ V := (hR _ hZρ).2 ⟨g, he.symm⟩
+    refine ⟨⟨logA (𝔸 := 𝔸) (C.mat g), hZV⟩, ⟨?_, ?_⟩, ?_⟩
     · rw [mem_closedBall_zero_iff]
       exact le_of_lt (lt_of_lt_of_le hn (min_le_left _ _))
     · rw [mem_ball_zero_iff]

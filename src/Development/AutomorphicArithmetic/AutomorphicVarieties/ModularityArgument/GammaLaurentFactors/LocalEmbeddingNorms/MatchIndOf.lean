@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormCnt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.Regroup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharLocalComponentExistsUniqueUnitary
-import ReciprocityTheory.Chebotarev.CyclotomicIrreducibleOfForallIsUnramifiedAt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.LocalEmbeddingNorms.NormCnt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.Regroup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HeckeCharLocalComponentExistsUniqueUnitary
+public import ReciprocityTheory.Chebotarev.CyclotomicIrreducibleOfForallIsUnramifiedAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,22 +211,22 @@ end Primes
 
 section Main
 
-open Classical in
 
+open Classical in
 private def pick {X : Type} (sat : X → Multiset ℂˣ → Prop) (w : X) : Multiset ℂˣ :=
   if h : ∃ B, sat w B then h.choose else 0
 
 private theorem pick_spec {X : Type} {sat : X → Multiset ℂˣ → Prop} {w : X} {B : Multiset ℂˣ} (h : sat w B) :
     sat w (pick sat w) := by
   have h' : ∃ B, sat w B := ⟨B, h⟩
-  rw [pick, dif_pos h']
+  rw [pick, dite_eq_left h']
   exact h'.choose_spec
 
-private theorem sat_unique {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
+private theorem sat_unique {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
     {w : HeightOneSpectrum (𝓞 F)} {B B' : Multiset ℂˣ} (h : (CG.mk σ).HasSat w B) (h' : (CG.mk σ).HasSat w B') : B = B' :=
   GlobalTheory.LFun.HasSatGL.unique ((CG.hasSat_mk σ w B).1 h) ((CG.hasSat_mk σ w B').1 h')
 
-private theorem sat_card {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
+private theorem sat_card {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (σ : CuspSub F n)
     {w : HeightOneSpectrum (𝓞 F)} {B : Multiset ℂˣ} (h : (CG.mk σ).HasSat w B) : Multiset.card B = n :=
   GlobalTheory.LFun.HasSatGL.card ((CG.hasSat_mk σ w B).1 h)
 
@@ -254,7 +258,7 @@ private theorem unr_cancel {a b : kˣ →* ℂˣ} (ha : IsUnram a) (hab : IsUnra
   have h := hab x hx
   rwa [MonoidHom.mul_apply, ha x hx, one_mul] at h
 
-private theorem cnt_congr (s : Multiset (IrrGL k)) {a b : kˣ →* ℂˣ} (h : IsUnram (a * b⁻¹)) : cnt s a = cnt s b := by
+private theorem cnt_congr (s : Multiset (IrrGL (k := k))) {a b : kˣ →* ℂˣ} (h : IsUnram (a * b⁻¹)) : cnt s a = cnt s b := by
   have e : ∀ x : kˣ, ValuativeRel.valuation k (x : k) = 1 → a x = b x := fun x hx => by
     have := h x hx
     rwa [MonoidHom.mul_apply, MonoidHom.inv_apply, mul_inv_eq_one] at this
@@ -264,27 +268,27 @@ private theorem cnt_congr (s : Multiset (IrrGL k)) {a b : kˣ →* ℂˣ} (h : I
   refine forall_congr' fun x => forall_congr' fun hx => ?_
   rw [MonoidHom.mul_apply, MonoidHom.mul_apply, e x hx]
 
-private theorem cnt_zero (s : Multiset (IrrGL k)) (a : kˣ →* ℂˣ)
+private theorem cnt_zero (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ)
     (h : ∀ ξ hξ, IrrGL.ofChar ξ hξ ∈ s → ¬ IsUnram (ξ * a)) : cnt s a = 0 := by
   unfold cnt
   rw [Multiset.card_eq_zero, Multiset.filter_eq_nil]
   rintro y hy ⟨ξ, hξ, rfl, hu⟩
   exact h ξ hξ hy hu
 
-private theorem cnt_zero_of_unr (s : Multiset (IrrGL k)) (a : kˣ →* ℂˣ) (hs : ∀ y ∈ s, y.IsUnramChar)
+private theorem cnt_zero_of_unr (s : Multiset (IrrGL (k := k))) (a : kˣ →* ℂˣ) (hs : ∀ y ∈ s, y.IsUnramChar)
     (ha : ¬ IsUnram a) : cnt s a = 0 := by
   refine cnt_zero s a fun ξ hξ hy hu => ?_
   obtain ⟨μ, hμ, e⟩ := hs _ hy
   rw [IrrGL.ofChar_inj.1 e] at hu
   exact ha (unr_cancel hμ hu)
 
-private theorem exists_bad (s : Multiset (IrrGL k)) :
+private theorem exists_bad (s : Multiset (IrrGL (k := k))) :
     ∃ T : Finset (kˣ →* ℂˣ), ∀ ξ hξ, IrrGL.ofChar ξ hξ ∈ s → ξ ∈ T := by
-  let g : IrrGL k → (kˣ →* ℂˣ) := fun y => if h : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ then h.choose else 1
+  let g : IrrGL (k := k) → (kˣ →* ℂˣ) := fun y => if h : ∃ ξ hξ, y = IrrGL.ofChar ξ hξ then h.choose else 1
   refine ⟨s.toFinset.image g, fun ξ hξ hy => Finset.mem_image.2 ⟨_, Multiset.mem_toFinset.2 hy, ?_⟩⟩
   have h : ∃ ξ' hξ', IrrGL.ofChar ξ hξ = IrrGL.ofChar ξ' hξ' := ⟨ξ, hξ, rfl⟩
   change (if h : ∃ ξ' hξ', IrrGL.ofChar ξ hξ = IrrGL.ofChar ξ' hξ' then h.choose else 1) = ξ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   obtain ⟨h1, h2⟩ := h.choose_spec
   exact (IrrGL.ofChar_inj.1 h2).symm
 
@@ -315,7 +319,7 @@ private theorem Key.sat {sat : HeightOneSpectrum (𝓞 M) → Multiset ℂˣ →
   · exact ⟨⟨_, h1⟩, _, h⟩
   · exact ⟨⟨_, h1⟩, _, h⟩
 
-private theorem key_twist [IsTotallyComplex K] [IsTotallyComplex M] (h2 : Module.finrank K M = 2)
+private theorem key_twist [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M] (h2 : Module.finrank K M = 2)
     {P : CuspSub K (2 * 2)} {π : CuspSub M 2} (χ : HChar K) (ξ : HChar M)
     (hξ : ∀ w : HeightOneSpectrum (𝓞 M), χ.UnrAt (w.under (𝓞 K)) →
       ξ.UnrAt w ∧ ξ.val w = χ.val (w.under (𝓞 K)) ^ (w.under (𝓞 K)).asIdeal.inertiaDeg' w.asIdeal)
@@ -329,7 +333,7 @@ private theorem key_twist [IsTotallyComplex K] [IsTotallyComplex M] (h2 : Module
     rw [f_one h2 hne.symm hw'.symm, pow_one, hw'] at v2
     refine Or.inl ⟨hN, w', hne, hw', _, _, hB.twist u1, hB'.twist u2, ?_⟩
     have hP := hBP.twist hu
-    rw [Multiset.map_add] at hP
+    rw [Multiset.map_add (f := _)] at hP
     rwa [v1, v2]
   · obtain ⟨u1, v1⟩ := hξ w hu
     have hf : (w.under (𝓞 K)).asIdeal.inertiaDeg' w.asIdeal = 2 :=
@@ -343,16 +347,16 @@ private theorem key_twist [IsTotallyComplex K] [IsTotallyComplex M] (h2 : Module
       convert h using 2
       simp [mul_pow]
     · have h := hBP.twist hu
-      simpa [Multiset.map_add, Multiset.map_map, Function.comp_def] using h
+      simpa [Multiset.map_add (f := _), Multiset.map_map, Function.comp_def] using h
 
-private theorem core [IsTotallyComplex K] [IsTotallyComplex M] (hOps : PairGOps) (hCross : CrossG) (hSide : SideG)
+private theorem core [_root_.NumberField.IsTotallyComplex K] [_root_.NumberField.IsTotallyComplex M] (hOps : PairGOps) (hCross : CrossG) (hSide : SideG)
     (h2 : Module.finrank K M = 2) (P : CuspSub K (2 * 2)) (π : CuspSub M 2) (S : Finset (HeightOneSpectrum (𝓞 K)))
     (hkey : ∀ w : HeightOneSpectrum (𝓞 M), w.under (𝓞 K) ∉ S → Key (CG.mk π).HasSat (CG.mk P).HasSat w)
     (hK : GroundTheory.Automorphic.GJStandardL.ramifiedPlaces K ⊆ S)
     (hM : ∀ w ∈ GroundTheory.Automorphic.GJStandardL.ramifiedPlaces M, w.under (𝓞 K) ∈ S)
     (v : HeightOneSpectrum (𝓞 K)) (hv : v ∈ S)
-    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (u.adicCompletion K)))
-    (sM : ∀ w : HeightOneSpectrum (𝓞 M), Multiset (IrrGL (w.adicCompletion M)))
+    (sK : ∀ u : HeightOneSpectrum (𝓞 K), Multiset (IrrGL (k := u.adicCompletion K)))
+    (sM : ∀ w : HeightOneSpectrum (𝓞 M), Multiset (IrrGL (k := w.adicCompletion M)))
     (hsK : ∀ u, SuppAt P u (sK u)) (hsM : ∀ w, SuppAt π w (sM w))
     (zK : ∀ u ∈ S, u ≠ v → cnt (sK u) 1 = 0)
     (zM : ∀ w : HeightOneSpectrum (𝓞 M), w.under (𝓞 K) ∈ S → w.under (𝓞 K) ≠ v → cnt (sM w) 1 = 0) :
@@ -400,12 +404,12 @@ private theorem core [IsTotallyComplex K] [IsTotallyComplex M] (hOps : PairGOps)
       · left
         refine ⟨hN, w', hne, hu, ?_⟩
         have s3 := satM w' fun h => hw' (hu ▸ (memSM w').1 h)
-        rw [cx, cx, cx, sat_unique P s1 h4, sat_unique π s2 h1, sat_unique π s3 h3, Multiset.map_add]
+        rw [cx, cx, cx, sat_unique P s1 h4, sat_unique π s2 h1, sat_unique π s3 h3, Multiset.map_add (f := _)]
       · right
         refine ⟨hN, B'.map fun b : ℂˣ => (b : ℂ), ?_, ?_⟩
         · rw [cx, sat_unique π s2 h1, Multiset.map_map, Multiset.map_map]
           exact Multiset.map_congr rfl fun b _ => by simp
-        · rw [cx, sat_unique P s1 h4, h3, Multiset.map_add, Multiset.map_map, Multiset.map_map]
+        · rw [cx, sat_unique P s1 h4, h3, Multiset.map_add (f := _), Multiset.map_map, Multiset.map_map]
           congr 1)
   have pM' := hOps.2.2.1 _ _ _ _ _ _ _ c pM (fun s hs => ((hc s).1 hs).symm) (fun s hs => ((hc s).2 hs).symm)
   have e := hCross _ _ _ _ _ _ _ (by exact_mod_cast hq) hβ hβ' hQ0 hQ0' pK pM'

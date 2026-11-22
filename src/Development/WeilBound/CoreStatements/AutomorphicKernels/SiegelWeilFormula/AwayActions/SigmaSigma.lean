@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitLocF
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemClosureHeckeSplitCongruenceOfFinPartOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumTwistByHeckeCharactersTrivialBase
-import Development.WeilBound.ThetaLifts.LatticeBasics.ConstIdele
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitLocF
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemClosureHeckeSplitCongruenceOfFinPartOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumTwistByHeckeCharactersTrivialBase
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ConstIdele
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem cA_cA (hcm : IsCMExt F E σ) (z : AE F E) : cA σ (cA σ z) = z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [hσσ]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem sigma_sigma' (hcm : IsCMExt F E σ) (a : E) : σ (σ a) = a := by
   let τ : E →+* ℂ := (IsAlgClosed.lift (M := ℂ) (R := ℚ) (S := E)).toRingHom
@@ -73,7 +77,7 @@ private theorem exists_trace_zero_generator_of_isCMExt (hcm : IsCMExt F E σ) :
     simp only [Algebra.smul_def, mul_one] at hst
     have h2 : algebraMap F E s - algebraMap F E t * δ = 0 := by
       have := congrArg σ hst
-      rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hδ, map_zero] at this
+      rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hδ, map_zero] at this
       linear_combination this
     have hb : algebraMap F E t * δ = 0 := by
       have h3 : (2 : E) * (algebraMap F E t * δ) = 0 := by linear_combination hst - h2
@@ -98,7 +102,7 @@ theorem sigma_fix (hcm : IsCMExt F E σ) (e : E) : σ e = e ↔ e ∈ (algebraMa
   · intro he
     obtain ⟨s, t, rfl⟩ := hdec e
     rw [Algebra.smul_def] at he ⊢
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hδ] at he
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hδ] at he
     have h3 : (2 : E) * (algebraMap F E t * δ) = 0 := by linear_combination -he
     have hb : algebraMap F E t * δ = 0 := by
       rcases mul_eq_zero.1 h3 with h | h
@@ -136,7 +140,7 @@ theorem nrm_exists (hcm : IsCMExt F E σ) (z : AE F E) : ∃ a : AF F, algebraMa
   refine ⟨x * x - algebraMap F (AF F) d * (y * y), ?_⟩
   unfold cA
   rw [Algebra.TensorProduct.algebraMap_apply]
-  simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hδ, add_mul, mul_add,
+  simp only [map_add (f := _), Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one, hδ, add_mul, mul_add,
     Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, TensorProduct.tmul_neg, mul_neg]
   rw [Algebra.algebraMap_self, RingHom.id_apply, ← hd, Algebra.algebraMap_eq_smul_one (A := E) d,
     TensorProduct.tmul_smul, TensorProduct.smul_tmul', Algebra.smul_def, mul_comm y x, sub_eq_add_neg,

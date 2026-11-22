@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.LiftSingleAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.AevalSingleZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.LiftSingleAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.AevalSingleZero
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci
 open PositivityTheory.Rg.Fx
@@ -48,10 +52,10 @@ private theorem cm_sb {κ κ' R R' T T' : Type} [CommRing R] [CommRing R'] [Comm
   | add p q hp hq =>
     have e : cm φ (p + q) = cm φ p + cm φ q := by
       ext γ
-      rw [coeff_add, coeff_cm h0, coeff_cm h0, coeff_cm h0, coeff_add, ha]
-    rw [e, map_add, map_add, ← hp, ← hq]
+      rw [MvPolynomial.coeff_add, coeff_cm h0, coeff_cm h0, coeff_cm h0, MvPolynomial.coeff_add, ha]
+    rw [e, map_add (f := _), map_add (f := _), ← hp, ← hq]
     ext γ
-    rw [coeff_add, coeff_cm h0', coeff_cm h0', coeff_cm h0', coeff_add, ha']
+    rw [MvPolynomial.coeff_add, coeff_cm h0', coeff_cm h0', coeff_cm h0', MvPolynomial.coeff_add, ha']
 
 private theorem homog_eq {ι : Type} (d : ℕ) (p : MvPolynomial ι ℂ) (s : Finset (ι →₀ ℕ)) (hs : p.support ⊆ s) :
     homog d p = ∑ α ∈ s, X none ^ (d - α.degree) * rename some (monomial α (p.coeff α)) := by
@@ -64,7 +68,7 @@ private theorem homog_add {ι : Type} (d : ℕ) (p q : MvPolynomial ι ℂ) : ho
   rw [homog_eq d _ _ support_add, homog_eq d p _ Finset.subset_union_left, homog_eq d q _ Finset.subset_union_right,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun α _ => ?_
-  rw [coeff_add, map_add, map_add, mul_add]
+  rw [MvPolynomial.coeff_add, map_add (f := _), map_add (f := _), mul_add]
 
 private theorem homog_monomial {ι : Type} (d : ℕ) (α : ι →₀ ℕ) (c : ℂ) :
     homog d (monomial α c) = X none ^ (d - α.degree) * rename some (monomial α c) := by
@@ -85,7 +89,7 @@ private theorem homog_rename {ι ι' : Type} (δ : ι → ι') (d : ℕ) (p : Mv
     rw [homog_monomial, map_mul, map_pow, rename_X, rename_rename]
     conv_lhs => rw [rename_monomial, homog_monomial, ← rename_monomial, rename_rename, Finsupp.degree_mapDomain]
     rfl
-  | add p q hp hq => rw [map_add, homog_add, homog_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), homog_add, homog_add, hp, hq, map_add (f := _)]
 
 private theorem piece_mul {ι : Type} [Fintype ι] (k : ℕ) (f : EP ι) (c : ℂ) :
     piece k (f * algebraMap ℂ (EP ι) c) = piece k f * C c := by
@@ -214,7 +218,8 @@ theorem UpperTheory.ConvolutionTheory.Ci.kfBc :
         rfl
       exact DFunLike.congr_fun e r
   · unfold trunc
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     exact cm_sb h C C (rename res).toRingHom (rename (Option.map res)).toRingHom (homog d) (homog d)
       (by simp [homog]) (by simp [homog]) (homog_add d) (homog_add d) (homog_mul d) (homog_rename res d) (G k)

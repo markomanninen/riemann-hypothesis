@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushMuLinkA
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DetLatticeFlagTensorStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionDatumDegreeSumStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushMuLinkA
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DetLatticeFlagTensorStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntersectionDatumDegreeSumStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem mu_rootLat (τ : CMType H) (m : Fin D.q) : Fl.rootLat (τ, muRev D.p D.q
   have h0 : ¬ ((muRev D.p D.q m : ℕ) < D.p) := by simp only [muRev]; omega
   have h1 : HodgeCpt.rootIdx D (τ, muRev D.p D.q m) = ⟨.inr τ, m⟩ := by
     unfold HodgeCpt.rootIdx
-    rw [dif_neg h0]
+    rw [dite_eq_right h0]
     congr 1
     exact Fin.ext (by simp only [muRev]; omega)
   have h2 : HodgeCpt.rootSgn D (τ, muRev D.p D.q m) = -1 := if_neg h0

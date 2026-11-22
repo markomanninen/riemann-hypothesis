@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsFactorisationCuspidal
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.FlathTensorProduct
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.UnitaryIrreducibleAdmissible
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,8 @@ theorem card_ne (N : Subgroup H) [Fintype (H ⧸ N)] : (Fintype.card (H ⧸ N) :
 
 theorem apply_mean (τ : Representation ℂ H V) (N : Subgroup H) [Fintype (H ⧸ N)] {v : V}
     (hv : ∀ n ∈ N, τ n v = v) (k : H) : τ k (mean τ N v) = mean τ N v := by
-  rw [mean_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mean_apply, map_smul, map_sum]
   congr 1
   have := sum_out_comp N (fun x => τ x v) (fun x n hn => by simp [hv n hn]) (fun x => k * x)
     (MulAction.toPerm k) (fun _ => rfl)
@@ -85,7 +90,7 @@ theorem exists_projector (τ : Representation ℂ H V)
         obtain ⟨N, h1, h2, h3⟩ := hx
         obtain ⟨N', h1', h2', h3'⟩ := hy
         refine ⟨N ⊓ N', inferInstance, inferInstance, fun M hM hn _ => ?_⟩
-        rw [map_add, h3 M (hM.trans inf_le_left) hn, h3' M (hM.trans inf_le_right) hn, add_zero]
+        rw [map_add (f := _), h3 M (hM.trans inf_le_left) hn, h3' M (hM.trans inf_le_right) hn, add_zero]
       | smul c x _ hx =>
         obtain ⟨N, h1, h2, h3⟩ := hx
         exact ⟨N, h1, h2, fun M hM hn _ => by rw [map_smul, h3 M hM hn, smul_zero]⟩
@@ -179,7 +184,8 @@ theorem hecke_comm (K : Subgroup G) (θ : G → G) (hmul : ∀ x y, θ (x * y) =
   obtain ⟨a, ha, b, hb, hh⟩ := hdc h
   obtain ⟨c, hc, d, hd, hg⟩ := hdc g
   rw [hm N (ρ h v) (fun n hn => p2 n hn.1.2), hm N (ρ g v) (fun n hn => p1 n hn.1.1), mean_apply, mean_apply]
-  simp only [map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum]
   congr 1
   have := sum_out_comp N (fun k : K => e (ρ h (ρ k (ρ g v))))
     (fun k n hn => by simp [p1 n hn.1.1]) (fun k => ⟨b, hb⟩ * (ψ k)⁻¹ * ⟨c, hc⟩)

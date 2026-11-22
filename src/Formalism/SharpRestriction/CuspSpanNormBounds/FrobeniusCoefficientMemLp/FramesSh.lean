@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesTurn
-import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
-import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesTurn
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SBridge
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -26,31 +30,6 @@ theorem orbSqO_le_turn (L : LocBessel k r) (ka : ℝ) (hka : 0 < ka) (hc : L.c =
 section OneRec
 
 variable (D : D7)
-
-def FrameChangeSH (Ch Cs Cn Cf : ℝ) : Prop :=
-  ∀ (L : LocBessel D.R.k D.R.rS) (lam0 : Fin (2 * D.R.rS + D.R.k + 1) → ℝ)
-    (f : Mx D.R.k D.R.rS → (L.Wq →L[ℂ] L.Wp)) (ka b : ℝ),
-    Real.exp 1 ≤ b → 0 < ka → ka ≤ b ^ Ch → ka⁻¹ ≤ b ^ Ch → L.c = ((2 * ka : ℝ) : ℂ) → L.κN ≠ ⊤ →
-    L.ε = epsSH D.R → 0 < L.κN →
-    StdHyp Ch Cs D.R.k D.R.rS L.ε lam0 L.u L.u' (Tz D.R.k D.R.rS L.z) (Tz D.R.k D.R.rS L.z') ka b →
-    l1dist L.lam lam0 ≤ Cn * D.R.k * (D.R.m : ℝ) ^ 3 →
-    IsKFinCoefH L.σ f →
-    ∃ (L₁ : LocBessel D.R.k D.R.rS) (f₁ : Mx D.R.k D.R.rS → (L₁.Wq →L[ℂ] L₁.Wp)),
-      L₁.ε = L.ε ∧ L₁.lam = L.lam ∧ L₁.u = L.u ∧ L₁.u' = L.u' ∧ L₁.c = cOfDpsi ((1 : ℝ) : ℂ) ∧ 0 < L₁.κN ∧ L₁.κN ≠ ⊤ ∧
-      Tz D.R.k D.R.rS L₁.z = Tz D.R.k D.R.rS L.z * ka ^ (2 * D.R.rS) ∧
-      Tz D.R.k D.R.rS L₁.z' = Tz D.R.k D.R.rS L.z' * ka ^ (2 * D.R.rS) ∧
-      IsKFinCoefH L₁.σ f₁ ∧
-      ∀ μsec, IsSection D.R.k D.R.rS L.z L.z' μsec → ∃ μsec₁, IsSection D.R.k D.R.rS L₁.z L₁.z' μsec₁ ∧
-        ∃ K₁ : ℝ, 0 < K₁ ∧
-        jNorm2 L₁ f₁ μsec₁ ≤ ENNReal.ofReal K₁ * jNorm2 L f μsec ∧
-        (jNorm2 L f μsec ≠ 0 → jNorm2 L₁ f₁ μsec₁ ≠ 0) ∧
-        ∀ p : Point ℂ (D.R.rS + 1), Gpt (Tz D.R.k D.R.rS L.z) (Tz D.R.k D.R.rS L.z') p ≠ 0 →
-          ∃ p₁ : Point ℂ (D.R.rS + 1), Gpt (Tz D.R.k D.R.rS L₁.z) (Tz D.R.k D.R.rS L₁.z') p₁ ≠ 0 ∧
-            max 1 (1 / Gpt (Tz D.R.k D.R.rS L₁.z) (Tz D.R.k D.R.rS L₁.z') p₁) ≤
-              b ^ (Cf * (D.R.m : ℝ) ^ 2) * max 1 (1 / Gpt (Tz D.R.k D.R.rS L.z) (Tz D.R.k D.R.rS L.z') p) ∧
-            ENNReal.ofReal (K₁ * ptWeight D.R.k D.R.rS (Tz D.R.k D.R.rS L.z) (Tz D.R.k D.R.rS L.z') p) * orbSqO L f p ≤
-              ENNReal.ofReal (b ^ (Cf * (D.R.m : ℝ) ^ 2) *
-                ptWeight D.R.k D.R.rS (Tz D.R.k D.R.rS L₁.z) (Tz D.R.k D.R.rS L₁.z') p₁) * orbSq L₁ f₁ p₁
 
 end OneRec
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.MiscLemmasC.Imports
+module
+
+public import Mathlib
+public import Lemmata.MiscLemmasC.Imports
+
+@[expose] public section
 
 set_option linter.style.haveILetI false
 
@@ -50,11 +54,6 @@ theorem IsInv.out_mk {k : ℕ} {H : AddSubgroup W} {g : W → ℂ} (hg : IsInv k
     g (((QuotientAddGroup.mk x : Qt k H).out : H) : W) = g x :=
   hg.mk_eq (QuotientAddGroup.out_eq' _)
 
-theorem IsInv.mul {k : ℕ} {H : AddSubgroup W} {g : W → ℂ} (hg : IsInv k H g) (j : ℕ) : IsInv (k * j) H g := by
-  intro t ht u hu
-  rw [← smul_smul]
-  exact hg t ht _ (H.nsmul_mem hu j)
-
 theorem avg_eq_sum (k : ℕ) (H : AddSubgroup W) [Fintype (Qt k H)] (g : W → ℂ) :
     avg k H g = (Fintype.card (Qt k H) : ℂ)⁻¹ * ∑ q : Qt k H, g ((q.out : H) : W) := by
   rw [avg, finsum_eq_sum_of_fintype, Nat.card_eq_fintype_card]
@@ -88,10 +87,11 @@ theorem avg_mul (k j : ℕ) (H : AddSubgroup W) [Finite (Qt k H)] [Finite (Qt (k
   simp_rw [key]
   exact avg_comp_surj π hπ (fun b => g ((b.out : H) : W))
 
-open Classical in
 
+open Classical in
 def integ (H : AddSubgroup W) (g : W → ℂ) : ℂ :=
-  if h : ∃ k, 0 < k ∧ IsInv k H g then avg h.choose H g else 0
+  by classical
+     exact if h : ∃ k, 0 < k ∧ IsInv k H g then avg h.choose H g else 0
 
 section Integ
 
@@ -100,7 +100,7 @@ include hfin
 
 theorem integ_eq {k : ℕ} (hk : 0 < k) {g : W → ℂ} (hg : IsInv k H g) : integ H g = avg k H g := by
   have h : ∃ k, 0 < k ∧ IsInv k H g := ⟨k, hk, hg⟩
-  rw [integ, dif_pos h]
+  rw [integ, dite_eq_left h]
   obtain ⟨hk0, hg0⟩ := h.choose_spec
   haveI := hfin _ hk0
   haveI := hfin _ hk
@@ -126,16 +126,8 @@ theorem integ_congr {g g' : W → ℂ} (h : ∀ t ∈ H, g t = g' t) : integ H g
   · have hg' : ¬ ∃ k, 0 < k ∧ IsInv k H g' := by
       rintro ⟨k, hk, hgk⟩
       exact hg ⟨k, hk, hgk.congr fun t ht => (h t ht).symm⟩
-    rw [integ, dif_neg hg, integ, dif_neg hg']
+    rw [integ, dite_eq_right hg, integ, dite_eq_right hg']
 
-omit hfin in
-theorem IsInv.add {k k' : ℕ} {g g' : W → ℂ} (hg : IsInv k H g) (hg' : IsInv k' H g') :
-    IsInv (k * k') H (fun t => g t + g' t) := by
-  have h1 := hg.mul k'
-  have h2 := hg'.mul k
-  rw [Nat.mul_comm] at h2
-  intro t ht u hu
-  simp only [h1 t ht u hu, h2 t ht u hu]
 
 omit hfin in
 theorem IsInv.cmul {k : ℕ} {g : W → ℂ} (hg : IsInv k H g) (c : ℂ) : IsInv k H (fun t => c * g t) := by
@@ -211,7 +203,7 @@ theorem integ_cmul' (g : W → ℂ) (c : ℂ) : integ H (fun t => c * g t) = c *
       refine hg ⟨k, hk, ?_⟩
       refine (hgk.cmul c⁻¹).congr fun t _ => ?_
       simp [hc]
-    rw [integ, dif_neg hn, integ, dif_neg hg, mul_zero]
+    rw [integ, dite_eq_right hn, integ, dite_eq_right hg, mul_zero]
 
 theorem integ_zero_of {g : W → ℂ} (h : ∀ t ∈ H, g t = 0) : integ H g = 0 := by
   have h1 : integ H g = integ H (fun t => (0 : ℂ) * (fun _ => (1 : ℂ)) t) :=

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellValues
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftClosedUnderOperations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 
@@ -21,13 +25,18 @@ theorem lift_zero_order : TL.LiftZero := by
   let t : MinorPolynomials.CT P.k P.r 1 :=
     ⟨q, fun l => if l = Fin.last (P.r + 1) then i else 0,
       fun l => if l = Fin.last (P.r + 1) then j else 0, c, [((0 : Fin 1), [])]⟩
-  let T0 : B.DTerm P.k P.r Wp Wq := MinorPolynomials.mkTerm Bs fib (t, [])
+  let T0 : B.DTerm P.k P.r Wp Wq :=
+    { coef := MinorPolynomials.cv Bs fib t
+      coefAdj := fun g => HilbertSchmidtVectorization.adjH (MinorPolynomials.cv Bs fib t g)
+      word := []
+      word_lie := fun X hX => by simp at hX
+      adj_id := fun g A J => HilbertSchmidtVectorization.adjH_spec (MinorPolynomials.cv Bs fib t g) A J }
   have hcoef : ∀ g, T0.coef g = cf g := by
     intro g
-    simp only [T0, MinorPolynomials.mkTerm, MinorPolynomials.cv, MinorPolynomials.cvs, C6.Epart, C6.monoM, t, fib, cf]
+    simp only [T0, MinorPolynomials.cv, MinorPolynomials.cvs, C6.Epart, C6.monoM, t, fib, cf]
     rw [Finset.prod_eq_single (Fin.last (P.r + 1)) (fun l _ hl => by simp [hl])
       (fun h => absurd (Finset.mem_univ _) h)]
-    simp only [↓reduceIte, pow_zero, List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one]
+    simp only [↓reduceIte, List.map_cons, List.map_nil, List.prod_cons, List.prod_nil, mul_one, B.Rw, List.foldr_nil]
     rw [hq g]
     simp only [PI.UnitaryGroupMassFormula.UsCompose.vars]
     congr 1
@@ -57,9 +66,9 @@ theorem lift_zero_order : TL.LiftZero := by
     intro F g
     simp only [B.opApply, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
     rw [hcoef]
-    simp [T0, MinorPolynomials.mkTerm, B.Rw]
+    rfl
   have hord : B.opOrder [T0] = 0 := by
-    simp [B.opOrder, T0, MinorPolynomials.mkTerm]
+    rfl
   have hcomD : B.Commutes Bs (C6.domL Bs ∅) [T0] := by
     intro p hp f _ g hg
     rw [hop]
@@ -71,9 +80,9 @@ theorem lift_zero_order : TL.LiftZero := by
     rw [List.mem_singleton] at hT
     subst hT
     refine ⟨Pol, t.a, t.b, c, [((0 : Fin 1), [])], hPol, fun l _ hl => by simp [t, hl], ?_, by simp, ?_⟩
-    · simp [T0, MinorPolynomials.mkTerm]
+    · exact le_rfl
     · intro g _
-      simp only [T0, MinorPolynomials.mkTerm, MinorPolynomials.cv, MinorPolynomials.cvs, t]
+      simp only [T0, MinorPolynomials.cv, MinorPolynomials.cvs, t]
       rw [hq g]
       rfl
   refine ⟨1, fib, [T0], hfib, hDD, ?_⟩

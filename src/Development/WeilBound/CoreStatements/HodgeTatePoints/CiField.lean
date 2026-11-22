@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsCurveOfFunctionField
-import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CurveSemiAbelianConjecture
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.SeparableFormGroupElementFixesUniquePositiveLine
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsCurveOfFunctionField
+public import ReciprocityTheory.CommutativeAlgebra.PolynomialHeights.HeightAddRingKrullDimQuotientMvPolynomialField
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GfForms
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem cone_homog (y : (Σ k, J k) → K) {g : MRing J} {d : B → ℕ} (hg : I
   classical
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [mConeMap, aeval_monomial, aeval_monomial, Finsupp.prod_fintype _ _ (by simp),
     Finsupp.prod_fintype _ _ (by simp)]
@@ -49,7 +54,7 @@ theorem exists_homog_val {w : (Σ k, J k) → K} {c : ∀ k, J k} (hc : ∀ k, w
     obtain ⟨M, g', h3, h4⟩ := hg
     refine ⟨N + M, f' * mon c (fun _ => M) + g' * mon c (fun _ => N), hom_add (hom_mul h1 (hom_mon _ _))
       (hom_of_eq (hom_mul h3 (hom_mon _ _)) fun k => add_comm _ _), ?_⟩
-    simp only [map_add, map_mul, hm, h2, h4, mul_one]
+    simp only [map_add (f := _), map_mul, hm, h2, h4, mul_one]
   | mul_X f q hf =>
     obtain ⟨N, f', h1, h2⟩ := hf
     refine ⟨N + 1, f' * mon (Function.update c q.1 q.2) (fun _ => 1), hom_mul h1 (hom_mon _ _), ?_⟩
@@ -88,6 +93,8 @@ theorem isFunctionField_of_dim {p : ℕ} [Fact p.Prime] [Algebra (ZMod p) K] {w 
     have hchar : CharP (MRing J ⧸ W) p := (CharP.charP_iff_prime_eq_zero Fact.out).2 (by
       rw [← map_natCast (Ideal.Quotient.mk W), Ideal.Quotient.eq_zero_iff_mem]; exact hp)
     let _ := ZMod.algebra (MRing J ⧸ W) p
+    haveI : FaithfulSMul (ZMod p) (MRing J ⧸ W) :=
+      (faithfulSMul_iff_algebraMap_injective _ _).2 (RingHom.injective _)
     have : IsScalarTower ℤ (ZMod p) (MRing J ⧸ W) := IsScalarTower.of_algebraMap_eq' (RingHom.ext_int _ _)
     have : Algebra.FiniteType (ZMod p) (MRing J ⧸ W) :=
       Algebra.FiniteType.of_restrictScalars_finiteType ℤ (ZMod p) _

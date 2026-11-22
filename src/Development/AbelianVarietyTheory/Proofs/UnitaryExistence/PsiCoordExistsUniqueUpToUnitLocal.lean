@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValPsiZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BetaAtSymm
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValPsiZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,6 +49,7 @@ theorem exists_trans (j j' : PUnit → D.P.L.ι) {V : (Spec (CommRingCat.of R)).
     ∃ u : Γ(Spec (CommRingCat.of R), V)ˣ, res h ((D.psi χ).s j) = pullU (jK R) V u * res h' ((D.psi χ).s j') := by
   have l : V ≤ (D.c χ).left ⁻¹ᵁ (D.P.L.U (j PUnit.unit) ⊓ D.P.L.U (j' PUnit.unit)) := fun y hy => ⟨hj hy, hj' hy⟩
   refine ⟨(res l (pullU (D.c χ).left _ (D.P.L.g (j PUnit.unit) (j' PUnit.unit)))) ^ (-1 : ℤ), unit_ext fun y hy => ?_⟩
+
   have hy' : jK R y ∈ V := hy
   have t := gen_trans (D.psi_gen χ) (𝟙 (TK R).left) y (j := j) (j' := j') (h hy) (h' hy)
   refine (gm_res _ y h hy _).trans (t.trans (Eq.trans ?_ (map_mul _ _ _).symm))
@@ -55,7 +60,6 @@ theorem exists_trans (j j' : PUnit → D.P.L.ι) {V : (Spec (CommRingCat.of R)).
   refine congrArg (· ^ (-1 : ℤ)) ((gm_res (jK R) y l hy' _).trans ?_)
   refine (gm_pull (jK R) (D.c χ).left y _ (l hy') _).trans ?_
   rw [Category.id_comp]; rfl
-
 theorem psiUnitOn_zero (hB : D.TauBimult) : PsiUnitOn D 0 Set.univ := by
   intro j V hV _ hle h
   have c0 : (D.c 0).left = eSec D.P.A := by
@@ -67,6 +71,7 @@ theorem psiUnitOn_zero (hB : D.TauBimult) : PsiUnitOn D 0 Set.univ := by
     Set.mem_iInter.2 fun _ => by rw [← c0]; exact hle hy
   refine ⟨((Spec (CommRingCat.of R)).presheaf.map (homOfLE hle').op).hom (D.rig.s j)⁻¹.val,
     (Units.isUnit _).map _, fn_ext fun y hy => ?_⟩
+
   have hy' : jK R y ∈ V := hy
   obtain ⟨J, hJ, eJ⟩ := exists_good D.P.L D.P.isLB y (K := PUnit) (fun _ => D.xK 0) j (fun _ _ _ => rfl)
     (fun k => Set.mem_iInter.1 (h hy) k)
@@ -78,7 +83,6 @@ theorem psiUnitOn_zero (hB : D.TauBimult) : PsiUnitOn D 0 Set.univ := by
   rw [Category.id_comp]
   refine (gs_res (jK R) y hle' hy' _).trans ((gs_unit _ _ _ (hle' hy') _).trans ?_)
   exact congrArg Units.val ((map_inv _ _).trans e.symm)
-
 variable {D χ}
 
 theorem ne_zero_of_coord {r : R} (h : PsiCoord D χ r) : r ≠ 0 := by

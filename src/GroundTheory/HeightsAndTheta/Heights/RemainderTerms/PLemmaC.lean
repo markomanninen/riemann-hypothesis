@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.AltFrob
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsComb
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.AltFrob
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RowTEqRowS
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WindowAdditive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RowTEqRowS
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WindowAdditive
+
+@[expose] public section
 
 noncomputable section
 

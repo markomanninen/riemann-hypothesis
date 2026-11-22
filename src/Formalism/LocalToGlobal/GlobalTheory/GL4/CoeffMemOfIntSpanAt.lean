@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.ThirdLinkOfArchimedean
-import Formalism.LocalToGlobal.GlobalTheory.GL4.BcBasisApply
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FockNormSubstitutionBound
-import Formalism.LocalToGlobal.Columns.TwistedLocalisationComparable
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.ThirdLinkOfArchimedean
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.BcBasisApply
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FockNormSubstitutionBound
+public import Formalism.LocalToGlobal.Columns.TwistedLocalisationComparable
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain MvPolynomial
 open scoped Matrix
@@ -33,7 +37,8 @@ theorem gM_mulVec (c : (D.mem u).C.cls 0) (y : Fin (D.R.N 0) → (D.sp.X 0).V) (
     (a : Fin (D.R.N 0)) : (gM CV c y τ *ᵥ crdQ CV c τ z) a = bcFun CV c τ (y a) z := by
   show ∑ i, gM CV c y τ a i * crdQ CV c τ z i = _
   conv_rhs => rw [← ((CV.Q c τ).b.reindex (CV.eQ c τ)).sum_equivFun z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul, Basis.reindex_apply, mul_comm]
   rfl
@@ -106,7 +111,7 @@ variable {D : D7}
 
 theorem coeff_mem_of_intSpanAt {n : ℕ} (w : D.what₂.places.Pl) (lam : D.what₂.Tau → DomWeight n)
     {p : MvPolynomial (D.what₂.Tau × Fin n × Fin n) D.what₂.LL} (hp : p ∈ IntSpanAt D w lam) (m : (D.what₂.Tau × Fin n × Fin n) →₀ ℕ) :
-    coeff m p ∈ intW D.what₂.places w := by
+    AddMonoidAlgebra.coeff p m ∈ intW D.what₂.places w := by
   unfold IntSpanAt at hp
   induction hp using AddSubgroup.closure_induction with
   | mem x hx =>
@@ -175,7 +180,8 @@ theorem colLat_eq_map (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (B : GL (Fin 
   rw [Submodule.map_span, ← Set.range_comp]
   refine congrArg (Submodule.span _) (congrArg Set.range ?_)
   funext j a
-  simp only [Function.comp_apply, LinearMap.restrictScalars_apply, LinearEquiv.coe_coe, map_sum, map_smul, hb]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Function.comp_apply, LinearMap.restrictScalars_apply, LinearEquiv.coe_coe, map_sum, map_smul, hb]
   simp [Pi.single_apply]
 
 theorem locBasis_of_isBasisAt (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (w : D.what₂.places.Pl) (B : GL (Fin (D.R.N 0)) D.what₂.LL)

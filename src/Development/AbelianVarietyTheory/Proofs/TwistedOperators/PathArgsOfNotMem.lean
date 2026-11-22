@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathConvZipFock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchrodingerIntertwinerInjectiveSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RangeSndRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspAlongSmoothRows
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathConvZipFock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasLocalSmall
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SchrodingerIntertwinerInjectiveSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchrodingerIntertwinerSchwartzBruhatIsTheta
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpecialisedUniversalSeriesEqTwistedThetaSeries
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
@@ -24,11 +28,6 @@ def sandwich {X Y Z U : Node} {A : Path T X Y} {r : Path T Y Z} {B' : Path T Z U
     (β : PureT G B') : TotT G ((A.comp r).comp B') :=
   σ.sum fun d c => Finsupp.single ((α.append d).append β) c
 
-def RepFinAt {W : G.Weil} (B : Frames G) (ρ : RealMatch W) (t : T) {X Y : Node} (p : Path T X Y) (e : AE D) (τ : TotT G p)
-    (Tl : ∀ w, (locGrid G t w).Args → ℂ) : Prop :=
-  ∃ φ : PureT G p → PureT G p, (∀ d ∈ τ.support, VecAll ρ e p (φ d) d) ∧
-    ∀ x : ArgT G p, HalfAll e p x → (τ.sum fun d c => c * famProd p (φ d) x) = ∏ w ∈ locPl G t, Tl w (pathArgs B t w p x)
-
 section Helpers
 
 theorem arrows_comp_eq {X Y : Node} (p : Path T X Y) : ∀ {Z : Node} (q : Path T Y Z), (p.comp q).arrows = p.arrows ++ q.arrows
@@ -43,14 +42,14 @@ theorem onGrid_comp {m : ℕ} {t : T} {X Y Z : Node} {p : Path T X Y} {q : Path 
 
 theorem onGrid_routeSmall {m : ℕ} (t : T) {i j : ℕ} (hi : i < m) (hj : j < m) : OnGrid m t (routeSmall t i j) := by
   intro a ha
-  simp only [routeSmall, Path.arrows, List.nil_append, List.cons_append, List.mem_cons, List.not_mem_nil, or_false] at ha
+  simp only [Path.arrows, List.nil_append, List.cons_append, List.mem_cons, List.not_mem_nil, or_false] at ha
   rcases ha with rfl | rfl
   · exact Or.inr ⟨i, j, hi.le, hj, rfl⟩
   · exact Or.inl ⟨i, j, hi, hj.le, rfl⟩
 
 theorem onGrid_routeBig {m : ℕ} (t : T) {i j : ℕ} (hi : i < m) (hj : j < m) : OnGrid m t (routeBig t i j) := by
   intro a ha
-  simp only [routeBig, Path.arrows, List.nil_append, List.cons_append, List.mem_cons, List.not_mem_nil, or_false] at ha
+  simp only [Path.arrows, List.nil_append, List.cons_append, List.mem_cons, List.not_mem_nil, or_false] at ha
   rcases ha with rfl | rfl
   · exact Or.inl ⟨i, j + 1, hi, hj, rfl⟩
   · exact Or.inr ⟨i + 1, j, hi, hj, rfl⟩
@@ -125,12 +124,16 @@ theorem vecAll_unique {W : G.Weil} (ρ : RealMatch W) {μ₀ : T} (hL : L.Is μ�
       VecAll ρ e p φ d → VecAll ρ e p φ' d → φ = φ'
   | _, .nil, _, _, _, _, _, _ => rfl
   | _, .snoc a p, hg, φ, φ', d, h, h' => by
-    obtain ⟨Tm, h1, h2, -⟩ := exists_arrowModel ρ hL he hg.last
-    obtain ⟨a1, a2⟩ := (h1 _ _).1 h.2
-    obtain ⟨b1, b2⟩ := (h1 _ _).1 h'.2
-    refine Prod.ext (vecAll_unique ρ hL he p hg.init φ.1 φ'.1 d.1 h.1 h'.1) (sub_eq_zero.1 (h2 _ ?_ ?_))
-    · exact (LocTensor.sbSpace e (latA G a)).sub_mem a1 b1
-    · rw [map_sub, ← a2, ← b2, sub_self]
+    have ha : IsGridArrow D.R.m t a := OnGrid.last hg
+    rcases exists_arrowModel ρ hL he ha with ⟨Tm, hmodel, hinj, -⟩
+    change VecAll ρ e p φ.1 d.1 ∧ IsLocVec W a.pair e (vacOf ρ a) φ.2 d.2 at h
+    change VecAll ρ e p φ'.1 d.1 ∧ IsLocVec W a.pair e (vacOf ρ a) φ'.2 d.2 at h'
+    have haModel : IsSBHalf e (latA G a) φ.2 ∧ d.2 = Tm φ.2 := (hmodel _ _).mp h.2
+    have hbModel : IsSBHalf e (latA G a) φ'.2 ∧ d.2 = Tm φ'.2 := (hmodel _ _).mp h'.2
+    refine Prod.ext (vecAll_unique ρ hL he p (OnGrid.init hg) φ.1 φ'.1 d.1 h.1 h'.1)
+      (sub_eq_zero.1 (hinj _ ?_ ?_))
+    · exact (LocTensor.sbSpace e (latA G a)).sub_mem haModel.1 hbModel.1
+    · rw [map_sub, ← haModel.2, ← hbModel.2, sub_self]
 
 theorem vecAll_append {W : G.Weil} (ρ : RealMatch W) (e : AE D) {X Y : Node} (p : Path T X Y) (φ d : PureT G p) :
     ∀ {Z : Node} (q : Path T Y Z) (φ' d' : PureT G q),
@@ -161,7 +164,8 @@ theorem exists_append {S : Arrow T → Type} {X Y : Node} (p : Path T X Y) :
     ∀ {Z : Node} (q : Path T Y Z) (z : (p.comp q).Fam S), ∃ (x : p.Fam S) (y : q.Fam S), z = x.append y
   | _, .nil, z => ⟨z, (), rfl⟩
   | _, .snoc a q, z => by
-    obtain ⟨x, y, h⟩ := exists_append p q z.1
+    have ih := exists_append (S := S) p q (show (p.comp q).Fam S from z.1)
+    rcases ih with ⟨x, y, h⟩
     exact ⟨x, (y, z.2), Prod.ext h rfl⟩
 
 theorem edges_comp {X Y Z : Node} (p : Path T X Y) (q : Path T Y Z) : edges (p.comp q) = edges p ++ edges q := by
@@ -175,28 +179,36 @@ theorem edges_bound {m : ℕ} {t : T} {i j : ℕ} : ∀ {Y : Node} (p : Path T (
       ∀ b ∈ edges p, i ≤ b.src.1 ∧ b.tgt.1 ≤ i' ∧ j' ≤ b.tgt.2 ∧ b.src.2 ≤ j
   | _, .nil, _ => ⟨i, j, rfl, le_rfl, le_rfl, List.nodup_nil, fun _ h => absurd h List.not_mem_nil⟩
   | _, .snoc a p, hg => by
-    obtain ⟨i', j', h1, h2, h3, h4, h5⟩ := edges_bound p hg.init
+    have hp : OnGrid m t p := OnGrid.init hg
+    have ih := edges_bound (m := m) (t := t) p hp
+    rcases ih with ⟨i', j', h1, h2, h3, h4, h5⟩
     rw [edges_snoc]
-    rcases hg.last with ⟨k, l, -, -, rfl⟩ | ⟨k, l, -, -, rfl⟩
-    · obtain ⟨rfl, rfl⟩ : k = i' ∧ l = j' := Node.grid.inj h1
+    rcases OnGrid.last hg with ⟨k, l, -, -, rfl⟩ | ⟨k, l, -, -, rfl⟩
+    · change Node.grid k l = Node.grid i' j' at h1
+      simp only [Node.grid.injEq] at h1
+      rcases h1 with ⟨hk, hl⟩
+      subst i' j'
       refine ⟨k + 1, l, rfl, by omega, h3, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
-      · obtain rfl := List.mem_singleton.1 hc
-        subst e
-        have := (h5 _ hb).2.1
-        simp [edgeOf] at this
+      · have he : b = edgeOf (.right k l : Arrow T) := e.trans (List.mem_singleton.1 hc)
+        rw [he] at hb
+        have ht := (h5 _ hb).2.1
+        simp [edgeOf] at ht
       · rcases List.mem_append.1 hb with hb | hb
         · have := h5 b hb; omega
-        · obtain rfl := List.mem_singleton.1 hb
+        · rw [List.mem_singleton.1 hb]
           simp only [edgeOf]; omega
-    · obtain ⟨rfl, rfl⟩ : k = i' ∧ l + 1 = j' := Node.grid.inj h1
+    · change Node.grid k (l + 1) = Node.grid i' j' at h1
+      simp only [Node.grid.injEq] at h1
+      rcases h1 with ⟨hk, hl⟩
+      subst i' j'
       refine ⟨k, l, rfl, h2, by omega, List.nodup_append.2 ⟨h4, List.nodup_singleton _, fun b hb c hc e => ?_⟩, fun b hb => ?_⟩
-      · obtain rfl := List.mem_singleton.1 hc
-        subst e
-        have := (h5 _ hb).2.2.1
-        simp [edgeOf] at this
+      · have he : b = edgeOf (.down t k l) := e.trans (List.mem_singleton.1 hc)
+        rw [he] at hb
+        have ht := (h5 _ hb).2.2.1
+        simp [edgeOf] at ht
       · rcases List.mem_append.1 hb with hb | hb
         · have := h5 b hb; omega
-        · obtain rfl := List.mem_singleton.1 hb
+        · rw [List.mem_singleton.1 hb]
           simp only [edgeOf]; omega
 
 theorem pathArgs_of_notMem (B : Frames G) (t : T) (w : Pl D.host.E) {X : Node} :
@@ -205,7 +217,7 @@ theorem pathArgs_of_notMem (B : Frames G) (t : T) (w : Pl D.host.E) {X : Node} :
   | _, .snoc a p, x, b, hb => by
     rw [edges_snoc, List.mem_append, not_or, List.mem_singleton] at hb
     show argAt B t w a x.2 b (pathArgs B t w p x.1 b) = 0
-    rw [argAt, dif_neg (Ne.symm hb.2), pathArgs_of_notMem B t w p x.1 b hb.1]
+    rw [argAt, dite_eq_right (Ne.symm hb.2), pathArgs_of_notMem B t w p x.1 b hb.1]
 
 theorem pathArgs_snoc (B : Frames G) (t : T) (w : Pl D.host.E) {X : Node} (a : Arrow T) (p : Path T X a.src)
     (x : ArgT G (.snoc a p)) :
@@ -214,8 +226,8 @@ theorem pathArgs_snoc (B : Frames G) (t : T) (w : Pl D.host.E) {X : Node} (a : A
   show argAt B t w a x.2 b (pathArgs B t w p x.1 b) = _
   by_cases h : edgeOf a = b
   · subst h
-    rw [argAt, dif_pos rfl, Function.update_self]; rfl
-  · rw [argAt, dif_neg h, Function.update_of_ne (Ne.symm h)]
+    rw [argAt, dite_eq_left rfl, Function.update_self]; rfl
+  · rw [argAt, dite_eq_right h, Function.update_of_ne (Ne.symm h)]
 
 theorem pathArgs_append (B : Frames G) (t : T) (w : Pl D.host.E) {X Y : Node} (p : Path T X Y) (x : ArgT G p) :
     ∀ {Z : Node} (q : Path T Y Z) (y : ArgT G q), (∀ b ∈ edges q, b ∉ edges p) →

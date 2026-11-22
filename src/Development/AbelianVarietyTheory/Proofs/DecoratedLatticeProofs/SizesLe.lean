@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotInhAbsOfGamLe
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Formalism.LocalRingCardinality.HeightBoundGeFourthPowerRank
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ConcreteSettingExists
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotInhAbsOfGamLe
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Formalism.LocalRingCardinality.HeightBoundGeFourthPowerRank
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions.S GlobalTheory.Core.Rk
 
 namespace GlobalTheory.Core.Rk.HdGap
@@ -10,7 +15,7 @@ namespace GlobalTheory.Core.Rk.HdGap
 theorem bOne_eq (D : D7) (τ : D.what₂.Tau) (j : ℕ) (hj : j < D.R.m) :
     bOne D τ (j + 1) = (((D.hc τ).b ⟨j, hj⟩ : ℚ) : ℝ) := by
   unfold bOne
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   rfl
 
 theorem gap_of {D : D7} {L C' Cl Cg cb Cu cT CT : ℝ} (H : GlobalTheory.Core.Deg.HypL D L C' Cl Cg cb Cu cT CT)

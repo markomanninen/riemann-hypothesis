@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NCoords
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SymmetricMeasureL2NormEqResolutionL2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentUpperFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NCoords
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SymmetricMeasureL2NormEqResolutionL2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentUpperFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -236,7 +240,9 @@ theorem modulus_le_one {S : Set (Mat k r)} (hS : IsClosedSub k r S) {μ : Measur
     intro m
     induction m with
     | zero => rw [pow_zero, pow_zero, one_smul, rmul_one]
-    | succ m ih => rw [pow_succ, ← rmul_rmul, ih, Measure.map_smul, e, smul_smul, pow_succ]
+    | succ m ih =>
+      rw [pow_succ, ← rmul_rmul, ih, Measure.map_smul, e, smul_smul, pow_succ]
+      exact (continuous_rmulM g).measurable.aemeasurable
   have hgm : ∀ m : ℕ, g ^ m * h ^ m = 1 := fun m => by
     have hcm : Commute g h := by
       unfold Commute SemiconjBy
@@ -290,6 +296,7 @@ theorem isUnimod_of_subset_Nset {S : Set (Mat k r)} (hS : IsClosedSub k r S) (hN
     obtain ⟨c', c1', e'⟩ := one _ (hS.2.2.2.2 _ hg)
     have h := rmul_rmul g g⁻¹ μ
     rw [Matrix.mul_nonsing_inv _ (isUnit_det_of_mem_GG (hS.1 hg)), rmul_one, e, Measure.map_smul, e'] at h
+    case hf => exact (continuous_rmulM g⁻¹).measurable.aemeasurable
     rw [e]
     ext t -
     have h1 := congrArg (fun m : Measure (Mt k r) => m t) h

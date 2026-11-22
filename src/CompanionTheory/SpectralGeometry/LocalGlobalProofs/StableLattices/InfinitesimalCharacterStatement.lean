@@ -1,7 +1,11 @@
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CayleyHamiltonStatementStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantTensorStatement
+module
+
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CayleyHamiltonStatementStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantTensorStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -365,7 +369,8 @@ theorem compLeft_pow_apply {V : Type*} [AddCommGroup V] [Module ℂ V] {I : Type
 
 theorem commute_C_om (X : GMod n) (u : ℂ) : Commute ((qdet X.E u).compLeft (Fin n)) (om X) := by
   refine LinearMap.ext fun f => funext fun b => ?_
-  simp only [Module.End.mul_apply, om_apply, LinearMap.compLeft_apply, Function.comp, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, om_apply, LinearMap.compLeft_apply, Function.comp, map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   exact LinearMap.congr_fun (Formalism.REAL.qDetCentral _ n X.E X.gl u a b) (f a)
 
@@ -455,7 +460,7 @@ theorem stepChar_of (hT : QdetTens) (hC : CayleyHam) : StepChar := by
     refine PolyFn.pow (PolyFn.sub (polyFn_qdet _) ?_) _
     unfold capP
     refine PolyFn.algProd _ fun t => ?_
-    simp only [map_add, map_sub]
+    simp only [map_add (f := _), map_sub]
     exact (PolyFn.alg.sub (PolyFn.const _)).add (PolyFn.const _)
   have hF : ∀ u, u ≠ -a → F u = 0 := by
     intro u hu

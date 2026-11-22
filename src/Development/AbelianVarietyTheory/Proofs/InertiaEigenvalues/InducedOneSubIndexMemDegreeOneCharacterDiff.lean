@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IndApplyOne
+
+@[expose] public section
+
 open GlobalTheory.BI GlobalTheory.BrauerZero
 
 namespace GlobalTheory.BrauerZero
@@ -67,8 +72,8 @@ theorem ind_one_sub_index_mem_D0 {G : Type} [Group G] [Finite G] (K : Subgroup G
     have hs : ∀ x : G, (if h : x⁻¹ * g * x ∈ K then (1 : ℂ) else 0) = if g ∈ K then 1 else 0 := by
       intro x
       by_cases hg : g ∈ K
-      · rw [dif_pos ((hconj x).2 hg), if_pos hg]
-      · rw [dif_neg (fun h => hg ((hconj x).1 h)), if_neg hg]
+      · rw [dite_eq_left ((hconj x).2 hg), if_pos hg]
+      · rw [dite_eq_right (fun h => hg ((hconj x).1 h)), if_neg hg]
     rw [Finset.sum_congr rfl (fun x _ => hs x), Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
       ← Nat.card_eq_fintype_card, ← K.card_mul_index]
     have : (Nat.card K : ℂ) ≠ 0 := by exact_mod_cast (Nat.card_pos (α := K)).ne'

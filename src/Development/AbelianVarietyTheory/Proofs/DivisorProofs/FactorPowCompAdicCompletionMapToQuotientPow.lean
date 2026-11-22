@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,9 +62,6 @@ theorem map_algebraMap_le {A B B' : Type} [CommRing A] [CommRing B] [CommRing B'
 def galAlg {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R'] (σ : GlobalTheory.Mum.Gal (algebraMap R R')) :
     R' →ₐ[R] R' :=
   { σ.1.toRingHom with commutes' := σ.2 }
-
-@[simp] theorem galAlg_apply {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R']
-    (σ : GlobalTheory.Mum.Gal (algebraMap R R')) (x : R') : galAlg σ x = σ.1 x := rfl
 
 def galTensor {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R'] (O : Type) [CommRing O] [Algebra R O]
     (σ : GlobalTheory.Mum.Gal (algebraMap R R')) : TensorProduct R O R' →ₐ[O] TensorProduct R O R' :=

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -34,8 +39,8 @@ theorem volume_fundamentalDomain_basisFun (ι : Type) [Fintype ι] :
 
 end PSymplMinkowskiBox
 
-open PSymplMinkowskiBox in
 
+open PSymplMinkowskiBox in
 theorem SymplMinkowskiBox.proof (h1 : SymplBoxVolume.Statement) : SymplMinkowskiBox.Statement := by
   intro ι _ _ A a hdet ha hprod
   have hdet0 : A.det ≠ 0 := by

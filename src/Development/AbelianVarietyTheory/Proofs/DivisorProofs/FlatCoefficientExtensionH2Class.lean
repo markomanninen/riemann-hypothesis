@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThickId
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThickId
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open scoped TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.CechPic GlobalTheory.AbDual GlobalTheory.Obs GlobalTheory.LBLift
@@ -29,7 +34,7 @@ theorem sig_iota (y : I ⊗[R] B) : sig I B (iota I B y) = tau I B y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul i b => simp [sig, iota]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tau_mem (y : I ⊗[R] B) : tau I B y ∈ I.map (algebraMap R B) := by
   induction y using TensorProduct.induction_on with
@@ -37,7 +42,7 @@ theorem tau_mem (y : I ⊗[R] B) : tau I B y ∈ I.map (algebraMap R B) := by
   | tmul i b =>
     rw [tau_tmul, Algebra.smul_def]
     exact Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ i.2)
-  | add x y hx hy => rw [map_add]; exact Ideal.add_mem _ hx hy
+  | add x y hx hy => rw [map_add (f := _)]; exact Ideal.add_mem _ hx hy
 
 theorem sig_mem (x : TrivSqZeroExt R I ⊗[R] B) : sig I B x ∈ I.map (algebraMap R B) := tau_mem I B _
 
@@ -45,7 +50,7 @@ theorem tau_mulLeft (b : B) (y : I ⊗[R] B) : tau I B ((LinearMap.mulLeft R b).
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul i c => simp [tau_tmul, Algebra.smul_def]; ring
-  | add u v hu hv => simp only [map_add, hu, hv, smul_add]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv, smul_add]
 
 theorem exists_tau {x : B} (hx : x ∈ I.map (algebraMap R B)) : ∃ y, tau I B y = x := by
   rw [Ideal.map, Ideal.span] at hx
@@ -72,20 +77,20 @@ theorem iota_nat (y : I ⊗[R] B) :
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul i b => simp [iota]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem tau_nat (y : I ⊗[R] B) : tau I B' (φ.toLinearMap.lTensor I y) = φ (tau I B y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul i b => simp [tau_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem sig_nat (x : TrivSqZeroExt R I ⊗[R] B) :
     sig I B' (extHom (TrivSqZeroExt R I) φ x) = φ (sig I B x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sig, tau_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Lin
 
@@ -117,10 +122,10 @@ theorem primI_of_ext : ∀ (R : Type) [CommRing R] (I : Ideal R), ∃ (R₁ : Ty
     have key : (mp F χ).toLinearMap.lTensor I (y _ _ _ φ ψ) + y _ _ _ (φ ≫ ψ) χ =
         y _ _ _ φ (ψ ≫ χ) + y _ _ _ ψ χ := by
       apply tau_injective I (F.obj t''') (hF t''')
-      simp only [map_add, AlgHom.toLinearMap_apply, tau_nat, hy]
+      simp only [map_add (f := _), AlgHom.toLinearMap_apply, tau_nat, hy]
       exact z.2 φ ψ χ
     have := congrArg (iota I _) key
-    simp only [map_add, ← iota_nat] at this
+    simp only [map_add (f := _), ← iota_nat] at this
     exact this
   obtain ⟨g, hg⟩ := H2.mk_eq_zero.1 (hc (H2.mk _ ⟨zh, hzc⟩) (by
     show H2.mk _ ((extMap _ n₀).pullbackTwoCocycle ⟨zh, hzc⟩) =
@@ -136,17 +141,17 @@ theorem primI_of_ext : ∀ (R : Type) [CommRing R] (I : Ideal R), ∃ (R₁ : Ty
           ((coefHom n₁ t'').toLinearMap.lTensor I (y _ _ _ (n₁.G.map a) (n₁.G.map b)) +
             (coefHom n₂ t'').toLinearMap.lTensor I (y _ _ _ (n₂.G.map a) (n₂.G.map b))) := by
       apply tau_injective I (F'.obj t'') (hF' t'')
-      simp only [map_add, map_sub, AlgHom.toLinearMap_apply, tau_nat, hy, hy']
+      simp only [map_add (f := _), map_sub, AlgHom.toLinearMap_apply, tau_nat, hy, hy']
       rw [e]
       rw [sub_sub]; rfl
     have := congrArg (iota I _) key
-    simp only [map_add, map_sub, ← iota_nat] at this
+    simp only [map_add (f := _), map_sub, ← iota_nat] at this
     exact this))
   refine ⟨fun t t' a ↦ sig I (F.obj t') (g t t' a), fun t t' a ↦ sig_mem I _ _, ?_⟩
   funext t t' t'' a b
   have e := congrFun (congrFun (congrFun (congrFun (congrFun hg t) t') t'') a) b
   simp only [d1_apply] at e ⊢
-  rw [← sig_nat, ← map_sub, ← map_add]
+  rw [← sig_nat, ← map_sub, ← map_add (f := _)]
   change sig I (F.obj t'') (mp (ext (TrivSqZeroExt R I) F) b (g t t' a) - g t t'' (a ≫ b) + g t' t'' b) = _
   rw [e]
   exact (sig_iota I _ _).trans (hy t t' t'' a b)

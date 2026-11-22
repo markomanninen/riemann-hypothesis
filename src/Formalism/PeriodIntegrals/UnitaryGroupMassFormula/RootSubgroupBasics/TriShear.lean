@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.TriDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RootSubgroupBasics.TriDefs
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -11,7 +15,7 @@ def extNe {ι : Type} [DecidableEq ι] (a : ι) (y : {i // i ≠ a} → ℂ) : �
   fun j => if h : j ≠ a then y ⟨j, h⟩ else 0
 
 theorem measurable_extNe {ι : Type} [DecidableEq ι] (a : ι) : Measurable (extNe a) := by
-  refine measurable_pi_lambda _ (fun j => ?_)
+  refine Measurable.of_eval (fun j => ?_)
   by_cases h : j ≠ a
   · simp only [extNe, dif_pos h]
     exact measurable_pi_apply _
@@ -57,7 +61,7 @@ theorem measurePreserving_of_card (n : ℕ) : ∀ (ι : Type) [Fintype ι] [Deci
           exact hyy' ⟨j, hja⟩ hj
         · simp only [extNe, dif_neg hja]))
     have hc : Measurable (fun (y : {i // i ≠ a} → ℂ) (_ : {i // ¬ i ≠ a}) => g a (extNe a y)) :=
-      measurable_pi_lambda _ fun _ => (hg a).comp (measurable_extNe a)
+      Measurable.of_eval fun _ => (hg a).comp (measurable_extNe a)
     have hS : MeasurePreserving
         (fun p : ({i // i ≠ a} → ℂ) × ({i // ¬ i ≠ a} → ℂ) =>
           ((fun i => p.1 i + g i.1 (extNe a p.1)),

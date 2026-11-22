@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsSupUnitsLocalNormsSqrtNeTop
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsAdmissibleLocalNormMemSUnitsSupGlobalNormStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsSupUnitsLocalNormsSqrtNeTop
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsAdmissibleLocalNormMemSUnitsSupGlobalNormStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory.QNorm
@@ -29,13 +34,16 @@ theorem exists_infiniteAdele_real_component (F : Type) [Field F] [NumberField F]
     (Pi.evalRingHom (fun v : InfinitePlace F => v.Completion) _), fun t => ?_⟩
   have he := InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw
     ((WithAbs.equiv (InfinitePlace.mk (Complex.ofRealHom.comp σ)).1).symm t)
+  change (InfinitePlace.Completion.extensionEmbeddingOfIsReal hw)
+    ((algebraMap F (InfiniteAdeleRing F) t) _) = σ t
+  rw [InfiniteAdeleRing.algebraMap_apply]
   refine he.trans ?_
   apply Complex.ofReal_injective
   rw [InfinitePlace.embedding_of_isReal_apply, InfinitePlace.embedding_mk_eq_of_isReal hφ]
   simp
 
-open Classical in
 
+open Classical in
 noncomputable def adeleOn (F : Type) [Field F] [NumberField F]
     (S : Finset (HeightOneSpectrum (𝓞 F))) (z : F) : AdeleRing (𝓞 F) F :=
   (algebraMap F (InfiniteAdeleRing F) z,

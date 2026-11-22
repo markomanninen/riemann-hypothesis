@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory.CompanionTheory.Ggeo
@@ -21,7 +26,7 @@ theorem exists_numerator_of_mem_adjoin_insert_inv :
     obtain ⟨G₁, k₁, h₁⟩ := ihx
     obtain ⟨G₂, k₂, h₂⟩ := ihy
     refine ⟨G₁ * F ^ k₂ + G₂ * F ^ k₁, k₁ + k₂, ?_⟩
-    simp only [map_add, map_mul, map_pow, hF, ← h₁, ← h₂]
+    simp only [map_add (f := _), map_mul, map_pow, hF, ← h₁, ← h₂]
     ring
   | mul x y _ _ ihx ihy =>
     obtain ⟨G₁, k₁, h₁⟩ := ihx

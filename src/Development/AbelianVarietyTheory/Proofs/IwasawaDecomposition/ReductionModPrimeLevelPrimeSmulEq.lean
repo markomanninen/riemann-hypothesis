@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
-import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
+public import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -49,7 +54,7 @@ theorem proj_surj (h : localization₂ P.asIdeal A = localization₂ P.asIdeal M
   refine ⟨⟨(t * s) • x, by rw [mul_smul]; exact A.smul_mem _ hsx⟩, ?_⟩
   show redL M P ((t * s) • x) = _
   have e2 : (Ideal.Quotient.mk P.asIdeal (t * s) : Res P) = 1 := by
-    rw [← map_one (Ideal.Quotient.mk P.asIdeal), ← e, map_add, Ideal.Quotient.eq_zero_iff_mem.2 hp, add_zero]
+    rw [← map_one (Ideal.Quotient.mk P.asIdeal), ← e, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 hp, add_zero]
   rw [redL_osmul _ hx', e2, one_smul]
 
 theorem proj_ker (h : localization₂ P.asIdeal A = localization₂ P.asIdeal M) {J : Ideal (𝓞 E)} (hJ : J = P.asIdeal) (z : A) :
@@ -191,9 +196,9 @@ end GlobalTheory.Mem.Col2.LvProj
 
 end
 
+
 open GlobalTheory.Mem.Col2.LvProj GlobalTheory.LvT.Pts in
 set_option maxHeartbeats 1600000 in
-
 theorem GlobalTheory.Mem.Col2.TC.exists_level_projections : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m), ∃ (L : LevelCompatibleLattices (D := (I.rec7 l Z)) (I.fm l u a) (B.T u) (I.resT l u a) i hi fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c)), I.IdL l Z u a i hi L := by
   intro B X I hI hP l Z u a i hi
   obtain ⟨-, -, -, hc⟩ := TC.spaces_in_coordinates I hI hP l Z

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FormLaws
+
+@[expose] public section
+
 open CrystallineSemistableComparison.Onto
 
 set_option autoImplicit false
@@ -67,7 +72,7 @@ theorem dLog : DLog := by
     | add x y _ _ hx hy =>
       obtain ⟨η₁, h₁, e₁⟩ := hx
       obtain ⟨η₂, h₂, e₂⟩ := hy
-      exact ⟨η₁ + η₂, Submodule.add_mem _ h₁ h₂, by rw [smul_add, e₁, e₂, map_add]⟩
+      exact ⟨η₁ + η₂, Submodule.add_mem _ h₁ h₂, by rw [smul_add, e₁, e₂, map_add (f := _)]⟩
     | smul c x _ hx =>
       obtain ⟨η, h₁, e₁⟩ := hx
       exact ⟨c • η, Submodule.smul_mem _ c h₁, by rw [smul_comm, e₁, map_smul]⟩

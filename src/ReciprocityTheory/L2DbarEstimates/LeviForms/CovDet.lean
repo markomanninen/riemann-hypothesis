@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+
+@[expose] public section
 
 universe u
 

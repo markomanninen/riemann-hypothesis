@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
-import GroundTheory.AutomorphicForms.AnisotropicUnitaryHeight
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnipMinSubsetMinParOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CvecSurjective
+public import GroundTheory.AutomorphicForms.AnisotropicUnitaryHeight
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 set_option maxSynthPendingDepth 1
@@ -27,7 +31,7 @@ theorem sigR_conj (R : Type) [CommRing R] [Algebra F R] :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem hermValue_eq_hR (R : Type) [CommRing R] [Algebra F R] (H : Matrix (Fin n) (Fin n) E)
     (x : Fin n → R ⊗[F] E) : hermValue F H R x = hR R (conj F E).toAlgHom H x x := by

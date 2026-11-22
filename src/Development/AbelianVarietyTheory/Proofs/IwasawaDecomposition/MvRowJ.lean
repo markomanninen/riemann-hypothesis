@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RelabelledWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RelabelledWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formali
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem mvRowJ : MvRowJ := by
   intro B C a Z G' _ _ Pl0 T A Ks _ _ iK R X h G t eE j hj
   exact (by with_unfolding_all exact (hj :))

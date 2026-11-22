@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.PairingDivisors.StatementA
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicCompactDensity.ExistsNatLocal
+module
+
+public import Mathlib
+public import Formalism.PairingDivisors.StatementA
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFinSetSplitPlacesCoprimeConductor
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.CountableIdealSummableAbsNormRpow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdicCompactDensity.ExistsNatLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem mem_integers_of_mem_hatO {c : Ideal (OF E)} {y : Af E} (hy : y ∈ hatO 
   rintro _ ⟨x, hx, rfl⟩
   obtain ⟨a, b, -, rfl⟩ := mem_orderC.1 hx
   have : algebraMap (OF E) E a + algebraMap (𝓞 E) E b = algebraMap (𝓞 E) E (algebraMap (OF E) (𝓞 E) a + b) := by
-    rw [map_add]; rfl
+    rw [map_add (f := _)]; rfl
   rw [this]
   refine (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).2 ?_
   exact (HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v _).trans_le (v.valuation_le_one _)
@@ -39,8 +43,8 @@ theorem exists_denominator (c : Ideal (OF E)) (y : (Af E)ˣ) :
   exact (HeightOneSpectrum.valuedAdicCompletion_eq_valuation' v _).symm.trans_le
     ((HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 h3)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem exists_generator : ∃ g : Ideal (𝓞 E) → 𝓞 E, ∀ b : 𝓞 E, ∃ u : (𝓞 E)ˣ, g (Ideal.span {b}) * u = b := by
   classical
   refine ⟨fun I => if h : ∃ b, Ideal.span {b} = I then h.choose else 0, fun b => ?_⟩

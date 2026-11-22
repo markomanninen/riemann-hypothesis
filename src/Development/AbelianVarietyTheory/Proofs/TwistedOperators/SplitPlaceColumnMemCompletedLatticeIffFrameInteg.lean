@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitProjAdeleComponentChartProperties
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RestrictedTensorBasePointNormSq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitProjAdeleComponentChartProperties
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -71,9 +76,8 @@ theorem comm_mem_intAf_iff {D : D7} (z : Af D.host.F ⊗[D.host.F] D.host.E) :
     | neg x _ hx => rw [map_neg]; exact neg_mem hx
 
 theorem toEAf_finEmb {D : D7} (t : EAf D) : toEAf D (GlobalTheory.AdelicLatMove.finEmb D t) = t := by
-  induction t using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  induction t using TensorProduct.inductionOn with
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | tmul x α => rfl
 
 theorem latHat_iff_hatL {D : D7} {n : ℕ} (Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E))
@@ -87,7 +91,7 @@ theorem latHat_iff_hatL {D : D7} {n : ℕ} (Λ : Submodule (𝓞 D.host.E) (Fin 
       obtain ⟨a, ha, x, hx, rfl⟩ := hz
       exact GlobalTheory.AdelicLatMove.pure_mem_hatL Λ a (fun w => ha w) x hx
     | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-    | add x y _ _ hx hy => simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
     | neg x _ hx => simp only [Pi.neg_apply, map_neg]; exact neg_mem hx
   · intro hz
     have key : ∀ w ∈ AddSubgroup.closure (GlobalTheory.AdelicLatMove.pureSet (D := D) Λ),
@@ -99,7 +103,7 @@ theorem latHat_iff_hatL {D : D7} {n : ℕ} (Λ : Submodule (𝓞 D.host.E) (Fin 
         obtain ⟨α, hα, x, hx, rfl⟩ := hw
         exact AddSubgroup.subset_closure ⟨α, fun u => hα u, x, hx, rfl⟩
       | zero => simp only [Pi.zero_apply, map_zero]; exact zero_mem _
-      | add x y _ _ hx hy => simp only [Pi.add_apply, map_add]; exact add_mem hx hy
+      | add x y _ _ hx hy => simp only [Pi.add_apply, map_add (f := _)]; exact add_mem hx hy
       | neg x _ hx => simp only [Pi.neg_apply, map_neg]; exact neg_mem hx
     have := key _ (GlobalTheory.AdelicLatMove.mem_closure_of_mem_hatL Λ _ hz)
     simpa only [AlgEquiv.symm_apply_apply] using this

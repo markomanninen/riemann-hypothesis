@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.BlockMatrixPlaces.BlockDiagonalOrdinaryGSpRep
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws UpperTheory.V.Ws.Bl
 
@@ -89,7 +93,7 @@ theorem UpperTheory.V.Ws.Bl.limit :
   · simp only [hz']
     exact (hZ n).lc
   · refine eq_of_lev (A := A) _ _ fun n => ?_
-    rw [map_add, ← modRep_mk, hz', hz', hz']
+    rw [map_add (f := _), ← modRep_mk, hz', hz', hz']
     exact (hZ n).coc g h
   · refine eq_of_lev (A := A) _ _ fun n => ?_
     rw [hz', map_zero]

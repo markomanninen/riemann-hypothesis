@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.SHInsepPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.SHInsepPf
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct
@@ -28,7 +32,7 @@ theorem shl_pow (q : ℕ) [ExpChar κ q] [ExpChar (A ⊗[κ] K) q] (y : A ⊗[κ
     obtain ⟨n, a, ha⟩ := hx
     obtain ⟨m, b, hb⟩ := hy
     refine ⟨n + m, a ^ q ^ m + b ^ q ^ n, ?_⟩
-    rw [add_pow_expChar_pow, map_add, map_pow, map_pow, ← ha, ← hb, ← pow_mul, ← pow_mul, ← pow_add,
+    rw [add_pow_expChar_pow, map_add (f := _), map_pow, map_pow, ← ha, ← hb, ← pow_mul, ← pow_mul, ← pow_add,
       ← pow_add, add_comm m n]
 
 end
@@ -67,7 +71,7 @@ theorem SHInsepLoc_of : SHInsepLoc := by
   · exact Ideal.add_mem _ (Ideal.pow_mem_of_mem _ ha _ (Nat.pos_of_ne_zero (hqpos m)))
       (Ideal.pow_mem_of_mem _ hb _ (Nat.pos_of_ne_zero (hqpos n)))
   · have : (x + y) ^ q ^ (n + m) = algebraMap A (A ⊗[κ] K) (a ^ q ^ m + b ^ q ^ n) := by
-      rw [add_pow_expChar_pow, map_add, map_pow, map_pow, ← hxa, ← hyb, ← pow_mul, ← pow_mul, ← pow_add,
+      rw [add_pow_expChar_pow, map_add (f := _), map_pow, map_pow, ← hxa, ← hyb, ← pow_mul, ← pow_mul, ← pow_add,
         ← pow_add, add_comm m n]
     rw [← this]
     exact hxy.pow _

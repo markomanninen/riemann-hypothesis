@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitaryGramLifts.ScaleB
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ThetaGC
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.UnitaryGramLifts.ScaleB
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.DeterminantUnitTheta.ThetaGC
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,13 +70,13 @@ theorem gramG_scale (hcj : ∀ x, cj (cj x) = x) (α T T' : E) (hα : α * cj α
     simp [gramG]
   · rw [scC_right_inr, scC_left_inl, scC_left_inl]
     by_cases ha : a = Fin.last r <;> by_cases hb : b = Fin.last r <;>
-      simp [gramG, cor, dlast, Matrix.mul_diagonal, ha, hb, map_mul, map_sub, map_add, hqi, hT] <;> ring
+      simp [gramG, cor, dlast, Matrix.mul_diagonal, ha, hb, map_mul, map_sub, map_add (f := _), hqi, hT] <;> ring
   · rw [scC_right_inl, scC_left_inr]
     by_cases ha : a = Fin.last r <;> by_cases hb : b = Fin.last r <;>
       simp [gramG, cor, dlast, Matrix.mul_diagonal, ha, hb] <;> ring
   · rw [scC_right_inr, scC_left_inr, scC_left_inr]
     by_cases ha : a = Fin.last r <;> by_cases hb : b = Fin.last r <;>
-      simp [gramG, cor, dlast, Matrix.mul_diagonal, ha, hb, map_mul, map_sub, map_add, map_neg, hqi, hT, hT',
+      simp [gramG, cor, dlast, Matrix.mul_diagonal, ha, hb, map_mul, map_sub, map_add (f := _), map_neg, hqi, hT, hT',
         hcj] <;> first | ring1 | linear_combination (qi ^ 2 * T') * hα | linear_combination (qi * qi * T') * hα | linear_combination (-(qi ^ 2 * T')) * hα
 
 end ScaleA

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def lieT (K : Type) [CommRing K] (n : ℕ) : Matrix (Fin n) (Fin n) K := Matrix.
 variable {l : ℕ} [Fact l.Prime] {k : Type} [Field k]
 
 @[ext] structure Box (F : Frame l k) (n : ℕ) (C : Type) [CommRing C] where
-  r : F.Γ →* GG n C
+  r : F.Γ →* GG (m := n) (R := C)
   nu : ∀ s, (r s).right = F.del s
   g : F.V → GL (Fin n) C
   tri : ∀ v s, UpT ((g v : Matrix (Fin n) (Fin n) C) * (r (F.loc v s)).mat *
@@ -59,16 +63,16 @@ structure Of (B : Box F n C) (ρ : NRep F n C) : Prop where
   psi : ∀ v i s, ((B.g v : Matrix (Fin n) (Fin n) C) * ρ.r (F.loc0 v s) *
     (((B.g v)⁻¹ : GL (Fin n) C) : Matrix (Fin n) (Fin n) C)) i i = ρ.ψ v i s
 
-theorem Of.map {B : Box F n C} {ρ : NRep F n C} (h : B.Of ρ) (f : C →+* C') : (B.map f).Of (ρ.map f) where
-  atc := by
-    show ((B.r F.c).mat).map f = 1
+theorem Of.map {B : Box F n C} {ρ : NRep F n C} (h : B.Of ρ) (f : C →+* C') : (B.map f).Of (ρ.map f) := by
+  refine ⟨?_, ?_, ?_⟩
+  · show ((B.r F.c).mat).map f = 1
     rw [h.atc]
     exact Matrix.map_one _ (map_zero f) (map_one f)
-  res s := by
+  · intro s
     show ((B.r s).mat).map f = _
     rw [h.res]
     rfl
-  psi v i s := by
+  · intro v i s
     have e : (((B.map f).g v : GL (Fin n) C') : Matrix (Fin n) (Fin n) C') * (ρ.map f).r (F.loc0 v s) *
         ((((B.map f).g v)⁻¹ : GL (Fin n) C') : Matrix (Fin n) (Fin n) C') =
         f.mapMatrix ((B.g v : Matrix (Fin n) (Fin n) C) * ρ.r (F.loc0 v s) *
@@ -124,13 +128,13 @@ structure IsSq {C : Type} [CommRing C] [Algebra O C] [IsCO O C] (μ : ResidueFie
 
 variable {O}
 
-open Classical in
 
+open Classical in
 def evK {C : Type} [CommRing C] [Algebra O C] (K : Ideal C) (u : K →ₗ[O] ResidueField O) (x : C) : ResidueField O :=
   if h : x ∈ K then u ⟨x, h⟩ else 0
 
 theorem evK_of_mem {C : Type} [CommRing C] [Algebra O C] {K : Ideal C} (u : K →ₗ[O] ResidueField O) {x : C}
-    (h : x ∈ K) : evK K u x = u ⟨x, h⟩ := dif_pos h
+    (h : x ∈ K) : evK K u x = u ⟨x, h⟩ := dite_eq_left h
 
 variable {C' C : Type} [CommRing C'] [Algebra O C'] [IsCO O C'] [CommRing C] [Algebra O C]
 
@@ -171,8 +175,8 @@ def co : (RingHom.ker p →ₗ[O] ResidueField O) →ₗ[ResidueField O]
 
 end SetLift
 
-variable (O) in
 
+variable (O) in
 def HasObs (R : Type) [CommRing R] [Algebra O R] (H : Type) [AddCommGroup H] [Module (ResidueField O) H] : Prop :=
   ∀ (C' : Type) [CommRing C'] [Algebra O C'] [IsCO O C'] (p : C' →ₐ[O] R), Function.Surjective p →
     maximalIdeal C' * RingHom.ker p = ⊥ →

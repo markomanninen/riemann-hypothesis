@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+module
+
+public import Formalism.SharpRestriction.ValuationFrobeniusEpsilon.LeastPrimeTwists.QuotientShiftIrreducible.NoetherianQuotientCalc.EulerVanishingBelowDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem hom_cmp {G H : GMod B R k} (hG : DirectSum.IsInternal G.gr)
     · subst hn
       rw [cmp_of_mem _ _ y.2, cmp_of_mem _ _ (hφ _ _ y.2)]
     · rw [cmp_of_mem_ne _ _ y.2 hn, cmp_of_mem_ne _ _ (hφ _ _ y.2) hn, map_zero]
-  | add a b ha hb => rw [map_add, cmp_add, cmp_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), cmp_add, cmp_add, map_add (f := _), ha, hb]
 
 theorem isHomSub_of_cmp (F : GMod B R k) (h : DirectSum.IsInternal F.gr) (N : Submodule R F.M)
     (hN : ∀ x ∈ N, ∀ m, cmp F h x m ∈ N) : F.IsHomSub N := by
@@ -334,8 +338,8 @@ theorem adm_of_section_mem [IsLocalRing B] (𝒜 : Deg k → Submodule B R) {ts 
     exact Ideal.mem_sup_left hs
   · exact Ideal.mem_sup_right (Ideal.subset_span ⟨d', h1⟩)
 
-include S in
 
+include S in
 theorem length_add (m : Deg k) :
     Module.length B (F.gr m) = Module.length B (F'.gr m) + Module.length B (F''.gr m) := by
   refine Module.length_eq_add_of_exact
@@ -381,8 +385,8 @@ theorem add_of_hom {k : ℕ} (X : HidaSetting k) (hGr : RuleGr) (ts : List (Deg 
 
 end E1
 
-open E1 in
 
+open E1 in
 theorem euler_additivity_of_rules : RuleGr → RuleFin → RuleIso → EulerAdditivityExactSequence := by
   intro hGr hFin hIso k X ts
   induction ts with

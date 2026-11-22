@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PKaehlerBound
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StBoundingKaehler
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PKaehlerBound
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StBoundingKaehler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

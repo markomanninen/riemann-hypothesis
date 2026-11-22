@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacOfMemSchwartzA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmTypeFromConjugateComplement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.UnitarySchrodingerModel.UnitarySchrodingerLemmas.SchrodingerMatching.PsiPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VacOfMemSchwartzA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmTypeFromConjugateComplement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RealAdelesCmFieldEquivComplexCmType
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ theorem psiPlaces : PsiPlaces := by
   obtain ⟨h1, h2, h3⟩ := infFam_spec D θ h.hθ
   exact ⟨h.hψ, h1, h3, h2, GlobalTheory.ResAniso.VacSchwartz.realPar_ne_zero D θ h.hθ ψ h.hψ l h.hl, h.hl⟩
 
-open GlobalTheory.CompanionTheory.SiegelND.ThetaGlue in
 
+open GlobalTheory.CompanionTheory.SiegelND.ThetaGlue in
 theorem valueSide : ValueSide := by
   intro D r V ν hν φ β hβ μH 𝓕 hμ h𝓕
   have hrank : ∀ (δ : GL (Fin V.rank) D.host.E) (ξ : Matrix (Fin V.rank) (Fin r) D.host.E),

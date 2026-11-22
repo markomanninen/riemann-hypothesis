@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ZeroPull
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ZeroPull
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

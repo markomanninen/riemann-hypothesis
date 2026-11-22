@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNoetherianRingAdicCompletionOfNoetherian
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.CA ReciprocityTheory.CA
 
@@ -54,7 +58,7 @@ theorem UpperTheory.V.CA.cpl_is :
       ext a
       exact ⟨strict_loc _ n a, hL n a⟩
     rw [e, ← Localization.AtPrime.map_eq_maximalIdeal, ← Ideal.map_pow]
-    refine IsLocalization.comap_map_of_isPrimary_disjoint x.primeCompl _ ?_ ?_
+    refine IsLocalization.under_map_of_isPrimary_disjoint x.primeCompl (Localization.AtPrime x) ?_ ?_
     · apply Ideal.isPrimary_of_isMaximal_radical
       rw [Ideal.radical_pow _ hn.ne', (inferInstance : x.IsPrime).radical]
       infer_instance

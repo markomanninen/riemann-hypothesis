@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHasTemperateGrowth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinHasTemperateGrowth
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,9 +42,6 @@ def pureL {κ : Type} [Fintype κ] (φ : ∀ v : Pl F, (κ → Formalism.MainNot
   toFun f := GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ
   map_add' f g := by funext x; simp [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure, add_mul]
   map_smul' c f := by funext x; simp [GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure, mul_assoc]
-
-theorem pureL_apply {κ : Type} [Fintype κ] (φ : ∀ v : Pl F, (κ → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Fv F v) → ℂ) (f : SInf F κ) :
-    pureL φ f = GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure f φ := rfl
 
 end GlobalTheory.FockKFin
 

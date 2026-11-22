@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.PrimeToDifferent
+module
+
+public import Formalism.HermitianCurvature.PrimeToDifferent
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.S6x3
 
@@ -74,12 +78,12 @@ theorem exists_theta (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ
         have e4 : algebraMap F E (((g : 𝓞 F) : 𝓞 F) : F) = (g : E) := by simp
         rw [e4] at this
         exact this
-      rw [map_add, map_mul, hz1, ← e2]
+      rw [map_add (f := _), map_mul, hz1, ← e2]
       linear_combination (-(algebraMap F E x)) * e1
     have hint : IsIntegral ℤ x := by
       have : IsIntegral ℤ (algebraMap F E x) := by
         rw [hxE]; exact RingOfIntegers.isIntegral_coe _
-      exact (isIntegral_algebraMap_iff (algebraMap F E).injective).mp this
+      exact (isIntegral_algebraMap_iff ).mp this
     exact hx1 ((FractionalIdeal.mem_one_iff _).mpr ⟨⟨x, hint⟩, rfl⟩)
   have h1 : (1 : 𝓞 F) ∈ I ⊔ Ideal.span {(g : 𝓞 F)} := by rw [key]; trivial
   obtain ⟨i, ⟨θ, rfl⟩, j, hj, hij⟩ := Submodule.mem_sup.mp h1
@@ -87,7 +91,7 @@ theorem exists_theta (E : Type) [Field E] [NumberField E] [IsCMField E] (g : ℕ
   refine ⟨θ, -algebraMap (𝓞 F) (𝓞 E) w, ?_⟩
   rw [← trace_eq, ← Algebra.algebraMap_intTrace (A := 𝓞 F) (B := 𝓞 E)]
   have := congrArg (fun t : 𝓞 F => algebraMap F E (algebraMap (𝓞 F) F t)) hij
-  simp only [map_add, map_mul, map_one, map_natCast] at this
+  simp only [map_add (f := _), map_mul, map_one, map_natCast] at this
   have e3 : algebraMap (𝓞 E) E (algebraMap (𝓞 F) (𝓞 E) w) = algebraMap F E (algebraMap (𝓞 F) F w) := rfl
   have e5 : ((-algebraMap (𝓞 F) (𝓞 E) w : 𝓞 E) : E)
       = -algebraMap F E (algebraMap (𝓞 F) F w) := by
@@ -157,7 +161,7 @@ theorem tw_eq (A : FI E) (g s : ℕ) (hA : ConjStable E A) (hg : 0 < g) (hU : Un
     have h2 : (θ : E) * t + (-1) ^ s * complexConj E ((θ : E) * t) ∈ eig E A s := by
       rw [mem_eig]
       refine ⟨A.val.add_mem h1 (sign_mem E A s _ (hA _ h1)), ?_⟩
-      simp only [map_add, map_mul, map_pow, map_neg, map_one, complexConj_apply_apply]
+      simp only [map_add (f := _), map_mul, map_pow, map_neg, map_one, complexConj_apply_apply]
       linear_combination (-(θ : E) * t) * sign_sq E s
     have h3 : complexConj E θ * (t - (-1) ^ s * complexConj E t) - (g : E) * ((w : E) * t)
         ∈ zsub E (A * FractionalIdeal.spanSingleton _ (g : E)) := by
@@ -293,7 +297,7 @@ theorem rk_add (A : FI E) (s : ℕ) (hA : ConjStable E A) :
     have h1 : a + (-1) ^ s * complexConj E a ∈ eig E A s := by
       rw [mem_eig]
       refine ⟨A.val.add_mem ha' hc, ?_⟩
-      simp only [map_add, map_mul, map_pow, map_neg, map_one, complexConj_apply_apply]
+      simp only [map_add (f := _), map_mul, map_pow, map_neg, map_one, complexConj_apply_apply]
       linear_combination (-a) * sign_sq E s
     have h2 : a - (-1) ^ s * complexConj E a ∈ eig E A (s + 1) := by
       rw [mem_eig]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -53,12 +57,6 @@ private theorem locDiffY_sep {A B : Type*} [CommRing A] [CommRing B] [Algebra A 
   have : Algebra.IsAlgebraic (FractionRing A) (FractionRing B) :=
     isAlgebraic_of_isFractionRing A B ..
   infer_instance
-
-private theorem locDiffY_ne_bot {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
-    [IsDedekindDomain A] [IsDedekindDomain B] [IsTorsionFree A B] [Module.Finite A B] [CharZero A] :
-    differentIdeal A B ≠ ⊥ := by
-  have := locDiffY_sep (A := A) (B := B)
-  exact differentIdeal_ne_bot
 
 private theorem locDiffY_iff {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
     [IsDedekindDomain A] [IsDedekindDomain B] [IsTorsionFree A B] [Module.Finite A B] [CharZero A]
@@ -149,8 +147,8 @@ theorem dvd_differentIdeal_iff_trace {a : A} (ha : a ≠ 0) {I J : Ideal B}
     (by rw [h, Ideal.map_span, Set.image_singleton]), Algebra.intTrace_eq_trace]
   simp only [Ideal.mem_span_singleton]
 
-omit [CharZero A] in
 
+omit [CharZero A] in
 theorem mk_trace_eq_trace_quotient {p : A} (hp : Prime p) (n : ℕ) {Q₁ Q₂ : Ideal B}
     (hc : IsCoprime Q₁ Q₂) (h : Q₁ * Q₂ = Ideal.span {algebraMap A B (p ^ n)})
     [Algebra (A ⧸ Ideal.span {p ^ n}) (B ⧸ Q₁)]

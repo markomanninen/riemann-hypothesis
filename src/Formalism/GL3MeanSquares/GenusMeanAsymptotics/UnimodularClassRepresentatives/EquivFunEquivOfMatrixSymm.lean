@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NeZeroOfNotMem
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NeZeroOfNotMem
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -22,7 +26,8 @@ theorem form_repr (h : V →ₗ⋆[K] V →ₗ[K] K) (b : Basis κ K V) (x y : V
   calc h x y = h (∑ i, b.equivFun x i • b i) (∑ j, b.equivFun y j • b j) := by
         rw [b.sum_equivFun x, b.sum_equivFun y]
     _ = ∑ i, ∑ j, star (b.equivFun x i) * (b.equivFun y j * h (b i) (b j)) := by
-        simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, LinearMap.sum_apply, map_smulₛₗ, LinearMap.smul_apply,
           smul_eq_mul, starRingEnd_apply, RingHom.id_apply, Finset.mul_sum]
         rw [Finset.sum_comm]
         exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -37,7 +42,7 @@ theorem gramK_conjTranspose {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (
 
 theorem smul_basis_mem {𝔭 : Ideal (𝓞 F)} [𝔭.IsPrime] (b : Basis κ K V) {a : K} (ha : a ∈ SP K 𝔭)
     (i : κ) : a • b i ∈ locF 𝔭 (spanO b) := by
-  obtain ⟨t, ht, z, e⟩ := mem_SP.1 ha
+  obtain ⟨t, ht, z, e⟩ := (mem_SP (𝔭 := 𝔭) (a := a)).mp ha
   refine (mem_locF 𝔭 _ _).2 ⟨t, ht, ?_⟩
   rw [← algebraMap_smul K (ι t), smul_smul, ← e, algebraMap_smul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -51,7 +56,8 @@ theorem mem_locF_iff_repr {𝔭 : Ideal (𝓞 F)} [𝔭.IsPrime] (b : Basis κ K
     generalize crd b ⟨_, h1⟩ = c at h2
     refine mem_SP.2 ⟨t, ht, c i, ?_⟩
     have h3 := congrArg (fun v => b.equivFun v i) h2
-    simp only [← algebraMap_smul K (ι t), map_smul, map_sum, Pi.smul_apply, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← algebraMap_smul K (ι t), map_smul, map_sum, Pi.smul_apply, Finset.sum_apply,
       Basis.equivFun_self, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true] at h3
     exact h3.symm
@@ -70,7 +76,7 @@ theorem mem_smul_locF_iff_repr {𝔭 : Ideal (𝓞 F)} [𝔭.IsPrime] (b : Basis
       exact (inP_jK hr).mul (l := 0) ((mem_locF_iff_repr b y).1 hy i)
     | add y _ z _ hy hz =>
       intro i
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (hy i).add (hz i)
   · intro hx
     rw [← b.sum_equivFun x]

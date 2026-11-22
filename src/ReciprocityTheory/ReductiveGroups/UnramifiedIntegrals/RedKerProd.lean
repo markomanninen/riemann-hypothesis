@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerIdeal
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

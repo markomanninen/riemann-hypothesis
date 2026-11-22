@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IrrelevantLeMapLinearGradedMap
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IrrelevantLeMapLinearGradedMap
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 
@@ -374,9 +378,6 @@ def projectivePointMulEquiv :
   toEquiv := Multiplicative.toAdd.trans (projectivePointEquiv W k)
   map_mul' p q := ofProjectivePoint_add W k p.toAdd q.toAdd
 
-@[simp] theorem projectivePointMulEquiv_ofAdd (p : (W.baseChange k).toProjective.Point) :
-    projectivePointMulEquiv W k (.ofAdd p) = ofProjectivePoint W k p := rfl
-
 variable [DecidableEq k]
 
 theorem ofAffinePoint_add (p q : (W.baseChange k).toAffine.Point) :
@@ -388,9 +389,6 @@ def affinePointMulEquiv :
     Multiplicative (W.baseChange k).toAffine.Point ≃* (specOver R k ⟶ schemeOver W) where
   toEquiv := Multiplicative.toAdd.trans (affinePointEquiv W k)
   map_mul' p q := ofAffinePoint_add W k p.toAdd q.toAdd
-
-@[simp] theorem affinePointMulEquiv_ofAdd (p : (W.baseChange k).toAffine.Point) :
-    affinePointMulEquiv W k (.ofAdd p) = ofAffinePoint W k p := rfl
 
 theorem ofAffinePoint_zsmul (n : ℤ) (p : (W.baseChange k).toAffine.Point) :
     ofAffinePoint W k (n • p) = ofAffinePoint W k p ^ n :=
@@ -408,10 +406,6 @@ section Examples
 
 private def sampleCurve : WeierstrassCurve ℚ := ⟨0, 0, 1, -1, 0⟩
 
-private instance : sampleCurve.IsElliptic := ⟨Ne.isUnit (by
-  norm_num [sampleCurve, WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
-    WeierstrassCurve.b₆, WeierstrassCurve.b₈])⟩
-
 private theorem sample_sol {a b : ℚ} (h : b ^ 2 + b = a ^ 3 - a) :
     IsUnimodularSol (sampleCurve.baseChange ℚ) ![a, b, 1] :=
   isUnimodularSol_some (by
@@ -419,29 +413,6 @@ private theorem sample_sol {a b : ℚ} (h : b ^ 2 + b = a ^ 3 - a) :
     simp only [sampleCurve, WeierstrassCurve.baseChange, WeierstrassCurve.map, map_zero, map_one,
       map_neg]
     linear_combination h)
-
-example : (ptOver sampleCurve ![0, 0, 1] (sample_sol (by norm_num)))⁻¹ =
-    ptOver sampleCurve (A := ℚ) ![0, -1, 1] (sample_sol (by norm_num)) := by
-  rw [ptOver_inv]
-  congr 1
-  simp [WeierstrassCurve.Projective.neg, WeierstrassCurve.Projective.negY, sampleCurve,
-    WeierstrassCurve.baseChange]
-
-example : ptOver sampleCurve ![0, 0, 1] (sample_sol (by norm_num)) *
-    ptOver sampleCurve ![0, 0, 1] (sample_sol (by norm_num)) =
-    ptOver sampleCurve (A := ℚ) ![1, 0, 1] (sample_sol (by norm_num)) := by
-  refine ptOver_mul_self _ _ _ fun i j => ?_
-  fin_cases i <;> fin_cases j <;>
-    simp [WeierstrassCurve.Projective.dblXYZ, WeierstrassCurve.Projective.dblX,
-      WeierstrassCurve.Projective.dblY, WeierstrassCurve.Projective.dblZ,
-      WeierstrassCurve.Projective.negDblY, WeierstrassCurve.Projective.negY, sampleCurve,
-      WeierstrassCurve.baseChange] <;> norm_num
-
-example : ptOver sampleCurve (A := ℚ) ![0, 0, 1] (sample_sol (by norm_num)) ≠ 1 := by
-  rw [one_eq_ptOver]
-  intro e
-  obtain ⟨v, hv⟩ := (ptOver_eq_ptOver_iff _ _ _).mp e
-  simpa using congrFun hv 1
 
 end Examples
 

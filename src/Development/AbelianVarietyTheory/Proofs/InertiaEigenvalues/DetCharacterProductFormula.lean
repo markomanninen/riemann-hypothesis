@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralUnitDeterminantAtIdempotentResidue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIntegralUnitDeterminantAtIdempotentResidue
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem infPart_idemAt (P : Pl D.host.E) (e : AE D) (h : Formalism.L2.NTheta.IsI
   have k1 := congrArg (infPart D) h1
   have k2 := congrArg (infPart D) h2
   have k3 := congrArg (infPart D) h3
-  simp only [RingHom.map_mul, RingHom.map_add, RingHom.map_zero] at k1 k2 k3
+  simp only [RingHom.map_mul, RingHom.map_add (f := _), RingHom.map_zero] at k1 k2 k3
   have k4 : infPart D (algebraMap (AF D.host.F) (AE D) (pairA D.host.F 0 α)) = 0 := by
     simp [infPart, Algebra.TensorProduct.algebraMap_apply]
     show (0 : Ainf D.host.F) ⊗ₜ[D.host.F] (1 : D.host.E) = 0
@@ -47,7 +51,8 @@ theorem idem_mul_idem_of_disjoint {Q s s' : Finset (Pl D.host.E)} (h : SplitSet 
 
 theorem idem_mul_conj {Q s s' : Finset (Pl D.host.E)} (h : SplitSet Q) (hs : s ⊆ Q) (hs' : s' ⊆ Q) :
     idem s * cA D (idem s') = 0 := by
-  rw [idem, idem, map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [idem, idem, map_sum, Finset.sum_mul_sum]
   exact Finset.sum_eq_zero fun i hi => Finset.sum_eq_zero fun j hj => h.mul_conj (hs hi) (hs' hj)
 
 theorem val_mul (d e₁ e₂ : AE D) (h : e₁ * e₂ = 0) :
@@ -101,10 +106,11 @@ theorem detChar_eq_prod_res : ∀ {D : D7} {V : HSp D} {A : Type} [CommGroup A] 
     refine ht.unram _ ?_ (GlobalTheory.PlaceDatum.finPart_mem_of_toEAf (GlobalTheory.StabDet.toEAf_detAt_mem hst _ heR))
       (GlobalTheory.PlaceDatum.finPart_mem_of_toEAf (GlobalTheory.StabDet.toEAf_detAt_inv_mem hst _ heR)) ?_
     · have hinf : infPart D (idem (Q' \ t.Q)) = 0 := by
-        rw [idem, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [idem, map_sum]
         exact Finset.sum_eq_zero fun P hP => infPart_idemAt P _ (hQ'.isIdemAt (hR hP))
       show infPart D (idem (Q' \ t.Q) * (mt V κ).det + (1 - idem (Q' \ t.Q))) = 1
-      rw [map_add, map_mul, map_sub, map_one, hinf]
+      rw [map_add (f := _), map_mul, map_sub, map_one, hinf]
       ring
     · have a1 : idem t.Q * idem (Q' \ t.Q) = 0 := idem_mul_idem_of_disjoint hQ' hsub hR Finset.disjoint_sdiff
       have a2 : idem (Q' \ t.Q) * cA D (idem t.Q) = 0 := idem_mul_conj hQ' hR hsub

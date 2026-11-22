@@ -1,8 +1,12 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.FinalT
-import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
-import Formalism.SharpRestriction.GrowthBounds.ProjectionLemmaBaseLevel
-import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.FinalT
+public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionLemmaBaseLevel
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSystems
+
+@[expose] public section
 
 open Finset
 
@@ -292,7 +296,7 @@ theorem weylQ (n : ℕ) (μ : Fin n → ℤ) (hμ : Antitone μ) :
   have he : ∀ i : Fin n, Formalism.InvariantFactorPaths.BranchingDimensions.extW μ (i : ℕ) = μ i := by
     intro i
     show (if h : (i : ℕ) < n then μ ⟨i, h⟩ else 0) = μ i
-    rw [dif_pos i.2]
+    rw [dite_eq_left i.2]
   simp only [he] at h
   apply Rat.cast_injective (α := ℝ)
   push_cast

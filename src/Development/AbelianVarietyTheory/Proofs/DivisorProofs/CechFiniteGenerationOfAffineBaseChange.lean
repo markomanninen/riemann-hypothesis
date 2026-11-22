@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDeRhamSheaf
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RhoIsCoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechGluingOfKodairaSpencerRelation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDeRhamSheaf
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RhoIsCoc
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LogKS Formalism.L2.Pj
 open GlobalTheory.CatCoh GlobalTheory.CechDR GlobalTheory.CechFin
@@ -47,18 +52,19 @@ theorem cechFG_of_transfer {Z Z' : Scheme.{0}} {J : Type} (W : J → Z.Opens) (W
   · intro k i i' i''
     apply h3 i i' i''
     have := he' k i i' i''
-    rw [map_add, ha, hb, hc, hg, hg, hg]
+    rw [map_add (f := _), ha, hb, hc, hg, hg, hg]
     exact this
   · intro c hcoc
     obtain ⟨r, h', hh⟩ := hc' (fun i i' => φ2 i i' (c i i')) (by
       intro i i' i''
       have := congrArg (φ3 i i' i'') (hcoc i i' i'')
-      rw [map_add, ha, hb, hc] at this
+      rw [map_add (f := _), ha, hb, hc] at this
       exact this)
     choose h hh1 using fun i => h1 i (h' i)
     refine ⟨r, h, fun i i' => (h2 i i').1 ?_⟩
     have e1 := hh i i'
-    rw [map_add, map_sub, map_sum, hl, hr, hh1, hh1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sub, map_sum, hl, hr, hh1, hh1]
     simp only [map_mul, hact, hg]
     exact e1
 

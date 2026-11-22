@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartAsm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.TensorLatticeSelfDualSemicharacterIndex
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -25,7 +29,7 @@ theorem exists_nsmul {B : LinearMap.BilinForm ℤ P} (hB : Function.Bijective B)
     (h : ∀ y, (m : ℤ) ∣ B x y) : ∃ z, x = m • z := by
   let f : P →ₗ[ℤ] ℤ :=
     { toFun := fun y => B x y / m
-      map_add' := fun a b => by rw [map_add, Int.add_ediv_of_dvd_left (h a)]
+      map_add' := fun a b => by rw [map_add (f := _), Int.add_ediv_of_dvd_left (h a)]
       map_smul' := fun k a => by
         rw [map_zsmul]; simp only [smul_eq_mul, RingHom.id_apply]; exact Int.mul_ediv_assoc _ (h a) }
   obtain ⟨z, hz⟩ := hB.2 f
@@ -60,7 +64,7 @@ theorem exists_adj {s : R → R} {B : LinearMap.BilinForm ℤ P} {C : LinearMap.
   choose g hg using fun x => hB.2 ((C x).comp f.toAddMonoidHom.toIntLinearMap)
   have hg' : ∀ x v, B (g x) v = C x (f v) := fun x v => by rw [hg]; rfl
   refine ⟨⟨⟨g, fun x y => hB.1 (LinearMap.ext fun v => ?_)⟩, fun a x => hB.1 (LinearMap.ext fun v => ?_)⟩, hg'⟩
-  · simp only [map_add, LinearMap.add_apply, hg']
+  · simp only [map_add (f := _), LinearMap.add_apply, hg']
   · simp only [RingHom.id_apply, aB, hg', aC, map_smul]
 
 variable {s : R →+* R} {I J : Ideal R} {m : ℕ} {c : R} {B : LinearMap.BilinForm ℤ P} {C : LinearMap.BilinForm ℤ A}
@@ -72,7 +76,7 @@ theorem dvd_of_mem (hIJ : J * I ≤ Ideal.span {(m : R)}) (hs : ∀ a ∈ I, s a
   · obtain ⟨z, hz⟩ := smul_eq_nsmul hIJ (hs b hb) hy
     rw [aB, hz, map_nsmul, nsmul_eq_mul]
     exact Dvd.intro _ rfl
-  · rw [map_add, LinearMap.add_apply]; exact dvd_add hu hv
+  · rw [map_add (f := _), LinearMap.add_apply]; exact dvd_add hu hv
 
 theorem mem_of_dvd (hm : m ≠ 0) (hmI : (m : R) ∈ I) (hss : ∀ a, s (s a) = a) (hs' : ∀ a ∈ J, s a ∈ I)
     (hc : c ∈ I) (hc1 : c - 1 ∈ J) (hB : Function.Bijective B)
@@ -140,7 +144,7 @@ theorem exists_dual [Module.Projective R P] (hIJ : J * I ≤ Ideal.span {(m : R)
   obtain ⟨g, hg⟩ := exists_adj hB aB aC f
   refine ⟨(-k) • g, fun x a ha => ?_⟩
   obtain ⟨b, hb⟩ := hf a ha
-  rw [LinearMap.smul_apply, map_zsmul, LinearMap.smul_apply, hg, hb, map_add, map_nsmul]
+  rw [LinearMap.smul_apply, map_zsmul, LinearMap.smul_apply, hg, hb, map_add (f := _), map_nsmul]
   exact ⟨-k * C x b, by simp only [smul_eq_mul, nsmul_eq_mul]; ring⟩
 
 theorem mem_of_dual_mem (hIJ : J * I ≤ Ideal.span {(m : R)}) (hm : m ≠ 0) (hmI : (m : R) ∈ I)
@@ -165,7 +169,7 @@ theorem exists_dual_sub_mem (hm : m ≠ 0) (hmI : (m : R) ∈ I)
   obtain ⟨a, ha, u, rfl⟩ := surj y hy
   obtain ⟨t, ht⟩ := h ((-q) • g v) a ha
   rw [map_zsmul, LinearMap.smul_apply, hg, smul_eq_mul] at ht
-  rw [map_add, map_nsmul, nsmul_eq_mul]
+  rw [map_add (f := _), map_nsmul, nsmul_eq_mul]
   refine dvd_add ⟨p * B v (mk a) - t, ?_⟩ (Dvd.intro _ rfl)
   rw [map_sub, LinearMap.sub_apply]
   linear_combination (-1 : ℤ) * ht - B v (mk a) * hpq
@@ -241,7 +245,7 @@ theorem isDual_iff {B : LinearMap.BilinForm ℤ L} (hB : ∀ x y : L, EF X x y =
     intro x a ha
     obtain ⟨z, hz⟩ := smul_eq_nsmul (prod_le l) (LevelPairing.cSep_spec l).2 ha
     rw [sub_smul, one_smul, sub_eq_iff_eq_add] at hz
-    rw [ef_inv_smul, hB, zpow_eq_iff (level_ne l), hz, map_add, map_nsmul, nsmul_eq_mul, mul_add, add_assoc]
+    rw [ef_inv_smul, hB, zpow_eq_iff (level_ne l), hz, map_add (f := _), map_nsmul, nsmul_eq_mul, mul_add, add_assoc]
     exact dvd_add_right (Dvd.dvd.mul_left (Dvd.intro _ rfl) _)
   exact ⟨fun h x a ha => (key x a ha).1 (h.pair x a ha),
     fun h => ⟨fun a => (δ a).2, fun x a ha => (key x a ha).2 (h x a ha)⟩⟩
@@ -303,7 +307,7 @@ theorem isMark_map {mk : Dw.La →ₗ[𝓞 E] (Fin r → E)} (h : IsMark l L mk)
   · rw [mapL, ← Submodule.map_smul''] at hv
     obtain ⟨v, hv, rfl⟩ := hv
     obtain ⟨a, ha, u, hu, rfl⟩ := h.surj v hv
-    exact ⟨a, ha, T u, Submodule.mem_map_of_mem hu, by rw [map_add, map_nsmul]; rfl⟩
+    exact ⟨a, ha, T u, Submodule.mem_map_of_mem hu, by rw [map_add (f := _), map_nsmul]; rfl⟩
 
 theorem isDual_map {ζ : ℂ} {mk δ : Dw.La →ₗ[𝓞 E] (Fin r → E)} (h : IsDual X l ζ L mk δ) {ga : GL (Fin r) E}
     (hg : IsUn X ga) : IsDual X l ζ (mapL ga L) (mvMap ga mk) (mvMap ga δ) := by

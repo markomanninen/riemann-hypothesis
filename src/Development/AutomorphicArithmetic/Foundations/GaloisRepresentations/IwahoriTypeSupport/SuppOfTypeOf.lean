@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TorusScalar
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IwahoriTypeSupport.TorusScalar
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,18 +37,6 @@ theorem suppOfType_of (L : Loc) (h1 : TypeToIw) : SuppOfType := by
     exact hμ _ u
   exact ⟨ψ, hψ, GlobalTheory.TameIwahori.isCuspSupport_of_prinSeries (GlobalTheory.SplitRead.Irr.mk V π hsm hirr)
     (fun i => (lifts k).1 _ _ (hψ i)) hψ3⟩
-
-theorem HasTypeVec.of_equiv {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
-    {α n : Type} {m : α → Type} [Fintype α] [LinearOrder α] [∀ a, Fintype (m a)] [∀ a, DecidableEq (m a)]
-    [Fintype n] [DecidableEq n] {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
-    {π : Representation ℂ (GL n k) V} {σ : Representation ℂ (GL n k) W} {e : (Σ a, m a) ≃ n} {θ : α → 𝓀[k]ˣ →* ℂˣ}
-    (φ : π.Equiv σ) (h : HasTypeVec σ e θ) : HasTypeVec π e θ := by
-  obtain ⟨v, hv0, hv⟩ := h
-  obtain ⟨x, rfl⟩ := φ.toLinearEquiv.surjective v
-  refine ⟨x, fun h => hv0 (by rw [h, map_zero]), fun g => φ.toLinearEquiv.injective ?_⟩
-  have key : φ.toLinearEquiv (π g x) = σ g (φ.toLinearEquiv x) :=
-    LinearMap.congr_fun (φ.toIntertwiningMap.isIntertwining' g) x
-  rw [key, hv, map_smul]
 
 theorem topB_of (h1 : JacOfType) (h2 : GrpFacts) (h3 : JacProd) : TopB := by
   intro k _ _ _ _ _ N s d hd hpos V _ _ π hsm hirr θ hinj hθ

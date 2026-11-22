@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliShift
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoExistsOfCap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.BCRowGenMonomial
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliShift
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.IoExistsOfCap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightIrreducible.BCRowGenMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem io_natW_cast {k : ℕ} (mu : DomWeight k) (a : Fin k) :
   have ha := a.isLt
   have hd : mu.detShift = mu.w ⟨k - 1, by omega⟩ := by
     unfold DomWeight.detShift
-    rw [dif_pos hk]
+    rw [dite_eq_left hk]
   have hle : mu.w ⟨k - 1, by omega⟩ ≤ mu.w a := mu.anti (by
     rw [Fin.le_iff_val_le_val]
     show (a : ℕ) ≤ k - 1
@@ -36,7 +40,8 @@ theorem io_pol_diag_hw {k : ℕ} (ν : Fin k → ℕ) (hν : Antitone ν) (a : F
       ∑ s : Fin k, X (a, s) * pderiv (a, s) f = ((d a : ℕ) : ℂ) • f := by
     intro f d hf
     rw [f.as_sum]
-    simp only [map_sum, Finset.mul_sum, MvPolynomial.X_mul_pderiv_monomial, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum, MvPolynomial.X_mul_pderiv_monomial, Finset.smul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun m hm => ?_)
     rw [← Finset.sum_smul, Nat.cast_smul_eq_nsmul]
@@ -51,7 +56,7 @@ theorem io_pol_diag_hw {k : ℕ} (ν : Fin k → ℕ) (hν : Antitone ν) (a : F
   have hH := Formalism.GradedWeylDivisibility.hwRowWeight ℂ k k (le_refl k) ν hν
   have hra : Formalism.GradedWeylDivisibility.rowNu (r := k) ν a = ν a := by
     unfold Formalism.GradedWeylDivisibility.rowNu
-    rw [dif_pos a.isLt]
+    rw [dite_eq_left a.isLt]
   rw [pol_apply, euler _ _ hH, hra]
 
 theorem capScalar (h3 : PI.HwIrred) {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (mu : DomWeight n)

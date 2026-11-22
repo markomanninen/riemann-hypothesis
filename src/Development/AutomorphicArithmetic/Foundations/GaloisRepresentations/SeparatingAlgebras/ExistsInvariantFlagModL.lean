@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+
+@[expose] public section
 
 open Module
 
@@ -38,7 +42,7 @@ private theorem exists_invariant_flag_mod_l (hF : FixVec) (l : ℕ) [Fact l.Prim
       omega
     obtain ⟨x, hx, hxs⟩ := hF l H hH V ρ U hst hne
     refine ⟨Fin.snoc v x, ?_, ?_⟩
-    · exact (linearIndependent_fin_snoc).2 ⟨hv, hx⟩
+    · exact (linearIndependent_finSnoc).2 ⟨hv, hx⟩
     · intro h j
       refine Fin.lastCases ?_ (fun j => ?_) j
       · have himg : (Fin.snoc v x : Fin (m+1) → V) '' {i | i < Fin.last m} = Set.range v := by

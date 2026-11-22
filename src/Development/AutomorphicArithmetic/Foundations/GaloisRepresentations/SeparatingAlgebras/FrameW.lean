@@ -1,12 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBoundAlt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.BlockBoundAlt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU
 open UpperTheory.Gal.Gen
 
 private theorem cAll_fin' {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} {c : UA E n}
-    (hc : c ∈ finU E n) : cAll c = 1 := by
+    (hc : c ∈ finU (E := E) (n := n)) : cAll c = 1 := by
   funext v
   have : cInf c = 1 := hc
   simp [cAll, cEmb, this]
@@ -31,7 +36,7 @@ theorem UpperTheory.Gal.Gen.frameW_pf :
       have h := hκd c d hc τ i j
       simp only [Pi.inv_apply, inv_inv]
       exact ⟨h.2, h.1⟩) x hx
-  have hval : ∀ f : algForms W, ∀ γ ∈ ratU E a, ∀ s x, x ∈ infU E a → ∀ c : finU E a,
+  have hval : ∀ f : algForms W, ∀ γ ∈ ratU E a, ∀ s x, x ∈ infU E a → ∀ c : finU (E := E) (n := a),
       (∀ v g, f.1 v (g * (c : UA E a)) = f.1 v g) → ∀ v,
       f.1 (ρ (M (γ * s * x * c)) v) (γ * s * x * c) = f.1 (ρ (M s) (ρ (κ (c : UA E a)) v)) s := by
     intro f γ hγ s x hx c hf v
@@ -53,8 +58,8 @@ theorem UpperTheory.Gal.Gen.frameW_pf :
   · intro f
     obtain ⟨C, hC, hfC⟩ := hE E a W f
     obtain ⟨d, hd⟩ := hD E l hlp a C hC.compact
-    let C₃ : Subgroup (finU E a) := C.subgroupOf (finU E a)
-    have hC₃o : IsOpen (C₃ : Set (finU E a)) := by
+    let C₃ : Subgroup (finU (E := E) (n := a)) := C.subgroupOf (finU (E := E) (n := a))
+    have hC₃o : IsOpen (C₃ : Set (finU (E := E) (n := a))) := by
       obtain ⟨N, hNo, hN1, hNC⟩ := hC.isOpen
       refine Subgroup.isOpen_of_mem_nhds _ (g := 1)
         (Filter.mem_of_superset ((hNo.preimage continuous_subtype_val).mem_nhds hN1) ?_)
@@ -89,7 +94,8 @@ theorem UpperTheory.Gal.Gen.frameW_pf :
     have hR0 : 0 ≤ R := (norm_nonneg _).trans (hF g i)
     have e : opOf (RU E a) (t j) (F (b g i)) g = ∑ h ∈ (t j).support, t j h * F (b g i) (g * h) := by
       simp only [opOf, Finsupp.sum, Finset.sum_apply, Pi.smul_apply, RU_apply, smul_eq_mul]
-    rw [e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg hR0 fun h hh => ?_
     obtain ⟨hfin, d, hd, hn⟩ := ht j h hh
     have hMh : M g = M (g * h) * (κ h)⁻¹ := by
@@ -100,8 +106,8 @@ theorem UpperTheory.Gal.Gen.frameW_pf :
     have hx : CoefLe ι 1 ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) := by
       intro q
       have hq := hyc q
-      have e1 : MvPolynomial.coeff q ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) =
-          t j h * MvPolynomial.coeff q (y : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) := by
+      have e1 : AddMonoidAlgebra.coeff ((t j h • y : W.Sp) : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) q =
+          t j h * AddMonoidAlgebra.coeff (y : Formalism.L2.DIV.Pol ℂ (InfinitePlace E) a) q := by
         simp [MvPolynomial.coeff_smul]
       rw [e1, map_mul, norm_mul]
       have hlpos : (0 : ℝ) < (l : ℝ) := by linarith

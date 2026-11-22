@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.SubProjectorProductMemStrict
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.GlOperatorsFormRepresentation
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.LiePolarizationDerEqZeroOfDisjoint
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.SubProjectorProductMemStrict
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,7 +119,8 @@ theorem multidegreeProj_glOperatorsEmbedded_comm (d : Fin N → ℕ) (a b : Fin 
   classical
   induction G using MvPolynomial.induction_on' with
   | monomial mm c =>
-    rw [polProj_monomial, glOperatorsEmbedded_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [polProj_monomial, glOperatorsEmbedded_apply, map_sum]
     by_cases h : ∀ i, multideg mm i = d i
     · rw [if_pos h, glOperatorsEmbedded_apply]
       refine Finset.sum_congr rfl fun l _ => ?_
@@ -129,7 +134,7 @@ theorem multidegreeProj_glOperatorsEmbedded_comm (d : Fin N → ℕ) (a b : Fin 
       · rw [polProj_step, if_neg h]
       · rw [map_neg, polProj_step, if_neg h, neg_zero]
       · rw [map_zero]
-  | add p q hp hq => rw [map_add, map_add, map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hp, hq]
 
 theorem glOperatorsEmbedded_mem_multidegree (d : Fin N → ℕ) (a b : Fin m) (G : MvPolynomial (Fin N × Fin k) F) (hG : G ∈ Pol F k d) :
     glOpsE F LL S e a b G ∈ Pol F k d := by
@@ -192,8 +197,8 @@ theorem projectors_preserve_multidegree : ProjectorsPreserveMultidegree := by
   rw [← h]
   exact polProj_mem B _
 
-open Classical in
 
+open Classical in
 def partialInverseOfEmbedding {m k : ℕ} (e : Fin m → Fin k) : Fin k → Option (Fin m) :=
   fun c => if h : ∃ a, e a = c then some (Classical.choose h) else none
 
@@ -202,17 +207,17 @@ theorem partialInverseOfEmbedding_apply_self {m k : ℕ} (e : Fin m → Fin k) (
   classical
   unfold partialInverseOfEmbedding
   have h : ∃ a', e a' = e a := ⟨a, rfl⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact congrArg some (he (Classical.choose_spec h))
 
 theorem eq_of_partialInverseOfEmbedding_eq_some {m k : ℕ} (e : Fin m → Fin k) (c : Fin k) (a : Fin m) (h : partialInverseOfEmbedding e c = some a) : c = e a := by
   classical
   unfold partialInverseOfEmbedding at h
   by_cases h1 : ∃ a, e a = c
-  · rw [dif_pos h1] at h
+  · rw [dite_eq_left h1] at h
     rw [← Option.some.inj h]
     exact (Classical.choose_spec h1).symm
-  · rw [dif_neg h1] at h
+  · rw [dite_eq_right h1] at h
     exact absurd h (by simp)
 
 section types
@@ -275,7 +280,8 @@ theorem polynomialTypeSums_by_evaluation (D : Formalism.BasicNotions.D7) : TypeS
       have h2 : prm a ((Tev dcd y).toLinearMap x) =
           ∑ c ∈ T, prm a ((Tev dcd y).toLinearMap (prE c x)) := by
         conv_lhs => rw [hTx]
-        rw [map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum]
       rw [h2]
       by_cases haT : a ∈ T
       · rw [Finset.sum_eq_single_of_mem a haT fun c _ hc => sysm.zero_on a c hc _ (hiso y c _ (sysE.mem c x))]

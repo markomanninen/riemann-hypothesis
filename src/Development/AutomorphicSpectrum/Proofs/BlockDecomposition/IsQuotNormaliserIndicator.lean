@@ -1,10 +1,29 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMahlerBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.T2SpaceAdelicGeneralLinearGroupNumberField
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MahlerBoundOfDegree
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeBoundedOfBasis
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeRationalSubspace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeBasisGeneral
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicDegreeFormula
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSupportOfSize
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SizeFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LogAbsBasicFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicativityFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeterminantMonotonicity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicativityInfinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeBoundFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeBoundInfinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicGLNormOneSplit
+public import GroundTheory.AutomorphicForms.ReductionMahler
+
+@[expose] public section
 
 noncomputable section
 
@@ -361,14 +380,14 @@ theorem sliceTerm_of (hM : Mahler) : SliceTerm := by
     rw [cutTerm, ← quotIntegral_const_mul]
     congr 1
     funext x
-    simp only [hFdef]
+    simp only [hFdef, ht₁, ht₂]
     ring
   · congr 1
     funext x
     rw [cutTerm, ← quotIntegral_const_mul]
     congr 1
     funext y
-    simp only [hFdef]
+    simp only [hFdef, ht₁, ht₂]
     ring
 
 end Main

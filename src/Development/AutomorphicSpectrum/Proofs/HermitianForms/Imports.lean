@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
+
+@[expose] public section
 
 open Matrix
 

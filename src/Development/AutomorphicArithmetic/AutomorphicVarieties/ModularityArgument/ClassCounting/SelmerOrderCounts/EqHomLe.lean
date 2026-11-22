@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 
@@ -118,7 +122,7 @@ theorem UpperTheory.V.ZK.Ct.eqHomLe :
         intro 𝔡
         induction 𝔡 using Finsupp.induction_linear with
         | zero => simp
-        | add f g hf hg => rw [map_add, map_add, map_add, hf, hg, mul_add]
+        | add f g hf hg => rw [map_add (f := _), map_add (f := _), map_add (f := _), hf, hg, mul_add]
         | single P n =>
           rw [hsingle, hψs, hψs, hφ.2 P]
           ring

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapAcrFromBase
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -17,8 +21,8 @@ open PAlg
 
 variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O]
 
-variable (l) in
 
+variable (l) in
 structure Eps where
   e : ℕ → (Ob l)ˣ
   succ : ∀ k, e (k + 1) ^ l = e k
@@ -45,7 +49,8 @@ theorem μ_mem (k : Bool) (A : PAlg l) (n : ℕ) : A.cris n ε.μ ∈ JJ k A n :
   have h := uJ_th k A n (WittVector.teichmuller l (A.s (ε.e 0)))
   have h' : A.th (WittVector.teichmuller l (A.s (ε.e 0))) = 1 := ε.sharp_e A
   rw [h', map_one] at h
-  rw [μ, map_sub, map_one, cris_qk]
+  change A.cris n (ε.qk 0 - 1) ∈ JJ k A n
+  rw [(A.cris n).map_sub, (A.cris n).map_one, cris_qk]
   exact Ideal.Quotient.eq.1 h.symm
 
 def qU (n : ℕ) : ((base l).Acr n)ˣ :=
@@ -55,7 +60,8 @@ theorem qU_val (n : ℕ) : (ε.qU n : (base l).Acr n) = (base l).cris n (ε.qk 0
 
 theorem qU_mem (k : Bool) (n : ℕ) : (ε.qU n : (bs l k n).R) - 1 ∈ (bs l k n).I := by
   have := ε.μ_mem k (base l) n
-  rwa [μ, map_sub, map_one, ← qU_val] at this
+  change (base l).cris n (ε.qk 0 - 1) ∈ JJ k (base l) n at this
+  rwa [((base l).cris n).map_sub, ((base l).cris n).map_one, ← qU_val] at this
 
 end Eps
 
@@ -89,7 +95,7 @@ def contMap {A A' : PAlg l} (φ : A ⟶ A') (Γ : Type) [TopologicalSpace Γ] : 
   comm := RingHom.ext fun x => Subtype.ext (funext fun _ => RingHom.congr_fun (Hom.comm φ) x)
 
 def contShift (A : PAlg l) : A.cont ℤ_[l] ⟶ A.cont ℤ_[l] where
-  f := { toFun := fun f => ⟨fun z => f.1 (z + 1), fun k => (f.2 k).comp_continuous (continuous_add_right 1)⟩
+  f := { toFun := fun f => ⟨fun z => f.1 (z + 1), fun k => (f.2 k).comp_continuous (continuous_add_const 1)⟩
          map_one' := rfl
          map_mul' := fun _ _ => rfl
          map_zero' := rfl
@@ -109,10 +115,11 @@ structure Tower {d : ℕ} (s : F.Small d) : Type 1 where
     (∀ x w, theta0 l w = κ x → g' (s.a x) = o (w.coeff 0)) → (∀ k, ρ k 0 = g' (s.T k)) → (∀ k m, ρ k (m + 1) ^ l = ρ k m) →
     ∃! f : A.A →+* B, f.comp A.s = o ∧ (∀ r a, A.sharp a - g r ∈ Ideal.span {(l : A.U)} → f a = g' r) ∧ ∀ k m, f (c k m) = ρ k m
 
-variable {κ} in
 
+variable {κ} in
 def Tower.obj {d : ℕ} {s : F.Small d} (𝒯 : Tower κ s) : (F.pt κ).Elements :=
-  ⟨𝒯.A, F.Pt.map (CommRingCat.ofHom 𝒯.g) s.y₀, 𝒯.hg ▸ F.ov_map (CommRingCat.ofHom 𝒯.g) s.ov⟩
+  (F.pt κ).elementsMk 𝒯.A
+    ⟨F.Pt.map (CommRingCat.ofHom 𝒯.g) s.y₀, 𝒯.hg ▸ F.ov_map (CommRingCat.ofHom 𝒯.g) s.ov⟩
 
 def Fn.Sub.inc (V : F.Sub) : Fn.Map V.fn F where
   u := { app := fun B => TypeCat.ofHom fun y => y.1
@@ -124,19 +131,19 @@ abbrev subEl (V : F.Sub) : El (V.fn.pt κ) ⥤ El (F.pt κ) := elMap (V.inc.pt �
 theorem subEl_gT (V : F.Sub) (k : Bool) (n : ℕ) :
     gT V.fn κ k n ⋙ subThick V (bs l k n) rfl (κb κ k n) = subEl κ V ⋙ gT F κ k n := rfl
 
-variable (F) in
 
+variable (F) in
 abbrev flt (ε : Eps l) (k : Bool) (n : ℕ) (ρ : ℕ → ℕ) (hρ : Slow ρ) : Flt (Oc F κ k n) :=
   pdFlt (Lc F κ k n) ((base l).cris n) ρ hρ ε.μ (ε.μ_mem k (base l) n)
 
-variable (l) in
 
+variable (l) in
 def Local : Prop := ∀ d j : ℕ, ∃ N : ℕ, ∀ {O : Type} [CommRing O] (F : Fn O) (κ : O →+* OC l) (ε : Eps l) (k : Bool) (n : ℕ)
   (ρ : ℕ → ℕ) (hρ : Slow ρ), n ≠ 0 → (k = false ∨ ρ = 0) → F.Small d →
     RI ((Polynomial.X : Polynomial ℤ) ^ N) j (flt F κ ε k n ρ hρ).rees (gT F κ k n)
 
-variable (l) in
 
+variable (l) in
 def Main : Prop := ∀ d j : ℕ, ∃ N : ℕ, ∀ {O : Type} [CommRing O] (F : Fn O) (κ : O →+* OC l) (ε : Eps l), F.Atlas d →
   ∀ n : ℕ, (∀ k, UpTo (ε.μ ^ N) (β F κ k n j)) ∧ ∀ y, ∃ x ∈ HcFil F κ false n N j, β F κ false n j x = ε.μ ^ N • y
 

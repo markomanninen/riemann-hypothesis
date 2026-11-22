@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CharIdem
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CharIdem
+
+@[expose] public section
 
 open CategoryTheory
 

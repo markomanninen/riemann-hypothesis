@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ComplexConjugate ENNReal
 
@@ -85,8 +90,8 @@ lemma memLp_lift {k : X₁ → Y → ℂ} {u : X₁ → ℂ} (hk : Measurable (F
     (hk.comp (measurable_snd.prodMk measurable_fst)).mul (hu.comp measurable_snd)
   have hsm : StronglyMeasurable fun y => ∫ x, k x y * u x ∂μ₁ :=
     hF.stronglyMeasurable.integral_prod_right'
-  refine ⟨hsm.aestronglyMeasurable, ?_⟩
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
+    hsm.aestronglyMeasurable]
   refine ENNReal.rpow_lt_top_of_nonneg (by norm_num) ?_
   have hA : Measurable (Function.uncurry fun x y => ‖k x y‖ₑ) := hk.enorm
   have hb : Measurable fun x => ‖u x‖ₑ := hu.enorm

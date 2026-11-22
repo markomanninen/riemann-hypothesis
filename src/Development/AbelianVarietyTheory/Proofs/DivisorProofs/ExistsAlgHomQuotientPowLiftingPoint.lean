@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FaithfullyFlatAdicCompletionSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasHartogsPropertyQuotientSpanPowRetractionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FaithfullyFlatAdicCompletionSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasHartogsPropertyQuotientSpanPowRetractionStatement
+
+@[expose] public section
+
 open IsLocalRing
 open scoped TensorProduct
 
@@ -62,7 +67,7 @@ theorem isUnit_loc (A R : Type) [CommRing A] [CommRing R] [Algebra A R] (ρ : R 
       (S.map (algebraMap A R)))) s) := by
   obtain ⟨x, hx⟩ := sub_retract_dvd A R ρ hρ t hker s
   have e : s = algebraMap A R (ρ s) + t * x := by linear_combination hx
-  rw [e, map_add]
+  rw [e, map_add (f := _)]
   refine IsNilpotent.isUnit_add_left_of_commute ?_ ?_ (Commute.all _ _)
   · refine ⟨n, ?_⟩
     rw [← map_pow, IsScalarTower.algebraMap_apply R (R ⧸ Ideal.span {t} ^ n), Ideal.Quotient.algebraMap_eq,

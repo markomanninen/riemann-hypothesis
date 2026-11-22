@@ -1,12 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPositiveDefiniteQuadraticFormEndomorphismsStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianVarietyTorsionFiniteEndomorphismDivisibleStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SimilitudeDefiniteFormIsAlgebraicOnVectorStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPositiveDefiniteQuadraticFormEndomorphismsStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianVarietyTorsionFiniteEndomorphismDivisibleStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SimilitudeDefiniteFormIsAlgebraicOnVectorStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -102,23 +107,22 @@ theorem exists_monic_torsion {M : Type} [AddCommGroup M] (l : ℕ) (hf : ∀ n :
 section
 variable {S : Scheme.{0}} {B : Over S} [GrpObj B] [IsCommMonObj B]
 
-noncomputable def ptEnd (F : End B) (hF : IsMonHom (show B ⟶ B from F)) (Z : Over S) :
+noncomputable def ptEnd (F : End B) (hF : IsMonHom F.asHom) (Z : Over S) :
     Module.End ℤ (Additive (Z ⟶ B)) :=
-  (MonoidHom.toAdditive (IsMonHom.monoidHom (show B ⟶ B from F) Z)).toIntLinearMap
+  (MonoidHom.toAdditive (IsMonHom.monoidHom F.asHom Z)).toIntLinearMap
 
-theorem ptEnd_pow (F : End B) (hF : IsMonHom (show B ⟶ B from F)) {Z : Over S} (x : Z ⟶ B) (n : ℕ) :
-    (ptEnd F hF Z ^ n) (Additive.ofMul x) = Additive.ofMul (x ≫ (show B ⟶ B from F ^ n)) := by
+theorem ptEnd_pow (F : End B) (hF : IsMonHom F.asHom) {Z : Over S} (x : Z ⟶ B) (n : ℕ) :
+    (ptEnd F hF Z ^ n) (Additive.ofMul x) = Additive.ofMul (x ≫ (F ^ n).asHom) := by
   induction n with
-  | zero => rw [pow_zero, pow_zero]; exact congrArg Additive.ofMul (Category.comp_id x).symm
+  | zero => simp only [pow_zero, Module.End.one_apply, End.one_asHom, Category.comp_id]
   | succ n ih =>
-    rw [pow_succ', pow_succ', Module.End.mul_apply, ih]
-    exact congrArg Additive.ofMul (Category.assoc x (show B ⟶ B from F ^ n) (show B ⟶ B from F))
+    rw [pow_succ', pow_succ', Module.End.mul_apply, ih, End.mul_asHom]
+    exact congrArg Additive.ofMul (Category.assoc x (F ^ n).asHom F.asHom)
 
-theorem aeval_ptEnd (F : End B) (hF : IsMonHom (show B ⟶ B from F)) {Z : Over S} (x : Z ⟶ B) (P : ℤ[X]) :
+theorem aeval_ptEnd (F : End B) (hF : IsMonHom F.asHom) {Z : Over S} (x : Z ⟶ B) (P : ℤ[X]) :
     aeval (ptEnd F hF Z) P (Additive.ofMul x) = Additive.ofMul (polyPt F P x) := by
-  rw [aeval_eq_sum_range, LinearMap.sum_apply]
-  change _ = Additive.ofMul (∏ n ∈ Finset.range (P.natDegree + 1), (x ≫ (show B ⟶ B from F ^ n)) ^ P.coeff n)
-  rw [ofMul_prod]
+  rw [aeval_eq_sum_range, LinearMap.sum_apply, polyPt, ← List.prod_toFinset _ List.nodup_range,
+    List.toFinset_range, ofMul_prod]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [LinearMap.smul_apply, ptEnd_pow, ofMul_zpow]
 
@@ -144,7 +148,7 @@ noncomputable def homSub (B : Over S) [GrpObj B] [IsCommMonObj B] : Submodule �
 
 end
 
-theorem exists_poly_normSq_roots : ∀ (k : Type) [Field k] [IsAlgClosed k] (B : Over (Sp k)) [GrpObj B], IsAbelianScheme B → ∀ (L : LB B.left), AmpleCub B L → ∀ (F : End B) (q : ℕ), IsMonHom (show B ⟶ B from F) → PullPow (show B ⟶ B from F).left L q → ∃ P : Polynomial ℤ, P ≠ 0 ∧ (∀ β : ℂ, Polynomial.aeval β P = 0 → Complex.normSq β = q) ∧ ∀ x : (𝟙_ (Over (Sp k)) ⟶ B), polyPt F P x = 1 := by
+theorem exists_poly_normSq_roots : ∀ (k : Type) [Field k] [IsAlgClosed k] (B : Over (Sp k)) [GrpObj B], IsAbelianScheme B → ∀ (L : LB B.left), AmpleCub B L → ∀ (F : End B) (q : ℕ), IsMonHom F.asHom → PullPow F.asHom.left L q → ∃ P : Polynomial ℤ, P ≠ 0 ∧ (∀ β : ℂ, Polynomial.aeval β P = 0 → Complex.normSq β = q) ∧ ∀ x : (𝟙_ (Over (Sp k)) ⟶ B), polyPt F P x = 1 := by
   intro k _ _ B _ hB L hL F q hF hq
   have := hB.comm
   obtain ⟨l, hl2, hl⟩ : ∃ l : ℕ, 2 ≤ l ∧ (l : k) ≠ 0 := by
@@ -157,14 +161,14 @@ theorem exists_poly_normSq_roots : ∀ (k : Type) [Field k] [IsAlgClosed k] (B :
   obtain ⟨r, hr⟩ := exists_monic_torsion (M := Additive (𝟙_ (Over (Sp k)) ⟶ B)) l (fun n => (hD n).1) (ptEnd F hF _)
   have hT : ∀ f ∈ homSub B, ptEnd F hF B f ∈ homSub B := fun f hf => by
     change IsMonHom (Additive.toMul f) at hf
-    change IsMonHom (Additive.toMul f ≫ (show B ⟶ B from F))
+    change IsMonHom (Additive.toMul f ≫ F.asHom)
     infer_instance
   let e : homSub B := ⟨Additive.ofMul (𝟙 B), inferInstanceAs (IsMonHom (𝟙 B))⟩
   let φ : Module.End ℤ (homSub B) := (ptEnd F hF B).restrict hT
   have hev : ∀ (x : 𝟙_ (Over (Sp k)) ⟶ B) (p : ℤ[X]), aeval (ptEnd F hF _) p (Additive.ofMul x) =
       Additive.ofMul (x ≫ Additive.toMul (aeval φ p e).1) := fun x p => by
     have h := aeval_intertwine (evalPt x ∘ₗ (homSub B).subtype) φ (ptEnd F hF _)
-      (fun f => congrArg Additive.ofMul (Category.assoc x (Additive.toMul f.1) (show B ⟶ B from F))) p e
+      (fun f => congrArg Additive.ofMul (Category.assoc x (Additive.toMul f.1) F.asHom)) p e
     have h' : (evalPt x ∘ₗ (homSub B).subtype) e = Additive.ofMul x := congrArg Additive.ofMul (Category.comp_id x)
     rw [h'] at h
     exact h

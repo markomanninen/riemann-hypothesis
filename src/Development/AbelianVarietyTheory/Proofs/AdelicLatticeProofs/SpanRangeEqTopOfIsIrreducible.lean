@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -37,9 +42,12 @@ private theorem subalgebra_end_eq_whole_of_isSimpleModule {V : Type} [AddCommGro
       simp only [LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.single_apply] at h1 h2
       rw [h1, h2, map_smul]
     funext i
-    conv_lhs => rw [← Finset.univ_sum_single (fun i => T (x i)), map_sum]
-    conv_rhs => rw [← Finset.univ_sum_single x, map_sum]
-    simp only [Finset.sum_apply, map_sum, hsingle]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← Finset.univ_sum_single (fun i => T (x i)), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← Finset.univ_sum_single x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, map_sum, hsingle]
   ext T
   simp only [Algebra.mem_top, iff_true]
   have hmem : (fun i => T (b i)) ∈ N := by
@@ -55,10 +63,10 @@ private theorem subalgebra_end_eq_whole_of_isSimpleModule {V : Type} [AddCommGro
   rw [hT]
   exact a.2
 
+
 open Matrix in
 open scoped Kronecker ComplexOrder TensorProduct in
 open scoped MonoidAlgebra in
-
 theorem _root_.GlobalTheory.ClassFin.span_range_eq_top_of_isIrreducible :
     ∀ (G : Type) [Group G] (V : Type) [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) [FiniteDimensional ℂ V], ρ.IsIrreducible → Submodule.span ℂ (Set.range ρ) = ⊤ := by
   intro G _ V _ _ ρ _ h

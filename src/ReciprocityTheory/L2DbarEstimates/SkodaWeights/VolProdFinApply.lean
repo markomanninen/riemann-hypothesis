@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.NeedBergmanClosed
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaOps
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.NearContinuousOfSmoothR
-import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.OntoWithBoundTop
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.NeedBergmanClosed
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaOps
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.NearContinuousOfSmoothR
+public import ReciprocityTheory.L2DbarEstimates.MinimalSolutions.OntoWithBoundTop
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.H
 

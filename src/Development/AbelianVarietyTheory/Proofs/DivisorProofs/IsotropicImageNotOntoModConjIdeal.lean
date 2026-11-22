@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveModOfSurjectiveModOpposite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsModuliOfSignatureEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InjectiveModOfSurjectiveModOpposite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsModuliOfSignatureEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem mem_nsmul_of_dvd (h : IsOpp D Z Z') {p : ℕ} (hp : 0 < p) {z : D.La} (h
   choose c hc using fun b : Z' => hd b b.2
   have hp' : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne'
   let φ : Z' →+ ℤ := AddMonoidHom.mk' c fun x x' =>
-    mul_left_cancel₀ hp' (by rw [mul_add, ← hc, ← hc, ← hc, Submodule.coe_add, map_add])
+    mul_left_cancel₀ hp' (by rw [mul_add, ← hc, ← hc, ← hc, Submodule.coe_add, map_add (f := _)])
   obtain ⟨w, hw, -⟩ := h.2.2.2 φ
   refine ⟨w, w.2, ?_⟩
   have : z - p • (w : D.La) = 0 := h.symm.eq_zero (sub_mem hz (Z.nsmul_mem w.2 p)) fun b hb => by
@@ -124,7 +128,7 @@ theorem mem_nsmul_of_img_eq_top (D : Datum H) {X : Type} [AddCommGroup X] [Modul
     have h4 : Module.rank ℤ (LinearMap.range g) = Module.finrank ℤ X := le_antisymm h3 h1
     rw [h4] at h2
     have h5 : Module.rank ℤ (LinearMap.ker g) = 0 := by
-      obtain ⟨k, hk⟩ := Cardinal.lt_aleph0.1 (lt_of_le_of_lt (le_add_self.trans h2.le) (Cardinal.nat_lt_aleph0 _))
+      obtain ⟨k, hk⟩ := Cardinal.lt_aleph0.1 (lt_of_le_of_lt (le_add_self.trans h2.le) Cardinal.natCast_lt_aleph0)
       rw [hk] at h2 ⊢
       norm_cast at h2 ⊢
       omega
@@ -215,7 +219,7 @@ theorem img_bar_ne_top : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E] 
     have h1 := ha mc (hL (Submodule.mem_map_of_mem hmc))
     have e1 : D.EF z mc = 0 := by rw [ef_swap, hmc.1 z hz, neg_zero]
     have e2 : D.EF b' mc = 0 := by rw [ef_swap, hmc.2 b' hb', neg_zero]
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, e1, e2, zero_add, add_zero] at h1
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, e1, e2, zero_add, add_zero] at h1
     rwa [map_add, map_add, hm.1 zc hzc, hm.2 bc hbc, zero_add, add_zero]
   have hzm : z + m = p • (w1 + w2) := by rw [hw1, hw2, smul_add]
   have hyb : ∃ e, y b' = p • e := by

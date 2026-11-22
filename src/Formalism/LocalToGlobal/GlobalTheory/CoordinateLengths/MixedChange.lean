@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IntSpanLeRat
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.IntSpanLeRat
+
+@[expose] public section
 
 noncomputable section
 

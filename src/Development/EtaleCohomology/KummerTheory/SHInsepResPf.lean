@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.SHInsepPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.SHInsepPf
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct
@@ -27,7 +31,7 @@ theorem shInsepRes_pow [Nontrivial (A ⊗[κ] K)] (y : A ⊗[κ] K) :
     obtain ⟨n, a, ha⟩ := hx
     obtain ⟨m, b, hb⟩ := hy
     refine ⟨n + m, a ^ q ^ m + b ^ q ^ n, ?_⟩
-    rw [add_pow_expChar_pow, map_add, map_pow, map_pow, ← ha, ← hb, ← pow_mul, ← pow_mul, ← pow_add,
+    rw [add_pow_expChar_pow, map_add (f := _), map_pow, map_pow, ← ha, ← hb, ← pow_mul, ← pow_mul, ← pow_add,
       ← pow_add, add_comm m n]
 
 omit [IsPurelyInseparable κ K] in

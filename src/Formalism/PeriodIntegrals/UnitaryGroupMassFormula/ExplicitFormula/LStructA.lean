@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ lemma logDeriv_local {f : ℂ → ℂ} {ρ : ℂ} (hf : AnalyticAt ℂ f ρ)
       Filter.EventuallyEq.deriv_eq (hfs.mono fun w hw => by rw [hw, smul_eq_mul]), hfs']
   have hl : logDeriv (fun w : ℂ => w - ρ) s = 1 / (s - ρ) := by
     rw [logDeriv_apply, deriv_sub_const, deriv_id'']
-  rw [hld, logDeriv_mul (f := fun w => (w - ρ) ^ analyticOrderNatAt f ρ) s hpow hgs (hd.pow _)
+  rw [hld, logDeriv_fun_mul (f := fun w => (w - ρ) ^ analyticOrderNatAt f ρ) s hpow hgs (hd.pow _)
     hga.differentiableAt, logDeriv_fun_pow hd, hl, logDeriv_apply]
   beta_reduce
   ring

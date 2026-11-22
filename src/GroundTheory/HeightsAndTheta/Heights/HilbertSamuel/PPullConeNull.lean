@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNull
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GenericComplexPoint
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeNull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GenericComplexPoint
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

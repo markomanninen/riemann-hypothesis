@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotIsPrimZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumMulEqOfSumToRealEq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsStrictFaceOfSmoothConePolyhedralFanStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotIsPrimZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumMulEqOfSumToRealEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsStrictFaceOfSmoothConePolyhedralFanStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,16 +19,16 @@ section Gen
 variable {O : Type} [CommRing O] {bar : O → O} {φ : InvFun O} {X : Type} [AddCommGroup X] [Module O X]
   [Module.Finite O X] {m : ℕ}
 
-omit [Module.Finite O X] in
 
+omit [Module.Finite O X] in
 theorem smul_cancel {β β' : LinearMap.BilinForm ℤ X} {k : ℤ} (hk : k ≠ 0) (h : k • β = k • β') : β = β' := by
   ext x y
   have h1 := LinearMap.congr_fun₂ h x y
   simp only [LinearMap.smul_apply, smul_eq_mul] at h1
   exact mul_left_cancel₀ hk h1
 
-omit [Module.Finite O X] in
 
+omit [Module.Finite O X] in
 theorem isPrim_of_isPartOfBasis {v : Fin m → balForms bar X} (h : IsPartOfBasis v) (i : Fin m) : IsPrim bar (v i) := by
   intro k β' hk
   have h1 : (k : ℤ) • β' = v i := by rw [natCast_zsmul]; exact hk.symm
@@ -32,8 +36,8 @@ theorem isPrim_of_isPartOfBasis {v : Fin m → balForms bar X} (h : IsPartOfBasi
   · exact_mod_cast h2
   · omega
 
-omit [Module.Finite O X] in
 
+omit [Module.Finite O X] in
 theorem eq_of_isPrim {x y : LinearMap.BilinForm ℤ X} (hx : x ∈ balForms bar X) (hy : y ∈ balForms bar X)
     (px : IsPrim bar ⟨x, hx⟩) (py : IsPrim bar ⟨y, hy⟩) {k n : ℕ} (hk : 0 < k) (hn : 0 < n)
     (h : (k : ℤ) • x = (n : ℤ) • y) : x = y := by
@@ -266,7 +270,8 @@ theorem isPartOfBasis_of_card_torsion_le_one : ∀ (L : Type) [AddCommGroup L] [
       have e : (Submodule.Quotient.mk (∑ k, bQ.repr (Submodule.Quotient.mk x) k • s k) :
           L ⧸ Submodule.span ℤ (Set.range v)) = ∑ k, bQ.repr (Submodule.Quotient.mk x) k • bQ k := by
         change (Submodule.span ℤ (Set.range v)).mkQ (∑ k, bQ.repr (Submodule.Quotient.mk x) k • s k) = _
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         simp only [map_smul, Submodule.mkQ_apply, hs]
       rw [e, hx, sub_self]
     have h1 : Submodule.span ℤ (Set.range v) ≤ Submodule.span ℤ (Set.range (Sum.elim
@@ -334,7 +339,8 @@ theorem ray_of_mem_cone : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : InvF
       apply Subtype.ext
       simpa using hkc
     have := congrArg (ψ l) hsub
-    rw [map_nsmul, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_nsmul, map_sum] at this
     simp only [map_nsmul, hψ', nsmul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
       if_true] at this
     exact this
@@ -489,7 +495,7 @@ theorem onModule (hD : ∀ (X : Type) [AddCommGroup X] [Module O X] [Module.Fini
       · rintro β ⟨hβ, pβ, β₀, hβ₀, k, n, hk, hn, h⟩
         exact Set.mem_biUnion hβ₀ ⟨hβ, pβ, k, n, hk, hn, h⟩
     · intro m γ hγ
-      have hB : ∑ j, toReal (γ j) ∈ psdCone bar X := by
+      have hB : ∑ j, toReal (γ j) ∈ psdCone (bar := bar) (X := X) := by
         have := ConeSub.sum_smul_toReal_mem_psdCone O bar X m γ (fun _ => 1) hγ.mem hγ.nonneg (fun _ => zero_le_one)
         simpa using this
       obtain ⟨e, m', δ, c, hδ, hδS, hc, hBe⟩ := hS0 _ hB
@@ -544,8 +550,8 @@ theorem isPolFan_of_maxMult_le_one (hD : ∀ (X : Type) [AddCommGroup X] [Module
 
 end GlobalTheory.PolFan.SmoothEnd
 
-open GlobalTheory.PolFan.SmoothEnd in
 
+open GlobalTheory.PolFan.SmoothEnd in
 theorem GlobalTheory.PolFan.smoothEnd : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (q : ℕ) (φ lab : InvFun (𝓞 E)), (∀ (X : Type) [AddCommGroup X] [Module (𝓞 E) X] [Module.Finite (𝓞 E) X] [Module.Projective (𝓞 E) X], Dominates H.bar X) → IsPolyFan H.bar q φ → SimpLab H.bar q φ lab → maxMult H.bar q φ ≤ 1 → IsPolFan H.bar q φ ∧ NoSelfInt H.bar q φ := by
   intro E _ _ _ H q φ lab hD hPF hSL hM
   exact isPolFan_of_maxMult_le_one hD hPF hSL hM

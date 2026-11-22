@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.ConclOfInputs4
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ModulusPosOfThirdHypothesis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.ConclOfInputs4
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.NoCommonZeroSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ModulusPosOfThirdHypothesis
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,8 +27,10 @@ theorem three_le_DF_of_SetC {D : D7} {B : WeightFamilies.Prov D} {P : ModuliInte
     omega
   have hτ : Nonempty D.what₂.Tau := by
     rw [← Fintype.card_pos_iff, D.what₂.card_Tau]
+    have hm := D.R.two_le_m
+    have hf := D.R.m_le_f
     unfold Ranks.f Ranks.n
-    positivity
+    omega
   obtain ⟨τ⟩ := hτ
   set i : Fin (D.R.sigW j).1 := ⟨(D.R.sigW j).1 - 1, by omega⟩ with hi
   have hi1 : i.1 + 1 = (D.R.sigW j).1 := by simp only [hi]; omega
@@ -33,7 +39,7 @@ theorem three_le_DF_of_SetC {D : D7} {B : WeightFamilies.Prov D} {P : ModuliInte
   have hn : ¬ i.1 + 1 < (D.R.sigW j).1 := by omega
   rw [if_neg hn] at h3
   unfold gapZ at h3
-  rw [dif_neg hn] at h3
+  rw [dite_eq_right hn] at h3
   have hTp : (0 : ℤ) < (Tp D j T : ℤ) := by unfold Tp; positivity
   rw [Int.fdiv_eq_ediv_of_nonneg _ hTp.le] at h3
   have h4 : (3 : ℤ) ≤ ((ka.aP τ i : ℤ) - ((WeightFamilies.dimY D j : ℤ) + 2) * nW - 2 * D.R.r) / (Tp D j T : ℤ) := by

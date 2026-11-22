@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemSmulLk
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.HAt Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -147,10 +152,10 @@ theorem stabMap_tied : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → 
     simp [iXc, crdN, crdP]
   have hext := gam_ext I hOk hPins l Z u c.1 s.1
   refine ⟨fun x => ?_, ?_⟩
-  · apply (crdN (I.rec7 l Z) (I.rec7 l Z).R.m le_rfl).injective
+  · apply (crdN (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G) (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.m le_rfl).injective
     rw [key, hiX, hiX, hext.1, crdP_stabP I l Z H F A hF hCarT u c s x]
     rfl
-  · apply (crdN (I.rec7 l Z) (I.rec7 l Z).R.m le_rfl).injective
+  · apply (crdN (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G) (_root_.GlobalTheory.Mem.assemble _ _ Z.W Z.V Z.S Z.N Z.G).R.m le_rfl).injective
     rw [key, ← hCarT.z0 u]
     have hz : (F u).til.z0 = TC.z0 X u := funext fun j => (hF u).z0 j
     rw [hz, hext.2]

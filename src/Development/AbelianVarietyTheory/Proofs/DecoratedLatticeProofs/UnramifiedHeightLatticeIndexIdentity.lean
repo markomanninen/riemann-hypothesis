@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationDivZpowOrd
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RelIndexScaledMaxIdealStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCoType
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ValuationDivZpowOrd
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RelIndexScaledMaxIdealStatement
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound GlobalTheory.ParHecke
 
 noncomputable section
@@ -99,7 +104,34 @@ theorem ko_index : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
 theorem hgt_mul_index : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (D : Type) [Fintype D] [DecidableEq D] (ϖ : kˣ), valuation k (ϖ : k) = uniformizer k → ∀ H : GL D k → ℝ, IsHgt ϖ H → ∀ (h : GL D k) (L P : AddSubgroup (D → k)), (∀ v, v ∈ L ↔ ∀ i, valuation k (v i) < 1) → (∀ v, v ∈ P ↔ h.1.mulVec v ∈ L) → H h * (((P ⊓ L).relIndex P : ℕ) : ℝ) * (((P ⊓ L).relIndex L : ℕ) : ℝ) = 1 := by
   intro k _ _ _ _ D _ _ ϖ hϖ H hH h L P hL hP
   have hq : (0 : ℝ) < resCard k := by exact_mod_cast (show 0 < resCard k by unfold resCard; exact Nat.card_pos)
-  obtain ⟨x, hx, y, hy, e, rfl⟩ := GlobalTheory.LocalCartan.cartan_decomposition k D ϖ h hϖ
+  have hc : ∃ x ∈ KO k D, ∃ y ∈ KO k D, ∃ e : D → ℤ,
+      h = x * torusElt k D ϖ e * y := by
+    have ho : SmGL.ord k 1 = 0 := SmGL.ord_eq_zero_iff.mpr (by simp)
+    have hi (y : kˣ) : SmGL.ord k y⁻¹ = -SmGL.ord k y := by
+      have hh := SmGL.ord_mul k y y⁻¹
+      rw [mul_inv_cancel, ho] at hh
+      omega
+    have hp (m : ℤ) : SmGL.ord k (ϖ ^ m) = m := by
+      have h1 := SmGL.ord_eq_one hϖ
+      induction m using Int.induction_on with
+      | zero => simpa using ho
+      | succ i ih => rw [_root_.zpow_add_one, SmGL.ord_mul, ih, h1]
+      | pred i ih =>
+        rw [_root_.zpow_sub_one, SmGL.ord_mul, ih, hi, h1]
+        ring
+    have hu (z : kˣ) : ∃ u : kˣ, ∃ m : ℤ, valuation k (u : k) = 1 ∧ z = u * ϖ ^ m := by
+      refine ⟨z * (ϖ ^ SmGL.ord k z)⁻¹, SmGL.ord k z, ?_, by simp⟩
+      apply SmGL.ord_eq_zero_iff.mp
+      rw [SmGL.ord_mul, hi, hp]
+      ring
+    obtain ⟨x, hx, y, hy, t, rfl⟩ := GlobalTheory.LocalCartan.exists_diagT h
+    choose u e hu htu using fun i => hu (t i)
+    refine ⟨x * GlobalTheory.SmGL.diagT k D u,
+      mul_mem hx (GlobalTheory.LocalCartan.diagT_mem_KO hu), y, hy, e, ?_⟩
+    have ht : t = u * fun i => ϖ ^ e i := funext htu
+    rw [ht, map_mul]
+    simp only [torusElt, mul_assoc]
+  obtain ⟨x, hx, y, hy, e, rfl⟩ := hc
   let t : GL D k := torusElt k D ϖ e
   let Pt : AddSubgroup (D → k) := L.comap (Matrix.mulVecLin t.1).toAddMonoidHom
   have hPt : ∀ v, v ∈ Pt ↔ t.1.mulVec v ∈ L := fun v => Iff.rfl

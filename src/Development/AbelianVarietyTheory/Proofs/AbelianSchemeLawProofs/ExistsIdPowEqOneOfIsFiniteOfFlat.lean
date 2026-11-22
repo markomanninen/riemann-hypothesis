@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,8 +23,8 @@ section Coalg
 
 variable [AddCommGroup B] [Module R B] [Coalgebra R B] [IsCocomm R B]
 
-variable (B) in
 
+variable (B) in
 def postcomp (h : C →ₐ[R] F) : WithConv (B →ₗ[R] C) →+* WithConv (B →ₗ[R] F) where
   toFun f := toConv (h.toLinearMap ∘ₗ f.ofConv)
   map_one' := by ext c; simp
@@ -28,9 +32,6 @@ def postcomp (h : C →ₐ[R] F) : WithConv (B →ₗ[R] C) →+* WithConv (B �
     rw [LinearMap.algHom_comp_convMul_distrib]
   map_zero' := by ext c; simp
   map_add' f g := by ext c; simp
-
-@[simp] theorem postcomp_apply (h : C →ₐ[R] F) (f : WithConv (B →ₗ[R] C)) (c : B) :
-    postcomp B h f c = h (f c) := rfl
 
 variable [Algebra C F] [IsScalarTower R C F]
 
@@ -56,7 +57,7 @@ theorem pow_card_eq_one {ι : Type*} [Fintype ι] (b : Module.Basis ι C F) (τ 
         rw [(ℛ R c).convMul_apply]
         simp only [LinearMap.comp_apply]
         rw [(ℛ R c).convMul_apply]
-        simp [← Algebra.smul_def]
+        simp [postcomp, ← Algebra.smul_def]
       left_inv := fun f => by
         ext c
         simp
@@ -66,7 +67,7 @@ theorem pow_card_eq_one {ι : Type*} [Fintype ι] (b : Module.Basis ι C F) (τ 
   let b' := Module.Basis.ofEquivFun e
   let τ' : WithConv (B →ₗ[R] F) ≃ₐ[WithConv (B →ₗ[R] C)] WithConv (B →ₗ[R] F) :=
     AlgEquiv.ofRingEquiv (f := RingEquiv.ofRingHom (postcomp B (τ.toAlgHom.restrictScalars R))
-      (postcomp B (τ.symm.toAlgHom.restrictScalars R)) (by ext f c; simp) (by ext f c; simp))
+      (postcomp B (τ.symm.toAlgHom.restrictScalars R)) (by ext f c; simp [postcomp]) (by ext f c; simp [postcomp]))
       (fun g => by
         ext c
         exact τ.commutes (g c))

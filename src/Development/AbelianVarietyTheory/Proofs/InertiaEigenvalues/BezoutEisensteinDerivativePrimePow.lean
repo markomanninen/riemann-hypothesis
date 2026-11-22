@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMultiplicativeLiftCharZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsMultiplicativeLiftCharZero
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc
 open scoped Formalism.Per NNReal
 
@@ -32,15 +37,15 @@ theorem bezout_Ep_derivative : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk :
     (bk.monic.irreducible_iff_irreducible_map_fraction_map).1 hirrE
   obtain ⟨a, b, hab⟩ := hirrF.separable
   rw [Polynomial.derivative_map] at hab
-  obtain ⟨⟨d₁, hd₁⟩, hA⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors (Wq l bk.a)) a
-  obtain ⟨⟨d₂, hd₂⟩, hB⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors (Wq l bk.a)) b
+  obtain ⟨d₁, hd₁, hA⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors (Wq l bk.a)) a
+  obtain ⟨d₂, hd₂, hB⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors (Wq l bk.a)) b
   set A := IsLocalization.integerNormalization (nonZeroDivisors (Wq l bk.a)) a
   set B := IsLocalization.integerNormalization (nonZeroDivisors (Wq l bk.a)) b
   have hd : d₁ * d₂ ≠ 0 := mul_ne_zero (nonZeroDivisors.ne_zero hd₁) (nonZeroDivisors.ne_zero hd₂)
   have key : Polynomial.C d₂ * A * bk.Ep + Polynomial.C d₁ * B * Polynomial.derivative bk.Ep =
       Polynomial.C (d₁ * d₂) := by
     apply Polynomial.map_injective (algebraMap (Wq l bk.a) F) (IsFractionRing.injective (Wq l bk.a) F)
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, hA, hB, Polynomial.derivative_map]
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, hA, hB, Polynomial.derivative_map]
     simp only [Algebra.smul_def, Polynomial.algebraMap_apply, map_mul, Polynomial.C_mul]
     linear_combination (Polynomial.C (algebraMap (Wq l bk.a) F d₁) * Polynomial.C (algebraMap (Wq l bk.a) F d₂)) * hab
   obtain ⟨m, u, hu⟩ := WittVector.exists_eq_pow_p_mul' (p := l) (k := Fq l bk.a) (d₁ * d₂) hd

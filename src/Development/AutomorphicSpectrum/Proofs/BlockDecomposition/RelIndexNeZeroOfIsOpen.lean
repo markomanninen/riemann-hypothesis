@@ -1,6 +1,16 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistBijective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
-open GlobalTheory.BCT GlobalTheory.CompanionTheory.SplitConvTw
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralEqSumSmallerLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwistedOrbitalIntegralProductGroup
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinsumOutOfLe
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalAlgebraHolds
+
+@[expose] public section
+
+open GlobalTheory.BCT
 open scoped Classical Pointwise
 
 noncomputable section

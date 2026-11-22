@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
-import Formalism.SharpRestriction.LevelLetterCocycles.XDvdLevCQ
-import Formalism.SharpRestriction.LevelLetterCocycles.ConvEqSum
-import Formalism.SharpRestriction.LevelLetterCocycles.EqZeroOfMemSum
-import Formalism.SharpRestriction.LevelLetterCocycles.CardBasisEq
-import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerMemDeltaInvariants
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LatticeBoundsOfThreeParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.XDvdLevCQ
+public import Formalism.SharpRestriction.LevelLetterCocycles.ConvEqSum
+public import Formalism.SharpRestriction.LevelLetterCocycles.EqZeroOfMemSum
+public import Formalism.SharpRestriction.LevelLetterCocycles.CardBasisEq
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerMemDeltaInvariants
+
+@[expose] public section
 
 noncomputable section
 
@@ -161,7 +165,7 @@ theorem lev_q_X_mul (i : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) (hp2 
     simp only [Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, Pi.add_apply, Pi.one_apply]
     exact W.q₀_def
   have hL := congrArg (W.lev i ζ) hpi
-  rw [map_mul, map_sub, map_pow, map_add, map_one] at hL
+  rw [map_mul, map_sub, map_pow, map_add (f := _), map_one] at hL
   obtain ⟨E, hE0, hED, hEπ⟩ := W.lev_π i ζ ⟨1, by rwa [pow_one]⟩
   have hζp : (PowerSeries.C ζ : PowerSeries LL) ^ PD.p = 1 := by
     rw [← map_pow, hζ.pow_eq_one, map_one]
@@ -169,7 +173,7 @@ theorem lev_q_X_mul (i : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) (hp2 
   have hζ1 : ζ ≠ 1 := hζ.ne_one (by omega)
   have ht0 : PowerSeries.constantCoeff (W.lev i ζ letπ) = ζ - 1 := by
     have h := congrArg PowerSeries.constantCoeff hEπ
-    rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at h
+    rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at h
     linear_combination h
   have hq0 : PowerSeries.constantCoeff (W.lev i ζ W.q) = 0 := by
     have h := congrArg PowerSeries.constantCoeff hL
@@ -185,14 +189,14 @@ theorem lev_q_X_mul (i : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) (hp2 
       | simpa using PowerSeries.coeff_succ_X_mul (R := LL) 0 g
       | simp [PowerSeries.coeff_X_mul]
       | simp [mul_comm PowerSeries.X g, PowerSeries.coeff_succ_mul_X]
-  have hd : ∀ f : PowerSeries LL, PowerSeries.constantCoeff (PowerSeries.derivative LL f) = PowerSeries.coeff 1 f := by
+  have hd : ∀ f : PowerSeries LL, PowerSeries.constantCoeff (PowerSeries.derivative (R := LL) f) = PowerSeries.coeff 1 f := by
     intro f
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply]
     first
       | (rw [PowerSeries.derivative_coe, PowerSeries.coeff_derivativeFun]; simp)
       | (rw [PowerSeries.coeff_derivative]; simp)
       | simp [PowerSeries.derivative, PowerSeries.coeff_derivativeFun]
-  have hD : PowerSeries.derivative LL (E ^ PD.p) = (PD.p : PowerSeries LL) * E ^ PD.p := by
+  have hD : PowerSeries.derivative (R := LL) (E ^ PD.p) = (PD.p : PowerSeries LL) * E ^ PD.p := by
     rw [Derivation.leibniz_pow, hED, smul_eq_mul, ← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ PD.p), nsmul_eq_mul]
   have h1 : PowerSeries.coeff 1 (E ^ PD.p) = 0 := by
     have h := congrArg (PowerSeries.coeff 1) hL
@@ -264,7 +268,8 @@ theorem lead_indep [IsDomain O] [IsFractionRing O LL] (Pt : ZMod n → LL → (K
         ∑ a, (W.Q ^ k * W.φA (c a)) • (W.Q ^ M • W.φD T ((letE (i - 1) : LetA O n) • bb a)) := by
       have hφ : (letE i : LetA O n) • W.φD T x =
           ∑ a, W.φA (c a) • W.φD T ((letE (i - 1) : LetA O n) • bb a) := by
-        rw [← φA_letE W i, ← φD_smulA, hc, Finset.smul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← φA_letE W i, ← φD_smulA, hc, Finset.smul_sum, map_sum]
         refine Finset.sum_congr rfl fun a _ => ?_
         rw [smul_smul, mul_comm, ← smul_smul, φD_smulA]
       rw [smul_comm _ (W.Q ^ M), smul_comm _ (W.Q ^ k), hφ, Finset.smul_sum, Finset.smul_sum]
@@ -280,7 +285,8 @@ theorem lead_indep [IsDomain O] [IsFractionRing O LL] (Pt : ZMod n → LL → (K
         apply Subtype.ext
         rw [Submodule.coe_sum]
         exact hsum
-      rw [hsub, map_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsub, map_sum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [W.levN_smul]
       have := Formalism.MainNotions.RamifiedCoefficientChains.S9.Conv.conv_lead (W.lev i ζ (W.Q ^ k * W.φA (c a))) (W.levN T i ζ ⟨_, hpa a⟩) M
@@ -348,7 +354,8 @@ theorem sum_γA_mem (c : LetA O n) : (∑ δ ∈ W.DelF, W.γA δ c) ∈ W.AΔ :
   unfold LocWach.AΔ
   show ∀ δ ∈ W.DelF, W.γA δ (∑ δ' ∈ W.DelF, W.γA δ' c) = ∑ δ' ∈ W.DelF, W.γA δ' c
   intro δ hδ
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [← γA_mul]
   exact Finset.sum_nbij' (fun x => δ * x) (fun x => δ⁻¹ * x)
     (fun a ha => delF_mul W hδ ha) (fun a ha => delF_mul W (delF_inv W hδ) ha)
@@ -380,7 +387,8 @@ theorem phispan_le (T : LocLat G Qp LL O) (i : ZMod n) {r : ℕ} (bb : Fin r →
   rintro y ⟨z, hz, rfl⟩
   obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.mp hz
   obtain ⟨c, hc, -⟩ := huniq x hx
-  rw [SetLike.mem_coe, LinearMap.smul_apply, LinearMap.id_apply, hc, Finset.smul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [SetLike.mem_coe, LinearMap.smul_apply, LinearMap.id_apply, hc, Finset.smul_sum, map_sum]
   refine Submodule.sum_mem _ (fun a _ => ?_)
   rw [smul_smul, mul_comm, ← smul_smul, φD_smulA W T]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)
@@ -418,7 +426,8 @@ theorem coeff_vanish [IsDomain O] [IsFractionRing O LL] (Pt : ZMod n → LL → 
     rw [smul_comm]
   have e1 : W.levN T i ζ ⟨_, hyN⟩ k =
       ∑ a, Formalism.MainNotions.RamifiedCoefficientChains.S9.Conv.conv (W.lev i ζ (g a)) (W.levN T i ζ ⟨_, hpa a⟩) k := by
-    rw [hsub, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsub, map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [W.levN_smul]; rfl
   rw [← e1]
@@ -496,7 +505,8 @@ theorem reconstruct (T : LocLat G Qp LL O) (i : ZMod n) (hπ : W.π₀ ∈ W.AΔ
   have hγ : ∀ δ ∈ W.DelF, W.γD T δ x =
       Formalism.MainNotions.LiftingTheory.qp W ^ b • ∑ a, W.γA δ (c a) • W.φD T ((letE (i - 1) : LetA O n) • bb a) := by
     intro δ hδ
-    rw [hxy, γD_smulA W T, map_pow, hqpΔ δ hδ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxy, γD_smulA W T, map_pow, hqpΔ δ hδ, map_sum]
     congr 1
     refine Finset.sum_congr rfl (fun a _ => ?_)
     rw [γD_smulA W T, ← W.φγ_comm, γD_smulA W T, γA_letE W, (hb a).2 δ hδ]
@@ -634,7 +644,8 @@ theorem lemmaDN0_of_admits [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalI
     funext j
     show W.γ₀ δ (1 - (PD.p : PowerSeries O) + ∑ δ' ∈ W.DelF, W.γ₀ δ' (1 + PowerSeries.X)) =
       1 - (PD.p : PowerSeries O) + ∑ δ' ∈ W.DelF, W.γ₀ δ' (1 + PowerSeries.X)
-    rw [map_add, map_sub, map_one, map_natCast, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sub, map_one, map_natCast, map_sum]
     congr 1
     simp only [← AlgHom.mul_apply, ← map_mul]
     exact Finset.sum_nbij' (fun x => δ * x) (fun x => δ⁻¹ * x)

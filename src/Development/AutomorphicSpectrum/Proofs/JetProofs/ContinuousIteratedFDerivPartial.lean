@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ContDiff

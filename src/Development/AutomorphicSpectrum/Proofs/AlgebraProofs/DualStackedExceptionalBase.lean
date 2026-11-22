@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChart
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualStackedGraphBihomogeneous
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcChart
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualStackedGraphBihomogeneous
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
@@ -75,9 +80,11 @@ theorem arc_form (p : K) (y₀ : Fin i → K) (g : Fin m → Fin i → K) (φ : 
     rw [map_mul, eval₂Hom_C, eval₂Hom_X']
     simp only [C_mul, mul_assoc, ← Finset.mul_sum]
     ring
-  rw [map_sum, Finset.sum_congr rfl fun j _ => hj j, ← Finset.mul_sum, Finset.sum_add_distrib,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun j _ => hj j, ← Finset.mul_sum, Finset.sum_add_distrib,
     ← Finset.sum_mul, Finset.sum_comm]
-  simp only [dotProduct, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, Finset.sum_mul]
 
 end ThetaShiftProofs
 
@@ -120,7 +127,8 @@ theorem lead_of_coords {b : Module.Basis T ℤ (dualLattice F)} {b' : Module.Bas
     · intro t
       rw [RingHom.comp_apply, DualStackedExcLeadExample.stackedFormEval_first, blockEval_first]
       refine (arc_form p y₀ g _).trans ?_
-      simp only [A, ι, map_add, map_mul, map_C, map_X, map_sum, one_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [A, ι, map_add (f := _), map_mul, map_C, map_X, map_sum, one_mul]
       rw [hcα, dotProduct_smul, smul_eq_mul, C_mul, mul_add, Finset.mul_sum, mul_assoc]
       congr 1
       refine Finset.sum_congr rfl fun l _ => ?_
@@ -129,7 +137,8 @@ theorem lead_of_coords {b : Module.Basis T ℤ (dualLattice F)} {b' : Module.Bas
     · intro t
       rw [RingHom.comp_apply, DualStackedExcLeadExample.stackedFormEval_second, blockEval_second]
       refine (arc_form p y₀ g _).trans ?_
-      simp only [L, ι, map_add, map_mul, map_C, map_X, map_sum, hc0, hc1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [L, ι, map_add (f := _), map_mul, map_C, map_X, map_sum, hc0, hc1]
   have hι2 : blockEval (fun t => ι (A t)) (fun t => ι (L t)) = ι.comp (blockEval A L) := by
     apply ringHom_block_ext
     · intro t
@@ -155,12 +164,14 @@ theorem lead_of_coords {b : Module.Basis T ℤ (dualLattice F)} {b' : Module.Bas
     apply ringHom_block_ext
     · intro t
       rw [RingHom.comp_apply, blockEval_first, blockEval_first]
-      simp only [A, ψ, map_add, map_mul, eval₂Hom_C, eval₂Hom_X', map_sum, RingHom.comp_apply, hcαρ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [A, ψ, map_add (f := _), map_mul, eval₂Hom_C, eval₂Hom_X', map_sum, RingHom.comp_apply, hcαρ,
         hπ, map_zero, zero_mul, Finset.sum_const_zero, add_zero]
       ring
     · intro t
       rw [RingHom.comp_apply, blockEval_second, blockEval_second]
-      simp only [L, ψ, ℓ, map_add, map_mul, eval₂Hom_C, eval₂Hom_X', map_sum, RingHom.comp_apply, hc0ρ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [L, ψ, ℓ, map_add (f := _), map_mul, eval₂Hom_C, eval₂Hom_X', map_sum, RingHom.comp_apply, hc0ρ,
         hc1ρ, one_mul, Fin.sum_univ_succ]
   have hlin : (linPointMap α M : MRing (stackedBlocks T) →+* _) =
       blockEval (fun t => X none * C (α t)) (fun t => 1 * ℓ t) := by
@@ -203,7 +214,8 @@ theorem exc_base : DualStackedExcBase.Statement := by
   refine sup_le ?_ ?_
   · intro f hf
     obtain ⟨s, G, rfl, hG⟩ := graph_bihomog K i F F' T b b' a hab f hf
-    rw [linPrime, RingHom.mem_ker, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [linPrime, RingHom.mem_ker, map_sum]
     exact Finset.sum_eq_zero fun p hp => lead_of_coords hco (hG p hp).1 (hG p hp).2
   · rw [Ideal.span_le, Set.range_subset_iff]
     exact centre_mem_of_coords hab hco

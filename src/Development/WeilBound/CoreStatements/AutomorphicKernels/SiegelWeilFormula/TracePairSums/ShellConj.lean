@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.MeasurePreservingOfAddEquiv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalInvariantNeighborhoods.MeasurePreservingOfAddEquiv
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalInvariantNeighborhoods.NhdsInv
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalCharacterIntegrals.MeasurePreservingOfAddEquiv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalInvariantNeighborhoods.MeasurePreservingOfAddEquiv
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalInvariantNeighborhoods.NhdsInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem sigR_sigR (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) (hc
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul r e => simp [sigR, sig_sig_of_cm σ hcm e]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 def rowMix {A : Type} [CommRing A] {n M : ℕ} (C : Matrix (Fin n) (Fin n) A) (Y : Fin n → Fin M → A) :
     Fin n → Fin M → A :=
@@ -70,7 +74,8 @@ theorem gramR_rowMix (hcm : IsCMExt F E σ) (J : Matrix (Fin M) (Fin M) E) (a : 
     (Y : Fin n → Fin M → R ⊗[F] E) :
     gramR R σ J (rowMix (a.map (sigR R σ)) Y) = a * gramR R σ J Y * (a.map (sigR R σ))ᵀ := by
   ext c p
-  simp only [gramR, hR, hform, rowMix, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramR, hR, hform, rowMix, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, map_sum, map_mul,
     sigR_sigR R σ hcm, Finset.sum_mul, Finset.mul_sum]
   rw [sum_sum_sum_sum_comm]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun k _ =>

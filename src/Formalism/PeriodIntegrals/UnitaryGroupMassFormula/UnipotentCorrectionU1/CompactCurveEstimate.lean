@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CompCA
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CompCA
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate ContDiff
@@ -40,10 +44,6 @@ lemma cw_perm (cost : B.Mat k r → ℕ) {w₁ w₂ w : List (Bool × B.Mat k r)
   unfold cw
   rw [← List.sum_append, ← List.map_append]
   exact (hp.map _).sum_eq
-
-lemma cw_snoc (cost : B.Mat k r → ℕ) (w : List (Bool × B.Mat k r)) (x : Bool × B.Mat k r) :
-    cw cost (w ++ [x]) = cw cost w + cost x.2 := by
-  simp [cw, List.map_append, List.sum_append]
 
 lemma cw_LR (cost : B.Mat k r → ℕ) (u v : List (B.Mat k r)) :
     cw cost (wL u ++ wR v) = ((u ++ v).map cost).sum := by

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.CmpHyp0P
+
+@[expose] public section
 
 noncomputable section
 

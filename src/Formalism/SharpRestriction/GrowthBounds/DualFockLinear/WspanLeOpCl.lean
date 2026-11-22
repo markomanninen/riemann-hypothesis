@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestNDOfAdm
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.RestNDOfAdm
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem wspan_op (l : List (Fin n' × (Fin k × Fin k))) (h : MvPolynomial (Fin 
     exact Submodule.subset_span ⟨(s, (c, c')) :: l', by simp [hl'], rfl⟩
   | zero => simp
   | add a b _ _ ha hb =>
-    rw [map_add, mul_add]
+    rw [map_add (f := _), mul_add]
     exact Submodule.add_mem _ ha hb
   | smul a y _ hy =>
     rw [Derivation.map_smul, mul_smul_comm]
@@ -78,7 +82,7 @@ theorem Lin_OpCl (N N' : Fin n' → Matrix (Fin k) (Fin k) R) (h : ∀ s, N s * 
     obtain ⟨f0, hf0, l, h1, h2, rfl⟩ := hy
     exact wspan_le_OpCl TT c M' l h1 h2 (hM f0 hf0) (Lin_word N N' h f0 l)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [map_smul]; exact Submodule.smul_mem _ _ hx
 
 end Words

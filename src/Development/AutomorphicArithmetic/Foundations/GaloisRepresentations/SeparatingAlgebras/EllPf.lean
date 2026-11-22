@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantZmodLift
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StGlob
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsInvariantZmodLift
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
 open GlobalTheory.GalCut GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.DefU
@@ -77,7 +82,7 @@ theorem UpperTheory.Gal.Gen.ell_pf :
   · intro γ hγ g
     change φ (ℓ (γ * g)) = φ (ℓ g)
     rw [h1 γ hγ g]
-  · let S : Subgroup (finU E n) :=
+  · let S : Subgroup (finU (E := E) (n := n)) :=
       { carrier := {k | RU E n k (fun g => φ (ℓ g)) = fun g => φ (ℓ g)}
         one_mem' := by
           change RU E n 1 _ = _
@@ -92,9 +97,9 @@ theorem UpperTheory.Gal.Gen.ell_pf :
           conv_lhs => rw [← ha]
           change RU E n ((a : UA E n)⁻¹) (RU E n a _) = _
           rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one]; rfl }
-    change IsOpen (S : Set (finU E n))
+    change IsOpen (S : Set (finU (E := E) (n := n)))
     refine Subgroup.isOpen_of_mem_nhds S (g := 1) ?_
-    have ho : IsOpen ((Subtype.val : finU E n → UA E n) ⁻¹' Wn) := hWo.preimage continuous_subtype_val
+    have ho : IsOpen ((Subtype.val : finU (E := E) (n := n) → UA E n) ⁻¹' Wn) := hWo.preimage continuous_subtype_val
     refine Filter.mem_of_superset (ho.mem_nhds hW1) fun k hk => ?_
     change RU E n k _ = _
     funext g

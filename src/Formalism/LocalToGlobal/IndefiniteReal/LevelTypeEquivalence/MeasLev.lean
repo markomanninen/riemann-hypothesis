@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasFr
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,13 +19,8 @@ theorem upq_mat_one {p q : ℕ} : UpqT.mat (1 : UpqT p q) = 1 := rfl
 theorem upq_mat_inv_mul {p q : ℕ} (a : UpqT p q) : UpqT.mat a⁻¹ * UpqT.mat a = 1 := by
   rw [← upq_mat_mul, inv_mul_cancel, upq_mat_one]
 
-theorem upq_mat_mul_inv {p q : ℕ} (a : UpqT p q) : UpqT.mat a * UpqT.mat a⁻¹ = 1 := by
-  rw [← upq_mat_mul, mul_inv_cancel, upq_mat_one]
-
 variable {D : D7} {V : HSp D}
 
-set_option quotPrecheck false in
-local notation "ρv" v => (Formalism.L2.Host.tauPl D).symm v
 
 theorem cond_change {p q : ℕ} (A₀ A : Matrix (Fin p ⊕ Fin q) (Fin V.rank) ℂ) (u : UpqT p q)
     (hu : A = UpqT.mat u * A₀) (B : Set (UpqT p q)) (X : Matrix (Fin V.rank) (Fin V.rank) ℂ) :
@@ -52,7 +51,8 @@ theorem isMeasLevW_exists
   choose m0 hm0 using hex
   haveI : ∀ ρ, (m0 ρ).IsHaarMeasure := fun ρ => hgH ρ _ (hm0 ρ)
   obtain ⟨g1, g2, g3⟩ := gf_facts (MF.toFrames F)
-  obtain ⟨h1, h2, h3, h4, h5⟩ := ga_facts D V
+  obtain ⟨h1, h2, h3⟩ := G5.af_facts D.host.F
+  obtain ⟨h1, h2, h3, h4, h5⟩ := G5.ha_facts (AF D.host.F) D.sp.cm.deg2 D.sp.cm.sig V.gram
   obtain ⟨hkc, hko⟩ := kf_isCompact_isOpen_of_levelA (MF.toFrames F) K hK
   set νf : Measure (UI.instV (MF.toFrames F)).Gf := Measure.haar
   have hk0 : νf (kf (MF.toFrames F) K) ≠ 0 := (hko.measure_pos νf ⟨1, K.one_mem⟩).ne'
@@ -60,9 +60,9 @@ theorem isMeasLevW_exists
   set μf := (νf (kf (MF.toFrames F) K))⁻¹ • νf
   haveI hμf : μf.IsHaarMeasure := by
     exact Measure.IsHaarMeasure.smul _ (ENNReal.inv_ne_zero.mpr hkt) (ENNReal.inv_ne_top.mpr hk0)
-  haveI hmv : ∀ v, ((m0 (ρv v)).map (MF.phiR F v)).IsHaarMeasure := fun v =>
-    (MF.phiR F v).toMulEquiv.isHaarMeasure_map (m0 (ρv v)) (MF.phiR F v).continuous (MF.phiR F v).symm.continuous
-  set μi := Measure.pi fun v => (m0 (ρv v)).map (MF.phiR F v)
+  haveI hmv : ∀ v, ((m0 ((Formalism.L2.Host.tauPl D).symm v)).map (MF.phiR F v)).IsHaarMeasure := fun v =>
+    (MF.phiR F v).toMulEquiv.isHaarMeasure_map (m0 ((Formalism.L2.Host.tauPl D).symm v)) (MF.phiR F v).continuous (MF.phiR F v).symm.continuous
+  set μi := Measure.pi fun v => (m0 ((Formalism.L2.Host.tauPl D).symm v)).map (MF.phiR F v)
   have hμi : μi.IsHaarMeasure := Measure.pi.isHaarMeasure _
   have hsi : SFinite μi := inferInstance
   have hsf : SFinite μf := inferInstance
@@ -103,16 +103,16 @@ theorem isMeasLevW_exists
   rw [hset, ← Finset.prod_congr rfl fun ρ _ => hB' ρ]
   have hpre : (UI.brg (MF.toFrames F)) ⁻¹' {h : GA D V | Lev.finE V h ∈ K ∧ ∀ ρ, ∃ c ∈ B' ρ,
       UpqT.mat c * F.A ρ = F.A ρ * infMat D.sp.cm.sig V.gram (thetaC D ρ) h} =
-      (Set.univ.pi fun v => MF.phiR F v '' B' (ρv v)) ×ˢ kf (MF.toFrames F) K := by
+      (Set.univ.pi fun v => MF.phiR F v '' B' ((Formalism.L2.Host.tauPl D).symm v)) ×ˢ kf (MF.toFrames F) K := by
     ext x
     simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_prod, Set.mem_univ_pi]
     rw [finE_brg, and_comm]
     refine and_congr ?_ Iff.rfl
     constructor
     · intro h v _
-      exact (MF.cond_iff F x v (B' (ρv v))).mp (h (ρv v))
+      exact (MF.cond_iff F x v (B' ((Formalism.L2.Host.tauPl D).symm v))).mp (h ((Formalism.L2.Host.tauPl D).symm v))
     · intro h ρ
-      have := (MF.cond_iff F x (Formalism.L2.Host.tauPl D ρ) (B' (ρv (Formalism.L2.Host.tauPl D ρ)))).mpr
+      have := (MF.cond_iff F x (Formalism.L2.Host.tauPl D ρ) (B' ((Formalism.L2.Host.tauPl D).symm (Formalism.L2.Host.tauPl D ρ)))).mpr
         (h (Formalism.L2.Host.tauPl D ρ) (Set.mem_univ _))
       rw [Equiv.symm_apply_apply] at this
       exact this
@@ -126,9 +126,9 @@ theorem isMeasLevW_exists
     show ((νf (kf (MF.toFrames F) K))⁻¹ • νf) (kf (MF.toFrames F) K) = 1
     rw [Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel hk0 hkt]
   rw [hf1, mul_one]
-  have hv : ∀ v, ((m (ρv v)).map (MF.phiR F v)) (MF.phiR F v '' B' (ρv v)) = m (ρv v) (B' (ρv v)) := by
+  have hv : ∀ v, ((m ((Formalism.L2.Host.tauPl D).symm v)).map (MF.phiR F v)) (MF.phiR F v '' B' ((Formalism.L2.Host.tauPl D).symm v)) = m ((Formalism.L2.Host.tauPl D).symm v) (B' ((Formalism.L2.Host.tauPl D).symm v)) := by
     intro v
-    rw [show ((m (ρv v)).map (MF.phiR F v)) = (m (ρv v)).map (MF.phiR F v).toHomeomorph.toMeasurableEquiv from rfl,
+    rw [show ((m ((Formalism.L2.Host.tauPl D).symm v)).map (MF.phiR F v)) = (m ((Formalism.L2.Host.tauPl D).symm v)).map (MF.phiR F v).toHomeomorph.toMeasurableEquiv from rfl,
       MeasurableEquiv.map_apply]
     congr 1
     exact Set.preimage_image_eq _ (MF.phiR F v).injective
@@ -153,7 +153,10 @@ theorem measLevDefExists_holds : MeasLevDefExists D := fun V hS hD K hK =>
 
 theorem measFDExists_holds : MeasFDExists D := fun V hS K hK => by
   obtain ⟨μ, hμ⟩ := measLevExists_holds D V hS K hK
-  obtain ⟨𝓕, -, h𝓕⟩ := fundDomExists_holds D V
+  obtain ⟨h1, h2, h3⟩ := G5.af_facts D.host.F
+  obtain ⟨h1, -, -, h4, h5⟩ := G5.ha_facts (AF D.host.F) D.sp.cm.deg2 D.sp.cm.sig V.gram
+  haveI : DiscreteTopology (GQ V) := G5.hfin_disc D.sp.cm.sig V.gram
+  obtain ⟨𝓕, -, h𝓕⟩ := G5.fdom_exists_all (GQ V)
   exact ⟨μ, 𝓕, hμ, h𝓕 μ⟩
 
 end Formalism.IndefR.Eqv

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthTie
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+module
+
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthTie
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.SaturationChartsHolds
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,10 +55,6 @@ end CoreSat
 section NuFin
 
 open Formalism.L2.Pj ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions
-
-theorem nuFinAt_of_chartEx {D : D7} (T : Core D) (hp : T.Q.Pins) (Dd : DepData D.host.E) [StarRing (𝓞 D.host.E)]
-    (hL : LawsPi T Dd) (hE : ∀ j, InR D j → IntChartEx (T.Q.Xo j) T.Q.c) : NuFinAt T Dd :=
-  nuFinAt_of T hp Dd hL.wts hE (fun j _ => Formalism.L2.Pj.SaturatedCharts.saturation_charts_holds (T.Q.Xo j) T.Q.c)
 
 end NuFin
 

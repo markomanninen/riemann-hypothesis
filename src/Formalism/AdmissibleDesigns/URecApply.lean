@@ -1,7 +1,11 @@
-import Formalism.AdmissibleDesigns.KoEquivSmul
-import Formalism.AdmissibleDesigns.H1MapMemLcH1
-import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
-import Formalism.AdmissibleDesigns.DisplayForms
+module
+
+public import Formalism.AdmissibleDesigns.KoEquivSmul
+public import Formalism.AdmissibleDesigns.H1MapMemLcH1
+public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+public import Formalism.AdmissibleDesigns.DisplayForms
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -92,9 +96,133 @@ theorem yLoc_of
   have := Formalism.MainNotions.N.K.Topo.rTop_addGroup_RD i r π g0 eB e₁ s Dd hD
   have := Formalism.MainNotions.N.K.Topo.rTop_constSMul_RD i Dd
   have := Formalism.MainNotions.N.K.Topo.rTop_mul_RD i r π g0 eB e₁ s Dd hD
-  have h := Formalism.RepresentationBoundsCohomology.FIN.lc_of_torsion (D.nd.l i) Dd.r Dd.χ Dd.E (Formalism.MainNotions.N.K.Topo.padicCoeff_O i)
-    (Formalism.MainNotions.N.K.Topo.fgTop_RD i r π g0 eB e₁ s Dd hD) (Formalism.MainNotions.N.K.Topo.uElt_cont i r π g0 eB e₁ s Dd hD hc)
-    (fun m => Formalism.RepresentationBoundsCohomology.FIN.pi_ko_torsion (D.nd.O i) _ m) ψ
+  have htors (m : Mc i Dd c) : ∃ a : D.nd.O i, a ≠ 0 ∧ a • m = 0 := by
+    have h1 : ∀ y : KO (D.nd.O i), ∃ a : D.nd.O i, a ≠ 0 ∧ a • y = 0 := by
+      intro y
+      induction y using Submodule.Quotient.induction_on with
+      | H x =>
+        obtain ⟨⟨a, b⟩, hab⟩ := IsLocalization.surj (nonZeroDivisors (D.nd.O i)) x
+        refine ⟨b, nonZeroDivisors.ne_zero b.2, ?_⟩
+        rw [← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero, Submodule.mem_one]
+        exact ⟨a, by rw [Algebra.smul_def, mul_comm]; exact hab.symm⟩
+    choose a ha0 ha using fun j => h1 (m j)
+    refine ⟨∏ j, a j, Finset.prod_ne_zero_iff.2 fun j _ => ha0 j, ?_⟩
+    funext j
+    change (∏ j, a j) • m j = 0
+    rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ j), mul_smul, ha j, smul_zero]
+  have hA := Formalism.MainNotions.N.K.Topo.fgTop_RD i r π g0 eB e₁ s Dd hD
+  have hfg : ReciprocityTheory.ChartRestriction.T2.IsFGTop (D.nd.O i) (Ymod Dd.r Dd.χ Dd.E) := by
+    have := hA.fg
+    have := hA.t2
+    have := hA.csmul
+    refine ⟨?_, inferInstance, ?_⟩
+    · exact Module.Finite.of_injective ((Ymod Dd.r Dd.χ Dd.E).subtype.restrictScalars (D.nd.O i)) Subtype.val_injective
+    · exact ⟨Continuous.subtype_mk (f := fun q : (D.nd.O i) × (Ymod Dd.r Dd.χ Dd.E) => q.1 • (q.2 : Dd.R'))
+        (continuous_fst.smul (continuous_subtype_val.comp continuous_snd)) _⟩
+  obtain ⟨a, ha, hka⟩ : ∃ a : D.nd.O i, a ≠ 0 ∧ ∀ y : Ymod Dd.r Dd.χ Dd.E, a • ψ y = 0 := by
+    obtain ⟨t, ht⟩ := hfg.fg.fg_top
+    choose f hf0 hf using fun y : Ymod Dd.r Dd.χ Dd.E => htors (ψ y)
+    refine ⟨∏ y ∈ t, f y, Finset.prod_ne_zero_iff.2 (fun y _ => hf0 y), fun y => ?_⟩
+    have hy : y ∈ Submodule.span (D.nd.O i) (t : Set (Ymod Dd.r Dd.χ Dd.E)) := ht ▸ Submodule.mem_top
+    induction hy using Submodule.span_induction with
+    | mem x hx =>
+      obtain ⟨b, hb⟩ := Finset.dvd_prod_of_mem f hx
+      rw [hb, mul_comm, mul_smul, hf, smul_zero]
+    | zero => simp
+    | add x y _ _ hx hy => rw [map_add (f := _), smul_add, hx, hy, add_zero]
+    | smul b x _ hx => rw [map_smul, smul_comm, hx, smul_zero]
+  have continuous_of_isLocalHom {A B : Type} [CommRing A] [CommRing B] [IsLocalRing A] [IsLocalRing B]
+      [TopologicalSpace A] [TopologicalSpace B] [IsTopologicalRing A] [IsTopologicalRing B]
+      (hA : IsAdic (IsLocalRing.maximalIdeal A)) (hB : IsAdic (IsLocalRing.maximalIdeal B)) (φ : A →+* B)
+      [IsLocalHom φ] : Continuous φ := by
+    refine continuous_of_continuousAt_zero φ ?_
+    rw [ContinuousAt, map_zero]
+    intro s hs
+    obtain ⟨n, hn⟩ := (isAdic_iff.1 hB).2 s hs
+    have hopen := (isAdic_iff.1 hA).1 n
+    rw [Filter.mem_map]
+    filter_upwards [hopen.mem_nhds (Ideal.zero_mem _)] with x hx
+    apply hn
+    have hle : (IsLocalRing.maximalIdeal A).map φ ≤ IsLocalRing.maximalIdeal B :=
+      Ideal.map_le_iff_le_comap.2 fun a ha => map_nonunit φ a ha
+    have h1 : φ x ∈ ((IsLocalRing.maximalIdeal A) ^ n).map φ := Ideal.mem_map_of_mem φ hx
+    rw [Ideal.map_pow] at h1
+    exact Ideal.pow_right_mono hle n h1
+  
+  have l_mem_max : ((D.nd.l i : ℕ) : D.nd.O i) ∈ IsLocalRing.maximalIdeal (D.nd.O i) := by
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff]
+    rintro ⟨u, hu⟩
+    have h2 := Formalism.MainNotions.SumRepresentations.norm_iotaOQ_unit D.nd D.naut i u
+    have h3 := Formalism.MainNotions.SumRepresentations.norm_iotaOQ_l D.nd D.naut i
+    rw [hu] at h2
+    rw [h2] at h3
+    exact lt_irrefl _ h3
+  have l_ne_zero : ((D.nd.l i : ℕ) : D.nd.O i) ≠ 0 :=
+    Formalism.MainNotions.SumRepresentations.natCast_ne_zero_O D.nd i (D.nd.l i) (D.nd.lPrime i).out.ne_zero
+  have isLocalHom_alg : IsLocalHom (algebraMap ℤ_[D.nd.l i] (D.nd.O i)) := by
+    refine ⟨fun z hz => ?_⟩
+    by_contra hn
+    have h1 : z ∈ IsLocalRing.maximalIdeal ℤ_[D.nd.l i] := hn
+    rw [PadicInt.maximalIdeal_eq_span_p, Ideal.mem_span_singleton] at h1
+    obtain ⟨y, rfl⟩ := h1
+    rw [map_mul, map_natCast] at hz
+    exact (IsLocalRing.mem_maximalIdeal _).1 (l_mem_max) (isUnit_of_mul_isUnit_left hz)
+  have continuous_alg : Continuous (algebraMap ℤ_[D.nd.l i] (D.nd.O i)) := by
+    haveI := isLocalHom_alg
+    exact continuous_of_isLocalHom (ReciprocityTheory.ChartRestriction.T2.padicCoeff_padicInt (p := D.nd.l i)).adic (D.nd.O_adic i) _
+  have compact_O : CompactSpace (D.nd.O i) := by
+    obtain ⟨n, f, hf⟩ := Module.Finite.exists_fin' ℤ_[D.nd.l i] (D.nd.O i)
+    have hc : Continuous f := by
+      have : (f : (Fin n → ℤ_[D.nd.l i]) → D.nd.O i) = fun v =>
+          ∑ k, algebraMap ℤ_[D.nd.l i] (D.nd.O i) (v k) * f (fun j => if k = j then 1 else 0) := by
+        funext v
+        rw [LinearMap.pi_apply_eq_sum_univ f v]
+        refine Finset.sum_congr rfl fun k _ => ?_
+        rw [Algebra.smul_def]
+      rw [this]
+      fun_prop (disch := exact continuous_alg)
+    exact hf.compactSpace hc
+  have t2Space_nd_O : T2Space (D.nd.O i) := by
+    have hopen : ∀ n : ℕ, IsOpen ((IsLocalRing.maximalIdeal (D.nd.O i) ^ n : Ideal (D.nd.O i)) : Set (D.nd.O i)) :=
+      (isAdic_iff.1 (D.nd.O_adic i)).1
+    have hclosed : ∀ n : ℕ, IsClosed ((IsLocalRing.maximalIdeal (D.nd.O i) ^ n : Ideal (D.nd.O i)) : Set (D.nd.O i)) :=
+      fun n => AddSubgroup.isClosed_of_isOpen (Submodule.toAddSubgroup (IsLocalRing.maximalIdeal (D.nd.O i) ^ n)) (hopen n)
+    have h0 : ({0} : Set (D.nd.O i)) =
+        ⋂ n : ℕ, ((IsLocalRing.maximalIdeal (D.nd.O i) ^ n : Ideal (D.nd.O i)) : Set (D.nd.O i)) := by
+      ext x
+      simp only [Set.mem_singleton_iff, Set.mem_iInter, SetLike.mem_coe]
+      constructor
+      · rintro rfl n
+        exact Ideal.zero_mem _
+      · intro h
+        have h1 : x ∈ (⨅ n : ℕ, IsLocalRing.maximalIdeal (D.nd.O i) ^ n : Ideal (D.nd.O i)) := by
+          rw [Ideal.mem_iInf]; exact h
+        rw [Ideal.iInf_pow_eq_bot_of_isLocalRing _ (IsLocalRing.maximalIdeal.isMaximal _).ne_top] at h1
+        exact h1
+    have : IsClosed ({0} : Set (D.nd.O i)) := by
+      rw [h0]; exact isClosed_iInter hclosed
+    haveI : T1Space (D.nd.O i) := IsTopologicalAddGroup.t1Space _ this
+    infer_instance
+  have padicCoeff_O : ReciprocityTheory.ChartRestriction.T2.PadicCoeff (D.nd.l i) (D.nd.O i) :=
+    ⟨D.nd.trO i, compact_O, t2Space_nd_O, D.nd.O_adic i, l_mem_max, l_ne_zero⟩
+  have hopen := hfg.isOpen_mulSub padicCoeff_O ha
+  have hy : Continuous fun g => yY Dd.r Dd.χ Dd.E g :=
+    Continuous.subtype_mk (f := fun g => (uElt Dd.r Dd.χ g - 1) * Dd.E)
+      (((Formalism.MainNotions.N.K.Topo.uElt_cont i r π g0 eB e₁ s Dd hD hc).sub continuous_const).mul continuous_const) _
+  set_option synthInstance.maxHeartbeats 200000 in
+  have h : IsLocallyConstant fun g => ψ (yY Dd.r Dd.χ Dd.E g) := by
+    rw [IsLocallyConstant.iff_exists_open]
+    intro g₀
+    refine ⟨(fun g => yY Dd.r Dd.χ Dd.E g - yY Dd.r Dd.χ Dd.E g₀) ⁻¹' _, hopen.preimage (hy.sub continuous_const), ?_, ?_⟩
+    · show yY Dd.r Dd.χ Dd.E g₀ - yY Dd.r Dd.χ Dd.E g₀ ∈ Formalism.RepresentationBoundsCohomology.LOC.mulSub a (Ymod Dd.r Dd.χ Dd.E)
+      rw [sub_self]
+      exact zero_mem _
+    · rintro g ⟨z, hz⟩
+      have hz' : a • z = yY Dd.r Dd.χ Dd.E g - yY Dd.r Dd.χ Dd.E g₀ := hz
+      have h1 : ψ (yY Dd.r Dd.χ Dd.E g - yY Dd.r Dd.χ Dd.E g₀) = 0 := by
+        rw [← hz', map_smul, hka]
+      rw [map_sub, sub_eq_zero] at h1
+      exact h1
   exact h.comp_continuous continuous_subtype_val
 
 end Loc

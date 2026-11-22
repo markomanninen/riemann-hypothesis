@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgSFreeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgFiltSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGradedSubquot
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgSFreeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgFiltSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGradedSubquot
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -60,7 +65,7 @@ theorem exists_mem_of_surjective {M M'' : Type} [AddCommGroup M] [Module (MRingO
       obtain ⟨y₂, hy₂, e₂⟩ := h₂
       refine ⟨y₁ + y₂, add_mem hy₁ hy₂, ?_⟩
       have : h (x₁ + x₂) - h (y₁ + y₂) = (h x₁ - h y₁) + (h x₂ - h y₂) := by
-        simp only [map_add]
+        simp only [map_add (f := _)]
         abel
       rw [this]
       exact add_mem e₁ e₂
@@ -94,14 +99,15 @@ theorem cellRes_locMap {M N : Type} [AddCommGroup M] [Module (MRingOver S ι) M]
       rw [lmap_mk, GenTwistGenerated.cellRes_mk h, GenTwistGenerated.cellRes_mk h,
         lmap_mk]
   · unfold KH.cellRes
-    rw [dif_neg h, dif_neg h, LinearMap.zero_apply, LinearMap.zero_apply, map_zero]
+    rw [dite_eq_right h, dite_eq_right h, LinearMap.zero_apply, LinearMap.zero_apply, map_zero]
 
 theorem cechD_cechMap {M N : Type} [AddCommGroup M] [Module (MRingOver S ι) M] [AddCommGroup N]
     [Module (MRingOver S ι) N] (g : M →ₗ[MRingOver S ι] N) (n : ℕ) (z : KH.CechC S ι M n) :
     KH.cechD S ι N n (KH.cechMap S ι g n z) = KH.cechMap S ι g (n + 1) (KH.cechD S ι M n z) := by
   funext I
   rw [cechMap_apply]
-  simp only [KH.cechD, LinearMap.pi_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [KH.cechD, LinearMap.pi_apply, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
   split_ifs with hI
   · change KH.faceSign I.1 k i • KH.cellRes S N _ I.1 (KH.cechMap S ι g n z ⟨_, hI⟩) =

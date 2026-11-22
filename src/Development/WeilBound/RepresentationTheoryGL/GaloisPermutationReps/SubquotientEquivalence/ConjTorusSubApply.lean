@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsCommensuratedKO
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ApplyMemTwKerOfNormalizer
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsCommensuratedKO
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,11 +108,12 @@ theorem torus_mem_twKer {τ : Representation ℂ (GL (Fin n) 𝓀[k]) W} (hτ : 
 
   have hsum : ∑ u : unipRad 𝓀[k] e, τ u w = 0 := by
     refine hτ 2 _ e hne _ fun x hx => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft (⟨x, hx⟩ : unipRad 𝓀[k] e)) _ _ fun u => ?_
     rw [Equiv.coe_mulLeft]
     show _ = τ (x * (u : GL (Fin n) 𝓀[k])) w
-    rw [map_mul, Module.End.mul_apply]
+    rw [map_mul, mul_apply_eq_comp]
 
   have hterm : ∀ u : unipRad 𝓀[k] e, π t (j w) - π t (j (τ u w)) ∈ twKer π (KOne k (Fin n)) 1 := by
     intro u
@@ -131,13 +136,14 @@ theorem torus_mem_twKer {τ : Representation ℂ (GL (Fin n) 𝓀[k]) W} (hτ : 
       · rw [hb1 i l hZ]
         simp
     have : π t (π (incl k n b) (j w)) = π (t * incl k n b * t⁻¹) (π t (j w)) := by
-      rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel_right]
+      rw [← mul_apply_eq_comp, ← map_mul, ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel_right]
     rw [this, ← neg_sub]
     exact neg_mem (sub_mem_twKer hK _)
   have hcard : (Fintype.card (unipRad 𝓀[k] e) : ℂ) • π t (j w) ∈ twKer π (KOne k (Fin n)) 1 := by
     have h2 := Submodule.sum_mem (twKer π (KOne k (Fin n)) 1) fun u (_ : u ∈ Finset.univ) => hterm u
     have h3 : ∑ u : unipRad 𝓀[k] e, π t (j (τ u w)) = 0 := by
-      rw [← map_sum (π t), ← map_sum j, hsum, map_zero, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum (π t), ← map_sum j, hsum, map_zero, map_zero]
     rw [Finset.sum_sub_distrib, h3, sub_zero, Finset.sum_const, Finset.card_univ,
       ← Nat.cast_smul_eq_nsmul ℂ] at h2
     exact h2
@@ -153,13 +159,13 @@ theorem apply_mem_sup {τ : Representation ℂ (GL (Fin n) 𝓀[k]) W} (hτ : Fi
   obtain ⟨ϖ, hϖ⟩ := exists_uniformizer k
   obtain ⟨⟨a, _ha⟩, hg⟩ := GlobalTheory.UnramDoublingProof.exists_cell hϖ g
   obtain ⟨k1, h1, k2, h2, hg'⟩ := DoubleCoset.mem_doubleCoset.1 hg
-  rw [hg', map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, ← hj.2 ⟨k2, h2⟩]
+  rw [hg', map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, ← hj.2 ⟨k2, h2⟩]
   set w' := τ (redK k (Fin n) ⟨k2, h2⟩) w
   have hmid : π (GlobalTheory.GLDoubling.torusElt k (Fin n) ϖ a) (j w') ∈
       LinearMap.range j ⊔ twKer π (KOne k (Fin n)) 1 := by
     by_cases ha : ∃ i l, a i ≠ a l
     · exact Submodule.mem_sup_right (torus_mem_twKer hτ hj hϖ a ha w')
-    · push_neg at ha
+    · push Not at ha
       obtain ⟨c, hc⟩ : ∃ c, a = fun _ => c := by
         rcases Nat.eq_zero_or_pos n with hn | hn
         · subst hn; exact ⟨0, funext fun i => i.elim0⟩
@@ -167,7 +173,7 @@ theorem apply_mem_sup {τ : Representation ℂ (GL (Fin n) 𝓀[k]) W} (hτ : Fi
       rw [hc, torusElt_const, hω]
       exact Submodule.mem_sup_left (Submodule.smul_mem _ _ ⟨w', rfl⟩)
   obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.1 hmid
-  rw [← hyz, map_add]
+  rw [← hyz, map_add (f := _)]
   obtain ⟨w'', rfl⟩ := hy
   refine add_mem (Submodule.mem_sup_left ⟨_, hj.2 ⟨k1, h1⟩ w''⟩) (Submodule.mem_sup_right ?_)
   exact apply_mem_twKer_of_normalizer (mem_normalizer_KOne h1) hz
@@ -185,7 +191,7 @@ theorem st6 : St6 := by
     | mem x hx =>
       obtain ⟨h, w, rfl⟩ := hx
       refine Submodule.subset_span ⟨g * h, w, ?_⟩
-      rw [map_mul, Module.End.mul_apply]
+      rw [map_mul, mul_apply_eq_comp]
     | zero => simp
     | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx

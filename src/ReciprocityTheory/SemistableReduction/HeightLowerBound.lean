@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+module
+
+public import ReciprocityTheory.SemistableReduction.LogNormCoeffSubLeBlockSphereLogMean
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.ResCores
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.ResCores
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -27,8 +32,8 @@ variable (S : Subgroup G) [S.FiniteIndex] [DecidableRel (QuotientGroup.rightRel 
 
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
-omit [S.FiniteIndex] [DecidableRel (QuotientGroup.rightRel S)] in
 
+omit [S.FiniteIndex] [DecidableRel (QuotientGroup.rightRel S)] in
 theorem indResAdjunction_counit_app_hom_mk (A : Rep.{u} k G) (g : G) (a : A) :
     ((indResAdjunction k S.subtype).counit.app A).hom
       (Representation.IndV.mk S.subtype (res S.subtype A).ρ g a) = A.ρ g⁻¹ a := by
@@ -42,7 +47,8 @@ theorem unit_comp_indCoindIso_inv_comp_counit (A : Rep.{u} k G) :
   change ((indResAdjunction k S.subtype).counit.app A).hom
       (coindToInd (res S.subtype A) (((resCoindAdjunction.{u, u} k S.subtype).unit.app A).hom a)) =
     S.index • a
-  rw [coindToInd_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coindToInd_apply, map_sum]
   refine (Finset.sum_congr rfl (g := fun _ => a) fun x _ => ?_).trans ?_
   · induction x using Quotient.inductionOn with
     | h g =>
@@ -61,8 +67,8 @@ section Tate
 
 variable [Fintype G] (S : Subgroup G) [Fintype S]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem tateIndIso_inv_eq (B : Rep.{u} k S) (n : ℤ) :
     (tateIndIso S B n).inv =
       (tateCoindIso S B n).inv ≫ (tateCohomologyFunctor n).map (indCoindIso.{u, u, u} B).inv :=

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ConjugateHermitianLineIsometries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem evC_conjPt (z : (Σ k, ι k) → ℂ) (f : MRing ι) :
   induction f using MvPolynomial.induction_on with
   | C a => simp [evC]
   | add p q hp hq =>
-    simp only [evC, map_add] at hp hq ⊢
+    simp only [evC, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p i hp =>
     simp only [evC, map_mul, map_X, eval_X] at hp ⊢

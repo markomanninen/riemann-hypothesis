@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOnePrimeOverConstantIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOneContractionOfEtalePrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericFibreBaseChangeInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsDomainAndIsIntegrallyClosedAtPrimeOfSmoothOfCo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOnePrimeOverConstantIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeightOneContractionOfEtalePrime
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericFibreBaseChangeInjective
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 open scoped TensorProduct

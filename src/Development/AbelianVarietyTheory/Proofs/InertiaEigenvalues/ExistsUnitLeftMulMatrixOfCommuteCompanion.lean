@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeftMulTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LeftMulTau
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -26,7 +31,8 @@ theorem exists_leftMul_of_comm {F E : Type} [NontriviallyNormedField F] [Nontriv
     | succ n ih => intro x; rw [pow_succ', mul_assoc, hτx, ih, ← mul_assoc]
   have hall : ∀ k x, φ (k * x) = k * φ x := by
     intro k x
-    rw [← b.sum_repr k, Finset.sum_mul, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr k, Finset.sum_mul, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, smul_mul_assoc, bas_apply, hpow]
   refine ⟨φ 1, ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Rr
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Rr
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem lg_left_facts : LgFacts → ∀ n : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x 
       constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
     · have e : hm ((true, i, j) : Ix n) = bs (true, i, j) + bs (true, j, i) := by
         simp [hm, bs]
-      rw [e, mul_add, map_add, abs_le]
+      rw [e, mul_add, map_add (f := _), abs_le]
       constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
 
 end GlobalTheory.CompanionTheory.WaveSpd

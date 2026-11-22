@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LPdCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LPdCut
+
+@[expose] public section
 
 open MvPolynomial
 

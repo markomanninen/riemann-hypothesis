@@ -1,8 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RightDerivativeToL2
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.RightDerivativeToL2
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.SingleMulJmComm
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Weight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ private theorem Jm_conjTranspose_eq_self' (ε : Fin n → Bool) : (Jm ε)ᴴ = J
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
+  rw [Pi.star_apply]
   split_ifs <;> simp
 
 private theorem inUJ_exp_of_inG' {ε : Fin n → Bool} {A : Matrix (Fin n) (Fin n) ℂ} (hA : inG ε A) :
@@ -143,7 +147,7 @@ theorem pdA_eabV_clm {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε :
       (φ.restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt 0 hd
     simp only [Formalism.REAL.RdV, Formalism.REAL.Rd]
     rw [hd.deriv, hd'.deriv]
-  simp only [Formalism.REAL.EabV, Formalism.REAL.EcV, Formalism.REAL.Eab, Formalism.REAL.Ec, map_add, map_smul, smul_eq_mul]
+  simp only [Formalism.REAL.EabV, Formalism.REAL.EcV, Formalism.REAL.Eab, Formalism.REAL.Ec, map_add (f := _), map_smul, smul_eq_mul]
   rw [key _ h1, key _ h2]
 
 theorem pdA_casF_clm {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε : Fin n → Bool}
@@ -152,21 +156,12 @@ theorem pdA_casF_clm {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε :
     Formalism.REAL.CasF ε (fun x => φ (f x)) g = φ (S7.casimirV ε f g) := by
   have hE : ∀ (F : Matrix (Fin n) (Fin n) ℂ → E) (a b : Fin n),
       S7.EabV ε a b F = Formalism.REAL.EabV ε a b F := fun _ _ _ => rfl
-  simp only [Formalism.REAL.CasF, S7.casimirV, map_sum, hE]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.REAL.CasF, S7.casimirV, map_sum, hE]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [pdA_eabV_clm φ (pdA_smooth_eabV hf b a) a b hg]
   exact pdA_eabV_congr (f := Formalism.REAL.Eab ε b a fun x => φ (f x))
     (fun h hh => (pdA_eabV_clm φ hf b a hh).symm) a b hg
-
-theorem pdA_continuousOn {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {ε : Fin n → Bool}
-    {f : Matrix (Fin n) (Fin n) ℂ → E} (hf : Formalism.REAL.SmoothOnGV ε f) : ContinuousOn f (UJset ε) := by
-  unfold Formalism.REAL.SmoothOnGV at hf
-  intro g₀ hg₀
-  obtain ⟨U, F, hU, hgU, hF, hfF⟩ := hf g₀ hg₀
-  have hFc : ContinuousAt F g₀ := hF.continuousOn.continuousAt (hU.mem_nhds hgU)
-  refine hFc.continuousWithinAt.congr_of_eventuallyEq ?_ (hfF g₀ hgU hg₀)
-  filter_upwards [mem_nhdsWithin_of_mem_nhds (hU.mem_nhds hgU), self_mem_nhdsWithin] with g hgU' hgJ
-  exact hfF g hgU' hgJ
 
 def pdA_coef {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] (v₀ v : V) : (V →L[ℂ] V) →L[ℂ] ℂ :=
   (innerSL ℂ v₀).comp (ContinuousLinearMap.apply ℂ V v)
@@ -285,17 +280,18 @@ theorem pdA_eab_compact {ε : Fin n → Bool} {Λ : Fin n → ℝ} (T : S7.KType
   simp only [Formalism.REAL.Eab, Formalism.REAL.Ec]
   rw [e1, e2]
   conv_rhs => rw [hZ]
-  simp only [map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [map_add (f := _), map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
     inner_add_right, inner_smul_right]
 
-open scoped Classical in
 
+open scoped Classical in
 theorem toL2_congr_of_forall_inUJ_eq {ε : Fin n → Bool} {F G : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (h : ∀ g, inUJ ε g → F g = G g) : toL2 ε F = toL2 ε G := by
+  classical
   have hfg : (fun g : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat g)) = fun g => G (Formalism.MainNotions.S.umat g) :=
     funext fun g => h (Formalism.MainNotions.S.umat g) g.2
-  unfold toL2
-  simp only [hfg]
+  exact congrArg (fun f : Formalism.REAL.UJ ε → ℂ =>
+    if hf : MemLp f 2 (Formalism.REAL.muG ε) then hf.toLp f else 0) hfg
 
 theorem toL2_finset_sum_of_memLp {ε : Fin n → Bool} {ι : Type*} (s : Finset ι) (F : ι → Matrix (Fin n) (Fin n) ℂ → ℂ)
     (hF : ∀ i, MemLp (fun g : Formalism.REAL.UJ ε => F i (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
@@ -305,7 +301,7 @@ theorem toL2_finset_sum_of_memLp {ε : Fin n → Bool} {ι : Type*} (s : Finset 
       (hH : MemLp (fun g : Formalism.REAL.UJ ε => H (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)),
       toL2 ε H = hH.toLp _ := fun H hH => by
     unfold toL2
-    rw [dif_pos hH]
+    rw [dite_eq_left hH]
   induction s using Finset.induction_on with
   | empty =>
     simp only [Finset.sum_empty]
@@ -315,7 +311,7 @@ theorem toL2_finset_sum_of_memLp {ε : Fin n → Bool} {ι : Type*} (s : Finset 
     · rfl
   | @insert j s hj ih =>
     have hG : MemLp (fun g : Formalism.REAL.UJ ε => (fun x => ∑ i ∈ s, F i x) (Formalism.MainNotions.S.umat g)) 2
-        (Formalism.REAL.muG ε) := memLp_finset_sum s (fun i _ => hF i)
+        (Formalism.REAL.muG ε) := memLp_finsetSum s (fun i _ => hF i)
     rw [Finset.sum_insert hj, ← ih]
     have e : (fun x => ∑ i ∈ insert j s, F i x) = fun x => F j x + ∑ i ∈ s, F i x := by
       funext x

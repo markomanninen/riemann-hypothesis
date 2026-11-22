@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -37,7 +42,7 @@ theorem _root_.GlobalTheory.fourier_uniqueness_of_openSubgroup : ∀ {H A : Type
   have hmset : ∀ q : H ⧸ L, MeasurableSet (QuotientAddGroup.mk ⁻¹' ({q} : Set (H ⧸ L))) := by
     intro q
     rw [hpre]
-    exact (hL.preimage (continuous_add_left (-r q))).measurableSet
+    exact (hL.preimage (continuous_const_add (-r q))).measurableSet
   have hLtop : μ L < ⊤ := by
     have hsub : (QuotientAddGroup.mk ⁻¹' ({(t₀ : H ⧸ L)} : Set (H ⧸ L))) ⊆ Kc := by
       intro x hx
@@ -78,7 +83,7 @@ theorem _root_.GlobalTheory.fourier_uniqueness_of_openSubgroup : ∀ {H A : Type
         rw [show (t : H ⧸ L) = q from Set.mem_singleton_iff.mp h]
         exact hTfin.mem_toFinset.mp hq
     have hI := hint a ha
-    rw [hpt, integral_finset_sum] at hI
+    rw [hpt, MeasureTheory.integral_finsetSum] at hI
     · simp_rw [integral_indicator_const _ (hmset _), measureReal_def, hmeas,
         ← measureReal_def] at hI
       rw [← Finset.smul_sum] at hI

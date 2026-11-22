@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -79,7 +83,7 @@ lemma restr_injective (B : V →ₗ[ℂ] V →ₗ[ℂ] ℂ) (hB : ∀ k φ ψ, B
     {S₁ S : Subrepresentation ρ} (h₁ : IsAtom S₁)
     (hn : ∃ x ∈ S₁.toSubmodule, ∃ y ∈ S.toSubmodule, B x y ≠ 0) :
     Function.Injective (B.domRestrict₁₂ S₁.toSubmodule S.toSubmodule) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   apply Subtype.ext
   refine left_ker_zero B hB h₁ hn a a.2 fun y hy => ?_
@@ -91,7 +95,7 @@ lemma restr_flip_injective (hσ : Function.Surjective σ) (B : V →ₗ[ℂ] V �
     {S₁ S : Subrepresentation ρ} (h : IsAtom S)
     (hn : ∃ x ∈ S₁.toSubmodule, ∃ y ∈ S.toSubmodule, B x y ≠ 0) :
     Function.Injective (B.domRestrict₁₂ S₁.toSubmodule S.toSubmodule).flip := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   apply Subtype.ext
   refine right_ker_zero hσ B hB h hn a a.2 fun x hx => ?_
@@ -178,7 +182,7 @@ theorem orth_isCompl : ∀ (K V : Type) [Group K] [AddCommGroup V] [Module ℂ V
     intro φ
     have : φ ∈ X.toSubmodule ⊔ Y.toSubmodule := by rw [hXY.sup_eq_top]; trivial
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp this
-    rw [map_add, LinearMap.add_apply, h1 b hb, h2 a ha, add_zero]
+    rw [map_add (f := _), LinearMap.add_apply, h1 b hb, h2 a ha, add_zero]
   · rw [codisjoint_iff, eq_top_iff]
     have htop := hsum ⊤
     change (⊤ : Submodule ℂ V) = _ at htop

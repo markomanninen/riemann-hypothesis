@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.UatClosure
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.UatClosure
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ structure Br (B : Base F E) (M : Model σ X W) (om : Rep σ X W) (M₁ : Model �
 
 theorem I_right' (M : Model σ X W) (om : Rep σ X W) (Φ : Fn F n d) (h₀ h : UA σ W.J) :
     M.I om (om (1, h₀) Φ) h = M.I om Φ (h * h₀) := by
-  simp only [Model.I, theta, ← Module.End.mul_apply, ← map_mul, Prod.mk_mul_mk, mul_one]
+  simp only [Model.I, theta, ← mul_apply_eq_comp, ← map_mul, Prod.mk_mul_mk, mul_one]
 
 theorem pure_add_smul {κ : Type} [Fintype κ] (f g : SInf F κ) (a : ℂ) (φ) : pure (f + a • g) φ = pure f φ + a • pure g φ := by
   funext x
@@ -117,12 +121,12 @@ variable {M₁ : Model σ X₁ W₁} {om₁ : Rep σ X₁ W₁} {P₁ : Type} [A
   {S₁ : ∀ v : Pl F, Submodule ℂ (Fl F v n₁ d₁)} {H' : Plane E d d₁} {χ : Chr F E} {r : ℝ} {Ev : Fn F n d → Fn F n₁ d₁}
   {L : SInf F (Fin n × Fin d) →L[ℂ] SInf F (Fin n₁ × Fin d₁)} {Λ : ∀ v : Pl F, Fl F v n d →ₗ[ℂ] Fl F v n₁ d₁}
 
-variable (B M₁ om₁ pi₁ p₁ S₁) in
 
+variable (B M₁ om₁ pi₁ p₁ S₁) in
 def Inj : Prop := ∀ f ∈ M₁.Pol B.ψ B.emb, ∀ φ, admitted M₁ S₁ φ → pi₁ f ≠ 0 → (∀ v, p₁ v (φ v) ≠ 0) → M₁.I om₁ (pure f φ) ≠ 0
 
-variable (B M S L Λ pi₁ p₁) in
 
+variable (B M S L Λ pi₁ p₁) in
 def Pt : Prop := ∃ f ∈ M.Pol B.ψ B.emb, ∃ φ, admitted M S φ ∧ pi₁ (L f) ≠ 0 ∧ ∀ v, p₁ v (Λ v (φ v)) ≠ 0
 
 theorem exists_test_vectors_at_place (b : Br B M om M₁ om₁ H' χ r S S₁ Ev L Λ) (j : Inj B M₁ om₁ pi₁ p₁ S₁) (pt : Pt B M S pi₁ p₁ L Λ) (v : Pl F) :
@@ -190,7 +194,7 @@ theorem eqF (s : Side B M om pi p S) (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) 
     rw [s₁.linF hψ _ (b.mapS v _ hx') hz, Pi.zero_apply]
     apply mul_left_cancel₀ hc
     rw [mul_add, k]; ring)
-  rw [map_add, map_smul, neg_smul, add_neg_eq_zero] at this
+  rw [map_add (f := _), map_smul, neg_smul, add_neg_eq_zero] at this
   rw [this, s₁.wdF v h₁ h₁v _ (s₁.le v (b.mapS v x hx)) _ hy _ (s₁.le v hz) _ hy' az a₁ e]
 
 theorem eqK (s : Side B M om pi p S) (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) (b : Br B M om M₁ om₁ H' χ r S S₁ Ev L Λ)
@@ -208,10 +212,10 @@ theorem eqK (s : Side B M om pi p S) (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) 
     rw [one_mul, s.arch hφ hT, h1, h1, I_smul, I_smul, ← I_right', s₁.arch hψ hT₁] at k
     obtain ⟨l, hl⟩ := s₁.clm hψ g
     rw [← hl, ← hl] at k
-    rw [← hl, map_add, map_smul, Pi.zero_apply, smul_eq_mul]
+    rw [← hl, map_add (f := _), map_smul, Pi.zero_apply, smul_eq_mul]
     apply mul_left_cancel₀ hc
     rw [mul_add, k]; ring)
-  rw [map_add, map_smul, neg_smul, add_neg_eq_zero] at this
+  rw [map_add (f := _), map_smul, neg_smul, add_neg_eq_zero] at this
   rw [this, s₁.wdK k₁ hk₁ _ (b.pol f hf) _ hf₁ _ _ (hT₁.2 _) a₁ e]
 
 theorem eqN (s : Side B M om pi p S) (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) (b : Br B M om M₁ om₁ H' χ r S S₁ Ev L Λ)
@@ -262,8 +266,8 @@ theorem eqL (s : Side B M om pi p S) (s₁ : Side B M₁ om₁ pi₁ p₁ S₁) 
     rw [z, h0] at d2
     simp only [sc, map_one, Circle.coe_one, NNReal.coe_one, Real.one_rpow, Complex.ofReal_one, one_mul,
       ContinuousLinearMap.comp_apply] at d2
-    rw [← hl', map_sub, map_add, map_smul, d2, Pi.zero_apply, smul_eq_mul, sub_self])
-  rw [map_sub, sub_eq_zero, map_add, map_smul] at this
+    rw [← hl', map_sub, map_add (f := _), map_smul, d2, Pi.zero_apply, smul_eq_mul, sub_self])
+  rw [map_sub, sub_eq_zero, map_add (f := _), map_smul] at this
   rw [this, e, s₁.wdL γ₁ hγ₁ _ (b.pol f hf) _ hf₁ _ _ ag₁ a₁ e]
 
 end

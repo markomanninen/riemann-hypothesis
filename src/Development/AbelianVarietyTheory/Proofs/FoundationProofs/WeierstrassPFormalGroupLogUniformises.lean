@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixedOfContract
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsWeierstrassPSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFixedOfContract
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsWeierstrassPSeries
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.EvenTheta
 open scoped BigOperators
 
@@ -28,7 +33,7 @@ theorem exists_subst_inverse {R : Type*} [CommRing R] (l : PowerSeries R)
 theorem subst_eq_of_equation {K : Type} [Field K] [CharZero K] {a b : K}
     {P m q M : PowerSeries K} (hP : IsWpSer a b P) (hm : constantCoeff m = 1)
     (hq : constantCoeff q = 1)
-    (hd : X * derivative K q - 2 * q = derivative K (X * m) * M)
+    (hd : X * PowerSeries.derivative q - 2 * q = PowerSeries.derivative (X * m) * M)
     (hM : M ^ 2 = 4 * q ^ 3 - C a * X ^ 4 * q - C b * X ^ 6) :
     (subst (X * m : PowerSeries K) P : PowerSeries K) = m ^ 2 * q := by
   set l : PowerSeries K := X * m with hl
@@ -48,35 +53,35 @@ theorem subst_eq_of_equation {K : Type} [Field K] [CharZero K] {a b : K}
     exact congrFun MvPowerSeries.subst_self f
   set Q : PowerSeries K := subst ex (m ^ 2 * q) with hQ
   have hQl : (subst l Q : PowerSeries K) = m ^ 2 * q := hle _
-  have hw : derivative K l = m + X * derivative K m := by
+  have hw : PowerSeries.derivative l = m + X * PowerSeries.derivative m := by
     rw [hl, Derivation.leibniz]; simp [add_comm]
-  have hw0 : derivative K l ≠ 0 := by
+  have hw0 : PowerSeries.derivative l ≠ 0 := by
     intro h
     have := congrArg constantCoeff (hw.symm.trans h)
     simp [hm] at this
   have hch := derivative_subst (f := Q) sl
   rw [hQl, Derivation.leibniz, Derivation.leibniz_pow] at hch
   simp only [smul_eq_mul, nsmul_eq_mul] at hch
-  have key : l * (subst l (derivative K Q) : PowerSeries K) - 2 * (m ^ 2 * q) = m ^ 3 * M := by
+  have key : l * (subst l (PowerSeries.derivative Q) : PowerSeries K) - 2 * (m ^ 2 * q) = m ^ 3 * M := by
     apply mul_right_cancel₀ hw0
-    have hch' : m ^ 2 * derivative K q + q * (2 * (m * derivative K m)) =
-        (subst l (derivative K Q) : PowerSeries K) * derivative K l := by simpa using hch
+    have hch' : m ^ 2 * PowerSeries.derivative q + q * (2 * (m * PowerSeries.derivative m)) =
+        (subst l (PowerSeries.derivative Q) : PowerSeries K) * PowerSeries.derivative l := by simpa using hch
     linear_combination -l * hch' + m ^ 3 * hd - 2 * m ^ 2 * q * hw +
-      (m ^ 2 * derivative K q + q * (2 * (m * derivative K m))) * hl
+      (m ^ 2 * PowerSeries.derivative q + q * (2 * (m * PowerSeries.derivative m))) * hl
   have hQW : IsWpSer a b Q := by
     constructor
     · have h2 : ∀ f : PowerSeries K, constantCoeff (subst ex f : PowerSeries K) = constantCoeff f := by
         intro f
         have hf := eq_X_mul_shift_add_const f
         conv_lhs => rw [hf]
-        rw [← coe_substAlgHom se, map_add, map_mul, substAlgHom_X, map_add, map_mul, he0,
+        rw [← coe_substAlgHom se, map_add (f := _), map_mul, substAlgHom_X, map_add (f := _), map_mul, he0,
           C_eq_algebraMap, AlgHom.commutes]
         simp
       rw [hQ, h2]; simp [hm, hq]
     · rw [← hel (_ ^ 2), ← hel (_ - C b * X ^ 6)]
       congr 1
-      have hD : derivativeFun Q = derivative K Q := rfl
-      rw [hD, ← coe_substAlgHom sl]
+      change subst l ((X * PowerSeries.derivative Q - 2 * Q) ^ 2) = _
+      rw [← coe_substAlgHom sl]
       simp only [map_pow, map_sub, map_mul, map_ofNat, substAlgHom_X, C_eq_algebraMap,
         AlgHom.commutes]
       rw [coe_substAlgHom sl, hQl]
@@ -87,12 +92,12 @@ theorem subst_eq_of_equation {K : Type} [Field K] [CharZero K] {a b : K}
       linear_combination m ^ 6 * hM
   rw [(GlobalTheory.WpSeries.existsUnique_isWpSer K a b).unique hP hQW, hQl]
 
-theorem dX_eq_derivative {K : Type*} [CommRing K] (f : PowerSeries K) : dX f = derivative K f := by
+theorem dX_eq_derivative {K : Type*} [CommRing K] (f : PowerSeries K) : dX f = PowerSeries.derivative f := by
   ext n
   simp [dX, coeff_derivative, mul_comm]
 
 theorem derivative_flog {p : ℕ} [Fact p.Prime] (W : WeierstrassCurve ℂ_[p])
-    (wq : PowerSeries ℂ_[p]) : derivative ℂ_[p] (flog W wq) = omegaW W wq := by
+    (wq : PowerSeries ℂ_[p]) : PowerSeries.derivative (flog W wq) = omegaW W wq := by
   ext n
   have : ((n : ℂ_[p]) + 1) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
   simp [flog, coeff_derivative, this]
@@ -110,20 +115,20 @@ theorem wp_flog : ∀ (p : ℕ) [Fact p.Prime] (W : WeierstrassCurve ℂ_[p]) (w
   set e := wq⁻¹ with hedef
   set N : PowerSeries ℂ_[p] := C W.a₁ * X + C W.a₃ * X ^ 3 * wq - 2 with hN
   have h2 : constantCoeff (2 : PowerSeries ℂ_[p]) = 2 := map_ofNat _ 2
-  have hω : omegaW W wq * (wq * N) = -2 * wq - X * derivative ℂ_[p] wq := by
+  have hω : omegaW W wq * (wq * N) = -2 * wq - X * PowerSeries.derivative wq := by
     have hu : (wq * N)⁻¹ * (wq * N) = 1 :=
       PowerSeries.inv_mul_cancel _ (by simp [hN, hw1, h2])
-    have : omegaW W wq = (-2 * wq - X * derivative ℂ_[p] wq) * (wq * N)⁻¹ := by
+    have : omegaW W wq = (-2 * wq - X * PowerSeries.derivative wq) * (wq * N)⁻¹ := by
       rw [← dX_eq_derivative]; rfl
     rw [this, mul_assoc, hu, mul_one]
-  have hde : wq * derivative ℂ_[p] e + e * derivative ℂ_[p] wq = 0 := by
-    have := congrArg (derivative ℂ_[p]) he
+  have hde : wq * PowerSeries.derivative e + e * PowerSeries.derivative wq = 0 := by
+    have := congrArg (PowerSeries.derivative (R := ℂ_[p])) he
     rw [Derivation.leibniz] at this
     simpa using this
   set r := W.b₂ / 12 with hr
   have hq : lineSer e (-r) = e + C r * X ^ 2 := by simp [lineSer]
-  have hdq : derivative ℂ_[p] (e + C r * X ^ 2) = derivative ℂ_[p] e + C r * (2 * X) := by
-    rw [map_add, Derivation.leibniz, Derivation.leibniz_pow]; simp
+  have hdq : PowerSeries.derivative (e + C r * X ^ 2) = PowerSeries.derivative e + C r * (2 * X) := by
+    rw [map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow]; simp
   have hW : wq = 1 + C W.a₁ * X * wq + C W.a₂ * X ^ 2 * wq + C W.a₃ * X ^ 3 * wq ^ 2 +
     C W.a₄ * X ^ 4 * wq ^ 2 + C W.a₆ * X ^ 6 * wq ^ 3 := hwq
   have hW' : e ^ 2 = e ^ 3 + C W.a₁ * X * e ^ 2 + C W.a₂ * X ^ 2 * e ^ 2 + C W.a₃ * X ^ 3 * e +
@@ -135,23 +140,23 @@ theorem wp_flog : ∀ (p : ℕ) [Fact p.Prime] (W : WeierstrassCurve ℂ_[p]) (w
     rw [hN]; linear_combination C W.a₃ * X ^ 3 * he
   have c2 : (12 : PowerSeries ℂ_[p]) * C r = C W.a₁ ^ 2 + 4 * C W.a₂ := by
     have : 12 * r = W.a₁ ^ 2 + 4 * W.a₂ := by rw [hr, WeierstrassCurve.b₂]; ring
-    simpa only [map_mul, map_add, map_pow, map_ofNat] using congrArg (C (R := ℂ_[p])) this
+    simpa only [map_mul, map_add (f := _), map_pow, map_ofNat] using congrArg (C (R := ℂ_[p])) this
   have c4 : (C (W.c₄ / 12) : PowerSeries ℂ_[p]) =
       12 * C r ^ 2 - 2 * (2 * C W.a₄ + C W.a₁ * C W.a₃) := by
     have : W.c₄ / 12 = 12 * r ^ 2 - 2 * (2 * W.a₄ + W.a₁ * W.a₃) := by
       rw [hr, WeierstrassCurve.c₄, WeierstrassCurve.b₄]; ring
-    rw [this]; simp only [map_mul, map_add, map_sub, map_pow, map_ofNat]
+    rw [this]; simp only [map_mul, map_add (f := _), map_sub, map_pow, map_ofNat]
   have c6 : (C (W.c₆ / 216) : PowerSeries ℂ_[p]) =
       2 * C r * (2 * C W.a₄ + C W.a₁ * C W.a₃) - 8 * C r ^ 3 - (C W.a₃ ^ 2 + 4 * C W.a₆) := by
     have : W.c₆ / 216 = 2 * r * (2 * W.a₄ + W.a₁ * W.a₃) - 8 * r ^ 3 - (W.a₃ ^ 2 + 4 * W.a₆) := by
       rw [hr, WeierstrassCurve.c₆, WeierstrassCurve.b₄, WeierstrassCurve.b₆]; ring
-    rw [this]; simp only [map_mul, map_add, map_sub, map_pow, map_ofNat]
+    rw [this]; simp only [map_mul, map_add (f := _), map_sub, map_pow, map_ofNat]
   have main := subst_eq_of_equation (m := m) (q := e + C r * X ^ 2) (M := N * e) hP hm1
     (by simp [he1])
     (by
       rw [← hm, derivative_flog, hdq]
       linear_combination -e ^ 2 * hω + X * e * hde +
-        (omegaW W wq * N * e + 2 * e - X * derivative ℂ_[p] e) * he)
+        (omegaW W wq * N * e + 2 * e - X * PowerSeries.derivative e) * he)
     (by
       rw [hNe, c4, c6]
       linear_combination 4 * hW' - X ^ 2 * e ^ 2 * c2)

@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeLength
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeRingLaurent
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartDehomIdeal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLocalMultComap
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPrimeComplexRadical
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartConeLength
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StConeRingLaurent
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StChartDehomIdeal
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PLocalMultComap
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PFundCycleBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPrimeComplexRadical
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSupp
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ namespace ChartConeLength
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem aeval_algebraMap_X (i : (k : K) → ι k) (f : MvPolynomial (Σ k, ι k) ℂ) :
     aeval (fun q => algebraMap (MvPolynomial (Σ k, ι k) ℂ) (ConeRing i) (X q)) f =
       algebraMap (MvPolynomial (Σ k, ι k) ℂ) (ConeRing i) f := by
@@ -30,7 +35,7 @@ theorem aeval_algebraMap_X (i : (k : K) → ι k) (f : MvPolynomial (Σ k, ι k)
   | C a =>
     rw [aeval_C, IsScalarTower.algebraMap_apply ℂ (MvPolynomial (Σ k, ι k) ℂ) (ConeRing i),
       MvPolynomial.algebraMap_eq]
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | mul_X p q hp => rw [map_mul, map_mul, hp, aeval_X]
 
 theorem coneRatio_eq_unit_mul (i : (k : K) → ι k) {f : MvPolynomial (Σ k, ι k) ℂ} {a : K → ℕ}
@@ -72,16 +77,16 @@ theorem map_algebraMap_eq_map_ratioMap (i : (k : K) → ι k) {Q : Ideal (MRing 
     rw [hc]
     exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨_, ⟨f, hf, rfl⟩, rfl⟩)
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem comap_ratioMap_map (i : (k : K) → ι k) (Y : Ideal (DehomRing i)) :
     (Y.map (ratioMap i)).comap (ratioMap i) = Y := by
   refine le_antisymm (fun g hg => ?_) Ideal.le_comap_map
   have h := Ideal.mem_map_of_mem (evalOne i) (Ideal.mem_comap.1 hg)
   rwa [Ideal.map_map, evalOne_comp_ratioMap, Ideal.map_id, evalOne_ratioMap] at h
 
-omit [∀ k, Fintype (ι k)] in
 
+omit [∀ k, Fintype (ι k)] in
 theorem isRadical_map_dehom (i : (k : K) → ι k) {P' : Ideal (MvPolynomial (Σ k, ι k) ℂ)} (hrad : P'.IsRadical)
     (heq : P'.map (algebraMap _ (ConeRing i)) = (P'.map (dehom i)).map (ratioMap i)) :
     (P'.map (dehom i)).IsRadical := by
@@ -92,8 +97,8 @@ theorem isRadical_map_dehom (i : (k : K) → ι k) {P' : Ideal (MvPolynomial (Σ
   rw [← comap_ratioMap_map i (P'.map (dehom i))]
   exact h1
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem isMultiHomogIdeal_sup_span {P : Ideal (MRing ι)} (hP : IsMultiHomogIdeal P) {s : MRing ι} {a : K → ℕ}
     (hs : ReciprocityTheory.ChartRestriction.G.Geo.IsMultiHomog s a) : IsMultiHomogIdeal (P ⊔ Ideal.span {s}) := by
   obtain ⟨S, hS, rfl⟩ := hP
@@ -105,8 +110,8 @@ theorem isMultiHomogIdeal_sup_span {P : Ideal (MRing ι)} (hP : IsMultiHomogIdea
 
 end ChartConeLength
 
-open ChartConeLength in
 
+open ChartConeLength in
 theorem ChartConeLength.proof (hT : ConeRingLaurent.Statement) (hN : ChartDehomIdeal.Statement) :
     ChartConeLength.Statement := by
   intro K _ _ ι _ P n m σ i A s hP hs W hW hWh W' hW' W'' hW'' hle

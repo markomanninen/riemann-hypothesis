@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreSide
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.RestrictionMemInvariantH1
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreSide
+
+@[expose] public section
 
 open ReciprocityTheory.Gal UpperTheory.V.Base
 
@@ -29,5 +33,5 @@ theorem UpperTheory.V.Base.kerResSmul :
   have e : U'.relIndex U • (z.1 g - (ρ g m - m)) = ρ g s - s := hs g
   show U'.relIndex U • z.1 g = ρ g (s + U'.relIndex U • m) - (s + U'.relIndex U • m)
   rw [smul_sub, smul_sub, sub_eq_iff_eq_add] at e
-  rw [e, map_add, map_nsmul]
+  rw [e, map_add (f := _), map_nsmul]
   abel

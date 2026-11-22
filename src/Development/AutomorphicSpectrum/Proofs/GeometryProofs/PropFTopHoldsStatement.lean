@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PropFTopHolds
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PropFTopHolds
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.PropFTop
+
+@[expose] public section
+
 open MvPolynomial NumberField Filter Topology ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I2 GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Flat
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.PropFTop_holds : PropFTop := by

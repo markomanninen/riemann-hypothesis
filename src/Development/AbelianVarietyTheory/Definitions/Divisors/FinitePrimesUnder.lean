@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.LeafHypothesesConst
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOfBalanced
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.VpBounds
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.LeafHypothesesConst
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOfBalanced
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumUnderAdelicPairModulusOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,11 +65,6 @@ def HasChars (χ χ' : HChar D.host.E) : Prop :=
 theorem mem_hatId_top {x : AE D} (h : x ∈ OhE D) : x ∈ hatId D ⊤ :=
   AddSubgroup.subset_closure ⟨1, trivial, x, h, by simp⟩
 
-theorem skewLat_top (N : ℕ) : skewLat D ⊤ N = stdL D N := by
-  have : (D.host.conj • ⊤ : Ideal (𝓞 D.host.E)) = ⊤ := by
-    rw [← Ideal.one_eq_top, smul_one]
-  simp [skewLat, stdL, this]
-
 theorem pt_unitBlock_mem (δ : ℂ) (o a d : ℕ) : pt D (tor0 D ⊤ δ) δ (unitBlock D o a d) ∈ La0 D (tor0 D ⊤ δ) a d := by
   refine AddSubgroup.subset_closure ⟨δ, AddSubgroup.subset_closure ⟨1, trivial, by simp⟩, _, ?_, rfl⟩
   refine Submodule.subset_span ⟨1, ?_, _, Submodule.subset_span fun x hx i _ => ?_, (one_smul _ _).symm⟩
@@ -80,20 +79,6 @@ theorem pt_unitBlock_mem (δ : ℂ) (o a d : ℕ) : pt D (tor0 D ⊤ δ) δ (uni
       · simp [unitBlock, h]
     exact this
 
-theorem isStdDatum_top (P : Pair D ⊤ δ t0 Q) (hF : P.F = P.e0) (hJ : P.J = intG D P.d) (o a : ℕ) :
-    IsStdDatum P ⊤ o ∧ IsBlockLevel P ⊤ a := by
-  have h1 := (GlobalTheory.InducedType.induced_type D).1
-  have e : cosetVec P ⊤ o = P.e0 := by
-    rw [cosetVec, skewLat_top, show La D _ _ _ = La0 D (tor0 D ⊤ δ) P.a P.d from rfl, VacMove.iop_self D _ (La0 D _ _ _) P.vac.1,
-      VacMove.wd_fix h1 P.crv (VacMove.klat _ (VacMove.moves_one D _) (VacMove.moves_one D _)) P.vac.1
-        (pt_unitBlock_mem δ o _ _)]
-    simp
-  refine ⟨⟨{1}, by simp, fun k hk => ⟨1, ⟨by simp, fun i j => mem_hatId_top ?_⟩, fun r hr => by simpa using hr.1⟩, ?_⟩,
-    fun h => ⟨fun hh => ⟨hJ ▸ hh, fun i j _ _ => mem_hatId_top (((mem_intG h).1 (hJ ▸ hh)) i j).1⟩, fun hh => hJ ▸ hh.1⟩⟩
-  · rw [inv_one, one_mul, Matrix.sub_apply]
-    exact sub_mem ((mem_intG k).1 hk i j).1 ((mem_intG 1).1 (one_mem _) i j).1
-  · rw [Finset.sum_singleton, e, P.W.one _ (VacMove.vac_TT h1 P.crv P.vac.1), hF]
-
 end Std
 
 section Mean
@@ -106,34 +91,27 @@ def meanVal_vw (w : Formalism.PairingDivisionLocalBalance.Pl K) (p : K[X]) : ℝ
 
 variable {σ}
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem IsMinPol.eq_minpoly {β : ℂ} {p : K[X]} (h : IsMinPol σ β p) : p = @minpoly K ℂ _ _ σ.toAlgebra β := by
   let := σ.toAlgebra
   exact minpoly.eq_of_irreducible_of_monic h.2.1 h.2.2 h.1
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem exists_isMinPol {β : ℂ} (h : IsAlgebraic ℚ β) [Algebra ℚ K] : ∃ p, IsMinPol σ β p := by
   let := σ.toAlgebra
   have : IsScalarTower ℚ K ℂ := IsScalarTower.of_algebraMap_eq' (Subsingleton.elim _ _)
   have hi : IsIntegral K β := (h.tower_top K).isIntegral
   exact ⟨minpoly K β, minpoly.monic hi, minpoly.irreducible hi, minpoly.aeval K β⟩
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem IsMinPol.ne_zero {β : ℂ} {p : K[X]} (h : IsMinPol σ β p) (h0 : β ≠ 0) : p.coeff 0 ≠ 0 ∧ p.natDegree ≠ 0 := by
   refine ⟨fun hc => h0 ?_, h.2.1.natDegree_pos.ne'⟩
   have e : p = X := eq_of_monic_of_associated h.1 monic_X
     (irreducible_X.associated_of_dvd h.2.1 (X_dvd_iff.2 hc)).symm
   simpa [e] using h.2.2
-
-theorem meanVal_of_mem {b : K} {p : K[X]} (h : IsMinPol σ (σ b) p) (w : Formalism.PairingDivisionLocalBalance.Pl K) : meanVal_vw w p = vw w b := by
-  have h' : IsMinPol σ (σ b) (X - C b) := ⟨monic_X_sub_C b, irreducible_X_sub_C b, by simp⟩
-  have e : FractionalIdeal.spanSingleton (𝓞 K)⁰ (-b) = FractionalIdeal.spanSingleton (𝓞 K)⁰ b :=
-    FractionalIdeal.spanSingleton_eq_spanSingleton.2 ⟨-1, by simp⟩
-  rw [h.eq_minpoly.trans h'.eq_minpoly.symm]
-  simp [meanVal_vw, vw, e]
 
 theorem prime_unique {w : Formalism.PairingDivisionLocalBalance.Pl K} {l l' : ℕ} (hl : l.Prime) (hl' : l'.Prime) (h : (l : 𝓞 K) ∈ w.asIdeal)
     (h' : (l' : 𝓞 K) ∈ w.asIdeal) : l = l' := by
@@ -207,8 +185,8 @@ def maxWt (C : ℝ) : ℕ :=
 
 variable {D} {T : Type} {L : LevCh D T} {sc : Consts}
 
-open Classical in
 
+open Classical in
 def condExp (P : Places L) (v : HeightOneSpectrum (𝓞 D.host.F)) : ℕ := if v = P.v0 then 1 else 2
 
 def condF (P : Places L) : Ideal (GlobalTheory.CMVal.OF D.host.E) :=
@@ -236,10 +214,8 @@ def alphaH (L : LevCh D T) (t : T) (i j : Fin D.R.m) : HChar D.host.E := L.C.mu0
 
 def betaH : HChar D.host.E := G.ch.chiH (D.R.m - i) * L.C.eta ^ (rankV D i j % 2)
 
-theorem alphaH_div_betaH : alphaH L t i j / betaH G i j = nuH G t i j := mul_div_mul_right_eq_div _ _ _
 
 open Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum in
-
 theorem chrEq_nu {μ₀ : T} (hL : L.Is μ₀) : ChrEq (G.nu t i (j + 1)) (nuH G t i j) := by
   have h1 := hL.mu0 j
   have h2 := hL.xi t
@@ -292,13 +268,6 @@ def IsIntExp (C : ℝ) (dl : Formalism.PairingDivisionLocalBalance.Pl D.what₂.
     dl = wt S del_vp
 
 variable {G t i j}
-
-theorem IsTorVal.coord_unique {s : ℕ} {zd zd' g g'} (h : IsTorVal G t i j s zd g) (h' : IsTorVal G t i j s zd' g') :
-    zd = zd' := by
-  obtain ⟨x, h1, h0, h2, -⟩ := h
-  obtain ⟨x', h1', -, h2', -⟩ := h'
-  obtain rfl := h1.2.unique h1'.2
-  exact funext fun c => D.what₂.embLL.injective (mul_right_cancel₀ h0 ((h2 c).2.unique (h2' c).2))
 
 theorem exists_isIntExp (h : GlobalTheory.NormSum.IntSt) : ∃ C : ℝ, 0 < C ∧ ∀ (D : D7) (T : Type) (L : LevCh D T) (sc : Consts)
     (G : GridData L sc), GlobalTheory.NormSum.GoodLevel D (levQ G.pl) → 1 ≤ Real.log sc.b → Real.log D.host.rdE ≤ Real.log sc.b →
@@ -370,8 +339,8 @@ theorem delOf_ch {l : ℕ} (hl : l.Prime) {w : Formalism.PairingDivisionLocalBal
 
 end IsSqOf
 
-open Classical in
 
+open Classical in
 theorem exists_isSqOf {W : G.Weil} {B : Frames G} {ρ : RealMatch W} {C : ℝ} {μ₀ : T} {μ : Formalism.PairingDivisionLocalBalance.Pl D.what₂.LL → T}
     {rq : T → Fin D.R.m × Fin D.R.m → D.what₂.LL} {zA zA' : Fin D.R.m × Fin D.R.m → D.what₂.LL} {dl}
     (h1 : ∀ ij : Fin D.R.m × Fin D.R.m, ∃ c : T → ℂ, c μ₀ ≠ 0 ∧ ∀ t, (t = μ₀ ∨ ∃ w, μ w = t) →
@@ -400,11 +369,6 @@ theorem exists_isSqOf {W : G.Weil} {B : Frames G} {ρ : RealMatch W} {C : ℝ} {
   exact ⟨fun _ _ => 1, fun ij c s => zd ij s c, g, fun w => decide (((D.host.pde : ℕ) : 𝓞 D.what₂.LL) ∈ w.asIdeal), n,
     f1.toFinset, f2.toFinset, _, h1, h2, fun _ _ => rfl, fun ij s => a ij s s rfl, b, fun _ => decide_eq_true_iff,
     fun _ => f1.mem_toFinset, fun _ => f2.mem_toFinset, h4, rfl⟩
-
-example : unitBlock D 1 1 2 1 0 = 1 ∧ unitBlock D 1 1 2 0 0 = 0 := by simp [unitBlock]
-
-example {K : Type} [Field K] [NumberField K] (w : Formalism.PairingDivisionLocalBalance.Pl K) (a : K) :
-    meanVal_vw w (X ^ 2 + C a) = vw w a / 2 := by simp [meanVal_vw]
 
 end GlobalTheory.FunObj
 

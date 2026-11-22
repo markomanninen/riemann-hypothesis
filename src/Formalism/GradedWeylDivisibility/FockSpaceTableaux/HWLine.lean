@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LHwlineLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,9 +24,9 @@ theorem highest_weight_line : HWLine := by
     obtain ⟨a, j⟩ := v
     rw [lhwline_mnu_apply]
     by_cases h : a.val = j.val <;> simp [idPoint, h]
-  have hcf : eval (idPoint K r n) f = coeff (lhwline_mnu hn ν) f := by
+  have hcf : eval (idPoint K r n) f = AddMonoidAlgebra.coeff f (lhwline_mnu hn ν) := by
     rw [lhwline_diag hn ν f hfP.1 _ hid, hP1, mul_one]
-  have hch : coeff (lhwline_mnu hn ν) (hw K hn ν) = 1 := by
+  have hch : AddMonoidAlgebra.coeff (hw K hn ν) (lhwline_mnu hn ν) = 1 := by
     have h1 := lhwline_diag hn ν (hw K hn ν) hhP.1 _ hid
     rw [hP1, mul_one] at h1
     rw [← h1]

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TraceMulConjIntIffMemOfMulDifferentEqOne
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FinrankInt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FramePeriodsAlongIsotropicFlowAndBlockChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicIndexSums
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TraceMulConjIntIffMemOfMulDifferentEqOne
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.FinrankInt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FramePeriodsAlongIsotropicFlowAndBlockChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicIndexSums
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 open Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt Formalism.L2.LamCM GlobalTheory GlobalTheory.ArcQ GlobalTheory.LamF GlobalTheory.ArcCM
@@ -59,8 +64,8 @@ theorem exists_pair (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (X
       simp [FD.cc]
     · exact he x y
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_nsmul_mem (𝔄 : Submodule (𝓞 E) E) (h : 𝔄 ≠ ⊥) {J : Type} [Fintype J] (c : J → E) :
     ∃ n : ℕ, 0 < n ∧ ∀ i, (n : E) * c i ∈ 𝔄 := by
   classical
@@ -219,8 +224,8 @@ theorem eq_zero_of_trace {z : E} (h : ∀ b : 𝓞 E, Algebra.trace ℚ E ((b : 
   rw [smul_mul_assoc, inv_mul_cancel₀ hz, map_zsmul, ← map_one (algebraMap ℚ E), Algebra.trace_algebraMap] at this
   simp [hn, Module.finrank_pos.ne'] at this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem eq_zero_of_rank_one {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Module.Finite ℤ X] [Module (𝓞 E) X]
     (hrk : Module.finrank (𝓞 E) X = 1) (ξ : Module.Dual ℤ X) (hξ : ξ ≠ 0) {y : X} (hy : ∀ b : 𝓞 E, ξ (b • y) = 0) :
     y = 0 := by
@@ -251,8 +256,8 @@ theorem eq_zero_of_rank_one {X : Type} [AddCommGroup X] [Module.Free ℤ X] [Mod
     rw [← h1, map_nsmul] at h2
     simp [hn, hx] at h2
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem apply_eq_zero {g g' : ℕ} {M : Type} (ty : Fin g → (E →+* ℂ)) (ty' : Fin g' → (E →+* ℂ))
     (π : (Fin g → ℂ) →ₗ[ℂ] (Fin g' → ℂ)) (P : M → Fin g → ℂ) (hP : Submodule.span ℝ (Set.range P) = ⊤)
     (hπ : ∀ (a : 𝓞 E) m i, π (fun j => ty j a * P m j) i = ty' i a * π (P m) i) (i : Fin g') (z t : Fin g → ℂ)
@@ -268,7 +273,7 @@ theorem apply_eq_zero {g g' : ℕ} {M : Type} (ty : Fin g → (E →+* ℂ)) (ty
     | add u w _ _ hu hw =>
       have : (fun j => ty j a * (u + w) j) = (fun j => ty j a * u j) + fun j => ty j a * w j := by
         funext j; simp [mul_add]
-      rw [this, map_add, map_add, Pi.add_apply, Pi.add_apply, hu, hw, mul_add]
+      rw [this, map_add (f := _), map_add (f := _), Pi.add_apply, Pi.add_apply, hu, hw, mul_add]
     | smul s w _ hw =>
       have : (fun j => ty j a * (s • w) j) = (s : ℂ) • fun j => ty j a * w j := by
         funext j; simp; ring
@@ -288,7 +293,8 @@ theorem apply_eq_zero {g g' : ℕ} {M : Type} (ty : Fin g → (E →+* ℂ)) (ty
     exact mul_right_cancel₀ h h3
   have h4 : ∀ w : Fin g → ℂ, π w i = ∑ j, w j * π (Pi.single j 1) i := fun w => by
     conv_lhs => rw [pi_eq_sum_univ' w]
-    simp [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finset.sum_apply]
   have h5 : π z i = c * π t i := by
     rw [h4, h4 t, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -376,7 +382,8 @@ theorem exists_cmLat (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) {
         · refine Finset.sum_congr rfl fun j _ => ?_
           funext k; simp; ring
       have h6 := congrArg L h5
-      rw [map_nsmul, hLv, map_add, map_smul, hL, smul_zero, zero_add, map_sum] at h6
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_nsmul, hLv, map_add (f := _), map_smul, hL, smul_zero, zero_add, map_sum] at h6
       refine h6.trans (Finset.sum_congr rfl fun j _ => ?_)
       rw [map_nsmul, map_nsmul, hf]
       simp only [LinearEquiv.apply_symm_apply]
@@ -461,7 +468,7 @@ theorem exists_cmLat_abelianPart : ∀ (E : Type) [Field E] [NumberField E] [IsC
     have hper := Uw.period k ⟨_, hs⟩
     have key := apply_eq_zero _ tyB π (Uw.Pm k ⟨_, hs⟩) hper.2.2.2.1 (fun b m j => by
       rw [← funext (hper.1 b m), hπ, hπ, map_smul, AnArc.La.smul_y, AnArc.La.smul_l, A.ct_smul, AnArc.coe_FLam,
-        ← map_add, hB.1]) i (Uw.Pm k ⟨_, hs⟩ a) (Uw.Pm k ⟨_, hs⟩ t) (by simp [hπ, hty, htl]) c' (fun j hj => by
+        ← map_add (f := _), hB.1]) i (Uw.Pm k ⟨_, hs⟩ a) (Uw.Pm k ⟨_, hs⟩ t) (by simp [hπ, hty, htl]) c' (fun j hj => by
       rw [Uw.Pm_eq, Uw.Pm_eq, ht, perFr_flow _ hξ.2.1 hb1 _ _ ha, perFr_flow _ hξ.2.1 hb1 _ _ hξ.2.1, hj, hc'])
     rw [hπ, hy a ha, map_zero, zero_add, ← hL] at key
     exact key

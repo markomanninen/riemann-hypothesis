@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix
@@ -35,7 +39,7 @@ structure FrameData (A : HLat K) (J : Type) [Fintype J] [DecidableEq J] where
   det_ne : ∀ p, (Γ p).det ≠ 0
   loc : ∀ p, localization₂ (toH p).asIdeal A.L = localization₂ (toH p).asIdeal (latOf (K := K) (famOf e (Γ p)))
 
-variable [IsTotallyComplex K]
+variable [_root_.NumberField.IsTotallyComplex K]
 
 theorem mu_of_frames (A : HLat K) (hA : A.Good) {J : Type} [Fintype J] [DecidableEq J] [Nonempty J] (F : FrameData A J) :
     (∀ v, 0 < (gramJ A F.e v).det.re) ∧ (Function.support fun p => vAdd (toH p) (F.Γ p).det).Finite ∧
@@ -118,7 +122,7 @@ theorem log_prod_zpow {S : Type} (T : Finset S) (x : S → ℝ) (hx : ∀ s, 0 <
   rw [Real.log_prod (fun s _ => (zpow_pos (hx s) _).ne')]
   exact Finset.sum_congr rfl fun s _ => by rw [Real.log_zpow]
 
-variable [StarRing K] [IsTotallyComplex K]
+variable [StarRing K] [_root_.NumberField.IsTotallyComplex K]
 
 theorem mu_functor (A : HLat K) (hA : A.Good) {J : Type} [Fintype J] [DecidableEq J] [Nonempty J] (F : FrameData A J)
     {S : Type} [Fintype S] (Q : S → HLat K) (hQ : ∀ s, (Q s).Good) (k : ℕ) (hk : 0 < k)

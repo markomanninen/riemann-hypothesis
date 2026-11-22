@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepBI
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalLatticeIndex
+
+@[expose] public section
 
 open scoped TensorProduct Matrix Topology Kronecker ComplexOrder Classical
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Matrix
@@ -32,14 +36,14 @@ private theorem fin_lift {F E : Type} [Field F] [NumberField F] [Field E] [Numbe
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a t => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 private theorem inf_lift {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (y : Af F ⊗[F] E) : infPartF F E (PositivityTheory.ThKW.LatB.liftF F E y) = 0 := by
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a t => exact TensorProduct.zero_tmul _ _
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 private theorem exists_idele (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (P : HeightOneSpectrum (𝓞 E)) :
@@ -51,14 +55,14 @@ private theorem exists_idele (F E : Type) [Field F] [NumberField F] [Field E] [N
   have key : (PositivityTheory.ThKW.LatB.liftF F E a + (1 - finIdem F E)) * (PositivityTheory.ThKW.LatB.liftF F E b + (1 - finIdem F E)) = 1 := by
     rw [← sub_eq_zero]
     refine GlobalTheory.SplitDetCharF.adele_tensor_ext _ ?_ ?_
-    · simp only [map_sub, map_mul, map_add, map_one, inf_lift, infPartF_finIdem, zero_add, sub_zero, mul_one, sub_self, map_zero]
-    · simp only [map_sub, map_mul, map_add, map_one, fin_lift, PositivityTheory.ThKW.TauSpanIdentities.finPartF_finIdem, sub_self, add_zero, hab, map_zero]
+    · simp only [map_sub, map_mul, map_add (f := _), map_one, inf_lift, infPartF_finIdem, zero_add, sub_zero, mul_one, sub_self, map_zero]
+    · simp only [map_sub, map_mul, map_add (f := _), map_one, fin_lift, PositivityTheory.ThKW.TauSpanIdentities.finPartF_finIdem, sub_self, add_zero, hab, map_zero]
   let z : (AEF F E)ˣ := ⟨_, _, key, by rw [mul_comm]; exact key⟩
   have hev : ∀ Q, ev F E Q (z : AEF F E) = (u : FiniteAdeleRing (𝓞 E) E) Q := by
     intro Q
     have h1 : finPartF F E (z : AEF F E) = a := by
       show finPartF F E (PositivityTheory.ThKW.LatB.liftF F E a + (1 - finIdem F E)) = a
-      rw [map_add, map_sub, map_one, fin_lift, PositivityTheory.ThKW.TauSpanIdentities.finPartF_finIdem, sub_self, add_zero]
+      rw [map_add (f := _), map_sub, map_one, fin_lift, PositivityTheory.ThKW.TauSpanIdentities.finPartF_finIdem, sub_self, add_zero]
     show evalV E Q (finAdEquiv F E (finPartF F E (z : AEF F E))) = _
     rw [h1, ha]
     rfl

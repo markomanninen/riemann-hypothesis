@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Submodule TensorProduct
 
@@ -91,7 +95,7 @@ theorem HasBasisAway.map {a : R} (φ : X →ₗ[R] M) (P : Submodule R M)
     obtain ⟨n, hn⟩ := h3 x trivial
     obtain ⟨q, hq, y, hy, e⟩ := mem_sup.1 hn
     refine ⟨n, ?_⟩
-    rw [smul_add, ← map_smul, ← e, map_add, ← add_assoc]
+    rw [smul_add, ← map_smul, ← e, map_add (f := _), ← add_assoc]
     refine add_mem_sup (add_mem (smul_mem _ _ hp) hq) ?_
     rw [← map_span]
     exact mem_map_of_mem hy
@@ -533,24 +537,6 @@ theorem exists_free_tensor_of_isUnit.{w} (S : Type*) [CommRing S] [Algebra R S]
   obtain ⟨a, ha0, ha⟩ := exists_hasBasisAway_of_finiteType (R := R) (A := S) M
   exact ⟨a, ha0, fun R' _ _ h => ha.free_tensor R' h⟩
 
-theorem exists_free_localization_away (S : Type*) [CommRing S] [Algebra R S]
-    [Algebra.FiniteType R S] :
-    ∃ a : R, a ≠ 0 ∧ Module.Free (Localization.Away a)
-      (Localization (Algebra.algebraMapSubmonoid S (Submonoid.powers a))) := by
-  obtain ⟨a, ha0, ha⟩ := exists_hasBasisAway_of_finiteType (R := R) (A := S) S
-  exact ⟨a, ha0, ha.free_of_isLocalizedModule (.powers a) (Submonoid.mem_powers a) _
-    (IsScalarTower.toAlgHom R S
-      (Localization (Algebra.algebraMapSubmonoid S (Submonoid.powers a)))).toLinearMap⟩
-
-theorem exists_free_away_quotient (A₀ : Type*) [CommRing A₀] [Algebra R A₀]
-    [Algebra.FiniteType R A₀] (A : Type*) [CommRing A] [Algebra A₀ A] [Algebra.FiniteType A₀ A]
-    {M : Type*} [AddCommGroup M] [Module R M] [Module A₀ M] [Module A M] [IsScalarTower R A₀ M]
-    [IsScalarTower A₀ A M] [Module.Finite A M] (N : Submodule A₀ M) (hN : N.FG) :
-    ∃ a : R, a ≠ 0 ∧ ∀ b, a ∣ b →
-      Module.Free (Localization.Away b) (LocalizedModule.Away b (M ⧸ N.restrictScalars R)) := by
-  obtain ⟨a, ha0, ha⟩ := exists_hasBasisAway_quotient R A₀ A N hN
-  exact ⟨a, ha0, fun b hb => (ha.quotient.of_dvd hb).free_away⟩
-
 variable {R} {A₀ : Type*} [CommRing A₀] [Algebra R A₀] [Algebra.FiniteType R A₀]
   {A : Type*} [CommRing A] [Algebra R A] [Algebra.FiniteType R A] (φ : A₀ →ₐ[R] A)
 
@@ -574,12 +560,11 @@ theorem exists_pow_smul_mem_range_of_surjective_baseChange.{w}
       (LinearMap.range φ.toLinearMap).mkQ_surjective z
     obtain ⟨z, rfl⟩ := hsurj z
     induction z with
-    | zero => simp
     | tmul c x =>
       have : (LinearMap.range φ.toLinearMap).mkQ (φ x) = 0 :=
         (Submodule.Quotient.mk_eq_zero _).2 ⟨x, rfl⟩
       rw [Algebra.TensorProduct.map_tmul, LinearMap.lTensor_tmul, this, tmul_zero]
-    | add z w hz hw => rw [map_add, map_add, hz, hw, add_zero]
+    | add z w hz hw => rw [map_add (f := _), map_add (f := _), hz, hw, add_zero]
   obtain ⟨n, hn⟩ := ha.exists_pow_smul_eq_zero K hK ((LinearMap.range φ.toLinearMap).mkQ y)
   rw [← map_smul, mkQ_apply, Submodule.Quotient.mk_eq_zero] at hn
   exact ⟨n, hn⟩
@@ -615,7 +600,6 @@ theorem exists_baseChange_surjective_of_dense.{w} {D : Set (PrimeSpectrum R)} (h
   refine ⟨a, ha0, fun R' _ _ hu z => ?_⟩
   change z ∈ (Algebra.TensorProduct.map (AlgHom.id R' R') φ).range
   induction z with
-  | zero => exact zero_mem _
   | tmul c y =>
     obtain ⟨n, x, hx⟩ := ha y
     obtain ⟨u, hu⟩ := (hu.pow n).exists_left_inv

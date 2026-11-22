@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroSmulMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsLogCanonicalMultipleCanonical
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DenseInterior
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroSmulMem
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -181,15 +185,29 @@ theorem petAt_muOn {f : Rul Xo c} (hf : f ∈ suppOn Z) :
       (((muQ1 V (classesOver V dict (framesOn U Z)))⁻¹ ^ (1 / (2 : ENNReal)).toReal).toReal) *
         petAt U x V dict (muQ1 V) G f := by
   unfold petAt petE muOn muPart
-  rw [ProbabilityTheory.cond, MeasureTheory.eLpNorm_smul_measure_of_ne_top (by simp),
-    MeasureTheory.eLpNorm_restrict_eq_of_support_subset (support_ptN_subset U V dict Z G hf), smul_eq_mul, ENNReal.toReal_mul]
-  ring
+  have hr : MeasureTheory.eLpNorm' (fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out)) 2
+      ((muQ1 V).restrict (classesOver V dict (framesOn U Z))) =
+      MeasureTheory.eLpNorm' (fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out)) 2 (muQ1 V) := by
+    simp_rw [MeasureTheory.eLpNorm'_eq_lintegral_eNorm]
+    congr 1
+    apply MeasureTheory.setLIntegral_eq_of_support_subset
+    simpa using support_ptN_subset U V dict Z G hf
+  rw [ProbabilityTheory.cond, MeasureTheory.eLpNorm'_smul_measure (by norm_num), hr, ENNReal.toReal_mul]
+  norm_num [ENNReal.toReal_div]
+  <;> ring
 
 theorem petAt_eq_zero {f : Rul Xo c} (hf : f ∈ suppOn Z) (h0 : muQ1 V (classesOver V dict (framesOn U Z)) = 0) :
     petAt U x V dict (muQ1 V) G f = 0 := by
   unfold petAt petE
-  rw [← MeasureTheory.eLpNorm_restrict_eq_of_support_subset (support_ptN_subset U V dict Z G hf),
-    MeasureTheory.Measure.restrict_eq_zero.2 h0, MeasureTheory.eLpNorm_measure_zero]
+  have hr : MeasureTheory.eLpNorm' (fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out)) 2
+      ((muQ1 V).restrict (classesOver V dict (framesOn U Z))) =
+      MeasureTheory.eLpNorm' (fun q : AutQ V => ptN (modelWt U G) (rdU U f) (dict q.out)) 2 (muQ1 V) := by
+    simp_rw [MeasureTheory.eLpNorm'_eq_lintegral_eNorm]
+    congr 1
+    apply MeasureTheory.setLIntegral_eq_of_support_subset
+    simpa using support_ptN_subset U V dict Z G hf
+  rw [← hr, MeasureTheory.Measure.restrict_eq_zero.2 h0,
+    MeasureTheory.eLpNorm'_measure_zero_of_pos (by norm_num)]
   simp
 
 end One
@@ -198,33 +216,34 @@ variable (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ) (V : (c.F →+* �
   (dict : ∀ σ, Formalism.L2.Theta.GA D (V σ) → Σ k, FD.Frame ((U σ).X k).Ψ r) (Z : Comp Xo c) (G : WTZ E)
 
 theorem goodOn_of_goodW (h : GoodW U x V dict G) : GoodOn U x V dict Z G := by
-  obtain ⟨hg, hfg, hsp⟩ := h
-  let φ : cuspOn U Z G →ₗ[c.F] cuspW Xo c U G := Submodule.inclusion (cuspOn_le U Z G)
-  have hφ : Function.Injective φ := Submodule.inclusion_injective _
-  refine ⟨?_, ?_, ?_⟩
-  · by_cases h0 : ∃ v : InfinitePlace c.F, muQ1 (V (goodOf c v.embedding))
-        (classesOver (V (goodOf c v.embedding)) (dict (goodOf c v.embedding)) (framesOn (U (goodOf c v.embedding)) Z)) = 0
-    · obtain ⟨v, hv⟩ := h0
-      have hz : ∀ f : cuspOn U Z G, f = 0 := fun f => hφ (by
-        rw [map_zero]
-        exact HasGram_eq_zero hg v (petAt_eq_zero _ x _ _ Z G f.2.2 hv))
-      refine hasGram_of_injective hg φ hφ (fun _ => 1) (fun _ => one_pos) fun w f => ?_
-      obtain rfl := hz f
-      rw [map_zero, one_mul]
-      have a1 := GlobalTheory.AllWt.petOn_smul U x V dict Z G w.embedding 0 0
-      have a2 := GlobalTheory.AllWt.petW_smul U x V dict G w.embedding 0 0
-      simp only [zero_smul, map_zero, norm_zero, zero_mul] at a1 a2
-      exact a1.trans a2.symm
-    · push_neg at h0
-      refine hasGram_of_injective hg φ hφ (fun v => (((muQ1 (V (goodOf c v.embedding))
-        (classesOver (V (goodOf c v.embedding)) (dict (goodOf c v.embedding)) (framesOn (U (goodOf c v.embedding)) Z)))⁻¹ ^
-          (1 / (2 : ENNReal)).toReal).toReal)) (fun v => ?_) fun v f => ?_
-      · rw [← ENNReal.toReal_rpow]
-        refine Real.rpow_pos_of_pos (ENNReal.toReal_pos (ENNReal.inv_ne_zero.2 (MeasureTheory.measure_ne_top _ _))
-          (ENNReal.inv_ne_top.2 (h0 v))) _
-      · exact petAt_muOn _ x _ _ Z G f.2.2
-  · exact fg_of_injective φ hφ (fun _ h => h) hfg
-  · exact span_eq_top_of_injective φ (fun _ h => h) hsp
+  set_option synthInstance.maxHeartbeats 200000 in
+    obtain ⟨hg, hfg, hsp⟩ := h
+    let φ : cuspOn U Z G →ₗ[c.F] cuspW Xo c U G := Submodule.inclusion (cuspOn_le U Z G)
+    have hφ : Function.Injective φ := Submodule.inclusion_injective _
+    refine ⟨?_, ?_, ?_⟩
+    · by_cases h0 : ∃ v : InfinitePlace c.F, muQ1 (V (goodOf c v.embedding))
+          (classesOver (V (goodOf c v.embedding)) (dict (goodOf c v.embedding)) (framesOn (U (goodOf c v.embedding)) Z)) = 0
+      · obtain ⟨v, hv⟩ := h0
+        have hz : ∀ f : cuspOn U Z G, f = 0 := fun f => hφ (by
+          rw [map_zero]
+          exact HasGram_eq_zero hg v (petAt_eq_zero _ x _ _ Z G f.2.2 hv))
+        refine hasGram_of_injective hg φ hφ (fun _ => 1) (fun _ => one_pos) fun w f => ?_
+        obtain rfl := hz f
+        rw [map_zero, one_mul]
+        have a1 := GlobalTheory.AllWt.petOn_smul U x V dict Z G w.embedding 0 0
+        have a2 := GlobalTheory.AllWt.petW_smul U x V dict G w.embedding 0 0
+        simp only [zero_smul, map_zero, norm_zero, zero_mul] at a1 a2
+        exact a1.trans a2.symm
+      · push_neg at h0
+        refine hasGram_of_injective hg φ hφ (fun v => (((muQ1 (V (goodOf c v.embedding))
+          (classesOver (V (goodOf c v.embedding)) (dict (goodOf c v.embedding)) (framesOn (U (goodOf c v.embedding)) Z)))⁻¹ ^
+            (1 / (2 : ENNReal)).toReal).toReal)) (fun v => ?_) fun v f => ?_
+        · rw [← ENNReal.toReal_rpow]
+          refine Real.rpow_pos_of_pos (ENNReal.toReal_pos (ENNReal.inv_ne_zero.2 (MeasureTheory.measure_ne_top _ _))
+            (ENNReal.inv_ne_top.2 (h0 v))) _
+        · exact petAt_muOn _ x _ _ Z G f.2.2
+    · exact fg_of_injective φ hφ (fun _ h => h) hfg
+    · exact span_eq_top_of_injective φ (fun _ h => h) hsp
 
 end Norms
 

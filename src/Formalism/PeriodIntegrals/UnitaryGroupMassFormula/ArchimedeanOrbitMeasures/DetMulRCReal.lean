@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.TupPlace
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.TupPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem map_mulL {c : ℕ} (A : Matrix (Fin m) (Fin m) ℂ) (hA : A.det ≠ 0) :
   have hdet : F.det = Complex.normSq A.det ^ c := by
     rw [hF, LinearMap.det_conj, det_mulLC_real]
   have hpos : 0 < Complex.normSq A.det ^ c := pow_pos (Complex.normSq_pos.2 hA) _
-  have hfun : (fun y => reim (A * Matrix.of ((reimE (r := m) (m := c)).symm y))) = F := by
+  have hfun : (fun y => reim (A * Matrix.of ((reimE (r := m) (m := c)).symm y))) = ⇑F := by
     funext y
     simp only [hF, LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe, LinearMap.coe_restrictScalars]
     rw [mulLC_apply]

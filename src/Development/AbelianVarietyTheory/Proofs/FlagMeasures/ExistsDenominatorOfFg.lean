@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
-import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+public import Formalism.FlagUnipotentLattices.CardSubmodulesAndLinearEquivBounds
+
+@[expose] public section
+
 open NumberField Module Matrix Formalism.BasicNotions
 open scoped ENNReal
 
@@ -73,13 +78,13 @@ theorem isom_sub_mem_of_congr : ∀ (K V : Type) [Field K] [NumberField K] [Star
         have e2 : B y u = 0 := by rw [hB, hrad' y hyU u hu, map_zero]
         have hz' : z = (g : ℤ) • y + u := by rw [hz, natCast_zsmul, Nat.cast_smul_eq_nsmul]
         calc B z z = B ((g : ℤ) • y + u) z := by rw [← hz']
-          _ = (g : ℤ) • B y z := by rw [map_add, LinearMap.add_apply, e1, map_smul]; simp
+          _ = (g : ℤ) • B y z := by rw [map_add (f := _), LinearMap.add_apply, e1, map_smul]; simp
           _ = (g : ℤ) • B y ((g : ℤ) • y + u) := by rw [← hz']
-          _ = _ := by rw [map_add, e2, map_smul]; simp; ring
+          _ = _ := by rw [map_add (f := _), e2, map_smul]; simp; ring
       have h2 : B z z + B (γ x + x) (γ x + x) = 4 * B x x := by
         have e : B (γ x) (γ x) = B x x := by rw [hB, hB, hiso]
         rw [hz_def]
-        simp only [map_add, map_sub, LinearMap.add_apply, LinearMap.sub_apply, e]
+        simp only [map_add (f := _), map_sub, LinearMap.add_apply, LinearMap.sub_apply, e]
         ring
       have h3 := hnn _ (U.add_mem hγxU hxU)
       have hxp : 0 < B x x := hpos x hxU hxX
@@ -103,13 +108,13 @@ theorem isom_sub_mem_of_congr : ∀ (K V : Type) [Field K] [NumberField K] [Star
         exact_mod_cast this)
       have hw : γ z - z ∈ X := by
         have : γ z - z = (g : K) • (γ y - y) + (γ u - u) := by
-          rw [hz, map_add, map_smul, smul_sub]; abel
+          rw [hz, map_add (f := _), map_smul, smul_sub]; abel
         rw [this]
         exact X.add_mem (X.smul_mem _ hyX) (X.sub_mem (hγX u hu) hu)
       have hzz : h z z = 0 := by
         have e := hiso x z
         have e2 : h (γ x) (γ z - z) = 0 := hrad' _ hγxU _ hw
-        rw [map_sub, e, hγx, map_add, LinearMap.add_apply] at e2
+        rw [map_sub, e, hγx, map_add (f := _), LinearMap.add_apply] at e2
         linear_combination -e2
       by_contra hzX
       have := hpos z hzU hzX

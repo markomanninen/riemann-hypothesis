@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CyclicRecursionStatement
+
+@[expose] public section
 
 noncomputable section
 

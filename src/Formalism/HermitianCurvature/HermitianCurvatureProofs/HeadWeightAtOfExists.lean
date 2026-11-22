@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CastVMulVecLift
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DetCornerMatrixLevelZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CastVMulVecLift
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DetCornerMatrixLevelZero
+
+@[expose] public section
 
 open Matrix MeasureTheory Finset
 open scoped ComplexConjugate ComplexOrder

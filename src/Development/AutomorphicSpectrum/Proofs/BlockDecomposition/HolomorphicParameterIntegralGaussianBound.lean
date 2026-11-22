@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnIteratedDerivFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AesmIteratedDerivReal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnIteratedDerivFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AesmIteratedDerivReal
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix

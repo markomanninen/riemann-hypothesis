@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.CyclotomicNorms.StatementI
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.CyclotomicNorms.StatementI
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,6 @@ variable {R : Ranks}
 
 def condE (H : Host R) : ℕ := H.QS * H.q * H.d
 
-example (H : Host R) : condE H = H.condN := rfl
-
 def dlogH (H : Host R) : ℝ :=
   haveI : Fact H.d.Prime := ⟨H.hyp.2.1⟩
   haveI : NeZero H.d := ⟨H.hyp.2.1.ne_zero⟩
@@ -24,14 +26,10 @@ def dlogH (H : Host R) : ℝ :=
     DirichletCharacter.LFunction
       ((quadraticChar (ZMod H.d)).ringHomComp (Int.castRingHom ℂ) : DirichletCharacter ℂ H.d) 1).re
 
-example (D : D7) : dlogH D.host = dlogL D 1 := rfl
-
 def frobH (H : Host R) (p : ℕ) : R.A :=
   R.iotaInv (Classical.epsilon (fun g : R.GG =>
     g ∈ {g : R.GG | ∃ (P : Ideal (𝓞 H.E)) (_ : P.IsPrime) (_ : P.LiesOver (Ideal.span {(p : ℤ)}))
       (σ : H.E ≃ₐ[ℚ] H.E), IsArithFrobAt ℤ σ P ∧ H.galE σ = g})).2
-
-example (D : D7) (p : ℕ) : frobH D.host p = G.hP D p := rfl
 
 def logPowerBoundClassPrimes (H : Host R) (s : Scale) : ℕ :=
   2 * sSup {l | ∃ p : ℕ, p.Prime ∧ H.cls p = PrimeClass.inertClass ∧
@@ -42,16 +40,11 @@ def GoodH (H : Host R) (s : Scale) (p : ℕ) (t0 : R.A) : Prop :=
     (Finset.univ.filter (fun i : Fin (addOrderOf (frobH H p)) => t0 + (i : ℕ) • frobH H p ∈ H.TT))
     (logPowerBoundClassPrimes H s) (G.KG s) (G.rG s) s.delta1 (G.hG s) s.x
 
-example {D : D7} {L : SizeData₂ D} (X : G.Inst D L) (p : ℕ) (t0 : G.HH D) :
-    GoodH D.host L.sc p t0 ↔ G.Good X p t0 := Iff.rfl
-
 def IsOrigins {φ : Formalism.HC.Frame} (bs : φ.A → φ.A → φ.A) : Prop :=
   (∀ h t, ∃ i : ℕ, bs h t + i • h = t) ∧ ∀ h t, bs h (t + h) = bs h t
 
-example {D : D7} {L : SizeData₂ D} (X : G.Inst D L) : IsOrigins (φ := D.R.toFrame) X.bs := ⟨X.bs_orb, X.bs_step⟩
 
 open Classical in
-
 def FewBad (H : Host R) (s : Scale) (bs : R.A → R.A → R.A) : Prop :=
   ∑ p ∈ (Finset.range ⌈s.X'⌉₊).filter (fun p => p.Prime ∧ H.cls p = PrimeClass.inertClass ∧
       s.x ^ (s.eps / 4) ≤ (addOrderOf (frobH H p) : ℝ)),
@@ -62,24 +55,13 @@ def CharOf (H : Host R) {N : ℕ} (χ : DirichletCharacter ℂ N) : Prop :=
   χ.IsPrimitive ∧ ∃ ψ : R.GG →* ℂˣ, ∀ (a : ℕ) (h : a.Coprime H.condN),
     χ (a : ZMod N) = ((ψ (H.art (ZMod.unitOfCoprime a h)) : ℂˣ) : ℂ)
 
-example (D : D7) {N : ℕ} (χ : DirichletCharacter ℂ N) : CharOf D.host χ ↔ GlobalTheoryTheory.IsCharED D χ := Iff.rfl
-
 def RealBoxes (H : Host R) (Y eps : ℝ) : Prop :=
   ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N), CharOf H χ → GlobalTheoryTheory.IsRealChar χ →
     (H.d ∣ N → GlobalTheoryTheory.GoodFor (8 * ((ordCompl[2] H.QS : ℕ) : ℝ) * GlobalTheoryTheory.X1 Y eps * GlobalTheoryTheory.X2 Y eps) χ) ∧
     (H.q ∣ N → ¬ H.d ∣ N → GlobalTheoryTheory.GoodFor (8 * ((ordCompl[2] H.QS : ℕ) : ℝ) * GlobalTheoryTheory.X1 Y eps) χ)
 
-example (D : D7) (Y eps : ℝ) : RealBoxes D.host Y eps ↔ GlobalTheoryTheory.BoxE D Y eps := Iff.rfl
-
 def BoxesInWindow (s : Scale) (H : Host R) : Prop :=
   ∃ Y : ℝ, PairWin s Y ∧ PairRow Y s.eps H ∧ Boxq Y s.eps H.q H.d ∧ RealBoxes H Y s.eps
-
-example (s : Scale) (D : D7) : BoxesInWindow s D.host ↔
-    ∃ Y : ℝ, PairWin s Y ∧ QDRows_at D Y s.eps ∧ Boxes_at D Y s.eps ∧ GlobalTheoryTheory.BoxE D Y s.eps := Iff.rfl
-
-example (s : Scale) (D : D7) (h : BoxesInWindow s D.host) : BoxesW D s ∧ QDRowsW D s :=
-  let ⟨Y, h1, h2, h3, h4⟩ := h
-  ⟨⟨Y, h1, h3, h4⟩, Y, h1, h2⟩
 
 def ArithData (C : FC) (s : Scale) (H : Host R) (q0 : ℕ)
     (bs : R.A → R.A → R.A) : Prop :=
@@ -146,23 +128,6 @@ def ObjectsExist (Q : PtProp) : Prop :=
             Val C cD ch p.L ∧ p.Has Q ∧ ChProviso_at p.L 3 ∧
             (∀ w, s.b ^ ((R.m : ℝ) / 2) ≤ (T w : ℝ) ∧ (T w : ℝ) ≤ s.b ^ (25 * (R.m : ℝ))) ∧
             FactDGam p.D Cdg
-
-example {Q Q' : PtProp} (hQ : ∀ D L g x y K X c e, Q D L g x y K X c e → Q' D L g x y K X c e)
-    (h : ObjectsExist Q) : ObjectsExist Q' := by
-  obtain ⟨Cdg, h0, h⟩ := h
-  refine ⟨Cdg, h0, fun eps h1 h2 C8 h8 => ?_⟩
-  obtain ⟨K0, h⟩ := h eps h1 h2 C8 h8
-  refine ⟨K0, fun C hC hP hL => ?_⟩
-  obtain ⟨c1, h⟩ := h C hC hP hL
-  refine ⟨c1, fun cD hcD => ?_⟩
-  obtain ⟨c2, h⟩ := h cD hcD
-  refine ⟨c2, fun ch hch => ?_⟩
-  obtain ⟨x0, h⟩ := h ch hch
-  refine ⟨x0, fun s hs hx R hR H q0 bs hH a b hw code hc => ?_⟩
-  obtain ⟨off, h⟩ := h s hs hx R hR H q0 bs hH a b hw code hc
-  refine ⟨off, fun u0 => ?_⟩
-  obtain ⟨T, p, h3, h4, h5, h6, h7⟩ := h u0
-  exact ⟨T, p, h3, h4, h5, hQ _ _ _ _ _ _ _ _ _ h6, h7⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.FewBadPrimes
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetCharacterProductFormula
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinUnitIsDetRoot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacC
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetCharacterProductFormula
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFinUnitIsDetRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem cmRing_idempotent_unitRatio_identity {R : Type} [CommRing R] (c : R →+
   have k : (e * d + (1 - e)) * ((e + c e) + (1 - (e + c e)) * x) = e * d + c e + (1 - (e + c e)) * x := by
     linear_combination (d - 1) * (1 - x) * (h1 + h2)
   rw [k]
-  simp only [map_add, map_mul, map_sub, map_one, hc]
+  simp only [map_add (f := _), map_mul, map_sub, map_one, hc]
   linear_combination (1 - (e + c e)) * hx - c e * hd
 
 theorem finPart_off_mem (f y : AE D) (hf : f * f = f) (hy : finPart D y ∈ intAE D) :
@@ -86,7 +90,7 @@ theorem finPart_off_mem (f y : AE D) (hf : f * f = f) (hy : finPart D y ∈ intA
   have h1 : finPart D f ∈ intAE D := GlobalTheory.AdIdem.idempotent_mem_intAE D _ (by rw [← RingHom.map_mul, hf])
   have h2 : finPart D (1 - f) ∈ intAE D := GlobalTheory.AdIdem.idempotent_mem_intAE D _ (by
     rw [← RingHom.map_mul]; congr 1; linear_combination hf)
-  rw [RingHom.map_add, RingHom.map_mul]
+  rw [RingHom.map_add (f := _), RingHom.map_mul]
   exact add_mem h1 (GlobalTheory.HeckeConj.mul_mem_intAE D h2 hy)
 
 theorem detChar_eq_prod_res_of_frame {V : HSp D} {A : Type} [CommGroup A] (t : Twist D A) (ht : t.Good)
@@ -103,7 +107,7 @@ theorem detChar_eq_prod_res_of_frame {V : HSp D} {A : Type} [CommGroup A] (t : T
   have hw : t.chi (offUnit _ hf x) = 1 := by
     refine ht.unram _ ?_ (finPart_off_mem _ _ hf hx2) (finPart_off_mem _ _ hf hx3) ?_
     · show infPart D (_ + (1 - _) * (x : AE D)) = 1
-      rw [RingHom.map_add, RingHom.map_mul, hx1, RingHom.map_sub, RingHom.map_one]
+      rw [RingHom.map_add (f := _), RingHom.map_mul, hx1, RingHom.map_sub, RingHom.map_one]
       ring
     · show (idem t.Q + cA D (idem t.Q)) * ((idem t.Q + cA D (idem t.Q)) + (1 - (idem t.Q + cA D (idem t.Q))) * (x : AE D)) = _
       linear_combination (1 - (x : AE D)) * hf

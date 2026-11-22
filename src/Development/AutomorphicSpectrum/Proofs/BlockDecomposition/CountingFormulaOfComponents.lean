@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
-import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.SummableAbsNormRpow
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BaseOneSide.PsiSide
+public import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.SummableAbsNormRpow
+
+@[expose] public section
 
 noncomputable section
 
@@ -163,7 +167,7 @@ theorem fac_mult_sub {s : ℝ} (hs : 1 < s) (T : Set (HeightOneSpectrum (𝓞 F)
     refine hsum.congr fun v => ?_
     have h2 : 0 < (Ideal.absNorm v.asIdeal : ℝ) ^ (-s) := Real.rpow_pos_of_pos (by linarith [one_lt_q v]) _
     rcases eR_cases E v with e | e <;> rw [e] <;> simp [abs_of_pos h2]
-  have := multipliable_one_add_of_summable (h.subtype T)
+  have := multipliable_one_add_of_summable (h.subtype (fun v => v ∈ T))
   refine this.congr fun v => ?_
   simp [fac, sub_eq_add_neg]
 

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+
+@[expose] public section
+
 open UpperTheory.V.Sd.Eis
 
 open UpperTheory.V.Sd in
@@ -14,8 +19,8 @@ private theorem cb_rat_aff (F : Type) [Field F] [NumberField F] (a : Fˣ) (y : F
   ext i j
   fin_cases i <;> fin_cases j <;> simp [aff, ratGL]
 
-open NumberField GlobalTheory.CuspRep in
 
+open NumberField GlobalTheory.CuspRep in
 private noncomputable def cb_scale (F : Type) [Field F] [NumberField F] (u : (Ad F)ˣ) : NA F ≃ₜ+ NA F where
   toFun x p := (u : Ad F) * x p
   invFun x p := ((u⁻¹ : (Ad F)ˣ) : Ad F) * x p

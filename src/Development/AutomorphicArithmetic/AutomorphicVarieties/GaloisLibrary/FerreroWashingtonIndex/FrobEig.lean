@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -20,7 +24,7 @@ theorem UpperTheory.V.FW.frobEig :
   induction θ using MonoidAlgebra.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    simp only [map_add, frob_add, add_mul, hf, hg]
+    simp only [map_add (f := _), frob_add, add_mul, hf, hg]
   | single g c =>
     rw [tw_single, hs, hs]
     have hg : g ^ q = (g * (p g)⁻¹) ^ q * (p g) ^ q := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ def hermAt (V W : HSp D) (τ : D.what₂.Tau) (z w : Matrix (Fin W.rank) (Fin V.
 def symplAt (V W : HSp D) (τ : D.what₂.Tau) (z w : Matrix (Fin W.rank) (Fin V.rank) ℂ) : ℝ :=
   2 * (tauE D τ D.host.xi0 * hermAt V W τ z w).re
 
-open Classical in
 
+open Classical in
 def commScalar (V W : HSp D) (τ τ' : D.what₂.Tau) (z w : Matrix (Fin W.rank) (Fin V.rank) ℂ) : ℂ :=
   if τ = τ' then -(2 * Real.pi * Complex.I) * (symplAt V W τ z w : ℂ) else 0
 
@@ -75,22 +79,6 @@ def ThetaSquareIntegrable (D : D7) : Prop :=
     ∀ ψ : AddChar (AF D.host.F) ℂ, IsStdChar D ψ (-1) →
       SquareIntegrable ψ V W ∧ HeisUnitary ψ V W ∧
         ∀ θ : InfFam D, IsInfFam θ → DerSkew ψ θ V W ∧ DerComm ψ θ V W ∧ FinRealComm ψ θ V W
-
-example (D : D7) (m n : ℕ) : ∃ (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D)
-    (μ : Measure (WO (GlobalTheory.Size.posSp D m) (GlobalTheory.Size.posSp D n))) (𝓕 : Set (WO (GlobalTheory.Size.posSp D m) (GlobalTheory.Size.posSp D n)))
-    (f : WO (GlobalTheory.Size.posSp D m) (GlobalTheory.Size.posSp D n) → ℂ), IsStdChar D ψ (-1) ∧ IsInfFam θ ∧ μ.IsAddHaarMeasure ∧
-      IsAddFundamentalDomain (ratL (GlobalTheory.Size.posSp D n) (GlobalTheory.Size.posSp D m)) 𝓕 μ ∧ IsThetaFunO ψ _ _ f ∧
-      ipO μ 𝓕 f f ≠ 0 := by
-  obtain ⟨ψ, θ, μ, 𝓕, U, f, h1, h2, h3, -, h5, h6, -⟩ := GlobalTheory.Size.exists_theta_posSp D m n
-  exact ⟨ψ, θ, μ, 𝓕, f, h1, h2, h3.1, h3.2.1, h5.1, h6⟩
-
-example (D : D7) (m n : ℕ) (τ : D.what₂.Tau) (z : Matrix (Fin (GlobalTheory.Size.posSp D n).rank) (Fin (GlobalTheory.Size.posSp D m).rank) ℂ)
-    (hz : (zᴴ * z).trace.im = 0) :
-    symplAt (GlobalTheory.Size.posSp D m) (GlobalTheory.Size.posSp D n) τ (Complex.I • z) z =
-      -2 * (tauE D τ D.host.xi0).im * (zᴴ * z).trace.re := by
-  simp only [symplAt, hermAt, GlobalTheory.Size.gramAt_posSp, inv_one, Matrix.one_mul, Matrix.mul_one, Matrix.mul_smul,
-    Matrix.trace_smul, smul_eq_mul, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, hz]
-  ring
 
 end GlobalTheory.IndefiniteRowSideFullHecke.HermitianSymplecticScalars
 

@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistQuotientOfRootListsLocally
-import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyPrimaryLocalization
-import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyPrimaryPartBasic
-import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyLocalizationBasic
+module
+
+public import Development.EtaleCohomology.TateTwists.ExistsEtaleMonoMuTwistQuotientOfRootListsLocally
+public import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyPrimaryLocalization
+public import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyPrimaryPartBasic
+public import Development.EtaleCohomology.TateTwists.EtaleTorsionCohomologyLocalizationBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
@@ -41,10 +45,13 @@ theorem dvd_of_pow (q : ℕ) [NeZero q] (B : Type) [CommRing B] [Nontrivial B] (
 
 theorem sum_eq (q : ℕ) [NeZero q] (B : CommRingCat.{0}) (ζ : Prim q B) : ∀ (l : List (Prim q B)),
     (∀ ξ ∈ l, ∃ a : (ZMod q)ˣ, ξ.1 = ζ.1 ^ (a : ZMod q).val) →
-    ∃ n : ℕ, (l.map fun ξ => ξ.1).prod = ζ.1 ^ n ∧ (l.map fun ξ => twGenR B ξ).sum = n • twGenR B ζ
-  | [], _ => ⟨0, by simp, by simp⟩
-  | ξ :: l, h => by
-    obtain ⟨n, h1, h2⟩ := sum_eq q B ζ l (fun x hx => h x (List.mem_cons_of_mem _ hx))
+    ∃ n : ℕ, (l.map fun ξ => ξ.1).prod = ζ.1 ^ n ∧ (l.map fun ξ => twGenR B ξ).sum = n • twGenR B ζ := by
+  intro l
+  induction l with
+  | nil => exact fun _ => ⟨0, by simp, by simp⟩
+  | cons ξ l ih =>
+    intro h
+    obtain ⟨n, h1, h2⟩ := ih (fun x hx => h x (List.mem_cons_of_mem _ hx))
     obtain ⟨a, ha⟩ := h ξ List.mem_cons_self
     refine ⟨(a : ZMod q).val + n, ?_, ?_⟩
     · simp only [List.map_cons, List.prod_cons, h1, ha, pow_add]

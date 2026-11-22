@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.HV UpperTheory.V.Base IsLocalRing
 
 section Core
@@ -198,7 +203,8 @@ private theorem al_ine (hD : D.Good) {q : ℕ} (hq : q ∈ D.Sb) {s : G ℚ Ω} 
   have h4 : D.om s = 1 := by
     refine Units.ext (sub_eq_zero.1 ((mul_eq_zero.1 h3).resolve_left fun h => ?_))
     have h5 := congrArg (residue c.O) h
-    simp only [map_sum, map_pow, h1, one_pow, Finset.sum_const, Finset.card_range, nsmul_one, map_zero] at h5
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_pow, h1, one_pow, Finset.sum_const, Finset.card_range, nsmul_one, map_zero] at h5
     have h6 := (hu (l - 1) (Nat.not_dvd_of_pos_of_lt (by have := hl.two_le; omega)
       (by have := hl.two_le; omega))).map (residue c.O)
     rw [map_natCast, h5] at h6

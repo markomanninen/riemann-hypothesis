@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInterStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedByCyclotomicKernelEtalePhiSolutionMemWachStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionInjectiveSaturatedInterStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedByCyclotomicKernelEtalePhiSolutionMemWachStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,9 +78,11 @@ theorem repr_semi {r : ℕ} (e : Module.Basis (Fin r) R M) (F : M →ₗ[O] M) (
     e.repr (F y) i = ∑ k, e.repr (F (e k)) i * σ (e.repr y k) := by
   have : F y = ∑ k, σ (e.repr y k) • F (e k) := by
     conv_lhs => rw [← e.sum_repr y]
-    simp only [map_sum, hF]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hF]
   rw [this]
-  simp [map_sum, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, mul_comm]
 
 theorem isUnit_of_span {r : ℕ} (e : Module.Basis (Fin r) R M) (x : Fin r → M)
     (h : ∀ y, y ∈ Submodule.span R (Set.range x)) :
@@ -85,7 +91,8 @@ theorem isUnit_of_span {r : ℕ} (e : Module.Basis (Fin r) R M) (x : Fin r → M
   apply Matrix.isUnit_det_of_right_inverse (B := Matrix.of fun j k => c k j)
   ext i k
   have := congrArg (fun y => e.repr y i) (hc k)
-  simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
     smul_eq_mul, e.repr_self, Finsupp.single_apply] at this
   simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply, mul_comm (e.repr _ _), this, eq_comm]
 
@@ -107,14 +114,14 @@ theorem act_smul (f : RW →ₐ[O] RW) (T : LocLat G Qp LL O) (g : G) (r : RW) (
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWact, TensorProduct.smul_tmul']
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
 
 theorem phi_smul (f : RW →ₐ[O] RW) (T : LocLat G Qp LL O) (r : RW) (y : TW RW T) :
     TWmap f T (r • y) = f r • TWmap f T y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWmap, TensorProduct.smul_tmul']
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
 
 theorem act_mul (f f' f'' : RW →ₐ[O] RW) (hf : ∀ x, f x = f' (f'' x)) (T : LocLat G Qp LL O) (g h : G)
     (y : TW RW T) : TWact f T (g * h) y = TWact f' T g (TWact f'' T h y) := by
@@ -125,14 +132,14 @@ theorem act_mul (f f' f'' : RW →ₐ[O] RW) (hf : ∀ x, f x = f' (f'' x)) (T :
       change T.ρ (g * h) t = T.ρ g (T.ρ h t)
       rw [map_mul]; rfl)
     simp [TWact, this, hf]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem phi_act (φ f : RW →ₐ[O] RW) (hf : ∀ x, φ (f x) = f (φ x)) (T : LocLat G Qp LL O) (g : G)
     (y : TW RW T) : TWmap φ T (TWact f T g y) = TWact f T g (TWmap φ T y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWact, TWmap, hf]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 abbrev oneT (RW : Type) [CommRing RW] [Algebra O RW] {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) :
     TW RW T →ₗ[O] TW RW T' :=
@@ -146,14 +153,14 @@ theorem oneT_smul {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (r : RW) (y : 
     rw [TensorProduct.smul_tmul', TensorProduct.map_tmul, TensorProduct.map_tmul,
       TensorProduct.smul_tmul']
     rfl
-  | add x y hx hy => rw [smul_add, map_add, map_add, smul_add, hx, hy]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), smul_add, hx, hy]
 
 theorem oneT_phi {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : RW →ₐ[O] RW) (y : TW RW T) :
     oneT RW f (TWmap φ T y) = TWmap φ T' (oneT RW f y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => simp [TWmap]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem oneT_act {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : RW →ₐ[O] RW) (g : G)
     (y : TW RW T) : oneT RW f (TWact φ T g y) = TWact φ T' g (oneT RW f y) := by
@@ -163,20 +170,20 @@ theorem oneT_act {T T' : LocLat G Qp LL O} (f : LatHom T.L T'.L) (φ : RW →ₐ
     have : (f.f.restrictScalars O).restrict f.T_le (T.actT g t) =
         T'.actT g ((f.f.restrictScalars O).restrict f.T_le t) := Subtype.ext (f.equiv g t)
     simp [TWact, this]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem oneT_id (T : LocLat G Qp LL O) (y : TW RW T) : oneT RW (latId T) y = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => rfl
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem oneT_comp {T T' T'' : LocLat G Qp LL O} (g : LatHom T'.L T''.L) (f : LatHom T.L T'.L)
     (y : TW RW T) : oneT RW (latComp g f) y = oneT RW g (oneT RW f y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a t => rfl
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem oneT_add {T T' : LocLat G Qp LL O} (f g : LatHom T.L T'.L)
     (y : TW RW T) : oneT RW (latAdd f g) y = oneT RW f y + oneT RW g y := by
@@ -185,7 +192,7 @@ theorem oneT_add {T T' : LocLat G Qp LL O} (f g : LatHom T.L T'.L)
   | tmul a t =>
     simp only [TensorProduct.map_tmul, LinearMap.id_apply, ← TensorProduct.tmul_add]
     rfl
-  | add a b ha hb => simp only [map_add, ha, hb]; abel
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]; abel
 
 theorem oneT_latSmul (T : LocLat G Qp LL O) (c : O)
     (y : TW RW T) : oneT RW (latSmul T c) y = c • y := by
@@ -197,7 +204,7 @@ theorem oneT_latSmul (T : LocLat G Qp LL O) (c : O)
     apply Subtype.ext
     change algebraMap O LL c • (t : T.V) = c • (t : T.V)
     rw [algebraMap_smul]
-  | add a b ha hb => simp only [map_add, ha, hb, smul_add]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb, smul_add]
 
 theorem span_phi (φ : RW →ₐ[O] RW) (T : LocLat G Qp LL O) {r : ℕ}
     (e : Module.Basis (Fin r) RW (TW RW T)) (y : TW RW T) :
@@ -207,7 +214,8 @@ theorem span_phi (φ : RW →ₐ[O] RW) (T : LocLat G Qp LL O) {r : ℕ}
   | tmul a t =>
     have : a ⊗ₜ[O] t = a • TWmap φ T ((1 : RW) ⊗ₜ[O] t) := by
       simp [TWmap, TensorProduct.smul_tmul']
-    rw [this, ← e.sum_repr ((1 : RW) ⊗ₜ[O] t), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, ← e.sum_repr ((1 : RW) ⊗ₜ[O] t), map_sum]
     refine Submodule.smul_mem _ _ (Submodule.sum_mem _ fun i _ => ?_)
     rw [phi_smul]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -250,7 +258,8 @@ theorem exists_et (I : WIo R RA RW inclR φR gR πA)
     · ext i j
       have h := repr_semi (e T) (TWmap φR T) φR (phi_smul _ T) (x j) i
       rw [hφx] at h
-      simp only [map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
         smul_eq_mul] at h
       simp only [Matrix.mul_apply, Matrix.map_apply, Matrix.of_apply, hA]
       rw [← h]
@@ -267,7 +276,8 @@ theorem exists_et (I : WIo R RA RW inclR φR gR πA)
         rw [← act_mul _ _ _ (hmul h g), show h * g = g * (g⁻¹ * h * g) by group,
           act_mul _ _ _ (hmul g _), hfix T _ (by simp [hh])])
       (fun j => by
-        rw [phi_act _ _ (hφ g), hφe, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [phi_act _ _ (hφ g), hφe, map_sum]
         simp only [act_smul, ← I.ioE_γ]
         rfl))
   choose γG hγG using h2
@@ -277,13 +287,15 @@ theorem exists_et (I : WIo R RA RW inclR φR gR πA)
     (key T' _ _ (Matrix.of (A T)) (hAu T)
       (fun h hh j => by rw [← oneT_act, hfix T h hh])
       (fun j => by
-        rw [← oneT_phi, hφe, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← oneT_phi, hφe, map_sum]
         simp only [oneT_smul]
         rfl))
   choose mp hmp using h3
   have hker : ∀ T h, Γ.resΓ h = 1 → ∀ x, TWact (gR h) T h (jB I.ioE (e T) x) = jB I.ioE (e T) x := by
     intro T h hh x
-    simp only [jB_apply, map_sum, act_smul, ← I.ioE_γ, hh, hfix T h hh, map_one, AlgHom.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [jB_apply, map_sum, act_smul, ← I.ioE_γ, hh, hfix T h hh, map_one, AlgHom.one_apply]
   choose sec hsec using Γ.resΓ_onto
   have hact : ∀ T g x, jB I.ioE (e T) (γG T (sec (Γ.resΓ g)) x) =
       TWact (gR g) T g (jB I.ioE (e T) x) := by
@@ -322,7 +334,7 @@ theorem exists_et (I : WIo R RA RW inclR φR gR πA)
       rw [hmp, hmp, hmp, oneT_comp])
     map_latAdd := fun {T T'} f g x => hj T' (by
       change jB _ _ (mp T T' _ x) = jB _ _ (mp T T' f x + mp T T' g x)
-      rw [map_add, hmp, hmp, hmp, oneT_add])
+      rw [map_add (f := _), hmp, hmp, hmp, oneT_add])
     map_latSmul := fun T c x => hj T (by
       change jB _ _ (mp T T _ x) = _
       rw [hmp, oneT_latSmul, map_smul])
@@ -344,7 +356,7 @@ theorem map_id_comm {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algebra Z O]
@@ -353,7 +365,7 @@ theorem map_id_comp {Z O W : Type} [CommRing Z] [CommRing O] [CommRing W] [Algeb
     Algebra.TensorProduct.map (AlgHom.id O O) f' (Algebra.TensorProduct.map (AlgHom.id O O) g' x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a w => simp [h]
 
 variable {l : ℕ} [Fact l.Prime]
@@ -389,8 +401,8 @@ theorem res_eq_one_iff {P : LocPrime l} {K : FinExt l} {s : ℕ} {LL : FinExt l}
     apply Units.ext
     exact Subtype.ext h
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem nonempty_wEt : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → (∀ (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), ∃ e : Module.Basis (Fin (Module.finrank ↥(OL LL) ↥T.L.T)) (RW LL) (TW (RW LL) T), EtBasis I T e) → Nonempty (WEt I) := by
   intro l _ P AI K s LL hg Γ R I hI h
   choose e he using h

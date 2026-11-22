@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
-import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
-import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlobal
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.SaturationFractionModule
+public import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
+public import Formalism.SharpRestriction.LevelLetterCocycles.LetterConditionGlobal
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,9 +124,11 @@ theorem arc_length_three_exists_lambda_near_horizontal [NeZero n] [Fintype (K �
   set Hh : W.DD T₂ := ∑ r ∈ Finset.range M, W.π₀ ^ r • Formalism.MainNotions.LiftingTheory.vecB W T₂ bb (y r) with hHh
   have hφS : ((W.φD T₂) ^ 1) Hh = ∑ r ∈ Finset.range M, ∑ m,
       (((W.φA ^ 1) W.π₀) ^ r * algebraMap O (LetA O n) (y r m)) • β m := by
-    rw [hHh, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hHh, map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
-    rw [Formalism.MainNotions.UnusedSlot80.Relay2.φpow_smul, map_pow, Formalism.MainNotions.LiftingTheory.vecB, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Formalism.MainNotions.UnusedSlot80.Relay2.φpow_smul, map_pow, Formalism.MainNotions.LiftingTheory.vecB, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_smul, ← algebraMap_smul (LetA O n) (y r m), smul_smul]
   have key : lA W ^ κ • lam₀ - lA W ^ σ • ((W.φD T₂) ^ 1) Hh = JJ1 • Z := by
@@ -152,7 +158,7 @@ theorem arc_length_three_exists_lambda_near_horizontal [NeZero n] [Fintype (K �
     have hq : W.γA W.gam (Formalism.MainNotions.LiftingTheory.pk W 0) = Formalism.MainNotions.LiftingTheory.pk W 0 * (1 + W.π₀ * ka) := by
       have e1 : Formalism.MainNotions.LiftingTheory.pk W 0 = W.π₀ + lA W := by simp [Formalism.MainNotions.LiftingTheory.pk, Formalism.MainNotions.LiftingTheory.qp, lA]
       have e2 : W.γA W.gam (lA W) = lA W := by simp [lA]
-      rw [e1, map_add, e2, hγπ]
+      rw [e1, map_add (f := _), e2, hγπ]
       simp only [qA]
       ring
     simp only [hJJ1, Formalism.MainNotions.LiftingTheory.JJ, Finset.prod_range_one, map_mul, map_pow, hq, hγπ, mul_pow]
@@ -176,7 +182,7 @@ theorem arc_length_three_exists_lambda_near_horizontal [NeZero n] [Fintype (K �
     have e : lA W ^ κ • (W.γ T₂ lam₀ - lam₀) =
         lA W ^ σ • (W.γ T₂ (((W.φD T₂) ^ 1) Hh) - ((W.φD T₂) ^ 1) Hh) +
           (W.γ T₂ (JJ1 • Z) - JJ1 • Z) := by
-      rw [smul_sub, ← Formalism.MainNotions.UnusedSlot80.Relay2.γ_lsmul, hkey', map_add, Formalism.MainNotions.UnusedSlot80.Relay2.γ_lsmul,
+      rw [smul_sub, ← Formalism.MainNotions.UnusedSlot80.Relay2.γ_lsmul, hkey', map_add (f := _), Formalism.MainNotions.UnusedSlot80.Relay2.γ_lsmul,
         smul_sub]
       abel
     rw [e]
@@ -191,7 +197,7 @@ theorem arc_length_three_exists_lambda_near_horizontal [NeZero n] [Fintype (K �
   have hφP : ∀ z ∈ Pp W T₂ c' 1, ((W.φD T₂) ^ 1) z ∈ Pp W T₂ c' 2 := by
     refine Formalism.MainNotions.UnusedSlot80.Relay2.Pp_ind W T₂ c' 1 (fun z => ((W.φD T₂) ^ 1) z ∈ Pp W T₂ c' 2) ?_ ?_ ?_ ?_
     · rw [map_zero]; exact (Pp W T₂ c' 2).zero_mem
-    · intro z z' hz hz'; rw [map_add]; exact (Pp W T₂ c' 2).add_mem hz hz'
+    · intro z z' hz hz'; rw [map_add (f := _)]; exact (Pp W T₂ c' 2).add_mem hz hz'
     · intro z hz; rw [map_neg]; exact (Pp W T₂ c' 2).neg_mem hz
     · intro f hf z hz
       rw [Formalism.MainNotions.UnusedSlot80.Relay2.φpow_smul, ← hφ2]

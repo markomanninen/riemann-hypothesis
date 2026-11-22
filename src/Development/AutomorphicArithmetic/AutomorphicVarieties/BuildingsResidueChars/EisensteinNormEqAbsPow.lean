@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
-import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.PerDeriv
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
+
+@[expose] public section
+
 open UpperTheory.V.Sd.Eis NumberField GlobalTheory.Mem.Chr.CharModel
 
 theorem UpperTheory.eisenstein_norm_eq_abs_pow :
@@ -31,4 +36,5 @@ theorem UpperTheory.eisenstein_norm_eq_abs_pow :
   · refine (H.2.1 w).trans ?_
     rw [Complex.ofReal_cpow (Nat.cast_nonneg _)]
     push_cast
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
     rfl

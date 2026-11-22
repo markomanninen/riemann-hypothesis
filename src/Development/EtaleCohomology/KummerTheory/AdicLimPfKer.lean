@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.KummerTheory.AdicLimPf
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisTail
+module
+
+public import Development.EtaleCohomology.KummerTheory.AdicLimPf
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisTail
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

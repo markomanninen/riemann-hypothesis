@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementW
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.VIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSysW
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementW
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.VIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.AnaSysW
+
+@[expose] public section
 
 open PowerSeries
 
@@ -18,8 +22,6 @@ section Sim
 variable {K : Type} [NormedField K]
 
 def Sim (f g : K⟦X⟧) : Prop := ∃ ρ : K, ‖ρ‖ = 1 ∧ f = C ρ * g
-
-theorem Sim.refl (f : K⟦X⟧) : Sim f f := ⟨1, norm_one, by simp⟩
 
 theorem Sim.symm {f g : K⟦X⟧} (h : Sim f g) : Sim g f := by
   obtain ⟨ρ, hρ, rfl⟩ := h
@@ -109,8 +111,8 @@ theorem inW_const_mul (a : ℂ) (f : ℂ → ℂ) :
     PowerSeries.subst_smul hs]
   rfl
 
-open Classical in
 
+open Classical in
 def piW (hA : PtWAdd) (hU : Unif l L ι W) : ℂ →+ W.toAffine.Point :=
   AddMonoidHom.mk' (ptW l L ι W) (hA l L ι W hU)
 
@@ -134,8 +136,8 @@ theorem sub_ptW (hA : PtWAdd) (hU : Unif l L ι W) (s t : ℂ) :
   have h := map_sub (piW l L ι W hA hU) s t
   simpa [piW] using h
 
-open Classical in
 
+open Classical in
 theorem ptW_int (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L ι W) (hW : IntCurve W) (t : ℂ) (N : ℕ)
     (hlN : ¬ l ∣ N) (hNt : (N : ℂ) * t ∈ L.lattice) (ht : t ∉ L.lattice) :
     ‖px W (ptW l L ι W t)‖ ≤ 1 ∧ ‖py W (ptW l L ι W t)‖ ≤ 1 :=
@@ -143,8 +145,8 @@ theorem ptW_int (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L ι W) (hW : IntCurve
     (by rw [nsmul_ptW hA hU]; exact (hZ l L ι W hU _).2 hNt)
     (fun h => ht ((hZ l L ι W hU t).1 h))
 
-open Classical in
 
+open Classical in
 theorem restrict (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L ι W)
     (hW : IntCurve W) (t : ℂ) (N : ℕ) (hlN : ¬ l ∣ N) (hNt : (N : ℂ) * t ∈ L.lattice) :
     IntPts W ((piW l L ι W hA hU).comp (AddSubgroup.zmultiples t).subtype) ∧
@@ -235,7 +237,7 @@ theorem hW_sim (t₀ t : ℂ) (M : ℕ) (hM : 0 < M) (ht : (M : ℂ) * t ∈ L.l
       congr 1
       rw [show -(Real.pi : ℂ) * Complex.I * ((Formalism.L2.Th1.F.altE L t t₀ : ℝ) : ℂ)
           = -(Real.pi : ℂ) * (((Formalism.L2.Th1.F.altE L t t₀ : ℝ) : ℂ) * Complex.I) by ring, hc, hcj]
-      simp only [Formalism.L2.Th1.F.herm, map_add]
+      simp only [Formalism.L2.Th1.F.herm, map_add (f := _)]
       ring
     have hth : th0 L t₀ (z + t) = opU L t₀ (sgStar L) (z + t) * (opU L t₀ (sgStar L) 0)⁻¹ := by
       unfold th0
@@ -280,7 +282,7 @@ theorem opU_add_lattice (t ω : ℂ) (hω : ω ∈ L.lattice) :
     congr 1
     rw [show -(-(Real.pi : ℂ) * Complex.I * ((Formalism.L2.Th1.F.altE L t ω : ℝ) : ℂ))
         = (Real.pi : ℂ) * (((Formalism.L2.Th1.F.altE L t ω : ℝ) : ℂ) * Complex.I) by ring, hc, hcj]
-    simp only [Formalism.L2.Th1.F.herm, map_add]
+    simp only [Formalism.L2.Th1.F.herm, map_add (f := _)]
     ring
   simp only [opU]
   rw [show z + (t + ω) = z + t + ω by ring, hq]
@@ -335,8 +337,8 @@ theorem hW_sim_hW (t₀ a b : ℂ) (M : ℕ) (hM : 0 < M) (ha : (M : ℂ) * a �
 
 variable {l L ι W}
 
-open Classical in
 
+open Classical in
 theorem eW_prod (hS : AnalyticSysW) (hA : PtWAdd) (hU : Unif l L ι W) (P Q : ℂ) (hP : P ∉ L.lattice)
     (hQ : ptW l L ι W Q ≠ 0) :
     eW l L ι W (P + Q) * eW l L ι W (P - Q) =
@@ -364,8 +366,8 @@ theorem eW_prod (hS : AnalyticSysW) (hA : PtWAdd) (hU : Unif l L ι W) (P Q : �
   apply mul_left_cancel₀ hX
   linear_combination key
 
-open Classical in
 
+open Classical in
 theorem hW_prod (hS : AnalyticSysW) (hA : PtWAdd) (hU : Unif l L ι W) (t₀ : ℂ) (M : ℕ) (hM : 0 < M)
     (h0 : (M : ℂ) * t₀ ∈ L.lattice) (h0' : t₀ ∉ L.lattice) (a b p q : ℂ)
     (ha : (M : ℂ) * a ∈ L.lattice) (hb : (M : ℂ) * b ∈ L.lattice) (hp : (M : ℂ) * p ∈ L.lattice)
@@ -407,8 +409,8 @@ end TransW
 
 open TransW
 
-open Classical in
 
+open Classical in
 theorem AnalyticTransW_of (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) : AnalyticTransW := by
   intro l _ L ι W hU hW t N _ hlN hNt ht
   obtain ⟨hIP, hTS⟩ := restrict hS hA hZ hU hW t N hlN hNt
@@ -443,8 +445,8 @@ theorem two_mem {t : ℂ} {N : ℕ} (h : (N : ℂ) * t ∈ L.lattice) : ((2 * N 
   rw [h2]
   exact nsmul_mem h 2
 
-open Classical in
 
+open Classical in
 theorem oddCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L ι W) (hW : IntCurve W)
     (hl2 : l ≠ 2) (ω₀ : ℂ) (hω : ω₀ ∈ L.lattice) (hω2 : ω₀ / 2 ∉ L.lattice)
     (hOne : OneUnit (inW l ι W (th0 L (ω₀ / 2)))) (s : ℂ) (N : ℕ) (hN : 0 < N) (hlN : ¬ l ∣ N)
@@ -484,8 +486,8 @@ theorem oddCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L 
   rw [eW_eq]
   exact gaussMul ℂ_[l] _ _ (gaussOne_of_oneUnit hE') (gW_gauss hS hA hZ hU hW _ (2 * N) hN2 m3)
 
-open Classical in
 
+open Classical in
 theorem shiftCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l L ι W) (hW : IntCurve W)
     (ω₀ : ℂ) (hω : ω₀ ∈ L.lattice) (hω2 : ω₀ / 2 ∉ L.lattice)
     (hx : ‖px W (ptW l L ι W (ω₀ / 2))‖ ≤ 1)
@@ -544,7 +546,7 @@ theorem shiftCase (hS : AnalyticSysW) (hA : PtWAdd) (hZ : PtWZero) (hU : Unif l 
       have e : rep P = h.choose := by
         change (if P = 0 then 0 else
           if h : ∃ t : ℂ, (N : ℂ) * t ∈ L.lattice ∧ ptW l L ι W t = P then h.choose else 0) = _
-        rw [if_neg h0, dif_pos h]
+        rw [if_neg h0, dite_eq_left h]
       rw [e]
       exact h.choose_spec
   have hsys : IsShiftSys W (AddSubgroup.zmultiples (ptW l L ι W s)) (ptW l L ι W (ω₀ / 2))

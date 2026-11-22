@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.OfFreeParAlgIndep
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.OfFreeParAlgIndep
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -40,7 +45,8 @@ theorem ChartPointSeparable.proof (h : ChartFreeParAlgIndep.Statement) : ChartPo
     have h0 : ∑ j, algebraMap K L (u (i, j)) * z j = 0 := by
       simp only [z, ← mul_assoc, ← Finset.sum_mul, hrel i, zero_mul]
     have := congrArg D h0
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     rw [← this]
     exact Finset.sum_congr rfl fun j _ => (hlin _ _).symm
   have hDz : ∀ j, D (z j) = 0 := by
@@ -62,7 +68,8 @@ theorem ChartPointSeparable.proof (h : ChartFreeParAlgIndep.Statement) : ChartPo
     have hs : ∑ m, algebraMap F L (t m) * z m = (η j₀)⁻¹ := by
       simp only [z, ← mul_assoc, ← Finset.sum_mul, hT, one_mul]
     have h1 := congrArg D hs
-    rw [map_sum, Finset.sum_eq_zero fun m _ => by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_zero fun m _ => by
         rw [IsScalarTower.algebraMap_apply F K L, hlin, hDz, mul_zero],
       Derivation.leibniz_inv, eq_comm, smul_eq_mul, neg_mul, neg_eq_zero, mul_eq_zero] at h1
     exact h1.resolve_left (pow_ne_zero _ (inv_ne_zero hj₀))

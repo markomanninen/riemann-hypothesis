@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.GIface
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.CIface
+
+@[expose] public section
 
 noncomputable section
 

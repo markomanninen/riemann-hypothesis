@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -42,12 +46,12 @@ private theorem unitMap_comm {R : Type} [CommRing R] [Algebra ℝ R] {n : ℕ} {
       have h := congrArg₂ (· + ·) h₁ h₂
       simp only [add_zero] at h
       refine Eq.trans ?_ h
-      split_ifs <;> simp only [map_add, mul_add, add_mul] <;> abel
+      split_ifs <;> simp only [map_add (f := _), mul_add, add_mul] <;> abel
   | add a₁ a₂ h₁ h₂ =>
     have h := congrArg₂ (· + ·) h₁ h₂
     simp only [add_zero] at h
     refine Eq.trans ?_ h
-    split_ifs <;> simp only [map_add, mul_add, add_mul] <;> abel
+    split_ifs <;> simp only [map_add (f := _), mul_add, add_mul] <;> abel
 
 theorem UpperTheory.gen_glRelations_and_commute_of_isLie :
     ∀ (R : Type) [CommRing R] [Algebra ℝ R] (ι : Type) [Fintype ι] (n : ℕ) (A : Type) [Ring A] [Algebra ℂ A] [Algebra ℝ A] [IsScalarTower ℝ ℂ A] (D : Idem R ι) (l : Matrix (Fin n) (Fin n) R →ₗ[ℝ] A), IsLie l → (∀ τ, Formalism.REAL.GlRel (gen D l τ)) ∧ ∀ τ σ, τ ≠ σ → ∀ i j k m, Commute (gen D l τ i j) (gen D l σ k m) := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvOSmulO
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DvOSmulO
+
+@[expose] public section
 
 open scoped TensorProduct
 

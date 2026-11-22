@@ -1,7 +1,11 @@
-import ReciprocityTheory.GroupCohomology.TransgressionStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.LowHolds
-import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
+module
+
+public import ReciprocityTheory.GroupCohomology.TransgressionStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.LowHolds
+public import ReciprocityTheory.GroupCohomology.ContractNthCastAddCastSucc
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

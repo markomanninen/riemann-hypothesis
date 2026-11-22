@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PProjTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.MapWopWmap
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.PProjTrace
+
+@[expose] public section
 
 open Module
 universe u v
@@ -56,7 +60,8 @@ theorem UpperTheory.Gal.CertificateRingHomMap.pTracePow_holds :
     have h0 : Polynomial.aeval t P = 0 := minpoly.aeval F t
     rw [Polynomial.aeval_eq_sum_range] at h0
     have h1 := congrArg (fun f => LinearMap.trace F (LinearMap.range q) (f * t ^ j)) h0
-    simp only [Finset.sum_mul, map_sum, zero_mul, map_zero, smul_mul_assoc, map_smul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, map_sum, zero_mul, map_zero, smul_mul_assoc, map_smul,
       ← pow_add, smul_eq_mul] at h1
     simpa [ha] using h1
   have hall : ∀ n j, j₀ ≤ j + n → a j = 0 := by

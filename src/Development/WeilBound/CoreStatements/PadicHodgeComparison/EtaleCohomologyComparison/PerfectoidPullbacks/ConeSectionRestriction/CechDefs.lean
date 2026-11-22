@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.CapOComp
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -19,10 +23,6 @@ def cupPowC (A : C ⥤ CommAlgCat.{0} R) (z : CH.Cn (CH.modF A) 2) : ∀ k : ℕ
 def cupListC (A : C ⥤ CommAlgCat.{0} R) : ∀ {k : ℕ}, (Fin k → CH.Cn (CH.modF A) 1) → CH.Cn (CH.modF A) k
   | 0, _ => fun s => (1 : A.obj (s.obj (Fin.last _)))
   | k + 1, ℓ => (CH.mulP A).cupC (by omega) (cupListC A fun i => ℓ (Fin.castSucc i)) (ℓ (Fin.last k))
-
-def resZ (A : C ⥤ CommAlgCat.{0} R) (U : ObjectProperty C) {k : ℕ} (b : CH.Cn (CH.modF A) k) :
-    CH.Cn (CH.modF (U.ι ⋙ A)) k :=
-  fun σ => b (σ ⋙ U.ι)
 
 def resB (A : C ⥤ CommAlgCat.{0} R) {U V : ObjectProperty C} (h : V ≤ U) {k : ℕ} (b : CH.Cn (CH.modF (U.ι ⋙ A)) k) :
     CH.Cn (CH.modF (V.ι ⋙ A)) k :=

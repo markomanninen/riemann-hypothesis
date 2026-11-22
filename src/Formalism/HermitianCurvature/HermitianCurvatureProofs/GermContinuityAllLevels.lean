@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermContinuity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGInt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGSlice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX_UwTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermContinuity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGInt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGCongr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGSlice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX_UwTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -19,7 +23,7 @@ theorem rr_congr_below {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [Inner
     (a b : C.LPt) : p.RR F i w a b = p.RR F₂ i w a b := by
   by_cases hl : D.IsLocPt a i ∧ D.IsLocPt b i
   · unfold KB.Pl.RR D.RRplace
-    rw [dif_pos hl, dif_pos hl, dif_pos hi, dif_pos hi]
+    rw [dite_eq_left hl, dite_eq_left hl, dite_eq_left hi, dite_eq_left hi]
     have hU : ∀ (e : Wd.Ix (Fin w.length)), ∀ g ∈ B.GV P.k P.r,
         D.uwG P.k P.r p.T.base.z p.T.base.z' F₂ i hi w e g = D.uwG P.k P.r p.T.base.z p.T.base.z' F i hi w e g :=
       fun e g hg => (Formalism.FourierDecayAlt.P.CutEXUw.uwG_congrG p.T.base.z p.T.base.z' i hi isOpen_univ

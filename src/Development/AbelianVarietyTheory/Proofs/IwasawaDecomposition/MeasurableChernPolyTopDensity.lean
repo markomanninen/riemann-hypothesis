@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -11,7 +15,7 @@ open ReciprocityTheory.L2DbarEstimates (V)
 namespace GlobalTheory.ChernMeas
 
 def measPoly (X σ : Type) [MeasurableSpace X] : Subalgebra ℝ (X → MvPolynomial σ ℂ) where
-  carrier := {f | ∀ d, Measurable fun x => coeff d (f x)}
+  carrier := {f | ∀ d, Measurable fun x => AddMonoidAlgebra.coeff (f x) d}
   mul_mem' := by
     classical
     intro f g hf hg d
@@ -19,11 +23,11 @@ def measPoly (X σ : Type) [MeasurableSpace X] : Subalgebra ℝ (X → MvPolynom
     exact Finset.measurable_sum _ fun p _ => (hf p.1).mul (hg p.2)
   add_mem' := by
     intro f g hf hg d
-    simp only [Pi.add_apply, coeff_add]
+    simp only [Pi.add_apply, MvPolynomial.coeff_add]
     exact (hf d).add (hg d)
   algebraMap_mem' := by
     intro c d
-    exact measurable_const (a := coeff d (algebraMap ℝ (MvPolynomial σ ℂ) c))
+    exact measurable_const (a := AddMonoidAlgebra.coeff (algebraMap ℝ (MvPolynomial σ ℂ) c) d)
 
 theorem C_mem {X σ : Type} [MeasurableSpace X] {f : X → ℂ} (hf : Measurable f) :
     (fun x => (C (f x) : MvPolynomial σ ℂ)) ∈ measPoly X σ := by

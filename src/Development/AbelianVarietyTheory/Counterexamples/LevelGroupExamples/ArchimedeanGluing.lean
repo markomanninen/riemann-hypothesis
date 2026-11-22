@@ -1,8 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.PrincipalCongruenceGamma
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoreArithmeticGroupContainsPrincipalCongruence
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ExistsLawsCoreGamAt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryExistsWithPrescribedParts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.PrincipalCongruenceGamma
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CoreArithmeticGroupContainsPrincipalCongruence
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.GamAt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDvdModulus
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonal
+public import Formalism.LocalToGlobal.LatticeGeometry.DegFlLApply
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryExistsWithPrescribedParts
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.FD Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -34,8 +42,8 @@ def ArchGlue {D : D7} (V : HSp D) : Prop :=
       (∀ τ, ((u τ).map (starRingEnd ℂ)).transpose * V.gram.map τ.1 * u τ = V.gram.map τ.1) →
       ∃ h ∈ GinfC V, ∀ τ, archM V (th τ) h = u τ
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem root_eq_one_of_glue {D : D7} (V : HSp D) (hglue : ArchGlue V) {r : ℕ} (hr : V.rank = r) (hr0 : 0 < r) {Comp : Type}
     (X : Comp → Data D.host.E r) (dict : GA D V → Σ c, Frame (X c).Ψ r) (mu : GA D V → ℂ)
     (Kf : Subgroup (GA D V)) (th : ∀ c, (X c).Ψ → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))
@@ -124,8 +132,41 @@ theorem root_eq_one_of_glue {D : D7} (V : HSp D) (hglue : ArchGlue V) {r : ℕ} 
     · rintro ⟨a, ha, _, ⟨x, hx, rfl⟩, rfl⟩
       exact ⟨a, ha, x, hx, rfl⟩
   have hspan : Submodule.span D.host.E (V.L0.map f : Set (Fin V.rank → D.host.E)) = ⊤ := by
+    have hfull : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+      by_contra hspan
+      obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+      obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis V.hT V.nondeg V.frame
+      let μ : V.V := ∑ j, star (φ (V.frame j)) • bs j
+      have hμ : V.hT μ = φ := by
+        apply V.frame.ext
+        intro i
+        rw [show μ = ∑ j, star (φ (V.frame j)) • bs j from rfl, map_sum, LinearMap.sum_apply]
+        have hs : ∀ j, V.hT (star (φ (V.frame j)) • bs j) (V.frame i) =
+            φ (V.frame j) * (if i = j then 1 else 0) := by
+          intro j
+          rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+          congr 1
+          rw [← V.herm.eq (V.frame i) (bs j), hbs]
+          split_ifs <;> simp
+        simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      have hμ₀ : μ ≠ 0 := by
+        intro h
+        apply hφ₀
+        rw [← hμ, h, map_zero]
+      have hline (a : D.host.E) : a • μ ∈ V.L0 := by
+        rw [← V.baseLattice_isUnimodular, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+        intro y hy
+        have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+        simp [← V.herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+      let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+        ((LinearMap.toSpanSingleton D.host.E _ μ).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hline
+      let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective D.host.E hμ₀ (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField D.host.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
     have : (V.L0.map f : Set (Fin V.rank → D.host.E)) = V.frame.equivFun.toLinearMap '' (V.L0 : Set V.V) := rfl
-    rw [this, ← Submodule.map_span, V.standardTuple_isLattice.span_eq_top, Submodule.map_top, LinearEquiv.range]
+    rw [this, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
   rw [hhat] at hκ2
   obtain ⟨Λ', g1, g2, g3⟩ := exists_lattice_congr D.host.F D.host.E V.rank M (by omega) (V.L0.map f)
     (V.standardTuple_isLattice.fg.map f) hspan (finHom V g) (finHom V κ⁻¹).1 δ.1 hκ2 (by

@@ -1,8 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPosFrameQuotIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.HoloSmooth
+
+@[expose] public section
+
 open Set Matrix Filter Topology
 open ReciprocityTheory.L2DbarEstimates (V)
-open GlobalTheory.HermFrame GlobalTheory.CxForm GlobalTheory.SecForm
+open GlobalTheory.HermFrame GlobalTheory.CxForm
 open GlobalTheory.GoodMetric (coordVec)
 open scoped ContDiff ComplexOrder
 
@@ -12,7 +18,7 @@ namespace GlobalTheory.SecForm
 
 theorem coordVec_expand {n : ℕ} (w : V n) : w = ∑ a, w a • coordVec a := by
   ext i
-  simp [coordVec, EuclideanSpace.single_apply, Pi.single_apply]
+  simp [coordVec, Pi.single_apply]
 
 theorem sesq_sum_left {n : ℕ} {α : V n → V n → ℂ} (hα : IsSesq α) {ι : Type} (s : Finset ι) (c : ι → ℂ)
     (x : ι → V n) (y : V n) : α (∑ i ∈ s, c i • x i) y = ∑ i ∈ s, c i * α (x i) y := by
@@ -37,15 +43,16 @@ theorem sesq_expand {n : ℕ} {α : V n → V n → ℂ} (hα : IsSesq α) (x y 
   calc α x y = α (∑ a, x a • coordVec a) (∑ b, y b • coordVec b) := by
         rw [← coordVec_expand x, ← coordVec_expand y]
     _ = _ := by
-        rw [sesq_sum_left hα]
+        rw [sesq_sum_left (α := α) hα]
         refine Finset.sum_congr rfl fun a _ => ?_
-        rw [sesq_sum_right hα, Finset.mul_sum]
+        rw [sesq_sum_right (α := α) hα, Finset.mul_sum]
         refine Finset.sum_congr rfl fun b _ => ?_
         ring
 
 theorem pull_ofValues : ∀ {n : ℕ} (L : V n →L[ℂ] V n) (α : V n → V n → ℂ), IsSesq α → pull L (ofValues α : Alt n) = ofValues (fun ξ η => α (L ξ) (L η)) := by
   intro n L α hα
-  simp only [ofValues, sesq_expand hα (L _), AddSubmonoidClass.coe_finset_sum, Subalgebra.coe_smul, sym, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ofValues, sesq_expand hα (L _), AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_smul, sym, map_sum,
     map_smul, map_mul, (pull_dz L _).1, (pull_dz L _).2, Finset.sum_mul, Finset.mul_sum, Finset.sum_smul,
     Finset.smul_sum, smul_mul_smul_comm, smul_smul]
   conv_lhs => enter [2, a, 2, b]; rw [Finset.sum_comm]

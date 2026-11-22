@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
-import ReciprocityTheory.SemistableReduction.ExistsDualDerivations
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+public import ReciprocityTheory.SemistableReduction.ExistsDualDerivations
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -65,7 +69,7 @@ theorem genericImageFinite : FieldOfSStatement := by
   have hTB : IsTranscendenceBasis K (sImage (D := D) x) := by
     refine hind.isTranscendenceBasis_of_lift_trdeg_le ?_ ?_
     · rw [htrS]
-      exact Cardinal.nat_lt_aleph0 _
+      exact Cardinal.natCast_lt_aleph0
     · rw [htrS]
       simp
   have halg := hTB.isAlgebraic_field
@@ -97,7 +101,7 @@ theorem genericImageFinite : FieldOfSStatement := by
       have h := hω a
       simpa [f, MvPolynomial.algebraMap_eq] using h
     | add p q hp hq =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact L.add_mem hp hq
     | mul_X p i hp =>
       rw [map_mul]

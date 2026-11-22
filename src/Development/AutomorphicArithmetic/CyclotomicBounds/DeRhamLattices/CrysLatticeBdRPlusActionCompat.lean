@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRpToBdR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImageDeRhamEqEisensteinPowMulOfComponents
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsCrisPOfIsCrisDR
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsTensorBdRActionOnLatticeBdR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemSpanOfPowMul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BdRpToBdR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImageDeRhamEqEisensteinPowMulOfComponents
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsCrisPOfIsCrisDR
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.ExistsTensorBdRActionOnLatticeBdR
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 open GlobalTheory.BKGal.HatVal
@@ -24,11 +29,11 @@ private theorem actDRG {Z Q O P D V R : Type} [CommRing Z] [CommRing Q] [CommRin
     (y : O ⊗[Z] P) (w : V ⊗[Q] R) : A y w = B (d y) w := by
   induction w using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add v w hv hw => simp only [map_add, hv, hw]
+  | add v w hv hw => simp only [map_add (f := _), hv, hw]
   | tmul v c =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero, AddMonoidHom.zero_apply]
-    | add x x' hx hx' => simp only [map_add, AddMonoidHom.add_apply, hx, hx']
+    | add x x' hx hx' => simp only [map_add (f := _), AddMonoidHom.add_apply, hx, hx']
     | tmul o b => rw [hd, hA, hB, hg]
 
 private theorem actCrisG {Z Q O P D M V R : Type} [CommRing Z] [CommRing Q] [CommRing O] [Algebra Z O]
@@ -45,16 +50,16 @@ private theorem actCrisG {Z Q O P D M V R : Type} [CommRing Z] [CommRing Q] [Com
     (b : O ⊗[Z] P) (z : (O ⊗[Z] P) ⊗[O] M) : Y (b • z) = B (d b) (Y z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [smul_zero, map_zero]
-  | add v w hv hw => simp only [smul_add, map_add, hv, hw]
+  | add v w hv hw => simp only [smul_add, map_add (f := _), hv, hw]
   | tmul u x =>
     rw [TensorProduct.smul_tmul', smul_eq_mul]
     induction b using TensorProduct.induction_on with
     | zero => simp only [zero_mul, zero_tmul, map_zero, AddMonoidHom.zero_apply]
-    | add y y' hy hy' => simp only [add_mul, add_tmul, map_add, AddMonoidHom.add_apply, hy, hy']
+    | add y y' hy hy' => simp only [add_mul, add_tmul, map_add (f := _), AddMonoidHom.add_apply, hy, hy']
     | tmul o' b' =>
       induction u using TensorProduct.induction_on with
       | zero => simp only [mul_zero, zero_tmul, map_zero]
-      | add y y' hy hy' => simp only [mul_add, add_tmul, map_add, hy, hy']
+      | add y y' hy hy' => simp only [mul_add, add_tmul, map_add (f := _), hy, hy']
       | tmul o b =>
         rw [Algebra.TensorProduct.tmul_mul_tmul, hY, hY, hd, hB, map_mul, hs, hg b']
 

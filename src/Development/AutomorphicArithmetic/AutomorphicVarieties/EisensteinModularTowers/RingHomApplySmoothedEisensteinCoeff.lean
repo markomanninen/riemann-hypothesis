@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.Glue GlobalTheory.KummerEisensteinGalois UpperTheory.Kd.L
@@ -14,10 +18,11 @@ private theorem UpperTheory.ring_hom_eisenstein_coeff {K : Type} [Field K] [Char
     rw [zpow_neg, zpow_neg, map_inv₀, hz]
   unfold eisF const0 coefPos
   split_ifs
-  · simp only [map_div₀, map_mul, map_add, map_sub, map_one, map_ofNat, h]
+  · simp only [map_div₀, map_mul, map_add (f := _), map_sub, map_one, map_ofNat, h]
   · simp only [map_ratCast]
   · simp only [map_neg, map_ratCast]
-  · simp only [map_sum, map_sub]
+  · set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_sub]
     refine Finset.sum_congr rfl fun d _ => ?_
     congr 1
     · split_ifs

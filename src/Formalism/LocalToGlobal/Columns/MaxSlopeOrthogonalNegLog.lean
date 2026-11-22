@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.BrzoPairAtZeroRight
-import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
-import Formalism.MeanHeightDescent.AverageDegreeBounds.SpanMuMin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.BrzoPairAtZeroRight
+public import Formalism.SizeWindowBrackets.ChainSlopeWindows.TruncatedLatticeHolds
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.SpanMuMin
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open scoped Matrix ComplexOrder
@@ -16,14 +20,7 @@ section F3
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K]
 
-theorem majorant_conj_symm (A : HLat K) (v : InfinitePlace K) (x y : A.V) :
-    majAt A.b A.X v y x = star (majAt A.b A.X v x y) := by
-  unfold Formalism.HermitianLatticesTheory.majAt
-  rw [star_sum]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [star_mul', star_star, mul_comm]
-
-variable [IsTotallyComplex K] {V ι : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
+variable [_root_.NumberField.IsTotallyComplex K] {V ι : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
   [Fintype ι] [DecidableEq ι]
 
 theorem slope_line_le_neg_log (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ) (hX : ∀ v, IsUnit (X v).det) (x : V) (hx : x ≠ 0)
@@ -50,7 +47,7 @@ theorem slope_line_le_neg_log (b : Basis ι K V) (X : InfinitePlace K → Matrix
       rw [Formalism.ExtensionFiltration.majAt_self_re]
       exact hn v
     calc c ^ (nPl K) = ∏ _v : InfinitePlace K, c := by rw [Finset.prod_const, Finset.card_univ]; rfl
-      _ ≤ ∏ v, (gramPl b X v (fun _ : Fin 1 => x)).det.re := Finset.prod_le_prod (fun v _ => hc.le) (fun v _ => h1 v)
+      _ ≤ ∏ v, (gramPl b X v (fun _ : Fin 1 => x)).det.re := Finset.prod_le_prod₀ (fun v _ => hc.le) (fun v _ => h1 v)
   have hlog : (nPl K : ℝ) * Real.log c ≤ Real.log (ht b X L) := by
     rw [← Real.log_pow]
     exact Real.log_le_log (by positivity) hht
@@ -90,32 +87,7 @@ end F3
 
 section F3b
 
-variable {K : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
-
-theorem max_slope_orthogonal_neg_log (A : HLat K) (hA : FrameOK A) {γ : Type} [Fintype γ] [Nonempty γ] (e : γ → A.V) (he : ∀ c, e c ≠ 0)
-    (horth : ∀ c c', c ≠ c' → ∀ v, majAt A.b A.X v (e c) (e c') = 0) (c0 : ℝ) (hc0 : 0 < c0)
-    (hn : ∀ c v, c0 ≤ normAt A.b A.X v (e c) ^ 2) :
-    muMaxDef A.b A.X (⨆ c, Submodule.span (𝓞 K) ({e c} : Set A.V)) ≤ -Real.log c0 := by
-  classical
-  set N : γ → Submodule (𝓞 K) A.V := fun c => Submodule.span (𝓞 K) ({e c} : Set A.V) with hN
-  have hfg : ∀ c, (N c).FG := fun c => Submodule.fg_span (Set.finite_singleton _)
-  have hne : ∀ c, N c ≠ ⊥ := fun c h => he c ((Submodule.span_singleton_eq_bot).1 h)
-  have ho : ∀ c c', c ≠ c' → ∀ x ∈ N c, ∀ y ∈ N c', ∀ v, majAt A.b A.X v x y = 0 := by
-    intro c c' hcc x hx y hy v
-    have h1 : N c ≤ brzo_perp A (e c') :=
-      (Submodule.span_singleton_le_iff_mem _ _).2 fun v => horth c' c (Ne.symm hcc) v
-    have h2 : e c' ∈ brzo_perp A x := fun v => by
-      rw [majorant_conj_symm A v (e c') x, h1 hx v, star_zero]
-    exact ((Submodule.span_singleton_le_iff_mem _ _).2 h2) hy v
-  obtain ⟨-, h2⟩ := hlat_orth_fin N hA hfg hne ho Finset.univ
-  have hsup : (⨆ c, N c) = ⨆ c ∈ (Finset.univ : Finset γ), N c := by simp
-  rw [hsup]
-  have hb := (h2 Finset.univ_nonempty).2 ((-Real.log c0 + Real.log 2 - logDisc K / (Module.finrank ℚ K : ℝ)) / 2) fun c _ => by
-    have := max_slope_line_neg_log A.b A.X hA (e c) (he c) c0 hc0 (hn c)
-    unfold muMaxDef at this
-    linarith
-  unfold muMaxDef
-  linarith
+variable {K : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
 
 end F3b
 

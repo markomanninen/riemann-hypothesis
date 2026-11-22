@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirProj
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.LeibnizOrders.LeibnizOrd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirProj
+
+@[expose] public section
 
 noncomputable section
 open Matrix GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.SplitWeil GlobalTheory.CompanionTheory.MirFourier
@@ -12,12 +16,12 @@ variable {k : Type} [Field k]
 
 def uv (n : ℕ) (v : Fin n → k) : Mir k n := unipIn k n (Multiplicative.ofAdd v)
 
-variable (k) in
 
+variable (k) in
 def LH (n : ℕ) : Subgroup (Mir k n) := (levi k n).range
 
-variable (k) in
 
+variable (k) in
 def lv (n : ℕ) : GL (Fin n) k →* LH k n := (levi k n).rangeRestrict
 
 def colv {n : ℕ} (g : Mir k n) : Fin n → k :=

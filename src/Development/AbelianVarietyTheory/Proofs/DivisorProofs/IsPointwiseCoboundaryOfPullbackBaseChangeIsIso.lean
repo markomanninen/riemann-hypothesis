@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PtAlgSpOver
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PoincareDeRhamDuality
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor (Sp spMap epsR IsTangent IsGrpPullback)
 open ReciprocityTheory.ChartRestriction.G.Semi (IsAbelianScheme LB)
@@ -32,8 +37,9 @@ theorem ringOf_eq_of_spMap {E : Type} [CommRing E] (g : Sp E ⟶ X'.left) (τ : 
   exact congrArg CommRingCat.Hom.hom (Spec.map_injective h1)
 
 def ptBack [IsIso q] {E : Type} [CommRing E] (g : Sp E ⟶ X.left) :
-    @Pt R' _ X' E _ (ringOf (X' := X') (g ≫ inv q)).toAlgebra :=
-  @Over.homMk _ _ _ (@SpAlg R' E _ _ (ringOf (X' := X') (g ≫ inv q)).toAlgebra) X' (g ≫ inv q)
+    @Pt R' _ X' E _ (ringOf (X' := X') (g ≫ inv q)).toAlgebra := by
+  letI : Algebra R' E := (ringOf (X' := X') (g ≫ inv q)).toAlgebra
+  exact Over.homMk (U := SpAlg R' E) (V := X') (g ≫ inv q)
     (spMap_ringOf (X' := X') (g ≫ inv q)).symm
 
 theorem ringOf_comp (w : q ≫ X.hom = X'.hom ≫ spMap σ) [IsIso q] {E : Type} [CommRing E] [Algebra R E]

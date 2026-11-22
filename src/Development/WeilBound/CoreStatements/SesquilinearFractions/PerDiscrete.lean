@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.PrincipalRootReZeroImSq
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.PrincipalRootReZeroImSq
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -32,10 +36,10 @@ theorem blk_inj {k k' : Fin g} (ht : ty k = ty k') (hb : blk hty k = blk hty k')
   unfold blk at hb
   by_cases h : ty k (H.rt : E) = H.rt0
   · have h' : ty k' (H.rt : E) = H.rt0 := ht ▸ h
-    rw [dif_pos h, dif_pos h'] at hb
+    rw [dite_eq_left h, dite_eq_left h'] at hb
     exact key _ _ ht h h' ⟨k, rfl⟩ ⟨k', rfl⟩ (Sum.inl.inj hb)
   · have h' : ty k' (H.rt : E) ≠ H.rt0 := ht ▸ h
-    rw [dif_neg h, dif_neg h'] at hb
+    rw [dite_eq_right h, dite_eq_right h'] at hb
     exact key' _ _ ht h h' ⟨k, rfl⟩ ⟨k', rfl⟩ (Sum.inr.inj hb)
 
 variable {D : Datum H} (x : Fin p ⊕ Fin q → D.La) (c : D.La →ₗ[𝓞 E] (Fin p ⊕ Fin q →₀ 𝓞 E)) (n : ℕ)
@@ -52,9 +56,6 @@ theorem per_bx (hn0 : 0 < n) (hcx : ∀ m, c (x m) = Finsupp.single m (n : 𝓞 
     field_simp
   · rw [if_neg (Ne.symm h), if_neg h]
     simp
-
-def conjPerm : Equiv.Perm (E →+* ℂ) :=
-  Function.Involutive.toPerm ComplexEmbedding.conjugate (fun σ => by ext x; simp)
 
 theorem per_span (hn0 : 0 < n) (hcx : ∀ m, c (x m) = Finsupp.single m (n : 𝓞 E)) :
     Submodule.span ℝ (Set.range (per hty c n)) = ⊤ := by
@@ -79,12 +80,13 @@ theorem per_span (hn0 : 0 < n) (hcx : ∀ m, c (x m) = Finsupp.single m (n : �
       rcases eq_or_ne j k with rfl | hj
       · simp [Complex.ext_iff]
       · simp [hj]
-    rw [hz, map_add, map_smul, map_smul]
+    rw [hz, map_add (f := _), map_smul, map_smul]
     simp [hl, Complex.mul_re, smul_eq_mul] <;> ring
   have hf : ∀ v : Fin g → ℂ, f v = (∑ k, l k * v k).re := by
     intro v
     conv_lhs => rw [← Finset.univ_sum_single v]
-    rw [map_sum, Complex.re_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Complex.re_sum]
     exact Finset.sum_congr rfl (fun k _ => hsingle k (v k))
   have hl0 : ∀ k0, l k0 = 0 := by
     intro k0
@@ -139,7 +141,7 @@ private theorem exists_blk_inl_of_rt_eq_rt0 (σ : E →+* ℂ) (h : σ (H.rt : E
     exact (eP hty τ h).apply_symm_apply i
   have hk := ((eP hty σ h).symm i).2
   unfold blk
-  rw [dif_pos (by rw [hk]; exact h)]
+  rw [dite_eq_left (by rw [hk]; exact h)]
   exact congrArg Sum.inl (key _ hk _ ⟨_, rfl⟩ rfl)
 
 private theorem exists_blk_inr_of_rt_ne_rt0 (σ : E →+* ℂ) (h : σ (H.rt : E) ≠ H.rt0) (j : Fin q) :
@@ -153,7 +155,7 @@ private theorem exists_blk_inr_of_rt_ne_rt0 (σ : E →+* ℂ) (h : σ (H.rt : E
     exact (eQ hty τ h).apply_symm_apply j
   have hk := ((eQ hty σ h).symm j).2
   unfold blk
-  rw [dif_neg (by rw [hk]; exact h)]
+  rw [dite_eq_right (by rw [hk]; exact h)]
   exact congrArg Sum.inr (key _ hk _ ⟨_, rfl⟩ rfl)
 
 theorem per_discrete (hn0 : 0 < n) (hc : ∀ y, c y = 0 → y = 0) : DiscreteTopology (per hty c n).range := by

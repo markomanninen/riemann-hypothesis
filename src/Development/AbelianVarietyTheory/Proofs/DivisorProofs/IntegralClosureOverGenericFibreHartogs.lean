@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsionFreeOver
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -18,7 +23,7 @@ theorem closure_hart : ∀ (A R : Type) [CommRing A] [IsDomain A] [CommRing R] [
       (∀ i, y i ∈ GlobalTheory.KeyOriginNoeth.closure A R D) →
       (∀ d : D, ∑ i, x i * algebraMap _ D (τ (y i * d)) =
         GlobalTheory.KeyOriginNoeth.baseHom A R D (algebraMap A R a₀) * d) →
-    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D
+    letI := GlobalTheory.KeyOriginNoeth.closureAlg A R D;
     GlobalTheory.GoodEtale.Hart A R (GlobalTheory.KeyOriginNoeth.closure A R D) := by
   intro A R _ _ _ _ _ hHR hinj D _ _ τ hτC a₀ ha₀ n x y hy hid
   set F := GlobalTheory.LocAcyc.GenFib A R
@@ -45,7 +50,7 @@ theorem closure_hart : ∀ (A R : Type) [CommRing A] [IsDomain A] [CommRing R] [
         intro d₁ d₂ h₁ h₂ z hz
         obtain ⟨r₁, e₁⟩ := h₁ z hz
         obtain ⟨r₂, e₂⟩ := h₂ z hz
-        exact ⟨r₁ + r₂, by rw [map_add, e₁, e₂, add_mul, map_add]⟩
+        exact ⟨r₁ + r₂, by rw [map_add (f := _), e₁, e₂, add_mul, map_add (f := _)]⟩
       zero_mem' := by
         intro z _
         exact ⟨0, by simp⟩

@@ -1,16 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharFil
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlochKatoRightExact
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineAndJumps
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumOfIsCrys
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineBoundsCrystallineDeRhamConcreteRings
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PhiMul
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreExtra
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrysOfInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CharFil
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.OpenField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsCrField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.Z1fMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlochKatoRightExact
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineAndJumps
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumOfIsCrys
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FontaineBoundsCrystallineDeRhamConcreteRings
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PhiMul
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreExtra
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 noncomputable section
@@ -37,7 +42,7 @@ theorem eq_zero_of_ctr [FiniteDimensional Q E] (w : E ⊗[Q] B) (h : ∀ μ : E 
       conv_lhs => rw [← e.sum_repr v, sum_tmul]
       simp [smul_tmul]
     | add x y hx hy =>
-      simp only [map_add, tmul_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), tmul_add, Finset.sum_add_distrib]
       rw [← hx, ← hy]
   rw [this w]
   simp [h]
@@ -80,7 +85,7 @@ theorem ctr_act (μ : E →ₗ[Qp] Qp) (g : G) (x : E ⊗[Qp] B) :
     ctr B μ (actVB PD (chRep (1 : G →* Eˣ)) g x) = PD.actB g (ctr B μ x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul v b =>
     have : PD.actB g (μ v • b) = μ v • PD.actB g b := ((PD.actB g).toLinearMap.restrictScalars Qp).map_smul _ _
     simp [actVB, chRep, this]
@@ -89,21 +94,21 @@ theorem ctr_phi (μ : E →ₗ[Qp] Qp) (x : E ⊗[Qp] B) :
     ctr B μ (φVB PD (LL := E) x) = PD.φ (ctr B μ x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul v b => simp [φVB]
 
 theorem ctr_mul (μ : E →ₗ[Qp] Qp) (b : B) (x : E ⊗[Qp] B) :
     ctr B μ (x * ((1 : E) ⊗ₜ[Qp] b)) = ctr B μ x * b := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, add_mul, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), add_mul, hx, hx']
   | tmul v b => simp
 
 theorem mulLeft_eq (b : B) (x : E ⊗[Qp] B) :
     AlgebraTensorModule.map (LinearMap.id : E →ₗ[E] E) (LinearMap.mulLeft Qp b) x = x * ((1 : E) ⊗ₜ[Qp] b) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, add_mul, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), add_mul, hx, hx']
   | tmul v b => simp [mul_comm]
 
 theorem galois_action_mul_unramified (κ : G →* Eˣ) (g : G) (c : K₀) (y : E ⊗[Qp] B) :
@@ -111,7 +116,7 @@ theorem galois_action_mul_unramified (κ : G →* Eˣ) (g : G) (c : K₀) (y : E
       actVB PD (chRep κ) g y * ((1 : E) ⊗ₜ[Qp] algebraMap K₀ B c) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, add_mul, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), add_mul, hx, hx']
   | tmul v b => simp [actVB, chRep]
 
 theorem char_generic [CharZero Qp] [FiniteDimensional Qp E] [Nontrivial B] (κ : G →* Eˣ)
@@ -208,7 +213,7 @@ theorem iota_mem (K : FinExt l) (ρ : Representation E ↥(GK K) V) {y : V ⊗[�
     intro g y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [map_add, hx, hx']
+    | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
     | tmul v b => simp [actVdR, actVB, ιV, ((PP l).PD K).ι_comm]
   simp only [DdR, Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.id_apply, sub_eq_zero]
   intro g
@@ -219,7 +224,7 @@ theorem ctr_mem_Fil (K : FinExt l) (a : ℤ) (μ : V →ₗ[ℚ_[l]] ℚ_[l]) {y
   obtain ⟨z, rfl⟩ := hy
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => rw [map_add, map_add]; exact Submodule.add_mem _ hx hx'
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _)]; exact Submodule.add_mem _ hx hx'
   | tmul v b =>
     simp only [AlgebraTensorModule.map_tmul, ctr_tmul]
     exact ((((PP l).PD K).Fil a).restrictScalars ℚ_[l]).smul_mem _ b.2
@@ -232,7 +237,7 @@ theorem surj_of_inj (K : FinExt l) (ρ : Representation E ↥(GK K) V)
     intro g y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [map_add, hx, hx']
+    | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
     | tmul v b => simp [actVB, φVB, ((PP l).PD K).φ_comm]
   have hm : ∀ y ∈ Dcris ((PP l).PD K) ρ,
       (LinearMap.id - φVB ((PP l).PD K) (LL := E) (V := V) : _ →ₗ[E] _) y ∈ Dcris ((PP l).PD K) ρ := by
@@ -361,7 +366,7 @@ theorem noFix_of_filt (φ : G →* GQ l) (ρ : Representation E G V) (S : Set (G
       obtain ⟨u, hu, _, hw, rfl⟩ := Submodule.mem_sup.1 hv
       obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hw
       have hx' : x ∈ F (i + 1) := by rw [hx]; exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self x)
-      rw [map_add, map_smul]
+      rw [map_add (f := _), map_smul]
       refine add_mem (h1 (ih (by omega) g u hu)) (Submodule.smul_mem _ _ ?_)
       have := add_mem (h1 (hg g)) (Submodule.smul_mem _ ((κ g : Eˣ) : E) hx')
       rwa [sub_add_cancel] at this
@@ -419,7 +424,7 @@ theorem noFix_of_filt (φ : G →* GQ l) (ρ : Representation E G V) (S : Set (G
         intro y
         induction y using TensorProduct.induction_on with
         | zero => simp
-        | add x x' hx hx' => simp only [map_add, hx, hx']
+        | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
         | tmul v b => simp [phC, M]
       have hM0 : M z = 0 := hS κ hκ ⟨μ, x, hκx⟩ _ (fun g => by rw [hM g z hz, hinv]) (by rw [hMφ, hφ])
       have hle : R (i + 1) ≤ (R i).comap (LinearMap.id - N ∘ₗ M) := Submodule.span_le.2 (by
@@ -458,8 +463,8 @@ theorem noFix_quot {l : ℕ} [Fact l.Prime] {G : Type} [Group G] [TopologicalSpa
   rw [this]
   exact (IsModuleTopology.continuous_of_linearMap _).comp (hc.comp (continuous_id.prodMk continuous_const))
 
-open GlobalTheory.BKRightExact in
 
+open GlobalTheory.BKRightExact in
 theorem lift_dR {l : ℕ} [Fact l.Prime] {P : LocPrime l} {AI : LocAinf l P} (T : LocTied l P AI)
     (K : FinExt l) (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [FiniteDimensional ℚ_[l] LL]
     {V : Type} [AddCommGroup V] [Module LL V] [Module ℚ_[l] V] [IsScalarTower ℚ_[l] LL V]
@@ -521,7 +526,7 @@ theorem exists_fixed (hc : ∀ x, Continuous fun g => ρ g x) (hn : NoFix (GK K)
     intro g y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [map_add, hx, hx']
+    | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
     | tmul v b => simp [actVB, φVB, ((PP l).PD K).φ_comm]
   have hd : x - φVB ((PP l).PD K) (LL := ℚ_[l]) x ∈ Dcris ((PP l).PD K) ρ := by
     rw [mem_Dcris]
@@ -615,7 +620,7 @@ theorem actC_tr (g : G) (x : V ⊗[ℚ_[l]] Bcr l) :
   rw [← actC_eq]
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul v b => simp [actC, tr_apply]
 
 theorem noFix_tr (h : NoFix ((GK K).subtype.comp e.toMonoidHom) ρ) : NoFix (GK K).subtype (tr e ρ) :=

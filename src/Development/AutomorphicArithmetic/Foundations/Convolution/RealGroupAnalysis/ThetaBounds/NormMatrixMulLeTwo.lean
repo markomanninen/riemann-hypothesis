@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -35,7 +39,7 @@ private theorem cont_toL {E : Type} [Field E] [NumberField E] :
   continuous_pi fun i => continuous_pi fun j => continuous_id.matrix_elem i j
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.htLe :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], HtLe E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], HtLe E := by
   intro E _ _ _
   refine ⟨?_, fun y => ⟨?_, ?_, fun y' => ?_⟩⟩
   · unfold Ht

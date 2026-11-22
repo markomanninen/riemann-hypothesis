@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.IsPullbackH2Structure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.IsPullbackH2Structure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -58,7 +62,8 @@ theorem first_cohomology_vector_bundle_rank : DescentSt → LowSt → SysBCSt �
       ∀ (S₀ : Sys A₀.left P), Function.Bijective (resSys A₀.hom S₀).pull1 ∧
         (Stein (OAff A₀.hom) ↔ Stein (OSys A₀.hom S₀)) := fun {R₀} _ A₀ _ h₀ S₀ => by
     have : IsProper A₀.hom := h₀.proper
-    obtain ⟨b1, -, st⟩ := hL R₀ _ _ _ _ _ (hD R₀ A₀.left A₀.hom inferInstance P S₀)
+    obtain ⟨b1, -, st⟩ := hL R₀ _ _ (OAff A₀.hom) (OSys A₀.hom S₀) (resSys A₀.hom S₀)
+      (hD R₀ A₀.left A₀.hom inferInstance P S₀)
     exact ⟨b1, st⟩
   refine vb_of_bijective' (resSys A.hom S) (low A hA S).1 (hV R P (OSys A.hom S) g hPerf ?_ ?_ ?_)
   · intro R' _ _

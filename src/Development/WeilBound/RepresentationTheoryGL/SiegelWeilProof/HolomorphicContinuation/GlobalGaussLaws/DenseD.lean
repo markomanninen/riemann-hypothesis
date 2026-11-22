@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FourierZeroN
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FourierZeroN
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,6 @@ theorem isUnit_det_of_inG {g : M2 n} (hg : InG g) : IsUnit g.det := by
 
 def mkGR (g : M2 n) (hg : InG g) : GR n :=
   ⟨⟨g, g⁻¹, Matrix.mul_nonsing_inv g (isUnit_det_of_inG hg), Matrix.nonsing_inv_mul g (isUnit_det_of_inG hg)⟩, hg⟩
-
-@[simp] theorem mR_mkGR (g : M2 n) (hg : InG g) : mR (mkGR g hg) = g := rfl
 
 def IsNElt (g : GR n) : Prop := ∃ b : Matrix (Fin n) (Fin n) ℂ, bᴴ = b ∧ mR g = nU b
 

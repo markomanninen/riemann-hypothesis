@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConstantTermSteps.ConjBlock
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.L2DecayOfCountEscape
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.ExponentialNegativity.ConstantTermSteps.ConjBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem unipGL_mem_adelicBorel (r : ℕ) (X : UPos n r → 𝔸[K]) :
   have hij' : (j : ℕ) < i := hij
   simp only [unipMatrix, Matrix.add_apply, blockEntry_apply, Matrix.one_apply]
   have hne : i ≠ j := fun h => by subst h; omega
-  rw [if_neg hne, dif_neg (by omega), add_zero]
+  rw [if_neg hne, dite_eq_right (by omega), add_zero]
 
 theorem ctn_unipGL_mul {r : ℕ} {φ : AdelicGLn.AdelicGL K n → ℂ} (hφ : IsLeftInvariant φ)
     (X : UPos n r → 𝔸[K]) (g : AdelicGLn.AdelicGL K n) :
@@ -76,17 +80,16 @@ theorem tor_add (x y : Fin n → ℝ) : tor K (x + y) = tor K x * tor K y := by
   unfold tor
   rw [← map_mul]
   congr 1
-  funext i
-  simp only [Pi.add_apply, Pi.mul_apply]
+  ext i
+  simp only [Pi.mul_apply, Pi.add_apply]
   rw [posIdele_mul]
-  congr 1
-  exact Real.exp_add _ _
+  simp only [Real.exp_add]
 
 theorem aR_mul (r : ℕ) (s t : ℝ) : aR K n r s * aR K n r t = aR K n r (s + t) := by
   unfold aR
   rw [← tor_add]
   congr 1
-  funext i
+  ext i
   simp only [Pi.add_apply]
   split_ifs <;> ring
 
@@ -117,10 +120,10 @@ theorem sr_shift {r : ℕ} (hr : 0 < r) (hrn : r < n) (x : Fin n → ℝ) (s : �
     sr (shift r x s) r' = sr x r' + if r' = r then s else 0 := by
   unfold sr
   by_cases h : 0 < r' ∧ r' < n
-  · rw [dif_pos h, dif_pos h]
+  · rw [dite_eq_left h, dite_eq_left h]
     simp only [shift]
     split_ifs <;> first | omega | ring
-  · rw [dif_neg h, dif_neg h]
+  · rw [dite_eq_right h, dite_eq_right h]
     have : r' ≠ r := by omega
     simp [this]
 
@@ -128,7 +131,7 @@ theorem tor_shift (r : ℕ) (x : Fin n → ℝ) (s : ℝ) : tor K (shift r x s) 
   unfold aR
   rw [← tor_add]
   congr 1
-  funext i
+  ext i
   simp only [shift, Pi.add_apply]
   split_ifs <;> ring
 

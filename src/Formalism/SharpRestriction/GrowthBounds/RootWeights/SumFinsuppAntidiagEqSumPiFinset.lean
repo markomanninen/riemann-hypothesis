@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MatrixSubstTransvectionMonomialOfFixed
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MatrixSubstTransvectionMonomialOfFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,8 @@ theorem matrixSubst_transvection_monomial (N : ℕ) (hN : (m.sum fun _ e => e) <
 theorem map_dividedPowerMonomial (k : ℕ) :
     MvPolynomial.map φ (divPowMono R LL S a b k m) = divPowMono B LL S a b k m := by
   unfold Formalism.MainNotions.G.divPowMono
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun f _ => ?_
   have h : ∀ l, φ (if LL.vec l then ((m (l, b)).choose (f l) : R) else (-1 : R) ^ (f l) * ((m (l, a)).choose (f l) : R)) =
       (if LL.vec l then ((m (l, b)).choose (f l) : B) else (-1 : B) ^ (f l) * ((m (l, a)).choose (f l) : B)) :=
@@ -153,24 +158,26 @@ theorem transvectionExpansion : TransvectionExpansion := by
   unfold TransvectionExpansion
   intro R B _ _ ι _ LL n S φ a b _ t F N hF
   have key : ∀ v ∈ F.support,
-      matrixSubst LL S φ (Matrix.transvection a b t) (Matrix.transvection a b (-t)) (monomial v (coeff v F)) =
-        ∑ k ∈ Finset.range N, C (t ^ k) * MvPolynomial.map φ (Formalism.MainNotions.G.divPow R LL S a b k (monomial v (coeff v F))) := by
+      matrixSubst LL S φ (Matrix.transvection a b t) (Matrix.transvection a b (-t)) (monomial v (AddMonoidAlgebra.coeff F v)) =
+        ∑ k ∈ Finset.range N, C (t ^ k) * MvPolynomial.map φ (Formalism.MainNotions.G.divPow R LL S a b k (monomial v (AddMonoidAlgebra.coeff F v))) := by
     intro v hv
     have hv' : (v.sum fun _ e => e) < N := lt_of_le_of_lt (MvPolynomial.le_totalDegree hv) hF
-    have hmono : (monomial v (coeff v F) : MvPolynomial (ι × Fin n) R) = C (coeff v F) * monomial v 1 := by
+    have hmono : (monomial v (AddMonoidAlgebra.coeff F v) : MvPolynomial (ι × Fin n) R) = C (AddMonoidAlgebra.coeff F v) * monomial v 1 := by
       rw [MvPolynomial.C_mul_monomial, mul_one]
-    have hL : matrixSubst LL S φ (Matrix.transvection a b t) (Matrix.transvection a b (-t)) (monomial v (coeff v F)) =
-        C (φ (coeff v F)) * ∑ k ∈ Finset.range N, C (t ^ k) * Formalism.MainNotions.G.divPowMono B LL S a b k v := by
+    have hL : matrixSubst LL S φ (Matrix.transvection a b t) (Matrix.transvection a b (-t)) (monomial v (AddMonoidAlgebra.coeff F v)) =
+        C (φ (AddMonoidAlgebra.coeff F v)) * ∑ k ∈ Finset.range N, C (t ^ k) * Formalism.MainNotions.G.divPowMono B LL S a b k v := by
       rw [hmono, map_mul, matrixSubst_C, matrixSubst_transvection_monomial LL S a b t v φ N hv']
     rw [hL, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [dividedPower_monomial, MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, map_dividedPowerMonomial]
     ring
   conv_lhs => rw [F.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (Finset.sum_congr rfl key).trans ?_
   conv_rhs => rw [F.as_sum]
-  simp only [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.mul_sum]
   exact Finset.sum_comm
 
 end Formalism.MainNotions.G.GLWeightTheory

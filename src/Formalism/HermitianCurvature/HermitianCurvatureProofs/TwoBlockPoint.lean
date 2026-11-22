@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModulusLocallyConstant
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModulusLocallyConstant
+
+@[expose] public section
 
 open Matrix Formalism.DoubleCosetMeasures Formalism.FourierDecayAlt.A5 Formalism.FourierDecayAlt.A6
 open scoped ComplexConjugate
@@ -76,10 +80,6 @@ theorem blkM_add : blkM hN A B C D + blkM hN A' B' C' D' =
   obtain ⟨p, rfl⟩ := (eN hN).surjective x
   obtain ⟨q, rfl⟩ := (eN hN).surjective y
   rcases p with p | p <;> rcases q with q | q <;> simp [blkM]
-
-theorem blkM_one : blkM hN (1 : Matrix (Fin a) (Fin a) K) 0 0 1 = 1 := by
-  unfold blkM
-  rw [Matrix.fromBlocks_one, Matrix.submatrix_one_equiv]
 
 theorem blkM_det_low : (blkM hN A 0 C D).det = A.det * D.det := by
   unfold blkM
@@ -197,8 +197,8 @@ end GlobalTheory
 section Phi
 variable {K : Type} [CommRing K] (R : Subring K)
 
-open Classical in
 
+open Classical in
 def Fz {n n' : ℕ} (Z' : Matrix (Fin n') (Fin n') K) (Z : Matrix (Fin n) (Fin n) K) : ℂ :=
   if IsInt R Z then (Nat.card (isoZZ R Z Z') : ℂ) else 0
 
@@ -1244,7 +1244,7 @@ theorem pert_unit (ϖ : R) (hu : ∀ r : R, IsUnit (1 + ϖ * r)) {N : ℕ}
     have hz : (Ideal.Quotient.mk (Ideal.span {ϖ})).mapMatrix (ϖ • M) = 0 := by
       ext i j
       simp [h0]
-    rw [map_add, map_one, hz, add_zero, Matrix.det_one]
+    rw [map_add (f := _), map_one, hz, add_zero, Matrix.det_one]
   obtain ⟨a, ha⟩ := Ideal.mem_span_singleton'.1 (Ideal.Quotient.eq.1 hq)
   have e : (1 + ϖ • M).det = 1 + ϖ * a := by linear_combination -ha
   rw [e]
@@ -1721,10 +1721,10 @@ theorem head_reduction_lemma : Formalism.FourierDecayAlt.A6.HeadReduction := by
         rw [← mul_assoc, Units.mul_inv, one_mul]
     refine ⟨?_, ?_⟩
     · rw [e]
-      exact hD.isOpen.preimage (continuous_mul_left _)
+      exact hD.isOpen.preimage (continuous_const_mul _)
     · unfold mulR
       rw [AddSubgroup.coe_map, AddMonoidHom.coe_mulLeft]
-      exact hD.isCompact.image (continuous_mul_left _)
+      exact hD.isCompact.image (continuous_const_mul _)
   refine ⟨mulR R ((hdpt.unit⁻¹ : Kˣ) : K), mulR R ((hdpt.unit ^ 2 * ϖ ^ (2 * k + 1 + j) : Kˣ) : K),
     hlat _, hlat _, fun n' Z' => ⟨fun n => PhiH R ψ h Z' n, ?_,
       fun t c => sum_identity R (two_block_point_size_sum h m t c) (two_block_point_block_matrix h m t c) ψ hD Z',

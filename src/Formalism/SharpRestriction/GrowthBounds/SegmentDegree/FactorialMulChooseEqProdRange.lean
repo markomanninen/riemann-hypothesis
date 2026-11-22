@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestCountOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestCountOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,7 @@ theorem choose_add_mul_one_sub_le_pow_mul_choose_add (x y M : ℕ) (s θ : ℝ) 
     rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range, ← factorial_mul_choose_eq_prod_range]
     ring
   rw [e1, e2]
-  refine Finset.prod_le_prod (fun l _ => ?_) fun l hl => h l (Finset.mem_range.mp hl)
+  refine Finset.prod_le_prod₀ (fun l _ => ?_) fun l hl => h l (Finset.mem_range.mp hl)
   have : (0 : ℝ) ≤ (y : ℝ) + 1 + l := by positivity
   exact mul_nonneg this (by linarith)
 

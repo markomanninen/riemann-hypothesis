@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Places
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Sequence
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.Colimit
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.InfColimit
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Places
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleLimits.Sequence
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.Colimit
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.InfColimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -12,17 +17,15 @@ open CategoryTheory NumberField IntermediateField IsDedekindDomain GroundTheory.
 
 open scoped Pointwise NumberField.LiesOver
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable (K : FiniteSubfield)
 
 structure LocalEmbeddings where
 
-  fin : ∀ v : HeightOneSpectrum (𝓞 K.1), ℚ̄ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)
+  fin : ∀ v : HeightOneSpectrum (𝓞 K.1), AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure (v.adicCompletion K.1)
 
-  inf : ∀ v : InfinitePlace K.1, ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion
+  inf : ∀ v : InfinitePlace K.1, AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.Completion
 
 theorem nonempty_localEmbeddings : Nonempty (LocalEmbeddings K) :=
   ⟨⟨fun _ => Classical.choice nonempty_algHom_of_isSepClosed,
@@ -46,8 +49,8 @@ def places : CompatiblePlaces K where
 
 end LocalEmbeddings
 
-variable (K) in
 
+variable (K) in
 def localGaloisCohomology (n : ℕ) : Place K.1 → Type
   | .inl v => cohomology (galUnitsZ v.Completion (AlgebraicClosure v.Completion)) n
   | .inr v => cohomology (galUnitsZ (v.adicCompletion K.1) (AlgebraicClosure (v.adicCompletion K.1))) n
@@ -64,8 +67,8 @@ def localInflHom : ∀ (v : Place K.1) (p : GLevel K),
   | .inl v, p => (infLocalInfl (ι.inf v) p.1 n).hom.toAddMonoidHom
   | .inr v, p => (localInfl (ι.fin v) p.1 n).hom.toAddMonoidHom
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 def localLimit : LocalLimit (ι.places.levelDecomposition n) where
   T := localGaloisCohomology K n
   infl := ι.localInflHom n

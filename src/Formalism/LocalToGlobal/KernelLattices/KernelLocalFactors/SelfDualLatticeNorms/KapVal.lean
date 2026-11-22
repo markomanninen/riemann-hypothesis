@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
-import Formalism.LocalToGlobal.GlobalTheory.GL3.NormNatCoprime
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.NormNatCoprime
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain
@@ -29,7 +33,6 @@ theorem normO_le (a : 𝓞 K) : ‖f (a : K)‖ ≤ 1 := by
 variable (𝔭 : HeightOneSpectrum (𝓞 K)) (ϖ : 𝓞 K) (h : ℕ) (hgen : 𝔭.asIdeal ^ h = Ideal.span {ϖ}) (hlt : ‖f (ϖ : K)‖ < 1)
 
 include hgen hlt in
-
 theorem norm_lt_of_mem {t : 𝓞 K} (ht : t ∈ 𝔭.asIdeal) : ‖f (t : K)‖ < 1 := by
   have hmem : t ^ h ∈ Ideal.span {ϖ} := hgen ▸ Ideal.pow_mem_pow ht h
   obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hmem
@@ -48,7 +51,6 @@ theorem norm_lt_of_mem {t : 𝓞 K} (ht : t ∈ 𝔭.asIdeal) : ‖f (t : K)‖ 
   exact (pow_lt_one_iff_of_nonneg (norm_nonneg _) hh).mp key
 
 include hgen hlt in
-
 theorem norm_eq_one_of_not_mem {a : 𝓞 K} (ha : a ∉ 𝔭.asIdeal) : ‖f (a : K)‖ = 1 := by
   obtain ⟨b, i, hi, hbi⟩ := 𝔭.isMaximal.exists_inv ha
   have hsmall : ‖f (i : K)‖ < 1 := norm_lt_of_mem f 𝔭 ϖ h hgen hlt hi
@@ -58,7 +60,7 @@ theorem norm_eq_one_of_not_mem {a : 𝓞 K} (ha : a ∉ 𝔭.asIdeal) : ‖f (a 
       have : ((b * a + i : 𝓞 K) : K) = 1 := by rw [hbi]; rfl
       push_cast at this
       linear_combination this
-    rw [e, map_add, map_neg, map_one]
+    rw [e, map_add (f := _), map_neg, map_one]
     rw [IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm] <;> simp [norm_neg] <;> linarith [hsmall]
   refine le_antisymm (normO_le f a) ?_
   calc (1 : ℝ) = ‖f (b : K)‖ * ‖f (a : K)‖ := hba.symm
@@ -66,7 +68,6 @@ theorem norm_eq_one_of_not_mem {a : 𝓞 K} (ha : a ∉ 𝔭.asIdeal) : ‖f (a 
     _ = ‖f (a : K)‖ := one_mul _
 
 include hgen hlt in
-
 theorem norm_pow_int {a : 𝓞 K} (ha : a ≠ 0) :
     ∃ n : ℕ, 𝔭.intValuation a = WithZero.exp (-(n : ℤ)) ∧ ‖f (a : K)‖ ^ h = ‖f (ϖ : K)‖ ^ n := by
   classical
@@ -95,7 +96,6 @@ theorem norm_pow_int {a : 𝓞 K} (ha : a ≠ 0) :
   rw [← norm_pow, ← map_pow f, e, map_mul, norm_mul, hc1, one_mul, map_pow, norm_pow]
 
 include hgen hlt in
-
 theorem norm_pow_eq {x : K} (hx : x ≠ 0) :
     ‖f x‖ ^ h = ‖f (ϖ : K)‖ ^ (-WithZero.log (𝔭.valuation K x)) := by
   obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 K) x

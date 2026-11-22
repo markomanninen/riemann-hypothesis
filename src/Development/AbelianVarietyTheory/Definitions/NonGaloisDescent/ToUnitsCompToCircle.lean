@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaWeightArithmeticAtPlaceProof
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeCharSplitSupportedEqProdResidue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConjTupRefl
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleEmptyOfGood
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaWeightArithmeticAtPlaceProof
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEqMulOfResSNeOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameHeckeCharSplitSupportedEqProdResidue
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,12 +41,13 @@ def liftWeight : Weight D (Vc D i).rank where
   c := liftC D i
   lam := lamV D i
 
-theorem liftWeight_good : (liftWeight D i).Good where
-  le τ := by
+theorem liftWeight_good : (liftWeight D i).Good := by
+  refine ⟨?_, ?_⟩
+  · intro τ
     obtain ⟨h1, h2⟩ := (GlobalTheory.PairWeightArith.arithAt D i τ).rank
     change pS D i τ + qS D i τ ≤ _
     omega
-  lam_eq τ a := by
+  · intro τ a
     have h := GlobalTheory.PairWeightArith.arithAt D i τ
     obtain ⟨h1, h2⟩ := h.rank
     obtain ⟨z, hz⟩ := h.d_int
@@ -56,11 +61,11 @@ theorem liftWeight_good : (liftWeight D i).Good where
     rw [h4, hc, GlobalTheory.IndefiniteRowSideFullHecke.InfinityTypes.thetaWt]
     congr 1
     by_cases k1 : a.val < pS D i τ
-    · rw [if_pos k1, if_pos k1]
-    · rw [if_neg k1, if_neg k1]
+    · rw [ite_eq_left k1, ite_eq_left k1]
+    · rw [ite_eq_right k1, ite_eq_right k1]
       by_cases k2 : a.val < pS D i τ + D.R.t
-      · rw [if_pos k2, if_neg (by omega)]
-      · rw [if_neg k2, if_pos (by omega)]
+      · rw [ite_eq_left k2, ite_eq_right (by omega)]
+      · rw [ite_eq_right k2, ite_eq_left (by omega)]
         congr 3
         omega
 
@@ -74,7 +79,7 @@ variable {D : D7}
 
 theorem map_loc {M N : Type} [CommRing M] [CommRing N] (f : M →+* N) (e a : M) :
     f (1 + e * (a - 1)) = 1 + f e * (f a - 1) := by
-  rw [map_add, map_mul, map_sub, map_one]
+  rw [map_add (f := _), map_mul, map_sub, map_one]
 
 structure IsLocUnit (PP : Pl D.host.E) (u : (kP PP)ˣ) (x : (AE D)ˣ) : Prop where
   off : (1 - idemAt PP) * (x : AE D) = 1 - idemAt PP
@@ -83,8 +88,8 @@ structure IsLocUnit (PP : Pl D.host.E) (u : (kP PP)ˣ) (x : (AE D)ˣ) : Prop whe
   int' : finPart D ((x⁻¹ : (AE D)ˣ) : AE D) ∈ intAE D
   res : ∃ hx : toEAf D (x : AE D) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E, resS D.host.F PP ⟨_, hx⟩ = u
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_isLocUnit {PP : Pl D.host.E} (h : Formalism.L2.NTheta.IsIdemAt (idemAt PP) PP) (u : (kP PP)ˣ) :
     ∃ x : (AE D)ˣ, IsLocUnit PP u x := by
   obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (u : kP PP)
@@ -120,7 +125,7 @@ theorem exists_isLocUnit {PP : Pl D.host.E} (h : Formalism.L2.NTheta.IsIdemAt (i
     rw [map_loc, hinf, zero_mul, add_zero]
   · change finPart D (1 + idemAt PP * (b' - 1)) ∈ intAE D
     have e1 : finPart D (1 + idemAt PP * (b' - 1)) = finPart D (1 - idemAt PP) + finPart D (idemAt PP * b') := by
-      rw [← RingHom.map_add]
+      rw [← RingHom.map_add (f := _)]
       congr 1
       ring
     rw [e1]
@@ -150,7 +155,8 @@ theorem IsLocUnit.eq_one {M : Type} [CommGroup M] {χ : (AE D)ˣ →* M} {Q P : 
     (hx : IsLocUnit PP u x) : χ x = 1 := by
   refine hχ x hx.inf hx.int hx.int' ?_
   have h0 : idemAt PP * (idem Q + cA D (idem Q)) = 0 := by
-    rw [mul_add, idem, map_sum, Finset.mul_sum, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_add, idem, map_sum, Finset.mul_sum, Finset.mul_sum,
       Finset.sum_eq_zero fun j hj => hP.mul_eq_zero hPP (hQ hj) fun e => hn (e ▸ hj),
       Finset.sum_eq_zero fun j hj => hP.mul_conj hPP (hQ hj), add_zero]
   linear_combination (idem Q + cA D (idem Q)) * hx.off + ((x : AE D) - 1) * h0
@@ -170,12 +176,6 @@ def toCircle {M : Type} [Group M] [Finite M] (c : M →* ℂˣ) : M →* Circle 
     (by rw [← Units.val_pow_eq_pow_val, ← map_pow, pow_card_eq_one', map_one, Units.val_one]) Nat.card_pos.ne')⟩
   map_one' := Circle.ext (by simp)
   map_mul' u v := Circle.ext (congrArg Units.val (map_mul c u v))
-
-@[simp] theorem coe_toCircle {M : Type} [Group M] [Finite M] (c : M →* ℂˣ) (u : M) :
-    ((toCircle c u : Circle) : ℂ) = ((c u : ℂˣ) : ℂ) := rfl
-
-theorem toUnits_comp_toCircle {M : Type} [Group M] [Finite M] (c : M →* ℂˣ) : Circle.toUnits.comp (toCircle c) = c :=
-  MonoidHom.ext fun _ => Units.ext rfl
 
 end Res
 
@@ -206,8 +206,8 @@ structure BaseOf (B : Base (Vc D i) (Wc D i)) : Prop where
 
 variable {i}
 
-open Classical in
 
+open Classical in
 def IsTupOf (B : Base (Vc D i) (Wc D i)) (ψ : Twist D Circle) (t : T0) : Prop :=
   R.xi t = B.de.chi * ψ.chi ∧ R.Q t = B.de.Q ∪ ψ.Q
 
@@ -322,10 +322,6 @@ variable (R)
 
 def tupTwist (t : T0) : Twist D Circle := ⟨R.Q t, R.xi t, fun PP => toCircle (R.xiR t PP)⟩
 
-theorem isResAt_tupTwist {t₀ : T0} (hL : R.toLevCh.Is t₀) (t : T0) {PP : Pl D.host.E} (hPP : PP ∈ R.Q t)
-    (h : Formalism.L2.NTheta.IsIdemAt (idemAt PP) PP) : IsResAt (tupTwist R t).chi PP ((tupTwist R t).res PP) :=
-  fun x hx hi u hu => Circle.ext (eq_res_of_chrEq (hL.xi t) h (hL.xi_tame t PP) (hL.xiR t PP hPP) x hx hi u hu)
-
 theorem isUnit_of_isONBasis {k p : ℕ} {J s B : Matrix (Fin k) (Fin k) ℂ} (h : IsONBasis J s B p) : IsUnit B := by
   obtain ⟨ε, h1, h2, -⟩ := h
   rw [Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
@@ -335,8 +331,8 @@ theorem isUnit_of_isONBasis {k p : ℕ} {J s B : Matrix (Fin k) (Fin k) ℂ} (h 
   obtain ⟨a, -, ha⟩ := Finset.prod_eq_zero_iff.1 this.symm
   rcases h1 a with k | k <;> simp [k.1] at ha
 
-variable (i) in
 
+variable (i) in
 def baseAt (hB : R.models_BV) (δ : Twist D Circle) (P : LevelP R.Pg (Wc D i).rank ℂ) : Base (Vc D i) (Wc D i) where
   hr := (rank_Wc i).trans_le (r_le_V i)
   F := ⟨R.ψ, R.θ, cart (R.MW i (sg0 D A)), fun τ => (isUnit_of_isONBasis (hB i τ)).unit, onb (R.MW i (sg0 D A)),
@@ -358,19 +354,5 @@ theorem isTupOf_baseAt (hB : R.models_BV) (t₀ : T0) (P : LevelP R.Pg (Wc D i).
 theorem isTupOf_tupTwist (hB : R.models_BV) (t : T0) (P : LevelP R.Pg (Wc D i).rank ℂ) :
     IsTupOf R (baseAt R i hB (Twist.triv Circle ∅) P) (tupTwist R t) t :=
   ⟨(one_mul _).symm, by classical exact (Finset.empty_union _).symm.trans (by congr)⟩
-
-example (hB : R.models_BV) (hω : R.thP_ωP) (t₀ : T0) (P : LevelP R.Pg (Wc D i).rank ℂ) :
-    (baseAt R i hB (tupTwist R t₀) P).IsWeil 1 (R.ωP i t₀) :=
-  (baseOf_baseAt R hB _ P).isWeil hω (isTupOf_baseAt R hB t₀ P)
-
-example (ψ : Twist D Circle) : ConjChar (starRingAut : ℂ ≃+* ℂ) ψ ⟨ψ.Q, ψ.chi⁻¹, fun PP => (ψ.res PP)⁻¹⟩ :=
-  ⟨rfl, fun x => Circle.coe_inv_eq_conj (ψ.chi x)⟩
-
-example (τ : D.what₂.Tau) (a : Fin (Vc D i).rank) (h1 : pS D i τ ≤ a.val) (h2 : a.val + qS D i τ < (Vc D i).rank) :
-    (lamV D i τ).w a = liftC D i τ := by
-  have h := (liftWeight_good D i).lam_eq τ a
-  rw [if_neg (show ¬ a.val < (liftWeight D i).p τ from not_lt.2 h1),
-    if_neg (show ¬ (Vc D i).rank - (liftWeight D i).q τ ≤ a.val from by change ¬ _ - qS D i τ ≤ _; omega), zero_add] at h
-  exact h
 
 end GlobalTheory.ConjTwist

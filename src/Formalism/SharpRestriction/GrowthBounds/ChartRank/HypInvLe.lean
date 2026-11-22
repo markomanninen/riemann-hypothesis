@@ -1,11 +1,15 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypRankGe
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfRatInv
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypRankGe
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfRatInv
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem finrank_le_transfer (φK : Y →+ WK) (hK : ∀ (a : LL) y, φK (a • y
   have hsp : Submodule.span K (Set.range φK) ≤ Submodule.span K (Set.range fun j => φK (b j)) := by
     rw [Submodule.span_le]
     rintro _ ⟨y, rfl⟩
-    rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [hK]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -77,8 +82,8 @@ theorem ker_desc {σ τ : Type} (Ts : Set (MvPolynomial σ Kf →ₗ[Kf] MvPolyn
     Prod.ext (mapE_smul e a x.1) (mapE_smul e a x.2)
   have hval : ∀ x, IsRat e ev (φ x) := by
     rintro x (m | m)
-    · exact ⟨MvPolynomial.coeff m x.1, by simp [ev, φ, MvPolynomial.coeff_map]⟩
-    · exact ⟨MvPolynomial.coeff m x.2, by simp [ev, φ, MvPolynomial.coeff_map]⟩
+    · exact ⟨AddMonoidAlgebra.coeff x.1 m, by simp [ev, φ, MvPolynomial.coeff_map]⟩
+    · exact ⟨AddMonoidAlgebra.coeff x.2 m, by simp [ev, φ, MvPolynomial.coeff_map]⟩
   let S : Set ((MvPolynomial σ Kf × MvPolynomial τ Kf) →ₗ[Kf] (MvPolynomial σ Kf × MvPolynomial τ Kf)) :=
     {Tm | ∃ T ∈ Ts, Tm = LinearMap.id + (LinearMap.inr Kf _ _).comp (T.comp (LinearMap.fst Kf _ _))}
   have hS : ∀ Tm ∈ S, ∀ x, ∃ y, φ y = Tm (φ x) := by
@@ -135,7 +140,7 @@ theorem colAddGen_map {r n : ℕ} (l j : Fin n) (Q : MvPolynomial (Fin r × Fin 
   · rename_i a
     simp [Formalism.GradedWeylDivisibility.colAddGen]
   · rename_i p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · rename_i p v hp
     simp only [map_mul]
     rw [hp, MvPolynomial.map_X]
@@ -237,7 +242,7 @@ def YInv (a : H.comp) (L : H.P.Tup) : Submodule LL (YR H LL) where
   carrier := {Q | MvPolynomial.map e Q ∈ H.P.Vtup ∧ ∀ γ : (H.lev a).Γ, (H.lev a).smul γ L = L →
     ((H.lev a).χ γ : H.O) • (H.lev a).actX γ (MvPolynomial.map e Q) = MvPolynomial.map e Q}
   add_mem' := fun {Q Q'} h h' => by
-    simp only [Set.mem_ofPred_eq, map_add] at h h' ⊢
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at h h' ⊢
     exact ⟨Submodule.add_mem _ h.1 h'.1, fun γ hγ => by rw [smul_add, h.2 γ hγ, h'.2 γ hγ]⟩
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, map_zero]
@@ -271,7 +276,7 @@ theorem inv_le_span {a : H.comp} {L : H.P.Tup} (hL : H.P.IsLatTup L) (h1 : SpanR
   let Vr : Submodule LL (YR H LL) :=
     { carrier := {Q | MvPolynomial.map e Q ∈ H.P.Vtup}
       add_mem' := fun {Q Q'} h h' => by
-        simp only [Set.mem_ofPred_eq, map_add] at h h' ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at h h' ⊢
         exact Submodule.add_mem _ h h'
       zero_mem' := by
         simp only [Set.mem_ofPred_eq, map_zero]
@@ -285,7 +290,7 @@ theorem inv_le_span {a : H.comp} {L : H.P.Tup} (hL : H.P.IsLatTup L) (h1 : SpanR
     {Tm | ∃ γ : (H.lev a).Γ, (H.lev a).smul γ L = L ∧ Tm = algebraMap H.O H.Kf ((H.lev a).χ γ : H.O) • (H.lev a).actX γ}
   have hsm : ∀ (r : LL) (x : Vr), φ (r • x) = e r • φ x := fun r x => map_smul_e H e r x.1
   have hval : ∀ x : Vr, IsRat e (evX H) (φ x) := fun x m =>
-    ⟨MvPolynomial.coeff m x.1, by simp [φ, evX, MvPolynomial.lcoeff_apply, MvPolynomial.coeff_map]⟩
+    ⟨AddMonoidAlgebra.coeff x.1 m, by simp [φ, evX, MvPolynomial.lcoeff_apply, MvPolynomial.coeff_map]⟩
   have hT : ∀ Tm ∈ Sx, ∀ x : Vr, ∃ y : Vr, φ y = Tm (φ x) := by
     rintro Tm ⟨γ, hγ, rfl⟩ x
     obtain ⟨Q', hQ', e'⟩ := h2 γ hγ x.1 x.2
@@ -327,7 +332,7 @@ def ActRatOf (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Prop :=
 theorem actRat_of_core {S : StepIn M i hi G} {e : D.what₂.LL →+* G.Kf} {β : S.Ch} (H : S.Core e β) (hS : BlockRationalityField)
     (a : S.cmpt β) (L : (Hc S β).P.Tup) : ActRat (Hc S β) e a L := by
   intro γ _ Q hQ
-  obtain ⟨κ, hκ⟩ := (H.toHyp hS).away a γ
+  obtain ⟨κ, hκ⟩ := awayEx_of H.good (S.K β).lev H.gam a γ
   obtain ⟨r, -, hr⟩ := H.chi a γ κ hκ
   have hχ : algebraMap G.O G.Kf (((Hc S β).lev a).χ γ : G.O) = e r⁻¹ := by
     rw [map_inv₀]
@@ -382,10 +387,6 @@ theorem valLiftOf_of (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (h1 : F
   obtain ⟨Φ, hΦ, hind⟩ := h2 hS H X β rep hok c
   refine ⟨(Φ.codRestrict (FiBc S β c).toAddSubgroup fun Q => h1 β c _ (hΦ Q)), fun k Q hQ => ?_⟩
   exact LinearIndependent.of_comp (FiBc S β c).subtype (hind k Q hQ)
-
-theorem invLeOf_of_two (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (h1 : FormsOnClassOf S) (h2 : CmpLiftOf S e) :
-    InvLeOf S e :=
-  invLeOf_of_lift S e (valLiftOf_of S e h1 h2)
 
 theorem chartRankGe_of_lift [IsFractionRing G.O G.Kf] (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (H : ∀ β, S.Core e β)
     (hS : BlockRationalityField) (X : KAat.ChX S) (hV : ValLiftOf S e) : ChartRankGe S :=

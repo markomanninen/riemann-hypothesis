@@ -1,13 +1,17 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.QPowMemOfGenerator
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.InFNcOfInFPOfArcSigmaLe
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeMapLattice
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeInFPSmulPhiLambda
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeRepresentation
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AlgebraMapMemInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.QPowMemOfGenerator
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.InFNcOfInFPOfArcSigmaLe
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeMapLattice
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeInFPSmulPhiLambda
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ArcLengthThreeRepresentation
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.AlgebraMapMemInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
+
+@[expose] public section
 
 noncomputable section
 
@@ -255,7 +259,7 @@ theorem arc_length_three_final_bound [NeZero n] [Fintype (K →ₐ[Qp] LL)] [IsD
   have hFw : W.map F (De₁ + algebraMap O (LetA O n) tt • y₁) =
       algebraMap O (LetA O n) (((PD.p : ℕ) : O) ^ rr * t₃) • V := by
     have hlA : lA W = algebraMap O (LetA O n) ((PD.p : ℕ) : O) := by simp [lA]
-    rw [map_add, map_smulA W F, hFDe₁, hDedef, htt, map_mul, map_mul, map_pow, ← hlA]
+    rw [map_add (f := _), map_smulA W F, hFDe₁, hDedef, htt, map_mul, map_mul, map_pow, ← hlA]
     simp only [smul_sub, mul_smul]
     abel
   refine ⟨rr + σ, t₃, ?_, ⟨r₃, hr₃, hr₃b⟩, ?_⟩

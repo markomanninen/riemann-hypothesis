@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.ApproxBasisB
+module
+
+public import ReciprocityTheory.SemistableReduction.ApproxBasisB
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

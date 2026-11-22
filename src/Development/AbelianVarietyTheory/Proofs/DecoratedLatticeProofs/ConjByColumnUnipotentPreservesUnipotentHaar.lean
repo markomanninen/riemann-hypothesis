@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdRFJCoe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ProdRFJCoe
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SeeSaw GlobalTheory.LocMod GlobalTheory.QPl ValuativeRel
 open GlobalTheory.PosOne (toOne Covers TriPos)
@@ -54,12 +59,12 @@ theorem extendAboveDiagonalEntries_mul_blockRespecting (p : ℕ) (h : Matrix (n 
   · rw [matrixExtendByZero_mul (Up n c p) h e ⟨(r, s), hrs⟩]
     simp [ext0, hrs]
   · have : ext0 (Up n c p) ((rm (Up n c p) h).mulVec e) r s = 0 := by
-      simp only [ext0, Matrix.of_apply]; rw [dif_neg hrs]
+      simp only [ext0, Matrix.of_apply]; rw [dite_eq_right hrs]
     rw [this, Matrix.mul_apply]
     refine Finset.sum_eq_zero fun t _ => ?_
     by_cases hts : lev p t = lev p s
     · have : ext0 (Up n c p) e r t = 0 := by
-        simp only [ext0, Matrix.of_apply]; rw [dif_neg (show ¬ lev p r < lev p t by rw [hts]; exact hrs)]
+        simp only [ext0, Matrix.of_apply]; rw [dite_eq_right (show ¬ lev p r < lev p t by rw [hts]; exact hrs)]
       rw [this, zero_mul]
     · rw [hh t s hts, mul_zero]
 

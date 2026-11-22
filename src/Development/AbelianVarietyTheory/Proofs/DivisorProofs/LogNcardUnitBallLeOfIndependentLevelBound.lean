@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBallFamMonoNegAdd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearIndependentAdaptedToDecreasingChainAStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EncardSeminormBallLePowMulSmallerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBallFamMonoNegAdd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearIndependentAdaptedToDecreasingChainAStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EncardSeminormBallLePowMulSmallerStatement
+
+@[expose] public section
+
 open Filter Topology
 open GlobalTheory GlobalTheory.VolBr
 
@@ -67,6 +72,9 @@ theorem log_ncard_unit_ball_le_of_indep_bound :
     intro x hx
     by_contra hx0
     have hli : LinearIndependent ℤ (fun _ : Fin 1 => x) := by
+      letI : HasUniqueDiv G := ⟨by
+        intro n hn a b h
+        exact eq_of_nsmul_eq_nsmul_of_addCommute hn (AddCommute.all _ _) h⟩
       rw [linearIndependent_unique_iff]; exact hx0
     have h := hbound 1 (fun _ => x) (fun _ => K) hli (fun _ => hx)
     have hlt : T < (K : ℝ) + 1 := Nat.lt_floor_add_one T
@@ -105,5 +113,3 @@ theorem log_ncard_unit_ball_le_of_indep_bound :
       _ = Real.log q * T := mul_comm _ _
 
 end GlobalTheory.VolBr
-
-example : ∀ (G : Type) [AddCommGroup G] [IsAddTorsionFree G] (Λ : AddSubgroup G) (B : ℝ → Set G), IsBallFam Λ B → (B 1).Finite → ∀ (q : ℕ) (T : ℝ), 3 ≤ q → 0 ≤ T → (∀ (r : ℕ) (e : Fin r → G) (n : Fin r → ℕ), LinearIndependent ℤ e → (∀ j, e j ∈ B ((2 / q : ℝ) ^ n j)) → ((∑ j, (n j + 1) : ℕ) : ℝ) ≤ T) → Real.log ((B 1).ncard : ℝ) ≤ Real.log q * T := GlobalTheory.VolBr.log_ncard_unit_ball_le_of_indep_bound

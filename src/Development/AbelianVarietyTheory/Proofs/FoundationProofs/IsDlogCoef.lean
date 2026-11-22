@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivativeCyclotomicMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IntegralLocallyConstCochainModPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivativeCyclotomicMul
+
+@[expose] public section
+
 open GlobalTheory.K5 Polynomial
 
 noncomputable section
@@ -21,7 +26,7 @@ theorem deriv_pow (J : Ideal (On p n)) (D : Derivation (O0 p) (On p n) (On p n �
   induction i with
   | zero => simp
   | succ k ih =>
-    rw [pow_succ, Derivation.leibniz, ih, h, smul_mk, smul_mk, ← map_add]
+    rw [pow_succ, Derivation.leibniz, ih, h, smul_mk, smul_mk, ← (Ideal.Quotient.mk J).map_add]
     congr 1
     push_cast
     ring

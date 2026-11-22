@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
-import GroundTheory.GlobalFields.CompletionAtPlace.Galois
-import GroundTheory.LocalFields.HerbrandLocal
-import GroundTheory.LocalFields.UnramifiedNorms
-import GroundTheory.LocalFields.HerbrandCyclic
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.HerbrandQuotients.CycTate
+public import GroundTheory.GlobalFields.CompletionAtPlace.Galois
+public import GroundTheory.LocalFields.HerbrandLocal
+public import GroundTheory.LocalFields.UnramifiedNorms
+public import GroundTheory.LocalFields.HerbrandCyclic
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ variable [Fintype H] [Fintype G]
 
 theorem cycNorm_mulEquiv (e : H ≃* G) (f : V ≃+ W) (hf : ∀ h x, f (ρ' h x) = ρ (e h) (f x))
     (x : V) : f (cycNorm ρ' x) = cycNorm ρ (f x) := by
-  rw [cycNorm_apply, cycNorm_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cycNorm_apply, cycNorm_apply, map_sum]
   simp_rw [hf]
   exact Fintype.sum_equiv e.toEquiv _ _ fun _ ↦ rfl
 
@@ -51,8 +56,8 @@ theorem cycHerbrand_eq_of_mulEquiv (e : H ≃* G) (f : V ≃+ W)
       fun h ↦ ⟨Finite.of_equiv _ e0.symm (h := h.1), Finite.of_equiv _ e1.symm (h := h.2)⟩⟩
   · rw [cycHerbrand_eq, cycHerbrand_eq, Nat.card_congr e0, Nat.card_congr e1]
 
-omit [Fintype H] [Fintype G] in
 
+omit [Fintype H] [Fintype G] in
 theorem mem_zpowers_mulEquiv (e : H ≃* G) {τ : H} (hτ : ∀ h, h ∈ Subgroup.zpowers τ) (g : G) :
     g ∈ Subgroup.zpowers (e τ) := by
   obtain ⟨n, hn⟩ := Subgroup.mem_zpowers_iff.1 (hτ (e.symm g))
@@ -116,12 +121,6 @@ instance decompositionMulSemiringActionIntegers :
   smul_one σ := Subtype.ext (smul_one σ)
   smul_mul σ x y := Subtype.ext (MulSemiringAction.smul_mul σ (x : w.adicCompletion L) y)
 
-variable {w} in
-@[simp]
-theorem coe_decomposition_smul_integers (σ : MulAction.stabilizer Gal(L/K) w.asIdeal)
-    (x : w.adicCompletionIntegers L) :
-    ((σ • x : w.adicCompletionIntegers L) : w.adicCompletion L) = σ • (x : w.adicCompletion L) :=
-  rfl
 
 instance decompositionUnitsAction :
     MulDistribMulAction (MulAction.stabilizer Gal(L/K) w.asIdeal) (w.adicCompletion L)ˣ :=
@@ -210,12 +209,6 @@ def integerUnitsAddEquiv :
     Additive (w.adicCompletionIntegers L)ˣ ≃+ Additive 𝒪[w.adicCompletion L]ˣ :=
   MulEquiv.toAdditive (Units.mapEquiv (adicCompletionIntegersEquivInteger w).toMulEquiv)
 
-@[simp]
-theorem coe_integerUnitsAddEquiv (x : Additive (w.adicCompletionIntegers L)ˣ) :
-    ((((integerUnitsAddEquiv w x).toMul : 𝒪[w.adicCompletion L]ˣ) : 𝒪[w.adicCompletion L]) :
-      w.adicCompletion L) = ((x.toMul : w.adicCompletionIntegers L) : w.adicCompletion L) :=
-  rfl
-
 variable [Algebra (v.adicCompletion K) (w.adicCompletion L)]
   [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
   [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
@@ -235,12 +228,11 @@ theorem integerUnitsAddEquiv_decomposition (σ : MulAction.stabilizer Gal(L/K) w
   rw [GroundTheory.LocalField.coe_integerAlgEquiv_apply]
   rfl
 
-omit [IsGalois K L] in
 
+omit [IsGalois K L] in
 theorem isUnramified_adicCompletion (he : w.asIdeal.ramificationIdx (𝓞 K) = 1) :
     GroundTheory.LocalField.IsUnramified (v.adicCompletion K) (w.adicCompletion L) :=
-  (GroundTheory.LocalField.isUnramified_iff _ _).2 (by
-    rw [GroundTheory.LocalField.ramificationIndex, ramificationIdx_integer v w, he])
+  (GroundTheory.LocalField.isUnramified_iff _ _).2 ((ramificationIdx_integer v w).trans he)
 
 end UnitsCard
 
@@ -250,9 +242,9 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
   [IsGalois K L]
   (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
 
+
 open AdicLiesOver in
 include v in
-
 theorem subsingleton_cycTateZero_adicCompletionIntegers_units
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1)
     [Fintype (MulAction.stabilizer Gal(L/K) w.asIdeal)]
@@ -270,9 +262,9 @@ theorem subsingleton_cycTateZero_adicCompletionIntegers_units
       (integerUnitsAddEquiv_decomposition v w) τ).toEquiv] at h1
   exact (Nat.card_eq_one_iff_unique.1 h1).1
 
+
 open AdicLiesOver in
 include v in
-
 theorem subsingleton_cycTateNegOne_adicCompletionIntegers_units
     (he : w.asIdeal.ramificationIdx (𝓞 K) = 1)
     [Fintype (MulAction.stabilizer Gal(L/K) w.asIdeal)]

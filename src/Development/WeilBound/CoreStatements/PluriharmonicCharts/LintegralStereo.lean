@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.PSphereLongitudeCoordinates
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.PSphereLongitudeCoordinates
+
+@[expose] public section
 
 namespace PositivityTheory.Xgp.fib_stereo
 

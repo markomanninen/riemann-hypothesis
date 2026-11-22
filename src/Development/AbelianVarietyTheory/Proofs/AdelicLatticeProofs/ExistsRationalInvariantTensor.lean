@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLeftTranslationReynoldsOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HilbertFinitenessLeftInvariantMatrixPolyStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.InvariantFormEqSumInvariantTensorsStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemSpanRationalKroneckerInvariantsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsLeftTranslationReynoldsOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HilbertFinitenessLeftInvariantMatrixPolyStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.InvariantFormEqSumInvariantTensorsStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemSpanRationalKroneckerInvariantsStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -133,7 +138,7 @@ theorem exists_rational_invariant_tensor : ∀ (ι : Type) [Fintype ι] [Decidab
     | add u v _ _ hu hv =>
       obtain ⟨P, hP⟩ := hu
       obtain ⟨Q, hQ⟩ := hv
-      exact ⟨P + Q, fun y => by rw [map_add, ← hP, ← hQ]; rfl⟩
+      exact ⟨P + Q, fun y => by rw [map_add (f := _), ← hP, ← hQ]; rfl⟩
     | mul u v _ _ hu hv =>
       obtain ⟨P, hP⟩ := hu
       obtain ⟨Q, hQ⟩ := hv

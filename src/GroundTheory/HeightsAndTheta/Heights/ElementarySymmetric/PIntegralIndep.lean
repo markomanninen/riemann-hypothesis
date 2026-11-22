@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIntegralIndependent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartIndependent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteMapOpen
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCriticalImageNull
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartLocal
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartSplit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PIntegralIndependent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartIndependent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PSheetOnlyNull
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PFiniteMapOpen
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCriticalImageNull
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartLocal
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPosPartSplit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SettingConstruction
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate ContDiff
@@ -44,7 +48,7 @@ theorem gA_spec {a : Fin (k + 1) → ℂ} {T : ℝ} (hT : 0 < T) (ha : herm (Hb 
       gA k a T *ᵥ (((Real.sqrt T : ℝ) : ℂ) • Pi.single (Fin.last k) 1) = a := by
   have h : 0 < T ∧ herm (Hb k) a a = -(T : ℂ) := ⟨hT, ha⟩
   unfold gA
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec
     (transitive (Hb k) (Hb_herm k) _ a T h.1 (herm_last_scaled k T h.1) h.2)
 
@@ -53,7 +57,7 @@ theorem gB_spec {b : Fin (k + 1) → ℂ} {T' : ℝ} (hT' : 0 < T') (hb : herm (
       gB k b T' *ᵥ b = ((Real.sqrt T' : ℝ) : ℂ) • Pi.single (Fin.last k) 1 := by
   have h : 0 < T' ∧ herm (Hb k) b b = -(T' : ℂ) := ⟨hT', hb⟩
   unfold gB
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec
     (transitive (Hb k) (Hb_herm k) b _ T' h.1 h.2 (herm_last_scaled k T' h.1))
 

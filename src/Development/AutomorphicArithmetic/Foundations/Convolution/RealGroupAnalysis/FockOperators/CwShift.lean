@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.AtLaws
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -14,7 +18,7 @@ private lemma cw_shift {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
     have h1 : (v + Pi.single i (at1 w t) : V4 F) i = v i + at1 w t := by simp
     rw [h1]
     unfold cw
-    rw [map_add, Pi.add_apply, hp]
+    rw [map_add (f := _), Pi.add_apply, hp]
     by_cases hw : w = w'
     · subst hw; simp
     · have : w' ≠ w := fun h => hw h.symm

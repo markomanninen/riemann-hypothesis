@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -48,7 +52,7 @@ def matH (h : Matrix n n ℂ) : Sesq (n → ℂ) :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun z w => ∑ i, ∑ j, z i * h i j * conj (w j))
     (by intro a b c; simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib])
     (by intro c a b; simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum, mul_assoc])
-    (by intro a b c; simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib])
+    (by intro a b c; simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib])
     (by
       intro c a b
       simp only [Pi.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum]
@@ -107,8 +111,8 @@ end PI.ULS
 
 namespace PI
 
-open PI.ULS in
 
+open PI.ULS in
 def UnimodLocStd : Prop :=
   ∀ (a : ℕ) (b c : ℤ) (d : ℕ) (ha : 0 < a) (hd : 0 < d) (lam : ℂ) (hlam : lam ≠ 0), CmOK a b c d →
     ∀ (m : Type) [Fintype m] [DecidableEq m] (Λa : AddSubgroup (m → ℂ)),

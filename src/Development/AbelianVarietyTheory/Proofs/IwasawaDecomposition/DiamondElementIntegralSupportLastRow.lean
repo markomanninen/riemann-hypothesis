@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceProjectionZeroIntegralIffComponentsAbove
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceProjectionZeroIntegralIffComponentsAbove
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 Matrix
 open scoped TensorProduct
 
@@ -276,7 +281,7 @@ theorem val_coord_le (hLb : IsBase S π) (hP : P.under (𝓞 F) = v) (h3 : π �
   by_cases hj : j.1 + 1 = n
   · have h4 := (mem_intV_iff v _).1 (h.2 hj) P hP
     have h5 : cO E π ∉ P.asIdeal := h3
-    rw [map_mul, psi_inclE, map_mul, ← algebraMap_cO, val_eq_one h5, one_mul] at h4
+    rw [map_mul, psi_inclE v P hP, map_mul, ← algebraMap_cO, val_eq_one h5, one_mul] at h4
     exact h4
   · exact (mem_intV_iff v _).1 (h.1 hj) P hP
 
@@ -351,8 +356,8 @@ theorem fT_kill (hLb : IsBase S π) (hv : (T : 𝓞 F) ∈ v.asIdeal) (hP : P.un
     show ι (algebraMap (𝓞 E) E i) * s.1 j = ι (algebraMap (𝓞 E) E π) * (ι _ * s.1 j)
     rw [← mul_assoc, ← map_mul, mul_inv_cancel_left₀ hπ0]
   have e : s = kap F v (y * cO E π) • s + kap F v i • s := by
-    rw [← add_smul, ← map_add, hyi, map_one, one_smul]
-  rw [e, map_add, hA, hB, add_zero]
+    rw [← add_smul, ← map_add (f := _), hyi, map_one, one_smul]
+  rw [e, map_add (f := _), hA, hB, add_zero]
 
 theorem ee_self (r : Fin n) : ee n F E v r r = 1 := by
   simp [ee]
@@ -369,10 +374,10 @@ theorem mem_of_smul_eq_zero {A M : Type} [CommRing A] [AddCommGroup M] [Module A
   obtain ⟨y, i, hi, hyi⟩ := P.isMaximal.exists_inv hdn
   apply hm
   have e : κ (y * d + i) • m = m := by rw [hyi, map_one, one_smul]
-  rw [← e, map_add, add_smul, map_mul, mul_smul, hd, smul_zero, hP i hi, zero_add]
+  rw [← e, map_add (f := _), add_smul, map_mul, mul_smul, hd, smul_zero, hP i hi, zero_add]
+
 
 set_option maxHeartbeats 2000000 in
-
 theorem last_row (hLb : IsBase S π) (hv : (T : 𝓞 F) ∈ v.asIdeal) (hP : P.under (𝓞 F) = v)
     (hw : ∀ w : HeightOneSpectrum (𝓞 E), w.under (𝓞 F) = v → w = P ∨ w = conjPrime₂ P)
     (h2 : π ∉ P.asIdeal ^ 2) (h3 : π ∉ (conjPrime₂ P).asIdeal)

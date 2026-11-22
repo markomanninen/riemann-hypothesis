@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealB
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealStmt
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealB
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.IdealStmt
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,12 +23,12 @@ theorem lines {B : Base F E} (hB : B.IsGood σ) {n d n₁ d₁ : ℕ} {X : Spc F
     (h : H.IsAdapted σ B X X₁ i j) (h' : H'.IsAdapted σ B W W₁ i' j') (hσ : ∀ x, σ (σ x) = x) :
     (Line X.L H.x H.𝔟 ∧ Line X.L H.y (1 * (cj hσ H.𝔟)⁻¹)) ∧
       Line W.L H'.x H'.𝔟 ∧ Line W.L H'.y (codiff E * (cj hσ H'.𝔟)⁻¹) :=
-  ⟨plane_lines hσ (ε := 1) (mul_one 1) (fun a b => by rw [hX.herm, one_mul]) hX.lat (fun y => by
+  ⟨plane_lines hσ (ε := 1) (mul_one 1) (fun a b => by rw [hX.herm, one_mul]) hX.lat.toIsLattice (fun y => by
       rw [hX.dual]
       refine forall₂_congr fun x _ => ?_
       rw [FractionalIdeal.mem_one_iff]
       exact ⟨fun e => ⟨⟨_, e⟩, rfl⟩, fun ⟨o, e⟩ => e ▸ RingOfIntegers.isIntegral_coe o⟩) one_ne_zero h,
-    plane_lines hσ (ε := -1) (by ring) (fun a b => by rw [hW.skew, neg_one_mul]) hW.lat (fun y => by
+    plane_lines hσ (ε := -1) (by ring) (fun a b => by rw [hW.skew, neg_one_mul]) hW.lat.toIsLattice (fun y => by
       rw [hW.dual]
       exact forall₂_congr fun x _ => inD_iff _) codiff_ne_zero h'⟩
 

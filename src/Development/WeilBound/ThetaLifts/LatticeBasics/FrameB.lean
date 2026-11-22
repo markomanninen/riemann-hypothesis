@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.FrameA
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FrameA
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem add_conj (h : IsCMExt F E σ) (z : E) : z + σ z = algebraMap F E (Algeb
   apply (τ : E →+* AlgebraicClosure E).injective
   rw [show (Finset.univ : Finset (E →ₐ[F] AlgebraicClosure E)) = {τ, τ.comp σ} from
     Finset.ext fun ρ => by simpa using eq_or_eq_comp_conj h τ ρ, Finset.sum_pair (comp_conj_ne h τ).symm] at this
-  rw [map_add]
+  rw [map_add (f := _)]
   exact this.symm.trans (τ.commutes _).symm
 
 theorem inD_mem {B : Base F E} (hB : B.IsGood σ) {w : Pl E} (hw : Formalism.UG.IsInertAt F E v w) {z : E} (hz : InD z) :
@@ -48,7 +52,7 @@ theorem inD_mem {B : Base F E} (hB : B.IsGood σ) {w : Pl E} (hw : Formalism.UG.
   set Z := inclR (F := F) (Fv F v) z
   have key : ∀ y ∈ intLoc F E v, y * Z + sigR _ σ (y * Z) ∈ intLoc F E v := fun y hy => by
     refine intLoc_induction (p := fun y => y * Z + sigR _ σ (y * Z) ∈ intLoc F E v) (fun a ha x => ?_) (by simp)
-      (fun _ _ h h' => by convert add_mem h h' using 1; simp only [add_mul, map_add]; ring)
+      (fun _ _ h h' => by convert add_mem h h' using 1; simp only [add_mul, map_add (f := _)]; ring)
       (fun _ h => by convert neg_mem h using 1; simp only [neg_mul, map_neg]; ring) hy
     convert tmul_mem_intLoc (mul_mem ha (trace_mem hB.std (hB.inert v w hw).2.2 (hz.mul x))) 1 using 1
     rw [show a ⊗ₜ[F] (x : E) * Z = a ⊗ₜ[F] (z * x) from (Algebra.TensorProduct.tmul_mul_tmul a 1 _ z).trans (by rw [mul_one, mul_comm])]
@@ -68,8 +72,8 @@ theorem inD_mem {B : Base F E} (hB : B.IsGood σ) {w : Pl E} (hw : Formalism.UG.
   have h2 := (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).1 h1
   rwa [map_mul, hx1, one_mul] at h2
 
-variable (σ v) in
 
+variable (σ v) in
 def Uni (J : Matrix (Fin n) (Fin n) E) (g : GL (Fin n) (Fv F v ⊗[F] E)) : Prop :=
   Int (intLoc F E v) (g.1ᵀ * J.map (inclR (F := F) (Fv F v)) * g.1.map (sigR _ σ)) ∧
     ∃ G', Int (intLoc F E v) G' ∧ G' * (g.1ᵀ * J.map (inclR (F := F) (Fv F v)) * g.1.map (sigR _ σ)) = 1
@@ -79,7 +83,7 @@ theorem exists_loc {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s : ℕ}
       (∀ y, (∀ i, y i ∈ intLoc F E v) ↔ a.1 *ᵥ y ∈ latLoc F Y.L v) ∧ a.1 = l.1 • g.1 ∧ Uni σ v Y.J g := by
   have hc := hB.cm
   have hσ := cm_conj_conj hc
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI hL : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨P, h1, h2⟩ := Frames.exists_rational_frame Y.L v
   let ι := inclR (F := F) (E := E) (Fv F v)
   set G := P.1ᵀ * Y.J * P.1.map σ with hG
@@ -140,7 +144,7 @@ theorem exists_ad {B : Base F E} (hB : B.IsGood σ) {Y : Spc F E n} {r s : ℕ} 
       (∀ v, (∃ l : (Fv F v ⊗[F] E)ˣ, (bc (compFin F E v) a).1 = l.1 • (bc (compFin F E v) g).1) ∧ Uni σ v Y.J (bc (compFin F E v) g)) ∧
       ∀ w, bc (piInf (B.emb w)) g = c w := by
   classical
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI hL : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨S, hS⟩ := Frames.exists_finset_latLoc_eq (F := F) Y.L
   have h0 : ∀ᶠ v : Pl F in cofinite, v ∉ S ∧ ∀ i j, LocInt v (Y.J i j) ∧ LocInt v (Y.J⁻¹ i j) :=
     S.eventually_cofinite_notMem.and (eventually_all.2 fun i => eventually_all.2 fun j => (ae_locInt _).and (ae_locInt _))

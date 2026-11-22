@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaXiSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GaXiSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.JfBetaAdjCOfLemmaBNorm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateSizesOfHypotheses
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyZeroNear
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff
@@ -34,7 +38,7 @@ theorem sqN_eq (y : B.Mat k ρ) : sqN y = B.gN y ^ 2 := by
 theorem contDiff_sqN : ContDiff ℝ ∞ (sqN (k := k) (ρ := ρ)) := by
   unfold sqN
   refine ContDiff.sum fun i _ => ContDiff.sum fun j _ => ?_
-  have hl : ContDiff ℝ ∞ (fun y : B.Mat k ρ => y i j) := contDiff_apply_apply ℝ ℂ i j
+  have hl : ContDiff ℝ ∞ (fun y : B.Mat k ρ => y i j) := contDiff_apply_apply ℝ i j
   exact (contDiff_norm_sq ℝ).comp hl
 
 def bumpG (R : ℝ) (y : B.Mat k ρ) : ℝ := Real.smoothTransition (R ^ 2 + 1 - sqN y)

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -32,7 +36,7 @@ private lemma intAt_add_twisted_eisenstein_coset {E : Type} [Field E] [NumberFie
   · rcases P.isPrime.mem_or_mem h with h' | h'
     · exact hs1 h'
     · exact hs2 h'
-  · rw [map_mul, map_add, map_mul, map_mul, ← h1, ← h2]
+  · rw [map_mul, map_add (f := _), map_mul, map_mul, ← h1, ← h2]
     ring
 
 private lemma intAt_neg_twisted_eisenstein_coset {E : Type} [Field E] [NumberField E] {P : HeightOneSpectrum (𝓞 E)} {a : E}

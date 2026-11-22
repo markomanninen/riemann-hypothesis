@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.AbsGrow
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.AbsGrow
+
+@[expose] public section
 
 open NumberField
 
@@ -62,7 +66,8 @@ theorem UpperTheory.ConvolutionTheory.BW.absFar :
       congr 1
       simp only [map_mul, map_pow, map_neg, map_one, map_natCast]
       ring
-    rw [← norm_pow, ← norm_mul, ← e1, e2, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← norm_pow, ← norm_mul, ← e1, e2, map_sum, Finset.sum_apply]
     refine (norm_sum_le _ _).trans ?_
     have e3 : B * (2 * K) ^ k = ∑ m ∈ Finset.range (k + 1), (k.choose m : ℝ) * (B * K ^ k) := by
       rw [← Finset.sum_mul, ← Nat.cast_sum, Nat.sum_range_choose]

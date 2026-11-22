@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMMOnb
-import Formalism.LocalToGlobal.GlobalTheory.GL3.IsometryLinkageTrivialLevel
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMMOnb
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.IsometryLinkageTrivialLevel
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -12,7 +16,7 @@ variable {D : D7}
 theorem hYY_add_left {N N' : ℕ} (x x' y : Matrix (Fin N') (Fin N) D.host.E) :
     hYY D (x + x') y = hYY D x y + hYY D x' y := by
   unfold hYY
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
   simp only [Matrix.add_apply, add_mul, Finset.sum_add_distrib]
 
@@ -46,12 +50,12 @@ theorem linInd_of_orthonormal {N N' r : ℕ} (b : Fin r → Matrix (Fin N') (Fin
 
 theorem lamC_one {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) : lamC lam 1 = 1 := by
   unfold lamC
-  rw [dif_pos (IntermediateField.one_mem _)]
+  rw [dite_eq_left (IntermediateField.one_mem _)]
   exact map_one lam
 
 theorem lamC_zero {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) : lamC lam 0 = 0 := by
   unfold lamC
-  rw [dif_pos (IntermediateField.zero_mem _)]
+  rw [dite_eq_left (IntermediateField.zero_mem _)]
   exact map_zero lam
 
 theorem lamC_phi_K_one {p : ℕ} [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) :
@@ -286,7 +290,7 @@ theorem mem_bq {m : ℕ} (p : ℕ) (e : Fin m → Matrix (Fin 1) (Fin 1) D.host.
     (ik : Fin m × Fin 4) :
     ∃ s : ℕ, Nat.Coprime s p ∧ (s : D.host.E) • bq e n Q ik ∈ YYl D (Formalism.MainNotions.StandardLatticesGL3.stdL D 2) (Formalism.MainNotions.StandardLatticesGL3.stdL D 2) := by
   obtain ⟨s, hs, hmem⟩ := he ik.1
-  refine ⟨n ik.1 * s, Nat.Coprime.mul (hncop ik.1) hs, ?_⟩
+  refine ⟨n ik.1 * s, Nat.Coprime.mul_left (hncop ik.1) hs, ?_⟩
   rw [smul_bq e n Q hn0 ik s]
   exact Submodule.sum_mem _ (fun j _ => zsmul_mem (plc_mem j hmem) _)
 
@@ -328,14 +332,15 @@ theorem span_bq {m : ℕ} (p : ℕ) (e : Fin m → Matrix (Fin 1) (Fin 1) D.host
   have hsd : ∀ pc, s pc ∣ ∏ pc', s pc' := fun pc => Finset.dvd_prod_of_mem _ (Finset.mem_univ pc)
   have hdd : ∀ i, dn i ∣ ∏ i', dn i' := fun i => Finset.dvd_prod_of_mem _ (Finset.mem_univ i)
   refine ⟨(∏ pc, s pc) * ∏ i, dn i,
-    Nat.Coprime.mul (Nat.Coprime.prod_left fun pc _ => hs pc) (Nat.Coprime.prod_left fun i _ => hdcop i),
+    Nat.Coprime.mul_left (Nat.Coprime.prod_left fun pc _ => hs pc) (Nat.Coprime.prod_left fun i _ => hdcop i),
     fun ik => ∑ pc, (((∏ pc', s pc') / s pc * ((∏ i', dn i') / dn ik.1) : ℕ) : 𝓞 D.host.K) *
       ((Q ik.1 ik.2 (pos pc) : ℤ) : 𝓞 D.host.K) * c pc ik.1, ?_⟩
   refine Matrix.ext fun a c' => ?_
   rw [Matrix.smul_apply, Matrix.sum_apply, Fintype.sum_prod_type]
   simp only [Matrix.smul_apply, smul_eq_mul, bq, Matrix.of_apply]
   simp only [hφ]
-  simp only [map_sum, map_mul, map_natCast, map_intCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_natCast, map_intCast]
   have key : ∀ i, ∑ k, (∑ pc, (((∏ pc', s pc') / s pc * ((∏ i', dn i') / dn i) : ℕ) : D.host.E) *
       ((Q i k (pos pc) : ℤ) : D.host.E) * φ (c pc i)) *
       (((Q i k (pos (a, c')) : ℤ) : D.host.E) / (n i : D.host.E) * e i 0 0) =
@@ -473,6 +478,7 @@ def Good (p : ℕ) {k : ℕ} (e : Fin k → D.host.E) : Prop :=
 theorem orth_symm {x y : D.host.E} (h : Algebra.trace D.host.K D.host.E (x * D.host.conj y) = 0) :
     Algebra.trace D.host.K D.host.E (y * D.host.conj x) = 0 := by
   have := (G0.herm D).symm x y
+  change G0.hK D y x = G0.cK D (G0.hK D x y) at this
   simp only [G0.hK] at this
   rw [this, h, map_zero]
 
@@ -520,7 +526,7 @@ theorem oneCopyOrth_of (hU : UnitVec) : OneCopyOrth := by
     have : ((u i : ℚ) : D.host.K) ≠ 0 := Rat.cast_ne_zero.2 (hu i).1.ne'
     exact this h.symm
   have hli : LinearIndependent D.host.K e :=
-    FS.Herm4.linInd (G0.herm D) e hne (fun i j hij => horth i j hij)
+    FS.Herm4.linInd (h := G0.hK D) (G0.herm D) e hne (fun i j hij => horth i j hij)
   have hsp : ⊤ ≤ Submodule.span D.host.K (Set.range e) :=
     le_of_eq (hli.span_eq_top_of_card_eq_finrank' (by rw [Fintype.card_fin])).symm
   let bs : Module.Basis (Fin f) D.host.K D.host.E := Module.Basis.mk hli hsp
@@ -578,7 +584,7 @@ theorem oneCopyOrth_of (hU : UnitVec) : OneCopyOrth := by
       ring
     set S := ∏ j, (s j * n j) with hS
     have hdv : ∀ j, s j * n j ∣ S := fun j => Finset.dvd_prod_of_mem _ (Finset.mem_univ j)
-    refine ⟨S, Nat.Coprime.prod_left (fun j _ => Nat.Coprime.mul (hs j) (hncop j)),
+    refine ⟨S, Nat.Coprime.prod_left (fun j _ => Nat.Coprime.mul_left (hs j) (hncop j)),
       fun j => w j * (((u j).den : ℕ) : 𝓞 D.host.K) * ((S / (s j * n j) : ℕ) : 𝓞 D.host.K), ?_⟩
 
     have hexp : y 0 0 = ∑ j, bs.repr (y 0 0) j • e j := by
@@ -588,7 +594,8 @@ theorem oneCopyOrth_of (hU : UnitVec) : OneCopyOrth := by
         Algebra.trace D.host.K D.host.E (y 0 0 * D.host.conj (e j)) := by
       intro j
       have h1 := congrArg (fun x => (G0.herm D).hl (e j) x) hexp
-      simp only [map_sum, map_smul, smul_eq_mul] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, smul_eq_mul] at h1
       show _ = (G0.herm D).hl (e j) (y 0 0)
       rw [h1, Finset.sum_eq_single j]
       · show _ = bs.repr (y 0 0) j * G0.hK D (e j) (e j)
@@ -758,7 +765,7 @@ theorem coord_of_OK (D : D7) (w : 𝓞 D.host.K) (a b' : ℚ)
   have hb := bE_isIntegral D
   have hcw : D.host.conj (((w : D.host.K)) : D.host.E) =
       (a : D.host.E) - (b' : D.host.E) * D.host.sqd := by
-    rw [hw, map_add, map_mul, map_ratCast, map_ratCast, G0.conj_b]; ring
+    rw [hw, map_add (f := _), map_mul, map_ratCast, map_ratCast, G0.conj_b]; ring
   constructor
   · apply int_of_isIntegral D
     have e : ((2 * a : ℚ) : D.host.E) = (((w : D.host.K)) : D.host.E) + D.host.conj (((w : D.host.K)) : D.host.E) := by
@@ -784,7 +791,7 @@ theorem okK_of_int (D : D7) (m1 m2 : ℤ) : ∃ w : 𝓞 D.host.K,
   have e : ((((m1 : 𝓞 D.host.K) + (m2 : 𝓞 D.host.K) * bO : 𝓞 D.host.K) : D.host.K) : D.host.E) =
       algebraMap D.host.K D.host.E (algebraMap (𝓞 D.host.K) D.host.K ((m1 : 𝓞 D.host.K) + (m2 : 𝓞 D.host.K) * bO)) := rfl
   rw [e]
-  simp only [map_add, map_mul, map_intCast]
+  simp only [map_add (f := _), map_mul, map_intCast]
   rfl
 
 theorem okK_mul_mem (D : D7) (κ : 𝓞 D.host.K) {z : D.host.E} (hz : z ∈ AAs D) :
@@ -821,7 +828,7 @@ theorem tr_pos (D : D7) (x : D.host.E) (hx : x ≠ 0) :
     exact Finset.sum_pos (fun τ _ => Complex.normSq_pos.2 ((map_ne_zero _).2 hx)) Finset.univ_nonempty
   obtain ⟨p, q, e⟩ := CS.K_repr D _ (G0.hK D x x).2
   have hs := IO.sqrt_d_pos D
-  rw [e, map_add, map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d] at hφ
+  rw [e, map_add (f := _), map_mul, map_ratCast, map_ratCast, CS.embedding_sqrt_neg_d] at hφ
   have him := congrArg Complex.im hφ
   have hre := congrArg Complex.re hφ
   simp only [Complex.add_im, Complex.mul_im, Complex.ratCast_im, Complex.ratCast_re, Complex.I_re, Complex.I_im,
@@ -848,13 +855,13 @@ theorem tE_add_l (y y' z : D.host.E) :
     ((Algebra.trace D.host.K D.host.E ((y + y') * D.host.conj z) : D.host.K) : D.host.E) =
       (Algebra.trace D.host.K D.host.E (y * D.host.conj z) : D.host.E) +
         (Algebra.trace D.host.K D.host.E (y' * D.host.conj z) : D.host.E) := by
-  rw [add_mul, map_add, IntermediateField.coe_add]
+  rw [add_mul, map_add (f := _), IntermediateField.coe_add]
 
 theorem tE_add_r (y z z' : D.host.E) :
     ((Algebra.trace D.host.K D.host.E (y * D.host.conj (z + z')) : D.host.K) : D.host.E) =
       (Algebra.trace D.host.K D.host.E (y * D.host.conj z) : D.host.E) +
         (Algebra.trace D.host.K D.host.E (y * D.host.conj z') : D.host.E) := by
-  rw [map_add, mul_add, map_add, IntermediateField.coe_add]
+  rw [map_add (f := _), mul_add, map_add (f := _), IntermediateField.coe_add]
 
 theorem tE_mul_l (κ : D.host.K) (y z : D.host.E) :
     ((Algebra.trace D.host.K D.host.E ((κ : D.host.E) * y * D.host.conj z) : D.host.K) : D.host.E) =
@@ -873,6 +880,7 @@ theorem tE_swap (y z : D.host.E) :
     ((Algebra.trace D.host.K D.host.E (z * D.host.conj y) : D.host.K) : D.host.E) =
       D.host.conj ((Algebra.trace D.host.K D.host.E (y * D.host.conj z) : D.host.K) : D.host.E) := by
   have := (G0.herm D).symm y z
+  change G0.hK D z y = G0.cK D (G0.hK D y z) at this
   simp only [G0.hK] at this
   rw [this]
   rfl
@@ -890,12 +898,12 @@ variable (D : D7) (p : ℕ) [hp : Fact p.Prime] {k : ℕ} (e : Fin k → D.host.
 theorem InC_add {x y : D.host.E} (hx : InC D p e x) (hy : InC D p e y) : InC D p e (x + y) := by
   obtain ⟨⟨t, ht, htx⟩, hxo⟩ := hx
   obtain ⟨⟨t', ht', hty⟩, hyo⟩ := hy
-  refine ⟨⟨t * t', Nat.Coprime.mul ht ht', ?_⟩, fun i => ?_⟩
+  refine ⟨⟨t * t', Nat.Coprime.mul_left ht ht', ?_⟩, fun i => ?_⟩
   · have e1 : ((t * t' : ℕ) : D.host.E) * (x + y) = (t' : D.host.E) * ((t : D.host.E) * x) + (t : D.host.E) * ((t' : D.host.E) * y) := by
       push_cast; ring
     rw [e1]
     exact add_mem (nat_mul_mem D t' htx) (nat_mul_mem D t hty)
-  · rw [add_mul, map_add, hxo i, hyo i, add_zero]
+  · rw [add_mul, map_add (f := _), hxo i, hyo i, add_zero]
 
 theorem InC_bE {v : D.host.E} (hv : InC D p e v) : InC D p e (D.host.sqd * v) := by
   obtain ⟨⟨t, ht, htv⟩, hvo⟩ := hv
@@ -922,7 +930,8 @@ theorem oprj_orth (h2 : ∀ i j, i ≠ j → Algebra.trace D.host.K D.host.E (e 
     (hu : ∀ i, 0 < u i ∧ Algebra.trace D.host.K D.host.E (e i * D.host.conj (e i)) = ((u i : ℚ) : D.host.K))
     (w : D.host.E) (j : Fin k) : Algebra.trace D.host.K D.host.E (oprj D e u w * D.host.conj (e j)) = 0 := by
   unfold oprj
-  rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
   have h1 : ∀ i, Algebra.trace D.host.K D.host.E ((cf D e u w i : D.host.E) * e i * D.host.conj (e j)) =
       cf D e u w i * Algebra.trace D.host.K D.host.E (e i * D.host.conj (e j)) := by
     intro i; rw [mul_assoc, trace_K_mul]
@@ -934,7 +943,8 @@ theorem oprj_orth (h2 : ∀ i j, i ≠ j → Algebra.trace D.host.K D.host.E (e 
 theorem oprj_pair {x : D.host.E} (hxo : ∀ i, Algebra.trace D.host.K D.host.E (x * D.host.conj (e i)) = 0) (w : D.host.E) :
     Algebra.trace D.host.K D.host.E (x * D.host.conj w) = Algebra.trace D.host.K D.host.E (x * D.host.conj (oprj D e u w)) := by
   unfold oprj
-  rw [map_sub, mul_sub, map_sub, map_sum, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, mul_sub, map_sub, map_sum, Finset.mul_sum, map_sum]
   have h1 : ∀ i, Algebra.trace D.host.K D.host.E (x * D.host.conj ((cf D e u w i : D.host.E) * e i)) = 0 := by
     intro i
     have e1 : x * D.host.conj ((cf D e u w i : D.host.E) * e i) =
@@ -981,7 +991,7 @@ theorem oprj_mp (s : Fin k → ℕ) (hs : ∀ i, Nat.Coprime (s i) p) (hsm : ∀
     ring
   set t := ∏ j, (s j * s j * n j) with htdef
   have hdv : ∀ j, s j * s j * n j ∣ t := fun j => Finset.dvd_prod_of_mem _ (Finset.mem_univ j)
-  refine ⟨t, Nat.Coprime.prod_left (fun j _ => Nat.Coprime.mul (Nat.Coprime.mul (hs j) (hs j)) (hncop j)), ?_⟩
+  refine ⟨t, Nat.Coprime.prod_left (fun j _ => Nat.Coprime.mul_left (Nat.Coprime.mul_left (hs j) (hs j)) (hncop j)), ?_⟩
   let κ : Fin k → 𝓞 D.host.K := fun j => ω j * (((u j).den : ℕ) : 𝓞 D.host.K) * ((t / (s j * s j * n j) : ℕ) : 𝓞 D.host.K)
   have hterm : ∀ j, (t : D.host.E) * (((cf D e u w j : D.host.K) : D.host.E) * e j) =
       (((κ j : D.host.K)) : D.host.E) * ((s j : D.host.E) * e j) := by
@@ -1045,7 +1055,7 @@ theorem div_mem (D : D7) (p : ℕ) [hp : Fact p.Prime] {k : ℕ} (e : Fin k → 
   obtain ⟨⟨s0, hs0, hx0⟩, hxo⟩ := hx
   have hxC : InC D p e x := ⟨⟨s0, hs0, hx0⟩, hxo⟩
   have hpinv : x * (p : D.host.E)⁻¹ = (((p : ℚ)⁻¹ : ℚ) : D.host.E) * x := by push_cast; ring
-  refine ⟨⟨2 * D.host.d * s0, Nat.Coprime.mul hpd hs0, ?_⟩, fun i => ?_⟩
+  refine ⟨⟨2 * D.host.d * s0, Nat.Coprime.mul_left hpd hs0, ?_⟩, fun i => ?_⟩
   swap
   · rw [hpinv, mul_assoc, trace_rat_mul, hxo i, mul_zero]
   apply (factMMUnimodular D.R D.host _).2
@@ -1063,7 +1073,7 @@ theorem div_mem (D : D7) (p : ℕ) [hp : Fact p.Prime] {k : ℕ} (e : Fin k → 
   obtain ⟨q2, hq2, p2⟩ := hPZ _ (InC_add D p e hxC (InC_bE D p e hvC))
   have hcT : D.host.conj ((Algebra.trace D.host.K D.host.E (x * D.host.conj (oprj D e u w)) : D.host.K) : D.host.E) =
       (α : D.host.E) - (β : D.host.E) * D.host.sqd := by
-    rw [hαβ, map_add, map_mul, map_ratCast, map_ratCast, G0.conj_b]; ring
+    rw [hαβ, map_add (f := _), map_mul, map_ratCast, map_ratCast, G0.conj_b]; ring
   have hcb : D.host.conj (D.host.sqd) = -D.host.sqd := G0.conj_b D
   have hsq : (D.host.sqd) ^ 2 = -(D.host.d : D.host.E) := CS.s_sq D
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.RenameProdMapMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.RenameProdMapMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -38,8 +43,9 @@ theorem component_ne_zero_of_mem {p : MvPolynomial σ R} {a : ℕ} (ha : a ∈ w
   classical
   obtain ⟨d, hd, rfl⟩ := mem_weightSet.mp ha
   intro h
-  have := congrArg (coeff d) h
-  rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
+  have := congrArg (AddMonoidAlgebra.coeff · d) h
+  rw [coeff_weightedHomogeneousComponent, if_pos rfl] at this
+  change p.coeff d = 0 at this
   exact mem_support_iff.mp hd this
 
 theorem component_mul_of_unique (p q : MvPolynomial σ R) (a b : ℕ)
@@ -49,7 +55,8 @@ theorem component_mul_of_unique (p q : MvPolynomial σ R) (a b : ℕ)
   classical
   conv_lhs => rw [← sum_weightSet_component (w := w) p, ← sum_weightSet_component (w := w) q,
     Finset.sum_mul_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hterm : ∀ a' ∈ weightSet w p, ∀ b' ∈ weightSet w q,
       weightedHomogeneousComponent w (a + b)
         (weightedHomogeneousComponent w a' p * weightedHomogeneousComponent w b' q) =
@@ -65,7 +72,8 @@ theorem component_mul_of_unique (p q : MvPolynomial σ R) (a b : ℕ)
       rw [if_neg]
       rintro ⟨rfl, rfl⟩
       exact hs rfl
-  rw [Finset.sum_congr rfl fun a' ha' => map_sum _ _ _]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_congr rfl fun a' ha' => map_sum _ _ _]
   rw [Finset.sum_congr rfl fun a' ha' => Finset.sum_congr rfl fun b' hb' => hterm a' ha' b' hb']
   by_cases ha : a ∈ weightSet w p
   · by_cases hb : b ∈ weightSet w q

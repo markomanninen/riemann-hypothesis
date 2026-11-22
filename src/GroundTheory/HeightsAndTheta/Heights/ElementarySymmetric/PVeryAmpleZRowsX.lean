@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleZRows
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechPartition
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZChartSmul
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZChartLocal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PVeryAmpleZRows
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechPartition
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZChartSmul
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PZChartLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

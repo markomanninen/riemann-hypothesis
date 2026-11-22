@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfE
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelFPfE
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem modelF_local (hfr : IsFrame W Pt π' Eπ h' M σ c α β) (hcry : IsCrys
       obtain ⟨y₂, hy₂, hN₂, e₂⟩ := ih₂ hx₂
       refine ⟨y₁ + y₂, Submodule.add_mem _ hy₁ hy₂, Submodule.add_mem _ hN₁ hN₂, ?_⟩
       have e : (⟨x₁ + x₂, hx⟩ : ↥(LamLA W T π' Eπ h' c ⊤)) = ⟨x₁, hx₁⟩ + ⟨x₂, hx₂⟩ := rfl
-      rw [e, map_add, e₁, e₂]
+      rw [e, map_add (f := _), e₁, e₂]
       exact (Submodule.Quotient.mk_add _).symm
     | smul r x₁ h₁ ih₁ =>
       have hx₁ := NL_le_LamLA W T π' Eπ h' c Pt h₁

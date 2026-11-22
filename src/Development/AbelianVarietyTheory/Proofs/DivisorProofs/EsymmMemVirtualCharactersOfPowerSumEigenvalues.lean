@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MatrixTraceIffIsCharacterOverSubfieldComplex
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterEsymmRootsCharpoly
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MultisetPowerSumNewtonIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MatrixTraceIffIsCharacterOverSubfieldComplex
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.VirtualCharactersMulComapConjIndLinear
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPow
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterEsymmRootsCharpoly
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MultisetPowerSumNewtonIdentity
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
 namespace GlobalTheory.EsymmVirt
@@ -32,7 +37,7 @@ theorem coeff_prod_one_add (s : Multiset ℂ) (n : ℕ) :
 
 theorem esymm_add (s t : Multiset ℂ) (n : ℕ) :
     (s + t).esymm n = ∑ i ∈ Finset.range (n + 1), s.esymm i * t.esymm (n - i) := by
-  rw [← coeff_prod_one_add, Multiset.map_add, Multiset.prod_add, coeff_mul,
+  rw [← coeff_prod_one_add, Multiset.map_add (f := _), Multiset.prod_add, coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
   simp only [coeff_prod_one_add]
 
@@ -99,7 +104,7 @@ theorem exists_multisets {φ : G → ℂ} (hφ : φ ∈ Virt ℂ ℂ G) :
     obtain ⟨A', B', hA', hB', h'⟩ := hy
     refine ⟨fun g => A g + A' g, fun g => B g + B' g, esymm_add_mem_virt hA hA',
       esymm_add_mem_virt hB hB', fun g j hj => ?_⟩
-    simp only [Pi.add_apply, Multiset.map_add, Multiset.sum_add]
+    simp only [Pi.add_apply, Multiset.map_add (f := _), Multiset.sum_add]
     linear_combination h g j hj + h' g j hj
   | neg x _ hx =>
     obtain ⟨A, B, hA, hB, h⟩ := hx
@@ -114,7 +119,7 @@ theorem esymm_mem_virt : ∀ (G : Type) [Group G] [Finite G] (φ : G → ℂ) (x
   obtain ⟨A, B, hA, hB, h⟩ := exists_multisets hφ
   have he : ∀ g n, (x g + B g).esymm n = (A g).esymm n := fun g n =>
     esymm_eq_of_psum_eq _ _ (fun j hj => by
-      rw [Multiset.map_add, Multiset.sum_add, ← hx g j hj, h g j hj]) n
+      rw [Multiset.map_add (f := _), Multiset.sum_add, ← hx g j hj, h g j hj]) n
   induction s using Nat.strong_induction_on with
   | _ s ih =>
     have : (fun g => (x g).esymm s) = (fun g => (A g).esymm s) - ∑ i ∈ Finset.range s,

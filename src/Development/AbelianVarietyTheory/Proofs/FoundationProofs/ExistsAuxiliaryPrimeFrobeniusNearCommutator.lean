@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,7 @@ theorem root_mod {B : ValuationSubring Ω} {p m N : ℕ} (hp : p.Prime) (hpB : B
     rw [map_sub, map_pow, sub_eq_zero] at this
     exact this.symm
   have hP : (Polynomial.X ^ p - Polynomial.X : Polynomial (IsLocalRing.ResidueField B)) ≠ 0 :=
-    FiniteField.X_pow_card_sub_X_ne_zero _ hp.one_lt
+    Polynomial.X_pow_sub_X_ne_zero hp.one_lt
   have hsub : Finset.univ.image φ ⊆
       (Polynomial.X ^ p - Polynomial.X : Polynomial (IsLocalRing.ResidueField B)).roots.toFinset := by
     intro y hy
@@ -114,7 +118,7 @@ theorem root_mod {B : ValuationSubring Ω} {p m N : ℕ} (hp : p.Prime) (hpB : B
           Multiset.toFinset_card_le _
       _ ≤ (Polynomial.X ^ p - Polynomial.X : Polynomial (IsLocalRing.ResidueField B)).natDegree :=
           Polynomial.card_roots' _
-      _ = p := FiniteField.X_pow_card_sub_X_natDegree_eq _ hp.one_lt
+      _ = p := Polynomial.natDegree_X_pow_sub_X hp.one_lt
   have heq := Finset.eq_of_subset_of_card_le hsub hcard
   have hrmem : IsLocalRing.residue B a ∈
       (Polynomial.X ^ p - Polynomial.X : Polynomial (IsLocalRing.ResidueField B)).roots.toFinset := by
@@ -145,7 +149,9 @@ theorem natCast_mem_iff (v : Pl) (n : ℕ) : (n : 𝓞 ℚ) ∈ v.asIdeal ↔ no
   exact Ideal.mul_mem_right _ _ (Ideal.absNorm_mem _)
 
 theorem normV_prime' (v : Pl) : (normV v).Prime := by
-  have h1 : 1 < normV v := NumberField.HeightOneSpectrum.one_lt_absNorm v
+  have h1 : 1 < normV v := by
+    rw [normV_eq_absNorm]
+    exact NumberField.HeightOneSpectrum.one_lt_absNorm v
   refine Nat.prime_def.2 ⟨h1, fun m hm => ?_⟩
   obtain ⟨c, hc⟩ := hm
   have h2 := (natCast_mem_iff v _).2 dvd_rfl
@@ -184,7 +190,7 @@ theorem exists_odd_prime_gt_two_bounds : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type
   choose α hα using hα
   let T : Finset Ω := insert ζ (S.image α)
   let O : Set (G ℚ Ω) := {τ | σ⁻¹ * τ ∈ U} ∩ ⋂ x ∈ T, {τ | τ x = x}
-  have hO : IsOpen O := (hU.preimage (continuous_mul_left σ⁻¹)).inter
+  have hO : IsOpen O := (hU.preimage (continuous_const_mul σ⁻¹)).inter
     (isOpen_biInter_finset fun x _ => isOpen_stab x)
   have hσker : σ ∈ (cycBar ℚ Ω l).ker := Subgroup.commutator_le_left _ _ hσ
   have hσO : σ ∈ O := by

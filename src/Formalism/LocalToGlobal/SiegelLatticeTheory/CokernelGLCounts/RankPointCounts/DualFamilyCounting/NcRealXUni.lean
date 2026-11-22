@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalJacobianOfDoubleCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem Pu_star (k r : ℕ) (i j : Fin (2 * r + k + 1)) : star (Pu k r i j) = Pu
 theorem PuJPu_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
     ((Pu k r)ᴴ * Formalism.REAL.Jm (epsK k r) * Pu k r) i j = Hpk k r i j := by
   have hJ : Formalism.REAL.Jm (epsK k r) = diagonal (dK k r) := rfl
-  rw [hJ, mul_apply]
+  rw [hJ, Matrix.mul_apply]
   simp only [mul_diagonal, conjTranspose_apply, Pu_star]
   unfold Pu
   simp only [add_mul, mul_add, Finset.sum_add_distrib, ite_mul, mul_ite,
@@ -67,7 +71,7 @@ theorem PuJPu_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
 
 theorem PuPu_apply (k r : ℕ) (i j : Fin (2 * r + k + 1)) :
     ((Pu k r)ᴴ * Pu k r) i j = (1 : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) i j := by
-  rw [mul_apply, one_apply]
+  rw [Matrix.mul_apply, Matrix.one_apply]
   simp only [conjTranspose_apply, Pu_star]
   unfold Pu
   simp only [add_mul, mul_add, Finset.sum_add_distrib, ite_mul, mul_ite,
@@ -110,13 +114,13 @@ theorem exists_unitary {r k : ℕ} (ε : Fin (2 * r + k + 1) → Bool)
   refine ⟨Matrix.of fun i j => Pu k r (σ.symm i) j, ?_, ?_⟩
   · rw [← PuJPu k r]
     ext a b
-    rw [mul_apply, mul_apply]
+    rw [Matrix.mul_apply, Matrix.mul_apply]
     simp only [Formalism.REAL.Jm, mul_diagonal, conjTranspose_apply, of_apply]
     refine (Fintype.sum_equiv σ _ _ (fun m => ?_)).symm
     simp only [Equiv.symm_apply_apply, hσ m]
   · rw [← PuPu k r]
     ext a b
-    rw [mul_apply, mul_apply]
+    rw [Matrix.mul_apply, Matrix.mul_apply]
     simp only [conjTranspose_apply, of_apply]
     refine (Fintype.sum_equiv σ _ _ (fun m => ?_)).symm
     simp only [Equiv.symm_apply_apply]

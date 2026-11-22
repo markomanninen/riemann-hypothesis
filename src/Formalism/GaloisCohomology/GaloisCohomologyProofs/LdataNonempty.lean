@@ -1,4 +1,8 @@
-import Formalism.GaloisCohomology.Statement
+module
+
+public import Formalism.GaloisCohomology.Statement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Representation ReciprocityTheory.Gal Formalism.ConjugateSelfDual
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsArchimedeanExponentsAdeleCharacter
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousBdGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsArchimedeanExponentsAdeleCharacter
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ContinuousBdGen
+
+@[expose] public section
 
 namespace SchrodingerLinePhase
 section
@@ -101,7 +105,8 @@ theorem phase_line [Invertible (2 : AF F)] (hF : IsTotallyReal F) {ψ : AddChar 
   haveI : IsTotallyReal F := hF
   have hy0 : ∀ l, sndA F ((M s).2 l) = 0 := fun l => congrFun (hM.2 s).2 l
   have hsnd : sndA F (z ⬝ᵥ (M s).2 + ⅟(2 : AF F) * ((M s).1 ⬝ᵥ (M s).2)) = 0 := by
-    simp only [dotProduct, map_add, map_mul, map_sum, hy0, mul_zero, Finset.sum_const_zero, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_add (f := _), map_mul, map_sum, hy0, mul_zero, Finset.sum_const_zero, add_zero]
   have e1 : ∀ w, re (fstA F (z ⬝ᵥ (M s).2 + ⅟(2 : AF F) * ((M s).1 ⬝ᵥ (M s).2))) w =
       s * ∑ l, coord hF w (arch (z l)) * coord hF w (arch ((M 1).2 l)) +
         s ^ 2 * (coord hF w (arch ⅟(2 : AF F)) *
@@ -109,7 +114,8 @@ theorem phase_line [Invertible (2 : AF F)] (hF : IsTotallyReal F) {ψ : AddChar 
     intro w
     have hxs : ∀ l, arch ((M s).1 l) = s • arch ((M 1).1 l) := fun l => arch_fst hM l s
     have hys : ∀ l, arch ((M s).2 l) = s • arch ((M 1).2 l) := fun l => arch_snd hM l s
-    simp only [dotProduct, map_add, map_mul, map_sum, re_add, re_mul, re_sum, re_fstA_eq_coord_arch hF, hxs, hys,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_add (f := _), map_mul, map_sum, re_add, re_mul, re_sum, re_fstA_eq_coord_arch hF, hxs, hys,
       map_smul, smul_eq_mul]
     first
       | (simp only [Finset.mul_sum, ← Finset.sum_add_distrib]
@@ -169,8 +175,8 @@ private theorem hasDerivAt_exp_quadratic_mul_schwartz_line_zero {E : Type} [Norm
 
 end GlobalTheory.CompanionTheory.SchrLine
 
-open GlobalTheory.CompanionTheory.SchrLine in
 
+open GlobalTheory.CompanionTheory.SchrLine in
 theorem GlobalTheory.CompanionTheory.SchrLine.exists_hasDerivAt_schr_pureA :
     ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) [Invertible (2 : AF F)] (ψ : AddChar (AF F) ℂ), IsTotallyReal F →
     IsCharAF F ψ → ∀ M : ℝ →+ VA F N, IsRealLine M →
@@ -194,14 +200,14 @@ theorem GlobalTheory.CompanionTheory.SchrLine.exists_hasDerivAt_schr_pureA :
     have hq : (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F ((z + (M s).1) i).1) = q + s • v := by
       funext i
       show InfiniteAdeleRing.ringEquiv_mixedSpace F (fstA F (z i + (M s).1 i)) = q i + s • v i
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       first
         | exact congrArg₂ (· + ·) rfl (arch_fst hM i s)
         | (congr 1; exact arch_fst hM i s)
     have hz : (fun i => ((z + (M s).1) i).2) = zf := by
       funext i
       show sndA F (z i + (M s).1 i) = (z i).2
-      rw [map_add, show sndA F ((M s).1 i) = 0 from congrFun (hM.2 s).1 i]
+      rw [map_add (f := _), show sndA F ((M s).1 i) = 0 from congrFun (hM.2 s).1 i]
       exact add_zero _
     show ψ (z ⬝ᵥ (M s).2 + ⅟(2 : AF F) * ((M s).1 ⬝ᵥ (M s).2)) *
         (f (fun i => InfiniteAdeleRing.ringEquiv_mixedSpace F ((z + (M s).1) i).1) *

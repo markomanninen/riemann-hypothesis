@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.InPCommutatorOfInK
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.MapStdPoly
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.InPCommutatorOfInK
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped ContDiff

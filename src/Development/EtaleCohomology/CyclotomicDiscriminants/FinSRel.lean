@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CyclotomicDiscriminants.SRelTPf
+module
+
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SRelTPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SRel
 theorem relation_statement_holds : UpperTheory.V.ZK.SRel := by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -46,7 +50,7 @@ theorem exists_span_singleton_eq_map_of_integral (K M : Type) [Field K] [NumberF
       · rintro x y ⟨z, hz, hx⟩ ⟨w, hw, hy⟩
         refine ⟨z + w, Ideal.add_mem _ hz hw, ?_⟩
         change (z : M) + (w : M) = _
-        rw [hx, hy, map_add]; ring
+        rw [hx, hy, map_add (f := _)]; ring
     obtain ⟨z, hz, hz'⟩ := key 1 hone
     have : β₀ = z := by
       apply RingOfIntegers.ext

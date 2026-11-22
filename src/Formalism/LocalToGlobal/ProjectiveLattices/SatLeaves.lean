@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
-import Formalism.LocalToGlobal.ProjectiveLattices.IntAllProof
-import Formalism.LocalToGlobal.ProjectiveLattices.UnifGen
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ChartDirectionsIntegral
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntAllProof
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnifGen
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+
+@[expose] public section
 
 set_option autoImplicit false
 

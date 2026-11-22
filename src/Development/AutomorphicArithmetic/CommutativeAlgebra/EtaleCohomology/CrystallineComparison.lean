@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -12,10 +16,11 @@ section Factor
 
 variable {R : Type} [CommRing R] {e : R}
 
-local notation "Q" e:max => Ideal.Quotient.mk (Ideal.span {1 - e})
+private abbrev factorMk (e : R) : R →+* R ⧸ Ideal.span {1 - e} :=
+  Ideal.Quotient.mk _
 
 private theorem mk_eq_iff (he : IsIdempotentElem e) (a b : R) :
-    (Q e) a = (Q e) b ↔ e * a = e * b := by
+    factorMk e a = factorMk e b ↔ e * a = e * b := by
   rw [Ideal.Quotient.eq, Ideal.mem_span_singleton]
   constructor
   · rintro ⟨c, hc⟩
@@ -23,10 +28,10 @@ private theorem mk_eq_iff (he : IsIdempotentElem e) (a b : R) :
   · intro h
     exact ⟨a - b, by linear_combination h⟩
 
-private theorem mk_self (he : IsIdempotentElem e) : (Q e) e = 1 := by
-  rw [← map_one (Q e), mk_eq_iff he, mul_one, he.eq]
+private theorem mk_self (he : IsIdempotentElem e) : factorMk e e = 1 := by
+  rw [← map_one (factorMk e), mk_eq_iff he, mul_one, he.eq]
 
-private theorem dvd_of_mk_dvd (he : IsIdempotentElem e) {a b : R} (h : (Q e) a ∣ (Q e) b) : a ∣ e * b := by
+private theorem dvd_of_mk_dvd (he : IsIdempotentElem e) {a b : R} (h : factorMk e a ∣ factorMk e b) : a ∣ e * b := by
   obtain ⟨c, hc⟩ := h
   obtain ⟨c, rfl⟩ := Ideal.Quotient.mk_surjective c
   rw [← map_mul, mk_eq_iff he] at hc
@@ -45,32 +50,32 @@ private theorem perfect_quot (he : IsIdempotentElem e) {p : ℕ} (hp : 0 < p) [P
   refine ⟨⟨fun x y h => ?_, fun x => ?_⟩⟩
   · obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
     obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective y
-    have h' : (Q e) (a ^ p) = (Q e) (b ^ p) := by simpa only [map_pow] using h
+    have h' : factorMk e (a ^ p) = factorMk e (b ^ p) := by simpa only [map_pow] using h
     rw [mk_eq_iff he] at h' ⊢
     apply hb.1
     show (e * a) ^ p = (e * b) ^ p
     rw [mul_pow, mul_pow, hep, h']
   · obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
     obtain ⟨b, hb'⟩ := hb.2 a
-    exact ⟨(Q e) b, by rw [← hb']; simp only [map_pow]⟩
+    exact ⟨factorMk e b, by rw [← hb']; simp only [map_pow]⟩
 
 private theorem nzd_quot (he : IsIdempotentElem e) {π : R} (h : π ∈ nonZeroDivisors R) :
-    (Q e) π ∈ nonZeroDivisors (R ⧸ Ideal.span {1 - e}) := by
+    factorMk e π ∈ nonZeroDivisors (R ⧸ Ideal.span {1 - e}) := by
   rw [mem_nonZeroDivisors_iff_right]
   intro x hx
   obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [← map_mul, ← map_zero (Q e), mk_eq_iff he, mul_zero] at hx
-  rw [← map_zero (Q e), mk_eq_iff he, mul_zero]
+  rw [← map_mul, ← map_zero (factorMk e), mk_eq_iff he, mul_zero] at hx
+  rw [← map_zero (factorMk e), mk_eq_iff he, mul_zero]
   rw [mem_nonZeroDivisors_iff_right] at h
   exact h _ (by linear_combination hx)
 
 private theorem complete_quot (he : IsIdempotentElem e) {π : R} (h : IsAdicComplete (Ideal.span {π}) R) :
-    IsAdicComplete (Ideal.span {(Q e) π}) (R ⧸ Ideal.span {1 - e}) := by
+    IsAdicComplete (Ideal.span {factorMk e π}) (R ⧸ Ideal.span {1 - e}) := by
   have hH := h.toIsHausdorff
   have hP := h.toIsPrecomplete
   refine { haus' := fun x hx => ?_, prec' := fun f hf => ?_ }
   · obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
-    rw [← map_zero (Q e), mk_eq_iff he, mul_zero]
+    rw [← map_zero (factorMk e), mk_eq_iff he, mul_zero]
     refine hH.haus' _ fun n => ?_
     rw [SModEq.zero, mem_pow_iff]
     have := (hx n)
@@ -83,10 +88,10 @@ private theorem complete_quot (he : IsIdempotentElem e) {π : R} (h : IsAdicComp
       rw [SModEq.sub_mem, mem_pow_iff]
       have h2 := dvd_of_mk_dvd he this
       rwa [mul_sub] at h2)
-    refine ⟨(Q e) L, fun n => ?_⟩
+    refine ⟨factorMk e L, fun n => ?_⟩
     have := hL n
     rw [SModEq.sub_mem, mem_pow_iff] at this ⊢
-    have h3 := map_dvd (Q e) this
+    have h3 := map_dvd (factorMk e) this
     rw [map_pow, map_sub, map_mul, mk_self he, one_mul, hg n] at h3
     exact h3
 
@@ -97,12 +102,12 @@ private theorem aic_quot (I : Ideal R) (h : ∀ P : R[X], P.Monic → 0 < P.natD
     (Polynomial.mem_lifts _).2 (Polynomial.map_surjective _ Ideal.Quotient.mk_surjective P)
   obtain ⟨q, rfl, hdeg, hq⟩ := Polynomial.lifts_and_natDegree_eq_and_monic hl hP
   obtain ⟨x, hx⟩ := h q hq (hdeg ▸ hd)
-  exact ⟨_, hx.map⟩
+  exact ⟨_, hx.map (Ideal.Quotient.mk I)⟩
 
 private theorem val_quot (he : IsIdempotentElem e) {π : R}
     (h : ∀ f g : R, (∃ N : ℕ, π ^ N ∈ Ideal.span {f, g}) →
       ∃ u : R, IsIdempotentElem u ∧ u * f ∈ Ideal.span {g} ∧ (1 - u) * g ∈ Ideal.span {f}) :
-    ∀ f g : R ⧸ Ideal.span {1 - e}, (∃ N : ℕ, (Q e) π ^ N ∈ Ideal.span {f, g}) →
+    ∀ f g : R ⧸ Ideal.span {1 - e}, (∃ N : ℕ, factorMk e π ^ N ∈ Ideal.span {f, g}) →
       ∃ u : R ⧸ Ideal.span {1 - e}, IsIdempotentElem u ∧ u * f ∈ Ideal.span {g} ∧ (1 - u) * g ∈ Ideal.span {f} := by
   intro f g ⟨N, hN⟩
   obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective f
@@ -112,23 +117,23 @@ private theorem val_quot (he : IsIdempotentElem e) {π : R}
   obtain ⟨d, rfl⟩ := Ideal.Quotient.mk_surjective d'
   have hE : e * (c * a + d * b) = e * π ^ N := by
     rw [← mk_eq_iff he]
-    simpa only [map_add, map_mul, map_pow] using hcd
+    simpa only [map_add (f := _), map_mul, map_pow] using hcd
   obtain ⟨u, hu, h1, h2⟩ := h (a * e + (1 - e)) (b * e) ⟨N, Ideal.mem_span_pair.2
     ⟨c * e + π ^ N * (1 - e), d, by
       linear_combination hE + (c * a - c - π ^ N * a + π ^ N) * he.eq⟩⟩
-  have hm : (Q e) (1 - e) = 0 := by rw [map_sub, map_one, mk_self he, sub_self]
-  have ha : (Q e) (a * e + (1 - e)) = (Q e) a := by
-    rw [map_add, map_mul, mk_self he, hm, mul_one, add_zero]
-  have hb : (Q e) (b * e) = (Q e) b := by rw [map_mul, mk_self he, mul_one]
+  have hm : factorMk e (1 - e) = 0 := by rw [map_sub, map_one, mk_self he, sub_self]
+  have ha : factorMk e (a * e + (1 - e)) = factorMk e a := by
+    rw [map_add (f := _), map_mul, mk_self he, hm, mul_one, add_zero]
+  have hb : factorMk e (b * e) = factorMk e b := by rw [map_mul, mk_self he, mul_one]
   rw [Ideal.mem_span_singleton] at h1 h2
-  refine ⟨(Q e) u, ?_, ?_, ?_⟩
-  · show (Q e) u * (Q e) u = (Q e) u
+  refine ⟨factorMk e u, ?_, ?_, ?_⟩
+  · show factorMk e u * factorMk e u = factorMk e u
     rw [← map_mul, hu.eq]
   · rw [Ideal.mem_span_singleton]
-    have := map_dvd (Q e) h1
+    have := map_dvd (factorMk e) h1
     rwa [hb, map_mul, ha] at this
   · rw [Ideal.mem_span_singleton]
-    have := map_dvd (Q e) h2
+    have := map_dvd (factorMk e) h2
     rwa [ha, map_mul, hb, map_sub, map_one] at this
 
 end Factor

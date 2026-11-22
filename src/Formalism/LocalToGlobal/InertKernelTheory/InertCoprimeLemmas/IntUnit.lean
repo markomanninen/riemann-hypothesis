@@ -1,12 +1,25 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMMInv
-import Formalism.LocalToGlobal.InertKernelTheory.DefsBasis
-import Formalism.LocalToGlobal.InertKernelTheory.StatementCc
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.CurveIdealPrimeReduction
-import Formalism.LocalToGlobal.InertKernelTheory.StatementModel
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FormalExponentialAgree
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FirstGeometricConditionOfProperties
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMMInv
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsBasis
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementCc
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.CurveIdealPrimeReduction
+public import Formalism.LocalToGlobal.InertKernelTheory.StatementModel
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntBasis
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.FormalExponentialAgree
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.AdditionIdentityOfSigmaFormulaUnit
+public import Formalism.SharpRestriction.GlobalSchurBounds.StatementTranslationInvariantSeventh
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.CoefWfPhAt
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TestVectorMemSchwartzBruhat
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.RetcutA
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.TheoremOfCubeOfAdditionFormulas
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtEndIntWHolds
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.StmtPhDualWHolds
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.ReadWHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FormalGroupCommon.ExpLog
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +57,8 @@ theorem expMv_sum {σ ι : Type} (s : Finset ι) (f : ι → MvPowerSeries σ �
   · simpa using (expMv_zero' (σ := σ) (p := p))
   · intro a s ha ih
     have h0 : MvPowerSeries.constantCoeff (∑ i ∈ s, f i) = 0 := by
-      rw [map_sum]; exact Finset.sum_eq_zero fun i _ => hf i
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; exact Finset.sum_eq_zero fun i _ => hf i
     rw [Finset.sum_insert ha, Finset.prod_insert ha, expMv_add'' (hf a) h0, ih]
 
 theorem msubst_psubst {τ υ : Type} {a : MvPowerSeries τ ℂ_[p]} (ha : MvPowerSeries.constantCoeff a = 0)
@@ -95,9 +109,9 @@ theorem add_eq_subst (hOk : g.Ok) {σ : Type} {a b : MvPowerSeries σ ℂ_[p]}
     MvPowerSeries.hasSubst_of_constantCoeff_zero (fun i => by fin_cases i <;> simpa)
   have hX : ∀ i : Fin 2, MvPowerSeries.constantCoeff (Xv i : MvPowerSeries (Fin 2) ℂ_[p]) = 0 := fun i => by simp
   have h0 : MvPowerSeries.constantCoeff (g.lg (Xv 0) + g.lg (Xv 1) : MvPowerSeries (Fin 2) ℂ_[p]) = 0 := by
-    rw [map_add, cc_lg g (hX 0), cc_lg g (hX 1), add_zero]
+    rw [map_add (f := _), cc_lg g (hX 0), cc_lg g (hX 1), add_zero]
   unfold G1.add G1.pt
-  rw [msubst_psubst h0 hs, ← MvPowerSeries.coe_substAlgHom hs, map_add, MvPowerSeries.coe_substAlgHom hs,
+  rw [msubst_psubst h0 hs, ← MvPowerSeries.coe_substAlgHom hs, map_add (f := _), MvPowerSeries.coe_substAlgHom hs,
     subst_lg g (hX 0) hs, subst_lg g (hX 1) hs, MvPowerSeries.subst_X hs, MvPowerSeries.subst_X hs]
   rfl
 
@@ -125,7 +139,8 @@ theorem lin_partial (hOk : g.Ok) {r : ℕ} (c : Fin r → ℂ_[p])
   have hT : ∀ t : Finset (Fin r),
       MvPowerSeries.constantCoeff (∑ j ∈ t, MvPowerSeries.C (c j) * g.lg (Xv j) : MvPowerSeries (Fin r) ℂ_[p]) = 0 := by
     intro t
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero fun j _ => by rw [map_mul, cc_lg g (hX j), mul_zero]
   refine Finset.induction_on s ?_ ?_
   · rw [Finset.sum_empty]
@@ -146,7 +161,7 @@ theorem lin_partial (hOk : g.Ok) {r : ℕ} (c : Fin r → ℂ_[p])
       unfold G1.mulBy
       rw [lg_pt g hOk (by rw [map_mul, cc_lg g (hX j), mul_zero])]
     rw [e]
-    refine ⟨cc_pt g hOk (by rw [map_add, cc_lg g hm0, cc_lg g ih.1, add_zero]), ?_⟩
+    refine ⟨cc_pt g hOk (by rw [map_add (f := _), cc_lg g hm0, cc_lg g ih.1, add_zero]), ?_⟩
     change IntegralMv (g.add _ _)
     rw [add_eq_subst g hOk hm0 ih.1]
     exact IntegralOrthonormalChange.integral_subst _ (fun i => by fin_cases i <;> simp [hm0, ih.1])
@@ -164,7 +179,8 @@ theorem lg_lin (hOk : g.Ok) {r : ℕ} (c : Fin r → ℂ_[p]) :
       ∑ j, MvPowerSeries.C (c j) * g.lg (Xv j : MvPowerSeries (Fin r) ℂ_[p]) := by
   unfold G1.lin
   refine lg_pt g hOk ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun j _ => by rw [map_mul, cc_lg g (by simp), mul_zero]
 
 theorem inv_ePhi1 (he1 : PowerSeries.constantCoeff (ePhi1 g.lam g.abelian₂ g.C g.wq) = 1) {σ : Type}
@@ -251,15 +267,18 @@ theorem core (D : D7) (g : G1 p) (hOk : g.Ok) (hp : p ≠ 2)
     have hPh : g.PhOn de = ∑ i : Fin r, g.phAt (S i) := rfl
     have hX0 : ∀ i : Fin r, MvPowerSeries.constantCoeff (Xv i : MvPowerSeries (Fin r) ℂ_[p]) = 0 := fun i => by simp
     have hsum0 : MvPowerSeries.constantCoeff (∑ i : Fin r, g.phAt (Xv i) : MvPowerSeries (Fin r) ℂ_[p]) = 0 := by
-      rw [map_sum]; exact Finset.sum_eq_zero fun i _ => PowerSeries.constantCoeff_subst_eq_zero (hX0 i) _ (ph0 g)
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; exact Finset.sum_eq_zero fun i _ => PowerSeries.constantCoeff_subst_eq_zero (hX0 i) _ (ph0 g)
     have hsumS : MvPowerSeries.subst S (∑ i : Fin r, g.phAt (Xv i) : MvPowerSeries (Fin r) ℂ_[p]) =
         ∑ i : Fin r, g.phAt (S i) := by
-      rw [← MvPowerSeries.coe_substAlgHom hS, map_sum, MvPowerSeries.coe_substAlgHom hS]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← MvPowerSeries.coe_substAlgHom hS, map_sum, MvPowerSeries.coe_substAlgHom hS]
       refine Finset.sum_congr rfl fun i _ => ?_
       unfold G1.phAt
       rw [msubst_psubst (hX0 i) hS, MvPowerSeries.subst_X hS]
     have hS0 : MvPowerSeries.constantCoeff (∑ i : Fin r, g.phAt (S i) : MvPowerSeries (Fin r) ℂ_[p]) = 0 := by
-      rw [map_sum]; exact Finset.sum_eq_zero fun i _ => PowerSeries.constantCoeff_subst_eq_zero (hSI i).1 _ (ph0 g)
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; exact Finset.sum_eq_zero fun i _ => PowerSeries.constantCoeff_subst_eq_zero (hSI i).1 _ (ph0 g)
     obtain ⟨hG0, hGI⟩ := hG
     rw [hPh] at hG0 hGI
     have hd0 : MvPowerSeries.constantCoeff (∑ i : Fin r, g.phAt (Xv i) - ∑ i : Fin r, g.phAt (S i) :

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,8 @@ theorem cas_one {K I : Type} [Fintype K] [Fintype I] [DecidableEq I] (σ : K →
       have := LinearMap.congr_fun (h1 k i) y
       simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.sum_apply, LinearMap.smul_apply] at this
       rw [← this]; abel
-    simp only [hm1, hRa, map_sum, map_add, map_smul, h1', hι, Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hm1, hRa, map_sum, map_add (f := _), map_smul, h1', hι, Finset.sum_add_distrib]
     rw [Finset.sum_comm]
   let N := (LinearMap.ker m1)ᗮ
   have hRN : ∀ k, ∀ x ∈ N, R k x ∈ N := by
@@ -146,7 +151,8 @@ theorem cas_one {K I : Type} [Fintype K] [Fintype I] [DecidableEq I] (σ : K →
       · rw [hSa, sub_eq_iff_eq_add, ← add_smul] at hx'
         rw [LinearMap.sum_apply]
         simp only [Module.End.mul_apply, hem]
-        rw [← map_sum, hx', map_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum, hx', map_smul]
         push_cast
         rfl
     have h2 : ⟪x.1, x.1⟫_ℂ = 0 := (Submodule.mem_orthogonal' _ _).1 x.2 _ h0
@@ -173,12 +179,13 @@ theorem cas_one {K I : Type} [Fintype K] [Fintype I] [DecidableEq I] (σ : K →
     have e3 : ∑ k, ρ k (∑ l, c (σ k) i l • Φ l) = ∑ k, ∑ j, c k i j • ρ (σ k) (Φ j) := by
       rw [← Equiv.sum_comp hσ.toPerm]
       refine Finset.sum_congr rfl fun k _ => ?_
-      simp only [Function.Involutive.coe_toPerm, hσ k, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Function.Involutive.coe_toPerm, hσ k, map_sum, map_smul]
     have e4 : S (WithLp.toLp 2 Φ) i = ∑ k, R k (R (σ k) (WithLp.toLp 2 Φ)) i - ((c0 + d : ℝ) : ℂ) • Φ i := by
       rw [hSa]
       simp
     rw [e4]
-    simp only [hRa, smul_add, map_add, Finset.sum_add_distrib]
+    simp only [hRa, smul_add, map_add (f := _), Finset.sum_add_distrib]
     rw [e1, e2, e3, two_smul]
     push_cast
     rw [add_smul]

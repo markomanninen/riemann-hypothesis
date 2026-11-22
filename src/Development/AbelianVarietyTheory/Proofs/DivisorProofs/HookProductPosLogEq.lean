@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HookREqHookProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TwistedLevelValues
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HookREqHookProd
+
+@[expose] public section
 
 namespace GlobalTheory.HookDiagram
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
@@ -10,7 +15,7 @@ theorem det_one_add_comp_comm_field {K V W : Type*} [Field K] [AddCommGroup V] [
   classical
   let bV := Module.finBasis K V
   let bW := Module.finBasis K W
-  rw [← LinearMap.det_toMatrix bW, ← LinearMap.det_toMatrix bV, map_add, map_add,
+  rw [← LinearMap.det_toMatrix bW, ← LinearMap.det_toMatrix bV, map_add (f := _), map_add (f := _),
     LinearMap.toMatrix_comp bW bV bW, LinearMap.toMatrix_comp bV bW bV,
     LinearMap.toMatrix_one, LinearMap.toMatrix_one, Matrix.det_one_add_mul_comm]
 
@@ -26,12 +31,12 @@ theorem exists_det_congr_one : ∀ (E : Type) [Field E] [NumberField E] (La : Ty
       rw [map_smul, Pi.smul_apply, smul_eq_mul]
       exact I.mul_mem_right _ hr
     · intro x y hx hy
-      rw [map_add, Pi.add_apply]
+      rw [map_add (f := _), Pi.add_apply]
       exact I.add_mem hx hy
   refine ⟨LinearMap.det (1 + N), ?_, ?_⟩
   · rw [← Ideal.Quotient.eq, ← LinearMap.det_toMatrix', RingHom.map_det, map_one]
     have : (Ideal.Quotient.mk I).mapMatrix (LinearMap.toMatrix' (1 + N)) = 1 := by
-      rw [map_add, map_add, LinearMap.toMatrix'_one, map_one, add_eq_left]
+      rw [map_add (f := _), map_add (f := _), LinearMap.toMatrix'_one, map_one, add_eq_left]
       ext a b
       simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.zero_apply,
         LinearMap.toMatrix'_apply]

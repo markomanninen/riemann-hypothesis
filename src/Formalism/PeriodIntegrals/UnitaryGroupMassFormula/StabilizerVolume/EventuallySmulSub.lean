@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.MeasureEqOfCos
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.MeasureEqOfCos
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {K V X : Type} [Field K] [TopologicalSpace K]
   [AddCommGroup X] [Module K X] [TopologicalSpace X] [IsTopologicalAddGroup X] [ContinuousSMul K X]
 
 def smulSub {W : Type} [AddCommGroup W] [Module K W] (t : K) (P : AddSubgroup W) : AddSubgroup W :=
-  P.map (DistribMulAction.toAddMonoidHom W t)
+  P.map (DistribSMul.toAddMonoidHom W t)
 
 omit [TopologicalSpace K] in
 theorem mem_smulSub {W : Type} [AddCommGroup W] [Module K W] (t : K) (P : AddSubgroup W) (z : W) :
@@ -79,7 +83,7 @@ theorem reach_of_approx (π : K) (hπ : Tendsto (fun k : ℕ => π ^ k) atTop (�
       obtain ⟨l', hl', hpl'⟩ := hbase p' hp'
       obtain ⟨p'', hp'', e2⟩ := (mem_smulSub _ _ _).1 hpl'
       refine ⟨l + π ^ k • l', L.add_mem hl (hπkL k l' hl'), (mem_smulSub _ _ _).2 ⟨p'', hp'', ?_⟩⟩
-      rw [map_add, hDs, pow_succ, mul_smul, e2, smul_sub, e1]
+      rw [map_add (f := _), hDs, pow_succ, mul_smul, e2, smul_sub, e1]
       abel
   set S : Set X := D '' (L : Set V) with hS
   have hSc : IsClosed S := (hLc.image hDc).isClosed
@@ -91,13 +95,15 @@ theorem reach_of_approx (π : K) (hπ : Tendsto (fun k : ℕ => π ^ k) atTop (�
     rintro _ ⟨p, hp, rfl⟩
     exact hk p hp
   intro p hp
+  letI : MeasurableSpace X := borel X
+  letI : BorelSpace X := ⟨rfl⟩
   have hmem : p ∈ ⋂ k, thick S (smulSub (π ^ k) P) := by
     refine mem_iInter.2 fun k => ?_
     obtain ⟨l, hl, hpl⟩ := hstep k p hp
     exact ⟨D l, ⟨l, hl, rfl⟩, hpl⟩
-  rw [iInter_thick S hSc (fun k => smulSub (π ^ k) P) hb] at hmem
-  obtain ⟨l, hl, e⟩ := hmem
-  exact ⟨l, hl, e⟩
+  have hpS : p ∈ S :=
+    (Set.ext_iff.mp (iInter_thick S hSc (fun k => smulSub (π ^ k) P) hb) p).mp hmem
+  exact hpS
 
 theorem filt_abstract [ContinuousMul K] (π : K) (hπ0 : π ≠ 0) (hπ : Tendsto (fun k : ℕ => π ^ k) atTop (𝓝 0))
     (L : AddSubgroup V) (hLo : IsOpen (L : Set V)) (hLc : IsCompact (L : Set V))
@@ -112,7 +118,7 @@ theorem filt_abstract [ContinuousMul K] (π : K) (hπ0 : π ≠ 0) (hπ : Tendst
     (hsmall : ∀ U ∈ 𝓝 (0 : X), ∃ N2 ∈ 𝓝 (0 : V), ∀ c : K, (∀ w ∈ L, c • w ∈ N2) →
       ∀ w ∈ L, c • G w ∈ U) :
     ∃ N ∈ 𝓝 (0 : V), ∀ y, y - x ∈ N → ∀ Λ0 : AddSubgroup V,
-      (∃ c : K, c ≠ 0 ∧ Λ0 = L.map (DistribMulAction.toAddMonoidHom V c)) → (Λ0 : Set V) ⊆ N →
+      (∃ c : K, c ≠ 0 ∧ Λ0 = L.map (DistribSMul.toAddMonoidHom V c)) → (Λ0 : Set V) ⊆ N →
       ∃ (Λ : ℕ → AddSubgroup V) (H : ℕ → AddSubgroup X) (D : V →+ X),
         Λ 0 = Λ0 ∧ (∀ n, IsOpen (Λ n : Set V)) ∧ (∀ n, IsCompact (Λ n : Set V)) ∧ Antitone Λ ∧
         (∀ n, IsOpen (H n : Set X)) ∧ (∀ n, IsCompact (H n : Set X)) ∧

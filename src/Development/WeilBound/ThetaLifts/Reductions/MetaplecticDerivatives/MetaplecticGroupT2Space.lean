@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.MetaplecticDerivatives.ContinuousPair
+
+@[expose] public section
 
 noncomputable section
 

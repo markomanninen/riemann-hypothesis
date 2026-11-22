@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
 
 open GlobalTheory.KeyKa
 
@@ -97,9 +101,11 @@ theorem span_mod_equations_lift (O : Type) [CommRing O] [IsDomain O] [IsDiscrete
     rw [← hm, ← hf, RingHom.mem_ker]
     have h1 := congrArg (fun s => μ (MvPowerSeries.coeff d s)) (eq_sub_iff_add_eq.1 (hH y))
     have h2 : MvPowerSeries.coeff d (G' y) = f (G (y, d)) := rfl
-    simp only [map_add, map_sum, MvPowerSeries.coeff_mul, MvPowerSeries.coeff_map,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, MvPowerSeries.coeff_mul, MvPowerSeries.coeff_map,
       MvPowerSeries.coeff_smul, hμ, hμ1, h2] at h1
-    simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sub, map_add, map_sum, map_mul, Sum.elim_inl,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sub, map_add (f := _), map_sum, map_mul, Sum.elim_inl,
       Sum.elim_inr, hl]
     rw [← h1, add_comm, sub_self]
   obtain ⟨x, hx⟩ := hΦ fun j => MvPowerSeries.coeff j.2 (G j.1)
@@ -107,7 +113,8 @@ theorem span_mod_equations_lift (O : Type) [CommRing O] [IsDomain O] [IsDiscrete
     ⟨fun i => (show MvPowerSeries (Fin g) O from fun d => x (.inr (y, i, d))), ?_⟩⟩
   ext d
   have h1 : _ = MvPowerSeries.coeff d (G y) := congrFun hx (y, d)
-  simp only [map_sub, map_sum, MvPowerSeries.coeff_mul, MvPowerSeries.coeff_smul, ← h1, Φ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, MvPowerSeries.coeff_mul, MvPowerSeries.coeff_smul, ← h1, Φ,
     LinearMap.coe_mk, AddHom.coe_mk, add_sub_cancel_left]
   exact Finset.sum_congr rfl fun i _ => MvPowerSeries.coeff_mul d _ _
 

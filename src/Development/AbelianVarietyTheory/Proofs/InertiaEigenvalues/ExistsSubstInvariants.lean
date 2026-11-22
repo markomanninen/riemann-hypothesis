@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantCoboundaries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicIntAlgebraMapInjectiveOfCharZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAlgEquivXAddC
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.DiagonalQuotientEigen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompletionLines
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantCoboundaries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PadicIntAlgebraMapInjectiveOfCharZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAlgEquivXAddC
+
+@[expose] public section
 
 open PowerSeries Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.SenLines GlobalTheory.IndefiniteRowSideFullHecke.DiagonalQuotientEigen GlobalTheory.CycFr GlobalTheory.WachTie
 
@@ -33,7 +37,7 @@ theorem isUnit_q_of_associated {m : ℕ} (h : Associated W.π₀₁ (X ^ m)) :
     (Ideal.mem_span_singleton_self _)
   obtain ⟨u, hu⟩ := hu
   have h1 := (Ideal.mem_jacobson_bot.1 hJ (↑u⁻¹ : W.EE)).mul u.isUnit
-  rw [map_add, map_natCast, ← hu]
+  rw [map_add (f := _), map_natCast, ← hu]
   convert h1 using 1
   rw [add_mul, mul_assoc, Units.inv_mul]; ring
 
@@ -85,7 +89,7 @@ theorem exists_qFrame_of_card [IsNoetherianRing O] (hl : l ≠ 2) (hc : W.DelF.c
   let J : O⟦X⟧ →ₐ[O] O⟦X⟧ := j.comp σ
   have hJ : ∀ c, J c = j (σ c) := fun _ => rfl
   have hσ' : σ X = X + (l : O⟦X⟧) := by rw [hσ, map_natCast]
-  have hJX : J X = W.π₀₁ + (l : O⟦X⟧) := by rw [hJ, hσ', map_add, hj, map_natCast]
+  have hJX : J X = W.π₀₁ + (l : O⟦X⟧) := by rw [hJ, hσ', map_add (f := _), hj, map_natCast]
   have hσl : σ (X - (l : O⟦X⟧)) = X := by rw [map_sub, hσ', map_natCast]; ring
   have hr : ∀ a, (∃ b, J b = a) ↔ ∀ δ ∈ W.DelF, W.γ₀ δ a = a := fun a => by
     rw [← hjr]
@@ -93,7 +97,7 @@ theorem exists_qFrame_of_card [IsNoetherianRing O] (hl : l ≠ 2) (hc : W.DelF.c
   have hk : ∀ c, constantCoeff (J c) = 0 → X - (l : O⟦X⟧) ∣ c := fun c h => by
     rw [hJ, constantCoeff_algHom j (hj ▸ hX0)] at h
     rw [← map_dvd_iff σ, hσl, X_dvd_iff, h]
-  have hc0 : constantCoeff (J X) = (l : O) := by rw [hJX, map_add, h0, map_natCast, zero_add]
+  have hc0 : constantCoeff (J X) = (l : O) := by rw [hJX, map_add (f := _), h0, map_natCast, zero_add]
   have hwu : IsUnit w := by
     have h1 := congrArg constantCoeff hw
     rw [← hJX, hc0, map_mul, show constantCoeff (lvl l O 0) = (l : O) by simp [lvl]] at h1
@@ -117,11 +121,11 @@ theorem exists_qFrame_of_card [IsNoetherianRing O] (hl : l ≠ 2) (hc : W.DelF.c
     exact h1.symm
   obtain ⟨z, hz⟩ := hk y' (by rw [hy']; simp)
   have hs : IsUnit (1 + y') := by
-    rw [← MulEquiv.isUnit_map σ, hz, map_add, map_mul, hσl, isUnit_iff_constantCoeff]
+    rw [← MulEquiv.isUnit_map σ, hz, map_add (f := _), map_mul, hσl, isUnit_iff_constantCoeff]
     simp
   refine ⟨J, hji.comp σ.injective, hr, by rw [hp, hJX], by rw [hp]; exact hk,
     ⟨hs.unit, ?_, ?_⟩, hq ▸ hass, isUnit_q_of_associated W p2⟩
-  · rw [hs.unit_spec, map_add, map_one, hy']
+  · rw [hs.unit_spec, map_add (f := _), map_one, hy']
     linear_combination hy
   · rw [hp, hs.unit_spec, add_sub_cancel_left]
     exact ⟨z, hz⟩
@@ -144,7 +148,7 @@ theorem exists_qFrame : ∀ {l : ℕ} [Fact l.Prime] (P : LocPrime l) (K LL : Fi
     rw [hc, Nat.cast_sub (Fact.out : l.Prime).one_le, Nat.cast_one, ← IsUnit.neg_iff, neg_sub]
     exact h1.resolve_left hu
   · have h1 : (χ g : ℤ_[l]) = 1 + l := GlobalTheory.algebraMap_padicInt_OL_injective LL (by
-      rw [hχ, hg, map_add, map_one, map_natCast])
+      rw [hχ, hg, map_add (f := _), map_one, map_natCast])
     rw [h1, add_sub_cancel_left]
 
 end GlobalTheory.SenLines

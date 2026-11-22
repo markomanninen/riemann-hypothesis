@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.SzCt
+module
+
+public import Formalism.PeriodIntegrals.SzCt
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.VolumeIndexFiniteNonzero
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.StabilizerIndexVolumes.StClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ def AtNormRep (C : Term D u u' F0 what₂ → Point D.host.E (D.R.rS + 1) →
     LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E) → MatR D → Prop) : Prop :=
   Hyps D u u' F0 what₂ → (∀ p, Formalism.MainNotions.S.LocalSplitGroups.Agree δ M p) →
     ∀ (t : Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-      (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : MatR D),
+      (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : MatR D),
       t.relevant → t.generic → NormRep t w F' L U → Gval (lf D F0) F' ≠ 0 → C t w F' L
 
 def AinSt : Prop :=

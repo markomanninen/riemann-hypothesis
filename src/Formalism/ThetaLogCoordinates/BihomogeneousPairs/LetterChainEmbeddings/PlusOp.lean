@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.LatticeEqualHolds
+module
+
+public import Formalism.ThetaLogCoordinates.BihomogeneousPairs.LetterChainEmbeddings.LatticeEqualHolds
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.KP.LL
 
@@ -175,7 +179,7 @@ theorem po_coord (hU : HypU p (r := r) D) (j : Fin D.T.t → ℕ) (c : Fin r) (k
         ((k.factorial : ℚ_[p])⁻¹ • (po_d (xiVar N r D.T.t c) ^ k) g) := by
     have h1 := po_pow_left (p := p) (chainEmb N r D.T.t) chainEmb_inj (D.uPos, c) y
       (xi_free hg' (fun d => wU_ne_xi (D := D) c d)) k
-    rw [← Module.End.mul_eq_comp, (commute_pderiv _ _).mul_pow, LinearMap.smul_apply, Module.End.mul_apply,
+    rw [← Module.End.mul_eq_comp, (PhiIntegrality.commute_pderiv _ _).mul_pow, LinearMap.smul_apply, Module.End.mul_apply,
       po_pow_right _ (pderiv_xi_rename_chainEmb_eq_zero (D := D) y c), map_smul, smul_mul_assoc, ← h1, mul_smul_comm, map_smul,
       smul_smul, sq, mul_inv]
     rfl

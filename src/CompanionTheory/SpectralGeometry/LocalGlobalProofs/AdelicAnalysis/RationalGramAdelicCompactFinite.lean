@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RationalTuplesDiscreteCocompactAdelicStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.HypJ
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RationalTuplesDiscreteCocompactAdelicStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem fixed_mem (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (e : E) (he : σ e =
     rw [LinearIndependent.pair_iff]
     intro s t hst
     have h2 := congrArg σ hst
-    simp only [Algebra.smul_def, map_add, map_mul, AlgHom.commutes, map_one, map_zero] at h2
+    simp only [Algebra.smul_def, map_add (f := _), map_mul, AlgHom.commutes, map_one, map_zero] at h2
     have h3 : t • (x - σ x) = 0 := by
       simp only [Algebra.smul_def] at hst ⊢
       linear_combination hst - h2
@@ -58,7 +62,7 @@ theorem fixed_mem (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (e : E) (he : σ e =
   obtain ⟨a, b, hab⟩ := Submodule.mem_span_pair.mp hmem
   have h2 : a • (1 : E) + b • σ x = e := by
     have := congrArg σ hab
-    simp only [Algebra.smul_def, map_add, map_mul, AlgHom.commutes, map_one, he] at this
+    simp only [Algebra.smul_def, map_add (f := _), map_mul, AlgHom.commutes, map_one, he] at this
     simpa only [Algebra.smul_def] using this
   have h3 : b • (x - σ x) = 0 := by
     simp only [Algebra.smul_def] at hab h2 ⊢
@@ -72,7 +76,8 @@ theorem fixed_mem (σ : E →ₐ[F] E) (h : IsCMExt F E σ) (e : E) (he : σ e =
 theorem hE_self_fixed (σ : E →ₐ[F] E) (h : IsCMExt F E σ) {M : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (hJ : IsHermND σ J) (x : Fin M → E) :
     σ (hE σ J x x) = hE σ J x x := by
-  simp only [hE, hform, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, hform, map_sum, map_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   have h1 : σ ((σ : E →+* E) (x j)) = x j := sigma_sigma σ h (x j)
@@ -102,7 +107,8 @@ theorem gram_rational_finite : ∀ (F E : Type) [Field F] [NumberField F] [Field
     ext a b
     have hs : ∀ e : E, sigR (AF F) σ (inclR (AF F) e) = inclR (AF F) (σ e) := fun e => by
       simp [sigR, inclR]
-    simp only [gramR, hR, hform, ratTup, JR, Matrix.map_apply, gramE, hE, map_sum, map_mul, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [gramR, hR, hform, ratTup, JR, Matrix.map_apply, gramE, hE, map_sum, map_mul, hs]
     rfl
   · intro Ω hΩ
     obtain ⟨⟨hlc, hsc, ht2⟩, -⟩ := GlobalTheory.CompanionTheory.AdeleTop.adele_top F

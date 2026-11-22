@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.BlockCombStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,6 @@ theorem bp_split {M : Type*} [CommMonoid M] {n : ℕ} (ε : Fin n → Bool) (F :
   rw [← bp_prod_blk ε true F, ← bp_prod_blk ε false F,
     ← Finset.prod_filter_mul_prod_filter_not Finset.univ (fun i : Fin n => ε i = true)]
   congr 2
-  ext i
-  simp
 
 theorem bp_blk_surj {n : ℕ} (ε : Fin n → Bool) (b : Bool) (i : Fin n) (h : ε i = b) :
     ∃ r, blk ε b r = i := by

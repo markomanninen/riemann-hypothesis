@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NsPoint
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.NsPoint
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FtHolds
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -38,7 +42,7 @@ theorem UpperTheory.V.Alg.M.tsp_holds :
         have hm' : (a : A) * c ∈ 𝒜 0 := by simpa using hm
         rw [ps hm', show (⟨(a : A) * c, hm'⟩ : 𝒜 0) = ⟨a, a.2⟩ * c from rfl, map_mul, hc, mul_zero]
       · rw [pz hm (by simpa using hi), map_zero]
-    | add u v hu hv => rw [add_mul, map_add, map_add, hu, hv, add_zero]
+    | add u v hu hv => rw [add_mul, map_add (f := _), map_add (f := _), hu, hv, add_zero]
   have hJ0 : ∀ y ∈ J, σ (p y) = 0 := by
     intro y hy
     obtain ⟨u, hu, v, hv, rfl⟩ := Submodule.mem_sup.mp hy
@@ -56,14 +60,14 @@ theorem UpperTheory.V.Alg.M.tsp_holds :
       | zero => simp
       | add w w' _ _ hw hw' =>
         intro a
-        rw [mul_add, map_add, map_add, hw, hw', add_zero]
+        rw [mul_add, map_add (f := _), map_add (f := _), hw, hw', add_zero]
       | smul a' w _ hw =>
         intro a
         rw [smul_eq_mul, ← mul_assoc]
         exact hw (a * a')
     have h3 := h2 1
     rw [one_mul] at h3
-    rw [map_add, map_add, h1, h3, add_zero]
+    rw [map_add (f := _), map_add (f := _), h1, h3, add_zero]
   obtain ⟨ξ, hξ1, hξ2, -⟩ := ns_holds O (𝒜 0) A K σ J 1
     (fun b hb => Ideal.mem_sup_right (Ideal.mem_map_of_mem _ hb))
     (by

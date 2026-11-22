@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PulledBackProjCoordinateRatioOverlapDivStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ProjectiveChartAffineCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XMemOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PulledBackProjCoordinateRatioOverlapDivStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ProjectiveChartAffineCover
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential GlobalTheory GlobalTheory.PD ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PD.XCover
 
 namespace GlobalTheory.PD.XCover
@@ -36,7 +41,7 @@ theorem mem_germ_range_of_mem_rB : ∀ (d : ℕ) (Z : Scheme.{0}) [IsIntegral Z]
       rw [Z.presheaf.germ_res_apply]
       have hr := (GlobalTheory.T.pulledBackProjCoordinateRatio_overlap_div d Z φ 0 i j (hgen 0) (hgen i)).2
       simp only [IntermediateField.coe_div, crd_val]
-      rw [← hr, rat, dif_pos (hgen i)]
+      rw [← hr, rat, dite_eq_left (hgen i)]
     | algebraMap r =>
       refine ⟨Z.presheaf.map (homOfLE le_top).op (p.appTop.hom ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).inv.hom r)), ?_⟩
       rw [Z.presheaf.germ_res_apply]
@@ -44,7 +49,7 @@ theorem mem_germ_range_of_mem_rB : ∀ (d : ℕ) (Z : Scheme.{0}) [IsIntegral Z]
     | add x y _ _ hx hy =>
       obtain ⟨g, hg⟩ := hx
       obtain ⟨g', hg'⟩ := hy
-      exact ⟨g + g', by rw [map_add, hg, hg']; rfl⟩
+      exact ⟨g + g', by rw [map_add (f := _), hg, hg']; rfl⟩
     | mul x y _ _ hx hy =>
       obtain ⟨g, hg⟩ := hx
       obtain ⟨g', hg'⟩ := hy

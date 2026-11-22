@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ToXQFst
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionalSpecializes
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsClosureCoords
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCocharacterLieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ToXQFst
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularFunctionalSpecializes
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsClosureCoords
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsCocharacterLieModel
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 open GlobalTheory.CompanionTheory.Ar.TorusUnif
@@ -45,12 +50,30 @@ theorem span_tr {X : Scheme.{0}} {G : Over X} [GrpObj G] [Smooth G.hom] {R R' : 
     (hj : ∀ e, (M'.pt (j e)).left = spMap (dualMap c) ≫ (M.pt e).left) {n : ℕ} (s : Fin n → E)
     (hs : Submodule.span R (Set.range s) = ⊤) (e' : E') : ∃ a : Fin n → R', ∑ i, a i • j (s i) = e' := by
   rw [← Submodule.mem_span_range_iff_exists_fun]
-  refine RootHt.lie_transport_induction c h M M' j hj
+  have transport_induction {P : E' → Prop} (zero : P 0) (base : ∀ e, P (j e))
+      (smul : ∀ (s : R') n, P n → P (s • n))
+      (add : ∀ n n', P n → P n' → P (n + n')) (n : E') : P n := by
+    subst h
+    letI : Algebra R R' := c.toAlgebra
+    letI : Module R E' := Module.compHom E' c
+    haveI : IsScalarTower R R' E' := ⟨fun a b v => by
+      change (c a * b) • v = c a • (b • v)
+      rw [mul_smul]⟩
+    let jl : E →ₗ[R] E' :=
+      { toFun := j
+        map_add' := j.map_add
+        map_smul' := fun r e => j.map_smulₛₗ r e }
+    have hb : IsBaseChange R' jl := GlobalTheory.T.lie_model_isBaseChange X G R R' x E E' M M' jl (fun e => by
+      rw [Category.comp_id]
+      exact hj e)
+    exact hb.inductionOn n base smul add
+  refine transport_induction
     (P := fun e => e ∈ Submodule.span R' (Set.range fun i => j (s i))) (zero_mem _) (fun e => ?_)
     (fun r n hn => Submodule.smul_mem _ r hn) (fun n n' hn hn' => add_mem hn hn') e'
   have he : e ∈ Submodule.span R (Set.range s) := hs ▸ Submodule.mem_top
   obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 he
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Submodule.sum_mem _ fun i _ => ?_
   rw [j.map_smulₛₗ]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -65,7 +88,7 @@ theorem torus_tr {S : Scheme.{0}} {Xc : Type} [AddCommGroup Xc] {A B : Type} [Co
     (M : LieModel (splitTorus S Xc) a (Xc →+ A)) (hM : IsCocharLie M)
     (M' : LieModel (splitTorus S Xc) b (Xc →+ B)) (hM' : IsCocharLie M') (δ : Xc →+ ℤ) :
     (M'.pt ((Int.castAddHom B).comp δ)).left = spMap (dualMap g) ≫ (M.pt ((Int.castAddHom A).comp δ)).left := by
-  obtain ⟨j, hj⟩ := exists_tr a b g h M M'
+  obtain ⟨j, hj⟩ := LieVB.exists_tr a b g h M M'
   have hb : (epsAt b).hom = spMap (dualMap g) ≫ (epsAt a).hom := by
     have h1 := Over.w (M'.pt (j 0))
     have h2 := Over.w (M.pt 0)
@@ -89,7 +112,7 @@ theorem lie_valAt {X : Scheme.{0}} {Ω : Type} [Field Ω] {ξ : Sp Ω ⟶ X} (ha
     exact ⟨spMap g (IsLocalRing.closedPoint ℂ), rfl⟩
   obtain ⟨κ, hκ⟩ := exists_lift (A := X.presheaf.stalk (centre z)) x (X.fromSpecStalk (centre z)) hq
   obtain ⟨Fq, _, _, ⟨Mq⟩⟩ := lieModel_exists X G (X.presheaf.stalk (centre z)) (X.fromSpecStalk (centre z))
-  obtain ⟨β, hβ⟩ := exists_tr (B := X.presheaf.stalk (centre z)) x (X.fromSpecStalk (centre z)) κ hκ MR Mq
+  obtain ⟨β, hβ⟩ := LieVB.exists_tr (B := X.presheaf.stalk (centre z)) x (X.fromSpecStalk (centre z)) κ hκ MR Mq
   have h1 : (genMap ξ ⟨centre z, hall _⟩).comp κ = ψ := by
     refine ringHom_eq x ?_
     rw [← spMap_cmp, Category.assoc, hκ, hψ]
@@ -118,7 +141,7 @@ theorem local_formula {X : Scheme.{0}} {Ω : Type} [Field Ω] {K : Type} {J : K 
       ∃ sv : Fin n → (epsAt (z ≫ ρ) ⟶ G), (∀ i, (sv i).left = spMap (dualMap (g.comp φ)) ≫ (MR.pt (s i)).left) ∧
         ∀ a b, H z a b = ∑ i, ∑ j, starRingEnd ℂ (g (c a i)) * g (c b j) * h.ip (z ≫ ρ) (sv i) (sv j) := by
   obtain ⟨E', _, _, ⟨M'⟩⟩ := lieModel_exists X G B (xV ≫ ρ)
-  obtain ⟨j, hj⟩ := exists_tr x (xV ≫ ρ) φ hφ MR M'
+  obtain ⟨j, hj⟩ := LieVB.exists_tr x (xV ≫ ρ) φ hφ MR M'
   obtain ⟨MT, hMT⟩ := TorusLie.exists_lieModel_splitTorus Z' Xc B xV
   have hD : ∀ a, ∃ D : E', M'.pt D = LiePull.tanPts hΦ xV (MT.pt ((Int.castAddHom B).comp (β a)) ≫ u) :=
     fun a => M'.onto _ ((LiePull.isTan_iff hΦ xV _).2 (isTan_comp u _ (MT.tan _)))
@@ -127,7 +150,7 @@ theorem local_formula {X : Scheme.{0}} {Ω : Type} [Field Ω] {K : Type} {J : K 
   refine ⟨c, fun g z hz => ?_⟩
   obtain ⟨Mz, hMz⟩ := TorusLie.exists_lieModel_splitTorus Z' Xc ℂ z
   obtain ⟨Ec, _, _, ⟨Mc⟩⟩ := lieModel_exists X G ℂ (z ≫ ρ)
-  obtain ⟨j', hj'⟩ := exists_tr (xV ≫ ρ) (z ≫ ρ) g (by rw [← Category.assoc, hz]) M' Mc
+  obtain ⟨j', hj'⟩ := LieVB.exists_tr (xV ≫ ρ) (z ≫ ρ) g (by rw [← Category.assoc, hz]) M' Mc
   refine ⟨fun i => Mc.pt (j' (j (s i))), fun i => ?_, fun a b => ?_⟩
   · rw [hj', hj, ← Category.assoc, spMap_dual_comp]
   have hv := hH z Mz hMz (fun a => Mc.pt (j' (D a))) (fun a => by
@@ -140,15 +163,16 @@ theorem local_formula {X : Scheme.{0}} {Ω : Type} [Field Ω] {K : Type} {J : K 
     simp only [Category.assoc])
   obtain ⟨core, hcore⟩ := h.herm (z ≫ ρ) Ec Mc
   have hDs : ∀ a, j' (D a) = ∑ i, g (c a i) • j' (j (s i)) := fun a => by
-    rw [← hc a, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc a, map_sum]
     exact Finset.sum_congr rfl fun i _ => j'.map_smulₛₗ _ _
   rw [hv]
   change h.ip (z ≫ ρ) (Mc.pt (j' (D a))) (Mc.pt (j' (D b))) = _
   rw [← hcore, hDs, hDs, core_sum]
   simp only [hcore]
 
-open Classical in
 
+open Classical in
 noncomputable def ev {S : Scheme.{0}} (U : S.Opens) (f : Γ(S, U)) (z : Sp ℂ ⟶ S) : ℂ :=
   if hz : centre z ∈ U then evalAt U f z hz else 0
 
@@ -182,7 +206,7 @@ theorem exists_ev {S : Scheme.{0}} {U : S.Opens} (hU : IsAffineOpen U) (z : Sp �
   refine ⟨g, hg, fun f => ?_⟩
   subst hg
   obtain ⟨_, h2⟩ := point_of_ringHom hU g
-  rw [ev, dif_pos hz]
+  rw [ev, dite_eq_left hz]
   exact h2 f
 
 theorem exists_coords {X : Scheme.{0}} {Ω : Type} [Field Ω] {K : Type} [Fintype K] {J : K → Type}
@@ -270,7 +294,7 @@ theorem PositivityTheory.Xgn.torus_uniformization_continuous : ∀ (X : Scheme.{
     have : x.opensRange = W := hW.opensRange_fromSpec
     rw [this]
     exact (hall _).mem_open W.2 hpW)
-  obtain ⟨jξ, hjξ⟩ := exists_tr x ξ ψ hψ MR M
+  obtain ⟨jξ, hjξ⟩ := LieVB.exists_tr x ξ ψ hψ MR M
   choose F hF hFip using fun i j => h.cont (jξ (s i)) (jξ (s j))
   let w : (Sp ℂ ⟶ Z') → (Σ k, J k) → ℂ := fun z q => ev V (φ (t q)) z
   have key : ∀ z : Sp ℂ ⟶ Z', centre z ∈ V →
@@ -300,7 +324,7 @@ theorem PositivityTheory.Xgn.torus_uniformization_continuous : ∀ (X : Scheme.{
       (fun z hz => (key z hz).1 i j)).continuousAt hN
   refine continuousAt_pi.2 fun a => continuousAt_pi.2 fun b => ?_
   have hcont : ContinuousAt (fun z => ∑ i, ∑ j, starRingEnd ℂ (ev V (c a i) z) * ev V (c b j) z * F i j (w z)) z₀ := by
-    refine tendsto_finset_sum _ fun i _ => tendsto_finset_sum _ fun j _ => ?_
+    refine tendsto_finsetSum _ fun i _ => tendsto_finsetSum _ fun j _ => ?_
     exact ((Complex.continuous_conj.continuousAt.comp (ev_contAt V _ z₀ hzV)).mul (ev_contAt V _ z₀ hzV)).mul (hFc i j)
   refine hcont.congr ?_
   filter_upwards [hN] with z hz

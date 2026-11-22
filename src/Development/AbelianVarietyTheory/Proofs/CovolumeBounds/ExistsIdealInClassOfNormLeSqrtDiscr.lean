@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped nonZeroDivisors Real NumberField ArithmeticFunction.zeta
 open Module NumberField Finset

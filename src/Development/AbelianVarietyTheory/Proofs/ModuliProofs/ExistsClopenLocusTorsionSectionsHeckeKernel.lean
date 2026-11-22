@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.KerScheme
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenWeilIsIff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLevelCoverOfPowEqOne
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.KerScheme
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjIsAbelianSchemeDimRigidifiedSym
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsClopenWeilIsIff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLevelCoverOfPowEqOne
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -219,59 +223,60 @@ end GlobalTheory.HkClopen
 
 namespace GlobalTheory
 
-open HkClopen in
 
+open HkClopen in
 theorem exists_clopen_heckeKer_iff :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (𝔓 : Ideal (𝓞 E)) (p i n : ℕ) (S : Scheme.{0}) (s : S ⟶ Sp (KA l)) (o : Ob D l s) (σ : Fin n → (𝟙_ (Over S) ⟶ o.t.G)), admitted l 𝔓 p → (∀ j, σ j ^ p ^ 2 = 1) → ∃ V : S.Opens, IsClosed (V : Set S) ∧ ∀ (k : Type) [Field k] [IsAlgClosed k] (x : Sp k ⟶ S), Set.range x ⊆ V ↔ (Function.Injective fun j => x ≫ (σ j).left) ∧ ∃ C : Subgroup (Over.mk x ⟶ o.t.G), (C : Set _) = Set.range (fun j => toUnit (Over.mk x) ≫ σ j) ∧ o.t.HeckeKer (Over.mk x) D 𝔓 p i C := by
-  intro E _ _ _ H D l 𝔓 p i n S s o σ hA hσ
-  obtain ⟨-, -, hp, -, -⟩ := hA
-  have hN : 0 < p ^ 2 := pow_pos hp.pos 2
-  have hu : IsUnit ((p ^ 2 : ℕ) : Γ(S, ⊤)) := by
-    have := ((baseKA l).unit _ hN).map ((Scheme.ΓSpecIso (CommRingCat.of (KA l))).inv ≫ s.appTop).hom
-    rwa [map_natCast] at this
-  have eqv := loc_eq o.t.G (ObjDim.isAbelianScheme o) _ hu
-  have hact : ∀ j a, (σ j ≫ o.t.act.act a) ^ p ^ 2 = 1 := fun j a => by
-    have := o.t.act.hom a
-    rw [← MonObj.pow_comp, hσ, MonObj.one_comp]
-  have hfin : ∀ j, (Set.range fun a => σ j ≫ o.t.act.act a).Finite := fun j =>
-    finite_range _ (fun a b => by rw [o.t.act.add, MonObj.comp_mul]) hN (hact j)
-  have kill : ∀ j (J : Ideal (𝓞 E)), Loc fun k _ _ (x : Sp k ⟶ S) =>
-      ∀ a ∈ J, (toUnit (Over.mk x) ≫ σ j) ≫ o.t.act.act a = 1 := fun j J =>
-    (Loc.all_range _ (hfin j) J (P := fun τ k _ _ x => toUnit (Over.mk x) ≫ τ = toUnit (Over.mk x) ≫ 1)
-      fun a => eqv _ _ (hact j a) (one_pow _)).congr fun k _ _ x => by
-        simp only [Category.assoc, MonObj.comp_one, SetLike.mem_coe]
-  have hJ : {J | J * 𝔓 = Ideal.span {(p : 𝓞 E)}}.Finite := by
-    refine Set.Subsingleton.finite fun J hJ J' hJ' => ?_
-    have h0 : 𝔓 ≠ 0 := by
-      rintro rfl
-      have : Ideal.span {(p : 𝓞 E)} = ⊥ := by rw [← show J * 0 = _ from hJ, mul_zero]; rfl
-      exact hp.ne_zero (Nat.cast_eq_zero.1 (Ideal.span_singleton_eq_bot.1 this))
-    exact mul_right_cancel₀ h0 (hJ.trans hJ'.symm)
-  have L1 := Loc.all fun j => Loc.all fun j' => (eqv _ _ (hσ j) (hσ j')).imp_const (j = j')
-  have L2 := Loc.ex fun j => eqv _ _ (hσ j) (one_pow _)
-  have L3 := Loc.all fun j => Loc.all fun j' => Loc.ex fun m =>
-    eqv _ (σ j * σ j') (hσ m) (by rw [mul_pow, hσ, hσ, _root_.one_mul])
-  have L4 := Loc.all fun j => Loc.ex fun m => eqv _ (σ j)⁻¹ (hσ m) (by rw [inv_pow, hσ, inv_one])
-  have L5 := Loc.all fun j => Loc.all_range _ (hfin j) Set.univ
-    (P := fun τ k _ _ x => ∃ m, toUnit (Over.mk x) ≫ σ m = toUnit (Over.mk x) ≫ τ)
-    fun a => Loc.ex fun m => eqv _ _ (hσ m) (hact j a)
-  have L6 := Loc.all_mem hJ fun J _ => Loc.comb (fun j => kill j J) fun f => Nat.card {j // f j} = torsCount D p J
-  have L7 := Loc.all fun j => kill j (Ideal.span {(p : 𝓞 E)} * 𝔓.map (H.bar : 𝓞 E →+* 𝓞 E))
-  have L8 := Loc.all fun j => Loc.all fun j' => loc_weil (Obj.toPolAV o) _ hN hu _ _ (hσ j) (hσ j')
-  have liftZP_newton := Loc.const (S := S) (n = p ^ (2 * (Module.finrank ℚ E / 2 * (D.p + D.q))))
-  have ParameterUpperBound := Loc.comb (fun j => kill j (Ideal.span {(p : 𝓞 E)})) fun f =>
-    torsCount D p (Ideal.span {(p : 𝓞 E)}) = Nat.card {j // f j} * Ideal.absNorm 𝔓 ^ i
-  obtain ⟨V, hV, HV⟩ := L1.and (L2.and (L3.and (L4.and (L5.and (L6.and (L7.and (L8.and (liftZP_newton.and ParameterUpperBound))))))))
-  refine ⟨⟨V, hV.isOpen⟩, hV.isClosed, fun k _ _ x => ?_⟩
-  obtain ⟨-, I, -⟩ := o.geom k x (Spec.preimage (x ≫ s)).hom (Spec.map_preimage (x ≫ s)).symm
-  have key := heckeKer_iff D o.t (Over.mk x) 𝔓 p i n (fun j => toUnit (Over.mk x) ≫ σ j) (torsCount D p)
-    fun J hJ => card_eq_torsCount I hp.pos (fun y => comp_act_natCast o.t.act y p) J hJ
-  have hinj : (Function.Injective fun j => x ≫ (σ j).left) ↔
-      Function.Injective fun j => toUnit (Over.mk x) ≫ σ j :=
-    ⟨fun h a b e => h (congrArg (·.left) e), fun h a b e => h (Over.OverMorphism.ext e)⟩
-  rw [hinj, key]
-  refine ((range_subset_iff x V).trans (HV k x)).trans ?_
-  simp only [MonObj.comp_one, MonObj.comp_mul, GrpObj.comp_inv, Category.assoc]
-  rfl
+  open HkClopen in
+    intro E _ _ _ H D l 𝔓 p i n S s o σ hA hσ
+    obtain ⟨-, -, hp, -, -⟩ := hA
+    have hN : 0 < p ^ 2 := pow_pos hp.pos 2
+    have hu : IsUnit ((p ^ 2 : ℕ) : Γ(S, ⊤)) := by
+      have := ((baseKA l).unit _ hN).map ((Scheme.ΓSpecIso (CommRingCat.of (KA l))).inv ≫ s.appTop).hom
+      rwa [map_natCast] at this
+    have eqv := loc_eq o.t.G (ObjDim.isAbelianScheme o) _ hu
+    have hact : ∀ j a, (σ j ≫ o.t.act.act a) ^ p ^ 2 = 1 := fun j a => by
+      have := o.t.act.hom a
+      rw [← MonObj.pow_comp, hσ, MonObj.one_comp]
+    have hfin : ∀ j, (Set.range fun a => σ j ≫ o.t.act.act a).Finite := fun j =>
+      finite_range _ (fun a b => by rw [o.t.act.add, MonObj.comp_mul]) hN (hact j)
+    have kill : ∀ j (J : Ideal (𝓞 E)), Loc fun k _ _ (x : Sp k ⟶ S) =>
+        ∀ a ∈ J, (toUnit (Over.mk x) ≫ σ j) ≫ o.t.act.act a = 1 := fun j J =>
+      (Loc.all_range _ (hfin j) J (P := fun τ k _ _ x => toUnit (Over.mk x) ≫ τ = toUnit (Over.mk x) ≫ 1)
+        fun a => eqv _ _ (hact j a) (one_pow _)).congr fun k _ _ x => by
+          simp only [Category.assoc, MonObj.comp_one, SetLike.mem_coe]
+    have hJ : {J | J * 𝔓 = Ideal.span {(p : 𝓞 E)}}.Finite := by
+      refine Set.Subsingleton.finite fun J hJ J' hJ' => ?_
+      have h0 : 𝔓 ≠ 0 := by
+        rintro rfl
+        have : Ideal.span {(p : 𝓞 E)} = ⊥ := by rw [← show J * 0 = _ from hJ, mul_zero]; rfl
+        exact hp.ne_zero (Nat.cast_eq_zero.1 (Ideal.span_singleton_eq_bot.1 this))
+      exact mul_right_cancel₀ h0 (hJ.trans hJ'.symm)
+    have L1 := Loc.all fun j => Loc.all fun j' => (eqv _ _ (hσ j) (hσ j')).imp_const (j = j')
+    have L2 := Loc.ex fun j => eqv _ _ (hσ j) (one_pow _)
+    have L3 := Loc.all fun j => Loc.all fun j' => Loc.ex fun m =>
+      eqv _ (σ j * σ j') (hσ m) (by rw [mul_pow, hσ, hσ, _root_.one_mul])
+    have L4 := Loc.all fun j => Loc.ex fun m => eqv _ (σ j)⁻¹ (hσ m) (by rw [inv_pow, hσ, inv_one])
+    have L5 := Loc.all fun j => Loc.all_range _ (hfin j) Set.univ
+      (P := fun τ k _ _ x => ∃ m, toUnit (Over.mk x) ≫ σ m = toUnit (Over.mk x) ≫ τ)
+      fun a => Loc.ex fun m => eqv _ _ (hσ m) (hact j a)
+    have L6 := Loc.all_mem hJ fun J _ => Loc.comb (fun j => kill j J) fun f => Nat.card {j // f j} = torsCount D p J
+    have L7 := Loc.all fun j => kill j (Ideal.span {(p : 𝓞 E)} * 𝔓.map (H.bar : 𝓞 E →+* 𝓞 E))
+    have L8 := Loc.all fun j => Loc.all fun j' => loc_weil (Obj.toPolAV o) _ hN hu _ _ (hσ j) (hσ j')
+    have liftZP_newton := Loc.const (S := S) (n = p ^ (2 * (Module.finrank ℚ E / 2 * (D.p + D.q))))
+    have ParameterUpperBound := Loc.comb (fun j => kill j (Ideal.span {(p : 𝓞 E)})) fun f =>
+      torsCount D p (Ideal.span {(p : 𝓞 E)}) = Nat.card {j // f j} * Ideal.absNorm 𝔓 ^ i
+    obtain ⟨V, hV, HV⟩ := L1.and (L2.and (L3.and (L4.and (L5.and (L6.and (L7.and (L8.and (liftZP_newton.and ParameterUpperBound))))))))
+    refine ⟨⟨V, hV.isOpen⟩, hV.isClosed, fun k _ _ x => ?_⟩
+    obtain ⟨-, I, -⟩ := o.geom k x (Spec.preimage (x ≫ s)).hom (Spec.map_preimage (x ≫ s)).symm
+    have key := heckeKer_iff D o.t (Over.mk x) 𝔓 p i n (fun j => toUnit (Over.mk x) ≫ σ j) (torsCount D p)
+      fun J hJ => card_eq_torsCount I hp.pos (fun y => comp_act_natCast o.t.act y p) J hJ
+    have hinj : (Function.Injective fun j => x ≫ (σ j).left) ↔
+        Function.Injective fun j => toUnit (Over.mk x) ≫ σ j :=
+      ⟨fun h a b e => h (congrArg (·.left) e), fun h a b e => h (Over.OverMorphism.ext e)⟩
+    rw [hinj, key]
+    refine ((range_subset_iff x V).trans (HV k x)).trans ?_
+    simp only [MonObj.comp_one, MonObj.comp_mul, GrpObj.comp_inv, Category.assoc]
+    rfl
 
 end GlobalTheory

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open MeasureTheory Formalism.BasicNotions.TH GlobalTheory.RealLift GlobalTheory.RealWeil
 
@@ -129,7 +134,8 @@ theorem dual {l : Type} [Fintype l] (φ : (ι → Matrix (Ix P Q) (Ix R S) ℂ) 
   obtain ⟨c, rfl⟩ := φ.surjective x
   have e1 : ∀ i, sympl (φ (cv i)) (φ c) • φ (cu i) = φ (sympl (φ (cv i)) (φ c) • cu i) :=
     fun i => (map_smul φ _ _).symm
-  simp only [e1, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e1, ← map_sum]
   congr 1
   conv_rhs => rw [decomp c]
   simp only [Fintype.sum_prod_type, Fintype.sum_bool, cu, cv, if_true, Bool.false_eq_true, if_false, hφ, sum_eS]
@@ -206,7 +212,8 @@ theorem quad_fock : (∀ (l κ : Type) [Fintype l] [DecidableEq l] [Fintype κ] 
     refine Finset.sum_congr rfl fun w _ => ?_
     dsimp only
     rw [H2 P Q R S (Y w) (hY w)]
-    simp only [← atPlLin_apply, map_smul, map_sum, map_sub, map_add, atPlLin_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← atPlLin_apply, map_smul, map_sum, map_sub, map_add (f := _), atPlLin_mul]
     congr 1
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     rw [lineSign_eq_sgn]
@@ -215,7 +222,8 @@ theorem quad_fock : (∀ (l κ : Type) [Fintype l] [DecidableEq l] [Fintype κ] 
     module
   rw [hop, hq]
   clear H1 H2 hq hop hφ hY
-  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.coe_sum', Finset.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.coe_sum', Finset.sum_apply,
     ContinuousLinearMap.add_apply, ContinuousLinearMap.mul_apply, LinearMap.smul_apply, LinearMap.sum_apply,
     LinearMap.add_apply, Module.End.mul_apply, map_smul, map_sum, map_add, hΨ, hZ]
 

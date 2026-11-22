@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CocyclesToWachVectorsBoundOfExtTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingConditionOfDeltaInvariants
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,8 +109,8 @@ theorem invariantLetter_polynomial_derivation (hπΔ : W.π₀ ∈ W.AΔ) (hU : 
     Formalism.MainNotions.CrystallineLiftingInputs.DL W T c (Polynomial.aeval (derivationOnWachModule W T) P x) := by
   induction P using Polynomial.induction_on'
   next p q hp hq =>
-    rw [map_add, LinearMap.add_apply]
-    exact ⟨by rw [smul_add, hp.1, hq.1], fun δ hδ => by rw [map_add, hp.2 δ hδ, hq.2 δ hδ]⟩
+    rw [map_add (f := _), LinearMap.add_apply]
+    exact ⟨by rw [smul_add, hp.1, hq.1], fun δ hδ => by rw [map_add (f := _), hp.2 δ hδ, hq.2 δ hδ]⟩
   next k a =>
     rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
     have hk := invariantLetter_derivation_pow W T hπΔ hU k h
@@ -128,7 +132,7 @@ theorem qLattice_add {c : ZMod n} {k : ℕ} {x y : W.DD T} (hx : QLattice W T c 
     (hy : QLattice W T c k y) : QLattice W T c k (x + y) := by
   refine ⟨⟨?_, fun δ hδ => ?_⟩, ?_⟩
   · rw [smul_add, hx.1.1, hy.1.1]
-  · rw [map_add, hx.1.2 δ hδ, hy.1.2 δ hδ]
+  · rw [map_add (f := _), hx.1.2 δ hδ, hy.1.2 δ hδ]
   · rw [smul_add]
     exact add_mem hx.2 hy.2
 
@@ -165,7 +169,7 @@ theorem qLattice_polynomial_derivation [NeZero n] (hDS : DerivationPreservesQLat
     | succ j ih => rw [pow_succ', Module.End.mul_apply]; exact qLattice_derivation W T hDS hA hT c k ih
   induction P using Polynomial.induction_on'
   next p q hp hq =>
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
     exact qLattice_add W T hp hq
   next j a =>
     rw [Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]

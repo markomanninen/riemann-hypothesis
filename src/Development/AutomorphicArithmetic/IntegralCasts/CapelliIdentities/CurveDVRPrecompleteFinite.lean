@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PrecompleteOfFiniteOverAdicComplete.curveDVR_prec_finite :
     ∀ {O M : Type} [inst : CommRing O] [IsNoetherianRing O]
@@ -18,4 +22,4 @@ theorem UpperTheory.Reformulated.B.PrecompleteOfFiniteOverAdicComplete.curveDVR_
   | add x z hx hz =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hz
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩

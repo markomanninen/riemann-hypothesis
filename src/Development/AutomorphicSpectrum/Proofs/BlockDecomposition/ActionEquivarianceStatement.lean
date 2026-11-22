@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.ConjugatedGeneratorGlRelation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.EquivariantSections.EquivSection
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.ConjugatedGeneratorGlRelation
+
+@[expose] public section
 
 noncomputable section
 
@@ -201,7 +205,8 @@ theorem actEquiv : ActEquiv := by
         ∑ w ∈ (Finset.univ : Finset (Fin x.1 → Fin n × Fin n)), (∏ i, adC (toMK k) (w i) (x.2 i)) *
           jfun Ψ T.w (T.op k (a ⟨x.1, w⟩)) y := by
       funext y
-      simp only [rhoA, map_sum, map_smul, inner_sum, inner_smul_right, jfun]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [rhoA, map_sum, map_smul, inner_sum, inner_smul_right, jfun]
     rw [e]
     exact eword_sum _ _ _ (fun w => hJ _) _ hg
   show actF T Ψ a (g * toMK k) = actF T Ψ (rhoA T m k a) g

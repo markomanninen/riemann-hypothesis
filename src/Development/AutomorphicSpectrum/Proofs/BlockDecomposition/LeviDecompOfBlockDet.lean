@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.ConvGrOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -185,7 +189,7 @@ def tau (A : Ad E R) (hi : Function.Injective A.i) (h : ∀ x, ∃ y, A.σ (A.i 
   map_one' := hi (by rw [← (h 1).choose_spec]; simp)
   map_mul' a b := hi (by rw [← (h (a * b)).choose_spec, map_mul, map_mul, map_mul, ← (h a).choose_spec, ← (h b).choose_spec])
   map_zero' := hi (by rw [← (h 0).choose_spec]; simp)
-  map_add' a b := hi (by rw [← (h (a + b)).choose_spec, map_add, map_add, map_add, ← (h a).choose_spec, ← (h b).choose_spec])
+  map_add' a b := hi (by rw [← (h (a + b)).choose_spec, map_add (f := _), map_add (f := _), map_add (f := _), ← (h a).choose_spec, ← (h b).choose_spec])
 
 theorem i_tau (A : Ad E R) (hi : Function.Injective A.i) (h : ∀ x, ∃ y, A.σ (A.i x) = A.i y) (x : E) :
     A.i (tau A hi h x) = A.σ (A.i x) := (h x).choose_spec.symm

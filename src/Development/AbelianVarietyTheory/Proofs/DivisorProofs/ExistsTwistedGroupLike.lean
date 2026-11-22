@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MemPrimitiveTensorsIffIsPrimitiveElem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MemPrimitiveTensorsIffIsPrimitiveElem
+
+@[expose] public section
 
 open scoped TensorProduct
 open TensorProduct Coalgebra WithConv
@@ -21,7 +25,6 @@ def counitLeft : H ⊗[K] H →ₐ[K] H :=
 theorem counitLeft_eq_lid (y : H ⊗[K] H) :
     counitLeft y = TensorProduct.lid K H (LinearMap.rTensor H (counit (R := K)) y) := by
   induction y with
-  | zero => simp
   | add a b ha hb => simp [ha, hb]
   | tmul a b => simp
 
@@ -37,16 +40,14 @@ theorem counitLeft_assoc_symm_tmul (a : H) (y : H ⊗[K] H) :
     Algebra.TensorProduct.map counitLeft (AlgHom.id K H)
       ((Algebra.TensorProduct.assoc K K K H H H).symm (a ⊗ₜ[K] y)) = counit (R := K) a • y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [TensorProduct.tmul_add, map_add, smul_add, hy, hz]
+  | add y z hy hz => simp only [TensorProduct.tmul_add, map_add (f := _), smul_add, hy, hz]
   | tmul b d => simp [TensorProduct.smul_tmul']
 
 theorem counitLeft_map_comul (y : H ⊗[K] H) :
     Algebra.TensorProduct.map counitLeft (AlgHom.id K H)
       (Algebra.TensorProduct.map (Bialgebra.comulAlgHom K H) (AlgHom.id K H) y) = y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
   | tmul a b => simp [counitLeft_comul]
 
 theorem counitLeft_assoc_symm_map_comul (y : H ⊗[K] H) :
@@ -55,8 +56,7 @@ theorem counitLeft_assoc_symm_map_comul (y : H ⊗[K] H) :
         (Algebra.TensorProduct.map (AlgHom.id K H) (Bialgebra.comulAlgHom K H) y)) =
       comul (R := K) (counitLeft y) := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
   | tmul a b =>
     rw [Algebra.TensorProduct.map_tmul, counitLeft_assoc_symm_tmul, counitLeft_tmul, map_smul]
     rfl
@@ -80,16 +80,14 @@ theorem rTensor_comulTw (c y : H ⊗[K] H) :
     (comulTw c).rTensor H y =
       c ⊗ₜ[K] (1 : H) * Algebra.TensorProduct.map (Bialgebra.comulAlgHom K H) (AlgHom.id K H) y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, mul_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), mul_add, hy, hz]
   | tmul a b => simp [comulTw_apply, Algebra.TensorProduct.tmul_mul_tmul]
 
 theorem lTensor_comulTw (c y : H ⊗[K] H) :
     (comulTw c).lTensor H y =
       (1 : H) ⊗ₜ[K] c * Algebra.TensorProduct.map (AlgHom.id K H) (Bialgebra.comulAlgHom K H) y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, mul_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), mul_add, hy, hz]
   | tmul a b => simp [comulTw_apply, Algebra.TensorProduct.tmul_mul_tmul]
 
 theorem assoc_eq (z : (H ⊗[K] H) ⊗[K] H) :
@@ -99,16 +97,14 @@ theorem map_comul_id (y : H ⊗[K] H) :
     Algebra.TensorProduct.map (Bialgebra.comulAlgHom K H) (AlgHom.id K H) y =
       (comul (R := K) (A := H)).rTensor H y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
   | tmul a b => simp
 
 theorem map_id_comul (y : H ⊗[K] H) :
     Algebra.TensorProduct.map (AlgHom.id K H) (Bialgebra.comulAlgHom K H) y =
       (comul (R := K) (A := H)).lTensor H y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
   | tmul a b => simp
 
 theorem comulTw_coassoc (c : H ⊗[K] H) (hc : IsCocycle c) (x : H) :
@@ -139,16 +135,14 @@ theorem lid_rTensor_smul_counit (c : H ⊗[K] H) (y : H ⊗[K] H) :
     TensorProduct.lid K H (((kappa c)⁻¹ • counit (R := K) (A := H)).rTensor H y) =
       (kappa c)⁻¹ • counitLeft y := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, smul_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), smul_add, hy, hz]
   | tmul a b => simp [smul_smul]
 
 theorem rid_lTensor_smul_counit (c : H ⊗[K] H) (y : H ⊗[K] H) :
     TensorProduct.rid K H (((kappa c)⁻¹ • counit (R := K) (A := H)).lTensor H y) =
       (kappa c)⁻¹ • counitLeft (TensorProduct.comm K H H y) := by
   induction y with
-  | zero => simp
-  | add y z hy hz => simp only [map_add, smul_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), smul_add, hy, hz]
   | tmul a b => simp [smul_smul]
 
 theorem counitLeft_comulTw (c : H ⊗[K] H) (hu : IsUnit c) (hc : IsCocycle c) (x : H) :
@@ -168,8 +162,8 @@ theorem lTensor_counit_comulTw [Coalgebra.IsCocomm K H] (c : H ⊗[K] H) (hu : I
   rw [rid_lTensor_smul_counit, comm_comulTw c hs, counitLeft_comulTw c hu hc,
     TensorProduct.rid_tmul, one_smul]
 
-variable (K H) in
 
+variable (K H) in
 def Twisted (_c : H ⊗[K] H) : Type := H
 
 instance (c : H ⊗[K] H) : AddCommGroup (Twisted K H c) := inferInstanceAs (AddCommGroup H)
@@ -187,9 +181,10 @@ def twistedCoalgebra [Coalgebra.IsCocomm K H] (c : H ⊗[K] H) (hu : IsUnit c) (
 
 end TwistedGroupLike
 
-open TwistedGroupLike in
+open TwistedGroupLike
 
-theorem exists_twisted_groupLike : ∀ (K H : Type) [Field K] [IsAlgClosed K] [CommRing H]
+set_option synthInstance.maxHeartbeats 100000 in
+ theorem exists_twisted_groupLike : ∀ (K H : Type) [Field K] [IsAlgClosed K] [CommRing H]
     [Bialgebra K H] [Coalgebra.IsCocomm K H] [Module.Finite K H] (c : H ⊗[K] H), IsUnit c →
     c ⊗ₜ[K] (1 : H) * Algebra.TensorProduct.map (Bialgebra.comulAlgHom K H) (AlgHom.id K H) c =
       (Algebra.TensorProduct.assoc K K K H H H).symm
@@ -197,7 +192,7 @@ theorem exists_twisted_groupLike : ∀ (K H : Type) [Field K] [IsAlgClosed K] [C
     Algebra.TensorProduct.comm K H H c = c →
     ∃ u : H, u ≠ 0 ∧ c * Coalgebra.comul (R := K) u = u ⊗ₜ[K] u := by
   intro K H _ _ _ _ _ _ c hu hc hs
-  letI := twistedCoalgebra c hu hc hs
+  letI := TwistedGroupLike.twistedCoalgebra c hu hc hs
   haveI : Coalgebra.IsCocomm K (Twisted K H c) :=
     ⟨LinearMap.ext fun x => (LinearMap.comp_apply _ _ _).trans (comm_comulTw c hs x)⟩
   let A := CartierDual K (Twisted K H c)

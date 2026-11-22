@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordArInt
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopBasisChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordArInt
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopBasisChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -173,19 +178,19 @@ theorem ptsIntegralAt_eq (hSheet : SheetIndepStatement) (hAB : A * B = 1) (hBA :
   by_cases h₂ : ∃ γ₂, IsSheet (Q.comap (intCoordSubst A)) Ψ₂ y w₂ γ₂
   · have h : ∃ γ, IsSheet Q (Ψ₂ ∘ₗ segreMap A) y (segreMap B w₂) γ :=
       ⟨_, isSheet_pt hAB hBA h₂.choose_spec⟩
-    rw [dif_pos h₂, dif_pos h]
+    rw [dite_eq_left h₂, dite_eq_left h]
     have key := hy _ _ _ (isSheet_pt hAB hBA h₂.choose_spec) h.choose_spec
     simp only [pot] at key
     simp only [logNorm_pt hBA]
     exact key
   · have h : ¬ ∃ γ, IsSheet Q (Ψ₂ ∘ₗ segreMap A) y (segreMap B w₂) γ :=
       fun ⟨γ, hγ⟩ => h₂ ⟨_, isSheet_pt' hAB hBA hγ⟩
-    rw [dif_neg h₂, dif_neg h]
+    rw [dite_eq_right h₂, dite_eq_right h]
 
 end IntegralCoordArithIntersection
 
-open IntegralCoordArithIntersection in
 
+open IntegralCoordArithIntersection in
 theorem IntCoordArInt.proof (hInd : PtsIndepStatement) (hSheet : SheetIndepStatement) :
     IntCoordArInt.Statement := by
   intro T T₂ _ _ _ _ A B hAB hBA Q e L Ab s hQ hL hAb hs
@@ -194,12 +199,12 @@ theorem IntCoordArInt.proof (hInd : PtsIndepStatement) (hSheet : SheetIndepState
       IsGoodProj (Q.comap (intCoordSubst A)) Ψ₂
   · have h : ∃ Ψ : (((k : Unit) → dualBlocks T k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj Q Ψ :=
       ⟨_, isGoodProj_comp hAB hBA h₂.choose_spec⟩
-    rw [dif_pos h₂, dif_pos h, ptsIntegralAt_eq hSheet hAB hBA Q L Ab s hQ hL hAb hs _ h₂.choose_spec]
+    rw [dite_eq_left h₂, dite_eq_left h, ptsIntegralAt_eq hSheet hAB hBA Q L Ab s hQ hL hAb hs _ h₂.choose_spec]
     exact hInd Unit (dualBlocks T) Q e _ _ L Ab s hQ (isGoodProj_comp hAB hBA h₂.choose_spec) h.choose_spec
       hL hAb hs
   · have h : ¬ ∃ Ψ : (((k : Unit) → dualBlocks T k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj Q Ψ :=
       fun ⟨Ψ, hΨ⟩ => h₂ ⟨_, isGoodProj_comp' hAB hBA hΨ⟩
-    rw [dif_neg h₂, dif_neg h]
+    rw [dite_eq_right h₂, dite_eq_right h]
 
 end
 

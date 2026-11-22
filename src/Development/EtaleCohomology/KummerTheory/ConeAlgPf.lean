@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.FinalTheorems
+module
+
+public import Development.EtaleCohomology.KummerTheory.FinalTheorems
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -89,7 +93,7 @@ variable (μ : Pair I J K) {X S : Scheme.{0}} (p : X ⟶ S) (γ : ∀ a : ℕ, F
 
 theorem Phi_add (n w : ℤ) (h : n = w) (U : Over S) (b b' : FinalTheorems J r M n U.left) :
     Phi μ p γ n w h U (b + b') = Phi μ p γ n w h U b + Phi μ p γ n w h U b' := by
-  simp only [Phi, Pi.add_apply, map_add, Finset.sum_add_distrib]
+  simp only [Phi, Pi.add_apply, map_add (f := _), Finset.sum_add_distrib]
 
 theorem Phi_smul (n w : ℤ) (h : n = w) (U : Over S) (c : ULift.{1} Λ) (b : FinalTheorems J r M n U.left) :
     Phi μ p γ n w h U (c • b) = c • Phi μ p γ n w h U b := by

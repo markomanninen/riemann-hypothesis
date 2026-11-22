@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsIrrOfArch
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.TendstoIndMul
-import Development.WeilBound.ThetaLifts.SmallCones.SoStab
-import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapid
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsIrrOfArch
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ArchimedeanEvaluationVector
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.UnipotentGroups.TendstoIndMul
+public import Development.WeilBound.ThetaLifts.SmallCones.SoStab
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CuspRapid
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

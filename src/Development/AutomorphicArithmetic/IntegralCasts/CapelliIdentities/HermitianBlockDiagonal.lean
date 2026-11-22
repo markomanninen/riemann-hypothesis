@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private lemma ad_mul {S : Type} [CommRing S] (τ : S →+* S) {a b c : ℕ}
     (A : Matrix (Fin a) (Fin b) S) (B : Matrix (Fin b) (Fin c) S) :

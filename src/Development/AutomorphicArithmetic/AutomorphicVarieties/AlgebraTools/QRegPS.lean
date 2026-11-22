@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UltraDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemSpanVariable
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -60,7 +64,7 @@ private theorem monoVal_X_eq {O σ : Type} [CommRing O] (α : σ →₀ ℕ) :
 private theorem eq_of_le_of_degree_eq {σ : Type} {α β : σ →₀ ℕ} (h : β ≤ α)
     (hd : β.degree = α.degree) : β = α := by
   obtain ⟨γ, rfl⟩ := exists_add_of_le h
-  rw [map_add] at hd
+  rw [map_add (f := _)] at hd
   have : γ = 0 := by
     rw [← Finsupp.degree_eq_zero_iff]
     omega
@@ -81,7 +85,8 @@ theorem UpperTheory.V.AlgebraTools.qRegAt_mvPowerSeries :
     rw [α.2]
     exact_mod_cast Nat.lt_succ_self a
   have h1 : MvPowerSeries.coeff α.1 (u + v) = MvPowerSeries.constantCoeff (c α) := by
-    rw [huv, map_sum, Finset.sum_eq_single α]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [huv, map_sum, Finset.sum_eq_single α]
     · rw [monoVal_X_eq, smul_eq_mul, MvPowerSeries.coeff_monomial_mul]
       simp
     · intro β _ hβ
@@ -90,7 +95,7 @@ theorem UpperTheory.V.AlgebraTools.qRegAt_mvPowerSeries :
       exact hβ (Subtype.ext (eq_of_le_of_degree_eq hle (β.2.trans α.2.symm)))
     · simp
   have h2 : MvPowerSeries.constantCoeff (c α) ∈ I := by
-    rw [← h1, map_add, h0, zero_add]
+    rw [← h1, map_add (f := _), h0, zero_add]
     exact coeff_mem_of_mem_map I v hv _
   have h3 : c α = (c α - MvPowerSeries.C (MvPowerSeries.constantCoeff (c α))) +
       MvPowerSeries.C (MvPowerSeries.constantCoeff (c α)) := by ring

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.HRSmulERight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.HRSmulERight
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem approx (M : ℤ) (hM : M ≠ 0) (t : Fv F v ⊗[F] E) :
     obtain ⟨e1, w1, hw1, he1⟩ := h1
     obtain ⟨e2, w2, hw2, he2⟩ := h2
     refine ⟨e1 + e2, w1 + w2, Submodule.add_mem _ hw1 hw2, ?_⟩
-    rw [map_add]; linear_combination he1 + he2
+    rw [map_add (f := _)]; linear_combination he1 + he2
 
 def trV : Fv F v ⊗[F] E →ₗ[Fv F v] Fv F v :=
   (Algebra.TensorProduct.rid F (Fv F v) (Fv F v)).toLinearMap ∘ₗ LinearMap.baseChange (Fv F v) (Algebra.trace F E)

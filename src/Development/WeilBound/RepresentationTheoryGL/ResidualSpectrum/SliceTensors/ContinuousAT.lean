@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpFin
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpehDataUnique
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PExpFin
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpehDataUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,10 +14,10 @@ namespace PositivityTheory.Rg.Rs
 
 namespace PDich
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a N : ℕ}
+
 
 open PExpFin in
-
 theorem continuous_aT (F : Sm E N) (r : ℕ) (g : GA E N) : Continuous fun t : ℝ => F.1 (aT E N r t * g) := by
   set y := Matrix.GeneralLinearGroup.map (pInf E) g
   set k := Matrix.GeneralLinearGroup.map (pFin E) g
@@ -51,7 +55,7 @@ theorem ascEmb_one {π π' : CuspSub E a} (h : π.Iso π') : AscEmb π.V π' 1 :
     fun o φ hφ => ?_⟩
   · have e : -spehExp 1 i + a * spehExp 1 i = 0 := by simp [spehExp]
     rw [e]
-    exact ⟨fun _ _ _ => rfl, fun _ => by simp [HChar.val, HChar.locK], fun _ => by simp [HChar.inf]⟩
+    exact ⟨fun _ _ _ => rfl, fun _ => by simp [HChar.val, HChar.locK, HChar.loc], fun _ => by simp [HChar.inf]⟩
   · rw [show (fun _ : Fin 1 => π'.twist 1) = fun _ => π' from funext fun _ => π'.twist_one, indForms_one]
     exact (T (P φ)).2
   · simp only [LinearMap.coe_comp, Function.comp_apply, Submodule.subtype_apply, LinearEquiv.coe_coe, hP φ hφ] at h0

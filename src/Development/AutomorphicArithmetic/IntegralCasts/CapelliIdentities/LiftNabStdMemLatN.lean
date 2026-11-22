@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCoeff
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Formalism.LocalToGlobal.Divisibility.CoefMod
-import Formalism.PieriBlockIdeals.BlockIdealBound5Derived
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.PieriBlockIdeals.BranchingBoundLastGradedOneRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
-import Formalism.HermitianLattices.StatementLat
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormIntegersLeOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.WeightedHomogeneousMap
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SemilinearLatticeMem
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCoeff
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.PieriBlockIdeals.BlockIdealBound5Derived
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.PieriBlockIdeals.BranchingBoundLastGradedOneRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LamGApply
+public import Formalism.HermitianLattices.StatementLat
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormIntegersLeOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.WeightedHomogeneousMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SemilinearLatticeMem
+
+@[expose] public section
 
 open MvPolynomial in
 private theorem mem_dw_iff {R : Type} [CommRing R] (r n : ℕ) (ν : Fin n → ℕ) (f : MvPolynomial (Fin r × Fin n) R) :

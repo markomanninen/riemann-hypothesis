@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.IsCompactOhat
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.IsCompactOhat
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ theorem crd_tens {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra
   | tmul r e =>
     simp [crd, tensMap, Algebra.TensorProduct.basis_repr_tmul, Algebra.smul_def]
   | add x y hx hy =>
-    simp only [map_add] at *
-    simp only [crd, map_add, Pi.add_apply] at *
+    simp only [map_add (f := _)] at *
+    simp only [crd, map_add (f := _), Pi.add_apply] at *
     rw [hx, hy]
 
 def Bint (n : ℕ) : Set (Fin n → E) :=
@@ -44,7 +48,7 @@ theorem crd_mem_of_latLoc {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) {y : Fin n 
     simpa [crd, ratV, inclR, Algebra.TensorProduct.basis_repr_tmul, Algebra.TensorProduct.one_def] using h
   | zero => simp [crd]
   | add a b _ _ ha hb =>
-    simp only [Pi.add_apply, crd, map_add] at ha hb ⊢
+    simp only [Pi.add_apply, crd, map_add (f := _)] at ha hb ⊢
     exact add_mem ha hb
   | smul c a _ ha =>
     simp only [crd] at ha ⊢

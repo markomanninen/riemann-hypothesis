@@ -1,7 +1,11 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.StatBridgeChiOne
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.KeyMul
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.LiftBound
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.YGenCongr
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.StatBridgeChiOne
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.KeyMul
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.LiftBound
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.YGenCongr
+
+@[expose] public section
 
 open Finset Classical
 

@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BlowUpPushHypothesesExample
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PComponentDim
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BlowUpPushHypothesesExample
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PComponentDim
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PMinimalPrimeMultiHomog
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSupSpanMultiHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -21,18 +26,18 @@ theorem sup_span_C_ne_top_of_multiHomog {O : Type*} [CommRing O] {K : Type} [Dec
   have h1 : (1 : MRing ι O) ∈ W ⊔ Ideal.span {(C ϖ : MRing ι O)} := htop ▸ Submodule.mem_top
   obtain ⟨w, hw, t, ht, hwt⟩ := Submodule.mem_sup.mp h1
   obtain ⟨s, rfl⟩ := Ideal.mem_span_singleton'.mp ht
-  have hw0 : (C (coeff 0 w) : MRing ι O) ∈ W := by
+  have hw0 : (C (AddMonoidAlgebra.coeff w 0) : MRing ι O) ∈ W := by
     have h := hW w hw 0
     rwa [weightedHomogeneousComponent_zero] at h
     intro v hv
     have := congrFun hv v.1
     simp [blockWeight] at this
-  have hc : coeff 0 w = 0 := by
-    have h : coeff 0 w ∈ W.comap (C : O →+* MRing ι O) := hw0
+  have hc : AddMonoidAlgebra.coeff w 0 = 0 := by
+    have h : AddMonoidAlgebra.coeff w 0 ∈ W.comap (C : O →+* MRing ι O) := hw0
     rw [h0] at h
     exact h
-  have h2 := congrArg (coeff 0) hwt
-  rw [coeff_add, mul_comm s, coeff_C_mul, hc, zero_add, coeff_zero_one] at h2
+  have h2 := congrArg (AddMonoidAlgebra.coeff · 0) hwt
+  rw [MvPolynomial.coeff_add, mul_comm s, coeff_C_mul, hc, zero_add, coeff_zero_one] at h2
   exact hϖ (isUnit_iff_exists_inv.mpr ⟨_, h2⟩)
 
 theorem ringKrullDim_quotient_eq_of_minimalPrime_of_sup_ne_top {O : Type*} [CommRing O] [IsDomain O]

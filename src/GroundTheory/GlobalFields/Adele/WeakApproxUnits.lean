@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.WeakApprox
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.WeakApprox
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

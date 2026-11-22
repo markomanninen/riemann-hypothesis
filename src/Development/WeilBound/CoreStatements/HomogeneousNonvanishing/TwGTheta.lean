@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGDiff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HomogeneousNonvanishing.TwGDiff
+
+@[expose] public section
+
 open NumberField TensorProduct
 
 namespace PositivityTheory.UnitarySelfGeneration
@@ -107,7 +112,7 @@ theorem anti_avoid {B : Type} [CommRing B] (σ : B ≃+* B) (hσ : ∀ x, σ (σ
   have hyD : y - σ y ∈ I := I.sub_mem hyI (hI y hyI)
   refine ⟨x + a * σ a * y, I.add_mem hxI (I.mul_mem_left _ hyI), fun Q hQ => ?_⟩
   have hD : x + a * σ a * y - σ (x + a * σ a * y) = (x - σ x) + a * σ a * (y - σ y) := by
-    rw [map_add, map_mul, hc]
+    rw [map_add (f := _), map_mul, hc]
     ring
   rw [hD]
   rcases Finset.mem_insert.mp hQ with rfl | hQ

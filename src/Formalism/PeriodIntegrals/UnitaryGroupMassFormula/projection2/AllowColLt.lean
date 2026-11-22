@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZero
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.projection2.KappaZero
+
+@[expose] public section
 
 open PI.OneCosetSharp PI.OneCosetSharp.Loc PI.OneCosetSharp.LocE
 

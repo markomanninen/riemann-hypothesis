@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBCutOff
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DetLowW
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBCutOff
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DetLowW
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

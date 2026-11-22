@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -20,7 +24,8 @@ theorem UpperTheory.V.Pa.Det.maxIndep :
   refine ⟨n, κ, hκS, ?_, ?_⟩
   · intro c hc
     have h0 : ∑ j, c j • (ψ (Finsupp.single j 1) : M ⧸ B) = 0 := by
-      simp_rw [← hκ, ← map_smul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp_rw [← hκ, ← map_smul, ← map_sum]
       exact (Submodule.Quotient.mk_eq_zero B).mpr hc
     funext j
     exact Fintype.linearIndependent_iff.mp hli c h0 j
@@ -44,11 +49,13 @@ theorem UpperTheory.V.Pa.Det.maxIndep :
       · rfl
       · exact hd
     refine ⟨K, fun j => t ^ K * (φ w).1 j, ?_⟩
-    rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Submodule.Quotient.mk_eq_zero, ← Submodule.mkQ_apply, map_sub, map_smul, map_sum]
     simp_rw [map_smul, hκ]
     have hz' : B.mkQ z = (w : M ⧸ B) := rfl
     rw [hz', sub_eq_zero, ← Submodule.coe_smul, hφ]
     conv_lhs => rw [← Finsupp.univ_sum_single (t ^ K • (φ w).1)]
-    rw [map_sum, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Submodule.coe_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Finsupp.smul_apply, smul_eq_mul, ← Finsupp.smul_single_one, map_smul, Submodule.coe_smul]

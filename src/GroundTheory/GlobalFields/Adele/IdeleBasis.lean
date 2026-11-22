@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
-import GroundTheory.GlobalFields.IdeleGroups.Restricted
-import GroundTheory.GlobalFields.Adele.Topology
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+public import GroundTheory.GlobalFields.IdeleGroups.Restricted
+public import GroundTheory.GlobalFields.Adele.Topology
+
+@[expose] public section
 
 open Filter Topology TopologicalSpace NumberField IsDedekindDomain
 open scoped RestrictedProduct NumberField.AdeleRing

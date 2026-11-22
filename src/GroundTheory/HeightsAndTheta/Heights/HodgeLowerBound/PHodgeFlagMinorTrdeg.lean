@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagMinorTrdeg
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagRatioTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsHodgeFlagMinorTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFlagRatioTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -74,7 +79,7 @@ theorem pivotMinor_block {n j : ℕ} (h : j ≤ n) (M : Matrix (Fin n) (Fin n) R
     ext (r | r) (c | c)
     · simp only [Matrix.submatrix_apply, Matrix.fromBlocks_apply₁₁, topLeft, e, Equiv.trans_apply,
         finSumFinEquiv_apply_left, finCongr_apply, pivotCols]
-      rw [dif_pos (by simp; omega)]
+      rw [dite_eq_left (by simp; omega)]
       congr 1
     · simp only [Matrix.submatrix_apply, Matrix.fromBlocks_apply₁₂, Matrix.zero_apply, e, Equiv.trans_apply,
         finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, finCongr_apply, pivotCols]
@@ -330,8 +335,8 @@ theorem z_indep : AlgebraicIndependent F (z F Ψ h) := by
     simp only [z, w, δ, Sum.map_inr, Sum.elim_inr, pivotRatio, map_div₀]
     rfl
 
-include h in
 
+include h in
 theorem leadMinor_ne_zero (τ : Ψ) (A : Fin (n - 1)) : leadMinor (genMat0Fr F Ψ n j τ) A ≠ 0 := by
   by_cases hA : (A : ℕ) < j
   · have e := pivotMinor_congr (genMat0Fr F Ψ n j τ) (genMatFr F Ψ n τ)
@@ -392,7 +397,5 @@ theorem proof : HodgeFlagMinorTrdeg.Statement := by
   rfl
 
 end HodgeFlagMinorTrdeg
-
-theorem HodgeFlagMinorTrdeg.full : HodgeFlagMinorTrdeg.Statement := HodgeFlagMinorTrdeg.proof
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

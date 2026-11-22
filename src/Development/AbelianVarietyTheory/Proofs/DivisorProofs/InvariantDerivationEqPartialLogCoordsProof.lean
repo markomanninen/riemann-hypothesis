@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralInvariantDerivationLog
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.MonoVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralInvariantDerivationLog
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.LogChain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.MonoVal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -30,24 +34,23 @@ theorem subst_secondBlockZero_twoPointVariables {ι : Type} (Y : Fin d → MvPow
   rw [subst_comp_subst_apply hs_twoVars hA, subst_comp_subst_apply hB hYs]
   congr 1
   funext q
-  simp only [twoVars]
-  rw [subst_X hA]
+  rw [twoVars, subst_X hA]
   split_ifs with h
   · simp [GlobalTheory.LogJacobian.substSecondBlockZero, subst_X hYs]
   · simp only [GlobalTheory.LogJacobian.substSecondBlockZero, Sum.elim_inr]
     rw [← coe_substAlgHom hYs, map_zero]
 
 theorem pderiv_inr_twoVars (k : Fin d) (f : PS K 2 d) :
-    pderiv K (Sum.inr k) (subst (twoVars K d) f) = subst (twoVars K d) (pderiv K ((1 : Fin 2), k) f) := by
+    pderiv (Sum.inr k) (subst (twoVars K d) f) = subst (twoVars K d) (pderiv ((1 : Fin 2), k) f) := by
   classical
   rw [ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst cc_twoVars, Finset.sum_eq_single ((1 : Fin 2), k)]
-  · simp [twoVars, pderiv_X, Pi.single_apply]
+  · simp [twoVars]
   · intro q _ hq
     obtain ⟨a, i⟩ := q
     fin_cases a
-    · simp [twoVars, pderiv_X, Pi.single_apply]
+    · simp [twoVars]
     · have : i ≠ k := fun h => hq (by simp [h])
-      simp [twoVars, pderiv_X, Pi.single_apply, this]
+      simp [twoVars, this]
   · simp
 
 end Two
@@ -59,12 +62,12 @@ variable {K : Type} [Field K] [CharZero K] {v : AddValuation K (WithTop ℝ)} {d
 theorem subst_jacEntry (F : FGLaw K d) (hF : ∀ a, MvIsInt v (subst (twoVars K d) (F.F a)))
     (Y : Fin d → MvPowerSeries ι K) (hY : ∀ i, constantCoeff (Y i) = 0) (k j : Fin d) :
     subst Y (GlobalTheory.LogJacobian.jacEntry (logFGLOf v F hF) k j) =
-      subst (fun q : Fin 2 × Fin d => if q.1 = 0 then Y q.2 else 0) (pderiv K ((1 : Fin 2), k) (F.F j)) := by
+      subst (fun q : Fin 2 × Fin d => if q.1 = 0 then Y q.2 else 0) (pderiv ((1 : Fin 2), k) (F.F j)) := by
   rw [← subst_secondBlockZero_twoPointVariables Y hY, ← pderiv_inr_twoVars]
   rfl
 
-omit [CharZero K] in
 
+omit [CharZero K] in
 theorem subst_ev_pt_zero [Finite ι] (T : Fin n × Fin d → MvPowerSeries ι K) (hT : ∀ q, constantCoeff (T q) = 0)
     (b : Fin n) (g : PS K 2 d) :
     subst T (ev (n := n) ![pt K d b, 0] g) =
@@ -81,11 +84,11 @@ theorem subst_ev_pt_zero [Finite ι] (T : Fin n × Fin d → MvPowerSeries ι K)
   obtain ⟨j, i⟩ := p
   fin_cases j
   · simp [pt, subst_X hTs]
-  · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, Pi.zero_apply, one_ne_zero, if_false]
+  · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, Pi.zero_apply, one_ne_zero, ite_false]
     rw [← coe_substAlgHom hTs, map_zero]
 
-omit [CharZero K] in
 
+omit [CharZero K] in
 theorem constantCoeff_subst_self {σ : Type} [Finite σ] (T : σ → MvPowerSeries ι K)
     (hT : ∀ q, constantCoeff (T q) = 0) (f : MvPowerSeries σ K) :
     constantCoeff (subst T f : MvPowerSeries ι K) = constantCoeff f := by
@@ -103,14 +106,16 @@ def logLin (cp : ι → Fin n) (u : ι → Fin d → K) (b : Fin n) : Fin d → 
 omit [CharZero K] in
 theorem cc_logLin (cp : ι → Fin n) (u : ι → Fin d → K) (b : Fin n) (e : Fin d) :
     constantCoeff (logLin cp u b e) = 0 := by
-  simp only [logLin, map_sum, constantCoeff_smul, constantCoeff_X, smul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [logLin, map_sum, constantCoeff_smul, constantCoeff_X, smul_zero, Finset.sum_const_zero]
 
 omit [CharZero K] in
 theorem pderiv_logLin (cp : ι → Fin n) (u : ι → Fin d → K) (b : Fin n) (e : Fin d) (l : ι) :
-    pderiv K l (logLin cp u b e) = if cp l = b then C (u l e) else 0 := by
+    pderiv l (logLin cp u b e) = if cp l = b then C (u l e) else 0 := by
   classical
   unfold logLin
-  rw [map_sum, Finset.sum_eq_single l]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single l]
   · rw [Derivation.map_smul, pderiv_X_self, smul_eq_C_mul, mul_one]
     split_ifs <;> simp
   · intro l' _ hl
@@ -120,20 +125,20 @@ theorem pderiv_logLin (cp : ι → Fin n) (u : ι → Fin d → K) (b : Fin n) (
 theorem pderiv_subst_expPt (F : FGLaw K d) (hF : ∀ a, MvIsInt v (subst (twoVars K d) (F.F a)))
     (cp : ι → Fin n) (u : ι → Fin d → K) (l : ι) (Φ : PS K n d) :
     subst (fun q : Fin n × Fin d => expPt (logFGLOf v F hF) (logLin cp u q.1) q.2) (DofN F.F (cp l) (u l) Φ) =
-      pderiv K l (subst (fun q : Fin n × Fin d => expPt (logFGLOf v F hF) (logLin cp u q.1) q.2) Φ) := by
+      pderiv l (subst (fun q : Fin n × Fin d => expPt (logFGLOf v F hF) (logLin cp u q.1) q.2) Φ) := by
   classical
   set G := logFGLOf v F hF with hG
   set T : Fin n × Fin d → MvPowerSeries ι K := fun q => expPt G (logLin cp u q.1) q.2 with hTdef
   have hT : ∀ q, constantCoeff (T q) = 0 := fun q => cc_expPt G (cc_logLin cp u q.1) q.2
   have hTs : HasSubst T := hasSubst_of_constantCoeff_zero hT
-  have key : ∀ b j, pderiv K l (T (b, j)) = if cp l = b then
-      ∑ i : Fin d, C (u l i) * subst T (ev (n := n) ![pt K d b, 0] (pderiv K ((1 : Fin 2), i) (F.F j))) else 0 := by
+  have key : ∀ b j, pderiv l (T (b, j)) = if cp l = b then
+      ∑ i : Fin d, C (u l i) * subst T (ev (n := n) ![pt K d b, 0] (pderiv ((1 : Fin 2), i) (F.F j))) else 0 := by
     intro b j
-    have h1 : pderiv K l (T (b, j)) = ∑ i, subst (logLin cp u b) (pderiv K i (expOf G j)) *
-        pderiv K l (logLin cp u b i) :=
+    have h1 : pderiv l (T (b, j)) = ∑ i, subst (logLin cp u b) (pderiv i (expOf G j)) *
+        pderiv l (logLin cp u b i) :=
       ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst (cc_logLin cp u b) (expOf G j) l
-    have h2 : ∀ i, subst (logLin cp u b) (pderiv K i (expOf G j)) =
-        subst T (ev (n := n) ![pt K d b, 0] (pderiv K ((1 : Fin 2), i) (F.F j))) := by
+    have h2 : ∀ i, subst (logLin cp u b) (pderiv i (expOf G j)) =
+        subst T (ev (n := n) ![pt K d b, 0] (pderiv ((1 : Fin 2), i) (F.F j))) := by
       intro i
       rw [GlobalTheory.LogJacobian.pderiv_expOf, subst_comp_subst_apply (hasSubst_of_constantCoeff_zero (isExp_expOf G).1)
         (hasSubst_of_constantCoeff_zero (cc_logLin cp u b)), subst_ev_pt_zero T hT]
@@ -145,10 +150,12 @@ theorem pderiv_subst_expPt (F : FGLaw K d) (hF : ∀ a, MvIsInt v (subst (twoVar
     · simp
   rw [ReciprocityTheory.ChartRestriction.G.TB.LogPf.pderiv_subst hT, Fintype.sum_prod_type, Finset.sum_eq_single (cp l)]
   · unfold DofN
-    simp only [key, if_true]
-    rw [← coe_substAlgHom hTs, map_sum]
+    simp only [key, ite_true]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← coe_substAlgHom hTs, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [map_mul, map_sum, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_mul, map_sum, mul_comm]
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, coe_substAlgHom hTs, subst_C]
@@ -166,20 +173,21 @@ theorem invDer : InvDerSt := by
   set T : Fin n × Fin d → MvPowerSeries ι K := fun q => expPt (logFGLOf v F hF) (logLin cp u q.1) q.2
   have hT : ∀ q, constantCoeff (T q) = 0 := fun q => cc_expPt _ (cc_logLin cp u q.1) q.2
   have hit : ∀ (l : ι) (c : ℕ) (g : PS K n d),
-      subst T ((DofN F.F (cp l) (u l))^[c] g) = (pderiv K l)^[c] (subst T g : MvPowerSeries ι K) := by
+      subst T ((DofN F.F (cp l) (u l))^[c] g) = (pderiv l)^[c] (subst T g : MvPowerSeries ι K) := by
     intro l c
     induction c with
     | zero => intro g; rfl
     | succ c ih => intro g; rw [Function.iterate_succ_apply, Function.iterate_succ_apply, ih, hk]
   have hfold : ∀ (m : ι →₀ ℕ) (L : List ι),
       subst T (L.foldr (fun l g => (DofN F.F (cp l) (u l))^[m l] g) Φ) =
-        L.foldr (fun l g => (pderiv K l)^[m l] g) (subst T Φ : MvPowerSeries ι K) := by
+        L.foldr (fun l g => (pderiv l)^[m l] g) (subst T Φ : MvPowerSeries ι K) := by
     intro m L
     induction L with
     | nil => rfl
     | cons a L ih => rw [List.foldr_cons, List.foldr_cons, hit, ih]
   unfold DpolyN derivAt0
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, constantCoeff_C, mul_assoc, ← constantCoeff_subst_self T hT]
   congr 1

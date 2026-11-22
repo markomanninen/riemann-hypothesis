@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenericFlag
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,8 @@ theorem value_span : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj 
         rw [hw' (e k), map_mul, mul_smul]
         rfl
       simp only [πW, LinearMap.sum_apply, LinearMap.smul_apply]
-      rw [Finset.sum_congr rfl fun k _ => h1 k, ← Finset.sum_smul, ← map_sum, hsum, map_one, one_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl fun k _ => h1 k, ← Finset.sum_smul, ← map_sum, hsum, map_one, one_smul]
     have key : ∀ l : M.lat ⟨centre z, h⟩,
         πW (ev l) ∈ Submodule.span F (Set.range fun i => ev ⟨b i, hbl i⟩) := by
       intro l
@@ -87,11 +92,12 @@ theorem value_span : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj 
       let c : Fin n → regAt ξ ⟨centre z, h⟩ := fun k => ⟨inc (cf k), hreg _⟩
       let m : M.lat ⟨centre z, h⟩ := ∑ k, c k • (⟨ρ (e k) l, he k⟩ : M.lat ⟨centre z, h⟩)
       have hevm : ev m = πW (ev l) := by
-        simp only [πW, LinearMap.sum_apply, LinearMap.smul_apply, m, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [πW, LinearMap.sum_apply, LinearMap.smul_apply, m, map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [hsmul _ _ _ (hinc (cf k)), hk k]
       have hmv : (m : V) = ∑ k, inc (cf k) • ρ (e k) l := by
-        simp only [m, AddSubmonoidClass.coe_finset_sum]
+        simp only [m, AddSubmonoidClass.coe_finsetSum]
         exact Finset.sum_congr rfl fun _ _ => rfl
       have hme : (m : V) ∈ eigSp ρ (inc.comp σ) := mem_eigSp_iff.2 fun a => by
         rw [hmv]
@@ -102,9 +108,10 @@ theorem value_span : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj 
       choose t ht using fun i => hvalr (d i)
       have hm : m = ∑ i, d i • (⟨b i, hbl i⟩ : M.lat ⟨centre z, h⟩) := by
         apply Subtype.ext
-        rw [← hd, AddSubmonoidClass.coe_finset_sum]
+        rw [← hd, AddSubmonoidClass.coe_finsetSum]
         exact Finset.sum_congr rfl fun _ _ => rfl
-      rw [← hevm, hm, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hevm, hm, map_sum]
       refine Submodule.sum_mem _ fun i _ => ?_
       rw [hsmul _ _ _ (ht i)]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -119,7 +126,7 @@ theorem value_span : ∀ (X : Scheme.{0}) (G : Over X) [GrpObj G] [IsCommMonObj 
     · rw [map_zero]
       exact Submodule.zero_mem _
     · intro x y _ _ hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hx hy
     · intro c x _ hx
       rw [map_smul]

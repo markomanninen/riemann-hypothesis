@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapRDefs
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CapRDefs
+
+@[expose] public section
+
 open MeasureTheory NumberField GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW
 
@@ -31,7 +36,7 @@ private theorem flow_cont {G : Type} [Group G] [TopologicalSpace G] [IsTopologic
 theorem UpperTheory.integral_quotient_derivative_oneParameter_eq_zero :
     ∀ (E : Type) [Field E] [NumberField E] (r : ℕ) (h D : GA E r → ℂ) (c : ℝ → GA E r),
           AutomorphicForm.IsLeftInvariant h → AutomorphicForm.IsLeftInvariant D → Continuous D → Continuous c → c 0 = 1 →
-          (∀ s t, c (s + t) = c s * c t) → (∀ s, c s ∈ normOneGL E r) → (∀ g, HasDerivAt (fun s => h (g * c s)) (D g) 0) →
+          (∀ s t, c (s + t) = c s * c t) → (∀ s, c s ∈ normOneGL (K := E) (n := r)) → (∀ g, HasDerivAt (fun s => h (g * c s)) (D g) 0) →
           Integrable (onQ h) (muQ E r) → Integrable (onQ D) (muQ E r) → ∫ y, onQ D y ∂muQ E r = 0 := by
   intro E _ _ r h D c hh hD cD cc _ cadd c1 hd ih iD
   have e : ∀ {f : GA E r → ℂ} (hf : AutomorphicForm.IsLeftInvariant f), onQ f = CuspidalSpectrum.cuspQuot hf := fun hf => by
@@ -43,14 +48,15 @@ theorem UpperTheory.integral_quotient_derivative_oneParameter_eq_zero :
   haveI : IsFiniteMeasure (muQ E r) := Reduction.isFiniteMeasure_quotientMeasure (K := E) (n := r) (mu1 E r)
   haveI : SigmaFinite (muQ E r) := IsFiniteMeasure.toSigmaFinite _
   haveI : SFinite (muQ E r) := instSFiniteOfSigmaFinite
-  refine flow_abs (muQ E r) (fun u => rightMul (rationalGLOne E r) ⟨c u, c1 u⟩) ?_
-    (fun u => measurePreserving_rightMul (Γ := rationalGLOne E r) (mu1 E r) _)
-    (fun u => (rightMulHomeomorph (rationalGLOne E r) _).measurableEmbedding) _ _ ?_ ih iD fun y u => ?_
-  · exact flow_cont (rationalGLOne E r) (fun u => ⟨c u, c1 u⟩) (cc.subtype_mk c1)
-  · exact (isOpenQuotientMap_mk (rationalGLOne E r)).isQuotientMap.continuous_iff.2 (cD.comp continuous_subtype_val)
-  · obtain ⟨g, rfl⟩ := mk_surjective (rationalGLOne E r) y
-    have h1 := (hd (g * c u)).scomp_of_eq u ((hasDerivAt_id u).sub_const u) (by simp)
-    rw [one_smul] at h1
-    refine h1.congr_of_eventuallyEq (.of_forall fun s => ?_)
-    change h (g * c s) = h (g * c u * c (s - u))
-    rw [mul_assoc, ← cadd, add_sub_cancel]
+  set_option synthInstance.maxHeartbeats 200000 in
+    refine flow_abs (muQ E r) (fun u => rightMul (rationalGLOne (K := E) (n := r)) ⟨c u, c1 u⟩) ?_
+      (fun u => measurePreserving_rightMul (Γ := rationalGLOne (K := E) (n := r)) (mu1 E r) _)
+      (fun u => (rightMulHomeomorph (rationalGLOne (K := E) (n := r)) _).measurableEmbedding) _ _ ?_ ih iD fun y u => ?_
+    · exact flow_cont (rationalGLOne (K := E) (n := r)) (fun u => ⟨c u, c1 u⟩) (cc.subtype_mk c1)
+    · exact (isOpenQuotientMap_mk (rationalGLOne (K := E) (n := r))).isQuotientMap.continuous_iff.2 (cD.comp continuous_subtype_val)
+    · obtain ⟨g, rfl⟩ := mk_surjective (rationalGLOne (K := E) (n := r)) y
+      have h1 := (hd (g * c u)).scomp_of_eq u ((hasDerivAt_id u).sub_const u) (by simp)
+      rw [one_smul] at h1
+      refine h1.congr_of_eventuallyEq (.of_forall fun s => ?_)
+      change h (g * c s) = h (g * c u * c (s - u))
+      rw [mul_assoc, ← cadd, add_sub_cancel]

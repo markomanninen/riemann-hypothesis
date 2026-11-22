@@ -1,8 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsReductionActionChosenPlaces
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SerFixOne
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ConcreteLevelAdelicSubset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsReductionActionChosenPlaces
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsReduction
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.MainNotions.ArithmeticCylinders Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.AutomorphicEvaluation Formalism.IndefR.principalLevelFrame Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField ReciprocityTheory.Aut Formalism.AUTREP GlobalTheory.Mem.SRe GlobalTheory.LabPin
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LabPin.instCM
 
@@ -77,23 +82,23 @@ theorem le_one_iff_frac {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-local notation3 "Lp" => maximalRealSubfield L
+local notation3 "L⁺" => NumberField.maximalRealSubfield L
 
-theorem exists_approx (v : HeightOneSpectrum (𝓞 Lp)) (y d : v.adicCompletion Lp) (hd : d ≠ 0) :
-    ∃ a : Lp, Valued.v (y - algebraMap Lp (v.adicCompletion Lp) a) < Valued.v d := by
-  have hU : IsOpen {z : v.adicCompletion Lp | Valued.v (z - y) < Valued.v d} := by
-    have h := (Valued.isOpen_ball (v.adicCompletion Lp) (Valued.v.restrict d)).preimage (continuous_sub_right y)
+theorem exists_approx (v : HeightOneSpectrum (𝓞 L⁺)) (y d : v.adicCompletion L⁺) (hd : d ≠ 0) :
+    ∃ a : L⁺, Valued.v (y - algebraMap L⁺ (v.adicCompletion L⁺) a) < Valued.v d := by
+  have hU : IsOpen {z : v.adicCompletion L⁺ | Valued.v (z - y) < Valued.v d} := by
+    have h := (Valued.isOpen_ball (v.adicCompletion L⁺) (Valued.v.restrict d)).preimage (continuous_sub_right y)
     convert h using 2 with z
     simp [Valuation.restrict_lt_iff]
-  have hy : y ∈ {z : v.adicCompletion Lp | Valued.v (z - y) < Valued.v d} := by
+  have hy : y ∈ {z : v.adicCompletion L⁺ | Valued.v (z - y) < Valued.v d} := by
     simp only [Set.mem_setOf_eq, sub_self, map_zero]
     exact zero_lt_iff.mpr ((Valuation.ne_zero_iff _).mpr hd)
-  obtain ⟨z, hz, a, rfl⟩ := mem_closure_iff_nhds.mp (denseRange_algebraMap Lp v y) _ (hU.mem_nhds hy)
+  obtain ⟨z, hz, a, rfl⟩ := mem_closure_iff_nhds.mp (denseRange_algebraMap L⁺ v y) _ (hU.mem_nhds hy)
   refine ⟨a, ?_⟩
   rw [← Valuation.map_neg, neg_sub]
   exact hz
 
-theorem eq_of_le_one_iff (v : HeightOneSpectrum (𝓞 Lp)) (i i' : L →ₐ[Lp] v.adicCompletion Lp)
+theorem eq_of_le_one_iff (v : HeightOneSpectrum (𝓞 L⁺)) (i i' : L →ₐ[L⁺] v.adicCompletion L⁺)
     (h : ∀ x : L, Valued.v (i x) ≤ 1 ↔ Valued.v (i' x) ≤ 1) : i = i' := by
   refine AlgHom.ext fun x => ?_
   by_contra hne
@@ -101,14 +106,14 @@ theorem eq_of_le_one_iff (v : HeightOneSpectrum (𝓞 Lp)) (i i' : L →ₐ[Lp] 
   have hδ0 : Valued.v δ ≠ 0 := (Valuation.ne_zero_iff _).mpr (sub_ne_zero.mpr hne)
   obtain ⟨a, ha⟩ := exists_approx v (i x) δ (sub_ne_zero.mpr hne)
   obtain ⟨b, hb⟩ := exists_approx v δ δ (sub_ne_zero.mpr hne)
-  set b' := algebraMap Lp (v.adicCompletion Lp) b
-  set a' := algebraMap Lp (v.adicCompletion Lp) a
+  set b' := algebraMap L⁺ (v.adicCompletion L⁺) b
+  set a' := algebraMap L⁺ (v.adicCompletion L⁺) a
   have hbv : Valued.v b' = Valued.v δ := by
     have : b' = δ - (δ - b') := by ring
     rw [this, Valuation.map_sub_eq_of_lt_left _ hb]
   have hb0 : Valued.v b' ≠ 0 := hbv ▸ hδ0
   have hbne : b' ≠ 0 := (Valuation.ne_zero_iff _).mp hb0
-  set z : L := (x - algebraMap Lp L a) / algebraMap Lp L b
+  set z : L := (x - algebraMap L⁺ L a) / algebraMap L⁺ L b
   have hiz : i z = (i x - a') / b' := by simp [z, a', b', map_div₀, map_sub, AlgHom.commutes]
   have hi'z : i' z = (i' x - a') / b' := by simp [z, a', b', map_div₀, map_sub, AlgHom.commutes]
   have hlt : Valued.v (i z) < 1 := by

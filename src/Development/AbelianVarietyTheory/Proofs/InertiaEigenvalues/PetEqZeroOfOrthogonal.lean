@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBddFormsOfWithSmoothings
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLaplacianPolynomialKillsHarishChandraFinit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaplacianPolynomialKernelOfPolynomialLaplacian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolyMaximalCompactCasimirKillsKType
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpGLImageBallMemNhds
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
-import GroundTheory.AutomorphicForms.HarishChandraRegularity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBddFormsOfWithSmoothings
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLaplacianPolynomialKillsHarishChandraFinit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LaplacianPolynomialKernelOfPolynomialLaplacian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolyMaximalCompactCasimirKillsKType
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpGLImageBallMemNhds
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualInfinitesimalCharacterRegular
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix GlobalTheory.AutomorphicL2Unitary GlobalTheory.UnitaryBC GlobalTheory.CuspRep GlobalTheory.CuspRep.CuspidalL2GL GlobalTheory.Petersson Formalism.L2.Host
 open Filter Topology GlobalTheory.HCAlpha GlobalTheory.ExpDeriv
@@ -15,7 +19,7 @@ noncomputable section
 
 namespace GlobalTheory.KeepOrth
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem exists_poly_central {f : Sm E a} (h : IsAutForm f) {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) :
     ∃ p : Polynomial ℂ, p ≠ 0 ∧ Polynomial.aeval z p f = 0 := by
@@ -141,16 +145,16 @@ theorem eq_univ_of_exp {S : Set (GL (Fin a) (Cinf E))} (h1 : 1 ∈ S) (hS : ∀ 
     obtain ⟨X, rfl⟩ := hz
     exact hS y hy X 1
 
-variable (E a) in
 
+variable (E a) in
 abbrev bas : Module.Basis (Fin (Module.finrank ℝ (Lie E a))) ℝ (Lie E a) := Module.finBasis ℝ (Lie E a)
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 def crd (i : Fin (Module.finrank ℝ (Lie E a))) (z : Lie E a) : Lie E a →L[ℝ] ℝ :=
   (LinearMap.toContinuousLinearMap ((bas E a).coord i)).comp (lmul (invL z))
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem contDiffOn_crd (i : Fin (Module.finrank ℝ (Lie E a))) : ContDiffOn ℝ (⊤ : ℕ∞) (crd i) (invSet E a) :=
   contDiffOn_clm_apply.2 fun v z hz => ((LinearMap.toContinuousLinearMap ((bas E a).coord i)).contDiff.contDiffAt.comp z
     (GlobalTheory.AutGrowth.contDiff_lmul_uncurry.contDiffAt.comp z
@@ -161,7 +165,8 @@ theorem chart_lie (X : Lie E a) (φ : Sm E a) (g : GA E a) (z : Lie E a) :
   unfold chart
   split_ifs
   · conv_lhs => rw [← (bas E a).sum_repr X]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, Submodule.coe_sum, Finset.sum_apply,
       Module.Basis.coord_apply]
     rfl
   · simp
@@ -180,8 +185,8 @@ theorem hasFDerivAt_chart (φ : Sm E a) (g : GA E a) {z : Lie E a} (hz : z ∈ i
 
 variable {ω : HChar E} (μ : Measure (GA E a)) [μ.IsHaarMeasure] {ψ : GA E a → ℂ}
 
-variable (ψ) in
 
+variable (ψ) in
 def coef (φ : GA E a → ℂ) (x : GA E a) : ℂ := pet (latticeGL E a) μ (fun g => φ (g * x)) ψ
 
 theorem chart_coef (φ : GA E a → ℂ) (x : GA E a) (z : Lie E a) :
@@ -215,7 +220,7 @@ theorem hasFDerivAt_coef (hω : ω.IsUnitary) (h' : ψ ∈ bddForms E a ω) {φ 
     (F' := fun y q => ∑ i, (crd i y).smulRight (chart (lie E a (bas E a i) φ).1 (q.out * x) y * conj (ψ q.out)))
     (bound := fun _ => ∑ i, (‖crd i z‖ + 1) * (C i * D)) hs
     (.of_forall fun y => (integrable_chart μ hω h' h x y).1) (integrable_chart μ hω h' h x z)
-    (integrable_finset_sum _ fun i _ => hi i).1
+    (integrable_finsetSum _ fun i _ => hi i).1
     (.of_forall fun q y hy => (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => by
       rw [ContinuousLinearMap.norm_smulRight_apply, norm_mul, Complex.norm_conj]
       exact mul_le_mul (hy.2 i) (mul_le_mul (GlobalTheory.CuspQuot.norm_chart_le (hC i) _ _) (hD _) (norm_nonneg _)
@@ -225,7 +230,7 @@ theorem hasFDerivAt_coef (hω : ω.IsUnitary) (h' : ψ ∈ bddForms E a ω) {φ 
       refine ((hasFDerivAt_chart φ (q.out * x) hy.1).mul_const (conj (ψ q.out))).congr_fderiv ?_
       ext1 v
       simp [Finset.mul_sum, mul_comm, mul_left_comm])
-  rw [integral_finset_sum _ fun i _ => hi i] at key
+  rw [integral_finsetSum _ fun i _ => hi i] at key
   rw [funext (chart_coef μ φ.1 x)]
   refine key.congr_fderiv (Finset.sum_congr rfl fun i _ => ?_)
   rw [chart_coef]
@@ -258,7 +263,7 @@ theorem lieD_coef (hω : ω.IsUnitary) (h' : ψ ∈ bddForms E a ω) {φ : Sm E 
   rw [lieD, (hasFDerivAt_coef μ hω h' h hl x (z := oneL E a) isUnit_one).fderiv, e (coef μ ψ _)]
   simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply, chart_coef, chart_lie X,
     Finset.sum_mul, smul_mul_assoc]
-  refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) (integral_finset_sum _ fun i _ =>
+  refine Eq.trans (Finset.sum_congr rfl fun i _ => ?_) (integral_finsetSum _ fun i _ =>
     (integrable_chart μ hω h' (hl (bas E a i)) x (oneL E a)).smul ((bas E a).coord i X)).symm
   simp only [Pi.smul_apply]
   rw [integral_smul, crd, ContinuousLinearMap.comp_apply, e1]
@@ -316,7 +321,7 @@ theorem pet_translate_eq_zero (hω : ω.IsUnitary) (h' : ψ ∈ bddForms E a ω)
   exact (key ▸ Set.mem_univ y : y ∈ {y | ∀ φ : V, (T φ).1 (infGL E a y) = 0}) ⟨φ, hφ⟩
 
 theorem pet_eq_zero_of_orthogonal (hB : GlobalTheory.Published.CuspFormsBoundedGL) (E : Type) [Field E] [NumberField E]
-    [IsTotallyComplex E] (a : ℕ) (π π' : CuspSub E a) (ω : HChar E) (hω : ω.IsUnitary) (h : π.HasCentChar ω)
+    [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π π' : CuspSub E a) (ω : HChar E) (hω : ω.IsUnitary) (h : π.HasCentChar ω)
     (h' : π'.HasCentChar ω) (μ : Measure (GA E a)) [μ.IsHaarMeasure]
     (h0 : ∀ φ ∈ π.V, ∀ ψ ∈ π'.V, pet (latticeGL E a) μ φ.1 ψ.1 = 0) :
     (∀ φ ∈ π.V, ∀ ψ ∈ π'.V, ∀ y : GL (Fin a) (Cinf E),

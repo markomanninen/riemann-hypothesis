@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
-import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
-import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
-import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.ContentLargeFromSupplies
+public import Formalism.LocalToGlobal.CharacterGerms.ContentZeroAt
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffIterateZero
+public import Formalism.FormalGroupLog.FormalGroupLogProofs.ChainRule
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -15,7 +19,7 @@ open Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds MvPowerSeries
 variable {C : Type} [Field C]
 
 def IsExp {σ : Type} (y : σ → C) (F : MvPowerSeries σ C) : Prop :=
-  constantCoeff F = 1 ∧ ∀ w, pderiv C w F = y w • F
+  constantCoeff F = 1 ∧ ∀ w, pderiv w F = y w • F
 
 theorem IsExp.one {σ : Type} : IsExp (fun _ : σ => (0 : C)) 1 := ⟨by simp, fun w => by simp⟩
 
@@ -73,7 +77,7 @@ theorem IsExp.coeff {σ : Type} {y : σ → C} {F : MvPowerSeries σ C} (h : IsE
       rw [Finsupp.single_le_iff]
       simp at hw; omega
     have hd : m'.degree = n := by
-      rw [map_add, Finsupp.degree_single] at hm; omega
+      rw [map_add (f := _), Finsupp.degree_single] at hm; omega
     have h1 := congrArg (MvPowerSeries.coeff m') (h.2 w)
     rw [coeff_pderiv, coeff_smul] at h1
     have h2 : mfact (m' + Finsupp.single w 1) = (m' w + 1) * mfact m' := by
@@ -109,12 +113,13 @@ theorem isExp_mvExp [CharZero C] {σ : Type} [Fintype σ] (y : σ → C) :
   · rw [← coeff_zero_eq_constantCoeff_apply, coeff_mvExp]; simp
   · intro w
     ext m
-    have hL : pderiv C w (∑ x, y x • (X x : MvPowerSeries σ C)) = MvPowerSeries.C (y w) := by
-      rw [map_sum, Finset.sum_eq_single w]
+    have hL : pderiv w (∑ x, y x • (X x : MvPowerSeries σ C)) = MvPowerSeries.C (y w) := by
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single w]
       · simp [smul_eq_C_mul]
       · intro b _ hb; simp [pderiv_X_of_ne hb]
       · simp
-    rw [coeff_pderiv, coeff_smul, coeff_mvExp, coeff_mvExp, map_add, Finsupp.degree_single,
+    rw [coeff_pderiv, coeff_smul, coeff_mvExp, coeff_mvExp, map_add (f := _), Finsupp.degree_single,
       Finset.sum_range_succ', Finset.mul_sum, add_mul, Finset.sum_mul]
     have h0 : MvPowerSeries.coeff (m + Finsupp.single w 1)
         ((∑ x, y x • (X x : MvPowerSeries σ C)) ^ 0) = 0 := by
@@ -166,7 +171,7 @@ theorem val_eq [CharZero C] (hL : Fin 2 → ZMod d → ZMod d → MvPowerSeries 
     ((isExp_mvExp (y ρ)).subst fun x : I g => (⟨g, x⟩ : WV I)).subst
       fun w : WV I => ((ρ, w) : Fin n × WV I)
   refine (h1.jet _).trans ?_
-  rw [map_pow, MvPolynomial.eval_rename, minorK, dif_pos ⟨le_rfl, hn⟩, RingHom.map_det]
+  rw [map_pow, MvPolynomial.eval_rename, minorK, dite_eq_left ⟨le_rfl, hn⟩, RingHom.map_det]
   congr 2
   ext ρ c
   simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, MvPolynomial.eval_X,

@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.FrobeniusCoeffSupportBddBelow
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.RhoFfEqUnitMul
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ConstantCoeffPi0EqZeroOfP9ring
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvEquiv
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvRhoC
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GaloisActionFrobeniusComm
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.FrobeniusCoeffSupportBddBelow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.RhoFfEqUnitMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.ConstantCoeffPi0EqZeroOfP9ring
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvEquiv
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.PfLvRhoC
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.GaloisActionFrobeniusComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,20 @@ theorem lvData_localizesConst_of_crystalline [IsDomain O] {T : LocLat G Qp LL O}
   have hQ := Q_eq_unit_mul_qP hs1 hp9
   have hℓ : (baseIdOf hR).Bs.ℓ = PD.p := rfl
   intro x a w hx hγ hred hw s hs
-  obtain ⟨y, hxg, hxy⟩ := gamma_reduction_pi0_pow C (c - (ell : ZMod n)) hs1 hp2 x hx M hγ
+  have hgamma : ∃ (y : ↥(W.N T)) (_ : W.γD T W.gam (C.t (c - (ell : ZMod n)) x) ∈ W.N T),
+      W.γD T W.gam (C.t (c - (ell : ZMod n)) x) - C.t (c - (ell : ZMod n)) x = W.π₀ ^ M • (y : W.DD T) := by
+    obtain ⟨z, hz, hzeq⟩ := Submodule.mem_map.1 hγ
+    rw [LinearMap.lsmul_apply] at hzeq
+    have hg : W.gamK = W.gam := W.gamK_eq_one hs1 hp2
+    have h1 : C.t (c - (ell : ZMod n)) ((latOf C).γ (c - (ell : ZMod n)) x) =
+        W.γD T W.gam (C.t (c - (ell : ZMod n)) x) := by rw [t_γ, hg]
+    have h2 : W.γD T W.gam (C.t (c - (ell : ZMod n)) x) - C.t (c - (ell : ZMod n)) x = W.π₀ ^ M • C.t (c - (ell : ZMod n)) z := by
+      rw [← h1, ← C.t_sub, ← hzeq, C.t_smul, map_pow, BaseId.d_X]
+    refine ⟨⟨C.t (c - (ell : ZMod n)) z, hz⟩, ?_, h2⟩
+    have h3 : W.γD T W.gam (C.t (c - (ell : ZMod n)) x) = W.π₀ ^ M • C.t (c - (ell : ZMod n)) z + C.t (c - (ell : ZMod n)) x := by rw [← h2]; abel
+    rw [h3]
+    exact (W.N T).add_mem ((W.N T).smul_mem _ hz) hx
+  obtain ⟨y, hxg, hxy⟩ := hgamma
   have hcoef : ∀ i : ℤ, i < (((PD.p - 1) * M : ℕ) : ℤ) → i ≠ 0 →
       frobeniusCoeff Lb T c ell ⟨C.t (c - (ell : ZMod n)) x, hx⟩ i = 0 := by
     intro i hi hi0
@@ -71,6 +88,61 @@ theorem lvData_localizesConst_of_crystalline [IsDomain O] {T : LocLat G Qp LL O}
     show ((PD.p : LL) ^ ((ell : ℤ) * i)) • (φVB PD (LL := LL) (V := T.V))^[ell]
       (Lb.levB T (c - (ell : ZMod n)) 1 ⟨C.t (c - (ell : ZMod n)) x, hx⟩ i) = 0
     rw [hb, Function.iterate_fixed (map_zero _), smul_zero]
+  let comparisonOnLetter {T : LocLat G Qp LL O} (C : Coord W (baseIdOf hR) T) (i : ZMod n) :
+      ↥((latOf C).N i) →+ T.V ⊗[Qp] B := {
+    toFun y := W.cmp T ⟨C.t i y, y.2⟩
+    map_zero' := by
+      rw [← map_zero (W.cmp T)]
+      exact lvBasis_cmp_congr _ _ (C.t_zero i)
+    map_add' y y' := by
+      rw [← lvBasis_cmp_add y.2 y'.2 ((W.N T).add_mem y.2 y'.2)]
+      exact lvBasis_cmp_congr _ _ (C.t_add i _ _)
+  
+    }
+  have comparison_of_reduction {T : LocLat G Qp LL O} (C : Coord W (baseIdOf hR) T) (i : ZMod n)
+      (hp9 : Formalism.MainNotions.DeltaInvariantLattices.wachRingRelations W 1 (PD.p - 1) W.π₀ (fun _ => Polynomial.X + Polynomial.C ((PD.p : ℕ) : O)))
+      {r : ℕ} (e : Fin r → C.V) (he : ∀ k, e k ∈ (latOf C).N i) (x : C.V) (hx : x ∈ (latOf C).N i)
+      (a : Fin r → O) (hred : x - ∑ k, PowerSeries.C (a k) • e k ∈ E.sm (PowerSeries.X : PowerSeries O) ((latOf C).N i)) :
+      W.cmp T ⟨C.t i x, hx⟩ = ∑ k, algebraMap O LL (a k) • W.cmp T ⟨C.t i (e k), he k⟩ := by
+    obtain ⟨z, hz, hzeq⟩ := Submodule.mem_map.1 hred
+    rw [LinearMap.lsmul_apply] at hzeq
+    have key : (⟨x, hx⟩ : ↥((latOf C).N i)) =
+        ∑ k, PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i)) + (PowerSeries.X : PowerSeries O) • ⟨z, hz⟩ := by
+      apply Subtype.ext
+      simp only [Submodule.coe_add, Submodule.coe_sum, Submodule.coe_smul]
+      rw [hzeq]
+      abel
+    have hF := congrArg (comparisonOnLetter C i) key
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum] at hF
+    have hC : ∀ k, comparisonOnLetter C i (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))) =
+        algebraMap O LL (a k) • W.cmp T ⟨C.t i (e k), he k⟩ := by
+      intro k
+      have hm : (baseIdOf hR).d (PowerSeries.C (a k)) • C.t i (e k) ∈ W.N T := by
+        rw [← C.t_smul]
+        exact (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))).2
+      have h0 : comparisonOnLetter C i (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))) =
+          W.cmp T ⟨(baseIdOf hR).d (PowerSeries.C (a k)) • C.t i (e k), hm⟩ :=
+        lvBasis_cmp_congr (a := C.t i (PowerSeries.C (a k) • e k))
+          (PowerSeries.C (a k) • (⟨e k, he k⟩ : ↥((latOf C).N i))).2 hm (C.t_smul i _ _)
+      rw [h0]
+      refine lvBasis_cmp_smul_const (he k) _ (a k) (fun j => ?_) hm
+      rw [BaseId.d_apply]
+      have h1 : (baseIdOf hR).ι (PowerSeries.C (a k)) = PowerSeries.C (a k) :=
+        (baseIdOf hR).ι.commutes (a k)
+      rw [h1, PowerSeries.constantCoeff_C]
+    have hX : comparisonOnLetter C i ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))) = 0 := by
+      have hm : W.π₀ • C.t i z ∈ W.N T := by
+        rw [← BaseId.d_X, ← C.t_smul]
+        exact ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))).2
+      have h0 : comparisonOnLetter C i ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))) =
+          W.cmp T ⟨W.π₀ • C.t i z, hm⟩ :=
+        lvBasis_cmp_congr (a := C.t i ((PowerSeries.X : PowerSeries O) • z))
+          ((PowerSeries.X : PowerSeries O) • (⟨z, hz⟩ : ↥((latOf C).N i))).2 hm
+          (by rw [C.t_smul, BaseId.d_X])
+      rw [h0, lvBasis_cmp_smul_const hz W.π₀ 0 (constantCoeff_pi0_eq_zero_of_p9ring hp9) hm, map_zero, zero_smul]
+    rw [hX, add_zero, Finset.sum_congr rfl (fun k _ => hC k)] at hF
+    exact hF
   have hcoef0 : frobeniusCoeff Lb T c ell ⟨C.t (c - (ell : ZMod n)) x, hx⟩ 0 =
       ∑ k, algebraMap O LL (a k) • lam k := by
     apply Subtype.ext
@@ -79,7 +151,8 @@ theorem lvData_localizesConst_of_crystalline [IsDomain O] {T : LocLat G Qp LL O}
       (Lb.levB T (c - (ell : ZMod n)) 1 ⟨C.t (c - (ell : ZMod n)) x, hx⟩ 0) = _
     have hlet : ((letE (c - (ell : ZMod n)) : LetA O n) • (⟨C.t (c - (ell : ZMod n)) x, hx⟩ : ↥(W.N T))) =
         ⟨C.t (c - (ell : ZMod n)) x, hx⟩ := Subtype.ext (C.t_letter _ x)
-    rw [mul_zero, zpow_zero, one_smul, ← cmp_eq, hlet,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_zero, zpow_zero, one_smul, ← cmp_eq, hlet,
       comparison_of_reduction C (c - (ell : ZMod n)) hp9 e he x hx a hred, ← Module.End.coe_pow, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, Submodule.coe_smul, hlam, lambda_coe_eq_frobenius_pow C c ell e k (he k)]

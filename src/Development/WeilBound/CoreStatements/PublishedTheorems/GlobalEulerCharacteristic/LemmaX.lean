@@ -1,5 +1,9 @@
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.GlobalEulerFormulaInf
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
+module
+
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.GlobalEulerFormulaInf
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 

@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRingStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix WithZero
@@ -34,8 +38,12 @@ lemma IsRadius.ne_zero {γ : ℤᵐ⁰} (h : IsRadius K γ) : γ ≠ 0 := by
 
 lemma isOpen_ball_of_isRadius {γ : ℤᵐ⁰} (h : IsRadius K γ) : IsOpen {y : K | Valued.v y < γ} := by
   obtain ⟨u, rfl⟩ := h
-  have := Valued.isOpen_ball K u.1
-  simpa only [Valuation.restrict_lt_iff_lt_embedding] using this
+  have hball : {y : K | Valued.v y < MonoidWithZeroHom.ValueGroup₀.embedding u.1} =
+      {y : K | Valued.v.restrict y < u.1} :=
+    Set.ext fun y =>
+      (Valued.v.restrict_lt_iff_lt_embedding (x := y) (g := u.1)).symm
+  rw [hball]
+  exact Valued.isOpen_ball K u.1
 
 lemma isOpen_vball (x : K) {γ : ℤᵐ⁰} (h : IsRadius K γ) : IsOpen (vball x γ) :=
   (isOpen_ball_of_isRadius h).preimage (continuous_sub_right x)
@@ -193,7 +201,8 @@ theorem measure_quad [SecondCountableTopology K] [IsTopologicalRing K] (lam : Me
     (hfin : lam {s | Valued.v s < 1} ≠ ⊤) {a c : K}
     (ha : Valued.v a = 1) (hc : Valued.v c ≤ 1) {A : Set K} (hA : MeasurableSet A) :
     lam {t | Valued.v t < 1 ∧ a * t + c * t ^ 2 ∈ A} = lam (A ∩ {s | Valued.v s < 1}) := by
-  have hMo : IsOpen {s : K | Valued.v s < 1} := isOpen_ball_of_isRadius ⟨1, by simp⟩
+  have hMo : IsOpen {s : K | Valued.v s < 1} :=
+    isOpen_ball_of_isRadius ⟨1, by rw [Units.val_one, map_one]⟩
   have hM : MeasurableSet {s : K | Valued.v s < 1} := hMo.measurableSet
   have hf : Measurable (fun t : K => a * t + c * t ^ 2) := by
     apply Continuous.measurable

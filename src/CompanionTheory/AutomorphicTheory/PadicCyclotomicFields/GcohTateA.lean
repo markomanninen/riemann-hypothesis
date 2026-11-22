@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
+module
+
+public import CompanionTheory.AutomorphicTheory.PadicCyclotomicFields.GcohDefs
+
+@[expose] public section
 
 open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 
@@ -76,11 +80,22 @@ theorem exists_dualEquiv (hb : Function.Bijective b.flip) :
       change eD (b.flip y (eA.symm a)) = χ a
       rw [hy]
       simp
+  let E : (A.V →+ D.V) ≃+ (A →ₗ[ULift.{0} ℤ] D) :=
+    { toFun := fun f =>
+        { toFun := f
+          map_add' := f.map_add
+          map_smul' := by
+            rintro ⟨r⟩ x
+            have hr : (r : ULift.{0} ℤ) = ⟨r⟩ := (ULift.up_intCast r).symm
+            simp only [RingHom.id_apply, ← hr, Int.cast_smul_eq_zsmul, map_zsmul] }
+      invFun := LinearMap.toAddMonoidHom
+      left_inv := fun _ => rfl
+      right_inv := fun f => LinearMap.ext fun _ => rfl
+      map_add' := fun _ _ => rfl }
   let eB : M' ≃+ (A →ₗ[ULift.{0} ℤ] D) :=
-    (AddEquiv.ofBijective F hF).trans (uliftIntLinearEquivAddHom A D).symm
+    (AddEquiv.ofBijective F hF).trans E
   have h2 : ∀ x y, eB y (eA x) = eD (b x y) := fun x y => by
-    change (uliftIntLinearEquivAddHom A D).symm (F y) (eA x) = _
-    rw [uliftIntLinearEquivAddHom_symm_apply]
+    change F y (eA x) = eD (b x y)
     simp [F]
   refine ⟨eB, fun g y => LinearMap.ext fun a => ?_, h2⟩
   obtain ⟨x, rfl⟩ := eA.surjective a

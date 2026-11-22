@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.VarZeroSubVarOneNe
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdditiveIntegralGroups.VarZeroSubVarOneNe
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem flog_Fch {W : WeierstrassCurve ℂ_[p]} {wq : PowerSeries ℂ_[p]} (h : 
     PowerSeries.HasSubst.of_constantCoeff_zero (MvPowerSeries.constantCoeff_X i)
   have hZ : PowerSeries.HasSubst (Z3 W wq) := PowerSeries.HasSubst.of_constantCoeff_zero (constantCoeff_thirdRoot W wq)
   have hB := congrArg (MvPowerSeries.substAlgHom (R := ℂ_[p]) hb) hA
-  rw [map_add, map_add, map_zero, MvPowerSeries.coe_substAlgHom, subst_psubst (hX 0) hb,
+  rw [map_add (f := _), map_add (f := _), map_zero, MvPowerSeries.coe_substAlgHom, subst_psubst (hX 0) hb,
     subst_psubst (hX 1) hb, subst_psubst hZ hb, MvPowerSeries.subst_X hb, MvPowerSeries.subst_X hb,
     ← Fch_eq] at hB
   have h0 : bZ W wq 0 = 0 := by simp [bZ]

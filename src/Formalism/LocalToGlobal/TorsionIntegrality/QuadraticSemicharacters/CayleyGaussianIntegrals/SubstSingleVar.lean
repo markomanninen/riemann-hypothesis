@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactVersion
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.GeneralIntegrality
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactVersion
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.GeneralIntegrality
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -20,7 +24,8 @@ variable {K : Type} [Field K] {n : Type} [Fintype n]
 theorem cc_lin {σ m : Type} [Fintype m] (c : m → K) {u : m → MvPowerSeries σ K}
     (hu : ∀ j, MvPowerSeries.constantCoeff (u j) = 0) :
     MvPowerSeries.constantCoeff (∑ j, MvPowerSeries.C (c j) * u j) = 0 := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun j _ => by rw [map_mul, hu j, mul_zero]
 
 theorem subst_lin {σ ρ m : Type} [Finite σ] [Fintype m] (c : m → K) (u : m → MvPowerSeries σ K)
@@ -28,7 +33,8 @@ theorem subst_lin {σ ρ m : Type} [Finite σ] [Fintype m] (c : m → K) (u : m 
     MvPowerSeries.subst φ (∑ j, MvPowerSeries.C (c j) * u j) =
       ∑ j, MvPowerSeries.C (c j) * MvPowerSeries.subst φ (u j) := by
   have h := MvPowerSeries.hasSubst_of_constantCoeff_zero hφ
-  rw [← MvPowerSeries.coe_substAlgHom h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom h, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, MvPowerSeries.coe_substAlgHom h, MvPowerSeries.subst_C]
 
@@ -88,7 +94,8 @@ theorem left_side {lg linv : PowerSeries K} (h : IsLogPair lg linv) {O : Type} [
   simp_rw [h1, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun w _ => ?_
-  rw [MvPowerSeries.subst_X (MvPowerSeries.hasSubst_of_constantCoeff_zero fun w => hat w), ← hM, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPowerSeries.subst_X (MvPowerSeries.hasSubst_of_constantCoeff_zero fun w => hat w), ← hM, map_sum,
     Finset.sum_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, mul_assoc]
@@ -100,7 +107,8 @@ theorem right_side {lg : PowerSeries K} (hlg : PowerSeries.constantCoeff lg = 0)
   have hat : ∀ s : m, MvPowerSeries.constantCoeff (at1 s lg : MvPowerSeries m K) = 0 :=
     fun s => Formalism.L2.Th1.E.CompatibleChartOperations.constantCoeff_inVar_eq_zero s hlg
   have h := MvPowerSeries.hasSubst_of_constantCoeff_zero hat
-  rw [← MvPowerSeries.coe_substAlgHom h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom h, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_mul, map_prod, MvPowerSeries.coe_substAlgHom h, MvPowerSeries.subst_C]
   congr 1
@@ -135,14 +143,16 @@ theorem map_linSubst {m : Type} [Finite m] (M : Matrix m n K₀) (T : MvPowerSer
   rw [MvPowerSeries.map_subst hs]
   congr 1
   funext i
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, MvPowerSeries.map_C, MvPowerSeries.map_X, Matrix.map_apply]
 
 theorem map_sumProd {κ : Type} (S : Finset κ) (r : κ → K₀) (f : κ → n → PowerSeries K₀) :
     MvPowerSeries.map ι (∑ x ∈ S, MvPowerSeries.C (r x) * ∏ w, at1 w (f x w)) =
       ∑ x ∈ S, MvPowerSeries.C (ι (r x)) * ∏ w, at1 w (PowerSeries.map ι (f x w)) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_mul, map_prod, MvPowerSeries.map_C]
   congr 1

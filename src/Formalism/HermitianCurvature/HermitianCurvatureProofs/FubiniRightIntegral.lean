@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.InsertUnitMatrixZeroApply
-import Formalism.HermitianCurvature.StatementTL
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InsertUnitMatrixZeroApply
+public import Formalism.HermitianCurvature.StatementTL
+
+@[expose] public section
 
 open Matrix
 

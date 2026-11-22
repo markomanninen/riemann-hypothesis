@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocModSt
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocModSt
+
+@[expose] public section
 
 noncomputable section
 

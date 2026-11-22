@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.MatrixRepMul
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.MatrixRepMul
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilDatumProperties
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -19,16 +23,16 @@ theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.bb1 : incM F d.b.1 * incM
   rw [← incM_mul', ← Units.val_mul, mul_inv_cancel, Units.val_one, incM_one']
 theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.bb2 : incM F (d.b⁻¹).1 * incM F d.b.1 = 1 := by
   rw [← incM_mul', ← Units.val_mul, inv_mul_cancel, Units.val_one, incM_one']
-theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.matrixRep_mul (x y : d.G) : mat2 (x * y) = mat2 x * mat2 y := rfl
-theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.matrixRep_one : mat2 (1 : d.G) = 1 := rfl
 theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.inFrame_mul (x y : d.G) : inFrame d.b (x * y) = inFrame d.b x * inFrame d.b y := by
-  simp only [inFrame, _root_.PositivityTheory.SiegelWeilFormula.SD_k.matrixRep_mul]
+  have hmul : mat2 (x * y) = mat2 x * mat2 y := rfl
+  simp only [inFrame, hmul]
   calc incM F (d.b⁻¹).1 * (mat2 x * mat2 y) * incM F d.b.1
       = incM F (d.b⁻¹).1 * mat2 x * (incM F d.b.1 * incM F (d.b⁻¹).1) * mat2 y * incM F d.b.1 := by
         rw [d.bb1]; simp only [Matrix.mul_one, Matrix.mul_assoc]
     _ = _ := by simp only [Matrix.mul_assoc]
 theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.inFrame_one : inFrame d.b (1 : d.G) = 1 := by
-  simp only [inFrame, _root_.PositivityTheory.SiegelWeilFormula.SD_k.matrixRep_one, Matrix.mul_one, d.bb2]
+  change incM F (d.b⁻¹).1 * 1 * incM F d.b.1 = 1
+  simpa only [Matrix.mul_one] using d.bb2
 theorem _root_.PositivityTheory.SiegelWeilFormula.SD_k.inFrame_inj {x y : d.G} (h : inFrame d.b x = inFrame d.b y) : x = y := by
   have hx : mat2 x = incM F d.b.1 * inFrame d.b x * incM F (d.b⁻¹).1 := by
     simp only [inFrame, ← Matrix.mul_assoc, d.bb1, Matrix.one_mul]

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanInvolutionConjOfPosDef
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSupportedAtInfinityAdeleWithComplexComponeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SupportedAtInfinityAdeleEqZeroOfComplexComponentStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealPlaceComponentAdeleConjugationEqComplexConjStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartanInvolutionConjOfPosDef
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSupportedAtInfinityAdeleWithComplexComponeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SupportedAtInfinityAdeleEqZeroOfComplexComponentStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RealPlaceComponentAdeleConjugationEqComplexConjStatement
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
@@ -13,8 +17,8 @@ open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNo
 noncomputable section
 namespace GlobalTheory.ConjCartan
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem exists_conj_cartan_matrix : ∀ (n : ℕ) (M θ₁ θ₂ : Matrix (Fin n) (Fin n) ℂ), Mᴴ = M → IsCartan M θ₁ → IsCartan M θ₂ →
     ∃ u v : Matrix (Fin n) (Fin n) ℂ, u * v = 1 ∧ uᵀ * M * u.map star = M ∧ u * θ₁ = θ₂ * u := by
   intro n M θ₁ θ₂ hM h1 h2
@@ -108,8 +112,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 theorem piInf_inclR {w : InfinitePlace F} (τ : EmbOver E w) (x : E) : piInf τ (inclR (F := F) (AF F) x) = τ.1 x := by
   simp [piInf, inclR, compInf, infEmb_tmul]
 
-variable (F E) in
 
+variable (F E) in
 def archIdeal : Ideal (AE F E) where
   carrier := {z | At (evI F) z}
   add_mem' := fun {a b} ha hb u hu => by rw [smul_add, ha u hu, hb u hu, add_zero]
@@ -158,8 +162,8 @@ theorem conj_cartan_arch : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
       (fun w => congrFun (congrFun (h2 w) i) j)
   have hGH : (1 + Dm) * (1 + Dv) = 1 := by
     refine sub_eq_zero.1 (zero _ ?_ fun w => ?_)
-    · rw [map_sub, map_mul, map_add, map_add, map_one, hDm, hDv]; simp
-    · rw [map_sub, map_mul, map_add, map_add, map_one, hDmw, hDvw, add_sub_cancel, add_sub_cancel, huv w, sub_self]
+    · rw [map_sub, map_mul, map_add (f := _), map_add (f := _), map_one, hDm, hDv]; simp
+    · rw [map_sub, map_mul, map_add (f := _), map_add (f := _), map_one, hDmw, hDvw, add_sub_cancel, add_sub_cancel, huv w, sub_self]
   let g0 : GL (Fin n) (AE F E) := ⟨1 + Dm, 1 + Dv, hGH, mul_eq_one_comm.1 hGH⟩
   have hcw : ∀ w, (piInf (B.emb w)).mapMatrix ((cA σ).toRingHom.mapMatrix Dm) = (u w).map star - 1 := fun w => by
     ext i j
@@ -173,10 +177,10 @@ theorem conj_cartan_arch : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     ext i j; simp [incM, piInf_inclR]
   have hUG : g0 ∈ UG (cA σ) (incM F X.J) := by
     change (1 + Dm)ᵀ * incM F X.J * (cA σ).toRingHom.mapMatrix (1 + Dm) = incM F X.J
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     refine sub_eq_zero.1 (zero _ ?_ fun w => ?_)
-    · rw [map_sub, map_mul, map_mul, mapMatrix_transpose, map_add, map_add, map_one, hDm, hDc]; simp
-    · rw [map_sub, map_mul, map_mul, mapMatrix_transpose, map_add, map_add, map_one, hDmw, hcw, hJw,
+    · rw [map_sub, map_mul, map_mul, mapMatrix_transpose, map_add (f := _), map_add (f := _), map_one, hDm, hDc]; simp
+    · rw [map_sub, map_mul, map_mul, mapMatrix_transpose, map_add (f := _), map_add (f := _), map_one, hDmw, hcw, hJw,
         add_sub_cancel, add_sub_cancel, hun w, sub_self]
   refine ⟨⟨g0, hUG⟩, ?_, fun w => ?_⟩
   · intro a ha
@@ -186,7 +190,7 @@ theorem conj_cartan_arch : ∀ (F E : Type) [Field F] [NumberField F] [Field E] 
     exact hlat _ a ha
   · have : (mat (⟨g0, hUG⟩ : UA σ X.J)).map (piInf (B.emb w)) = u w := by
       show (piInf (B.emb w)).mapMatrix (1 + Dm) = u w
-      rw [map_add, map_one, hDmw]; abel
+      rw [map_add (f := _), map_one, hDmw]; abel
     rw [this]; exact hint w
 
 end GlobalTheory.ConjCartan

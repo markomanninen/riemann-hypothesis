@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDuality
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.InjectiveCohomologyMapKummerSeqOpenFTwo
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.LocalDuality
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalInvariants
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.InjectiveCohomologyMapKummerSeqOpenFTwo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +21,8 @@ attribute [local instance 2000] Rep.hV2
 
 variable {K : FiniteSubfield} (v : InfinitePlace K.1) (hv : v.IsReal)
 
-include hv in
 
+include hv in
 theorem exists_isComplex_infCompletion_algEquiv : ∃ (F : FiniteSubfield) (_ : Fact (K ≤ F))
     (w : v.placesOver F.1), (w : InfinitePlace F.1).IsComplex ∧
       Nonempty ((w : InfinitePlace F.1).Completion ≃ₐ[v.Completion] AlgebraicClosure v.Completion) := by
@@ -43,8 +48,8 @@ theorem exists_isComplex_infCompletion_algEquiv : ∃ (F : FiniteSubfield) (_ : 
   rw [map_pow, map_neg, map_one] at h
   nlinarith [sq_nonneg (InfinitePlace.Completion.extensionEmbeddingOfIsReal hv x)]
 
-include hv in
 
+include hv in
 theorem finrank_infAlgClosure_of_isReal :
     Module.finrank v.Completion (AlgebraicClosure v.Completion) = 2 := by
   obtain ⟨F, _, w, hw, ⟨e⟩⟩ := exists_isComplex_infCompletion_algEquiv v hv
@@ -52,8 +57,8 @@ theorem finrank_infAlgClosure_of_isReal :
   rw [← e.toLinearEquiv.finrank_eq]
   exact (GroundTheory.Global.InfinitePlace.finrank_completion_eq_two_iff (w : InfinitePlace F.1)).2 ⟨hv, hw⟩
 
-include hv in
 
+include hv in
 theorem extensionEmbeddingOfIsReal_norm_pos (y : AlgebraicClosure v.Completion) (hy : y ≠ 0) :
     0 < InfinitePlace.Completion.extensionEmbeddingOfIsReal hv (Algebra.norm v.Completion y) := by
   obtain ⟨F, _, w, hw, ⟨e⟩⟩ := exists_isComplex_infCompletion_algEquiv v hv
@@ -66,8 +71,8 @@ theorem extensionEmbeddingOfIsReal_norm_pos (y : AlgebraicClosure v.Completion) 
       exact Algebra.norm_eq_of_algEquiv e.symm y)⟩
   exact (GroundTheory.Global.InfinitePlace.mem_normSubgroup_iff hv hw _).1 hmem
 
-include hv in
 
+include hv in
 theorem neg_one_not_mem_range_norm_infAlgClosure :
     (-1 : v.Completion) ∉ Set.range (Algebra.norm v.Completion :
       AlgebraicClosure v.Completion → v.Completion) := by

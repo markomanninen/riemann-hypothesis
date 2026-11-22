@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.DegProd
+
+@[expose] public section
+
 open GlobalTheory.KeyKa
 
 namespace GlobalTheory.TorsExists
@@ -52,7 +57,7 @@ theorem exists_contraction {R : Type} [CommRing R] [IsLocalRing R] (D : Matrix I
   have hu : IsUnit A.det := by
     have : IsLocalRing.residue R A.det = (D.map (IsLocalRing.residue R) * G + G * D.map (IsLocalRing.residue R)).det := by
       rw [RingHom.map_det, ← hHG, hA]
-      simp [RingHom.mapMatrix_apply, Matrix.map_mul, Matrix.map_add]
+      simp [RingHom.mapMatrix_apply, Matrix.map_mul, Matrix.map_add (f := _)]
     rw [← this] at hG
     exact (isUnit_map_iff _ _).1 hG
   have hc : A * D = D * A := by

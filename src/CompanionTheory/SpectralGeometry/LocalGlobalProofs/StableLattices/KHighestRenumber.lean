@@ -1,6 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KTypesAboveOfDsClass
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.L2Embedding
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.InConeRefl
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KTypesAboveOfDsClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +14,9 @@ open Finset
 namespace GlobalTheory.CompanionTheory.LowestData
 
 open Formalism.REAL (KHighest)
-open GlobalTheory.LowestKTypeDetermines (rhoC_perm lowK_add strictAnti_add_rho nsq_add_cone eq_zero_of_nsq nsq_comp)
+open _root_.CompanionTheory.RgExh (GMod AlgDS)
+open _root_.CompanionTheory.RgDs (InCone)
+open GlobalTheory.LowestKTypeDetermines (lt_of_perm_lt rhoC_perm lowK_add strictAnti_add_rho nsq_add_cone eq_zero_of_nsq nsq_comp)
 
 variable {n : ℕ}
 
@@ -25,19 +32,20 @@ theorem kHighest_renumber {V : Type} [AddCommGroup V] [Module ℂ V] (ε : Fin n
     simpa using this
   · have hlt := hs a b hab he
     have key : s'.symm (s a) < s'.symm (s b) := by
-      by_contra hn
-      have hle := not_lt.1 hn
-      rcases hle.lt_or_eq with hl | he'
-      · have := hs' _ _ hl (by simpa using he.symm)
-        simp only [Equiv.apply_symm_apply] at this
-        exact absurd this (not_lt.2 hlt.le)
-      · have := s'.symm.injective he'
-        exact absurd this hlt.ne'
+      refine lt_of_perm_lt (s := s') hs' ?_ ?_
+      · simpa only [Equiv.apply_symm_apply] using hlt
+      · simpa only [Function.comp_apply, Equiv.apply_symm_apply] using he
     have := h2 _ _ key (by simpa using he)
     simpa using this
 
-theorem dataUniq : CompanionTheory.RgExh.Fin.DataUniq := by
-  intro n ε X s s' mu mu' h hc h'
+-- Unfold DataUniq and ConeDS to depend directly on AlgDS and InCone.
+theorem dataUniq (n : ℕ) (ε : Fin n → Bool) (X : GMod n)
+    (s s' : Equiv.Perm (Fin n)) (mu mu' : Fin n → ℝ)
+    (h : AlgDS ε X s mu)
+    (hc : ∀ (ν : Fin n → ℝ) (x : X.V), x ≠ 0 →
+      KHighest (ε ∘ s) (fun a b => X.E (s a) (s b)) ν x →
+      InCone (PI.UpqRep.lowK (ε ∘ s) mu) ν)
+    (h' : AlgDS ε X s' mu') : s = s' ∧ mu = mu' := by
   obtain ⟨hl, hs, -, v, hv0, hv⟩ := h
   obtain ⟨hl', hs', hmin', v', hv0', hv'⟩ := h'
   have add : ∀ (ε : Fin n → Bool) (lam : Fin n → ℝ),

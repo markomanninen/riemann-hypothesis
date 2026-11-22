@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneParameterDifferentiable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OneParameterDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinCongMemLevEnv
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenCongruenceIdelesAndRealFiniteParts
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LatHatOpenAndContinuous
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Lev Formalism.IndefR.Cx GlobalTheory.Chain
 open NumberField Matrix
@@ -56,7 +60,8 @@ theorem isCuspFun_of_definite {V : HSp D} (hs : V.SigOK) (hd : V.IsDefinite) (φ
   have h2 := aniso hs hd τ (fun i => τ (C i ⟨0, hr⟩)) (by
     rw [Matrix.zero_apply, map_zero] at h1
     rw [← h1, Matrix.mul_assoc]
-    simp only [Matrix.mul_apply, map_sum, map_mul, dotProduct, Matrix.mulVec, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, map_sum, map_mul, dotProduct, Matrix.mulVec, Matrix.map_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     congr 1
     exact (hτ _).symm)
@@ -140,7 +145,8 @@ theorem eventually_conj {R R' : Type} [CommRing R] [TopologicalSpace R] [IsTopol
   refine Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => ?_
   have e : ∀ m : Matrix (Fin n) (Fin n) R, ((β⁻¹).1 * m.map φ * β.1) i j - (1 : Matrix (Fin n) (Fin n) R') i j =
       φ ((((β⁻¹).1.map φ.symm * m * β.1.map φ.symm) i j) - (1 : Matrix (Fin n) (Fin n) R) i j) := fun m => by
-    simp only [map_sub, Matrix.mul_apply, map_sum, map_mul, Matrix.map_apply, RingEquiv.apply_symm_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, Matrix.mul_apply, map_sum, map_mul, Matrix.map_apply, RingEquiv.apply_symm_apply,
       Matrix.one_apply, apply_ite φ, map_one, map_zero]
   have hc : Continuous fun m : Matrix (Fin n) (Fin n) R =>
       (((β⁻¹).1.map φ.symm * m * β.1.map φ.symm) i j) - (1 : Matrix (Fin n) (Fin n) R) i j :=
@@ -316,7 +322,7 @@ theorem smooth_coefFun (hθ : IsInfFam θ) (hc : c.Is) (hF : ∀ g, ∀ k ∈ Gi
     ContDiff ℝ ∞ fun t : Fin k → ℝ => coefFun c F ℓ (g * (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod) := by
   have h1 := contDiff_prod (c := c) (List.ofFn fun i (t : Fin k → ℝ) => oneP θ V (τs i) (Xs i) (t i)) (fun f hf => by
     obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hf
-    exact (contDiff_oneP hθ hc (hX i)).comp (contDiff_apply ℝ ℝ i))
+    exact (contDiff_oneP hθ hc (hX i)).comp (contDiff_apply ℝ (fun _ => ℝ) i))
   simp only [List.map_ofFn, Function.comp_def] at h1
   have h2 := ((ℓ.comp (ContinuousLinearMap.apply ℂ c.W (invOp c g (F g)))).restrictScalars ℝ).contDiff.comp h1
   have e : (fun t : Fin k → ℝ => coefFun c F ℓ (g * (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod)) =
@@ -338,12 +344,10 @@ theorem gelf_mem (hθ : IsInfFam θ) (hc : c.Is) (hF : ∀ g, ∀ k ∈ GinfC V,
     (Submodule.smul_mem _ _ (rder_mem hθ hc hF (GlobalTheory.SmoothAutCheck.parts_mem V τ _).2 hx))
 
 theorem isAutFunSm_coefFun (hθ : IsInfFam θ) (hc : c.Is) (hF : ∀ g, ∀ k ∈ GinfC V, F (g * k) = F g)
-    (ℓ : c.W →L[ℂ] ℂ) (h : IsAutFun V (coefFun c F ℓ)) : IsAutFunSm θ V (coefFun c F ℓ) where
-  toIsAutFun := h
-  smooth := smooth_coefFun hθ hc hF ℓ
-  zfin := ⟨LinearMap.range (coefFun c F), inferInstance, ⟨ℓ, rfl⟩, fun τ k _ hf => gelf_mem hθ hc hF τ k hf⟩
-  growth := by
-    refine ⟨0, fun l hl x => ?_⟩
+    (ℓ : c.W →L[ℂ] ℂ) (h : IsAutFun V (coefFun c F ℓ)) : IsAutFunSm θ V (coefFun c F ℓ) := by
+  refine ⟨h, smooth_coefFun hθ hc hF ℓ, ?_, ?_⟩
+  · exact ⟨LinearMap.range (coefFun c F), inferInstance, ⟨ℓ, rfl⟩, fun τ k _ hf => gelf_mem hθ hc hF τ k hf⟩
+  · refine ⟨0, fun l hl x => ?_⟩
     obtain ⟨ℓ', e⟩ := foldr_mem (LinearMap.range (coefFun c F))
       (fun (p : D.what₂.Tau × Matrix (Fin V.rank) (Fin V.rank) ℂ) f => Rder θ V p.1 p.2 f) l
       (fun p hp y hy => rder_mem hθ hc hF (hl p hp) hy) (LinearMap.mem_range_self _ ℓ)
@@ -373,8 +377,8 @@ theorem rho_inv_cancel (a : GA D V) (w : c.W) : c.ρ a (c.ρ a⁻¹ w) = w := by
 theorem rho_mul_inv (a g : GA D V) (w : c.W) : c.ρ (a * g)⁻¹ (c.ρ a w) = c.ρ g⁻¹ w := by
   rw [← Module.End.mul_apply, ← map_mul c.ρ, _root_.mul_inv_rev, inv_mul_cancel_right]
 
-open Classical in
 
+open Classical in
 theorem exists_sobCont {S : D.what₂.Tau → SPar} (M : DSModel V S) (τ : D.what₂.Tau) [FiniteDimensional ℂ (M.H τ)]
     (T : MMap M) (v : M.Vec) (x : GA D V) : ∃ ℓ : M.H τ →ₗ[ℂ] ℂ, Sobolev₂ (lieAt V τ) (M.rep τ) ℓ ∧
       ∀ w : M.sm τ, ℓ w = T (Function.update v τ w) x := by

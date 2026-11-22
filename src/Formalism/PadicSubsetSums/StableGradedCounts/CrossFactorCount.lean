@@ -1,4 +1,8 @@
-import Formalism.PadicSubsetSums.StableGradedCounts.CoeffZeroNeZeroOfIrreducible
+module
+
+public import Formalism.PadicSubsetSums.StableGradedCounts.CoeffZeroNeZeroOfIrreducible
+
+@[expose] public section
 
 open Finset Polynomial
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DetNeZeroOfInG
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.DetNeZeroOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def toC (L : Matrix (Fin n) (Fin n) ℂ →L[ℝ] ℂ) (hL : ∀ v, L (Complex.I
       simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Complex.real_smul]
       conv_lhs => rw [← Complex.re_add_im c]
       ring
-    rw [hv, L.map_add, L.map_smul, L.map_smul, hL, RingHom.id_apply, smul_eq_mul]
+    rw [hv, map_add L, L.map_smul, L.map_smul, hL, RingHom.id_apply, smul_eq_mul]
     simp only [Complex.real_smul]
     conv_rhs => rw [← Complex.re_add_im c]
     ring
@@ -137,11 +141,11 @@ theorem crLem_of (hsec : LocSec) (hfib : Fib) (ha : CauchyRiemannFacts) : CRLem 
     have hsum : ∀ (D : M2 n →L[ℂ] Matrix (Fin n) (Fin n) ℂ), D (x0 * Z1 (lowQ Q)) + Complex.I • D (x0 * Z2 (lowQ Q)) =
         D (x0 * lowQ Q) := by
       intro D
-      rw [← D.map_smul, ← D.map_add, ← Matrix.mul_smul, ← Matrix.mul_add, real_add_imaginary_part]
+      rw [← D.map_smul, ← map_add D, ← Matrix.mul_smul, ← Matrix.mul_add, real_add_imaginary_part]
     have hsum' : ∀ (D : M2 n →L[ℂ] ℂ), D (x0 * Z1 (lowQ Q)) + Complex.I * D (x0 * Z2 (lowQ Q)) =
         D (x0 * lowQ Q) := by
       intro D
-      rw [← smul_eq_mul Complex.I (D _), ← D.map_smul, ← D.map_add, ← Matrix.mul_smul, ← Matrix.mul_add, real_add_imaginary_part]
+      rw [← smul_eq_mul Complex.I (D _), ← D.map_smul, ← map_add D, ← Matrix.mul_smul, ← Matrix.mul_add, real_add_imaginary_part]
     have hsumF : fderiv ℂ (holomorphicScalarSection m e) x0 (x0 * Z1 (lowQ Q)) + Complex.I * fderiv ℂ (holomorphicScalarSection m e) x0 (x0 * Z2 (lowQ Q)) =
         0 := (hsum' _).trans ((hlow Q).2 m e)
     have hsumZ := hsum (fderiv ℂ zOfE x0)

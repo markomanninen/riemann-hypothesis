@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneCodiff
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneReal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsotropicOfIndefinite
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneCodiff
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneReal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsotropicOfIndefinite
+
+@[expose] public section
 
 noncomputable section
 

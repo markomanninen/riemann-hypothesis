@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL Finset
 
 namespace GlobalTheory
@@ -49,7 +54,7 @@ theorem qdet_polyMap_monic (A : Type) [Ring A] [Algebra ℂ A] (n : ℕ) (E : Fi
     unfold Tm
     simp only [id]
     split_ifs
-    · rw [← add_assoc, ← Algebra.algebraMap_eq_smul_one, ← map_add]
+    · rw [← add_assoc, ← Algebra.algebraMap_eq_smul_one, ← map_add (f := _)]
       congr 2
       all_goals ring
     · simp

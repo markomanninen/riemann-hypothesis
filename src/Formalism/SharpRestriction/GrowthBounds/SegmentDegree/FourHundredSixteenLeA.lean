@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SortGetDSpec
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SortGetDSpec
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+
+@[expose] public section
 
 noncomputable section
 

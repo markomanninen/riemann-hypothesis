@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
-import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BlockEnds
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.S
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -28,7 +32,8 @@ theorem exists_norm_one {E : Type} [Field E] [NumberField E] [StarRing E] (S : H
     rw [hprod, hCM]
     simp
   rw [← key]
-  simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
     Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.reindex_apply, Matrix.submatrix_apply,
     HSpace.gram, starRingEnd_apply]
   simp only [Finset.mul_sum, Finset.sum_mul, RingHom.id_apply]
@@ -79,13 +84,13 @@ theorem exists_isotropic_orth_hyp : ∀ (D : D7), Formalism.L2.Forms.Forms0 D D.
   · intro h0
     have h1 : (VS D).hT (D.sp.iXY 0 ((hF.atT.piU : D.host.E) • x) + D.sp.zm) D.sp.zm = 0 := by
       rw [h0, map_zero, LinearMap.zero_apply]
-    rw [map_add, LinearMap.add_apply, hvz, hzz, zero_add, neg_eq_zero] at h1
+    rw [map_add (f := _), LinearMap.add_apply, hvz, hzz, zero_add, neg_eq_zero] at h1
     exact hT0 h1
-  · simp only [map_add, LinearMap.add_apply, hvv, hvz, hzv, hzz]
+  · simp only [map_add (f := _), LinearMap.add_apply, hvv, hvz, hzv, hzz]
     ring
   · intro i
     constructor
-    · rw [map_add, hsym _ _ (D.sp.hyp_orthX i _).1, hsym _ _ (D.sp.hyp_orthz i).1, add_zero]
-    · rw [map_add, hsym _ _ (D.sp.hyp_orthX i _).2, hsym _ _ (D.sp.hyp_orthz i).2, add_zero]
+    · rw [map_add (f := _), hsym _ _ (D.sp.hyp_orthX i _).1, hsym _ _ (D.sp.hyp_orthz i).1, add_zero]
+    · rw [map_add (f := _), hsym _ _ (D.sp.hyp_orthX i _).2, hsym _ _ (D.sp.hyp_orthz i).2, add_zero]
 
 end GlobalTheory.IsoOrthHyp

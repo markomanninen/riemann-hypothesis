@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOfNormResultantEqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EqOfNormResultantEqStatement
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.PolyNorm
@@ -21,7 +26,8 @@ theorem ev_map {r : ℕ} (Φ : MvPolynomial (Fin r) ℚ) {K L : Type} [CommRing 
 
 theorem gen_map {r : ℕ} {K L : Type} [CommRing K] [CommRing L] (φ : K →+* L) (f : Fin r → K) :
     (gen f).map φ = gen (fun i => φ (f i)) := by
-  simp [gen, Polynomial.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [gen, Polynomial.map_sum]
 
 theorem gen_coeff {r : ℕ} {K : Type} [CommRing K] (F : K[X]) (h : F.natDegree < r) :
     gen (fun i : Fin r => F.coeff i) = F := by
@@ -169,7 +175,7 @@ theorem monic_ev {m : ℕ} {Φ : MvPolynomial (Fin 2) ℚ} (h : Φ.IsHomogeneous
     refine natDegree_sum_le_of_forall_le _ _ fun d hd' => (natDegree_monomial_le _).trans ?_
     have := hd d hd'; omega
   have hc : (ev Φ (C X - X : ℚ[X][X])).coeff m = 1 := by
-    rw [e, ← h1, finset_sum_coeff]
+    rw [e, ← h1, Polynomial.finsetSum_coeff]
     unfold ev
     rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_eq']
     refine Finset.sum_congr rfl fun d hd' => ?_
@@ -222,7 +228,7 @@ theorem norm_all {l : ℕ} [hl : Fact l.Prime] {m : ℕ} (U : Matrix (Fin m) (Fi
     rfl
   have e2 : ∀ t : ℕ, Polynomial.aeval U (F + (t : ℤ[X])) =
       Polynomial.aeval U F + (t : ℤ_[l]) • (1 : Matrix (Fin m) (Fin m) ℤ_[l]) := fun t => by
-    rw [map_add, map_natCast, Nat.cast_smul_eq_nsmul, nsmul_one]
+    rw [map_add (f := _), map_natCast, Nat.cast_smul_eq_nsmul, nsmul_one]
   have h := tendsto_nhds_unique_of_eventuallyEq ((c1.tendsto 0).comp t0) ((c2.tendsto 0).comp t0)
     (((tendsto_pow_atTop_atTop_of_one_lt hl.out.one_lt).eventually (hG F)).mono fun k hk => by
       have := hn _ hk

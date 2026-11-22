@@ -1,10 +1,15 @@
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
-import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+public import Formalism.LocalToGlobal.IndefiniteReal.EvalTieTOne
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RowLevelMatch
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.DiscreteSeriesClassificationIff
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DiagGLConjApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.AutomorphicEvaluation Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.PoincareInHH.PoincareSetting MeasureTheory NumberField IsDedekindDomain
 open scoped InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -21,7 +26,6 @@ variable {D : D7}
 local notation "𝒪" => Formalism.L2.Herm.intAf D.host.F D.host.E
 
 set_option maxHeartbeats 1000000 in
-
 theorem exists_unit_res (Pg : Finset (Formalism.L2.DIV.Pl D.host.E)) (d : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ) :
     ∃ u : (𝒪)ˣ, ∀ PP ∈ Pg, Formalism.L2.DIV.resS D.host.F PP (u : 𝒪) = d PP := by
   classical
@@ -32,7 +36,7 @@ theorem exists_unit_res (Pg : Finset (Formalism.L2.DIV.Pl D.host.E)) (d : ∀ PP
     intro PP
     rw [Formalism.UG.P.levelaf_valued_algebraMap]
     refine le_antisymm (HeightOneSpectrum.valuation_le_one _ _) (not_lt.1 fun h => ?_)
-    have hm := (HeightOneSpectrum.valuation_lt_one_iff_mem PP (a PP)).1 h
+    have hm := (HeightOneSpectrum.valuation_lt_one_iff_mem (K := D.host.E) PP (a PP)).1 h
     have h0 : (Ideal.Quotient.mk PP.asIdeal (a PP)) = 0 := Ideal.Quotient.eq_zero_iff_mem.2 hm
     rw [ha PP] at h0
     exact (d PP).ne_zero h0
@@ -55,7 +59,7 @@ theorem exists_unit_res (Pg : Finset (Formalism.L2.DIV.Pl D.host.E)) (d : ∀ PP
   have h2 : Valued.v (GlobalTheory.StdFrames.cpt PP
       (((⟨z, hz⟩ : 𝒪) - Formalism.L2.DIV.oToS D.host.F D.host.E (a PP) : 𝒪) : EAf D)) < 1 := by
     rw [AddSubgroupClass.coe_sub, hc, map_sub, GlobalTheory.AdIsom.cpt_inc, hzc]
-    simp only [t, if_pos hPP, sub_self, map_zero]
+    simp only [t, ite_eq_left hPP, sub_self, map_zero]
     exact zero_lt_one
   have h1 : Formalism.L2.DIV.resS D.host.F PP ((⟨z, hz⟩ : 𝒪) - Formalism.L2.DIV.oToS D.host.F D.host.E (a PP)) = 0 :=
     (GlobalTheory.AdIsom.resS_eq_zero_iff_cpt (D := D) PP ((⟨z, hz⟩ : 𝒪) - Formalism.L2.DIV.oToS D.host.F D.host.E (a PP))).2 h2
@@ -86,7 +90,7 @@ theorem upperLeftBlock_diagonal_conj_eq {κ : Type} [CommRing κ] {n r : ℕ} (h
       rwa [← diagGL_inv, inv_inv, ← mul_assoc, ← mul_assoc, mul_inv_cancel, one_mul, mul_assoc,
         mul_inv_cancel, mul_one] at this
     unfold Formalism.L2.DIV.upperLeftBlock Formalism.L2.DIV.ext1
-    rw [dif_neg hX, dif_neg hY, mul_one, inv_mul_cancel]
+    rw [dite_eq_right hX, dite_eq_right hY, mul_one, inv_mul_cancel]
 
 theorem intGL_diagGL_val {n : ℕ} (u : Fin n → (𝒪)ˣ) :
     (Formalism.L2.DIV.intGL D.host.F D.host.E n (diagGL u)).val =
@@ -111,8 +115,8 @@ theorem bc_conj {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) {n : ℕ
     Formalism.UG.bc φ (δ⁻¹ * y * δ) = (Formalism.UG.bc φ δ)⁻¹ * Formalism.UG.bc φ y * Formalism.UG.bc φ δ := by
   rw [MonoidHom.map_mul, MonoidHom.map_mul, MonoidHom.map_inv]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_rescale : ∀ {D : D7} {n r : ℕ} (hr : r ≤ n) (β : GL (Fin n) (EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin n → D.host.E)), IsFrame β Λ → ∀ (Pg : Finset (Pl D.host.E)) (d : ∀ PP : Pl D.host.E, Fin r → (kP PP)ˣ), ∃ β' : GL (Fin n) (EAf D), IsFrame β' Λ ∧ (∀ M, M ∈ St β' ↔ M ∈ St β) ∧ ∀ PP ∈ Pg, ∀ M ∈ St β, upperLeftBlock hr (redFn β' PP M) = (diagGL (d PP))⁻¹ * upperLeftBlock hr (redFn β PP M) * diagGL (d PP) := by
   intro D n r hr β Λ hβ Pg d
   classical
@@ -169,7 +173,7 @@ theorem exists_rescale : ∀ {D : D7} {n r : ℕ} (hr : r ≤ n) (β : GL (Fin n
       rw [e3, e4, bc_conj, hred]
     refine (congrArg (Formalism.L2.DIV.upperLeftBlock hr) e2).trans (upperLeftBlock_diagonal_conj_eq hr (dn PP) (d PP) (fun i => ?_) _)
     show (if h : (Fin.castLE hr i).val < r then d PP ⟨(Fin.castLE hr i).val, h⟩ else 1) = d PP i
-    rw [dif_pos (show (Fin.castLE hr i).val < r from i.2)]
+    rw [dite_eq_left (show (Fin.castLE hr i).val < r from i.2)]
     rfl
 
 end GlobalTheory.FrameRescale

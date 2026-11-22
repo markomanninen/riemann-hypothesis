@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem extend_isom [CharZero L] [FiniteDimensional L V] (hs : ∀ x, s (s x) = 
       star_mul := fun a b => by rw [map_mul, mul_comm]
       star_add := map_add s }
   have hadd : ∀ x y z, h (x + y) z = h x z + h y z := fun x y z => by
-    rw [hh.2.2.1 z (x + y), hh.1, map_add, ← hh.2.2.1, ← hh.2.2.1]
+    rw [hh.2.2.1 z (x + y), hh.1, map_add (f := _), ← hh.2.2.1, ← hh.2.2.1]
   have hsm : ∀ (c : L) x z, h (c • x) z = s c * h x z := fun c x z => by
     rw [hh.2.2.1 z (c • x), hh.2.1, map_mul, ← hh.2.2.1]
   let B : V →ₗ⋆[L] V →ₗ[L] L := LinearMap.mk₂'ₛₗ (starRingEnd L) (RingHom.id L) h hadd

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootCoordinatesIndex
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RootCoordinatesIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,9 +20,6 @@ def toUJn {n : ℕ} {ε : Fin n → Bool} (M : Matrix (Fin n) (Fin n) ℂ) (hM :
     (mul_eq_one_comm_of_card_eq (Fin n) (Fin n) ℂ rfl).mp (by
       rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc Mᴴ, hM, Formalism.REAL.Jm_mul_self]),
     by rw [Matrix.mul_assoc, Matrix.mul_assoc, ← Matrix.mul_assoc Mᴴ, hM, Formalism.REAL.Jm_mul_self]⟩, hM⟩
-
-theorem uMat_toUJn {n : ℕ} {ε : Fin n → Bool} (M : Matrix (Fin n) (Fin n) ℂ) (hM : Mᴴ * Formalism.REAL.Jm ε * M = Formalism.REAL.Jm ε) :
-    uMat (toUJn M hM) = M := rfl
 
 theorem uMat_inv' {n : ℕ} {ε : Fin n → Bool} (g : Formalism.REAL.UJ ε) : uMat g⁻¹ = (uMat g)⁻¹ := by
   show (((g⁻¹ : Formalism.REAL.UJ ε) : (Matrix (Fin n) (Fin n) ℂ)ˣ) : Matrix (Fin n) (Fin n) ℂ) =
@@ -39,13 +40,12 @@ theorem uMat_inv_mul {n : ℕ} {ε : Fin n → Bool} (g : Formalism.REAL.UJ ε) 
 
 variable {D : D7} {X : HidaSetting D} {θ : ℝ} (C : Choice X θ) (γ : X.B.I.Ginf) (τ : D.what₂.Tau)
 
-local notation "NN" => 2 * D.R.rS + D.R.k + 1
-
 def cMr (y : Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) : Formalism.QuantumDeterminants.Mt D.R.k D.R.rS :=
-  (C.Qi τ * (uMat (γ (vOf X τ)))⁻¹ * uMat y * (uMat (γ (vOf X τ)) * C.Q τ) : Matrix (Fin NN) (Fin NN) ℂ)
+  (C.Qi τ * (uMat (γ (vOf X τ)))⁻¹ * uMat y * (uMat (γ (vOf X τ)) * C.Q τ) :
+    Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ)
 
 theorem cMr_eq (y : Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) :
-    (cMr C γ τ y : Matrix (Fin NN) (Fin NN) ℂ) = Formalism.L2.SG.RealFrameCoordinates.cMg C γ τ y := by
+    cMr C γ τ y = Formalism.L2.SG.RealFrameCoordinates.cMg C γ τ y := by
   show C.Qi τ * (uMat (γ (vOf X τ)))⁻¹ * uMat y * (uMat (γ (vOf X τ)) * C.Q τ) =
     C.Qi τ * ((uMat (γ (vOf X τ)))⁻¹ * uMat y * uMat (γ (vOf X τ))) * C.Q τ
   simp only [Matrix.mul_assoc]
@@ -55,7 +55,8 @@ theorem cMr_closedEmb : Topology.IsClosedEmbedding (cMr C γ τ) := by
   set g := uMat (γ (vOf X τ))
   have h1 : g * g⁻¹ = 1 := uMat_mul_inv _
   have h2 : g⁻¹ * g = 1 := uMat_inv_mul _
-  let L : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ ≃ₜ Matrix (Fin NN) (Fin NN) ℂ :=
+  let L : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ ≃ₜ
+      Matrix (Fin (2 * D.R.rS + D.R.k + 1)) (Fin (2 * D.R.rS + D.R.k + 1)) ℂ :=
     { toFun := fun M => C.Qi τ * g⁻¹ * M * (g * C.Q τ)
       invFun := fun M => g * C.Q τ * M * (C.Qi τ * g⁻¹)
       left_inv := fun M => by
@@ -88,14 +89,14 @@ theorem conjugator_inverse : (Formalism.L2.SG.RealObj.trG (C.Q τ) (C.Qi τ) (γ
 
 theorem stV_iff (y : Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) :
     y ∈ Formalism.L2.SG.NGPin.StV X u u' γ (vOf X τ) ↔
-      (cMr C γ τ y : Matrix (Fin NN) (Fin NN) ℂ) ∈ Formalism.MainNotions.S.Rset D.R.k D.R.rS (Formalism.L2.SG.RealFrameCoordinates.g0 C γ τ) := by
+      cMr C γ τ y ∈ Formalism.MainNotions.S.Rset D.R.k D.R.rS (Formalism.L2.SG.RealFrameCoordinates.g0 C γ τ) := by
   obtain ⟨hQiQ, hQQi, _, _⟩ := C.isT τ
   have hy : (uMat y)ᴴ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) * uMat y = Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) := y.2
   have hy' : (uMat ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)))ᴴ * Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) *
       uMat ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)) = Formalism.REAL.Jm (X.B.I.ε (vOf X τ)) := ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)).2
   have h1 := Formalism.L2.SG.RootCoordinatesIndex.inN_iff (C := C) (τ := τ) _ (Formalism.L2.SG.Pf.zTr C u τ).1 _ hy
   have h2 := Formalism.L2.SG.RootCoordinatesIndex.inN_iff (C := C) (τ := τ) _ (Formalism.L2.SG.Pf.zTr C u' τ).1 _ hy'
-  have e2 : C.Qi τ * uMat ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)) * C.Q τ = (cMr C γ τ y : Matrix (Fin NN) (Fin NN) ℂ) := by
+  have e2 : C.Qi τ * uMat ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)) * C.Q τ = cMr C γ τ y := by
     rw [cMr_eq]
     unfold Formalism.L2.SG.RealFrameCoordinates.cMg
     rw [show uMat ((γ (vOf X τ))⁻¹ * y * γ (vOf X τ)) = uMat ((γ (vOf X τ))⁻¹) * uMat y * uMat (γ (vOf X τ)) from rfl,

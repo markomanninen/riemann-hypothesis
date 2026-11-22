@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsExtZ
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ContinuousFinId
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsFull
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ExistsExtZ
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.ContinuousFinId
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+
+@[expose] public section
 
 noncomputable section
 

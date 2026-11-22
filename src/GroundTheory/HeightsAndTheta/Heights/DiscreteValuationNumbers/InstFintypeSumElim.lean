@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.Bundle
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.IsFieldIntersection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.Bundle
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -68,15 +73,6 @@ def divDiff {r : ℕ} (l : Fin r) (G : MvPolynomial (Fin r) ℤ) : MvPolynomial 
     (∏ j ∈ Finset.univ.filter (fun j => j < l), X (Fin.natAdd r j) ^ μ j) *
     (∑ a ∈ Finset.range (μ l), X (Fin.castAdd r l) ^ a * X (Fin.natAdd r l) ^ (μ l - 1 - a)) *
     (∏ j ∈ Finset.univ.filter (fun j => l < j), X (Fin.castAdd r j) ^ μ j)
-
-def hNeg (N n c : ℕ) : MvPolynomial (Fin (N + n)) ℤ :=
-  aeval (fun i : Fin N => -X (Fin.castAdd n i)) (hsymm (Fin N) ℤ c)
-
-def segrePoly (N m n : ℕ) : MvPolynomial (Fin (N + n)) ℤ :=
-  (if N ≤ m + 1 then hNeg N n (m + 1 - N) else 0) * ∏ j : Fin n, X (Fin.natAdd N j)
-
-def zetaDeg (tw : K → ℤ) : K ⊕ Unit → ℤ :=
-  Sum.elim (fun k => -tw k) fun _ => 1
 
 end Numbers
 
@@ -148,21 +144,6 @@ structure FullFlag (x : (Σ k, ι k) → Ω) {N : ℕ} {E : Type*} [AddCommGroup
   gen : Fin N → E
   gen_mem : ∀ i, gen i ∈ Vs i.succ
   frame : IsGradedFrame o x B Vs deg gen
-
-def IsDualGen (x : (Σ k, ι k) → Ω) {N : ℕ} {E : Type*} [AddCommGroup E] [Module Ω E]
-    (B : ChartBundle o (mseg x) N E) (tw : K → ℤ) {M : ℕ} (φ : Fin M → Module.Dual Ω E) : Prop :=
-  ∀ s, mseg x s ≠ 0 →
-    (∀ j, ∀ e ∈ B.lat s, ∃ a ∈ chartRing o (mseg x) s, φ j e = a * chartMon x s tw) ∧
-    ∀ ψ : Module.Dual Ω E, (∀ e ∈ B.lat s, ψ e ∈ chartRing o (mseg x) s) →
-      ∃ c : Fin M → Ω, (∀ j, c j ∈ chartRing o (mseg x) s) ∧
-        ψ = ∑ j, (c j * (chartMon x s tw)⁻¹) • φ j
-
-def peCoord (x : (Σ k, ι k) → Ω) {N : ℕ} {E : Type*} [AddCommGroup E] [Module Ω E]
-    (bas : Module.Basis (Fin N) Ω E) {M : ℕ} (φ : Fin M → Module.Dual Ω E) :
-    (Σ k : K ⊕ Unit, Sum.elim ι (fun _ : Unit => Fin M) k) → FractionRing (MvPolynomial (Fin N) Ω) :=
-  joinCoord (fun p => algebraMap Ω (FractionRing (MvPolynomial (Fin N) Ω)) (x p))
-    fun p : (Σ _ : Unit, Fin M) => algebraMap (MvPolynomial (Fin N) Ω) (FractionRing (MvPolynomial (Fin N) Ω))
-      (∑ q, MvPolynomial.C (φ p.2 (bas q)) * MvPolynomial.X q)
 
 end Flags
 
@@ -244,8 +225,9 @@ def FlagModel.value {x : (Σ k, ι k) → Ω} {d N : ℕ} {V : Type*} [AddCommGr
     (Fin.append F.flag.g fun l => rename (liftVar F.ι') (g l))
     (rename (Fin.castAdd r) G * rename (Fin.natAdd N) Q)
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def ck (x : (Σ k, ι k) → Ω) (d N : ℕ) {V : Type*} [AddCommGroup V] [Module Ω V]
     (E E' : ChartBundle O (mseg x) N V) (k : ℕ) {q : ℕ} (L : Fin q → K → ℤ)
     (Q : MvPolynomial (Fin q) ℤ) : ℤ :=
@@ -254,8 +236,9 @@ def ck (x : (Σ k, ι k) → Ω) (d N : ℕ) {V : Type*} [AddCommGroup V] [Modul
       (fun _ => 1) Q
   else 0
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def rootNum (x : (Σ k, ι k) → Ω) (d N : ℕ) {V : Type*} [AddCommGroup V] [Module Ω V]
     (E : ChartBundle O (mseg x) N V) (G : MvPolynomial (Fin N) ℤ) {q : ℕ} (L : Fin q → K → ℤ)
     (Q : MvPolynomial (Fin q) ℤ) (c : O) : ℤ :=

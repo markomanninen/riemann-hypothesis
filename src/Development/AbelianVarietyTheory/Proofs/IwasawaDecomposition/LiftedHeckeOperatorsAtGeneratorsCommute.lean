@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Formalism.LocalToGlobal.NumberFieldFamilies.JMtInjective
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Formalism.LocalToGlobal.NumberFieldFamilies.JMtInjective
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 open Formalism.L2.Fam.NPC Formalism.L2.Fam.NPC.BaseC GlobalTheory.HeckeLocN
 
@@ -16,11 +21,11 @@ theorem hLC_commute : ∀ (D : D7) (M : MtFam D) (C : NChoice D) (hR : HeckeLift
   intro D M C hR hstd hgen hsplit j w v k v' k'
   by_cases h : (1 ≤ j ∧ j ≤ D.R.m) ∧ GenAt0 D.host (D.what₂.places.resChar w) (C.Q w) v k
   swap
-  · have : hLC (mt0 M) C.Q hR j w v k = 0 := by unfold hLC; rw [dif_neg h]
+  · have : hLC (mt0 M) C.Q hR j w v k = 0 := by unfold hLC; rw [dite_eq_right h]
     rw [this]; exact Commute.zero_left _
   by_cases h' : (1 ≤ j ∧ j ≤ D.R.m) ∧ GenAt0 D.host (D.what₂.places.resChar w) (C.Q w) v' k'
   swap
-  · have : hLC (mt0 M) C.Q hR j w v' k' = 0 := by unfold hLC; rw [dif_neg h']
+  · have : hLC (mt0 M) C.Q hR j w v' k' = 0 := by unfold hLC; rw [dite_eq_right h']
     rw [this]; exact Commute.zero_right _
   obtain ⟨⟨h1, h2⟩, hg⟩ := h
   obtain ⟨-, hg'⟩ := h'

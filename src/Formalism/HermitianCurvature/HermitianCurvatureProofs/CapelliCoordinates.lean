@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.FrameMinor
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+module
+
+public import Formalism.HermitianCurvature.FrameMinor
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OperatorRepresentations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ContDiff
@@ -69,10 +73,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 def cx (H : Matrix (Fin n) (Fin n) ℂ) (L : Matrix (Fin n) (Fin n) ℂ →ₗ[ℝ] E) : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] E where
   toFun := fun Z => L (hpart1 H Z) + Complex.I • L (hpart2 H Z)
   map_add' := fun Z W => by
-    rw [hpart1_add, hpart2_add, map_add, map_add, smul_add]
+    rw [hpart1_add, hpart2_add, map_add (f := _), map_add (f := _), smul_add]
     abel
   map_smul' := fun c Z => by
-    rw [hpart1_smul, hpart2_smul, map_sub, map_add, map_smul, map_smul, map_smul, map_smul, RingHom.id_apply]
+    rw [hpart1_smul, hpart2_smul, map_sub, map_add (f := _), map_smul, map_smul, map_smul, map_smul, RingHom.id_apply]
     have hc : c = (c.re : ℂ) + (c.im : ℂ) * Complex.I := (Complex.re_add_im c).symm
     conv_rhs => rw [hc]
     simp only [← Complex.coe_smul, smul_add, add_smul, smul_smul]
@@ -132,12 +136,6 @@ private theorem sup_single_of_inV (p q : Fin (2 * r + k + 1)) (hp : Qx2.inV k r 
     · rw [Matrix.mul_apply, Finset.sum_eq_zero, zero_mul]
       intro w _
       simp [Matrix.conjTranspose_apply, Matrix.single_apply, Ne.symm hz']
-
-theorem sup_single (a b : Fin (mdim k r i)) : Sup k r i (Matrix.single (posL k r i a) (posL k r i b) 1) := by
-  have hj := a.isLt
-  have hj' := b.isLt
-  have hi := i.isLt
-  apply sup_single_of_inV <;> simp only [Qx2.inV, posL, mdim] at hj hj' ⊢ <;> omega
 
 theorem sup_sum {ι : Type*} (s : Finset ι) (Z : ι → Mx k r) (h : ∀ j ∈ s, Sup k r i (Z j)) :
     Sup k r i (∑ j ∈ s, Z j) := by
@@ -208,17 +206,6 @@ theorem rz_linear {F : Mx k r → E} (hF : SmoothLev k r i D F) {g : Mx k r} (hg
 end Lin
 
 end CapelliCoordinates
-
-theorem right_lowering_linear : Formalism.FourierDecayAlt.Qr.RZLin := by
-  intro E _ _ k r i D hD c F hF g hg
-  obtain ⟨L, hL⟩ := CapelliCoordinates.rz_linear hF hg
-  have hs : ∀ a b, CapelliCoordinates.Sup k r i (Matrix.single (posL k r i a) (posL k r i b) (1 : ℂ)) :=
-    fun a b => CapelliCoordinates.sup_single a b
-  rw [hL _ (CapelliCoordinates.sup_sum _ _ fun a _ => CapelliCoordinates.sup_sum _ _ fun b _ => (hs a b).smul (c a b))]
-  simp only [map_sum, map_smul]
-  refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
-  rw [← hL _ (hs a b)]
-  rfl
 
 namespace CapelliCoordinates
 
@@ -374,12 +361,6 @@ section Frame
 
 variable {k r : ℕ}
 
-theorem out_of_inWb {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) {p : Fin (2 * r + k + 1)}
-    (hp : ¬ Qx2.inV k r (Fin.last r) p) : v p = 0 := apply_eq_zero_of_inWb_not_inV hv hp
-
-theorem herm_out {v : Fin (2 * r + k + 1) → ℂ} (hv : inWb k r v) {p : Fin (2 * r + k + 1)}
-    (hp : ¬ Qx2.inV k r (Fin.last r) p) : herm (Hpk k r) (bvec p) v = 0 := herm_bvec_eq_zero_of_not_inV hv hp
-
 theorem unitB_expand {m : ℕ} (Bs : Fin m → Fin (2 * r + k + 1) → ℂ) (hB : ∀ a, inWb k r (Bs a)) (a b : Fin m) :
     unitB (Hpk k r) Bs a b = ∑ c, ∑ d, (Bs a (posL k r (Fin.last r) c) *
       herm (Hpk k r) (bvec (posL k r (Fin.last r) d)) (Bs b)) •
@@ -437,9 +418,11 @@ theorem rep_econj (hD : IsOpen D) {m : ℕ} (Bs : Fin m → Fin (2 * r + k + 1) 
   rw [hrep.2 φ g hg]
   obtain ⟨L, hL⟩ := rz_linear φ.2.1 hg
   show _ = RZ (Hpk k r) (unitB (Hpk k r) Bs a b) φ.1 g
-  rw [hL _ hSu, unitB_expand Bs hB a b, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hL _ hSu, unitB_expand Bs hB a b, map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [map_smul, ← hL _ (hS c d), hP, hQ]
   rfl

@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVstep
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermMulVecMulVec
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVpic
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVstep
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBFVnice
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFpmDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermMulVecMulVec
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix ComplexConjugate ContDiff
@@ -30,7 +34,7 @@ theorem contDiff_dpW_coord (l : Fin r) :
     ContDiff ℝ ∞ (fun x : (Fin r → ℂ) × Mx k r => ((dpW (x.1 l) : ℝ) : ℂ)) := by
   unfold dpW
   have h : ContDiff ℝ ∞ (fun x : (Fin r → ℂ) × Mx k r => (1 + ‖x.1 l‖ ^ 2) ^ 2) :=
-    ((contDiff_const.add ((contDiff_norm_sq ℝ).comp ((contDiff_apply ℝ ℂ l).comp contDiff_fst))).pow 2)
+    ((contDiff_const.add ((contDiff_norm_sq ℝ).comp ((contDiff_apply ℝ (fun _ => ℂ) l).comp contDiff_fst))).pow 2)
   exact Complex.ofRealCLM.contDiff.comp h
 
 def dpMul (l : Fin r) : Module.End ℂ (RadSp k r z z' π π') :=
@@ -64,8 +68,8 @@ theorem dpMul_comm (l : Fin r) {W : Module.End ℂ (RadSp k r z z' π π')} {m :
   show (dpMul l (W Φ) : Fn k r (Wq →L[ℂ] Wp)) c g = (W (dpMul l Φ) : Fn k r (Wq →L[ℂ] Wp)) c g
   rw [dpMul_isMulOp l, hW, hW, dpMul_isMulOp l, smul_comm]
 
-variable (k r z z' π π') in
 
+variable (k r z z' π π') in
 def dpSub (μ : Measure (Mt k r)) [SFinite μ] (hμ : B.IsHaarOn (Glev k r (Fin.last r)) μ) (l : Fin r) :
     Submodule ℂ (RadSp k r z z' π π') :=
   squareIntegrableSmoothSubmoduleGL k r z z' π π' μ hμ ⊓ (squareIntegrableSmoothSubmoduleGL k r z z' π π' μ hμ).comap (dpMul l)
@@ -248,8 +252,31 @@ theorem decay_pair_estimate : DecayPair1 := by
     rRL2Lev0Pos Wp Wq S P z z' π π' X μ L st l0 D hD hl0 hl0' hz hz' hπ hπ' hr w hw x hx a c hc
   have hvlc : ∀ a, dpMul l (v a) ∈ lcSub P.k P.r z z' π π' := fun a => (hvd a).2.1
   have hvl2 : ∀ a, LevelSquareIntegrable μ (0 : Fin (P.r + 1)) (dpMul l (v a)) c := fun a => (hvd a).2.2 c
-  have hint := (dens_int μ hμ l (act (RRi L st 0 w) x) (fun b => dpMul l (v b)) hulc hvlc c
-    (by rw [h0]; exact hul2) (by rw [h0]; exact hvl2)).1
+  have hint : Integrable (Dens μ l (act (RRi L st 0 w) x) (fun b => dpMul l (v b)) c) := by
+    let u := act (RRi L st 0 w) x
+    let v' := fun b => dpMul l (v b)
+    have hi := formIntOuter_of_l2I μ hμ l.castSucc u v' hulc hvlc c
+      (by rw [h0]; exact hul2) (by rw [h0]; exact hvl2)
+    let f : Cf P.r l.castSucc → ℂ := fun c' =>
+      ((∏ j, ‖c' j‖ ^ (-2 : ℤ) : ℝ) : ℂ) * ∑ a, pairAt μ (u a) (v' a) (glue l.castSucc c c')
+    have hmp := coordinate_split_measurePreserving (r := P.r) l
+    have hval : ∀ p : ℂ × Cf P.r l.succ, f ((coordinateSplit (r := P.r) l).symm p) =
+        ((‖p.1‖ ^ (-2 : ℤ) : ℝ) : ℂ) *
+        (((∏ j, ‖p.2 j‖ ^ (-2 : ℤ) : ℝ) : ℂ) *
+          ∑ a, pairAt μ (u a) (v' a) (glue l.succ (Function.update c l p.1) p.2)) := by
+      intro p
+      have hw := weight_coordinate_split (r := P.r) l ((coordinateSplit (r := P.r) l).symm p)
+      have hg := glue_coordinate_split (r := P.r) l c ((coordinateSplit (r := P.r) l).symm p)
+      simp only [MeasurableEquiv.apply_symm_apply] at hw hg
+      dsimp only [f]
+      rw [hw, hg, Complex.ofReal_mul, mul_assoc]
+    have hF : Integrable (fun p : ℂ × Cf P.r l.succ => f ((coordinateSplit (r := P.r) l).symm p)) (volume.prod volume) :=
+      (hmp.symm.integrable_comp_emb (coordinateSplit (r := P.r) l).symm.measurableEmbedding (g := f)).mpr hi
+    apply hF.integral_prod_left.congr
+    filter_upwards with t
+    show ∫ c'', f ((coordinateSplit (r := P.r) l).symm (t, c'')) = Dens μ l u v' c t
+    simp only [hval, Dens, form]
+    rw [integral_const_mul]
   have heq : (fun t : ℂ => (1 + ‖t‖ ^ 2) ^ 2 • Dens μ l (act (RRi L st 0 w) x) v c t) =
       Dens μ l (act (RRi L st 0 w) x) (fun b => dpMul l (v b)) c := by
     funext t

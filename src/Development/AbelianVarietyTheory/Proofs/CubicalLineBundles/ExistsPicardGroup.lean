@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.IsDiffOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ open GlobalTheory GlobalTheory.CM
 
 namespace GlobalTheory.CechPicMul
 
-open Classical in
 
+open Classical in
 def cl {X : Scheme.{0}} (L : LB X) : Multiplicative (CechPic.Pic X) :=
   if h : L.IsLB then Multiplicative.ofAdd (CechPic.cls L h) else 1
 

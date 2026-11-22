@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyCons
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyPb
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyCons
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyPb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 

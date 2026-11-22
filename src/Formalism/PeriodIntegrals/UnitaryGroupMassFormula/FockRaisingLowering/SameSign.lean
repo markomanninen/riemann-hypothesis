@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.JointBlockShapes.MinusPart
+
+@[expose] public section
 
 noncomputable section
 

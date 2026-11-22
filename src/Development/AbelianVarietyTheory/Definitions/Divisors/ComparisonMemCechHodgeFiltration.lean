@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechDeRhamCoefMapOneFormsRestrictAlongFunctor
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsNilDPOfCube
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.StructureHomApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechDeRhamCoefMapOneFormsRestrictAlongFunctor
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsNilDPOfCube
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.StructureHomApply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -119,8 +123,14 @@ variable {C : Type u} [Category.{v} C] {F : C ⥤ CommAlgCat.{0} R}
 def ptFunctor : C ⥤ (IsTriv s).FullSubcategory where
   obj T := ⟨Thick.triv (F.obj T) (x T) (hx T), rfl⟩
   map {T T'} a := ⟨Thick.trivHom (T := Thick.triv (F.obj T') (x T') (hx T')) (mp F a) (hc a)⟩
-  map_id T := ObjectProperty.hom_ext _ (Thick.hom_ext (mp_id F T))
-  map_comp a b := ObjectProperty.hom_ext _ (Thick.hom_ext (mp_comp F a b))
+  map_id T := by
+    apply ObjectProperty.hom_ext (IsTriv s)
+    apply Thick.Hom.ext'
+    exact AlgHom.ext (mp_id F T)
+  map_comp a b := by
+    apply ObjectProperty.hom_ext (IsTriv s)
+    apply Thick.Hom.ext'
+    exact AlgHom.ext (mp_comp F a b)
 
 def ptCoef : CoefMap (RingHom.id R) ((IsTriv s).ι ⋙ O (dp0 R) s) F where
   G := ptFunctor x hx hc
@@ -231,9 +241,6 @@ def cmpZZ (s : X ⟶ Sp R) : Z1 (O (dp0 R) s) →ₗ[R] cechDeRhamTotalCocyclesO
   ptZZ (F := OAff s) (fun U ↦ affPt s U.unop) (fun U ↦ affPt_w s U.unop)
     fun _ _ a ↦ affPt_res s (leOfHom a.unop)
 
-theorem cmpZZ_ω (s : X ⟶ Sp R) (f : Z1 (O (dp0 R) s)) (U : AffOp X) :
-    (cmpZZ s f).1.2 U = connForm f (affPt s U.unop) (affPt_w s U.unop) := rfl
-
 theorem cmpZZ_f (s : X ⟶ Sp R) (f : Z1 (O (dp0 R) s)) {U V : AffOp X} (a : U ⟶ V) :
     (cmpZZ s f).1.1 U V a = ev f (Thick.trivHom (hx := affPt_w s U.unop)
       (T := Thick.triv _ _ (affPt_w s V.unop)) (Sec.res s (leOfHom a.unop))
@@ -341,25 +348,9 @@ theorem isPullForm_iff {ω : GlobForm s} {ω' : GlobForm s'} : IsPullForm h ω �
       ((congrArg (fun z : Glob1 (OPair φ s') ↦ z.1 (op p)) e).trans (k (op p)))
   · exact (k' p).trans ((e p.unop).trans (k p).symm)
 
-theorem IsPull1.zero : IsPull1 h 0 0 := (map_zero _).trans (map_zero _).symm
-
-theorem IsPull1.add {a b : HH1 s} {a' b' : HH1 s'} (ha : IsPull1 h a a') (hb : IsPull1 h b b') :
-    IsPull1 h (a + b) (a' + b') := by
-  unfold IsPull1 at *; rw [map_add, map_add, ha, hb]
-
 theorem IsPull1.smul {a : HH1 s} {a' : HH1 s'} (ha : IsPull1 h a a') (r : R) :
     IsPull1 h (r • a) (σ r • a') := by
   unfold IsPull1 at *; rw [map_smulₛₗ, map_smulₛₗ, ha]; rfl
-
-theorem IsPull2.zero : IsPull2 h 0 0 := (map_zero _).trans (map_zero _).symm
-
-theorem IsPull2.add {a b : HH2 s} {a' b' : HH2 s'} (ha : IsPull2 h a a') (hb : IsPull2 h b b') :
-    IsPull2 h (a + b) (a' + b') := by
-  unfold IsPull2 at *; rw [map_add, map_add, ha, hb]
-
-theorem IsPull2.smul {a : HH2 s} {a' : HH2 s'} (ha : IsPull2 h a a') (r : R) :
-    IsPull2 h (r • a) (σ r • a') := by
-  unfold IsPull2 at *; rw [map_smulₛₗ, map_smulₛₗ, ha]; rfl
 
 theorem IsPull1.cup {a b : HH1 s} {a' b' : HH1 s'} (ha : IsPull1 h a a') (hb : IsPull1 h b b') :
     IsPull2 h (cupHH s a b) (cupHH s' a' b') := by
@@ -438,7 +429,7 @@ theorem dOne_line (ω : Ω[R[X]⁄R]) : dOne R R[X] ω = 0 := by
     rw [dOne_smul_D, polynomial_D_apply R b, polynomial_D_apply R c]
     simp
   | h0 => simp
-  | ha x y hx hy => rw [map_add, hx, hy, add_zero]
+  | ha x y hx hy => rw [map_add (f := _), hx, hy, add_zero]
 
 def lineEquiv : (Ω[R[X]⁄R] ⧸ LinearMap.range (D R R[X]).toLinearMap) ≃ₗ[R] HH1 (lineStr R) :=
   (Submodule.Quotient.equiv (exact1 R R[X]) _
@@ -450,9 +441,9 @@ def lineEquiv : (Ω[R[X]⁄R] ⧸ LinearMap.range (D R R[X]).toLinearMap) ≃ₗ
 theorem lineEquiv_mk (ω : Ω[R[X]⁄R]) : lineEquiv R (Submodule.Quotient.mk ω) =
     affEquiv R R[X] (Submodule.Quotient.mk ⟨ω, dOne_line R ω⟩) := rfl
 
+
 attribute [local instance] opModule isCentralScalar_kaehler isScalarTower_kaehler in
 variable {R B} in
-
 theorem connForm_tdt (x : Sp B ⟶ Sp R[X]) (hx : x ≫ lineStr R = spMap (algebraMap R B)) :
     connForm (tdt R).1 x hx =
       (Spec.preimage x).hom Polynomial.X • D R B ((Spec.preimage x).hom Polynomial.X) := by
@@ -480,11 +471,6 @@ theorem comparison_tdt_line : cmp1 (lineStr R) (Form.cl _ (tdt R)) =
   have : Spec.preimage (affPt (lineStr R) U.unop) = secMap (𝟙 (Sp R[X])) U.unop.1 := by
     rw [affPt_eq]; exact Spec.preimage_map _
   rw [this]; rfl
-
-example (r : R) (h : r * 2 = 1) : cmp1 (lineStr R) (Form.cl _ (tdt R)) = 0 := by
-  rw [comparison_tdt_line, LinearEquiv.map_eq_zero_iff, Submodule.Quotient.mk_eq_zero]
-  refine ⟨r • (Polynomial.X * Polynomial.X), ?_⟩
-  rw [map_smul, Derivation.coeFn_coe, Derivation.leibniz, ← two_smul R, smul_smul, h, one_smul]
 
 end Affine
 

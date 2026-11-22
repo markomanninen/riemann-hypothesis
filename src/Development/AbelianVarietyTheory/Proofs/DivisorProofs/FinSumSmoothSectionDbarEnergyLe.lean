@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+
+@[expose] public section
 
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
@@ -46,7 +50,7 @@ theorem isSSec_finset_sum_and_n1_le_card_mul_sum (n : ℕ) (Y : Type) [Topologic
           (A.smooth_ph la i).continuousOn
         refine ENNReal.continuous_ofReal.comp_continuousOn ?_
         refine ContinuousOn.mul ?_ ((hph.mono hball).neg.rexp)
-        refine continuousOn_finset_sum _ (fun j _ => ?_)
+        refine continuousOn_finsetSum _ (fun j _ => ?_)
         refine ContinuousOn.pow (ContinuousOn.norm ?_) 2
         unfold wdb
         refine ContinuousOn.div_const (ContinuousOn.add ?_ (continuousOn_const.mul ?_)) _
@@ -83,7 +87,7 @@ theorem isSSec_finset_sum_and_n1_le_card_mul_sum (n : ℕ) (Y : Type) [Topologic
               (Filter.Eventually.of_forall hpt))
         _ = _ := by
           rw [lintegral_const_mul' _ _ (ENNReal.natCast_ne_top _),
-            lintegral_finset_sum' _ (fun P hP => (hcont P hP).aemeasurable
+            lintegral_finsetSum' _ (fun P hP => (hcont P hP).aemeasurable
               Metric.isOpen_ball.measurableSet)]
     unfold n1
     calc _ ≤ ∑ a, (T.card : ℝ≥0∞) * ∑ P ∈ T, ∫⁻ v in Metric.ball (C.c a) (C.r a), ENNReal.ofReal

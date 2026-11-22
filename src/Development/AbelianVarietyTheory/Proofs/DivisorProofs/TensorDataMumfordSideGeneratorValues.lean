@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomOfMulComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinProdIsGen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordLambdaBilinearIntegralCombinationsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdFourMapsEqOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMonHomOfMulComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinProdIsGen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordLambdaBilinearIntegralCombinationsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdFourMapsEqOneStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj

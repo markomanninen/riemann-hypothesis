@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LogIntegralEqGenericIntersectionStatement
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PNumericalSegre
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.LogIntegralEqGenericIntersectionStatement
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PNumericalSegre
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 
@@ -39,7 +44,7 @@ theorem geoMono_mapDomain_some (M : RootModel Ψ N) [DecidableEq M.K] (II : Inte
       ⟨k, by rw [hlen]; exact k.2⟩) := by
     intro k
     simp only [hLdef, monoLines]
-    rw [dif_pos (by rw [hlen]; exact k.2)]
+    rw [dite_eq_left (by rw [hlen]; exact k.2)]
   have hline : ∀ o, IsSmoothHerm (M.line 1 o) := by
     rintro (_ | r)
     · exact M.A_smooth
@@ -66,10 +71,12 @@ theorem geoFun_toA_eq : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ] (N : ℕ) 
     M.geoFun (toA F) = genNum ℚ (extTo ℚ M.P) M.xdeg F [] / (M.δ : ℝ) := by
   intro Ψ _ _ N M _ II hII F hF
   have h1 : toA F = ∑ μ ∈ F.support, F.coeff μ • basisMonomials (Option (Ψ × Fin N)) ℝ (μ.mapDomain some) := by
-    conv_lhs => rw [toA, F.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [toA, F.as_sum, map_sum]
     refine Finset.sum_congr rfl fun μ _ => ?_
     rw [rename_monomial, coe_basisMonomials, smul_monomial, smul_eq_mul, mul_one]
-  rw [h1, map_sum, genNum, Finset.sum_div]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum, genNum, Finset.sum_div]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hd : μ.degree = dimFl Ψ N := by
     exact (DFunLike.congr_fun Finsupp.degree_eq_weight_one μ).trans (hF (mem_support_iff.1 hμ))

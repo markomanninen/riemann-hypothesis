@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageIdealEqConeIdealOfGeneric
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopologicalKrullDimLeZeroOfSubset
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIsOpenImmersionIsStandardSmoothOfRelativeD
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChowFormIntExistsAndChowFormExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImageIdealEqConeIdealOfGeneric
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndepBaseChange
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TopologicalKrullDimLeZeroOfSubset
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsIsOpenImmersionIsStandardSmoothOfRelativeD
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,10 +30,10 @@ section Algebra
 variable {k K σ : Type} [Field k] [Field K] [Algebra k K]
 
 def coeffMap (l : K →ₗ[k] k) (g : MvPolynomial σ K) : MvPolynomial σ k :=
-  ∑ a ∈ g.support, monomial a (l (coeff a g))
+  ∑ a ∈ g.support, monomial a (l (AddMonoidAlgebra.coeff g a))
 
 theorem coeff_coeffMap (l : K →ₗ[k] k) (g : MvPolynomial σ K) (a : σ →₀ ℕ) :
-    coeff a (coeffMap l g) = l (coeff a g) := by
+    AddMonoidAlgebra.coeff (coeffMap l g) a = l (AddMonoidAlgebra.coeff g a) := by
   classical
   simp only [coeffMap, coeff_sum, coeff_monomial, Finset.sum_ite_eq']
   split_ifs with h
@@ -45,15 +49,15 @@ theorem mem_map_of_coeffMap {I : Ideal (MvPolynomial σ k)} {g : MvPolynomial σ
     g ∈ I.map (MvPolynomial.map (algebraMap k K) : MvPolynomial σ k →+* MvPolynomial σ K) := by
   classical
   let b := Module.Basis.ofVectorSpace k K
-  let s := g.support.biUnion fun a => (b.repr (coeff a g)).support
+  let s := g.support.biUnion fun a => (b.repr (AddMonoidAlgebra.coeff g a)).support
   have e : g = ∑ i ∈ s, C (b i) * map (algebraMap k K) (coeffMap (b.coord i) g) := by
     ext a
     simp only [coeff_sum, coeff_C_mul, coeff_map, coeff_coeffMap]
-    have hs : (b.repr (coeff a g)).support ⊆ s := by
+    have hs : (b.repr (AddMonoidAlgebra.coeff g a)).support ⊆ s := by
       by_cases ha : a ∈ g.support
-      · exact Finset.subset_biUnion_of_mem (fun a => (b.repr (coeff a g)).support) ha
+      · exact Finset.subset_biUnion_of_mem (fun a => (b.repr (AddMonoidAlgebra.coeff g a)).support) ha
       · simp [notMem_support_iff.1 ha]
-    conv_lhs => rw [← b.linearCombination_repr (coeff a g),
+    conv_lhs => rw [← b.linearCombination_repr (AddMonoidAlgebra.coeff g a),
       Finsupp.linearCombination_apply, Finsupp.sum_of_support_subset _ hs _ (by simp)]
     exact Finset.sum_congr rfl fun i _ => by rw [Algebra.smul_def, mul_comm]; rfl
   rw [e]
@@ -115,12 +119,14 @@ theorem coeffMap_mem_imageIdeal (E : Type) [Field E] [Algebra k E] {g : MvPolyno
     have b := (S.bcFst E).map_appLE (U := W) (V := S.bcFst E ⁻¹ᵁ W) le_rfl (homOfLE hle).op
     exact congrArg (fun g => g.hom ((S.b j).f i)) (a.trans b.symm)
   have e₂ := congrArg Λ e
-  rw [map_zero, map_sum] at e₂
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum] at e₂
   refine (resG_chartEval k S.b i le_rfl hle _).trans (Eq.trans ?_ (e₂.trans (map_zero _).symm))
-  rw [coeffMap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeffMap, map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [chartEval, eval₂Hom_monomial]
-  refine Eq.trans (hΛ (coeff a g) (a.prod fun j n => resG S.Y hle ((S.b j).f i) ^ n)).symm (congrArg Λ ?_)
+  refine Eq.trans (hΛ (AddMonoidAlgebra.coeff g a) (a.prod fun j n => resG S.Y hle ((S.b j).f i) ^ n)).symm (congrArg Λ ?_)
   refine congrArg₂ (· * ·) rfl ?_
   refine (map_prod ((S.bcFst E).appLE W (S.bcFst E ⁻¹ᵁ W) le_rfl).hom _ _).trans
     (Finset.prod_congr rfl fun j _ => ?_)
@@ -198,7 +204,7 @@ theorem del_eq_zero_of_lt [Infinite k] (hp : IsProjOver S.str) (hb : S.BasePoint
   have h1 := (hf.zero_iff_of_isAlgClosed S.isHomogeneous_imageIdeal fun p => algebraMap k Ω (u p)).2
     ⟨S.coords x, hb.coords_ne_zero x, fun g hg => S.eval₂_coords_eq_zero x hg, fun i => by
       have h2 := hc ⟨i, by omega⟩
-      rw [dif_pos i.2, ← hx, ← S.val_ne_zero_iff, not_not, S.val_comb] at h2
+      rw [dite_eq_left i.2, ← hx, ← S.val_ne_zero_iff, not_not, S.val_comb] at h2
       exact h2⟩
   exact hu ((map_eq_zero (algebraMap k Ω)).1 ((aeval_algebraMap_apply Ω u f).symm.trans h1))
 

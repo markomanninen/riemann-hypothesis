@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaSeriesDataHypothesesBelowMaximalLevel
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FrecAt
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.MovDXiAtRecStep
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.LocalClassDataOfTrivialStabilizers
-import Formalism.LocalToGlobal.GlobalTheory.BaseLatticeSelfDual
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.LocSpBot
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaSeriesDataHypothesesBelowMaximalLevel
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FrecAt
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.MovDXiAtRecStep
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.LocalClassDataOfTrivialStabilizers
+public import Formalism.LocalToGlobal.GlobalTheory.BaseLatticeSelfDual
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.MainNotions.G.KAat Formalism.MainNotions.G.CmpJ Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelInstances GlobalTheory.TwU GlobalTheory.TwV
 open scoped TensorProduct Matrix
@@ -41,21 +45,19 @@ theorem isLat_and_dl_eq_of_isSDLat_mvL : ∀ {R : Ranks} {F E : Type} [Field F] 
       Module.Finite.iff_fg.mpr hfg
     exact Module.Finite.equiv (Submodule.equivMapOfInjective _ hinj M).symm
   ·
-    rw [eq_top_iff]
-    intro v _
-    have hv : toLE co v ∈ Submodule.span E ((mvL co M : Submodule (𝓞 E) (Fin N → E)) : Set (Fin N → E)) := by
-      rw [hspan]
-      exact Submodule.mem_top
-    have hset : ((mvL co M : Submodule (𝓞 E) (Fin N → E)) : Set (Fin N → E)) =
-        ((toLE co : (Fin N → E) ≃ₗ[E] (Fin N → E)) : (Fin N → E) →ₗ[E] (Fin N → E)) '' (M : Set (Fin N → E)) := by
-      unfold mvL
-      rw [Submodule.map_coe]
-      rfl
-    rw [hset, Submodule.span_image] at hv
-    obtain ⟨w, hw, hwv⟩ := Submodule.mem_map.mp hv
-    have hwv' : w = v := (toLE co).injective hwv
-    rw [hwv'] at hw
-    exact hw
+    have himage : (↑(mvL co M) : Set (Fin N → E)) = (toLE co) '' (↑M : Set (Fin N → E)) := by
+      ext x
+      simp [mvL]
+    rw [himage] at hspan
+    apply top_unique
+    intro x hx
+    apply (Submodule.apply_mem_span_image_iff_mem_span
+      (R := E) (R₂ := E)
+      (f := ((toLE co : (Fin N → E) ≃ₗ[E] (Fin N → E)) : (Fin N → E) →ₗ[E] (Fin N → E)))
+      (toLE co).injective).mp
+    change toLE co x ∈ Submodule.span E ((toLE co) '' (↑M : Set (Fin N → E)))
+    rw [hspan]
+    trivial
   ·
     ext y
     rw [Formalism.L2.GlobalTheoryTheory.Comp.mem_dl, ← toLE_mem_mvL co M y, hdual (toLE co y)]

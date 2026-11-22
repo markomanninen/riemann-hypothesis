@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInvariantForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SubsingletonJacquetOfPerm
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInvariantForm
+
+@[expose] public section
 
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Matrix Topology Filter
 
@@ -104,7 +108,7 @@ theorem exists_smooth_form_eq {G V : Type} [Group G] [TopologicalSpace G] [IsTop
 
 theorem val_le_one_of_mem_cong {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] {n : Type} [Fintype n] [DecidableEq n] {κ : GL n k}
-    (hκ : κ ∈ CentralExponent.cong n (1 : (ValueGroupWithZero k)ˣ) le_rfl) (p q : n) :
+    (hκ : κ ∈ CentralExponent.cong (n := n) (1 : (ValueGroupWithZero k)ˣ) le_rfl) (p q : n) :
     valuation k ((κ : Matrix n n k) p q) ≤ 1 := by
   have h1 : valuation k (((κ : Matrix n n k) - 1) p q) ≤ 1 := by
     have := hκ p q
@@ -125,9 +129,18 @@ theorem false_of_infinite {k : Type} [Field k] [ValuativeRel k] [TopologicalSpac
     {C : Set (GL n k)} (hC : IsCompact C) {S : Set ℕ} (hS : S.Infinite)
     (h : ∀ r ∈ S, ∃ ζ ∈ Subgroup.center (GL n k), ∃ c ∈ C,
       emb₂ k e (GeneralLinearGroup.scalar a z, 1) ^ r = ζ * c) : False := by
-  set K' := CentralExponent.cong n (1 : (ValueGroupWithZero k)ˣ) le_rfl with hK'
+  set K' := CentralExponent.cong (n := n) (1 : (ValueGroupWithZero k)ˣ) le_rfl with hK'
+  have hOpen : IsOpen (K' : Set (GL n k)) := by
+    change IsOpen {g : GL n k | ∀ i j, valuation k ((g.val - 1) i j) < 1}
+    simp only [Set.setOf_forall]
+    refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => ?_
+    have hBall : IsOpen {x : k | valuation k x < 1} := by
+      refine isOpen_iff_mem_nhds.2 fun x hx => (IsValuativeTopology.mem_nhds_iff).2 ⟨1, ?_⟩
+      rintro _ ⟨y, hy, rfl⟩
+      exact Valuation.map_add_lt (valuation k) (g := 1) hx hy
+    exact hBall.preimage ((Units.continuous_val.sub continuous_const).matrix_elem i j)
   obtain ⟨t, ht⟩ := compact_covered_by_mul_left_translates hC (V := (K' : Set (GL n k)))
-    (by rw [(CentralExponent.isOpen_cong _ _).interior_eq]; exact ⟨1, one_mem _⟩)
+    (by rw [hOpen.interior_eq]; exact ⟨1, one_mem _⟩)
   have hne : e (Sum.inr j) ≠ e (Sum.inl i) := by simp
   obtain ⟨y, hyv⟩ : ∃ y : GL n k, (y : Matrix n n k) = Matrix.transvection (e (.inr j)) (e (.inl i)) 1 :=
     ⟨⟨Matrix.transvection (e (.inr j)) (e (.inl i)) 1,
@@ -236,12 +249,102 @@ theorem isCuspidal_of_isSupercuspidal : ∀ (k : Type) [Field k] [ValuativeRel k
     rwa [Submodule.mem_comap, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one,
       Module.End.one_apply] at this
   obtain ⟨φ, hφ⟩ := exists_dual_infinite w hw
-  obtain ⟨γ, hγ, hK⟩ := CentralExponent.exists_cong_subset ((hπ.1 u).mem_nhds (by simp))
-  obtain ⟨l, hl, hll⟩ := exists_smooth_form_eq hπ.1 (CentralExponent.isOpen_cong γ hγ)
-    (CentralExponent.isCompact_cong γ hγ) A
-    (CentralExponent.cong (Fin N) γ hγ ⊓ parabLower k (two (stdSum h)) : Subgroup _)
-    (fun c hc => (Subgroup.mem_inf.1 hc).1) (CentralExponent.cong_factor (stdSum h) γ hγ)
-    (CentralExponent.cong_contract (stdSum h) γ hγ hz1) hK
+  have hFix : ∃ (γ : (ValueGroupWithZero k)ˣ) (hγ : γ ≤ 1),
+      ∀ g ∈ CentralExponent.cong (n := Fin N) γ hγ, π g u = u := by
+    have hU : {g : GL (Fin N) k | π g u = u} ∈ 𝓝 (1 : GL (Fin N) k) :=
+      (hπ.1 u).mem_nhds (by simp)
+    rw [SplitFlip.isEmbedding_val_GL.nhds_eq_comap] at hU
+    obtain ⟨T, hT, hTU⟩ := hU
+    have hT₀ : (fun M : Matrix (Fin N) (Fin N) k => M + 1) ⁻¹' T ∈ 𝓝 0 :=
+      (continuous_add_const _).continuousAt.preimage_mem_nhds (by simpa using hT)
+    have hSmall : Tendsto (fun p : (ValueGroupWithZero k)ˣ × Matrix (Fin N) (Fin N) k =>
+        if ∀ i j, valuation k (p.2 i j) < p.1 then p.2 else 0) (atBot ×ˢ ⊤) (𝓝 0) := by
+      refine tendsto_pi_nhds.2 fun i => tendsto_pi_nhds.2 fun j => ?_
+      rw [Matrix.zero_apply, (IsValuativeTopology.hasBasis_nhds_zero k).tendsto_right_iff]
+      intro γ _
+      filter_upwards [prod_mem_prod (mem_atBot γ) univ_mem] with p hp
+      split_ifs with hpSmall
+      · exact (hpSmall i j).trans_le hp.1
+      · simp
+    obtain ⟨γ, hγ, hTγ⟩ := ((eventually_le_atBot 1).and (mem_prod_top.1 (hSmall hT₀))).exists
+    refine ⟨γ, hγ, fun g hg => hTU ?_⟩
+    have hMem := hTγ (g.val - 1)
+    have hg' : ∀ i j, valuation k ((g.val - 1) i j) < γ := hg
+    rw [Set.mem_preimage, Set.mem_preimage, if_pos hg', sub_add_cancel] at hMem
+    exact hMem
+  obtain ⟨γ, hγ, hK⟩ := hFix
+  let K := CentralExponent.cong (n := Fin N) γ hγ
+  let e := stdSum h
+  let C₀ := K ⊓ parabLower k (two e)
+  have hOpen : IsOpen (K : Set (GL (Fin N) k)) := by
+    change IsOpen {g : GL (Fin N) k | ∀ i j, valuation k ((g.val - 1) i j) < γ}
+    simp only [Set.setOf_forall]
+    refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => ?_
+    have hBall : IsOpen {x : k | valuation k x < γ} := by
+      refine isOpen_iff_mem_nhds.2 fun x hx => (IsValuativeTopology.mem_nhds_iff).2 ⟨γ, ?_⟩
+      rintro _ ⟨y, hy, rfl⟩
+      exact Valuation.map_add_lt (valuation k) (g := γ) hx hy
+    exact hBall.preimage ((Units.continuous_val.sub continuous_const).matrix_elem i j)
+  have hCompact : IsCompact (K : Set (GL (Fin N) k)) :=
+    SplitFlip.isCompact_KO.of_isClosed_subset (Subgroup.isClosed_of_isOpen K hOpen)
+      fun _ hg => StepData.KOne_le_KO (StepData.mem_KOne.2 fun i j => (hg i j).trans_le hγ)
+  have hFactor : ∀ g ∈ K, ∃ x ∈ unipRad k (two e), ∃ c ∈ C₀, g = x * c := by
+    intro g hg
+    let M : Matrix (Fin N) (Fin N) k := Matrix.of fun i j =>
+      if (e.symm j).isLeft then (1 : Matrix (Fin N) (Fin N) k) i j else g.val i j
+    have hM : ∀ i j, valuation k ((M - 1) i j) < γ := by
+      intro i j
+      by_cases hj : (e.symm j).isLeft
+      · simp [M, hj]
+      · simpa [M, hj] using hg i j
+    obtain ⟨p, -, hp⟩ := StepData.exists_mem_KOne (M := M) fun i j => (hM i j).trans_le hγ
+    have hpK : p ∈ K := fun i j => hp ▸ hM i j
+    have hpP : p ∈ parab k (two e) := (mem_parab_two k).2 fun j i => by
+      simp [hp, M, Matrix.one_apply]
+    let q : parab k (two e) := ⟨_, leviEmb_mem_parab k (two e) (leviProj k (two e) ⟨p, hpP⟩)⟩
+    have hqK : q.1 ∈ K := by
+      intro i j
+      obtain ⟨⟨a, i⟩, rfl⟩ := (two e).surjective i
+      obtain ⟨⟨b, j⟩, rfl⟩ := (two e).surjective j
+      by_cases hab : a = b
+      · subst b
+        simpa [q] using hpK (two e ⟨a, i⟩) (two e ⟨a, j⟩)
+      · rw [Matrix.sub_apply, leviEmb_apply_ne k (two e) _ hab, Matrix.one_apply_ne (by simp [hab])]
+        simp
+    refine ⟨((⟨p, hpP⟩ * q⁻¹ : parab k (two e)) : GL (Fin N) k), (coe_mem_unipRad k _).2 ?_,
+      q * (p⁻¹ * g), Subgroup.mem_inf.2 ⟨mul_mem hqK (mul_mem (inv_mem hpK) hg),
+        mul_mem (leviEmb_mem_parabLower k _ _) ((mem_parabLower_two k).2 fun i j => ?_)⟩,
+      by simp [mul_assoc]⟩
+    · rw [map_mul, map_inv, leviProj_leviEmb, mul_inv_cancel]
+    · have heq : (p⁻¹ * g).val (e (.inl i)) (e (.inr j)) =
+          (p⁻¹ * p).val (e (.inl i)) (e (.inr j)) := by
+        simp only [Units.val_mul, Matrix.mul_apply]
+        refine Finset.sum_congr rfl fun l _ => ?_
+        congr 1
+        simp [hp, M]
+      rw [heq, inv_mul_cancel, Units.val_one, Matrix.one_apply_ne (by simp)]
+  have hContract : ∀ c ∈ C₀, A⁻¹ * c * A ∈ C₀ := by
+    intro c hcc
+    obtain ⟨hc, hc'⟩ : c ∈ K ∧ c ∈ parabLower k (two e) := Subgroup.mem_inf.1 hcc
+    have hm : A ∈ parabLower k (two e) := leviEmb_mem_parabLower k _ _
+    refine Subgroup.mem_inf.2 ⟨fun i j => ?_, mul_mem (mul_mem (inv_mem hm) hc') hm⟩
+    have hEntry := hc i j
+    change valuation k ((((emb₂ k e (GeneralLinearGroup.scalar (Fin r) z, 1))⁻¹ * c *
+      emb₂ k e (GeneralLinearGroup.scalar (Fin r) z, 1)).val - 1) i j) < γ
+    rw [← map_inv, Prod.inv_mk, ← map_inv, inv_one, Units.val_mul, Units.val_mul,
+      CentralExponent.val_emb₂_scalar, CentralExponent.val_emb₂_scalar, Matrix.sub_apply,
+      Matrix.mul_diagonal, Matrix.diagonal_mul]
+    rw [Matrix.sub_apply] at hEntry
+    obtain ⟨i, rfl⟩ := e.surjective i
+    obtain ⟨j, rfl⟩ := e.surjective j
+    rcases i with i | i <;> rcases j with j | j
+    · simpa [mul_comm, mul_left_comm] using hEntry
+    · simp [(mem_parabLower_two k).1 hc' i j, Matrix.one_apply]
+    · simp only [Matrix.one_apply, EmbeddingLike.apply_eq_iff_eq, reduceCtorEq, if_false, sub_zero] at hEntry ⊢
+      simpa using (mul_le_of_le_one_right' hz1).trans_lt hEntry
+    · simpa using hEntry
+  obtain ⟨l, hl, hll⟩ := exists_smooth_form_eq hπ.1 hOpen hCompact A
+    (C₀ : Set (GL (Fin N) k)) (fun c hc => (Subgroup.mem_inf.1 hc).1) hFactor hContract hK
     (φ ∘ₗ (twKer π (unipRad k (two (stdSum h))) 1).mkQ)
     (fun x hx v => congrArg φ ((Submodule.Quotient.eq _).2 (Submodule.subset_span ⟨⟨x, hx⟩, v, by simp⟩)))
   obtain ⟨C, hC, hsupp⟩ := hπ.2 u l hl

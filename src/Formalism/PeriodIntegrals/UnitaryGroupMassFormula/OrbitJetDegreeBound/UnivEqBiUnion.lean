@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.ProdMonomialOne
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetDegreeBound.ProdMonomialOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,8 @@ theorem Gxz_eq {R : Finset (Pl D)} (hR : IsReps D p R) {N0 N1 : ℕ} (nu : Pl D 
   rw [AlgHom.map_det]
   congr 1
   refine Matrix.ext fun i k => ?_
-  simp [AlgHom.mapMatrix_apply, Matrix.map_apply, map_sum, MvPolynomial.rename_X, xzMap, orbE, pEmb,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [AlgHom.mapMatrix_apply, Matrix.map_apply, map_sum, MvPolynomial.rename_X, xzMap, orbE, pEmb,
     Function.Embedding.coeFn_mk]
   all_goals rfl
 

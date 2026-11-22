@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueLinearLiftOfAbelianEndomorphismStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingComplexValueUniqueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueLinearLiftOfAbelianEndomorphismStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilPairingComplexValueUniqueStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PELU
 open scoped Matrix
@@ -20,7 +25,7 @@ theorem exists_linMap_of_periods {O : Type} [Ring O] {bar : O → O} {g : ℕ} (
   refine ⟨{ toFun := f, map_add' := ?_, map_smul' := ?_ }, hf⟩
   · intro x y
     apply hinj
-    rw [map_add, hf, hf, hf, map_add, map_add]
+    rw [map_add (f := _), hf, hf, hf, map_add (f := _), map_add (f := _)]
   · intro a x
     apply hinj
     rw [RingHom.id_apply, hP', hf, hf, hP, hc]
@@ -106,7 +111,7 @@ theorem unifAt_cmp : ∀ (O : Type) [Ring O] (bar : O → O) (g : ℕ) (ρ : O �
     apply hper2.2.1
     have : P' (w (t a)) - P' (t' a) = (N : ℂ) • u := by
       simp only [u, v, ← smul_sub, smul_smul, mul_inv_cancel₀ hN', one_smul]
-    rw [map_add, map_nsmul, ← Nat.cast_smul_eq_nsmul ℂ, hx₀, ← this]
+    rw [map_add (f := _), map_nsmul, ← Nat.cast_smul_eq_nsmul ℂ, hx₀, ← this]
     abel
 
 end GlobalTheory.PELU

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AltDoubleSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConvexNerveComplexes.AltDoubleSum
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -29,11 +33,12 @@ private theorem UpperTheory.V.KT.fe_comm {I : Type} (S : ∀ n, Set (Fin n → I
   induction f using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    rw [map_add, Finsupp.mapDomain_add, hf, hg, Finsupp.mapDomain_add, map_add]
+    rw [map_add (f := _), Finsupp.mapDomain_add, hf, hg, Finsupp.mapDomain_add, map_add (f := _)]
   | single t c =>
     rw [KH.faceD_single, Finsupp.mapDomain_single]
     simp only [ConeExtensionAcyclic.bd, Finsupp.linearCombination_single, Finset.smul_sum]
-    rw [← Finsupp.lmapDomain_apply ℤ ℤ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finsupp.lmapDomain_apply ℤ ℤ, map_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_zsmul, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
     simp only [Finsupp.smul_single, smul_eq_mul, mul_one]
@@ -45,7 +50,7 @@ private theorem UpperTheory.V.KT.fe_aug {I : Type} (s : Set (Fin 1 → I)) (f : 
   induction f using Finsupp.induction_linear with
   | zero => simp
   | add f g hf hg =>
-    rw [Finsupp.mapDomain_add, map_add, hf, hg, map_add, Finsupp.single_add]
+    rw [Finsupp.mapDomain_add, map_add (f := _), hf, hg, map_add (f := _), Finsupp.single_add]
   | single t c =>
     rw [Finsupp.mapDomain_single, KH.aug_single]
     simp only [ConeExtensionAcyclic.bd, Finsupp.linearCombination_single]

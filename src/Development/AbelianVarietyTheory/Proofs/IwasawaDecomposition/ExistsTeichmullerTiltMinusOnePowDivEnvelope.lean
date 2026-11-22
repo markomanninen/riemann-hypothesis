@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -32,7 +36,8 @@ theorem pow_sub_one_pow_congr_geom_sum_pow {R : Type} [CommRing R] {l : ℕ} (hl
     have h7 := dvd_sub h6 h5
     rw [← pow_mul, ← pow_mul, mul_comm k (k + 1), sub_sub_sub_cancel_right] at h7
     simpa using h7
-  simpa [map_sum] using map_dvd (Polynomial.aeval (R := ℤ) x) key
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [map_sum] using map_dvd (Polynomial.aeval (R := ℤ) x) key
 
 theorem exists_div_prime_pow_dvd {R A : Type} [CommRing R] [CommRing A] [Algebra R A] {l : ℕ} (hl : l.Prime)
     (hu : ∀ n : ℕ, IsUnit ((n.factorial : ℕ) : A)) (S : Subalgebra R A) (η z : R)
@@ -53,7 +58,7 @@ theorem exists_div_prime_pow_dvd {R A : Type} [CommRing R] [CommRing A] [Algebra
   let a : S := (((l - 1).factorial : ℕ) : S) * ⟨g₁, m₁⟩
   let b : S := algebraMap R S z
   refine ⟨a + b, ?_, ?_⟩
-  · rw [map_add, map_mul, map_pow, map_natCast, ← h₁, hf]
+  · rw [map_add (f := _), map_mul, map_pow, map_natCast, ← h₁, hf]
     simp only [a, b]
     push_cast
     ring

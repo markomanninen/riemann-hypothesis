@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.RealTestFunctionApply
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.FourierTransforms.RealTestFunctionApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 def adL {g : GL (Fin n) k} (hg : g ∈ Gz Z) : (Fin (d Z) → k) →ₗ[k] (Fin (d Z) → k) where
   toFun u := (bas Z).equivFun ⟨g.val * E Z u * g⁻¹.val, conj_mem_nilpotent_cone hg (E_mem Z u)⟩
   map_add' u u' := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext1
     simp [E_add, mul_add, add_mul]

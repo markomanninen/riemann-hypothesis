@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.KStability
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.DedekindSR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.GrpHComp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.HomologicalStability.KStability
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.DedekindSR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TensorHomCubes.GrpHComp
+
+@[expose] public section
 
 noncomputable section
 

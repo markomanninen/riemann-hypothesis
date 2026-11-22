@@ -1,8 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.FrobFieldExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomLieEquivScalarTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.AV GlobalTheory.AV.AbVar
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.DeRham (spOver spOver_comp)
@@ -62,26 +69,30 @@ def kerPt : ptOver k (G.A n ⧸ kerIdeal ((t.map t' f.hom).app n)) ⟶ A.X :=
 
 theorem comp_eq_one_iff {R : Type} [CommRing R] [Algebra k R] (φ : G.A n →ₐ[k] R) :
     (spOver φ ≫ t.y n) ≫ f.hom = 1 ↔ kerIdeal ((t.map t' f.hom).app n) ≤ RingHom.ker φ := by
-  rw [kerIdeal_le_ker_iff _ φ, Category.assoc, ← t.map_y t' f.hom n, ← Category.assoc, spOver_comp,
-    t'.eq_one_iff]
-  rfl
+  let u : H.A n →ₐ[k] G.A n := (t.map t' f.hom).app n
+  have hu : spOver u ≫ t'.y n = t.y n ≫ f.hom := t.map_y t' f.hom n
+  rw [Category.assoc, ← hu, ← Category.assoc, spOver_comp, t'.eq_one_iff]
+  exact (kerIdeal_le_ker_iff ((t.map t' f.hom).app n) φ).symm
 
 theorem kerPow_kerPt : KerPow f (p ^ n) _ (kerPt t t' f n) := by
-  set I := kerIdeal ((t.map t' f.hom).app n)
-  refine ⟨⟨(comp_eq_one_iff t t' f n _).2 ?_, (t.exists_iff n _).1 ⟨_, rfl⟩⟩, ?_⟩
+  let I := kerIdeal ((t.map t' f.hom).app n)
+  let q := Ideal.Quotient.mkₐ k I
+  refine ⟨⟨(comp_eq_one_iff t t' f n q).2 ?_, (t.exists_iff n _).1 ⟨q, rfl⟩⟩, ?_⟩
   · exact fun a ha => Ideal.Quotient.eq_zero_iff_mem.2 ha
   · intro R _ _ x hx hp
     obtain ⟨φ, hφ⟩ := t.surj n R x hp
     have hI : I ≤ RingHom.ker φ := (comp_eq_one_iff t t' f n φ).1 (hφ ▸ hx)
-    refine ⟨Ideal.Quotient.liftₐ I φ (fun a ha => hI ha), ?_, fun ψ hψ => ?_⟩
-    · change (spOver (Ideal.Quotient.liftₐ I φ (fun a ha => hI ha)) ≫ kerPt t t' f n).left = x.left
-      rw [kerPt, ← Category.assoc, spOver_comp]
-      exact congrArg Over.Hom.left ((congrArg (spOver · ≫ t.y n) (AlgHom.ext fun a => rfl)).trans hφ)
-    · have h1 : spOver (ψ.comp (Ideal.Quotient.mkₐ k I)) ≫ t.y n = x := by
-        rw [← spOver_comp, Category.assoc]
-        exact Over.OverMorphism.ext hψ
-      have h2 := t.inj n R _ _ (h1.trans hφ.symm)
-      exact Ideal.Quotient.algHom_ext k (h2.trans (AlgHom.ext fun a => rfl))
+    let ψ : G.A n ⧸ I →ₐ[k] R := Ideal.Quotient.liftₐ I φ (fun _ ha => hI ha)
+    have hψ : ψ.comp q = φ := AlgHom.ext fun _ => rfl
+    have hψx : spOver ψ ≫ kerPt t t' f n = x := by
+      change spOver ψ ≫ (spOver q ≫ t.y n) = x
+      rw [← Category.assoc, spOver_comp, hψ]
+      exact hφ
+    refine ⟨ψ, congrArg Over.Hom.left hψx, fun χ hχ => ?_⟩
+    have hχx : spOver (χ.comp q) ≫ t.y n = x := by
+      rw [← spOver_comp, Category.assoc]
+      exact Over.OverMorphism.ext hχ
+    exact Ideal.Quotient.algHom_ext k ((t.inj n R _ _ (hχx.trans hφ.symm)).trans hψ.symm)
 
 end Tower
 

@@ -1,19 +1,19 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.BeConjOfNormHolds
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.AdditionIdentityOfSigmaFormulaUnit
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitZeroG
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FglTriFactor
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FglChordFactor
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CubicExponentialFactor
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PhiCubeOfFactor
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.BeConjOfNormHolds
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.AdditionIdentityOfSigmaFormulaUnit
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.FormalGroupLawFirstHalfHolds
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FglTriFactor
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.FglChordFactor
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CubicExponentialFactor
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PhiCubeOfFactor
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext.CutA
 
 open Formalism.MainNotions.GL3Theta Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.GL3r7
-
-theorem splitZeroG_holds : SplitZeroG := by
-  intro p _ g S hOk hp hsw hint hadd hC hbi hm1 hex
-  exact split_zero_g p g.l g.ex g.ph (l0 g) hOk.2.2.1 hOk.2.2.2 (ph0 g) S hp hsw hint hadd hC hbi hm1 hex
 
 theorem lemma_three_one_third_holds : LemmaThreeOneThird := by
   intro p hp g hOk hI

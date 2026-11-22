@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.MatrixTwoByTwoCongr
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsEigenProjectorRingOfIntegers
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsColsDetNeZeroOfMul
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.PolyChartSmoothFractionLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.MatrixTwoByTwoCongr
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsEigenProjectorRingOfIntegers
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsColsDetNeZeroOfMul
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.PolyChartSmoothFractionLift
+
+@[expose] public section
 
 open NumberField
 
@@ -73,7 +77,8 @@ theorem exists_projector (E K : Type) [Field E] [NumberField E] [Field K] (emb :
   have hp : (∑ k, α (t k) • ρ (a k)).map f = f (α N) • π := by
     ext i j
     have ht' : ∀ i, algebraMap O K (t i) = algebraMap O K N * κ i := fun i => (ht i).trans (Algebra.smul_def _ _)
-    simp only [hπ, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, hf', ht',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hπ, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, map_sum, map_mul, hf', ht',
       Finset.mul_sum, RingHom.comp_apply, RingHom.mapMatrix_apply, mul_assoc]
   have hu : IsUnit (f (α N)) := by
     rw [hf']
@@ -113,13 +118,13 @@ theorem loc_descr {K O A F : Type} [Field K] [CommRing O] [IsDomain O] [Algebra 
     obtain ⟨a, b, m, hb, h⟩ := hx
     obtain ⟨a', b', m', hb', h'⟩ := hy
     refine ⟨a * (α b' * g ^ m') + a' * (α b * g ^ m), b * b', m + m', mul_ne_zero hb hb', ?_⟩
-    simp only [map_add, map_mul, map_pow] at h h' ⊢
+    simp only [map_add (f := _), map_mul, map_pow] at h h' ⊢
     rw [← h, ← h']; ring
   | mul x y _ _ hx hy =>
     obtain ⟨a, b, m, hb, h⟩ := hx
     obtain ⟨a', b', m', hb', h'⟩ := hy
     refine ⟨a * a', b * b', m + m', mul_ne_zero hb hb', ?_⟩
-    simp only [map_add, map_mul, map_pow] at h h' ⊢
+    simp only [map_add (f := _), map_mul, map_pow] at h h' ⊢
     rw [← h, ← h']; ring
 
 theorem loc_lift {K O A F L : Type} [Field K] [CommRing O] [IsDomain O] [Algebra O K] [IsFractionRing O K]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.CompanionTheory.FormalAlg GlobalTheory.CompanionTheory.FormalAlg.Lift
 
@@ -41,9 +46,6 @@ theorem component_of (n : ℕ) (a : V n) : component hy n (of hy n a) = a :=
 
 theorem component_of_ne {n k : ℕ} (h : k ≠ n) (a : V k) : component hy n (of hy k a) = 0 :=
   (DirectSum.component.of R n k a).trans (dif_neg h)
-
-theorem of_injective (n : ℕ) : Function.Injective (of hy n) :=
-  Function.LeftInverse.injective (component_of hy n)
 
 theorem lhom_ext {N : Type*} [AddCommGroup N] [Module R N] {f g : NSum hy →ₗ[R] N}
     (h : ∀ n a, f (of hy n a) = g (of hy n a)) : f = g :=
@@ -99,11 +101,11 @@ def lift {N : Type*} [AddCommGroup N] [Module R N] [Module (MvPolynomial κ R) N
       induction m using NSum.induction with
       | h0 => simp
       | hof n a => simp [hφ]
-      | hadd a b ha hb => simp only [smul_add, map_add, ha, hb]
+      | hadd a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
     rw [RingHom.id_apply]
     induction p using MvPolynomial.induction_on generalizing m with
     | C a => rw [← MvPolynomial.algebraMap_eq, algebraMap_smul, algebraMap_smul, map_smul]
-    | add p q hp hq => rw [add_smul, add_smul, map_add, hp, hq]
+    | add p q hp hq => rw [add_smul, add_smul, map_add (f := _), hp, hq]
     | mul_X p i hp => rw [mul_smul, mul_smul, hp, hX]
 
 @[simp]
@@ -128,7 +130,7 @@ theorem component_map (φ : ∀ n, V n →ₗ[R] V' n) (hφ) (n : ℕ) (m : NSum
     · subst h
       simp
     · rw [map_of, component_of_ne hy' h, component_of_ne hy h, map_zero]
-  | hadd a b ha hb => simp only [map_add, ha, hb]
+  | hadd a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem ext_component {m m' : NSum hy} (h : ∀ n, component hy n m = component hy n m') : m = m' :=
   DFinsupp.ext h
@@ -190,7 +192,7 @@ theorem hxN : OperatorsCommute (R := MvPolynomial κ R) (A := D.NM) D.xN := fun 
   induction m using NSum.induction with
   | h0 => simp
   | hof e a => simp [D.hx i j e t a]
-  | hadd a b ha hb => simp only [map_add, ha, hb]
+  | hadd a b ha hb => simp only [map_add (f := _), ha, hb]
 
 abbrev Tot : Type := GrSum D.hxN
 
@@ -209,9 +211,6 @@ theorem of_mem_grading (e : ℕ) (t : ℤ) (a : W e t) : D.of e t a ∈ D.gradin
 @[simp]
 theorem comp_of (e : ℕ) (t : ℤ) (a : W e t) : D.comp e t (D.of e t a) = a := by
   simp [comp, of]
-
-theorem of_injective (e : ℕ) (t : ℤ) : Function.Injective (D.of e t) :=
-  Function.LeftInverse.injective (D.comp_of e t)
 
 theorem X_smul_of (j : ι) (e : ℕ) (t : ℤ) (a : W e t) :
     (MvPolynomial.X j : MvPolynomial ι (MvPolynomial κ R)) • D.of e t a =
@@ -242,7 +241,7 @@ theorem induction {C : D.Tot → Prop} (h0 : C 0) (hof : ∀ e t a, C (D.of e t 
     induction n using NSum.induction with
     | h0 => rw [map_zero]; exact h0
     | hof e a => exact hof e t a
-    | hadd a b ha hb => rw [map_add]; exact hadd _ _ ha hb
+    | hadd a b ha hb => rw [map_add (f := _)]; exact hadd _ _ ha hb
   exact DirectSum.induction_on (β := D.NM) (motive := C) m h0 (fun t n => key t n) hadd
 
 theorem comp_of_ne {e e' : ℕ} {t t' : ℤ} (h : ¬(e = e' ∧ t = t')) (a : W e t) :
@@ -275,7 +274,7 @@ theorem exists_finset_sum (m : D.Tot) :
     obtain ⟨s₁, h₁⟩ := ha
     obtain ⟨s₂, h₂⟩ := hb
     refine ⟨s₁ ∪ s₂, fun s hs => ?_⟩
-    simp only [map_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), Finset.sum_add_distrib]
     rw [← h₁ s (Finset.union_subset_left hs), ← h₂ s (Finset.union_subset_right hs)]
 
 def map (φ : ∀ e t, W e t →ₗ[R] W' e t)
@@ -287,7 +286,7 @@ def map (φ : ∀ e t, W e t →ₗ[R] W' e t)
       induction m using NSum.induction with
       | h0 => simp
       | hof e a => simp [hx]
-      | hadd a b ha hb => simp only [map_add, ha, hb]
+      | hadd a b ha hb => simp only [map_add (f := _), ha, hb]
 
 @[simp]
 theorem map_of (φ : ∀ e t, W e t →ₗ[R] W' e t) (hx) (hy) (e : ℕ) (t : ℤ) (a : W e t) :
@@ -307,7 +306,7 @@ theorem comp_map (φ : ∀ e t, W e t →ₗ[R] W' e t) (hx) (hy) (e : ℕ) (t :
     · obtain ⟨rfl, rfl⟩ := h
       simp
     · rw [map_of, comp_of_ne _ h, comp_of_ne _ h, map_zero]
-  | hadd a b ha hb => simp only [map_add, ha, hb]
+  | hadd a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem X_smul_bijective (j : ι) (h : ∀ e t, Function.Bijective (D.x j e t)) :
     Function.Bijective fun m : D.Tot =>
@@ -315,13 +314,6 @@ theorem X_smul_bijective (j : ι) (h : ∀ e t, Function.Bijective (D.x j e t)) 
   GrSum.X_smul_bijective D.hxN fun t => NSum.map_bijective (D.hyN t) (D.hyN (t + 1)) _ _ fun e => h e t
 
 end BiOps
-
-example : BiOps (R := ℤ) (fun _ _ => ℤ) Unit Unit where
-  x _ _ _ := 2 • LinearMap.id
-  y _ _ _ := 3 • LinearMap.id
-  hx _ _ _ _ _ := rfl
-  hy _ _ _ _ _ := rfl
-  hxy _ _ _ _ a := by simp; ring
 
 end Bi
 

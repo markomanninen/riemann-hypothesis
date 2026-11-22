@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.ContinuousEntryCharacters.LongWeylSwapsBlockDiagonal
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -37,7 +41,8 @@ private theorem eb_chi_neg (ν : Fin (2 + 2) → ℤ) (θ : Fin (2 + 2) → ℝ)
   unfold chi
   rw [← Complex.exp_conj]
   congr 1
-  simp [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 private theorem eb_right (i j : Fin (2 + 2)) (θ : Fin (2 + 2) → ℝ) (h : U4) :
     en i j (h * dg θ) = chi (Pi.single j 1) θ * en i j h := by
@@ -102,7 +107,8 @@ private theorem eb_three (π : Equiv.Perm (Fin (2 + 2))) : OExp π (fun k => con
     fun s => -Pi.single (π s) 1,
     fun s => ⟨Complex.continuous_conj.comp (eb_cont _ _), Complex.continuous_conj.comp (eb_cont _ _)⟩, fun h k => ?_, rfl, rfl, rfl,
     fun s θ h => ?_, fun s w y hy => ?_, fun s hs => ?_⟩
-  · simp only [eb_mul π, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [eb_mul π, map_sum, map_mul]
   · simp only [eb_right, eb_left, eb_chi_neg, map_mul, and_self]
   · simp only [Pi.neg_apply, neg_mul, Finset.sum_neg_distrib]
     rw [eb_pair (π s) fun i => y (w i), eb_pair]

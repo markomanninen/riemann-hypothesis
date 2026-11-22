@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPowerSumsEsymmAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPowerSumsEsymmAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -12,7 +17,8 @@ theorem multiset_mul_esymm_eq_sum (s : Multiset ℂ) (k : ℕ) :
   classical
   have h := congrArg (MvPolynomial.aeval (R := ℂ) (fun x : s => (x : ℂ)))
     (MvPolynomial.mul_esymm_eq_sum s ℂ k)
-  simp only [map_mul, map_natCast, map_pow, map_neg, map_one, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_natCast, map_pow, map_neg, map_one, map_sum,
     MvPolynomial.aeval_esymm_eq_multiset_esymm, Multiset.map_univ_coe, MvPolynomial.psum,
     MvPolynomial.aeval_X] at h
   convert h using 4 with a _

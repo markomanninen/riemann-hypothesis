@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NEqApply
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NEqApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem dictEx_holds : DictEx := by
           exact Submodule.zero_mem _
     · simp
     · intro a b _ _ ha hb
-      rw [map_add, add_sub_add_comm]
+      rw [map_add (f := _), add_sub_add_comm]
       exact Submodule.add_mem _ ha hb
     · intro c a _ ha
       rw [map_smul, ← smul_sub]
@@ -129,7 +133,7 @@ theorem dictEx_holds : DictEx := by
     rw [← sub_eq_zero]
     refine (VS D).nondeg.1 _ fun v => ?_
     conv_lhs => rw [decomp X v]
-    rw [map_add, map_add, h_sum_right, h_sum_right, hw0 _ (inW_pW X v)]
+    rw [map_add (f := _), map_add (f := _), h_sum_right, h_sum_right, hw0 _ (inW_pW X v)]
     simp [(inW_left X (inW_pW X y) _).1, (inW_left X (inW_pW X y) _).2, (inW_left X (hxs b) _).1,
       (inW_left X (hxs b) _).2]
   ·

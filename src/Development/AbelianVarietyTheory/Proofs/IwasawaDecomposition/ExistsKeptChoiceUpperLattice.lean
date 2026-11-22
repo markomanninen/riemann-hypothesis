@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CongrFunHeq
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowReadingsSameRowsIdentifyDefiniteFormsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsSameGeometricHalf
-import Formalism.LocalToGlobal.NumberFieldFamilies.OwnStruct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CongrFunHeq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowReadingsSameRowsIdentifyDefiniteFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowsSameGeometricHalf
+public import Lean
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.L2.Host GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.Mem.Top GlobalTheory.Mem.Top.GroupRetwisting GlobalTheory.Mem.Top.Bl NumberField IsDedekindDomain
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -23,7 +27,29 @@ variable {K : Ctx} {B : Base} {f : Fr B.toPre} {T : TwDat B} {w : ColW B f T} {Z
   {xd : ThData (w.D Z)}
 
 theorem nchT_up (n : NchT w Z Wt nch) : Nonempty (NchT w (upL Z S' N h) Wt (nchUp S' N h nch)) :=
-  ⟨{ tp := by kcopy n.tp, xi := kc% n.xi, psi := kc% n.psi, tie := by kcopy n.tie, Q := n.Q, chrPsi := by kcopy n.chrPsi }⟩
+  ⟨{ tp := {
+       xi := by with_unfolding_all exact (n.tp.xi :)
+       xi_inj := by with_unfolding_all exact (n.tp.xi_inj :)
+       xi_fin := by with_unfolding_all exact (n.tp.xi_fin :)
+       xi_triv := by with_unfolding_all exact (n.tp.xi_triv :)
+       xi_tame := by with_unfolding_all exact (n.tp.xi_tame :)
+       psi := by with_unfolding_all exact (n.tp.psi :)
+       trueColumnChoices_heckeChar_reference_eq_one := by with_unfolding_all exact (n.tp.trueColumnChoices_heckeChar_reference_eq_one :)
+       xi_star := by with_unfolding_all exact (n.tp.xi_star :)
+       xi_star' := by with_unfolding_all exact (n.tp.xi_star' :)
+       xi_tw := by with_unfolding_all exact (n.tp.xi_tw :)
+       psi_is := by with_unfolding_all exact (n.tp.psi_is :)
+       psi_un := by with_unfolding_all exact (n.tp.psi_un :) }
+     xi := by with_unfolding_all exact (n.xi :)
+     psi := by with_unfolding_all exact (n.psi :)
+     tie := {
+       twOf_eq := by with_unfolding_all exact (n.tie.twOf_eq :)
+       twSide_eq := by with_unfolding_all exact (n.tie.twSide_eq :)
+       Q_eq := by with_unfolding_all exact (n.tie.Q_eq :)
+       psi_eq := by with_unfolding_all exact (n.tie.psi_eq :)
+       embedding_baseField_condition := by with_unfolding_all exact (n.tie.embedding_baseField_condition :) }
+     Q := n.Q
+     chrPsi := by with_unfolding_all exact (n.chrPsi :) }⟩
 
 theorem kept_up (nch : NChoice (w.D Z)) : Kept nch (nchUp S' N h nch) := by
   refine ⟨?_, ?_, ?_, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl, HEq.rfl⟩ <;> constructor <;> first | rfl | exact HEq.rfl
@@ -31,24 +57,8 @@ theorem kept_up (nch : NChoice (w.D Z)) : Kept nch (nchUp S' N h nch) := by
 theorem goodO_up (g : GoodO (w.D Z) nch xd) : GoodO (w.D (upL Z S' N h)) (nchUp S' N h nch) (xdUp S' N h xd) := by
   obtain ⟨⟨E, N0, S⟩, h1, h2, h3⟩ := g.tw
   cases h1
-  exact ⟨⟨⟨twEOf (xdUp S' N h xd), N0, S⟩, rfl, kc% h2, kc% h3⟩, g.sep⟩
+  exact ⟨⟨⟨twEOf (xdUp S' N h xd), N0, S⟩, rfl, (by with_unfolding_all exact (h2 :)), (by with_unfolding_all exact (h3 :))⟩, g.sep⟩
 end
-
-theorem layer_up : ∀ (hL : GlobalTheory.Published.LocalLanglandsGL), ∀ (K : Ctx) (B : Base) (f : Fr B.toPre) (T : TwDat B) (w : ColW B f T) (Z : w.Lt) (Wt : Set B.places.Pl) (S' : SStage B w.C Z.W) (N : ∀ u, Submodule (𝓞 B.LL) (Z.V.div.Nu u).V) (h : B.Word → ℝ) (nch : NChoice (w.D Z)) (xd : ThData (w.D Z)), ∃ (nch' : NChoice (w.D (upL Z S' N h))) (xd' : ThData (w.D (upL Z S' N h))), Kept nch nch' ∧ (S' = Z.S → HEq nch' (nchTr (D := w.D Z) N h nch) ∧ HEq xd' (xdTr (D := w.D Z) N h xd)) ∧ (NchT w Z Wt nch → Nonempty (NchT w (upL Z S' N h) Wt nch')) ∧ (GoodO (w.D Z) nch xd → GoodO (w.D (upL Z S' N h)) nch' xd') ∧ ∀ (p0 : BaseLevelRowSide (w.D Z)) (t : RowsT K w Z Wt p0) (n : NchT w Z Wt nch) (p0' : BaseLevelRowSide (w.D (upL Z S' N h))) (t' : RowsT K w (upL Z S' N h) Wt p0') (n' : NchT w (upL Z S' N h) Wt nch'), RowsSame t t' → HEq t'.r.z.geo (R3.Tr.geoHalf (a := ⟨Z.W, Z.V, Z.S, Z.N, Z.G⟩) (upL Z S' N h) (iK := t.r.z.alg) t.r.z.geo) → NX hL (NEb hL) K B f T w Z Wt p0 t nch n xd → Nonempty (NX hL (NEb hL) K B f T w (upL Z S' N h) Wt p0' t' nch' n' xd') := by
-  intro hL K B f T w Z Wt S' N h nch xd
-  refine ⟨nchUp S' N h nch, xdUp S' N h xd, kept_up S' N h nch, ?_, nchT_up S' N h, goodO_up S' N h, ?_⟩
-  · rintro rfl
-    exact ⟨HEq.rfl, HEq.rfl⟩
-  · rintro p0 t n p0' t' ⟨tp', xi', psi', tie', Q', chr'⟩ hs hg ⟨c, e, ⟨bk⟩⟩
-    have e1 : tp' = (by with_unfolding_all exact (((mvOf w Z S' N h).tp n.tp) :)) := tupTied_ext (xi'.trans ((by with_unfolding_all exact (n.xi.symm :)))) (psi'.trans ((by with_unfolding_all exact (n.psi.symm :))))
-    subst e1
-    obtain ⟨a', hA⟩ := (mvOf w Z S' N h).exists_at c.a
-    refine Exists.elim (exists_row hL K B f T w Z Wt S' N h nch xd p0 t p0' t' hs hg
-      (GlobalTheory.T.rowReadings_sameRows_identify_definiteForms K B f T w Z Wt S' N h p0 t p0' t' hs) (GlobalTheory.T.rows_same_geometric_half K B f T w Z Wt S' N h nch p0 t p0' t' hs hg)
-      (tp' := (by with_unfolding_all exact (((mvOf w Z S' N h).tp n.tp) :))) c.a ((by with_unfolding_all exact (a' :))) ((by with_unfolding_all exact (hA :))) c.row e) fun r' hr => hr.elim fun e' => ?_
-    have hq : a'.Pq = (by with_unfolding_all exact (c.a.Pq :)) := eq_of_heq ((by with_unfolding_all exact (hA.2.1 :)))
-    have hsel : Set.range a'.Pq = (by with_unfolding_all exact ((Set.range w.I.sel) :)) := (congrArg Set.range hq).trans ((by with_unfolding_all exact (c.sel :)))
-    exact ⟨⟨⟨(by with_unfolding_all exact (a' :)), (by with_unfolding_all exact (r' :)), (by with_unfolding_all exact (hsel :))⟩, (by with_unfolding_all exact (e' :)), ⟨(by with_unfolding_all exact (((mvOf w Z S' N h).bkLaw bk) :))⟩⟩⟩
 
 end GlobalTheory.LayerMove
 end

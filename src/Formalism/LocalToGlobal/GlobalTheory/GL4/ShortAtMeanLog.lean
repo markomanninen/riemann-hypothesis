@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
-import Formalism.GL3MeanSquares.HookFormulaTorsion.ColumnParametrizationOffDiagonal
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
+public import Mathlib
+public import Formalism.GL3MeanSquares.ConcavityEquidistribution
+
+@[expose] public section
 
 open NumberField
 
@@ -13,12 +18,8 @@ theorem trace_re_sum (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (
     ((Algebra.trace ℚ E z : ℚ) : ℝ) = ∑ w : InfinitePlace E, 2 * (w.embedding z).re := by
   classical
   have h1 : ((Algebra.trace ℚ E z : ℚ) : ℂ) = ∑ φ : E →+* ℂ, φ z := by
-    have h : algebraMap ℚ ℂ (Algebra.trace ℚ E z) = ∑ σ : E →ₐ[ℚ] ℂ, σ z := by
-      first
-      | exact trace_eq_sum_embeddings ℂ (x := z)
-      | exact trace_eq_sum_embeddings (E := ℂ) (x := z)
-      | exact trace_eq_sum_embeddings (F := ℂ) (x := z)
-      | exact (trace_eq_sum_embeddings ℂ : _)
+    have h : algebraMap ℚ ℂ (Algebra.trace ℚ E z) = ∑ σ : E →ₐ[ℚ] ℂ, σ z :=
+      trace_eq_sum_embeddings ℂ (x := z)
     rw [show ((Algebra.trace ℚ E z : ℚ) : ℂ) = algebraMap ℚ ℂ (Algebra.trace ℚ E z) from
       (eq_ratCast _ _).symm, h]
     exact (Fintype.sum_equiv (RingHom.equivRatAlgHom E ℂ) (fun φ : E →+* ℂ => φ z)
@@ -88,11 +89,7 @@ theorem shortAt_mean_log (D : D7) (u : D.what₂.Word) (c : (D.mem u).C.cls 0) [
     have h2 := two_nPl D.host.E
     rw [hfin] at h2
     omega
-  have hfo : D.R.f = 2 * D.R.ord := by
-    first
-    | exact Formalism.BasicNotions.Ranks.f_eq_ord
-    | exact Formalism.BasicNotions.Ranks.f_eq_ord D.R
-    | exact Formalism.BasicNotions.Ranks.f_eq_ord (R := D.R)
+  have hfo : D.R.f = 2 * D.R.ord := Formalism.BasicNotions.Ranks.f_eq_ord D.R
   have hf : 0 < D.R.f := by
     have := D.R.m_le_f
     have := D.R.two_le_m

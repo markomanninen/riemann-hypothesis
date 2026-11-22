@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CrystallineCardinalities.UnitStep
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Z.J
 
@@ -12,14 +16,14 @@ private theorem ac_add {D R : Type} [TopologicalSpace D] [CommRing R] {I : Ideal
   have h := (hf N).add (hg N)
   convert h using 1
   funext s
-  simp
+  exact map_add (Ideal.Quotient.mk (I ^ N)) (f s) (g s)
 
 private theorem ac_mul {D R : Type} [TopologicalSpace D] [CommRing R] {I : Ideal R} {f g : D → R}
     (hf : AdicCont I f) (hg : AdicCont I g) : AdicCont I fun s => f s * g s := fun N => by
   have h := (hf N).mul (hg N)
   convert h using 1
   funext s
-  simp
+  exact map_mul (Ideal.Quotient.mk (I ^ N)) (f s) (g s)
 
 private theorem ac_comp {D E R : Type} [TopologicalSpace D] [TopologicalSpace E] [CommRing R] {I : Ideal R}
     {f : E → R} (hf : AdicCont I f) {φ : D → E} (hφ : Continuous φ) : AdicCont I fun s => f (φ s) :=

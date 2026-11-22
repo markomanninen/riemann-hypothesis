@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SupRatioLeOfPhaseZero
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SplitA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.SupRatioLeOfPhaseZero
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -39,9 +43,6 @@ theorem tof_act_smul {dim : (E →+* ℂ) → ℕ} (α : 𝓞 E) (c : ℂ) (v : 
   ext i
   simp [act]
   ring
-
-theorem tof_natc_smul {dim : (E →+* ℂ) → ℕ} (n : ℕ) (z : Vsp dim) : (n : ℂ) • z = (n : ℝ) • z := by
-  rw [Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
 
 theorem tof_fg_div_eq_bot {Q : Type*} [NormedAddCommGroup Q] [InnerProductSpace ℝ Q]
     (M : Submodule ℤ Q) (hM : M.FG)
@@ -117,7 +118,8 @@ theorem tof_span_condition [IsCMField E] {X : PT E} (I : Submodule ℤ (Vsp X.di
     rw [hxe]
     simp_rw [e1]
     rw [Finset.sum_add_distrib, Nat.cast_smul_eq_nsmul ℂ]
-    simp only [map_add, map_sum, map_nsmul, hz, Finset.sum_const_zero, zero_add, smul_add, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_nsmul, hz, Finset.sum_const_zero, zero_add, smul_add, Finset.smul_sum]
     abel)
   have hLT : ∀ x ∈ X.L, x ∈ T := fun x hx => hf0inv x (by
     have h : f x ∈ X.L.map f := ⟨x, hx, rfl⟩

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
-import Formalism.LocalToGlobal.CharacterGerms.WipDworkInvG
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
-import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+public import Formalism.LocalToGlobal.CharacterGerms.WipDworkInvG
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.SolveV
+public import Formalism.FormalGroupWitt.FormalGroupWittProofs.EqSingleOfDegreeEqOne
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -12,8 +16,6 @@ namespace AbstractGermZero
 open Formalism.IncomingBounds
 
 variable {C : Type} [Field C] (V : VF C)
-
-def eG' {I : Fin 2 → Type} (g : Fin 2) : I g ↪ WV I := ⟨fun x => ⟨g, x⟩, sigma_mk_injective⟩
 
 def AbstractGermZeroCondition : Prop :=
   ∀ (I : Fin 2 → Type) [∀ g, Fintype (I g)] (t t₂ φ φ₂ : ∀ g, I g → MvPowerSeries (I g) C),
@@ -62,7 +64,8 @@ theorem one_group {σ : Type} [Fintype σ] (t t₂ φ φ₂ : σ → MvPowerSeri
   have hcoeff : ∀ (ψ : σ → MvPowerSeries σ C) j μ,
       MvPowerSeries.coeff μ (∑ k, N j k • ψ k) = ∑ k, N j k * MvPowerSeries.coeff μ (ψ k) := by
     intro ψ j μ
-    simp only [map_sum, MvPowerSeries.coeff_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, MvPowerSeries.coeff_smul]
   have hcc : ∀ (ψ : σ → MvPowerSeries σ C), (∀ k, MvPowerSeries.constantCoeff (ψ k) = 0) →
       ∀ j, MvPowerSeries.constantCoeff (∑ k, N j k • ψ k) = 0 := by
     intro ψ hψ j
@@ -87,7 +90,8 @@ theorem one_group {σ : Type} [Fintype σ] (t t₂ φ φ₂ : σ → MvPowerSeri
   have hlin : ∀ (a : σ → MvPowerSeries σ C), MvPowerSeries.HasSubst a → ∀ j,
       MvPowerSeries.subst a (∑ k, N j k • φ k) = ∑ k, N j k • MvPowerSeries.subst a (φ k) := by
     intro a ha j
-    rw [← MvPowerSeries.coe_substAlgHom ha, map_sum, MvPowerSeries.coe_substAlgHom ha]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPowerSeries.coe_substAlgHom ha, map_sum, MvPowerSeries.coe_substAlgHom ha]
     exact Finset.sum_congr rfl fun k _ => MvPowerSeries.subst_smul ha _ _
 
   have hφh : ∀ k, MvPowerSeries.subst h (φ k) = φ₂ k := by

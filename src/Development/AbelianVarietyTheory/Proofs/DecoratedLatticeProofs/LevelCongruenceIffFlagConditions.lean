@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
 
 noncomputable section
 
@@ -169,20 +173,20 @@ theorem k2cong_iff_flagCond (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : Fin ρ
       fun l => (β : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)) l j) - e0 a ∈ mL I g := by
     intro a j hj
     have := hcol j
-    rw [hj, flagVec, dif_pos a.2] at this
+    rw [hj, flagVec, dite_eq_left a.2] at this
     rw [one_smul]; exact this
   have hz : ∀ (j : Fin I.n), j.val = ρ + k → ((1 : I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F) •
       fun l => (β : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)) l j) - z0 ∈ mL I g := by
     intro j hj
     have := hcol j
-    rw [hj, flagVec, dif_neg (by omega), dif_neg (by omega), if_pos rfl] at this
+    rw [hj, flagVec, dite_eq_right (by omega), dite_eq_right (by omega), if_pos rfl] at this
     rw [one_smul]; exact this
   have hb : ∀ (a : Fin k) (j : Fin I.n), j.val = ρ + a.val → (ew •
       fun l => (β : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)) l j) - bw a ∈ mL I g := by
     intro a j hj
     have := hcol j
     have ha : j.val - ρ < k := by omega
-    rw [flagVec, dif_neg (by omega), dif_pos ha] at this
+    rw [flagVec, dite_eq_right (by omega), dite_eq_left ha] at this
     have e : (⟨j.val - ρ, ha⟩ : Fin k) = a := Fin.ext (by simp only; omega)
     rw [e] at this
     have h2 := Submodule.smul_mem _ (⟨ew, hew⟩ : IntAf I.F I.E) this

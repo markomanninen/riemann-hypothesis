@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitsBasic
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV GlobalTheory.HodgeCoh TensorProduct UpperTheory.Gal.G3
 open UpperTheory.Gal.Int.Geo (FEt Cover gen piece IsHEig)
@@ -41,7 +45,7 @@ theorem UpperTheory.Gal.G3.pHopLin :
         simp [h1, h2]
       · exact hA1 g h1
     · intro x
-      rw [LinearMap.add_apply, map_add, e1 x, e2 x,
+      rw [LinearMap.add_apply, map_add (f := _), e1 x, e2 x,
         ← finsum_add_distrib (supp_fin (m := m) X T hf x) (supp_fin (m := m) X T hf' x)]
       apply finsum_congr
       intro y

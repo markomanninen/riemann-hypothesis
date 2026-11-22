@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberFieldStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IntegrableOnFundamentalDomainOfCocompactStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.TwoStepUnipotentCompactModSubringStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EqOrConjOfPlaceOf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IntegrableOnFundamentalDomainOfCocompactStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.MemAdelicLatticeIffLocalSelfDualCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.TwoStepUnipotentCompactModSubringStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -188,8 +192,8 @@ theorem exists_dual {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) E) (hC : LinearIn
       Matrix.smul_mul, Matrix.smul_mul, Matrix.mul_smul, e3, Matrix.mul_assoc s, hcd1, ← hs, Matrix.mul_one]
     module
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem tens_cocompact : ∃ K : Set (AF F ⊗[F] E), IsCompact K ∧ ∀ z, ∃ x : E, z - inclR (F := F) (AF F) x ∈ K := by
   obtain ⟨K, hK, h⟩ := GlobalTheory.T.exists_compact_adeleRing_mod_numberField F
   have : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
@@ -201,7 +205,8 @@ theorem tens_cocompact : ∃ K : Set (AF F ⊗[F] E), IsCompact K ∧ ∀ z, ∃
   choose x hx using fun i => h (e z i)
   refine ⟨∑ i, x i • b i, fun i => e z i - algebraMap F _ (x i), fun i _ => hx i, ?_⟩
   have : (fun i => e z i - algebraMap F (AF F) (x i)) = e z - fun i => algebraMap F (AF F) (x i) := rfl
-  rw [this, map_sub, LinearEquiv.symm_apply_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sub, LinearEquiv.symm_apply_apply, map_sum]
   congr 1
   rw [Module.Basis.equivFun_symm_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -246,7 +251,7 @@ theorem adj_adj (X : Matrix (Fin V.rank) (Fin V.rank) (AF F ⊗[F] E)) : adj hc 
     induction X i j using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (star_star x)
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   simp only [adj_apply, cT_mul, GlobalTheory.AutFunCounterexample.cT_map_gen, cT_gram, cT_gram_inv, h, Matrix.mul_assoc]
   rw [inv_mul_gram, Matrix.mul_one, ← Matrix.mul_assoc, inv_mul_gram, Matrix.one_mul]
 
@@ -338,7 +343,7 @@ theorem unipRad_cocompact (W : Submodule E V.V) (hW : IsIsotropic V W) :
     (by
       rw [adj_map, e, ← Matrix.map_mul, Matrix.mul_assoc, ← Matrix.mul_assoc _ C, h0]
       simp)
-    (by rw [← map_add, ← map_add, add_halves, map_one, map_one])
+    (by rw [← map_add (f := _), ← map_add (f := _), add_halves, map_one, map_one])
     (fun x => (Matrix.scalar_commute _ (fun _ => Commute.all _ _) x).eq)
     (isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => hK)
     (fun X => by
@@ -403,7 +408,7 @@ def sgV (v : HeightOneSpectrum (𝓞 F)) : Fv F v →ₗ[F] Af F where
   toFun := singleV F v
   map_add' a b := af_ext fun w => by
     classical
-    simp only [map_add, evalV_singleV, Pi.single_add, Pi.add_apply]
+    simp only [map_add (f := _), evalV_singleV, Pi.single_add, Pi.add_apply]
   map_smul' c a := af_ext fun w => by
     classical
     simp only [map_smul, evalV_singleV, Pi.single_smul, Pi.smul_apply, RingHom.id_apply]
@@ -516,64 +521,15 @@ open Formalism.BasicNotions.TH Formalism.L2.Theta
 
 variable {D : D7} (V : HSp D)
 
-theorem emb_cc (g : D.R.GG) :
-    D.host.emb (g * D.R.cc) = (D.host.emb g).comp (starRingEnd D.host.E) :=
-  (Formalism.L2.Geo.emb_mul_cc_comp D.host g).trans (RingHom.ext fun x => congrArg (D.host.emb g) (by
-    apply D.host.φ₀.injective
-    show D.host.φ₀ (D.host.conj x) = D.host.φ₀ (star x)
-    rw [D.sp.cm.cmUnram.2.1]
-    exact D.host.toHostAx.conjE_apply _ x))
-
-theorem placeOf_tauE_inj {τ τ' : D.what₂.Tau} (h : placeOf D.host.F (tauE D τ) = placeOf D.host.F (tauE D τ')) :
-    τ = τ' := by
-  rcases eq_or_conj_of_placeOf D.sp.cm h with e | e
-  · exact D.eTau.injective (Subtype.ext ((factEmb D.R D.host).1.1 e))
-  · have := (factEmb D.R D.host).1.1 (e.trans (emb_cc _).symm)
-    exact absurd (this ▸ (D.eTau τ).2) ((Formalism.L2.Geo.mem_Psi_iff_mul_cc_notMem _).1 (D.eTau τ').2)
-
-theorem placeOf_tauE_surj (w : InfinitePlace D.host.F) : ∃ τ, placeOf D.host.F (tauE D τ) = w := by
-  have e : placeOf D.host.F (ComplexEmbedding.lift D.host.E w.embedding) = w := by
-    rw [placeOf, ComplexEmbedding.lift_comp_algebraMap, InfinitePlace.mk_embedding]
-  obtain ⟨g, hg⟩ := (factEmb D.R D.host).1.2 (ComplexEmbedding.lift D.host.E w.embedding)
-  rw [← hg] at e
-  by_cases h : g ∈ D.R.Psi
-  · obtain ⟨τ, hτ⟩ := (Formalism.L2.Geo.exists_tauEmb_iff D g).2 h
-    exact ⟨τ, (congrArg _ hτ.symm).trans e⟩
-  · obtain ⟨τ, hτ⟩ := (Formalism.L2.Geo.exists_tauEmb_iff D (g * D.R.cc)).2
-      (by_contra fun h' => h ((Formalism.L2.Geo.mem_Psi_iff_mul_cc_notMem _).2 h'))
-    rw [emb_cc] at hτ
-    exact ⟨τ, (congrArg _ hτ.symm).trans ((placeOf_conj D.sp.cm _).trans e)⟩
-
 theorem GQ_eq : GQ V = ratPts D.sp.cm V := (ratPts_eq D.sp.cm V).symm
 
 theorem GfC_eq : GfC V = finPts D.sp.cm V := by
-  ext g; exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
-
-theorem GinfC_eq : GinfC V = realPts D.sp.cm V := by
   ext g; exact ⟨fun h => Subtype.ext h, fun h => congrArg Subtype.val h⟩
 
 theorem isInfFam_iff (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) :
     IsInfFam θ ↔ θ = fun τ => infEmb D.sp.cm (tauE D τ) :=
   ⟨fun h => funext fun τ => isInfEmb_unique _ _ _ (h τ) (isInfEmb_infEmb _ _),
     fun h _ => h ▸ isInfEmb_infEmb _ _⟩
-
-theorem isAtTau_iff (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (hθ : IsInfFam θ)
-    (τ : D.what₂.Tau) (g : Matrix (Fin V.rank) (Fin V.rank) ℂ) (h : Formalism.L2.Theta.GA D V) :
-    IsAtTau θ V τ g h ↔ ∃ u : UJ (starRingEnd ℂ) (TH.gramAt D V τ), u.1.1 = g ∧ atRealD D V τ u = h := by
-  obtain rfl := (isInfFam_iff θ).1 hθ
-  unfold IsAtTau
-  simp only [infMat_infEmb, GinfC_eq]
-  constructor
-  · rintro ⟨h1, h2, h3⟩
-    refine ⟨realComp D.sp.cm V (tauE D τ) h, h2,
-      eq_of_realComp D.sp.cm V (tauE D) placeOf_tauE_surj ((projFin_ofInf _ _ _).trans (Eq.symm h1)) fun τ' => ?_⟩
-    by_cases e : τ' = τ
-    · subst e; exact realComp_atReal _ _ _ _
-    · exact (realComp_atReal_ne _ _ _ _ (fun e' => e (placeOf_tauE_inj e')) _).trans
-        (Subtype.ext (Units.ext (h3 τ' e))).symm
-  · rintro ⟨u, rfl, rfl⟩
-    exact ⟨projFin_ofInf _ _ _, congrArg (·.1.1) (realComp_atReal D.sp.cm V _ u), fun τ' e =>
-      congrArg (·.1.1) (realComp_atReal_ne D.sp.cm V _ _ (fun e' => e (placeOf_tauE_inj e')) u)⟩
 
 theorem isIsoFrame_iff {r : ℕ} (C : Matrix (Fin V.rank) (Fin r) D.host.E) :
     IsIsoFrame V C ↔ LinearIndependent D.host.E Cᵀ ∧ IsIsotropic V (colSpan V C) :=

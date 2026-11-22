@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.Mollifiers.HasCompactSupport
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Mollifiers.HasCompactSupport
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.B
 
@@ -108,25 +112,19 @@ theorem moll_young (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [Finit
   have h := moll_young_sq E μ K u s hs hu
   have e : ∀ z : ℝ≥0∞, z ^ (ENNReal.toReal 2) = z ^ 2 := fun z => by
     rw [ENNReal.toReal_ofNat, ← ENNReal.rpow_natCast]; norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num),
-    eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num)]
+  have huT : AEStronglyMeasurable u (μ.restrict (thickening K.r s)) := hu.restrict
+  have hmoll : AEStronglyMeasurable (moll K u) μ := by
+    have hq := hu.comp_quasiMeasurePreserving (quasiMeasurePreserving_sub μ μ)
+    have hprod : AEStronglyMeasurable
+        (fun p : E × E => K.toFun p.2 • u (p.1 - p.2)) (μ.prod μ) :=
+      (K.smooth.continuous.measurable.comp measurable_snd).aestronglyMeasurable.smul hq
+    change AEStronglyMeasurable
+      (fun x => ∫ t, K.toFun t • u (x - t) ∂μ) μ
+    exact hprod.integral_prod_right'
+  have hmolls : AEStronglyMeasurable (moll K u) (μ.restrict s) := hmoll.restrict
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) huT,
+    MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hmolls]
   simp_rw [e]
   exact ENNReal.rpow_le_rpow h (by norm_num)
-
-theorem mollifier_memL2 (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-    [MeasurableSpace E] [BorelSpace E] (μ : Measure E) [μ.IsAddHaarMeasure] : MollifierMemL2 E μ := by
-  intro K u hu
-  have hT : thickening K.r (univ : Set E) = univ :=
-    eq_univ_of_forall fun x => mem_thickening_iff.mpr ⟨x, mem_univ _, by simpa using K.r_pos⟩
-  have hY := moll_young E μ K u univ MeasurableSet.univ hu.1
-  rw [hT, Measure.restrict_univ] at hY
-  have hcs : HasCompactSupport K.toFun :=
-    HasCompactSupport.intro (isCompact_closedBall (0 : E) K.r) fun x hx => by
-      by_contra h
-      exact hx (ball_subset_closedBall (K.support_subset h))
-  have hc : Continuous (moll K u) :=
-    hcs.continuous_convolution_left (ContinuousLinearMap.lsmul ℝ ℝ) K.smooth.continuous
-      (hu.locallyIntegrable (by norm_num))
-  exact ⟨⟨hc.aestronglyMeasurable, hY.trans_lt hu.2⟩, hY⟩
 
 end ReciprocityTheory.L2DbarEstimates.B

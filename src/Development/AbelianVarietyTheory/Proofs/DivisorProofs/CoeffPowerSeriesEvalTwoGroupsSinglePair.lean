@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+
+@[expose] public section
 
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
@@ -8,8 +12,8 @@ namespace GlobalTheory
 
 namespace OnePair
 
-open CategoryTheory TensorProduct MvPowerSeries in
 
+open CategoryTheory TensorProduct MvPowerSeries in
 theorem _root_.GlobalTheory.OnePair.coeff_subst_kill {σ R : Type} [CommRing R] [Finite σ] (p : σ → Prop)
     [DecidablePred p] (c : MvPowerSeries σ R) (γ : σ →₀ ℕ) [Decidable (∀ s, ¬ p s → γ s = 0)] :
     coeff γ (subst (fun s => if p s then (X s : MvPowerSeries σ R) else 0) c) =
@@ -51,8 +55,8 @@ theorem _root_.GlobalTheory.OnePair.coeff_subst_kill {σ R : Type} [CommRing R] 
 
 end OnePair
 
-open CategoryTheory TensorProduct MvPowerSeries in
 
+open CategoryTheory TensorProduct MvPowerSeries in
 theorem _root_.GlobalTheory.coeff_at2_single_X_inl_inr (R : Type) [CommRing R] (d : ℕ)
     (c : MvPowerSeries (Fin d ⊕ Fin d) R) (m : Fin d) (γ : Fin d ⊕ Fin d →₀ ℕ) :
     coeff γ (_root_.GlobalTheory.Katz.at2 c

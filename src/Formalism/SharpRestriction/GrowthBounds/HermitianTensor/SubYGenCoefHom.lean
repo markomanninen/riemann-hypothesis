@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CoeffSumMonomialLinear
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CoeffSumMonomialLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,15 +26,11 @@ theorem midI_lt (r : ℕ) {i j : Fin r} (h : i < j) : midI r i < midI r j := by
   have := Fin.lt_iff_val_lt_val.mp h
   omega
 
-theorem midI_pos (r : ℕ) (j : Fin r) : (0 : Fin (r + 1 + 1)) < midI r j := by
-  rw [Fin.lt_def, midI_val]
-  simp
-
 theorem midOf_midI (r : ℕ) (j : Fin r) : midOf (midI r j) = some j := by
   have hv := midI_val r j
   have hj := j.isLt
   unfold midOf
-  rw [dif_pos (by rw [hv]; exact ⟨Nat.succ_pos _, by omega⟩)]
+  rw [dite_eq_left (by rw [hv]; exact ⟨Nat.succ_pos _, by omega⟩)]
   congr 1
 
 theorem midOf_cases {r : ℕ} (t : Fin (r + 1 + 1)) :
@@ -44,7 +44,7 @@ theorem midOf_cases {r : ℕ} (t : Fin (r + 1 + 1)) :
     dsimp only
     omega
   · right
-    refine ⟨by unfold midOf; rw [dif_neg h], ?_⟩
+    refine ⟨by unfold midOf; rw [dite_eq_right h], ?_⟩
     by_cases h0 : t.val = 0
     · left
       exact Fin.ext (by simp [h0])
@@ -71,8 +71,8 @@ section MAH
 
 variable {R S1 S2 σ : Type} [CommRing R] [CommRing S1] [CommRing S2] [Algebra R S1] [Algebra R S2]
 
-theorem mAH_coeff (f : S1 →ₐ[R] S2) (p : MvPolynomial σ S1) (u : σ →₀ ℕ) : coeff u (mapAlgHom f p) = f (coeff u p) := by
-  show coeff u (map (f : S1 →+* S2) p) = _
+theorem mAH_coeff (f : S1 →ₐ[R] S2) (p : MvPolynomial σ S1) (u : σ →₀ ℕ) : AddMonoidAlgebra.coeff (mapAlgHom f p) u = f (AddMonoidAlgebra.coeff p u) := by
+  show AddMonoidAlgebra.coeff (map (f : S1 →+* S2) p) u = _
   rw [coeff_map]
   rfl
 
@@ -91,7 +91,8 @@ theorem mAH_subY_mid {A S : Type} [CommRing A] [CommRing S] [Algebra A S] (r : �
     (f : MvPolynomial (Fin r × Fin r) A →ₐ[A] S) (a : Fin (r + 1 + 1)) (j : Fin r) :
     mapAlgHom f (subY A r (X (a, midI r j))) = ∑ i : Fin r, C (f (X (i, j))) * X (a, midI r i) := by
   rw [subY_X_mid]
-  simp only [map_sum, map_mul, mAH_C, mAH_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, mAH_C, mAH_X]
 
 theorem mAH_subY_none {A S : Type} [CommRing A] [CommRing S] [Algebra A S] (r : ℕ)
     (f : MvPolynomial (Fin r × Fin r) A →ₐ[A] S) (a t : Fin (r + 1 + 1)) (h : midOf t = none) :
@@ -103,7 +104,7 @@ section Coef
 variable {A : Type} [CommRing A] {r : ℕ} {σ : Type}
 
 def CoefHom (μ : Fin r → ℕ) (h : MvPolynomial σ (MvPolynomial (Fin r × Fin r) A)) : Prop :=
-  ∀ u, IsWeightedHomogeneous (colW r r) (coeff u h) μ
+  ∀ u, IsWeightedHomogeneous (colW r r) (AddMonoidAlgebra.coeff h u) μ
 
 theorem CoefHom.sum {ι : Type} (s : Finset ι) (f : ι → MvPolynomial σ (MvPolynomial (Fin r × Fin r) A)) (μ : Fin r → ℕ)
     (h : ∀ i ∈ s, CoefHom μ (f i)) : CoefHom μ (∑ i ∈ s, f i) := by
@@ -194,7 +195,8 @@ theorem subY_coefHom (A : Type) [CommRing A] (r : ℕ) (ν : Fin (r + 1 + 1) →
     (hv : IsWeightedHomogeneous (colW (r + 1 + 1) (r + 1 + 1)) v ν) :
     CoefHom (fun j => ν (midI r j)) (subY A r v) := by
   classical
-  rw [v.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [v.as_sum, map_sum]
   apply CoefHom.sum
   intro m hm
   have hw : Finsupp.weight (colW (r + 1 + 1) (r + 1 + 1)) m = ν := hv (mem_support_iff.mp hm)
@@ -205,7 +207,7 @@ theorem subY_coefHom (A : Type) [CommRing A] (r : ℕ) (ν : Fin (r + 1 + 1) →
     intro w _
     rw [map_pow]
     exact (subY_gen_coefHom A r w).pow _
-  have hC : CoefHom (σ := Fin (r + 1 + 1) × Fin (r + 1 + 1)) (0 : Fin r → ℕ) (C (C (coeff m v))) := by
+  have hC : CoefHom (σ := Fin (r + 1 + 1) × Fin (r + 1 + 1)) (0 : Fin r → ℕ) (C (C (AddMonoidAlgebra.coeff v m))) := by
     apply CoefHom.ofC
     intro d hd
     rw [coeff_C] at hd
@@ -226,7 +228,7 @@ theorem subY_coefHom (A : Type) [CommRing A] (r : ℕ) (ν : Fin (r + 1 + 1) →
 theorem subY_inv (A : Type) [CommRing A] (r : ℕ) (v : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) A)
     (hv : ∀ l j : Fin (r + 1 + 1), l < j → colAddGen A l j v = rename some v) (l j : Fin r) (hlj : l < j)
     (u : Fin (r + 1 + 1) × Fin (r + 1 + 1) →₀ ℕ) :
-    colAddGen A l j (coeff u (subY A r v)) = rename some (coeff u (subY A r v)) := by
+    colAddGen A l j (AddMonoidAlgebra.coeff (subY A r v) u) = rename some (AddMonoidAlgebra.coeff (subY A r v) u) := by
   classical
   let Φ : MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) (MvPolynomial (Fin r × Fin r) A) →ₐ[A]
       MvPolynomial (Fin (r + 1 + 1) × Fin (r + 1 + 1)) (MvPolynomial (Option (Fin r × Fin r)) A) :=
@@ -249,10 +251,10 @@ theorem subY_inv (A : Type) [CommRing A] (r : ℕ) (v : MvPolynomial (Fin (r + 1
     · rw [mAH_subY_mid]
       by_cases hj : j' = j
       · subst hj
-        rw [if_pos rfl, map_add, map_mul, hθn, hθs, hθs, mAH_subY_mid, mAH_subY_mid, Finset.mul_sum,
+        rw [if_pos rfl, map_add (f := _), map_mul, hθn, hθs, hθs, mAH_subY_mid, mAH_subY_mid, Finset.mul_sum,
           ← Finset.sum_add_distrib]
         refine Finset.sum_congr rfl fun i _ => ?_
-        simp only [colAddGen_X, if_true, rename_X, map_add, map_mul]
+        simp only [colAddGen_X, if_true, rename_X, map_add (f := _), map_mul]
         ring
       · rw [if_neg (fun h => hj ((midI_inj r j' j).mp h)), hθs, mAH_subY_mid]
         refine Finset.sum_congr rfl fun i _ => ?_
@@ -267,7 +269,7 @@ theorem subY_inv (A : Type) [CommRing A] (r : ℕ) (v : MvPolynomial (Fin (r + 1
     have e2 := congrArg (fun F => F v) h2
     simp only [AlgHom.comp_apply] at e1 e2
     rw [e1, e2, hv _ _ (midI_lt r hlj)]
-  have h4 := congrArg (coeff u) h3
+  have h4 := congrArg (AddMonoidAlgebra.coeff · u) h3
   simp only [Φ, Ψ, mAH_coeff] at h4
   exact h4
 

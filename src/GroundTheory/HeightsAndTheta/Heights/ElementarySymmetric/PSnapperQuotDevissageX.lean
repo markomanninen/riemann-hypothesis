@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperQuotDevissage
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperSubquotFinite
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperFinite
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeFiniteE
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistTilde
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeShift
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSnapperQuotFiltX
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSnapperQuotIsoX
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSubFamilyTwistX
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperQuotDevissage
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperSubquotFinite
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperFinite
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeFiniteE
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwistTilde
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTildeShift
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PExtension
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSnapperQuotFiltX
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSnapperQuotIsoX
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSubFamilyTwistX
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadTCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadTCut
+
+@[expose] public section
 
 open scoped ContDiff
 
@@ -159,10 +163,10 @@ theorem poly_at {j i : ℕ} (m : ContinuousMultilinearMap ℝ (fun _ : Fin j => 
       if h : i = j then ∑ σ : Equiv.Perm (Fin j), m (fun k => (v ∘ Fin.cast h.symm) (σ k)) else 0 := by
   by_cases h : i = j
   · subst h
-    rw [dif_pos rfl, iteratedFDeriv_comp_sub (f := fun ζ => m fun _ => ζ), sub_self,
+    rw [dite_eq_left rfl, iteratedFDeriv_comp_sub (f := fun ζ => m fun _ => ζ), sub_self,
       ContinuousMultilinearMap.iteratedFDeriv_comp_diagonal]
     rfl
-  · rw [dif_neg h, iteratedFDeriv_comp_sub (f := fun ζ => m fun _ => ζ), sub_self, poly_hom h m]
+  · rw [dite_eq_right h, iteratedFDeriv_comp_sub (f := fun ζ => m fun _ => ζ), sub_self, poly_hom h m]
     rfl
 
 end

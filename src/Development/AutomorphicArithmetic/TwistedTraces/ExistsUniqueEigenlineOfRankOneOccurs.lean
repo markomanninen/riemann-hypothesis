@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TvDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.TvDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CommPrj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain Filter GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.CuspidalSpectrum GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets GlobalTheory.PRep Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.SmGL PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.L1 UpperTheory.ConvolutionTheory.C
 open scoped ComplexConjugate Classical InnerProductSpace
@@ -141,7 +146,7 @@ end Dense
 
 section Main
 
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
 
 private theorem mem_eigL {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ} {v : LL μ} :
     v ∈ eigL μ w J χ ↔ ∀ x ∈ J, rhoL μ w x v = χ x • v := by
@@ -169,8 +174,8 @@ private theorem prj_avg {w : Pl K} {J : Subgroup (Gw n w)} {χ : Gw n w → ℂ}
   rw [← Submodule.orthogonal_closure] at h0
   exact (Submodule.mem_orthogonal' _ _).1 h0 u hu
 
-private theorem exists_split (w : Pl K) (x : normOneGL K n) :
-    ∃ (c : normOneGL K n) (a : Gw n w),
+private theorem exists_split (w : Pl K) (x : normOneGL (K := K) (n := n)) :
+    ∃ (c : normOneGL (K := K) (n := n)) (a : Gw n w),
       x = c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w a) ∧
       ∀ g : Gw n w, c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) =
         MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) * c := by
@@ -191,14 +196,14 @@ private theorem exists_split (w : Pl K) (x : normOneGL K n) :
     rw [mul_assoc, ← map_mul, ← h, map_mul, ← mul_assoc, ← mul_assoc,
       MultiplicityOne.finProj_mul_archProj_comm]
 
-private theorem rho_comm {w : Pl K} {c : normOneGL K n}
+private theorem rho_comm {w : Pl K} {c : normOneGL (K := K) (n := n)}
     (hc : ∀ g : Gw n w, c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) =
       MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g) * c) (g : Gw n w) (v : LL μ) :
-    rightRegularRep (rationalGLOne K n) μ c (rhoL μ w g v) =
-      rhoL μ w g (rightRegularRep (rationalGLOne K n) μ c v) := by
-  have h := UnitaryRep.map_mul_apply (rightRegularRep (rationalGLOne K n) μ) c
+    rightRegularRep (rationalGLOne (K := K) (n := n)) μ c (rhoL μ w g v) =
+      rhoL μ w g (rightRegularRep (rationalGLOne (K := K) (n := n)) μ c v) := by
+  have h := UnitaryRep.map_mul_apply (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) c
     (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) v
-  have h' := UnitaryRep.map_mul_apply (rightRegularRep (rationalGLOne K n) μ)
+  have h' := UnitaryRep.map_mul_apply (rightRegularRep (rationalGLOne (K := K) (n := n)) μ)
     (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) c v
   rw [hc g] at h
   exact h.symm.trans h'
@@ -210,9 +215,9 @@ private theorem ker_of_all {V : Submodule ℂ (LL μ)} (hV : IsSummand μ V) {w 
   obtain ⟨f₀, hf0, hf0V, hf0i⟩ := hocc
   refine ker_gen _ hV hf0 hf0V Q fun x y => ?_
   obtain ⟨c, a, rfl, hc⟩ := exists_split (n := n) w x
-  have h2 := hQ _ (inter_gen π.ρ (rhoL μ w) (rightRegularRep (rationalGLOne K n) μ c) (rho_comm μ hc) f₀ hf0i) (π.ρ a y)
-  have e2 : rightRegularRep (rationalGLOne K n) μ (c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w a)) (f₀ y) =
-      rightRegularRep (rationalGLOne K n) μ c (f₀ (π.ρ a y)) :=
+  have h2 := hQ _ (inter_gen π.ρ (rhoL μ w) (rightRegularRep (rationalGLOne (K := K) (n := n)) μ c) (rho_comm μ hc) f₀ hf0i) (π.ρ a y)
+  have e2 : rightRegularRep (rationalGLOne (K := K) (n := n)) μ (c * MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w a)) (f₀ y) =
+      rightRegularRep (rationalGLOne (K := K) (n := n)) μ c (f₀ (π.ρ a y)) :=
     (UnitaryRep.map_mul_apply _ c _ (f₀ y)).trans (congrArg _ (hf0i a y).symm)
   rw [e2]
   exact h2
@@ -223,7 +228,7 @@ end UpperTheory.TypeLine
 
 open UpperTheory.TypeLine in
 theorem UpperTheory.exists_unique_eigenline_of_rankOne_occurs :
-    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (V : Submodule ℂ (LL μ)),
+    ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (V : Submodule ℂ (LL μ)),
         IsSummand μ V → ∀ (w : Pl K) (τ : SmIrr (Gw n w)), Occurs μ V w τ → ∀ (J : Subgroup (Gw n w)) (χ : Gw n w → ℂ),
         CO J → IsChr J χ → RankOne μ V w J χ → V ⊓ eigL μ w J χ ≠ ⊥ →
         ∃ e : τ.V, e ≠ 0 ∧ (∀ g ∈ J, τ.ρ g e = χ g • e) ∧ ∀ x : τ.V, (∀ g ∈ J, τ.ρ g x = χ g • x) → ∃ c : ℂ, x = c • e := by
@@ -240,7 +245,8 @@ theorem UpperTheory.exists_unique_eigenline_of_rankOne_occurs :
       rw [map_smul, hav g hg, smul_comm]
     refine ⟨_, hy, fun f hf => ?_⟩
     refine prj_avg μ t ht _ _ ?_ ((mem_eigL μ).2 fun g hg => ?_)
-    · simp only [map_smul, map_sum, hf]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [map_smul, map_sum, hf]
     · rw [← hf, hy g hg, map_smul]
   have hex : ∃ e, e ≠ 0 ∧ IsE e := by
     by_contra hno
@@ -280,7 +286,7 @@ theorem UpperTheory.exists_unique_eigenline_of_rankOne_occurs :
     | add a b _ _ ha hb =>
       obtain ⟨c, hc⟩ := ha
       obtain ⟨d, hd⟩ := hb
-      exact ⟨c + d, by rw [map_add, map_add, hc, hd, add_smul]⟩
+      exact ⟨c + d, by rw [map_add (f := _), map_add (f := _), hc, hd, add_smul]⟩
     | smul a b _ hb =>
       obtain ⟨c, hc⟩ := hb
       exact ⟨a * c, by rw [map_smul, map_smul, hc, smul_smul]⟩

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetNeOfSig
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LagrangianDecomposition.SDarb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetNeOfSig
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -12,13 +16,6 @@ namespace PositivityTheory.SiegelWeilFormula.Ldexa
 open PositivityTheory.SiegelWeilFormula.Ald
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-theorem inclR_eq (e : E) : inclR (F := F) (AF F) e = (1 : AF F) ⊗ₜ[F] e := rfl
-
-theorem trace_inclR [FiniteDimensional F E] (e : E) :
-    Algebra.trace (AF F) (AE F E) (inclR (F := F) (AF F) e) = algebraMap F (AF F) (Algebra.trace F E e) := by
-  show Algebra.trace (AF F) (AF F ⊗[F] E) ((1 : AF F) ⊗ₜ[F] e) = _
-  rw [Algebra.trace_apply, Algebra.trace_apply, ← Algebra.baseChange_lmul, LinearMap.trace_baseChange]
 
 theorem cA_cA {σ : E →ₐ[F] E} (hσ : ∀ a, σ (σ a) = a) (z : AE F E) : cA σ (cA σ z) = z := by
   have : (cA σ).comp (cA σ) = AlgHom.id (AF F) (AE F E) := by
@@ -59,7 +56,7 @@ theorem sum_crdB (bs : Module.Basis (Fin 2) F E) (Z : Mx F E m n) : ∑ k, crdB 
 def BfR (σ : E →ₐ[F] E) (J : Matrix (Fin m) (Fin m) E) (X : Mx F E m n) : Mx F E m n →ₗ[AF F] AF F where
   toFun Z := Bf σ J X Z
   map_add' Z Z' := by
-    simp only [Bf, Matrix.map_add _ (map_add (cA σ)), Matrix.mul_add, Matrix.trace_add, map_add]
+    simp only [Bf, Matrix.map_add _ (map_add (cA σ)), Matrix.mul_add, Matrix.trace_add, map_add (f := _)]
   map_smul' c Z := by
     have : (c • Z).map (cA σ) = c • Z.map (cA σ) := by ext i j; simp [map_smul]
     simp only [Bf, this, Matrix.mul_smul, Matrix.trace_smul, map_smul, RingHom.id_apply]
@@ -67,7 +64,7 @@ def BfR (σ : E →ₐ[F] E) (J : Matrix (Fin m) (Fin m) E) (X : Mx F E m n) : M
 def BfL (σ : E →ₐ[F] E) (J : Matrix (Fin m) (Fin m) E) (Z : Mx F E m n) : Mx F E m n →ₗ[AF F] AF F where
   toFun X := Bf σ J X Z
   map_add' X X' := by
-    simp only [Bf, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add]
+    simp only [Bf, Matrix.transpose_add, Matrix.add_mul, Matrix.trace_add, map_add (f := _)]
   map_smul' c X := by
     simp only [Bf, Matrix.transpose_smul, Matrix.smul_mul, Matrix.trace_smul, map_smul, RingHom.id_apply]
 
@@ -75,7 +72,8 @@ theorem Bf_eq_sum_right (σ : E →ₐ[F] E) (J : Matrix (Fin m) (Fin m) E) (bs 
     Bf σ J X Z = ∑ k, crdB bs Z k * Bf σ J X (Ek bs k) := by
   conv_lhs => rw [← sum_crdB bs Z]
   change BfR σ J X _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   rfl
 
@@ -83,7 +81,8 @@ theorem Bf_eq_sum_left (σ : E →ₐ[F] E) (J : Matrix (Fin m) (Fin m) E) (bs :
     Bf σ J X Z = ∑ k, crdB bs X k * Bf σ J (Ek bs k) Z := by
   conv_lhs => rw [← sum_crdB bs X]
   change BfL σ J Z _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul]
   rfl
 

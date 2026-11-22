@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LinearIndependentEigProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem act_mem_of_free (h : HT.IsFreeOn ρ Y t) (a : 𝓞 E) {y : W} (hy : y �
     rw [Submodule.span_le]
     rintro _ ⟨q, rfl⟩
     change ρ a (ρ (RingOfIntegers.basis E q.2) (t q.1)) ∈ Y
-    rw [← Module.End.mul_apply, ← map_mul, h.2.2,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Module.End.mul_apply, ← map_mul, h.2.2,
       ← (RingOfIntegers.basis E).sum_repr (a * RingOfIntegers.basis E q.2), map_sum, LinearMap.sum_apply]
     refine Submodule.sum_mem _ fun k _ => ?_
     rw [map_zsmul, LinearMap.smul_apply]

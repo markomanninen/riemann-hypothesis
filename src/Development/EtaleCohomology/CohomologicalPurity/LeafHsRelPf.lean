@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafExcSpPfMono
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafExcSpPfMono
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex
@@ -18,7 +22,7 @@ theorem cone_map_congr {R : Type} [CommRing R] {K₁ L₁ K₂ L₂ : Cx R} (f�
 
 theorem dbl_sq (R : Type) [CommRing R] (P : Arrow Spc) :
     (chains R).map P.hom ≫ (chains R).map (dbl.inl P) = (chains R).map P.hom ≫ (chains R).map (dbl.inr P) := by
-  rw [← Functor.map_comp, ← Functor.map_comp]; exact congrArg (chains R).map pushout.condition
+  rw [← Functor.map_comp, ← Functor.map_comp]; exact congrArg (chains R).map (pushout.condition (f := P.hom) (g := P.hom))
 
 def dblCone (R : Type) [CommRing R] (P : Arrow Spc) :
     mappingCone ((chains R).map P.hom) ⟶ mappingCone ((chains R).map (dbl.inr P)) :=

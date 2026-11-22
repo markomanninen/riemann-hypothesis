@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateCommuteRaisingConstant
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGenTransferFn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateCommuteRaisingConstant
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 
@@ -112,7 +116,7 @@ theorem quadratic_kappa_identity : GQKap := by
     rw [e1, e2]; exact intw_alg hsm c
   · intro f g hf hg
     show Intw P Bs e (d.κ (f + g)) (MA.kap P (MA.DQ P) (f + g))
-    rw [map_add, map_add]; exact intw_add hsm hf hg
+    rw [map_add (f := _), map_add (f := _)]; exact intw_add hsm hf hg
   · intro f g hf hg
     show Intw P Bs e (d.κ (f * g)) (MA.kap P (MA.DQ P) (f * g))
     rw [map_mul, map_mul]; exact intw_mul hsm hf hg

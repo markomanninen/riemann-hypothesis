@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementB
+module
+
+public import Formalism.RealPlaceAnalysis.StatementB
+
+@[expose] public section
 
 open Finset
 
@@ -49,10 +53,6 @@ theorem HWDiag_cov {A : Type*} [Ring A] {n : ℕ} (E : Fin n → Fin n → A) (h
 
 private theorem module_end_mul_apply {V : Type*} [AddCommGroup V] [Module ℂ V]
     (f g : Module.End ℂ V) (v : V) : (f * g) v = f (g v) := rfl
-
-private theorem module_end_ite_apply {V : Type*} [AddCommGroup V] [Module ℂ V] (p : Prop) [Decidable p]
-    (f : Module.End ℂ V) (v : V) : (if p then f else 0) v = if p then f v else 0 := by
-  first | (split_ifs <;> rfl) | (split_ifs <;> simp)
 
 theorem HWDiag_covApply {V : Type*} [AddCommGroup V] [Module ℂ V] {n : ℕ}
     (E : Fin n → Fin n → Module.End ℂ V) (hE : GlRel E) (k : ℕ) (a b c d : Fin n) (v : V) :

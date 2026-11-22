@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRhoPartLieDeRhamQuotient
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieConditionHodgeSubspaceLeHodgeFiltration
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRhoPartLieDeRhamQuotient
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieConditionHodgeSubspaceLeHodgeFiltration
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -35,7 +39,7 @@ private theorem eps_mul_sub {p : ℕ} (hp : p.Prime) {C : Type} [CommRing C] {w 
   have hp0 : mk (p : C) = 0 := (key _).mp dvd_rfl
   have hSY : S * Y = 1 := by
     have h := congrArg (fun t : ℤ => mk (t : C)) huv
-    simp only [Int.cast_add, Int.cast_mul, Int.cast_natCast, Int.cast_one, map_add, map_mul, map_one,
+    simp only [Int.cast_add, Int.cast_mul, Int.cast_natCast, Int.cast_one, map_add (f := _), map_mul, map_one,
       hp0, mul_zero, zero_add] at h
     rw [hS, hY, ← map_mul]
     simpa [map_mul] using h
@@ -57,7 +61,7 @@ private theorem eps_mul_sub {p : ℕ} (hp : p.Prime) {C : Type} [CommRing C] {w 
       push_cast
       ring
     have h := congrArg mk e2
-    rw [map_mul, map_add, hq, zero_sub, map_neg, cast_dvd _ hz, neg_zero] at h
+    rw [map_mul, map_add (f := _), hq, zero_sub, map_neg, cast_dvd _ hz, neg_zero] at h
     exact h
   have h1 : X = -S * X ^ 2 := by
     calc X = X * (S * Y) := by rw [hSY, _root_.mul_one]
@@ -106,12 +110,12 @@ theorem UpperTheory.Gal.Ord.lie :
     simp [UpperTheory.Gal.Ord.hom, map_mul, Module.End.mul_apply]
   have hhom_add : ∀ (c d : 𝓞 D.F) (h : HdR o.A), hom o (c + d) h = hom o c h + hom o d h := by
     intro c d h
-    simp [UpperTheory.Gal.Ord.hom, map_add, LinearMap.add_apply]
+    simp [UpperTheory.Gal.Ord.hom, map_add (f := _), LinearMap.add_apply]
   have hhom_int : ∀ (n : ℤ) (h : HdR o.A), hom o (n : 𝓞 D.F) h = (n : k) • h := by
     intro n h
     exact GlobalTheory.HTCount.crysAct_intCast o n h
   have hLc : ∀ (c : 𝓞 D.F) (h : HdR o.A), HL.toLie (OActN.toF D o.act) (hom o c h) =
-      c • HL.toLie (OActN.toF D o.act) h := fun c h => GlobalTheory.HTLieRho.toLie_crys o HL c h
+      c • HL.toLie (OActN.toF D o.act) h := fun c h => HL.toLie_act _ c h
   have hρ : β b.ρ ^ 2 - (D.tr : k) * β b.ρ + (D.nm : k) = 0 := by
     have h0 := congrArg β b.ρ_root
     simpa using h0
@@ -170,9 +174,60 @@ theorem UpperTheory.Gal.Ord.lie :
       exact (b.apart i j (Ne.symm hj) k β).symm
     have h1 := π.off _ hmax hpmem hne'
     rwa [RingHom.mem_ker, RingHom.comp_apply] at h1
+  have lie_decomp (v : GlobalTheory.Serre.Lie (OActN.toF D o.act)) :
+      ∃ u, D.ω • u = ((D.tr : k) - β b.ρ) • u ∧
+        ∃ w : Fin D.a → GlobalTheory.Serre.Lie (OActN.toF D o.act),
+          (∀ j, w j ∈ GlobalTheory.Serre.Lie.eig (OActN.toF D o.act) (β.comp (b.t j))) ∧
+          v = u + ∑ j, w j := by
+    have hd := GlobalTheory.HTLieRho.two_rho_sub_ne_zero b β
+    set ρ := β b.ρ
+    set ρ' := (D.tr : k) - ρ
+    set e := (ρ - ρ')⁻¹
+    have he : e * (ρ - ρ') = 1 := inv_mul_cancel₀ hd
+    have q : D.ω • D.ω • v - (D.tr : k) • D.ω • v + (D.nm : k) • v = 0 := by
+      have h := congrArg (· • v) (GlobalTheory.HTLieRho.omega_quad D)
+      simp only [zero_smul, add_smul, sub_smul, mul_smul] at h
+      simp only [Int.cast_smul_eq_zsmul] at h ⊢
+      exact h
+    rw [GlobalTheory.HTLieRho.nm_eq_mul b β] at q
+    have hsplit : v = -(e • (D.ω • v - ρ • v)) + e • (D.ω • v - ρ' • v) := by
+      rw [← sub_eq_neg_add, ← smul_sub, sub_sub_sub_cancel_left, ← sub_smul, smul_smul, he, one_smul]
+    have hvr : D.ω • (e • (D.ω • v - ρ' • v)) = ρ • (e • (D.ω • v - ρ' • v)) := by
+      rw [smul_comm D.ω e, smul_sub, smul_comm D.ω ρ']
+      generalize D.ω • D.ω • v = Y at q ⊢
+      generalize D.ω • v = X at q ⊢
+      linear_combination (norm := module) e • q
+    have hLc' (c : 𝓞 D.F) (h : HdR o.A) :
+        HL.toLie (OActN.toF D o.act) (GlobalTheory.HTSummand.crysAct (dp0 k) (𝟙 _) o.act (algebraMap (𝓞 D.F) D.O c) h) =
+          c • HL.toLie (OActN.toF D o.act) h := HL.toLie_act _ c h
+    have lie_rho_decomp (v : GlobalTheory.Serre.Lie (OActN.toF D o.act))
+        (hv : D.ω • v = β b.ρ • v) :
+        ∃ w : Fin D.a → GlobalTheory.Serre.Lie (OActN.toF D o.act),
+          (∀ j, w j ∈ GlobalTheory.Serre.Lie.eig (OActN.toF D o.act) (β.comp (b.t j))) ∧
+          v = ∑ j, w j := by
+      obtain ⟨y, rfl⟩ := HL.toLie_surjective (OActN.toF D o.act) v
+      have hy : GlobalTheory.HTSummand.crysAct (dp0 k) (𝟙 _) o.act (algebraMap (𝓞 D.F) D.O D.ω) y - β b.ρ • y ∈ Fil o.A := by
+        rw [← HL.ker_toLie (OActN.toF D o.act), LinearMap.mem_ker, map_sub, map_smul, hLc', hv, sub_self]
+      obtain ⟨w, hw, hs⟩ := GlobalTheory.HTSummand.lie_mod_fil p D R b N k β _ rfl o y hy
+      refine ⟨fun j => HL.toLie (OActN.toF D o.act) (w j), fun j => ?_, ?_⟩
+      · rw [GlobalTheory.Serre.Lie.mem_eig_iff]
+        intro c
+        have ht := hw j c
+        rw [← HL.ker_toLie (OActN.toF D o.act), LinearMap.mem_ker, map_sub, map_smul, hLc', sub_eq_zero] at ht
+        exact ht
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [← HL.ker_toLie (OActN.toF D o.act), LinearMap.mem_ker, map_sub, map_sum, sub_eq_zero] at hs
+          exact hs
+    obtain ⟨w, hw, hs⟩ := lie_rho_decomp _ hvr
+    refine ⟨-(e • (D.ω • v - ρ • v)), ?_, w, hw, ?_⟩
+    · rw [smul_neg, smul_comm D.ω e, smul_sub, smul_comm D.ω ρ]
+      generalize D.ω • D.ω • v = Y at q ⊢
+      generalize D.ω • v = X at q ⊢
+      linear_combination (norm := module) (-e) • q
+    · rw [← hs]; exact hsplit
   have hkey : ∀ h, HL.toLie (OActN.toF D o.act) (hom o π.ε h) ∈ GlobalTheory.Serre.Lie.eig (OActN.toF D o.act) τ := by
     intro h
-    obtain ⟨u, hu, wv, hwv, hdec⟩ := GlobalTheory.HTLieRho.lie_decomp o β rfl HL (HL.toLie (OActN.toF D o.act) h)
+    obtain ⟨u, hu, wv, hwv, hdec⟩ := lie_decomp (HL.toLie (OActN.toF D o.act) h)
     obtain ⟨hu', rfl⟩ := HL.toLie_surjective (OActN.toF D o.act) u
     choose hs hhs using fun j => HL.toLie_surjective (OActN.toF D o.act) (wv j)
     have hu0 : HL.toLie (OActN.toF D o.act) (hom o π.ε hu') = 0 := by
@@ -192,10 +247,12 @@ theorem UpperTheory.Gal.Ord.lie :
         rw [sub_smul, ← e4, ← e5, sub_self]
       exact (smul_eq_zero.mp e6).resolve_left (GlobalTheory.HTLieRho.two_rho_sub_ne_zero b β)
     have hsum : HL.toLie (OActN.toF D o.act) h = HL.toLie (OActN.toF D o.act) (hu' + ∑ j, hs j) := by
-      rw [hdec, map_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hdec, map_add (f := _), map_sum]
       simp only [hhs]
     have hLε : HL.toLie (OActN.toF D o.act) (hom o π.ε h) = wv i := by
-      rw [hLc, hsum, ← hLc, map_add, map_sum, map_add, map_sum, hu0, zero_add]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hLc, hsum, ← hLc, map_add (f := _), map_sum, map_add (f := _), map_sum, hu0, zero_add]
       have e9 : ∀ j, HL.toLie (OActN.toF D o.act) (hom o π.ε (hs j)) = β (b.t j π.ε) • wv j := by
         intro j
         rw [hLc, hhs j]

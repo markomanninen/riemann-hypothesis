@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -10,8 +15,8 @@ theorem integral_haar_eq_zero_of_fibre_integrals_eq_zero :
   haveI : LocallyCompactSpace Q := hQ.locallyCompactSpace
   haveI : SecondCountableTopology P := TopologicalSpace.Subtype.secondCountableTopology (P : Set H)
   haveI : SecondCountableTopology Q := TopologicalSpace.Subtype.secondCountableTopology (Q : Set H)
-  haveI : BorelSpace P := Subtype.borelSpace (P : Set H)
-  haveI : BorelSpace Q := Subtype.borelSpace (Q : Set H)
+  haveI : BorelSpace P := Subtype.borelSpace (fun x => x ∈ (P : Set H))
+  haveI : BorelSpace Q := Subtype.borelSpace (fun x => x ∈ (Q : Set H))
   let m : P × Q →* H :=
     { toFun := fun x => (x.1 : H) * x.2
       map_one' := by simp

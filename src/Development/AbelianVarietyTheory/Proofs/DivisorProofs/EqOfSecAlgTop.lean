@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite
@@ -56,7 +60,7 @@ theorem _root_.GlobalTheory.HilbAff.kappa_comm {T : Scheme.{0}}
 
 def kappa {T : Scheme.{0}} (g : T ⟶ Spec (CommRingCat.of A))
     (I : (pullback (str A B) g).IdealSheafData) (U : T.Opens) :
-    letI := (secAlg A g U).toAlgebra
+    letI := (secAlg A g U).toAlgebra;
     Γ(T, U) ⊗[A] B →+* Γ(I.subscheme, (I.subschemeι ≫ pullback.snd _ g) ⁻¹ᵁ U) :=
   letI := (secAlg A g U).toAlgebra
   letI : Algebra A Γ(I.subscheme, (I.subschemeι ≫ pullback.snd _ g) ⁻¹ᵁ U) :=
@@ -93,12 +97,13 @@ theorem _root_.GlobalTheory.HilbAff.basic_iff_kappa {r N : ℕ} (e : Module.Basi
     (I : (pullback (_root_.GlobalTheory.HilbAff.str A B) g).IdealSheafData)
     (hI : _root_.GlobalTheory.HilbAff.Good A B r g I) :
     _root_.GlobalTheory.HilbAff.Basic A B e σ (T := T) ⟨g, ⟨I, hI⟩⟩ ↔ ∀ U : T.affineOpens,
-      letI := (_root_.GlobalTheory.HilbAff.secAlg A g U).toAlgebra
+      letI := (_root_.GlobalTheory.HilbAff.secAlg A g U).toAlgebra;
       Function.Bijective fun c : Fin r → Γ(T, U) =>
         _root_.GlobalTheory.HilbAff.kappa A B g I U (∑ k, c k ⊗ₜ[A] e (σ k)) := by
   unfold _root_.GlobalTheory.HilbAff.Basic
   refine forall_congr' fun U => ?_
-  simp only [map_sum, _root_.GlobalTheory.HilbAff.kappa_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, _root_.GlobalTheory.HilbAff.kappa_tmul]
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite in
 open scoped TensorProduct in

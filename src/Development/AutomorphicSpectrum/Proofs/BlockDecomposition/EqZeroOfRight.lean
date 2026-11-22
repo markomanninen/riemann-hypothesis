@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.NonEllFlag
+
+@[expose] public section
 
 noncomputable section
 
@@ -236,7 +240,7 @@ theorem nonEllFlag : PositivityTheory.Rg.BcB.D4.NonEllFlag := by
         ((nrm d).val.charpoly.map τ).map (starRingEnd ℂ) := by
       rw [Polynomial.map_map]; rfl
     rw [e]
-    exact Polynomial.IsRoot.map hz
+    exact Polynomial.IsRoot.map (starRingEnd ℂ) hz
 
 end GlobalTheory.CompanionTheory.NonEll
 

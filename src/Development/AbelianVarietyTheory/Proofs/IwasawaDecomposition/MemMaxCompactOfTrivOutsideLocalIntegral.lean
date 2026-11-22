@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial Formalism.UG GlobalTheory.SatInd
 
 noncomputable section
@@ -21,7 +26,7 @@ theorem tensor_decomp_zero {K M N : Type*} [Field K] [AddCommGroup M] [Module K 
   have h' := congrArg (TensorProduct.equivFinsuppOfBasisLeft b) h
   have h0 := DFunLike.congr_fun h' 0
   have h1 := DFunLike.congr_fun h' 1
-  simp [map_add, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply] at h0 h1
+  simp [map_add (f := _), TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply] at h0 h1
   exact ⟨h0, h1⟩
 
 variable (L : Type) [Field L] [NumberField L] [IsCMField L]
@@ -39,7 +44,7 @@ theorem eq_zero_of_compAt (z : AL L) (hz : ∀ v, compAt L v z = 0) : z = 0 := b
   have hoff : ∀ w, A w = 0 ∧ B w = 0 := by
     intro w
     have h := hz w
-    rw [hAB, map_add, compAt_tmul, compAt_tmul] at h
+    rw [hAB, map_add (f := _), compAt_tmul, compAt_tmul] at h
     exact tensor_decomp_zero b _ _ h
   have hA : A = 0 := by
     apply DFunLike.ext; intro w; exact (hoff w).1
@@ -47,8 +52,8 @@ theorem eq_zero_of_compAt (z : AL L) (hz : ∀ v, compAt L v z = 0) : z = 0 := b
     apply DFunLike.ext; intro w; exact (hoff w).2
   rw [hAB, hA, hB]; simp
 
-open Classical in
 
+open Classical in
 def sgl (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L)))
     (r : v.adicCompletion (maximalRealSubfield L)) : AFplus L :=
   ⟨Pi.single (M := fun w : HeightOneSpectrum (𝓞 (maximalRealSubfield L)) =>
@@ -83,8 +88,8 @@ theorem one_tmul_sgl_mem (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L)))
   · rw [sgl_same]; exact hr
   · rw [sgl_ne L v r hw]; exact zero_mem _
 
-omit [IsCMField L] in
 
+omit [IsCMField L] in
 theorem exists_lift (v : HeightOneSpectrum (𝓞 (maximalRealSubfield L)))
     (y : L ⊗[maximalRealSubfield L] v.adicCompletion (maximalRealSubfield L))
     (hy : y ∈ tensInt (F := maximalRealSubfield L) (v.adicCompletion (maximalRealSubfield L))

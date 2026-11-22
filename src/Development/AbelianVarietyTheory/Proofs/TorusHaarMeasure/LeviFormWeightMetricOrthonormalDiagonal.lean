@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -340,7 +344,8 @@ theorem dmin_cpt_real {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (z : V (nd X)) (τ 
   rw [RingHom.map_det, ← Matrix.det_transpose]
   congr 1
   ext b c
-  simp only [Matrix.transpose_apply, RingHom.mapMatrix_apply, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.transpose_apply, RingHom.mapMatrix_apply, Matrix.map_apply,
     Matrix.submatrix_apply, gram_cpt_apply X ho, map_sum, map_mul, Complex.conj_ofReal,
     Complex.conj_conj]
   exact Finset.sum_congr rfl fun a _ => by ring
@@ -392,7 +397,8 @@ theorem leviV_Lm {x0 : Frame X.Ψ r} (ho : IsOrth X x0) (ξ : Fin (nd X) → ℂ
     · subst hbc; simp only [if_true]; ring
     · simp only [if_neg hbc, if_neg (Ne.symm hbc)]; ring
   rw [hmat, hdet] at hjet
-  simp only [Matrix.of_apply, ← map_mul, ← map_sum, ← map_sub, ← map_prod] at hjet
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.of_apply, ← map_mul, ← map_sum, ← map_sub, ← map_prod] at hjet
   simp only [← cJ_eq] at hjet
   have hee : (∏ a, ε (κ a)) * (∏ a, ε (κ a)) = 1 := by
     rw [← Finset.prod_mul_distrib]; exact Finset.prod_eq_one fun a _ => hεε _

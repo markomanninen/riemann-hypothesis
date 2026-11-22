@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LastStepParametersPartitionExtendedByZeros
-import Development.AbelianVarietyTheory.Definitions.Divisors.LeastSplitAuxiliaryPrimeThetaChainSpec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.NodeYPredEqChainVertexAtRowZeroLast
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LastStepParametersPartitionExtendedByZeros
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LeastSplitAuxiliaryPrimeThetaChainSpec
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.Chain GlobalTheory.CompactHowe Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -191,7 +196,7 @@ theorem shape_below {n T : ℕ} (c : ℝ) (lam : Fin n → ℝ) (hl : StrictAnti
     · have : (((a : ℕ) - n : ℕ) : ℝ) < (((b : ℕ) - n : ℕ) : ℝ) := by exact_mod_cast (by omega : (a : ℕ) - n < b - n)
       linarith
   have key : lam' = L := by
-    rw [← StrictAnti.range_inj h' hL]
+    rw [← StrictAnti.range_inj_of_wellFoundedGT h' hL]
     ext x
     rw [hr]
     constructor
@@ -325,7 +330,7 @@ theorem colPar : ∀ (D : D7) (j : ℕ) (hj : j < D.R.m) (τ : D.what₂.Tau) (n
          omega)
   · intro b hb
     simp only [ν]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
   · intro a
     have e1 := hν (Fin.castLE (by omega) a) a.2
     rw [GlobalTheory.LastStepParam.lowK_allPos, e1, hz a]
@@ -338,8 +343,8 @@ theorem colPar : ∀ (D : D7) (j : ℕ) (hj : j < D.R.m) (τ : D.what₂.Tau) (n
     · rw [dif_pos hb, hz, hν b hb]
       push_cast
       linarith [hpR, htR]
-    · have h0 : ν b = 0 := by simp only [ν]; rw [dif_neg hb]
-      rw [dif_neg hb, h0, Nat.cast_sub (by omega)]
+    · have h0 : ν b = 0 := by simp only [ν]; rw [dite_eq_right hb]
+      rw [dite_eq_right hb, h0, Nat.cast_sub (by omega)]
       push_cast
       linarith [hpR, htR]
 

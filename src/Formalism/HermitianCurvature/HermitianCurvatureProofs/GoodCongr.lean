@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtInt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasFDerivAtInt
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ContDiff ComplexConjugate
@@ -114,7 +118,7 @@ theorem int_add {Φ Ψ : X → V1 E} {f g : V1 E} (hℓ : Continuous ℓ) (h : G
   rw [hf τ hτ, hg τ hτ, ← integral_add (good_int μ ℓ h hℓ hτ) (good_int μ ℓ h' hℓ hτ)]
   congr 1
   funext v
-  rw [map_add]
+  rw [map_add (f := _)]
 
 theorem int_smul {Φ : X → V1 E} {f : V1 E} (hf : IsInt μ ℓ Φ f) (c : ℂ) :
     IsInt μ ℓ (fun v => c • Φ v) (c • f) := by
@@ -184,7 +188,7 @@ theorem ok_opP (hℓ : Continuous ℓ) (κ : ℂ) : OK μ ℓ (opP (E := E) κ) 
   rw [opP_apply κ f hτ, dz_int μ ℓ hΦ hℓ hf hτ, hf τ hτ, ← integral_smul, ← integral_smul, ← integral_add i1 i2]
   congr 1
   funext v
-  rw [opP_apply κ _ hτ, map_add, map_smul, map_smul]
+  rw [opP_apply κ _ hτ, map_add (f := _), map_smul, map_smul]
 
 theorem ok_opPb (hℓ : Continuous ℓ) (κ : ℂ) : OK μ ℓ (opPb (E := E) κ) := by
   intro Φ f hΦ hf
@@ -197,7 +201,7 @@ theorem ok_opPb (hℓ : Continuous ℓ) (κ : ℂ) : OK μ ℓ (opPb (E := E) κ
   rw [opPb_apply κ f hτ, dzb_int μ ℓ hΦ hℓ hf hτ, hf τ hτ, ← integral_smul, ← integral_smul, ← integral_add i1 i2]
   congr 1
   funext v
-  rw [opPb_apply κ _ hτ, map_add, map_smul, map_smul]
+  rw [opPb_apply κ _ hτ, map_add (f := _), map_smul, map_smul]
 
 end ok
 

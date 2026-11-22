@@ -1,6 +1,10 @@
-import Formalism.CyclotomicNorms.StatementT
-import Formalism.GaloisIrreducibility.NoSolvableTransitive
-import Lemmata.GeneralBFactSecondBis.Imports
+module
+
+public import Formalism.CyclotomicNorms.StatementT
+public import Formalism.GaloisIrreducibility.NoSolvableTransitive
+public import Lemmata.GeneralBFactSecondBis.Imports
+
+@[expose] public section
 
 open Polynomial
 
@@ -215,7 +219,7 @@ lemma mem_cycleType_of_factor (hf : GoodPoly N f) (hr : Function.Injective r)
     by_contra hnd
     obtain ⟨a, b, hab⟩ := (Irreducible.coprime_iff_not_dvd hq).mpr hnd
     have := congrArg (fun p => (p.map alg).eval α) hab
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_one, eval_add, eval_mul,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_one, eval_add, eval_mul,
       eval_one] at this
     rw [hα.eq_zero, ← hi0, hQr i0 hi0O] at this
     simp at this

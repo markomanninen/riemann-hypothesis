@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RePosOfIsMultIP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcFiniteAndSchurMult
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInnerProductSmoothVectorsTensorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RePosOfIsMultIP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcFiniteAndSchurMult
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsInnerProductSmoothVectorsTensorStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
@@ -48,12 +52,12 @@ theorem integ_pair {ι : Type} [Fintype ι] {E : ι → Type} [∀ i, AddCommGro
       have e : (fun x => f (a + b) x * conj (g (PiTensorProduct.tprod ℂ v') x)) =
           fun x => f a x * conj (g (PiTensorProduct.tprod ℂ v') x) + f b x * conj (g (PiTensorProduct.tprod ℂ v') x) := by
         funext x
-        simp only [map_add, Pi.add_apply, add_mul]
+        simp only [map_add (f := _), Pi.add_apply, add_mul]
       refine ⟨?_, ?_⟩
       · rw [e]
         exact Integrable.add ha1 hb1
       · rw [e, integral_add ha1 hb1, ha2, hb2]
-        simp only [map_add, LinearMap.add_apply, mul_add]
+        simp only [map_add (f := _), LinearMap.add_apply, mul_add]
 
   intro w w'
   induction w' using PiTensorProduct.induction_on with
@@ -76,12 +80,12 @@ theorem integ_pair {ι : Type} [Fintype ι] {E : ι → Type} [∀ i, AddCommGro
     have e : (fun x => f w x * conj (g (a + b) x)) =
         fun x => f w x * conj (g a x) + f w x * conj (g b x) := by
       funext x
-      simp only [map_add, Pi.add_apply, mul_add]
+      simp only [map_add (f := _), Pi.add_apply, mul_add]
     refine ⟨?_, ?_⟩
     · rw [e]
       exact Integrable.add ha1 hb1
     · rw [e, integral_add ha1 hb1, ha2, hb2]
-      simp only [map_add, mul_add]
+      simp only [map_add (f := _), mul_add]
 
 variable {D : D7}
 
@@ -140,7 +144,7 @@ theorem metEx : GlobalTheory.Published.CuspRapidDecay → ∀ D : D7, MetEx D :=
           (PiTensorProduct.lift.symm (x : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)))
           (ipM s.M s.ν s.fd (PiTensorProduct.lift.symm (y : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)))
             (PiTensorProduct.lift.symm (x : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)))) := by
-        rw [ipM, dif_pos hex]
+        rw [ipM, dite_eq_left hex]
         exact hex.choose_spec
       obtain ⟨h1, h2⟩ := hc v' v
       have e : (fun g => (x : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)) (PiTensorProduct.tprod ℂ v) g *
@@ -157,13 +161,13 @@ theorem metEx : GlobalTheory.Published.CuspRapidDecay → ∀ D : D7, MetEx D :=
       (fun x y : s.CC c => ipM s.M s.ν s.fd (PiTensorProduct.lift.symm (y : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)))
         (PiTensorProduct.lift.symm (x : SmT s.M →ₗ[ℂ] (GA D s.V → ℂ)))) ?_ ?_ ?_ ?_, ?_⟩
     · intro x x' y
-      simp only [Submodule.coe_add, map_add]
+      simp only [Submodule.coe_add, map_add (f := _)]
       exact hadd _ (hmem y) _ (hmem x) _ (hmem x')
     · intro a x y
       simp only [Submodule.coe_smul, map_smul, RingHom.id_apply, smul_eq_mul]
       exact hsmul _ (hmem y) _ (hmem x) a
     · intro x y y'
-      simp only [Submodule.coe_add, map_add]
+      simp only [Submodule.coe_add, map_add (f := _)]
       rw [hherm _ (hmem x) _ (add_mem (hmem y) (hmem y')), hadd _ (hmem x) _ (hmem y) _ (hmem y'), star_add,
         ← hherm _ (hmem x) _ (hmem y), ← hherm _ (hmem x) _ (hmem y')]
     · intro a x y

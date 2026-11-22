@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.LayerLeGeneratedTensorFock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.LayerLeGeneratedTensorFock
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,14 +23,9 @@ theorem casimirValue_highestWeightCoordinates : CasCoord := by
   have hK := casimirK_khwVec_compact ε (diagE_compact hE' cpT_cmT_isCAR (eT_commutesCAR E) ε) hz
   have hs : ∑ a, ((rhoHol ε a : ℝ) : ℂ) • diagE ε (eT E) cpT cmT a a z =
       ((dot (rhoHol ε) (gaW ε lam) : ℝ) : ℂ) • z := by
-    simp only [hz.1, smul_smul, ← sum_smul]
-    congr 1
-    unfold dot
-    push_cast
-    refine sum_congr rfl fun a _ => ?_
-    ring
+    simp only [dot, Complex.ofReal_sum, Complex.ofReal_mul, sum_smul, hz.1, smul_smul]
   have h0 : ((2 : ℂ) • ((dOp ε (eT E) cpT + dOp' ε (eT E) cmT) * (dOp ε (eT E) cpT + dOp' ε (eT E) cmT))) z = 0 := by
-    rw [LinearMap.smul_apply, Module.End.mul_apply]
+    rw [LinearMap.smul_apply, mul_apply_eq_comp]
     have : (dOp ε (eT E) cpT + dOp' ε (eT E) cmT) z = 0 := hD
     rw [this, map_zero, smul_zero]
   rw [h0] at h2
@@ -42,11 +41,9 @@ theorem casimirValue_highestWeightCoordinates : CasCoord := by
           (2 : ℂ) • (((dot (rhoHol ε) (gaW ε lam) : ℝ) : ℂ) • z) := by
       linear_combination (norm := module) h2
     rw [e, casVal, ← hid]
-    push_cast
-    module
-  have := congrArg (tco s) hc
-  rw [TRGap.casimir_eT, tco_map_left] at this
-  rw [this]
-  simp only [tco, map_smul]
+    simp only [Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_ofNat, sub_smul, smul_smul]
+  have hcoord := congrArg (tco s) hc
+  rw [TRGap.casimir_eT, tco_map_left] at hcoord
+  simpa only [tco, map_smul] using hcoord
 
 end GlobalTheory.PsCo.PcEF

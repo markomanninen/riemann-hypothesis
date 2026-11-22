@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ExistsIntSmulIsAdicIntegralInTensorBasis
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsOrthFull
+
+@[expose] public section
 
 noncomputable section
 

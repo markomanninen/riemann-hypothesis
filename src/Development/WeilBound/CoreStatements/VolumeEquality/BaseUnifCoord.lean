@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefsB
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.VerticalDerivativeInCoordinates
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifDefsB
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.VerticalDerivativeInCoordinates
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,12 +136,12 @@ theorem holCoord : HolCoord := by
   intro Z n g B e A _ v ψ w hB hol hψ hder huniq t₀ ht₀
   refine analyticAt_of_forms w t₀ fun z hz => ?_
 
-  obtain ⟨U, h₀, f, hf⟩ : ∃ (U : Z.Opens) (_ : ⊤ ≤ (spMap (dualMap (ψ t₀)) ≫ v) ⁻¹ᵁ U) (f : Γ(Z, U)),
+  obtain ⟨U, h₀, f, hf⟩ : ∃ (U : Z.Opens) (_ : ⊤ ≤ (spMap (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t₀)) ≫ v) ⁻¹ᵁ U) (f : Γ(Z, U)),
       fderiv ℂ (fun z => valAt' (e t₀ z) U f) 0 z ≠ 0 := by
     by_contra hn
     push Not at hn
-    have h' : IsDerivAt0 (e t₀) (w t₀ + z) (spMap (dualMap (ψ t₀)) ≫ v) :=
-      ⟨(hder t₀ ht₀).1, fun U h f => by rw [map_add, hn U h f, add_zero]; exact (hder t₀ ht₀).2 U h f⟩
+    have h' : IsDerivAt0 (e t₀) (w t₀ + z) (spMap (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t₀)) ≫ v) :=
+      ⟨(hder t₀ ht₀).1, fun U h f => by rw [map_add (f := _), hn U h f, add_zero]; exact (hder t₀ ht₀).2 U h f⟩
     have := huniq t₀ ht₀ _ _ _ h' (hder t₀ ht₀)
     exact hz (by simpa using this)
   have h00 : ⊤ ≤ e t₀ 0 ⁻¹ᵁ U := (GlobalTheory.FibreDeriv.top_le_preimage_eps _ _ (hder t₀ ht₀).1 U).1 h₀
@@ -153,11 +157,11 @@ theorem holCoord : HolCoord := by
     have h2 := ht.hasFDerivAt.comp (0 : Fin g → ℂ) h1
     have h3 := h2.fderiv
     exact congrArg (fun T => T u) h3
-  obtain ⟨a, r, k, hr0, hfr⟩ := exists_frac v U f (dualMap (ψ t₀)) h₀
+  obtain ⟨a, r, k, hr0, hfr⟩ := exists_frac v U f (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t₀)) h₀
   have hψa : ∀ x, AnalyticAt ℂ (fun t => ψ t x) t₀ := fun x =>
     GlobalTheory.SCV.analyticAt_of_differentiableOn (hψ x) (hB.mem_nhds ht₀)
-  have hfst : ∀ t (x : DualNumber A), (dualMap (ψ t) x).fst = ψ t x.fst := fun t x => by simp [dualMap]
-  have hsnd : ∀ t (x : DualNumber A), (dualMap (ψ t) x).snd = ψ t x.snd := fun t x => by simp [dualMap]
+  have hfst : ∀ t (x : DualNumber A), (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t) x).fst = ψ t x.fst := fun t x => by simp [GlobalTheory.CompanionTheory.Ar.dualMap]
+  have hsnd : ∀ t (x : DualNumber A), (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t) x).snd = ψ t x.snd := fun t x => by simp [GlobalTheory.CompanionTheory.Ar.dualMap]
   have hpow : ∀ t, ψ t r.fst ≠ 0 → ψ t (r ^ k).fst ≠ 0 := fun t ht => by
     rw [TrivSqZeroExt.fst_pow, map_pow]
     exact pow_ne_zero _ ht
@@ -169,7 +173,7 @@ theorem holCoord : HolCoord := by
   · exact (((hψa _).mul (hψa _)).sub ((hψa _).mul (hψa _))).div ((hψa _).pow 2) (pow_ne_zero _ (hpow _ hr0))
   · filter_upwards [hB.mem_nhds ht₀, (hψa r.fst).continuousAt.eventually_ne hr0,
       hι.continuousAt.eventually hG.eventually_analyticAt] with t ht hne hGt
-    obtain ⟨hU, he⟩ := hfr (dualMap (ψ t)) (by rwa [hfst])
+    obtain ⟨hU, he⟩ := hfr (GlobalTheory.CompanionTheory.Ar.dualMap (ψ t)) (by rwa [hfst])
     rw [← map_pow] at he
     have h1 := snd_of_mul_eq he (by rw [hfst]; exact hpow t hne)
     rw [hfst, hfst, hsnd, hsnd] at h1

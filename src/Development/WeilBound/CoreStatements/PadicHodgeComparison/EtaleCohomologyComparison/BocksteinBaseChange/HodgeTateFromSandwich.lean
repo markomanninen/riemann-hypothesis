@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.SemistableModelSemistable
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.SemistableModelSemistable
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -13,8 +17,8 @@ namespace CrystallineSemistableComparison
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure ComparisonOn (G : Model l K → Prop) where
   c : ∀ (M : Model l K) (n : ℕ), M.V n →+ (Module.Dual K (HdR M.q n) →+ BdR l)
   lin : ∀ (M : Model l K) (n : ℕ) (z : ℚ_[l]) (v : M.V n) (φ : Module.Dual K (HdR M.q n)), c M n (z • v) φ = qQ l z * c M n v φ
@@ -43,12 +47,5 @@ structure ComparisonOn (G : Model l K → Prop) where
 def DeRhamComparisonSmooth : Prop :=
   ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K],
     Nonempty (ComparisonOn (Model.Sm (l := l) (K := K)))
-
-def DeRhamComparisonSemistable : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : IntermediateField ℚ_[l] (PadicAlgCl l)) [FiniteDimensional ℚ_[l] K],
-    Nonempty (ComparisonOn (Model.Good (l := l) (K := K)))
-
-theorem DeRhamComparisonSemistable.dr (h : DeRhamComparisonSemistable) : FilteredDeRhamComparison := fun l _ K _ =>
-  (h l K).elim fun C => ⟨⟨C.c, C.lin, C.lin', C.fin, C.equi, C.inj, C.fil, fun M hM _ => C.strict M hM, C.nat⟩⟩
 
 end CrystallineSemistableComparison

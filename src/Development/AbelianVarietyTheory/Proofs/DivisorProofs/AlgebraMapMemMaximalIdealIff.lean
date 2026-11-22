@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainFibFinite
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Subsingleton
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistableAlt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -56,7 +61,7 @@ def tangentHom (π : S → k) (hπ : ∀ s, s - algebraMap k S (π s) ∈ maxima
       simp only [Algebra.smul_def, map_mul]; ring
     have hf : f (s * t) = π s * f t + π t * f s := by
       have huv := hf2 _ (by rw [pow_two]; exact Ideal.mul_mem_mul (hπ s) (hπ t))
-      rw [e, map_add, map_add, map_add, map_smul, map_smul, huv, map_sub, map_sub, hfa, hfa, hfa]
+      rw [e, map_add (f := _), map_add (f := _), map_add (f := _), map_smul, map_smul, huv, map_sub, map_sub, hfa, hfa, hfa]
       simp
     ext <;> simp [hm, hf] <;> ring
   map_zero' := by
@@ -64,7 +69,7 @@ def tangentHom (π : S → k) (hπ : ∀ s, s - algebraMap k S (π s) ∈ maxima
     ext <;> simp [this]
   map_add' s t := by
     have : π (s + t) = π s + π t := residue_eq hπ _ _ (by
-      rw [map_add]; convert add_mem (hπ s) (hπ t) using 1; ring)
+      rw [map_add (f := _)]; convert add_mem (hπ s) (hπ t) using 1; ring)
     ext <;> simp [this]
   commutes' c := by
     have : π (algebraMap k S c) = c := residue_eq hπ _ _ (by simp)

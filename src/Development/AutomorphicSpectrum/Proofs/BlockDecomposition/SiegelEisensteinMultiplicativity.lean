@@ -1,10 +1,14 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFrameEquivSymm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinSeriesConvergent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousDerivFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteKTypeDecompositionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardCompactFrameEquivStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicIffFrameParabolicStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockDetParabolicFrameStatement
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFrameEquivSymm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinSeriesConvergent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousDerivFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteKTypeDecompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StandardCompactFrameEquivStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicIffFrameParabolicStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockDetParabolicFrameStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -171,7 +175,7 @@ theorem ext_mul {G : Type} [Group G] (K P : Subgroup G) (f : G → ℝ) (hadd : 
     (h0 : ∀ r ∈ P, r ∈ K → f r = 0) {p k : G} (hp : p ∈ P) (hk : k ∈ K) : ext K P f (p * k) = f p := by
   have h : ∃ k' : K, p * k * (k' : G)⁻¹ ∈ P := ⟨⟨k, hk⟩, by simpa using hp⟩
   unfold ext
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   have hs := h.choose_spec
   have hr : k * (h.choose : G)⁻¹ ∈ K := K.mul_mem hk (K.inv_mem h.choose.2)
   have e : p * k * (h.choose : G)⁻¹ = p * (k * (h.choose : G)⁻¹) := by group

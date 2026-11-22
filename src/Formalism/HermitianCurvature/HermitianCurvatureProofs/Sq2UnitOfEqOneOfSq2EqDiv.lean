@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfUnitWords
-import Mathlib.Geometry.Manifold.PartitionOfUnity
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleOfUnitWords
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+
+@[expose] public section
 
 open Matrix Set
 open scoped ComplexConjugate ContDiff Manifold Topology
@@ -39,7 +43,7 @@ lemma sq2_unitOf_eq_one_of_sq2_eq_div {m : ℕ} {T Gv : ℝ} (hT : 0 < T) (hG : 
 
 lemma continuous_sum_squares (m : ℕ) : Continuous (C6.sq2 (m := m)) := by
   unfold C6.sq2
-  exact continuous_finset_sum _ fun a _ => Complex.continuous_normSq.comp (continuous_apply a)
+  exact continuous_finsetSum _ fun a _ => Complex.continuous_normSq.comp (continuous_apply a)
 
 lemma norm_le_one_of_sq2_eq_one {m : ℕ} {v : Fin m → ℂ} (h : C6.sq2 v = 1) : ‖v‖ ≤ 1 := by
   refine (pi_norm_le_iff_of_nonneg zero_le_one).2 fun a => ?_

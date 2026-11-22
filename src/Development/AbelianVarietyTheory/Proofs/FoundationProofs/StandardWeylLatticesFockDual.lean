@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.ProdFormula
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitriMonomialOfLowerTri
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LowerTriOfInterlaced
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FockQWordRowActAdj
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LowerTriIntegral
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ApplyWordMemDualWeyl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSelfDualE
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StdWeylLatticesFgAndSpanCoeffSpace
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitriMonomialOfLowerTri
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LowerTriOfInterlaced
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FockQWordRowActAdj
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LowerTriIntegral
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ApplyWordMemDualWeyl
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MvPolynomial Formalism.BasicNotions Formalism.L2.DIV Formalism.DivisionValues GlobalTheory.TestLat Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
 open scoped Matrix ComplexOrder
@@ -35,16 +39,19 @@ theorem dual_span_iff {R K V κ : Type} [CommRing R] [Field K] [Algebra R K] [Ad
     refine Submodule.sum_mem _ fun i _ => ?_
     obtain ⟨r, hr⟩ := H (D i) (Submodule.subset_span ⟨i, rfl⟩)
     have e : B (D i) (∑ j, a j • E j) = a i := by
-      simp [map_sum, h]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, h]
     rw [e] at hr
     rw [← hr, algebraMap_smul]
     exact Submodule.smul_mem _ r (Submodule.subset_span ⟨i, rfl⟩)
   · intro H y hy
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).mp H
     obtain ⟨b, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun R).mp hy
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine sum_mem fun j _ => ?_
-    rw [map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
     refine sum_mem fun i _ => ?_
     rw [← algebraMap_smul K (a j), ← algebraMap_smul K (b i), map_smul, LinearMap.map_smulₛₗ,
       LinearMap.smul_apply, h, smul_eq_mul, smul_eq_mul]
@@ -61,7 +68,8 @@ theorem linInd_of_dual {R K V κ : Type} [CommRing R] [Field K] [Algebra R K] [F
   rw [Fintype.linearIndependent_iff]
   intro a ha i
   have e : B (D i) (∑ j, a j • E j) = a i * N := by
-    simp [map_sum, h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, h]
   rw [ha, map_zero] at e
   exact (mul_eq_zero.mp e.symm).resolve_right hN
 
@@ -106,7 +114,7 @@ theorem image_wordSet {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (n
   rw [← Set.range_comp]
   congr 1
   funext w
-  simp only [Function.comp]
+  change MvPolynomial.map φ (Formalism.GradedWeylDivisibility.applyWord R w _) = _
   rw [← Formalism.GradedWeylDivisibility.lclosedeq_applyWord_map, Formalism.GradedWeylDivisibility.lclosedeq_hw_map]
 
 theorem dualWeyl_eq (R : Type) [CommRing R] [IsDomain R] (n : ℕ) (ν : Fin n → ℕ) :
@@ -174,7 +182,8 @@ theorem exists_dual_bases (n : ℕ) (ν : Fin n → ℕ) (hν : Antitone ν) [Fi
     have e := congrFun (congrFun (Matrix.mul_nonsing_inv Q hQu) i) j
     rw [Matrix.mul_apply, Matrix.one_apply] at e
     have e2 : fockL (b i) (d j) = N * ∑ k, Q i k * Q⁻¹ k j := by
-      simp only [hd, map_sum, map_smul, smul_eq_mul, ps_fockL_rat, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hd, map_sum, map_smul, smul_eq_mul, ps_fockL_rat, Finset.mul_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [hQ, Matrix.of_apply]
       ring

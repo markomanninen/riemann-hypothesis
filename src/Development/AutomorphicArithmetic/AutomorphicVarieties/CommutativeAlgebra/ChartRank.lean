@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.OrbitVanishingLocal
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -20,7 +24,7 @@ private theorem crLin_sat (h : IsChart 𝒜 x wt φ) (i : τ) : ∀ f ∈ satSq 
   have h2 : ∀ f ∈ RingHom.ker x ^ 2, crLin φ i f = 0 := by
     intro f hf
     rw [sq] at hf
-    refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add, ha, hb, add_zero])
+    refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) (fun a b ha hb => by rw [map_add (f := _), ha, hb, add_zero])
     have ha' : MvPowerSeries.coeff 0 (φ a) = 0 := by
       rw [MvPowerSeries.coeff_zero_eq_constantCoeff_apply, h.const, show x a = 0 from ha, map_zero]
     have hb' : MvPowerSeries.coeff 0 (φ b) = 0 := by
@@ -81,7 +85,7 @@ theorem UpperTheory.V.Alg.chart_rank :
   apply Module.finrank_eq_of_rank_eq
   apply le_antisymm
   · have hinj : Function.Injective ψ := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       rintro ⟨_, f, hf, rfl⟩ h0
       apply Subtype.ext
       refine (Submodule.Quotient.mk_eq_zero _).2 (h.inj f hf.2 fun i => ?_)
@@ -98,7 +102,8 @@ theorem UpperTheory.V.Alg.chart_rank :
       rw [Fintype.linearIndependent_iff]
       intro c hc i
       have h1 := congrFun (congrArg ψ hc) i
-      rw [map_sum, Finset.sum_apply, Finset.sum_eq_single i, map_zero, map_smul, Pi.smul_apply, hψ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply, Finset.sum_eq_single i, map_zero, map_smul, Pi.smul_apply, hψ,
         hpl _ _ i.2] at h1
       · exact (smul_eq_zero.1 h1).resolve_right (hg i.1)
       · intro k _ hk

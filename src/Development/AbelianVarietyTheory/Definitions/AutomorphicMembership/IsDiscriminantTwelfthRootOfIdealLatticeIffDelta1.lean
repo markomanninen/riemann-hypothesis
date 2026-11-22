@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,25 +71,25 @@ def IsDgen (cD : ι → ℂ) : Prop :=
 
 def SplitK (p : ℕ) : Prop := p = 2 ∨ jacobiSym (-(H.d : ℤ)) p = 1
 
-variable (ι) in
 
+variable (ι) in
 abbrev IsoK : Type := IsoKG H.K H.E H.conj ι
 
-variable {H} in
 
+variable {H} in
 def AtP (γ : IsoK H ι) (p : ℕ) : Prop :=
   (∀ x : Fin 4 → H.E, (∀ a, x a ∈ H.AA0) → ∃ s : ℕ, Nat.Coprime s p ∧
     ∀ w, (s : H.K) * γ.g x w ∈ (algebraMap (𝓞 H.K) H.K).range) ∧
   ∀ v : Fin 4 × ι → H.K, (∀ w, v w ∈ (algebraMap (𝓞 H.K) H.K).range) →
     ∃ s : ℕ, Nat.Coprime s p ∧ ∀ a, (s : H.E) * γ.g.symm v a ∈ H.AA0
 
-variable {H} in
 
+variable {H} in
 def detRel (γ γ₀ : IsoK H ι) : H.K :=
   LinearMap.det ((γ₀.g.symm.trans γ.g : (Fin 4 × ι → H.K) ≃ₗ[H.K] _) : (Fin 4 × ι → H.K) →ₗ[H.K] (Fin 4 × ι → H.K))
 
-variable {H} in
 
+variable {H} in
 structure KapIn (γ₀ : IsoK H ι) where
   pp : ℕ → IsDedekindDomain.HeightOneSpectrum (𝓞 H.K)
   pp_over : ∀ p, p.Prime → SplitK H p → ((p : ℕ) : 𝓞 H.K) ∈ (pp p).asIdeal
@@ -97,13 +101,13 @@ structure KapIn (γ₀ : IsoK H ι) where
   rt_pow : ∀ p, p.Prime → SplitK H p → rt p ^ (2 * classNumber H.K)
     = H.φ₀ (((pi p : 𝓞 H.K) : H.K) : H.E) / H.φ₀ (H.conj (((pi p : 𝓞 H.K) : H.K) : H.E))
 
-variable {H} in
 
+variable {H} in
 def KapIn.yP {γ₀ : IsoK H ι} (k : KapIn γ₀) (p : ℕ) : ℤ :=
   -WithZero.log ((k.pp p).valuation H.K (detRel (k.gaP p) γ₀))
 
-variable {H} in
 
+variable {H} in
 def KapIn.kappa {γ₀ : IsoK H ι} (k : KapIn γ₀) : ℂ :=
   ∏ᶠ p : {p : ℕ // p.Prime ∧ SplitK H p}, k.rt p ^ (-(k.yP p))
 
@@ -146,60 +150,17 @@ section Record
 
 variable (D : D7)
 
-theorem lamOf_rec (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) : lamOf D.host cc δ = TaylorLogMetric.lamOf D cc δ := rfl
-
 theorem isDiscriminantTwelfthRoot_host_iff (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) : IsDiscriminantTwelfthRootOfIdealLattice D.host cc δ ↔ TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ := Iff.rfl
-
-theorem stdL_rec (N : ℕ) : stdL D.host N = StandardLatticesGL3.stdL D N := rfl
-
-theorem detId_rec {N : ℕ} (L L' : Lt D.host N) : detId D.host L L' = TaylorLogMetric.detId D L L' := rfl
-
-theorem La_rec (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) {N N' : ℕ} (L : Lt D.host N) (L' : Lt D.host N') :
-    La D.host (TaylorLogMetric.embT D) (lamOf D.host cc δ) L L' = TaylorLogMetric.La D (TaylorLogMetric.tor0 D cc δ) L L' := rfl
-
-theorem isDgen_rec (cD : D.what₂.Tau → ℂ) : IsDgen D.host (TaylorLogMetric.embT D) cD ↔ Formalism.L2.Ker.IsDgen D cD := Iff.rfl
-
-theorem chiFac_rec (χ : TaylorLogMetric.IdE D → ℂ) (N N' : ℕ) (L : Lt D.host N) (L' : Lt D.host N') :
-    chiFac D.host χ N N' L L' = Formalism.L2.Ker.Base.chiFac χ N N' L L' := rfl
 
 variable {D} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ}
 
 def KapIn.toRec {γ₀ : IsoK D.host D.what₂.Tau} (k : KapIn γ₀) : KapChoice (D := D) γ₀ :=
   ⟨k.pp, k.pp_over, k.pi, k.pi_gen, k.gaP, k.gaP_at, k.rt, k.rt_pow⟩
 
-def KapIn.ofRec {γ₀ : IsoK D.host D.what₂.Tau} (k : KapChoice (D := D) γ₀) : KapIn γ₀ :=
-  ⟨k.pp, k.pp_over, k.pi, k.pi_gen, k.gaP, k.gaP_at, k.rt, k.rt_pow⟩
-
 def VacIn.toRec (V : VacIn D.host (TaylorLogMetric.embT D) cc δ) : Formalism.L2.Ker.Base D cc δ :=
   ⟨V.L, V.lat, V.ω₀, V.t0, V.γ₀, V.gC, V.gC_spec, V.kc.toRec⟩
 
-def VacIn.ofRec (B : Formalism.L2.Ker.Base D cc δ) : VacIn D.host (TaylorLogMetric.embT D) cc δ :=
-  ⟨B.L, B.lat, B.ω₀, B.t0, B.γ₀, B.gC, B.gC_spec, KapIn.ofRec B.kc⟩
-
-theorem VacIn.toRec_ofRec (B : Formalism.L2.Ker.Base D cc δ) : (VacIn.ofRec B).toRec = B := rfl
-
-theorem VacIn.ofRec_toRec (V : VacIn D.host (TaylorLogMetric.embT D) cc δ) : VacIn.ofRec V.toRec = V := rfl
-
-theorem VacIn.thMM_rec (V : VacIn D.host (TaylorLogMetric.embT D) cc δ) : V.thMM = V.toRec.thMM := rfl
-
-theorem VacIn.eNat_rec (V : VacIn D.host (TaylorLogMetric.embT D) cc δ) (χ : TaylorLogMetric.IdE D → ℂ) : V.eNat χ = V.toRec.eNat χ := rfl
-
 end Record
-
-example (Λ : AddSubgroup ℂ) {N N' : ℕ} (c : ℂ) (z w : VC ι N N') : Hf Λ (c • z) w = c * Hf Λ z w := by
-  simp only [Hf, Pi.smul_apply, smul_eq_mul, mul_assoc, ← Finset.mul_sum, mul_div_assoc]
-
-example (Λ : AddSubgroup ℂ) {N N' : ℕ} (G : VC ι N N' → ℂ) : Iop H Λ ⊥ ⊥ G = G := by
-  funext z
-  have h0 : ∀ q : (⊥ : AddSubgroup (VC ι N N')) ⧸ (⊥ : AddSubgroup (VC ι N N')).addSubgroupOf ⊥,
-      ((Quotient.out q : (⊥ : AddSubgroup (VC ι N N'))) : VC ι N N') = 0 := fun q => AddSubgroup.mem_bot.1 (Quotient.out q).2
-  have hU : Unique ((⊥ : AddSubgroup (VC ι N N')) ⧸ (⊥ : AddSubgroup (VC ι N N')).addSubgroupOf ⊥) :=
-    ⟨⟨QuotientAddGroup.mk 0⟩, fun q => by
-      obtain ⟨x, rfl⟩ := QuotientAddGroup.mk_surjective q
-      rw [Subsingleton.elim x 0]
-      rfl⟩
-  simp only [Iop, h0, finsum_unique]
-  simp [al, U, Hf]
 
 theorem perAA_top : perAA H ⊤ = (H.AA0 : Submodule (𝓞 H.E) H.E) := by
   apply le_antisymm

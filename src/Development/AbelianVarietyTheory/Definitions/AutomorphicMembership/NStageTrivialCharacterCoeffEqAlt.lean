@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AssembleLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,22 +53,22 @@ def NLay0.ZOk (L : NLay0 R H what₂ LL0) : Prop :=
 
 def ndZ (N : NData R H what₂) (Z Zg : ∀ i, Finset (N.X i)) : NData R H what₂ := { N with Z := Z, Zgood := Zg }
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def NLay0.setZ (L : NLay0 R H what₂ LL0) (Z Zg : ∀ i, Finset (L.nd.X i)) : NLay0 R H what₂ LL0 :=
   { loc := L.loc, locA := L.locA, locT := L.locT, nd := ndZ L.nd Z Zg, ntw := { L.ntw with }, naut := { L.naut with }
     nbc := { L.nbc with }, nexp := { L.nexp with }, ntypes := { L.ntypes with }, nStage_trivialCharacter_compat := L.nStage_trivialCharacter_compat, nStage_trivialCharacter_coeff_eq := L.nStage_trivialCharacter_coeff_eq
     nth := { L.nth with }, nbr := L.nbr, nbr_ind := L.nbr_ind, self_good := L.self_good, ntwbr := L.ntwbr
     ntwbr_ind := L.ntwbr_ind, loc_tie := L.loc_tie, bc_tie := L.bc_tie, rbar_tie := L.rbar_tie, mtpar_tie := L.mtpar_tie }
 
-open Classical in
 
+open Classical in
 def NLay0.fixZ (L : NLay0 R H what₂ LL0) : NLay0 R H what₂ LL0 :=
   L.setZ (fun i => Finset.univ.filter fun x => x ∈ Formalism.MainNotions.N.ZN L.nd L.naut i)
     (fun i => Finset.univ.filter fun x => x ∈ Formalism.MainNotions.N.ZgoodN L.nd L.naut i)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 def NLay0.reEta (L : NLay0 R H what₂ LL0) (η : ℕ → what₂.places.Pl → ℚ) (hη : ∀ j w, 0 ≤ η j w) :
     @NLay0 R H (rowsEta what₂ η hη) ‹NumberField what₂.LL› ‹StarRing what₂.LL› LL0 :=
   letI : NumberField (rowsEta what₂ η hη).LL := ‹NumberField what₂.LL›
@@ -74,8 +78,8 @@ def NLay0.reEta (L : NLay0 R H what₂ LL0) (η : ℕ → what₂.places.Pl → 
     nth := { L.nth with }, nbr := L.nbr, nbr_ind := L.nbr_ind, self_good := L.self_good, ntwbr := L.ntwbr
     ntwbr_ind := L.ntwbr_ind, loc_tie := L.loc_tie, bc_tie := L.bc_tie, rbar_tie := L.rbar_tie, mtpar_tie := L.mtpar_tie }
 
-open Classical in
 
+open Classical in
 def NLay0.eta (L : NLay0 R H what₂ LL0) (j : ℕ) (w : what₂.places.Pl) : ℚ :=
   if 1 ≤ j ∧ j ≤ R.m then ∑ i ∈ L.nd.locs j w, L.nd.etaLoc i else what₂.etaJ j w
 
@@ -107,8 +111,8 @@ end
 
 abbrev Lay0 (D : D7) : Type _ := NLay0 D.R D.host D.what₂ D.LL0
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def setRaw (D : D7) (η : ℕ → D.what₂.places.Pl → ℚ) (hη : ∀ j w, 0 ≤ η j w)
     (P : @NLay0 D.R D.host (rowsEta D.what₂ η hη) D.nfLL D.starLL D.LL0)
     (hZ : @NLay0.ZOk D.R D.host (rowsEta D.what₂ η hη) D.nfLL D.starLL D.LL0 P)

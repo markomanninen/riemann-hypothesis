@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ExistsDiagonalization.exists_diag :
     ∀ {K : Type} [inst : Field K] {n : ℕ}

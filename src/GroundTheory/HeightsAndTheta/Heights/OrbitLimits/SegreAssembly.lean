@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDimBound
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartFiniteIrrel
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreComponent
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreDivisor
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Positivity
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartDimBound
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PChartFiniteIrrel
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreComponent
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreDivisor
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.Positivity
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets

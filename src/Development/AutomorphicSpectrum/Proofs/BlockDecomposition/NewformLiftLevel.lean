@@ -1,5 +1,9 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.VerticalStrips.UnramifiedEulerProductIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,10 +18,10 @@ open Ad3 Ad3.R
 
 namespace GlobalTheory.CompanionTheory.RSLift
 
-local notation "𝔸f" => FiniteAdeleRing (𝓞 ℚ) ℚ
-
 set_option linter.unusedSectionVars false
 set_option linter.unnecessarySimpa false
+
+local notation "𝔸f" => FiniteAdeleRing (𝓞 ℚ) ℚ
 
 variable (N : ℕ) [NeZero N]
 
@@ -52,7 +56,7 @@ variable {N}
 
 theorem res_eq {x : 𝔸f} {n : ℤ} (h : x - (n : 𝔸f) ∈ levelIdeal N) : res N x = (n : ZMod N) := by
   have hex : ∃ n : ℤ, x - (n : 𝔸f) ∈ levelIdeal N := ⟨n, h⟩
-  rw [res, dif_pos hex]
+  rw [res, dite_eq_left hex]
   have h2 := hex.choose_spec
   set m := hex.choose
   have h3 : ((n - m : ℤ) : 𝔸f) ∈ levelIdeal N := by
@@ -120,8 +124,8 @@ theorem chi_ne {s : SL(2, ℤ)} (hs : s ∈ Gamma0 N) : χ ((s 1 1 : ℤ) : ZMod
     simpa using this
   exact ((IsUnit.of_mul_eq_one _ (by rw [mul_comm]; exact hd')).map χ).ne_zero
 
-variable (N) in
 
+variable (N) in
 def decU (g : AdelicGL ℚ 2) : FiniteAdelicGL ℚ 2 :=
   (decompGL_spec N g).2.choose_spec.choose
 

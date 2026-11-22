@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.TaylorExpansionLocalCoordinates
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.TaylorExpansionLocalCoordinates
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -121,7 +125,7 @@ theorem step {T a0 a : ℕ} (ha : a < a0) (ha0 : a0 ≤ T + 1)
     calc ‖∏ k, ζ j v k ^ α k‖
         = ∏ k, ‖ζ j v k‖ ^ α k := by simp only [norm_prod, norm_pow]
       _ ≤ ∏ k, ‖ζ j v‖ ^ α k :=
-          Finset.prod_le_prod (fun k _ => by positivity)
+          Finset.prod_le_prod₀ (fun k _ => by positivity)
             (fun k _ => pow_le_pow_left₀ (norm_nonneg _) (PiLp.norm_apply_le _ _) _)
       _ = 1 * ‖‖ζ j v‖ ^ a‖ := by
           rw [Finset.prod_pow_eq_pow_sum, hsum, one_mul, norm_pow, norm_norm]
@@ -210,32 +214,6 @@ theorem lact_one {r : ℕ} (X : Data E r) (x : Frame X.Ψ r) : lact (1 : GL (Fin
   show (((1 : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x τ : Matrix (Fin r) (Fin r) ℂ) = x τ
   rw [Units.val_one, Matrix.map_one _ (map_zero _) (map_one _), Matrix.one_mul]
   rfl
-
-theorem main : ∀ (r : ℕ) (X : Data E r) (Xa : ArchInM X) (Fl : FlatM X Xa) (G : Wt X.Ψ r) (T a δ : ℕ), a ≤ T + 1 →
-    ∀ (t : Fin δ → Frame X.Ψ r → ℂ), (∀ k, X.IsSec G (t k)) → IsValBasisM X Fl.xs t →
-    ∀ f, X.IsSec (G + T • Xa.L) f →
-    ∃ cc : (Fin (nd X) → ℕ) → Fin δ → ℂ, ∀ j,
-      (fun z : V (nd X) => f (cpt X (Fl.xs j) z) - leadM X Fl.s Fl.w0 t T a cc (cpt X (Fl.xs j) z))
-        =O[𝓝 0] fun z => ‖z‖ ^ a := by
-  intro r X Xa Fl G T a δ ha t ht hb f hf
-  have hs0 : ∀ j k, Fl.s k (Fl.xs j) = 0 := fun j =>
-    (Fl.S_eq _ (Fl.xs_mem j)).2 ⟨j, 1, one_mem _, nmat X 0, nmat_zero_mem_Bor X, by
-      rw [rmul_nmat_zero, lact_one]⟩
-  exact jets (U := fun j => OmF X (Fl.xs j)) (f := fun j z => f (cpt X (Fl.xs j) z))
-    (w := fun j z => Fl.w0 (cpt X (Fl.xs j) z)) (s := fun j z k => Fl.s k (cpt X (Fl.xs j) z))
-    (t := fun j z k => t k (cpt X (Fl.xs j) z)) ha
-    (fun j => OntoB.isOpen_OmF X _)
-    (fun j => by
-      show cpt X (Fl.xs j) 0 ∈ X.dom
-      rw [cpt_zero]; exact Fl.xs_mem j)
-    (fun j => OntoB.hol_comp X _ hf.1)
-    (fun j => OntoB.hol_comp X _ Fl.weightForm_vanishes.1.1.1.1)
-    (fun j k => OntoB.hol_comp X _ (Fl.s_van k).1.1.1.1)
-    (fun j k => OntoB.hol_comp X _ (ht k).1)
-    (fun j => by simpa only [cpt_zero] using Fl.w0_ne j)
-    (fun j k => by simpa only [cpt_zero] using hs0 j k)
-    Fl.coord
-    (fun v => by simpa only [cpt_zero] using hb.1 v)
 
 end
 

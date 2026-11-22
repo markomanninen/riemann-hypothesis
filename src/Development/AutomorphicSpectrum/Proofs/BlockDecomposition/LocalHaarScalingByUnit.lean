@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulA
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.BoxMulA
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology Filter PositivityTheory.Rg.Base1 GroundTheory.Global GlobalTheory.CompanionTheory.SW.RankOneSiegelWeil
 open scoped TensorProduct ENNReal NNReal Matrix Classical
 open scoped Pointwise
@@ -14,14 +19,14 @@ theorem nnnorm_eq_distribHaarChar (F : Type) [Field F] [NumberField F]
   have hn : (n : Fv F v) ≠ 0 := n.ne_zero
   have hva : Valued.v (n : Fv F v) ≠ 0 := (Valuation.ne_zero_iff _).2 hn
   have h := PI.UnitaryGroupMassFormula.LocJacTyp.BM.modF_Fv v (n : Fv F v) hn
-  rw [PI.NglqJacSplitW.modF, dif_neg hn] at h
+  rw [PI.NglqJacSplitW.modF, dite_eq_right hn] at h
   have hu : Units.mk0 (n : Fv F v) hn = n := by ext; rfl
   rw [hu] at h
   have habs : PI.LocJacTyp.absV v (n : Fv F v) = ‖(n : Fv F v)‖ := by
     unfold PI.LocJacTyp.absV
-    rw [dif_neg hva, NumberField.FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hva]
+    rw [dite_eq_right hva, NumberField.FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hva]
     push_cast
-    rfl
+    rw [WithZero.toAdd_unzero_eq_log]
   rw [habs, ← coe_nnnorm, ENNReal.ofReal_coe_nnreal] at h
   exact (ENNReal.coe_injective h).symm
 

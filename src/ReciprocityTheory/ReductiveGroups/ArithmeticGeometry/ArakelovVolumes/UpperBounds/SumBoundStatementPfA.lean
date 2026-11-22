@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.SumBoundStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up
 
@@ -51,14 +55,14 @@ theorem sumBdFsq_nonneg {m n : Type*} [Fintype m] [Fintype n] (X : Matrix m n �
 
 theorem sumBd_trace_ctm {m n : Type*} [Fintype m] [Fintype n] (X : Matrix m n ℂ) :
     (trace (Xᴴ * X)).re = sumBdFsq X := by
-  simp only [trace, diag, mul_apply, conjTranspose_apply, sumBdFsq, Complex.re_sum]
+  simp only [trace, diag, Matrix.mul_apply, conjTranspose_apply, sumBdFsq, Complex.re_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   simp [Complex.normSq_apply, Complex.mul_re]
 
 theorem sumBd_trace_mct {m n : Type*} [Fintype m] [Fintype n] (X : Matrix m n ℂ) :
     (trace (X * Xᴴ)).re = sumBdFsq X := by
-  simp only [trace, diag, mul_apply, conjTranspose_apply, sumBdFsq, Complex.re_sum]
+  simp only [trace, diag, Matrix.mul_apply, conjTranspose_apply, sumBdFsq, Complex.re_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   simp [Complex.normSq_apply, Complex.mul_re]
 

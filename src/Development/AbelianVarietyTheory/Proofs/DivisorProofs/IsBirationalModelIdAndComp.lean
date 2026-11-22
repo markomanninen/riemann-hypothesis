@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SmallFam
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SmallSecTensTriv
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SmallFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SmallSecTensTriv
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsAlgClosedBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeOfIsOpenImmersion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -14,23 +18,21 @@ open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier Glo
 
 namespace GlobalTheory.HSNef
 
-theorem isModel_id (X : Scheme.{0}) [IsIntegral X] : IsModel (𝟙 X) (RingHom.id X.functionField) where
-  gen := rfl
-  deg := Scheme.Hom.residueDegree_id _
-  compat y a := by
-    simp only [RingHom.id_apply, Scheme.Hom.stalkMap_id]
-    rfl
+theorem isModel_id (X : Scheme.{0}) [IsIntegral X] : IsModel (𝟙 X) (RingHom.id X.functionField) := by
+  refine { gen := rfl, deg := Scheme.Hom.residueDegree_id _, compat := ?_ }
+  intro y a
+  simp only [RingHom.id_apply, Scheme.Hom.stalkMap_id]
+  rfl
 
 theorem IsModel.comp {X Y Z : Scheme.{0}} [IsIntegral X] [IsIntegral Y] [IsIntegral Z] {π : Y ⟶ X} {π' : Z ⟶ Y}
     {φ : X.functionField →+* Y.functionField} {φ' : Y.functionField →+* Z.functionField}
-    (h : IsModel π φ) (h' : IsModel π' φ') : IsModel (π' ≫ π) (φ'.comp φ) where
-  gen := by
-    show π (π' (genericPoint Z)) = genericPoint X
+    (h : IsModel π φ) (h' : IsModel π' φ') : IsModel (π' ≫ π) (φ'.comp φ) := by
+  refine { gen := ?_, deg := ?_, compat := ?_ }
+  · show π (π' (genericPoint Z)) = genericPoint X
     rw [h'.gen, h.gen]
-  deg := by
-    rw [GlobalTheory.CurveDegreesCompare.residueDegree_comp π' π (genericPoint Z), h'.deg]
+  · rw [GlobalTheory.CurveDegreesCompare.residueDegree_comp π' π (genericPoint Z), h'.deg]
     rw [h'.gen, h.deg]
-  compat z a := by
+  · intro z a
     refine (congrArg φ' (h.compat (π' z) a)).trans ((h'.compat z _).trans ?_)
     rw [Scheme.Hom.stalkMap_comp]
     rfl

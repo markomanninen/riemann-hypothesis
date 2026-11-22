@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaZeroLogDerivative
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaZeroLogDerivative
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -82,7 +86,7 @@ lemma exists_coord (L : PeriodPair) (x : ℂ) : ∃ a b : ℝ, x = (a : ℂ) * L
 lemma wEta_coord (L : PeriodPair) (a b : ℝ) :
     wEta L ((a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂) = (a : ℂ) * wEta L L.ω₁ + (b : ℂ) * wEta L L.ω₂ := by
   have : (a : ℂ) * L.ω₁ + (b : ℂ) * L.ω₂ = a • L.ω₁ + b • L.ω₂ := by simp
-  rw [this, map_add, map_smul, map_smul]; simp
+  rw [this, map_add (f := _), map_smul, map_smul]; simp
 
 end PeriodAreaSignLemmas
 
@@ -115,7 +119,7 @@ theorem etaSplit_of (h : Legendre) : EtaSplit := by
     linear_combination (-L.ω₂) * hs2 - (conj L.ω₂) * hpi - (conj L.ω₂) * hL + wEta L L.ω₂ * hDdef
   obtain ⟨a, b, rfl⟩ := exists_coord L x
   rw [wEta_coord]
-  simp only [map_add, map_mul, Complex.conj_ofReal]
+  simp only [map_add (f := _), map_mul, Complex.conj_ofReal]
   linear_combination (a : ℂ) * e1 + (b : ℂ) * e2
 
 namespace PeriodAreaSignLemmas

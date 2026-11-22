@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.BetaLUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.AgreeOnH
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.LineReduce
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.WAniso
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.BetaLUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.Skeleton
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.AgreeOnH
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.LineReduce
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.WAniso
+
+@[expose] public section
 
 noncomputable section
 

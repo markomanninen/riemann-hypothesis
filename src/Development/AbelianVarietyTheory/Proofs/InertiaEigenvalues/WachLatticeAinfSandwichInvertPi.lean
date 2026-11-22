@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeSandwichAinf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityTensorAinfCoefficients
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeFreeOfCrystallineStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeSandwichAinf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobeniusIntegralityTensorAinfCoefficients
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeFreeOfCrystallineStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL Module
 
@@ -39,7 +43,7 @@ theorem φA_π (R : WSer Γ) : letφ (n := n) R.φ₀ letπ = letπ * (fun _ => 
   exact R.φ₀_X
 
 theorem φA_one_add_π (R : WSer Γ) : letφ (n := n) R.φ₀ (1 + letπ) = (1 + letπ) ^ PD.p := by
-  rw [map_add, map_one, φA_π]
+  rw [map_add (f := _), map_one, φA_π]
   funext i
   have := R.q₀_def
   simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.one_apply, letπ]
@@ -57,13 +61,13 @@ theorem frobenius_inclusion_X_eq_mul_Q (I : WIo R RA RW inclR φR gR πA)
     φR (inclR ((1 + πA) ^ (PD.p ^ (s - 1)) - 1)) =
       inclR ((1 + πA) ^ (PD.p ^ (s - 1)) - 1) * inclR (I.io R.Q) := by
   have hX : (letφ (n := n) R.φ₀ ^ (s - 1)) letπ = (1 + letπ) ^ (PD.p ^ (s - 1)) - 1 := by
-    rw [← φA_pow_one_add_π R, map_add, map_one]; ring
+    rw [← φA_pow_one_add_π R, map_add (f := _), map_one]; ring
   have hXQ : (letφ (n := n) R.φ₀ ^ (s - 1)) letπ * R.Q =
       ((1 + letπ) ^ PD.p) ^ (PD.p ^ (s - 1)) - 1 := by
     rw [WSer.Q, ← map_mul, ← φA_π, ← pow_mul, mul_comm PD.p, pow_mul,
       ← φA_pow_one_add_π R, ← map_pow, ← φA_one_add_π R, map_add, map_one, map_add, map_one]
     ring
-  have hπ : I.io (1 + letπ) = 1 + πA := by rw [map_add, map_one, I.io_π]
+  have hπ : I.io (1 + letπ) = 1 + πA := by rw [map_add (f := _), map_one, I.io_π]
   have h1 : (1 + πA) ^ (PD.p ^ (s - 1)) - 1 = I.io ((letφ (n := n) R.φ₀ ^ (s - 1)) letπ) := by
     rw [hX, map_sub, map_pow, map_one, hπ]
   conv_rhs => rw [h1, ← map_mul, ← map_mul, hXQ]
@@ -96,20 +100,20 @@ theorem sand_of {E : WEt I} (Mo : WN E zl)
     intro y hy
     refine ⟨fun j => b.repr ⟨y, hy⟩ j, ?_⟩
     have := congrArg (Mo.N T).subtype (b.sum_repr ⟨y, hy⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     exact this.symm
   have hj : ∀ (c : Fin (Module.finrank O ↥T.L.T) → LetA O n)
       (w : Fin (Module.finrank O ↥T.L.T) → E.DD T),
       E.jD T (∑ j, c j • w j) = ∑ j, inclR (I.io (c j)) • E.jD T (w j) := by
     intro c w
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun j _ => jD_smulA E T _ _
   have hsp : ⊤ ≤ Submodule.span RW (Set.range fun i => E.jD T (b i : E.DD T)) := by
     rw [← E.jD_span T, Submodule.span_le]
     rintro _ ⟨y, rfl⟩
-    refine (Mo.N_base T hT).inductionOn y
-      (fun y => E.jD T y ∈ Submodule.span RW (Set.range fun i => E.jD T (b i : E.DD T))) ?_ ?_ ?_ ?_
-    · rw [map_zero]; exact Submodule.zero_mem _
+    refine (Mo.N_base T hT).inductionOn y ?_ ?_ ?_
     · intro z
       obtain ⟨c, hc⟩ := hexp z.1 z.2
       change E.jD T z.1 ∈ _
@@ -119,7 +123,7 @@ theorem sand_of {E : WEt I} (Mo : WN E zl)
       rw [E.jD_smul]
       exact Submodule.smul_mem _ _ hz
     · intro z z' hz hz'
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ hz hz'
   have hli : LinearIndependent RW fun i => E.jD T (b i : E.DD T) := by
     have hs := hsp
@@ -160,7 +164,8 @@ theorem sand_of {E : WEt I} (Mo : WN E zl)
         refine Submodule.span_le.mpr ?_
         rintro _ ⟨z, hz, rfl⟩
         obtain ⟨c, rfl⟩ := hexp z hz
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Submodule.sum_mem _ fun j _ => ?_
         rw [φD_smulA]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -208,8 +213,8 @@ theorem x_eq {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P) (LL : 
   rw [h, Algebra.TensorProduct.tmul_pow, one_pow, ← map_pow, Nat.add_sub_cancel, εroot_pow_pred,
     LocAinf.π₁, TensorProduct.tmul_sub, Algebra.TensorProduct.one_def]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem sandwich : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l) (s : ℕ) (LL : FinExt l), Good K s LL → ∀ (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R), IoW I → ∀ (E : WEt I) (Mo : NS E) (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)), IsCrys (P.PD K) T.ρ → ∃ m : ℕ, Sand Mo T ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] (AI.π₁ ^ m) : RA LL) := by
   intro l _ P AI K s LL hg Γ R I hI E Mo T hT
   obtain ⟨b⟩ := GlobalTheory.T.wach_lattice_free_of_crystalline l P AI K s LL hg Γ R I hI E Mo T hT

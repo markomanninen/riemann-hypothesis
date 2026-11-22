@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.ContinuousOnLogNormSec
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystemRegularityProperties
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.ContinuousOnLogNormSec
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AnalyticSystemRegularityProperties
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace PositivityTheory.Xgp.sq_limit
@@ -138,11 +143,11 @@ theorem regular (hC : ConvergenceSignedStatement) {e : ℕ} {τ : Type} (S : AnS
     intro t
     by_cases ht : 0 < t ∧ t ≤ S.t₀
     · simp only [ht, and_self, if_true]
-      refine continuousOn_const.add (continuousOn_finset_sum _ fun i _ => continuousOn_const.mul ?_)
+      refine continuousOn_const.add (continuousOn_finsetSum _ fun i _ => continuousOn_const.mul ?_)
       exact (continuousOn_of_smoothOn S.A isOpen_univ ((S.reg (mm i)).2.2 t ht.1 ht.2).1).mono
         (Set.subset_univ _)
     · simp only [ht, if_false]
-      exact continuousOn_const.add (continuousOn_finset_sum _ fun i _ => continuousOn_const.mul
+      exact continuousOn_const.add (continuousOn_finsetSum _ fun i _ => continuousOn_const.mul
         (continuousOn_of_smoothOn S.A hU (S.sing (mm i)).2.1))
   have hgb : ∀ t y, y ∉ bdry S.s → |(fun x => if 0 < t ∧ t ≤ S.t₀ then cst + ∑ i, c i * S.phT (mm i) t x
       else cst + ∑ i, c i * S.ph (mm i) x) y| ≤

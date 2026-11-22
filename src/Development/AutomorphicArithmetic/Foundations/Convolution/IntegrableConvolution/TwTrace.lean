@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.DiagOnly
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.DiagOnly
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.JointTrace
+
+@[expose] public section
 
 open GroundTheory.Automorphic UpperTheory.ConvolutionTheory.C
 open scoped InnerProductSpace

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem fib_meas (μ : Measure X) [μ.IsAddRightInvariant] (π : X →+ (Fin m �
     have key : ∀ z, ((fun x => u + x) ⁻¹' A).indicator 1 (π z) * g z =
         (fun z => A.indicator 1 (π z) * g z) (z + s u) := by
       intro z
-      simp only [map_add, hπs, hgs]
+      simp only [map_add (f := _), hπs, hgs]
       congr 1
       by_cases h : u + π z ∈ A
       · simp [Set.indicator, h, add_comm]

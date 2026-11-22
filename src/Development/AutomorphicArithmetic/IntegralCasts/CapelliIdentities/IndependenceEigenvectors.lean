@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.IndependenceEigenvectors.indep :
     ∀ {V I J : Type} [inst : AddCommGroup V]
@@ -20,7 +24,8 @@ theorem UpperTheory.Reformulated.B.IndependenceEigenvectors.indep :
       obtain ⟨i, hi⟩ := Function.ne_iff.mp hne
       have h1 : (g a * lam a i) • v a + ∑ k ∈ s, (g k * lam k i) • v k = 0 := by
         have h := congrArg (T i) hg
-        simpa only [map_add, map_sum, map_smul, map_zero, hT, smul_smul] using h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simpa only [map_add (f := _), map_sum, map_smul, map_zero, hT, smul_smul] using h
       have h2 : (g a * lam a i) • v a + ∑ k ∈ s, (g k * lam a i) • v k = 0 := by
         have h := congrArg (fun x => lam a i • x) hg
         simpa only [smul_add, Finset.smul_sum, smul_zero, smul_smul, mul_comm (lam a i)] using h

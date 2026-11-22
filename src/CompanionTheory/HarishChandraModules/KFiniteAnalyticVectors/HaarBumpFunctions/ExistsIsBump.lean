@@ -1,6 +1,10 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsOpOfForm
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.Garding
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
+module
+
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.HaarBumpFunctions.ExistsOpOfForm
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.Garding
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
+
+@[expose] public section
 
 open Matrix Filter Topology Set MeasureTheory MeasureTheory.Measure
 open scoped ContDiff InnerProductSpace
@@ -139,17 +143,33 @@ theorem IsSmForm.avg_bd (hl : IsSmForm G σ W C l) (h : RepOn G σ) (hW : ∀ i,
     (hv : IsSm G σ v) {φ : Mat n → ℝ} (hφ : Continuous φ) (hc : HasCompactSupport φ) {x : H} (hx : IsSm G σ x) :
     ‖(∫ g : MG G hG, φ g.mat • l (σ g.mat v) ∂haar) - l x‖ ≤
       C * ∑ i, ‖(∫ g : MG G hG, φ g.mat • dsW σ (W i) (σ g.mat v) ∂haar) - dsW σ (W i) x‖ := by
+  have hzero (i : ι) : dsW σ (W i) 0 = 0 := by
+    simpa only [sub_self] using dsW_sub h IsSm.zero IsSm.zero (hW i)
+  have hadd {a b : H} (ha : IsSm G σ a) (hb : IsSm G σ b) (i : ι) :
+      dsW σ (W i) (a + b) = dsW σ (W i) a + dsW σ (W i) b := by
+    calc
+      dsW σ (W i) (a + b) = dsW σ (W i) (a - (0 - b)) := by rw [zero_sub, sub_neg_eq_add]
+      _ = _ := by
+        rw [dsW_sub h ha (IsSm.zero.sub hb) (hW i), dsW_sub h IsSm.zero hb (hW i),
+          hzero i, zero_sub, sub_neg_eq_add]
+  have hsmul {a : H} (ha : IsSm G σ a) (c : ℂ) {U : List (Mat n)} (hU : LieW G U) :
+      dsW σ U (c • a) = c • dsW σ U a := by
+    induction U with
+    | nil => rfl
+    | cons X U ih =>
+      have hU' : LieW G U := fun Y hY => hU Y (List.mem_cons_of_mem _ hY)
+      simp only [dsW_cons, ih hU']
+      exact ds_smul h (hU X List.mem_cons_self) (ha.dsW h hU') c
   let S₀ : Submodule ℂ ((ι → H) × ℂ) :=
     { carrier := {p | ∃ y, IsSm G σ y ∧ p = (fun i => dsW σ (W i) y, l y)}
       add_mem' := by
         rintro _ _ ⟨a, ha, rfl⟩ ⟨b, hb, rfl⟩
-        exact ⟨a + b, ha.add hb, Prod.ext (funext fun i => (dsW_add h ha hb (hW i)).symm) (hl.add _ _ ha hb).symm⟩
-      zero_mem' := ⟨0, IsSm.zero, Prod.ext (funext fun i => by
-          simpa using (dsW_smul h (IsSm.zero (G := G) (σ := σ)) 0 (hW i)).symm)
+        exact ⟨a + b, ha.add hb, Prod.ext (funext fun i => (hadd ha hb i).symm) (hl.add _ _ ha hb).symm⟩
+      zero_mem' := ⟨0, IsSm.zero, Prod.ext (funext fun i => (hzero i).symm)
         (by simpa using (hl.smul 0 0 IsSm.zero).symm)⟩
       smul_mem' := by
         rintro c _ ⟨a, ha, rfl⟩
-        exact ⟨c • a, ha.smul c, Prod.ext (funext fun i => (dsW_smul h ha c (hW i)).symm) (hl.smul _ _ ha).symm⟩ }
+        exact ⟨c • a, ha.smul c, Prod.ext (funext fun i => (hsmul ha c (hW i)).symm) (hl.smul _ _ ha).symm⟩ }
   have hcl : IsClosed {p : (ι → H) × ℂ | ‖p.2‖ ≤ C * ∑ i, ‖p.1 i‖} :=
     isClosed_le continuous_snd.norm (continuous_const.mul (continuous_finsetSum _ fun i _ =>
       ((continuous_apply i).comp continuous_fst).norm))
@@ -185,7 +205,7 @@ theorem IsSmForm.exists_bd (hl : IsSmForm G σ W C l) (h : RepOn G σ) (hiso : �
   have h1 := hl.avg_bd (hG := hG) h hW hv hφ.continuous hc IsSm.zero
   have h0 : l 0 = 0 := by simpa using hl.smul 0 0 IsSm.zero
   have h0' : ∀ i, dsW σ (W i) 0 = 0 := fun i => by
-    simpa using dsW_smul h (IsSm.zero (G := G) (σ := σ)) 0 (hW i)
+    simpa only [sub_self] using dsW_sub h IsSm.zero IsSm.zero (hW i)
   simp only [h0, h0', sub_zero] at h1
   refine h1.trans ((mul_le_mul_of_nonneg_right (le_abs_self C) (Finset.sum_nonneg fun _ _ => norm_nonneg _)).trans ?_)
   rw [mul_assoc, Finset.sum_mul]
@@ -230,20 +250,26 @@ variable {ι ι' : Type} [Fintype ι] [Fintype ι'] {W : ι → List (Mat n)} {W
   {B : H → H' → ℂ}
 
 omit [CompleteSpace H] [CompleteSpace H'] in
-theorem IsInv.swap (hB : IsInv G σ σ' W W' C B) : IsInv G σ' σ W' W C fun y x => star (B x y) where
-  add_left y y' x hy hy' hx := by rw [hB.add_right x y y' hx hy hy', star_add]
-  smul_left a y x hy hx := by rw [hB.smul_right a x y hx hy, star_mul', star_star]
-  add_right y x x' hy hx hx' := by rw [hB.add_left x x' y hx hx' hy, star_add]
-  smul_right a y x hy hx := by rw [hB.smul_left a x y hx hy, star_mul']
-  inv g hg y x hy hx := by rw [hB.inv g hg x y hx hy]
-  bd y x hy hx := by rw [norm_star, mul_right_comm]; exact hB.bd x y hx hy
+theorem IsInv.swap (hB : IsInv G σ σ' W W' C B) : IsInv G σ' σ W' W C (fun y x => star (B x y)) := by
+  exact
+    { add_left := fun y y' x hy hy' hx => by rw [hB.add_right x y y' hx hy hy', star_add]
+      smul_left := fun a y x hy hx => by rw [hB.smul_right a x y hx hy, star_mul', star_star]
+      add_right := fun y x x' hy hx hx' => by rw [hB.add_left x x' y hx hx' hy, star_add]
+      smul_right := fun a y x hy hx => by rw [hB.smul_left a x y hx hy, star_mul']
+      inv := fun g hg y x hy hx => by rw [hB.inv g hg x y hx hy]
+      bd := fun y x hy hx => by
+        rw [norm_star, mul_right_comm]
+        exact hB.bd x y hx hy }
 
 omit [CompleteSpace H] [CompleteSpace H'] in
 theorem IsInv.left (hB : IsInv G σ σ' W W' C B) {y : H'} (hy : IsSm G σ' y) :
-    IsSmForm G σ W (C * ∑ j, ‖dsW σ' (W' j) y‖) fun x => B x y where
-  add x x' hx hx' := hB.add_left x x' y hx hx' hy
-  smul a x hx := hB.smul_left a x y hx hy
-  bd x hx := by rw [mul_right_comm]; exact hB.bd x y hx hy
+    IsSmForm G σ W (C * ∑ j, ‖dsW σ' (W' j) y‖) (fun x => B x y) := by
+  exact
+    { add := fun x x' hx hx' => hB.add_left x x' y hx hx' hy
+      smul := fun a x hx => hB.smul_left a x y hx hy
+      bd := fun x hx => by
+        rw [mul_right_comm]
+        exact hB.bd x y hx hy }
 
 theorem IsInv.exists_rep [(haar : Measure (MG G hG)).IsInvInvariant] (θ : Mat n →L[ℝ] Mat n)
     (hθ : ∀ x ∈ G, θ x = x⁻¹) (hB : IsInv G σ σ' W W' C B) (h : RepOn G σ) (h' : RepOn G σ')

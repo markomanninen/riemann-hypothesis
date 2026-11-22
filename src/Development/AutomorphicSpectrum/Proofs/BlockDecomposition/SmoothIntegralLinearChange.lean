@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralCompSymm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralCompSymm
+
+@[expose] public section
 
 noncomputable section
 

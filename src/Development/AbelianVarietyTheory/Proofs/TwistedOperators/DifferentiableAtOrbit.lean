@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Formalism.RealPlaceAnalysis.StatementE
-import Formalism.RealPlaceAnalysis.StatementB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DRepAddAndBracket
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.PseudoCoefficientSeparation
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Formalism.RealPlaceAnalysis.StatementE
+public import Formalism.RealPlaceAnalysis.StatementB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DRepAddAndBracket
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem Jm_conjTranspose (ε : Fin n → Bool) : (Jm ε)ᴴ = Jm ε := by
 theorem isUnit_Jm_det (ε : Fin n → Bool) : IsUnit (Jm ε).det :=
   isUnit_det_of_left_inverse (Jm_mul_self ε)
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 theorem dRep_add_bracket {ρ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)}
     (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) {v : H} (hv : SmoothVec (lieSet ε) ρ v)
     {X Y : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (hY : Y ∈ lieSet ε) :
@@ -101,7 +105,7 @@ theorem dRep_add_vec {ρ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {v w 
     (hv : SmoothVec (lieSet ε) ρ v) (hw : SmoothVec (lieSet ε) ρ w) {X : Matrix (Fin n) (Fin n) ℂ}
     (hX : X ∈ lieSet ε) : dRep ρ X (v + w) = dRep ρ X v + dRep ρ X w := by
   unfold dRep
-  simp_rw [map_add]
+  simp_rw [map_add (f := _)]
   exact deriv_add (differentiableAt_orbit hv hX) (differentiableAt_orbit hw hX)
 
 theorem dRep_smul_vec {ρ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {v : H}
@@ -275,64 +279,6 @@ theorem dsigC_smul_vec {v : H} (hv : SmoothVec (lieSet ε) ρ v) (Y : Matrix (Fi
     PI.DSInfCharCap.dsigC ε ρ Y (c • v) = c • PI.DSInfCharCap.dsigC ε ρ Y v := by
   rw [dsigC_eq, dsigC_eq, dRep_smul_vec hv (cre_mem Y), dRep_smul_vec hv (cim_mem Y), smul_add,
     smul_comm c Complex.I]
-
-theorem dsigC_mem (hV : IsGKSub ε ρ (kFinVec ε ρ)) (Y : Matrix (Fin n) (Fin n) ℂ) {v : H}
-    (hv : v ∈ kFinVec ε ρ) : PI.DSInfCharCap.dsigC ε ρ Y v ∈ kFinVec ε ρ := by
-  rw [dsigC_eq]
-  exact add_mem (hV.lieStable _ (cre_mem Y) v hv) (Submodule.smul_mem _ _ (hV.lieStable _ (cim_mem Y) v hv))
-
-def gAct (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ)) :
-    Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] Module.End ℂ (kFinVec ε ρ) where
-  toFun Y :=
-    { toFun := fun v => ⟨PI.DSInfCharCap.dsigC ε ρ Y v, dsigC_mem hV Y v.2⟩
-      map_add' := fun v w => Subtype.ext (dsigC_add_vec (hV.smooth v v.2) (hV.smooth w w.2) Y)
-      map_smul' := fun c v => Subtype.ext (dsigC_smul_vec (hV.smooth v v.2) Y c) }
-  map_add' Y Z := LinearMap.ext fun v => Subtype.ext (dsigC_add hρ (hV.smooth v v.2) Y Z)
-  map_smul' c Y := LinearMap.ext fun v => Subtype.ext (dsigC_smul hρ (hV.smooth v v.2) c Y)
-
-theorem gAct_coe (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ))
-    (Y : Matrix (Fin n) (Fin n) ℂ) (v : kFinVec ε ρ) :
-    ((gAct hρ hV Y v : kFinVec ε ρ) : H) = PI.DSInfCharCap.dsigC ε ρ Y v := rfl
-
-theorem gAct_of_mem (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ))
-    {X : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (v : kFinVec ε ρ) :
-    ((gAct hρ hV X v : kFinVec ε ρ) : H) = dRep ρ X v := by
-  rw [gAct_coe, dsigC_eq, cre_of_mem hX, cim_of_mem hX, dRep_zero, smul_zero, add_zero]
-
-theorem gAct_decomp (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ))
-    (X : Matrix (Fin n) (Fin n) ℂ) :
-    gAct hρ hV X = gAct hρ hV (cre ε X) + Complex.I • gAct hρ hV (cim ε X) := by
-  conv_lhs => rw [← cre_add_cim (ε := ε) X]
-  rw [map_add, map_smul]
-
-theorem gAct_bracket_of_mem (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ))
-    {X Y : Matrix (Fin n) (Fin n) ℂ} (hX : X ∈ lieSet ε) (hY : Y ∈ lieSet ε) :
-    gAct hρ hV (X * Y - Y * X) = gAct hρ hV X * gAct hρ hV Y - gAct hρ hV Y * gAct hρ hV X := by
-  refine LinearMap.ext fun v => Subtype.ext ?_
-  rw [gAct_of_mem hρ hV (bracket_mem hX hY), LinearMap.sub_apply, Module.End.mul_apply, Module.End.mul_apply,
-    Submodule.coe_sub]
-  simp only [gAct_of_mem hρ hV hX, gAct_of_mem hρ hV hY]
-  exact (dRep_add_bracket hρ (hV.smooth v v.2) hX hY).2
-
-theorem gAct_bracket (hρ : Formalism.QuantumDeterminants.IsCRepOn (UJset ε) ρ) (hV : IsGKSub ε ρ (kFinVec ε ρ))
-    (X Y : Matrix (Fin n) (Fin n) ℂ) :
-    gAct hρ hV (X * Y - Y * X) = gAct hρ hV X * gAct hρ hV Y - gAct hρ hV Y * gAct hρ hV X := by
-  have hm : ∀ X1 X2 Y1 Y2 : Matrix (Fin n) (Fin n) ℂ,
-      (X1 + Complex.I • X2) * (Y1 + Complex.I • Y2) - (Y1 + Complex.I • Y2) * (X1 + Complex.I • X2) =
-        (X1 * Y1 - Y1 * X1) + Complex.I • (X1 * Y2 - Y2 * X1) + Complex.I • (X2 * Y1 - Y1 * X2) -
-          (X2 * Y2 - Y2 * X2) := by
-    intro X1 X2 Y1 Y2
-    simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, Complex.I_mul_I, neg_one_smul,
-      smul_sub, smul_add, smul_neg, neg_smul, Complex.I_mul_I]
-    module
-  have h := hm (cre ε X) (cim ε X) (cre ε Y) (cim ε Y)
-  rw [cre_add_cim, cre_add_cim] at h
-  rw [h, map_sub, map_add, map_add, map_smul, map_smul, gAct_bracket_of_mem hρ hV (cre_mem X) (cre_mem Y),
-    gAct_bracket_of_mem hρ hV (cre_mem X) (cim_mem Y), gAct_bracket_of_mem hρ hV (cim_mem X) (cre_mem Y),
-    gAct_bracket_of_mem hρ hV (cim_mem X) (cim_mem Y), gAct_decomp hρ hV X, gAct_decomp hρ hV Y]
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, Complex.I_mul_I, neg_one_smul,
-    smul_sub, smul_add, smul_neg, neg_smul, Complex.I_mul_I]
-  module
 
 end Act
 

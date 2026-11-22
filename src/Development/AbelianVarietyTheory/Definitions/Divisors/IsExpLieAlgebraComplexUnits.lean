@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.RightRegular
-import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.RightRegular
+public import GroundTheory.AutomorphicForms.DixmierMalliavinBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,6 @@ theorem mem_solG {P : Polynomial ℂ} {f : G → ℂ} : f ∈ solG h b P ↔ ∃
     exact ⟨⟨f, hf⟩, h0, rfl⟩
 
 namespace SmFnEx
-
-def idChar : (⊤ : Subgroup ℂˣ) →* ℂ := (Units.coeHom ℂ).comp (Subgroup.subtype ⊤)
 
 end SmFnEx
 

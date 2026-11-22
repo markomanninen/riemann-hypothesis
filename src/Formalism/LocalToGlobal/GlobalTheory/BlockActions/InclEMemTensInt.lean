@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LatSOfMem
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.AfsplitB
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,8 @@ theorem tq_tmul {m : ℕ} (b : Fin m → 𝓞 E) (hb : Submodule.span ℤ (Set.r
   have he : e ∈ Submodule.span ℤ (Set.range b) := by rw [hb]; trivial
   obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 he
   refine ⟨fun j => c j • y, fun j => zsmul_mem hy (c j), ?_⟩
-  rw [← hc, map_sum, TensorProduct.sum_tmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hc, map_sum, TensorProduct.sum_tmul]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_zsmul]
   exact TensorProduct.smul_tmul _ _ _

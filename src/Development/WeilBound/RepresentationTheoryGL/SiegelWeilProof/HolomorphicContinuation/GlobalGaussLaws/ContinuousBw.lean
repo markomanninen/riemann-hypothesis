@@ -1,12 +1,16 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PsiInnerSIns
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ReTraceEq
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.EvXTemperate
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LNe
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FibFact
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocCellT
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinCoefficientBlockUnfolding
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HalfTrAddSwap
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PsiInnerSIns
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ReTraceEq
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.EvXTemperate
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LNe
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.FibFact
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocCellT
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaLiftEisensteinLevelSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EisensteinCoefficientBlockUnfolding
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HalfTrAddSwap
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,17 +32,17 @@ variable {D : D7} {n m : ℕ}
 set_option synthInstance.maxHeartbeats 400000 in
 theorem compAt_add (θ : InfFam D) (τ : D.what₂.Tau) (a b : Mx D m n) :
     compAt θ τ (a + b) = compAt θ τ a + compAt θ τ b := by
-  ext i j; simp only [compAt, Matrix.map_apply, Matrix.add_apply, RingHom.map_add]
+  ext i j; simp only [compAt, Matrix.map_apply, Matrix.add_apply, RingHom.map_add (f := _)]
 
 set_option synthInstance.maxHeartbeats 400000 in
 theorem finMap_add (a b : Mx D m n) : (a + b).map (finPart D) = a.map (finPart D) + b.map (finPart D) := by
-  ext i j; simp only [Matrix.map_apply, Matrix.add_apply, RingHom.map_add]
+  ext i j; simp only [Matrix.map_apply, Matrix.add_apply, RingHom.map_add (f := _)]
 
 theorem away_add {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {fr : Matrix (Fin m) (Fin m) ℂ}
     {Ψ : Mx D m n → ℂ} (hΨ : AwayCls θ τ fr Ψ) (y : Mx D m n) (u : Fin m → Fin n → ℂ) :
     Ψ (y + sIns τ fr u) = Ψ y := by
   refine hΨ.1 _ _ (fun τ' hne => ?_) ?_
-  · rw [compAt_add, show sIns (D := D) τ fr u = insT τ (fr * Matrix.of u) from rfl, compAt_insT hθ, if_neg hne,
+  · rw [compAt_add, show sIns (D := D) τ fr u = insT τ (fr * Matrix.of u) from rfl, compAt_insT hθ, ite_eq_right hne,
       add_zero]
   · rw [finMap_add, show sIns (D := D) τ fr u = insT τ (fr * Matrix.of u) from rfl, finMap_insT, add_zero]
 
@@ -61,14 +65,14 @@ theorem cont_of_away {θ : InfFam D} (hθ : IsInfFam θ) {τ : D.what₂.Tau} {f
 
 def Bw (ψ : AddChar (AF D.host.F) ℂ) (V : HSp D) (θ : InfFam D) (τ : D.what₂.Tau) (fr : Matrix (Fin V.rank) (Fin V.rank) ℂ)
     (Ψ : Mx D V.rank n → ℂ) (x y : Mx D V.rank n) : ℂ :=
-  Ψ y * ψ (trA (Matrix.trace (inner V x (y - sIns τ fr (piF θ τ fr y)))))
+  Ψ y * ψ (trA (Matrix.trace (GlobalTheory.StdUnn.inner V x (y - sIns τ fr (piF θ τ fr y)))))
 
 theorem Bw_add {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {τ : D.what₂.Tau} {fr : Matrix (Fin V.rank) (Fin V.rank) ℂ}
     (hdet : IsUnit fr.det) (ψ : AddChar (AF D.host.F) ℂ) {Ψ : Mx D V.rank n → ℂ} (hΨ : AwayCls θ τ fr Ψ)
     (x y : Mx D V.rank n) (u : Fin V.rank → Fin n → ℂ) :
     Bw ψ V θ τ fr Ψ x (y + sIns τ fr u) = Bw ψ V θ τ fr Ψ x y := by
   have e : y + sIns τ fr u - sIns τ fr (piF θ τ fr (y + sIns τ fr u)) = y - sIns τ fr (piF θ τ fr y) := by
-    rw [(piF θ τ fr).map_add, piF_sIns hθ τ hdet, (sIns τ fr).map_add]
+    rw [map_add (piF θ τ fr), piF_sIns hθ τ hdet, map_add (sIns τ fr)]
     abel
   unfold Bw
   rw [away_add hθ hΨ, e]
@@ -81,7 +85,13 @@ theorem continuous_Bw {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {τ : D.wh
   have := GlobalTheory.Doubling.isTopologicalRing_tens (F := D.host.F) (E := D.host.E) (R := AF D.host.F)
   have : ContinuousSub (Mx D V.rank n) := inferInstance
   refine (cont_of_away hθ hΨ).mul ?_
-  have h := GlobalTheory.CompanionTheory.EisUnfold.Core.continuous_lin ψ hψ V x
+  have htr : Continuous (trA (D := D)) := by
+    have : IsModuleTopology (AF D.host.F) (AE D) := ⟨rfl⟩
+    exact IsModuleTopology.continuous_of_linearMap (Algebra.trace (AF D.host.F) (AE D))
+  have hinner : Continuous (fun y : Mx D V.rank n => GlobalTheory.StdUnn.inner V x y) := by
+    unfold GlobalTheory.StdUnn.inner
+    exact continuous_const.matrix_mul (continuous_const.matrix_mul continuous_id)
+  have h := hψ.1.comp (htr.comp hinner.matrix_trace)
   exact h.comp (continuous_id.sub ((continuous_sIns τ fr).comp (continuous_piF hθ τ fr)))
 
 theorem norm_Bw {V : HSp D} {θ : InfFam D} {τ : D.what₂.Tau} {fr : Matrix (Fin V.rank) (Fin V.rank) ℂ}

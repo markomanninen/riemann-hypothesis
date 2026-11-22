@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppLoc
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.KppLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,11 +51,11 @@ theorem wqs (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal) {c : X.B.I.E ⊗
     (h : ZMod' X.B.I X.B.g c) : sg X.B.I c ∈ Wq X.B.I w := zmod_Wq hg (zmod_sg h)
 
 theorem xI_inj {a b : Fin D.R.rS} : xI (hrD D) a = xI (hrD D) b ↔ a = b :=
-  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa using this), fun h => h ▸ rfl⟩
+  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa [xI, wI, yI] using this), fun h => h ▸ rfl⟩
 theorem wI_inj {a b : Fin D.R.k} : wI (hrD D) a = wI (hrD D) b ↔ a = b :=
-  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa using this), fun h => h ▸ rfl⟩
+  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa [xI, wI, yI] using this), fun h => h ▸ rfl⟩
 theorem yI_inj {a b : Fin D.R.rS} : yI (hrD D) a = yI (hrD D) b ↔ a = b :=
-  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa using this), fun h => h ▸ rfl⟩
+  ⟨fun h => Fin.ext (by have := congrArg Fin.val h; simpa [xI, wI, yI] using this), fun h => h ▸ rfl⟩
 
 theorem gram (ob : Bool) (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal)
     (hew : X.ew - (if ob then 1 else 0) ∈ Wq X.B.I w) (hsew : sg X.B.I X.ew - (if ob then 0 else 1) ∈ Wq X.B.I w) :
@@ -68,18 +72,18 @@ theorem gram (ob : Bool) (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal)
     rw [map_sub, sg_hA, sg_ite] at h
     exact gram_of h (by rw [xI_inj]; exact eq_comm)
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [dual_frame_isotropic, fr_wf]; exact wq X hg ((X.weightVectorsIntegral (rv b)).2.2 a).2.2.2
     · rw [dual_frame_isotropic, fr_wt]; exact wq X hg ((X.weightVectorsIntegral b).2.2 a).2.1
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [dual_frame_isotropic, frame_anisotropic]; exact wq X hg (X.formsAtZero.2 a).2
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [dual_frame_isotropic, fr_y]; exact wq X hg (X.gramIntegral a (rv b)).2.1
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [frd_wf, frame_isotropic]; have := wqs X hg ((X.weightVectorsIntegral (rv a)).2.2 b).1; rwa [sg_hA] at this
     · rw [frd_wt, frame_isotropic]; have := wqs X hg ((X.weightVectorsIntegral a).2.2 b).2.2.1; rwa [sg_hA] at this
@@ -108,22 +112,22 @@ theorem gram (ob : Bool) (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal)
       · rw [if_neg hab, sub_zero] at h
         exact gram_ne h (fun h' => hab (wI_inj.1 h'))
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [frd_wf, frame_anisotropic]; have := wqs X hg (X.weightVectorsIntegral (rv a)).1; rwa [sg_hA] at this
     · rw [frd_wt, frame_anisotropic]; have := wqs X hg (X.weightVectorsIntegral a).2.1; rwa [sg_hA] at this
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [frd_wf, fr_y]; have := wqs X hg ((X.weightVectorsIntegral (rv a)).2.2 (rv b)).2.1; rwa [sg_hA] at this
     · rw [frd_wt, fr_y]; have := wqs X hg ((X.weightVectorsIntegral a).2.2 (rv b)).2.2.2; rwa [sg_hA] at this
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [dual_frame_anisotropic, frame_isotropic, hhat_neg_left]
     refine neg_mem ?_
     have := wqs X hg (X.formsAtZero.2 b).1; rwa [sg_hA] at this
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [dual_frame_anisotropic, fr_wf, hhat_neg_left]; exact neg_mem (wq X hg (X.weightVectorsIntegral (rv b)).2.1)
     · rw [dual_frame_anisotropic, fr_wt, hhat_neg_left]; exact neg_mem (wq X hg (X.weightVectorsIntegral b).1)
@@ -134,20 +138,20 @@ theorem gram (ob : Bool) (hg : ((X.B.g : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal)
     show -hhat X.B.I X.z0 X.z0 - 1 = -(hA X.B.I X.z0 X.z0 + 1)
     rw [show hA X.B.I X.z0 X.z0 = hhat X.B.I X.z0 X.z0 from rfl]; ring
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [dual_frame_anisotropic, fr_y, hhat_neg_left]
     refine neg_mem ?_
     have := wqs X hg (X.formsAtZero.2 (rv b)).2; rwa [sg_hA] at this
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [frd_y, frame_isotropic]; exact wq X hg (X.gramIntegral (rv a) b).1
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     cases ob
     · rw [frd_y, fr_wf]; exact wq X hg ((X.weightVectorsIntegral (rv b)).2.2 (rv a)).2.2.1
     · rw [frd_y, fr_wt]; exact wq X hg ((X.weightVectorsIntegral b).2.2 (rv a)).1
   ·
-    refine gram_ne ?_ (ne_val (by simp <;> omega))
+    refine gram_ne ?_ (ne_val (by simp [xI, wI, yI, zI] <;> omega))
     rw [frd_y, frame_anisotropic]; exact wq X hg (X.formsAtZero.2 (rv a)).1
   ·
     rw [frd_y, fr_y]

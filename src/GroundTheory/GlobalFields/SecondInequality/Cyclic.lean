@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.FirstInequality
-import GroundTheory.GlobalFields.SecondInequality.PowFinrankMemRangeInfiniteLocalNorm
-import GroundTheory.GlobalFields.SecondInequality.Reduction
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.FirstInequality
+public import GroundTheory.GlobalFields.SecondInequality.PowFinrankMemRangeInfiniteLocalNorm
+public import GroundTheory.GlobalFields.SecondInequality.Reduction
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

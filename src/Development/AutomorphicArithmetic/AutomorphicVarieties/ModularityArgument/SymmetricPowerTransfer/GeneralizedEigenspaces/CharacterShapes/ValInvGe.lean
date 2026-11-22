@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ConjMemLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DetRoot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinToAF
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.HomTrivialOnDetOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.RpExistsUnique
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralLf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ConjMemLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DetRoot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinToAF
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.DcAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.HomTrivialOnDetOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.OutInvMulMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.FinOrbSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.RpExistsUnique
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.ExpoEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.FiniteOrbits.LocalLevelOutsideSigma
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralLf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,12 +31,12 @@ section SlopeTestRemainingChoices
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-theorem exFin (n : ℕ) : ∃ p : UA L n →* finU L n,
-    (∀ f : finU L n, ∀ k ∈ infU L n, p ((f : UA L n) * k) = f) ∧ ∀ x : UA L n, ∃ k ∈ infU L n, x = (p x : UA L n) * k := by
+theorem exFin (n : ℕ) : ∃ p : UA L n →* finU (E := L) (n := n),
+    (∀ f : finU (E := L) (n := n), ∀ k ∈ infU L n, p ((f : UA L n) * k) = f) ∧ ∀ x : UA L n, ∃ k ∈ infU L n, x = (p x : UA L n) * k := by
   obtain ⟨-, -, hs, hc, he, hm, -, -⟩ := uaFacts L n
-  have hone : ∀ x : UA L n, x ∈ finU L n → x ∈ infU L n → x = 1 := fun x h₁ h₂ =>
+  have hone : ∀ x : UA L n, x ∈ finU (E := L) (n := n) → x ∈ infU L n → x = 1 := fun x h₁ h₂ =>
     he x 1 (fun w => by rw [(hm x).2.1 h₂ w, map_one]) (fun τ => by rw [(hm x).1.1 h₁ τ, map_one])
-  have hu : ∀ f ∈ finU L n, ∀ k ∈ infU L n, ∀ f' ∈ finU L n, ∀ k' ∈ infU L n, f * k = f' * k' → f = f' := by
+  have hu : ∀ f ∈ finU (E := L) (n := n), ∀ k ∈ infU L n, ∀ f' ∈ finU (E := L) (n := n), ∀ k' ∈ infU L n, f * k = f' * k' → f = f' := by
     intro f hf k hk f' hf' k' hk' h
     have h₀ : f'⁻¹ * f = k' * k⁻¹ := by
       rw [inv_mul_eq_iff_eq_mul, ← mul_assoc, ← h, mul_inv_cancel_right]
@@ -51,7 +55,7 @@ theorem exFin (n : ℕ) : ∃ p : UA L n →* finU L n,
   · intro f₀ k₀ hk₀
     exact Subtype.ext (hu _ (hf _) _ (hk _) _ f₀.2 _ hk₀ (hx _).symm)
 
-theorem infC_fin {n : ℕ} {x : UA L n} (h : x ∈ finU L n) : infC L n x = 1 := by
+theorem infC_fin {n : ℕ} {x : UA L n} (h : x ∈ finU (E := L) (n := n)) : infC L n x = 1 := by
   obtain ⟨-, -, -, -, -, hm, -, -⟩ := uaFacts L n
   funext v
   exact (hm x).1.1 h v.embedding
@@ -76,7 +80,7 @@ theorem cD_rS (B : Bridge L) (n : ℕ) (e : ℤ) (γ : SU B.Δ) :
   rw [Wt.repD_apply, h₂, h₁, h₃]
   simp
 
-def eT : ↥(finU L 2 ⊓ SUA L) ≃* ↥((SUA L).subgroupOf (finU L 2)) where
+def eT : ↥(finU (E := L) (n := 2) ⊓ SUA L) ≃* ↥((SUA L).subgroupOf (finU (E := L) (n := 2))) where
   toFun x := ⟨⟨x.1, x.2.1⟩, x.2.2⟩
   invFun s := ⟨s.1.1, s.1.2, s.2⟩
   left_inv _ := rfl
@@ -96,15 +100,15 @@ section Aux2
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-theorem comm_mem (x y : finU L 2) : x * y * x⁻¹ * y⁻¹ ∈ (SUA L).subgroupOf (finU L 2) := by
+theorem comm_mem (x y : finU (E := L) (n := 2)) : x * y * x⁻¹ * y⁻¹ ∈ (SUA L).subgroupOf (finU (E := L) (n := 2)) := by
   rw [Subgroup.mem_subgroupOf]
   refine MonoidHom.mem_ker.2 ?_
   rw [Subgroup.coe_mul, Subgroup.coe_mul, Subgroup.coe_mul, Subgroup.coe_inv, Subgroup.coe_inv, map_mul, map_mul, map_mul, map_inv, map_inv]
   exact comm_one _ _
 
-theorem rat_iota (B : Bridge L) (hB : B.Ok) (p : UA L 2 →* finU L 2)
-    (hp1 : ∀ f : finU L 2, ∀ k ∈ infU L 2, p ((f : UA L 2) * k) = f) (ι : DX B.Δ →* DA B.Δ) (hι : IsIotaD ι) (γ₀ : SU B.Δ) :
-    ∃ h : ι γ₀ ∈ SA B.Δ, ((B.bS ⟨ι γ₀, h⟩ : ↥(finU L 2 ⊓ SUA L)) : UA L 2) = (p (B.rS γ₀ : UA L 2) : UA L 2) := by
+theorem rat_iota (B : Bridge L) (hB : B.Ok) (p : UA L 2 →* finU (E := L) (n := 2))
+    (hp1 : ∀ f : finU (E := L) (n := 2), ∀ k ∈ infU L 2, p ((f : UA L 2) * k) = f) (ι : DX B.Δ →* DA B.Δ) (hι : IsIotaD ι) (γ₀ : SU B.Δ) :
+    ∃ h : ι γ₀ ∈ SA B.Δ, ((B.bS ⟨ι γ₀, h⟩ : ↥(finU (E := L) (n := 2) ⊓ SUA L)) : UA L 2) = (p (B.rS γ₀ : UA L 2) : UA L 2) := by
   have hdet : (mt (γ₀ : DX B.Δ)).det = 1 :=
     congrArg Units.val (MonoidHom.mem_ker.1 (show (γ₀ : DX B.Δ) ∈ ((Matrix.GeneralLinearGroup.det (n := Fin 2) (R := Lsq (Lp L) B.Δ)).comp (DX B.Δ).subtype).ker from γ₀.2))
   have hmem : ι γ₀ ∈ SA B.Δ := by
@@ -129,19 +133,19 @@ section Aux3
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
 
-def eS (B : Bridge L) : SA B.Δ ≃* ↥((SUA L).subgroupOf (finU L 2)) := B.bS.trans eT
+def eS (B : Bridge L) : SA B.Δ ≃* ↥((SUA L).subgroupOf (finU (E := L) (n := 2))) := B.bS.trans eT
 
 set_option maxHeartbeats 2000000 in
-theorem left_eq (B : Bridge L) (hB : B.Ok) (p : UA L 2 →* finU L 2)
-    (hp1 : ∀ f : finU L 2, ∀ k ∈ infU L 2, p ((f : UA L 2) * k) = f)
+theorem left_eq (B : Bridge L) (hB : B.Ok) (p : UA L 2 →* finU (E := L) (n := 2))
+    (hp1 : ∀ f : finU (E := L) (n := 2), ∀ k ∈ infU L 2, p ((f : UA L 2) * k) = f)
     (hp2 : ∀ x : UA L 2, ∃ k ∈ infU L 2, x = (p x : UA L 2) * k)
     {m : ℕ} (hm : 3 ≤ m) {U : Subgroup (UA L 2)} (hU : IsCong m U) (ι : DX B.Δ →* DA B.Δ) (hι : IsIotaD ι)
     {n : ℕ} {e : ℤ} (ψ : SA B.Δ → Wt.VD (InfinitePlace L) n)
     (h0 : ∀ (γ : SU B.Δ) (g g' : SA B.Δ), (g' : DA B.Δ) = ι γ * g → ψ g' = Wt.cD (em B) n e (γ : DX B.Δ) (ψ g))
-    (γ : ratU L 2) (g g' : ↥((SUA L).subgroupOf (finU L 2))) (hg : (g' : finU L 2) = p γ.1 * g) :
+    (γ : ratU L 2) (g g' : ↥((SUA L).subgroupOf (finU (E := L) (n := 2)))) (hg : (g' : finU (E := L) (n := 2)) = p γ.1 * g) :
     ψ ((eS B).symm g') = repE n (0 : InfinitePlace L → ℤ) (infC L 2 γ.1) (ψ ((eS B).symm g)) := by
   obtain ⟨k, hk, hγ⟩ := hp2 γ.1
-  have hfS : p γ.1 ∈ (SUA L).subgroupOf (finU L 2) := by
+  have hfS : p γ.1 ∈ (SUA L).subgroupOf (finU (E := L) (n := 2)) := by
     have h₁ := mul_mem g'.2 (inv_mem g.2)
     rwa [hg, mul_inv_cancel_right] at h₁
   have hr : (p γ.1 : UA L 2) * k ∈ ratU L 2 := by rw [← hγ]; exact γ.2
@@ -157,7 +161,7 @@ theorem left_eq (B : Bridge L) (hB : B.Ok) (p : UA L 2 →* finU L 2)
       apply (eS B).injective
       rw [map_mul, MulEquiv.apply_symm_apply, MulEquiv.apply_symm_apply]
       refine Subtype.ext (Subtype.ext ?_)
-      show ((g' : finU L 2) : UA L 2) = (B.bS ⟨ι γ₀, hmem⟩ : UA L 2) * ((g : finU L 2) : UA L 2)
+      show ((g' : finU (E := L) (n := 2)) : UA L 2) = (B.bS ⟨ι γ₀, hmem⟩ : UA L 2) * ((g : finU (E := L) (n := 2)) : UA L 2)
       rw [hg, hf']
       rfl
     exact congrArg Subtype.val this
@@ -174,8 +178,6 @@ namespace UpperTheory.V.Z.Sym.So.OS
 section PrimeReciprocalSums
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L]
-
-def psiS (B : Bridge L) {V : Type} (ψ : SA B.Δ → V) (s : ↥((SUA L).subgroupOf (finU L 2))) : V := ψ ((eS B).symm s)
 
 instance suaNormal : (SUA L).Normal := by unfold SUA; infer_instance
 

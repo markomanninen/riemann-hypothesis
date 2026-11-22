@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalGroupInFamilyNontrivial
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalGroupInFamilyNontrivial
+
+@[expose] public section
 
 noncomputable section
 
@@ -106,7 +110,7 @@ def EZ {T : D.host.E} (T' : D.host.E) (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodu
     FrameOK D Λ F' ∧ ZhatL (lf D F0) F' = Z}
 
 def NilradicalFlagMoved {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (F' F'' : LFlag (VS D) D.R.rS T') : Prop :=
+    (F' F'' : LFlag (D.sp.Y 0) D.R.rS T') : Prop :=
   ∃ n ∈ N0 F0 Λ, (∀ a, n (F'.fl.e a) = F''.fl.e a) ∧ n F'.fl.z = F''.fl.z
 
 def cntE {T : D.host.E} (T' : D.host.E) (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
@@ -131,21 +135,9 @@ def Formula (δ : ∀ p : PlF D, (D.s.atP p).Fp) (L : LocSp D M) (u u' : D.what�
       nu (Tn u') F0 what₂ Z =
         c * sqrtAbsNormOfScaledGram (Tn u) (Tn u') Z ^ (D.R.k - 1) * ∏' p, densP L δ ϖ (Tn u) (Tn u') Z p)
 
-def NotPos (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Tn u))
-    (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) : Prop :=
-  ∀ Z : MatZ D, ¬ TotPos (GZ (Tn u) (Tn u') Z) → nu (Tn u') F0 what₂ Z = 0
-
 def NotInt (δ : ∀ p : PlF D, (D.s.atP p).Fp) (u u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Tn u))
     (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) : Prop :=
   ∀ Z : MatZ D, (∃ p a b, ZZP (M := M) δ u u' p Z a b ∉ (M p).R) → nu (Tn u') F0 what₂ Z = 0
-
-def CntLocal (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (δ : ∀ p : PlF D, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep),
-    (∀ p, Agree δ M p) → ∀ (L : LocSp D M) (u u' : D.what₂.Word),
-    (D.mem u).A.T ≡ (D.mem u').A.T [MOD (Lat.gS D) ^ 2] →
-    ∀ (F0 : FlagG (VS D) D.R.rS (Tn u)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)),
-      RowsOf u F0 what₂ →
-      (∃ c, Formula δ L u u' F0 what₂ c) ∧ NotPos u u' F0 what₂ ∧ NotInt (M := M) δ u u' F0 what₂
 
 section
 variable {F E : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [CommRing E] [Algebra F E]
@@ -164,7 +156,8 @@ theorem h_sum_left {ι : Type} (s : Finset ι) (x : ι → V) (y : V) :
 
 theorem h_sum_right {ι : Type} (s : Finset ι) (x : V) (y : ι → V) :
     H.h x (∑ i ∈ s, y i) = ∑ i ∈ s, H.h x (y i) := by
-  rw [H.h_herm, h_sum_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm, h_sum_left, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← H.h_herm]
 
@@ -178,7 +171,7 @@ theorem gram_comb {ι : Type} [Fintype ι] [DecidableEq ι] (v : ι → V) (A : 
   ring
 end
 
-theorem gz_eq (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
+theorem gz_eq (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Gval F F' = GZ T T' (ZhatL F F') := rfl
 
 theorem ga_gram (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F : FlagG (VS D) D.R.rS T) (F' : FlagG (VS D) D.R.rS T')
@@ -273,20 +266,5 @@ theorem zhatLoc_eq (D : Formalism.BasicNotions.D7) {M : ∀ p : PlF D, Formalism
   rw [(L.H p).h_smul_left, h_smul_right' (L.H p), L.bc_form]
   simp only [Zhat]
   ring
-
-theorem nu_eq_zero_of_GZ (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T)
-    (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)) (Z : MatZ D) (hZ : GZ T T' Z = 0) :
-    Formalism.L2.SG.CntLocal.nu T' F0 what₂ Z = 0 := by
-  have hE : ∀ Λ, EZ T' F0 Λ Z = ∅ := by
-    intro Λ
-    ext F'
-    simp only [EZ, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-    rintro ⟨⟨_, _, hG⟩, _, _, _, hZ'⟩
-    exact hG (by rw [gz_eq, hZ', hZ])
-  have hc : ∀ Λ, cntE T' F0 Λ Z = 0 := by
-    intro Λ
-    simp only [cntE, hE Λ, Set.mem_empty_iff_false, false_and, exists_false, Set.ofPred_false,
-      Set.encard_empty]
-  simp [Formalism.L2.SG.CntLocal.nu, hc]
 
 end Formalism.L2.SG.CntLocal

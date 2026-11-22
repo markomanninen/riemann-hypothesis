@@ -1,4 +1,8 @@
-import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NFModel
+module
+
+public import CompanionTheory.AutomorphicTheory.JacobiDiagonalBounds.NFModel
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.NormalFormRelations
 

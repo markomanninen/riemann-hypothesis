@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RedBasicsPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem hform_smul_right (s : A) (x y : n → A) : Formalism.UG.hform σ J x (s 
 
 theorem hform_add_left (x x' y : n → A) :
     Formalism.UG.hform σ J (x + x') y = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x' y := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_add_right (x y y' : n → A) :
     Formalism.UG.hform σ J x (y + y') = Formalism.UG.hform σ J x y + Formalism.UG.hform σ J x y' := by
@@ -54,7 +58,8 @@ theorem hform_unit [DecidableEq n] (M : Matrix n n A) (hM : Formalism.UG.cT σ M
     simp only [Formalism.UG.hform, dotProduct, mulVec, Finset.mul_sum, mul_assoc]
   have hσ : (fun i => σ ((M *ᵥ x) i)) = M.map σ *ᵥ (fun i => σ (x i)) := by
     funext i
-    simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
   rw [key, key, hσ, dotProduct_comm, dotProduct_mulVec, ← mulVec_transpose, dotProduct_comm,
     mulVec_mulVec, mulVec_mulVec, show (M.map σ)ᵀ * J * M = J from hM]
 
@@ -121,7 +126,7 @@ theorem stepA {w : HeightOneSpectrum (𝓞 I.E)} {p : ℕ} (hp : p.Prime) (hcard
       have e : (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) ((u + v) i)) =
           (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (u i)) + fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (v i) := by
         funext i
-        simp [map_add]
+        simp [map_add (f := _)]
       rw [e, Matrix.mulVec_add]
       exact add_mem hu hv
     | smul o u _ hu =>
@@ -158,7 +163,8 @@ theorem stepA {w : HeightOneSpectrum (𝓞 I.E)} {p : ℕ} (hp : p.Prime) (hcard
         (∑ k, ((c k : ℤ) : I.E ⊗[I.F] Af I.F) • (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (b k i))) +
           (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) ((l - ∑ k, (c k : I.E) • b k) i)) := by
       funext i
-      simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.sub_apply, map_sub, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Pi.add_apply, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.sub_apply, map_sub, map_sum,
         map_mul, map_intCast]
       ring
     rw [hdec, Matrix.mulVec_add, Matrix.mulVec_sum]
@@ -299,7 +305,7 @@ theorem hhat_Lq {w : HeightOneSpectrum (𝓞 I.E)} {t β : 𝓞 I.E}
   have hzl : ∀ z : Fin I.n → I.E ⊗[I.F] Af I.F, hhat I 0 z = 0 := fun z => by simp [hhat, Formalism.UG.hform]
   have hzr : ∀ y : Fin I.n → I.E ⊗[I.F] Af I.F, hhat I y 0 = 0 := fun y => by simp [hhat, Formalism.UG.hform]
   have hal : ∀ y y' z : Fin I.n → I.E ⊗[I.F] Af I.F, hhat I (y + y') z = hhat I y z + hhat I y' z :=
-    fun y y' z => by simp only [hhat, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+    fun y y' z => by simp only [hhat, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
   have har : ∀ y z z' : Fin I.n → I.E ⊗[I.F] Af I.F, hhat I y (z + z') = hhat I y z + hhat I y z' :=
     fun y z z' => by simp only [hhat, Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
   have hsl : ∀ (r : IntAf I.F I.E) (y z : Fin I.n → I.E ⊗[I.F] Af I.F),
@@ -330,7 +336,8 @@ theorem hhat_Lq {w : HeightOneSpectrum (𝓞 I.E)} {t β : 𝓞 I.E}
     have e : hhat I (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (x i))
         (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (y i)) =
         Formalism.UG.inclE (F := I.F) (Af I.F) (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
-      simp only [hhat, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, hincl, starRingEnd_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hhat, Formalism.UG.hform, map_sum, map_mul, Matrix.map_apply, hincl, starRingEnd_apply]
     refine ⟨iE I g, iE_int I g, ?_⟩
     rw [e, hcv]
     show Formalism.UG.inclE (F := I.F) (Af I.F) (β : I.E) * Formalism.UG.inclE (F := I.F) (Af I.F) (c : I.E) =
@@ -400,7 +407,7 @@ theorem stepB {w : HeightOneSpectrum (𝓞 I.E)} {x : I.Gf} (hx : x ∈ I.Kset)
   obtain ⟨γ, i, hi, hγ⟩ := Ideal.IsMaximal.exists_inv (inferInstance : (wc I w).asIdeal.IsMaximal) hβw
   have hγ' : iE I γ * iE I β + iE I i = 1 := by
     have := congrArg (fun a : 𝓞 I.E => Formalism.UG.inclE (F := I.F) (Af I.F) (a : I.E)) hγ
-    simpa [iE, map_add, map_mul] using this
+    simpa [iE, map_add (f := _), map_mul] using this
   have e2 : z = iE I γ • (iE I β • z) + iE I i • z := by
     rw [smul_smul, ← add_smul, hγ', one_smul]
   rw [e2]

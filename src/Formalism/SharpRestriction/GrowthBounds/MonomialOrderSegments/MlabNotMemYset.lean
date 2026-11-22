@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.GlobalTheory
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SubstitutedExponentApplyBlock
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.GlobalTheory
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SubstitutedExponentApplyBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,8 @@ variable {K : Type} [Field K]
 theorem linMap_eq_sum {σ τ : Type} (T : MvPolynomial σ K →ₗ[K] MvPolynomial τ K) (Y : MvPolynomial σ K) :
     T Y = ∑ ζ ∈ Y.support, Y.coeff ζ • T (monomial ζ 1) := by
   conv_lhs => rw [Y.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun ζ _ => ?_
   rw [← map_smul, smul_monomial, smul_eq_mul, mul_one]
 

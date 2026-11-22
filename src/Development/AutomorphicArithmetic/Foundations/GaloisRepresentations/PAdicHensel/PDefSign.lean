@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicHensel.PadicUnitNorm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.Gal.W2.Seed UpperTheory.Gal.G1
 open scoped TensorProduct
@@ -30,7 +34,8 @@ private theorem def_conj {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) (s : ℝ)
     simpa using congrArg star h0
   have key : star x ⬝ᵥ (M.map (starRingEnd ℂ) *ᵥ x) =
       starRingEnd ℂ (star (star x) ⬝ᵥ (M *ᵥ star x)) := by
-    simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, Matrix.mulVec, map_sum, map_mul]
   rw [key, Complex.conj_re]
   exact h _ hy
 

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepAtBIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepAtBIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TraceFormTwistIsoOfPullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PullCub
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.OneArc
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZH GlobalTheory.Poinc GlobalTheory.UPoinc GlobalTheory.TorRef
@@ -38,7 +43,7 @@ theorem exists_moved (p : IsPullDeg ρ Q D) (τ₀ : GlobalTheory.UChart.Gens Q)
         spMap ρ ≫ (![(Q.c (p.xe a + p.xe b)).left, (Q.c (p.xe a)).left, (Q.c (p.xe b)).left, (Q.c 0).left] k) := by
       intro k
       fin_cases k
-      · simpa [map_add] using p.c_pr (a + b)
+      · simpa [map_add (f := _)] using p.c_pr (a + b)
       · simpa using p.c_pr a
       · simpa using p.c_pr b
       · simpa [map_zero] using p.c_pr 0
@@ -178,7 +183,7 @@ theorem fromBase_moved (p : IsPullDeg ρ Q D) (τ₀ : GlobalTheory.UChart.Gens 
   have hw₂ : w₂.IsGen :=
     (isGen_iff w₂).2 (hT.pgen_comp Q.P.isLB ((isGen_iff w).1 hw) ((isGen_iff p.w).1 p.w_gen))
   have hφ : ∀ a b : D.X, ![c₀ (p.xe a + p.xe b), c₀ (p.xe a), c₀ (p.xe b), c₀ 0] =
-      ![c₀ (p.xe (a + b)), c₀ (p.xe a), c₀ (p.xe b), c₀ (p.xe 0)] := fun a b => by rw [map_add, map_zero]
+      ![c₀ (p.xe (a + b)), c₀ (p.xe a), c₀ (p.xe b), c₀ (p.xe 0)] := fun a b => by rw [map_add (f := _), map_zero]
   have ec : ∀ t : D.X, GlobalTheory.UChart.cpt D t ≫ (p.e.hom.left ≫ pullback.fst Q.P.A.hom (specOf ρ)) =
       spMap ρ ≫ GlobalTheory.UChart.cpt Q (p.xe t) := fun t => p.c_pr t
   refine ⟨B₀, iG, M₀, fun a => c₀ (p.xe a), fun a b => trGen (hφ a b) (σ (p.xe a) (p.xe b)),
@@ -208,7 +213,7 @@ theorem fromBase_moved (p : IsPullDeg ρ Q D) (τ₀ : GlobalTheory.UChart.Gens 
     have m := hmv a b _ (𝟙 _) zz JQ J hJQ hJ
     have k := key (p.xe a) (p.xe b) _ (spMap ρ) zz JQ J₀ hJQ hJ₀
     simp only [Category.id_comp] at m
-    rw [tri (a + b) (p.xe a + p.xe b) (by rw [← map_add]; exact ec _), tri a _ (ec a), tri b _ (ec b),
+    rw [tri (a + b) (p.xe a + p.xe b) (by rw [← map_add (f := _)]; exact ec _), tri a _ (ec a), tri b _ (ec b),
       tri 0 0 (by rw [ec, map_zero]), val_trGen, spMap_comp, k, m]
     apply Additive.ofMul.injective
     simp only [ofMul_mul, ofMul_inv]
@@ -219,8 +224,8 @@ end GlobalTheory.USep.TauPullB
 noncomputable section
 namespace GlobalTheory.USep
 
-open GlobalTheory.USep.TauPullB in
 
+open GlobalTheory.USep.TauPullB in
 theorem tauIn_fromBase_pull : ∀ (V V₁ : Type) [CommRing V] [IsDomain V] [CommRing V₁] [IsDomain V₁] (ρ : V →+* V₁), Function.Injective ρ → ∀ (Q : DegPre V) (D : DegPre V₁) (p : IsPullDeg ρ Q D) (τ₀ : GlobalTheory.UChart.Gens Q) (N : ℕ) (s : Fin N → V) (ε : Fin N → LinearMap.BilinForm ℤ Q.X) (ε₁ : Fin N → LinearMap.BilinForm ℤ D.X), (∀ k a b, ε₁ k a b = ε k (p.xe a) (p.xe b)) → GlobalTheory.UChart.TauIn Q τ₀ s ε → ∀ (W₀ : Type) [CommRing W₀] (ib : W₀ →+* V), GlobalTheory.UChart.FromBase Q τ₀ ib → ∃ τ₁ : GlobalTheory.UChart.Gens D, GlobalTheory.UChart.TauIn D τ₁ (fun k => ρ (s k)) ε₁ ∧ GlobalTheory.UChart.FromBase D τ₁ (ρ.comp ib) := by
   intro V V₁ _ _ _ _ ρ hρ Q D p τ₀ N s ε ε₁ hε hT W₀ _ ib hF
   obtain ⟨τ₁, h₁, hmv⟩ := exists_moved p τ₀ fun a b => (hT a b).1

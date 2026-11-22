@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutComponentSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutZeroNotLeSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutNonemptySt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutDimLowerSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutComponentSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutZeroNotLeSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutNonemptySt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CutDimLowerSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman

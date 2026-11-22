@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LieModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,10 +15,14 @@ section Field
 
 variable {k V O : Type} [Field k] [AddCommGroup V] [Module k V] [CommRing O]
 
-open Classical in
 
-def eigComp (ρ : O →+* Module.End k V) (σ : O →+* k) (x : V) : V :=
-  if h : ∃ p ∈ eigSp ρ σ, x - p ∈ ⨆ σ' ∈ {σ' : O →+* k | σ' ≠ σ}, eigSp ρ σ' then h.choose else 0
+open Classical in
+def eigComp (ρ : O →+* Module.End k V) (σ : O →+* k) (x : V) : V := by
+  classical
+  exact if h : ∃ p ∈ eigSp ρ σ, x - p ∈ ⨆ σ' ∈ {σ' : O →+* k | σ' ≠ σ}, eigSp ρ σ' then
+    h.choose
+  else
+    0
 
 def oSpan (ρ : O →+* Module.End k V) {r : ℕ} (v : Fin r → V) : AddSubgroup V :=
   AddSubgroup.closure {x | ∃ (a : O) (i : Fin r), x = ρ a (v i)}

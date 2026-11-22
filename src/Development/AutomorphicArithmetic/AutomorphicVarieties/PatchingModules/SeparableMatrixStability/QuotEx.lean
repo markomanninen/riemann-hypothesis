@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QuotProf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlProps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.QuotProf
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -54,7 +58,23 @@ private theorem pl_le_ker {l : ℕ} [Fact l.Prime] {Γ : Type} [Group Γ] [Topol
 theorem UpperTheory.V.Pa.quot_ex :
     ∀ (l : ℕ) [Fact l.Prime] (L : Loc) (G : Glob l L) (H : Subgroup G.Γ) [H.Normal], IsOpen (H : Set G.Γ) → H ≤ G.η.ker → (∀ a ∈ H, PadicInt.toZMod ((G.ε a : ℤ_[l]ˣ) : ℤ_[l]) = 1) → ∃ (G' : Glob l L) (g : G.Hom G'), g.p.ker = PL l H := by
   intro l _ L G H _ hH hη hε1
-  obtain ⟨hN, hC, hKH, -, -, -⟩ := pl_props l G.Γ H hH
+  have hN : (PL l H).Normal := by
+    constructor
+    intro x hx g
+    simp only [PL, Subgroup.mem_iInf] at hx ⊢
+    intro U hU
+    exact U.isNormal'.conj_mem _ (hx U hU) g
+  have hC : IsClosed (PL l H : Set G.Γ) := by
+    simp only [PL, Subgroup.coe_iInf]
+    exact isClosed_iInter fun U => isClosed_iInter fun _ => U.toOpenSubgroup.isClosed
+  have hKH : PL l H ≤ H := by
+    let U : OpenNormalSubgroup G.Γ := ⟨⟨H, hH⟩, inferInstance⟩
+    have hcond : ∀ h ∈ H, ∃ e : ℕ, h ^ l ^ e ∈ U := by
+      intro h hh
+      refine ⟨0, ?_⟩
+      change h ^ l ^ 0 ∈ H
+      simpa using hh
+    exact (iInf_le _ U).trans (iInf_le _ hcond)
   haveI := hN
   let π : G.Γ →* G.Γ ⧸ PL l H := QuotientGroup.mk' (PL l H)
   have hπc : Continuous π := QuotientGroup.continuous_mk

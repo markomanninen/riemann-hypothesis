@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsOrd
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.DivisorsOrd
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -88,20 +92,20 @@ theorem eq_mapDomain_affinePart_add (D : CurveDivisor W) :
   · rw [Finsupp.mapDomain_of_notMem_range _ _ (fun ⟨v, hv⟩ => pointOfIdeal_ne_zero W v hv),
       Finsupp.single_eq_same, zero_add]
   · obtain ⟨v, rfl⟩ := exists_pointOfIdeal_eq W hP
-    rw [Finsupp.mapDomain_apply (pointOfIdeal_injective W), affinePart_apply, Finsupp.single_apply,
+    rw [Finsupp.mapDomain_apply_of_injective (pointOfIdeal_injective W), affinePart_apply, Finsupp.single_apply,
       if_neg (pointOfIdeal_ne_zero W v).symm, add_zero]
 
 theorem divisorDegree_eq (D : CurveDivisor W) :
     divisorDegree W D = (affinePart W D).sum (fun _ n => n) + D 0 := by
   conv_lhs => rw [eq_mapDomain_affinePart_add W D]
-  rw [map_add, divisorDegree_single, divisorDegree, Finsupp.liftAddHom_apply,
+  rw [map_add (f := _), divisorDegree_single, divisorDegree, Finsupp.liftAddHom_apply,
     Finsupp.sum_mapDomain_index_addMonoidHom]
   rfl
 
 theorem divisorSum_eq (D : CurveDivisor W) :
     divisorSum W D = (affinePart W D).sum (fun v n => n • pointOfIdeal W v) := by
   conv_lhs => rw [eq_mapDomain_affinePart_add W D]
-  rw [map_add, divisorSum_single, smul_zero, add_zero, divisorSum, Finsupp.liftAddHom_apply,
+  rw [map_add (f := _), divisorSum_single, smul_zero, add_zero, divisorSum, Finsupp.liftAddHom_apply,
     Finsupp.sum_mapDomain_index_addMonoidHom]
   simp
 
@@ -146,19 +150,11 @@ theorem toClass_pointOfIdeal (v : HeightOneSpectrum W.toAffine.CoordinateRing) :
 theorem toClass_sum (D : HeightOneSpectrum W.toAffine.CoordinateRing →₀ ℤ) :
     Point.toClass (W := W.toAffine) (D.sum fun v n => n • pointOfIdeal W v) =
       Additive.ofMul (ClassGroup.mk W.toAffine.FunctionField (idealOfExps W D)) := by
-  rw [Finsupp.sum, map_sum, idealOfExps, Finsupp.prod, map_prod, ofMul_prod]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum, idealOfExps, Finsupp.prod, map_prod, ofMul_prod]
   refine Finset.sum_congr rfl fun v _ => ?_
   rw [map_zsmul, toClass_pointOfIdeal, map_zpow, ofMul_zpow]
 
-omit [DecidableEq F] in
-
-theorem fractionalIdeal_eq_of_count_eq
-    {I J : FractionalIdeal W.toAffine.CoordinateRing⁰ W.toAffine.FunctionField} (hI : I ≠ 0)
-    (hJ : J ≠ 0) (h : ∀ v, FractionalIdeal.count W.toAffine.FunctionField v I =
-      FractionalIdeal.count W.toAffine.FunctionField v J) : I = J := by
-  rw [← FractionalIdeal.finprod_heightOneSpectrum_factorization' W.toAffine.FunctionField hI,
-    ← FractionalIdeal.finprod_heightOneSpectrum_factorization' W.toAffine.FunctionField hJ]
-  simp_rw [h]
 
 omit [DecidableEq F] in
 theorem classGroup_mk_eq_one_iff
@@ -197,7 +193,7 @@ noncomputable def divisorOf (f : W.toAffine.FunctionField) : CurveDivisor W :=
 theorem divisorOf_pointOfIdeal (f : W.toAffine.FunctionField)
     (v : HeightOneSpectrum W.toAffine.CoordinateRing) :
     divisorOf W f (pointOfIdeal W v) = ordAtIdeal W v f := by
-  rw [divisorOf, Finsupp.add_apply, Finsupp.mapDomain_apply (pointOfIdeal_injective W),
+  rw [divisorOf, Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (pointOfIdeal_injective W),
     Finsupp.single_apply, if_neg (pointOfIdeal_ne_zero W v).symm, add_zero, affineDivisorOf_apply]
 
 omit [DecidableEq F] in
@@ -248,8 +244,8 @@ theorem finsum_ordAtIdeal_algebraMap {a : W.toAffine.CoordinateRing} (ha : a ≠
   simp_rw [ordAtIdeal_algebraMap]
   exact (natDegree_norm_eq_finsum_count W ha).symm
 
-omit [DecidableEq F] in
 
+omit [DecidableEq F] in
 theorem finsum_ordAtIdeal_add_ordInfty {f : W.toAffine.FunctionField} (hf : f ≠ 0) :
     ∑ᶠ v, ordAtIdeal W v f + ordInfty W f = 0 := by
   obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective W.toAffine.CoordinateRing⁰ f
@@ -281,20 +277,6 @@ theorem divisorDegree_divisorOf {f : W.toAffine.FunctionField} (hf : f ≠ 0) :
   rw [divisorDegree_eq, affinePart_divisorOf, sum_affineDivisorOf, divisorOf_zero_apply]
   exact finsum_ordAtIdeal_add_ordInfty W hf
 
-omit [DecidableEq F] in
-theorem val_idealOfExps_affineDivisorOf {f : W.toAffine.FunctionField} (hf : f ≠ 0) :
-    ((idealOfExps W (affineDivisorOf W f) :
-      (FractionalIdeal W.toAffine.CoordinateRing⁰ W.toAffine.FunctionField)ˣ) :
-        FractionalIdeal W.toAffine.CoordinateRing⁰ W.toAffine.FunctionField) =
-      FractionalIdeal.spanSingleton _ f :=
-  fractionalIdeal_eq_of_count_eq W (Units.ne_zero _) (spanSingleton_ne_zero W hf)
-    fun v => by rw [count_idealOfExps, affineDivisorOf_apply, ordAtIdeal]
-
-theorem divisorSum_divisorOf {f : W.toAffine.FunctionField} (hf : f ≠ 0) :
-    divisorSum W (divisorOf W f) = 0 := by
-  rw [divisorSum_eq, affinePart_divisorOf, ← Point.toClass_eq_zero, toClass_sum, ofMul_eq_zero,
-    classGroup_mk_eq_one_iff]
-  exact ⟨f, hf, val_idealOfExps_affineDivisorOf W hf⟩
 
 theorem exists_divisorOf_eq {D : CurveDivisor W} (hdeg : divisorDegree W D = 0)
     (hsum : divisorSum W D = 0) :
@@ -316,62 +298,7 @@ theorem exists_divisorOf_eq {D : CurveDivisor W} (hdeg : divisorDegree W D = 0)
   rw [divisorOf, haff, hinf]
   exact (eq_mapDomain_affinePart_add W D).symm
 
-theorem exists_divisorOf_eq_iff (D : CurveDivisor W) :
-    (∃ f : W.toAffine.FunctionField, f ≠ 0 ∧ divisorOf W f = D) ↔
-      divisorDegree W D = 0 ∧ divisorSum W D = 0 := by
-  constructor
-  · rintro ⟨f, hf, rfl⟩
-    exact ⟨divisorDegree_divisorOf W hf, divisorSum_divisorOf W hf⟩
-  · rintro ⟨h1, h2⟩
-    exact exists_divisorOf_eq W h1 h2
 
-noncomputable def divisorHom : Additive W.toAffine.FunctionFieldˣ →+ CurveDivisor W where
-  toFun u := divisorOf W (u.toMul : W.toAffine.FunctionFieldˣ)
-  map_zero' := by simp [divisorOf_one]
-  map_add' u v := by
-    simp only [toMul_add, Units.val_mul]
-    exact divisorOf_mul W u.toMul.ne_zero v.toMul.ne_zero
-
-noncomputable def principalDivisors : AddSubgroup (CurveDivisor W) := (divisorHom W).range
-
-theorem mem_principalDivisors_iff (D : CurveDivisor W) :
-    D ∈ principalDivisors W ↔ ∃ f : W.toAffine.FunctionField, f ≠ 0 ∧ divisorOf W f = D := by
-  constructor
-  · rintro ⟨u, rfl⟩
-    exact ⟨_, u.toMul.ne_zero, rfl⟩
-  · rintro ⟨f, hf, rfl⟩
-    exact ⟨Additive.ofMul (Units.mk0 f hf), rfl⟩
-
-noncomputable def degreeZeroDivisors : AddSubgroup (CurveDivisor W) := (divisorDegree W).ker
-
-abbrev PicZero : Type u :=
-  degreeZeroDivisors W ⧸ (principalDivisors W).addSubgroupOf (degreeZeroDivisors W)
-
-noncomputable def divisorSumDegreeZero : degreeZeroDivisors W →+ W.toAffine.Point :=
-  (divisorSum W).comp (degreeZeroDivisors W).subtype
-
-omit [IsAlgClosed F] [W.IsElliptic] [DecidableEq F] in
-theorem single_sub_single_zero_mem (P : W.toAffine.Point) :
-    Finsupp.single P 1 - Finsupp.single 0 1 ∈ degreeZeroDivisors W := by
-  change divisorDegree W _ = 0
-  simp
-
-omit [IsAlgClosed F] [W.IsElliptic] in
-theorem divisorSumDegreeZero_surjective : Function.Surjective (divisorSumDegreeZero W) := by
-  intro P
-  refine ⟨⟨_, single_sub_single_zero_mem W P⟩, ?_⟩
-  simp [divisorSumDegreeZero]
-
-theorem ker_divisorSumDegreeZero :
-    (divisorSumDegreeZero W).ker = (principalDivisors W).addSubgroupOf (degreeZeroDivisors W) := by
-  ext ⟨D, hD⟩
-  rw [AddMonoidHom.mem_ker, AddSubgroup.mem_addSubgroupOf, mem_principalDivisors_iff,
-    exists_divisorOf_eq_iff]
-  exact ⟨fun h => ⟨hD, h⟩, fun h => h.2⟩
-
-noncomputable def picZeroEquiv : PicZero W ≃+ W.toAffine.Point :=
-  (QuotientAddGroup.quotientAddEquivOfEq (ker_divisorSumDegreeZero W).symm).trans
-    (QuotientAddGroup.quotientKerEquivOfSurjective _ (divisorSumDegreeZero_surjective W))
 
 end AlgClosed
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.FmTools
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.LFun
@@ -107,14 +111,14 @@ private theorem heckeVec_snd {G₁ G₂ V : Type} [Group G₁] [Group G₂] [Add
   rfl
 
 private theorem tj_zero_mem {E : Type} [Field E] [NumberField E] (w : Pl E) (n : ℕ) (ϖ : w.adicCompletion E) :
-    ∀ g ∈ KGL w n, Tj ℂ n (Ov E w) ϖ 0 g = 1 := by
+    ∀ g ∈ KGL w (n := n), Tj ℂ n (Ov E w) ϖ 0 g = 1 := by
   intro g hg
   unfold Tj
   refine Set.indicator_of_mem ?_ _
   exact ⟨g, hg, 1, one_mem _, by simp [diagJ]⟩
 
 private theorem tj_zero_not {E : Type} [Field E] [NumberField E] (w : Pl E) (n : ℕ) (ϖ : w.adicCompletion E) :
-    ∀ g, g ∉ KGL w n → Tj ℂ n (Ov E w) ϖ 0 g = 0 := by
+    ∀ g, g ∉ KGL w (n := n) → Tj ℂ n (Ov E w) ϖ 0 g = 0 := by
   intro g hg
   unfold Tj
   refine Set.indicator_of_notMem ?_ _
@@ -125,7 +129,7 @@ private theorem tj_zero_not {E : Type} [Field E] [NumberField E] (w : Pl E) (n :
   exact mul_mem hx hy
 
 private theorem tj_right {E : Type} [Field E] [NumberField E] (w : Pl E) (n : ℕ) {ϖ : w.adicCompletion E}
-    (hϖ : IsUnifV E w ϖ) (i : ℕ) : ∀ g, ∀ k ∈ KGL w n, Tj ℂ n (Ov E w) ϖ i (g * k) = Tj ℂ n (Ov E w) ϖ i g := by
+    (hϖ : IsUnifV E w ϖ) (i : ℕ) : ∀ g, ∀ k ∈ KGL w (n := n), Tj ℂ n (Ov E w) ϖ i (g * k) = Tj ℂ n (Ov E w) ϖ i g := by
   intro g k hk
   have := (Tj_mem_hecke (n := n) hϖ i).1 1 ⟨k, hk⟩ g
   simpa using this

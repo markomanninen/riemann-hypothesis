@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameMinorValueFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockLUFactorizationStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LUTwistRefactorizationStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentChartTenthStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameLUMinorValueStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TwistedFrameValueFormulaStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogPeriodStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameMinorValueFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockLUFactorizationStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LUTwistRefactorizationStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagAdjacentChartTenthStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FrameLUMinorValueStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TwistedFrameValueFormulaStatement
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WMan

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CuspidalRankFourRegularAlgebraic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicCases.SymplecticGSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.CuspidalRankFourRegularAlgebraic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicCases.SymplecticGSp4
+
+@[expose] public section
 
 noncomputable section
 
@@ -165,13 +169,13 @@ attribute [instance] Tower.nK Tower.nF Tower.nL Tower.cmK Tower.realF Tower.cmL 
 def TameL (l : ℕ) (F : IntermediateField ℚ Ω) : Prop :=
   ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∀ g ∈ Ine (F := ℚ) A, ∃ m : ℕ, l.Coprime m ∧ g ^ m ∈ F.fixingSubgroup
 
-variable (l) in
 
+variable (l) in
 def IsLayer (m : ℕ) (F F' : IntermediateField ℚ Ω) : Prop :=
   ∀ g : G ℚ Ω, g ∈ F'.fixingSubgroup ↔ g ∈ F.fixingSubgroup ∧ cycZ ℚ Ω l g ^ (l - 1) ∈ KStar.TotallyRealRoots.princ l (m + 1)
 
-variable (l) in
 
+variable (l) in
 def Dies (w : ℕ) (F : IntermediateField ℚ Ω) : Prop :=
   ∀ θ : G ℚ Ω →* Multiplicative (ZMod l), IsOpen (θ.ker : Set (G ℚ Ω)) →
     (∀ A, Raw.Away {w} A → Ine (F := ℚ) A ≤ θ.ker) → F.fixingSubgroup ≤ θ.ker

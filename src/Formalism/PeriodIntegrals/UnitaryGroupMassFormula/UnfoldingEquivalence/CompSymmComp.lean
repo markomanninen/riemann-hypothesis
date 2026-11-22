@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.Points
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnfoldingEquivalence.Points
+
+@[expose] public section
 
 open PI.UnfoldEquiv PI.UnfoldEquiv.Loc
 
@@ -16,7 +20,7 @@ theorem atN_map {n c i : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) �
     intro l hl
     rw [Pi.sub_apply, Pi.smul_apply, eN_apply, smul_eq_mul]
     by_cases hl' : l.1 = n + i
-    · rw [if_pos hl', mul_one, PI.UnfoldEquiv.Loc.atN, dif_pos hlt]
+    · rw [if_pos hl', mul_one, PI.UnfoldEquiv.Loc.atN, dite_eq_left hlt]
       have hle : l = ⟨n + i, hlt⟩ := Fin.ext hl'
       rw [hle, sub_self]
     · rw [if_neg hl', mul_zero, sub_zero]
@@ -54,7 +58,7 @@ theorem chArg_map {n' n c : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c)
       have hx : x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) =
           (x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) - PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1)) + PI.UnfoldEquiv.Loc.eN k (n + c) (n + i + 1) :=
         (sub_add_cancel _ _).symm
-      rw [hx, map_add, atN_add, atN_add, hcoord, atN_eN_ne (by omega : n + i + 1 ≠ n + i), add_zero]
+      rw [hx, map_add (f := _), atN_add, atN_add, hcoord, atN_eN_ne (by omega : n + i + 1 ≠ n + i), add_zero]
     · have hw : x (PI.UnfoldEquiv.Loc.eN k (n' + (c + 1)) (n' + i + 1)) ∈ PI.UnfoldEquiv.Loc.Ufl k n c (i + 1) := by
         rw [mem_Ufl]
         intro l hl
@@ -72,57 +76,5 @@ theorem chArg_map {n' n c : ℕ} {r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c)
   · obtain ⟨m, rfl⟩ : ∃ m, c = m + 1 := ⟨c - 1, by omega⟩
     rw [Nat.add_sub_cancel, Finset.sum_range_succ, eN_eq_zero_of_le (by omega : n + (m + 1) ≤ n + m + 1), map_zero,
       atN_zero, add_zero]
-
-theorem comp_symm_comp {n' n c : ℕ} (r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k))
-    (y : (Fin (n' + (c + 1)) → k) →ₗ[k] (Fin (n + c) → k)) : r.toLinearMap ∘ₗ (r.symm.toLinearMap ∘ₗ y) = y := by
-  apply LinearMap.ext
-  intro v
-  simp
-
-theorem symm_comp_comp {n' n c : ℕ} (r : (Fin (n + c) → k) ≃ₗ[k] (Fin (n + c) → k))
-    (y : (Fin (n' + (c + 1)) → k) →ₗ[k] (Fin (n + c) → k)) : r.symm.toLinearMap ∘ₗ (r.toLinearMap ∘ₗ y) = y := by
-  apply LinearMap.ext
-  intro v
-  simp
-
-theorem unfoldEquiv : UnfoldEquiv := by
-  intro k₀ K _ _ _ n' n c psi hpsi wt Φ r g hmem hg xj
-  have hmem' : PI.UnfoldEquiv.Loc.R1cond k₀ n c r ∧ PI.UnfoldEquiv.Loc.R1cond k₀ n c r⁻¹ := hmem
-  have hr : PI.UnfoldEquiv.Loc.R1cond k₀ n c r := hmem'.1
-  have hrs : PI.UnfoldEquiv.Loc.R1cond k₀ n c r.symm := hmem'.2
-  have hgs : ∀ v, r.symm (PI.UnfoldEquiv.Loc.inX k₀ n c v) = PI.UnfoldEquiv.Loc.inX k₀ n c (g.symm v) := by
-    intro v
-    rw [LinearEquiv.symm_apply_eq, hg, LinearEquiv.apply_symm_apply]
-  have hgg : g.toLinearMap ∘ₗ (g.symm.toLinearMap ∘ₗ xj) = xj := by
-    apply LinearMap.ext
-    intro v
-    simp
-  let F : (PI.UnfoldEquiv.Loc.FC n' (c + 1) n c → k₀) → (PI.UnfoldEquiv.Loc.FC n' (c + 1) n c → k₀) :=
-    fun t => fe (r.symm.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 xj t)
-  let G : (PI.UnfoldEquiv.Loc.FC n' (c + 1) n c → k₀) → (PI.UnfoldEquiv.Loc.FC n' (c + 1) n c → k₀) :=
-    fun s => fe (r.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 (g.symm.toLinearMap ∘ₗ xj) s)
-  have hF : ∀ t, PI.UnfoldEquiv.Loc.xx1 (g.symm.toLinearMap ∘ₗ xj) (F t) = r.symm.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 xj t := fun t =>
-    fillMatrix_extractFree (Q_map hrs hgs (isFillOf_fillMatrix xj t))
-  have hG : ∀ s, PI.UnfoldEquiv.Loc.xx1 xj (G s) = r.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 (g.symm.toLinearMap ∘ₗ xj) s := fun s => by
-    have h1 := Q_map hr hg (isFillOf_fillMatrix (g.symm.toLinearMap ∘ₗ xj) s)
-    rw [hgg] at h1
-    exact fillMatrix_extractFree h1
-  have hbij : Function.Bijective F := by
-    refine Function.bijective_iff_has_inverse.mpr ⟨G, fun t => ?_, fun s => ?_⟩
-    · show fe (r.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 (g.symm.toLinearMap ∘ₗ xj) (F t)) = t
-      rw [hF, comp_symm_comp, extractFree_fillMatrix]
-    · show fe (r.symm.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 xj (G s)) = s
-      rw [hG, symm_comp_comp, extractFree_fillMatrix]
-  have hca : ∀ t : PI.UnfoldEquiv.Loc.FC n' (c + 1) n c → k₀, PI.UnfoldEquiv.Loc.chArg (PI.UnfoldEquiv.Loc.xx1 xj t) =
-      PI.UnfoldEquiv.Loc.chArg (r.symm.toLinearMap ∘ₗ PI.UnfoldEquiv.Loc.xx1 xj t) + PI.UnfoldEquiv.Loc.n1Arg r := fun t => by
-    have h2 := chArg_map hr (Q_map hrs hgs (isFillOf_fillMatrix xj t))
-    rwa [comp_symm_comp] at h2
-  simp only [PI.UnfoldEquiv.Loc.E1, Fintype.piFinset_univ]
-  rw [mul_left_comm (psi _)]
-  congr 1
-  rw [Finset.mul_sum]
-  refine Fintype.sum_bijective F hbij _ _ (fun t => ?_)
-  rw [hF, hca, neg_add, hpsi]
-  ring
 
 end PI.UnfoldEquiv.UnitaryGroupMassFormula

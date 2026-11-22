@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.WeilBound.ThetaLifts.FrameEstimates.LevelA
-import Development.WeilBound.ThetaLifts.FrameEstimates.Parity
-import Development.WeilBound.CoreStatements.LocalThetaKernels.LinearIndependentOfNotMem
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LevelA
+public import Development.WeilBound.ThetaLifts.FrameEstimates.Parity
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.LinearIndependentOfNotMem
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -130,13 +134,13 @@ theorem coef_near {n d : ℕ} {X : Spc F E n} {W : Spc F E d} (M : Model σ X W)
   have e : z * (mat u)ᵀ = z + c * (mat u - 1)ᵀ := by
     rw [← hu', Matrix.mul_smul, ← Matrix.smul_mul, ← hz, Matrix.smul_mul, ← Matrix.mul_smul, hu', Matrix.transpose_sub,
       Matrix.transpose_one, Matrix.mul_sub, Matrix.mul_one, add_sub_cancel]
-  rw [e, map_add]
+  rw [e, map_add (f := _)]
   exact h1 c hc (by rw [← map_smul, ← Matrix.mul_smul, hu']) _ ⟨c, hc, rfl⟩ _ (by rw [← map_smul, ← map_smul, hz]) f
 
 end levelStructure
 
-open levelStructure in
 
+open levelStructure in
 theorem level_of (hC : CoefEq) (hF : FourierInj) (hB : CoefBd) : Level := by
   intro F E _ _ _ _ _ σ B n d X W M χX χW om r s r' s' hp φ hφ
   by_cases h0 : ∀ f : SInf F (Fin n × Fin d), pureA F f φ = 0

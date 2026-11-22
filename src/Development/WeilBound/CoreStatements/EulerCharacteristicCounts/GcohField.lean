@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohDefs
-import GroundTheory.LocalFields.Examples
-import GroundTheory.LocalFields.FiniteExtension
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.MainCount
+module
+
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohDefs
+public import GroundTheory.LocalFields.Examples
+public import GroundTheory.LocalFields.FiniteExtension
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.MainCount
+
+@[expose] public section
 
 open CategoryTheory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

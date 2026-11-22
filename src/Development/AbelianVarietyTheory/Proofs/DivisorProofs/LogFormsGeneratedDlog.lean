@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,9 +41,9 @@ private lemma logUnit_of_isUnit_stalk {X : Scheme.{0}} [IsIntegral X] (Z : Set X
     (X.presheaf.stalkSpecializes _) a
   rw [← CategoryTheory.comp_apply, TopCat.Presheaf.stalkSpecializes_comp]
 
+
 set_option autoImplicit false in
 open CategoryTheory AlgebraicGeometry TopologicalSpace in
-
 theorem _root_.GlobalTheory.DI.dK_dlog_mem_forms_one : ∀ {X : Scheme.{0}} [IsIntegral X]
     (Z : Set X) (y : X), (∀ w ∈ _root_.GlobalTheory.LogDR.locRing y,
       ExteriorAlgebra.ι X.functionField (_root_.GlobalTheory.LogDR.dK w) ∈

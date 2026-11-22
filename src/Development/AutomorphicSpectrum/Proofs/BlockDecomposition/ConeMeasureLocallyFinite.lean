@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeMeas
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceSingleMulSingle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTwistHomotopyKernel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PositiveConeIsOpenStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeMeas
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceSingleMulSingle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HasDerivAtTwistHomotopyKernel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PositiveConeIsOpenStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ variable {n : ℕ}
 
 theorem continuous_hOf : Continuous (hOf (n := n)) := by
   unfold hOf
-  refine continuous_finset_sum _ fun p _ => ?_
+  refine continuous_finsetSum _ fun p _ => ?_
   exact (Complex.continuous_ofReal.comp (continuous_apply p)).smul continuous_const
 
 theorem continuous_detRe : Continuous fun v : Fin n × Fin n → ℝ => (hOf v).det.re :=

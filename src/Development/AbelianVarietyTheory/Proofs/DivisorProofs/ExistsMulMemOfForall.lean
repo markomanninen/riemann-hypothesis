@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.MultipleMembershipForAll
 
@@ -94,7 +98,8 @@ theorem main : ∀ (S : Type) [inst : CommRing S] [IsNoetherianRing S] (Q : Idea
     have h1 : algebraMap S R (u * ∑ j, a j * f j) ∈ m ^ 2 := by
       rw [hm, ← Localization.AtPrime.map_eq_maximalIdeal, ← Ideal.map_pow]
       exact Ideal.mem_map_of_mem _ hsum
-    simp only [map_mul, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sum] at h1
     obtain ⟨v, hv⟩ := hU.exists_left_inv
     have h2 := Ideal.mul_mem_left _ v h1
     rwa [← mul_assoc, hv, one_mul] at h2

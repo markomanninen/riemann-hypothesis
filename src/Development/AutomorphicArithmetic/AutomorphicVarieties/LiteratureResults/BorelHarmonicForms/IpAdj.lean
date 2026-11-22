@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
@@ -10,7 +15,8 @@ theorem UpperTheory.V.Lit.Bor.ipAdj :
       ip e H (del L' e ω) η := fun i => by
     rw [← (Fin.insertNthEquiv (fun _ => Fin n) i).sum_comp, Fintype.sum_prod_type, Finset.sum_comm, ip]
     refine Finset.sum_congr rfl fun J _ => ?_
-    rw [del_apply, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [del_apply, map_sum, LinearMap.sum_apply]
     refine Finset.sum_congr rfl fun j _ => ?_
     have h1 : (fun k => e ((Fin.insertNthEquiv (fun _ => Fin n) i (j, J)) k)) =
         i.insertNth (α := fun _ => Herm E a) (e j) (fun k => e (J k)) := by
@@ -24,6 +30,7 @@ theorem UpperTheory.V.Lit.Bor.ipAdj :
       H (ω fun k => e (I k)) ((-1 : ℤ) ^ (i : ℕ) • L (toL (e (I i)).1) (η (i.removeNth fun k => e (I k)))) := by
     rw [Finset.sum_comm, ip]
     refine Finset.sum_congr rfl fun I _ => ?_
-    rw [dCo_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dCo_apply, map_sum]
   rw [h0, Finset.sum_congr rfl fun i _ => key i]
   simp

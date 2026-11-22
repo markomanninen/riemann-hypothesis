@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+
+@[expose] public section
 
 namespace GlobalTheory.RationalOfReal
 
@@ -46,7 +50,7 @@ theorem rat_of_im_eq_zero {E : Type*} [Field E] [CharZero E] [Algebra ℚ E] (φ
     push_cast
     linear_combination (Real.sqrt d : ℂ) * (Real.sqrt d : ℂ) * Complex.I_mul_I - h2
   obtain ⟨u, v, rfl⟩ := exists_coords β d hβ y hy
-  rw [map_add, map_mul, map_ratCast, map_ratCast, hφ] at him
+  rw [map_add (f := _), map_mul, map_ratCast, map_ratCast, hφ] at him
   have hv : (v : ℝ) * Real.sqrt d = 0 := by simpa using him
   have hv0 : v = 0 := by
     have := (mul_eq_zero.1 hv).resolve_right hs.ne'

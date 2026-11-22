@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.StatementY
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ShapeCovering.StatementY
+
+@[expose] public section
 
 noncomputable section
 

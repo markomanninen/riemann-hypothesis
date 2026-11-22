@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CharSumInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CharSumInv
+
+@[expose] public section
 
 open Module
 open TensorProduct
@@ -25,14 +29,16 @@ theorem avg_apply (c : T →* oˣ) (x : M) :
   simp [avg, LinearMap.sum_apply]
 
 theorem comm_avg (c : T →* oˣ) (s : T) (x : M) : ρ s (avg ρ u c x) = avg ρ u c (ρ s x) := by
-  simp only [avg_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [avg_apply, map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun t _ => ?_
   rw [← Module.End.mul_apply, ← map_mul, mul_comm s t, map_mul, Module.End.mul_apply]
 
 theorem apply_avg (c : T →* oˣ) (s : T) (x : M) :
     ρ s (avg ρ u c x) = (c s : o) • avg ρ u c x := by
-  simp only [avg_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [avg_apply, map_smul, map_sum]
   rw [smul_comm]
   congr 1
   rw [Finset.smul_sum]
@@ -84,7 +90,7 @@ theorem baseChange_avg_of_weight (hu : u * (Fintype.card T : o) = 1) (A : Type) 
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a m => simp [avg_apply, TensorProduct.tmul_sum, TensorProduct.tmul_smul]
-    | add y z hy hz => simp only [map_add, hy, hz, smul_add, Finset.sum_add_distrib]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz, smul_add, Finset.sum_add_distrib]
   rw [h]
   simp only [hx, algebraMap_smul, smul_smul, Units.inv_mul, one_smul, Finset.sum_const,
     Finset.card_univ]
@@ -92,8 +98,8 @@ theorem baseChange_avg_of_weight (hu : u * (Fintype.card T : o) = 1) (A : Type) 
 
 end FiniteAbelianWeights
 
-open FiniteAbelianWeights in
 
+open FiniteAbelianWeights in
 theorem finiteAbelian_weightDecomposition :
     ∀ (o : Type) [CommRing o] [IsDomain o] (N : ℕ) (ζ : o), 0 < N → IsUnit (N : o) →
     IsPrimitiveRoot ζ N → ∀ (T : Type) [CommGroup T] [Finite T], (∀ t : T, t ^ N = 1) →
@@ -188,7 +194,7 @@ theorem finiteAbelian_weightDecomposition :
         rw [LinearMap.baseChange_tmul]
         exact Submodule.tmul_mem_baseChange_of_mem a (hmem c m)
       | add y z hy hz =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact Submodule.add_mem _ hy hz
     · rw [Submodule.baseChange_eq_span, Submodule.span_le]
       rintro _ ⟨m, hm, rfl⟩

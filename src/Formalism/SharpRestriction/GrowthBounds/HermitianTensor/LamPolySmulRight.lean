@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIsoDef
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FunctorComparisonOfSingleWeight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudIsoDef
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.Tensor
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.TensorKP
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.FunctorComparisonOfSingleWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,11 +65,11 @@ variable (T : MvPolynomial (S × (Bool × (Fin k × Fin n))) K →ₗ[K] MvPolyn
 
 theorem lamPoly_add_left (V V' W) : lamPoly T (V + V') W = lamPoly T V W + lamPoly T V' W := by
   unfold lamPoly
-  rw [map_add, add_mul, map_add]
+  rw [map_add (f := _), add_mul, map_add (f := _)]
 
 theorem lamPoly_add_right (V W W') : lamPoly T V (W + W') = lamPoly T V W + lamPoly T V W' := by
   unfold lamPoly
-  rw [map_add, mul_add, map_add]
+  rw [map_add (f := _), mul_add, map_add (f := _)]
 
 theorem lamPoly_smul_left (c : K) (V W) : lamPoly T (c • V) W = c • lamPoly T V W := by
   unfold lamPoly
@@ -92,8 +96,8 @@ theorem lamPoly_prod (v t : S → MvPolynomial (Fin k × Fin n) K) :
   unfold lamPoly
   rw [renB_prod, hT]
 
-include hT in
 
+include hT in
 theorem lamPoly_mem {A : Type} [CommRing A] [Algebra A K] (Mv Mt Mr : S → Submodule A (MvPolynomial (Fin k × Fin n) K))
     (h : ∀ s, ∀ v ∈ Mv s, ∀ t ∈ Mt s, L s (blockEmb K true v * blockEmb K false t) ∈ Mr s) :
     ∀ V ∈ tensorLat A K Mv, ∀ W ∈ tensorLat A K Mt, lamPoly T V W ∈ tensorLat A K Mr := by

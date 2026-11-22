@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped BigOperators ComplexOrder
@@ -80,7 +84,8 @@ theorem pair_nonneg {g : ℕ} {B : Matrix (Fin g) (Fin g) ℤ}
 theorem mulVec_eq_zero_of_pair {g : ℕ} {B : Matrix (Fin g) (Fin g) ℤ}
     (h : (B.map (fun x : ℤ => (x : ℝ))).PosSemidef) (v : Fin g → ℤ) (h0 : v ⬝ᵥ (B *ᵥ v) = 0) :
     B *ᵥ v = 0 := by
-  have := (h.dotProduct_mulVec_zero_iff (fun k => (v k : ℝ))).1 (by rw [cast_pair, h0]; simp)
+  have := (h.dotProduct_mulVec_zero_iff (x := fun k => (v k : ℝ))).1
+    (by rw [cast_pair, h0]; simp)
   ext k
   have h1 := congrFun this k
   have h2 : ((B.map (fun x : ℤ => (x : ℝ))) *ᵥ (fun k => (v k : ℝ))) k
@@ -150,7 +155,7 @@ theorem limit_period : ∀ (n a g : ℕ) (ha : a ≤ n) (U : Set (Fin n → ℂ)
       simp only [mulVec, dotProduct]; fun_prop
     have t3 : Tendsto (fun m => ∏ j, (p (φ m)).1 (Fin.castLE ha j) ^ (v0 ⬝ᵥ (B j *ᵥ v0))) atTop
         (𝓝 (∏ j, z (Fin.castLE ha j) ^ (v0 ⬝ᵥ (B j *ᵥ v0)))) := by
-      refine tendsto_finset_prod _ fun j _ => ?_
+      refine tendsto_finsetProd _ fun j _ => ?_
       obtain ⟨b, hb⟩ := Int.eq_ofNat_of_zero_le (pair_nonneg (hB j) v0)
       simp only [hb, zpow_natCast]
       exact (hzj j).pow b
@@ -179,7 +184,7 @@ theorem limit_period : ∀ (n a g : ℕ) (ha : a ≤ n) (U : Set (Fin n → ℂ)
       simp only [mulVec, dotProduct]; fun_prop
     have t3 : Tendsto (fun m => ∏ j, (p (φ m)).1 (Fin.castLE ha j) ^ ((B j *ᵥ v0) k)) atTop
         (𝓝 (∏ j, Complex.exp (l j) ^ ((B j *ᵥ v0) k))) := by
-      refine tendsto_finset_prod _ fun j _ => ?_
+      refine tendsto_finsetProd _ fun j _ => ?_
       by_cases hj : z (Fin.castLE ha j) = 0
       · simp [hker j hj]
       · rw [hl j hj]

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.LocalQuotientRank
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.LocalLengthFraction
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.LocalQuotientRank
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.LocalLengthFraction
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank.LocalLengthAverage
 
@@ -94,7 +98,7 @@ theorem lenW_bound (hL : QuotLocalStatement) (M : Submodule (𝓞 K) V) (hM : M.
           linarith
       | zero => rw [map_zero, map_zero]; exact zero_le
       | add a b _ _ ha hb =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact le_trans (Valuation.map_add _ _ _) (max_le ha hb)
       | smul r a _ ha =>
         show w.valuation K₁ (c i ((r : K₁) • a)) ≤ _

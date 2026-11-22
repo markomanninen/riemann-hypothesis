@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FirstChernCoboundary
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.FirstChernCoboundary
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -23,8 +27,8 @@ def liftS {Q : ObjectProperty C} (hQ : Cosieve Q) {n : ℕ} (s : ComposableArrow
     ComposableArrows Q.FullSubcategory n :=
   Q.lift s fun k => hQ (s.map (homOfLE (Fin.zero_le _))) hs
 
-open Classical in
 
+open Classical in
 def extZ {Q : ObjectProperty C} (hQ : Cosieve Q) {n : ℕ} (b : CH.Cn (Q.ι ⋙ F) n) : CH.Cn F n :=
   fun s => if hs : Q (s.obj 0) then b (liftS hQ s hs) else 0
 
@@ -40,8 +44,8 @@ theorem d_extZ {Q : ObjectProperty C} (hQ : Cosieve Q) {n : ℕ} (b : CH.Cn (Q.�
 
 end RelativeFormLift
 
-open RelativeFormLift in
 
+open RelativeFormLift in
 theorem relLiftOf_pf : RelLiftOf := by
   intro hS hO K _ W Z q i _ a n y hy
   have hQ : Cosieve (On q i) := (hS K W Z W q i i).2.1

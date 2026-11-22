@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk9.tri_diag :
     ∀ {R : Type} [inst : CommRing R] {n : ℕ}

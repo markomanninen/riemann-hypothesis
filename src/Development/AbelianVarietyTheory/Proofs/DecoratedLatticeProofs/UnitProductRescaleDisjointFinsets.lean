@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepVectorLiftPairFlagLevelRealizedChain
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesLocalDatumBlockTriangularLaw
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotBadPrimeBase
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StepVectorLiftPairFlagLevelRealizedChain
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepThetaDatumHalfEqSmul
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypePlacesLocalDatumBlockTriangularLaw
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotentsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ theorem topL_mul_right (y : Matrix (Fin b) (Fin a) κ) (s : Matrix (Fin a) (Fin 
   rw [Matrix.mul_apply]
   unfold topL
   by_cases hp : p.val < b
-  · rw [dif_pos ⟨hp, q.2⟩, Matrix.mul_apply]
-    exact Finset.sum_congr rfl fun l _ => by rw [dif_pos ⟨hp, l.2⟩]
+  · rw [dite_eq_left ⟨hp, q.2⟩, Matrix.mul_apply]
+    exact Finset.sum_congr rfl fun l _ => by rw [dite_eq_left ⟨hp, l.2⟩]
   · rw [dif_neg fun h => hp h.1]
     exact (Finset.sum_eq_zero fun l _ => by rw [dif_neg fun h => hp h.1, zero_mul]).symm
 
@@ -191,8 +195,8 @@ theorem unit_product_rescale_disjoint_finsets {ι : Type} [DecidableEq ι] {Pg Q
   simp only [ofMul_mul, ofMul_inv]
   abel
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem stepVec_eq_sum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (sS : D.what₂.Tau → Matrix (Fin S.rank) (Fin S.rank) ℂ) (sT : D.what₂.Tau → Matrix (Fin T.rank) (Fin T.rank) ℂ) (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)) (βS : GL (Fin S.rank) (Lev.EAf D)) (βT : GL (Fin T.rank) (Lev.EAf D)) (f₀ f f' : WO S T → ℂ), IsWeilDatumO ψ S T χS χT om → S.SigOK → T.SigOK → (∀ τ, IsCartanInv (gramAt D S τ) (sS τ)) → (∀ τ, IsCartanInv (gramAt D T τ) (sT τ)) → IsSelfDualC S ΛS → IsSelfDualC T ΛT → IsFrame βS ΛS → IsFrame βT ΛT → ∀ (r t k : ℕ) (ha : r ≤ S.rank), S.rank = r + k * t → T.rank = r + (k + 1) * t → ∀ (Pg Q : Finset (Pl D.host.E)), Disjoint Pg Q → ∀ (χ : ℕ → ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) (ξ : ∀ PP : Pl D.host.E, (kP PP)ˣ →* ℂˣ) (P : LevelP Pg r ℂ) [Fintype P.H], IsStepVecOf ψ θ S T sS sT ΛS ΛT βS βT (datY S.rank r t k ha Pg Q (LevelP.triv Pg r ℂ) χ ξ Frm.B) (χ (k + 1)) Q ξ f₀ f → IsStepVecOf ψ θ S T sS sT ΛS ΛT βS βT (datY S.rank r t k ha Pg Q P χ ξ Frm.B) (χ (k + 1)) Q ξ f₀ f' → (∀ PP ∈ Pg, GlobalTheory.StepLaw.ResAt χS PP (χ (k + 1) PP)⁻¹ ∧ GlobalTheory.StepLaw.ResAt χT PP (χ (k + 1) PP)⁻¹) → (∀ PP ∈ Q, GlobalTheory.StepLaw.ResAt χS PP (ξ PP) ∧ GlobalTheory.StepLaw.ResAt χT PP (ξ PP)) → GlobalTheory.StepLaw.UnrOff χS (Pg ∪ Q) → GlobalTheory.StepLaw.UnrOff χT (Pg ∪ Q) → ∀ κ : P.H → GA D S, (∀ p : P.H, IsLevelLift S βS (datY S.rank r t k ha Pg Q (LevelP.triv Pg r ℂ) χ ξ Frm.B) p.1 (κ p)) → f' = ∑ p : P.H, (levChi S βS (datY S.rank r t k ha Pg Q P χ ξ Frm.B) (κ p))⁻¹ • om (κ p, 1) f := by
   intro D ψ θ S T χS χT om sS sT ΛS ΛT βS βT f₀ f f' hW kS kT cS cT dS dT fS fT r t k ha eS eT Pg Q hd χ ξ P _ hv hv' hG hQ uS uT
     κ hκ
@@ -218,7 +222,8 @@ theorem stepVec_eq_sum : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : Inf
   have h2 := fun p => om_theta hW hTm hth hΘ (GlobalTheory.T.mem_homLattice_iff_frameStabilizer_act_mem D S T ΛS ΛT βS βT dS dT fS fT (κ p) 1 (sg p) sh)
     (GlobalTheory.StepVecLaw.om_vac hW kS kT cS cT dS dT fS fT hf he' (fun PP hP => (hres PP hP).1) (fun PP hP => (hres PP hP).2) uS uT
       (hκ p).1 (one_mem _) (sg p) sh)
-  rw [hΘ'.2 Tm hTm, Finset.sum_congr rfl fun p _ => by rw [h2 p, smul_smul, ← map_smul], ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΘ'.2 Tm hTm, Finset.sum_congr rfl fun p _ => by rw [h2 p, smul_smul, ← map_smul], ← map_sum]
   congr 1
   funext x
   rw [Finset.sum_apply]

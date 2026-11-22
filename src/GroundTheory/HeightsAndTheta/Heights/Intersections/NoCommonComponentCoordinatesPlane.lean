@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -53,13 +58,5 @@ def DeLeSemiPos.Statement : Prop :=
     IsSmoothHerm A → IsSmoothHerm A' → IsSectionOn P A s → IsSectionOn P A' s' →
     (∀ W, W ∈ divSupp P s → W ∈ divSupp P s' → ¬ IsHorizontal W) →
     De P L A A' s s' ≤ 0
-
-theorem isSectionOn_coordinate_plane (i : Fin 3) : IsSectionOn (⊥ : Ideal (MRing (PBlk 3))) (fsLine 3) (Xc 3 i) := by
-  refine ⟨fun _ => 1, fun _ => rfl, fun m hm k => ?_, ?_⟩
-  · rw [support_X, Finset.mem_singleton] at hm
-    subst hm
-    simp [Finsupp.single_apply]
-  · rw [Submodule.mem_bot]
-    exact X_ne_zero _
 
 end GroundTheory.Heights₂.Heights.Inter

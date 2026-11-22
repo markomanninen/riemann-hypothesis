@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicWhittakerEquivariantBumpMirabolic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRapidInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicWhittakerEquivariantBumpMirabolic
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ def idemHom {R : Type} [CommRing R] (e : R) (he : IsIdempotentElem e) : R →ₙ
 
 variable {E : Type} [Field E] [NumberField E]
 
-open Classical in
 
+open Classical in
 def idemSf (S : Finset (HeightOneSpectrum (𝓞 E))) : Af E :=
   ⟨fun w => if w ∈ S then 1 else 0, Filter.Eventually.of_forall fun w => by
     by_cases h : w ∈ S
@@ -95,18 +99,18 @@ theorem blk_unblk (P : Matrix (Fin (m + 1) ⊕ Fin (r + 1)) (Fin (m + 1) ⊕ Fin
 
 end Blocks
 
-open Classical in
 
+open Classical in
 def mkGL {R : Type} [CommRing R] {k : ℕ} (M : Matrix (Fin k) (Fin k) R) : GL (Fin k) R :=
   if h : IsUnit M.det then Matrix.nonsingInvUnit M h else 1
 
 theorem coe_mkGL {R : Type} [CommRing R] {k : ℕ} {M : Matrix (Fin k) (Fin k) R} (h : IsUnit M.det) :
     ((mkGL M : GL (Fin k) R) : Matrix (Fin k) (Fin k) R) = M := by
-  rw [mkGL, dif_pos h]; rfl
+  rw [mkGL, dite_eq_left h]; rfl
 
 def psi (x : Ad E) : ℂ := (GroundTheory.Global.adelicChar E x : ℂ)
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
 
 def chiF {m r : ℕ} (χ : (Fin (r + 1) → Fin (m + 1) → Cinf E) → ℝ) (Y : Matrix (Fin (r + 1)) (Fin (m + 1)) (Ad E)) : ℂ :=
   open Classical in

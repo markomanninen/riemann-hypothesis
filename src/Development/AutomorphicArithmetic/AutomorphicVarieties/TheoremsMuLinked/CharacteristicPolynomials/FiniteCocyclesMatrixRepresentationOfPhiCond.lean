@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.FiniteCocyclesColRepOfPhiCond
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.CharacteristicPolynomials.FiniteCocyclesColRepOfPhiCond
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial Matrix UpperTheory.V UpperTheory.V.HV UpperTheory.V.Alg GlobalTheory.GalOfCusp
 
@@ -72,7 +76,7 @@ theorem UpperTheory.V.Th.Det.finite_cocycles_matrixRepresentation_of_phiCond :
     rintro f ⟨hc, hco⟩
     refine ⟨(continuous_matrix_flatten (Qbar l) n).comp hc, fun g h => ?_⟩
     show matrixFlattenLinearEquiv (Qbar l) n (f (g * h)) = matrixFlattenLinearEquiv (Qbar l) n (f g) + Matrix.toLin' (flattenedMatrixRepresentation R g) (matrixFlattenLinearEquiv (Qbar l) n (f h))
-    rw [hco g h, map_add, matrix_rep_flatten_apply]
+    rw [hco g h, map_add (f := _), matrix_rep_flatten_apply]
   have hinj : Function.Injective (Φ.restrict hmem) := by
     intro x y hxy
     apply Subtype.ext

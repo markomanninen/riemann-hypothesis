@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 
@@ -27,7 +31,7 @@ theorem prodDist_step {ι : Type*} [DecidableEq ι] (t : ι → ℝ) (s S : Fins
   have hfar' : (r / 5) ^ (s \ S).card ≤ ∏ j ∈ s \ S, |ρ - t j| := by
     calc (r / 5) ^ (s \ S).card = ∏ _j ∈ s \ S, (r / 5) := (Finset.prod_const _).symm
       _ ≤ ∏ j ∈ s \ S, |ρ - t j| := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro i _
           positivity
         · intro i hi

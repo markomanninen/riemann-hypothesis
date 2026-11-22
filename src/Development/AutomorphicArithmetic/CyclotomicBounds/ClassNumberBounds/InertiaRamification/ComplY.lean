@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplDefY
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.LocDiffY
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.FieldDisc
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.EmbDefY
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.SplitDef
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.ComplDefY
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.LocDiffY
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.FieldDefs
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.EmbDefY
+public import Mathlib
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -158,7 +162,8 @@ private theorem cy_fin [Algebra ℤ_[l] (w.adicCompletionIntegers E)] :
     have hx : φ (fun i => ((b.repr x i : ℤ) : ℤ_[l])) =
         algebraMap (𝓞 E) (w.adicCompletionIntegers E) x := by
       conv_rhs => rw [← b.sum_repr x]
-      simp [φ, Fintype.linearCombination_apply, map_sum, Int.cast_smul_eq_zsmul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [φ, Fintype.linearCombination_apply, map_sum, Int.cast_smul_eq_zsmul]
     simp only [LinearMap.coe_comp, Function.comp_apply, Submodule.mkQ_apply, hx]
     rw [Submodule.Quotient.eq, Submodule.ideal_span_singleton_smul,
       Submodule.mem_smul_pointwise_iff_exists]
@@ -234,8 +239,8 @@ theorem finrank_complIntegers [Algebra ℤ_[l] (w.adicCompletionIntegers E)] :
         rintro ⟨q, hq1, hq2⟩
         apply Subtype.ext
         have : q.IsMaximal := by
-          apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := ℤ_[l])
-          rw [← Ideal.under_def, ← hq2.over]
+          apply Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := ℤ_[l])
+          rw [← hq2.over]
           exact hmax
         exact IsLocalRing.eq_maximalIdeal this }
   haveI : Fintype ((Ideal.span {(l : ℤ_[l])}).primesOver (w.adicCompletionIntegers E)) :=
@@ -267,7 +272,7 @@ private theorem ramificationIdx_mul_inertiaDeg_eq_one_of_splitsIn (hs : SplitsIn
     intro q
     haveI : q.1.IsPrime := q.2.1
     exact Nat.one_le_iff_ne_zero.2
-      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 ℤ).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
+      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) q.1).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
   let q0 : (Ideal.span {(l : ℤ)}).primesOver (𝓞 E) := ⟨w.asIdeal, w.isPrime, inferInstance⟩
   by_contra hne
   have hlt : ∑ _q : (Ideal.span {(l : ℤ)}).primesOver (𝓞 E), (1 : ℕ) <
@@ -300,7 +305,7 @@ theorem finrank_compl [Algebra ℚ_[l] (w.adicCompletion E)]
     IsFractionRing.finrank_eq ℤ_[l] ℚ_[l] (w.adicCompletionIntegers E) (w.adicCompletion E)
   have hpos : 0 < Module.finrank ℚ_[l] (w.adicCompletion E) := by
     rw [hK, hrank]
-    exact Nat.mul_pos (Ideal.ramificationIdx_pos w.asIdeal ℤ) (Ideal.inertiaDeg_pos w.asIdeal ℤ)
+    exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) w.asIdeal) (Ideal.inertiaDeg_pos w.asIdeal ℤ)
   haveI : Module.Finite ℚ_[l] (w.adicCompletion E) := Module.finite_of_finrank_pos hpos
   refine ⟨inferInstance, hK.trans hrank, fun hs => ?_⟩
   have h1 : Module.finrank ℚ_[l] (w.adicCompletion E) = 1 := by

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceAdelicCmExtension
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GramNear
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.IntegralAlmostAllPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TraceAdelicCmExtension
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceCharacterConductorIntegers
+
+@[expose] public section
+
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.StdUnn PositivityTheory.GramSchwartzFunctions PositivityTheory.GramSchwartzFunctions.BC GlobalTheory.CompanionTheory.SiegelND
@@ -33,11 +38,13 @@ theorem coord_sig {R : Type} [CommRing R] [Algebra F R] {d : ℕ} (σ : E →ₐ
   have h : sigR R σ x =
       ∑ k, ((Algebra.TensorProduct.basis R b).repr x k) • ((1 : R) ⊗ₜ[F] σ (b k)) := by
     conv_lhs => rw [sum_coord (R := R) b x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [TensorProduct.smul_tmul', TensorProduct.smul_tmul']
     simp [sigR]
-  rw [h, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
 
@@ -47,7 +54,8 @@ theorem trace_coord {R : Type} [CommRing R] [Algebra F R] {d : ℕ} (b : Module.
     Algebra.trace R (R ⊗[F] E) x =
       ∑ k, (Algebra.TensorProduct.basis R b).repr x k * algebraMap F R (Algebra.trace F E (b k)) := by
   conv_lhs => rw [sum_coord (R := R) b x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, GlobalTheory.LatVac.trace_tmul, one_mul, smul_eq_mul]
 
@@ -57,7 +65,7 @@ theorem trace_tmul_one {R : Type} [CommRing R] [Algebra F R] (σ : E →ₐ[F] E
   induction x using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    rw [map_add, TensorProduct.add_tmul, hx, hy, map_add]
+    rw [map_add (f := _), TensorProduct.add_tmul, hx, hy, map_add (f := _)]
     abel
   | tmul a e =>
     have h1 : (a * algebraMap F R (Algebra.trace F E e)) ⊗ₜ[F] (1 : E) =

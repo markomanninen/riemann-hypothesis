@@ -1,5 +1,9 @@
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurOrthogonality
-import Formalism.HermitianCurvature.BesselNonvanishingReduction
+module
+
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.SchurOrthogonality.SchurOrthogonality
+public import Formalism.HermitianCurvature.BesselNonvanishingReduction
+
+@[expose] public section
 
 noncomputable section
 

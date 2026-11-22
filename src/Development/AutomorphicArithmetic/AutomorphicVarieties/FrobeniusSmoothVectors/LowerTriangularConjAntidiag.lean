@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 private theorem jconj {K : Type} [CommRing K] {n : ℕ} (M : Matrix (Fin n) (Fin n) K) (i j : Fin n) :
-    (Jmat K n * Mᵀ * Jmat K n) i j = M j.rev i.rev := by
+    (Jmat (R := K) n * Mᵀ * Jmat (R := K) n) i j = M j.rev i.rev := by
   simp only [Matrix.mul_apply, Jmat]
   simp [Fin.rev_eq_iff]
   simp [eq_comm (a := j), Fin.rev_eq_iff]
@@ -21,7 +25,8 @@ private theorem ord3 {K : Type} [CommRing K] (α β γ p₀ q₀ p₁ q₁ p₂ 
     simp [Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] <;> ring
 
 private theorem low_pol {K : Type} [CommRing K] (p q y z a : K) :
-    !![q, 0, 0; z, 1, 0; a, y, p] = Jmat K 3 * (!![p, 0, 0; y, 1, 0; a, z, q])ᵀ * Jmat K 3 := by
+    !![q, 0, 0; z, 1, 0; a, y, p] =
+      Jmat (R := K) 3 * (!![p, 0, 0; y, 1, 0; a, z, q])ᵀ * Jmat (R := K) 3 := by
   ext i j
   rw [jconj]
   fin_cases i <;> fin_cases j <;> rfl

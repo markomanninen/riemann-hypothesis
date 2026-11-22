@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.TraceIntegralBasis
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -104,7 +108,6 @@ noncomputable def plc (τ : X.Ψ) : TraceIntegralBasis.CP E :=
   ⟨InfinitePlace.mk τ.1, IsTotallyComplex.isComplex _⟩
 
 open scoped Classical in
-
 noncomputable def Tm : TraceIntegralBasis.VS E →ₗ[ℝ] (X.Ψ → ℂ) where
   toFun z τ := if (plc X τ).1.embedding = τ.1 then z (plc X τ) else conj (z (plc X τ))
   map_add' z z' := by
@@ -188,7 +191,8 @@ theorem span_embV {ι : Type} [Fintype ι] (g : Basis ι ℤ X.Λ) :
     have hv : X.embV v = ∑ i, (((qb X g).repr v i : ℚ) : ℝ) • X.embV (g i : Fin r → E) := by
       conv_lhs => rw [← (qb X g).sum_repr v]
       funext τ a
-      simp only [Data.embV, Data.emb, qb_apply, Finset.sum_apply, Pi.smul_apply, Rat.smul_def,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Data.embV, Data.emb, qb_apply, Finset.sum_apply, Pi.smul_apply, Rat.smul_def,
         map_sum, map_mul, map_ratCast, Complex.real_smul, Complex.ofReal_ratCast]
     rw [hv]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (subset_span ⟨i, rfl⟩)

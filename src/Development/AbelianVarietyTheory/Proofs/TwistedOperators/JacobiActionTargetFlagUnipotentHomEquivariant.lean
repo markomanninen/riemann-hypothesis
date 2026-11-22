@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.MixModel GlobalTheory.MixPer
 open scoped TensorProduct
@@ -58,7 +62,7 @@ theorem eq_zero_of_eq_neg {x : AF D.host.F} (h : x = -x) : x = 0 := by
     calc x + x = -x + x := by rw [← h]
       _ = 0 := neg_add_cancel x
   calc x = algebraMap D.host.F (AF D.host.F) (1 / 2) * (x + x) := by
-        rw [mul_add, ← add_mul, ← map_add, add_halves, map_one, one_mul]
+        rw [mul_add, ← add_mul, ← map_add (f := _), add_halves, map_one, one_mul]
     _ = 0 := by rw [h2, mul_zero]
 
 end Sympl
@@ -245,8 +249,8 @@ end Main
 
 end GlobalTheory.MixPer.JacHom
 
-open GlobalTheory.MixPer.JacHom in
 
+open GlobalTheory.MixPer.JacHom in
 theorem GlobalTheory.MixPer.jacT_hom : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (T T₀ S : HSp D) (ρ : ℕ) (d : HypDec T T₀ ρ)
     (y : Mx D S.rank ρ), (∀ u ∈ UX D ρ, y ⬝ u.1 = y) → (∀ b c, cenT d S y (d.nB b * d.nC c) = d.qT S c y) ∧
     (∀ n ∈ flagN d, ∀ n' ∈ flagN d, ptT d S y (n * n') = ptT d S y n + ptT d S y n' ∧

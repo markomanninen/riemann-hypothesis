@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -21,11 +25,14 @@ theorem contDiff_of_differentiable {N : ℕ} {F : (Fin N → ℂ) → ℂ} (hF :
 theorem iter_step_bound {N : ℕ} (F : (Fin N → ℂ) → ℂ) (hF : Differentiable ℂ F) (ρ M : ℝ)
     (hρ : 0 < ρ) : ∀ (k : ℕ) (l : Fin k → Fin N) (x : Fin N → ℂ),
     (∀ y, ∑ i, ‖y i - x i‖ ≤ k * ρ → ‖F y‖ ≤ M) →
-    ‖iteratedFDeriv ℂ k F x (fun j => Pi.single (l j) 1)‖ ≤ M / ρ ^ k
-  | 0, l, x, hM => by
-    have := hM x (by simp)
-    simpa using this
-  | k + 1, l, x, hM => by
+    ‖iteratedFDeriv ℂ k F x (fun j => Pi.single (l j) 1)‖ ≤ M / ρ ^ k := by
+  intro k
+  induction k with
+  | zero =>
+    intro l x hM
+    simpa only [iteratedFDeriv_zero_apply, pow_zero, div_one] using hM x (by simp)
+  | succ k ih =>
+    intro l x hM
     set e : Fin N → ℂ := Pi.single (l 0) 1 with he
     set v : Fin k → (Fin N → ℂ) := fun j => Pi.single (l (Fin.succ j)) 1 with hv
     set A := iteratedFDeriv ℂ k F with hA
@@ -50,7 +57,7 @@ theorem iter_step_bound {N : ℕ} (F : (Fin N → ℂ) → ℂ) (hF : Differenti
     have hsph : ∀ w ∈ sphere (0 : ℂ) ρ, ‖g w‖ ≤ M / ρ ^ k := by
       intro w hw
       have hw' : ‖w‖ = ρ := by simpa using hw
-      have := iter_step_bound F hF ρ M hρ k (fun j => l (Fin.succ j)) (x + w • e) (by
+      have := ih (fun j => l (Fin.succ j)) (x + w • e) (by
         intro y hy
         apply hM y
         calc ∑ i, ‖y i - x i‖ ≤ ∑ i, (‖y i - (x + w • e) i‖ + ‖(w • e) i‖) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.ColPins
-import Formalism.LocalToGlobal.NumberFieldFamilies.EvRowSurjective
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsAbsIrrCharCompIff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvaluationDatumOkBaseTuple
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.ColPins
+public import Formalism.LocalToGlobal.NumberFieldFamilies.EvRowSurjective
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsAbsIrrCharCompIff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvaluationDatumOkBaseTuple
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,13 +78,6 @@ def colRecC : ColRec3 B.fields (famC I hX U Xg tr) (lev1 I) (chr1 I) where
     exact e
   ev := evC (X := B.fields) (Pr := B.primes X) B.wts I.Ch I.sel hX (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ (xiValOf I) tr
     (rPsymF (R := B.R) I.Ch)
-
-theorem colRecC_ev_bijective (Zs : DefSub (famC I hX U Xg tr).fam3.amb3) (t : TupU I U) :
-    Function.Bijective ((colRecC h hp l Z ht hJ χ hχ hX U Xg tr).ev Zs t) :=
-  evC_bijective (X := B.fields) (Pr := B.primes X) B.wts I.Ch I.sel hX (InfinitePlace.mk B.embLL) (tuOf I U) Xg ∅ (xiValOf I) tr
-    (rPsymF (R := B.R) I.Ch) Zs t
-
-theorem fieldsLL_eq : fieldsLL (I.rec7 l Z) B.fields B.tauLL = B.fields := rfl
 
 end GlobalTheory.Mem.R3.SelC
 

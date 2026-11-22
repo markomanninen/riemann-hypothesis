@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,7 +158,7 @@ theorem htY_prod (hA : D.Ax) (s s' : Fin 2 → F) (hd : s 0 * s' 1 - s 1 * s' 0 
     _ = ∏ v, (|(y.2 v).1.im| / ‖(D.σ v (s 0) : ℂ) * (y.2 v).1 + (D.σ v (s 1) : ℂ)‖ ^ 2 *
       (|(y.2 v).1.im| / ‖(D.σ v (s' 0) : ℂ) * (y.2 v).1 + (D.σ v (s' 1) : ℂ)‖ ^ 2) *
       D.σ v (s 0 * s' 1 - s 1 * s' 0) ^ 2) := by rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-    _ ≤ 1 := Finset.prod_le_one (fun v _ => by positivity) (fun v _ => hl v)
+    _ ≤ 1 := Finset.prod_le_one₀ (fun v _ => by positivity) (fun v _ => hl v)
 
 theorem meas_ht (s : Fin 2 → F) (x : Gf) : Measurable fun z : D.Xs => D.Ht s z x := by
   unfold Dat.Ht

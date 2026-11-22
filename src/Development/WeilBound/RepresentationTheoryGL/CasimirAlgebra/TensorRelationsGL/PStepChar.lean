@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem eval_mul_nc (p q : A[X]) (x : A) (h : ∀ k, Commute (q.coeff k) x) :
 
 theorem eval_sumMono (d : ℕ → A) (N : ℕ) (u : ℂ) :
     (∑ i ∈ Finset.range N, monomial i (d i)).eval (algebraMap ℂ A u) = ∑ i ∈ Finset.range N, u ^ i • d i := by
-  simp only [Polynomial.eval_finset_sum, Polynomial.eval_monomial, ← map_pow, Algebra.smul_def,
+  simp only [Polynomial.eval_finsetSum, Polynomial.eval_monomial, ← map_pow, Algebra.smul_def,
     Algebra.commutes]
 
 theorem vanish (D : A[X]) (a : ℂ) (h : ∀ u : ℂ, u ≠ a → D.eval (algebraMap ℂ A u) = 0) : D = 0 := by
@@ -33,8 +37,9 @@ theorem vanish (D : A[X]) (a : ℂ) (h : ∀ u : ℂ, u ≠ a → D.eval (algebr
   have hq : ∀ u : ℂ, u ≠ a → q.eval u = 0 := by
     intro u hu
     have e := congrArg φ (h u hu)
-    rw [Polynomial.eval_eq_sum_range, map_zero, map_sum] at e
-    simp only [q, Polynomial.eval_finset_sum, Polynomial.eval_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Polynomial.eval_eq_sum_range, map_zero, map_sum] at e
+    simp only [q, Polynomial.eval_finsetSum, Polynomial.eval_monomial]
     rw [← e]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
@@ -44,7 +49,7 @@ theorem vanish (D : A[X]) (a : ℂ) (h : ∀ u : ℂ, u ≠ a → D.eval (algebr
     exact (Set.finite_singleton a).infinite_compl
   by_cases hi : i < D.natDegree + 1
   · have e := congrArg (fun p => p.coeff i) q0
-    simpa [q, Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, hi] using e
+    simpa [q, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply, hi] using e
   · rw [Polynomial.coeff_eq_zero_of_natDegree_lt (by omega), map_zero]
 
 theorem prod_neg_zero (L : List A) (h : (L.map fun x => -x).prod = 0) : L.prod = 0 := by
@@ -69,7 +74,7 @@ theorem rel_add {X X' Y Y'} (h : Rel W q X Y) (h' : Rel W q X' Y') : Rel W q (X 
   obtain ⟨h2, e2⟩ := h' w
   refine ⟨W.add_mem h1 h2, ?_⟩
   show q (⟨X w, h1⟩ + ⟨X' w, h2⟩) = Y (q w) + Y' (q w)
-  rw [map_add, e1, e2]
+  rw [map_add (f := _), e1, e2]
 
 theorem rel_sub {X X' Y Y'} (h : Rel W q X Y) (h' : Rel W q X' Y') : Rel W q (X - X') (Y - Y') := by
   intro w
@@ -188,7 +193,7 @@ theorem part1 (hT : TensorGl) (hS : StepFormula) (hQ : QdetFacts) (E : Fin n →
     intro u
     have e := hS n M E hE 1 u
     rw [piJ_one, piJ_one, hl u, lift_alg] at e
-    rw [← ((comm_alg _ u).symm.add_left (hcomm u)).eq, e, map_add, map_one, add_assoc]
+    rw [← ((comm_alg _ u).symm.add_left (hcomm u)).eq, e, map_add (f := _), map_one, add_assoc]
   have hP : (∑ i ∈ Finset.range (n + 1), monomial i (c i)) * (X + C (Om E (0 : Fin 1))) -
       (∏ k, (X + C (l k))).map (algebraMap ℂ (Module.End ℂ (TV n M (Fin 1)))) * (X + C (1 + Om E 0)) = 0 := by
     apply vanish _ 0
@@ -212,7 +217,7 @@ theorem part1 (hT : TensorGl) (hS : StepFormula) (hQ : QdetFacts) (E : Fin n →
   apply prod_neg_zero
   rw [List.map_ofFn]
   refine Eq.trans (congrArg List.prod (congrArg List.ofFn (funext fun k => ?_))) e
-  simp only [Function.comp_apply, map_add, Polynomial.aeval_X, Polynomial.aeval_C, neg_sub]
+  simp only [Function.comp_apply, map_add (f := _), Polynomial.aeval_X, Polynomial.aeval_C, neg_sub]
   abel
 
 theorem part2 (hT : TensorGl) (hS : StepFormula) (hQ : QdetFacts) (E : Fin n → Fin n → Module.End ℂ M)

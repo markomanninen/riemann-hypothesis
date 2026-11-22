@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.LeviBlockInduction.GxDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeometricLemma
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleLeviTransport
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivDetCharacterOfIrreducibleRankLeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FixedNeBotOfIsSubquotientOfIsCompact
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.LeviBlockInduction.GxDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GeometricLemma
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetModuleLeviTransport
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JacquetMultiplicityPos
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivDetCharacterOfIrreducibleRankLeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FixedNeBotOfIsSubquotientOfIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -197,7 +201,7 @@ private theorem cusp_block {n r : ℕ} {d : Fin r → ℕ} (e : (Σ j, Fin (d j)
 private theorem pol_eq {n r : ℕ} {d : Fin r → ℕ} (hd : ∀ j, 0 < d j) (e : (Σ j, Fin (d j)) ≃ Fin n) {β : Fin n → ℕ}
     (hβ : ∀ x y, β x < β y ↔ blk e x < blk e y) (φ : Levi k (fun j => Fin (d j)) ≃* levi k n β)
     (hφ : ∀ g, ((φ g : levi k n β) : GL (Fin n) k) = leviEmb k e g) {V : Type} [AddCommGroup V] [Module ℂ V]
-    {π : Representation ℂ (GL (Fin n) k) V} {s : Multiset (IrrGL k)} (hs : HasSupport π s)
+    {π : Representation ℂ (GL (Fin n) k) V} {s : Multiset (IrrGL (k := k))} (hs : HasSupport π s)
     {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (levi k n β) W) (hi : σ.IsIrreducible)
     (hc : GroundTheory.Automorphic.Parabolic.IsCuspidal σ) (ι : Representation.IntertwiningMap π (parabolicInd k n β σ))
     (hι : Function.Injective ι) (α : Fin r → ℂ)
@@ -223,8 +227,14 @@ private theorem pol_eq {n r : ℕ} {d : Fin r → ℕ} (hd : ∀ j, 0 < d j) (e 
   haveI := GlobalTheory.SmGL.Model.nontrivial_of_isIrreducible hτ
   obtain ⟨v, hv⟩ := exists_ne (0 : V)
   let f := E.symm.toIntertwiningMap.comp ι
-  have hf : f v ≠ 0 := fun h => hv (hι (E.symm.toLinearEquiv.injective (by
-    rw [map_zero, map_zero]; exact h)))
+  have hf : f v ≠ 0 := by
+    intro h
+    apply hv
+    apply hι
+    apply E.symm.toLinearEquiv.injective
+    change E.symm.toLinearEquiv (ι.toLinearMap v) = E.symm.toLinearEquiv (ι.toLinearMap 0)
+    rw [ι.map_zero, E.symm.toLinearEquiv.map_zero]
+    exact h
   have hτs : IsSubquotient τ (jac e π) := .of_surjective (GlobalTheory.CompanionTheory.FrobJm.frobMap e f)
     (GlobalTheory.CompanionTheory.FrobJm.surjective_of_ne_zero hτ _ (GlobalTheory.CompanionTheory.FrobJm.frobMap_ne_zero e f ⟨v, hf⟩))
   have hτsm : IsSmooth τ := hτs.isSmooth (isSmooth_jac e hs.isSmooth)
@@ -289,7 +299,7 @@ end UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter
 
 open UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter GroundTheory.Automorphic.GodementJacquet GroundTheory.Automorphic.Parabolic in
 theorem UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.gxSupp {F : Type} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
-    {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin n) F) V} {s : Multiset (IrrGL F)}
+    {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin n) F) V} {s : Multiset (IrrGL (k := F))}
     (hs : HasSupport π s) {β : Fin n → ℕ} {W : Type} [AddCommGroup W] [Module ℂ W]
     {σ : Representation ℂ (levi F n β) W} (hi : σ.IsIrreducible) (hc : GroundTheory.Automorphic.Parabolic.IsCuspidal σ)
     (ι : Representation.IntertwiningMap π (parabolicInd F n β σ)) (hι : Function.Injective ι) {ω : Set.range β → ℂ}

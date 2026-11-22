@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.GenericFiberGluing.SemistableCompleteSplit
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.GenericFiberGluing.SemistableCompleteSplit
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+
+@[expose] public section
 
 universe u
 
@@ -14,12 +18,10 @@ open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.S
 namespace GlobalTheory.SplitExtTorus
 
 theorem isTorus_splitTorus (k : Type u) [Field k] (X : Type u) [AddCommGroup X] [Module.Free ℤ X]
-    [Module.Finite ℤ X] : IsTorus (splitTorus (Spec (CommRingCat.of k)) X) where
-  comm := GlobalTheory.Diag.isCommMonObj _ X
-  finiteType := inferInstance
-  quasiCompact := inferInstance
-  splits := ⟨k, inferInstance, inferInstance, X, inferInstance, inferInstance, inferInstance,
-    GlobalTheory.Diag.baseChangeIso _ X, GlobalTheory.Diag.baseChangeIso_isMonHom _ X⟩
+    [Module.Finite ℤ X] : IsTorus (splitTorus (Spec (CommRingCat.of k)) X) :=
+  ⟨GlobalTheory.Diag.isCommMonObj _ X, inferInstance, inferInstance,
+    ⟨k, inferInstance, inferInstance, X, inferInstance, inferInstance, inferInstance,
+      GlobalTheory.Diag.baseChangeIso _ X, GlobalTheory.Diag.baseChangeIso_isMonHom _ X⟩⟩
 
 def torusExtOfSplit {k : Type u} [Field k] {G : Over (Spec (CommRingCat.of k))} [GrpObj G]
     (E : TorusExtension G) : TorusExt G :=

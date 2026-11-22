@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCarry
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RaCarry
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix

@@ -1,8 +1,12 @@
-import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatement
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
-import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
-import ReciprocityTheory.DualLattices.EigenLiftsFrobenius
+module
+
+public import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatement
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+public import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+public import ReciprocityTheory.DualLattices.EigenLiftsFrobenius
+
+@[expose] public section
 
 noncomputable section
 

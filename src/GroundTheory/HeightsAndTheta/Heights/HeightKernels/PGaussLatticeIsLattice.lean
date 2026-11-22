@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGauss
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -30,8 +35,8 @@ theorem gaussLattice_eq_span {g : ℕ} (B : Matrix (Fin g) (Fin g) ℝ) (hB : B.
 
 end PGaussLatticeIsLattice
 
-open PGaussLatticeIsLattice in
 
+open PGaussLatticeIsLattice in
 theorem GaussLatticeIsLattice.proof : GaussLatticeIsLattice.Statement := by
   intro g B hB
   have h := gaussLattice_eq_span B hB

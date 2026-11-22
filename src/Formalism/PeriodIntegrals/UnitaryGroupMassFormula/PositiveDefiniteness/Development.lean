@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.FinOrdAd
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.FinOrdAd
+
+@[expose] public section
 
 noncomputable section
 

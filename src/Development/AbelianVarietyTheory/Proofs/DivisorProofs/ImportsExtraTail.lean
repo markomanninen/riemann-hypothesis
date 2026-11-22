@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+
+@[expose] public section
 
 noncomputable section
 

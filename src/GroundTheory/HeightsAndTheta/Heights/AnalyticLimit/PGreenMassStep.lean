@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassStep
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PGreenMassStepA
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PGreenMassStepB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassStep
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PGreenMassStepA
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PGreenMassStepB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

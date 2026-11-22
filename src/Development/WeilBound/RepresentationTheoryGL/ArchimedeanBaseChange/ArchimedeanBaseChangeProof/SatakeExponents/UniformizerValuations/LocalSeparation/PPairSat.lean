@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem pairSat_holds : PairSat := by
     by_contra hc
     push Not at hc
     exact h0 (funext hc)
-  have fixA : ∀ y (φ : Sm E a), (∀ x, φ.1 x = G (x, y)) → ∀ k ∈ KGL w a, finRep E a (locGL E a w k) φ = φ := by
+  have fixA : ∀ y (φ : Sm E a), (∀ x, φ.1 x = G (x, y)) → ∀ k ∈ KGL w (n := a), finRep E a (locGL E a w k) φ = φ := by
     intro y φ e k hk
     refine Subtype.ext (funext fun x => ?_)
     show φ.1 (x * finGL E a (locGL E a w k)) = φ.1 x
@@ -135,7 +139,7 @@ theorem pairSat_holds : PairSat := by
     rw [map_one, Prod.mk_mul_mk, mul_one] at this
     rw [e, e]
     exact this
-  have fixB : ∀ x (φ : Sm E b), (∀ y, φ.1 y = G (x, y)) → ∀ k ∈ KGL w b, finRep E b (locGL E b w k) φ = φ := by
+  have fixB : ∀ x (φ : Sm E b), (∀ y, φ.1 y = G (x, y)) → ∀ k ∈ KGL w (n := b), finRep E b (locGL E b w k) φ = φ := by
     intro x φ e k hk
     refine Subtype.ext (funext fun y => ?_)
     show φ.1 (y * finGL E b (locGL E b w k)) = φ.1 y
@@ -150,7 +154,7 @@ theorem pairSat_holds : PairSat := by
   have nb : φb ≠ 0 := fun h => hp (by rw [← eb y₀, h]; rfl)
   obtain ⟨Ba, sa, hBa⟩ := hT E a s₁ Pa w g₁ u₁ t₁ ⟨φa, hφa, na, fixA y₀ φa ea⟩
   obtain ⟨Bb, sb, hBb⟩ := hT E b s₂ Pb w g₂ u₂ t₂ ⟨φb, hφb, nb, fixB x₀ φb eb⟩
-  have eigA : ∀ ϖ, IsUnifV E w ϖ → ∀ i ≤ a, heckeVec ((pairRt a b w).comp (MonoidHom.inl _ _)) (KGL w a)
+  have eigA : ∀ ϖ, IsUnifV E w ϖ → ∀ i ≤ a, heckeVec ((pairRt a b w).comp (MonoidHom.inl _ _)) (KGL w (n := a))
       (Tj ℂ a (Ov E w) ϖ i) G = satEig (qV E w) a Ba i • G := by
     intro ϖ hϖ i hi
     funext ⟨x, y⟩
@@ -160,18 +164,18 @@ theorem pairSat_holds : PairSat := by
       (pairSatEvA_equiv w y) G) x
     have hev : pairSatEvA y G = φ.1 := funext fun x => (e x).symm
     rw [hev] at key
-    change heckeVec ((pairRt a b w).comp (MonoidHom.inl _ _)) (KGL w a) (Tj ℂ a (Ov E w) ϖ i) G (x, y) = _ at key
+    change heckeVec ((pairRt a b w).comp (MonoidHom.inl _ _)) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ i) G (x, y) = _ at key
     rw [key, Pi.smul_apply, ← e x]
     by_cases hz : φ = 0
     · subst hz
       simp [heckeVec_zero_pair]
     · have hs := (hBa φ hφ hz (fixA y φ e)).map (Sm E a).subtype
         (ρ' := (rightReg ℂ (GA E a) ℂ).comp (embW a w)) (fun g z => rfl) (by simpa using hz)
-      have he : heckeVec ((rightReg ℂ (GA E a) ℂ).comp (embW a w)) (KGL w a) (Tj ℂ a (Ov E w) ϖ i) φ.1 =
+      have he : heckeVec ((rightReg ℂ (GA E a) ℂ).comp (embW a w)) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ i) φ.1 =
           satEig (qV E w) a Ba i • φ.1 := hs.2.2.2 ϖ hϖ i hi
       rw [he]
       rfl
-  have eigB : ∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ b, heckeVec ((pairRt a b w).comp (MonoidHom.inr _ _)) (KGL w b)
+  have eigB : ∀ ϖ, IsUnifV E w ϖ → ∀ j ≤ b, heckeVec ((pairRt a b w).comp (MonoidHom.inr _ _)) (KGL w (n := b))
       (Tj ℂ b (Ov E w) ϖ j) G = satEig (qV E w) b Bb j • G := by
     intro ϖ hϖ j hj
     funext ⟨x, y⟩
@@ -181,14 +185,14 @@ theorem pairSat_holds : PairSat := by
       (pairSatEvB_equiv w x) G) y
     have hev : pairSatEvB x G = φ.1 := funext fun y => (e y).symm
     rw [hev] at key
-    change heckeVec ((pairRt a b w).comp (MonoidHom.inr _ _)) (KGL w b) (Tj ℂ b (Ov E w) ϖ j) G (x, y) = _ at key
+    change heckeVec ((pairRt a b w).comp (MonoidHom.inr _ _)) (KGL w (n := b)) (Tj ℂ b (Ov E w) ϖ j) G (x, y) = _ at key
     rw [key, Pi.smul_apply, ← e y]
     by_cases hz : φ = 0
     · subst hz
       simp [heckeVec_zero_pair]
     · have hs := (hBb φ hφ hz (fixB x φ e)).map (Sm E b).subtype
         (ρ' := (rightReg ℂ (GA E b) ℂ).comp (embW b w)) (fun g z => rfl) (by simpa using hz)
-      have he : heckeVec ((rightReg ℂ (GA E b) ℂ).comp (embW b w)) (KGL w b) (Tj ℂ b (Ov E w) ϖ j) φ.1 =
+      have he : heckeVec ((rightReg ℂ (GA E b) ℂ).comp (embW b w)) (KGL w (n := b)) (Tj ℂ b (Ov E w) ϖ j) φ.1 =
           satEig (qV E w) b Bb j • φ.1 := hs.2.2.2 ϖ hϖ j hj
       rw [he]
       rfl

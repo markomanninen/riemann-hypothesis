@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RationalSymplecticPointsSelfAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceAnnihilatorRelativelyCompact
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ImportsAlt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.FWT GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff ComplexOrder Topology
@@ -33,7 +37,7 @@ theorem exists_char_form {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module 
     { carrier := {a | π a g = 0}
       add_mem' := fun {a b} ha hb => by
         simp only [Set.mem_setOf_eq] at *
-        rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+        rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
       zero_mem' := by simp
       smul_mem' := fun c a ha => by
         simp only [Set.mem_setOf_eq] at *
@@ -58,7 +62,7 @@ theorem exists_char_form {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module 
       change IsIntegral ℂ (Ideal.Quotient.mk m (x u) ^ N)
       rw [this]
       exact isIntegral_one
-    | add a b ha hb => rw [map_add]; exact ha.add hb
+    | add a b ha hb => rw [map_add (f := _)]; exact ha.add hb
     | smul r a ha => exact ha.smul r⟩
   let φ : ℂ ≃ₐ[ℂ] (A ⧸ m) := AlgEquiv.ofBijective (Algebra.ofId ℂ (A ⧸ m))
     IsAlgClosed.algebraMap_bijective_of_isIntegral
@@ -80,7 +84,7 @@ theorem exists_char_form {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module 
         rintro f f' ⟨a, ha, haf⟩ ⟨b, hb, hbf⟩
         refine ⟨a * b, by rw [map_mul]; exact mul_ne_zero ha hb, ?_⟩
         have h1 : π (a * b) f = 0 := by rw [mul_comm, map_mul, Module.End.mul_apply, haf, map_zero]
-        rw [map_add, h1, map_mul, Module.End.mul_apply, hbf, map_zero, add_zero]
+        rw [map_add (f := _), h1, map_mul, Module.End.mul_apply, hbf, map_zero, add_zero]
       zero_mem' := ⟨1, by rw [map_one]; exact one_ne_zero, map_zero _⟩
       smul_mem' := by
         rintro r f ⟨a, ha, haf⟩
@@ -103,7 +107,8 @@ theorem exists_char_form {G V : Type} [AddCommGroup G] [AddCommGroup V] [Module 
   have hmem : ρ u f - χ u • f ∈ S := by
     refine ⟨∑ i ∈ Finset.range (N * N₀), x u ^ i * algebraMap ℂ A (χ u) ^ (N * N₀ - 1 - i), ?_, ?_⟩
     · have h1 : c (x u) = χ u := rfl
-      simp only [map_sum, map_mul, map_pow, AlgHom.commutes, h1, Algebra.algebraMap_self, RingHom.id_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_pow, AlgHom.commutes, h1, Algebra.algebraMap_self, RingHom.id_apply]
       rw [geom_sum₂_self]
       exact mul_ne_zero (Nat.cast_ne_zero.2 hM.ne') (pow_ne_zero _ hz0)
     · have h2 : ρ u f - χ u • f = π (x u - algebraMap ℂ A (χ u)) f := by
@@ -251,7 +256,7 @@ theorem heisO_comm (u t : WO S T) (f : WO S T → ℂ) :
   rw [GlobalTheory.OrientedHeis.heisO_heisO, GlobalTheory.OrientedHeis.heisO_heisO, smul_smul, ← AddChar.map_add_eq_mul, add_comm t u]
   congr 2
   have h : algebraMap D.host.F (AF D.host.F) (1 / 2) + algebraMap D.host.F (AF D.host.F) (1 / 2) = 1 := by
-    rw [← map_add, add_halves, map_one]
+    rw [← map_add (f := _), add_halves, map_one]
   rw [symplOH, symplOH, (GlobalTheory.SymplecticOrthogonalSesquilinear.symplO_alt D S T).2.2.1 t u]
   linear_combination symplO S T u t * h
 
@@ -272,9 +277,9 @@ theorem exists_hO_eq (S T : HSp D) (i : Fin T.rank) (j : Fin S.rank) (e : D.host
 
 end Heis
 
+
 set_option maxHeartbeats 1000000 in
 open GlobalTheory.IdemModTwo in
-
 theorem eq_zero_of_invariant_forms : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (e : AE D), IsSplitIdem D e → ∀ g, IsThetaFunO ψ S T g → (∀ ℓ : (WO S T → ℂ) →ₗ[ℂ] ℂ, (∀ u, IsHalf (cA D e) u → ∀ f, IsThetaFunO ψ S T f → ℓ (heisO ψ S T u f) = ℓ f) → ∀ t, IsHalf e t → ℓ (heisO ψ S T t g) = 0) → g = 0 := by
   intro D ψ hψ S T e hε g hg H
   classical
@@ -286,12 +291,12 @@ theorem eq_zero_of_invariant_forms : ∀ (D : D7) (ψ : AddChar (AF D.host.F) �
   have : ProperSpace (Fv D.host.F v) := GlobalTheory.AdelicUnitaryTop.properSpace_adicCompletion D.host.F v
   let sg : Fv D.host.F v →+ Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F := AddMonoidHom.ofMapSub (singleV D.host.F v) (singleV_sub D v)
   let ι : Fv D.host.F v →+ AF D.host.F := AddMonoidHom.mk' (fun y => pairA D.host.F 0 (sg y)) fun a b => by
-    rw [map_add]; exact Prod.ext (add_zero _).symm rfl
+    rw [map_add (f := _)]; exact Prod.ext (add_zero _).symm rfl
   have hι : Continuous ι := Continuous.prodMk continuous_const (GlobalTheory.SplitAnnihilator.continuous_singleV D.host.F v)
   let G := Fin T.rank × Fin S.rank → Fv D.host.F v
   let J : G →+ WO S T := AddMonoidHom.mk' (fun y => Matrix.of fun i k => fj D (sg (y (i, k))) * cA D e) fun a b => by
     ext i k
-    simp only [G, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul]
+    simp only [G, Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul]
   have hJ : Continuous J := continuous_matrix fun i k =>
     ((IsModuleTopology.continuous_of_linearMap (Algebra.linearMap (AF D.host.F) (AE D))).comp
       (hι.comp (continuous_apply (i, k)))).mul continuous_const
@@ -343,7 +348,8 @@ theorem eq_zero_of_invariant_forms : ∀ (D : D7) (ψ : AddChar (AF D.host.F) �
         mul_inv_cancel₀ (GlobalTheory.DualPairCompare.embedding_xi_zero_ne_zero D), map_one, one_mul, map_mul (cA D), cA_fj]
       exact GlobalTheory.SplitAnnihilator.trace_split he' _ _
     have h2 : symplO S T (J y) t = ∑ p, ι (a p * y p) := by
-      rw [← Finset.sum_congr rfl fun p _ => h1 p, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finset.sum_congr rfl fun p _ => h1 p, ← map_sum]
       rfl
     conv_lhs => rw [← Finset.univ_sum_single y]
     rw [h2]

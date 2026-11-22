@@ -1,13 +1,17 @@
-import Formalism.LatticeSlopes.Statement
-import Formalism.LatticeSlopes.CovolAntiSameRank
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
-import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
-import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopesBdd
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeLeMuMaxOf
-import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
+module
+
+public import Formalism.LatticeSlopes.Statement
+public import Formalism.LatticeSlopes.CovolAntiSameRank
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolEqGram
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.CovolPos
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DegQuot
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.GramDetLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopesBdd
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeLeMuMaxOf
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.SlopeInequality
+
+@[expose] public section
 
 open Module Submodule
 
@@ -99,8 +103,8 @@ theorem degree_le_rank_mul_maxSlope_of_injective (Q M : Submodule ℤ E) (hQ : D
     rw [div_le_iff₀ hk'] at hs
     linarith
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem slope_le_max_maxSlope (L₁ L₂ : Submodule ℤ E) (h1 : DiscreteTopology L₁)
     (h2 : DiscreteTopology L₂) (h : ∀ x ∈ L₁, ∀ y ∈ L₂, inner ℝ x y = 0)
     (hd : DiscreteTopology (L₁ ⊔ L₂ : Submodule ℤ E))
@@ -126,7 +130,7 @@ theorem slope_le_max_maxSlope (L₁ L₂ : Submodule ℤ E) (h1 : DiscreteTopolo
   have hP3 : ∀ x ∈ L₁ ⊔ L₂, P x ∈ L₂ ∧ x - P x ∈ L₁ := by
     intro x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add, hP1 y hy, hP2 z hz, zero_add, add_sub_cancel_right]
+    rw [map_add (f := _), hP1 y hy, hP2 z hz, zero_add, add_sub_cancel_right]
     exact ⟨hz, hy⟩
   have hPnorm : ∀ x, ‖P x‖ ≤ ‖x‖ := fun x => by
     rw [hPdef]; exact Submodule.norm_starProjection_apply_le _ x
@@ -160,7 +164,7 @@ theorem slope_le_max_maxSlope (L₁ L₂ : Submodule ℤ E) (h1 : DiscreteTopolo
     ((P.toLinearMap.restrictScalars ℤ).comp Q.subtype) (fun y => hQmem y.1 y.2)
   have hψ : ∀ y : Q, ((ψ y : L₂) : E) = P y := fun y => rfl
   have hinj : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy0
     have hPy : P y = 0 := by
       rw [← hψ, hy0]; rfl

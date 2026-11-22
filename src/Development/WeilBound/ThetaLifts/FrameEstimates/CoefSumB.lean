@@ -1,11 +1,15 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
-import Development.WeilBound.ThetaLifts.FrameEstimates.CoefSumA
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IndicatorMemSBOfIsClopen
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSubgroupCountableAndExistsStrictFundamen
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsNhdsZeroPrincipalEqZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.SquareIntegrableWeilRange
+public import Development.WeilBound.ThetaLifts.FrameEstimates.CoefSumA
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IndicatorMemSBOfIsClopen
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DiscreteSubgroupCountableAndExistsStrictFundamen
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsNhdsZeroPrincipalEqZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ variable (F : Type) [Field F] [NumberField F] (κ : Type)
 def ratH : (κ → F) →+ (κ → AF F) :=
   AddMonoidHom.mk' (fun ξ i => algebraMap F (AF F) (ξ i)) fun x y => by
     funext i
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
 
 variable {F κ}
 
@@ -36,7 +40,8 @@ theorem ratH_apply (ξ : κ → F) : ratH F κ ξ = fun i => algebraMap F (AF F)
 variable [Fintype κ]
 
 theorem ratH_dot (ξ η : κ → F) : ratH F κ ξ ⬝ᵥ ratH F κ η = algebraMap F (AF F) (ξ ⬝ᵥ η) := by
-  simp [ratH_apply, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [ratH_apply, dotProduct, map_sum, map_mul]
 
 theorem dot_single (i : κ) [DecidableEq κ] (u : κ → AF F) (a : F) :
     u ⬝ᵥ ratH F κ (Pi.single i a) = algebraMap F (AF F) a * u i := by
@@ -48,24 +53,27 @@ theorem dot_single (i : κ) [DecidableEq κ] (u : κ → AF F) (a : F) :
   rw [this, dotProduct_single, mul_comm]
 
 theorem dual {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) (hann : RatOfKer ψ) :
-    Dual (ratH F κ) fun ξ u => ψ (u ⬝ᵥ ratH F κ ξ) where
-  inj := by
-    have : Nontrivial (AF F) := by
+    Dual (ratH F κ) fun ξ u => ψ (u ⬝ᵥ ratH F κ ξ) := by
+  constructor
+  · have : Nontrivial (AF F) := by
       show Nontrivial (AdeleRing (𝓞 F) F)
       unfold AdeleRing
       infer_instance
     intro ξ η h
     funext l
     exact (algebraMap F (AF F)).injective (congrFun h l)
-  cont ξ := by
+  · intro ξ
     have h : Continuous fun u : κ → AF F => u ⬝ᵥ ratH F κ ξ :=
-      continuous_finset_sum _ fun i _ => (continuous_apply i).mul continuous_const
+      continuous_finsetSum _ fun i _ => (continuous_apply i).mul continuous_const
     exact hψ.1.comp h
-  norm ξ u := hψ.2.1 _
-  addl ξ η u := by rw [map_add, dotProduct_add, AddChar.map_add_eq_mul]
-  addr ξ u v := by rw [add_dotProduct, AddChar.map_add_eq_mul]
-  triv ξ η := by rw [ratH_dot, hψ.2.2.1]
-  sep u hu := by
+  · exact fun _ _ => hψ.2.1 _
+  · intro ξ η u
+    rw [map_add (f := _), dotProduct_add, AddChar.map_add_eq_mul]
+  · intro ξ u v
+    rw [add_dotProduct, AddChar.map_add_eq_mul]
+  · intro ξ η
+    rw [ratH_dot, hψ.2.2.1]
+  · intro u hu
     classical
     have key : ∀ i, ∃ c : F, algebraMap F (AF F) c = u i := fun i => hann (a := u i) (by
       rintro _ ⟨a, rfl⟩
@@ -73,14 +81,13 @@ theorem dual {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F ψ) (hann : RatOfKer ψ
       exact hu _)
     choose c hc using key
     exact ⟨c, funext hc⟩
-  nondeg ξ hξ := by
+  · intro ξ hξ
     classical
     obtain ⟨x, hx⟩ := hψ.2.2.2
     obtain ⟨l, hl⟩ := Function.ne_iff.1 hξ
     refine ⟨Pi.single l (x * algebraMap F (AF F) (ξ l)⁻¹), ?_⟩
     rwa [single_dotProduct, ratH_apply, mul_assoc, ← map_mul, inv_mul_cancel₀ hl, map_one, mul_one]
-  cpt := by
-    obtain ⟨K, hK, hKc⟩ := GlobalTheory.AdeleCocompact.exists_compact_adele F
+  · obtain ⟨K, hK, hKc⟩ := GlobalTheory.AdeleCocompact.exists_compact_adele F
     refine ⟨Set.univ.pi fun _ => K, isCompact_univ_pi fun _ => hK, fun u => ?_⟩
     choose ξ hξ using fun l => hKc (u l)
     exact ⟨ξ, fun l _ => hξ l⟩
@@ -122,8 +129,8 @@ theorem exists_dom {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsTopologic
 
 end CS
 
-open CS in
 
+open CS in
 theorem coefSum_of_annih (hA : Annih) : CoefSum := by
   intro F _ _ κ _ ψ hstd μ hμ
   have hψ := GlobalTheory.StdCharFromIsStd.isCharAF hstd
@@ -152,7 +159,7 @@ theorem coefSum_of_annih (hA : Annih) : CoefSum := by
       obtain ⟨M, hM⟩ := hu.tendsto_cofinite_zero.bddAbove_range_of_cofinite
       refine ⟨fun ξ => M * v ξ, hv.mul_left M, fun ξ a ha => ?_⟩
       have h1 : ‖Φ₁ (ratH F κ ξ + a + ratH F κ x)‖ ≤ M := by
-        rw [add_right_comm, ← map_add]
+        rw [add_right_comm, ← map_add (f := _)]
         exact (hub (ξ + x) a ha).trans (hM ⟨_, rfl⟩)
       rw [norm_mul, Complex.norm_conj]
       exact mul_le_mul h1 (hvb ξ a ha) (norm_nonneg _) ((norm_nonneg _).trans h1)
@@ -175,15 +182,15 @@ theorem coefSum_of_annih (hA : Annih) : CoefSum := by
     have e1 : thetaSum F Φ₁ = ∑' ξ, Φ₁ (ratH F κ ξ) := rfl
     rw [e1, e2, tsum_mul_tsum_of_summable_norm s₁ s₂, ← e.tsum_eq]
     refine hs'.tsum_prod.trans ?_
-    simp only [← map_add]
+    simp only [← map_add (f := _)]
     rfl
   calc ‖thetaSum F Φ₁‖ₑ * ‖thetaSum F Φ₂‖ₑ = ‖thetaSum F Φ₁ * (starRingEnd ℂ) (thetaSum F Φ₂)‖ₑ := by
-        rw [enorm_mul, ← ofReal_norm ((starRingEnd ℂ) _), Complex.norm_conj, ofReal_norm]
+        rw [eNorm_mul, ← ofReal_norm ((starRingEnd ℂ) _), Complex.norm_conj, ofReal_norm]
     _ ≤ ∑' x : κ → F, ENNReal.ofReal c * ∑' y : κ → F, ‖coef F ψ μ Φ₁ Φ₂ (ratH F κ x, ratH F κ y)‖ₑ := by
         rw [hmain]
-        exact enorm_tsum_le_tsum_enorm.trans (ENNReal.tsum_le_tsum hx)
+        exact eNorm_tsum_le_tsum_eNorm.trans (tsum_le_tsum hx)
     _ = _ := by
-        rw [ENNReal.tsum_mul_left, ENNReal.tsum_prod']
+        rw [ENNReal.tsum_mul_left, tsum_prod']
         rfl
 
 end PositivityTheory.ThKEst

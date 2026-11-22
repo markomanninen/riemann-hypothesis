@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.InJSymRestrict
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapEstimateOfPartial
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.InJSymRestrict
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapEstimateOfPartial
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ theorem isUnit_of_extE (Tf : FormsTiedSym D u Ch chOf) (δ : Matrix (Fin (D.R.N 
     rw [Matrix.mul_assoc, hQ, hP1]
   exact Matrix.isUnit_det_of_left_inverse hl
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem til_injective (Tf : FormsTiedSym D u Ch chOf)
     (hSD : ∀ c, dualSet (sigD D : D.host.E →+* D.host.E) (gramP D) (Tf.clsP.lat c) = (Tf.clsP.lat c : Set (Fin (D.R.N D.R.m - 1) → D.host.E)))
     (hdeg : Module.finrank ℚ D.host.E < (D.mem u).A.T - 1) (v : (D.mem u).A.vT) :
@@ -60,7 +64,7 @@ theorem til_injective (Tf : FormsTiedSym D u Ch chOf)
     Formalism.UG.P.base_change_mem_holds _ _ _ _ _ _ hc _ Δ hΔ
   apply Tf.clsP.y_bij.1
   show (Quotient.mk'' (Tf.clsP.y c) : Cls Tf.clsP.lev) = Quotient.mk'' (Tf.clsP.y c')
-  apply (DoubleCoset.eq _ _ _ _).2
+  apply (@DoubleCoset.eq _ _ _ _ _ _).2
   refine ⟨⟨_, hrU⟩, ?_, ⟨K⁻¹, inv_mem hKU⟩, ?_, ?_⟩
   · exact Subgroup.mem_subgroupOf.2 (Subgroup.mem_map.2 ⟨Δ, hΔ, rfl⟩)
   · exact Subgroup.mem_subgroupOf.2 (inv_mem hK)
@@ -88,7 +92,7 @@ theorem class_injective_of_degree
 theorem vT_nonempty (D : D7) (u : D.what₂.Word) : Nonempty (D.mem u).A.vT := by
   rw [← Fintype.card_pos_iff, (D.mem u).A.card_vT]
   simp only [Ranks.f, Ranks.n]
-  positivity
+  exact Nat.mul_pos (by decide) D.R.toFrame.ord_pos
 
 theorem classMapInjective_of_finrank_lt
     (hSD : ∀ (D : D7) (u : D.what₂.Word) (Ch : ℕ → Type) (chOf : ∀ i, (D.mem u).C.cls i → Ch i) (Tf : FormsTiedSym D u Ch chOf),

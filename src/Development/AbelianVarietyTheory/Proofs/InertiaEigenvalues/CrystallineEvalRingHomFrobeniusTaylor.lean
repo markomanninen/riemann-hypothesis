@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomExtDense
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DividedTwoVariableSubringSubsetGeneratorSetStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobMemPPSetCongrStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedWittPowerSeriesMemDividedPowerSeriesGeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TaylorShiftFrobeniusMemDividedTwoVariableGeneratStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorialMulCoeffMemDividedPowerSeriesSubringStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdPolyEvaluationOfMemDividedTwoVariableSetStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPolynomialApproxDividedTwoVariableSetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingHomExtDense
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DividedTwoVariableSubringSubsetGeneratorSetStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrobMemPPSetCongrStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedWittPowerSeriesMemDividedPowerSeriesGeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TaylorShiftFrobeniusMemDividedTwoVariableGeneratStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FactorialMulCoeffMemDividedPowerSeriesSubringStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdPolyEvaluationOfMemDividedTwoVariableSetStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPolynomialApproxDividedTwoVariableSetStatement
+
+@[expose] public section
+
 noncomputable section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Filter GlobalTheory.CrysPrism
@@ -20,9 +25,9 @@ variable {l : ℕ} [hl : Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e] {O K : 
   [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K] [Algebra O K]
   [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] (t : Wq l a →ₐ[ℤ_[l]] O)
 
+
 omit [NeZero e] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K]
   [NormedAlgebra ℚ_[l] K] in
-
 theorem iotaP_mem (b : Bp l a) : iotaP K t b ∈ PPSet t K e := by
   refine ⟨fun x => ((x.1.factorial * (x.2 / e).factorial : ℕ) : Wq l a) * (b.coeff x.1).coeff x.2,
     fun r => ?_, fun τ i n => ?_⟩
@@ -37,8 +42,8 @@ theorem iotaP_mem (b : Bp l a) : iotaP K t b ∈ PPSet t K e := by
   · rw [coeff_iotaP]
     simp [embK, map_mul, map_natCast]
 
-variable (K) in
 
+variable (K) in
 def iotaD : Bp l a →+* PPd t K e :=
   (iotaP K t).codRestrict (PPd t K e) fun b => Subring.subset_closure (iotaP_mem t b)
 
@@ -66,15 +71,15 @@ theorem coeff_iotaP_X (b : Bp l a) (τ : ZMod a) (i : ℕ) : coeff i (iotaP K t 
   change coeff i (PowerSeries.map (rhoK K t τ) (b : (Polynomial (Wq l a))⟦X⟧)) = _
   rw [coeff_map, Polynomial.coeff_coe]
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem constP_inclS_coe (q : Polynomial (Wq l a)) :
     constP a K (inclS t K (q : (Wq l a)⟦X⟧)) = iotaP K t (Polynomial.C q) := funext fun τ => by
   rw [iotaP_C, rhoK_eq_toAc]
   rfl
 
-omit [NeZero e] in
 
+omit [NeZero e] in
 theorem acris_complete : IsAdicComplete (Ideal.span {(l : Per.Acris l)}) (Per.Acris l) :=
   (GlobalTheory.MemLoc.acris_torsionFree_complete l).2
 
@@ -118,8 +123,8 @@ omit [NeZero e] in
 theorem fP_X (g' : GQ l) : fP a ϖ g' Polynomial.X = ainfToAcris l (ϖ.mu g' * ϖ.teich) := by
   simp [fP]
 
-omit [NeZero a] [NeZero e] in
 
+omit [NeZero a] [NeZero e] in
 theorem sep_teich_acris (x : Per.Acris l) (h : ∀ n, ainfToAcris l ϖ.teich ^ n ∣ x) : x = 0 := by
   have := acris_complete (l := l)
   refine sep_l l x fun r => ?_
@@ -164,18 +169,18 @@ theorem frobenius_teich_mul (g' : GQ l) :
 section Sh
 
 variable (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧)
-  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative K)^[i] f)
+  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative (R := K))^[i] f)
 include hsh
+
 
 omit [NeZero a] [NeZero e] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsUltrametricDist K] [IsUnitBall O K]
   [NormedAlgebra ℚ_[l] K] in
-
 theorem sh_C [CharZero K] (c : K) : sh (C c) = C (C c) := by
   ext i : 1
   rcases i with _ | i
   · simpa [coeff_C] using hsh (C c) 0
   · have h := hsh (C c) (i + 1)
-    have h4 : (PowerSeries.derivative K)^[i + 1] (C c) = 0 := by
+    have h4 : (PowerSeries.derivative (R := K))^[i + 1] (C c) = 0 := by
       rw [Function.iterate_succ_apply, PowerSeries.derivative_C]
       exact Function.iterate_fixed (map_zero _) i
     rw [h4] at h
@@ -201,11 +206,12 @@ theorem shP_frobS_X :
     shP a sh (inclS t K (frobS l a X)) = iotaP K t ((Polynomial.C Polynomial.X + Polynomial.X) ^ l) := by
   have := charZero_K (l := l) (K := K)
   funext τ
-  rw [map_pow, map_add, Pi.pow_apply, Pi.add_apply, iotaP_C, rhoK_X, iotaP_X, frobS_X, map_pow, map_pow,
+  rw [map_pow, map_add (f := _), Pi.pow_apply, Pi.add_apply, iotaP_C, rhoK_X, iotaP_X, frobS_X, map_pow, map_pow,
     Pi.pow_apply]
   change sh (toAc t K X τ : K⟦X⟧) ^ l = _
   rw [show (toAc t K X τ : K⟦X⟧) = X from PowerSeries.ext fun n => by
-    rw [coeff_toAc, coeff_X, coeff_X]; split_ifs <;> simp, sh_X sh hsh]
+    rw [coeff_toAc, coeff_X, coeff_X]; split_ifs <;> simp]
+  rw [sh_X sh hsh]
 
 theorem evE_shP (x : (Wq l a)⟦X⟧) (hx : shP a sh (inclS t K (frobS l a x)) ∈ PPd t K e) :
     evE t ϖ g ⟨_, hx⟩ = ainfToAcris l (WittVector.frobenius (Per.σA (g : GQ l) (ϖ.ev a x))) := by
@@ -229,7 +235,7 @@ theorem evE_shP (x : (Wq l a)⟦X⟧) (hx : shP a sh (inclS t K (frobS l a x)) �
   have hφX : φ X = ψ X := by
     change evE t ϖ g ⟨shP a sh (inclS t K (frobS l a X)), shP_mem t sh hsh _⟩ =
       ainfToAcris l (WittVector.frobenius (Per.σA (g : GQ l) (ϖ.ev a X)))
-    rw [evE_of_eq t ϖ g _ _ (shP_frobS_X t sh hsh), map_pow, map_add, fP_C, fP_X, Polynomial.coe_X, PiSys.ev_X,
+    rw [evE_of_eq t ϖ g _ _ (shP_frobS_X t sh hsh), map_pow, map_add (f := _), fP_C, fP_X, Polynomial.coe_X, PiSys.ev_X,
       PiSys.gal_teich, frobenius_teich_mul, map_pow, map_mul, map_mul, map_add, map_one]
     ring
   have h := ringHom_ext_of_sep ψ φ (fun w => (hφC w).symm) hφX.symm (fun y hy => sep_teich_acris ϖ y fun n =>
@@ -251,7 +257,7 @@ theorem evE_ext (G₁ G₂ : PPd t K e →+* Per.Acris l) (h : ∀ b, G₁ (iota
 section Frob
 
 variable (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧)
-  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative K)^[i] f)
+  (hsh : ∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative (R := K))^[i] f)
   (φ₂ : K⟦X⟧⟦X⟧ →+* K⟦X⟧⟦X⟧) (hφC : ∀ f : K⟦X⟧, φ₂ (PowerSeries.C f) = PowerSeries.C (frob K l f))
   (hφsh : ∀ f : K⟦X⟧, φ₂ (sh f) = sh (frob K l f))
 include hsh hφC hφsh
@@ -264,7 +270,8 @@ theorem φ₂_X : φ₂ X = (C X + X) ^ l - C (X ^ l) := by
   have := charZero_K (l := l) (K := K)
   have h : (X : K⟦X⟧⟦X⟧) = sh X - C X := by rw [sh_X sh hsh]; ring
   conv_lhs => rw [h]
-  rw [map_sub, hφsh, hφC, frob_X, map_pow, sh_X sh hsh]
+  rw [map_sub, hφsh, hφC, frob_X, map_pow]
+  rw [sh_X sh hsh]
 
 omit [NeZero e] in
 theorem bivariateFrobenius_bivariateEmbedding_CC (w : Wq l a) :
@@ -288,7 +295,7 @@ theorem bivariateFrobenius_bivariateEmbedding_X : frob2 φ₂ (iotaP K t Polynom
   funext τ
   change φ₂ (iotaP K t Polynomial.X (τ - 1)) = _
   rw [iotaP_X, φ₂_X sh hsh φ₂ hφC hφsh]
-  simp only [map_sub, map_pow, map_add, Pi.sub_apply, Pi.pow_apply, Pi.add_apply, iotaP_C, iotaP_X, rhoK_X]
+  simp only [map_sub, map_pow, map_add (f := _), Pi.sub_apply, Pi.pow_apply, Pi.add_apply, iotaP_C, iotaP_X, rhoK_X]
 
 theorem evE_frob2 : (evE t ϖ g).comp ((frob2 φ₂).restrict (PPd t K e) (PPd t K e)
     fun _ hF => bivariateFrobenius_mem_dividedSubring t sh hsh φ₂ hφC hφsh hF) = (frobC l).toRingHom.comp (evE t ϖ g) := by
@@ -315,13 +322,13 @@ theorem evE_frob2 : (evE t ϖ g).comp ((frob2 φ₂).restrict (PPd t K e) (PPd t
         GlobalTheory.AcrisPrism.frobC_ainfToAcris, frobenius_teich, map_pow]
   have h := Polynomial.ringHom_ext (f := H₁) (g := H₂) (fun q => RingHom.congr_fun hC q) (by
     refine key _ _ (bivariateFrobenius_bivariateEmbedding_X t sh hsh φ₂ hφC hφsh) ?_
-    rw [map_sub, map_pow, map_pow, map_add, fP_C, fP_X, Polynomial.coe_X, PiSys.ev_X,
+    rw [map_sub, map_pow, map_pow, map_add (f := _), fP_C, fP_X, Polynomial.coe_X, PiSys.ev_X,
       GlobalTheory.AcrisPrism.frobC_ainfToAcris]
     have e1 : WittVector.frobenius (ϖ.mu (g : GQ l) * ϖ.teich) =
         ((1 + ϖ.mu (g : GQ l)) * ϖ.teich) ^ l - ϖ.teich ^ l := by
       rw [show ϖ.mu (g : GQ l) * ϖ.teich = (1 + ϖ.mu (g : GQ l)) * ϖ.teich - ϖ.teich by ring, map_sub,
         frobenius_teich_mul, frobenius_teich]
-    rw [e1, map_sub, map_pow, map_pow, map_mul, map_mul, map_add, map_one]
+    rw [e1, map_sub, map_pow, map_pow, map_mul, map_mul, map_add (f := _), map_one]
     ring)
   exact RingHom.congr_fun h b
 
@@ -386,7 +393,8 @@ theorem taylor_poly (b : Bp l a) (p : ZMod a → K⟦X⟧⟦X⟧) (hp : p ∈ PP
   have e4 : (N : OCr l O) * (1 : O) ⊗ₜ[ℤ_[l]] evE t ϖ g ⟨p, hp⟩ = j (fP a ϖ (g : GQ l) b) := by
     rw [← e2, map_mul, map_natCast]
     rfl
-  rw [mul_sub, Finset.mul_sum, e4, Finset.sum_congr rfl fun i _ => taylor_term t ϖ g b p N hpb i (fun τ => hSp τ i),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mul_sub, Finset.mul_sum, e4, Finset.sum_congr rfl fun i _ => taylor_term t ϖ g b p N hpb i (fun τ => hSp τ i),
     e3, map_sum]
   exact sub_eq_zero.2 (Finset.sum_congr rfl fun i _ => rfl)
 
@@ -400,7 +408,7 @@ theorem evE_taylor (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e)
   have hcoef : ∀ τ i, coeff i (F τ) = coeff i (p τ) + (l : K⟦X⟧) ^ r * coeff i (h τ) := fun τ i => by
     have h1 := congrFun hFeq τ
     simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.natCast_apply] at h1
-    rw [h1, map_add, ← map_natCast (C : K⟦X⟧ →+* K⟦X⟧⟦X⟧), ← map_pow, coeff_C_mul]
+    rw [h1, map_add (f := _), ← map_natCast (C : K⟦X⟧ →+* K⟦X⟧⟦X⟧), ← map_pow, coeff_C_mul]
   have hSh : ∀ τ i, (X : K⟦X⟧) ^ i * ((i.factorial : K⟦X⟧) * coeff i (h τ)) ∈ S O K e := fun τ i =>
     mul_mem (pow_mem HasU.X_mem i) (GlobalTheory.T.factorial_mul_coeff_mem_dividedPowerSeriesSubring l a e O K t h hh τ i)
   have hSp : ∀ τ i, (X : K⟦X⟧) ^ i * ((i.factorial : K⟦X⟧) * coeff i (p τ)) ∈ S O K e := fun τ i => by
@@ -420,13 +428,13 @@ theorem evE_taylor (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e)
         simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply, Pi.natCast_apply, Subalgebra.coe_add,
           Subalgebra.coe_mul, Subalgebra.coe_pow, SubringClass.coe_natCast]
         rw [hcoef]; ring)
-    rw [e1, map_add, map_mul, map_pow, map_natCast]
+    rw [e1, map_add (f := _), map_mul, map_pow, map_natCast]
   have hEsplit : (1 : O) ⊗ₜ[ℤ_[l]] evE t ϖ g ⟨F, hF⟩ = (1 : O) ⊗ₜ[ℤ_[l]] evE t ϖ g ⟨p, hp'⟩ +
       (l : OCr l O) ^ r * (1 : O) ⊗ₜ[ℤ_[l]] evE t ϖ g ⟨h, hh'⟩ := by
     have e1 : (⟨F, hF⟩ : PPd t K e) = ⟨p, hp'⟩ + (l : PPd t K e) ^ r * ⟨h, hh'⟩ := Subtype.ext (by simpa using hFeq)
-    rw [e1, map_add, map_mul, map_pow, map_natCast]
+    rw [e1, map_add (f := _), map_mul, map_pow, map_natCast]
     change j _ = j _ + _ * j _
-    rw [map_add, map_mul, map_pow, map_natCast]
+    rw [map_add (f := _), map_mul, map_pow, map_natCast]
   refine ⟨b.natDegree + 1, fun n hn => ⟨(1 : O) ⊗ₜ[ℤ_[l]] evE t ϖ g ⟨h, hh'⟩ -
     ∑ i ∈ Finset.range n, ϖ.muDiv a O g i * ϖ.iC t K (fun τ => ⟨_, hSh τ i⟩), ?_⟩⟩
   have hz := taylor_poly t ϖ g b p hp' N hN hpb hSp n (by omega)
@@ -440,7 +448,7 @@ theorem evE_taylor (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e)
 
 end Main
 
-theorem evalPP : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZero e] (O K : Type) [CommRing O] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e), ∀ (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧), (∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative K)^[i] f) → ∀ (φ₂ : K⟦X⟧⟦X⟧ →+* K⟦X⟧⟦X⟧), (∀ f : K⟦X⟧, φ₂ (PowerSeries.C f) = PowerSeries.C (frob K l f)) → (∀ f : K⟦X⟧, φ₂ (sh f) = sh (frob K l f)) → ∀ g : ↥(GK (ϖ.field a)), ∃ E : ↥(PPd t K e) →+* Per.Acris l, (∀ (x : (Wq l a)⟦X⟧) (hx : constP a K (inclS t K (frobS l a x)) ∈ PPd t K e), E ⟨_, hx⟩ = ainfToAcris l (WittVector.frobenius (ϖ.ev a x))) ∧ (∀ (x : (Wq l a)⟦X⟧) (hx : shP a sh (inclS t K (frobS l a x)) ∈ PPd t K e), E ⟨_, hx⟩ = ainfToAcris l (WittVector.frobenius (Per.σA (g : GQ l) (ϖ.ev a x)))) ∧ (∀ (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e) (hF' : frob2 φ₂ F ∈ PPd t K e), E ⟨_, hF'⟩ = frobC l (E ⟨F, hF⟩)) ∧ ∀ (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e) (hS : ∀ (τ : ZMod a) (i : ℕ), (X : K⟦X⟧) ^ i * ((i.factorial : K⟦X⟧) * coeff i (F τ)) ∈ S O K e) (r : ℕ), ∃ n₀ : ℕ, ∀ n ≥ n₀, (l : OCr l O) ^ r ∣ (1 : O) ⊗ₜ[ℤ_[l]] E ⟨F, hF⟩ - ∑ i ∈ Finset.range n, ϖ.muDiv a O g i * ϖ.iC t K (fun τ => ⟨_, hS τ i⟩) :=
+theorem evalPP : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZero e] (O K : Type) [CommRing O] [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K] [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] (t : Wq l a →ₐ[ℤ_[l]] O) (ϖ : PiSys l e), ∀ (sh : K⟦X⟧ →+* K⟦X⟧⟦X⟧), (∀ (f : K⟦X⟧) (i : ℕ), (i.factorial : K⟦X⟧) * coeff i (sh f) = (PowerSeries.derivative (R := K))^[i] f) → ∀ (φ₂ : K⟦X⟧⟦X⟧ →+* K⟦X⟧⟦X⟧), (∀ f : K⟦X⟧, φ₂ (PowerSeries.C f) = PowerSeries.C (frob K l f)) → (∀ f : K⟦X⟧, φ₂ (sh f) = sh (frob K l f)) → ∀ g : ↥(GK (ϖ.field a)), ∃ E : ↥(PPd t K e) →+* Per.Acris l, (∀ (x : (Wq l a)⟦X⟧) (hx : constP a K (inclS t K (frobS l a x)) ∈ PPd t K e), E ⟨_, hx⟩ = ainfToAcris l (WittVector.frobenius (ϖ.ev a x))) ∧ (∀ (x : (Wq l a)⟦X⟧) (hx : shP a sh (inclS t K (frobS l a x)) ∈ PPd t K e), E ⟨_, hx⟩ = ainfToAcris l (WittVector.frobenius (Per.σA (g : GQ l) (ϖ.ev a x)))) ∧ (∀ (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e) (hF' : frob2 φ₂ F ∈ PPd t K e), E ⟨_, hF'⟩ = frobC l (E ⟨F, hF⟩)) ∧ ∀ (F : ZMod a → K⟦X⟧⟦X⟧) (hF : F ∈ PPd t K e) (hS : ∀ (τ : ZMod a) (i : ℕ), (X : K⟦X⟧) ^ i * ((i.factorial : K⟦X⟧) * coeff i (F τ)) ∈ S O K e) (r : ℕ), ∃ n₀ : ℕ, ∀ n ≥ n₀, (l : OCr l O) ^ r ∣ (1 : O) ⊗ₜ[ℤ_[l]] E ⟨F, hF⟩ - ∑ i ∈ Finset.range n, ϖ.muDiv a O g i * ϖ.iC t K (fun τ => ⟨_, hS τ i⟩) :=
   fun l _ a e _ _ O K _ _ _ _ _ _ _ _ _ t ϖ sh hsh φ₂ hφC hφsh g =>
     ⟨evE t ϖ g, fun x hx => by rw [evE_constP, PiSys.ev_frobS], fun x hx => evE_shP t ϖ g sh hsh x hx,
       fun F hF hF' => RingHom.congr_fun (evE_frob2 t ϖ g sh hsh φ₂ hφC hφsh) ⟨F, hF⟩,

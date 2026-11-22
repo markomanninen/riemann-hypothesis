@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfC
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem smulLA_smulLA (a b : LetA O n) (x : LA W T π' c) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul e s => simp only [smulLA_tmul, map_mul, mul_assoc]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem smul_eq_smulLA (o : O) (x : LA W T π' c) :
     o • x = smulLA W T π' c (algebraMap O (LetA O n) o) x := by
@@ -50,7 +54,7 @@ theorem smul_eq_smulLA (o : O) (x : LA W T π' c) :
   | tmul e s =>
     rw [smulLA_tmul, TensorProduct.smul_tmul', Algebra.smul_def,
       IsScalarTower.algebraMap_apply O (LetA O n) W.EE]
-  | add x y hx hy => rw [smul_add, map_add, hx, hy]
+  | add x y hx hy => rw [smul_add, map_add (f := _), hx, hy]
 
 theorem rep_exists {x : LA W T π' c} (hx : x ∈ LamLA W T π' Eπ h' c ⊤) :
     ∃ (m : ℕ) (a : Fin m → ↥W.AΔ) (y : Fin m → W.DD T), IsRepL W T π' Eπ h' c x a y := by
@@ -60,7 +64,8 @@ theorem rep_exists {x : LA W T π' c} (hx : x ∈ LamLA W T π' Eπ h' c ⊤) :
       LcQ W T π' c) := fun j => Submodule.Quotient.mk_surjective _ _
   choose yy hyy using hs
   refine ⟨m, a, fun j => (yy j : W.DD T), ⟨fun j => (yy j).2, ?_⟩⟩
-  rw [← ht, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ht, map_sum]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   rw [toLA_tmul, ← hyy j]
   rfl
@@ -75,7 +80,7 @@ theorem rep_append {x x' : LA W T π' c} {m m' : ℕ} {a : Fin m → ↥W.AΔ} {
   · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
     · rw [Fin.append_left]; exact hy j
     · rw [Fin.append_right]; exact hy' j
-  · rw [map_add, hx, hx', Fin.sum_univ_add]
+  · rw [map_add (f := _), hx, hx', Fin.sum_univ_add]
     congr 1
     · refine Finset.sum_congr rfl (fun j _ => ?_)
       simp only [Fin.append_left]
@@ -94,7 +99,8 @@ theorem rep_smul {x : LA W T π' c} {m : ℕ} {a : Fin m → ↥W.AΔ} {y : Fin 
     IsRepL W T π' Eπ h' c (smulLA W T π' c b x) (fun j => ⟨b * a j, W.AΔ.mul_mem hb (a j).2⟩) y := by
   obtain ⟨hy, hx⟩ := h
   refine ⟨hy, ?_⟩
-  rw [smulLA_smulLA, mul_comm, ← smulLA_smulLA, hx, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smulLA_smulLA, mul_comm, ← smulLA_smulLA, hx, map_sum]
   refine Finset.sum_congr rfl (fun j _ => ?_)
   rw [smulLA_tmul, ← map_mul]
   congr 2

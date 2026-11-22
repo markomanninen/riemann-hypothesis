@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerUnipotentRotationHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerUnipotentRotationHolds
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.Q NumberField
 open scoped ComplexConjugate Matrix ContDiff

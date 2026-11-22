@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedSubgroupBesselHaarFiniteCompactPosOpenStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactNormBoundedBesselClosedSubgroupStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselModelUnitaryGroupOpNormPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ExistsIsFolnerUWset
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ClosedSubgroupBesselHaarFiniteCompactPosOpenStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsCompactNormBoundedBesselClosedSubgroupStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselModelUnitaryGroupOpNormPropertiesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem measurePreserving_rmulM {h : Mat k r} (hd : ‖h.det‖ = 1) :
   exact measurePreserving_pi _ _ fun _ => hrow
 
 theorem opn_add_le (a b : Mat k r) : opn (a + b) ≤ opn a + opn b := by
-  unfold opn; rw [map_add]; exact norm_add_le _ _
+  unfold opn; rw [map_add (f := _)]; exact norm_add_le _ _
 
 theorem opn_sub_le (a b : Mat k r) : opn (a - b) ≤ opn a + opn b := by
   unfold opn; rw [map_sub]; exact norm_sub_le _ _

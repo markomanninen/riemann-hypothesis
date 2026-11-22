@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NeZeroTop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPtOfMulJ0DecorationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NeZeroTop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPtOfMulJ0DecorationStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.TopCh GlobalTheory.Mem.ColAd Matrix
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -37,13 +42,13 @@ end GlobalTheory.Mem.Col2.TopCh
 
 namespace GlobalTheory.Mem.Col2.TopCh
 
-theorem mem_topU_iff : ∀ (F E K : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] [Field K] (hc : CMData F E) (n : ℕ) [NeZero n] (ST SG Q : Finset (HeightOneSpectrum (𝓞 E))) (Λ : LevFam E K n SG) (Θ : LevQFam E K n Q) (d : Q → E) (hd : ∀ P, d P ≠ 0) (N : Q → ℕ) (hdN : ∀ P : Q, P.1.valuation E (d P) ≤ WithZero.exp (-(N P : ℤ))) (hΘ : ∀ (P : Q) (g : ↥(GLint E n P.1)), lqPrinc P.1 (N P) (g : Sp E n ≃ₗ[E] Sp E n) → ∃ h : g ∈ (Θ P).H, (Θ P).lam ⟨g, h⟩ = 1) (U : Subgroup (GL (Fin n) (AfE F E))) (k t y x : GL (Fin n) (AfE F E)) (p p' : DecoF E n ST SG Q), k ∈ UAd hc n → (∀ P : Q, rhoP F P.1 k = 1) → t ∈ K1 hc n ST SG → (∀ x ∈ UAd hc n, x ∈ U ↔ k⁻¹ * x * k ∈ levU hc n ST SG Λ.grp) → IsPtOf hc (y * (k * t)) p → IsPtOf hc (y * x * (k * t)) p' → (x ∈ topU U t Θ d ↔ ∃ (h : Λ.grp) (θ : Θ.grp), ((1, h.1, θ.1) : UF E n × GLG E n SG × GLQ E n Q) • p = p') := by
+theorem mem_topU_iff : ∀ (F E K : Type) [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E] [Field K] (hc : CMData F E) (n : ℕ) [NeZero n] (ST SG Q : Finset (HeightOneSpectrum (𝓞 E))) (Λ : LevFam E K n SG) (Θ : LevQFam E K n Q) (d : Q → E) (hd : ∀ P, d P ≠ 0) (N : Q → ℕ) (hdN : ∀ P : Q, P.1.valuation E (d P) ≤ WithZero.exp (-(N P : ℤ))) (hΘ : ∀ (P : Q) (g : ↥(GLint E n P.1)), lqPrinc P.1 (N P) (g : Sp E n ≃ₗ[E] Sp E n) → ∃ h : g ∈ (Θ P).H, (Θ P).lam ⟨g, h⟩ = 1) (U : Subgroup (GL (Fin n) (AfE F E))) (k t y x : GL (Fin n) (AfE F E)) (p p' : DecoF E n ST SG Q), k ∈ UAd hc n → (∀ P : Q, rhoP F P.1 k = 1) → t ∈ K1 hc n ST SG → (∀ x ∈ UAd hc n, x ∈ U ↔ k⁻¹ * x * k ∈ levU hc n ST SG Λ.grp) → IsPtOf hc (y * (k * t)) p → IsPtOf hc (y * x * (k * t)) p' → (x ∈ topU U t Θ d ↔ ∃ (h : Λ.grp) (θ : Θ.grp), ((1, h.1, θ.1) : UF E n × GLG (E := E) (n := n) (SG := SG) × GLQ E n Q) • p = p') := by
   intro F E K _ _ _ _ _ _ _ hc n _ ST SG Q Λ Θ d hd N hdN hΘ U k t y x p p' hk hkP ht hU hp hp'
   set g := y * (k * t) with hg
   set z := (k * t)⁻¹ * x * (k * t) with hz
   have hgz : y * x * (k * t) = g * z := by rw [hg, hz]; group
   rw [hgz] at hp'
-  have step := fun h : GLG E n SG => ((GlobalTheory.T.isPtOf_mul_J0_decoration F E hc n ST SG Q g z p p' h).1 hp hp')
+  have step := fun h : GLG (E := E) (n := n) (SG := SG) => ((GlobalTheory.T.isPtOf_mul_J0_decoration F E hc n ST SG Q g z p p' h).1 hp hp')
   have htU : t ∈ UAd hc n := principal_le_adelic_unitary hc n ST SG ht
   have hktU : k * t ∈ UAd hc n := mul_mem hk htU
   have hgU : g ∈ UAd hc n := hp.uni
@@ -84,7 +89,7 @@ theorem mem_topU_iff : ∀ (F E K : Type) [Field F] [NumberField F] [Field E] [N
     rw [hT P, hZ hN P]
     exact qbU_rat (F := E) P.1 (algebraMap E (P.1.adicCompletion E)) (phi_int P.1) (phi_lt P.1) (Θ P) (d P) (hd P) (hdN P)
       (hΘ P) _
-  have hNs : ∀ h : GLG E n SG, p'.deco = ((1, h) : UF E n × GLG E n SG) • p.deco → p.deco.1.N = p'.deco.1.N := by
+  have hNs : ∀ h : GLG (E := E) (n := n) (SG := SG), p'.deco = ((1, h) : UF E n × GLG (E := E) (n := n) (SG := SG)) • p.deco → p.deco.1.N = p'.deco.1.N := by
     intro h e
     rw [e]
     show p.deco.1.N = Formalism.HermitianLatticesTheory.gmap (1 : Sp E n ≃ₗ[E] Sp E n) p.deco.1.N
@@ -93,7 +98,7 @@ theorem mem_topU_iff : ∀ (F E K : Type) [Field F] [NumberField F] [Field E] [N
   · intro hx
     obtain ⟨hz0, hzr⟩ := (mem_levU hc n ST SG _).1 (hU'.1 hx.1)
     let h : Λ.grp := ⟨(redG hc n ST SG ⟨z, hz0⟩)⁻¹, inv_mem hzr⟩
-    have hdeco : p'.deco = ((1, h.1) : UF E n × GLG E n SG) • p.deco := (step h.1).1 ⟨hz0, (inv_inv _).symm⟩
+    have hdeco : p'.deco = ((1, h.1) : UF E n × GLG (E := E) (n := n) (SG := SG)) • p.deco := (step h.1).1 ⟨hz0, (inv_inv _).symm⟩
     have hN := hNs h.1 hdeco
     have hc' : ∀ P : Q, (⟨_, frDiv_mem_GLint p p' hN P⟩ : ↥(GLint E n P.1)) ∈ (Θ P).H := fun P =>
       (hL hN P).1 (rhoT_mem hx P)
@@ -107,7 +112,7 @@ theorem mem_topU_iff : ∀ (F E K : Type) [Field F] [NumberField F] [Field E] [N
       show (1 : Sp E n ≃ₗ[E] Sp E n) * p.fr P * ((p.fr P)⁻¹ * p'.fr P) = p'.fr P
       rw [one_mul, mul_inv_cancel_left]
   · rintro ⟨h, θ, hθ⟩
-    have hdeco : p'.deco = ((1, h.1) : UF E n × GLG E n SG) • p.deco := by rw [← hθ]; rfl
+    have hdeco : p'.deco = ((1, h.1) : UF E n × GLG (E := E) (n := n) (SG := SG)) • p.deco := by rw [← hθ]; rfl
     obtain ⟨hz0, hzr⟩ := (step h.1).2 hdeco
     have hN := hNs h.1 hdeco
     refine ⟨hU'.2 ((mem_levU hc n ST SG _).2 ⟨hz0, by rw [hzr]; exact inv_mem h.2⟩), ?_⟩

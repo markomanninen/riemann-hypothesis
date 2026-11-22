@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFrobeniusBijOnLettersDirectSumStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibilityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqStdPowerSeriesAtZeroStatement
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachCrystallineComparison
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLevelExpansionAtRootOfUnity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallineFrobeniusBijOnLettersDirectSumStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachExpansionBasisDivisibilityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeEqStdPowerSeriesAtZeroStatement
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.WachCrystallineComparison
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,7 +121,8 @@ theorem const_lev (i : ZMod n) (a : LetA O n) :
   simp [PowerSeries.algebraMap_apply]
 
 theorem const_lev_Q (i : ZMod n) : PowerSeries.constantCoeff (W.lev i 1 W.Q) = (PD.p : LL) := by
-  rw [LevPt.Q_eq, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LevPt.Q_eq, map_sum, map_sum]
   simp [const_lev_π]
 
 theorem π_dvd_of_van (hinj : Function.Injective (algebraMap O LL)) (a : LetA O n)
@@ -134,7 +139,8 @@ theorem π_dvd_of_van (hinj : Function.Injective (algebraMap O LL)) (a : LetA O 
 
 theorem cmp_eq_sum [NeZero n] (T : LocLat G Qp LL O) (x : ↥(W.N T)) :
     W.cmp T x = ∑ i : ZMod n, W.cmp T ((letE i : LetA O n) • x) := by
-  rw [← map_sum, ← Finset.sum_smul, sum_letE, one_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← Finset.sum_smul, sum_letE, one_smul]
 
 theorem cmp_iso_of_expansions [NeZero n] (hinj : Function.Injective (algebraMap O LL))
     (T : LocLat G Qp LL O) (ex : ZMod n → ↥(W.N T) → ℤ → T.V ⊗[Qp] B)
@@ -162,7 +168,7 @@ theorem cmp_iso_of_expansions [NeZero n] (hinj : Function.Injective (algebraMap 
     have h0 : ∀ i, ex i x 0 = 0 := by
       intro i
       rw [← hcmp]
-      exact (iSupIndep_iff_finset_sum_eq_zero_imp_eq_zero _).1 hind Finset.univ
+      exact (iSupIndep_iff_finsetSum_eq_zero_imp_eq_zero _).1 hind Finset.univ
         (fun i => W.cmp T ((letE i : LetA O n) • x)) (fun i _ => W.cmp_letter T i x) hx i
         (Finset.mem_univ _)
     have hv : ∀ j, (letπ : LetA O n) ∣ nb.repr x j := fun j =>
@@ -187,7 +193,8 @@ theorem cmp_iso_of_expansions [NeZero n] (hinj : Function.Injective (algebraMap 
       rintro _ ⟨x, rfl⟩
       exact ⟨_, rfl⟩
   · intro x m hx
-    rw [cmp_eq_sum W T x, cmp_eq_sum, map_sum, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cmp_eq_sum W T x, cmp_eq_sum, map_sum, Finset.smul_sum,
       ← Equiv.sum_comp (Equiv.subRight (1 : ZMod n))
         (fun i => (PD.p : LL) ^ m •
           φVB PD (LL := LL) (V := T.V) (W.cmp T ((letE i : LetA O n) • x)))]
@@ -201,8 +208,8 @@ theorem cmp_iso_of_expansions [NeZero n] (hinj : Function.Injective (algebraMap 
 
 end Generic
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem cmp_iso (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (l : ℕ) [Fact l.Prime] (K : FinExt l) (s : ℕ) (LL : FinExt l)
     (h : Good K s LL) (T : Lt K LL) (hT : IsCrys ((D.loc l).PD K) T.ρ) :

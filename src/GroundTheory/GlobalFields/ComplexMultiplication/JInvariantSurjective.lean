@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.JInvariant
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.JInvariant
+
+@[expose] public section
 
 open Complex UpperHalfPlane ModularForm EisensteinSeries MatrixGroups Filter Topology Set
 open scoped PeriodPair Real Modular

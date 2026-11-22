@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.QuotNuSigma
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.QuotNuSigma
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CellOfQuotientCellRadicalPullback
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CellOfQuotientCellRadicalPullback
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan GlobalTheory.PolFan.CarDim GlobalTheory.CompanionTheory.Ar.Fan
 
@@ -63,7 +67,7 @@ theorem cell_of_quot_cell : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [Ch
     rw [pull_apply, pull_apply, hb.1 (t _) (t _), ← e2, hb.1 b (t ((orad (O := O) β).mkQ a)), ← e1]
   have hbK : ∀ k ∈ (orad (O := O) β), ∀ y, β k y = 0 := fun k hk y => by simpa using (mem_orad.1 hk) 1 y
 
-  have hmem : toReal β ∈ psdCone bar X := by
+  have hmem : toReal β ∈ psdCone (bar := bar) (X := X) := by
     have := ConeSub.sum_smul_toReal_mem_psdCone O bar X 1 ![β] ![1] (fun i => by fin_cases i; exact hβ)
       (fun i y => by fin_cases i; exact hp y) (fun i => by fin_cases i; norm_num)
     simpa using this
@@ -177,7 +181,8 @@ theorem cell_of_quot_cell : ∀ (O : Type) [CommRing O] [IsDedekindDomain O] [Ch
     have hv := (hKt _ (hσ.mem (s i)) (hσ.nonneg (s i))).2.1 hKj
     have e3 : k • σ (s i) = ∑ l, c' l • pull (orad (O := O) β).mkQ (δ l) := by
       have e := congrArg (pullLin (orad (O := O) β).mkQ) hkc
-      simp only [map_nsmul, map_sum, pullLin_apply] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_nsmul, map_sum, pullLin_apply] at e
       rw [desc _ (hσ.mem (s i)) hv] at e
       exact e
     rw [e3]

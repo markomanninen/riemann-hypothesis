@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadicStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KerThetaLocalizedEqSpanFontaineXiElementStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineXiPowSaturatedQuotientCompleteStatement
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.Acris0TorsionFree
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCompatibleRootsOfUnityAndTiltPadicStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KerThetaLocalizedEqSpanFontaineXiElementStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FontaineXiPowSaturatedQuotientCompleteStatement
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
@@ -178,7 +182,7 @@ theorem ev_eq {j : Per.Acris l →+* Per.BdRp l} (hj : IsCrisP j) (n : ℕ) (x :
   refine ⟨b - (l : Per.Ainf l) ^ N * a, ?_⟩
   rw [map_sub, map_mul, map_pow, map_natCast, ev_aDp] at hy
   rw [map_mul, map_pow, map_natCast] at hb
-  simp only [hx, map_add, map_sub, map_mul, map_pow, map_natCast, hj.on0]
+  simp only [hx, map_add (f := _), map_sub, map_mul, map_pow, map_natCast, hj.on0]
   linear_combination (l : Per.AinfP l ⧸ Per.kerP l ^ n) ^ r * hb -
     (l : Per.AinfP l ⧸ Per.kerP l ^ n) ^ N * hy
 
@@ -188,7 +192,7 @@ theorem unique {j j' : Per.Acris l →+* Per.BdRp l} (hj : IsCrisP j) (hj' : IsC
   obtain ⟨s, z, hx⟩ := (acris_basic l).2.2.1 x (r + N)
   obtain ⟨a, ha⟩ := hN z
   refine ⟨s, (l : Per.Acris l) ^ N * z, a, by rw [hx, pow_add, mul_assoc], ?_⟩
-  rw [map_mul (Per.ev l n), ev_aDp, ← ha, ← map_mul, hx, map_add, map_mul j', map_pow j', map_natCast, hj'.on0,
+  rw [map_mul (Per.ev l n), ev_aDp, ← ha, ← map_mul, hx, map_add (f := _), map_mul j', map_pow j', map_natCast, hj'.on0,
     add_sub_cancel_left, pow_add, mul_assoc]
 
 theorem equivariant {j : Per.Acris l →+* Per.BdRp l} (hj : IsCrisP j) (g : Per.Gq l) (x : Per.Acris l) :
@@ -198,7 +202,7 @@ theorem equivariant {j : Per.Acris l →+* Per.BdRp l} (hj : IsCrisP j) (g : Per
   obtain ⟨s, z, hx⟩ := (acris_basic l).2.2.1 x (r + N)
   obtain ⟨a, ha⟩ := hN z
   refine ⟨⟨Per.extP (Per.σA g) s, (GlobalTheory.CrisMaps.sigA_extends g).mem _ s.2⟩, (l : Per.Acris l) ^ N * sigA g z, Per.σA g a, ?_, ?_⟩
-  · rw [hx, map_add, sigA_alg, map_mul, map_pow, map_natCast, pow_add, mul_assoc]
+  · rw [hx, map_add (f := _), sigA_alg, map_mul, map_pow, map_natCast, pow_add, mul_assoc]
   · have hb := ev_σDp g n _ _ ha
     rw [GlobalTheory.RingBasics.awayMap_algebraMap₂, map_mul (Per.σDp g), map_pow (Per.σDp g), map_natCast] at hb
     rw [map_mul (Per.ev l n), ev_aDp, ← hb, ← map_mul, hx, map_add j, map_mul j, map_pow j, map_natCast j, hj.on0,

@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.StatementC
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Adelstab
+module
+
+public import Formalism.SatakeDualWeyl.StatementC
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Adelstab
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,6 @@ local notation "𝒮" => tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E)
 local notation "ι" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
 
 omit [NumberField F] [Algebra F E] in
-
 theorem adelstabL_den {κ : Type} [Fintype κ] (f : κ → E) :
     ∃ m : ℤ, m ≠ 0 ∧ ∀ i, IsIntegral ℤ ((m : E) * f i) := by
   classical

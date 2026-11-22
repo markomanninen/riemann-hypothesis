@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module Topology UpperTheory.V.Loc UpperTheory.V.U3
 
@@ -64,9 +68,11 @@ private theorem triGL_mul {B : Type} [CommRing B] (t s : Fin 3 → Bˣ) (x y z x
       | linear_combination (-((t 0 : B) * z' * s 2 + x * t 1 * y' * s 2)) * h2
 
 theorem UpperTheory.exists_unipotent_from_torus_coords :
-    ∀ {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} (T : Tor η B) (h : B), 2 * h = 1 → ∀ (β : G → B × B) (γ : G → B), (∀ g g', β (g * g') = β g + T.M1 g (β g')) → T.IsGam h β γ → ∃ u : G →* GG 3 B, T.Coord h β γ u := by
+    ∀ {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} (T : Tor η B) (h : B), 2 * h = 1 →
+      ∀ (β : G → B × B) (γ : G → B), (∀ g g', β (g * g') = β g + T.M1 g (β g')) →
+        T.IsGam h β γ → ∃ u : G →* GG (m := 3) (R := B), T.Coord h β γ u := by
   intro G B _ _ η T h hh β γ hβ hγ
-  let F : G → GG 3 B := fun g =>
+  let F : G → GG (m := 3) (R := B) := fun g =>
     ⟨triGL (T.t g) (β g).1 (β g).2 (γ g + h * (β g).1 * (β g).2), η g⟩
   have hmul : ∀ g g' : G, F (g * g') = F g * F g' := by
     intro g g'

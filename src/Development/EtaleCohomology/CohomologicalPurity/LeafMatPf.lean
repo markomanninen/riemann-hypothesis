@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafClCut
+
+@[expose] public section
 
 noncomputable section
 open Matrix
@@ -26,14 +30,14 @@ theorem glue_dom (hD : ∀ (d : ℕ) (D : Type) [CommRing D] [IsDomain D] (N E N
   obtain ⟨N', hN'⟩ := gens x y hxy.le
   let f := Ideal.Quotient.mk p.asIdeal
   obtain ⟨T₀, hT₀⟩ := hD d (A ⧸ p.asIdeal) (f.mapMatrix N) (f.mapMatrix (1 - N' * N)) (f.mapMatrix N')
-    (by rw [← map_mul, ← map_add, add_sub_cancel, map_one])
+    (by rw [← map_mul, ← map_add (f := _), add_sub_cancel, map_one])
   choose T hT using fun i j => Ideal.Quotient.mk_surjective (I := p.asIdeal) (T₀ i j)
   refine ⟨N + Matrix.of T * (1 - N' * N), ?_, red x y N N' _ hN hN'⟩
   intro hm
   apply hT₀
   have h1 : f.mapMatrix (Matrix.of T) = T₀ := by ext i j; simp [f, hT]
   have := RingHom.map_det f (N + Matrix.of T * (1 - N' * N))
-  rw [map_add, map_mul, h1, (Ideal.Quotient.eq_zero_iff_mem).2 hm] at this
+  rw [map_add (f := _), map_mul, h1, (Ideal.Quotient.eq_zero_iff_mem).2 hm] at this
   exact this.symm
 
 theorem fld {d : ℕ} {k : Type} [Field k] (N E N' : Matrix (Fin d) (Fin d) k) (h : N' * N + E = 1) :
@@ -72,8 +76,9 @@ theorem fld {d : ℕ} {k : Type} [Field k] (N E N' : Matrix (Fin d) (Fin d) k) (
     apply Subtype.ext
     have := htv
     simp only [t, LinearMap.comp_apply, hp] at this
-    simpa using this
-  have := congrArg Subtype.val (e.map_eq_zero_iff.1 this)
+    exact this
+  have he : e ⟨v, hker⟩ = e 0 := this.trans (e.toLinearMap.map_zero).symm
+  have := congrArg Subtype.val (e.injective he)
   simpa using this
 
 theorem dom (d : ℕ) (D : Type) [CommRing D] [IsDomain D] (N E N' : Matrix (Fin d) (Fin d) D)
@@ -81,7 +86,7 @@ theorem dom (d : ℕ) (D : Type) [CommRing D] [IsDomain D] (N E N' : Matrix (Fin
   classical
   let g := algebraMap D (FractionRing D)
   obtain ⟨T, hT⟩ := fld (g.mapMatrix N) (g.mapMatrix E) (g.mapMatrix N')
-    (by rw [← map_mul, ← map_add, h, map_one])
+    (by rw [← map_mul, ← map_add (f := _), h, map_one])
   obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples_of_finite (nonZeroDivisors D)
     (fun ij : Fin d × Fin d => T ij.1 ij.2)
   choose T' hT' using fun i j => hb (i, j)
@@ -90,7 +95,7 @@ theorem dom (d : ℕ) (D : Type) [CommRing D] [IsDomain D] (N E N' : Matrix (Fin
   have hne : g b ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
   refine ⟨Matrix.of T', fun h0 => hT (g b) hne ?_⟩
   have := RingHom.map_det g (N + Matrix.of T' * E)
-  rw [h0, map_zero, map_add, map_mul, h1] at this
+  rw [h0, map_zero, map_add (f := _), map_mul, h1] at this
   exact this.symm
 
 end LateralTheory.CohomologicalPurity.MatPf

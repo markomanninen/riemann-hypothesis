@@ -1,4 +1,8 @@
-import Formalism.FockGram.StatementFock
+module
+
+public import Formalism.FockGram.StatementFock
+
+@[expose] public section
 
 open Finset MvPolynomial
 
@@ -25,32 +29,6 @@ theorem fock_add_left (f f' g : MvPolynomial τ R) : fock (f + f') g = fock f g 
     ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl (fun m _ => by rw [MvPolynomial.coeff_add]; ring)
 
-theorem fock_smul_left (c : R) (f g : MvPolynomial τ R) : fock (c • f) g = c * fock f g := by
-  classical
-  rw [fock_eq_sum_of_subset (c • f) g f.support MvPolynomial.support_smul,
-    fock_eq_sum_of_subset f g f.support (Finset.Subset.refl _), Finset.mul_sum]
-  exact Finset.sum_congr rfl (fun m _ => by rw [MvPolynomial.coeff_smul, smul_eq_mul]; ring)
-
-theorem fock_add_right (f g g' : MvPolynomial τ R) : fock f (g + g') = fock f g + fock f g' := by
-  unfold fock
-  rw [← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl (fun m _ => by rw [MvPolynomial.coeff_add, star_add]; ring)
-
-theorem fock_smul_right (c : R) (f g : MvPolynomial τ R) :
-    fock f (c • g) = star c * fock f g := by
-  unfold fock
-  rw [Finset.mul_sum]
-  exact Finset.sum_congr rfl (fun m _ => by
-    rw [MvPolynomial.coeff_smul, smul_eq_mul, star_mul']
-    ring)
-
 end
-
-theorem existsSesqForm : FockSesq := by
-  intro R τ _ _
-  exact ⟨LinearMap.mk₂'ₛₗ (RingHom.id R) (starRingEnd R) (fun f g => fock f g)
-    (fun f f' g => fock_add_left f f' g) (fun c f g => by rw [fock_smul_left]; rfl)
-    (fun f g g' => fock_add_right f g g') (fun c f g => by rw [fock_smul_right]; rfl),
-    fun f g => rfl⟩
 
 end Formalism.E

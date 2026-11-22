@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SelmerRankBoundLaurent
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 open NumberField IsDedekindDomain GroundTheory.Global GroundTheory.Global.SemiLocal Topology Filter
 
@@ -59,7 +64,7 @@ private theorem exists_small (v : HeightOneSpectrum (𝓞 F)) (g : (WithZero (Mu
 
 private theorem ce_compl (v : HeightOneSpectrum (𝓞 F)) (w : HeightOneSpectrum (𝓞 E)) [w.asIdeal.LiesOver v.asIdeal] :
     IsClosedEmbedding (completionMap v w) := by
-  have he0 : w.asIdeal.ramificationIdx (𝓞 F) ≠ 0 := (Ideal.ramificationIdx_pos w.asIdeal (𝓞 F)).ne'
+  have he0 : w.asIdeal.ramificationIdx (𝓞 F) ≠ 0 := (Ideal.ramificationIdx_pos (R := 𝓞 F) w.asIdeal).ne'
   have hind : IsInducing (completionMap v w) := by
     rw [IsTopologicalAddGroup.isInducing_iff_nhds_zero]
     refine le_antisymm ?_ ?_
@@ -68,33 +73,29 @@ private theorem ce_compl (v : HeightOneSpectrum (𝓞 F)) (w : HeightOneSpectrum
       exact this.le_comap
     · intro s hs
       obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.1 hs
-      obtain ⟨a, ha0, ha⟩ := exists_small v (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding (f := (.ofClass (Valued.v : Valuation (v.adicCompletion F) _)))) γ)
+      let ν : Valuation (v.adicCompletion F) (WithZero (Multiplicative ℤ)) := Valued.v
+      let emb : ν.ValueGroup₀ →*₀ WithZero (Multiplicative ℤ) :=
+        MonoidWithZeroHom.ValueGroup₀.embedding (f := ν.toMonoidWithZeroHom)
+      obtain ⟨a, ha0, ha⟩ := exists_small v (Units.map emb.toMonoidHom γ)
       have hfa : completionMap v w a ≠ 0 := (map_ne_zero_iff _ (completionMap v w).injective).2 ha0
       have hopen := Valued.isOpen_ball (w.adicCompletion E) ((Valued.v : Valuation (w.adicCompletion E) _).restrict (completionMap v w a))
       have hmem : (0 : w.adicCompletion E) ∈ {x | (Valued.v : Valuation (w.adicCompletion E) _).restrict x < (Valued.v : Valuation (w.adicCompletion E) _).restrict (completionMap v w a)} := by
-        simp only [Set.mem_ofPred_eq, Set.mem_setOf_eq, Valuation.restrict_lt_iff, map_zero]
+        simp only [Set.mem_ofPred_eq, Valuation.restrict_lt_iff, map_zero]
         exact zero_lt_iff.2 ((Valuation.ne_zero_iff _).2 hfa)
       refine Filter.mem_comap.2 ⟨_, hopen.mem_nhds hmem, fun x hx => hγ ?_⟩
       have h1 : Valued.v (completionMap v w x) < Valued.v (completionMap v w a) := by
         simpa [Valuation.restrict_lt_iff] using hx
       rw [valued_completionMap, valued_completionMap] at h1
-      have h2 := lt_of_pow_lt_pow_left₀ _ zero_le' h1
+      have h2 := lt_of_pow_lt_pow_left₀ _ zero_le h1
       rw [Set.mem_ofPred_eq, Valuation.restrict_lt_iff_lt_embedding]
       exact h2.trans ha
   have hu : IsUniformInducing (completionMap v w) := AddMonoidHom.isUniformInducing_of_isInducing hind
   exact (IsUniformEmbedding.mk hu (completionMap v w).injective).isClosedEmbedding
 
+omit [NumberField F] [NumberField E] in
 private theorem ce_infComp (v : InfinitePlace F) (w : InfinitePlace E) [w.LiesOver v] :
-    IsClosedEmbedding (LiesOver.completionMap (v := v) (w := w)) := by
-  have : Isometry (LiesOver.completionMap (v := v) (w := w)) := by
-    refine AddMonoidHomClass.isometry_of_norm _ fun y => ?_
-    refine InfinitePlace.Completion.induction_on v y
-      (isClosed_eq LiesOver.continuous_completionMap.norm continuous_norm) fun a => ?_
-    rw [LiesOver.completionMap_coe]
-    have h := (InfinitePlace.LiesOver.isometry_algebraMap w v).norm_map_of_map_zero (map_zero _) a
-    rw [InfinitePlace.Completion.norm_coe, InfinitePlace.Completion.norm_coe]
-    exact h
-  exact this.isClosedEmbedding
+    IsClosedEmbedding (AbsoluteValue.Completion.map v.1 w.1) :=
+  (AbsoluteValue.Completion.isometry_map v.1 w.1).isClosedEmbedding
 
 private theorem ce_incFin (v : HeightOneSpectrum (𝓞 F)) : IsClosedEmbedding (incFin E v) := by
   obtain ⟨P⟩ := Ideal.nonempty_primesOver (S := 𝓞 E) v.asIdeal
@@ -102,11 +103,19 @@ private theorem ce_incFin (v : HeightOneSpectrum (𝓞 F)) : IsClosedEmbedding (
   exact ce_of_comp (g := fun y : CompletionsOver E v => y w)
     (continuous_pi fun u => continuous_completionMap v u.1) (continuous_apply w) (ce_compl v w.1)
 
+open scoped NumberField.LiesOver in
 private theorem ce_infMap : IsClosedEmbedding (infMap F E) := by
   have hs : Function.Surjective (fun w : InfinitePlace E => w.comap (algebraMap F E)) := InfinitePlace.comap_surjective
+  have hmap : (infMap F E : InfiniteAdeleRing F → InfiniteAdeleRing E) =
+      fun (x : InfiniteAdeleRing F) (w : InfinitePlace E) =>
+        AbsoluteValue.Completion.map (w.comap (algebraMap F E)).1 w.1 (x (w.comap (algebraMap F E))) := by
+    funext x w
+    exact (GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap_apply x w).trans
+      (AbsoluteValue.Completion.algebraMap_apply_of_liesOver (w.comap (algebraMap F E)).1 w.1 _)
+  rw [hmap]
   exact ce_pi (A := fun v : InfinitePlace F => v.Completion) (B := fun w : InfinitePlace E => w.Completion)
     (fun w : InfinitePlace E => w.comap (algebraMap F E)) hs
-    (fun w => LiesOver.completionMap (v := w.comap (algebraMap F E)) (w := w)) fun w => ce_infComp _ w
+    (fun w => AbsoluteValue.Completion.map (w.comap (algebraMap F E)).1 w.1) fun w => ce_infComp _ w
 end
 
 theorem UpperTheory.adele_baseChange_local_isClosedEmbedding :

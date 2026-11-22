@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.AddEquivAddHaarCharEqOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SiegelWeilVolume.AddEquivAddHaarCharEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,8 @@ theorem gram_entry {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [Co
     [Algebra F R] (σ : E →ₐ[F] E) (n M : ℕ) (J : Matrix (Fin M) (Fin M) E)
     (D : Matrix (Fin n) (Fin n) (R ⊗[F] E)) (X : Fin n → Fin M → R ⊗[F] E) (a b : Fin n) :
     gramR R σ J (mulTup D X) a b = (conjT R σ D * gramR R σ J X * D) a b := by
-  simp only [gramR, hR, Formalism.UG.hform, mulTup, conjT, Matrix.mul_apply, Matrix.transpose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gramR, hR, Formalism.UG.hform, mulTup, conjT, Matrix.mul_apply, Matrix.transpose_apply,
     Matrix.map_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
   have h1 : ∀ f : Fin M → Fin M → Fin n → Fin n → R ⊗[F] E,
       (∑ i, ∑ j, ∑ l, ∑ k, f i j l k) = ∑ l, ∑ k, ∑ i, ∑ j, f i j l k := by

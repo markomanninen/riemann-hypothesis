@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIsometryOfSabMap
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointMoveCalculus
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnitGramFrameBorelChange
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.UnitFramesGeneratorRatioModulusOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BlockTriangularOfMulEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsIsometryOfSabMap
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointMoveCalculus
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnitGramFrameBorelChange
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.CabsDiagEqOne
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.UnitFramesGeneratorRatioModulusOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.BlockTriangularOfMulEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.OrthonormalFlagTranslateHolds
+
+@[expose] public section
 
 open NumberField AlgebraicGeometry CategoryTheory ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj GlobalTheory.LevelCusp
 open GlobalTheory.Dict (castFr)
@@ -47,7 +51,8 @@ theorem eq_zero_of_lattice (X : Data E r) (τ : E →+* ℂ) (f : (Fin r → ℂ
     funext a
     simp [Data.emb, Finset.sum_apply, Pi.single_apply, apply_ite]
   show F u = 0
-  rw [hu, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hu, map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
   show f _ = 0
   rw [hsm, hE, mul_zero]
@@ -59,7 +64,7 @@ def natPer (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (q : ℕ) (M : Matr
 theorem perFr_mem (X : Data E r) (x : Frame X.Ψ r) (v : Fin r → E) (τ : E →+* ℂ) (h : τ ∈ X.Ψ) (i : ℕ) :
     Formalism.L2.PjFree.perFr X x v τ i = natPer τ X.Gm X.p0 (mat x ⟨τ, h⟩) (Data.emb τ v) (X.p0 + i) := by
   unfold Formalism.L2.PjFree.perFr natPer
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   split_ifs with hi
   · rw [locPer_apply, if_neg (by simp)]
   · rfl
@@ -83,7 +88,7 @@ theorem perFr_conj (X : Data E r) (x : Frame X.Ψ r) (v : Fin r → E) (τ : E �
   generalize conjEmb τ = σ at hn e
   subst e
   unfold Formalism.L2.PjFree.perFr natPer
-  rw [dif_neg hn, dif_pos h]
+  rw [dite_eq_right hn, dite_eq_left h]
   split_ifs with hj
   · rw [locPer_apply, if_pos (by simp only; omega)]
   · rfl
@@ -159,7 +164,7 @@ theorem loc_borel (X : Data E r) (τ : E →+* ℂ) (M M' : Matrix (Fin r) (Fin 
     refine eq_zero_of_lattice X τ (fun u => locPer τ X.Gm q M' u a - (K *ᵥ locPer τ X.Gm q M u) a)
       (fun c => if (a : ℕ) < q then conj c else c) (fun u w => ?_) (fun c u => ?_)
       (fun v hv => sub_eq_zero.2 (hlat v hv a)) u
-    · simp only [map_add, Matrix.mulVec_add, Pi.add_apply]; ring
+    · simp only [map_add (f := _), Matrix.mulVec_add, Pi.add_apply]; ring
     · have hs : ∀ (N : Matrix (Fin r) (Fin r) ℂ) (e : Fin r), locPer τ X.Gm q N (c • u) e =
           (if (e : ℕ) < q then conj c else c) * locPer τ X.Gm q N u e := by
         intro N e

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+
+@[expose] public section
 
 open Module
 open scoped InnerProductSpace
@@ -43,13 +47,13 @@ variable {Bs : DefBase K} {A : DefAmb Bs} (X : CxData A)
 theorem jR_opR (hR : X.KFormR) (t : Bs.Tup) (i : A.OpR t) (x : A.FR t) :
     X.jR t (A.opR t i x) = X.opC t i (X.jR t x) := by
   unfold opC
-  rw [dif_pos (hR t)]
+  rw [dite_eq_left (hR t)]
   exact semilin_comp_eq_constr _ (X.jR t) (hR t).1 (hR t).2.ge (A.opR t i) x
 
 theorem jL_opL (hL : X.KFormL) (j : Bs.J) (t : Bs.Tup) (i : A.OpL j t) (x : A.FL j t) :
     X.jL j t (A.opL j t i x) = X.opLC j t i (X.jL j t x) := by
   unfold opLC
-  rw [dif_pos (hL j t)]
+  rw [dite_eq_left (hL j t)]
   exact semilin_comp_eq_constr _ (X.jL j t) (hL j t).1 (hL j t).2.ge (A.opL j t i) x
 
 theorem cutStable : X.CutStable := by

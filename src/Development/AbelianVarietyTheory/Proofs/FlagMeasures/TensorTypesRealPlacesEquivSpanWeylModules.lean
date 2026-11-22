@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearIsometryCompactUnitaryTypeWeylMoStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearOfGramEqStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearIsometryCompactUnitaryTypeWeylMoStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalizedFockFormPureTensorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearOfGramEqStatement
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.Forms Formalism.UG Matrix NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
@@ -35,7 +39,7 @@ theorem nfAll_add_left {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeigh
     (p p' q : MvPolynomial (ι × Fin n × Fin n) ℂ) :
     nfAll lam (p + p') q = nfAll lam p q + nfAll lam p' q := by
   unfold nfAll
-  rw [fockF_eq_fockL (p + p') q, map_add, ← fockF_eq_fockL p q, ← fockF_eq_fockL p' q, add_div]
+  rw [fockF_eq_fockL (p + p') q, map_add (f := _), ← fockF_eq_fockL p q, ← fockF_eq_fockL p' q, add_div]
 
 theorem nfAll_smul_left {ι : Type} [Fintype ι] {n : ℕ} (lam : ι → DomWeight n)
     (c : ℂ) (p q : MvPolynomial (ι × Fin n × Fin n) ℂ) :
@@ -55,7 +59,7 @@ theorem eval_rowAct {n : ℕ} (g x : Matrix (Fin n) (Fin n) ℂ) (p : MvPolynomi
       MvPolynomial.eval (fun v : Fin n × Fin n => (g * x) v.1 v.2) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp [Formalism.GradedWeylDivisibility.rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     have hX : MvPolynomial.eval (fun w : Fin n × Fin n => x w.1 w.2)
         (Formalism.GradedWeylDivisibility.rowAct ℂ g (MvPolynomial.X v)) = (g * x) v.1 v.2 := by
@@ -136,7 +140,7 @@ theorem tensor_dict : ∀ (ι : Type) [Fintype ι] (k n : ℕ) (h : k = n) (lam 
       rw [hjeq τ (m τ) (hm τ) (x τ)]
       exact factor_eq (m τ) (o τ) (y.1 τ) (y'.1 τ) (hm τ) (ho τ) (shiftOf lam τ) (j τ (x τ)) (hy τ)
     | zero => simp
-    | add z w _ _ hz hw => simp only [map_add, Pi.add_apply, hz, hw]
+    | add z w _ _ hz hw => simp only [map_add (f := _), Pi.add_apply, hz, hw]
     | smul c z _ hz => simp only [map_smul, map_smulₛₗ, Pi.smul_apply, smul_eq_mul, hz]
 
 end GlobalTheory.TenTypes

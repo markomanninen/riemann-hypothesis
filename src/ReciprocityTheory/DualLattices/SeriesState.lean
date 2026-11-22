@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SqZeroOfSpan
+module
+
+public import ReciprocityTheory.DualLattices.SqZeroOfSpan
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.NormBound
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.AevalCyclotomic
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionFieldStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.NormBound
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.AevalCyclotomic
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalFractionFieldStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
 open GroundTheory.Heights₂.Heights.LowerBoundFree GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
@@ -38,7 +43,7 @@ theorem centre_loc {X : Scheme.{0}} {O : Type} [CommRing O] (z : Sp O ⟶ X) (P 
       (⟨P, hP⟩ : PrimeSpectrum O) := by
     apply PrimeSpectrum.ext
     show (IsLocalRing.maximalIdeal _).comap (algebraMap O (Localization.AtPrime P)) = P
-    exact Localization.AtPrime.comap_maximalIdeal
+    exact Localization.AtPrime.under_maximalIdeal
   show z ((spMap (algebraMap O (Localization.AtPrime P))) (IsLocalRing.closedPoint _)) = _
   rw [e]
 
@@ -54,8 +59,8 @@ theorem inFibre_loc (P : Ideal (𝓞 L)) [P.IsPrime] {p : ℕ} (hp : (p : 𝓞 L
   rw [← map_natCast (algebraMap (𝓞 L) (Localization.AtPrime P))] at h
   exact (IsLocalization.AtPrime.isUnit_to_map_iff (Localization.AtPrime P) P _).1 h hp
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem loc {V : Type} [AddCommGroup V] [Module L V] [Module (𝓞 L) V] [IsScalarTower (𝓞 L) L V]
     (ML : LieModel 𝔐.t.G (spMap (algebraMap (𝓞 L) L) ≫ z) V) (ρ : 𝓞 E →+* Module.End L V)
     (hact : ML.IsActOf 𝔐.t.act.act ρ) (σ₀ : CMType H ⊕ CMType H → (𝓞 E →+* 𝓞 L))

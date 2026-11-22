@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PartDiagCut
+
+@[expose] public section
 
 noncomputable section
 open LateralTheory.E.PartDiagCut

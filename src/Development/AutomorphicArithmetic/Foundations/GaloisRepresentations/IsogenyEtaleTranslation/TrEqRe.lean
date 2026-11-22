@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.EtCancel
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.EtCancel
+
+@[expose] public section
 
 open NumberField Polynomial GlobalTheory.UPel.HT GlobalTheory.LKGeo GlobalTheory.LKTrip
 
@@ -34,7 +38,7 @@ private lemma eps_eq (D : Datum p) : W2.epsD D = LocalSmoothExtension.epsOf D :=
     have h1 : (D.ω : 𝓞 D.F) ^ 2 - (D.tr : 𝓞 D.F) * D.ω + (D.nm : 𝓞 D.F) = 0 := by
       rw [← D.tr_eq, ← D.nm_eq]; ring
     have h2 := congrArg (algebraMap (𝓞 D.F) D.F) h1
-    simpa only [map_sub, map_add, map_mul, map_pow, map_intCast, map_zero] using h2
+    simpa only [map_sub, map_add (f := _), map_mul, map_pow, map_intCast, map_zero] using h2
   have hτ : (τ (D.ω : D.F)) ^ 2 - (D.tr : ℂ) * τ (D.ω : D.F) + (D.nm : ℂ) = 0 := by
     have := congrArg τ hω
     simpa using this

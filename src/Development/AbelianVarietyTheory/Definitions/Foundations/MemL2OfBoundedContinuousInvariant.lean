@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.WittIndexEqZeroIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsIwasawaOfIsCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsCuspFunOnePlane
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAutomorphicFormRightTranslateFiniteAdelic
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankOrth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.WittIndexEqZeroIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ConstTermOnMulLeftOfNormalizer
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsIwasawaOfIsCompact
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsCuspFunOnePlane
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteVolumeAdelicUnitaryQuotient
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothAutomorphicFormRightTranslateFiniteAdelic
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinrankOrth
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,35 +29,6 @@ section Span
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
   {hc : CMData F E} {V : HSpace E} {R : Type} [CommRing R] [Algebra F R]
 
-omit [NumberField F] in
-
-theorem mem_extSub_span_lt {r : ℕ} {C : Matrix (Fin V.rank) (Fin r) E} (i : ℕ) (y : Fin V.rank → R ⊗[F] E) :
-    y ∈ extSub (F := F) V R (Submodule.span E ((fun k => vecOf V (Cᵀ k)) '' {j | j.val < i})) ↔
-      ∃ a : Fin r → R ⊗[F] E, (∀ j, i ≤ j.val → a j = 0) ∧ y = (C.map (inclR (F := F) R)).mulVec a := by
-  let C' : Matrix (Fin V.rank) (Fin r) E := fun a j => if j.val < i then C a j else 0
-  have e : Submodule.span E ((fun k => vecOf V (Cᵀ k)) '' {j | j.val < i}) = colSpan V C' := by
-    refine le_antisymm (Submodule.span_mono ?_) (Submodule.span_le.2 ?_)
-    · rintro _ ⟨j, hj, rfl⟩
-      exact ⟨j, congrArg (vecOf V) (funext fun a => if_pos hj)⟩
-    · rintro _ ⟨j, rfl⟩
-      by_cases hj : j.val < i
-      · exact Submodule.subset_span ⟨j, hj, congrArg (vecOf V) (funext fun a => (if_pos hj).symm)⟩
-      · have : C'ᵀ j = 0 := funext fun a => if_neg hj
-        simp [this, vecOf]
-  rw [e, AutFunCompare.mem_extSub_colSpan]
-  constructor
-  · rintro ⟨a, rfl⟩
-    refine ⟨fun j => if j.val < i then a j else 0, fun j hj => if_neg (not_lt.2 hj), funext fun b => ?_⟩
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    by_cases hj : j.val < i <;> simp [C', hj]
-  · rintro ⟨a, ha, rfl⟩
-    refine ⟨a, funext fun b => ?_⟩
-    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply]
-    refine Finset.sum_congr rfl fun j _ => ?_
-    by_cases hj : j.val < i
-    · simp [C', hj]
-    · rw [ha j (not_lt.1 hj), mul_zero, mul_zero]
 
 theorem act_sub_mem_of_mem_span {S : Set V.V} {A : Submodule E V.V} {g : HA R hc.sig V.gram}
     (h : ∀ x ∈ S, act hc V g (coordR V R x) - coordR V R x ∈ extSub (F := F) V R A) {x : V.V}
@@ -65,7 +40,7 @@ theorem act_sub_mem_of_mem_span {S : Set V.V} {A : Submodule E V.V} {g : HA R hc
   | mem x hx => exact h x hx
   | zero => rw [show coordR V R 0 = 0 from funext fun _ => by simp [coordR], map_zero]; exact zero_mem _
   | add x y _ _ h1 h2 =>
-    rw [show coordR V R (x + y) = coordR V R x + coordR V R y from funext fun _ => by simp [coordR], map_add]
+    rw [show coordR V R (x + y) = coordR V R x + coordR V R y from funext fun _ => by simp [coordR], map_add (f := _)]
     exact add_mem h1 h2
   | smul a x _ h1 =>
     rw [show coordR V R (a • x) = inclR (F := F) R a • coordR V R x from funext fun _ => by simp [coordR], map_smul]
@@ -85,8 +60,6 @@ abbrev PA : Subgroup (GA D V) := 𝔉.par D.sp.cm (AF D.host.F)
 
 abbrev NA : Subgroup (GA D V) := 𝔉.unip D.sp.cm (AF D.host.F)
 
-abbrev PQ : Subgroup (PA 𝔉) := (GQ V).subgroupOf (PA 𝔉)
-
 abbrev NQ : Subgroup (NA 𝔉) := (GQ V).subgroupOf (NA 𝔉)
 
 abbrev PLoc (v : HeightOneSpectrum (𝓞 D.host.F)) : Subgroup (AdelicU.GLoc D.sp.cm.sig V.gram v) :=
@@ -94,10 +67,6 @@ abbrev PLoc (v : HeightOneSpectrum (𝓞 D.host.F)) : Subgroup (AdelicU.GLoc D.s
 
 abbrev NLoc (v : HeightOneSpectrum (𝓞 D.host.F)) : Subgroup (AdelicU.GLoc D.sp.cm.sig V.gram v) :=
   𝔉.unip D.sp.cm (Fv D.host.F v)
-
-abbrev PArch (w : InfinitePlace D.host.F) : Subgroup (AdelicU.GArch D.sp.cm.sig V.gram w) := 𝔉.par D.sp.cm w.Completion
-
-abbrev NArch (w : InfinitePlace D.host.F) : Subgroup (AdelicU.GArch D.sp.cm.sig V.gram w) := 𝔉.unip D.sp.cm w.Completion
 
 theorem map_unipRat : (𝔉.unipRat D.sp.cm).map (AdelicU.ratEmb D.sp.cm.sig V.gram) = GQ V ⊓ NA 𝔉 := by
   have : Nontrivial (AF D.host.F) := inferInstanceAs (Nontrivial (Ainf D.host.F × Af D.host.F))
@@ -160,8 +129,8 @@ theorem isCuspFun_of_forall_flag (hφ : LeftInv (GQ V) φ) (h : ∀ 𝔉 : IsoFl
 theorem isCuspFun_rTr (h : IsCuspFun V φ) (k : GA D V) : IsCuspFun V (rTr V k φ) :=
   fun r C hC μ 𝓕 hμ h𝓕 g => by simpa only [rTr, mul_assoc] using h r C hC μ 𝓕 hμ h𝓕 (g * k)
 
-variable (V) in
 
+variable (V) in
 def cuspCont : Submodule ℂ (GA D V → ℂ) where
   carrier := {φ | Continuous φ ∧ LeftInv (GQ V) φ ∧ IsCuspFun V φ}
   zero_mem' := ⟨continuous_zero, fun _ _ _ => rfl, CuspDecay.Model.isCuspFun_zero V⟩
@@ -174,8 +143,6 @@ def cuspCont : Submodule ℂ (GA D V → ℂ) where
         simp⟩
   smul_mem' := fun c φ h => ⟨h.1.const_smul c, fun γ hγ g => congrArg (c • ·) (h.2.1 γ hγ g),
     fun r C hC μ 𝓕 hμ h𝓕 g => (integral_const_mul c _).trans (by rw [h.2.2 r C hC μ 𝓕 hμ h𝓕 g, mul_zero])⟩
-
-theorem mem_cuspCont : φ ∈ cuspCont V ↔ Continuous φ ∧ LeftInv (GQ V) φ ∧ IsCuspFun V φ := Iff.rfl
 
 theorem rTr_mem_cuspCont (h : φ ∈ cuspCont V) (k : GA D V) : rTr V k φ ∈ cuspCont V :=
   ⟨h.1.comp (continuous_mul_const k), h.2.1.mul_right k, isCuspFun_rTr h.2.2 k⟩
@@ -210,23 +177,14 @@ theorem toL2_mem_cuspidal [μ.IsMulLeftInvariant] (h : MemL2Quotient (GQ V) μ �
 theorem mem_L2cusp_of_ae_eq [μ.IsMulLeftInvariant] {F : DividedPowerChartLift V μ} (hφ : φ ∈ cuspCont V) (e : lift (GQ V) F =ᵐ[μ] φ) :
     F ∈ L2cusp V μ := Submodule.le_topologicalClosure _ ⟨φ, hφ, e⟩
 
-theorem L2cusp_le [μ.IsMulLeftInvariant] {U : Submodule ℂ (DividedPowerChartLift V μ)} (hU : IsClosed (U : Set (DividedPowerChartLift V μ)))
-    (h : ∀ φ ∈ cuspCont V, ∀ h : MemL2Quotient (GQ V) μ φ, h.toL2 ∈ U) : L2cusp V μ ≤ U := by
-  refine Submodule.topologicalClosure_minimal _ ?_ hU
-  rintro F ⟨φ, hφ, e⟩
-  have hd := isFundamentalDomain_stdDom (GQ V) μ
-  have h2 : MemL2Quotient (GQ V) μ φ :=
-    (memL2_iff_fundamental_domain hd).2 ⟨hφ.2.1, ((memL2_iff_fundamental_domain hd).1 (memL2_lift F)).2.ae_eq (ae_restrict_of_ae e)⟩
-  exact l2DiscreteQuotient_ext_iff_lift_ae_eq.2 (h2.lift_toL2_ae_eq.trans e.symm) ▸ h φ hφ h2
-
 variable (V μ) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
 
 theorem isSubrep_L2cusp : IsSubrep (RG V μ) (L2cusp V μ) :=
   isSubrep_topologicalClosure fun g F ⟨_, h, e⟩ => ⟨_, rTr_mem_cuspCont h g,
     (lift_R g F).trans ((measurePreserving_mul_right μ g).quasiMeasurePreserving.ae e)⟩
 
-omit [μ.IsMulRightInvariant] in
 
+omit [μ.IsMulRightInvariant] in
 instance : CompleteSpace (L2cusp V μ) := (Submodule.isClosed_topologicalClosure _).completeSpace_coe
 
 abbrev Rcusp : GA D V →* (L2cusp V μ →L[ℂ] L2cusp V μ) := (isSubrep_L2cusp V μ).rep
@@ -344,8 +302,8 @@ theorem memL2_of_cusp_form (hP : Published.CuspRapidDecay) (hθ : IsInfFam θ) [
   let ⟨_, hC⟩ := CuspDecay.bounded_of_cuspForm hP hθ h.1 h.2
   memL2_of_bounded_continuous_invariant h.1.left h.1.cont hC
 
-variable (K μ) in
 
+variable (K μ) in
 def cuspToL2 (hP : Published.CuspRapidDecay) (hθ : IsInfFam θ) [μ.IsHaarMeasure] : cuspForms θ V K →ₗ[ℂ] L2cusp V μ where
   toFun φ := ⟨_, toL2_mem_cuspidal (memL2_of_cusp_form hP hθ (mem_cuspForms.1 φ.2).1) φ.2.2⟩
   map_add' φ ψ := Subtype.ext (MemLp.toLp_add (memL2_of_cusp_form hP hθ (mem_cuspForms.1 φ.2).1).2
@@ -414,8 +372,8 @@ theorem exists_isWittLower_iff {i : ℕ} : (∃ V' : HSp D, IsWittLower V V' i �
   ⟨fun ⟨_, ⟨_, _, _, C, hC, _⟩, _⟩ => le_wittIndex_iff_isIsoSub.2 ⟨C, hC⟩,
     fun h => WittLow.wittLowEx D V i (le_wittIndex_iff_isIsoSub.1 h)⟩
 
-variable (V) in
 
+variable (V) in
 def minusHyp (i : ℕ) (h : i ≤ wittIndex V) : HSp D := (exists_isWittLower_iff.2 h).choose
 
 theorem isWittLower_minusHyp {i : ℕ} (h : i ≤ wittIndex V) : IsWittLower V (minusHyp V i h) i :=
@@ -424,8 +382,8 @@ theorem isWittLower_minusHyp {i : ℕ} (h : i ≤ wittIndex V) : IsWittLower V (
 theorem rank_minusHyp {i : ℕ} (h : i ≤ wittIndex V) : (minusHyp V i h).rank + 2 * i = V.rank :=
   (isWittLower_minusHyp h).1
 
-variable (V) in
 
+variable (V) in
 theorem two_mul_wittIndex_le : 2 * wittIndex V ≤ V.rank := Nat.le_add_left _ _ |>.trans (rank_minusHyp le_rfl).le
 
 end Witt
@@ -440,18 +398,6 @@ theorem wittIndex_plane (D : D7) : wittIndex (plane D) = 1 := by
   have h1 : 2 * wittIndex (plane D) ≤ 2 := two_mul_wittIndex_le (plane D)
   have h2 : 1 ≤ wittIndex (plane D) := (planeFlag D).k_le_wittIndex
   omega
-
-example (D : D7) (c : ℂ) (x : GA D (plane D)) : constTerm (planeFlag D) (fun _ => c) x = c :=
-  (cocompact_single ((AutFunCompare.isIsoFrame_iff _ _).1 (isIsoFrame_plane D)).2).constTermOn_const c x
-
-example (θ : InfF D) (K : Subgroup (GA D V)) : (fun _ => (1 : ℂ)) ∈ cuspForms θ V K ↔ wittIndex V = 0 := by
-  rw [wittIndex_eq_zero_iff_isAniso, mem_cuspForms]
-  exact ⟨fun h r C hC => not_isCuspFun_const V hC one_ne_zero h.1.2,
-    fun h => ⟨⟨isAutFunSm_const θ V 1, fun r C hC => absurd hC (h r C)⟩, .of_invariant fun _ _ _ => rfl⟩⟩
-
-example (μ : Measure (GA D V)) (φ ψ : GA D V → ℂ) :
-    petersson V μ φ (Complex.I • ψ) = -Complex.I * petersson V μ φ ψ := by
-  rw [← petersson_conj_symm, petersson_smul_left, map_mul, Complex.conj_I, petersson_conj_symm]
 
 end Examples
 

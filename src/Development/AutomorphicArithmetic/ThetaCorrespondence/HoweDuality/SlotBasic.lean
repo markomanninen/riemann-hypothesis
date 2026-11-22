@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.HoweDuality.FactorApply
+
+@[expose] public section
+
 open scoped TensorProduct
 open UpperTheory.Lit.HoweDuality
 

@@ -1,15 +1,19 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CcARatioZero
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Decomp
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Weighted
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiGelfand
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PsiPos
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.InfChar
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeExpK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBasic
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
-import Formalism.PeriodIntegrals.ZuckTensor
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CcARatioZero
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Decomp
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Weighted
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiGelfand
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.PsiPos
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.EquivSigLamOfIsDS
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.InfChar
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.BridgeExpK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.BochnerInequality.LayerBasic
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+public import Formalism.PeriodIntegrals.ZuckTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem cns_data {ε : Fin n → Bool} (hq : 1 ≤ S7.q0 ε) {lam : Fin n → �
       HasGelfandChar (smE ε (rreg ε)) lam (genSub (smE ε (rreg ε)) (datumV ε Ψ T.w)) := by
   obtain ⟨T⟩ := HW.kType_exists ε lam hlam
   obtain ⟨Ψ, h1, h2, h3, h4, -, h6, h7, h8⟩ := S7.psiAll ε lam h T hlam hh hq
-  have hmax := hth
-  unfold thrStar at hmax
+  have hmax : thrStar ε < h := hth
+  delta thrStar at hmax
   rw [max_lt_iff] at hmax
   have hsq : (0 : ℝ) ≤ Real.sqrt (2 * (S7.q0 ε : ℝ)) := Real.sqrt_nonneg _
   have hnq : (0 : ℝ) ≤ (n : ℝ) * S7.q0 ε := by positivity
@@ -184,8 +188,9 @@ theorem cns_shift_gap (dual : Bool) {ε : Fin n → Bool} {μ : Fin n → ℝ} {
   have h0 := hh a b hab
   obtain ⟨a0, a1⟩ := cns_single_bd s a
   obtain ⟨b0, b1⟩ := cns_single_bd s b
+  delta shiftF
   cases dual
-  · simp only [shiftF, cond_false, Pi.add_apply]
+  · simp only [Bool.cond_false, Pi.add_apply]
     have e : μ a + (Pi.single s (1 : ℝ) : Fin n → ℝ) a - (μ b + (Pi.single s (1 : ℝ) : Fin n → ℝ) b) =
         (μ a - μ b) - -((Pi.single s (1 : ℝ) : Fin n → ℝ) a - (Pi.single s (1 : ℝ) : Fin n → ℝ) b) := by ring
     rw [e]
@@ -194,7 +199,7 @@ theorem cns_shift_gap (dual : Bool) {ε : Fin n → Bool} {μ : Fin n → ℝ} {
     have hd : |-((Pi.single s (1 : ℝ) : Fin n → ℝ) a - (Pi.single s (1 : ℝ) : Fin n → ℝ) b)| ≤ 1 :=
       abs_le.2 ⟨by linarith, by linarith⟩
     linarith
-  · simp only [shiftF, cond_true, Pi.sub_apply]
+  · simp only [Bool.cond_true, Pi.sub_apply]
     have e : μ a - (Pi.single s (1 : ℝ) : Fin n → ℝ) a - (μ b - (Pi.single s (1 : ℝ) : Fin n → ℝ) b) =
         (μ a - μ b) - ((Pi.single s (1 : ℝ) : Fin n → ℝ) a - (Pi.single s (1 : ℝ) : Fin n → ℝ) b) := by ring
     rw [e]
@@ -224,37 +229,41 @@ theorem cns_sing (dual : Bool) {μ : Fin n → ℝ} (hμ : S7.IsHCParam μ) {s :
     obtain ⟨a0, a1⟩ := cns_single_bd s a
     obtain ⟨b0, b1⟩ := cns_single_bd s b
     have hle : shiftF dual μ s b ≤ shiftF dual μ s a := by
+      delta shiftF
       cases dual
-      · simp only [shiftF, cond_false, Pi.add_apply]; linarith
-      · simp only [shiftF, cond_true, Pi.sub_apply]; linarith
+      · simp only [Bool.cond_false, Pi.add_apply]; linarith
+      · simp only [Bool.cond_true, Pi.sub_apply]; linarith
     exact lt_of_le_of_ne hle (fun e => hab.ne' (hinj e))
   · intro a
+    delta shiftF
     obtain ⟨ma, hma⟩ := hμ.2 a
     rcases cns_single_01 s a with h0 | h0
     · refine ⟨ma, ?_⟩
       cases dual
-      · simp only [shiftF, cond_false, Pi.add_apply, h0]; linarith
-      · simp only [shiftF, cond_true, Pi.sub_apply, h0]; linarith
+      · simp only [Bool.cond_false, Pi.add_apply, h0]; linarith
+      · simp only [Bool.cond_true, Pi.sub_apply, h0]; linarith
     · cases dual
       · refine ⟨ma + 1, ?_⟩
-        simp only [shiftF, cond_false, Pi.add_apply, h0]; push_cast; linarith
+        simp only [Bool.cond_false, Pi.add_apply, h0]; push_cast; linarith
       · refine ⟨ma - 1, ?_⟩
-        simp only [shiftF, cond_true, Pi.sub_apply, h0]; push_cast; linarith
+        simp only [Bool.cond_true, Pi.sub_apply, h0]; push_cast; linarith
 
 theorem cns_shift_inj (dual : Bool) (μ : Fin n → ℝ) {s s' : Fin n} (h : shiftF dual μ s = shiftF dual μ s') :
     s = s' := by
   by_contra hne
-  have := congrFun h s
+  have heval : shiftF dual μ s s = shiftF dual μ s' s := congrFun h s
+  delta shiftF at heval
   cases dual
-  · simp [shiftF, Pi.single_apply, hne] at this
-  · simp [shiftF, Pi.single_apply, hne] at this
+  · simp [Pi.single_apply, hne] at heval
+  · simp [Pi.single_apply, hne] at heval
 
 theorem cns_coefV {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (g : Matrix (Fin n) (Fin n) ℂ) (a b : H) (x y : Fin n → ℂ) :
     inner ℂ b (σ g a) * (star y ⬝ᵥ (g *ᵥ x)) =
       ∑ c, inner ℂ (y c • b) (tensGrp false σ g (fun d => x d • a) c) := by
-  simp only [tensGrp, cond_false, map_smul, smul_smul, inner_smul_left, inner_sum, inner_smul_right,
-    dotProduct, Matrix.mulVec, Finset.mul_sum, Finset.sum_mul, Pi.star_apply, Complex.star_def]
+  delta tensGrp
+  simp only [Bool.cond_false, map_smul, smul_smul, inner_smul_left, inner_sum, inner_smul_right,
+    dotProduct, Matrix.mulVec, Finset.mul_sum, Pi.star_apply, Complex.star_def]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
   ring
 
@@ -262,8 +271,9 @@ theorem cns_coefVd {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (g : Matrix (Fin n) (Fin n) ℂ) (a b : H) (x y : Fin n → ℂ) :
     inner ℂ b (σ g a) * (star y ⬝ᵥ (g⁻¹ *ᵥ x)) =
       ∑ c, inner ℂ (star (x c) • b) (tensGrp true σ g (fun d => star (y d) • a) c) := by
-  simp only [tensGrp, cond_true, map_smul, smul_smul, inner_smul_left, inner_sum, inner_smul_right,
-    dotProduct, Matrix.mulVec, Finset.mul_sum, Finset.sum_mul, Pi.star_apply, Complex.star_def,
+  delta tensGrp
+  simp only [Bool.cond_true, map_smul, smul_smul, inner_smul_left, inner_sum, inner_smul_right,
+    dotProduct, Matrix.mulVec, Finset.mul_sum, Pi.star_apply, Complex.star_def,
     Complex.conj_conj]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => ?_
@@ -278,7 +288,8 @@ theorem cns_expandV {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     ∑ c, inner ℂ (f c) (tensGrp false σ g F c) = ∑ p : Fin n × Fin n, inner ℂ (f p.1) (σ g (F p.2)) *
       (star (Pi.single p.1 (1 : ℂ) : Fin n → ℂ) ⬝ᵥ (g *ᵥ Pi.single p.2 1)) := by
   rw [Fintype.sum_prod_type]
-  simp only [tensGrp, cond_false, inner_sum, inner_smul_right, cns_single_coef]
+  delta tensGrp
+  simp only [Bool.cond_false, inner_sum, inner_smul_right, cns_single_coef]
   exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => mul_comm _ _
 
 theorem cns_expandVd {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -286,7 +297,8 @@ theorem cns_expandVd {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H
     ∑ c, inner ℂ (f c) (tensGrp true σ g F c) = ∑ p : Fin n × Fin n, inner ℂ (f p.1) (σ g (F p.2)) *
       (star (Pi.single p.2 (1 : ℂ) : Fin n → ℂ) ⬝ᵥ (g⁻¹ *ᵥ Pi.single p.1 1)) := by
   rw [Fintype.sum_prod_type]
-  simp only [tensGrp, cond_true, inner_sum, inner_smul_right, cns_single_coef]
+  delta tensGrp
+  simp only [Bool.cond_true, inner_sum, inner_smul_right, cns_single_coef]
   exact Finset.sum_congr rfl fun c _ => Finset.sum_congr rfl fun d _ => mul_comm _ _
 
 theorem cns_tens_sum {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (dual : Bool)
@@ -294,7 +306,9 @@ theorem cns_tens_sum {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H
     (η : Fin n → H) {β : Type*} (B : Finset β) (F : β → Fin n → D) :
     ∑ c, inner ℂ (η c) (tensGrp dual σ g (fun d => (((∑ b ∈ B, F b) d : D) : H)) c) =
       ∑ b ∈ B, ∑ c, inner ℂ (η c) (tensGrp dual σ g (fun d => ((F b d : D) : H)) c) := by
-  simp only [tensGrp, Finset.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum, inner_sum]
+  delta tensGrp
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Submodule.coe_sum, map_sum, Finset.smul_sum, inner_sum]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [Finset.sum_comm]

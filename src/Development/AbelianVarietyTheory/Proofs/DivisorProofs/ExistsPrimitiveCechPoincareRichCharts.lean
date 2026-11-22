@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechPrimitiveBoxSegment
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCechPrimitiveBoxSegment
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -56,7 +60,8 @@ private theorem exists_global_cechPrimitive_of_zero_section_lemma
       ext j
       · simp [Prod.fst_sum]
       · simp [Prod.snd_sum, Finset.sum_apply, Pi.single_apply]
-    rw [hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_smul, smul_eq_mul, (hG q hq).2.2.2.2.2.2.2.2.1 k a y hy hyB]
   set H : P × (Fin g → ℂ) → K → P × (Fin g → ℂ) → ℂ :=
@@ -159,11 +164,11 @@ private theorem hol_sub_fn {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   rw [← _root_.GlobalTheory.AnPer.Hol.ev_apply p hp, map_sub,
     _root_.GlobalTheory.AnPer.Hol.ev_apply, _root_.GlobalTheory.AnPer.Hol.ev_apply]
 
+
 set_option autoImplicit false in
 open CategoryTheory TopologicalSpace in
 variable {I : Type} [Fintype I] {g : ℕ} {Λ : Type} [AddCommGroup Λ]
   {F : _root_.GlobalTheory.AnPer.Fam I g Λ} in
-
 theorem _root_.GlobalTheory.AnPer.Charts.exists_primitive_of_rich {I : Type} [Fintype I] {g : ℕ} {Λ : Type}
     [AddCommGroup Λ] {F : _root_.GlobalTheory.AnPer.Fam I g Λ}
     (K : _root_.GlobalTheory.AnPer.Charts F) (hR : K.Rich)
@@ -172,16 +177,16 @@ theorem _root_.GlobalTheory.AnPer.Charts.exists_primitive_of_rich {I : Type} [Fi
     (ω : ∀ k, Fin g → _root_.GlobalTheory.AnPer.Hol (K.W k))
     (hcoc : ∀ k k' k'' (e : K.le 0 k' k)
       (e' : K.le 0 k'' k') (e'' : K.le 0 k'' k),
-      a k k'' e'' = _root_.GlobalTheory.AnPer.Charts.sh e' (a k k' e) + a k' k'' e')
+      a k k'' e'' = K.sh e' (a k k' e) + a k' k'' e')
     (hcl : ∀ k i j, _root_.GlobalTheory.AnPer.dw i (ω k j) =
       _root_.GlobalTheory.AnPer.dw j (ω k i))
     (hd : ∀ k k' (e : K.le 0 k' k) i,
-      ω k' i - _root_.GlobalTheory.AnPer.Charts.sh e (ω k i) =
+      ω k' i - K.sh e (ω k i) =
         _root_.GlobalTheory.AnPer.dw i (a k k' e)) :
     ∃ G : ∀ k, _root_.GlobalTheory.AnPer.Hol (K.W k),
       (∀ k i, _root_.GlobalTheory.AnPer.dw i (G k) = ω k i) ∧
       ∀ k k' (e : K.le 0 k' k),
-        a k k' e = G k' - _root_.GlobalTheory.AnPer.Charts.sh e (G k) := by
+        a k k' e = G k' - K.sh e (G k) := by
   classical
   obtain ⟨hcov, hmeet⟩ := hR
   obtain ⟨k₀, hk₀⟩ := hB
@@ -193,7 +198,7 @@ theorem _root_.GlobalTheory.AnPer.Charts.exists_primitive_of_rich {I : Type} [Fi
     intro k k' k'' e e'
     simpa using K.le_trans e e'
   have hsh : ∀ {k k' : K.K} (e : K.le 0 k' k) (f : _root_.GlobalTheory.AnPer.Hol (K.W k)),
-      ∀ p ∈ K.W k', (_root_.GlobalTheory.AnPer.Charts.sh e f).fn p = f.fn p := by
+      ∀ p ∈ K.W k', (K.sh e f).fn p = f.fn p := by
     intro k k' e f p hp
     rw [_root_.GlobalTheory.AnPer.Charts.fn_sh e f hp, _root_.GlobalTheory.AnPer.Fam.shift_zero]
   have hdw : ∀ {k : K.K} (i : Fin g) (f : _root_.GlobalTheory.AnPer.Hol (K.W k)), ∀ p ∈ K.W k,

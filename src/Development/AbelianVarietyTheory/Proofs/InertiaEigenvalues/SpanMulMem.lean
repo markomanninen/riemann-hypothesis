@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.Development
+
+@[expose] public section
 
 namespace GlobalTheory.SpanMulInertiaEigenvalues
 

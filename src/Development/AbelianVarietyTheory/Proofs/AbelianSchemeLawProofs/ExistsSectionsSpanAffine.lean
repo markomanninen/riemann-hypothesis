@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.PsbLb
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -282,7 +286,7 @@ theorem map_mem_span {R R' M M' : Type} [CommRing R] [CommRing R'] [AddCommGroup
   induction hs using Submodule.span_induction with
   | mem x hx => obtain ⟨i, rfl⟩ := hx; exact Submodule.subset_span ⟨i, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul r x _ hx => rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ hx
 
 theorem pow_smul_mem_of {R R' M M' : Type} [CommRing R] [CommRing R'] [AddCommGroup M]
@@ -299,7 +303,7 @@ theorem pow_smul_mem_of {R R' M M' : Type} [CommRing R] [CommRing R'] [AddCommGr
       obtain ⟨m, u, hu, eu⟩ := hx
       obtain ⟨n, v, hv, ev⟩ := hy
       refine ⟨m + n, r ^ n • u + r ^ m • v, W.add_mem (W.smul_mem _ hu) (W.smul_mem _ hv), ?_⟩
-      rw [map_add, map_smulₛₗ, map_smulₛₗ, eu, ev, map_pow, map_pow, smul_smul, smul_smul,
+      rw [map_add (f := _), map_smulₛₗ, map_smulₛₗ, eu, ev, map_pow, map_pow, smul_smul, smul_smul,
         ← pow_add, ← pow_add, add_comm n m, smul_add]
     | smul c x _ hx =>
       obtain ⟨m, u, hu, eu⟩ := hx
@@ -379,9 +383,6 @@ def pull (h : T' ⟶ T) :
     change pa (h ▷ A).left (chart_le A L a h j) (liftHom A _ r * s.1 j) =
       liftHom A _ _ * pa (h ▷ A).left (chart_le A L a h j) (s.1 j)
     rw [map_mul, pa_liftHom]
-
-theorem pull_apply (h : T' ⟶ T) (s : SecM A L a T) (j : Fin 1 → L.ι) :
-    (pull A L a h s).1 j = pa (h ▷ A).left (chart_le A L a h j) (s.1 j) := rfl
 
 theorem pull_pull (h : T' ⟶ T) (k : T'' ⟶ T') (s : SecM A L a T) :
     pull A L a k (pull A L a h s) = pull A L a (k ≫ h) s := by
@@ -560,8 +561,8 @@ theorem local_span (H : SecBaseChangeSt) (S : Scheme.{0}) [IsLocallyNoetherian S
 
 end GlobalTheory.SecAff
 
-open GlobalTheory.SecAff in
 
+open GlobalTheory.SecAff in
 theorem GlobalTheory.exists_sections_span_affine :
     SecBaseChangeSt → ∀ (S : Scheme.{0}) [IsLocallyNoetherian S] (P : PolAV S) (n : ℕ), 1 ≤ n → ∀ U : S.Opens, IsAffineOpen U → ∃ (m : ℕ) (b : Fin (m + 1) → LB.Sec (LPow P.A P.L n (overRes (T := baseOver S) U))), ∀ (T' : Over S) [IsAffine T'.left] (h : T' ⟶ overRes (T := baseOver S) U) (b' : Fin (m + 1) → LB.Sec (LPow P.A P.L n T')), (∀ i, IsPullSec P.A P.L n (h ▷ P.A) (whiskerRight_snd h P.A) (b i) (b' i)) → Submodule.span Γ(T'.left, ⊤) (Set.range fun i => (SecM.ofSec P.A (b' i) : SecM P.A P.L n T')) = ⊤ := by
   intro H S _ P n hn U hU

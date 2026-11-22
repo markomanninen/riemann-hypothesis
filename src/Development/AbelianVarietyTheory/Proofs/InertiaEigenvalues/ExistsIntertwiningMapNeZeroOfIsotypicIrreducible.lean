@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IsoSep
 
@@ -53,7 +57,7 @@ theorem main : ∀ (H V W : Type) [Group H] [AddCommGroup V] [Module ℂ V] [Add
         · refine le_sSup (a := e f.range) ?_ ?_
           · exact isSimpleModule_iff_isAtom.2 ((e.isAtom_iff _).2 (hatom f hf))
           · exact hy)
-      (by simp) (fun a b ha hb => by rw [map_add]; exact add_mem ha hb)
+      (by simp) (fun a b ha hb => by simpa only [map_add] using add_mem ha hb)
     simpa using key
 
   let K : Submodule (MonoidAlgebra ℂ H) ρ.asModule := Submodule.span _ {ρ.asModuleEquiv.symm v}
@@ -85,7 +89,7 @@ theorem main : ∀ (H V W : Type) [Group H] [AddCommGroup V] [Module ℂ V] [Add
       Submodule.projectionOnto_apply_right hc ⟨ρ g z, C'.apply_mem_toSubmodule g hz⟩
     have h3 : P y = ⟨y, hy⟩ := Submodule.projectionOnto_apply_left hc ⟨y, hy⟩
     have h4 : P z = 0 := Submodule.projectionOnto_apply_right hc ⟨z, hz⟩
-    simp only [LinearMap.coe_comp, Function.comp_apply, map_add, h1, h2, h3, h4, add_zero, map_zero]
+    simp only [LinearMap.coe_comp, Function.comp_apply, map_add (f := _), h1, h2, h3, h4, add_zero, map_zero]
     rfl⟩
   have hpv : p v ≠ 0 := by
     intro h0

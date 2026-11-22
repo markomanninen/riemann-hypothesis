@@ -1,7 +1,11 @@
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.SharpRestriction.GrowthBounds.DataG
-import Formalism.SharpRestriction.ParConsts
+module
+
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+public import Formalism.SharpRestriction.ParConsts
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,15 +68,5 @@ def Conclusion1 (_D : Formalism.BasicNotions.D7) (G : GAtP p) : Prop :=
           (Submodule.inclusion hM'.1) (fun _ hx => hx)) ∧
         ∀ (Y : Type) [AddCommGroup Y] [Module G.O Y] (K : G.Fn →ₗ[G.O] Y) (Z : Submodule G.O Y),
           N.map K ≤ Z → (Nst ⊓ M').map K ≤ Z)
-
-def IntegralityFromMetric (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
-    (h : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)),
-    admitted D (D.gat u w h) → Conclusion1 D (D.gat u w h)
-
-def RationalPlaneProblemLocal (D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (p : ℕ) (G : GAtP p), admitted D G → Conclusion1 D G
-
-def FamilyGlobalDerivation {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : Prop := ∀ x (i : Fm.Ix x), IntegralityFromMetric (Fm.D x i)
 
 end Formalism.MainNotions.SelectionLemmas

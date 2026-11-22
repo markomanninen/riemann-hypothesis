@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieAlgebraOfTangentCurve
-import Formalism.UnipotentAdelicQuotients.SmComplete
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LieAlgebraOfTangentCurve
+public import Formalism.UnipotentAdelicQuotients.SmComplete
+
+@[expose] public section
+
 open SmoothVectors Filter Topology
 open scoped ContDiff Matrix.Norms.Elementwise
 set_option maxHeartbeats 1000000 in

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.LocRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.LocRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -30,8 +35,8 @@ def fibreOver (v : (Σ k, ι k) → (Σ k', ι' k')) (P' : Ideal (MRing ι')) (W
     Set (Ideal (MRing ι')) :=
   {W' | IsMultiProjPrime W' ∧ P' ≤ W' ∧ imageZ v W' = W}
 
-open Classical in
 
+open Classical in
 theorem rename_isMultiHomog {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
     IsMultiHomog (rename v f) (Function.extend κ a 0) := by
@@ -79,8 +84,8 @@ theorem quotMapZ_injective (v : (Σ k, ι k) → (Σ k', ι' k')) (P' : Ideal (M
     Function.Injective (quotMapZ v P') :=
   Ideal.quotientMap_injective
 
-omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K] [∀ k, Fintype (ι k)] [Fintype K'] [∀ k, Fintype (ι' k)] in
 theorem imageZ_isPrime_of_prime (v : (Σ k, ι k) → (Σ k', ι' k')) (P' : Ideal (MRing ι')) [P'.IsPrime] :
     (imageZ v P').IsPrime :=
   Ideal.comap_isPrime _ _
@@ -143,12 +148,12 @@ namespace SemilocRing
 
 variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
 
-open Classical in
 
+open Classical in
 def blkW : (Σ k, ι k) → K → ℕ := fun p => Pi.single p.1 1
 
-open Classical in
 
+open Classical in
 theorem isMultiHomog_of_wh {s : MRing ι} {a : K → ℕ} (h : IsWeightedHomogeneous (blkW (ι := ι)) s a) :
     IsMultiHomog s a := by
   intro m hm k

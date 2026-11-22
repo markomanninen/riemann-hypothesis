@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianMatrixMeasurePosFinite
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.GaussianMatrixMeasurePosFinite
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
@@ -148,7 +152,7 @@ theorem aesm (h : HermNorm n) (G : (Fin e × Fin n → ℂ) → ℝ)
     have hq : Measure.QuasiMeasurePreserving (sc (n := n) (fun _ => (1 : ℝ) / (m + 1)))
         (volume.restrict (sc (n := n) (fun _ => (1 : ℝ) / (m + 1)) ⁻¹' ballProd h e))
         (volume.restrict (ballProd h e)) := by
-      refine ⟨measurable_sc _, ?_⟩
+      refine ⟨(measurable_sc _).aemeasurable, ?_⟩
       rw [← Measure.restrict_map (measurable_sc _) (isOpen_ballProd h e).measurableSet, hmap,
         Measure.restrict_smul]
       exact Measure.smul_absolutelyContinuous
@@ -229,7 +233,7 @@ def scT (p : (Fin e → ℝ) × (Fin e × Fin n → ℂ)) : Fin e × Fin n → �
 
 theorem measurable_scT : Measurable (scT (n := n) (e := e)) := by
   unfold scT
-  refine measurable_pi_lambda _ fun ij => ?_
+  refine Measurable.of_eval fun ij => ?_
   simp only [sc_apply]
   refine Measurable.mul ?_ ?_
   · exact Complex.continuous_ofReal.measurable.comp
@@ -411,33 +415,6 @@ theorem map_coefRows (h : HermNorm n) : ∃ a : ℝ≥0∞,
   rw [← lintegral_map hF Ψ.continuous.measurable, hc, lintegral_smul_measure, hprod,
     lintegral_indicator hA]
   rw [ENNReal.smul_def, smul_eq_mul, mul_assoc]
-
-theorem main (h : HermNorm n) (G : (Fin e × Fin n → ℂ) → ℝ)
-    (hfin : gaussM (e + 1) n Set.univ < ⊤)
-    (hG : IntegrableOn (fun u => G (nrmGroups h e u)) (ballProd h e)) :
-    Integrable (fun π : Fin (e + 1) → Fin n → ℂ => G (nrmGroups h e (coefRows h π)))
-        (gaussM (e + 1) n) ∧
-      ∫ π, G (nrmGroups h e (coefRows h π)) ∂(gaussM (e + 1) n) =
-        (gaussM (e + 1) n Set.univ).toReal * sphereMean h e G := by
-  haveI : IsFiniteMeasure (gaussM (e + 1) n) := ⟨hfin⟩
-  haveI : IsFiniteMeasure (volume.restrict (ballProd h e)) :=
-    ⟨by rw [Measure.restrict_apply_univ]; exact volume_ballProd_lt_top h e⟩
-  obtain ⟨a, ha⟩ := map_coefRows (e := e) h
-  have hmap : (gaussM (e + 1) n).map (coefRows h) =
-      ((a • (exP e).withDensity (wt h)).prod (volume.restrict (ballProd h e))).map scT := by
-    rw [ha, layer h, Measure.prod_smul_left, Measure.map_smul]
-  have hac : a • (exP e).withDensity (wt h) ≪ exP e :=
-    Measure.smul_absolutelyContinuous.trans (withDensity_absolutelyContinuous _ _)
-  refine transfer (gaussM (e + 1) n) (a • (exP e).withDensity (wt h))
-    (volume.restrict (ballProd h e)) ?_ (measurable_coefRows h) measurable_scT hmap
-    (F := fun u => G (nrmGroups h e u)) ?_ ?_ hG
-  · rw [Measure.restrict_apply_univ]; exact (volume_ballProd_pos h e).ne'
-  · rw [ha]
-    exact (aesm h G hG.aestronglyMeasurable).mono_ac
-      (Measure.smul_absolutelyContinuous.trans (withDensity_absolutelyContinuous _ _))
-  · filter_upwards [hac.ae_le ae_pos_piExponential] with s hs u
-    simp only [scT]
-    rw [nrm_sc h (fun i => Real.sqrt_pos.2 (hs i)) u]
 
 end
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleChapterDTwo
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleChapterDTwo
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -41,7 +45,7 @@ def IsChern {q : ℕ} (P : Collected q) {E : Spc} (h : Inv q E) {N : ℕ} (V : E
     P.deg1 (inv_of (PB.pr V) h) (c1 q (PB.line V)) ^ (N - j) = 0
 
 def newton {A : Type 1} [CommRing A] (c : ℕ → A) (k : ℕ) : A :=
-  PowerSeries.coeff k (-(PowerSeries.X * PowerSeries.derivative A (PowerSeries.mk c)) * (PowerSeries.mk c).invOfUnit 1)
+  PowerSeries.coeff k (-(PowerSeries.X * PowerSeries.derivative (PowerSeries.mk c)) * (PowerSeries.mk c).invOfUnit 1)
 
 def LeafA6nat : Prop := DivisorNaturality
 
@@ -98,7 +102,7 @@ theorem goal_of (hR : LeafRing) (hC : LeafChern) (hN : LeafNat) (hW : LeafWhitne
   · intro E a b V W h
     simp only [dif_pos h]
     obtain ⟨e, he, hk⟩ := hW q P h V W _ _ (hc h V) (hc h W)
-    rw [← hu h _ e he, hS.2.1 _ (fun j => P.ι h j (c h V j)) (fun j => P.ι h j (c h W j)) _ (hc h V).1 (hc h W).1 hk, map_add]
+    rw [← hu h _ e he, hS.2.1 _ (fun j => P.ι h j (c h V j)) (fun j => P.ι h j (c h W j)) _ (hc h V).1 (hc h W).1 hk, map_add (f := _)]
   · intro E L h
     simp only [dif_pos h]
     rw [hS.2.2 _ _ _ (hc h L).1 (hL q P h L _ (hc h L)) (fun j hj => by rw [(hc h L).2.1 j hj, map_zero]) k hk,

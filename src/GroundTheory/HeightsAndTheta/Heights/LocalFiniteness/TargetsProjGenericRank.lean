@@ -1,26 +1,30 @@
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PDefectAverage
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.IsolatedPointsCountPrime
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.UniformIntegrabilityProportionalityHolds
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjFullRankMeetsRegular
-import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsCurveVertPointLength
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeSheetGramLintegral
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyCocycle
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveSectionQuotFinite
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertIndex
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsProjGenericRank
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PProjRegularNull
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosDensMeasurable
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartLocal
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartProjIndep
-set_option maxSynthPendingDepth 1
+module
 
-theorem GroundTheory.Heights₂.Heights.AutoClose.PtsPosPartProjIndep : GroundTheory.Heights₂.Heights.PtsPosPartProjIndep.Statement :=
-  @GroundTheory.Heights₂.Heights.PtsPosPartProjIndep.proof GroundTheory.Heights₂.Heights.AutoClose.PtsSheetSimpleNull GroundTheory.Heights₂.Heights.AutoClose.PtsSheetOnlyNull GroundTheory.Heights₂.Heights.PtsPosPartLocal.proof GroundTheory.Heights₂.Heights.PtsPosDensMeasurable.proof
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PDefectAverage
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.IsolatedPointsCountPrime
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.UniformIntegrabilityProportionalityHolds
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsProjFullRankMeetsRegular
+public import GroundTheory.HeightsAndTheta.Heights.LocalFiniteness.TargetsCurveVertPointLength
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PConeSheetGramLintegral
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergyCocycle
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveSectionQuotFinite
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PCurveVertIndex
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivPushA
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ContDiffFubiniStudyRatioCompChart0
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IntegrableOnTargetOfTsupport
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.KerEqBotOfCoord
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeH
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.NullZero
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosDensMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartLocal
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PPtsPosPartProjIndep
+
+@[expose] public section
+
+set_option maxSynthPendingDepth 1
 
 theorem GroundTheory.Heights₂.Heights.AutoClose.DefectAverage : GroundTheory.Heights₂.Heights.DefectAverage.Statement :=
   @GroundTheory.Heights₂.Heights.DefectAverage.proof GroundTheory.Heights₂.Heights.AutoClose.MahlerAverageSplit GroundTheory.Heights₂.Heights.AutoClose.CycleAverage
-
-theorem GroundTheory.Heights₂.Heights.AutoClose.ConeSheetGramLintegral : GroundTheory.Heights₂.Heights.ConeSheetGramLintegral.Statement :=
-  @GroundTheory.Heights₂.Heights.ConeSheetGramLintegral.proof GroundTheory.Heights₂.Heights.AutoClose.ConeSliceSheetParam GroundTheory.Heights₂.Heights.AutoClose.ConeMapArea

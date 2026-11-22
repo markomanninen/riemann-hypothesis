@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 open scoped ComplexOrder
 
@@ -19,7 +24,7 @@ theorem norm_det_le_pow_card_of_ultrametric :
   have h2 : ‖∏ i, M (σ i) i‖ ≤ r ^ Fintype.card I := by
     rw [norm_prod]
     calc ∏ i, ‖M (σ i) i‖ ≤ ∏ _i : I, r :=
-          Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ => hM _ _)
+          Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun i _ => hM _ _)
       _ = r ^ Fintype.card I := by simp
   calc _ ≤ 1 * r ^ Fintype.card I :=
         mul_le_mul h1 h2 (norm_nonneg _) zero_le_one

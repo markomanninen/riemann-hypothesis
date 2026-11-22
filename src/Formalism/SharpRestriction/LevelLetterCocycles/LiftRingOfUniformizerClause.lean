@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.PullbackLevelTwoToOne
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.PullbackLevelTwoToOne
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementT
+
+@[expose] public section
 
 open PowerSeries
 
@@ -44,7 +48,7 @@ theorem fac_exists (hF : FacShape) {K : Type} [NormedField K] [IsUltrametricDist
     ∃ e, UnitAt e (C (px W (π Q)) - xT W (π P)) := by
   obtain ⟨h0, h1, h2⟩ := hF K W hW (π P) (π Q) hP hQ (hI P hP).1 (hI P hP).2 (hI Q hQ).1
     (hI Q hQ).2
-    (fun h => by rw [← map_add] at h ⊢; exact (hI _ h).1)
+    (fun h => by rw [← map_add (f := _)] at h ⊢; exact (hI _ h).1)
     (fun h => by rw [← map_sub] at h ⊢; exact (hI _ h).1)
   by_cases ha : π P + π Q = 0
   · by_cases hq : π Q + π Q = 0

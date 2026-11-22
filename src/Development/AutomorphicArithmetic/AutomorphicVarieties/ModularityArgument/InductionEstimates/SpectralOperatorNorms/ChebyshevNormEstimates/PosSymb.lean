@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -97,7 +101,7 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.posSymb :
   intro H V _ _ _ _ _ _ _ J Y β hk hc h0 h1
   have hY : ∀ u' u : L V, ⟪u', conv β u⟫_ℂ = ⟪J u', Y (J u)⟫_ℂ := fun u' u => by
     rw [hc u _ (convSpec β hk u).1, J.inner_map_map]
-  have hp := (ContinuousLinearMap.nonneg_iff_isPositive Y).1 h0
+  have hp := ContinuousLinearMap.nonneg_iff_isPositive.1 h0
   constructor
   · have key : ∀ e, 0 ≤ ⟪e, symb β 0 e⟫_ℂ := fun e => by
       refine ge_of_tendsto (conv_lim β hk e e) ?_

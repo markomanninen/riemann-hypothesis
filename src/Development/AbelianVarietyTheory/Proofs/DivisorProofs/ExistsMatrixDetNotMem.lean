@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsEqSumIndicatorOfRightInvariant
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjectiveOfFg
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.UnimodularStandardLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClass
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsEqSumIndicatorOfRightInvariant
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ProjectiveOfFg
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.UnimodularStandardLattice
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,7 +47,8 @@ theorem exists_matrix_det_notMem (I : Ideal O) [I.IsMaximal] (a b : n → Q)
     simp only [Function.comp_apply, Submodule.mkQ_apply] at this
     rw [this]
     show _ = (I • ⊤ : Submodule O Q).mkQ (∑ i, g1 i j • b i)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Submodule.mkQ_apply, ← hg1 i j, ← Ideal.Quotient.algebraMap_eq, algebraMap_smul]
   choose c hcI hc using fun j => (Submodule.mem_ideal_smul_span_iff_exists_sum I b _).1 (hmem j)
@@ -56,7 +61,7 @@ theorem exists_matrix_det_notMem (I : Ideal O) [I.IsMaximal] (a b : n → Q)
     have h2 : Matrix.map (fun i j => g1 i j + c j i : Matrix n n O) (Ideal.Quotient.mk I) = g0 := by
       refine Matrix.ext fun i j => ?_
       show Ideal.Quotient.mk I (g1 i j + c j i) = g0 i j
-      rw [map_add, hg1, Ideal.Quotient.eq_zero_iff_mem.2 (hcI j i), add_zero]
+      rw [map_add (f := _), hg1, Ideal.Quotient.eq_zero_iff_mem.2 (hcI j i), add_zero]
     rw [← h2]
     exact h1.symm
   · simp only [add_smul, Finset.sum_add_distrib]
@@ -130,12 +135,14 @@ theorem exists_matrix_inv_mod (I : Ideal O) (hI : {P : Ideal O | P.IsMaximal ∧
       have h1 : g i j = ∑ Q ∈ s, e Q * G Q i j + (1 - ∑ Q ∈ s, e Q) * H0 i j := by
         simp [g, Matrix.sum_apply]
       have hsum : Ideal.Quotient.mk P (∑ Q ∈ s, e Q) = 1 := by
-        rw [map_sum, Finset.sum_eq_single P]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_eq_single P]
         · exact (Ideal.Quotient.eq.2 (he1 P hP)).trans (map_one _)
         · intro Q hQ hQP
           exact Ideal.Quotient.eq_zero_iff_mem.2 (he2 Q hQ P hP (Ne.symm hQP))
         · intro h; exact absurd hP h
-      rw [h1, map_add, map_mul, map_sub, map_one, hsum, sub_self, zero_mul, add_zero, map_sum,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_add (f := _), map_mul, map_sub, map_one, hsum, sub_self, zero_mul, add_zero, map_sum,
         Finset.sum_eq_single P]
       · rw [map_mul, (Ideal.Quotient.eq.2 (he1 P hP)), map_one, one_mul]
       · intro Q hQ hQP
@@ -295,7 +302,8 @@ theorem exists_unitary_of_mod (H : Host E) {M bad : ℕ} (hM : 0 < M) (hbad : 0 
         exact Ideal.Quotient.eq.1 this.symm
       have hbarv : ∀ j, H.bar ((B *ᵥ a') j) = ((B.map H.bar) *ᵥ (fun l => H.bar (a' l))) j := by
         intro j
-        simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
       have hT : ∀ i j, ((Bᵀ * B.map H.bar) - 1) i j ∈ S := by
         intro i j
         have e1 : ((Bᵀ * B.map H.bar) - 1) i j = ((B.map H.bar)ᵀ * B - 1) j i := by
@@ -331,7 +339,8 @@ theorem exists_unitary_of_mod (H : Host E) {M bad : ℕ} (hM : 0 < M) (hbad : 0 
       refine ⟨t, ?_⟩
       simp only [hecoe]
       have := congrArg (fun z : 𝓞 E => (z : E)) ht
-      simp only [map_sub, map_sum, map_mul, H.bar_eq] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, map_mul, H.bar_eq] at this
       push_cast [H.bar_eq] at this
       linear_combination -this
   obtain ⟨γ, hγ, h1, h2, h3⟩ := GlobalTheory.RepTrivial.repExists E n H.unram M bad hM hbad ⟨stdLat E n⟩ ι
@@ -364,14 +373,14 @@ private theorem span_singleton_smul_le_iff {R M : Type*} [CommRing R] [AddCommGr
     rw [mul_smul]
     exact N'.smul_mem c (h x hx)
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem trivAt_act {γ : Matrix (Fin n) (Fin n) E} {Λ : GenLat E n} {m : ℕ}
     (h : (actLat γ ⟨stdLat E n⟩).TrivAt m) (hΛ : Λ.TrivAt m) : (actLat γ Λ).TrivAt m := by
   obtain ⟨k1, hk1, h1, h1'⟩ := h
   obtain ⟨k2, hk2, h2, h2'⟩ := hΛ
   rw [span_singleton_smul_le_iff] at h1 h1' h2 h2'
-  refine ⟨k1 * k2, Nat.Coprime.mul hk1 hk2, (span_singleton_smul_le_iff _ _ _).2 ?_, (span_singleton_smul_le_iff _ _ _).2 ?_⟩
+  refine ⟨k1 * k2, Nat.Coprime.mul_left hk1 hk2, (span_singleton_smul_le_iff _ _ _).2 ?_, (span_singleton_smul_le_iff _ _ _).2 ?_⟩
   · intro y hy
     obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.1 hy
     have := h1 _ (Submodule.mem_map_of_mem (f := (Matrix.mulVecLin γ).restrictScalars (𝓞 E)) (h2 x hx))
@@ -385,8 +394,8 @@ theorem trivAt_act {γ : Matrix (Fin n) (Fin n) E} {Λ : GenLat E n} {m : ℕ}
     rw [Nat.cast_mul, mul_comm (k1 : 𝓞 E)]
     exact this
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem exists_levOK {γ : Matrix (Fin n) (Fin n) E} {Λ : GenLat E n} {N M : ℕ}
     (h : (actLat γ ⟨stdLat E n⟩).TrivAt 2) (hΛ : Λ.LevOK N M) : ∃ N', (actLat γ Λ).LevOK N' M := by
   obtain ⟨k, hk, -, h1'⟩ := h
@@ -440,7 +449,8 @@ theorem exists_unitary_mod (g g' : Matrix (Fin n) (Fin n) (𝓞 E)) (h : ∀ i j
         exact Ideal.Quotient.eq.2 hc1
       have e2 : Ideal.Quotient.mk l.Mb (H.bar (cSep l)) = 0 := Ideal.Quotient.eq_zero_iff_mem.2 (bar_mem_Mb hc0)
       have key := Ideal.Quotient.eq_zero_iff_mem.2 (bar_mem_Mb (h i j))
-      simp only [Matrix.sub_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.sub_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply,
         map_sub, map_sum, map_mul, map_add, map_one, bar_bar, apply_ite (H.bar), map_zero,
         apply_ite (Ideal.Quotient.mk l.Mb), e1, e2, sub_self, zero_mul, one_mul, add_zero, zero_add, mul_zero,
         mul_one, sub_zero] at key ⊢
@@ -457,7 +467,8 @@ theorem exists_unitary_mod (g g' : Matrix (Fin n) (Fin n) (𝓞 E)) (h : ∀ i j
       have key0 := h j i
       rw [Matrix.sub_apply, hsym] at key0
       have key := Ideal.Quotient.eq_zero_iff_mem.2 key0
-      simp only [Matrix.sub_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.sub_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.transpose_apply, Matrix.map_apply, Matrix.one_apply,
         map_sub, map_sum, map_mul, map_add, map_one, bar_bar, apply_ite (H.bar), map_zero,
         apply_ite (Ideal.Quotient.mk (Mfr l)), e1, e2, sub_self, zero_mul, one_mul, add_zero, zero_add, mul_zero,
         mul_one, sub_zero] at key ⊢
@@ -577,11 +588,13 @@ theorem exists_unitary_moving (c : Coeff l) {bad : ℕ} (hbad : 0 < bad) (x0 x1 
     · intro b
       rw [← Submodule.Quotient.eq]
       show Submodule.Quotient.mk (levRep (q' b)) = Submodule.Quotient.mk (∑ j, B b j • levRep (q j))
-      rw [hLq, levMoves_eq hcong hmv b, ← Submodule.mkQ_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hLq, levMoves_eq hcong hmv b, ← Submodule.mkQ_apply, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, Submodule.mkQ_apply, hLq]
   have stepB : pairL (l := l) X1 Y'' = pairL (l := l) X2 Y := by
-    simp only [pairL, Y'', X2, Finset.smul_sum, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [pairL, Y'', X2, Finset.smul_sum, map_sum, LinearMap.sum_apply]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun b _ => ?_
     rw [Dw.adj, bar_bar, smul_comm (cSep l) (B b j)]
@@ -590,7 +603,8 @@ theorem exists_unitary_moving (c : Coeff l) {bad : ℕ} (hbad : 0 < bad) (x0 x1 
     · intro j
       rw [← Submodule.Quotient.eq]
       show Submodule.Quotient.mk (∑ b, H.bar (B b j) • qRep (x1 b)) = Submodule.Quotient.mk (qRep (x0 j))
-      rw [hQc, hg j, ← Submodule.mkQ_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hQc, hg j, ← Submodule.mkQ_apply, map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [map_smul, Submodule.mkQ_apply, hQc, ← sub_eq_zero, ← sub_smul]
       obtain ⟨y, hy⟩ := Submodule.Quotient.mk_surjective _ (x1 b)

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjS
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCapAdjS
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ def eig (ρ : Representation k G V) (H : Subgroup G) (χ : H →* kˣ) : Submodu
   carrier := {v | ∀ h : H, ρ (h : G) v = (χ h : k) • v}
   add_mem' := by
     intro a b ha hb h
-    rw [map_add, ha h, hb h, smul_add]
+    rw [map_add (f := _), ha h, hb h, smul_add]
   zero_mem' := by intro h; simp
   smul_mem' := by
     intro c v hv h
@@ -126,7 +130,7 @@ def smoothPart (ρ : Representation k G V) : Submodule k V where
     refine T.isOpen_of_mem_nhds (g := 1) (Filter.mem_of_superset ((ha.inter hb).mem_nhds (by simp)) ?_)
     rintro g ⟨h1, h2⟩
     show ρ g (a + b) = a + b
-    rw [map_add, h1, h2]
+    rw [map_add (f := _), h1, h2]
   zero_mem' := by simp
   smul_mem' := by
     intro c v hv

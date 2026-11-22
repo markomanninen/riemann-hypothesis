@@ -1,5 +1,9 @@
-import Formalism.ThickAverageLoss.PartnersToFactorsAt
-import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+module
+
+public import Formalism.ThickAverageLoss.PartnersToFactorsAt
+public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+
+@[expose] public section
 
 open Finset ArithmeticFunction
 
@@ -107,12 +111,6 @@ def PrimValPow : Prop :=
 def PrimValTriv : Prop :=
   ∀ (D : ArithData H) (n : ℕ), primVal D 0 n = 1
 
-def OrthoUnram : Prop :=
-  ∀ (D : ArithData H), HostFacts D → ∀ (p i : ℕ), p.Prime → p ≠ 2 → p ≠ D.q1 → p ≠ D.d → 1 ≤ i →
-    ∀ g : E0 × H, (1 / ((PhiSet (H := H)).card : ℂ)) * ∑ ψ : AddChar (E0 × H) ℂ,
-        starRingEnd ℂ (ψ g) * primVal D ψ (p ^ i)
-      = if i • D.frob p = g then 2 else 0
-
 def OrthoRam : Prop := by
   classical
   exact
@@ -123,19 +121,6 @@ def OrthoRam : Prop := by
 def ColourSum : Prop :=
   ∀ ψ : AddChar (E0 × H) ℂ, ∑ g ∈ univ.filter (fun g : E0 × H => ¬ InPhi g), starRingEnd ℂ (ψ g)
     = if ψ = 0 then ((PhiSet (H := H)).card : ℂ) else if ψ = chC then -((PhiSet (H := H)).card : ℂ) else 0
-
-def PartnerBij : Prop :=
-  ∀ t : H, Set.BijOn (partner t) {g : E0 × H | ¬ InPhi g} {ρ : E0 × H | InPhi ρ}
-
-def DCosetSingle : Prop :=
-  ∀ (D : ArithData H), HostFacts D → ∀ i : ℕ, ∃! g : E0 × H, g - i • D.frob D.d ∈ D.inertia D.d ∧ ¬ InPhi g
-
-def AskExpansion : Prop :=
-  ∀ (D : ArithData H), HostFacts D → ∀ (a : ℝ) (t : H) (w : E0 × H → ℝ),
-    0 < a → (∀ ρ, InPhi ρ → 0 < w ρ) → ∀ N : ℕ, (∀ ρ, InPhi ρ → a / w ρ ≤ N) →
-      (ASK D N a t w : ℂ) = (1 / ((PhiSet (H := H)).card : ℂ)) * ∑ g ∈ univ.filter (fun g : E0 × H => ¬ InPhi g),
-        ∑ ψ : AddChar (E0 × H) ℂ, starRingEnd ℂ (ψ g) * ∑ n ∈ Icc 1 N,
-          (Λ n : ℂ) * primVal D ψ n * ((max (a / n - w (partner t g)) 0 : ℝ) : ℂ)
 
 end
 

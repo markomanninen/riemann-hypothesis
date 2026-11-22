@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParP
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -22,7 +27,7 @@ theorem comp_linearAut_smooth_compact : ∀ (E : Type) [Field E] [NumberField E]
   refine ⟨⟨U.comap L.toAddMonoidHom, ?_, ?_⟩, ?_, hLC⟩
   · exact hUo.preimage (IsModuleTopology.continuous_of_linearMap L)
   · intro x y hy
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hU (L x) (L y) hy
   · exact hcs.comp_homeomorph h
 

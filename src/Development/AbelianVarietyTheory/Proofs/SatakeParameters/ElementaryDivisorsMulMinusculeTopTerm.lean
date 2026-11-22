@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -103,9 +108,7 @@ section Val
 
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))] {n : ℕ}
 
-local notation "Γ" => WithZero (Multiplicative ℤ)
-
-def MinorLe (c : Γ) (r : ℕ) (M : Matrix (Fin n) (Fin n) L) : Prop :=
+def MinorLe (c : WithZero (Multiplicative ℤ)) (r : ℕ) (M : Matrix (Fin n) (Fin n) L) : Prop :=
   ∀ I J : Fin r → Fin n, Valued.v (M.submatrix I J).det ≤ c
 
 theorem mem_intL_iff {x : L} : x ∈ Formalism.UG.intL L ↔ Valued.v x ≤ 1 := Iff.rfl
@@ -123,7 +126,7 @@ theorem det_submatrix_mul_expand {r : ℕ} (A M : Matrix (Fin n) (Fin n) L) (I J
   rw [MultilinearMap.map_smul_univ]
   rfl
 
-theorem minorLe_mul_left {c : Γ} {r : ℕ} {A M : Matrix (Fin n) (Fin n) L}
+theorem minorLe_mul_left {c : WithZero (Multiplicative ℤ)} {r : ℕ} {A M : Matrix (Fin n) (Fin n) L}
     (hA : ∀ i j, A i j ∈ Formalism.UG.intL L) (h : MinorLe c r M) : MinorLe c r (A * M) := by
   intro I J
   rw [det_submatrix_mul_expand]
@@ -134,14 +137,15 @@ theorem minorLe_mul_left {c : Γ} {r : ℕ} {A M : Matrix (Fin n) (Fin n) L}
   calc _ ≤ 1 * c := mul_le_mul' h1 (h f J)
     _ = c := one_mul c
 
-theorem minorLe_transpose {c : Γ} {r : ℕ} {M : Matrix (Fin n) (Fin n) L} (h : MinorLe c r M) :
+theorem minorLe_transpose {c : WithZero (Multiplicative ℤ)} {r : ℕ} {M : Matrix (Fin n) (Fin n) L}
+    (h : MinorLe c r M) :
     MinorLe c r M.transpose := by
   intro I J
   have : (M.transpose.submatrix I J) = (M.submatrix J I).transpose := by ext; rfl
   rw [this, Matrix.det_transpose]
   exact h J I
 
-theorem minorLe_mul_right {c : Γ} {r : ℕ} {B M : Matrix (Fin n) (Fin n) L}
+theorem minorLe_mul_right {c : WithZero (Multiplicative ℤ)} {r : ℕ} {B M : Matrix (Fin n) (Fin n) L}
     (hB : ∀ i j, B i j ∈ Formalism.UG.intL L) (h : MinorLe c r M) : MinorLe c r (M * B) := by
   have := minorLe_transpose (minorLe_mul_left (A := B.transpose) (fun i j => hB j i) (minorLe_transpose h))
   rwa [← Matrix.transpose_mul, Matrix.transpose_transpose] at this
@@ -166,13 +170,14 @@ theorem glint_det {g : GL (Fin n) L} (hg : g ∈ Formalism.UG.GLint (Fin n) (For
   have h4 := congrArg Valued.v h3
   rw [map_mul, map_one] at h4
   refine le_antisymm h1 ?_
-  calc (1 : Γ) = _ := h4.symm
+  calc (1 : WithZero (Multiplicative ℤ)) = _ := h4.symm
     _ ≤ Valued.v (g : Matrix (Fin n) (Fin n) L).det * 1 := mul_le_mul' le_rfl h2
     _ = _ := mul_one _
 
 variable {ϖ : L}
 
-theorem v_pow_anti {q : Γ} (hq : q < 1) (h0 : 0 < q) {a b : ℕ} (h : q ^ a ≤ q ^ b) : b ≤ a := by
+theorem v_pow_anti {q : WithZero (Multiplicative ℤ)} (hq : q < 1) (h0 : 0 < q) {a b : ℕ}
+    (h : q ^ a ≤ q ^ b) : b ≤ a := by
   by_contra hc
   exact absurd (pow_lt_pow_right_of_lt_one₀ h0 hq (not_le.1 hc)) (not_lt.2 h)
 
@@ -180,7 +185,8 @@ theorem sum_inj_image {M : Type} [AddCommMonoid M] {r : ℕ} (f : Fin n → M) {
     (hI : Function.Injective I) : ∑ t, f (I t) = ∑ i ∈ Finset.univ.image I, f i :=
   (Finset.sum_image fun _ _ _ _ h => hI h).symm
 
-theorem minorLe_diag (q : Γ) (hq : q < 1) (hϖ : Valued.v ϖ = q) {μ ω : Fin n → ℕ} (hμ : Antitone μ) (hω : Antitone ω)
+theorem minorLe_diag (q : WithZero (Multiplicative ℤ)) (hq : q < 1) (hϖ : Valued.v ϖ = q)
+    {μ ω : Fin n → ℕ} (hμ : Antitone μ) (hω : Antitone ω)
     {h : Matrix (Fin n) (Fin n) L} (hh : ∀ i j, h i j ∈ Formalism.UG.intL L) (j : ℕ) :
     MinorLe (q ^ (∑ i ∈ Finset.univ.filter (fun i : Fin n => j ≤ (i : ℕ)), μ i +
         ∑ i ∈ Finset.univ.filter (fun i : Fin n => j ≤ (i : ℕ)), ω i))
@@ -217,7 +223,8 @@ theorem minorLe_diag (q : Γ) (hq : q < 1) (hϖ : Valued.v ϖ = q) {μ ω : Fin 
         rw [mul_one, pow_add]
     _ ≤ _ := pow_le_pow_right_of_le_one' hq.le (add_le_add t1 t2)
 
-theorem tail_of_minorLe (q : Γ) (hq : q < 1) (h0 : 0 < q) (hϖ : Valued.v ϖ = q) {d' : Fin n → ℕ} {t : ℕ} (j : ℕ)
+theorem tail_of_minorLe (q : WithZero (Multiplicative ℤ)) (hq : q < 1) (h0 : 0 < q) (hϖ : Valued.v ϖ = q)
+    {d' : Fin n → ℕ} {t : ℕ} (j : ℕ)
     (h : MinorLe (q ^ t) (Finset.univ.filter fun i : Fin n => j ≤ (i : ℕ)).card
       (Matrix.diagonal fun i => ϖ ^ d' i)) :
     t ≤ ∑ i ∈ Finset.univ.filter (fun i : Fin n => j ≤ (i : ℕ)), d' i := by
@@ -258,8 +265,7 @@ theorem elemDiv_mul_minuscule : ∀ (L : Type) [Field L] [Valued L (WithZero (Mu
     rw [ea]
     congr 1
     funext i
-    simp only [ω]
-    split_ifs <;> simp
+    by_cases hi : (i : ℕ) < k <;> simp [ω, hi]
   have hA : m₁ * k₁⁻¹ ∈ Formalism.UG.GLint (Fin n) (Formalism.UG.intL L) := mul_mem hm₁ (inv_mem hk₁)
   have hh : k₂⁻¹ * l₁⁻¹ ∈ Formalism.UG.GLint (Fin n) (Formalism.UG.intL L) := mul_mem (inv_mem hk₂) (inv_mem hl₁)
   have hB : l₂⁻¹ * m₂ ∈ Formalism.UG.GLint (Fin n) (Formalism.UG.intL L) := mul_mem (inv_mem hl₂) hm₂

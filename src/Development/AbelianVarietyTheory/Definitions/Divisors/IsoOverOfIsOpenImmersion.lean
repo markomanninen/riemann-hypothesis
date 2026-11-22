@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishesToPullChartIffOfFlat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishesToPullChartIffOfFlat
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -236,9 +240,6 @@ def toSec (f : H0 p B ⊤) : B.Sec := (Equiv.ofBijective _ (bijective_ofSec_top 
 @[simp] theorem ofSec_toSec (f : H0 p B ⊤) : ofSec p ⊤ (toSec f) = f := by
   exact (Equiv.ofBijective _ (bijective_ofSec_top (p := p) (B := B))).apply_symm_apply f
 
-theorem ofSec_toSec' (O : Y.Opens) (f : H0 p B ⊤) : ofSec p O (toSec f) = restr le_top f := by
-  rw [← restr_ofSec (le_top : O ≤ ⊤), ofSec_toSec]
-
 theorem ger_toSec (f : H0 p B ⊤) (i : B.ι) (y : Y) (hi : y ∈ B.U i) :
     ger y hi ((toSec f).f i) = germ i y (memTop y) hi f := by
   rw [← germ_ofSec (p := p) i y (memTop y) hi, ofSec_toSec]
@@ -308,17 +309,6 @@ def comap (f : Λ' → Λ) (hf : ∀ a b, f (a + b) = f a + f b) : Common fun a 
   idx a := C.idx (f a)
   mem a := C.mem (f a)
   add a b y j j' h h' := (congrArg (fun x => C.θ x y j j') (hf a b)).trans (C.add _ _ y j j' h h')
-
-def powers {L : LB Y} (hL : L.IsLB) : Common (lbZPow L) where
-  isLB := Twist.isLB_lbZPow hL
-  J := L.ι
-  U := L.U
-  cover := exists_chart hL
-  idx _ j _ := j
-  mem _ _ _ := mem_zpow_U
-  add a b y j j' h h' := by
-    rw [tr_zpow L _ y (mem_zpow_U.2 h) (mem_zpow_U.2 h'), tr_zpow L _ y (mem_zpow_U.2 h) (mem_zpow_U.2 h'),
-      tr_zpow L _ y (mem_zpow_U.2 h) (mem_zpow_U.2 h'), zpow_add]
 
 abbrev addChart {a b s : Λ} (h : a + b = s) : ProdChart (B a) (B b) (B s) where
   isLB₁ := C.isLB a
@@ -448,7 +438,7 @@ theorem baseIdeal_span {ι : Type} (v : ι → B.Sec) :
       obtain ⟨i, rfl⟩ := hx
       exact Ideal.subset_span ⟨i, (germ_ofSec j y (memTop y) hj (v i)).symm⟩
     | zero => rw [map_zero]; exact Ideal.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Ideal.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Ideal.add_mem _ ha hb
     | smul c a _ ha => rw [germ_smul]; exact Ideal.mul_mem_left _ _ ha
   · rw [Ideal.span_le]
     rintro _ ⟨i, rfl⟩
@@ -584,7 +574,7 @@ theorem iSup_nonzeroLocus {ι : Type} {v : ι → W} (hv : Submodule.span k (Set
       obtain ⟨i, rfl⟩ := hx
       exact Ideal.subset_span ⟨i, rfl⟩
     | zero => rw [map_zero, map_zero]; exact J.zero_mem
-    | add a b _ _ ha hb => rw [map_add, map_add]; exact J.add_mem ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _), map_add (f := _)]; exact J.add_mem ha hb
     | smul c a _ ha => rw [map_smul, germ_smul]; exact J.mul_mem_left _ ha
   have hT : ger z hj.2 (Δ.t.f j.2) ∈
       Ideal.span (Set.range fun s : W => germ j.1 z (memTop z) hj.1 (H0.pull r le_top s.1)) := by
@@ -694,17 +684,5 @@ def trans (M' : Modif M.str M.opn D) : Modif p U D where
   dense := M'.dense
 
 end Modif
-
-example : ∃ (W : Submodule ℚ (H0 (PSpace.str ℚ 1) (ProjSpace.O1 ℚ 1) ⊤))
-    (M : Modif (PSpace.str ℚ 1) (ProjSpace.chart ℚ 1 1) 1)
-    (Δ : Cartier ((baseIdeal (ProjSpace.O1_isLB ℚ 1) W).comap M.σ)), nonzeroLocus Δ.t = M.opn ∧ M.opn ≠ ⊤ := by
-  have hv := Adelic.projSys.isVariety ℚ 1 le_rfl
-  have : IsIntegral (PSpace ℚ 1) := hv.isIntegral
-  have hg := Adelic.projSys.gen_mem ℚ 1 1
-  have e := ProjSpace.nonzeroLocus_coord ℚ 1 1
-  let M := Modif.refl hv.smooth hv.proj ((ProjSpace.chart ℚ 1 1).isOpen.dense ⟨_, hg⟩)
-  let Δ := Cartier.ofSec (ProjSpace.O1_isLB ℚ 1) (ProjSpace.coord ℚ 1 1) (e.ge hg)
-  exact ⟨_, M, { Δ with cut := (baseIdeal_span _ _).symm.trans (Scheme.IdealSheafData.comap_id _).symm }, e,
-    fun h => AmpleModel.coord_ne_top ℚ (e.trans h)⟩
 
 end GlobalTheory.CompHS

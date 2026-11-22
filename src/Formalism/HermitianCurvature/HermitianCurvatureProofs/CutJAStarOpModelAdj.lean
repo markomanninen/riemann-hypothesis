@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOp2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAIsAdj
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOp2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAIsAdj
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.MA Formalism.FourierDecayAlt.R
 open scoped ComplexConjugate

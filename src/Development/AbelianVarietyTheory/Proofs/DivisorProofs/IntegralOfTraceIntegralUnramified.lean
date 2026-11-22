@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FinrankLeOfMapLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FormallyUnramifiedRingOfIntegersIffDifferentIdea
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FinrankLeOfMapLe
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.LieDisc
 open scoped nonZeroDivisors
@@ -30,7 +34,7 @@ theorem isIntegral_of_trace_integral :
     rw [Algebra.traceForm_apply]
     have ht := Formalism.FourierDecayAlt.P.S6x3.trace_eq E (w * algebraMap (𝓞 E) E b)
     have hi : IsIntegral ℤ (Algebra.trace F E (w * algebraMap (𝓞 E) E b)) := by
-      rw [← isIntegral_algebraMap_iff (FaithfulSMul.algebraMap_injective F E), ht]
+      rw [← isIntegral_algebraMap_iff (B := E), ht]
       exact hw _ (RingOfIntegers.isIntegral_coe b)
     exact ⟨⟨_, hi⟩, rfl⟩
   rw [hdual] at hmem

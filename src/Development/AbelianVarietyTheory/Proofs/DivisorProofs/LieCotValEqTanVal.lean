@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +28,7 @@ def sqToEps {M S : Type} [AddCommGroup M] [Module R M] [Module Rᵐᵒᵖ M] [Is
   map_mul' a b := TrivSqZeroExt.ext (map_mul (algebraMap R S) _ _) (by
     change k (a.fst • b.snd + MulOpposite.op b.fst • a.snd) =
       algebraMap R S a.fst * k b.snd + k a.snd * algebraMap R S b.fst
-    rw [op_smul_eq_smul, map_add, map_smul, map_smul, Algebra.smul_def, Algebra.smul_def,
+    rw [op_smul_eq_smul, map_add (f := _), map_smul, map_smul, Algebra.smul_def, Algebra.smul_def,
       mul_comm (k a.snd)])
   map_zero' := TrivSqZeroExt.ext (map_zero (algebraMap R S)) (map_zero k)
   map_add' a b := TrivSqZeroExt.ext (map_add (algebraMap R S) _ _) (map_add k _ _)
@@ -33,8 +38,8 @@ attribute [local instance] cotOp cotCentral cotTower
 
 theorem tanDer_cotVal {A : Over (Sp R)} [GrpObj A] {p : ℕ} {G : PDivGroup p R} (t : G.TorsionTower A)
     (β : Form (A.hom ≫ 𝟙 _)) {v : epsR R ⟶ A} (hv : IsTangent v) (n : ℕ) :
-    t.tanDer hv n (cotVal β.1 (t.y n)) = algebraMap R (ModPow p R n) (tanVal v β) := by
-  let S := ModPow p R n
+    t.tanDer hv n (cotVal β.1 (t.y n)) = algebraMap R (PDiv.ModPow p R n) (tanVal v β) := by
+  let S := PDiv.ModPow p R n
   let E : SqExt R := SqExt.ofModule R S S
   let ρ : (cotExt R (G.A n)).C →ₐ[R] DualNumber S := sqToEps (t.tanDer hv n)
   let y' : Pt A (cotExt R (G.A n)).C := spOver (cotPt R (G.A n)) ≫ t.y n

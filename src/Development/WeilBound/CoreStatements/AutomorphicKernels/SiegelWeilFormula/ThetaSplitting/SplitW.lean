@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DenseW
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.BlockTriangularFrames.SiegelParabolicEqStabiliserCols
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SplitB
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdDecomp
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.CayleyTransform.DenseW
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.BlockTriangularFrames.SiegelParabolicEqStabiliserCols
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SplitB
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,10 +74,10 @@ theorem decompW (d : SD σ) (R : RD d) (w : InfinitePlace F) (g : d.G) :
     simp only [← Matrix.mul_assoc, Krd.dZ_inv_mul h0, Matrix.one_mul]
     rw [Matrix.mul_assoc, Krd.dZ_inv_mul h0, Matrix.mul_one]
   have hinv : Zw * d.cw w (inFrame d.b g⁻¹) = 1 := by
-    rw [hZw, ← Krd.cw_mul, ← Krd.DM.inFrame_mul d, mul_inv_cancel, cw_inFrame_one]
+    rw [hZw, ← Krd.cw_mul, ← SiegelEisensteinSeries.Grp.inFrame_mul d.b, mul_inv_cancel, cw_inFrame_one]
   have e : d.cw w (inFrame d.b (g * (R.ι w y)⁻¹)) * Zw = Zw := by
     have e0 : d.cw w (inFrame d.b (g * (R.ι w y)⁻¹)) * d.cw w (inFrame d.b (R.ι w y)) = Zw := by
-      rw [← Krd.cw_mul, ← Krd.DM.inFrame_mul d, inv_mul_cancel_right]
+      rw [← Krd.cw_mul, ← SiegelEisensteinSeries.Grp.inFrame_mul d.b, inv_mul_cancel_right]
     rwa [hy] at e0
   calc d.cw w (inFrame d.b (g * (R.ι w y)⁻¹)) = d.cw w (inFrame d.b (g * (R.ι w y)⁻¹)) * (Zw * d.cw w (inFrame d.b g⁻¹)) := by
         rw [hinv, Matrix.mul_one]
@@ -81,8 +85,15 @@ theorem decompW (d : SD σ) (R : RD d) (w : InfinitePlace F) (g : d.G) :
 
 theorem commW (d : SD σ) (R : RD d) (w : InfinitePlace F) (x : d.G) (hx : d.cw w (inFrame d.b x) = 1) (y : GR d.n) :
     x * R.ι w y = R.ι w y * x := by
-  apply Krd.DM.inFrame_inj d
-  rw [Krd.DM.inFrame_mul d, Krd.DM.inFrame_mul d]
+  have hinj : Function.Injective (inFrame (σ := σ) (Y := d.Y) d.b) := by
+    intro a b h
+    have h' := congrArg (fun M => incM F d.b.1 * M * incM F (d.b⁻¹).1) h
+    have e : mat2 a = mat2 b := by
+      simpa only [inFrame, Matrix.mul_assoc, ← Matrix.mul_assoc (incM F d.b.1),
+        SiegelEisensteinSeries.Grp.incM_mul_inv, Matrix.one_mul, Matrix.mul_one] using h'
+    exact Subtype.ext (Units.ext e)
+  apply hinj
+  rw [SiegelEisensteinSeries.Grp.inFrame_mul d.b, SiegelEisensteinSeries.Grp.inFrame_mul d.b]
   refine Place.cw_ext d (fun w' => ?_) ?_
   · rw [Krd.cw_mul, Krd.cw_mul]
     by_cases h : w' = w
@@ -140,7 +151,7 @@ theorem kSplit (d : SD σ) (R : RD d) (w : InfinitePlace F) (k : d.G) (hk : k �
   have hkx : (R.ι w y)⁻¹ * k = x := by rw [hxy, commW d R w x hx y, inv_mul_cancel_left]
   have hU : d.cw w (inFrame d.b k) * (d.cw w (inFrame d.b k))ᴴ = 1 := ((d.ok.stdK k).1 hk).1 w
   have hkw : d.cw w (inFrame d.b k) = (dZ d.n R.ζ)ᴴ * mR y * dZ d.n R.ζ := by
-    rw [hxy, Krd.DM.inFrame_mul d, Krd.cw_mul, hx, Matrix.one_mul, cw_iota, dZ_inv_ct R.hζ]
+    rw [hxy, SiegelEisensteinSeries.Grp.inFrame_mul d.b, Krd.cw_mul, hx, Matrix.one_mul, cw_iota, dZ_inv_ct R.hζ]
   have hD : dZ d.n R.ζ * (dZ d.n R.ζ)ᴴ = 1 := by rw [← dZ_inv_ct R.hζ, Krd.dZ_mul_inv h0]
   have hD' : (dZ d.n R.ζ)ᴴ * dZ d.n R.ζ = 1 := by rw [← dZ_inv_ct R.hζ, Krd.dZ_inv_mul h0]
   have hM : mR y = dZ d.n R.ζ * d.cw w (inFrame d.b k) * (dZ d.n R.ζ)ᴴ := by

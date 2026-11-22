@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.ColimitUnion
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighInfl
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.ColimitUnion
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.Closed
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.DivisorModule
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.HighInfl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -146,8 +151,8 @@ theorem divFunOneLevel_mono : Monotone (divFunOneLevel ψ) := by
   rintro _ ⟨F, rfl⟩
   exact ⟨(coindIncl hab).hom F, rfl⟩
 
-omit [TotallyDisconnectedSpace G] in
 
+omit [TotallyDisconnectedSpace G] in
 theorem exists_mem_divFunOneLevel [TotallyDisconnectedSpace G] (f : divFunRepOne ψ) :
     ∃ a, f ∈ divFunOneLevel ψ a := by
   obtain ⟨hlc, hinv⟩ := f.2.2 PUnit.unit
@@ -161,9 +166,7 @@ theorem exists_mem_divFunOneLevel [TotallyDisconnectedSpace G] (f : divFunRepOne
     intro g x
     obtain ⟨m, ⟨h, rfl⟩, v, hv, hmv⟩ := Subgroup.mem_sup_of_normal_right.1 g.2
     change (f : PUnit → G → QZ) PUnit.unit ((g : G) * x) = (f : PUnit → G → QZ) PUnit.unit x
-    have hv' : x⁻¹ * v * x ∈ (N : Subgroup G) := by
-      have := Subgroup.Normal.conj_mem inferInstance v hv x⁻¹
-      rwa [inv_inv] at this
+    have hv' : x⁻¹ * v * x ∈ (N : Subgroup G) := N.isNormal'.conj_mem' v hv x
     rw [← hmv, show ψ h * v * x = ψ h * (x * (x⁻¹ * v * x)) by group, hinv,
       hVf x _ (hWV (hN hv'))]
   refine ⟨⟨U, hU⟩, ⟨⟨(f : PUnit → G → QZ) PUnit.unit, hF⟩, ?_⟩⟩
@@ -268,8 +271,8 @@ attribute [local instance] Classical.propDecidable
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   [TotallyDisconnectedSpace G] {I : Type} {H : I → Type} [∀ i, Group (H i)] (φ : ∀ i, H i →* G)
 
-omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem ker_repHom_le_comap {k : Type} [CommRing k] {A B : Rep.{0} k G} (f : A ⟶ B) (g : G) :
     LinearMap.ker f.hom.toLinearMap ≤ (LinearMap.ker f.hom.toLinearMap).comap (A.ρ g) := by
   intro a ha
@@ -278,8 +281,8 @@ theorem ker_repHom_le_comap {k : Type} [CommRing k] {A B : Rep.{0} k G} (f : A �
   change B.ρ g (f.hom a) = 0
   rw [show f.hom a = 0 from ha, map_zero]
 
-omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem mem_divFun_ite (T : Finset I) (f : divFun φ QZ) :
     (fun i => if i ∈ T then 0 else (f : I → G → QZ) i) ∈ divFun φ QZ := by
   refine ⟨f.2.1.subset fun i hi => ?_, fun i => ?_⟩
@@ -376,8 +379,8 @@ instance isDiscreteRep_divFunSuppSequence_X₃ (T : Finset I) (j : I) (hj : j �
     IsDiscreteRep (divFunSuppSequence φ T j hj).X₃ :=
   (inferInstance : IsDiscreteRep (divFunRepOne (φ j)))
 
-omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [CompactSpace G] [TotallyDisconnectedSpace G] in
 theorem single_mem_divFun (j : I) (F : G → QZ) (hF : IsLocallyConstant F ∧ ∀ (h : H j) (x : G), F (φ j h * x) = F x) :
     (Pi.single j F : I → G → QZ) ∈ divFun φ QZ := by
   refine ⟨(Set.finite_singleton j).subset fun i hi => ?_, fun i => ?_⟩
@@ -392,9 +395,12 @@ theorem single_mem_divFun (j : I) (F : G → QZ) (hF : IsLocallyConstant F ∧ �
       exact ⟨IsLocallyConstant.const 0, fun _ _ => rfl⟩
 
 theorem divFunSuppSequence_shortExact (T : Finset I) (j : I) (hj : j ∉ T) :
-    (divFunSuppSequence φ T j hj).ShortExact where
-  exact := by
-    apply shortComplex_exact_of_forall_exists
+    (divFunSuppSequence φ T j hj).ShortExact := by
+  have hmono : Mono (divFunSuppSequence φ T j hj).f :=
+    (Rep.mono_iff_injective _).2
+      (Submodule.inclusion_injective (divFunSupp_mono φ (Finset.subset_insert j T)))
+  refine ShortComplex.ShortExact.mk' ?_ hmono ?_
+  · apply shortComplex_exact_of_forall_exists
     intro f hf
     have hj0 : ((f.1 : divFun φ QZ) : I → G → QZ) j = 0 := congrFun (congrArg Subtype.val hf) PUnit.unit
     refine ⟨⟨f.1, (mem_divFunSupp_iff φ T f.1).2 fun i hi => ?_⟩, rfl⟩
@@ -402,10 +408,8 @@ theorem divFunSuppSequence_shortExact (T : Finset I) (j : I) (hj : j ∉ T) :
     · subst hij
       exact hj0
     · exact (mem_divFunSupp_iff φ _ f.1).1 f.2 i (by simp [hij, hi])
-  mono_f := (Rep.mono_iff_injective _).2 fun a b h => Subtype.ext (by
-    have h' := congrArg Subtype.val h
-    exact h')
-  epi_g := (Rep.epi_iff_surjective _).2 fun e => by
+  · apply (Rep.epi_iff_surjective _).2
+    intro e
     refine ⟨⟨⟨Pi.single j ((e.1 : PUnit → G → QZ) PUnit.unit),
       single_mem_divFun φ j _ (e.2.2 PUnit.unit)⟩, (mem_divFunSupp_iff φ _ _).2 fun i hi => ?_⟩, ?_⟩
     · have hij : i ≠ j := fun h => hi (h ▸ Finset.mem_insert_self j T)

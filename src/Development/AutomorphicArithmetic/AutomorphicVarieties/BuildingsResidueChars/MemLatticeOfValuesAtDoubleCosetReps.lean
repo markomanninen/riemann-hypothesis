@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CtrlDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CtrlEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CtrlDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.CtrlEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.UOpLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IwMemMul
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Hi
 
@@ -89,7 +93,7 @@ theorem UpperTheory.mem_lattice_of_values_at_double_coset_reps :
     intro γ h hG i k
     have e : X.unt m W F i (X.glob γ * h) = X.unt m W F i h := by
       rw [Frame.unt_apply, Frame.unt_apply, hA' i γ h]
-      simp [Prod.snd_mul, Matrix.mulVec_mulVec, _root_.mul_inv_rev, GeneralLinearGroup.coe_mul, mul_assoc]
+      simp [Prod.snd_mul, Matrix.mulVec_mulVec, _root_.mul_inv_rev, mul_assoc]
     rw [e]
     exact hG i k
   show ∀ i g k, X.unt m W F i g k ∈ Λ

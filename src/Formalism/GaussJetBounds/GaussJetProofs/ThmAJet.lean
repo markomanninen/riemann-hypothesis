@@ -1,13 +1,17 @@
-import Formalism.GaussJetBounds.GenLogInverse
-import Formalism.GaussJetBounds.StatementE
-import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
-import Formalism.GaussJetBounds.GaussJetProofs.PureCrossTermWeight
-import Formalism.GaussJetBounds.GaussJetProofs.AsmRDotAddRight
-import Formalism.GaussJetBounds.GaussJetProofs.OneLetterRadiusIdentity
-import Formalism.IncomingBounds.WeightIdentities
-import Formalism.GaussJetBounds.OneLetterRadius
-import Formalism.GaussJetBounds.GaussJetProofs.FrameCoeffMulLin
-import Formalism.GaussJetBounds.GaussJetProofs.CapacityLeReachCapacity
+module
+
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.StatementE
+public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+public import Formalism.GaussJetBounds.GaussJetProofs.PureCrossTermWeight
+public import Formalism.GaussJetBounds.GaussJetProofs.AsmRDotAddRight
+public import Formalism.GaussJetBounds.GaussJetProofs.OneLetterRadiusIdentity
+public import Formalism.IncomingBounds.WeightIdentities
+public import Formalism.GaussJetBounds.OneLetterRadius
+public import Formalism.GaussJetBounds.GaussJetProofs.FrameCoeffMulLin
+public import Formalism.GaussJetBounds.GaussJetProofs.CapacityLeReachCapacity
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -64,7 +68,8 @@ theorem jetHom_lin [Fintype ι] (c : ι → K) (t : σ) (hc : ∀ i, c i ≠ 0 �
     jetHom lt (Finsupp.single t 1) (∑ i, MvPowerSeries.C (c i) * MvPowerSeries.X i) := by
   classical
   intro m hm
-  simp only [map_sum, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X] at hm
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X] at hm
   obtain ⟨i, -, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hm
   split_ifs at hne with h
   · subst h; rw [Finsupp.mapDomain_single, hc i (left_ne_zero_of_mul hne)]
@@ -92,7 +97,8 @@ theorem jet_collapse {K : Type u} [NormedField K] [IsUltrametricDist K] {d N0 N1
     ‖MvPowerSeries.coeff m (bSum M be)‖ ≤ ‖MvPowerSeries.coeff (m.mapDomain lt) be‖ := by
   classical
   unfold bSum
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (norm_nonneg _) fun ab _ => ?_
   have hlin0 : ∀ s, MvPowerSeries.constantCoeff (linSub M (s, ab.1, ab.2)) = 0 := fun s => by
     simp [linSub]

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClPullApply
-import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.ExistsCen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ClPullApply
+public import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.ExistsCen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
@@ -39,7 +43,11 @@ private theorem exists_conj {E Ω : Type} [Field E] [NumberField E] [Field Ω] [
   let _ : Algebra E ℂ := (j₀.comp (algebraMap E L)).toAlgebra
   have : IsScalarTower E L ℂ := IsScalarTower.of_algebraMap_eq fun _ => rfl
   have : Algebra.IsAlgebraic L Ω := Algebra.IsAlgebraic.tower_top (K := E) L
-  let j : Ω →ₐ[L] ℂ := IsAlgClosed.lift
+  let j : Ω →ₐ[L] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let j₁ : Ω →ₐ[E] ℂ := j.restrictScalars E
   let j₂ : Ω →ₐ[E] ℂ :=
     { (starRingEnd ℂ).comp j₁.toRingHom with

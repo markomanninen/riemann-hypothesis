@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.SymExp
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.TsgPolyVolPolyCoeffEven
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsFibreLocal
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.SymExp
+
+@[expose] public section
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace PositivityTheory.Xgp.thma_alg
 
 noncomputable def pml {σ : Type} [Fintype σ] (n : ℕ) (a : (Fin n → σ) → ℝ) :
-    MultilinearMap ℝ (fun _ : Fin n => σ → ℝ) ℝ :=
+    (Fin n → σ → ℝ) →ₘₗ[ℝ] ℝ :=
   ∑ w : Fin n → σ, a w • (MultilinearMap.mkPiAlgebra ℝ (Fin n) ℝ).compLinearMap
     (fun r => LinearMap.proj (w r))
 
@@ -55,7 +59,7 @@ theorem eval_linePoly {σ : Type} (c : σ → ℝ) (e : σ → ℤ) (Q : MvPolyn
   unfold linePoly
   induction Q using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, Polynomial.eval_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, Polynomial.eval_mul, hp, aeval_X, MvPolynomial.eval_X, Polynomial.eval_sub,
       Polynomial.eval_C, Polynomial.eval_X]
@@ -74,8 +78,8 @@ theorem linePoly_formPoly {σ : Type} [Fintype σ] (D : ℕ) (b : (Fin D → σ)
   rw [show -u / 2 = 1 / 2 * -u by ring, mul_pow]
   ring
 
-open Classical in
 
+open Classical in
 noncomputable def mixPoly {σ : Type} [Fintype σ] (n : ℕ) (a : (Fin n → σ) → ℝ) (k : ℕ) (e : σ → ℝ) (a₀ : σ) :
     MvPolynomial σ ℝ :=
   ∑ w : Fin n → σ, (∏ r : Fin n, if (r : ℕ) < k then C (e (w r)) else if w r = a₀ then 0 else X (w r)) * C (a w)
@@ -84,7 +88,8 @@ open Classical in
 theorem eval_mixPoly {σ : Type} [Fintype σ] (n : ℕ) (a : (Fin n → σ) → ℝ) (k : ℕ) (e : σ → ℝ) (a₀ : σ)
     (c : σ → ℝ) :
     MvPolynomial.eval c (mixPoly n a k e a₀) = polar n a (mix k e fun x => if x = a₀ then 0 else c x) := by
-  simp only [mixPoly, polar, mix, map_sum, map_mul, map_prod, MvPolynomial.eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mixPoly, polar, mix, map_sum, map_mul, map_prod, MvPolynomial.eval_C]
   refine Finset.sum_congr rfl fun w _ => ?_
   congr 1
   refine Finset.prod_congr rfl fun r _ => ?_
@@ -168,9 +173,9 @@ theorem PositivityTheory.Xgp.t_thma_alg : ∀ (σ : Type) [Fintype σ] (D : ℕ)
       else 0 := by
     intro n
     rw [PositivityTheory.Xgp.thma_alg.linePoly_formPoly D b hb c ε]
-    simp only [volPoly, Polynomial.finset_sum_coeff, hx, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
+    simp only [volPoly, Polynomial.finsetSum_coeff, hx, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
     simp [Finset.mem_range]
-  rw [tsgPoly, Polynomial.eval_finset_sum]
+  rw [tsgPoly, Polynomial.eval_finsetSum]
   set Pl := linePoly c ε (formPoly D b) with hPl
   have key : ∀ f : ℕ → ℝ, (∀ n, Pl.coeff n = 0 → f n = 0) →
       ∑ n ∈ Finset.range (Pl.natDegree + 1), f n = ∑ n ∈ Finset.range (D + 1), f n := by

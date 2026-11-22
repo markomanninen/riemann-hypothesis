@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.StdSubAtOfRing
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
-import Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.StdSubAtOfRing
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
+
+@[expose] public section
 
 noncomputable section
 

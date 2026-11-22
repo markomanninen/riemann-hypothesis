@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,12 +26,9 @@ def GenericProdIff : Prop :=
     [∀ a, Module ℂ (X a)] (π : ∀ a, Representation ℂ (GL (Fin (d a)) k) (X a)), (∀ a, IsSmooth (π a)) →
     (IsGeneric (multiProd (stdBlocks d hd) π) ↔ ∀ a, IsGeneric (π a))
 
-def GenericProdIrr : Prop :=
-  ∀ (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N), IsGeneric (prodIrr x hd) ↔ ∀ a, IsGeneric (x a).rep
-
 def WhitRankProd : Prop :=
   ∀ (ψ : AddChar k Circle), Continuous ψ → ψ ≠ 1 →
-    ∀ (h N : ℕ) (x : Fin h → IrrGL k) (hd : ∑ a, (x a).1 = N),
+    ∀ (h N : ℕ) (x : Fin h → IrrGL (k := k)) (hd : ∑ a, (x a).1 = N),
       Module.finrank ℂ (TwJacquet (prodIrr x hd) (unipB k (Fin N)) (whitChar ψ N)) =
         ∏ a, Module.finrank ℂ (TwJacquet (x a).rep (unipB k (Fin (x a).1)) (whitChar ψ (x a).1))
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
-import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfCrystallineLift
+module
+
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwistedPlaces
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.LiftingConditionOfCrystallineLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,6 @@ section Glue
 
 variable (L : SizeData₂ D) (tb : Formalism.MainNotions.TwistedPlaces.Tab L)
   (len0 : ∀ i : D.nd.Loc, D.nd.X i → HeightOneSpectrum (𝓞 D.host.E) → ℝ)
-
-def HLen : Prop :=
-  ∀ i lam, D.nd.l i ≠ 2 → D.nd.l i ≠ 3 →
-    ((∃ π ∈ D.nd.Zgood i, tb.len i lam = len0 i π lam) ∨ tb.len i lam = 0)
 
 def coreB (l : ℕ) (lam : HeightOneSpectrum (𝓞 D.host.E)) : ℝ :=
   ((Formalism.MainNotions.TwistedPlaces.nLam D lam : ℝ) + 1) * D.R.r * (Formalism.MainNotions.TwistedPlaces.hB L / ((l : ℝ) - 1) ^ (Formalism.MainNotions.TwistedPlaces.jA L l + 1) +

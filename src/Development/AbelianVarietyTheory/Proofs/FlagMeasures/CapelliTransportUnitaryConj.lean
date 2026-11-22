@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.Smooth
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
 
 open Matrix Formalism.REAL Formalism.QuantumDeterminants
 
@@ -178,7 +182,7 @@ private theorem qdet_conj_eq_qdet_of_mul_eq_one {A : Type} [Ring A] [Algebra ℂ
 theorem capelli_transport_conj : PI.UnitaryGroupMassFormula.CapelliEig.CapTransport := by
   intro n ε E _ _ H P Q F u g hQP hPQ hH hF hg
   have hx : Formalism.REAL.inUJ ε (P * g * Q) := Formalism.QuantumDeterminants.ioh_inUJ ε H P Q g hPQ hH hg
-  obtain ⟨x₀, hx₀⟩ := Formalism.QuantumDeterminants.io_rep_mk hF
+  obtain ⟨x₀, hx₀⟩ := Formalism.QuantumDeterminants.io_rep_mk (ε := ε) (E := E) hF
   have hA := Formalism.QuantumDeterminants.ioh_qminor_rep (Formalism.QuantumDeterminants.ioh_repr (ε := ε) (E := E) P Q) id id u hx₀
   have hB := Formalism.QuantumDeterminants.io_qminor_rep (ε := ε) id id u hx₀
   have hkey : Formalism.REAL.qminor (Formalism.QuantumDeterminants.iohE ε E P Q) id id u =

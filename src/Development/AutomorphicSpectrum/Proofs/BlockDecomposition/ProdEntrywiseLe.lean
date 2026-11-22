@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 
@@ -79,11 +83,11 @@ theorem prod_entrywise_le : ∀ (n r d : ℕ), r ≤ n → ∀ (C β t : ℝ), 0
         C * (1 + β * (if (i : ℕ) < r ∧ r ≤ (j : ℕ) then Real.exp t else 1)) ^ d
       ≤ ∏ i : Fin n, ∏ j : Fin n, ((C * (1 + β) ^ d) *
           (if (i : ℕ) < r ∧ r ≤ (j : ℕ) then Real.exp ((d : ℝ) * t) else 1)) := by
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i _
       exact Finset.prod_nonneg (fun j _ => hnn i j)
     · intro i _
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro j _
         exact hnn i j
       · intro j _

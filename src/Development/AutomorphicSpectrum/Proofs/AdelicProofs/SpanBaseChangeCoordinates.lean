@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.GramMat
+
+@[expose] public section
+
 open NumberField TensorProduct GroundTheory.Heights₂.Heights GlobalTheory.CompanionTheory.Ar.Lines Matrix
 open scoped ComplexOrder nonZeroDivisors
 
@@ -28,7 +33,7 @@ theorem coord_smul (τ : K →+* ℂ) (b : 𝓞 K) (X : 𝓞 K ⊗[𝓞 L] E) :
   | tmul c e =>
     rw [TensorProduct.smul_tmul', coord_one_tmul, coord_one_tmul, smul_eq_mul, smul_smul]
     simp
-  | add X Y hX hY => rw [smul_add, tmul_add, map_add, hX, hY, tmul_add, map_add, smul_add]
+  | add X Y hX hY => rw [smul_add, tmul_add, map_add (f := _), hX, hY, tmul_add, map_add (f := _), smul_add]
 
 theorem one_tmul_smul (σ : L →+* ℂ) (a : 𝓞 L) (e : E) :
     (1 : ComplexAt σ) ⊗ₜ[𝓞 L] (a • e) = σ (a : L) • ((1 : ComplexAt σ) ⊗ₜ[𝓞 L] e) := by
@@ -71,9 +76,9 @@ theorem exists_lift (F : Submodule (𝓞 L) E) {i : ℕ} (f : Fin i → F) (c : 
     obtain ⟨X, hX⟩ := hx
     obtain ⟨Y, hY⟩ := hy
     refine ⟨X + Y, fun τ => ?_⟩
-    rw [tmul_add, map_add, hX, hY, ← Finset.sum_add_distrib]
+    rw [tmul_add, map_add (f := _), hX, hY, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [Pi.add_apply, map_add, add_smul]
+    rw [Pi.add_apply, map_add (f := _), add_smul]
   | smul b x _ hx =>
     obtain ⟨X, hX⟩ := hx
     refine ⟨b • X, fun τ => ?_⟩
@@ -90,7 +95,8 @@ theorem lift_length : ∀ (L : Type) [Field L] [NumberField L] (B : HermitianBun
     (FibreSpace.equiv B.metric (τ.comp (algebraMap L K))
       (baseChangeCoord τ ((1 : ComplexAt τ) ⊗ₜ[𝓞 K] X))) = _
   rw [hX τ]
-  simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, sum_inner, inner_sum, inner_smul_left, inner_smul_right]
   simp only [dotProduct, mulVec, Pi.star_apply, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_

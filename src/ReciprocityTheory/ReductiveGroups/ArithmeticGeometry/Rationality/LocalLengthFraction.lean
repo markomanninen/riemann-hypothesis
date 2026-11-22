@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotShiftPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FreeQuotPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.QuotShiftPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FreeQuotPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank.LocalLengthFraction
 
@@ -121,7 +125,7 @@ theorem local_len (hL : QuotLocalStatement) (P : Submodule K₁ U) (Mw : Submodu
       have h0 : N.mkQ ⟨a, ha.2⟩ = 0 := by
         rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact (hmemN _).mpr (hspanP a ha.1)
-      rw [hyab, map_add, h0, zero_add, ← hmapTh]
+      rw [hyab, map_add (f := _), h0, zero_add, ← hmapTh]
       exact Submodule.mem_map_of_mem hb'
     · rw [Submodule.span_le]
       rintro _ ⟨j, rfl⟩

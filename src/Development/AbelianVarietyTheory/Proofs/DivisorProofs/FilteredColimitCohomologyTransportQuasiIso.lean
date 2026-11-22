@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.EtC
@@ -34,13 +39,13 @@ theorem contH_transport_quasiIso : ∀ (N M : CommRingCat.{0} ⥤ AbCx) (ε : N 
     obtain ⟨j, w, y2, hw, h2⟩ := hN1 c' hc'
     refine ⟨j, (ε.app (D.obj j)).f n w, y1 + (ε.app c.pt).f (n - 1) y2, ?_, ?_⟩
     · rw [← hom_d_apply, hw, map_zero]
-    · rw [← nat, h2, map_add, h1, map_add, hom_d_apply]
+    · rw [← nat, h2, map_add (f := _), h1, map_add (f := _), hom_d_apply]
       abel
   · obtain ⟨c1, y1, hc1, h1⟩ := (hε (D.obj j)).1 n w hw
     have hcz : ((N).obj c.pt).d n (n + 1) ((N.map (c.ι.app j)).f n c1) = 0 := by
       rw [← dN, hc1, map_zero]
     obtain ⟨b, hb⟩ := (hε c.pt).2 n _ hcz ⟨y + (show ((M).obj c.pt).X (n - 1) from (M.map (c.ι.app j)).f (n - 1) y1), by
-      rw [nat, h1, map_add, hy, map_add, dM]⟩
+      rw [nat, h1, map_add (f := _), hy, map_add (f := _), dM]⟩
     obtain ⟨k, f, y2, h2⟩ := hN2 j c1 hc1 ⟨b, hb.symm⟩
     refine ⟨k, f, (ε.app (D.obj k)).f (n - 1) y2 - (M.map (D.map f)).f (n - 1) y1, ?_⟩
     have e1 : w = (ε.app (D.obj j)).f n c1 - ((M).obj (D.obj j)).d (n - 1) n y1 := by

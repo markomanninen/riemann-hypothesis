@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LGenKE
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.MulVecInt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.LGenKE
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.MulVecInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem unit_loc (v : Pl D) (g : G D n) :
 
 theorem det_map_u {T : Type} [CommRing T] (f : AE D →+* T) (M : Mx D (n + n) (n + n)) (X : Mx D n n) :
     f (bD M + bC M * X).det = (bD (M.map f) + bC (M.map f) * X.map f).det := by
-  rw [RingHom.map_det, RingHom.map_add, RingHom.map_mul, bD_map, bC_map]
+  rw [RingHom.map_det, RingHom.map_add (f := _), RingHom.map_mul, bD_map, bC_map]
   rfl
 
 theorem exists_X {S : Finset (Pl D)} (hS2 : ∀ v ∉ S, (2 : 𝓞 D.host.F) ∉ v.asIdeal) {k : G D n} (hk : k ∈ KOff D n S) :

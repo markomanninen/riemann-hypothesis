@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
-import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsComplexLinearOfPureTypes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+public import Formalism.LocalToGlobal.ProjectiveLattices.UnFree
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsComplexLinearOfPureTypes
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.PureType GlobalTheory.CompRat
@@ -36,7 +40,7 @@ theorem exists_complex_linear_of_pure_types_of_index : ∀ (E : Type) [Field E] 
     have k₁ := key _ x hx (h₁ x hx)
     have k₂ := key _ y hy (h₂ y hy)
     rw [neg_smul, neg_smul, map_neg, neg_inj] at k₂
-    rw [map_add, smul_add, map_add, map_add, smul_add, k₁, k₂]
+    rw [map_add (f := _), smul_add, map_add (f := _), map_add (f := _), smul_add, k₁, k₂]
   have hNc : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hN.ne'
   have hP0 : ∀ a, r (H.rt0 • P a) = H.rt0 • r (P a) := by
     intro a
@@ -50,7 +54,7 @@ theorem exists_complex_linear_of_pure_types_of_index : ∀ (E : Type) [Field E] 
     induction hv using Submodule.span_induction with
     | mem x hx => obtain ⟨a, rfl⟩ := hx; exact hP0 a
     | zero => simp
-    | add x y _ _ hx hy => rw [smul_add, map_add, map_add, smul_add, hx, hy]
+    | add x y _ _ hx hy => rw [smul_add, map_add (f := _), map_add (f := _), smul_add, hx, hy]
     | smul c x _ hx => rw [smul_comm, r.map_smul, r.map_smul, hx, smul_comm]
   have hI : ∀ v, r (Complex.I • v) = Complex.I • r v := by
     intro v

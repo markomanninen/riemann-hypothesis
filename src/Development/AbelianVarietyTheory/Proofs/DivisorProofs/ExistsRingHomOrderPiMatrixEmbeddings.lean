@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.Uniformised
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem mem_span_bigPhi (D : Datum p) (κ : ℤ_[p] →+* ℂ)
     apply mem_of_embeddings V (fun f => (fun τ => Matrix.scalar (Fin D.m) (f τ)) * bigPhi D κ e (x ⊗ₜ 1))
     · intro f g
       funext τ
-      simp only [Pi.mul_apply, Pi.add_apply, map_add, _root_.add_mul]
+      simp only [Pi.mul_apply, Pi.add_apply, map_add (f := _), _root_.add_mul]
     · intro a f
       funext τ
       ext i j
@@ -117,7 +121,7 @@ theorem mem_span_bigPhi (D : Datum p) (κ : ℤ_[p] →+* ℂ)
       rw [Algebra.TensorProduct.tmul_mul_tmul, _root_.one_mul, _root_.mul_one]
     rw [this, map_mul, hw]
     exact hL x _
-  | add a b ha hb => rw [map_add]; exact V.add_mem ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact V.add_mem ha hb
 
 theorem bigPhi_symm_single (D : Datum p) (κ : ℤ_[p] →+* ℂ)
     (e : (D.O ⊗[ℤ] ℤ_[p]) ≃ₐ[𝓞 D.F] Matrix (Fin D.m) (Fin D.m) (𝓞 D.F ⊗[ℤ] ℤ_[p])) (i j : Fin D.m) (c : 𝓞 D.F) :

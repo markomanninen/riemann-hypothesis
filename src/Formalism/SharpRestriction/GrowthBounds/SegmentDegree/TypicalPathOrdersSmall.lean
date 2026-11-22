@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NegDminusLeMu
+
+@[expose] public section
 
 noncomputable section
 

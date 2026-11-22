@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenbasisPsiInfinitePlaceDistinctRoots
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenbasisPsiInfinitePlaceDistinctRoots
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 
@@ -93,8 +98,8 @@ end GlobalTheory.LKMid.CentPos
 
 namespace GlobalTheory.LKMid
 
-open GlobalTheory.LKMid.CentPos in
 
+open GlobalTheory.LKMid.CentPos in
 theorem cent_sim_pos : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (P : Pair G) (μ : ℂ), G.a = 1 → P.Mark μ →
     ∀ y ∈ P.cent, 0 < ((y.2 : ℚˣ) : ℚ) := by
   intro p _ G P μ _ hm y hy
@@ -129,8 +134,5 @@ theorem cent_sim_pos : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (P : Pair G)
     rw [← h2, this]; exact Complex.normSq_nonneg l
   have hnn' : (0 : ℚ) ≤ ((y.2 : ℚˣ) : ℚ) := by exact_mod_cast hnn
   exact lt_of_le_of_ne hnn' (Ne.symm (y.2.ne_zero))
-
-example : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (P : Pair G) (μ : ℂ), G.a = 1 → P.Mark μ →
-    ∀ y ∈ P.cent, 0 < ((y.2 : ℚˣ) : ℚ) := cent_sim_pos
 
 end GlobalTheory.LKMid

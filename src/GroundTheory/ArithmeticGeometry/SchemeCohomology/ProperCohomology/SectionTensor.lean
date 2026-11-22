@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictTensor
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.RestrictTensor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -26,7 +31,7 @@ lemma bijective_app_of_factor {A B : X.Modules} (φ : A ⟶ B) {P : PMod X}
     fun i σ => NatTrans.naturality_apply φ.mapPresheaf (homOfLE i).op σ
   have inj : ∀ V ≤ W, Function.Injective (φ.app V) := by
     intro V hV
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro a ha
     rw [hφapp] at ha
     have hS := hq₁ (op V) _ ha
@@ -105,7 +110,7 @@ def tensorSection : (preMod X).obj M ⟶ (preMod X).obj M ⊗ (preMod X).obj L :
         change ((preMod X).obj L).map (homOfLE (le_top : V.unop ≤ ⊤)).op s =
           ((preMod X).obj L).map g (((preMod X).obj L).map (homOfLE (le_top : U.unop ≤ ⊤)).op s)
         exact PresheafOfModules.map_comp_apply ((preMod X).obj L) (homOfLE (le_top : U.unop ≤ ⊤)).op g s }
-    (fun U r m => (smul_tmul' r m _).symm)
+    (fun _ _ _ => rfl)
 
 def mulSection : M ⟶ M ⊗ L :=
   homOfPreMod (tensorSection M L s ≫ tensorToSheaf M L)
@@ -122,16 +127,17 @@ theorem bijective_mulSection_app {W : X.Opens}
   intro V hV
   have e0 : resM ((preMod X).obj L) hV (resM ((preMod X).obj L) le_top s) =
       resM ((preMod X).obj L) (le_top : V ≤ ⊤) s := resM_resM _ le_top hV s
-  let e : ringOn X V ≃ₗ[ringOn X V] ((preMod X).obj L).obj (op V) :=
-    LinearEquiv.ofBijective (LinearMap.toSpanSingleton (ringOn X V) _
+  let R := X.sheaf.obj.obj (op V)
+  let e : R ≃ₗ[R] ((preMod X).obj L).obj (op V) :=
+    LinearEquiv.ofBijective (LinearMap.toSpanSingleton R _
       (resM ((preMod X).obj L) hV (resM ((preMod X).obj L) le_top s))) (hs V hV)
-  let E := (TensorProduct.rid (ringOn X V) (((preMod X).obj M).obj (op V))).symm ≪≫ₗ
+  let E := (TensorProduct.rid R (((preMod X).obj M).obj (op V))).symm ≪≫ₗ
     e.lTensor (((preMod X).obj M).obj (op V))
   have hE : ∀ m, E m = (tensorSection M L s).app (op V) m := by
     intro m
     change m ⊗ₜ e 1 = m ⊗ₜ resM ((preMod X).obj L) (le_top : V ≤ ⊤) s
     congr 1
-    exact (one_smul (ringOn X V) _).trans e0
+    exact (one_smul R _).trans e0
   have : ⇑((tensorSection M L s).app (op V)) = E := funext fun m => (hE m).symm
   rw [this]
   exact E.bijective

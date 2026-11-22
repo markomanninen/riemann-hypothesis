@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.StripEntire
+
+@[expose] public section
 
 noncomputable section
 
@@ -127,11 +131,6 @@ theorem Fac_strip {f : ℂ → X} (hf : StripEntire f) (α β γ : ℝ) (Ω : Se
       refine ⟨M, fun l hl => hM _ ?_ ?_⟩
       · rw [aff_re]; exact (hxy _ hl).1
       · rw [aff_re]; exact (hxy _ hl).2
-
-lemma Fac_mono {A : ℂ × ℂ → X} {Ω Ω' : Set (ℝ × ℝ)} (hA : Fac A Ω) (h : Ω' ⊆ Ω) : Fac A Ω' := by
-  have ht : tube Ω' ⊆ tube Ω := fun l hl => h hl
-  exact ⟨fun p v => (hA.hol p v).mono fun τ hτ => ht hτ, hA.cont.mono ht,
-    fun C hC => hA.bdd C (hC.trans h)⟩
 
 theorem Fac_smul {f : ℂ × ℂ → ℂ} {A : ℂ × ℂ → X} {Ω : Set (ℝ × ℝ)} (hf : Fac f Ω) (hA : Fac A Ω) :
     Fac (fun l => f l • A l) Ω := by

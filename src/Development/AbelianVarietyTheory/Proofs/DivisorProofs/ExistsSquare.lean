@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricTwoCocycleSumPowMulStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumTwoPointFunctionMultiplesNaturalCharPStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricTwoCocycleSumPowMulStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumTwoPointFunctionMultiplesNaturalCharPStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,24 +58,25 @@ variable {A : Over (Sp R)} [GrpObj A]
 
 def sig (p : ℕ) (f : Fn1 A) (g : Fn2 A) {D D' : Type} [CommRing D] [Algebra R D] [CommRing D'] [Algebra R D']
     (ψ : D →ₐ[R] D') (x : Pt A D) (z : Pt A D') : D' :=
-  chi p g D' z + f R D' (Algebra.ofId R D') 1 - f D D' ψ x
+  PtExt.chi p g D' z + f R D' (Algebra.ofId R D') (1 : Pt A R) - f D D' ψ x
 
 theorem sig_nat {p : ℕ} (hp : (p : R) = 0) {f : Fn1 A} {g : Fn2 A} (hf : IsCoc (whole A) f) (hfg : IsAdd f g)
     {D D' D'' : Type} [CommRing D] [Algebra R D] [CommRing D'] [Algebra R D'] [CommRing D''] [Algebra R D'']
-    (ψ : D →ₐ[R] D') (θ : D' →ₐ[R] D'') (x : Pt A D) (z : Pt A D') (hz : z ^ p = spOver ψ ≫ x) :
+    (ψ : D →ₐ[R] D') (θ : D' →ₐ[R] D'') (x : Pt A D) (z : Pt A D') (hz : (z ^ p : Pt A D') = spOver ψ ≫ x) :
     θ (sig p f g ψ x z) = sig p f g (θ.comp ψ) x (spOver θ ≫ z) := by
   have h1 := GlobalTheory.T.sumTwoPointFunction_multiples_natural_charP p R hp A f g hfg D' D'' θ z
   have h2 := hf D D' D'' ψ θ x (sm_whole _)
-  have h3 := hf R D' D'' (Algebra.ofId R D') θ 1 (sm_whole _)
+  have h3 := hf R D' D'' (Algebra.ofId R D') θ (1 : Pt A R) (sm_whole _)
   have e : θ.comp (Algebra.ofId R D') = Algebra.ofId R D'' := Subsingleton.elim _ _
   rw [e, MonObj.comp_one] at h3
   rw [hz] at h1
-  simp only [sig, map_add, map_sub]
+  simp only [sig, map_add θ, map_sub θ]
   linear_combination -h1 + h2 - h3
 
 theorem chi_indep [IsCommMonObj A] {p : ℕ} (hp : (p : R) = 0) {g : Fn2 A} (hg : IsSymCoc g)
-    (h0 : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), x ^ p = 1 → chi p g D x = 0)
-    {D : Type} [CommRing D] [Algebra R D] (z z' : Pt A D) (h : z ^ p = z' ^ p) : chi p g D z = chi p g D z' := by
+    (h0 : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), x ^ p = 1 → PtExt.chi p g D x = 0)
+    {D : Type} [CommRing D] [Algebra R D] (z z' : Pt A D) (h : z ^ p = z' ^ p) :
+    PtExt.chi p g D z = PtExt.chi p g D z' := by
   obtain ⟨t, rfl⟩ : ∃ t, z = z' * t := ⟨z'⁻¹ * z, by simp⟩
   have ht : t ^ p = 1 := by rwa [mul_pow, mul_eq_left] at h
   have h1 := GlobalTheory.T.symmetric_two_cocycle_sum_pow_mul (Pt A D) D (g D) (hg D).1 (hg D).2 p z' t
@@ -80,28 +85,30 @@ theorem chi_indep [IsCommMonObj A] {p : ℕ} (hp : (p : R) = 0) {g : Fn2 A} (hg 
   have h4 : (p : D) = 0 := by rw [← map_natCast (algebraMap R D), hp, map_zero]
   rw [ht, nsmul_eq_mul, h4] at h1
   simp only [_root_.mul_one] at h2
-  simp only [chi] at h3 ⊢
+  simp only [PtExt.chi] at h3 ⊢
   linear_combination h1 - h2 + h3
 
 theorem pow_comp {p : ℕ} {D D' D'' : Type} [CommRing D] [Algebra R D] [CommRing D'] [Algebra R D'] [CommRing D'']
-    [Algebra R D''] (ψ : D →ₐ[R] D') (θ : D' →ₐ[R] D'') (x : Pt A D) (z : Pt A D') (hz : z ^ p = spOver ψ ≫ x) :
-    (spOver θ ≫ z) ^ p = spOver (θ.comp ψ) ≫ x := by
+    [Algebra R D''] (ψ : D →ₐ[R] D') (θ : D' →ₐ[R] D'') (x : Pt A D) (z : Pt A D')
+    (hz : (z ^ p : Pt A D') = spOver ψ ≫ x) :
+    ((spOver θ ≫ z) ^ p : Pt A D'') = spOver (θ.comp ψ) ≫ x := by
   rw [← MonObj.comp_pow, hz, ← Category.assoc, spOver_comp]
 
 theorem exists_isCob (p : ℕ) (R : Type) [CommRing R] (hp : (p : R) = 0) (A : Over (Sp R)) [GrpObj A]
     [IsCommMonObj A] (f : Fn1 A) (g : Fn2 A) (hf : IsCoc (whole A) f) (hfg : IsAdd f g) (hg : IsSymCoc g)
-    (h0 : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), x ^ p = 1 → chi p g D x = 0)
+    (h0 : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), x ^ p = 1 → PtExt.chi p g D x = 0)
     (hr : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), ∃ (D' : Type) (_ : CommRing D') (_ : Algebra R D')
-      (ψ : D →ₐ[R] D') (z : Pt A D'), (ψ : D →+* D').FaithfullyFlat ∧ z ^ p = spOver ψ ≫ x) :
+      (ψ : D →ₐ[R] D') (z : Pt A D'), (ψ : D →+* D').FaithfullyFlat ∧ (z ^ p : Pt A D') = spOver ψ ≫ x) :
     ∃ k : Fn0 A, IsCob (whole A) f k := by
   have key : ∀ (D : Type) [CommRing D] [Algebra R D] (x : Pt A D), ∃ k : D,
-      ∀ (D₂ : Type) [CommRing D₂] [Algebra R D₂] (ψ₂ : D →ₐ[R] D₂) (z₂ : Pt A D₂), z₂ ^ p = spOver ψ₂ ≫ x →
-        ψ₂ k = sig p f g ψ₂ x z₂ := by
+      ∀ (D₂ : Type) [CommRing D₂] [Algebra R D₂] (ψ₂ : D →ₐ[R] D₂) (z₂ : Pt A D₂),
+        (z₂ ^ p : Pt A D₂) = spOver ψ₂ ≫ x → ψ₂ k = sig p f g ψ₂ x z₂ := by
     intro D _ _ x
     obtain ⟨D', _, _, ψ, z, hψ, hz⟩ := hr D x
     have cmp : ∀ (D₂ : Type) [CommRing D₂] [Algebra R D₂] (ψ₂ : D →ₐ[R] D₂) (z₂ : Pt A D₂),
-        z₂ ^ p = spOver ψ₂ ≫ x → ∀ (E : Type) [CommRing E] [Algebra R E] (α : D' →ₐ[R] E) (β : D₂ →ₐ[R] E),
-        α.comp ψ = β.comp ψ₂ → α (sig p f g ψ x z) = β (sig p f g ψ₂ x z₂) := by
+        (z₂ ^ p : Pt A D₂) = spOver ψ₂ ≫ x →
+        ∀ (E : Type) [CommRing E] [Algebra R E] (α : D' →ₐ[R] E) (β : D₂ →ₐ[R] E),
+          α.comp ψ = β.comp ψ₂ → α (sig p f g ψ x z) = β (sig p f g ψ₂ x z₂) := by
       intro D₂ _ _ ψ₂ z₂ hz₂ E _ _ α β e
       rw [sig_nat hp hf hfg ψ α x z hz, sig_nat hp hf hfg ψ₂ β x z₂ hz₂, sig, sig, e,
         chi_indep hp hg h0 (spOver α ≫ z) (spOver β ≫ z₂)
@@ -121,7 +128,7 @@ theorem exists_isCob (p : ℕ) (R : Type) [CommRing R] (hp : (p : R) = 0) (A : O
   have h2 := hk D x D' (ψ.comp φ) z (by rw [hz, ← Category.assoc, spOver_comp])
   have h3 := hf D D₁ D' φ ψ x (sm_whole _)
   simp only [sig, AlgHom.comp_apply] at h1 h2
-  rw [map_sub]
+  rw [map_sub ψ]
   linear_combination h2 - h1 - h3
 
 end GlobalTheory.PtExt.Descent

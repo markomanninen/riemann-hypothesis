@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ColumnDegreeLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ISupEigenspaceEqTop
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowAddGenericRowAddTerm
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ColumnDegreeLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ theorem partial_sum_le {σ : Type} [DecidableEq σ] {p r : ℕ} (z : Fin p × Fi
     have h0 : ∑ k, X (z (b, k)) * pderiv (z (c, k)) P = 0 := by
       rw [← GlobalTheory.Capelli.rowOp_apply]
       exact hrow b c hbc
-    have h12 := hT.out 1 2
-    exact h12.mpr h0 t
+    have h23 := hT.out 2 3
+    exact h23.mpr h0 t
 
   have hrowdeg : ∀ b, ∀ m ∈ P.support, ∑ k, m (z (b, k)) = a b := by
     intro b m hm

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -62,7 +66,7 @@ theorem uniLat_det_le_of_sub {ι : Type*} [Fintype ι] [DecidableEq ι] {G H : M
   have h1 : 1 ≤ (C * H * Cᴴ).det := by
     rw [hCH, uniLat_det_one_add hQ']
     calc (1 : ℝ) = ∏ _i : ι, (1 : ℝ) := by simp
-      _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one)
+      _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one)
           (fun i _ => by linarith [hQ'.eigenvalues_nonneg i])
   have h2 : (C * G * Cᴴ).det = 1 := by rw [hCG, det_one]
   rw [det_mul, det_mul, det_conjTranspose, star_trivial] at h1 h2

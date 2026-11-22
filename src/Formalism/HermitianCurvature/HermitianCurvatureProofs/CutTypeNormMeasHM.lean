@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsCompactZetaLe
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeas
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsCompactZetaLe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TNM.HM
 
@@ -258,7 +262,7 @@ theorem R_meas (z e : Fin (2 * r + k + 1) → ℂ) :
 theorem hh_meas (z e : Fin (2 * r + k + 1) → ℂ) : Measurable (hh k r z e) := by
   have hv := vH_meas (k := k) (r := r) z e
   have hR := R_meas (k := k) (r := r) z e
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have e1 : (fun u => hh k r z e u i j) = fun u =>
       if (herm (Hpk k r) (vH k r z e u) (vH k r z e u)).re = 0 then (1 : B.Mat k r) i j
       else (1 : B.Mat k r) i j + ((-2 / (herm (Hpk k r) (vH k r z e u) (vH k r z e u)).re : ℝ) : ℂ) *

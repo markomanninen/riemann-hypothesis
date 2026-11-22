@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.RegDom
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsConstMul
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FixedByAutomorphismsMemFieldStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramedPointDescendsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatGenFrameIndependentStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsConstMul
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FixedByAutomorphismsMemFieldStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FramedPointDescendsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FlatGenFrameIndependentStatement
+
+@[expose] public section
 
 noncomputable section
 

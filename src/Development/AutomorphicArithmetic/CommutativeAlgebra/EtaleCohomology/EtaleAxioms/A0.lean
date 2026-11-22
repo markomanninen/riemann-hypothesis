@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.AwSpec
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.AwSpec
+
+@[expose] public section
 
 namespace UpperTheory.Et.D2
 

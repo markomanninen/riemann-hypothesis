@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UpqRep
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.HarishChandraParameters
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UpqRep
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.HarishChandraParameters
+
+@[expose] public section
 
 open Matrix Finset
 

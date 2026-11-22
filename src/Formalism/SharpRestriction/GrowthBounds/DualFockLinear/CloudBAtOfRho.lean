@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideExplicitIdentification
-import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
-import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideExplicitIdentification
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.DualInclusionLattices
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.MulMemRiemannRochSpaceAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,8 +86,8 @@ private theorem dualMap_mem_scale_dualLat_of_maps_to_scale {O Kf V0 V1 : Type} [
     field_simp
   · rw [smul_smul, mul_inv_cancel₀ (mul_ne_zero ht hd), one_smul]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem cloudBAt_of_rho {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W] [Field Qq]
     [Algebra W Qq] [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field Kf] [Algebra O Kf]
     {ι : Qq →+* Kf} {σ : Qq ≃+* Qq} {j : W →+* O} {w : O} (hS : HidaSetting p n' W Qq O Kf ι σ j w) (hBP : BePerfect)
@@ -178,7 +182,8 @@ theorem cloudBAt_of_rho {p n' : ℕ} {W Qq O Kf : Type} [CommRing W] [IsDomain W
   have hak : a ≤ 2 * κ := by omega
   choose F' hF'1 hF'2 using fun x : Fin nb × Fin n2 => h4 β (FsB x.1) (sh x.2) (S x) (hSd x.1 x.2)
   have hG : Θ (∑ x, c x • F' x) = ρ β xx := by
-    rw [hxx, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxx, map_sum, map_sum]
     apply Finset.sum_congr rfl
     intro x _
     rw [map_smul, LinearMap.map_smul_of_tower, hF'2]

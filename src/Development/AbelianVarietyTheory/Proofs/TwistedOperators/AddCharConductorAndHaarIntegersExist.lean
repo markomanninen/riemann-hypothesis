@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 open scoped Topology
@@ -82,7 +86,7 @@ theorem conductor_exists :
       (∃ ψ : AddChar k Circle, Continuous ψ ∧ ψ ≠ 1 ∧ HasConductor ψ 1) ∧
       ∃ ν : Measure k, IsUnitVol ν := by
   intro k _ _ _ _ _ _
-  obtain ⟨ψ, hψ⟩ := exists_hasConductor_one k
+  obtain ⟨ψ, hψ⟩ : ∃ ψ : AddChar k Circle, HasConductor ψ 1 := exists_hasConductor_one k
   exact ⟨exists_hasConductor_of_continuous, ⟨ψ, hψ.continuous, hψ.ne_one, hψ⟩, exists_isUnitVol k⟩
 
 end GlobalTheory.SplitWeil

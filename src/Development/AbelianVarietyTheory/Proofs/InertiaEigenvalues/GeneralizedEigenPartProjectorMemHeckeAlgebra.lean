@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AlgebraMapMemMaximalIdealPowIff
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAlg
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2 NumberField IsDedekindDomain Module
 
 namespace GlobalTheory
@@ -45,7 +50,9 @@ theorem part_projector_mem_adjoin :
   choose s hsin hsout using hs
   set FA := F.filter (fun ψ => NCov.cls ψ = NCov.cls ψ0)
   set FB := F.filter (fun ψ => NCov.cls ψ ≠ NCov.cls ψ0)
-  letI : CommRing (Algebra.adjoin O S) := Algebra.adjoinCommRingOfComm O fun a ha b hb => (hS a ha b hb).eq
+  letI : IsMulCommutative (Algebra.adjoin O S) :=
+    Algebra.isMulCommutative_adjoin O (fun a ha b hb _ => hS a ha b hb)
+  open scoped IsMulCommutative in
   obtain ⟨f, hfdef⟩ : ∃ f : Algebra.adjoin O S, f = ∏ φ ∈ FB, s φ := ⟨_, rfl⟩
   have hres : ∀ ψ : Algebra.adjoin O S →ₐ[O] O, ∀ u, u ∈ NCov.cls ψ ↔ IsLocalRing.residue O (ψ u) = 0 :=
     fun ψ u => Iff.rfl
@@ -96,7 +103,7 @@ theorem part_projector_mem_adjoin :
         rw [hy, map_zero]
       have hψA : ψ ∈ FA := Finset.mem_filter.2 ⟨hF ψ hW, hψ⟩
       have e1 := congrArg (fun P => aeval (f : End K V) P y) hpq
-      simp only [map_add, map_mul, LinearMap.add_apply, Module.End.mul_apply, map_one,
+      simp only [map_add (f := _), map_mul, LinearMap.add_apply, Module.End.mul_apply, map_one,
         Module.End.one_apply] at e1
       rw [hkill FA ψ hψA y hy, map_zero, zero_add] at e1
       simpa [map_mul, Module.End.mul_apply] using e1

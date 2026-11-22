@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.IsStableFlag
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleProdIsoOfPowIsoBirigidified
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PicEqZeroOfFpqc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFactorsThroughMulN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LineBundleProdIsoOfPowIsoBirigidified
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PicEqZeroOfFpqc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFactorsThroughMulN
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.ES
 open GlobalTheory.AbLaw GlobalTheory.CechPic GlobalTheory.AbDual
@@ -79,7 +84,42 @@ theorem star_ker_le {k : Type} [CommRing k] {s : Sp k ⟶ Sp R} {c : ℕ} {o o�
   haveI := o.act.hom (D.star a).unop
   obtain ⟨φ₁, hφ₁, e₁, e₁'⟩ := h₁.2.2.2.2.2
   obtain ⟨φ₂, hφ₂, e₂, e₂'⟩ := h₂.2.2.2.2.2
-  obtain ⟨β, hβ, eβ⟩ := GlobalTheory.MulNDiv.exists_factor_mulN k o₂.A o₁.A o₂.ab o₁.ab c h₁.pos
+  have hom_ext_spAlg {T B : Over (Sp k)} (a b : T ⟶ B)
+      (h : ∀ (S : Type) [CommRing S] [Algebra k S] (g : GlobalTheory.PDiv.SpAlg k S ⟶ T), g ≫ a = g ≫ b) : a = b := by
+    ext1
+    apply T.left.affineOpenCover.openCover.hom_ext
+    intro j
+    let C : CommRingCat := T.left.affineOpenCover.X j
+    let φ : CommRingCat.of k ⟶ C := Spec.preimage (T.left.affineOpenCover.f j ≫ T.hom)
+    letI : Algebra k C := φ.hom.toAlgebra
+    let g : GlobalTheory.PDiv.SpAlg k C ⟶ T := Over.homMk (T.left.affineOpenCover.f j) (by
+      show _ = Spec.map (CommRingCat.ofHom (algebraMap k C))
+      rw [← Spec.map_preimage (T.left.affineOpenCover.f j ≫ T.hom)]
+      rfl)
+    have := congrArg CommaMorphism.left (h C g)
+    simp only [g, Over.comp_left, Over.homMk_left] at this
+    exact this
+  have factor (A B : Over (Sp k)) [GrpObj A] [GrpObj B] (hA : IsAbelianScheme A)
+      (n : ℕ) (hn : 0 < n) (F : A ⟶ B) (hF : IsMonHom F)
+      (hker : ∀ (S : Type) [CommRing S] [Algebra k S] (z : GlobalTheory.PDiv.SpAlg k S ⟶ A),
+        z ^ n = 1 → z ≫ F = 1) : ∃ f : A ⟶ B, IsMonHom f ∧ F = mulN A n ≫ f := by
+    haveI := hA.comm
+    obtain ⟨hfin, hflat, hsurj⟩ := GlobalTheory.T.abelianScheme_mulN_finite_flat_surjective k A hA n hn
+    haveI : IsMonHom (mulN A n) := GlobalTheory.MulEtaleDvr.isMonHom_mulN A n
+    have hqc : QuasiCompact (mulN A n).left := inferInstance
+    have h : ∀ (T : Over (Sp k)) (x : T ⟶ A), x ≫ mulN A n = 1 → x ≫ F = 1 := by
+      intro T x hx
+      apply hom_ext_spAlg
+      intro S _ _ g
+      have hxn : x ^ n = 1 := by
+        rw [← hx, GlobalTheory.MulEtaleDvr.mulN_eq_pow, MonObj.comp_pow, Category.comp_id]
+      have hz : (g ≫ x) ^ n = 1 := by
+        rw [← MonObj.comp_pow, hxn, MonObj.comp_one]
+      rw [← Category.assoc, hker S (g ≫ x) hz, MonObj.comp_one]
+    obtain ⟨⟨ψ, hψ, hc⟩, -⟩ := exists_monHom_factor_of_flat_surjective _ A A B (mulN A n) F inferInstance hF
+      hflat hsurj hqc h
+    exact ⟨ψ, hψ, hc.symm⟩
+  obtain ⟨β, hβ, eβ⟩ := factor o₂.A o₁.A o₂.ab c h₁.pos
     (φ₂ ≫ o.act.act a ≫ ψ₁) inferInstance (fun S _ _ z hz => by
       have := H _ (z ≫ φ₂) (by rw [Category.assoc, e₂', MonObj.comp_pow, Category.comp_id, hz])
       simpa only [Category.assoc] using this)

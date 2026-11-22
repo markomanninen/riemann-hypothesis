@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueGalBEquivariant
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.IsThBIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsCuspFunctionalValueGalBEquivariant
+
+@[expose] public section
+
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.Glue GlobalTheory.KummerEisensteinGalois UpperTheory.Kd.L
 
@@ -31,7 +36,7 @@ theorem UpperTheory.Kd.L.witalg :
   · rintro b b' f f' ⟨h1, h2, h3⟩ ⟨k1, k2, k3⟩
     refine ⟨fun γ hγ => ?_, ?_, fun δ a c => ?_⟩
     · rw [Units.val_mul, map_mul, h1 γ hγ, k1 γ hγ]
-    · rw [Pi.add_apply, map_add, h2, k2]
+    · rw [Pi.add_apply, map_add (f := _), h2, k2]
       unfold Tower.cls
       rw [← Submodule.Quotient.mk_add, ← TensorProduct.tmul_add, ofMul_mul]
     · obtain ⟨g, hg, e⟩ := h3 δ a c

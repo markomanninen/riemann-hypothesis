@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightUniqueness.HpkMulMulHpkApply
+
+@[expose] public section
 
 open Matrix
 
@@ -54,20 +58,20 @@ lemma blockW_in (h : Matrix (Fin k) (Fin k) ℂ) {i j : Fin (2 * r + k + 1)} (hi
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   have hj' : r ≤ j.val ∧ j.val < r + k := hj
   simp only [blockW]
-  rw [dif_pos hi', dif_pos hj']
+  rw [dite_eq_left hi', dite_eq_left hj']
 
 lemma blockW_in_out (h : Matrix (Fin k) (Fin k) ℂ) {i j : Fin (2 * r + k + 1)} (hi : InB k r i)
     (hj : ¬ InB k r j) : blockW k r h i j = 0 := by
   have hi' : r ≤ i.val ∧ i.val < r + k := hi
   have hj' : ¬ (r ≤ j.val ∧ j.val < r + k) := hj
   simp only [blockW]
-  rw [dif_pos hi', dif_neg hj']
+  rw [dite_eq_left hi', dite_eq_right hj']
 
 lemma blockW_out (h : Matrix (Fin k) (Fin k) ℂ) {i j : Fin (2 * r + k + 1)} (hi : ¬ InB k r i) :
     blockW k r h i j = if i = j then 1 else 0 := by
   have hi' : ¬ (r ≤ i.val ∧ i.val < r + k) := hi
   simp only [blockW]
-  rw [dif_neg hi']
+  rw [dite_eq_right hi']
 
 lemma blockW_bl (h : Matrix (Fin k) (Fin k) ℂ) (a b : Fin k) :
     blockW k r h (bl k r a) (bl k r b) = h a b := by

@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
+
 open Formalism.REAL
 
 namespace GlobalTheory
@@ -21,7 +26,7 @@ theorem tensorStd_rel_adjoint_splitCasimir : ∀ (V : Type) [NormedAddCommGroup 
         (if b = c then Et a d y k else 0) - if d = a then Et c b y k else 0 := by
       split_ifs <;> simp
     rw [h1]
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, PiLp.sub_apply, hEt, map_add]
+    simp only [LinearMap.sub_apply, Module.End.mul_apply, PiLp.sub_apply, hEt, map_add (f := _)]
     rw [hv a b c d]
     split_ifs <;> (try simp only [map_zero]) <;> abel
   · intro a b x y
@@ -39,7 +44,8 @@ theorem tensorStd_rel_adjoint_splitCasimir : ∀ (V : Type) [NormedAddCommGroup 
     exact Finset.sum_comm
   · intro a b
     refine LinearMap.ext fun y => PiLp.ext fun k => ?_
-    simp only [Module.End.mul_apply, hEt, hOm, map_add, map_sum, Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.End.mul_apply, hEt, hOm, map_add (f := _), map_sum, Finset.sum_add_distrib]
     have h1 : ∀ c, E c k (E a b (y c)) = _ := fun c => hv c k a b (y c)
     simp only [h1, Finset.sum_add_distrib, Finset.sum_sub_distrib, apply_ite (E _ k), map_zero]
     by_cases h : k = a

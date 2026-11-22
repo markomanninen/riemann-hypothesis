@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TermEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SideE
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SmoothStar
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeightDiagPowLe
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SumSmulApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.G1St
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.TermEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SideE
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SmoothStar
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LocHeightDiagPowLe
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.SumSmulApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.G1St
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -47,7 +51,7 @@ private theorem numeric_product_inequality (C₁ C₂ Y₀ Q : ℝ) (c₁ c₂ :
       _ = _ := by rw [← mul_pow]
 
 private theorem sideCondition_split_place (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E]
-    (σ : E ≃ₐ[F] E) (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) (n : ℕ) (hn : 0 < n) (μ : Measure (normOneGL E n)) [μ.IsHaarMeasure]
+    (σ : E ≃ₐ[F] E) (hσ : ∀ τ, τ ∈ Subgroup.zpowers σ) (n : ℕ) (hn : 0 < n) (μ : Measure (normOneGL (K := E) (n := n))) [μ.IsHaarMeasure]
     (θ : Twist μ) (hθ : IsGalTwist σ θ) (q : Pl F) (w₀ : PlacesOver E q) (hq : Split E q) (ν : Fin n → ℤ) (hν : Good ν)
     (Y₀ : ℝ) (hY : 1 ≤ Y₀) :
     ∃ (p : ℕ) (C₀ : ℝ), 0 < p ∧ ∀ Y₁ : ℝ, 1 ≤ Y₁ → ∀ᶠ j : ℕ in atTop, ∀ m : ℕ, m ≤ j / p → ∀ f : TG E n,
@@ -78,9 +82,11 @@ private theorem monomialDecomposition_eval {σ τ H : Type} [Ring H] [Algebra �
     ψ (g * R) = ∑ i ∈ R.support.sigma (fun β => (R.coeff β).support),
       (R.coeff i.1).coeff i.2 • ψ (g * monomial i.1 (monomial i.2 1)) := by
   rw [Finset.sum_sigma]
-  conv_lhs => rw [R.as_sum, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [R.as_sum, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun β _ => ?_
-  conv_lhs => rw [(R.coeff β).as_sum, map_sum, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [(R.coeff β).as_sum, map_sum, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun α _ => ?_
   rw [← smul_one_mul, ← hψ, ← map_mul, mul_left_comm, C_mul_monomial, C_mul_monomial, mul_one]
 
@@ -88,10 +94,11 @@ private theorem linearMap_comp_eq_on_smul_of_eq {V : Type*} [NormedAddCommGroup 
     (A B G : V →L[ℂ] V) (P : ι → V →L[ℂ] V) :
     A ∘L ((∑ i ∈ s, c i • P i) ∘L B) ∘L G = ∑ i ∈ s, c i • (A ∘L (P i ∘L B) ∘L G) := by
   ext v
-  simp [ContinuousLinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum]
 
 private theorem self_over (F : Type) [Field F] [NumberField F] (q : Pl F) : q.asIdeal.LiesOver q.asIdeal :=
-  ⟨by ext x; simp [Ideal.under_def, Ideal.mem_comap]⟩
+  ⟨by ext x; simp [Ideal.under_def]⟩
 
 private theorem split_self (F : Type) [Field F] [NumberField F] (q : Pl F) : Split F q := by
   rintro ⟨w, hw⟩
@@ -174,7 +181,7 @@ theorem UpperTheory.ConvolutionTheory.GM.gm_of_unit :
       have hdeg : i.1.degree ≤ D := (degree_le_totalDegree_of_mem_support h1).trans hRd
       have hβB : i.1 ∈ B := by
         refine Finset.mem_filter.2 ⟨Finset.mem_finsupp_iff.2 ⟨fun x hx => ?_, fun x _ => ?_⟩, hdeg⟩
-        · exact Finset.mem_product.2 ⟨hRv x (mem_vars x |>.2 ⟨_, h1, hx⟩), Finset.mem_univ _⟩
+        · exact Finset.mem_product.2 ⟨hRv x (mem_vars_iff_mem_support x |>.2 ⟨_, h1, hx⟩), Finset.mem_univ _⟩
         · exact Finset.mem_range.2 (Nat.lt_succ_of_le ((Finsupp.le_degree x i.1).trans hdeg))
       obtain ⟨wd, hwd, hlen⟩ := exists_word_monomial i.2
       have hm : wd.length ≤ j / (pE * pF) := by

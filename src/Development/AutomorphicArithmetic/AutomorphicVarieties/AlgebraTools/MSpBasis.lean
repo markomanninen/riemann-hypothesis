@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSplitDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SpBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MSplitDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.TopNilDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.SpBasis
+
+@[expose] public section
 
 open Filter UpperTheory.V.AlgebraTools
 open scoped TensorProduct
@@ -14,7 +18,7 @@ theorem UpperTheory.V.AlgebraTools.mSplitAlg_basis :
   choose bj hbj using hb
   let f : ∀ j, SplitAlg (P j) n →ₐ[R] MSplitAlg P n := fun j =>
     SplitAlg.lift (P j) n (MSplitAlg.root P n j) (MSplitAlg.prod_root P n j)
-  let M : MultilinearMap R (fun j => SplitAlg (P j) n) (MSplitAlg P n) :=
+  let M : (∀ j, SplitAlg (P j) n) →ₘₗ[R] MSplitAlg P n :=
     (MultilinearMap.mkPiAlgebra R κ (MSplitAlg P n)).compLinearMap (fun j => (f j).toLinearMap)
   have hM : ∀ x, M x = ∏ j, f j (x j) := fun x => by
     simp [M, MultilinearMap.compLinearMap_apply, MultilinearMap.mkPiAlgebra_apply]

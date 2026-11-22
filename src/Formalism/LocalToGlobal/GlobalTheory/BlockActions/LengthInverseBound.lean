@@ -1,6 +1,10 @@
-import Formalism.SatakeDualWeyl.Statement
-import Mathlib
-import Formalism.GL3MeanSquares.HookFormulaTorsion.InvariantKernelTraceVanishes
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+public import Mathlib
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.InvariantKernelTraceVanishes
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ section Sesq
 variable {E : Type} [Field E] {n : ℕ} (σ : E →+* E) (J : Matrix (Fin n) (Fin n) E)
 
 theorem hform_add_left (x x' y : Fin n → E) : hform σ J (x + x') y = hform σ J x y + hform σ J x' y := by
-  simp only [Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hform_add_right (x y y' : Fin n → E) : hform σ J x (y + y') = hform σ J x y + hform σ J x y' := by
   simp only [Formalism.UG.hform, Pi.add_apply, mul_add, Finset.sum_add_distrib]
@@ -59,7 +63,7 @@ theorem length_inverse_bound (σ : E →+* E) (hσ : ∀ (φ : E →+* ℂ) (x :
     intro φ
     obtain ⟨r, hr0, hr, -⟩ := hdef φ x
     have hk := congrArg φ key
-    rw [map_add, map_mul, map_mul, hσ, map_natCast, map_one, hr, Complex.conj_mul'] at hk
+    rw [map_add (f := _), map_mul, map_mul, hσ, map_natCast, map_one, hr, Complex.conj_mul'] at hk
     have hk' : (T : ℝ) * r + ‖φ (algebraMap (𝓞 E) E a)‖ ^ 2 = 1 := by exact_mod_cast hk
     have hc : ‖φ (c0 : E)‖ = r := by
       rw [hc0, hr, Complex.norm_real, Real.norm_of_nonneg hr0]
@@ -112,7 +116,8 @@ theorem root_eq_one (P : Ideal (𝓞 E)) (T k : ℕ) (b : 𝓞 E) (hT : T.Prime)
   have hqP : (q : 𝓞 E) ∈ P := by
     rw [← Ideal.Quotient.eq_zero_iff_mem]
     have h0 := congrArg (Ideal.Quotient.mk P) (hη.geom_sum_eq_zero hq.one_lt)
-    simpa [map_sum, map_pow, hbP] using h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_pow, hbP] using h0
   have hTq : T = q := by
     by_contra hne'
     have hcop : Nat.Coprime T q := (Nat.coprime_primes hT hq).2 hne'

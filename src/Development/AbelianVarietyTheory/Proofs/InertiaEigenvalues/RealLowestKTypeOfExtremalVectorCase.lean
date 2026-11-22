@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolShapeOfOverK
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaFunctionEqZeroOfMeanSquareZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqTopOfTranslates
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HolShapeOfOverK
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryActionAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaPairingInvariant
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ThetaFunctionEqZeroOfMeanSquareZero
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
 open Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx Formalism.IndefR.Links
@@ -45,7 +50,7 @@ theorem thetaInner_add_right (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T')
   rw [← integral_add (integrable_star_mul hψ h1 hf hg) (integrable_star_mul hψ h1 hf hh)]
   congr 1
   funext w
-  simp only [Pi.add_apply, mul_add]
+  simp [mul_add]
 
 theorem thetaInner_add_left (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T')} {𝓕 : Set (WO S T')} (h1 : μ 𝓕 = 1)
     {f g h : WO S T' → ℂ} (hf : IsThetaFunO ψ S T' f) (hg : IsThetaFunO ψ S T' g) (hh : IsThetaFunO ψ S T' h) :
@@ -54,7 +59,7 @@ theorem thetaInner_add_left (hψ : IsStdChar D ψ (-1)) {μ : Measure (WO S T')}
   rw [← integral_add (integrable_star_mul hψ h1 hf hh) (integrable_star_mul hψ h1 hg hh)]
   congr 1
   funext w
-  simp only [Pi.add_apply, star_add, add_mul]
+  simp [add_mul]
 
 end GlobalTheory.RawLift.RealLowRed
 
@@ -65,7 +70,7 @@ open Formalism.IndefR.FWT
 variable {D : D7}
 
 def prodR {W : HSp D} {S' : D.what₂.Tau → SPar} (θ : InfFam D) (M : DSModel W S') (a : ∀ ρ, M.H ρ) :
-    MultilinearMap ℂ (fun ρ => lowT M ρ) (GA D W → ℂ) :=
+    (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) :=
   MultilinearMap.pi fun g => (MultilinearMap.mkPiAlgebra ℂ D.what₂.Tau ℂ).compLinearMap fun ρ =>
     (innerₛₗ ℂ (a ρ)).comp ((M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g)).toLinearMap.comp
       ((M.sm ρ).subtype.comp (lowT M ρ).subtype))
@@ -76,7 +81,7 @@ theorem prodR_apply {W : HSp D} {S' : D.what₂.Tau → SPar} (θ : InfFam D) (M
   simp [prodR, MultilinearMap.pi_apply, MultilinearMap.compLinearMap_apply, MultilinearMap.mkPiAlgebra_apply]
 
 def prodL {W : HSp D} {S' : D.what₂.Tau → SPar} (θ : InfFam D) (M : DSModel W S') (b : ∀ ρ, M.H ρ) :
-    MultilinearMap ℂ (fun ρ => lowT M ρ) (GA D W → ℂ) :=
+    (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) :=
   MultilinearMap.pi fun g => (MultilinearMap.mkPiAlgebra ℂ D.what₂.Tau ℂ).compLinearMap fun ρ =>
     (innerₛₗ ℂ (M.rep ρ (infMat D.sp.cm.sig W.gram (θ ρ) g) (b ρ))).comp
       ((M.sm ρ).subtype.comp (lowT M ρ).subtype)
@@ -106,13 +111,13 @@ variable {D : D7} {V W : HSp D} {S' : D.what₂.Tau → SPar} {ψ : AddChar (AF 
   {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {μ : Measure (WO V W)} {𝓕 : Set (WO V W)}
 
 def thR (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W S'}
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
-    (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) : MultilinearMap ℂ (fun ρ => lowT M ρ) (GA D W → ℂ) where
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) where
   toFun v g := thetaIP μ 𝓕 f (ω (1, g) (J v))
   map_update_add' m ρ x y := by
     funext g
     simp only [Pi.add_apply]
-    rw [J.map_update_add, map_add]
+    rw [J.map_update_add, map_add (f := _)]
     exact thetaInner_add_right hω.std h1 hf (hω.om_pres _ _ (hJ _)) (hω.om_pres _ _ (hJ _))
   map_update_smul' m ρ a x := by
     funext g
@@ -121,13 +126,13 @@ def thR (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W
     exact thetaInner_smul_right _ _ _ _ _
 
 theorem thR_apply (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W S'}
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
     (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) (v : ∀ ρ, lowT M ρ) (g : GA D W) :
     thR hω h1 J hJ f hf v g = thetaIP μ 𝓕 f (ω (1, g) (J v)) := rfl
 
 def thL (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W S'}
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
-    (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) : MultilinearMap ℂ (fun ρ => lowT M ρ) (GA D W → ℂ) where
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (GA D W → ℂ) where
   toFun v g := star (thetaIP μ 𝓕 (J v) (ω (1, g) f))
   map_update_add' m ρ x y := by
     funext g
@@ -139,7 +144,7 @@ def thL (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W
     rw [J.map_update_smul, thetaInner_smul_left, star_mul', star_star]
 
 theorem thL_apply (hω : IsWeilDatumO ψ V W χV χW ω) (h1 : μ 𝓕 = 1) {M : DSModel W S'}
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
     (f : WO V W → ℂ) (hf : IsThetaFunO ψ V W f) (v : ∀ ρ, lowT M ρ) (g : GA D W) :
     thL hω h1 J hJ f hf v g = star (thetaIP μ 𝓕 (J v) (ω (1, g) f)) := rfl
 
@@ -152,12 +157,12 @@ open Formalism.IndefR.FWT
 variable {D : D7} {V W : HSp D} {S' : D.what₂.Tau → SPar} {ψ : AddChar (AF D.host.F) ℂ} {χV χW : (AE D)ˣ →* Circle}
   {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {μ : Measure (WO V W)} {𝓕 : Set (WO V W)}
 
+
 open Classical in
 set_option maxHeartbeats 4000000 in
-
 theorem of_ext (θ : InfFam D) (hθ : IsInfFam θ) (M : DSModel W S') (hLS : LowSm M) (hLI : GlobalTheory.IndefiniteRowSideFullHecke.HolomorphicLowestType.LowIrr M)
     (hω : IsWeilDatumO ψ V W χV χW ω) (hcv : IsCovolOne (ratL W V) μ 𝓕)
-    (J : MultilinearMap ℂ (fun ρ => lowT M ρ) (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
+    (J : (∀ ρ, lowT M ρ) →ₘₗ[ℂ] (WO V W → ℂ)) (hJ : ∀ v, IsThetaFunO ψ V W (J v))
     (hK : ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M.ε τ), ∀ (v : ∀ ρ, lowT M ρ) (u : lowT M τ),
       ((u : M.sm τ) : M.H τ) = M.σ τ k ((v τ : M.sm τ) : M.H τ) →
       J (Function.update v τ u) = ω (1, atTau θ W τ ((M.fr τ)⁻¹ * k * M.fr τ)) (J v))

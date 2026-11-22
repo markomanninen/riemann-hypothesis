@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FDMSubCompact
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUniqueAdelicMatrixRealComponentsFinitePart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumTranslateConjugateJetBound
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodModModT
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FDMSubCompact
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SelfDualLatticePairingDual
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsOpenNsmulCompletedHomLatticeFiniteAdelic
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsUniqueAdelicMatrixRealComponentsFinitePart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VacuumTranslateConjugateJetBound
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualCLatP
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+
+@[expose] public section
 
 open NumberField MeasureTheory IsDedekindDomain UniqueFactorizationMonoid
 open scoped Classical Pointwise
@@ -49,7 +53,7 @@ theorem integral_eq_mean {G V : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
     intro l hl v
     obtain ⟨γ, hγ, hγP, rfl⟩ := h2 l hl
     obtain ⟨p, hp, rfl⟩ := hsurj v
-    rw [← map_add, ← hgh _ (P.add_mem hγP hp), hg γ hγ, hgh p hp]
+    rw [← map_add (f := _), ← hgh _ (P.add_mem hγP hp), hg γ hγ, hgh p hp]
   have hm' : MeasurableSet (Y ⁻¹' F0 ∩ (P : Set G)) := (hY.measurable hF0m).inter hP.measurableSet
   have hfd : IsAddFundamentalDomain Γ (Y ⁻¹' F0 ∩ (P : Set G)) ν := by
     refine IsAddFundamentalDomain.mk' hm'.nullMeasurableSet fun w => ?_
@@ -58,7 +62,7 @@ theorem integral_eq_mean {G V : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
     obtain ⟨γ', hγ', hγ'P, e⟩ := h2 l l.2
     refine ⟨⟨γ' + γ, Γ.add_mem hγ' hγ⟩, ⟨?_, ?_⟩, ?_⟩
     · change Y (γ' + γ + w) ∈ F0
-      rw [add_assoc, map_add, e]; exact hl
+      rw [add_assoc, map_add (f := _), e]; exact hl
     · change γ' + γ + w ∈ P
       rw [add_assoc]; exact P.add_mem hγ'P hγw
     · rintro ⟨β, hβ⟩ ⟨hb1, hb2⟩
@@ -68,7 +72,7 @@ theorem integral_eq_mean {G V : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
       have a2 : β - γ ∈ Γ := Γ.sub_mem hβ hγ
       have a3 := hlu ⟨Y (β - γ), h1 _ a2 a1⟩ (by
         change Y (β - γ) + Y (γ + w) ∈ F0
-        rw [← map_add, ← add_assoc, sub_add_cancel]; exact hb1)
+        rw [← map_add (f := _), ← add_assoc, sub_add_cancel]; exact hb1)
       have a4 : Y (β - γ) = l := congrArg Subtype.val a3
       have a5 := hinj _ (Γ.sub_mem a2 hγ') (P.sub_mem a1 hγ'P) (by rw [map_sub, a4, e, sub_self])
       apply Subtype.ext
@@ -84,7 +88,7 @@ theorem integral_eq_mean {G V : Type} [AddCommGroup G] [TopologicalSpace G] [IsT
     rw [hmA _ (measurable_const_add _ hA), hmA _ hA, ← measure_preimage_add ν p (Y ⁻¹' A ∩ _)]
     congr 1
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_preimage, map_add, SetLike.mem_coe, Pi.add_apply, id]
+    simp only [Set.mem_inter_iff, Set.mem_preimage, map_add (f := _), SetLike.mem_coe, Pi.add_apply, id]
     exact and_congr_right fun _ => (P.add_mem_cancel_left hp).symm
   haveI : m.IsAddLeftInvariant := (forall_measure_preimage_add_iff m).1 hinv
   have hm1 : m F0 = 1 := by rw [hmA _ hF0m, ← hone]; exact hfd.measure_eq h𝓕
@@ -172,7 +176,7 @@ noncomputable def coordHom (θ : InfFam D) (S T : HSp D) (δ : ℂ) (r : D.host.
     funext τ i j
     change δ * embT D τ r * θ τ (infPart D (x i j + y i j)) =
       δ * embT D τ r * θ τ (infPart D (x i j)) + δ * embT D τ r * θ τ (infPart D (y i j))
-    rw [RingHom.map_add, RingHom.map_add, mul_add]
+    rw [RingHom.map_add (f := _), RingHom.map_add (f := _), mul_add]
 
 theorem coordHom_ratW {θ : InfFam D} (hθ : IsInfFam θ) (S T : HSp D) (δ : ℂ) (r : D.host.E)
     (M : Matrix (Fin T.rank) (Fin S.rank) D.host.E) :
@@ -198,8 +202,8 @@ theorem eq_of_inf_fin {θ : InfFam D} (hθ : IsInfFam θ) {S T : HSp D} {u v : W
     rw [this, RingHom.map_zero]
   exact (GlobalTheory.StdUnn.exists_unique_of_comp_finPart D θ hθ _ _ (fun _ => 0) v).unique ⟨hz hu, h⟩ ⟨hz hv, rfl⟩
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem ip_eq_normSq : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam D) (S T : HSp D) {a d : ℕ} (hS : S.rank = a) (hT : T.rank = d)
   (δ : ℂ) (r : D.host.E), Setup ψ θ S T ⊤ δ r →
   ∀ LT : Lat T, IsSelfDualC T LT →
@@ -264,7 +268,7 @@ theorem ip_eq_normSq : ∀ {D : D7} (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFa
   · intro w
     obtain ⟨M, u, hu, h⟩ := happ w
     refine ⟨-ratW T S M, neg_mem ⟨M, rfl⟩, (hP _).2 ⟨u, hu, ?_⟩⟩
-    rw [map_add, map_neg, eq_neg_add_iff_add_eq]
+    rw [map_add (f := _), map_neg, eq_neg_add_iff_add_eq]
     funext i j
     exact (h i j).symm
   · rintro _ ⟨M, rfl⟩ hM

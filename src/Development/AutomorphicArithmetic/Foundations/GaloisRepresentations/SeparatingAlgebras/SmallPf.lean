@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.StLocB
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.Spherical UpperTheory.Gal.Gen
 
@@ -30,7 +34,7 @@ theorem UpperTheory.Gal.Gen.small_pf :
     have : 0 ≤ c * ‖evalAt (pt θ) P‖ ^ 2 := by positivity
     linarith
   let pk : ℕ → LaurentRing n := fun k => (1 - (c : ℂ) • (P * Q)) ^ k
-  have hpk_mem : ∀ k, pk k ∈ symmetricLaurent n := by
+  have hpk_mem : ∀ k, pk k ∈ symmetricLaurent (n := n) := by
     intro k
     exact Subalgebra.pow_mem _ (Subalgebra.sub_mem _ (Subalgebra.one_mem _)
       (Subalgebra.smul_mem _ (Subalgebra.mul_mem _ hPmem hQmem) _)) k

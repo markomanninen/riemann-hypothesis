@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPairingStdP
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrSumOf
+
+@[expose] public section
 
 open scoped SchwartzMap Matrix TensorProduct Classical
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -43,76 +47,50 @@ theorem eq_zero_of_trace (x : mixedEmbedding.mixedSpace F)
     show x.2 w = 0
     exact Complex.ext hre him
 
-theorem isPairing_trP (κ : Type) [Fintype κ] : IsPairing (trP F κ) where
-  addL x x' y := by
-    simp only [trP, Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add]
-  addR := by
-    intros
-    simp only [trP, Pi.add_apply, mul_add, Finset.sum_add_distrib, map_add]
-  smulL := by
-    intros
-    simp only [trP, Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, map_smul, smul_eq_mul]
-  smulR := by
-    intros
-    simp only [trP, Pi.smul_apply, mul_smul_comm, ← Finset.smul_sum, map_smul, smul_eq_mul]
-  nondegL := by
-    intro x hx
-    funext i
-    apply eq_zero_of_trace
-    intro b
-    have h := hx (Pi.single i b)
-    simpa [trP, Pi.single_apply, mul_ite, Finset.sum_ite_eq'] using h
-  nondegR := by
-    intro y hy
-    funext i
-    apply eq_zero_of_trace
-    intro b
-    have h := hy (Pi.single i b)
-    simpa [trP, Pi.single_apply, ite_mul, Finset.sum_ite_eq', mul_comm] using h
+theorem isPairing_trP (κ : Type) [Fintype κ] : IsPairing (trP F κ) := by
+  exact {
+    addL x x' y := by
+      simp only [trP, Pi.add_apply, add_mul, Finset.sum_add_distrib, map_add (f := _)]
+    addR x y y' := by
+      simp only [trP, Pi.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
+    smulL c x y := by
+      simp only [trP, Pi.smul_apply, smul_mul_assoc, ← Finset.smul_sum, map_smul, smul_eq_mul]
+    smulR c x y := by
+      simp only [trP, Pi.smul_apply, mul_smul_comm, ← Finset.smul_sum, map_smul, smul_eq_mul]
+    nondegL x hx := by
+      funext i
+      apply eq_zero_of_trace
+      intro b
+      have h := hx (Pi.single i b)
+      simpa [trP, Pi.single_apply, mul_ite, Finset.sum_ite_eq'] using h
+    nondegR y hy := by
+      funext i
+      apply eq_zero_of_trace
+      intro b
+      have h := hy (Pi.single i b)
+      simpa [trP, Pi.single_apply, ite_mul, Finset.sum_ite_eq', mul_comm] using h
+  }
 
-theorem omega_nondeg {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] {P : V → V → ℝ} (h : IsPairing P)
-    (v : V × V) (hv : ∀ w, omega P v w = 0) : v = 0 := by
-  have h0L : ∀ y, P 0 y = 0 := fun y => by
-    have h3 := h.addL 0 0 y
-    simp only [add_zero] at h3
-    linarith
-  have h0R : ∀ x, P x 0 = 0 := fun x => by
-    have h3 := h.addR x 0 0
-    simp only [add_zero] at h3
-    linarith
-  have h1 : v.1 = 0 := h.nondegL _ fun y => by
-    have h3 : P v.1 y - P 0 v.2 = 0 := hv (0, y)
-    rw [h0L, sub_zero] at h3
-    exact h3
-  have h2 : v.2 = 0 := h.nondegR _ fun x => by
-    have h3 : P v.1 0 - P x v.2 = 0 := hv (x, 0)
-    rw [h0R, zero_sub, neg_eq_zero] at h3
-    exact h3
-  exact Prod.ext h1 h2
 
 variable (F) in
-
 def evH : AF F →+* mixedEmbedding.mixedSpace F :=
   (InfiniteAdeleRing.ringEquiv_mixedSpace F).toRingHom.comp (RingHom.fst _ _)
 
 theorem evI_eq (a : AF F) : evI F a = evH F a := rfl
 
 theorem evI_realAd (c : ℝ) : evI F (realAd F c) = algebraMap ℝ _ c := by
-  first
-    | simp [evI, realAd]
-    | (unfold evI realAd; simp)
+  unfold evI realAd
+  exact (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply _
 
 variable {κ : Type}
 
 theorem loc_lift (y : κ → mixedEmbedding.mixedSpace F) : locV (liftV y) = y := by
   funext i
-  first
-    | simp [locV, liftV, evI]
-    | simp [locV, liftV]
+  exact (InfiniteAdeleRing.ringEquiv_mixedSpace F).apply_symm_apply (y i)
 
 theorem loc_add (x y : κ → AF F) : locV (x + y) = locV x + locV y := by
   funext i
-  simp only [locV, Pi.add_apply, evI_eq, map_add]
+  simp only [locV, Pi.add_apply, evI_eq, map_add (f := _)]
 
 theorem loc_smul (c : ℝ) (x : κ → AF F) : locV (realAd F c • x) = c • locV x := by
   funext i
@@ -121,7 +99,7 @@ theorem loc_smul (c : ℝ) (x : κ → AF F) : locV (realAd F c • x) = c • l
 
 theorem lift_add (x y : κ → mixedEmbedding.mixedSpace F) : liftV (x + y) = liftV x + liftV y := by
   funext i
-  simp only [liftV, Pi.add_apply, map_add]
+  simp only [liftV, Pi.add_apply, map_add (f := _)]
   first
     | exact Prod.ext rfl (add_zero 0).symm
     | exact Prod.ext (by simp) (by simp)
@@ -140,17 +118,6 @@ theorem lift_loc (x : κ → AF F) : liftV (locV x) = realAd F 1 • x := by
   rw [Pi.smul_apply, smul_eq_mul]
   simp only [liftV, locV, evI, RingEquiv.symm_apply_apply, realAd, LinearMap.inl_apply, map_one]
   exact Prod.ext (one_mul _).symm (zero_mul _).symm
-
-theorem mul_realAd_eq_zero (a : AF F) (ha : evI F a = 0) : a * realAd F 1 = 0 := by
-  have h1 : a.1 = 0 := by
-    have h2 := congrArg (InfiniteAdeleRing.ringEquiv_mixedSpace F).symm ha
-    simp only [evI, RingEquiv.symm_apply_apply, map_zero] at h2
-    exact h2
-  refine Prod.ext ?_ ?_
-  · show a.1 * (realAd F 1).1 = 0
-    rw [h1, zero_mul]
-  · show a.2 * (realAd F 1).2 = 0
-    simp only [realAd, LinearMap.inl_apply, mul_zero]
 
 end Trace
 
@@ -215,7 +182,7 @@ def coordI (u : Matrix (Fin n) (Fin d) (AE F E)) :
 
 theorem coordI_add (u u' : Matrix (Fin n) (Fin d) (AE F E)) : coordI M (u + u') = coordI M u + coordI M u' := by
   first
-    | simp only [coordI, map_add, Prod.fst_add, Prod.snd_add, loc_add, Prod.mk_add_mk]
+    | simp only [coordI, map_add (f := _), Prod.fst_add, Prod.snd_add, loc_add, Prod.mk_add_mk]
     | simp [coordI, loc_add]
 
 theorem coordI_smul (c : ℝ) (u : Matrix (Fin n) (Fin d) (AE F E)) :
@@ -245,21 +212,8 @@ theorem omega_coordI (u u' : Matrix (Fin n) (Fin d) (AE F E)) :
     omega (trP F (Fin n × Fin d)) (coordI M u) (coordI M u') =
       Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evH F (sympM (σ := σ) X W u u')) := by
   rw [show sympM (σ := σ) X W u u' = _ from M.co.form u u']
-  simp only [omega, trP, coordI, locV, dotProduct, map_sub, map_sum, map_mul, evI_eq]
-
-theorem sympM_add_right (M : Model σ X W) (u v v' : Matrix (Fin n) (Fin d) (AE F E)) :
-    sympM (σ := σ) X W u (v + v') = sympM (σ := σ) X W u v + sympM (σ := σ) X W u v' := by
-  simp only [sympM]
-  unfold symp hTens
-  simp only [Matrix.add_apply, map_add, mul_add, Finset.sum_add_distrib]
-
-theorem sympM_anti (M : Model σ X W) (u v : Matrix (Fin n) (Fin d) (AE F E)) :
-    sympM (σ := σ) X W u v = -sympM (σ := σ) X W v u := by
-  have h1 := M.co.form u v
-  have h2 := M.co.form v u
-  simp only [sympM]
-  rw [h1, h2]
-  ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [omega, trP, coordI, locV, dotProduct, map_sub, map_sum, map_mul, evI_eq]
 
 theorem sympM_eq_zero {p q : Type} [Fintype p] [Fintype q] (P : Matrix (Fin d) p E) (Q : Matrix (Fin d) q E)
     (h : Pᵀ * W.J * Q.map σ = 0) (a : Matrix (Fin n) p (AE F E)) (b : Matrix (Fin n) q (AE F E)) :
@@ -296,31 +250,11 @@ theorem gram_xx (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
   rw [gram_apply, Matrix.zero_apply]
   exact hA.xx
 
-theorem gram_yy (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
-    (Matrix.replicateCol Unit H'.y)ᵀ * W.J * (Matrix.replicateCol Unit H'.y).map σ = 0 := by
-  ext i j
-  rw [gram_apply, Matrix.zero_apply]
-  exact hA.yy
-
-theorem gram_ιx (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
-    H'.ιᵀ * W.J * (Matrix.replicateCol Unit H'.x).map σ = 0 := by
-  ext i j
-  rw [gram_apply, Matrix.zero_apply]
-  have h := (hA.orth (Pi.single i 1)).1
-  rw [Matrix.mulVec_single_one] at h
-  exact h
-
-theorem gram_ιy (hA : H'.IsAdapted σ B W W₁ i₀ i₁) :
-    H'.ιᵀ * W.J * (Matrix.replicateCol Unit H'.y).map σ = 0 := by
-  ext i j
-  rw [gram_apply, Matrix.zero_apply]
-  have h := (hA.orth (Pi.single i 1)).2
-  rw [Matrix.mulVec_single_one] at h
-  exact h
-
 theorem span_plane (hS : W.IsSkew σ B r' s') (hA : H'.IsAdapted σ B W W₁ i₀ i₁) (z : Fin d → E) :
     ∃ (s t : E) (u : Fin d₁ → E), z = s • H'.x + H'.ι *ᵥ u + t • H'.y := by
-  have htop : Submodule.span E (W.L : Set (Fin d → E)) = ⊤ := hS.lat.span_eq_top
+  have htop : Submodule.span E (W.L : Set (Fin d → E)) = ⊤ := by
+    let _ := hS.lat
+    exact Submodule.IsFullLattice.span_eq_top (A := E) (M := W.L)
   have hz : z ∈ Submodule.span E (W.L : Set (Fin d → E)) := by
     rw [htop]
     exact Submodule.mem_top
@@ -371,8 +305,6 @@ theorem decomp (hS : W.IsSkew σ B r' s') (hA : H'.IsAdapted σ B W W₁ i₀ i�
   have hincT : ∀ {p q : Type} (A : Matrix p q E), incM F Aᵀ = (incM F A)ᵀ := fun A => (Matrix.transpose_map).symm
   have hincA : ∀ {p q : Type} (A B : Matrix p q E), incM F (A + B) = incM F A + incM F B := fun A B => Matrix.map_add _ (map_add _) A B
   simp only [Matrix.mul_assoc, ← hincT, ← hinc, ← Matrix.mul_add, ← hincA, ← hone, incM_one', Matrix.mul_one]
-
-abbrev trI (a : AF F) : ℝ := Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evH F a)
 
 end Final
 

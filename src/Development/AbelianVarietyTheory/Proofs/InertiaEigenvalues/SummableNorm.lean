@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompleteSpaceFinExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,14 +67,15 @@ theorem tendsto_ev (hc : Bdd c) (hν : Small ν) {a : K⟦X⟧} (ha : SC a) :
 theorem ev_add (hc : Bdd c) (hν : Small ν) {a b : K⟦X⟧} (ha : SC a) (hb : SC b) :
     ev c ν (a + b) = ev c ν a + ev c ν b := by
   refine HasSum.tsum_eq ?_
-  simpa only [map_add, add_mul] using (hasSum_ev hc hν ha).add (hasSum_ev hc hν hb)
+  simpa only [map_add (f := _), add_mul] using (hasSum_ev hc hν ha).add (hasSum_ev hc hν hb)
 
 theorem ev_mul (hc : Bdd c) (hν : Small ν) {a b : K⟦X⟧} (ha : SC a) (hb : SC b) :
     ev c ν (a * b) = ev c ν a * ev c ν b := by
   rw [ev, ev, ev, tsum_mul_tsum_eq_tsum_sum_antidiagonal_of_summable_norm (summable_norm hc hν ha)
     (summable_norm hc hν hb)]
   refine tsum_congr fun k => ?_
-  rw [coeff_mul, map_sum, sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_mul, map_sum, sum_mul]
   refine sum_congr rfl fun p hp => ?_
   rw [← mem_antidiagonal.1 hp, map_mul, pow_add]
   ring
@@ -103,12 +108,13 @@ theorem ev_map {O : Type} [CommRing O] (j : O →+* K) (hν : Small ν) (hc : Bd
       f a - ν ^ m * f (mk fun i => coeff (i + m) a) := by
     intro m
     have e0 := congrArg f (eq_X_pow_mul_shift_add_trunc m a)
-    rw [e0, map_add, map_mul, map_pow, hX, add_sub_cancel_left, trunc_apply, Polynomial.coe_def]
+    rw [e0, map_add (f := _), map_mul, map_pow, hX, add_sub_cancel_left, trunc_apply, Polynomial.coe_def]
     have e : (mk (∑ k ∈ Ico 0 m, Polynomial.monomial k (coeff k a)).coeff : O⟦X⟧) =
         ∑ k ∈ range m, C (coeff k a) * X ^ k := by
       ext n
-      simp [coeff_X_pow, Polynomial.coeff_monomial, Polynomial.finset_sum_coeff]
-    rw [e, map_sum]
+      simp [coeff_X_pow, Polynomial.coeff_monomial, Polynomial.finsetSum_coeff, Finsupp.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum]
     simp only [map_mul, map_pow, hX, hC, coeff_map]
   simp only [key]
   conv => rhs; rw [← sub_zero (f a)]
@@ -150,7 +156,8 @@ theorem hasSum_subst [IsUltrametricDist K] (hc : Bdd c) (hν : Small ν) {y a : 
         apply hk
         simp only [coe_range, Set.mem_Iio, not_lt] at hk'
         simp [hz k n hk']
-    rw [e, map_sum, sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum, sum_mul]
     refine hasSum_sum_of_ne_finset_zero fun k hk => ?_
     simp only [mem_range, not_lt] at hk
     simp [F, hz k n hk]

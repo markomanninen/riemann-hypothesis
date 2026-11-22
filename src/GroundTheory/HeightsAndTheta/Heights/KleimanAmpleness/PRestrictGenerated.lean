@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsRestrictGenerated
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeOnWGen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsRestrictGenerated
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeOnWGen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -17,8 +22,8 @@ variable {S : Type u} [CommRing S] {Ω : Type w} [Field Ω] [Algebra S Ω] {N : 
   {x : Fin (N + 1) → Ω} {K' : Type w} [Field K'] [Algebra S K'] {y : Fin (N + 1) → K'}
   {hxy : ∀ i, y i ≠ 0 → x i ≠ 0}
 
-variable (y) in
 
+variable (y) in
 def toChartY (I : Chart x) (h : ∀ i ∈ I.1, y i ≠ 0) : Chart y :=
   ⟨I.1, I.2.1, fun i hi => (mem_support y).mpr (h i hi)⟩
 
@@ -118,8 +123,8 @@ theorem mem_twist_of_eq_zero (Q : LineBundle S x) (Q' : LineBundle S y) {r : Ω 
 
 end RestrictGenerated
 
-open RestrictGenerated in
 
+open RestrictGenerated in
 theorem RestrictGenerated.proof : RestrictGenerated.Statement.{u, w} := by
   intro S _ Ω _ _ N x K' _ _ y hxy pp _ hyp Q Q' r h hgen I
   have hX : ∀ i, (X i : Poly S N) ∈ pp ↔ y i = 0 := fun i => by
@@ -155,14 +160,14 @@ theorem RestrictGenerated.proof : RestrictGenerated.Statement.{u, w} := by
         have hm1 := Q.toSubSystem.mono I₁ I₂ h12 _ (hw (toChartY y I₁ h1))
         have hm2 := hw (toChartY y I₂ h2)
         dsimp only
-        rw [dif_pos h1, dif_pos h2]
+        rw [dite_eq_left h1, dite_eq_left h2]
         exact mem_twist_of_eq_zero Q Q' hyp h (toChartY y I₂ h2) (sub_mem hm1 hm2)
           (by rw [r_sub h (toChartY y I₂ h2) hm1 hm2, hrw, hrw, sub_self])
       · push Not at h2
         obtain ⟨i, hi, hyi⟩ := h2
         exact hQtw I₂ i hi hyi (sub_mem (Q.toSubSystem.mono I₁ I₂ h12 _ (hmem I₁)) (hmem I₂))
     · dsimp only
-      rw [dif_pos hI']
+      rw [dite_eq_left hI']
       exact hrw _
   let J : Chart y := toChartY y I hI
   have hJ : ∀ t ∈ Q'.toSubSystem.sub J, ∃ u ∈ Submodule.span (chartRing S x I)

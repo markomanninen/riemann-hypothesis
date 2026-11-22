@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
-import ReciprocityTheory.AnalyticForms.LeviForms.MixedIntegralInclusionExclusion
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsCompactRWSublevel
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsomorphicLinesPotentialDifference
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBound
+public import ReciprocityTheory.AnalyticForms.LeviForms.MixedIntegralInclusionExclusion
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsCompactRWSublevel
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsomorphicLinesPotentialDifference
+
+@[expose] public section
 
 open MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P GlobalTheory.CompanionTheory.Ar.PB
 open scoped ContDiff
@@ -57,11 +61,24 @@ theorem term_zero (A : FinHolAtlas e X) (Θ : Fin e → LocPot X) (L : LocPot X)
   set δ : ℝ := ε / (2 * (M + 1)) with hδ
   have hδ0 : 0 < δ := by positivity
   have hK := GlobalTheory.CompanionTheory.Ar.Giv.isCompact_rW_sublevel A L s hL hs R
-  have hun := Metric.tendstoUniformlyOn_iff.1 (hg0 _ (fun y hy => hy.1) hK) δ hδ0
+  have hun := Metric.tendstoUniformlyOn_iff.1 (hg0 _ (fun y (hy : y ∈ (bdry s)ᶜ ∩ {y | rW L s y ≤ R}) => hy.1) hK) δ hδ0
   filter_upwards [hu, hg, hun] with t ⟨hu1, hu2, hu3⟩ ⟨hg1, hg2⟩ hun
   have hpot : ∀ i, IsPotential A (Θ i + LocPot.ofFun (u t i)) := fun i =>
     isPotentialAdd A _ _ (hΘ i) (isPotential_ofFun A _ (hu1 i))
-  have hI := ((maMeasure_thm A _ hpot hu2).2 (g t) hg1.measurable).2 (mIntegrableCont A _ hpot _ hg1)
+  have hI : mInt A (fun i => Θ i + LocPot.ofFun (u t i)) (g t) =
+      ∫ y, g t y ∂maMeasure A (fun i => Θ i + LocPot.ofFun (u t i)) := by
+    by_cases hP : Nonempty (ChartPartition A)
+    · have hμ : maMeasure A (fun i => Θ i + LocPot.ofFun (u t i)) =
+          ∑ j, chartMeasure A hP.some (fun i => Θ i + LocPot.ofFun (u t i)) j := by
+        simp [maMeasure, hP, chartMeasure]
+      have hc j := chartMeasure_integrable_integral A hP.some _ hpot hu2 j hg1.measurable
+        (mIntegrableCont A _ hpot _ hg1)
+      rw [hμ, integral_finsetSum_measure fun j _ => (hc j).1]
+      simp only [mInt, dif_pos hP, integralWith]
+      refine Finset.sum_congr rfl fun j _ => ?_
+      rw [(hc j).2]
+      exact integral_congr_ae (Filter.Eventually.of_forall fun y => by ring)
+    · simp [maMeasure, mInt, hP]
   have hnull := bdry_null A L s m W hL hs hsnc _ hpot
   have hmass := (hC C₁ (u t) hC₁ hu1 hu2 hu3 (Real.exp 1) le_rfl).1
   have htail := (hC C₁ (u t) hC₁ hu1 hu2 hu3 R hR2).2

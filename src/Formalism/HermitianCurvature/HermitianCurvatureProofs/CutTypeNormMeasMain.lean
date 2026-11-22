@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasV
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutTypeNormMeasV
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.TNM
 
@@ -47,7 +51,7 @@ theorem cofR_cont {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ 
     exact continuous_const.dotProduct (continuous_const.matrix_mulVec (continuous_id.matrix_mulVec continuous_const))
   show Continuous (fun γ : B.Mat k r =>
     ∑ j, (Zhat k r S.z S.z' γ).adjugate j (Fin.last r) • (γ *ᵥ fvec k r S.z' j))
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   exact ((continuous_apply (Fin.last r)).comp ((continuous_apply j).comp hZ.matrix_adjugate)).smul
     (continuous_id.matrix_mulVec continuous_const)
 
@@ -162,7 +166,7 @@ theorem typeNormMeas_of_typeComm_houseMeas (hTC : TypeComm) (hHM : HouseMeas) : 
       exact not_lt.2 (mul_nonpos_of_nonneg_of_nonpos (Complex.normSq_nonneg _) (by linarith))
     show D.vecV p.T.base p.ν' p.m₀ Y (TBB.bigPt P.r c) = 0
     unfold D.vecV
-    rw [dif_neg]
+    rw [dite_eq_right]
     exact fun h => hG h.2
 
   have hD0 : MeasurableSet D0 := by

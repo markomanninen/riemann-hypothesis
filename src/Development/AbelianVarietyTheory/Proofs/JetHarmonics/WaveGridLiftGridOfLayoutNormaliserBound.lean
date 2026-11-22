@@ -1,26 +1,15 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OnePointBasisFundamentalDomainVolume
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OnePointBasisFundamentalDomainVolume
+
+@[expose] public section
 
 namespace GlobalTheory.GridsFromLayout
 
 open Finset Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P
 
 noncomputable section
-
-theorem cutWord_iff (P : M.Par) (l0 : ℕ) (w : List C.Letter) :
-    KB.CutWord P l0 w ↔ (∀ l ∈ w, I.OnCut P.u P.u' l0 l.2) ∧ w.Pairwise (fun l l' => 2 < |l.2 - l'.2|) := by
-  unfold KB.CutWord
-  rw [List.pairwise_iff_get]
-  constructor
-  · rintro ⟨h1, h2⟩
-    refine ⟨fun l hl => ?_, fun i j hij => h2 i j hij.ne⟩
-    obtain ⟨i, rfl⟩ := List.get_of_mem hl
-    exact h1 i
-  · rintro ⟨h1, h2⟩
-    refine ⟨fun i => h1 _ (List.get_mem _ _), fun i j hij => ?_⟩
-    rcases lt_or_gt_of_ne hij with h | h
-    · exact h2 i j h
-    · rw [abs_sub_comm]; exact h2 j i h
 
 variable {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
   [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
@@ -43,10 +32,15 @@ open Finset in
 private theorem exists_qw_eq_mul_pos_real_of_five_le_dist {S : Type} (q : ℂ → ℂ) (y : ℝ) :
     ∀ u : List (_root_.Formalism.FourierDecayAlt.Wd.Letter ℂ S), (∀ l ∈ u, ∃ t : ℝ, l.pt = t ∧ (l.plus = true → 5 ≤ |y - t|) ∧
       (l.plus = false → 5 ≤ |t - 1 - y|)) →
-      ∃ ρ : ℝ, 0 < ρ ∧ 1 ≤ (5 / 4 : ℝ) ^ u.length * ρ ∧ _root_.Formalism.FourierDecayAlt.Wd.qw q u (y : ℂ) = q y * ρ
-  | [], _ => ⟨1, one_pos, by simp, by simp [_root_.Formalism.FourierDecayAlt.Wd.qw]⟩
-  | l :: w, h => by
-    obtain ⟨ρ, hρ, hρ1, hρeq⟩ := exists_qw_eq_mul_pos_real_of_five_le_dist q y w (fun l' hl' => h l' (List.mem_cons_of_mem _ hl'))
+      ∃ ρ : ℝ, 0 < ρ ∧ 1 ≤ (5 / 4 : ℝ) ^ u.length * ρ ∧ _root_.Formalism.FourierDecayAlt.Wd.qw q u (y : ℂ) = q y * ρ := by
+  intro u
+  induction u with
+  | nil =>
+    intro _
+    exact ⟨1, one_pos, by simp, by simp [_root_.Formalism.FourierDecayAlt.Wd.qw]⟩
+  | cons l w ih =>
+    intro h
+    obtain ⟨ρ, hρ, hρ1, hρeq⟩ := ih (fun l' hl' => h l' (List.mem_cons_of_mem _ hl'))
     obtain ⟨t, ht, hplus, hminus⟩ := h l (List.mem_cons_self)
     cases hl : l.plus
     · obtain ⟨f0, f1⟩ := one_add_inv_pos_and_le_of_five_le_abs (hminus hl)
@@ -86,7 +80,7 @@ private theorem sum_abs_lagCo_le_one_of_five_separated {d : ℕ} (y : Fin (d + 1
     unfold _root_.Formalism.FourierDecayAlt.F7.lagCo
     rw [Finset.abs_prod]
     calc ∏ i ∈ Finset.univ.erase j, |(y j - y i)⁻¹| ≤ ∏ i ∈ Finset.univ.erase j, (1 / 5 : ℝ) :=
-          Finset.prod_le_prod (fun _ _ => abs_nonneg _) (fun i hi => by
+          Finset.prod_le_prod₀ (fun _ _ => abs_nonneg _) (fun i hi => by
             rw [abs_inv, one_div]
             exact inv_anti₀ (by norm_num) (hy j i (Finset.ne_of_mem_erase hi).symm))
       _ = (1 / 5) ^ d := by
@@ -256,7 +250,7 @@ private theorem exists_grid_of_layout_lemma {P : _root_.Formalism.FourierDecayAl
       rw [hys]
       simp only [List.map_ofFn, List.prod_ofFn, Function.comp_def]
       rw [← Finset.prod_mul_distrib, ← Finset.prod_div_distrib]
-      calc _ ≤ √(∏ _a : Fin K, Λ ^ 2) := Real.sqrt_le_sqrt (Finset.prod_le_prod
+      calc _ ≤ √(∏ _a : Fin K, Λ ^ 2) := Real.sqrt_le_sqrt (Finset.prod_le_prod₀
               (fun a _ => (hF _ (hgY a (n a)) (hgB a (n a))).1)
               (fun a _ => (hF _ (hgY a (n a)) (hgB a (n a))).2))
         _ = Λ ^ K := by
@@ -267,15 +261,15 @@ private theorem exists_grid_of_layout_lemma {P : _root_.Formalism.FourierDecayAl
     simp_rw [Finset.abs_prod]
     rw [← Fintype.piFinset_univ, ← Finset.prod_univ_sum (t := fun _ => Finset.univ) (f := fun a j => |_root_.Formalism.FourierDecayAlt.F7.lagCo (grid a) j|)]
     calc (∏ a, ∑ j, |_root_.Formalism.FourierDecayAlt.F7.lagCo (grid a) j|) * Λ ^ K ≤ 1 * Λ ^ K :=
-          mul_le_mul_of_nonneg_right (Finset.prod_le_one
+          mul_le_mul_of_nonneg_right (Finset.prod_le_one₀
             (fun a _ => Finset.sum_nonneg fun _ _ => abs_nonneg _)
             (fun a _ => sum_abs_lagCo_le_one_of_five_separated _ (fun i j hij =>
               hsep _ (hgY a i) _ (hgY a j) (fun h => hij (Prod.mk.inj (hginj a i a j h)).2))))
             (pow_nonneg hΛ K)
       _ = Λ ^ K := one_mul _
 
-open Finset in
 
+open Finset in
 theorem _root_.GlobalTheory.GridsFromLayout.main : ∀ (P : _root_.Formalism.FourierDecayAlt.M.Par) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (p : _root_.Formalism.FourierDecayAlt.KB.Pl P Wp Wq) (nn : ℝ → ℝ) (Y : Finset ℝ) (Λ Λ₀ : ℝ) (K N : ℕ), (∀ y, 0 < nn y) → ((∀ y ∈ Y, ∀ y' ∈ Y, y ≠ y' → 5 ≤ |y - y'|) ∧ N * (2 * P.r + 1) ≤ Y.card ∧ ∀ y ∈ Y, _root_.Formalism.FourierDecayAlt.I.OnCut P.u P.u' p.l0 y ∧ _root_.Formalism.FourierDecayAlt.I.OnCut P.u P.u' p.l0 (y + 1)) → (∀ y ∈ Y, nn y * nn (y + 1) ≤ Λ₀ ^ 2 * (_root_.Formalism.FourierDecayAlt.M.qC P (y : ℂ)).re) → 0 ≤ Λ → Λ₀ ^ 2 * (5 / 4 : ℝ) ^ N ≤ Λ ^ 2 → _root_.Formalism.FourierDecayAlt.P.TBBx5.WaveGrid p nn Y Λ K N ∧ _root_.Formalism.FourierDecayAlt.P.TBBx5.LiftGrid p nn Y Λ K N := by
   intro P Wp Wq _ _ _ _ _ _ p nn Y Λ Λ₀ K N hnn ⟨hsep, hcard, hcut⟩ hq hΛ hΛ₀
   refine ⟨?_, ?_⟩

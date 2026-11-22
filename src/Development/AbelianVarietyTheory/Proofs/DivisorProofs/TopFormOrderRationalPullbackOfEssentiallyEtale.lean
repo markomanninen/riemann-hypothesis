@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldMapCompConstFn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FunctionFieldMapCompConstFn
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy
@@ -28,7 +33,7 @@ theorem formOrd_ratPull (M W : Scheme.{0}) [IsIntegral M] [IsIntegral W] (p : W 
     (hord : ∀ g : W.functionFieldˣ,
       E'.ord (Units.map (functionFieldMap f).toMonoidHom g) = E.ord g)
     (η : RatForms p n) (hη : η ≠ 0) :
-    E'.formOrd (GlobalTheory.EtaleKlt.ratPull p f n η) = E.formOrd η := by
+    (fun ω => @dite ℤ (∃ a, E'.IsFormOrd ω a) (Classical.propDecidable _) (fun h => h.choose) (fun _ => 0)) (GlobalTheory.EtaleKlt.ratPull p f n η) = (fun ω => @dite ℤ (∃ a, E.IsFormOrd ω a) (Classical.propDecidable _) (fun h => h.choose) (fun _ => 0)) η := by
   set φ := functionFieldMap f with hφ
   set ρ := φ.restrict E.ring E'.ring h with hρdef
   obtain ⟨ω, hω, g, hη', hg⟩ := E.isFormOrd_formOrd hn hη
@@ -55,6 +60,7 @@ theorem formOrd_ratPull (M W : Scheme.{0}) [IsIntegral M] [IsIntegral W] (p : W 
     have hinj := (E'.isFreeGen_toRat hω').1
     have : φ (g : W.functionField) = 0 := hinj (by simpa using h0)
     exact (g.map φ.toMonoidHom).ne_zero this
+  change E'.formOrd (ratPull p f n η) = E.formOrd η
   rw [← hg]
   refine DivOver.IsFormOrd.formOrd_eq hne ⟨_, hω', Units.map φ.toMonoidHom g, hpull, hord g⟩
 

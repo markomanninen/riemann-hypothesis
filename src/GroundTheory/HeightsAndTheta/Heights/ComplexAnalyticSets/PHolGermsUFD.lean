@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsUFD
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.WeierstrassPolynomialRing
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermGeneralCoordinates
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermWeierstrassDivision
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermWeierstrassPreparation
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PWeierstrassPolynomialDivision
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParametricCircleIntegralAnalytic
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCircleArgumentPrinciple
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPowerSumsEsymmAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsUFD
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.WeierstrassPolynomialRing
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermGeneralCoordinates
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermWeierstrassDivision
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGermWeierstrassPreparation
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PWeierstrassPolynomialDivision
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PParametricCircleIntegralAnalytic
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCircleArgumentPrinciple
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PPowerSumsEsymmAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -47,9 +52,7 @@ theorem uniqueFactorizationMonoid_holGerms_option (hN : AnalyticGermsNoetherian.
     show ((germPull (fun z : Option σ → ℂ => A z + 0) ((A.analyticAt 0).add analyticAt_const) (by simp) φ : holGerms (0 : Option σ → ℂ)) :
       Germ (𝓝 (0 : Option σ → ℂ)) ℂ) = ↑(f ∘ A)
     rw [germPull_coe _ _ _ φ f hfφ]
-    congr 1
-    funext z
-    simp
+    simp only [add_zero]
   refine (MulEquiv.prime_iff (germAffineEquiv A (0 : Option σ → ℂ))).1 ?_
   rw [hT]
   have hirrA : Irreducible (mkGerm (f ∘ A) hfA) := by
@@ -101,18 +104,6 @@ theorem HolGermsUFD.proof (hP : WeierstrassPreparation.Statement) (hD : Weierstr
   intro σ _ w
   exact (germAffineEquiv (LinearEquiv.funCongrLeft ℂ ℂ (Fintype.equivFin σ)).toContinuousLinearEquiv
     w).symm.toMulEquiv.uniqueFactorizationMonoid (hfin _)
-
-theorem holGerms_uniqueFactorizationMonoid : HolGermsUFD.Statement :=
-  HolGermsUFD.proof
-    (WeierstrassPreparation.proof ParametricCircleIntegralAnalytic.proof CircleArgumentPrinciple.proof
-      PowerSumsEsymmAnalytic.proof)
-    (WeierstrassDivision.proof
-      (WeierstrassPreparation.proof ParametricCircleIntegralAnalytic.proof CircleArgumentPrinciple.proof
-        PowerSumsEsymmAnalytic.proof)
-      (WeierstrassPolynomialDivision.proof ParametricCircleIntegralAnalytic.proof))
-
-instance holGerms_isUFM {σ : Type} [Fintype σ] (w : σ → ℂ) : UniqueFactorizationMonoid (holGerms w) :=
-  holGerms_uniqueFactorizationMonoid σ w
 
 end
 

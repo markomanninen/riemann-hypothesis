@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.CriterionTruncation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DFormMem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalisationLadders.CriterionTruncation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DFormMem
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 open GlobalTheory.CatH (face toLast)
@@ -34,7 +39,7 @@ theorem Pmap_shift {T₀ T T' : C} (ψ : T₀ ⟶ T) (φ : T ⟶ T') :
   have h : (Φ.A.map (Cut.Pmap Q (X := (Pt.Sσ σ).obj T) (Y := (Pt.Sσ σ).obj T') φ)).hom (Q.X T) =
       Q.X T' + (Φ.A.map (Q.j T')).hom (E.a σ 0 φ) :=
     Cut.Pmap_X Q (X := (Pt.Sσ σ).obj T) (Y := (Pt.Sσ σ).obj T') φ
-  rw [map_add, Pmap_j_apply, a_comp, map_add, h]
+  rw [map_add (f := _), Pmap_j_apply, a_comp, map_add (f := _), h]
   abel
 
 def Bv {n : ℕ} (s : ComposableArrows C n) (p : Fin (n + 1)) : Φ.A.obj (Q.P (s.obj (Fin.last n))) :=
@@ -73,7 +78,7 @@ theorem Bv_zero {n : ℕ} (s : ComposableArrows C (n + 1)) :
       s.map (homOfLE (Fin.zero_le (1 : Fin (n + 2)))) ≫ s.map (homOfLE (Fin.le_last (1 : Fin (n + 2)))) := by
     rw [← s.map_comp]; rfl
   unfold Bv ga
-  rw [e, a_comp, map_add]
+  rw [e, a_comp, map_add (f := _)]
   abel
 
 theorem form_cons {j : ℕ} (I : Fin j → Fin d) (x : Φ.A.obj E.D) (s : ComposableArrows C (j + 1)) :
@@ -93,7 +98,8 @@ theorem alt_sum {S S' F : Type*} [CommRing S] [CommRing S'] [FunLike F S S'] [Ri
     (hs : ∀ k : Fin n, b k.succ = B) :
     ∑ i : Fin (n + 1), (-1 : ℤ) ^ (i : ℕ) • (b i * J (t i)) =
       B * J (∑ i : Fin (n + 1), (-1 : ℤ) ^ (i : ℕ) • t i) - J (g * t 0) := by
-  rw [map_sum, Finset.mul_sum, Fin.sum_univ_succ, Fin.sum_univ_succ (f := fun i : Fin (n + 1) => B * J ((-1 : ℤ) ^ (i : ℕ) • t i))]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, Fin.sum_univ_succ, Fin.sum_univ_succ (f := fun i : Fin (n + 1) => B * J ((-1 : ℤ) ^ (i : ℕ) • t i))]
   have h : ∀ k : Fin n, (-1 : ℤ) ^ (k.succ : ℕ) • (b k.succ * J (t k.succ)) = B * J ((-1 : ℤ) ^ (k.succ : ℕ) • t k.succ) := by
     intro k
     rw [hs, map_zsmul, mul_smul_comm]
@@ -118,7 +124,8 @@ theorem gr_delta {R : Type} [CommRing R] {C : Type 1} [Category.{0} C] {Φ : PDF
     change Subtype.val (∑ i : Fin (j + 2), (-1 : ℤ) ^ (i : ℕ) •
       ((Cut.Pσ Q σ ⋙ Cut.U E ⋙ gr Fil r).map (toLast i s)).hom (y (face i s)) :
       sqM (Fil r) (Fil (r + 1)) (Q.P (s.obj (Fin.last (j + 1))))) = _
-    rw [AddSubmonoidClass.coe_finsetSum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AddSubmonoidClass.coe_finsetSum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul]
     refine Eq.trans ?_ (congrArg (fun z => (-1 : ℤ) ^ (i : ℕ) • z) (term_val Q E σ I x y hy s i))

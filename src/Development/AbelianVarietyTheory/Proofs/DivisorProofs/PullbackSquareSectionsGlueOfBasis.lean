@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Glues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.Glues
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 
 set_option autoImplicit false

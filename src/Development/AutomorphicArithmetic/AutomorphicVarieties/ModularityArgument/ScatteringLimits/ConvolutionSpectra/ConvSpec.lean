@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.AeIntegral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
-import GroundTheory.AutomorphicForms.TraceNormComp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.AeIntegral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+public import GroundTheory.AutomorphicForms.TraceNormComp
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic PositivityTheory.Rg.Tf.IntegralApplyAeEq Set Filter Topology UpperTheory.V.Z.IntegralApplyAeEq
 open scoped InnerProductSpace FourierTransform ComplexConjugate
@@ -22,7 +26,7 @@ theorem UpperTheory.V.Z.IntegralApplyAeEq.convSpec :
   have hk1 : Integrable κ := hk.1.integrable_of_hasCompactSupport hk.2
   let A : L V →ₗ[ℂ] L W :=
     { toFun := fun u => ∫ t, (κ t).compLpL 2 volume (sh V t u)
-      map_add' := fun x y => by simp only [map_add]; exact integral_add (hi x) (hi y)
+      map_add' := fun x y => by simp only [map_add (f := _)]; exact integral_add (hi x) (hi y)
       map_smul' := fun a x => by simp only [map_smul, RingHom.id_apply]; exact integral_smul a _ }
   have hb : ∀ u, ‖A u‖ ≤ (∫ t, ‖κ t‖) * ‖u‖ := fun u => by
     rw [← integral_mul_const]

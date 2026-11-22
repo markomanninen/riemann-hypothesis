@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEigenSysOfHeckeLin
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitarySphericalSatakeOfUnitarisableHasSatake
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalCoefficientElementarySymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEigenSysOfHeckeLin
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsUnitarySphericalSatakeOfUnitarisableHasSatake
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHeckeOpFullDualLab
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalCoefficientElementarySymm
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -79,16 +84,16 @@ theorem heckeVec_chart {V : HSp D} {v : HeightOneSpectrum (𝓞 D.host.F)} {w : 
     (r2 : ∀ x, (∃ k₁ ∈ Kv V v, ∃ k₂ ∈ Kv V v, x = k₁ * e.symm t * k₂) → ∃! γ, γ ∈ R0 ∧ γ⁻¹ * x ∈ Kv V v)
     {M : Type} [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (x : M)
     (hx : ∀ k ∈ Kv V v, π (embV V v k) x = x) :
-    heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w V.rank) (Formalism.UG.dosetInd ℂ (KGL w V.rank) t) x =
+    heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w (n := V.rank)) (Formalism.UG.dosetInd ℂ (KGL w (n := V.rank)) t) x =
       ∑ γ ∈ R0, π (embV V v γ) x := by
   classical
-  have hK : ∀ y, y ∈ (KGL w V.rank : Set (GL (Fin V.rank) (w.adicCompletion D.host.E))) ↔
+  have hK : ∀ y, y ∈ (KGL w (n := V.rank) : Set (GL (Fin V.rank) (w.adicCompletion D.host.E))) ↔
       ∃ k ∈ Kv V v, e.toMonoidHom k = y := fun y =>
     ⟨fun hy => ⟨e.symm y, (he.2 _).2 (by simpa using hy), by simp⟩, by rintro ⟨k, hk, rfl⟩; exact (he.2 k).1 hk⟩
   obtain ⟨s1, s2⟩ := rep_image e.toMonoidHom e.injective hK r1 r2
   have ht : e.toMonoidHom (e.symm t) = t := by simp
   rw [ht] at s1 s2
-  have hfix : x ∈ fixed ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w V.rank) :=
+  have hfix : x ∈ fixed ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w (n := V.rank)) :=
     (mem_fixed_comp_symm e he.2).2 (GlobalTheory.LGrp.mem_fixed.2 fun k hk => hx k hk)
   rw [heckeVec_dosetInd hfix (R := R0.image e.toMonoidHom) (fun γ hγ => DoubleCoset.mem_doubleCoset.2 (s1 γ hγ))
     fun y hy => s2 y (DoubleCoset.mem_doubleCoset.1 hy),
@@ -155,7 +160,7 @@ noncomputable section
 
 namespace GlobalTheory.ChainOnto.LabChart
 
-theorem split_label_ops : ∀ (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (w : HeightOneSpectrum (𝓞 D.host.E)) (h : w.under (𝓞 D.host.F) = v), IsSplit (E := D.host.E) v → ∀ e, IsSplitChart D.sp.cm.sig V.gram (frameLat V) h e → ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ Kv V v, π (embV V v k) u = u) → ∀ ϖ, IsUnifV D.host.E w ϖ → ∀ k ≤ V.rank, opOf π w (Finsupp.single (splitLab V.rank k) 1) u = heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w V.rank) (fun g => Tj ℂ V.rank (Ov D.host.E w) ϖ k g⁻¹) u ∧ opOf π w (Finsupp.single (dualLab (splitLab V.rank k)) 1) u = heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w V.rank) (Tj ℂ V.rank (Ov D.host.E w) ϖ k) u := by
+theorem split_label_ops : ∀ (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (w : HeightOneSpectrum (𝓞 D.host.E)) (h : w.under (𝓞 D.host.F) = v), IsSplit (E := D.host.E) v → ∀ e, IsSplitChart D.sp.cm.sig V.gram (frameLat V) h e → ∀ (M : Type) [AddCommGroup M] [Module ℂ M] (π : GA D V →* Module.End ℂ M) (u : M), (∀ k ∈ Kv V v, π (embV V v k) u = u) → ∀ ϖ, IsUnifV D.host.E w ϖ → ∀ k ≤ V.rank, opOf π w (Finsupp.single (splitLab V.rank k) 1) u = heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w (n := V.rank)) (fun g => Tj ℂ V.rank (Ov D.host.E w) ϖ k g⁻¹) u ∧ opOf π w (Finsupp.single (dualLab (splitLab V.rank k)) 1) u = heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w (n := V.rank)) (Tj ℂ V.rank (Ov D.host.E w) ϖ k) u := by
   intro D V v w h _ e he M _ _ π x hx ϖ hϖ k hk
   classical
   obtain ⟨a, ha, hea⟩ := he.1
@@ -166,7 +171,7 @@ theorem split_label_ops : ∀ (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 
       (uu : Fin V.rank → w.adicCompletion D.host.E), Antitone d → (∀ i, Valued.v (uu i) = WithZero.exp (-d i)) →
       t.1 = Matrix.diagonal uu →
       opOf π w (Finsupp.single (List.ofFn d) 1) x =
-        heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w V.rank) (Formalism.UG.dosetInd ℂ (KGL w V.rank) t) x := by
+        heckeVec ((π.comp (embV V v)).comp e.symm.toMonoidHom) (KGL w (n := V.rank)) (Formalism.UG.dosetInd ℂ (KGL w (n := V.rank)) t) x := by
     intro d t uu hd hu ht
     obtain ⟨R0, r1, r2⟩ := GlobalTheory.HeckeDual.exists_rep _ (isOpen_stabLoc D.sp.cm.sig V.gram (frameLat V) v)
       (isCompact_stabLoc D.sp.cm.sig V.gram (frameLat V) v) (e.symm t)
@@ -175,7 +180,7 @@ theorem split_label_ops : ∀ (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 
     rw [opOf_eq_sum_rep h ha hd hu hg r1 r2 π x hx, heckeVec_chart he t r1 r2 π x hx]
   set n := V.rank with hn
   set tJ := Matrix.GeneralLinearGroup.mkOfDetNeZero (Formalism.UG.diagJ n ϖ k) (GlobalTheory.SatHecke.diagJ_det_ne hϖ k) with htJ
-  have hTj : Tj ℂ n (Ov D.host.E w) ϖ k = Formalism.UG.dosetInd ℂ (KGL w n) tJ := GlobalTheory.SatHecke.Tj_eq_dosetInd hϖ k
+  have hTj : Tj ℂ n (Ov D.host.E w) ϖ k = Formalism.UG.dosetInd ℂ (KGL w (n := n)) tJ := GlobalTheory.SatHecke.Tj_eq_dosetInd hϖ k
 
   have hJ := key (fun i => if (i : ℕ) < k then 1 else 0) tJ (fun i => if (i : ℕ) < k then ϖ else 1)
     (fun i j hij => by
@@ -220,7 +225,7 @@ theorem split_label_ops : ∀ (D : D7) (V : HSp D) (v : HeightOneSpectrum (𝓞 
     by_cases h1 : (i : ℕ) < k
     · rw [if_pos h1, if_pos (e1.2 h1), mul_inv_cancel₀ hϖ0]
     · rw [if_neg h1, if_neg (mt e1.1 h1), mul_one]
-  have hTinv : (fun g => Tj ℂ n (Ov D.host.E w) ϖ k g⁻¹) = Formalism.UG.dosetInd ℂ (KGL w n) tS := by
+  have hTinv : (fun g => Tj ℂ n (Ov D.host.E w) ϖ k g⁻¹) = Formalism.UG.dosetInd ℂ (KGL w (n := n)) tS := by
     rw [hTj, GlobalTheory.ChainOnto.dosetInd_comp_inv, hinv, dosetInd_mul (revGL_mem _) (revGL_mem _)]
   refine ⟨?_, ?_⟩
   · rw [← hlS, hS, hTinv]

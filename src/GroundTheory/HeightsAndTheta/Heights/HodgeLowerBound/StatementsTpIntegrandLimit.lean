@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,11 +26,5 @@ def TpIntegrandLimit.Statement : Prop :=
         ∀ z ∈ mcPts (mCoordIdeal D.y), z ∉ N →
           Tendsto (fun t' => X.wSt B p q t t' z) (𝓝[>] 0)
             (𝓝 (cuspCorr X.H X.Cd z - (Real.log (X.S.ref.h z) + X.S.regWeight t (X.M.proj z))))
-
-namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
-
-end Line
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

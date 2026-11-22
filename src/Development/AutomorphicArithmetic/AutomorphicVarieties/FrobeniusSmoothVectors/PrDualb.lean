@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -32,7 +36,7 @@ theorem UpperTheory.V.Fr.pr_dualb :
     { toFun := fun y => residue O (a y u)
       map_add' := fun x y => ?_
       map_smul' := fun c x => ?_ }, fun y => ⟨a y, fun u => rfl, ha y⟩⟩
-  · rw [← map_add]
+  · rw [← map_add (f := _)]
     refine huniq (a (x + y)) (fun u => a x u + a y u) ?_ u
     simp only [add_smul, Finset.sum_add_distrib]
     rw [← ha, ← ha, ← ha]

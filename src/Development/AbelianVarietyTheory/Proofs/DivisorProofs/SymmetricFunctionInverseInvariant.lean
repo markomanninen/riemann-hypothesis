@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -31,7 +35,7 @@ theorem eq_of_perm_inv_invariant_of_multiset_eq :
     · obtain ⟨j, -, hj⟩ := Multiset.mem_map.1 h1
       exact hα j (inv_eq_zero.1 hj)
   have h2 := congrArg (Multiset.map (fun x : ℂ => x + x⁻¹)) h
-  simp only [Multiset.map_add, Multiset.map_map, Function.comp_def, inv_inv] at h2
+  simp only [Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, inv_inv] at h2
   have e1 : ∀ γ : Fin m → ℂ, (fun i => (γ i)⁻¹ + γ i) = fun i => γ i + (γ i)⁻¹ :=
     fun γ => funext fun i => add_comm _ _
   rw [e1 α, e1 α'] at h2

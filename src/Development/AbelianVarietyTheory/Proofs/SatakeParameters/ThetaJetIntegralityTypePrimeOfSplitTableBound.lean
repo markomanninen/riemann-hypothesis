@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetSplitAmb
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemRatIdxOfJetsRatDeg
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetLossOfFamilyFacts
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumJetsTranslate
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TypePrimeBadPrimesLevelsHypothesesProofStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlaceOverPInducedByAlgebraicPadicEmbeddingStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlaceExtendsToIso
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffInLetters
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedFamilyNonzeroThetaVectorsNumberField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernelConstantExponentsFinite
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NotDvdDiscrHost
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.EntryG
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.JetSplitAmb
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemRatIdxOfJetsRatDeg
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.JetLossOfFamilyFacts
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DatumJetsTranslate
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TypePrimeBadPrimesLevelsHypothesesProofStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlaceOverPInducedByAlgebraicPadicEmbeddingStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlaceExtendsToIso
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.NormPadicEmbeddingLeOneOfMemInverseHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffInLetters
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalisedFamilyNonzeroThetaVectorsNumberField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernelConstantExponentsFinite
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NotDvdDiscrHost
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.EntryG
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.AtG
 open GlobalTheory.IndefiniteRowSideFullHecke.BadPrimesPeriodBound (recFields recPrimes recSeam HostTie AnTie badS)
@@ -202,7 +206,7 @@ theorem isQInt_piG {D : D7} (EX : ErrX D) (i : Fin 2) :
   rw [hab, hc] at hint hn
   have e : (a : D.host.E) + b * D.host.sqrtMinusD + (a - b * D.host.sqrtMinusD) = algebraMap ℚ D.host.E (2 * a) := by
     simp; ring
-  rw [e, isIntegral_algebraMap_iff (algebraMap ℚ D.host.E).injective] at hint
+  rw [e, isIntegral_algebraMap_iff ] at hint
   obtain ⟨t, ht⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
   have hn' : a ^ 2 + D.host.d * b ^ 2 = D.host.g i := by
     have : (a : D.host.E) ^ 2 + D.host.d * b ^ 2 = D.host.g i := by
@@ -212,7 +216,7 @@ theorem isQInt_piG {D : D7} (EX : ErrX D) (i : Fin 2) :
   obtain ⟨m, n, hm, hn⟩ := half_coords hh.2.1 (by have := hh.2.2.2.1; omega) (t := t) (by simpa using ht.symm) hn'
   have hφ : D.host.φ₀ D.host.sqrtMinusD = Complex.I * (Real.sqrt D.host.d : ℂ) := D.host.φ₀_mem
   refine ⟨m, n, ?_⟩
-  rw [hab, map_add, map_mul, map_ratCast, map_ratCast, hφ, hm, hn, Formalism.L2.Th1.CM.omegaK]
+  rw [hab, map_add (f := _), map_mul, map_ratCast, map_ratCast, hφ, hm, hn, Formalism.L2.Th1.CM.omegaK]
   push_cast
   ring
 
@@ -247,7 +251,7 @@ theorem jetLossAll_of_jetSplitAmb : JetSplitAmb → ∀ (D : D7) (EX : ErrX D)
   have hdisc := GlobalTheory.GoodDepth.not_dvd_discr_host D.R D.host _ hp (UpperTheory.Ram.g_notMem_small D i) hpq fun h => hpd h.dvd
   obtain ⟨lam, hlam⟩ := GlobalTheory.T.place_over_p_induced_by_algebraic_padic_embedding _ (recSeam D).σ₀ (D.host.g i) w hw
   obtain ⟨ι, hι⟩ := GlobalTheory.ThLoc.place_extends_to_iso _ lam
-  have hιC : ∀ x ∈ TaylorLogMetric.Qbar, TaylorLogMetric.lamC lam x = ι x := fun x hx => by rw [TaylorLogMetric.lamC, dif_pos hx]; exact (hι ⟨x, hx⟩).symm
+  have hιC : ∀ x ∈ TaylorLogMetric.Qbar, TaylorLogMetric.lamC lam x = ι x := fun x hx => by rw [TaylorLogMetric.lamC, dite_eq_left hx]; exact (hι ⟨x, hx⟩).symm
   have hval : ∀ k : D.what₂.LL, ‖ι ((recSeam D).σ₀ k)‖ ≤ 1 → w.valuation _ k ≤ 1 := fun k hk => by
     have hq : (recSeam D).σ₀ k ∈ TaylorLogMetric.Qbar := by
       rw [mem_algebraicClosure_iff]

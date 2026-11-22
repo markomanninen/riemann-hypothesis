@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BlockDegOfScale
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.BlockDegOfScale
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GoodPrimesProperties
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+
+@[expose] public section
 
 theorem ReciprocityTheory.ChartRestriction.G.T0.prod_zpow_eq_zpow_sum_height {M : Type*} [CommGroupWithZero M] {α : Type*}
     (s : Finset α) (f : α → ℤ) (a : M) (ha : a ≠ 0) :
@@ -79,7 +83,8 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
             from fun A F => Fin.insertNth_apply_same _ _ _]
         split_ifs with hi0
         · exact hTin _ (hib.symm.trans hi0)
-        · simp only [map_neg, map_sum, map_mul, hTC, fun k => hTin (Sum.inr (i, k)) hib, mul_neg,
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp only [map_neg, map_sum, map_mul, hTC, fun k => hTin (Sum.inr (i, k)) hib, mul_neg,
             Finset.mul_sum, mul_assoc]
       · rw [show ∀ (A : MvPolynomial (SVar d.D d.N) (Ω c)) (F : Fin d.N → MvPolynomial (SVar d.D d.N) (Ω c)),
             Fin.succAboveCases (α := fun _ => MvPolynomial (SVar d.D d.N) (Ω c)) (d.jc c) A F
@@ -102,7 +107,8 @@ private theorem tauFG_sH_X (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) (v : TVar d.D 
             from fun A F => Fin.insertNth_apply_same _ _ _]
         split_ifs with hi0
         · exact hTout _ (fun hb0 => hib (hi0.trans hb0.symm))
-        · simp only [map_neg, map_sum, map_mul, hTC, fun k => hTout (Sum.inr (i, k)) hib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp only [map_neg, map_sum, map_mul, hTC, fun k => hTout (Sum.inr (i, k)) hib]
       · rw [show ∀ (A : MvPolynomial (SVar d.D d.N) (Ω c)) (F : Fin d.N → MvPolynomial (SVar d.D d.N) (Ω c)),
             Fin.succAboveCases (α := fun _ => MvPolynomial (SVar d.D d.N) (Ω c)) (d.jc c) A F
               ((d.jc c).succAbove k) = F k
@@ -216,7 +222,8 @@ theorem tauFG_w0rat (c : ι) (b : Fin (d.D + 1)) (u : Kˣ) :
     exact (tauPG (Ω := Ω c) (D := d.D) (N := d.N) b u).commutes a
   have hsC : d.sH c (C (u : K)) = algebraMap K _ (u : K) := (d.sH c).commutes _
   unfold rationalBaseRow
-  rw [map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, tauFG_sH_X d c b u (0, j), hΩ]
   by_cases hb : b = 0
@@ -372,14 +379,15 @@ theorem F_degrees (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp K d.D d.N)
     (∀ s ∈ F.support, ∑ j, s (0, j) = d.delc c) ∧
       ∀ b : Fin (d.D + 1), b ≠ 0 → ∀ s ∈ F.support, ∑ j, s (b, j) = (d.aMM h c).toNat := by
   have hco : ∀ (b : Fin (d.D + 1)) (u : Kˣ) (s : TVar d.D d.N →₀ ℕ),
-      coeff s F * (u : K) ^ (∑ j, s (b, j)) =
-        (u : K) ^ (if b = 0 then (d.delc c : ℤ) else d.aMM h c) * coeff s F := by
+      AddMonoidAlgebra.coeff F s * (u : K) ^ (∑ j, s (b, j)) =
+        (u : K) ^ (if b = 0 then (d.delc c : ℤ) else d.aMM h c) * AddMonoidAlgebra.coeff F s := by
     intro b u s
-    have e := congrArg (coeff s) (sigP_F d hd h c F hF b u)
+    have e := congrArg (AddMonoidAlgebra.coeff · s) (sigP_F d hd h c F hF b u)
     rw [coeff_C_mul] at e
     rw [← e]
     conv_rhs => rw [F.as_sum]
-    rw [map_sum, coeff_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, coeff_sum]
     simp only [sigP_monomial, coeff_monomial]
     rw [Finset.sum_ite_eq']
     split_ifs with hs

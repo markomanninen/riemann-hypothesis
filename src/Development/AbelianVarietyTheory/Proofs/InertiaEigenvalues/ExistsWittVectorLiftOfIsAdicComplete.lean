@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.DeltaStructureOfWittLengthTwoSection
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
@@ -164,7 +168,7 @@ theorem exists_wittVector_lift_of_isAdicComplete :
   have h1 := Ideal.Quotient.eq.mp h0
   rw [pow_one] at h1
   rw [Ideal.Quotient.eq.mpr h1, WittLift.ghost_eq, Finset.sum_range_succ, Finset.sum_range_one]
-  simp only [pow_zero, one_mul, Nat.sub_zero, pow_one, Nat.sub_self, map_add, map_mul, map_pow]
+  simp only [pow_zero, one_mul, Nat.sub_zero, pow_one, Nat.sub_self, map_add (f := _), map_mul, map_pow]
   rw [Ideal.Quotient.eq_zero_iff_mem.mpr hlJ, zero_mul, add_zero, WittLift.mk_yh_coeff, ← map_pow,
     WittLift.symm_iter_pow, WittLift.symm_iter_zero]
 

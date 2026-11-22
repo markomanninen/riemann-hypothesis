@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.LatticePoisson
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.LatticePoisson
+
+@[expose] public section
 
 open Module
 open scoped RealInnerProductSpace FourierTransform SchwartzMap
@@ -88,7 +92,7 @@ theorem periodisation_hasSum_fourier_bilinForm {V : Type} [NormedAddCommGroup V]
     have hper : GroundTheory.Global.LatticePoisson.per L g (T.symm x) = ∑' l : Λ, f (x + l) := by
       rw [GroundTheory.Global.LatticePoisson.per, ← e'.tsum_eq]
       refine tsum_congr fun l => ?_
-      rw [hg, map_add, T.apply_symm_apply]
+      rw [hg, map_add (f := _), T.apply_symm_apply]
       rfl
     rw [hper] at hs
     convert hs using 1

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistHW
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistWt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistPad
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistHW
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistWt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.ExistPad
+
+@[expose] public section
 
 open MvPolynomial FockH1Action PI.FJM
 
@@ -53,31 +57,33 @@ theorem monomialRightWeight_eq_weight_sub (m : Ln p q r s →₀ ℕ) (y : Ix r 
   · simp
 
 theorem leftAction_diagonal_of (hW : FormWt1) (P : Pol p q r s) (x : Ix p q) (W : ℤ)
-    (h : ∀ m, coeff m P ≠ 0 → wt1 m x = W) :
+    (h : ∀ m, AddMonoidAlgebra.coeff P m ≠ 0 → wt1 m x = W) :
     fockAct1 p q r s (Eab x x) P = ((((W : ℚ) + sh1 p q r s x : ℚ)) : ℂ) • P := by
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   apply Finset.sum_congr rfl
   intro m hm
-  have e : monomial m (coeff m P) = coeff m P • monomial m (1 : ℂ) := by
+  have e : monomial m (AddMonoidAlgebra.coeff P m) = AddMonoidAlgebra.coeff P m • monomial m (1 : ℂ) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [e, map_smul, hW, h m (mem_support_iff.1 hm), smul_comm]
 
 theorem rightAction_diagonal_of (hW : FormWt2) (P : Pol p q r s) (y : Ix r s) (W : ℤ)
-    (h : ∀ m, coeff m P ≠ 0 → wt2 m y = W) :
+    (h : ∀ m, AddMonoidAlgebra.coeff P m ≠ 0 → wt2 m y = W) :
     fockAct2 p q r s (Eab y y) P = ((((W : ℚ) + sh2 p q r s y : ℚ)) : ℂ) • P := by
   conv_lhs => rw [P.as_sum]
   conv_rhs => rw [P.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   apply Finset.sum_congr rfl
   intro m hm
-  have e : monomial m (coeff m P) = coeff m P • monomial m (1 : ℂ) := by
+  have e : monomial m (AddMonoidAlgebra.coeff P m) = AddMonoidAlgebra.coeff P m • monomial m (1 : ℂ) := by
     rw [smul_monomial, smul_eq_mul, mul_one]
   rw [e, map_smul, hW, h m (mem_support_iff.1 hm), smul_comm]
 
 theorem mem_wtSub1 (hW : FormWt1) (P : Pol p q r s) (μ : Ix p q → ℚ)
-    (h : ∀ x, ∃ W : ℤ, (W : ℚ) + sh1 p q r s x = μ x ∧ ∀ m, coeff m P ≠ 0 → wt1 m x = W) :
+    (h : ∀ x, ∃ W : ℤ, (W : ℚ) + sh1 p q r s x = μ x ∧ ∀ m, AddMonoidAlgebra.coeff P m ≠ 0 → wt1 m x = W) :
     P ∈ wtSub (fockAct1 p q r s) μ := by
   simp only [wtSub, Submodule.mem_iInf, LinearMap.mem_ker]
   intro x
@@ -86,7 +92,7 @@ theorem mem_wtSub1 (hW : FormWt1) (P : Pol p q r s) (μ : Ix p q → ℚ)
   simp
 
 theorem mem_wtSub2 (hW : FormWt2) (P : Pol p q r s) (μ : Ix r s → ℚ)
-    (h : ∀ y, ∃ W : ℤ, (W : ℚ) + sh2 p q r s y = μ y ∧ ∀ m, coeff m P ≠ 0 → wt2 m y = W) :
+    (h : ∀ y, ∃ W : ℤ, (W : ℚ) + sh2 p q r s y = μ y ∧ ∀ m, AddMonoidAlgebra.coeff P m ≠ 0 → wt2 m y = W) :
     P ∈ wtSub (fockAct2 p q r s) μ := by
   simp only [wtSub, Submodule.mem_iInf, LinearMap.mem_ker]
   intro y
@@ -118,7 +124,7 @@ theorem hwVec_hom (w : Ln p q r s → ℕ) (a b c d : List ℤ) (d1 d2 d3 d4 : �
 
 theorem wtVec1 (a b c d : List ℤ) (hd : ShapeData p q r s a b c d) (x : Ix p q) :
     ∃ W : ℤ, (W : ℚ) + sh1 p q r s x = wtOf1 p q r s a b c d x ∧
-      ∀ m, coeff m (hwVec p q r s a b c d) ≠ 0 → wt1 m x = W := by
+      ∀ m, AddMonoidAlgebra.coeff (hwVec p q r s a b c d) m ≠ 0 → wt1 m x = W := by
   obtain ⟨ha, hc, hb, hdd, hpa, hpb, hpc, hpd, h1, h2, h3, h4⟩ := hd
   cases x with
   | inl i₀ =>
@@ -166,7 +172,7 @@ theorem wtVec1 (a b c d : List ℤ) (hd : ShapeData p q r s a b c d) (x : Ix p q
 
 theorem wtVec2 (a b c d : List ℤ) (hd : ShapeData p q r s a b c d) (y : Ix r s) :
     ∃ W : ℤ, (W : ℚ) + sh2 p q r s y = wtOf2 p q r s a b c d y ∧
-      ∀ m, coeff m (hwVec p q r s a b c d) ≠ 0 → wt2 m y = W := by
+      ∀ m, AddMonoidAlgebra.coeff (hwVec p q r s a b c d) m ≠ 0 → wt2 m y = W := by
   obtain ⟨ha, hc, hb, hdd, hpa, hpb, hpc, hpd, h1, h2, h3, h4⟩ := hd
   cases y with
   | inl k₀ =>

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataRows
-import Formalism.LocalRingCardinality.DataArith
-import Formalism.LocalRingCardinality.DataForms
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataRows
+public import Formalism.LocalRingCardinality.DataArith
+public import Formalism.LocalRingCardinality.DataForms
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.ExistsIdealDenominator.exists_denI :
     ∀ {D : Formalism.BasicNotions.D7} (u : D.what₂.Word) (i : ℕ) (x : ((D.fm u).lat i).V),

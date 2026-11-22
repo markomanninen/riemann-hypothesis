@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsDerAt0
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpairGeo
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsDerAt0
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpairGeo
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory TensorProduct
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT
@@ -32,7 +36,7 @@ theorem tens_of_bc {R RC C N : Type} [CommRing R] [CommRing RC] [Field C] [Algeb
     induction x using TensorProduct.induction_on with
     | zero =>
       convert M.zero_mem using 1
-      funext y
+      ext y
       simp
     | tmul r a =>
       have e1 : r ⊗ₜ[R] a = r • ((1 : RC) ⊗ₜ[R] a) := by
@@ -67,11 +71,11 @@ theorem tens_of_bc {R RC C N : Type} [CommRing R] [CommRing RC] [Field C] [Algeb
     simp
   | zero =>
     convert (GR.tens M M).zero_mem using 1
-    funext z
+    ext z
     simp
   | add g₁ g₂ _ _ h₁ h₂ =>
     convert (GR.tens M M).add_mem h₁ h₂ using 1
-    funext z
+    ext z
     simp
   | smul r g _ h =>
     convert (GR.tens M M).smul_mem r h using 1

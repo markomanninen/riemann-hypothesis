@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EvensBeforePairwise
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.DvDegOtherMono
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.SymbolRealisableBound
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EvensBeforePairwise
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.DvDegOtherMono
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,16 +1,21 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Finite
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
@@ -46,8 +51,12 @@ theorem rootsOfUnity_mem_of_gsOpenSubgroup_le {L : FiniteSubfield} [Fact (K ≤ 
 theorem nonempty_addEquiv_gsRoots_of_places [NeZero n] (hnS : ∀ v ∉ S, ((n : ℕ) : 𝓞 K.1) ∉ v.asIdeal) :
     Nonempty (gsRoots S n ≃+ ZMod n) := by
   have hcard : Nat.card (Additive (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S))) = Nat.card (ZMod n) := by
-    rw [Nat.card_congr Additive.toMul, card_rootsOfUnity_maxUnramifiedOutside K S n (NeZero.ne n) hnS,
-      Nat.card_zmod]
+    obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot ℚ̄ n
+    have hmem := mem_maxUnramifiedOutside_of_pow_eq_one S (NeZero.ne n) hnS hζ.pow_eq_one
+    have hprim : IsPrimitiveRoot (⟨ζ, hmem⟩ : maxUnramifiedOutside K.1 ℚ̄ S) n :=
+      IsPrimitiveRoot.of_map_of_injective (f := (maxUnramifiedOutside K.1 ℚ̄ S).val) hζ
+        Subtype.val_injective
+    rw [Nat.card_congr Additive.toMul, hprim.card_rootsOfUnity, Nat.card_zmod]
   have : IsAddCyclic (Additive (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S))) := inferInstance
   exact ⟨addEquivOfAddCyclicCardEq hcard⟩
 

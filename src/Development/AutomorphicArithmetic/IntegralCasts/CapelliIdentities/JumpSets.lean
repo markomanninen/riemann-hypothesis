@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped IntermediateField TensorProduct Matrix Pointwise NumberField Topology ContDiff NNReal ENNReal Polynomial DirectSum BigOperators InnerProductSpace Manifold
 open scoped Classical
@@ -23,16 +27,6 @@ noncomputable def UpperTheory.Reformulated.B.JumpSetsAlt.F1.{u_1} :
 noncomputable def UpperTheory.Reformulated.B.JumpSetsAlt.hostE.{u_1} :
     {L : Type u_1} → [inst : Field L] → [inst_1 : Algebra ℚ L] → L → L → L → IntermediateField ℚ L :=
     fun {L : Type u_1} [Field L] [Algebra ℚ L] (ζ a b : L) ↦ UpperTheory.Reformulated.B.JumpSetsAlt.E0 a b ⊔ UpperTheory.Reformulated.B.JumpSetsAlt.F1 ζ
-
-theorem UpperTheory.Reformulated.B.JumpSetsAlt.aux6 :
-    ∀ (L : Type) [inst : Field L] [inst_1 : NumberField L] (ζ a b : L), CharZero ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostE ζ a b) := by
-  intro L _ _ ζ a b
-  infer_instance
-
-theorem UpperTheory.Reformulated.B.JumpSetsAlt.aux7 :
-    ∀ (L : Type) [inst : Field L] [inst_1 : NumberField L], IsScalarTower ℚ ℚ L := by
-  intro L _ _
-  infer_instance
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.JumpSetsAlt.G0 :
     Type :=
@@ -253,7 +247,7 @@ theorem UpperTheory.Reformulated.B.JumpSetsAlt.hostReal_of :
     have hd : (d : L) ≠ 0 := Nat.cast_ne_zero.mpr hqd.2.1.ne_zero
     exact hd (by simpa using h)
   refine ⟨?_, fun x => ⟨?_, ?_⟩⟩
-  · have h := Module.finrank_mul_finrank ℚ ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostF ζ a b) ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostE ζ a b)
+  · have h := (letI : Module.Free ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostF ζ a b) ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostE ζ a b) := Module.Free.of_divisionRing _ _; Module.finrank_mul_finrank ℚ ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostF ζ a b) ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostE ζ a b))
     rw [Algebra.IsQuadraticExtension.finrank_eq_two ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostF ζ a b) ↥(UpperTheory.Reformulated.B.JumpSetsAlt.hostE ζ a b),
       hfin, show 2 ^ (e + 2) = 2 ^ (e + 1) * 2 from pow_succ 2 (e + 1)] at h
     exact Nat.eq_of_mul_eq_mul_right two_pos h

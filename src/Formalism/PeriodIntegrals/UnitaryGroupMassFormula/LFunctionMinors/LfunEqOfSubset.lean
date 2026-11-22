@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WwMain
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WwMain
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LFunctionMinors.FintypeColChoice
+
+@[expose] public section
 
 open MvPolynomial Finset
 
@@ -13,7 +17,7 @@ open PI.WwMain PI.WwMain.KM
 theorem Lfun_eq_of_subset {Lt : Type} (l : ℕ) [Fact l.Prime] (N0 N1 : ℕ)
     (Th : MvPowerSeries (Lt × Fin N0 × Fin N1) ℂ_[l]) (P : MvPolynomial (Lt × Fin N0 × Fin N1) ℂ_[l])
     (s : Finset ((Lt × Fin N0 × Fin N1) →₀ ℕ)) (hs : P.support ⊆ s) :
-    Lfun l N0 N1 Th P = ∑ α ∈ s, coeff α P * wt l N0 N1 Th α := by
+    Lfun l N0 N1 Th P = ∑ α ∈ s, AddMonoidAlgebra.coeff P α * wt l N0 N1 Th α := by
   unfold Lfun
   exact Finset.sum_subset hs (fun α _ h => by
     rw [MvPolynomial.mem_support_iff, not_not] at h
@@ -65,7 +69,8 @@ theorem lH : LH := by
   have hm : ∀ (a : Lt × ℕ × Fin N0 →₀ ℕ) (c : ℂ_[l]),
       ph (MvPolynomial.monomial a c) = c * ph (MvPolynomial.monomial a 1) := fun a c => by
     rw [← smul_eq_mul, ← map_smul, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl (fun μ _ => ?_)
   conv_rhs => rw [hm]
   unfold wt
@@ -95,7 +100,8 @@ theorem evalH : EvalH := by
   unfold EvalH Hpol
   intro Lt _ _ l _ N0 N1 ph G z
   conv_rhs => rw [G.as_sum]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl (fun μ _ => ?_)
   rw [chi_monomial, MvPolynomial.eval_monomial, MvPolynomial.C_mul', map_smul, smul_eq_mul]
   ring

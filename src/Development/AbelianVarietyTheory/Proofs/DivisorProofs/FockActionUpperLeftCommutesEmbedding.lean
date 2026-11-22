@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions.TH GlobalTheory.CharPair
 
@@ -40,7 +44,8 @@ theorem der_prod {ι : Type} [DecidableEq ι] (d : Derivation K A A) (s : Finset
 
 theorem der_det {n : Type} [Fintype n] [DecidableEq n] (d : Derivation K A A) (M : Matrix n n A) :
     d M.det = ∑ i, (M.updateRow i fun j => d (M i j)).det := by
-  simp only [Matrix.det_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.det_apply, map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [← Finset.smul_sum, Units.smul_def, Units.smul_def, map_zsmul, der_prod,
@@ -79,7 +84,8 @@ theorem rowDer_w (a a' : Fin P) (b : Fin Q) (c : Fin R) :
 
 theorem rowDer_mR (a a' i : Fin P) (b : Fin Q) :
     rowDer Q R a a' (mR P Q R i b) = if i = a' then mR P Q R a b else 0 := by
-  simp only [mR, map_sum, Derivation.leibniz, rowDer_X_inl_inl, rowDer_w, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mR, map_sum, Derivation.leibniz, rowDer_X_inl_inl, rowDer_w, smul_eq_mul]
   split_ifs <;> simp [mul_comm]
 
 theorem rowDer_detR (h : P ≤ R) (a a' : Fin P) :
@@ -132,7 +138,8 @@ theorem act_first_block : ∀ (P Q R : ℕ) (h : P ≤ R) (k : ℕ) (a a' : Fin 
   have ho : opR P Q R k (Sum.inl a) (Sum.inl a') G =
       ∑ b, X (a, b) * pderiv (a', b) G + (if a = a' then (k : ℂ) + (R : ℂ) / 2 else 0) • G := by
     by_cases e : a = a' <;> simp [opR, LinearMap.sum_apply, e]
-  rw [act_eq, he, he, ho, Derivation.leibniz, hk, hG, map_add, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [act_eq, he, he, ho, Derivation.leibniz, hk, hG, map_add (f := _), map_sum, map_smul]
   simp only [map_mul, aeval_X, smul_eq_mul, add_mul, mul_smul_comm, smul_mul_assoc]
   rw [mul_comm (detR P Q R h ^ k)]
   split_ifs

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.CntLocal
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.PairVal
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.CntLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,8 @@ theorem zLoc_move (ι : E →+* K) (cj : K →+* K) (Dd : Fin (r + 1) → K) (hD
   have hc' : ∀ i, Ring.inverse (cj (Dd i)) * cj (Dd i) = 1 := fun i => Ring.inverse_mul_cancel _ ((hD i).map cj)
   have hd : ∀ i, Dd i * Ring.inverse (Dd i) = 1 := fun i => Ring.mul_inverse_cancel _ (hD i)
   ext x y
-  simp only [zLoc, lL, ρL, ZhatOM, Matrix.of_apply, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [zLoc, lL, ρL, ZhatOM, Matrix.of_apply, Matrix.mul_apply, map_sum, map_mul, Finset.mul_sum,
     Finset.sum_mul]
   refine Finset.sum_congr rfl fun d _ => Finset.sum_congr rfl fun c _ => ?_
   have e1 : Ring.inverse (cj (Dd c)) * cj (Dd c) = 1 := hc' c
@@ -106,7 +111,8 @@ theorem linG_move (e : K ≃ₐ[F] F × F) (cj : K →+* K) (he : ∀ x, e (cj x
     linG e q (zLoc ι cj Dd (ZhatOM (a * ZhatOM Z * b))) = lG e ι Dd a b * linG e q (zLoc ι cj Dd Z) * ρG e ι Dd a b := by
   ext x y
   apply e.injective
-  simp only [linG, lG, ρG, zLoc, ZhatOM, Matrix.of_apply, Matrix.mul_apply, AlgEquiv.apply_symm_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [linG, lG, ρG, zLoc, ZhatOM, Matrix.of_apply, Matrix.mul_apply, AlgEquiv.apply_symm_apply, map_sum,
     map_mul, he]
   ext
   · simp only [Prod.fst_sum, Prod.fst_mul, Prod.swap, Finset.sum_div, Finset.mul_sum, Finset.sum_mul]

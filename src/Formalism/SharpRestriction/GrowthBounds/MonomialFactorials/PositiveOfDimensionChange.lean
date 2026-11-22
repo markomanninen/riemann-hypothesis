@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DirectionsOfPositivePart
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDimBCProved
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DirectionsOfPositivePart
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestDimBCProved
+
+@[expose] public section
 
 noncomputable section
 

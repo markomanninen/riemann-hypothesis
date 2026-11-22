@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.CosDens
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.CosDens
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ section CosMeas
 variable {X : Type} [AddCommGroup X] [TopologicalSpace X] [IsTopologicalAddGroup X]
   [MeasurableSpace X] [OpensMeasurableSpace X]
 
-omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 
+omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 def thick (S : Set X) (Λ : AddSubgroup X) : Set X := {x | ∃ s ∈ S, x - s ∈ Λ}
 
 omit [MeasurableSpace X] [OpensMeasurableSpace X] in
@@ -69,8 +73,8 @@ theorem measure_thick_eq (m1 m2 : Measure X) (Λ : AddSubgroup X) (hΛ : IsOpen 
   rw [heq]
   exact hfin t
 
-omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 
+omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 theorem iInter_thick (S : Set X) (hSc : IsClosed S) (Λ : ℕ → AddSubgroup X)
     (hb : ∀ N ∈ 𝓝 (0 : X), ∃ n, (Λ n : Set X) ⊆ N) : ⋂ n, thick S (Λ n) = S := by
   ext x

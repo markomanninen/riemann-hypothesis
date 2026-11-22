@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.ClassSum
+module
+
+public import Formalism.LocalToGlobal.Divisibility.ClassSum
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder
@@ -10,8 +14,6 @@ namespace Formalism.L2.DIV.CSD
 open Formalism.DivisionValues
 
 variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : CSD K)
-
-theorem mem_Forms (f : S.Cl → S.V) : f ∈ S.Forms ↔ ∀ c (γ : S.Gam c), S.ρ c γ (f c) = f c := Iff.rfl
 
 theorem I_apply (x : Fin S.dim → K) : S.I x = ((S.basis.equivFun.symm x : S.Forms) : S.Cl → S.V) := rfl
 
@@ -33,7 +35,8 @@ theorem I_eq_sum (x : Fin S.dim → K) : S.I x = ∑ i, x i • (S.basis i : S.C
 
 theorem csum_sum (x y : Fin S.dim → K) :
     S.csum (S.I x) (S.I y) = ∑ i, ∑ j, star (x i) * S.H i j * y j := by
-  simp only [csum, I_eq_sum, H, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [csum, I_eq_sum, H, Matrix.of_apply, Finset.sum_apply, Pi.smul_apply, map_sum,
     LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
     starRingEnd_apply, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
@@ -66,7 +69,7 @@ theorem DGam_pos : 0 < S.DGam := by
 
 theorem basis_eq (h : S.HasRatBasis) : S.basis = h.choose := by
   unfold basis
-  exact dif_pos h
+  exact dite_eq_left h
 
 theorem basis_rat (h : S.HasRatBasis) (i : Fin S.dim) : S.IsRat (S.basis i : S.Cl → S.V) := by
   rw [S.basis_eq h]

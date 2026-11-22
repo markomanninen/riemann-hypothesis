@@ -1,7 +1,12 @@
-import Formalism.SatakeDualWeyl.StatementC
+module
+
+public import Formalism.SatakeDualWeyl.StatementC
+
+@[expose] public section
 
 noncomputable section
 open Matrix TensorProduct NumberField IsDedekindDomain
+open scoped NumberField.AdeleRing
 
 namespace Formalism.UG.P
 open Formalism.UG
@@ -9,18 +14,16 @@ open Formalism.UG
 section Adele
 variable {F : Type} [Field F] [NumberField F]
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-
-theorem afsplit_add_apply (a b : 𝔸) (w : HeightOneSpectrum (𝓞 F)) : (a + b) w = a w + b w := rfl
-theorem afsplit_mul_apply (a b : 𝔸) (w : HeightOneSpectrum (𝓞 F)) : (a * b) w = a w * b w := rfl
-theorem afsplit_sub_apply (a b : 𝔸) (w : HeightOneSpectrum (𝓞 F)) : (a - b) w = a w - b w := rfl
-theorem afsplit_one_apply (w : HeightOneSpectrum (𝓞 F)) : (1 : 𝔸) w = 1 := rfl
-theorem afsplit_zero_apply (w : HeightOneSpectrum (𝓞 F)) : (0 : 𝔸) w = 0 := rfl
-theorem afsplit_smul_apply (c : F) (a : 𝔸) (w : HeightOneSpectrum (𝓞 F)) :
+theorem afsplit_add_apply (a b : 𝔸ᶠ[F]) (w : HeightOneSpectrum (𝓞 F)) : (a + b) w = a w + b w := rfl
+theorem afsplit_mul_apply (a b : 𝔸ᶠ[F]) (w : HeightOneSpectrum (𝓞 F)) : (a * b) w = a w * b w := rfl
+theorem afsplit_sub_apply (a b : 𝔸ᶠ[F]) (w : HeightOneSpectrum (𝓞 F)) : (a - b) w = a w - b w := rfl
+theorem afsplit_one_apply (w : HeightOneSpectrum (𝓞 F)) : (1 : 𝔸ᶠ[F]) w = 1 := rfl
+theorem afsplit_zero_apply (w : HeightOneSpectrum (𝓞 F)) : (0 : 𝔸ᶠ[F]) w = 0 := rfl
+theorem afsplit_smul_apply (c : F) (a : 𝔸ᶠ[F]) (w : HeightOneSpectrum (𝓞 F)) :
     (c • a) w = c • a w := by
   rw [Algebra.smul_def, afsplit_mul_apply, Algebra.smul_def]; rfl
 
-def afsplitF (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompletion F) : 𝔸 := by
+def afsplitF (v : HeightOneSpectrum (𝓞 F)) (x : v.adicCompletion F) : 𝔸ᶠ[F] := by
   classical
   exact ⟨Pi.single v x, by
     filter_upwards [show ({v}ᶜ : Set (HeightOneSpectrum (𝓞 F))) ∈ Filter.cofinite by simp] with w hw
@@ -39,7 +42,7 @@ theorem afsplitF_ne (v w : HeightOneSpectrum (𝓞 F)) (h : w ≠ v) (x : v.adic
   show Pi.single v x w = 0
   convert Pi.single_eq_of_ne h x
 
-def afsplitI (v : HeightOneSpectrum (𝓞 F)) : v.adicCompletion F →ₗ[F] 𝔸 where
+def afsplitI (v : HeightOneSpectrum (𝓞 F)) : v.adicCompletion F →ₗ[F] 𝔸ᶠ[F] where
   toFun := afsplitF v
   map_add' x y := by
     ext w
@@ -65,7 +68,7 @@ theorem afsplitI_mul (v : HeightOneSpectrum (𝓞 F)) (x y : v.adicCompletion F)
   · subst h; simp only [afsplit_mul_apply, afsplitI_self]
   · simp only [afsplit_mul_apply, afsplitI_ne v w h, mul_zero]
 
-theorem afsplitI_eval (v : HeightOneSpectrum (𝓞 F)) (a : 𝔸) :
+theorem afsplitI_eval (v : HeightOneSpectrum (𝓞 F)) (a : 𝔸ᶠ[F]) :
     afsplitI v (a v) = afsplitI v 1 * a := by
   ext w
   by_cases h : w = v

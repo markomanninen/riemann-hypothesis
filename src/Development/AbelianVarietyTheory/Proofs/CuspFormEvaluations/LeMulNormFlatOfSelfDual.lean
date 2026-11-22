@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
+
+@[expose] public section
 
 namespace GlobalTheory.TensorLat
 
@@ -49,8 +53,8 @@ theorem le_mul_norm_flat (X : PT E) (Λ' : Submodule (𝓞 E) (Fin n → E)) {ι
   obtain ⟨i, hi⟩ := exists_contr_ne_zero v hspan h0
   exact (hlam _ (hγ _ (hv i)) hi).trans (norm_contr_le γ (v i) hρ (hlen i))
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem span_eq_top_of_rat {S : Set (Fin n → E)} (h : Submodule.span ℚ S = ⊤) :
     Submodule.span E S = ⊤ :=
   eq_top_iff.2 fun x _ => Submodule.span_le_restrictScalars ℚ E S (h ▸ Submodule.mem_top (x := x))
@@ -64,18 +68,5 @@ theorem le_mul_norm_flat_of_selfDual (X : PT E) (Λ' : Submodule (𝓞 E) (Fin n
   obtain ⟨v, hv, -, hspan, hlen⟩ := exists_short_vectors Λ' hfg hint hdual
   have hr : 0 ≤ rdE E := Real.rpow_nonneg (abs_nonneg _) _
   exact le_mul_norm_flat X Λ' v hv (span_eq_top_of_rat hspan) (by positivity) hlen hlam hγ h0
-
-example (X : PT E) (x : Vsp X.dim) (hx : x ∈ X.L) (k : Fin n) :
-    Pi.single k x ∈ tensorLat X (ReciprocityTheory.GeometryOfNumbersTheory.stdLat E n) ∧
-      ‖flat (Pi.single k x : Fin n → Vsp X.dim)‖ ^ 2 = ‖x‖ ^ 2 := by
-  constructor
-  · refine mem_tensorLat_stdLat.2 fun j => ?_
-    by_cases h : j = k
-    · subst h; simpa using hx
-    · simp [h]
-  · rw [norm_sq_flat, Finset.sum_eq_single k]
-    · simp
-    · intro j _ h; simp [h]
-    · simp
 
 end GlobalTheory.TensorLat

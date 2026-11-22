@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplit
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExistsUnitsToIdelesEqOfIdelesSumInvEqZero
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BrauerSplit
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ExistsUnitsToIdelesEqOfIdelesSumInvEqZero
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory NumberField IsDedekindDomain IntermediateField GroundTheory.Global DirectSum
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem finite_setOf_nsmul_eq_zero_QZ {m : ℕ} (hm : m ≠ 0) : {q : QZ | m • q = 0}.Finite := by
   have hmk : ∀ (j : ℕ) (r : ℚ), j • QZ.mk r = QZ.mk (j * r) := by
@@ -65,9 +70,9 @@ theorem exists_place_above (ℓ : ℕ) (hℓ : ℓ.Prime) :
 variable (S : Set (HeightOneSpectrum (𝓞 K.1))) (ℓ : ℕ) (hℓ : ℓ.Prime)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S) (ιs : LocalEmbeddings K)
 
+
 open Classical in
 include hℓ hS in
-
 theorem exists_gsLocalRes_eq_single (v : HeightOneSpectrum (𝓞 K.1)) (hv : v ∉ S)
     (t : localGaloisCohomology K 2 (.inr v)) (k : ℕ) (ht : ℓ ^ k • t = 0) :
     ∃ x : cohomology (uliftIntToIntRep (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S))) 2,
@@ -81,7 +86,7 @@ theorem exists_gsLocalRes_eq_single (v : HeightOneSpectrum (𝓞 K.1)) (hv : v �
       T = DirectSum.of (fun u : Place K.1 => localGaloisCohomology K 2 u) (.inr v) t +
         DirectSum.of (fun u : Place K.1 => localGaloisCohomology K 2 u) (.inr w) t').elim fun T hTdef => ?_
   have hT : sumPlaceInv K T = 0 := by
-    rw [hTdef, map_add, sumPlaceInv_of, sumPlaceInv_of, ht', add_neg_cancel]
+    rw [hTdef, map_add (f := _), sumPlaceInv_of, sumPlaceInv_of, ht', add_neg_cancel]
   refine ((sumPlaceInv_eq_zero_iff ιs T).1 hT).elim fun y hy => ?_
   have ht'k : ℓ ^ k • t' = 0 := by
     apply (placeInv_bijective_inr (K := K) w).1

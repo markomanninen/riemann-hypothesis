@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -42,7 +46,7 @@ theorem exists_derivation_cotangent (R B : Type) [CommRing R] [CommRing B] [IsLo
     Algebra.smul_def a z
   have hmul : ∀ a b, D (a * b) = a • D b + b • D a := fun a b => by
     apply hinj
-    rw [map_add, map_smul, map_smul, hD, hD, hD, hsm, hsm, map_mul, map_mul, map_mul]
+    rw [map_add (f := _), map_smul, map_smul, hD, hD, hD, hsm, hsm, map_mul, map_mul, map_mul]
     linear_combination (-1 : B ⧸ m ^ 2) * hsq a b
   have hR : ∀ c : R, D (algebraMap R B c) = 0 := fun c => by
     apply hinj
@@ -50,7 +54,7 @@ theorem exists_derivation_cotangent (R B : Type) [CommRing R] [CommRing B] [IsLo
     exact (s.commutes c).symm
   refine ⟨⟨⟨D, fun a b => ?_⟩, fun c a => ?_⟩, hmul, fun t => ?_⟩
   · apply hinj
-    rw [map_add, hD, hD, hD, map_add, map_add, map_add]
+    rw [map_add (f := _), hD, hD, hD, map_add (f := _), map_add (f := _), map_add (f := _)]
     ring
   · show D (c • a) = c • D a
     rw [Algebra.smul_def, hmul, hR, smul_zero, add_zero, algebraMap_smul]
@@ -98,12 +102,12 @@ theorem exists_derivation_extending :
     rw [← algebraMap_smul (ResidueField B) a v, map_smul, algebraMap_smul]
   let L : B →ₗ[R] ResidueField B :=
     { toFun := fun a => lam (D a)
-      map_add' := fun a b => by rw [map_add, map_add]
+      map_add' := fun a b => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun c a => by
         rw [RingHom.id_apply, map_smul, ← algebraMap_smul B c (D a), hsm, algebraMap_smul] }
   refine ⟨Derivation.mk' L fun a b => ?_, fun y hy => ?_⟩
   · change lam (D (a * b)) = a • lam (D b) + b • lam (D a)
-    rw [hmul, map_add, hsm, hsm]
+    rw [hmul, map_add (f := _), hsm, hsm]
   · show lam (D y) = _
     exact congrArg lam (hD ⟨y, hy⟩)
 

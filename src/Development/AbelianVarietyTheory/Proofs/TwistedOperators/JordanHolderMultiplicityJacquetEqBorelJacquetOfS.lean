@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,11 +64,9 @@ theorem leviEmb_torusToLevi (t : n → Rˣ) : leviEmb R f (torusToLevi R f t) = 
   obtain ⟨⟨b, j⟩, rfl⟩ := f.surjective j
   by_cases h : a = b
   · subst h
-    rw [leviEmb_apply_same]
-    rfl
-  · rw [leviEmb_apply_ne R f _ h, val_diagT, diagonal_apply_ne]
-    intro h'
-    exact h (congrArg Sigma.fst (f.injective h'))
+    simp [leviEmb, val_torusToLevi, val_diagT, diagonal_apply]
+  · have hij : f ⟨a, i⟩ ≠ f ⟨b, j⟩ := fun h' => h (congrArg Sigma.fst (f.injective h'))
+    simp [leviEmb, blockDiagonal'_apply, h, val_diagT, diagonal_apply_ne, hij]
 
 theorem det_torusToLevi (t : n → Rˣ) (j : β) :
     GeneralLinearGroup.det (torusToLevi R f t j) = ∏ x, t (f ⟨j, x⟩) := by
@@ -89,8 +91,8 @@ theorem torusToLevi_surjective (hf : Function.Injective (blk f)) :
   rw [val_torusToLevi, diagonal_apply_eq, blk_apply, GeneralLinearGroup.val_det_apply,
     det_unique, hs default x]
 
-omit [LinearOrder β] [DecidableEq n] [∀ j, DecidableEq (c j)] in
 
+omit [LinearOrder β] [DecidableEq n] [∀ j, DecidableEq (c j)] in
 theorem sum_card_blocks (P : β → Prop) [DecidablePred P] :
     ∑ b with P b, (Fintype.card (c b) : ℤ) = ∑ i with P (blk f i), (1 : ℤ) := by
   rw [Finset.sum_filter, Finset.sum_filter, ← f.sum_comp, Fintype.sum_sigma]
@@ -100,8 +102,8 @@ theorem sum_card_blocks (P : β → Prop) [DecidablePred P] :
 
 variable [LinearOrder n]
 
-omit [DecidableEq n] [∀ j, DecidableEq (c j)] in
 
+omit [DecidableEq n] [∀ j, DecidableEq (c j)] in
 theorem modExp_blk (hf : StrictMono (blk f)) (i : n) :
     modExp c (blk f i) = modExp (fun _ : n => Unit) i := by
   unfold modExp
@@ -147,6 +149,12 @@ theorem jhMult_jac_eq_jacB (k : Type) [Field k] [ValuativeRel k] [TopologicalSpa
   show Submodule.quotEquivOfEq _ _ h3 (jac f π (torusToLevi k f t) (Submodule.Quotient.mk v)) =
     jac (points n) π (leviTorus k n t) (Submodule.Quotient.mk v)
   rw [jac_mk, jac_mk, map_smul, h2, leviEmb_torusToLevi]
-  rfl
+  simp only [Submodule.quotEquivOfEq_mk]
+  have heq : diagT k n t = leviEmb k (points n) (leviTorus k n t) := by
+    ext i j
+    rw [val_diagT]
+    simp [leviEmb, leviTorus, points, GeneralLinearGroup.coe_scalar, Matrix.scalar, diagonal_apply]
+  rw [heq]
+  congr 4
 
 end GlobalTheory.SmGL.EmptyBlocks

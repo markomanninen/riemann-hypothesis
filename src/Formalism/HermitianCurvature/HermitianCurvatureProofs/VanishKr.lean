@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVZeroOfVanish
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVZeroOfVanish
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

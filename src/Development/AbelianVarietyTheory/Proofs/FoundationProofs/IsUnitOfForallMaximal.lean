@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 
@@ -63,7 +68,7 @@ theorem exists_anticommuting {R : Type} [CommRing R] [Finite R] (h2 : IsUnit (2 
   have k2 := pow_idem_field hn2 (q2 ▸ he2.map (Ideal.Quotient.mk m))
   rw [← q1] at k1
   rw [← q2] at k2
-  simp only [map_add, map_mul, map_sub, map_one, map_neg, map_pow, map_ofNat] at hh k1 k2 h2' ⊢
+  simp only [map_add (f := _), map_mul, map_sub, map_one, map_neg, map_pow, map_ofNat] at hh k1 k2 h2' ⊢
   generalize Ideal.Quotient.mk m e1 = E1 at k1 k2 ⊢
   generalize Ideal.Quotient.mk m e2 = E2 at k1 k2 ⊢
   generalize Ideal.Quotient.mk m a = A at hh k1 k2 ⊢

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
-import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
-import Formalism.LocalToGlobal.Columns.ChainTwTopQ
-import Formalism.LocalToGlobal.Columns.DiagUnitMemAndNormalizesKOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetTwist
-import Formalism.LocalToGlobal.Columns.ChainTopLawTw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.XiAtPenultimateEqXiCpl1
+public import Formalism.LocalToGlobal.Columns.KOneCharacterTrivialNearOne
+public import Formalism.LocalToGlobal.Columns.ChainTwTopQ
+public import Formalism.LocalToGlobal.Columns.DiagUnitMemAndNormalizesKOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetTwist
+public import Formalism.LocalToGlobal.Columns.ChainTopLawTw
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem.Col2 GlobalTheory.TopStep
 
 namespace GlobalTheory.BlockDecompositionK1

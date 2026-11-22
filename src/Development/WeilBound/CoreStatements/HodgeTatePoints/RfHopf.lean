@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsCounitEqOneMulEqZeroOfIsNilpotent
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsCounitEqOneMulEqZeroOfIsNilpotent
+
+@[expose] public section
 
 open ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up GlobalTheory.CompanionTheory.Ar.GR
 open scoped Matrix
@@ -22,7 +26,7 @@ theorem exists_pt_of_gen {C R A : Type} [Field C] [CommRing R] [IsDomain R] [Alg
       map_one' := inj (by rw [hf, map_one, map_one]),
       map_mul' := fun a b => inj (by rw [hf, map_mul, map_mul, hf, hf]),
       map_zero' := inj (by rw [hf, map_zero, map_zero]),
-      map_add' := fun a b => inj (by rw [hf, map_add, map_add, hf, hf]),
+      map_add' := fun a b => inj (by rw [hf, map_add (f := _), map_add (f := _), hf, hf]),
       commutes' := fun r => inj (by rw [hf, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply]) }
   exact ⟨ψ, fun a => hf a⟩
 
@@ -108,7 +112,8 @@ theorem evGen_bij {C R A : Type} [Field C] [IsAlgClosed C] [CharZero C] [CommRin
       simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, Function.comp_apply, hM]
       rw [← hfE b]
       conv_rhs => rw [← Finset.univ_sum_single (evGen C pt b)]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun x _ => ?_
       rw [hsingle x (evGen C pt b x), map_smul, smul_eq_mul, mul_comm])
     apply hf0

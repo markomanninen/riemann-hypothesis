@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FlagBundles.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FlagBundles
@@ -16,7 +21,8 @@ theorem eval_smul_of_isHomogeneous {σ : Type*} {φ : MvPolynomial σ ℝ} {n : 
   classical
   conv_lhs => rw [φ.as_sum]
   conv_rhs => rw [φ.as_sum]
-  simp only [map_sum, eval_monomial, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, eval_monomial, Finset.mul_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdeg : ∑ i ∈ d.support, d i = n := by
     have := h (mem_support_iff.mp hd)
@@ -106,7 +112,7 @@ instance : IsProbabilityMeasure sphereMeasure := ⟨sphereMeasure_univ⟩
 theorem measurePreserving_sphereMap (R : E3 ≃ₗᵢ[ℝ] E3) :
     MeasurePreserving (sphereMap R) sphereMeasure sphereMeasure := by
   refine ⟨(continuous_sphereMap R).measurable, ?_⟩
-  rw [sphereMeasure, Measure.map_smul, toSphere_map]
+  rw [sphereMeasure, Measure.map_smul _ (continuous_sphereMap R).aemeasurable, toSphere_map]
 
 theorem measurePreserving_pair (R : E3 ≃ₗᵢ[ℝ] E3) :
     MeasurePreserving (Prod.map (sphereMap R) (sphereMap R)) pairMeasure pairMeasure :=
@@ -164,7 +170,7 @@ def fibreQ (k : ℕ) : MvPolynomial (Fin 3) (Sphere2 × Sphere2 → ℝ) :=
     (gMixed k)
 
 theorem fibrePoly_eq (k : ℕ) : fibrePoly k = ∑ μ ∈ (fibreQ k).support,
-    monomial μ (∫ p, kernelL ⟪(p.1 : E3), (p.2 : E3)⟫_ℝ * coeff μ (fibreQ k) p ∂pairMeasure) :=
+    monomial μ (∫ p, kernelL ⟪(p.1 : E3), (p.2 : E3)⟫_ℝ * AddMonoidAlgebra.coeff (fibreQ k) μ p ∂pairMeasure) :=
   rfl
 
 theorem fibreQ_eq_map (k : ℕ) : fibreQ k = mapAlgHom (ContinuousMap.coeFnAlgHom (R := ℝ))
@@ -172,12 +178,13 @@ theorem fibreQ_eq_map (k : ℕ) : fibreQ k = mapAlgHom (ContinuousMap.coeFnAlgHo
   rw [← AlgHom.comp_apply, comp_aeval, fibreQ]
   refine congrArg (fun x => aeval x (gMixed k)) ?_
   funext r
-  simp [map_sum, mapAlgHom_apply, map_X, map_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, mapAlgHom_apply, map_X, map_C]
   rfl
 
-theorem continuous_coeff (k : ℕ) (μ : Fin 3 →₀ ℕ) : Continuous (coeff μ (fibreQ k)) := by
+theorem continuous_coeff (k : ℕ) (μ : Fin 3 →₀ ℕ) : Continuous (AddMonoidAlgebra.coeff (fibreQ k) μ) := by
   rw [fibreQ_eq_map, mapAlgHom_apply, coeff_map]
-  exact (coeff μ (aeval (fun r : Fin 2 => ∑ i : Fin 3, X i * C (coordC r i)) (gMixed k))).continuous
+  exact (AddMonoidAlgebra.coeff (aeval (fun r : Fin 2 => ∑ i : Fin 3, X i * C (coordC r i)) (gMixed k)) μ).continuous
 
 theorem integrable_term
     (hint : Integrable (fun p : Sphere2 × Sphere2 => kernelL ⟪(p.1 : E3), (p.2 : E3)⟫_ℝ)
@@ -224,8 +231,10 @@ theorem fibrePoly_eq_C (h0 : FibreConstantClosedForm.Statement) (k : ℕ) :
     rw [real_inner_self_eq_norm_sq, EuclideanSpace.norm_sq_eq]
     simp [sq_abs]
   rw [haa] at hmean
-  simp only [map_mul, map_pow, map_sum, eval_C, eval_X]
-  rw [← hmean, fibrePoly_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_pow, map_sum, eval_C, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hmean, fibrePoly_eq, map_sum]
   simp only [eval_monomial]
   simp_rw [← integral_mul_const]
   rw [← integral_finsetSum _
@@ -240,7 +249,8 @@ theorem fibrePoly_eq_C (h0 : FibreConstantClosedForm.Statement) (k : ℕ) :
 theorem proof (h0 : FibreConstantClosedForm.Statement) : FibreIntegralInvariant.Statement := by
   refine ⟨mean_eq, fun k B _ _ a => ?_⟩
   rw [fibrePoly_eq_C h0 k]
-  simp [map_mul, map_pow, map_sum, aeval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_mul, map_pow, map_sum, aeval_X]
 
 end FibreIntegralInvariant
 

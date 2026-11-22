@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPCompactOfTransportSite
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivCombCongr
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Matrix
@@ -219,28 +223,22 @@ theorem stepDensCptAll_of_levT (hT : Formalism.FourierDecayAlt.P.PTie.LevTranspo
   unfold ph RRform
   rw [form_tr μ l.castSucc l.succ l'.succ hjl1 c (Function.update c l t) hupd μi T κ hκ hpair, eX, eY, mul_left_comm]
   congr 3
+  change shiftV l.castSucc (Function.update c l t) =
+    Function.update (shiftV l.castSucc c) l' t
   funext m
-  simp only [shiftV, Function.update]
-  split_ifs with hA hB hB
-  · subst hB
-    first | (simp only [eq_rec_constant]; done) | (simp only [eq_rec_constant]; rfl) | rfl | simp
-  · exfalso
-    apply hB
+  by_cases hm : m = l'
+  · subst m
+    simp only [shiftV, e0, Function.update_self]
+  · rw [Function.update_of_ne hm]
+    unfold shiftV
+    rw [Function.update_of_ne]
+    intro he
+    apply hm
     apply Fin.ext
-    have := congrArg Fin.val hA
-    change m.val + (l.castSucc : Fin (P.r + 1)).val = l.val at this
-    have hcs := Fin.val_castSucc l
+    have hv := congrArg Fin.val he
+    simp only [Fin.val_castSucc] at hv
     rw [hl'v]
     omega
-  · exfalso
-    apply hA
-    apply Fin.ext
-    have := congrArg Fin.val hB
-    rw [hl'v] at this
-    change m.val + (l.castSucc : Fin (P.r + 1)).val = l.val
-    have hcs := Fin.val_castSucc l
-    omega
-  · rfl
 
 theorem theorem_P_compact_of_step_density (hT : Formalism.FourierDecayAlt.P.PTie.LevTransportHer) (h0 : StepExp0) : ThmPActualCpt :=
   thmPActualCpt_of_outer (stepDensCptAll_of_levT hT h0) (formIntOuterCpt_of_levT hT)

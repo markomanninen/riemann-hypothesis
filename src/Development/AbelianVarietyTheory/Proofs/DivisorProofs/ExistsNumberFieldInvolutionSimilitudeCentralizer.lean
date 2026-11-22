@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutantOfMaximalDegreeElement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentraliserInvolution
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugatePairRelated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.TraceDefinitePairsEqAutomorphicTrace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutantOfMaximalDegreeElement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentraliserInvolution
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjugatePairRelated
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount
 open scoped TensorProduct Classical
 
@@ -74,8 +79,8 @@ theorem centraliser_field_involution : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup
   have ha : ∀ a b, t (a + b) = t a + t b := by
     intro a b
     apply hj
-    rw [ht, map_add, ht, ht, hw]; dsimp only
-    rw [map_add, GlobalTheory.CentConj.sh_add']; noncomm_ring
+    rw [ht, map_add (f := _), ht, ht, hw]; dsimp only
+    rw [map_add (f := _), GlobalTheory.CentConj.sh_add']; noncomm_ring
   have h1 : t 1 = 1 := by
     apply hj
     rw [ht, hw]; dsimp only
@@ -92,11 +97,3 @@ theorem centraliser_field_involution : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup
   · intro x; exact tt x
 
 end GlobalTheory.CentSim
-
-example : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p) (β γ : G.Cˣ) (c₀ : ℚˣ), sh G β = β →
-    (γ : G.C) * β * sh G γ = algebraMap ℚ G.C c₀ * β → Irreducible (minpoly G.F (γ : G.C)) →
-    (minpoly G.F (γ : G.C)).natDegree = G.n →
-    ∃ (L : Type) (_ : Field L) (_ : NumberField L) (ι : L →ₐ[ℚ] G.C) (c : L →ₐ[ℚ] L),
-      Function.Injective ι ∧ (∀ z : G.C, z * γ = γ * z ↔ ∃ w, ι w = z) ∧
-      (∀ x, ι (c x) = β * sh G (ι x) * ((β⁻¹ : G.Cˣ) : G.C)) ∧ ∀ x, c (c x) = x :=
-  GlobalTheory.CentSim.centraliser_field_involution

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open Formalism.BasicNotions Formalism.GradedWeylDivisibility MvPolynomial
 namespace EqvWt
 
 theorem coeff_aeval_scale {σ : Type} (e : σ → ℂ) (f : MvPolynomial σ ℂ) (m : σ →₀ ℕ) :
-    coeff m (aeval (fun v => C (e v) * X v) f) = (m.prod fun v k => e v ^ k) * coeff m f := by
+    AddMonoidAlgebra.coeff (aeval (fun v => C (e v) * X v) f) m = (m.prod fun v k => e v ^ k) * AddMonoidAlgebra.coeff f m := by
   classical
   refine MvPolynomial.induction_on' f (fun u a => ?_) (fun p q hp hq => ?_)
   · have key : aeval (fun v => C (e v) * X v) (monomial u a) =
@@ -22,7 +26,7 @@ theorem coeff_aeval_scale {σ : Type} (e : σ → ℂ) (f : MvPolynomial σ ℂ)
     split_ifs with h
     · subst h; ring
     · simp
-  · rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem rowAct_diagonal {r c : ℕ} (d : Fin r → ℂ) :
     rowAct ℂ (n := c) (Matrix.diagonal d) = aeval (fun v : Fin r × Fin c => C (d v.1) * X v) := by
@@ -45,8 +49,8 @@ theorem prod_rowDeg {r c : ℕ} (x : Fin r → ℂ) (m : Fin r × Fin c →₀ �
 
 theorem coeff_sqAct_diag {r : ℕ} (lam : DomWeight r) (t : Fin r → ℂˣ) (f : MvPolynomial (Fin r × Fin r) ℂ)
     (m : Fin r × Fin r →₀ ℕ) :
-    coeff m (sqAct ℂ r lam (diagGL ℂ r t) f) =
-      (∏ a, (t a : ℂ)) ^ lam.detShift * ((∏ a, (t a : ℂ) ^ rowDeg m a) * coeff m f) := by
+    AddMonoidAlgebra.coeff (sqAct ℂ r lam (diagGL ℂ r t) f) m =
+      (∏ a, (t a : ℂ)) ^ lam.detShift * ((∏ a, (t a : ℂ) ^ rowDeg m a) * AddMonoidAlgebra.coeff f m) := by
   have hdet : detPow ℂ r (diagGL ℂ r t) lam.detShift = (∏ a, (t a : ℂ)) ^ lam.detShift := by
     unfold detPow
     rw [Units.val_zpow_eq_zpow_val]
@@ -98,7 +102,7 @@ theorem weight_lastW {n : ℕ} (m : Fin (n + 1) × Fin (n + 1) →₀ ℕ) :
   · simp
 
 theorem sum_rowDeg_of_mem {r : ℕ} (lam : DomWeight r) (f : MvPolynomial (Fin r × Fin r) ℂ)
-    (hf : f ∈ nablaSq ℂ r lam) (m : Fin r × Fin r →₀ ℕ) (hm : coeff m f ≠ 0) :
+    (hf : f ∈ nablaSq ℂ r lam) (m : Fin r × Fin r →₀ ℕ) (hm : AddMonoidAlgebra.coeff f m ≠ 0) :
     ∑ a, rowDeg m a = ∑ j, lam.natW j := by
   have hf' : f ∈ Formalism.GradedWeylDivisibility.dualWeyl ℂ r r lam.natW := hf
   have hw : Finsupp.weight (colW r r) m = lam.natW :=
@@ -142,11 +146,11 @@ theorem coeff_eq_of_eqv {n : ℕ} (lam : DomWeight (n + 1)) (mu : DomWeight n)
     (φ : MvPolynomial (Fin n × Fin n) ℂ →ₗ[ℂ] MvPolynomial (Fin (n + 1) × Fin (n + 1)) ℂ)
     (hφ : IsEqv rfl mu lam φ) (t : Fin n → ℂˣ) (s : MvPolynomial (Fin n × Fin n) ℂ) (hs : s ∈ nablaSq ℂ n mu)
     (κ : ℂ) (hκ : sqAct ℂ n mu (diagGL ℂ n t) s = κ • s) (m : Fin (n + 1) × Fin (n + 1) →₀ ℕ)
-    (hm : coeff m (φ s) ≠ 0) :
+    (hm : AddMonoidAlgebra.coeff (φ s) m ≠ 0) :
     (∏ i, (t i : ℂ)) ^ lam.detShift * ∏ i, (t i : ℂ) ^ rowDeg m (Fin.castSucc i) = κ := by
   have h1 := hφ.2 (diagGL ℂ n t) s hs
   rw [hκ, map_smul, embGL_diagGL] at h1
-  have h2 := congrArg (coeff m) h1
+  have h2 := congrArg (AddMonoidAlgebra.coeff · m) h1
   rw [coeff_smul, coeff_sqAct_diag, smul_eq_mul, Fin.prod_univ_castSucc, Fin.prod_univ_castSucc] at h2
   simp only [Fin.coe_castSucc, Fin.is_lt, dite_true, dif_pos, Fin.eta, Fin.val_last, lt_self_iff_false,
     dite_false, Units.val_one, one_pow, mul_one] at h2
@@ -155,7 +159,7 @@ theorem coeff_eq_of_eqv {n : ℕ} (lam : DomWeight (n + 1)) (mu : DomWeight n)
 theorem equivariant_last_degree_coeff {n : ℕ} (lam : DomWeight (n + 1)) (mu : DomWeight n)
     (φ : MvPolynomial (Fin n × Fin n) ℂ →ₗ[ℂ] MvPolynomial (Fin (n + 1) × Fin (n + 1)) ℂ)
     (hφ : IsEqv rfl mu lam φ) (s : MvPolynomial (Fin n × Fin n) ℂ) (hs : s ∈ nablaSq ℂ n mu)
-    (m : Fin (n + 1) × Fin (n + 1) →₀ ℕ) (hm : coeff m (φ s) ≠ 0) :
+    (m : Fin (n + 1) × Fin (n + 1) →₀ ℕ) (hm : AddMonoidAlgebra.coeff (φ s) m ≠ 0) :
     ((rowDeg m (Fin.last n) : ℕ) : ℤ) = wsum lam - wsum mu - lam.detShift := by
   set t : Fin n → ℂˣ := fun _ => Units.mk0 (2 : ℂ) two_ne_zero with ht
   have htv : ∀ i, (t i : ℂ) = 2 := fun _ => rfl
@@ -163,7 +167,7 @@ theorem equivariant_last_degree_coeff {n : ℕ} (lam : DomWeight (n + 1)) (mu : 
       ((∏ i : Fin n, (t i : ℂ)) ^ mu.detShift * (2 : ℂ) ^ (∑ j, mu.natW j)) • s := by
     ext m'
     rw [coeff_sqAct_diag, coeff_smul, smul_eq_mul]
-    by_cases h0 : coeff m' s = 0
+    by_cases h0 : AddMonoidAlgebra.coeff s m' = 0
     · simp [h0]
     · have hs' := sum_rowDeg_of_mem mu s hs m' h0
       simp only [htv, Finset.prod_pow_eq_pow_sum, hs']
@@ -211,7 +215,7 @@ theorem equivariant_partial_weight : EqvRowWt := by
   | last =>
     have := equivariant_last_degree_coeff lam mu φ hφ s hs m hm
     unfold liftWt
-    rw [dif_neg (by simp)]
+    rw [dite_eq_right (by simp)]
     show rowDeg m (Fin.last n) = (wsum lam - wsum mu - lam.detShift).toNat
     omega
   | cast i =>
@@ -229,7 +233,7 @@ theorem equivariant_partial_weight : EqvRowWt := by
         ((∏ j, (t j : ℂ)) ^ mu.detShift * ∏ j, (t j : ℂ) ^ ω j) • s := by
       ext m'
       rw [coeff_sqAct_diag, coeff_smul, smul_eq_mul]
-      by_cases h0 : coeff m' s = 0
+      by_cases h0 : AddMonoidAlgebra.coeff s m' = 0
       · simp [h0]
       · have hw := hω h0
         have hr : ∀ j, rowDeg m' j = ω j := fun j => by rw [← weight_rowW_apply, hw]

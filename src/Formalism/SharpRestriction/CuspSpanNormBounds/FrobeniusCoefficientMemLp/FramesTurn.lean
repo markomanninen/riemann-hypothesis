@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesMeas
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesPt
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesMeas
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.FramesPt
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -316,22 +320,22 @@ theorem flagMat_conjI {z : Fin (2 * r + k + 1) → ℂ} (hz : inWb k r z) (x : M
       (if i.val < r then star (Complex.I ^ i.val) * Complex.I ^ j.val else 1) * flagMat k r z x i j := by
   unfold flagMat fvec
   by_cases hi : i.val < r
-  · rw [dif_pos hi, dif_pos hi, if_pos hi]
+  · rw [dite_eq_left hi, dite_eq_left hi, if_pos hi]
     have hv : tT k r *ᵥ (if h : j.val < r then bvec (eI k r ⟨j.val, h⟩) else z) =
         Complex.I ^ j.val • (if h : j.val < r then bvec (eI k r ⟨j.val, h⟩) else z) := by
       by_cases hj : j.val < r
-      · rw [dif_pos hj]
+      · rw [dite_eq_left hj]
         funext p
         simp only [tT, Matrix.mulVec_diagonal, Pi.smul_apply, smul_eq_mul]
         by_cases hp : p = eI k r ⟨j.val, hj⟩
         · rw [hp, dT_eI]
         · have hb : bvec (eI k r ⟨j.val, hj⟩) p = 0 := by simp [bvec, Pi.single_apply, hp]
           rw [hb, mul_zero, mul_zero]
-      · rw [dif_neg hj, tT_mulVec_Wb hz, show j.val = r by have := j.isLt; omega]
+      · rw [dite_eq_right hj, tT_mulVec_Wb hz, show j.val = r by have := j.isLt; omega]
     rw [← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, hv, Matrix.mulVec_smul]
     simp only [tTi, Matrix.mulVec_diagonal, dT_eI, Fin.val_mk, Pi.smul_apply, smul_eq_mul]
     ring
-  · rw [dif_neg hi, dif_neg hi, if_neg hi, one_mul]
+  · rw [dite_eq_right hi, dite_eq_right hi, if_neg hi, one_mul]
 
 theorem continuous_rootCoordsS {z : Fin (2 * r + k + 1) → ℂ} (S : Finset (Fin (r + 1) × Fin (r + 1))) :
     Continuous (fun (x : Mt k r) (q : S) => flagMat k r z (Matrix.of x) q.1.1 q.1.2) := by
@@ -379,6 +383,7 @@ theorem isRootMeas_turn (L : LocBessel k r) (ka : ℝ) (hka : 0 < ka) (hc : L.c 
     rw [Measure.map_map (continuous_rootCoordsS _).measurable continuous_cA.measurable, e,
       ← Measure.map_map (rot_mp u hu).measurable (continuous_rootCoordsS _).measurable, h2', Measure.map_smul,
       (rot_mp u hu).map_eq]
+    exact (rot_mp u hu).measurable.aemeasurable
 
 theorem isPtRep_turn (L : LocBessel k r) (ka : ℝ) {p : Point ℂ (r + 1)} {g : Mx k r} (h : IsPtRepO L p g) :
     IsPtRep (turnL L ka) (turnPt p) (tTi k r * g * tT k r) :=

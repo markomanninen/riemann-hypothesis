@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhNormUnits
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhNormUnits
+
+@[expose] public section
 
 noncomputable section
 

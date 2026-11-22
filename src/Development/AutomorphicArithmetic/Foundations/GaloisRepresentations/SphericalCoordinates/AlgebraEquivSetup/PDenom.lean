@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNatMulFiniteAdeleAwayPIntegralStatement
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoprimeNatMulFiniteAdeleAwayPIntegralStatement
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InvMemLatMonoidOfMemAwaySupp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc comp lev GLw IsCen mat sim)
@@ -22,7 +26,7 @@ private theorem HasDen.add {D : Datum p} {u w : AfP p ⊗[ℚ] VQ D} (hu : HasDe
     HasDen D (u + w) := by
   obtain ⟨c, hc0, hcp, hc⟩ := hu
   obtain ⟨d, hd0, hdp, hd⟩ := hw
-  refine ⟨c * d, Nat.mul_pos hc0 hd0, Nat.Coprime.mul hcp hdp, ?_⟩
+  refine ⟨c * d, Nat.mul_pos hc0 hd0, Nat.Coprime.mul_left hcp hdp, ?_⟩
   rw [smul_add]
   refine AddSubgroup.add_mem _ ?_ ?_
   · rw [mul_comm, mul_smul]
@@ -82,7 +86,7 @@ theorem UpperTheory.Gal.W2.Seed.pDenom :
       exact AddSubgroup.nsmul_mem _ (hcm y) _
     | zero => simp [AddSubgroup.zero_mem]
     | add y z _ _ hy hz =>
-      rw [map_add, map_add, smul_add]
+      rw [map_add (f := _), map_add (f := _), smul_add]
       exact AddSubgroup.add_mem _ hy hz
     | smul n y _ hy =>
       rw [map_zsmul, map_zsmul, smul_comm]
@@ -98,7 +102,7 @@ theorem UpperTheory.Gal.W2.Seed.pDenom :
     exact GlobalTheory.W2.smul_mem_laHat ha (hgen x)
   | zero => simp [AddSubgroup.zero_mem]
   | add y z _ _ hy hz =>
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     exact AddSubgroup.add_mem _ hy hz
   | neg y _ hy =>
     rw [map_neg, smul_neg]

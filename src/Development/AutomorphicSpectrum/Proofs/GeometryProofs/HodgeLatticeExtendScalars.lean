@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.GermSys
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeAt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.Fl
 open scoped CategoryTheory.Obj
@@ -72,7 +77,7 @@ theorem exists_transport {E : Type} [Field E] [NumberField E] {Ω W J C X : Type
       map_one' := hinj (by rw [hm, map_one, map_one, map_one])
       map_zero' := hinj (by rw [hm, map_zero, map_zero, map_zero])
       map_mul' := fun a b => hinj (by rw [map_mul, hm, hm, hm, map_mul, map_mul])
-      map_add' := fun a b => hinj (by rw [map_add, hm, hm, hm, map_add, map_add]) }
+      map_add' := fun a b => hinj (by rw [map_add (f := _), hm, hm, hm, map_add (f := _), map_add (f := _)]) }
   let ρX : 𝓞 E →+* Module.End C X :=
     ((Matrix.toLinAlgEquiv F).toRingEquiv.toRingHom.comp ψ.mapMatrix).comp mr
   have hρX : ∀ a j, ρX a (F j) = ∑ i, ψ (m a i j) • F i := by
@@ -103,18 +108,20 @@ theorem exists_transport {E : Type} [Field E] [NumberField E] {Ω W J C X : Type
     · subst hij
       rw [hco _ i 1 (by simp), F.repr_self]
       simp
-    · rw [hco _ i 0 (by simp [Finsupp.single_apply, Ne.symm hij]), F.repr_self]
-      simp [Finsupp.single_apply, Ne.symm hij]
+    · rw [hco _ i 0 (by simp [Ne.symm hij]), F.repr_self]
+      simp [Ne.symm hij]
   · intro a h h'
     have key : ∀ i, cd ⟨_, h'⟩ i = ∑ j, m a i j * cd h j := by
       intro i
       apply Subtype.ext
       have := congrFun (LinearMap.toMatrix_mulVec_repr B B (ρ a) (h : W)) i
       simp only [Matrix.mulVec, dotProduct] at this
-      simp only [cd, m, AddSubmonoidClass.coe_finset_sum, Subring.coe_mul]
+      simp only [cd, m, AddSubmonoidClass.coe_finsetSum, Subring.coe_mul]
       simpa [LinearMap.toMatrix_apply] using this.symm
-    rw [hev, hev, map_sum]
-    simp only [map_smul, hρX, key, map_sum, map_mul, Finset.smul_sum, Finset.sum_smul, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hev, hev, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, hρX, key, map_sum, map_mul, Finset.smul_sum, Finset.sum_smul, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
     rw [mul_comm]
@@ -129,9 +136,10 @@ theorem ev_mem_span {Ω W J K C X A : Type} [Field Ω] [AddCommGroup W] [Module 
   have : v q = ∑ j, (⟨c j, hR (c j).2⟩ : R') • u j := by
     apply Subtype.ext
     rw [← hc]
-    simp only [AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul]
+    simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul]
     rfl
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smulₛₗ]
   obtain ⟨a, ha⟩ := hψ (c j)
@@ -183,7 +191,8 @@ theorem stable_of_isFreeOn {E K V A : Type} [Field E] [NumberField E] [CommRing 
         ∑ j, ((RingOfIntegers.basis E).repr (a * RingOfIntegers.basis E q.2) j) •
           ρ (RingOfIntegers.basis E j) (t q.1) := by
       have := congrArg (fun y => ρ y (t q.1)) ((RingOfIntegers.basis E).sum_repr (a * RingOfIntegers.basis E q.2))
-      simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, map_mul, Module.End.mul_apply] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, map_mul, mul_apply_eq_comp] at this
       exact this.symm
     rw [e]
     refine Submodule.sum_mem _ fun j _ => Submodule.smul_of_tower_mem _ _ (Submodule.subset_span ⟨(q.1, j), rfl⟩)
@@ -382,16 +391,19 @@ theorem exists_eval : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs : Type) [F
     have e1 : (fun i => ψ (x i)) = ∑ i, ψ (x i) • F i := by
       ext k
       simp [F, Finset.sum_apply, Pi.single_apply]
-    rw [e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, map_sum]
     simp only [map_smul, smul_eq_mul]
     have e2 : ∀ i, (ev ⟨(0, f), hw⟩).2 (F i) = ψ ⟨_, hs i⟩ := fun i => fe2 _ i _ rfl
     simp only [e2]
     have hr' : r = ∑ i, x i * ⟨_, hs i⟩ := by
       apply Subtype.ext
       have hr2 : f (comb ℓ x) = r := hr
-      rw [← hr2, AddSubmonoidClass.coe_finset_sum]
-      simp only [comb, map_sum, map_smul, smul_eq_mul, Subring.coe_mul, hrr]
-    rw [hr', map_sum]
+      rw [← hr2, AddSubmonoidClass.coe_finsetSum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [comb, map_sum, map_smul, smul_eq_mul, Subring.coe_mul, hrr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hr', map_sum]
     simp only [map_mul]
   have c2 : ∀ a f, ρHC a ((0 : Fin g → C), f) = (0, f ∘ₗ ρC (bar a)) := by
     intro a f
@@ -457,7 +469,8 @@ theorem exists_eval : ∀ (E : Type) [Field E] [NumberField E] (Ω Vs : Type) [F
       have : e = ∑ i, e i • F i := by
         ext k
         simp [F, Finset.sum_apply, Pi.single_apply]
-      rw [this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum]
       refine sum_mem fun i _ => ?_
       rw [map_smul, smul_eq_mul]
       exact mul_mem (he i) (hf i)

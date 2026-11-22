@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPsCharOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteSemisimple
+
+@[expose] public section
+
 open Formalism.MainNotions.N GlobalTheory.Cong GlobalTheory.PsChar
 
 namespace GlobalTheory.Cong
@@ -10,7 +15,7 @@ theorem continuous_aeval_comp {Γ k : Type} [TopologicalSpace Γ] [CommRing k] [
     Continuous fun u : Γ → Γ => MvPolynomial.aeval (f ∘ u) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simpa using continuous_const
-  | add p q hp hq => simp only [map_add]; exact hp.add hq
+  | add p q hp hq => simp only [map_add (f := _)]; exact hp.add hq
   | mul_X p j hp =>
     simp only [map_mul, MvPolynomial.aeval_X, Function.comp_apply]
     exact hp.mul (hf.comp (continuous_apply j))
@@ -42,7 +47,7 @@ theorem polyApprox_of_denseRange : ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Gro
   let F : (Γ → Γ) → PadicAlgCl l := fun u =>
     MvPolynomial.aeval (T ∘ u) P - ∑ η ∈ s, c η * MvPolynomial.aeval (trc (ρ η) ∘ u) P
   have hF : Continuous F := by
-    refine (continuous_aeval_comp T hT P).sub (continuous_finset_sum _ fun η hη => ?_)
+    refine (continuous_aeval_comp T hT P).sub (continuous_finsetSum _ fun η hη => ?_)
     exact continuous_const.mul (continuous_aeval_comp _ (htr η hη) P)
   have key : ‖F id‖ ≤ ε := by
     refine (DenseRange.piMap (fun _ : Γ => hx)).induction_on (p := fun u => ‖F u‖ ≤ ε) id

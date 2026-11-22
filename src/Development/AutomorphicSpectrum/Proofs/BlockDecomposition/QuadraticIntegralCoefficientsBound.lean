@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.WeilBound.ThetaLifts.LatticeBasics.UnfoldC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EmbBar
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK.Dbl
@@ -11,7 +16,7 @@ open GlobalTheory.CompanionTheory.GodementH
 namespace GlobalTheory.CompanionTheory.GodementH
 
 theorem trace_norm_local_sizes : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E), IsCMExt F E σ → ∀ x : E, ∃ y₁ y₂ : F,
-    x ^ 2 - algebraMap F E y₁ * x + algebraMap F E y₂ = 0 ∧ ∀ (v : Pl F) (τ : E →ₐ[F] FvBar F v),
+    x ^ 2 - algebraMap F E y₁ * x + algebraMap F E y₂ = 0 ∧ ∀ (v : Pl (F := F)) (τ : E →ₐ[F] FvBar F v),
       ‖algebraMap F (Fv F v) y₁‖₊ ≤ max (absBar F v (τ x)) (absBar F v (τ (σ x))) ∧
       ‖algebraMap F (Fv F v) y₂‖₊ = absBar F v (τ x) * absBar F v (τ (σ x)) := by
   intro F E _ _ _ _ _ σ hCM x
@@ -51,7 +56,7 @@ theorem trace_norm_local_sizes : ∀ (F E : Type) [Field F] [NumberField F] [Fie
     rw [← heq] at hzk
     obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.1 hzk
     exact ⟨c, by rw [Algebra.algebraMap_eq_smul_one]; exact hc⟩
-  obtain ⟨y₁, hy₁⟩ := hfix (x + σ x) (by rw [map_add, hσσ, add_comm])
+  obtain ⟨y₁, hy₁⟩ := hfix (x + σ x) (by rw [map_add (f := _), hσσ, add_comm])
   obtain ⟨y₂, hy₂⟩ := hfix (x * σ x) (by rw [map_mul, hσσ, mul_comm])
   refine ⟨y₁, y₂, by rw [hy₁, hy₂]; ring, fun v τ => ?_⟩
   have key : ∀ y : F, τ (algebraMap F E y) =
@@ -59,7 +64,7 @@ theorem trace_norm_local_sizes : ∀ (F E : Type) [Field F] [NumberField F] [Fie
     rw [τ.commutes]
     exact IsScalarTower.algebraMap_apply F (Fv F v) (FvBar F v) y
   constructor
-  · rw [← absBar_algebraMap F v, ← key, hy₁, map_add]
+  · rw [← absBar_algebraMap F v, ← key, hy₁, map_add (f := _)]
     exact absBar_add_le F v _ _
   · rw [← absBar_algebraMap F v, ← key, hy₂, map_mul]
     exact absBar_mul F v _ _

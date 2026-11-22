@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem norm_le_one {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberFiel
     intro g
     have h2 : (g : Ω ≃ₐ[E] Ω) y⁻¹ ∈ A := (ReciprocityTheory.Gal.apply_mem_iff_of_mem_Dec g.2 _).mpr hyA
     have h3 := congrArg (g : Ω ≃ₐ[E] Ω) hroot
-    simp only [map_add, map_mul, map_pow, map_one, map_zero, AlgEquiv.commutes] at h3
+    simp only [map_add (f := _), map_mul, map_pow, map_one, map_zero, AlgEquiv.commutes] at h3
     have h4 := root_unique A hu (m + 1) h2 hyA h3 hroot
     rw [map_inv₀] at h4
     exact inv_injective h4
@@ -139,7 +143,7 @@ theorem norm_le_one {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberFiel
     exact this
   apply hK _ hmem
   have hz := congrArg Bw.j hy
-  simp only [map_add, map_pow, map_zero] at hz
+  simp only [map_add (f := _), map_pow, map_zero] at hz
   set z := Bw.j y
   set w := Bw.j (algebraMap E Ω u)
   have hw : ‖w‖ = ‖z‖ ^ m * ‖z + 1‖ := by
@@ -181,7 +185,7 @@ theorem norm_lt_one_iff : ∀ {l : ℕ} [Fact (Nat.Prime l)] {E Ω : Type} [Fiel
     { carrier := {x | ‖φ x‖ < 1}
       add_mem' := fun {a b} ha hb => by
         show ‖φ (a + b)‖ < 1
-        rw [map_add]
+        rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
       zero_mem' := by simp
       smul_mem' := fun c a ha => by

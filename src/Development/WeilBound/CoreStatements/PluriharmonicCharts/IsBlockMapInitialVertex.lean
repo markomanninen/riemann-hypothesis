@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.MCoordIdealLeOfHomog
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverTransferIdealEq
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagFormDiv
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.MCoordIdealLeOfHomog
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverTransferIdealEq
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PFnFieldTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PDiagFormDiv
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -130,7 +135,7 @@ theorem ker_plane_le {A' B' : ι k₀ → Φ} (a b c d : Φ) (hA : ∀ m, A' m =
   have e : σ.comp (planeMap y k₀ A B) = planeMap y k₀ A' B' := by
     refine MvPolynomial.ringHom_ext (fun r => by simp) fun q => ?_
     rcases q with ⟨_ | k, m⟩
-    · simp only [σ, planeMap, ext2, RingHom.comp_apply, map_mul, map_add, eval₂Hom_C, eval₂Hom_X',
+    · simp only [σ, planeMap, ext2, RingHom.comp_apply, map_mul, map_add (f := _), eval₂Hom_C, eval₂Hom_X',
         Matrix.cons_val_zero, Matrix.cons_val_one, hA, hB]
       ring
     · simp only [σ, planeMap, ext2, RingHom.comp_apply, eval₂Hom_C, eval₂Hom_X']
@@ -184,7 +189,7 @@ theorem arith_of_birational [CharZero Φ] [Nonempty K] (hb : Birational y) (h0 :
   rw [ht] at htr
   have hA := IntDomainDim.full (MRing ι ⧸ mCoordIdeal y) (algebraMap_injective _ hhor)
   rw [hA, htr]
-  simp only [map_add, map_natCast]
+  simp only [map_add (f := _), map_natCast]
   norm_cast
   omega
 
@@ -208,12 +213,14 @@ theorem birational_extension_two (hb : Birational y) (A : ι k₀ → Φ) : Bira
 
 theorem sum_smul_penCo_none_eq_one {α : ι k₀ → Φ} (hA : ∑ m, α m * A m = 1) (hB : ∑ m, α m * B m = 0) (t : RatFunc Φ) :
     ∑ m, algebraMap Φ (RatFunc Φ) (α m) * penCo y k₀ A B t ⟨none, m⟩ = 1 := by
-  simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum, hA, hB]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum, hA, hB]
   simp
 
 theorem pencil_coordinate_sum {β : ι k₀ → Φ} (hA : ∑ m, β m * A m = 0) (hB : ∑ m, β m * B m = 1) (t : RatFunc Φ) :
     ∑ m, algebraMap Φ (RatFunc Φ) (β m) * penCo y k₀ A B t ⟨none, m⟩ = t := by
-  simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum, hA, hB]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [penCo, mul_add, Finset.sum_add_distrib, mul_left_comm _ t, ← Finset.mul_sum, ← map_mul, ← map_sum, hA, hB]
   simp
 
 theorem exists_ne_of_sum {R σ : Type} [Field R] [Fintype σ] {a b : σ → R} (h : ∑ m, a m * b m ≠ 0) :

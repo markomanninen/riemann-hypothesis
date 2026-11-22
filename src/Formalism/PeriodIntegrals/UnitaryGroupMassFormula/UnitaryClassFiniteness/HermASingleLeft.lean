@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.RationalPointsDense
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.LatticeClassesFiniteRefinement
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.PosDefOfDefiniteSignatureHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictInter
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.RationalPointsDense
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.LatticeClassesFiniteRefinement
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassFiniteness.PosDefOfDefiniteSignatureHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictInter
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem oh_inter {e : E} (he : inclR (Af F) e ∈ Oh F E) : IsIntegral ℤ e := 
       refine Subring.mul_mem _ (Subring.subset_closure (Or.inl ⟨⟨e', ⟨⟨e', he'⟩, rfl⟩⟩, rfl⟩))
         (Subring.subset_closure (Or.inr ⟨⟨a, ha⟩, rfl⟩))
     | zero => rw [map_zero]; exact Subring.zero_mem _
-    | add x y _ _ h1 h2 => rw [map_add]; exact Subring.add_mem _ h1 h2
+    | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact Subring.add_mem _ h1 h2
     | neg x _ h1 => rw [map_neg]; exact Subring.neg_mem _ h1
   have e2 : ψ (inclR (Af F) e) = Formalism.UG.inclE (F := F) (Af F) e := rfl
   have := PIW.AdelClassFin.dual_intersection F E e (e2 ▸ hψ _ he)
@@ -97,7 +101,7 @@ theorem sigR_Oh {z : Af F ⊗[F] E} (hz : z ∈ Oh F E) : sigR (Af F) σ z ∈ O
     rw [e1]
     exact tmul_mem_Oh ha (by simpa using int_sigma (σ : E →+* E) he)
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add]; exact add_mem h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _)]; exact add_mem h1 h2
   | neg x _ h1 => rw [map_neg]; exact neg_mem h1
 
 def hermA (X Y : Fin M → Af F ⊗[F] E) : Af F ⊗[F] E :=
@@ -105,14 +109,15 @@ def hermA (X Y : Fin M → Af F ⊗[F] E) : Af F ⊗[F] E :=
 
 theorem hermA_vinc (x y : Fin M → E) :
     hermA σ J (vinc (F := F) x) (vinc y) = inclR (Af F) (PI.HermLatFin.herm (σ : E →+* E) J x y) := by
-  simp only [hermA, dotProduct, Matrix.mulVec, vinc, JR, Matrix.map_apply, sigR_inclR, PI.HermLatFin.herm,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermA, dotProduct, Matrix.mulVec, vinc, JR, Matrix.map_apply, sigR_inclR, PI.HermLatFin.herm,
     map_sum, map_mul, Finset.mul_sum, AlgHom.coe_toRingHom]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
 theorem hermA_add_left (X X' Y : Fin M → Af F ⊗[F] E) :
     hermA σ J (X + X') Y = hermA σ J X Y + hermA σ J X' Y := by
-  simp only [hermA, dotProduct, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hermA, dotProduct, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hermA_neg_left (X Y : Fin M → Af F ⊗[F] E) : hermA σ J (-X) Y = -hermA σ J X Y := by
   simp only [hermA, dotProduct, Pi.neg_apply, map_neg, neg_mul, Finset.sum_neg_distrib]
@@ -156,7 +161,7 @@ theorem finMat_unitary (h : HA (AF F) σ J) :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [φ, sigR, Algebra.TensorProduct.map_tmul]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
   have hφJ : (JR (AF F) J).map φ = JR (Af F) J := by
     ext i j
     simp [φ, JR, inclR, Algebra.TensorProduct.map_tmul]

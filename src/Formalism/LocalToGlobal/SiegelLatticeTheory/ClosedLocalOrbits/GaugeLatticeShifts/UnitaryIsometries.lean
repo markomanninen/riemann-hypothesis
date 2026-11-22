@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,12 +44,13 @@ theorem hJ_sum_right {ι : Type*} (s : Finset ι) (x : Fin n → ℂ) (c : ι �
 
 theorem hJ_conj (x y : Fin n → ℂ) : hJ ε x y = conj (hJ ε y x) := by
   unfold hJ Formalism.REAL.Jm
-  simp only [Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec_diagonal, dotProduct, Pi.star_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   split_ifs <;> simp <;> ring
 
 theorem hJ_add_left (x x' y : Fin n → ℂ) : hJ ε (x + x') y = hJ ε x y + hJ ε x' y := by
-  rw [hJ_conj, hJ_add_right, map_add, ← hJ_conj, ← hJ_conj]
+  rw [hJ_conj, hJ_add_right, map_add (f := _), ← hJ_conj, ← hJ_conj]
 
 theorem hJ_smul_left (a : ℂ) (x y : Fin n → ℂ) : hJ ε (a • x) y = conj a * hJ ε x y := by
   rw [hJ_conj, hJ_smul_right, map_mul, ← hJ_conj]
@@ -53,12 +58,10 @@ theorem hJ_smul_left (a : ℂ) (x y : Fin n → ℂ) : hJ ε (a • x) y = conj 
 theorem hJ_sub_left (x x' y : Fin n → ℂ) : hJ ε (x - x') y = hJ ε x y - hJ ε x' y := by
   rw [hJ_conj, hJ_sub_right, map_sub, ← hJ_conj, ← hJ_conj]
 
-theorem hJ_neg_left (x y : Fin n → ℂ) : hJ ε (-x) y = -hJ ε x y := by
-  rw [hJ_conj, hJ_neg_right, map_neg, ← hJ_conj]
-
 theorem hJ_sum_left {ι : Type*} (s : Finset ι) (c : ι → ℂ) (x : ι → Fin n → ℂ) (y : Fin n → ℂ) :
     hJ ε (∑ i ∈ s, c i • x i) y = ∑ i ∈ s, conj (c i) * hJ ε (x i) y := by
-  rw [hJ_conj, hJ_sum_right, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hJ_conj, hJ_sum_right, map_sum]
   simp only [map_mul, ← hJ_conj]
 
 theorem hJ_self_conj (x : Fin n → ℂ) : conj (hJ ε x x) = hJ ε x x := (hJ_conj ε x x).symm
@@ -171,7 +174,7 @@ theorem step_exists (x y : Fin n → ℂ) (hxy : hJ ε x x = hJ ε y y) (hx : hJ
       apply hx
       linear_combination h2 / 2
     have hH1 : hJ ε (x + y) (x + y) = hJ ε (x + y) x + conj (hJ ε (x + y) x) := by
-      simp only [hJ_add_left, hJ_add_right, map_add]
+      simp only [hJ_add_left, hJ_add_right, map_add (f := _)]
       linear_combination hxy' - hxy - hcr
     obtain ⟨hI1, hm1⟩ := gen (x + y) hu1 hH1
     have hc0 : hJ ε y y ≠ 0 := by rw [← hxy]; exact hx

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigD
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyTeich2
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyJoint
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigD
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyTeich2
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyJoint
+
+@[expose] public section
 
 namespace Formalism.L2.FormalSeriesBounds
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ThresholdPowerBoundOfCounts
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem allowed_letters_of_late_rows (D : Formalism.BasicNotions.D7) (hA3 : Form
     have hseg : segRen X.F j (FF O) K (Psi (FF O) q.2 I'') ∈
         supported (FF O) {v : ℤ × Fin K | v.1 ∈ X.F.letters j ∧ ¬ X.F.IsW j v.1} := by
       refine hren _ _ fun v hv => ⟨hlet v.1, fun hWv => ?_⟩
-      obtain ⟨m, hm, hvm⟩ := (MvPolynomial.mem_vars _).1 hv
+      obtain ⟨m, hm, hvm⟩ := (MvPolynomial.mem_vars_iff_mem_support _).1 hv
       have hb0 : b'' v.1 = 0 := (hcond v.1).1 hWv
       have hsum : multideg m v.1 = b'' v.1 := ((MvPolynomial.mem_restrictSupport_iff _).1 hPol) hm v.1
       rw [hb0] at hsum
@@ -133,7 +137,7 @@ theorem degAt_of_supported {P : MvPolynomial (ι × Fin n) R} (s : Set (ι × Fi
   show ∑ c, m (x, c) = 0
   refine Finset.sum_eq_zero fun c _ => ?_
   by_contra hne
-  have hv : (x, c) ∈ P.vars := (MvPolynomial.mem_vars _).2 ⟨m, hm, Finsupp.mem_support_iff.2 hne⟩
+  have hv : (x, c) ∈ P.vars := (MvPolynomial.mem_vars_iff_mem_support _).2 ⟨m, hm, Finsupp.mem_support_iff.2 hne⟩
   exact hs _ (hP hv) rfl
 
 end DegAt
@@ -154,7 +158,7 @@ theorem degAt_segRen {R : Type} [CommRing R] {n' r : ℕ} [NeZero n'] (F : Frame
   have h0 := ((MvPolynomial.mem_restrictSupport_iff _).1 hA) hm0
   show ∑ c, (Finsupp.mapDomain _ m0) (segE F j i, c) = b i
   rw [← h0 i]
-  exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply hinj m0 (i, c)
+  exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply_of_injective hinj m0 (i, c)
 
 theorem ordDeg_prod {R : Type} [CommRing R] {r K : ℕ} {x : ℤ} {dA dG : ℕ} {A : MvPolynomial (ℤ × Fin r) R}
     {G : MvPolynomial (ℤ × Fin K) R} (hA : ¬ Even x → DegAt x dA A) (hG : Even x → DegAt x dG G) :
@@ -188,7 +192,7 @@ theorem ordDeg_prod {R : Type} [CommRing R] {r K : ℕ} {x : ℤ} {dA dG : ℕ} 
       omega
     simp only [Finsupp.add_apply, Finset.sum_add_distrib, h1, Finset.sum_const_zero, zero_add]
     rw [← hG hx b0 hb0]
-    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply hi2 b0 (x, c)
+    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply_of_injective hi2 b0 (x, c)
   · have h1 : ∀ c : Fin r, (Finsupp.mapDomain (fun v : ℤ × Fin K => (v.1, Fin.natAdd r v.2)) b0)
         (x, Fin.castAdd K c) = 0 := fun c => by
       refine Finsupp.mapDomain_notin_range _ _ ?_
@@ -199,6 +203,6 @@ theorem ordDeg_prod {R : Type} [CommRing R] {r K : ℕ} {x : ℤ} {dA dG : ℕ} 
       omega
     simp only [Finsupp.add_apply, Finset.sum_add_distrib, h1, Finset.sum_const_zero, add_zero]
     rw [← hA hx a0 ha0]
-    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply hi1 a0 (x, c)
+    exact Finset.sum_congr rfl fun c _ => Finsupp.mapDomain_apply_of_injective hi1 a0 (x, c)
 
 end Formalism.MainNotions.SelectionLemmas.Pf

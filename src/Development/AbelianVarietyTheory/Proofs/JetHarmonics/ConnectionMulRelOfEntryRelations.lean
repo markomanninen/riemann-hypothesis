@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
@@ -60,7 +64,8 @@ theorem eq_zero_of_blocks (d : Q.NFData P A) (X : A) (hc : ∀ f, Commute (d.κ 
     rw [mul_assoc, ← (hc _).eq, ← mul_assoc, ← map_mul, ← Pi.single_mul, mul_one] at this
     exact this
   have h2 : ∑ ρ : M.Ty P, d.κ (Pi.single ρ 1) = 1 := by
-    rw [← map_sum, ← map_one d.κ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_one d.κ]
     congr 1
     exact Finset.univ_sum_single (1 : M.Ty P → ℂ)
   rw [← one_mul X, ← h2, Finset.sum_mul]

@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SigmaCount
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NkCountLocF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulDvdUnif
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.SigmaCount
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NkCountLocF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulDvdUnif
+
+@[expose] public section
 
 open NumberField Module Filter
 
@@ -46,7 +50,81 @@ theorem finite_quot {A₀ : Submodule (𝓞 K) V} (hA₀ : Submodule.IsLattice K
     Module.Finite.of_restrictScalars_finite (𝓞 K) _ _
   have : Finite (↥A₀ ⧸ ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥A₀)) :=
     Module.finite_of_finite (𝓞 K ⧸ extP K 𝔭 ^ k)
-  exact Finite.of_equiv _ (localizedQuotients.quotLocF h𝔭 A₀ k).toEquiv
+  haveI := h𝔭.isPrime
+  have ιMemPow {a : 𝓞 F} (ha : a ∈ 𝔭 ^ k) :
+      algebraMap (𝓞 F) (𝓞 K) a ∈ extP K 𝔭 ^ k := by
+    change algebraMap (𝓞 F) (𝓞 K) a ∈ Ideal.map (algebraMap (𝓞 F) (𝓞 K)) 𝔭 ^ k
+    rw [← Ideal.map_pow]
+    exact Ideal.mem_map_of_mem _ ha
+  have hle : A₀ ≤ locF 𝔭 A₀ := fun x hx => by
+    apply (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF 𝔭 A₀ x).2
+    exact ⟨1, by
+      intro h
+      exact (Ideal.ne_top_iff_one 𝔭).1 (Ideal.IsPrime.ne_top inferInstance) h,
+      by simpa using hx⟩
+  have existsS (J : Ideal (𝓞 K)) {v : V} (hv : v ∈ J • locF 𝔭 A₀) :
+      ∃ t : 𝓞 F, t ∉ 𝔭 ∧ algebraMap (𝓞 F) (𝓞 K) t • v ∈ J • A₀ := by
+    induction hv using Submodule.smul_induction_on' with
+    | smul a ha w hw =>
+      obtain ⟨t, ht, h⟩ :=
+        (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF 𝔭 A₀ w).1 hw
+      exact ⟨t, ht, by rw [smul_comm]; exact Submodule.smul_mem_smul ha h⟩
+    | add x _ y _ hx hy =>
+      obtain ⟨t, ht, h1⟩ := hx
+      obtain ⟨u, hu, h2⟩ := hy
+      refine ⟨t * u, fun h => (h𝔭.isPrime.mem_or_mem h).elim ht hu, ?_⟩
+      rw [smul_add, map_mul]
+      refine add_mem ?_ ?_
+      · rw [mul_comm, mul_smul]
+        exact Submodule.smul_mem _ _ h1
+      · rw [mul_smul]
+        exact Submodule.smul_mem _ _ h2
+  have existsApprox {w : V} (hw : w ∈ locF 𝔭 A₀) :
+      ∃ c : 𝓞 F, c - 1 ∈ 𝔭 ^ k ∧ algebraMap (𝓞 F) (𝓞 K) c • w ∈ A₀ := by
+    obtain ⟨t, ht, h⟩ :=
+      (Formalism.HermitianLattices.Ext.L3.LocalSpans.mem_locF 𝔭 A₀ w).1 hw
+    obtain ⟨u, hu⟩ := MeanA.exists_mul_sub_one_mem_pow h𝔭 ht k
+    exact ⟨u * t, hu, by rw [map_mul, mul_smul]; exact A₀.smul_mem _ h⟩
+  let e : (↥A₀ ⧸ ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥A₀)) ≃ₗ[𝓞 K]
+      (↥(locF 𝔭 A₀) ⧸ ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥(locF 𝔭 A₀))) := by
+    have hmap : ∀ y, y ∈ ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥A₀) →
+        (Submodule.inclusion hle y : ↥(locF 𝔭 A₀)) ∈
+          ((extP K 𝔭) ^ k • ⊤ : Submodule (𝓞 K) ↥(locF 𝔭 A₀)) := by
+      intro y hy
+      rw [Submodule.mem_smul_top_iff] at hy ⊢
+      exact Submodule.smul_mono le_rfl hle hy
+    refine LinearEquiv.ofBijective
+      (Submodule.mapQ _ _ (Submodule.inclusion hle) hmap) ?_
+    constructor
+    · rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
+      intro x hx
+      obtain ⟨y, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+      rw [Submodule.mapQ_apply, Submodule.Quotient.mk_eq_zero,
+        Submodule.mem_smul_top_iff] at hx
+      rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_smul_top_iff]
+      obtain ⟨t, ht, hty⟩ := existsS (extP K 𝔭 ^ k) hx
+      obtain ⟨u, hu⟩ := MeanA.exists_mul_sub_one_mem_pow h𝔭 ht k
+      have hy : (y : V) = algebraMap (𝓞 F) (𝓞 K) u •
+          (algebraMap (𝓞 F) (𝓞 K) t • y) -
+          algebraMap (𝓞 F) (𝓞 K) (u * t - 1) • y := by
+        rw [map_sub, map_mul, map_one, sub_smul, mul_smul, one_smul]
+        abel
+      rw [hy]
+      exact sub_mem (Submodule.smul_mem _ _ hty)
+        (Submodule.smul_mem_smul
+          (ιMemPow hu) y.2)
+    · intro x
+      obtain ⟨w, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+      obtain ⟨c, hc, hcw⟩ := existsApprox w.2
+      refine ⟨Submodule.Quotient.mk ⟨_, hcw⟩, ?_⟩
+      rw [Submodule.mapQ_apply, Submodule.Quotient.eq, Submodule.mem_smul_top_iff]
+      have hw : ((Submodule.inclusion hle ⟨algebraMap (𝓞 F) (𝓞 K) c • (w : V), hcw⟩ - w :
+          ↥(locF 𝔭 A₀)) : V) = algebraMap (𝓞 F) (𝓞 K) (c - 1) • (w : V) := by
+        rw [map_sub, map_one, sub_smul, one_smul]
+        rfl
+      rw [hw]
+      exact Submodule.smul_mem_smul (ιMemPow hc) w.2
+  exact Finite.of_equiv _ e.toEquiv
 
 theorem cnt_congr (h : V →ₗ⋆[K] V →ₗ[K] K) (A : Submodule (𝓞 K) V) (𝔭 : Ideal (𝓞 F)) (k : ℕ)
     (n : 𝓞 F) {Ω Ω' : Set V}
@@ -158,7 +236,7 @@ theorem congrP_add_of_mem (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {
   rw [D2.congrP_algebraMap_iff_sub_mem h𝔭] at hc ⊢
   have hzA : z ∈ A := Submodule.smul_le_right hz
   have e : h (y + z) (y + z) - c = (h y y - c) + h y z + h z y + h z z := by
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     ring
   rw [e]
   exact add_mem (add_mem (add_mem hc (form_right_mem h𝔭 hA hAi hy hz))
@@ -246,7 +324,7 @@ theorem cnt_sub (hF : IsFixF K F) {h : V →ₗ⋆[K] V →ₗ[K] K} {𝔭 : Ide
       have e1 := congrArg Subtype.val e
       rw [hFn, hFn] at e1
       have e2 := congrArg φ e1
-      simp only [map_add, hφψ, hφy, add_zero] at e2
+      simp only [map_add (f := _), hφψ, hφy, add_zero] at e2
       have e3 : x = x' := Subtype.ext e2
       subst e3
       have e4 : q = q' := ψb_inj (add_left_cancel e1)

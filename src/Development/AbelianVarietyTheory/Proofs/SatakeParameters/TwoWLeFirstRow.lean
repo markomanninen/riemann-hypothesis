@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.ParConsts
-import Formalism.LocalRingCardinality.DataKerI
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TopRowsParams
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.LocalRingCardinality.DataKerI
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ScaleFamilySizeRelationsEventually
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BTLeFiveQuarters
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TopRowsParams
+
+@[expose] public section
 
 open Formalism.MainNotions Formalism.BasicNotions Formalism.MainNotions.G Classical
 
@@ -28,8 +32,8 @@ theorem two_w_le_first_row : ∀ {eps : ℝ} (Fm : FamP eps), ∃ x0 : ℝ, ∀ 
   have hxp : 0 < L.sc.x := by linarith
   have hb : 0 < L.sc.b := Real.exp_pos _
   have hb' : 0 < L.sc.b' := div_pos (mul_pos hxp hb) (Real.exp_pos _)
-  have ha : aL L z.2 = L.aT ⟨z.2, hz.2⟩ := by unfold aL; rw [dif_pos hz.2]
-  have hbb : bL L z.2 = L.bT ⟨z.2, hz.2⟩ := by unfold bL; rw [dif_pos hz.2]
+  have ha : aL L z.2 = L.aT ⟨z.2, hz.2⟩ := by unfold aL; rw [dite_eq_left hz.2]
+  have hbb : bL L z.2 = L.bT ⟨z.2, hz.2⟩ := by unfold bL; rw [dite_eq_left hz.2]
   have a1 := (L.aT_win ⟨z.2, hz.2⟩).1
   have a2 := L.bT_ge ⟨z.2, hz.2⟩
   have a3 : 4 * L.sc.b ≤ L.sc.a := by

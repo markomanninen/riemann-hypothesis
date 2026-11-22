@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ProperW
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ProperW
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,8 +82,5 @@ theorem invNbhd_holds : InvNbhd := by
   refine ⟨((u⁻¹ : (MfI X)ˣ) : MfI X), ⟨u, interior_subset hu, rfl⟩, ?_⟩
   change ((u⁻¹ : (MfI X)ˣ) : MfI X) * ((u : MfI X) * 1) = 1
   simp
-
-theorem constTest_of_polar_wh (hP : PolarLoc) (hW : WittInf) (hH : MassDataMassesW.HinfCompact) : ConstTest :=
-  constTest_of_polar_witt hP hW hH invNbhd_holds
 
 end PI.AprimeInfW

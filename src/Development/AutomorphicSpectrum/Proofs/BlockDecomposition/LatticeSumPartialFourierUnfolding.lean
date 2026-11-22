@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColJoinColLColR
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantUnipotentTranslate
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ColJoinColLColR
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaSumInvariantUnipotentTranslate
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -25,7 +30,8 @@ theorem psi_inner_rat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F 
     rw [rat_mul, rat_mul, rat_conjTranspose, gA]
   have ht : ∀ M : Matrix (Fin s) (Fin s) D.host.E,
       Matrix.trace (rat M : Mx D s s) = incA D (Matrix.trace M) := fun M => by
-    simp only [rat, Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [rat, Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
   rw [h, ht, GlobalTheory.CompanionTheory.ThetaInv.trA_incA]
   exact hψ.2.2.1 _
 

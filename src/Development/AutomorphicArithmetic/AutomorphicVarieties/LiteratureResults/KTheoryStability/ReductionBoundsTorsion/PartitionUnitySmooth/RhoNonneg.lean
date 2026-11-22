@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ private theorem ret_act (hq : ∀ (γ : Gm L N) (h : HS L N) (v : Lat L N), q (a
     ret μ (actL (emb L N γ) h) = actL (emb L N γ) (ret μ h) := by
   have hi : μ (actL (emb L N γ) h) = μ h := hμ.inv γ h hh
   unfold ret
-  rw [hi, map_add, map_smul, inj_finsum _ (act_inj γ)]
+  rw [hi, map_add (f := _), map_smul, inj_finsum _ (act_inj γ)]
   congr 1
   exact finsum_congr fun k => by rw [term_act hq, map_smul]
 
@@ -124,7 +128,7 @@ theorem pf_GREqv : GREqv := by
   · rw [hr, mat_add, mat_smul]
     exact ((hh w).smul hμp).add_posSemidef (hS w)
   · have e : qR (μ h • h + S) z = μ h * qR h z + qR S z := by
-      simp only [← evR_apply, map_add, map_smul, smul_eq_mul]
+      simp only [← evR_apply, map_add (f := _), map_smul, smul_eq_mul]
     rw [hr, e]
     linarith [psd_qR hS z]
 

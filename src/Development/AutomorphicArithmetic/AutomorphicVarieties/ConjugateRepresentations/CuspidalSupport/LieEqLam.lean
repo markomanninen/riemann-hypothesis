@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsRestrictionBlockEmbeddingIntertwinesLie
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsRestrictionBlockEmbeddingIntertwinesLie
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -8,7 +12,7 @@ open GlobalTheory.PRep (fixed)
 open scoped TensorProduct
 
 open UpperTheory.V UpperTheory.V.Af.Fin in
-private theorem lie_eq_lam {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (i j : Fin a) (x : Cinf E)
+private theorem lie_eq_lam {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (i j : Fin a) (x : Cinf E)
     (φ : Sm E a) :
     Cm.smEq E a (lie E a (toL (Matrix.single i j x)) φ) =
       lam E a (Matrix.single i j (Cm.mixEq E x)) (Cm.smEq E a φ) := by

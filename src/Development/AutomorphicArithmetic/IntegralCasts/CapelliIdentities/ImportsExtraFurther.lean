@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace UpperTheory.Reformulated.B.AddCharacterCount.Helpers
 
@@ -15,7 +19,7 @@ private lemma card_le {C F : Type} [Field C] [Fintype F] [AddCommGroup F] :
   refine ⟨hfin, ?_⟩
   have : Nat.card (AddChar F C) ≤ Fintype.card (Multiplicative F) := by
     have h2 := Cardinal.toNat_le_toNat h1 Cardinal.natCast_lt_aleph0
-    simpa [Nat.card] using h2
+    simpa only [Cardinal.toNat_mk, Cardinal.toNat_natCast] using h2
   simpa [Nat.card_eq_fintype_card] using this
 
 end UpperTheory.Reformulated.B.AddCharacterCount.Helpers

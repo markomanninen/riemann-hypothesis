@@ -1,6 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDRed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDJDJComm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatBdd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BoundedOperatorsSquareIntegrable
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSquareIntegrableHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDCCLower
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDJDJComm
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -32,11 +40,6 @@ def JDHatOpQQ : Prop :=
           ∀ J ∈ Q.FFl S.G.k S.G.r (T v).base.z (T v).base.z' (T v).base.π (T v).base.π' 0 (OmP S T v),
             MA.actA (D.parOf S v) X (trJ S T v e J) =
               (ts.map fun t => MA.actA (D.parOf S v) t.1 (trJ S T v e (B.opApply t.2 J))).sum
-
-theorem jDHatOpQQ_of (h : JDHatOp) : JDHatOpQQ := by
-  obtain ⟨Cc, hCc, H⟩ := h
-  exact ⟨Cc, hCc, fun E _ _ _ Wp Wq _ _ _ _ _ _ S T f χ ν' m₀ top A₀ hB v e L hFr hGa _ hL =>
-    H E Wp Wq S T f χ ν' m₀ top A₀ hB v e L hFr hGa hL⟩
 
 def JDecayTrQQd : Prop :=
   ∃ Cc : ℝ, ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Wp Wq : InfinitePlace E → Type)
@@ -142,8 +145,6 @@ theorem jDecayTrQQd_of_leaves (h1 : JDHatBdd) (h2 : JDHatOpQQ) (h3 : JDJComm) (h
 
 theorem jDecayTrQQd_of_open (h2 : JDHatOpQQ) : JDecayTrQQd :=
   jDecayTrQQd_of_leaves hat_bounded_decay_holds h2 transfer_commutation_holds class_lower_decay_holds transfer_square_integrable_holds bounded_operators_square_integrable
-
-theorem jDecayTr_of_hatOp (h2 : JDHatOp) : JDecayTr := jDecayTr_of_open h2 transfer_commutation_holds
 
 end
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+
+@[expose] public section
+
 open GlobalTheory.BI
 namespace GlobalTheory.BI
 
@@ -13,6 +18,7 @@ theorem _root_.GlobalTheory.BI.pair_character_eq_finrank : ∀ (K L : Type) [Fie
     (Representation.card_inv_mul_sum_char_mul_char_eq_finrank ρ σ)
   unfold _root_.GlobalTheory.BI.pair
   rw [finsum_eq_sum_of_fintype]
-  simpa only [map_mul, map_sum, map_inv₀, map_natCast] using h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_mul, map_sum, map_inv₀, map_natCast] using h
 
 end GlobalTheory.BI

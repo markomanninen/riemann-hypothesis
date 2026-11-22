@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.SubsingletonOfLeOne
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.KerMemAbLocus
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.SubsingletonOfLeOne
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.KerMemAbLocus
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -123,10 +127,6 @@ theorem Rel.point {X : Scheme.{0}} (p : Sp R ⟶ X) (U : X.Opens) (h : p (spMap 
 def toStk (V : Type) [CommRing V] [IsDomain V] : V →+* (Sp V).presheaf.stalk (gen V) :=
   ((Sp V).presheaf.germ ⊤ (gen V) trivial).hom.comp (Scheme.ΓSpecIso (CommRingCat.of V)).inv.hom
 
-theorem toStk_injective : Function.Injective (toStk V) :=
-  (germ_injective_of_isIntegral (Sp V) (U := ⊤) (gen V) trivial).comp
-    (ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (CommRingCat.of V)).inv).1
-
 theorem toStk_map (r : R) : toStk V (g r) = gs (spMap g) (gen V) ⊤ (DegPre.toOpen (R := R) ⊤ r) := by
   rw [gs_eq _ _ ⊤ trivial, BetaAdd.toOpen_top]
   have e := congrArg (fun q => q.hom r) (Scheme.ΓSpecIso_inv_naturality (CommRingCat.ofHom g))
@@ -135,7 +135,7 @@ theorem toStk_map (r : R) : toStk V (g r) = gs (spMap g) (gen V) ⊤ (DegPre.toO
 
 theorem toStk_valR {U : (Sp V).Opens} (h : ⊤ ≤ U) (a : Γ(Sp V, U)) :
     toStk V (valR (𝟙 (Sp V)) U a) = gs (𝟙 (Sp V)) (gen V) U a := by
-  rw [valR, dif_pos (show ⊤ ≤ 𝟙 (Sp V) ⁻¹ᵁ U from h), gs_eq _ _ U (h trivial)]
+  rw [valR, dite_eq_left (show ⊤ ≤ 𝟙 (Sp V) ⁻¹ᵁ U from h), gs_eq _ _ U (h trivial)]
   simp only [toStk, RingHom.comp_apply]
   rw [Iso.hom_inv_id_apply]
   exact TopCat.Presheaf.germ_res_apply (Sp V).presheaf (homOfLE h) (gen V) trivial a
@@ -228,13 +228,13 @@ abbrev rigV (D : DegPre R) (g : R →+* V) (i : D.P.L.ι) : ((Sp V).presheaf.sta
 theorem rigV_val {i : D.P.L.ι} (h : ⊤ ≤ eSec D.P.A ⁻¹ᵁ D.P.L.U i) : (rigV D g i).val = toStk V (g (rigAt D i)) := by
   have ht : (⊤ : (Sp R).Opens) ≤ LB.wchart D.P.L (K := PUnit) (fun _ => eSec D.P.A) fun _ => i :=
     fun y hy => Set.mem_iInter.2 fun _ => h hy
-  rw [toStk_map, BetaAdd.toOpen_top, rigAt, valR, dif_pos (show ⊤ ≤ 𝟙 (Sp R) ⁻¹ᵁ (D.P.L.pull (eSec D.P.A)).U fun _ => i from ht), Iso.hom_inv_id_apply]
+  rw [toStk_map, BetaAdd.toOpen_top, rigAt, valR, dite_eq_left (show ⊤ ≤ 𝟙 (Sp R) ⁻¹ᵁ (D.P.L.pull (eSec D.P.A)).U fun _ => i from ht), Iso.hom_inv_id_apply]
   exact (gs_unit _ _ _ (ht trivial) _).symm.trans (gs_res (spMap g) _ ht trivial _).symm
 
 theorem isUnit_rigAt {i : D.P.L.ι} (h : ⊤ ≤ eSec D.P.A ⁻¹ᵁ D.P.L.U i) : IsUnit (rigAt D i) := by
   have ht : (⊤ : (Sp R).Opens) ≤ LB.wchart D.P.L (K := PUnit) (fun _ => eSec D.P.A) fun _ => i :=
     fun y hy => Set.mem_iInter.2 fun _ => h hy
-  rw [rigAt, valR, dif_pos (show ⊤ ≤ 𝟙 (Sp R) ⁻¹ᵁ (D.P.L.pull (eSec D.P.A)).U fun _ => i from ht)]
+  rw [rigAt, valR, dite_eq_left (show ⊤ ≤ 𝟙 (Sp R) ⁻¹ᵁ (D.P.L.pull (eSec D.P.A)).U fun _ => i from ht)]
   exact ((Units.isUnit _).map _).map _
 
 theorem rigV_trans {i i' : D.P.L.ι} (h : eSec D.P.A (spMap g (gen V)) ∈ D.P.L.U i)
@@ -273,8 +273,8 @@ section Exist
 variable {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] {D : DegPre R}
   {C : Type} [NormedField C] [IsUltrametricDist C]
 
-omit [IsDomain R] [IsLocalRing R] in
 
+omit [IsDomain R] [IsLocalRing R] in
 theorem exists_unit_of_norm {x : C} (h : ‖x‖ = 1) : ∃ u : (intO C)ˣ, ((u : intO C) : C) = x := by
   have h0 : x ≠ 0 := fun e => by simp [e] at h
   refine ⟨⟨⟨x, h.le⟩, ⟨x⁻¹, ?_⟩, Subtype.ext (mul_inv_cancel₀ h0), Subtype.ext (inv_mul_cancel₀ h0)⟩, rfl⟩
@@ -443,8 +443,8 @@ theorem IsTauVal.unique {g : R →+* intO C} (hex : ∀ χ, ∃ r, PsiCoord D χ
   simp only [_root_.mul_assoc] at e₁ e₂
   exact mul_right_cancel₀ (right_ne_zero_of_mul (e₁ ▸ h0)) (e₁.symm.trans e₂)
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem exists_lift {X : Type} [AddCommGroup X] [Module.Finite ℤ X] (β : X →ₗ[ℤ] X →ₗ[ℤ] ℝ) (p : ℕ)
     (h : ∀ a b, ∃ c : Cˣ, β a b = -Real.logb p ‖(c : C)‖) :
     ∃ t : X → X → Cˣ, (∀ a b, β a b = -Real.logb p ‖(t a b : C)‖) ∧
@@ -456,7 +456,6 @@ theorem exists_lift {X : Type} [AddCommGroup X] [Module.Finite ℤ X] (β : X �
   have hle : M ≤ LinearMap.range v := by
     rintro _ ⟨z, rfl⟩
     induction z with
-    | zero => simp
     | tmul a b => obtain ⟨c, hc⟩ := h a b; exact ⟨Additive.ofMul c, hc.symm⟩
     | add z w hz hw => rw [map_add]; exact add_mem hz hw
   obtain ⟨s, hs⟩ := Module.projective_lifting_property v.rangeRestrict (Submodule.inclusion hle)
@@ -466,7 +465,7 @@ theorem exists_lift {X : Type} [AddCommGroup X] [Module.Finite ℤ X] (β : X �
   · exact (congrArg Subtype.val (LinearMap.congr_fun hs (m a b))).symm
   · exact congrArg (fun z => (s z).toMul) (Subtype.ext e : m a b = m a' b')
   · have : m (a + a') b = m a b + m a' b := Subtype.ext (by simp [m])
-    simp only [this, map_add, toMul_add]
+    simp only [this, map_add (f := _), toMul_add]
 
 end Exist
 

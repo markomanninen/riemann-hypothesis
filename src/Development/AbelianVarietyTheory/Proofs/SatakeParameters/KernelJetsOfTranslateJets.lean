@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TranslateJets
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableComb
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTraceCompatibleTorusEmbeddingStandardTorus
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffInLetters
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelJets
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableComb
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsTraceCompatibleTorusEmbeddingStandardTorus
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeCharacterTrivialNearOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffInLetters
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ variable {p : ℕ} [Fact p.Prime] {lam : Qbar →+* ℂ_[p]}
 
 theorem intAt_iff {x : ℂ} : IntAt lam x ↔ ∃ h : x ∈ Qbar, ‖lam ⟨x, h⟩‖ ≤ 1 := by
   unfold IntAt lamC
-  exact ⟨fun ⟨h, h1⟩ => ⟨h, by rwa [dif_pos h] at h1⟩, fun ⟨h, h1⟩ => ⟨h, by rwa [dif_pos h]⟩⟩
+  exact ⟨fun ⟨h, h1⟩ => ⟨h, by rwa [dite_eq_left h] at h1⟩, fun ⟨h, h1⟩ => ⟨h, by rwa [dite_eq_left h]⟩⟩
 
 theorem intAt_mul {x y : ℂ} (hx : IntAt lam x) (hy : IntAt lam y) : IntAt lam (x * y) := by
   obtain ⟨h, h1⟩ := intAt_iff.1 hx
@@ -41,7 +45,7 @@ theorem intAt_add {x y : ℂ} (hx : IntAt lam x) (hy : IntAt lam y) : IntAt lam 
   obtain ⟨h', h2⟩ := intAt_iff.1 hy
   refine intAt_iff.2 ⟨add_mem h h', ?_⟩
   change ‖lam (⟨x, h⟩ + ⟨y, h'⟩)‖ ≤ 1
-  rw [map_add]
+  rw [map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le h1 h2)
 
 theorem intAt_of_isIntegral {x : ℂ} (hx : IsIntegral ℤ x) : IntAt lam x := by

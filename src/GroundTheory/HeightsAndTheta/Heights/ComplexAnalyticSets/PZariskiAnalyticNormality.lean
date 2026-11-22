@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsNoetherian
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCompletionNormalDescent
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAffineCompletionNormal
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermCompletionEquiv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsNoetherian
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCompletionNormalDescent
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAffineCompletionNormal
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermCompletionEquiv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -27,7 +32,7 @@ theorem holGermPointIdeal_le_jacobson {σ : Type} [Fintype σ] (w : σ → ℂ) 
   intro y
   apply holGerms_isUnit_of_value_ne_zero
   have hx0 : holGermValue w x = 0 := RingHom.mem_ker.1 hx
-  simp [map_add, map_mul, hx0]
+  simp [map_add (f := _), map_mul, hx0]
 
 theorem germQuotPointIdeal_le_jacobson {σ : Type} [Fintype σ] (I : Ideal (MvPolynomial σ ℂ)) (w : σ → ℂ) :
     germQuotPointIdeal I w ≤ (⊥ : Ideal (holGerms w ⧸ I.map (polyGerm w))).jacobson := by
@@ -37,7 +42,7 @@ theorem germQuotPointIdeal_le_jacobson {σ : Type} [Fintype σ] (I : Ideal (MvPo
   intro y
   obtain ⟨y', rfl⟩ := Ideal.Quotient.mk_surjective y
   have hu := Ideal.mem_jacobson_bot.1 (holGermPointIdeal_le_jacobson w hx') y'
-  simpa [map_add, map_mul] using hu.map (Ideal.Quotient.mk (I.map (polyGerm w)))
+  simpa [map_add (f := _), map_mul] using hu.map (Ideal.Quotient.mk (I.map (polyGerm w)))
 
 theorem ZariskiAnalyticNormality.proof (hN : HolGermsNoetherian.Statement)
     (hD : CompletionNormalDescent.Statement) (hA : AffineCompletionNormal.Statement)

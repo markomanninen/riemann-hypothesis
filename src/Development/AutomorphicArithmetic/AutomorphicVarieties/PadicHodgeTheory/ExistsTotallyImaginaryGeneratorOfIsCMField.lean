@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsRealSplitPrimitiveElementPadicFiniteExt
-import Mathlib.NumberTheory.Padics.Hensel
-import Mathlib.NumberTheory.NumberField.CMField
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsCMOfConj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsRealSplitPrimitiveElementPadicFiniteExt
+public import Mathlib.NumberTheory.Padics.Hensel
+public import Mathlib.NumberTheory.NumberField.CMField
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsCMOfConj
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc NumberField
 
-private theorem isCM_of_conj (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+private theorem isCM_of_conj (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     (h : ∀ x : K, ∃ y : K, ∀ φ : K →+* ℂ, φ y = starRingEnd ℂ (φ x)) : IsCMField K :=
   _root_.UpperTheory.Reformulated.B.Qh8.isCM_of_conj K h
 
@@ -117,7 +122,7 @@ theorem UpperTheory.exists_totally_imaginary_generator_of_isCMField :
       obtain ⟨a, ha⟩ := ihx
       obtain ⟨b, hb⟩ := ihy
       refine ⟨a + b, fun φ => ?_⟩
-      rw [map_add, ha, hb, ← map_add, ← map_add]
+      rw [map_add (f := _), ha, hb, ← map_add (f := _), ← map_add (f := _)]
       rfl
     | inv x hx ihx =>
       obtain ⟨a, ha⟩ := ihx

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.IsotInLeOfIntw
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.IsotInLeOfIntw
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ def conjMap {U U' : Submodule ℂ (Formalism.AUTREP.GAf L n → ℂ)} (T : U →
     apply Subtype.ext
     show cj ((T (toU (f + f')) : U') : Formalism.AUTREP.GAf L n → ℂ) =
       cj ((T (toU f) : U') : Formalism.AUTREP.GAf L n → ℂ) + cj ((T (toU f') : U') : Formalism.AUTREP.GAf L n → ℂ)
-    rw [this, map_add, Submodule.coe_add, cj_add]
+    rw [this, map_add (f := _), Submodule.coe_add, cj_add]
   map_smul' a f := by
     have : toU (a • f) = star a • toU f := Subtype.ext (cj_smul a f.1)
     apply Subtype.ext
@@ -128,8 +132,6 @@ end LinIndep
 section Fin
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-local instance instCMHostN (D : Formalism.BasicNotions.D7) : IsCMField D.host.E := D.host.isCMField_hostE
 
 variable {D : Formalism.BasicNotions.D7} {Y : Formalism.BasicNotions.TH.HSp D} {n : ℕ} {Sp : D.what₂.Tau → SPar}
 variable (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ))

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.Hypotheses.GalCoh
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.Transport
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ExistsApplyEqOfMemDec
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohField
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTate
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeMemAsIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.Transport
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.ExistsApplyEqOfMemDec
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Inertia
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohCmp
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohField
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTate
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsPrimeMemAsIdeal
+
+@[expose] public section
 
 open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel NumberField IsDedekindDomain Formalism.ConjugateSelfDual
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -60,15 +64,13 @@ variable {X : Data F} {s : Fin X.D → Fin X.N → F} {hs : X.IsGood s} {δ : �
 def totRes (Co : Coord X.toGeo hs δ) : Tot X.toGeo →ₗ[F] (Fin δ → F) :=
   (Co.ev 0).toLinearMap ∘ₗ hs.res 0 ∘ₗ LinearMap.proj 0
 
-variable (X s) in
 
+variable (X s) in
 def totFil (a : ℕ) : Submodule F (Tot X.toGeo) := (filV X s a).map (incl X X.T)
 
 def totSym (Co : Coord X.toGeo hs δ) (a : ℕ) : totFil X s a →ₗ[F] (MonoDeg (Fin X.D) a × Fin δ → F) :=
   symV Co a ∘ₗ (Submodule.equivMapOfInjective _ (incl_injective X X.T) (filV X s a)).symm.toLinearMap
 
 end Split
-
-example (G : Geo F) (u : Fin G.N → F) (x : Tot G) : shift G u x 0 = 0 := rfl
 
 end GlobalTheory.HSShort

@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharpolySmulOfProd
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TripleAtt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdOfMono0L
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CharpolySmulOfProd
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TripleAtt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdOfMono0L
+
+@[expose] public section
 
 namespace GlobalTheory.SmallPrimeIdeal
 

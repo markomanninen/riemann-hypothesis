@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+
+@[expose] public section
+
 open Filter Topology GlobalTheory.VolBr
 
 namespace GlobalTheory.VolBr

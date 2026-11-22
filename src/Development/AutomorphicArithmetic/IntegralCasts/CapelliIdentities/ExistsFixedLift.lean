@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Gwa5.IsSmooth :
     {k G V : Type} →
@@ -16,7 +20,7 @@ theorem UpperTheory.Reformulated.B.Gwa5.aux2 :
         b ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
           ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (a + b) = (↑((χ : ↥H → kˣ) h) : k) • (a + b) := by
   intro k G V _ _ _ _ ρ H χ a b ha hb h
-  rw [map_add, smul_add, ha h, hb h]
+  rw [map_add (f := _), smul_add, ha h, hb h]
 
 theorem UpperTheory.Reformulated.B.Gwa5.aux3 :
     ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
@@ -119,7 +123,8 @@ theorem UpperTheory.Reformulated.B.Gwa5.exists_fixed_lift :
         simp only [hmul, inv_mul_cancel, map_one, Module.End.one_apply]
       · intro w _
         simp only [hmul, mul_inv_cancel, map_one, Module.End.one_apply]
-    rw [map_smul, map_sum, hs, MonoidHom.one_apply, Units.val_one, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum, hs, MonoidHom.one_apply, Units.val_one, one_smul]
   · have h2 : (O.card : ℂ)⁻¹ • ∑ w ∈ O, w - u = (O.card : ℂ)⁻¹ • ∑ w ∈ O, (w - u) := by
       rw [Finset.sum_sub_distrib, Finset.sum_const, smul_sub, ← Nat.cast_smul_eq_nsmul ℂ,
         smul_smul, inv_mul_cancel₀ hne, one_smul]

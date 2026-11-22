@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.LocPad
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.InsSuccAbove
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.LocPad
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.InsSuccAbove
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -14,12 +18,12 @@ def OO (dK : ℕ) (δ : MaximalUnramifiedExtension l) (hδ : δ ^ 2 = -(dK : Max
   mul_mem' := by
     rintro _ _ ⟨a, b, rfl⟩ ⟨c, e, rfl⟩
     refine ⟨a * c - dK * (b * e), a * e + b * c, ?_⟩
-    simp only [map_add, map_sub, map_mul, map_natCast]
+    simp only [map_add (f := _), map_sub, map_mul, map_natCast]
     linear_combination (ψ l b * ψ l e) * hδ
   one_mem' := ⟨1, 0, by simp⟩
   add_mem' := by
     rintro _ _ ⟨a, b, rfl⟩ ⟨c, e, rfl⟩
-    exact ⟨a + c, b + e, by simp only [map_add]; ring⟩
+    exact ⟨a + c, b + e, by simp only [map_add (f := _)]; ring⟩
   zero_mem' := ⟨0, 0, by simp⟩
   neg_mem' := by
     rintro _ ⟨a, b, rfl⟩
@@ -57,7 +61,7 @@ theorem norm_sq_unit {dK : ℕ} (hin : ¬ ∃ a : ZMod l, a ^ 2 = -(dK : ZMod l)
     (h : ‖a‖ = 1 ∨ ‖b‖ = 1) : ‖a * a + dK * (b * b)‖ = 1 := by
   rw [norm_eq_one_iff]
   intro h0
-  rw [map_add, map_mul, map_mul, map_mul, toZMod_natCast] at h0
+  rw [map_add (f := _), map_mul, map_mul, map_mul, toZMod_natCast] at h0
   by_cases hB : PadicInt.toZMod b = 0
   · have hA : PadicInt.toZMod a = 0 := by
       rw [hB, mul_zero, mul_zero, add_zero] at h0; exact mul_self_eq_zero.mp h0
@@ -82,10 +86,10 @@ def setup (h5 : 5 ≤ l) (dK : ℕ) (hld : ¬ l ∣ dK) (hin : ¬ ∃ a : ZMod l
   hσp := map_natCast σ l
   hσO := by
     rintro _ ⟨a, b, rfl⟩
-    exact ⟨a, -b, by rw [map_add, map_mul, σ_ψ l σ hσ, σ_ψ l σ hσ, hσδ, map_neg]; ring⟩
+    exact ⟨a, -b, by rw [map_add (f := _), map_mul, σ_ψ l σ hσ, σ_ψ l σ hσ, hσδ, map_neg]; ring⟩
   hσσ := by
     rintro _ ⟨a, b, rfl⟩
-    simp only [map_add, map_mul, σ_ψ l σ hσ, hσδ, map_neg, neg_neg]
+    simp only [map_add (f := _), map_mul, σ_ψ l σ hσ, hσδ, map_neg, neg_neg]
   hinv := by
     rintro _ ⟨a, b, rfl⟩ hnu
     have hab : ‖a‖ = 1 ∨ ‖b‖ = 1 := by
@@ -100,7 +104,7 @@ def setup (h5 : 5 ≤ l) (dK : ℕ) (hld : ¬ l ∣ dK) (hin : ¬ ∃ a : ZMod l
     have hNu : ψ l (a * a + dK * (b * b)) * ψ l ↑u⁻¹ = 1 := by
       rw [← map_mul, ← hu, Units.mul_inv, map_one]
     have hmul : (ψ l a + δ * ψ l b) * (ψ l (a * ↑u⁻¹) + δ * ψ l (-(b * ↑u⁻¹))) = 1 := by
-      simp only [map_mul, map_neg, map_add, map_natCast] at hNu ⊢
+      simp only [map_mul, map_neg, map_add (f := _), map_natCast] at hNu ⊢
       linear_combination hNu + (-(ψ l b * ψ l b * ψ l ↑u⁻¹)) * hδ
     exact inv_eq_of_mul_eq_one_right hmul
   hone := by
@@ -129,7 +133,7 @@ def setup (h5 : 5 ≤ l) (dK : ℕ) (hld : ¬ l ∣ dK) (hin : ¬ ∃ a : ZMod l
       rw [h0, zero_pow two_ne_zero, eq_comm, neg_eq_zero, Nat.cast_eq_zero] at hδ
       exact hld (hδ ▸ dvd_zero l)
     have hb : ψ l b = 0 := by
-      rw [map_add, map_mul, σ_ψ l σ hσ, σ_ψ l σ hσ, hσδ] at hσu
+      rw [map_add (f := _), map_mul, σ_ψ l σ hσ, σ_ψ l σ hσ, hσδ] at hσu
       have h2δ : (2 * δ) * ψ l b = 0 := by linear_combination -hσu
       rcases mul_eq_zero.mp h2δ with h | h
       · exact absurd h (mul_ne_zero two_ne_zero hδ0)
@@ -142,7 +146,7 @@ def setup (h5 : 5 ≤ l) (dK : ℕ) (hld : ¬ l ∣ dK) (hin : ¬ ∃ a : ZMod l
     obtain ⟨x, y, hxy⟩ := exists_norm l h5 dK hld a ha
     refine ⟨ψ l x + δ * ψ l y, ⟨x, y, rfl⟩, ?_⟩
     rw [hb, mul_zero, add_zero, ← hxy]
-    simp only [map_add, map_mul, σ_ψ l σ hσ, hσδ, map_natCast]
+    simp only [map_add (f := _), map_mul, σ_ψ l σ hσ, hσδ, map_natCast]
     linear_combination (-(ψ l y * ψ l y)) * hδ
   hsep := by
     intro x hx hx0

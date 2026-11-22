@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsAdicColimitOfFactor
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 open GlobalTheory.AdicColimit
@@ -16,7 +20,7 @@ theorem mem_smul_top_iff_repr {O M ι : Type} [CommRing O] [AddCommGroup M] [Mod
       rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
       exact J.mul_mem_right _ hr
     · intro y z hy hz i
-      rw [map_add, Finsupp.add_apply]
+      rw [map_add (f := _), Finsupp.add_apply]
       exact J.add_mem (hy i) (hz i)
   · intro h
     rw [← b.sum_repr x]

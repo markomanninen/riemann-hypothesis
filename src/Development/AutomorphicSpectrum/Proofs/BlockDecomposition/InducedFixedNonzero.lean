@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BCT ValuativeRel
 open scoped Classical TensorProduct
@@ -21,7 +25,7 @@ theorem bump_eq (hx : ∀ p : P, (p : G) ∈ K → σ p x = x) {p : P} {g : G}
     (hp : (p : G)⁻¹ * g ∈ K) : bump P σ K x g = σ p x := by
   have h : ∃ p : P, (p : G)⁻¹ * g ∈ K := ⟨p, hp⟩
   have hq := h.choose_spec
-  rw [bump, dif_pos h]
+  rw [bump, dite_eq_left h]
   set q := h.choose
   have hm : ((q⁻¹ * p : P) : G) ∈ K := by
     have := K.mul_mem hq (K.inv_mem hp)
@@ -34,7 +38,7 @@ theorem bump_eq (hx : ∀ p : P, (p : G) ∈ K → σ p x = x) {p : P} {g : G}
   rw [h3, h2]
 
 theorem bump_of_not {g : G} (h : ¬ ∃ p : P, (p : G)⁻¹ * g ∈ K) : bump P σ K x g = 0 := by
-  rw [bump, dif_neg h]
+  rw [bump, dite_eq_right h]
 
 theorem bump_mul_left (hx : ∀ p : P, (p : G) ∈ K → σ p x = x) (p : P) (g : G) :
     bump P σ K x ((p : G) * g) = σ p (bump P σ K x g) := by

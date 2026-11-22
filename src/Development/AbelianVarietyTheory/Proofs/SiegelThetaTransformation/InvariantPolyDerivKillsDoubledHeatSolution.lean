@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiablePolyDeriv
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivEqSumList
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.InvariantPolynomialEqAevalPairingsStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivPairingEqZeroOfIsHeatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsSystem
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.DifferentiablePolyDeriv
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DblZMemHn
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivEqSumList
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.InvariantPolynomialEqAevalPairingsStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.PolyDerivPairingEqZeroOfIsHeatStatement
+
+@[expose] public section
 
 open Matrix Complex NumberField MeasureTheory GlobalTheory GlobalTheory.SW GlobalTheory.ThFr ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
 open scoped ComplexConjugate ComplexOrder Real Classical
@@ -33,7 +37,7 @@ theorem eval_aeval_lin (d : ι → σ → ℂ) (y : σ → ℂ) (P : MvPolynomia
     eval y (aeval (fun l => lin (d l)) P) = eval (fun l => d l ⬝ᵥ y) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P l hP => simp only [map_mul, hP, aeval_X, eval_X, eval_lin]
 
 abbrev crdDir (σ : Type) [DecidableEq σ] : σ → σ → ℂ := fun v => Pi.single v 1
@@ -53,11 +57,12 @@ theorem polyDeriv_aeval_lin {F : (σ → ℂ) → ℂ} (hF : Differentiable ℂ 
     polyDeriv (aeval (fun l => lin (d l)) P) (crdDir σ) F x = polyDeriv P d F x := by
   induction P using MvPolynomial.induction_on generalizing x with
   | C a => rw [algHom_C, algebraMap_eq, polyDeriv_C, polyDeriv_C]
-  | add P Q hP hQ => simp only [map_add, I2.polyDeriv_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), I2.polyDeriv_add, hP, hQ]
   | mul_X P l hP =>
     rw [map_mul, aeval_X, lin, Finset.mul_sum, I2.jof_polyDeriv_sum,
       polyDeriv_mul_X (smooth hF)]
-    conv_rhs => rw [pi_eq_sum_univ' (d l), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [pi_eq_sum_univ' (d l), map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [mul_left_comm, C_mul', I2.polyDeriv_smul, polyDeriv_mul_X (smooth hF), funext hP]
     simp
@@ -229,11 +234,11 @@ theorem eval_barP {σ : Type} (y : σ → ℂ) (P : MvPolynomial σ ℂ) :
     eval y (barP P) = conj (eval (fun l => conj (y l)) P) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [barP]
-  | add P Q hP hQ => simp only [barP, map_add] at *; rw [hP, hQ]
+  | add P Q hP hQ => simp only [barP, map_add (f := _)] at *; rw [hP, hQ]
   | mul_X P l hP => simp only [barP, map_mul, map_X, eval_X, conj_conj] at *; rw [hP]
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem invFam_eval {P : J → Harm.Poly ℂ T p q (Fin n)} (hP : InvFam P)
     {u : T → Matrix (Fin n) (Fin n) ℂ} (hu : ∀ t, u t ∈ Matrix.unitaryGroup (Fin n) ℂ)
     (z w z' w' : Harm.Var T p q (Fin n) → ℂ)
@@ -276,12 +281,13 @@ theorem exists_invariant (idx : Fin g ≃ T × Fin r) (ρ : Fin q ⊕ Fin p → 
       aeval (fun l => lin (lift idx NB (d l))) (barP (P j)))
   refine ⟨R, fun u hu => absorb_invariant (differentiable_gauss c M) hR _ _
     (dotProduct_act (uc u)) (fun y => ?_) (gauss_act c M hu), fun F hF => ?_⟩
-  · simp only [map_sum, map_mul, eval_aeval_lin]
-    refine invFam_eval hP hu _ _ _ _ (fun t i k => ?_) fun t i k => ?_
-    · simp only [hd]
-      convert lift_single_act idx NA t (ρ i) _ (hA t i) k (uc u) y
-    · simp only [hd]
-      convert lift_single_act idx NB t (ρ i) _ (hB t i) k (uc u) y
+  · set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, eval_aeval_lin]
+      refine invFam_eval hP hu _ _ _ _ (fun t i k => ?_) fun t i k => ?_
+      · simp only [hd]
+        convert lift_single_act idx NA t (ρ i) _ (hA t i) k (uc u) y
+      · simp only [hd]
+        convert lift_single_act idx NB t (ρ i) _ (hB t i) k (uc u) y
   · rw [← hR F hF, I2.jof_polyDeriv_sum]
     exact Finset.sum_congr rfl fun j _ =>
       polyDeriv_bi ((differentiable_gauss c M).fun_mul hF) _ _ _ _ _

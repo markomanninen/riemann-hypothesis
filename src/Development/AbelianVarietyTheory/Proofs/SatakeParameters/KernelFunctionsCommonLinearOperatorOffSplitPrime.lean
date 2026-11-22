@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepComb
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCommonScaleLatticePairsSplitPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommonRepresentativesPeriodLatticeHalvesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepComb
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.SelfDualLatticeNorms.SelfDualComap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsCommonScaleLatticePairsSplitPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CommonRepresentativesPeriodLatticeHalvesStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,8 +70,23 @@ theorem admissible_pair_twist {D : D7} {a b : ℕ} (cl : ℕ) (N : Submodule (�
     (hA : TaylorLogMetric.admitted D a b N N') (hcl : 0 < cl) (ex : HeightOneSpectrum (𝓞 D.host.E) → ℤ)
     (h01 : ∀ Q, ex Q = 1 ∨ ex Q = 0 ∨ ex Q = -1) (hc : ∀ Q, ex (Formalism.L2.Col.conjPrime₂ Q) = -ex Q) :
     TaylorLogMetric.admitted D a b N (twist₂ N' cl ex) := by
-  have hl := hh_tw_lattice N' ⟨hA.2.2.2.1, hA.2.2.2.2.1⟩ hcl ex h01
-  exact ⟨hA.1, hA.2.1, hA.2.2.1, hl.fg, hl.span_eq_top,
+  have hl := hh_tw_lattice N' ⟨hA.2.2.2.1, by
+    intro s hs hli
+    exact (LinearIndependent.iff_fractionRing _ _).mp hli⟩ hcl ex h01
+  have hspan : Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Fin b → D.host.E)) = ⊤ := by
+    apply top_unique
+    rw [← hA.2.2.2.2.1]
+    apply Submodule.span_le.mpr
+    intro x hx
+    change x ∈ Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Fin b → D.host.E))
+    have hx' : (cl : 𝓞 D.host.E) • x ∈ Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Fin b → D.host.E)) :=
+      Submodule.subset_span (hh_tw_of N' hcl ex h01 hx)
+    have hc : (cl : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 hcl.ne'
+    have hx'' : (cl : D.host.E) • x ∈ Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Fin b → D.host.E)) := by
+      simpa only [Nat.cast_smul_eq_nsmul] using hx'
+    have := Submodule.smul_mem (Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Fin b → D.host.E))) (cl : D.host.E)⁻¹ hx''
+    simpa only [smul_smul, inv_mul_cancel₀ hc, one_smul] using this
+  exact ⟨hA.1, hA.2.1, hA.2.2.1, hl.fg, hspan,
     (unimod_iff _).1 (twist_selfDual D.host.E b N' cl ex hA.2.2.2.1 hcl hc ((unimod_iff _).2 hA.2.2.2.2.2))⟩
 
 theorem split_of_adm {D : D7} {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (B : Base D cc δ) {a b : ℕ} (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)

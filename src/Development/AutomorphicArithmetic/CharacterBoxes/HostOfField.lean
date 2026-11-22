@@ -1,7 +1,16 @@
-import Development.AutomorphicArithmetic.ShortNorms.Primes
-import Development.AutomorphicArithmetic.ShortNorms.hostOfFieldOf
-import Development.AutomorphicArithmetic.ShortNorms.supplyOfAdmOf
-import Development.AutomorphicArithmetic.ShortNorms.hostExOneOf
+module
+
+public import Development.AutomorphicArithmetic.ShortNorms.Primes
+public import Development.AutomorphicArithmetic.ShortNorms.hostOfFieldOf
+public import Development.AutomorphicArithmetic.ShortNorms.supplyOfAdmOf
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AutomorphicArithmetic.CharacterBoxes.Imports
+public import Development.AutomorphicArithmetic.CharacterBoxes.PairHyp
+public import Development.AutomorphicArithmetic.MeanSquareBounds.pairEx
+public import Development.AutomorphicArithmetic.CoprimeRanks.AdmChi
+public import Development.AutomorphicArithmetic.CoprimeRanks.FieldAny
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.HC GlobalTheory.EX UpperTheory.Top HostParam.Seam
 

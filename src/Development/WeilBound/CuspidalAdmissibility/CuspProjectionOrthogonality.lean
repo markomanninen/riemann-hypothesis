@@ -1,9 +1,16 @@
-import GroundTheory.AutomorphicForms.L2LocalComponents
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
-import GroundTheory.AutomorphicForms.SmoothRep
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Smooth
-import Development.WeilBound.CuspidalAdmissibility.OccLocSpan
+module
+
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsIsOpenForallCuspRepTFinOneEq
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+public import GroundTheory.AutomorphicForms.L2LocalComponents
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CuspSmooth
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+public import GroundTheory.AutomorphicForms.SmoothRep
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Smooth
+public import Development.WeilBound.CuspidalAdmissibility.OccLocSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,36 +22,36 @@ namespace PositivityTheory.TfC.CuspProjectionOrthogonality
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-abbrev cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))) : Submodule ℂ (CuspL2 μ) :=
-  V.comap ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) :
-    CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))
+abbrev cuspPart (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
+    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))) : Submodule ℂ (CuspL2 μ) :=
+  V.comap ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) :
+    CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))
 
-theorem isClosed_cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)))
-    (hcl : IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)))) :
+theorem isClosed_cuspPart (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
+    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)))
+    (hcl : IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)))) :
     IsClosed ((cuspPart μ V : Submodule ℂ (CuspL2 μ)) : Set (CuspL2 μ)) :=
   hcl.preimage (toLp μ).continuous
 
-theorem isInvariant_cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)))
-    (hinv : (rightRegularRep (rationalGLOne K n) μ).IsInvariant V) :
+theorem isInvariant_cuspPart (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
+    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)))
+    (hinv : (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant V) :
     (cuspRepT μ).IsInvariant (cuspPart μ V) := by
   intro g v hv
   show toLp μ (cuspRepT μ g v) ∈ V
   rw [toLp_cuspRepT]
   exact hinv g _ hv
 
-theorem isometry_toLp (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] :
+theorem isometry_toLp (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] :
     Isometry (toLp μ) :=
   AddMonoidHomClass.isometry_of_norm _ (norm_toLp μ)
 
-theorem isMinimal_cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
-    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)))
-    (hle : V ≤ cuspidalL2 μ) (hcl : IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))))
-    (hinv : (rightRegularRep (rationalGLOne K n) μ).IsInvariant V) (hne : V ≠ ⊥)
-    (hirr : ∀ V' ≤ V, IsClosed (V' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))) →
-      (rightRegularRep (rationalGLOne K n) μ).IsInvariant V' → V' = ⊥ ∨ V' = V) :
+theorem isMinimal_cuspPart (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
+    (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)))
+    (hle : V ≤ cuspidalL2 μ) (hcl : IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))))
+    (hinv : (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant V) (hne : V ≠ ⊥)
+    (hirr : ∀ V' ≤ V, IsClosed (V' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))) →
+      (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant V' → V' = ⊥ ∨ V' = V) :
     (cuspRepT μ).IsMinimal (cuspPart μ V) := by
   refine ⟨isClosed_cuspPart μ V hcl, isInvariant_cuspPart μ V hinv, ?_, ?_⟩
   · obtain ⟨u, hu, hu0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
@@ -54,16 +61,16 @@ theorem isMinimal_cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
     rw [h, Submodule.mem_bot] at hmem
     exact hu0 (congrArg Subtype.val hmem)
   · intro U hUc hUi hUV
-    set U' : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) :=
-      U.map ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) :
-        CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) with hU'
+    set U' : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) :=
+      U.map ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) :
+        CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) with hU'
     have hU'V : U' ≤ V := by
       rintro _ ⟨v, hv, rfl⟩
       exact hUV hv
-    have hU'c : IsClosed (U' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))) := by
+    have hU'c : IsClosed (U' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))) := by
       rw [hU', Submodule.map_coe]
       exact (isometry_toLp μ).isClosedEmbedding.isClosedMap _ hUc
-    have hU'i : (rightRegularRep (rationalGLOne K n) μ).IsInvariant U' := by
+    have hU'i : (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant U' := by
       rintro g _ ⟨v, hv, rfl⟩
       exact ⟨cuspRepT μ g v, hUi g v hv, rfl⟩
     rcases hirr U' hU'V hU'c hU'i with h | h
@@ -82,16 +89,16 @@ theorem isMinimal_cuspPart (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
 
 section Family
 
-variable (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+variable (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
   (P : CuspidalAutomorphicRepresentation K n) (D : AdelicDecomposition P.toModule)
 
-def clsL : P.carrier →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ) :=
-  ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) :
-    CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)) ∘ₗ cuspVecL μ ∘ₗ P.carrier.subtype
+def clsL : P.carrier →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ) :=
+  ((toLp μ : CuspL2 μ →L[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) :
+    CuspL2 μ →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)) ∘ₗ cuspVecL μ ∘ₗ P.carrier.subtype
 
 theorem clsL_tau (h : AdelicGLn.FiniteAdelicGL K n) (c : P.carrier) :
     clsL μ P (P.toModule.τ h c) =
-      rightRegularRep (rationalGLOne K n) μ (MultiplicityOne.finProj K n h) (clsL μ P c) := by
+      rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n h) (clsL μ P c) := by
   show toLp μ (cuspVecL μ (finRepCusp K n h c)) = _
   rw [cuspToL2_finRepCusp μ h (P.le_central c.2), toLp_cuspRepT]
   rfl
@@ -123,9 +130,9 @@ theorem tensorEquiv_symm_rep (h : AdelicGLn.FiniteAdelicGL K n)
       D.toDecomposition.π₂ h (D.finite.equiv.toLinearEquiv.symm t) :=
   LinearMap.congr_fun (D.finite.equiv.symm.toIntertwiningMap.isIntertwining' h) t
 
+
 open Classical in
 variable {P} in
-
 def famL (w : HeightOneSpectrum (𝓞 K)) (x : ∀ v, D.finite.W v)
     (hx : RestrictedTensor.IsRestricted D.finite.ξ x) :
     D.finite.W w →ₗ[ℂ] RestrictedTensor.restrictedTensor D.finite.ξ :=
@@ -177,7 +184,7 @@ theorem famL_equivariant (w : HeightOneSpectrum (𝓞 K)) (x : ∀ v, D.finite.W
 
 def famF (w : HeightOneSpectrum (𝓞 K)) (a : D.toDecomposition.W₁) (x : ∀ v, D.finite.W v)
     (hx : RestrictedTensor.IsRestricted D.finite.ξ x) :
-    D.finite.W w →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ) :=
+    D.finite.W w →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ) :=
   clsL μ P ∘ₗ D.toDecomposition.equiv.toLinearEquiv.symm.toLinearMap ∘ₗ
     TensorProduct.mk ℂ D.toDecomposition.W₁ D.toDecomposition.W₂ a ∘ₗ
     D.finite.equiv.toLinearEquiv.symm.toLinearMap ∘ₗ famL D w x hx
@@ -185,7 +192,7 @@ def famF (w : HeightOneSpectrum (𝓞 K)) (a : D.toDecomposition.W₁) (x : ∀ 
 theorem famF_equivariant (w : HeightOneSpectrum (𝓞 K)) (a : D.toDecomposition.W₁) (x : ∀ v, D.finite.W v)
     (hx : RestrictedTensor.IsRestricted D.finite.ξ x) (g : GL (Fin n) (w.adicCompletion K))
     (y : D.finite.W w) :
-    famF μ P D w a x hx (D.finite.π w g y) = rightRegularRep (rationalGLOne K n) μ
+    famF μ P D w a x hx (D.finite.π w g y) = rightRegularRep (rationalGLOne (K := K) (n := n)) μ
       (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) (famF μ P D w a x hx y) := by
   have h12 := (congrArg D.finite.equiv.toLinearEquiv.symm (famL_equivariant D w x hx g y)).trans
     (tensorEquiv_symm_rep D (AdelicGLn.localEmbedding w g) (famL D w x hx y))
@@ -196,9 +203,9 @@ theorem famF_equivariant (w : HeightOneSpectrum (𝓞 K)) (a : D.toDecomposition
 
 end Family
 
-theorem inner_clsL_eq_zero (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
+theorem inner_clsL_eq_zero (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure]
     (P : CuspidalAutomorphicRepresentation K n) (D : AdelicDecomposition P.toModule)
-    (w : HeightOneSpectrum (𝓞 K)) (u : Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))
+    (w : HeightOneSpectrum (𝓞 K)) (u : Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))
     (h : ∀ a x hx y, inner ℂ (famF μ P D w a x hx y) u = 0) (c : P.carrier) :
     inner ℂ (clsL μ P c) u = 0 := by
   refine PositivityTheory.TfC.OccursIff.Span.span_core D.finite.ξ D.toDecomposition.equiv.toLinearEquiv
@@ -210,7 +217,7 @@ theorem inner_clsL_eq_zero (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure]
     (a ⊗ₜ D.finite.equiv.toLinearEquiv.symm t))) e
   exact e2 ▸ h a x hx (x w)
 
-theorem occ_loccomp : ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL K n)) [μ.IsHaarMeasure] (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))), V ≤ cuspidalL2 μ → IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))) → (rightRegularRep (rationalGLOne K n) μ).IsInvariant V → V ≠ ⊥ → (∀ V' ≤ V, IsClosed (V' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ))) → (rightRegularRep (rationalGLOne K n) μ).IsInvariant V' → V' = ⊥ ∨ V' = V) → ∀ (w : HeightOneSpectrum (𝓞 K)), ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W) (π : Representation ℂ (GL (Fin n) (w.adicCompletion K)) W), GroundTheory.Automorphic.IsAdmissible π ∧ π.IsIrreducible ∧ ∃ F : Set (W →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne K n) μ)), (∀ f ∈ F, (∀ x, f x ∈ V) ∧ ∀ g x, f (π g x) = rightRegularRep (rationalGLOne K n) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) (f x)) ∧ ∀ u ∈ V, u ≠ 0 → ∃ f ∈ F, ∃ x, inner ℂ (f x) u ≠ 0 := by
+theorem occ_loccomp : ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) (μ : Measure (normOneGL (K := K) (n := n))) [μ.IsHaarMeasure] (V : Submodule ℂ (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))), V ≤ cuspidalL2 μ → IsClosed (V : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))) → (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant V → V ≠ ⊥ → (∀ V' ≤ V, IsClosed (V' : Set (Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ))) → (rightRegularRep (rationalGLOne (K := K) (n := n)) μ).IsInvariant V' → V' = ⊥ ∨ V' = V) → ∀ (w : HeightOneSpectrum (𝓞 K)), ∃ (W : Type) (_ : AddCommGroup W) (_ : Module ℂ W) (π : Representation ℂ (GL (Fin n) (w.adicCompletion K)) W), GroundTheory.Automorphic.IsAdmissible π ∧ π.IsIrreducible ∧ ∃ F : Set (W →ₗ[ℂ] Lp ℂ 2 (quotientMeasure (rationalGLOne (K := K) (n := n)) μ)), (∀ f ∈ F, (∀ x, f x ∈ V) ∧ ∀ g x, f (π g x) = rightRegularRep (rationalGLOne (K := K) (n := n)) μ (MultiplicityOne.finProj K n (AdelicGLn.localEmbedding w g)) (f x)) ∧ ∀ u ∈ V, u ≠ 0 → ∃ f ∈ F, ∃ x, inner ℂ (f x) u ≠ 0 := by
   intro K _ _ n μ _ V hle hcl hinv hne hirr w
   have : CompleteSpace (cuspPart μ V) := (isClosed_cuspPart μ V hcl).completeSpace_coe
   have hV0 := isInvariant_cuspPart μ V hinv

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UniformVanishing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -61,9 +65,10 @@ def kerSC (T : Fin k → ∀ e, M e ⟶ M (e + 1)) (d e : ℕ) : ShortComplex X.
   ShortComplex.mk (kernel.ι (sumMap T d e)) (sumMap T d e) (kernel.condition _)
 
 theorem kerSC_shortExact (T : Fin k → ∀ e, M e ⟶ M (e + 1)) (d e : ℕ) [Epi (sumMap T d e)] :
-    (kerSC T d e).ShortExact where
-  exact := ShortComplex.exact_of_f_is_kernel _ (kernelIsKernel _)
-  mono_f := by dsimp [kerSC]; infer_instance
-  epi_g := by dsimp [kerSC]; infer_instance
+    (kerSC T d e).ShortExact :=
+  ShortComplex.ShortExact.mk'
+    (ShortComplex.exact_of_f_is_kernel _ (kernelIsKernel _))
+    (inferInstanceAs (Mono (kernel.ι (sumMap T d e))))
+    (inferInstanceAs (Epi (sumMap T d e)))
 
 end GlobalTheory.CompanionTheory.GE.KerSeq

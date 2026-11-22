@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.FibGlue
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.FibGlue
+
+@[expose] public section
 
 noncomputable section
 
@@ -180,7 +184,7 @@ theorem meas_fib : ∀ A, MeasurableSet A → Measurable fun b => fib b A := by
         rw [iUnion_inter, measure_iUnion (fun i j hij => (hd hij).mono inter_subset_left
           inter_subset_left) (fun i => (hgm i).inter (hW n).1.measurableSet)]
       simp_rw [e]
-      exact Measurable.ennreal_tsum IH
+      exact Measurable.tsum IH
   intro A hA
   have hD : ∀ n, MeasurableSet (disjointed W n) :=
     MeasurableSet.disjointed fun n => (hW n).1.measurableSet
@@ -193,7 +197,7 @@ theorem meas_fib : ∀ A, MeasurableSet A → Measurable fun b => fib b A := by
       measure_iUnion (fun i j hij => ((disjoint_disjointed W) hij).mono inter_subset_right
         inter_subset_right) (fun n => hA.inter (hD n))]
   simp_rw [e]
-  refine Measurable.ennreal_tsum fun n => ?_
+  refine Measurable.tsum fun n => ?_
   have := hP n (A ∩ disjointed W n) (hA.inter (hD n))
   simpa only [inter_eq_left.2 (inter_subset_right.trans (disjointed_subset W n))] using this
 

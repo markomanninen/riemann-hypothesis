@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.ShareSt
-import ReciprocityTheory.SemistableReduction.Unipotent
+module
+
+public import ReciprocityTheory.SemistableReduction.ShareSt
+public import ReciprocityTheory.SemistableReduction.Unipotent
+
+@[expose] public section
 
 noncomputable section
 

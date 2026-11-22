@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowOnAdmissible
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CmapMemRestrictSupport
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowOnAdmissible
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.CmapMemRestrictSupport
+
+@[expose] public section
 
 noncomputable section
 

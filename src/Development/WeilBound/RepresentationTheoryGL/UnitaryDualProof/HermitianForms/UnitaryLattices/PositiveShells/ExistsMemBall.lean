@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.PositiveShells.ContinuousColElVal
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.PositiveShells.ContinuousColElVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -109,7 +113,8 @@ theorem avgL_colEl {A H : AddSubgroup (Fin (m + 1) → k)} {T : Finset (Fin (m +
 
 theorem colEl_avgL {A H : AddSubgroup (Fin (m + 1) → k)} {T : Finset (Fin (m + 1) → k)} (hT : IsTr A H T) {v : V}
     (hv : FixH h π H v) {a : Fin (m + 1) → k} (ha : a ∈ A) : π (colEl k m N h a) (avgL h π T v) = avgL h π T v := by
-  rw [avgL_apply, map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avgL_apply, map_smul, map_sum]
   congr 1
   rw [← sum_translate hT hv ha]
   refine Finset.sum_congr rfl fun t _ => ?_
@@ -124,7 +129,8 @@ theorem avgL_eq {A H H' : AddSubgroup (Fin (m + 1) → k)} {T T' : Finset (Fin (
     (hv : FixH h π H v) (hT' : IsTr A H' T') (hv' : FixH h π H' v) : avgL h π T v = avgL h π T' v := by
   have h1 : avgL h π T (avgL h π T' v) = avgL h π T' v :=
     avgL_of_inv hT fun a ha => colEl_avgL hT' hv' ha
-  rw [← h1, avgL_apply h π T' v, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, avgL_apply h π T' v, map_smul, map_sum,
     Finset.sum_congr rfl fun t ht => avgL_colEl hT hv (hT'.2.2.1 t ht), Finset.sum_const,
     ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hT'.card_ne, one_smul]
 
@@ -132,7 +138,7 @@ theorem avg_eq {A H : AddSubgroup (Fin (m + 1) → k)} {T : Finset (Fin (m + 1) 
     (hv : FixH h π H v) : avg (1 : AddChar k Circle) h π 0 A v = avgL h π T v := by
   have hd : ∃ p, AvgData (1 : AddChar k Circle) h π 0 A v p :=
     ⟨(H, T), hT.1, hT.2.1, hv, fun a _ => by simp, hT.2.2.1, hT.2.2.2⟩
-  rw [avg, dif_pos hd]
+  rw [avg, dite_eq_left hd]
   obtain ⟨p1, p2, p3, -, p5, p6⟩ := hd.choose_spec
   have e := avgL_eq (h := h) (π := π) (v := v) ⟨p1, p2, p5, p6⟩ p3 hT hv
   rw [← e, avgL_apply]
@@ -175,7 +181,8 @@ theorem B_avgL {s : ℝ} {B : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ} (hB : MirEq π
   classical
   have hTn := hT.neg
   have hcard : (T.image Neg.neg).card = T.card := Finset.card_image_of_injective _ neg_injective
-  rw [← avgL_eq hTn hw hT hw, avgL_apply, avgL_apply, Finset.sum_image (fun x _ y _ hxy => neg_injective hxy),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← avgL_eq hTn hw hT hw, avgL_apply, avgL_apply, Finset.sum_image (fun x _ y _ hxy => neg_injective hxy),
     hcard, LinearMap.map_smul, LinearMap.smul_apply, LinearMap.map_smulₛₗ, map_sum, map_sum,
     LinearMap.sum_apply]
   simp only [map_inv₀, map_natCast, smul_eq_mul]
@@ -382,7 +389,8 @@ theorem FixH.smul {H : AddSubgroup (Fin (m + 1) → k)} {v : V} (hv : FixH h π 
 theorem avgL_smul [DecidableEq (Fin (m + 1) → k)] (T : Finset (Fin (m + 1) → k)) (z : kˣ) (v : V) :
     avgL h π (T.image fun t => z • t) (π (scalAt k (m + 1) N (by omega) z) v) =
       π (scalAt k (m + 1) N (by omega) z) (avgL h π T v) := by
-  rw [avgL_apply, avgL_apply, Finset.card_image_of_injective _ (MulAction.injective z),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avgL_apply, avgL_apply, Finset.card_image_of_injective _ (MulAction.injective z),
     Finset.sum_image (fun x _ y _ hxy => MulAction.injective z hxy), map_smul, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun t _ => ?_

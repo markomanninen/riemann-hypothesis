@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFCocIff
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftBlochKatoCocycleIffOrthogonalLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFCocIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CohDimTwoLocalOfLocalFiniteness
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftBlochKatoCocycleIffOrthogonalLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,13 +72,13 @@ theorem mem_bkOn_of_orthogonal : ∀ (D : Formalism.BasicNotions.D7) (N : NData 
   · obtain ⟨y', hy', e⟩ := key
     obtain ⟨c, hc, hc'⟩ := isFCoc_iff.1 hy'
     unfold bkOn
-    rw [dif_pos hv]
+    rw [dite_eq_left hv]
     refine Submodule.subset_span ⟨y, c, y', 1, hc, hc', fun g a => ?_, rfl⟩
     rw [smul_eq_mul, mul_one, (eq_iff hK _ _).1 (e g a), hlift]
   · have : IsLocallyConstant fun g => y.1 g a :=
       (IsLocallyConstant.iff_continuous _).2 ((continuous_apply a).comp y.2.1)
     exact this.comp fun k => IsLocalRing.residue (X.O0 i) (lift k)
-  · rw [eq_iff hK, map_add, hlift, hlift, ← hact, y.2.2 g h]
+  · rw [eq_iff hK, map_add (f := _), hlift, hlift, ← hact, y.2.2 g h]
     rfl
   · intro d hd
     let x : Z1 ((red i K (Tgl i s)).comp (DecV N v).subtype) :=
@@ -82,19 +86,20 @@ theorem mem_bkOn_of_orthogonal : ∀ (D : Formalism.BasicNotions.D7) (N : NData 
         continuous_pi fun a => (continuous_algebraMap (X.twistBaseCoefficientRing_isAdic i) hK).comp ((continuous_apply a).comp hd.continuous),
         fun g h => funext fun a => by
           beta_reduce
-          rw [hd.cocycle g h, Pi.add_apply, map_add, ← repOn_one_map]
+          rw [hd.cocycle g h, Pi.add_apply, map_add (f := _), ← repOn_one_map]
           rfl⟩
     have hx : Submodule.Quotient.mk x ∈ bkOn bkP i (Tgl i s) (1 : GE N →* Kˣ) K v := by
       obtain ⟨c, hc, hc'⟩ := isFCoc_iff.1 hd
       unfold bkOn
-      rw [dif_pos hv]
+      rw [dite_eq_left hv]
       exact Submodule.subset_span ⟨x, c, d, 1, hc, hc', fun g a => by rw [smul_eq_mul, mul_one], rfl⟩
     obtain ⟨f, hf, e⟩ := H x hx
     refine ⟨fun g => divMap ϖ (lift (f g)), hf.comp fun k => divMap ϖ (lift k), fun g h => ?_⟩
-    rw [← divMap_apply, ← map_smul, ← map_sub, ← map_add, ← sub_eq_zero, ← map_sub]
+    rw [← divMap_apply, ← map_smul, ← map_sub, ← map_add (f := _), ← sub_eq_zero, ← map_sub]
     apply divMap_eq_zero hϖ
-    rw [eq_iff hK, map_add, map_sub, smul_eq_mul, map_mul, hlift, hlift, hlift, ← e g h]
-    simp only [dotProductBilin_apply_apply, dotProduct, map_sum, map_mul, hact]
+    rw [eq_iff hK, map_add (f := _), map_sub, smul_eq_mul, map_mul, hlift, hlift, hlift, ← e g h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProductBilin_apply_apply, dotProduct, map_sum, map_mul, hact]
     rfl
 
 end GlobalTheory.ResDual.Perp

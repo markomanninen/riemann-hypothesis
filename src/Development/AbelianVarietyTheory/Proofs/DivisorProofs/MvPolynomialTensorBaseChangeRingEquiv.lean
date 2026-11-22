@@ -1,16 +1,20 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing TensorProduct
 
 namespace GlobalTheory
 
+attribute [local instance] MvPolynomial.algebraMvPolynomial
+
 theorem mvPolynomial_tensor_baseChange_ringEquiv :
     ∀ (S B K τ : Type) [CommRing S] [CommRing B] [CommRing K] [Algebra S B] [Algebra S K]
       [Algebra (MvPolynomial τ S) K] [IsScalarTower S (MvPolynomial τ S) K],
-      letI : Algebra (MvPolynomial τ S) (MvPolynomial τ B) :=
-        (MvPolynomial.map (algebraMap S B)).toAlgebra
       Nonempty (MvPolynomial τ B ⊗[MvPolynomial τ S] K ≃+* B ⊗[S] K) := by
   intro S B K τ _ _ _ _ _ _ _
-  letI : Algebra (MvPolynomial τ S) (MvPolynomial τ B) := MvPolynomial.algebraMvPolynomial
   let e : MvPolynomial τ S ⊗[S] B ≃ₐ[MvPolynomial τ S] MvPolynomial τ B :=
     Algebra.IsPushout.equiv S (MvPolynomial τ S) B (MvPolynomial τ B)
   exact ⟨(Algebra.TensorProduct.comm (MvPolynomial τ S) (MvPolynomial τ B) K).toRingEquiv.trans

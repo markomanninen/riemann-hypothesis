@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalLiftFormsEqGoodForms
-import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
-import Formalism.LocalToGlobal.IndefiniteReal.LiftGoodPartComplexEqRangeFamily
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMtTieCoord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalLiftFormsEqGoodForms
+public import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+public import Formalism.LocalToGlobal.IndefiniteReal.LiftGoodPartComplexEqRangeFamily
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMtTieCoord
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -56,7 +60,8 @@ theorem opF_lvlIdem_fix {K : Type} [Field K] [CharZero K] {G : Type} [Group G] [
   classical
   rw [opF_eq_lift]
   unfold lvlIdem
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   have : ∀ h : H, MonoidAlgebra.lift K (V →ₗ[K] V) G ρ
       (MonoidAlgebra.single (h : G) ((Nat.card H : K)⁻¹ * ((ψ h⁻¹ : Kˣ) : K))) v = (Nat.card H : K)⁻¹ • v := by
     intro h
@@ -71,8 +76,8 @@ namespace GlobalTheory.Mem.ThOrth
 
 open Formalism.IndefR.CxPass.LevelOperators
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem thG_eq_zero_of_orth : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 I0 T : Type) (A3 : FamIn3 D.what₂.LL G Pl0 I0 (List ℕ) T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat3 D A3 Ks) (F : Face3 D A3) (cG : G0 R.Pg D.R.r ≃* G0g D.nd) (X0 : BaseLevelRowSide D) (Y : Read (A3 := A3) R.toRealDat F.lv2 X0) (Z : ReadL R F X0 Y), Pins R F cG → Holds R F → ∀ (i : Fin D.R.m) (t : T) (x : Fin (lDim D A3.A F.P0 F.ψ0 i t) → D.what₂.LL), (∀ z, Formalism.DivisionValues.hform (lH D A3.A F.P0 F.ψ0 i t) (lZ0 D A3.A F.P0 F.ψ0 (A3.fam3.toSub2 (zsOf R F)) i t *ᵥ z) x = 0) → R.thG i t (R.jV i t (liftForm A3.A F.P0 F.ψ0 i t x)) = 0 := by
   intro D G _ _ Pl0 I0 T A3 Ks _ _ _ R F cG X0 Y _Z hP hH i t x hx
   have hok := hH.ok
@@ -83,7 +88,35 @@ theorem thG_eq_zero_of_orth : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0
   have hK : (R.toCx3 F).KFormL := Formalism.IndefR.Links.RealDat3.kFormL_of (F := F) hM
   have hJ : (R.toCx3 F).JIsoL F.cv := Formalism.IndefR.Links.RealDat3.jIsoL_of (F := F) hM
   have hRZ : (R.toCx3 F).RatZ := (complex_data_conditions_base_level_of_primitive_links hok hH.sep hP.char hH.prim).ratZ
-  have H := Formalism.IndefR.CxPass.lift_hypotheses_of_unitary hok hK F.cv (fun _ _ _ _ => rfl) hJ hH.prim.gUnit.2 hH.prim.gEquiv.2 i t
+  have hjr (g : G) (v : A3.fam3.amb3.FL i t) :
+      (R.toCx3 F).jL i t ((A3.A.fam.L i t).r g v) =
+        (R.toCx3 F).opLC i t (Sum.inr g) ((R.toCx3 F).jL i t v) := by
+    have hb := hK i t
+    have key : ∀ k : Module.Basis.ofVectorSpaceIndex D.what₂.LL (A3.fam3.amb3.FL i t),
+        (R.toCx3 F).opLC i t (Sum.inr g) ((R.toCx3 F).jL i t (Module.Basis.ofVectorSpace D.what₂.LL (A3.fam3.amb3.FL i t) k)) =
+        (R.toCx3 F).jL i t ((A3.A.fam.L i t).r g (Module.Basis.ofVectorSpace D.what₂.LL (A3.fam3.amb3.FL i t) k)) := by
+      intro k
+      unfold Formalism.IndefR.Cx.CxData.opLC
+      rw [dite_eq_left hb]
+      have e : (R.toCx3 F).jL i t (Module.Basis.ofVectorSpace D.what₂.LL (A3.fam3.amb3.FL i t) k) = Module.Basis.mk hb.1 hb.2.ge k :=
+        (Module.Basis.mk_apply hb.1 hb.2.ge k).symm
+      rw [e, Module.Basis.constr_basis]
+      rfl
+    have hh := Module.Basis.ext (Module.Basis.ofVectorSpace D.what₂.LL (A3.fam3.amb3.FL i t))
+      (f₁ := ((R.toCx3 F).jL i t).comp ((A3.A.fam.L i t).r g))
+      (f₂ := ((R.toCx3 F).opLC i t (Sum.inr g)).comp ((R.toCx3 F).jL i t))
+      (fun k => (key k).symm)
+    exact LinearMap.congr_fun hh v
+  have H : Hyp A3.fam3.base3.v0.embedding ((R.toCx3 F).jL i t) (A3.A.fam.L i t).r
+      (fun g => (R.toCx3 F).opLC i t (Sum.inr g)) (R.gWx F i) ((R.toCx3 F).θ' i t) := by
+    refine ⟨Formalism.IndefR.CxPass.lift_embeddings_span hK i t, hjr, ?_, hH.prim.gEquiv.2 i t, hH.prim.gUnit.2 i⟩
+    intro g a b
+    rw [hJ i t, hJ i t]
+    change A3.fam3.base3.v0.embedding (CSDForm.csumForm (A3.A.fam.L i t).S _ _) =
+      A3.fam3.base3.v0.embedding (CSDForm.csumForm (A3.A.fam.L i t).S _ _)
+    set_option backward.isDefEq.respectTransparency false in
+      rw [CSDForm.csumForm_apply, CSDForm.csumForm_apply]
+    exact congrArg A3.fam3.base3.v0.embedding ((hok.ok2.lifts i t).act.unitary g a b)
   have hB : BlockHyp (A3.A.fam.L i t) (A3.A.fam.lvlA F.P0 F.ψ0) A3.A.v0 1 := ⟨hok.ok2.conj, hok.ok2.irr, hok.ok2.lifts i t⟩
 
   have hopE : opV A3.fam3.base3.v0.embedding (fun g => R.gWx F i g) (idemOf A3.A.X) =
@@ -94,13 +127,14 @@ theorem thG_eq_zero_of_orth : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0
         map_add' := fun _ _ => LinearMap.ext fun _ => rfl }
     rw [show Tw.map (twAt D.what₂.embLL A3.A.v0) (GlobalTheory.Hk3.eH R.toRealDat i) = mA (GlobalTheory.Hk3.eH R.toRealDat i) from rfl]
     unfold opV GlobalTheory.Hk3.eH
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun g _ => LinearMap.ext fun y => ?_
     show cj (twAt D.what₂.embLL A3.A.v0) (A3.A.v0.embedding ((idemOf A3.A.X).coeff g)) •
         R.gW i (sg0 D A3.A) g (Tw.out (s := (twAt D.what₂.embLL A3.A.v0)) (E := (R.HW i (sg0 D A3.A)).H) y) =
       RealDat.eC (A := A3.A) (sg0 D A3.A) g •
         R.gW i (sg0 D A3.A) g (Tw.out (s := (twAt D.what₂.embLL A3.A.v0)) (E := (R.HW i (sg0 D A3.A)).H) y)
-    rw [Formalism.IndefR.Links.emb_eq D.what₂.embLL A3.A.v0, cj_cj]
+    rw [Formalism.IndefR.Links.emb_eq D.what₂.embLL A3.A.v0, Formalism.IndefR.Links.cj_cj]
     rfl
   have hθ : ∀ (u : (R.toCx3 F).FLC i t),
       Tw.out (s := (twAt D.what₂.embLL A3.A.v0)) (E := (R.HW i (sg0 D A3.A)).H) ((R.toCx3 F).θ' i t u) =

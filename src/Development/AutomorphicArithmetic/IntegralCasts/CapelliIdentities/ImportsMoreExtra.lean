@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qh15.aux1 :
     ∀ {A : Type} [inst : CommRing A],
@@ -1538,11 +1542,11 @@ theorem UpperTheory.Reformulated.B.Qh15.act_mul :
     rfl
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero, zero_mul]
-  | add x₁ x₂ h₁ h₂ => simp only [map_add, add_mul, h₁, h₂]
+  | add x₁ x₂ h₁ h₂ => simp only [map_add (f := _), add_mul, h₁, h₂]
   | tmul a b =>
     induction y using TensorProduct.induction_on with
     | zero => simp only [map_zero, mul_zero]
-    | add y₁ y₂ h₁ h₂ => simp only [map_add, mul_add, h₁, h₂]
+    | add y₁ y₂ h₁ h₂ => simp only [map_add (f := _), mul_add, h₁, h₂]
     | tmul c d =>
       have hu : (κ g : E) * a * ((κ⁻¹ g : E) * c) = ((1 : G →* Eˣ) g : E) * (a * c) := by
         rw [mul_mul_mul_comm, ← Units.val_mul, MonoidHom.inv_apply, mul_inv_cancel,

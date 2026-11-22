@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitSumStabLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceWeilRepLatticeVacuumCharacter
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepSchrodingerModelHalfSubstitution
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SplitSumStabLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitPlaceWeilRepLatticeVacuumCharacter
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeilRepSchrodingerModelHalfSubstitution
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,11 +87,11 @@ theorem idem_laws (σ : R →+* R) (cc : ∀ x, σ (σ x) = x) {e e' : R} (h1 : 
     rwa [map_mul, cc, map_zero] at this
   have c3 : σ e * σ e = σ e := by rw [← map_mul, h1]
   have hb : (e + σ e) * (e + σ e) = e + σ e := by linear_combination h1 + c3 + 2 * h2
-  have hc : σ (e + σ e) = e + σ e := by rw [map_add, cc, add_comm]
+  have hc : σ (e + σ e) = e + σ e := by rw [map_add (f := _), cc, add_comm]
   refine ⟨hb, hc, by linear_combination hb, by rw [map_sub, map_one, hc], by linear_combination h1 + h2,
     by linear_combination -a1 - a2, fun m hm => idempotent_mul_cut_sub_one_entry hb (by linear_combination a0 + c0 + 2 * a3)
       (by linear_combination a1 + a2 + c1 + c2) ?_⟩
-  rw [map_add] at hm
+  rw [map_add (f := _)] at hm
   rwa [add_add_add_comm]
 
 theorem om_mul_eig {G M : Type} [Monoid G] [AddCommGroup M] [Module ℂ M] (om : G →* Module.End ℂ M) {p p₁ p₂ : G}
@@ -259,7 +263,8 @@ theorem om_latVac_sum {ψ : AddChar (AF D.host.F) ℂ} {χS χT : (AE D)ˣ →* 
       rw [Finset.sum_mul]
       exact Finset.sum_eq_zero fun j hj => h3 j (Finset.mem_insert_of_mem hj) i m0
     have a3 : (∑ j ∈ P, es j) * cA D (∑ j ∈ P, es j) = 0 := by
-      rw [map_sum, Finset.sum_mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_mul_sum]
       exact Finset.sum_eq_zero fun j hj => Finset.sum_eq_zero fun k hk =>
         h3 j (Finset.mem_insert_of_mem hj) k (Finset.mem_insert_of_mem hk)
     rw [Finset.sum_insert hi] at hg hh hx hy

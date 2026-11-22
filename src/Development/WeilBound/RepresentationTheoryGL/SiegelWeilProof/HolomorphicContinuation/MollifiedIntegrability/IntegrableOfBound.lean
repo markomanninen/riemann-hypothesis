@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,21 +91,14 @@ theorem sum_vkl (β : E n) (k l : Fin n) : ∑ a, ∑ b, (β a b : ℂ) * vkl k 
   push_cast
   ring
 
-theorem dkl_chr (t : ℝ) (β : E n) (k l : Fin n) (y : E n) :
-    Dkl k l (chr t β) y = (-(Complex.I * t) * herm β k l) * chr t β y := by
-  have h := lf_re_im t β (vkl k l)
-  rw [sum_vkl] at h
-  simp only [Dkl, dirC, fderiv_chr]
-  linear_combination (chr t β y) * h
-
 theorem conj_half_add : starRingEnd ℂ ((1 + Complex.I) / 2) = (1 - Complex.I) / 2 := by
-  rw [map_div₀, map_add, map_one, Complex.conj_I, map_ofNat]; ring
+  rw [map_div₀, map_add (f := _), map_one, Complex.conj_I, map_ofNat]; ring
 
 theorem conj_half_sub : starRingEnd ℂ ((1 - Complex.I) / 2) = (1 + Complex.I) / 2 := by
   rw [map_div₀, map_sub, map_one, Complex.conj_I, map_ofNat]; ring
 
 theorem vkl_swap (k l a b : Fin n) : vkl l k a b = starRingEnd ℂ (vkl k l a b) := by
-  simp only [vkl, map_add, apply_ite (starRingEnd ℂ), map_zero, conj_half_add, conj_half_sub]
+  simp only [vkl, map_add (f := _), apply_ite (starRingEnd ℂ), map_zero, conj_half_add, conj_half_sub]
   rw [add_comm]
 
 theorem dkl_swap (g : E n → ℂ) (k l : Fin n) (y : E n) :
@@ -217,7 +214,7 @@ theorem ibp : IBP := by
       simp only [Delta, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Finset.sum_mul, hfold]
       refine Finset.sum_congr rfl fun σ _ => ?_
       ring
-    rw [e, integral_finset_sum]
+    rw [e, MeasureTheory.integral_finsetSum]
     swap
     · intro σ _
       exact (integrable_mul_chr (hI _) (contDiff_foldr hf _).continuous t β).const_mul _

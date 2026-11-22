@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantVectorMove.SumPermEqSumFirstColumnSplit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CovariantVectorMove.SumPermEqSumFirstColumnSplit
+
+@[expose] public section
 
 open Finset Formalism.REAL
 
@@ -26,8 +30,8 @@ def Fc (p : ℕ) (τ : Equiv.Perm (Fin (m + 1))) (q : Fin (m + 1)) : A :=
 
 def Nc (p : ℕ) : A := ∑ τ, ((Equiv.Perm.sign τ : ℤ) : A) * (List.ofFn (Fc E η a b w p τ)).prod
 
-omit [Algebra ℂ A] in
 
+omit [Algebra ℂ A] in
 def symC (d x c : Fin n) : A := (if x = d then η c else 0) + (if c = d then η x else 0)
 
 theorem midC (hη : ∀ a b c, E a b * η c - η c * E a b = if b = c then η a else 0)
@@ -46,7 +50,7 @@ theorem midC (hη : ∀ a b c, E a b * η c - η c * E a b = if b = c then η a 
   simp only [Tm, symC, mul_add, add_mul, hk]
   by_cases hxd : x = d
   · simp only [if_pos hxd]
-    rw [hc, map_add, map_one, add_mul, one_mul]
+    rw [hc, map_add (f := _), map_one, add_mul, one_mul]
     abel
   · simp only [if_neg hxd, mul_zero, zero_mul, zero_add]
     abel

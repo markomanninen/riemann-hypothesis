@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.RowLatticeFiniteFree
-import Formalism.AdmissibleDesigns.UnramifiedInputOfAdmitted
+module
+
+public import Formalism.AdmissibleDesigns.RowLatticeFiniteFree
+public import Formalism.AdmissibleDesigns.UnramifiedInputOfAdmitted
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core] [hH0Fin : Fact Formalism.MainNotions.N.K.H0.FinCore]
 
@@ -24,9 +28,9 @@ variable {D : D7} (i : D.nd.Loc) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV)
   (hD : RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0 eB e₁ s Dd)
   (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := D) i r)
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem rowTieIn_of
     (hMat : KRow.RowMat i dc (KLat.VT (O := D.nd.O i) (RepresentationBoundsCohomology.blk D.R)) (KLat.VT (O := D.nd.O i) (RepresentationBoundsCohomology.blk D.R))
       (DatS i r π dc g0 eB e₁ s Dd hD hc) ρ π)

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFieldIdemOne
+
+@[expose] public section
+
 open MeasureTheory Topology Filter GlobalTheory.CompanionTheory.NullFr
 open scoped NNReal ENNReal Matrix
 

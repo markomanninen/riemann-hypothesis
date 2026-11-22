@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhitImgMono
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubquotientEquivOfIrreducibleImageStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSubquotientOfExtensionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerSubquotientEquivStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivPiExteriorTensorBlockLevi
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhitImgMono
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubquotientEquivOfIrreducibleImageStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IrreducibleSubquotientOfExtensionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WhittakerSubquotientEquivStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivPiExteriorTensorBlockLevi
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.BernsteinZelevinskyFiniteness
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,13 +51,13 @@ theorem exists_constituent_of_whit2 : ∀ (k : Type) [Field k] [ValuativeRel k] 
       IsSubquotient (piTensor fun a => (s a).ρ) J ∧ Nonempty ((s 0).ρ.Equiv S.ρ) := by
   intro k _ _ _ _ ψ _ d X _ _ J hs hfl S hS
   obtain ⟨hgt, hlt⟩ := (hasFiniteLength_iff_wellFounded J).1 hfl
-  obtain ⟨T, hT, hmin⟩ := WellFounded.has_min hlt.wf
+  obtain ⟨T, hT, hmin⟩ := WellFounded.has_min hlt
     {T : Subrepresentation J | IsSubquotient S.ρ (whitImg ψ d J T).toRepresentation}
     ⟨⊤, hS.trans (whit2_isSubquotient_whitImg_top ψ d J)⟩
   have hne : T ≠ ⊥ := by
     rintro rfl
     exact not_isSubquotient_whitImg_bot ψ d J S.irr hT
-  obtain ⟨T', hT'lt, hmax⟩ := WellFounded.has_min hgt.wf {U : Subrepresentation J | U < T}
+  obtain ⟨T', hT'lt, hmax⟩ := WellFounded.has_min hgt {U : Subrepresentation J | U < T}
     ⟨⊥, bot_lt_iff_ne_bot.2 hne⟩
   have hcov : T' ⋖ T := ⟨hT'lt, fun c h1 h2 => hmax c h2 h1⟩
   have hq : IsSubquotient (subQuot T T') J :=

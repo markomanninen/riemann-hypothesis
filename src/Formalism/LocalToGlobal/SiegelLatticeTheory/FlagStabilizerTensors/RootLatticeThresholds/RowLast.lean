@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.YcUnitary
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.YcUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem Yc_G {C : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (b : Fin (r + 1)) :
   have hGcol : G b = Wfg F G *ᵥ Pi.single (Sum.inr b) 1 := by
     funext p
     rw [Matrix.mulVec_single]
-    simp [Wfg]
+    simp [Wfg, Function.swap]
   rw [hGcol, Matrix.mulVec_mulVec, hW, ← Matrix.mulVec_mulVec, Matrix.mulVec_single]
   funext p
   simp [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Wfg, Mm, Matrix.one_apply, Finset.sum_apply, mul_comm]
@@ -41,7 +45,7 @@ theorem Yc_F {C : Matrix (Fin (r + 1)) (Fin (r + 1)) ℂ} (a : Fin (r + 1)) :
   have hFcol : F a = Wfg F G *ᵥ Pi.single (Sum.inl a) 1 := by
     funext p
     rw [Matrix.mulVec_single]
-    simp [Wfg]
+    simp [Wfg, Function.swap]
   rw [hFcol, Matrix.mulVec_mulVec, hW, ← Matrix.mulVec_mulVec, Matrix.mulVec_single]
   funext p
   simp [Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Wfg, Mm, Matrix.one_apply, Finset.sum_apply, mul_comm]

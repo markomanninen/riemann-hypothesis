@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetRestriction.ConstantCoeffZeroOfVanishing
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetRestriction.ConstantCoeffZeroOfVanishing
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,16 +54,19 @@ theorem restricted_jet_equation (D : D7) (p : ℕ) [Fact p.Prime] {N0 N1 : ℕ} 
     · intro t ht; exact killCompl_logPl_off D p r t ht
   have hccAll : constantCoeff (beAll D p (N0 := N0) (N1 := N1) R sg be) = 0 := by
     unfold beAll
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hsm : ∀ (c : ℂ_[p]) (f : MvPowerSeries (Pl D × Fin N0 × Fin N1) ℂ_[p]),
         constantCoeff f = 0 → constantCoeff (c • f) = 0 := by
       intro c f h
       rw [← coeff_zero_eq_constantCoeff_apply] at h ⊢
       simp [h]
     refine Finset.sum_eq_zero fun r' hr' => hsm _ _ ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun a _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun b _ => ?_
     exact constantCoeff_subst_eq_zero (hasSubst_orbX D p r' a b) (fun s => by simp) (hcc r' hr')
   have hE : killCompl e (OJ.expS ℂ_[p] (beAll D p (N0 := N0) (N1 := N1) R sg be)) =

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WittDecomposition.Anisotropic
+
+@[expose] public section
 
 namespace PI.Witt
 
@@ -71,7 +75,7 @@ theorem one_vector_holds : OneVector := by
       exact (sub_eq_zero.1 ha).symm
     have hxy' : B x x = B (-y) (-y) := by simp [hxy]
     have ha2 : B (x - -y) x ≠ 0 := by
-      rw [sub_neg_eq_add, map_add, LinearMap.add_apply, hyx]
+      rw [sub_neg_eq_add, map_add (f := _), LinearMap.add_apply, hyx]
       intro h
       apply hx0
       have h2 : (2 : K) * B x x = 0 := by rw [two_mul]; exact h

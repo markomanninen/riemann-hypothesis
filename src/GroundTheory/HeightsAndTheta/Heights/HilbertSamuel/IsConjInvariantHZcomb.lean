@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMonomialShift
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbMonomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsUpperNormalisation
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMonomialShift
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPerturbMonomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsUpperNormalisation
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PThmAExpand
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -115,6 +120,7 @@ theorem fam_eq_famExt_zcomb (hI : IsIntersectionFamily I) (hP : IsArithVar P (n 
       congrArg (Function.update (fun j => if j ∈ T then (![1, (q : ℝ)] : Fin 2 → ℝ) else Pi.single (t j) 1) a) hw,
       MultilinearMap.map_update_add, MultilinearMap.map_update_smul, MultilinearMap.map_update_smul, hV1, hV0,
       smul_eq_mul, smul_eq_mul]
+    simp only [RingHom.id_apply]
     ring
 
 theorem tendsto_fam_zcomb (hI : IsIntersectionFamily I) (hP : IsArithVar P (n + 1)) {A X : HermLine ι}
@@ -135,6 +141,8 @@ theorem tendsto_fam_zcomb (hI : IsIntersectionFamily I) (hP : IsArithVar P (n + 
       fin_cases j <;> simp [hq']
     rw [e, MultilinearMap.map_smul_univ, smul_eq_mul, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     field_simp
+    simp only [RingHom.id_apply]
+    ring
   have hlim : Tendsto (fun q : ℕ => famExt I P (n + 1) ![X, A] (fun _ => ![1 / (q : ℝ), 1])) atTop
       (𝓝 (famExt I P (n + 1) ![X, A] (fun _ => ![0, 1]))) := by
     simp only [famExt_apply]

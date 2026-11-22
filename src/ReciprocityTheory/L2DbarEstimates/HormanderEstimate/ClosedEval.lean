@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ExistsLintegralCompactLe
+module
+
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ExistsLintegralCompactLe
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 

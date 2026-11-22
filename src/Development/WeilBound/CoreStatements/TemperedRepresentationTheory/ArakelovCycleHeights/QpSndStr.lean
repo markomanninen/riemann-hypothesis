@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.ArMixIff
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.ExtLBAmb
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.ArMixIff
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.ExtLBAmb
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,7 +55,5 @@ def ProjQ : Prop := ∀ (n' m : ℕ) (n : Fin (m + 1) → ℕ) (Y : Scheme.{0}) 
       (M.pull (qpSnd n' m n) (qpSnd_str n' m n)).IsArithHeight h' →
         h' (j (genericPoint Y)) = ((qpSnd n' m n).residueDegree (j (genericPoint Y)) : ℝ) *
           h (qpSnd n' m n (j (genericPoint Y)))
-
-def CyclesZ : Prop := HeightsZ ∧ HeightsQ ∧ FormZ ∧ MixZ ∧ ProjQ
 
 end GlobalTheory.ArithmeticHeightTower

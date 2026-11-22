@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrSpanG
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrSpanG
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.BrBase
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem brSPAN [CharZero (G.KK O)] (S : G.UniformizedDVR p O) (h3 : Formalism.Ma
   haveI : Finite (Idx N r LL d) := idx_finite h3a N r LL d
   letI : Fintype (Idx N r LL d) := Fintype.ofFinite _
   have hint : ∀ F : MvPolynomial (Fin N × Fin r) (G.KK O), Integral (vQ p S) F →
-      ∀ m, ∃ o : O, coeff m F = algebraMap O (G.KK O) o :=
+      ∀ m, ∃ o : O, AddMonoidAlgebra.coeff F m = algebraMap O (G.KK O) o :=
     fun F hF m => (vQ_nonneg_iff S _).1 (hF m)
   let cI : (b : Idx N r LL d) → Fin #(G.colRange b.1.1.mu) → ℤ :=
     fun b k => ((G.colRange b.1.1.mu).equivFin.symm k : ℤ)

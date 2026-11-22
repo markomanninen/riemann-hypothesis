@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem e3b : faceMap_castSucc_comp_eq_succ := by
   have hadd : ∀ u₁ u₂, P u₁ → P u₂ → P (u₁ + u₂) := by
     rintro u₁ u₂ ⟨D₁, h₁⟩ ⟨D₂, h₂⟩
     refine ⟨D₁ + D₂, fun v => ?_⟩
-    simp only [LinearMap.add_apply, Submodule.coe_add, map_add, h₁, h₂, _root_.add_apply]
+    simp only [LinearMap.add_apply, Submodule.coe_add, map_add (f := _), h₁, h₂, _root_.add_apply]
   have hmul : ∀ u₁ u₂, P u₁ → P u₂ → P (u₁ * u₂) := by
     rintro u₁ u₂ ⟨D₁, h₁⟩ ⟨D₂, h₂⟩
     refine ⟨D₁.comp D₂, fun v => ?_⟩

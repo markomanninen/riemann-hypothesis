@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FnComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RuleGD
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FnComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RuleGD
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.TL
 
@@ -17,7 +21,7 @@ theorem vecP (L : LevelData A r) (φ : A →+* A) (t : ℂ) (hal : ∀ z, φ (al
     have hc : φ (L.c l) = L.c l := hf _ (by simp [R.LevelData.fns])
     have hci : φ (L.ci l) = L.ci l := hf _ (by simp [R.LevelData.fns])
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [R.LevelData.Tl, hal, hp, hc, hci, map_add] <;> abel
+    fin_cases i <;> fin_cases j <;> simp [R.LevelData.Tl, hal, hp, hc, hci, map_add (f := _)] <;> abel
   have hTP : φ.mapMatrix (L.Tprod Y) = L.Tprod (Y + t) := by
     unfold R.LevelData.Tprod
     rw [map_list_prod, List.map_reverse, List.map_ofFn]
@@ -203,9 +207,9 @@ theorem capConj : CapConj := by
     have q10 : cZb L (st.QQ Y 1 0) = st.QQ Y 1 0 := cj_fix _ _ _ _ b10.eq
     have q11 : cZb L (st.QQ Y 1 1) = st.QQ Y 1 1 := cj_fix _ _ _ _ b11.eq
     have n1 : cZb L (cDrb L (nP L st Y 1)) = nP L st Y 1 := by
-      simp only [nP, map_add, map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero, q10, q11]
+      simp only [nP, map_add (f := _), map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero, q10, q11]
     have n0 : cZb L (cDrb L (nP L st Y 0)) = nP L st Y 0 + bP L st Y := by
-      simp only [bP, nP, map_add, map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero,
+      simp only [bP, nP, map_add (f := _), map_mul, (qq_Dr h Y _ _).2, (e2.P Y).1, (e2.P Y).2, (e4.P Y).1, (e4.P Y).2, add_zero,
         q00, q01]
       noncomm_ring
     have nb : cZb L (cDrb L (bP L st Y)) = bP L st Y := by
@@ -216,7 +220,7 @@ theorem capConj : CapConj := by
       have : L.Dbi ^ (s + 1) * cst L st Y * L.Db ^ (s + 1) = L.Dbi * (L.Dbi ^ s * cst L st Y * L.Db ^ s) * L.Db := by
         rw [pow_succ', pow_succ]; simp only [mul_assoc]
       rw [this, ih, ← hχ]
-      simp only [map_add, map_mul, e2.smul, e4.smul, n0, n1, nb, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero]
+      simp only [map_add (f := _), map_mul, e2.smul, e4.smul, n0, n1, nb, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero]
       push_cast
       rw [sub_sub, add_smul, one_smul]
       noncomm_ring
@@ -236,7 +240,7 @@ theorem capConj : CapConj := by
       rw [bM, mul_add, (commute_Avr_Bvr_of_commute_siteOps (h.qq_site Y 0 1) Y).1.eq, (commute_Avr_Bvr_of_commute_siteOps (h.qq_site Y 1 1) Y).2.eq, ← mul_assoc, ← mul_assoc,
         (commute_Avr_Bvr_of_commute_siteOps zi Y).1.eq, (commute_Avr_Bvr_of_commute_siteOps zi Y).2.eq, mul_assoc, mul_assoc]
     have nb : cZ L (cDr L (bM L st Y)) = bM L st Y := by
-      simp only [bM, map_add, map_mul, (qq_Dr h Y _ _).1, (e1.M _).1, (e1.M _).2, (e3.M _).1, (e3.M _).2, sub_zero, q01, q11,
+      simp only [bM, map_add (f := _), map_mul, (qq_Dr h Y _ _).1, (e1.M _).1, (e1.M _).2, (e3.M _).1, (e3.M _).2, sub_zero, q01, q11,
         e1.f _ (m_ζi L), e3.f _ (m_ζi L)]
     induction s with
     | zero => simp only [cst, nP, pow_zero, Nat.cast_zero, zero_smul, add_zero, sub_zero, one_mul, mul_one]; noncomm_ring
@@ -244,7 +248,7 @@ theorem capConj : CapConj := by
       have : L.Di ^ (s + 1) * cst L st Y * L.D ^ (s + 1) = L.Di * (L.Di ^ s * cst L st Y * L.D ^ s) * L.D := by
         rw [pow_succ', pow_succ]; simp only [mul_assoc]
       rw [this, ih, ← hψ]
-      simp only [map_add, map_sub, map_mul, e1.smul, e3.smul, nb, (qq_Dr h Y _ _).1, (e1.M _).1, (e1.M _).2, (e3.M _).1,
+      simp only [map_add (f := _), map_sub, map_mul, e1.smul, e3.smul, nb, (qq_Dr h Y _ _).1, (e1.M _).1, (e1.M _).2, (e3.M _).1,
         (e3.M _).2, (e1.P _).1, (e1.P _).2, (e3.P _).1, (e3.P _).2, sub_zero, add_zero, q00, q01, q10, q11]
       push_cast
       rw [add_assoc Y, add_smul, one_smul]
@@ -286,7 +290,7 @@ theorem aFromB : AFromB := by
     have k2 : L.Dr * L.Di * bP L st Y * L.D = L.Dr * cZ L (cDr L (bP L st Y)) := by
       simp only [cZ, cDr, cj_apply, LevelData.Di, LevelData.D, mul_assoc]
     have k3 : cDr L (bP L st Y) - cZ L (cDr L (bP L st Y)) = L.ζbi * (L.ζi * st.QQ Y 1 1) * L.Ar (Y + 1) := by
-      simp only [bP, nP, map_add, map_mul, (qq_Dr h Y _ _).1, (e1.P _).1, (e1.P _).2, (e3.P _).1, (e3.P _).2, add_zero,
+      simp only [bP, nP, map_add (f := _), map_mul, (qq_Dr h Y _ _).1, (e1.P _).1, (e1.P _).2, (e3.P _).1, (e3.P _).2, add_zero,
         q10, q11, e1.f _ (m_ζbi L), e3.f _ (m_ζbi L)]
       noncomm_ring
     rw [k1, k2, ← mul_sub, k3, mul_assoc (L.Db * gI L), ← mul_assoc (st.xi Y), xD.1.eq, mul_assoc L.Dr,
@@ -310,7 +314,7 @@ theorem aFromB : AFromB := by
     have k2 : L.Drb * L.Dbi * bM L st Y * L.Db = L.Drb * cZb L (cDrb L (bM L st Y)) := by
       simp only [cZb, cDrb, cj_apply, LevelData.Dbi, LevelData.Db, mul_assoc]
     have k3 : cDrb L (bM L st Y) - cZb L (cDrb L (bM L st Y)) = -(L.ζi * (L.ζbi * st.QQ Y 1 1) * L.Avr (Y - 1)) := by
-      simp only [bM, map_add, map_mul, (qq_Dr h Y _ _).2, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero,
+      simp only [bM, map_add (f := _), map_mul, (qq_Dr h Y _ _).2, (e2.M _).1, (e2.M _).2, (e4.M _).1, (e4.M _).2, sub_zero,
         q01, q11, e2.f _ (m_ζi L), e4.f _ (m_ζi L)]
       noncomm_ring
     rw [k1, k2, ← mul_sub, k3, mul_neg, mul_neg, neg_neg, mul_assoc (L.D * gI L), ← mul_assoc (st.xi Y), xD.2.eq,

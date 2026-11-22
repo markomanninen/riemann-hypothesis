@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.CoeffFirstPairingLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,7 +204,7 @@ theorem rootsProd : ∀ (C : Type) [Field C] (V : VF C) (ζ : C), ζ ^ V.l = 1 �
             f ^ n * (MvPowerSeries.rescale (fun i => if i = j then ζ ^ n else 1) f - f) := by
         rw [Finset.prod_range_succ, pow_succ]
         ring
-      rw [hid, map_add]
+      rw [hid, map_add (f := _)]
       refine RootsP.mm_add_lemma_3 (RootsP.mm_mul_series ih (hG n) μ) ?_
       rw [mul_comm]
       exact RootsP.mm_mul_series (hE n) (hpow n) μ

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.HeckeStdTwOfStd
-import Formalism.LocalToGlobal.Divisibility.RowSideTie
-import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.HeckeStdTwOfStd
+public import Formalism.LocalToGlobal.Divisibility.RowSideTie
+public import Formalism.SharpRestriction.LevelLetterCocycles.SumRepresentations
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,9 +60,6 @@ def TypeOrth (i : D.nd.Loc) : Prop :=
 
 def ThetaCut (μ : D.what₂.Tup) (j : ℕ) : Prop :=
   D.what₂.Zj μ j ≤ LinearMap.range (D.what₂.eMt μ j)
-
-def RowsExhaust (j : ℕ) (w : D.what₂.places.Pl) : Prop :=
-  ∀ σ, D.what₂.isot j σ ≠ ⊥ → D.nd.goodRow σ ∧ ∃ i ∈ D.nd.locs j w, Formalism.MainNotions.N.AtM D.nd D.naut i σ
 
 def SplitUnif : Prop :=
   ∀ v : PlE D.host, IsSplitPl D.host v → ∃ (s : SplitPlace D.host.E)

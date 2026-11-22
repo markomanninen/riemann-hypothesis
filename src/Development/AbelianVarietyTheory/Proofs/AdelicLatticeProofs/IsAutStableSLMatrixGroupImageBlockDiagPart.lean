@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -91,7 +96,7 @@ theorem isPre_blk_image :
       simp
     change _ = (σ : ℂ →+* ℂ).mapMatrix (blk e g)
     unfold blk
-    rw [map_add, map_mul, map_mul, map_mul, map_mul, map_sub, map_one, hσ]
+    rw [map_add (f := _), map_mul, map_mul, map_mul, map_mul, map_sub, map_one, hσ]
     rfl
 
 end GlobalTheory.ClassFin

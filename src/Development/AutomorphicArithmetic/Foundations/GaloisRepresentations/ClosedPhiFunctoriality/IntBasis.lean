@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ClosedPhiFunctoriality.IntBasisAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,7 +158,7 @@ private theorem exists_bounded_independent_spanning_family {l : ℕ} [Fact (Nat.
             refine ⟨c', hc'1, ?_⟩
             rw [hc2, hc'2, ← ha']
     · refine ⟨m + 1, (Fin.snoc e (x (Fin.last n)) : Fin (m + 1) → Om l),
-        linearIndependent_fin_snoc.2 ⟨hLI, hy⟩, ?_, ?_⟩
+        linearIndependent_finSnoc.2 ⟨hLI, hy⟩, ?_, ?_⟩
       · intro j
         induction j using Fin.lastCases with
         | last =>

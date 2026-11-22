@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.CoboundaryTransfers.Statement
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+module
+
+public import Mathlib
+public import Formalism.CoboundaryTransfers.Statement
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,9 +47,6 @@ instance PointRing.algebra (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL) :
     Algebra (LetA O n) (PointRing W i ζ) :=
   RingHom.toAlgebra (R := LetA O n) (S := PointRing W i ζ) (W.lev i ζ).toRingHom
 
-example (W : LocWach PD LL O v n) (i : ZMod n) (ζ : LL) (a : LetA O n) :
-    algebraMap (LetA O n) (PointRing W i ζ) a = W.lev i ζ a := rfl
-
 abbrev CompletedAt (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (ζ : LL) : Type :=
   PointRing W i ζ ⊗[LetA O n] ↥(W.Nl T i)
 
@@ -53,11 +54,6 @@ def InCompletedAt (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) 
     (y : W.DD T) : Prop :=
   ∃ (k : ℕ) (hk : W.Q ^ k • y ∈ W.Nl T i) (w : CompletedAt W T i ζ),
     (1 : PointRing W i ζ) ⊗ₜ[LetA O n] (⟨W.Q ^ k • y, hk⟩ : ↥(W.Nl T i)) = W.Q ^ k • w
-
-example (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (i : ZMod n) (ζ : LL) (y : W.DD T)
-    (hy : y ∈ W.Nl T i) : InCompletedAt W T i ζ y :=
-  ⟨0, by simpa using hy, (1 : PointRing W i ζ) ⊗ₜ[LetA O n] ⟨W.Q ^ 0 • y, by simpa using hy⟩,
-    by simp⟩
 
 def HeightBounds (W : LocWach PD LL O v n) (T : LocLat G Qp LL O) (M h : ZMod n → ℕ) : Prop :=
   ∀ i : ZMod n,
@@ -83,8 +79,8 @@ def Sandwich (E : EtTie W RA RW inclR φR gR πA) (T : LocLat G Qp LL O) (M h : 
 
 end Generic
 
-open TensorProduct in
 
+open TensorProduct in
 theorem _root_.GlobalTheory.IndefiniteRowSideFullHecke.PointRingCommRing.letters_neZero {l : ℕ} [Fact l.Prime] (K : _root_.Formalism.BasicNotions.Loc.FinExt l) :
     NeZero (Module.finrank ℚ_[l] ↥(_root_.Formalism.BasicNotions.Loc.K0 K)) := by
   haveI : FiniteDimensional ℚ_[l] ↥(K : IntermediateField ℚ_[l] (_root_.Formalism.BasicNotions.Loc.Om l)) := K.2

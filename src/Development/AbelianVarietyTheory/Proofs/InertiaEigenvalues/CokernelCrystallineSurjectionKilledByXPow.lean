@@ -1,16 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumpsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachNCokernelKilledByPowerStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneNotMemFilOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingsCyclotomic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValOfPowAssociated
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.XXPowMemOfQQPowMulMemMapPhi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiFree
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OfShortExact
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachLatticeHeightsFromHodgeJumpsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachNCokernelKilledByPowerStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NBasisLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachInclusionXQFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OneNotMemFilOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RingsCyclotomic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValOfPowAssociated
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.XXPowMemOfQQPowMulMemMapPhi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PhiFree
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OfShortExact
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,8 @@ theorem decomp_unique {κ : Type} [Fintype κ] (ht : ∀ z : ι → A, ∑ j, t 
   rw [Fintype.linearIndependent_iff] at hb
   have h1 : ∀ k, ∑ j, t j * φ (z j k) = 0 := hb (fun k => ∑ j, t j * φ (z j k)) (by
     rw [← h]
-    simp only [← hz, map_sum, hΦ, Finset.sum_smul, Finset.smul_sum, mul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← hz, map_sum, hΦ, Finset.sum_smul, Finset.smul_sum, mul_smul]
     exact Finset.sum_comm)
   rw [← hz]
   exact Finset.sum_eq_zero fun k _ => by
@@ -271,7 +276,8 @@ theorem key_inclusion {ι κ : Type} [Fintype ι] [Fintype κ] (t : ι → Power
       rw [← hspan, SetLike.mem_coe, Submodule.mem_span_range_iff_exists_fun] at hx
       obtain ⟨c, rfl⟩ := hx
       change Φ _ ∈ _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun k _ => ?_
       rw [hΦ]
       exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
@@ -406,8 +412,8 @@ theorem exists_kernel_padic {l : ℕ} [Fact l.Prime] (K LL : FinExt l) (T₁ T�
 
 end GlobalTheory.NL.CokerKill
 
-open GlobalTheory.NL.CokerKill in
 
+open GlobalTheory.NL.CokerKill in
 theorem GlobalTheory.NL.CokerKill.X_pow_kills_coker : ∀ (D : Formalism.BasicNotions.D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F), lem3 D HW F := by
   intro D HW F Cm l _ K s LL hG T₁ T₂ π M h c1 c2
   obtain ⟨_, hcomp, hu⟩ := GlobalTheory.FinExtIntegers.dvr_complete LL

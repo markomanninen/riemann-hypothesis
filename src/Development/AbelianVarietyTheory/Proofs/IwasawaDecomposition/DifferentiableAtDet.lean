@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.DifferentiableDet
 
@@ -8,7 +12,7 @@ theorem differentiableAt_det {σ : Type} [Fintype σ] [DecidableEq σ] (M : ℝ 
   simp only [Matrix.det_apply']
   refine DifferentiableAt.fun_sum fun π _ => ?_
   refine DifferentiableAt.const_mul ?_ _
-  exact (HasDerivAt.fun_finset_prod (u := Finset.univ) (f := fun i s => M s (π i) i)
+  exact (HasDerivAt.fun_finsetProd (u := Finset.univ) (f := fun i s => M s (π i) i)
     (fun i _ => (h (π i) i).hasDerivAt)).differentiableAt
 
 end GlobalTheory.DifferentiableDet

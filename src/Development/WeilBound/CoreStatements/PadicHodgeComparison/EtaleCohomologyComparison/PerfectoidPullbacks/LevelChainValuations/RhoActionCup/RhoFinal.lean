@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.RhoActionCup.RhoFirstChernFormula
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.RhoActionCup.RhoFirstChernFormula
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
@@ -18,16 +22,17 @@ variable (S : LevSys (per l K)) (hS : S.Good) (hC : ∀ m, (S.L m).CrisOK)
 variable [FiniteDimensional ℚ_[l] K]
 
 theorem lev_good (M : Model l K) (m s : ℕ) : (homLev S hS m M s (qb_le (hS.lev (m + 1)) M s) (qb_le (hS.lev m) M s)
-    (rHof (dOf S hS hC (m + 1)) (hcOf S hS hC (m + 1)) M s) (rHof (dOf S hS hC m) (hcOf S hS hC m) M s)).Good where
-  ℓ := rfl
-  lam c := hS.dlam m c
-  ι a := hS.dι m a
-  o k := hS.dK m k
-  tS n j x := rfl
-  r n j x := nmHM_nmLevA_rHof_succ S hS hC M m s n j x
-  red n j z := nmHM_redM _ l s none n j z
-  b j z := nmHO_nmLevB_bMap S hS m M s _ _ j z
-  μ j v := (nm_muB (nmLevB S hS m M) (Category.id_comp _) 1 s (hS.dK m) j v).trans (congrArg _ (pullR_id' M.q j v))
+    (rHof (dOf S hS hC (m + 1)) (hcOf S hS hC (m + 1)) M s) (rHof (dOf S hS hC m) (hcOf S hS hC m) M s)).Good := by
+  exact
+    { ℓ := rfl
+      lam c := hS.dlam m c
+      ι a := hS.dι m a
+      o k := hS.dK m k
+      tS n j x := rfl
+      r n j x := nmHM_nmLevA_rHof_succ S hS hC M m s n j x
+      red n j z := nmHM_redM _ l s none n j z
+      b j z := nmHO_nmLevB_bMap S hS m M s _ _ j z
+      μ j v := (nm_muB (nmLevB S hS m M) (Category.id_comp _) 1 s (hS.dK m) j v).trans (congrArg _ (pullR_id' M.q j v)) }
 
 theorem rho_lev_pf : ∀ {M : Model l K} (a : (dat Amp).Ch M), M.Sm → ∀ j m x f,
     rhoK S hS hC a j (m + 1) x f → rhoK S hS hC a j m x ((S.dB m).toAddMonoidHom.comp f) := by
@@ -95,17 +100,24 @@ theorem rhoSys_ex : Nonempty (RhoSys S Model.Sm (dat Amp) fun a c => IsFirstCher
      smul := rho_smul_pf S hS hC
      lin' := rho_lin'_pf S hS hC
      lev := rho_lev_pf S hS hC
-     act := rho_act_of S hS hC fun M m s g => homGal_good_of_galRed _ g M s _ _ (galRed_rHof _ _ _ g M s)
+     act := rho_act_of S hS hC fun M m s g => by
+       have hL := hS.lev m
+       have hRed := galRed_rHof (dOf S hS hC m) (hcOf S hS hC m) hL g M s
+       exact
+         { ℓ := rfl
+           lam c := hL.σ_lam g c
+           ι a := (hL.σ_ι g a).symm
+           o k := hL.σB_K g k
+           tS n j x := ((M.galH false j (IntermediateField.fixingSubgroupEquiv K g)).comm n x).symm
+           r n j x := hRed n j x
+           red n j z := nmHM_redM _ l s none n j z
+           b j z := nmHO_nmGB_bMap hL g M s _ j z
+           μ j v := (nm_muB (nmGB hL g M) (Category.id_comp _) 1 s (hL.σB_K g) j v).trans
+             (congrArg _ (pullR_id' M.q j v)) }
      nat := rho_nat_of S hS hC fun M N u hu m s => homPull_rHof_good _ _ u hu s _ _ _
      fil := rho_fil_pf S hS hC
      cup := rho_cup_pf S hS hC
      one := rho_one_of S hS hC fun M m s => cupOf_rHof_good _ M s _ _ _
      c1 := rho_firstChern_formula S hS hC }⟩
-
-theorem crystalline_deRham_firstChern_exists : ∃ L : KapL (l := l) (K := K) Amp, LieComplementChartContDiffAt L := by
-  obtain ⟨S, hS, hC⟩ := CrystallineSemistableComparison.HT.levSys_ex (l := l) (K := K)
-  obtain ⟨P⟩ := rhoSys_ex S hS hC
-  obtain ⟨A⟩ := kap_abs (facts l K) (fun c => ⟨_, rfl⟩) hS P
-  exact ⟨⟨A.κ, A.lin, A.lin', A.act, A.nat, A.fil, A.cup, A.one⟩, A.c1⟩
 
 end CrystallineSemistableComparison.Pb.Kap.Mo

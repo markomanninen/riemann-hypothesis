@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FieldValuesMemFixedField
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OmPinsTr
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,13 +57,13 @@ namespace Tr
 
 variable {a : Late B C} (b : Late B C) {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type}
 
-variable {b} in
 
+variable {b} in
 def _root_.GlobalTheory.Mem.R3.SameGrp.back (s : SameGrp a b) : (Σ k : Fin 2, b.D.nd.PlG k) ≃ (Σ k : Fin 2, a.D.nd.PlG k) :=
   Equiv.sigmaCongrRight fun k => (s.e k).symm
 
-variable {b} in
 
+variable {b} in
 theorem _root_.GlobalTheory.Mem.R3.SameGrp.pl_back (s : SameGrp a b) (kv : Σ k : Fin 2, b.D.nd.PlG k) :
     (a.D.naut.plGw kv.1 ((s.e kv.1).symm kv.2) : HeightOneSpectrum (𝓞 B.host.E)) = b.D.naut.plGw kv.1 kv.2 := s.symm.pl kv.1 kv.2
 
@@ -70,8 +74,8 @@ def GrpCl (D : D7) (Pg : Finset (Pl D.host.E)) (c : G → ℂ) (Dv : Fin 2 → P
     (∀ kv, Dv kv.1 (plg kv).1) ∧
     ∀ g kv, eG g (plg kv) = Formalism.UG.bc (iso kv : ZMod (D.host.g kv.1) →+* kP (plg kv).1) (eR g kv)
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem grpCl_tr (s : SameGrp a b) {Pg c Dv eG} {eR : G ≃* G0g a.D.nd} (h : GrpCl a.D Pg c Dv eG eR) :
     GrpCl b.D ((Pg)) c ((Dv)) ((eG)) (eR.trans s.iso) := by
   obtain ⟨plg, iso, h1, h2, h3, h4⟩ := h
@@ -81,8 +85,8 @@ theorem grpCl_tr (s : SameGrp a b) {Pg c Dv eG} {eR : G ≃* G0g a.D.nd} (h : Gr
   · exact (by with_unfolding_all exact ((h3 (s.back kv)) :))
   · exact (by with_unfolding_all exact ((h4 g (s.back kv)) :))
 
-omit [Fintype G] in
 
+omit [Fintype G] in
 theorem psiPPTie_transport (s : SameGrp a b) {P0 P1 : Subgroup G} {ψ0 ψ1} {eR : G ≃* G0g a.D.nd} (h : PsiPPTie a.D P0 ψ0 P1 ψ1 eR) :
     PsiPPTie b.D P0 ((ψ0)) P1 ((ψ1)) (eR.trans s.iso) := by
   obtain ⟨Pg, pl, res, ψ, eC, h1, h2⟩ := h
@@ -133,6 +137,40 @@ end Two
 
 variable {A : FamIn3 a.D.what₂.LL G Pl0 I0 (List ℕ) T a.D.R.m}
 
+theorem normalFrames_tr (Pg : Finset (Pl a.D.host.E))
+    (βY : ∀ j, GL (Fin (Yc a.D j).rank) (Datum.EAf a.D))
+    (βW : ∀ i : Fin a.D.R.m, GL (Fin (Wc a.D i).rank) (Datum.EAf a.D))
+    (h : Seed.Frm.NormalFrameConditionsDiagonal Pg βY βW) :
+    @Seed.Frm.NormalFrameConditionsDiagonal b.D Pg βY βW := by
+  rcases h with ⟨⟨e, ev, z, κ, t, h0, hW⟩, hX⟩
+  refine ⟨⟨e, ev, z, κ, t, ?_, ?_⟩, ?_⟩
+  · rcases h0 with ⟨⟨ha, hκ, ht, hv, hcol⟩, hzero⟩
+    have heq (j i : ℕ) : @Formalism.IndefR.Mi.nfScal a.D κ t j i =
+        @Formalism.IndefR.Mi.nfScal b.D κ t j i := by
+      induction i with
+      | zero => rfl
+      | succ i ih =>
+          simp only [Formalism.IndefR.Mi.nfScal]
+          exact congrArg (fun x : a.D.host.E => κ j i * x) ih
+    refine ⟨⟨ha, hκ, ht, ?_, ?_⟩, hzero⟩
+    · intro PP hPP j hj i hi
+      rw [← heq j i]
+      exact hv PP hPP j hj i hi
+    · intro PP hPP ei hei j hj
+      obtain ⟨h1, h2⟩ := hcol PP hPP ei hei j hj
+      refine ⟨?_, h2⟩
+      intro i hi col hc
+      rw [← heq j i]
+      exact h1 i hi col hc
+  · exact hW
+  · exact hX
+
+theorem framesExist_tr (Pg : Finset (Pl a.D.host.E))
+    (h : Seed.Frm.FramesExistDiagonal a.D Pg) : Seed.Frm.FramesExistDiagonal b.D Pg := by
+  rcases h with ⟨ΛY, ΛX, ΛV, ΛW, βY, βX, βV, βW, hSD, hN⟩
+  refine ⟨ΛY, ΛX, ΛV, ΛW, βY, βX, βV, βW, ?_, normalFrames_tr b Pg βY βW hN⟩
+  exact hSD
+
 section Kept
 
 variable {R : RealDat a.D A.A Ks} {F : Face a.D A.A}
@@ -145,7 +183,9 @@ theorem keep_tr (s : SameGrp a b) {cG : G0 R.Pg a.D.R.r ≃* G0g a.D.nd} (h : Ke
   case psi => exact (by with_unfolding_all exact ((psiPPTie_transport b s h.psi) :))
   case std => exact (by with_unfolding_all exact (h.std :))
   case signs => exact (by with_unfolding_all exact (h.signs :))
-  case frames => kexactB h.frames
+  case frames =>
+    intro hf
+    exact normalFrames_tr b R.Pg R.βY R.βW (h.frames (framesExist_tr a (real b R).Pg hf))
   case beta => exact (by with_unfolding_all exact (h.beta :))
   case prX => exact (by with_unfolding_all exact (h.prX :))
   case guard => exact (by with_unfolding_all exact (h.guard :))
@@ -163,7 +203,9 @@ theorem keep_back (s : SameGrp b a) {cG : G0 (levCh b R.toLevCh).Pg b.D.R.r ≃*
   case psi => exact (by with_unfolding_all exact ((psiPPTie_transport a s h.psi) :))
   case std => exact (by with_unfolding_all exact (h.std :))
   case signs => exact (by with_unfolding_all exact (h.signs :))
-  case frames => kexactB h.frames
+  case frames =>
+    intro hf
+    exact normalFrames_tr a (real b R).Pg (real b R).βY (real b R).βW (h.frames (framesExist_tr b R.Pg hf))
   case beta => exact (by with_unfolding_all exact (h.beta :))
   case prX => exact (by with_unfolding_all exact (h.prX :))
   case guard => exact (by with_unfolding_all exact (h.guard :))
@@ -175,16 +217,22 @@ end Kept
 
 variable {R : RealDat3 a.D A Ks} {F : Face3 a.D A}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem weakCharInertPart_realAdelicDataTransport (s : SameGrp a b) (h : R.WeakCharacterisation F) : letI := alg b iK; (real3 b R).WeakCharacterisation (face3 b F) := by
   letI := alg b iK
   constructor
   case base => exact (by with_unfolding_all exact ((baseW_tr b s h.base) :))
   case inert => exact (by with_unfolding_all exact ((isInert_tr b h.inert) :))
-  case fullY => tr_clause a b h.fullY
-  case fullX => tr_clause a b h.fullX
-  case fullP => tr_clause a b h.fullP
+  case fullY =>
+    intro t k hk
+    exact (by with_unfolding_all exact (weilFull_imp b _ _ _ _ _ _ (h.fullY t k hk) :))
+  case fullX =>
+    intro t
+    exact (by with_unfolding_all exact (weilFull_imp b _ _ _ _ _ _ (h.fullX t) :))
+  case fullP =>
+    intro i t
+    exact (by with_unfolding_all exact (weilFull_imp b _ _ _ _ _ _ (h.fullP i t) :))
   case scal => exact (by with_unfolding_all exact ((isScal_tr b h.scal) :))
   case tup => exact (by with_unfolding_all exact ((isTup_tr b h.tup) :))
   case phase => exact (by with_unfolding_all exact (h.phase :))
@@ -196,7 +244,7 @@ theorem pins_tr (s : SameGrp a b) {cG : G0 R.Pg a.D.R.r ≃* G0g a.D.nd} (h : Pi
   case char => exact (by with_unfolding_all exact ((weakCharInertPart_realAdelicDataTransport b s h.char) :))
   case keep => exact (by with_unfolding_all exact ((keep_tr b s h.keep) :))
   case phs => exact (by with_unfolding_all exact (h.phs :))
-  case trSem => tr_via (fun P : type_of% (R.TrISem F) => (∃ tr, P tr ∧ SepWith A tr) → P A.trI ∧ A.fam3.TrISep) (trISem_eq b R F) h.trSem
+  case trSem => exact (by with_unfolding_all exact (cast (congrArg (fun P : type_of% (R.TrISem F) => (∃ tr, P tr ∧ SepWith A tr) → P A.trI ∧ A.fam3.TrISep) (trISem_eq b R F)) h.trSem :))
 
 theorem holds_tr (h : Holds R F) : letI := alg b iK; Holds (real3 b R) (face3 b F) := by
   letI := alg b iK
@@ -205,10 +253,6 @@ theorem holds_tr (h : Holds R F) : letI := alg b iK; Holds (real3 b R) (face3 b 
   case aux => exact (by with_unfolding_all exact ((realAdelicInertTransport_furtherRows b h.aux) :))
   case ok => exact (by with_unfolding_all exact (h.ok :))
   case sep => exact (by with_unfolding_all exact (h.sep :))
-
-theorem errEq_tr (h : ErrEq R F) : letI := alg b iK; ErrEq (real3 b R) (face3 b F) := by
-  tr_via (fun X : Cx.CxData A.fam3.amb3 => ∀ w j, (X.data F.cr false).err0 w j = errOf (X.data F.cr false) (F.fc X.zs).Z.F0 w)
-    (toCx3_eq b R F) h
 
 end Tr
 

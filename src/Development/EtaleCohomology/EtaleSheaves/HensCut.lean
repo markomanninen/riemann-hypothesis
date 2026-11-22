@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.QuotAcycCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.QuotAcycCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC

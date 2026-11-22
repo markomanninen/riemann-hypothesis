@@ -1,12 +1,17 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 
 namespace GlobalTheory.CompanionTheory.MonicSplit
 
 open Polynomial
 
-theorem exists_multiset_of_natDegree_eq {S : Type} [CommRing S] (hS : Aic S) (d : ℕ) :
+theorem exists_multiset_of_natDegree_eq {S : Type} [CommRing S] (hS : Aic (S := S)) (d : ℕ) :
     ∀ P : Polynomial S, P.Monic → P.natDegree = d →
       ∃ s : Multiset S, P = (s.map fun b => X - C b).prod := by
   rcases subsingleton_or_nontrivial S with hS' | hS'
@@ -32,7 +37,7 @@ theorem exists_multiset_of_natDegree_eq {S : Type} [CommRing S] (hS : Aic S) (d 
       refine ⟨x ::ₘ s, ?_⟩
       rw [Multiset.map_cons, Multiset.prod_cons, ← hs, hmul]
 
-theorem monic_splits : ∀ {S : Type} [CommRing S], Aic S → ∀ P : Polynomial S, P.Monic →
+theorem monic_splits : ∀ {S : Type} [CommRing S], Aic (S := S) → ∀ P : Polynomial S, P.Monic →
     ∃ s : Multiset S, P = (s.map fun b => Polynomial.X - Polynomial.C b).prod := by
   intro S _ hS P hP
   exact exists_multiset_of_natDegree_eq hS _ P hP rfl

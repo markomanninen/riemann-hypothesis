@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
@@ -12,14 +16,14 @@ private theorem cmp_lTensor_toLin {W : Type} [AddCommGroup W] [Module ℂ W] {d 
     simp only [LinearMap.lTensor_tmul, cmp_tmul, Matrix.toLin'_apply, Matrix.mulVec, dotProduct,
       Finset.sum_smul, smul_smul]
   | add a b ha hb =>
-    simp only [map_add, ha, hb, smul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), ha, hb, smul_add, Finset.sum_add_distrib]
 
 private theorem cmp_rTensor_end {W : Type} [AddCommGroup W] [Module ℂ W] {d : ℕ} (S : Module.End ℂ W)
     (y : W ⊗[ℂ] (Fin d → ℂ)) (j : Fin d) :
     cmp j (S.rTensor (Fin d → ℂ) y) = S (cmp j y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul φ v => simp only [LinearMap.rTensor_tmul, cmp_tmul, map_smul]
 
 theorem UpperTheory.V.Lit.Bor.tformAdj :
@@ -30,7 +34,8 @@ theorem UpperTheory.V.Lit.Bor.tformAdj :
     have hL : tform H G x ((Matrix.toLin' Q).lTensor W y)
         = ∑ a, ∑ b, (G * Q) a b * H (cmp a x) (cmp b y) := by
       rw [tform_apply]
-      simp only [cmp_lTensor_toLin, map_sum, map_smul, smul_eq_mul, Matrix.mul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [cmp_lTensor_toLin, map_sum, map_smul, smul_eq_mul, Matrix.mul_apply,
         Finset.mul_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Finset.sum_comm]
@@ -38,7 +43,8 @@ theorem UpperTheory.V.Lit.Bor.tformAdj :
     have hR : tform H G ((Matrix.toLin' P).lTensor W x) y
         = ∑ a, ∑ b, (Pᴴ * G) a b * H (cmp a x) (cmp b y) := by
       rw [tform_apply]
-      simp only [cmp_lTensor_toLin, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [cmp_lTensor_toLin, map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
         LinearMap.smul_apply, smul_eq_mul, Matrix.mul_apply, Matrix.conjTranspose_apply,
         starRingEnd_apply, Finset.mul_sum, Finset.sum_mul]
       conv_lhs => rw [Finset.sum_comm]

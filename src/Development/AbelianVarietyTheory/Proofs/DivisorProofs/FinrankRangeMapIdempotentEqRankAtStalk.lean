@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix TensorProduct
 
 set_option autoImplicit false
@@ -74,7 +79,7 @@ theorem finrank_range_map_eq_rankAtStalk (A : Type) [CommRing A] (n : ℕ)
         Finset.mul_sum, Algebra.smul_def, RingHom.algebraMap_toAlgebra]
       rw [Finset.sum_mul]
       exact Finset.sum_congr rfl fun _ _ => mul_assoc _ _ _
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hrange : LinearMap.range (P.map g).mulVecLin =
       (LinearMap.range (e.baseChange k)).map (Φ : k ⊗[A] (Fin n → A) →ₗ[k] (Fin n → k)) := by
     have hc : (P.map g).mulVecLin ∘ₗ (Φ : k ⊗[A] (Fin n → A) →ₗ[k] (Fin n → k)) =

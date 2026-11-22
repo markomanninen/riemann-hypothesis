@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHilbRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapEqKerIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHilbRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapEqKerIff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -51,7 +55,6 @@ lemma restrictIso_hom_snd {Y : Scheme.{0}} (b : Y ⟶ W.toScheme) :
     (restrictIso z W b).hom ≫ pullback.snd z (b ≫ W.ι) = pullback.snd (z ∣_ W) b :=
   (isPullback_restrict z W b).isoPullback_hom_snd
 
-@[reassoc (attr := simp)]
 lemma restrictIso_inv_snd {Y : Scheme.{0}} (b : Y ⟶ W.toScheme) :
     (restrictIso z W b).inv ≫ pullback.snd (z ∣_ W) b = pullback.snd z (b ≫ W.ι) := by
   rw [Iso.inv_comp_eq, restrictIso_hom_snd]

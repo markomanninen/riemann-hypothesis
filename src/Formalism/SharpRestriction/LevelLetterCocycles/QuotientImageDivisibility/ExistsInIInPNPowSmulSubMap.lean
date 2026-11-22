@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDNAlt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.PchainDNAlt
+
+@[expose] public section
 
 noncomputable section
 open Classical

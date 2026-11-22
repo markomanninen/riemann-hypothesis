@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableUnderOperators
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorFixedMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsotypicStableUnderOperators
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ theorem weightSpace_disjoint [CharZero K] (E : GLOps n K V) {mu ka : Fin n → �
   · exact absurd (by exact_mod_cast sub_eq_zero.1 h0) ha
   · exact h0
 
-open Classical in
 
+open Classical in
 def lagrangeFactor (E : GLOps n K V) (mu nu : Fin n → ℤ) : Module.End K V :=
   if h : nu = mu then 1 else
     (((mu (Classical.choose (Function.ne_iff.1 h)) : K) - (nu (Classical.choose (Function.ne_iff.1 h)) : K))⁻¹) •
@@ -61,7 +65,7 @@ theorem lagrange_factor_fixes_weight [CharZero K] (E : GLOps n K V) (mu nu : Fin
 theorem lagrange_factor_kills_other (E : GLOps n K V) {mu nu : Fin n → ℤ} (h : nu ≠ mu) {x : V} (hx : x ∈ weightSp E nu) :
     lagrangeFactor E mu nu x = 0 := by
   unfold lagrangeFactor
-  rw [dif_neg h]
+  rw [dite_eq_right h]
   set a := Classical.choose (Function.ne_iff.1 h)
   simp only [LinearMap.smul_apply, LinearMap.sub_apply, Module.End.one_apply]
   rw [(mem_weightSpace_iff_diagonal E nu x).1 hx a, sub_self, smul_zero]
@@ -145,7 +149,7 @@ theorem sum_lagrange_projectors_eq_self (E : GLOps n K V) (t : Finset (Fin n →
       simp [this]
   · simp
   · intro y z hy hz
-    simp only [map_add, Finset.sum_add_distrib, hy, hz]
+    simp only [map_add (f := _), Finset.sum_add_distrib, hy, hz]
 
 theorem lagrange_projector_mem_weightSpace (E : GLOps n K V) (t : Finset (Fin n → ℤ))
     (ht : (⊤ : Submodule K V) ≤ ⨆ mu ∈ t, weightSp E mu) (mu : Fin n → ℤ) (x : V) :
@@ -164,7 +168,7 @@ theorem lagrange_projector_mem_weightSpace (E : GLOps n K V) (t : Finset (Fin n 
       simp [this]
   · simp
   · intro y z hy hz
-    rw [map_add]; exact Submodule.add_mem _ hy hz
+    rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem nonzero_weight_mem_support (E : GLOps n K V) (t : Finset (Fin n → ℤ))
     (ht : (⊤ : Submodule K V) ≤ ⨆ mu ∈ t, weightSp E mu) {ka : Fin n → ℤ} {y : V}
@@ -266,9 +270,9 @@ theorem isotypic_subspaces_span_top (D : Formalism.BasicNotions.D7) (h2 : adm2 D
       exact Submodule.mem_iSup_of_mem mu (isotypic_stable_under_operators E mu a b hy)
     · simp
     · intro y z hy hz
-      rw [map_add]; exact Submodule.add_mem _ hy hz
+      rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   obtain ⟨W', hc, hW'⟩ := h2 K V n E ⟨hrel, ‹_›, hw⟩ _ hst
-  obtain ⟨t, ht⟩ := CompleteLattice.IsCompactElement.exists_finset_of_le_iSup (Submodule K V)
+  obtain ⟨t, ht⟩ := IsCompactElement.exists_finset_of_le_iSup
     ((Submodule.fg_iff_compact (⊤ : Submodule K V)).1 Module.Finite.fg_top)
     (fun mu => weightSp E mu) (le_of_eq hw.symm)
   have hbot : W' = ⊥ := by
@@ -295,6 +299,6 @@ theorem isotypic_projector_fixed_mem (D : Formalism.BasicNotions.D7) (h2 : adm2 
     · rw [he.2 mu hm y hy]; exact Submodule.zero_mem _
   · simp
   · intro y z hy hz
-    rw [map_add]; exact Submodule.add_mem _ hy hz
+    rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 end Formalism.MainNotions.G.GLWeightTheory

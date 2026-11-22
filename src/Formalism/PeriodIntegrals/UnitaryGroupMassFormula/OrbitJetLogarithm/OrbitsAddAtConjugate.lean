@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ProdRenameExpJetSeries
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OrbitJetLogarithm.ProdRenameExpJetSeries
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,10 +21,10 @@ theorem bound_place {D : D7} (E : Ent D) (h5 : 5 ≤ p) (u : D.what₂.Word) (i 
     (hbe : ∀ z, OJ.B1 p 2 (be z) ∧ OJ.B2 p 2 (be z) ∧ OJ.B3 p 2 (be z) ∧ OJ.B4 p 2 (be z))
     (I : ColChoice (D.R.N (i + 1)) (E.nu u i)) (k : Pl D × Fin (D.R.N i) × Fin (D.R.N (i + 1)) →₀ ℕ)
     (z : Pl D) (m' : Pl D × ℕ × Fin (D.R.N i) →₀ ℕ) :
-    ‖MvPolynomial.coeff m' (applyAt0 (D.R.N i) (D.R.N (i + 1)) p
+    ‖AddMonoidAlgebra.coeff (applyAt0 (D.R.N i) (D.R.N (i + 1)) p
       (rename (pEmb (ptE D z) (Fin (D.R.N i) × Fin (D.R.N (i + 1))))
         (T1 (D.R.N i) (D.R.N (i + 1)) c (ep z) (sg z) (be z) (kz D z k)))
-      (∏ c' : Fin ((E.nu u i z).rowLen 0), minorXZ (D.R.N i) (D.R.N (i + 1)) z ((E.nu u i z).colLen c') (I z c')))‖
+      (∏ c' : Fin ((E.nu u i z).rowLen 0), minorXZ (D.R.N i) (D.R.N (i + 1)) z ((E.nu u i z).colLen c') (I z c'))) m'‖
       ≤ (p : ℝ) ^ (-β z) := by
   have hadm := admissible_jet_term E h5 u i z c hc (ep z) (sg z) (hep z) (hsg z) (be z) (hbe z) (kz D z k)
   have hK := hβ z _ hadm
@@ -79,10 +83,10 @@ theorem orbitsAddAtConjugate (D : D7) (E : Ent D) : OrbitsAddAtConjugate E := by
     exact Set.disjoint_singleton.mpr hxy
   have hprod : ∀ (k : Pl D × Fin (D.R.N i) × Fin (D.R.N (i + 1)) →₀ ℕ)
       (m' : Pl D × ℕ × Fin (D.R.N i) →₀ ℕ),
-      ‖MvPolynomial.coeff m' (applyAt0 (D.R.N i) (D.R.N (i + 1)) p
+      ‖AddMonoidAlgebra.coeff (applyAt0 (D.R.N i) (D.R.N (i + 1)) p
         (∏ z, rename (pEmb (ptE D z) (Fin (D.R.N i) × Fin (D.R.N (i + 1))))
           (T1 (D.R.N i) (D.R.N (i + 1)) ep0 (ep z) (sg z) (be z) (kz D z k)))
-        (Gxz (D.R.N i) (D.R.N (i + 1)) (E.nu u i) I))‖ ≤ (p : ℝ) ^ (-∑ z, β z) := by
+        (Gxz (D.R.N i) (D.R.N (i + 1)) (E.nu u i) I)) m'‖ ≤ (p : ℝ) ^ (-∑ z, β z) := by
     intro k m'
     have hT : ∀ z ∈ (Finset.univ : Finset (Pl D)),
         SerIn {v : Pl D × Fin (D.R.N i) × Fin (D.R.N (i + 1)) | v.1 ∈ ({z} : Set (Pl D))}
@@ -141,7 +145,8 @@ theorem orbitsAddAtConjugate (D : D7) (E : Ent D) : OrbitsAddAtConjugate E := by
           subst (psiA p ep0) (MvPowerSeries.monomial k (1 : ℂ_[p]) * L)
         + subst (psiA p ep0) (V * L) := by
     conv_lhs => rw [hUV]
-    rw [add_mul, Finset.sum_mul, ← MvPowerSeries.coe_substAlgHom (R := ℂ_[p]) hs, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [add_mul, Finset.sum_mul, ← MvPowerSeries.coe_substAlgHom (R := ℂ_[p]) hs, map_add (f := _), map_sum]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hmon k, map_smul]

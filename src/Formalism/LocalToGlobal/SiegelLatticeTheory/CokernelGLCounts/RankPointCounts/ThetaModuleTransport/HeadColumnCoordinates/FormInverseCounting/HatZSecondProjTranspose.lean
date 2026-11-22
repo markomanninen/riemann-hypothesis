@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.StepLiftG
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ThetaModuleTransport.HeadColumnCoordinates.FormInverseCounting.StepLiftG
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def crn (r : ℕ) (c : F) : Matrix (Fin (r + 1)) (Fin (r + 1)) F :=
 
 theorem uV_add (x y : Fin (r + 1) → M.R) : uV g (x + y) = uV g x + uV g y := by
   funext i
-  rcases i with a | a <;> simp [uV, map_add]
+  rcases i with a | a <;> simp [uV, map_add (f := _)]
 
 theorem uV_mulVec (N : Matrix (Fin (r + 1)) (Fin (r + 1)) M.R) (v : Fin (r + 1) → M.R) :
     uV g (N.mulVec v) = (Matrix.fromBlocks (N.map (rh1 g)) 0 0 (N.map (rh2 g))).mulVec (uV g v) := by
@@ -176,11 +180,13 @@ theorem stepDuF_of (hL : StepLiftG) : StepDuF := by
     funext i
     rcases i with a | a
     · have := congrArg (ph1 g) (hm a)
-      simp only [map_sum, map_mul, map_add, splitFirstProj_conj] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_add (f := _), splitFirstProj_conj] at this
       simpa [uV, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Matrix.fromBlocks_transpose, ringSecondProj_apply,
         map_add] using this
     · have := congrArg (ph2 g) (hm a)
-      simp only [map_sum, map_mul, map_add, ph2_cj_eq_ph1] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, map_add (f := _), ph2_cj_eq_ph1] at this
       simpa [uV, Matrix.mulVec, dotProduct, Fintype.sum_sum_type, Matrix.fromBlocks_transpose, ringFirstProj_apply,
         map_add] using this
   have hA := stepA_mat hs T T' Zh₁ Zh₂ Z₁ Z₂ hZ₁ hZ₂ P Q hPQ hPe hQe

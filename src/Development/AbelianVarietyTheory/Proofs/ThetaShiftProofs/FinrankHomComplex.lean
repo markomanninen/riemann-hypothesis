@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.TorusProjPeriodZeroEqReal
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsEquivOfSumEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,8 @@ theorem sesq_apply {g : ℕ} (Hm : Matrix (Fin g) (Fin g) ℂ) (z w : Fin g → 
 theorem sesq_conj {g : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermitian) (z w : Fin g → ℂ) :
     starRingEnd ℂ (sesq Hm z w) = sesq Hm w z := by
   have h : ∀ i k, starRingEnd ℂ (Hm i k) = Hm k i := fun i k => hH.apply k i
-  simp only [sesq_apply, hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, h, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sesq_apply, hermForm, dotProduct, Matrix.mulVec, map_sum, map_mul, Finset.mul_sum, h, Pi.star_apply,
     RCLike.star_def, Complex.conj_conj]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by ring
@@ -28,7 +33,8 @@ theorem sesq_conj {g : ℕ} {Hm : Matrix (Fin g) (Fin g) ℂ} (hH : Hm.IsHermiti
 theorem sesq_of {n : ℕ} (S : (Fin n → ℂ) →ₗ[ℂ] (Fin n → ℂ) →ₗ⋆[ℂ] ℂ) (z w : Fin n → ℂ) :
     hermForm (Matrix.of fun i j => S (Pi.single i 1) (Pi.single j 1)) z w = S z w := by
   conv_rhs => rw [pi_eq_sum_univ' z, pi_eq_sum_univ' w]
-  simp only [hermForm, dotProduct, Matrix.mulVec, map_sum, map_smul, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermForm, dotProduct, Matrix.mulVec, map_sum, map_smul, LinearMap.map_smulₛₗ, LinearMap.sum_apply,
     LinearMap.smul_apply, smul_eq_mul, Finset.mul_sum, Matrix.of_apply, Pi.star_apply, RCLike.star_def]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -39,8 +45,6 @@ def imForm (S : W →ₗ[ℂ] W →ₗ⋆[ℂ] ℂ) : LinearMap.BilinForm ℝ W 
   LinearMap.mk₂ ℝ (fun x y => (S x y).im) (fun _ _ _ => by simp)
     (fun r x y => by rw [← algebraMap_smul ℂ r x]; simp) (fun _ _ _ => by simp)
     (fun r x y => by rw [← algebraMap_smul ℂ r y, LinearMap.map_smulₛₗ]; simp)
-
-@[simp] theorem imForm_apply (S : W →ₗ[ℂ] W →ₗ⋆[ℂ] ℂ) (x y : W) : imForm S x y = (S x y).im := rfl
 
 def reForm (S : W →ₗ[ℂ] W →ₗ⋆[ℂ] ℂ) : LinearMap.BilinForm ℝ W :=
   LinearMap.mk₂ ℝ (fun x y => (S x y).re) (fun _ _ _ => by simp)
@@ -79,9 +83,9 @@ variable (hconj : ∀ z w, starRingEnd ℂ (S z w) = S w z) (hpos : ∀ z, z ≠
   (hR : ∀ r ∈ R, ∀ r' ∈ R, (S r r').im = 0) {b : W →ₗ[ℝ] W} (hb : ∀ w, b w ∈ R)
   (hb' : ∀ w, ∀ r ∈ R, S (b w) r = (S w r).im)
 
+
 omit [IsScalarTower ℝ ℂ W] in
 include hpos hb hb' in
-
 theorem imPart_eq {w c : W} (hc : c ∈ R) (h : ∀ r ∈ R, (S c r).re = (S w r).im) : b w = c := by
   by_contra hne
   have h1 := hpos _ (sub_ne_zero.2 hne)
@@ -89,24 +93,24 @@ theorem imPart_eq {w c : W} (hc : c ∈ R) (h : ∀ r ∈ R, (S c r).re = (S w r
   rw [map_sub S, LinearMap.sub_apply, hb' w _ h2, Complex.sub_re, h _ h2] at h1
   simp at h1
 
+
 omit [IsScalarTower ℝ ℂ W] in
 include hconj hb' in
-
 theorem apply_imPart (w : W) {r : W} (hr : r ∈ R) : S r (b w) = (S w r).im := by
   rw [← hconj, hb' w r hr, Complex.conj_ofReal]
 
 variable {O : Type} [CommRing O] [StarRing O] {ρ : O →+* Module.End ℂ W}
   (hρ : ∀ a z w, S (ρ a z) w = S z (ρ (star a) w)) (hρR : ∀ a, ∀ r ∈ R, ρ a r ∈ R)
 
+
 omit [IsScalarTower ℝ ℂ W] in
 include hpos hb hb' hρ hρR in
-
 theorem imPart_act (a : O) (w : W) : b (ρ a w) = ρ a (b w) :=
   imPart_eq hpos hb hb' (hρR _ _ (hb w)) fun r hr => by
     rw [hρ, hρ, hb' _ _ (hρR _ _ hr), Complex.ofReal_re]
 
-include hpos hb hb' hρ hρR in
 
+include hpos hb hb' hρ hρR in
 theorem exists_compl [FiniteDimensional ℂ W] (Q : ∀ n : ℕ, (O →+* Module.End ℂ (Fin n → ℂ)) → Prop)
     (hQ : ∀ (U : Type) [AddCommGroup U] [Module ℂ U] [FiniteDimensional ℂ U] (σ : O →+* Module.End ℂ U),
       ∃ (n : ℕ) (k : U ≃ₗ[ℂ] (Fin n → ℂ)) (F : O →+* Module.End ℂ (Fin n → ℂ)), Q n F ∧ ∀ a u, k (σ a u) = F a (k u)) :
@@ -136,7 +140,7 @@ theorem exists_compl [FiniteDimensional ℂ W] (Q : ∀ n : ℕ, (O →+* Module
       map_add' := fun w w' => Subtype.ext (map_add p₀ w w')
       map_smul' := fun c w => Subtype.ext (by
         show p₀ (c • w) = c • p₀ w
-        rw [hsm c w, hsm c (p₀ w), map_add, map_smul, map_smul, hpI]) }
+        rw [hsm c w, hsm c (p₀ w), map_add (f := _), map_smul, map_smul, hpI]) }
   have hb0 : ∀ u ∈ U, b u = 0 := fun u hu => imPart_eq hpos hb hb' R.zero_mem fun r hr => by simp [hu r hr]
   have hpu : ∀ u : U, p u = u := fun u => Subtype.ext (by
     show p₀ u = u
@@ -161,9 +165,9 @@ theorem exists_compl [FiniteDimensional ℂ W] (Q : ∀ n : ℕ, (O →+* Module
     rw [← hk]
     simp [σ]
 
+
 omit [IsScalarTower ℝ ℂ W] in
 include hconj hR hb in
-
 theorem sub_swap {w w' u u' : W} (hu : ∀ r ∈ R, S u r = 0) (hu' : ∀ r ∈ R, S u' r = 0)
     (h : w = b (I • w) + I • b w + u) (h' : w' = b (I • w') + I • b w' + u') :
     S w (b w') - S u u' / (2 * I) = S w' (b w) - S u' u / (2 * I) - (S w w').im := by
@@ -175,7 +179,7 @@ theorem sub_swap {w w' u u' : W} (hu : ∀ r ∈ R, S u r = 0) (hu' : ∀ r ∈ 
   generalize b w = c, hb w = hc at h ⊢
   generalize b w' = c', hb w' = hc' at h' ⊢
   subst h h'
-  simp only [map_add, LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hu _ ha', hu _ hc',
+  simp only [map_add (f := _), LinearMap.map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hu _ ha', hu _ hc',
     hu' _ hc, hv _ ha, hv _ hc, AnArc.div_two_I]
   apply Complex.ext <;>
     simp [hR _ ha _ ha', hR _ ha _ hc', hR _ hc _ ha', hR _ hc _ hc', hR _ ha' _ hc, hR _ hc' _ hc, hre a' c, hre c' c,
@@ -184,8 +188,8 @@ theorem sub_swap {w w' u u' : W} (hu : ∀ r ∈ R, S u r = 0) (hu' : ∀ r ∈ 
 
 end
 
-open NumberField in
 
+open NumberField in
 theorem exists_diag {E : Type} [Field E] [NumberField E] (U : Type) [AddCommGroup U] [Module ℂ U]
     [FiniteDimensional ℂ U] (σ : 𝓞 E →+* Module.End ℂ U) :
     ∃ (n : ℕ) (k : U ≃ₗ[ℂ] (Fin n → ℂ)) (F : 𝓞 E →+* Module.End ℂ (Fin n → ℂ)),
@@ -231,7 +235,8 @@ theorem span_intHom :
   let b := Module.Free.chooseBasis ℤ Y
   have : l = ∑ i, l (b i) • (Int.castAddHom ℂ).comp (b.coord i).toAddMonoidHom := by
     ext x
-    conv_lhs => rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [← b.sum_repr x, map_sum]
     simp only [map_zsmul]
     simp [AddMonoidHom.finsetSum_apply, mul_comm]
   rw [this]

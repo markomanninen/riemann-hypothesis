@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
-import GroundTheory.GlobalFields.Adele.WeakApprox
-import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
-import Mathlib.Analysis.Calculus.FDeriv.Bilinear
-import Mathlib.Topology.Algebra.Module.FiniteDimension
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+public import GroundTheory.GlobalFields.Adele.WeakApprox
+public import Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv
+public import Mathlib.Analysis.Calculus.FDeriv.Bilinear
+public import Mathlib.Topology.Algebra.Module.FiniteDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,9 +90,10 @@ private theorem int_nhds {K : Type} [NontriviallyNormedField K] [CompleteSpace K
   have hsplit : l x = l o + ∑ i, (x i - o i) • l (e i) := by
     have h1 : x - o = ∑ i, (x - o) i • e i := pi_eq_sum_univ (x - o)
     have h2 : l (x - o) = ∑ i, (x i - o i) • l (e i) := by
-      rw [h1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_sum]
       simp [map_smul]
-    rw [← h2, ← map_add, add_sub_cancel]
+    rw [← h2, ← map_add (f := _), add_sub_cancel]
   rw [hsplit]
   refine IsIntegral.add ho (IsIntegral.sum _ fun i _ => ?_)
   obtain ⟨s, hs⟩ := hx i
@@ -247,7 +252,7 @@ private theorem loc_open {K : Type} [NontriviallyNormedField K] [CompleteSpace K
     obtain ⟨a0, ha0⟩ := hy2
     obtain ⟨g', hg'⟩ := ex_mt Δ y ((isUnit_p Δ y).mpr hy3)
     refine ⟨g', mem_KD Δ O g' (by rw [hg']; exact hy) (a0 + 1) ?_, hg'⟩
-    rw [hg', det_p, IsScalarTower.algebraMap_apply O K (Lsq K Δ), map_add, map_one, ha0, sub_add_cancel, ← map_mul, mul_inv_cancel₀ hy3, map_one]
+    rw [hg', det_p, IsScalarTower.algebraMap_apply O K (Lsq K Δ), map_add (f := _), map_one, ha0, sub_add_cancel, ← map_mul, mul_inv_cancel₀ hy3, map_one]
   have hpow := pow_nhds (pD Δ) (qD Δ) (qp Δ) (pq_mul Δ) ![1, 0, 0, 0] (p_one Δ) J'.normalCore.index (Nat.cast_ne_zero.mpr hm0) P hP
   have hT : Tendsto (fun x => qD Δ (pD Δ x * mt g)) (𝓝 (qD Δ (mt g⁻¹))) (𝓝 ![1, 0, 0, 0]) := by
     let T : (Fin 4 → K) →ₗ[K] (Fin 4 → K) := qD Δ ∘ₗ (LinearMap.mulRight K (mt g)) ∘ₗ pD Δ

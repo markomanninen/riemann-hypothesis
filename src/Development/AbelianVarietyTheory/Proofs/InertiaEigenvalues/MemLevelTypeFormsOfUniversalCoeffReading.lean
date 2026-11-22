@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChosenPlacesAdmissibleGoodSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlNeOfSplit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBlockTriangularTwoBlockSizesOfLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupLiftsToParahoricLevel
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdmissibleIndexBoundAllPowers
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DualTypePlacesIsSplitNonconjugateOfAdmissible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChosenPlacesAdmissibleGoodSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistingCharacterAdmissibleGaloisTwistGood
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjPlNeOfSplit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemBlockTriangularTwoBlockSizesOfLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteGroupLiftsToParahoricLevel
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ variable {D : D7} {S T : HSp D}
 
 section Series
 
-open Classical in
 
+open Classical in
 theorem omegaG_levT_mul_inv {n r : ℕ} (G : TypeDat D r) (hr : r ≤ n) (K : ∀ PP : Pl D.host.E, GL (Fin r) (kP PP))
     (a : G0 G.Pg r) (ha : ∀ PP : ↥G.Pg, a PP = K PP.1) (hH : a ∈ G.P.H)
     (y : ∀ PP : Pl D.host.E, Matrix (Fin n) (Fin r) (kP PP)) :
@@ -78,8 +82,8 @@ structure Lifts (B : Base S T) (a : G0 B.G.Pg T.rank) (κ : GA D T) : Prop where
 theorem lifts_of_isLiftG0 {a : G0 B.G.Pg T.rank} {κ : GA D T} (h : Lev.IsLevelLift T B.F.βT B.G.levT a κ) : Lifts B a κ :=
   ⟨h.1, parLev_St h.2.1, fun PP => (congrFun h.2.2 PP).symm.trans (GlobalTheory.AdjDatumMove.restrictedBlock_self_apply _)⟩
 
-open Classical in
 
+open Classical in
 theorem om_type (hB : B.Good) (hS : S.SigOK) {Q : Finset (Pl D.host.E)} (hQ : B.admitted Q) {ω : PairRep S T} (hω : B.IsWeil 1 ω)
     {a : G0 B.G.Pg T.rank} (hH : a ∈ B.G.P.H) {κ : GA D T} (hκ : Lifts B a κ)
     {φ φ' : ∀ PP : ↥Q, Matrix (Fin T.rank) (Fin S.rank) (kP PP.1) → ℂ} (s : ↥Q → ℂˣ)
@@ -135,7 +139,7 @@ theorem om_fock (hB : B.Good) {Q : Finset (Pl D.host.E)} (hQ : B.admitted Q) {ω
     (fun τ => (B.F.BS τ).val) (fun τ => (B.F.BS τ).val) B.F.sT B.F.sT B.F.BT B.F.BT 1 κ
     (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
     (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hκ])
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
+    (fun τ => by rw [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _), Matrix.one_mul])
     (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hκ]) _ hth P).2]
   rfl
 
@@ -231,7 +235,8 @@ theorem mem_baseChange_iInf_ker [Finite ι] (φ : ι → V →ₗ[K] V) {x : A �
   have key : ∀ v : V, v - ∑ i, s i (φ i v) ∈ ⨅ i, LinearMap.ker (φ i) := fun v => by
     have e1 : ∑ i, s i (φ i v) = r ((LinearMap.pi φ).rangeRestrict v) := by
       have : l (LinearMap.pi φ v) = (LinearMap.pi φ).rangeRestrict v := LinearMap.congr_fun hl ((LinearMap.pi φ).rangeRestrict v)
-      rw [← this, ← Finset.univ_sum_single (LinearMap.pi φ v), map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← this, ← Finset.univ_sum_single (LinearMap.pi φ v), map_sum, map_sum]
       rfl
     have e2 : LinearMap.pi φ (r ((LinearMap.pi φ).rangeRestrict v)) = LinearMap.pi φ v :=
       congrArg Subtype.val (LinearMap.congr_fun hr ((LinearMap.pi φ).rangeRestrict v))
@@ -242,7 +247,7 @@ theorem mem_baseChange_iInf_ker [Finite ι] (φ : ι → V →ₗ[K] V) {x : A �
     | zero => simp
     | add y z hy hz =>
       have := add_mem hy hz
-      simp only [map_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       convert this using 1
       abel
     | tmul a v =>
@@ -269,7 +274,8 @@ theorem coefAt_tmul_single (δ δ' : Δ) (v : V) :
 theorem coefAt_sum (Xi : Δ →₀ V) (δ : Δ) :
     coefAt δ (Xi.sum fun δ' f => f ⊗ₜ[R] AddMonoidAlgebra.single δ' (1 : R)) = Xi δ := by
   classical
-  rw [Finsupp.sum, map_sum, Finset.sum_congr rfl fun δ' _ => coefAt_tmul_single δ δ' (Xi δ'), Finset.sum_ite_eq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finsupp.sum, map_sum, Finset.sum_congr rfl fun δ' _ => coefAt_tmul_single δ δ' (Xi δ'), Finset.sum_ite_eq']
   split_ifs with h
   · rfl
   · exact (Finsupp.notMem_support_iff.1 h).symm
@@ -317,20 +323,20 @@ theorem injective_rd (Z : CellTie hρ Y rd) : Function.Injective rd := by
     rw [Z.thU_eq ∅ 0 d hQ (fun _ => x) fun a => by rw [hx, Z.th_eq, ρ.xi_of_empty i j b Y (by simp)], grpSum,
       Finset.sum_eq_single 0 (fun a _ h => absurd (funext fun P => isEmptyElim P) h)
         (fun h => absurd (@Finset.mem_univ _ (_) _) h), map_zero, coefAt_tmul_single, if_pos rfl]
-  have h1 := key (Y.th i _ b d + f) (by rw [map_add, hf, add_zero])
+  have h1 := key (Y.th i _ b d + f) (by rw [map_add (f := _), hf, add_zero])
   rw [key _ rfl] at h1
   exact left_eq_add.1 h1
 
-include hρ in
 
+include hρ in
 theorem exists_lift (g : G0g N) :
     ∃ κ, Lev.IsLevelLift (Wc D j) (ρ.B i j b).F.βT (ρ.B i j b).G.levT (ρ.eG i j b g) κ := by
   obtain ⟨R, h1, -, hR⟩ := (hρ.base i j b).places.split
   exact GlobalTheory.FiniteGroupLifts.liftsExist_of_twist_empty _ _ (ρ.B i j b).G.levT _ _ (hρ.latT i j b) rfl
     (fun P hP P' hP' => not_isConjPl_of_splitSet hR (h1 hP) (h1 hP')) _
 
-variable (ρ i j b) in
 
+variable (ρ i j b) in
 def HasType (F : GA D (Wc D j) → ℂ) : Prop :=
   ∀ a (hH : a ∈ (ρ.B i j b).G.P.H) κ, Lifts (ρ.B i j b) a κ → ∀ g, F (g * κ) = (((ρ.B i j b).G.P.chi ⟨a, hH⟩ : ℂˣ) : ℂ) * F g
 
@@ -372,7 +378,7 @@ theorem mem_baseChange_of_hasType (Z : CellTie hρ Y rd) (hA : ActRead rd) {k : 
       rdK rd hρ k y (g * κ) - ρ.e i b (Y.psiU i b u : (FractionRing (X.O i))ˣ) * rdK rd hρ k y g := fun y => by
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y z hy hz => simp only [map_add, Pi.add_apply, hy, hz]; ring
+    | add y z hy hz => simp only [map_add (f := _), Pi.add_apply, hy, hz]; ring
     | tmul a f =>
       rw [LinearMap.lTensor_tmul, rdK_tmul, rdK_tmul]
       change ρ.eOk i b k a * rd (Y.actG i _ b u f - ((Y.psiU i b u : (FractionRing (X.O i))ˣ) : FractionRing (X.O i)) • f) g =
@@ -402,7 +408,8 @@ theorem coefAt_thU_mem (Q M) (d : Y.Dat i ((j : ℕ) + 1) b) (δ) : coefAt δ (Y
   by_cases h : InRange X i Q ∧ ∀ a, ρ.xi i j b Y Q M (Z.cls d) (Z.coef d) a ∈ Set.range rd
   · obtain ⟨hQ, h⟩ := h
     choose x hx using h
-    rw [Z.thU_eq Q M d hQ x hx, grpSum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Z.thU_eq Q M d hQ x hx, grpSum, map_sum]
     refine Submodule.sum_mem _ fun a _ => ?_
     rw [coefAt_tmul_single]
     split_ifs
@@ -413,8 +420,8 @@ theorem coefAt_thU_mem (Q M) (d : Y.Dat i ((j : ℕ) + 1) b) (δ) : coefAt δ (Y
 
 omit Z hA
 
-variable (Y) in
 
+variable (Y) in
 def UnivTyped : Prop := ∀ i, ∀ j ∈ Finset.Icc 1 D.R.m, ∀ b Q M (d : Y.Dat i j b),
   (∃ Xi : DelQM D.host (X.l i) Q M →₀ Y.Fm i j b,
     Y.thU i j b Q M d = Xi.sum (fun δ f => f ⊗ₜ[X.O i] AddMonoidAlgebra.single δ (1 : X.O i))) ∧
@@ -443,11 +450,6 @@ theorem th_typed_of_tie (i : X.Tw) {j : ℕ} (hj : j ∈ Finset.Icc 1 D.R.m) (b 
   obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hj
   obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' h1
   exact thetaSeriesDatum_mem_levelTypeForms (W i ⟨n, h2⟩ b) (hW i ⟨n, h2⟩ b) d
-
-def allData : ExpDat Y where
-  Dat0 _ j _ := {_d | j ∈ Finset.Icc 1 D.R.m}
-  theta_base_equivariant i _ b d hd u :=
-    sub_eq_zero.1 (LinearMap.mem_ker.1 ((Submodule.mem_iInf _).1 (th_typed_of_tie W hW i hd b d) u))
 
 end Record
 

@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
-import Formalism.PolynomialDimension.DetMulEqSumAdjugate
-import Formalism.SubspaceCounting.ChoiceOfTopsRefined
-import Formalism.GrowthSums.LemmaATwoFactList
-import Formalism.PolynomialDimension.FinalNum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SourceCleaning
+public import Formalism.PolynomialDimension.DetMulEqSumAdjugate
+public import Formalism.SubspaceCounting.ChoiceOfTopsRefined
+public import Formalism.GrowthSums.LemmaATwoFactList
+public import Formalism.PolynomialDimension.FinalNum
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem inWj_add {P Q : MvPolynomial σ (KK O)} {j : ℕ} (hP : InWj w P j) (hQ 
     InWj w (P + Q) j := fun m => by
   obtain ⟨a, ha⟩ := hP m
   obtain ⟨b, hb⟩ := hQ m
-  exact ⟨a + b, by rw [coeff_add, ha, hb, ← map_add]; ring_nf⟩
+  exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, ← map_add (f := _)]; ring_nf⟩
 
 theorem inWj_neg {P : MvPolynomial σ (KK O)} {j : ℕ} (hP : InWj w P j) : InWj w (-P) j := fun m => by
   obtain ⟨a, ha⟩ := hP m
@@ -50,7 +54,8 @@ theorem inWj_mul {P Q : MvPolynomial σ (KK O)} {i j : ℕ} (hP : InWj w P i) (h
   choose a ha using hP
   choose b hb using hQ
   refine ⟨∑ x ∈ Finset.HasAntidiagonal.antidiagonal m, a x.1 * b x.2, ?_⟩
-  rw [coeff_mul, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [coeff_mul, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [ha, hb, ← map_mul]
   congr 1
@@ -65,10 +70,6 @@ theorem inWj_C (j : ℕ) (c : O) : InWj w (C (algebraMap O (KK O) (w ^ j * c)) :
   by_cases h : 0 = m
   · exact ⟨c, by rw [coeff_C, if_pos h]⟩
   · exact ⟨0, by rw [coeff_C, if_neg h]; simp⟩
-
-theorem inWj_Cw : InWj w (C (algebraMap O (KK O) w) : MvPolynomial σ (KK O)) 1 := by
-  have := inWj_C (σ := σ) (w := w) 1 1
-  simpa using this
 
 theorem inWj_Cpow (j : ℕ) : InWj w (C (algebraMap O (KK O) (w ^ j)) : MvPolynomial σ (KK O)) j := by
   have := inWj_C (σ := σ) (w := w) j 1
@@ -127,7 +128,8 @@ theorem exists_map_of_inWj0 {P : MvPolynomial σ (KK O)} (hP : InWj w P 0) :
     ∃ h : MvPolynomial σ O, MvPolynomial.map (algebraMap O (KK O)) h = P ∧ h.vars ⊆ P.vars := by
   choose a ha using hP
   refine ⟨∑ m ∈ P.support, monomial m (a m), ?_, ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [P.as_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_monomial, ha]; simp
@@ -135,10 +137,10 @@ theorem exists_map_of_inWj0 {P : MvPolynomial σ (KK O)} (hP : InWj w P 0) :
     have := vars_sum_subset P.support (fun m => monomial m (a m)) hv
     rw [Finset.mem_biUnion] at this
     obtain ⟨m, hm, hvm⟩ := this
-    obtain ⟨d, hd, hvd⟩ := (mem_vars v).1 hvm
+    obtain ⟨d, hd, hvd⟩ := (mem_vars_iff_mem_support v).1 hvm
     have hdm : d = m := Finset.mem_singleton.1 (support_monomial_subset hd)
     subst hdm
-    exact (mem_vars v).2 ⟨d, hm, hvd⟩
+    exact (mem_vars_iff_mem_support v).2 ⟨d, hm, hvd⟩
 
 end InWj
 
@@ -210,13 +212,15 @@ theorem subst_xg (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : 
     subst p n' O w n' r g (xg p n' O n' g a b) = newVar w r (posOf n' a, b) := by
   have hs : Even (posOf n' a).val := (posOf_even hn a).2 ha
   unfold xg
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, subst_X_even w r g _ hs, sigMat_posOf]
   have hC : ∀ x : KK O, subst p n' O w n' r g (C x) = C x := fun x => by
     unfold subst; exact (liftSubst p n' O w r (LLT n') g).commutes x
   simp only [hC, Finset.sum_mul, mul_assoc, ← C_mul]
   rw [Finset.sum_comm]
-  simp only [← Finset.mul_sum, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.mul_sum, ← map_sum]
   have hinv : ∀ b' : Fin k, ∑ c : Fin k, (sigMat p n' O g a)⁻¹ b' c * sigMat p n' O g a c b =
       (1 : Matrix (Fin k) (Fin k) (KK O)) b' b := fun b' => by
     rw [← Matrix.mul_apply, Matrix.nonsing_inv_mul _ (sigMat_det_isUnit hg a)]
@@ -231,13 +235,15 @@ theorem subst_yg (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : 
     subst p n' O w n' r g (yg p n' O n' g a b) = newVar w r (posOf n' a, b) := by
   have hs : ¬ Even (posOf n' a).val := fun h => ha ((posOf_even hn a).1 h)
   unfold yg
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, subst_X_odd w r g _ hs, sigMat_posOf]
   have hC : ∀ x : KK O, subst p n' O w n' r g (C x) = C x := fun x => by
     unfold subst; exact (liftSubst p n' O w r (LLT n') g).commutes x
   simp only [hC, Finset.sum_mul, mul_assoc, ← C_mul]
   rw [Finset.sum_comm]
-  simp only [← Finset.mul_sum, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.mul_sum, ← map_sum]
   have hinv : ∀ b' : Fin k, ∑ c : Fin k, sigMat p n' O g a c b' * (sigMat p n' O g a)⁻¹ b c =
       (1 : Matrix (Fin k) (Fin k) (KK O)) b b' := fun b' => by
     rw [← Matrix.nonsing_inv_mul _ (sigMat_det_isUnit hg a), Matrix.mul_apply]
@@ -310,7 +316,7 @@ theorem columnSetMinor_image_eq_sign {r k : ℕ} (c : Fin r → Fin k) (hc : Fun
     exact ((univ.image c).orderEmbOfFin hcard).injective this
   refine ⟨Equiv.ofBijective f (Finite.injective_iff_bijective.mp hinj), fun R _ x e => ?_⟩
   unfold columnSetMinor
-  rw [dif_pos hcard]
+  rw [dite_eq_left hcard]
   unfold entrywisePowerMinor
   have := Matrix.det_permute' (Equiv.ofBijective f (Finite.injective_iff_bijective.mp hinj))
     (Matrix.of fun l i : Fin r => x l (c i) ^ e l)
@@ -448,7 +454,7 @@ theorem residue_zero_mem_order_one {p : ℕ} {O : Type} [CommRing O] [IsDomain O
     InWj S.w (MvPolynomial.map (algebraMap O (KK O)) P) 1 := by
   intro m
   have h1 : IsLocalRing.residue O (P.coeff m) = 0 := by
-    have := congrArg (MvPolynomial.coeff m) hP
+    have := congrArg (AddMonoidAlgebra.coeff · m) hP
     simpa [MvPolynomial.coeff_map] using this
   have h2 : P.coeff m ∈ IsLocalRing.maximalIdeal O := (IsLocalRing.residue_eq_zero_iff _).mp h1
   rw [S.w_irr.maximalIdeal_eq, Ideal.mem_span_singleton] at h2
@@ -488,7 +494,8 @@ theorem subst_twisted_row_even (w : O) (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF
   have hmul : sigMat p n' O (g'⁻¹ * g) a = sigMat p n' O g'⁻¹ a * sigMat p n' O g a := by
     simp only [sigMat_eq_map, Matrix.map_mul]
   unfold xg integralPrimalRow
-  simp only [map_sum, map_mul, subst_X_even w r g' _ hs, sigMat_posOf, sigmaMatrix_inv_twisted hg', MvPolynomial.algHom_C,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, subst_X_even w r g' _ hs, sigMat_posOf, sigmaMatrix_inv_twisted hg', MvPolynomial.algHom_C,
     Finset.sum_mul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun b' _ => ?_
@@ -500,7 +507,8 @@ theorem subst_twisted_row_even (w : O) (r : ℕ) (g : Matrix (Fin k) (Fin k) (WF
   have hC : MvPolynomial.map (algebraMap O (KK O)) (C (algebraMap (WF p n') O (sigPow p n' a ((g'⁻¹ * g) b' b)))) =
       (C (sigMat p n' O (g'⁻¹ * g) a b' b) : MvPolynomial (TV n' k) (KK O)) := by
     rw [MvPolynomial.map_C]; rfl
-  rw [hN, hC, hmul, Matrix.mul_apply, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hN, hC, hmul, Matrix.mul_apply, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, mul_assoc]
   rfl
@@ -518,7 +526,8 @@ theorem residue_integral_primal_row [IsDiscreteValuationRing O] (S : Uniformized
   rw [← sum_ite_first_columns hrk (fun b' => X (posOf n' a, b') *
         (C (ι (WittVector.constantCoeff (h b' b)))) ^ p ^ m)]
   unfold integralPrimalRow
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b' _ => ?_
   have hF : IsLocalRing.residue O (algebraMap (WF p n') O (sigPow p n' a (h b' b))) =
       (ι (WittVector.constantCoeff (h b' b))) ^ p ^ m := by
@@ -726,7 +735,8 @@ theorem localiser_nonzero_off_plane : LocaliserNonzeroOffPlane := by
           (fun c => WittVector.constantCoeff (g⁻¹ d c)) := by
       funext c
       conv_lhs => rw [hdec]
-      rw [Matrix.mul_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum]
       simp [Finset.sum_apply, map_mul]
     show (fun c => WittVector.constantCoeff (g'⁻¹ (Fin.castLE hrk i) c)) ∈ ratPlane p n' r g
     rw [e]
@@ -1013,7 +1023,8 @@ theorem complement_minor_order_pos (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr 
       (fun i _ => Nat.zero_le _) (Finset.mem_univ i0)
     simp only [hi0, hc', if_true] at this
     exact this
-  rw [minorI, dif_pos hIc, Matrix.det_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [minorI, dite_eq_left hIc, Matrix.det_apply, map_sum]
   refine sum_mem fun s _ => ?_
   rcases Int.units_eq_one_or (Equiv.Perm.sign s) with hs | hs
   · rw [hs, one_smul, map_prod]
@@ -1150,7 +1161,7 @@ theorem order_mem_add {w : O} {P Q : MvPolynomial σ (KK O)} {j : ℕ} (hP : InW
     InWj w (P + Q) j := fun m => by
   obtain ⟨a, ha⟩ := hP m
   obtain ⟨b, hb⟩ := hQ m
-  exact ⟨a + b, by rw [coeff_add, ha, hb, ← map_add, mul_add]⟩
+  exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, ← map_add (f := _), mul_add]⟩
 
 theorem inWPow_neg {w : O} {P : MvPolynomial σ (KK O)} {j : ℕ} (hP : InWj w P j) : InWj w (-P) j := fun m => by
   obtain ⟨a, ha⟩ := hP m
@@ -1339,8 +1350,8 @@ theorem inWPow_weighted_component {w : O} (d : Fin n' → ℕ) {P : MvPolynomial
 theorem onTops_weighted_component {r : ℕ} (Fr : Frames n' r) (d : Fin n' → ℕ) {P : MvPolynomial (TV n' k) (KK O)}
     (hP : OnTops Fr P) : OnTops Fr (weightedHomogeneousComponent (coordinatePositionWeight n' k) d P) := by
   intro v hv
-  obtain ⟨m, hm, hvm⟩ := (mem_vars v).1 hv
-  refine hP v ((mem_vars v).2 ⟨m, ?_, hvm⟩)
+  obtain ⟨m, hm, hvm⟩ := (mem_vars_iff_mem_support v).1 hv
+  refine hP v ((mem_vars_iff_mem_support v).2 ⟨m, ?_, hvm⟩)
   rw [mem_support_iff] at hm ⊢
   rw [coeff_weightedHomogeneousComponent] at hm
   split_ifs at hm
@@ -1399,7 +1410,7 @@ theorem weighted_component_substitute_comm (w : O) (r : ℕ) (g : Matrix (Fin k)
     · rw [h, h1.weightedHomogeneousComponent_same, h2.weightedHomogeneousComponent_same]
     · rw [h1.weightedHomogeneousComponent_ne d h, h2.weightedHomogeneousComponent_ne d h, map_zero]
   · intro P Q hP hQ
-    simp only [map_add, hP, hQ]
+    simp only [map_add (f := _), hP, hQ]
 
 end B4c
 
@@ -1461,7 +1472,8 @@ theorem subst_integral (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')} 
   have h : subst p n' O w n' r g F =
       ∑ d ∈ F.support, C (F.coeff d) * ∏ i ∈ d.support, (subst p n' O w n' r g (X i)) ^ d i := by
     conv_lhs => rw [F.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun d _ => ?_
     rw [monomial_eq, map_mul, subst_C_alt, Finsupp.prod, map_prod]
     simp only [map_pow]
@@ -1626,14 +1638,15 @@ theorem substitute_new_coordinate (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) 
 theorem subst_true_coordinates (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsGLW g) (hn : Even n')
     (h : MvPolynomial (TV n' k) O) (hh : InTV r h) :
     subst p n' O w n' r g (hTrue p n' O n' g h) = MvPolynomial.map (algebraMap O (KK O)) h := by
-  rw [true_coordinates_eq_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [true_coordinates_eq_sum, map_sum]
   conv_rhs => rw [(MvPolynomial.map (algebraMap O (KK O)) h).as_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   rw [map_mul, subst_C_alt, map_prod, monomial_eq, coeff_map, Finsupp.prod]
   congr 1
   refine Finset.prod_congr rfl fun i hi => ?_
   rw [map_pow, substitute_new_coordinate w r hg hn, newVar, if_neg]
-  exact hh i (vars_map _ _ ((mem_vars i).2 ⟨d, hd, hi⟩))
+  exact hh i (vars_map _ _ ((mem_vars_iff_mem_support i).2 ⟨d, hd, hi⟩))
 
 end B4e
 
@@ -1739,7 +1752,7 @@ theorem bs_top_hTrue (g : Matrix (Fin k) (Fin k) (WF p n')) (h : MvPolynomial (T
   rw [bs_hTrue_eq]
   refine sum_mem fun d hd => mul_mem (Subalgebra.algebraMap_mem _ _) (prod_mem fun i hi => pow_mem ?_ _)
   refine bs_top_newCoord Fr g i (hh i ?_)
-  rw [mem_vars]
+  rw [mem_vars_iff_mem_support]
   exact ⟨d, support_map_subset _ _ hd, hi⟩
 
 theorem bs_top_minorI {L₁ N₁ : ℕ} (hV : Fr.Valid L₁ N₁) (g : Matrix (Fin k) (Fin k) (WF p n')) (j : ℤ)
@@ -1780,9 +1793,6 @@ theorem bs_restRawTops (D : Formalism.BasicNotions.D7) : RawTermOnTops D := by
     (pow_mem (bs_top_Rloc Fr hV g) _)) (prod_mem fun j _ => pow_mem (bs_top_minorI Fr hV g _ _) _))
     (bs_top_DtopProd Fr hH.2.2.1 g mu)) (bs_top_hTrue Fr g τ.h hτT.2)
 
-theorem divisibility_lemma_of_order_claim (D : Formalism.BasicNotions.D7) (hL1 : Conclusion1 D) (hC : OrderClaimRemaining D) : Conclusion4 D :=
-  divisibility_lemma_of_three_orders D (symbol_order_ge_level D) (raw_term_order_ge_off_plane D hL1 (bs_restRawTops D)) hC
-
 end Formalism.MainNotions.G.WittFrameLocaliserOrders
 
 end
@@ -1794,59 +1804,6 @@ open MvPolynomial Finset Classical
 namespace Formalism.MainNotions.G.WittFrameLocaliserOrders
 
 open Formalism.MainNotions.G Formalism.MainNotions.SourceCleaning
-
-def bd_RestCritModW (_D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] (_S : UniformizedDVR p O)
-    (n' r K : ℕ) [NeZero n'] [NeZero r] [NeZero K]
-    (Fr : Frames n' r) (j : ℤ) (m : ℤ → ℤ) (th o : ℤ → ℝ),
-  (∀ (A : MvPolynomial (ℤ × Fin r) (FF O)) (G : MvPolynomial (ℤ × Fin K) (FF O)) (M : ℤ → ℤ),
-    A ∈ supported (FF O) {v : ℤ × Fin r | v.1 ∈ Fr.letters j} →
-    G ∈ supported (FF O) {v : ℤ × Fin K | v.1 ∈ Fr.letters j ∧ ¬ Fr.IsW j v.1} →
-    (∀ x ∈ Fr.letters j, ¬ Fr.IsW j x →
-      (Even x → lam1S LZ {y | y ≤ x} G ≤ ((M x : ℤ) : WithBot ℤ) ∧
-          ((M x + m x : ℤ) : WithTop ℤ) ≤ valS LZ {y | y < x} A) ∧
-      (¬ Even x → lam1S LZ {y | y < x} G ≤ ((M x : ℤ) : WithBot ℤ) ∧
-          ((M x + m x : ℤ) : WithTop ℤ) ≤ valS LZ {y | y ≤ x} A) ∧
-      geR (valS LZ {y | y < x} A) (th x)) →
-    (∀ mm ∈ (plEmb (FF O) r K A * nmEmb (FF O) r K G).support, ∀ x ∈ Fr.letters j, ¬ Fr.IsW j x →
-      (ordDeg mm x : ℝ) ≤ o x) →
-    ∃ P ∈ XX' O r K Fr j m th o,
-      MvPolynomial.map (IsLocalRing.residue O) P = plEmb (FF O) r K A * nmEmb (FF O) r K G)
-
-theorem criterion_of_mod_w_clause (D : Formalism.BasicNotions.D7) (h : bd_RestCritModW D) : SpaceCriterionModuloUniformiser D := by
-  intro p _ O _ _ _ S n' r K _ _ _ Fr j m th o
-  refine ⟨?_, h p O S n' r K Fr j m th o⟩
-  intro A G M hA hG hc ho
-  refine Submodule.mem_inf.mpr ⟨Submodule.subset_span ⟨A, G, M, hA, hG, hc, rfl⟩, ?_⟩
-  rw [MvPolynomial.mem_restrictSupport_iff]
-  intro mm hmm x hx hw
-  exact ho mm (by simpa using hmm) x hx hw
-
-theorem mod_w_clause_of_criterion (D : Formalism.BasicNotions.D7) (h : SpaceCriterionModuloUniformiser D) : bd_RestCritModW D := by
-  intro p _ O _ _ _ S n' r K _ _ _ Fr j m th o
-  exact (h p O S n' r K Fr j m th o).2
-
-theorem bd_hypII_mono {n' r : ℕ} [NeZero n'] {A B C A' B' C' : ℝ} (hA : A ≤ A') (hB : B ≤ B') (hC : C ≤ C')
-    (p : ℕ) (hp : 1 < p) (Fr : Frames n' r) (k L₁ N₁ G' : ℕ) (deg : Fin n' → ℕ) (a : ℕ) (Y : ℝ) (c0 c'' cStar : ℕ)
-    (Dd : ℝ) (h : HypII A' B' C' p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd) :
-    HypII A B C p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd := by
-  unfold HypII at h ⊢
-  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
-  have hla : 0 ≤ Real.log (a : ℝ) := Real.log_natCast_nonneg a
-  have hlb : 0 ≤ Real.logb (p : ℝ) (a : ℝ) := by
-    unfold Real.logb
-    exact div_nonneg hla (Real.log_natCast_nonneg p)
-  have hY : 0 ≤ Y := le_trans (Nat.cast_nonneg r) h4
-  refine ⟨h1, h2, h3, h4, le_trans ?_ h5, h6, h7, le_trans ?_ h8, h9, le_trans ?_ h10⟩
-  · gcongr
-  · gcongr
-  · gcongr
-
-theorem real_bound_monotone_constants (D : Formalism.BasicNotions.D7) {A B C A' B' C' : ℝ} (hA : A ≤ A') (hB : B ≤ B') (hC : C ≤ C')
-    (h : Conclusion6 D A B C) : Conclusion6 D A' B' C' := by
-  intro p n' r K _ _ _ _ O _ _ _ _ S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd hII
-  exact h p n' r K O S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd
-    (bd_hypII_mono hA hB hC p (by have := hH.1; omega) Fr _ L₁ N₁ G' deg a Y c0 c'' cStar Dd hII)
 
 theorem bd_goodU_pos {de : ℝ} (h : 0 < de) : 1 ≤ goodU de := by
   unfold goodU
@@ -2121,11 +2078,6 @@ theorem good_orbits_of_frames (D : Formalism.BasicNotions.D7) (hR : bd_RestOrbit
     fun y z hyz a b c d e => bd_orbit_next TT L₂ (r - 1) r de h x hn (by omega) hde h3 hg y z hyz a b c d e,
     hcnt.1, hcnt.2, fun y => bd_orbit_interval TT L₂ (r - 1) r de h x hL2n hg y⟩
 
-theorem orbit_clauses_of_lemma (D : Formalism.BasicNotions.D7) (hA : GoodOrbitPositions D) : bd_RestOrbit D := by
-  intro r h hr hh n' _ TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3 hg
-  obtain ⟨Ce, _, hC⟩ := hA r h hr hh
-  exact (hC n' TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3 hg).2.1
-
 theorem bd_letters_card {n' r : ℕ} [NeZero n'] (F : Frames n' r) (L₂ K r' : ℕ) (de h x : ℝ)
     (hGn : goodG' r' de h x ≤ n') (hg : IsGoodOrbit n' F.TT L₂ K r' de h x) (j : ℤ)
     (hlen : F.fr j (r - 1) - F.fr (j - 1) 0 < goodG' r' de h x) : (F.letters j).card ≤ orbitWindowCount r' de h x := by
@@ -2228,53 +2180,6 @@ theorem bd_gap_mono {n' r : ℕ} [NeZero n'] (F : Frames n' r) {L L' : ℕ} (hL 
   have h2 : (L : ℤ) ≤ L' := by exact_mod_cast hL
   omega
 
-def bd_RestFrames (_D : Formalism.BasicNotions.D7) : Prop :=
-  ∀ (r : ℕ) (h : ℝ), 2 ≤ r → 0 ≤ h →
-  ∀ (n' : ℕ) [NeZero n'] (TT : Finset (Fin n')) (L₁ L₂ : ℕ) (de x : ℝ),
-    Even n' → 1 ≤ L₁ → 2 * L₁ ≤ L₂ → 0 < de → de ≤ 1 → 3 ≤ x → L₂ < goodU de →
-    3 * goodG' r de h x ≤ n' → IsGoodOrbit n' TT L₂ (r - 1) r de h x →
-    let u := goodU de
-    let G' := goodG' r de h x
-    let T := TT.map Fin.valEmbedding
-    let ell := (6 * r + 1) * u
-    (∃ F : Frames n' r, F.TT = TT ∧
-      1 ≤ F.J ∧
-      (∀ j : ℤ, ∀ i, F.fr (j + F.J) i = F.fr j i + n') ∧
-      (∀ j : ℤ, ∀ i, i + 1 < r → F.fr j i < F.fr j (i + 1)) ∧
-      (∀ j : ℤ, F.fr j (r - 1) < F.fr (j + 1) 0) ∧
-      (∀ j : ℤ, ∀ i, i < r → posOf n' (F.fr j i) ∈ F.TT ∧ Even (F.fr j i)) ∧
-      (∀ j : ℤ, ∀ i, ∀ x : ℤ, i + 1 < r → F.fr j i < x → x < F.fr j (i + 1) → posOf n' x ∉ F.TT) ∧
-      (∀ j : ℤ, r ≤ (F.LLset j).card ∧
-        ∀ x ∈ F.LLset j, (((F.LLset j).filter (· ≤ x)).card ≤ r ∨
-          (F.LLset j).card < ((F.LLset j).filter (· ≤ x)).card + r) → Even x) ∧
-      (∀ j : ℤ, ∀ i < r, ∃ s < n' / ell, Formalism.G0.Marked T r u s ∧
-        (F.fr j i % (n' : ℤ)).toNat ∈ Formalism.G0.cell r u s (2 * r + 2 + 2 * i)) ∧
-      (∀ s < n' / ell, Formalism.G0.Marked T r u s → ∃ j : ℤ, (F.fr j 0 % (n' : ℤ)).toNat ∈ Formalism.G0.cell r u s (2 * r + 2)) ∧
-      (∀ j : ℤ, F.fr j (r - 1) - F.fr (j - 1) 0 < G') ∧
-      (∀ j : ℤ, ∀ x ∈ F.LLset j, (((F.LLset j).filter (· ≤ x)).card ≤ r ∨
-          (F.LLset j).card < ((F.LLset j).filter (· ≤ x)).card + r) → F.GapGt L₂ j x) ∧
-      (∀ j : ℤ, F.GapGt L₂ j (F.fr j 0)))
-
-theorem bd_restOrbit_of_frames (D : Formalism.BasicNotions.D7) (hR : bd_RestFrames D) : bd_RestOrbit D := by
-  intro r h hr hh n' _ TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3 hg u G' N₁ T ell
-  obtain ⟨F, hTT, v1, v2, v3, v4, v5, v6, v7, c1, c2, c3, c4, c5⟩ :=
-    hR r h hr hh n' TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3 hg
-  subst hTT
-  have hL2n : L₂ ≤ n' := by have := bd_U_le_G' r de h x; omega
-  have hI := fun y => bd_orbit_interval F.TT L₂ (r - 1) r de h x hL2n hg y
-  have hcardL := fun j => bd_letters_card F L₂ (r - 1) r de h x (by omega) hg j (c3 j)
-  have hLL : L₁ ≤ L₂ := by omega
-  exact ⟨F, rfl, ⟨v1, v2, v3, v4, v5, v6,
-      fun j => ⟨(v7 j).1, fun x hx hc => ⟨(v7 j).2 x hx hc, bd_gap_mono F hLL (c4 j x hx hc)⟩,
-        bd_gap_mono F hLL (c5 j)⟩,
-      hcardL,
-      fun j x _ hw => bd_oldest_far F L₁ L₂ (by omega) (by omega) hI j x
-        (bd_vectors_before F (by omega) v3 v4 v5 j x hw)⟩,
-    c1, c2, fun j => ⟨(c3 j).le, hcardL j⟩, c4, c5⟩
-
-theorem orbit_lemma_of_frame_construction (D : Formalism.BasicNotions.D7) (hR : bd_RestFrames D) : GoodOrbitPositions D :=
-  good_orbits_of_frames D (bd_restOrbit_of_frames D hR)
-
 end Formalism.MainNotions.G.WittFrameLocaliserOrders
 
 end
@@ -2308,7 +2213,7 @@ theorem bf_tp_spec {b : ℤ} (h : bf_MT TT r u b) {c : ℕ} (h1 : 1 ≤ c) (h2 :
       ∀ y : ℤ, b + (c : ℤ) * u - u ≤ y → y < b + (c : ℤ) * u → posOf n' y ∈ TT → y = bf_tp TT u b c := by
   have hx := (h c h1 h2).2 he
   unfold bf_tp
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
   exact Classical.choose_spec hx
 
 theorem bf_cu {c c' : ℕ} (h : c ≤ c') (u : ℕ) : (c : ℤ) * u ≤ (c' : ℤ) * u :=
@@ -2448,8 +2353,8 @@ theorem bf_LL_last (j : ℤ) {k : ℕ} (hk : k < r) :
   have h2 := bf_u_le (show 1 ≤ 2 + 2 * k by omega) u
   linarith [A.1.2.1, Bq.1.1]
 
-include hr hu hMT hstep in
 
+include hr hu hMT hstep in
 theorem bf_LL_key (j x : ℤ) (hx : x ∈ (bf_F TT r u J B).LLset j)
     (hc : (((bf_F TT r u J B).LLset j).filter (· ≤ x)).card ≤ r ∨
       ((bf_F TT r u J B).LLset j).card < (((bf_F TT r u J B).LLset j).filter (· ≤ x)).card + r) :
@@ -2789,11 +2694,11 @@ def bf_ms (a : ℕ) : ℕ :=
 variable {T r u t}
 
 theorem bf_ms_mem {a : ℕ} (h : a < (bf_MS T r u t).card) : bf_ms T r u t a ∈ bf_MS T r u t := by
-  unfold bf_ms; rw [dif_pos h]; exact orderEmbOfFin_mem _ _ _
+  unfold bf_ms; rw [dite_eq_left h]; exact orderEmbOfFin_mem _ _ _
 
 theorem bf_ms_lt {a a' : ℕ} (h : a < a') (h' : a' < (bf_MS T r u t).card) :
     bf_ms T r u t a < bf_ms T r u t a' := by
-  unfold bf_ms; rw [dif_pos (lt_trans h h'), dif_pos h']
+  unfold bf_ms; rw [dite_eq_left (lt_trans h h'), dite_eq_left h']
   exact ((bf_MS T r u t).orderEmbOfFin rfl).strictMono (Fin.mk_lt_mk.2 h)
 
 theorem bf_ms_le {a a' : ℕ} (h : a ≤ a') (h' : a' < (bf_MS T r u t).card) :
@@ -2805,7 +2710,7 @@ theorem bf_ms_le {a a' : ℕ} (h : a ≤ a') (h' : a' < (bf_MS T r u t).card) :
 theorem bf_ms_surj {s : ℕ} (hs : s ∈ bf_MS T r u t) : ∃ a, a < (bf_MS T r u t).card ∧ bf_ms T r u t a = s := by
   have : s ∈ Set.range ((bf_MS T r u t).orderEmbOfFin rfl) := by rw [range_orderEmbOfFin]; exact hs
   obtain ⟨a, ha⟩ := this
-  exact ⟨a.val, a.2, by unfold bf_ms; rw [dif_pos a.2]; exact ha⟩
+  exact ⟨a.val, a.2, by unfold bf_ms; rw [dite_eq_left a.2]; exact ha⟩
 
 theorem bf_ms_next {a s : ℕ} (ha : a < (bf_MS T r u t).card) (hs : s ∈ bf_MS T r u t)
     (hlt : bf_ms T r u t a < s) : a + 1 < (bf_MS T r u t).card ∧ bf_ms T r u t (a + 1) ≤ s := by
@@ -2970,26 +2875,6 @@ theorem bf_seq (TT : Finset (Fin n')) (r u M : ℕ) (hn : Even n') (hu : 1 ≤ u
 
 end Enum3
 
-theorem bf_restFrames (D : Formalism.BasicNotions.D7) : bd_RestFrames D := by
-  intro r h hr hh n' _ TT L₁ L₂ de x hn hL1 hL12 hde hde1 hx hLu h3G hgood
-  intro u G' T ell
-  obtain ⟨_, hTiles, _⟩ := hgood
-  have hu : 1 ≤ goodU de := bd_goodU_pos hde
-  have hell : 0 < (6 * r + 1) * goodU de := Nat.mul_pos (by omega) hu
-  have hGdef : goodG' r de h x = (orbitSmallMultiplicity r h x + 5) * ((6 * r + 1) * goodU de) := rfl
-  have hMt : orbitSmallMultiplicity r h x + 1 < n' / ((6 * r + 1) * goodU de) := by
-    have h1 : (orbitSmallMultiplicity r h x + 2) * ((6 * r + 1) * goodU de) ≤ n' := by
-      have h2 : (orbitSmallMultiplicity r h x + 2) * ((6 * r + 1) * goodU de) ≤ (orbitSmallMultiplicity r h x + 5) * ((6 * r + 1) * goodU de) :=
-        Nat.mul_le_mul_right _ (by omega)
-      rw [hGdef] at h3G
-      omega
-    exact (Nat.le_div_iff_mul_le hell).2 h1
-  obtain ⟨J, B, sidx, hS⟩ := bf_seq TT r (goodU de) (orbitSmallMultiplicity r h x) hn hu hTiles hMt
-  exact bf_frames TT r (goodU de) L₂ (goodG' r de h x) (orbitSmallMultiplicity r h x) J B sidx hr hu hLu
-    (by rw [hGdef]; exact Nat.mul_le_mul_right _ (by omega)) hS
-
-theorem good_orbits_lemma (D : Formalism.BasicNotions.D7) : GoodOrbitPositions D := orbit_lemma_of_frame_construction D (bf_restFrames D)
-
 end Formalism.MainNotions.G.WittFrameLocaliserOrders
 
 end
@@ -3062,12 +2947,6 @@ theorem residue_position_val (a : ℤ) : ((posOf n' a).val : ℤ) = a % (n' : �
   show (((a % (n' : ℤ)).toNat % n' : ℕ) : ℤ) = _
   rw [Nat.mod_eq_of_lt h2, Int.toNat_of_nonneg h0]
 
-theorem position_of_even_is_even (hn : Even n') {a : ℤ} (ha : Even a) : Even (posOf n' a).val := by
-  have h : Even ((posOf n' a).val : ℤ) := by
-    rw [residue_position_val, Int.emod_def]
-    exact ha.sub (((Int.even_coe_nat n').mpr hn).mul_right _)
-  exact (Int.even_coe_nat _).mp h
-
 theorem residue_position_of_nat (s : Fin n') : posOf n' (s.val : ℤ) = s := by
   apply Fin.ext
   have h := residue_position_val (n' := n') (s.val : ℤ)
@@ -3114,10 +2993,10 @@ theorem leading_part_normal_degree {O : Type} [CommRing O] [IsDomain O] (r o : �
 
 theorem uniformiser_power_leading_mem_order {O : Type} [CommRing O] [IsDomain O] (w : O) (j : ℕ) (P : MvPolynomial (TV n' k) O) :
     InWj w (MvPolynomial.map (algebraMap O (KK O)) (C (w ^ j) * P)) j := fun m =>
-  ⟨coeff m P, by rw [coeff_map, coeff_C_mul]⟩
+  ⟨AddMonoidAlgebra.coeff P m, by rw [coeff_map, coeff_C_mul]⟩
 
 theorem integral_map_mem_integral {O : Type} [CommRing O] [IsDomain O] (P : MvPolynomial (TV n' k) O) :
-    InA (MvPolynomial.map (algebraMap O (KK O)) P) := fun m => ⟨coeff m P, by rw [coeff_map]⟩
+    InA (MvPolynomial.map (algebraMap O (KK O)) P) := fun m => ⟨AddMonoidAlgebra.coeff P m, by rw [coeff_map]⟩
 
 theorem map_supported_fraction_field {O : Type} [CommRing O] [IsDomain O] (s : Set (TV n' k)) (P : MvPolynomial (TV n' k) O)
     (h : P ∈ supported O s) : MvPolynomial.map (algebraMap O (KK O)) P ∈ supported (KK O) s :=
@@ -3247,7 +3126,8 @@ def twistedRowIntegral (p : ℕ) [Fact p.Prime] (O : Type) [CommRing O] [IsDomai
 theorem map_integral_primal_variable (g : Matrix (Fin k) (Fin k) (WF p n')) (a : ℤ) (b : Fin k) :
     MvPolynomial.map (algebraMap O (KK O)) (twistedRowIntegral p O g a b) = xg p n' O n' g a b := by
   unfold twistedRowIntegral xg
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, MvPolynomial.map_X, MvPolynomial.map_C]
   rfl
@@ -3263,7 +3143,8 @@ theorem map_twisted_inverse_row {g : Matrix (Fin k) (Fin k) (WF p n')} (hg : IsG
       (∑ c : Fin k, X (posOf n' a, c) * C (algebraMap (WF p n') O (sigPow p n' a (g⁻¹ b c)))) =
       yg p n' O n' g a b := by
   unfold yg
-  rw [map_sum, sigmaMatrix_inv_at_shift hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, sigmaMatrix_inv_at_shift hg]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, MvPolynomial.map_X, MvPolynomial.map_C]
   rfl
@@ -3292,7 +3173,8 @@ theorem third_key_integral (Fr : Frames n' r) {g : Matrix (Fin k) (Fin k) (WF p 
       (∑ c : Fin k, twistedRowIntegral p O g (Arow Fr s l.val) c ^ rowPowerExponent p Fr s l.val *
         (∑ c' : Fin k, X (posOf n' s, c') * C (algebraMap (WF p n') O (sigPow p n' s (g⁻¹ c c'))))) := by
     unfold pairingKey
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [map_mul, map_pow, map_integral_primal_variable, map_twisted_inverse_row hg]
   rw [h]
@@ -3305,7 +3187,7 @@ theorem row_power_mem_supported (Fr : Frames n' r) (hrk : r ≤ k) (s : ℤ) (St
 
 theorem inWPow_one_of_C_w_mul (w : O) (P : MvPolynomial (TV n' k) O) :
     InWj w (C (algebraMap O (KK O) w) * MvPolynomial.map (algebraMap O (KK O)) P) 1 := fun m =>
-  ⟨coeff m P, by rw [coeff_C_mul, coeff_map, pow_one, map_mul]⟩
+  ⟨AddMonoidAlgebra.coeff P m, by rw [coeff_C_mul, coeff_map, pow_one, map_mul]⟩
 
 theorem uniformiser_variable_pow_split (w : O) (v : TV n' k) (P : ℕ) (hP : 2 ≤ P) :
     (C w * X v : MvPolynomial (TV n' k) O) ^ P = C (w ^ 2) * (C (w ^ (P - 2)) * X v ^ P) := by
@@ -3316,7 +3198,7 @@ theorem minor_tail_mem_order_two (hp : 2 ≤ p) (w : O) (Fr : Frames n' r) (hrk 
     InWj w (subst p n' O w n' r g (firstKeyMinor p O Fr hrk g s c) - firstKeyLeading p w Fr hrk s c) 2 := by
   obtain ⟨cc, hcc⟩ := Formalism.CountingSumsFrames.Top.borderedDetLinear (MvPolynomial (TV n' k) O) r
     (fun i => X (posOf n' s, Fin.castLE hrk i)) (topPairingMatrix p O Fr hrk s)
-  rw [subst_first_key_eq w Fr hrk hg hn s hs hA c hc, hcc, map_add]
+  rw [subst_first_key_eq w Fr hrk hg hn s hs hA c hc, hcc, map_add (f := _)]
   have e1 : MvPolynomial.map (algebraMap O (KK O))
       ((-1) ^ r * (C w * X (posOf n' s, c)) * (topPairingMatrix p O Fr hrk s).det) = firstKeyLeading p w Fr hrk s c := by
     unfold firstKeyLeading
@@ -3344,9 +3226,11 @@ theorem substitute_pairing_key_leading_part (hp : 2 ≤ p) (w : O) (Fr : Frames 
     rw [sum_ite_lt_castLE r k hrk (fun c => C w * (X (posOf n' (Arow Fr s l.val), c) ^ rowPowerExponent p Fr s l.val *
       X (posOf n' s, c))), ← Finset.mul_sum, map_mul, MvPolynomial.map_C]
     rfl
-  rw [e0, ← map_add, Finset.mul_sum, ← Finset.sum_add_distrib, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e0, ← map_add (f := _), Finset.mul_sum, ← Finset.sum_add_distrib, map_sum]
   unfold pairingKey
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [map_mul, map_pow]
   by_cases hc : c.val < r
@@ -3516,7 +3400,8 @@ theorem pairing_order_of_planes_and_rows (D : Formalism.BasicNotions.D7) (h1 : R
         (Formalism.CountingSumsFrames.Top.detMulEqSumAdjugate (MvPolynomial (TV n' k) O) r (topPairingMatrix p O Fr hrk (s.val : ℤ))
           (fun a : Fin r => X (posOf n' (s.val : ℤ), Fin.castLE hrk a)) ⟨b.val, hc⟩)
       beta_reduce at e
-      rw [map_mul, map_sum, MvPolynomial.map_X] at e
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_mul, map_sum, MvPolynomial.map_X] at e
       have hX : (X (s, b) : MvPolynomial (TV n' k) (KK O)) =
           X (posOf n' (s.val : ℤ), Fin.castLE hrk ⟨b.val, hc⟩) := by
         rw [residue_position_of_nat]; rfl
@@ -3600,15 +3485,18 @@ theorem substitute_dual_row (w : O) (r : ℕ) (g' : Matrix (Fin k) (Fin k) (WF p
       MvPolynomial.map (algebraMap O (KK O)) (dualRowIntegral w r g' g a b) := by
   have hs : ¬ Even (posOf n' a).val := fun h => ha ((posOf_even hn a).1 h)
   unfold yg
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, subst_X_odd w r g' _ hs, sigMat_posOf]
   have hC : ∀ x : KK O, subst p n' O w n' r g' (C x) = C x := fun x => by
     unfold subst; exact (liftSubst p n' O w r (LLT n') g').commutes x
   simp only [hC, Finset.sum_mul, mul_assoc, ← C_mul]
   rw [Finset.sum_comm]
-  simp only [← Finset.mul_sum, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← Finset.mul_sum, ← map_sum]
   unfold dualRowIntegral
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b' _ => ?_
   have e : ∑ c : Fin k, sigMat p n' O g' a c b' * (sigMat p n' O g a)⁻¹ b c = sigMat p n' O (g⁻¹ * g') a b b' := by
     rw [frobenius_twisted_matrix_mul, ← sigmaMatrix_inv_at_shift hg, Matrix.mul_apply]
@@ -3679,7 +3567,8 @@ theorem residue_twisted_row_eq [IsDiscreteValuationRing O] (S : UniformizedDVR p
     rw [IsLocalRing.residue_eq_zero_iff, S.w_irr.maximalIdeal_eq]
     exact Ideal.mem_span_singleton_self _
   unfold dualRowIntegral
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b' _ => ?_
   have hF : IsLocalRing.residue O (algebraMap (WF p n') O (sigPow p n' a ((g⁻¹ * g') b b'))) =
       (ι (WittVector.constantCoeff ((g⁻¹ * g') b b'))) ^ p ^ m := by
@@ -3720,13 +3609,15 @@ theorem third_key_residue_eq_zero [IsDiscreteValuationRing O] (S : UniformizedDV
     have h3 : (C (ι (WittVector.constantCoeff (((g'⁻¹ * g) * (g⁻¹ * g')) i b'))) :
         MvPolynomial (TV n' k) (FF O)) = ∑ c : Fin k, C (ι (WittVector.constantCoeff ((g'⁻¹ * g) i c))) *
           C (ι (WittVector.constantCoeff ((g⁻¹ * g') c b'))) := by
-      rw [Matrix.mul_apply, map_sum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mul_apply, map_sum, map_sum, map_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       rw [map_mul, map_mul, map_mul]
     rw [← h3, hh, Matrix.one_apply]
     split_ifs <;> simp
   unfold rowPowerExponent
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (Finset.sum_congr rfl fun c _ => ?_).trans (twisted_pairing_eq_zero p hrk
     (fun i : Fin r => (X (posOf n' (Arow Fr s l.val), Fin.castLE hrk i) : MvPolynomial (TV n' k) (FF O)))
     (fun b' : Fin k => if b'.val < r then 0 else X (posOf n' s, b'))
@@ -3757,7 +3648,8 @@ theorem plane_pairings_of_first_key (h : ExplicitMinorsOrderRemaining) : RowsPai
       (∑ c : Fin k, integralPrimalRow p n' O S.w r (g'⁻¹ * g) (Arow Fr (s.val : ℤ) l.val) c ^ rowPowerExponent p Fr (s.val : ℤ) l.val *
         dualRowIntegral S.w r g' g (s.val : ℤ) c) := by
     unfold pairingKey
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [map_mul, map_mul, map_pow, map_pow, subst_twisted_row_even S.w r g hg' hn _ (hA l.val l.isLt).1,
       substitute_dual_row S.w r g' hg hn _ hEz]
@@ -3842,7 +3734,8 @@ theorem bk_vanish1 (S : UniformizedDVR p O) (hrk : r ≤ k) (hn : Even n') (g : 
         (integralPrimalRow p n' O S.w r (g'⁻¹ * g) (aZ l) (cols c') ^ p ^ (Sn - An l))) = _
   rw [map_pow, map_pow, residue_integral_primal_row S hrk (g'⁻¹ * g) (aZ l) (cols c') ι hι' (An l) t ht, Matrix.of_apply]
   congr 1
-  rw [Matrix.vecMul, dotProduct, map_sum, ← sum_ite_first_columns hrk (fun b' : Fin k =>
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.vecMul, dotProduct, map_sum, ← sum_ite_first_columns hrk (fun b' : Fin k =>
     algebraMap (MvPolynomial (TV n' k) (FF O)) (FractionRing (MvPolynomial (TV n' k) (FF O)))
       (X (posOf n' (aZ l), b') * C (ι (WittVector.constantCoeff ((g'⁻¹ * g) b' (cols c')))) ^ p ^ An l))]
   refine Finset.sum_congr rfl fun b' _ => ?_
@@ -3941,7 +3834,7 @@ def bx_Gr (w : O) (r : ℕ) (P : MvPolynomial (TV n' k) (KK O)) : Prop :=
   ∀ m, ∃ c : O, P.coeff m = algebraMap O (KK O) (w ^ normDeg r m * c)
 
 theorem bx_normDeg_add (r : ℕ) (m m' : TV n' k →₀ ℕ) : normDeg r (m + m') = normDeg r m + normDeg r m' := by
-  rw [← weight_eq_normal_degree, ← weight_eq_normal_degree, ← weight_eq_normal_degree, map_add]
+  rw [← weight_eq_normal_degree, ← weight_eq_normal_degree, ← weight_eq_normal_degree, map_add (f := _)]
 
 theorem bx_normDeg_single (r : ℕ) (v : TV n' k) : normDeg r (Finsupp.single v 1) = if IsNormal r v then 1 else 0 := by
   rw [← weight_eq_normal_degree, Finsupp.weight_single]
@@ -3956,7 +3849,7 @@ theorem bx_Gr_add {P Q : MvPolynomial (TV n' k) (KK O)} (hP : bx_Gr w r P) (hQ :
   fun m => by
     obtain ⟨a, ha⟩ := hP m
     obtain ⟨b, hb⟩ := hQ m
-    exact ⟨a + b, by rw [coeff_add, ha, hb, ← map_add]; ring_nf⟩
+    exact ⟨a + b, by rw [MvPolynomial.coeff_add, ha, hb, ← map_add (f := _)]; ring_nf⟩
 
 theorem bx_Gr_zero : bx_Gr w r (0 : MvPolynomial (TV n' k) (KK O)) := fun m => ⟨0, by simp⟩
 
@@ -3973,7 +3866,8 @@ theorem bx_Gr_mul {P Q : MvPolynomial (TV n' k) (KK O)} (hP : bx_Gr w r P) (hQ :
     choose a ha using hP
     choose b hb using hQ
     refine ⟨∑ x ∈ Finset.HasAntidiagonal.antidiagonal m, a x.1 * b x.2, ?_⟩
-    rw [coeff_mul, Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [coeff_mul, Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     have hm : x.1 + x.2 = m := Finset.HasAntidiagonal.mem_antidiagonal.1 hx
     rw [ha, hb, ← map_mul, ← hm, bx_normDeg_add, pow_add]
@@ -4028,7 +3922,7 @@ theorem bx_coeff_normDeg (w : O) (r : ℕ) {g : Matrix (Fin k) (Fin k) (WF p n')
     have : subst p n' O w n' r g (C (algebraMap O (KK O) a)) = C (algebraMap O (KK O) a) := by
       unfold subst; exact (liftSubst p n' O w r (LLT n') g).commutes _
     rw [this]; exact bx_Gr_C a
-  | add a b ha hb => rw [map_add, map_add]; exact bx_Gr_add ha hb
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact bx_Gr_add ha hb
   | mul_X a v ha => rw [map_mul, map_X, map_mul]; exact bx_Gr_mul ha (bx_Gr_subst_X w r hg v)
 
 theorem bx_onTops_subst (w : O) {r : ℕ} (Fr : Frames n' r) (g : Matrix (Fin k) (Fin k) (WF p n'))
@@ -4047,7 +3941,8 @@ theorem bx_onTops_subst (w : O) {r : ℕ} (Fr : Frames n' r) (g : Matrix (Fin k)
     · rw [subst_X_odd w r g s hs c]
       exact sum_mem fun b _ => mul_mem (hN b) (Subalgebra.algebraMap_mem _ _)
   have hmem : subst p n' O w n' r g F ∈ supported (KK O) {v : TV n' k | v.1 ∈ Fr.TT} := by
-    rw [F.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [F.as_sum, map_sum]
     refine sum_mem fun d hd => ?_
     rw [monomial_eq, map_mul, Finsupp.prod, map_prod]
     refine mul_mem ?_ (prod_mem fun i hi => ?_)
@@ -4055,7 +3950,7 @@ theorem bx_onTops_subst (w : O) {r : ℕ} (Fr : Frames n' r) (g : Matrix (Fin k)
         unfold subst; exact (liftSubst p n' O w r (LLT n') g).commutes _
       rw [this]; exact Subalgebra.algebraMap_mem _ _
     · rw [map_pow]
-      exact pow_mem (hX i (hF i ((mem_vars i).2 ⟨d, hd, hi⟩))) _
+      exact pow_mem (hX i (hF i ((mem_vars_iff_mem_support i).2 ⟨d, hd, hi⟩))) _
   intro v hv
   exact (mem_supported.1 hmem) (Finset.mem_coe.2 hv)
 
@@ -4258,18 +4153,19 @@ section Absorb
 variable {p n' r k : ℕ} [Fact p.Prime] [NeZero n'] {O : Type} [CommRing O] [IsDomain O] [Algebra (WF p n') O]
   (w : O) (Fr : Frames n' r) (Q : ℕ) (g : Matrix (Fin k) (Fin k) (WF p n'))
 
-local notation "PP" => MvPolynomial (TV n' k) (KK O)
+def bc_agen (J : ℕ) (_E : ℕ) : Set (MvPolynomial (TV n' k) (KK O)) :=
+  {z | ∃ A1 H : MvPolynomial (TV n' k) (KK O), bc_KP w Fr Q g A1 J ∧ bc_IT Fr H ∧ z = A1 * H}
 
-def bc_agen (J : ℕ) (_E : ℕ) : Set PP := {z | ∃ A1 H : PP, bc_KP w Fr Q g A1 J ∧ bc_IT Fr H ∧ z = A1 * H}
-
-theorem bc_agen_mul : ∀ (i j : ℕ) (E E' : ℕ) (a b : PP), a ∈ bc_agen w Fr Q g i E → b ∈ bc_agen w Fr Q g j E' →
+theorem bc_agen_mul : ∀ (i j : ℕ) (E E' : ℕ) (a b : MvPolynomial (TV n' k) (KK O)),
+    a ∈ bc_agen w Fr Q g i E → b ∈ bc_agen w Fr Q g j E' →
     a * b ∈ bc_agen w Fr Q g (i + j) (E + E') := by
   rintro i j E E' _ _ ⟨A1, H1, h1, h2, rfl⟩ ⟨A2, H2, h3, h4, rfl⟩
   exact ⟨A1 * A2, H1 * H2, isKeyProduct_mul h1 h3, bc_IT_mul h2 h4, by ring⟩
 
-theorem bc_agen_one : (1 : PP) ∈ bc_agen w Fr Q g 0 0 := ⟨1, 1, isKeyProduct_one w Fr Q g, bc_IT_one, by simp⟩
+theorem bc_agen_one : (1 : MvPolynomial (TV n' k) (KK O)) ∈ bc_agen w Fr Q g 0 0 :=
+  ⟨1, 1, isKeyProduct_one w Fr Q g, bc_IT_one, by simp⟩
 
-theorem bc_mono_absorb (DD1 : PP)
+theorem bc_mono_absorb (DD1 : MvPolynomial (TV n' k) (KK O))
     (hD1 : ∀ v : TV n' k, IsNormal r v → v.1 ∈ Fr.TT →
       C (algebraMap O (KK O) w) * X v * DD1 ∈ AddSubmonoid.closure (bc_agen w Fr Q g 1 0))
     (ν : TV n' k →₀ ℕ) (hν : ∀ v ∈ ν.support, IsNormal r v ∧ v.1 ∈ Fr.TT) :
@@ -4290,17 +4186,19 @@ theorem bc_mono_absorb (DD1 : PP)
 
 variable (hrk : r ≤ k) (c' o mu la L : ℕ)
 
-def bc_Phi (X : PP) : Prop :=
-  ∃ (l : List (Term n' k O × ℕ × ℕ)) (ρ : PP), InWj w ρ (o + c') ∧
+def bc_Phi (X : MvPolynomial (TV n' k) (KK O)) : Prop :=
+  ∃ (l : List (Term n' k O × ℕ × ℕ)) (ρ : MvPolynomial (TV n' k) (KK O)), InWj w ρ (o + c') ∧
     X = (l.map fun y => y.1.sym p n' w Fr hrk g c' y.2.1 y.2.2).sum + ρ ∧
     ∀ y ∈ l, y.1.Valid p n' w n' r Q g ∧ y.1.InTops Fr ∧ L < y.1.level ∧ y.1.level < o + c' ∧
       (y.2.1 : ℤ) = (mu : ℤ) - (2 * (Q : ℤ) + 1) * ((y.1.level : ℤ) - L) ∧
       (y.2.2 : ℤ) = (la : ℤ) - ((y.1.level : ℤ) - L)
 
-theorem bc_Phi_rho {ρ : PP} (h : InWj w ρ (o + c')) : bc_Phi w Fr Q g hrk c' o mu la L ρ :=
+theorem bc_Phi_rho {ρ : MvPolynomial (TV n' k) (KK O)} (h : InWj w ρ (o + c')) :
+    bc_Phi w Fr Q g hrk c' o mu la L ρ :=
   ⟨[], ρ, h, by simp, by simp⟩
 
-theorem bc_Phi_add {X Y : PP} (hX : bc_Phi w Fr Q g hrk c' o mu la L X) (hY : bc_Phi w Fr Q g hrk c' o mu la L Y) :
+theorem bc_Phi_add {X Y : MvPolynomial (TV n' k) (KK O)}
+    (hX : bc_Phi w Fr Q g hrk c' o mu la L X) (hY : bc_Phi w Fr Q g hrk c' o mu la L Y) :
     bc_Phi w Fr Q g hrk c' o mu la L (X + Y) := by
   obtain ⟨l1, ρ1, h1, rfl, h3⟩ := hX
   obtain ⟨l2, ρ2, k1, rfl, k3⟩ := hY
@@ -4310,7 +4208,8 @@ theorem bc_Phi_add {X Y : PP} (hX : bc_Phi w Fr Q g hrk c' o mu la L X) (hY : bc
   · exact h3 y h
   · exact k3 y h
 
-theorem bc_sym_of_KP (mu' la' i' : ℕ) {A H : PP} {s : ℕ} (hA : bc_KP w Fr Q g A s) (hH : bc_IT Fr H) :
+theorem bc_sym_of_KP (mu' la' i' : ℕ) {A H : MvPolynomial (TV n' k) (KK O)} {s : ℕ}
+    (hA : bc_KP w Fr Q g A s) (hH : bc_IT Fr H) :
     ∃ τ' : Term n' k O, τ'.Valid p n' w n' r Q g ∧ τ'.InTops Fr ∧ τ'.level = i' + s ∧
       τ'.sym p n' w Fr hrk g c' mu' la' = C (algebraMap O (KK O) (w ^ i')) * A *
         (subst p n' O w n' r g (R0 p n' O Fr g)) ^ c' *
@@ -4334,8 +4233,6 @@ section Absorb2
 variable {p n' r k : ℕ} [Fact p.Prime] [NeZero n'] {O : Type} [CommRing O] [IsDomain O] [Algebra (WF p n') O]
   (w : O) (Fr : Frames n' r) (Q : ℕ) (g : Matrix (Fin k) (Fin k) (WF p n'))
 
-local notation "PP" => MvPolynomial (TV n' k) (KK O)
-
 theorem bc_DtopProd_pow (hrk : r ≤ k) (n : ℕ) :
     subst p n' O w n' r g (DtopProd p n' O Fr hrk g n) = (subst p n' O w n' r g (DtopProd p n' O Fr hrk g 1)) ^ n := by
   rw [← map_pow]
@@ -4344,8 +4241,9 @@ theorem bc_DtopProd_pow (hrk : r ≤ k) (n : ℕ) :
   simp only [pow_one]
   rw [Finset.prod_pow]
 
-theorem bc_inWj_monomial (ν : TV n' k →₀ ℕ) : InWj w (monomial ν 1 : PP) 0 := by
-  have : (monomial ν 1 : PP) = MvPolynomial.map (algebraMap O (KK O)) (monomial ν 1) := by
+theorem bc_inWj_monomial (ν : TV n' k →₀ ℕ) : InWj w (monomial ν 1 : MvPolynomial (TV n' k) (KK O)) 0 := by
+  have : (monomial ν 1 : MvPolynomial (TV n' k) (KK O)) =
+      MvPolynomial.map (algebraMap O (KK O)) (monomial ν 1) := by
     rw [map_monomial, (algebraMap O (KK O)).map_one]
   rw [this]; exact inWj_map _
 
@@ -4355,9 +4253,10 @@ theorem bc_absorb (hrk : r ≤ k) (c' o mu la L : ℕ)
     (hD1 : ∀ v : TV n' k, IsNormal r v → v.1 ∈ Fr.TT →
       C (algebraMap O (KK O) w) * X v * subst p n' O w n' r g (DtopProd p n' O Fr hrk g 1) ∈
         AddSubmonoid.closure (bc_agen w Fr Q g 1 0))
-    (i a : ℕ) (hL : L = i + a) {Hh : PP} (hh : bc_IT Fr Hh)
+    (i a : ℕ) (hL : L = i + a) {Hh : MvPolynomial (TV n' k) (KK O)} (hh : bc_IT Fr Hh)
     (hmu : (2 * Q + 1) * (o + c' - 1 - L) ≤ mu) (hla : o + c' - 1 - L ≤ la)
-    (β : ℕ → ℕ) (hβ : ∀ j : ℕ, β j = alpha p Fr k (j : ℤ) * c') {γ : PP}
+    (β : ℕ → ℕ) (hβ : ∀ j : ℕ, β j = alpha p Fr k (j : ℤ) * c')
+    {γ : MvPolynomial (TV n' k) (KK O)}
     (hγ : γ ∈ bc_gen w Fr Q g (fun j : ℕ => subst p n' O w n' r g (Del p n' O Fr g (j : ℤ))) (a, β) 1) :
     bc_Phi w Fr Q g hrk c' o mu la L (C (algebraMap O (KK O) (w ^ i)) * γ *
       (∏ j ∈ Finset.range Fr.J, (subst p n' O w n' r g (Del p n' O Fr g j)) ^ la) *
@@ -4462,8 +4361,6 @@ section Facts
 variable {p n' r k : ℕ} [Fact p.Prime] [NeZero n'] {O : Type} [CommRing O] [IsDomain O] [Algebra (WF p n') O]
   (w : O) (Fr : Frames n' r)
 
-local notation "PP" => MvPolynomial (TV n' k) (KK O)
-
 def bc_St (Fr : Frames n' r) (k : ℕ) : Set (TV n' k) := {v | ¬ IsNormal r v ∧ v.1 ∈ Fr.TT}
 
 theorem bc_IT_of_supp (h : MvPolynomial (TV n' k) O) (hh : h ∈ supported O (bc_St Fr k)) :
@@ -4471,7 +4368,8 @@ theorem bc_IT_of_supp (h : MvPolynomial (TV n' k) O) (hh : h ∈ supported O (bc
   rw [mem_supported] at hh
   exact ⟨h, fun v hv => (hh (Finset.mem_coe.2 hv)).1, fun v hv => (hh (Finset.mem_coe.2 hv)).2, rfl⟩
 
-theorem bc_IT_of_K {P : PP} (h0 : InWj w P 0) (hP : P ∈ supported (KK O) (bc_St Fr k)) : bc_IT Fr P := by
+theorem bc_IT_of_K {P : MvPolynomial (TV n' k) (KK O)}
+    (h0 : InWj w P 0) (hP : P ∈ supported (KK O) (bc_St Fr k)) : bc_IT Fr P := by
   obtain ⟨h, rfl, hv⟩ := exists_map_of_inWj0 h0
   rw [mem_supported] at hP
   exact ⟨h, fun v hv' => (hP (Finset.mem_coe.2 (hv hv'))).1, fun v hv' => (hP (Finset.mem_coe.2 (hv hv'))).2, rfl⟩
@@ -4481,7 +4379,7 @@ theorem bc_IT_Del {L₁ N₁ : ℕ} (hV : Fr.Valid L₁ N₁) (hn : Even n') (hr
     bc_IT Fr (subst p n' O w n' r g (Del p n' O Fr g j)) := by
   refine bc_IT_of_K w Fr (subst_integral w r hg (frame_determinant_integral Fr w g j)) ?_
   unfold Del minorI
-  rw [dif_pos (first_columns_card hrk), AlgHom.map_det]
+  rw [dite_eq_left (first_columns_card hrk), AlgHom.map_det]
   refine det_mem_subalgebra_alt _ _ fun l i => ?_
   show subst p n' O w n' r g (twRow p n' O Fr g j l.val ((Ifirst r k).orderEmbOfFin (first_columns_card hrk) i)) ∈ _
   unfold twRow
@@ -4688,9 +4586,9 @@ theorem bc_restTail (D : Formalism.BasicNotions.D7) : bc_RestTail D := by
   obtain ⟨hA, hoQ, hnd, h0, htail, _⟩ := hk
   obtain ⟨T, hTdef⟩ : ∃ T, T = subst p n' O S.w n' r g ka - ka0 := ⟨_, rfl⟩
   rw [← hTdef]
-  have hc1 : ∀ m, ∃ c : O, coeff m T = algebraMap O (KK O) (S.w ^ (o + 1) * c) := by
+  have hc1 : ∀ m, ∃ c : O, AddMonoidAlgebra.coeff T m = algebraMap O (KK O) (S.w ^ (o + 1) * c) := by
     rw [hTdef]; exact htail
-  have hc2 : ∀ m, ∃ c : O, coeff m T = algebraMap O (KK O) (S.w ^ (normDeg r m) * c) := by
+  have hc2 : ∀ m, ∃ c : O, AddMonoidAlgebra.coeff T m = algebraMap O (KK O) (S.w ^ (normDeg r m) * c) := by
     intro m
     obtain ⟨c1, hc1⟩ := bx_coeff_normDeg S.w r hg hA m
     by_cases hm : m ∈ ka0.support
@@ -4709,15 +4607,15 @@ theorem bc_restTail (D : Formalism.BasicNotions.D7) : bc_RestTail D := by
   rw [T.as_sum]
   refine sum_mem fun m hm => ?_
   obtain ⟨x, c, hx1, hx2, hxc⟩ : ∃ (x : ℕ) (c : O), o + 1 ≤ x ∧ normDeg r m ≤ x ∧
-      coeff m T = algebraMap O (KK O) (S.w ^ x * c) := by
+      AddMonoidAlgebra.coeff T m = algebraMap O (KK O) (S.w ^ x * c) := by
     by_cases h : o + 1 ≤ normDeg r m
     · obtain ⟨c, hc⟩ := hc2 m; exact ⟨_, c, h, le_rfl, hc⟩
     · obtain ⟨c, hc⟩ := hc1 m; exact ⟨_, c, le_rfl, by omega, hc⟩
-  have hmv : ∀ v ∈ m.support, v.1 ∈ Fr.TT := fun v hv => hTop v ((mem_vars v).2 ⟨m, hm, hv⟩)
+  have hmv : ∀ v ∈ m.support, v.1 ∈ Fr.TT := fun v hv => hTop v ((mem_vars_iff_mem_support v).2 ⟨m, hm, hv⟩)
   have hmon : ∀ v ∈ (monomial (m.filter fun v => ¬ IsNormal r v) c : MvPolynomial (TV n' k) O).vars,
       v ∈ (m.filter fun v => ¬ IsNormal r v).support := by
     intro v hv
-    obtain ⟨d, hd, hvd⟩ := (mem_vars v).1 hv
+    obtain ⟨d, hd, hvd⟩ := (mem_vars_iff_mem_support v).1 hv
     have hdm := Finset.mem_singleton.1 (support_monomial_subset hd)
     subst hdm
     exact hvd
@@ -4746,9 +4644,6 @@ theorem bc_claim (D : Formalism.BasicNotions.D7) (hL : Conclusion2 D) (hK : Poin
   bc_claim_of_tail D hL hK (bc_restTail D)
 
 theorem bc_claim' (D : Formalism.BasicNotions.D7) : DifferenceClaimInCoordinates D := bc_claim D (localiser_expansion_lemma D) (keys_vanish_modulo_uniformiser D)
-
-theorem order_lemma_of_raw_on_tops (D : Formalism.BasicNotions.D7) (hT : RawTermOnTops D) : Conclusion4 D :=
-  order_lemma_of_plane_coordinates D (localiser_vanishing_off_plane D) hT (bc_claim' D)
 
 end Formalism.MainNotions.G.WittFrameLocaliserOrders
 
@@ -4973,7 +4868,8 @@ theorem components_preserve_valuation : ComponentsPreserveValuation := by
   obtain ⟨m', hm', hz'⟩ := hz
   have hWH : IsWeightedHomogeneous letterWeight (twistSub LL S (lastIdx n) (multidegreeComponent d G)) d := by
     unfold multidegreeComponent
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     apply IsWeightedHomogeneous.sum
     intro m hm
     have h := twist_substitution_weighted_homog LL S (lastIdx n) m (G.coeff m)
@@ -4986,7 +4882,8 @@ theorem components_preserve_valuation : ComponentsPreserveValuation := by
     exact G.support_sum_monomial_coeff.symm
   have key : (twistSub LL S (lastIdx n) (multidegreeComponent d G)).coeff m' = (twistSub LL S (lastIdx n) G).coeff m' := by
     conv_rhs => rw [hsplit]
-    rw [map_add, coeff_add, map_sum, coeff_sum, Finset.sum_eq_zero, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), MvPolynomial.coeff_add, map_sum, coeff_sum, Finset.sum_eq_zero, add_zero]
     intro m hm
     apply (twist_substitution_weighted_homog LL S (lastIdx n) m (G.coeff m)).coeff_eq_zero
     intro h
@@ -5099,7 +4996,7 @@ theorem determinant_coefficients_units : DeterminantCoefficientsUnits := by
   refine ⟨?_, ?_⟩
   · intro h0
     have h1 := hcoeff 1
-    rw [h0, coeff_zero] at h1
+    rw [h0, MvPolynomial.coeff_zero] at h1
     exact (hunit 1).ne_zero h1.symm
   · intro μ hμ
     by_cases hex : ∃ s0, mu s0 = μ
@@ -5215,12 +5112,6 @@ theorem slope_bounds_alt : ∃ C : ℝ, 1 ≤ C ∧
   refine ⟨?_, hs2⟩
   rw [hms]
   linarith
-
-theorem pow_add_mul_mem_span_sup {O : Type} [CommRing O] {n' k : ℕ} (Dp h : MvPolynomial (TV n' k) O) (p P n c : ℕ)
-    (hP : 1 ≤ P) :
-    (Dp ^ P + (p : MvPolynomial (TV n' k) O) * h) ^ n ∈
-      Ideal.span {Dp ^ (n - c)} ⊔ Ideal.span {(p : MvPolynomial (TV n' k) O) ^ c} :=
-  Formalism.CountingSumsFrames.Top.powerSplit _ Dp h _ P n c hP
 
 theorem getD_mem_list (l : List ℤ) (r : ℕ) (hr : 1 ≤ r) (hl : 0 < l.length) : l.getD (l.length - r) 0 ∈ l := by
   have hidx : l.length - r < l.length := by omega
@@ -5448,21 +5339,6 @@ theorem segment_length_bounds_real : ∃ C : ℝ, 1 ≤ C ∧
   exact H n' r p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd hp hr hV hII hT hX
     (rank_le_segment_length Fr L₁ N₁ hV (by omega)) hL1 hLG h7 j x hx hW
 
-theorem margin_real_bound : ∃ C : ℝ, 1 ≤ C ∧
-    ∀ (n' r : ℕ) [NeZero n'] (p : ℕ) (Fr : Frames n' r) (k L₁ N₁ G' : ℕ) (deg : Fin n' → ℕ) (a : ℕ) (Y : ℝ)
-      (c0 c'' cStar : ℕ) (Dd : ℝ), 13 ≤ p → 2 ≤ r → Fr.Valid L₁ N₁ →
-      Formalism.MainNotions.SourceCleaning.HypII C (C + 1) C p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd → TwistBound p Fr (p ^ G') →
-      Fr.J * r ≤ Fr.TT.card →
-      ∀ j x : ℤ, x ∈ Fr.letters j → ¬ Fr.IsW j x → ∀ B' val : ℝ, B' ≤ Bo p Fr deg j x / 80 →
-        Bo p Fr deg j x / 2 - sl p Fr deg Y k j x ≤ val →
-        Bo p Fr deg j x / 4 + (mStar p Fr k N₁ (p ^ G') (cPrime n' r Fr.TT.card c0 c'' cStar) : ℝ) ≤ val - B' ∧
-          (mStar p Fr k N₁ (p ^ G') (cPrime n' r Fr.TT.card c0 c'' cStar) : ℝ) ≤ Bo p Fr deg j x / 4 := by
-  obtain ⟨C, hC, H⟩ := segment_length_bounds_real
-  refine ⟨C, hC, ?_⟩
-  intro n' r _ p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd hp hr hV hII hT h7 j x hx hW B' val hB' hval
-  obtain ⟨h1, h2⟩ := H n' r p Fr k L₁ N₁ G' deg a Y c0 c'' cStar Dd hp hr hV hII hT h7 j x hx hW
-  exact symbol_valuation_margin p Fr deg Y k j x B' _ val (level_degree_nonneg p Fr deg j x) hB' h2 h1 hval
-
 theorem posOf_val_eq_emod (n' : ℕ) [NeZero n'] (a : ℤ) : ((posOf n' a).val : ℤ) = a % (n' : ℤ) := by
   have hn : (0 : ℤ) < n' := by exact_mod_cast NeZero.pos n'
   have h0 : 0 ≤ a % (n' : ℤ) := Int.emod_nonneg _ hn.ne'
@@ -5629,7 +5505,7 @@ theorem glCoordMap_inv_det : glCoordRingMap R0 n (IsLocalization.Away.invSelf (g
     _ = _ := by rw [h3, one_mul]
 
 theorem laurent_coordinate_embedding_injective : Function.Injective (glCoordRingMap R0 n) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨a, s, rfl⟩ := IsLocalization.exists_mk'_eq (Submonoid.powers (genMat R0 n).det) x
   have h1 := IsLocalization.mk'_spec (GLCoord R0 n) a s
@@ -5660,7 +5536,7 @@ theorem laurentCoordinateMap_support (x : GLLaurent R0 n) : (laurentRingMap R0 n
   exact map_ne_zero_iff _ (laurent_coordinate_embedding_injective R0 n)
 
 theorem laurentRingMap_injective : Function.Injective (laurentRingMap R0 n) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h := laurentCoordinateMap_support R0 n x
   rw [hx] at h
@@ -5740,55 +5616,6 @@ theorem multideg_unique {R : Type*} [CommRing R] {n' k : ℕ} {P : MvPolynomial 
   funext i
   rw [← h1 i, ← h2 i]
 
-def SymbolRealisabilityRemaining (_D : Formalism.BasicNotions.D7) (CLa CD Csz : ℝ) : Prop :=
-  ∀ (p n' r K : ℕ) [Fact p.Prime] [NeZero n'] [NeZero r] [NeZero K] (O : Type) [CommRing O] [IsDomain O]
-    [IsDiscreteValuationRing O] [Algebra (WF p n') O] (S : UniformizedDVR p O), OHyp p n' O S →
-    ∀ hH : CommonHypotheses p n' r (r + K),
-  ∀ (Fr : Frames n' r) (L₁ N₁ G' : ℕ), Fr.Valid L₁ N₁ → TwistBound p Fr (p ^ G') →
-  ∀ (deg : Fin n' → ℕ) (a : ℕ) (Y : ℝ) (c0 c'' cStar : ℕ) (Dd : ℝ),
-    HypII CLa CD Csz p Fr (r + K) L₁ N₁ G' deg a Y c0 c'' cStar Dd →
-  let c' := cPrime n' r Fr.TT.card c0 c'' cStar
-  ∀ g : Matrix (Fin (r + K)) (Fin (r + K)) (WF p n'), IsGLW g →
-  ∀ (n : ℕ) (obd : ℤ → ℤ → ℝ) (xi : Fin n → ℤ → SegRing O r K) (dd : ℤ → ℤ → ℕ),
-    (∀ (i : Fin n) (j : ℕ), j < Fr.J →
-      xi i j ∈ XX' O r K Fr j (fun _ => (mStar p Fr (r + K) N₁ (p ^ G') c' : ℤ))
-        (fun x => Bo p Fr deg j x / 2 - sl p Fr deg Y (r + K) j x) (obd j) ∧
-      xi i j ∈ restrictSupport O {mm | ∀ x ∈ Fr.letters j, ∑ c : Fin (r + K), mm (x, c) = dd j x}) →
-    (∀ j : ℕ, j < Fr.J → ∀ x ∈ Fr.letters j, (Fr.IsW j x ∨ x ∈ Fr.LLset j) →
-        |(dd j x : ℝ) - levDeg p Fr deg j x| ≤ levDeg p Fr deg j x / 100) →
-  ∀ (mon : Fin n' × Fin (r + K) →₀ ℕ), IsLabel p Fr mon → (∀ v ∈ mon.support, v.1 ∈ Fr.TT) →
-  ∀ o : ℕ, (∀ m ∈ (monPh O K p Fr mon xi).support, normDeg r m = o) →
-    ∃ (d : Fin n' → ℕ) (m : ℕ) (τ : Fin m → Term n' (r + K) O),
-      (∀ i, (τ i).Valid p n' S.w n' r (p ^ G') g ∧ (τ i).InTops Fr ∧ o ≤ (τ i).level ∧
-        HasMultideg ((τ i).sym p n' S.w Fr hH.2.2.1 g c' ((2 * p ^ G' + 3) * c') c') d ∧
-        HasMultideg ((τ i).raw p n' S.w Fr hH.2.2.1 g c' ((2 * p ^ G' + 3) * c') c') d) ∧
-      HasMultideg (MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi)) d ∧
-      InWj S.w (C (algebraMap O (KK O) (S.w ^ o)) * MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi) -
-        ∑ i, (τ i).sym p n' S.w Fr hH.2.2.1 g c' ((2 * p ^ G' + 3) * c') c') (o + c')
-
-theorem real_bound_of_term_symbols (D : Formalism.BasicNotions.D7) (CLa CD Csz : ℝ) (h4 : Conclusion4 D) (h : SymbolRealisabilityRemaining D CLa CD Csz) :
-    Conclusion6 D CLa CD Csz := by
-  intro p n' r K _ _ _ _ O _ _ _ _ S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd hII c' g hg n obd xi dd hxi hdd
-    mon hmon hmonT o ho
-  obtain ⟨d, m, τ, hτ, hd, hcl⟩ := h p n' r K O S hO hH Fr L₁ N₁ G' hV hT deg a Y c0 c'' cStar Dd hII g hg n obd xi dd
-    hxi hdd mon hmon hmonT o ho
-  obtain ⟨F, hFA, hFT, hFd, hFw, hFo⟩ := h4 p n' r (r + K) O S hO hH Fr L₁ N₁ hV (p ^ G') hT g hg c' o d m τ hτ
-  by_cases h0 : MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi) = 0
-  · refine ⟨0, (inA_iff_inWj0 (w := S.w) _).2 (inWj_zero 0), fun d' _ => Submodule.zero_mem _, ?_, ?_⟩
-    · rw [h0, map_zero, mul_zero, sub_zero]; exact inWj_zero _
-    · intro g' _ _
-      show InWj S.w (subst p n' O S.w n' r g' 0) (o + c')
-      rw [map_zero]; exact inWj_zero _
-  · refine ⟨F, hFA, fun d' hd' => ?_, ?_, hFo⟩
-    · rw [multideg_unique h0 hd hd']; exact hFd
-    · have := inWj_sub hFw hcl
-      have he : subst p n' O S.w n' r g F -
-          C (algebraMap O (KK O) (S.w ^ o)) * MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi) =
-          (subst p n' O S.w n' r g F - ∑ i, (τ i).sym p n' S.w Fr hH.2.2.1 g c' ((2 * p ^ G' + 3) * c') c') -
-          (C (algebraMap O (KK O) (S.w ^ o)) * MvPolynomial.map (algebraMap O (KK O)) (monPh O K p Fr mon xi) -
-            ∑ i, (τ i).sym p n' S.w Fr hH.2.2.1 g c' ((2 * p ^ G' + 3) * c') c') := by ring
-      rw [he]; exact this
-
 end Formalism.MainNotions.G.WittFrameLocaliserOrders
 
 end
@@ -5809,25 +5636,5 @@ theorem order_lemma_holds (D : Formalism.BasicNotions.D7) : Conclusion4 D :=
   order_lemma_of_plane_coordinates D (localiser_vanishing_off_plane D) (bs_restRawTops D) (bc_claim' D)
 
 theorem divisibility_of_field_lemma (D : Formalism.BasicNotions.D7) (h : LargePrimeLengthVanishing D) : Conclusion5 D := divisibility_of_homogeneous_field_lemma D h valuation_fraction_field_extension
-
-theorem real_bound_reduced_to_symbols (D : Formalism.BasicNotions.D7) (CLa CD Csz : ℝ) (hS : SymbolRealisabilityRemaining D CLa CD Csz) : Conclusion6 D CLa CD Csz :=
-  real_bound_of_term_symbols D CLa CD Csz (order_lemma_holds D) hS
-
-theorem orbit_lemma_holds (D : Formalism.BasicNotions.D7) : GoodOrbitPositions D := good_orbits_lemma D
-
-theorem criterion_of_modulo_uniformiser (D : Formalism.BasicNotions.D7) (h : bd_RestCritModW D) : SpaceCriterionModuloUniformiser D := criterion_of_mod_w_clause D h
-
-theorem stmt_of_rest (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg CLa' CD Csz : ℝ)
-    (hS : SymbolRealisabilityRemaining D CLa' CD Csz) : Stmt D CLa Ck Crk Cdeg CLa' CD Csz := by
-  intro hA
-  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hE, _⟩ := hA
-  exact ⟨theta_kernel_expansion D, splitting_package_holds D, segment_statement_holds D, order_lemma_holds D, divisibility_of_field_lemma D hE,
-    real_bound_reduced_to_symbols D CLa' CD Csz hS⟩
-
-theorem stmtE_of_rest (D : Formalism.BasicNotions.D7)
-    (hS : ∃ CLa' CD Csz : ℝ, 0 < CLa' ∧ 0 < CD ∧ 0 < Csz ∧ SymbolRealisabilityRemaining D CLa' CD Csz) : ClosedFormOfAdmitted D := by
-  intro CLa Ck Crk Cdeg hA
-  obtain ⟨CLa', CD, Csz, h1, h2, h3, hS'⟩ := hS
-  exact ⟨CLa', CD, Csz, h1, h2, h3, stmt_of_rest D CLa Ck Crk Cdeg CLa' CD Csz hS' hA⟩
 
 end Formalism.MainNotions.G.WittFrameLocaliserOrders

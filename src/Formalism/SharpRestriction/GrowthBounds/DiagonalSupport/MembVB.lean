@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PreChainLe
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PreChainLe
+
+@[expose] public section
 
 noncomputable section
 

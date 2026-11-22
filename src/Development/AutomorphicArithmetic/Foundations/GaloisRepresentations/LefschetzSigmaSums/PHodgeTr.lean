@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PFnRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.HodgeTraceFromLefschetzAndGroupSide
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PFnRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelEqKN
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,9 +24,8 @@ theorem UpperTheory.Gal.LocalSmoothExtension.hodgeTr_of :
   obtain ⟨c, hc1, hc2⟩ := hk' k hkk
   refine ⟨c, fun hSc gb hStd T N d hsm V _ _ _ ξ hξ f hfn hG y => ?_⟩
   have hcard : 0 < Fintype.card {v : InfinitePlace G.F // sigPosH (G.gram_herm v) = 1} := by
-    have e : G.a = 1 := hSc.ga
-    have e' : Fintype.card {v : InfinitePlace G.F // sigPosH (G.gram_herm v) = 1} = 1 := e
-    omega
+    change 0 < G.a
+    exact hSc.ga.symm ▸ Nat.zero_lt_one
   obtain ⟨⟨v, hv⟩⟩ := Fintype.card_pos_iff.1 hcard
   obtain ⟨Lv, hLv⟩ := GlobalTheory.LKGeo.KNLevel.exists_level_eq_KN p D G L N.1 (by have := N.2.1; omega)
   have hK := T.K_eq N

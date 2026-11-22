@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSpMapEv
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory TopologicalSpace Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg GlobalTheory.FlagEmb GlobalTheory.ProjSpace GlobalTheory.FlagMod GlobalTheory.FlagMod.FieldFlag
 open GlobalTheory.FlagMod.LowRank (ECh Proj str)
 open MonoidalCategory CartesianMonoidalCategory MonObj
@@ -49,7 +54,8 @@ theorem frVec_eq_eigFrame_mul : ∀ (E : Type) [Field E] [NumberField E] [IsCMFi
       rw [← hspan, mem_initSpan] at this
       obtain ⟨a, -, ha⟩ := this
       refine ⟨a, (vec (A.k b).M.toMChart _ hM).injective ?_⟩
-      rw [map_sum, ← ha]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← ha]
       simp only [map_smul, hcvv]
     choose a ha using hc
     have hCT : C * Matrix.of (fun j r => a r j) = U := by

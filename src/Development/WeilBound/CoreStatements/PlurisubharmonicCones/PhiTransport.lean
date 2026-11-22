@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsEigenComponentPolynomialStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsEigenComponentPolynomialStatement
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 
 noncomputable section
@@ -19,7 +24,8 @@ theorem phi_transport {E : Type} [Field E] [NumberField E] {V V' A : Type} [AddC
       Ψ (GlobalTheory.CompanionTheory.Ar.Cusp.eigComp ρ s₀ x) = GlobalTheory.CompanionTheory.Ar.Cusp.eigComp ρ' s₀ (Ψ x) := by
     intro s₀ x
     obtain ⟨c₀, hc₀⟩ := GlobalTheory.T.exists_eigenComponent_polynomial E s₀
-    rw [(hc₀ V ρ).1 x, (hc₀ V' ρ').1 (Ψ x), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [(hc₀ V ρ).1 x, (hc₀ V' ρ').1 (Ψ x), map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_smul, hρ]
   have hmem : ∀ (s₀ : 𝓞 E →+* ℂ) (x : V), x ∈ GlobalTheory.CompanionTheory.Ar.eigSp ρ s₀ →
@@ -51,7 +57,8 @@ theorem phi_transport {E : Type} [Field E] [NumberField E] {V V' A : Type} [AddC
   · obtain ⟨hvI, hind, hidx⟩ := hint
     refine ⟨fun i => AddSubgroup.mem_map_of_mem _ (hvI i), fun a ha => hind a ?_, ?_⟩
     · apply Ψ.injective
-      rw [map_sum, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero]
       simp only [← hρ]
       exact ha
     · rw [hspan v, AddSubgroup.relIndex_map_map_of_injective (f := Ψ.toLinearMap.toAddMonoidHom)
@@ -65,7 +72,8 @@ theorem phi_transport {E : Type} [Field E] [NumberField E] {V V' A : Type} [AddC
       · rw [Fin.append_left, Fin.append_left, heig]
       · rw [Fin.append_right, Fin.append_right]
     refine h1.trans ?_
-    rw [hT τ i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT τ i, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hbb, smul_smul]
     congr 1

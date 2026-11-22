@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedCoreOfRegM
-import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedEval
+module
+
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedCoreOfRegM
+public import ReciprocityTheory.L2DbarEstimates.HormanderEstimate.ClosedEval
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -41,7 +45,8 @@ theorem needBergmanClosed (n : ℕ) (M : Type*) [TopologicalSpace M] [T2Space M]
   have key : ∀ k, eLpNorm (⇑(Fs k) - ⇑F) 2 (H.wvol n z ψ) =
       wint n z (fun x => fk k x - F x) ψ ^ (1 / (2:ℝ)) := by
     intro k
-    rw [eLpNorm_eq_lintegral_rpow_enorm two_ne_zero ENNReal.ofNat_ne_top]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      ((Lp.aestronglyMeasurable (Fs k)).sub (Lp.aestronglyMeasurable F))]
     simp only [ENNReal.toReal_ofNat]
     congr 1
     rw [lintegral_congr_ae (g := fun x => ‖fk k x - F x‖ₑ ^ (2:ℝ))

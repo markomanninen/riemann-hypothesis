@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.DualLattices.CharR
-import ReciprocityTheory.DualLattices.SubMemSpan
-import ReciprocityTheory.DualLattices.ThmAAll
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.DualLattices.CharR
+public import ReciprocityTheory.DualLattices.SubMemSpan
+public import ReciprocityTheory.DualLattices.ThmAAll
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+
+@[expose] public section
 
 open TensorProduct Matrix ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.Be2
 
@@ -68,12 +72,13 @@ lemma ev_expand {O : LAlg R₀} {g : ℕ} (gb : Module.Basis (Fin g) R₀ B.gg)
     simp only [BX.ev, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.id_apply,
       TensorProduct.comm_tmul, Module.Basis.baseChange_repr_tmul]
     conv_lhs => rw [← gb.sum_repr x]
-    rw [map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [map_smul, Algebra.smul_def, Algebra.smul_def]
     ring
   | add a b ha hb =>
-    simp only [BX.ev, map_add] at *
+    simp only [BX.ev, map_add (f := _)] at *
     rw [ha, hb, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun _ _ => by rw [Finsupp.add_apply]; ring
 
@@ -143,9 +148,11 @@ lemma tangent_eq {O R : LAlg R₀} (gb : Module.Basis (Fin g) R₀ B.gg) (f : OE
     f.f (Dp.σ.comp s) (B.tg Dp.π Dp.sqZero (v ⊗ₜ Dp.ηk)) =
       B.tg Dp.π Dp.sqZero (LinearMap.lTensor B.gg Dp.ηmap
         (gb.constr R₀ (fun l => ∑ k, gb k ⊗ₜ[R₀] s.1 (M k l)) v)) := by
-  rw [← gb.sum_repr v, TensorProduct.sum_tmul, map_sum, map_sum, map_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← gb.sum_repr v, TensorProduct.sum_tmul, map_sum, map_sum, map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
-  rw [TensorProduct.smul_tmul, map_smul, Module.Basis.constr_basis, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [TensorProduct.smul_tmul, map_smul, Module.Basis.constr_basis, map_smul, map_sum,
     Finset.smul_sum,
     hM l _ (fun k => gb.repr v l • Dp.ηmap (s.1 (M k l))) (fun k => by
       simp only [DualPair.ηmap, DualPair.ηk, LHom.comp, LinearMap.coe_mk, AddHom.coe_mk,
@@ -186,10 +193,12 @@ lemma height_eq (Tw : ATower R₀ p) [Algebra ℤ_[p] (Tw.O : Type)] (Dp : ∀ n
     rw [← map_nsmul, hy, map_zero]
   have H3 := B.isHeight_unique (pairingProperties B) (Dp n) _ hchar _ hya _ _ H1 H2
   have H4 := LinearMap.congr_fun H3 (gb l)
-  simp only [LinearMap.comp_apply, Module.Basis.constr_basis, map_sum, hext_tmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, Module.Basis.constr_basis, map_sum, hext_tmul,
     AlgHom.toLinearMap_apply, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul,
     map_mul] at H4
-  simp only [map_sub, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_mul]
   rw [sub_eq_zero]
   simp only [mul_comm] at H4 ⊢
   exact H4.symm
@@ -229,8 +238,8 @@ open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalC
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
 attribute [local instance] Over.cartesianMonoidalCategory
 
-open TateMatrices in
 
+open TateMatrices in
 theorem exists_tateMatrices_link :
   (∀ (p : ℕ) [Fact p.Prime] (κ Γ : Type) [Fintype κ] [DecidableEq κ] [AddCommGroup Γ] (τ : κ → ℕ → Γ),
     (∀ i n, (p ^ (n + 1)) • τ i n = 0) → (∀ i n, τ i n = p • τ i (n + 1)) →
@@ -295,9 +304,10 @@ theorem exists_tateMatrices_link :
       hE i j n⟩
   have hinv₀ : ∀ a, (ρ₀ a)ᵀ * E = E * ρ₀ (cj a) := by
     intro a
-    ext i j
+    apply Matrix.ext
+    intro i j
     simp only [Matrix.mul_apply, Matrix.transpose_apply]
-    refine eq_of_zeta_pow Tw.ζ hprim _ _ _ _ fun n => ?_
+    refine eq_of_zeta_pow (κ := Ix g) Tw.ζ hprim _ _ _ _ fun n => ?_
     have h1 := pairing_sum_left B Finset.univ (p ^ (n + 1)) (fun k => τ k n) (τ j n) (Tw.ζ n)
       (fun k => (PadicInt.toZModPow (n + 1) (ρ₀ a k i)).val) _ (hτ j n) (fun k => hE k j n)
     have h2 := pairing_sum_right B Finset.univ (p ^ (n + 1)) (fun k => τ k n) (τ i n) (Tw.ζ n)
@@ -336,7 +346,7 @@ theorem exists_tateMatrices_link :
             Matrix.mul_smul, hinv₀]
           rfl
         | add a b ha hb =>
-          rw [map_add, map_add, map_add, Matrix.transpose_add, Matrix.add_mul, Matrix.mul_add, ha, hb]
+          rw [map_add (f := _), map_add (f := _), map_add (f := _), Matrix.transpose_add, Matrix.add_mul, Matrix.mul_add, ha, hb]
       projectors := by simp
       Ht := Ht
       Bt := Bt
@@ -352,7 +362,7 @@ theorem exists_tateMatrices_link :
           rw [e, Matrix.mul_smul, hHt₀]
           rfl
         | add a b ha hb =>
-          rw [map_add, map_add, map_add, Matrix.transpose_add, Matrix.add_mul,
+          rw [map_add (f := _), map_add (f := _), map_add (f := _), Matrix.transpose_add, Matrix.add_mul,
             Matrix.map_add _ (map_add _), Matrix.mul_add, ha, hb], by simp⟩
       form_eq_alt := by
         ext i j
@@ -393,7 +403,7 @@ theorem exists_tateMatrices_link :
         | add a b ha hb =>
           rw [A.act_add, AddSubgroup.coe_add, ha, hb, ← Finset.sum_add_distrib]
           refine Finset.sum_congr rfl fun k _ => ?_
-          rw [map_add, Matrix.add_apply, map_add, val_add_smul _ _ _ (hτ0 k)]
+          rw [map_add (f := _), Matrix.add_apply, map_add (f := _), val_add_smul _ _ _ (hτ0 k)]
       ρL_spec := hρLs }
   refine ⟨A, H, L, rfl, rfl, rfl, fun a => ?_, fun a j n => ?_⟩
   · change ρL _ = _

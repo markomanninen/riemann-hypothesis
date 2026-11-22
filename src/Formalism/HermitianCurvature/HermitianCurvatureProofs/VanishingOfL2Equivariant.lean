@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZeroOfAe
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ZeroOfAe
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.L2NormScaling
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal

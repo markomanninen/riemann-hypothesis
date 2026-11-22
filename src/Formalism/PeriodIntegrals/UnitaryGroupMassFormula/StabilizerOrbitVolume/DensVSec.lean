@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVSecSt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVSecSt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem exists_leftInv_of_linIndep {K : Type} [CommRing K] [IsSemisimpleRing K] 
     intro c
     simp [f, LinearMap.sum_apply]
   have hf : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     rw [hf_apply] at hc
     funext i
@@ -39,7 +43,8 @@ theorem exists_leftInv_of_linIndep {K : Type} [CommRing K] [IsSemisimpleRing K] 
       simp
     rw [hZf, ← LinearMap.comp_apply, hg, LinearMap.id_apply]
   have h2 := congrFun key i'
-  rw [hZi, map_sum] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hZi, map_sum] at h2
   simpa [Finset.sum_apply, map_smul] using h2
 
 theorem secGram_holds : SecGram := by
@@ -50,7 +55,7 @@ theorem secGram_holds : SecGram := by
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => simp [sigR, hσ]
-    | add z w hz hw => rw [map_add, map_add, hz, hw]
+    | add z w hz hw => rw [map_add (f := _), map_add (f := _), hz, hw]
   have hsF : ∀ c : F, sigR R σ (algebraMap F (R ⊗[F] E) c) = algebraMap F (R ⊗[F] E) c := by
     intro c
     simp [sigR]
@@ -80,7 +85,8 @@ theorem secGram_holds : SecGram := by
     have hx0 : ∑ i, s (c i) • x i = 0 := by
       funext k
       have h4 := congrArg s (congrFun hv0 k)
-      simp only [hv, map_sum, map_mul, hs2, map_zero, Pi.zero_apply] at h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hv, map_sum, map_mul, hs2, map_zero, Pi.zero_apply] at h4
       simpa [Finset.sum_apply, smul_eq_mul] using h4
     have h5 := Fintype.linearIndependent_iff.1 hx _ hx0 i
     rw [← hs2 (c i), h5, map_zero]
@@ -108,12 +114,13 @@ theorem secGram_holds : SecGram := by
     simp [hq]
   have h2 : ∀ i j, hR R σ J (Y i) (x j) = s (hR R σ J (x j) (Y i)) := by
     intro i j
-    simp only [hR, Formalism.UG.hform, ← hs, map_sum, map_mul, hs2, hJR]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hR, Formalism.UG.hform, ← hs, map_sum, map_mul, hs2, hJR]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => by ring
   have hsc : s c = c := hsF _
   have hcc : c + c = 1 := by
-    rw [hc, ← map_add, show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one]
+    rw [hc, ← map_add (f := _), show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one]
   unfold gramB
   funext i j
   show hR R σ J (x i) (Y j) + hR R σ J (Y i) (x j) = S i j

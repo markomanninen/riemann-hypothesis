@@ -1,4 +1,8 @@
-import Formalism.FormalGroupWitt.SubstInjectiveV
+module
+
+public import Formalism.FormalGroupWitt.SubstInjectiveV
+
+@[expose] public section
 
 noncomputable section
 

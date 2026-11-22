@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StarMulSelfOfPair
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.BaseCh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatCopyIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.StarMulSelfOfPair
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.BaseCh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RatCopyIff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwInputs.Move
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open Formalism.L2.Host (embLL0 CharFrame)
@@ -49,7 +54,7 @@ variable {n : ℕ} {K : Type} [Field K] (σ : K →+* ℂ) (lam : D.what₂.Tau 
 
 theorem coefFn_add (F G : Formalism.L2.DIV.Pol K D.what₂.Tau n) (x : GLR D n) :
     coefFn σ lam (F + G) x = coefFn σ lam F x + coefFn σ lam G x := by
-  simp only [coefFn, map_add, mul_add]
+  simp only [coefFn, map_add (f := _), mul_add]
 
 theorem coefFn_zero (x : GLR D n) : coefFn σ lam (0 : Formalism.L2.DIV.Pol K D.what₂.Tau n) x = 0 := by
   simp only [coefFn, map_zero, mul_zero]
@@ -66,8 +71,8 @@ theorem extremalVector_mem_lowestKType (X : RealSide D) {j : Fin D.R.m}
     X.geo.v₀ j (sg0 D X.A3.A) τ ∈ lowT (model X j) τ :=
   (hv.1 τ).2.1
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem harm_move (h : CopyTw D D' ι e) {ρ : Setup D.ntw} {ρ' : Setup D'.ntw} (hs : SameSetup ρ ρ') (i : D.ntw.Tw)
     (i' : D'.ntw.Tw) (hi : HEq i i') (j : Fin D.R.m) (b : Bool) (P : PolF D (Wc D j).rank (Vc D j).rank)
     (P' : PolF D' (Wc D' (h.cm j)).rank (Vc D' (h.cm j)).rank) (hP : HEq P P') (x : GLR D (Vc D j).rank)
@@ -170,7 +175,7 @@ theorem scale_fwd (h : CopyTw D D' ι e) {X : RealSide D} {X' : RealSide D'} (m 
       intro hxy
       have hx' := hG hx
       have hy' := hG hy
-      rw [show (⟨x + y, hxy⟩ : ↥(VV D'.what₂.LL (FWT.lamV D' (h.cm j)))) = ⟨x, hx'⟩ + ⟨y, hy'⟩ from rfl, map_add, map_add,
+      rw [show (⟨x + y, hxy⟩ : ↥(VV D'.what₂.LL (FWT.lamV D' (h.cm j)))) = ⟨x, hx'⟩ + ⟨y, hy'⟩ from rfl, map_add (f := _), map_add (f := _),
         map_add, ihx hx', ihy hy']
       funext x'
       simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, coefFn_add, mul_add]

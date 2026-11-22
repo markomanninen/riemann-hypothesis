@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+
+@[expose] public section
 
 open Formalism.BasicNotions UpperTheory.TP.RP MvPolynomial
 
@@ -21,7 +25,8 @@ private theorem sSub_rowAct {n d : ℕ} (g : Matrix (Fin d) (Fin d) ℂ)
   have e : (sSub n d).comp (Formalism.GradedWeylDivisibility.rowAct ℂ g.transpose) = (rightSub g).comp (sSub n d) := by
     apply MvPolynomial.algHom_ext
     rintro ⟨a, b⟩
-    simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, aeval_X, map_sum, map_mul, Matrix.transpose_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, Formalism.GradedWeylDivisibility.rowAct, aeval_X, map_sum, map_mul, Matrix.transpose_apply,
       algHom_C, sSub_X]
     by_cases hb : (b : ℕ) < n
     · simp [hb, rightSub_xv, algebraMap_eq]

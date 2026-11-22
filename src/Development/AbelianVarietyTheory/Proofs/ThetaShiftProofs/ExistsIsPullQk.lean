@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPushEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,8 +152,6 @@ def pullArc : ArcIn D l β O'' (f.comp b) :=
       · rw [← spMap_comp]; exact hn
       · rw [(({ hD.xe with map_smul' := hx } : D'.X ≃ₗ[𝓞 E] a.D₀.X)).finrank_eq]
         exact hn' }
-
-theorem pullArc_D₀ : (pullArc hG hf a hD).D₀ = D' := rfl
 
 theorem isBC_pullArc : IsBC f a (pullArc hG hf a hD) hD :=
   letI := H.starRing

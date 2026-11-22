@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieScalar
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivContinuousCharacterRealUnitaryOneParameterStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenuineSplittingAdelicSchwartzPlaceSignatuStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanSplittingsDifferByCharacterStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LieScalar
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DerivContinuousCharacterRealUnitaryOneParameterStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenuineSplittingAdelicSchwartzPlaceSignatuStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArchimedeanSplittingsDifferByCharacterStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,8 @@ theorem lieScalarD : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     rw [mul_one] at this
     exact (mul_eq_left₀ (hν0 1 h1m)).mp this.symm
   beta_reduce at h3
-  rw [hγ0, hν1, map_one, Module.End.one_apply, one_mul] at h3
+  set_option backward.isDefEq.respectTransparency false in
+    rw [hγ0, hν1, map_one, Module.End.one_apply, one_mul] at h3
   refine h3.congr_deriv ?_
   have e2 : sumPl (fun w => fockAct2 (P w) (Q w) (R w) (S w) (Y w) +
         (((fun w => c₀ w + k w) w) * (Y w).trace) • (1 : Module.End ℂ _)) =
@@ -51,10 +56,10 @@ theorem lieScalarD : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numbe
     simp only [add_mul, add_smul, ← add_assoc]
     exact GlobalTheory.LieScal.sumPl_add_smul
       (fun w => fockAct2 (P w) (Q w) (R w) (S w) (Y w) + (c₀ w * (Y w).trace) • (1 : Module.End ℂ _)) _
-  rw [e2, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add, map_smul]
+  rw [e2, LinearMap.add_apply, LinearMap.smul_apply, Module.End.one_apply, map_add (f := _), map_smul]
   have key : ∀ (z : ℂ) (f f' : SInf F κ), pureA F ⇑(f' + z • f) g = z • pureA F ⇑f g + pureA F ⇑f' g := by
     intro z f f'; funext x; simp [pureA]; ring
-  rw [key, map_add, map_smul, smul_eq_mul]
+  rw [key, map_add (f := _), map_smul, smul_eq_mul]
 
 end GlobalTheory.HoweD
 

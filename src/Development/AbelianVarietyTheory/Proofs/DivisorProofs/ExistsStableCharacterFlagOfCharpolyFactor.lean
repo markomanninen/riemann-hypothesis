@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubRepApply
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsIrreducibleConstituentRanksUniqueOfCharpoly
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsSemisimplificationOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyEqOfSemisimplification
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubRepApply
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.CharpolyBlockAndInvariantUnderStabilizerNilradic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.AbsIrreducibleConstituentRanksUniqueOfCharpoly
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsSemisimplificationOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CharpolyEqOfSemisimplification
+
+@[expose] public section
+
 open Polynomial
 
 noncomputable section
@@ -30,7 +35,7 @@ theorem hasCharFlag_zero (π : Representation k Γ V) (ψ : Fin 0 → Γ →* k�
       simp [hi, hj]
   · intro g j x hx
     by_cases hj : (j : ℕ) = 0
-    · simp only [hj, if_true, Submodule.mem_bot] at hx ⊢; simp [hx]
+    · simp only [hj, ite_true, Submodule.mem_bot] at hx ⊢; simp [hx]
     · simp [hj]
 
 theorem stab_span (π : Representation k Γ V) (x : V) (c : Γ → k) (hx : ∀ g, π g x = c g • x) :
@@ -167,13 +172,18 @@ theorem exists_sum_chars : ∀ (t : ℕ) (ψ : Fin t → Γ →* kˣ),
       IsSemisimpleModule (MonoidAlgebra k Γ) δ.asModule ∧
       (∀ g, LinearMap.charpoly (δ g) = ∏ s, (X - C ((ψ s g : kˣ) : k))) ∧
       ∀ (σ : Representation k Γ V) (f : V →ₗ[k] B), (∀ g x, f (σ g x) = δ g (f x)) →
-        (∀ s (φ : V →ₗ[k] k), (∀ g x, φ (σ g x) = ((ψ s g : kˣ) : k) • φ x) → φ = 0) → f = 0
-  | 0, ψ => ⟨Fin 0 → k, inferInstance, inferInstance, inferInstance, 1,
+        (∀ s (φ : V →ₗ[k] k), (∀ g x, φ (σ g x) = ((ψ s g : kˣ) : k) • φ x) → φ = 0) → f = 0 := by
+  intro t
+  induction t with
+  | zero =>
+    intro ψ
+    exact ⟨Fin 0 → k, inferInstance, inferInstance, inferInstance, 1,
       ss_of_min _ fun W _ => Or.inl (Subsingleton.elim _ _),
       fun g => by rw [GlobalTheory.SSRank.charpoly_fin_zero]; simp,
       fun _ _ _ _ => LinearMap.ext fun _ => Subsingleton.elim _ _⟩
-  | t + 1, ψ => by
-    obtain ⟨B, _, _, _, δ, h1, h2, h3⟩ := exists_sum_chars t fun s => ψ s.succ
+  | succ t ih =>
+    intro ψ
+    obtain ⟨B, _, _, _, δ, h1, h2, h3⟩ := ih fun s => ψ s.succ
     refine ⟨k × B, inferInstance, inferInstance, inferInstance, (charRep (ψ 0)).prod δ,
       ss_prod' _ _ (ss_of_min _ fun W _ => eq_bot_or_eq_top W) h1, fun g => ?_, fun σ f hf hφ => ?_⟩
     · rw [Fin.prod_univ_succ, ← h2, ← charpoly_charRep, ← LinearMap.charpoly_prodMap]

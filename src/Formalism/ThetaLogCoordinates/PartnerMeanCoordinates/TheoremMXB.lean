@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMCB
+module
+
+public import Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.TheoremMCB
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.MC
 

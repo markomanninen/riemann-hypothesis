@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagCoi
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagCoi
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.LagNeZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CoiConjSingle
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 

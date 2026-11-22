@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RemainingWeightVectorCount
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RemainingWeightVectorCount
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
-import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HermSysHypOneLeLambdaZero
+public import ReciprocityTheory.SemistableReduction.TorusL2CauchyInequality
+
+@[expose] public section
+
 open NumberField MvPolynomial ReciprocityTheory.MultiplicativeHeights ReciprocityTheory.GeometryOfNumbersTheory
 open GlobalTheory GlobalTheory.ChowHt GlobalTheory.Adelic GlobalTheory.HermTools GlobalTheory.HilbertSamuel GlobalTheory.HSChoice GlobalTheory.HSShort
 
@@ -33,7 +38,8 @@ theorem det_filtration_symbols : ∀ (E A' : Type) [Field E] [AddCommGroup A'] [
     refine (hsym a ⟨_, hy⟩).1 ?_
     have : (⟨_, hy⟩ : U a) = ⟨x, hx⟩ - ∑ i, sym a ⟨x, hx⟩ i • ⟨z (ix ⟨a, i⟩), hz ⟨a, i⟩⟩ := by
       ext; simp
-    rw [this, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sub, map_sum]
     simp only [map_smul, hzs']
     funext j
     simp [Finset.sum_apply, Pi.single_apply]
@@ -105,9 +111,9 @@ theorem det_filtration_symbols : ∀ (E A' : Type) [Field E] [AddCommGroup A'] [
     have hy := hdown (r - (a + 1)) (a + 1) (by omega) key
     obtain ⟨c, hc0, hcL⟩ := conv _ _ hy
     refine ⟨c + ∑ i, sym a ⟨v (ix ⟨a, i'⟩), hv ⟨a, i'⟩⟩ i • Pi.single (ix ⟨a, i⟩) 1, ?_, ?_, ?_⟩
-    · rw [map_add, map_sum, hcL]
-      simp only [map_smul, Fintype.linearCombination_apply_single, one_smul]
-      abel
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_sum, hcL]
+      simp only [map_smul, Fintype.linearCombination_apply_single, one_smul, sub_add_cancel]
     · intro k hk
       have hk' : β k < a := hk
       have h1 : c k = 0 := hc0 k (by simp only [Set.mem_setOf_eq, not_le]; omega)
@@ -189,8 +195,7 @@ theorem det_filtration_symbols : ∀ (E A' : Type) [Field E] [AddCommGroup A'] [
         ⟨fun ⟨i, hi⟩ => hb (Finset.mem_image.2 ⟨i, Finset.mem_univ _, hi⟩)⟩
       exact Matrix.det_isEmpty
   have hv' : v = fun j => Fintype.linearCombination E z (N j) := funext fun j => (hNL j).symm
-  rw [show ω v = ω (fun j => Fintype.linearCombination E z (N j)) from congrArg _ hv',
-]
+  rw [show ω v = ω (fun j => Fintype.linearCombination E z (N j)) from congrArg _ hv']
   refine (alt_linComb ω z N).trans ?_
   rw [← hdet]
   rfl

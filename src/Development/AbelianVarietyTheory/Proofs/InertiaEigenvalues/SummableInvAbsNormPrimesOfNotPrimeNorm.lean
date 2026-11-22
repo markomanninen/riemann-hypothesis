@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InfinitelyManyPrimesInRayClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.InfinitelyManyPrimesInRayClass
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped Classical
 
@@ -31,9 +36,9 @@ private lemma exists_prime_liesOver_absNorm_eq_pow (K : Type) [Field K] [NumberF
       ⟨by rw [Int.span_natAbs, Ideal.span_singleton_generator]⟩
     exact ⟨_, (Ideal.absNorm_eq_pow_inertiaDeg P.asIdeal hpr).trans (by rw [Int.natAbs_natCast])⟩
 
+
 open NumberField IsDedekindDomain in
 open scoped Classical in
-
 theorem _root_.GlobalTheory.summable_inv_absNorm_of_not_prime :
     ∀ (K : Type) [Field K] [NumberField K],
       Summable fun P : {P : HeightOneSpectrum (𝓞 K) // ¬ (Ideal.absNorm P.asIdeal).Prime} =>

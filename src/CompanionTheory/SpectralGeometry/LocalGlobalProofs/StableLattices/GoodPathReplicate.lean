@@ -1,7 +1,27 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.SimpleDistinctness.ScalarCharacterOfL2Embedding
+module
 
-open Finset CompanionTheory.RgExh
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.IsSimpleTriv
+
+@[expose] public section
+
+open Finset
+
+namespace CompanionTheory.RgExh
+
+def FarLabels {n : ℕ} (χ χ' : Fin n → ℂ) (B : ℝ) : Prop :=
+  ∀ I I' : Finset (Fin n), Disjoint I I' → I.card = I'.card → (∑ i ∈ I, χ i - ∑ i ∈ I', χ i).re < 0 →
+    (∑ i ∈ I, χ' i - ∑ i ∈ I', χ' i).re < -B
+
+def Fin.PathExists : Prop :=
+  ∀ (n : ℕ) (χ : Fin n → ℂ) (B : ℝ), ∃ C δ : ℝ, 0 < δ ∧ ∀ N₀ : ℝ, ∃ (ss : List (Fin n)) (N : ℝ), N₀ ≤ N ∧
+    GoodPath χ ss ∧ FarLabels χ (pathEnd χ ss) B ∧ (∀ s, s ∈ ss) ∧
+    (∀ a b, a ≠ b → δ * N ≤ |(pathEnd χ ss a).re - (pathEnd χ ss b).re|) ∧
+    ∀ a, |(pathEnd χ ss a).re| ≤ C * N ∧ |(pathEnd χ ss a).im| ≤ C
+
+end CompanionTheory.RgExh
+
+open CompanionTheory.RgExh
 
 namespace GlobalTheory.CompanionTheory.RgPath
 

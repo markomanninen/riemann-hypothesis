@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntSmulMemLatticeTwistedOperators
 
@@ -11,7 +15,7 @@ theorem exists_int_mul_integral {E : Type} [Field E] [NumberField E] (a : E) :
   simpa [zsmul_eq_mul] using hint
 
 theorem exists_int_smul_mem {E : Type} [Field E] [NumberField E] {n : ℕ}
-    (L : Submodule (RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsLattice E L)
+    (L : Submodule (RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (v : Fin n → E) : ∃ c : ℤ, c ≠ 0 ∧ c • v ∈ L := by
   have hv : v ∈ Submodule.span E (L : Set (Fin n → E)) := by rw [hL.span_eq_top]; trivial
   induction hv using Submodule.span_induction with
@@ -41,7 +45,7 @@ theorem exists_int_smul_mem {E : Type} [Field E] [NumberField E] {n : ℕ}
     rw [key]
     exact L.smul_mem b hcx
 
-theorem exists_nonzero_int_smul_mem_of_isLattice : ∀ {E : Type} [inst : Field E] [NumberField E] {n : ℕ} (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)), Submodule.IsLattice E L → ∀ (v : Fin n → E), ∃ (c : ℤ), c ≠ (0 : ℤ) ∧ c • v ∈ L :=
+theorem exists_nonzero_int_smul_mem_of_isLattice : ∀ {E : Type} [inst : Field E] [NumberField E] {n : ℕ} (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)), Submodule.IsFullLattice E L → ∀ (v : Fin n → E), ∃ (c : ℤ), c ≠ (0 : ℤ) ∧ c • v ∈ L :=
   fun L hL v => exists_int_smul_mem L hL v
 
 end GlobalTheory.IntSmulMemLatticeTwistedOperators

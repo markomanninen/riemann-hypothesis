@@ -1,4 +1,8 @@
-import Formalism.FrobeniusOrbits.Statement
+module
+
+public import Formalism.FrobeniusOrbits.Statement
+
+@[expose] public section
 
 open NumberField IntermediateField
 

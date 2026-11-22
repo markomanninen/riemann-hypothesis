@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTopConstantTwist
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PTelescope
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTopConstantTwist
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PTelescope
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheetA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -75,8 +80,8 @@ theorem ptsIntegral_twist_term (P : Ideal (MRing ι)) (A : HermLine ι) (c : ℝ
 
 end TopConstantTwistAlt
 
-open TopConstantTwistAlt in
 
+open TopConstantTwistAlt in
 theorem TopConstantTwist.proof : TopConstantTwist.Statement := by
   intro K _ ι _ P D A c II hII hP hA
   have h : II K ι P (D + 1) (fun _ => A.tensor (constLine c)) - II K ι P (D + 1) (fun _ => A) =

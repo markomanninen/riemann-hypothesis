@@ -1,7 +1,11 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtCut
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeak
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollifyEqConvolution
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeakA
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtCut
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeak
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MollifyEqConvolution
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeakA
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -64,7 +68,7 @@ theorem tendsto_setLIntegral_band {W : Set (V n)} (hW : IsOpen W) {f : V n → �
     exact ⟨k, fun h => by have := h.2; linarith⟩
   have hfin : ∃ k, volume.withDensity φ (A k) ≠ ⊤ := ⟨0, by
     rw [withDensity_apply _ (hmeas 0)]
-    exact (lt_of_le_of_lt (lintegral_mono_set (fun z hz => hz.1)) hφ).ne⟩
+    exact (lt_of_le_of_lt (lintegral_mono_set (by exact fun z hz => hz.1)) hφ).ne⟩
   have h := tendsto_measure_iInter_atTop (fun k => (hmeas k).nullMeasurableSet) hanti hfin
   rw [hempty, measure_empty] at h
   refine h.congr (fun k => ?_)

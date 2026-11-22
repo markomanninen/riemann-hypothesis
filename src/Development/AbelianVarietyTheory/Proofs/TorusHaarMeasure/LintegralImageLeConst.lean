@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.LUStatementPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+
+@[expose] public section
 
 namespace GlobalTheory.FrameLoc
 
@@ -49,7 +53,7 @@ theorem lowPart_glue (z : V (nd X)) (b : Frame X.Ψ r) : lowPart X (glue X z b) 
   obtain ⟨⟨τ, ⟨⟨a, c⟩, h⟩⟩, rfl⟩ := (Fintype.equivFin (Ent X)).surjective j
   rw [lowPart_apply X _ τ a c h]
   simp only [glue]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem upPart_glue (z : V (nd X)) {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r) :
     upPart X (glue X z b) = b := by
@@ -184,7 +188,7 @@ theorem frame_measure_local :
         have := norm_sub_norm_le (bOf x) b1
         linarith
       simp only [glue]
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       exact ((norm_le_pi_norm _ c).trans ((norm_le_pi_norm _ a).trans (norm_le_pi_norm _ τ))).trans hn
     · simpa [lowPart_glue] using hx1'
     · simpa [upPart_glue X _ s2] using s2

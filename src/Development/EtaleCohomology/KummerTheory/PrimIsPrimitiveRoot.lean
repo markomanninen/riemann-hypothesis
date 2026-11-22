@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.OneExPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.OneExPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC Polynomial
@@ -60,7 +64,7 @@ theorem local_pow {q : ℕ} [NeZero q] {U : Scheme.{0}} (ζ ξ : Prim q Γ(U, �
       exact hie
     have hq : ((q : ℕ) : U.residueField x) ≠ 0 := (Prim.map e ξ).2.1.ne_zero
     change e _ ≠ 0
-    rw [map_add, map_mul, map_mul, hy, mul_zero, add_zero, map_pow, map_natCast]
+    rw [map_add (f := _), map_mul, map_mul, hy, mul_zero, add_zero, map_pow, map_natCast]
     exact mul_ne_zero hq (pow_ne_zero _ (hξ.ne_zero (NeZero.ne q)))
   · have hs : ξ.1 + (ζ.1 ^ ((ZMod.unitOfCoprime i hcop : (ZMod q)ˣ) : ZMod q).val - ξ.1) =
         ζ.1 ^ ((ZMod.unitOfCoprime i hcop : (ZMod q)ˣ) : ZMod q).val := by ring
@@ -86,7 +90,7 @@ theorem sec_eq_of_cover {R : Type} [CommRing R] {F : Shv R} {U : Scheme.{0}} {ι
     rintro W f ⟨i⟩
     exact h i
   have hsh : Presieve.IsSheaf Scheme.etaleTopology (F.obj ⋙ forget _) :=
-    (isSheaf_iff_isSheaf_of_type _ _).1 (Presheaf.isSheaf_comp_of_isSheaf _ _ (forget _) F.cond)
+    (isSheaf_iff_isSheaf_of_type _ _).1 (Presheaf.isSheaf_comp_of_isSheaf _ _ (forget _) F.property)
   exact (hsh S hS).isSeparatedFor.ext fun W f hf => hf
 
 theorem twGen_zero_indep {q : ℕ} [NeZero q] {U : Scheme.{0}} (ζ ξ : Prim q Γ(U, ⊤)) :

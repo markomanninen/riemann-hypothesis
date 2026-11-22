@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.TmulMemFilV
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.TmulMemFilV
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem inFr_add {a : ZMod n} {num den : LetA O n} {f f' : W.EE} (h : InFr W a n
   obtain ⟨u, hu, hf⟩ := h
   obtain ⟨u', hu', hf'⟩ := h'
   refine ⟨u + u', W.AΔ.add_mem hu hu', ?_⟩
-  rw [mul_add, hf, hf', ← map_add]
+  rw [mul_add, hf, hf', ← map_add (f := _)]
   congr 1; ring
 
 theorem inFr_sub {a : ZMod n} {num den : LetA O n} {f f' : W.EE} (h : InFr W a num den f)
@@ -81,7 +85,8 @@ theorem secIn_mulA {a : ZMod n} {e d : ℕ} {cond : (ℕ → ℤ) → (Fin d →
 theorem dvO_succ (T : LocLat G Qp LL O) (e : ℕ) {d : ℕ} (b : Fin d → W.DD T) (c₀ : Fin d → O) :
     dvO W T (e + 1) b c₀ = Formalism.WeaklyAdmissibleFiltrations.φVB PD (LL := LL) (V := T.V) (dvO W T e b c₀) := by
   unfold dvO dv
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_smul, pow_succ', Module.End.mul_apply]
 
@@ -143,7 +148,8 @@ theorem secIn_transport (T : LocLat G Qp LL O) (a : ZMod n) (e : ℕ) {d : ℕ} 
       rw [filS_succ, dvO_succ]
       exact Submodule.mem_map_of_mem ((hg i).2 t (by omega))
   · show algebraMap (LetA O n) W.EE (ps W 0 ^ H * v) * W.φE (F k) = _
-    rw [hFe k, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hFe k, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul W.φE, AlgHom.commutes]
     ring

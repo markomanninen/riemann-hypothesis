@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.NonemptyPl
+module
+
+public import Formalism.AdmissibleDesigns.NonemptyPl
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -431,7 +435,7 @@ theorem selmer_length_inequality (lenRow : HeightOneSpectrum (𝓞 D.host.E) →
     congr 1
     refine Finset.sum_congr rfl fun w hw => ?_
     unfold TruncatedSeriesCountingIdentities.lenW
-    rw [dif_neg (Finset.disjoint_left.mp dc.disj hw)]
+    rw [dite_eq_right (Finset.disjoint_left.mp dc.disj hw)]
   have A1 : ∑ n ∈ rowsN i dc, qU (eON i).toNat (rowLen n) ≤ ∑ w ∈ dc.row, lenRow w := by
     rw [sum_rowsN]
     refine Finset.sum_le_sum fun v hv => ?_
@@ -454,7 +458,7 @@ theorem selmer_length_inequality (lenRow : HeightOneSpectrum (𝓞 D.host.E) →
       rintro u rfl h; rfl
     have hj : jN i ρ π dc (idx i dc v) = Br.jW D.loc D.nbr i v hw ρ π := by
       unfold jN
-      rw [dif_pos (by rw [hpo]; exact hw)]
+      rw [dite_eq_left (by rw [hpo]; exact hw)]
       exact hjw _ hpo _
     have he' : e'N i dc e' (idx i dc v) = e' v := by unfold e'N; rw [hpo]
     have hn : idx i dc v ∈ colsN i dc := Finset.mem_image_of_mem _ hv
@@ -464,7 +468,7 @@ theorem selmer_length_inequality (lenRow : HeightOneSpectrum (𝓞 D.host.E) →
       rw [hpo] at h3
       exact qU_mono h3 (hF1 v hv).ne
     unfold TruncatedSeriesCountingIdentities.lenW
-    rw [dif_pos hv]
+    rw [dite_eq_left hv]
     unfold Br.lenCol
     rw [hj, he', hvd]
     linarith

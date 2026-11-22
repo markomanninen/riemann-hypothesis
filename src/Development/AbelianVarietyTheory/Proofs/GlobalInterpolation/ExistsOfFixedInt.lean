@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSubConjNotMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsReflection
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticeProjectionMemOfUnitLength
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabLatInfStabVec
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RestrHomSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsSubConjNotMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsReflection
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticeProjectionMemOfUnitLength
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.StabLatInfStabVec
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.RestrHomSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ theorem h_smul_left (x y : Fin M → A) (a : A) : hform c J (a • x) y = c a * 
 
 theorem h_add_left (x y z : Fin M → A) :
     hform c J (x + y) z = hform c J x z + hform c J y z := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem h_sum_left {ι : Type} (s : Finset ι) (x : ι → Fin M → A) (z : Fin M → A) :
     hform c J (∑ i ∈ s, x i) z = ∑ i ∈ s, hform c J (x i) z := by
@@ -53,7 +57,8 @@ variable {c J}
 
 theorem h_conj (hc : ∀ a, c (c a) = a) (hJ : ∀ i j, c (J j i) = J i j) (x y : Fin M → A) :
     c (hform c J x y) = hform c J y x := by
-  simp only [hform, map_sum, map_mul, hc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, hc]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [hJ]; ring
@@ -168,7 +173,8 @@ theorem exists_next [Nontrivial A] (hc : ∀ a, c (c a) = a) (hJ : ∀ i j, c (J
     rw [hπ]
     exact sub_mem hy (sum_mem fun i _ => smul_mem' ((hL y).1 hy _ (heL i)) (heL i))
   have hπe : ∀ y j, hform c J (e j) (π y) = 0 := fun y j => by
-    rw [hπ, ← hLin_apply, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hπ, ← hLin_apply, map_sub, map_sum]
     simp [hLin_apply, he]
   let N : Submodule O (Fin M → A) := L.map (π.restrictScalars O)
   have hN : ∀ y, y ∈ N ↔ y ∈ L ∧ ∀ j, hform c J (e j) y = 0 := fun y => by
@@ -307,7 +313,8 @@ theorem exists_basis (hL : ∀ y, y ∈ L ↔ ∀ z ∈ L, hform c J z y ∈ O) 
       have := congrArg Subtype.val hg
       simpa [f, Subalgebra.smul_def] using this
     have h2 := congrArg (hLin c J (e j)) h1
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     simp only [map_smul, hLin_apply, he, smul_eq_mul, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq, Finset.mem_univ, if_true] at h2
     exact Subtype.ext h2
@@ -465,8 +472,8 @@ theorem exists_frame (h : IsCMExt F E σ) (hv : UnramAt F E v) {m : ℕ}
 
 end Local
 
-open GlobalTheory.SelfDualLatticeCompare in
 
+open GlobalTheory.SelfDualLatticeCompare in
 theorem selfDualLattices : SelfDualLattices := by
   intro F E _ _ _ _ _ σ h M J hJ hM v hv L hL
   obtain ⟨m, rfl⟩ : ∃ m, M = m + 1 := ⟨M - 1, by omega⟩

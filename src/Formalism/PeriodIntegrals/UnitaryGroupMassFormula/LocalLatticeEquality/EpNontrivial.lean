@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalLatticeEquality.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem coeff_mem (h2 : Module.finrank F E = 2) (A : LocAt F E sig p) (a : E)
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hx
     have : A.ιE x = A.ιF (B.repr x 0) • (1 : A.Ep) + A.ιF (B.repr x 1) • A.ιE a := by
       conv_lhs => rw [← hx]
-      simp only [map_add, map_mul, map_one, Algebra.smul_def, A.compat, mul_one]
+      simp only [map_add (f := _), map_mul, map_one, Algebra.smul_def, A.compat, mul_one]
     rw [SetLike.mem_coe, this]
     apply Submodule.add_mem
     · exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨0, rfl⟩)
@@ -103,7 +107,7 @@ theorem intP : IntP := by
     have hf : A.ιF f ∈ 𝒪[A.Fp] := by
       rw [A.compat] at ha
       have hi : IsIntegral 𝒪[A.Fp] (A.ιF f) :=
-        (isIntegral_algebraMap_iff (algebraMap A.Fp A.Ep).injective).mp ha
+        (isIntegral_algebraMap_iff ).mp ha
       exact (Valuation.integer.integers _).mem_of_integral hi
     obtain ⟨d, hd, n, hn⟩ := int_of_val A f hf
     refine ⟨d, hd, algebraMap (𝓞 F) (𝓞 E) n, ?_⟩

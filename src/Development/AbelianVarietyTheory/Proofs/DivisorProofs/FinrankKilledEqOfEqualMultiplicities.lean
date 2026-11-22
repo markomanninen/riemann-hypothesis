@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroOfRankEq
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroOfRankEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem mem_of_mem_sSup_pieces {ρ : Representation ℂ H X} {C : Submodule ℂ 
     exact hU.1 hy
   · simp
   · intro a b ha hb
-    rw [map_add]
+    rw [map_add (f := _)]
     exact C.add_mem ha hb
 
 theorem semisimple_sSup_pieces (ρ : Representation ℂ H X) (C : Submodule ℂ X) :

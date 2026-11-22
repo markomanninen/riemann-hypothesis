@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.WfSubst
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialIntegrality.InvNatMemWf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.WfSubst
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExponentialIntegrality.InvNatMemWf
+
+@[expose] public section
 
 noncomputable section
 

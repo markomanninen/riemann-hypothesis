@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ACrisBdRInj
-import GroundTheory.PAdicHodge.ACrisLog
-import GroundTheory.PAdicHodge.ACrisGalois
-import GroundTheory.PAdicHodge.InstMulSemiringActionGalPlus
-import GroundTheory.PAdicHodge.BdRGalois
-import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
-import GroundTheory.PAdicHodge.BdRAlg
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ACrisBdRInj
+public import GroundTheory.PAdicHodge.ACrisLog
+public import GroundTheory.PAdicHodge.ACrisGalois
+public import GroundTheory.PAdicHodge.InstMulSemiringActionGalPlus
+public import GroundTheory.PAdicHodge.BdRGalois
+public import GroundTheory.PAdicHodge.UntiltFrobeniusEquivSymmEpsilonNeOne
+public import GroundTheory.PAdicHodge.BdRAlg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -28,8 +33,8 @@ theorem eq_zero_of_p_mul_eq_zero {x : ACris K p} (h : (p : ACris K p) * x = 0) :
   rw [map_zero]
   exact ((IsPerfectoidField.isUnit_natCast_p_bDeRhamPlus (K := K) p).mul_right_eq_zero).1 h1
 
-variable (K p) in
 
+variable (K p) in
 def iotaPlus : BCrisPlus K p →+* BDeRhamPlus (normInteger K) p :=
   Localization.awayLift (iota K p) (p : ACris K p) (by
     rw [map_natCast]
@@ -40,7 +45,7 @@ theorem iotaPlus_algebraMap (x : ACris K p) :
   IsLocalization.lift_eq _ x
 
 theorem iotaPlus_injective : Function.Injective (iotaPlus K p) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨⟨a, s⟩, rfl⟩ := IsLocalization.mk'_surjective (Submonoid.powers (p : ACris K p)) x
   have h := IsLocalization.mk'_spec (BCrisPlus K p) a s
@@ -67,8 +72,8 @@ theorem mk_dpow_eq_zero {x : AInf K p} (hx : x ∈ RingHom.ker (fontaineTheta (n
   rw [dpow_mul, map_pow, hpow]
   ring
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem iotaQ_log {x : AInf K p} (hx : x ∈ RingHom.ker (fontaineTheta (normInteger K) p)) (m : ℕ) :
     iotaQ K p m (log hx) = Ideal.Quotient.mk (kerAway K p ^ m)
       (∑ n ∈ Finset.range m, (logTermZero hx n : Localization.Away (p : AInf K p))) := by
@@ -92,7 +97,8 @@ theorem iotaQ_log {x : AInf K p} (hx : x ∈ RingHom.ker (fontaineTheta (normInt
       mul_zero]
   have h0 := isAdicSum_of_eq_zero (I := Ideal.span {(p : acrisQ K p m)}) hzero
   have h := hsum.unique h0
-  rw [iotaQ, RingHom.comp_apply, h, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [iotaQ, RingHom.comp_apply, h, map_sum, map_sum]
   exact Finset.sum_congr rfl fun n _ => hterm n
 
 end Plus
@@ -101,10 +107,9 @@ section Cp
 
 variable {p : ℕ} [hp : Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
-local notation "𝒪♭" => PreTilt (normInteger ℂ_[p]) p
 local notation "𝔸" => Localization.Away (p : AInf ℂ_[p] p)
 local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "θ" => fontaineTheta (normInteger ℂ_[p]) p
+local notation "𝒪♭" => PreTilt (normInteger ℂ_[p]) p
 
 def galS (σ : Gal(PadicAlgCl p/K)) (m : ℕ) : acrisQ ℂ_[p] p m →+* acrisQ ℂ_[p] p m :=
   ((galQuot σ m).comp (acrisQ ℂ_[p] p m).subtype).codRestrict (acrisQ ℂ_[p] p m) fun s => by
@@ -177,7 +182,8 @@ theorem iota_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) :
   rw [← IsPerfectoidField.ker_evalB, RingHom.mem_ker, map_sub, sub_eq_zero] at h1
   rw [h1, ← IsPerfectoidField.evalB_toBDeRhamPlus]
   congr 1
-  rw [map_sum, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [logTermZero]
   simp only [Subalgebra.coe_mul, Subalgebra.coe_pow, Subalgebra.coe_neg, Subalgebra.coe_one,
@@ -192,14 +198,6 @@ theorem iota_periodT {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1) :
     ring
   rw [e]
   ring
-
-theorem periodT_ne_zero {ε : 𝒪♭} (hε : PreTilt.untilt ε = 1)
-    (hζ : PreTilt.untilt ((_root_.frobeniusEquiv 𝒪♭ p).symm ε) ≠ 1) :
-    periodT hε ≠ 0 := by
-  intro h
-  have h1 := iota_periodT hε
-  rw [h, map_zero] at h1
-  exact fontaineT_ne_zero hε hζ h1.symm
 
 end Cp
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,11 +31,11 @@ theorem finSt_relIndex_nhds {G : Type} [Group G] [TopologicalSpace G] [IsTopolog
 
 theorem finSt_KGL {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) (n : ℕ)
     (b : GL (Fin n) (w.adicCompletion E)) :
-    (KGL w n ⊓ (KGL w n).map (MulAut.conj b).toMonoidHom).relIndex (KGL w n) ≠ 0 := by
+    (KGL w (n := n) ⊓ (KGL w (n := n)).map (MulAut.conj b).toMonoidHom).relIndex (KGL w (n := n)) ≠ 0 := by
   obtain ⟨ho, hc⟩ := SatCompare.isOpen_isCompact_KGL w n
   have hcont : Continuous fun x : GL (Fin n) (w.adicCompletion E) => b⁻¹ * x * b :=
     (continuous_const.mul continuous_id).mul continuous_const
-  refine finSt_relIndex_nhds hc (U := (KGL w n : Set _) ∩ (fun x => b⁻¹ * x * b) ⁻¹' (KGL w n : Set _))
+  refine finSt_relIndex_nhds hc (U := (KGL w (n := n) : Set _) ∩ (fun x => b⁻¹ * x * b) ⁻¹' (KGL w (n := n) : Set _))
     ((ho.inter (ho.preimage hcont)).mem_nhds ⟨one_mem _, by simp [one_mem]⟩) fun k _ hk => ⟨hk.1, ?_⟩
   refine ⟨b⁻¹ * k * b, hk.2, ?_⟩
   simp [MulAut.conj_apply, mul_assoc]
@@ -48,13 +52,13 @@ theorem finSt : FinSt := by
   have hΦ : ∀ x, ((Φ x : GL (Fin d) (w.adicCompletion E)) : Matrix (Fin d) (Fin d) (w.adicCompletion E)) =
       (a⁻¹).1 * (mat x).map (PositivityTheory.ThKH.Iwas.piE hv) * a.1 := fun x => by
     simp [Φ, mat]
-  have memK : ∀ x ∈ UAt σ W (evFin F v), x ∈ KSub σ W v ↔ Φ x ∈ KGL w d := fun x hx => by
+  have memK : ∀ x ∈ UAt σ W (evFin F v), x ∈ KSub σ W v ↔ Φ x ∈ KGL w (n := d) := fun x hx => by
     rw [mem_GLint_iff, ← map_inv, hΦ, hΦ]
     change (x ∈ UAt σ W (evFin F v) ∧ ∀ y ∈ latW W v, mat x *ᵥ y ∈ latW W v ∧ mat x⁻¹ *ᵥ y ∈ latW W v) ↔ _
     rw [← PositivityTheory.ThKH.Iwas.stab_iff hw hv ha, ← PositivityTheory.ThKH.Iwas.stab_iff hw hv ha]
     exact ⟨fun H => ⟨fun y hy => (H.2 y hy).1, fun y hy => (H.2 y hy).2⟩, fun H => ⟨hx, fun y hy => ⟨H.1 y hy, H.2 y hy⟩⟩⟩
   set K := KSub σ W v
-  set H' := KGL w d ⊓ (KGL w d).map (MulAut.conj (Φ g)).toMonoidHom
+  set H' := KGL w (n := d) ⊓ (KGL w (n := d)).map (MulAut.conj (Φ g)).toMonoidHom
   have h1 : (H'.comap Φ).relIndex K ≠ 0 := by
     rw [Subgroup.relIndex_comap]
     refine finSt_relIndex_le ?_ (finSt_KGL w d (Φ g))

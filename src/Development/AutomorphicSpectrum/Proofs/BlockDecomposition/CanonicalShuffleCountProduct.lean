@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.Cos
 open Classical
 
@@ -189,10 +194,10 @@ theorem shuffleCount_eq_T_reverse {h : ℕ} (W : List α) (D : Fin h → List α
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem ofFn_term_cons (Δ : Segment k) : ∃ B : List (IrrGL k), List.ofFn Δ.term = Δ.first :: B ∧
+theorem ofFn_term_cons (Δ : Segment k) : ∃ B : List (IrrGL (k := k)), List.ofFn Δ.term = Δ.first :: B ∧
     B.length + 1 = Δ.len ∧ ∀ a ∈ B, ∃ n : ℕ, 0 < n ∧ a = Δ.first.nu (n : ℂ) := by
-  have key : ∀ (m : ℕ) (f : Fin m → IrrGL k), 0 < m → (∀ a : Fin m, f a = Δ.first.nu ((a : ℕ) : ℂ)) →
-      ∃ B : List (IrrGL k), List.ofFn f = Δ.first :: B ∧ B.length + 1 = m ∧
+  have key : ∀ (m : ℕ) (f : Fin m → IrrGL (k := k)), 0 < m → (∀ a : Fin m, f a = Δ.first.nu ((a : ℕ) : ℂ)) →
+      ∃ B : List (IrrGL (k := k)), List.ofFn f = Δ.first :: B ∧ B.length + 1 = m ∧
         ∀ a ∈ B, ∃ n : ℕ, 0 < n ∧ a = Δ.first.nu (n : ℂ) := by
     intro m f hm hf
     cases m with
@@ -207,7 +212,7 @@ theorem ofFn_term_cons (Δ : Segment k) : ∃ B : List (IrrGL k), List.ofFn Δ.t
         exact ⟨(i.succ : ℕ), by simp, hf i.succ⟩
   exact key Δ.len Δ.term Δ.len_pos (fun a => rfl)
 
-theorem T_step {h : ℕ} (Γ : Fin (h + 1) → Segment k) (hc : IsCanon Γ) (R : List (IrrGL k)) :
+theorem T_step {h : ℕ} (Γ : Fin (h + 1) → Segment k) (hc : IsCanon Γ) (R : List (IrrGL (k := k))) :
     T (List.ofFn (Γ (Fin.last h)).term ++ R) (fun i => List.ofFn (Γ i).term) =
       (Finset.univ.filter fun g => Γ g = Γ (Fin.last h)).card *
         T R (fun i : Fin h => List.ofFn (Γ i.castSucc).term) := by

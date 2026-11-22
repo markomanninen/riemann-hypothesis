@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.GMConjTranspose
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.GMConjTranspose
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix

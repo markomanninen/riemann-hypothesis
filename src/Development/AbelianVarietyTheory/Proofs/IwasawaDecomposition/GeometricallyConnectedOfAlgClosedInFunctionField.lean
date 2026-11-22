@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValRSpMapFromSpecStalk
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,8 +63,5 @@ theorem geometricallyConnected_of_locallyOfFiniteType {F : Type} [Field F] [Char
   refine ⟨_, Set.subset_univ _, ?_, hy, (isConnected_preimage p h K U hU hg).isPreconnected⟩
   rw [Set.mem_preimage, hx₀]
   exact hg
-
-theorem geometricallyConnected_of_algClosed_in_functionField : ∀ (F : Type) [Field F] [CharZero F] (X : Scheme.{0}) [IsIntegral X] (p : X ⟶ Sp F) [Smooth p], IsProjOver p → (∀ a : X.functionField, (∃ P : Polynomial F, P ≠ 0 ∧ P.eval₂ (GlobalTheory.Cartier.constFn p) a = 0) → a ∈ (GlobalTheory.Cartier.constFn p).range) → GeometricallyConnected p :=
-  fun _ _ _ _ _ p _ _ h => geometricallyConnected_of_locallyOfFiniteType p h
 
 end GlobalTheory.GeomConnFn

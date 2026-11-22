@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem ncard_places_eq_finrank_iff (E : Type) [Field E] [NumberField E] (p : �
       1 ≤ (q : Ideal (𝓞 E)).ramificationIdx ℤ * (q : Ideal (𝓞 E)).inertiaDeg ℤ := by
     intro q
     haveI := Ideal.primesOver.isPrime P q
-    exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (Ideal.ramificationIdx_pos _ ℤ).ne' (Ideal.inertiaDeg_pos _ ℤ).ne')
+    exact Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) _).ne' (Ideal.inertiaDeg_pos _ ℤ).ne')
   have hcard : Fintype.card (P.primesOver (𝓞 E)) = ∑ _q : P.primesOver (𝓞 E), 1 := by simp
   have heqv : ∀ W : HeightOneSpectrum (𝓞 E), ∀ hW : ((p : ℕ) : 𝓞 E) ∈ W.asIdeal,
       ((eqv ⟨W, hW⟩ : P.primesOver (𝓞 E)) : Ideal (𝓞 E)) = W.asIdeal := by

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatBoxDecompositionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenRankGeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowRankBoxFunctionStableStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzBruhatBoxDecompositionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenRankGeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LowRankBoxFunctionStableStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+
+@[expose] public section
+
 open ValuativeRel Matrix
 
 namespace GlobalTheory.RankCoinv

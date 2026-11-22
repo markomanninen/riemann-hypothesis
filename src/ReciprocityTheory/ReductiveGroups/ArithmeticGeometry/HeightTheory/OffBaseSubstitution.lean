@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteDimensionalOfLiftY
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteDimensionalOfLiftY
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -69,7 +73,7 @@ theorem hL_rename (p : MvPolynomial {v : TVar D N // v.1 ≠ 0} K) :
     hL K D N (MvPolynomial.rename Subtype.val p) = MvPolynomial.C p := by
   induction p using MvPolynomial.induction_on with
   | C a => rw [MvPolynomial.rename_C, hL_C]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p n hp => rw [map_mul, map_mul, hp, MvPolynomial.rename_X, hL_X, dif_neg n.2, map_mul]
 
 theorem hE_C (j0 : Fin (N + 1)) (r : Ω) :

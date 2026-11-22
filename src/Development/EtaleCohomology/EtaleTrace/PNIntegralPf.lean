@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.PNBasicPf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.PNBasicPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial

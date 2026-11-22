@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsIntClosedLocalizationAndQuotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DivConstClosedPts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbsIntClosedLocalizationAndQuotient
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.VertUnits
 
+
 open GlobalTheory.LocAcyc in
 open CategoryTheory in
-
 theorem divConstAll_of_divConstLocal : DivConstLocal → DivConstAll := by
   intro hL T O _ _ _ _ _ _ _ _ hAIC P _ φ hφ hSH
   set p : Ideal T := P.comap (C : T →+* T[X]) with hp
@@ -45,14 +50,14 @@ theorem divConstAll_of_divConstLocal : DivConstLocal → DivConstAll := by
   haveI hP'prime : P'.IsPrime :=
     IsLocalization.isPrime_of_isPrime_disjoint _ T'[X] P inferInstance hdisj
   have hcomapP' : P'.comap (algebraMap T[X] T'[X]) = P :=
-    IsLocalization.comap_map_of_isPrime_disjoint _ T'[X] inferInstance hdisj
+    IsLocalization.under_map_of_isPrime_disjoint _ T'[X] inferInstance hdisj
   have hCcomm : ∀ a : T, C (algebraMap T T' a) = algebraMap T[X] T'[X] (C a) := fun a => by
     change _ = (C a).map (algebraMap T T')
     rw [Polynomial.map_C]
   have hmax : P'.comap (C : T' →+* T'[X]) = maximalIdeal T' := by
-    rw [← IsLocalization.map_comap p.primeCompl T' (P'.comap C),
-      ← IsLocalization.map_comap p.primeCompl T' (maximalIdeal T'),
-      IsLocalization.AtPrime.comap_maximalIdeal T' p]
+    rw [← IsLocalization.map_under p.primeCompl T' (P'.comap C),
+      ← IsLocalization.map_under p.primeCompl T' (maximalIdeal T'),
+      IsLocalization.AtPrime.under_maximalIdeal T' p]
     congr 1
     ext a
     change C (algebraMap T T' a) ∈ P' ↔ C a ∈ P

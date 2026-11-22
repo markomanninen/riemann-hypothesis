@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -14,8 +19,8 @@ section Proof
 variable {O : Type} [CommRing O] {Ω : Type} [Field Ω] [Algebra O Ω]
   {K : Type} [Fintype K] {ι : K → Type} {K₂ : Type} [Fintype K₂] {ι₂ : K₂ → Type}
 
-omit [Fintype K] in
 
+omit [Fintype K] in
 theorem BirationalJoin.segre_ratio_mem_fnField (y : (Σ k, ι k) → Ω) (w : (Σ k, ι₂ k) → Ω)
     (c₁ c₂ : ∀ k, ι₂ k) : segreVec w c₁ / segreVec w c₂ ∈ fnField O (joinCoord y w) := by
   unfold segreVec

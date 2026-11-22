@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCGlob
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCGlob
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 
@@ -118,7 +122,8 @@ theorem phiRG_psd (Y : Finset H) (κ : H → H → ℂ) (hκ : TB.PSDOn Y κ) (U
       ∑ h ∈ Y, ∑ h' ∈ Y, κ h h' * ∏ v, conj (P v (h', y v) (h, x v)) := by
     intro x y
     unfold phi
-    simp only [map_sum, map_mul, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_prod]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun h hh => Finset.sum_congr rfl fun h' hh' => ?_
     congr 1
@@ -157,7 +162,7 @@ theorem phi_bound (Y : Finset H) (κ : H → H → ℂ) (K : Fin f → H × ℂ 
   rw [norm_mul, norm_prod]
   gcongr
   calc ∏ v, ‖K v (h, x v) (h', x' v)‖ ≤ ∏ _v : Fin f, B :=
-        Finset.prod_le_prod (fun v _ => norm_nonneg _) (fun v _ => hK v h hh h' hh')
+        Finset.prod_le_prod₀ (fun v _ => norm_nonneg _) (fun v _ => hK v h hh h' hh')
     _ = B ^ f := by simp
 
 end

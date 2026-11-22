@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LastComatrixRowInvertsDual
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumStarProjectionEigenspaceEqSelfOfEigenvaluesLi
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirEigenvalueDual
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDualStandardRel
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.CapelliDeterminantAndBranching
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LastComatrixRowInvertsDual
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SumStarProjectionEigenspaceEqSelfOfEigenvaluesLi
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SplitCasimirEigenvalueDual
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.TensorDualStandardRel
+
+@[expose] public section
 
 open Formalism.REAL Formalism.FourierDecayAlt.Q Formalism.FourierDecayAlt.Qr
 

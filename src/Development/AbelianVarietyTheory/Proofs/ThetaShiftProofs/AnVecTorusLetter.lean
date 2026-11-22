@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.TBIdemDen
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsThetaL2NormSquared
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.TBIdemDen
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcNilpotent
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUnitCharts
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD Formalism.L2.Pj Formalism.L2.PjFree Formalism.L2.Pj.QAt GlobalTheory.ArcQ GlobalTheory.Frames
@@ -84,7 +88,8 @@ theorem sum_dual_mul {E : Type} [Field E] [NumberField E] (τ ρ : E →+* ℂ) 
     ∑ i, τ ((Algebra.traceForm ℚ E).dualBasis (traceForm_nondegenerate ℚ E) (integralBasis E) i) *
       ρ (integralBasis E i) = if τ = ρ then 1 else 0 := by
   have := idempotent_evaluation E ℂ _ (integralBasis E) ρ τ
-  simpa only [TB.evAt, TB.idemOf, TB.trDual, map_sum, Algebra.TensorProduct.productMap_apply_tmul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [TB.evAt, TB.idemOf, TB.trDual, map_sum, Algebra.TensorProduct.productMap_apply_tmul,
       AlgHom.id_apply, RingHom.toRatAlgHom_apply] using this
 
 end GlobalTheory.ArcQ.TorusLetter
@@ -158,7 +163,8 @@ theorem anVec_torusLetter : Out.GlobalFnsSt → ∀ (E : Type) [Field E] [Number
       rw [hνb]
       exact (ZH.CrdCalc.valR_spMap _ _ U (hzF _ h0.1 ▸ hU0)).2 f
     refine (congrArg TrivSqZeroExt.snd ((ZH.CrdCalc.valR_eq _ U hU f).symm.trans hl)).trans ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Eq.trans rfl (Finset.sum_eq_zero fun i _ => ?_).symm
     rw [map_smul, fderiv_of_exp hdf _ 0 fun s => ?_]
     · simp
@@ -206,7 +212,8 @@ theorem anVec_torusLetter : Out.GlobalFnsSt → ∀ (E : Type) [Field E] [Number
               (congrArg Units.val (hv0 x z J hJ)).symm))) j
           (by rw [hφ]; exact hj0)).2
     refine TrivSqZeroExt.ext (by simpa using hf) ?_
-    rw [hd x j hj, hf, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hd x j hj, hf, map_sum]
     simp only [TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inl, TrivSqZeroExt.snd_inr, zero_add, map_smul, hder,
       smul_eq_mul, xiVal, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_

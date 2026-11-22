@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -9,6 +13,7 @@ namespace GlobalTheory.QNF
 
 open Formalism.BasicNotions Formalism.L2.DIV
 
+open Classical in
 def nfMat {E : Type} [Field E] (n c : ℕ) (q : E) (nn : Fin c → ℤ) (z : Fin n → E) : Matrix (Fin (n + c)) (Fin (n + c)) E :=
   fun a b =>
     if hb : b.1 < n then (if a = b then 1 else 0)

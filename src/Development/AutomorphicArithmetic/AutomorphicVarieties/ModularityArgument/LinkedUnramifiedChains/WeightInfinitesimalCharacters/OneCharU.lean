@@ -1,8 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.AdmissibleUnitaryThreePoint
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.PtHypU
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.OneChar
+module
 
-open private chHom gd_chHom exists_unram isPush_push trace_reducible_three_dim from Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.OneChar
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.AdmissibleUnitaryThreePoint
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.WeightInfinitesimalCharacters.PtHypU
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.OneChar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Z.J
@@ -35,16 +37,23 @@ private theorem oneChar_unramU (hC : U3.CohInp) (hLM : LemmaM) (hLM' : LemmaM') 
   have htr : ∀ f, trDiff D.η D.Ψ S.r.hom (galEmb ℚ K Ω σ) f =
       (ρ f σ : Matrix (Fin 3) (Fin 3) (Qbar l)).trace - t := by
     intro f
-    rw [trDiff, trace_reducible_three_dim, ht]
+    let g := galEmb ℚ K Ω σ
+    have htrace : (r0 D.η D.Ψ g).mat.trace = (D.Ψ g : c.O) + 1 + ((D.Ψ g)⁻¹ : c.Oˣ).val := by
+      simp [GG.mat, tor_val, Matrix.trace_diagonal, Fin.sum_univ_three, wt1]
+    rw [trDiff, htrace, ht]
     congr 1
     exact AddMonoidHom.map_trace (f : S.R →+* PadicAlgCl l) _
-  have hadm : ∀ f, TwoPt D.η S.r.hom f → Adm3U ι e N (ρ f) ∨ Af.Adm2 ι e (N * (discr K).natAbs) (ρ f) := by
+  have hadm : ∀ f, TwoPt (η := D.η) S.r.hom f → Adm3U ι e N (ρ f) ∨ Af.Adm2 ι e (N * (discr K).natAbs) (ρ f) := by
     intro f hf
     have hp := isPt_push D hM S f hf.1
+    have hpush {O Γ R κ : Type} [CommRing O] [Group Γ] [CommRing R] [Algebra O R] [CommRing κ]
+        [Algebra O κ] (a : R →ₐ[O] κ) (r : Γ →* GG (m := 3) (R := R)) :
+        IsPush (a.comp (entAlg O r).val) r (push a r) :=
+      fun g => ⟨rfl, fun a b => ⟨Algebra.subset_adjoin ⟨g, a, b, rfl⟩, rfl⟩⟩
     rcases (twoPt_shape S hG.l_odd hM f hf).1 with h | h
-    · exact Or.inl (hAd D hM S f hf.1 (hmult f) ι h (hB U S _ _ _ (isPush_push f _) h))
+    · exact Or.inl (hAd D hM S f hf.1 (hmult f) ι h (hB U S _ _ _ (hpush f _) h))
     · exact Or.inr (admissible_of_typeII hC D hM hp ι h
-        (hW U S _ _ (isPush_push f _) h (typeII_facts hC D hM hp h).1))
+        (hW U S _ _ (hpush f _) h (typeII_facts hC D hM hp h).1))
   obtain ⟨hlen, T, hT, hTo, hle⟩ := model_upper S M hG.l_odd hM hLM (hFin U S)
     (Z.J.ptHyp_ofU hC hK hRI hRII D hM S ι hB hW M.x₀ M.base) (galEmb ℚ K Ω σ) hσ
     fun f hf => by rw [htr]; exact sub_ne_zero.2 (hne _ (hadm f hf))
@@ -65,25 +74,3 @@ private theorem oneChar_unramU (hC : U3.CohInp) (hLM : LemmaM) (hLM' : LemmaM') 
   · rw [Finset.sum_image fun f hf f' hf' h => hinj f hf f' hf' ⟨1, fun s => by rw [h, one_mul, inv_one, mul_one]⟩]
     simp only [← htr]
     exact (Chr.nrm_mono l hV hlen).trans hle
-
-theorem UpperTheory.V.Z.J.oneCharU :
-    U3.CohInp → LemmaM → LemmaM' → LemmaP → Z.Kato.KatoTwo → Th.RigI → Th.RigII → AdmI → Aut.AutomorphyUnramifiedCoefficients → OneCharU := by
-  intro hC hLM hLM' hLP hK hRI hRII hAd hA Ω _ _ _ K _ _ _ _ _ l _ c N _ e ψ hG ι σ t ht hne
-  obtain ⟨c', ψ', he, hψ⟩ := exists_unram c ψ hG.ord
-  have h1 : chHom c.O.val.toRingHom ψ = chHom c'.O.val.toRingHom ψ' := MulChar.ext fun a => hψ a
-  have hG' : GD Ω K l e ψ' :=
-    (gd_chHom c'.O.val.toRingHom Subtype.val_injective ψ').1
-      (h1 ▸ (gd_chHom c.O.val.toRingHom Subtype.val_injective ψ).2 hG)
-  obtain ⟨h2, h3⟩ := coefIndep Ω l c c' N e ψ ψ' hψ
-  have h4 : ∀ g, Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom (Chr.Psi l e (Chr.dirG ℚ Ω ψ) g) =
-      Units.map (algebraMap c'.O (PadicAlgCl l)).toMonoidHom (Chr.Psi l e (Chr.dirG ℚ Ω ψ') g) := by
-    intro g
-    simp only [Chr.Psi, MonoidHom.mul_apply, MonoidHom.zpow_apply, map_mul, map_zpow]
-    congr 1
-    exact Units.ext (hψ _)
-  have h5 := congrArg Units.val (h4 (galEmb ℚ K Ω σ))
-  have h6 := congrArg (fun u : (PadicAlgCl l)ˣ => (u⁻¹).val) (h4 (galEmb ℚ K Ω σ))
-  rw [Ne, h2, h3]
-  refine oneChar_unramU hC hLM hLM' hLP hK hRI hRII hAd hA Ω K l c' N e ψ' he hG' ι σ t ?_ hne
-  rw [ht, map_add, map_add, map_add, map_add, map_one, map_one]
-  exact congrArg₂ (· + ·) (congrArg (· + 1) h5) h6

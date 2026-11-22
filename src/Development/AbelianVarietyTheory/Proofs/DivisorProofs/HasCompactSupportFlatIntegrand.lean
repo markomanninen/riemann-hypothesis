@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FlatTensorVacuum
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 
@@ -7,7 +11,7 @@ noncomputable section
 namespace GlobalTheory.FunObj
 open GlobalTheory.SplitWeil GlobalTheory.SplitFlip GlobalTheory.RootEx
 
-variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {G : Grid k}
+variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {G : Grid (k := k)}
 
 theorem isLocallyConstant_of_isTensor {ϖ : kˣ} {e : ℕ} {γ : List Edge} {T : G.Args → ℂ} (hT : G.IsTensor ϖ e γ T) :
     IsLocallyConstant T := by
@@ -60,17 +64,17 @@ theorem continuous_phase (x : ColArgs G) : Continuous (phase x) := by
     · exact continuous_const
   · exact continuous_const
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem exists_fill_entry (hs : 1 ≤ G.s) (x : ColArgs G) (y : RowArgs G) (j : Fin (G.m - 1))
     (rs : StepVar (Fin (topRank G (j + 1))) (G.m - 2 - j) (Fin (topRank G j))) :
     ∃ a b c, ∀ e : Vars G, e j rs = fill hs x y e (.theta G.m j) a b - c := by
   refine ⟨frame (b := G.rank (G.m, j)) (by have := topRank_add hs j; have := j.2; omega) rs.1.2,
     frame (b := G.rank (G.m, j + 1)) (by have := topRank_add hs (j + 1); have := j.2; omega) rs.1.1,
     basePt _ (x j) rs.1.1 rs.1.2, fun e => ?_⟩
-  rw [fill_theta, transpose_apply, downMap, dif_pos j.2]
+  rw [fill_theta, transpose_apply, downMap, dite_eq_left j.2]
   simp only [reindex_apply, submatrix_apply, Equiv.symm_apply_apply, stepPt, Matrix.add_apply, of_apply]
-  rw [dif_pos rs.2, add_sub_cancel_left]
+  rw [dite_eq_left rs.2, add_sub_cancel_left]
 
 theorem exists_isCompact_of_mul_mem {m n : Type*} [Fintype m] [DecidableEq m] [Fintype n] [DecidableEq n]
     (A : GL m k) (B : GL n k) :

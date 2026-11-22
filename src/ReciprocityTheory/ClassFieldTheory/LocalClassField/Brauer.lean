@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.InflationH2InjectiveOfSameRamification
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.BrBound
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.InvRes
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfMemBrKerOfCoprime
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+module
+
+public import Mathlib
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsIntEKMulVbar
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.GalBasic
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.InflationH2InjectiveOfSameRamification
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.BrBound
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.InvRes
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.EqZeroOfMemBrKerOfCoprime
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.FinCoh
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -56,9 +60,9 @@ theorem inflation_unramified_closure_h2_bijective (hK : FiniteDimensional ℚ_[p
   rw [BrKer_eq_BrLK_Kn hK hL h] at hx
   exact BrLK_mono (Kn_le_Kur (degLK_pos hL)) hx
 
+
 open Classical in
 variable (p K) in
-
 noncomputable def invBr : Br p K →+ QZ :=
   if h : ∃ f : Br p K →+ QZ, ∀ x, f ((layerInf p K (MaximalUnramifiedExtension p K)).hom.H 2 x) = invUr p K x then h.choose else 0
 
@@ -70,7 +74,7 @@ theorem invBr_layerInf (hK : FiniteDimensional ℚ_[p] K) (x : (urT p K).H 2) :
     show invUr p K (e.symm (e x)) = _
     rw [LinearEquiv.symm_apply_apply]
   unfold invBr
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec x
 
 theorem invBr_bijective (hK : FiniteDimensional ℚ_[p] K) : Bijective (invBr p K) := by
@@ -90,8 +94,5 @@ theorem invBr_res (hK : FiniteDimensional ℚ_[p] K) (hL : FiniteDimensional ℚ
   obtain ⟨y, hy, hinv⟩ := exists_res_ur hK hL h z
   rw [hy, invBr_layerInf hL, invBr_layerInf hK, hinv]
 
-variable (p K) in
-
-noncomputable def h2EquivBrauer : H2 (kbarRep p K) ≃+ Br p K := (lowEquiv2 (kbarT p K)).symm.toAddEquiv
 
 end ReciprocityTheory.DiscreteGroups.LocalClassField

@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HtBijOfParts
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HodgeC
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.HTSpecAllHodge
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HtBijOfParts
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.DifferentialFormsCech.HodgeC
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.HTSpecAllHodge
+
+@[expose] public section
 
 set_option autoImplicit false
 

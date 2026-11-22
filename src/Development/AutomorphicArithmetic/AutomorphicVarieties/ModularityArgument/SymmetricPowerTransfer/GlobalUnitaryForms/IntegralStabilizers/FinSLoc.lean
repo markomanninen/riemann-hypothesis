@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,11 +97,11 @@ theorem isIntegral_coords {a : Lsq K Δ} (h : IsIntegral O a) {m : K} (hm : IsIn
     IsIntegral O (2 * m * Δ * a.re) ∧ IsIntegral O (2 * m * Δ * a.im) := by
   have inj : Function.Injective (algebraMap K (Lsq K Δ)) := fun x y h => by simpa using congrArg QuadraticAlgebra.re h
   have h1 : IsIntegral O (2 * a.re) := by
-    rw [← isIntegral_algebraMap_iff inj]
+    rw [← isIntegral_algebraMap_iff (B := Lsq K Δ)]
     convert h.add (isIntegral_star h) using 1
     ext <;> simp; ring
   have h2 : IsIntegral O (Δ * (2 * a.im) ^ 2) := by
-    rw [← isIntegral_algebraMap_iff inj]
+    rw [← isIntegral_algebraMap_iff (B := Lsq K Δ)]
     convert (h.sub (isIntegral_star h)).pow 2 using 1
     ext <;> simp [sq] <;> ring
   refine ⟨by rw [show 2 * m * Δ * a.re = m * Δ * (2 * a.re) by ring]; exact hmΔ.mul h1, ?_⟩

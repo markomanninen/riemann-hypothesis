@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealEqJointEigen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaximalIdealEqJointEigen
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -72,9 +76,9 @@ private lemma coeffs_eq_zero_of_linearIndependent_of_injective {O K X : Type} [C
     · exact hc0
     · exact htail' k
 
+
 set_option autoImplicit false in
 open MvPolynomial in
-
 theorem _root_.GlobalTheory.ExpCover.values_mem_of_local {l : ℕ} [Fact l.Prime] {O I G V W : Type} [CommRing O]
     [IsDomain O] [IsPrincipalIdealRing O] [Mul G]
     [AddCommGroup V] [Module O V] [Module.Finite O V] [AddCommGroup W] [Module (PadicAlgCl l) W]
@@ -178,7 +182,8 @@ theorem _root_.GlobalTheory.ExpCover.values_mem_of_local {l : ℕ} [Fact l.Prime
               (fun g => b (((p • x : M) : G → V) g)) := by
           funext g
           rw [mul_comm, mul_smul, hX]
-          simp [_root_.GlobalTheory.ExpCover.transOp, map_sum, map_smulₛₗ]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [_root_.GlobalTheory.ExpCover.transOp, map_sum, map_smulₛₗ]
         rw [e]; exact hS i _ hp
     have hZS : ∀ z ∈ Z, (fun g => b ((z : G → V) g)) ∈ S := by
       intro z hz
@@ -206,7 +211,8 @@ theorem _root_.GlobalTheory.ExpCover.values_mem_of_local {l : ℕ} [Fact l.Prime
       have hfk : ∀ j g, f j g = ∑ k, emb ((L ∘ B) j (g, k)) • b (w k) := by
         intro j g
         have e := congrArg b (w.sum_repr ((((B j : Z) : M) : G → V) g))
-        rw [map_sum] at e
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum] at e
         simp only [map_smulₛₗ] at e
         show b ((((B j : Z) : M) : G → V) g) = _
         rw [← e]
@@ -233,11 +239,13 @@ theorem _root_.GlobalTheory.ExpCover.values_mem_of_local {l : ℕ} [Fact l.Prime
           simp [ρ, φ, LinearMap.toMatrixAlgEquiv_apply]
         calc emb (cst i) • ∑ s ∈ tr i, f j (g * s)
             = b ((((X i : MvPolynomial I O) • ((B j : Z) : M) : M) : G → V) g) := by
-              rw [hX]; simp [f, map_sum, map_smulₛₗ]
+              set_option synthInstance.maxHeartbeats 100000 in
+                rw [hX]; simp [f, map_sum, map_smulₛₗ]
           _ = b (((((X i : MvPolynomial I O) • B j : Z) : M) : G → V) g) := rfl
           _ = b ((((∑ k, ρ (X i) k j • B k : Z) : M) : G → V) g) := by rw [e1]
           _ = ∑ k, emb (ρ (X i) k j) • f k g := by
-              simp [f, map_sum, map_smulₛₗ, Submodule.coe_sum, Finset.sum_apply]
+              set_option synthInstance.maxHeartbeats 100000 in
+                simp [f, map_sum, map_smulₛₗ, Submodule.coe_sum, Finset.sum_apply]
       calc emb (cst i) • ∑ s ∈ tr i, v (g * s)
           = ∑ j, c j • (emb (cst i) • ∑ s ∈ tr i, f j (g * s)) := by
             simp only [hv_apply, Finset.smul_sum]

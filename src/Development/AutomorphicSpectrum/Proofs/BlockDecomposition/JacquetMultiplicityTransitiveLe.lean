@@ -1,17 +1,22 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetModuleInStagesRefinedBlocks
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientRelativeJacquetBlockLevi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ParabolicModulusSqrtCharRefinedBlocksInStages
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinSigmaFinEquivSymmStrictMonoToLex
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JhMultMulLeOfSteps
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyCosocles.LUnlinkedComm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetModuleInStagesRefinedBlocks
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RelativeJacquetPiExteriorTensorEquivNormalized
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSubquotientRelativeJacquetBlockLevi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PiExteriorTensorFlattenedIndexEquivNested
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ParabolicModulusSqrtCharRefinedBlocksInStages
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FinSigmaFinEquivSymmStrictMonoToLex
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JordanHolderMultiplicityJacquetEqBorelJacquetOfS
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JhMultMulLeOfSteps
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIrreducibleSubquotientTwoBlockConstituents
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult Zc Zc.Cos GlobalTheory.JacStages
 
 noncomputable section
@@ -57,7 +62,6 @@ theorem jhMult_extLeft_add_le {ρ : Representation ℂ G V} {S T : Subrepresenta
     (Module.Flat.rTensor_preserves_injective_linearMap _ (Submodule.inclusion_injective h))
     (LinearMap.rTensor_surjective W (Submodule.Quotient.mk_surjective _)) fun x => ?_
   induction x with
-  | zero => simp
   | add x y hx hy => simpa using congrArg₂ (· + ·) hx hy
   | tmul v w =>
     show (p (ι v)) ⊗ₜ[ℂ] w = 0
@@ -75,7 +79,6 @@ theorem jhMult_extRight_add_le {ρ : Representation ℂ H V} {S T : Subrepresent
     (Module.Flat.lTensor_preserves_injective_linearMap _ (Submodule.inclusion_injective h))
     (LinearMap.lTensor_surjective W (Submodule.Quotient.mk_surjective _)) fun x => ?_
   induction x with
-  | zero => simp
   | add x y hx hy => simpa using congrArg₂ (· + ·) hx hy
   | tmul v w =>
     show v ⊗ₜ[ℂ] (p (ι w)) = 0
@@ -135,7 +138,7 @@ theorem piTensor_cons_equiv {s : ℕ} {Γ X : Fin (s + 1) → Type} [∀ a, Grou
   refine ⟨Representation.Equiv.mk (tensorCons X) fun g => ?_⟩
   refine TensorProduct.ext' fun v w => ?_
   induction w using PiTensorProduct.induction_on with
-  | add x y hx hy => simp only [TensorProduct.tmul_add, map_add, hx, hy]
+  | add x y hx hy => simp only [TensorProduct.tmul_add, map_add (f := _), hx, hy]
   | smul_tprod c y =>
     simp only [TensorProduct.tmul_smul, map_smul]
     congr 1
@@ -328,7 +331,7 @@ theorem refinePlace_stdBlocks : ∀ (s n : ℕ) (d t : Fin s → ℕ) (d' : ∀ 
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem jmL_eq_jm {L N : ℕ} (W : List (IrrGL k)) (f : Fin L → IrrGL k) (hW : W = List.ofFn f)
+theorem jmL_eq_jm {L N : ℕ} (W : List (IrrGL (k := k))) (f : Fin L → IrrGL (k := k)) (hW : W = List.ofFn f)
     (hd : ∑ a, (f a).1 = N) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V) : jmL W π = jm f hd π := by
   have hL : W.length = L := by rw [hW, List.length_ofFn]
@@ -343,8 +346,8 @@ theorem jmL_eq_jm {L N : ℕ} (W : List (IrrGL k)) (f : Fin L → IrrGL k) (hW :
 end Words
 
 theorem jm_mul_prod_jmL_le : ∀ {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k],
-    GlobalTheory.Published.IrreducibleAdmissibleGL → ∀ {g N : ℕ} (y : Fin g → IrrGL k) (hy : ∑ b, (y b).1 = N)
-    (Wb : Fin g → List (IrrGL k)) {V : Type} [AddCommGroup V] [Module ℂ V]
+    GlobalTheory.Published.IrreducibleAdmissibleGL → ∀ {g N : ℕ} (y : Fin g → IrrGL (k := k)) (hy : ∑ b, (y b).1 = N)
+    (Wb : Fin g → List (IrrGL (k := k))) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin N) k) V), IsSmooth π → HasFiniteLength π →
     (∀ b, ∑ a, ((Wb b).get a).1 = (y b).1) →
     jm y hy π * ∏ b, jmL (Wb b) (y b).rep ≤ jmL (List.ofFn Wb).flatten π := by
@@ -353,7 +356,7 @@ theorem jm_mul_prod_jmL_le : ∀ {k : Type} [Field k] [ValuativeRel k] [Topologi
   let d : Fin g → ℕ := fun b => (y b).1
   let t : Fin g → ℕ := fun b => (Wb b).length
   let d' : ∀ a, Fin (t a) → ℕ := fun a b => ((Wb a).get b).1
-  let f : Fin (∑ a, t a) → IrrGL k := fun c => (Wb (finSigmaFinEquiv.symm c).1).get (finSigmaFinEquiv.symm c).2
+  let f : Fin (∑ a, t a) → IrrGL (k := k) := fun c => (Wb (finSigmaFinEquiv.symm c).1).get (finSigmaFinEquiv.symm c).2
   let e : (Σ a, Fin (d a)) ≃ Fin N := stdBlocks d hy
   let e' : ∀ a, (Σ b, Fin (d' a b)) ≃ Fin (d a) := fun a => stdBlocks (d' a) (hW a)
   have hf : ∑ c, d' (finSigmaFinEquiv.symm c).1 (finSigmaFinEquiv.symm c).2 = N := by

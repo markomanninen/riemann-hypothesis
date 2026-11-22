@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+
+@[expose] public section
 
 open UpperTheory.V.Af.CohB in
 theorem UpperTheory.absolute_bound_of_partial_bound_of_orbit_bound :

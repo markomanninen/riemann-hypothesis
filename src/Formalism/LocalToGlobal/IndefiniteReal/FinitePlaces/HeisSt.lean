@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IntegrableOnOfPeriodic
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
-import Formalism.LocalToGlobal.IndefiniteReal.PHeisThC
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IntegrableOnOfPeriodic
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.TwoSplitIdem
+public import Formalism.LocalToGlobal.IndefiniteReal.PHeisThC
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem trace_fst_eq_zero (z : AE D) (hz : infPart D z = 0) :
     rw [← Formalism.IndefR.PHeisTh.repr_fst]
     have : Algebra.TensorProduct.map (fstA D.host.F) (AlgHom.id D.host.F D.host.E) z = 0 := hz
     rw [this, map_zero]; rfl
-  rw [← (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).sum_repr z, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).sum_repr z, map_sum, map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
   rw [map_smul, smul_eq_mul, map_mul]
   have : (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).repr z k = Formalism.IndefR.PHeisFC.cE D.host.F D.host.E z k := rfl
@@ -34,7 +39,8 @@ theorem trace_snd_eq_zero (z : AE D) (hz : finPart D z = 0) :
     rw [← Formalism.IndefR.PHeisTh.repr_snd]
     have : Algebra.TensorProduct.map (sndA D.host.F) (AlgHom.id D.host.F D.host.E) z = 0 := hz
     rw [this, map_zero]; rfl
-  rw [← (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).sum_repr z, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).sum_repr z, map_sum, map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
   rw [map_smul, smul_eq_mul, map_mul]
   have : (Formalism.IndefR.PHeisFC.bA D.host.F D.host.E).repr z k = Formalism.IndefR.PHeisFC.cE D.host.F D.host.E z k := rfl
@@ -46,13 +52,15 @@ set_option synthInstance.maxHeartbeats 400000 in
 theorem infPart_hO (u w : MO S T) (hu : u.map (infPart D) = 0) : infPart D (hO S T u w) = 0 := by
   have h0 : ∀ d a, infPart D (u d a) = 0 := fun d a => congrFun (congrFun hu d) a
   unfold hO
-  simp only [map_sum (infPart D), map_mul (infPart D), h0, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum (infPart D), map_mul (infPart D), h0, mul_zero, Finset.sum_const_zero]
 
 set_option synthInstance.maxHeartbeats 400000 in
 theorem finPart_hO (u w : MO S T) (hu : u.map (finPart D) = 0) : finPart D (hO S T u w) = 0 := by
   have h0 : ∀ d a, finPart D (u d a) = 0 := fun d a => congrFun (congrFun hu d) a
   unfold hO
-  simp only [map_sum (finPart D), map_mul (finPart D), h0, mul_zero, Finset.sum_const_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum (finPart D), map_mul (finPart D), h0, mul_zero, Finset.sum_const_zero]
 
 set_option synthInstance.maxHeartbeats 200000 in
 theorem symplO_fst_eq_zero (u w : MO S T) (hu : u.map (infPart D) = 0) : fstA D.host.F (symplO S T u w) = 0 := by
@@ -73,7 +81,7 @@ theorem symplOH_snd_eq_zero (u w : MO S T) (hu : u.map (finPart D) = 0) : sndA D
 def sndSympl (w : MO S T) : MO S T →+ Af D.host.F where
   toFun u := sndA D.host.F (symplO S T u w)
   map_zero' := by rw [symplO_zero_left, map_zero]
-  map_add' u u' := by rw [symplO_add_left, map_add]
+  map_add' u u' := by rw [symplO_add_left, map_add (f := _)]
 
 theorem heisStable : HeisStable D := by
   intro ψ hψ S T w f hf
@@ -114,7 +122,7 @@ theorem heisStable : HeisStable D := by
     let s : (Fin k → ℝ) →+ Ainf D.host.F :=
       { toFun := fun t => fstA D.host.F (symplOH S T (L t) w)
         map_zero' := by simp only [map_zero]; unfold symplOH; rw [symplO_zero_left, mul_zero, map_zero]
-        map_add' := fun t t' => by simp only [map_add]; rw [symplOH_add_left, map_add] }
+        map_add' := fun t t' => by simp only [map_add (f := _)]; rw [symplOH_add_left, map_add (f := _)] }
     have hs : Continuous s := continuous_fst.comp ((cont_symplOH_left S T w).comp hL)
     have e : (fun t => heisO ψ S T w f (x + L t)) =
         fun t => ψ (symplOH S T x w) * ψ (pairA D.host.F (s t) 0) * f (x + w + L t) := by
@@ -125,12 +133,6 @@ theorem heisStable : HeisStable D := by
       rw [symplOH_add_left, AddChar.map_add_eq_mul, ep, show x + L t + w = x + w + L t by abel]
     rw [e]
     exact (contDiff_const.mul (Formalism.IndefR.PHeisTh.psiSmooth D ψ hψ k s hs)).mul (hf.smooth k L hL hL0 (x + w))
-
-theorem svnSchurO_all_of_heis (hK : KernelId D) (h : HeisStable D) : SvNSchurOAll D :=
-  svnSchurO_all_of hK h
-
-theorem svnSchurO_all_of_char (hC : CharComplete D) : SvNSchurOAll D :=
-  svnSchurO_all_of_heis (kernelId_of hC) heisStable
 
 end Formalism.IndefR.Fin
 

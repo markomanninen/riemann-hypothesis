@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.TrivOfLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG
 open UpperTheory.Gal.CertificateRingHomMap (GUf Plc comp lev GLw IsCen mat sim)
@@ -42,7 +46,7 @@ theorem UpperTheory.Gal.W2.Seed.pActsConv :
       unfold conv
       rw [smul_finsum]
       congr 1
-      funext x
+      funext i
       simp only [Pi.smul_apply, smul_eq_mul]
       ring
     rw [hlin, conv_tf hA T ψ c h h' hψ hh', smul_smul, mul_comm c' c]

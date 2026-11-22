@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.VFEqEmultiplicity
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.VFEqEmultiplicity
+
+@[expose] public section
 
 open NumberField Module IsDedekindDomain Formalism.HermitianLattices.Ext.L3
 
@@ -10,7 +14,7 @@ namespace PI.UnitaryGroupMassFormula.CntFormula.R6
 theorem count_coe_eq_multiplicity {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
     [IsFractionRing R K] (v : HeightOneSpectrum R) {I : Ideal R} (hI : I ≠ ⊥) :
     FractionalIdeal.count K v (I : FractionalIdeal (nonZeroDivisors R) K) = (multiplicity v.asIdeal I : ℤ) := by
-  rw [FractionalIdeal.count_coe K v hI, Ideal.count_associates_factors_eq hI v.isPrime v.ne_bot,
+  rw [FractionalIdeal.count_coeIdeal K v hI, Ideal.count_associates_factors_eq hI v.isPrime v.ne_bot,
     HeightOneSpectrum.count_normalizedFactors_eq_multiplicity hI v]
 
 theorem eq_of_count_eq {R K : Type*} [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
@@ -27,7 +31,7 @@ def belowP {K F : Type} [Field K] [NumberField K] [Field F] [NumberField F] [Alg
   ne_bot := by
     intro h
     have hmax : (P.asIdeal.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P.asIdeal
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal P.asIdeal
     exact Ring.ne_bot_of_isMaximal_of_not_isField hmax (NumberField.RingOfIntegers.not_isField F) h
 
 theorem exists_above {K F : Type} [Field K] [NumberField K] [Field F] [NumberField F] [Algebra F K]
@@ -40,7 +44,7 @@ theorem exists_above {K F : Type} [Field K] [NumberField K] [Field F] [NumberFie
   have hQ0 : Q ≠ ⊥ := by
     rintro rfl
     apply v.ne_bot
-    rw [← hQc, ← RingHom.ker_eq_comap_bot,
+    rw [← hQc, Ideal.under_def, ← RingHom.ker_eq_comap_bot,
       (RingHom.injective_iff_ker_eq_bot _).mp (FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K))]
   refine ⟨⟨Q, hQ.isPrime, hQ0⟩, ?_⟩
   ext1
@@ -53,11 +57,11 @@ theorem norm_mass_assembly : NormAssembly := by
 
   have hcJ : ∀ P : HeightOneSpectrum (𝓞 K), FractionalIdeal.count K P J =
       ((P.asIdeal.ramificationIdx (𝓞 F) * wv (belowP P) : ℕ) : ℤ) := fun P =>
-    hc _ P (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P.asIdeal) rfl
+    hc _ P (Ideal.isMaximal_under_of_isIntegral_of_isMaximal P.asIdeal) rfl
   have he : ∀ P : HeightOneSpectrum (𝓞 K), P.asIdeal.ramificationIdx (𝓞 F) ≠ 0 := by
     intro P
     haveI := P.isPrime
-    exact (Ideal.ramificationIdx_pos P.asIdeal (𝓞 F)).ne'
+    exact (Ideal.ramificationIdx_pos (R := 𝓞 F) P.asIdeal).ne'
 
   have hfinJ := FractionalIdeal.finite_factors (K := K) J
   have hsupp : {v : HeightOneSpectrum (𝓞 F) | wv v ≠ 0}.Finite := by

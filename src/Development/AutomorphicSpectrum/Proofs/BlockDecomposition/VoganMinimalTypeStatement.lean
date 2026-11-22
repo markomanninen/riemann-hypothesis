@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.DiscreteSeriesHilbert.StepSqInt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KTypesAboveOfDsClass
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.DiscreteSeries.DiscreteSeriesCovers.DiscreteSeriesHilbert.StepSqInt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KTypesAboveOfDsClass
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.DiscreteSeries
 
@@ -78,8 +82,8 @@ private lemma dot_nonneg_sum_root_of_antitone {n : ℕ} (v : Fin n → ℝ) (c :
   · simp [h0]
   · exact mul_nonneg (Nat.cast_nonneg _) (sub_nonneg.mpr (hmono a b (hc a b h0)))
 
-open GlobalTheory.LowestKTypeDetermines in
 
+open GlobalTheory.LowestKTypeDetermines in
 theorem stepVogan : PositivityTheory.RgDs.Hilb.StepVogan := by
   intro n ε lam η hlam hη
   obtain ⟨c, hc, rfl⟩ := hη

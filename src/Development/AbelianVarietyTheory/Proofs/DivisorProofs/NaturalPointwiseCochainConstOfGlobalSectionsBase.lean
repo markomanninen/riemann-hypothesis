@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TorsionTowersOfDivisibleGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -74,8 +79,11 @@ theorem const_of_natural : ∀ (R : Type) [CommRing R] (X : Over (Sp R)) (K : Ty
   intro R _ X K W hW hs k hk
   let al : ∀ (D : CommRingCat.{0}) (x : Spec D ⟶ X.left), Algebra R D := fun D x ↦
     (Spec.preimage (R := CommRingCat.of R) (x ≫ X.hom)).hom.toAlgebra
-  let pt : ∀ (D : CommRingCat.{0}) (x : Spec D ⟶ X.left), @Pt R _ X D _ (al D x) := fun D x ↦
-    Over.homMk x (Spec.map_preimage (R := CommRingCat.of R) (x ≫ X.hom)).symm
+  let pt : ∀ (D : CommRingCat.{0}) (x : Spec D ⟶ X.left), @Pt R _ X D _ (al D x) := fun D x ↦ by
+    letI : Algebra R D := al D x
+    refine Over.homMk (U := SpAlg R D) (V := X) x ?_
+    change x ≫ X.hom = Spec.map (Spec.preimage (x ≫ X.hom))
+    exact (Spec.map_preimage (x ≫ X.hom)).symm
   let κ : ∀ D : CommRingCat.{0}, (Spec D ⟶ X.left) → D := fun D x ↦ @k D _ (al D x) (pt D x)
   have key : ∀ (D : Type) [CommRing D] [Algebra R D] (D' : Type) [CommRing D'] [Algebra R D'] (φ : D →+* D')
       (x : Pt X D) (x' : Pt X D'), Sm W x → spMap φ ≫ x.left = x'.left → k D' x' = φ (k D x) := by

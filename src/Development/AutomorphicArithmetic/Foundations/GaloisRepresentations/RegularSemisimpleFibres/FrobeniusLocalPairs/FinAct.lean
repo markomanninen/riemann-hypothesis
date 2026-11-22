@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFactsAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobFactsAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.InflFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,7 +147,7 @@ private theorem tr_eq [Finite Γ] (ρ : Representation ℂ G V) (ι : H →* G) 
     refine Submodule.smul_mem _ _ (Submodule.sum_mem _ fun g _ => Submodule.smul_mem _ _ ?_)
     exact fx_stable ρ ι p _ (hA v hv)
   unfold GlobalTheory.BCT.twTr
-  rw [dif_pos hL, finsum_eq_sum_of_fintype, ← smul_eq_mul, ← map_smul]
+  rw [dite_eq_left hL, finsum_eq_sum_of_fintype, ← smul_eq_mul, ← map_smul]
   congr 1
   ext ⟨v, hv⟩
   simp only [LinearMap.restrict_apply, LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.comp_apply,
@@ -196,12 +200,12 @@ private theorem infl_on (rd : 𝒪[k] →+* F₀) {n : ℕ} (fb : GL (Fin n) F�
   have h : ∃ y', GeneralLinearGroup.map (algebraMap 𝒪[k] k) y' = GeneralLinearGroup.map (algebraMap 𝒪[k] k) y :=
     ⟨y, rfl⟩
   unfold infl
-  rw [dif_pos h, iota_inj (k := k) n h.choose_spec]
+  rw [dite_eq_left h, iota_inj (k := k) n h.choose_spec]
 
 private theorem infl_off (rd : 𝒪[k] →+* F₀) {n : ℕ} (fb : GL (Fin n) F₀ → ℂ) (x : GL (Fin n) k)
     (hx : x ∉ (GeneralLinearGroup.map (n := Fin n) (algebraMap 𝒪[k] k)).range) : infl rd fb x = 0 := by
   unfold infl
-  rw [dif_neg (fun h => hx (MonoidHom.mem_range.2 h))]
+  rw [dite_eq_right (fun h => hx (MonoidHom.mem_range.2 h))]
 
 end Loc
 

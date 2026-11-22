@@ -1,38 +1,42 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsOrthogonalIdempotentsIsDomainOfEtale
-import Development.EtaleCohomology.EtaleSheaves.AcycQAPf
-import Development.EtaleCohomology.EtaleSheaves.CoverPf
-import Development.EtaleCohomology.EtaleSheaves.PrimMapComp
-import Development.EtaleCohomology.EtaleSheaves.DescentPf
-import Development.EtaleCohomology.EtaleSheaves.DomOpenPf
-import Development.EtaleCohomology.EtaleSheaves.EmptyVan2
-import Development.EtaleCohomology.EtaleSheaves.EqvQAPf
-import Development.EtaleCohomology.EtaleSheaves.EtAICPf
-import Development.EtaleCohomology.EtaleSheaves.EtLiftPf
-import Development.EtaleCohomology.EtaleSheaves.FinEtSectionPf
-import Development.EtaleCohomology.EtaleSheaves.FinOpenPf
-import Development.EtaleCohomology.EtaleSheaves.GlueOf
-import Development.EtaleCohomology.EtaleSheaves.LocallyConstantH0
-import Development.EtaleCohomology.EtaleSheaves.LCBijPf
-import Development.EtaleCohomology.EtaleSheaves.LCGoodPf
-import Development.EtaleCohomology.EtaleSheaves.LCMapPf
-import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
-import Development.EtaleCohomology.EtaleSheaves.LCSurjPf
-import Development.EtaleCohomology.EtaleSheaves.LeafMVVanishPf
-import Development.EtaleCohomology.EtaleSheaves.LocDiagPf
-import Development.EtaleCohomology.EtaleSheaves.LocFormPf
-import Development.EtaleCohomology.EtaleSheaves.LocSHPf
-import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
-import Development.EtaleCohomology.EtaleSheaves.PiecesPf
-import Development.EtaleCohomology.EtaleSheaves.ProjFPf
-import Development.EtaleCohomology.EtaleSheaves.ProjGPf
-import Development.EtaleCohomology.EtaleSheaves.QAClosedPf
-import Development.EtaleCohomology.EtaleSheaves.StdCoverPf
-import Development.EtaleCohomology.EtaleSheaves.StdPBPf
-import Development.EtaleCohomology.EtaleSheaves.TorEtPf
-import Development.EtaleCohomology.EtaleSheaves.TorSecPf
-import Development.EtaleCohomology.EtaleSheaves.TwGenNZACPf
-import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ExistsOrthogonalIdempotentsIsDomainOfEtale
+public import Development.EtaleCohomology.EtaleSheaves.AcycQAPf
+public import Development.EtaleCohomology.EtaleSheaves.CoverPf
+public import Development.EtaleCohomology.EtaleSheaves.PrimMapComp
+public import Development.EtaleCohomology.EtaleSheaves.DescentPf
+public import Development.EtaleCohomology.EtaleSheaves.DomOpenPf
+public import Development.EtaleCohomology.EtaleSheaves.EmptyVan2
+public import Development.EtaleCohomology.EtaleSheaves.EqvQAPf
+public import Development.EtaleCohomology.EtaleSheaves.EtAICPf
+public import Development.EtaleCohomology.EtaleSheaves.EtLiftPf
+public import Development.EtaleCohomology.EtaleSheaves.FinEtSectionPf
+public import Development.EtaleCohomology.EtaleSheaves.FinOpenPf
+public import Development.EtaleCohomology.EtaleSheaves.GlueOf
+public import Development.EtaleCohomology.EtaleSheaves.LocallyConstantH0
+public import Development.EtaleCohomology.EtaleSheaves.LCBijPf
+public import Development.EtaleCohomology.EtaleSheaves.LCGoodPf
+public import Development.EtaleCohomology.EtaleSheaves.LCMapPf
+public import Development.EtaleCohomology.EtaleSheaves.LCSplitPf
+public import Development.EtaleCohomology.EtaleSheaves.LCSurjPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafMVVanishPf
+public import Development.EtaleCohomology.EtaleSheaves.LocDiagPf
+public import Development.EtaleCohomology.EtaleSheaves.LocFormPf
+public import Development.EtaleCohomology.EtaleSheaves.LocSHPf
+public import Development.EtaleCohomology.EtaleSheaves.PullInjOfIso
+public import Development.EtaleCohomology.EtaleSheaves.PiecesPf
+public import Development.EtaleCohomology.EtaleSheaves.ProjFPf
+public import Development.EtaleCohomology.EtaleSheaves.ProjGPf
+public import Development.EtaleCohomology.EtaleSheaves.QAClosedPf
+public import Development.EtaleCohomology.EtaleSheaves.StdCoverPf
+public import Development.EtaleCohomology.EtaleSheaves.StdPBPf
+public import Development.EtaleCohomology.EtaleSheaves.TorEtPf
+public import Development.EtaleCohomology.EtaleSheaves.TorSecPf
+public import Development.EtaleCohomology.EtaleSheaves.TwGenNZACPf
+public import Development.EtaleCohomology.EtaleSheaves.ZarLocalPf
+
+@[expose] public section
 
 namespace UpperTheory.Et.QuasiAffineEquivalence
 

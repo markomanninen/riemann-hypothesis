@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 open GlobalTheory.QLog
 
@@ -25,7 +29,7 @@ end GlobalTheory
 
 namespace GlobalTheory
 
-theorem trunc_dec : ∀ (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Algebra O A] (d : ℕ) (x : Fin d → A) (E : MvPowerSeries (Fin d) O →ₐ[O] A), IsEval p x E → ∀ (n N : ℕ) (f : MvPowerSeries (Fin d) O), E f = 0 → ∃ P : MvPolynomial (Fin d) O, (∀ α : Fin d →₀ ℕ, N ≤ α.degree → MvPolynomial.coeff α P = 0) ∧ (∀ α : Fin d →₀ ℕ, α.degree < N → MvPolynomial.coeff α P = MvPowerSeries.coeff α f) ∧ MvPolynomial.aeval x P ∈ Ideal.span (Set.range x) ^ N ⊔ Ideal.span {(p : A) ^ n} := by
+theorem trunc_dec : ∀ (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Algebra O A] (d : ℕ) (x : Fin d → A) (E : MvPowerSeries (Fin d) O →ₐ[O] A), IsEval p x E → ∀ (n N : ℕ) (f : MvPowerSeries (Fin d) O), E f = 0 → ∃ P : MvPolynomial (Fin d) O, (∀ α : Fin d →₀ ℕ, N ≤ α.degree → AddMonoidAlgebra.coeff P α = 0) ∧ (∀ α : Fin d →₀ ℕ, α.degree < N → AddMonoidAlgebra.coeff P α = MvPowerSeries.coeff α f) ∧ MvPolynomial.aeval x P ∈ Ideal.span (Set.range x) ^ N ⊔ Ideal.span {(p : A) ^ n} := by
   intro p O A _ _ _ d x E hE n N f hf
   obtain ⟨hX, hc⟩ := hE
   obtain ⟨M, hM⟩ := hc n
@@ -40,13 +44,13 @@ theorem trunc_dec : ∀ (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Algebr
     ∑ α ∈ F.filter (fun α => α.degree < N), MvPolynomial.monomial α (MvPowerSeries.coeff α f) with hP
   set Q : MvPolynomial (Fin d) O :=
     ∑ α ∈ F.filter (fun α => ¬ α.degree < N), MvPolynomial.monomial α (MvPowerSeries.coeff α f) with hQ
-  have cP : ∀ β, MvPolynomial.coeff β P = if β ∈ F ∧ β.degree < N then MvPowerSeries.coeff β f else 0 := by
+  have cP : ∀ β, AddMonoidAlgebra.coeff P β = if β ∈ F ∧ β.degree < N then MvPowerSeries.coeff β f else 0 := by
     intro β
     rw [hP, MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial]
     rw [Finset.sum_ite_eq' (F.filter _) β]
     simp only [Finset.mem_filter]
-  have cQ : ∀ β, MvPolynomial.coeff β Q = if β ∈ F ∧ ¬ β.degree < N then MvPowerSeries.coeff β f else 0 := by
+  have cQ : ∀ β, AddMonoidAlgebra.coeff Q β = if β ∈ F ∧ ¬ β.degree < N then MvPowerSeries.coeff β f else 0 := by
     intro β
     rw [hQ, MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial]
@@ -67,7 +71,8 @@ theorem trunc_dec : ∀ (p : ℕ) (O A : Type) [CommRing O] [CommRing A] [Algebr
       · simp [hαF, h]
       · simp [hαF, h]
     have hQmem : MvPolynomial.aeval x Q ∈ Ideal.span (Set.range x) ^ N := by
-      rw [hQ, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hQ, map_sum]
       refine Ideal.sum_mem _ fun α hα => aeval_monomial_mem_span_pow x N α ?_ _
       exact not_lt.1 (Finset.mem_filter.1 hα).2
     have hsplit : MvPolynomial.aeval x P = -(MvPolynomial.aeval x Q) -

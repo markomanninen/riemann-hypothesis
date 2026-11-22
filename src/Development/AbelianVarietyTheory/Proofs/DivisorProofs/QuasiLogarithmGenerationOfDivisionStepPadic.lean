@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfLinearZeroCoboundaryZeroFractionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapCoboundarySwapPullbackCommute
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfLinearZeroCoboundaryZeroFractionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MapCoboundarySwapPullbackCommute
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -45,7 +49,7 @@ theorem comb_add_mul {ι : Type} [Fintype ι] (x y : ι → O) (c : O)
     (e : ι → MvPowerSeries (Fin d) E) :
     comb (fun i => x i + c * y i) e = comb x e + algebraMap O E c • comb y e := by
   unfold comb
-  simp only [map_add, map_mul, add_smul, mul_smul, Finset.sum_add_distrib, Finset.smul_sum]
+  simp only [map_add (f := _), map_mul, add_smul, mul_smul, Finset.sum_add_distrib, Finset.smul_sum]
 
 def IntD (μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) O) (g : MvPowerSeries (Fin d) E) : Prop :=
   (∀ i, ∃ b : O, lin g i = algebraMap O E b) ∧ In (⊤ : Ideal O) (cob1 (up E μ) g)
@@ -70,11 +74,11 @@ theorem IntD.add (hμ : ∀ i, constantCoeff (μ i) = 0) {g g' : MvPowerSeries (
   · obtain ⟨b, hb⟩ := hg.1 i
     obtain ⟨b', hb'⟩ := hg'.1 i
     refine ⟨b + b', ?_⟩
-    simp only [lin, map_add] at hb hb' ⊢
+    simp only [lin, map_add (f := _)] at hb hb' ⊢
     rw [hb, hb']
   · obtain ⟨b, -, hb⟩ := hg.2 α
     obtain ⟨b', -, hb'⟩ := hg'.2 α
-    exact ⟨b + b', trivial, by rw [formalCoboundary_add (up_const hμ), map_add, hb, hb', map_add]⟩
+    exact ⟨b + b', trivial, by rw [formalCoboundary_add (up_const hμ), map_add (f := _), hb, hb', map_add (f := _)]⟩
 
 theorem IntD.smul (hμ : ∀ i, constantCoeff (μ i) = 0) (c : O) {g : MvPowerSeries (Fin d) E}
     (hg : IntD μ g) : IntD μ (algebraMap O E c • g) := by
@@ -158,8 +162,10 @@ theorem generate_of_step : ∀ (p : ℕ) [Fact p.Prime] (O E : Type) [CommRing O
           ∑ n ∈ Finset.range N, (p : E) ^ n • map (algebraMap O E) (sf (F n)) +
             (p : E) ^ N • map (algebraMap O E) T := by
         ext α
-        rw [coeff_map, hSd, hcS α, map_add, map_add, coeff_smul, coeff_map, hTd, map_sum (coeff α)]
-        simp only [coeff_smul, coeff_map, map_sum, map_mul, map_pow, map_natCast]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [coeff_map, hSd, hcS α, map_add (f := _), map_add (f := _), coeff_smul, coeff_map, hTd, map_sum (coeff α)]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [coeff_smul, coeff_map, map_sum, map_mul, map_pow, map_natCast]
       rw [h1, h2]
       linear_combination (norm := module) tele N
   have hR : f - comb Bv e - map (algebraMap O E) S = 0 := by

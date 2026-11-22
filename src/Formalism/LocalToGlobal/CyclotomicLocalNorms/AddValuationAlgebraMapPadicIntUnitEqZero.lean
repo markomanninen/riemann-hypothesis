@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CyclotomicLocalNorms.FiniteDimensionalUnramifiedSubfield
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CyclotomicLocalNorms.NormSubToZModPowVal
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.ExistsDvdQKPowSubOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,13 +63,6 @@ theorem eq_χQ_of_cyc (χ' : GQ l →* ℚ_[l]ˣ)
   refine (Padic.nonarchimedean _ _).trans ?_
   rw [norm_neg]
   exact max_le ha h2
-
-theorem χQ_cyc_of (χ' : GQ l →* ℚ_[l]ˣ)
-    (h : ∀ g : GQ l, (χ' g : ℚ_[l]) = ((cyclotomicCharacter (Om l) l g.toRingEquiv : ℤ_[l]) : ℚ_[l]))
-    (g : GQ l) (m : ℕ) (ζ : Om l) (hζ : ζ ^ (l ^ m) = 1) :
-    ∃ a : ℕ, ‖(χ' g : ℚ_[l]) - (a : ℚ_[l])‖ ≤ (l : ℝ) ^ (-(m : ℤ)) ∧ g ζ = ζ ^ a := by
-  rw [h g]
-  exact χQ_cyc g m ζ hζ
 
 section W
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SndDualLiftAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,5 @@ instance isUltrametricDist_finExt : IsUltrametricDist ↥LL.1 :=
 instance completeSpace_finExt : CompleteSpace ↥LL.1 :=
   haveI := LL.2
   FiniteDimensional.complete ℚ_[l] ↥LL.1
-
-example : invL l (S ↥(OL LL) ↥LL.1 8) →+* Ahat ↥(OL LL) ↥LL.1 l 8 := toHatS ↥(OL LL) ↥LL.1 l 8
 
 end GlobalTheory.BK

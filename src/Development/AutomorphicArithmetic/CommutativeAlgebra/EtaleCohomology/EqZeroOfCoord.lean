@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VInduction
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VInduction
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option maxHeartbeats 1000000
@@ -20,7 +24,6 @@ private theorem UpperTheory.Ru.crystallineComparison.eq_zero_of_coord {F V C : T
       TensorProduct.lid F C (LinearMap.rTensor C (b.coord i) w) := by
     intro w
     induction w with
-    | zero => simp
     | tmul x y => simp
     | add x y hx hy => simp [hx, hy]
   rw [key, h]
@@ -30,6 +33,7 @@ theorem UpperTheory.Ru.crystallineComparison.injOf :
     UpperTheory.Ru.crystallineComparison.InjOf := by
   intro l _ K B₀ ι hι hc hq G Amp hF hE hL e e' hB hP hcomp M hM j κ _ v c u hu
   obtain ⟨a⟩ := hL.ch M hM
+  set_option synthInstance.maxHeartbeats 2000000 in
   have h0 : (per l K).t ^ u • ∑ k, (show (per l K).A from c k) • e'.e a j (v k) = 0 := by
     change ((UpperTheory.Ru.crystallineComparison.tA l ^ u • ∑ k, c k • (show (M.MS j).lim from e'.e a j (v k)) : (M.MS j).lim)) = 0
     apply Subtype.ext
@@ -42,6 +46,7 @@ theorem UpperTheory.Ru.crystallineComparison.injOf :
   intro f
   apply hι
   have h2 := h1 f
-  simp only [UpperTheory.Ru.crystallineComparison.vec, map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, pow_zero, mul_one, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [UpperTheory.Ru.crystallineComparison.vec, map_sum, LinearMap.rTensor_tmul, TensorProduct.lid_tmul, pow_zero, mul_one, map_zero]
   simp only [Algebra.smul_def, map_mul, hq, hc]
   exact h2

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.TorsionDualFinite
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.TorsionDualFinite
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -10,8 +15,7 @@ open Function
 variable {n : ℕ}
 
 variable (n) in
-
-noncomputable def zmodToQZ : ZMod n →+ QZ :=
+noncomputable def zmodToQZ (n : ℕ) : ZMod n →+ QZ :=
   ZMod.lift n ⟨zmultiplesHom QZ (QZ.mk (1 / n)), by
     rw [zmultiplesHom_apply, ← QZ.mk_zsmul, QZ.mk_eq_zero_iff]
     by_cases hn : n = 0
@@ -25,7 +29,7 @@ theorem zmodToQZ_intCast (m : ℤ) : zmodToQZ n (m : ZMod n) = QZ.mk (m / n) := 
 variable [NeZero n]
 
 theorem zmodToQZ_injective : Injective (zmodToQZ n) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨m, rfl⟩ := ZMod.intCast_surjective a
   rw [zmodToQZ_intCast, QZ.mk_eq_zero_iff] at ha
@@ -59,7 +63,7 @@ noncomputable def zmodOfQZ (f : A →+ QZ) (hf : ∀ a, n • f a = 0) : A →+ 
   map_zero' := zmodToQZ_injective (by
     rw [Classical.choose_spec (exists_zmodToQZ_eq (hf 0)), map_zero, map_zero])
   map_add' a b := zmodToQZ_injective (by
-    rw [Classical.choose_spec (exists_zmodToQZ_eq (hf (a + b))), map_add, map_add,
+    rw [Classical.choose_spec (exists_zmodToQZ_eq (hf (a + b))), map_add (f := _), map_add (f := _),
       Classical.choose_spec (exists_zmodToQZ_eq (hf a)),
       Classical.choose_spec (exists_zmodToQZ_eq (hf b))])
 
@@ -118,7 +122,7 @@ theorem bijective_of_bijective_flip {X Y Z : Type*} [AddCommGroup X] [AddCommGro
       right_inv := fun g => by ext; simp }
   have : Finite (Y →+ ZMod n) := Finite.of_equiv _ e'.symm
   have hinj : Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hne
     obtain ⟨χ, hχ⟩ := zmod_exists_apply_ne_zero hX hne

@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.DualSumEqZero
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.DualSumEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_avg_notMem (W : Submodule ℂ V) {s t : kˣ} {x : V} (hx : ∀ h 
   by_contra hall
   push Not at hall
   apply hxW
-  have hsum := sum_avg ψ σ hc (t := t) hx
+  have hsum := sum_avg ψ σ (c := c) hc (t := t) hx
   have hm : ((Fintype.card (Q (c * t⁻¹) (c * s⁻¹)) : ℕ) : ℂ) • x ∈ W := by
     rw [← hsum]
     exact W.sum_mem fun f _ => hall _ (out_mem f)
@@ -64,7 +68,7 @@ theorem key_step (W : Submodule ℂ V) (hW : ∀ a, ∀ w ∈ W, σ a w ∈ W)
     obtain ⟨s', a1, a2⟩ := exists_min s1 s2
     obtain ⟨t', b1, b2⟩ := exists_max t1 t2
     refine ⟨s', t', a1.trans hs1, ht1.trans b1, fun s'' t'' h1' h2' => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact W.add_mem (h1 _ _ (h1'.trans a1) (b1.trans h2')) (h2 _ _ (h1'.trans a2) (b2.trans h2'))
   have PW : ∀ w ∈ W, P w := fun w hw => ⟨s, s, le_rfl, le_rfl, fun _ _ _ _ => avg_mem ψ σ W hW _ _ _ hw⟩
   have Pspan : ∀ z ∈ Submodule.span ℂ {z | ∃ (a : k) (y : V), z = σ a y - ((ψ (ξ * a) : Circle) : ℂ) • y},
@@ -98,8 +102,8 @@ theorem key_step (W : Submodule ℂ V) (hW : ∀ a, ∀ w ∈ W, σ a w ∈ W)
     rw [← e]; exact W.smul_mem _ h1
   exact (W.smul_mem_iff (card_ne_zero _ _)).1 hm
 
-include hc hadd in
 
+include hc hadd in
 theorem exists_character_sup_ne_top (W : Submodule ℂ V) (hW : ∀ a, ∀ w ∈ W, σ a w ∈ W)
     (hsm : ∀ v : V, ∃ s : kˣ, ∀ h ∈ ball s, σ h v = v) (hne : W ≠ ⊤) :
     ∃ ξ : k, W ⊔ Submodule.span ℂ {z | ∃ (a : k) (y : V), z = σ a y - ((ψ (ξ * a) : Circle) : ℂ) • y} ≠ ⊤ := by

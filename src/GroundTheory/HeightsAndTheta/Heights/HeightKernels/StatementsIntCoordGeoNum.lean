@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordChange
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsIntCoordChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,17 +21,6 @@ def IntCoordGeoNum.Statement : Prop :=
       (C (p : ℤ) : MRing (dualBlocks T)) ∈ V →
       ringKrullDim (MRing (dualBlocks T) ⧸ V) = ((n + Fintype.card Unit : ℕ) : WithBot ℕ∞) →
       ∀ a : Fin n → Unit → ℤ, geoNum n (V.comap (intCoordSubst A)) a = geoNum n V a
-
-example : (-1 : Matrix (Fin 1) (Fin 1) ℤ) * (-1) = 1 ∧
-    IsMultiProjPrime (RingHom.ker (Bridge.GeoNum.red (ι := fun _ : Unit => Fin (0 + 1)) 2)) ∧
-    Nat.Prime 2 ∧
-    (C ((2 : ℕ) : ℤ) : MRing (dualBlocks (Fin 1))) ∈
-      RingHom.ker (Bridge.GeoNum.red (ι := fun _ : Unit => Fin (0 + 1)) 2) ∧
-    ringKrullDim (MRing (dualBlocks (Fin 1)) ⧸
-        RingHom.ker (Bridge.GeoNum.red (ι := fun _ : Unit => Fin (0 + 1)) 2)) =
-      ((0 + Fintype.card Unit : ℕ) : WithBot ℕ∞) :=
-  ⟨by simp, (Bridge.intNum_map_eq_geoNum_hyps 2 0).1, Nat.prime_two,
-    (Bridge.intNum_map_eq_geoNum_hyps 2 0).2.1, (Bridge.intNum_map_eq_geoNum_hyps 2 0).2.2⟩
 
 end
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -21,7 +25,7 @@ theorem exists_int_eigenvector_of_stable {K V : Type*} [Field K] [AddCommGroup V
         obtain ⟨y, hy, z, hz, rfl⟩ := hx
         rw [Module.End.mem_eigenspace_iff] at hy
         have h1 : f (y + z) - (a : K) • (y + z) = f z - (a : K) • z := by
-          rw [map_add, hy, smul_add]; abel
+          rw [map_add (f := _), hy, smul_add]; abel
         rw [h1]
         refine Submodule.sub_mem _ ?_ (Submodule.smul_mem _ _ hz)
         have : (⨆ n ∈ s, f.eigenspace (n : K)) ≤ (⨆ n ∈ s, f.eigenspace (n : K)).comap f := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitTraceUnramifiedExtension
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceIntOfIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitTraceUnramifiedExtension
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TraceIntOfIsIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,9 +102,9 @@ theorem not_isRoot_cofactor : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), I
       obtain ⟨f, z, hz, hy⟩ := hgen y'
       have hy' : y' = f.eval₂ φO s + z := by
         apply IsFractionRing.injective K'.O K'.E
-        rw [hy, map_add, Polynomial.hom_eval₂, hspec]
+        rw [hy, map_add (f := _), Polynomial.hom_eval₂, hspec]
       have hres : IsLocalRing.residue K'.O y' = f.eval₂ (ψ.comp (IsLocalRing.residue K.O)) sb := by
-        rw [hy', map_add, (IsLocalRing.residue_eq_zero_iff z).2 hz, add_zero, Polynomial.hom_eval₂]
+        rw [hy', map_add (f := _), (IsLocalRing.residue_eq_zero_iff z).2 hz, add_zero, Polynomial.hom_eval₂]
         congr 1
       have hev := Polynomial.hom_eval₂ f (ψ.comp (IsLocalRing.residue K.O))
         ((F ^ m : k' →ₐ[k] k') : k' →+* k') sb
@@ -112,9 +116,9 @@ theorem not_isRoot_cofactor : ∀ (K K' : UQ) (d : ℕ) (φ : K.E →+* K'.E), I
     have hcard : Fintype.card k' ≤ Q ^ m := by
       have h1 := card_le_degree_of_subset_roots (p := (X ^ (Q ^ m) - X : k'[X])) (Z := Finset.univ) (by
         intro y _
-        rw [mem_roots (FiniteField.X_pow_card_sub_X_ne_zero (K' := k') hQm)]
+        rw [mem_roots (Polynomial.X_pow_sub_X_ne_zero (R := k') hQm)]
         simp [IsRoot, hall y])
-      rwa [FiniteField.X_pow_card_sub_X_natDegree_eq (K' := k') hQm, Finset.card_univ] at h1
+      rwa [Polynomial.natDegree_X_pow_sub_X (R := k') hQm, Finset.card_univ] at h1
     rw [hQ'] at hcard
     exact absurd hcard (not_le.2 (Nat.pow_lt_pow_right hQ1 (by omega)))
 

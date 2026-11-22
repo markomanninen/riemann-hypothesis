@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharactersFactTer
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -116,7 +120,7 @@ private theorem mul_opU_add_eq_of_mem_fixedBy {V : Type} [AddCommGroup V] [Modul
         + (Real.pi : ℂ) * Complex.I * ((altE H x a : ℝ) : ℂ) := by
     have hc : H x a - conj (H x a) = 2 * Complex.I * (((H x a).im : ℝ) : ℂ) := by
       rw [Complex.sub_conj]; push_cast; ring
-    simp only [map_add, LinearMap.add_apply, altE]
+    simp only [map_add (f := _), LinearMap.add_apply, altE]
     rw [hH x a]
     linear_combination ((Real.pi : ℂ) / 2) * hc
   have hinv : Complex.exp (-(Real.pi : ℂ) * H (z + x) a - (Real.pi : ℂ) * H a a / 2)
@@ -282,7 +286,8 @@ include hHd
 
 theorem herm_prod (hH : IsHerm H) : IsHerm H' := by
   intro x y
-  rw [hHd, hHd, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hHd, hHd, map_sum]
   exact Finset.sum_congr rfl fun i _ => hH _ _
 
 theorem altE_prod (x y : M' → ℂ) : altE H' x y = ∑ i, altE H (sl e i x) (sl e i y) := by
@@ -386,7 +391,7 @@ def powEquiv {M M' : Type} [Fintype M] [Fintype M'] (e : M' ≃ M × I) (g : (M 
   map_add' x y := by
     funext m'
     show g (sl e (e m').2 (x + y)) (e m').1 = g (sl e (e m').2 x) (e m').1 + g (sl e (e m').2 y) (e m').1
-    rw [sl_add, map_add]; rfl
+    rw [sl_add, map_add (f := _)]; rfl
   map_smul' c x := by
     funext m'
     show g (sl e (e m').2 (c • x)) (e m').1 = c * g (sl e (e m').2 x) (e m').1

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarInj
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarNumerator
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarInj
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsConeVarNumerator
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -15,7 +20,7 @@ theorem ConeVarInj.proof (hNum : ConeVarNumerator.Statement.{u}) : ConeVarInj.St
   intro F _ K _ _ ι _ P hP W hW hPW v hv
   have := hP.isPrime
   have := hW.isPrime
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   obtain ⟨B, g, h, -, hgW, hh, hc, hφ⟩ := hNum F K ι P hP W hW hPW v hv p
 
@@ -38,10 +43,11 @@ theorem ConeVarInj.proof (hNum : ConeVarNumerator.Statement.{u}) : ConeVarInj.St
       IsFractionRing.to_map_eq_zero_iff, Ideal.Quotient.eq_zero_iff_mem] at hφ
     exact hφ
   refine MvPolynomial.ext _ _ fun d => ?_
-  rw [coeff_zero]
+  simp only [AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
   by_contra hd
   have hcomp := hP.multiHomog _ hN (B + ⇑d)
-  rw [map_sum, Finset.sum_eq_single d] at hcomp
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single d] at hcomp
   · rw [((hh d).mul (hu d)).weightedHomogeneousComponent_same] at hcomp
     have hhd : h d ∈ P := (hP.isPrime.mem_or_mem hcomp).resolve_right fun hm => huW d (hPW hm)
     apply hd

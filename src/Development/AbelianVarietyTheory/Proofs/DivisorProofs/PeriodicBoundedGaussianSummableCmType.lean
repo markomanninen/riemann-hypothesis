@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.CompletedLStripBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormWt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GaussZero
+
+@[expose] public section
+
 open NumberField MeasureTheory
 
 noncomputable section
@@ -40,7 +45,7 @@ def embHom (φ : I → K →+* ℂ) : 𝓞 K →+ (I → ℂ) where
   map_add' a b := by funext i; simp [GlobalTheory.HeckeTheta.emb]
 
 theorem embHom_injective {φ : I → K →+* ℂ} (hφ : GlobalTheory.CMVal.IsCMType φ) : Function.Injective (embHom φ) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h0
   obtain ⟨i, hi⟩ := exists_one_le_norm hφ h0
@@ -48,8 +53,8 @@ theorem embHom_injective {φ : I → K →+* ℂ} (hφ : GlobalTheory.CMVal.IsCM
   rw [this, norm_zero] at hi
   exact absurd hi (by norm_num)
 
-omit [Fintype I] in
 
+omit [Fintype I] in
 theorem summable_exp_neg_mul_norm_sq {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     (L : Submodule ℤ E) [DiscreteTopology L] {a : ℝ} (ha : 0 < a) :
     Summable fun x : L ↦ Real.exp (-a * ‖(x : E)‖ ^ 2) := by

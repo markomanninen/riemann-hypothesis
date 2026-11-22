@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LagrangeExtraction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeylCellAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LagrangeExtraction
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -17,13 +21,13 @@ theorem lstN_succ (K : ℕ) (a : Fin K) (y : Fin K → ℝ) (t : ℝ) :
   unfold lstN
   rw [List.ofFn_succ]
   congr 1
-  · rw [dif_pos (by omega)]
+  · rw [dite_eq_left (by omega)]
     have e : (⟨(a : ℕ) + 1 - 1 - ((0 : Fin ((a : ℕ) + 1)) : ℕ), by omega⟩ : Fin K) = a := Fin.ext (by simp)
     rw [e, Function.update_self]
   · congr 1
     funext i
     have hi := i.isLt
-    rw [dif_pos (by simp; omega), dif_pos (by omega)]
+    rw [dite_eq_left (by simp; omega), dite_eq_left (by omega)]
     have e : (⟨(a : ℕ) + 1 - 1 - (i.succ : ℕ), by simp; omega⟩ : Fin K) = ⟨(a : ℕ) - 1 - i, by omega⟩ :=
       Fin.ext (by simp; omega)
     rw [e, Function.update_of_ne]
@@ -36,7 +40,7 @@ theorem lstN_full (K : ℕ) (z : Fin K → ℝ) : lstN K K z = List.ofFn fun b =
   unfold lstN
   congr 1
   funext b
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
   congr 1
   ext
   simp [Fin.val_rev]
@@ -67,10 +71,12 @@ theorem aaIter_rad (hRA : RadAATop) (P : M.Par) (Bs : B.RealPlaceData P.k P.r Wp
     (st : Fr.Start (Q.Pr (Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π'))) (l0 : ℕ)
     (hD : P5.IsData P Bs.z Bs.z' Bs.π Bs.π' X μ L st l0) {F0 : B.Mat P.k P.r → (Wq →L[ℂ] Wp)}
     (hF0 : KB.CptCoef Bs F0) {Ψ : Q.RadSp P.k P.r Bs.z Bs.z' Bs.π Bs.π'} (hΨ : Top.IsRadOf P Bs Ψ F0) :
-    ∀ ys : List ℝ, KB.CptCoef Bs (aaIter Bs F0 ys) ∧ Top.IsRadOf P Bs (aPIter L ys Ψ) (aaIter Bs F0 ys)
-  | [] => ⟨hF0, hΨ⟩
-  | y :: ys => by
-    obtain ⟨h1, h2⟩ := aaIter_rad hRA P Bs X μ L st l0 hD hF0 hΨ ys
+    ∀ ys : List ℝ, KB.CptCoef Bs (aaIter Bs F0 ys) ∧ Top.IsRadOf P Bs (aPIter L ys Ψ) (aaIter Bs F0 ys) := by
+  intro ys
+  induction ys with
+  | nil => exact ⟨hF0, hΨ⟩
+  | cons y ys ih =>
+    obtain ⟨h1, h2⟩ := ih
     obtain ⟨h3, h4⟩ := hRA Wp Wq P Bs X μ L st l0 y hD _ h1
     exact ⟨h3, h4 _ h2⟩
 
@@ -83,12 +89,14 @@ theorem rad_plusW (hWS : TL.WordStep) (P : M.Par) (p : KB.Pl P Wp Wq)
     ∀ ys : List ℝ, KB.CutWord P p.l0 (KB.plusW ys w) →
       P5.act ((Fr.ofWord L st (D.positionted (KB.plusW ys w))).F * P5.bTall L (D.positionted (KB.plusW ys w)))
           (Top.firstStateVector Φ) (KB.firstSt ys e) =
-        aPIter L ys (P5.act ((Fr.ofWord L st (D.positionted w)).F * P5.bTall L (D.positionted w)) (Top.firstStateVector Φ) e)
-  | [], _ => rfl
-  | y :: ys, hc => by
-    have ih := rad_plusW hWS P p X μ L st hD w Φ e ys (cutWord_tail hc)
+        aPIter L ys (P5.act ((Fr.ofWord L st (D.positionted w)).F * P5.bTall L (D.positionted w)) (Top.firstStateVector Φ) e) := by
+  intro ys
+  induction ys with
+  | nil => intro; rfl
+  | cons y ys ih =>
+    intro hc
     have h1 := rad_plus hWS P p X μ L st hD (KB.plusW ys w) y hc Φ (KB.firstSt ys e)
-    exact h1.trans (congrArg (fun Ψ => (TL.aP L (y : ℂ)).1 Ψ) ih)
+    exact h1.trans (congrArg (fun Ψ => (TL.aP L (y : ℂ)).1 Ψ) (ih (cutWord_tail hc)))
 
 end deg
 

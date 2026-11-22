@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaT
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfJ
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaT
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,9 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word}
 
 namespace BwdBetaCut
 
-variable (u u' F0 what₂) in
 
-def BHyp (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+variable (u u' F0 what₂) in
+def BHyp (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (φ : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V) : Prop :=
@@ -29,7 +33,7 @@ def BHyp (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFl
     (∃ n ∈ unipotentFrameFixers F0, (n : (VS D).V → (VS D).V) '' (Λ₂ : Set (VS D).V) = (γ.lam : Set (VS D).V)) ∧
     TermHyp (F0 := F0) Λ₂ F'₂ ∧ PD D γ.lam (lf D F0) u' (repF γ) ∧ Gval (lf D F0) (repF γ) ≠ 0
 
-def OmB {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {T' : D.host.E} (F' F₂ : LFlag (VS D) D.R.rS T')
+def OmB {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) {T' : D.host.E} (F' F₂ : LFlag (D.sp.Y 0) D.R.rS T')
     (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) : Prop :=
   star (GDl (frame F) (frame F₂) (D.R.rS + 1)) • β (Gom (frame F) (frame F')) -
       star (GDl (frame F) (frame F') (D.R.rS + 1)) • Gom (frame F) (frame F₂) ∈ Xsp F₂
@@ -39,7 +43,7 @@ end BwdBetaCut
 variable (u u' F0 what₂)
 
 def BetaRat : Prop :=
-  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (φ : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V), BHyp Zd u u' F0 what₂ γ Z F'₂ φ φ' Λ₂ →
@@ -48,7 +52,7 @@ def BetaRat : Prop :=
       W0₂ γ.lam Λ₂ (lf D F0) (repF γ) (liftF F'₂) β₀ ∧ OmB (lf D F0) (repF γ) (liftF F'₂) β₀
 
 def ScalarOf : Prop :=
-  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (φ : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V), BHyp Zd u u' F0 what₂ γ Z F'₂ φ φ' Λ₂ →
@@ -57,7 +61,7 @@ def ScalarOf : Prop :=
       Scalar₂ γ.lam Λ₂ (lf D F0) (repF γ) (liftF F'₂) β
 
 def BetaInt : Prop :=
-  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+  ∀ (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (φ : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (tLoc Zd p γ).f)
     (φ' : ∀ p, (locH Zd p).Wb (tLoc Zd p γ).f' ≃ₗ[(D.s.atP p).Ep] (locH Zd p).Wb (locF' Zd p F'₂))
     (Λ₂ : Submodule (𝓞 D.host.E) (VS D).V), BHyp Zd u u' F0 what₂ γ Z F'₂ φ φ' Λ₂ →
@@ -75,38 +79,54 @@ namespace BwdBetaCut
 
 variable {T T' : D.host.E}
 
-theorem fvec_cs' (F : LFlag (VS D) D.R.rS T) (i : Fin D.R.rS) : frame F i.castSucc = F.fl.e i := by
+theorem fvec_cs' (F : LFlag (D.sp.Y 0) D.R.rS T) (i : Fin D.R.rS) : frame F i.castSucc = F.fl.e i := by
   first
   | exact PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_castSucc F.fl i
   | simp [frame]
   | rfl
 
-theorem fvec_last' (F : LFlag (VS D) D.R.rS T) : frame F (Fin.last _) = F.fl.z := by
+theorem fvec_last' (F : LFlag (D.sp.Y 0) D.R.rS T) : frame F (Fin.last _) = F.fl.z := by
   first
   | exact PI.UnitaryGroupMassFormula.BetaLUniq.GN.fvec_last F.fl
   | simp [frame]
   | rfl
 
-theorem e_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (VS D) D.R.rS T')
+theorem e_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (D.sp.Y 0) D.R.rS T')
     (h : ∀ b, β (frame F b) = frame F₂ b) (i : Fin D.R.rS) : β (F.fl.e i) = F₂.fl.e i := by
   have hi := h i.castSucc
   rwa [fvec_cs', fvec_cs'] at hi
 
-theorem Xflag_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (VS D) D.R.rS T')
+theorem Xflag_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (D.sp.Y 0) D.R.rS T')
     (h : ∀ b, β (frame F b) = frame F₂ b) (j : ℕ) :
     (Xflag F j).map (β : (VS D).V →ₗ[D.host.E] (VS D).V) = Xflag F₂ j := by
   ext x
   rw [Submodule.mem_map_equiv]
   exact (Formalism.L2.SG.Pf.mem_xflag_of_frame (fun a => (h a).symm) j x).symm
 
-theorem Xsp_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (VS D) D.R.rS T')
+theorem Xsp_of_frame (β : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F F₂ : LFlag (D.sp.Y 0) D.R.rS T')
     (h : ∀ b, β (frame F b) = frame F₂ b) :
     (Xsp F).map (β : (VS D).V →ₗ[D.host.E] (VS D).V) = Xsp F₂ := by
   rw [← Formalism.L2.SG.FourParts.Xflag_r, ← Formalism.L2.SG.FourParts.Xflag_r]
   exact Xflag_of_frame β F F₂ h D.R.rS
 
-theorem Gom_orth (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
+theorem Gom_orth (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Gom (frame F) (frame F') ∈ orth (VS D) (Xsp F') := by
+  have om_pair (u v : Fin (D.R.rS + 1) → (VS D).V) (b : Fin (D.R.rS + 1)) :
+      (VS D).hT (Gom u v) (v b) = if b = Fin.last _ then GDl u v (D.R.rS + 1) else 0 := by
+    have key := congrFun (congrFun (Matrix.adjugate_mul (GZ u v)) (Fin.last _)) b
+    rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply] at key
+    unfold GDl
+    rw [dite_eq_left le_rfl]
+    unfold Gom
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply]
+    simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+    change (∑ a, (GZ u v).adjugate (Fin.last _) a * GZ u v a b) = _
+    rw [key]
+    rcases eq_or_ne b (Fin.last _) with hb | hb
+    · subst hb
+      simp
+    · rw [if_neg (Ne.symm hb), if_neg hb, smul_zero]
   unfold orth Xsp
   simp only [Submodule.mem_iInf, LinearMap.mem_ker]
   intro x hx
@@ -114,10 +134,10 @@ theorem Gom_orth (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
   induction hx using Submodule.span_induction with
   | mem y hy =>
     obtain ⟨i, rfl⟩ := hy
-    rw [← fvec_cs' F' i, PI.NRL.herm_eq, Formalism.L2.SG.Pf.ScalarFramePf.om_pair,
+    rw [← fvec_cs' F' i, PI.NRL.herm_eq, om_pair,
       if_neg (Fin.castSucc_lt_last i).ne, star_zero]
   | zero => simp
-  | add y z _ _ hy hz => simp [map_add, hy, hz]
+  | add y z _ _ hy hz => simp [map_add (f := _), hy, hz]
   | smul a y _ hy => simp [hy]
 
 end BwdBetaCut
@@ -134,42 +154,16 @@ theorem comb_mem {V : Type*} [AddCommGroup V] [Module D.host.E V] {X : Submodule
   rw [smul_sub]
   abel
 
-private theorem Hp_le_orth_Xsp (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLattice D.host.E Λ)
-    {T₁ T₂ : D.host.E} (F : LFlag (VS D) D.R.rS T₁) (F' : LFlag (VS D) D.R.rS T₂) :
+private theorem Hp_le_orth_Xsp (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsFullLattice D.host.E Λ)
+    {T₁ T₂ : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T₁) (F' : LFlag (D.sp.Y 0) D.R.rS T₂) :
     Hp Λ F F' ≤ orth (VS D) (Xsp F') := by
-  have hle : XLam Λ F' ≤ UU Λ F F' := by
-    unfold UU
-    exact le_sup_right.trans le_sup_left
-  have hX : Xsp F' ≤ spanE (VS D) (UU Λ F F') := by
-    refine le_trans ?_ (Submodule.span_mono (SetLike.coe_subset_coe.mpr hle))
-    intro x hx
-    have hxs : x ∈ Submodule.span D.host.E (Λ : Set (VS D).V) := by
-      rw [hΛ.span_eq_top]
-      exact Submodule.mem_top
-    obtain ⟨d, hd0, hd⟩ := Formalism.MainNotions.LatticeGluingRadicals.m_exists_smul_mem Λ hxs
-    have hdx : (algebraMap (𝓞 D.host.E) D.host.E d) • x ∈ Xsp F' := (Xsp F').smul_mem _ hx
-    rw [algebraMap_smul] at hdx
-    have hdX : d • x ∈ XLam Λ F' := by
-      unfold XLam
-      exact Submodule.mem_inf.mpr ⟨hd, by unfold toO; first | exact hdx | simpa using hdx⟩
-    have hd' : algebraMap (𝓞 D.host.E) D.host.E d ≠ 0 := by
-      first
-      | exact (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 D.host.E) D.host.E)).mpr hd0
-      | simpa using hd0
-    have hx' : x = (algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ • (d • x) := by
-      rw [← algebraMap_smul D.host.E d x, smul_smul, inv_mul_cancel₀ hd', one_smul]
-    rw [hx']
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hdX)
+  have hX : Xsp F' ≤ UUE Λ F F' :=
+    PI.UnitaryGroupMassFormula.BetaLUniq.Xsp_le_UUE' (VS D) Λ hΛ F F'
   unfold Hp UUE
   intro y hy
   simp only [orth, Submodule.mem_iInf, LinearMap.mem_ker] at hy ⊢
   intro x hx
   exact hy x (hX hx)
-
-theorem h_le_orth_second_frame (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Submodule.IsLattice D.host.E Λ) {T' : D.host.E}
-    (F' : LFlag (VS D) D.R.rS T') (hL : IsLift Λ (lf D F0)) (hL' : IsLift Λ F') :
-    Hp Λ (lf D F0) F' ≤ orth (VS D) (Xsp F') := by
-  exact Hp_le_orth_Xsp Λ hΛ _ F'
 
 end BwdBetaCut
 

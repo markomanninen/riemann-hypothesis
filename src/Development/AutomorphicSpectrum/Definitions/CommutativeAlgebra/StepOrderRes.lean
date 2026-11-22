@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ variable {C : Type} [Field C] {R : Type} [CommRing R] [Algebra R C]
 def IsFund (p : ℕ) (σ : MulChar F R) : Prop :=
   ∀ a b, σ (a + b) - σ a - σ b ∈ Ideal.span {(p : R)}
 
-variable (F) in
 
+variable (F) in
 def FStable (M : Submodule R (N → C)) : Prop :=
   ∀ a : F, ∀ g ∈ M, (fun x => g (a • x)) ∈ M
 
@@ -67,7 +71,7 @@ def idealD (p : ℕ) (M : Submodule R (N → C)) (K : Submodule F N) (t : N) (χ
       simp only [Pi.add_apply]; ring
     · exact Submodule.add_mem _ (h2 k hk) (h2' k hk)
     · convert Submodule.add_mem _ h3 h3' using 1
-      simp only [Pi.add_apply, map_add]; ring
+      simp only [Pi.add_apply, map_add (f := _)]; ring
   zero_mem' := ⟨0, Submodule.zero_mem _, fun _ _ => by simp, fun _ _ => by simp, by simp⟩
   smul_mem' := by
     rintro r c ⟨g, hg, h1, h2, h3⟩

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.EichPreserves
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.StrongApproximation.EichPreserves
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -36,7 +41,8 @@ theorem OrthProjection.proof (hT : AETopologicalRing.Statement) : OrthProjection
     · have hmap : ∀ x y : Fin N → E, inclA F E (hf c.toRingHom J x y) =
           hf (sigA c) (J.map (inclA F E)) (inclA F E ∘ x) (inclA F E ∘ y) := by
         intro x y
-        simp [hf, map_sum, map_mul, sigA_inclA_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [hf, map_sum, map_mul, sigA_inclA_apply]
       funext i
       simp only [perpProj, Function.comp_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_sub,
         map_mul, hmap]

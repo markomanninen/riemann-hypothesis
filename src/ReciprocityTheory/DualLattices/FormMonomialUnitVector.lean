@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ProdPowUnitVectorVal
+module
+
+public import ReciprocityTheory.DualLattices.ProdPowUnitVectorVal
+
+@[expose] public section
 
 noncomputable section
 

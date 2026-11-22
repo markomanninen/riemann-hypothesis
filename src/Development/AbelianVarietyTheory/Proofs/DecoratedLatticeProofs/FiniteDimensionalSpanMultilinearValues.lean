@@ -1,15 +1,19 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
 theorem finiteDimensional_span_multilinear_values :
     ∀ {ι : Type} [Fintype ι] (E : ι → Type) [∀ i, AddCommGroup (E i)] [∀ i, Module ℂ (E i)]
-      (F : Type) [AddCommGroup F] [Module ℂ F] (T : MultilinearMap ℂ E F)
+      (F : Type) [AddCommGroup F] [Module ℂ F] (T : (∀ i, E i) →ₘₗ[ℂ] F)
       (W : ∀ i, Submodule ℂ (E i)), (∀ i, FiniteDimensional ℂ (W i)) →
       FiniteDimensional ℂ (Submodule.span ℂ {f | ∃ v : ∀ i, E i, (∀ i, v i ∈ W i) ∧ f = T v}) := by
   intro ι _ E _ _ F _ _ T W hW
   have := hW
-  let T' : MultilinearMap ℂ (fun i => W i) F := T.compLinearMap (fun i => (W i).subtype)
+  let T' : (∀ i, W i) →ₘₗ[ℂ] F := T.compLinearMap (fun i => (W i).subtype)
   have hset : {f | ∃ v : ∀ i, E i, (∀ i, v i ∈ W i) ∧ f = T v} = Set.range T' := by
     ext f
     constructor

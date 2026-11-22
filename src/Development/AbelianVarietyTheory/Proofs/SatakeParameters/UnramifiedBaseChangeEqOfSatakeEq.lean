@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DataN
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BcParamEqOfSatUEq
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BcParamEqOfSatUEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,9 +111,10 @@ theorem ne_zero_of_symJ (α : Fin m → ℂˣ) (α₀ : Fin m → ℂ) (i₀ : F
     refine hli (funext fun k => ?_)
     have := h k.toAdd
     simp only [symJ, monoJ_single] at this
-    simpa [map_sum, powersHom_apply] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, powersHom_apply] using this
   have h1 := DFunLike.congr_fun e 0
-  rw [Finsupp.finset_sum_apply, Finsupp.finset_sum_apply, Finset.sum_eq_zero (s := Finset.univ)
+  rw [Finsupp.finsetSum_apply, Finsupp.finsetSum_apply, Finset.sum_eq_zero (s := Finset.univ)
     (f := fun w : Sgn m => (Finsupp.single (actJ w (fun j => (α j : ℂ)) i₀) (1 : ℂ)) 0) fun w _ =>
       Finsupp.single_eq_of_ne (zpow_ne_zero _ (Units.ne_zero _)).symm] at h1
   simp only [Finsupp.single_apply, Finset.sum_boole, Nat.cast_eq_zero, Finset.card_eq_zero,
@@ -191,7 +196,7 @@ theorem bcParam_eq_ubc_of_satU_eq : ∀ (L : Type) [Field L] [Valued L (WithZero
   have e : bcParam n α = bcParam n β :=
     bcParam_of_weylConj (GlobalTheory.LFun.weylConj_of_dosetInd hU (by rw [hβ]; exact h))
   rw [e, bcParam, ubc]
-  simp only [Multiset.map_add, Multiset.map_map, Function.comp_def, Units.val_inv_eq_inv_val, Multiset.map_replicate,
+  simp only [Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, Units.val_inv_eq_inv_val, Multiset.map_replicate,
     Units.val_one]
   rw [← hβ]
   congr 1

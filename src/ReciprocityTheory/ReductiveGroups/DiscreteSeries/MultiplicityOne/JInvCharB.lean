@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JInvCharA
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,12 +56,12 @@ private theorem embWb_apply_of_mem_block (X : Matrix (Fin (k + 1)) (Fin (k + 1))
     (hi : r ≤ i.val ∧ i.val ≤ r + k) (hj : r ≤ j.val ∧ j.val ≤ r + k) :
     embWb k r X i j = X ⟨i.val - r, by omega⟩ ⟨j.val - r, by omega⟩ := by
   simp only [embWb]
-  rw [dif_pos ⟨hi, hj⟩]
+  rw [dite_eq_left ⟨hi, hj⟩]
 
 private theorem embWb_apply_of_left_not_mem_block (X : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) {i j : Fin (2 * r + k + 1)}
     (hi : ¬ (r ≤ i.val ∧ i.val ≤ r + k)) : embWb k r X i j = if i = j then 1 else 0 := by
   simp only [embWb]
-  rw [dif_neg (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hi h.1)]
+  rw [dite_eq_right (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hi h.1)]
   by_cases h : i = j
   · rw [if_pos (show i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k) from ⟨h, hi⟩), if_pos h]
   · rw [if_neg (show ¬ (i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) from fun h' => h h'.1), if_neg h]
@@ -65,7 +69,7 @@ private theorem embWb_apply_of_left_not_mem_block (X : Matrix (Fin (k + 1)) (Fin
 private theorem embWb_apply_of_right_not_mem_block (X : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) {i j : Fin (2 * r + k + 1)}
     (hj : ¬ (r ≤ j.val ∧ j.val ≤ r + k)) : embWb k r X i j = if i = j then 1 else 0 := by
   simp only [embWb]
-  rw [dif_neg (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hj h.2)]
+  rw [dite_eq_right (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hj h.2)]
   by_cases h : i = j
   · rw [if_pos (show i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k) from ⟨h, by rw [h]; exact hj⟩), if_pos h]
   · rw [if_neg (show ¬ (i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) from fun h' => h h'.1), if_neg h]
@@ -132,7 +136,7 @@ private theorem embWb_apply_eq_ite_of_left_index_not_isW {i : Fin (2 * r + k + 1
     embWb k r γ i j = if i = j then 1 else 0 := by
   have hi' : ¬ (r ≤ i.val ∧ i.val ≤ r + k) := hi
   simp only [embWb]
-  rw [dif_neg (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hi' h.1)]
+  rw [dite_eq_right (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hi' h.1)]
   by_cases h : i = j
   · rw [if_pos (show i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k) from ⟨h, hi'⟩), if_pos h]
   · rw [if_neg (show ¬ (i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) from fun h' => h h'.1), if_neg h]
@@ -141,7 +145,7 @@ private theorem embWb_apply_eq_ite_of_right_index_not_isW {j : Fin (2 * r + k + 
     embWb k r γ i j = if i = j then 1 else 0 := by
   have hj' : ¬ (r ≤ j.val ∧ j.val ≤ r + k) := hj
   simp only [embWb]
-  rw [dif_neg (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hj' h.2)]
+  rw [dite_eq_right (show ¬ ((r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k)) from fun h => hj' h.2)]
   by_cases h : i = j
   · rw [if_pos (show i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k) from ⟨h, by rw [h]; exact hj'⟩), if_pos h]
   · rw [if_neg (show ¬ (i = j ∧ ¬ (r ≤ i.val ∧ i.val ≤ r + k)) from fun h' => h h'.1), if_neg h]
@@ -216,12 +220,15 @@ theorem frame_conjugation_fixes_vector (z : Fin (2 * r + k + 1) → ℂ) (hT : 0
   rw [hinv]
   conv_rhs => rw [hz]
   rw [← Matrix.mulVec_smul]
-  congr 1
-  funext l
-  simp only [Pi.smul_apply, smul_eq_mul, map_mul, Complex.conj_ofReal]
-  congr 1
-  simp only [bvec, Pi.single_apply]
-  split_ifs <;> simp
+  apply congrArg (fun v => embWb k r γ *ᵥ v)
+  funext i
+  let e : Fin (2 * r + k + 1) → ℂ := Pi.single (wI k r (Fin.last k)) 1
+  have hsingle : ∀ i, conj (e i) = e i := by
+    intro i
+    by_cases hi : i = wI k r (Fin.last k) <;> simp [e, Pi.single_apply, hi]
+  change conj ((((Real.sqrt (Tz k r z) : ℝ) : ℂ) * e i)) =
+    ((Real.sqrt (Tz k r z) : ℝ) : ℂ) * e i
+  rw [map_mul, Complex.conj_ofReal, hsingle i]
 
 theorem gbar_apply_off (g : Mat k r) (i j : Fin (2 * r + k + 1)) (hi : ¬ isW k r i) (hj : ¬ isW k r j) :
     gbar k r γ g i j = conj (g i j) := by
@@ -239,7 +246,8 @@ theorem gbar_mulVec_off (g : Mat k r) (v : Fin (2 * r + k + 1) → ℂ) (hv : cc
       Y.map (starRingEnd ℂ) *ᵥ (fun l => conj (w l)) = fun l => conj ((Y *ᵥ w) l) := by
     intro Y w
     funext l
-    simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul]
   have hY : ((embWb k r γ)⁻¹ * g * embWb k r γ) *ᵥ ((embWb k r γ)⁻¹ *ᵥ v) = (embWb k r γ)⁻¹ *ᵥ (g *ᵥ v) := by
     rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mul_assoc ((embWb k r γ)⁻¹ * g) (embWb k r γ),
       Matrix.mul_nonsing_inv _ hE, Matrix.mul_one]
@@ -252,7 +260,8 @@ theorem gbar_mulVec_off (g : Mat k r) (v : Fin (2 * r + k + 1) → ℂ) (hv : cc
 theorem ell_gbar (z : Fin (2 * r + k + 1) → ℂ) (hz : cc γ z = z) (g : Mat k r) :
     ell k r z (gbar k r γ g) = conj (ell k r z g) := by
   unfold ell
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl (fun a _ => ?_)
   split_ifs with h
   · exact gbar_apply_off hE g _ _ (not_isW_eI a) (not_isW_eI _)

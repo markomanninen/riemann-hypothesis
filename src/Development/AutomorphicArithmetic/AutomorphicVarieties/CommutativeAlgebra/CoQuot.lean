@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -13,7 +17,7 @@ private theorem prec_of_surj {R R' : Type} [CommRing R] [CommRing R'] (p : R →
   have hg : ∀ n, p (x + ∑ i ∈ Finset.range n, d i) = f n := fun n => by
     induction n with
     | zero => simpa using hx
-    | succ n ih => rw [Finset.sum_range_succ, ← add_assoc, map_add, ih, hd]; ring
+    | succ n ih => rw [Finset.sum_range_succ, ← add_assoc, map_add (f := _), ih, hd]; ring
   obtain ⟨L, hL⟩ := IsPrecomplete.prec' (I := I) (fun n => x + ∑ i ∈ Finset.range n, d i) (fun {m n} hmn => by
     apply SModEq.symm
     rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, add_sub_add_left_eq_sub, ← Finset.sum_Ico_eq_sub _ hmn]

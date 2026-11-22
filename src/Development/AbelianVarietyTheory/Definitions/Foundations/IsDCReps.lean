@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
 open Polynomial Matrix
-open scoped MatrixGroups
+open scoped MatrixGroups ModularForm
 
 namespace GlobalTheory.HeckeFamilyMatrices
 
@@ -21,7 +25,7 @@ def Z1 (Γ : Subgroup SL(2, ℤ)) (w : ℕ) : Submodule ℂ (Γ → ℂ[X]) wher
   add_mem' := by
     rintro z z' ⟨h1, h2⟩ ⟨h1', h2'⟩
     refine ⟨fun γ => Submodule.add_mem _ (h1 γ) (h1' γ), fun γ δ => ?_⟩
-    simp only [Pi.add_apply, h2, h2', map_add]
+    simp only [Pi.add_apply, h2, h2', map_add (f := _)]
     abel
   zero_mem' := ⟨fun _ => Submodule.zero_mem _, fun _ _ => by simp⟩
   smul_mem' := by
@@ -37,14 +41,16 @@ def IsDCReps (Γ : Subgroup SL(2, ℤ)) (α : Matrix (Fin 2) (Fin 2) ℤ) {ι : 
   (∀ i, ∃ γ₁ γ₂ : Γ, δ i = mat γ₁ * α * mat γ₂) ∧
     ∀ γ₁ γ₂ : Γ, ∃! i, ∃ γ : Γ, mat γ₁ * α * mat γ₂ = mat γ * δ i
 
-open Classical in
 
+open Classical in
 def hk (Γ : Subgroup SL(2, ℤ)) (w : ℕ) {ι : Type} [Fintype ι] (δ : ι → Matrix (Fin 2) (Fin 2) ℤ) :
     (Γ → ℂ[X]) →ₗ[ℂ] (Γ → ℂ[X]) :=
-  LinearMap.pi fun γ : Γ =>
-    if h : ∃ π : Equiv.Perm ι, ∀ i, ∃ γ' : Γ, δ i * mat γ = mat γ' * δ (π i) then
-      ∑ i, (slP w (δ (h.choose i))).comp (LinearMap.proj (h.choose_spec i).choose)
-    else 0
+  by
+    classical
+    exact LinearMap.pi fun γ : Γ =>
+      if h : ∃ π : Equiv.Perm ι, ∀ i, ∃ γ' : Γ, δ i * mat γ = mat γ' * δ (π i) then
+        ∑ i, (slP w (δ (h.choose i))).comp (LinearMap.proj (h.choose_spec i).choose)
+      else 0
 
 def dg (a b : ℤ) : Matrix (Fin 2) (Fin 2) ℤ := !![a, 0; 0, b]
 
@@ -70,8 +76,8 @@ def toGL (g : Matrix (Fin 2) (Fin 2) ℤ) : GL (Fin 2) ℝ :=
     Matrix.GeneralLinearGroup.mkOfDetNeZero ((Int.castRingHom ℝ).mapMatrix g)
       (by rw [← RingHom.map_det]; simpa using h)
 
-open scoped ModularForm in
 
+open scoped ModularForm in
 def hkF (k : ℤ) {ι : Type} [Fintype ι] (δ : ι → Matrix (Fin 2) (Fin 2) ℤ) (f : UpperHalfPlane → ℂ) :
     UpperHalfPlane → ℂ :=
   ∑ i, f ∣[k] toGL (δ i)

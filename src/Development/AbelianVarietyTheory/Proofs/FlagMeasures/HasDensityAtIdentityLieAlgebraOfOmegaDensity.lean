@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
-import Formalism.PeriodIntegrals.QuotInv
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.LocalRingCardinality.DataCD
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChartStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueHaarDensityAtIdentityStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarUpqHasOmegaDensity
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDensityUpqUniqueAndSmul
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmegaLebesgueMeasure
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMatExp
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousGrpHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.BlockAnti
+public import Formalism.PeriodIntegrals.QuotInv
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.LocalRingCardinality.DataCD
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DensityInChartStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsUniqueHaarDensityAtIdentityStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HaarUpqHasOmegaDensity
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OmegaDensityUpqUniqueAndSmul
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsOmegaLebesgueMeasure
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousMatExp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousGrpHom
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -126,7 +130,6 @@ theorem measurePreserving_unrealify {ι : Type} [Fintype ι] {n : ℕ} (e : ι �
   have hσ1 : ∀ p : ι × ι, σ (Sum.inl p) = (e p.1, e p.2, false) := fun p => rfl
   have hσ2 : ∀ p : ι × ι, σ (Sum.inr p) = (e p.1, e p.2, true) := fun p => rfl
   convert total using 1
-  case e'_7 => exact volume_pi
   clear h1 h2 h3 h4 h5 total
   clear_value σ
   funext x p
@@ -255,8 +258,8 @@ def cplxIsom (e : Fin P ⊕ Fin Q ≃ Fin n) :
     WithLp 2 (lieE (UH (form e)) × lieE (UH (form e))) →ₗᵢ[ℝ] EuclideanSpace ℝ (Fin n × Fin n × Bool) where
   toFun p := coord e (((lieCoord e).symm p.fst).1 + Complex.I • ((lieCoord e).symm p.snd).1)
   map_add' p q := by
-    rw [← map_add]; congr 1
-    simp only [WithLp.add_fst, WithLp.add_snd, map_add, Submodule.coe_add, smul_add]
+    rw [← map_add (f := _)]; congr 1
+    simp only [WithLp.add_fst, WithLp.add_snd, map_add (f := _), Submodule.coe_add, smul_add]
     abel
   map_smul' c p := by
     rw [RingHom.id_apply, ← map_smul]; congr 1
@@ -332,7 +335,6 @@ theorem isOmegaLeb_frobenius (e : Fin P ⊕ Fin Q ≃ Fin n) :
     simp
   rw [Measure.map_prod_map _ _ hLs hLs, Measure.map_map hG (hLs.prodMap hLs)]
   convert hT.map_eq using 2
-  case e'_6 => rfl
   funext ab
   funext p
   show ((lieCoord e).symm ab.1 : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ) p.1 p.2 +

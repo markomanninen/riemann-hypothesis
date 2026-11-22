@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyDvdPowFinrankOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FamIdeal
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CharpolyDvdPowFinrankOfAevalEqZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 
 noncomputable section
@@ -18,7 +23,8 @@ theorem leftMulMatrix_sum_tmul (K L : Type) [Field K] [Field L] [Algebra K L] [F
       (∑ i, (X i : MvPolynomial (Fin m) K) ⊗ₜ[K] x i) =
     ∑ i, (X i : MvPolynomial (Fin m) K) •
       (Algebra.leftMulMatrix (Module.finBasis K L) (x i)).map (C : K →+* MvPolynomial (Fin m) K) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   ext a c
   simp [Algebra.leftMulMatrix_eq_repr_mul, Algebra.TensorProduct.basis_repr_tmul,
@@ -43,8 +49,8 @@ open scoped TensorProduct
 theorem isIntegral_normForm (A K L : Type) [CommRing A] [Field K] [Field L] [Algebra A K]
     [Algebra K L] [FiniteDimensional K L] [Algebra A L] [IsScalarTower A K L] {m : ℕ}
     (x : Fin m → L) (hx : ∀ i, IsIntegral A (x i)) :
-    letI : Algebra (MvPolynomial (Fin m) A) (MvPolynomial (Fin m) K) := MvPolynomial.algebraMvPolynomial
-    IsIntegral (MvPolynomial (Fin m) A) (GlobalTheory.NormSheaf.normForm K L x) := by
+    @IsIntegral (MvPolynomial (Fin m) A) (MvPolynomial (Fin m) K) _ _
+      MvPolynomial.algebraMvPolynomial (GlobalTheory.NormSheaf.normForm K L x) := by
   classical
   letI : Algebra (MvPolynomial (Fin m) A) (MvPolynomial (Fin m) K) := MvPolynomial.algebraMvPolynomial
   set R := MvPolynomial (Fin m) K
@@ -95,7 +101,7 @@ theorem isIntegral_normForm (A K L : Type) [CommRing A] [Field K] [Field L] [Alg
     exact h2.symm
   have hdet := isIntegral_det_of_aeval _ g hgm h0
   rw [hM, ← RingHom.map_det] at hdet
-  exact (isIntegral_algebraMap_iff (IsFractionRing.injective R F)).mp hdet
+  exact (isIntegral_algebraMap_iff ).mp hdet
 
 end GlobalTheory.NormSheaf.IntegralCoeff
 

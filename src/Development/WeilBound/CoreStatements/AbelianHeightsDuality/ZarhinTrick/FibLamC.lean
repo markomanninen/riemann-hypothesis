@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamB
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ZarhinTrick.FibLamB
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,8 +21,8 @@ namespace PositivityTheory.PrwZar
 
 variable {S : Scheme.{0}} {A B : Over S} [GrpObj A] [GrpObj B] {Ω : Type} [Field Ω] (s : Sp Ω ⟶ S)
 
-omit [GrpObj B] in
 
+omit [GrpObj B] in
 theorem lam_cL_pt {P : LB (A ⊗ B).left} (hP : P.IsLB) (l : A ⟶ B) (L : LB ((Over.pullback s).obj A).left)
     (hL : L.IsLB) (e : LBIso ((ev P (fst A A) (snd A A ≫ l)).pull (sqToBase A s)) (abelian₂ ((Over.pullback s).obj A) L))
     {T : Over (Sp Ω)} (p q : T ⟶ (Over.pullback s).obj A) :

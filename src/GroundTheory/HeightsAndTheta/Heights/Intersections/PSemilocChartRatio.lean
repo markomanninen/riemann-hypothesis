@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocChartRatio
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StSemilocChartRatio
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StFibreOverFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

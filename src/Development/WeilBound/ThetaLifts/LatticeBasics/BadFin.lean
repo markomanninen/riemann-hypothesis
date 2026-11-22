@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadFactor
-import Development.WeilBound.ThetaLifts.LatticeBasics.PresDOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.NearUnits
-import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
-import Development.WeilBound.ThetaLifts.TowerModels.StabEx
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadFactor
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PresDOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NearUnits
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RatEquiv
+public import Development.WeilBound.ThetaLifts.TowerModels.StabEx
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

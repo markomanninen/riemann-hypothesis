@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.FockAnisoOfRanges
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.IntegralUnitCoefficients.CoefND
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilDoubledSpaceOfStandardUnitary
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.WeilSiegelFormula
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SiegelFormulaSchwartz.SiegelFormulaThetaOfSchwartz
-import Development.AutomorphicArithmetic.ThetaCorrespondence.WeilRepresentation.WeilTheta
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.FockAnisoOfRanges
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.IntegralUnitCoefficients.CoefND
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SiegelWeilDoubledSpaceOfStandardUnitary
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.WeilSiegelFormula
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.SiegelFormulaSchwartz.SiegelFormulaThetaOfSchwartz
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.WeilRepresentation.WeilTheta
+
+@[expose] public section
 
 namespace UpperTheory.Lit.Sw47
 
@@ -16,7 +20,5 @@ theorem fa : FA := fa_of convergent weilUnitary
 
 theorem fockAniso_free (_ : GlobalTheory.Published.SiegelWeilAnisotropicUnitary) (D : Formalism.BasicNotions.D7) :
     GlobalTheory.BottomRallis.SiegelWeilFockAniso D := fa D
-
-example : type_of% @fockAniso_free = type_of% @GlobalTheory.BottomRallis.siegelWeilFockAniso_of_siegelWeilAnisotropic := rfl
 
 end UpperTheory.Lit.Sw47

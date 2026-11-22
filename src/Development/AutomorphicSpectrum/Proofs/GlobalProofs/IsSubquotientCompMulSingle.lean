@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviBlockRepEquivFirst
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PiExteriorTensorSmoothIrreducibleIsIrreducibleStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeviBlockRepEquivFirst
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PiExteriorTensorSmoothIrreducibleIsIrreducibleStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -135,7 +139,7 @@ theorem exists_of_cell (h' : CellSemisimplification k) {α β : Type} [Fintype �
     jhMult_ne_zero_iff.1 (right_ne_zero_of_mul hs)⟩
 
 theorem offdiag_eq_zero (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFiniteness) {d : Fin 2 → ℕ}
-    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL k)} (hA : ∀ i, HasSupport (p i).π (A i))
+    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL (k := k))} (hA : ∀ i, HasSupport (p i).π (A i))
     (hAB : ∀ x ∈ A 0, x ∉ A 1) {b : Fin 2 → Fin 2 → ℕ}
     (f : ∀ i, (Σ j, Fin (b i j)) ≃ Fin (d i)) (g : ∀ j, (Σ i, Fin (b i j)) ≃ Fin (d j))
     {τ : Representation ℂ (Levi k fun i => Fin (d i)) Y} (hτ : τ.IsIrreducible) (hτs : IsSmooth τ)
@@ -146,7 +150,7 @@ theorem offdiag_eq_zero (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFinitene
     (h0 : jhMult τ (cellFunctor f g (piTensor fun i => (p i).π)) ≠ 0) : b 0 1 = 0 ∧ b 1 0 = 0 := by
   obtain ⟨s, hrow, hcol⟩ := exists_of_cell (hG k).2 f g (fun i => (p i).smooth)
     (fun i => hasFiniteLength_of_isIrreducible (p i).irr) hτ hτs h0
-  have hR : ∀ i, ∃ t : Fin 2 → Multiset (IrrGL k), (∀ j, HasSupport (s i j).ρ (t j)) ∧ A i = ∑ j, t j :=
+  have hR : ∀ i, ∃ t : Fin 2 → Multiset (IrrGL (k := k)), (∀ j, HasSupport (s i j).ρ (t j)) ∧ A i = ∑ j, t j :=
     fun i => exists_sum_of_jac hG hBZ (hA i) (f i) (GlobalTheory.T.piExteriorTensor_smoothIrreducible_isIrreducible hBZ k _ _ fun j => s i j) (hrow i)
       (fun j => s i j) (fun j => isSubquotient_comp_mulSingle _ (fun j => (s i j).irr) j)
   choose t ht hAt using hR
@@ -175,7 +179,7 @@ theorem offdiag_eq_zero (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFinitene
   exact ⟨hd1.symm, hd2.symm⟩
 
 theorem jhMult_jac_multiProd (hG : GeometricLemma) (hBZ : BernsteinZelevinskyFiniteness) {d : Fin 2 → ℕ}
-    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL k)} (hA : ∀ i, HasSupport (p i).π (A i))
+    (p : ∀ i, Irr k (d i)) {A : Fin 2 → Multiset (IrrGL (k := k))} (hA : ∀ i, HasSupport (p i).π (A i))
     (hAB : ∀ x ∈ A 0, x ∉ A 1) {N : ℕ} (e e' : (Σ i, Fin (d i)) ≃ Fin N)
     {τ : Representation ℂ (Levi k fun i => Fin (d i)) Y} (hτ : τ.IsIrreducible) (hτs : IsSmooth τ)
     (y : ∀ i, IrrRep (GL (Fin (d i)) k))

@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SelfDualLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.HformSumRight
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.OneTmulMemOloc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.SelfDualLocOfDirs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SelfDualLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.DualBasis
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.HformSumRight
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.OneTmulMemOloc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SelfDualLocalBasis.SelfDualLocOfDirs
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -22,13 +26,14 @@ theorem hform_incl {n : ℕ} (σ : E →ₐ[F] E) (J : Matrix (Fin n) (Fin n) E)
       (fun i => inclE (F := F) (v.adicCompletion F) (a i))
       (fun i => inclE (F := F) (v.adicCompletion F) (b i)) =
       inclE (F := F) (v.adicCompletion F) (hform (σ : E →+* E) J a b) := by
-  simp only [hform, Matrix.map_apply, sigR_inclE, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, Matrix.map_apply, sigR_inclE, map_sum, map_mul]
   rfl
 
 private theorem hform_add_left_self_dual_local_basis {A : Type} [CommRing A] {m : ℕ} (σ : A →+* A)
     (J : Matrix (Fin m) (Fin m) A) (x x' y : Fin m → A) :
     hform σ J (x + x') y = hform σ J x y + hform σ J x' y := by
-  simp only [hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 private theorem hform_add_right_self_dual_local_basis {A : Type} [CommRing A] {m : ℕ} (σ : A →+* A)
     (J : Matrix (Fin m) (Fin m) A) (x y y' : Fin m → A) :
@@ -183,7 +188,8 @@ theorem bwdDir_of (hN : Nondeg) (hSp : SpanTop) (hL : LocBasis) (hD : DualBasis)
           inclE (F := F) (v.adicCompletion F) (yd j l) := by
       intro k
       conv_lhs => rw [hd k]
-      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_sum, map_mul]
     calc y l = ∑ k, y k * inclE (F := F) (v.adicCompletion F) ((Pi.single k (1 : E) : Fin n → E) l) := by
           simp [Pi.single_apply]
       _ = ∑ k, ∑ j, y k * inclE (F := F) (v.adicCompletion F) (d k j) *

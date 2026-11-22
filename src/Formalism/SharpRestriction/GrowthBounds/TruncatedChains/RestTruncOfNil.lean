@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestPair
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.RestPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,8 @@ theorem pow_intertw (f : Module.End K W) (g : Module.End K V) (π : W →ₗ[K] 
 theorem pf_intertw (A : GLOps n K W) (E : GLOps n K V) (π : W →ₗ[K] V) (S : Submodule K W) (x y : Fin n)
     (hS : ∀ w ∈ S, A x y w ∈ S) (h1 : ∀ w ∈ S, π (A x y w) = E x y (π w)) (h2 : ∀ w, π (A y x w) = E y x (π w))
     (c T : ℕ) (w : W) (hw : w ∈ S) : π (pf A x y c T w) = pf E x y c T (π w) := by
-  rw [pf_apply, pf_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [pf_apply, pf_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, map_smul, pow_intertw (A y x) (E y x) π ⊤ (fun _ _ => Submodule.mem_top)
     (fun w _ => h2 w) k _ Submodule.mem_top, map_smul, pow_intertw (A x y) (E x y) π S hS h1 k w hw]
@@ -87,27 +92,6 @@ theorem pf_sub (E : GLOps n K V) (a b : Fin n) (c T : ℕ) (x : V) :
 
 end Gen
 
-def RestTrunc : Prop :=
-  ∀ (K V : Type) [Field K] [CharZero K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] (n : ℕ)
-    (E : GLOps n K V), IsGLRep E → ∀ a b : Fin n, a ≠ b → ∀ c T T' : ℕ, Module.finrank K V ≤ T →
-      Module.finrank K V ≤ T' → pf E a b c T = pf E a b c T'
-
-theorem restTrunc_of_nil (hN : RestNil) : RestTrunc := by
-  unfold RestTrunc
-  unfold RestNil at hN
-  intro K V _ _ _ _ _ n E hE a b hab c T T' hT hT'
-  have key : ∀ m, Module.finrank K V ≤ m → pf E a b c m = pf E a b c (Module.finrank K V) := by
-    intro m hm
-    induction m, hm using Nat.le_induction with
-    | base => rfl
-    | succ m hm ih =>
-      rw [← ih]
-      have h0 : (E a b) ^ (m + 1) = 0 := hN K V n E hE a b hab (m + 1) (by omega)
-      unfold pf
-      rw [Finset.sum_range_succ _ (m + 1)]
-      simp [divPowE, h0]
-  rw [key T hT, key T' hT']
-
 section Tens
 
 variable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
@@ -126,7 +110,7 @@ theorem tens_rel {E : GLOps n K V} (hE : IsGLRep E) (a b c d : Fin n) :
   refine LinearMap.ext fun w => funext fun i => ?_
   have hc := LinearMap.congr_fun (hE.1 a b c d) (w i)
   simp only [LinearMap.sub_apply, Module.End.mul_apply] at hc
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, Pi.sub_apply, tensOps_apply, map_add]
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, Pi.sub_apply, tensOps_apply, map_add (f := _)]
   split_ifs at hc ⊢ <;> subst_vars <;>
     (try simp only [tensOps_apply, LinearMap.zero_apply, Pi.zero_apply, map_zero, add_zero, zero_add,
       sub_zero, LinearMap.sub_apply] at hc ⊢) <;>

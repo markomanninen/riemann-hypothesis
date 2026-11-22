@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearFormFactorThroughTraceGeneratorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmHostUnitAddConjEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLinearFormFactorThroughTraceGeneratorStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,7 @@ theorem exists_improves_of_real {E : Type} [Field E] [NumberField E] [IsCMField 
     simpa [hP1] using this
   have P2sub : ∀ a b, P2 (a + b) → P2 b → P2 a := fun a b hab hb' => by
     have := sub_mem hab hb'
-    simpa [hP2, map_add] using this
+    simpa [hP2, map_add (f := _)] using this
 
   obtain ⟨x, ⟨z, hz, rfl⟩, hx⟩ := Set.not_subset.1 hZ
   have hs0 : s ≠ 0 := fun h0 => hs (h0 ▸ 𝔭.zero_mem)

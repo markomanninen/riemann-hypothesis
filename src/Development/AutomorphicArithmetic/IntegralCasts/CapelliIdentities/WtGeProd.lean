@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qk29.dot.{v} :
     {ι : Type v} → (ι →₀ ℕ) → (ι → ℝ) → ℝ :=

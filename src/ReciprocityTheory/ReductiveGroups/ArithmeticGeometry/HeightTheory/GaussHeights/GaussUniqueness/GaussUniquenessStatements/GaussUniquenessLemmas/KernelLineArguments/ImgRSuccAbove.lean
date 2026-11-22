@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.ExistsSmulOfLine
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GaussHeights.GaussUniqueness.GaussUniquenessStatements.GaussUniquenessLemmas.KernelLineArguments.ExistsSmulOfLine
+
+@[expose] public section
 
 namespace GaussValuationUniqueness
 
@@ -31,7 +35,8 @@ theorem imgR_map {R R' : Type*} [CommRing R] [CommRing R'] {D N : ℕ} (φ : R �
   · rw [imgR_same, imgR_same]
     split_ifs
     · exact MvPolynomial.map_X φ _
-    · simp only [map_neg, map_sum, map_mul, MvPolynomial.map_X, MvPolynomial.map_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [map_neg, map_sum, map_mul, MvPolynomial.map_X, MvPolynomial.map_C]
   · rw [imgR_succAbove, imgR_succAbove, MvPolynomial.map_X]
 
 section Ker
@@ -74,7 +79,7 @@ theorem pos_of_ker {w : AddValuation (OmS Ω D N) (WithTop ℤ)}
       (le_of_eq (AddValuation.map_one w).symm)
       (fun s _ => by rw [AddValuation.map_pow]; exact nsmul_nonneg (he s) _)
   have hnu : ¬ IsUnit (q.coeff d) := by
-    have h0 := congrArg (MvPolynomial.coeff d) hq
+    have h0 := congrArg (AddMonoidAlgebra.coeff · d) hq
     rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at h0
     exact (IsLocalRing.mem_maximalIdeal _).mp ((IsLocalRing.residue_eq_zero_iff _).mp h0)
   have hc : 0 < w (((algebraMap Ω (OmS Ω D N)).comp (vRing v).subtype) (q.coeff d)) := by

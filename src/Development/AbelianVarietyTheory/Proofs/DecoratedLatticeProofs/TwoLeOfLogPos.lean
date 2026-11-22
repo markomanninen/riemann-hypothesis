@@ -1,6 +1,11 @@
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.HostCls
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
+module
+
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Core GlobalTheory.Core.Ht2 GlobalTheory.CoreHt
 open GlobalTheory.ColumnNormCompare (numDatumOfParameters codeRec plRec)
 attribute [local instance] GlobalTheory.Mem.Col2.starE
@@ -34,7 +39,7 @@ theorem rows_of_design : ∀ (D : D7) (L : SizeData₂ D) (P : ParameterChoice' 
   have hd' : (2 : ℝ) ≤ D.host.d := by exact_mod_cast hd2
   have hrd2 := two_le_rdE' D hq2 hd2
   have hn1 : (1 : ℝ) ≤ D.R.n := by
-    have : 1 ≤ D.R.n := by unfold Ranks.n; exact Nat.succ_le_of_lt (by positivity)
+    have : 1 ≤ D.R.n := by have := D.host.four_le_n'; omega
     exact_mod_cast this
   have ht1 : (1 : ℝ) ≤ D.R.t := hT.1
   have hm1 : (1 : ℝ) ≤ D.R.m := by

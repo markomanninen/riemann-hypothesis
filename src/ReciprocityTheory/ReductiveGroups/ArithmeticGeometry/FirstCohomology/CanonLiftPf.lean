@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.CanonicalLiftFiniteOrder
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.CanonicalLiftUnpacking
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.CanonicalLiftFiniteOrder
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.CanonicalLiftUnpacking
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,14 +22,42 @@ theorem canonLiftFix_of_laws (hL : Out.Laws) : CanonLiftFixStatement := by
   intro E _ _ _ H V _ _ _ t P hT
   letI := H.starRing
   intro α N hN hαN _hco _hNu F _ _ _ θ θα hpull p x hx hxα
-  obtain ⟨z, q, h, g0, hy, hgt, hι, hadd, hz⟩ :=
-    CanonicalLiftUnpacking.alpha_unpack P hT (qkActExists_of hL.globalFns) α N hN hαN F p x hx hxα
+  have hQ : QkActExistsStatement := qkActExists_of hL.globalFns
+  have hUnpack : ∃ (z : P.D.toPre.X) (q : QkPt P.D.toPre F (1 * N))
+      (h g0 : GtPtF P.D.toPre F),
+      p.y = -(star α • z) ∧ GtAct P.oD α p.g q.g ∧ GtPtF.IsIota z h ∧
+      q.g.IsAdd h g0 ∧ g0.IsZero := by
+    have hαN' : α * star α = (N : 𝓞 E) := hαN
+    have hB : P.D.toPre.TauBimult := P.D.tau_bimult
+    obtain ⟨p0, hy0, hz0, hadd0⟩ := CanonicalLiftUnpacking.exists_zero_qk (F := F) hB (1 * N)
+    obtain ⟨f, hf1, -, hf3, hf4, hf5, -⟩ := hT F (1 * N) (by omega)
+    obtain ⟨p', hp'⟩ := hQ E H V t P F (1 * N) α p
+    have hfp' := hf5 α p p' hp'
+    obtain ⟨q, hqy, hGt, hqe⟩ := hp'
+    have hf0 : f p0 = 1 := by
+      have h := hf4 p0 p0 p0 ⟨p0, by rw [hy0, add_zero], hadd0, qk_equiv_refl hB p0⟩
+      exact (mul_left_cancel ((_root_.mul_one _).trans h)).symm
+    have hfq : f q = f p0 := by
+      rw [(hf3 q p').2 hqe, hfp', ← (hf1 p x).1 hx, hxα, hf0]
+    obtain ⟨z, hz, h, hIota, hAdd⟩ := (hf3 q p0).1 hfq
+    refine ⟨z, q, h, p0.g, ?_, hGt, hIota, hAdd, hz0⟩
+    have e : α • p.y + (1 * N) • z = 0 := by rw [← hqy, ← hz, hy0]
+    have e' := congrArg (fun w => star α • w) e
+    simp only [smul_add, smul_zero, smul_smul] at e'
+    have key : ∀ w : P.D.toPre.X, (1 * N) • w = N • w := fun w => by rw [Nat.one_mul]
+    rw [smul_comm (star α) (1 * N) z, _root_.mul_comm (star α) α, hαN', Nat.cast_smul_eq_nsmul,
+      ← key p.y, ← smul_add] at e'
+    haveI : Module.Free ℤ P.D.toPre.X := P.D.toPre.freeX
+    rw [← Nat.cast_smul_eq_nsmul ℤ] at e'
+    have e3 : p.y + star α • z = 0 := (smul_eq_zero.1 e').resolve_left (by omega)
+    exact eq_neg_of_add_eq_zero_left e3
+  obtain ⟨z, q, h, g0, hy, hgt, hι, hadd, hz⟩ := hUnpack
   haveI := P.oD.onB.hom (star α)
   haveI := P.oD.onB.hom α
   obtain ⟨r, hr, hr0⟩ := Geo.Tor.exists_ros (A := P.D.toPre.P.A) (L := P.D.toPre.P.L)
     hL.globalFns P.D.toPre.P.isAb P.D.toPre.P.isLB (P.oD.onB.act (star α)) (P.oD.onB.act α)
     (by have hR := P.oD.onB.rosati (star α); rwa [star_star] at hR)
-  obtain ⟨hb, hrel⟩ := CanonicalLiftOrigin.gt_rel P.oD α p.g q.g h g0 z hgt hι hadd hz r hr hr0
+  obtain ⟨hb, hrel⟩ := ReciprocityTheory.ChartRestriction.G.H1.CanonicalLiftOrigin.gt_rel P.oD α p.g q.g h g0 z hgt hι hadd hz r hr hr0
   obtain ⟨u0, hu0, hc0, -⟩ := hpull.1 0
   obtain ⟨w, hw, hwv⟩ := CanonicalLiftTraces.exists_w P.oD α N hN p.g.b z hb u0 hu0
   have hfix : PhiRel P.D.toPre F (1 * N) p w θα θα :=

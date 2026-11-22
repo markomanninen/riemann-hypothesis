@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ToYIsFirstChernIff
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.GaloisTTransform
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.SmoothQ
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DividedPowerReduction.RedInEx
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.ChainOf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.ToYIsFirstChernIff
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.GaloisTTransform
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.SmoothQ
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.DividedPowerReduction.RedInEx
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LevelChainValuations.ChainOf
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -37,17 +41,23 @@ def thP : period_ring_base.Plus l →+* ℂ_[l] where
 theorem θD_algCl (x : PadicAlgCl l) : θD l (algClToBdR l x) = clToC l x := thetaAlgHom_algClToBdR l x
 
 theorem br (ht : TFil l) (hs : CrisSurj l) : Br (per l K) (cb K ht hs) (RingHom.id (Acris l)) (thP l)
-    (fun σ => ACris.galCris (IntermediateField.fixingSubgroupEquiv K σ)) (fun σ => galBase (IntermediateField.fixingSubgroupEquiv K σ))
-    (fun σ => (period_ring_base.σC σ.1).toRingHom) fun σ => qC l (period_ring_base.χ σ.1) where
-  et := rfl
-  t_ne := DeRhamTwist.Twist.tQ_ne
-  θ_i x := ⟨⟨_, ⟨ACris.iota ℂ_[l] l x, rfl⟩⟩, rfl, th_alg _⟩
-  θ_o k := ⟨⟨_, ⟨algClToBdR l k.1, rfl⟩⟩, rfl, (th_alg _).trans (θD_algCl l k.1)⟩
-  ker x := ((period_ring_base.base l).th_zero x.1 x.2).trans ⟨fun ⟨y, hy, e⟩ => ⟨⟨y, hy⟩, e⟩, fun ⟨y, e⟩ => ⟨y.1, y.2, e⟩⟩
-  θ_σ g x := ⟨⟨_, (period_ring_base.base l).plus_σ g.1 x.1 x.2⟩, rfl, (period_ring_base.base l).th_σ g.1 x.1 x.2⟩
-  galois_t_transform g := ⟨⟨_, ((period_ring_base.base l).th_q (period_ring_base.χ g.1)).1⟩, σD_tQ g.1, th_qQ _⟩
-  eσ _ _ := rfl
-  cris g n x := galBase_cris _ n x
+    (fun σ => ACris.galCris (IntermediateField.fixingSubgroupEquiv K σ))
+    (fun σ => galBase (IntermediateField.fixingSubgroupEquiv K σ))
+    (fun σ => (period_ring_base.σC σ.1).toRingHom) (fun σ => qC l (period_ring_base.χ σ.1)) := by
+  exact {
+    et := rfl
+    t_ne := DeRhamTwist.Twist.tQ_ne
+    θ_i x := ⟨⟨_, ⟨ACris.iota ℂ_[l] l x, rfl⟩⟩, rfl, th_alg _⟩
+    θ_o k := ⟨⟨_, ⟨algClToBdR l k.1, rfl⟩⟩, rfl, (th_alg _).trans (θD_algCl l k.1)⟩
+    ker x := ((period_ring_base.base l).th_zero x.1 x.2).trans
+      ⟨fun ⟨y, hy, e⟩ => ⟨⟨y, hy⟩, e⟩, fun ⟨y, e⟩ => ⟨y.1, y.2, e⟩⟩
+    θ_σ g x :=
+      ⟨⟨_, (period_ring_base.base l).plus_σ g.1 x.1 x.2⟩, rfl, (period_ring_base.base l).th_σ g.1 x.1 x.2⟩
+    galois_t_transform g :=
+      ⟨⟨_, ((period_ring_base.base l).th_q (period_ring_base.χ g.1)).1⟩, σD_tQ g.1, th_qQ _⟩
+    eσ _ _ := rfl
+    cris g n x := galBase_cris _ n x
+  }
 
 theorem red_ex {m : ℕ} (L : Lev (per l K) m) (hL : L.Good) (hC : L.CrisOK) (n : ℕ) :
     ∃ d : RedIn (B.DD false (base l) n) (B.κb (okToOC l K) false n) L.γ l n,

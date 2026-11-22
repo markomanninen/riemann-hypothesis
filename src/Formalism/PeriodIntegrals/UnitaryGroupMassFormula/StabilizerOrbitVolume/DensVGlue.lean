@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVCos
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.HenselCount
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.CosDens
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.DensVCos
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.HenselCount
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.CosDens
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,7 @@ theorem densCos_of_filt (hP1 : HenselCount) (hP2 : CosDens) {V X Y : Type} [AddC
     exact hH
   have hcompl : m {z | z - G y ∈ H 0}ᶜ = 0 := by
     rw [hmT _ (hopen (G y) 0).measurableSet.compl]
-    convert measure_empty (μ := μ)
-    ext Z
+    refine (congrArg (fun s : Set V => μ s) (Set.ext fun Z => ?_)).trans measure_empty
     constructor
     · rintro ⟨hZ, hZ'⟩
       have h1 := hyp 0 0 (Λ 0).zero_mem Z hZ

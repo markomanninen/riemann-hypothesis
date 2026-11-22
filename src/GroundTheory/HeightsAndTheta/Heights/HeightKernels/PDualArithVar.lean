@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegreeDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -25,9 +30,8 @@ theorem algebraicIndependent_gen (m : ℕ) :
 theorem evalForm_ne_zero {m : ℕ} {φ : Fin m → K} (hφ : φ ≠ 0) : evalForm m φ ≠ 0 := by
   intro h0
   apply hφ
-  funext j
-  exact Fintype.linearIndependent_iff.mp (algebraicIndependent_gen m).linearIndependent φ
-    (by rw [← Fintype.linearCombination_apply]; exact h0) j
+  apply (algebraicIndependent_gen m).linearIndependent.fintypeLinearCombination_injective
+  simpa only [evalForm, map_zero] using h0
 
 theorem mem_of_gen_mem {m : ℕ} (E : IntermediateField K (ProjField K m))
     (h : ∀ j, algebraMap (MvPolynomial (Fin m) K) (ProjField K m) (X j) ∈ E) (z : ProjField K m) :
@@ -74,7 +78,7 @@ theorem span_dualLattice (F : HermLattice K i) :
     | add x y _ _ hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨c, hc⟩ := hy
-      exact ⟨a + c, by rw [dotProduct_add, map_add, ha, hc]⟩
+      exact ⟨a + c, by rw [dotProduct_add, map_add (f := _), ha, hc]⟩
     | smul r x _ hx =>
       obtain ⟨a, ha⟩ := hx
       refine ⟨r * a, ?_⟩
@@ -97,15 +101,16 @@ theorem span_basis [Fintype T] (b : Module.Basis T ℤ (dualLattice F)) :
 
 theorem dualLatticeCoord_eq (b : Module.Basis T ℤ (dualLattice F)) (t : T) :
     dualLatticeCoord b ⟨(), t⟩ = evalForm i (b t : Fin i → K) := by
-  rw [dualLatticeCoord, evalForm, Fintype.linearCombination_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dualLatticeCoord, evalForm, Fintype.linearCombination_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, Algebra.smul_def, IsScalarTower.algebraMap_apply K (MvPolynomial (Fin i) K),
     MvPolynomial.algebraMap_eq]
 
 end DualArithmeticVariety
 
-open DualArithmeticVariety in
 
+open DualArithmeticVariety in
 theorem DualArithVar.proof (h : CoordConeArithVar.Statement) : DualArithVar.Statement := by
   intro K _ _ i F T _ _ b hi
   obtain ⟨n, rfl⟩ : ∃ n, i = n + 1 := ⟨i - 1, by omega⟩
@@ -164,8 +169,9 @@ theorem DualArithVar.proof (h : CoordConeArithVar.Statement) : DualArithVar.Stat
     | add x y _ _ hx hy => rw [add_div]; exact hx.add hy
     | smul c x _ hx =>
       rw [Algebra.smul_def, mul_div_assoc]
-      exact ((Algebra.IsIntegral.isIntegral (R := ℚ) c).map
-        (IsScalarTower.toAlgHom ℚ K (ProjField K (n + 1)))).tower_top.mul hx
+      set_option synthInstance.maxHeartbeats 200000 in
+        exact ((Algebra.IsIntegral.isIntegral (R := ℚ) c).map
+          (IsScalarTower.toAlgHom ℚ K (ProjField K (n + 1)))).tower_top.mul hx
   refine h Unit (dualBlocks T) (ProjField K (n + 1)) (dualLatticeCoord b) (fun _ => u 0) n s ⟨()⟩
     (fun _ => by rw [hy]; exact hw0) hs (fun l => IntermediateField.subset_adjoin _ _ ⟨⟨(), u l.succ⟩, ?_⟩) ?_
   · show dualLatticeCoord b ⟨(), u l.succ⟩ / dualLatticeCoord b ⟨(), u 0⟩ = w l.succ / w 0

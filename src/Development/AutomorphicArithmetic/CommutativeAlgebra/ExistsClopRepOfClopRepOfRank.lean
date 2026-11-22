@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFiniteEtaleOfIsClosed
-import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFinrankPullback
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.RepresentationRank.RepOfRank
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFiniteEtaleOfIsClosed
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.ClopProjFinrankPullback
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory
 
@@ -17,7 +21,6 @@ private lemma sq {T T' G : Over S} (y : T' ⟶ T) :
     all_goals first
       | rfl
       | exact Over.w y
-      | (rw [Over.whiskerRight_left]; exact pullback.lift_snd _ _ _ |>.trans (Category.comp_id _))
       | simp [Over.whiskerRight_left]
   · rw [Over.whiskerRight_left]
     exact pullback.lift_fst _ _ _
@@ -124,10 +127,6 @@ private noncomputable def piece (T : Over S) (W : T.left.Opens) : Over S :=
 
 private noncomputable def pieceι (T : Over S) (W : T.left.Opens) : piece T W ⟶ T :=
   Over.homMk W.ι rfl
-
-private instance pieceι_open (T : Over S) (W : T.left.Opens) :
-    IsOpenImmersion (pieceι T W).left :=
-  inferInstanceAs (IsOpenImmersion W.ι)
 
 private lemma piece_cover {T : Over S} (W : ℕ → T.left.Opens) (hc : ∀ t, ∃ r, t ∈ W r) :
     TopologicalSpace.IsOpenCover W := by

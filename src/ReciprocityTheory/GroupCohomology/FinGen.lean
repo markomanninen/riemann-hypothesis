@@ -1,7 +1,11 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.ConnNatHolds
-import ReciprocityTheory.GroupCohomology.IsSuccSubset
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.ConnNatHolds
+public import ReciprocityTheory.GroupCohomology.IsSuccSubset
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -128,13 +132,13 @@ variable (hT : IsTowerLim A τ L π) (htf : ∀ n (x : L.X n), t • x = 0 → x
 
 include hT htf hk
 
-theorem ses_smul : SES (smulHom L t) (π 0) where
-  inj n := (injective_iff_map_eq_zero _).2 fun x hx => htf n x hx
-  exact n y := by
-    rw [hk 0 n y]
-    simp only [zero_add, pow_one, Set.mem_range, smulHom_f]
-    exact ⟨fun ⟨z, hz⟩ => ⟨z, hz.symm⟩, fun ⟨z, hz⟩ => ⟨z, hz.symm⟩⟩
-  surj n := tower_pi_surj hT 0 n
+theorem ses_smul : SES (smulHom L t) (π 0) := by
+  refine ⟨fun n => (injective_iff_map_eq_zero _).2 fun x hx => htf n x hx,
+    ?_, tower_pi_surj hT 0⟩
+  intro n y
+  rw [hk 0 n y]
+  simp only [zero_add, pow_one, Set.mem_range, smulHom_f]
+  exact ⟨fun ⟨z, hz⟩ => ⟨z, hz.symm⟩, fun ⟨z, hz⟩ => ⟨z, hz.symm⟩⟩
 
 theorem ker_le_ker_smul (m n : ℕ) : LinearMap.ker ((π 0).f n) ≤
     LinearMap.ker ((π (m + 1)).f n ∘ₗ (t ^ (m + 1) • LinearMap.id)) := by
@@ -158,8 +162,9 @@ noncomputable def jHom (m : ℕ) : Hom (A 0) (A (m + 1)) where
     rw [← (π 0).comm, jf_apply, jf_apply, ← (π (m + 1)).comm]
     simp only [map_smul]
 
-theorem ses_j (m : ℕ) : SES (jHom t hT htf hk m) (τ m) where
-  inj n := by
+theorem ses_j (m : ℕ) : SES (jHom t hT htf hk m) (τ m) := by
+  refine ⟨?_, ?_, hT.surj m⟩
+  · intro n
     refine (injective_iff_map_eq_zero _).2 fun a ha => ?_
     obtain ⟨x, rfl⟩ := tower_pi_surj hT 0 n a
     change jf t hT htf hk m n _ = 0 at ha
@@ -170,7 +175,7 @@ theorem ses_j (m : ℕ) : SES (jHom t hT htf hk m) (τ m) where
       rw [smul_sub, hy, smul_smul, ← pow_succ, sub_self]
     rw [hk 0 n]
     exact ⟨y, by simpa using this⟩
-  exact n z := by
+  · intro n z
     obtain ⟨x, rfl⟩ := tower_pi_surj hT (m + 1) n z
     rw [hT.compat, hk]
     constructor
@@ -185,7 +190,6 @@ theorem ses_j (m : ℕ) : SES (jHom t hT htf hk m) (τ m) where
       refine ⟨y + t • w, ?_⟩
       rw [smul_add, smul_smul, ← pow_succ, ← hw]
       abel
-  surj n := hT.surj m n
 
 end Tower
 

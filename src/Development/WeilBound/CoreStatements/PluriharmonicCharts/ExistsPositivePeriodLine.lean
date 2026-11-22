@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PProjBundleFibre
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsBlockMapInitialVertex
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PProjBundleFibre
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Classical
 
@@ -9,8 +14,6 @@ noncomputable section
 set_option linter.unusedSectionVars false
 
 namespace PositivityTheory.Xgp.W
-
-local instance (priority := 2000) intAlg4 {Φ : Type} [Field Φ] : Algebra ℤ (RatFunc Φ) := Ring.toIntAlgebra _
 
 open GlobalTheory.CompanionTheory.Ar.PB.CovGraph.GenIdeal GlobalTheory.CompanionTheory.Ar.PB.WSq
 
@@ -108,7 +111,8 @@ theorem exists_positive_period_line {E : Type} [Field E] (i₀ : MvPolynomial K 
       rw [Equiv.sum_comp eF fun m => u m * w m]
       apply ψ.injective
       rw [hs, ← h]
-      simp only [map_sum, map_mul, hu, hw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, hu, hw]
     intro a b
     fin_cases a <;> fin_cases b
     · exact key α p _ _ 1 1 hα hp (by simp) Fr.αp
@@ -151,8 +155,8 @@ theorem exists_positive_period_line {E : Type} [Field E] (i₀ : MvPolynomial K 
       obtain ⟨D₂, f₂, h₂, a₂, b₂⟩ := hg
       refine ⟨D₁ * D₂, f₁ * rename (v₀ k₀) D₂ + f₂ * rename (v₀ k₀) D₁, by rw [map_mul]; exact mul_ne_zero h₁ h₂,
         ?_, ?_⟩
-      · simp only [map_add, map_mul, r1, a₁, a₂]; ring
-      · simp only [map_add, map_mul, r2, b₁, b₂]; ring
+      · simp only [map_add (f := _), map_mul, r1, a₁, a₂]; ring
+      · simp only [map_add (f := _), map_mul, r2, b₁, b₂]; ring
     | mul_X f q hf =>
       obtain ⟨D₁, f₁, h₁, a₁, b₁⟩ := hf
       refine ⟨D₁, f₁ * X ⟨q.1.1, q.2⟩, h₁, ?_, ?_⟩

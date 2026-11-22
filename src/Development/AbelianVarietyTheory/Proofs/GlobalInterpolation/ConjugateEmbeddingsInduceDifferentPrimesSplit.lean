@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.BaseEx
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Classical Formalism.MainNotions Formalism.L2.Ker
 
@@ -74,9 +78,9 @@ theorem exists_small_not_conj {E : Type} [Field E] [CharZero E] (K : Intermediat
     by_contra h2
     push_neg at h2
     have e2 : c (((B + u : 𝓞 K) : K) : E) = -(s : E) + (u : E) := by
-      rw [hcoe, map_add, map_intCast, hc']
+      rw [hcoe, map_add (f := _), map_intCast, hc']
     have hsum : j (((B + u : 𝓞 K) : K) : E) + j (c (((B + u : 𝓞 K) : K) : E)) = (((2 * u : ℤ)) : ℂ_[q]) := by
-      rw [e2, hcoe, ← map_add]
+      rw [e2, hcoe, ← map_add (f := _)]
       have : (s : E) + (u : E) + (-(s : E) + (u : E)) = ((2 * u : ℤ) : E) := by push_cast; ring
       rw [this, map_intCast]
     have hlt : ‖(((2 * u : ℤ)) : ℂ_[q])‖ < 1 := by

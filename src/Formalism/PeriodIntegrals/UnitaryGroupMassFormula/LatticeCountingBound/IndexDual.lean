@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.IndexDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.IndexDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,9 @@ def aI {K : Type} [Field K] [NumberField K] {k : ℕ} (X : Submodule (𝓞 K) (F
     exact X.smul_mem r hc
 
 theorem absNorm_eq_index {S : Type} [CommRing S] [IsDedekindDomain S] [Module.Free ℤ S] [Module.Finite ℤ S]
-    (I : Ideal S) : Ideal.absNorm I = I.toAddSubgroup.index := rfl
+    (I : Ideal S) : Ideal.absNorm I = I.toAddSubgroup.index := by
+  letI : Infinite S := Module.Free.infinite ℤ S
+  exact Ideal.absNorm_eq_index I
 
 theorem quot_le (K : Type) [Field K] [NumberField K] (𝔞 : Ideal (𝓞 K)) (h𝔞 : 𝔞 ≠ ⊥) (a : 𝓞 K)
     (ha0 : a ≠ 0) :

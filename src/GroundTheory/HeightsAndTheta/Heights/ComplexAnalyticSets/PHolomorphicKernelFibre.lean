@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolomorphicKernelFibre
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PInjectiveHolomorphicInverse
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolomorphicKernelFibre
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PInjectiveHolomorphicInverse
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -50,7 +55,7 @@ theorem HolomorphicKernelFibre.proof : HolomorphicKernelFibre.Statement := by
 
   let M : (Fin k → ℂ) →ₗ[ℂ] Fin k → ℂ := (A : (Fin k → ℂ) →ₗ[ℂ] Fin k → ℂ) + (E.comp lam : _)
   have hMinj : Function.Injective M := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     have hv' : A v + E (lam v) = 0 := hv
     have hAv : A v = 0 := by
@@ -108,7 +113,7 @@ theorem HolomorphicKernelFibre.proof : HolomorphicKernelFibre.Statement := by
       intro t ht
       have h1 : Φ (H.symm (aff t)) = c + E t := H.right_inv ht.1.1
       have h2 := congrArg P h1
-      simp only [Φ, map_add, hPE, add_zero, hPP] at h2
+      simp only [Φ, map_add (f := _), hPE, add_zero, hPP] at h2
       rw [h2, hc, hPP]
     intro s hs t ht hst
     have hq : C.projectionOnto W hWC.symm (f (H.symm (aff s))) =

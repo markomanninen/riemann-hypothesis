@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementC
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.FockMonomialProofs.ResInto
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 

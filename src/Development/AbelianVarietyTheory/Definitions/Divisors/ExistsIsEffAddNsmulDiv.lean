@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToNatLengthEqRangeAddRange
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsRetractTensorTriple
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToNatLengthEqRangeAddRange
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.CoeNonzeroLocusCanonicalEqComplRange
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsRetractTensorTriple
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsClosedImmersionGenericPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -19,14 +23,11 @@ open GlobalTheory.Cartier (IsRegularFn IsRegularSec SecMaps germ_resG ext_germK)
 namespace GlobalTheory.Vert
 
 theorem shortExact_cokernel_comp {C : Type*} [Category C] [Abelian C] {A B E : C} (f : A ⟶ B)
-    (g : B ⟶ E) [Mono g] : (kernelCokernelCompSequence.snakeInput f g).L₃.ShortExact where
-  exact := (kernelCokernelCompSequence.snakeInput f g).L₃_exact
-  mono_f := (kernelCokernelCompSequence.snakeInput f g).L₂'_exact.mono_g
-    ((isZero_kernel_of_mono g).eq_of_src _ _)
-  epi_g :=
-    have : Epi (kernelCokernelCompSequence.snakeInput f g).L₂.g :=
-      inferInstanceAs (Epi (biprod.snd : B ⊞ E ⟶ E))
-    (kernelCokernelCompSequence.snakeInput f g).epi_L₃_g
+    (g : B ⟶ E) [Mono g] : (kernelCokernelCompSequence.snakeInput f g).L₃.ShortExact := by
+  let S := kernelCokernelCompSequence.snakeInput f g
+  have : Epi S.L₂.g := inferInstanceAs (Epi (biprod.snd : B ⊞ E ⟶ E))
+  exact ShortComplex.ShortExact.mk' S.L₃_exact
+    (S.L₂'_exact.mono_g ((isZero_kernel_of_mono g).eq_of_src _ _)) S.epi_L₃_g
 
 section Divisor
 
@@ -187,19 +188,19 @@ theorem exists_isAmpleLB : ∃ A : LB Z.X, IsAmpleLB A :=
 def gen : Z.X.Opens :=
   Z.str ⁻¹ᵁ ⟨{closedPoint O}ᶜ, (IsLocalRing.isClosed_singleton_closedPoint O).isOpen_compl⟩
 
-variable {Z} in
 
+variable {Z} in
 theorem mem_gen {x : Z.X} : x ∈ Z.gen ↔ Z.str x ≠ closedPoint O := Iff.rfl
 
-variable {Z} in
 
+variable {Z} in
 theorem mem_gen_iff_eq_bot {x : Z.X} : x ∈ Z.gen ↔ (Z.str x).asIdeal = ⊥ := by
   refine ⟨fun h => by_contra fun h' => h (PrimeSpectrum.ext
     (eq_maximalIdeal ((Z.str x).isPrime.isMaximal h'))), fun h h' => ?_⟩
   exact IsDiscreteValuationRing.not_a_field O ((congrArg PrimeSpectrum.asIdeal h').symm.trans h)
 
-variable {Z} in
 
+variable {Z} in
 theorem mem_basicOpen_const {x : Z.X} {g : O} :
     x ∈ Z.X.basicOpen (Z.const g) ↔ g ∉ (Z.str x).asIdeal := by
   rw [const, const_eq, ← Scheme.preimage_basicOpen_top, basicOpen_eq_of_affine]
@@ -263,8 +264,8 @@ def relDim : ℕ := Z.exists_dim_eq.choose
 
 theorem dim_eq : topologicalKrullDim Z.X = (Z.relDim + 1 : ℕ) := Z.exists_dim_eq.choose_spec
 
-variable {Z} in
 
+variable {Z} in
 theorem relDim_eq_iff {d : ℕ} : Z.relDim = d ↔ topologicalKrullDim Z.X = (d + 1 : ℕ) := by
   rw [dim_eq]
   exact ⟨fun h => h ▸ rfl, fun h => Nat.succ_injective (by exact_mod_cast h)⟩
@@ -272,8 +273,8 @@ theorem relDim_eq_iff {d : ℕ} : Z.relDim = d ↔ topologicalKrullDim Z.X = (d 
 theorem dim_special_le : topologicalKrullDim ((Z.gen : Set Z.X)ᶜ : Set Z.X) ≤ Z.relDim :=
   ENat.WithBot.add_le_add_one_right_iff.1 (Z.dim_special_add_one_le.trans_eq Z.dim_eq)
 
-variable (O) in
 
+variable (O) in
 def projSpace (N : ℕ) : Model O where
   X := PSpace O N
   str := PSpace.str O N
@@ -293,11 +294,6 @@ structure Hom (Z₁ Z : Model O) where
   [surjective : Surjective f]
 
 attribute [instance] Hom.surjective
-
-def Hom.id : Hom Z Z := ⟨𝟙 _, Category.id_comp _⟩
-
-def Hom.comp {Z Z₁ Z₂ : Model O} (g : Hom Z₂ Z₁) (f : Hom Z₁ Z) : Hom Z₂ Z :=
-  ⟨g.f ≫ f.f, by rw [Category.assoc, f.comp_str, g.comp_str]⟩
 
 section Over
 
@@ -416,8 +412,8 @@ theorem effDeg_mul (I J : Z.effVert) : effDeg (I * J) = effDeg I + effDeg J := b
   rw [chiLenPic_congr O e₁, chiLenPic_congr O e₂, chiLenPic_congr O e₃] at this
   exact (congrFun this c).trans (congrArg (· + _) (chiLenPic_twist O _ hM c))
 
-variable (Z) in
 
+variable (Z) in
 abbrev VDivZ : Type := Algebra.GrothendieckAddGroup (Additive Z.effVert)
 
 def ofEff (I : Z.effVert) : Z.VDivZ := Algebra.GrothendieckAddGroup.of (Additive.ofMul I)
@@ -436,8 +432,6 @@ theorem exists_eq_ofEff_sub (D : Z.VDivZ) : ∃ I J, D = ofEff I - ofEff J := by
     refine ⟨p.1.toMul, p.2.1.toMul, ?_⟩
     exact ((Algebra.GrothendieckAddGroup.mk_sub_mk p.1 p.2.1 0 0).trans (by simp)).symm
 
-def IsEff (D : Z.VDivZ) : Prop := ∃ I, ofEff I = D
-
 def vLift {A : Type*} [AddCommGroup A] (f : Z.effVert → A) (h : ∀ I J, f (I * J) = f I + f J) :
     Z.VDivZ →+ A :=
   Algebra.GrothendieckAddGroup.lift (AddMonoidHom.mk' (fun I => f I.toMul) h)
@@ -447,35 +441,30 @@ def vLift {A : Type*} [AddCommGroup A] (f : Z.effVert → A) (h : ∀ I J, f (I 
   DFunLike.congr_fun (Algebra.GrothendieckAddGroup.lift.symm_apply_apply
     (AddMonoidHom.mk' (fun I : Additive Z.effVert => f I.toMul) h)) (Additive.ofMul I)
 
-theorem vDivZ_hom_ext {A : Type*} [AddCommGroup A] {f g : Z.VDivZ →+ A}
-    (h : ∀ I, f (ofEff I) = g (ofEff I)) : f = g := AddMonoidHom.ext fun D => by
-  obtain ⟨I, J, rfl⟩ := exists_eq_ofEff_sub D
-  rw [map_sub, map_sub, h, h]
-
 variable (Z)
 
 def vCls : Z.VDivZ →+ Pic Z.X := vLift effCls effCls_mul
 
 def vDeg : Z.VDivZ →+ (PicSym Z.X →ₗ[ℚ] ℚ) := vLift effDeg effDeg_mul
 
-variable {Z} in
 
+variable {Z} in
 @[simp] theorem vCls_ofEff (I : Z.effVert) : Z.vCls (ofEff I) = effCls I := vLift_ofEff _ _ I
 
-variable {Z} in
 
+variable {Z} in
 @[simp] theorem vDeg_ofEff (I : Z.effVert) : Z.vDeg (ofEff I) = effDeg I := vLift_ofEff _ _ I
 
-variable {Z} in
 
+variable {Z} in
 theorem vDeg_ofEff_prod (I : Z.effVert) {ι : Type} [Fintype ι] {L : ι → LB Z.X}
     (hL : ∀ i, (L i).IsLB) : Z.vDeg (ofEff I) (∏ i, c1 (L i) (hL i)) =
       if Fintype.card ι = Z.relDim then (interLen O (divMod I.1) L : ℚ) else 0 := by
   rw [vDeg_ofEff]
   exact (isVertical_divMod I).deg_prod hL
 
-variable {Z} in
 
+variable {Z} in
 theorem vDeg_eq_zero (D : Z.VDivZ) {n : ℕ} (hn : n ≠ Z.relDim) {x : PicSym Z.X}
     (hx : x ∈ symDeg (SmallPic Z.X) n) : Z.vDeg D x = 0 := by
   obtain ⟨I, J, rfl⟩ := exists_eq_ofEff_sub D
@@ -485,10 +474,6 @@ theorem vDeg_eq_zero (D : Z.VDivZ) {n : ℕ} (hn : n ≠ Z.relDim) {x : PicSym Z
 def effConst (g : O) (hg : g ≠ 0) : Z.effVert :=
   effMk (.principal (Z.const g) (Z.isRegularFn_const hg))
     fun _ => inf_le_left.trans (Z.gen_le_basicOpen hg)
-
-theorem coe_effConst (g : O) (hg : g ≠ 0) : (Z.effConst g hg).1 =
-    Scheme.IdealSheafData.ofIdealTop (Ideal.span {Z.const g}) :=
-  EffCartierData.idealSheaf_principal _ _
 
 def div (g : O) (hg : g ≠ 0) : Z.VDivZ := ofEff (Z.effConst g hg)
 
@@ -511,12 +496,6 @@ theorem div_pow {g : O} (hg : g ≠ 0) (n : ℕ) (h : g ^ n ≠ 0) :
   induction n with
   | zero => simpa using Z.div_of_isUnit isUnit_one _
   | succ n ih => simp only [pow_succ, succ_nsmul, Z.div_mul (pow_ne_zero n hg) hg, ih]
-
-theorem div_eq_addVal_smul {ϖ g : O} (hϖ : Irreducible ϖ) (hg : g ≠ 0) :
-    Z.div g hg = (IsDiscreteValuationRing.addVal O g).toNat • Z.div ϖ hϖ.ne_zero := by
-  obtain ⟨n, u, rfl⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hg hϖ
-  rw [IsDiscreteValuationRing.addVal_def _ u hϖ n rfl, ENat.toNat_natCast,
-    Z.div_mul u.ne_zero (pow_ne_zero n hϖ.ne_zero), Z.div_of_isUnit u.isUnit, zero_add, div_pow]
 
 @[simp] theorem vCls_div (g : O) (hg : g ≠ 0) : Z.vCls (Z.div g hg) = 0 := by
   rw [div, vCls_ofEff, effCls_eq (D := .principal (Z.const g) (Z.isRegularFn_const hg)) rfl]
@@ -554,16 +533,6 @@ def vPull : Z.VDivZ →+ Z₁.VDivZ :=
 @[simp] theorem vPull_ofEff (I : Z.effVert) : vPull hf (ofEff I) = ofEff (effPull hf I) :=
   vLift_ofEff _ _ I
 
-theorem vCls_vPull (D : Z.VDivZ) : Z₁.vCls (vPull hf D) = pull f (Z.vCls D) := by
-  refine DFunLike.congr_fun (vDivZ_hom_ext (f := Z₁.vCls.comp (vPull hf))
-    (g := (pull f).comp Z.vCls) fun I => ?_) D
-  have hI := keepsRegular hf (idealSheaf_effData I)
-  simp only [AddMonoidHom.comp_apply, vPull_ofEff, vCls_ofEff]
-  rw [effCls_eq (D := (effData I).pull f hI) (by
-    rw [EffCartierData.idealSheaf_pull, idealSheaf_effData]; rfl), effCls,
-    ← cls_pull _ f (Semi.LB.isLB_pull (effData I).isLB_lb f), cls_eq_iff]
-  exact (effData I).lbIso_pull f hI
-
 @[simp] theorem vPull_div (g : O) (hg : g ≠ 0) : vPull hf (Z.div g hg) = Z₁.div g hg := by
   rw [div, vPull_ofEff]
   refine congrArg ofEff (Subtype.ext ((EffCartierData.idealSheaf_pull _ f
@@ -575,8 +544,8 @@ end Pull
 
 end Model
 
-variable {O} in
 
+variable {O} in
 structure VertDiv (Z : Model O) where
 
   M : LB Z.X
@@ -620,15 +589,15 @@ def ofUnits (M : LB Z.X) (hM : M.IsLB) (u : ∀ i, Γ(Z.X, Z.gen ⊓ M.U i))
     (hu : ∀ i, IsUnit (u i)) (h : u ∈ secOn M Z.gen) : VertDiv Z :=
   ⟨M, hM, LB.mkSec u h, hu⟩
 
-variable (Z) in
 
+variable (Z) in
 def zero : VertDiv Z :=
   ofUnits (LB.triv _) (LB.isLB_triv _) (fun _ => 1) (fun _ => isUnit_one) fun _ _ => by
     change _ = resG Z.X _ 1 * _
     simp only [map_one, mul_one]
 
-variable (Z) in
 
+variable (Z) in
 def const (g : O) (hg : g ≠ 0) : VertDiv Z :=
   ofUnits (LB.triv _) (LB.isLB_triv _) (fun _ => resG Z.X le_top (Z.const g))
     (fun _ => Z.isUnit_const hg inf_le_left) fun _ _ => by
@@ -641,17 +610,6 @@ def add : VertDiv Z :=
     (fun _ => (P.isUnit_eqn _ _).mul (P'.isUnit_eqn _ _)) fun p q => by
       simp only [map_mul, resG_eqn]
       exact eqn_mul_rel P P' p.1 q.1 p.2 q.2 _ _ _ _ _ _ _
-
-def neg : VertDiv Z :=
-  ofUnits (dual P.M) (isLB_dual P.isLB) (fun i => ((P.isUnit i).unit⁻¹).val)
-    (fun _ => Units.isUnit _) fun i j => by
-      have : res (inf_le_left : Z.gen ⊓ P.M.U i ⊓ P.M.U j ≤ _) (P.isUnit i).unit =
-          res (inf_le_inf_right _ inf_le_right) (P.M.g i j) *
-            res (inf_le_inf_right _ inf_le_left) (P.isUnit j).unit :=
-        Units.ext (LB.coord_mem P.t i j)
-      have := congrArg (fun u => Units.val u⁻¹) this
-      simp only [mul_inv, ← map_inv] at this
-      exact this
 
 def ofEff (I : Z.effVert) : VertDiv Z :=
   ⟨(effData I).lb, (effData I).isLB_lb, ofSec (effData I).canonical _, fun i => by
@@ -692,8 +650,8 @@ theorem Extends.smul (h : P.Extends g s) (g' : O) : P.Extends (g' * g) (Z.const 
     simp only [LB.coord_ofSec, LB.coord_smul, LB.smul_f, map_mul, resG_resG, this, eqn, resG_self,
       mul_assoc]
 
-variable (P) in
 
+variable (P) in
 theorem exists_extends {a : O} (ha : a ≠ 0) (hm : a ∈ maximalIdeal O) :
     ∃ (m : ℕ) (s : P.M.Sec), P.Extends (a ^ m) s := by
   have := LB.isQuasicoherent_toMod P.isLB
@@ -704,8 +662,8 @@ theorem exists_extends {a : O} (ha : a ≠ 0) (hm : a ∈ maximalIdeal O) :
     LinearEquiv.symm_apply_apply, ← ht]
   simp only [Model.const, map_pow]
 
-variable (P P' P'') in
 
+variable (P P' P'') in
 def IsSum : Prop := ∀ (i : P.M.ι) (j : P'.M.ι) (k : P''.M.ι),
   ∃ u : Γ(Z.X, P.M.U i ⊓ P'.M.U j ⊓ P''.M.U k)ˣ,
     P''.eqn k (inf_le_inf_left _ inf_le_right : Z.gen ⊓ (P.M.U i ⊓ P'.M.U j ⊓ P''.M.U k) ≤ _) =
@@ -742,15 +700,15 @@ theorem IsSum.ofEff_sub (H : IsSum P P' P'') (h : P.Extends g s) (h' : P'.Extend
   simp only [map_mul, germ_resG] at e'
   exact (Associated.of_eq e').trans (associated_unit_mul_left _ _ (u.isUnit.map _))
 
-variable (P) in
 
+variable (P) in
 theorem exists_extends' : ∃ q : {g : O // g ≠ 0} × P.M.Sec, P.Extends q.1 q.2 :=
   have ⟨_, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible O
   have ⟨m, s, h⟩ := P.exists_extends hϖ.ne_zero hϖ.not_isUnit
   ⟨⟨⟨_, pow_ne_zero m hϖ.ne_zero⟩, s⟩, h⟩
 
-variable (P) in
 
+variable (P) in
 def cls : Z.VDivZ :=
   Model.ofEff (P.exists_extends'.choose_spec.eff P.exists_extends'.choose.1.2) -
     Z.div _ P.exists_extends'.choose.1.2
@@ -766,13 +724,13 @@ theorem IsIsom.isSum (H : IsIsom P P') : IsSum P (zero Z) P' := fun i _ k => by
   refine this.trans (congrArg₂ (· * ·) (resG_resG _ _ _).symm ?_)
   exact (mul_one _).symm.trans (congrArg _ (map_one _).symm)
 
-variable (P) in
 
+variable (P) in
 theorem IsIsom.refl : IsIsom P P :=
   ⟨idIso P.M, idIso_isGen P.isLB, fun p q => P.eqn_rel p q _ _ _⟩
 
-variable (Z) in
 
+variable (Z) in
 @[simp] theorem cls_zero : (zero Z).cls = 0 := by simpa using (IsIsom.refl (zero Z)).isSum.cls_eq
 
 theorem Extends.cls_eq (h : P.Extends g s) (hg : g ≠ 0) :
@@ -782,29 +740,7 @@ theorem Extends.cls_eq (h : P.Extends g s) (hg : g ≠ 0) :
 
 theorem IsIsom.cls_eq (H : IsIsom P P') : P.cls = P'.cls := by simpa using H.isSum.cls_eq.symm
 
-variable (P P') in
 
-@[simp] theorem cls_add : (P.add P').cls = P.cls + P'.cls :=
-  IsSum.cls_eq fun i j k => ⟨res (le_inf (inf_le_right.trans inf_le_left)
-    (inf_le_left.trans inf_le_left)) (P.M.g k.1 i) * res (le_inf (inf_le_right.trans inf_le_right)
-    (inf_le_left.trans inf_le_right)) (P'.M.g k.2 j), by
-      refine Eq.trans ?_ (eqn_mul_rel P P' k.1 i k.2 j (inf_le_inf_left _
-        (inf_le_right.trans inf_le_left)) _ (inf_le_inf_left _ (inf_le_right.trans inf_le_right))
-        _ _ _ _)
-      exact (map_mul _ _ _).trans (congrArg₂ (· * ·) (resG_eqn _ _ _ _) (resG_eqn _ _ _ _))⟩
-
-variable (P) in
-
-@[simp] theorem cls_neg : P.neg.cls = -P.cls := by
-  suffices h : IsSum P P.neg (zero Z) from
-    eq_neg_of_add_eq_zero_right (h.cls_eq.symm.trans (cls_zero Z))
-  refine fun i j k =>
-    ⟨res (le_inf (inf_le_left.trans inf_le_right) (inf_le_left.trans inf_le_left)) (P.M.g j i), ?_⟩
-  rw [val_res, resG_resG, ← mul_assoc]
-  refine Eq.trans ?_ (congrArg (· * _) (P.eqn_rel j i
-    (inf_le_inf_left _ (inf_le_left.trans inf_le_right)) _ _))
-  change resG Z.X _ 1 = resG Z.X _ (coord P.t j) * resG Z.X _ ((P.isUnit j).unit⁻¹).val
-  rw [← map_mul, IsUnit.mul_val_inv, map_one, map_one]
 
 theorem extends_one (h : ofSec s Z.gen = P.t) : P.Extends 1 s := by
   rw [Extends, Model.const, map_one, map_one, one_smul, h]
@@ -812,27 +748,18 @@ theorem extends_one (h : ofSec s Z.gen = P.t) : P.Extends 1 s := by
 theorem Extends.cls_eq_ofEff (h : P.Extends 1 s) : P.cls = Model.ofEff (h.eff one_ne_zero) := by
   rw [h.cls_eq one_ne_zero, Z.div_of_isUnit isUnit_one, sub_zero]
 
-@[simp] theorem cls_ofEff (I : Z.effVert) : (ofEff I).cls = Model.ofEff I := by
-  have h : (ofEff I).Extends 1 (effData I).canonical := extends_one rfl
-  rw [h.cls_eq_ofEff]
-  exact congrArg _ (Subtype.ext (idealSheaf_effData I))
 
 variable (Z) in
-
 @[simp] theorem cls_const (g : O) (hg : g ≠ 0) : (const Z g hg).cls = Z.div g hg := by
   have h : (const Z g hg).Extends 1 ⟨fun _ => Z.const g, fun _ _ => (one_mul _).symm⟩ :=
     extends_one rfl
   exact h.cls_eq_ofEff
 
-variable (P) in
 
+variable (P) in
 @[simp] theorem vCls_cls : Z.vCls P.cls = CechPic.cls P.M P.isLB := by
   rw [cls, map_sub, vCls_div, sub_zero, vCls_ofEff, effCls_eq rfl, cls_eq_iff]
   exact EffCartierData.lbIso_ofSec _ _ _
-
-theorem cls_surjective : Function.Surjective (cls (Z := Z)) := fun D =>
-  have ⟨I, J, e⟩ := exists_eq_ofEff_sub D
-  ⟨(ofEff I).add (ofEff J).neg, by simp [e, sub_eq_add_neg]⟩
 
 theorem cls_eq_iff : P.cls = P'.cls ↔ IsIsom P P' := by
   refine ⟨fun e => ?_, IsIsom.cls_eq⟩
@@ -853,33 +780,7 @@ section Pull
 
 variable {Z₁ : Model O} {f : Z₁.X ⟶ Z.X} (hf : f ≫ Z.str = Z₁.str)
 
-variable (P) in
 
-def pull : VertDiv Z₁ where
-  M := P.M.pull f
-  isLB := Semi.LB.isLB_pull P.isLB f
-  t := Twist.resM _ (preimage_gen hf).ge (LB.pullSec P.M f _ P.t)
-  isUnit j := ((P.isUnit (j ⟨⟩)).map (f.appLE _ _ (LB.pull_inf_le f _ j)).hom).map _
-
-theorem Extends.pull (h : P.Extends g s) : (P.pull hf).Extends g (Cartier.secPull s f) :=
-  LB.sec_ext fun j => by
-    have e : Z₁.gen ⊓ (P.M.pull f).U j ≤ f ⁻¹ᵁ (Z.gen ⊓ P.M.U (j ⟨⟩)) :=
-      inf_le_inf (preimage_gen hf).ge (LB.pull_U_le f j)
-    have := congrArg (f.appLE _ _ e).hom (h.resG_f (j ⟨⟩) le_rfl)
-    rw [map_mul, LB.appLE_resG, LB.appLE_resG, eqn, resG_self] at this
-    change resG Z₁.X _ (resG Z₁.X _ _) = resG Z₁.X _ (resG Z₁.X _ _) * resG Z₁.X _ _
-    rw [resG_resG, resG_resG, ← appTop_const hf]
-    exact this.trans (congrArg _ (LB.resG_appLE f (LB.pull_inf_le f _ j) _ _).symm)
-
-variable (P) in
-
-@[simp] theorem cls_pull : (P.pull hf).cls = vPull hf P.cls := by
-  obtain ⟨⟨⟨g, hg⟩, s⟩, h⟩ := P.exists_extends'
-  rw [h.cls_eq hg, (h.pull hf).cls_eq hg, map_sub, vPull_div, vPull_ofEff, sub_left_inj]
-  refine congrArg _ (Subtype.ext (Eq.trans (idealSheaf_eq_of_germ _ _ fun x i j hi hj => ?_)
-    (EffCartierData.idealSheaf_pull _ f (keepsRegular hf (I := h.eff hg) rfl))))
-  exact (Associated.of_eq (germ_resG _ _ _ _)).trans
-    ((EffCartierData.ofSec P.isLB s (h.isRegularSec hg)).associated_germ_app f (i ⟨⟩) j x _ hj)
 
 end Pull
 
@@ -888,20 +789,6 @@ end VertDiv
 namespace Model
 
 variable {O} {Z : Model O}
-
-theorem exists_isEff_add_nsmul_div (D : Z.VDivZ) {a : O} (ha : a ≠ 0) (hm : a ∈ maximalIdeal O) :
-    ∃ m : ℕ, IsEff (D + m • Z.div a ha) := by
-  obtain ⟨P, rfl⟩ := VertDiv.cls_surjective D
-  obtain ⟨m, s, h⟩ := P.exists_extends ha hm
-  exact ⟨m, h.eff (pow_ne_zero m ha), by rw [h.cls_eq (pow_ne_zero m ha), Z.div_pow ha, sub_add_cancel]⟩
-
-theorem vDeg_prod_of_add_nsmul_div {D : Z.VDivZ} {a : O} (ha : a ≠ 0) {m : ℕ} {E : Z.effVert}
-    (h : ofEff E = D + m • Z.div a ha) {L : Fin Z.relDim → LB Z.X} (hL : ∀ i, (L i).IsLB) :
-    Z.vDeg D (∏ i, c1 (L i) (hL i)) =
-      interLen O (divMod E.1) L - m * interLen O (divMod (Z.effConst a ha).1) L := by
-  rw [← sub_eq_iff_eq_add.2 h, map_sub, map_nsmul, LinearMap.sub_apply, LinearMap.smul_apply, div,
-    vDeg_ofEff_prod, vDeg_ofEff_prod]
-  simp
 
 end Model
 

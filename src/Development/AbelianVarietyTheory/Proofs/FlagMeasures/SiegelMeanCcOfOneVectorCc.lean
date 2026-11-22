@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SiegelMeanCc
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SiegelMeanOfWeilSiegel
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureGaussian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmEulerProductDiscrUnramified
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsOrthComplementOfUnitVectorAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnramifiedAdditiveCharacterConductor
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ArchimedeanDensityProductTestFunctionAtSignStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContinuousDensitySelfDualLatticeIndicatorAtUnitStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SiegelMeanCc
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SiegelMeanOfWeilSiegel
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SelfDualMeasureGaussian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CmEulerProductDiscrUnramified
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsOrthComplementOfUnitVectorAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnramifiedAdditiveCharacterConductor
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ArchimedeanDensityProductTestFunctionAtSignStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ContinuousDensitySelfDualLatticeIndicatorAtUnitStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Count GlobalTheory.GaussMean
 open Formalism.MainNotions.S (AutInst uMat)
@@ -118,8 +122,8 @@ theorem lintegral_lt_top_of_meanC {α : Type} [MeasurableSpace α] (μ : Measure
 
 variable (I : AutInst) (φ : InfinitePlace I.F → (Fin I.n → ℂ) → ℝ)
 
-open Classical in
 
+open Classical in
 def term (x : I.GA) (y : Fin I.n → I.E) : ℝ :=
   if y ∈ lamX I x then ∏ v, φ v (((uMat (x.1 v))⁻¹ * (I.P v)⁻¹) *ᵥ fun i => I.φ v (y i)) else 0
 
@@ -181,7 +185,8 @@ theorem qEps_frame (s : Bool) (y : Fin I.n → I.E) (hy : star y ⬝ᵥ (I.J *�
   have e : ((sgn ℝ s : ℝ) : ℂ) = I.φ v (sgn I.E s) := by
     unfold sgn; split_ifs <;> simp
   rw [e, ← hy]
-  simp [dotProduct, mulVec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [dotProduct, mulVec, map_sum]
 
 theorem hE_eq (y : Fin I.n → I.E) : hE I.cm.sig I.J y y = star y ⬝ᵥ (I.J *ᵥ y) := by
   simp only [hE, Formalism.UG.hform, dotProduct, Matrix.mulVec, Finset.mul_sum, mul_assoc]
@@ -203,12 +208,12 @@ theorem sum_eq (β : I.E) (x : I.GA) :
     unfold term
     by_cases hy : y ∈ lamX I x
     · rw [Set.indicator_of_mem (by exact ⟨hy, h⟩), if_pos hy]
-    · rw [Set.indicator_of_notMem (fun h' => hy h'.1), if_neg hy, ENNReal.ofReal_zero]
+    · rw [Set.indicator_of_notMem (by exact fun h' => hy h'.1), if_neg hy, ENNReal.ofReal_zero]
   · have h1 : (Equiv.funUnique (Fin 1) (Fin I.n → I.E)).symm y ∉
         {X : Fin 1 → Fin I.n → I.E | hE I.cm.sig I.J (X 0) (X 0) = β} := fun h' => by
       have h'' : hE I.cm.sig I.J y y = β := h'
       exact h ((hE_eq I y).symm.trans h'')
-    rw [Set.indicator_of_notMem (fun h' => h h'.2), Set.indicator_of_notMem h1]
+    rw [Set.indicator_of_notMem (by exact fun h' => h h'.2), Set.indicator_of_notMem h1]
 
 theorem sum_ne_top (hK : ∀ v, HasCompactSupport (φ v)) (A : Set (Fin 1 → Fin I.n → I.E)) (x : I.GA) :
     ∑' X : A, ENNReal.ofReal (term I φ x (X.1 0)) ≠ ⊤ := by
@@ -234,7 +239,8 @@ theorem test_eq_term (θ : InfinitePlace I.F → (Ainf I.F ⊗[I.F] I.E →+* �
       X 0 ∈ lamX I (T h) := by
     rw [GlobalTheory.T.mem_adelicLatticeClosure_iff_swap_mem_span, (GlobalTheory.PointLattice.lamX_selfDual I (T h)).1, show (T h).2⁻¹ = (T h⁻¹).2 by rw [map_inv]; rfl, hf]
     refine iff_of_eq (congrArg (· ∈ I.Lf) (funext fun i => ?_))
-    simp only [projFin, e0, map_sum, map_mul, Algebra.TensorProduct.map_tmul, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [projFin, e0, map_sum, map_mul, Algebra.TensorProduct.map_tmul, map_one]
     rfl
   have e2 : ∀ v, ((I.P v)⁻¹ *ᵥ fun i => θ v (projInf (h⁻¹ • ratTup (F := I.F) (AF I.F) X) 0 i)) =
       ((uMat ((T h).1 v))⁻¹ * (I.P v)⁻¹) *ᵥ fun i => I.φ v (X 0 i) := fun v => by
@@ -243,7 +249,18 @@ theorem test_eq_term (θ : InfinitePlace I.F → (Ainf I.F ⊗[I.F] I.E →+* �
       ← Matrix.mulVec_mulVec]
     congr 1
     funext i
-    simp only [projInf, e0, map_sum, map_mul, Algebra.TensorProduct.map_tmul, map_one, AlgHom.id_apply, (hθ v).1]
+    let p : AF I.F ⊗[I.F] I.E →+* Ainf I.F ⊗[I.F] I.E :=
+      (Algebra.TensorProduct.map (fstA I.F) (AlgHom.id I.F I.E)).toRingHom
+    have e := RingHom.map_mulVec ((θ v).comp p) (HA.mat (AF I.F) I.cm.sig I.J h⁻¹).1
+      (ratTup (F := I.F) (AF I.F) X 0) i
+    refine e.trans ?_
+    have e2 : ((θ v).comp p) ∘ ratTup (F := I.F) (AF I.F) X 0 = fun i => I.φ v (X 0 i) := by
+      funext j
+      rw [← (hθ v).1]
+      show θ v (Algebra.TensorProduct.map (fstA I.F) (AlgHom.id I.F I.E) (1 ⊗ₜ X 0 j)) = _
+      rw [Algebra.TensorProduct.map_tmul, map_one]
+      rfl
+    rw [e2]
     rfl
   unfold term
   by_cases hx : X 0 ∈ lamX I (T h)
@@ -294,7 +311,9 @@ theorem siegelMeanCc_of_oneVectorCc : OneVectorCc → SiegelMeanCc := by
     refine (lintegral_congr fun x => ENNReal.tsum_eq_zero.2 fun y => ?_).trans lintegral_zero
     rw [Finset.prod_eq_zero (Finset.mem_univ v) (eq_zero_of_isDens (hc v) (hK v) (h0 v) (hφ v).2.2.2 (hs1 ℝ) hv
       (qEps_frame I s y.1 y.2.2 v _)), ENNReal.ofReal_zero]
-  have hL : Submodule.IsLattice I.E I.L := ⟨I.L_fg, I.L_span⟩
+  have hL : Submodule.IsLattice I.E I.L := Submodule.IsLattice.of_fg I.E I.L_fg
+  have hLfull : Submodule.IsFullLattice I.E I.L :=
+    { toIsLattice := hL, span_eq_top := I.L_span }
   haveI : FiniteDimensional I.F I.E := Module.finite_of_finrank_eq_succ hCM.2.2.1
   let b := Module.finBasis I.F I.E
   obtain ⟨g1, g2, g3⟩ := test_smooth I φ θ hθ (fun v => (hφ v).1) hK _ rfl
@@ -302,8 +321,8 @@ theorem siegelMeanCc_of_oneVectorCc : OneVectorCc → SiegelMeanCc := by
   have hsg : ∀ (R : Type) [CommRing R] [Algebra I.F R], algebraMap I.F R (sgn I.F s) = sgn R s := fun R _ _ => by
     cases s <;> simp [sgn]
   obtain ⟨⟨ψ, hψ⟩, hB⟩ := b1 hn (sgn I.F s) (hs1 _) _ b _ _ _ _ g1 g2 g3
-    ⟨GlobalTheory.T.isSchwartzBruhat_indicator_localLatticeCompletion I.F I.E I.n I.L hL, (GlobalTheory.T.eventually_localLatticeCompletion_eq_coordinateLattice I.F I.E I.n _ b I.L hL).mono fun v hv => by rw [hv],
-      GlobalTheory.T.indicator_completedLattice_eq_finprod_local I.F I.E I.n I.L hL⟩ fun _ => rfl
+    ⟨GlobalTheory.T.isSchwartzBruhat_indicator_localLatticeCompletion I.F I.E I.n I.L hLfull, (GlobalTheory.T.eventually_localLatticeCompletion_eq_coordinateLattice I.F I.E I.n _ b I.L hLfull).mono fun v hv => by rw [hv],
+      GlobalTheory.T.indicator_completedLattice_eq_finprod_local I.F I.E I.n I.L hLfull⟩ fun _ => rfl
   obtain ⟨⟨μi, hμi⟩, ⟨νi, hνi⟩, ⟨μv, hμv⟩, ⟨νv, hνv⟩, hQ⟩ := ((hB ψ hψ).2 μ hμ).2 S hS
   obtain ⟨Fi, Fl, hFi, hFl, -, hmean⟩ := hQ μi νi μv νv hμi hνi hμv hνv
   obtain ⟨lam, m, hlam, hψi, hm, hdual, hprod⟩ := GlobalTheory.T.adelic_character_frequencies_and_conductor_product I θ hθ ψ hψ
@@ -329,7 +348,7 @@ theorem siegelMeanCc_of_oneVectorCc : OneVectorCc → SiegelMeanCc := by
   have hG : Measurable fun h : HA (AF I.F) I.cm.sig I.J =>
       ∑' X : {X : Fin 1 → Fin I.n → I.E | hE I.cm.sig I.J (X 0) (X 0) = sgn I.E s},
         ENNReal.ofReal (term I φ (T h) (X.1 0)) :=
-    Measurable.ennreal_tsum fun X => (measurable_term I φ hc _).comp hTm
+    Measurable.tsum fun X => (measurable_term I φ hc _).comp hTm
   have hM : meanC μ S (fun h => ((∑' X : {X : Fin 1 → Fin I.n → I.E | hE I.cm.sig I.J (X 0) (X 0) = sgn I.E s},
       ENNReal.ofReal (term I φ (T h) (X.1 0))).toReal : ℂ)) =
       ((meanConst I.E I.n * ∏ v, D v (sgn ℝ s) : ℝ) : ℂ) := by

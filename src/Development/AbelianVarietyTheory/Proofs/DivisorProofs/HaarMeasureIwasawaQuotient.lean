@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HaarSK
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectHaar
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HaarSK
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectHaar
+
+@[expose] public section
 
 open MeasureTheory Measure Topology Set Function TopologicalSpace GroundTheory.Automorphic.HaarSK
 open scoped NNReal ENNReal Pointwise

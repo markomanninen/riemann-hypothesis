@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSumsSpan
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionSecond
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEmbeddingIdealLevel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelsAtRecordCore
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LettersEqFockVarsCore
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameConstantsOfCharacterisationCoreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspFormClassSumNormalisedData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicLiftEqGeometricClassSumAllTuplesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockCoefficientMapExtremalEqPhaseSmulLettersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelOneClassEqClassicalShortSeriesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelFinitePointMemSpanRationalFormLiftsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassSumsSpan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelExtensionSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeEmbeddingIdealLevel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ModelsAtRecordCore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LettersEqFockVarsCore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameConstantsOfCharacterisationCoreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCuspFormClassSumNormalisedData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAdelicLiftEqGeometricClassSumAllTuplesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockCoefficientMapExtremalEqPhaseSmulLettersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelOneClassEqClassicalShortSeriesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelFinitePointMemSpanRationalFormLiftsStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -29,8 +33,8 @@ open scoped TensorProduct Classical
 open GlobalTheory.BasePoint
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_point_phiIs_core : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : Formalism.L2.DIV.FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Hk3.Core R F → ∀ (i : Fin D.R.m), VStd D i → ∀ (H : Geo.Tor.Host D.host.E) (Dw : Datum H) (l : Geo.Tor.Level H) (c : Coeff l) (ι : Dw.La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E)) (I : Ideal (𝓞 D.host.E)), LatEmb (Wc D i) ι → HalfIs R A.μ0 l.Mb I → ∃ x1 : Fin (Vc D i).rank → LevQc Dw l, Submodule.span (𝓞 D.host.E) (Set.range x1) = ⊤ ∧ PhiIs R i c.F.val.toRingHom A.μ0 ι (Mfr l • ⊤) (indPhi c x1) := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hR i hV H Dw l c ι I hι hh
   have hQ : R.Q A.μ0 = ∅ := Finset.eq_empty_of_forall_notMem fun PP hP =>
@@ -66,7 +70,8 @@ theorem exists_point_phiIs_core : ∀ (D : D7) (G : Type) [Group G] [Fintype G] 
     (fun PP => Matrix.of fun a b => Formalism.L2.DIV.resS D.host.F PP ⟨_, hβ a b⟩)
     (fun PP => by
       ext a b
-      simp only [Matrix.mul_apply, Matrix.of_apply, ← RingHom.map_mul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, Matrix.of_apply, ← RingHom.map_mul, ← map_sum]
       have : (∑ j, ⟨_, hβ a j⟩ * ⟨_, hβ' j b⟩ : Formalism.L2.Herm.intAf D.host.F D.host.E) = if a = b then 1 else 0 := by
         refine Subtype.ext ?_
         rw [AddSubmonoidClass.coe_finsetSum]
@@ -108,8 +113,8 @@ variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : Formalis
   {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)} {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec}
   {i : Fin D.R.m} {Tp : Type} {tup : Tp → T0}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem lattice_scalar_value (hC : GlobalTheory.Hk3.Core R F) (hT : TieIn T R κ v₀) (O : OMDat T.toCore R i Tp tup)
     (hO : O.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O.s0)) (t : Tp) (h : GA D (Vc D i)) (e : AE D)
     (P : Finset (Formalism.L2.DIV.Pl D.host.E)) (y : (AE D)ˣ) (he : IsIdemSum e P)
@@ -141,7 +146,11 @@ theorem lattice_scalar_value (hC : GlobalTheory.Hk3.Core R F) (hT : TieIn T R κ
         · exact hQ (hbad Q (Or.inr a))
         · rw [(GlobalTheory.IdemSupport.isConjPl_iff _ _).1 a', GlobalTheory.IdemSupport.mem_cP, map_natCast] at hQ
           exact hQ (hbad Q' (Or.inr a))
-      rw [Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_mul, Formalism.L2.Host.HChar.loc_inv, a1 x hx, a2 x hx,
+      have loc_mul (a b : Formalism.L2.Host.HChar D.host.E) (v : HeightOneSpectrum (𝓞 D.host.E)) (x : (v.adicCompletion D.host.E)ˣ) :
+          (a * b).loc v x = a.loc v x * b.loc v x := rfl
+      have loc_inv (a : Formalism.L2.Host.HChar D.host.E) (v : HeightOneSpectrum (𝓞 D.host.E)) (x : (v.adicCompletion D.host.E)ˣ) :
+          (a⁻¹).loc v x = (a.loc v x)⁻¹ := rfl
+      rw [loc_mul, loc_mul, loc_inv, a1 x hx, a2 x hx,
         R.C.isEta.unr Q x hx, inv_one, one_mul, one_mul])
     (fun Q hQ x => by
       rw [Formalism.L2.Host.HChar.resFin_mul, Formalism.L2.Host.HChar.resFin_mul, Formalism.L2.Host.HChar.resFin_inv,
@@ -164,8 +173,8 @@ theorem lattice_scalar_value (hC : GlobalTheory.Hk3.Core R F) (hT : TieIn T R κ
   rw [← hi'] at this
   exact this
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem kernel_eq_shortVal (hC : GlobalTheory.Hk3.Core R F) (hT : TieIn T R κ v₀) (O : OMDat T.toCore R i Unit (fun _ => A.μ0))
     (hP : O.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O.s0)) {ka : ℂ} (hka : IoAt O (v₀ i (sg0 D A)) ka)
     {δ : ℤˣ} (hδ : ClsAt R i (iotaW T i) δ) {cst : (T.U ((i : ℕ) + 1) O.s0).Comp → ℂ}
@@ -189,6 +198,24 @@ theorem kernel_eq_shortVal (hC : GlobalTheory.Hk3.Core R F) (hT : TieIn T R κ v
   have hs : O.s0 = T.toCore.σ₀ := sOv_eq _ _ _
   have hσ : GoodEmb T.Q.c O.s0 := hs ▸ T.toCore.good_σ₀
   have hmod := models_at_record_core D G Pl0 T0 A T R F κ v₀ hC hT i O.s0 hs
+  have dict_cast {D : D7} (T : CoreJ D) (hL : LawsJ T) (j : ℕ) (hj : InR D j) (σ : T.Q.c.F →+* ℂ) (hσ : GoodEmb T.Q.c σ)
+      (W : HSp D) (hV : T.V j σ = W) (hr : W.rank = D.R.r) :
+      LatEmb W (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota j) ∧
+      LatIsom W (T.Q.Dw j).EF (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota j) ∧
+      (∀ g : GA D W, ∃ x, IsDetRoot W g x) ∧
+      ∀ θ : InfFam D, IsInfFam θ → (∀ k, IsMod W hr ((T.U j σ).X k)) → 1 ≤ D.R.r →
+        ∀ (Wt : UW (Formalism.L2.PjFree.Unf.ofPj (T.U j σ))) (h : GA D W),
+          IsONFr ((T.U j σ).X (castDict hV (T.dict j σ) h).1) (castDict hV (T.dict j σ) h).2 ∧
+          ∃ γ, AtComp θ W hr (T.U j σ).X (castDict hV (T.dict j σ)) (T.x₀ j σ) h γ ∧
+            MarkAd T.Q.l W hr (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota j) (γ * h)
+              (Wt.mark (castDict hV (T.dict j σ) h).1) := by
+    subst hV
+    obtain ⟨_, g, e, F, ik, φ, th, h1, h2, h3, h4⟩ := hL.adPin j hj σ hσ
+    refine ⟨h1, h2, (hL.muVal j hj σ hσ).1, fun θ hθ hm h0 Wt h => ?_⟩
+    obtain ⟨k1, γ, k2, k3, -⟩ := dict_atComp_markAd D _ _ _ _ _ σ _ (T.U j σ) hσ (hL.unf j hj σ hσ) h0 hL.pins.2.1.2 θ _ hr
+      (T.dict j σ) _ g e F ik φ th _ hθ hm (hL.familyUniformisationBasePointOrthogonal j hj σ hσ) h3 h4 Wt h
+    exact ⟨k1, γ, k2, k3⟩
+
   obtain ⟨hemb, -, -, hmk⟩ := dict_cast T hT.laws _ (inR i) O.s0 hσ (Wc D i) O.hV (rank_Wc i)
   obtain ⟨hX, hon, hinv, hp, hrk, hpq, h1, hrt, -, hbas, hD, -⟩ := hmod (O.dict g').1
   have hU : IsUnf (unfO O) := GlobalTheory.OneMapAll.isUnf_unfExt O.hle (inC O.c') (fun _ => rfl) (hT.laws.unf _ (inR i) O.s0 hσ)
@@ -279,8 +306,8 @@ variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : Formalis
   (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (F : Face D A)
   (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem classSumsSpan_of_pins_core (hR : GlobalTheory.Hk3.Core R F) (ht : TieIn T R κ v₀) (hio : IoExt R) (hsz : 8 * D.R.f * D.R.r + 4 ≤ D.R.nV)
     (i : Fin D.R.m) (O : OMDat T.toCore R i Unit (fun _ => A.μ0))
     (hP : O.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O.s0)) : GlobalTheory.OneMapAll.ClassSumsSpan O (κ i) := by
@@ -292,7 +319,13 @@ theorem classSumsSpan_of_pins_core (hR : GlobalTheory.Hk3.Core R F) (ht : TieIn 
   have hV := hP.lift.std
   obtain ⟨cc, hcc⟩ := GlobalTheory.T.exists_frameConstants_of_characterisationCore hCI D G Pl0 T0 A T R F κ v₀ hR ht i _ _ O hP
   obtain ⟨u, hu, -, -, hser⟩ := GlobalTheory.T.exists_adelicLift_eq_geometric_classSum_all_tuples hCI D G Pl0 T0 A T R F κ v₀ hR ht hio i _ _ O hP cc hcc
-  obtain ⟨h1', h2', -⟩ := GlobalTheory.PtId.dict_cast T hT _ (inR i) O.s0 (goodEmbedding_baseEmbedding_coreData O) (Wc D i) O.hV (rank_Wc i)
+  have hpair (W : HSp D) (hV : T.V ((i : ℕ) + 1) O.s0 = W) (hr : W.rank = D.R.r) :
+      LatEmb W (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota ((i : ℕ) + 1)) ∧
+      LatIsom W (T.Q.Dw ((i : ℕ) + 1)).EF (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ T.iota ((i : ℕ) + 1)) := by
+    subst W
+    obtain ⟨_, _, _, _, _, _, _, h1, h2, _, _⟩ := hT.adPin _ (inR i) O.s0 (goodEmbedding_baseEmbedding_coreData O)
+    exact ⟨h1, h2⟩
+  obtain ⟨h1', h2'⟩ := hpair (Wc D i) O.hV (rank_Wc i)
   obtain ⟨δ, hδ⟩ := GlobalTheory.T.thetaKernel_oneClass_eq_classicalShortSeries D G Pl0 T0 A _ R F hR i hV _ _ (iotaW T i) h1' h2'
   obtain ⟨ka, hka, hio'⟩ := GlobalTheory.T.fockCoefficientMap_extremal_eq_phase_smul_letters D G Pl0 T0 A T R F κ v₀ hR ht hio i _ _ O hP
   have hex := GlobalTheory.ClassSumRule.exists_cusp_isThClsD_core hCI D G Pl0 T0 A T R F κ v₀ hR ht i _ _ O hP ()
@@ -315,40 +348,43 @@ theorem classSumsSpan_of_pins_core (hR : GlobalTheory.Hk3.Core R F) (ht : TieIn 
   have hu0' := GlobalTheory.PtId.cmpConst_ne_zero (D := D) (norm_ne_zero_iff.1 (hka.trans_ne one_ne_zero)) δ
     (GlobalTheory.PtId.degW (T.Q.Dw ((i : ℕ) + 1)) (wtA (κ i)))
   have hl0 : (lieFac (T.Q.Dw ((i : ℕ) + 1)) (xiR D) (wtA (κ i)) : ℂ) ≠ 0 := by exact_mod_cast (lieFac_pos _ _ _).ne'
-  refine mem_span_of_map_mem ((atDict O).comp (rdU (unfO O))) _ (atDict_indep hT O (κ i)) (fun _ hg => hg.1) hf ?_
-  have hraw := Submodule.apply_mem_span_image_of_mem_span (atDict O)
-    (rdU_mem_span_raw hT O (κ i) hn (hrk ▸ hsz) nab hnab hb x1 hx1 hf)
-  refine Submodule.span_le.2 ?_ hraw
-  rintro _ ⟨_, ⟨s, ⟨hs, Λ, N, P, c1, c2, c3, c4, c5, c6⟩, rfl⟩, rfl⟩
-  obtain ⟨h', Λ', N', P', z, d1, d2, d3, d4, d5, d6⟩ := exists_split_move (Vc D i) hV.1 hV.2 nab h1 hnab hev hb h2 hM
-    c1 c2 c3 c4 c5 (phiHat O.c' (indPhi O.c' x1))
-  obtain ⟨v, rfl⟩ := hr.ge (Submodule.subset_span d5.1)
-  have hep := ep_ne_zero (Vc D i) hV.1 hV.2 O.c' (hP.ep ()).2 (fun cc c0 c2 h0 => by
-    have := (hP.tuple ()).B cc c0 c2
-    rw [h0, map_zero] at this
-    refine mul_ne_zero (Units.ne_zero _) ?_ this.symm
-    exact_mod_cast (Real.sqrt_pos.2 (Nat.cast_pos.2 (Nat.pos_of_ne_zero fun h =>
-      c0 (Ideal.absNorm_eq_zero_iff.1 h)))).ne') d1 d4
-  let _ : Algebra O.c'.F ℂ := (inC O.c').toAlgebra
-  choose t t1 t2 using fun g => d6 ℂ _ _ (raw_at_point nab hnab c1 c3 c4 c5 _ hs c6 ℂ
-    (GlobalTheory.Dict.unC (Formalism.L2.PjFree.Unf.ofPj (unfO O)) (O.dict g).1 ⟨(O.dict g).2, dict_mem hT O g⟩))
-  have e : atDict O (rdU (unfO O) s) = inC O.c' z • t := funext fun g => (dif_pos (dict_mem hT O g)).trans (t2 g)
-  rw [SetLike.mem_coe, e]
-  refine Submodule.smul_mem _ _ (mem_of_mul ha (mul_ne_zero (mul_ne_zero hu0' (inv_ne_zero hl0)) ((map_ne_zero (inC O.c')).2 hep))
-    (GlobalTheory.T.thetaKernel_finitePoint_mem_span_rationalFormLifts D G Pl0 T0 A _ R F hR i A.μ0 hV h' d1.1 (O.c0' v) w₀) (fun x₀ => ?_) fun g => ?_)
-  · obtain ⟨x, hx⟩ := hpe x₀
-    obtain ⟨f', hf', hcl⟩ := hex x
-    refine ⟨u • atDict O (rdU (unfO O) f'), Submodule.smul_mem _ _
-      (Submodule.subset_span ⟨f', ⟨hf', x, (hpl x).2 ⟨x₀, hx⟩, hcl⟩, rfl⟩), fun g => ?_⟩
-    have := hser () h J' hrep _ x hx f' hf'.1 hcl g
-    rw [one_mul, ← hw₁] at this
-    have key : ∀ a b c d : ℂ, u * a * b * c * d = a * b * c * (u * d) := fun a b c d => by ring
-    exact this.trans (key _ _ _ _)
-  · refine (kernel_eq_shortVal hR ht O hP hio' hδ hcc _ hφ nab hnab h' Λ' N' d1 d2 d3 d4 w₀ hw₀ v g (dict_mem hT O g)
-      (t g) (t1 g)).trans ?_
-    have key : ∀ c a l m e t : ℂ, l ≠ 0 → c * a * m * e * t = c * l⁻¹ * e * (a * l * m) * t := fun c a l m e t hl => by
-      field_simp
-    exact key _ _ _ _ _ _ hl0
+  refine mem_span_of_map_mem ((atDict O).comp (rdU (unfO O))) _ (atDict_indep hT O (κ i)) ?_ hf ?_
+  · intro g hg
+    exact hg.1
+  ·
+    have hraw := Submodule.apply_mem_span_image_of_mem_span (atDict O)
+      (rdU_mem_span_raw hT O (κ i) hn (hrk ▸ hsz) nab hnab hb x1 hx1 hf)
+    refine Submodule.span_le.2 ?_ hraw
+    rintro _ ⟨_, ⟨s, ⟨hs, Λ, N, P, c1, c2, c3, c4, c5, c6⟩, rfl⟩, rfl⟩
+    obtain ⟨h', Λ', N', P', z, d1, d2, d3, d4, d5, d6⟩ := exists_split_move (Vc D i) hV.1 hV.2 nab h1 hnab hev hb h2 hM
+      c1 c2 c3 c4 c5 (phiHat O.c' (indPhi O.c' x1))
+    obtain ⟨v, rfl⟩ := hr.ge (Submodule.subset_span d5.1)
+    have hep := ep_ne_zero (Vc D i) hV.1 hV.2 O.c' (hP.ep ()).2 (fun cc c0 c2 h0 => by
+      have := (hP.tuple ()).B cc c0 c2
+      rw [h0, map_zero] at this
+      refine mul_ne_zero (Units.ne_zero _) ?_ this.symm
+      exact_mod_cast (Real.sqrt_pos.2 (Nat.cast_pos.2 (Nat.pos_of_ne_zero fun h =>
+        c0 (Ideal.absNorm_eq_zero_iff.1 h)))).ne') d1 d4
+    let _ : Algebra O.c'.F ℂ := (inC O.c').toAlgebra
+    choose t t1 t2 using fun g => d6 ℂ _ _ (raw_at_point nab hnab c1 c3 c4 c5 _ hs c6 ℂ
+      (GlobalTheory.Dict.unC (Formalism.L2.PjFree.Unf.ofPj (unfO O)) (O.dict g).1 ⟨(O.dict g).2, dict_mem hT O g⟩))
+    have e : atDict O (rdU (unfO O) s) = inC O.c' z • t := funext fun g => (dif_pos (dict_mem hT O g)).trans (t2 g)
+    rw [SetLike.mem_coe, e]
+    refine Submodule.smul_mem _ _ (mem_of_mul ha (mul_ne_zero (mul_ne_zero hu0' (inv_ne_zero hl0)) ((map_ne_zero (inC O.c')).2 hep))
+      (GlobalTheory.T.thetaKernel_finitePoint_mem_span_rationalFormLifts D G Pl0 T0 A _ R F hR i A.μ0 hV h' d1.1 (O.c0' v) w₀) (fun x₀ => ?_) fun g => ?_)
+    · obtain ⟨x, hx⟩ := hpe x₀
+      obtain ⟨f', hf', hcl⟩ := hex x
+      refine ⟨u • atDict O (rdU (unfO O) f'), Submodule.smul_mem _ _
+        (Submodule.subset_span ⟨f', ⟨hf', x, (hpl x).2 ⟨x₀, hx⟩, hcl⟩, rfl⟩), fun g => ?_⟩
+      have := hser () h J' hrep _ x hx f' hf'.1 hcl g
+      rw [one_mul, ← hw₁] at this
+      have key : ∀ a b c d : ℂ, u * a * b * c * d = a * b * c * (u * d) := fun a b c d => by ring
+      exact this.trans (key _ _ _ _)
+    · refine (kernel_eq_shortVal hR ht O hP hio' hδ hcc _ hφ nab hnab h' Λ' N' d1 d2 d3 d4 w₀ hw₀ v g (dict_mem hT O g)
+        (t g) (t1 g)).trans ?_
+      have key : ∀ c a l m e t : ℂ, l ≠ 0 → c * a * m * e * t = c * l⁻¹ * e * (a * l * m) * t := fun c a l m e t hl => by
+        field_simp
+      exact key _ _ _ _ _ _ hl0
 
 end Main
 

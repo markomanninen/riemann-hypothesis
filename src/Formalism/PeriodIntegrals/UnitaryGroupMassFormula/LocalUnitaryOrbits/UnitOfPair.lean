@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.SigRAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem unit_of_pair (hF : FixLoc σ v) (hstd : StdHyp σ J ψ)
     rw [map_mul, map_mul, hss, hβf, hs]; ring
   have hm0 : -(α + t * s * β) ∈ OEv (E := E) v := oev_neg v (oev_add v hα0 htsβ0)
   have hmf : sigR (Fv F v) σ (-(α + t * s * β)) = -(α + t * s * β) := by
-    rw [map_neg, map_add, hαf, htsβf]
+    rw [map_neg, map_add (f := _), hαf, htsβf]
   have hsum : hR (Fv F v) σ J r r + -(α + t * s * β) = t * c + sigR (Fv F v) σ (t * c) := by
     rw [hrr]; ring
   rcases hF hcm _ hr0 _ hm0 hrf hmf (by rw [hsum]; exact hu) with h | h

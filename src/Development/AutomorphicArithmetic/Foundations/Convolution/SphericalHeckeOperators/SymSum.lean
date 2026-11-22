@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.MacdonaldFormula
-import GroundTheory.AutomorphicForms.SatakeNormalized
-import GroundTheory.AutomorphicForms.IwahoriFactorization
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.MacdonaldFormula
+public import GroundTheory.AutomorphicForms.SatakeNormalized
+public import GroundTheory.AutomorphicForms.IwahoriFactorization
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,12 +17,12 @@ section Laurent
 
 variable {n : ℕ}
 
-variable (n) in
 
+variable (n) in
 def pairs : Finset (Fin n × Fin n) := Finset.univ.filter fun p => p.1 < p.2
 
-variable (n) in
 
+variable (n) in
 def dPol (t : ℂ) : LaurentRing n := ∏ p ∈ pairs n, (varL p.1 - t • varL p.2)
 
 def symSum (y : LaurentRing n) : LaurentRing n := ∑ σ : Equiv.Perm (Fin n), permAct σ y
@@ -38,8 +42,6 @@ def eR (S : Finset (Fin n × Fin n)) : Fin n → ℤ := ∑ p ∈ pairs n \ S, P
 
 def sgS (S : Finset (Fin n × Fin n)) : ℂ := (-1) ^ (pairs n \ S).card
 
-example : Dom (0 : LaurentRing n) := fun _ h => by simp at h
-
 end Laurent
 
 variable (F : Type) [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] {n : ℕ}
@@ -49,8 +51,8 @@ def dco (a : Fin n → ℤ) : Set (GL (Fin n) F) :=
 
 def uFn (a : Fin n → ℤ) : GL (Fin n) F → ℂ := (dco F a).indicator 1
 
-variable (n) in
 
+variable (n) in
 def oneK : GL (Fin n) F → ℂ := (integralGL F n : Set (GL (Fin n) F)).indicator 1
 
 def BiI (φ : GL (Fin n) F → ℂ) : Prop := ∀ g, ∀ y ∈ iwahori F n, φ (y * g) = φ g ∧ φ (g * y) = φ g

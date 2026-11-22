@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdicCompleteTensorFiniteStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdicCompleteTensorFiniteStatement
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison CrystallineSemistableComparison.Tw
 
@@ -30,7 +34,7 @@ theorem lTensor_pow_smul (n : ℕ) (v : A ⊗[W] M) :
   | tmul a x =>
     rw [pow_smul_tmul, LinearMap.lTensor_tmul]
     rfl
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
 
 theorem mem_pow_smul_top {N : Type*} [AddCommGroup N] [Module A N] (n : ℕ) (v : N) :
     v ∈ ((Ideal.span {(l : A)}) ^ n • ⊤ : Submodule A N) ↔ ∃ u : N, v = ((l : A) ^ n) • u := by
@@ -55,7 +59,7 @@ theorem r_baseChange_pr (n : ℕ) (w : A ⊗[W] S.lim) :
     simp only [LinearMap.baseChange_tmul]
     change a ⊗ₜ[W] S.r n (x.1 (n + 1)) = a ⊗ₜ[W] x.1 n
     rw [hx]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exists_eq_pow_smul [Module.Flat W A] (n : ℕ)
     (hkill : ∀ (x : S.M n), ((l : W) ^ n) • x = 0)
@@ -96,7 +100,7 @@ theorem exists_baseChange_pr_eq (n c : ℕ)
   | add x y hx hy =>
     obtain ⟨w₁, h₁⟩ := hx
     obtain ⟨w₂, h₂⟩ := hy
-    exact ⟨w₁ + w₂, by rw [map_add, h₁, h₂, smul_add]⟩
+    exact ⟨w₁ + w₂, by rw [map_add (f := _), h₁, h₂, smul_add]⟩
 
 theorem eq_zero_of_baseChange_pr [Module.Flat W A]
     [IsHausdorff (Ideal.span {(l : A)}) (A ⊗[W] S.lim)]
@@ -155,7 +159,7 @@ theorem limit_extension_upTo : ∀ (W : Type) [CommRing W] [IsDomain W] [IsDiscr
   refine ⟨{ toFun := g, map_add' := fun x y => ?_, map_smul' := fun a x => ?_ }, hg⟩
   · rw [← sub_eq_zero]
     refine hinj _ fun n => ?_
-    rw [map_sub, map_add, hg, hg, hg]
+    rw [map_sub, map_add (f := _), hg, hg, hg]
     exact sub_eq_zero.2 (smul_add ((l : A) ^ c) (x.1 n : A ⊗[W] S.M n) (y.1 n : A ⊗[W] S.M n))
   · rw [← sub_eq_zero]
     refine hinj _ fun n => ?_

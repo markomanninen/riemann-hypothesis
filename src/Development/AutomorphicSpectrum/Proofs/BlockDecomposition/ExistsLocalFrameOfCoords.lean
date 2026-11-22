@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.LocDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RepUnique
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
 open CategoryTheory AlgebraicGeometry GlobalTheory.LogCris CrystallineSemistableComparison CrystallineSemistableComparison.Pb GlobalTheory.CompanionTheory.ConeLocal
@@ -25,12 +30,13 @@ theorem dividedPowerFiltration_dividedPowersBot_of_one_le {K : Type} [CommRing K
   rw [e]
   exact (dividedPowersBot K).dpow_eval_zero h0
 
-theorem tfBase_dpBot {K : Type} [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s where
-  nil := dividedPowerFiltration_dividedPowersBot_of_one_le hs
-  tf r x h := by simpa using h
-  dv n hn := ⟨0, (n : K)⁻¹, by
-    have : (n : K) ≠ 0 := Nat.cast_ne_zero.2 hn
-    simp [this]⟩
+theorem tfBase_dpBot {K : Type} [Field K] [CharZero K] {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot K) 1 s := by
+  refine ⟨dividedPowerFiltration_dividedPowersBot_of_one_le hs, ?_, ?_⟩
+  · intro r x h
+    simpa only [Nat.cast_one, one_mul] using h
+  · intro n hn
+    refine ⟨0, (n : K)⁻¹, ?_⟩
+    rw [pow_zero, mul_inv_cancel₀ (Nat.cast_ne_zero.2 hn)]
 
 theorem exists_loc : ∀ {K : Type} [Field K] [CharZero K] {X : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of K)) {W : X.Opens} {d : ℕ} (c : Coord q W d) (s : ℕ), 1 ≤ s →
     ∃ (E : Frame (sP (KS q s {W})) d) (ε : Γ(X, W) ≃+* (sP (KS q s {W})).A.obj E.D), IsLoc q s c.t E ε := by
@@ -41,8 +47,16 @@ theorem exists_loc : ∀ {K : Type} [Field K] [CharZero K] {X : Scheme.{0}} (q :
   letI := (strV q W).toAlgebra
   have hg := GlobalTheory.CompanionTheory.ChartMaps.good c'
   have hD : KS q s {W} c'.D := ⟨hTF, W, rfl, c'.inV⟩
-  obtain ⟨hpow, hc⟩ := GlobalTheory.CompanionTheory.ChartFil.chart_grConst c' hg (KS q s {W}) (ks_in q s W) hD
   let E := c'.frame hg (KS q s {W}) (ks_in q s W) hD
+  have hpow (r : ℕ) : c'.D.pdPow r = (pdP (dividedPowersBot K) r).map c'.D.i :=
+    GlobalTheory.CompanionTheory.ChartFil.dividedPowerFiltration_eq_map _ _ _ c'.D.compat c'.J_eq r
+  have hc : E.GrConst (sFil (KS q s {W})) := by
+    intro n T u v x hx
+    have hx' : (show c'.D.B from x) ∈ c'.D.pdPow ((n : ℤ).toNat) := hx
+    rw [Int.toNat_natCast, hpow] at hx'
+    change _ ∈ T.obj.pdPow (((n : ℤ) + 1).toNat)
+    rw [show ((n : ℤ) + 1).toNat = n + 1 by omega]
+    exact GlobalTheory.CompanionTheory.ChartFil.sub_mem_pdP c' (ks_in q s W _ T.property) u.hom v.hom n hx'
   let ε : Γ(X, W) ≃+* c'.D.B := (Algebra.TensorProduct.lid K Γ(X, W)).symm.toRingEquiv.trans e
   have hε : ∀ f, ε f = e ((1 : K) ⊗ₜ[K] f) := fun f => rfl
   refine ⟨E, ε, hc, fun x hx => ?_, fun a => ?_, fun T u g => ?_, fun i T u v => ?_⟩

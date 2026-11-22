@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareStanding
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAddCharSymplecticLocalLatticeEqOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.IndefR.Links
 open IsDedekindDomain NumberField MeasureTheory Matrix
@@ -41,7 +45,8 @@ theorem _root_.GlobalTheory.VacCocycle.conj_hTens (hc : ∀ z, c (c z) = z) {JA 
     (x y : Matrix α β A) :
     c (_root_.GlobalTheory.WeilM.hTens c JA JB y x) = -_root_.GlobalTheory.WeilM.hTens c JA JB x y := by
   unfold _root_.GlobalTheory.WeilM.hTens
-  simp only [map_sum, map_mul, hc, hA, hB]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hc, hA, hB]
   simp only [← Finset.sum_neg_distrib]
   conv_lhs => enter [2, i]; rw [Finset.sum_comm]
   conv_lhs => rw [Finset.sum_comm]
@@ -82,7 +87,7 @@ private lemma hTens_add_add (JA : Matrix α α A) (JB : Matrix β β A)
       _root_.GlobalTheory.WeilM.hTens c JA JB x x + _root_.GlobalTheory.WeilM.hTens c JA JB x y +
         _root_.GlobalTheory.WeilM.hTens c JA JB y x + _root_.GlobalTheory.WeilM.hTens c JA JB y y := by
   unfold _root_.GlobalTheory.WeilM.hTens
-  simp only [Matrix.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib]
+  simp only [Matrix.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib]
   ring
 
 set_option autoImplicit false in
@@ -121,13 +126,14 @@ private lemma addChar_symp_add_add (hc : ∀ z, c (c z) = z) {JA : Matrix α α 
         (Algebra.trace R A (ξ * _root_.GlobalTheory.WeilM.hTens c JA JB x y) +
           Algebra.trace R A (-1 * _root_.GlobalTheory.WeilM.hTens c JA JB x y)) := by
     rw [hTens_add_add, hswap]
-    simp only [mul_add, map_add, mul_neg, map_neg]
+    simp only [mul_add, map_add (f := _), mul_neg, map_neg]
     rw [hconj]
     linear_combination (Algebra.trace R A (ξ * _root_.GlobalTheory.WeilM.hTens c JA JB x y) -
       Algebra.trace R A (_root_.GlobalTheory.WeilM.hTens c JA JB x y)) * hh + (h - 1) * hm1
   rw [key]
   simp only [AddChar.map_add_eq_mul]
   rw [h1, h2, mul_one, mul_one]
+
 
 set_option autoImplicit false in
 open IsDedekindDomain NumberField MeasureTheory Matrix in
@@ -136,14 +142,13 @@ open scoped TensorProduct ComplexConjugate in
 attribute [local instance] _root_.Formalism.BasicNotions.Host.cmStar _root_.GlobalTheory.LocalData.complRel
   _root_.GlobalTheory.LocalData.isLocalField _root_.GlobalTheory.FunObj.borelKw
   _root_.GlobalTheory.FunObj.borelSpaceKw in
-
 theorem _root_.GlobalTheory.VacCocycle.psi_half_symp_add : ∀ {F E : Type} [Field F]
     [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
     (B : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Base F E), B.IsGood σ →
     ∀ {n d : ℕ} (X : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E n) (Y : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Spc F E d)
     (r s r' s' : ℕ),
     X.IsHerm σ B r s → Y.IsSkew σ B r' s' →
-    ∀ θ : 𝓞 E, (θ : E) + σ θ = 1 → ∀ v : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl F,
+    ∀ θ : 𝓞 E, (θ : E) + σ θ = 1 → ∀ v : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.Pl (F := F),
     ∀ γ ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v, ∀ γ' ∈ _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.latAtV X Y v,
       B.ψ (⅟(2 : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) * _root_.GlobalTheory.WeilM.symp
           (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.cA σ) (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (F := F) (_root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.AF F) (θ : E))

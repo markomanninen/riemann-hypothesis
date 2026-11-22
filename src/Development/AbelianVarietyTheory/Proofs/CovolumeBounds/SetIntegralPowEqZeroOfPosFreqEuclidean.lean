@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SummablePiProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SummablePiProd
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped Real FourierTransform Pointwise

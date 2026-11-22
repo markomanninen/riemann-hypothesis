@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.FlDecomp
@@ -36,7 +40,8 @@ theorem adapted_pull {h : V → V → L} {l : ℕ} {e f e' f' : Fin l → V} {W 
   intro a b w hw
   rw [mem_pull]
   have : k (∑ i, a i • e i + ∑ i, b i • f i + w) = ∑ i, a i • e' i + ∑ i, b i • f' i + k w := by
-    simp [map_add, map_sum, he, hf]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_add (f := _), map_sum, he, hf]
   rw [this, hA a b (k w) (hW w hw), hk]
 
 theorem adapted_reindex {h : V → V → L} {l l' : ℕ} {e f : Fin l' → V} {W : Submodule L V} {u : Fin l' → L}
@@ -60,7 +65,8 @@ theorem adapted_tor {s : L →+* L} (hs : IsInv s) {h : V → V → L} {l : ℕ}
   rw [mem_pull]
   have : t (∑ i, a i • e i + ∑ i, b i • f i + w) =
       ∑ i, (a i * u i) • e i + ∑ i, (b i * (s (u i))⁻¹) • f i + w := by
-    simp [map_add, map_sum, ht.1, ht.2.1, ht.2.2 w hw, smul_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_add (f := _), map_sum, ht.1, ht.2.1, ht.2.2 w hw, smul_smul]
   rw [this, hA _ _ w hw]
   have hn : ∀ i, ‖s (u i)‖ = ‖u i‖ := fun i => hs.2.1 _
   have hp : ∀ i, 0 < ‖u i‖ := fun i => norm_pos_iff.2 (hu i)
@@ -163,13 +169,15 @@ theorem h_fe (hh : IsHerm s h) (hF : IsFrame h δ e f W) (i j : Fin l) :
 theorem form_e (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b : Fin l → L) {w : V} (hw : w ∈ W) (i : Fin l) :
     h (e i) (∑ j, a j • e j + ∑ j, b j • f j + w) = b i * δ := by
   change hl hh (e i) _ = _
-  simp only [map_add, map_sum, map_smul, smul_eq_mul, hl_apply, hF.1, hF.2.2.1, (hF.2.2.2.1 w hw i).1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hl_apply, hF.1, hF.2.2.1, (hF.2.2.2.1 w hw i).1]
   simp
 
 theorem form_f (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b : Fin l → L) {w : V} (hw : w ∈ W) (i : Fin l) :
     h (f i) (∑ j, a j • e j + ∑ j, b j • f j + w) = a i * s δ := by
   change hl hh (f i) _ = _
-  simp only [map_add, map_sum, map_smul, smul_eq_mul, hl_apply, h_fe hh hF, hF.2.1, (hF.2.2.2.1 w hw i).2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hl_apply, h_fe hh hF, hF.2.1, (hF.2.2.2.1 w hw i).2]
   simp
 
 theorem form_w (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b : Fin l → L) {w v : V} (hw : w ∈ W) (hv : v ∈ W) :
@@ -179,7 +187,8 @@ theorem form_w (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b : Fin l → L) {
   have h2 : ∀ j, h v (f j) = 0 := fun j => by
     rw [hh.2.2.1 (f j) v, (hF.2.2.2.1 v hv j).2, map_zero]
   change hl hh v _ = _
-  simp only [map_add, map_sum, map_smul, smul_eq_mul, hl_apply, h1, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hl_apply, h1, h2]
   simp
 
 theorem frame_form (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b a' b' : Fin l → L) {w w' : V} (hw : w ∈ W)
@@ -194,7 +203,8 @@ theorem frame_form (hh : IsHerm s h) (hF : IsFrame h δ e f W) (a b a' b' : Fin 
   have h3 : h y w = s (h w w') := by
     rw [hh.2.2.1 w y, hy, form_w hh hF a' b' hw' hw]
   change hl hh y _ = _
-  simp only [map_add, map_sum, map_smul, smul_eq_mul, hl_apply, h1, h2, h3]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hl_apply, h1, h2, h3]
 
 def permMap (hh : IsHerm s h) (δ : L) (e f : Fin l → V) (τ : Equiv.Perm (Fin l)) : V →ₗ[L] V :=
   LinearMap.id + ∑ i, (((s δ)⁻¹ • hl hh (f i)).smulRight (e (τ i) - e i) +

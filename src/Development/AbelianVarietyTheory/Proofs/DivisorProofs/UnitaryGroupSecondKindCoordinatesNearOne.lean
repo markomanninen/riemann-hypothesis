@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory.UnitaryChart
@@ -87,7 +92,8 @@ theorem exists_skew_coord {E : Type} [NormedRing E] [NormedAlgebra ℝ E] [Finit
   have hπ : ∀ m, π m = (1 / 2 : ℝ) • (m - σ m) := fun m => rfl
   refine ⟨LinearMap.toContinuousLinearMap (Q ∘ₗ π), fun t => ?_, fun m hm => ?_, fun u v h => ?_⟩
   · have : σ (∑ i, t i • e i) = -∑ i, t i • e i := by
-      simp [map_sum, he]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum, he]
     change Q (π _) = t
     rw [hπ, this, sub_neg_eq_add, ← two_smul ℝ, smul_smul]
     norm_num

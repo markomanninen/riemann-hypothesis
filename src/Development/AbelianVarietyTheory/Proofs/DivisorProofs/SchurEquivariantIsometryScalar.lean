@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 open scoped Matrix
 open MeasureTheory GlobalTheory.RealWeil
@@ -153,8 +157,8 @@ end GlobalTheory.RealWeil.FourierConjProductVanishing
 
 namespace GlobalTheory.RealWeil
 
-open GlobalTheory.RealWeil.FourierConjProductVanishing in
 
+open GlobalTheory.RealWeil.FourierConjProductVanishing in
 theorem schur_rho_l2 : ∀ (l : Type) [Fintype l] (U : L2 l ≃ₗᵢ[ℂ] L2 l), (∀ w v, U (rho w v) = rho w (U v)) →
     ∃ a : ℂ, ∀ v, U v = a • v := by
   intro l _ U hU

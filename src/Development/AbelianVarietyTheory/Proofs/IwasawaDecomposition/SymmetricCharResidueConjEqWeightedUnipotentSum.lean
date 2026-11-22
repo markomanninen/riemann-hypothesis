@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OtherInstanceCharacterEqPsiSymmetricArgument
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsMatrixModPlaceInFamilyInvStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjIdempotentSubOneMemPlaceIdealStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianE0SymmetricFrameStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianZ0SymmetricFrameStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianFormMiddleSymmetricFrameNotOneAtStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymEdgeConjWeightedSumEqFlagAndUnipotentPairsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OtherInstanceCharacterEqPsiSymmetricArgument
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsMatrixModPlaceInFamilyInvStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ConjIdempotentSubOneMemPlaceIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianE0SymmetricFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianZ0SymmetricFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HermitianFormMiddleSymmetricFrameNotOneAtStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymEdgeConjWeightedSumEqFlagAndUnipotentPairsStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.AutomorphicEvaluation Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ConcreteSettingExists MeasureTheory NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.SRe
 open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -72,7 +77,8 @@ theorem read (X : HidaSetting D) (w : HeightOneSpectrum (𝓞 D.host.E)) {g : �
     (hG : ∀ j, hA X.B.I v (u j) - (if j = q then c else 0) ∈ wInt X w) :
     mkW X w (hA X.B.I v (X.B.I.fmat x *ᵥ u p)) = (M q p).val • mkW X w c := by
   classical
-  rw [mkW_eq (hA_isMatIn X w hM hv p), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mkW_eq (hA_isMatIn X w hM hv p), map_sum]
   have e : ∀ j, mkW X w ((((M j p).val : ℕ) : X.B.I.E ⊗[X.B.I.F] Formalism.MainNotions.S.Af X.B.I.F) * hA X.B.I v (u j)) =
       if j = q then (M q p).val • mkW X w c else 0 := by
     intro j
@@ -103,7 +109,7 @@ theorem symmetricOrderFrameModPlace_last_block (X : HidaSetting D) (w : HeightOn
     (hp : p.val = 2 * D.R.rS + D.R.k - a.val) : GlobalTheory.Mem.SymFrame.symVec X w p = X.f0 a := by
   have hr := r_eq D
   unfold GlobalTheory.Mem.SymFrame.symVec GlobalTheory.SeeConjRead.flagV
-  rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega), dif_pos (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_left (by omega)]
   congr 1
   ext
   simp only
@@ -113,7 +119,7 @@ theorem symVec_bwd (X : HidaSetting D) (w : HeightOneSpectrum (𝓞 D.host.E)) (
     (i : Fin D.R.k) (p : Fin D.R.r) (hp : p.val = D.R.rS + D.R.k - 1 - i.val) :
     GlobalTheory.Mem.SymFrame.symVec X w p = X.bwd i := by
   unfold GlobalTheory.Mem.SymFrame.symVec GlobalTheory.SeeConjRead.flagV GlobalTheory.Mem.SymFrame.epsW
-  rw [if_neg hE, dif_neg (by omega), dif_pos (by omega)]
+  rw [if_neg hE, dite_eq_right (by omega), dite_eq_left (by omega)]
   congr 1
   ext
   simp only [Fin.val_rev]
@@ -144,7 +150,8 @@ theorem resBar : ∀ (D : D7) (X : HidaSetting D) (h : X.B.I = Formalism.L2.SG.I
   have hU : N ∈ unip _ _ := unipCol_le _ _ _ hNu
   rw [GlobalTheory.T.symEdge_conjWeighted_sum_eq_flag_and_unipotent_pairs _ _ _ hr]
   apply modW_of hφ
-  simp only [argS, map_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [argS, map_add (f := _), map_sum]
   congr 1
   · refine Finset.sum_congr rfl fun a _ => ?_
     rw [← Formalism.L2.SG.Pf.unitaryCongruence.hA_symm]
@@ -152,13 +159,13 @@ theorem resBar : ∀ (D : D7) (X : HidaSetting D) (h : X.B.I = Formalism.L2.SG.I
     rw [inv_inv] at e
     rw [← e, ← symmetricOrderFrameModPlace_last_block X w a ⟨2 * D.R.rS + D.R.k - a.val, by omega⟩ rfl]
     by_cases ha : a.val + 1 < D.R.rS
-    · rw [dif_pos ha]
-      have hn : nxt X.e0 X.z0 a = X.e0 ⟨a.val + 1, ha⟩ := by unfold nxt; rw [dif_pos ha]
+    · rw [dite_eq_left ha]
+      have hn : nxt X.e0 X.z0 a = X.e0 ⟨a.val + 1, ha⟩ := by unfold nxt; rw [dite_eq_left ha]
       rw [hn, read X w hNi (X.vectorsInLattice.1 _).1 _ ⟨2 * D.R.rS + D.R.k - a.val - 1, by omega⟩ 1 (fun j => by
         rw [← ite_val j _ (2 * D.R.rS + D.R.k - (a.val + 1)) (by simp only; omega)]
         exact GlobalTheory.T.hermitian_e0_symmetric_frame D X kv hgw ⟨a.val + 1, ha⟩ j), ← hφ, unip_inv_sup hU _ _ (by simp only; omega)]
-    · rw [dif_neg ha]
-      have hn : nxt X.e0 X.z0 a = X.z0 := by unfold nxt; rw [dif_neg ha]
+    · rw [dite_eq_right ha]
+      have hn : nxt X.e0 X.z0 a = X.z0 := by unfold nxt; rw [dite_eq_right ha]
       have hp : (⟨2 * D.R.rS + D.R.k - a.val, by omega⟩ : Fin D.R.r) = ⟨D.R.rS + D.R.k + 1, by omega⟩ :=
         Fin.ext (by simp only; omega)
       rw [hn, hp, read X w hNi X.vectorsInLattice.2.1 _ ⟨D.R.rS + D.R.k, by omega⟩ (-1) (fun j => by
@@ -170,7 +177,7 @@ theorem resBar : ∀ (D : D7) (X : HidaSetting D) (h : X.B.I = Formalism.L2.SG.I
       rw [hs, if_pos rfl, map_zero]
       refine Finset.sum_eq_zero fun i _ => ?_
       by_cases hi : i.val + 1 < D.R.k
-      · rw [dif_pos hi]
+      · rw [dite_eq_left hi]
         apply mkW_zero
         rw [← Formalism.L2.SG.Pf.unitaryCongruence.hA_symm]
         have hb : X.bwd i ∈ wLf X w := by
@@ -180,13 +187,14 @@ theorem resBar : ∀ (D : D7) (X : HidaSetting D) (h : X.B.I = Formalism.L2.SG.I
             rw [smul_smul, sub_mul, one_mul, X.ew_orth, sub_zero, ← X.bwd_w i]
           rwa [e] at h1
         exact hA_mem_wInt X w (Formalism.L2.SG.Pf.unitaryCongruence.K_mv X.B.I hk (X.vectorsInLattice.2.2 _).1) hb
-      · rw [dif_neg hi, map_zero, map_zero]
+      · rw [dite_eq_right hi, map_zero, map_zero]
     · have hs : side X w = false := by simp [side, hE]
       have hew := GlobalTheory.T.conj_idempotent_sub_one_mem_placeIdeal D X h hι kv hgw hE
-      rw [hs, if_neg (by simp), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hs, if_neg (by simp), map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       by_cases hi : i.val + 1 < D.R.k
-      · rw [dif_pos hi, dif_pos hi]
+      · rw [dite_eq_left hi, dite_eq_left hi]
         rw [← Formalism.L2.SG.Pf.unitaryCongruence.hA_symm]
         have e := GlobalTheory.St.G.FrameClose.hA_move k⁻¹ (X.bw ⟨i.val + 1, hi⟩) (X.bwd i)
         rw [inv_inv] at e
@@ -194,6 +202,6 @@ theorem resBar : ∀ (D : D7) (X : HidaSetting D) (h : X.B.I = Formalism.L2.SG.I
           read X w hNi (X.vectorsInLattice.2.2 _).1 _ ⟨D.R.rS + D.R.k - 2 - i.val, by omega⟩ 1 (fun j => by
             rw [← ite_val j _ (D.R.rS + D.R.k - 1 - (i.val + 1)) (by simp only; omega)]
             exact GlobalTheory.T.hermitianForm_middle_symmetricFrame_not_oneAt D X kv hgw hE hew ⟨i.val + 1, hi⟩ j), ← hφ, unip_inv_sup hU _ _ (by simp only; omega)]
-      · rw [dif_neg hi, dif_neg hi, map_zero, map_zero, map_zero]
+      · rw [dite_eq_right hi, dite_eq_right hi, map_zero, map_zero, map_zero]
 
 end GlobalTheory.Mem.SymChar.ResBar

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveBaseChangeComp
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemiAbelianHomExtensionUnique
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisBaseChange
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnivChartOfStandardSmooth
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveBaseChangeComp
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemiAbelianHomExtensionUnique
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.LieCombBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsLieBasisIffIsUnitDet
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnivChartOfStandardSmooth
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -40,7 +44,7 @@ theorem isPullback_dualMap (f : R →+* R') :
   · have hs : ∀ x, s.inl.hom (algebraMap R (DualNumber R) x) = s.inr.hom (f x) := fun x =>
       RingHom.congr_fun (congrArg CommRingCat.Hom.hom s.condition) x
     refine CommRingCat.hom_ext (RingHom.ext fun x => ?_)
-    conv_rhs => rw [dec x, map_add, map_mul, hs, hs]
+    conv_rhs => rw [dec x, map_add (f := _), map_mul, hs, hs]
     simp [DualNumber.lift_apply_apply, Chart.dualMapR]
     rfl
   · refine CommRingCat.hom_ext (RingHom.ext fun x => ?_)
@@ -50,7 +54,7 @@ theorem isPullback_dualMap (f : R →+* R') :
       rw [← h₁, ← he]; rfl
     have e₂ : ∀ x, m.hom (algebraMap R' (DualNumber R') x) = s.inr.hom x := fun x => by rw [← h₂]; rfl
     refine CommRingCat.hom_ext (RingHom.ext fun x => ?_)
-    conv_lhs => rw [dec x, map_add, map_mul, e₁, e₂, e₂]
+    conv_lhs => rw [dec x, map_add (f := _), map_mul, e₁, e₂, e₂]
     simp [DualNumber.lift_apply_apply]
     rfl
 
@@ -119,8 +123,8 @@ theorem exists_matrix (hψ : IsGrpPullback A G (spMap g) ψ) (hs : Smooth G.hom)
   choose M hM using fun j => (hv.2 _ (he'.1 j)).exists
   exact ⟨M, (((LieComb.lieComb_algebra K A n v hv.1).2.2.2.2 M e' hv hM).1 he').ne_zero, fun j => ⟨e' j, h j, hM j⟩⟩
 
-omit [IsCommMonObj G] in
 
+omit [IsCommMonObj G] in
 theorem isVecOver_iff (hψ : IsGrpPullback A G (spMap g) ψ) (hv : IsLieBasis v) {M : Matrix (Fin n) (Fin n) K}
     (hM : ∀ j, ∃ w, IsVecOver g ψ (e j) w ∧ IsLieComb (M j) v w) {a : Fin n → R} {t : epsR R ⟶ G}
     (ht : IsLieComb a e t) (w : epsR K ⟶ A) : IsVecOver g ψ t w ↔ IsLieComb (∑ j, g (a j) • M j) v w := by

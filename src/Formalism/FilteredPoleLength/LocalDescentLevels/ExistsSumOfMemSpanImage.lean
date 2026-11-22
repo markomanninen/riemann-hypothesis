@@ -1,4 +1,8 @@
-import Formalism.FilteredPoleLength.ReducedBasisBounds.TransvectionIsometry
+module
+
+public import Formalism.FilteredPoleLength.ReducedBasisBounds.TransvectionIsometry
+
+@[expose] public section
 
 noncomputable section
 

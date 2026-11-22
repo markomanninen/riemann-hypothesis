@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PExtra
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -281,7 +285,7 @@ theorem shear_step {ι : Type} [Fintype ι] [DecidableEq ι] (ht : ι → ℕ) (
   have he : MeasurePreserving e volume volume := volume_preserving_piEquivPiSubtypeProd (fun _ : ι => ℝ) _
   let gg : ({i // ht i ≠ p} → ℝ) → ({i // ¬ ht i ≠ p} → ℝ) := fun v i => S (e.symm (v, 0)) i - e.symm (v, 0) i
   have hgg : Measurable gg := by
-    refine measurable_pi_lambda _ fun i => ?_
+    refine Measurable.of_eval fun i => ?_
     exact ((measurable_pi_apply _).comp (hS.comp (e.symm.measurable.comp (measurable_id.prodMk measurable_const)))).sub
       ((measurable_pi_apply _).comp (e.symm.measurable.comp (measurable_id.prodMk measurable_const)))
   have hF : MeasurePreserving (fun q : ({i // ht i ≠ p} → ℝ) × ({i // ¬ ht i ≠ p} → ℝ) => (id q.1, q.2 + gg q.1))
@@ -314,7 +318,7 @@ theorem shearMP : ShearMP := by
   obtain ⟨P, hP⟩ : ∃ P, ∀ i, ht i < P :=
     ⟨Finset.univ.sup ht + 1, fun i => Nat.lt_succ_of_le (Finset.le_sup (Finset.mem_univ i))⟩
   have hSpP : Sp P = id := by funext x i; simp [Sp, not_le.2 (hP i)]
-  have hmeas : ∀ p, Measurable (Sp p) := fun p => measurable_pi_lambda _ fun i => by
+  have hmeas : ∀ p, Measurable (Sp p) := fun p => Measurable.of_eval fun i => by
     by_cases h : p ≤ ht i
     · simp only [Sp, h, if_true]; exact (measurable_pi_apply i).comp hS
     · simp only [Sp, h, if_false]; exact measurable_pi_apply i
@@ -898,7 +902,8 @@ theorem Pg_Lc (q : Fin (2 * r + 1)) (x : Ix k r → ℝ) :
     Pg q.val (Lc x) = ∑ a, x ⟨q, a⟩ • bv (⟨q, a⟩ : Ix k r) := by
   rw [Lc_apply]
   have : Pg q.val (∑ i, x i • bv i) = PgL q.val (∑ i, x i • bv (k := k) (r := r) i) := rfl
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   simp only [map_smul]
   have e : ∀ i : Ix k r, PgL q.val (bv i) = if i.1 = q then bv i else 0 := by
     intro i
@@ -1180,7 +1185,7 @@ theorem IsHaarOn.smul_nnreal {S : Set (Mat k r)} {μ : Measure (Mt k r)} (h : Is
     · exact h.2.1 (Measure.measure_univ_eq_zero.1 h1)
   · rw [Measure.smul_apply, h.2.2.1, smul_zero]
   · intro s hs
-    rw [Measure.map_smul, h.2.2.2 s hs]
+    rw [Measure.map_smul a (continuous_lmulM s).measurable.aemeasurable, h.2.2.2 s hs]
 
 theorem haarLie_N_eq : ∃ c : ℝ≥0, c ≠ 0 ∧ ∀ κ : ℝ≥0∞, haarLie (Nset k r) κ = κ • (c • nuN k r) := by
   let E := (LinearEquiv.ofBijective (eL (k := k) (r := r)) eL_bijective).toContinuousLinearEquiv
@@ -1199,7 +1204,7 @@ theorem haarLie_N_eq : ∃ c : ℝ≥0, c ≠ 0 ∧ ∀ κ : ℝ≥0∞, haarLie
   have h2 : (volume : Measure (lieE (Nset k r))).map F = c⁻¹ • nuN k r := by
     have h3 : ((volume : Measure (Ix k r → ℝ)).map E).map F = nuN k r := by
       rw [Measure.map_map hFm E.continuous.measurable, hFE]; rfl
-    rw [hμ, Measure.map_smul] at h3
+    rw [hμ, Measure.map_smul c hFm.aemeasurable] at h3
     rw [← h3, smul_smul, inv_mul_cancel₀ hcpos.ne', one_smul]
   rw [← h2]
   rfl
@@ -1242,25 +1247,6 @@ open scoped ENNReal
 namespace Formalism.MainNotions.BridgeCSB
 
 open Formalism.QuantumDeterminants Formalism.MainNotions.S Formalism.BasicNotions
-
-theorem muSHaar_of (D : D7) : Formalism.MainNotions.S.Bridge.MuSHaar D := by
-  intro τ w w' θ W hW
-  obtain ⟨_, _, hz, _, _, _, hG, hUW, _, _, _, hN, hQ, _⟩ := hW
-  have hκtop : kapN D θ ≠ ⊤ := ENNReal.ofReal_ne_top
-  have hκ0 : kapN D θ ≠ 0 := by
-    intro h0
-    have hμN : W.μN = 0 := by rw [hN, h0]; unfold haarLie; rw [zero_smul]
-    have hS : muS W.μW W.μN = 0 := by unfold muS; rw [hμN, Measure.prod_zero, Measure.map_zero]
-    have h1 := hQ (fun _ => 1) measurable_const
-    rw [hS] at h1
-    simp at h1
-    exact hG.2.1 h1
-  have hNH : IsHaarOn (Nset D.R.k D.R.rS) W.μN := by rw [hN]; exact haarLieN _ _ _ hκ0 hκtop
-  exact haarS hz hUW hNH
-
-def vmOfGm (V0 : ∀ r, ValMap 0 r) (Gm : Formalism.MainNotions.HereditaryPositivity.GM) : ∀ k r, ValMap k r
-  | 0, r => V0 r
-  | k0 + 1, r => (Gm k0 r).toValMap
 
 end Formalism.MainNotions.BridgeCSB
 

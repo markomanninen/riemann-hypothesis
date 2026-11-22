@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.DetByType
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TypeEx
-import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.SuppBCOfMix
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.DetByType
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.TypeEx
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -125,7 +129,7 @@ theorem UpperTheory.Gal.InertialTypesAlt.inertOf :
   have hcl := UpperTheory.Zero.LLC.detByType E Ω A v hv g i hi m hm y.rep σ' τy τx ωy hτy hch hinfy hinfσ hωy hωσ
   unfold IrrGL.Inert
   refine ⟨μ, hμ, ?_⟩
-  have e3 : IrrGL.tw (⟨m, x⟩ : IrrGL _) μ hμs = GlobalTheory.LocLanglands.cls σ' := by
+  have e3 : IrrGL.tw (⟨m, x⟩ : IrrGL (k := _)) μ hμs = GlobalTheory.LocLanglands.cls σ' := by
     conv_lhs => rw [← IrrGL.of_rep ⟨m, x⟩]
     rw [IrrGL.tw_of]
     rfl

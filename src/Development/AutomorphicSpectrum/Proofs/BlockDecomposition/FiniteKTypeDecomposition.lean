@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFrameEquivSymm
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFrameEquivSymm
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem rho_apply (hV : ∀ v ∈ V, ∀ k : K, (fun x => v (x * (k : G))) ∈ V
 theorem sum_repr_apply (z : V) (x : G) :
     ∑ j, (Module.finBasis ℂ V).repr z j * (Module.finBasis ℂ V j).1 x = z.1 x := by
   have h := congrArg (fun y : V => y.1 x) ((Module.finBasis ℂ V).sum_repr z)
-  simp only [AddSubmonoidClass.coe_finset_sum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply,
+  simp only [AddSubmonoidClass.coe_finsetSum, Submodule.coe_smul, Finset.sum_apply, Pi.smul_apply,
     smul_eq_mul] at h
   exact h
 
@@ -130,7 +134,7 @@ theorem rho_cont (hV : ∀ v ∈ V, ∀ k : K, (fun x => v (x * (k : G))) ∈ V)
   intro a
   refine continuous_pi fun i => ?_
   simp only [rho_apply]
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   exact (cont_coef hV hc ((Module.finBasis ℂ V).coord j) _).mul continuous_const
 
 end Cont

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodD
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Geo
 
@@ -30,7 +34,7 @@ theorem intOver_trans {R : Type*} [CommRing R] [Algebra k R] {r : ℕ} (ℓ : Fi
     | C a =>
       have := hB (C a)
       simpa [f'] using this
-    | add p q hp hq => rw [map_add]; exact Cl.add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _)]; exact Cl.add_mem hp hq
     | mul_X p j hp => rw [map_mul, aeval_X]; exact Cl.mul_mem hp (hmem j)
   obtain ⟨p, hpm, hp⟩ := hx
   let g : MvPolynomial (Fin (r + 1)) k →+* Cl :=

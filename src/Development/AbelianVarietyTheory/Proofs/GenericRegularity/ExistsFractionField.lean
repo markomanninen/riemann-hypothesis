@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RankOfQuasiIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.RankOfQuasiIdem
+
+@[expose] public section
 
 open NumberField
 
@@ -333,7 +337,7 @@ theorem exists_cell_algebra (K O A T : Type) [Field K] [CommRing O] [IsDomain O]
         ext a b
         have := congrFun (congrFun (hu2 τ) a) b
         simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul] at this ⊢
-        rw [AddSubmonoidClass.coe_finset_sum]
+        rw [AddSubmonoidClass.coe_finsetSum]
         exact this
       refine ⟨fe, ue, fun _ => rfl, fun _ _ _ => rfl, RingHom.ext fun o => Subtype.ext (hgα' o),
         ⟨e, he, isUnit_of_mul_isUnit_left hun⟩, hpu, fun τ y hy => ?_⟩
@@ -370,10 +374,11 @@ theorem exists_cell_algebra (K O A T : Type) [Field K] [CommRing O] [IsDomain O]
       simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul] at h0 ⊢
       have h1 : ∑ j, (⟨g (p τ a j), hAR _ _⟩ : R) * ue j b = (⟨g (α (N τ)), hAR _ _⟩ : R) * ue a b := by
         apply Subtype.ext
-        rw [AddSubmonoidClass.coe_finset_sum]
+        rw [AddSubmonoidClass.coe_finsetSum]
         exact h0
       have h2 := congrArg ψ h1
-      rw [map_sum ψ, map_mul ψ ⟨g (α (N τ)), _⟩, hψA] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum ψ, map_mul ψ ⟨g (α (N τ)), _⟩, hψA] at h2
       refine Eq.trans (Finset.sum_congr rfl fun j _ => ?_) h2
       rw [map_mul ψ, hψA]
       rfl

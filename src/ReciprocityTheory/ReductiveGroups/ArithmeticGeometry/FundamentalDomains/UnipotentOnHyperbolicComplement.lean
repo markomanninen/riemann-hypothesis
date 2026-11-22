@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -19,7 +23,7 @@ private lemma hermC_sub_left_section (u u' v : Fin r → ℂ) :
 
 private lemma hermC_add_right_section (u v v' : Fin r → ℂ) :
     hermC τ G u (v + v') = hermC τ G u v + hermC τ G u v' := by
-  simp only [hermC, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hermC, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 private lemma hermC_smul_right_section (c : ℂ) (u v : Fin r → ℂ) :
     hermC τ G u (c • v) = conj c * hermC τ G u v := by
@@ -64,7 +68,8 @@ lemma rz_spec (hG : (G.map τ).det ≠ 0) (φ : (Fin r → ℂ) →ₗ[ℂ] ℂ)
     _ = ∑ a, v a * φ (fun j => if a = j then 1 else 0) := by simp only [key]
     _ = φ v := by
         conv_rhs => rw [hv]
-        simp only [map_sum, map_smul, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_eq_mul]
 
 lemma map_det_ne (hG : G.det ≠ 0) : (G.map τ).det ≠ 0 := by
   rw [← RingHom.mapMatrix_apply, ← RingHom.map_det]
@@ -87,7 +92,8 @@ private lemma hermC_Gm_eq_conj_swap (τ : X.Ψ) (u w : Fin r → ℂ) :
     first
       | exact NumberField.IsCMField.complexEmbedding_complexConj E _ _
       | exact (NumberField.IsCMField.complexEmbedding_complexConj E _ _).symm
-  simp only [hermC, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hG a b]
@@ -176,7 +182,8 @@ private lemma hermC_ppos_left_eq_ppos_right_frame (x : Frame X.Ψ r) (τ : X.Ψ)
     exact (X.hermC_Gm_eq_conj_swap τ (col (mat x τ) (Fin.castLE X.p0_le a)) (col (mat x τ) (Fin.castLE X.p0_le b))).symm
   have hGi : ∀ a b, conj ((X.gramPos x τ)⁻¹ b a) = (X.gramPos x τ)⁻¹ a b :=
     fun a b => hH.inv.apply a b
-  simp only [ppos, hermC_finset_sum_left, hermC_finset_sum_right, hC_smul_left, hermC_smul_right_section, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ppos, hermC_finset_sum_left, hermC_finset_sum_right, hC_smul_left, hermC_smul_right_section, map_sum,
     map_mul]
   simp only [← X.hermC_Gm_eq_conj_swap, hGi, Finset.sum_mul]
   rw [Finset.sum_comm]
@@ -234,7 +241,8 @@ lemma hsym (u w : Fin r → ℂ) : hermC τ.1 X.Gm u w = conj (hermC τ.1 X.Gm w
       | exact (NumberField.IsCMField.complexEmbedding_complexConj E _ _).symm
       | exact NumberField.IsCMField.complexEmbedding_complexConj E _
       | exact (NumberField.IsCMField.complexEmbedding_complexConj E _).symm
-  simp only [hermC, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermC, map_sum, map_mul, Complex.conj_conj]
   conv_rhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hG a b]

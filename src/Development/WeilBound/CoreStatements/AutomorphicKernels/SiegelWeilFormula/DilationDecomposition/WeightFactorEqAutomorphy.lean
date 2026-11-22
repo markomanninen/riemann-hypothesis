@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocDerBig
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.LocForm
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SmulOneConj
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.RowsBlocks
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.LocDerBig
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.LocForm
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.SmulOneConj
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.RowsBlocks
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem weight_factor_eq_automorphy (p q : ℕ) (e : ℤ) (y : GR n) : F0 p q e 
   simp only [F0, f0, jF, u1, u2, Matrix.mul_smul, Matrix.mul_one, conjTranspose_smul, conjTranspose_one, Complex.star_def,
     Complex.conj_I, neg_smul, Matrix.mul_neg, mul_assoc]
 
-open PositivityTheory.Rg.Sw.Glob.DRealH in
 
+open PositivityTheory.Rg.Sw.Glob.DRealH in
 theorem gf_real (e : ℤ) (p q : ℕ) (t : ℝ) {m : ℕ} (X : Fin n → ℝ) (a : ℝ → GR n)
     (ha : ∀ s, IsDil X s (a s)) (y : GR n) (s : ℝ) :
     Gf e p q t (m := m) X y s = fun u => F0 p q e (y * a s) *

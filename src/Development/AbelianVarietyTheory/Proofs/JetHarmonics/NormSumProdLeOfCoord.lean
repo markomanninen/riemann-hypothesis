@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
@@ -43,7 +47,9 @@ theorem translate_norm_prod_le : ∀ (d q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* 
     (fun j i n => coeff n (hat ι (C ω * logS) (U1 d (τ i) (U1 d (t j i) θ)) ^ a i)) c B ?_ h
   intro i c' hc n
   have := hθ.2.2 (a i) m c' (fun j => t j i) (τ i) B (fun j => ht j i) (hτ i) (fun k => by
-    simpa only [map_sum, coeff_C_mul] using hc k) n
-  simpa only [map_sum, coeff_C_mul] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, coeff_C_mul] using hc k) n
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum, coeff_C_mul] using this
 
 end GlobalTheory.MomOne

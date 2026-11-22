@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
-import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.IsOpenPart
+public import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,22 +100,6 @@ def TowerAt {p : ℕ} {Xo : Moduli D l} {c : Coeff l} (T : Tower p Xo c) : Prop 
     ∀ w, (BaseAt w.1 (T.βN n w) ∧ Nonempty (T.YN n w).X) ∧
       ∃ (v : abelian₂ p c) (bm : T.O v →+* T.ON n w) (π : (T.YN n w).X ⟶ (T.Y v).X), IsTransition (T.Y v) (T.YN n w) bm π
 
-structure AtLevel (p : ℕ) (D : Datum H) where
-  lv : Level H
-  Xo : Moduli D lv
-  c : Coeff lv
-  T : Tower p Xo c
-
-def ModelsAt (p : ℕ) (Xo : Moduli D l) (c : Coeff l) : Prop :=
-  Nonempty {A : AtLevel p D // l.Dvd A.lv ∧ A.lv.GoodAt p ∧ TowerAt A.T ∧
-    (l.GoodAt p → ∃ _ : A.lv = l, HEq A.Xo Xo ∧ HEq A.c c)}
-
-def towerOf {p : ℕ} {Xo : Moduli D l} {c : Coeff l} (h : ModelsAt p Xo c) : AtLevel p D :=
-  (Classical.choice h).1
-
-theorem towerOf_at {p : ℕ} {Xo : Moduli D l} {c : Coeff l} (h : ModelsAt p Xo c) : TowerAt (towerOf h).T :=
-  (Classical.choice h).2.2.2.1
-
 end Tower
 
 variable {D : Datum H} {l : Level H} {Xo : Moduli D l} {c : Coeff l}
@@ -125,9 +113,5 @@ def fld {p : ℕ} {T : Tower p Xo c} : ∀ {Z : MdlC}, Pt T Z → Formalism.Main
   | .xm, y => y.2.1.toCF
   | .yy, y => y.2.1.toCF
   | .xn _, y => y.2.1.toCF
-
-def toXm {p : ℕ} {T : Tower p Xo c} (y : Pt T .yy) : Pt T .xm := ⟨y.1, y.2.1, y.2.2.1⟩
-
-theorem fld_toXm {p : ℕ} {T : Tower p Xo c} (y : Pt T .yy) : fld (toXm y) = fld y := rfl
 
 end Formalism.L2.Pj.PointsOfFlagModel

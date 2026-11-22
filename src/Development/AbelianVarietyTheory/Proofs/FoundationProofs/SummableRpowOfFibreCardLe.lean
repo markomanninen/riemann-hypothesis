@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.SummCount
 
@@ -43,7 +47,7 @@ theorem summable_rpow_of_fibre_card_le (ι : Type) (n : ℕ) (b C t : ℝ) (k : 
     (summable_prod_fin_tuple (summable_geometric_of_lt_one hr0 hr1) (fun _ => pow_nonneg hr0 _)
       n).mul_left _
   have key : ∀ q, h q ^ t ≤ C ^ t * ∏ i, ((b ^ k q i)⁻¹) ^ t := fun q => by
-    rw [Real.finset_prod_rpow _ _ (fun i _ => by positivity), ← Real.mul_rpow hC (hP _).le]
+    rw [Real.finsetProd_rpow _ _ (fun i _ => by positivity), ← Real.mul_rpow hC (hP _).le]
     exact Real.rpow_le_rpow (hh q).1 (hh q).2 ht0
   refine summable_of_sum_le (c := ∑' m, g m) (fun q => Real.rpow_nonneg (hh q).1 _) fun T => ?_
   rw [← Finset.sum_fiberwise_of_maps_to (g := k) (t := T.image k)

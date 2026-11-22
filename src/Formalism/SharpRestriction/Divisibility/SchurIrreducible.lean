@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.LocalRingCardinality.DataTheta
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.LocalRingCardinality.DataTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,10 +114,6 @@ def DiscreteSeriesHighestVector : Prop := ∀ (p q : ℕ) (lam : Ix p q → ℚ)
     ∀ g x, opE (X.grp p q) πU.π (eFun (X.ds p q lam) v)
         (πU.π g (opE (X.grp p q) πU.π (eFun (X.ds p q lam) v) x)) =
       mcoef (X.ds p q lam) v g • opE (X.grp p q) πU.π (eFun (X.ds p q lam) v) x
-
-def CasimirAnalyticVectors : Prop := ∀ p q : ℕ, 1 ≤ p + q → ∀ (πU : URep (X.grp p q)) (u : πU.H),
-  KFin (X.grp p q) πU.π u → Smooth (X.grp p q) πU.π u → (∃ c, CasEig (X.grp p q) πU.π u c) →
-  ∀ g, ∀ w ∈ closure (UgSpan (X.grp p q) πU.π u), πU.π g w ∈ closure (UgSpan (X.grp p q) πU.π u)
 
 def IsHCMod {p q : ℕ} {T : GrpData p q} (πU : URep T) (M : GKMod p q) (io : M.V →ₗ[ℂ] πU.H) : Prop :=
   Function.Injective io ∧ (∀ x, x ∈ Set.range io ↔ KFin T πU.π x) ∧
@@ -259,9 +259,6 @@ def admQ8 : Prop := ∀ (p q : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
 
 end PBW
 
-def AdmA : Prop := admH1 X ∧ admH2 X ∧ DiscreteSeriesBlattner X ∧ DiscreteSeriesPositivity X ∧ DiscreteSeriesHighestVector X ∧ CasimirAnalyticVectors X ∧
-  admQ5 X ∧ CoverHaarIntegration X ∧ admQ7 ∧ admQ8
-
 def ARi {p q r s : ℕ} (lam : Ix p q → ℚ) (lam' : Ix r s → ℚ) : Prop :=
   (∃ Φ, JointHW (X.fock p q r s) (blattner lam) (blattner lam') Φ) ∧
   ∀ Φ v, JointHW (X.fock p q r s) (blattner lam) (blattner lam') Φ →
@@ -358,8 +355,6 @@ def ArchimedeanRallisFifth : Prop :=
   (∀ t al be ga de, DataAR t al be ga de → ARv X t (lamA al be ga de) (lamA' t al be ga de)) ∧
   (∀ t al be ga de, DataARm t al be ga de → ARv X t (lamA al be ga de) (lamM' t al be ga de))
 
-def IntegralityGoodReduction : Prop := AdmA X → ArchimedeanRallisFirst X ∧ ArchimedeanRallisSecond X ∧ ArchimedeanRallisUpDownLine X ∧ ArchimedeanRallisFourth X ∧ ArchimedeanRallisFifth X
-
 end StatementsA
 
 section PartB
@@ -387,27 +382,13 @@ def IsUnram (w : HeightOneSpectrum (𝓞 F)) : Prop :=
   ∀ P : HeightOneSpectrum (𝓞 E), P.asIdeal.comap (algebraMap (𝓞 F) (𝓞 E)) = w.asIdeal →
     Ideal.ramificationIdx P.asIdeal (𝓞 F) = 1
 
-def IsUnramQ (w : HeightOneSpectrum (𝓞 F)) : Prop := Ideal.ramificationIdx w.asIdeal ℤ = 1
 
 open Classical in
-
 def etaV (w : HeightOneSpectrum (𝓞 F)) : ℂ := if IsSplit (E := E) w then 1 else -1
-
-theorem etaV_sq (w : HeightOneSpectrum (𝓞 F)) : (etaV (E := E) w) ^ 2 = 1 := by
-  unfold etaV; split_ifs <;> norm_num
 
 def dvLoc (n M : ℕ) (w : HeightOneSpectrum (𝓞 F)) (s : ℂ) : ℂ :=
   ∏ i ∈ Finset.Icc 1 n,
     (1 - (etaV (E := E) w) ^ (M + n - i) * (qNorm w : ℂ) ^ (-(2 * s + i)))⁻¹
-
-theorem dvLoc_eq (n t : ℕ) (w : HeightOneSpectrum (𝓞 F)) (s : ℂ) :
-    dvLoc (E := E) n (n + t) w s = ∏ i ∈ Finset.Icc 1 n,
-      (1 - (etaV (E := E) w) ^ (t + i) * (qNorm w : ℂ) ^ (-(2 * s + i)))⁻¹ := by
-  unfold dvLoc
-  refine Finset.prod_congr rfl fun i hi => ?_
-  have hi' : i ≤ n := (Finset.mem_Icc.mp hi).2
-  have h : n + t + n - i = (t + i) + 2 * (n - i) := by omega
-  rw [h, pow_add, pow_mul, etaV_sq, one_pow, mul_one]
 
 end Helpers
 
@@ -486,74 +467,10 @@ attribute [instance] RFObj.msG RFObj.msH RFObj.probH
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E]
   [Algebra F E] {A B : Formalism.BasicNotions.HSpace E} (O : RFObj F E A B)
 
-def Ith (ph : O.SchD) (g : O.GhQ) : ℂ := ∫ h, O.thetaD ph g h ∂O.muH
-
-def thetaLift {π : O.Pi} (f : O.Vec π) (φ : O.Sch) (h : O.HQ) : ℂ :=
-  ∫ g, star (O.form π f g) * O.thetaK φ g h ∂O.muG
-
-def thetaIP {π : O.Pi} (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch) : ℂ :=
-  ∫ h, thetaLift O f₁ φ₁ h * star (thetaLift O f₂ φ₂ h) ∂O.muH
-
-def ZS {π : O.Pi} (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch) (S : Finset (Pl F)) (s : ℂ) : ℂ :=
-  ∏ v ∈ S, O.Zv π f₁ f₂ φ₁ φ₂ v s
-
 def LS (π : O.Pi) (S : Finset (Pl F)) (s : ℂ) : ℂ :=
   ∏' v : {v : Pl F // v ∉ S}, O.Lv π v s
 
 def dS (S : Finset (Pl F)) (s : ℂ) : ℂ := ∏' v : {v : Pl F // v ∉ S}, O.dv v s
-
-def GoodPl (π : O.Pi) (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch) (w : HeightOneSpectrum (𝓞 F)) : Prop :=
-  O.sph π f₁ f₂ φ₁ φ₂ (Sum.inr w) ∧ IsUnram (E := E) w ∧
-  (IsSplit (E := E) w ∨ ((2 : 𝓞 F) ∉ w.asIdeal ∧ 3 < qNorm w ∧ IsUnramQ w ∧ O.psiXi w))
-
-def RFData (π : O.Pi) (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch) (S : Finset (Pl F)) (s₀ : ℂ) : Prop :=
-  O.good φ₁ ∧ O.good φ₂ ∧ (∀ v : InfinitePlace F, Sum.inl v ∈ S) ∧
-  (∀ w, Sum.inr w ∉ S → GoodPl O π f₁ f₂ φ₁ φ₂ w) ∧
-  ∃ ε > 0, ∀ v ∈ S, ∀ s : ℂ, ‖s - s₀‖ < ε → O.zconv π f₁ f₂ φ₁ φ₂ v s
-
-def NSat (π : O.Pi) (S : Finset (Pl F)) (t : ℕ) (qq : HeightOneSpectrum (𝓞 F)) : Prop :=
-  Sum.inr qq ∉ S ∧ IsSplit (E := E) qq ∧ (2 : 𝓞 F) ∉ qq.asIdeal ∧ O.psiXi qq ∧
-  (∀ i, O.sat π qq i ∉ ({(((qNorm qq : ℝ) ^ (((t : ℝ) - 1) / 2) : ℝ) : ℂ),
-      (((qNorm qq : ℝ) ^ (-(((t : ℝ) - 1) / 2)) : ℝ) : ℂ),
-      (((qNorm qq : ℝ) ^ (((t : ℝ) + 1) / 2) : ℝ) : ℂ),
-      (((qNorm qq : ℝ) ^ (-(((t : ℝ) + 1) / 2)) : ℝ) : ℂ)} : Set ℂ))
-
-def HolCont (π : O.Pi) (S : Finset (Pl F)) (s₀ : ℂ) (g : ℂ → ℂ) : Prop :=
-  ∃ U : Set ℂ, ∃ σ : ℝ, IsOpen U ∧ IsPreconnected U ∧ s₀ ∈ U ∧ AnalyticOnNhd ℂ g U ∧
-    (∃ s ∈ U, σ < s.re) ∧
-    ∀ s ∈ U, σ < s.re → HasProd (fun v : {v : Pl F // v ∉ S} => O.Lv π v (s + 1 / 2)) (g s)
-
-def admW : Prop := ∀ t : ℕ, B.rank = A.rank + t → 2 ≤ t → (wittIdx B = 0 ∨ wittIdx B < t) →
-  ∀ ph : O.SchD, O.factD ph →
-  (∀ g, Integrable (O.thetaD ph g) O.muH) ∧
-  ∃ C N : ℝ, ∀ g, ‖Ith O ph g‖ ≤ C * (max 1 (O.ht g)) ^ N ∧
-    ∫ h, ‖O.thetaD ph g h‖ ∂O.muH ≤ C * (max 1 (O.ht g)) ^ N
-
-def admS : Prop := ∀ ph : O.SchD, O.factD ph → A.rank + 2 ≤ B.rank →
-  ∀ T : Matrix (Fin A.rank) (Fin A.rank) E, Tᴴ = T → T.det ≠ 0 →
-    Integrable (O.thetaT ph T) O.muH ∧
-    HasProd (fun v => O.dens ph v T) (∫ h, O.thetaT ph T h ∂O.muH)
-
-def DoublingBasicIdentity : Prop := ∃ σ : ℝ, ∀ s : ℂ, σ < s.re → ∀ (π : O.Pi) (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch),
-  O.good φ₁ → O.good φ₂ →
-  Integrable (fun g : O.GQ × O.GQ => O.Eis (O.tensor φ₁ φ₂) s (O.io g.1 g.2) *
-    star (O.form π f₁ g.1) * O.form π f₂ g.2 * O.muInv g.2) (O.muG.prod O.muG) ∧
-  (∃ P : ℂ, HasProd (fun v => O.Zv π f₁ f₂ φ₁ φ₂ v s) P ∧
-    ∫ g, O.Eis (O.tensor φ₁ φ₂) s (O.io g.1 g.2) * star (O.form π f₁ g.1) * O.form π f₂ g.2 *
-      O.muInv g.2 ∂(O.muG.prod O.muG) = O.be π f₁ f₂ * P) ∧
-  (∀ w, GoodPl O π f₁ f₂ φ₁ φ₂ w →
-    O.Zv π f₁ f₂ φ₁ φ₂ (Sum.inr w) s = O.Lv π (Sum.inr w) (s + 1 / 2) / O.dv (Sum.inr w) s)
-
-def RFconcl : Prop :=
-  1 ≤ A.rank → ∀ t : ℕ, B.rank = A.rank + t → 2 ≤ t → (wittIdx B = 0 ∨ wittIdx B < t) →
-  ∀ (π : O.Pi) (S : Finset (Pl F)),
-    (∃ qq, NSat O π S t qq) →
-    (∃ (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch), RFData O π f₁ f₂ φ₁ φ₂ S ((t : ℂ) / 2) ∧
-      ZS O f₁ f₂ φ₁ φ₂ S ((t : ℂ) / 2) ≠ 0) →
-    ∃ g : ℂ → ℂ, HolCont O π S ((t : ℂ) / 2) g ∧
-      ∀ (f₁ f₂ : O.Vec π) (φ₁ φ₂ : O.Sch), RFData O π f₁ f₂ φ₁ φ₂ S ((t : ℂ) / 2) →
-        thetaIP O f₁ f₂ φ₁ φ₂ = O.be π f₁ f₂ * (g ((t : ℂ) / 2) / dS O S ((t : ℂ) / 2)) *
-          ZS O f₁ f₂ φ₁ φ₂ S ((t : ℂ) / 2)
 
 end PartB
 
@@ -564,53 +481,6 @@ structure Prov (D : Formalism.BasicNotions.D7) extends ProvA where
 section Packet
 
 variable (D : Formalism.BasicNotions.D7) (X : Prov D)
-
-def adm1 : Prop := admH1 X.toProvA
-
-def adm2 : Prop := admH2 X.toProvA
-
-def adm3 : Prop := DiscreteSeriesBlattner X.toProvA
-
-def ArchimedeanSignatureMatching : Prop := DiscreteSeriesPositivity X.toProvA
-
-def adm5 : Prop := DiscreteSeriesHighestVector X.toProvA
-
-def adm6 : Prop := CasimirAnalyticVectors X.toProvA
-
-def adm7 : Prop := letI := D.host.cmStar; ∀ A B, admW (X.rf A B)
-
-def adm8 : Prop := letI := D.host.cmStar; ∀ A B, admS (X.rf A B)
-
-def adm9 : Prop := letI := D.host.cmStar; ∀ A B, DoublingBasicIdentity (X.rf A B)
-
-def adm10 : Prop := admQ5 X.toProvA
-
-def adm11 : Prop := CoverHaarIntegration X.toProvA
-
-def adm12 : Prop := admQ7
-
-def adm13 : Prop := admQ8
-
-def admitted : Prop := adm1 D X ∧ adm2 D X ∧ adm3 D X ∧ ArchimedeanSignatureMatching D X ∧ adm5 D X ∧ adm6 D X ∧
-  adm10 D X ∧ adm11 D X ∧ adm12 ∧ adm13
-
-def AdmB : Prop := adm7 D X ∧ adm8 D X ∧ adm9 D X
-
-def Conclusion1 : Prop := ArchimedeanRallisFirst X.toProvA
-
-def Conclusion2 : Prop := ArchimedeanRallisSecond X.toProvA
-
-def PointsLemma : Prop := ArchimedeanRallisUpDownLine X.toProvA
-
-def Conclusion4 : Prop := ArchimedeanRallisFourth X.toProvA
-
-def Conclusion5 : Prop := ArchimedeanRallisFifth X.toProvA
-
-def Conclusion6 : Prop := letI := D.host.cmStar; ∀ A B, RFconcl (X.rf A B)
-
-def Stmt : Prop := admitted D X → Conclusion1 D X ∧ Conclusion2 D X ∧ PointsLemma D X ∧ Conclusion4 D X ∧ Conclusion5 D X
-
-def ArchimedeanRallisLocal : Prop := IntegralityGoodReduction X.toProvA
 
 end Packet
 

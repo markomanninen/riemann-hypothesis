@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceSectionAddComplementMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SplitPlaceSectionAddComplementMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,9 @@ theorem base_enlarge {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt 
     om (g, h) f₀ = ((splitFacO χS χT x y : ℂ) * ((Real.sqrt ((((latO S T ΛS ΛT fun _ => True) ⊓ half S T e).relIndex
       ((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹) ⊓ half S T e) : ℕ) : ℝ) : ℝ) : ℂ)⁻¹) •
       Tm fun t => halfInd a (latO S T ΛS ΛT fun _ => True) (actO S T g⁻¹ h⁻¹ t) := by
-  haveI := finite_enlarge hS.1 hT.1 he.1 hle
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  haveI := finite_enlarge inferInstance inferInstance he.1 hle
   obtain ⟨R, r1, r2, r3⟩ := exists_reps ((latO S T ΛS ΛT fun _ => True) ⊓ half S T e)
     ((latO S T ΛS ΛT fun _ => True).comap (actAdd S T g⁻¹ h⁻¹) ⊓ half S T e)
   have hR : ∀ u ∈ R, actO S T g⁻¹ h⁻¹ u ∈ latO S T ΛS ΛT (fun _ => True) ∧ IsHalf e u := fun u hu =>
@@ -54,12 +60,16 @@ theorem law_enlarge' {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt 
     Law om a (latO S T ΛS ΛT fun _ => True) Tm g h (fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h)) := by
   have h1 := base_enlarge hW hS hT ha hinf hc hf hTm he hae hfix hg hh
     (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle
-  rw [← Complex.ofReal_inv, sqrt_index hS.1 hT.1 he (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle] at h1
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  rw [← Complex.ofReal_inv, sqrt_index inferInstance inferInstance he (isDetAt_detAt e he.1 S g) (isDetAt_detAt e he.1 T h) hle] at h1
   exact om_model_of_base D ψ S T χS χT om ΛS ΛT a f₀ Tm hW hS hT ha hinf hf hTm g h _ h1
 
 theorem law_place' {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e T h) :
     Law om a (latO S T ΛS ΛT fun _ => True) Tm g h (fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h)) := by
-  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO hS.1 hT.1 g⁻¹ h⁻¹
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS
+  letI := GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT
+  obtain ⟨N, hN, h1⟩ := exists_nsmul_actO (ΛS := ΛS) (ΛT := ΛT) inferInstance inferInstance g⁻¹ h⁻¹
   obtain ⟨z, z1, z2⟩ := exists_scalar he T hN
   have z4 : SuppAt e T z⁻¹ := suppAt_of (GlobalTheory.SplitScalar.off_smul_mt_inv z1)
   have l1 := law_enlarge' hW hS hT ha hinf hc hf hTm he hae hfix hg (suppAt_mul hh z4) fun w hw hwe => by
@@ -68,7 +78,7 @@ theorem law_place' {g : GA D S} {h : GA D T} (hg : SuppAt e S g) (hh : SuppAt e 
   have l2 := law_enlarge' hW hS hT ha hinf hc hf hTm he hae hfix (suppAt_one e S) z4 fun w hw hwe => by
     rw [inv_one, inv_inv, actO_scalar z2 hwe]
     exact nsmul_mem hw N
-  have l3 := l1.mul hS.1 hT.1 (l2.inv hS.1 hT.1 (fac_ne_zero _ _))
+  have l3 := l1.mul inferInstance inferInstance (l2.inv inferInstance inferInstance (fac_ne_zero _ _))
   have e1 : fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T (h * z⁻¹)) =
       fac S T χS χT (detAt e he.1 S g) (detAt e he.1 T h) * fac S T χS χT (detAt e he.1 S 1) (detAt e he.1 T z⁻¹) := by
     rw [← fac_mul, ← MonoidHom.map_mul, ← MonoidHom.map_mul, mul_one]

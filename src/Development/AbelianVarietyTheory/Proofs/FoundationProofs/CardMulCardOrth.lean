@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinsumNormNeg
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceOneIntegerConjDiffPrimeTo
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FrameEmbeddingUniqueFixedStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormCmPrimeInertPrimeSignStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumCompSurjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdxEqRelIndex
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinsumNormNeg
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceOneIntegerConjDiffPrimeTo
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FrameEmbeddingUniqueFixedStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AbsNormCmPrimeInertPrimeSignStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumCompSurjective
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.RatEqui GlobalTheory.InertParity
 open scoped BigOperators Pointwise
 
@@ -173,11 +178,11 @@ theorem isotropic_step [Finite M] (h : IsHerm σ φ β) {X Y : Submodule R M}
     fun p => ?_⟩, ?_⟩
   · obtain ⟨p, rfl⟩ := hπ p
     obtain ⟨q, rfl⟩ := hπ q
-    rw [← map_add, hφ, hφ, hφ, hβ]; exact h1 _ _
+    rw [← map_add (f := _), hφ, hφ, hφ, hβ]; exact h1 _ _
   · obtain ⟨p, rfl⟩ := hπ p
     obtain ⟨p', rfl⟩ := hπ p'
     obtain ⟨q, rfl⟩ := hπ q
-    rw [← map_add, hβ, hβ, hβ]; exact h2 _ _ _
+    rw [← map_add (f := _), hβ, hβ, hβ]; exact h2 _ _ _
   · obtain ⟨p, rfl⟩ := hπ p
     obtain ⟨q, rfl⟩ := hπ q
     rw [← map_smul, ← map_smul, hβ, hβ]; exact h3 _ _ _
@@ -258,7 +263,7 @@ theorem line_step (h : IsHerm σ φ β) (hσ : ∀ a, σ (σ a) = a) {w : R} (hw
   have hb : ∀ a b : R, β (a • x) (b • x) = χ (a * σ b + σ a * b) := fun a b => by
     have := h1 (a • x) (b • x)
     rw [← add_smul, hχ' (a + b), show (a + b) * σ (a + b) = a * σ a + b * σ b + (a * σ b + σ a * b) by
-      rw [map_add]; ring, hχ, hχ, ← hχ', ← hχ'] at this
+      rw [map_add (f := _)]; ring, hχ, hχ, ← hχ', ← hχ'] at this
     exact (mul_left_cancel₀ (mul_ne_zero (h0 _) (h0 _)) this).symm
   have hn : ∀ a : R, β ((a * σ a) • x) (w • x) = φ (a • x) := fun a => by
     rw [hb, hχ']

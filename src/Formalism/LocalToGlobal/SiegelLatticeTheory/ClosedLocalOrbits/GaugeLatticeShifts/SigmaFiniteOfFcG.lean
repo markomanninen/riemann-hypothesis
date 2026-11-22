@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem haar_unique (S : Subgroup G) (hS : IsClosed (S : Set G)) (μ m : Measure
   refine ⟨((c / d : ℝ≥0) : ℝ≥0∞), ENNReal.coe_ne_top, ?_⟩
   have hm'' : m' = (c / d) • μ' := by
     rw [hm, hμ, smul_smul, div_mul_cancel₀ c hd]
-  rw [← hmm, ← hμm, hm'', Measure.map_smul]
+  rw [← hmm, ← hμm, hm'', Measure.map_smul _ measurable_subtype_coe.aemeasurable]
   rfl
 
 end Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL.HaarCore

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CompactGroupRepDefinedOverFiniteExtension
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published.Kato
 
@@ -63,16 +67,3 @@ private theorem coc_finext (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [Topo
         IntermediateField.adjoin ℚ_[l] (Set.range fun q : (Γ ⧸ H i) × Fin n => c q.1.out q.2) ≤ _)
       (IntermediateField.subset_adjoin _ _ ⟨((g : Γ ⧸ H i), j), rfl⟩)
   · exact (le_sup_right : K₀ ⊔ K i ≤ _) ((H i).inv_mem h.2 k)
-
-theorem UpperTheory.V.X.Kato.finExt :
-    ∀ (l : ℕ) [Fact l.Prime] (Γ : Type) [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] (E : IntermediateField ℚ_[l] (Qbar l)) [FiniteDimensional ℚ_[l] ↥E] (n : ℕ) (r : Γ →* GL (Fin n) ↥E) (c : Γ → Fin n → Qbar l), c ∈ Z1 (Loc.colRep (toBar r)) → ∃ E' : IntermediateField ℚ_[l] (Qbar l), FiniteDimensional ℚ_[l] ↥E' ∧ E ≤ E' ∧ ∀ g i, c g i ∈ E' := by
-  intro l _ Γ _ _ _ _ _ E _ n r c hc
-  obtain ⟨hcc, hcoc⟩ := (mem_Z1_iff_cocycle _ _).1 hc
-  have hc1 : c 1 = 0 := by
-    have := hcoc 1 1
-    rw [one_mul, map_one, Module.End.one_apply] at this
-    exact left_eq_add.1 this
-  refine coc_finext l Γ E n (fun g v => Loc.colRep (toBar r) g v) c ?_ hc1 hcc hcoc
-  intro L hL g v hv j
-  show (∑ k, ((r g : Matrix (Fin n) (Fin n) ↥E) j k : Qbar l) * v k) ∈ L
-  exact sum_mem fun k _ => mul_mem (hL (SetLike.coe_mem _)) (hv k)

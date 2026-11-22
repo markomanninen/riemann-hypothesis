@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweDefs
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RhoMemOfMkEq
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweDefs
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.RhoMemOfMkEq
+
+@[expose] public section
 
 noncomputable section
 

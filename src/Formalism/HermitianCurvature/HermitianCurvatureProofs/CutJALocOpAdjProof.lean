@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsOp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsAgree
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocOpAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsOp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsAgree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
+
+@[expose] public section
 
 noncomputable section
 

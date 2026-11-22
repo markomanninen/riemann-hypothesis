@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.PeBnOfLt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.PeBnOfLt
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,19 +14,19 @@ open Formalism.MainNotions.G Formalism.MainNotions.CovariantDegrees
 
 theorem ext_last {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) : ext mu N = pEnd mu := by
   unfold ext pEnd
-  rw [dif_pos (Nat.lt_succ_self N)]
+  rw [dite_eq_left (Nat.lt_succ_self N)]
   rfl
 
 theorem ext_apply_of_lt {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) {i : ℕ} (h : i < N + 1) : ext mu i = mu ⟨i, h⟩ := by
   unfold ext
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem ext_val {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) (i : Fin (N + 1)) : ext mu i.val = mu i := by
   exact ext_apply_of_lt mu i.2
 
 theorem ext_of_gt {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) {i : ℕ} (h : N < i) : ext mu i = 0 := by
   unfold ext
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 theorem restrict_extendByZero {N n : ℕ} (mu : Fin (N + 1) → Fin n → ℤ) : res N (ext mu) = mu := by
   funext i
@@ -83,9 +87,6 @@ theorem pathWordMap_bijective (hT : RestPathTo) (hF : RestPathFrom) (hS : RestSt
 def e17 (hT : RestPathTo) (hF : RestPathFrom) (hS : RestStd) (n N : ℕ) (LL : Letters (Fin N)) (B : Fin N → ℕ) :
     WIdx n N LL B ≃ Formalism.InvariantFactorPaths.GelfandTsetlinBases.PathIdx n N (isV LL) (Bn B) :=
   Equiv.ofBijective (f17 hT hS) (pathWordMap_bijective hT hF hS)
-
-theorem pathWordEquiv_fst_eq (hT : RestPathTo) (hF : RestPathFrom) (hS : RestStd) {n N : ℕ} {LL : Letters (Fin N)}
-    {B : Fin N → ℕ} (x : WIdx n N LL B) : (e17 hT hF hS n N LL B x).1 = (ext x.1.1.mu, x.1.2) := rfl
 
 theorem rename_Psi (hT : RestPathTo) (hF : RestPathFrom) (hS : RestStd) (hP : RestPsi) (R : Type) [CommRing R]
     {n N : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} (x : WIdx n N LL B) :

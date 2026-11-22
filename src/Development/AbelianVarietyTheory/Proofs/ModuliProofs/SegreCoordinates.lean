@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SecCoordBcScaleUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionCoordinateVectorExistsLocallyStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSectionCoordinateVectorOfLocallyOnRingStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsProjByOfIsPullback
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ProjectiveRepresentationPullbackCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SecCoordBcScaleUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SectionCoordinateVectorExistsLocallyStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSectionCoordinateVectorOfLocallyOnRingStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -164,9 +169,23 @@ variable {X Y P : Scheme.{0}} (p : P ⟶ X) (q : P ⟶ Y) {H : LB X} {K : LB Y} 
 theorem split_local (hH : H.IsLB) (hK : K.IsLB) {T : Type} [CommRing T] [IsLocalRing T] (x : Sp T ⟶ P)
     (w : σ₁ × σ₂ → T) (hw : SecCoord (box p q H K) (fun i : σ₁ × σ₂ => boxSec p q (s i.1) (t i.2)) x w) :
     ∃ a b, SecCoord H s (x ≫ p) a ∧ SecCoord K t (x ≫ q) b ∧ w = fun i => a i.1 * b i.2 := by
+  have hbox : (box p q H K).IsLB := by
+    refine ⟨?_, ?_, ?_⟩
+    · refine top_le_iff.1 fun y _ => ?_
+      obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (show p y ∈ ⨆ i, H.U i by rw [hH.cover]; trivial)
+      obtain ⟨j, hj⟩ := TopologicalSpace.Opens.mem_iSup.1 (show q y ∈ ⨆ i, K.U i by rw [hK.cover]; trivial)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), hi, hj⟩
+    · intro a
+      refine Units.ext ((rs_mul p q _ _ _ _ _).trans ?_)
+      rw [ap_g_self p hH, ap_g_self q hK, _root_.mul_one, Units.val_one]
+    · intro a b c
+      refine Units.ext ((congrArg₂ (· * ·) (rs_mul p q _ _ _ _ _) (rs_mul p q _ _ _ _ _)).trans
+        (Eq.trans ?_ (rs_mul p q _ _ _ _ _).symm))
+      exact (mul_mul_mul_comm _ _ _ _).trans
+        (congrArg₂ (· * ·) (ap_cocycle p hH _ _ _ _ _ _).symm (ap_cocycle q hK _ _ _ _ _ _).symm)
   obtain ⟨a, ha⟩ := (GlobalTheory.T.sectionCoordinateVector_exists_locally X H σ₁ s hH).1 T (x ≫ p)
   obtain ⟨b, hb⟩ := (GlobalTheory.T.sectionCoordinateVector_exists_locally Y K σ₂ t hK).1 T (x ≫ q)
-  obtain ⟨u, hu⟩ := uniq (isLB_box p q hH hK) (secCoord_box p q s t x a b ha hb) hw
+  obtain ⟨u, hu⟩ := uniq (hbox) (secCoord_box p q s t x a b ha hb) hw
   exact ⟨fun i => u * a i, b, scale hH ha u, hb, funext fun i => (hu i).trans (_root_.mul_assoc _ _ _).symm⟩
 
 theorem split_near (hH : H.IsLB) (hK : K.IsLB) {T : Type} [CommRing T] (x : Sp T ⟶ P)
@@ -174,6 +193,20 @@ theorem split_near (hH : H.IsLB) (hK : K.IsLB) {T : Type} [CommRing T] (x : Sp T
     (z : Sp T) : ∃ (T' : Type) (_ : CommRing T') (φ : T →+* T'), IsOpenImmersion (spMap φ) ∧
       z ∈ Set.range (spMap φ) ∧ ∃ a b, SecCoord H s (spMap φ ≫ x ≫ p) a ∧ SecCoord K t (spMap φ ≫ x ≫ q) b ∧
         ∀ i, φ (w i) = a i.1 * b i.2 := by
+  have hbox : (box p q H K).IsLB := by
+    refine ⟨?_, ?_, ?_⟩
+    · refine top_le_iff.1 fun y _ => ?_
+      obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (show p y ∈ ⨆ i, H.U i by rw [hH.cover]; trivial)
+      obtain ⟨j, hj⟩ := TopologicalSpace.Opens.mem_iSup.1 (show q y ∈ ⨆ i, K.U i by rw [hK.cover]; trivial)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), hi, hj⟩
+    · intro a
+      refine Units.ext ((rs_mul p q _ _ _ _ _).trans ?_)
+      rw [ap_g_self p hH, ap_g_self q hK, _root_.mul_one, Units.val_one]
+    · intro a b c
+      refine Units.ext ((congrArg₂ (· * ·) (rs_mul p q _ _ _ _ _) (rs_mul p q _ _ _ _ _)).trans
+        (Eq.trans ?_ (rs_mul p q _ _ _ _ _).symm))
+      exact (mul_mul_mul_comm _ _ _ _).trans
+        (congrArg₂ (· * ·) (ap_cocycle p hH _ _ _ _ _ _).symm (ap_cocycle q hK _ _ _ _ _ _).symm)
   obtain ⟨f, hf, a, ha⟩ := (GlobalTheory.T.sectionCoordinateVector_exists_locally X H σ₁ s hH).2.1 T (x ≫ p) z
   obtain ⟨z', hz'⟩ : z ∈ Set.range (spMap (algebraMap T (Localization.Away f))) :=
     (PrimeSpectrum.localization_away_comap_range (Localization.Away f) f).ge hf
@@ -184,9 +217,9 @@ theorem split_near (hH : H.IsLB) (hK : K.IsLB) {T : Type} [CommRing T] (x : Sp T
   have ha' := bc hH ha (algebraMap _ (Localization.Away g))
   rw [← Category.assoc, spc] at ha' hb
   set φ := (algebraMap _ (Localization.Away g)).comp (algebraMap T (Localization.Away f)) with hφ
-  obtain ⟨u, hu⟩ := uniq (isLB_box p q hH hK)
+  obtain ⟨u, hu⟩ := uniq (hbox)
     (secCoord_box p q s t (spMap φ ≫ x) _ b (by rw [Category.assoc]; exact ha') (by rw [Category.assoc]; exact hb))
-    (bc (isLB_box p q hH hK) hw φ)
+    (bc (hbox) hw φ)
   refine ⟨_, inferInstance, φ, ?_, ⟨z'', ?_⟩, _, b, scale hH ha' u, hb,
     fun i => (hu i).trans (_root_.mul_assoc _ _ _).symm⟩
   · rw [hφ, ← spc]; infer_instance
@@ -220,7 +253,23 @@ theorem projRep_box {R : Type} [CommRing R] {f : X ⟶ Sp R} {g : Y ⟶ Sp R} (s
     {I₁ : Ideal (MvPolynomial σ₁ R)} {I₂ : Ideal (MvPolynomial σ₂ R)} (h₁ : ProjRep I₁ f H s) (h₂ : ProjRep I₂ g K t) :
     ProjRep (graphIdeal (p ≫ f) H s p K t q) (p ≫ f) (box p q H K)
       (fun i : σ₁ × σ₂ => boxSec p q (s i.1) (t i.2)) := by
-  have hB := isLB_box p q h₁.1 h₂.1
+  have hH := h₁.1
+  have hK := h₂.1
+  have hbox : (box p q H K).IsLB := by
+    refine ⟨?_, ?_, ?_⟩
+    · refine top_le_iff.1 fun y _ => ?_
+      obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 (show p y ∈ ⨆ i, H.U i by rw [hH.cover]; trivial)
+      obtain ⟨j, hj⟩ := TopologicalSpace.Opens.mem_iSup.1 (show q y ∈ ⨆ i, K.U i by rw [hK.cover]; trivial)
+      exact TopologicalSpace.Opens.mem_iSup.2 ⟨(i, j), hi, hj⟩
+    · intro a
+      refine Units.ext ((rs_mul p q _ _ _ _ _).trans ?_)
+      rw [ap_g_self p hH, ap_g_self q hK, _root_.mul_one, Units.val_one]
+    · intro a b c
+      refine Units.ext ((congrArg₂ (· * ·) (rs_mul p q _ _ _ _ _) (rs_mul p q _ _ _ _ _)).trans
+        (Eq.trans ?_ (rs_mul p q _ _ _ _ _).symm))
+      exact (mul_mul_mul_comm _ _ _ _).trans
+        (congrArg₂ (· * ·) (ap_cocycle p hH _ _ _ _ _ _).symm (ap_cocycle q hK _ _ _ _ _ _).symm)
+  have hB := hbox
   refine ⟨hB, fun T _ β x w hx hw => ⟨?_, fun F hF => ?_⟩, fun T _ β w hw hI => ?_⟩
   · by_contra hne
     obtain ⟨m, hm, hle⟩ := Ideal.exists_le_maximal _ hne

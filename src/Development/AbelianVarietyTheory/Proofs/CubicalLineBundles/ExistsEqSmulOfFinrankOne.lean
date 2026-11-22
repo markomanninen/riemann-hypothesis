@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
@@ -32,7 +36,7 @@ theorem finrank_add_le_of_disjoint {A B : Submodule R M} (h : Disjoint A B) :
   have h1 := A.finrank_quotient_add_finrank
   have h2 : Module.finrank R B ≤ Module.finrank R (M ⧸ A) := by
     refine LinearMap.finrank_le_finrank_of_injective (f := A.mkQ ∘ₗ B.subtype) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro b hb
     exact Subtype.ext (Submodule.disjoint_def.1 h _ ((Submodule.Quotient.mk_eq_zero A).1 hb) b.2)
   omega
@@ -85,7 +89,8 @@ theorem card_le_finrank_lat {ρ ρ' : ℂ} (hne : ρ ≠ ρ') {n : ℕ} (hn : 0 
   have h1 : ∀ a : PureType.lat hP ρ, pr (Pe a) ∈ W := fun a => by
     obtain ⟨s, hs⟩ := hv a
     have hc' : τ (c : E) ≠ 0 := by simpa using hc
-    rw [← W.smul_mem_iff hc', ← hsm, ← Submodule.coe_smul, hs, Submodule.coe_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← W.smul_mem_iff hc', ← hsm, ← Submodule.coe_smul, hs, Submodule.coe_sum, map_sum, map_sum]
     refine W.sum_mem fun i _ => ?_
     rw [Submodule.coe_smul, hsm]
     exact W.smul_mem _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -93,7 +98,7 @@ theorem card_le_finrank_lat {ρ ρ' : ℂ} (hne : ρ ≠ ρ') {n : ℕ} (hn : 0 
     obtain ⟨x, hx, y, hy, hxy⟩ := Submodule.mem_sup.1 (hs a)
     have hn' : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
     have hy0 : pr (Pe y) = 0 := funext fun i => hy i (by rw [i.2, hτ]; exact hne)
-    rw [← W.smul_mem_iff hn', Nat.cast_smul_eq_nsmul, ← map_nsmul, ← map_nsmul, ← hxy, map_add, map_add, hy0,
+    rw [← W.smul_mem_iff hn', Nat.cast_smul_eq_nsmul, ← map_nsmul, ← map_nsmul, ← hxy, map_add (f := _), map_add (f := _), hy0,
       add_zero]
     exact h1 ⟨x, hx⟩
   have h3 : W = ⊤ := by

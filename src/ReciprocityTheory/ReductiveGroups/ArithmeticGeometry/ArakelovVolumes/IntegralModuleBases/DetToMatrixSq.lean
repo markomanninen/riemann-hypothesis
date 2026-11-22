@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.IntegralModuleBasisStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.NormGsoSqLeTwoPowMulOfValEqAdd
-import ReciprocityTheory.ReducedBases.ExistsRedOf
-import ReciprocityTheory.ReducedBases.PrefixProdGeOne
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.IntegralModuleBasisStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.NormGsoSqLeTwoPowMulOfValEqAdd
+public import ReciprocityTheory.ReducedBases.ExistsRedOf
+public import ReciprocityTheory.ReducedBases.PrefixProdGeOne
+
+@[expose] public section
 
 noncomputable section
 

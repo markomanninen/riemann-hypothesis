@@ -1,18 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+
+@[expose] public section
 
 noncomputable section
 
 namespace Formalism.L2.S
 
 open Formalism.BasicNotions
-
-def letterOf {R : Ranks} (h : HCParam R) (l : Fin (R.k - 2)) : Bool :=
-  decide (h.u ⟨l.1 + 1, by omega⟩ ≠ h.v ⟨l.1, by omega⟩ - 1 / 2)
-
-def delOf {R : Ranks} (h : HCParam R) (hk : 3 ≤ R.k) : ℚ :=
-  (h.v ⟨0, by omega⟩ - h.v ⟨1, by omega⟩) / 4
 
 def IsPtL {K : Type*} [Zero K] (l : List (ℕ × K)) (i : ℕ) : Prop :=
   (l.map Prod.fst).sum = i ∧ ∀ b ∈ l, 1 ≤ b.1 ∧ b.2 ≠ 0
@@ -49,8 +47,5 @@ def ptEquiv (K : Type*) [Zero K] (i : ℕ) : Formalism.MainNotions.S.Point K i �
   right_inv l := by
     apply Subtype.ext
     simp [ptList, List.map_map]
-
-@[simp] theorem ptEquiv_apply {K : Type*} [Zero K] {i : ℕ} (p : Formalism.MainNotions.S.Point K i) :
-    (ptEquiv K i p).1 = ptList p := rfl
 
 end Formalism.L2.S

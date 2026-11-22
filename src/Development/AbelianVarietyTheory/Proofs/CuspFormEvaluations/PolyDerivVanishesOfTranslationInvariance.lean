@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.MemAnalyticAtZeroOfEventuallyDifferentiableAt
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+
+@[expose] public section
 
 open Filter Topology
 open ReciprocityTheory.ChartRestriction.G.I2 (polyDeriv)
@@ -29,7 +33,8 @@ theorem apolar_apply (P : MvPolynomial σ ℂ) (F : MvPowerSeries σ ℂ) :
     apolar P F = ∑ m ∈ P.support,
       P.coeff m * ((∏ i, (m i).factorial : ℕ) : ℂ) * MvPowerSeries.coeff m F := by
   conv_lhs => rw [P.as_sum]
-  simp only [map_sum, LinearMap.sum_apply, apolar_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, apolar_monomial]
 
 theorem prod_factorial_add_single [DecidableEq σ] (m : σ →₀ ℕ) (i : σ) :
     (∏ j, ((m + Finsupp.single i 1 : σ →₀ ℕ) j).factorial : ℕ) =
@@ -42,7 +47,7 @@ theorem prod_factorial_add_single [DecidableEq σ] (m : σ →₀ ℕ) (i : σ) 
     simp [Finsupp.single_eq_of_ne (Finset.ne_of_mem_erase hj)]
 
 theorem apolar_X_mul (i : σ) (P : MvPolynomial σ ℂ) (F : MvPowerSeries σ ℂ) :
-    apolar (MvPolynomial.X i * P) F = apolar P (MvPowerSeries.pderiv ℂ i F) := by
+    apolar (MvPolynomial.X i * P) F = apolar P (MvPowerSeries.pderiv (R := ℂ) i F) := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial m c =>
@@ -50,7 +55,7 @@ theorem apolar_X_mul (i : σ) (P : MvPolynomial σ ℂ) (F : MvPowerSeries σ �
       MvPowerSeries.coeff_pderiv, add_comm _ m, prod_factorial_add_single]
     push_cast
     ring
-  | add P Q hP hQ => simp only [mul_add, map_add, LinearMap.add_apply, hP, hQ]
+  | add P Q hP hQ => simp only [mul_add, map_add (f := _), LinearMap.add_apply, hP, hQ]
 
 theorem apolar_mul_X (i : σ) (P : MvPolynomial σ ℂ) (F : MvPowerSeries σ ℂ) :
     apolar P (MvPowerSeries.X i * F) = apolar (MvPolynomial.pderiv i P) F := by
@@ -68,7 +73,7 @@ theorem apolar_mul_X (i : σ) (P : MvPolynomial σ ℂ) (F : MvPowerSeries σ �
     · have : m i = 0 := by
         rw [Finsupp.single_le_iff] at h; omega
       simp [this]
-  | add P Q hP hQ => simp only [map_add, LinearMap.add_apply, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), LinearMap.add_apply, hP, hQ]
 
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℂ W]
 
@@ -81,13 +86,15 @@ theorem apolar_quad_mul (P : MvPolynomial σ ℂ) (β : σ → σ → ℂ)
     (F : MvPowerSeries σ ℂ) :
     apolar P ((∑ s, ∑ t, β s t • (MvPowerSeries.X t * MvPowerSeries.X s)) * F) = 0 := by
   have h := congrArg (fun Q => apolar Q F) hP
-  simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_zero,
     LinearMap.zero_apply] at h
   rw [← h]
-  simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, mul_assoc, apolar_mul_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, mul_assoc, apolar_mul_X]
 
 theorem apolar_eq_zero_of_mem_span {ι : Type*} (v : ι → σ → ℂ) (F : MvPowerSeries σ ℂ)
-    (hF : ∀ k, ∑ s, v k s • MvPowerSeries.pderiv ℂ s F = 0) {P : MvPolynomial σ ℂ}
+    (hF : ∀ k, ∑ s, v k s • MvPowerSeries.pderiv (R := ℂ) s F = 0) {P : MvPolynomial σ ℂ}
     (hP : P ∈ Ideal.span (Set.range fun k => ∑ s, v k s • (MvPolynomial.X s : MvPolynomial σ ℂ))) :
     apolar P F = 0 := by
   suffices h : ∀ Q, apolar (P * Q) F = 0 by simpa using h 1
@@ -96,12 +103,14 @@ theorem apolar_eq_zero_of_mem_span {ι : Type*} (v : ι → σ → ℂ) (F : MvP
     obtain ⟨k, rfl⟩ := hP
     intro Q
     have h := congrArg (apolar Q) (hF k)
-    simp only [map_sum, map_smul, map_zero] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero] at h
     rw [← h]
-    simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_mul, map_sum, smul_mul_assoc, map_smul, LinearMap.sum_apply,
       LinearMap.smul_apply, apolar_X_mul]
   | zero => simp
-  | add P P' _ _ h h' => intro Q; rw [add_mul, map_add, LinearMap.add_apply, h, h', add_zero]
+  | add P P' _ _ h h' => intro Q; rw [add_mul, map_add (f := _), LinearMap.add_apply, h, h', add_zero]
   | smul a P _ h => intro Q; rw [smul_eq_mul, mul_comm a, mul_assoc, h]
 
 end Pairing
@@ -114,9 +123,11 @@ theorem taylor_quad [DecidableEq σ] (β : σ → σ → ℂ) :
     taylor (fun z : σ → ℂ => ∑ s, ∑ t, β s t * z s * z t) =
       ∑ s, ∑ t, β s t • (MvPowerSeries.X t * MvPowerSeries.X s) := by
   have h := taylor_eval (∑ s, ∑ t, MvPolynomial.C (β s t) * MvPolynomial.X s * MvPolynomial.X t)
-  simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X] at h
   rw [h, ← MvPolynomial.coeToMvPowerSeries.ringHom_apply]
-  simp only [map_sum, map_mul, MvPolynomial.coeToMvPowerSeries.ringHom_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, MvPolynomial.coeToMvPowerSeries.ringHom_apply,
     MvPolynomial.coe_C, MvPolynomial.coe_X, MvPowerSeries.smul_eq_C_mul]
   refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun t _ => by ring
 
@@ -146,22 +157,6 @@ theorem polyDeriv_exp_mul_dir (P : MvPolynomial σ ℂ) (β : σ → σ → ℂ)
   rw [h1, polyDeriv_eq_apolar, polyDeriv_eq_apolar, taylorDir_add u hG (hBa.mul hH),
     taylorDir_mul u hBa hH, map_add, hT, apolar_quad_mul P β hP, add_zero]
 
-theorem analyticAt_quad (β : σ → σ → ℂ) (x : σ → ℂ) :
-    AnalyticAt ℂ (fun z : σ → ℂ => ∑ s, ∑ t, β s t * z s * z t) x := by
-  have h (i : σ) : AnalyticAt ℂ (fun z : σ → ℂ => z i) x :=
-    (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : σ => ℂ) i).analyticAt x
-  exact Finset.analyticAt_fun_sum _ fun s _ => Finset.analyticAt_fun_sum _ fun t _ =>
-    (analyticAt_const.mul (h s)).mul (h t)
-
-theorem polyDeriv_exp_mul [DecidableEq σ] (P : MvPolynomial σ ℂ) (β : σ → σ → ℂ)
-    (hP : ∑ s, ∑ t, β s t • MvPolynomial.pderiv s (MvPolynomial.pderiv t P) = 0)
-    {G : (σ → ℂ) → ℂ} (hG : AnalyticAt ℂ G 0) :
-    polyDeriv P (fun i => (Pi.single i 1 : σ → ℂ))
-        (fun z => Complex.exp (∑ s, ∑ t, β s t * z s * z t) * G z) 0 =
-      polyDeriv P (fun i => (Pi.single i 1 : σ → ℂ)) G 0 :=
-  polyDeriv_exp_mul_dir P β hP _ (analyticAt_quad β 0)
-    (fun z => by rw [← pi_eq_sum_univ' z]) hG
-
 theorem polyDeriv_eq_zero_of_mem_span {ι : Type*} (v : ι → σ → ℂ) (u : σ → W) {G : W → ℂ}
     (hG : AnalyticAt ℂ G 0)
     (hv : ∀ k, ∀ᶠ w in 𝓝 (0 : W), fderiv ℂ G w (∑ s, v k s • u s) = 0) {P : MvPolynomial σ ℂ}
@@ -171,8 +166,8 @@ theorem polyDeriv_eq_zero_of_mem_span {ι : Type*} (v : ι → σ → ℂ) (u : 
   refine apolar_eq_zero_of_mem_span v _ (fun k => ?_) hP
   rw [← taylorDir_fderiv_sum u hG, taylorDir_congr u (g := 0) (hv k), taylorDir_zero]
 
-omit [Fintype σ] in
 
+omit [Fintype σ] in
 theorem eventually_fderiv_eq_zero_of_invariant {G : W → ℂ} {x : W} (hG : AnalyticAt ℂ G x) {v : W}
     (hv : ∀ (w : W) (s : ℂ), G (w + s • v) = G w) : ∀ᶠ w in 𝓝 x, fderiv ℂ G w v = 0 := by
   filter_upwards [hG.eventually_analyticAt] with w hw
@@ -226,8 +221,8 @@ theorem polyDeriv_exp_balanced_mul_dir {P : Poly ℂ T p q κ} (hP : IsHarmonic 
   exact polyDeriv_exp_mul_dir P _ (balCoeff_pderiv_eq_zero hP γ) u hBa
     (fun z => by rw [hB, quad_balCoeff]) hG
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem det_rowForm_mem {ι : Type*} [Fintype ι] [DecidableEq ι] (t : T) (r : ι → Fin p ⊕ Fin q)
     (ε : ι → κ → ℂ) {v : ι → ℂ} (hv : v ≠ 0) {I : Ideal (Poly ℂ T p q κ)}
     (hI : ∀ k, ∑ a, v a • MvPolynomial.X (t, r a, k) ∈ I) :

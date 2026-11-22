@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.LocalFields.ExistenceDictionary
-import GroundTheory.LocalFields.LubinTateReciprocity
-import GroundTheory.LocalFields.LubinTateLimit
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.ExistenceDictionary
+public import GroundTheory.LocalFields.LubinTateReciprocity
+public import GroundTheory.LocalFields.LubinTateLimit
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,13 +31,17 @@ theorem lubinTateField_mul_comm (n : ℕ)
   rw [map_mul, map_mul]
   exact mul_comm (G := (𝒪[K] ⧸ Ideal.span {π ^ n})ˣ) _ _
 
-include hf in
 
+include hf in
 theorem mem_unitFiltration_of_mem_range_normUnits {n : ℕ} (hn : 0 < n) (u : 𝒪[K]ˣ) (k : ℤ)
     (h : unitUniformizerPow hπ u k ∈ (normUnits K (lubinTateField Ω hπ hf n)).range) :
     u ∈ unitFiltration K n := by
   have : IsSepClosed Ω := IsSepClosure.sep_closed K
   set T := lubinTateField Ω hπ hf n
+  haveI : IsGalois K T :=
+    IsGalois.of_card_aut_eq_finrank K _
+      ((Nat.card_congr (lubinTateGalEquiv (Ω := Ω) hπ hf n).toEquiv).trans
+        (card_units_quotient_eq_finrank (Ω := Ω) (hπ := hπ) hf n))
   have hab : IsAbelianExtension ⊤ (fixingOpenSubgroup T) :=
     (isAbelianExtension_fixingOpenSubgroup_iff T).2 ⟨inferInstance, lubinTateField_mul_comm hπ hf n⟩
   have := hab.normal
@@ -57,23 +65,23 @@ theorem mem_unitFiltration_of_mem_range_normUnits {n : ℕ} (hn : 0 < n) (u : �
   have h1 : unitsMk π n u⁻¹ = 1 := Units.ext (by rw [coe_unitsMk, Units.val_one, hchar])
   exact inv_mem_iff.1 ((unitsMk_eq_one_iff hπ).1 h1)
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [ValuativeRel Ω]
   [TopologicalSpace Ω] [IsValuativeTopology Ω] [ValuativeExtension K Ω] in
-
 theorem range_normUnits_anti {L L' : IntermediateField K Ω} [FiniteDimensional K L]
     [FiniteDimensional K L'] (h : L ≤ L') : (normUnits K L').range ≤ (normUnits K L).range := by
   rw [← map_baseUnitsEquiv_normGroup, ← map_baseUnitsEquiv_normGroup]
   exact Subgroup.map_mono (normGroup_mono (fixingOpenSubgroup_anti h) le_top)
 
-omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem unitUniformizerPow_eq (u : 𝒪[K]ˣ) (k : ℤ) :
     unitUniformizerPow hπ u k = uniformizerUnit hπ ^ k * unitsIncl K u := by
   rw [unitUniformizerPow, mul_comm]
   rfl
 
-include hf in
 
+include hf in
 theorem range_normUnits_sup_le {n m : ℕ} (hn : 0 < n) {E : IntermediateField K Ω}
     (hE : IsUnramifiedSubextension E) (hmE : m ∣ Module.finrank K E) {H : Subgroup Kˣ}
     (hnH : unitFiltrationUnits K n ≤ H) (hmH : (powMonoidHom m : Kˣ →* Kˣ).range ≤ H) :
@@ -84,7 +92,7 @@ theorem range_normUnits_sup_le {n m : ℕ} (hn : 0 < n) {E : IntermediateField K
   set L : IntermediateField K Ω := T ⊔ E
   rintro _ ⟨y, rfl⟩
 
-  have hdvd : m ∣ residueDegree K L := by
+  have hdvd : m ∣ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
     have h1 := residueDegree_dvd_of_le (le_sup_right : E ≤ L)
     rw [residueDegree_eq_finrank_of_unramified K E hE.ramificationIndex_eq_one] at h1
     exact hmE.trans h1
@@ -129,7 +137,19 @@ theorem exists_range_normUnits_le (H : Subgroup Kˣ) [H.FiniteIndex] (hH : IsOpe
   have hmE : m ∣ Module.finrank K (unramifiedTower K Ω m) := by
     rw [finrank_unramifiedTower]
     exact Nat.dvd_factorial (Nat.pos_of_ne_zero hm) m.le_succ
-  exact ⟨_, inferInstance, range_normUnits_sup_le hπ (isLubinTateSeries_ltPoly π) n.succ_pos hE hmE
+  have hf : IsLubinTateSeries π (ltPoly π : PowerSeries 𝒪[K]) := by
+    have hq := one_lt_card_residueField' K
+    refine ⟨?_, ?_, ?_⟩
+    · rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, Polynomial.coeff_coe, ltPoly]
+      simp [Polynomial.coeff_X_pow, show 0 ≠ Nat.card 𝓀[K] by omega]
+    · rw [Polynomial.coeff_coe, ltPoly]
+      simp [Polynomial.coeff_X_pow, hq.ne]
+    · intro k
+      rw [coeff_ltPoly_sub, Polynomial.coeff_C_mul_X]
+      split_ifs
+      · exact dvd_rfl
+      · exact dvd_zero π
+  exact ⟨_, inferInstance, range_normUnits_sup_le hπ hf n.succ_pos hE hmE
     ((unitFiltrationUnits_antitone n.le_succ).trans hnH) hmH⟩
 
 theorem isOpen_range_normUnits_and_finiteIndex (L : IntermediateField K Ω) [FiniteDimensional K L] :

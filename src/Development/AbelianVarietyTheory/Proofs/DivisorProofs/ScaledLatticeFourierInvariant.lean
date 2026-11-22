@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenScaledInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledLatticeCharacterTrivialStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenScaledInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ScaledLatticeCharacterTrivialStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped Matrix TensorProduct Classical
 namespace GlobalTheory.SchrCharPure
@@ -52,7 +57,8 @@ theorem main : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ
     have hinf := hψ.2.2 _ hAt
     have hev : evI F (show AF F from (u.1, 0)) = ∑ i, InfiniteAdeleRing.ringEquiv_mixedSpace F (x i).1 * mixedEmbedding F (b i) := by
       show InfiniteAdeleRing.ringEquiv_mixedSpace F u.1 = _
-      rw [hu1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hu1, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [InfiniteAdeleRing.mixedEmbedding_eq_algebraMap_comp, map_mul]
     rw [hsplit, AddChar.map_add_eq_mul, hfin, hinf, hev]

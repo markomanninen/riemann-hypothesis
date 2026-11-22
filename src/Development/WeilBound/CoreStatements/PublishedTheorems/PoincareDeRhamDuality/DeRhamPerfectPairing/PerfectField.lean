@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCechRepresentativeChernClassTangentValueStatement
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.EqOneOfIsRep
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.FinrankOfRankAtStalk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCechRepresentativeChernClassTangentValueStatement
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.EqOneOfIsRep
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoincareDeRhamDuality.DeRhamPerfectPairing.FinrankOfRankAtStalk
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +39,8 @@ theorem perfect_field (hF : AbelianDeRham.Free) (hH : AbelianDeRham.Hodge) {K : 
     intro f hf
     have e := hx f hf
     rw [hψf f hf] at e
-    rw [← e, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e, map_sum]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [map_smul, smul_eq_mul, hv.2 (ω k) (hω k), _root_.mul_comm]
   have hch' : IsChern (dp0 K) (A.hom ≫ 𝟙 (Sp K)) L (∑ k, cup _ (H1.mk _ (z k)) (Form.cl _ (ω k))) := by
@@ -49,8 +54,10 @@ theorem perfect_field (hF : AbelianDeRham.Free) (hH : AbelianDeRham.Hodge) {K : 
     exact TopologicalSpace.Opens.mem_iSup.2 ⟨⟨(⟨U, hU⟩, k), hle⟩, hp⟩
   have h1 : v = 1 := eq_one_of_isRep hL hK hv.1 _ hcov _ (fun j ↦ j.2) _ hr (by
     have := Submodule.mem_comap.1 hmem
-    simp only [map_sum, map_smul] at this
-    simp only [map_sum, map_smul, hz]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hz]
     exact this)
   subst h1
   exact isLieImage_one_iff.1 hv

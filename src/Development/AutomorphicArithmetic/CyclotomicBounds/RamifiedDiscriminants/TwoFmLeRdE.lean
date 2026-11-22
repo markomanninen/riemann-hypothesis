@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataHost
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.LogQdLeRd
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataHost
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.LogQdLeRd
+
+@[expose] public section
 
 open Formalism.BasicNotions
 

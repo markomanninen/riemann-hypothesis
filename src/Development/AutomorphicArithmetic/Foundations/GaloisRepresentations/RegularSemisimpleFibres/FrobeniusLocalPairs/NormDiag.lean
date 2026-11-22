@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniHolds
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.MatchSmulAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Bridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubiniHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -170,7 +174,7 @@ private theorem cont_sg {σ : E ≃+* E} (hσ : Isom σ) : Continuous σ := by
   refine ⟨γ, ?_⟩
   rintro _ ⟨z, hz, rfl⟩
   show σ (x + z) ∈ s
-  rw [map_add]
+  rw [map_add (f := _)]
   refine hγ ⟨σ z, ?_, rfl⟩
   show valuation E (σ z) < _
   rw [hσ z]
@@ -184,12 +188,12 @@ private theorem cont_norm [IsGalois k E] (σ : E ≃ₐ[k] E) (hg : ∀ τ : E �
     funext x
     exact norm_prod σ hg x
   rw [h]
-  exact continuous_finset_prod _ fun j _ => (cont_sg hσ).iterate j
+  exact continuous_finsetProd _ fun j _ => (cont_sg hσ).iterate j
 
 private theorem near_compact {r : ValueGroupWithZero E} (hr : r < 1) :
     IsCompact {u : Eˣ | valuation E ((u : E) - 1) ≤ r} := by
   have hB : IsCompact ((fun x : E => x + 1) '' {x | valuation E x ≤ r}) :=
-    (IsNonarchimedeanLocalField.isCompact_closedBall E r).image (continuous_add_right 1)
+    (IsNonarchimedeanLocalField.isCompact_closedBall E r).image (continuous_id.add continuous_const)
   rw [Units.isEmbedding_val₀.isCompact_iff]
   convert hB using 1
   ext x

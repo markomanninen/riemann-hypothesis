@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HeckeAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HeckeAlgebra
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,6 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
 omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [MeasurableSpace G]
   [BorelSpace G] in
-
 theorem smooth_of_mem_fixedVectors {V : Type*} [AddCommGroup V] [Module ℂ V]
     {ρ : Representation ℂ G V} {K : Subgroup G} (hKo : IsOpen (K : Set G)) {v : V}
     (hv : v ∈ fixedVectors ρ K) : v ∈ smoothVectors ρ :=
@@ -26,12 +29,11 @@ variable (μ : Measure G) [μ.IsHaarMeasure] {K : Subgroup G} (hKc : IsCompact (
   (hKo : IsOpen (K : Set G))
 
 include hKc hKo in
-
 theorem measureReal_compactOpen_pos : 0 < μ.real (K : Set G) :=
   ENNReal.toReal_pos (hKo.measure_ne_zero μ ⟨1, K.one_mem⟩) hKc.measure_lt_top.ne
 
 def idem : HeckeAlgebra μ :=
-  mk μ ((K : Set G).indicator fun _ => ((μ.real (K : Set G) : ℂ))⁻¹)
+  mk (μ := μ) ((K : Set G).indicator fun _ => ((μ.real (K : Set G) : ℂ))⁻¹)
     (indicator_mem_locallyConstantCompactSupport hKc hKo _)
 
 variable {μ}
@@ -85,7 +87,7 @@ variable {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G 
 theorem heckeAct_idem_of_mem {v : V} (hv : v ∈ fixedVectors ρ K) :
     heckeAct μ ρ (idem μ hKc hKo) v = v := by
   refine eq_of_forall_dual fun φ => ?_
-  rw [dual_heckeAct μ (idem μ hKc hKo).mem (smooth_of_mem_fixedVectors hKo hv),
+  rw [dual_heckeAct (μ := μ) (idem μ hKc hKo).mem (smooth_of_mem_fixedVectors hKo hv) φ,
     integral_idem_mul hKc hKo (F := fun g => φ (ρ g v)) (fun k hk => by simp [hv k hk])]
   simp
 
@@ -102,13 +104,12 @@ theorem heckeAct_idem_eq_fixedProj (hρ : IsSmooth ρ) (v : V) :
   congr 1
   refine eq_of_forall_dual fun φ => ?_
   let ψ : Module.Dual ℂ V := φ ∘ₗ fixedProj ρ hρ hKc hKo
-  have := dual_heckeAct μ (idem μ hKc hKo).mem (hρ v) ψ
+  have := dual_heckeAct (μ := μ) (idem μ hKc hKo).mem (hρ v) ψ
   rw [integral_idem_mul hKc hKo (F := fun g => ψ (ρ g v)) (fun k hk => by
     simp [ψ, fixedProj_apply_act hρ hKc hKo hk])] at this
   simpa [ψ] using this
 
 variable (μ) in
-
 def biInvariant (K : Subgroup G) : NonUnitalSubalgebra ℂ (HeckeAlgebra μ) where
   carrier := {f | ∀ k ∈ K, ∀ x, f (k * x) = f x ∧ f (x * k) = f x}
   add_mem' {a b} ha hb k hk x := by
@@ -143,7 +144,8 @@ theorem mul_idem_eq_self_iff {f : HeckeAlgebra μ} :
   · intro h k hk x
     rw [← h, coe_mul, groupConv_mul_right (fun g => idem_mul_right hKc hKo hk g)]
   · intro h
-    ext x
+    apply HeckeAlgebra.ext
+    intro x
     rw [mul_apply, ← integral_mul_left_eq_self _ x]
     simp only [mul_inv_rev, inv_mul_cancel_right, idem_inv]
     simp_rw [mul_comm (f _)]
@@ -176,7 +178,6 @@ theorem biInvariant_eq_range :
     · rw [mul_assoc, hi.eq]
 
 variable (μ) in
-
 def HeckeAlgebraLevel (K : Subgroup G) (_hKc : IsCompact (K : Set G)) (_hKo : IsOpen (K : Set G)) :
     Type _ :=
   biInvariant μ K
@@ -200,9 +201,6 @@ theorem val_mem (h : HeckeAlgebraLevel μ K hKc hKo) : (h : HeckeAlgebra μ) ∈
 def mk (f : HeckeAlgebra μ) (hf : f ∈ biInvariant μ K) : HeckeAlgebraLevel μ K hKc hKo :=
   (⟨f, hf⟩ : biInvariant μ K)
 
-@[simp] theorem val_mk (f : HeckeAlgebra μ) (hf : f ∈ biInvariant μ K) :
-    ((mk hKc hKo f hf : HeckeAlgebraLevel μ K hKc hKo) : HeckeAlgebra μ) = f := rfl
-
 theorem val_injective : Function.Injective (val hKc hKo : HeckeAlgebraLevel μ K hKc hKo → _) :=
   fun _ _ h => Subtype.ext h
 
@@ -216,10 +214,6 @@ theorem val_injective : Function.Injective (val hKc hKo : HeckeAlgebraLevel μ K
 @[simp] theorem val_zero : ((0 : HeckeAlgebraLevel μ K hKc hKo) : HeckeAlgebra μ) = 0 := rfl
 @[simp] theorem val_smul (c : ℂ) (a : HeckeAlgebraLevel μ K hKc hKo) :
     ((c • a : HeckeAlgebraLevel μ K hKc hKo) : HeckeAlgebra μ) = c • (a : HeckeAlgebra μ) := rfl
-@[simp] theorem val_neg (a : HeckeAlgebraLevel μ K hKc hKo) :
-    ((-a : HeckeAlgebraLevel μ K hKc hKo) : HeckeAlgebra μ) = -(a : HeckeAlgebra μ) := rfl
-@[simp] theorem val_sub (a b : HeckeAlgebraLevel μ K hKc hKo) :
-    ((a - b : HeckeAlgebraLevel μ K hKc hKo) : HeckeAlgebra μ) = a - b := rfl
 
 instance : Ring (HeckeAlgebraLevel μ K hKc hKo) :=
   { (inferInstance : NonUnitalRing (HeckeAlgebraLevel μ K hKc hKo)) with

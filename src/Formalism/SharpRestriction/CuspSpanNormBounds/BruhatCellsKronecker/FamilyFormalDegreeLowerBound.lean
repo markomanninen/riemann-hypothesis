@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.CfgTopFalseIff
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalBesselAndTopKernel
+
+@[expose] public section
 
 noncomputable section
 

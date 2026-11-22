@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsCompactUnitaryPointsAtPlaceFstMemCompact
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatBuild
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsCompactUnitaryPointsAtPlaceFstMemCompact
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatBuild
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.HT NumberField TensorProduct
 

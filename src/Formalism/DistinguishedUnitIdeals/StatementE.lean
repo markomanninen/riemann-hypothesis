@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.IsCocycle
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.IsCocycle
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
-import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
-import ReciprocityTheory.Automorphisms.PlaceA
-import ReciprocityTheory.Automorphisms.InstMainA
-import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverAct
+public import ReciprocityTheory.Automorphisms.SplitCoeAlgebraMap
+public import ReciprocityTheory.Automorphisms.PlaceA
+public import ReciprocityTheory.Automorphisms.InstMainA
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem splitEx_of (hstar : ∀ x : D.host.E, D.host.conj x = IsCMField.complexC
       isPrime := Ideal.comap_isPrime _ _
       ne_bot := by
         obtain ⟨y, hy, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
-        exact Ideal.comap_ne_bot_of_integral_mem hy0 hy (Algebra.IsIntegral.isIntegral y) }
+        exact Ideal.under_ne_bot_of_integral_mem hy0 hy (Algebra.IsIntegral.isIntegral y) }
   have hover' : (conjPlE v).asIdeal.comap (algebraMap (𝓞 (maximalRealSubfield D.host.E)) (𝓞 D.host.E)) =
       v₀.asIdeal := by
     ext a
@@ -147,19 +151,19 @@ def belowE (v : PlE D.host) : HeightOneSpectrum (𝓞 Fp) where
   isPrime := Ideal.comap_isPrime _ _
   ne_bot := by
     obtain ⟨y, hy, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
-    exact Ideal.comap_ne_bot_of_integral_mem hy0 hy (Algebra.IsIntegral.isIntegral y)
+    exact Ideal.under_ne_bot_of_integral_mem hy0 hy (Algebra.IsIntegral.isIntegral y)
 
 theorem fixed_of_cO {x : 𝓞 D.host.E} (hx : cO x = x) : ∃ y : 𝓞 Fp, algebraMap (𝓞 Fp) (𝓞 D.host.E) y = x :=
   (IsCMField.ringOfIntegersComplexConj_eq_self_iff D.host.E _).1 hx
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem exists_splitPlace (v : PlE D.host) (x0 : 𝓞 D.host.E) (hx0 : x0 ∈ v.asIdeal) (hc0 : cO x0 ∉ v.asIdeal) :
     ∃ s : SplitPlace D.host.E, s.v = belowE v := by
   classical
   set v₀ := belowE v
-  obtain ⟨a, ha⟩ := fixed_of_cO (x := x0 + cO x0) (by rw [map_add, cO_cO, add_comm])
+  obtain ⟨a, ha⟩ := fixed_of_cO (x := x0 + cO x0) (by rw [map_add (f := _), cO_cO, add_comm])
   obtain ⟨b, hb⟩ := fixed_of_cO (x := x0 * cO x0) (by rw [map_mul, cO_cO, mul_comm])
   have hbv : b ∈ v₀.asIdeal := by
     show algebraMap _ _ b ∈ v.asIdeal
@@ -170,7 +174,6 @@ theorem exists_splitPlace (v : PlE D.host) (x0 : 𝓞 D.host.E) (hx0 : x0 ∈ v.
     rw [ha] at h'
     exact hc0 (by simpa using v.asIdeal.sub_mem h' hx0)
 
-  haveI := Formalism.BasicNotions.Examples₂.adicInt_henselian (K := Fp) v₀
   set Rv := v₀.adicCompletionIntegers Fp
   let g : Polynomial Rv := Polynomial.X ^ 2 - Polynomial.C (algebraMap (𝓞 Fp) Rv a) * Polynomial.X +
     Polynomial.C (algebraMap (𝓞 Fp) Rv b)

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.LocalQuotientIntegrals.OneVanish
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,8 +158,8 @@ theorem main (μ : Measure G) [μ.IsHaarMeasure] (T : Subgroup G) (ν : Measure 
     have hne : ENNReal.ofReal B * ∫⁻ g, S.indicator 1 g * hex.choose g ∂μ ≠ ⊤ :=
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top hL
     have hfin : ∫⁻ g, ‖F g‖ₑ * hex.choose g ∂μ ≠ ⊤ := ne_top_of_le_ne_top hne hle
-    refine ⟨by rw [quotLIntegral, dif_pos hex]; exact hfin, ?_⟩
-    rw [quotIntegral, dif_pos hex]
+    refine ⟨by rw [quotLIntegral, dite_eq_left hex]; exact hfin, ?_⟩
+    rw [quotIntegral, dite_eq_left hex]
     calc ‖∫ g, F g * ((hex.choose g).toReal : ℂ) ∂μ‖
         = ‖∫ g, F g * ((hex.choose g).toReal : ℂ) ∂μ‖ₑ.toReal := (toReal_enorm _).symm
       _ ≤ (∫⁻ g, ‖F g‖ₑ * hex.choose g ∂μ).toReal := by

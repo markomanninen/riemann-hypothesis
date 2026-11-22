@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ValueConstantOnOrbit
-import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsValueAtZpow
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ValueConstantOnOrbit
+public import Development.WeilBound.CoreStatements.PluriharmonicCharts.IsValueAtZpow
+
+@[expose] public section
+
 open MvPolynomial Matrix ReciprocityTheory.ChartRestriction.G.Geo GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open GlobalTheory.CompanionTheory.Ar.PB.MinorCalc GlobalTheory.CompanionTheory.Ar.PB.CPts GlobalTheory.CompanionTheory.Ar.PB.ValRing
 open scoped ComplexOrder Classical
@@ -76,7 +81,8 @@ theorem Rel.conj
     exact (map_ne_zero _).2 dh
   · rcases ht with ⟨k, a, hk, ha, hz, rfl⟩ | ⟨hk, rfl⟩
     · refine Or.inl ⟨k, starRingEnd ℂ a, hk, (map_ne_zero _).2 ha, fun m => ?_, by simp⟩
-      rw [conjVec, hz m, map_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [conjVec, hz m, map_mul, map_sum]
       congr 1
       refine Finset.sum_congr rfl fun I _ => ?_
       rw [map_mul, eb, valAt_conj hw hw' (gd.2.1 _ I).1, minorIJ_map]

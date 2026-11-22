@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.DivisorFrames.MemAdjoinGelfandSupOfCommuteGlGenerators
-import Development.AutomorphicArithmetic.DivisorFrames.GelfandElementMemAdjoinCapelliCoeffs
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Development.AutomorphicArithmetic.DivisorFrames.MemAdjoinGelfandSupOfCommuteGlGenerators
+public import Development.AutomorphicArithmetic.DivisorFrames.GelfandElementMemAdjoinCapelliCoeffs
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open Formalism.REAL
 open scoped TensorProduct
@@ -66,7 +70,8 @@ theorem map_qdet {B : Type} [Ring B] [Algebra ℂ B] (f : A →ₐ[ℂ] B) (X : 
   have hT : ∀ v a b, f (Tm X v a b) = Tm (fun a b => f (X a b)) v a b := fun v a b => by
     unfold Tm
     split_ifs <;> simp
-  simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, hT]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qdet, qminor, map_sum, map_mul, map_intCast, map_list_prod, List.map_ofFn, Function.comp_def, hT]
 
 theorem glRel_map {R S F : Type} [Ring R] [Ring S] [FunLike F R S] [RingHomClass F R S] (f : F) {X : Fin n → Fin n → R}
     (h : GlRel X) : GlRel fun a b => f (X a b) := fun a b c d => by
@@ -79,26 +84,23 @@ theorem exists_re_im {B : Type} [Ring B] [Algebra ℝ B] (w : ℂ ⊗[ℝ] B) (h
   have hP : ∀ f c x, P f (c ⊗ₜ x) = f c • x := fun f c x => by simp [P]
   have hl : ∀ f (x : B) (w : ℂ ⊗[ℝ] B), P f ((1 ⊗ₜ x) * w) = x * P f w := fun f x w => by
     induction w with
-    | zero => simp
     | tmul c y => rw [Algebra.TensorProduct.tmul_mul_tmul, hP, hP, one_mul, mul_smul_comm]
-    | add a b ha hb => rw [mul_add, map_add, map_add, ha, hb, mul_add]
+    | add a b ha hb => rw [mul_add, map_add (f := _), map_add (f := _), ha, hb, mul_add]
   have hr : ∀ f (x : B) (w : ℂ ⊗[ℝ] B), P f (w * (1 ⊗ₜ x)) = P f w * x := fun f x w => by
     induction w with
-    | zero => simp
     | tmul c y => rw [Algebra.TensorProduct.tmul_mul_tmul, hP, hP, mul_one, smul_mul_assoc]
-    | add a b ha hb => rw [add_mul, map_add, map_add, ha, hb, add_mul]
+    | add a b ha hb => rw [add_mul, map_add (f := _), map_add (f := _), ha, hb, add_mul]
   have hc : ∀ f, P f w ∈ Subalgebra.center ℝ B := fun f =>
     Subalgebra.mem_center_iff.2 fun x => by rw [← hl, hw, hr]
   refine ⟨_, hc Complex.reLm, _, hc Complex.imLm, ?_⟩
   clear hc hw
   induction w with
-  | zero => simp
   | tmul c y =>
     rw [hP, hP, ← TensorProduct.smul_tmul, ← TensorProduct.smul_tmul, ← TensorProduct.add_tmul]
     congr 1
     simp
   | add a b ha hb =>
-    rw [map_add, map_add, TensorProduct.tmul_add, TensorProduct.tmul_add, add_add_add_comm, ← ha, ← hb]
+    rw [map_add (f := _), map_add (f := _), TensorProduct.tmul_add, TensorProduct.tmul_add, add_add_add_comm, ← ha, ← hb]
 
 theorem qdet_mem_span_center [Algebra ℝ A] [IsScalarTower ℝ ℂ A] {B : Type} [Ring B] [Algebra ℝ B]
     (X : ι → Fin n → Fin n → B) (hX : ∀ i, GlRel (X i))
@@ -127,7 +129,7 @@ theorem qdet_mem_span_center [Algebra ℝ A] [IsScalarTower ℝ ℂ A] {B : Type
     congr 1
     funext a b
     exact (hψ 1 _).trans (one_smul _ _)
-  rw [← h2, e, map_add, hψ, hψ]
+  rw [← h2, e, map_add (f := _), hψ, hψ]
   exact add_mem (Submodule.smul_mem _ _ (Submodule.subset_span ⟨p, hp, rfl⟩))
     (Submodule.smul_mem _ _ (Submodule.subset_span ⟨q, hq, rfl⟩))
 

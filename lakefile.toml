@@ -1,6 +1,9 @@
+# Cache infrastructure; the original submission starts below this block.
+platformIndependent = true
+
 name = "tree"
 srcDir = "src"
-defaultTargets = ["BuildAid", "CompanionTheory", "Development", "Formalism", "GroundTheory", "GroundTheoryFields", "Lemmata", "PositivityTheory", "ReciprocityTheory", "Supplements", "Main"]
+defaultTargets = ["CompanionTheory", "Development", "Formalism", "GroundTheory", "GroundTheoryFields", "Lemmata", "PositivityTheory", "ReciprocityTheory", "Supplements", "Main"]
 moreLeanArgs = ["--tstack=400000"]
 
 [leanOptions]
@@ -13,11 +16,7 @@ maxHeartbeats = 4000000
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
-rev = "0df444a360eaa60ab8c11dca51a86af692955474"
-
-[[lean_lib]]
-name = "BuildAid"
-globs = ["BuildAid.+"]
+rev = "fc4f59e577feb1a4956671bc04ac18aaaf8cd842"
 
 [[lean_lib]]
 name = "CompanionTheory"
@@ -64,3 +63,19 @@ roots = ["Statements", "Main"]
 [[lean_lib]]
 name = "Challenge"
 roots = ["Challenge"]
+
+# Project cache entrypoint. The original submission above is unchanged.
+[[lean_exe]]
+name = "cache"
+root = "scripts.Cache"
+srcDir = ".."
+
+# Stock Lake also reads this file as its cache-service configuration.
+[cache]
+defaultService = "riemann-hypothesis"
+
+[[cache.service]]
+name = "riemann-hypothesis"
+kind = "s3"
+artifactEndpoint = "https://rh-cache.taucetiproject.org/artifacts"
+revisionEndpoint = "https://rh-cache.taucetiproject.org/revisions"

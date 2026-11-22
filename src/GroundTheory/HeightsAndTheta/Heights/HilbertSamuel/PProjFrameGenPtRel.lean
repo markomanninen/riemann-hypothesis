@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGenPtRel
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjFrameFibrePt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsProjFrameGenPtRel
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjFrameFibrePt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -9,8 +14,8 @@ open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.Cha
 
 noncomputable section
 
-open ProjFrameFibrePt in
 
+open ProjFrameFibrePt in
 theorem ProjFrameGenPtRel.proof : ProjFrameGenPtRel.Statement := by
   intro D Ω _ _ κ _ x e _ hF G
   classical
@@ -69,7 +74,7 @@ theorem ProjFrameGenPtRel.proof : ProjFrameGenPtRel.Statement := by
           rw [aeval_C, eq_intCast, map_intCast]
           exact intCast_mem _ a
         | add p q hp hq =>
-          rw [map_add, map_add]
+          rw [map_add (f := _), map_add (f := _)]
           exact add_mem hp hq
         | mul_X p i hp =>
           rw [map_mul, map_mul, aeval_X]

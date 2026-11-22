@@ -1,19 +1,23 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchExponentEqZeroOfMulSelf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalEquationPairEntirePartBound
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSetIntegralIoiOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsSide
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntNeg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntSmul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearChangeMemSchwartzBruhatPi
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.MeasurePreservingCompEquiv
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.ThetaCIntegrandMulDiagonalToNormOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousTranslatedIntegrand
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntLtrSubThetaCConst
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.ExistsSchwartzBruhatPiMajorant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VolCharOneEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinContinuation.IsEpCont
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchExponentEqZeroOfMulSelf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FunctionalEquationPairEntirePartBound
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousSetIntegralIoiOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ImportsSide
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntNeg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntSmul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearChangeMemSchwartzBruhatPi
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.MeasurePreservingCompEquiv
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.ThetaCIntegrandMulDiagonalToNormOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousTranslatedIntegrand
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ThetaCIntLtrSubThetaCConst
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.ExistsSchwartzBruhatPiMajorant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.VolCharOneEq
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology
 open scoped NumberField.AdeleRing
@@ -106,7 +110,7 @@ theorem fourier_ltr (A : GL ι 𝔸[k]) (F : (ι → 𝔸[k]) → ℂ) :
   GlobalTheory.CompanionTheory.LtrFourier.Hd.adelicFourierPi_ltr A F
 
 theorem thetaCFun_decay (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) → ℂ}
-    (hΨ : Ψ ∈ schwartzBruhatPi k ι) (ω : HeckeCharacter k) {C : Set (GL ι 𝔸[k])}
+    (hΨ : Ψ ∈ schwartzBruhatPi (K := k) (ι := ι)) (ω : HeckeCharacter k) {C : Set (GL ι 𝔸[k])}
     (hC : IsCompact C) (r : ℝ) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ A ∈ C, ∀ x : ℝ, 1 ≤ x →
       ‖thetaCFun w (ltr A Ψ) ω x - thetaCConst (ltr A Ψ) ω‖ ≤ M * x ^ (-r) := by
@@ -126,7 +130,7 @@ theorem thetaCFun_decay (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) → ℂ}
     _ = _ := mul_comm _ _
 
 theorem isBigO_thetaCFun_sub (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi k ι) (ω : HeckeCharacter k) (r : ℝ) :
+    (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) (ω : HeckeCharacter k) (r : ℝ) :
     (fun x ↦ thetaCFun w F ω x - thetaCConst F ω) =O[atTop] (· ^ r) := by
   obtain ⟨M, -, hM⟩ := thetaCFun_decay w hF ω (isCompact_singleton (x := (1 : GL ι 𝔸[k]))) (-r)
   refine IsBigO.of_bound M ?_
@@ -136,7 +140,7 @@ theorem isBigO_thetaCFun_sub (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ
   rwa [Real.norm_of_nonneg (Real.rpow_nonneg (zero_le_one.trans hx) r)]
 
 theorem continuousOn_thetaCFun_ltr (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) → ℂ}
-    (hΨ : Ψ ∈ schwartzBruhatPi k ι) (ω : HeckeCharacter k) :
+    (hΨ : Ψ ∈ schwartzBruhatPi (K := k) (ι := ι)) (ω : HeckeCharacter k) :
     ContinuousOn (fun q : GL ι 𝔸[k] × ℝ ↦ thetaCFun w (ltr q.1 Ψ) ω q.2) (univ ×ˢ Ioi 0) := by
   have h := GlobalTheory.CompanionTheory.EpsteinThetaC.continuous_thetaCInt_ltr w hΨ ω
   rw [continuousOn_iff_continuous_restrict]
@@ -149,7 +153,7 @@ theorem continuousOn_thetaCFun_ltr (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) 
   exact (thetaCFun_of_pos w _ ω q.2.2).symm
 
 theorem continuousOn_thetaCFun (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi k ι) (ω : HeckeCharacter k) :
+    (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) (ω : HeckeCharacter k) :
     ContinuousOn (thetaCFun w F ω) (Ioi 0) := by
   have h := continuousOn_thetaCFun_ltr w hF ω
   have h2 := h.comp (f := fun x : ℝ ↦ ((1 : GL ι 𝔸[k]), x)) (s := Ioi 0) (by fun_prop)
@@ -157,7 +161,7 @@ theorem continuousOn_thetaCFun (w : InfinitePlace k) {F : (ι → 𝔸[k]) → �
   simpa [Function.comp_def, ltr_one] using h2
 
 theorem thetaCFun_one_div (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi k ι) {ω : HeckeCharacter k} (hω : ω * ω = 1) (x : ℝ)
+    (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) {ω : HeckeCharacter k} (hω : ω * ω = 1) (x : ℝ)
     (hx : x ∈ Ioi (0 : ℝ)) :
     thetaCFun w F ω (1 / x) =
       ((1 : ℂ) * ((x ^ (Fintype.card ι : ℝ) : ℝ) : ℂ)) • thetaCFun w (adelicFourierPi k F) ω x := by
@@ -172,7 +176,7 @@ theorem thetaCFun_one_div (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
   simp
 
 noncomputable def pair [Nonempty ι] (w : InfinitePlace k) {F : (ι → 𝔸[k]) → ℂ}
-    (hF : F ∈ schwartzBruhatPi k ι) {ω : HeckeCharacter k} (hω : ω * ω = 1) : WeakFEPair ℂ where
+    (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) {ω : HeckeCharacter k} (hω : ω * ω = 1) : WeakFEPair ℂ where
   f := thetaCFun w F ω
   g := thetaCFun w (adelicFourierPi k F) ω
   k := Fintype.card ι
@@ -216,14 +220,14 @@ theorem thetaCConst_fourier_ltr (A : GL ι 𝔸[k]) (F : (ι → 𝔸[k]) → �
   rw [fourier_ltr, thetaCConst_smul, thetaCConst_ltr]
 
 noncomputable def pairAt [Nonempty ι] (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) → ℂ}
-    (hΨ : Ψ ∈ schwartzBruhatPi k ι) {ω : HeckeCharacter k} (hω : ω * ω = 1) (A : GL ι 𝔸[k]) :
+    (hΨ : Ψ ∈ schwartzBruhatPi (K := k) (ι := ι)) {ω : HeckeCharacter k} (hω : ω * ω = 1) (A : GL ι 𝔸[k]) :
     WeakFEPair ℂ :=
   pair w (GlobalTheory.CompanionTheory.LinearChangeSchwartzBruhat.ltr_mem hΨ A) hω
 
 section pairAt
 
 variable [Nonempty ι] (w : InfinitePlace k) {Ψ : (ι → 𝔸[k]) → ℂ}
-  (hΨ : Ψ ∈ schwartzBruhatPi k ι) {ω : HeckeCharacter k} (hω : ω * ω = 1)
+  (hΨ : Ψ ∈ schwartzBruhatPi (K := k) (ι := ι)) {ω : HeckeCharacter k} (hω : ω * ω = 1)
 
 theorem pairAt_bound {C : Set (GL ι 𝔸[k])} (hC : IsCompact C) (r : ℝ) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ A ∈ C, ∀ x : ℝ, 1 ≤ x →
@@ -320,11 +324,12 @@ theorem continuous_entireForm_inv :
   exact (((continuous_fst.mul hz).mul hΛ).sub (hz.mul hf)).add
     ((continuous_fst.mul continuous_const).mul hg)
 
-theorem isEpCont : IsEpCont Ψ ω fun z m ↦ entireForm (pairAt w hΨ hω m⁻¹) z where
-  entire m := differentiable_entireForm _
-  cont := continuous_entireForm_inv w hΨ hω
-  eq := by
-    intro z hz m
+theorem isEpCont : IsEpCont Ψ ω fun z m ↦ entireForm (pairAt w hΨ hω m⁻¹) z := by
+  refine { entire := fun _ ↦ differentiable_entireForm _
+           cont := continuous_entireForm_inv w hΨ hω
+           eq := ?_
+           strip := ?_ }
+  · intro z hz m
     have hN : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
     have hz0 : z ≠ 0 := by
       rintro rfl
@@ -338,7 +343,11 @@ theorem isEpCont : IsEpCont Ψ ω fun z m ↦ entireForm (pairAt w hΨ hω m⁻�
       linarith
     have hm := ((pairAt w hΨ hω m⁻¹).hasMellin (s := z) hz).2
     have he := (GlobalTheory.CompanionTheory.EpsteinUnfold.Hd.epstein_eq_mellin w ω hΨ hz m).2
-    rw [GlobalTheory.CompanionTheory.EisRk1.archExponent_eq_zero_of_mul_self w hω] at he
+    have hArch : archExponent w ω = 0 := by
+      have h : archExponent w ω = -archExponent w ω := by
+        rw [← archExponent_inv, ← eq_inv_of_mul_eq_one_left hω]
+      linarith
+    rw [hArch] at he
     simp only [Complex.ofReal_zero, zero_mul, add_zero] at he
     show entireForm (pairAt w hΨ hω m⁻¹) z = _
     rw [entireForm_eq _ hz0 hzk, he]
@@ -347,8 +356,7 @@ theorem isEpCont : IsEpCont Ψ ω fun z m ↦ entireForm (pairAt w hΨ hω m⁻�
       simp
     rw [hk, ← hm]
     rfl
-  strip := by
-    intro a b C hC
+  · intro a b C hC
     have hC' : IsCompact ((fun m : GL ι 𝔸[k] ↦ m⁻¹) '' C) := hC.image continuous_inv
     set N : ℝ := (Fintype.card ι : ℝ) with hNdef
     have hN : 0 ≤ N := Nat.cast_nonneg _

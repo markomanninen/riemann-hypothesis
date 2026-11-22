@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversalStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFunctionsPeriodRingSeparationStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousAlgebraUniversalPropertyStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLocallyConstantToZModPow
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PeriodRingBaseChangeFromUniversalStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousFunctionsPeriodRingSeparationStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousAlgebraUniversalPropertyStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLocallyConstantToZModPow
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option linter.unusedVariables false
@@ -42,21 +46,22 @@ theorem contMap_shift {A B : PAlg l} (φ : A ⟶ B) :
   Hom.ext (RingHom.ext fun _ => rfl)
 
 def Xi (P : PAlg l ⥤ Type) : P.Elements ⥤ P.Elements where
-  obj T := ⟨T.1.cont ℤ_[l], P.map (T.1.toCont ℤ_[l]) T.2⟩
-  map {T T'} φ := ⟨contMap φ.1 ℤ_[l], by
-    rw [← Functor.map_comp_apply, toCont_contMap, Functor.map_comp_apply, φ.2]⟩
-  map_id T := Subtype.ext (contMap_id T.1)
-  map_comp φ ψ := Subtype.ext (contMap_comp φ.1 ψ.1)
+  obj T := P.elementsMk (T.obj.cont ℤ_[l]) (P.map (T.obj.toCont ℤ_[l]) T.val)
+  map {T T'} φ := Functor.Elements.homMk (contMap φ.hom ℤ_[l]) (by
+    rw [← Functor.map_comp_apply, toCont_contMap, Functor.map_comp_apply, φ.map_val])
+  map_id T := Functor.Elements.hom_ext (contMap_id T.obj)
+  map_comp φ ψ := Functor.Elements.hom_ext (contMap_comp φ.hom ψ.hom)
 
 def iota (P : PAlg l ⥤ Type) : 𝟭 P.Elements ⟶ Xi P where
-  app T := ⟨T.1.toCont ℤ_[l], rfl⟩
-  naturality T T' φ := Subtype.ext (toCont_contMap φ.1).symm
+  app T := Functor.Elements.homMk (T.obj.toCont ℤ_[l]) rfl
+  naturality T T' φ := Functor.Elements.hom_ext (toCont_contMap φ.hom).symm
 
 def gam (P : PAlg l ⥤ Type) : Xi P ⟶ Xi P where
-  app T := ⟨contShift T.1, by
-    change P.map (contShift T.1) (P.map (T.1.toCont ℤ_[l]) T.2) = P.map (T.1.toCont ℤ_[l]) T.2
-    rw [← Functor.map_comp_apply, toCont_shift]⟩
-  naturality T T' φ := Subtype.ext (contMap_shift φ.1)
+  app T := Functor.Elements.homMk (contShift T.obj) (by
+    change P.map (contShift T.obj) (P.map (T.obj.toCont ℤ_[l]) T.val) =
+      P.map (T.obj.toCont ℤ_[l]) T.val
+    rw [← Functor.map_comp_apply, toCont_shift])
+  naturality T T' φ := Functor.Elements.hom_ext (contMap_shift φ.hom)
 
 def eta₀ (ε : Eps l) : (((base l).cont ℤ_[l]).A)ˣ := (GlobalTheory.T.continuous_algebra_universal_property ε).choose
 
@@ -97,20 +102,20 @@ theorem eta_shift (ε : Eps l) (A : PAlg l) :
 def line (ε : Eps l) (P : PAlg l ⥤ Type) : Line (jE P) (epsU ε P) where
   Ξ := Xi P
   i := iota P
-  η T := ⟨eta ε T.1, MonoidHom.mem_ker.2 (Units.ext (eta_sharp ε T.1))⟩
-  map_η φ := Subtype.ext (Units.ext (eta_map ε φ.1))
+  η T := ⟨eta ε T.obj, MonoidHom.mem_ker.2 (Units.ext (eta_sharp ε T.obj))⟩
+  map_η φ := Subtype.ext (Units.ext (eta_map ε φ.hom))
   γ := gam P
-  iγ := NatTrans.ext (funext fun T => Subtype.ext (toCont_shift T.1))
-  γη T := Subtype.ext (Units.ext (eta_shift ε T.1))
+  iγ := NatTrans.ext (funext fun T => Functor.Elements.hom_ext (toCont_shift T.obj))
+  γη T := Subtype.ext (Units.ext (eta_shift ε T.obj))
   univ T t φ a := by
-    have ha : t.1.obj.sharp (a.1).1 = 1 := congrArg Units.val (MonoidHom.mem_ker.1 a.2)
-    obtain ⟨ψ, ⟨h1, h2⟩, hu⟩ := eta₀_univ ε T.1 t.1.obj t.1.property φ.1 a.1 ha
-    have hψ : P.map ψ (P.map (T.1.toCont ℤ_[l]) T.2) = t.2 := by
+    have ha : t.obj.obj.sharp (a.1).1 = 1 := congrArg Units.val (MonoidHom.mem_ker.1 a.2)
+    obtain ⟨ψ, ⟨h1, h2⟩, hu⟩ := eta₀_univ ε T.obj t.obj.obj t.obj.property φ.hom a.1 ha
+    have hψ : P.map ψ (P.map (T.obj.toCont ℤ_[l]) T.val) = t.val := by
       rw [← Functor.map_comp_apply, h1]
-      exact φ.2
-    refine ⟨⟨ψ, hψ⟩, ⟨Subtype.ext h1, Subtype.ext (Units.ext h2)⟩, ?_⟩
+      exact φ.map_val
+    refine ⟨Functor.Elements.homMk ψ hψ, ⟨Functor.Elements.hom_ext h1, Subtype.ext (Units.ext h2)⟩, ?_⟩
     rintro ⟨ψ', h'⟩ ⟨e1, e2⟩
-    refine Subtype.ext (hu ψ' ⟨congrArg Subtype.val e1, ?_⟩)
+    refine Functor.Elements.hom_ext (hu ψ' ⟨congrArg Functor.Elements.Hom.hom e1, ?_⟩)
     exact congrArg (fun x => (x.1).1) e2
 
 theorem acr_ev_const (A : PAlg l) (n : ℕ) (z : ℤ_[l]) (a : A.Acr n) :

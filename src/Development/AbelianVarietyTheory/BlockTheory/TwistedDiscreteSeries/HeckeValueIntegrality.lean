@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Formalism.LocalToGlobal.ProjectiveLattices.HeckeFr
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Formalism.LocalToGlobal.ProjectiveLattices.HeckeFr
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsPointedOfIsHkIsog
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.BddGood
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,11 +23,8 @@ def IsFinExt (T T' : CDVR) (i : T.Fr →+* T'.Fr) : Prop :=
   (letI := i.toAlgebra; FiniteDimensional T.Fr T'.Fr) ∧
     ∃ r : ℕ, 0 < r ∧ ∀ x : T.Fr, vV T'.V (i x) = (r : ℤ) * vV T.V x
 
-example (T : CDVR) : IsFinExt T T (RingHom.id _) :=
-  ⟨Module.Finite.self _, 1, one_pos, fun x => by simp⟩
 
 variable (H l) in
-
 def IsHeckePrime (𝔓 : Ideal (𝓞 E)) (p : ℕ) : Prop :=
   𝔓.IsMaximal ∧ 𝔓 ⊔ 𝔓.map (H.bar : 𝓞 E →+* 𝓞 E) = ⊤ ∧ p.Prime ∧ (p : 𝓞 E) ∈ 𝔓 ∧ ¬ p ∣ l.M'
 
@@ -79,8 +80,5 @@ def HeckeIntAll : Prop := HeckeFrameInt Xo c (trivialClassCondition Xo c) ∧ He
 def HeckeInt : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H)
     (Xo : Moduli Dw l) (c : Coeff l), HeckeIntGood Xo c ∧ HeckeIntAll Xo c
-
-example (h : HeckeValueInt Xo c (trivialClassCondition Xo c)) : HeckeValueInt Xo c (goodCls Xo c) :=
-  fun la P p i hP hp T io e ho y hy _ => h la P p i hP hp T io e ho y hy trivial
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UnusedSlot39

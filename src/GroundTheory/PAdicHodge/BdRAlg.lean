@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ThetaPlus
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ThetaPlus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,7 +21,7 @@ theorem ringHom_ext_padicInt {p : ℕ} [Fact p.Prime] {S : Type*} [CommRing S]
   obtain ⟨c, hc⟩ := mem_span_singleton.1 (PadicInt.appr_spec n x)
   have hx : x = (x.appr n : ℤ_[p]) + (p : ℤ_[p]) ^ n * c := by rw [← hc]; ring
   have h : f x - g x = (p : S) ^ n * (f c - g c) := by
-    rw [hx, map_add, map_add, map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast,
+    rw [hx, map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, map_natCast, map_natCast,
       map_natCast, map_natCast]
     ring
   rw [SModEq.zero, smul_eq_mul, mul_top, h, span_singleton_pow]
@@ -28,9 +33,9 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable (p : ℕ) [Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "𝕎𝒪♭" => WittVector p (PreTilt (normInteger K) p)
-local notation "𝔹" => BDeRhamPlus (normInteger K) p
+local notation "𝒪♭" => PreTilt 𝒪 p
+local notation "𝕎𝒪♭" => WittVector p 𝒪♭
+local notation "𝔹" => BDeRhamPlus 𝒪 p
 
 def padicIntToWitt : ℤ_[p] →+* 𝕎𝒪♭ :=
   (WittVector.map (ZMod.castHom (dvd_refl p) 𝒪♭)).comp (WittVector.equiv p).symm.toRingHom
@@ -54,17 +59,12 @@ def padicToBDeRhamPlus : ℚ_[p] →+* 𝔹 :=
 
 instance algebraPadic : Algebra ℚ_[p] 𝔹 := (padicToBDeRhamPlus p).toAlgebra
 
-theorem algebraMap_padic_eq : algebraMap ℚ_[p] 𝔹 = padicToBDeRhamPlus p := rfl
-
 theorem algebraMap_padic_coe (x : ℤ_[p]) :
     algebraMap ℚ_[p] 𝔹 (x : ℚ_[p]) = wittToBDeRhamPlus 𝒪 p (padicIntToWitt p x) :=
   IsLocalization.lift_eq (M := nonZeroDivisors ℤ_[p]) (S := ℚ_[p]) _ x
 
 instance algebraRat : Algebra ℚ 𝔹 :=
   ((algebraMap ℚ_[p] 𝔹).comp (algebraMap ℚ ℚ_[p])).toAlgebra
-
-instance isScalarTower_rat_padic : IsScalarTower ℚ ℚ_[p] 𝔹 :=
-  IsScalarTower.of_algebraMap_eq fun _ => rfl
 
 end IsPerfectoidField
 
@@ -73,11 +73,11 @@ section Cp
 variable (p : ℕ) [Fact p.Prime]
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
+local notation "𝔹" => BDeRhamPlus 𝒪 p
 
 theorem algebraMap_padicInt_mem_normInteger (x : ℤ_[p]) :
     algebraMap ℚ_[p] ℂ_[p] (x : ℚ_[p]) ∈ normInteger ℂ_[p] := by
-  rw [mem_normInteger, norm_algebraMap', PadicInt.padic_norm_e_of_padicInt]
+  rw [mem_normInteger, norm_algebraMap', PadicInt.norm_coe]
   exact x.norm_le_one
 
 theorem fontaineTheta_padicIntToWitt (x : ℤ_[p]) :

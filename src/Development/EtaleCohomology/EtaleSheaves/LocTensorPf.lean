@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHTensorPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHTensorPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC
@@ -51,7 +55,7 @@ theorem maxOver {A X B Z : CommRingCat.{0}} (x : A ⟶ X) (b : A ⟶ B) (u : X �
   have hX : (M.comap u.hom).IsMaximal := by
     let _ := u.hom.toAlgebra
     have : Algebra.IsIntegral X Z := ⟨hu⟩
-    exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+    exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal u.hom hu M
   have hXe : M.comap u.hom = maximalIdeal X := IsLocalRing.eq_maximalIdeal hX
   have hw : u.hom.comp x.hom = v.hom.comp b.hom := by
     have := congrArg CommRingCat.Hom.hom hp.w; simpa using this
@@ -67,7 +71,7 @@ theorem maxOver {A X B Z : CommRingCat.{0}} (x : A ⟶ X) (b : A ⟶ B) (u : X �
     have hA' : ((M.comap v.hom).comap (algebraMap A B)).IsMaximal := by
       change ((M.comap v.hom).comap b.hom).IsMaximal
       rw [hA]; exact IsLocalRing.maximalIdeal.isMaximal A
-    exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ hA'
+    exact Ideal.isMaximal_of_isIntegral_of_isMaximal_comap b.hom hb (M.comap v.hom) hA'
   exact ⟨hXe.symm.le, (IsLocalRing.eq_maximalIdeal hB).symm.le⟩
 
 open IsLocalRing in
@@ -76,7 +80,7 @@ theorem locHom_of_int {A B : Type} [CommRing A] [CommRing B] [IsLocalRing A] [Is
   have hm : ((maximalIdeal B).comap b).IsMaximal := by
     let _ := b.toAlgebra
     have : Algebra.IsIntegral A B := ⟨hb⟩
-    exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (maximalIdeal B)
+    exact Ideal.isMaximal_comap_of_isIntegral_of_isMaximal b hb (maximalIdeal B)
   have he := IsLocalRing.eq_maximalIdeal hm
   refine ⟨fun a ha => ?_⟩
   by_contra hna
@@ -104,7 +108,11 @@ theorem nontriv {A X B Z : CommRingCat.{0}} (x : A ⟶ X) (b : A ⟶ B) (u : X �
   let _ : Algebra (ResidueField A) (ResidueField B) := (ResidueField.map b.hom).toAlgebra
   have : Algebra.IsIntegral (ResidueField A) (ResidueField B) := ⟨resInt b.hom hb⟩
   have : Algebra.IsAlgebraic (ResidueField A) (ResidueField B) := inferInstance
-  let l : ResidueField B →ₐ[ResidueField A] K := IsAlgClosed.lift
+  let l : ResidueField B →ₐ[ResidueField A] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let f : X →+* K := (algebraMap (ResidueField X) K).comp (residue X)
   let g : B →+* K := l.toRingHom.comp (residue B)
   have hw : x ≫ CommRingCat.ofHom f = b ≫ CommRingCat.ofHom g := by
@@ -189,7 +197,7 @@ theorem frob {A X B Z : CommRingCat.{0}} (x : A ⟶ X) (b : A ⟶ B) (u : X ⟶ 
   have hadd : ∀ z w, P z → P w → P (z + w) := by
     rintro z w ⟨n, y, hy⟩ ⟨m, y', hy'⟩
     refine ⟨n + m, y ^ (q ^ m) + y' ^ (q ^ n), ?_⟩
-    rw [map_pow, map_add, frobAdd q _ hq, ← map_pow, ← map_pow, lift z n m y hy, add_comm n m,
+    rw [map_pow, map_add (f := _), frobAdd q _ hq, ← map_pow, ← map_pow, lift z n m y hy, add_comm n m,
       lift w m n y' hy', map_add, map_add]
   have hmul : ∀ z w, P z → P w → P (z * w) := by
     rintro z w ⟨n, y, hy⟩ ⟨m, y', hy'⟩

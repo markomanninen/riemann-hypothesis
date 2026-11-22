@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheafA
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.DivSheafA
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.IsLevel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.QuaternionDoubleCosetIndicator
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.IsLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.QuaternionDoubleCosetIndicator
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,8 +49,8 @@ namespace SD
 
 variable {Δ : F} (A : SD Δ)
 
-open Classical in
 
+open Classical in
 def dat : Dat Δ where
   Sg := A.Sg
   S v := if h : v ∈ A.Sg then (A.V v).data (A.hs v h) (A.Ry v) (A.χ v) else ⟨∅, ⊤, ⊤, ⊤, 0, 0, 0, 1, 1, 1⟩
@@ -72,17 +76,17 @@ def dS (t : Dat.Par F) : ParN F 2 := fun v => ![t v, (t v)⁻¹]
 
 def sg (d : ParN F 3) : ParN F 3 := fun v => ![(d v 2)⁻¹, (d v 1)⁻¹, (d v 0)⁻¹]
 
-open Classical in
 
+open Classical in
 def dG (t : Dat.Par F) (y : ∀ v : A.Sg, (Kv v.1)ˣ) : ParN F 3 :=
   fun v => ![t v * (unif (Kv v))⁻¹, if h : v ∈ A.Sg then y ⟨v, h⟩ else 1, (unif (Kv v))⁻¹]
 
-open Classical in
 
+open Classical in
 def Ys : Finset (∀ v : A.Sg, (Kv v.1)ˣ) := Fintype.piFinset fun v => A.Ry v.1
 
-open Classical in
 
+open Classical in
 def F0 (d : ParN F 3) (g : GA Δ) : ℂ :=
   ∏ᶠ v, if h : v ∈ A.Sg then (A.V v).unitaryDoubleCosetIndicator (d v) (eU (A.hs v h) (g.1 v)) else one (g.1 v ∈ KU (Ov v) _)
 
@@ -107,15 +111,6 @@ structure GOps (B : Base (U3 Δ) (GA Δ) V) (s : B.Tw) (u : ParN F 3 → Module.
   tr : ∀ t, A.Cone t → s.R (A.dat.FG t) = ∑ y ∈ A.Ys, u (A.dG t y) * Θ
 
 end SD
-
-structure GlobIn : Prop where
-  tf : TFId0
-  bG : BaseG
-  bS : BaseS
-  bK : BaseK
-  fG : FinG
-  fS : FinS
-  fK : FinK
 
 def SpecF : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (Δ : F) (A : SD Δ), A.Ok →

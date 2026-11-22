@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfStmt
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RCocompactPfStmt
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.RCoc
 
@@ -21,9 +25,9 @@ theorem kerBaseChange_holds : KerBaseChange := by
     obtain ⟨k, hk, c, hc, rfl⟩ := Submodule.mem_sup.1 hv
     have hk0 : T k = 0 := hk
     have e : g (T (k + c)) = ⟨c, hc⟩ := by
-      rw [map_add, hk0, zero_add]
+      rw [map_add (f := _), hk0, zero_add]
       exact LinearMap.congr_fun hg ⟨c, hc⟩
-    rw [e, map_add, hk0, zero_add]
+    rw [e, map_add (f := _), hk0, zero_add]
     rfl
   set Q : Matrix p m K := LinearMap.toMatrix' (C.subtype ∘ₗ g) with hQ
   have hAQA : A * Q * A = A := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MeasureToRealEqMass
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,11 +62,11 @@ theorem finite_finCl (V : HSp D) (K : Subgroup (GL (Fin V.rank) (Lev.EAf D)))
   choose x hx using fun a => gfcToGf_surjective V (c a)
   refine Finite.of_surjective (fun a : Fin m => (DoubleCoset.mk (ratFin V) (K.comap (finG V)) (x a) : FinCl V K)) ?_
   intro q
-  rw [← DoubleCoset.out_eq' _ _ q]
+  rw [← DoubleCoset.out_eq' q]
   set y := Quotient.out q
   obtain ⟨a, γ, k, e⟩ := hc (gfcToGf V y)
   obtain ⟨z, hz⟩ := gfcToGf_surjective V (Bridge.ratF V γ)
-  refine ⟨a, (DoubleCoset.eq _ _ _ _).2 ⟨z, ?_, (x a)⁻¹ * z⁻¹ * y, ?_, by group⟩⟩
+  refine ⟨a, (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨z, ?_, (x a)⁻¹ * z⁻¹ * y, ?_, by group⟩⟩
   · have hz' : finHom V z.1 = finHom V γ.1 := congrArg Subtype.val hz
     refine ⟨γ.1, γ.2, ?_⟩
     show Formalism.UG.bc (Lev.swapAE D) (finHom V γ.1) = Formalism.UG.bc (Lev.swapAE D) (finHom V z.1)

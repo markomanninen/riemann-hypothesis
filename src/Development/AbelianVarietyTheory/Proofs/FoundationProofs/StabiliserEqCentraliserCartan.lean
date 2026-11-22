@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsArchEquivEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBasisAdaptedToCartanInvolution
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem diagonal_sign_conjTranspose (ε : Fin n → Bool) :
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext i
-  simp only [Pi.star_apply]
+  change star (if ε i then (1 : ℂ) else -1) = _
   split_ifs <;> simp
 
 theorem mul_conjTranspose_mul_eq (hbc : b * c = 1) (h : bᴴ * G * b = d) : b * bᴴ * G = b * d * c := by
@@ -147,7 +151,7 @@ theorem infProj_fst (τ : EmbOver E w) (y : AF F ⊗[F] E) :
     infProj τ (Algebra.TensorProduct.map (fstA F) (AlgHom.id F E) y) = infEmb τ (compInf F E w y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul x y => rfl
 
 theorem frame_local_iff (h : IsCMExt F E σ) (τ : EmbOver E w) (J : Matrix (Fin n) (Fin n) E)

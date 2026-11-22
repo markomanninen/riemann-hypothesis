@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.DetIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,10 +19,6 @@ def IsBaseChangeLine {K K1 : Type} [Field K] [NumberField K] [Field K1] [NumberF
 def NdegBaseChange : Prop :=
   ∀ (K K1 : Type) [Field K] [NumberField K] [Field K1] [NumberField K1] [Algebra K K1] (L : MLine K) (L1 : MLine K1),
     L.Good → IsBaseChangeLine L L1 → L1.Good ∧ L1.ndeg = L.ndeg
-
-def BaseChangeExists : Prop :=
-  ∀ (K K1 : Type) [Field K] [NumberField K] [Field K1] [NumberField K1] [Algebra K K1] (L : MLine K),
-    ∃ L1 : MLine K1, IsBaseChangeLine L L1
 
 def LocGenBaseChange : Prop :=
   ∀ (K K1 : Type) [Field K] [NumberField K] [Field K1] [NumberField K1] [Algebra K K1] (L : MLine K) (L1 : MLine K1)

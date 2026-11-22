@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDetChangeOfBasesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerAevalOrthogonalRangeUnitarySelfReciprocalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDetNeZeroOfKerOrthStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryConjMapsKerAevalBasisAndGramStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDetChangeOfBasesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerAevalOrthogonalRangeUnitarySelfReciprocalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GramDetNeZeroOfKerOrthStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryConjMapsKerAevalBasisAndGramStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -20,7 +25,7 @@ theorem ordL_mul [Valued K (WithZero (Multiplicative ℤ))] {x y : K} (hx : x �
   have hy' : Valued.v y ≠ 0 := (Valuation.ne_zero_iff _).2 hy
   have hxy' : Valued.v (x * y) ≠ 0 := (Valuation.ne_zero_iff _).2 (mul_ne_zero hx hy)
   unfold ordL
-  rw [dif_neg hx', dif_neg hy', dif_neg hxy']
+  rw [dite_eq_right hx', dite_eq_right hy', dite_eq_right hxy']
   have : WithZero.unzero hxy' = WithZero.unzero hx' * WithZero.unzero hy' := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, WithZero.coe_mul, WithZero.coe_unzero, WithZero.coe_unzero, Valuation.map_mul]
@@ -94,7 +99,7 @@ theorem dec_of_dvd {n : ℕ} (γ : Matrix (Fin n) (Fin n) K) (Q : K[X]) (hsep : 
   refine ⟨aeval γ a *ᵥ v, aeval γ (c * R) *ᵥ v, ?_, ?_⟩
   · rw [mulVec_mulVec, ← map_mul, show Q * (c * R) = c * (Q * R) by ring, ← hR, map_mul, aeval_self_charpoly,
       mul_zero, zero_mulVec]
-  · rw [mulVec_mulVec, ← map_mul, ← add_mulVec, ← map_add, show Q * a + c * R = a * Q + c * R by ring, hac, map_one,
+  · rw [mulVec_mulVec, ← map_mul, ← add_mulVec, ← map_add (f := _), show Q * a + c * R = a * Q + c * R by ring, hac, map_one,
       one_mulVec]
 
 theorem mem_im_of_coprime {n : ℕ} (γ : Matrix (Fin n) (Fin n) K) {Q₁ Q₂ : K[X]} (hcop : IsCoprime Q₁ Q₂)
@@ -104,7 +109,7 @@ theorem mem_im_of_coprime {n : ℕ} (γ : Matrix (Fin n) (Fin n) K) {Q₁ Q₂ :
   have : y = aeval γ (a * Q₁ + c * Q₂) *ᵥ y := by rw [hac, map_one, one_mulVec]
   rw [mulVec_mulVec, ← map_mul, mul_comm Q₁ a]
   conv_lhs => rw [this]
-  rw [map_add, add_mulVec, map_mul (aeval γ) c, ← mulVec_mulVec, hy, mulVec_zero, add_zero]
+  rw [map_add (f := _), add_mulVec, map_mul (aeval γ) c, ← mulVec_mulVec, hy, mulVec_zero, add_zero]
 
 theorem ker_toLin' {n : ℕ} (M : Matrix (Fin n) (Fin n) K) (P : K[X]) :
     LinearMap.ker (Matrix.toLin' (aeval M P)) = LinearMap.ker (aeval (Matrix.toLin' M) P) := by

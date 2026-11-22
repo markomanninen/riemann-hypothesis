@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBI
 

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
-import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanA
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.EvIHalfTrace
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanConj
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.CartanA
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.EvIHalfTrace
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLActs
+
+@[expose] public section
 
 noncomputable section
 

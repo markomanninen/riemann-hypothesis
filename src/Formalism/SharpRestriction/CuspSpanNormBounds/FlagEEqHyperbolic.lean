@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingNumericalData
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ open MeasureTheory
 
 variable (D : D7)
 
-abbrev lf {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) : LFlag (VS D) D.R.rS T := ⟨F0, F0.z⟩
+abbrev lf {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) : LFlag (D.sp.Y 0) D.R.rS T := ⟨F0, F0.z⟩
 
 def stabF {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) : Set ((VS D).V ≃ₗ[D.host.E] (VS D).V) :=
   {γ | γ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT ∧ (∀ j, (F0.Xa j).map (γ : (VS D).V →ₗ[D.host.E] (VS D).V) = F0.Xa j) ∧
@@ -116,14 +120,14 @@ def autLz {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.ho
 def wRow {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V) : ℝ :=
   ((Nat.card (autLz D F0 Λ) : ℝ))⁻¹
 
-def FrameOK {T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (VS D) D.R.rS T') : Prop :=
+def FrameOK {T' : D.host.E} (Λ : Submodule (𝓞 D.host.E) (VS D).V) (F' : LFlag (D.sp.Y 0) D.R.rS T') : Prop :=
   IsFixedConv Λ (gS D) F' ∧ XLam Λ F' = XS D F'.fl
 
-def FrameEqv {T' : D.host.E} (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F' F'₂ : LFlag (VS D) D.R.rS T') : Prop :=
+def FrameEqv {T' : D.host.E} (n : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F' F'₂ : LFlag (D.sp.Y 0) D.R.rS T') : Prop :=
   ∃ ξ : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E),
     (∀ a b, b < a → ξ a b = 0) ∧ (∀ a, ξ a a = 1) ∧ frame F'₂ = frameAct (fun a => n (frame F' a)) ξ
 
-def cntSW {T : D.host.E} (T' : D.host.E) (F : LFlag (VS D) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
+def cntSW {T : D.host.E} (T' : D.host.E) (F : LFlag (D.sp.Y 0) D.R.rS T) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (Z : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E) : ℕ∞ :=
   let X : Set (LFlag (VS D) D.R.rS T') :=
     {F' | IsTerm Λ (gS D) F F' ∧ FrameOK D Λ F' ∧ IsGeneric Λ (gS D) F F' ∧ ZEquiv (ZhatL F F') Z}

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockJointMultiplicity.CauchyHW
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ variable {σ : Type*}
 
 theorem coeff_diag (T : Module.End ℂ (MvPolynomial σ ℂ)) (w : (σ →₀ ℕ) → ℂ)
     (hT : ∀ m, T (monomial m 1) = w m • monomial m 1) (P : MvPolynomial σ ℂ) (e : σ →₀ ℕ) :
-    coeff e (T P) = w e * coeff e P := by
+    AddMonoidAlgebra.coeff (T P) e = w e * AddMonoidAlgebra.coeff P e := by
   classical
   refine MvPolynomial.induction_on' P (fun m a => ?_) (fun p q hp hq => ?_)
   · have h1 : monomial m a = a • monomial m (1 : ℂ) := by
@@ -27,7 +31,7 @@ theorem coeff_diag (T : Module.End ℂ (MvPolynomial σ ℂ)) (w : (σ →₀ �
       ring
     · rw [if_neg h]
       ring
-  · rw [map_add, coeff_add, coeff_add, hp, hq, mul_add]
+  · rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
 
 theorem eig_of_mem_support (T : Module.End ℂ (MvPolynomial σ ℂ)) (w : (σ →₀ ℕ) → ℂ)
     (hT : ∀ m, T (monomial m 1) = w m • monomial m 1) (P : MvPolynomial σ ℂ) (c : ℂ) (hP : T P = c • P)
@@ -40,7 +44,8 @@ theorem eig_of_mem_support (T : Module.End ℂ (MvPolynomial σ ℂ)) (w : (σ �
 def NoVar (P : MvPolynomial σ ℂ) (v : σ) : Prop := ∀ e ∈ P.support, e v = 0
 
 theorem pderiv_eq_zero_of_noVar {P : MvPolynomial σ ℂ} {v : σ} (h : NoVar P v) : pderiv v P = 0 := by
-  rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum]
   refine Finset.sum_eq_zero fun e he => ?_
   rw [pderiv_monomial]
   simp [h e he]
@@ -48,7 +53,8 @@ theorem pderiv_eq_zero_of_noVar {P : MvPolynomial σ ℂ} {v : σ} (h : NoVar P 
 theorem noVar_pderiv {P : MvPolynomial σ ℂ} {v : σ} (h : NoVar P v) (u : σ) : NoVar (pderiv u P) v := by
   classical
   intro f hf
-  rw [P.as_sum, map_sum] at hf
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [P.as_sum, map_sum] at hf
   obtain ⟨e, he, hfe⟩ := Finset.mem_biUnion.mp (support_sum hf)
   rw [pderiv_monomial] at hfe
   obtain rfl := Finset.mem_singleton.mp (support_monomial_subset hfe)
@@ -58,9 +64,10 @@ theorem noVar_of_pderiv_eq_zero {P : MvPolynomial σ ℂ} {v : σ} (h : pderiv v
   classical
   intro e he
   by_contra hev
-  have hc : coeff (e - Finsupp.single v 1) (pderiv v P) = coeff e P * (e v : ℂ) := by
+  have hc : AddMonoidAlgebra.coeff (pderiv v P) (e - Finsupp.single v 1) = AddMonoidAlgebra.coeff P e * (e v : ℂ) := by
     conv_lhs => rw [P.as_sum]
-    rw [map_sum, coeff_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, coeff_sum]
     simp only [pderiv_monomial, coeff_monomial]
     rw [Finset.sum_eq_single e]
     · rw [if_pos rfl]
@@ -75,7 +82,7 @@ theorem noVar_of_pderiv_eq_zero {P : MvPolynomial σ ℂ} {v : σ} (h : pderiv v
         rw [← tsub_add_cancel_of_le h1, ← tsub_add_cancel_of_le h2, hb]
     · intro h'
       exact absurd he h'
-  rw [h, coeff_zero] at hc
+  simp only [h, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at hc
   exact mul_ne_zero (mem_support_iff.mp he) (Nat.cast_ne_zero.mpr hev) hc.symm
 
 theorem exists_mem_support {P : MvPolynomial σ ℂ} (hP : P ≠ 0) : ∃ e, e ∈ P.support := by
@@ -106,7 +113,8 @@ theorem gR_pos_lemma (u v : κ → σ) (pos : κ → Bool) (hu : Function.Inject
     rw [Derivation.leibniz, pderiv_eq_zero_of_noVar (noVar_pderiv hno0 b), smul_zero, zero_add, smul_eq_mul]
   have h0 : pderiv (u c0) (gR u v pos P) = 0 := by rw [hR, map_zero]
   unfold gR at h0
-  rw [map_sum, Finset.sum_eq_single c0] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single c0] at h0
   · rw [if_pos hc0, key, pderiv_X_self, mul_one] at h0
     exact h0
   · intro c _ hc

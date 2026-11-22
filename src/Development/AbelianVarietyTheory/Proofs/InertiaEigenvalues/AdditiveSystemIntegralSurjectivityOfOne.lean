@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MooreNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,9 @@ theorem norm_one_apply_le (i j : m) : ‖(1 : Matrix m m F) i j‖ ≤ 1 := by
 
 omit [Fintype m] in
 theorem lowerOrder_normal {N : ℕ} (hN : 1 ≤ N) {M : ℕ → Matrix m m F} (hM : Normal (N + 1) M) :
-    Normal N (lowerOrder N M) where
-  int n i j := by
+    Normal N (lowerOrder N M) := by
+  constructor
+  · intro n i j
     rcases i with i | i <;> rcases j with j | j <;>
       simp only [lowerOrder, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
         Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂]
@@ -37,17 +42,16 @@ theorem lowerOrder_normal {N : ℕ} (hN : 1 ≤ N) {M : ℕ → Matrix m m F} (h
       · exact hM.int 0 i j
       · simp
     · exact hM.int (n + 1) i j
-  top := by
-    have h1 : N + 1 ≠ N := by omega
-    have h2 : N ≠ 0 := by omega
-    simp [lowerOrder, h1, h2, hM.top]
-  small n hn i j := by
+  · have hN₀ : N ≠ 0 := by omega
+    simp [lowerOrder, hN₀, hM.top]
+  · intro n hn i j
     have h1 : n ≠ N := by omega
     have h2 : n + 1 ≠ N := by omega
     have h3 : n ≠ 0 := by omega
     rcases i with i | i <;> rcases j with j | j <;>
       simp only [lowerOrder, Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
-        Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, if_neg h1, if_neg h2, if_neg h3,
+        Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂, ite_eq_right h1, ite_eq_right h2,
+        ite_eq_right h3,
         Matrix.zero_apply, norm_zero, zero_lt_one]
     exact hM.small (n + 1) (by omega) i j
 
@@ -68,7 +72,7 @@ theorem gsum_lowerOrder_inl (q : ℕ) {K D : ℕ} (hD : K + 1 ≤ D) (M : ℕ �
       · have h3 : n ≠ K := h2
         simp [h1, h3]
   simp only [gsum, Finset.sum_apply, h, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_range]
-  rw [if_pos (by omega), if_pos (by omega), sub_eq_add_neg]
+  rw [ite_eq_left (by omega), ite_eq_left (by omega), sub_eq_add_neg]
 
 theorem gsum_lowerOrder_inr (q : ℕ) (N D : ℕ) (M : ℕ → Matrix m m F) (z : m ⊕ m → F)
     (hz : ∀ i, z (Sum.inr i) = z (Sum.inl i) ^ q) (i : m) :
@@ -88,7 +92,7 @@ theorem gsum_lowerOrder_inr (q : ℕ) (N D : ℕ) (M : ℕ → Matrix m m F) (z 
       funext j
       rw [← pow_mul, ← pow_succ']
   simp only [gsum, Finset.sum_apply, h, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_range]
-  rw [Finset.sum_range_succ' _ (D + 1), if_pos (by omega), add_comm]
+  rw [Finset.sum_range_succ' _ (D + 1), ite_eq_left (by omega), add_comm]
 
 end Lower
 

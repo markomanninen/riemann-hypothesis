@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLocModelIsPrimeOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotDominatesTopPlace
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.TopForm GlobalTheory.Discrepancy GlobalTheory.FieldPair
@@ -35,7 +40,7 @@ def coeffHom (δ : Derivation k R S) : R →+* TrivSqZeroExt S S where
   map_zero' := by ext <;> simp only [fst_add, fst_inl, fst_inr, snd_add, snd_inl, snd_inr, map_zero,
     add_zero, fst_zero, snd_zero]
   map_add' a b := by
-    ext <;> simp only [fst_add, fst_inl, fst_inr, snd_add, snd_inl, snd_inr, map_add, add_zero,
+    ext <;> simp only [fst_add, fst_inl, fst_inr, snd_add, snd_inl, snd_inr, map_add (f := _), add_zero,
       zero_add]
 
 def polyHom (δ : Derivation k R S) (v : Fin r → S) : MvPolynomial (Fin r) R →+* TrivSqZeroExt S S :=
@@ -64,7 +69,7 @@ def polyDer (δ : Derivation k R S) (v : Fin r → S) : Derivation k (MvPolynomi
   toFun p := snd (polyHom δ v p)
   map_add' p q := by
     show snd (polyHom δ v (p + q)) = snd (polyHom δ v p) + snd (polyHom δ v q)
-    rw [map_add, snd_add]
+    rw [map_add (f := _), snd_add]
   map_smul' c p := by
     show snd (polyHom δ v (c • p)) = c • snd (polyHom δ v p)
     rw [Algebra.smul_def, map_mul, TrivSqZeroExt.snd_mul, polyHom_fst, MvPolynomial.algebraMap_apply,
@@ -165,7 +170,8 @@ theorem exists_basis_kaehler (σ : K →+* S) (hσR : ∀ a : R, σ (algebraMap 
     rw [Fintype.linearIndependent_iff]
     intro g hg j
     have := congrArg (dualForm (DD j)) hg
-    simp only [map_sum, map_smul, hΦ, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hΦ, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
       Finset.mem_univ, if_true, map_zero] at this
     exact this
 
@@ -174,7 +180,8 @@ theorem exists_basis_kaehler (σ : K →+* S) (hσR : ∀ a : R, σ (algebraMap 
   let W := Submodule.span S (Set.range fun i => D k S (algebraMap A S (Y i)))
   have hC (a : R) : D k S (algebraMap R S a) ∈ W := by
     have e : algebraMap R S a = algebraMap K S (algebraMap R K a) := (hσR a).symm
-    rw [e, ← KaehlerDifferential.map_D k k K S, ← bK.sum_repr (D k K (algebraMap R K a)), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, ← KaehlerDifferential.map_D k k K S, ← bK.sum_repr (D k K (algebraMap R K a)), map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smul, ← algebraMap_smul S, hbK, KaehlerDifferential.map_D]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨Fin.natAdd r i, ?_⟩)
@@ -186,7 +193,7 @@ theorem exists_basis_kaehler (σ : K →+* S) (hσR : ∀ a : R, σ (algebraMap 
     | C a =>
       rw [← MvPolynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
       exact hC a
-    | add p q hp hq => rw [map_add, map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hq
     | mul_X p i hp =>
       rw [map_mul, Derivation.leibniz]
       refine add_mem (Submodule.smul_mem _ _ (Submodule.subset_span ⟨Fin.castAdd n i, ?_⟩))
@@ -238,7 +245,7 @@ theorem formOrd_dForm_append_eq_zero : ∀ {K L : Type} [Field K] [Field L] (cK 
     (ι : R →+* T) (ψ : T →+* R) (τ : Fin r → T) (x : Fin n → R) (P : Place cL),
   IsEtTower cK R cL T ι ψ τ → TrBasis cK (fun i => (x i : K)) → P.IsPrimeOf T →
   (∀ g : R, g ≠ 0 → P.ord (ι g : L) = 0) →
-  P.formOrd (dForm cL (Fin.append (fun i => (τ i : L)) (fun i => (ι (x i) : L)))) = 0 := by
+  (fun ω => @dite ℤ (∃ a, P.IsFormOrd ω a) (Classical.propDecidable _) (fun h => h.choose) (fun _ => 0)) (dForm cL (Fin.append (fun i => (τ i : L)) (fun i => (ι (x i) : L)))) = 0 := by
   intro K L _ _ cK cL n r R T ι ψ τ x P hT hx hP h0
 
   letI : Algebra ℂ K := cK.toAlgebra

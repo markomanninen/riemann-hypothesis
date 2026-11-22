@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WHyp
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 noncomputable section
@@ -17,7 +22,7 @@ theorem isLocallyConstant_of_isStdChar {F : Type} [NontriviallyNormedField F] (�
 def kerLinF {F E : Type} [NontriviallyNormedField F] [NontriviallyNormedField E] [NormedAlgebra F E] [StarRing E]
     (A : Et F E) (x : A.K) (y' : A.L) : A.L →ₗ[F] F where
   toFun y := Algebra.trace F A.K (x * Algebra.trace A.K A.L (star y * y'))
-  map_add' a b := by simp [star_add, add_mul, mul_add, map_add]
+  map_add' a b := by simp [star_add, add_mul, mul_add, map_add (f := _)]
   map_smul' c a := by
     have hc : star (algebraMap F A.L c) = algebraMap F A.L c := by
       rw [IsScalarTower.algebraMap_apply F A.K A.L]; exact A.star_K _

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittLam
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSIntWittLam
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem lamAE : LamAE := by
   have hind : ∀ p q : F, algebraMap F E p + algebraMap F E q * θ = 0 → p = 0 ∧ q = 0 := by
     intro p q h
     have h' := congrArg σ h
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσθ, map_zero] at h'
+    rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσθ, map_zero] at h'
     have hq : (2 : E) * (algebraMap F E q * θ) = 0 := by linear_combination h - h'
     have hq0 : q = 0 := by
       rcases mul_eq_zero.1 ((mul_eq_zero.1 hq).resolve_left two_ne_zero) with h1 | h1
@@ -64,7 +68,7 @@ theorem lamAE : LamAE := by
     intro e he
     have h1 := hdec e
     have h2 := congrArg σ h1
-    rw [he, map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσθ] at h2
+    rw [he, map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσθ] at h2
     have h3 : algebraMap F E 0 + algebraMap F E (2 * b2.repr e 1) * θ = 0 := by
       rw [map_zero, map_mul, map_ofNat]; linear_combination h2 - h1
     have hq := (hind _ _ h3).2

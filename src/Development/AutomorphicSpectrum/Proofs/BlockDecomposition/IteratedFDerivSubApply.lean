@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped SchwartzMap ContDiff Topology Uniformity
 open Filter

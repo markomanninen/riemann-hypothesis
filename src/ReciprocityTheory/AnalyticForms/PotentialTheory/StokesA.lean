@@ -1,6 +1,10 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Partition
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.PartsSt
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 

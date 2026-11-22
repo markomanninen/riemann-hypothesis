@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitsLiftSpec
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 open Formalism.L2.Fam.NPC Formalism.L2.Fam.NPC.BaseC GlobalTheory.HeckeLocN
 
@@ -60,7 +65,7 @@ theorem mem_range_of_roots {K : Type} [Field K] {O : Type} [CommRing O] [IsDomai
   let c : ℕ := ∏ ρ ∈ Q.roots.toFinset, df ρ
   have hc : ¬ l ∣ c := by
     intro h
-    obtain ⟨ρ, -, hρ⟩ := (Prime.dvd_finset_prod_iff hl.prime _).1 h
+    obtain ⟨ρ, -, hρ⟩ := (Prime.dvd_finsetProd_iff hl.prime _).1 h
     exact hdf ρ hρ
   have hcr : ∀ a ∈ Q.roots, IsIntegral ℤ ((c : ℂ) * a) := by
     intro a ha
@@ -137,7 +142,8 @@ theorem exists_complexify {K : Type} [Field K] {E : Type} [AddCommGroup E] [Modu
     intro z i
     have e : j z = ∑ i, φ (b.repr z i) • b' i := by
       conv_lhs => rw [← b.sum_repr z]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [LinearMap.map_smulₛₗ, hb']
     rw [e, b'.repr_sum_self]
@@ -155,8 +161,8 @@ section Gen
 
 variable {R : Ranks} {H : Host R} {what₂ : Rows.Data R}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem isRoot_of_eig (B : LocBase0 H what₂) (j : ℕ) (w : what₂.places.Pl) (v : HeightOneSpectrum (𝓞 H.E)) (k : ℕ)
     [Module.Finite what₂.LL (what₂.MtL (what₂.muTw w) j)] (μ : FractionRing (B.Oc j w))
     (hμ : (B.hK j w v k).maxGenEigenspace μ ≠ ⊥) :
@@ -175,7 +181,7 @@ theorem isRoot_of_eig (B : LocBase0 H what₂) (j : ℕ) (w : what₂.places.Pl)
       Polynomial.aeval (B.hK j w v k) (q.map (B.ec j w)) (B.iV j w y) = B.iV j w (Polynomial.aeval (B.hL j w v k) q y) := by
     intro q y
     induction q using Polynomial.induction_on' with
-    | add p q hp hq => simp only [Polynomial.map_add, map_add, LinearMap.add_apply, hp, hq]
+    | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), LinearMap.add_apply, hp, hq]
     | monomial n a =>
       simp only [Polynomial.map_monomial, Polynomial.aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply]
       rw [hpow, LinearMap.map_smulₛₗ]
@@ -200,8 +206,8 @@ theorem finite_MtL {R : Ranks} (what₂ : Rows.Data R) (μ : what₂.Tup) (j : �
 
 variable {D : D7}
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem root_int (M : MtFam D) (C : NChoice D) (hR : HeckeLift0 (mt0 M) C.Q) (hP : HeckeStdPlain) (hG : GenHyp M C.Q)
     (hsp : ∀ v : PlE D.host, IsSplitPl D.host v → ∃ (s : SplitPlace D.host.E) (ϖ : s.v.adicCompletion (maximalRealSubfield D.host.E)),
       IsConjPl D.host v s.w ∧ IsUnif D.host.E s.v ϖ)
@@ -232,7 +238,7 @@ theorem root_int (M : MtFam D) (C : NChoice D) (hR : HeckeLift0 (mt0 M) C.Q) (hP
       map_add' := fun z z' => by
         have := hlin _ (hin z) _ (hin z') 1
         rw [one_smul] at this
-        rw [map_add, this, one_smul]
+        rw [map_add (f := _), this, one_smul]
       map_smul' := fun c z => by
         have := hlin _ (hin z) _ (Submodule.zero_mem _) c
         rw [add_zero, h0, add_zero] at this
@@ -263,8 +269,8 @@ end GlobalTheory.HeckeStdBase
 
 namespace GlobalTheory.HeckeStdBase
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem heckeStd0_base : ∀ (D : D7) (M : MtFam D) (C : NChoice D) (hR : HeckeLift0 (mt0 M) C.Q) (X : CoefIn D.what₂)
     (hS : SplitK (mt0 M) C.Q hR X), HeckeStdPlain → GenHyp M C.Q →
     (∀ v : PlE D.host, IsSplitPl D.host v → ∃ (s : SplitPlace D.host.E) (ϖ : s.v.adicCompletion (maximalRealSubfield D.host.E)),

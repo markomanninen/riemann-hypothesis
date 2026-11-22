@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DblCol
+
+@[expose] public section
 
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels Matrix Classical
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.BasicNotions.TH GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.FockAlg GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.RealLift GlobalTheory.RealLift.Dbl
@@ -29,7 +33,7 @@ theorem algebraMap_norm_eq_mul {R A : Type*} [CommRing R] [CommRing A] [Algebra 
     simp [Finsupp.single_apply]
   rw [hnorm]
   conv_rhs => rw [hz]
-  simp only [map_add, map_mul, AlgHom.commutes, map_one, hs, Algebra.smul_def, map_sub]
+  simp only [map_add (f := _), map_mul, AlgHom.commutes, map_one, hs, Algebra.smul_def, map_sub]
   linear_combination (algebraMap R A b) ^ 2 * hC
 
 end GlobalTheory.NormOne
@@ -72,7 +76,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
     rw [LinearIndependent.pair_iff]
     intro s t hst
     have h2 := congrArg σ hst
-    rw [map_add, AlgHom.map_smul_of_tower, AlgHom.map_smul_of_tower, map_one, hσθ, map_zero] at h2
+    rw [map_add (f := _), AlgHom.map_smul_of_tower, AlgHom.map_smul_of_tower, map_one, hσθ, map_zero] at h2
     have h3 : (2 * t) • θ = 0 := by
       have : (2 * t) • θ = (s • (1 : E) + t • θ) - (s • 1 + t • -θ) := by
         rw [smul_neg, mul_smul, two_smul]; abel
@@ -97,7 +101,7 @@ theorem exists_basis {σ : E →ₐ[F] E} (h : IsCMExt F E σ) :
     exact h5.symm
   have hsq' : θ * θ = p • (1 : E) - q • θ := by
     have h6 := congrArg σ hsq
-    rw [map_mul, hσθ, map_add, AlgHom.map_smul_of_tower, AlgHom.map_smul_of_tower, map_one, hσθ, neg_mul_neg, smul_neg] at h6
+    rw [map_mul, hσθ, map_add (f := _), AlgHom.map_smul_of_tower, AlgHom.map_smul_of_tower, map_one, hσθ, neg_mul_neg, smul_neg] at h6
     rw [h6, sub_eq_add_neg]
   have hq : q = 0 := by
     have h7 : (2 * q) • θ = 0 := by

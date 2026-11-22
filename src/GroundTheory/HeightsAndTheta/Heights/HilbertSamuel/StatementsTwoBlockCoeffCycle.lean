@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.TwoBlockCycle
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNestedLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.TwoBlockCycle
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsNestedLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

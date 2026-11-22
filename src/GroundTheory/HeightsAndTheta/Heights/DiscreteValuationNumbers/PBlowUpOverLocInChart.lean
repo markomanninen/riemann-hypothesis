@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFiniteCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpModel
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpOverLocFiniteCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PBlowUpModel
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PHomLocRingMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -22,7 +27,7 @@ theorem weight_blockWeight (d : (Σ o, E o) →₀ ℕ) :
     Finsupp.weight (blockWeight E) d = ⇑(d.mapDomain Sigma.fst) := by
   induction d using Finsupp.induction_linear with
   | zero => funext o; simp
-  | add x y hx hy => rw [map_add, hx, hy, Finsupp.mapDomain_add, Finsupp.coe_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, Finsupp.mapDomain_add, Finsupp.coe_add]
   | single v n =>
     rw [Finsupp.weight_single, Finsupp.mapDomain_single]
     funext o
@@ -32,7 +37,7 @@ theorem weight_blockWeight (d : (Σ o, E o) →₀ ℕ) :
 
 theorem coeff_eval₂_C_mul_X_fst {B : Type*} [CommRing B] (f : R →+* B) (a : (Σ o, E o) → B)
     (p : MvPolynomial (Σ o, E o) R) (e : κ →₀ ℕ) :
-    coeff e (eval₂ (C.comp f) (fun v => C (a v) * X v.1) p) =
+    AddMonoidAlgebra.coeff (eval₂ (C.comp f) (fun v => C (a v) * X v.1) p) e =
       eval₂ f a (weightedHomogeneousComponent (blockWeight E) ⇑e p) := by
   classical
   induction p using MvPolynomial.induction_on' with
@@ -54,7 +59,7 @@ theorem coeff_eval₂_C_mul_X_fst {B : Type*} [CommRing B] (f : R →+* B) (a : 
     · subst hd
       simp
     · rw [if_neg hd, if_neg (fun h => hd (DFunLike.coe_injective h)), mul_zero, eval₂_zero]
-  | add p q hp hq => simp only [eval₂_add, map_add, coeff_add, hp, hq]
+  | add p q hp hq => simp only [eval₂_add, map_add (f := _), MvPolynomial.coeff_add, hp, hq]
 
 theorem eval₂_C_mul_X_fst_of_homog [Fintype κ] {B : Type*} [CommRing B] (f : R →+* B)
     (a : (Σ o, E o) → B) {p : MvPolynomial (Σ o, E o) R} {b : κ → ℕ}
@@ -106,7 +111,7 @@ theorem component_liftForm (g : MRing ι R) (c : K → ℕ) :
     induction a using Finsupp.induction_linear with
     | zero => funext o; cases o <;> simp [liftMDeg]
     | add x y hx hy =>
-      rw [Finsupp.mapDomain_add, map_add, map_add, hx, hy]
+      rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hx, hy]
       funext o; cases o <;> simp [liftMDeg]
     | single v n =>
       rw [Finsupp.mapDomain_single, Finsupp.weight_single, Finsupp.weight_single]
@@ -120,15 +125,15 @@ theorem component_liftForm (g : MRing ι R) (c : K → ℕ) :
     split_ifs
     · simp [rename_monomial]
     · simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 end Lift
 
 end BlowUpOverLocInChart
 
+
 set_option maxHeartbeats 1600000 in
 open BlowUpOverLocInChart in
-
 theorem BlowUpOverLocInChart.proof : BlowUpOverLocInChart.Statement.{u} := by
   intro R _ K _ _ ι J P W _ hPh hW hPW hrel N u hu j huj
   set L := FractionRing (MRing ι R ⧸ P)
@@ -203,7 +208,7 @@ theorem BlowUpOverLocInChart.proof : BlowUpOverLocInChart.Statement.{u} := by
   have memQ : ∀ F, F ∈ Q ↔ ∀ e : Option K →₀ ℕ,
       eval₂ fC aC (weightedHomogeneousComponent (blockWeight (extIdx ι J)) ⇑e F) ∈ 𝔮 := by
     intro F
-    simp only [hQdef, hψ, RingHom.mem_ker, RingHom.comp_apply, MvPolynomial.ext_iff, coeff_map, coeff_zero,
+    simp only [hQdef, hψ, RingHom.mem_ker, RingHom.comp_apply, MvPolynomial.ext_iff, coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply,
       Ideal.Quotient.eq_zero_iff_mem, coe_eval₂Hom, coeff_eval₂_C_mul_X_fst]
 
   have hσ : ∀ F, eval₂ (ev.comp C) x F = algebraMap (MRing ι R ⧸ P) L (blowUpEval P u F) := by
@@ -252,8 +257,8 @@ theorem BlowUpOverLocInChart.proof : BlowUpOverLocInChart.Statement.{u} := by
       intro o l h1 hmem
       rw [hQdef, RingHom.mem_ker, RingHom.comp_apply] at hmem
       simp only [hψ, coe_eval₂Hom, eval₂_X, map_mul, map_C, map_X] at hmem
-      have h2 := congrArg (coeff (Finsupp.single o 1)) hmem
-      simp only [coeff_C_mul, coeff_X, coeff_X', if_true, mul_one, coeff_zero] at h2
+      have h2 := congrArg (AddMonoidAlgebra.coeff · (Finsupp.single o 1)) hmem
+      simp only [coeff_C_mul, coeff_X, coeff_X', if_true, mul_one, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
       rw [Ideal.Quotient.eq_zero_iff_mem] at h2
       have h1' : aC ⟨o, l⟩ = 1 := Subtype.ext (by rw [haC]; exact h1)
       rw [h1'] at h2

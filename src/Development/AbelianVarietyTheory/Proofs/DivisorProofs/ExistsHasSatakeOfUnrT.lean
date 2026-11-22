@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalIffUnrOfLawsT
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecTExistsIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRecTLocRecT
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSphericalIffUnrOfLawsT
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecTExistsIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 namespace GlobalTheory.CuspRep.ParLawsT
 
-open GlobalTheory.CuspRep.ParLaws in
 
+open GlobalTheory.CuspRep.ParLaws in
 theorem hasSatake_of_repEquiv {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     {n : ℕ} {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
     {π : Representation ℂ (GL (Fin n) k) V} {π' : Representation ℂ (GL (Fin n) k) W} (φ : π.Equiv π')
@@ -31,7 +35,7 @@ open GlobalTheory.CuspRep.ParLaws
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {a : ℕ}
 
-theorem locParT_eq_locComp [IsTotallyComplex E] (hT : UpperTheory.Zero.LLC.RecTExists) {π : CuspSub E a}
+theorem locParT_eq_locComp [_root_.NumberField.IsTotallyComplex E] (hT : UpperTheory.Zero.LLC.RecTExists) {π : CuspSub E a}
     {σ : SmIrr (GL (Fin a) (w.adicCompletion E))} (hσ : π.IsLocComp w σ) (h : IsPlaceOver A w) :
     locParT hT (CG.mk π) h = locRecT hT h (cls (toRep σ)) := by
   have h1 : (CG.mk π).IsLoc w (Quotient.mk _ σ) := hσ

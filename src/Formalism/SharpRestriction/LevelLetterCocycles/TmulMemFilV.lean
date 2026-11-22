@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FrameInvPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrameInvPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem filV_sep (z : V ⊗[Qp] BdR) (h : ∀ a, z ∈ FilV PD (LL := LL) (V := 
       rw [this]
       exact (PD.Fil a).smul_mem _ y.2
     | add u₁ u₂ h₁ h₂ =>
-      rw [map_add, map_add, Finsupp.add_apply]
+      rw [map_add (f := _), map_add (f := _), Finsupp.add_apply]
       exact (PD.Fil a).add_mem h₁ h₂
   have hE : E z = 0 := by
     ext i

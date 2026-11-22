@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeCovolumePosAndSelfDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HermitianPairingRationalValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIsFundamentalDomainAndQuotMeasureEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ConjugateCurveDatumLatticeIsCurveLattice
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegerMapEqHalfOneAddSqrt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeCovolumePosAndSelfDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HermitianPairingRationalValues
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -75,7 +80,8 @@ theorem vBar_zero : vBar D (0 : VC D N N') = 0 := by
 theorem Hf_bar (T : Tor D) (z w : VC D N N') :
     Hf D (torBar D T) (vBar D z) (vBar D w) = (starRingEnd ℂ) (Hf D T z w) := by
   have : area (torBar D T).abelian₂ = area T.abelian₂ := area_lamBar _
-  simp only [Hf, this, vBar, map_div₀, map_sum, map_mul, Complex.conj_ofReal]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, this, vBar, map_div₀, map_sum, map_mul, Complex.conj_ofReal]
 
 theorem qH_bar (T : Tor D) (z : VC D N N') : qH D (torBar D T) (vBar D z) = qH D T z := by
   simp only [qH, Hf_bar, Complex.conj_re]
@@ -300,7 +306,7 @@ theorem normSq_bar {T : Tor D} (hT : 0 < area T.abelian₂)
 theorem fixK_or (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ) (hM : ∀ τ x, embT D τ x ∈ M) :
     FixK D M ρ ∨ FixK D M (rhoBar M ρ) := by
   obtain ⟨τ⟩ : Nonempty D.what₂.Tau := Fintype.card_pos_iff.1 (by
-    rw [D.what₂.card_Tau]; unfold Ranks.f Ranks.n; positivity)
+    rw [D.what₂.card_Tau]; unfold Ranks.f Ranks.n; have := D.R.ord_pos; omega)
   have hm : ∀ a : D.host.K, D.host.φ₀ (a : D.host.E) ∈ M := fun a => by
     rw [← (GlobalTheory.InducedType.induced_type D).1.1 τ a]; exact hM _ _
   let σ : D.host.K →+* ℂ := D.host.φ₀.comp D.host.K.val.toRingHom
@@ -328,7 +334,7 @@ theorem fixK_or (M : IntermediateField ℚ ℂ) (ρ : M →ₐ[ℚ] ℂ) (hM : �
       exact h
     have h2 : ρ' (σM a) = σ a := DFunLike.congr_fun this a
     unfold cj TaylorLogMetric.liftM
-    rw [dif_pos (hm a)]
+    rw [dite_eq_left (hm a)]
     exact h2
   have h1 : ρ (σM b) ^ 2 = σ b ^ 2 := (hall ((ρ : M →+* ℂ).comp σM)).trans (hall σ).symm
   rcases sq_eq_sq_iff_eq_or_eq_neg.1 h1 with h | h
@@ -349,7 +355,7 @@ theorem exists_periodPair_lamConj {cc : Ideal (𝓞 D.host.K)} {δ : ℂ} (hc : 
     have : liftM M (g2 (lamOf D cc δ)) ^ 3 - 27 * liftM M (g3 (lamOf D cc δ)) ^ 2 = 1 := by
       apply Subtype.ext
       unfold TaylorLogMetric.liftM
-      rw [dif_pos h2, dif_pos h3]
+      rw [dite_eq_left h2, dite_eq_left h3]
       exact hΔ
     have h := congrArg ρ this
     rw [map_sub, map_mul, map_pow, map_pow, map_ofNat, map_one] at h
@@ -418,7 +424,8 @@ theorem sesq_embV (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (hG : admG1 D)
       embV D (tor0 D cc δ) x τ i j = embT D τ (x i j) := fun _ _ _ _ => rfl
   rw [hYY, ← hG.2]
   refine Finset.sum_congr rfl fun τ _ => ?_
-  simp only [map_sum, map_mul, he]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, he]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
   rw [D.host.conjE_apply]
 

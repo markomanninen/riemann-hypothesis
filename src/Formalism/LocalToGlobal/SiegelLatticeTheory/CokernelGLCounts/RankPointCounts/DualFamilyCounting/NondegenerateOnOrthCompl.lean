@@ -1,9 +1,14 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsRepsOfCover
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSmulMem
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteRepSetOfOrtho
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsRepsOfCover
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsSmulMem
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteRepSetOfOrtho
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomAct
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardBaseFlagComplementIntegralLattice
+
+@[expose] public section
 
 open NumberField Module
 
@@ -62,9 +67,9 @@ theorem card_ne_zero_eq {n : ℕ} (e : Fin n → ℕ) :
   rw [Finset.card_filter]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases hi : e i = 0
-  · rw [if_neg (not_not.mpr hi), hi]
+  · rw [ite_eq_right (not_not.mpr hi), hi]
     simp
-  · rw [if_pos hi, min_eq_right (Nat.one_le_iff_ne_zero.mpr hi)]
+  · rw [ite_eq_left hi, min_eq_right (Nat.one_le_iff_ne_zero.mpr hi)]
 
 variable {K F V : Type} [Field K] [NumberField K] [StarRing K] [Field F] [NumberField F]
   [Algebra F K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V]
@@ -129,22 +134,18 @@ theorem gmap_eq_self {h : V →ₗ⋆[K] V →ₗ[K] K} {U : Submodule K V} {g :
   · intro hx
     exact ⟨x, hx, hg.2 x (hM x hx)⟩
 
-theorem cut_isLatIn {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsLattice K Λ) (X : Submodule K V) :
+theorem cut_isLatIn {Λ : Submodule (𝓞 K) V} (hΛ : Submodule.IsFullLattice K Λ) (X : Submodule K V) :
     IsLatIn X (Λ ⊓ X.restrictScalars (𝓞 K)) := by
-  refine ⟨?_, ?_⟩
-  · have := isNoetherian_of_fg_of_noetherian _ hΛ.fg
-    exact Submodule.FG.of_le_of_isNoetherian (inf_le_left : Λ ⊓ X.restrictScalars (𝓞 K) ≤ Λ)
-  · apply le_antisymm
-    · exact Submodule.span_le.mpr fun x hx => hx.2
-    · intro x hx
-      obtain ⟨r, hr, hrx⟩ := StabilizerLattices.exists_smul_mem hΛ x
-      have h1 : r • x ∈ Λ ⊓ X.restrictScalars (𝓞 K) :=
-        ⟨hrx, (X.restrictScalars (𝓞 K)).smul_mem r hx⟩
-      have hr' : algebraMap (𝓞 K) K r ≠ 0 := by simpa using hr
-      have e : x = (algebraMap (𝓞 K) K r)⁻¹ • (r • x) := by
-        rw [← algebraMap_smul K r x, smul_smul, inv_mul_cancel₀ hr', one_smul]
-      rw [e]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span h1)
+  refine ⟨hΛ.toIsLattice.fg.of_le inf_le_left, le_antisymm ?_ ?_⟩
+  · exact Submodule.span_le.mpr fun x hx => hx.2
+  · intro x hx
+    obtain ⟨r, hr, hrx⟩ := StabilizerLattices.exists_smul_mem hΛ x
+    have hcut : r • x ∈ Λ ⊓ X.restrictScalars (𝓞 K) :=
+      ⟨hrx, (X.restrictScalars (𝓞 K)).smul_mem r hx⟩
+    have hr' : algebraMap (𝓞 K) K r ≠ 0 := by simpa using hr
+    apply (Submodule.smul_mem_iff _ hr').mp
+    rw [algebraMap_smul]
+    exact Submodule.subset_span hcut
 
 theorem integral_of_unimod {h : V →ₗ⋆[K] V →ₗ[K] K} {Λ : Submodule (𝓞 K) V}
     (hU : Formalism.HermitianLatticesTheory.IsUnimodular h Λ) (X : Submodule (𝓞 K) V) :
@@ -161,9 +162,6 @@ scoped instance fixAct (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) :
   smul g Λ := Formalism.HermitianLatticesTheory.gmap g.1 Λ
   one_smul := autSub_gmap_one
   mul_smul a b Λ := autSub_gmap_mul a.1 b.1 Λ
-
-theorem smul_def {h : V →ₗ⋆[K] V →ₗ[K] K} {U : Submodule K V} (g : isomFix h U)
-    (Λ : Submodule (𝓞 K) V) : g • Λ = Formalism.HermitianLatticesTheory.gmap g.1 Λ := rfl
 
 def stabEquiv (h : V →ₗ⋆[K] V →ₗ[K] K) (U : Submodule K V) (Λ : Submodule (𝓞 K) V) :
     MulAction.stabilizer (isomFix h U) Λ ≃ stabFix h U Λ where
@@ -198,7 +196,7 @@ theorem nondegenerate_on_orth_compl {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.I
   intro v
   have hv : v ∈ U ⊔ orthK h U := by rw [hUW.sup_eq_top]; exact Submodule.mem_top
   obtain ⟨u, hu, w, hw, rfl⟩ := Submodule.mem_sup.mp hv
-  rw [map_add, hxy w hw, ← hs.eq u x, (mem_orthK.mp hx) u hu, map_zero, add_zero]
+  rw [map_add (f := _), hxy w hw, ← hs.eq u x, (mem_orthK.mp hx) u hu, map_zero, add_zero]
 
 theorem vJof_eq_of_jordan (h2 : JordanInv) (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) {X X' : Submodule K V} {L L' : Submodule (𝓞 K) V}
@@ -249,9 +247,15 @@ theorem glueMass_of (h1 : JordanExists) (h2 : JordanInv) (h6 : GlueLoc) (h8 : Gl
     (hG : GenusMassW) : GlueMass := by
   intro K F V _ _ _ _ _ _ _ _ _ _ _ hK hF h hs hnd U hUW hpos M hM hMi hne c hc
   classical
+  have hnd' : h.Nondegenerate := ⟨hnd, fun y hy => hnd y fun x => by
+    rw [← hs.eq x y, hy x, map_zero]⟩
+  have hfull {Λ : Submodule (𝓞 K) V} (hΛ : Λ ∈ GlueSet h U M) :
+      Submodule.IsFullLattice K Λ :=
+    { toIsLattice := hΛ.1
+      span_eq_top := GlobalTheory.LoopC.Base.span_eq_top_of_unimodular h hs hnd' hΛ.1 hΛ.2.1 }
   obtain ⟨Λ₀, hΛ₀⟩ := hne
   obtain ⟨T₀, hT⟩ : ∃ T₀, Λ₀ ⊓ (orthK h U).restrictScalars (𝓞 K) = T₀ := ⟨_, rfl⟩
-  have hT₀ : IsLatIn (orthK h U) T₀ := hT ▸ G9.cut_isLatIn hΛ₀.1 _
+  have hT₀ : IsLatIn (orthK h U) T₀ := hT ▸ G9.cut_isLatIn (hfull hΛ₀) _
   have hT₀i : Formalism.HermitianLatticesTheory.IsIntegralLat h T₀ := hT ▸ G9.integral_of_unimod hΛ₀.2.1 _
   obtain ⟨sY, hsY1, hsY2, hsYfin, hmass⟩ := hG K F V hK hF h hs hnd U hUW hpos T₀ hT₀ hT₀i c hc
   have hrefl : ∀ T, SameGenusFix (F := F) h U T T :=
@@ -259,7 +263,7 @@ theorem glueMass_of (h1 : JordanExists) (h2 : JordanInv) (h6 : GlueLoc) (h8 : Gl
   have hB : ∀ Λ ∈ GlueSet h U M, IsLatIn (orthK h U) (Λ ⊓ (orthK h U).restrictScalars (𝓞 K)) ∧
       SameGenusFix (F := F) h U T₀ (Λ ⊓ (orthK h U).restrictScalars (𝓞 K)) := by
     intro Λ hΛ
-    have hl := G9.cut_isLatIn hΛ.1 (orthK h U)
+    have hl := G9.cut_isLatIn (hfull hΛ) (orthK h U)
     refine ⟨hl, ?_⟩
     have e1 := ((h8 K F V hK hF h hs hnd U hUW hpos M hM Λ hΛ _ hl).1).mpr (hrefl _)
     have e2 := ((h8 K F V hK hF h hs hnd U hUW hpos M hM Λ₀ hΛ₀ _ hl).1).mp e1

@@ -1,28 +1,32 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColumnHighestWeightPolynomialMapStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnHighestRowIntertwinersProportionalStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColStableDisjointStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBilinearFischerPairingMatrixEntryPolynomiaStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDegreeBoundOfRowUnitaryInvariantPairingStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteSmoothIrreducibleStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensorProductDefiniteUnitaryLocalModelsIrreducibStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteThetaIntegralIntegrableContinuousStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteThetaIntegralInvariantRealTranslateStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryRealPointsActFockSubstitutionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariantStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultiplicitySpaceDefiniteContinuousInvariantEquiStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepsLevelCharacterConditionsHold
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteDimensionalModel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastStepVectorLiftPairFlagLevelCharactersStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKOContinuousAndRatInvariant
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodFiniteOfHcFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColLieApply
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColumnHighestWeightPolynomialMapStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnHighestRowIntertwinersProportionalStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsColStableDisjointStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsBilinearFischerPairingMatrixEntryPolynomiaStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsDegreeBoundOfRowUnitaryInvariantPairingStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteSmoothIrreducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TensorProductDefiniteUnitaryLocalModelsIrreducibStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteThetaIntegralIntegrableContinuousStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteThetaIntegralInvariantRealTranslateStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryRealPointsActFockSubstitutionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemMultTOfEquivariantStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultiplicitySpaceDefiniteContinuousInvariantEquiStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ChainStepsLevelCharacterConditionsHold
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteDimensionalModel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LastStepVectorLiftPairFlagLevelCharactersStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsFockVacAtOfIsThetaAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKOContinuousAndRatInvariant
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmPureTensorOOfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodFiniteOfHcFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem subst_subst (a a' : ι → Matrix (Fin n) (Fin n) ℂ) (b b' : ι → Ma
     subst a b (subst a' b' P) = subst (fun τ => a' τ * a τ) (fun τ => b τ * b' τ) P := by
   refine DFunLike.congr_fun (?_ : (subst a b).comp (subst a' b') = _) P
   refine MvPolynomial.algHom_ext fun v => ?_
-  simp only [subst, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_smul, Finset.smul_sum, smul_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [subst, AlgHom.comp_apply, MvPolynomial.aeval_X, map_sum, map_smul, Finset.smul_sum, smul_smul,
     Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, Finset.sum_smul]
   calc _ = ∑ i, ∑ c, ∑ i', ∑ c', (b v.1 i' i * b' v.1 i v.2.1 * (a' v.1 v.2.2 c * a v.1 c c')) •
         (MvPolynomial.X (v.1, i', c') : Pol ι m n) := by
@@ -87,7 +92,7 @@ theorem mem_of_intertwiner (hnm : n ≤ m) {π : ι → Matrix.unitaryGroup (Fin
     (Φ : X →ₗ[ℂ] Pol ι m n) (hΦ : ∀ τ u x, Φ (π τ u x) = rowSub n τ u (Φ x)) : Φ ∈ U := by
   let W : Submodule ℂ (X →ₗ[ℂ] Pol ι m n) :=
     { carrier := {Ψ | ∀ τ u x, Ψ (π τ u x) = rowSub n τ u (Ψ x)}
-      add_mem' := fun ha hb τ u x => by simp only [LinearMap.add_apply, map_add, ha τ u x, hb τ u x]
+      add_mem' := fun ha hb τ u x => by simp only [LinearMap.add_apply, map_add (f := _), ha τ u x, hb τ u x]
       zero_mem' := fun τ u x => by simp
       smul_mem' := fun c _ ha τ u x => by simp only [LinearMap.smul_apply, map_smul, ha τ u x] }
   have hW : ∀ Ψ ∈ W, ∀ τ g, colSub m τ g ∘ₗ Ψ ∈ W := fun Ψ h τ g ρ u x => by
@@ -220,27 +225,27 @@ theorem exists_trilinear {G H S P Ds : Type} [MeasurableSpace H] [AddCommGroup S
   let b : P → Ds → C →ₗ[ℂ] (G → ℂ) := fun φ v =>
     { toFun := fun F g => I fun h => th g h (pt φ) * (F : Ds →ₗ[ℂ] (H → ℂ)) v h
       map_add' := fun F F' => funext fun g => by
-        rw [Pi.add_apply, ← map_add]; congr 1; funext h; simp [mul_add]
+        rw [Pi.add_apply, ← map_add (f := _)]; congr 1; funext h; simp [mul_add]
       map_smul' := fun c F => funext fun g => by
         rw [Pi.smul_apply, ← map_smul]; congr 1; funext h; simp [mul_left_comm] }
   refine ⟨LinearMap.mk₂ ℂ b ?_ ?_ ?_ ?_, fun φ v F => funext fun g => hI _ (hint F φ v g)⟩
   · refine fun φ φ' v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = I _ + I _
-    rw [← map_add]; congr 1; funext h; simp [add_mul]
+    rw [← map_add (f := _)]; congr 1; funext h; simp [add_mul]
   · refine fun c φ v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = c • I _
     rw [← map_smul]; congr 1; funext h; simp [mul_assoc]
   · refine fun φ v v' => LinearMap.ext fun F => funext fun g => ?_
     show I _ = I _ + I _
-    rw [← map_add]; congr 1; funext h; simp [mul_add]
+    rw [← map_add (f := _)]; congr 1; funext h; simp [mul_add]
   · refine fun c φ v => LinearMap.ext fun F => funext fun g => ?_
     show I _ = c • I _
     rw [← map_smul]; congr 1; funext h; simp [mul_left_comm]
 
 variable {D : D7}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem ioExists_definite {V W : HSp D} {S S' : D.what₂.Tau → SPar} (M : DSModel V S) (M' : DSModel W S')
     {θ : InfFam D} {ψ : AddChar (AF D.host.F) ℂ} {χS χT : (AE D)ˣ →* Circle}
     {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {f : WO V W → ℂ}
@@ -312,7 +317,7 @@ theorem ioExists_definite {V W : HSp D} {S S' : D.what₂.Tau → SPar} (M : DSM
   have hmem : ∀ F : C, L.flip F ∈ MultT θ M J χ := fun F => by
     have hlev : ∀ x, ∀ k ∈ J, ∀ g, L.flip F x (g * k) = χ k * L.flip F x g := by
       refine hind _ (fun P x k hk g => ?_) (fun k _ g => by simp) fun x y a b k hk g => by
-        simp only [map_add, Pi.add_apply, a k hk g, b k hk g, mul_add]
+        simp only [map_add (f := _), Pi.add_apply, a k hk g, b k hk g, mul_add]
       have e : ω (k, 1) (pt P) = χ k • pt P := by
         exact GlobalTheory.FiniteFock.om_pureTensorO_of_finite ψ θ V W χS χT ω hθ hω (cart M) (cart M') (onb M) (onb M') f hpt k (hJ k hk).1 1 (one_mem _) _
           (hJ k hk).2 P
@@ -322,7 +327,7 @@ theorem ioExists_definite {V W : HSp D} {S S' : D.what₂.Tau → SPar} (M : DSM
       fun τ g => ?_
     · revert x
       refine hind _ (fun P x γ hγ g => ?_) (fun γ _ g => by simp) fun x y a b γ hγ g => by
-        simp only [map_add, Pi.add_apply, a γ hγ g, b γ hγ g]
+        simp only [map_add (f := _), Pi.add_apply, a γ hγ g, b γ hγ g]
       rw [LinearMap.flip_apply, hLB, hB]
       unfold Lift.liftInt
       congr 1; funext h
@@ -331,11 +336,11 @@ theorem ioExists_definite {V W : HSp D} {S S' : D.what₂.Tau → SPar} (M : DSM
       exact ⟨U, hU1, fun k hk hk' g => by rw [hlev x k (hU2 k hk hk').1, (hU2 k hk hk').2, one_mul]⟩
     · revert x
       refine hind _ (fun P x => ?_) (by rw [map_zero]; exact continuous_const) fun x y a b => by
-        rw [map_add]; exact a.add b
+        rw [map_add (f := _)]; exact a.add b
       rw [LinearMap.flip_apply, hLB, hB]
       exact (hL F P x).2
     · refine hind _ (fun P x => ?_) (by rw [map_zero, map_zero]; rfl) fun x y a b => by
-        rw [map_add, map_add, map_add, a, b]; rfl
+        rw [map_add (f := _), map_add (f := _), map_add (f := _), a, b]; rfl
       funext h
       rw [← hcol, LinearMap.flip_apply, LinearMap.flip_apply, hLB, hLB, hB, hB, rTr, hshift, hcV, hpe, hpe, map_smul]
   exact ⟨L.flip.codRestrict _ hmem, fun F φ v => (hL F φ v).1, fun F φ v g => by
@@ -381,7 +386,7 @@ theorem exists_lift_last : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T 
     have hf : IsThetaFunO R.ψ _ _ (R.vX t) := by
       have := hpt t 1
       rwa [RealDat.ptX, GlobalTheory.FiniteFock.pureTensorO_one] at this
-    refine ioExists_definite (R.MY (D.R.m - 1)) R.MX hM.inf (hω t) (D.sp.Y_sig _) D.sp.X'_sig ?_
+    refine ioExists_definite (J := levS _ (R.βY (D.R.m - 1)) (R.datYt t (D.R.m - 1) R.triv)) (R.MY (D.R.m - 1)) R.MX hM.inf (hω t) (D.sp.Y_sig _) D.sp.X'_sig ?_
       (allPlus_of_le _ (le_min le_rfl (Nat.sub_le _ _)) _) (allPlus_of_le _ (Nat.sub_le _ _) _) (hpt t)
       (isFockVacAt_stepVec (hv t) hf) (hIt t) (fun κ hκ => ⟨hκ.1, ?_⟩) (GlobalTheory.GoodFiniteDim.exists_open_subgroup _ _ _)
       (hM.νX t).1.1 (hM.νX t).2 hC

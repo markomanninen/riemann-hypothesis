@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LocEmb
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Geo
@@ -53,7 +58,8 @@ theorem UpperTheory.levF_isOpen_isCompact_le_integral :
   · exact (AdelicGLn.isCompact_integralFiniteGL K n).of_isClosed_subset
       (Subgroup.isClosed_of_isOpen _ hopen) hint
   · rintro w J hJ _ ⟨x, hx, rfl⟩
-    obtain ⟨-, h1, h2, -, -⟩ := UpperTheory.ConvolutionTheory.Tf.locEmb K n w
+    have h1 := (UpperTheory.ConvolutionTheory.Tf.locEmb K n w).2.1
+    have h2 := (UpperTheory.ConvolutionTheory.Tf.locEmb K n w).2.2.1
     intro v
     by_cases hv : v = w
     · subst hv

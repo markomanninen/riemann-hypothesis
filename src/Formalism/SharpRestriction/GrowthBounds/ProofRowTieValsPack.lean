@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsDef
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLieSelf
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ProofRowTieValsDef
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePProjLieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEig2
+
+@[expose] public section
 
 noncomputable section
 

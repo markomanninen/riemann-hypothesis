@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,14 +63,5 @@ structure UnifChart [StarRing (𝓞 E)] {T : CDVR} {io : c.F →+* T.Fr} {y : In
   acts : ChartActs t.G x t.act.toRingAct act
   law_eq : F.mapF ι' = fun i => MvPowerSeries.map X.ι (Ch.FT i)
   act_eq : ∀ a, actMap ι' act a = fun i => MvPowerSeries.map X.ι (Ch.actT a i)
-
-def TwoPlaces (H : Host E) (f : ℕ) (vd : ℝ) : Prop :=
-  letI := H.starRing
-  ∀ (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C],
-    v.Integers O → ∀ [Fact (¬ IsUnit ((2 : ℕ) : O))] [Algebra ℤ_[2] O] (τO : (E →+* ℂ) → (𝓞 E →+* O)),
-    Function.Injective τO → (∀ τ τ', τ (H.rt : E) = τ' (H.rt : E) ↔ τO τ H.rt = τO τ' H.rt) →
-    ∃ w : Place 2 (𝓞 E), w.n = f ∧ (∀ σ, σ ∈ Emb (O := O) w.e ↔ ∃ τ, InPsi H τ ∧ σ = τO τ) ∧
-      (∀ σ, σ ∈ Emb (O := O) w.bar ↔ ∃ τ, ¬ InPsi H τ ∧ σ = τO τ) ∧
-      ∃ t : Fin w.n ≃ Emb (O := O) w.e, HasVd 2 v w t vd
 
 end GlobalTheory.CharDepth

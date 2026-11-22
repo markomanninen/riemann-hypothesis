@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SteinPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SteinPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Polynomial

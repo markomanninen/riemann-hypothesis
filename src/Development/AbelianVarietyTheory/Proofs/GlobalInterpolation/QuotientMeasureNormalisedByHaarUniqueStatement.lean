@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientMeasureNormalisedByHaarUnique
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InvariantRadonFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.QuotientMeasureNormalisedByHaarUnique
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InvariantRadonFibre
+
+@[expose] public section
+
 open MeasureTheory GlobalTheory.IndefiniteRowSideFullHecke.InvariantRadonFibre
 open scoped ENNReal
 set_option maxHeartbeats 1000000 in

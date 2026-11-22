@@ -1,17 +1,22 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AdaptedParameters
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsAddHypersurface
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AdaptedParameters
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateDivisorSmoothness
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ChartRing
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.CoordinateSubscheme
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleChartExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.FormallyEtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsAddHypersurface
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.SmoothCenterChart
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdealSheaf
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry TopologicalSpace
@@ -98,7 +103,8 @@ private theorem basisKaehler_repr_kaehlerMap (k₀ : Type*) [CommRing k₀] (ι�
       = ∑ j : ι₀, algebraMap S S' ((EtaleCoordinates.basisKaehler k₀ ι₀ S).repr ω j) •
         EtaleCoordinates.basisKaehler k₀ ι₀ S' j := by
     conv_lhs => rw [hω]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl ?_
     intro j _
     rw [map_smul, hb j]
@@ -226,6 +232,78 @@ theorem exists_etaleChart_restrict_coord_eq_of_jacobianDet_notMem
     (ringHom_etale_of_formallyEtale p hVg f hfC hfEtale)
   exact ⟨X.basicOpen g, hVg, hle, hxg, c', fun j => (hc' j).trans (halg _)⟩
 
+def chartPartialDeriv (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n)
+    (f : Γ(X, V)) : Γ(X, V) :=
+  letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
+  letI : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
+  haveI : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
+  haveI : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
+    c.algebra_formallyEtale hV
+  (EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).repr
+    (KaehlerDifferential.D k Γ(X, V) f) (ULift.up j)
+
+private def chartDerivation (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n) :
+    letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
+    Derivation k Γ(X, V) Γ(X, V) :=
+  letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
+  letI : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
+  haveI : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
+  haveI : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
+    c.algebra_formallyEtale hV
+  ((EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).coord (ULift.up j)).compDer
+    (KaehlerDifferential.D k Γ(X, V))
+
+omit [AlgebraicGeometry.Smooth p] in
+private theorem chartPartialDeriv_coord (hV : IsAffineOpen V) (c : EtaleChart p V n)
+    (j i : Fin n) :
+    chartPartialDeriv hV c j (c.coord i) = if i = j then (1 : Γ(X, V)) else 0 := by
+  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
+  let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
+  have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
+  have instFE : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
+    c.algebra_formallyEtale hV
+  change (EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).repr
+    (KaehlerDifferential.D k Γ(X, V) (c.coord i)) (ULift.up j) = _
+  rw [← basisKaehler_apply_eq_D_coord c (algebraMap_sectionsAlgebra k p V)
+    c.algebraMap_eq_coordRingHom i, Module.Basis.repr_self_apply]
+  by_cases hij : i = j
+  · subst j
+    simp
+  · have hup : (ULift.up i : ULift.{u} (Fin n)) ≠ ULift.up j :=
+      fun h => hij (congrArg ULift.down h)
+    rw [if_neg hup, if_neg hij]
+
+omit [AlgebraicGeometry.Smooth p] in
+private theorem chartPartialDeriv_coord_self (hV : IsAffineOpen V) (c : EtaleChart p V n)
+    (j : Fin n) : chartPartialDeriv hV c j (c.coord j) = 1 := by
+  rw [chartPartialDeriv_coord, if_pos rfl]
+
+omit [AlgebraicGeometry.Smooth p] in
+private theorem chartPartialDeriv_coord_of_ne (hV : IsAffineOpen V) (c : EtaleChart p V n)
+    (j i : Fin n) (h : j ≠ i) : chartPartialDeriv hV c j (c.coord i) = 0 := by
+  rw [chartPartialDeriv_coord, if_neg h.symm]
+
+omit [AlgebraicGeometry.Smooth p] in
+private theorem chartPartialDeriv_add_algebraMap_mul (hV : IsAffineOpen V) (c : EtaleChart p V n)
+    (j : Fin n) (a b : Γ(X, V)) (t : k) :
+    chartPartialDeriv hV c j (a + sectionsAlgebraMap k p V t * b) =
+      chartPartialDeriv hV c j a + sectionsAlgebraMap k p V t * chartPartialDeriv hV c j b := by
+  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
+  let D := chartDerivation hV c j
+  change D (a + sectionsAlgebraMap k p V t * b) = D a + sectionsAlgebraMap k p V t * D b
+  rw [← algebraMap_sectionsAlgebra k p V]
+  simp [Derivation.leibniz, smul_eq_mul]
+
+omit [AlgebraicGeometry.Smooth p] in
+private theorem chartPartialDeriv_mul (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n)
+    (a b : Γ(X, V)) :
+    chartPartialDeriv hV c j (a * b) =
+      a * chartPartialDeriv hV c j b + b * chartPartialDeriv hV c j a := by
+  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
+  let D := chartDerivation hV c j
+  change D (a * b) = a * D b + b * D a
+  rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
+
 theorem exists_etaleChart_coord_add_smul (hV : IsAffineOpen V) (c : EtaleChart p V n)
     (j₁ j₂ : Fin n) (hj : j₁ ≠ j₂) (t : k) :
     ∃ c' : EtaleChart p V n,
@@ -239,27 +317,10 @@ theorem exists_etaleChart_coord_add_smul (hV : IsAffineOpen V) (c : EtaleChart p
   have hk : algebraMap k Γ(X, V) = sectionsAlgebraMap k p V := algebraMap_sectionsAlgebra k p V
   have hcr : algebraMap (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) = c.coordRingHom :=
     c.algebraMap_eq_coordRingHom
-  have hcoord : ∀ j : Fin n,
-      EtaleCoordinates.coord k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) = c.coord j :=
-    fun j => c.etaleCoordinates_coord j
-  have h1 : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₂)
-      (c.coord j₂) = 1 := by
-    rw [← hcoord j₂]
-    exact EtaleCoordinates.partialDeriv_coord_self k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₂)
-  have h2 : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₂)
-      (c.coord j₁) = 0 := by
-    rw [← hcoord j₁]
-    refine EtaleCoordinates.partialDeriv_coord_of_ne k (ULift.{u} (Fin n)) Γ(X, V)
-      (ULift.up j₂) (ULift.up j₁) ?_
-    intro hcon
-    exact hj (congrArg ULift.down hcon).symm
-  have h3 : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₂)
-      (sectionsAlgebraMap k p V t) = 0 := by
-    rw [← hk]
-    simp
-  have hpd : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₂)
+  have hpd : chartPartialDeriv hV c j₂
       (c.coord j₂ + sectionsAlgebraMap k p V t * c.coord j₁) = 1 := by
-    simp [Derivation.leibniz, h1, h2, h3]
+    rw [chartPartialDeriv_add_algebraMap_mul, chartPartialDeriv_coord_self,
+      chartPartialDeriv_coord_of_ne hV c j₂ j₁ hj.symm, mul_zero, add_zero]
   obtain ⟨w, hwj, hwne, hwupd⟩ : ∃ w : ULift.{u} (Fin n) → Γ(X, V),
       w (ULift.up j₂) = c.coord j₂ + sectionsAlgebraMap k p V t * c.coord j₁ ∧
       (∀ j : Fin n, j ≠ j₂ → w (ULift.up j) = c.coord j) ∧
@@ -282,7 +343,9 @@ theorem exists_etaleChart_coord_add_smul (hV : IsAffineOpen V) (c : EtaleChart p
         exact (basisKaehler_apply_eq_D_coord c hk hcr i.down).symm
   have hdet : IsUnit ((EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).det
       fun i : ULift.{u} (Fin n) => KaehlerDifferential.D k Γ(X, V) (w i)) := by
-    rw [hwupd, det_update_eq_repr, ← EtaleCoordinates.partialDeriv_apply, hpd]
+    rw [hwupd, det_update_eq_repr]
+    change IsUnit (chartPartialDeriv hV c j₂ _)
+    rw [hpd]
     exact isUnit_one
   obtain ⟨c', hc'⟩ := exists_etaleChart_coord_eq_of_isUnit_jacobianDet hV c w hdet
   refine ⟨c', ?_, fun j hjne => ?_⟩
@@ -292,26 +355,18 @@ theorem exists_etaleChart_coord_add_smul (hV : IsAffineOpen V) (c : EtaleChart p
 theorem exists_etaleChart_update_coord_of_partialDeriv_notMem
     (hV : IsAffineOpen V) (c : EtaleChart p V n) {x : X} (hx : x ∈ V) (j₁ : Fin n)
     (x' : Γ(X, V)) :
-    letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
-    letI : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-    haveI : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-    haveI : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-      c.algebra_formallyEtale hV
-    EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₁) x' ∉
-        (hV.primeIdealOf ⟨x, hx⟩).asIdeal →
+    chartPartialDeriv hV c j₁ x' ∉ (hV.primeIdealOf ⟨x, hx⟩).asIdeal →
       ∃ (V' : X.Opens) (_ : IsAffineOpen V') (hV'V : V' ≤ V) (_ : x ∈ V')
         (c' : EtaleChart p V' n),
         c'.coord j₁ = (X.presheaf.map (homOfLE hV'V).op).hom x' ∧
           ∀ j : Fin n, j ≠ j₁ →
             c'.coord j = (X.presheaf.map (homOfLE hV'V).op).hom (c.coord j) := by
-  intro hpd0
+  intro hpd
   let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
   let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
   have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
   have instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
     c.algebra_formallyEtale hV
-  have hpd : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j₁) x' ∉
-      (hV.primeIdealOf ⟨x, hx⟩).asIdeal := hpd0
   have hk : algebraMap k Γ(X, V) = sectionsAlgebraMap k p V := algebraMap_sectionsAlgebra k p V
   have hcr : algebraMap (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) = c.coordRingHom :=
     c.algebraMap_eq_coordRingHom
@@ -336,43 +391,13 @@ theorem exists_etaleChart_update_coord_of_partialDeriv_notMem
   have hdet : ((EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n)) Γ(X, V)).det
       fun i : ULift.{u} (Fin n) => KaehlerDifferential.D k Γ(X, V) (w i)) ∉
         (hV.primeIdealOf ⟨x, hx⟩).asIdeal := by
-    rw [hwupd, det_update_eq_repr, ← EtaleCoordinates.partialDeriv_apply]
+    rw [hwupd, det_update_eq_repr]
     exact hpd
   obtain ⟨V', hV'aff, hle, hxV', c', hc'⟩ :=
     exists_etaleChart_restrict_coord_eq_of_jacobianDet_notMem hV c hx w hdet
   refine ⟨V', hV'aff, hle, hxV', c', ?_, fun j hjne => ?_⟩
   · rw [hc' j₁, hwj]
   · rw [hc' j, hwne j hjne]
-
-def chartPartialDeriv (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n)
-    (f : Γ(X, V)) : Γ(X, V) :=
-  letI _instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
-  letI _instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-  haveI _instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-  haveI _instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-    c.algebra_formallyEtale hV
-  EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) f
-
-omit [AlgebraicGeometry.Smooth p] in
-theorem chartPartialDeriv_eq (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n)
-    (f : Γ(X, V)) :
-    letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
-    letI : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-    haveI : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-    haveI : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-      c.algebra_formallyEtale hV
-    chartPartialDeriv hV c j f =
-      EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) f :=
-  rfl
-
-private theorem derivation_sum_apply {R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (D : ι → Derivation R A A) (a : A) :
-    (∑ i ∈ s, D i) a = ∑ i ∈ s, D i a := by
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert i s hi ih =>
-      rw [Finset.sum_insert hi, Finset.sum_insert hi]
-      simp [ih]
 
 omit [AlgebraicGeometry.Smooth p] in
 private theorem chartPartialDeriv_chainRule {W : X.Opens} (hW : IsAffineOpen W) {n₁ n₂ : ℕ}
@@ -381,125 +406,28 @@ private theorem chartPartialDeriv_chainRule {W : X.Opens} (hW : IsAffineOpen W) 
       ∑ i : Fin n₁, chartPartialDeriv hW c₂ j (c₁.coord i) * chartPartialDeriv hW c₁ i f := by
   classical
   let instk : Algebra k Γ(X, W) := sectionsAlgebra k p W
-  obtain ⟨D, hD⟩ : ∃ D : Derivation k Γ(X, W) Γ(X, W),
-      ∀ z : Γ(X, W), D z = chartPartialDeriv hW c₂ j z := by
-    let instc₂ : Algebra (MvPolynomial (ULift.{u} (Fin n₂)) k) Γ(X, W) := c₂.algebra
-    have instT₂ : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n₂)) k) Γ(X, W) :=
-      c₂.isScalarTower
-    have instFE₂ : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n₂)) k) Γ(X, W) :=
-      c₂.algebra_formallyEtale hW
-    exact ⟨EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n₂)) Γ(X, W) (ULift.up j),
-      fun _ => rfl⟩
+  let D := chartDerivation hW c₂ j
   let instc₁ : Algebra (MvPolynomial (ULift.{u} (Fin n₁)) k) Γ(X, W) := c₁.algebra
   have instT₁ : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n₁)) k) Γ(X, W) :=
     c₁.isScalarTower
   have instFE₁ : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n₁)) k) Γ(X, W) :=
     c₁.algebra_formallyEtale hW
-  have hcoord : ∀ i : ULift.{u} (Fin n₁),
-      EtaleCoordinates.coord k (ULift.{u} (Fin n₁)) Γ(X, W) i = c₁.coord i.down := by
-    rintro ⟨i⟩
-    exact c₁.etaleCoordinates_coord i
-  have hpd : ∀ i : ULift.{u} (Fin n₁),
-      EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n₁)) Γ(X, W) i f =
-        chartPartialDeriv hW c₁ i.down f := by
-    rintro ⟨i⟩
-    rfl
-  have hsum := EtaleCoordinates.eq_sum_smul_partialDeriv k (ULift.{u} (Fin n₁)) Γ(X, W) D
-  have happ : D f = ∑ i : ULift.{u} (Fin n₁),
-      D (EtaleCoordinates.coord k (ULift.{u} (Fin n₁)) Γ(X, W) i) *
-        EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n₁)) Γ(X, W) i f := by
-    conv_lhs => rw [hsum]
-    rw [derivation_sum_apply]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    simp
-  have hbij : Function.Bijective (fun i : ULift.{u} (Fin n₁) => i.down) := by
-    constructor
-    · rintro ⟨a⟩ ⟨b⟩ hab
-      exact congrArg ULift.up hab
-    · intro b
-      exact ⟨ULift.up b, rfl⟩
-  rw [← hD f, happ]
-  refine Fintype.sum_bijective (fun i : ULift.{u} (Fin n₁) => i.down) hbij _ _ ?_
-  intro i
-  rw [hcoord i, hpd i, hD]
-
-omit [AlgebraicGeometry.Smooth p] in
-private theorem chartPartialDeriv_coord_self (hV : IsAffineOpen V) (c : EtaleChart p V n)
-    (j : Fin n) : chartPartialDeriv hV c j (c.coord j) = 1 := by
-  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
-  let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-  have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-  have instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-    c.algebra_formallyEtale hV
-  have hcoord : EtaleCoordinates.coord k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) = c.coord j :=
-    c.etaleCoordinates_coord j
-  show EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) (c.coord j) = 1
-  rw [← hcoord]
-  exact EtaleCoordinates.partialDeriv_coord_self k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j)
-
-omit [AlgebraicGeometry.Smooth p] in
-private theorem chartPartialDeriv_coord_of_ne (hV : IsAffineOpen V) (c : EtaleChart p V n)
-    (j i : Fin n) (h : j ≠ i) : chartPartialDeriv hV c j (c.coord i) = 0 := by
-  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
-  let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-  have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-  have instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-    c.algebra_formallyEtale hV
-  have hcoord : EtaleCoordinates.coord k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up i) = c.coord i :=
-    c.etaleCoordinates_coord i
-  show EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) (c.coord i) = 0
-  rw [← hcoord]
-  refine EtaleCoordinates.partialDeriv_coord_of_ne k (ULift.{u} (Fin n)) Γ(X, V)
-    (ULift.up j) (ULift.up i) ?_
-  intro hcon
-  exact h (congrArg ULift.down hcon)
-
-omit [AlgebraicGeometry.Smooth p] in
-private theorem chartPartialDeriv_coord (hV : IsAffineOpen V) (c : EtaleChart p V n)
-    (j i : Fin n) :
-    chartPartialDeriv hV c j (c.coord i) = if i = j then (1 : Γ(X, V)) else 0 := by
-  by_cases h : i = j
-  · rw [if_pos h, ← h]
-    exact chartPartialDeriv_coord_self hV c i
-  · rw [if_neg h]
-    exact chartPartialDeriv_coord_of_ne hV c j i (fun hc => h hc.symm)
-
-omit [AlgebraicGeometry.Smooth p] in
-private theorem chartPartialDeriv_add_algebraMap_mul (hV : IsAffineOpen V) (c : EtaleChart p V n)
-    (j : Fin n) (a b : Γ(X, V)) (t : k) :
-    chartPartialDeriv hV c j (a + sectionsAlgebraMap k p V t * b) =
-      chartPartialDeriv hV c j a + sectionsAlgebraMap k p V t * chartPartialDeriv hV c j b := by
-  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
-  let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-  have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-  have instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-    c.algebra_formallyEtale hV
-  have hk : algebraMap k Γ(X, V) = sectionsAlgebraMap k p V := algebraMap_sectionsAlgebra k p V
-  have h3 : EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j)
-      (sectionsAlgebraMap k p V t) = 0 := by
-    rw [← hk]
-    simp
-  show EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j)
-      (a + sectionsAlgebraMap k p V t * b)
-    = EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) a
-      + sectionsAlgebraMap k p V t *
-        EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) b
-  simp [Derivation.leibniz, h3]
-
-omit [AlgebraicGeometry.Smooth p] in
-private theorem chartPartialDeriv_mul (hV : IsAffineOpen V) (c : EtaleChart p V n) (j : Fin n)
-    (a b : Γ(X, V)) :
-    chartPartialDeriv hV c j (a * b) =
-      a * chartPartialDeriv hV c j b + b * chartPartialDeriv hV c j a := by
-  let instk : Algebra k Γ(X, V) := sectionsAlgebra k p V
-  let instc : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-  have instT : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-  have instFormallyEtale : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-    c.algebra_formallyEtale hV
-  show EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) (a * b)
-    = a * EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) b
-      + b * EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) a
-  rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
+  let b := EtaleCoordinates.basisKaehler k (ULift.{u} (Fin n₁)) Γ(X, W)
+  let ω := KaehlerDifferential.D k Γ(X, W) f
+  have hsum := congrArg D.liftKaehlerDifferential (b.sum_repr ω)
+  change D f = _
+  calc
+    D f = ∑ i : ULift.{u} (Fin n₁), b.repr ω i • D.liftKaehlerDifferential (b i) := by
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [ω, map_sum, map_smul, Derivation.liftKaehlerDifferential_comp_D] using hsum.symm
+    _ = _ := by
+      refine Fintype.sum_bijective Equiv.ulift Equiv.ulift.bijective _ _ ?_
+      rintro ⟨i⟩
+      have hb : b (ULift.up i) = KaehlerDifferential.D k Γ(X, W) (c₁.coord i) :=
+        basisKaehler_apply_eq_D_coord c₁ (algebraMap_sectionsAlgebra k p W)
+          c₁.algebraMap_eq_coordRingHom i
+      rw [hb, Derivation.liftKaehlerDifferential_comp_D, smul_eq_mul, mul_comm]
+      rfl
 
 omit [AlgebraicGeometry.Smooth p] in
 private theorem chartPartialDeriv_chainRule_of_same_rank (hV : IsAffineOpen V)
@@ -661,17 +589,9 @@ theorem exists_unlabeled_index_partialDeriv_notMem_primeIdealOf
     (hxH : x ∈ H.support)
     (hxN : ∀ i : ℕ, ∀ hi : i < N.length, ∀ j : Fin n,
       γ i = some j → x ∈ (N[i]'hi).support) :
-    letI : Algebra k Γ(X, V) := sectionsAlgebra k p V
-    letI : Algebra (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.algebra
-    haveI : IsScalarTower k (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) := c.isScalarTower
-    haveI : Algebra.FormallyEtale (MvPolynomial (ULift.{u} (Fin n)) k) Γ(X, V) :=
-      c.algebra_formallyEtale hV
     ∃ j : Fin n, (∀ i : ℕ, i < N.length → γ i ≠ some j) ∧
-      EtaleCoordinates.partialDeriv k (ULift.{u} (Fin n)) Γ(X, V) (ULift.up j) g ∉
-        (hV.primeIdealOf ⟨x, hx⟩).asIdeal := by
+      chartPartialDeriv hV c j g ∉ (hV.primeIdealOf ⟨x, hx⟩).asIdeal := by
   classical
-  show ∃ j : Fin n, (∀ i : ℕ, i < N.length → γ i ≠ some j) ∧
-      chartPartialDeriv hV c j g ∉ (hV.primeIdealOf ⟨x, hx⟩).asIdeal
   by_contra hcon
   have hall : ∀ j : Fin n, (∀ i : ℕ, i < N.length → γ i ≠ some j) →
       chartPartialDeriv hV c j g ∈ (hV.primeIdealOf ⟨x, hx⟩).asIdeal := by

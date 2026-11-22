@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,7 @@ theorem con_evF_eq_evL [Finite (Fin (0 + 1) ⥤ C)] (T₀ : C) (ε : F.obj T₀ 
       Algebra.smul_def]
     rfl
   · intro u v hu hv
-    rw [map_add, hu, hv]
+    rw [map_add (f := _), hu, hv]
     exact (map_add (evL F T₀ T ε) _ _).symm
 
 theorem tmap_mp_id {T T' : C} (t : F.obj T ⊗[R] F.obj T') :
@@ -35,7 +39,7 @@ theorem tmap_mp_id {T T' : C} (t : F.obj T ⊗[R] F.obj T') :
   induction t using TensorProduct.induction_on with
   | zero => exact map_zero _
   | tmul x y => simp only [Algebra.TensorProduct.map_tmul, mp_id]
-  | add x y hx hy => rw [map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), hx, hy]
 
 theorem UU_evF [Finite (Fin (0 + 1) ⥤ C)] (T₀ : C) (ε : F.obj T₀ →ₐ[R] R) (n : ℕ) (w : Cn (box F) n) :
     UU F (evF F T₀ ε) n w = pulln (boxE F T₀ ε) n w := by

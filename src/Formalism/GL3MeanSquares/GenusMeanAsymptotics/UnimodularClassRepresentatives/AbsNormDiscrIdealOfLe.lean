@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ConjOMemConjIdeal
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ConjOMemConjIdeal
+
+@[expose] public section
 
 open NumberField Module
 
@@ -18,7 +22,8 @@ theorem det_update_sum {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Basis ι 
       (Matrix.transpose (b.toMatrix x)).updateRow i (∑ k, a k • Matrix.transpose (b.toMatrix x) k) := by
     ext r s
     rcases eq_or_ne r i with rfl | hr
-    · simp [Basis.toMatrix_apply, Matrix.updateRow_self, Finset.sum_apply, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [Basis.toMatrix_apply, Matrix.updateRow_self, Finset.sum_apply, map_sum, map_smul]
     · simp [Basis.toMatrix_apply, Matrix.updateRow_ne hr, Function.update_apply, hr]
   rw [e, Matrix.det_updateRow_sum, smul_eq_mul]
 
@@ -90,7 +95,7 @@ theorem step_le (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V →�
   set c₀ := c none with hc₀
   have hcδ : algebraMap (𝓞 K) K c₁ * b.det x =
       algebraMap (𝓞 K) K c₀ * b.det (Function.update x i y) + algebraMap (𝓞 K) K π * b.det x := by
-    rw [hc₁, map_add, add_mul, hrel]
+    rw [hc₁, map_add (f := _), add_mul, hrel]
   have hxk : ∀ k, k ≠ i → x k ∈ B := fun k _ => hxB k
   have huy := update_mem hxk S.mem
   obtain ⟨zyy, hyy⟩ := exists_mixed hB b huy huy
@@ -105,7 +110,7 @@ theorem step_le (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {h : V →�
   have heq : conjO K c₁ * c₁ * z = conjO K c₀ * c₀ * zyy + conjO K c₀ * π * zyx +
       conjO K π * c₀ * zxy + conjO K π * π * z := by
     apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-    simp only [map_add, map_mul, algebraMap_conjO, hz, hyy, hyx, hxy]
+    simp only [map_add (f := _), map_mul, algebraMap_conjO, hz, hyy, hyx, hxy]
     have h1 : star (algebraMap (𝓞 K) K c₁) * algebraMap (𝓞 K) K c₁ *
         (star (b.det x) * gdet h b * b.det x) =
         star (algebraMap (𝓞 K) K c₁ * b.det x) * gdet h b * (algebraMap (𝓞 K) K c₁ * b.det x) := by

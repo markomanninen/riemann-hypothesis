@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
-import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.MatrixOfBesselTwoSidedAction
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LowestKTypeMultiplicity
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf
 open scoped InnerProductSpace ContDiff
@@ -119,7 +123,7 @@ theorem dsig_add (hσ : IsURepOn (GG k r) σ) {a b : H} (ha : IsSmoothVec (k := 
     dsig σ Y (a + b) = dsig σ Y a + dsig σ Y b := by
   have h := (hasDeriv_dsig hσ ha hY).add (hasDeriv_dsig hσ hb hY)
   show deriv _ 0 = _
-  simp only [map_add]
+  simp only [map_add (f := _)]
   exact h.deriv
 
 theorem dsig_smul (hσ : IsURepOn (GG k r) σ) {a : H} (ha : IsSmoothVec (k := k) (r := r) σ a)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CompanionTheory.Ar.Fl
 
@@ -34,7 +38,7 @@ theorem exists_padicAlgCl_factor {K : Type} [Field K] [NumberField K] (κ : K �
             map_one' := hjinj (by rw [hf, map_one, map_one])
             map_mul' := fun a b => hjinj (by rw [hf, map_mul, map_mul, hf, hf])
             map_zero' := hjinj (by rw [hf, map_zero, map_zero])
-            map_add' := fun a b => hjinj (by rw [hf, map_add, map_add, hf, hf]) }, fun a => hf a⟩
+            map_add' := fun a b => hjinj (by rw [hf, map_add (f := _), map_add (f := _), hf, hf]) }, fun a => hf a⟩
 
 theorem norm_aeval_monomial_sub (x : PadicAlgCl p) (n : ℕ) (r : ℚ) (c : ℚ_[p]) :
     ‖aeval x (monomial n r) - aeval x (monomial n c)‖ = ‖(r : ℚ_[p]) - c‖ * ‖x‖ ^ n := by
@@ -62,7 +66,8 @@ theorem exists_rat_poly_approx (x y : PadicAlgCl p) (e : ℚ_[p][X]) {ε : ℝ} 
       δ * ∑ i ∈ Finset.range N, ‖z‖ ^ i := by
     intro z
     conv_lhs => rw [e.as_sum_range' N hN]
-    rw [map_sum, map_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, ← Finset.sum_sub_distrib, Finset.mul_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [norm_aeval_monomial_sub, norm_sub_rev]
     exact mul_le_mul_of_nonneg_right (hr i).le (by positivity)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AdelicU GlobalTheory.OpTrace NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.AutomorphicL2Unitary (IsTopIrreducible)
@@ -19,16 +23,7 @@ theorem repOp_congr {π : H →* (V →L[ℂ] V)} {π' : H' →* (V →L[ℂ] V)
   by_cases hT : ∃ T, IsRepOp π μ f T
   · obtain ⟨T, hT⟩ := hT
     rw [hT.repOp_eq, ((h T).1 hT).repOp_eq]
-  · rw [repOp, repOp, dif_neg hT, dif_neg fun ⟨T, h'⟩ => hT ⟨T, (h T).2 h'⟩]
-
-theorem repOp_smul_measure (π : H →* (V →L[ℂ] V)) (μ : Measure H) (f : H → ℂ) {c : ℝ≥0} (hc : c ≠ 0) :
-    repOp π (c • μ) f = repOp π μ ((c : ℂ) • f) := by
-  refine repOp_congr fun T => forall_congr' fun v => ?_
-  simp only [Pi.smul_apply, smul_assoc]
-  refine and_congr ?_ ?_
-  · rw [show c • μ = (c : ℝ≥0∞) • μ from rfl, integrable_smul_measure (by simpa using hc) ENNReal.coe_ne_top]
-    exact (integrable_fun_smul_iff (by simpa using hc) _).symm
-  · rw [integral_smul_nnreal_measure, integral_smul, NNReal.smul_def, Complex.coe_smul]
+  · rw [repOp, repOp, dite_eq_right hT, dite_eq_right fun ⟨T, h'⟩ => hT ⟨T, (h T).2 h'⟩]
 
 theorem IsUnitEquiv.symm {π : H →* (V →L[ℂ] V)} {π' : H →* (W →L[ℂ] W)} (h : IsUnitEquiv π π') :
     IsUnitEquiv π' π := by
@@ -65,8 +60,8 @@ theorem IsUnitEquiv.hasTrace {π : H →* (V →L[ℂ] V)} {π' : H →* (W →L
     rw [(isRepOp_conj A hA hT).repOp_eq]
     exact ⟨ht.1.comp_comp _ _, (ht.1.trace_conj _).trans ht.2⟩
   · obtain ⟨A, hA⟩ := h.symm
-    rw [repOp, dif_neg hT] at ht
-    rw [repOp, dif_neg fun ⟨T, h'⟩ => hT ⟨_, isRepOp_conj A hA h'⟩]
+    rw [repOp, dite_eq_right hT] at ht
+    rw [repOp, dite_eq_right fun ⟨T, h'⟩ => hT ⟨_, isRepOp_conj A hA h'⟩]
     exact ⟨isTraceClass_zero, trace_zero.trans (trace_zero.symm.trans ht.2)⟩
 
 end Operators
@@ -76,14 +71,6 @@ section Transport
 variable {H H' n V W : Type} [Group H] [Group H'] [TopologicalSpace H] [TopologicalSpace H'] [Fintype n]
   [DecidableEq n] [NormedAddCommGroup V] [InnerProductSpace ℂ V] [NormedAddCommGroup W] [InnerProductSpace ℂ W]
   (e : H ≃ₜ* H') {ι : H →* Matrix n n ℂ} {ι' : H' →* Matrix n n ℂ} {a : Matrix n n ℂ}
-
-theorem IsBiFinite.comp {K' : Subgroup H'} {f' : H' → ℂ} (h : IsBiFinite K' f') :
-    IsBiFinite (K'.comap (e : H →* H')) (f' ∘ e) := by
-  haveI : FiniteDimensional ℂ _ := h
-  refine Submodule.finiteDimensional_of_le (S₂ := Submodule.map (LinearMap.funLeft ℂ ℂ e)
-    (Submodule.span ℂ {φ : H' → ℂ | ∃ k ∈ K', ∃ k' ∈ K', φ = fun g => f' (k * g * k')})) (Submodule.span_le.2 ?_)
-  rintro _ ⟨k, hk, k', hk', rfl⟩
-  exact ⟨_, Submodule.subset_span ⟨e k, hk, e k', hk', rfl⟩, funext fun g => by simp [LinearMap.funLeft]⟩
 
 variable {e}
 
@@ -107,8 +94,8 @@ theorem isRegSS_conj_iff (ha : IsUnit a) (hι : ∀ g, ι' (e g) = a * ι g * a�
   rw [IsRegSS, IsRegSS, hι, Matrix.charpoly_mul_comm,
     Matrix.nonsing_inv_mul_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 ha)]
 
-variable (e) in
 
+variable (e) in
 theorem isCompact_cent_iff (s : H) : IsCompact (cent (e s) : Set H') ↔ IsCompact (cent s : Set H) := by
   rw [isCompact_iff_compactSpace, isCompact_iff_compactSpace]
   exact ⟨fun _ => (centEquiv e s rfl).toHomeomorph.symm.compactSpace,
@@ -188,63 +175,11 @@ variable {H n V W : Type} [Group H] [TopologicalSpace H] [Fintype n] [DecidableE
   [InnerProductSpace ℂ V] [NormedAddCommGroup W] [InnerProductSpace ℂ W] [MeasurableSpace H]
   {ι : H →* Matrix n n ℂ} {μ : Measure H} {c : ℝ≥0}
 
-omit [TopologicalSpace H] in
-
-theorem isTempered_smul_iff (hc : c ≠ 0) {π : H →* (V →L[ℂ] V)} : IsTempered (c • μ) π ↔ IsTempered μ π :=
-  exists_congr fun _ => and_congr_right fun _ => forall₂_congr fun _ _ =>
-    integrable_smul_measure (c := c) (by simpa using hc) ENNReal.coe_ne_top
 
 variable [CompleteSpace V] [CompleteSpace W]
 
-theorem IsCharFn.smul_measure (hc : c ≠ 0) {π : H →* (V →L[ℂ] V)} {Θ : H → ℂ} (h : IsCharFn ι μ π Θ) :
-    IsCharFn ι (c • μ) π Θ := by
-  refine ⟨fun x => ?_, h.2.1, fun f hf => ?_⟩
-  · obtain ⟨s, hs, hi⟩ := h.1 x
-    refine ⟨s, hs, ?_⟩
-    rw [IntegrableOn, Measure.restrict_smul]
-    exact hi.smul_measure_nnreal
-  · have := h.2.2 _ ((CcMat ι).smul_mem (c : ℂ) hf)
-    rw [repOp_smul_measure _ _ _ hc, integral_smul_nnreal_measure]
-    simpa [mul_assoc, integral_const_mul, NNReal.smul_def] using this
-
-theorem IsCharFn.of_isUnitEquiv {π : H →* (V →L[ℂ] V)} {π' : H →* (W →L[ℂ] W)} (hπ : IsUnitEquiv π π') {Θ : H → ℂ}
-    (h : IsCharFn ι μ π Θ) : IsCharFn ι μ π' Θ := ⟨h.1, h.2.1, fun f hf => hπ.hasTrace (h.2.2 f hf)⟩
-
-theorem IsPseudoCoeff.of_isUnitEquiv {D : H →* (V →L[ℂ] V)} {D' : H →* (W →L[ℂ] W)} (hD : IsUnitEquiv D D')
-    {f : H → ℂ} (h : IsPseudoCoeff ι μ D f) : IsPseudoCoeff ι μ D' f := by
-  obtain ⟨Θ, hΘ, hO⟩ := h.orb_compact
-  exact ⟨h.mem, hD.hasTrace h.trace_self,
-    fun U _ _ _ π h1 h2 h3 h4 => h.trace_other U π h1 h2 h3 fun h5 => h4 (h5.trans hD), h.orb_noncompact,
-    Θ, hΘ.of_isUnitEquiv hD, hO⟩
-
 variable [BorelSpace H] [IsTopologicalGroup H] [SecondCountableTopology H] [LocallyCompactSpace H] [T2Space H]
   [μ.IsHaarMeasure]
-
-theorem HasOrbInt.smul_measure {γ : H} {dt : Measure (cent γ)} [dt.IsHaarMeasure] [dt.IsMulRightInvariant]
-    {f : H → ℂ} {x : ℂ} (h : HasOrbInt μ γ dt f x) (c : ℝ≥0) : HasOrbInt (c • μ) γ dt f (c * x) := by
-  refine ⟨?_, (orbInt_smul_left c).trans (congrArg _ h.2)⟩
-  rw [show c • μ = (c : ℝ≥0∞) • μ from rfl, quotMeas_smul_left (isClosed_cent γ)]
-  exact h.1.smul_measure ENNReal.coe_ne_top
-
-theorem IsPseudoCoeff.smul_measure (hc : c ≠ 0) {D : H →* (V →L[ℂ] V)} {f : H → ℂ} (h : IsPseudoCoeff ι μ D f) :
-    IsPseudoCoeff ι (c • μ) D ((c : ℂ)⁻¹ • f) := by
-  have hc' : (c : ℂ) ≠ 0 := by simpa using hc
-  obtain ⟨Θ, hΘ, hO⟩ := h.orb_compact
-  refine ⟨(CcMat ι).smul_mem _ h.mem, ?_, fun U _ _ _ π h1 h2 h3 h4 => ?_, fun s hs hT dt _ _ => ?_,
-    Θ, hΘ.smul_measure hc, fun s hs hT dt _ _ => ?_⟩
-  · rw [repOp_smul_measure _ _ _ hc, smul_inv_smul₀ hc']
-    exact h.trace_self
-  · rw [repOp_smul_measure _ _ _ hc, smul_inv_smul₀ hc']
-    exact h.trace_other U π h1 h2 ((isTempered_smul_iff hc).1 h3) h4
-  · simpa using ((h.orb_noncompact s hs hT dt).smul (c : ℂ)⁻¹).smul_measure c
-  · simpa only [mul_inv_cancel_left₀ hc'] using ((hO s hs hT dt).smul (c : ℂ)⁻¹).smul_measure c
-
-theorem IsPseudoCoeff.exists_smul {D : H →* (V →L[ℂ] V)} {f : H → ℂ} (h : IsPseudoCoeff ι μ D f) (ν : Measure H)
-    [ν.IsHaarMeasure] : ∃ c : ℝ≥0, c ≠ 0 ∧ IsPseudoCoeff ι ν D ((c : ℂ)⁻¹ • f) := by
-  have hc := (Measure.haarScalarFactor_pos_of_isHaarMeasure ν μ).ne'
-  refine ⟨_, hc, ?_⟩
-  have := h.smul_measure hc
-  rwa [← Measure.isMulLeftInvariant_eq_smul ν μ] at this
 
 end Scaling
 
@@ -294,31 +229,12 @@ def frameEquiv (ρ : D.what₂.Tau) : GArch D.sp.cm.sig V.gram (placeOf D ρ) �
 theorem ujMat_frameEquiv_eq_conj (ρ : D.what₂.Tau) (g : GArch D.sp.cm.sig V.gram (placeOf D ρ)) :
     ujMat (M.ε ρ) (frameEquiv M ρ g) = M.fr ρ * matAt V ρ g * (M.fr ρ)⁻¹ := rfl
 
-theorem dsRep_eq_comp (ρ : D.what₂.Tau) :
-    dsRep M ρ = (ujRep (M.ds ρ).2.2.1).comp (frameEquiv M ρ : _ →* Formalism.REAL.UJ (M.ε ρ)) := rfl
-
 theorem isPseudoCoeff_dsRep_iff (ρ : D.what₂.Tau) (μ : Measure (GArch D.sp.cm.sig V.gram (placeOf D ρ)))
     [μ.IsHaarMeasure] (f : Formalism.REAL.UJ (M.ε ρ) → ℂ) : haveI := (M.ds ρ).1
     IsPseudoCoeff (ujMat (M.ε ρ)) (μ.map (frameEquiv M ρ)) (ujRep (M.ds ρ).2.2.1) f ↔
       IsPseudoCoeff (matAt V ρ) μ (dsRep M ρ) (f ∘ frameEquiv M ρ) :=
   haveI := (M.ds ρ).1
   isPseudoCoeff_map_iff (M.fr_unit ρ) (ujMat_frameEquiv_eq_conj M ρ)
-
-theorem exists_isTestArchG
-    (h : ∀ ρ, haveI := (M.ds ρ).1
-      ∃ (μ : Measure (Formalism.REAL.UJ (M.ε ρ))) (_ : μ.IsHaarMeasure) (f : Formalism.REAL.UJ (M.ε ρ) → ℂ),
-        IsPseudoCoeff (ujMat (M.ε ρ)) μ (ujRep (M.ds ρ).2.2.1) f)
-    (μa : ∀ w, Measure (GArch D.sp.cm.sig V.gram w)) [∀ w, (μa w).IsHaarMeasure] : ∃ fa, IsTestArchG M μa fa := by
-  have h1 : ∀ ρ, haveI := (M.ds ρ).1
-      ∃ f, IsPseudoCoeff (matAt V ρ) (μa (placeOf D ρ)) (dsRep M ρ) f := fun ρ => by
-    haveI := (M.ds ρ).1
-    obtain ⟨μ, _, f, hf⟩ := h ρ
-    obtain ⟨c, -, hc⟩ := hf.exists_smul ((μa (placeOf D ρ)).map (frameEquiv M ρ))
-    exact ⟨_, (isPseudoCoeff_dsRep_iff M ρ _ _).1 hc⟩
-  choose f hf using h1
-  let p := Equiv.ofBijective _ (placeOf_bijective D)
-  refine ⟨Equiv.piCongrLeft (fun w => GArch D.sp.cm.sig V.gram w → ℂ) p f, fun ρ => ?_⟩
-  exact (Equiv.piCongrLeft_apply_apply (fun w => GArch D.sp.cm.sig V.gram w → ℂ) p f ρ).symm ▸ hf ρ
 
 end Record
 

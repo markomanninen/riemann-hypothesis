@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjDegGenDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRankOfSections
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertPrime
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertDimZero
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertIncrement
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMixedNumberPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PModulesFromPrimes
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedFiltration
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFiltrationHilbSum
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegLTGrowth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjDegGenDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRankOfSections
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertPrime
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertDimZero
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PHilbertIncrement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMixedNumberPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PModulesFromPrimes
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedFiltration
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFiltrationHilbSum
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PDegLTGrowth
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Swarm

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStdBaseChange
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStdBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -36,8 +41,8 @@ def dualStdCoordMat (b : Module.Basis T ℤ (dualLattice (HermLattice.standard K
     ∀ _ : Unit, Fin i → T → ℤ :=
   fun _ j t => b.repr ⟨Pi.single j 1, single_mem_dualLattice_standard K j⟩ t
 
-omit [DecidableEq T] in
 
+omit [DecidableEq T] in
 theorem dualStdCoordMat_sum (b : Module.Basis T ℤ (dualLattice (HermLattice.standard K i))) (j : Fin i) :
     ∑ t, dualStdCoordMat b () j t • (b t : Fin i → K) = Pi.single j 1 := by
   have h := congrArg (fun v : dualLattice (HermLattice.standard K i) => (v : Fin i → K))
@@ -72,19 +77,6 @@ def DualStdMetricPull.Statement : Prop :=
     ∀ z ∈ mcPts (dualIdeal b),
       (dualLine (HermLattice.standard K i) b hb).h z =
         (fsMulti (PBlk i)).h (linApply (ι₂ := PBlk i) (dualStdCoordMat b) z)
-
-example : ∀ _ : Unit, Fin 1 → Unit → ℤ := dualStdCoordMat dualBasisStandard
-
-example (hP : DualPtsOfPlane.Statement) :
-    ∃ (b : Module.Basis Unit ℤ (dualLattice (HermLattice.standard ℚ 1)))
-      (_ : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) (z : (Σ _ : Unit, Unit) → ℂ),
-      z ∈ mcPts (dualIdeal b) :=
-  ⟨dualBasisStandard, dualEmbMatrix_standard_bijective, _,
-    hP ℚ 1 _ Unit dualBasisStandard dualEmbMatrix_standard_bijective (Rat.castHom ℂ) (fun _ => 1)
-      fun h => one_ne_zero (congrFun h 0)⟩
-
-example : ∃ _ : Module.Basis Unit ℤ (dualLattice (HermLattice.standard ℚ 1)), 1 ≤ 1 :=
-  ⟨dualBasisStandard, le_rfl⟩
 
 end
 

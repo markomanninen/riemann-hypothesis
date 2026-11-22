@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.KeyThree
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.CuspidalAverages.KeyThree
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,7 +95,8 @@ theorem count (h : IsUnif ϖ) {M : Type} (l : (M → ℂ) →ₗ[ℂ] ℂ) (S S'
     · rw [Set.indicator_of_notMem hY, Finset.sum_eq_zero]
       intro ρ hρ
       exact Set.indicator_of_notMem (fun hm => hY ((h2 ρ (hR ρ hρ) Y).1 hm).1) _
-  rw [this, map_sum, Finset.sum_congr rfl fun ρ hρ => h3 ρ (hR ρ hρ), Finset.sum_const, hc, nsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum, Finset.sum_congr rfl fun ρ hρ => h3 ρ (hR ρ hρ), Finset.sum_const, hc, nsmul_eq_mul]
 
 def Box (ϖ : kˣ) (e : Fin n → Fin d → ℤ) : Set (Matrix (Fin n) (Fin d) k) := {Y | ∀ x y, Le ϖ (e x y) (Y x y)}
 

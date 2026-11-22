@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RightIdealImageOfSurjective
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.SplitFibre
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RightIdealImageOfSurjective
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.SplitFibre
+
+@[expose] public section
 
 open Finset Classical
 
@@ -22,11 +26,11 @@ theorem splitPts : StatSplitPts := by
     rw [h]; exact Polynomial.monic_prod_of_monic _ _ fun i _ => Polynomial.monic_X_sub_C _
   have hdegP : ∀ x, (P x).natDegree = t := fun x => by
     obtain ⟨α, -, h⟩ := hPr x
-    rw [h, Polynomial.natDegree_finset_prod_X_sub_C_eq_card]; simp
+    rw [h, Polynomial.natDegree_finsetProd_X_sub_C_eq_card]; simp
   let PT : Polynomial T := ∑ k ∈ range (t + 1), Polynomial.monomial k ⟨fun x => (P x).coeff k, hPc k⟩
   have hcoef : ∀ k, PT.coeff k = if k ≤ t then ⟨fun x => (P x).coeff k, hPc k⟩ else 0 := by
     intro k
-    simp only [PT, Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq',
+    simp only [PT, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply, Finset.sum_ite_eq',
       Finset.mem_range, Nat.lt_succ_iff]
   have hmap : ∀ x, PT.map (evT x) = P x := by
     intro x
@@ -99,7 +103,8 @@ theorem splitPts : StatSplitPts := by
     obtain ⟨z, rfl⟩ := hrange f' hf'
     refine ⟨fun k => (bas.repr z k).1, fun k => (bas.repr z k).2, ?_⟩
     conv_lhs => rw [← bas.sum_repr z]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Algebra.smul_def, map_mul, hΨa]
   · intro x a ha
@@ -148,7 +153,8 @@ theorem splitPts : StatSplitPts := by
           rw [hψ2, hσ])
         exact fun z => DFunLike.congr_fun h12 z
       have h4 := congrArg ι (ha y rfl)
-      rw [map_sum, map_zero] at h4
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h4
       rw [← h4]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [hφy, map_mul]

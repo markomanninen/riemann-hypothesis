@@ -1,6 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.AlgCechSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -177,7 +182,7 @@ theorem cechD_apply (n : ℕ) (φ : KH.CechC S ι M n) (I : KH.Cell K ι (n + 1)
     rw [dif_pos h, if_pos h']
     exact congrArg (KH.faceSign I.1 k i • ·) (key _ _ e h)
   · have h' : ¬((∀ l, (rem I.1 ⟨k, i⟩ l).Nonempty) ∧ ∑ l, ((rem I.1 ⟨k, i⟩ l).card - 1) = n) := e ▸ h
-    rw [dif_neg h, if_neg h']
+    rw [dite_eq_right h, if_neg h']
     rfl
 
 theorem val_cechD (n : ℕ) (φ : KH.CechC S ι M n) (X : ∀ k, Finset (ι k))
@@ -218,8 +223,9 @@ theorem step (n : ℕ) (φ : KH.CechC S ι M n) (I : ∀ k, Finset (ι k))
         sg I p • KH.cellRes S M (rem I p) I (val S M (n + 1) (KH.cechD S ι M n φ) (rem I p)) else 0) =
       ∑ q ∈ Finset.univ.sigma I, pairTerm S M n φ I p q := by
   by_cases h : (∀ l, (rem I p l).Nonempty) ∧ ∑ l, ((rem I p l).card - 1) = n + 1
-  · rw [if_pos h, val_cechD S M n φ _ h, map_sum, ← Finset.sum_zsmul, sigma_rem,
-      ← Finset.sum_erase (Finset.univ.sigma I) (pairTerm_self S M n φ I hI hp)]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [if_pos h, val_cechD S M n φ _ h, map_sum, ← Finset.sum_zsmul, sigma_rem,
+        ← Finset.sum_erase (Finset.univ.sigma I) (pairTerm_self S M n φ I hI hp)]
     refine Finset.sum_congr rfl fun q _ => ?_
     unfold pairTerm
     by_cases h' : (∀ l, (rem (rem I p) q l).Nonempty) ∧ ∑ l, ((rem (rem I p) q l).card - 1) = n

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix IsLocalRing
 
@@ -124,7 +128,8 @@ theorem card_quot_range_toLin_clean {ι : Type*} [Fintype ι] [DecidableEq ι] (
         have h3 := congrFun hCvb m
         rw [Pi.zero_apply] at h3
         rw [← h3]
-        simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hvlift]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hvlift]
       rw [IsLocalRing.residue_eq_zero_iff, hmax, Ideal.mem_span_singleton] at h1
       exact h1
     choose c hc using hdiv
@@ -162,10 +167,5 @@ theorem card_quot_range_toLin_clean {ι : Type*} [Fintype ι] [DecidableEq ι] (
       card_quot_range_of_isUnit_det P (by rw [hdetP]; exact hunit), one_mul,
       card_quot_range_scaleAt ϖ hϖ i0, ih C' _ hdetC'] at e1
     rw [← e1, pow_succ']
-
-example {ι : Type*} [Fintype ι] [DecidableEq ι] (ϖ : O) (hϖ : Irreducible ϖ) (j : ι) :
-    Nat.card ((ι → O) ⧸ LinearMap.range (Matrix.toLin' (scaleAt j ϖ))) =
-      Nat.card (IsLocalRing.ResidueField O) ^ 1 :=
-  card_quot_range_toLin_clean ϖ hϖ (scaleAt j ϖ) 1 1 (by rw [det_scaleAt]; simp)
 
 end DVRLatticeIndex

@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateCommuteRaisingConstant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGQQSSFCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormalFormOrderZeroOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CoordinateCommuteRaisingConstant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCRadSpSmooth
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 
@@ -46,7 +50,8 @@ theorem pj_mul_ne {ρ σ : M.Ty P} (h : ρ ≠ σ) : pj κ ρ * pj κ σ = 0 := 
 
 theorem sum_pj : ∑ ρ, pj κ ρ = 1 := by
   unfold pj
-  rw [← map_sum, ← map_one κ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← map_one κ]
   congr 1
   funext σ
   simp [Finset.sum_apply]
@@ -154,7 +159,7 @@ private theorem lo_le_rho_and_rho_le_hi (hP : P.OK) {m : ℕ} (h1 : 1 ≤ m) (h2
       _ ≤ P.hi m - P.lo m := Nat.floor_le (by linarith)
   have h0 : (0 : ℝ) ≤ (((ρ ⟨m - 1, by omega⟩ : Fin _) : ℕ) : ℝ) := Nat.cast_nonneg _
   unfold M.rho
-  rw [dif_pos ⟨h1, h2⟩]
+  rw [dite_eq_left ⟨h1, h2⟩]
   constructor <;> linarith
 
 private theorem hi_succ_lt_lo (m : ℕ) : P.hi (m + 1) < P.lo m := by

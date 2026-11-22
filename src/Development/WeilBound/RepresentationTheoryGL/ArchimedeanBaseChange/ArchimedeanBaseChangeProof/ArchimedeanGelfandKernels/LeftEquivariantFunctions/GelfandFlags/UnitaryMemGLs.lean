@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.GelfandFlags.IntSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,8 @@ theorem vcOf_of (hIS : IntSmooth) (hVK : VCKer) : VCOf := by
   have hpt : (fun u : N => phiOf E T k (u * d)) = fun u : N => ∑ i, c i * phiOf E T (ks i) (u * d) := by
     funext u
     show trT T (k ((u : G n) * d).val) = ∑ i, c i * trT T (ks i ((u : G n) * d).val)
-    rw [hsum _ (mem_GLs _), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum _ (mem_GLs _), map_sum]
     simp only [map_smul, smul_eq_mul]
   rw [hpt, integral_finsetSum _ fun i _ => (key i).1.const_mul (c i)]
   simp only [integral_const_mul, (key _).2, mul_zero, Finset.sum_const_zero]

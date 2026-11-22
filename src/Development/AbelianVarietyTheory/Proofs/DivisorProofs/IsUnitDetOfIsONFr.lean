@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
-import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PerCEmb
+public import Formalism.LocalToGlobal.IndefiniteReal.ThPinsR
+
+@[expose] public section
+
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh
 open GlobalTheory.SW hiding Level IsSB
@@ -91,7 +96,7 @@ theorem isUnit_det_of_isONFr {E : Type} [Field E] [NumberField E] [IsCMField E] 
     (x : Frame X.Ψ r) (h : IsONFr X x) (τ : X.Ψ) : IsUnit (mat x τ).det := by
   have e : FD.gram τ.1 X.Gm (mat x τ) = (mat x τ)ᵀ * (X.Gm.map τ.1 * (mat x τ).map conj) := by
     ext a b
-    simp only [FD.gram, hermC, FD.col, of_apply, mul_apply, transpose_apply, map_apply, Finset.mul_sum, mul_assoc]
+    simp only [FD.gram, hermC, FD.col, of_apply, Matrix.mul_apply, transpose_apply, map_apply, Finset.mul_sum, mul_assoc]
   have d := congrArg det (e.symm.trans (h τ))
   rw [det_mul, det_transpose, sgnM, det_diagonal] at d
   refine isUnit_iff_ne_zero.2 (left_ne_zero_of_mul (d ▸ Finset.prod_ne_zero_iff.2 fun a _ => ?_))
@@ -123,7 +128,7 @@ theorem perC_block {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} 
   · simp only [ha, if_true]
     have : hermC τ.1 X.Gm (FD.col (mat x τ * b) a) (u τ) =
         ∑ c, b c a * hermC τ.1 X.Gm (FD.col (mat x τ) c) (u τ) := by
-      simp only [hermC, FD.col, mul_apply, Finset.mul_sum, Finset.sum_mul]
+      simp only [hermC, FD.col, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]
       rw [Finset.sum_congr rfl fun i _ => Finset.sum_comm, Finset.sum_comm]
       refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
     rw [this]

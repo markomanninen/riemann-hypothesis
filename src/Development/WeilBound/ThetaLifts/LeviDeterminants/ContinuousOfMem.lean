@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowLine
-import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowSplit
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowLine
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.GrowSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,7 @@ theorem nsq_lt_top {μ : @Measure (κ → AF F) (borel _)} (hμ : IsHaar μ) {Φ
     haveI := volume_isAddHaar F κ
     haveI := borelV (F := F) (κ := κ)
     refine nsq_pure_lt_top hμ f.continuous ?_ hg
-    have := (f.memLp 2 (volume : Measure (V F κ))).2
+    have := f.memLp 2 (volume : Measure (V F κ))
     have h2 := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (by simp) (by simp) this
     simpa using h2
   | zero => simp [nsq]

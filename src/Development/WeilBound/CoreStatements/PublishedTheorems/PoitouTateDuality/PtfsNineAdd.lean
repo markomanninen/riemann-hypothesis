@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsAddTransfer
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDefs
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsAddTransfer
+
+@[expose] public section
 
 noncomputable section
 

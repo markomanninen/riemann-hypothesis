@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.DivisorInequality.StatementObj
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.KappaNormalise
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.TransferMean
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.StepDiii
-import Formalism.ThetaSupremumBounds.GaussianShiftBounds.Assembly
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjugateWeightLatticeOfGeneral
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.PlaceSumSquares
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DualMu
-import Formalism.MeanHeightDescent.AverageDegreeBounds.CovolumeAssemblyHolds
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsGlobalForm
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+module
+
+public import Mathlib
+public import Formalism.DivisorInequality.StatementObj
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.KappaNormalise
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.TransferMean
+public import Formalism.BranchSandwichDivisors.StatementR
+public import Formalism.LogFactorialIndices.StatementSize
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ConjugateWeightLatticeOfGeneral
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.PlaceSumSquares
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.DualMu
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.CovolumeAssemblyHolds
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.LocalConditionsGlobalForm
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Finset
 open scoped Matrix ComplexOrder
@@ -62,8 +66,7 @@ theorem slope_bounds : BoundsMu := by
     Finset.sum_congr rfl (fun j _ => hs3 j)
   rw [hF] at hch
   refine ⟨?_, fun j => ?_⟩
-  · rw [dual_lattice_measure K D hD XE hXE R hR]
-    exact hch
+  · simpa only [dual_lattice_measure K D hD XE hXE R hR] using hch
   · rw [Formalism.ExtensionFiltration.log_covolume_slope_mu K D hD (XW j) (hXW j) (M j) (hM j)]
     have : (D : ℝ) ≠ 0 := by exact_mod_cast hD.ne'
     field_simp

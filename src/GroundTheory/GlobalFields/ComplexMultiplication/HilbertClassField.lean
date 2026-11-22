@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -11,10 +16,10 @@ open NumberField IsDedekindDomain Module IntermediateField WeierstrassCurve Grou
 open scoped nonZeroDivisors
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 omit [NumberField K] in
-
 theorem mem_fixingSubgroup_adjoin_simple_iff {F E : Type*} [Field F] [Field E] [Algebra F E]
     (α : E) (τ : E ≃ₐ[F] E) : τ ∈ (F⟮α⟯).fixingSubgroup ↔ τ α = α := by
   constructor
@@ -28,8 +33,8 @@ theorem mem_fixingSubgroup_adjoin_simple_iff {F E : Type*} [Field F] [Field E] [
       exact (Subgroup.zpowers_le.2 hst) hf
     exact (le_iff_le _ _).1 hle (Subgroup.mem_zpowers τ)
 
-include hK in
 
+include hK in
 theorem adjoin_j_eq_hilbertClassField (x : ELL K) : K⟮ELL.j x⟯ = hilbertClassField K ℂ := by
   classical
   obtain ⟨L, hHL, hLfin, hLgal, hL, E, hEl, hE, hiso⟩ :=
@@ -58,15 +63,15 @@ theorem adjoin_j_eq_hilbertClassField (x : ELL K) : K⟮ELL.j x⟯ = hilbertClas
   have h := congrArg lift hJH
   rwa [lift_adjoin_simple, lift_restrict] at h
 
-include hK in
 
+include hK in
 theorem adjoin_j_curve_eq_hilbertClassField (E : CMCurve K) :
     K⟮E.curve.j⟯ = hilbertClassField K ℂ := by
   rw [← ELL.j_toEll]
   exact adjoin_j_eq_hilbertClassField hK E.toEll
 
-include hK in
 
+include hK in
 theorem j_mem_hilbertClassField (x : ELL K) : ELL.j x ∈ hilbertClassField K ℂ := by
   rw [← adjoin_j_eq_hilbertClassField hK x]
   exact mem_adjoin_simple_self K _
@@ -84,21 +89,21 @@ theorem hilbertClassFieldArtinEquiv_apply_j (a : ClassGroup (𝓞 K)) (y : ELL K
   rw [← hτ, galRestrict_apply, ← hcls, ← galClassOf_apply_j hK L hL τ y]
   rfl
 
-include hK in
 
+include hK in
 theorem j_weierstrassCurve_mem_hilbertClassField (Λ : PeriodPair)
-    (hΛ : latticeEnd Λ = cmRing (algebraMap K ℂ)) :
+    (hΛ : periodLatticeEnd Λ = cmRingOfEmbedding (algebraMap K ℂ)) :
     (weierstrassCurve Λ).j ∈ hilbertClassField K ℂ :=
   j_mem_hilbertClassField hK (ellOf (algebraMap K ℂ) Λ hΛ)
 
 theorem hilbertClassFieldArtinEquiv_apply_j_weierstrassCurve (Λ Λ' : PeriodPair)
-    (hΛ : latticeEnd Λ = cmRing (algebraMap K ℂ)) (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
+    (hΛ : periodLatticeEnd Λ = cmRingOfEmbedding (algebraMap K ℂ)) (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
     (h : Λ'.lattice = idealLattice (algebraMap K ℂ) ↑𝔞⁻¹ * Λ.lattice) :
     ((hilbertClassFieldArtinEquiv K ℂ (ClassGroup.mk K 𝔞)
         ⟨(weierstrassCurve Λ).j, j_weierstrassCurve_mem_hilbertClassField hK Λ hΛ⟩ :
         hilbertClassField K ℂ) : ℂ) = (weierstrassCurve Λ').j := by
   obtain ⟨L'', hL''lat, hL''⟩ := exists_lattice_mul (algebraMap K ℂ) hK Λ hΛ 𝔞
-  have hΛ' : latticeEnd Λ' = cmRing (algebraMap K ℂ) := by
+  have hΛ' : periodLatticeEnd Λ' = cmRingOfEmbedding (algebraMap K ℂ) := by
     rw [← hL'']
     ext α
     show (∀ l ∈ Λ'.lattice, α * l ∈ Λ'.lattice) ↔ ∀ l ∈ L''.lattice, α * l ∈ L''.lattice

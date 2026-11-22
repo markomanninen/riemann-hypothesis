@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CoprodPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CoprodPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -25,12 +29,7 @@ theorem cochain_ext {n : ℤ} {x y : Cochain c.pt L n}
 def cof (L : CochainComplex C ℤ) {n : ℤ} (b : ∀ j, Cochain (K j) L n) (p q : ℤ) (hpq : p + n = q) :
     Cocone (Discrete.functor K ⋙ HomologicalComplex.eval C (ComplexShape.up ℤ) p) where
   pt := L.X q
-  ι :=
-    { app := fun k => (b k.as).v p q hpq
-      naturality := by
-        rintro ⟨i⟩ ⟨k⟩ ⟨⟨h⟩⟩
-        cases h
-        exact (Category.id_comp _).trans (Category.comp_id _).symm }
+  ι := Discrete.natTrans fun k => (b k.as).v p q hpq
 
 def glue (hc : ∀ p, IsColimit ((HomologicalComplex.eval C (ComplexShape.up ℤ) p).mapCocone c)) {n : ℤ}
     (b : ∀ j, Cochain (K j) L n) : Cochain c.pt L n :=

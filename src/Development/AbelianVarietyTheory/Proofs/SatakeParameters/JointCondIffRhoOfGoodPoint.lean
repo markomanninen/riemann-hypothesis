@@ -1,13 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleOfTheorem
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FrobeniusRankParts
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.ResidualIrreducibleOfTheorem
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.ParamRepCompare
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial NumberField IsDedekindDomain
-open GlobalTheory.IndefiniteRowSideFullHecke.FrobeniusTwistedRepresentations
 open scoped Pointwise
 
 section Inertia
@@ -44,10 +47,10 @@ private lemma valuation_smul_smul_lt_one_iff (h : _root_.Formalism.ConjugateSelf
     smul_mem_smul_valuationSubring_iff]
   simp
 
+
 open Polynomial NumberField IsDedekindDomain in
 open scoped Pointwise in
 variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] in
-
 theorem _root_.GlobalTheory.ParamRepCompare.conj_mem_Ine_of_smul_eq {A A' : ValuationSubring Ω} {g σ : _root_.Formalism.ConjugateSelfDual.G F Ω}
     (hg : g • A = A') (hσ : σ ∈ _root_.ReciprocityTheory.Gal.Ine (F := F) A') : g⁻¹ * σ * g ∈ _root_.ReciprocityTheory.Gal.Ine (F := F) A := by
   subst hg

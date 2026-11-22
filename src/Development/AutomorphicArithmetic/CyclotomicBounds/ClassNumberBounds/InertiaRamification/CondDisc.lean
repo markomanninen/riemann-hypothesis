@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycDifferent
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.RootNorm
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Filtration
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Average
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycDifferent
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.RootNorm
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Filtration
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.CycInertia
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.InertiaRamification.Average
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -35,7 +39,7 @@ private theorem span_sub_smul {z : 𝓞 K} (hz : IsPrimitiveRoot z N) (σ : Gal(
 private theorem padicValNat_prod {ι : Type*} (l : ℕ) [Fact l.Prime] (s : Finset ι) (f : ι → ℕ)
     (hf : ∀ i ∈ s, f i ≠ 0) : padicValNat l (∏ i ∈ s, f i) = ∑ i ∈ s, padicValNat l (f i) := by
   have hl : l.Prime := Fact.out
-  simp only [← Nat.factorization_def _ hl]
+  simp only [Nat.padicValNat_def, ← Nat.factorization_def _ hl]
   rw [Nat.factorization_prod hf, Finsupp.finsetSum_apply]
 
 private theorem vdField_eq_avg (E : IntermediateField ℚ K) (l : ℕ) [Fact l.Prime] :
@@ -49,7 +53,8 @@ private theorem vdField_eq_avg (E : IntermediateField ℚ K) (l : ℕ) [Fact l.P
   have hne : (discr E).natAbs ≠ 0 := Int.natAbs_ne_zero.2 (discr_ne_zero E)
   have hne' := h ▸ pow_ne_zero (Module.finrank E K) hne
   have h2 := congrArg (padicValNat l) h
-  rw [padicValNat.pow, padicValNat_prod l _ _ (Finset.prod_ne_zero_iff.1 hne')] at h2
+  rw [Nat.padicValNat_def, Nat.multiplicity_pow, ← Nat.padicValNat_def,
+    padicValNat_prod l _ _ (Finset.prod_ne_zero_iff.1 hne')] at h2
   have h3 := congrArg (Nat.cast : ℕ → ℚ) h2
   push_cast at h3
   have h4 : ∀ σ ∈ Finset.univ.filter (fun σ : Gal(K/ℚ) => σ ∉ E.fixingSubgroup),
@@ -83,7 +88,7 @@ private theorem vdField_eq_avg (E : IntermediateField ℚ K) (l : ℕ) [Fact l.P
   rw [vdField, padicValInt, div_eq_iff p1]
   push_cast at h3
   apply mul_left_cancel₀ p2
-  rw [h3]; ring
+  rw [← Nat.padicValNat_def, h3]; ring
 
 theorem natAbs_discr_eq_finprod_conductor (E : IntermediateField ℚ K) :
     (discr E).natAbs = ∏ᶠ ψ : fieldChars N E, (ψ : DirichletCharacter ℂ N).conductor ∧

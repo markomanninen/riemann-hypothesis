@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleForms
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleSectionDiv
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleForms
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundleSectionDiv
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -34,8 +39,8 @@ theorem cycEval_single {K : Type} {ι : K → Type} {F : Type} [Field F]
 
 end FlagBundleCutProof
 
-open FlagBundleCutProof in
 
+open FlagBundleCutProof in
 theorem FlagBundleCut.proof (hDim : FlagBundleDim.Statement)
     (hForms : FlagBundleSectionForms.Statement) (hDiv : FlagBundleSectionDiv.Statement)
     (hCut : FieldNumbers.CutRational.Statement.{0}) : FlagBundleCut.Statement := by

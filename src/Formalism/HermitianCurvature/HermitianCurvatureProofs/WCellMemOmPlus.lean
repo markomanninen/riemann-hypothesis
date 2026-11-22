@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothLevOfCk
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothLevOfCk
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -173,7 +177,7 @@ theorem sf_resG {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {D : Set 
       F (wCell k r (Fin.last r) x.1 * x.2),
     hM.continuousOn.isOpen_inter_preimage ((Formalism.FourierDecayAlt.P.Qx3.isOpen_OmX r).preimage continuous_fst) hU,
     ⟨hx₀.1, hmem⟩, ?_, ?_⟩
-  · exact (hρ.comp contDiffOn_fst (fun x hx => hx.1)).smul
+  · exact (hρ.comp contDiffOn_fst (fun (x : (Fin r → ℂ) × Mx k r) (hx : x ∈ {x : (Fin r → ℂ) × Mx k r | x.1 ∈ OmX r} ∩ (fun x : (Fin r → ℂ) × Mx k r => wCell k r (Fin.last r) x.1 * x.2) ⁻¹' U) => hx.1)).smul
       (hF.comp (hM.mono Set.inter_subset_left) (fun x hx => hx.2))
   · intro x hx hxg
     simp only [resG]

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -42,7 +47,7 @@ theorem mem_dual_of {F F' : HermLattice K i} (hle : F'.lattice ≤ F.lattice)
   rw [dotProduct_add, dotProduct_smul]
   obtain ⟨r, hr⟩ := hψ z hz
   obtain ⟨s, hs⟩ := hψy
-  exact ⟨r + μ * s, by rw [map_add, map_mul, hr, hs, Algebra.smul_def]⟩
+  exact ⟨r + μ * s, by rw [map_add (f := _), map_mul, hr, hs, Algebra.smul_def]⟩
 
 theorem exists_sub_mem_dual {F F' : HermLattice K i} (hlt : F'.lattice < F.lattice)
     (hcov : ∀ N : Submodule (𝓞 K) (Fin i → K), F'.lattice ≤ N → N ≤ F.lattice → N = F'.lattice ∨ N = F.lattice)
@@ -130,7 +135,8 @@ theorem isLinAt_linD {F' : HermLattice K i} (b' : Module.Basis T ℤ (dualLattic
     IsLinAt b' (linD m) (∑ s, m s • (b' s : Fin i → K)) := by
   have h := isLinAt_X b'
   unfold IsLinAt at h ⊢
-  rw [linD, map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [linD, map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun s _ => ?_
   rw [← smul_eq_C_mul (X ⟨(), s⟩ : MRing (dualBlocks T)) (m s), map_zsmul, h s, map_zsmul, map_zsmul,
     smul_mul_assoc]
@@ -282,8 +288,8 @@ theorem geoNum_eq_zero {F F' : HermLattice K i} (hlt : F'.lattice < F.lattice)
 
 end StackedExceptionalFirstGeometric
 
-open StackedExceptionalFirstGeometric in
 
+open StackedExceptionalFirstGeometric in
 theorem DualStackedExcGeoFirst.proof : DualStackedExcGeoFirst.Statement := by
   intro K _ _ i F F' T _ _ b b' a _ hlt hcov hab E hE d _ ⟨j, hj⟩
   exact geoNum_eq_zero hlt hcov hab hE.1.1.2 (i - 1) E d le_rfl ⟨j, by rw [hj, degFirst_inr]⟩

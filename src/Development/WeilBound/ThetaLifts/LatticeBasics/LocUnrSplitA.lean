@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertA
-import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterEqOneIntegralUnitsUnramifiedAdelic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedCharacterAtUniformizer
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInertA
+public import Development.WeilBound.ThetaLifts.LocalTheory.UnramifiedCohomology.ExistsSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IdeleCharacterEqOneIntegralUnitsUnramifiedAdelic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedCharacterAtUniformizer
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSplitChartOfBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,8 +157,6 @@ def liftS : GL β (Fv F v) →* UG (cA σ) J :=
     · rw [Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map, awM_cA, up_aw, Matrix.transpose_one,
         Matrix.map_one _ (map_zero _) (map_one _), one_mul, mul_one]
 
-theorem liftS_val (g : GL β (Fv F v)) : (liftS hσ τ h1 h2 g).1.1 = up hσ τ g.1 (dual Jp g).1 := rfl
-
 include h1 in
 theorem snd_eq (g : UG (cA σ) J) : g.1.1.map (piW (τ.comp σ)) = (dual Jp (Matrix.GeneralLinearGroup.map (piW τ) g.1)).1 := by
   have := (pi_gram τ g.1.1).symm.trans (congrArg (·.map (piW τ)) g.2)
@@ -221,12 +223,12 @@ theorem chrW_mul {χ : Chr F E} (hr : ResEtaPow (Units.map (algebraMap F (AF F))
   rw [← chi_at hσ τ χ (x := Units.map (algebraMap (AF F) (AE F E) : AF F →* AE F E) (Units.map j a)) ?_ (e _) (e _),
     hr.triv_of_even (by simp), Circle.coe_one]
   change At _ (algebraMap (AF F) (AE F E) (1 + atPlace v (a.1 - 1)) - 1)
-  rw [map_add, map_one, add_sub_cancel_left]
+  rw [map_add (f := _), map_one, add_sub_cancel_left]
   exact at_tensAt v ((a.1 - 1) ⊗ₜ[F] 1)
 
 theorem selfDual {B : Base F E} {r s : ℕ} (hY : Y.IsHerm σ B r s) (hd : ((1 : E) • Y.Jᵀ).det ≠ 0) :
     IsSelfDualAt σ ((1 : E) • Y.Jᵀ) Y.L v :=
-  PositivityTheory.ThKG.Loc.Iwa.selfDual_of hd hY.lat (fun y hy x hx => SelfDual.inclR_mem_intLoc v (by
+  PositivityTheory.ThKG.Loc.Iwa.selfDual_of hd hY.lat.toIsLattice (fun y hy x hx => SelfDual.inclR_mem_intLoc v (by
     rw [PositivityTheory.ThKG.Loc.Iwa.hE_smul, one_mul]; exact ⟨⟨_, (hY.dual y).1 hy x hx⟩, rfl⟩)) (s := 1)
     ((Ideal.ne_top_iff_one _).1 v.isPrime.ne_top) fun y hy => by
       simp only [OneMemClass.coe_one, map_one, one_smul]

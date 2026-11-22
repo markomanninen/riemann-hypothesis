@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
-import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksExistW
+public import Formalism.LocalToGlobal.IndefiniteReal.ZeroPartEigenvalueConvention
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ theorem partAt_withErr (e i p v) : (R.withErr e).PartAt F i p v ↔ R.PartAt F i
 theorem zs_withErr (e) : ((R.withErr e).toCx3 F).zs = (R.toCx3 F).zs := by
   rfl
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem weak_characterisation_with_error (h : R.WeakCharacterisation F) (e) : (R.withErr e).WeakCharacterisation F := by
   cases_type* RealDat3.WeakCharacterisation RealDat.BaseW RealDat.IsGrp RealDat.IsFam RealDat.IsModels RealDat.IsChainW RealDat.IsThPW RealDat3.IsInert RealDat3.IsScal RealDat3.IsTup
   repeat' (first | assumption | constructor)
@@ -63,14 +67,12 @@ def updS (kap : ℝ) (lam : type_of% R.lam3) : RealDat3 D A3 Ks :=
 def Eig0 (i : Fin D.R.m) (t : T) (p : A3.fam3.base3.Ix) (l : ℝ) : Prop :=
   R.Wp3 i p ≠ ⊥ ∧ ∀ x ∈ R.Wp3 i p, R.thG i t (LinearMap.adjoint (R.thG i t) x) = (l : ℂ) • x
 
-variable (F) in
 
+variable (F) in
 def EigOff (i : Fin D.R.m) (p : A3.fam3.base3.Ix) (v : InfinitePlace D.what₂.LL) (l : ℝ) : Prop :=
   PartX F.cr (R.toCx3 F) false i p v ∧ SimX F.cr (R.toCx3 F) false i p v l
 
 variable {R}
-
-theorem toCx3_updS (kap lam) : (R.updS kap lam).toCx3 F = reScal (R.toCx3 F) (fun _ => kap) lam := rfl
 
 theorem base_eigenvalue_unique {i t p} (l l' : ℝ) (h : R.Eig0 i t p l) (h' : R.Eig0 i t p l') : l = l' := by
   obtain ⟨hb, hl⟩ := h
@@ -106,8 +108,8 @@ theorem zs_updS (kap lam) : ((R.updS kap lam).toCx3 F).zs = (R.toCx3 F).zs := by
 
 end RealDat3
 
-open Classical in
 
+open Classical in
 theorem scalars_exist (R : RealDat3 D A3 Ks) : ∃ kap lam, (R.updS kap lam).IsScal F := by
 
   have hcan : ∀ {N : Type} [AddCommGroup N] [Module ℂ N] {a b : ℂ} {x : N}, x ≠ 0 → a • x = b • x → a = b := by
@@ -146,7 +148,7 @@ theorem scalars_exist (R : RealDat3 D A3 Ks) : ∃ kap lam, (R.updS kap lam).IsS
   · intro i t p l hb hl
     have hE : R.Eig0 i t p l := ⟨hb, hl⟩
     show lam i t p A3.A.v0 = l
-    rw [hlam, if_pos rfl, dif_pos ⟨l, hE⟩]
+    rw [hlam, if_pos rfl, dite_eq_left ⟨l, hE⟩]
     exact RealDat3.base_eigenvalue_unique (R := R) _ _ (Exists.choose_spec _) hE
   · intro κ hk hnd
     exact hkap κ hk hnd
@@ -155,29 +157,22 @@ theorem scalars_exist (R : RealDat3 D A3 Ks) : ∃ kap lam, (R.updS kap lam).IsS
     have hSX : SimX F.cr (R.toCx3 F) false i p v l := (RealDat3.sim_updS kap lam i p v l).1 hS
     have hE : R.EigOff F i p v l := ⟨hPX, hSX⟩
     show lam i A3.A.μ0 p v = l
-    rw [hlam, if_neg hv, dif_pos ⟨l, hE⟩]
+    rw [hlam, if_neg hv, dite_eq_left ⟨l, hE⟩]
     exact RealDat3.eigOff_unique (R := R) _ _ (Exists.choose_spec _) hE
   · intro i t p hb
     show lam i t p A3.A.v0 = Real.exp ((F.Zsc ((R.updS kap lam).toCx3 F).zs).l6m i)
-    rw [RealDat3.zs_updS, hlam, if_pos rfl, dif_neg]
+    rw [RealDat3.zs_updS, hlam, if_pos rfl, dite_eq_right]
     rintro ⟨l, hl⟩
     exact hl.1 hb
   · intro i p v hv hnP
     show lam i A3.A.μ0 p v = Real.exp ((F.Zsc ((R.updS kap lam).toCx3 F).zs).l6m i)
-    rw [RealDat3.zs_updS, hlam, if_neg hv, dif_neg]
+    rw [RealDat3.zs_updS, hlam, if_neg hv, dite_eq_right]
     rintro ⟨l, hl⟩
     exact hnP ((RealDat3.partAt_updS kap lam i p v).2 hl.1)
   · intro i t p v hv
     show lam i t p v = lam i A3.A.μ0 p v
     rw [hlam, hlam, if_neg hv, if_neg hv]
 
-variable (D A3 Ks) in
-
-def ThreeFaceBaseDatumExists (F : Face3 D A3) : Prop := ∃ R : RealDat3 D A3 Ks, R.toRealDat.Pre0 F.lv2 ∧ R.IsInert ∧ R.IsTup ∧ R.AllPlaces
-
-def FormsExist (F : Face3 D A3) (Geo : RealDat D A3.A Ks → Prop) : Prop :=
-  ∀ R : RealDat3 D A3 Ks, R.toRealDat.Pre1 F.lv2 → R.toRealDat.IsChainW → R.toRealDat.IsThPW → R.toRealDat.FullY → R.toRealDat.FullP →
-    ∃ nW FW err0, (R.toRealDat.upd5 nW FW R.mu R.twPl err0).grp_chiW ∧ Geo (R.toRealDat.upd5 nW FW R.mu R.twPl err0)
 
 end Three
 

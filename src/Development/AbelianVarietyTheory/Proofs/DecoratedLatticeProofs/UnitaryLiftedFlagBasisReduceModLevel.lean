@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -47,7 +52,7 @@ theorem unitary_reduce : ∀ (I : AutInst) (g ρ k : ℕ) (β : GL (Fin I.n) (I.
     have h2 : (Formalism.L2.Herm.intAf I.F I.E).subtype (flagGram (Formalism.L2.Herm.intAf I.F I.E) I.n ρ k i j) = flagGram (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F) I.n ρ k i j := by
       rw [← Matrix.map_apply (f := (Formalism.L2.Herm.intAf I.F I.E).subtype), flagGram_map']
     show (Formalism.L2.Herm.intAf I.F I.E).subtype (GS i j) = _
-    simp only [GS, ts, map_add, map_mul, map_natCast, h2]
+    simp only [GS, ts, map_add (f := _), map_mul, map_natCast, h2]
     show _ + (g : I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F) * t i j = _
     rw [← this]; ring
   have hM : I.fmat x * (β : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)) = (β : Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)) * (m : Matrix (Fin I.n) (Fin I.n) (Formalism.L2.Herm.intAf I.F I.E)).map (Formalism.L2.Herm.intAf I.F I.E).subtype := by
@@ -72,7 +77,7 @@ theorem unitary_reduce : ∀ (I : AutInst) (g ρ k : ℕ) (β : GL (Fin I.n) (I.
     show p (GS i j) = _
     have h2 : p (flagGram (Formalism.L2.Herm.intAf I.F I.E) I.n ρ k i j) = flagGram K I.n ρ k i j := by
       rw [← Matrix.map_apply (f := p), flagGram_map']
-    simp only [GS, map_add, map_mul, map_natCast, hg, zero_mul, add_zero, h2]
+    simp only [GS, map_add (f := _), map_mul, map_natCast, hg, zero_mul, add_zero, h2]
   rw [hGK] at this
   convert this using 3
   ext i j

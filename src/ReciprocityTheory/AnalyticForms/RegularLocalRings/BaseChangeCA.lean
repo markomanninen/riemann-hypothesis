@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.BaseChangeC
 
@@ -35,7 +39,7 @@ theorem fracTensor_exists_den (z : F ⊗[ℚ] C) :
         (algebraMap (MvPolynomial ι ℚ) F s₁ ⊗ₜ[ℚ] (1 : C)) *
           (algebraMap (MvPolynomial ι ℚ) F s₂ ⊗ₜ[ℚ] (1 : C)) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
-    simp only [map_add, map_mul, hΦ]
+    simp only [map_add (f := _), map_mul, hΦ]
     rw [← e₁, ← e₂, hsplit]
     ring
 

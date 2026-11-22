@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+
+@[expose] public section
 
 open IsLocalRing Polynomial
 open scoped TensorProduct
@@ -38,9 +42,3 @@ def Good (A R D : Type) [CommRing A] [CommRing R] [Algebra A R] [CommRing D]
       s.comp (algebraMap R (closure A R D)) = (algebraMap A (FractionRing A)).comp ρ
 
 end GlobalTheory.KeyOriginNoeth
-
-example (A R : Type) [CommRing A] [CommRing R] [Algebra A R] (r : R) :
-    GlobalTheory.KeyOriginNoeth.baseHom A R (GlobalTheory.LocAcyc.GenFib A R) r ∈
-      GlobalTheory.KeyOriginNoeth.closure A R (GlobalTheory.LocAcyc.GenFib A R) := by
-  letI := (GlobalTheory.KeyOriginNoeth.baseHom A R (GlobalTheory.LocAcyc.GenFib A R)).toAlgebra
-  exact isIntegral_algebraMap (R := R) (A := GlobalTheory.LocAcyc.GenFib A R) (x := r)

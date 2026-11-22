@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsSecNeObj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushRProdPtsResP
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaArc
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsSecNeObj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushRProdPtsResP
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaArc
+
+@[expose] public section
 
 noncomputable section
 
@@ -216,7 +220,7 @@ theorem gs_comp {Z Y X : Scheme.{0}} (r : Z ⟶ Y) (F : Y ⟶ X) (z : Z) (U : X.
     gs (r ≫ F) z U f = (r.stalkMap z).hom (gs F (r z) U f) := by
   have h' : (r ≫ F) z ∈ U := h
   unfold gs
-  rw [dif_pos h', dif_pos h]
+  rw [dite_eq_left h', dite_eq_left h]
   have e := congrArg (fun φ => φ.hom ((F.app U).hom f)) (Scheme.Hom.germ_stalkMap r (F ⁻¹ᵁ U) z h)
   simp only [CommRingCat.comp_apply] at e
   rw [e]
@@ -314,7 +318,7 @@ theorem gen_baseChangeR (hS : SecBaseChangeAnySt) (hT : SecTwistSt) (o : Obj D l
     exact ⟨a * ↑u⁻¹, (iff _).2 (by rwa [Units.inv_mul_cancel_right]), fun a' h =>
       (Units.eq_mul_inv_iff_mul_eq u).2 (hu _ ((iff _).1 h))⟩
   have cadd : ∀ {Z : Scheme.{0}} (q : Z ⟶ Sp K) z a c, cst q z (a + c) = cst q z a + cst q z c := fun q z a c => by
-    rw [cst, map_add, gs_eq q z ⊤ trivial, map_add, map_add, ← gs_eq q z ⊤ trivial, ← gs_eq q z ⊤ trivial]; rfl
+    rw [cst, map_add (f := _), gs_eq q z ⊤ trivial, map_add (f := _), map_add (f := _), ← gs_eq q z ⊤ trivial, ← gs_eq q z ⊤ trivial]; rfl
   let I : Ideal K :=
     { carrier := {r | ∃ a, ∀ j, ∀ y ∈ t'.PP.L.U j,
         cst t'.G.hom y r * gs (𝟙 _) y _ (s'.f j) = cst t'.G.hom y a * gs (𝟙 _) y _ (σ'.f j)}

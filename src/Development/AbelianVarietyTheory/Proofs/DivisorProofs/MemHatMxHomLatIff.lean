@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,11 +17,10 @@ open Matrix TensorProduct NumberField IsDedekindDomain Formalism.UG Formalism.UG
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {m n : ℕ}
 
 local notation "𝒜" => E ⊗[F] FiniteAdeleRing (𝓞 F) F
-local notation "𝒮" => Formalism.L2.Herm.intAf F E
+local notation "𝒮" => tensInt (F := F) (FiniteAdeleRing (𝓞 F) F) (intOE E) (intAd F)
 local notation "ι" => inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
 
 variable (F) in
-
 def genGrp (M : Submodule (𝓞 E) (Matrix (Fin m) (Fin n) E)) :
     AddSubgroup (Matrix (Fin m) (Fin n) 𝒜) :=
   AddSubgroup.closure {w | ∃ α ∈ intAd F, ∃ x ∈ M, w = Matrix.of fun i j => x i j ⊗ₜ[F] α}
@@ -255,7 +258,7 @@ theorem mem_hatMx_iff (D : D7) {m n : ℕ} (M : Submodule (𝓞 D.host.E) (Matri
       rw [Matrix.map_zero _ (RingHom.map_zero _)]; exact zero_mem _
     | add a b _ _ ha hb =>
       refine ⟨fun i j => ?_, ?_⟩
-      · rw [Matrix.add_apply, RingHom.map_add, ha.1, hb.1, add_zero]
+      · rw [Matrix.add_apply, RingHom.map_add (f := _), ha.1, hb.1, add_zero]
       · rw [Matrix.map_add _ (RingHom.map_add _)]; exact add_mem ha.2 hb.2
     | neg a _ ha =>
       refine ⟨fun i j => ?_, ?_⟩

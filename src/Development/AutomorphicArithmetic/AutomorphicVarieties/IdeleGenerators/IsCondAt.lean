@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.SlopeTestRemainingChoices
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsoOfFrob
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.SlopeTestRemainingChoices
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsoOfFrob
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,12 +68,12 @@ def GenD (y : Af F) (𝔪 : Ideal (𝓞 F)) : Prop :=
   𝔪 ≠ ⊥ ∧ ∀ w : HeightOneSpectrum (𝓞 F),
     Valued.v (pLoc F w y) = WithZero.exp ((ordI w (differentIdeal ℤ (𝓞 F)) : ℤ) - (ordI w 𝔪 : ℤ))
 
-open Classical in
 
+open Classical in
 def coefAt (c : Ideal (𝓞 F) → ℂ) (y : Af F) : ℂ := if h : ∃ 𝔪, GenD y 𝔪 then c h.choose else 0
 
-open Classical in
 
+open Classical in
 def coefDiv (c : Ideal (𝓞 F) → ℂ) (𝔮 𝔪 : Ideal (𝓞 F)) : ℂ := if h : ∃ 𝔫, 𝔪 = 𝔮 * 𝔫 then c h.choose else 0
 
 def absF (y : (Af F)ˣ) : ℝ := ∏ᶠ w : HeightOneSpectrum (𝓞 F), ‖pLoc F w (y : Af F)‖
@@ -84,8 +88,8 @@ def HasExp (φ : GA F 2 → ℂ) (k : ℕ) (c₀ : (Af F)ˣ → ℂ) (c : Ideal 
         Complex.exp (2 * Real.pi * Complex.I * ∑ v, (reAt v ξ.1 : ℂ) * ((x v : ℂ) + Complex.I * (y.val v : ℂ))))
       (φ (TR.infGL F 2 (aff y x) * finGL F 2 (aff yf 0)) / ((((∏ v, y.val v) * absF yf) ^ ((k : ℝ) / 2) : ℝ) : ℂ) - c₀ yf)
 
-variable (F) in
 
+variable (F) in
 def locSm (w : HeightOneSpectrum (𝓞 F)) : Representation ℂ (GL (Fin 2) (w.adicCompletion F)) (TR.Sm F 2) :=
   (TR.finRep F 2).comp (locGL F 2 w)
 

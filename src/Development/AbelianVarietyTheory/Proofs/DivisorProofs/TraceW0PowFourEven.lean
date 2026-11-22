@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmUnitPowFourIdempotentModEight
-import Development.AutomorphicArithmetic.WeightCongruences.DvdNormSubOneOfIdempotentInterpolationRelNormOne
-import Development.AutomorphicArithmetic.WeightCongruences.NormRootOfUnityQuadraticSubfield
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPinnedOfIsUnf
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CmUnitPowFourIdempotentModEight
+public import Development.AutomorphicArithmetic.WeightCongruences.DvdNormSubOneOfIdempotentInterpolationRelNormOne
+public import Development.AutomorphicArithmetic.WeightCongruences.NormRootOfUnityQuadraticSubfield
+
+@[expose] public section
 
 open NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AdaptedDet
@@ -43,9 +47,9 @@ theorem det_interp_gen {E : Type} [Field E] [NumberField E] {r : ℕ} (n : ℕ) 
       generalize (e : E) = x
       ext i j
       by_cases h : i = j <;> simp [h, -algebraMap_smul]
-    rw [this, h, map_add, map_mul, map_sub, map_one]
+    rw [this, h, map_add (f := _), map_mul, map_sub, map_one]
   have hy' : IsIntegral ℤ ((d - ((e : E) * (δ : E) + (1 - (e : E)))) / n) := by
-    rw [← isIntegral_algebraMap_iff hinj, map_div₀, map_sub, map_natCast, hd',
+    rw [← isIntegral_algebraMap_iff (B := K), map_div₀, map_sub, map_natCast, hd',
       add_sub_cancel_left, mul_div_cancel_left₀ _ hn']
     exact hy
   obtain ⟨z, hz⟩ : ∃ z : 𝓞 E, (z : E) = (d - ((e : E) * (δ : E) + (1 - (e : E)))) / n := ⟨⟨_, hy'⟩, rfl⟩
@@ -61,7 +65,7 @@ theorem norm_one_add_two {E : Type} [Field E] [NumberField E] (u : 𝓞 E) :
     (4 : ℤ) ∣ Algebra.norm ℤ (1 + 2 * u : 𝓞 E) - (1 + 2 * Algebra.trace ℤ (𝓞 E) u) := by
   classical
   have h2 : (2 * u : 𝓞 E) = (2 : ℤ) • u := by simp
-  rw [Algebra.norm_eq_matrix_det (RingOfIntegers.basis E), map_add, map_one, h2, map_smul,
+  rw [Algebra.norm_eq_matrix_det (RingOfIntegers.basis E), map_add (f := _), map_one, h2, map_smul,
     Matrix.det_one_add_smul, Algebra.trace_eq_matrix_trace (RingOfIntegers.basis E)]
   generalize Polynomial.eval (2 : ℤ) _ = c
   exact ⟨c, by ring⟩
@@ -84,7 +88,7 @@ theorem det_interp_pm {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Ho
   have h := det_eq_norm b φ hinj hspan T
     (((H.w0 ^ 4 : 𝓞 E) : E) • A + (1 - ((H.w0 ^ 4 : 𝓞 E) : E)) • 1) (by
       intro x
-      rw [hT, map_add, map_sub, hsm, hsm, Matrix.add_mulVec, Matrix.smul_mulVec,
+      rw [hT, map_add (f := _), map_sub, hsm, hsm, Matrix.add_mulVec, Matrix.smul_mulVec,
         Matrix.smul_mulVec, hA, Matrix.one_mulVec, sub_smul, one_smul])
   have hst : ∀ v ∈ LinearMap.range φ, A *ᵥ v ∈ LinearMap.range φ := by
     rintro _ ⟨x, rfl⟩
@@ -146,7 +150,7 @@ theorem blocks_det_mod_four : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     obtain ⟨c, rfl⟩ := bas.surjective x
     induction c using Pi.single_induction with
     | zero => cases u <;> simp
-    | add a b ha hb => rw [map_add, smul_add, map_add, map_add, Pi.add_apply, ha, hb]; cases u <;> simp
+    | add a b ha hb => rw [map_add (f := _), smul_add, map_add (f := _), map_add (f := _), Pi.add_apply, ha, hb]; cases u <;> simp
     | single v n =>
       have : (Pi.single v n : Fin g ⊕ Fin g → ℤ) = n • Pi.single v 1 := by
         rw [← Pi.single_smul, smul_eq_mul, mul_one]
@@ -154,7 +158,7 @@ theorem blocks_det_mod_four : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
       cases v with
       | inl k =>
         obtain ⟨e, h⟩ := hl k
-        rw [h, map_add, h8, add_zero]
+        rw [h, map_add (f := _), h8, add_zero]
         cases u <;> simp [hπb]
       | inr k =>
         obtain ⟨e, h⟩ := hr k
@@ -174,7 +178,7 @@ theorem blocks_det_mod_four : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
     · apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ 8).mp
       obtain ⟨e, h⟩ := hl j
       have h1 := he (gam (bas (Pi.single (Sum.inl j) 1))) (Sum.inr i)
-      rw [← map_smul, h, map_add, map_nsmul, map_add, h8, add_zero] at h1
+      rw [← map_smul, h, map_add (f := _), map_nsmul, map_add (f := _), h8, add_zero] at h1
       rw [hN']
       exact h1
   · let b : Module.Basis (Fin g ⊕ Fin g) ℤ D.La := (Pi.basisFun ℤ _).map bas
@@ -198,12 +202,12 @@ theorem blocks_det_mod_four : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
             (LinearMap.toMatrix b b (T.restrictScalars ℤ)) (Sum.inl i) (Sum.inr j)) 0 1 := by
       ext u v
       rcases u with i | i <;> rcases v with j | j
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [Matrix.toBlocks₁₁, hN']
       · rfl
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [hπb]
-      · rw [hent, hT, map_add, map_sub, Pi.add_apply, Pi.sub_apply, he, he]
+      · rw [hent, hT, map_add (f := _), map_sub, Pi.add_apply, Pi.sub_apply, he, he]
         simp [hπb, Matrix.one_apply]
     rw [hblk, Matrix.det_fromBlocks_zero₂₁, det_one, mul_one]
 

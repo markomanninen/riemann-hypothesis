@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransferenceMinima
+
+@[expose] public section
 
 namespace GlobalTheory
 

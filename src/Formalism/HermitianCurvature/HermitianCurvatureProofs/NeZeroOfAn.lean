@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThShiftInt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThShiftInt
+
+@[expose] public section
 
 open Set Filter Topology Complex
 

@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoAppTopOfIsPullbackOfSurjective
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.FlagBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoAppTopOfIsPullbackOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open TopologicalSpace
@@ -31,7 +35,7 @@ theorem exists_denom_of_isPushout {R : Type} [CommRing R] [IsDomain R] {R₀ A K
     obtain ⟨d, hd, a, ha⟩ := hx
     obtain ⟨e, he, b, hb⟩ := hy
     refine ⟨d * e, mul_ne_zero hd he, α.hom (c e) * a + α.hom (c d) * b, ?_⟩
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     rw [← ha, ← hb]; ring
   | neg x _ hx =>
     obtain ⟨d, hd, a, ha⟩ := hx
@@ -102,8 +106,8 @@ theorem exists_glue (H : IsPullback φ π p (spMap (algebraMap R K))) [Flat p] (
   exact (gs_res φ z (hU ⟨_, hz⟩) (hx _) s).symm.trans
     ((congrArg (gs φ z _) (hs ⟨_, hz⟩)).trans (ha _ z (hx _)))
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem cst_mul {Z : Scheme.{0}} (q : Z ⟶ Sp R) (z : Z) (a b : R) : cst q z (a * b) = cst q z a * cst q z b := by
   rw [cst, map_mul, gs_mul q z ⊤ trivial]; rfl
 

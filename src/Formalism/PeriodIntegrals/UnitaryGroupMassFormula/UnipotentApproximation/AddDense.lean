@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentApproximation.MemZeroLocusGLIff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentApproximation.MemZeroLocusGLIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -253,7 +257,7 @@ theorem denseRange : DenseRange (algebraMap K (FiniteAdeleRing R K)) := by
     intro v
     show algebraMap K (v.adicCompletion K) (u0 + algebraMap R K a) - x v =
       -((x v - algebraMap K (v.adicCompletion K) u0) - algebraMap K (v.adicCompletion K) (algebraMap R K a))
-    rw [map_add]; ring
+    rw [map_add (f := _)]; ring
   have hval : ∀ v : HeightOneSpectrum R,
       Valued.v ((algebraMap K (FiniteAdeleRing R K) (u0 + algebraMap R K a) - x) v) ≤ v.intValuation r := by
     intro v

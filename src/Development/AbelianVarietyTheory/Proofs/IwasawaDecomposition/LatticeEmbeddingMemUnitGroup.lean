@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoordMapBasisFun
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoordMapBasisFun
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,8 @@ variable {K V M ι : Type} [Field K] [AddCommGroup V] [Module K V] [AddCommGroup
 
 theorem map_eq_sum (x : V) : e x = ∑ i, σ (b.repr x i) • e (b i) := by
   conv_lhs => rw [← b.sum_repr x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl (fun i _ => LinearMap.map_smulₛₗ e _ _)
 
 theorem exists_extension (h : LinearIndependent ℂ (fun i => e (b i))) {N : Type} [AddCommGroup N] [Module ℂ N]
@@ -29,7 +34,8 @@ theorem exists_extension (h : LinearIndependent ℂ (fun i => e (b i))) {N : Typ
     rw [h1, h.repr_eq_single i _ rfl]
     simp
   refine ⟨F, fun x => ?_⟩
-  rw [map_eq_sum e b, map_eq_sum g b, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_eq_sum e b, map_eq_sum g b, map_sum]
   simp [hb]
 
 theorem linearIndependent_map (h : LinearIndependent ℂ (fun i => e (b i))) {κ : Type} [Fintype κ] {z : κ → V}
@@ -89,7 +95,8 @@ theorem mem_span_ker (h : LinearIndependent ℂ (fun i => e (b i))) {S : Type} [
       obtain ⟨i, rfl⟩ := hψ
       refine ⟨?_, ?_⟩
       · simp only [← hN, hSx, hP, LinearMap.comp_apply]
-        rw [← map_sum e, ← map_sum s, ← map_add]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← map_sum e, ← map_sum s, ← map_add (f := _)]
         congr 1
         have : ∑ v, LinearMap.single K (fun _ : S => V) v (N v (b i)) = N' (b i) := by
           funext w; simp [N', Finset.sum_apply, Pi.single_apply]
@@ -97,8 +104,8 @@ theorem mem_span_ker (h : LinearIndependent ℂ (fun i => e (b i))) {S : Type} [
       · rw [hP]; exact Submodule.subset_span ⟨p (b i), hp _, rfl⟩
     | zero => simp
     | add x y _ _ hx hy =>
-      refine ⟨?_, by rw [map_add]; exact Submodule.add_mem _ hx.2 hy.2⟩
-      simp only [map_add, Finset.sum_add_distrib]
+      refine ⟨?_, by rw [map_add (f := _)]; exact Submodule.add_mem _ hx.2 hy.2⟩
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       conv_lhs => rw [hx.1, hy.1]
       abel
     | smul a x _ hx =>

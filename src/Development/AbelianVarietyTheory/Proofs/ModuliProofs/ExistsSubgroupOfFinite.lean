@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAppTopEqOfEffectiveEpi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsAppTopEqOfEffectiveEpi
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite
 
@@ -105,19 +109,19 @@ theorem invariant_descends (r : X ⟶ Y) [Etale r] [QuasiCompact r] [Surjective 
     exact h1.trans h2.symm
 
 def autOver (r : X ⟶ Y) : Subgroup (Aut X) where
-  carrier := {ρ | ρ.hom ≫ r = r}
+  carrier := {ρ | ρ.asIso.hom ≫ r = r}
   mul_mem' := fun {a b} ha hb => by
-    show (b.hom ≫ a.hom) ≫ r = r
+    show (b.asIso.hom ≫ a.asIso.hom) ≫ r = r
     rw [Category.assoc, ha, hb]
   one_mem' := Category.id_comp _
   inv_mem' := fun {a} ha => by
-    show a.inv ≫ r = r
-    exact (Iso.inv_comp_eq a).2 (Eq.symm ha)
+    show a.asIso.inv ≫ r = r
+    exact (Iso.inv_comp_eq a.asIso).2 (Eq.symm ha)
 
 theorem exists_liftAut {P Q : Scheme.{0}} {φ : P ⟶ Q} {p : P ⟶ X} {q : Q ⟶ Y} {r : X ⟶ Y} (h : IsPullback φ p q r) :
-    ∃ τ : autOver r →* Aut P, ∀ ω, (τ ω).hom ≫ φ = φ ∧ (τ ω).hom ≫ p = p ≫ ω.1.hom := by
-  have hom_r : ∀ ω : autOver r, ω.1.hom ≫ r = r := fun ω => ω.2
-  have inv_r : ∀ ω : autOver r, ω.1.inv ≫ r = r := fun ω => (Iso.inv_comp_eq ω.1).2 (hom_r ω).symm
+    ∃ τ : autOver r →* Aut P, ∀ ω, (τ ω).asIso.hom ≫ φ = φ ∧ (τ ω).asIso.hom ≫ p = p ≫ ω.1.asIso.hom := by
+  have hom_r : ∀ ω : autOver r, ω.1.asIso.hom ≫ r = r := fun ω => ω.2
+  have inv_r : ∀ ω : autOver r, ω.1.asIso.inv ≫ r = r := fun ω => (Iso.inv_comp_eq ω.1.asIso).2 (hom_r ω).symm
   have sq : ∀ u : X ⟶ X, u ≫ r = r → φ ≫ q = (p ≫ u) ≫ r := fun u hu => by
     rw [Category.assoc, hu, h.w]
   have back : ∀ (u v : X ⟶ X) (hu : u ≫ r = r) (hv : v ≫ r = r), u ≫ v = 𝟙 X →
@@ -127,12 +131,13 @@ theorem exists_liftAut {P Q : Scheme.{0}} {φ : P ⟶ Q} {p : P ⟶ X} {q : Q �
     · simp only [Category.assoc, IsPullback.lift_snd, IsPullback.lift_snd_assoc, huv, Category.comp_id,
         Category.id_comp]
   let lift1 : autOver r → Aut P := fun ω =>
-    { hom := h.lift φ (p ≫ ω.1.hom) (sq _ (hom_r ω))
-      inv := h.lift φ (p ≫ ω.1.inv) (sq _ (inv_r ω))
-      hom_inv_id := back _ _ (hom_r ω) (inv_r ω) ω.1.hom_inv_id
-      inv_hom_id := back _ _ (inv_r ω) (hom_r ω) ω.1.inv_hom_id }
+    Aut.of ⟨h.lift φ (p ≫ ω.1.asIso.hom) (sq _ (hom_r ω)),
+      h.lift φ (p ≫ ω.1.asIso.inv) (sq _ (inv_r ω)),
+      back _ _ (hom_r ω) (inv_r ω) ω.1.asIso.hom_inv_id,
+      back _ _ (inv_r ω) (hom_r ω) ω.1.asIso.inv_hom_id⟩
   refine ⟨{ toFun := lift1, map_one' := ?_, map_mul' := ?_ }, fun ω => ⟨h.lift_fst _ _ _, h.lift_snd _ _ _⟩⟩
   · ext1
+    ext1
     apply h.hom_ext
     · change h.lift _ _ _ ≫ φ = 𝟙 P ≫ φ
       rw [IsPullback.lift_fst, Category.id_comp]
@@ -141,12 +146,13 @@ theorem exists_liftAut {P Q : Scheme.{0}} {φ : P ⟶ Q} {p : P ⟶ X} {q : Q �
       exact Category.comp_id p
   · intro a b
     ext1
+    ext1
     apply h.hom_ext
-    · change h.lift _ _ _ ≫ φ = (h.lift φ (p ≫ b.1.hom) (sq _ (hom_r b)) ≫
-        h.lift φ (p ≫ a.1.hom) (sq _ (hom_r a))) ≫ φ
+    · change h.lift _ _ _ ≫ φ = (h.lift φ (p ≫ b.1.asIso.hom) (sq _ (hom_r b)) ≫
+        h.lift φ (p ≫ a.1.asIso.hom) (sq _ (hom_r a))) ≫ φ
       simp only [IsPullback.lift_fst, Category.assoc]
-    · change h.lift _ _ _ ≫ p = (h.lift φ (p ≫ b.1.hom) (sq _ (hom_r b)) ≫
-        h.lift φ (p ≫ a.1.hom) (sq _ (hom_r a))) ≫ p
+    · change h.lift _ _ _ ≫ p = (h.lift φ (p ≫ b.1.asIso.hom) (sq _ (hom_r b)) ≫
+        h.lift φ (p ≫ a.1.asIso.hom) (sq _ (hom_r a))) ≫ p
       simp only [IsPullback.lift_snd, Category.assoc, IsPullback.lift_snd_assoc]
       rfl
 

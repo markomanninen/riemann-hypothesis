@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -19,7 +23,7 @@ theorem semiChar_img (hI : IsIsom H H (δ : V →ₗ[ℂ] V)) (hα : ∀ x, α (
   · rintro _ ⟨x, hx, rfl⟩ _ ⟨y, hy, rfl⟩
     show α (δ x + δ y) = α (δ x) * α (δ y) * Complex.exp ((Real.pi : ℂ) * Complex.I * (altE H (δ x) (δ y) : ℂ))
     have : altE H (δ x) (δ y) = altE H x y := by simp only [altE]; rw [show H (δ x) (δ y) = H x y from hI x y]
-    rw [← map_add, hα, hα, hα, this, h.2 x hx y hy]
+    rw [← map_add (f := _), hα, hα, hα, this, h.2 x hx y hy]
 
 theorem fixed_img (hI : IsIsom H H (δ : V →ₗ[ℂ] V)) (hα : ∀ x, α (δ x) = α x) {Λ : AddSubgroup V} {F : V → ℂ}
     (hF : F ∈ fixedBy H α Λ) : pullInv δ F ∈ fixedBy H α (imgLat (δ : V →ₗ[ℂ] V) Λ) := by

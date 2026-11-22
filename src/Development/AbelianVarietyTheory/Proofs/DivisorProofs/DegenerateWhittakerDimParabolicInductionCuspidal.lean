@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankEigenCoindMackeyDoubleCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenEqBotOfRootInUnipotentRadicalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenEqBotOfBlockCutCuspidalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenSortingPermEqLeviWhittakerStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SplitDoublingNBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsColReduced
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankEigenCoindMackeyDoubleCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenEqBotOfRootInUnipotentRadicalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenEqBotOfBlockCutCuspidalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoindEigenSortingPermEqLeviWhittakerStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -211,7 +215,7 @@ theorem degenerateWhittakerDim_parabolicInduction (F : Type) [Field F] [Fintype 
     · have hs := (Tuple.eq_sort_iff (f := key b J.1)).1 rfl
       unfold leviWh
       rw [GlobalTheory.T.coindEigen_sorting_perm_eq_levi_whittaker F ψ r V b σ hσ j (Tuple.sort (key b J.1)) _ (pm_conj _ _)]
-      · exact fun a c hac e => hs.2 a c hac ((key_eq_iff b J.1 _ _).2 e)
+      · exact fun a c hac e => lt_of_le_of_ne (hs.2 (le_of_lt hac) ((key_eq_iff b J.1 _ _).2 e)) (fun h => (ne_of_lt hac) ((Tuple.sort (key b J.1)).injective h))
       · intro a e c h1 h2 h3
         have h4 : key b J.1 _ ≤ key b J.1 _ := hs.1 h1
         have h5 : key b J.1 _ ≤ key b J.1 _ := hs.1 h2

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
-import Formalism.LocalToGlobal.IndefiniteReal.ThetaFireRow
-import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThetaPToLiftReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResInjLToLiftReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaAdjointAtLiftEqLowestKTypeRestriction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+public import Formalism.LocalToGlobal.IndefiniteReal.ThetaFireRow
+public import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsThetaPToLiftReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResInjLToLiftReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaAdjointAtLiftEqLowestKTypeRestriction
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,9 +28,9 @@ abbrev tensCast {E : Type} [Field E] [NumberField E] {F1 F2 : Subfield E} (h : F
 abbrev StdFrame {D : D7} {V : HSp D} {n : ℕ} (hF : D.host.F = maximalRealSubfield D.host.E) (P : RowPsi V n) : Prop :=
   Formalism.IndefR.principalLevelFrame.StdPsi hF P
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure RealAt (D : D7) (cf : CharFrame D) (nch : NChoice D) (tp : TupTied D cf nch) : Type 1 where
   G : Type
   [grp : Group G]
@@ -124,37 +128,6 @@ theorem RealAt.existsUnique_vec {μ} (hμ : Used0 D μ) (j : Fin D.R.m) (f : D.w
   have h : ∃ y, X.R.extV j (X.tupT μ) y = X.fn hμ j f := (X.IL.jMt μ hμ j f).2.1
   obtain ⟨y, hy⟩ := h
   exact ⟨y, hy, fun z hz => X.hinj _ _ (hz.trans hy.symm)⟩
-
-theorem RealAt.fn_injective {μ} (hμ : Used0 D μ) (j : Fin D.R.m) : Function.Injective (X.fn hμ j) :=
-  Subtype.val_injective.comp (X.IL.jMt μ hμ j).injective
-
-theorem OnGood.mono {X : RealAt D cf nch tp} {i : D.nd.Loc} {p q : ∀ (j : Fin D.R.m) (t : X.T), (X.R.HV j t).H → Prop}
-    (h : OnGood X i p) (hpq : ∀ j t y, p j t y → q j t y) : OnGood X i q :=
-  fun hμ j hj x hx f hf y hy => hpq _ _ _ (h hμ j hj x hx f hf y hy)
-
-theorem Agree.iso_rep {X : RealAt D cf nch tp} {M : MtFam D} {rep : D.what₂.FT → NG.FinTyp D.host.E D.R.r} (A : Agree X M rep)
-    (σ : D.what₂.FT) : (rep σ).Iso (X.rep σ) := A.rep_iso σ
-
-example {μ} (hμ : Used0 D μ) (j : Fin D.R.m) : X.fn hμ j 0 = 0 :=
-  congrArg Subtype.val (map_zero (X.IL.jMt μ hμ j))
-
-example (i : D.nd.Loc) (x) (hx : x ∈ ZgoodN D.nd D.naut i) : ¬ OnGood X i fun _ _ _ => False := fun h => by
-  have hj := D.nd.j_range i
-  let j : Fin D.R.m := ⟨D.nd.j i - 1, by omega⟩
-  have e : j.1 + 1 = D.nd.j i := by show D.nd.j i - 1 + 1 = _; omega
-  obtain ⟨y, hy, -⟩ := X.existsUnique_vec (used_mu i) j 0
-  refine h (used_mu i) j e x hx 0 ?_ y hy
-  have z : ∀ (k : ℕ) (e : j.1 + 1 = k), (e ▸ (0 : D.what₂.Mt (D.nd.mu i) (j.1 + 1)) : D.what₂.Mt (D.nd.mu i) k) = 0 := by
-    intro k e
-    subst e
-    rfl
-  rw [z]
-  exact zero_mem _
-
-example {M : MtFam D} {rep} (A : Agree X M rep) {μ} (hμ : Used0 D μ) (j : Fin D.R.m) (x) (h k) :
-    (M μ (j.1 + 1) (by omega) (by omega)).real x (h * k) =
-      A.eW μ hμ j (X.fn hμ j x ((A.PV j).ψ ((A.a j)⁻¹ * h) * (A.PV j).ψ k)) := by
-  rw [A.real μ hμ, ← mul_assoc, map_mul]
 
 end GlobalTheory.NJoin
 

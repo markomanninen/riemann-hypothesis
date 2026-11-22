@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementA
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementA
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -15,12 +19,14 @@ theorem Om_nat (E : ι → ι → Module.End K W) (E' : ι → ι → Module.End
   | zero => intro x; simp [Om]
   | succ q ih =>
     intro x
-    simp only [Om, LinearMap.sum_apply, map_sum, Module.End.mul_apply, ih, h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Om, LinearMap.sum_apply, map_sum, Module.End.mul_apply, ih, h]
 
 theorem Pstep_nat (E : ι → ι → Module.End K W) (E' : ι → ι → Module.End K W') (θ : W →ₗ[K] W')
     (h : ∀ a b x, θ (E a b x) = E' a b (θ x)) (S : Finset ι) (z : ι) (l : ℕ) (x : W) :
     θ (Pstep E S z l x) = Pstep E' S z l (θ x) := by
-  simp only [Pstep, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Om_nat E E' θ h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Pstep, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Om_nat E E' θ h]
 
 theorem invariant_natural_holds : InvNat := by
   intro K W W' ι _ _ _ _ _ _ E E' θ h l L
@@ -323,7 +329,7 @@ theorem E_Pstep_apply [CharZero K] (h : GlRel E) {S : Finset ι} {z j : ι} (hz 
     simp [Om, cc_zero]
   | succ n ih =>
     rw [Pstep_eq, Finset.sum_range_succ, ← Pstep_eq]
-    simp only [LinearMap.add_apply, map_add, ih, LinearMap.smul_apply, map_smul,
+    simp only [LinearMap.add_apply, map_add (f := _), ih, LinearMap.smul_apply, map_smul,
       E_Om_apply h hz hj hS hzz n]
     rw [eq_neg_of_add_eq_zero_left (cc_rec (K := K) S.card n)]
     module

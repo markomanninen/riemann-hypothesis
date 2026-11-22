@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.LocStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 def qZ (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (x : Matrix (Fin n) (Fin n) k) : Fin (Module.finrank k Z) → k :=
   fun i => trace (((Module.finBasis k Z i : Z) : Matrix (Fin n) (Fin n) k) * x)
 
-open Classical in
 
+open Classical in
 def piZ (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (x : Matrix (Fin n) (Fin n) k) : Matrix (Fin n) (Fin n) k :=
   if h : ∃ c ∈ Z, qZ Z c = qZ Z x then h.choose else 0
 

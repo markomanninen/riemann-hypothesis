@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
-import Formalism.GaloisCohomology.Statement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNineTermTransgressionZeroApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ContinuousCycMod
+public import Formalism.GaloisCohomology.Statement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate
 
@@ -32,7 +36,8 @@ theorem exists_sum_mul_of_finite_torsion (l : ℕ) [Fact l.Prime] (M M' : Type) 
     conv_lhs => rw [← b.linearCombination_repr m]
     rw [Finsupp.linearCombination_apply, Finsupp.sum]
   conv_lhs => rw [hm']
-  rw [map_sum, AddMonoidHom.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, AddMonoidHom.finsetSum_apply]
   simp only [pairing_smul_left', LinearMap.toAddMonoidHom_coe, Module.Basis.coord_apply]
   refine Finset.sum_subset hsub ?_
   intro k _ hk
@@ -58,7 +63,7 @@ theorem inv_cup_pairing_of_inv_cup_characters : ∀ (Γ : Type) [Group Γ] [Topo
     · exact ((continuous_of_discreteTopology.comp hxc).comp continuous_fst).mul
         ((continuous_of_discreteTopology.comp hyc).comp continuous_snd)
     · intro g h k'
-      simp only [hμ, hxa, hya, map_add]
+      simp only [hμ, hxa, hya, map_add (f := _)]
       ring
   let W : ι → Z2 μ := fun k => ⟨_, hmem k⟩
   have hWsum : w = ∑ k ∈ s, W k := by
@@ -70,12 +75,13 @@ theorem inv_cup_pairing_of_inv_cup_characters : ∀ (Γ : Type) [Group Γ] [Topo
   have hW : ∀ k, e (Submodule.Quotient.mk (W k)) = u * (c k (x γ) * d k (y φ)) := fun k =>
     hchar (fun g => c k (x g)) (fun g => d k (y g))
       (continuous_of_discreteTopology.comp hxc) (continuous_of_discreteTopology.comp hyc)
-      (fun g h => by simp only [hxa, map_add]) (fun g h => by simp only [hya, map_add])
+      (fun g h => by simp only [hxa, map_add (f := _)]) (fun g h => by simp only [hya, map_add (f := _)])
       (fun g hg => by simp only [hyI g hg, map_zero]) (W k) (fun g h => rfl)
   have hq : (Submodule.Quotient.mk (∑ k ∈ s, W k) : H2 μ) =
       ∑ k ∈ s, (Submodule.Quotient.mk (W k) : H2 μ) :=
     map_sum (Submodule.mkQ _) W s
-  rw [hWsum, hq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hWsum, hq, map_sum]
   simp only [hW]
   rw [← Finset.mul_sum, ← hdec (x γ) ⟨γ, rfl⟩ (y φ)]
 

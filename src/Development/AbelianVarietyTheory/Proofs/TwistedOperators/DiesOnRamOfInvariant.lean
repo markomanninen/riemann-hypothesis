@@ -1,20 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemSmulOfMemFlagSubOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OpEOmTargetUnipotent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeSupportAndFourierRelation
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.DualLatticeExchange
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLatticeChainLatAndComap
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FlagVolumeOpenFiniteNonzero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsSelfDualOfHasConductor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NabsDetEqOfActEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCOPrXCgrp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralTranslateIndicator
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsQuotIntCosetFn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClosedEmbeddingAffPtUncurry
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.T2SpaceOfIsNonarchimedeanLocalFieldFlagMeasures
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemSmulOfMemFlagSubOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormalizedAbsCharacterization
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OpEOmTargetUnipotent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClopenIsCompactMapsPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RootExchangeSupportAndFourierRelation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.HasConductorMulShift
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsLatticeChainLatAndComap
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.FlagVolumeFiltration
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsSelfDualOfHasConductor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NabsDetEqOfActEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCOPrXCgrp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IntegralTranslateIndicator
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsQuotIntCosetFn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsClosedEmbeddingAffPtUncurry
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.T2SpaceOfIsNonarchimedeanLocalFieldFlagMeasures
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix IsLocalRing
 open scoped Pointwise ENNReal
@@ -48,11 +54,11 @@ theorem oneOrbit : OneOrbit k n c q := by
     · rw [← embX_smul_gluedS, ← e, mul_smul _ κ, show κ • L₀ = L₀ from hκ]
       simp only [mul_smul, inv_smul_smul]
 
-instance isLattice_interX (L : Submodule 𝒪[k] (n ⊕ Fin c → k)) [hL : L.IsLattice k] : (interX L).IsLattice k := by
-  refine ⟨Submodule.fg_of_fg_map_injective (inX k n c) (fun x y h => funext fun r => congrFun h (Sum.inl r))
-    (hL.fg.of_le (Submodule.map_comap_le _ _)), ChainLattice.span_eq_top_of_smul_mem _ fun v => ?_⟩
-  obtain ⟨a, ha, hav⟩ := ChainLattice.exists_smul_mem (K := k) L (v := inX k n c v) (by rw [hL.span_eq_top]; trivial)
-  exact ⟨a, ha, by rw [interX, Submodule.mem_comap, map_smul]; exact hav⟩
+instance isLattice_interX (L : Submodule 𝒪[k] (n ⊕ Fin c → k)) [hL : L.IsFullLattice k] : (interX L).IsLattice k := by
+  apply Submodule.IsLattice.of_fg k
+  exact Submodule.fg_of_fg_map_injective (inX k n c)
+    (fun x y h => funext fun r => congrFun h (Sum.inl r))
+    (hL.fg.of_le (Submodule.map_comap_le _ _))
 
 variable [MeasurableSpace k] [BorelSpace k] {ψ : AddChar k Circle} {ν : Measure k} [ν.IsAddHaarMeasure]
 

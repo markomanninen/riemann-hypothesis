@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHModel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHVolP
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.VolUDensity
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.UnGrpHaarProbExists
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.BridgeA
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHModel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.JacConstBHVolP
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.VolUDensity
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.UnGrpHaarProbExists
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.BridgeA
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -23,8 +27,6 @@ theorem mem_iff (k : ℕ) (g : (Matrix (Fin k) (Fin k) ℂ)ˣ) :
 theorem ujEq (k : ℕ) : Formalism.REAL.UJ (εT k) = ReciprocityTheory.ChartRestriction.DS.UNgrp k := Subgroup.ext (mem_iff k)
 
 def eU (k : ℕ) : ↥(Formalism.REAL.UJ (εT k)) ≃* ↥(ReciprocityTheory.ChartRestriction.DS.UNgrp k) := MulEquiv.subgroupCongr (ujEq k)
-
-theorem eU_val (k : ℕ) (g : ↥(Formalism.REAL.UJ (εT k))) : ((eU k g : (Matrix (Fin k) (Fin k) ℂ)ˣ)) = g := rfl
 
 theorem cont_eU (k : ℕ) : Continuous (eU k) := continuous_induced_rng.2 continuous_subtype_val
 theorem cont_eU_symm (k : ℕ) : Continuous (eU k).symm := continuous_induced_rng.2 continuous_subtype_val
@@ -186,12 +188,6 @@ variable {k : ℕ}
 
 abbrev Low (k : ℕ) : Type := {ab : Fin k × Fin k // ab.2 < ab.1}
 
-theorem skMat_low (x : UCo k) (p : Low k) : skMat x p.1.1 p.1.2 = x.2 p := skMat_low_om x p
-
-theorem skMat_up (x : UCo k) (p : Low k) : ‖skMat x p.1.2 p.1.1‖ = ‖x.2 p‖ := by
-  obtain ⟨⟨a, b⟩, h⟩ := p
-  simp [skMat, h, h.ne, not_lt.2 h.le]
-
 theorem norm_skMat_sq (x : UCo k) :
     ‖RLk (skMat x)‖ ^ 2 = ∑ a, (x.1 a) ^ 2 + 2 * ∑ p : Low k, ‖x.2 p‖ ^ 2 := by
   have key : ∀ a b : Fin k, ‖skMat x a b‖ ^ 2 = (if a = b then (x.1 a) ^ 2 else 0) +
@@ -210,7 +206,7 @@ theorem norm_skMat_sq (x : UCo k) :
         (if h : i.1.2 < i.1.1 then ‖x.2 ⟨(i.1.1, i.1.2), h⟩‖ ^ 2 else 0) = 0 := fun i => dif_neg i.2
     have h2 : ∀ i : Low k,
         (if h : i.1.2 < i.1.1 then ‖x.2 ⟨(i.1.1, i.1.2), h⟩‖ ^ 2 else 0) = ‖x.2 i‖ ^ 2 :=
-      fun i => by rw [dif_pos i.2]
+      fun i => by rw [dite_eq_left i.2]
     simp only [h1, h2, Finset.sum_const_zero, add_zero]
   rw [RLk_sq]
   simp only [key, Finset.sum_add_distrib]
@@ -379,7 +375,7 @@ theorem ratio_bounds {η : ℝ} (hη : 0 < η) :
   set E := (hU k).toMeasurableEquiv with hE
   set μK : Measure ↥(ReciprocityTheory.ChartRestriction.DS.UNgrp k) := μ.map E with hμK
   have : μK.IsHaarMeasure := MulEquiv.isHaarMeasure_map μ (eU k) (cont_eU k) (cont_eU_symm k)
-  have : IsProbabilityMeasure μK := Measure.isProbabilityMeasure_map E.measurable.aemeasurable
+  have : IsProbabilityMeasure μK := by rw [hμK]; infer_instance
   obtain ⟨δ, hδ, hd⟩ := volU_density μK η hη
   refine ⟨δ, hδ, fun ρ hρ hρδ => ?_⟩
   have hBm : MeasurableSet (Bρ k ρ) := (isOpen_Bρ ρ).measurableSet

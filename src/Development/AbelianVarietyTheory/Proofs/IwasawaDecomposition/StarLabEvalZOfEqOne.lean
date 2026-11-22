@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntLinearFormCuttingSubcell
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultCellsAmong
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntLinearFormCuttingSubcell
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,8 +41,8 @@ theorem isCentreRay_comp (w : InvFun O) {X X₁ : Type} [AddCommGroup X] [Module
   · rintro ⟨t, ht, β, hw, hβ⟩
     exact ⟨t, ht, pull r β, by rw [evalZ_pull w hr, hw], fun a b => by simp only [pull_apply, hβ]⟩
 
-open Classical in
 
+open Classical in
 def starLab (lab w : InvFun O) : InvFun O where
   toFun n B := if IsCentreRay w (Fin n → O) B then -1 else Real.exp (lab.toFun n B) - 1
   inv n m r hr B := by
@@ -50,8 +54,8 @@ def starLab (lab w : InvFun O) : InvFun O where
       norm_num at hw
     rw [if_neg this, lab.zero, Real.exp_zero, sub_self]
 
-open Classical in
 
+open Classical in
 theorem starLab_eval (lab w : InvFun O) {X : Type} [AddCommGroup X] [Module O X] [Module.Finite O X]
     [Module.Projective O X] (B : X → X → ℝ) :
     (starLab lab w).eval X B = if IsCentreRay w X B then -1 else Real.exp (lab.eval X B) - 1 := by
@@ -61,8 +65,8 @@ theorem starLab_eval (lab w : InvFun O) {X : Type} [AddCommGroup X] [Module O X]
 
 variable {X : Type} [AddCommGroup X]
 
-open Classical in
 
+open Classical in
 theorem starLab_evalZ_of_eq_one (lab w : InvFun O) [Module O X] [Module.Finite O X] [Module.Projective O X]
     {β : LinearMap.BilinForm ℤ X} (h : w.evalZ β = 1) : (starLab lab w).evalZ β = -1 := by
   rw [InvFun.evalZ, starLab_eval, if_pos ⟨1, one_pos, β, h, fun a b => one_mul _⟩]

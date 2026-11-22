@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TopFormula
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BrEqv
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqSmulOfUnitaryEquivariant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlace
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPiTensorMvPolynomialEquivBlocks
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.GlobalTheory.GL4.BranchingNormalisedOfAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EvalAtOneExtremalMul
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SplitPart
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TopFormula
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BrEqv
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqSmulOfUnitaryEquivariant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSpanTprodOfCommuteAtEachPlace
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsPiTensorMvPolynomialEquivBlocks
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.BranchingNormalisedOfAdjoint
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.Core.Rk GlobalTheory.AdForm
 open scoped TensorProduct Classical
@@ -34,7 +39,7 @@ theorem eval_rowAct {n : ℕ} (g y : Matrix (Fin n) (Fin n) ℂ) (f : MvPolynomi
       eval (fun p : Fin n × Fin n => (g * y) p.1 p.2) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [Formalism.GradedWeylDivisibility.rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     congr 1
@@ -118,7 +123,7 @@ def actL {N : ℕ} (lam : DomWeight N) (c : ℤ) (g : Matrix (Fin N) (Fin N) ℂ
 
 theorem actL_apply {N : ℕ} (lam : DomWeight N) (c : ℤ) (g : Matrix (Fin N) (Fin N) ℂ) (hg : IsUnit g.det)
     (f : delSq ℂ N lam) : (actL lam c g f).1 = g.det ^ c • Formalism.GradedWeylDivisibility.rowAct ℂ g f.1 := by
-  rw [actL, dif_pos (fun f hf => rowAct_mem lam g hg f hf)]
+  rw [actL, dite_eq_left (fun f hf => rowAct_mem lam g hg f hf)]
   rfl
 
 theorem span_map_mult_one {V W : ι → Type} [∀ τ, AddCommGroup (V τ)] [∀ τ, Module ℂ (V τ)]
@@ -200,7 +205,7 @@ theorem emb_update {N : ℕ} (G : ι → Matrix (Fin N) (Fin N) ℂ) (lam : ι �
     simp only [Submodule.subtype_apply, hfun]
     exact fnOf_ten_update G (shiftOf lam) (fun σ => (f σ : MvPolynomial (Fin N × Fin N) ℂ)) τ g y y' hy
   | add a b ha hb =>
-    simp only [map_add, Pi.add_apply, ha, hb]
+    simp only [map_add (f := _), Pi.add_apply, ha, hb]
 
 theorem range_emb {N : ℕ} (G : ι → Matrix (Fin N) (Fin N) ℂ) (lam : ι → DomWeight N)
     (e : PiTensorProduct ℂ (fun _ : ι => MvPolynomial (Fin N × Fin N) ℂ) ≃ₗ[ℂ] MvPolynomial (ι × Fin N × Fin N) ℂ)

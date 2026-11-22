@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.L1QuotientIntegralBound
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.L1QuotientIntegralBound
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalSer
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalMF
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFacSer
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmForm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModBasic
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.CoeffRescaleExpandOfNotDvd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalSer
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModEvalMF
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModFacSer
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGmForm
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane MatrixGroups CongruenceSubgroup Manifold

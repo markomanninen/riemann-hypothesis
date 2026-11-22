@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.GenericMulOfProd
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.GenericMulOfProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,11 +68,11 @@ def InjSplit : Prop :=
 
 def CoeffInt : Prop :=
   ∀ (R T : Type) [CommRing R] [CommRing T] [Algebra R T] (ι I : Type) [Fintype ι] [Fintype I] (c : I → ι → T),
-    (∀ i k, IsIntegral R (c i k)) → ∀ (a : ℕ) (m : ι →₀ ℕ), IsIntegral R (MvPolynomial.coeff m ((∏ i, form (c i)).coeff a))
+    (∀ i k, IsIntegral R (c i k)) → ∀ (a : ℕ) (m : ι →₀ ℕ), IsIntegral R (AddMonoidAlgebra.coeff ((∏ i, form (c i)).coeff a) m)
 
 def LiftP : Prop :=
   ∀ (R T ι : Type) [CommRing R] [CommRing T] (f : R →+* T) (N' : Polynomial (MvPolynomial ι T)),
-    (∀ (a : ℕ) (m : ι →₀ ℕ), ∃ r, f r = MvPolynomial.coeff m (N'.coeff a)) → ∃ N, mapP f N = N'
+    (∀ (a : ℕ) (m : ι →₀ ℕ), ∃ r, f r = AddMonoidAlgebra.coeff (N'.coeff a) m) → ∃ N, mapP f N = N'
 
 def NormInt : Prop :=
   ∀ (l d : ℕ) (R S : Type) [CommRing R] [CommRing S] [Algebra R S], EtAway l d R S →
@@ -106,7 +110,7 @@ def CongrRad : Prop :=
     ∀ (B' : Type) [CommRing B'] (g : R →+* B'), (∀ x ∈ 𝔞, g x = 0) → mapP g N = mapP g N'
 
 def GaussLin : Prop :=
-  ∀ (A ι : Type) [CommRing A] (c : A) (s : Multiset (MvPolynomial ι A)), (∀ p ∈ s, ∃ m, MvPolynomial.coeff m p = 1) →
+  ∀ (A ι : Type) [CommRing A] (c : A) (s : Multiset (MvPolynomial ι A)), (∀ p ∈ s, ∃ m, AddMonoidAlgebra.coeff p m = 1) →
     MvPolynomial.C c * s.prod = 0 → c = 0
 
 def SameNormBasic : Prop :=

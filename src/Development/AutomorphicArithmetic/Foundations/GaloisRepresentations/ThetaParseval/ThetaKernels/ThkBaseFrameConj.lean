@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.FrameConj
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BaseKnownTheoremsE
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBaseFrameB
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodK
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FrameConj
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.BaseKnownTheoremsE
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ThkBaseFrameB
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.ExistsIntAddConjEqOneOfBaseGoodK
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -26,7 +30,7 @@ theorem frameConj_k : _root_.GlobalTheory.ThK.Dbl.FrameConj_k := by
   intro F E _ _ _ _ _ σ B n Y r s hB hY K hK
   have hc := hB.cm
   have hσ := cm_conj_conj hc
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  have hL : Y.L.IsLattice E := hY.elim (·.lat.toIsLattice) (·.lat.toIsLattice)
   have hJ := Frame.det_ne hY
   obtain ⟨ε, hε, c, c1, c2⟩ : ∃ ε : ℤˣ, (Y.J.map σ)ᵀ = ((ε : ℤ) : E) • Y.J ∧ ∃ c : ℂ, star c * c = 1 ∧
       ∀ w, (c • Y.J.map (B.emb w).1)ᴴ = c • Y.J.map (B.emb w).1 ∧ IsCartan (c • Y.J.map (B.emb w).1) (Y.θ w) := by
@@ -52,13 +56,13 @@ theorem frameConj_k : _root_.GlobalTheory.ThK.Dbl.FrameConj_k := by
     induction z using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul a x => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hi : ∀ w z, piInf (B.emb w) (cc z) = star (piInf (B.emb w) z) := fun w z => by
     refine Eq.trans (congrArg (infEmb (B.emb w)) ?_) (infEmb_sigR hc (B.emb w) (compInf F E w z)).symm
     induction z using TensorProduct.induction_on with
     | zero => simp only [map_zero]
     | tmul a x => rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have jf : ∀ v, (incM F Y.J).map (compFin F E v) = Y.J.map (inclR (F := F) (Fv F v)) := fun v =>
     Matrix.ext fun i j => congrArg (· ⊗ₜ[F] Y.J i j) (map_one (evFin F v))
   have ii : ∀ w z, piInf (B.emb w) (ι z) = (B.emb w).1 z := fun w z => by
@@ -69,17 +73,17 @@ theorem frameConj_k : _root_.GlobalTheory.ThK.Dbl.FrameConj_k := by
   let α : AE F E := ι 2⁻¹ + eF F • ι (t - 2⁻¹)
   have α0 : α + cc α = 1 := by
     have : cc α = ι (σ 2⁻¹) + eF F • ι (σ (t - 2⁻¹)) := by
-      rw [hι, hι, map_add]; exact congrArg _ (map_smul (cA σ) _ _)
-    rw [this, add_add_add_comm, ← smul_add, ← map_add, ← map_add, h2, map_sub σ, sub_add_sub_comm, ht, h2, sub_self]
+      rw [hι, hι, map_add (f := _)]; exact congrArg _ (map_smul (cA σ) _ _)
+    rw [this, add_add_add_comm, ← smul_add, ← map_add (f := _), ← map_add (f := _), h2, map_sub σ, sub_add_sub_comm, ht, h2, sub_self]
     simp
   have α1 : ∀ v, compFin F E v α ∈ intLoc F E v := fun v => by
-    rw [map_add, comp_eF, ← map_add, ← map_add, add_sub_cancel]
+    rw [map_add (f := _), comp_eF, ← map_add (f := _), ← map_add (f := _), add_sub_cancel]
     exact tmul_mem_intLoc (a := evFin F v 1) (by rw [map_one]; exact one_mem _) t
   have α2 : ∀ w, piInf (B.emb w) α = 2⁻¹ := fun w => by
     have : piInf (B.emb w) (algebraMap (AF F) (AE F E) (eF F)) = 0 := by
       change InfinitePlace.Completion.extensionEmbedding w 0 * (B.emb w).1 1 = _
       rw [map_zero, zero_mul]
-    rw [map_add, Algebra.smul_def, map_mul, this, zero_mul, add_zero, ii, map_inv₀, map_ofNat]
+    rw [map_add (f := _), Algebra.smul_def, map_mul, this, zero_mul, add_zero, ii, map_inv₀, map_ofNat]
   have uJ : IsUnit Y.J := (Matrix.isUnit_iff_isUnit_det _).2 hJ.isUnit
   obtain ⟨T₀, hT₀⟩ := exists_dual (σ : E →+* E) hσ uJ 1
   obtain ⟨T, hT⟩ := exists_dual cc hcc (J := incM F Y.J) (uJ.map ι.mapMatrix) g

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsAdicCompleteIdealEps
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SvalEqSumOfHasVal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IdealPart
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsAdicCompleteIdealEps
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.SvalEqSumOfHasVal
+
+@[expose] public section
 
 noncomputable section
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
@@ -22,15 +26,15 @@ theorem valR_cocycle (hL : L.IsLB) (x : Sp R ⟶ Z) {i j k : L.ι} (hi : ⊤ ≤
     valR x (L.U i ⊓ L.U j) (L.g i j).val * valR x (L.U j ⊓ L.U k) (L.g j k).val =
       valR x (L.U i ⊓ L.U k) (L.g i k).val := by
   apply toStkA_injective
-  rw [map_mul, toStkA_valR x (L.U i ⊓ L.U j) _ (fun _ hz => ⟨hi hz, hj hz⟩),
-    toStkA_valR x (L.U j ⊓ L.U k) _ (fun _ hz => ⟨hj hz, hk hz⟩),
-    toStkA_valR x (L.U i ⊓ L.U k) _ (fun _ hz => ⟨hi hz, hk hz⟩), ← Units.val_mul,
+  rw [map_mul, FormalValue.toStkA_valR_eq_gs x (L.U i ⊓ L.U j) _ (fun _ hz => ⟨hi hz, hj hz⟩) _, gs_unit x (cpt R) (L.U i ⊓ L.U j) ⟨hi trivial, hj trivial⟩ (L.g i j),
+    FormalValue.toStkA_valR_eq_gs x (L.U j ⊓ L.U k) _ (fun _ hz => ⟨hj hz, hk hz⟩) _, gs_unit x (cpt R) (L.U j ⊓ L.U k) ⟨hj trivial, hk trivial⟩ (L.g j k),
+    FormalValue.toStkA_valR_eq_gs x (L.U i ⊓ L.U k) _ (fun _ hz => ⟨hi hz, hk hz⟩) _, gs_unit x (cpt R) (L.U i ⊓ L.U k) ⟨hi trivial, hk trivial⟩ (L.g i k), ← Units.val_mul,
     gm_cocycle hL x _ (hi trivial) (hj trivial) (hk trivial)]
 
 theorem valR_self (hL : L.IsLB) (x : Sp R ⟶ Z) {j : L.ι} (h : ⊤ ≤ x ⁻¹ᵁ L.U j) :
     valR x (L.U j ⊓ L.U j) (L.g j j).val = 1 := by
   apply toStkA_injective
-  rw [toStkA_valR x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨h hz, h hz⟩), map_one]
+  rw [FormalValue.toStkA_valR_eq_gs x (L.U j ⊓ L.U j) _ (fun _ hz => ⟨h hz, h hz⟩) _, gs_unit x (cpt R) (L.U j ⊓ L.U j) ⟨h trivial, h trivial⟩ (L.g j j), map_one]
   exact congrArg Units.val (gm_self hL x _ (h trivial))
 
 theorem isFrm_spread (hL : L.IsLB) (x : Sp R ⟶ Z) {k : L.ι} (hk : ⊤ ≤ x ⁻¹ᵁ L.U k) {a : R} (ha : IsUnit a) :
@@ -47,7 +51,7 @@ theorem sval_chart {p : Z' ⟶ Z} {m : ℕ} (s : SecP L p m) (q : Sp R ⟶ Z') {
   have wk : ⊤ ≤ q ⁻¹ᵁ LB.wchart L (fun _ : Fin 1 => p) (fun _ => k) :=
     fun z hz => Set.mem_iInter.2 fun _ => hk hz
   apply toStkA_injective
-  rw [map_mul, map_pow, toStkA_valR (q ≫ p) (L.U j ⊓ L.U k) _ (fun _ hz => ⟨hj hz, hk hz⟩)]
+  rw [map_mul, map_pow, FormalValue.toStkA_valR_eq_gs (q ≫ p) (L.U j ⊓ L.U k) _ (fun _ hz => ⟨hj hz, hk hz⟩) _, gs_unit (q ≫ p) (cpt R) (L.U j ⊓ L.U k) ⟨hj trivial, hk trivial⟩ (L.g j k)]
   refine (FormalValue.toStkA_valR_eq_gs q _ _ wj _).trans ((sec_trans s q _ (wj trivial) (wk trivial)).trans
     (congrArg₂ (· * ·) ?_ (FormalValue.toStkA_valR_eq_gs q _ _ wk _).symm))
   rw [trF, Fin.prod_univ_one, zpow_natCast, Units.val_pow_eq_pow_val]

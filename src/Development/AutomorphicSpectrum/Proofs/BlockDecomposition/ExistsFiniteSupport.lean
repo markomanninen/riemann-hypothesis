@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 open GlobalTheory.PRep
 
@@ -61,7 +65,8 @@ theorem mem_span_of_normal (ρ : Representation ℂ L V) (σ : Representation �
   haveI := Fintype.ofFinite (L ⧸ M)
   set S := Submodule.span ℂ {y | ∃ (n : L) (u : V), y = ρ n u - ((χ n : ℂˣ) : ℂ) • u} with hS
   have h1 : f (avg ρ χ M v) = avg σ χ M (f v) := by
-    simp only [avg_apply, map_sum, map_smul, hfi]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [avg_apply, map_sum, map_smul, hfi]
   have h2 : avg σ χ M (f v) = 0 := by
     have hle : Submodule.span ℂ
         {y | ∃ (n : L) (w : W), (∀ m ∈ M, σ m w = w) ∧ y = σ n w - ((χ n : ℂˣ) : ℂ) • w}

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private theorem primitive_dyadic_character_ne_one (R : Type) [CommRing R] (m : ℕ)
     (ξ : DirichletCharacter R (2 ^ (m + 2))) (hξ : ξ.IsPrimitive) :

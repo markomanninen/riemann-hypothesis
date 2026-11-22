@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.Brauer.TensorSimple
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.TensorSimple
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.CsaCharpoly

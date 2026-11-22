@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.MapZeroS
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupEqClassOfIsAWStatement
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.MapZeroS
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupEqClassOfIsAWStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf UpperTheory.Kun
 
 theorem UpperTheory.exists_cocycle_product_eq_pull_add_cup :

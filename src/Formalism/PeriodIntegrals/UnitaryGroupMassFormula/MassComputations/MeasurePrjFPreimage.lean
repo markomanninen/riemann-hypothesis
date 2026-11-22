@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.BcTensMapInclR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.BcTensMapInclR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TopoAF
+
+@[expose] public section
 
 noncomputable section
 
@@ -176,7 +180,7 @@ theorem isClosed_stabT' (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace 
     first
     | simp only [Matrix.mulVec, dotProduct]
     | simp only [Matrix.mulVec, Matrix.dotProduct]
-    refine continuous_finset_sum _ fun j _ => ?_
+    refine continuous_finsetSum _ fun j _ => ?_
     exact ((continuous_apply j).comp ((continuous_apply i).comp hmat)).mul continuous_const
   have hset : ((stabT R σ J X0 : Subgroup (HA R σ J)) : Set (HA R σ J)) =
       {g | actTup R (HA.mat R σ J g) (ratTup (F := F) R X0) = ratTup (F := F) R X0} := by

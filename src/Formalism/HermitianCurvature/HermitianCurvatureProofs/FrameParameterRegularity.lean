@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFP
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GoodAlt
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutFP
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GoodAlt
+
+@[expose] public section
 
 noncomputable section
 

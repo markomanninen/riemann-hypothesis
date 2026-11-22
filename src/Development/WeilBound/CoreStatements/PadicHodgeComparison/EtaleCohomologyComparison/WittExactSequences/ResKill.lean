@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -23,10 +27,10 @@ theorem res_add {K : Cx.{w} R} {M : Type w₁} [AddCommGroup M] [Module R M] {ε
   · rw [add_smul, ha.2.1 x hx, hb.2.1 x hx, add_zero]
   · obtain ⟨x, hx⟩ := ha.2.2.1 y hy
     obtain ⟨x', hx'⟩ := hb.2.2.1 y hy
-    exact ⟨x + x', by rw [map_add, hx, hx', add_smul]⟩
+    exact ⟨x + x', by rw [map_add (f := _), hx, hx', add_smul]⟩
   · obtain ⟨x, hx⟩ := ha.2.2.2 n y hy
     obtain ⟨x', hx'⟩ := hb.2.2.2 n y hy
-    exact ⟨x + x', by rw [map_add, hx, hx', add_smul]⟩
+    exact ⟨x + x', by rw [map_add (f := _), hx, hx', add_smul]⟩
 
 theorem res_mul {K : Cx.{w} R} {M : Type w₁} [AddCommGroup M] [Module R M] {ε : M →ₗ[R] K.X 0} (r : R) {a : R}
     (ha : K.ResUpTo a ε) : K.ResUpTo (r * a) ε := by

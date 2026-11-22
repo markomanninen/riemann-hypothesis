@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.SqSubLeNormSub
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.QNorm
 open scoped WithZero
@@ -14,7 +18,7 @@ theorem exists_isQuad : ∀ (F : Type) [Field F] [NumberField F] (δ : F), ¬ Is
   have hirr : Irreducible (Polynomial.X ^ 2 - Polynomial.C δ) :=
     X_pow_sub_C_irreducible_of_prime Nat.prime_two hroot
   have hmon : (Polynomial.X ^ 2 - Polynomial.C δ).Monic := Polynomial.monic_X_pow_sub_C δ two_ne_zero
-  have hdeg : (Polynomial.X ^ 2 - Polynomial.C δ).natDegree = 2 := Polynomial.natDegree_X_pow_sub_C
+  have hdeg : (Polynomial.X ^ 2 - Polynomial.C δ).natDegree = 2 := Polynomial.natDegree_X_pow_sub_C _
   have : Fact (Irreducible (Polynomial.X ^ 2 - Polynomial.C δ)) := ⟨hirr⟩
   set p : Polynomial F := Polynomial.X ^ 2 - Polynomial.C δ with hp
   have hsq : AdjoinRoot.root p ^ 2 = AdjoinRoot.of p δ := by
@@ -49,10 +53,10 @@ theorem exists_isQuad : ∀ (F : Type) [Field F] [NumberField F] (δ : F), ¬ Is
     refine ⟨(g %ₘ p).coeff 0, (g %ₘ p).coeff 1, ?_⟩
     have hmk : AdjoinRoot.mk p g = AdjoinRoot.mk p (g %ₘ p) := by
       conv_lhs => rw [← Polynomial.modByMonic_add_div g p]
-      rw [map_add, map_mul, AdjoinRoot.mk_self, zero_mul, add_zero]
+      rw [map_add (f := _), map_mul, AdjoinRoot.mk_self, zero_mul, add_zero]
     rw [hmk]
     conv_lhs => rw [hr]
-    rw [map_add, map_mul, AdjoinRoot.mk_C, AdjoinRoot.mk_C, AdjoinRoot.mk_X,
+    rw [map_add (f := _), map_mul, AdjoinRoot.mk_C, AdjoinRoot.mk_C, AdjoinRoot.mk_X,
       AdjoinRoot.algebraMap_eq, add_comm]
 
 end GlobalTheory.QNorm

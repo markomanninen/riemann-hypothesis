@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.PrimeProj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -102,7 +106,7 @@ def TyTop : Prop := ForData fun _ _ _ _ _ n _ _ S _ _ _ w₀ _ _ _ _ N _ Ty =>
 def TyFact : Prop := ForData fun E _ _ _ _ n p _ S _ _ _ _ _ V _ W _ L Ty =>
   (∀ w ∈ W, (L w).Fact Ty.K (Iw n w.1) ∧ Ty.L.Apart (L w) ∧ ∀ w' ∈ W, w ≠ w' → (L w).Apart (L w')) ∧
   (∀ w : Spl E p, w.1 ∉ V.S → cj w.1 ∉ V.S → (∀ u ∈ W, GlobalTheory.Cong.Apart w.1 u.1) →
-    (L w).Fact Ty.K (GlobalTheory.LFun.KGL w.1 n) ∧ Ty.L.Apart (L w)) ∧
+    (L w).Fact Ty.K (GlobalTheory.LFun.KGL w.1 (n := n)) ∧ Ty.L.Apart (L w)) ∧
   ∃ c : ℕ, 0 < c ∧ c.Coprime p ∧ ∀ k ∈ Ty.K, ∀ v ∈ LaHat S.D, c • S.L.actG k v ∈ LaHat S.D
 
 def ExistsIdempotentHeckeOperatorWithRegularSupport : Prop := ForData fun E _ _ _ _ n p _ S _ _ _ _ _ _ _ W _ L Ty =>
@@ -124,7 +128,7 @@ def MemComm : Prop := ForData fun _ _ _ _ _ _ _ _ S F _ _ _ _ V r W N L Ty => �
 
 def PhiEx : Prop := ForData fun E _ _ _ _ n p _ S F _ _ _ _ V r _ N _ Ty =>
   ∃ φ : S.G.GAf → Module.Dual ℂ V.W.Sp, φ ≠ 0 ∧ Ty.IsTy φ ∧
-    (∀ g : GUf E n, (∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g ∈ GlobalTheory.LFun.KGL w n) → φ (F.j g) = V.Φ (F.th g)) ∧
+    (∀ g : GUf E n, (∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w g ∈ GlobalTheory.LFun.KGL w (n := n)) → φ (F.j g) = V.Φ (F.th g)) ∧
     ∀ (g : Mem S.L N) (θ : ℂ), Seen F V r g θ → Formalism.UG.hAct Ty.K₀ g.fn φ = θ • φ
 
 def EigEx : Prop := ForData fun E _ _ _ _ n _ _ S F _ _ _ _ V r _ N _ Ty =>

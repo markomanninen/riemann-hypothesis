@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendVCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut

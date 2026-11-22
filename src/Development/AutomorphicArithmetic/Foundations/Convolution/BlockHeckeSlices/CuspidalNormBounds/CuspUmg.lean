@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +12,7 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Au
 open GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.V.Cm
 
 theorem UpperTheory.ConvolutionTheory.BW.cuspUmg :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CuspUmg E := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CuspUmg E := by
   intro E _ _ _ n f hf
   refine ⟨⟨hf.1.isLeftInvariant, level_of hf.1.isSmooth hf.1.isKFinite, ?_⟩, hf.2⟩
   obtain ⟨C₀, N, hC₀⟩ := hf.1.hasModerateGrowth
@@ -22,5 +26,5 @@ theorem UpperTheory.ConvolutionTheory.BW.cuspUmg :
     rw [uC_tmul, mul_assoc]
     exact (norm_mul c _).le.trans (mul_le_mul_of_nonneg_left (hC g) (norm_nonneg c))
   | add x y hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hx.add hy

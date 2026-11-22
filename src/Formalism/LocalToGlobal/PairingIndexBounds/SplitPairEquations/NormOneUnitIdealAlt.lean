@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.Reduction
-import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
-import Formalism.LocalToGlobal.GlobalTheory.GL3.DeterminantNormOneOfUnitDisc
-import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.Reduction
+public import Formalism.LocalToGlobal.TorsionIntegrality.QuadraticSemicharacters.QuadraticSemicharacterIdentityReformulated2
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.DeterminantNormOneOfUnitDisc
+public import Formalism.LocalRingCardinality.SpanPowerMembership.RelDet
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardIntegralLatticeExists
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical
@@ -13,7 +17,8 @@ open Formalism.MainNotions Formalism.L2.Th1.H
 
 theorem formV_herm' (A : ℝ) (n : Type) [Fintype n] (N N' : ℕ) : IsHerm (Ker.formV A n N N') := by
   intro x y
-  simp only [Ker.formV, LinearMap.mk₂'ₛₗ_apply, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Ker.formV, LinearMap.mk₂'ₛₗ_apply, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal]
   congr 1
   refine Finset.sum_congr rfl fun τ _ => Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring

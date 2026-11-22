@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.HasDerivAtInvpow
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.HasDerivAtInvpow
+
+@[expose] public section
 
 open Matrix MvPolynomial
 

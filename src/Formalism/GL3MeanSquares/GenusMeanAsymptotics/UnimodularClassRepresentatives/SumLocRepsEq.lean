@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralLatOfForall
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsIntegralLatOfForall
+
+@[expose] public section
 
 open NumberField Module
 
@@ -105,7 +109,7 @@ theorem psiP_eq_sum' (hs : h.IsSymm) (S : VecSplit h h') (L : Submodule (𝓞 K)
     psiP S L 𝔭 = ∑ T ∈ s, (fibLoc S L 𝔭 T : ℝ) * lamP h' T 𝔭 := by
   have hex : ∃ s, IsLocReps S L 𝔭 s := ⟨s, hsr⟩
   unfold psiP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact sum_locReps_eq hs S L 𝔭 hex.choose_spec hsr
 
 end Formalism.HermitianLattices.Ext.L3.BrB

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryKTypeFiniteStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalConvolutionCompactStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNonnegBump
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.NotIsFinitePartOfBot
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryKTypeFiniteStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalConvolutionCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsOpenIsCompact
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsNonnegBump
+
+@[expose] public section
 
 noncomputable section
 
@@ -197,15 +201,15 @@ theorem finiteDimensional_types_of_irred {R : Γ →* (L →L[ℂ] L)} (i : G �
 def compress (X : Submodule ℂ L) [X.HasOrthogonalProjection] (T : L →L[ℂ] L) : X →L[ℂ] X :=
   ((X.starProjection ∘L T) ∘L X.subtypeL).codRestrict X fun _ => X.starProjection_apply_mem _
 
-omit [CompleteSpace L] in
 
+omit [CompleteSpace L] in
 theorem inner_compress (X : Submodule ℂ L) [X.HasOrthogonalProjection] (T : L →L[ℂ] L) (y x : X) :
     ⟪y, compress X T x⟫_ℂ = ⟪(y : L), T x⟫_ℂ := by
   change ⟪(y : L), X.starProjection (T x)⟫_ℂ = _
   rw [← Submodule.inner_starProjection_left_eq_right, Submodule.starProjection_eq_self_iff.2 y.2]
 
-omit [CompleteSpace L] in
 
+omit [CompleteSpace L] in
 theorem isCompactOperator_compress {X Y : Submodule ℂ L} [X.HasOrthogonalProjection] (hXY : X ≤ Y)
     {T : L →L[ℂ] L} {T' : Y →L[ℂ] Y} (hT : ∀ y : Y, (T' y : L) = T y) (hc : IsCompactOperator T') :
     IsCompactOperator (compress X T) := by
@@ -248,22 +252,22 @@ end Abstract2
 
 section Concrete
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem continuous_infGL : Continuous (infGL E a) := by
   have hs : Continuous (sInf E) := ((continuous_infEq E).prodMk continuous_const :
     Continuous fun x : Cinf E => ((infEq E x, 0) : InfiniteAdeleRing E × Af E))
   exact Continuous.units_map (corner (matN a (sInf E))) (continuous_const.add (continuous_id.matrix_map hs))
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem continuous_finGL : Continuous (finGL E a) := by
   have hs : Continuous (sFin E) := (continuous_const.prodMk continuous_id :
     Continuous fun x : Af E => ((0, x) : InfiniteAdeleRing E × Af E))
   exact Continuous.units_map (corner (matN a (sFin E))) (continuous_const.add (continuous_id.matrix_map hs))
 
-omit [IsTotallyComplex E] in
 
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem locallyCompactSpace_GL : LocallyCompactSpace (GL (Fin a) (Cinf E)) := by
   haveI : LocallyCompactSpace (Matrix (Fin a) (Fin a) (Cinf E)) :=
     inferInstanceAs (LocallyCompactSpace (Fin a → Fin a → Cinf E))
@@ -275,6 +279,7 @@ theorem exists_testFn {N : Set (GL (Fin a) (Cinf E))} (hN : N ∈ 𝓝 1) {U : S
     (hU : IsOpen (U : Set (GL (Fin a) (Af E)))) (hUc : IsCompact (U : Set (GL (Fin a) (Af E)))) :
     ∃ f : GA E a → ℝ, Continuous f ∧ HasCompactSupport f ∧ 0 ≤ f ∧ f 1 ≠ 0 ∧
       ∀ g, f g ≠ 0 → GeneralLinearGroup.map (pInf E) g ∈ N ∧ GeneralLinearGroup.map (pFin E) g ∈ U := by
+  set_option synthInstance.maxHeartbeats 200000 in
   classical
   haveI := locallyCompactSpace_GL (E := E) (a := a)
   obtain ⟨φ, hφ, hφs, hφ0, hφ1, hφN⟩ := GlobalTheory.CompanionTheory.Bump.exists_nonneg_bump (1 : GL (Fin a) (Cinf E)) N hN
@@ -305,7 +310,7 @@ variable (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
 def fixedPart (H : Submodule ℂ (L2 (latticeGL E a) μ)) (U : Subgroup (GL (Fin a) (Af E))) :
     Submodule ℂ (L2 (latticeGL E a) μ) where
   carrier := {F | F ∈ H ∧ ∀ u ∈ U, R (latticeGL E a) μ (finGL E a u) F = F}
-  add_mem' := fun h h' => ⟨H.add_mem h.1 h'.1, fun u hu => by rw [map_add, h.2 u hu, h'.2 u hu]⟩
+  add_mem' := fun h h' => ⟨H.add_mem h.1 h'.1, fun u hu => by rw [map_add (f := _), h.2 u hu, h'.2 u hu]⟩
   zero_mem' := ⟨H.zero_mem, fun _ _ => map_zero _⟩
   smul_mem' := fun c _ h => ⟨H.smul_mem c h.1, fun u hu => by rw [map_smul, h.2 u hu]⟩
 
@@ -355,7 +360,7 @@ theorem enoughCompact_fixedPart {H : Submodule ℂ (L2 (latticeGL E a) μ)} (hHc
 
 end Concrete
 
-theorem finiteDimensional_isotypic : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (H : Submodule ℂ (L2 (latticeGL E a) μ)), H ≤ L2cusp μ → IsIrredSubrep (R (latticeGL E a) μ) H → ∀ (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : Representation ℂ (Kinf E a) W), FiniteDimensional ℂ ↥(⨆ (T : W →ₗ[ℂ] L2 (latticeGL E a) μ) (_ : (∀ k w, T (ρ k w) = R (latticeGL E a) μ (infGL E a (Unitary.toUnits k)) (T w)) ∧ ∀ w, T w ∈ H ∧ ∀ u ∈ U, R (latticeGL E a) μ (finGL E a u) (T w) = T w), LinearMap.range T : Submodule ℂ (L2 (latticeGL E a) μ)) := by
+theorem finiteDimensional_isotypic : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (μ : Measure (GA E a)) [μ.IsHaarMeasure] [μ.IsMulRightInvariant] (H : Submodule ℂ (L2 (latticeGL E a) μ)), H ≤ L2cusp μ → IsIrredSubrep (R (latticeGL E a) μ) H → ∀ (U : Subgroup (GL (Fin a) (Af E))), IsOpen (U : Set (GL (Fin a) (Af E))) → ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : Representation ℂ (Kinf E a) W), FiniteDimensional ℂ ↥(⨆ (T : W →ₗ[ℂ] L2 (latticeGL E a) μ) (_ : (∀ k w, T (ρ k w) = R (latticeGL E a) μ (infGL E a (Unitary.toUnits k)) (T w)) ∧ ∀ w, T w ∈ H ∧ ∀ u ∈ U, R (latticeGL E a) μ (finGL E a u) (T w) = T w), LinearMap.range T : Submodule ℂ (L2 (latticeGL E a) μ)) := by
   intro E _ _ _ a μ _ _ H hH hI U hU W _ _ _ ρ
   obtain ⟨K0, hK0o, hK0c⟩ := GlobalTheory.GLIntegral.exists_isOpen_isCompact E a
   have hU' : IsOpen ((U ⊓ K0 : Subgroup _) : Set (GL (Fin a) (Af E))) := hU.inter hK0o

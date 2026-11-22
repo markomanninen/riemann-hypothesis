@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal
@@ -104,10 +108,7 @@ theorem schur_selfAdjoint (𝒰 : Set (H →L[ℂ] H))
     · show max 0 (|s - t| / 2 - |t - t|) ≠ 0
       rw [sub_self, abs_zero, sub_zero, max_eq_right hδ.le]
       exact hδ.ne'
-  have hne : (spectrum ℝ A).Nonempty := by
-    first
-    | exact CFC.spectrum_nonempty ℝ A hA
-    | exact CFC.spectrum_nonempty ℝ A
+  have hne : (spectrum ℝ A).Nonempty := ContinuousFunctionalCalculus.spectrum_nonempty A hA
   obtain ⟨c, hc⟩ := hne
   refine ⟨c, ?_⟩
   have h1 : cfc (fun x : ℝ => x) A = cfc (fun _ : ℝ => c) A :=
@@ -207,13 +208,8 @@ variable [CompleteSpace H]
 theorem Tlin_cont (h : SqRep μ ρ) (v : H) : Continuous (Tlin h v) := by
   refine LinearMap.continuous_of_seq_closed_graph (Tlin h v) ?_
   intro u x y hu hy
-  have h2 : Filter.Tendsto (fun n => eLpNorm (⇑(Tlin h v (u n)) - ⇑y) 2 μ) Filter.atTop (nhds 0) := by
-    first
-    | exact (Lp.tendsto_Lp_iff_tendsto_eLpNorm' (fun n => Tlin h v (u n)) y).1 hy
-    | exact Lp.tendsto_Lp_iff_tendsto_eLpNorm'.1 hy
   have hm : TendstoInMeasure μ (fun n => ⇑(Tlin h v (u n))) Filter.atTop ⇑y :=
-    tendstoInMeasure_of_tendsto_eLpNorm two_ne_zero (fun n => Lp.aestronglyMeasurable _)
-      (Lp.aestronglyMeasurable _) h2
+    tendstoInMeasure_of_tendsto_Lp hy
   obtain ⟨ns, hns, hae⟩ := hm.exists_seq_tendsto_ae
   have hall : ∀ᵐ g ∂μ, ∀ n, (Tlin h v (u n) : G → ℂ) g = ⟪ρ g v, u n⟫_ℂ :=
     ae_all_iff.2 fun n => Tlin_coe h v (u n)
@@ -563,12 +559,14 @@ theorem umat_mem (g : Formalism.REAL.UJ ε) : umat g ∈ UJset ε := by
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 theorem sqRep_of {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} (hU : IsURepOn (UJset ε) σ) (hS : IsSqIntOn ε σ) :
-    SqRep (Formalism.REAL.muG ε) (fun g : Formalism.REAL.UJ ε => σ (umat g)) where
-  one := hU.1.1
-  mul a b := hU.1.2 _ (umat_mem a) _ (umat_mem b)
-  iso g v := hU.2.1 _ (umat_mem g) v
-  cont v := (hU.2.2 v).comp_continuous continuous_umat umat_mem
-  sq v w := hS v w
+    SqRep (Formalism.REAL.muG ε) (fun g : Formalism.REAL.UJ ε => σ (umat g)) := by
+  refine ⟨hU.1.1, ?_, ?_, ?_, hS⟩
+  · intro a b
+    exact hU.1.2 _ (umat_mem a) _ (umat_mem b)
+  · intro g v
+    exact hU.2.1 _ (umat_mem g) v
+  · intro v
+    exact (hU.2.2 v).comp_continuous continuous_umat umat_mem
 
 private theorem umat_surj_lemma {n : ℕ} {ε : Fin n → Bool} (g : Matrix (Fin n) (Fin n) ℂ)
     (hg : g ∈ UJset ε) : ∃ u : Formalism.REAL.UJ ε, umat u = g := by

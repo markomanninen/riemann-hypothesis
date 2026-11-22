@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.LeviTransposeDistributions.BoundOneTwo
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.DetUpdateRowOneLast
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.LeviTransposeDistributions.BoundOneTwo
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.DetUpdateRowOneLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ theorem sec_row {w : Vc k n} {s : GL (Fin (n + 1)) k} (hs : ∀ j, (s : Matrix (
     ∀ j, ((sec w : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) j = w j := by
   have hex : ∃ s' : GL (Fin (n + 1)) k, ∀ j, (s' : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) j = w j := ⟨s, hs⟩
   unfold sec
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem phi_eq_of_row {Λ : (Mx k n → ℂ) →ₗ[ℂ] ℂ} (hP : PInvX Λ) {F : Mx k n × Vc k n → ℂ} (hF : F ∈ SB (Mx k n × Vc k n))
@@ -145,7 +149,27 @@ theorem phi_eventually_eq {Λ : (Mx k n → ℂ) →ₗ[ℂ] ℂ} (hP : PInvX Λ
   have hMc : Continuous Mf := continuous_const.add (Continuous.matrix_vecMulVec continuous_const (continuous_id.sub continuous_const))
   have hM0 : Mf w₀ = 1 := by simp [Mf]
   obtain ⟨W, hW1, hW⟩ := (eventually_actP_eq hF).exists_mem
-  have hE := PositivityTheory.PfBern.cocyclesToWachVectorsExponent.isOpenEmbedding_valGL (k := k) (m := n + 1)
+  have hE : IsOpenEmbedding (Units.val : GL (Fin (n + 1)) k → Matrix (Fin (n + 1)) (Fin (n + 1)) k) := by
+    haveI := t2Space k
+    refine ⟨?_, ?_⟩
+    · refine Units.isEmbedding_val_mk' (f := Inv.inv) ?_ ?_
+      · intro A hA
+        apply ContinuousAt.continuousWithinAt
+        apply continuousAt_matrix_inv
+        have hd : A.det ≠ 0 := ((Matrix.isUnit_iff_isUnit_det A).1 hA).ne_zero
+        rw [Ring.inverse_eq_inv']
+        exact continuousAt_inv₀ hd
+      · intro u
+        exact (Matrix.coe_units_inv u).symm
+    · have hr : Set.range (Units.val : GL (Fin (n + 1)) k → Matrix (Fin (n + 1)) (Fin (n + 1)) k) = {A | A.det ≠ 0} := by
+        ext A
+        constructor
+        · rintro ⟨u, rfl⟩
+          exact ((Matrix.isUnit_iff_isUnit_det _).1 u.isUnit).ne_zero
+        · intro h
+          exact ⟨((Matrix.isUnit_iff_isUnit_det A).2 (isUnit_iff_ne_zero.2 h)).unit, IsUnit.unit_spec _⟩
+      rw [hr]
+      exact isOpen_ne_fun (continuous_id.matrix_det) continuous_const
   have hO : Units.val '' W ∈ 𝓝 (1 : Matrix (Fin (n + 1)) (Fin (n + 1)) k) := by
     have := hE.isOpenMap.image_mem_nhds hW1
     simpa using this

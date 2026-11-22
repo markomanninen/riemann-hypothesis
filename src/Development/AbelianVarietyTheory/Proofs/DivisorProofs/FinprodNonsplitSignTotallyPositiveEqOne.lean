@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -14,7 +19,10 @@ theorem embReal_algebraMap {w : InfinitePlace F} (hw : w.IsReal) (t : F) :
     InfinitePlace.Completion.extensionEmbeddingOfIsReal hw (algebraMap F w.Completion t) =
       InfinitePlace.embedding_of_isReal hw t := by
   have := InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe hw ((WithAbs.equiv w.1).symm t)
-  simpa using this
+  rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+    Algebra.algebraMap_self_apply]
+  rw [← WithAbs.equiv_symm_apply]
+  simpa only [RingEquiv.apply_symm_apply] using this
 
 theorem eta_inf_eq_one [Algebra.IsQuadraticExtension F E] {w : InfinitePlace F} (hw : w.IsReal) (t : Fˣ)
     (ht : 0 < InfinitePlace.embedding_of_isReal hw (t : F)) :
@@ -48,7 +56,7 @@ theorem valued_eq_exp {L : Type} [Field L] [Valued L (WithZero (Multiplicative �
     Valued.v x = WithZero.exp (-ordL x) := by
   have h0 : Valued.v x ≠ 0 := (Valuation.ne_zero_iff _).2 hx
   unfold ordL
-  rw [dif_neg h0, neg_neg]
+  rw [dite_eq_right h0, neg_neg]
   conv_lhs => rw [← WithZero.coe_unzero h0]
   rfl
 
@@ -138,8 +146,8 @@ end GlobalTheory.TotPosSign
 
 namespace GlobalTheory.UnitaryClasses
 
-open GlobalTheory.TotPosSign in
 
+open GlobalTheory.TotPosSign in
 theorem signProd_totPos : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ S : Set (Pl E), IsSection S →
     ∀ d : E, d ≠ 0 → (∀ τ : E →+* ℂ, ∃ r : ℝ, 0 < r ∧ τ d = r) →
     ∏ᶠ w ∈ S, (if IsSplitAt w then (1 : ℂ) else (-1) ^ ordL (algebraMap E (w.adicCompletion E) d)) = 1 := by
@@ -158,7 +166,11 @@ theorem signProd_totPos : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     have hw : w.IsReal := IsTotallyReal.isReal w
     refine eta_inf_eq_one hw t ?_
     letI : Algebra (↥(maximalRealSubfield E)) ℂ := w.embedding.toAlgebra
-    let τ : E →ₐ[↥(maximalRealSubfield E)] ℂ := IsAlgClosed.lift
+    let τ : E →ₐ[↥(maximalRealSubfield E)] ℂ := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     obtain ⟨r, hr, e⟩ := hpos τ.toRingHom
     have e2 : (InfinitePlace.embedding_of_isReal hw (t : ↥(maximalRealSubfield E)) : ℂ) = r := by
       rw [InfinitePlace.embedding_of_isReal_apply, ← e]

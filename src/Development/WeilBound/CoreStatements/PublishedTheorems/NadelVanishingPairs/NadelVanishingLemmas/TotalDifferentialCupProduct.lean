@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeltaCupProduct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsFlatLift
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechDeltaCupProduct
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,7 +22,8 @@ theorem Dtot_cup : ∀ {ι : Type} [LinearOrder ι] {E : Type} [AddCommGroup E] 
       + ((-1 : ℤ) ^ u.card) • d (cup Φ c u) = 0 by
     simp only [Dtot]
     rw [key, add_assoc, hS, add_zero]
-  simp only [cup, map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cup, map_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_eq_zero fun j hj => ?_
   have h := congrFun (hD ({x ∈ u | x ≤ j})) ({x ∈ u | j ≤ x})
   simp only [Dtot, Pi.zero_apply] at h

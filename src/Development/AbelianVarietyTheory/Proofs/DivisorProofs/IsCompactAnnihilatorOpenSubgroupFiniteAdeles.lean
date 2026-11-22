@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportedWeilDatumCMPreservesSchwartzHeisenberStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsContOnOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TransportedWeilDatumCMPreservesSchwartzHeisenberStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStdCharNegOneOfStandardTraceAdelicAddChar
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -84,7 +89,7 @@ theorem exists_mul_mem_of_forall {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) :
     exact_mod_cast h2
   have hdual : k * δ ∈ ((FractionalIdeal.dual ℤ ℚ (1 : FractionalIdeal (𝓞 F)⁰ F) : FractionalIdeal (𝓞 F)⁰ F) :
       Submodule (𝓞 F) F) := by
-    rw [FractionalIdeal.coe_dual_one, Submodule.mem_traceDual]
+    rw [FractionalIdeal.coeToSubmodule_dual_one, Submodule.mem_traceDual]
     intro a ha
     obtain ⟨b, rfl⟩ := Submodule.mem_one.mp ha
     obtain ⟨n, hn⟩ := htr b
@@ -132,7 +137,7 @@ theorem isCompact_annihilator : ∀ (F : Type) [Field F] [NumberField F] (ψ : A
     rw [hset]
     refine isClosed_biInter fun y _ => isClosed_eq ?_ continuous_const
     exact hψ.1.comp (continuous_const.prodMk
-      (continuous_finset_sum _ fun i _ => (continuous_apply i).mul continuous_const))
+      (continuous_finsetSum _ fun i _ => (continuous_apply i).mul continuous_const))
   · intro x hx i _
     have hz : ∀ t ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 F) F,
         ψ (pairA F 0 ((algebraMap F (FiniteAdeleRing (𝓞 F) F) (algebraMap (𝓞 F) F (d i)) * x i) * t)) = 1 := by

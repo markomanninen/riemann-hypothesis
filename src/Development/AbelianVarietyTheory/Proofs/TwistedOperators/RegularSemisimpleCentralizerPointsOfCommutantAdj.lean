@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 open Matrix Formalism.UG GlobalTheory.IndefiniteRowSideFullHecke.CentralizerTensorForms GlobalTheory.RegSS
 open scoped TensorProduct
@@ -37,14 +41,19 @@ theorem pointsCentraliser_of_commutant_of_adjoint :
   rw [cT_mul_mul_eq_iff_mul_adj_eq_one _ hJ]
   constructor
   · rintro ⟨hunit, hc⟩
-    obtain ⟨u, hu⟩ := (hcomm g).1 hc
+    have hc' := congrArg Units.val hc.eq
+    simp only [Units.val_mul, hb] at hc'
+    obtain ⟨u, hu⟩ := (hcomm g).1 hc'
     have h1 : u * lConj σ J (γ : Matrix n n E) R u = 1 := by
       apply hinj
       rw [map_mul, hA F E n σ J γ hreg R u, hu, map_one, hunit]
     exact ⟨Units.mkOfMulEqOne u _ h1, h1, hu⟩
   · rintro ⟨u, hu, hg⟩
     have hu' : (u : LPts σ J (γ : Matrix n n E) R) * lConj σ J (γ : Matrix n n E) R u = 1 := hu
-    refine ⟨?_, (hcomm _).2 ⟨u, hg⟩⟩
-    rw [← hg, ← hA F E n σ J γ hreg R, ← map_mul, hu', map_one]
+    refine ⟨?_, ?_⟩
+    · rw [← hg, ← hA F E n σ J γ hreg R, ← map_mul, hu', map_one]
+    · change g * _ = _ * g
+      apply Units.ext
+      simpa only [Units.val_mul, hb] using (hcomm g).2 ⟨u, hg⟩
 
 end GlobalTheory.RegSS

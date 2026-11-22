@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import ReciprocityTheory.GaloisValuations.Global
-import GroundTheory.GlobalFields.CyclotomicCharacters.ProfinitePadic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+public import ReciprocityTheory.GaloisValuations.Global
+public import GroundTheory.GlobalFields.CyclotomicCharacters.ProfinitePadic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.KZ GlobalTheory.Glue
 
 namespace GlobalTheory

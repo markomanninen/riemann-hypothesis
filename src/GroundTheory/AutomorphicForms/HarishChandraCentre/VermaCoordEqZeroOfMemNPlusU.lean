@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HarishChandraCentre.Projection
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic.HarishChandra
 
@@ -39,7 +43,7 @@ theorem hcEmb_sub_eval_mem_vermaIdeal (lam : Fin n → ℂ) (p : MvPolynomial (F
   induction p using MvPolynomial.induction_on with
   | C a => simp
   | add p q hp hq =>
-    rw [map_add, eval_add, map_add, add_sub_add_comm]
+    rw [map_add (f := _), eval_add, map_add (f := _), add_sub_add_comm]
     exact Submodule.add_mem _ hp hq
   | mul_X p k hp =>
     have : hcEmb (p * X k) - algebraMap ℂ (U n) (eval lam (p * X k)) =
@@ -54,9 +58,10 @@ theorem hcEmb_sub_eval_mem_vermaIdeal (lam : Fin n → ℂ) (p : MvPolynomial (F
 
 noncomputable def lowPart (m : Fin n × Fin n →₀ ℕ) : Fin n × Fin n →₀ ℕ := m.filter IsLower
 
-open Classical in
 
+open Classical in
 noncomputable def vermaCoord (lam : Fin n → ℂ) : U n →ₗ[ℂ] ((Fin n × Fin n →₀ ℕ) →₀ ℂ) :=
+  open scoped Classical in
   pbw.constr ℂ fun m =>
     if HasUpper m then 0 else Finsupp.single (lowPart m) (eval lam (monomial (diagExp m) 1))
 
@@ -78,7 +83,7 @@ theorem vermaCoord_eq_zero_of_mem_nPlusU (lam : Fin n → ℂ) {x : U n} (hx : x
     obtain ⟨m, hm, rfl⟩ := hx
     exact vermaCoord_canon_of_hasUpper lam hm
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul r x _ hx => rw [map_smul, hx, smul_zero]
 
 theorem canon_mul_e_diag_of_not_hasUpper {m : Fin n × Fin n →₀ ℕ} (h : ¬ HasUpper m) (k : Fin n) :
@@ -138,18 +143,18 @@ theorem vermaCoord_mul_e_sub (lam : Fin n → ℂ) (u : U n) (k : Fin n) :
   induction hu using Submodule.span_induction with
   | mem x hx => obtain ⟨m, rfl⟩ := hx; exact vermaCoord_canon_mul_e_sub lam m k
   | zero => simp
-  | add x y _ _ hx hy => rw [add_mul, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [add_mul, map_add (f := _), hx, hy, add_zero]
   | smul r x _ hx => rw [smul_mul_assoc, map_smul, hx, smul_zero]
 
 theorem vermaCoord_vermaIdeal (lam : Fin n → ℂ) {x : U n} (hx : x ∈ vermaIdeal lam) :
     vermaCoord lam x = 0 := by
   obtain ⟨y, hy, w, hw, rfl⟩ := Submodule.mem_sup.1 hx
   clear hx
-  rw [map_add, vermaCoord_eq_zero_of_mem_nPlusU lam hy, zero_add]
+  rw [map_add (f := _), vermaCoord_eq_zero_of_mem_nPlusU lam hy, zero_add]
   induction hw using Submodule.span_induction with
   | mem x hx => obtain ⟨u, k, rfl⟩ := hx; exact vermaCoord_mul_e_sub lam u k
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul r x _ hx => rw [map_smul, hx, smul_zero]
 
 theorem canon_single (a : Fin n × Fin n) (m : ℕ) : canon (Finsupp.single a m) = e a ^ m := by
@@ -209,11 +214,11 @@ theorem hcEmb_mul_e_pow (a : Fin n × Fin n) (p : ℕ) (q : MvPolynomial (Fin n)
   | C c =>
     rw [show translate (fun k => (p : ℂ) * rootAt a k) (C c) = C c by simp [translate],
       ← MvPolynomial.algebraMap_eq, AlgHom.commutes, Algebra.commutes]
-  | add q r hq hr => rw [map_add, add_mul, hq, hr, map_add, map_add, mul_add]
+  | add q r hq hr => rw [map_add (f := _), add_mul, hq, hr, map_add (f := _), map_add (f := _), mul_add]
   | mul_X q k hq =>
     set T := translate (fun k => (p : ℂ) * rootAt a k)
     have hTX : hcEmb (T (X k)) = e (k, k) + ((p : ℂ) * rootAt a k) • 1 := by
-      simp only [T, translate, aeval_X, map_add, hcEmb_X, ← MvPolynomial.algebraMap_eq,
+      simp only [T, translate, aeval_X, map_add (f := _), hcEmb_X, ← MvPolynomial.algebraMap_eq,
         Algebra.algebraMap_eq_smul_one, map_smul, map_one]
     calc hcEmb (q * X k) * e a ^ p = hcEmb q * (e (k, k) * e a ^ p) := by
           rw [map_mul, hcEmb_X, mul_assoc]
@@ -404,7 +409,7 @@ theorem eval_aeval_reflect (r : Fin n → ℂ) (q : MvPolynomial (Fin n) ℂ) (m
       eval (mu + fun k => (mu i - mu j + 1) * r k) q := by
   induction q using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => rw [map_add, eval_add, eval_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), eval_add, eval_add, hp, hq]
   | mul_X p k hp =>
     rw [map_mul, eval_mul, eval_mul, hp]
     simp
@@ -423,7 +428,7 @@ theorem eq_of_eval_eq_of_sub_nat (hij : i ≠ j) {P Q : MvPolynomial (Fin n) ℂ
     intro x R
     induction R using MvPolynomial.induction_on with
     | C a => simp
-    | add p q hp hq => rw [map_add, eval_add, eval_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), eval_add, eval_add, hp, hq]
     | mul_X p k hp =>
       rw [map_mul, eval_mul, eval_mul, hp, aeval_X, eval_X]
       by_cases hk : k = i

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Formalism.TorsionNormIteration.InverseIntegralClasses.SigmaNormLeOne
-import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Formalism.TorsionNormIteration.InverseIntegralClasses.SigmaNormLeOne
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+
+@[expose] public section
 
 open PowerSeries
 
@@ -11,7 +15,7 @@ namespace GlobalTheory.Honda
 
 theorem subst_congr_of_derivative_integral :
     ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (l : ℕ), l.Prime → ‖(l : K)‖ < 1 →
-    ∀ (f : K⟦X⟧), CoefLe 1 (derivative K f) → ∀ (s : Type) (A B : MvPowerSeries s K),
+    ∀ (f : K⟦X⟧), CoefLe 1 (PowerSeries.derivative f) → ∀ (s : Type) (A B : MvPowerSeries s K),
     MvPowerSeries.constantCoeff A = 0 → MvPowerSeries.constantCoeff B = 0 →
     (∀ m, ‖MvPowerSeries.coeff m A‖ ≤ 1) → (∀ m, ‖MvPowerSeries.coeff m B‖ ≤ 1) →
     (∀ m, ‖MvPowerSeries.coeff m (A - B)‖ ≤ ‖(l : K)‖) →
@@ -27,7 +31,7 @@ theorem subst_congr_of_derivative_integral :
     have hcong := Formalism.LT.PowCongr_valid K s l hl A B hA hB 1 le_rfl
       (by intro e; simpa using hAB e) (padicValNat l d) (d / l ^ padicValNat l d) m
     have hdecomp : l ^ padicValNat l d * (d / l ^ padicValNat l d) = d :=
-      Nat.mul_div_cancel' pow_padicValNat_dvd
+      Nat.mul_div_cancel' (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))
     rw [hdecomp, norm_pow, pow_add, pow_one] at hcong
     have hnd : ‖(d : K)‖ = ‖(l : K)‖ ^ padicValNat l d :=
       Formalism.DworkPowerSeriesWeights.norm_natCast_eq_pow_padicValNat hl hlt hd.ne'

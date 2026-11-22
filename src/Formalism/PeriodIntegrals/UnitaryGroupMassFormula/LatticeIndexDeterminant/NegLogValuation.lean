@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatIdxDet
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementLat
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.IdxChange
+
+@[expose] public section
 
 open Module IsDedekindDomain Formalism.HermitianLatticesTheory Formalism.DivisionValues
 open scoped nonZeroDivisors
@@ -41,12 +45,6 @@ theorem lidx_congr (p : Ideal R) [p.IsPrime] {A A' B B' : Submodule R W}
   have hAB : localization₂ p (A ⊓ B) = localization₂ p (A' ⊓ B') := by
     rw [localization_inf', localization_inf', hA, hB]
   rw [locLen_congr p hA hAB, locLen_congr p hB hAB]
-
-theorem lidx_antisymm (p : Ideal R) [p.IsPrime] (A B : Submodule R W) :
-    lidx p A B = - lidx p B A := by
-  unfold lidx
-  rw [inf_comm B A]
-  ring
 
 theorem localization_map₂ (p : Ideal R) [p.IsPrime] (φ : W ≃ₗ[R] W') (L : Submodule R W) :
     localization₂ p (L.map (φ : W →ₗ[R] W')) = (localization₂ p L).map (φ : W →ₗ[R] W') := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoBkMap
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.QuotRepMk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoBkMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published.Kato
 
@@ -32,7 +36,7 @@ theorem UpperTheory.V.X.Kato.conj :
   have hz : (fun g => f (c g)) ∈ Z1 (Loc.colRep r) := by
     refine ⟨hcont, fun g g' => ?_⟩
     have h1 := congrArg f (hc.2 g g')
-    simpa only [map_add, hf] using h1
+    simpa only [map_add (f := _), hf] using h1
   obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 (h _ hz (UpperTheory.V.X.Kato.bkMap l F Ω _ _ _ _ _ _ f hf c hcont hbk))
   obtain ⟨m', rfl⟩ := hsurj m
   refine (mem_coboundaries1 _ _).2 ⟨m', fun g => hinj ?_⟩

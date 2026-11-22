@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -89,7 +93,7 @@ theorem weierstrass_series_unique : IsWpUnique := by
   obtain ⟨-, -, hP⟩ := hP
   obtain ⟨-, -, hQ⟩ := hQ
   have hX : (X : PowerSeries K) ≠ 0 := X_ne_zero
-  have hdX : ∀ n : ℕ, X * derivative K ((X : PowerSeries K) ^ n) = (n : PowerSeries K) * X ^ n := by
+  have hdX : ∀ n : ℕ, X * derivative ((X : PowerSeries K) ^ n) = (n : PowerSeries K) * X ^ n := by
     intro n
     induction n with
     | zero => simp
@@ -103,23 +107,23 @@ theorem weierstrass_series_unique : IsWpUnique := by
     | zero => simp
     | succ n ih =>
       obtain ⟨E, hE⟩ := ih
-      have hD : X * (derivative K P - derivative K Q)
-          = X ^ n * ((n : PowerSeries K) * E + X * derivative K E) := by
+      have hD : X * (derivative P - derivative Q)
+          = X ^ n * ((n : PowerSeries K) * E + X * derivative E) := by
         rw [← map_sub, hE, Derivation.leibniz, smul_eq_mul, smul_eq_mul]
         linear_combination E * hdX n
-      have hc : ((n : PowerSeries K) * E + X * derivative K E)
-            * (-4 + X ^ 3 * (derivative K P + derivative K Q))
+      have hc : ((n : PowerSeries K) * E + X * derivative E)
+            * (-4 + X ^ 3 * (derivative P + derivative Q))
           = E * (4 * ((1 + X ^ 2 * P) ^ 2 + (1 + X ^ 2 * P) * (1 + X ^ 2 * Q) + (1 + X ^ 2 * Q) ^ 2)
               - C g2 * X ^ 4) := by
         apply mul_left_cancel₀ (pow_ne_zero (n + 2) hX)
         have hs := congrArg₂ (· - ·) hP hQ
         simp only [Formalism.L2.Th1.B.dz] at hs
         linear_combination hs
-          - X ^ 2 * (-4 + X ^ 3 * (derivative K P + derivative K Q)) * hD
+          - X ^ 2 * (-4 + X ^ 3 * (derivative P + derivative Q)) * hD
           + X ^ 2 * (4 * ((1 + X ^ 2 * P) ^ 2 + (1 + X ^ 2 * P) * (1 + X ^ 2 * Q)
               + (1 + X ^ 2 * Q) ^ 2) - C g2 * X ^ 4) * hE
       have h0 := congrArg constantCoeff hc
-      simp only [map_mul, map_add, map_sub, map_neg, map_pow, map_natCast, map_ofNat, map_one,
+      simp only [map_mul, map_add (f := _), map_sub, map_neg, map_pow, map_natCast, map_ofNat, map_one,
         constantCoeff_X, constantCoeff_C] at h0
       have h1 : (4 * (n : K) + 12) * constantCoeff E = 0 := by
         linear_combination -h0

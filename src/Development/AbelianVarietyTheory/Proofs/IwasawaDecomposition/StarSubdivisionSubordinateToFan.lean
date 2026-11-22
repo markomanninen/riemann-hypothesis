@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfToRealRel
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,5 @@ theorem subordinate_of_isStarOf : ∀ (O : Type) [CommRing O] (bar : O → O) (q
     refine Fin.cases ?_ (fun k => ?_) k
     · simpa using hβ₀
     · simpa using inRCone_self γ (s k)
-
-example : ∀ (O : Type) [CommRing O] (bar : O → O) (q : ℕ) (ψ w ψ' : InvFun O), IsStarOf bar q ψ w ψ' → Subordinate bar q ψ' ψ :=
-  subordinate_of_isStarOf
 
 end GlobalTheory.PolFan

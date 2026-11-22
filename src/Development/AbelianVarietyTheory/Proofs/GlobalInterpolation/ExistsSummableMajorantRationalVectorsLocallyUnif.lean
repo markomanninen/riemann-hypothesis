@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DecayZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx GlobalTheory.SWQ
 open scoped TensorProduct NNReal ENNReal
 
@@ -11,7 +16,7 @@ variable {F : Type} [Field F] [NumberField F] {N : ℕ}
 
 theorem re_add (x y : Ainf F) (w : InfinitePlace F) : re (x + y) w = re x w + re y w := by
   show (InfinitePlace.Completion.extensionEmbedding w (x w + y w)).re = _
-  rw [map_add, Complex.add_re]; rfl
+  rw [map_add (f := _), Complex.add_re]; rfl
 
 theorem abs_re_algebraMap (hF : IsTotallyReal F) (x : F) (w : InfinitePlace F) :
     |re (algebraMap F (Ainf F) x) w| = w x := by
@@ -41,7 +46,7 @@ theorem sz_sub_le (u y : Fin N → AF F) : sz u - sz y ≤ sz (u + y) := by
 
 theorem continuous_sz : Continuous (sz : (Fin N → AF F) → ℝ) := by
   unfold sz
-  refine continuous_finset_sum _ fun l _ => continuous_finset_sum _ fun w _ => ?_
+  refine continuous_finsetSum _ fun l _ => continuous_finsetSum _ fun w _ => ?_
   have h1 : Continuous fun u : Fin N → AF F => inf u l := by
     show Continuous fun u : Fin N → AF F => (u l).1
     exact continuous_fst.comp (continuous_apply l)
@@ -56,7 +61,7 @@ theorem continuous_fin : Continuous (fin : (Fin N → AF F) → Fin N → Af F) 
   exact continuous_snd.comp (continuous_apply l)
 
 theorem fin_add (u y : Fin N → AF F) : fin (u + y) = fin u + fin y := by
-  funext l; simp [fin, map_add]
+  funext l; simp [fin, map_add (f := _)]
 
 theorem inf_rat (ξ : Fin N → F) (l : Fin N) : inf (rat ξ) l = algebraMap F (Ainf F) (ξ l) := by
   simp [inf, rat]

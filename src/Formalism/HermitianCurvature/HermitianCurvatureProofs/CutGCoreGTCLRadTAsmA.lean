@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadTCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCLRadTCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -38,7 +42,8 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
 theorem ml_expand {j : ℕ} (m : ContinuousMultilinearMap ℝ (fun _ : Fin j => ℂ) E) (v : ℂ) :
     m (fun _ => v) = ∑ s : Fin j → Fin 2, (∏ i, crd (s i) v) • m (fun i => e2 (s i)) := by
   have h : (fun _ : Fin j => v) = fun _ => ∑ t : Fin 2, crd t v • e2 t := funext fun _ => (sum_crd v).symm
-  rw [h, m.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, m.map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
   exact m.map_smul_univ (fun i => crd (s i) v) (fun i => e2 (s i))
 
@@ -144,7 +149,7 @@ theorem radR_PhiP (hG : Gd z z' μs π π' Pr) {p : ℂ → (Wq →L[ℂ] Wp)} (
     NF.radR k r z z' μs ((PhiP z z' μs π π' Pr p : Q.RadSp k r z z' π π') : Q.Fn k r (Wq →L[ℂ] Wp)) =
       phiP z z' Pr p := by
   unfold PhiP
-  rw [dif_pos ⟨hG, hp⟩]
+  rw [dite_eq_left ⟨hG, hp⟩]
   exact (Classical.choose_spec (Formalism.FourierDecayAlt.P.radical_reduction_surjective Wp Wq k r z z' μs π π' hG.1 (phiP z z' Pr p)
       (phiP_mem hG hp))).2
 
@@ -185,7 +190,7 @@ theorem VV_add (hG : Gd z z' μs π π' Pr) {p p' : ℂ → (Wq →L[ℂ] Wp)} (
     (hp' : ContDiff ℝ ∞ p') (ζ : ℂ) :
     VV z z' μs π π' Pr T c0 (fun ζ => p ζ + p' ζ) ζ = VV z z' μs π π' Pr T c0 p ζ + VV z z' μs π π' Pr T c0 p' ζ := by
   unfold VV
-  rw [PhiP_add hG hp hp', map_add, Submodule.coe_add, radR_add]
+  rw [PhiP_add hG hp hp', map_add (f := _), Submodule.coe_add, radR_add]
   rfl
 
 theorem VV_smul (hG : Gd z z' μs π π' Pr) {p : ℂ → (Wq →L[ℂ] Wp)} (hp : ContDiff ℝ ∞ p) (s : ℂ) (ζ : ℂ) :

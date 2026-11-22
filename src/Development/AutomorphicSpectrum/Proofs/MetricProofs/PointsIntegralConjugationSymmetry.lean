@@ -1,15 +1,20 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPieceDegree
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
-import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPushDown
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPieceDegree
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPushDown
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+
+@[expose] public section
+
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.ArakelovGeometry Filter Topology NumberField
 
 noncomputable section
@@ -47,14 +52,15 @@ theorem cxHessian_comp_star (φ : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) :
     rw [star_smul, hs]; simp
   simp only [cxHessian, Matrix.map_apply, hess_comp_star, hs, hI, map_neg,
     ContinuousLinearMap.neg_apply, neg_neg]
-  simp only [map_div₀, map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+  simp only [map_div₀, map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
   have h4 : starRingEnd ℂ (4 : ℂ) = 4 := map_ofNat _ 4
   simp [h4]
   ring
 
 theorem mixedDisc_map_conj (A : Fin D → Matrix (Fin D) (Fin D) ℂ) :
     mixedDisc (fun k => (A k).map (starRingEnd ℂ)) = starRingEnd ℂ (mixedDisc A) := by
-  simp only [mixedDisc, map_mul, map_sum, map_pow, map_neg, map_one, map_div₀, map_natCast]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mixedDisc, map_mul, map_sum, map_pow, map_neg, map_one, map_div₀, map_natCast]
   congr 1
   refine Finset.sum_congr rfl fun S _ => ?_
   congr 1
@@ -160,7 +166,7 @@ theorem sheetDensity_star {L : Fin e → HermLine ι} (hLc : ∀ j, IsConjInvari
   by_cases hex : ∃ γ, IsSheet P Ψ y w γ
   · have hex' : ∃ γ, IsSheet P Ψ' (star y) (star w) γ :=
       ⟨_, isSheet_star hΨ hex.choose_spec⟩
-    rw [dif_pos hex, dif_pos hex', hy w _ _ hex.choose_spec (back _ hex'.choose_spec)]
+    rw [dite_eq_left hex, dite_eq_left hex', hy w _ _ hex.choose_spec (back _ hex'.choose_spec)]
     set γ := hex'.choose with hγ
     have hspec : IsSheet P Ψ' (star y) (star w) γ := hex'.choose_spec
     have hz : γ (star y) ∈ mcPts P := hspec.2.self_of_nhds.2.1
@@ -179,7 +185,7 @@ theorem sheetDensity_star {L : Fin e → HermLine ι} (hLc : ∀ j, IsConjInvari
       exact hLc j _
     rw [h1, h3]
   · have hex' : ¬ ∃ γ, IsSheet P Ψ' (star y) (star w) γ := fun ⟨γ, h⟩ => hex ⟨_, back γ h⟩
-    rw [dif_neg hex, dif_neg hex']
+    rw [dite_eq_right hex, dite_eq_right hex']
 
 end Pts
 

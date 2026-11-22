@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullbackBijectiveDegreesOneTwo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,7 @@ theorem coef_acyclic_of_two_sections (C : Type 1) [Category.{0} C] (M : Coef C) 
       have e2 := hf T (S.obj T) (S.obj T') (θ.app T) (S.map φ)
       rw [nat, e2] at e1
       have e3 := congrArg (r T') e1
-      simp only [map_add, hr] at e3
+      simp only [map_add (f := _), hr] at e3
       exact e3.symm
     have ku := key u
     have kv := key v
@@ -65,7 +69,7 @@ theorem coef_acyclic_of_two_sections (C : Type 1) [Category.{0} C] (M : Coef C) 
           | linear_combination (norm := abel1) h1 + h2 - h3
           | linear_combination (norm := abel1) -h1 - h2 + h3
       rw [← hr, inner]
-      simp only [map_sub, map_add]
+      simp only [map_sub, map_add (f := _)]
     have ku := key u
     have kv := key v
     rw [hu] at ku

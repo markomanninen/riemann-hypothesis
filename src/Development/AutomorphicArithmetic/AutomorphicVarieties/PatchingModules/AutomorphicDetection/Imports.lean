@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelmerCocyclesLimitAndDescentProperties
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.SelmerCocyclesLimitAndDescentProperties
+
+@[expose] public section
 
 namespace UpperTheory.V.Pa
 

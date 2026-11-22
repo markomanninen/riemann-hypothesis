@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.DegreeFormula.Statement
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
+module
+
+public import Mathlib
+public import Formalism.DegreeFormula.Statement
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FlagComponentFramedPointFrame
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankRiemannRochNsmulHyperplane
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FirstIndexEqOfUnfolded
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.AntisymmFibrePointTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,23 +42,12 @@ theorem GoodChernWeil.flag (h : GoodChernWeil) {F : Type} [Field F] {σ : F →+
   rw [h.2 F X Y ι m E E' φ f gr hf hg Q R hR]
   exact h.1 F σ X Y ι m E E' φ f gr hf hg O H hH hG R
 
-theorem GoodChernNumbers.line (h : GoodChernNumbers) {F : Type} [Field F] {σ : F →+* ℂ} {X : Var F} (Δ : X.Dv)
-    {O : X.X.Opens} {H : Mat (fun _ : Unit => 1) X.Fn → CxPts X.str σ → Mat (fun _ : Unit => 1) ℂ}
-    (hH : IsMetricOn (ofDivisor Δ) O H) (hG : IsGood (ofDivisor Δ) O H) :
-    HasChernIntegral (ofDivisor Δ) O H (MvPolynomial.X ((), 1) ^ X.dim) (X.inter fun _ => Δ) := by
-  have := h F σ X X Unit _ _ _ _ _ _ (refines_lineFlag _) (isGraded_ofDivisor Δ) O H hH hG
-    (MvPolynomial.X ((), 1) ^ X.dim)
-  have e : chernRoots (fun _ : Unit => 1) (MvPolynomial.X ((), 1) ^ X.dim) * fibrePoint _ =
-      ∏ _i : Fin X.dim, MvPolynomial.X ⟨(), 0⟩ := by
-    simp [chernRoots, fibrePoint, esymm_one]
-  rwa [e, Var.interPoly_prod] at this
-
 end AutomorphicFormsHyp
 
 open AlgebraicGeometry CategoryTheory NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam
 
-open Classical in
 
+open Classical in
 def MumfordProportionality : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
     (c : Coeff l) (O : Type) [CommRing O] (β : O →+* c.F) (Y : Model Xo c β) (T : TorModel Y) (F : Type) [Field F]

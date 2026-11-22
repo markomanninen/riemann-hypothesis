@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.Divisibility.RecBridge
-import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.ShiftOfColTie
-import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBNum
-import Formalism.LocalToGlobal.Divisibility.RecBridgeNum
-import Formalism.LocalToGlobal.Divisibility.SmallTies
+module
+
+public import Formalism.LocalToGlobal.Divisibility.RecBridge
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.ShiftOfColTie
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBNum
+public import Formalism.LocalToGlobal.Divisibility.RecBridgeNum
+public import Formalism.LocalToGlobal.Divisibility.SmallTies
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
-import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.FockWeightWedgeLowerModes
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.MemHighestWeightSubIff
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TensFockInfPhysSub
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ActDiagMemOfWK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFCoreA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DatumEquiv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.VdmSplit
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.FockWeightWedgeLowerModes
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.MemHighestWeightSubIff
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.TensFockInfPhysSub
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TraceGap.ActDiagMemOfWK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFPrimeB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.CFCoreA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirAlgebra.MulMulSubMulMulEqAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ theorem highestWeightKernel_lowestType : AlgDatum := by
     have e : (diagE ε (eT E) cpT cmT : Fin n → Fin n → Module.End ℂ (TensorProduct ℂ M (Fock n))) =
         fun a b => TensorProduct.map (E a b) LinearMap.id + LinearMap.lTensor M (sgE ε cpFock cmFock a b) := by
       funext a b
-      simp only [diagE, eT, sgE_cpT]
+      delta diagE eT
+      rw [sgE_cpT]
     rw [← e]; exact hz
   obtain ⟨s, hy0, hy⟩ := khw_extract ε hg.1 hz' hz0
   set y := tcoef ((fockBasis n).coord s) z with hydef
@@ -42,7 +47,8 @@ theorem highestWeightKernel_lowestType : AlgDatum := by
   have hwt : gaW ε lam - fockWt ε s = lowK ε lam - phSum Ph := by
     rw [gc_wt_eq ε hs]
     funext a
-    simp only [gaW, lowK, Pi.sub_apply, Pi.add_apply]
+    delta gaW lowK
+    simp only [Pi.sub_apply, Pi.add_apply]
     ring
   rw [hwt] at hy
   have hyS : y ∈ S := hzS s
@@ -76,7 +82,8 @@ theorem highestWeightKernel_lowestType : AlgDatum := by
     by_contra hne
     exact dirac_sharp hg hE hU (gc_isPosNC ε hs) (Finset.nonempty_iff_ne_empty.2 hne) hVirr hVc
   rw [hPh0] at hVirr
-  simp only [phSum, Finset.sum_empty, sub_zero] at hVirr
+  delta phSum at hVirr
+  simp only [Finset.sum_empty, sub_zero] at hVirr
   refine ⟨V, hVirr, ?_, hVc⟩
   intro h0
   apply hy0

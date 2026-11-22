@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
-import Development.WeilBound.CoreStatements.FlagImmersions.SumFundOnRoot
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryFibreSquares
+public import Development.WeilBound.CoreStatements.FlagImmersions.SumFundOnRoot
+
+@[expose] public section
 
 noncomputable section
 

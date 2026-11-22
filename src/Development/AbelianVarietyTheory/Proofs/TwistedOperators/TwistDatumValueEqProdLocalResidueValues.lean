@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsRedMap
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntOv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.IndefiniteRowSideFullHecke.RestrictedTensorSplitting GlobalTheory.PlaceTensor GlobalTheory.StepVec
 open scoped TensorProduct ComplexOrder
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -14,14 +19,14 @@ theorem omegaQ_one_eq_prod_qLoc : ∀ (D : D7) (a b r : ℕ) (Q : Finset (Formal
   intro D a b r Q ξ y
   unfold omegaQ
   by_cases h : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
-  · rw [dif_pos h, ← Finset.prod_attach Q (fun PP => qLoc r PP (ξ PP) (y PP))]
+  · rw [dite_eq_left h, ← Finset.prod_attach Q (fun PP => qLoc r PP (ξ PP) (y PP))]
     refine Finset.prod_congr rfl fun PP _ => ?_
-    rw [zpow_one, qLoc, dif_pos (h PP.1 PP.2)]
-  · rw [dif_neg h]
+    rw [zpow_one, qLoc, dite_eq_left (h PP.1 PP.2)]
+  · rw [dite_eq_right h]
     push_neg at h
     obtain ⟨PP, hPP, hn⟩ := h
     refine (Finset.prod_eq_zero hPP ?_).symm
-    rw [qLoc, dif_neg]
+    rw [qLoc, dite_eq_right]
     rintro ⟨h1, h2⟩
     exact hn h1 h2
 

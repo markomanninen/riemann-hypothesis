@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+
+@[expose] public section
 
 namespace DifferentiableLines
 
@@ -101,7 +105,7 @@ theorem differentiableAt_of_lines {k : ℕ} {U O : Set (Fin k → ℂ)} {g f : (
       exact hgO _ (hline τ hτr z (mem_ball_zero_iff.mp h')) h
     have t₁ : Tendsto (fun w : ℂ => z₀ + w) (𝓝[≠] 0) (𝓝[≠] z₀) :=
       tendsto_nhdsWithin_iff.2 ⟨by
-        simpa using ((continuous_add_left z₀).tendsto 0).mono_left (nhdsWithin_le_nhds (s := {0}ᶜ)),
+        simpa using ((show Continuous (fun w : ℂ => z₀ + w) by fun_prop).tendsto 0).mono_left (nhdsWithin_le_nhds (s := {0}ᶜ)),
         eventually_mem_nhdsWithin.mono fun w hw => by simpa using hw⟩
     have t₂ : Tendsto (fun z : ℂ => z - z₀) (𝓝[≠] z₀) (𝓝[≠] 0) :=
       tendsto_nhdsWithin_iff.2 ⟨by

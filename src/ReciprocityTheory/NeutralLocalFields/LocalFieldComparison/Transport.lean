@@ -1,5 +1,9 @@
-import ReciprocityTheory.Hypotheses.GalCoh
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+module
+
+public import ReciprocityTheory.Hypotheses.GalCoh
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+
+@[expose] public section
 
 noncomputable section
 

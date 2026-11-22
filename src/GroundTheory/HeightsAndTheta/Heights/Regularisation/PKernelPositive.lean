@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
@@ -91,9 +96,9 @@ theorem line_apply {n : ℕ} (z : Fin n → ℂ) (t : ℂ) (k : Fin n) : line z 
 
 end KernelPositive
 
-open KernelPositive in
 
-theorem kernelPositive_statement : KernelPositive.Statement := by
+open KernelPositive in
+theorem kernelPositive_statement : KernelPositive.Statement := open KernelPositive in by
   intro n a g P T0 hT v hv hB z hz
   rw [← cquad_im]
   have hLa : AnalyticAt ℂ (line z) 0 :=
@@ -125,9 +130,6 @@ theorem kernelPositive_statement : KernelPositive.Statement := by
     exact pos_of_punctured P hT hv hB ht1 ht2
   have := im_pos_of_punctured hG hpos
   simpa only [hL0] using this
-
-theorem KernelPositive.proof (_h0 : Tau0Holomorphic.Statement) : KernelPositive.Statement :=
-  kernelPositive_statement
 
 end
 

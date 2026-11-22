@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfFree
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdditiveCharConductorExists
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfFree
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdditiveCharConductorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ theorem exists_pow_eq_one {w : HeightOneSpectrum (𝓞 E)} (f : (w.adicCompletio
   · exact key i j h e
   · exact key j i h e.symm
 
-variable (F E) in
 
+variable (F E) in
 def finId : Ideles E →* (AF F ⊗[F] E)ˣ :=
   (ofFinIdele F E).comp ((Units.map (finAdEquiv F E).symm.toRingHom.toMonoidHom).comp
     (Units.map (RingHom.snd (InfiniteAdeleRing E) (FiniteAdeleRing (𝓞 E) E)).toMonoidHom))
@@ -102,9 +106,9 @@ theorem arch_eq_one {χ : Chr F E} (hχ : IsHecke F E χ) {τ : ∀ w : Infinite
   set f := finId F E (finPr x) with hf
   have hfv : (f : AF F ⊗[F] E) = 1 - extZero F E 1 + extZero F E ((finAdEquiv F E).symm (algebraMap E _ (x : E))) := rfl
   have i1 : infTens F E f = 1 := by
-    rw [hfv, map_add, map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero]
+    rw [hfv, map_add (f := _), map_sub, map_one, infTens_extZero, infTens_extZero, sub_zero, add_zero]
   have f1 : finTens F E f = finTens F E a := by
-    rw [hfv, map_add, map_sub, map_one, finTens_extZero, finTens_extZero, sub_self, zero_add, RingEquiv.symm_apply_eq]
+    rw [hfv, map_add (f := _), map_sub, map_one, finTens_extZero, finTens_extZero, sub_self, zero_add, RingEquiv.symm_apply_eq]
     exact ((toFinAd_tmul 1 (x : E)).trans (by rw [map_one, one_mul])).symm
   have e : ((a / f : (AF F ⊗[F] E)ˣ) : AF F ⊗[F] E) * f = a := by rw [← Units.val_mul, div_mul_cancel]
   have i2 : infTens F E (a / f : (AF F ⊗[F] E)ˣ) = infTens F E a := by
@@ -128,7 +132,7 @@ theorem arch_eq_one {χ : Chr F E} (hχ : IsHecke F E χ) {τ : ∀ w : Infinite
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a x => rfl
-    | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
   have hp : ∀ w, piInf (τ w) ((a / f : (AF F ⊗[F] E)ˣ) : AF F ⊗[F] E) = (τ w).1 x := fun w => by
     change infEmb (τ w) (compInf F E w _) = _
     rw [hc, i2, ← hc]

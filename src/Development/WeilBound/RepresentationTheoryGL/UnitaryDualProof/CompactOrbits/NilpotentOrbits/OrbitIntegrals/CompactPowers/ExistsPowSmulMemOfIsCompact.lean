@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
-import GroundTheory.AutomorphicForms.GLnLocal
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisExtra
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.ZNClosed
+public import GroundTheory.AutomorphicForms.GLnLocal
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsBisExtra
+
+@[expose] public section
 
 noncomputable section
 

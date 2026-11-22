@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.XtLamGvSCongr
+module
+
+public import Formalism.LocalToGlobal.Columns.XtLamGvSCongr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 
@@ -30,8 +34,8 @@ theorem xtIntAt_qpow (q k : ℕ) : IntAt P ((q : E) ^ k) := by
   refine ⟨(q : 𝓞 E) ^ k, 1, fun h => P.isPrime.ne_top ((Ideal.eq_top_iff_one _).2 h), ?_⟩
   simp
 
-open Classical in
 
+open Classical in
 theorem xtLocal {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2) {k₀ c' n' n N : ℕ} (hc' : c' = 0)
     (Φ : Loc.SF E K (n' + c') (n + 0))
     (hcongr : ∀ x x' : HomE E (n' + c') (n + 0), (∀ p p', p < n + 0 → p' < n' → ∃ d, IntAt P d ∧
@@ -102,7 +106,8 @@ theorem xtLocal {q : ℕ} (hq : ((q : ℕ) : 𝓞 E) ∈ P.asIdeal) (hu : ((q : 
     conv_lhs => rw [show y' = ∑ j, y' j • (Pi.single j (1 : E) : Sp E n') by
       ext i
       simp [Finset.sum_apply, Pi.single_apply]]
-    simp [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul, smul_eq_mul]
   by_cases hall : ∀ j : Fin n', ∀ i, IntAt P (zA (Pi.single j 1) i)
   · have hB := fun j => (H j).1.1 (hall j)
     have hl := fun j => ((hsplit _).1 (hall j)).2

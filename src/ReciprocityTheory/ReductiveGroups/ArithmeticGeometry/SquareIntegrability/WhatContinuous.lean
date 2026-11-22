@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CubeSplit
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.CubeSplit
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -94,7 +98,7 @@ theorem zm_norm_eq (hI : IsSplit P I) (hP : Ext.PackingCount) {s : (Fin 1 → Vs
   have hFm : Measurable fun y : Fin (Module.finrank ℝ (IR I)) ⊕ Fin (2 * Fintype.card (Fin (gB (IR I)))) → ℝ =>
       ∑' n : Fin (Module.finrank ℝ (IR I)) → ℤ, ENNReal.ofReal
         (Ψ ((fun j => y (Sum.inl j)) + fun i => (n i : ℝ)) (fun l => y (Sum.inr l))) := by
-    refine Measurable.ennreal_tsum fun n => ENNReal.measurable_ofReal.comp ?_
+    refine Measurable.tsum fun n => ENNReal.measurable_ofReal.comp ?_
     refine (hΨc.comp (Continuous.prodMk ?_ ?_)).measurable
     · exact (continuous_pi fun j => continuous_apply (Sum.inl j)).add continuous_const
     · exact continuous_pi fun l => continuous_apply (Sum.inr l)

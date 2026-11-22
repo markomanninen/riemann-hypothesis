@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicitySpaceEqZeroOfLowestKTypes
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SchurOrthogonalityIndefiniteUnitaryGroup
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsKStableOnKFiniteVectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicitySpaceEqZeroOfLowestKTypes
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SchurOrthogonalityIndefiniteUnitaryGroup
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ComplexificationHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.IndefiniteUnitaryPreservesForm
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsKStableOnKFiniteVectors
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,9 +39,6 @@ def IsExpn (Lie Gs : Set (Mx n)) (σ : Mx n → (H →L[ℂ] H)) (S : List (List
   (∀ i, SmoothVec Lie σ (v i)) ∧ (∀ i, 0 ≤ C i) ∧ (∀ i w, SmoothVec Lie σ w → ‖ℓ i w‖ ≤ C i * sobNorm σ S w) ∧
     Summable (fun i => C i * sobNorm σ S (v i)) ∧ ∀ g ∈ Gs, HasSum (fun i => ℓ i (σ g (v i))) (f g)
 
-def HasType (Lie Gs : Set (Mx n)) (σ : Mx n → (H →L[ℂ] H)) (f : Mx n → ℂ) : Prop :=
-  ∃ S, Words Lie S ∧ Ctrl Lie Gs σ S ∧ ∃ v ℓ C, IsExpn Lie Gs σ S v ℓ C f
-
 def IsDerFam (ε : Fin n → Bool) (F : List (Mx n) → Mx n → ℂ) : Prop :=
   ∀ l : List (Mx n), (∀ Y ∈ l, Y ∈ lieSet ε) → ∀ X ∈ lieSet ε, ∀ g ∈ UJset ε,
     HasDerivAt (fun t : ℝ => F l (g * NormedSpace.exp (t • X))) (F (X :: l) g) 0
@@ -62,10 +63,6 @@ def AvgBd (σ : Mx n → (H →L[ℂ] H)) (T : H → H) (Z : Set (Mx n)) (C : �
 
 def IsAvg (ε : Fin n → Bool) (σ : Mx n → (H →L[ℂ] H)) (T : H → H) : Prop :=
   ∃ (Z : Set (Mx n)) (C : ℝ), IsCompact Z ∧ Z ⊆ UJset ε ∧ 0 ≤ C ∧ AvgBd σ T Z C
-
-def DomBy (ε : Fin n → Bool) (Z : Set (Mx n)) (C : ℝ) (g : Mx n) (F Φ : Mx n → ℂ) : Prop :=
-  ∀ (ι : Type) [Fintype ι] (a : ι → ℂ) (g' : ι → Mx n), (∀ j, g' j ∈ UJset ε) → ∀ M : ℝ, 0 ≤ M →
-    (∀ y ∈ Z, ‖∑ j, a j * F (g * y * g' j)‖ ≤ M) → ‖∑ j, a j * Φ (g' j)‖ ≤ C * M
 
 def kAvg (ε : Fin n → Bool) (σ : Mx n → (H →L[ℂ] H)) (e : KG ε → ℂ) (w : H) : H :=
   ∫ k, e k • σ (toMK k) w ∂(muK ε)
@@ -94,7 +91,7 @@ def Fam (ε : Fin n → Bool) (ρ : Mx n → (E →L[ℂ] E)) : Submodule ℂ (L
       v (l₁ ++ (a • X + Y) :: l₂) = (a : ℂ) • v (l₁ ++ X :: l₂) + v (l₁ ++ Y :: l₂)) ∧
     ∀ (l₁ l₂ : List (lie (Jm ε))) (X Y Z : lie (Jm ε)), (Z : Mx n) = X * Y - Y * X →
       v (l₁ ++ X :: Y :: l₂) - v (l₁ ++ Y :: X :: l₂) = v (l₁ ++ Z :: l₂)}
-  add_mem' := fun {v w} hv hw => ⟨fun l X => by simpa only [Pi.add_apply, map_add] using (hv.1 l X).fun_add (hw.1 l X),
+  add_mem' := fun {v w} hv hw => ⟨fun l X => by simpa only [Pi.add_apply, map_add (f := _)] using (hv.1 l X).fun_add (hw.1 l X),
     fun l₁ l₂ a X Y => by simp only [Pi.add_apply, hv.2.1, hw.2.1, smul_add]; abel,
     fun l₁ l₂ X Y Z h => by
       simp only [Pi.add_apply, ← hv.2.2 l₁ l₂ X Y Z h, ← hw.2.2 l₁ l₂ X Y Z h]; abel⟩
@@ -109,11 +106,7 @@ variable {ε : Fin n → Bool} {σ : Mx n → (H →L[ℂ] H)}
 
 theorem isUnit_Jm (ε : Fin n → Bool) : IsUnit (Jm ε) := IsUnit.of_mul_eq_one _ (Jm_mul_self ε)
 
-theorem lieSet_eq (ε : Fin n → Bool) : lieSet ε = lieOf (Jm ε) := rfl
-
 theorem lieSet_eq_lie (ε : Fin n → Bool) : lieSet ε = (lie (Jm ε) : Set (Mx n)) := rfl
-
-theorem UJset_eq (ε : Fin n → Bool) : UJset ε = Formalism.QuantumDeterminants.UH (Jm ε) := rfl
 
 theorem sm_iff {w : H} : Sm ε σ w ↔ w ∈ smooth (Jm ε) σ := Iff.rfl
 
@@ -285,24 +278,13 @@ theorem sobFun_of_sobCont {ℓ : H →ₗ[ℂ] ℂ} (h : Sobolev₂ (lieSet ε) 
 theorem SobFun.translate (hσ : IsURepOn (UJset ε) σ) {ξ : H → ℂ} (h : SobFun ε σ ξ) {g : Mx n} (hg : g ∈ UJset ε) :
     SobFun ε σ fun w => ξ (σ g w) := by
   obtain ⟨h1, h2, S, C, hS, hC⟩ := h
-  refine ⟨fun x y hx hy => by beta_reduce; rw [map_add, h1 _ _ (hx.translate hσ hg) (hy.translate hσ hg)],
+  refine ⟨fun x y hx hy => by beta_reduce; rw [map_add (f := _), h1 _ _ (hx.translate hσ hg) (hy.translate hσ hg)],
     fun c x hx => by beta_reduce; rw [map_smul, h2 _ _ (hx.translate hσ hg)], S.map fun l => l.map fun X => g⁻¹ * X * g, C, ?_,
     fun w hw => by rw [← sobNorm_translate hσ hg hw hS]; exact hC _ (hw.translate hσ hg)⟩
   intro l hl X hX
   obtain ⟨l', hl', rfl⟩ := List.mem_map.1 hl
   obtain ⟨Y, hY, rfl⟩ := List.mem_map.1 hX
   exact conj_mem_lie (isUnit_Jm ε) hg (hS l' hl' Y hY)
-
-theorem SobFun.word (hσ : IsURepOn (UJset ε) σ) {ξ : H → ℂ} (h : SobFun ε σ ξ) {l : List (Mx n)}
-    (hl : ∀ X ∈ l, X ∈ lieSet ε) : SobFun ε σ fun w => ξ (Dw σ l w) := by
-  obtain ⟨h1, h2, S, C, hS, hC⟩ := h
-  refine ⟨fun x y hx hy => by beta_reduce; rw [Dw_add hσ hl hx hy, h1 _ _ (hx.word hσ hl) (hy.word hσ hl)],
-    fun c x hx => by beta_reduce; rw [Dw_smul hσ hl c hx, h2 _ _ (hx.word hσ hl)], S.map (· ++ l), C, ?_, fun w hw => ?_⟩
-  · intro l₁ hl₁ X hX
-    obtain ⟨l', hl', rfl⟩ := List.mem_map.1 hl₁
-    exact (List.mem_append.1 hX).elim (hS l' hl' X) (hl X)
-  · have := hC _ (hw.word hσ hl)
-    simpa [sobNorm, List.map_map, Function.comp_def, List.foldr_append] using this
 
 theorem sobCont_translate (hσ : IsURepOn (UJset ε) σ) {ℓ : H →ₗ[ℂ] ℂ} (h : Sobolev₂ (lieSet ε) σ ℓ) {g : Mx n}
     (hg : g ∈ UJset ε) : Sobolev₂ (lieSet ε) σ (ℓ ∘ₗ (σ g : H →ₗ[ℂ] H)) :=
@@ -358,7 +340,7 @@ theorem Std.continuousOn_coef (h : Std ε σ) {ℓ : H →ₗ[ℂ] ℂ} (hℓ : 
     ContinuousOn (fun g => ℓ (σ g w)) (UJset ε) := by
   obtain ⟨m, S, Λ, hS, hΛ⟩ := exists_factor (isUnit_Jm ε) h.1 hℓ
   refine ContinuousOn.congr (f := fun g => ∑ i, Λ i (Dw σ (S i) (σ g w))) ?_ fun g hg => hΛ _ (hw.translate h.1 hg)
-  exact continuousOn_finset_sum _ fun i _ => (Λ i).continuous.comp_continuousOn (h.continuousOn_Dw (hS i) hw)
+  exact continuousOn_finsetSum _ fun i _ => (Λ i).continuous.comp_continuousOn (h.continuousOn_Dw (hS i) hw)
 
 theorem Std.eq_zero_of_orbit (h : Std ε σ) {ℓ : H →ₗ[ℂ] ℂ} (hℓ : Sobolev₂ (lieSet ε) σ ℓ) {u : H} (hu : Sm ε σ u)
     (hu0 : u ≠ 0) (h0 : ∀ g ∈ UJset ε, ℓ (σ g u) = 0) {w : H} (hw : Sm ε σ w) : ℓ w = 0 := by

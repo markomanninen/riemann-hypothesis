@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MemPowSmulLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.MemPowSmulLe
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -33,7 +37,7 @@ theorem UpperTheory.V.Fr.ext_A :
         exact this
       have h4 := Ideal.pow_right_mono hf N h3
       exact Ideal.le_comap_pow (f : S.A →+* C) N h4
-    · rw [map_add]
+    · rw [map_add (f := _)]
       exact add_mem hx hy
   have hB : S.B ≤ E := by
     intro b hb
@@ -53,7 +57,7 @@ theorem UpperTheory.V.Fr.ext_A :
     have he : ξ ⟨y, S.B_le_A hyB⟩ = ξ' ⟨y, S.B_le_A hyB⟩ := (hE _).1 (h0 hy)
     have hs : (⟨b, S.B_le_A hb⟩ : S.A) = S.inc ⟨b - y, sub_mem hb hyB⟩ + ⟨y, S.B_le_A hyB⟩ :=
       Subtype.ext (sub_add_cancel b y).symm
-    rw [hs, map_add, map_add, he, add_sub_add_right_eq_sub]
+    rw [hs, map_add (f := _), map_add (f := _), he, add_sub_add_right_eq_sub]
     exact sub_mem (hpow ξ h1 N _ hm) (hpow ξ' h2 N _ hm)
   have hA : S.A ≤ E := by
     refine Algebra.adjoin_le ?_

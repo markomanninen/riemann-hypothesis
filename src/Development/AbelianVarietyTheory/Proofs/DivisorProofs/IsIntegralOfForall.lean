@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TateUnramifiedOfTorsionUnramified
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -243,8 +247,8 @@ theorem exists_correction [IsGalois L Ω] (s : Ω ≃+* Ω) (t : L ≃+* L)
 
 end
 
-open GlobalTheory.Published.AbVarRed in
 
+open GlobalTheory.Published.AbVarRed in
 theorem exists_lift {K Ω : Type} [Field K] [Field Ω] [Algebra K Ω] [IsGalois K Ω] (V : ValuationSubring Ω)
     (L : IntermediateField K Ω) [Normal K L] (τ : L ≃ₐ[K] L)
     (hτ : τ ∈ inertia K (V.comap (algebraMap L Ω))) :

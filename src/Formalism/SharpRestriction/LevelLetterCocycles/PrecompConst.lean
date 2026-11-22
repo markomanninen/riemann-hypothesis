@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MapEvalPsPi
+
+@[expose] public section
 
 namespace Formalism.MainNotions.UnusedSlot80.InvCut
 

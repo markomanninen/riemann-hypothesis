@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.NewtonLow
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,8 @@ theorem sum_lterm (q : W → ℕ) (hq : ∀ w, 2 ≤ q w) (A : ∀ x, W → Fin 
       Pw q A u p.1 p.2 * conj (Pw q A v p.1 p.2) * ((q p.1 : ℂ) ^ (-(σ : ℂ))) ^ (p.2 + 1) / (p.2 + 1) := by
   simp only [lterm_pair q hq]
   unfold Pw
-  rw [map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum]
   simp only [Finset.sum_mul, Finset.sum_div]
 
 def cc (q : W → ℕ) (A : ∀ x, W → Fin (d x) → ℂ) {ι : Type} [Fintype ι] (u : ι → X × ℝ) (p : W × ℕ) : ℝ :=
@@ -108,14 +113,16 @@ theorem dsum_subtype {ι : Type} [Fintype ι] (P : ι → Prop) [DecidablePred P
   · simp [hi, sum_subtype_ite P (fun j => f i j)]
   · simp [hi]
 
-open Classical in
 
-def gf {ι κ : Type} (F : ι × κ → ℂ → ℂ) (x : ι → X × ℝ) (y : κ → X × ℝ) (p : ι × κ) (s : ℂ) : ℂ :=
-  if (x p.1).1 = (y p.2).1 then F p (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ)) / (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ) - 1)
-  else F p (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ))
+open Classical in
+def gf {ι κ : Type} (F : ι × κ → ℂ → ℂ) (x : ι → X × ℝ) (y : κ → X × ℝ) (p : ι × κ) (s : ℂ) : ℂ := by
+  classical
+  exact if (x p.1).1 = (y p.2).1 then F p (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ)) / (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ) - 1)
+    else F p (s + (((x p.1).2 + (y p.2).2 : ℝ) : ℂ))
 
 end PositivityTheory.RgJS.Common0Aux
 
+open PositivityTheory.RgJS PositivityTheory.RgJS.Common0Aux in
 open PositivityTheory.RgJS.Common0Aux in
 theorem PositivityTheory.RgJS.common_of_landau_euler : LandauL → EulerLog → Conv1 → Unb → Common0 := by
   classical

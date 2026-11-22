@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
-import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ReductionDomains.ContinuousEntry
+public import GroundTheory.GlobalFields.TateThesis.AdeleScaling
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open GroundTheory.Global GroundTheory.Automorphic GroundTheory.Automorphic.GJMatrix
@@ -25,7 +29,7 @@ private theorem real_iff {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ) :
     ext i j
     have h3 := hb (Pi.single i 1) (Pi.single j 1)
     rw [single_one_vecMul, single_one_vecMul, single_one_dotProduct] at h3
-    rw [mul_apply, one_apply]
+    rw [Matrix.mul_apply, Matrix.one_apply]
     simp only [transpose_apply]
     refine Eq.trans h3 ?_
     simp [Pi.single_apply]
@@ -41,7 +45,7 @@ private theorem entry_mul {F : Type} [Field F] [NumberField F] (k : G1 F) (w : I
 
 private theorem entry_one {F : Type} [Field F] [NumberField F] (w : InfinitePlace F) (i j : Fin 2) :
     ((1 : Matrix (Fin 2) (Fin 2) (A F)) i j).1 w = (1 : Matrix (Fin 2) (Fin 2) w.Completion) i j := by
-  rw [one_apply, one_apply]
+  rw [Matrix.one_apply, Matrix.one_apply]
   split_ifs <;> rfl
 
 private theorem place_iff {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (k : G1 F) (w : InfinitePlace F) :
@@ -57,17 +61,19 @@ private theorem place_iff {F : Type} [Field F] [NumberField F] [IsTotallyReal F]
         (fun i => ψ.toRingHom (z i)) ᵥ* M := by
     intro z
     ext j
-    simp only [vecMul, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMul, dotProduct, map_sum, map_mul]
     rfl
   have key : ∀ i j, (M * Mᵀ) i j = ψ (((k.1 * k.1ᵀ) i j).1 w) := by
     intro i j
-    rw [entry_mul, map_sum, mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [entry_mul, map_sum, Matrix.mul_apply]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_mul]
     rfl
   have key1 : ∀ i j, (1 : Matrix (Fin 2) (Fin 2) ℝ) i j = ψ (((1 : Matrix (Fin 2) (Fin 2) (A F)) i j).1 w) := by
     intro i j
-    rw [entry_one, one_apply, one_apply]
+    rw [entry_one, Matrix.one_apply, Matrix.one_apply]
     split_ifs <;> simp
   have h1 : Reduction.infAt w (gl k) ∈ Reduction.archCompact w ↔
       ∀ z : Fin 2 → ℝ, Reduction.euclidNorm (z ᵥ* M) = Reduction.euclidNorm z := by

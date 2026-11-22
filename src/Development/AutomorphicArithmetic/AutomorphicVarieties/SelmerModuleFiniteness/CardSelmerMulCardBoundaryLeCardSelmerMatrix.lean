@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.OdKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.OdKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.AdicLC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.FinAm
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -132,7 +136,7 @@ private theorem selCard_mem {l : ℕ} [Fact l.Prime] {L : Loc} {G G0 : Glob l L}
     rw [map_sub, Submodule.coe_sub]
   have ha : ∀ m1 m2 : D.M.X, ((o.e (m1 + m2) : Matrix (Fin n) (Fin n) (x.Am e))) =
       (o.e m1 : Matrix (Fin n) (Fin n) (x.Am e)) + o.e m2 := fun m1 m2 => by
-    rw [map_add, Submodule.coe_add]
+    rw [map_add (f := _), Submodule.coe_add]
   have hcoc : ∀ a b : G.Γ, y.1 (a * b) = y.1 a + D.M.ρ a (y.1 b) := y.2.2
   have hcinv : G.c⁻¹ = G.c := inv_eq_of_mul_eq_one_right G.c_sq
   refine ⟨fun g => (o.e _).2, fun i j => ?_, fun g g' => ?_, fun g => ?_, fun u g hg => ?_, fun v => ?_⟩

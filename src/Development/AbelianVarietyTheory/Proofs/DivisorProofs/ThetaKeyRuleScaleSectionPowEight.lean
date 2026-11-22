@@ -1,10 +1,15 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -12,28 +17,26 @@ noncomputable section
 
 namespace GlobalTheory.MBLow.ScaleJet
 
-local notation "cF" => ReciprocityTheory.ChartRestriction.G.Geo.Tor.constFn
-
 variable {R : Type} [CommRing R]
 
 theorem res_cst {X : Scheme.{0}} (q : X ⟶ Sp R) {U V : X.Opens} (h : V ≤ U) (a : R) :
-    (X.presheaf.map (homOfLE h).op).hom (cF q U a) = cF q V a :=
+    (X.presheaf.map (homOfLE h).op).hom (constFn q U a) = constFn q V a :=
   congrArg (fun φ => φ.hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom a))
     (Scheme.Hom.appLE_map q (U := ⊤) (V := U) (fun _ _ => trivial) (homOfLE h).op)
 
 theorem appLE_cst {X Y : Scheme.{0}} (q : X ⟶ Sp R) (q' : Y ⟶ Sp R) (f : Y ⟶ X) (hf : f ≫ q = q')
     (U : X.Opens) (V : Y.Opens) (h : V ≤ f ⁻¹ᵁ U) (a : R) :
-    (f.appLE U V h).hom (cF q U a) = cF q' V a := by
+    (f.appLE U V h).hom (constFn q U a) = constFn q' V a := by
   subst hf
   exact congrArg (fun φ => φ.hom ((Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom a))
     (Scheme.Hom.appLE_comp_appLE f q ⊤ U V (fun _ _ => trivial) h)
 
 theorem app_cst {X Y : Scheme.{0}} (q : X ⟶ Sp R) (q' : Y ⟶ Sp R) (f : Y ⟶ X) (hf : f ≫ q = q')
-    (U : X.Opens) (a : R) : (f.app U).hom (cF q U a) = cF q' (f ⁻¹ᵁ U) a := by
+    (U : X.Opens) (a : R) : (f.app U).hom (constFn q U a) = constFn q' (f ⁻¹ᵁ U) a := by
   rw [Scheme.Hom.app_eq_appLE, appLE_cst q q' f hf]
 
 def cMul {X : Scheme.{0}} (q : X ⟶ Sp R) {L : LB X} (a : R) (s : LB.Sec L) : LB.Sec L where
-  f i := cF q _ a * s.f i
+  f i := constFn q _ a * s.f i
   compat i j := by
     rw [map_mul, map_mul, res_cst, res_cst, s.compat, mul_left_comm]
 
@@ -41,14 +44,14 @@ theorem nonzeroLocus_cMul {X : Scheme.{0}} (q : X ⟶ Sp R) {L : LB X} {a : R}
     (ha : IsUnit a) (s : LB.Sec L) : Out.nonzeroLocus (cMul q a s) = Out.nonzeroLocus s := by
   unfold Out.nonzeroLocus
   refine iSup_congr fun k => ?_
-  have hu : IsUnit (cF q (L.U k) a) := (ha.map _).map _
-  show X.basicOpen (cF q _ a * s.f k) = _
+  have hu : IsUnit (constFn q (L.U k) a) := (ha.map _).map _
+  show X.basicOpen (constFn q _ a * s.f k) = _
   rw [Scheme.basicOpen_mul, X.basicOpen_of_isUnit hu]
   exact inf_eq_right.2 (X.basicOpen_le _)
 
 theorem valR_cMul {A : Type} [CommRing A] {X : Scheme.{0}} (q : X ⟶ Sp R) (φ : R →+* A) (x : Sp A ⟶ X)
     (hx : x ≫ q = spMap φ) (U : X.Opens) (a : R) (f : Γ(X, U)) :
-    valR x U (cF q U a * f) = φ a * valR x U f := by
+    valR x U (constFn q U a * f) = φ a * valR x U f := by
   unfold valR
   split_ifs with h
   · rw [map_mul, map_mul, appLE_cst q (spMap φ) x hx U ⊤ h]
@@ -84,8 +87,6 @@ end Twist
 end GlobalTheory.MBLow.ScaleJet
 
 namespace GlobalTheory.MBLow.ScaleJet
-
-local notation "cF" => ReciprocityTheory.ChartRestriction.G.Geo.Tor.constFn
 
 theorem polAVSectionInverseImage_mulConstant {R : Type} [CommRing R] (P : PolAV (Sp R)) (T : Over (Sp R)) (s : P.L.Sec)
     (t : LB.Sec (LPow P.A P.L ((1 : ℕ) : ℤ) T)) (c : R) (h : IsPolAVSectionInverseImage P T s t) :

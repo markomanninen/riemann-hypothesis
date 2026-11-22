@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContDiffAtFrameEntry
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightedPolynomialHomogeneousCoeffBoundStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsHolomorphicNormalFrameStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ContDiffAtFrameEntry
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.WeightedPolynomialHomogeneousCoeffBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsHolomorphicNormalFrameStatement
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder
 
@@ -24,7 +29,7 @@ theorem GlobalTheory.CompanionTheory.Ar.PB.FibPt.exists_frame_normal_near :
     rw [Matrix.conjTranspose_apply, hent, hent]
     have hhalf : (starRingEnd ℂ) (1 / 2 : ℂ) = 1 / 2 := by
       apply Complex.ext <;> simp
-    simp only [RCLike.star_def, map_mul, map_add, Complex.conj_conj, hhalf]
+    simp only [RCLike.star_def, map_mul, map_add (f := _), Complex.conj_conj, hhalf]
     ring
   have hEq : ∀ᶠ y' in 𝓝 y, Gh y' = G y' := by
     filter_upwards [hpd] with y' h

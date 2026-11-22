@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.LevelGatherings
-import Formalism.LocalRingCardinality.DataKerI
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.LevelGatherings
+public import Formalism.LocalRingCardinality.DataKerI
+
+@[expose] public section
 
 noncomputable section
 

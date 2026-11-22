@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteProductMultipliable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TprodComplementSplitFinset
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EulerFactorStandardMeasureIdentity
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCovolOne
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteProductMultipliable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TprodComplementSplitFinset
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EulerFactorStandardMeasureIdentity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCovolOne
+
+@[expose] public section
 
 open Filter Topology
 
@@ -29,7 +33,7 @@ theorem term_mono {ι : Type} [DecidableEq ι] (Mv τ p : ι → ℝ) (S : Finse
   have hΔ : (∏ v ∈ (S ∪ S₂) \ (S ∪ S₁), τ v) * (∏ v ∈ (S ∪ S₂) \ (S ∪ S₁), p v) ≤
       ∏ v ∈ (S ∪ S₂) \ (S ∪ S₁), Mv v := by
     rw [← Finset.prod_mul_distrib]
-    exact Finset.prod_le_prod (fun v _ => mul_nonneg (hτ0 v) (hp0 v))
+    exact Finset.prod_le_prod₀ (fun v _ => mul_nonneg (hτ0 v) (hp0 v))
       (fun v hv => hle v (fun hvS => (Finset.mem_sdiff.1 hv).2 (Finset.mem_union_left _ hvS)))
   have hX1 : 0 ≤ ∏ v ∈ (S ∪ S₁) \ S, Mv v := Finset.prod_nonneg fun v _ => hM0 v
   have hT : 0 ≤ ∏' v : {v // v ∉ S ∪ S₂}, τ v.1 :=

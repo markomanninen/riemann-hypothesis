@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecompositionOfThreeParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecompositionOfThreeParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem asm_add (rho : TL J nL r × Fin (r + K) → ℕ) (A B : MvPolynomial (TL
     (N : MvPolynomial (TL J nL r × Fin K) (KK O)) :
     asm Fr p O hk nL rho (A + B) N = asm Fr p O hk nL rho A N + asm Fr p O hk nL rho B N := by
   unfold asm
-  rw [map_add]; ring
+  rw [map_add (f := _)]; ring
 
 theorem asm_coefGe (rho : TL J nL r × Fin (r + K) → ℕ) {A : MvPolynomial (TL J nL r × Fin r) (KK O)}
     {N : MvPolynomial (TL J nL r × Fin K) (KK O)} {t : ℝ} (hA : CoefGe p A t) (hN : CoefGe p N 0) :
@@ -49,7 +53,8 @@ theorem ph_coefGe (Dt : SignedChainData p O r J) {R : MvPolynomial (ML J Dt.nL r
 theorem ph_mem_pol (Dt : SignedChainData p O r J) (F : MvPolynomial (ML J Dt.nL r × Fin r) (KK O))
     (h : ∀ mo ∈ F.support, Dt.ph (monomial mo 1) ∈ Pol (KK O) r Dt.d) : Dt.ph F ∈ Pol (KK O) r Dt.d := by
   have hF : Dt.ph F = Dt.ph (∑ mo ∈ F.support, monomial mo (F.coeff mo)) := by rw [← F.as_sum]
-  rw [hF, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hF, map_sum]
   refine Submodule.sum_mem _ fun mo hmo => ?_
   have : (monomial mo (F.coeff mo) : MvPolynomial (ML J Dt.nL r × Fin r) (KK O)) = F.coeff mo • monomial mo 1 := by
     rw [smul_monomial, smul_eq_mul, mul_one]
@@ -97,7 +102,7 @@ theorem value_core {p : ℕ} [hpF : Fact p.Prime] {O : Type} [CommRing O] [IsDom
       k0 * Dt.Bform F2 (Dt.ph (Gp + R)) +
         ((fock G (asm F p O hk Dt.nL rho (Dt.ph (Gp + R)) N0) - k0 * Dt.Bform F2 (Dt.ph (Gp + R))) -
           fock G (asm F p O hk Dt.nL rho (Dt.ph R) N0)) := by
-    rw [map_add, asm_add, fock_add_right]; ring
+    rw [map_add (f := _), asm_add, fock_add_right]; ring
   have hκ0 : (0 : ℝ) ≤ (kapFl p (m + 1) d : ℝ) := Nat.cast_nonneg _
   have herr : geQ (vK p ((fock G (asm F p O hk Dt.nL rho (Dt.ph (Gp + R)) N0) - k0 * Dt.Bform F2 (Dt.ph (Gp + R))) -
           fock G (asm F p O hk Dt.nL rho (Dt.ph R) N0)))

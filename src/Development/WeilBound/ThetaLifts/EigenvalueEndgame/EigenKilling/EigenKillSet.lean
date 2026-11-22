@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
-import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
-import Development.WeilBound.ThetaLifts.SmallCones.FourierUniq
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.SoDefs
+public import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
+public import Development.WeilBound.ThetaLifts.SmallCones.FourierUniq
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.SoStatement
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfDict
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.PfSurj
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.EigenKilling.ConeIntegralFactorisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -142,13 +146,16 @@ theorem sig_sig (h : IsCMExt F E σ) (x : E) : σ (σ x) = x := by
 
 theorem form_swap (hσ : ∀ x, σ (σ x) = x) {J : Matrix (Fin n) (Fin n) E} (ε : E) (h : ∀ i j, σ (J j i) = ε * J i j) (x y : Fin n → E) :
     σ (form σ J x y) = ε * form σ J y x := by
-  simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, h, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [form, dotProduct, mulVec, map_sum, map_mul, hσ, h, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
-theorem plane_span {H : Plane E n n₁} {i₀ i₁ : ℕ} (h : H.IsAdapted σ B X X₁ i₀ i₁) (hL : X.L.IsLattice E) (z : Fin n → E) :
+theorem plane_span {H : Plane E n n₁} {i₀ i₁ : ℕ} (h : H.IsAdapted σ B X X₁ i₀ i₁) (hL : X.L.IsFullLattice E) (z : Fin n → E) :
     ∃ (s t : E) (u : Fin n₁ → E), z = s • H.x + H.ι *ᵥ u + t • H.y := by
-  have hz : z ∈ Submodule.span E (X.L : Set (Fin n → E)) := by rw [hL.span_eq_top]; trivial
+  have hz : z ∈ Submodule.span E (X.L : Set (Fin n → E)) := by
+    letI := hL
+    rw [Submodule.IsFullLattice.span_eq_top]; trivial
   induction hz using Submodule.span_induction with
   | mem z hz =>
     obtain ⟨s, t, u, -, -, -, e⟩ := h.split z hz
@@ -537,13 +544,55 @@ theorem upd_cof {κ : Type} {φ : ∀ u : Pl F, (κ → Fv F u) → ℂ} (z) : �
 theorem position_inj (hM : M.IsGood B.ψ) {f : SInf F (Fin n × Fin d)} (hf : f ≠ 0) {a b}
     (h : pure f (Function.update M.vac v a) = pure f (Function.update M.vac v b)) : a = b := by
   obtain ⟨x, hx⟩ := Function.ne_iff.1 (pure_ne_zero f hf M.vac (fun u => (hM.vac u).2.1) hM.std)
-  have u := fun z y => pure_update hM.std (φ := M.vac) (Eventually.of_forall fun _ => rfl) v z f y
+  have u (z : (Fin n × Fin d → Fv F v) → ℂ) (y : Fin n × Fin d → AF F) :
+      pure f (Function.update M.vac v z) y =
+        z (fun i => evFin F v (y i)) * pure f (Function.update M.vac v 1) y := by
+    have hs : (Function.mulSupport fun w => Function.update M.vac v 1 w
+        (fun i => evFin F w (y i))).Finite := by
+      have hint : ∀ᶠ w in cofinite, ∀ i, evFin F w (y i) ∈ w.adicCompletionIntegers F :=
+        eventually_all.2 fun i => (y i).2.2
+      apply Filter.eventually_cofinite.1
+      filter_upwards [hM.std, eventually_cofinite_ne v, hint] with w hw hne hi
+      rw [Function.update_of_ne hne, hw]
+      exact Set.indicator_of_mem (show (fun i => evFin F w (y i)) ∈ {x | ∀ i, x i ∈ w.adicCompletionIntegers F} from hi) 1
+    let t : Pl F → ℂ := fun w => if w = v then z (fun i => evFin F v (y i)) else 1
+    have ht : (Function.mulSupport t).Finite := (Set.finite_singleton v).subset fun w hw => by
+      by_contra hn
+      exact hw (if_neg hn)
+    have key : (fun w => Function.update M.vac v z w (fun i => evFin F w (y i))) =
+        fun w => t w * Function.update M.vac v 1 w (fun i => evFin F w (y i)) := by
+      funext w
+      by_cases hw : w = v
+      · subst w; simp [t]
+      · simp [t, hw, Function.update_of_ne hw]
+    unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure
+    rw [key, finprod_mul_distrib ht hs, finprod_eq_single t v fun w hw => if_neg hw]
+    simp only [t, if_true]
+    ring
+  have piK_repl' (y : Fin n × Fin d → Fv F v) :
+      (fun i => evFin F v (repl v x y i)) = y := by
+    change piK v (finPart x - epsK v (piK v (finPart x)) + epsK v y) = y
+    simp [piK_epsK]
+  have pure_repl' (y : Fin n × Fin d → Fv F v) :
+      pure f (Function.update M.vac v 1) (repl v x y) = pure f (Function.update M.vac v 1) x := by
+    unfold GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.pure
+    congr 1
+    refine finprod_congr fun w => ?_
+    by_cases hw : w = v
+    · subst w; simp
+    · rw [Function.update_of_ne hw]
+      congr 1
+      funext i
+      change Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F w ((x i).2 - GlobalTheory.AdelicU.singleFin v _ + GlobalTheory.AdelicU.singleFin v _) = _
+      rw [map_add (f := _), map_sub, GlobalTheory.AdelicU.evalV_singleFin_ne hw, GlobalTheory.AdelicU.evalV_singleFin_ne hw]
+      simp
+      rfl
   have h1 := u (M.vac v) x
   rw [Function.update_eq_self] at h1
   have h2 := right_ne_zero_of_mul (fun e => hx (h1.trans e))
   funext y
   have := (u a (repl v x y)).symm.trans ((congrFun h _).trans (u b (repl v x y)))
-  rw [piK_repl, pure_repl] at this
+  rw [piK_repl', pure_repl'] at this
   exact mul_right_cancel₀ h2 this
 
 theorem exists_continuousLinearMap_tens_update (hM : M.IsGood B.ψ) (f : SInf F (Fin n × Fin d)) (v : Pl F) : ∃ r, (∀ φ, pure f (Function.update M.vac v φ) =
@@ -587,7 +636,7 @@ theorem sep {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {s s' : Fv F v} (h : ∀ 
     have := sub_ne_zero.2 hne
     field_simp
     ring
-  rw [h2, map_add, AddChar.map_add_eq_mul] at h1
+  rw [h2, map_add (f := _), AddChar.map_add_eq_mul] at h1
   exact (mul_eq_right₀ (std_ne_zero hψ _)).1 h1
 
 theorem map_form (t : E →ₐ[F] Fv F v) (J : Matrix (Fin d) (Fin d) E) (x y : Fin d → E) :
@@ -654,7 +703,8 @@ theorem soLower_of (hMx : PositivityTheory.ThKG.MixW) : SoLower := by
     have h1 : ι'ᵀ * J * ιb = J₁ := by
       rw [hJ₁, ← hH.gram, hι', hJ, hιb]
       refine Matrix.ext fun i j => ?_
-      simp only [Matrix.mul_apply, map_apply, transpose_apply, map_sum, map_mul, AlgHom.comp_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_apply, transpose_apply, map_sum, map_mul, AlgHom.comp_apply]
     rw [← h1, transpose_mul, transpose_mul, transpose_transpose, Matrix.mul_assoc]
   let κ : Matrix (Fin d₁) (Fin d) (Fv F B.v₁) := J₁ᵀ⁻¹ * (ιbᵀ * Jᵀ)
   let ρ : Fin d → Fv F B.v₁ := J *ᵥ fun i => (t.comp σ) (H.x i)
@@ -778,7 +828,7 @@ theorem soLower_of (hMx : PositivityTheory.ThKG.MixW) : SoLower := by
     { carrier := {φ | φ ∈ SB _ ∧ Full (ι φ)}
       zero_mem' := ⟨zero_mem _, by rw [map_zero]; exact ⟨zero_mem _, fun _ _ => rfl⟩⟩
       add_mem' := fun a b => ⟨add_mem a.1 b.1, by
-        rw [map_add]; exact ⟨add_mem a.2.1 b.2.1, fun Y hY => by simp [a.2.2 Y hY, b.2.2 Y hY]⟩⟩
+        rw [map_add (f := _)]; exact ⟨add_mem a.2.1 b.2.1, fun Y hY => by simp [a.2.2 Y hY, b.2.2 Y hY]⟩⟩
       smul_mem' := fun c _ a => ⟨Submodule.smul_mem _ c a.1, by
         rw [map_smul]; exact ⟨Submodule.smul_mem _ c a.2.1, fun Y hY => by simp [a.2.2 Y hY]⟩⟩ }
   have hne : ∃ φ ∈ SB (Fin n × Fin d → Fv F B.v₁), (ι₁ ∘ₗ ev B.v₁) φ ≠ 0 := ⟨_, (hp.good.vac _).1, fun h0 => by

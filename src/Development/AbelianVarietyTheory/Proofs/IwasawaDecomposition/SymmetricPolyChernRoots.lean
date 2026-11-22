@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SigmaSplitSymmInl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SigmaSplitSymmInl
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric
 
 set_option autoImplicit false
@@ -47,7 +52,7 @@ theorem splitEquiv_symm_C (c : MvPolynomial (Root (fun τ : {τ // τ ≠ τ₀}
     simp only [rename_C]
     change _ = splitEquiv R τ₀ (algebraMap R _ r)
     rw [AlgEquiv.commutes]; rfl
-  | add p q hp hq => simp [map_add, ← hp, ← hq]
+  | add p q hp hq => simp [map_add (f := _), ← hp, ← hq]
   | mul_X p y hp =>
     simp only [map_mul, rename_X]
     rw [← hp, splitEquiv_X_ne R τ₀ y.1.2]
@@ -55,7 +60,8 @@ theorem splitEquiv_symm_C (c : MvPolynomial (Root (fun τ : {τ // τ ≠ τ₀}
 theorem splitEquiv_symm_esymm (j : ℕ) :
     (splitEquiv R τ₀).symm (esymm (Fin (m τ₀)) (MvPolynomial (Root (fun τ : {τ // τ ≠ τ₀} => m τ.1)) R) j) =
       chernRootsOver R m (X (τ₀, j)) := by
-  simp [chernRootsOver, esymm, map_sum, map_prod, splitEquiv_symm_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [chernRootsOver, esymm, map_sum, map_prod, splitEquiv_symm_X]
 
 theorem splitEquiv_rename_update (σ : Equiv.Perm (Fin (m τ₀))) (S : MvPolynomial (Root m) R) :
     splitEquiv R τ₀ (rename (Equiv.sigmaCongrRight
@@ -88,7 +94,7 @@ theorem rename_chernRootsOver (T : MvPolynomial ({τ // τ ≠ τ₀} × ℕ) R)
       chernRootsOver R m (rename (Prod.map Subtype.val id) T) := by
   induction T using MvPolynomial.induction_on with
   | C r => simp [chernRootsOver]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p x hp =>
     simp only [map_mul, hp]
     congr 1
@@ -121,7 +127,7 @@ theorem mem_range_chernRootsOver (n : ℕ) : ∀ (ι : Type) [Fintype ι] [Decid
     obtain ⟨T, hT⟩ := esymmAlgHom_fin_surjective R' (m := m τ₀) (n := m τ₀) le_rfl ⟨_, hsym⟩
     have hT' : aeval f T = splitEquiv R τ₀ S := by
       rw [← esymmAlgHom_apply, hT]
-    have hcoef : ∀ d, coeff d T ∈ (chernRootsOver R (fun τ : {τ // τ ≠ τ₀} => m τ.1)).range := by
+    have hcoef : ∀ d, AddMonoidAlgebra.coeff T d ∈ (chernRootsOver R (fun τ : {τ // τ ≠ τ₀} => m τ.1)).range := by
       intro d
       apply ih _ hc' R
       intro w'
@@ -135,7 +141,7 @@ theorem mem_range_chernRootsOver (n : ℕ) : ∀ (ι : Type) [Fintype ι] [Decid
         congr 1
         funext i
         exact (map_esymm _ _ _ _).symm
-      have := congrArg (coeff d) hinv
+      have := congrArg (AddMonoidAlgebra.coeff · d) hinv
       rwa [coeff_map] at this
     let k : MvPolynomial (Fin (m τ₀)) R' →+* MvPolynomial (Root m) R :=
       (splitEquiv R τ₀).symm.toRingEquiv.toRingHom

@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,12 +30,12 @@ private lemma sum_Icc_padicValNat_add_factorial_eq (ℓ : ℕ) [Fact ℓ.Prime] 
     simp
   | succ L ih =>
     rw [show m + (L + 1) = m + L + 1 by omega, Finset.sum_Icc_succ_top (by omega), Nat.factorial_succ,
-      padicValNat.mul (by omega) (Nat.factorial_ne_zero _), ← ih]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by omega) (Nat.factorial_ne_zero _), ← ih]
     omega
 
 private lemma sub_one_mul_padicValNat_factorial_le' (ℓ : ℕ) [Fact ℓ.Prime] (N : ℕ) :
     (ℓ - 1) * padicValNat ℓ N.factorial ≤ N := by
-  rw [sub_one_mul_padicValNat_factorial]
+  rw [Nat.padicValNat_def, (Fact.out : ℓ.Prime).sub_one_mul_multiplicity_factorial]
   omega
 
 private lemma padicValNat_factorial_add_le_add_log (ℓ : ℕ) [Fact ℓ.Prime] (m L : ℕ) :
@@ -40,16 +44,16 @@ private lemma padicValNat_factorial_add_le_add_log (ℓ : ℕ) [Fact ℓ.Prime] 
   have h := Nat.add_choose_mul_factorial_mul_factorial m L
   have hc : (m + L).choose L ≠ 0 := (Nat.choose_pos (by omega)).ne'
   have hlog : padicValNat ℓ ((m + L).choose L) ≤ Nat.log ℓ (m + L) := by
-    rw [← Nat.factorization_def _ (Fact.out : ℓ.Prime)]
+    rw [Nat.padicValNat_def, ← Nat.factorization_def _ (Fact.out : ℓ.Prime)]
     exact Nat.factorization_choose_le_log
-  rw [← h, padicValNat.mul (by positivity) (Nat.factorial_ne_zero _),
-    padicValNat.mul hc (Nat.factorial_ne_zero _)]
+  rw [← h, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by positivity) (Nat.factorial_ne_zero _),
+    (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) hc (Nat.factorial_ne_zero _)]
   omega
 
 private lemma sum_Icc_one_padicValNat_eq_factorial (ℓ : ℕ) [Fact ℓ.Prime] (L : ℕ) :
     (∑ n ∈ Finset.Icc 1 L, padicValNat ℓ n) = padicValNat ℓ L.factorial := by
   have h := sum_Icc_padicValNat_add_factorial_eq ℓ 0 L
-  simpa using h
+  simpa [Nat.padicValNat_def] using h
 
 theorem first_sigma_valuation_bound : TwoIntervalValuationSumBound := by
   intro ℓ _ h η S b a hab hbS
@@ -88,7 +92,7 @@ theorem first_sigma_valuation_bound : TwoIntervalValuationSumBound := by
       · intro j hj
         simp only [Finset.mem_Icc] at hj
         try dsimp only
-        rw [padicValInt]
+        rw [padicValInt, Nat.padicValNat_def]
         congr 1
         omega
     have hpos : (∑ j ∈ Finset.Icc 1 ((η : ℤ) + a), padicValInt ℓ j) =
@@ -110,7 +114,7 @@ theorem first_sigma_valuation_bound : TwoIntervalValuationSumBound := by
       · intro j hj
         simp only [Finset.mem_Icc] at hj
         try dsimp only
-        rw [padicValInt]
+        rw [padicValInt, Nat.padicValNat_def]
         congr 1
         omega
     calc _ ≤ ∑ j ∈ Finset.Icc (1 - (η : ℤ)) (-1) ∪ Finset.Icc 1 ((η : ℤ) + a), padicValInt ℓ j :=
@@ -137,7 +141,7 @@ theorem first_sigma_valuation_bound : TwoIntervalValuationSumBound := by
       · intro j hj
         simp only [Finset.mem_Icc] at hj
         try dsimp only
-        rw [padicValInt]
+        rw [padicValInt, Nat.padicValNat_def]
         congr 1
         omega
     have h1 := sum_Icc_padicValNat_add_factorial_eq ℓ (b - a - 1) (a + S)

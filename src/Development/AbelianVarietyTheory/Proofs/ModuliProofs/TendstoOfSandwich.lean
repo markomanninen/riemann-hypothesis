@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.VolFin
 
@@ -76,7 +80,8 @@ theorem upper {R : ι → Subalgebra K F} {γ : ι → F} {R' : ι → Subalgebr
       exact hfw
     have h1 : γ i ^ e * b.repr f j = ∑ l, w l * b.repr (g i l) j := by
       have := congrArg (fun x => b.repr x j) hfw'
-      simpa [map_sum, Finsupp.finsetSum_apply] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, Finsupp.finsetSum_apply] using this
     have h2 : q * b.repr f j * γ i ^ (e + c) = ∑ l, w l * (q * b.repr (g i l) j * γ i ^ c) := by
       rw [pow_add, show q * b.repr f j * (γ i ^ e * γ i ^ c)
         = (γ i ^ e * b.repr f j) * (q * γ i ^ c) by ring, h1, Finset.sum_mul]

@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Reframe
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.Reframe
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField IsDedekindDomain Formalism.MainNotions.G Formalism.MainNotions.FormalGroupSystem Formalism.L2.G.Pend Formalism.MainNotions Formalism.L2.Ker Formalism.L2.PairingIndexBounds.F Formalism.L2.KerInert Formalism.UG Formalism.MainNotions.G.KAat Formalism.MainNotions.G.CmpJ Formalism.L2.Forms Formalism.L2.KerInert.SecondKernelInstances Formalism.L2.KerInert.SecondKernelSeries Formalism.L2.KerInert.QuadraticBaseChangeGL3 Formalism.L2.KerInert.SecondKernelDifference Formalism.L2.KerInert.SecondKernelHermitian GlobalTheory.TwU GlobalTheory.TwV GlobalTheory.TwV.DelB TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -30,7 +35,7 @@ theorem coeff_resV_thCl : ∀ {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi 
   rw [hres, ← Finsupp.mapDomain_comp, MvPowerSeries.coeff_smul, MvPowerSeries.coeff_map, hcomp]
   congr 2
   show TaylorLogMetric.taylor D (thCl t u μ cls j La La') _ = _
-  rw [thCl, dif_pos hr]
+  rw [thCl, dite_eq_left hr]
   exact taylor_reV hr.1 hr.2 _ α
 
 end GlobalTheory.TwV.DelB

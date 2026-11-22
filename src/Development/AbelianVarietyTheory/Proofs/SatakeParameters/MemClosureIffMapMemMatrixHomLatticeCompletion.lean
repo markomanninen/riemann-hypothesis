@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesTrivial
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemHomLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ theorem approx_of_mem_span {ϖ : W} (ρ : E →+* Qq)
     have e1 := congrFun (congrFun hM i) j
     have e2 := congrFun (congrFun hM' i) j
     simp only [Matrix.sub_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul] at e1 e2
-    simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_add]
+    simp only [Matrix.sub_apply, Matrix.add_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_add (f := _)]
     linear_combination e1 + e2
   | smul c x _ hx =>
     obtain ⟨A, hA, M, hM⟩ := hx n
@@ -141,7 +145,7 @@ theorem approx_of_mem_span {ϖ : W} (ρ : E →+* Qq)
       rw [Matrix.smul_apply, ← map_mul]
       rfl
     rw [Matrix.sub_apply, Matrix.map_apply, e3, hxz]
-    simp only [Matrix.smul_apply, Matrix.map_apply, Matrix.sub_apply, smul_eq_mul, Algebra.smul_def, map_add,
+    simp only [Matrix.smul_apply, Matrix.map_apply, Matrix.sub_apply, smul_eq_mul, Algebra.smul_def, map_add (f := _),
       map_sub, map_mul, map_pow, pow_add] at e1 e2 ⊢
     linear_combination (algebraMap W Qq c) * e1 -
       algebraMap W Qq ϖ ^ n * algebraMap W Qq z * e2
@@ -171,8 +175,8 @@ end Neighbourhoods
 
 end ClosureLat
 
-open ClosureLat in
 
+open ClosureLat in
 theorem mem_closure_iff_map_mem_homLat {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E)) {W Qq : Type}
     [CommRing W] [IsDomain W] [IsDiscreteValuationRing W] [Field Qq] [Algebra W Qq] [IsFractionRing W Qq] (p : ℕ)
     (hp : Irreducible (p : W)) (ρ : E →+* Qq)

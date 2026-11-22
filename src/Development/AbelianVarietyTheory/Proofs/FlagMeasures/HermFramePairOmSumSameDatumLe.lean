@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsStarStableIdealAbsorbingMinorsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardLatticesNearReferenceLatticeLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardSublatticesDefiniteQuotientNormalFormLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardUnimodularHermGluingsLeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonUnipotentStabiliserPreservesTermsAndDatumStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairInnerLatticesUnimodularPrimitiveStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBoundStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairExistsUnipotentSplitLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormExistsConjNearReferenceStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexNeZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitTermWeightLeNearReferenceLatticeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsStarStableIdealAbsorbingMinorsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardLatticesNearReferenceLatticeLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CardSublatticesDefiniteQuotientNormalFormLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EncardUnimodularHermGluingsLeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairCommonUnipotentStabiliserSummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CommonUnipotentStabiliserPreservesTermsAndDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairInnerLatticesUnimodularPrimitiveStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagPairDefiniteThetaLatticeLeFixedIndexBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairExistsUnipotentSplitLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormExistsConjNearReferenceStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RelIndexNeZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SplitTermWeightLeNearReferenceLatticeStatement
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
@@ -102,7 +106,7 @@ theorem idx_dual_sup (H : HermSpace K V) (W I : Submodule K V) (A : Submodule R 
       refine (mem_dual_iff H _ _).2 ⟨?_, fun x hx => ?_⟩
       · rw [hspan]; exact Submodule.add_mem_sup ha1 hi
       · obtain ⟨a', ha', i', hi', rfl⟩ := Submodule.mem_sup.1 hx
-        rw [map_add, h1 (a + i) (Submodule.add_mem_sup (hsp ha1) hi) i' hi', add_zero, map_add,
+        rw [map_add (f := _), h1 (a + i) (Submodule.add_mem_sup (hsp ha1) hi) i' hi', add_zero, map_add (f := _),
           LinearMap.add_apply, h2 a' (Submodule.mem_sup_left (hA ha')) i hi, add_zero]
         exact ha2 a' ha'
   have hinf : (A ⊔ rs R I) ⊓ dual H A = A := by
@@ -154,12 +158,36 @@ variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [M
 theorem om_smul (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (N : NF H r) {g : ℕ} {Λ : Submodule (𝓞 K) V} (hg : 1 ≤ g)
     (hΛ : N.IsTerm g Λ) {s : V ≃ₗ[K] V} (hs : s ∈ N.R) : N.om (s • Λ) = N.om Λ := by
   obtain ⟨-, hS, -, -⟩ := GlobalTheory.T.commonUnipotent_stabiliser_preserves_terms_and_datum K V H hK r N g Λ hg hΛ s hs
-  obtain ⟨-, -, -, -, hRef, -⟩ := GlobalTheory.T.hermFramePair_innerLattices_unimodular_primitive K V H hK r N g Λ hg hΛ
   obtain ⟨-, -, -, -, hnil⟩ := GlobalTheory.T.hermFramePairCommonUnipotentStabiliser_summary K V H hK r N
-  have hL : Submodule.IsLattice K Λ := ((isUnimod_iff H Λ).1 hΛ.1.1).1
+  have hLat := ((isUnimod_iff H Λ).1 hΛ.1.1).1
+  have hL : Submodule.IsFullLattice K Λ :=
+    { Submodule.IsLattice.of_fg K hLat.1 with span_eq_top := hLat.2 }
   unfold NF.om NF.Gam
   rw [hS.1]
-  exact (Unimod.invVol_smul K V N.R (2 * r + 1) hnil Λ _ hL hRef).2 s hs
+  let A := N.R ⊓ MulAction.stabilizer (V ≃ₗ[K] V) Λ
+  let B := N.R ⊓ MulAction.stabilizer (V ≃ₗ[K] V) (s • Λ)
+  let C := N.R ⊓ MulAction.stabilizer (V ≃ₗ[K] V) (N.Ref (latL N.F N.F' Λ))
+  have hB : Submodule.IsFullLattice K (s • Λ) := Unimod.isLattice_smul s hL
+  have hab : A.relIndex B ≠ 0 := Unimod.relIndex_ne_zero N.R hL hB
+  have hba : B.relIndex A ≠ 0 := Unimod.relIndex_ne_zero N.R hB hL
+  have hd : GlobalTheory.HL.invVol A B = 1 := by
+    have h := (Unimod.invVol_smul K V N.R (2 * r + 1) hnil Λ Λ hL hL).2 s hs
+    simpa [A, B, GlobalTheory.HL.invVol] using h
+  change GlobalTheory.HL.invVol C B = GlobalTheory.HL.invVol C A
+  by_cases hca : C.relIndex A = 0
+  · have hcb : C.relIndex B = 0 := by
+      by_contra h
+      exact (Subgroup.relIndex_ne_zero_trans h hba) hca
+    simp [GlobalTheory.HL.invVol, hca, hcb]
+  · by_cases hac : A.relIndex C = 0
+    · have hbc : B.relIndex C = 0 := by
+        by_contra h
+        exact (Subgroup.relIndex_ne_zero_trans hab h) hac
+      simp [GlobalTheory.HL.invVol, hac, hbc]
+    · have hcb : C.relIndex B ≠ 0 := Subgroup.relIndex_ne_zero_trans hca hab
+      have hbc : B.relIndex C ≠ 0 := Subgroup.relIndex_ne_zero_trans hba hac
+      have h := (GlobalTheory.HL.invVol_mul_pos_le_conj C A B hca hac hcb hbc).1
+      simpa [hd] using h
 
 theorem isLatMod_latLa (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (N : NF H r) {g : ℕ} {Λ : Submodule (𝓞 K) V} (hg : 1 ≤ g)
     (hΛ : N.IsTerm g Λ) :
@@ -209,7 +237,7 @@ theorem idx_dual_le (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (N : NF
     refine (isIntegralLat_iff H _).2 fun x hx y hy => ?_
     obtain ⟨a, ha, i, hi, rfl⟩ := Submodule.mem_sup.1 hx
     obtain ⟨a', ha', i', hi', rfl⟩ := Submodule.mem_sup.1 hy
-    rw [map_add, h1 (a + i) (Submodule.add_mem_sup ha.2 hi) i' hi', add_zero, map_add,
+    rw [map_add (f := _), h1 (a + i) (Submodule.add_mem_sup ha.2 hi) i' hi', add_zero, map_add (f := _),
       LinearMap.add_apply, h2 a' (Submodule.mem_sup_left ha'.2) i hi, add_zero]
     exact hintΛ a ha.1 a' ha'.1
   have hrad : ∀ x ∈ wSp N.F N.F', (∀ y ∈ wSp N.F N.F', H.B x y = 0) ↔ x ∈ II N.F N.F' := by
@@ -218,7 +246,7 @@ theorem idx_dual_le (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (N : NF
     refine ⟨fun hx0 => ?_, fun hxI y hy => h2 y hy x hxI⟩
     obtain ⟨a, ha, i, hi, rfl⟩ := Submodule.mem_sup.1 hx
     have haa := hx0 a (Submodule.mem_sup_left ha)
-    rw [map_add, LinearMap.add_apply, h2 a (Submodule.mem_sup_left ha) i hi, add_zero] at haa
+    rw [map_add (f := _), LinearMap.add_apply, h2 a (Submodule.mem_sup_left ha) i hi, add_zero] at haa
     obtain ⟨τ⟩ : Nonempty (K →+* ℂ) := inferInstance
     have ha0 : a = 0 := by
       by_contra hne

@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MulVecOfRealVecAddMemSpanPeriodLattice
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
@@ -212,14 +216,6 @@ theorem per_lattice (hs : τ.IsSymm) (hp : (τ.map Complex.im).PosDef) :
   · rw [hrange]
     infer_instance
   · rw [hrange, Submodule.span_span_of_tower, b.span_eq]
-
-def turn (h : ℕ) : (Fin h ⊕ Fin h → ℤ) ≃ₗ[ℤ] (Fin h ⊕ Fin h → ℤ) where
-  toFun x := Sum.elim (fun i => -x (.inr i)) (fun i => x (.inl i))
-  invFun x := Sum.elim (fun i => x (.inr i)) (fun i => -x (.inl i))
-  map_add' x y := by ext (i | i) <;> simp [add_comm]
-  map_smul' c x := by ext (i | i) <;> simp
-  left_inv x := by ext (i | i) <;> simp
-  right_inv x := by ext (i | i) <;> simp
 
 theorem exists_form (hs : τ.IsSymm) (hp : (τ.map Complex.im).PosDef) :
     ∃ Ef : LinearMap.BilinForm ℤ (LinearMap.range (per τ)),

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ConjEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.CycRepApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.ConjEq
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Stick UpperTheory.V.FW
 open scoped nonZeroDivisors
@@ -15,7 +19,7 @@ theorem UpperTheory.V.FW.sgnStab :
   have : IsGalois ℚ L := IsCyclotomicExtension.isGalois {M} ℚ L
   have hc : ∀ a : L, sg M L (-1) a = cE L a := fun a => by
     have h := congrArg (fun e : L ≃+* L => e a) (conjEq M L).1
-    simpa using h
+    exact h
   have hcomm : ∀ (g : (ZMod M)ˣ) (a : L), cE L (sg M L g a) = sg M L g (cE L a) := by
     intro g a
     rw [← hc, ← hc, ← AlgEquiv.mul_apply, ← AlgEquiv.mul_apply, ← map_mul, ← map_mul, mul_comm]

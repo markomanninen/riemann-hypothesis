@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PRUpLoc
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
-import Formalism.LocalToGlobal.GlobalTheory.GL4.PFrLoc
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.RndLinkAdmTOf
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.PFrLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -136,6 +140,63 @@ theorem rlv_mulLat_inv {n : ℕ} (g : GL (Fin n) E) (L : Submodule (𝓞 E) (Fin
     exact ⟨(g : Matrix (Fin n) (Fin n) E) *ᵥ x, ⟨x, hx, rfl⟩, by
       rw [mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one, one_mulVec]⟩
 
+section LocalProjection
+
+open Formalism.UG.CS Formalism.UG.P Formalism.L2.GlobalTheoryTheory.Comp
+
+local notation "𝒜" => E ⊗[F] FiniteAdeleRing (𝓞 F) F
+
+variable {n : Type} [Fintype n] [DecidableEq n]
+variable (v : HeightOneSpectrum (𝓞 F))
+
+private abbrev rlv_lv (Λ : Submodule (𝓞 E) (n → E)) : Submodule (intV E v) (n → E ⊗[F] v.adicCompletion F) :=
+  latS (F := F) (v.adicCompletion F) (intV E v) Λ
+
+private theorem rlv_prV_hat {Λ : Submodule (𝓞 E) (n → E)} (u : n → 𝒜) (hu : u ∈ hat F Λ) :
+    (fun i => prV (E := E) v (u i)) ∈ rlv_lv v Λ := by
+  induction hu using Submodule.span_induction with
+  | mem u hu =>
+    obtain ⟨x, hx, rfl⟩ := hu
+    exact Submodule.subset_span ⟨x, hx, rfl⟩
+  | zero =>
+    have : (fun i => prV (E := E) v ((0 : n → 𝒜) i)) = 0 := by funext i; simp
+    rw [this]; exact zero_mem _
+  | add u w _ _ hu hw =>
+    have : (fun i => prV (E := E) v ((u + w) i)) =
+        (fun i => prV (E := E) v (u i)) + (fun i => prV (E := E) v (w i)) := by funext i; simp
+    rw [this]; exact add_mem hu hw
+  | smul s u _ hu =>
+    have hs := afsplit_prV_int (E := E) v (s : 𝒜) s.2
+    have : (fun i => prV (E := E) v ((s • u) i)) =
+        (⟨_, hs⟩ : intV E v) • (fun i => prV (E := E) v (u i)) := by
+      funext i
+      simp [Subring.smul_def, map_mul]
+    rw [this]; exact Submodule.smul_mem _ _ hu
+
+private theorem rlv_bc_mulVec_vi (k : GL n 𝒜) (x : n → E) :
+    ((bc (prV (E := E) v) k : GL n (E ⊗[F] v.adicCompletion F)) : Matrix n n _) *ᵥ
+      (fun i => inclE (F := F) (v.adicCompletion F) (x i)) =
+      fun i => prV (E := E) v (((k : Matrix n n 𝒜) *ᵥ Formalism.L2.GlobalTheoryTheory.TraceIntegrality.Fr.vi F x) i) := by
+  funext i
+  rw [RingHom.map_mulVec]
+  rfl
+
+private theorem rlv_loc_fwd {Λ Λ' : Submodule (𝓞 E) (n → E)} (k : GL n 𝒜) (hk : ∀ u ∈ hat F Λ, (k : Matrix n n 𝒜) *ᵥ u ∈ hat F Λ')
+    (y : n → E ⊗[F] v.adicCompletion F) (hy : y ∈ rlv_lv v Λ) :
+    ((bc (prV (E := E) v) k : GL n (E ⊗[F] v.adicCompletion F)) : Matrix n n _) *ᵥ y ∈ rlv_lv v Λ' := by
+  induction hy using Submodule.span_induction with
+  | mem y hy =>
+    obtain ⟨x, hx, rfl⟩ := hy
+    rw [rlv_bc_mulVec_vi]
+    exact rlv_prV_hat v _ (hk _ (Formalism.L2.GlobalTheoryTheory.TraceIntegrality.Fr.vi_mem_hat hx))
+  | zero => rw [mulVec_zero]; exact zero_mem _
+  | add y w _ _ hy hw => rw [mulVec_add]; exact add_mem hy hw
+  | smul t y _ hy =>
+    rw [Subring.smul_def, mulVec_smul]
+    exact Submodule.smul_mem _ t hy
+
+end LocalProjection
+
 theorem rlv_yloc (v : HeightOneSpectrum (𝓞 F)) {n : Type} [Fintype n] [DecidableEq n] {L Lb : Submodule (𝓞 E) (n → E)}
     (y : GL n (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
     (hy : ∀ x, x ∈ Formalism.L2.GlobalTheoryTheory.Comp.hat F L ↔ ((y⁻¹ : GL n _) : Matrix n n _) *ᵥ x ∈ Formalism.L2.GlobalTheoryTheory.Comp.hat F Lb)
@@ -144,14 +205,14 @@ theorem rlv_yloc (v : HeightOneSpectrum (𝓞 F)) {n : Type} [Fintype n] [Decida
       ((bc (prV (E := E) v) y⁻¹ : GL n _) : Matrix n n _) *ᵥ x ∈ latS (F := F) (v.adicCompletion F) (intV E v) Lb := by
   constructor
   · intro hx
-    exact Formalism.L2.GlobalTheoryTheory.TraceIntegrality.Fr.loc_fwd v y⁻¹ (fun u hu => (hy u).1 hu) x hx
+    exact rlv_loc_fwd v y⁻¹ (fun u hu => (hy u).1 hu) x hx
   · intro hx
     have h1 : ∀ u ∈ Formalism.L2.GlobalTheoryTheory.Comp.hat F Lb, (y : Matrix n n _) *ᵥ u ∈ Formalism.L2.GlobalTheoryTheory.Comp.hat F L := by
       intro u hu
       apply (hy _).2
       rw [mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one, one_mulVec]
       exact hu
-    have h2 := Formalism.L2.GlobalTheoryTheory.TraceIntegrality.Fr.loc_fwd v y h1 _ hx
+    have h2 := rlv_loc_fwd v y h1 _ hx
     rwa [mulVec_mulVec, ← Units.val_mul, ← map_mul, mul_inv_cancel, map_one, Units.val_one, one_mulVec] at h2
 
 theorem rlv_stab {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) {Lb L1 L2 : Submodule (𝓞 E) (Fin n → E)}
@@ -193,28 +254,6 @@ section Lev
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {n : ℕ} {σ : E →ₐ[F] E} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
-
-theorem rlv_mem_U (S : StepLevel F E σ J T f bad) (v : HeightOneSpectrum (𝓞 F))
-    (η η' : UPts σ J (FiniteAdeleRing (𝓞 F) F))
-    (hη : ∀ v', v' ≠ v → bc (prV (E := E) v') η.1 = 1) (hη' : ∀ v', v' ≠ v → bc (prV (E := E) v') η'.1 = 1)
-    (κ κ' : S.U) (hv : bc (prV (E := E) v) (η.1 * κ.1 * η'.1 * κ'.1) ∈ S.Uloc v) :
-    η.1 * κ.1 * η'.1 * κ'.1 ∈ S.U := by
-  have hκ := (S.U_eq _).1 κ.2
-  have hκ' := (S.U_eq _).1 κ'.2
-  rw [S.U_eq]
-  refine ⟨mul_mem (mul_mem (mul_mem η.2 hκ.1) η'.2) hκ'.1, fun v' => ?_⟩
-  by_cases h : v' = v
-  · subst h; exact hv
-  · rw [map_mul, map_mul, map_mul, hη v' h, hη' v' h, one_mul, mul_one]
-    exact mul_mem (hκ.2 v') (hκ'.2 v')
-
-theorem rlv_comp_eq {G : Type} [Group G] (y y' y'' η κ η' κ' g g' : G)
-    (h1 : g * y' = y * η * κ) (h2 : g' * y'' = y' * η' * κ') :
-    η * κ * η' * κ' = y⁻¹ * (g * g') * y'' := by
-  have e1 : η * κ = y⁻¹ * g * y' := by rw [mul_assoc y⁻¹, h1]; group
-  have e2 : η' * κ' = y'⁻¹ * g' * y'' := by rw [mul_assoc y'⁻¹, h2]; group
-  calc η * κ * η' * κ' = (η * κ) * (η' * κ') := by group
-    _ = _ := by rw [e1, e2]; group
 
 end Lev
 
@@ -296,166 +335,13 @@ theorem rlv_norm (A : AtTTied u) (v : (D.mem u).A.vT) (a : 𝓞 D.host.E) (ha : 
   rw [A.res_v v, hr, map_mul]
   exact mul_ne_zero hb' ha'
 
-set_option synthInstance.maxHeartbeats 400000 in
 
-theorem rlv_stabT (Tf : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c c2 : (D.mem u).C.cls i)
-    (g : GL (Fin (D.R.N i)) D.host.E)
-    (hP : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (g : Matrix _ _ D.host.E) (clsCrd D u i hi c2)) =
-      Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c))
-    (hQ : Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (mulLat (g : Matrix _ _ D.host.E) (clsCrd D u i hi c2)) =
-      Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (clsCrd D u i hi c)) :
-    bc (prV (E := D.host.E) (Tf.atT.eV v).1) (((Tf.cls i hi).y c).1⁻¹ *
-      bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) g * ((Tf.cls i hi).y c2).1) ∈
-      stabGL (latS (F := D.host.F) ((Tf.atT.eV v).1.adicCompletion D.host.F) (intV D.host.E (Tf.atT.eV v).1) (Tf.cls i hi).lev.Lb) := by
-  have hN := rlv_norm Tf.atT v
-  exact rlv_stab (Tf.atT.eV v).1 ((Tf.cls i hi).y c).1 ((Tf.cls i hi).y c2).1 ((Tf.cls i hi).y_lat c) ((Tf.cls i hi).y_lat c2) g
-    (rlv_locV (Tf.atT.eV v).1 (Tf.atT.Pv v) (rlvQ Tf.atT v) hN hP.le hQ.le)
-    (rlv_locV (Tf.atT.eV v).1 (Tf.atT.Pv v) (rlvQ Tf.atT v) hN hP.ge hQ.ge)
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
 
-theorem rlv_comp_mem (Tf : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c c1 c2 : (D.mem u).C.cls i)
-    (γ γ' : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
-    (η η' : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ κ' : (Tf.cls i hi).lev.U)
-    (hsup : ∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η.1 = 1)
-    (hsup' : ∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η'.1 = 1)
-    (hrel : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ.1 * ((Tf.cls i hi).y c1).1 =
-      ((Tf.cls i hi).y c).1 * η.1 * κ.1)
-    (hrel' : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ'.1 * ((Tf.cls i hi).y c2).1 =
-      ((Tf.cls i hi).y c1).1 * η'.1 * κ'.1)
-    (hP : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (γ.1 * γ'.1).1 (clsCrd D u i hi c2)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c))
-    (hQ : Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (mulLat (γ.1 * γ'.1).1 (clsCrd D u i hi c2)) =
-      Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (clsCrd D u i hi c))
-    (hF : bc (prV (E := D.host.E) (Tf.atT.eV v).1) (((Tf.cls i hi).y c).1⁻¹ *
-        bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (γ.1 * γ'.1) * ((Tf.cls i hi).y c2).1) ∈
-      stabFun _ ((Tf.cls i hi).lev.fT (Tf.atT.eV v).1 (Tf.atT.eV v).2)) :
-    η.1 * κ.1 * η'.1 * κ'.1 ∈ (Tf.cls i hi).lev.U := by
-  have hκ := ((Tf.cls i hi).lev.U_eq _).1 κ.2
-  have hκ' := ((Tf.cls i hi).lev.U_eq _).1 κ'.2
-  have hU : η.1 * κ.1 * η'.1 * κ'.1 ∈ UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F) :=
-    mul_mem (mul_mem (mul_mem η.2 hκ.1) η'.2) hκ'.1
-  have heq := rlv_comp_eq ((Tf.cls i hi).y c).1 ((Tf.cls i hi).y c1).1 ((Tf.cls i hi).y c2).1 η.1 κ.1 η'.1 κ'.1
-    (bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ.1)
-    (bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ'.1) hrel hrel'
-  rw [← map_mul] at heq
-  apply rlv_mem_U (Tf.cls i hi).lev (Tf.atT.eV v).1 η η' hsup hsup' κ κ'
-  rw [(Tf.cls i hi).lev.UlocAlt _ (Tf.atT.eV v).2]
-  refine Subgroup.mem_inf.2 ⟨Subgroup.mem_inf.2 ⟨Formalism.UG.P.afsplit_bc_mem _ _ _ _ hU, ?_⟩, ?_⟩
-  · have hs := rlv_stabT Tf i hi v c c2 (γ.1 * γ'.1) hP hQ
-    rw [← heq] at hs
-    exact hs
-  · rw [heq]; exact hF
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 2000000 in
 
-def RUpLocV (Tf : FormsTied D u) : Prop :=
-  ∀ i (hi : i ≤ D.R.m) v c (z : ↥(Ld D u i hi c)), (D.fm u).fv i v c ((Tf.lv i hi).pr v c z) = 1 →
-    ∀ (γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi)) (η : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ : (Tf.cls i hi).lev.U),
-        (∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η.1 = 1) →
-        bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ.1 *
-          ((Tf.cls i hi).y ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))).1 = ((Tf.cls i hi).y c).1 * η.1 * κ.1 →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ.1.1 (clsCrd D u i hi ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi c) →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ.1.1 (Ld D u i hi ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi c ⊔
-            Submodule.span (𝓞 D.host.E) {(((D.mem u).A.T : ℕ) : D.host.E)⁻¹ • z.1}) →
-        (∀ (x : ↥(Ld D u i hi ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))))
-          (hx : (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) • (γ.1.1 *ᵥ x.1) ∈ Ld D u i hi c),
-          (D.fm u).fv i v _ ((Tf.lv i hi).pr v _ x) = (D.fm u).fv i v c ((Tf.lv i hi).pr v c ⟨_, hx⟩)) →
-    ∃ e : (D.fm u).lk i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) ≃ₗ[(D.mem u).A.Fv v] (D.fm u).lv i v c,
-      e ((D.fm u).te i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))) = (Tf.lv i hi).pr v c z ∧
-      ∀ (γ' : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi)) (η' : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ' : (Tf.cls i hi).lev.U),
-        (∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η'.1 = 1) →
-        bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ'.1 *
-          ((Tf.cls i hi).y ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap))).1 =
-          ((Tf.cls i hi).y ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))).1 * η'.1 * κ'.1 →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ'.1.1 (Ld D u i hi ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap)))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))) →
-        (∀ (x : ↥(Ld D u i hi ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap))))
-          (hx : γ'.1.1 *ᵥ x.1 ∈ Lk Tf.atT i hi v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z))),
-          (D.fm u).fv i v _ ((Tf.lv i hi).pr v _ x) =
-            (((D.fm u).fv i v c).comp e.toLinearMap)
-              ((Tf.lv i hi).prk v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) ⟨_, hx⟩)) →
-      Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (γ.1 * γ'.1).1 (clsCrd D u i hi ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap)))) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c) ∧
-      Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (mulLat (γ.1 * γ'.1).1 (clsCrd D u i hi ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap)))) = Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (clsCrd D u i hi c) ∧
-      bc (prV (E := D.host.E) (Tf.atT.eV v).1) (((Tf.cls i hi).y c).1⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (γ.1 * γ'.1) *
-        ((Tf.cls i hi).y ((D.fm u).dn i v ((D.fm u).up i v c ((Tf.lv i hi).pr v c z)) (((D.fm u).fv i v c).comp e.toLinearMap))).1) ∈ stabFun _ ((Tf.cls i hi).lev.fT (Tf.atT.eV v).1 (Tf.atT.eV v).2)
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 2000000 in
 
-def RDnLocV (Tf : FormsTied D u) : Prop :=
-  ∀ i (hi : i ≤ D.R.m) v c (g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk i v c)), g ((D.fm u).te i v c) = 1 →
-    ∀ (γ' : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi)) (η' : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ' : (Tf.cls i hi).lev.U),
-        (∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η'.1 = 1) →
-        bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ'.1 *
-          ((Tf.cls i hi).y ((D.fm u).dn i v c g)).1 = ((Tf.cls i hi).y c).1 * η'.1 * κ'.1 →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ'.1.1 (Ld D u i hi ((D.fm u).dn i v c g))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c) →
-        (∀ (x : ↥(Ld D u i hi ((D.fm u).dn i v c g))) (hx : γ'.1.1 *ᵥ x.1 ∈ Lk Tf.atT i hi v c),
-          (D.fm u).fv i v _ ((Tf.lv i hi).pr v _ x) = g ((Tf.lv i hi).prk v c ⟨_, hx⟩)) →
-    ∃ e : (D.fm u).lv i v ((D.fm u).dn i v c g) ≃ₗ[(D.mem u).A.Fv v] (D.fm u).lk i v c,
-      (D.fm u).fv i v ((D.fm u).dn i v c g) = g.comp e.toLinearMap ∧
-      ∀ (z : ↥(Ld D u i hi ((D.fm u).dn i v c g))),
-        (Tf.lv i hi).pr v ((D.fm u).dn i v c g) z = e.symm ((D.fm u).te i v c) →
-      ∀ (γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi)) (η : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (κ : (Tf.cls i hi).lev.U),
-        (∀ v', v' ≠ (Tf.atT.eV v).1 → bc (prV (E := D.host.E) v') η.1 = 1) →
-        bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ.1 *
-          ((Tf.cls i hi).y ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z))).1 =
-          ((Tf.cls i hi).y ((D.fm u).dn i v c g)).1 * η.1 * κ.1 →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v)
-                  (mulLat γ.1.1 (clsCrd D u i hi ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z)))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi ((D.fm u).dn i v c g)) →
-        Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v)
-                  (mulLat γ.1.1 (Ld D u i hi ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z)))) =
-          Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi ((D.fm u).dn i v c g) ⊔
-            Submodule.span (𝓞 D.host.E) {(((D.mem u).A.T : ℕ) : D.host.E)⁻¹ • z.1}) →
-        (∀ (x : ↥(Ld D u i hi ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z))))
-          (hx : (((D.mem u).A.T : ℕ) : 𝓞 D.host.E) • (γ.1.1 *ᵥ x.1) ∈ Ld D u i hi ((D.fm u).dn i v c g)),
-          (D.fm u).fv i v _ ((Tf.lv i hi).pr v _ x) =
-            (D.fm u).fv i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v ((D.fm u).dn i v c g) ⟨_, hx⟩)) →
-      Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (γ'.1 * γ.1).1 (clsCrd D u i hi ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z)))) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c) ∧
-      Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (mulLat (γ'.1 * γ.1).1 (clsCrd D u i hi ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z)))) = Formalism.HermitianLatticesTheory.localization₂ (rlvQ Tf.atT v) (clsCrd D u i hi c) ∧
-      bc (prV (E := D.host.E) (Tf.atT.eV v).1) (((Tf.cls i hi).y c).1⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (γ'.1 * γ.1) *
-        ((Tf.cls i hi).y ((D.fm u).up i v ((D.fm u).dn i v c g) ((Tf.lv i hi).pr v _ z))).1) ∈ stabFun _ ((Tf.cls i hi).lev.fT (Tf.atT.eV v).1 (Tf.atT.eV v).2)
-
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
-theorem rupLocM_of_V (Tf : FormsTied D u) (h : RUpLocV Tf) : RUpLocM Tf := by
-  intro i hi v c z hz γ η κ hsup hrel hl1 hl2 hfun
-  obtain ⟨e, he1, he2⟩ := h i hi v c z hz γ η κ hsup hrel hl1 hl2 hfun
-  refine ⟨e, he1, fun γ' η' κ' hsup' hrel' hl1' hfun' => ?_⟩
-  obtain ⟨hP, hQ, hF⟩ := he2 γ' η' κ' hsup' hrel' hl1' hfun'
-  exact rlv_comp_mem Tf i hi v _ _ _ γ γ' η η' κ κ' hsup hsup' hrel hrel' hP hQ hF
-
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 4000000 in
-theorem rdnLocM_of_V (Tf : FormsTied D u) (h : RDnLocV Tf) : RDnLocM Tf := by
-  intro i hi v c g hg γ' η' κ' hsup' hrel' hl1' hfun'
-  obtain ⟨e, he1, he2⟩ := h i hi v c g hg γ' η' κ' hsup' hrel' hl1' hfun'
-  refine ⟨e, he1, fun z hz γ η κ hsup hrel hl1 hl2 hfun => ?_⟩
-  obtain ⟨hP, hQ, hF⟩ := he2 z hz γ η κ hsup hrel hl1 hl2 hfun
-  exact rlv_comp_mem Tf i hi v _ _ _ γ' γ η' η κ' κ hsup' hsup hrel' hrel hP hQ hF
-
-set_option maxHeartbeats 2000000 in
-
-theorem rlv_upDn_dualP (Tf : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c c1 c2 : (D.mem u).C.cls i)
-    (γ γ' : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
-    (hl1 : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ.1.1 (clsCrd D u i hi c1)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi c))
-    (hl1' : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ'.1.1 (Ld D u i hi c2)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c1)) :
-    Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (γ.1 * γ'.1).1 (Ld D u i hi c2)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi c) :=
-  rlv_chainP _ γ.1.1 γ'.1.1 hl1 hl1'
-
-set_option maxHeartbeats 2000000 in
-
-theorem rlv_dnUp_latP (Tf : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m) (v : (D.mem u).A.vT) (c c2 c3 : (D.mem u).C.cls i)
-    (γ' γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
-    (hl1' : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ'.1.1 (Ld D u i hi c2)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c))
-    (hl1 : Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat γ.1.1 (clsCrd D u i hi c3)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (Ld D u i hi c2)) :
-    Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (mulLat (γ'.1 * γ.1).1 (clsCrd D u i hi c3)) = Formalism.HermitianLatticesTheory.localization₂ (Tf.atT.Pv v) (clsCrd D u i hi c) :=
-  rlv_chainP _ γ'.1.1 γ.1.1 hl1' hl1
 
 end Tied
 

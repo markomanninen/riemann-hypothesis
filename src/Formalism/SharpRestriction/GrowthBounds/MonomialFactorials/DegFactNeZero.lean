@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.GoodCountMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.GoodCountMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,10 +14,10 @@ theorem exists_scal (p : ℕ) [hp : Fact p.Prime] (m Mx : ℕ) (hm : m ≠ 0) (h
     ∃ c : ℤ_[p], (c : ℚ_[p]) * (m : ℚ_[p]) = (p : ℚ_[p]) ^ Mx := by
   have hm' : (m : ℚ_[p]) ≠ 0 := by exact_mod_cast hm
   have hn : ‖(m : ℚ_[p])‖ = (p : ℝ) ^ (-(padicValNat p m : ℤ)) := by
-    rw [Padic.norm_eq_zpow_neg_valuation hm', Padic.valuation_natCast]
+    rw [Padic.norm_eq_zpow_neg_valuation hm', Padic.valuation_natCast, Nat.padicValNat_def]
   have hp1 : (1 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp.out.one_lt.le
   have hp0 : (0 : ℝ) < (p : ℝ) := by linarith
-  refine ⟨⟨(p : ℚ_[p]) ^ Mx / m, ?_⟩, ?_⟩
+  refine ⟨Padic.lift ((p : ℚ_[p]) ^ Mx / m) ?_, ?_⟩
   · rw [norm_div, norm_pow, Padic.norm_p, hn, div_le_one (zpow_pos hp0 _), inv_pow, ← zpow_natCast, ← zpow_neg]
     exact zpow_le_zpow_right₀ hp1 (by omega)
   · show (p : ℚ_[p]) ^ Mx / m * m = _

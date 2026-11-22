@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMatMir
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMatMir
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,10 +54,7 @@ def rowEl (n : ℕ) (r : Fin (n + 1) → k) (h : (rowMat n r).det ≠ 0) : Mir k
     show rowMat n r (Fin.last (n + 1)) = eLast k (n + 1)
     rw [rowMat, updateRow_ne (Fin.castSucc_ne_last _).symm]
     funext j
-    simp [eLast, one_apply, Pi.single_apply, eq_comm]⟩
-
-theorem rowEl_val (n : ℕ) (r : Fin (n + 1) → k) (h : (rowMat n r).det ≠ 0) :
-    (((rowEl n r h : Mir k (n + 1)) : GL (Fin (n + 2)) k) : Matrix (Fin (n + 2)) (Fin (n + 2)) k) = rowMat n r := rfl
+    simp only [GlobalTheory.BZMir.eLast, Matrix.one_apply, Pi.single_apply, eq_comm]⟩
 
 theorem rowQ_rowEl (n : ℕ) (r : Fin (n + 1) → k) (h : (rowMat n r).det ≠ 0) :
     rowQ k n (rowEl n r h) = r := by

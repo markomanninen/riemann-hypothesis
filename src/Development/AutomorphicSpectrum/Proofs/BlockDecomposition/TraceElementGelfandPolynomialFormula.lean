@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliOperatorOnUnitaryCoefficientEqDerived
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetAddOnesField
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CapelliOperatorOnUnitaryCoefficientEqDerived
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetAddOnesField
+
+@[expose] public section
+
 open scoped InnerProductSpace
 
 namespace GlobalTheory.CompanionTheory.GelfRec
@@ -52,7 +57,8 @@ theorem entrySum_step {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (x : ℂ[X]) (k
   have h4 := congrArg (fun B : Matrix (Fin n) (Fin n) ℂ[X] => ∑ a, ∑ b, B a b) key
   simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Finset.sum_add_distrib,
     ← Finset.mul_sum, Matrix.map_apply] at h4
-  simp only [entrySum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [entrySum, map_sum]
   exact h4
 
 theorem newton_closed {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ) (x : ℂ[X]) (N : ℕ) :
@@ -112,7 +118,8 @@ theorem entrySum_zero {n : ℕ} (l : Fin n → ℂ) (x : ℂ[X]) :
       simp
     · simp [Matrix.one_apply_ne h]
   have h0 := congrArg (compRingHom x) (GlobalTheory.CompanionTheory.AdjSum.adj_sum n l)
-  simp only [map_sum, map_sub, map_prod, map_add, map_one, coe_compRingHom_apply, X_comp, C_comp] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_sub, map_prod, map_add (f := _), map_one, coe_compRingHom_apply, X_comp, C_comp] at h0
   rw [← h0, hM, ← RingHom.map_adjugate]
   simp [entrySum]
 

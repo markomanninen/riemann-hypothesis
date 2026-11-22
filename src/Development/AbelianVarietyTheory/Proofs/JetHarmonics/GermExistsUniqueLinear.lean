@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsNilpotentOfMemKerJetTruncR
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.TopLePreimageWchart
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionOfIntegralSectionIsIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.ColValMonomial
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.VRatioGtStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBC
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExpansionBijectiveOverFields
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.IsNilpotentOfMemKerJetTruncR
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.TopLePreimageWchart
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionOfIntegralSectionIsIntegral
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
@@ -35,16 +39,20 @@ theorem exists_linear_extension {R K F : Type} [CommRing R] [IsDomain R] [Field 
     choose! m hm using hr
     have h₁ : ∑ x ∈ c.support, m x • x = 0 := hρ (by
       have := congrArg (fun z => (algebraMap R K r) • Λ z) hc
-      simp only [map_sum, map_zero, smul_zero, Finset.smul_sum] at this
-      rw [map_zero, ← this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zero, smul_zero, Finset.smul_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_zero, ← this, map_sum]
       refine Finset.sum_congr rfl fun x hx => ?_
       rw [hΛ, map_smulₛₗ, hm x hx, smul_smul, Algebra.smul_def])
     have h₂ := congrArg (fun z => algebraMap R K (MvPowerSeries.coeff mo (g z))) h₁
-    simp only [map_sum, map_smul, map_zero, smul_eq_mul, map_mul] at h₂
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, map_zero, smul_eq_mul, map_mul] at h₂
     have hr0 : algebraMap R K r ≠ 0 :=
       (map_ne_zero_iff _ (IsFractionRing.injective R K)).2 (nonZeroDivisors.coe_ne_zero r)
     refine mul_left_cancel₀ hr0 ?_
-    rw [mul_zero, ← h₂, map_sum, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_zero, ← h₂, map_sum, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [hm x hx, map_smul, MvPowerSeries.coeff_map, smul_eq_mul, RingHom.comp_apply, mul_comm (c x),
       ← Algebra.smul_def (A := F), map_smul, Algebra.smul_def (r : R) (ℓ (c x)), smul_eq_mul]
@@ -147,7 +155,8 @@ theorem exists_linear_series {k : ℕ} {κ : Type} (g : IntSec U k →ₗ[R] MvP
   obtain ⟨Λ, hΛ⟩ := exists_linear_extension (genericSec U k) (genericSec_injective U k)
     (extendSec U F k) (isExtension_pullOver (isPullback_groupBase F) U.LG.isLB _ _) g
   refine ⟨Λ, fun n c σ => ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_smul, hΛ, MvPowerSeries.smul_eq_C_mul]
 
 theorem exists_linear_germ (hG : GlobalFnsSt) {k : ℕ} (hk : 1 ≤ k) (h : U.ExpBij k) {κ : Type}

@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdelicGLn
-import GroundTheory.AutomorphicForms.Iwasawa
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdelicGLn
+public import GroundTheory.AutomorphicForms.Iwasawa
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+
+@[expose] public section
 
 set_option maxSynthPendingDepth 1
 
@@ -80,7 +84,7 @@ theorem exists_unip_mul_lev {R : Type} [CommRing R] (r s : ℕ) (P : GL (Fin (r 
   rw [Units.val_mul, ← Matrix.submatrix_mul_equiv _ _ _ e, hu, hl, fromBlocks_multiply, ← hQd, hb]
   simp [X, Matrix.mul_assoc, d2]
 
-theorem exists_unip_lev_integral (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ)
+theorem exists_unip_lev_integral (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ)
     (k : GL (Fin (r + s)) (Af E)) :
     ∃ (x : BlockIx (r + s) r → Af E) (m : GL (Fin r) (Af E) × GL (Fin s) (Af E)) (c : GL (Fin (r + s)) (Af E)),
       c ∈ GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E (r + s) ∧ k = unip x * lev (Af E) r s m * c := by

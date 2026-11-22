@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitLoc
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.FinSplit
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitLoc
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.FinSplit
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+
+@[expose] public section
 
 noncomputable section
 

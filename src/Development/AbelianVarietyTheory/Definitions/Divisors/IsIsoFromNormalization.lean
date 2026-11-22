@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InterNumDetNonposSplitTorus
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ attribute [local instance] Over.cartesianMonoidalCategory
 namespace GlobalTheory.NeronCurve
 
 def IsCurve (k : Type) [Field k] (C : Scheme.{0}) [Algebra k Γ(C, ⊤)] : Prop :=
-  SmoothOfRelativeDimension 1 (strHom k C) ∧ IsProjOver (strHom k C) ∧ GeometricallyConnected (strHom k C)
+  SmoothOfRelativeDimension 1 (strHom k (X := C)) ∧ IsProjOver (strHom k (X := C)) ∧ GeometricallyConnected (strHom k (X := C))
 
 def SemiNeg (k : Type) [Field k] {C : Scheme.{0}} [Algebra k Γ(C, ⊤)] (F : C.Modules) : Prop :=
   ∀ (W : C.Modules) (r : ℕ), IsVB W r → ∀ i : W ⟶ F, Mono i → interNum k (structureModule C) ![det W r] ≤ 0
@@ -31,11 +35,5 @@ theorem isGen_fromSpecStalk (C : Scheme.{0}) [IsIntegral C] :
       rintro _ rfl
       exact ⟨_, Scheme.fromSpecStalk_closedPoint⟩⟩,
     inferInstanceAs (IsPreimmersion (C.fromSpecStalk (genericPoint C)))⟩
-
-structure IsNeron {K : Type} [Field K] {C : Scheme.{0}} (x : Sp K ⟶ C) (N : Over C) : Prop where
-  smooth : Smooth N.hom
-  separated : IsSeparated N.hom
-  quasiCompact : QuasiCompact N.hom
-  ext : ∀ Y : Over C, Smooth Y.hom → Function.Bijective fun f : Y ⟶ N ↦ (Over.pullback x).map f
 
 end GlobalTheory.NeronCurve

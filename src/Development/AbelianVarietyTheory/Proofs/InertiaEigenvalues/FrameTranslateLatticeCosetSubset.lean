@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace BigOperators
 namespace GlobalTheory.ParahoricTranslate
@@ -13,7 +18,7 @@ theorem isUnit_det_one_add_nonunit_smul {O : Type} [CommRing O] [IsLocalRing O] 
   have hf : f ϖ = 0 := Ideal.Quotient.eq_zero_iff_mem.mpr
     ((IsLocalRing.mem_maximalIdeal _).mpr (mem_nonunits_iff.mpr hϖ))
   have h1 : f.mapMatrix (1 + ϖ • Z) = 1 := by
-    rw [map_add, map_one]
+    rw [map_add (f := _), map_one]
     ext i j
     simp [hf]
   rw [RingHom.map_det, h1, Matrix.det_one] at h0

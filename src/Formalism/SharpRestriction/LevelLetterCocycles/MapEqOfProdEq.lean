@@ -1,4 +1,9 @@
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.ChainWithExtensionOfSplit
+module
+
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.CompositeOfChainHolds
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.SplitExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,10 +19,10 @@ def blkG (a : Fin (r + t)) : Fin (t + 1) :=
   if _h : (a : ℕ) < r then 0 else ⟨(a : ℕ) - r + 1, by have := a.2; omega⟩
 
 theorem blkG_castAdd (a : Fin r) : blkG r t (Fin.castAdd t a) = 0 := by
-  rw [blkG, dif_pos (by simp)]
+  rw [blkG, dite_eq_left (by simp)]
 
 theorem blkG_natAdd (c : Fin t) : blkG r t (Fin.natAdd r c) = c.succ := by
-  rw [blkG, dif_neg (by simp only [Fin.coe_natAdd]; omega)]
+  rw [blkG, dite_eq_right (by simp only [Fin.coe_natAdd]; omega)]
   ext
   simp
 
@@ -73,12 +78,12 @@ variable {r t : ℕ} {A : Type} [CommRing A]
 theorem blkG_inj {a b : Fin (r + t)} (h : blkG r t a = blkG r t b) (ha : blkG r t a ≠ 0) : a = b := by
   unfold blkG at h ha
   by_cases h1 : (a : ℕ) < r
-  · rw [dif_pos h1] at ha
+  · rw [dite_eq_left h1] at ha
     exact absurd rfl ha
   · by_cases h2 : (b : ℕ) < r
-    · rw [dif_pos h2, dif_neg h1] at h
+    · rw [dite_eq_left h2, dite_eq_right h1] at h
       exact absurd (congrArg Fin.val h) (by simp)
-    · rw [dif_neg h1, dif_neg h2] at h
+    · rw [dite_eq_right h1, dite_eq_right h2] at h
       have h3 : (a : ℕ) - r + 1 = (b : ℕ) - r + 1 := congrArg Fin.val h
       exact Fin.ext (by omega)
 

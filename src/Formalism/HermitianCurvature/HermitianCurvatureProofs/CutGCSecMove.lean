@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGaugeGQLFam
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentLevelZeroEqOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ChainRecursionFromSingleDescent
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -209,7 +213,8 @@ theorem section_move_holds : SecMove := by
       rw [hrhs]
       conv_lhs => rw [hXX, hsp0]
       ext v
-      simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ContinuousLinearMap.comp_apply, FunLike.coe_sum, Finset.sum_apply,
         FunLike.coe_smul, Pi.smul_apply, map_sum, map_smul]
 
   have hfam0 : ∀ (Dc : (Fin P.r → ℂ) → Set (Q.Mx P.k P.r)) (Φ : Q.Fn P.k P.r (Wq →L[ℂ] Wp)),

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLUnit
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TensInt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BesselLevi
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ConcreteSettingExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.WFLUnit
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.TensInt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.BesselLevi
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ConcreteSettingExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem wblk_core (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (hTens
       {s : ∀ v, Formalism.REAL.UJ (ε v) | ∀ v, (∀ a, uMat (s v) *ᵥ eV v a = eV v a) ∧
         (∀ a, uMat (s v) *ᵥ fV v a = fV v a) ∧ uMat (s v) *ᵥ zV u v = zV u v} := by
     intro u; ext s
-    simp only [Hset, Set.mem_setOf_eq, Set.mem_union, Set.mem_range, Set.mem_singleton_iff]
+    simp only [Hset, Set.mem_ofPred_eq, Set.mem_union, Set.mem_range, Set.mem_singleton_iff]
     constructor
     · intro h v
       exact ⟨fun a => h v _ (Or.inl (Or.inl ⟨a, rfl⟩)), fun a => h v _ (Or.inl (Or.inr ⟨a, rfl⟩)),
@@ -139,16 +143,16 @@ theorem wblk_core (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (hTens
   have hinv : ∀ u v, ∀ s ∈ HNset (ε v) (eV v) (fV v) (Pi.wfr u v) (z0v (TV u) (zV u v)) (zBv D.R.k D.R.rS (TV u)),
       ∀ y, ‖Wloc u v (s * y)‖ₑ = ‖Wloc u v y‖ₑ := by
     intro u v s hs y
-    simp only [Wloc, enorm_smul]
+    simp only [Wloc, eNorm_smul]
     rw [show ‖Wl u v (s * y)‖ₑ = ‖Wl u v y‖ₑ by
-      simp only [enorm_eq_nnnorm]
+      simp only [eNorm_eq_nnNorm]
       congr 1
       exact NNReal.eq (loc_norm_inv (hT u) (hFr u v) (Pi.piLoc_type u v) (hWe u v) hs y)]
   have hnorm : ∀ u (x : ∀ v, Formalism.REAL.UJ (ε v)),
       ‖Pi.tensU u (fun v => Wloc u v (x v))‖ₑ = ∏ v, ‖Wloc u v (x v)‖ₑ := by
     intro u x
-    simp only [enorm_eq_nnnorm]
-    rw [← ENNReal.coe_finset_prod]
+    simp only [eNorm_eq_nnNorm]
+    rw [← ENNReal.ofNNReal_finsetProd]
     congr 1
     exact NNReal.eq (by push_cast; exact Formalism.L2.SG.Pf.WuDec.norm_tens (Pi.tensU_inner u) _)
   refine ⟨⟨fun u x => Pi.tensU u (fun v => Wloc u v (x v)), fun u => ?_, Wloc, hWlc, fun u x => rfl⟩⟩
@@ -236,30 +240,31 @@ theorem wblk_core (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (hTens
       (continuous_pi fun v => (hWlc u v).comp (continuous_apply v))
   ·
     rw [lintegral_congr (fun x => hnorm u x),
-      hK u (fun v y => ‖Wloc u v y‖ₑ) (fun v => (hWlc u v).enorm.measurable) (fun v s hs y => hinv u v s hs y)]
+      hK u (fun v y => ‖Wloc u v y‖ₑ) (fun v => (hWlc u v).eNorm.measurable) (fun v s hs y => hinv u v s hs y)]
     refine ENNReal.mul_lt_top (lt_top_iff_ne_top.2 (hCt u)) (ENNReal.prod_lt_top fun v _ => ?_)
-    simp only [Wloc, enorm_smul]
-    rw [lintegral_const_mul' _ _ enorm_ne_top]
-    exact ENNReal.mul_lt_top enorm_lt_top (hW1 u v)
+    simp only [Wloc, eNorm_smul]
+    rw [lintegral_const_mul' _ _ eNorm_ne_top]
+    exact ENNReal.mul_lt_top eNorm_lt_top (hW1 u v)
   ·
     have h2 : ∀ x : ∀ v, Formalism.REAL.UJ (ε v), ‖Pi.tensU u (fun v => Wloc u v (x v))‖ₑ ^ 2 =
         ∏ v, ‖Wloc u v (x v)‖ₑ ^ 2 := fun x => by rw [hnorm u x, Finset.prod_pow]
     rw [lintegral_congr h2,
-      hK u (fun v y => ‖Wloc u v y‖ₑ ^ 2) (fun v => ((hWlc u v).enorm.measurable.pow_const 2))
+      hK u (fun v y => ‖Wloc u v y‖ₑ ^ 2) (fun v => ((hWlc u v).eNorm.measurable.pow_const 2))
         (fun v s hs y => by show ‖Wloc u v (s * y)‖ₑ ^ 2 = ‖Wloc u v y‖ₑ ^ 2; rw [hinv u v s hs y])]
     have hloc2 : ∀ v, ∫⁻ y, ‖Wloc u v y‖ₑ ^ 2 ∂(νl u v) = ‖cv u v‖ₑ ^ 2 := fun v => by
-      simp only [Wloc, enorm_smul, mul_pow]
-      rw [lintegral_const_mul' _ _ (ENNReal.pow_ne_top enorm_ne_top), hW2 u v, mul_one]
+      simp only [Wloc, eNorm_smul, mul_pow]
+      rw [lintegral_const_mul' _ _ (ENNReal.pow_ne_top eNorm_ne_top), hW2 u v, mul_one]
     simp only [hloc2]
     rw [Finset.prod_pow]
     have hcU : ∏ v, ‖cv u v‖ₑ = ‖cU u‖ₑ := by
-      rw [← hcv u]; simp only [enorm_eq_nnnorm]; rw [← ENNReal.coe_finset_prod]; congr 1; rw [nnnorm_prod]
+      rw [← hcv u]
+      simp only [eNorm_eq_nnNorm, nnNorm_prod, ← ENNReal.ofNNReal_finsetProd]
     rw [hcU]
     have ht : 0 < (C u).toReal := ENNReal.toReal_pos (hC0 u) (hCt u)
     have he : ‖cU u‖ₑ ^ 2 = (C u)⁻¹ := by
       have hnn : 0 ≤ (C u).toReal ^ (-(1 / 2 : ℝ)) := Real.rpow_nonneg ht.le _
       rw [show ‖cU u‖ₑ = ENNReal.ofReal ((C u).toReal ^ (-(1 / 2 : ℝ))) by
-        rw [← ofReal_norm_eq_enorm]; simp only [cU]; rw [Complex.norm_real, Real.norm_of_nonneg hnn]]
+        rw [← ofReal_norm]; simp only [cU]; rw [Complex.norm_real, Real.norm_of_nonneg hnn]]
       rw [← ENNReal.ofReal_pow hnn, ← Real.rpow_natCast, ← Real.rpow_mul ht.le]
       norm_num
       rw [Real.rpow_neg_one, ENNReal.ofReal_inv_of_pos ht, ENNReal.ofReal_toReal (hCt u)]
@@ -271,7 +276,9 @@ section Final
 
 theorem weighted_block_exists_of_local_data (hQK : QuotProdK) (hHN : LocHNProps) (hNU : NUnimodLoc) (D : D7)
     (hB : BesselNVGap) (hCW : CoefWeightedLoc) (hWl : WlocExists) (hGB : GapBigOfGapHyp D) :
-    Formalism.L2.SG.Pf.Set3.WBlkExists D := by
+    GapHyp D → ∀ (A : UnitaryGroupInstance D) (L : UnitaryLatticeData D) (Ps : AdditiveCharacterData A)
+      (Rf : ReferenceFrame A L) (Bu : AutomorphicBundle A Ps Rf) (Pi : RepresentationData A L)
+      (Mu : MuBlocks A L), Nonempty (WBlk A L Bu Pi Mu) := by
   intro hG A L Ps Rf Bu Pi Mu
   obtain ⟨I, ιE, ιE_conj, ιE_F, bas, J_eq, L_eq, pl, φ_eq, n_eq, eps_eq⟩ := A
   exact wblk_core hQK hHN hNU Formalism.L2.SG.Pf.WuDec.integrable_and_integral_pi_apply hB hCW hWl hGB hG I ιE ιE_conj ιE_F bas J_eq L_eq pl

@@ -1,24 +1,29 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalLanglandsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalConverseGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInduction
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSupercuspidalOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmoothDualNeZeroAtVector
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitarizableComplexRepOfSupercuspidalUnitaryCentralCharacter
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNonzeroIntertwiningMapFromUnitarySupercusp
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInSupportOfMultiProd
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalLanglandsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroCuspidalLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalConverseGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInduction
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BrauerDegreeZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChevalleyUnits
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSupercuspidalOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSmoothDualNeZeroAtVector
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitarizableComplexRepOfSupercuspidalUnitaryCentralCharacter
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsNonzeroIntertwiningMapFromUnitarySupercusp
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsInSupportOfMultiProd
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InSupportOfIsSubquotient
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Matrix Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Published
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -78,7 +83,7 @@ theorem isSubquotient_of_span {σ : Representation ℂ G W} {ρ : Representation
       LinearMap.ext fun r => by
         obtain ⟨s, hs, t, ht, e⟩ := Submodule.mem_sup.1 (show ι r ∈ S.toSubmodule ⊔ T.toSubmodule from r.2)
         show l (ι (ρ g r)) = σ g (l (ι r))
-        rw [ι.isIntertwining, ← e, map_add, hl' ⟨s, hs⟩ t ht, ← f.isIntertwining]
+        rw [ι.isIntertwining, ← e, map_add (f := _), hl' ⟨s, hs⟩ t ht, ← f.isIntertwining]
         exact hl' (S.toRepresentation g ⟨s, hs⟩) _ (T.apply_mem_toSubmodule g ht)⟩
     have hF : F = 0 := (Representation.IsIrreducible.surjective_or_eq_zero F).resolve_left fun h => hn ⟨R, F, h⟩
     intro s hs
@@ -179,7 +184,7 @@ theorem isSubquotient_jac_single {r : ℕ} {b : Fin r → ℕ} (a : Fin r) (ha :
   show Submodule.Quotient.mk (σ g v) = jac f' σ (Pi.mulSingle a g) (Submodule.Quotient.mk v)
   rw [jac_mk, h1, h3, inv_one, Units.val_one, one_smul]
 
-theorem exists_block_of_isCusp {x : IrrGL k} (hx : x.IsCusp) {r : ℕ} {b : Fin r → ℕ}
+theorem exists_block_of_isCusp {x : IrrGL (k := k)} (hx : x.IsCusp) {r : ℕ} {b : Fin r → ℕ}
     (f : (Σ j, Fin (b j)) ≃ Fin x.1) (c : ∀ j, IrrRep (GL (Fin (b j)) k))
     (h : IsSubquotient (piTensor fun j => (c j).ρ) (jac f x.rep)) :
     ∃ a, (∀ j, j ≠ a → b j = 0) ∧ IrrGL.of (c a).ρ (c a).smooth (c a).irr = x := by
@@ -210,7 +215,7 @@ theorem exists_block_of_isCusp {x : IrrGL k} (hx : x.IsCusp) {r : ℕ} {b : Fin 
   exact (IrrGL.of_eq_of.2 ⟨φ.trans ψ.symm⟩).trans (IrrGL.of_rep ⟨_, y⟩)
 
 theorem eq_zero_of_hasSupport {N : ℕ} (hN : N = 0) {π : Representation ℂ (GL (Fin N) k) V}
-    {s : Multiset (IrrGL k)} (h : HasSupport π s) : s = 0 := by
+    {s : Multiset (IrrGL (k := k))} (h : HasSupport π s) : s = 0 := by
   have h2 := h.sum_fst
   rw [Fintype.card_fin] at h2
   by_contra hne
@@ -220,12 +225,12 @@ theorem eq_zero_of_hasSupport {N : ℕ} (hN : N = 0) {π : Representation ℂ (G
   omega
 
 theorem exists_sum_of_jac (hG : GeometricLemma) (hZ : ZelevinskyPolynomialRing) {N : ℕ}
-    {π : Representation ℂ (GL (Fin N) k) V} {s : Multiset (IrrGL k)} (hs : HasSupport π s) {r : ℕ} {d : Fin r → ℕ}
+    {π : Representation ℂ (GL (Fin N) k) V} {s : Multiset (IrrGL (k := k))} (hs : HasSupport π s) {r : ℕ} {d : Fin r → ℕ}
     (e' : (Σ j, Fin (d j)) ≃ Fin N) {τ : Representation ℂ (Levi k fun j => Fin (d j)) W} (hτ : τ.IsIrreducible)
     (hτs : IsSubquotient τ (jac e' π)) (y : ∀ j, IrrRep (GL (Fin (d j)) k))
     (hy : ∀ j, IsSubquotient (y j).ρ (τ.comp (MonoidHom.mulSingle (fun j => GL (Fin (d j)) k) j) :
       Representation ℂ (GL (Fin (d j)) k) W)) :
-    ∃ t : Fin r → Multiset (IrrGL k), (∀ j, HasSupport (y j).ρ (t j)) ∧ s = ∑ j, t j := by
+    ∃ t : Fin r → Multiset (IrrGL (k := k)), (∀ j, HasSupport (y j).ρ (t j)) ∧ s = ∑ j, t j := by
   obtain ⟨Z, Ψ, -, hΨ, -⟩ := hZ k
   obtain ⟨h, x, rfl, hi, hc, e, hsub⟩ := hs
   have hx : ∀ i, (x i).IsCusp := fun i => ⟨(hc i).1, (hc i).2.2⟩
@@ -233,7 +238,7 @@ theorem exists_sum_of_jac (hG : GeometricLemma) (hZ : ZelevinskyPolynomialRing) 
     (fun i => (x i).2.rep.smooth) (fun i => (x i).2.rep.hasFiniteLength) hτ
     (hτs.trans (GlobalTheory.JacquetExact.isSubquotient_jac e' (isSmooth_parInd _ _) hsub))
   choose J hJ0 hJ using fun i => exists_block_of_isCusp (hx i) (f i) (c i) (hrow i)
-  let u : Fin h → Fin r → Multiset (IrrGL k) := fun i j => if j = J i then {x i} else 0
+  let u : Fin h → Fin r → Multiset (IrrGL (k := k)) := fun i j => if j = J i then {x i} else 0
   have hu : ∀ i j, HasSupport (IrrGL.of (c i j).ρ (c i j).smooth (c i j).irr).rep (u i j) := by
     intro i j
     by_cases hj : j = J i
@@ -341,12 +346,12 @@ theorem exists_scalar_multiProd {h N : ℕ} {d : Fin h → ℕ} (e : (Σ a, Fin 
   have h2 : ∀ y, piTensor σ g y = (∏ a, (ω a z : ℂ)) • y := by
     intro y
     induction y using PiTensorProduct.induction_on with
-    | add x y hx hy => rw [map_add, hx, hy, smul_add]
+    | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
     | smul_tprod c y =>
-      rw [map_smul, smul_comm, piTensor_tprod, ← MultilinearMap.map_smul_univ]
-      congr 2
-      funext a
-      exact hω a z _
+      rw [map_smul, piTensor_tprod]
+      simp_rw [show ∀ a, σ a (g a) (y a) = (ω a z : ℂ) • y a from fun a => hω a z _]
+      rw [MultilinearMap.map_smul_univ, smul_comm]
+      rfl
   refine ⟨(deltaHalf k _ g : ℂ) * ∏ a, (ω a z : ℂ), fun f => Subtype.ext (Subtype.ext (funext fun y => ?_))⟩
   have h4 := parInd_law e _ f ⟨_, leviEmb_mem_parab k e g⟩ y
   rw [leviProj_leviEmb, h2, smul_smul] at h4
@@ -357,7 +362,7 @@ theorem exists_scalar_multiProd {h N : ℕ} {d : Fin h → ℕ} (e : (Σ a, Fin 
   rw [hc, ← h1]
   exact h4
 
-theorem eq_singleton_of_isCusp {x : IrrGL k} (hx : x.IsCusp) {s : Multiset (IrrGL k)} (hs : HasSupport x.rep s) :
+theorem eq_singleton_of_isCusp {x : IrrGL (k := k)} (hx : x.IsCusp) {s : Multiset (IrrGL (k := k))} (hs : HasSupport x.rep s) :
     s = {x} := by
   obtain ⟨h, y, rfl, hi, hc, e, hsub⟩ := hs
   obtain ⟨ι, hι⟩ := exists_map_of_isCuspidal hx.1 hi hx.2 (isSmooth_parInd _ _)
@@ -366,7 +371,9 @@ theorem eq_singleton_of_isCusp {x : IrrGL k} (hx : x.IsCusp) {s : Multiset (IrrG
     by_contra hU
     haveI := hx.2.2 h _ e hU
     refine hι ((GlobalTheory.SmGL.Model.evalOne_bijective e hx.2.1 _).1 ?_)
-    refine Representation.IntertwiningMap.ext (LinearMap.ext fun v => ?_)
+    apply Representation.IntertwiningMap.ext
+    apply LinearMap.ext
+    intro v
     rw [Subsingleton.elim v 0, map_zero, map_zero]
   obtain ⟨⟨a, i⟩, -⟩ := e.surjective ⟨0, hx.1⟩
   have ha : ∀ j, j = a := by
@@ -389,10 +396,10 @@ theorem eq_singleton_of_isCusp {x : IrrGL k} (hx : x.IsCusp) {s : Multiset (IrrG
   obtain ⟨θ⟩ := nonempty_equiv_of_isSubquotient hi y₀.2.rep.irr
     (hsub.trans (.of_injective χ.toIntertwiningMap χ.toLinearEquiv.injective))
   have : y₀ = ⟨_, x⟩ := (IrrGL.of_rep y₀).symm.trans ((IrrGL.of_eq_of.2 ⟨θ⟩).trans (IrrGL.of_rep ⟨_, x⟩))
-  exact congrArg (fun z => ({z} : Multiset (IrrGL k))) this
+  exact congrArg (fun z => ({z} : Multiset (IrrGL (k := k)))) this
 
 theorem eq_of_hasSupport (hG : GeometricLemma) (hZ : ZelevinskyPolynomialRing) (N : ℕ) :
-    ∀ (x : IrrGL k), x.1 = N → ∀ s t : Multiset (IrrGL k), HasSupport x.rep s → HasSupport x.rep t → s = t := by
+    ∀ (x : IrrGL (k := k)), x.1 = N → ∀ s t : Multiset (IrrGL (k := k)), HasSupport x.rep s → HasSupport x.rep t → s = t := by
   induction N using Nat.strong_induction_on with
   | _ N ih =>
     rintro x rfl s t hs ht
@@ -435,7 +442,7 @@ theorem eq_of_hasSupport (hG : GeometricLemma) (hZ : ZelevinskyPolynomialRing) (
     exact ih (d j) hlt (IrrGL.of (y j).ρ (y j).smooth (y j).irr) rfl _ _
       ((hu j).of_equiv (IrrGL.equivOf _ _ _)) ((hu' j).of_equiv (IrrGL.equivOf _ _ _))
 
-theorem hasSupport_unique : GeometricLemma → BernsteinZelevinskyFiniteness → ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (x : IrrGL k) (s t : Multiset (IrrGL k)), HasSupport x.rep s → HasSupport x.rep t → s = t :=
+theorem hasSupport_unique : GeometricLemma → BernsteinZelevinskyFiniteness → ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k] (x : IrrGL (k := k)) (s t : Multiset (IrrGL (k := k))), HasSupport x.rep s → HasSupport x.rep t → s = t :=
   fun hG _ hZ _ _ _ _ _ _ x s t hs ht => eq_of_hasSupport hG hZ _ x rfl s t hs ht
 
 end GlobalTheory.LocGL.SupportUnique

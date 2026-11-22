@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreeSumXMulCLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreeSumXMulCLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,9 +45,10 @@ theorem ev_conjT_mul {n : ℕ} (A M : Mat n) (P : Poly n) :
 
 theorem eval_map_eq {n : ℕ} (x : (Fin n × Fin n) ⊕ (Fin n × Fin n) → ℂ) (f : Poly n →+* ℂ)
     (p : MvPolynomial ((Fin n × Fin n) ⊕ (Fin n × Fin n)) (Poly n)) :
-    eval x (map f p) = ∑ s ∈ p.support, f (coeff s p) * eval x (monomial s 1) := by
+    eval x (map f p) = ∑ s ∈ p.support, f (AddMonoidAlgebra.coeff p s) * eval x (monomial s 1) := by
   conv_lhs => rw [p.as_sum]
-  simp only [map_sum, map_monomial, eval_monomial, one_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_monomial, eval_monomial, one_mul]
 
 end GlobalTheory.PsCo.Pc3.RK
 
@@ -78,7 +83,7 @@ theorem rangeK : RangeK := by
   let Bl : U →ₗ[ℂ] U :=
     { toFun := fun v => ∫ k, ev (toMK k) P • π k v ∂(muK ε)
       map_add' := fun v w => by
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
         exact integral_add (hint P v) (hint P w)
       map_smul' := fun c v => by
         simp only [map_smul, RingHom.id_apply]
@@ -96,7 +101,7 @@ theorem rangeK : RangeK := by
   set p := TT n P with hp
   let f : KG ε → ℂ := fun k => ⟪l, π k u⟫_ℂ
   have hfc : Continuous f := continuous_const.inner (horb u)
-  let c : _ → ℂ := fun s => ∫ k, ev (toMK k) (coeff s p) * f k ∂(muK ε)
+  let c : _ → ℂ := fun s => ∫ k, ev (toMK k) (AddMonoidAlgebra.coeff p s) * f k ∂(muK ε)
   refine ⟨∑ s ∈ p.support, C (c s) * monomial s 1, ?_, fun k₀ => ?_⟩
   · refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun s hs => ?_)
     rw [C_mul_monomial, mul_one]
@@ -118,19 +123,19 @@ theorem rangeK : RangeK := by
         simp only [map_smul, inv_mul_cancel_left, Subgroup.coe_mul, map_mul, ContinuousLinearMap.mul_apply]
       rw [e2, integral_mul_left_eq_self (fun k' : KG ε => ev (toMK (k₀⁻¹ * k')) P • π (k' : UJ ε) u) k₀]
     have hexp : ∀ k : KG ε, ev (toMK (k₀⁻¹ * k)) P =
-        ∑ s ∈ p.support, ev (toMK k) (coeff s p) * ev (toMK k₀) (monomial s 1) := by
+        ∑ s ∈ p.support, ev (toMK k) (AddMonoidAlgebra.coeff p s) * ev (toMK k₀) (monomial s 1) := by
       intro k
       change ev (toMK k₀⁻¹ * toMK k) P = _
       rw [hginv, show star (toMK k₀) = (toMK k₀).conjTranspose from rfl, ev_conjT_mul, eval_map_eq]
       rfl
-    have hint2 : ∀ s, Integrable (fun k : KG ε => ev (toMK k) (coeff s p) * f k) (muK ε) :=
+    have hint2 : ∀ s, Integrable (fun k : KG ε => ev (toMK k) (AddMonoidAlgebra.coeff p s) * f k) (muK ε) :=
       fun s => hintC _ ((hevc _).mul hfc)
     have hint3 : Integrable (fun k : KG ε => ev (toMK (k₀⁻¹ * k)) P • π k u) (muK ε) :=
       (((hevc P).comp (continuous_const.mul continuous_id)).smul (horb u)).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)
     calc ⟪l, π k₀ (B u)⟫_ℂ = ∫ k, ⟪l, ev (toMK (k₀⁻¹ * k)) P • π k u⟫_ℂ ∂(muK ε) := by
           rw [e1, integral_inner hint3]
-      _ = ∫ k, ∑ s ∈ p.support, ev (toMK k₀) (monomial s 1) * (ev (toMK k) (coeff s p) * f k) ∂(muK ε) := by
+      _ = ∫ k, ∑ s ∈ p.support, ev (toMK k₀) (monomial s 1) * (ev (toMK k) (AddMonoidAlgebra.coeff p s) * f k) ∂(muK ε) := by
           refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
           simp only [inner_smul_right, hexp k, Finset.sum_mul]
           refine Finset.sum_congr rfl fun s _ => ?_
@@ -139,7 +144,8 @@ theorem rangeK : RangeK := by
           rw [integral_finsetSum _ fun s _ => (hint2 s).const_mul _]
           exact Finset.sum_congr rfl fun s _ => integral_const_mul _ _
       _ = ev (toMK k₀) (∑ s ∈ p.support, C (c s) * monomial s 1) := by
-          simp only [map_sum, map_mul, ev, eval_C]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_mul, ev, eval_C]
           exact Finset.sum_congr rfl fun s _ => mul_comm _ _
 
 end GlobalTheory.PsCo.Pc3

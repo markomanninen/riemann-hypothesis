@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanLStable
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOfClosure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestricStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanLStable
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOfClosure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestricStatement
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass Formalism.MainNotions.PairedCharacterCondition GlobalTheory.Pass.LocDual GlobalTheory.Pass.LocDual.OneX
 
 noncomputable section
@@ -43,9 +48,11 @@ theorem finrank_span_vecS_le (W : Submodule K (Fin a → Fin n → K)) :
     rintro _ ⟨w, hw, rfl⟩
     have h : w = ∑ i, b.repr ⟨w, hw⟩ i • (b i : Fin a → Fin n → K) := by
       have := congrArg W.subtype (b.sum_repr ⟨w, hw⟩)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm
-    rw [h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smulₛₗ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -62,7 +69,7 @@ theorem span_vecS_top : Submodule.span L (Set.range (vecS φ a n)) = ⊤ := by
     funext b' j'
     simp only [Finset.sum_apply, Pi.smul_apply, vecS_apply, smul_eq_mul, apply_ite φ, map_one, map_zero, mul_ite,
       mul_one, mul_zero, ite_and]
-    simp [Finset.sum_ite_eq, Finset.sum_ite_eq']
+    simp [Finset.sum_ite_eq]
   rw [e]
   exact Submodule.sum_mem _ fun b _ => Submodule.sum_mem _ fun j _ =>
     Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
@@ -77,7 +84,7 @@ theorem isCompl_span_vecS {W W' : Submodule K (Fin a → Fin n → K)} (h : IsCo
     rintro _ ⟨v, rfl⟩
     have hv : v ∈ W ⊔ W' := by rw [h.sup_eq_top]; trivial
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem (Submodule.mem_sup_left (Submodule.subset_span ⟨y, hy, rfl⟩))
       (Submodule.mem_sup_right (Submodule.subset_span ⟨z, hz, rfl⟩))
   have h1 : finrank L A ≤ finrank K W := finrank_span_vecS_le W
@@ -86,18 +93,18 @@ theorem isCompl_span_vecS {W W' : Submodule K (Fin a → Fin n → K)} (h : IsCo
   have h4 := Submodule.finrank_sup_add_finrank_inf_eq A B
   rw [hsup, finrank_top] at h4
   have hK : finrank K (Fin a → Fin n → K) = a * n := by
-    rw [Module.finrank_pi_fintype]; simp [Module.finrank_fin_fun]
+    rw [Module.finrank_pi_fintype]; simp
   have hL : finrank L (Fin a → Fin n → L) = a * n := by
-    rw [Module.finrank_pi_fintype]; simp [Module.finrank_fin_fun]
+    rw [Module.finrank_pi_fintype]; simp
   have hinf : A ⊓ B = ⊥ := by
     rw [← Submodule.finrank_eq_zero]; omega
   exact ⟨disjoint_iff.2 hinf, codisjoint_iff.2 hsup⟩
 
 end VecGen
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem isSummandTw_XG : ∀ (D : D7) (i : D.nd.Loc) (w : HeightOneSpectrum (𝓞 D.host.E))
     (hw : w ∈ placesOver D.host.E (D.nd.l i)) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))
     (Xs : Set (D.nd.X i)) (hr : GoodR D.nd i r) {a : ℕ} (x : Fin a → ↥Xs)

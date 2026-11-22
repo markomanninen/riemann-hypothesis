@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfS
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsGenFrGenFr
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfB
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPfS
+
+@[expose] public section
 
 set_option autoImplicit false
 

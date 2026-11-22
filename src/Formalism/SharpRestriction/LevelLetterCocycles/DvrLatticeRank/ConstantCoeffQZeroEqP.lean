@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ExistsInfFilVEqBot
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ExistsInfFilVEqBot
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -28,7 +32,7 @@ theorem cc_lev_pi (c : ZMod n) (ζ : LL) (hζ : ∃ j : ℕ, IsPrimitiveRoot ζ 
     PowerSeries.constantCoeff (W.lev c ζ letπ) = ζ - 1 := by
   obtain ⟨E, hE0, -, hE⟩ := W.lev_π c ζ hζ
   have := congrArg PowerSeries.constantCoeff hE
-  rw [map_add, map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
+  rw [map_add (f := _), map_one, map_mul, PowerSeries.constantCoeff_C, hE0, mul_one] at this
   linear_combination this
 
 theorem constantCoeff_q_zero_eq_p : PowerSeries.constantCoeff W.q₀ = (PD.p : O) := by
@@ -47,7 +51,7 @@ theorem cc_lev_q_one (c : ZMod n) : PowerSeries.constantCoeff (W.lev c 1 W.q) = 
     simp only [LocWach.q, Pi.add_apply, Pi.mul_apply, letπ, Pi.natCast_apply]
     conv_lhs => rw [PowerSeries.eq_shift_mul_X_add_const W.q₀]
     rw [constantCoeff_q_zero_eq_p, map_natCast]
-  rw [hq, map_add, map_mul, map_natCast, map_add, map_mul,
+  rw [hq, map_add (f := _), map_mul, map_natCast, map_add (f := _), map_mul,
     cc_lev_pi W c 1 ⟨0, by rw [pow_zero]; exact IsPrimitiveRoot.one⟩, sub_self, mul_zero, zero_add,
     map_natCast]
 
@@ -114,7 +118,8 @@ theorem levN_sum {T : LocLat G Qp LL O} (c : ZMod n) (ζ : LL) {r : ℕ} {b : Fi
       ∑ m, smulS (W.lev c ζ (a m)) (W.levN T c ζ ⟨b m, hbN m⟩) j := by
   have e : (⟨∑ m, a m • b m, hy⟩ : ↥(W.N T)) = ∑ m, a m • (⟨b m, hbN m⟩ : ↥(W.N T)) :=
     Subtype.ext (by simp [Submodule.coe_sum])
-  rw [e, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [W.levN_smul]
   rfl
@@ -139,7 +144,8 @@ theorem rank_le (hFr : IsFractionRing O LL) (T : LocLat G Qp LL O) (c : ZMod n) 
     refine Fintype.linearIndependent_iff.2 fun g hg m => ?_
     have hg' : ιV PD (LL := LL) (V := T.V) (∑ m, g m • W.cmp T (bN m)) = 0 := by
       have := congrArg Subtype.val hg
-      simpa [vv, Submodule.coe_sum, map_sum, map_smul] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [vv, Submodule.coe_sum, map_sum, map_smul] using this
     have hsum : ∑ m, g m • W.cmp T (bN m) = 0 :=
       Formalism.MainNotions.UnusedSlot80.LevR.ιV_inj (PD := PD) (V := T.V) (hg'.trans (map_zero _).symm)
     obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors O)
@@ -148,7 +154,8 @@ theorem rank_le (hFr : IsFractionRing O LL) (T : LocLat G Qp LL O) (c : ZMod n) 
     haveI : Nontrivial O := (algebraMap O LL).domain_nontrivial
     have hdne : algebraMap O LL d ≠ 0 := IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hd
     have hcz : W.cmp T (∑ i, o i • bN i) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [W.cmp_smul]
       calc ∑ i, algebraMap O LL (o i) • W.cmp T (bN i)
           = ∑ i, algebraMap O LL d • (g i • W.cmp T (bN i)) := by

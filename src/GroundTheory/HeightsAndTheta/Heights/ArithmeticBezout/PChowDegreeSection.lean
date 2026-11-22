@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeSection
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIntChowFormExists
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChowDegree
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowDegreeSection
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PIntChowFormExists
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ChowDegree
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PChowFormHomog
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -34,7 +39,8 @@ theorem isMultiHomog_specFirst {R : Type*} [CommSemiring R] {k n δ : ℕ}
     {f : MvPolynomial (Fin (k + 1) × Fin n) R} (u : Fin n → R) (hf : IsMultiHomog δ f) :
     IsMultiHomog δ (specFirst f u) := by
   unfold IsMultiHomog specFirst
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
   rw [bind₁_monomial]
   have hdeg : (fun _ : Fin k => δ) =

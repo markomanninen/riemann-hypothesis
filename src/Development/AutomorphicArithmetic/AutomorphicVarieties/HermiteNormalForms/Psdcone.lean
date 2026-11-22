@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -27,8 +31,8 @@ theorem UpperTheory.V.KT.psdcone :
     refine isClosed_iInter fun w => isClosed_iInter fun x => ?_
     refine isClosed_le continuous_const ?_
     unfold Finsupp.sum
-    refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
-    exact (continuous_const.mul (hc w i j)).mul continuous_const
+    exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
+      (continuous_const.mul (hc w i j)).mul continuous_const
   · intro c hc k hk w
     show (mat (c • k) w).PosSemidef
     rw [mat_smul]
@@ -48,8 +52,8 @@ theorem UpperTheory.V.KT.psdcone :
           simp }
     have hf : Continuous f := by
       show Continuous (fun h : HS L N => ∑ w, ((mat h w).trace).re)
-      refine continuous_finset_sum _ fun w _ => Complex.continuous_re.comp ?_
-      exact continuous_finset_sum _ fun i _ => hc w i i
+      exact continuous_finsetSum _ fun w _ =>
+        Complex.continuous_re.comp (continuous_finsetSum _ fun i _ => hc w i i)
     refine ⟨⟨f, hf⟩, ?_⟩
     intro k hk hk0
     have hw : ∃ w, mat k w ≠ 0 := by

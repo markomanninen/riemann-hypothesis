@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivationFinsetSumApply
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DerivationFinsetSumApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,8 @@ theorem multidegree_polarization_move (m : ι × Fin n →₀ ℕ) (l : ι) (a b
 theorem gl_operator_preserves_multidegree (LL : Letters ι) (S : Set ι) (d : ι → ℕ) (a b : Fin n) (F : MvPolynomial (ι × Fin n) K)
     (hF : F ∈ Pol K n d) : glOps K n LL S a b F ∈ Pol K n d := by
   classical
-  rw [gl_operator_apply_derivation, F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gl_operator_apply_derivation, F.as_sum, map_sum]
   refine Submodule.sum_mem _ fun m hm => ?_
   have hm' : ∀ i, multideg m i = d i := (MvPolynomial.mem_restrictSupport_iff K).1 hF (by simpa using hm)
   rw [gl_derivation_monomial]

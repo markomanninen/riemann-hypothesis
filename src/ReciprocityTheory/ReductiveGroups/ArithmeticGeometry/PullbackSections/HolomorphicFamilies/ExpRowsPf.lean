@@ -1,6 +1,11 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.OpenRowsFree
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartX
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFree
+public import Formalism.LocalToGlobal.ProjectiveLattices.IntegrableOnIntegrand
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.HolJetF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnChartX
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,9 +30,6 @@ instance isLocalHom_epsMul (cc : ℂ) : IsLocalHom (epsMul cc) :=
 
 instance isLocalHom_fst' : IsLocalHom (CommRingCat.Hom.hom (CommRingCat.ofHom (TrivSqZeroExt.fstHom ℂ ℂ ℂ).toRingHom)) :=
   isLocalHom_fst
-
-instance isLocalHom_epsMul' (cc : ℂ) : IsLocalHom (CommRingCat.Hom.hom (CommRingCat.ofHom (epsMul cc))) :=
-  isLocalHom_epsMul cc
 
 theorem dual_top_le (W : (Spec (CommRingCat.of (DualNumber ℂ))).Opens)
     (hW : IsLocalRing.closedPoint (DualNumber ℂ) ∈ W) : ⊤ ≤ W := by

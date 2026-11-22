@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
-import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+public import Formalism.LocalToGlobal.ProjectiveLattices.OneLtAbsNormReal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -76,7 +80,7 @@ def primeOf (ψ : E →+* k) (hψ : Function.Injective ψ) : Ideal (𝓞 E) wher
     have hb' := hb.resolve_right hb0
     rw [key _ (cz _ hab)]
     have hsum : ((a + b : 𝓞 E) : E) = (a : E) + (b : E) := by simp
-    rw [hsum, map_add]
+    rw [hsum, map_add (f := _)]
     calc valV V (K' := k) (ψ (a : E) + ψ (b : E))
         ≤ max (valV V (K' := k) (ψ (a : E))) (valV V (K' := k) (ψ (b : E))) := (valV V (K' := k)).map_add _ _
       _ < 1 := max_lt ((key _ (cz a ha0)).mp ha') ((key _ (cz b hb0)).mp hb')

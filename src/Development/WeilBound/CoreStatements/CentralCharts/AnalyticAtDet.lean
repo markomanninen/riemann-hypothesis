@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.CentralCharts.TraceMulReNonneg
-import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogNorm
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.TraceMulReNonneg
+public import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem posDef_ofReal {Y : Matrix (Fin k) (Fin k) ℝ} (hY : Y.PosDef) : (Y.map 
   have h3 : Y.map Complex.ofReal = (S.map Complex.ofReal)ᴴ * S.map Complex.ofReal := by
     rw [hS]
     ext i j
-    simp [mul_apply]
+    simp [Matrix.mul_apply, ← Complex.ofReal_sum, ← Complex.ofReal_mul]
   have h4 : (Y.map Complex.ofReal).PosSemidef := by rw [h3]; exact posSemidef_conjTranspose_mul_self _
   refine h4.posDef_iff_det_ne_zero.2 ?_
   have h5 := Complex.ofRealHom.map_det Y
@@ -26,14 +30,6 @@ theorem posDef_ofReal {Y : Matrix (Fin k) (Fin k) ℝ} (hY : Y.PosDef) : (Y.map 
   have h6 : (Y.map Complex.ofReal).det = (Y.det : ℂ) := h5.symm
   rw [h6]
   exact_mod_cast hY.det_pos.ne'
-
-theorem inv_map_ofReal {Y : Matrix (Fin k) (Fin k) ℝ} (hY : Y.PosDef) :
-    Y⁻¹.map Complex.ofReal = (Y.map Complex.ofReal)⁻¹ := by
-  symm
-  refine inv_eq_left_inv ?_
-  have h := Matrix.map_mul (L := Y⁻¹) (M := Y) (f := Complex.ofRealHom)
-  rw [nonsing_inv_mul _ (IsUnit.mk0 _ hY.det_pos.ne'), Matrix.map_one _ (map_zero _) (map_one _)] at h
-  exact h.symm
 
 theorem analyticAt_det {m : ℕ} {A : (Fin n → ℂ) → Matrix (Fin m) (Fin m) ℂ} {t : Fin n → ℂ}
     (h : ∀ p q, AnalyticAt ℂ (fun u => A u p q) t) : AnalyticAt ℂ (fun u => (A u).det) t := by
@@ -77,7 +73,7 @@ theorem psh_core {τ : (Fin n → ℂ) → Matrix (Fin k) (Fin k) ℂ} {V : (Fin
     apply h1
     rw [← hVC, ← mulVec_mulVec, ← mulVec_mulVec, hxy]
   have hF : AnalyticAt ℂ (fun u => (V u * C).det) 0 := analyticAt_det fun p q => by
-    simp only [mul_apply]
+    simp only [Matrix.mul_apply]
     exact Finset.analyticAt_fun_sum _ fun i _ => (hV _ _).mul analyticAt_const
   have hF0 : (V 0 * C).det ≠ 0 := by rw [hVC]; exact huG.ne_zero
   obtain ⟨Km, hK⟩ : ∃ Km, Km = C * G⁻¹ * Cᴴ := ⟨_, rfl⟩
@@ -90,7 +86,7 @@ theorem psh_core {τ : (Fin n → ℂ) → Matrix (Fin k) (Fin k) ℂ} {V : (Fin
       rw [hK, ← Matrix.mul_assoc, trace_mul_comm]
       simp only [Matrix.mul_assoc]
     rw [e, hY]
-    simp [trace, mul_apply, Complex.re_sum]
+    simp [trace, Matrix.mul_apply, Complex.re_sum]
   have hg := padd (plog_norm 2 (d - Real.log G.det.re + r) hF hF0) (pre hT)
   refine ptouch hf hg ?_ ?_
   · rw [he.self_of_nhds (hG ▸ hGp), htr, hM0, hVC, ← hG, nonsing_inv_mul _ huG, trace_one]

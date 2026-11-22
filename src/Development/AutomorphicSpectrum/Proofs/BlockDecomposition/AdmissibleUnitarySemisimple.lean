@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OrbitFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.OrbitFinite
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL
 open scoped TensorProduct
 
@@ -93,7 +98,8 @@ theorem orthogonal_of_fixed {G : Type} [Group G] [TopologicalSpace G] [IsTopolog
   have hsF : ∑ x ∈ O, x ∈ fixed ρ K := by
     rw [mem_fixed_iff]
     intro k hk
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_nbij' (ρ k) (ρ k⁻¹) (fun x hx => hst k hk x hx)
       (fun x hx => hst _ (K.inv_mem hk) x hx) (fun x _ => hinv k hk x) (fun x _ => hinv' k hk x)
       (fun x _ => rfl)
@@ -103,7 +109,8 @@ theorem orthogonal_of_fixed {G : Type} [Group G] [TopologicalSpace G] [IsTopolog
     obtain ⟨l, hl, rfl⟩ := (hmem x).1 hx
     conv_lhs => rw [← hu l hl]
     exact hi l u w
-  rw [map_sum, Finset.sum_congr rfl hterm, Finset.sum_const] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl hterm, Finset.sum_const] at h0
   have hne : O.card ≠ 0 := Finset.card_ne_zero.2 ⟨w, (hmem w).2 ⟨1, K.one_mem, by simp⟩⟩
   rw [nsmul_eq_mul] at h0
   exact (mul_eq_zero.1 h0).resolve_left (by exact_mod_cast hne)

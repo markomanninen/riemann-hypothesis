@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.Differential
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.Differential
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -9,8 +13,8 @@ universe u
 
 variable {F : Type u} [Field F] {E E' : WeierstrassCurve F} [E.IsElliptic] [E'.IsElliptic]
 
-omit [E.IsElliptic] in
 
+omit [E.IsElliptic] in
 theorem D_comap_mem_span (φ : Isogeny E E') (f : E'.toAffine.FunctionField) :
     D F E.toAffine.FunctionField (φ.comap f) ∈
       Submodule.span E.toAffine.FunctionField {isogenyPullback φ (invariantDifferential E')} := by
@@ -27,7 +31,6 @@ theorem span_isogenyPullback_eq_top (φ : Isogeny E E') (hφ : φ.IsSeparable) :
   clear hω
   obtain ⟨z, rfl⟩ := (exact_mapBaseChange_map F M K ω).mp (Subsingleton.elim _ _)
   induction z with
-  | zero => simp
   | add a b ha hb => rw [map_add]; exact add_mem ha hb
   | tmul a b =>
     rw [mapBaseChange_tmul]

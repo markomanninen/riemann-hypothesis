@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
       obtain ⟨u', hu'⟩ : ∃ u', u = u' + Finsupp.single i (r i) :=
         ⟨u - Finsupp.single i (r i), (tsub_add_cancel_of_le hle).symm⟩
       have hdeg : u'.degree + r i = u.degree := by
-        rw [hu', map_add, Finsupp.degree_single]
+        rw [hu', map_add (f := _), Finsupp.degree_single]
       have hsplit : ∀ w : W → ℂ, (∀ i, w i ^ r i = eval w (H i)) →
           eval w (monomial u a) = eval w (monomial u' a * H i) := by
         intro w hw
@@ -44,23 +48,24 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
           monomial u' a * monomial (Finsupp.single i (r i)) 1 by rw [monomial_mul, mul_one],
           map_mul, map_mul, ← X_pow_eq_monomial, map_pow, eval_X, hw i]
       have hsum : monomial u' a * H i =
-          ∑ v ∈ (H i).support, monomial (u' + v) (a * coeff v (H i)) := by
+          ∑ v ∈ (H i).support, monomial (u' + v) (a * AddMonoidAlgebra.coeff (H i) v) := by
         conv_lhs => rw [(H i).as_sum]
         rw [Finset.mul_sum]
         simp only [monomial_mul]
       have hterm : ∀ v ∈ (H i).support, ∃ q ∈ M, ∀ w : W → ℂ, (∀ i, w i ^ r i = eval w (H i)) →
-          eval w (monomial (u' + v) (a * coeff v (H i))) = eval w q := by
+          eval w (monomial (u' + v) (a * AddMonoidAlgebra.coeff (H i) v)) = eval w q := by
         intro v hv
         have hv' : v.degree ≤ (H i).totalDegree := le_totalDegree hv
         have hlt : (u' + v).degree < n := by
-          rw [map_add]
+          rw [map_add (f := _)]
           have := hH i
           omega
         exact ih _ hlt _ le_rfl _
       choose q hqM hq using hterm
       refine ⟨∑ v ∈ (H i).support.attach, q v.1 v.2, Submodule.sum_mem _ fun v _ => hqM v.1 v.2, ?_⟩
       intro w hw
-      rw [hsplit w hw, hsum, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hsplit w hw, hsum, map_sum, map_sum]
       exact (Finset.sum_attach _ _).symm.trans (Finset.sum_congr rfl fun v _ => hq v.1 v.2 w hw)
   have hA : ∀ p : MvPolynomial W ℂ, ∃ q ∈ M, ∀ w : W → ℂ, (∀ i, w i ^ r i = eval w (H i)) →
       eval w p = eval w q := by
@@ -68,7 +73,7 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
     refine MvPolynomial.induction_on' p (fun u a => hmon _ u le_rfl a) (fun p q hp hq => ?_)
     obtain ⟨p', hp'M, hp'⟩ := hp
     obtain ⟨q', hq'M, hq'⟩ := hq
-    exact ⟨p' + q', M.add_mem hp'M hq'M, fun w hw => by rw [map_add, map_add, hp' w hw, hq' w hw]⟩
+    exact ⟨p' + q', M.add_mem hp'M hq'M, fun w hw => by rw [map_add (f := _), map_add (f := _), hp' w hw, hq' w hw]⟩
   have hex : ∀ x y : W → ℂ, ∃ i, x ≠ y → x i ≠ y i := fun x y => by
     by_cases h : x = y
     · exact ⟨Classical.arbitrary W, fun h' => (h' h).elim⟩
@@ -104,7 +109,7 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
     | add x y _ _ hx hy =>
       obtain ⟨c, hc⟩ := hx
       obtain ⟨c', hc'⟩ := hy
-      exact ⟨c + c', fun t => by rw [map_add, hc, hc', map_add]; rfl⟩
+      exact ⟨c + c', fun t => by rw [map_add (f := _), hc, hc', map_add (f := _)]; rfl⟩
     | smul a x _ hx =>
       obtain ⟨c, hc⟩ := hx
       exact ⟨a • c, fun t => by rw [MvPolynomial.smul_eval, hc, map_smul]; rfl⟩
@@ -128,7 +133,8 @@ theorem fibSys_finite {W : Type*} [Fintype W] (r : W → ℕ) (H : W → MvPolyn
     obtain ⟨q, hqM, hq⟩ := hA (∑ x ∈ T, C (f' x) * L x)
     obtain ⟨c, hc⟩ := key q hqM
     refine ⟨c, funext fun t => ?_⟩
-    rw [← hc t, ← hq t (hTS t.2), map_sum, Finset.sum_eq_single (t : W → ℂ)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc t, ← hq t (hTS t.2), map_sum, Finset.sum_eq_single (t : W → ℂ)]
     · rw [map_mul, eval_C, hLself, mul_one, hf']
     · intro x _ hxt
       rw [map_mul, hLother x t t.2 (Ne.symm hxt), mul_zero]

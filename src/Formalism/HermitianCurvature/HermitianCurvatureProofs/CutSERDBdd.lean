@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERD
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERD
+
+@[expose] public section
 
 open MeasureTheory
 

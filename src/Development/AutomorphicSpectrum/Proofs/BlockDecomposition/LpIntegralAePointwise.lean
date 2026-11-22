@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+
+@[expose] public section
+
 open MeasureTheory Matrix Finset Filter Topology
 open scoped ContDiff ComplexConjugate InnerProductSpace ZeroAtInfty ENNReal
 open PositivityTheory.RgTw (Mat G)
@@ -21,7 +26,7 @@ theorem integrableOn_of_memLp_two {h : Y → V} (hh : MemLp h 2 ν) {s : Set Y} 
 theorem integral_norm_restrict_le {h : Y → V} (hh : MemLp h 2 ν) {s : Set Y} (hs : ν s ≠ ⊤) :
     ∫ y in s, ‖h y‖ ∂ν ≤ ((ν s) ^ (1 / 2 : ℝ)).toReal * (eLpNorm h 2 ν).toReal := by
   haveI : IsFiniteMeasure (ν.restrict s) := ⟨by simpa using hs.lt_top⟩
-  have hm : AEStronglyMeasurable h (ν.restrict s) := hh.1.restrict
+  have hm : AEStronglyMeasurable h (ν.restrict s) := hh.aestronglyMeasurable.restrict
   have h1 := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (μ := ν.restrict s) (p := 1) (q := 2)
     (by norm_num) hm
   have h3 : eLpNorm h 2 (ν.restrict s) ≤ eLpNorm h 2 ν := eLpNorm_restrict_le _ _ _ _
@@ -34,9 +39,9 @@ theorem integral_norm_restrict_le {h : Y → V} (hh : MemLp h 2 ν) {s : Set Y} 
       _ ≤ eLpNorm h 2 ν * (ν s) ^ (1 / 2 : ℝ) := by gcongr
       _ = _ := mul_comm _ _
   have h5 : ∫ y in s, ‖h y‖ ∂ν = (eLpNorm h 1 (ν.restrict s)).toReal := by
-    rw [integral_norm_eq_lintegral_enorm hm, eLpNorm_one_eq_lintegral_enorm]
+    rw [integral_norm_eq_lintegral_eNorm hm, eLpNorm_one_eq_lintegral_eNorm hm]
   rw [h5, ← ENNReal.toReal_mul]
-  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hfin hh.2.ne) h4
+  exact ENNReal.toReal_mono (ENNReal.mul_ne_top hfin hh.ne) h4
 
 variable [CompleteSpace V]
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.CptConj
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.CptConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,12 +124,12 @@ private theorem sum_transfer {G H : Type} [Group G] [Group H] (j : H →* G) (hj
     fun p => DoubleCoset.mk (T₀.map j) K (j (Quotient.out p))
   have hval : ∀ x, F (Quotient.out (DoubleCoset.mk (T₀.map j) K x)) = F x := by
     intro x
-    obtain ⟨a, b, ha, hb, hx⟩ := DoubleCoset.mk_out_eq_mul (T₀.map j) K x
+    obtain ⟨a, ha, b, hb, hx⟩ := DoubleCoset.mk_out_eq_mul (T₀.map j) K x
     rw [hx]
     exact hinv a ha b hb x
   have he' : ∀ h, e (DoubleCoset.mk T₀ K₀ h) = DoubleCoset.mk (T₀.map j) K (j h) := by
     intro h
-    obtain ⟨a, b, ha, hb, hab⟩ := DoubleCoset.mk_out_eq_mul T₀ K₀ h
+    obtain ⟨a, ha, b, hb, hab⟩ := DoubleCoset.mk_out_eq_mul T₀ K₀ h
     show DoubleCoset.mk (T₀.map j) K (j (Quotient.out (DoubleCoset.mk T₀ K₀ h))) = _
     rw [hab, DoubleCoset.eq]
     refine ⟨(j a)⁻¹, (T₀.map j).inv_mem (Subgroup.mem_map_of_mem j ha), (j b)⁻¹,
@@ -139,7 +143,7 @@ private theorem sum_transfer {G H : Type} [Group G] [Group H] (j : H →* G) (hj
     rw [DoubleCoset.eq] at hpp'
     obtain ⟨a, ha, b, hb, hab⟩ := hpp'
     obtain ⟨a₀, ha₀, rfl⟩ := Subgroup.mem_map.mp ha
-    rw [← DoubleCoset.out_eq' T₀ K₀ p, ← DoubleCoset.out_eq' T₀ K₀ p', DoubleCoset.eq]
+    rw [← DoubleCoset.out_eq' p, ← DoubleCoset.out_eq' p', DoubleCoset.eq]
     have hjb : j ((a₀ * Quotient.out p)⁻¹ * Quotient.out p') = b := by
       rw [map_mul, map_inv, map_mul, hab]
       group
@@ -152,7 +156,7 @@ private theorem sum_transfer {G H : Type} [Group G] [Group H] (j : H →* G) (hj
     intro q hq
     obtain ⟨h, κ, hκ, hx⟩ := hsupp _ hq
     refine ⟨DoubleCoset.mk T₀ K₀ h, ?_⟩
-    rw [he', ← DoubleCoset.out_eq' (T₀.map j) K q, DoubleCoset.eq]
+    rw [he', ← DoubleCoset.out_eq' q, DoubleCoset.eq]
     exact ⟨1, (T₀.map j).one_mem, κ, hκ, by rw [hx, one_mul]⟩
   have hfull : ∑ᶠ q ∈ Set.range e, F (Quotient.out q) =
       ∑ᶠ q : DoubleCoset.Quotient ((T₀.map j : Subgroup G) : Set G) (K : Set G),

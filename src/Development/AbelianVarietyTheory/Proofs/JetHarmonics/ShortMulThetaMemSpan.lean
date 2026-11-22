@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffMoreColumns
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsBetaUnitBlock
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ShortSeriesBlockProduct
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsSimInducing
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StandardCoverShortValueEqThetaValueStatement
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.BaseClassMove
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaRuleExistsAndEval
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqOfForallAlgClosed
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TotalDegreeLeOfRowDeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.ThetaLeMsupOfSetC
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LatOfLamSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CoeffMoreColumns
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsBetaUnitBlock
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ShortSeriesBlockProduct
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsSimInducing
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StandardCoverShortValueEqThetaValueStatement
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.BaseClassMove
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.CardLatticeQuotientHalfLevel
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaRuleExistsAndEval
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HarmAMemSpanShort
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.EqOfForallAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.TotalDegreeLeOfRowDeg
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -147,7 +151,8 @@ theorem weighted_sum {K S ι Q : Type} [Field K] [CommRing S] [Algebra K S] [Fin
   simp only [finsum_eq_sum_of_fintype, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun q _ => ?_
-  rw [mul_left_comm, ← mul_assoc (algebraMap K S t), ← map_mul, ← hw, map_sum, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mul_left_comm, ← mul_assoc (algebraMap K S t), ← map_mul, ← hw, map_sum, Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul]; ring
 
@@ -167,7 +172,8 @@ theorem shortVal_sum (hC : ChartIndepSt2) [StarRing (𝓞 E)] {nab : NabV Xo c} 
     Λ N hU hT hL a P hP.1 (w i) β).2 S S' φ y y' h2 (u i) _ (hu i)
     ⟨S', _, _, AlgHom.id c.F S', y', z, tp, F, RingHom.FaithfullyFlat.of_bijective Function.bijective_id,
       FramedBaseChange.refl y', h3, h4, h5, h6, rfl⟩
-  rw [map_sum, map_mul, h7]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_mul, h7]
   simp only [map_mul φ, AlgHom.commutes, key]
   exact weighted_sum cf w w₀ t hw _ _
 
@@ -190,7 +196,7 @@ theorem isBeta_betaH {n : ℕ} {Λ : GenLat E n}
     (h : ∃ β : c.F, β ≠ 0 ∧ BetaIs (Dw := Dw) c Λ β ∧ BetaAbs (Dw := Dw) c Λ β) :
     IsBeta Dw c Λ (betaH (Dw := Dw) c Λ) := by
   unfold betaH
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem map_blockPoly {K K' : Type} [Field K] [Field K'] (f : K →+* K') {n m : ℕ} (P : MvPolynomial (LtN Dw n) K)
@@ -234,7 +240,8 @@ theorem sum_data [Fintype (ConjQ Dw l)] {n m : ℕ} (d : DeltaDat Xo c n) (hd : 
   rw [apply_ite d.eF, map_natCast, map_zero] at h2
   unfold blockDat
   refine Eq.trans ?_ (congrArg (fun t => d.eF ζ * (d.w x0 (fun i => q (Fin.castAdd m i)) * t)) (h2.trans (by congr)))
-  simp only [h1, hφ, DeltaDat.w, ← map_mul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h1, hφ, DeltaDat.w, ← map_mul, ← map_sum]
   congr 1
   simp only [Finset.sum_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl fun x' _ => ?_
@@ -321,7 +328,8 @@ theorem mul_mem_span (hC : ChartIndepSt2) [StarRing (𝓞 E)] {nab : NabV Xo c} 
     have hL : ∀ f, L f = evR Xo c f y := fun _ => rfl
     have hm : evR Xo c (g * f) y = evR Xo c g y * evR Xo c f y := evalAt_mul _ _ g f y
     have eu' : ∀ x', evR Xo c (F x') y = evR d.Xo₂ d.c₂ d.cδ y₂ * u x' := eu
-    rw [hm, ← hL (∑ x', _), map_sum, e₁, ← e₂]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm, ← hL (∑ x', _), map_sum, e₁, ← e₂]
     simp only [map_smul]
     simp only [hL, eu', Algebra.smul_def]
     have n₃ : algebraMap c.F k (betaH (Dw := Dw) c Λ) ≠ 0 := (map_ne_zero _).2 b₁.1

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumGalois
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NcardEqIffStabilizer
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.LeOfFiniteSplitNotSplitBauer
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.Imports
-import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LatticeDeterminedByInvariants
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.HasSumLocallyUniformlyWeierstrassZetaExcept
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import GroundTheory.GlobalFields.ComplexMultiplication.JugendtraumGalois
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NcardEqIffStabilizer
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.LeOfFiniteSplitNotSplitBauer
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemConnectedComponentOfOneOfPos
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.Imports
+public import GroundTheory.GlobalFields.TateThesis.DegreeOneDensity
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LatticeDeterminedByInvariants
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.HasSumLocallyUniformlyWeierstrassZetaExcept
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option maxSynthPendingDepth 1
@@ -220,10 +224,10 @@ theorem g_ne_zero [Algebra K ℂ] (hK : finrank ℚ K = 2) (hd : NumberField.dis
     omega
 section Main
 
-variable [Algebra K ℂ] [IsTotallyComplex K] (hK : finrank ℚ K = 2)
+variable [Algebra K ℂ] [_root_.NumberField.IsTotallyComplex K] (hK : finrank ℚ K = 2)
+
 
 include hK in
-
 theorem weberSet_fixed (hd : NumberField.discr K < -4) (L : PeriodPair)
     (hL : ∀ z, z ∈ L.lattice ↔ ∃ a : 𝓞 K, algebraMap K ℂ (a : K) = z) {n : ℕ} (hn : n ≠ 0)
     (σ : ℂ ≃ₐ[K] ℂ) (u : IdeleGroup K)
@@ -259,8 +263,8 @@ theorem weberSet_fixed (hd : NumberField.discr K < -4) (L : PeriodPair)
     rw [weberFunction_toPointHom L h2 h3 hzn] at e
     exact (Option.some_injective _ e).symm
 
-include hK in
 
+include hK in
 theorem mk_mem_of_fixed (hd : NumberField.discr K < -4) (L : PeriodPair)
     (hL : ∀ z, z ∈ L.lattice ↔ ∃ a : 𝓞 K, algebraMap K ℂ (a : K) = z) {n : ℕ} (hn : n ≠ 0)
     (σ : ℂ ≃ₐ[K] ℂ) (u : IdeleGroup K)
@@ -300,7 +304,7 @@ theorem mk_mem_of_fixed (hd : NumberField.discr K < -4) (L : PeriodPair)
   rw [hε] at hξ
   have hmem : y - algebraMap (𝓞 K) K ε * (n : K)⁻¹ ∈ ((1 : 𝓘) : FractionalIdeal (𝓞 K)⁰ K) := by
     apply mem_of_map_mem_idealLattice (algebraMap K ℂ)
-    rw [← hf.map_eq_zero_iff, map_sub (algebraMap K ℂ), map_mul (algebraMap K ℂ), map_sub (toPointHom L), hξ, sub_self]
+    rw [← hf.map_eq_zero_iff, RingHom.map_sub (algebraMap K ℂ), map_mul (algebraMap K ℂ), map_sub (toPointHom L), hξ, sub_self]
   refine ⟨_, diagonal_mul_mem_congruenceSubgroup hn hu ε hy.symm hmem, ?_⟩
   refine QuotientGroup.eq.2 ⟨(Units.map (algebraMap (𝓞 K) K).toMonoidHom ε)⁻¹, ?_⟩
   rw [mul_inv, mul_assoc, inv_mul_cancel, mul_one, map_inv]
@@ -309,10 +313,10 @@ end Main
 
 section Final
 
-variable [Algebra K ℂ] [IsTotallyComplex K] (hK : finrank ℚ K = 2)
+variable [Algebra K ℂ] [_root_.NumberField.IsTotallyComplex K] (hK : finrank ℚ K = 2)
+
 
 include hK in
-
 theorem adjoin_weberSet_eq_rayClassField (hd : NumberField.discr K < -4) (L : PeriodPair)
     (hL : ∀ z, z ∈ L.lattice ↔ ∃ a : 𝓞 K, algebraMap K ℂ (a : K) = z) {n : ℕ} (hn : n ≠ 0) :
     IntermediateField.adjoin K (weberSet L n) = (Modulus.ofNat (K := K) n hn).rayClassField ℂ := by
@@ -423,7 +427,7 @@ theorem isRay_of_eq {M N : IntermediateField K ℂ} (h : M = N) [NumberField M] 
   subst h
   exact hM
 
-theorem isRay_rayClassField [IsTotallyComplex K] (n : ℕ) (hn : n ≠ 0) :
+theorem isRay_rayClassField [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (hn : n ≠ 0) :
     IsRay ((Modulus.ofNat (K := K) n hn).rayClassField ℂ) (Ideal.span {(n : 𝓞 K)}) := by
   have hn0 : (n : 𝓞 K) ≠ 0 := by exact_mod_cast hn
   have hq : Ideal.span {(n : 𝓞 K)} ≠ ⊥ := by
@@ -432,7 +436,11 @@ theorem isRay_rayClassField [IsTotallyComplex K] (n : ℕ) (hn : n ≠ 0) :
     GlobalTheory.Published.GlobalArtinReciprocity.rayClassFieldSt GlobalTheory.CompanionTheory.Hypotheses₂.globalArtinReciprocity
   obtain ⟨M, _, _, _, hM⟩ := GlobalTheory.Mem.Fld.rayField_iff.1 hR K _ hq
   have := hM.1
-  let f : M →ₐ[K] ℂ := IsAlgClosed.lift
+  let f : M →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let e : M ≃ₐ[K] f.fieldRange := AlgEquiv.ofInjectiveField f
   have : FiniteDimensional K f.fieldRange := e.toLinearEquiv.finiteDimensional
   have : NumberField f.fieldRange := NumberField.of_module_finite K f.fieldRange

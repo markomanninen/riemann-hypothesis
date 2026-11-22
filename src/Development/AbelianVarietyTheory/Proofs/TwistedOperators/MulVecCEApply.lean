@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,8 +68,8 @@ abbrev SPart : Type := ∀ v : S, Fv F v.1
 
 abbrev OPart : Type := ∀ v : {v : HeightOneSpectrum (𝓞 F) // v ∉ S}, v.1.adicCompletionIntegers F
 
-open Classical in
 
+open Classical in
 def jS : SPart F S × OPart F S →+* Af F where
   toFun p := ⟨fun v => if h : v ∈ S then p.1 ⟨v, h⟩ else (p.2 ⟨v, h⟩ : Fv F v),
     Filter.eventually_cofinite.2 (S.finite_toSet.subset fun v hv => by

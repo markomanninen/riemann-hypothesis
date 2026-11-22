@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.CharZeroWittQuadratic
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem p_inv_notMem_Oc : (p : Kc p)⁻¹ ∉ Oc p := by
   rw [mem_Oc]
   intro h
   have hK : (p : Kc p)⁻¹ = algebraMap (K0 p) (Kc p) (p : K0 p)⁻¹ := by simp
-  rw [hK, isIntegral_algebraMap_iff (algebraMap (K0 p) (Kc p)).injective] at h
+  rw [hK, isIntegral_algebraMap_iff ] at h
   obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h
   have h1 : algebraMap (WW p) (K0 p) (y * p) = 1 := by
     rw [map_mul, hy, map_natCast, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hp.out.ne_zero)]
@@ -115,10 +119,10 @@ def gO : OO p n →+* Kc p where
   map_zero' := by
     show gW p n (0 : OO p n).re + gW p n (0 : OO p n).im * rtP p = 0
     rw [QuadraticAlgebra.re_zero, QuadraticAlgebra.im_zero, map_zero, zero_mul, add_zero]
-  map_add' x y := by simp only [QuadraticAlgebra.re_add, QuadraticAlgebra.im_add, map_add]; ring
+  map_add' x y := by simp only [QuadraticAlgebra.re_add, QuadraticAlgebra.im_add, map_add (f := _)]; ring
   map_mul' x y := by
     have h : rtP p * rtP p = (p : Kc p) := by rw [← sq, sqrtPrime_sq]
-    simp only [QuadraticAlgebra.re_mul, QuadraticAlgebra.im_mul, map_add, map_mul, map_natCast, zero_mul,
+    simp only [QuadraticAlgebra.re_mul, QuadraticAlgebra.im_mul, map_add (f := _), map_mul, map_natCast, zero_mul,
       add_zero]
     linear_combination (gW p n x.im * gW p n y.im) * (-h)
 
@@ -129,7 +133,7 @@ theorem gO_mem (z : OO p n) : gO p n z ∈ Oc p := by
   exact (Oc p).add_mem (gW_mem p n _) ((Oc p).mul_mem (gW_mem p n _) (sqrtPrime_mem p))
 
 theorem gO_injective : Function.Injective (gO p n) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   rw [gO_apply] at hz
   by_cases hb : z.im = 0

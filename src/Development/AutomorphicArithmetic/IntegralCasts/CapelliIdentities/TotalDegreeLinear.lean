@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.TotalDegreeLinear.PV :
     Type → Type → Type → Type :=
@@ -18,10 +22,10 @@ private lemma UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_aeval_le 
     (f : σ → MvPolynomial τ ℂ) (hf : ∀ i, (f i).totalDegree ≤ 1) (p : MvPolynomial σ ℂ) :
     (MvPolynomial.aeval f p).totalDegree ≤ p.totalDegree := by
   rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_eq]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun d hd => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun d hd => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   rw [MvPolynomial.algebraMap_eq, MvPolynomial.totalDegree_C, zero_add]
-  refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+  refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
   calc ∑ i ∈ d.support, (f i ^ d i).totalDegree
       ≤ ∑ i ∈ d.support, d i := Finset.sum_le_sum fun i _ =>
         (MvPolynomial.totalDegree_pow _ _).trans (by simpa using Nat.mul_le_mul_left (d i) (hf i))
@@ -30,7 +34,7 @@ private lemma UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_aeval_le 
 private lemma UpperTheory.Reformulated.B.TotalDegreeLinear.totalDegree_linear_le {ι τ : Type} [Fintype ι]
     (c : ι → ℂ) (v : ι → τ) :
     (∑ j : ι, (MvPolynomial.C (c j) : MvPolynomial τ ℂ) * MvPolynomial.X (v j)).totalDegree ≤ 1 := by
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun j _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun j _ => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   rw [MvPolynomial.totalDegree_C, zero_add]
   exact (MvPolynomial.totalDegree_X _).le

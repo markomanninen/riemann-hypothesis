@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.KerCoreSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DescPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FunKerPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.KerCoreSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.DescPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FunKerPf
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
 
@@ -10,13 +14,13 @@ open TensorProduct
 theorem exists_finset_inf_eq {K V : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
     (S : Set (Submodule K V)) : ∃ t : Finset (Submodule K V), (t : Set _) ⊆ S ∧ ∀ N ∈ S, t.inf id ≤ N := by
   classical
-  have hwf : WellFoundedLT (Submodule K V) := inferInstance
-  obtain ⟨N0, ⟨t0, ht0S, rfl⟩, hmin⟩ := hwf.wf.has_min
+  let T : Set (Submodule K V) :=
     {N | ∃ t : Finset (Submodule K V), (t : Set (Submodule K V)) ⊆ S ∧ N = t.inf id}
-    ⟨⊤, ∅, by simp, by simp⟩
+  have hT : T.Nonempty := ⟨⊤, ∅, by simp, by simp⟩
+  obtain ⟨N0, hN0, hmin⟩ := (wellFounded_lt (α := Submodule K V)).has_min T hT
+  obtain ⟨t0, ht0S, rfl⟩ := hN0
   refine ⟨t0, ht0S, fun N hN => ?_⟩
-  have hmem : (insert N t0).inf id ∈
-      {N | ∃ t : Finset (Submodule K V), (t : Set (Submodule K V)) ⊆ S ∧ N = t.inf id} :=
+  have hmem : (insert N t0).inf id ∈ T :=
     ⟨insert N t0, by
       rw [Finset.coe_insert, Set.insert_subset_iff]
       exact ⟨hN, ht0S⟩, rfl⟩
@@ -106,7 +110,7 @@ theorem kerCore_holds : KerCoreStatement := by
         AlgHom.comp_apply]
       congr 1
       exact (σ.apply_symm_apply _).symm
-    | add y z hy hz => simp only [map_add, hy, hz]
+    | add y z hy hz => simp only [map_add (f := _), hy, hz]
   have hstab : ∀ σ : L ≃ₐ[K] L, ∀ x ∈ Kc, galAct σ x ∈ Kc := by
     intro σ x hx
     rw [Submodule.mem_iInf] at hx ⊢

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 noncomputable section
 

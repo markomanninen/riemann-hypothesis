@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,13 +24,14 @@ theorem prod_X_eq {ι : Type} {n : ℕ} (c : Fin n → ι) :
 
 theorem expv_apply {ι : Type} [DecidableEq ι] {n : ℕ} (c : Fin n → ι) (i : ι) :
     expv c i = Fintype.card {a // c a = i} := by
-  rw [expv, Finsupp.finset_sum_apply, Fintype.card_subtype]
+  rw [expv, Finsupp.finsetSum_apply, Fintype.card_subtype]
   simp only [Finsupp.single_apply]
   rw [Finset.sum_boole]
   simp
 
 theorem weight_expv {ι : Type} {n : ℕ} (c : Fin n → ι) : Finsupp.weight 1 (expv c) = n := by
-  simp [expv, map_sum, Finsupp.weight_apply, Finsupp.sum_single_index]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [expv, map_sum, Finsupp.weight_apply, Finsupp.sum_single_index]
 
 theorem exists_perm_of_expv_eq {ι : Type} {n : ℕ} {c c' : Fin n → ι} (h : expv c = expv c') :
     ∃ e : Equiv.Perm (Fin n), ∀ a, c' a = c (e a) := by
@@ -45,8 +50,8 @@ end GlobalTheory.MixHt.PolForm
 
 namespace GlobalTheory.MixHt
 
-open PolForm in
 
+open PolForm in
 theorem exists_linear_of_multiadditive : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) (p : X ⟶ Sp k) (d : ℕ) (F : (Fin (d + 1) → HermLB p) → ℝ), (∀ L M, (∀ a, (L a).Isometric (M a)) → F L = F M) → (∀ L (e : Equiv.Perm (Fin (d + 1))), F (fun a => L (e a)) = F L) → (∀ (A B : HermLB p) (L : Fin d → HermLB p), F (Fin.cons (A.tens B) L) = F (Fin.cons A L) + F (Fin.cons B L)) → ∀ (ι : Type) [Fintype ι] (L : ι → HermLB p), ∃ Φ : MvPolynomial ι ℝ →ₗ[ℝ] ℝ, (∀ n : Fin (d + 1) → ι → ℤ, Φ (∏ a, lin fun i => (n a i : ℝ)) = F fun a => comb L (n a)) ∧ ∀ (P : MvPolynomial ι ℝ) (e : ℕ), e ≠ d + 1 → P.IsHomogeneous e → Φ P = 0 := by
   intro k _ X p d F hiso hsymm hadd ι _ L
   classical
@@ -85,7 +90,7 @@ theorem exists_linear_of_multiadditive : ∀ (k : Type) [CommRing k] (X : Scheme
       rw [Function.update_comp_equiv, Equiv.symm_swap, Equiv.swap_apply_right]
     rw [key, key, key]
     exact h0 _ x y
-  let Mlt : MultilinearMap ℤ (fun _ : Fin (d + 1) => HermLB.IsomClass p) ℝ :=
+  let Mlt : MultilinearMap (RingHom.id ℤ) (fun _ : Fin (d + 1) => HermLB.IsomClass p) ℝ :=
     { toFun := G'
       map_update_add' := by
         intro inst m i x y
@@ -126,12 +131,14 @@ theorem exists_linear_of_multiadditive : ∀ (k : Type) [CommRing k] (X : Scheme
   refine ⟨Φ, fun n => ?_, fun P e he hP => ?_⟩
   · rw [hF]
     simp only [lin]
-    rw [Finset.prod_univ_sum, Fintype.piFinset_univ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.prod_univ_sum, Fintype.piFinset_univ, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [Finset.prod_mul_distrib, ← map_prod, prod_X_eq, C_mul', map_smul, hΦ, hφ, smul_eq_mul]
-  · rw [P.as_sum, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [P.as_sum, map_sum]
     refine Finset.sum_eq_zero fun s hs => ?_
-    have hm : monomial s (coeff s P) = coeff s P • monomial s (1 : ℝ) := by rw [smul_monomial, smul_eq_mul, mul_one]
+    have hm : monomial s (AddMonoidAlgebra.coeff P s) = AddMonoidAlgebra.coeff P s • monomial s (1 : ℝ) := by rw [smul_monomial, smul_eq_mul, mul_one]
     rw [hm, map_smul, hΦ, smul_eq_mul]
     refine mul_eq_zero_of_right _ (dif_neg ?_)
     rintro ⟨c, rfl⟩

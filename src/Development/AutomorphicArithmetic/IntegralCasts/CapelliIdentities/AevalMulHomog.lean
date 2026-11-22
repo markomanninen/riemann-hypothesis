@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk4.aeval_mul_homog :
     ∀ {n : ℕ} {A G S : Type} [inst : CommRing A]

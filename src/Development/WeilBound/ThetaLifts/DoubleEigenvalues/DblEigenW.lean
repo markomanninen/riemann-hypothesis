@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ConeShifts.PresOfHat
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.Kcompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open PositivityTheory.ThK PositivityTheory.ThK.Vac PositivityTheory.ThKH.Iwas Po
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n d : ℕ} {v : Pl F}
 
-variable (σ) in
 
+variable (σ) in
 def KSub (X : Spc F E n) (v : Pl F) : Subgroup (UA σ X.J) where
   carrier := KAt σ X v
   one_mem' := GlobalTheory.InertSph.one_mem_KAt σ X v

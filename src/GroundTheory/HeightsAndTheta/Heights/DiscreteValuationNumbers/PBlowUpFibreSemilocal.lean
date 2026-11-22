@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreSemilocalCut
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsBlowUpFibreSemilocalCut
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyDimensionInequality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -19,8 +24,8 @@ theorem length_quot_span_ringEquiv {R R' : Type*} [CommRing R] [CommRing R'] (ψ
       (by rw [Ideal.map_span, Set.image_singleton]; rfl)
   rw [e.toLinearEquiv.length_eq, Module.length_eq_of_surjective ψ.surjective]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem BlowUpFibreSemilocal.proof (ha : HomLocRingLocal.Statement.{u})
     (hb : DivCycleHomLoc.Statement.{u}) (hiso : BlowUpLocRingIso.Statement.{u})
     (hfin : BlowUpOverLocFinite.Statement.{u}) (hmax : BlowUpOverLocMax.Statement.{u}) :
@@ -73,7 +78,7 @@ theorem BlowUpFibreSemilocal.proof (ha : HomLocRingLocal.Statement.{u})
     have hdivQ : divCycle (blowUpOf P u) (liftForm x) Q =
         ((multAt (blowUpOf P u ⊔ Ideal.span {liftForm x}) Q).toNat : ℤ) := by
       unfold divCycle
-      rw [dif_pos ⟨hQmin, hQrel⟩]
+      rw [dite_eq_left ⟨hQmin, hQrel⟩]
     have : Ring.KrullDimLE 1 (homLocRing (blowUpOf P u) Q) := by
       rw [Ring.krullDimLE_iff, hd]
       rfl

@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramesCommonStabiliserEqPairingMatrixStabiliser
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalExtend
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -27,7 +32,7 @@ theorem hfR_smul (L : LocE K R) {n : ℕ} (Hm : Matrix (Fin n) (Fin n) R) (s t :
 
 theorem hfR_add (L : LocE K R) {n : ℕ} (Hm : Matrix (Fin n) (Fin n) R) (x y z : Fin n → R) :
     hf L Hm x (y + z) = hf L Hm x y + hf L Hm x z := by
-  simp only [hf, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hf, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem hfR_smulr (L : LocE K R) {n : ℕ} (Hm : Matrix (Fin n) (Fin n) R) (t : R) (x y : Fin n → R) :
     hf L Hm x (t • y) = L.cj t * hf L Hm x y := by
@@ -104,7 +109,8 @@ theorem locM_unitri (s : Matrix (Fin (r + 1)) (Fin (r + 1)) E)
 theorem mat_entry (s s' : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (a b : Fin (r + 1)) :
     (cT (A.L p) (locM G p s) * (G.S p).Zh * locM G p s') a b =
       sc G p a * sc G p b * (A.loc p).ιE (((s.map sig).transpose * G.Zh * s') a b) := by
-  simp only [Matrix.mul_apply, cT, locM, Matrix.of_apply, Zh_scale, Matrix.transpose_apply, Matrix.map_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, cT, locM, Matrix.of_apply, Zh_scale, Matrix.transpose_apply, Matrix.map_apply,
     map_sum, map_mul, cj_sc, cj_sci, cj_ι, Finset.mul_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun i _ => ?_
   have h1 := sc_mul_sci G p i
@@ -141,7 +147,8 @@ theorem mat_iff (s s' : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
 
 theorem bc_sum (s : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (v : Fin (r + 1) → G.V) (j : Fin (r + 1)) :
     A.bc p (∑ i, s i j • v i) = ∑ i, (A.loc p).ιE (s i j) • A.bc p (v i) := by
-  simp only [← bcL_apply, map_sum, map_smulₛₗ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← bcL_apply, map_sum, map_smulₛₗ]
 
 theorem loc_of_glob (u : Fin (r + 1) → Fin (k + 2 * r + 1) → (A.loc p).Ep) (v : Fin (r + 1) → G.V)
     (hu : ∀ a, u a = sc G p a • A.bc p (v a)) (s : Matrix (Fin (r + 1)) (Fin (r + 1)) E) (h : G.GLV)
@@ -216,7 +223,8 @@ theorem decomp : LinearIndependent E (gg G) ∧ IsCompl (Submodule.span E (Set.r
     rw [Fintype.linearIndependent_iff]
     intro c hc i
     have h1 := congrArg (bcL A p _) hc
-    simp only [map_sum, map_smulₛₗ, map_zero, bcL_apply, bc_gg, smul_smul] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, map_zero, bcL_apply, bc_gg, smul_smul] at h1
     have h2 := Fintype.linearIndependent_iff.1 hli _ h1 i
     apply (A.loc p).ιE.injective
     rw [map_zero]
@@ -319,7 +327,7 @@ theorem stab_rat : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberF
             exact (stab_eq (A.L p) r k (G.S p)).1 (hp p) (hpSt p) _ ((decomp G p).2.2 x hx))
       exact fun x => LinearMap.congr_fun heq x
     have hinj : Function.Injective φ := by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       have h1 := hExt p0 x
       rw [hx] at h1

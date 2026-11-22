@@ -1,27 +1,34 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GrothendieckDeformation
-import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
-import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
-import Development.AbelianVarietyTheory.Definitions.Divisors.MeanLogLeOfBounds
-import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHomWeightHomWeight
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
-import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWhittakerDatumAndHalfLevels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
-import Development.AbelianVarietyTheory.Definitions.Divisors.EigLatLe
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActCCoe
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricLiftsOfFrames
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenImmersionOfSection
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFramedPointMoveUniversalTriple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInjectiveDualWeylTensorCuspFormsRationalPo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHolds
-import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GrothendieckDeformation
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CovolXOfCovol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CuspIso
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WellChosen
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsCoordAtPoints
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedPointHeightLatticeSmul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WedgeNrmLeOfWedgeNormLe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.VolMeasureOfAdd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemLevEigenIffTransl
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenRatios
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BadElt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWhittakerDatumAndHalfLevels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexificationBaseChangeLinearOneTmul
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EigLatLe
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActCCoe
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.GeometricLiftsOfFrames
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenImmersionOfSection
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueFramedPointMoveUniversalTriple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsInjectiveDualWeylTensorCuspFormsRationalPo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightBoundHolds
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +74,8 @@ theorem iSup_part [IsSepClosed L] [Algebra.Etale K B] (m : B →ₐ[K] Module.En
   have hχ : ∀ i b, χ i b = e (1 ⊗ₜ b) i := fun _ _ => rfl
   refine eq_top_iff.2 fun v _ => ?_
   have h1 : v = ∑ i, M (e.symm (Pi.single i 1)) v := by
-    rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, Finset.univ_sum_single (fun _ => (1 : L))]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, Finset.univ_sum_single (fun _ => (1 : L))]
     have : e.symm (fun _ => (1 : L)) = 1 := map_one e.symm
     rw [this, map_one]
     rfl
@@ -156,8 +164,8 @@ theorem fnAt_toΓ {R S : Type} [CommRing R] [CommRing S] (φ : R →+* S) (k : R
 
 variable {D : D7} {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.host.E} {Dw : Datum H} {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-variable (Xo c) in
 
+variable (Xo c) in
 def cst : c.F →+* Γ(Xo.XF c, ⊤) := (strK (Xo := Xo) (c := c)).appTop.hom.comp (toΓ c.F)
 
 theorem fnAt_cst {S : Type} [CommRing S] (y : Sp S ⟶ Xo.XF c) (k : c.F) :
@@ -176,7 +184,7 @@ theorem fnRule_mul (a b : Γ(Xo.XF c, ⊤)) : fnRule (a * b) = fnRule a * fnRule
 theorem fnRule_add (a b : Γ(Xo.XF c, ⊤)) : fnRule (a + b) = fnRule a + fnRule b := by
   funext p y
   show fnAt (basePt y) _ = fnAt (basePt y) _ + fnAt (basePt y) _
-  simp only [fnAt, map_add]
+  simp only [fnAt, map_add (f := _)]
 
 theorem fnRule_one : fnRule (1 : Γ(Xo.XF c, ⊤)) = 1 := by
   funext p y
@@ -227,9 +235,9 @@ theorem exists_map (hL : ActLev (Xo := Xo) c lev) (g : G) : ∃ r : Xo.XF c ⟶ 
     · rw [Category.assoc, pullback.lift_snd, basePt, basePt, pullback.lift_snd, pullback.lift_snd]
   · exact ⟨𝟙 _, Category.id_comp _, fun S _ _ y y' ⟨ρ, ν, hi, hm, _⟩ => absurd ⟨ρ, ν, hi, hm⟩ h⟩
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem split_rules (hq : Dw.q = 0) (hL : ActLev (Xo := Xo) c lev) (hF : GlobalTheory.DefPt.FreePt Xo c lev)
     (W : Submodule c.F (Rul Xo c)) (hW : ∀ b, ∀ f ∈ W, fnRule b * f ∈ W) (T : G → W →ₗ[c.F] W)
     (hT : ∀ g f, (T g f : Rul Xo c) = actLev c lev g f) (σ : c.F →+* ℂ) :
@@ -314,42 +322,6 @@ open GlobalTheory.BadCount
 open scoped TensorProduct
 open Formalism.IndefR.FWT
 
-set_option synthInstance.maxHeartbeats 400000 in
-set_option maxHeartbeats 1000000 in
-
-theorem split_lift : Hypotheses2 → Gram → Lifts fun Fm x _ ι p i _ _ => (i : ℕ) + 1 = (Fm.D x ι).R.m → ∀ (hp : RowsT p) (Hg : Type) [Group Hg] [Finite Hg] (φ : Hg →* p.P.Gp),
-    GlobalTheory.DefPt.FreePt (p.T.Q.Xo ((i : ℕ) + 1)) p.T.Q.c (fun h => (p.O i).lev2 (φ h)) →
-    ∃ (X : Type) (_ : Fintype X) (_ : DecidableEq X) (_ : MulAction Hg X) (A : X → Submodule ℂ (GlobalTheory.DefRead.VC (GlobalTheory.DefHalf.sigC p) (GlobalTheory.DefHalf.CF p i))),
-      (∀ (h : Hg) (y : X), h • y = y → h = 1) ∧ DirectSum.IsInternal A ∧
-      ∀ (h : Hg) (y : X), ∀ v ∈ A y, GlobalTheory.DefRead.bcLin (GlobalTheory.DefHalf.sigC p) (GlobalTheory.DefHalf.actC p i hp.1 (φ h)) v ∈ A (h • y) := by
-  intro _ _
-  have hw : WtN := GlobalTheory.CovTop.WtShape.wtN
-  unfold WtN Lifts at *
-  refine Closed.imp hw ?_
-  rintro eps Fm CH - ⟨C, hC, x0, ha⟩
-  refine ⟨C, hC, x0, fun x hx hle ι p hp i hi hp' Hg _ _ φ hF => ?_⟩
-  have hW := ha x hx hle ι p hp i
-  have hj : InR (Fm.D x ι) ((i : ℕ) + 1) := ⟨Nat.succ_pos _, hi.le⟩
-  have hq : (p.T.Q.Dw ((i : ℕ) + 1)).q = 0 := by
-    have : (dat p i).q = (Fm.D x ι).R.m - ((i : ℕ) + 1) := by rw [hW.sig.2.1]; rfl
-    simpa [dat, hi] using this
-  have hU := p.fw.laws.unf _ hj
-  have h : ActLev (Xo := p.T.Q.Xo ((i : ℕ) + 1)) p.T.Q.c (p.O i).lev2 := (p.pins i).2.act.1
-  have hL : ActLev (Xo := p.T.Q.Xo ((i : ℕ) + 1)) p.T.Q.c (fun g : Hg => (p.O i).lev2 (φ g)) :=
-    ⟨fun g => h.total (φ g), fun g => h.func (φ g), fun S _ _ y => by
-        have := h.one S y
-        rw [← map_one φ] at this
-        exact this,
-      fun g g' S _ _ y y' y'' a b => by
-        have := h.mul (φ g) (φ g') S y y' y'' a b
-        rw [← map_mul φ] at this
-        exact this,
-      fun g => h.nat (φ g), fun g => h.bor (φ g)⟩
-  refine split_rules hq hL hF (GlobalTheory.DefHalf.CF p i) (fun b f hf => ?_) (fun g => GlobalTheory.DefHalf.actC p i hp'.1 (φ g))
-    (fun g f => rfl) _
-  refine GlobalTheory.DefPt.ReadsPt.mem_cusp_of_sec hq hU hW.dom ?_
-  have := sec_mul _ _ _ _ _ _ (GlobalTheory.LevelCoverCompare.fnRule_mem b) (cusp_le_sec _ _ _ _ _ hf)
-  rwa [zero_add, zero_add] at this
 
 end Main
 

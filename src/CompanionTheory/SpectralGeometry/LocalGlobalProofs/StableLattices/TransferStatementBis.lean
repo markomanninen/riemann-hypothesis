@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeOperatorsSpanAndFaithfulStatement
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.InhabitedFinite
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HeckeOperatorsSpanAndFaithfulStatement
+
+@[expose] public section
 
 open CompanionTheory.Rg.Fl
 open CompanionTheory.D.gk.admitted (stdPoly word word_nil word_cons)
@@ -89,7 +93,7 @@ theorem phi_lam (hv : ∀ k ∈ K, σ k v = v) (g : G) (f : (G ⧸ K) →₀ ℂ
     phi K σ v (lam K g f) = σ g (phi K σ v f) := by
   induction f using Finsupp.induction_linear with
   | zero => simp only [map_zero]
-  | add f₁ f₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add f₁ f₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | single y c =>
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective y
     rw [lam_single, phi_single hv, phi_single hv, map_mul, ContinuousLinearMap.mul_apply,
@@ -117,7 +121,7 @@ theorem phi_phi (hv : ∀ k ∈ K, σ k v = v) (h : Hk K) (f : (G ⧸ K) →₀ 
       phi K σ v ((h : Module.End ℂ ((G ⧸ K) →₀ ℂ)) f) := by
   induction f using Finsupp.induction_linear with
   | zero => simp only [map_zero]
-  | add f₁ f₂ h₁ h₂ => simp only [map_add, h₁, h₂]
+  | add f₁ f₂ h₁ h₂ => simp only [map_add (f := _), h₁, h₂]
   | single y c =>
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective y
     have hd : lam K x (dlt K) = Finsupp.single (x : G ⧸ K) 1 := by
@@ -148,7 +152,8 @@ theorem avg_sigma {E : H →L[ℂ] H} (hA : IsAvg σ K E) (hv : ∀ k ∈ K, σ 
       ContinuousLinearMap.mul_apply, hA.2.2 _ _ k.2]
   have hfix := phi_fixed hv (((S.card : ℂ)⁻¹ • T : Hk K))
   rw [← hA.2.1 _ hfix, Subalgebra.coe_smul, LinearMap.smul_apply, hT]
-  simp only [map_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, map_sum]
   rw [Finset.sum_congr rfl hterm, Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul,
     inv_mul_cancel₀ hcard, one_smul]
 
@@ -194,7 +199,7 @@ theorem stTransfer : StTransfer := by
     let L : Hk K →+ H :=
       { toFun := fun h => phi K σ u ((h : Module.End ℂ ((G ⧸ K) →₀ ℂ)) (dlt K)),
         map_zero' := by simp,
-        map_add' := fun x y => by simp [map_add] }
+        map_add' := fun x y => by simp [map_add (f := _)] }
     have hw : ∀ π : Equiv.Perm (Fin M), A (word E (List.ofFn fun i => σ (g (π i)))) =
         L (List.ofFn fun i => b (g (π i))).reverse.prod := by
       intro π
@@ -204,13 +209,15 @@ theorem stTransfer : StTransfer := by
     have h0 := sum_reverse_eq_zero (fun i => b (g i)) (hPI _)
     show A (stdPoly E fun i => σ (g i)) = 0
     unfold CompanionTheory.D.gk.admitted.stdPoly
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     calc ∑ π : Equiv.Perm (Fin M), A (↑↑(Equiv.Perm.sign π) * word E (List.ofFn fun i => σ (g (π i))))
         = ∑ π : Equiv.Perm (Fin M), (Equiv.Perm.sign π : ℤ) • L (List.ofFn fun i => b (g (π i))).reverse.prod := by
           refine Finset.sum_congr rfl fun π _ => ?_
           rw [← zsmul_eq_mul, map_zsmul, hw]
       _ = L (∑ π : Equiv.Perm (Fin M), (Equiv.Perm.sign π : ℤ) • (List.ofFn fun i => b (g (π i))).reverse.prod) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           simp only [map_zsmul]
       _ = 0 := by rw [h0, map_zero]
   ext v

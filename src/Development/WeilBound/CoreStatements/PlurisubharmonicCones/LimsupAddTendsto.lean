@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PhiISemipositive
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlurisubharmonicLocalStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.GlueCharts
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PhiISemipositive
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlurisubharmonicLocalStatement
+
+@[expose] public section
 
 open Filter Topology Metric Set
 open ReciprocityTheory.AnForm.A (IsPsh coordDiv limsupExt molli shrink polyMax)

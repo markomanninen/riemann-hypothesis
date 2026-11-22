@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfG
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfG
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ theorem locMem_qd_iff (k : ℕ) (z : D.host.E) :
     rfl
   rw [hi, ← map_mul, div_eq_mul_inv, mul_comm z]
 
-include hA in
 
+include hA in
 theorem qLocG_of_data (g : Loc.SplitG (M p).L) (hs : (M p).split = some g) (k : ℕ) (hk : k ≤ D.R.rS)
     (z : D.host.E) :
     LocMem D p (qdPow D k) z ↔ ∃ o ∈ (D.s.atP p).O,

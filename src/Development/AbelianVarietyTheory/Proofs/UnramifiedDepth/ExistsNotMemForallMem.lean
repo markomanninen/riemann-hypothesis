@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFB
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LinEig
+
+@[expose] public section
 
 noncomputable section
 
@@ -396,8 +400,8 @@ theorem exists_idem_seq {O : Type} [CommRing O] (l ε : O) (hε : ∃ y, ε * ε
       obtain ⟨z, hz⟩ := h2 n
       exact ⟨y + l ^ n * z, by linear_combination hy + hz⟩
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.MainNotions.ModuliIntegralCharts.H1.LinEig in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.MainNotions.ModuliIntegralCharts.H1.LinEig in
 theorem exists_linHom {C : Type} [Field C] {O : Type} [CommRing O] {dd : ℕ} (G : FGLaw C dd) (A : OAct O G) :
     ∃ ρ : O →+* Matrix (Fin dd) (Fin dd) C,
       (∀ a i j, ρ a i j = MvPowerSeries.coeff (Finsupp.single ((0 : Fin 1), j) 1) (A.act a i)) ∧
@@ -518,7 +522,7 @@ theorem exists_hom_of_eig (hρ : ∀ x i j, V.Ge 0 (ρ x i j)) (χ : O → C) (v
   have hmul : ∀ x y, χ (x * y) = χ x * χ y := fun x y =>
     inj (by rw [← hv, map_mul, ← mulVec_mulVec, hv, mulVec_smul, hv, smul_smul, mul_comm])
   have hadd : ∀ x y, χ (x + y) = χ x + χ y := fun x y =>
-    inj (by rw [← hv, map_add, add_mulVec, hv, hv, add_smul])
+    inj (by rw [← hv, map_add (f := _), add_mulVec, hv, hv, add_smul])
   refine ⟨RingHom.mk' ⟨⟨χ, hone⟩, hmul⟩ hadd, fun _ => rfl, fun x => ?_⟩
   show V.Ge 0 (χ x)
   obtain ⟨i0, hi0⟩ := Function.ne_iff.1 hv0
@@ -611,7 +615,7 @@ theorem IsLim.range [IsAlgClosed C] {d : ℕ} [NeZero d] (h : IsLim V ρ a M) (h
     funext i
     obtain ⟨w, hw⟩ := exists_ge_vec (V := V) z
     let D : O →+ C := AddMonoidHom.mk' (fun x => (ρ x *ᵥ z) i - em t x * z i) (fun x y => by
-      simp only [map_add, add_mulVec, Pi.add_apply]; ring)
+      simp only [map_add (f := _), add_mulVec, Pi.add_apply]; ring)
     have hD : ∀ x, D x = (ρ x *ᵥ z) i - em t x * z i := fun _ => rfl
     refine sub_eq_zero.1 (twisted_der_eq_zero (em t) (em t) (hint t) (hint t) (fun x => by simpa using mm_zero) ε hε
       (hε1 t) d (NeZero.ne d) (fun x => hεP _ fun s => ?_) D (fun x y => ?_) w

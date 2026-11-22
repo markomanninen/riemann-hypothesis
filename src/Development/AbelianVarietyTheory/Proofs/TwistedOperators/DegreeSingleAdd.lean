@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MvPolynomial TensorProduct
 
@@ -282,12 +286,13 @@ lemma comm_high (i : ι) (J : ι →₀ ℕ) (hJ : ∀ j ∈ J.support, i ≤ j)
     (hx : ∀ j, j ≤ i → c j x = 0) (v : V) :
     rho c δ x (rho c δ (e i) (zv J v)) =
       rho c δ (e i) (rho c δ x (zv J v)) + rho c δ ⁅x, e i⁆ (zv J v) := by
-  rw [rho_e_le hce hf i J hJ, rho_apply c δ x, rho_apply c δ x, map_add]
+  rw [rho_e_le hce hf i J hJ, rho_apply c δ x, rho_apply c δ x, map_add (f := _)]
   conv_lhs => rw [← hf]
   rw [step_succ e c act δ i J hJ, straighten_apply,
     strip_eq (fun j hj => hx j (by simpa using hj)), ← add_assoc]
   congr 2
-  rw [mulLin_apply, mulLin_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mulLin_apply, mulLin_apply, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases hj : j ≤ i
   · simp [hx j hj]
@@ -297,9 +302,9 @@ lemma comm_high (i : ι) (J : ι →₀ ℕ) (hJ : ∀ j ∈ J.support, i ≤ j)
 def defect (c : ι → g →ₗ[R] R) (δ : g →ₗ[R] Module.End R (MvPolynomial ι R ⊗[R] V))
     (m : MvPolynomial ι R ⊗[R] V) : g →ₗ[R] g →ₗ[R] (MvPolynomial ι R ⊗[R] V) :=
   LinearMap.mk₂ R (fun x y => rho c δ x (rho c δ y m) - rho c δ y (rho c δ x m) - rho c δ ⁅x, y⁆ m)
-    (by intros; simp only [add_lie, map_add, LinearMap.add_apply]; abel)
+    (by intros; simp only [add_lie, map_add (f := _), LinearMap.add_apply]; abel)
     (by intros; simp only [smul_lie, map_smul, LinearMap.smul_apply, smul_sub])
-    (by intros; simp only [lie_add, map_add, LinearMap.add_apply]; abel)
+    (by intros; simp only [lie_add, map_add (f := _), LinearMap.add_apply]; abel)
     (by intros; simp only [lie_smul, map_smul, LinearMap.smul_apply, smul_sub])
 
 omit hce hf [LinearOrder ι] in
@@ -315,7 +320,8 @@ lemma defect_swap (m : MvPolynomial ι R ⊗[R] V) (x y : g) :
 lemma defect_e (i : ι) (J : ι →₀ ℕ) (hJ : ∀ j ∈ J.support, i ≤ j) (x : g) (v : V) :
     defect c δ (zv J v) x (e i) = 0 := by
   have hx : x = strip e c Finset.univ x + ∑ j, c j x • e j := by simp [strip_apply]
-  rw [hx, map_add, LinearMap.add_apply, map_sum, LinearMap.sum_apply, Finset.sum_eq_zero, add_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, map_add (f := _), LinearMap.add_apply, map_sum, LinearMap.sum_apply, Finset.sum_eq_zero, add_zero]
   · rw [defect_apply, comm_high hce hf i J hJ _ fun j _ => c_strip hce (Finset.mem_univ _) x]
     abel
   · intro j _
@@ -336,7 +342,8 @@ lemma defect_strip (m : MvPolynomial ι R ⊗[R] V) (s : Finset ι)
     defect c δ m x y = defect c δ m (strip e c s x) (strip e c s y) := by
   have h' : ∀ j ∈ s, ∀ x, defect c δ m (e j) x = 0 := fun j hj x => by
     rw [defect_swap, h j hj, neg_zero]
-  rw [strip_apply e c s y, map_sub, map_sum, Finset.sum_eq_zero fun j hj => by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [strip_apply e c s y, map_sub, map_sum, Finset.sum_eq_zero fun j hj => by
     rw [map_smul, h j hj, smul_zero], sub_zero, strip_apply, map_sub, map_sum,
     LinearMap.sub_apply, LinearMap.sum_apply, Finset.sum_eq_zero fun j hj => by
     rw [map_smul, LinearMap.smul_apply, h' j hj, smul_zero], sub_zero]
@@ -385,7 +392,8 @@ lemma defect_eq_zero (hp : Pres δ)
         have : defect c δ (rho c δ b (zv J v)) a (e i) =
             ∑ j, c j b • defect c δ (mulX j (zv J v)) a (e i) +
               defect c δ (δ b (zv J v)) a (e i) := by
-          simp only [defect_apply, rho_apply c δ b, mulLin_apply c b, map_add, map_sum, map_smul,
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [defect_apply, rho_apply c δ b, mulLin_apply c b, map_add (f := _), map_sum, map_smul,
             smul_sub, Finset.sum_sub_distrib]
           abel
         rw [this, ih _ _ _ (hp _ _ _ hz), add_zero]
@@ -405,7 +413,7 @@ lemma defect_eq_zero (hp : Pres δ)
       have jac : ⁅⁅x, y⁆, e i⁆ = ⁅⁅x, e i⁆, y⁆ + ⁅x, ⁅y, e i⁆⁆ := by
         rw [leibniz_lie x y (e i), ← lie_skew y ⁅x, e i⁆]; abel
       rw [← rho_e_le hce hf i J hJ]
-      simp only [defect_apply, map_sub, map_zero, jac, map_add, LinearMap.add_apply] at *
+      simp only [defect_apply, map_sub, map_zero, jac, map_add (f := _), LinearMap.add_apply] at *
       linear_combination (norm := abel1) k7 - k8 + k1 - k2 + k9 + k4 + k5 - k6
 
 end Fixed

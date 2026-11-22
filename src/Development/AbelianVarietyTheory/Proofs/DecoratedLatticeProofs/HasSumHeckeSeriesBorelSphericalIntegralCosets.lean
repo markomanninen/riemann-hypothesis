@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowDvdOfHermMatEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowDvdOfHermMatEq
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.SatakeBound GlobalTheory.GLDoubling
 
 noncomputable section
@@ -12,15 +17,6 @@ section Cosets
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] {n : ℕ}
   {p : 𝒪[k]}
-
-theorem ord_det_of_mem_KO {y : GL (Fin n) k} (hy : y ∈ KO k (Fin n)) :
-    ord k (Matrix.GeneralLinearGroup.det y) = 0 := by
-  have hq : (1 : ℝ) < resCard k := by exact_mod_cast GlobalTheory.IndefiniteRowSideFullHecke.SatakeTrivialRangeBound.one_lt_resCard k
-  have h1 := GlobalTheory.LGrp.nabs_eq_zpow (Matrix.GeneralLinearGroup.det y)
-  rw [GlobalTheory.LGrp.nabs_det_of_mem_KO hy] at h1
-  have h2 : ((resCard k : ℝ)) ^ (-ord k (Matrix.GeneralLinearGroup.det y)) = (resCard k : ℝ) ^ (0 : ℤ) := by
-    rw [← h1, zpow_zero]
-  exact neg_eq_zero.1 (zpow_right_injective₀ (by positivity) hq.ne' h2)
 
 end Cosets
 
@@ -59,7 +55,7 @@ private theorem exists_hermGL_coset_eq_of_integral {k : Type} [Field k] [Valuati
   have hdiag : ∀ i, b' i i ≠ 0 := by
     intro i h
     have hb' : (b : Matrix (Fin n) (Fin n) k).BlockTriangular id := fun i j h => hb h
-    have hdet := Matrix.det_of_upperTriangular hb'
+    have hdet := Matrix.det_of_isUpperTriangular hb'
     have hne : (b : Matrix (Fin n) (Fin n) k).det ≠ 0 := by
       rw [← Matrix.GeneralLinearGroup.val_det_apply]
       exact Units.ne_zero _
@@ -79,7 +75,8 @@ private theorem exists_hermGL_coset_eq_of_integral {k : Type} [Field k] [Valuati
       exact ((W⁻¹ : GL (Fin n) 𝒪[k]) i j).2
   have hhnf : _root_.GlobalTheory.SatakeBound.hermGL hp a c = b * Wk := by
     ext i j
-    rw [_root_.GlobalTheory.SatakeBound.val_hermGL, hW, Matrix.GeneralLinearGroup.coe_mul, RingHom.mapMatrix_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [_root_.GlobalTheory.SatakeBound.val_hermGL, hW, Matrix.GeneralLinearGroup.coe_mul, RingHom.mapMatrix_apply,
       Matrix.map_apply, Matrix.mul_apply, Matrix.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_mul]
@@ -95,7 +92,90 @@ private theorem ord_eq_of_nabs_eq_resCard_zpow_neg {k : Type} [Field k] [Valuati
     _root_.GlobalTheory.SmGL.ord k x = m := by
   have hq : (1 : ℝ) < _root_.GlobalTheory.SplitWeil.resCard k := by
     exact_mod_cast _root_.GlobalTheory.SplitWeil.one_lt_resCard k
-  rw [_root_.GlobalTheory.LGrp.nabs_eq_zpow] at hx
+  have hn (x : kˣ) : _root_.GlobalTheory.SplitWeil.nabs k x =
+      (_root_.GlobalTheory.SplitWeil.resCard k : ℝ) ^ (-_root_.GlobalTheory.SmGL.ord k x) := by
+    have hex : ∃ ϖ : kˣ, _root_.GlobalTheory.SmGL.ord k ϖ = 1 ∧
+        _root_.GlobalTheory.SplitWeil.nabs k ϖ = (_root_.GlobalTheory.SplitWeil.resCard k : ℝ)⁻¹ := by
+      obtain ⟨p, hp⟩ := IsDiscreteValuationRing.exists_irreducible (valuation k).integer
+      have hp0 : (p : k) ≠ 0 := by
+        intro h
+        exact hp.ne_zero (Subtype.ext h)
+      obtain ⟨y, hy⟩ : ∃ y : k, valuation k y = uniformizer k := valuation_surjective _
+      have hy0 : y ≠ 0 := by
+        intro h
+        rw [h, map_zero] at hy
+        exact (uniformizer_pos (R := k)).ne hy
+      have hyint : y ∈ (valuation k).integer := by
+        rw [Valuation.mem_integer_iff, hy]
+        exact uniformizer_lt_one.le
+      obtain ⟨m, u, hu⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible
+        (x := (⟨y, hyint⟩ : (valuation k).integer)) (fun h => hy0 (congrArg Subtype.val h)) hp
+      have hu0 : ((u : (valuation k).integer) : k) ≠ 0 := by
+        intro h
+        exact u.ne_zero (Subtype.ext h)
+      refine ⟨Units.mk0 (p : k) hp0, ?_, _root_.GlobalTheory.SplitWeil.nabs_uniformiser hp rfl⟩
+      have hyo : _root_.GlobalTheory.SmGL.ord k (Units.mk0 y hy0) = 1 :=
+        _root_.GlobalTheory.SmGL.ord_eq_one hy
+      have huo : _root_.GlobalTheory.SmGL.ord k (Units.mk0 _ hu0) = 0 := by
+        apply _root_.GlobalTheory.SmGL.ord_eq_zero
+        exact (Valuation.integer.integers (valuation k)).one_of_isUnit u.isUnit
+      have hsplit : Units.mk0 y hy0 = Units.mk0 _ hu0 * Units.mk0 (p : k) hp0 ^ m := by
+        ext
+        have := congrArg Subtype.val hu
+        simpa using this
+      have hpow (x : kˣ) (m : ℕ) : _root_.GlobalTheory.SmGL.ord k (x ^ m) = m * _root_.GlobalTheory.SmGL.ord k x := by
+        induction m with
+        | zero => simp only [pow_zero, Nat.cast_zero, zero_mul]; exact _root_.GlobalTheory.SmGL.ord_eq_zero (by simp)
+        | succ m ih => rw [pow_succ, _root_.GlobalTheory.SmGL.ord_mul, ih]; push_cast; ring
+      rw [hsplit, _root_.GlobalTheory.SmGL.ord_mul, huo, hpow,
+        zero_add] at hyo
+      rcases Int.eq_one_or_neg_one_of_mul_eq_one' hyo with ⟨_, h2⟩ | ⟨h1, _⟩
+      · exact h2
+      · omega
+    obtain ⟨ϖ, hord, habs⟩ := hex
+    have hq : (_root_.GlobalTheory.SplitWeil.resCard k : ℝ) ≠ 0 := by
+      have := _root_.GlobalTheory.SplitWeil.one_lt_resCard k
+      positivity
+    have hinv : _root_.GlobalTheory.SplitWeil.nabs k ϖ⁻¹ = _root_.GlobalTheory.SplitWeil.resCard k := by
+      have h := _root_.GlobalTheory.SplitWeil.nabs_mul k ϖ ϖ⁻¹
+      rw [mul_inv_cancel, _root_.GlobalTheory.SplitWeil.nabs_one, habs] at h
+      exact ((inv_mul_eq_one₀ hq).mp h.symm).symm
+    have oinv : _root_.GlobalTheory.SmGL.ord k ϖ⁻¹ = -1 := by
+      have h := _root_.GlobalTheory.SmGL.ord_mul k ϖ ϖ⁻¹
+      rw [mul_inv_cancel, hord,
+        _root_.GlobalTheory.SmGL.ord_eq_zero (x := (1 : kˣ)) (by simp only [Units.val_one, map_one])] at h
+      omega
+    have key : ∀ m : ℤ, _root_.GlobalTheory.SplitWeil.nabs k (ϖ ^ m) =
+        (_root_.GlobalTheory.SplitWeil.resCard k : ℝ) ^ (-m) ∧ _root_.GlobalTheory.SmGL.ord k (ϖ ^ m) = m := by
+      intro m
+      refine Int.induction_on m ?_ ?_ ?_
+      · refine ⟨by simp [_root_.GlobalTheory.SplitWeil.nabs_one], ?_⟩
+        rw [zpow_zero]
+        exact _root_.GlobalTheory.SmGL.ord_eq_zero (by simp only [Units.val_one, map_one])
+      · intro i ih
+        rw [_root_.zpow_add_one, _root_.GlobalTheory.SplitWeil.nabs_mul, _root_.GlobalTheory.SmGL.ord_mul,
+          ih.1, ih.2, habs, hord]
+        refine ⟨?_, rfl⟩
+        rw [neg_add, zpow_add₀ hq, _root_.zpow_neg_one]
+      · intro i ih
+        rw [_root_.zpow_sub_one, _root_.GlobalTheory.SplitWeil.nabs_mul, _root_.GlobalTheory.SmGL.ord_mul,
+          ih.1, ih.2, hinv, oinv]
+        refine ⟨?_, by ring⟩
+        rw [show -(-(i : ℤ) - 1) = -(-(i : ℤ)) + 1 by ring, zpow_add₀ hq, _root_.zpow_one]
+    set o := _root_.GlobalTheory.SmGL.ord k x
+    have hy : _root_.GlobalTheory.SmGL.ord k (x * ϖ ^ (-o)) = 0 := by
+      rw [_root_.GlobalTheory.SmGL.ord_mul, (key _).2]
+      ring
+    have hy1 : _root_.GlobalTheory.SplitWeil.nabs k (x * ϖ ^ (-o)) = 1 :=
+      _root_.GlobalTheory.SmGL.nabs_eq_one k
+        (_root_.GlobalTheory.SmGL.ord_eq_zero_iff.mp hy)
+    have hx : x * ϖ ^ (-o) * ϖ ^ o = x := by
+      rw [mul_assoc, ← _root_.zpow_add, neg_add_cancel, zpow_zero, mul_one]
+    calc _root_.GlobalTheory.SplitWeil.nabs k x
+        = _root_.GlobalTheory.SplitWeil.nabs k (x * ϖ ^ (-o) * ϖ ^ o) := by rw [hx]
+      _ = (_root_.GlobalTheory.SplitWeil.resCard k : ℝ) ^ (-o) := by
+        rw [_root_.GlobalTheory.SplitWeil.nabs_mul, hy1, (key o).1, one_mul]
+  rw [hn] at hx
   have := zpow_right_injective₀ (by linarith) hq.ne' hx
   linarith
 
@@ -118,7 +198,7 @@ private theorem ord_det_hermGL_mul_eq_sum {k : Type} [Field k] [ValuativeRel k]
     induction m with
     | zero =>
       rw [pow_zero]
-      exact _root_.GlobalTheory.SmGL.ord_eq_zero_iff.2 (by simp)
+      exact (_root_.GlobalTheory.SmGL.ord_eq_zero_iff).2 (by simp)
     | succ m ih => rw [pow_succ, _root_.GlobalTheory.SmGL.ord_mul, ih, hu1]; push_cast; ring
   have hw0 : _root_.GlobalTheory.SmGL.ord k (Matrix.GeneralLinearGroup.det w) = 0 := by
     apply ord_eq_of_nabs_eq_resCard_zpow_neg
@@ -139,12 +219,16 @@ private theorem ord_det_hermGL_mul_eq_sum {k : Type} [Field k] [ValuativeRel k]
 open MeasureTheory ValuativeRel in
 private theorem hasSum_prod_pow_eq_prod_one_sub_inv : ∀ (n : ℕ) (β : Fin n → ℂ), (∀ i, ‖β i‖ < 1) →
     Summable (fun a : Fin n → ℕ => ‖∏ i, β i ^ a i‖) ∧
-      HasSum (fun a : Fin n → ℕ => ∏ i, β i ^ a i) (∏ i, (1 - β i)⁻¹)
-  | 0, β, _ => by
+      HasSum (fun a : Fin n → ℕ => ∏ i, β i ^ a i) (∏ i, (1 - β i)⁻¹) := by
+  intro n
+  induction n with
+  | zero =>
+    intro β _
     refine ⟨Summable.of_finite, ?_⟩
-    simpa using (hasSum_fintype (fun a : Fin 0 → ℕ => (1 : ℂ)))
-  | n + 1, β, hβ => by
-    obtain ⟨hs, hh⟩ := hasSum_prod_pow_eq_prod_one_sub_inv n (fun i => β i.succ) (fun i => hβ i.succ)
+    simp
+  | succ n ih =>
+    intro β hβ
+    obtain ⟨hs, hh⟩ := ih (fun i => β i.succ) (fun i => hβ i.succ)
     have hg : HasSum (fun m : ℕ => β 0 ^ m) (1 - β 0)⁻¹ := hasSum_geometric_of_norm_lt_one (hβ 0)
     have hgn : Summable (fun m : ℕ => ‖β 0 ^ m‖) := by
       simpa [norm_pow] using summable_geometric_of_lt_one (norm_nonneg _) (hβ 0)
@@ -164,8 +248,8 @@ private theorem hasSum_prod_pow_eq_prod_one_sub_inv : ∀ (n : ℕ) (β : Fin n 
       refine hprod.congr_fun fun x => ?_
       simp only [Function.comp_apply, hfe]
 
-open MeasureTheory ValuativeRel in
 
+open MeasureTheory ValuativeRel in
 theorem _root_.GlobalTheory.HeckeSeries.hasSum_integral_cosets : ∀ (k : Type) [Field k] [ValuativeRel k]
     [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ) (γ : Fin n → ℂ)
     (φ : GL (Fin n) k → ℂ), _root_.GlobalTheory.SatakeBound.IsBorelSph k γ φ → ∀ X : ℂ,

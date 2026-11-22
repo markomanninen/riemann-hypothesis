@@ -1,8 +1,12 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
-import Lemmata.GeneralBFactSecondTail.Imports
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+public import Lemmata.GeneralBFactSecondTail.Imports
+
+@[expose] public section
 
 open Module NumberField
 

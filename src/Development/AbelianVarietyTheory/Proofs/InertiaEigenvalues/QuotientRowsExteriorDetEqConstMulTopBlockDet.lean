@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivOfNotLinearIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivOfNotLinearIndependent
+
+@[expose] public section
+
 open Matrix Formalism.IndefR.Datum GlobalTheory.ExportSeries
 
 namespace GlobalTheory

@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.AdelicGL2ExtOfLocalComponents
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDef
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushHomBijective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleOfFibres
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsMonHomLift
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.AdelicGL2ExtOfLocalComponents
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDef
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushHomBijective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleOfFibres
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsMonHomLift
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PrincipalOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,8 @@ theorem pull_pair (π : Pic (A ⊗ A).left) {T T' : Over S} (g : T' ⟶ T) (x y 
 
 theorem pull_quad (π : Pic (A ⊗ A).left) (W : Matrix (Fin n) (Fin n) ℤ) {T T' : Over S} (g : T' ⟶ T)
     (x : Fin n → (T ⟶ A)) : pull g.left (quad π W x) = quad π W (fun u => g ≫ x u) := by
-  simp only [quad, map_sum, map_zsmul, pull_pair]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [quad, map_sum, map_zsmul, pull_pair]
 
 variable [GrpObj A] [IsCommMonObj A] {π : Pic (A ⊗ A).left}
   (hadd : ∀ (T : Over S) (x x' y : T ⟶ A), pair π (x * x') y = pair π x y + pair π x' y)
@@ -89,7 +94,7 @@ theorem pull_translDiff {T T' : Over S} (x : T ⟶ G) (j : T' ⟶ T) (b : T' ⟶
       ∑ u, ∑ v, (W + W.transpose) u v • pair π (j ≫ x ≫ pr u) (b ≫ pr v) := by
   unfold Out.translDiff at h ⊢
   rw [cls_linComb hL, Fin.sum_univ_two]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul, hLW, pull_quad, map_add, map_neg]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, one_smul, neg_smul, hLW, pull_quad, map_add (f := _), map_neg]
   have e : ∀ u, lift j b ≫ (lift (fst T G ≫ x) (snd T G) ≫ μ[G]) ≫ pr u = (j ≫ x ≫ pr u) * (b ≫ pr u) := fun u => by
     have := hmon u
     rw [← Hom.mul_def, MonObj.mul_comp, MonObj.comp_mul, Category.assoc, lift_fst_assoc, lift_snd_assoc]
@@ -117,8 +122,8 @@ theorem sym : Out.Sym G L := fun _ => ⟨⊤, trivial, by
     simpa [Hom.inv_def] using h
   simp only [e, quad_inv hadd hsym, add_neg_cancel]⟩
 
-include hadd hsym hLW hmon huniv in
 
+include hadd hsym hLW hmon huniv in
 theorem kTriv_of_kernel (hdet : (W + W.transpose).det = 1)
     (hker : ∀ (T : Over S) (x : T ⟶ A), pair π (snd A T ≫ x) (fst A T) = 0 → x = 1) : Out.KTriv G L := by
   intro R _ t x hx
@@ -164,8 +169,8 @@ theorem kTriv_of_kernel (hdet : (W + W.transpose).det = 1)
   have e : j ≫ x ≫ pr u₀ = j ≫ 1 := (hker T' _ k₁).trans (MonObj.comp_one j).symm
   exact congrArg (fun q => q.left) e
 
-include hadd hsym hLW hmon huniv in
 
+include hadd hsym hLW hmon huniv in
 theorem kernel_of_kTriv (u₀ : Fin n) (hK : Out.KTriv G L) (T : Over S) (x : T ⟶ A)
     (hx : pair π (snd A T ≫ x) (fst A T) = 0) : x = 1 := by
   refine Over.OverMorphism.ext (Scheme.Cover.hom_ext T.left.affineOpenCover.openCover _ _ fun i => ?_)
@@ -272,7 +277,8 @@ theorem principal_of_generic_of_ample_special : Out.Laws → Out.Laws2 → ∀ (
   have hLW' : cls L' hL' = quad (cls c'.P c'.isLB) W8 pr' := cls_linComb c'.isLB _ _ _
   have hiso : LBIso L' (L.pull ψ) := by
     refine (cls_eq_iff hL' (pull_isLB hL _)).1 ?_
-    rw [cls_pull hL, hLW, hLW', quad, quad, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cls_pull hL, hLW, hLW', quad, quad, map_sum]
     exact Finset.sum_congr rfl fun uv _ => by rw [map_zsmul, hpair ψ _ _ _ _ (hpr uv.1) (hpr uv.2)]
   have := hG.smooth
   have := hG.geomConnected

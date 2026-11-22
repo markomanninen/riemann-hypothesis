@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -83,7 +87,8 @@ def Fam.Over {Z S : Scheme.{0}} {p : Z ⟶ S} {R' R : Type} [CommRing R'] [CommR
 def Fam.IsImage {Z S : Scheme.{0}} {p : Z ⟶ S} {R' R : Type} [CommRing R'] [CommRing R] {I : Cx R'} {J : Cx R}
     (τ : Fam p I J) {n : ℤ} (α : Cochain ((chains R').obj (sch.obj Z)) I n) (β : Cochain ((chains R).obj (sch.obj S)) J n) :
     Prop :=
-  ∀ (k : ℕ) (s : ℤ) (h : -(k : ℤ) + n = s) (A : Sq p), ev β k s h A.U A.u = (τ.deg s).app A (ev α k s h A.V A.v)
+  ∀ (k : ℕ) (s : ℤ) (h : -(k : ℤ) + n = s) (A : Sq p),
+    ev (R := R) β k s h A.U A.u = (τ.deg s).app A (ev (R := R') α k s h A.V A.v)
 
 def Fam.op {Z S : Scheme.{0}} {p : Z ⟶ S} {R' R : Type} [CommRing R'] [CommRing R] {I : Cx R'} {J : Cx R} (τ : Fam p I J)
     (n : ℤ) : CohomologyClass ((chains R').obj (sch.obj Z)) I n →+ CohomologyClass ((chains R).obj (sch.obj S)) J n :=
@@ -113,8 +118,6 @@ structure Corr (S Y : Scheme.{0}) : Type 1 where
   w : Wt Z
   fin : IsFinite p
   wt : IsWt p w
-
-def Corr.zero {S Y : Scheme.{0}} (f : S ⟶ Y) : Corr S Y := ⟨S, 𝟙 S, f, Wt.const S 0, inferInstance, isWt_zero _⟩
 
 def Corr.cyc {S Y : Scheme.{0}} (c : Corr S Y) (Ω : Type) [Field Ω] [IsAlgClosed Ω] (x : gp Ω ⟶ S) (y : gp Ω ⟶ Y) : ℤ :=
   ∑ᶠ z ∈ {z : gp Ω ⟶ c.Z | z ≫ c.p = x ∧ z ≫ c.f = y}, c.w Ω z

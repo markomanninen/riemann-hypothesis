@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaPlaces.BasisReprMap
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.ThetaPlaces.BasisReprMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ def eL : (Fin n → Fin m → HeckeCharacterZeroLocus.SiegelWeilU.Fv F v ⊗[F] 
   map_add' Y Y' := by
     funext k
     have : toMxV v (Y + Y') = toMxV v Y + toMxV v Y' := by ext; rfl
-    simp only [this, Matrix.add_mul, crdV, Matrix.add_apply, map_add, Finsupp.add_apply, Pi.add_apply]
+    simp only [this, Matrix.add_mul, crdV, Matrix.add_apply, map_add (f := _), Finsupp.add_apply, Pi.add_apply]
   map_smul' r Y := by
     funext k
     have : toMxV v (r • Y) = r • toMxV v Y := by ext; rfl

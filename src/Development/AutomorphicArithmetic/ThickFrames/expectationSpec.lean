@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+module
+
+public import Development.AutomorphicArithmetic.ThickFrames.MarkedLow
+
+@[expose] public section
 
 open Finset UpperTheory.BernoulliSumsFrobeniusOrbits Formalism.G0
 

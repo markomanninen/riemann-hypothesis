@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -27,7 +31,8 @@ theorem LeafNat_of (hA : LeafA6nat) : LeafNat := by
   · rw [← P.map_ι f h h', h0, map_one]
   · intro j hj; simp [hz j hj]
   · have hg := congrArg (P.map (PB.over f V) (inv_of (PB.pr (f ≫ V)) h) (inv_of (PB.pr V) h')) hs
-    rw [map_zero, map_sum] at hg
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, map_sum] at hg
     rw [← hg]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [map_mul, map_pow, P.map_ι, Collected.deg1, pull_cast_nat, ← pull_comp, PB.over_pr]

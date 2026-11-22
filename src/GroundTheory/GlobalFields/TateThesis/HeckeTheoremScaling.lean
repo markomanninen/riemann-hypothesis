@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TateMainUnique
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourier
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TateMainUnique
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsFourier
+
+@[expose] public section
 
 open NumberField InfinitePlace IsDedekindDomain MeasureTheory Complex Topology Filter Set
 open scoped NumberField.AdeleRing nonZeroDivisors

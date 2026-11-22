@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.InfInvA
+
+@[expose] public section
 
 noncomputable section
 
@@ -226,7 +230,8 @@ def Gen (n : ℕ) : Set (M2 n) :=
 
 theorem sum_single_mem (W : Submodule ℂ (M2 n)) (Φ : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] M2 n)
     (h : ∀ i j a, Φ (Matrix.single i j a) ∈ W) (M : Matrix (Fin n) (Fin n) ℂ) : Φ M ∈ W := by
-  rw [Matrix.matrix_eq_sum_single M, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.matrix_eq_sum_single M, map_sum]
   exact Submodule.sum_mem _ fun i _ => by rw [map_sum]; exact Submodule.sum_mem _ fun j _ => h i j _
 
 def fb11 (n : ℕ) : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] M2 n where
@@ -312,7 +317,7 @@ theorem lawDeriv : LawDeriv := by
   · have h0 : lam (0 : M2 n) = 0 := by simpa using lam_smul 0 (0 : M2 n)
     rw [zero_mul, map_zero, h0, zero_mul]
   · intro a b _ _ ha hb
-    rw [add_mul, map_add, ha, hb, lam_add, add_mul]
+    rw [add_mul, map_add (f := _), ha, hb, lam_add, add_mul]
   · intro a b _ hb
     rw [smul_mul_assoc, map_smul, hb, lam_smul, smul_eq_mul, mul_assoc]
 

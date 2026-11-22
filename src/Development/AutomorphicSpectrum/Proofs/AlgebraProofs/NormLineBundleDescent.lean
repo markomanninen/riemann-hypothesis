@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsAmpleLBOfRelAmpleOfIsAffine
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,12 +211,12 @@ theorem normLB_res_g (hN : NormRes q N) (hL : L.IsLB) (c c' : (normLB q N hL).ι
   Units.ext ((hN _ _ h _).trans (congrArg (N T) (congrArg Units.val (Frame.res_div hL c.2 c'.2 _ _ _))))
 
 theorem isLB_normLB (hN : NormRes q N) (hL : L.IsLB) (hc : ∀ y : Y, ∃ c : (normLB q N hL).ι, y ∈ c.1) :
-    (normLB q N hL).IsLB where
+    (normLB q N hL).IsLB := {
   cover := top_le_iff.1 fun y _ => Opens.mem_iSup.2 (hc y)
   g_self c := (normLB_res_g hN hL c c _).trans (by rw [Frame.div_self, map_one])
   cocycle c₁ c₂ c₃ := (congrArg₂ (· * ·) (normLB_res_g hN hL c₁ c₂ _) (normLB_res_g hN hL c₂ c₃ _)).trans
     (((map_mul _ _ _).symm.trans (congrArg _ (Frame.div_mul_div hL _ _ _ _ _ _))).trans
-      (normLB_res_g hN hL c₁ c₃ _).symm)
+      (normLB_res_g hN hL c₁ c₃ _).symm) }
 
 theorem gs_norm_compat (hN : NormRes q N) (hL : L.IsLB) {n : ℕ} (s : (lbPow L n).Sec) (c c' : (normLB q N hL).ι)
     {y : Y} (hy : y ∈ c.1) (hy' : y ∈ c'.1) :

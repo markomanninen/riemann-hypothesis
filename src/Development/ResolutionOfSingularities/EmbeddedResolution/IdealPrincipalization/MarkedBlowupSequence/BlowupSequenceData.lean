@@ -1,12 +1,17 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.Foundations.Blowup.StrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealSheafOrder
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.MarkedSequenceOfBlowups
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory Opposite AlgebraicGeometry
@@ -38,32 +43,32 @@ theorem projectionToBase_zero (d : BlowupSequenceData X) : projectionToBase d 0 
 theorem projectionToBase_succ (d : BlowupSequenceData X) (i : ℕ) :
     projectionToBase d (i + 1) = d.map i ≫ projectionToBase d i := rfl
 
-private def homAdd (d : BlowupSequenceData X) (i : ℕ) : ∀ k : ℕ, d.obj (i + k) ⟶ d.obj i
+protected def homAdd (d : BlowupSequenceData X) (i : ℕ) : ∀ k : ℕ, d.obj (i + k) ⟶ d.obj i
   | 0 => 𝟙 (d.obj i)
-  | (k + 1) => d.map (i + k) ≫ homAdd d i k
+  | (k + 1) => d.map (i + k) ≫ d.homAdd i k
 
-private def homOfLE (d : BlowupSequenceData X) {i j : ℕ} (h : i ≤ j) : d.obj j ⟶ d.obj i :=
-  eqToHom (congrArg d.obj (Nat.add_sub_cancel' h).symm) ≫ homAdd d i (j - i)
+protected def homOfLE (d : BlowupSequenceData X) {i j : ℕ} (h : i ≤ j) : d.obj j ⟶ d.obj i :=
+  eqToHom (congrArg d.obj (Nat.add_sub_cancel' h).symm) ≫ d.homAdd i (j - i)
 
 private theorem eqToHom_comp_iteratedBlowupMorphism_of_eq_zero (d : BlowupSequenceData X) (i k : ℕ)
     (h : d.obj i = d.obj (i + k)) (hk : k = 0) :
-    eqToHom h ≫ homAdd d i k = 𝟙 (d.obj i) := by
+    eqToHom h ≫ d.homAdd i k = 𝟙 (d.obj i) := by
   subst hk
-  have h1 : homAdd d i 0 = 𝟙 (d.obj i) := rfl
+  have h1 : d.homAdd i 0 = 𝟙 (d.obj i) := rfl
   have h2 : eqToHom h = 𝟙 (d.obj i) := rfl
   rw [h1, h2]
   exact Category.id_comp (𝟙 (d.obj i))
 
 private theorem towerMorphism_refl (d : BlowupSequenceData X) (i : ℕ) :
-    homOfLE d (le_refl i) = 𝟙 (d.obj i) :=
+    d.homOfLE (le_refl i) = 𝟙 (d.obj i) :=
   eqToHom_comp_iteratedBlowupMorphism_of_eq_zero d i (i - i)
     (congrArg d.obj (Nat.add_sub_cancel' (le_refl i)).symm) (Nat.sub_self i)
 
 private theorem iteratedBlowupMorphism_zero (d : BlowupSequenceData X) (i : ℕ) :
-    homAdd d i 0 = 𝟙 (d.obj i) := rfl
+    d.homAdd i 0 = 𝟙 (d.obj i) := rfl
 
 private theorem iteratedBlowupMorphism_succ (d : BlowupSequenceData X) (i k : ℕ) :
-    homAdd d i (k + 1) = d.map (i + k) ≫ homAdd d i k := rfl
+    d.homAdd i (k + 1) = d.map (i + k) ≫ d.homAdd i k := rfl
 
 private theorem blowupMorphism_comp_eqToHom (d : BlowupSequenceData X) {n m : ℕ} (h : n = m) :
     d.map n ≫ eqToHom (congrArg d.obj h) =
@@ -72,25 +77,25 @@ private theorem blowupMorphism_comp_eqToHom (d : BlowupSequenceData X) {n m : �
   simp
 
 private theorem iteratedBlowupMorphism_congr_length (d : BlowupSequenceData X) (i : ℕ) {k k' : ℕ} (h : k = k') :
-    homAdd d i k =
-      eqToHom (show d.obj (i + k) = d.obj (i + k') by rw [h]) ≫ homAdd d i k' := by
+    d.homAdd i k =
+      eqToHom (show d.obj (i + k) = d.obj (i + k') by rw [h]) ≫ d.homAdd i k' := by
   subst h
   simp
 
 private theorem iteratedBlowupMorphism_congr_start (d : BlowupSequenceData X) {i i' : ℕ} (h : i = i') (k : ℕ) :
-    homAdd d i k =
-      eqToHom (show d.obj (i + k) = d.obj (i' + k) by rw [h]) ≫ homAdd d i' k ≫
+    d.homAdd i k =
+      eqToHom (show d.obj (i + k) = d.obj (i' + k) by rw [h]) ≫ d.homAdd i' k ≫
         eqToHom (show d.obj i' = d.obj i by rw [h]) := by
   subst h
   simp
 
 private theorem iteratedBlowupMorphism_comp_iteratedBlowupMorphism (d : BlowupSequenceData X) (i a b : ℕ) :
-    homAdd d (i + a) b ≫ homAdd d i a =
-      eqToHom (congrArg d.obj (Nat.add_assoc i a b)) ≫ homAdd d i (a + b) := by
+    d.homAdd (i + a) b ≫ d.homAdd i a =
+      eqToHom (congrArg d.obj (Nat.add_assoc i a b)) ≫ d.homAdd i (a + b) := by
   induction b with
   | zero =>
-      show homAdd d (i + a) 0 ≫ homAdd d i a
-          = eqToHom (rfl : d.obj (i + a) = d.obj (i + a)) ≫ homAdd d i a
+      show d.homAdd (i + a) 0 ≫ d.homAdd i a
+          = eqToHom (rfl : d.obj (i + a) = d.obj (i + a)) ≫ d.homAdd i a
       rw [iteratedBlowupMorphism_zero, eqToHom_refl, Category.id_comp]
       exact Category.id_comp _
   | succ b ih =>
@@ -100,14 +105,14 @@ private theorem iteratedBlowupMorphism_comp_iteratedBlowupMorphism (d : BlowupSe
 
 private theorem towerMorphism_eq_iteratedBlowupMorphism (d : BlowupSequenceData X) {i j : ℕ} (h : i ≤ j) (k : ℕ)
     (hk : j = i + k) :
-    homOfLE d h = eqToHom (congrArg d.obj hk) ≫ homAdd d i k := by
+    d.homOfLE h = eqToHom (congrArg d.obj hk) ≫ d.homAdd i k := by
   subst hk
-  unfold homOfLE
+  unfold BlowupSequenceData.homOfLE
   rw [iteratedBlowupMorphism_congr_length d i (show i + k - i = k by omega)]
   simp
 
 private theorem towerMorphism_comp (d : BlowupSequenceData X) {i j l : ℕ} (hij : i ≤ j) (hjl : j ≤ l) :
-    homOfLE d hjl ≫ homOfLE d hij = homOfLE d (hij.trans hjl) := by
+    d.homOfLE hjl ≫ d.homOfLE hij = d.homOfLE (hij.trans hjl) := by
   rw [towerMorphism_eq_iteratedBlowupMorphism d hjl (l - j) (by omega), towerMorphism_eq_iteratedBlowupMorphism d hij (j - i) (by omega),
     towerMorphism_eq_iteratedBlowupMorphism d (hij.trans hjl) ((j - i) + (l - j)) (by omega),
     iteratedBlowupMorphism_congr_start d (show j = i + (j - i) by omega) (l - j)]
@@ -117,30 +122,29 @@ private theorem towerMorphism_comp (d : BlowupSequenceData X) {i j l : ℕ} (hij
 
 def tower (d : BlowupSequenceData X) : ℕᵒᵖ ⥤ Scheme.{u} where
   obj n := d.obj n.unop
-  map f := homOfLE d (leOfHom f.unop)
-  map_id n := towerMorphism_refl d n.unop
-  map_comp f g := (towerMorphism_comp d (leOfHom g.unop) (leOfHom f.unop)).symm
-
-@[simp]
-theorem tower_obj (d : BlowupSequenceData X) (i : ℕ) : d.tower.obj (op i) = d.obj i := rfl
+  map f := d.homOfLE (leOfHom f.unop)
+  map_id n := by
+    exact towerMorphism_refl d n.unop
+  map_comp f g := by
+    exact (towerMorphism_comp d (leOfHom g.unop) (leOfHom f.unop)).symm
 
 private theorem iteratedBlowupMorphism_one (d : BlowupSequenceData X) (i : ℕ) :
-    homAdd d i 1 = d.map i := by
-  show d.map (i + 0) ≫ homAdd d i 0 = d.map i
+    d.homAdd i 1 = d.map i := by
+  show d.map (i + 0) ≫ d.homAdd i 0 = d.map i
   exact Category.comp_id _
 
 private theorem eqToHom_comp_iteratedBlowupMorphism (d : BlowupSequenceData X) (i : ℕ) {k k' : ℕ} (h : k = k')
     (hobj : d.obj (i + k) = d.obj (i + k')) :
-    eqToHom hobj ≫ homAdd d i k' = homAdd d i k := by
+    eqToHom hobj ≫ d.homAdd i k' = d.homAdd i k := by
   subst h
   simp
 
 private theorem towerMorphism_succ (d : BlowupSequenceData X) (i : ℕ) (h : i ≤ i + 1) :
-    homOfLE d h = d.map i := by
+    d.homOfLE h = d.map i := by
   have h1 : i + 1 - i = 1 := by omega
   have h2 := eqToHom_comp_iteratedBlowupMorphism d i h1
     (show d.obj (i + (i + 1 - i)) = d.obj (i + 1) by rw [h1])
-  unfold homOfLE
+  unfold BlowupSequenceData.homOfLE
   rw [← h2, ← Category.assoc, eqToHom_trans, eqToHom_refl, Category.id_comp]
   exact iteratedBlowupMorphism_one d i
 
@@ -164,9 +168,6 @@ def toSequenceOfBlowups (d : BlowupSequenceData X) : SequenceOfBlowups X where
 
 @[simp]
 theorem toSequenceOfBlowups_length (d : BlowupSequenceData X) : d.toSequenceOfBlowups.length = d.length := rfl
-
-@[simp]
-theorem toSequenceOfBlowups_tower (d : BlowupSequenceData X) : d.toSequenceOfBlowups.tower = d.tower := rfl
 
 theorem toSequenceOfBlowups_schemeAt (d : BlowupSequenceData X) (i : ℕ) : d.toSequenceOfBlowups.schemeAt i = d.obj i := rfl
 
@@ -252,19 +253,6 @@ def emptyBlowupSequenceData (X : Scheme.{u}) : BlowupSequenceData X where
 
 @[simp]
 theorem emptyBlowupSequenceData_length (X : Scheme.{u}) : (emptyBlowupSequenceData X).length = 0 := rfl
-
-@[simp]
-theorem emptyBlowupSequenceData_schemeAt (X : Scheme.{u}) (i : ℕ) : (emptyBlowupSequenceData X).obj i = X := rfl
-
-@[simp]
-theorem emptyBlowupSequenceData_blowupMorphism (X : Scheme.{u}) (i : ℕ) : (emptyBlowupSequenceData X).map i = 𝟙 X := rfl
-
-@[simp]
-theorem emptyBlowupSequenceData_center (X : Scheme.{u}) (i : ℕ) : (emptyBlowupSequenceData X).center i = ⊤ := rfl
-
-@[simp]
-theorem emptyBlowupSequenceData_isoObjZero (X : Scheme.{u}) :
-    (emptyBlowupSequenceData X).isoZero = Iso.refl X := rfl
 
 structure MarkedBlowupSequenceData {k : Type u} [Field k] {X : Scheme.{u}}
     (p : X ⟶ Spec (CommRingCat.of k)) (I : X.IdealSheafData) (m : ℕ)
@@ -361,11 +349,16 @@ def toMarkedSequenceOfBlowups (d : MarkedBlowupSequenceData p I m E) : MarkedSeq
   boundary := d.boundary
   ideal_zero := d.ideal_zero
   boundary_zero := d.boundary_zero
-  center_smooth := fun i hi => smooth_center_comp_projection d i hi
-  center_snc := fun i hi => hasStrictNormalCrossingsWith_center_boundary d i hi
-  center_order := fun i hi => center_support_subset_orderAtLeastLocus d i hi
-  ideal_succ := fun i hi => exceptionalIdeal_pow_mul_ideal_succ_eq_comap d i hi
-  boundary_succ := fun i hi => boundary_succ_eq_map_strictTransform_append d i hi
+  center_smooth := by
+    exact smooth_center_comp_projection d
+  center_snc := by
+    exact hasStrictNormalCrossingsWith_center_boundary d
+  center_order := by
+    exact center_support_subset_orderAtLeastLocus d
+  ideal_succ := by
+    exact exceptionalIdeal_pow_mul_ideal_succ_eq_comap d
+  boundary_succ := by
+    exact boundary_succ_eq_map_strictTransform_append d
 
 @[simp]
 theorem toMarkedSequence_toSequenceOfBlowups (d : MarkedBlowupSequenceData p I m E) :
@@ -426,8 +419,10 @@ private theorem toSequenceOfBlowups_projectionToBase_succ (s : MarkedSequenceOfB
 def ofMarkedSequence (s : MarkedSequenceOfBlowups p I m E) : MarkedBlowupSequenceData p I m E where
   toBlowupSequenceData := BlowupSequenceData.ofSequenceOfBlowups s.toSequenceOfBlowups
   proj := fun i => s.toSequenceOfBlowups.projectionToBase i
-  proj_zero := toSequenceOfBlowups_projectionToBase_zero s
-  proj_succ := fun i => toSequenceOfBlowups_projectionToBase_succ s i
+  proj_zero := by
+    exact toSequenceOfBlowups_projectionToBase_zero s
+  proj_succ := by
+    exact toSequenceOfBlowups_projectionToBase_succ s
   ideal := s.ideal
   boundary := s.boundary
   ideal_zero := s.ideal_zero
@@ -451,16 +446,8 @@ theorem ofMarkedSequence_projectionToBase (s : MarkedSequenceOfBlowups p I m E) 
     (ofMarkedSequence s).proj i = s.toSequenceOfBlowups.projectionToBase i := rfl
 
 @[simp]
-theorem ofMarkedSequence_blowupMorphism (s : MarkedSequenceOfBlowups p I m E) (i : ℕ) :
-    (ofMarkedSequence s).toBlowupSequenceData.map i = s.toSequenceOfBlowups.transitionMapSucc i := rfl
-
-@[simp]
 theorem ofMarkedSequence_ideal (s : MarkedSequenceOfBlowups p I m E) (i : ℕ) :
     (ofMarkedSequence s).ideal i = s.ideal i := rfl
-
-@[simp]
-theorem ofMarkedSequence_boundary_apply (s : MarkedSequenceOfBlowups p I m E) (i : ℕ) :
-    (ofMarkedSequence s).boundary i = s.boundary i := rfl
 
 @[simp]
 theorem ofMarkedSequence_center (s : MarkedSequenceOfBlowups p I m E) (i : ℕ) :
@@ -478,7 +465,9 @@ def emptyMarkedBlowupSequenceData {k : Type u} [Field k] {X : Scheme.{u}}
   ideal := fun _ => I
   boundary := fun _ => E
   ideal_zero := (Scheme.IdealSheafData.comap_id I).symm
-  boundary_zero := by simp [Scheme.IdealSheafData.comap_id]
+  boundary_zero := by
+    change E = E.map (fun D => D.comap (𝟙 X))
+    simp [Scheme.IdealSheafData.comap_id]
   center_order := fun i hi => absurd hi (Nat.not_lt_zero i)
   center_smooth := fun i hi => absurd hi (Nat.not_lt_zero i)
   center_snc := fun i hi => absurd hi (Nat.not_lt_zero i)
@@ -502,12 +491,6 @@ theorem emptyMarkedBlowupSequenceData_schemeAt {k : Type u} [Field k] {X : Schem
     (p : X ⟶ Spec (CommRingCat.of k)) (I : X.IdealSheafData) (m : ℕ)
     (E : List X.IdealSheafData) (i : ℕ) :
     (emptyMarkedBlowupSequenceData p I m E).toBlowupSequenceData.obj i = X := rfl
-
-@[simp]
-theorem emptyMarkedBlowupSequenceData_center {k : Type u} [Field k] {X : Scheme.{u}}
-    (p : X ⟶ Spec (CommRingCat.of k)) (I : X.IdealSheafData) (m : ℕ)
-    (E : List X.IdealSheafData) (i : ℕ) :
-    (emptyMarkedBlowupSequenceData p I m E).toBlowupSequenceData.center i = ⊤ := rfl
 
 @[simp]
 theorem emptyMarkedBlowupSequenceData_projectionToBase {k : Type u} [Field k] {X : Scheme.{u}}

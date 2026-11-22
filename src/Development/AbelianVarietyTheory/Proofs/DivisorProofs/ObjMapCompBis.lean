@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,12 +32,5 @@ def comp (m₁ : ObjMap o'' o' g) (m₂ : ObjMap o' o f) : ObjMap o'' o (g ≫ f
       (chartPullSame o.P (fun _ : PUnit => m₁.φ₂ ≫ m₂.φ₂) (fun _ => m₂.φ₂) (fun _ => 1) m₁.φ₂ (fun _ => rfl))
       m₂.pol)
   eta y := by rw [← Category.assoc, m₁.eta, Category.assoc, m₂.eta, Category.assoc]
-
-theorem objMap_comp : ∀ {p : ℕ} [Fact p.Prime] {D : GlobalTheory.UPel.HT.Datum p} {R : Type} [CommRing R]
-    {b : GlobalTheory.UPel.HT.Base D R} {N : ℕ} {S S' S'' : Scheme.{0}} {s : S ⟶ Sp R} {s' : S' ⟶ Sp R} {s'' : S'' ⟶ Sp R}
-    (o : GlobalTheory.UPel.HT.Obj b N s) (o' : GlobalTheory.UPel.HT.Obj b N s') (o'' : GlobalTheory.UPel.HT.Obj b N s'') (f : S' ⟶ S)
-    (g : S'' ⟶ S'), GlobalTheory.UPel.HT.ObjMap o'' o' g → GlobalTheory.UPel.HT.ObjMap o' o f →
-      Nonempty (GlobalTheory.UPel.HT.ObjMap o'' o (g ≫ f)) :=
-  fun _ _ _ _ _ m₁ m₂ => ⟨comp m₁ m₂⟩
 
 end GlobalTheory.UPel.HT.ObjMapComp

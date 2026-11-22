@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LandherrAndLandherrSt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LandherrAndLandherrSt
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -51,7 +55,7 @@ private theorem emb_star {Δ : F} (hΔ : ∀ σ : F →+* ℝ, σ Δ < 0) (φ : 
   have hd : ∀ x : Lsq F Δ, φ x = (σ x.re : ℂ) + (σ x.im : ℂ) * w := by
     intro x
     conv_lhs => rw [show x = algebraMap F _ x.re + algebraMap F _ x.im * QuadraticAlgebra.omega by ext <;> simp]
-    rw [map_add, map_mul, hσ', hσ']
+    rw [map_add (f := _), map_mul, hσ', hσ']
   refine ⟨fun x => ?_, hwi⟩
   rw [hd, hd]
   apply Complex.ext <;> simp [hwr]

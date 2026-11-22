@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsHeight
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -152,7 +156,7 @@ private theorem box (r : Fin (2 + 2) → ℝ) (hr : ∀ i, 0 < r i) {E R : ℝ} 
     field_simp
   have h2 : ∏ j, (r i / r j) ≤ R ^ (2 + 2) := by
     calc ∏ j, (r i / r j) ≤ ∏ _j : Fin (2 + 2), R :=
-          Finset.prod_le_prod (fun j _ => (div_pos (hr i) (hr j)).le) fun j _ => hq i j
+          Finset.prod_le_prod₀ (fun j _ => (div_pos (hr i) (hr j)).le) fun j _ => hq i j
       _ = R ^ (2 + 2) := by simp
   have h3 : r i ^ (2 + 2) ≤ (E * R) ^ (2 + 2) := by
     rw [h1, mul_pow]

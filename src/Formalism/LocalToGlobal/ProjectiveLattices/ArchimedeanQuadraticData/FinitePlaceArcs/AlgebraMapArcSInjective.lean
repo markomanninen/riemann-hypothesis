@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.ExistsCoeffNormOne
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.BeSumPf
-import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.ArcSPin
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FinCorePf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.BasisChangePf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.ExistsCoeffNormOne
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.FinitePlaceArcs.BeSumPf
+public import Formalism.LocalToGlobal.ProjectiveLattices.ArchimedeanQuadraticData.ArcLineFunctions.ArcSPin
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.FinCorePf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.Rationality.BasisChangePf
+
+@[expose] public section
 
 noncomputable section
 

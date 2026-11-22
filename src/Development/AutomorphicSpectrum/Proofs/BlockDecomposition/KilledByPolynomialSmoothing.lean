@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UfamConst
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UfamConst
+
+@[expose] public section
+
 open scoped ENNReal
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology Polynomial
 open GlobalTheory.CuspRep GlobalTheory.UnitaryBC PositivityTheory.Rg.Rs GlobalTheory.CompanionTheory.Conc
@@ -54,8 +59,8 @@ theorem ctn_sm {K : Type} [Field K] [NumberField K] {n : ℕ} [MeasurableSpace (
 
 end GlobalTheory.CompanionTheory.Conc.SmKill
 
-open GlobalTheory.CompanionTheory.Conc.SmKill in
 
+open GlobalTheory.CompanionTheory.Conc.SmKill in
 theorem GlobalTheory.CompanionTheory.Conc.kill_sm : ∀ (K : Type) [Field K] [NumberField K] (n : ℕ) [MeasurableSpace (archGroup K n)] [BorelSpace (archGroup K n)] (ν : Measure (archGroup K n)) [ν.IsHaarMeasure] (β : archGroup K n → ℝ) (f : AdelicGLn.AdelicGL K n → ℂ) (r : ℕ) (p : ℂ[X]), Ker ν β → 0 < r → r < n → Continuous f →
     An.Kill r f p → An.Kill r (sm ν β f) p := by
   intro K _ _ n _ _ ν _ β f r p hk _ _ hf hkill g
@@ -63,7 +68,7 @@ theorem GlobalTheory.CompanionTheory.Conc.kill_sm : ∀ (K : Type) [Field K] [Nu
       p.coeff j * An.ctn r (sm ν β f) (An.aR K n r j * g) =
         ∫ y, p.coeff j * ((β y : ℂ) * An.ctn r f (An.aR K n r j * g * infEmb K n y)) ∂ν := fun j _ => by
     rw [(ctn_sm ν hk.cont hk.cpt hf r _).2, integral_const_mul]
-  rw [Finset.sum_congr rfl h1, ← integral_finset_sum _ fun j _ =>
+  rw [Finset.sum_congr rfl h1, ← integral_finsetSum _ fun j _ =>
     ((ctn_sm ν hk.cont hk.cpt hf r _).1).const_mul _]
   refine integral_eq_zero_of_ae (Eventually.of_forall fun y => ?_)
   have h2 := hkill (g * infEmb K n y)

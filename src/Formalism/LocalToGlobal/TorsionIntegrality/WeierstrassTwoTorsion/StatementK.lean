@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
-import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementI
+public import Formalism.LocalToGlobal.TorsionIntegrality.CMGoodModels.Statement
+
+@[expose] public section
 
 open PowerSeries
 
@@ -18,11 +22,7 @@ def ShortInv : Prop :=
 def WpNumEq : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (W : WeierstrassCurve K),
     Formalism.L2.Th1.CM.wpNum (g₂ W) (g₃ W) = 1 + X ^ 2 * wpReg W ∧
-    Formalism.L2.Th1.CM.wpDen (g₂ W) (g₃ W) = 1 - C (1 / 2 : K) * X ^ 3 * derivative K (wpReg W)
-
-def WpRegInv : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (W W' : WeierstrassCurve K),
-    g₂ W = g₂ W' → g₃ W = g₃ W' → wpReg W = wpReg W'
+    Formalism.L2.Th1.CM.wpDen (g₂ W) (g₃ W) = 1 - C (1 / 2 : K) * X ^ 3 * derivative (wpReg W)
 
 def USerEq : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (g2 g3 : K),

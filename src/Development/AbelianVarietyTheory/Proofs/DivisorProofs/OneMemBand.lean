@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
-import GroundTheory.AutomorphicForms.ReductionCore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CentralNilGL
+public import GroundTheory.AutomorphicForms.ReductionCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ theorem absDetA_one : absDetA (1 : GA E a) = 1 := by
   rw [GroundTheory.Automorphic.Reduction.adeleAbs_units (K := E) (Matrix.GeneralLinearGroup.det (1 : GA E a)), map_one, map_one]
   rfl
 
-variable (E a) in
 
+variable (E a) in
 def band : Set (GA E a) := {g | 1 ≤ absDetA g ∧ absDetA g ≤ 2}
 
 theorem one_mem_band : (1 : GA E a) ∈ band E a := by

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import ReciprocityTheory.DualLattices.MemDualLat
-import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.HasLenCokerDet
-import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import ReciprocityTheory.DualLattices.MemDualLat
+public import ReciprocityTheory.DualLattices.IsUnitDetOfSpanEq
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.HasLenCokerDet
+public import ReciprocityTheory.DualLattices.MemOfSumSingleEqZero
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ theorem ret_hopf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
       refine ⟨hpull h hh.1, ?_⟩
       rintro x k ⟨k', hk', rfl⟩
       show h (π (x + ι k')) = h (π x)
-      rw [map_add, hπ]
+      rw [map_add (f := _), hπ]
       exact hh.2 _ _ hk'
     have h2 := hG h1
     let φ : (N → C) →ₐ[R] (N' → C) := AlgHom.pi (fun y => Pi.evalAlgHom R (fun _ : N => C) (ι y))
@@ -65,8 +69,8 @@ theorem ret_hopf : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
       refine Algebra.adjoin_mono ?_
       rintro _ ⟨g, ⟨⟨hg1, hg2⟩, hg3⟩, rfl⟩
       refine ⟨⟨⟨g, hg1, rfl⟩, fun y k hk => ?_⟩, fun x y => ?_⟩
-      · rw [hφ, hφ, map_add]; exact hg2 _ _ ⟨k, hk, rfl⟩
-      · rw [hφ, hφ, hφ, map_add]; exact hg3 _ _
+      · rw [hφ, hφ, map_add (f := _)]; exact hg2 _ _ ⟨k, hk, rfl⟩
+      · rw [hφ, hφ, hφ, map_add (f := _)]; exact hg3 _ _
     rw [← h3]
     exact h4 ⟨_, h2, rfl⟩
 
@@ -152,7 +156,7 @@ theorem mem_pFun {p : ℕ} {X : Type} {f : X → C} :
 theorem addFun_comp {p : ℕ} {X Y : Type} [AddCommGroup X] [AddCommGroup Y] (e : X →+ Y)
     {f : Y → C} (hf : f ∈ addFun (C := C) R p Y) : (fun x => f (e x)) ∈ addFun (C := C) R p X := by
   intro x y
-  simp only [map_add]
+  simp only [map_add (f := _)]
   exact hf _ _
 
 theorem linFun_comp {p : ℕ} {X Y : Type} [AddCommGroup X] [AddCommGroup Y] (e : X →+ Y)

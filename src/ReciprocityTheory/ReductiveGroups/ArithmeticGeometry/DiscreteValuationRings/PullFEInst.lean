@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullFEPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PullFEPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,11 +34,11 @@ theorem pullSecs_fe' (hGF : GlobalFnsSt) {O : Type} [CommRing O] [StarRing O]
     refine ⟨uPull (D := D) (F := F) hL oa w0 uΨ huΨ a N hN hN1 k χ, hgen, hcorr, ?_⟩
     have hex : ∃ χ', star a • χ' = star a • χ := ⟨χ, rfl⟩
     unfold pullSecs
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact secRel_pullSecs (D := D) (F := F) hL oa w0 uΨ huΨ a N hN hN1 k s χ hex.choose hex.choose_spec
       (hinj _ _ hex.choose_spec)
   · unfold pullSecs
-    rw [dif_neg (by rintro ⟨χ, hχ⟩; exact hβ χ hχ.symm)]
+    rw [dite_eq_right (by rintro ⟨χ, hχ⟩; exact hβ χ hχ.symm)]
     rfl
 
 end ReciprocityTheory.ChartRestriction.G.DVR

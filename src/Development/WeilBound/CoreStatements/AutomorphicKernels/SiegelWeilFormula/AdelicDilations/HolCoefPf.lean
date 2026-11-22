@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicDilations.WeightFactorDilation
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AdelicDilations.WeightFactorDilation
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem holPhi (H : Hyps) {d : SD σ} (R : RD d) (w : InfinitePlace F) {nb lam �
   obtain ⟨iLC, iSC, iT2, iBo⟩ := kfour.nA_top hσ d.ok.frame
   obtain ⟨K, hK, hKc⟩ := kfour.nF_cocompact hσ d.ok.frame
   obtain ⟨-, -, hTG, -, -, -⟩ := H.auxEx F E σ d
-  haveI := hTG
+  have := hTG
   have hψ := GlobalTheory.StdCharWeilDatum.isCharAF d.ok.good.std
   have hnbc := kfour.nb_continuous hσ d.ok.frame hN
   let u : nA σ d.Y d.b → ℂ := fun β => d.B.ψ (-(Algebra.trace (AF F) (AE F E) (Matrix.trace (T.1.1 * β.1))))
@@ -33,7 +37,7 @@ theorem holPhi (H : Hyps) {d : SD σ} (R : RD d) (w : InfinitePlace F) {nb lam �
     intro β g
     show A (nb (γf β + β) * x' * g) = _
     rw [KSing.nb_add d hN, mul_assoc, mul_assoc, hAi _ (KSing.nb_rat d hN (hγ β).1)]
-  haveI : IsFiniteMeasure (lam.restrict 𝓖) := ⟨by rw [Measure.restrict_apply_univ, h1]; exact ENNReal.one_lt_top⟩
+  have : IsFiniteMeasure (lam.restrict 𝓖) := ⟨by rw [Measure.restrict_apply_univ, h1]; exact ENNReal.one_lt_top⟩
   have hC : IsCompact ((fun k => nb k * x') '' K) := hK.image (hnbc.mul continuous_const)
   have hmeas : ∀ y, AEStronglyMeasurable (fun β => A (c β * R.ι w y) * u β) (lam.restrict 𝓖) := by
     intro y
@@ -95,9 +99,9 @@ theorem holCoef_pf (H : Hyps) {d : SD σ} (R : RD d) (L : LD d) (w : InfinitePla
     set M := d.cw w S with hMdef
     have hM : ∀ k l, k ≠ L.i₀ → M k l = 0 := by
       intro k l hk
-      simp [hMdef, hS, SD.cw, Matrix.map_apply, Matrix.sum_apply, Matrix.single_apply, Ne.symm hk]
+      simp [hMdef, hS, SD.cw, Matrix.map_apply, Matrix.sum_apply, Ne.symm hk]
     have hM0 : M L.i₀ L.i₀ = 0 := by
-      simp [hMdef, hS, SD.cw, Matrix.map_apply, Matrix.sum_apply, Matrix.single_apply, hne]
+      simp [hMdef, hS, SD.cw, Matrix.map_apply, Matrix.sum_apply, hne]
     have hmy : mR y = dZ d.n R.ζ * d.cw w (inFrame d.b (R.ι w y)) * dZ d.n R.ζ⁻¹ := by
       rw [KSplitW.cw_iota]
       simp only [← Matrix.mul_assoc, Krd.dZ_mul_inv h0, Matrix.one_mul]
@@ -106,7 +110,7 @@ theorem holCoef_pf (H : Hyps) {d : SD σ} (R : RD d) (L : LD d) (w : InfinitePla
     have hy : mR y = Matrix.fromBlocks (1 + M) 0 0 ((R.ζ • (1 : Matrix (Fin d.n) (Fin d.n) ℂ)) * d.cw w a' *
         (R.ζ⁻¹ • (1 : Matrix (Fin d.n) (Fin d.n) ℂ))) := by
       rw [hmy, hMdef]
-      simp [dZ, SD.cw, Matrix.fromBlocks_map, Matrix.fromBlocks_multiply, Matrix.map_add]
+      simp [dZ, SD.cw, Matrix.fromBlocks_map, Matrix.fromBlocks_multiply, Matrix.map_add (f := _)]
     rw [hleft _ _ y hy (stab_row L.i₀ M hM _ hr hcol) x, weight_factor_det_one pp qq e y _ _ hy (det_row L.i₀ M hM hM0), one_mul]
 
 end PositivityTheory.SiegelWeilFormula.AStep

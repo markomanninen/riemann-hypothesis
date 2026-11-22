@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ScalarCommuteTransposedRMatrixEntry
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferWordEntriesMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ScalarCommuteTransposedRMatrixEntry
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelCoordinatesCommute
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -155,11 +159,11 @@ theorem QQi_mem_all (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (st : Fr.St
     induction n with
     | zero =>
       intro j hj hij
-      rw [tprod, dif_neg (by omega)]
+      rw [tprod, dite_eq_right (by omega)]
       exact hone
     | succ n ih =>
       intro j hj hij
-      rw [tprod, dif_pos (by omega)]
+      rw [tprod, dite_eq_left (by omega)]
       exact hmul _ _ (ih (j + 1) (by omega) (by omega)) (hts Y' ⟨j, by omega⟩ hij)
   unfold QQi
   exact hmul _ _ (hmul _ _ (hct _ (htp _ _ _ rfl le_rfl)) hQ) (htp _ _ _ rfl le_rfl) a b
@@ -169,7 +173,7 @@ theorem QQi_castSucc (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (st : Fr.S
     QQi L st l.castSucc Y = (Ts (site L l) Y)ᴴ * QQi L st l.succ Y * Ts (site L l) Y := by
   have ht : ∀ Y' : ℂ, tprod L Y' (l.castSucc : ℕ) = tprod L Y' (l.succ : ℕ) * Ts (site L l) Y' := by
     intro Y'
-    rw [tprod, dif_pos (show (l.castSucc : ℕ) < r from l.isLt)]
+    rw [tprod, dite_eq_left (show (l.castSucc : ℕ) < r from l.isLt)]
     rfl
   unfold QQi
   rw [ht, ht, hY, Matrix.conjTranspose_mul]

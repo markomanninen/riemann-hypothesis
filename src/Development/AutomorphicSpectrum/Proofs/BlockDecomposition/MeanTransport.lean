@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHermPart
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.HeckeEta
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierZeroHolds
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousHermPart
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory Filter
@@ -74,7 +79,7 @@ theorem mean_transport (Γ : AddSubgroup A) (Δ : AddSubgroup B) [Countable Γ] 
   have hAC : (μ.map T).IsAddHaarMeasure := ContinuousAddEquiv.isAddHaarMeasure_map μ T
   have hAC2 : (ν.map T.symm).IsAddHaarMeasure := ContinuousAddEquiv.isAddHaarMeasure_map ν T.symm
   have hsm : Measure.QuasiMeasurePreserving (T.symm.toAddEquiv.toEquiv) ν μ :=
-    ⟨T.symm.continuous.measurable, Measure.absolutelyContinuous_isAddHaarMeasure _ _⟩
+    ⟨T.symm.continuous.measurable.aemeasurable, Measure.absolutelyContinuous_isAddHaarMeasure _ _⟩
   let eΓ : Δ ≃ Γ :=
     { toFun := fun d => ⟨T.symm d.1, (hT _).1 (by simpa using d.2)⟩
       invFun := fun c => ⟨T c.1, (hT _).2 c.2⟩

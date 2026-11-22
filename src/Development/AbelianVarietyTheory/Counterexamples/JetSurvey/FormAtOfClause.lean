@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETExSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.EtValLink
-import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETExSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETPointStatement
+public import Formalism.LocalToGlobal.ProjectiveLattices.Adm3OfExtension
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,15 +39,12 @@ theorem phiC_nonneg (X : WeightAlgebra.PJ D B P j) (la : HeightOneSpectrum (𝓞
             ∑ i, ∑ k, ((b.repr a i : ℤ) : ℝ) * ((b.repr a k : ℤ) : ℝ) *
               (P.loc X.dat (WeightAlgebra.resCh la)).be (X.pt66 la y) (b i) (b k) := by
           conv_lhs => rw [← b.sum_repr a]
-          simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, zsmul_eq_mul, Finset.mul_sum]
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by ring
         rw [h2]; exact h1.le
   · exact le_rfl
-
-theorem zero (X : WeightAlgebra.PJ D B P j) (i : ℕ) : EtVal X i 0 := by
-  intro la y
-  rw [map_zero, X.vAt_zero]; exact le_top
 
 theorem mem_Mlat (X : WeightAlgebra.PJ D B P j) (i : ℕ) (η : B.Cusp j (Formalism.L2.Pj.wEt D j i)) (h : EtVal X i η) :
     η ∈ B.Mlat j _ := by

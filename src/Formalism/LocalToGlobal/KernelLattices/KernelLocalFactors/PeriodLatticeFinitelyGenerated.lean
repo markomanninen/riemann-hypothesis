@@ -1,12 +1,16 @@
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylPoint
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.TensorBasis
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylPoint
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.TensorBasis
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -25,7 +29,7 @@ theorem lamC_of_mem {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* �
 
 theorem lamC_add {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p]) {x y : ℂ} (hx : x ∈ TaylorLogMetric.Qbar) (hy : y ∈ TaylorLogMetric.Qbar) :
     TaylorLogMetric.lamC lam (x + y) = TaylorLogMetric.lamC lam x + TaylorLogMetric.lamC lam y := by
-  rw [lamC_of_mem lam hx, lamC_of_mem lam hy, lamC_of_mem lam (add_mem hx hy), ← map_add]; rfl
+  rw [lamC_of_mem lam hx, lamC_of_mem lam hy, lamC_of_mem lam (add_mem hx hy), ← map_add (f := _)]; rfl
 
 theorem lamC_mul {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar →+* ℂ_[p]) {x y : ℂ} (hx : x ∈ TaylorLogMetric.Qbar) (hy : y ∈ TaylorLogMetric.Qbar) :
     TaylorLogMetric.lamC lam (x * y) = TaylorLogMetric.lamC lam x * TaylorLogMetric.lamC lam y := by
@@ -110,10 +114,6 @@ theorem TorS.add {Λ : AddSubgroup V} {x y : V} (hx : TorS Λ S x) (hy : TorS Λ
   refine Λ.add_mem ?_ ?_
   · rw [mul_comm, mul_smul]; exact Λ.nsmul_mem hax b
   · rw [mul_smul]; exact Λ.nsmul_mem hby a
-
-theorem TorS.neg {Λ : AddSubgroup V} {x : V} (hx : TorS Λ S x) : TorS Λ S (-x) := by
-  obtain ⟨a, ha, hax⟩ := hx
-  exact ⟨a, ha, by rw [smul_neg]; exact Λ.neg_mem hax⟩
 
 theorem altE_nsmul (H : Sesq V) (a b : ℕ) (x y : V) : altE H (a • x) (b • y) = (a : ℝ) * (b : ℝ) * altE H x y := by
   simp only [altE, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul, Complex.mul_im, Complex.natCast_re, Complex.natCast_im, zero_mul, add_zero]
@@ -385,7 +385,7 @@ theorem jetLin_inl_mul (J : (DVar ι a b →₀ ℕ) → K) (f : Pol K ι b) (q 
     rw [rename_monomial, rename_monomial, monomial_mul, jetLin_mixed, smul_monomial, smul_eq_mul]
     congr 1
     ring
-  | add f g hf hg => rw [map_add, add_mul, map_add, hf, hg, smul_add]
+  | add f g hf hg => rw [map_add (f := _), add_mul, map_add (f := _), hf, hg, smul_add]
 
 theorem jetLin_liftL (J : (DVar ι a b →₀ ℕ) → K) (φ : Pol K ι b →ₐ[K] Pol K ι b)
     (R : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) : jetLin J (liftL φ R) = φ (jetLin J R) := by
@@ -398,7 +398,7 @@ theorem jetLin_liftL (J : (DVar ι a b →₀ ℕ) → K) (φ : Pol K ι b →�
         rename Sum.inl (monomial p 1) * rename Sum.inr (monomial q c) := by
       rw [rename_monomial, rename_monomial, monomial_mul, one_mul]
     rw [h, map_mul, liftL_inl, liftL_inr, jetLin_inl_mul, jetLin_inl_mul, map_smul]
-  | add f g hf hg => rw [map_add, map_add, map_add, map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hf, hg]
 
 def resB (h : a ≤ b) (β : ι → Matrix (Fin b) (Fin b) K) : ι → Matrix (Fin a) (Fin a) K :=
   fun τ r s => β τ (Fin.castLE h r) (Fin.castLE h s)
@@ -412,7 +412,8 @@ theorem liftL_subD (h : a ≤ b) {β : ι → Matrix (Fin b) (Fin b) K} (hβ : I
     apply MvPolynomial.algHom_ext
     rintro ⟨τ, α, s⟩
     have hs : s.1 < b := lt_of_lt_of_le s.2 h
-    simp only [AlgHom.comp_apply, subD, colSub, aeval_X, dif_pos hs, map_sum, map_mul, liftL, Sum.elim_inl, Sum.elim_inr, rename_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, subD, colSub, aeval_X, dif_pos hs, map_sum, map_mul, liftL, Sum.elim_inl, Sum.elim_inr, rename_X,
       algHom_C, algebraMap_eq]
     have h1 : ∀ r : Fin a, (r : ℕ) < b := fun r => lt_of_lt_of_le r.2 h
     simp only [dif_pos (h1 _)]
@@ -444,7 +445,7 @@ theorem jet_weight : JetWt := by
     rfl
   · intro r hr
     simp only [extNu]
-    rw [dif_neg (not_lt.2 hr), pow_zero]
+    rw [dite_eq_right (not_lt.2 hr), pow_zero]
 
 end Wt
 
@@ -458,7 +459,7 @@ theorem map_jetLin (σ : K →+* L) (J : (DVar ι a b →₀ ℕ) → K) (R : Mv
     map σ (jetLin J R) = jetLin (fun m => σ (J m)) (map σ R) := by
   induction R using MvPolynomial.induction_on' with
   | monomial m c => rw [jetLin_monomial, map_monomial, map_monomial, jetLin_monomial, map_mul]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
 
 theorem map_subD (σ : K →+* L) (P : Pol K ι a) : map σ (subD K ι a b P) = subD L ι a b (map σ P) := by
   have e : (map σ).comp (subD K ι a b).toRingHom = ((subD L ι a b).toRingHom).comp (map σ) := by
@@ -518,7 +519,7 @@ theorem eval_frDet (v : ι × Fin a × Fin a → ℂ) (τ : ι) : eval v (frDet 
 
 theorem frPolyG_inj (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ)
     (hr : ∀ f : ι → Matrix (Fin a) (Fin a) ℂ, (∀ τ, (f τ).det ≠ 0) → ∃ y, fr y = f) : Function.Injective (frPolyG fr) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro Q hQ
   have h0 : Q * ∏ τ, frDet ℂ a τ = 0 := by
     apply MvPolynomial.funext
@@ -593,12 +594,6 @@ theorem unfolding_gl_eval : UnfGEv := by
   simp only [zpow_neg]
   ring
 
-theorem evG_smul {K : Type} [Field K] (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ) (sh : ι → ℤ) (σ : K →+* ℂ) (k : K) (P : Pol K ι a) :
-    evG fr sh σ (k • P) = σ k • evG fr sh σ P := by
-  funext y
-  simp only [evG, smul_eq_C_mul, eval₂_mul, eval₂_C, Pi.smul_apply, smul_eq_mul]
-  ring
-
 theorem frPolyG_colSub (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ) (β : ι → Matrix (Fin a) (Fin a) ℂ) (Q : Pol ℂ ι a) (y : Y) :
     frPolyG fr (colSub β Q) y = eval (fun k : ι × Fin a × Fin a => (fr y k.1 * β k.1) k.2.1 k.2.2) Q := by
   have e : (eval fun k : ι × Fin a × Fin a => fr y k.1 k.2.1 k.2.2).comp (colSub β).toRingHom =
@@ -607,7 +602,8 @@ theorem frPolyG_colSub (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ) (β : ι �
     · intro c
       simp [colSub]
     · intro v
-      simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, colSub, aeval_X, map_sum, map_mul, eval_C, eval_X,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, colSub, aeval_X, map_sum, map_mul, eval_C, eval_X,
         Matrix.mul_apply]
       exact Finset.sum_congr rfl fun r _ => mul_comm _ _
   exact RingHom.congr_fun e Q
@@ -710,7 +706,7 @@ theorem colAddS_insert (t l : Fin n) (hl : l ≠ t) (S : Finset (Fin n)) (hS : l
   intro v
   simp only [colAddS, colAdd, AlgHom.comp_apply, aeval_X]
   split_ifs with h
-  · rw [map_add, map_mul, aeval_X, aeval_X, algHom_C, if_pos h, if_neg hl, Finset.sum_insert hS]
+  · rw [map_add (f := _), map_mul, aeval_X, aeval_X, algHom_C, if_pos h, if_neg hl, Finset.sum_insert hS]
     simp only [algebraMap_eq]
     ring
   · rw [aeval_X, if_neg h]
@@ -753,7 +749,8 @@ theorem colSc_hom {ν : Fin n → ℕ} {F : MvPolynomial (Fin r × Fin n) K} (hF
   classical
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [colSc_monomial]
   congr 2
@@ -789,7 +786,8 @@ theorem colOne_eq (β : Matrix (Fin n) (Fin n) K) (hβ : ∀ w s, s < w → β w
   simp only [colOne, colSc, colAddS, AlgHom.comp_apply, aeval_X]
   split_ifs with h
   · rw [sum_split t _ fun w hw => by rw [hβ w t hw, C_0, zero_mul]]
-    rw [map_add, aeval_X, if_pos h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), aeval_X, if_pos h, map_sum]
     congr 1
     · obtain ⟨a, s⟩ := v
       simp only at h
@@ -804,8 +802,8 @@ theorem colOne_good {ν : Fin n → ℕ} {F : MvPolynomial (Fin r × Fin n) K} (
     (hβ : ∀ w s, s < w → β w s = 0) (t : Fin n) : colOne β t F = (β t t ^ ν t) • F := by
   rw [colOne_eq β hβ, AlgHom.comp_apply, colAddS_inv hF t _ _ (fun l hl => (Finset.mem_filter.1 hl).2), colSc_hom (lsat_mem_dualWeyl.1 hF).1]
 
-open Classical in
 
+open Classical in
 def cutCol (β : Matrix (Fin n) (Fin n) K) (t : Fin n) : Matrix (Fin n) (Fin n) K :=
   fun w s => if s = t then (if w = t then 1 else 0) else β w s
 
@@ -817,7 +815,8 @@ theorem colSub1_cut (β : Matrix (Fin n) (Fin n) K) (t : Fin n) (hid : ∀ s, s 
   simp only [colSub1, colOne, AlgHom.comp_apply, aeval_X]
   split_ifs with h
   · subst h
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [map_mul, algHom_C, aeval_X]
     by_cases hw : s < w
@@ -949,7 +948,7 @@ open MvPolynomial Formalism.L2.DIV Formalism.GradedWeylDivisibility
 variable {K : Type} [Field K] {r n : ℕ}
 
 theorem coeff_colSc (t : Fin n) (d : K) (F : MvPolynomial (Fin r × Fin n) K) (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (colSc t d F) = d ^ (∑ a : Fin r, m (a, t)) * coeff m F := by
+    AddMonoidAlgebra.coeff (colSc t d F) m = d ^ (∑ a : Fin r, m (a, t)) * AddMonoidAlgebra.coeff F m := by
   classical
   induction F using MvPolynomial.induction_on' with
   | monomial m' c =>
@@ -957,7 +956,7 @@ theorem coeff_colSc (t : Fin n) (d : K) (F : MvPolynomial (Fin r × Fin n) K) (m
     split_ifs with h
     · rw [h]
     · simp
-  | add f g hf hg => rw [map_add, coeff_add, coeff_add, hf, hg, mul_add]
+  | add f g hf hg => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hf, hg, mul_add]
 
 theorem pow_inj_of_infinite [Infinite K] {a b : ℕ} (h : ∀ x : K, x ≠ 0 → x ^ a = x ^ b) : a = b := by
   have h0 : (Polynomial.X ^ a - Polynomial.X ^ b : Polynomial K) = 0 := by
@@ -1014,7 +1013,7 @@ theorem mem_dualWeyl_of_bor [Infinite K] {ν : Fin n → ℕ} {F : MvPolynomial 
       have h2 := h (Matrix.diagonal fun s => if s = t then x else 1) (fun w s hws => Matrix.diagonal_apply_ne _ hws.ne')
         (fun w => by rw [Matrix.diagonal_apply_eq]; split_ifs; exacts [hx, one_ne_zero])
       rw [colSub1_diag] at h2
-      have h3 := congrArg (coeff m) h2
+      have h3 := congrArg (AddMonoidAlgebra.coeff · m) h2
       rw [coeff_colSc, coeff_smul, smul_eq_mul] at h3
       have h4 : (∏ y, (Matrix.diagonal (fun s => if s = t then x else 1) : Matrix (Fin n) (Fin n) K) y y ^ ν y) = x ^ ν t := by
         rw [Finset.prod_eq_single t]
@@ -1053,8 +1052,8 @@ variable {K : Type} [Field K] {n : ℕ} {ι : Type}
 
 abbrev Off (ι : Type) (n : ℕ) (τ : ι) : Type := {v : ι × Fin n × Fin n // v.1 ≠ τ}
 
-open Classical in
 
+open Classical in
 def psi (τ : ι) : Pol K ι n →ₐ[K] MvPolynomial (Off ι n τ) (MvPolynomial (Fin n × Fin n) K) :=
   aeval fun v => if h : v.1 = τ then C (X v.2) else X ⟨v, h⟩
 
@@ -1076,7 +1075,7 @@ theorem psi'_psi (τ : ι) (Q : Pol K ι n) : psi' τ (psi τ Q) = Q := by
 theorem psi_blockEmb (τ : ι) (G : MvPolynomial (Fin n × Fin n) K) : psi τ (blockEmb K τ G) = C G := by
   induction G using MvPolynomial.induction_on with
   | C a => simp [blockEmb, MvPolynomial.algebraMap_apply]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp =>
     rw [map_mul, map_mul, hp, map_mul]
     simp [blockEmb, psi]
@@ -1107,7 +1106,7 @@ theorem psi_colSub [Fintype ι] (τ : ι) (β : Matrix (Fin n) (Fin n) K) (Q : P
   exact RingHom.congr_fun e Q
 
 theorem coeff_psi_mem [Fintype ι] [Infinite K] {ν : ι → Fin n → ℕ} {Q : Pol K ι n} (hQ : Q ∈ WtPol K ν) (τ : ι) (r : Off ι n τ →₀ ℕ) :
-    coeff r (psi τ Q) ∈ dualWeyl K n n (ν τ) := by
+    AddMonoidAlgebra.coeff (psi τ Q) r ∈ dualWeyl K n n (ν τ) := by
   classical
   apply mem_dualWeyl_of_bor
   intro β h1 h2
@@ -1119,7 +1118,7 @@ theorem coeff_psi_mem [Fintype ι] [Infinite K] {ν : ι → Fin n → ℕ} {Q :
       exact ⟨h1, h2⟩
     · rw [Function.update_of_ne h]
       exact ⟨fun w s hws => Matrix.one_apply_ne hws.ne', fun w => by simp⟩
-  have h3 := congrArg (fun x => coeff r (psi τ x)) (hQ _ hB)
+  have h3 := congrArg (fun x => AddMonoidAlgebra.coeff (psi τ x) r) (hQ _ hB)
   simp only [psi_colSub, coeff_map, map_smul, coeff_smul] at h3
   have h4 : (∏ σ, ∏ x, (Function.update (1 : ι → Matrix (Fin n) (Fin n) K) τ β) σ x x ^ ν σ x) = ∏ x, β x x ^ ν τ x := by
     rw [Finset.prod_eq_single τ]
@@ -1140,12 +1139,12 @@ theorem split_pos (τ : ι) (m : ι × Fin n × Fin n →₀ ℕ) :
   ext ⟨t, v⟩
   by_cases h : t = τ
   · subst h
-    rw [Finsupp.add_apply, Finsupp.mapDomain_apply (Prod.mk_right_injective t), Finsupp.mapDomain_of_notMem_range, add_zero]
+    rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective t), Finsupp.mapDomain_of_notMem_range, add_zero]
     · rfl
     · rintro ⟨w, hw⟩
       exact w.2 (congrArg Prod.fst hw)
   · rw [Finsupp.add_apply, Finsupp.mapDomain_of_notMem_range, zero_add]
-    · exact (Finsupp.mapDomain_apply Subtype.val_injective (rOf τ m) (⟨(t, v), h⟩ : Off ι n τ)).symm
+    · exact (Finsupp.mapDomain_apply_of_injective Subtype.val_injective (rOf τ m) (⟨(t, v), h⟩ : Off ι n τ)).symm
     · rintro ⟨w, hw⟩
       exact h (congrArg Prod.fst hw).symm
 
@@ -1166,7 +1165,7 @@ def atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial
   (basisMonomials _ K).constr K fun m => psi' τ (monomial (rOf τ m) (π (monomial (gOf τ m) 1)))
 
 theorem coeff_psi_atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial (Fin n × Fin n) K) (Q : Pol K ι n)
-    (r : Off ι n τ →₀ ℕ) : coeff r (psi τ (atPos τ π Q)) = π (coeff r (psi τ Q)) := by
+    (r : Off ι n τ →₀ ℕ) : AddMonoidAlgebra.coeff (psi τ (atPos τ π Q)) r = π (AddMonoidAlgebra.coeff (psi τ Q) r) := by
   classical
   induction Q using MvPolynomial.induction_on' with
   | monomial m c =>
@@ -1178,10 +1177,10 @@ theorem coeff_psi_atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K
     split_ifs
     · rw [map_smul]
     · rw [smul_zero, map_zero]
-  | add f g hf hg => simp only [map_add, coeff_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), MvPolynomial.coeff_add, hf, hg]
 
 theorem atPos_fixed (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial (Fin n × Fin n) K) (Q : Pol K ι n)
-    (h : ∀ r, π (coeff r (psi τ Q)) = coeff r (psi τ Q)) : atPos τ π Q = Q := by
+    (h : ∀ r, π (AddMonoidAlgebra.coeff (psi τ Q) r) = AddMonoidAlgebra.coeff (psi τ Q) r) : atPos τ π Q = Q := by
   have e : psi τ (atPos τ π Q) = psi τ Q := MvPolynomial.ext _ _ fun r => by rw [coeff_psi_atPos, h r]
   rw [← psi'_psi τ (atPos τ π Q), e, psi'_psi]
 
@@ -1198,7 +1197,7 @@ theorem psi_blockEmb_ne (τ σ : ι) (h : σ ≠ τ) (F : MvPolynomial (Fin n ×
     psi τ (blockEmb K σ F) = map C (rename (fun v => (⟨(σ, v), h⟩ : Off ι n τ)) F) := by
   induction F using MvPolynomial.induction_on with
   | C a => simp [blockEmb, MvPolynomial.algebraMap_apply]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     simp [blockEmb, psi, h]
@@ -1214,7 +1213,7 @@ theorem atPos_prod [Fintype ι] (τ : ι) (π : MvPolynomial (Fin n × Fin n) K 
   refine atPos_mul τ π (F τ) _ (∏ σ ∈ Finset.univ.erase τ, if h : σ = τ then 1 else rename (fun v => (⟨(σ, v), h⟩ : Off ι n τ)) (F σ)) ?_
   rw [map_prod, map_prod]
   refine Finset.prod_congr rfl fun σ hσ => ?_
-  rw [dif_neg (Finset.ne_of_mem_erase hσ), psi_blockEmb_ne τ σ (Finset.ne_of_mem_erase hσ)]
+  rw [dite_eq_right (Finset.ne_of_mem_erase hσ), psi_blockEmb_ne τ σ (Finset.ne_of_mem_erase hσ)]
 
 def TS [Fintype ι] (W : ι → Submodule K (MvPolynomial (Fin n × Fin n) K)) (S : Finset ι) : Submodule K (Pol K ι n) :=
   Submodule.span K {P | ∃ F : ι → MvPolynomial (Fin n × Fin n) K, (∀ σ ∈ S, F σ ∈ W σ) ∧ P = ∏ σ, blockEmb K σ (F σ)}
@@ -1226,13 +1225,13 @@ theorem mem_TS_empty [Fintype ι] (W : ι → Submodule K (MvPolynomial (Fin n �
   have hm : m = ∑ t, (gOf t m).mapDomain (Prod.mk t) := by
     ext ⟨t, v⟩
     rw [Finsupp.finsetSum_apply, Finset.sum_eq_single t]
-    · exact (Finsupp.mapDomain_apply (Prod.mk_right_injective t) (gOf t m) v).symm
+    · exact (Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective t) (gOf t m) v).symm
     · intro σ _ hσ
       refine Finsupp.mapDomain_of_notMem_range _ _ ?_
       rintro ⟨w, hw⟩
       exact hσ (congrArg Prod.fst hw)
     · intro h; exact absurd (Finset.mem_univ _) h
-  have h : (monomial m (coeff m Q) : Pol K ι n) = coeff m Q • ∏ σ, blockEmb K σ (monomial (gOf σ m) (1 : K)) := by
+  have h : (monomial m (AddMonoidAlgebra.coeff Q m) : Pol K ι n) = AddMonoidAlgebra.coeff Q m • ∏ σ, blockEmb K σ (monomial (gOf σ m) (1 : K)) := by
     rw [ldtensor_prod_monomial, smul_monomial, smul_eq_mul, mul_one, ← hm]
   rw [h]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, fun σ hσ => absurd hσ (Finset.notMem_empty σ), rfl⟩)
@@ -1251,8 +1250,8 @@ theorem wtPol_le_tensor [Fintype ι] [Infinite K] (ν : ι → Fin n → ℕ) :
         (dualWeyl K n n (ν τ)).subtype ∘ₗ Submodule.projectionOnto _ T hT with hπ
       have hfix : atPos τ π Q = Q := by
         refine atPos_fixed τ π Q fun r => ?_
-        have h := Submodule.projectionOnto_apply_left hT (⟨coeff r (psi τ Q), coeff_psi_mem hQ τ r⟩ : dualWeyl K n n (ν τ))
-        have h' : Submodule.projectionOnto _ T hT (coeff r (psi τ Q)) = ⟨coeff r (psi τ Q), coeff_psi_mem hQ τ r⟩ := h
+        have h := Submodule.projectionOnto_apply_left hT (⟨AddMonoidAlgebra.coeff (psi τ Q) r, coeff_psi_mem hQ τ r⟩ : dualWeyl K n n (ν τ))
+        have h' : Submodule.projectionOnto _ T hT (AddMonoidAlgebra.coeff (psi τ Q) r) = ⟨AddMonoidAlgebra.coeff (psi τ Q) r, coeff_psi_mem hQ τ r⟩ := h
         rw [hπ, LinearMap.comp_apply, h']
         rfl
       have hle : TS (fun τ => dualWeyl K n n (ν τ)) S ≤ (TS (fun τ => dualWeyl K n n (ν τ)) (insert τ S)).comap (atPos τ π) := by
@@ -1306,7 +1305,7 @@ open MvPolynomial
 
 theorem frobenius_poly_injective : FrPolyInj := by
   intro D u C O i hi
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro Q hQ
   set Dt : MvPolynomial (GL3Theta.FrV D (D.R.N i)) ℂ := ∏ τ, frDet ℂ (D.R.N i) τ with hDt
   have hev : ∀ v : GL3Theta.FrV D (D.R.N i) → ℂ, eval v Dt = ∏ τ, (Matrix.of fun α k => v (τ, α, k)).det := by
@@ -1490,7 +1489,8 @@ theorem kernel_combination_form : KerCombOf := by
     have hq : ∀ k α, TaylorLogMetric.taylor D (TaylorLogMetric.U D (TaylorLogMetric.tor0 D cc δ) (t k) (e N N' L L')) α ∈ TaylorLogMetric.Qbar := fun k α =>
       halg (t k) (by obtain ⟨a, ha, -, hm⟩ := ht k; exact ⟨a, ha, hm⟩) α
     ext α
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have h1 : MvPowerSeries.coeff α (TaylorLogMetric.pSer D lam Θ) = TaylorLogMetric.lamC lam (TaylorLogMetric.taylor D Θ α) := rfl
     rw [h1, hΘ, taylor_sum D r _ hU, lamC_sum lam _ _ fun k _ => mul_mem (hr k) (hq k α)]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -1543,13 +1543,6 @@ section Tests2
 
 variable {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)}
 
-theorem taylor_zero {N N' : ℕ} (Θ : TaylorLogMetric.VC D N N' → ℂ) : TaylorLogMetric.taylor D Θ 0 = Θ 0 := by
-  have h : ∀ (n : ℕ) (_ : n = 0) (m : Fin n → TaylorLogMetric.VC D N N'), iteratedFDeriv ℂ n Θ 0 m = Θ 0 := by
-    intro n hn m; subst hn; simp
-  unfold TaylorLogMetric.taylor
-  rw [h _ (by simp)]
-  simp
-
 end Tests2
 
 section SeamLatS
@@ -1565,7 +1558,8 @@ theorem matOf_mulVec (y : HomE X.E a b) (n : Sp X.E a) : (matOf s y).mulVec (fun
   have hn : n = ∑ j, n j • (Pi.single j (1 : X.E) : Sp X.E a) := by
     ext k; simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hn]
-  simp only [Matrix.mulVec, dotProduct, matOf, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, matOf, map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, map_mul]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
 theorem matOf_mem (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b)) {y : HomE X.E a b} (hy : y ∈ homO N N') :
@@ -1591,7 +1585,7 @@ theorem gluing_lattice_eq : SeamLat := by
   intro D X s cc δ B χ cD hok a b N N' t ht
   obtain ⟨x, hx, rfl⟩ := ht
   have hadd : ∀ x y : HomE X.E a b, s.pt (embH (X.embC s.σ₀) δ (x + y)) = s.pt (embH (X.embC s.σ₀) δ x) + s.pt (embH (X.embC s.σ₀) δ y) := by
-    intro x y; rw [map_add]; rfl
+    intro x y; rw [map_add (f := _)]; rfl
   have hzero : s.pt (embH (X.embC s.σ₀) δ (0 : HomE X.E a b)) = 0 := by rw [map_zero]; rfl
   have hgen : ∀ c ∈ cc, ∀ t0 ∈ D.host.AA0, ∀ y ∈ homO N N',
       s.pt (embH (X.embC s.σ₀) δ ((s.iE.symm ((((c : 𝓞 D.host.K) : D.host.K) : D.host.E) * t0)) • y)) ∈ TaylorLogMetric.La D B.tor (s.lat N) (s.lat N') := by
@@ -1716,7 +1710,16 @@ theorem perO_fg {E : Type} [Field E] [NumberField E] [StarRing E] {a b : ℕ} (A
   have sa := stdLat_lattice (E := E) (n := a)
   have sb := stdLat_lattice (E := E) (n := b)
   obtain ⟨νa₁, ha₁0, ha₁⟩ := exists_smul_le (stdLat E a) N sa.fg hsN
-  obtain ⟨νb₁, hb₁0, hb₁⟩ := exists_smul_le N' (stdLat E b) hN' sb.span_eq_top
+  have hstd : Submodule.span E (stdLat E b : Set (Sp E b)) = ⊤ := by
+    apply Submodule.eq_top_iff'.2
+    intro x
+    have hx : x = ∑ i, x i • (Pi.single i (1 : E) : Sp E b) := by
+      funext j
+      simp [Pi.single_apply, Finset.sum_ite_eq']
+    rw [hx]
+    exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
+      (Submodule.subset_span (single_mem_stdLat (E := E) i 1))
+  obtain ⟨νb₁, hb₁0, hb₁⟩ := exists_smul_le N' (stdLat E b) hN' hstd
   have h1 := perO_scale AA0 N (stdLat E a) N' (stdLat E b) νa₁ νb₁ ha₁ hb₁
   have hone : Submodule.span E (((1 : Submodule (𝓞 E) E) : Submodule (𝓞 E) E) : Set E) = ⊤ := by
     rw [eq_top_iff]
@@ -1746,11 +1749,14 @@ theorem period_lattice_finitely_generated : LamFG := by
   have h2 : Module.Finite ℤ (perO AA0 N N') := Module.Finite.trans (𝓞 E) _
   have h3 : AddGroup.FG (perO AA0 N N') := Module.Finite.iff_addGroup_fg.1 h2
   have h4 : (perO AA0 N N').toAddSubgroup.FG := (AddGroup.fg_iff_addSubgroup_fg _).1 h3
-  obtain ⟨S, hS⟩ := h4
-  classical
-  refine ⟨S.image (embH emb δ), ?_⟩
-  rw [Finset.coe_image, ← AddMonoidHom.map_closure, hS]
-  rfl
+  letI := h4
+  let f : (perO AA0 N N').toAddSubgroup →+ LamC emb δ AA0 N N' :=
+    (embH emb δ).comp (perO AA0 N N').toAddSubgroup.subtype |>.codRestrict _ (by
+      intro x
+      exact ⟨x, x.2, rfl⟩)
+  exact IsAddFG.of_surjective f (by
+    rintro ⟨y, x, hx, rfl⟩
+    exact ⟨⟨x, hx⟩, rfl⟩)
 
 end LamFGS
 
@@ -1815,8 +1821,45 @@ theorem hypotheses_of_base_hypotheses : HypOfHyp0 := by
   obtain ⟨a1, a2⟩ := ambient_of_hypotheses D t.X t.seam t.cc t.δ t.B t.χ t.cD
   refine ⟨a1, h1, fun c c' => ?_⟩
   obtain ⟨s1, s2, hx⟩ := h2 c c'
+  have hspan {n : ℕ} {L : Submodule (𝓞 t.X.E) (Formalism.L2.Col.Sp t.X.E n)} (hL : Formalism.L2.Col.IsSdLat L) :
+      Submodule.span t.X.E (L : Set (Formalism.L2.Col.Sp t.X.E n)) = ⊤ := by
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro f hf
+    let v : Formalism.L2.Col.Sp t.X.E n := fun i => star (f (Pi.single i 1))
+    have hpair : Formalism.L2.Col.hStd t.X.E n v = f := by
+      apply (Pi.basisFun t.X.E (Fin n)).ext
+      intro i
+      rw [Pi.basisFun_apply, Formalism.L2.Col.hStd_apply, Finset.sum_eq_single i]
+      · simp [v]
+      · intro j _ hj
+        simp [hj]
+      · simp
+    have hline (r : t.X.E) : r • v ∈ L := by
+      rw [← show Formalism.HermitianLatticesTheory.dual (Formalism.L2.Col.hStd t.X.E n) L = L from hL.2, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+      intro y hy
+      have hy0 : Formalism.L2.Col.hStd t.X.E n v y = 0 := by
+        rw [hpair]
+        exact (Submodule.mem_dualAnnihilator f).mp hf y (Submodule.subset_span hy)
+      have hz : Formalism.L2.Col.hStd t.X.E n y v = 0 := by
+        simpa [hy0] using ((Formalism.L2.Col.hStd_isSymm (E := t.X.E) (n := n)).eq v y).symm
+      simp [hz]
+    have hv : v = 0 := by
+      funext i
+      change v i = 0
+      by_contra hi
+      let coord := (LinearMap.proj i : Formalism.L2.Col.Sp t.X.E n →ₗ[t.X.E] t.X.E).restrictScalars (𝓞 t.X.E)
+      have htop : L.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        exact ⟨(x / v i) • v, hline _, div_mul_cancel₀ _ hi⟩
+      have : Module.Finite (𝓞 t.X.E) t.X.E := Module.finite_def.mpr (htop ▸ hL.1.fg.map coord)
+      exact RingOfIntegers.not_isField t.X.E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 t.X.E) t.X.E) (Field.toIsField t.X.E))
+    rw [Submodule.mem_bot]
+    simpa [hv] using hpair.symm
   obtain ⟨i1, i2, i3⟩ := finite_index_of_fg _ _ _ _ (t.X.embC t.amb.σ₀) t.amb.δ t.amb.AA (t.rd u μ).SS ((t.rd u μ).N i c) ((t.rd u μ).N (i + 1) c')
-    (t.rd u μ).lev h1.1 (period_lattice_finitely_generated _ _ _ _ _ _ _ _ _ s2.1.fg s1.1.span_eq_top hAA)
+    (t.rd u μ).lev h1.1 (period_lattice_finitely_generated _ _ _ _ _ _ _ _ _ s2.1.fg (hspan s1) hAA)
   have hA : TaylorLogMetric.admitted D _ _ (t.seam.lat ((t.rd u μ).N i c)) (t.seam.lat ((t.rd u μ).N (i + 1) c')) := by
     rw [← t.O_lat, ← t.O_lat]
     exact ⟨factNEven _ _, factNEven _ _, ((t.O u μ).lat i c).2, ((t.O u μ).lat (i + 1) c').2⟩
@@ -1850,28 +1893,9 @@ namespace Test
 
 open MvPolynomial Formalism.L2.DIV
 
-abbrev Fr (n : ℕ) : Type := {f : Unit → Matrix (Fin n) (Fin n) ℂ // ∀ τ, (f τ).det ≠ 0}
-
-def frV (n : ℕ) : Fr n → Unit → Matrix (Fin n) (Fin n) ℂ := Subtype.val
-
-def nu10 : Unit → Fin 2 → ℕ := fun _ r => if r = 0 then 1 else 0
-
-def firstFrameCoordinate : Pol ℂ Unit 2 := X ((), 0, 0)
-
-def Th1 : VCx Unit 2 3 → ℂ := fun z => 1 + z () 0 0
-
-def complementLatticeOfDatum : VCx Unit 2 3 →L[ℂ] ℂ :=
-  (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin 2 => ℂ) 0).comp
-    ((ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin 3 => Fin 2 → ℂ) 0).comp
-      (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Unit => Fin 3 → Fin 2 → ℂ) ()))
-
 end Test
 
 namespace Test
-
-def x3 : ℂ := ⟨1 / 3, 0⟩
-
-def y3 : ℂ := ⟨0, 1 / 3⟩
 
 end Test
 

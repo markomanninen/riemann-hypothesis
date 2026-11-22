@@ -1,8 +1,12 @@
-import Development.EtaleCohomology.KummerTheory.PlaceResGoodPf
-import Development.EtaleCohomology.KummerTheory.PlaceStepPf
-import Development.EtaleCohomology.KummerTheory.PlaceExPfZorn
-import Development.EtaleCohomology.KummerTheory.PlacePfVal
-import Development.EtaleCohomology.KummerTheory.AlgExtPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.PlaceResGoodPf
+public import Development.EtaleCohomology.KummerTheory.PlaceStepPf
+public import Development.EtaleCohomology.KummerTheory.PlaceExPfZorn
+public import Development.EtaleCohomology.KummerTheory.PlacePfVal
+public import Development.EtaleCohomology.KummerTheory.AlgExtPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.AlgExt
 theorem etale_cohomology_place_restriction_good_reduction : LateralTheory.KummerTheory.PlaceResGood := by

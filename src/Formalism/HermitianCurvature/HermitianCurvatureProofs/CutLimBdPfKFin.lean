@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.HermitianCurvature.StatementB
+module
+
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.HermitianCurvature.StatementB
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

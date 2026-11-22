@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Section
-import GroundTheory.ProfiniteCohomology.CoinducedModules.Acyclic
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Section
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.Acyclic
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -32,10 +37,10 @@ variable (N : Subgroup G) [N.Normal] {s : G ⧸ N → G} (hs : Continuous s)
   (hsec : ∀ c, (s c : G ⧸ N) = c)
 
 include hsec in
-
 theorem inv_section_mul_mem (x : G) : (s (x : G ⧸ N))⁻¹ * x ∈ N :=
   QuotientGroup.eq.mp (hsec x)
 
+include hsec in
 def sectionRetraction (x : G) : N :=
   ⟨(s (x : G ⧸ N))⁻¹ * x, inv_section_mul_mem N hsec x⟩
 
@@ -62,7 +67,6 @@ theorem sectionRetraction_section_mul (c : G ⧸ N) (m : N) :
   rw [coe_sectionRetraction, mk_section_mul N hsec, inv_mul_cancel_left]
 
 include hs in
-
 def restrictSlice (f : LocallyConstant G X) (m : N) : LocallyConstant (G ⧸ N) X :=
   ⟨fun c => f (s c * m), f.isLocallyConstant.comp_continuous (hs.mul continuous_const)⟩
 
@@ -85,6 +89,7 @@ noncomputable def restrictCoindLinear :
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
+include hs hsec in
 noncomputable def unrestrictCoind (F : LocallyConstant N (LocallyConstant (G ⧸ N) X)) :
     LocallyConstant G X where
   toFun x := F (sectionRetraction N hsec x) (x : G ⧸ N)
@@ -142,7 +147,7 @@ theorem isZero_cohomology_res_discreteCoind (hN : IsClosed (N : Set G)) (n : ℕ
     Limits.IsZero (cohomology (Rep.res N.subtype (discreteCoind k G X)) (n + 1)) := by
   obtain ⟨s, hs, hsec, -⟩ := exists_continuous_section N hN
   have : CompactSpace N := isCompact_iff_compactSpace.mp hN.isCompact
-  exact (isZero_cohomology_discreteCoind k N (LocallyConstant (G ⧸ N) X) n).of_iso
+  exact (isZero_cohomology_discreteCoind (k := k) (G := N) (X := LocallyConstant (G ⧸ N) X) n).of_iso
     (cohomologyIsoOfIso (resDiscreteCoindIso X N hs hsec) (n + 1))
 
 end Restriction
@@ -152,7 +157,6 @@ section Invariants
 variable (N : Subgroup G) [N.Normal]
 
 variable {X N} in
-
 theorem apply_eq_of_mem_invariants {f : LocallyConstant G X}
     (hf : f ∈ Representation.invariants ((discreteCoindRep k G X).comp N.subtype)) {x y : G}
     (h : (x : G ⧸ N) = y) : f x = f y := by
@@ -237,7 +241,7 @@ instance isDiscreteRep_quotientToInvariants_discreteCoind :
 
 theorem isZero_cohomology_quotientToInvariants_discreteCoind (n : ℕ) :
     Limits.IsZero (cohomology ((discreteCoind k G X).quotientToInvariants N) (n + 1)) :=
-  (isZero_cohomology_discreteCoind k (G ⧸ N) X n).of_iso
+  (isZero_cohomology_discreteCoind (k := k) (G := G ⧸ N) (X := X) n).of_iso
     (cohomologyIsoOfIso (quotientToInvariantsDiscreteCoindIso X N) (n + 1))
 
 end Invariants

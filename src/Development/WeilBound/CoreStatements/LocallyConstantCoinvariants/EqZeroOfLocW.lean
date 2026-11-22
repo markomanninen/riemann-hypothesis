@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.KdExistsInv
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.KdExistsInv
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -31,7 +35,8 @@ theorem eq_zero_of_locW {w : (κ → AF F) × (κ → AF F)} (ha : At (evFin F v
     rw [mul_comm, mul_sgl, this, zero_mul, map_zero]
 
 theorem ev_dot (a b : κ → AF F) : evFin F v (a ⬝ᵥ b) = (fun i => evFin F v (a i)) ⬝ᵥ fun i => evFin F v (b i) := by
-  simp only [dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, map_mul]
 
 theorem coord_add (u u' : Matrix α β (AE F E)) : coord σ t JA JB (u + u') = coord σ t JA JB u + coord σ t JA JB u' := by
   simp only [coord, Matrix.map_add _ (map_add _), Matrix.mul_add, Matrix.add_mul, neg_add]
@@ -77,7 +82,7 @@ theorem exists_e (h : IsSec σ t sec) (hG : Grams σ t JA JB) (d : Darboux (symp
     rw [this, map_smul, locW_smul, ev_sgl, one_smul]
   let f : ((α × β → Fv F v) × (α × β → Fv F v)) →ₗ[Fv F v] ((κ → Fv F v) × (κ → Fv F v)) :=
     { toFun := fun w => locW v (d.e (s w))
-      map_add' := fun w w' => by rw [← locW_add, ← map_add, ← key (s w + s w'), coord_add, hs2, hs2]
+      map_add' := fun w w' => by rw [← locW_add, ← map_add (f := _), ← key (s w + s w'), coord_add, hs2, hs2]
       map_smul' := fun a w => by
         have := key (sgl v a • s w)
         rw [coord_smul h, hs2, ev_sgl, map_smul, locW_smul, ev_sgl] at this
@@ -93,8 +98,8 @@ theorem exists_e (h : IsSec σ t sec) (hG : Grams σ t JA JB) (d : Darboux (symp
   have := congrArg (evFin F v) ((d.form (s w) (s w')).symm.trans (symp_eq h hG (hs1 w) (s w')))
   rwa [ev_sgl, hs2, hs2, map_sub, ev_dot, ev_dot] at this
 
-variable (t ψ) in
 
+variable (t ψ) in
 structure LM (d : Darboux (symp (R := AF F) (cA σ) (-1) JA JB) κ) (ι : ((κ → Fv F v) → ℂ) →ₗ[ℂ] ((α × β → Fv F v) → ℂ)) : Prop where
   bij : Set.BijOn ι (SB (κ → Fv F v) : Set _) (SB (α × β → Fv F v) : Set _)
   Heisenberg₂ : ∀ u, ∀ φ ∈ SB (κ → Fv F v), ι (schr (psiV ψ v) (locW v (d.e u)) φ) = schr (psiV ψ v) (coord σ t JA JB u) (ι φ)

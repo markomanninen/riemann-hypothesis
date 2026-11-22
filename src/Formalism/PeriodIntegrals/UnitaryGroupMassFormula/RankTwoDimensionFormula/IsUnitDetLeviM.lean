@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.MemMLOfInAt
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RankTwoDimensionFormula.MemMLOfInAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem isUnit_det_leviM {x : X.B.I.Gf} (hx : Good X x) (v : TR.Pl) : IsUnit (le
 theorem levi_coe {x : X.B.I.Gf} (hx : Good X x) (v : TR.Pl) :
     ((levi TR x v : GL (Fin D.R.k) (TR.Fq v)) : Matrix (Fin D.R.k) (Fin D.R.k) (TR.Fq v)) = leviM TR x v := by
   unfold levi
-  rw [dif_pos (isUnit_det_leviM TR hx v)]
+  rw [dite_eq_left (isUnit_det_leviM TR hx v)]
   rfl
 
 theorem levi_mul {x y : X.B.I.Gf} (hx : Good X x) (hy : Good X y) : levi TR (x * y) = levi TR x * levi TR y := by

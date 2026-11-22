@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.CoreLatticeEqOfMemCoreStabilizer
-import GroundTheory.AutomorphicForms.DefiniteClassNumber.Finiteness
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.CoreLatticeEqOfMemCoreStabilizer
+public import GroundTheory.AutomorphicForms.DefiniteClassNumber.Finiteness
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -31,7 +35,7 @@ theorem baseTrace_eq_trace_lid (z : K ⊗[K] E) :
   | tmul r e =>
     rw [baseTrace_tmul, Algebra.TensorProduct.lid_tmul, LinearMap.map_smul, smul_eq_mul,
       Algebra.algebraMap_self, RingHom.id_apply, mul_comm]
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), map_add (f := _), hx, hy]
 
 theorem hermTrace_eq_trace_pairE (x y : ι → K ⊗[K] E) :
     hermTrace K H K x y = Algebra.trace K E (pairE H x y) :=

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsClassSystem
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameData
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SameSetup
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsClassSystem
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsSameData
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links IsDedekindDomain NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.ExportSeries GlobalTheory.SeriesTie GlobalTheory.TwInputs GlobalTheory.TwInputs.Move
 open Formalism.MainNotions.IntegralHeckeForms (TwOK ClsQ HkIdx V0 Fm0 FullRk SgJ BasisOf)
 open Formalism.L2.Host (embLL0 CharFrame)
@@ -18,24 +23,28 @@ namespace GlobalTheory.TwInputs.Move
 
 variable {D D' : D7}
 
-scoped macro "set_cases " h1:ident h2:ident N:ident N':ident X:ident X':ident : tactic =>
-  `(tactic| (
-    obtain ⟨-, -, -, nOm, ninstOm, nalgOm, -, nPlG⟩ := $h1
-    obtain ⟨-, xTw, -, fixedFieldTransport_baseIntegerRing_heq, fixedFieldTransport_baseIntegerCommRing_heq, -, -, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, -, xpD, -, -, -, -, -, -, fixedFieldTransport_initialPlaceSet_heq, -⟩ := $h2
-    cases $N:ident; cases $N':ident
-    dsimp only at nOm ninstOm nalgOm nPlG
-    subst nOm; subst ninstOm; subst nalgOm; subst nPlG
-    cases $X:ident; cases $X':ident
-    dsimp only at xTw fixedFieldTransport_baseIntegerRing_heq fixedFieldTransport_baseIntegerCommRing_heq xO xcrO xalgO xOk xcrOk xalgOk xpD fixedFieldTransport_initialPlaceSet_heq
-    subst xTw; subst fixedFieldTransport_baseIntegerRing_heq; subst fixedFieldTransport_baseIntegerCommRing_heq; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xpD
-    subst fixedFieldTransport_initialPlaceSet_heq))
-
 theorem exists_setupRel (h : SameGeo D D') {N : NData D.R D.host D.what₂} {N' : NData D'.R D'.host D'.what₂}
     {X : NTw D.R D.host D.what₂ D.LL0 N} {X' : NTw D'.R D'.host D'.what₂ D'.LL0 N'}
     (h1 : GlobalTheory.TwistChoice.SameGalois N N') (h2 : GlobalTheory.TwistChoice.TwistDataAgreeAcrossCoefficients X X') (ρ : Setup X) :
     ∃ ρ' : Setup X', SetupRel ρ ρ' := by
-  geo_cases h D D'
-  set_cases h1 h2 N N' X X'
+  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
+  obtain ⟨_, _, _, _, _, w, _⟩ := D
+  obtain ⟨_, _, _, _, _, w', _⟩ := D'
+  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
+  subst gR; subst ghost; subst gsp
+  cases w; cases w'
+  dsimp only at gTau ginstTau geTau ghc
+  subst gTau; subst ginstTau; subst geTau; subst ghc
+  obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := h1
+  obtain ⟨xcc, xTw, xl, xO0, xcrO0, xalgO0, xtopO0, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, xS0, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := h2
+  dsimp only at a1 a2 a3
+  subst a3
+  cases N; cases N'
+  dsimp only at nOm ninstOm nalgOm nplOm nPlG
+  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
+  cases X; cases X'
+  dsimp only at xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
+  subst xcc; subst xTw; subst xl; subst xO0; subst xcrO0; subst xalgO0; subst xtopO0; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xzk; subst xpD; subst xchi1; subst xSig; subst xfinSig; subst xjS; subst xside; subst xrhoS; subst xS0; subst xhEig; subst xLam; subst xsideL; subst xRCG; subst xgrpRCG; subst xfinRCG; subst xart; subst xth
   obtain ⟨rc, ch, bad, e, ek, B, om, Cl, rep, β, eG⟩ := ρ
   rename_i fin
   refine ⟨@Setup.mk _ _ _ ⟨rc.κ, rc.art⟩ ch bad e ek
@@ -63,7 +72,14 @@ theorem exists_setupRel (h : SameGeo D D') {N : NData D.R D.host D.what₂} {N' 
 theorem RecipRel.good (h : SameGeo D D') {Ω Ω' : Type} [i1 : Field Ω] [i2 : Algebra D.host.E Ω] [i1' : Field Ω']
     [i2' : Algebra D'.host.E Ω'] (hΩ : Ω = Ω') (h1 : HEq i1 i1') (h2 : HEq i2 i2') {a : Recip D Ω} {a' : Recip D' Ω'}
     (r : RecipRel a a') (g : a.Good) : a'.Good := by
-  geo_cases h D D'
+  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
+  obtain ⟨_, _, _, _, _, w, _⟩ := D
+  obtain ⟨_, _, _, _, _, w', _⟩ := D'
+  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
+  subst gR; subst ghost; subst gsp
+  cases w; cases w'
+  dsimp only at gTau ginstTau geTau ghc
+  subst gTau; subst ginstTau; subst geTau; subst ghc
   subst hΩ; subst h1; subst h2
   obtain ⟨κ, art⟩ := a
   obtain ⟨κ', art'⟩ := a'
@@ -78,8 +94,24 @@ theorem SetupRel.good_of (h : SameGeo D D') {N : NData D.R D.host D.what₂} {N'
     {ρ : Setup X} {ρ' : Setup X'} (r : SetupRel ρ ρ') (g : ρ.Good) : ρ'.Good := by
   have grc := r.rc.good h (eq_of_heq h1.Om) h1.instOm h1.algOm g.rc
   have h0 := h
-  geo_cases h D D'
-  set_cases h1 h2 N N' X X'
+  obtain ⟨gR, ghost, gsp, gTau, ginstTau, geTau, ghc⟩ := h
+  obtain ⟨_, _, _, _, _, w, _⟩ := D
+  obtain ⟨_, _, _, _, _, w', _⟩ := D'
+  dsimp only at gR ghost gsp gTau ginstTau geTau ghc
+  subst gR; subst ghost; subst gsp
+  cases w; cases w'
+  dsimp only at gTau ginstTau geTau ghc
+  subst gTau; subst ginstTau; subst geTau; subst ghc
+  obtain ⟨a1, a2, a3, nOm, ninstOm, nalgOm, nplOm, nPlG⟩ := h1
+  obtain ⟨xcc, xTw, xl, xO0, xcrO0, xalgO0, xtopO0, xO, xcrO, xalgO, xOk, xcrOk, xalgOk, xzk, xpD, xchi1, xSig, xfinSig, xjS, xside, xrhoS, xS0, xhEig, xLam, xsideL, xRCG, xgrpRCG, xfinRCG, xart, xth⟩ := h2
+  dsimp only at a1 a2 a3
+  subst a3
+  cases N; cases N'
+  dsimp only at nOm ninstOm nalgOm nplOm nPlG
+  subst nOm; subst ninstOm; subst nalgOm; subst nplOm; subst nPlG
+  cases X; cases X'
+  dsimp only at xcc xTw xl xO0 xcrO0 xalgO0 xtopO0 xO xcrO xalgO xOk xcrOk xalgOk xzk xpD xchi1 xSig xfinSig xjS xside xrhoS xS0 xhEig xLam xsideL xRCG xgrpRCG xfinRCG xart xth
+  subst xcc; subst xTw; subst xl; subst xO0; subst xcrO0; subst xalgO0; subst xtopO0; subst xO; subst xcrO; subst xalgO; subst xOk; subst xcrOk; subst xalgOk; subst xzk; subst xpD; subst xchi1; subst xSig; subst xfinSig; subst xjS; subst xside; subst xrhoS; subst xS0; subst xhEig; subst xLam; subst xsideL; subst xRCG; subst xgrpRCG; subst xfinRCG; subst xart; subst xth
   dsimp only at hδ
   subst hδ
   obtain ⟨⟨κ, art⟩, ch, bad, e, ek, B, om, Cl, rep, β, eG⟩ := ρ

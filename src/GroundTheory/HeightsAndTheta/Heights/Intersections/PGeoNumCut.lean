@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSwap
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSwap
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.GeoNum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

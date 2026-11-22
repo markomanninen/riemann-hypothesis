@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.IntegralMul
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.IntegralMul
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.SplitStab
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.HalfIndexLattices.IsLatRepL
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -57,7 +61,7 @@ theorem change_k : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberF
         induction z using TensorProduct.induction_on with
         | zero => rw [map_zero, map_zero]
         | tmul a x => exact congrArg (a ⊗ₜ[F] ·) (GlobalTheory.SplitDetCharF.sig_invol hB.cm x)
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       have hd : A.1.det = cAF σ s.1.det := by
         show ((s.1.map (cAF σ))ᵀ).det = _
         rw [Matrix.det_transpose, RingHom.map_det]; rfl

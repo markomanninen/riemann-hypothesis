@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Formalism.MirabolicMackeyTheory.MirabolicIsMackey
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Formalism.MirabolicMackeyTheory.MirabolicIsMackey
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ def psiExt (y : mirabSub k n) : ℂ := by
 
 theorem psiExt_of_mem (u : uniSub k n) : psiExt n ψ₀ (u : mirabSub k n) = genericChar n ψ₀ u := by
   unfold psiExt
-  rw [dif_pos u.2]
+  rw [dite_eq_left u.2]
 
 theorem psiExt_mul (u : uniSub k n) (y : mirabSub k n) (hy : y ∈ uniSub k n) :
     psiExt n ψ₀ ((u : mirabSub k n) * y) = genericChar n ψ₀ u * psiExt n ψ₀ y := by
@@ -95,9 +99,5 @@ theorem finrank_mirabInducedSpace_eq_index (ψ₀ : AddChar k ℂ) :
   have e := LinearEquiv.ofBijective (restr n ψ₀) ⟨restr_injective n ψ₀, restr_surjective n ψ₀⟩
   rw [e.finrank_eq, Module.finrank_fintype_fun_eq_card, Subgroup.index_eq_card, ← Nat.card_eq_fintype_card]
   exact Nat.card_congr (QuotientGroup.quotientRightRelEquivQuotientLeftRel (uniSub k n))
-
-theorem finrank_mirabInducedSpace (ψ₀ : AddChar k ℂ) :
-    Module.finrank ℂ (MirabInducedSpace n ψ₀) = ∏ i ∈ Finset.Ico 1 (n + 1), (Fintype.card k ^ i - 1) := by
-  rw [finrank_mirabInducedSpace_eq_index, index_uniSub]
 
 end CompanionTheory.Mirab.Dim

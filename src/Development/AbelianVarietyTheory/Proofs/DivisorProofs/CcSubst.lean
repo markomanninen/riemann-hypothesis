@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NewtonPowerSeriesSurjectiveLinearizationSolution
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowerSeriesTaylorSubstFirstOrder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffHasse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NewtonPowerSeriesSurjectiveLinearizationSolution
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PowerSeriesTaylorSubstFirstOrder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffHasse
+
+@[expose] public section
 
 open Polynomial
 
@@ -57,7 +61,7 @@ lemma dvd_step {m : ℕ} (hm : 1 ≤ m) (y g S S' : PowerSeries k) (y0 c A : k)
           + (g * S - PowerSeries.C (PowerSeries.constantCoeff g * A)))
         + PowerSeries.X ^ (n + 1 + 1) * (y * r + PowerSeries.X ^ n *
           (g * PowerSeries.C c + PowerSeries.X * g * r)) := by
-    rw [hS', map_add]; ring
+    rw [hS', map_add (f := _)]; ring
   rw [heq]
   refine dvd_add ?_ (dvd_mul_right _ _)
   rw [pow_succ]
@@ -106,7 +110,7 @@ theorem deform : ∀ (k J I : Type) [Field k] [Fintype J] [Fintype I] (N : ℕ) 
             = w (some (i, l)) := by
           simp only [hA]
           have := hvl i l.1 hl
-          rw [dif_pos l.2] at this
+          rw [dite_eq_left l.2] at this
           exact this
         have h2 : ∑ j, y₀ j * PowerSeries.coeff 1 (GlobalTheory.PicDiv.hasse l.1 (s i j)) = 0 := by
           simp only [hB]
@@ -123,13 +127,15 @@ theorem deform : ∀ (k J I : Type) [Field k] [Fintype J] [Fintype I] (N : ℕ) 
       (sys N ξ s (fun i => PowerSeries.C (Sum.elim y₀ 0 i)) e) = 0 := by
     intro e
     rcases e with _ | ⟨i, l⟩
-    · simp [sys, map_sum, h0]
-    · simp only [sys, map_sum, map_mul, PowerSeries.constantCoeff_C, Sum.elim_inl, Sum.elim_inr]
-      have h' : ∀ j, PowerSeries.constantCoeff ((GlobalTheory.PicDiv.hasse l.1 (s i j)).subst
-          (PowerSeries.C ((0 : I → k) i)) : PowerSeries k) = PowerSeries.coeff l.1 (s i j) := by
-        intro j; rw [cc_subst _ _ (by simp), hA]
-      simp only [h']
-      exact hlow i l.1 l.2
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [sys, map_sum, h0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [sys, map_sum, map_mul, PowerSeries.constantCoeff_C, Sum.elim_inl, Sum.elim_inr]
+        have h' : ∀ j, PowerSeries.constantCoeff ((GlobalTheory.PicDiv.hasse l.1 (s i j)).subst
+            (PowerSeries.C ((0 : I → k) i)) : PowerSeries k) = PowerSeries.coeff l.1 (s i j) := by
+          intro j; rw [cc_subst _ _ (by simp), hA]
+        simp only [h']
+        exact hlow i l.1 l.2
   have htay : ∀ (x h : J ⊕ I → PowerSeries k) (m : ℕ), 1 ≤ m →
       (∀ i, PowerSeries.constantCoeff (x i) = Sum.elim y₀ 0 i) → ∀ e,
       (PowerSeries.X : PowerSeries k) ^ (m + 1) ∣ sys N ξ s (fun i => x i + PowerSeries.X ^ m * h i) e
@@ -146,7 +152,8 @@ theorem deform : ∀ (k J I : Type) [Field k] [Fintype J] [Fintype I] (N : ℕ) 
       rw [heq, pow_succ]
       refine mul_dvd_mul_left _ ?_
       rw [PowerSeries.X_dvd_iff]
-      simp [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [map_sum]
     · simp only [sys, lin, linFun, LinearMap.coe_mk, AddHom.coe_mk]
       set a := x (Sum.inr i)
       set b := h (Sum.inr i)
@@ -173,7 +180,8 @@ theorem deform : ∀ (k J I : Type) [Field k] [Fintype J] [Fintype I] (N : ℕ) 
           - PowerSeries.X ^ m * PowerSeries.C (PowerSeries.constantCoeff (h (Sum.inl j)) *
               PowerSeries.constantCoeff (GlobalTheory.PicDiv.hasse l.1 (s i j))
               + y₀ j * (PowerSeries.constantCoeff b * PowerSeries.coeff 1 (GlobalTheory.PicDiv.hasse l.1 (s i j))))) := by
-        rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, ← map_sum,
           Finset.sum_add_distrib, Finset.mul_sum (a := PowerSeries.constantCoeff b)]
         congr 4
         refine Finset.sum_congr rfl fun j _ => by ring

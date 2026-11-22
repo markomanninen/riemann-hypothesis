@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvA
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffPolyAdd
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PsiCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.KillAddFin
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.HarmInvA
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffPolyAdd
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PsiCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.KillAddFin
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,8 @@ theorem subst_quadCol (b : Fin n) (r : S) (β : Matrix (Fin d) (Fin d) S) :
   have hC' : ∀ (c : S) (f : MvPowerSeries (Fin n × Fin d) S), MvPowerSeries.C c * f = c • f :=
     fun c f => by rw [MvPowerSeries.smul_eq_C_mul]
   rw [← MvPowerSeries.coe_substAlgHom hs]
-  simp only [ReciprocityTheory.ChartRestriction.G.TB.quadCol, Fin.sum_univ_one, mul_assoc, hC, hC', map_smul, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ReciprocityTheory.ChartRestriction.G.TB.quadCol, Fin.sum_univ_one, mul_assoc, hC, hC', map_smul, map_sum, map_mul]
   simp only [MvPowerSeries.coe_substAlgHom, MvPowerSeries.subst_X hs, sb]
 
 theorem sum_subst_quadCol (r : S) (β : Matrix (Fin d) (Fin d) S) :
@@ -83,7 +88,8 @@ private theorem prod_exp_lemma_2 {S σ ι : Type} [CommRing S] [Algebra ℚ S] (
   refine Finset.induction_on s ?_ ?_
   · rw [Finset.prod_empty, Finset.sum_empty, ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_zero]
   · intro a s ha ih
-    rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_add (hx a)
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.prod_insert ha, Finset.sum_insert ha, ih, ReciprocityTheory.ChartRestriction.G.TB.WickVanishing.exp_add (hx a)
       (by rw [map_sum]; exact Finset.sum_eq_zero (fun i _ => hx i))]
 
 theorem harm_kill_jet {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {Dw : Datum H} {l : Level H}

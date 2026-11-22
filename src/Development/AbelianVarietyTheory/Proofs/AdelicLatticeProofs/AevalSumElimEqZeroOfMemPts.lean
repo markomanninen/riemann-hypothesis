@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatComponentMemRatPolysVanishingOnMatrixSetStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfContractions
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatComponentMemRatPolysVanishingOnMatrixSetStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfContractions
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -53,7 +58,7 @@ theorem aeval_sum_elim_eq_zero_of_tensor {ι : Type} [Fintype ι] [DecidableEq �
             simp [evC, φ, ← heg, MvPolynomial.eval_map, MvPolynomial.aeval_def, Algebra.ofId_apply]
           | add s t hs ht =>
             simp only [evC] at hs ht
-            simp only [evC, map_add, hs, ht]
+            simp only [evC, map_add (f := _), hs, ht]
         · intro k
           clear ht
           induction t using TensorProduct.induction_on with
@@ -61,7 +66,7 @@ theorem aeval_sum_elim_eq_zero_of_tensor {ι : Type} [Fintype ι] [DecidableEq �
           | tmul a b =>
             simp [φ, MvPolynomial.coeff_map, Algebra.ofId_apply]
             rw [mul_comm (eg a), ← eq_ratCast (algebraMap ℚ ℂ), ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
-          | add s t hs ht => simp only [map_add, MvPolynomial.coeff_add, hs, ht]
+          | add s t hs ht => simp only [map_add (f := _), MvPolynomial.coeff_add, hs, ht]
       have h3 : ey _ = 0 := hy _ h2
       have h4 := congrArg m h3
       rw [map_zero] at h4
@@ -71,14 +76,14 @@ theorem aeval_sum_elim_eq_zero_of_tensor {ι : Type} [Fintype ι] [DecidableEq �
       induction t using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [mul_comm]
-      | add s t hs ht => simp only [map_add, hs, ht]
+      | add s t hs ht => simp only [map_add (f := _), hs, ht]
     have h5 : ex _ = 0 := hx _ h1
     rw [← h5]
     clear ht h1 h5
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp
-    | add s t hs ht => simp only [map_add, hs, ht]
+    | add s t hs ht => simp only [map_add (f := _), hs, ht]
   have h6 := congrArg (LinearMap.mul' ℚ R) key
   rw [map_zero] at h6
   rw [← h6]
@@ -86,7 +91,7 @@ theorem aeval_sum_elim_eq_zero_of_tensor {ι : Type} [Fintype ι] [DecidableEq �
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add s t hs ht => simp only [map_add, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), hs, ht]
 
 theorem aeval_sum_elim_eq_zero_of_mem_pts : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)), (∀ σ : ℂ ≃+* ℂ, ∀ g ∈ Γ, g.map σ ∈ Γ) → ∀ F : MvPolynomial ((ι × ι) ⊕ (ι × ι)) ℚ, (∀ g ∈ Γ, ∀ h ∈ Γ, MvPolynomial.aeval (Sum.elim (fun ij : ι × ι => g ij.1 ij.2) (fun ij : ι × ι => h ij.1 ij.2)) F = (0 : ℂ)) → ∀ (R : Type) [CommRing R] [Algebra ℚ R], ∀ x ∈ pts Γ R, ∀ y ∈ pts Γ R, MvPolynomial.aeval (Sum.elim (fun ij : ι × ι => x ij.1 ij.2) (fun ij : ι × ι => y ij.1 ij.2)) F = (0 : R) := by
   intro ι _ _ Γ hΓ F hF R _ _ x hx y hy

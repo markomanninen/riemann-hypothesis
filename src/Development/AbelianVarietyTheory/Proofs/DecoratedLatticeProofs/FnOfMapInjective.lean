@@ -1,15 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.FormsTied
-import Formalism.LocalToGlobal.Columns.TiedValLatG
-import Formalism.LocalToGlobal.Columns.TiedValNorm
-import Formalism.LocalToGlobal.Columns.TiedValRat
-import Formalism.LocalToGlobal.Columns.CoefModAt
-import Formalism.LocalRingCardinality.PosOfIsomEmb
-import Formalism.QuotientMetricDivisors.ReductionLemmaZero
-import Formalism.QuotientMetricDivisors.FinalW
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SlopeStepG
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HtPsiLeIffExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.FormsTied
+public import Formalism.LocalToGlobal.Columns.TiedValLatG
+public import Formalism.LocalToGlobal.Columns.TiedVal
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkMapInitMinor
+public import Formalism.LocalToGlobal.Columns.TiedValRat
+public import Formalism.LocalToGlobal.Columns.CoefModAt
+public import Formalism.LocalRingCardinality.PosOfIsomEmb
+public import Formalism.QuotientMetricDivisors.ReductionLemmaZero
+public import Formalism.QuotientMetricDivisors.FinalW
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.LocalRingCardinality.DataArith
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HtPsiLeIffExists
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Forms
 open scoped Matrix ComplexOrder
 
@@ -41,7 +47,7 @@ theorem exists_ptVal : ∀ (D : D7) (u : D.what₂.Word) (K : ClsPTied u) (W : V
   · funext c
     apply Subtype.ext
     refine fnOf_map_injective (gramC (gramP D) (embT D)) (shiftOf (sgT u)) D.what₂.embLL ?_
-    rw [← hval, Pi.add_apply, Submodule.coe_add, map_add, map_add, map_add, map_add, ← hval, ← hval, Pi.add_apply]
+    rw [← hval, Pi.add_apply, Submodule.coe_add, map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), ← hval, ← hval, Pi.add_apply]
   · funext c
     apply Subtype.ext
     refine fnOf_map_injective (gramC (gramP D) (embT D)) (shiftOf (sgT u)) D.what₂.embLL ?_

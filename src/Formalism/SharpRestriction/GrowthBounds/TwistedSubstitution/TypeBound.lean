@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+
+@[expose] public section
 
 noncomputable section
 

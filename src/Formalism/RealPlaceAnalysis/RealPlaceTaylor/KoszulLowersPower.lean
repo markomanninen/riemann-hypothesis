@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.UJLocCompact
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsInducingCoeMatrix
+module
+
+public import Formalism.RealPlaceAnalysis.UJLocCompact
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Topology
 

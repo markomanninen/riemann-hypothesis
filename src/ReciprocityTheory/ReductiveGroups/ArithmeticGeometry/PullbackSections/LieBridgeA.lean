@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.SatLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,6 @@ def actL (φ : G ⟶ G) [IsMonHom φ] : TanM x0 G →ₗ[S] TanM x0 G where
   toFun v := mkT (tv v ≫ φ) (by rw [smT_post, tv_mem, MonObj.one_comp])
   map_add' u v := tanM_ext (MonObj.mul_comp (tv u) (tv v) φ)
   map_smul' a v := tanM_ext (smT_post x0 a (tv v) φ).symm
-
-theorem tv_actL (φ : G ⟶ G) [IsMonHom φ] (v : TanM x0 G) : tv (actL φ v) = tv v ≫ φ := rfl
 
 theorem oact_zero {O : Type} [CommRing O] (A : OAct O G) : A.act 0 = 1 := by
   have h := A.add 0 0

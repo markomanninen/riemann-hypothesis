@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+
+@[expose] public section
 
 noncomputable section
 

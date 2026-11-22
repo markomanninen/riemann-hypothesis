@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeightTraceProducts.ThFacts
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.Z.Sym.Wt
 
 open MvPolynomial in
 private theorem coeff_scale {σ : Type} [Fintype σ] (t : σ → ℂ) (P : MvPolynomial σ ℂ) (m : σ →₀ ℕ) :
-    coeff m (aeval (fun p => MvPolynomial.C (t p) * MvPolynomial.X p) P : MvPolynomial σ ℂ) = (∏ p, t p ^ m p) * coeff m P := by
+    (aeval (fun p => MvPolynomial.C (t p) * MvPolynomial.X p) P : MvPolynomial σ ℂ).coeff m =
+      (∏ p, t p ^ m p) * P.coeff m := by
   classical
   induction P using MvPolynomial.induction_on' with
   | monomial u a =>
@@ -17,7 +22,8 @@ private theorem coeff_scale {σ : Type} [Fintype σ] (t : σ → ℂ) (P : MvPol
     split_ifs with h
     · rw [h]
     · simp
-  | add p q hp hq => rw [map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq, mul_add]
+  | add p q hp hq =>
+    simp only [map_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hp, hq, mul_add]
 
 open MvPolynomial in
 private theorem eval_scale {σ : Type} (t x : σ → ℂ) (P : MvPolynomial σ ℂ) :
@@ -25,7 +31,7 @@ private theorem eval_scale {σ : Type} (t x : σ → ℂ) (P : MvPolynomial σ �
       MvPolynomial.eval (fun p => t p * x p) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, hp, MvPolynomial.aeval_X, MvPolynomial.eval_C, MvPolynomial.eval_X]
 
 theorem UpperTheory.V.Z.Sym.Wt.memMH :
@@ -40,7 +46,7 @@ theorem UpperTheory.V.Z.Sym.Wt.memMH :
     have h1 : (MvPolynomial.aeval (fun p : K × Fin d => MvPolynomial.C (Function.update (fun _ => (1 : ℂ)) k 2 p.1) * MvPolynomial.X p) P :
         MvPolynomial (K × Fin d) ℂ) = MvPolynomial.C (∏ v, Function.update (fun _ => (1 : ℂ)) k 2 v ^ n v) * P :=
       MvPolynomial.funext fun x => by rw [eval_scale, map_mul, MvPolynomial.eval_C]; exact h _ x
-    have h2 := congrArg (MvPolynomial.coeff m) h1
+    have h2 := congrArg (AddMonoidAlgebra.coeff · m) h1
     rw [coeff_scale, MvPolynomial.coeff_C_mul, e] at h2
     have h3 := mul_right_cancel₀ (MvPolynomial.mem_support_iff.1 hm) h2
     have h4 : ∀ a : K → ℕ, ∏ v, Function.update (fun _ => (1 : ℂ)) k 2 v ^ a v = 2 ^ a k := fun a => by

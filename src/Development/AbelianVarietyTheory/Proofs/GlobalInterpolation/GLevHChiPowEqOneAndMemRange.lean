@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.TiedSym
-import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.TiedSym
+public import Formalism.LocalToGlobal.GroupLattices.DownNaturalLevelZero
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GSplit
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.L2.Forms NumberField IsDedekindDomain Matrix Formalism.UG
 open scoped TensorProduct
 

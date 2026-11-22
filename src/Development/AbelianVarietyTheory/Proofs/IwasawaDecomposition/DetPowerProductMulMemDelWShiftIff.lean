@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PolFunApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,12 +23,12 @@ theorem hw_shift (R : Type) [CommRing R] {m : ℕ} (ν : Fin (m + 1) → ℕ) (c
     congr 1
     unfold nuNext
     have h : (s.castSucc : Fin (m + 1)).val + 1 < m + 1 := by simp only [Fin.val_castSucc]; omega
-    rw [dif_pos h, dif_pos h]
+    rw [dite_eq_left h, dite_eq_left h]
     dsimp only
     omega
   · have h : ¬ ((Fin.last m : Fin (m + 1)).val + 1 < m + 1) := by simp
     unfold nuNext
-    rw [dif_neg h, dif_neg h]
+    rw [dite_eq_right h, dite_eq_right h]
     dsimp only
     rw [Nat.sub_zero, Nat.sub_zero, pow_add]
     rfl
@@ -92,7 +96,7 @@ theorem rowDiv_fullMinor_mul_self (R : Type) [CommRing R] {m : ℕ} (a : Fin m) 
 theorem rowDiv_add' (R : Type) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ) (f g : MvPolynomial (Fin r × Fin n) R) :
     rowDiv R a b k (f + g) = rowDiv R a b k f + rowDiv R a b k g := by
   unfold rowDiv
-  rw [map_add, Polynomial.coeff_add]
+  rw [map_add (f := _), Polynomial.coeff_add]
 
 theorem rowDiv_smul' (R : Type) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ) (t : R)
     (f : MvPolynomial (Fin r × Fin n) R) : rowDiv R a b k (t • f) = t • rowDiv R a b k f := by
@@ -235,9 +239,6 @@ def detMul (K : Type) [CommRing K] {T : Type} [Fintype T] (N : ℕ) (k : T → �
 theorem detMul_apply (K : Type) [CommRing K] {T : Type} [Fintype T] (N : ℕ) (k : T → ℕ)
     (F : (T → Matrix (Fin N) (Fin N) K) → K) (y : T → Matrix (Fin N) (Fin N) K) :
     detMul K N k F y = (∏ τ, (y τ).det ^ k τ) * F y := rfl
-
-theorem polFunAdd_apply (K : Type) [CommRing K] (T : Type) (N : ℕ) (P : MvPolynomial (T × Fin N × Fin N) K) :
-    polFunAdd K T N P = polFun P := rfl
 
 theorem delW_le_range (p : ℕ) [Fact p.Prime] (T : Type) [Fintype T] (N : ℕ) (ν : T → Fin N → ℕ) :
     DelW p T N ν ≤ (polFunAdd ℂ_[p] T N).range := by

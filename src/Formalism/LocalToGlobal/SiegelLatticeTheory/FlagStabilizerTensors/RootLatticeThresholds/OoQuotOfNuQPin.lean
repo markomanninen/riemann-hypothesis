@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.UMatMulInv
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.UMatMulInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,7 @@ theorem continuous_yM (hw : OkPt X u u' w) :
     · intro i j hij
       simp only [Cw, Matrix.of_apply]
       have hji : j < i := hij
-      rw [if_neg (ne_of_gt hji), dif_neg (fun h => absurd h.1 (lt_asymm hji))]
+      rw [if_neg (ne_of_gt hji), dite_eq_right (fun h => absurd h.1 (lt_asymm hji))]
 
   have hinv : Continuous fun c : FreeE w → ℂ => (Cw w c)⁻¹ := by
     have h : (fun c : FreeE w → ℂ => (Cw w c)⁻¹) = fun c => (Cw w c).adjugate := by

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
-import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsIntMulIsIntegralOfTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+public import Development.AbelianVarietyTheory.PublishedTheorems.AdelicLattices₂.ExistsIntMulIsIntegralOfTrace
+
+@[expose] public section
 
 open GlobalTheory.SmoothForms GlobalTheory.HermClass Module Submodule NumberField Matrix
 
@@ -21,7 +25,7 @@ theorem one_le_norm_mul_pow {E : Type} [Field E] [NumberField E] {a : E} (ha : I
     exact_mod_cast Int.one_le_abs hm0
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ ψ)] at h1
   refine h1.trans (mul_le_mul_of_nonneg_left ?_ (norm_nonneg _))
-  refine (Finset.prod_le_prod (g := fun _ => T) (fun _ _ => norm_nonneg _)
+  refine (Finset.prod_le_prod₀ (g := fun _ => T) (fun _ _ => norm_nonneg _)
     fun φ _ => (norm_le_pi_norm (canonicalEmbedding E a) φ).trans haT).trans ?_
   rw [Finset.prod_const, ← Embeddings.card E ℂ]
   exact pow_le_pow_right₀ hT (Finset.card_le_univ _)
@@ -43,7 +47,8 @@ theorem exists_short_coord {F : Type} [Field F] [NumberField F] [IsTotallyReal F
   have hqe : ∀ x y, q x y = ∑ k, e.repr x k * e.repr y k * q (e k) (e k) := by
     intro x y
     conv_lhs => rw [← e.sum_repr x, ← e.sum_repr y]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Finset.sum_eq_single k]
     · ring
@@ -70,7 +75,8 @@ theorem exists_short_coord {F : Type} [Field F] [NumberField F] [IsTotallyReal F
     rw [Fintype.sum_equiv ε _ (fun p => ρ p.1 (e.repr (b i) p.2) * ρ p.1 (q (e p.2) (e p.2)) *
       ρ p.1 (e.repr (b i') p.2)) (fun _ => rfl), Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun φ _ => ?_
-    rw [hqe, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hqe, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp only [map_mul]; ring
   have hdT : ((T.det : ℚ) : ℝ) = B.det ^ 2 * ∏ j, a j := by
@@ -100,10 +106,12 @@ theorem exists_short_coord {F : Type} [Field F] [NumberField F] [IsTotallyReal F
     have h3 : ∑ i, (z i : ℝ) * A i (ε.symm (φ, k)) =
         ρ φ (e.repr v k) * Real.sqrt |ρ φ (q (e k) (e k))| := by
       have hc : e.repr v k = ∑ i, (z i : F) * e.repr (b i) k := by
-        rw [← e.coord_apply, hv, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← e.coord_apply, hv, map_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_zsmul, zsmul_eq_mul, e.coord_apply]
-      rw [hc, map_sum, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hc, map_sum, Finset.sum_mul]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [A, Matrix.mul_diagonal, B, a, Matrix.of_apply, Equiv.apply_symm_apply,
         mul_assoc, map_mul, map_intCast]
@@ -113,7 +121,8 @@ theorem exists_short_coord {F : Type} [Field F] [NumberField F] [IsTotallyReal F
     rw [map_mul, map_mul, Real.norm_eq_abs, abs_mul, abs_mul_self]
     rwa [sq] at h4
   refine ⟨?_, fun k => ?_⟩
-  · rw [← hρc, Complex.norm_real, hqe, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hρc, Complex.norm_real, hqe, map_sum]
     refine (norm_sum_le _ _).trans ?_
     calc _ ≤ ∑ _k : ι, t ^ 2 := Finset.sum_le_sum fun k _ => key k
       _ = _ := by simp
@@ -169,7 +178,7 @@ theorem shortSmall (E : Type) [Field E] [NumberField E] [IsCMField E] (hfr : Fra
   letI : Module ℚ V := Module.compHom V (algebraMap ℚ E)
   have : IsScalarTower ℚ E V := IsScalarTower.of_compHom ℚ E V
   have : Module.Finite ℤ Λ := Module.Finite.iff_fg.2 hfg
-  have : IsAddTorsionFree V := .of_module_rat V
+  have : HasUniqueDiv V := .of_module_rat V
   have : Module.Free ℤ Λ := inferInstance
   let β := Module.Free.chooseBasis ℤ Λ
   let κ := Module.Free.ChooseBasisIndex ℤ Λ
@@ -179,7 +188,8 @@ theorem shortSmall (E : Type) [Field E] [NumberField E] [IsCMField E] (hfr : Fra
   have hbΛ : ∀ x ∈ Λ, ∃ c : κ → ℤ, x = ∑ i, c i • b i := fun x hx =>
     ⟨β.repr ⟨x, hx⟩, by
       have := congrArg Λ.subtype (β.sum_repr ⟨x, hx⟩)
-      rw [map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum] at this
       exact this.symm⟩
   have hbs : ⊤ ≤ span ℚ (Set.range b) := by
     have hΛ : ∀ x ∈ Λ, x ∈ span ℚ (Set.range b) := fun x hx => by
@@ -222,7 +232,7 @@ theorem shortSmall (E : Type) [Field E] [NumberField E] [IsCMField E] (hfr : Fra
     have h1 := Algebra.trace_trace (R := ℚ) (S := F) (T := E) (algebraMap F E (q x y))
     rw [Algebra.trace_algebraMap, Algebra.IsQuadraticExtension.finrank_eq_two, map_nsmul] at h1
     have h2 : algebraMap F E (q x y) = h x y + star (h x y) := by rw [← hs]; rfl
-    rw [h2, map_add, trace_star, two_nsmul] at h1
+    rw [h2, map_add (f := _), trace_star, two_nsmul] at h1
     linarith
   set T : Matrix κ κ ℚ := Matrix.of fun i j => Algebra.trace ℚ F (q (b i) (b j)) with hT
   obtain ⟨hT0, hT1⟩ := det_ne_zero_and_abs_le T hM0 (by
@@ -231,7 +241,8 @@ theorem shortSmall (E : Type) [Field E] [NumberField E] [IsCMField E] (hfr : Fra
     have h1 : ∀ j, ∃ m : ℤ, Algebra.trace ℚ E (h y (b j)) = m := fun j => by
       obtain ⟨m, hm⟩ := hx j
       refine ⟨m, ?_⟩
-      rw [← hm, hy, map_sum, LinearMap.sum_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hm, hy, map_sum, LinearMap.sum_apply, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← algebraMap_smul E, map_smul, LinearMap.smul_apply, algebraMap_smul, map_smul, ← htr]
       rfl
@@ -239,7 +250,8 @@ theorem shortSmall (E : Type) [Field E] [NumberField E] [IsCMField E] (hfr : Fra
       obtain ⟨c, rfl⟩ := hbΛ w hw
       choose m hm using h1
       refine ⟨∑ j, c j * m j, ?_⟩
-      rw [map_sum, map_sum, Int.cast_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Int.cast_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_zsmul, map_zsmul, hm, zsmul_eq_mul, Int.cast_mul]
     have h3 : (N : E) • (D : E) • y ∈ Λ := hdual _ fun w hw => by

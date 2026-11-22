@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+
+@[expose] public section
 
 open Matrix ValuativeRel GlobalTheory.WeilM MeasureTheory
 open scoped ComplexConjugate NNReal
@@ -76,7 +80,7 @@ theorem exists_eq_mul_apply_zero : ∀ (k : Type) [Field k] [ValuativeRel k] [To
         · have hne : ψ (x ⬝ᵥ y) - 1 ≠ 0 := sub_ne_zero.mpr h1
           rw [zero_add, ← sub_one_mul]
           field_simp
-      rw [hdiff, map_add, map_sub, hl y g hgSB, sub_self, add_zero]
+      rw [hdiff, map_add (f := _), map_sub, hl y g hgSB, sub_self, add_zero]
       refine ih φ₁ hφ₁SB ?_
       intro x hx
       have hx1 : ψ (x ⬝ᵥ y) = 1 := by

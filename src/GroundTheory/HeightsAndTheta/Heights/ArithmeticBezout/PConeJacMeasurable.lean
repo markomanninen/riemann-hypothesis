@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeJacMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTangentJacCompress
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsKernelProjMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeTangentAverage
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsConeJacMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsTangentJacCompress
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsKernelProjMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeTangentAverage
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -58,7 +63,7 @@ theorem coneTangent_eq_ker (h : HermNorm n) {J : Ideal (MvPolynomial (Fin n) ℂ
           = eval (h.pointOf y) a * ∑ j, eval (h.pointOf y) (pderiv j x) * h.pointOf v j := by
             rw [Finset.mul_sum]
             refine Finset.sum_congr rfl fun j _ => ?_
-            rw [smul_eq_mul, pderiv_mul, map_add, map_mul, map_mul, hx0]
+            rw [smul_eq_mul, pderiv_mul, map_add (f := _), map_mul, map_mul, hx0]
             ring
         _ = 0 := by rw [hx, mul_zero]
 

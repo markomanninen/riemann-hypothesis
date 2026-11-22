@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsClearDenominators
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExistsClearDenominators
+
+@[expose] public section
 
 noncomputable section
 

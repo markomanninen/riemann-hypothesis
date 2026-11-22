@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScGapBig
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScGapBig
+
+@[expose] public section
 
 namespace PI.UnitaryGroupMassFormula.ScGapBig
 

@@ -1,9 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAutCbCbTop
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.UsedLocalConclusion
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotFullBot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsWeakTopologyWittTiltTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZlTowerGen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousAutCbCbTop
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc TensorProduct GlobalTheory.NL Formalism.MainNotions.DeltaInvariantLattices GlobalTheory.WeakClosed
 open scoped Topology PowerSeries.WithPiTopology
 set_option synthInstance.maxHeartbeats 400000
@@ -14,7 +19,11 @@ open Filter Topology
 
 namespace GlobalTheory.WeakClosed
 
-theorem continuous_orbit_twTop : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P) {K LL : FinExt l} (T : Lt K LL) {d : ℕ} (b : LatB T d) (y : TW (RW LL) T), letI := twTop T b; Continuous fun g : ↥(GK K) => TWact (AI.gRW LL (g : GQ l)) T g y := by
+theorem continuous_orbit_twTop :
+    ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P) {K LL : FinExt l}
+      (T : Lt K LL) {d : ℕ} (b : LatB T d) (y : TW (RW LL) T),
+      letI := twTop T b
+      Continuous fun g : ↥(GK K) => TWact (AI.gRW LL (g : GQ l)) T g y := by
   intro l _ P AI K LL T d b y
 
   letI := zlMod T
@@ -40,7 +49,7 @@ theorem continuous_orbit_twTop : ∀ {l : ℕ} [Fact l.Prime] {P : LocPrime l} (
       (f := fun g : ↥(GK K) => ((g : GQ l), w)) ha (continuous_subtype_val.prodMk continuous_const)
   have hs : ∀ i, Continuous fun g : ↥(GK K) => ∑ j, algebraMap ℤ_[l] (WCb l) (b.repr (T.actT g (b j)) i) *
       (AI.actWCbHom (g : GQ l)).toAlgHom (GlobalTheory.WeakTop.coords (WCb l) ↥(OL LL) b y j) := fun i =>
-    continuous_finset_sum _ fun j _ => (hW.comp (hρ i j)).mul (h2 _)
+    continuous_finsetSum _ fun j _ => (hW.comp (hρ i j)).mul (h2 _)
   refine continuous_induced_rng.2 (continuous_pi fun i => ?_)
   refine (hs i).congr fun g => ?_
   exact (GlobalTheory.WeakTop.coords_map b _ _ y i).symm

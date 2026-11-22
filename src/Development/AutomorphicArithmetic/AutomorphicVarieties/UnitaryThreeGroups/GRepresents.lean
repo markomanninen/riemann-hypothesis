@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,11 +15,11 @@ section Emb
 
 variable {m : ℕ} {R : Type*} [CommRing R]
 
-def emb : GG m R →* Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) R where
+def emb : GG (m := m) (R := R) →* Matrix (Fin m ⊕ Fin m) (Fin m ⊕ Fin m) R where
   toFun x := if x.right = 1 then Matrix.fromBlocks x.mat 0 0 (theta x.left : GL (Fin m) R)
     else Matrix.fromBlocks 0 x.mat (theta x.left : GL (Fin m) R) 0
   map_one' := by
-    have h : theta (1 : GL (Fin m) R) = 1 := map_one (thetaAut m R)
+    have h : theta (1 : GL (Fin m) R) = 1 := map_one (thetaAut (m := m) (R := R))
     simp [GG.mat, h]
   map_mul' x y := by
     have h : ((-1 : ℤˣ) = 1) = False := by decide
@@ -36,10 +40,10 @@ def barChar (Ψ : Γ →* Oˣ) : Γ →* (ResidueField O)ˣ := (Units.map (resid
 
 variable (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ)
 
-def rbar : Γ →* GG 3 (ResidueField O) := r0 η (barChar O Ψ)
+def rbar : Γ →* GG (m := 3) (R := ResidueField O) := r0 η (barChar O Ψ)
 
 @[ext] structure GLift (R : Type) [CommRing R] [Algebra O R] [IsCO O R] where
-  hom : Γ →* GG 3 R
+  hom : Γ →* GG (m := 3) (R := R)
   cont : ∀ a b, AdicCont (maximalIdeal R) fun g => (hom g).mat a b
   red : ∀ g, GG.map (res O R : R →+* ResidueField O) (hom g) = rbar O η Ψ g
 
@@ -48,7 +52,7 @@ variable {O η Ψ} {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing
 theorem GLift.hasMult (r : GLift O η Ψ R) : HasMult η r.hom := fun g => congrArg SemidirectProduct.right (r.red g)
 
 theorem GG.map_map {m : ℕ} {A B C : Type*} [CommRing A] [CommRing B] [CommRing C] (f : A →+* B) (f' : B →+* C)
-    (x : GG m A) : GG.map f' (GG.map f x) = GG.map (f'.comp f) x := rfl
+    (x : GG (m := m) (R := A)) : GG.map f' (GG.map f x) = GG.map (f'.comp f) x := rfl
 
 def GLift.map (f : R →ₐ[O] R') (r : GLift O η Ψ R) : GLift O η Ψ R' where
   hom := (GG.map (f : R →+* R')).comp r.hom
@@ -61,7 +65,7 @@ def GLift.map (f : R →ₐ[O] R') (r : GLift O η Ψ R) : GLift O η Ψ R' wher
     exact (r.cont a b N).comp (Ideal.quotientMap _ (f : R →+* R') hle)
   red g := by
     have e : (res O R' : R' →+* ResidueField O).comp (f : R →+* R') = (res O R : R →+* ResidueField O) :=
-      RingHom.ext fun x => res_map f x
+      RingHom.ext fun x => res_map (O := O) (R := R) (R' := R') f x
     rw [MonoidHom.comp_apply, GG.map_map, e, r.red]
 
 def GLift.comap {H : Type} [Group H] [TopologicalSpace H] (φ : H →* Γ) (hφ : Continuous φ) (r : GLift O η Ψ R) :
@@ -70,13 +74,15 @@ def GLift.comap {H : Type} [Group H] [TopologicalSpace H] (φ : H →* Γ) (hφ 
   cont a b N := (r.cont a b N).comp_continuous hφ
   red g := r.red (φ g)
 
-variable (O η Ψ) in
-
-def GCond : Type 1 := ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R], GLift O η Ψ R → Prop
 
 variable (O η Ψ) in
+def GCond (O : Type) [CommRing O] [IsLocalRing O] {Γ : Type} [Group Γ] [TopologicalSpace Γ]
+    (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) : Type 1 := ∀ (R : Type) [CommRing R] [Algebra O R] [IsCO O R], GLift O η Ψ R → Prop
 
-def GCond.noCondition : GCond O η Ψ := fun _ _ _ _ _ => True
+
+variable (O η Ψ) in
+def GCond.noCondition (O : Type) [CommRing O] [IsLocalRing O] {Γ : Type} [Group Γ] [TopologicalSpace Γ]
+    (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) : GCond O η Ψ := fun _ _ _ _ _ => True
 
 def GRepresents (P : GCond O η Ψ) (r : GLift O η Ψ R) : Prop :=
   ∀ (R' : Type) [CommRing R'] [Algebra O R'] [IsCO O R'],
@@ -110,32 +116,32 @@ section Points
 
 variable (O : Type) [CommRing O] {Γ R : Type} [Group Γ] [CommRing R] [Algebra O R]
 
-def entAlg (r : Γ →* GG 3 R) : Subalgebra O R := Algebra.adjoin O {x | ∃ g a b, x = (r g).mat a b}
+def entAlg (r : Γ →* GG (m := 3) (R := R)) : Subalgebra O R := Algebra.adjoin O {x | ∃ g a b, x = (r g).mat a b}
 
-def entMon (r : Γ →* GG 3 R) (j : ℤ) : Set R :=
+def entMon (r : Γ →* GG (m := 3) (R := R)) (j : ℤ) : Set R :=
   {x | ∃ L : List (Γ × Fin 3 × Fin 3), (L.map fun s => wt s.2.1 s.2.2).sum = j ∧
     x = (L.map fun s => (r s.1).mat s.2.1 s.2.2).prod}
 
-def weightZeroSubalgebra (r : Γ →* GG 3 R) : Subalgebra O R := Algebra.adjoin O (entMon r 0)
+def weightZeroSubalgebra (r : Γ →* GG (m := 3) (R := R)) : Subalgebra O R := Algebra.adjoin O (entMon r 0)
 
 variable {O} {κ : Type} [CommRing κ] [Algebra O κ]
 
-def push (f : R →ₐ[O] κ) (r : Γ →* GG 3 R) : Γ →* GG 3 κ := (GG.map (f : R →+* κ)).comp r
+def push (f : R →ₐ[O] κ) (r : Γ →* GG (m := 3) (R := R)) : Γ →* GG (m := 3) (R := κ) := (GG.map (f : R →+* κ)).comp r
 
-def IsPush {A : Subalgebra O R} (ξ : A →ₐ[O] κ) (r : Γ →* GG 3 R) (r' : Γ →* GG 3 κ) : Prop :=
+def IsPush {A : Subalgebra O R} (ξ : A →ₐ[O] κ) (r : Γ →* GG (m := 3) (R := R)) (r' : Γ →* GG (m := 3) (R := κ)) : Prop :=
   ∀ g, (r' g).right = (r g).right ∧ ∀ a b, ∃ h : (r g).mat a b ∈ A, (r' g).mat a b = ξ ⟨_, h⟩
 
-def tanCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG 3 R) (g : Γ) : Matrix (Fin 3) (Fin 3) κ :=
+def tanCoc (F : R →ₐ[O] DualNumber κ) (r : Γ →* GG (m := 3) (R := R)) (g : Γ) : Matrix (Fin 3) (Fin 3) κ :=
   ((r g).mat.map fun x => (F x).snd) *
     (((r g).left⁻¹ : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R).map fun x => (F x).fst
 
 def dualFst (F : R →ₐ[O] DualNumber κ) : R →ₐ[O] κ := (TrivSqZeroExt.fstHom O κ κ).comp F
 
-def Rigid (r : Γ →* GG 3 R) (f : R →ₐ[O] κ) : Prop :=
+def Rigid (r : Γ →* GG (m := 3) (R := R)) (f : R →ₐ[O] κ) : Prop :=
   ∀ F : R →ₐ[O] DualNumber κ, dualFst F = f → ∃ X, tanCoc F r = cob (push f r) X
 
-def RigidWt (j : ℤ) (r : Γ →* GG 3 R) (f : R →ₐ[O] κ) : Prop :=
-  ∀ F : R →ₐ[O] DualNumber κ, dualFst F = f → (∀ g, tanCoc F r g ∈ gw κ j) → ∃ X, tanCoc F r = cob (push f r) X
+def RigidWt (j : ℤ) (r : Γ →* GG (m := 3) (R := R)) (f : R →ₐ[O] κ) : Prop :=
+  ∀ F : R →ₐ[O] DualNumber κ, dualFst F = f → (∀ g, tanCoc F r g ∈ gw (R := κ) j) → ∃ X, tanCoc F r = cob (push f r) X
 
 def IsLocPt [IsLocalRing R] {κ : Type} [NormedField κ] [Algebra O κ] (f : R →ₐ[O] κ) : Prop :=
   ∀ x ∈ maximalIdeal R, ‖f x‖ < 1
@@ -159,7 +165,7 @@ def baseLift (hΨ : ∀ j : ℤ, AdicCont (maximalIdeal O) fun g => ((Ψ g ^ j :
   red g := by
     have e : ∀ x : O, res O O x = residue O x := fun x => (res O O).commutes x
     refine SemidirectProduct.ext (Units.ext ?_) rfl
-    show (tor O (Ψ g) : Matrix (Fin 3) (Fin 3) O).map (res O O) = tor _ (barChar O Ψ g)
+    show (tor (R := O) (Ψ g) : Matrix (Fin 3) (Fin 3) O).map (res O O) = tor (R := ResidueField O) (barChar O Ψ g)
     rw [tor_val, tor_val, Matrix.diagonal_map (map_zero _)]
     congr 1
     funext i

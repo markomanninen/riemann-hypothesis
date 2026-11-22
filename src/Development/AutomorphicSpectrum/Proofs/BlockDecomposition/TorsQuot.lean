@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -69,7 +73,7 @@ theorem tors_quot : ∀ (p : ℕ) [Fact p.Prime] (B : Type) [CommRing B] (π : B
         (Polynomial.mem_lifts _).2 ⟨Q, hQ⟩
     obtain ⟨Q, rfl, hQd, hQm⟩ := Polynomial.lifts_and_natDegree_eq_and_monic hl hP
     obtain ⟨x, hx⟩ := hA Q hQm (hQd ▸ hdeg)
-    exact ⟨Ideal.Quotient.mk I x, hx.map⟩
+    exact ⟨Ideal.Quotient.mk I x, hx.map (Ideal.Quotient.mk I)⟩
   · intro hV f₁ g₁ ⟨N, hN⟩
     obtain ⟨f, rfl⟩ := hsurj f₁
     obtain ⟨g, rfl⟩ := hsurj g₁
@@ -77,7 +81,7 @@ theorem tors_quot : ∀ (p : ℕ) [Fact p.Prime] (B : Type) [CommRing B] (π : B
     obtain ⟨a, rfl⟩ := hsurj a₁
     obtain ⟨b, rfl⟩ := hsurj b₁
     have ht : π * (a * f + b * g - π ^ N) = 0 := by
-      rw [← hI, map_sub, map_add, map_mul, map_mul, map_pow, hab, sub_self]
+      rw [← hI, map_sub, map_add (f := _), map_mul, map_mul, map_pow, hab, sub_self]
     have hmem : π ^ (N + 1) ∈ Ideal.span {f, g} := by
       refine Ideal.mem_span_pair.2 ⟨π * a, π * b, ?_⟩
       linear_combination ht

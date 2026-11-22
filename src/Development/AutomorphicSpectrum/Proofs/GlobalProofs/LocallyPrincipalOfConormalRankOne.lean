@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocPrincipalSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.EffCartierIffForallCartAt
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocPrincipalSpan
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits TopologicalSpace
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R GlobalTheory.CompanionTheory.Hypotheses₂.CentreOver
 
@@ -80,7 +85,7 @@ theorem locPrincipal_of_rankAtStalk_eq_one {A : Type} [CommRing A] [IsDomain A]
       IsLocalization.map_units (Localization.AtPrime p) (⟨s, hs⟩ : p.primeCompl)
     rw [← Ideal.unit_mul_mem_iff_mem _ hunit, ← map_mul]
     have hdecomp : s * x = b * f0 + (s * x - b * f0) := by ring
-    rw [hdecomp, map_add]
+    rw [hdecomp, map_add (f := _)]
     refine Submodule.add_mem_sup ?_ ?_
     · exact Ideal.mem_map_of_mem _ (Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self f0))
     · have h2 : φ (s * x - b * f0) ∈ (I ^ 2).map φ := Ideal.mem_map_of_mem _ hsb

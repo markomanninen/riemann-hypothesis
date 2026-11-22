@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.HarderNarasimhan.QuotRealize
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.HarderNarasimhan.QuotRealize
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset
 open scoped InnerProductSpace
@@ -40,8 +44,8 @@ def lamX (x : I.GA) : Submodule (𝓞 I.E) (Fin I.n → I.E) :=
   Submodule.span (𝓞 I.E)
     {y | I.fmat x.2⁻¹ *ᵥ (fun i => Formalism.UG.inclE (F := I.F) (Af I.F) (y i)) ∈ I.Lf}
 
-open Classical in
 
+open Classical in
 def frm (x : I.GA) : InfinitePlace I.E → Matrix (Fin I.n) (Fin I.n) ℂ := fun w =>
   if w.embedding = I.φ (w.comap (algebraMap I.F I.E)) then
     I.P (w.comap (algebraMap I.F I.E)) * uMat (x.1 (w.comap (algebraMap I.F I.E)))

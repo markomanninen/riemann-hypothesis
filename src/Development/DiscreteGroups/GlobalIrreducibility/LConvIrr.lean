@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrAvg
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvIrrAvg
+
+@[expose] public section
 
 noncomputable section
 

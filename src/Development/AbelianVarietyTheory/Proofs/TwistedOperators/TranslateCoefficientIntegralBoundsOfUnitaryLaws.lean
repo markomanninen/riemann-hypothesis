@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteBranchingUpq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -161,8 +165,8 @@ end GlobalTheory.SepReal.IntBd
 
 namespace GlobalTheory.SepReal
 
-open GlobalTheory.SepReal.IntBd in
 
+open GlobalTheory.SepReal.IntBd in
 theorem intBounds_of (hE : EmbLaws) (hBo : Boost) (hP : PowInt) (hD : DecPow) : IntBounds := by
   intro C₀ hC₀
   refine ⟨200 + 80 * C₀, by positivity, ?_⟩

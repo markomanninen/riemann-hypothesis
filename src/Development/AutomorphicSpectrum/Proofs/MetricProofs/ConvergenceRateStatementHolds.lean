@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
-import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MaMeasureEqOfConst
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHolds
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.MaMeasure
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MaMeasureEqOfConst
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TailBoundStatementHolds
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 
@@ -27,7 +32,7 @@ theorem maMeasure_univ_eq {e : ℕ} {X : Type} [TopologicalSpace X] [CompactSpac
     (hPsh : ∀ i, IsPsh A (th i + LocPot.ofFun (u i) + Θ)) :
     maMeasure A (fun i => th i + LocPot.ofFun (u i) + Θ) Set.univ =
       ENNReal.ofReal (mInt A (fun i => th i + Θ) (fun _ => 1)) := by
-  obtain ⟨hfin, hg⟩ := maMeasure_thm A _ hP hPsh
+  obtain ⟨hfin, hg⟩ := maMeasure_thm A (fun i => th i + LocPot.ofFun (u i) + Θ) hP hPsh
   have hI : Integrable (fun _ : X => (1 : ℝ)) (maMeasure A (fun i => th i + LocPot.ofFun (u i) + Θ)) :=
     integrable_const 1
   have hM := (hg _ measurable_const).1.2 hI
@@ -45,8 +50,8 @@ end GlobalTheory.CompanionTheory.Ar.Giv.Rate
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
 
-open GlobalTheory.CompanionTheory.Ar.Giv.Rate in
 
+open GlobalTheory.CompanionTheory.Ar.Giv.Rate in
 theorem convergenceRate_holds : ConvergenceRateStatement := by
   intro e X _ _ _ _ _ A Θ L s n m W hΘ hpos hL hS hSNC hnorm th ph phT th₀ ph₀ phT₀ C₅ C t₀
     hW hR hW₀ hR₀
@@ -168,7 +173,7 @@ theorem convergenceRate_holds : ConvergenceRateStatement := by
     · rw [Set.indicator_of_mem (show y ∈ (bdry s)ᶜ ∩ {y | ℓ ≤ rW L s y} from ⟨hy, hry⟩),
         ← ENNReal.ofReal_mul hk]
       exact (ENNReal.ofReal_le_ofReal (hout y hy hry)).trans le_add_self
-    · rw [Set.indicator_of_notMem (fun h => hry h.2), add_zero]
+    · rw [Set.indicator_of_notMem (by exact fun h => hry h.2), add_zero]
       exact ENNReal.ofReal_le_ofReal (hin y hy (not_le.1 hry))
   have hsec : ∫⁻ y, ((bdry s)ᶜ ∩ {y | ℓ ≤ rW L s y}).indicator
         (fun y => ENNReal.ofReal k * ENNReal.ofReal (Real.log (rW L s y))) y ∂μ ≤

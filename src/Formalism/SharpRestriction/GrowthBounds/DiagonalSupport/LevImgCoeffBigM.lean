@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.NoMonMultideg
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.NoMonMultideg
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem asm_eq_sum (rho : TL J nL r × Fin (r + K) → ℕ) (A : MvPolynomial (T
     asm Fr p O hk nL rho A N = ∑ bp ∈ A.support, ∑ bn ∈ N.support,
       monomial (bigM Fr p hk nL rho bp bn) (A.coeff bp * N.coeff bn) := by
   conv_lhs => rw [asm, A.as_sum, N.as_sum]
-  simp only [map_sum, upPl_monomial, upNo_monomial, Finset.mul_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, upPl_monomial, upNo_monomial, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro bp _

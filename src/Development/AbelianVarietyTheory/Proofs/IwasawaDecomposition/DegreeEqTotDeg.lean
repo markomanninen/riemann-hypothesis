@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntMulMemInvHalfDifferent
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotMemVGsOfMemQE
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrdSubConjEqNeg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GmapToAddSubgroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmulLatMatOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetIdLatGmap
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VacuumEntireAndNormalizedJetsAlgebraicStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgJetSet
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLawsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMovesOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianLatticeTransportPreservesSelfDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JetsInIffStepField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgOfFinite
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIntMulMemInvHalfDifferent
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NotMemVGsOfMemQE
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPreHasLetters
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OrdSubConjEqNeg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GmapToAddSubgroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmulLatMatOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetIdLatGmap
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.VacuumEntireAndNormalizedJetsAlgebraicStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinAlgJetSet
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMovesOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalisedFamilyLatticeHypAndSmooth
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AbsNormEqOfSplit
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NotDvdDifferent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianLatticeTransportPreservesSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,8 +67,8 @@ theorem jetSet_amb (B : Base) (J : AmbIn B.host) (χ : Submodule (𝓞 B.host.E)
   simp only [h2]
   rfl
 
-open Classical in
 
+open Classical in
 @[reducible] def hostWts (P : Pre) : Wts (hostFields P.host) P.Word P.R where
   row := fun τ => RowPar.of (P.hc τ)
   hc := P.hcW
@@ -104,8 +108,9 @@ theorem finite_mem {E : Type} [Field E] [NumberField E] {a : 𝓞 E} (ha : a ≠
   simpa only [Ideal.dvd_span_singleton] using Ideal.finite_factors (I := Ideal.span {a}) (by simpa using ha)
 
 theorem badPrimes_finite₂ (P : Pre) {Ξ : Set (HChar P.host.E)} (h : Ξ.Finite) : (badP P Ξ).Finite := by
+  have hfin : {ξ ∈ Ξ | (ramSet P.host ξ).Finite}.Finite := h.subset fun _ hξ => hξ.1
   refine ((Set.finite_iUnion fun u => finite_mem ?_).union (Set.finite_iUnion fun i => finite_mem ?_)).union
-    ((h.subset fun _ hξ => hξ.1).biUnion fun ξ hξ => Set.Finite.biUnion hξ.2 fun v _ => ?_)
+    (hfin.biUnion fun ξ hξ => Set.Finite.biUnion hξ.2 fun v _ => ?_)
   · exact Nat.cast_ne_zero.2 (P.T_prime u).ne_zero
   · exact Nat.cast_ne_zero.2 (P.host.g_prime i).ne_zero
   · obtain ⟨a, ha, h0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
@@ -225,92 +230,11 @@ theorem finAlg_step (hL : StagesInhab.HasLetters B.toPre) {I : ColIn B X} (h : I
     rw [I.A_cD, ← hs]
     exact (Algebra.IsAlgebraic.isAlgebraic (R := ℚ) s).algHom K.val
 
-theorem exists_replace {I : ColIn B X} (h : I.Ok) (J : AmbIn B.host) (hJ : J.Ok)
-    (hr : ∀ a, ∀ Q ∈ rowSG (B.primes X) I.sel (I.tup a), ∃ ζ : B.LL, IsPrimitiveRoot ζ (qOf Q ^ (2 * B.R.m))) :
-    ∃ I' : ColIn B X, I'.Ok ∧ I'.C = I.C ∧ I'.S = I.S ∧ Set.range I'.xi = Set.range I.xi ∧ I'.J = J ∧
-      ∀ a, (I'.cst a).A = B.R.m ∧ (I'.cst a).B = B.R.m := by
-  have hX := base_fields_primes_ok B X
-  choose cst idx h1 h2 h3 h4 h5 h6 h7 using fun a => exists_chIdx hX.1 hX.2.1 I.Ch I.sel h.sel_ok h.g_mem (I.tup a) I.glob
-    (fun j τ => (B.hc τ).e j) (fun j τ => (B.hc τ).e_int j) I.C.eta h.ch_tied h.weil (h.idx_ok a).xiUnitAtPrime
-    B.R.m B.R.m B.R.m (2 * B.R.m) le_rfl le_rfl le_rfl le_rfl (fun P => ⟨_, (h.idx_ok a).cst_ok.sq_sq P⟩)
-    (fun P _ => hr a P.1 P.2)
-  exact ⟨{ I with cst := cst, idx := idx, J := J }, { h with sharp := h1, idx_ok := h6, amb_ok := hJ }, rfl, rfl, rfl, rfl,
-    fun a => ⟨h3 a, h4 a⟩⟩
-
 def amb0 {R : Ranks} (H : Host R) : AmbIn H := (exists_ambIn_ok H).choose
-
-def stepSet (P : Pre) (χ : HChar P.host.E)
-    (k : P.Word × ℕ × Finset (HeightOneSpectrum (𝓞 P.host.E)) × Finset (HeightOneSpectrum (𝓞 P.host.E))) : Set ℂ :=
-  jetSet (hostAmb (amb0 P.host) (chiId χ)) (P.R.N k.2.1) (P.R.N (k.2.1 + 1)) k.2.2.1
-    ((∏ Q ∈ k.2.2.2, qOf Q) ^ P.R.m * (P.T k.1 * (∏ Q ∈ k.2.2.2, qOf Q) ^ P.R.m)) (totDeg P k.1 k.2.1)
-
-def allSet (P : Pre) (χ : HChar P.host.E) (Ξ : Set (HChar P.host.E)) : Set ℂ :=
-  (⋃ k ∈ {k : P.Word × ℕ × Finset (HeightOneSpectrum (𝓞 P.host.E)) × Finset (HeightOneSpectrum (𝓞 P.host.E)) |
-      (k.2.1 < P.R.m ∧ (∀ Q ∈ k.2.2.1, Q ∈ badP P Ξ) ∧ ∀ Q ∈ k.2.2.2, Q ∈ badP P Ξ) ∧ FinAlg (stepSet P χ k)}, stepSet P χ k) ∪
-    (fun Q => Complex.exp (2 * Real.pi * Complex.I / ((qOf Q ^ (2 * P.R.m) : ℕ) : ℂ))) '' badP P Ξ
 
 theorem qPow_ne_zero {E : Type} [Field E] [NumberField E] (Q : HeightOneSpectrum (𝓞 E)) (n : ℕ) : qOf Q ^ n ≠ 0 :=
   pow_ne_zero _ (Ideal.absNorm_eq_zero_iff.not.2 Q.ne_bot)
 
-theorem finAlg_allSet (P : Pre) (χ : HChar P.host.E) {Ξ : Set (HChar P.host.E)} (h : Ξ.Finite) : FinAlg (allSet P χ Ξ) := by
-  have hb := badPrimes_finite₂ P h
-  have hs : {S : Finset (HeightOneSpectrum (𝓞 P.host.E)) | ∀ Q ∈ S, Q ∈ badP P Ξ}.Finite :=
-    hb.toFinset.powerset.finite_toSet.subset fun S hS =>
-      Finset.mem_coe.2 (Finset.mem_powerset.2 fun Q hQ => hb.mem_toFinset.2 (hS Q hQ))
-  refine (finAlg_biUnion ?_ fun k hk => hk.2).union (finAlg_of_finite (hb.image _) ?_)
-  · exact (Set.finite_univ.prod ((Set.finite_Iio P.R.m).prod (hs.prod hs))).subset fun k hk => ⟨trivial, hk.1⟩
-  · rintro _ ⟨Q, -, rfl⟩
-    exact ((Complex.isPrimitiveRoot_exp _ (qPow_ne_zero Q _)).isIntegral
-      (Nat.pos_of_ne_zero (qPow_ne_zero Q _))).tower_top.isAlgebraic
-
-open Classical in
-
-def gens (P : Pre) (χ : HChar P.host.E) (Ξ : Set (HChar P.host.E)) : Finset ℂ :=
-  if h : FinAlg (allSet P χ Ξ) then h.choose else ∅
-
-theorem gens_algebraic (P : Pre) (χ : HChar P.host.E) (Ξ : Set (HChar P.host.E)) : ∀ z ∈ gens P χ Ξ, IsAlgebraic ℚ z := by
-  unfold gens
-  split_ifs with h
-  · exact h.choose_spec.1
-  · simp
-
-theorem allSet_subset (P : Pre) (χ : HChar P.host.E) {Ξ : Set (HChar P.host.E)} (h : Ξ.Finite) {K : Subfield ℂ}
-    (hK : ∀ z ∈ gens P χ Ξ, z ∈ K) : allSet P χ Ξ ⊆ K := by
-  have h1 := finAlg_allSet P χ h
-  rw [gens, dif_pos h1] at hK
-  exact h1.choose_spec.2.trans (Subfield.closure_le.2 hK)
-
-theorem exists_jetsIn (hL : StagesInhab.HasLetters B.toPre) {I : ColIn B X} (h : I.Ok)
-    (hK : ∀ z ∈ gens B.toPre I.C.chiPsi (Set.range I.xi), z ∈ B.embLL.fieldRange) :
-    ∃ I' : ColIn B X, I'.Ok ∧ I'.JetsIn ∧ I'.C = I.C ∧ I'.S = I.S ∧ Set.range I'.xi = Set.range I.xi := by
-  have hall := allSet_subset B.toPre I.C.chiPsi (Set.finite_range I.xi) hK
-  obtain ⟨I', h', e1, e2, e3, e4, e5⟩ := exists_replace h (amb0 B.host) (exists_ambIn_ok B.host).choose_spec fun a Q hQ => by
-    obtain ⟨ζ, hζ⟩ := hall (Or.inr ⟨Q, rowSG_subset h a Q hQ, rfl⟩)
-    refine ⟨ζ, IsPrimitiveRoot.of_map_of_injective (f := B.embLL) ?_ B.embLL.injective⟩
-    rw [hζ]
-    exact Complex.isPrimitiveRoot_exp _ (qPow_ne_zero Q _)
-  refine ⟨I', h', I'.jetsIn_iff.2 fun a u i hi N N' c x hx e he => ?_, e1, e2, e3⟩
-  rw [← e1, ← e3] at hall
-  have hM : I'.modulus a u = (∏ Q ∈ rowSG (B.primes X) I'.sel (I'.tup a), qOf Q) ^ B.R.m *
-      (B.T u * (∏ Q ∈ rowSG (B.primes X) I'.sel (I'.tup a), qOf Q) ^ B.R.m) := by
-    unfold ColIn.modulus cAof cBof
-    rw [(e5 a).1, (e5 a).2, Finset.prod_coe_sort _ qOf]
-  have hS : stepSet B.toPre I'.C.chiPsi (u, i, I'.Sb a u, rowSG (B.primes X) I'.sel (I'.tup a)) =
-      jetSet I'.A (B.R.N i) (B.R.N (i + 1)) (I'.Sb a u) (I'.modulus a u) (totDeg B.toPre u i) := by
-    rw [hM, ColIn.A, e4]
-    exact (jetSet_amb B _ _ _ _ _ _ _).symm
-  have hpos : 0 < I'.modulus a u := by
-    rw [hM]
-    have := Finset.prod_pos fun Q (_ : Q ∈ rowSG (B.primes X) I'.sel (I'.tup a)) =>
-      Nat.pos_of_ne_zero (by simpa using qPow_ne_zero Q 1 : qOf Q ≠ 0)
-    have := (B.T_prime u).pos
-    positivity
-  refine hall (Or.inl (Set.mem_iUnion₂.2 ⟨(u, i, I'.Sb a u, rowSG (B.primes X) I'.sel (I'.tup a)),
-    ⟨⟨hi, Sb_subset h' a u, rowSG_subset h' a⟩, ?_⟩, ?_⟩))
-  · rw [hS]
-    exact finAlg_step hL h' a u _ _ _ _ hpos
-  · rw [hS]
-    exact ⟨N, N', c, x, e, hx, degree_eq_totDeg B u i e he, rfl⟩
 
 end JetEx
 

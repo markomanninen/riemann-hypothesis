@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Mathlib
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
 
 noncomputable section
 

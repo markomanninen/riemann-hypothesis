@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -71,14 +75,6 @@ theorem projLine_leviForm_radial {F : (Fin 1 → ℂ) → ℝ} {G G' : ℝ → �
   rw [projLine_norm_sq_eq (y 0), projLine_norm_sq_eq (v 0)]
   ring
 
-theorem projLine_leviForm_radial_nonneg {F : (Fin 1 → ℂ) → ℝ} {G G' : ℝ → ℝ} {G'' : ℝ} {y : Fin 1 → ℂ}
-    (hF : ∀ᶠ w in 𝓝 y, F w = G (‖w 0‖ ^ 2))
-    (hG : ∀ᶠ t in 𝓝 (‖y 0‖ ^ 2), HasDerivAt G (G' t) t)
-    (hG' : HasDerivAt G' G'' (‖y 0‖ ^ 2)) (hpos : 0 ≤ G'' * ‖y 0‖ ^ 2 + G' (‖y 0‖ ^ 2))
-    (v : Fin 1 → ℂ) : 0 ≤ levi F y v := by
-  rw [projLine_leviForm_radial hF hG hG' v]
-  exact mul_nonneg hpos (by positivity)
-
 open scoped Classical in
 theorem continuous_chart1_inv :
     Continuous (fun w : Fin 1 → ℂ => if w 0 = 0 then (∞ : OnePoint ℂ) else (((w 0)⁻¹ : ℂ) : OnePoint ℂ)) := by
@@ -124,7 +120,7 @@ def fubiniStudyProfile (t : ℝ) : ℝ := (1 / 2) * Real.log (1 + t)
 def fubiniStudyProfileInv (t : ℝ) : ℝ := (1 / 2) * Real.log (1 + t⁻¹)
 def fsQ (w : Fin 1 → ℂ) : ℝ := ‖w 0‖ ^ 2
 
-theorem contDiff_fsQ : ContDiff ℝ (⊤ : ℕ∞) fsQ := (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ 0)
+theorem contDiff_fsQ : ContDiff ℝ (⊤ : ℕ∞) fsQ := (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) 0)
 
 theorem contDiff_fubiniStudyProfile_normSqFirst : ContDiff ℝ (⊤ : ℕ∞) (fun w => fubiniStudyProfile (fsQ w)) := by
   unfold fubiniStudyProfile

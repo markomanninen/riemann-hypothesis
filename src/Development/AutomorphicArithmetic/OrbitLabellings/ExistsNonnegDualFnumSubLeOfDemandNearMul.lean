@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.IncomingBounds.IncomingBound
-import Development.AutomorphicArithmetic.OrbitLabellings.ExistsMaxFlowAttainedAndIsOptDual
-import Development.AutomorphicArithmetic.OrbitLabellings.SumDemandFilterTwoDivLeOfIsOptDual
+module
+
+public import Mathlib
+public import Formalism.IncomingBounds.IncomingBound
+public import Development.AutomorphicArithmetic.OrbitLabellings.ExistsMaxFlowAttainedAndIsOptDual
+public import Development.AutomorphicArithmetic.OrbitLabellings.SumDemandFilterTwoDivLeOfIsOptDual
+
+@[expose] public section
 
 open scoped BigOperators
 open Formalism.IncomingBounds

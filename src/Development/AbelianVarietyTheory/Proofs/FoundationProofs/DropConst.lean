@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefPosEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoefPosEqZero
+
+@[expose] public section
 
 open GlobalTheory.KummerEisensteinGalois GlobalTheory.KummerEisensteinGalois.UnitPiece Finset
 

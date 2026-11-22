@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.RhGradFPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OneLeMinorOfIsOrth
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FundSetPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.OntoStatementPfB
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.RhGradFPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfH
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.MajLactRmul
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.OneLeMinorOfIsOrth
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates MeasureTheory Topology
 open scoped ContDiff ENNReal Matrix
@@ -58,12 +62,6 @@ def RhTr : Prop := ∀ (r : ℕ) (X : Data E r) (x1 x2 : Frame X.Ψ r), IsOrth X
     ∀ ξ : Fin (nd X) → ℂ, leviO X x1 (rhX X x2) z ξ = leviRh X x1 z ξ ∧
       Complex.normSq (∑ j, wd (nd X) j (fun w => ((rhX X x2 (cpt X x1 w) : ℝ) : ℂ)) z * ξ j) ≤
         rhX X x2 (cpt X x1 z) * leviRh X x1 z ξ
-
-def BallEx : Prop := ∀ (r : ℕ) (X : DataX E r) (G : Subgroup (GL (Fin r) E)) (g : ℕ), 0 < r → 3 * r < g →
-  X.Γ ≤ G → (∀ γ ∈ G, IsUStab X.Gm X.Λ γ) →
-  (∀ γ ∈ G, ∀ x ∈ X.L', Matrix.mulVec (γ : Matrix (Fin r) (Fin r) E) x ∈ X.L') →
-  (∀ γ ∈ G, ∃ z : 𝓞 E, (γ : Matrix (Fin r) (Fin r) E).trace - r = (g : E) * z) →
-  ∃ x0, IsOrth X.toData x0 ∧ FreeBall X.toData G x0 (1 / (49 * (r : ℝ) ^ 2))
 
 def OrbitInterp : Prop := ∀ (r : ℕ) (X : Data E r) (G : Subgroup (GL (Fin r) E)) (x0 : Frame X.Ψ r) (la : Wt X.Ψ r)
   (ρ0 bb m : ℝ), PropDisc X → IsOrth X x0 → 1 ≤ dimX X → 0 < ρ0 → FreeBall X G x0 ρ0 → BlockConst X la →
@@ -142,7 +140,7 @@ theorem measurable_rhX (h0 : IsOrth X x0) : Measurable (rhX X x0) :=
   (Real.measurable_log.comp (FramePotential.frame_potential_basic r X x0 h0).1).neg
 
 theorem continuousOn_rhX (h0 : IsOrth X x0) : ContinuousOn (rhX X x0) X.dom := by
-  refine ContinuousOn.neg (ContinuousOn.log (continuousOn_finset_prod _ fun τ _ => ?_)
+  refine ContinuousOn.neg (ContinuousOn.log (continuousOn_finsetProd _ fun τ _ => ?_)
     fun x hx => (Finset.prod_pos fun τ _ => (FramePotential.factor_mem X h0 hx τ).1).ne')
   refine ContinuousOn.div (ExtFPf.cont_dmin X τ _).norm.continuousOn ?_
     fun x hx => pow_ne_zero _ (norm_ne_zero_iff.2 (lminor_inv_mul_ne_zero h0 hx τ))
@@ -241,20 +239,6 @@ theorem FreeBall.unique (h : FreeBall X G x0 ρ0) {γ γ' : GL (Fin r) E} (hγ :
     (by rwa [FundSetPf.lact_mul, FundSetPf.lact_inv])
   exact (mul_inv_eq_one.1 this).symm
 
-theorem FreeBall.mono (h : FreeBall X G x0 ρ0) (hρ : ρ1 ≤ ρ0) : FreeBall X G x0 ρ1 :=
-  ⟨h.1, h.2.1, fun γ hγ hne x hx hlt => hρ.trans (h.2.2 γ hγ hne x hx (hlt.trans_le hρ))⟩
-
-theorem FreeBall.of_le (h : FreeBall X G x0 ρ0) (h1 : X.Γ ≤ G') (h2 : G' ≤ G) : FreeBall X G' x0 ρ0 :=
-  ⟨h1, fun γ hγ => h.2.1 γ (h2 hγ), fun γ hγ => h.2.2 γ (h2 hγ)⟩
-
-theorem FreeBall.eq_of_lact_eq (h : FreeBall X G x0 ρ0) (h0 : IsOrth X x0) (hρ : 0 < ρ0)
-    {γ γ' : GL (Fin r) E} (hγ : γ ∈ G) (hγ' : γ' ∈ G) {b : Frame X.Ψ r} (hb : b ∈ Bor X.Ψ r)
-    (e : lact γ x0 = lact γ' (rmul x0 b)) : γ = γ' := by
-  have h1 : lact (γ'⁻¹ * γ) x0 = rmul x0 b := by rw [FundSetPf.lact_mul, e, FundSetPf.lact_inv]
-  have := h.eq_one (G.mul_mem (G.inv_mem hγ') hγ) (IW.orth_mem_dom X x0 h0) (by rwa [rhX_self h0])
-    (by rwa [h1, rhX_rmul x0 x0 hb, rhX_self h0])
-  exact (inv_mul_eq_one.1 this).symm
-
 theorem FreeBall.lact (h : FreeBall X G x0 ρ0) {g : GL (Fin r) E} (hg : g ∈ G) :
     FreeBall X G (lact g x0) ρ0 := by
   refine ⟨h.1, h.2.1, fun γ hγ hne x hx hlt => ?_⟩
@@ -285,15 +269,6 @@ theorem IsPole.rmul (h : IsPole X G x0 κ ε C δ ψ) (hx : x ∈ X.dom) {b : Fr
 
 theorem IsPole.isInvFn (h : IsPole X G x0 κ ε C δ ψ) (hG : X.Γ ≤ G) : IsInvFn X ψ :=
   fun γ hγ => h.1 γ (hG hγ)
-
-theorem IsPole.mono (h : IsPole X G x0 κ ε C δ ψ) (hG : G' ≤ G) (hκ : κ ≤ κ') (hC : C ≤ C') :
-    IsPole X G' x0 κ' ε C' δ ψ := by
-  obtain ⟨h1, h2, h3, h4, h5⟩ := h
-  refine ⟨fun γ hγ => h1 γ (hG hγ), h2, fun x1 hx1 => ⟨(h3 x1 hx1).1, fun z hz ξ => ?_⟩,
-    fun x hx hle => (h4 x hx hle).trans (by linarith),
-    fun x hx ha hb => le_trans (by linarith) (h5 x hx ha hb)⟩
-  exact le_trans (neg_le_neg (mul_le_mul_of_nonneg_right hκ (leviRh_nonneg hx1 hz ξ)))
-    ((h3 x1 hx1).2 z hz ξ)
 
 theorem IsPole.le_log_orbit (h : IsPole X G x0 κ ε C δ ψ) (hG : ∀ γ ∈ G, IsUStab X.Gm X.Λ γ)
     {γ : GL (Fin r) E} (hγ : γ ∈ G) (hx : x ∈ X.dom) (hle : rhX X (ReciprocityTheory.ChartRestriction.G.FD.lact γ x0) x ≤ ε) :
@@ -343,78 +318,17 @@ theorem blockConst_iff : BlockConst X la ↔
     beta_reduce
     by_cases hi : (i : ℕ) < X.p0
     · have hex : ∃ i : Fin r, (i : ℕ) < X.p0 := ⟨i, hi⟩
-      rw [if_pos hi, dif_pos hex]
+      rw [if_pos hi, dite_eq_left hex]
       exact h τ _ _ (iff_of_true hi hex.choose_spec)
     · have hex : ∃ i : Fin r, ¬ (i : ℕ) < X.p0 := ⟨i, hi⟩
-      rw [if_neg hi, dif_pos hex]
+      rw [if_neg hi, dite_eq_left hex]
       exact h τ _ _ (iff_of_false hi hex.choose_spec)
   · rintro ⟨a, a', rfl⟩
     exact blockConst_ite a a'
 
-theorem BlockConst.add (h : BlockConst X la) (h' : BlockConst X la') : BlockConst X (la + la') :=
-  fun τ i j hij => by simp only [Pi.add_apply, h τ i j hij, h' τ i j hij]
-
-theorem BlockConst.zsmul (h : BlockConst X la) (k : ℤ) : BlockConst X (k • la) :=
-  fun τ i j hij => by simp only [Pi.smul_apply, h τ i j hij]
-
-theorem BlockConst.nsmul (h : BlockConst X la) (k : ℕ) : BlockConst X (k • la) :=
-  fun τ i j hij => by simp only [Pi.smul_apply, h τ i j hij]
-
 end Block
 
 section Checks
-
-example (X : Data E 2) (hp : X.p0 = 1) : dimX X = X.Ψ.card := by simp [dimX, hp]
-
-example (X : Data E 5) (hp : X.p0 = 2) : dimX X = 6 * X.Ψ.card := by simp [dimX, hp, mul_comm]
-
-example (x0 : Frame (inhab (E := E)).Ψ 1) (ρ0 : ℝ) : FreeBall (inhab (E := E)) ⊥ x0 ρ0 :=
-  ⟨le_rfl, fun γ hγ => (inhab (E := E)).Γ_stab γ hγ, fun _ hγ hne => absurd (Subgroup.mem_bot.1 hγ) hne⟩
-
-example {r : ℕ} (hr : 0 < r) (X : Data E r) (G : Subgroup (GL (Fin r) E)) (hG : -1 ∈ G) {x0 : Frame X.Ψ r}
-    (h0 : IsOrth X x0) {ρ0 : ℝ} (hρ : 0 < ρ0) : ¬ FreeBall X G x0 ρ0 := by
-  intro h
-  have hb : (fun _ => (-1 : Matrix (Fin r) (Fin r) ℂ) : Frame X.Ψ r) ∈ Bor X.Ψ r := fun τ =>
-    ⟨by
-      show (-1 : Matrix (Fin r) (Fin r) ℂ).det ≠ 0
-      rw [Matrix.det_neg]; simp,
-    fun a c hac => by
-      show -(1 : Matrix (Fin r) (Fin r) ℂ) a c = 0
-      rw [Matrix.one_apply_ne hac.ne', neg_zero]⟩
-  have e := h.eq_of_lact_eq h0 hρ hG G.one_mem hb (by
-    rw [FundSetPf.lact_one]
-    funext τ
-    show (((-1 : GL (Fin r) E) : Matrix (Fin r) (Fin r) E).map τ.1 * mat x0 τ : Matrix (Fin r) (Fin r) ℂ) =
-      mat x0 τ * (-1 : Matrix (Fin r) (Fin r) ℂ)
-    rw [Units.val_neg, Units.val_one, ← RingHom.mapMatrix_apply, map_neg, map_one]
-    simp)
-  have e2 := congrArg (fun γ : GL (Fin r) E => (γ : Matrix (Fin r) (Fin r) E) ⟨0, hr⟩ ⟨0, hr⟩) e
-  simp only [Units.val_neg, Units.val_one, Matrix.neg_apply, Matrix.one_apply_eq] at e2
-  norm_num at e2
-
-example {r : ℕ} (X : Data E r) (hd : dimX X = 0) (G : Subgroup (GL (Fin r) E)) {x0 : Frame X.Ψ r}
-    (h0 : IsOrth X x0) {ρ0 : ℝ} (hρ : 0 < ρ0) (θ : ℝ) :
-    ∃ ε C : ℝ, 0 < ε ∧ ε < ρ0 ∧ ∀ δ : ℝ, 0 < δ → δ ≤ 1 → ∃ ψ, IsPole X G x0 (dimX X * θ / ρ0) ε C δ ψ :=
-  ⟨ρ0 / 2, 0, by linarith, by linarith, fun _ hδ _ =>
-    ⟨_, isPole_zero h0 (by simp [hd]) hδ le_rfl (by simp [hd])⟩⟩
-
-example {r : ℕ} (X : Data E r) (hd : 1 ≤ dimX X) (G : Subgroup (GL (Fin r) E)) {x0 : Frame X.Ψ r}
-    (h0 : IsOrth X x0) (κ C : ℝ) {ε : ℝ} (hε : 0 ≤ ε) :
-    ¬ ∀ δ : ℝ, 0 < δ → δ ≤ 1 → IsPole X G x0 κ ε C δ fun _ => 0 := by
-  intro h
-  have h1 : (1 : ℝ) ≤ dimX X := by exact_mod_cast hd
-  have h2 := (h (Real.exp (-(|C| + 1))) (Real.exp_pos _)
-    (Real.exp_le_one_iff.2 (by linarith [abs_nonneg C]))).centre h0 hε
-  rw [Real.log_exp] at h2
-  nlinarith [abs_nonneg C, le_abs_self C]
-
-example (X : Data E 2) (hp : X.p0 = 2) (τ : X.Ψ) : ¬ BlockConst X (kapW X) := by
-  intro h
-  have := h τ 0 1 (by simp [hp])
-  simp [kapW] at this
-
-example (D θ r : ℝ) : D * θ / (1 / (49 * r ^ 2)) = D * θ * (49 * r ^ 2) := by
-  rw [one_div, div_inv_eq_mul]
 
 end Checks
 

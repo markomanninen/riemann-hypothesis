@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PolyExpBound
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PolyExpBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,29 +19,29 @@ theorem mom_add (c : ℝ) (hc : 0 < c) (P Q : PX m n) : mom c (P + Q) = mom c P 
   rw [← integral_add (integrable_pg c hc P) (integrable_pg c hc Q)]
   congr 1
   funext x
-  simp only [evX, map_add, add_mul]
+  simp [evX, add_mul]
 
 theorem mom_C_mul (c : ℝ) (a : ℂ) (P : PX m n) : mom c (C a * P) = a * mom c P := by
   unfold mom
   rw [← integral_const_mul]
   congr 1
   funext x
-  simp only [evX, map_mul, eval_C, mul_assoc]
+  simp [evX, mul_assoc]
 
 theorem mom_sub (c : ℝ) (hc : 0 < c) (P Q : PX m n) : mom c (P - Q) = mom c P - mom c Q := by
   unfold mom
   rw [← integral_sub (integrable_pg c hc P) (integrable_pg c hc Q)]
   congr 1
   funext x
-  simp only [evX, map_sub, sub_mul]
+  simp [evX, sub_mul]
 
 theorem mom_sum (c : ℝ) (hc : 0 < c) {ι : Type*} (s : Finset ι) (f : ι → PX m n) :
     mom c (∑ i ∈ s, f i) = ∑ i ∈ s, mom c (f i) := by
   unfold mom
-  rw [← integral_finset_sum s (fun i _ => integrable_pg c hc (f i))]
+  rw [← MeasureTheory.integral_finsetSum s (fun i _ => integrable_pg c hc (f i))]
   congr 1
   funext x
-  simp only [evX, map_sum, Finset.sum_mul]
+  simp [evX, Finset.sum_mul]
 
 theorem pderiv_Sg (c : ℝ) (k : Fin m × Fin n × Bool) :
     pderiv k (Sg c : PX m n) = C (-(c : ℂ)) * X (k.1, k.2.1, !k.2.2) := by
@@ -61,7 +65,8 @@ theorem hasFDerivAt_pg (c : ℝ) (P : PX m n) (x : Fin m → Fin n → ℂ) :
 theorem fderiv_pg (c : ℝ) (P : PX m n) (x v : Fin m → Fin n → ℂ) :
     fderiv ℝ (fun y => evX P y * gs c y) x v = evX (Qv c P v) x * gs c x := by
   rw [(hasFDerivAt_pg c P x).fderiv]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, dP,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, dP,
     ContinuousLinearMap.sum_apply, smul_eq_mul, Qv, evX, map_sum, map_add, map_mul, eval_C]
   rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl (fun k _ => ?_)

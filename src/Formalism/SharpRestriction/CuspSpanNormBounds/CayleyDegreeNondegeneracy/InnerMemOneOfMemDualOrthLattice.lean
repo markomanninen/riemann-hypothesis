@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.MemSupIsotropicOfDualPairing
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.MemSupIsotropicOfDualPairing
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,13 +21,47 @@ variable {D : D7} {u : D.what₂.Word} (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ)
   (hprim : ∀ c : D.host.E, c • F0.z ∈ Lsub Λ (lf D F0) → ∃ o : 𝓞 D.host.E, (o : D.host.E) = c)
   (hT : Tu D u ≠ 0)
 
-local notation "t" => ((Tu D u : ℕ) : D.host.E)
-
 theorem z_mem_orth_isotropic : F0.z ∈ orth (hS D) (Xsp (lf D F0)) := a_orth_of_frame F0.e F0.z F0.z_orth
 
-include he hΛ hu hzΛ hprim hT in
 
+include he hΛ hu hzΛ hprim hT in
 theorem exists_lattice_vector_inner_z_one : ∃ m ∈ Λ ⊓ toO (hS D) (orth (hS D) (Xsp (lf D F0))), (hS D).hT F0.z m = 1 := by
+  have hfull : Submodule.IsFullLattice D.host.E Λ := by
+    classical
+    refine { toIsLattice := hΛ, span_eq_top := ?_ }
+    rw [eq_top_iff]
+    intro v _
+    obtain ⟨S, hSgen⟩ := hΛ.fg
+    obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples_of_finset
+      (nonZeroDivisors (𝓞 D.host.E)) (S.image (fun m => (hS D).hT m v))
+    have hd0 : (algebraMap (𝓞 D.host.E) D.host.E d) ≠ 0 :=
+      (IsFractionRing.injective (𝓞 D.host.E) D.host.E).ne (nonZeroDivisors.ne_zero hd)
+    have hv : d • v ∈ Λ := by
+      rw [← hu]
+      apply (i_mem_dual _ _).2
+      intro m hm
+      rw [← hSgen] at hm
+      induction hm using Submodule.span_induction with
+      | mem x hx =>
+        obtain ⟨a, ha⟩ := hint ((hS D).hT x v) (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
+        apply Submodule.mem_one.2
+        refine ⟨a, ?_⟩
+        rw [← algebraMap_smul D.host.E, map_smul, smul_eq_mul]
+        exact ha
+      | zero => simp
+      | add x y hx hy ihx ihy =>
+        rw [map_add (f := _), LinearMap.add_apply]
+        exact Submodule.add_mem _ ihx ihy
+      | smul a x hx ih =>
+        have ea : a • x = (algebraMap (𝓞 D.host.E) D.host.E a) • x := (algebraMap_smul D.host.E a x).symm
+        rw [ea]
+        rw [LinearMap.map_smulₛₗ₂]
+        simp only [LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
+        exact mul_mem_one_submodule (star_mem_one_submodule (Submodule.mem_one.2 ⟨a, rfl⟩)) ih
+    have : v = (algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ • (d • v) := by
+      rw [← algebraMap_smul D.host.E d v, smul_smul, inv_mul_cancel₀ hd0, one_smul]
+    rw [this]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hv)
   set M : LatV D := Λ ⊓ toO (hS D) (orth (hS D) (Xsp (lf D F0))) with hM
   set I : Ideal (𝓞 D.host.E) :=
     (M.map (((hS D).hT F0.z).restrictScalars (𝓞 D.host.E))).comap (Algebra.linearMap (𝓞 D.host.E) D.host.E) with hI
@@ -42,7 +80,7 @@ theorem exists_lattice_vector_inner_z_one : ∃ m ∈ Λ ⊓ toO (hS D) (orth (h
     intro c hc
     rw [FractionalIdeal.mem_inv_iff hFI0] at hc
     have hy : star c • F0.z ∈ Λ ⊔ toO (hS D) (Xsp (lf D F0)) := by
-      refine mem_sup_isotropic_of_dual_pairing F0 he Λ hΛ hu _ fun m hm => ?_
+      refine mem_sup_isotropic_of_dual_pairing F0 he Λ hfull hu _ fun m hm => ?_
       obtain ⟨i, hi⟩ := Submodule.mem_one.1 (i_int Λ hu hzΛ hm.1)
       have hiI : i ∈ I := (memI i).2 ⟨m, hm, hi.symm⟩
       obtain ⟨o, ho⟩ := (FractionalIdeal.mem_one_iff _).1
@@ -65,8 +103,8 @@ theorem exists_lattice_vector_inner_z_one : ∃ m ∈ Λ ⊓ toO (hS D) (orth (h
   obtain ⟨m, hm, e⟩ := (memI x).1 hx
   exact ⟨m, hm, by rw [e, hx1]⟩
 
-include he hz hT in
 
+include he hz hT in
 theorem exists_decomp_orth_plus {v : (hS D).V} (hv : v ∈ orth (hS D) (Xsp (lf D F0))) (hvz : (hS D).hT F0.z v = 0) :
     ∃ w : (D.sp.X 0).V, ∃ ξ ∈ Xsp (lf D F0), v = D.sp.iXY 0 w + ξ := by
   have hW := (Formalism.MainNotions.WHyp_Wsp D u hT (lf D F0) he hz).1
@@ -82,8 +120,8 @@ theorem exists_decomp_orth_plus {v : (hS D).V} (hv : v ∈ orth (hS D) (Xsp (lf 
   obtain ⟨a, ⟨w, rfl⟩, ξ, hξ, e⟩ := Submodule.mem_sup.1 hv'
   exact ⟨w, ξ, hξ, e.symm⟩
 
-include he hz hT in
 
+include he hz hT in
 theorem inner_mem_one_of_mem_dual_orthLattice {m : (hS D).V} (hmΛ : m ∈ Λ) (hm : m ∈ orth (hS D) (Xsp (lf D F0)))
     (hmz : (hS D).hT F0.z m = 0) {w : (D.sp.X 0).V}
     (hw : w ∈ Formalism.HermitianLatticesTheory.dual (D.sp.X 0).hT (L0X D Λ (lf D F0))) :
@@ -94,24 +132,61 @@ theorem inner_mem_one_of_mem_dual_orthLattice {m : (hS D).V} (hmΛ : m ∈ Λ) (
     have : D.sp.iXY 0 x = m + (-ξ) := by rw [e]; abel
     rw [this]
     exact Submodule.add_mem_sup hmΛ ((toO (hS D) (Xsp (lf D F0))).neg_mem hξ)
-  rw [e, map_add, LinearMap.add_apply, orth_embedding_isometry, c_mem_orth.1 (orth_embedding_mem_orth_isotropic F0 he hz w) ξ hξ, add_zero]
+  rw [e, map_add (f := _), LinearMap.add_apply, orth_embedding_isometry, c_mem_orth.1 (orth_embedding_mem_orth_isotropic F0 he hz w) ξ hξ, add_zero]
   exact (i_mem_dual _ _).1 hw x hx
 
-include he hz hΛ hu hzΛ hprim hT in
 
+include he hz hΛ hu hzΛ hprim hT in
 theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatticesTheory.dual (D.sp.X 0).hT (L0X D Λ (lf D F0)),
     (∀ w ∈ Formalism.HermitianLatticesTheory.dual (D.sp.X 0).hT (L0X D Λ (lf D F0)), ∃ a : 𝓞 D.host.E, w + a • w₁ ∈ L0X D Λ (lf D F0)) ∧
     ∀ a : 𝓞 D.host.E, a • w₁ ∈ L0X D Λ (lf D F0) ↔ ((Tu D u : ℕ) : 𝓞 D.host.E) ∣ a := by
   obtain ⟨m₁, hm₁, hzm⟩ := exists_lattice_vector_inner_z_one F0 he Λ hΛ hu hzΛ hprim hT
-  have hTE : ((Tu D u : ℕ) : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 hT
+  have hfull : Submodule.IsFullLattice D.host.E Λ := by
+    classical
+    refine { toIsLattice := hΛ, span_eq_top := ?_ }
+    rw [eq_top_iff]
+    intro v _
+    obtain ⟨S, hSgen⟩ := hΛ.fg
+    obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples_of_finset
+      (nonZeroDivisors (𝓞 D.host.E)) (S.image (fun m => (hS D).hT m v))
+    have hd0 : (algebraMap (𝓞 D.host.E) D.host.E d) ≠ 0 :=
+      (IsFractionRing.injective (𝓞 D.host.E) D.host.E).ne (nonZeroDivisors.ne_zero hd)
+    have hv : d • v ∈ Λ := by
+      rw [← hu]
+      apply (i_mem_dual _ _).2
+      intro m hm
+      rw [← hSgen] at hm
+      induction hm using Submodule.span_induction with
+      | mem x hx =>
+        obtain ⟨a, ha⟩ := hint ((hS D).hT x v) (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
+        apply Submodule.mem_one.2
+        refine ⟨a, ?_⟩
+        rw [← algebraMap_smul D.host.E, map_smul, smul_eq_mul]
+        exact ha
+      | zero => simp
+      | add x y hx hy ihx ihy =>
+        rw [map_add (f := _), LinearMap.add_apply]
+        exact Submodule.add_mem _ ihx ihy
+      | smul a x hx ih =>
+        have ea : a • x = (algebraMap (𝓞 D.host.E) D.host.E a) • x := (algebraMap_smul D.host.E a x).symm
+        rw [ea]
+        rw [LinearMap.map_smulₛₗ₂]
+        simp only [LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
+        exact mul_mem_one_submodule (star_mem_one_submodule (Submodule.mem_one.2 ⟨a, rfl⟩)) ih
+    have : v = (algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ • (d • v) := by
+      rw [← algebraMap_smul D.host.E d v, smul_smul, inv_mul_cancel₀ hd0, one_smul]
+    rw [this]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hv)
+  let t : D.host.E := (Tu D u : ℕ)
+  have hTE : t ≠ 0 := Nat.cast_ne_zero.2 hT
   set B : LatV D := Λ ⊔ toO (hS D) (Xsp (lf D F0)) with hB
-  have hstar : star t = t := by simp
+  have hstar : star t = t := by simp [t]
   have hzo := z_mem_orth_isotropic F0
 
   have hv1 : m₁ + t⁻¹ • F0.z ∈ orth (hS D) (Xsp (lf D F0)) :=
     (orth (hS D) (Xsp (lf D F0))).add_mem hm₁.2 ((orth (hS D) (Xsp (lf D F0))).smul_mem _ hzo)
   have hv2 : (hS D).hT F0.z (m₁ + t⁻¹ • F0.z) = 0 := by
-    rw [map_add, map_smul, hzm, F0.z_norm, smul_eq_mul]
+    rw [map_add (f := _), map_smul, hzm, F0.z_norm, smul_eq_mul]
     field_simp
     ring
   obtain ⟨w₁, ξ₁, hξ₁, e₁⟩ := exists_decomp_orth_plus F0 he hz hT hv1 hv2
@@ -125,10 +200,10 @@ theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatti
   have hw₁ : w₁ ∈ Formalism.HermitianLatticesTheory.dual (D.sp.X 0).hT (L0X D Λ (lf D F0)) := by
     refine (i_mem_dual _ _).2 fun x hx => ?_
     have e2 : D.sp.iXY 0 w₁ = m₁ + t⁻¹ • F0.z - ξ₁ := by rw [e₁]; abel
-    rw [← orth_embedding_isometry, e2, map_sub, map_add, map_smul, c_symm0 (inner_z_orth_embedding_eq_zero F0 he hz x), smul_zero, add_zero,
+    rw [← orth_embedding_isometry, e2, map_sub, map_add (f := _), map_smul, c_symm0 (inner_z_orth_embedding_eq_zero F0 he hz x), smul_zero, add_zero,
       c_symm0 (c_mem_orth.1 (orth_embedding_mem_orth_isotropic F0 he hz x) ξ₁ hξ₁), sub_zero]
     obtain ⟨l, hl, ξ, hξ, e⟩ := Submodule.mem_sup.1 ((mem_orthLattice_iff_image_mem_sup F0 he hz Λ).1 hx)
-    rw [← e, map_add, LinearMap.add_apply, c_mem_orth.1 hm₁.2 ξ hξ, add_zero]
+    rw [← e, map_add (f := _), LinearMap.add_apply, c_mem_orth.1 hm₁.2 ξ hξ, add_zero]
     exact i_int Λ hu hl hm₁.1
   refine ⟨w₁, hw₁, ?_, ?_⟩
   · intro w hw
@@ -139,10 +214,10 @@ theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatti
         (toO (hS D) (orth (hS D) (Xsp (lf D F0)))).add_mem
           ((toO (hS D) (orth (hS D) (Xsp (lf D F0)))).smul_mem _ hm₁.2) hzo
       have h3 : (hS D).hT F0.z (((Tu D u : ℕ) : 𝓞 D.host.E) • m₁ + F0.z) = 0 := by
-        rw [map_add, ← algebraMap_smul D.host.E, map_smul, hzm, F0.z_norm]
+        rw [map_add (f := _), ← algebraMap_smul D.host.E, map_smul, hzm, F0.z_norm]
         simp
       have h4 := inner_mem_one_of_mem_dual_orthLattice F0 he hz Λ hT h1 h2 h3 hw
-      rw [map_add, LinearMap.add_apply, inner_z_orth_embedding_eq_zero F0 he hz w, add_zero, ← algebraMap_smul D.host.E,
+      rw [map_add (f := _), LinearMap.add_apply, inner_z_orth_embedding_eq_zero F0 he hz w, add_zero, ← algebraMap_smul D.host.E,
         map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply] at h4
       have h5 : star (algebraMap (𝓞 D.host.E) D.host.E ((Tu D u : ℕ) : 𝓞 D.host.E)) = t := by
         rw [map_natCast]; exact hstar
@@ -150,7 +225,7 @@ theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatti
     obtain ⟨α₀, hα₀⟩ := Submodule.mem_one.1 hα
     refine ⟨-α₀, (mem_orthLattice_iff_image_mem_sup F0 he hz Λ).2 ?_⟩
     have hy : D.sp.iXY 0 w + (algebraMap (𝓞 D.host.E) D.host.E (-α₀) * t⁻¹) • F0.z ∈ B := by
-      refine mem_sup_isotropic_of_dual_pairing F0 he Λ hΛ hu _ fun m hm => ?_
+      refine mem_sup_isotropic_of_dual_pairing F0 he Λ hfull hu _ fun m hm => ?_
       obtain ⟨γ, hγ⟩ := Submodule.mem_one.1 (i_int Λ hu hzΛ hm.1)
       have h1 : m - γ • m₁ ∈ Λ := Λ.sub_mem hm.1 (Λ.smul_mem _ hm₁.1)
       have h2 : m - γ • m₁ ∈ orth (hS D) (Xsp (lf D F0)) :=
@@ -162,7 +237,7 @@ theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatti
       have h4 := inner_mem_one_of_mem_dual_orthLattice F0 he hz Λ hT h1 h2 h3 hw
       have h5 : (hS D).hT m (D.sp.iXY 0 w + (algebraMap (𝓞 D.host.E) D.host.E (-α₀) * t⁻¹) • F0.z) =
           (hS D).hT (m - γ • m₁) (D.sp.iXY 0 w) := by
-        rw [map_add, map_smul, map_sub, LinearMap.sub_apply, ← algebraMap_smul D.host.E γ, map_smulₛₗ,
+        rw [map_add (f := _), map_smul, map_sub, LinearMap.sub_apply, ← algebraMap_smul D.host.E γ, map_smulₛₗ,
           LinearMap.smul_apply, smul_eq_mul, smul_eq_mul, starRingEnd_apply, hγ, c_herm, map_neg, hα₀]
         field_simp
         ring
@@ -171,7 +246,7 @@ theorem dual_orthLattice_quotient_cyclic : ∃ w₁ ∈ Formalism.HermitianLatti
     have e3 : D.sp.iXY 0 (w + (-α₀) • w₁) =
         (D.sp.iXY 0 w + (algebraMap (𝓞 D.host.E) D.host.E (-α₀) * t⁻¹) • F0.z) +
           (-α₀) • (D.sp.iXY 0 w₁ - t⁻¹ • F0.z) := by
-      rw [map_add, LinearMap.map_smul_of_tower, smul_sub, ← algebraMap_smul D.host.E (-α₀) (t⁻¹ • F0.z), smul_smul]
+      rw [map_add (f := _), LinearMap.map_smul_of_tower, smul_sub, ← algebraMap_smul D.host.E (-α₀) (t⁻¹ • F0.z), smul_smul]
       abel
     rw [e3]
     exact B.add_mem hy (B.smul_mem _ hK1)

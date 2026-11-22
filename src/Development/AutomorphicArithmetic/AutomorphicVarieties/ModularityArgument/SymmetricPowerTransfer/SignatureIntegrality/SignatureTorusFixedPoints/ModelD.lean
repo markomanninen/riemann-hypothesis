@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralLf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.NormalD
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.IsIntegralLf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.SignatureTorusFixedPoints.NormalD
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem _root_.UpperTheory.V.Z.Sym.Sig.modelD : UpperTheory.V.Z.Sym.Sig.ModelD :
         (t : Etau k ((a : k) + ((a⁻¹ : kˣ) : k))).im • ((eD hs γ : GL (Fin 2) k) : Matrix (Fin 2) (Fin 2) k) := by
     rw [eD_coe, eD_coe, hemb t]
     ext i l
-    simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, map_add, proj_smul, Matrix.one_apply]
+    simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, map_add (f := _), proj_smul, Matrix.one_apply]
     split_ifs <;> simp
   have hg : ((eD hs γ : GL (Fin 2) k) : Matrix (Fin 2) (Fin 2) k) =
       (g₀ : Matrix (Fin 2) (Fin 2) k) * ((dg ![a, a⁻¹] : GL (Fin 2) k) : Matrix (Fin 2) (Fin 2) k) *

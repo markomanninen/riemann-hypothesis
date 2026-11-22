@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SwapInt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LongCell
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.Master
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SwapInt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.LongCell
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -142,7 +146,7 @@ private theorem inner_eq {K : Type} [Field K] [NumberField K] {f f' : G1 K (2 + 
     simp only [mul_assoc]
   simp only [h1]
   simp only [mul_assoc (nn _)]
-  rw [integral_const_mul, (thCt _ hP' hB' (lv x y t * k)).2.2.2, h2, bf_lv hf', hH]
+  rw [integral_const_mul, (thCt (bf β' f') hP' hB' (lv x y t * k)).2.2.2, h2, bf_lv hf', hH]
   simp only [bf_lv hf']
   have hc : conj (Complex.exp (2 * (t : ℂ))) = Complex.exp (2 * (t : ℂ)) := by
     rw [← Complex.exp_conj, map_mul, Complex.conj_ofReal, map_ofNat]
@@ -216,8 +220,16 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.pairF :
   obtain ⟨hI, hE⟩ := (master μ μ₂ κ c hU _ hP.cont hP.rat hB hD v v' hv).2.2 _ hc' hi' hv'
   haveI := isFiniteMeasure_quotientMeasure μ₂
   haveI : IsFiniteMeasure (fd μ₂) := isFiniteMeasure_restrict.2 (measure_fundamentalDomain_pos_lt_top (Gam K 2) μ₂).2.ne
+  haveI : SigmaFinite (fd μ₂) := IsFiniteMeasure.toSigmaFinite _
+  haveI : SFinite (fd μ₂) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact inferInstance
   haveI : CompactSpace (KG K (2 + 2)) := isCompact_iff_compactSpace.1 ((blkLaws (K := K)).2.2.2.2.2.2.2.2.2.2.2 (2 + 2)).1
   haveI : IsFiniteMeasure κ := CompactSpace.isFiniteMeasure
+  haveI : SigmaFinite κ := IsFiniteMeasure.toSigmaFinite _
+  haveI : SFinite κ := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact inferInstance
   haveI : SecondCountableTopology (KG K (2 + 2)) := TopologicalSpace.Subtype.secondCountableTopology _
   obtain ⟨C, hC⟩ := hf.bdd
   obtain ⟨C', hC'⟩ := hf'.bdd

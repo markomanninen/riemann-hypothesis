@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.AevalValuation.RestSpec
-import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LowestWeightNonposOffSet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.AevalValuation.RestSpec
+public import Formalism.SharpRestriction.GrowthBounds.PolynomialLevels.LowestWeightNonposOffSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem mlOf_ll (hnL : ∀ j, nL j = (Fr.LLset (segZ j)).card) (j : ZMod J) (l :
     mlOf Fr nL j (llPos Fr (segZ j) l.val) = ML.ll j l := by
   have h : ∃ l' : Fin (nL j), llPos Fr (segZ j) l.val = llPos Fr (segZ j) l'.val := ⟨l, rfl⟩
   unfold mlOf
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
   apply Fin.ext
   exact (DdG.llPos_inj Fr (segZ j) (by rw [← hnL j]; exact l.isLt) (by rw [← hnL j]; exact h.choose.isLt)
@@ -48,7 +52,7 @@ theorem mlOf_lab (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (Fr.LLset (segZ 
     omega
   have h : ∃ m' : Fin r, Fr.fr (segZ j) (r - 1 - m.val) = Fr.fr (segZ j) (r - 1 - m'.val) := ⟨m, rfl⟩
   unfold mlOf
-  rw [dif_neg h1, dif_pos h]
+  rw [dite_eq_right h1, dite_eq_left h]
   congr 1
   exact (fr_rev_inj hV _ h.choose_spec).symm
 
@@ -68,7 +72,7 @@ theorem mlOf_wc (hV : Fr.Valid L₁ N₁) (hnL : ∀ j, nL j = (Fr.LLset (segZ j
     omega
   have h : ∃ m' : Fin r, Fr.fr (segZ j - 1) (r - 1 - m.val) = Fr.fr (segZ j - 1) (r - 1 - m'.val) := ⟨m, rfl⟩
   unfold mlOf
-  rw [dif_neg h1, dif_neg h2, dif_pos h]
+  rw [dite_eq_right h1, dite_eq_right h2, dite_eq_left h]
   congr 1
   exact (fr_rev_inj hV _ h.choose_spec).symm
 

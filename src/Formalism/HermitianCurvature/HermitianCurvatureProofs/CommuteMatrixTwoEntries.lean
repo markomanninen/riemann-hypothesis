@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.TopDensNonnegOfKappa
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+module
+
+public import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMemMatrixAlgebra
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -22,7 +26,7 @@ theorem io_mul' (x y : A) : (io (x * y) : SlopeTestRemainingChoices S A) = io x 
   simp only [io, map_mul]
 
 theorem io_add' (x y : A) : (io (x + y) : SlopeTestRemainingChoices S A) = io x + io y := by
-  simp only [io, map_add]
+  simp only [io, map_add (f := _)]
 
 theorem io_sub' (x y : A) : (io (x - y) : SlopeTestRemainingChoices S A) = io x - io y := by
   simp only [io, map_sub]
@@ -73,9 +77,6 @@ theorem cj_mul (h : f * fi = 1) (z w : SlopeTestRemainingChoices S A) : cj f fi 
 
 theorem cj_add (z w : SlopeTestRemainingChoices S A) : cj f fi (z + w) = cj f fi z + cj f fi w := by
   simp only [cj, mul_add, add_mul]
-
-theorem cj_smul (t : ℂ) (z : SlopeTestRemainingChoices S A) : cj f fi (t • z) = t • cj f fi z := by
-  simp only [cj, mul_smul_comm, smul_mul_assoc]
 
 theorem cj_zero : cj f fi (0 : SlopeTestRemainingChoices S A) = 0 := by
   simp only [cj, mul_zero, zero_mul]

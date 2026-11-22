@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfK
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfA
-import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfAs
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfK
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfA
+public import Formalism.LocalToGlobal.IndefiniteReal.SobolevIteration.ArvOSobPfAs
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,13 +114,6 @@ theorem dL_rep {G : Matrix (Fin n) (Fin n) ℂ} {π : Matrix (Fin n) (Fin n) ℂ
     rw [ih (fun Y hY => hl Y (List.mem_cons_of_mem _ hY)), dRep_rep hπ hG hg (hl X (by simp)) _]
 
 end Gen
-
-theorem isOpen_near {n : ℕ} (δ : ℝ) (f : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ) (hf : Continuous f) :
-    IsOpen {k | ∀ i j, ‖f k i j - (1 : Matrix (Fin n) (Fin n) ℂ) i j‖ < δ} := by
-  have hcont : ∀ i j, Continuous fun k => ‖f k i j - (1 : Matrix (Fin n) (Fin n) ℂ) i j‖ :=
-    fun i j => ((hf.matrix_elem i j).sub continuous_const).norm
-  simp only [Set.setOf_forall]
-  exact isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => isOpen_lt (hcont i j) continuous_const
 
 theorem foldBddK_of (h4 : SobChart) : FoldBddK := by
   intro n H _ _ G s π hs hπ w hw l hl

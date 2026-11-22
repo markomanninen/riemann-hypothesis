@@ -1,5 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.Objects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.ThreeLeLevel
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.GaussCM
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.DataHodge
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.Values
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,8 +25,8 @@ def baseChangeLat (K : Type) [Field K] [NumberField K] (I : Submodule (𝓞 Em) 
     Submodule (𝓞 K) ((Em →+* K) → Fin N → K) :=
   Submodule.span (𝓞 K) ((fun v σ a => σ (v a)) '' (I : Set (Fin N → Em)))
 
-open Classical in
 
+open Classical in
 def eigenLat (I : Submodule (𝓞 Em) (Fin N → Em)) (s : Em →+* K) : Submodule (𝓞 K) (Fin N → K) :=
   (baseChangeLat K I).comap (LinearMap.single (𝓞 K) (fun _ : Em →+* K => Fin N → K) s)
 
@@ -76,9 +85,5 @@ theorem isoFam_nz : IsNzFamily isoLine 1 isoFam := by
     exact one_ne_zero
 
 end Gauss
-
-example : (∀ σ : Gauss.Em →+* ℂ, ∃ t : Gauss.Em →+* Gauss.Em, Gauss.φ₀.comp t = σ) ∧
-    IsNzFamily Gauss.isoLine 1 Gauss.isoFam :=
-  ⟨Gauss.split Gauss.φ₀, Gauss.isoFam_nz⟩
 
 end GroundTheory.Heights₂.Heights.NineStatements

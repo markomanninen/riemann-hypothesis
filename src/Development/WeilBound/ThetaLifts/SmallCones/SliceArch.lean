@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 def Bd (m : ℕ) (f : V → ℂ) (C : ℝ) : Prop := ∀ j ≤ m, ∀ x, (1 + ‖x‖) ^ m * ‖iteratedFDeriv ℝ j f x‖ ≤ C
 
-variable (V) in
 
+variable (V) in
 def P (m : ℕ) : Seminorm ℂ (SchwartzMap V ℂ) := (Finset.Iic (m, m)).sup (schwartzSeminormFamily ℂ V ℂ)
 
 theorem P_cont (m : ℕ) : Continuous (P V m) :=
@@ -32,9 +36,6 @@ theorem bd_P (m : ℕ) (f : SchwartzMap V ℂ) : Bd m f (2 ^ m * P V m f) := fun
 
 theorem Bd.nonneg {m : ℕ} {f : V → ℂ} {C : ℝ} (h : Bd m f C) : 0 ≤ C :=
   le_trans (by positivity) (h 0 (Nat.zero_le _) 0)
-
-theorem Bd.mono {m : ℕ} {f : V → ℂ} {C C' : ℝ} (h : Bd m f C) (hC : C ≤ C') : Bd m f C' :=
-  fun j hj x => (h j hj x).trans hC
 
 theorem Bd.succ {m : ℕ} {f : V → ℂ} {C : ℝ} (h : Bd (m + 1) f C) : Bd m f C := fun j hj x =>
   le_trans (mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by linarith [norm_nonneg x]) (Nat.le_succ m)) (norm_nonneg _))
@@ -229,7 +230,7 @@ theorem S_add (w h : V × (V →L[ℝ] ℝ)) (f : SchwartzMap V ℂ) :
   rw [SchwartzMap.smul_apply, S_apply, S_apply, S_apply, ph, ph, ph, smul_eq_mul, ← mul_assoc, ← mul_assoc, ← Complex.exp_add,
     ← Complex.exp_add, Prod.fst_add, add_assoc x]
   congr 2
-  simp only [Prod.snd_add, ContinuousLinearMap.add_apply, map_add]
+  simp only [Prod.snd_add, ContinuousLinearMap.add_apply, map_add (f := _)]
   push_cast
   ring
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -40,7 +44,7 @@ theorem UpperTheory.V.Fr.pr_mu :
         map_add' := by
           intro c d
           show q (s (c + d) : C') = q (s c : C') + q (s d : C')
-          rw [hwd (s (c + d)) (s c + s d) (by rw [hs, map_add, hs, hs]), Submodule.coe_add, map_add] }
+          rw [hwd (s (c + d)) (s c + s d) (by rw [hs, map_add (f := _), hs, hs]), Submodule.coe_add, map_add (f := _)] }
     have hμ : ∀ c, μ c = q (s c) := fun c => rfl
     refine ⟨μ, ⟨?_, ?_⟩, ?_, ?_⟩
     · intro a c

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
@@ -25,7 +29,7 @@ theorem isOpen_connectedComponent_noetherian {Y : Type*} [TopologicalSpace Y] [N
     exact hZ htZ
   have hcl : IsClosed Cᶜ := by
     rw [hC]
-    exact (NoetherianSpace.finite_irreducibleComponents.subset fun _ h => h.1).isClosed_biUnion
+    exact (NoetherianSpace.finite_irreducibleComponents.subset (by exact fun _ h => h.1)).isClosed_biUnion
       fun Z h => isClosed_of_mem_irreducibleComponents Z h.1
   exact isClosed_compl_iff.1 hcl
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+
+@[expose] public section
 
 noncomputable section
 
@@ -181,9 +185,6 @@ def levelIdeal (D : D7) (S : Finset (HeightOneSpectrum (𝓞 D.host.E))) (c : S 
 
 def withConj (D : D7) (𝔮 : Ideal (𝓞 D.host.E)) : Ideal (𝓞 D.host.E) := 𝔮 * ((D.host.conj : _) • 𝔮)
 
-def TrivMod (D : D7) {N : ℕ} (χ : HeckeU D N) (𝔪 : Ideal (𝓞 D.host.E)) : Prop :=
-  ∀ u, IntU D u → (u : AE D) - 1 ∈ idHat D 𝔪 → χ.f u = 1
-
 def UnrOutside (D : D7) {N : ℕ} (χ : HeckeU D N) (𝔪 : Ideal (𝓞 D.host.E)) : Prop :=
   ∀ u, IntU D u → (∀ k : ℕ, (u : AE D) - 1 ∈ idHat D (𝔪 ^ k)) → χ.f u = 1
 
@@ -247,8 +248,6 @@ variable {D : D7} (X : PairDatum D)
 
 def ideal : Ideal (𝓞 D.host.E) := levelIdeal D X.S X.c
 
-def level : ℕ := Ideal.absNorm X.ideal
-
 def F : VC D X.a X.d → ℂ := xiVec D X.cc X.δ X.ideal (fun x => ∏ P, X.Φ P x) X.e0
 
 def J : Subgroup (GA D X.d) := levelJ D X.ideal X.what₂.1
@@ -260,37 +259,6 @@ def zPoly (h : GA D X.d) (P : nabla D X.a X.d X.n) : ℂ :=
 def z (h : GA D X.d) (T : Tup D X.a X.d X.n) : ℂ :=
   X.zPoly h ⟨minorProd D T, Submodule.subset_span ⟨T, rfl⟩⟩
 
-def normSq : ℝ := classSum D X.J fun h => gNormSq D (X.z h)
-
-def normSqConj (s : ℂ →+* ℂ) : ℝ := classSum D X.J fun h => gNormSq D fun T => s (X.z h T)
-
-def IsStandard : Prop :=
-  (∀ 𝔪 : Ideal (𝓞 D.host.E), 𝔪 ≠ ⊥ → (TrivMod D X.W.chV' 𝔪 ↔ 𝔪 ≤ withConj D X.ideal)) ∧
-  ∀ (P : X.S) (x : lat0 D X.cc X.a X.d),
-    (X.Φ P x ≠ 0 ↔
-      (∀ i ∉ X.what₂.1, ∀ j, (x : Matrix (Fin X.d) (Fin X.a) D.host.E) i j ∈
-        ((P : HeightOneSpectrum (𝓞 D.host.E)).asIdeal ^ X.c P) • coefLat D X.cc) ∧
-      (P : HeightOneSpectrum (𝓞 D.host.E)).valuation D.host.E
-        (((x : Matrix (Fin X.d) (Fin X.a) D.host.E).submatrix (X.what₂.1.orderEmbOfFin X.what₂.2) id).det) = 1) ∧
-    (X.Φ P x ≠ 0 → ∃ m : ℕ, 0 < m ∧ X.Φ P x ^ m = 1)
-
 end PairDatum
-
-theorem levelJ_le (D : D7) {N : ℕ} (𝔮 : Ideal (𝓞 D.host.E)) (I : Finset (Fin N)) :
-    levelJ D 𝔮 I ≤ intPts D N := fun _ h => h.1
-
-theorem levelJ_top (D : D7) {N : ℕ} (I : Finset (Fin N)) : levelJ D ⊤ I = intPts D N := by
-  have key : ∀ y ∈ OhE D, y ∈ idHat D ⊤ := by
-    intro y hy
-    exact AddSubgroup.subset_closure ⟨1, Submodule.mem_top, y, hy, by simp⟩
-  refine le_antisymm (levelJ_le D _ I) fun h hh => ⟨hh, ?_, ?_⟩
-  · intro i _ j _; exact key _ (hh i j).1
-  · intro i _ j _; exact key _ (hh i j).2
-
-example (D : D7) {a d : ℕ} (l : Tup D a d (fun _ => 0) → ℂ) :
-    gNormSq D l = ‖l (fun _ k => k.elim0)‖ ^ 2 := by
-  unfold gNormSq
-  refine Finset.sum_eq_single _ (fun T _ hT => absurd ?_ hT) (fun h => absurd (Finset.mem_univ _) h)
-  funext τ k; exact k.elim0
 
 end GlobalTheory.IndefiniteRowSideFullHecke.PolarLatticePairs

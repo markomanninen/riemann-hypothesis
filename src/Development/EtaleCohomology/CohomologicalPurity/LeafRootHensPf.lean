@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafRootPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafRootPf
+
+@[expose] public section
 
 noncomputable section
 open Polynomial
@@ -34,7 +38,9 @@ theorem hens_q_eval {A : Type} [CommRing A] (f : A[X]) (a : A) (hf : f.Monic) :
 
 theorem LeafRootHens_of : LeafRootHens := by
   intro A B _ _ I J hJ ψ hIJ f a hf hfa hu
-  have hjac := hJ.jac
+  have hjac : J ≤ Ideal.jacobson ⊥ := by
+    rw [Ideal.jacobson_bot]
+    exact hJ.jac
   have hmk : ∀ x : A, IsUnit (Ideal.Quotient.mk I x) → IsUnit (Ideal.Quotient.mk J (ψ x)) := by
     intro x hx
     have := hx.map (Ideal.quotientMap J ψ hIJ)

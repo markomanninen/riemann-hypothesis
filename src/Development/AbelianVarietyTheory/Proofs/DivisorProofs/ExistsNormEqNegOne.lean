@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyValExtOfOverLa
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem exists_norm_eq_neg_one {k : Type} [Field k] [Finite k] (σ : k →+* k) 
   have ha : σ a = a := a.2
   have hb : σ b = b := b.2
   refine ⟨a + b * (y - σ y), ?_⟩
-  rw [map_add, map_mul, hδ, ha, hb]
+  rw [map_add (f := _), map_mul, hδ, ha, hb]
   linear_combination h
 
 theorem exists_pair_seq {R : Type} [CommRing R] (bar : R ≃+* R) (hbb : ∀ x, bar (bar x) = x) (w : Ideal R)
@@ -69,14 +73,14 @@ theorem exists_pair_seq {R : Type} [CommRing R] (bar : R ≃+* R) (hbb : ∀ x, 
       intro n
       induction n with
       | zero =>
-        rw [zero_add, pow_one, ← Ideal.Quotient.eq_zero_iff_mem, map_add, map_mul, ← hσ]
+        rw [zero_add, pow_one, ← Ideal.Quotient.eq_zero_iff_mem, map_add (f := _), map_mul, ← hσ]
         show _ + Ideal.Quotient.mk w a0 * σ (Ideal.Quotient.mk w a0) = 0
         rw [ha0]; simp
       | succ n ih =>
         have ih1 : 1 + a n * bar (a n) ∈ w := Ideal.pow_le_self (Nat.succ_ne_zero n) ih
         have e : 1 + a (n + 1) * bar (a (n + 1)) = (1 + a n * bar (a n)) * ((1 - t - bar t) +
             (1 + a n * bar (a n)) * (t + bar t + a n * bar (a n) * t * bar t)) := by
-          simp only [has, map_mul, map_add, map_one, hbb]; ring
+          simp only [has, map_mul, map_add (f := _), map_one, hbb]; ring
         rw [e, pow_succ w (n + 1)]
         exact Ideal.mul_mem_mul ih (w.add_mem ht1 (w.mul_mem_right _ ih1))
     refine ⟨fun _ => 1, a, fun k => by simp, fun k => ?_, fun k => ?_⟩
@@ -136,14 +140,14 @@ theorem exists_pair {R V : Type} [CommRing R] [IsDedekindDomain R] [CommRing V] 
   refine ⟨v * u k, v * a k, ?_, ?_, ?_⟩
   · obtain ⟨z, hz⟩ := hk _ (hφ k _ ((w ^ k).sub_mem (hu k) (Ideal.mul_mem_right (u k) _ hv')))
     refine ⟨z, ?_⟩
-    rw [← hz, ← map_one φ, ← map_add]
+    rw [← hz, ← map_one φ, ← map_add (f := _)]
     congr 1
     linear_combination (u k) * hvv
   · obtain ⟨z, hz⟩ := hk _ ((m ^ k).sub_mem hαk (hφ k _ (Ideal.mul_mem_right (a k) _ hv')))
     refine ⟨z, ?_⟩
     have := congrArg φ hvv
     rw [← hz]
-    simp only [map_mul, map_add, map_one] at this ⊢
+    simp only [map_mul, map_add (f := _), map_one] at this ⊢
     linear_combination (φ (a k)) * this
   · rw [hI]
     have e : v * u k * bar (v * u k) + v * a k * bar (v * a k) =

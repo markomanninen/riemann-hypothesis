@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowPSmulMemOneFractionRing
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowPSmulMemOneFractionRing
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+
+@[expose] public section
+
 open ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC ReciprocityTheory.ChartRestriction.T2
 open Formalism.NG (KO)
 set_option maxHeartbeats 1000000 in

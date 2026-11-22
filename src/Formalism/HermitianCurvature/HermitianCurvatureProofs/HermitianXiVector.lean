@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagSpanVanishing
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagSpanVanishing
+
+@[expose] public section
 
 open Matrix Formalism.FourierDecayAlt Formalism.QuantumDeterminants
 open scoped ComplexConjugate

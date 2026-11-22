@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PhiGam.Window
@@ -74,7 +78,7 @@ theorem gam_zpow {l : ℕ} (R : RingPG k l) (b : ℤ) :
   have hv : vv k = ι PowerSeries.X := vv_coe
   set w : k⸨X⸩ := 1 - (κ : k⸨X⸩) * vv k with hw
   have hw1 : w = 1 - vv k - ι c0 * vv k ^ 2 := by
-    rw [hw, hι, hκ', hv]; simp only [map_add, map_mul, map_one]; ring
+    rw [hw, hι, hκ', hv]; simp only [map_add (f := _), map_mul, map_one]; ring
   have hww : w * ι w' = 1 := by
     have := congrArg ι hw'
     simp only [map_mul, map_sub, map_one] at this
@@ -88,14 +92,14 @@ theorem gam_zpow {l : ℕ} (R : RingPG k l) (b : ℤ) :
       obtain ⟨c, hc⟩ := ih
       refine ⟨(n : k⟦X⟧) - c0 + (n : k⟦X⟧) * c0 * PowerSeries.X + c * (1 - PowerSeries.X - c0 * PowerSeries.X ^ 2), ?_⟩
       rw [zpow_add_one₀ hw0, hc, hw1]
-      simp only [map_add, map_sub, map_mul, map_one, map_pow, map_natCast, ← hv]
+      simp only [map_add (f := _), map_sub, map_mul, map_one, map_pow, map_natCast, ← hv]
       push_cast
       ring
     | pred n ih =>
       obtain ⟨c, hc⟩ := ih
       refine ⟨w' * (c + ((n : k⟦X⟧) + 1) + c0 + ((n : k⟦X⟧) + 1) * c0 * PowerSeries.X), ?_⟩
       rw [zpow_sub_one₀ hw0, hc, hinv]
-      simp only [map_add, map_sub, map_mul, map_one, map_pow, map_natCast, ← hv]
+      simp only [map_add (f := _), map_sub, map_mul, map_one, map_pow, map_natCast, ← hv]
       push_cast
       rw [hw1] at hww
       linear_combination (1 + ((n : k⸨X⸩) + 1) * vv k) * hww
@@ -172,7 +176,7 @@ theorem finite_quot {N : Submodule k⟦X⟧ V} (hN : N.FG) :
     induction hn' using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x hx ih =>
       have hxN : x ∈ N := by rw [← hs]; exact hx
       obtain ⟨c', hc'⟩ : (PowerSeries.X : k⟦X⟧) ∣ c - algebraMap k k⟦X⟧ (PowerSeries.constantCoeff c) := by
@@ -231,6 +235,6 @@ theorem nab_bijective_window : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime]
     obtain ⟨x, hx, hx'⟩ := i2 y hy
     obtain ⟨z, hz, hz'⟩ := g2 _ hx'
     refine ⟨x + z, Submodule.add_mem _ hx (sh_add_le a m N hz), ?_⟩
-    rw [map_add, ← sub_sub]; exact hz'
+    rw [map_add (f := _), ← sub_sub]; exact hz'
 
 end GlobalTheory.PhiGam.Window

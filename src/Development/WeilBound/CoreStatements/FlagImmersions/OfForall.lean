@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.Transport
-import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
-import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.Transport
+public import Development.WeilBound.CoreStatements.VolumeEquality.CoverRootsSch
+public import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 

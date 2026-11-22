@@ -1,5 +1,9 @@
-import Formalism.RealPlaceAnalysis.StatementU
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import Formalism.RealPlaceAnalysis.StatementU
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset
@@ -510,7 +514,8 @@ theorem omPlus_of (hd : KDecomp) (ho : KOrth) (hk : KCasSpan) (hca : CasArr) (ha
   have hort : ∀ p q : ι, p ≠ q → ⟪f p, f q⟫_ℂ = 0 := fun p q h =>
     hWorth p q h _ (hfW p) _ (hfW q)
   have hOm : OmS ε E (0 : Fin 1) F = ∑ q, (c q : ℂ) • f q := by
-    rw [hfs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hfs, map_sum]
     exact Finset.sum_congr rfl fun q _ => hWeig q _ (hfW q)
   have e1 : ⟪F, OmS ε E (0 : Fin 1) F⟫_ℂ = ∑ p, (c p : ℂ) * ⟪f p, f p⟫_ℂ := by
     rw [hOm, hfs, sum_inner]

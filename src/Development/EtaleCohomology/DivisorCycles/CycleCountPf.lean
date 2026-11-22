@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 namespace LateralTheory.DivDb.CycleCountPf

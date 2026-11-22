@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.DirichletPrimeToLPartMulLPowerPart
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Gs5b.cd_norm_lt :
     ∀ {l : ℕ} [inst : Fact (Nat.Prime l)] (c : UpperTheory.V.HV.Coef l) {R : Type} [inst_1 : CommRing R] [inst_2 : IsLocalRing R]

@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.LineFormulas.LineFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MeasurableFlagLocalSizesUnitary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicFlagLeviMaxCompactClosedSubgroups
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem measurable_modA (A : Matrix (Fin n) (Fin n) ℂ) : Measurable (modA (ε 
     unfold layerProd
     simp only [id]
     fun_prop
-  exact (h1.comp (measurable_pi_lambda _ fun i =>
+  exact (h1.comp (Measurable.of_eval fun i =>
     measurable_locSize_uMat n ε 1 (fun _ : Fin 1 => rk A) (W A) i)).ennreal_ofReal
 
 theorem detOn_pos_of_left_inv {f g : Matrix (Fin n) (Fin n) ℂ} (hgf : g * f = 1) (V : Submodule ℂ (Fin n → ℂ))
@@ -30,7 +34,7 @@ theorem detOn_pos_of_left_inv {f g : Matrix (Fin n) (Fin n) ℂ} (hgf : g * f = 
     rw [Matrix.toLin'_apply]
     exact hV y hy
   unfold detOn
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   refine norm_pos_iff.mpr fun h0 => ?_
   obtain ⟨x, hx, hx0⟩ := SetLike.exists_of_lt (LinearMap.bot_lt_ker_of_det_eq_zero h0)
   have h1 : f *ᵥ (x : Fin n → ℂ) = 0 := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -66,8 +70,6 @@ def FlagTransitive : Prop :=
 def IsAdapted {r : ℕ} (h : V → V → R) (x y : Fin r → V) (L : Submodule 𝔬 V) : Prop :=
   ∀ z, z ∈ L ↔ (∀ i, h (x i) z ∈ 𝔬) ∧ (∀ i, h (y i) z ∈ 𝔬) ∧
     z - ∑ i, h (y i) z • x i - ∑ i, h (x i) z • y i ∈ L
-
-def hypQ (x y : ℚ × ℚ) : ℚ := x.1 * y.2 + x.2 * y.1
 
 end Abstract
 

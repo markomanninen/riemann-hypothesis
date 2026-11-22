@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem eq_on_poly (φ ψ : MvPowerSeries σ R →+* A) (hC : ∀ c, φ (C c) = 
     (hX : ∀ i, φ (X i) = ψ (X i)) (P : MvPolynomial σ R) : φ P = ψ P := by
   induction P using MvPolynomial.induction_on with
   | C c => rw [MvPolynomial.coe_C, hC]
-  | add P Q hP hQ => rw [MvPolynomial.coe_add, map_add, map_add, hP, hQ]
+  | add P Q hP hQ => rw [MvPolynomial.coe_add, map_add (f := _), map_add (f := _), hP, hQ]
   | mul_X P i hP => rw [MvPolynomial.coe_mul, map_mul, map_mul, hP, MvPolynomial.coe_X, hX]
 
 theorem ext_of_cont (p : ℕ) [IsHausdorff (Ideal.span {(p : A)}) A] (φ ψ : MvPowerSeries σ R →+* A)
@@ -75,7 +79,8 @@ theorem dvd_aeval_of_coeff (p : ℕ) (x : σ → A) (S : ℕ) (hS : ∀ i, (p : 
     (p : A) ^ m ∣ MvPolynomial.aeval x P := by
   classical
   conv_rhs => rw [P.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.dvd_sum fun α hα => ?_
   rw [MvPolynomial.aeval_monomial]
   obtain ⟨i, hi⟩ : ∃ i, m * S < α i := by
@@ -129,7 +134,7 @@ theorem exists_isEval (p : ℕ) [IsAdicComplete (Ideal.span {(p : A)}) A] (x : �
     intro f g
     refine huniq _ _ fun m => ?_
     have e : s m (f + g) - (L f + L g) = (s m f - L f) + (s m g - L g) := by
-      simp only [s, map_add]; ring
+      simp only [s, map_add (f := _)]; ring
     rw [e]
     exact dvd_add (hL f m) (hL g m)
   have hmul : ∀ f g, L (f * g) = L f * L g := by

@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTateA
+module
+
+public import Development.WeilBound.CoreStatements.EulerCharacteristicCounts.GcohTateA
+
+@[expose] public section
 
 open CategoryTheory MonoidalCategory GroundTheory.ProfCoh ReciprocityTheory.Gal ValuativeRel
 

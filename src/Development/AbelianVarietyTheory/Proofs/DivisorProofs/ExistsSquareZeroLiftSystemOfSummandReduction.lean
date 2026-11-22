@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealCochainOfCoboundaryConstantsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareZeroLiftSystemFiltrationInfEqAndFullStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLiftSystemFiltrationSupIffHodgeFiltrationStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsComplOfAgreeModSqZeroIdealStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineClassSecondSystemEqNegDefectStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocIsoTransportCochainsInIdealStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistSquareZeroSmoothLiftSystemByDerivatioStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearLiftOfProjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SurjectiveOfIsPullbackSqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsNoetherianRingDualNumber
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdealCochainOfCoboundaryConstantsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SquareZeroLiftSystemFiltrationInfEqAndFullStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLiftSystemFiltrationSupIffHodgeFiltrationStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsComplOfAgreeModSqZeroIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineClassSecondSystemEqNegDefectStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocIsoTransportCochainsInIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistSquareZeroSmoothLiftSystemByDerivatioStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSemilinearLiftOfProjective
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry KaehlerDifferential DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.LiftSys GlobalTheory.Published
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -43,7 +48,7 @@ theorem exists_sys_of_summand : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
 
   have fadd : ∀ (c1 c2 : Cr hI π s₀) (w1 w2 : GlobForm s₀), FormOf hI hk c1 w1 → FormOf hI hk c2 w2 → FormOf hI hk (c1 + c2) (w1 + w2) := by
     rintro c1 c2 w1 w2 ⟨f1, h1, e1⟩ ⟨f2, h2, e2⟩
-    exact ⟨f1 + f2, by rw [map_add, map_add, h1, h2], by rw [map_add, Submodule.coe_add, e1, e2]⟩
+    exact ⟨f1 + f2, by rw [map_add (f := _), map_add (f := _), h1, h2], by rw [map_add (f := _), Submodule.coe_add, e1, e2]⟩
   have fsmul : ∀ (r : R) (c : Cr hI π s₀) (w : GlobForm s₀), FormOf hI hk c w → FormOf hI hk (r • c) (π r • w) := by
     rintro r c w ⟨f, h, e⟩
     exact ⟨π r • f, by rw [map_smul, h, map_smulₛₗ], by rw [map_smul, Submodule.coe_smul, e]⟩
@@ -70,7 +75,7 @@ theorem exists_sys_of_summand : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
       (ksup S' hR hF c0).2 (by rw [hc0, hodgeFiltration_eq_range]; exact ⟨f, rfl⟩)
     obtain ⟨k, hk', i, hi, rfl⟩ := Submodule.mem_sup.1 hm
     refine ⟨⟨k, hk'⟩, f, ?_, hf⟩
-    rw [← hc0, map_add, (hR.2 i).2 hi, add_zero]
+    rw [← hc0, map_add (f := _), (hR.2 i).2 hi, add_zero]
   choose cw hcw using hexF
 
   let v : GlobForm s₀ →+ CatCoh.H1 S'.F :=
@@ -78,7 +83,7 @@ theorem exists_sys_of_summand : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
       map_zero' := by
         rw [hwd (cw 0) 0 0 (hcw 0) fzero, map_zero, map_zero, neg_zero]
       map_add' := fun a b ↦ by
-        rw [hwd (cw (a + b)) (cw a + cw b) (a + b) (hcw _) (fadd _ _ _ _ (hcw a) (hcw b)), map_add, map_add,
+        rw [hwd (cw (a + b)) (cw a + cw b) (a + b) (hcw _) (fadd _ _ _ _ (hcw a) (hcw b)), map_add (f := _), map_add (f := _),
           neg_add] }
   have hvdef : ∀ w, v w = -S'.r hI (u (cw w)) := fun _ ↦ rfl
   have hv : ∀ (r : R) w, v (π r • w) = r • v w := by
@@ -113,7 +118,7 @@ theorem exists_sys_of_summand : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
     obtain ⟨z, z2, hzI, hz1, hz2, hzz⟩ := (trans' S' S'' Φ).2.2 (u c) (hu c).1
     have heq : u c = u (cw w) := hwd c (cw w) w hw (hcw w)
     have hsum : CatCoh.H1.mk S'.F (z + u' w) = 0 := by
-      rw [map_add, hz1, hu'q w, hvdef, heq, add_neg_cancel]
+      rw [map_add (f := _), hz1, hu'q w, hvdef, heq, add_neg_cancel]
     obtain ⟨g, hgI, hg⟩ := GlobalTheory.T.exists_ideal_cochain_of_coboundary_constants R R₀ I hI π hπ hk X₀ s₀ hG.const S' (z + u' w)
       (S'.cocyclesInIdealExtensions.add_mem hzI (hu'W w)) hsum
     have h2 : CatCoh.H1.mk S''.F (z2 + zw) = 0 := by
@@ -121,8 +126,8 @@ theorem exists_sys_of_summand : ∀ (R R₀ : Type) [CommRing R] [CommRing R₀]
       funext U V a
       rw [(trans' S' S'' Φ).2.1 g hgI U V a, hg]
       change Φ.φ V (z.1 U V a + (u' w).1 U V a) = z2.1 U V a + zw.1 U V a
-      rw [map_add, hzz, hzw]
-    rw [map_add] at h2
+      rw [map_add (f := _), hzz, hzw]
+    rw [map_add (f := _)] at h2
     have h3 := eq_neg_of_add_eq_zero_left h2
     rw [Sys.K, LinearMap.mem_ker, map_sub, hmain, ← hz2, h3, sub_neg_eq_add, neg_add_cancel]
 

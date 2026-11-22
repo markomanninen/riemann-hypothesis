@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RTensorPairingEqZeroOfFlipInjectiveStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RTensorPairingEqZeroOfFlipInjectiveStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem tensorPairing_one (m : V →ₗ[F] V' →ₗ[F] F) (v : V) (y : V' ⊗[F
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul v' b => simp [tensorPairing_tmul]
-  | add y y' hy hy' => simp only [map_add, hy, hy']
+  | add y y' hy hy' => simp only [map_add (f := _), hy, hy']
 
 theorem induction_two {p : V ⊗[F] B → V' ⊗[F] B → Prop} (h0 : ∀ y, p 0 y) (h0' : ∀ x, p x 0)
     (ht : ∀ v a v' b, p (v ⊗ₜ[F] a) (v' ⊗ₜ[F] b))
@@ -58,9 +62,9 @@ theorem exists_stPairing : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : Fi
     · intro v a v' b
       simp [tensorPairing_tmul, map_mul, map_smul]
     · intro x x' y hx hx'
-      simp only [map_add, LinearMap.add_apply, hx, hx']
+      simp only [map_add (f := _), LinearMap.add_apply, hx, hx']
     · intro x y y' hy hy'
-      simp only [map_add, hy, hy']
+      simp only [map_add (f := _), hy, hy']
   · intro x y
     refine induction_two (p := fun x y => tensorPairing m (monV P ℚ_[l] V x) y +
       tensorPairing m x (monV P ℚ_[l] V' y) = monSt P (tensorPairing m x y)) (by simp) (by simp) ?_ ?_ ?_ x y
@@ -71,10 +75,10 @@ theorem exists_stPairing : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : Fi
       simp only [monSt_apply, Polynomial.derivative_mul]
       ring
     · intro x x' y hx hx'
-      simp only [map_add, LinearMap.add_apply, ← hx, ← hx']
+      simp only [map_add (f := _), LinearMap.add_apply, ← hx, ← hx']
       abel
     · intro x y y' hy hy'
-      simp only [map_add, ← hy, ← hy']
+      simp only [map_add (f := _), ← hy, ← hy']
       abel
   · intro g x y
     refine induction_two (p := fun x y => tensorPairing m (stRep P ρ g x) (stRep P ρ' g y) =
@@ -84,9 +88,9 @@ theorem exists_stPairing : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : Fi
       rw [stRep_tmul, stRep_tmul, tensorPairing_tmul, tensorPairing_tmul, hg, hcyc, map_smul, map_mul,
         smul_smul]
     · intro x x' y hx hx'
-      simp only [map_add, LinearMap.add_apply, hx, hx', smul_add]
+      simp only [map_add (f := _), LinearMap.add_apply, hx, hx', smul_add]
     · intro x y y' hy hy'
-      simp only [map_add, hy, hy', smul_add]
+      simp only [map_add (f := _), hy, hy', smul_add]
   · intro a x y
     refine induction_two (p := fun x y => tensorPairing m (onB P ℚ_[l] V (LinearMap.mulLeft ℚ_[l] a) x) y =
       a * tensorPairing m x y) (by simp) (by simp) ?_ ?_ ?_ x y
@@ -94,9 +98,9 @@ theorem exists_stPairing : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : Fi
       rw [onB_tmul, tensorPairing_tmul, tensorPairing_tmul, LinearMap.mulLeft_apply, mul_smul_comm,
         mul_assoc]
     · intro x x' y hx hx'
-      simp only [map_add, LinearMap.add_apply, hx, hx', mul_add]
+      simp only [map_add (f := _), LinearMap.add_apply, hx, hx', mul_add]
     · intro x y y' hy hy'
-      simp only [map_add, hy, hy', mul_add]
+      simp only [map_add (f := _), hy, hy', mul_add]
   · intro y hy
     refine GlobalTheory.T.eq_zero_of_rTensor_pairing_eq_zero ℚ_[l] (Bst P) V V' m hr y fun v => ?_
     rw [← tensorPairing_one]

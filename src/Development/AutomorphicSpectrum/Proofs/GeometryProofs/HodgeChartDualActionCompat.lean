@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsExtendLin
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsExtendLin
+
+@[expose] public section
+
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT GlobalTheory.CompanionTheory.Ar.Flat
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat.HTL
@@ -65,7 +70,8 @@ theorem exists_retraction_mod : ∀ (A K : Type) [CommRing A] [IsDomain A] [IsNo
       obtain ⟨z', hz'⟩ := hr' z
       refine ⟨z', ?_⟩
       have h1 : (z : Module.Dual K Li) (Rr x) = ∑ k, x k * algebraMap A K (r z k) := by
-        rw [hRr, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hRr, map_sum]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [map_smul, hevz k z]
         rfl

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AdmissibleInduction
-import GroundTheory.AutomorphicForms.Cartan
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AdmissibleInduction
+public import GroundTheory.AutomorphicForms.Cartan
+
+@[expose] public section
 
 noncomputable section
 

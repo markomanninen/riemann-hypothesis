@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.AInfXi
-import GroundTheory.PAdicHodge.ThetaPlus
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.AInfXi
+public import GroundTheory.PAdicHodge.ThetaPlus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -94,11 +99,8 @@ section Defs
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
-local notation "𝒪" => normInteger K
-local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "θ" => fontaineTheta (normInteger K) p
 
 theorem isUnit_natCast {m : ℕ} (hm : m ≠ 0) : IsUnit (m : 𝔸) :=
   WittVector.isUnit_natCast_away hm
@@ -147,17 +149,17 @@ theorem dpow_mul_dpow (m n : ℕ) (x : AInf K p) :
     _ = ((m + n).factorial : 𝔸) * (((m + n).choose m : 𝔸) * dpow (m + n) x) := by
         rw [← factorial_mul_dpow (m + n) x]; ring
 
-variable (K p) in
 
+variable (K p) in
 def ACrisZero : Subalgebra (AInf K p) 𝔸 :=
   Algebra.adjoin (AInf K p) {y | ∃ n : ℕ, ∃ x ∈ RingHom.ker θ, dpow n x = y}
 
 theorem dpow_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) (n : ℕ) :
-    dpow n x ∈ ACrisZero K p :=
+    dpow n x ∈ ACrisZero (K := K) (p := p) :=
   Algebra.subset_adjoin ⟨n, x, hx, rfl⟩
 
 theorem acrisZero_eq_adjoin {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {ξ}) :
-    ACrisZero K p = Algebra.adjoin (AInf K p) (Set.range fun n : ℕ => dpow n ξ) := by
+    ACrisZero (K := K) (p := p) = Algebra.adjoin (AInf K p) (Set.range fun n : ℕ => dpow n ξ) := by
   apply le_antisymm
   · apply Algebra.adjoin_le
     rintro _ ⟨n, x, hx, rfl⟩
@@ -170,10 +172,10 @@ theorem acrisZero_eq_adjoin {ξ : AInf K p} (hξ : RingHom.ker θ = Ideal.span {
     rintro _ ⟨n, rfl⟩
     exact dpow_mem (by rw [hξ]; exact Ideal.mem_span_singleton_self ξ) n
 
-variable (K p) in
 
+variable (K p) in
 abbrev ACris : Type _ :=
-  AdicCompletion (Ideal.span {(p : ACrisZero K p)}) (ACrisZero K p)
+  AdicCompletion (Ideal.span {(p : ACrisZero (K := K) (p := p))}) (ACrisZero (K := K) (p := p))
 
 end Defs
 
@@ -181,84 +183,79 @@ section Theta
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
-
-local notation "𝒪" => normInteger K
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
+local notation "𝒪" => normInteger K
+local notation "θ" => fontaineTheta 𝒪 p
+
 
 variable (K p) in
-
 def thetaAway : 𝔸 →+* K :=
   ((IsPerfectoidField.awayEquiv (K := K) p : Localization.Away (p : 𝒪) ≃ₐ[𝒪] K) :
     Localization.Away (p : 𝒪) →+* K).comp (fontaineThetaInvertP 𝒪 p)
 
 theorem thetaAway_algebraMap (x : AInf K p) :
-    thetaAway K p (algebraMap (AInf K p) 𝔸 x) = (θ x : K) := by
+    thetaAway (K := K) (p := p) (algebraMap (AInf K p) 𝔸 x) = (θ x : K) := by
   rw [thetaAway, RingHom.comp_apply, fontaineThetaInvertP_algebraMap]
   exact (IsPerfectoidField.awayEquiv (K := K) p).commutes (θ x)
 
 theorem thetaAway_dpow {x : AInf K p} (hx : x ∈ RingHom.ker θ) {n : ℕ} (hn : n ≠ 0) :
-    thetaAway K p (dpow n x) = 0 := by
-  have h := congrArg (thetaAway K p) (factorial_mul_dpow n x)
+    thetaAway (K := K) (p := p) (dpow n x) = 0 := by
+  have h := congrArg (thetaAway (K := K) (p := p)) (factorial_mul_dpow n x)
   rw [map_mul, map_pow, thetaAway_algebraMap, RingHom.mem_ker.1 hx, map_natCast] at h
   simp only [ZeroMemClass.coe_zero, zero_pow hn, mul_eq_zero, Nat.cast_eq_zero] at h
   exact h.resolve_left (Nat.factorial_ne_zero n)
 
-variable (K p) in
 
+variable (K p) in
 def thetaIntegral : Subalgebra (AInf K p) 𝔸 :=
-  { (normInteger K).comap (thetaAway K p) with
+  { (normInteger K).comap (thetaAway (K := K) (p := p)) with
     algebraMap_mem' := fun x => by
-      show thetaAway K p _ ∈ normInteger K
+      show thetaAway (K := K) (p := p) _ ∈ normInteger K
       rw [thetaAway_algebraMap]
       exact (θ x).2 }
 
-theorem acrisZero_le_thetaIntegral : ACrisZero K p ≤ thetaIntegral K p := by
+theorem acrisZero_le_thetaIntegral : ACrisZero (K := K) (p := p) ≤ thetaIntegral (K := K) (p := p) := by
   apply Algebra.adjoin_le
   rintro _ ⟨n, x, hx, rfl⟩
-  show thetaAway K p (dpow n x) ∈ normInteger K
+  show thetaAway (K := K) (p := p) (dpow n x) ∈ normInteger K
   rcases n with _ | n
   · rw [dpow_zero, map_one]; exact one_mem _
   · rw [thetaAway_dpow hx n.succ_ne_zero]; exact zero_mem _
 
-variable (K p) in
 
-def thetaZero : ACrisZero K p →+* 𝒪 :=
-  ((thetaAway K p).comp (ACrisZero K p).val.toRingHom).codRestrict (normInteger K)
+variable (K p) in
+def thetaZero : ACrisZero (K := K) (p := p) →+* 𝒪 :=
+  ((thetaAway (K := K) (p := p)).comp (ACrisZero (K := K) (p := p)).val.toRingHom).codRestrict (normInteger K)
     fun y => acrisZero_le_thetaIntegral y.2
 
-theorem coe_thetaZero (y : ACrisZero K p) : (thetaZero K p y : K) = thetaAway K p (y : 𝔸) :=
+theorem coe_thetaZero (y : ACrisZero (K := K) (p := p)) : (thetaZero (K := K) (p := p) y : K) = thetaAway (K := K) (p := p) (y : 𝔸) :=
   rfl
 
 theorem thetaZero_algebraMap (x : AInf K p) :
-    thetaZero K p (algebraMap (AInf K p) (ACrisZero K p) x) = θ x :=
+    thetaZero (K := K) (p := p) (algebraMap (AInf K p) (ACrisZero (K := K) (p := p)) x) = θ x :=
   Subtype.ext (thetaAway_algebraMap x)
 
 theorem thetaZero_dpow {x : AInf K p} (hx : x ∈ RingHom.ker θ) {n : ℕ} (hn : n ≠ 0) :
-    thetaZero K p ⟨dpow n x, dpow_mem hx n⟩ = 0 :=
+    thetaZero (K := K) (p := p) ⟨dpow n x, dpow_mem hx n⟩ = 0 :=
   Subtype.ext (thetaAway_dpow hx hn)
 
 theorem span_p_le_comap_thetaZero :
-    Ideal.span {(p : ACrisZero K p)} ≤ (Ideal.span {(p : 𝒪)}).comap (thetaZero K p) := by
+    Ideal.span {(p : ACrisZero (K := K) (p := p))} ≤ (Ideal.span {(p : 𝒪)}).comap (thetaZero (K := K) (p := p)) := by
   rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
 
+
 variable (K p) in
+def theta : ACris (K := K) (p := p) →+* 𝒪 :=
+  AdicCompletion.extendRingHom _ _ (thetaZero (K := K) (p := p)) span_p_le_comap_thetaZero
 
-def theta : ACris K p →+* 𝒪 :=
-  AdicCompletion.extendRingHom _ _ (thetaZero K p) span_p_le_comap_thetaZero
-
-theorem theta_of (y : ACrisZero K p) :
-    theta K p (AdicCompletion.of _ _ y) = thetaZero K p y :=
+theorem theta_of (y : ACrisZero (K := K) (p := p)) :
+    theta (K := K) (p := p) (AdicCompletion.of _ _ y) = thetaZero (K := K) (p := p) y :=
   AdicCompletion.extendRingHom_of _ _ _ _ y
 
 theorem theta_algebraMap (x : AInf K p) :
-    theta K p (algebraMap (AInf K p) (ACris K p) x) = θ x := by
+    theta (K := K) (p := p) (algebraMap (AInf K p) (ACris (K := K) (p := p)) x) = θ x := by
   rw [AdicCompletion.algebraMap_apply, theta_of, thetaZero_algebraMap]
-
-theorem theta_surjective : Function.Surjective (theta K p) := fun y => by
-  obtain ⟨x, rfl⟩ := IsPerfectoidField.surjective_fontaineTheta (K := K) p y
-  exact ⟨_, theta_algebraMap x⟩
 
 end Theta
 
@@ -266,10 +263,9 @@ section Frobenius
 
 variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [hp : Fact p.Prime] [IsPerfectoidField K p]
-
-local notation "θ" => fontaineTheta (normInteger K) p
 local notation "𝔸" => Localization.Away (p : AInf K p)
 local notation "φ" => WittVector.frobeniusEquiv p (PreTilt (normInteger K) p)
+local notation "θ" => fontaineTheta (normInteger K) p
 
 theorem exists_natCast_mul_eq_pow {n k : ℕ} (hn : n ≠ 0) (hk : n.factorization p ≤ k) :
     ∃ w : AInf K p, (n : AInf K p) * w = (p : AInf K p) ^ k := by
@@ -288,10 +284,10 @@ theorem exists_natCast_mul_eq_pow {n k : ℕ} (hn : n ≠ 0) (hk : n.factorizati
 
 theorem factorization_factorial_le (m : ℕ) : (m.factorial).factorization p ≤ m := by
   rw [Nat.factorization_def _ hp.out]
-  have h : (p - 1) * padicValNat p m.factorial = m - (p.digits m).sum :=
-    sub_one_mul_padicValNat_factorial m
+  have h : (p - 1) * multiplicity p m.factorial = m - (p.digits m).sum :=
+    Nat.Prime.sub_one_mul_multiplicity_factorial hp.out
   have h1 : 1 ≤ p - 1 := Nat.le_sub_of_add_le hp.out.two_le
-  calc padicValNat p m.factorial ≤ (p - 1) * padicValNat p m.factorial := Nat.le_mul_of_pos_left _ h1
+  calc multiplicity p m.factorial ≤ (p - 1) * multiplicity p m.factorial := Nat.le_mul_of_pos_left _ h1
     _ = m - (p.digits m).sum := h
     _ ≤ m := Nat.sub_le _ _
 
@@ -305,7 +301,7 @@ theorem exists_dpow_p_mul (m : ℕ) (y : AInf K p) :
 
 theorem dpow_add (n : ℕ) (x y : AInf K p) :
     dpow n (x + y) = ∑ k ∈ Finset.range (n + 1), dpow k x * dpow (n - k) y := by
-  rw [dpow_eq_iff, Finset.mul_sum, map_add, add_pow]
+  rw [dpow_eq_iff, Finset.mul_sum, map_add (f := _), add_pow]
   refine Finset.sum_congr rfl fun k hk => ?_
   have hk' : k ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
   rw [← Nat.choose_mul_factorial_mul_factorial hk']
@@ -330,7 +326,7 @@ theorem exists_frobenius_eq (x : AInf K p) : ∃ y : AInf K p, φ x = x ^ p + (p
   exact ⟨y, by rw [mul_comm, hy]; ring⟩
 
 theorem dpow_frobenius_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) (n : ℕ) :
-    dpow n (φ x) ∈ ACrisZero K p := by
+    dpow n (φ x) ∈ ACrisZero (K := K) (p := p) := by
   obtain ⟨y, hy⟩ := exists_frobenius_eq x
   rw [hy, dpow_add]
   refine Subalgebra.sum_mem _ fun k _ => Subalgebra.mul_mem _ ?_ ?_
@@ -340,8 +336,8 @@ theorem dpow_frobenius_mem {x : AInf K p} (hx : x ∈ RingHom.ker θ) (n : ℕ) 
     rw [hw]
     exact Subalgebra.algebraMap_mem _ w
 
-variable (K p) in
 
+variable (K p) in
 def phiAway : 𝔸 →+* 𝔸 :=
   Localization.awayLift ((algebraMap (AInf K p) 𝔸).comp (φ : AInf K p →+* AInf K p)) (p : AInf K p)
     (by
@@ -349,15 +345,15 @@ def phiAway : 𝔸 →+* 𝔸 :=
       exact IsLocalization.Away.algebraMap_isUnit (p : AInf K p))
 
 theorem phiAway_algebraMap (x : AInf K p) :
-    phiAway K p (algebraMap (AInf K p) 𝔸 x) = algebraMap (AInf K p) 𝔸 (φ x) :=
+    phiAway (K := K) (p := p) (algebraMap (AInf K p) 𝔸 x) = algebraMap (AInf K p) 𝔸 (φ x) :=
   IsLocalization.lift_eq _ x
 
-theorem phiAway_dpow (n : ℕ) (x : AInf K p) : phiAway K p (dpow n x) = dpow n (φ x) := by
+theorem phiAway_dpow (n : ℕ) (x : AInf K p) : phiAway (K := K) (p := p) (dpow n x) = dpow n (φ x) := by
   symm
-  rw [dpow_eq_iff, ← map_natCast (phiAway K p), ← map_mul, factorial_mul_dpow, map_pow,
+  rw [dpow_eq_iff, ← map_natCast (phiAway (K := K) (p := p)), ← map_mul, factorial_mul_dpow, map_pow,
     phiAway_algebraMap]
 
-theorem phiAway_mem {y : 𝔸} (hy : y ∈ ACrisZero K p) : phiAway K p y ∈ ACrisZero K p := by
+theorem phiAway_mem {y : 𝔸} (hy : y ∈ ACrisZero (K := K) (p := p)) : phiAway (K := K) (p := p) y ∈ ACrisZero (K := K) (p := p) := by
   induction hy using Algebra.adjoin_induction with
   | mem y hy =>
     obtain ⟨n, x, hx, rfl⟩ := hy
@@ -369,49 +365,49 @@ theorem phiAway_mem {y : 𝔸} (hy : y ∈ ACrisZero K p) : phiAway K p y ∈ AC
   | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
   | mul y z _ _ hy hz => rw [map_mul]; exact mul_mem hy hz
 
-variable (K p) in
 
-def phiZero : ACrisZero K p →+* ACrisZero K p :=
-  ((phiAway K p).comp (ACrisZero K p).val.toRingHom).codRestrict (ACrisZero K p)
+variable (K p) in
+def phiZero : ACrisZero (K := K) (p := p) →+* ACrisZero (K := K) (p := p) :=
+  ((phiAway (K := K) (p := p)).comp (ACrisZero (K := K) (p := p)).val.toRingHom).codRestrict (ACrisZero (K := K) (p := p))
     fun y => phiAway_mem y.2
 
-theorem coe_phiZero (y : ACrisZero K p) : (phiZero K p y : 𝔸) = phiAway K p y :=
+theorem coe_phiZero (y : ACrisZero (K := K) (p := p)) : (phiZero (K := K) (p := p) y : 𝔸) = phiAway (K := K) (p := p) y :=
   rfl
 
 theorem phiZero_algebraMap (x : AInf K p) :
-    phiZero K p (algebraMap (AInf K p) (ACrisZero K p) x) =
-      algebraMap (AInf K p) (ACrisZero K p) (φ x) :=
+    phiZero (K := K) (p := p) (algebraMap (AInf K p) (ACrisZero (K := K) (p := p)) x) =
+      algebraMap (AInf K p) (ACrisZero (K := K) (p := p)) (φ x) :=
   Subtype.ext (phiAway_algebraMap x)
 
-variable (K p) in
 
-instance isAdicComplete : IsAdicComplete (Ideal.span {(p : ACris K p)}) (ACris K p) := by
-  have h := AdicCompletion.isAdicComplete_self (Ideal.span {(p : ACrisZero K p)})
+variable (K p) in
+instance isAdicComplete : IsAdicComplete (Ideal.span {(p : ACris (K := K) (p := p))}) (ACris (K := K) (p := p)) := by
+  have h := AdicCompletion.isAdicComplete_self (Ideal.span {(p : ACrisZero (K := K) (p := p))})
     (Submodule.fg_span_singleton _)
-  have h' : (Ideal.span {(p : ACrisZero K p)}).map (algebraMap (ACrisZero K p) (ACris K p)) =
-      Ideal.span {(p : ACris K p)} := by
+  have h' : (Ideal.span {(p : ACrisZero (K := K) (p := p))}).map (algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p))) =
+      Ideal.span {(p : ACris (K := K) (p := p))} := by
     rw [Ideal.map_span, Set.image_singleton, map_natCast]
   rw [h'] at h
   exact h
 
 theorem span_p_le_comap_phiZero :
-    Ideal.span {(p : ACrisZero K p)} ≤ (Ideal.span {(p : ACris K p)}).comap
-      ((algebraMap (ACrisZero K p) (ACris K p)).comp (phiZero K p)) := by
+    Ideal.span {(p : ACrisZero (K := K) (p := p))} ≤ (Ideal.span {(p : ACris (K := K) (p := p))}).comap
+      ((algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p))).comp (phiZero (K := K) (p := p))) := by
   rw [Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe, Ideal.mem_comap, map_natCast]
   exact Ideal.mem_span_singleton_self _
 
-variable (K p) in
 
-def phi : ACris K p →+* ACris K p :=
-  AdicCompletion.extendRingHom _ _ ((algebraMap (ACrisZero K p) (ACris K p)).comp (phiZero K p))
+variable (K p) in
+def phi : ACris (K := K) (p := p) →+* ACris (K := K) (p := p) :=
+  AdicCompletion.extendRingHom _ _ ((algebraMap (ACrisZero (K := K) (p := p)) (ACris (K := K) (p := p))).comp (phiZero (K := K) (p := p)))
     span_p_le_comap_phiZero
 
-theorem phi_of (y : ACrisZero K p) :
-    phi K p (AdicCompletion.of _ _ y) = AdicCompletion.of _ _ (phiZero K p y) :=
+theorem phi_of (y : ACrisZero (K := K) (p := p)) :
+    phi (K := K) (p := p) (AdicCompletion.of _ _ y) = AdicCompletion.of _ _ (phiZero (K := K) (p := p) y) :=
   AdicCompletion.extendRingHom_of _ _ _ _ y
 
 theorem phi_algebraMap (x : AInf K p) :
-    phi K p (algebraMap (AInf K p) (ACris K p) x) = algebraMap (AInf K p) (ACris K p) (φ x) := by
+    phi (K := K) (p := p) (algebraMap (AInf K p) (ACris (K := K) (p := p)) x) = algebraMap (AInf K p) (ACris (K := K) (p := p)) (φ x) := by
   rw [AdicCompletion.algebraMap_apply, phi_of, phiZero_algebraMap, AdicCompletion.algebraMap_apply]
 
 end Frobenius

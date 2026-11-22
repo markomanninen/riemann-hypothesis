@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenEtalePfData
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenEtalePfData
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry
 

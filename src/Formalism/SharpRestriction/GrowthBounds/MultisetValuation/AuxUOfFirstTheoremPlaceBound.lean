@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RamifiedLatticeOfChainEstimates
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RamifiedLatticeOfChainEstimates
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,8 +36,8 @@ theorem PIvS_zero (j : ℕ) (I : X.ColCh j) (v : X.Pl) : PIvS X j I (fun _ => 0)
 def LowAtI (j : ℕ) (v : X.Pl) (i : ℕ) (g : ℝ) : Prop :=
   ∀ U : MvPowerSeries (X.EA j ⊕ X.EA j) Y.Kc, IntR Y.Oc (inParamK p Y.Kc U) →
     ∀ (I : X.ColCh j) (n : X.FrI j →₀ ℕ),
-      Y.geC (MvPolynomial.coeff n (applyD (PIvS X j I (fun _ => i) v)
-        (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U)))) g
+      Y.geC (AddMonoidAlgebra.coeff (applyD (PIvS X j I (fun _ => i) v)
+        (X.ThZA Y.Kc j (MvPowerSeries.map (algebraMap (K0 p) Y.Kc) (expS p (-Y.PhAt j v)) * U))) n) g
 
 variable {X Y}
 

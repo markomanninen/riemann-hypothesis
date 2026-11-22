@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -48,7 +52,7 @@ theorem isReduced_of_nonZeroDivisor_mem_jacobson_of_associatedPrimes :
       rw [pow_succ', mul_comm m' x]
       exact Ideal.mul_mem_mul (Ideal.mem_span_singleton_self x) (ih m' hm')
   have hK := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (M := R) (Ideal.span {x})
-    ((Ideal.span_singleton_le_iff_mem _).2 hj)
+    ((Ideal.span_singleton_le_iff_mem _).2 (by simpa only [Ideal.jacobson_bot] using hj))
   have : n ∈ (⨅ i : ℕ, (Ideal.span {x}) ^ i • ⊤ : Submodule R R) := by
     rw [Submodule.mem_iInf]
     intro i

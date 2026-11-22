@@ -1,9 +1,13 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepB_A
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SumFourEqTrace
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeNotDvdRelIndexSplitPlace
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.LatRepB_A
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SumFourEqTrace
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.ImportsMore
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemRangeOfOneTmulMem
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteAdeleStrongApproximationModNat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InertPrimeNotDvdRelIndexSplitPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,21 +20,21 @@ namespace PositivityTheory.ThKW.LatB
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 variable {nS nT : ℕ} {Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)}
 
-variable (F) in
 
+variable (F) in
 def inrA : Af F →ₗ[F] AF F where
   toFun a := pairA F 0 a
   map_add' _ _ := Prod.ext (add_zero 0).symm rfl
   map_smul' c _ := Prod.ext (smul_zero c).symm rfl
 
-variable (F E) in
 
+variable (F E) in
 def liftF : Af F ⊗[F] E →ₗ[F] AEF F E := TensorProduct.map (inrA F) LinearMap.id
 
 theorem liftF_tmul (a : Af F) (t : E) : liftF F E (a ⊗ₜ[F] t) = pairA F 0 a ⊗ₜ[F] t := rfl
 
-variable (E) in
 
+variable (E) in
 abbrev hatO : AddSubgroup (Af F ⊗[F] E) := GlobalTheory.AdLat.hat1 F (Set.range (algebraMap (𝓞 E) E))
 
 theorem fin_mul_eq (y : AEF F E) :
@@ -43,7 +47,7 @@ theorem fin_mul_eq (y : AEF F E) :
       show finPartF F E (a ⊗ₜ[F] t) = sndA F a ⊗ₜ[F] t from rfl, liftF_tmul]
     congr 1
     exact Prod.ext (zero_mul _) (one_mul _)
-  | add x y hx hy => rw [mul_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [mul_add, hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem liftF_smul_mem {z : Af F ⊗[F] E} (hz : z ∈ hatO (F := F) E) {u : WOF F E nS nT}
     (hu : u ∈ latOF F E nS nT Λ) : liftF F E z • u ∈ latOF F E nS nT Λ := by
@@ -68,7 +72,7 @@ theorem liftF_smul_mem {z : Af F ⊗[F] E} (hz : z ∈ hatO (F := F) E) {u : WOF
     | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
     | neg x _ hx => rw [smul_neg]; exact neg_mem hx
   | zero => rw [map_zero, zero_smul]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add, add_smul]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), add_smul]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg, neg_smul]; exact neg_mem hx
 
 theorem idem_smul_mem {e : AEF F E} (he : e * e = e) (hf : algebraMap (AF F) (AEF F E) (pairA F 0 1) * e = e)

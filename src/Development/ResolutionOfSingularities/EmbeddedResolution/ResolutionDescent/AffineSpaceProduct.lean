@@ -1,10 +1,15 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.AffineSpaceCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.AffineResolutionRule
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace
@@ -129,22 +134,6 @@ def sumUliftEquivUliftSum (n m : ℕ) :
     Sum.elim (fun a => Sum.inl (ULift.up a)) (fun b => Sum.inr (ULift.up b)) i.down
   left_inv := by rintro (⟨a⟩ | ⟨b⟩) <;> rfl
   right_inv := by rintro ⟨a | b⟩ <;> rfl
-
-@[simp]
-theorem sumUliftEquivUliftSum_inl (n m : ℕ) (a : Fin n) :
-    sumUliftEquivUliftSum.{u} n m (Sum.inl (ULift.up a)) = ULift.up (Sum.inl a) := rfl
-
-@[simp]
-theorem sumUliftEquivUliftSum_inr (n m : ℕ) (b : Fin m) :
-    sumUliftEquivUliftSum.{u} n m (Sum.inr (ULift.up b)) = ULift.up (Sum.inr b) := rfl
-
-@[simp]
-theorem sumUliftEquivUliftSum_symm_inl (n m : ℕ) (a : Fin n) :
-    (sumUliftEquivUliftSum.{u} n m).symm (ULift.up (Sum.inl a)) = Sum.inl (ULift.up a) := rfl
-
-@[simp]
-theorem sumUliftEquivUliftSum_symm_inr (n m : ℕ) (b : Fin m) :
-    (sumUliftEquivUliftSum.{u} n m).symm (ULift.up (Sum.inr b)) = Sum.inr (ULift.up b) := rfl
 
 def projRight (k : Type u) [Field k] (n m : ℕ) :
     affineSpaceIndexedBy k (ULift.{u} (Fin n ⊕ Fin m)) ⟶ affineSpaceIndexedBy k (ULift.{u} (Fin m)) :=

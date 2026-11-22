@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.DivisorCycles.SpecPtPf
-import Development.EtaleCohomology.DivisorCycles.SpecLiePf
+module
+
+public import Development.EtaleCohomology.DivisorCycles.SpecPtPf
+public import Development.EtaleCohomology.DivisorCycles.SpecLiePf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SpecLie
 theorem etale_special_point_exists_of_key : LateralTheory.DivDb.SpecPt := by

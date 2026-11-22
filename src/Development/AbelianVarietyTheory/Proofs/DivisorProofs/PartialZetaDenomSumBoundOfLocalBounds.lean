@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateWideInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ZetaValueIdeals
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TranslateWideInd
+
+@[expose] public section
+
 open NumberField Module Formalism.MainNotions.ShortIntervalPrimes GlobalTheory.RayZeta GlobalTheory.IndefiniteRowSideFullHecke.ZetaValueIdeals GlobalTheory.ZetaDenom
 open scoped nonZeroDivisors
 
@@ -17,8 +22,12 @@ theorem sumBound_of_local : ∀ {F : Type} [Field F] [NumberField F], Formalism.
   have hvan : ∀ l : ℕ, l.Prime → X + 2 ≤ l → cE z l = 0 := by
     intro l hl hlX
     have hl2 : l ≠ 2 := by omega
-    have hv : padicValNat l 2 = 0 := padicValNat.eq_zero_of_not_dvd (fun h => by
-      have := Nat.le_of_dvd (by norm_num) h; omega)
+    have hv : padicValNat l 2 = 0 := by
+      rw [Nat.padicValNat_def]
+      apply multiplicity_eq_zero_of_not_dvd
+      intro h
+      have := Nat.le_of_dvd (by norm_num : 0 < 2) h
+      omega
     have hm : Formalism.PairingDivisionLocalBalance.mE l X = 0 := by
       unfold Formalism.PairingDivisionLocalBalance.mE
       rw [if_neg hl2, if_neg]

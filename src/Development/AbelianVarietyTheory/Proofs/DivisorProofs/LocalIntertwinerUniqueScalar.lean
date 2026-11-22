@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveHomogeneousOperatorLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalLinearOperatorL2Isometry
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingTrRep
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveHomogeneousOperatorLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchroedingerOperatorHeisenbergInnerPreserving
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalLinearOperatorL2Isometry
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.WeilTr MeasureTheory
 open scoped Matrix ENNReal
 
@@ -313,7 +318,7 @@ theorem form_eq_loc (ψ : AddChar K ℂ) (hψc : Continuous ψ) {x₀ : K} (hx�
     rw [← integral_add (hI f hf g hg) (hI f' hf' g hg)]
     congr 1
     funext x
-    rw [map_add, Pi.add_apply, add_mul]
+    rw [map_add (f := _), Pi.add_apply, add_mul]
   · intro c f hf g hg
     simp only [map_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
     exact integral_const_mul c _
@@ -321,7 +326,7 @@ theorem form_eq_loc (ψ : AddChar K ℂ) (hψc : Continuous ψ) {x₀ : K} (hx�
     rw [← integral_add (hI f hf g hg) (hI f hf g' hg')]
     congr 1
     funext x
-    rw [map_add, Pi.add_apply, map_add, mul_add]
+    rw [map_add (f := _), Pi.add_apply, map_add (f := _), mul_add]
   · intro c f hf g hg
     simp only [map_smul, Pi.smul_apply, smul_eq_mul, map_mul]
     rw [← integral_const_mul]
@@ -476,7 +481,7 @@ end Main
 
 end GlobalTheory.CompactOpenLattice
 
-theorem GlobalTheory.CompactOpenLattice.inner_eq_const_mul : ∀ (F : Type) [Field F] [NumberField F] (v : Pl F) [Invertible (2 : Fv F v)] (κ : Type) [Fintype κ]
+theorem GlobalTheory.CompactOpenLattice.inner_eq_const_mul : ∀ (F : Type) [Field F] [NumberField F] (v : Pl (F := F)) [Invertible (2 : Fv F v)] (κ : Type) [Fintype κ]
     (ψv : AddChar (Fv F v) ℂ), Continuous ψv → ψv ≠ 1 →
     ∀ (T : ((κ → Fv F v) → ℂ) →ₗ[ℂ] (κ → Fv F v) → ℂ) (A : (κ → Fv F v) × (κ → Fv F v) → (κ → Fv F v) × (κ → Fv F v)),
       (∀ φ ∈ SB (κ → Fv F v), T φ ∈ SB (κ → Fv F v)) →

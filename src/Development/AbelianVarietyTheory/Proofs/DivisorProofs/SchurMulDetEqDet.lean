@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
-import Formalism.ArtinHasse.ArtinHasseProofs.SymmSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAddHaarMeasureVolumeLie
+public import Formalism.ArtinHasse.ArtinHasseProofs.SymmSeries
+
+@[expose] public section
 
 noncomputable section
 

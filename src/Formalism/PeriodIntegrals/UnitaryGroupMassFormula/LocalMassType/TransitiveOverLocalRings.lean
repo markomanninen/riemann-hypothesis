@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreDef
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem model_inj {K V W Z : Type*} [Field K] [AddCommGroup V] [Module K V] [Add
   simp only [LinearMap.coprod_apply, LinearMap.comp_apply, Submodule.subtype_apply] at h
 
   have hb := congrArg b h
-  rw [map_add, map_add, hbs, hζb, add_zero, map_zero] at hb
+  rw [map_add (f := _), map_add (f := _), hbs, hζb, add_zero, map_zero] at hb
   have hbaw : b (a w) ∈ T := by
     rw [eq_neg_of_add_eq_zero_left hb]
     exact T.neg_mem ht
@@ -243,7 +247,7 @@ theorem transitiveOverLocalRings : WCore := by
   set k := k1 A B0 B L0 M + (1 - Mᵀ * Bᵀ) * X * (1 - A0 * L0) with hk
   have hkmap : k.map f = kb := by
     rw [← RingHom.mapMatrix_apply, hk]
-    simp only [map_add, map_mul, map_sub, map_one, RingHom.mapMatrix_apply]
+    simp only [map_add (f := _), map_mul, map_sub, map_one, RingHom.mapMatrix_apply]
     rw [Matrix.map_mul, Matrix.map_mul, Matrix.transpose_map, Matrix.transpose_map, hX, hproj, hhbar]
     abel
   refine ⟨k, ?_, hkA, ?_⟩

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.BijectiveCechDeRhamComparisonDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.DeRham
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -20,7 +25,7 @@ theorem kaehler_liftSemi_bijective : ∀ (R R' : Type) [CommRing R] [CommRing R'
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [g, hf]; rfl
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   haveI : Algebra.IsPushout R R' B B' :=
     ⟨IsBaseChange.of_equiv (LinearEquiv.ofBijective (g.liftBaseChange R') (e1 ▸ hb)) fun n ↦ by simp [g]⟩
   have e2 : ∀ ω : Ω[B⁄R], h.m1 ω = KaehlerDifferential.map R R' B B' ω := by
@@ -32,7 +37,7 @@ theorem kaehler_liftSemi_bijective : ∀ (R R' : Type) [CommRing R] [CommRing R'
       obtain ⟨b, rfl⟩ := hx
       rw [SemiHom.m1_D, KaehlerDifferential.map_D]; rfl
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | smul b x _ hx =>
       rw [SemiHom.oneFormMap_smul_semilinear, hx, LinearMap.map_smul_of_tower]
       exact algebraMap_smul B' b _
@@ -41,7 +46,7 @@ theorem kaehler_liftSemi_bijective : ∀ (R R' : Type) [CommRing R] [CommRing R'
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul x ω => rw [liftSemi_tmul, KaehlerDifferential.tensorKaehlerEquivBase_tmul, e2]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   rw [e3]
   exact (KaehlerDifferential.tensorKaehlerEquivBase R R' B B').bijective
 

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdjoinCoordsArithVar
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularValuesInAdjoinedField
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzero
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogeneousFormNonvanishingPoint
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSncModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Proportional
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridge
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRed
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AdjoinCoordsArithVar
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.RegularValuesInAdjoinedField
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StandardSmoothChartOfNonzero
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomogeneousFormNonvanishingPoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -139,7 +143,7 @@ theorem exists_homog_poly {σ : Type} (c₀ : σ) (P : MvPolynomial σ ℚ) :
       · have := ((isHomogeneous_C σ m₁).mul ((isHomogeneous_X ℤ c₀).pow n₁)).mul hG₂
         convert this using 1
         ring
-    · simp only [map_add, map_mul, map_pow, aeval_X, hv, one_pow, mul_one, eq_intCast, map_intCast, e₁ R v hv,
+    · simp only [map_add (f := _), map_mul, map_pow, aeval_X, hv, one_pow, mul_one, eq_intCast, map_intCast, e₁ R v hv,
         e₂ R v hv]
       push_cast
       ring

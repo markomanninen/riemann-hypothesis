@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerInclOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.KerInclOn
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions.S GlobalTheory.Core.Rk
 open scoped InnerProductSpace

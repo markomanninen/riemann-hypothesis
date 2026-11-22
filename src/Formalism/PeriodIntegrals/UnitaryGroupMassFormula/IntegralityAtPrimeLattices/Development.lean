@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.IntegralityOfRationalityLocal
-import Formalism.LocalToGlobal.GroupLattices.Joint0
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
-import Formalism.LocalToGlobal.GlobalTheory.GL6.DiamondPreservesRationalFormZero
-import Formalism.LocalToGlobal.GlobalTheory.GL6.CongruenceNoKernelOfHeckeRamified
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.IntegralityOfRationalityLocal
+public import Formalism.LocalToGlobal.GroupLattices.Joint0
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiagonalSlopes.CharacterFiniteLevelZeroOfForms
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PBwLocInd
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.DiamondPreservesRationalFormZero
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.CongruenceNoKernelOfHeckeRamified
+
+@[expose] public section
 
 noncomputable section
 

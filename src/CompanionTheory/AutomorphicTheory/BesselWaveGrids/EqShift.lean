@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PlaceSwapExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDJDJComm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThresholdOfLargeConstant
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PlaceSwapExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDJDJComm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadJFExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThresholdOfLargeConstant
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LUFactorOrbitBounds
+
+@[expose] public section
 
 namespace CompanionTheory.WaveGrid.EqShift
 
@@ -93,7 +97,20 @@ theorem ff_swap (Ds : B.RealPlaceData k r Wp Wq) (Ds' : B.RealPlaceData k r Wp W
   obtain ⟨V, A', hV, hgV, hA', hAA⟩ := hAs g₀ hg₀.1.1
   refine ⟨U ∩ V ∩ Q.OmPlus k r Ds.z Ds.z', fun g => (J' g).comp (A' g),
     (hU.inter hV).inter (SmoothnessOnGoodSet.isOpen_OmPlus _ _), ⟨⟨hgU, hgV⟩, hOm.2⟩, ?_, fun g hg hG => ?_⟩
-  · exact isBoundedBilinearMap_compSh.contDiff.comp_contDiffOn
+  · let hb : IsBoundedBilinearMap ℝ
+        (fun q : (Wq →L[ℂ] Wp) × (Wq' →L[ℂ] Wq) => q.1.comp q.2) := by
+      constructor
+      · exact fun x₁ x₂ y => ContinuousLinearMap.add_comp x₁ x₂ y
+      · intro c x y
+        ext v
+        simp
+      · exact fun x y₁ y₂ => ContinuousLinearMap.comp_add x y₁ y₂
+      · intro c x y
+        ext v
+        simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply]
+        exact ContinuousLinearMap.map_smul_of_tower x c (y v)
+      · exact ⟨1, one_pos, fun x y => by simpa using ContinuousLinearMap.opNorm_comp_le x y⟩
+    exact hb.contDiff.comp_contDiffOn
       ((hJ'.mono (Set.inter_subset_left.trans Set.inter_subset_left)).prodMk
         (hA'.mono (Set.inter_subset_left.trans Set.inter_subset_right)))
   · have e := jf_swap Ds Ds' hz hz' hπ hW hN hW' A hA f hThr hf (γ := g) ⟨hG.1, hg.2⟩
@@ -133,8 +150,88 @@ theorem shiftAtR_full (hW : WigExists) : ∃ Cb c₃ : ℝ, 0 ≤ Cb ∧ ∀ (P 
       KB.InDDplus2 (shP P S.um S.um') S.pm.l0 S.pm.T.base Cb S.pm.Θ ∧
       B.JF S.pp.T.base (fun g => (f g).comp (S.Ap g)) ∈ FFKB S.pp ∧
       B.JF S.pm.T.base (fun g => (f g).comp (S.Am g)) ∈ FFKB S.pm := by
+  classical
+  let ptRep {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
+      [FiniteDimensional ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
+      [FiniteDimensional ℂ Wq] (p : KB.Pl P Wp Wq) (γ : C.LPt) : B.Mat P.k P.r :=
+    if h : ∃ g ∈ B.GV P.k P.r, Zhat P.k P.r p.T.base.z p.T.base.z' g = D.ptMatN γ (P.r + 1) ∧
+        D.IsDFrame p.T.base p.ν' p.m₀ g then h.choose else 1
+  have ptRep_spec {P : M.Par} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
+      [FiniteDimensional ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq]
+      [FiniteDimensional ℂ Wq] (p : KB.Pl P Wp Wq) {γ : C.LPt}
+      (hγ : D.IsLocPt γ (P.r + 1)) (hG : 0 < Gp p γ) :
+      ptRep p γ ∈ B.GV P.k P.r ∧ Gf P.k P.r p.T.base.z p.T.base.z' (ptRep p γ) = Gp p γ := by
+    have hex : ∃ g ∈ B.GV P.k P.r, Zhat P.k P.r p.T.base.z p.T.base.z' g = D.ptMatN γ (P.r + 1) ∧
+        D.IsDFrame p.T.base p.ν' p.m₀ g :=
+      Formalism.FourierDecayAlt.P.Dx2.dFrameExists P.k P.r Wp Wq p.T.base p.ν' p.m₀ γ p.hF hγ hG
+    have hrep : ptRep p γ = hex.choose := by
+      dsimp [ptRep]
+      exact dif_pos hex
+    obtain ⟨hmem, hz, _⟩ := hex.choose_spec
+    refine ⟨by rw [hrep]; exact hmem, ?_⟩
+    rw [hrep, Formalism.FourierDecayAlt.P.TBBx2.Gf_of_Zhat _ _ _ γ hz]
+    rfl
   obtain ⟨Cb, hCb, hPS⟩ := placeSwap_dd
-  obtain ⟨c₃, hC⟩ := cell_identity_shifted
+  have hC : ∃ c₃ : ℝ, ∀ (P : M.Par) (Wp Wq Wq' : Type)
+      [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
+      [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq]
+      [NormedAddCommGroup Wq'] [InnerProductSpace ℂ Wq'] [FiniteDimensional ℂ Wq']
+      (u u' : ℕ → ℝ) (p : KB.Pl P Wp Wq) (q : KB.Pl (shP P u u') Wp Wq')
+      (f : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (A : B.Mat P.k P.r → (Wq' →L[ℂ] Wq)) (A₀ : ℝ),
+      SwapTie p q → WigEquiv p.T.base.z p.T.base.z' p.T.base.π' q.T.base.π' A →
+      c₃ * ((P.r : ℝ) + 1) ^ 2 * ((P.r : ℝ) * ((2 * P.r + P.k + 1 : ℕ) : ℝ) + 1) ≤ A₀ →
+      B.InCC A₀ 1 f → ∀ γ : C.LPt, D.IsLocPt γ (P.r + 1) → 0 < Gp p γ →
+        q.V (fun g => (f g).comp (A g)) γ = (p.V f γ).comp (A (ptRep p γ)) := by
+    obtain ⟨c₃, hc⟩ := Formalism.FourierDecayAlt.P.orbital_integral_converges
+    refine ⟨c₃, ?_⟩
+    intro Pa Wp Wq Wq' _ _ _ _ _ _ _ _ _ u u' p q f A A₀ hT hA hA₀ hf γ hγ hG
+    obtain ⟨hz, hz', hπ, hW, hN, hW', hν, hm⟩ := hT
+    have hG' : 0 < D.ptG (Tz Pa.k Pa.r p.T.base.z * Tz Pa.k Pa.r p.T.base.z') Pa.r γ := hG
+    have hGq : 0 < D.ptG (Tz Pa.k Pa.r q.T.base.z * Tz Pa.k Pa.r q.T.base.z') Pa.r γ := by
+      rw [hz, hz']
+      exact hG'
+    by_cases hex : ∃ g ∈ B.GV Pa.k Pa.r, Zhat Pa.k Pa.r p.T.base.z p.T.base.z' g = D.ptMatN γ (Pa.r + 1) ∧
+        D.IsDFrame p.T.base p.ν' p.m₀ g
+    · have hrep : ptRep p γ = hex.choose := by
+        dsimp [ptRep]
+        exact dif_pos hex
+      obtain ⟨hgGV, hZ, hF⟩ := hex.choose_spec
+      rw [hrep]
+      generalize hex.choose = g at hgGV hZ hF ⊢
+      obtain ⟨hw, hd⟩ := Dx2.VV.ptMatN_monoP' γ (Pa.r + 1) hγ.2 hγ.1
+      have hZq : Zhat Pa.k Pa.r q.T.base.z q.T.base.z' g = D.ptMatN γ (Pa.r + 1) := by
+        rw [hz, hz']
+        exact hZ
+      have hFq : D.IsDFrame q.T.base q.ν' q.m₀ g := by
+        rw [hν, hm]
+        exact (isDFrame_swap p.T.base q.T.base hz hz' p.ν' p.m₀ g).2 hF
+      have hZm := hZ.trans hw
+      have hGf : 0 < Gf Pa.k Pa.r p.T.base.z p.T.base.z' g := by
+        rw [TBBx2.Gf_of_Zhat _ _ g γ hZ]
+        exact hG'
+      have hrel := Final.d_ptRelevant _ _ _ _ p.T.base γ g hγ hgGV hZ
+      have hH := Formalism.FourierDecayAlt.P.radial_measure_is_haar _ _ _ _ p.T.base g _ _ hgGV hd hZm
+      obtain ⟨θ, hθ, hi⟩ := hc Pa.k Pa.r Wp Wq p.T.base g _ _ A₀ f hgGV hrel hd hZm hGf hA₀ hf
+      simp only [KB.Pl.V]
+      rw [Formalism.FourierDecayAlt.P.isotropic_vectors_linear_indep _ _ _ _ q.T.base q.ν' q.m₀ _ γ hγ g q.hF hGq hgGV hZq hFq,
+        Formalism.FourierDecayAlt.P.isotropic_vectors_linear_indep _ _ _ _ p.T.base p.ν' p.m₀ f γ hγ g p.hF hG' hgGV hZ hF]
+      convert orbJ_swap p.T.base q.T.base hz hz' hπ hW hN hW' A hA f g hgGV hGf _ hrel hH θ hθ hi using 2
+      congr 1
+      exact muR_swap p.T.base q.T.base hz hz' g _
+    · have h1 : ¬ ∃ g ∈ B.GV Pa.k Pa.r, Zhat Pa.k Pa.r q.T.base.z q.T.base.z' g = D.ptMatN γ (Pa.r + 1) ∧
+          D.IsDFrame q.T.base q.ν' q.m₀ g := by
+        rintro ⟨g, hg1, hg2, hg3⟩
+        apply hex
+        refine ⟨g, hg1, ?_, ?_⟩
+        · rw [← hz, ← hz']
+          exact hg2
+        · rw [hν, hm] at hg3
+          exact (isDFrame_swap p.T.base q.T.base hz hz' p.ν' p.m₀ g).1 hg3
+      simp only [KB.Pl.V, D.vecV]
+      rw [dif_pos ⟨hγ, hGq⟩]
+      conv_rhs => rw [dif_pos ⟨hγ, hG'⟩, dif_neg hex, ContinuousLinearMap.zero_comp]
+      exact dif_neg h1
+  obtain ⟨c₃, hC⟩ := hC
   refine ⟨Cb, c₃, hCb, ?_⟩
   intro P Wp Wq _ _ _ _ _ _ p f b n₀ l A₀ hu hl1 hlk hposition hb hub hA₀ hThr hf hf0 hJ
   have hOK : P.OK := p.hP.1

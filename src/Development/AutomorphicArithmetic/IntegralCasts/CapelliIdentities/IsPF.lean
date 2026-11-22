@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.PolynomialFunction₂.IsPF :
     {A : Type} → [inst : Ring A] → [Algebra ℂ A] → (ℂ → A) → Prop :=

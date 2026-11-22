@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -57,7 +62,8 @@ theorem finrank_span_le_finrank_int {V : Type*} [AddCommGroup V] [Module ℝ V]
       FiniteDimensional ℝ (Submodule.span ℝ (La : Set V)) ∧
       finrank ℝ (Submodule.span ℝ (La : Set V)) ≤ finrank ℤ La := by
   classical
-  have : IsAddTorsionFree V := IsAddTorsionFree.of_isTorsionFree ℝ V
+  have : HasUniqueDiv V := HasUniqueDiv.of_isTorsionFree ℝ V
+  have : IsAddTorsionFree V := inferInstance
   have : Module.IsTorsionFree ℤ La := inferInstance
   have : Module.Free ℤ La := Module.free_of_finite_type_torsion_free'
   let B := Module.Free.chooseBasis ℤ La

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Reg
 
@@ -39,8 +44,8 @@ theorem exists_extend_of_pow_denom {R A L : Type} [CommRing R] [CommRing A] [IsD
     simpa using this
   · intro r s
     have := key (r + s) (X r * d ^ T s + d ^ T r * X s) (d ^ T r * d ^ T s) (by
-      rw [map_add, map_add, map_mul, map_mul, map_mul, ← hXT r, ← hXT s]; ring)
-    rw [map_add, map_mul, map_mul, map_mul] at this
+      rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_mul, ← hXT r, ← hXT s]; ring)
+    rw [map_add (f := _), map_mul, map_mul, map_mul] at this
     rw [div_add_div _ _ (hp _) (hp _), eq_div_iff (mul_ne_zero (hp _) (hp _))]
     exact this
 
@@ -72,7 +77,7 @@ theorem openChart_regular_away :
       obtain ⟨b, t, hb⟩ := ihy
       refine ⟨a * (algebraMap O A ϖ * eb) ^ t + b * (algebraMap O A ϖ * eb) ^ s, s + t, ?_⟩
       generalize algebraMap O A ϖ * eb = d at *
-      rw [pow_add, map_add, map_add, map_mul, map_mul, map_mul, ← ha, ← hb]; ring
+      rw [pow_add, map_add (f := _), map_add (f := _), map_mul, map_mul, map_mul, ← ha, ← hb]; ring
     | mul x y _ _ ihx ihy =>
       obtain ⟨a, s, ha⟩ := ihx
       obtain ⟨b, t, hb⟩ := ihy

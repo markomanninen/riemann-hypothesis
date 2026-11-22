@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
-import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalRigidOfSurjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MinSt5OfMinSt4
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMember
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TateProductRigidificationTrivial
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.Poinc GlobalTheory.SiegJoin GlobalTheory.TChart
@@ -26,7 +31,7 @@ theorem sub_mem_pow_of_mem_maximalIdeal {O W V : Type} [CommRing O] [IsLocalRing
     rw [this, sub_self]; exact zero_mem _
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add, map_add, add_sub_add_comm]; exact add_mem hx hy
+    rw [map_add (f := _), map_add (f := _), add_sub_add_comm]; exact add_mem hx hy
   | smul a x hx' hx =>
     have hx'' : x ∈ maximalIdeal W := by rw [← hm]; exact hx'
     have h2 : θ₂ x ∈ maximalIdeal V :=
@@ -96,9 +101,9 @@ theorem sub_mem_pow_succ {O W V : Type} [CommRing O] [IsLocalRing O] [CommRing W
         intro x y
         obtain ⟨a, rfl⟩ := residue_surjective x
         obtain ⟨b, rfl⟩ := residue_surjective y
-        rw [← map_add, hs, hs, hs, ← Submodule.Quotient.mk_add]
+        rw [← map_add (f := _), hs, hs, hs, ← Submodule.Quotient.mk_add]
         refine gr_mk_eq_mk V k _ _ ?_
-        simp only [Submodule.coe_add, map_add]
+        simp only [Submodule.coe_add, map_add (f := _)]
         convert zero_mem (maximalIdeal V ^ (k + 2)) using 1; ring
       map_smul' := by
         intro c x

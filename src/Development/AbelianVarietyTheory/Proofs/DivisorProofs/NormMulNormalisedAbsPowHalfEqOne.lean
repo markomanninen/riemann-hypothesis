@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntIndMemSB
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqOfHasValueAtInfinite
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+
+@[expose] public section
 
 open MeasureTheory Matrix ValuativeRel
 
@@ -36,7 +40,7 @@ theorem norm_mul_apow_eq_one : ∀ {k : Type} [Field k] [ValuativeRel k] [Topolo
   set q : ℝ := (GlobalTheory.SplitWeil.resCard k : ℝ) with hqdef
   have hq0 : 0 < q := by linarith
   have hnabs : GlobalTheory.SplitWeil.nabs k ϖ = q⁻¹ := by
-    rw [GlobalTheory.LGrp.nabs_eq_zpow, GlobalTheory.SmGL.ord_eq_one hϖ]
+    rw [GlobalTheory.LGrp.nabs_eq_zpow, GlobalTheory.SmGL.ord_eq_one (k := k) hϖ]
     simp [hqdef]
   have hap : GlobalTheory.SplitFlip.apow ϖ (-((d : ℂ) / 2)) = ((q ^ ((d : ℝ) / 2) : ℝ) : ℂ) := by
     rw [GlobalTheory.SplitFlip.apow, hnabs, show (-((d : ℂ) / 2)) = ((-((d : ℝ) / 2) : ℝ) : ℂ) by push_cast; ring,
@@ -51,7 +55,7 @@ theorem norm_mul_apow_eq_one : ∀ {k : Type} [Field k] [ValuativeRel k] [Topolo
       exact hn
     have := (pow_eq_one_iff_of_nonneg hb0 two_ne_zero).1 hsq
     rw [this]; simp
-  have hB := GlobalTheory.SmGL.eq_unrChar (χ := B) hunr hϖ
+  have hB := GlobalTheory.SmGL.eq_unrChar (k := k) (χ := B) hunr hϖ
   have hx : B x = 1 := by
     rw [hB, hBϖ, GlobalTheory.SmGL.unrChar_apply, _root_.one_zpow]
   have hx' : ‖(B x : ℂ)‖ = 1 := by rw [hx]; simp

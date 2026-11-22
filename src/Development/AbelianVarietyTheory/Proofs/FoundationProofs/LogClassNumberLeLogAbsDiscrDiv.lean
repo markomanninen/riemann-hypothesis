@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIdealInClassOfNormLeSqrtDiscr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsIdealInClassOfNormLeSqrtDiscr
+
+@[expose] public section
 
 open NumberField
 
 namespace GlobalTheory
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.log_classNumber_le_log_abs_discr_div :
     ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (f : ℕ),
       Module.finrank ℚ E = 2*f →

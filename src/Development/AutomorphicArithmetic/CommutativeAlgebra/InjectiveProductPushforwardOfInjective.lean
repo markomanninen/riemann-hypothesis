@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BconeDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleToSheafifyLocallyBijectiveAndLiftStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigEtaleModuleSheafMonoEpiIffSectionsStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Bc
 
@@ -96,8 +100,8 @@ private instance (W : C) : (lamF (S := S) W).PreservesMonomorphisms where
 
 variable [HasBinaryProducts C]
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 private noncomputable def adjTo (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S} (α : lam W P ⟶ Q) :
     P ⟶ (prod.functor.obj W).op ⋙ Q where
   app T := ModuleCat.ofHom
@@ -140,8 +144,8 @@ private lemma invApp_single (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
   simp only [invApp, Finsupp.lsum_single, LinearMap.comp_apply]
   try rfl
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 private noncomputable def adjInv (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
     (u : P ⟶ (prod.functor.obj W).op ⋙ Q) : lam W P ⟶ Q where
   app T := ModuleCat.ofHom (invApp W u T)
@@ -159,8 +163,8 @@ private noncomputable def adjInv (W : C) {P Q : Cᵒᵖ ⥤ ModuleCat.{1} S}
     exact pmap_op Q ((prod.functor.obj W).map h.unop) (prod.lift (h.unop ≫ g) (𝟙 T'.unop))
       (prod.lift g (𝟙 T.unop)) h.unop (by apply Limits.prod.hom_ext <;> simp) _
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 private noncomputable def lamAdj (W : C) :
     lamF (S := S) W ⊣ (Functor.whiskeringLeft _ _ (ModuleCat.{1} S)).obj (prod.functor.obj W).op :=
   Adjunction.mkOfHomEquiv
@@ -211,8 +215,8 @@ private noncomputable def lamAdj (W : C) :
 
 end UpperTheory.PwInj
 
-open UpperTheory.PwInj in
 
+open UpperTheory.PwInj in
 private noncomputable def UpperTheory.PwInj.sheafAdj (R : Type) [CommRing R] (W : Scheme.{0}) :
     (sheafToPresheaf Scheme.etaleTopology.{0} (ModuleCat.{1} (ULift.{1} R)) ⋙ lamF W ⋙
       presheafToSheaf Scheme.etaleTopology.{0} (ModuleCat.{1} (ULift.{1} R))) ⊣ pw R W :=

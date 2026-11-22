@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmAOneApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmAOneApply
+
+@[expose] public section
+
 open Matrix MeasureTheory ValuativeRel GlobalTheory.SplitFlip GlobalTheory.SmGL GlobalTheory.WeilM GlobalTheory.RankFibre GlobalTheory.SplitWeil GlobalTheory.RankFibreKer
 
 namespace GlobalTheory.RankFibreKer
@@ -7,12 +12,12 @@ namespace GlobalTheory.RankFibreKer
 theorem indicator_slice_orbit_isLocallyConstant : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (a d : ℕ) (K : Subgroup (GL (Fin a) k)), IsOpen (K : Set (GL (Fin a) k)) → K ≤ KO k (Fin a) →
     (∀ Y : Matrix (Fin a) (Fin d) k, Y.rank = a ↔ ∃ J, minor Y J ≠ 0) →
     ∀ (s : Matrix (Fin a) (Fin d) k → GL (Fin a) k), ContinuousOn s {Y | Y.rank = a} →
-    (∀ Y : Matrix (Fin a) (Fin d) k, Y.rank = a → ((s Y)⁻¹).val * Y ∈ slice k a d) →
-    (∀ (Z : Matrix (Fin a) (Fin d) k) (g : GL (Fin a) k), Z ∈ slice k a d → g.val * Z ∈ slice k a d → g = 1) →
-    IsLocallyConstant (Set.indicator {Y : Matrix (Fin a) (Fin d) k | ∃ x ∈ K, ∃ Z ∈ slice k a d, Y = x.val * Z}
+    (∀ Y : Matrix (Fin a) (Fin d) k, Y.rank = a → ((s Y)⁻¹).val * Y ∈ slice (k := k) a d) →
+    (∀ (Z : Matrix (Fin a) (Fin d) k) (g : GL (Fin a) k), Z ∈ slice (k := k) a d → g.val * Z ∈ slice (k := k) a d → g = 1) →
+    IsLocallyConstant (Set.indicator {Y : Matrix (Fin a) (Fin d) k | ∃ x ∈ K, ∃ Z ∈ slice (k := k) a d, Y = x.val * Z}
       (1 : Matrix (Fin a) (Fin d) k → ℂ)) := by
   intro k _ _ _ _ a d K hKo hKO hrank s hs hsec huniq
-  set T : Set (Matrix (Fin a) (Fin d) k) := {Y | ∃ x ∈ K, ∃ Z ∈ slice k a d, Y = x.val * Z} with hTdef
+  set T : Set (Matrix (Fin a) (Fin d) k) := {Y | ∃ x ∈ K, ∃ Z ∈ slice (k := k) a d, Y = x.val * Z} with hTdef
   set O : Set (Matrix (Fin a) (Fin d) k) := {Y | Y.rank = a} with hOdef
   have hmc : ∀ J : Fin a ↪ Fin d, Continuous fun Y : Matrix (Fin a) (Fin d) k => minor Y J := fun J => by
     unfold minor
@@ -22,7 +27,7 @@ theorem indicator_slice_orbit_isLocallyConstant : ∀ (k : Type) [Field k] [Valu
     intro Y hY
     constructor
     · rintro ⟨x, hx, Z, hZ, rfl⟩
-      have h1 : ((s (x.val * Z))⁻¹ * x).val * Z ∈ slice k a d := by
+      have h1 : ((s (x.val * Z))⁻¹ * x).val * Z ∈ slice (k := k) a d := by
         rw [Units.val_mul, Matrix.mul_assoc]; exact hsec _ hY
       have h2 := huniq Z _ hZ h1
       have h3 : x = s (x.val * Z) := by

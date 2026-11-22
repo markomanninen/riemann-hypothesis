@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CupK
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CupSurjectivity.CupK
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -52,7 +56,7 @@ theorem t2z (hC : CupLaws) (P : HTPre l K) {M : Model l K} (hM : M.Sm) {D : ℕ}
     have hG : ∀ v : Hdg M.q 0 0, Gx hC x ψ v = ψ (cupH M.q (Nat.zero_add β) (Nat.zero_add n) v x) := by
       intro v
       unfold Gx
-      rw [dif_pos (Nat.zero_add β)]
+      rw [dite_eq_left (Nat.zero_add β)]
       simp only [LinearMap.comp_apply, LinearMap.flip_apply, cupL_apply]
     have hterm : ∀ (s : Fin (Module.finrank K (Hdg M.q A t))) (s' : Fin (Module.finrank K (Hdg M.q 0 0))),
         th hC S sl ψ (S.pl₂ β n x) (cupH S.P.q (Nat.add_zero A) rfl (S.pl₁ A t (Module.finBasis K (Hdg M.q A t) s))
@@ -69,7 +73,7 @@ theorem t2z (hC : CupLaws) (P : HTPre l K) {M : Model l K} (hM : M.Sm) {D : ℕ}
     ring
   · have hG0 : Gx hC x ψ = 0 := by
       unfold Gx
-      rw [dif_neg (show ¬ (0 + a' = β) by omega)]
+      rw [dite_eq_right (show ¬ (0 + a' = β) by omega)]
     simp only [hG0, map_zero, mul_zero]
     refine Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun s' _ => ?_
     erw [assoc (i1 := t) (j1 := 0) (Nat.add_zero A) (Nat.add_zero t) rfl rfl,

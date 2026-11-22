@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,12 +75,14 @@ private theorem false_of_forall_sub_smul_bijective {V : Type} [AddCommGroup V] [
     have hQ : Polynomial.aeval T Q v = 0 := by
       calc Polynomial.aeval T Q v
           = ∑ j ∈ s, g j • Polynomial.aeval T (∏ l ∈ s.erase j, (Polynomial.X - Polynomial.C l)) v := by
-            rw [hQdef, map_sum, LinearMap.sum_apply]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [hQdef, map_sum, LinearMap.sum_apply]
             refine Finset.sum_congr rfl fun j _ => ?_
             rw [map_mul, Polynomial.aeval_C, Module.End.mul_apply, Module.algebraMap_end_apply]
         _ = Polynomial.aeval T (∏ l ∈ s, (Polynomial.X - Polynomial.C l))
               (∑ j ∈ s, g j • (LinearEquiv.ofBijective (T - j • (1 : Module.End ℂ V)) (h j)).symm v) := by
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             refine Finset.sum_congr rfl fun j hj => ?_
             rw [map_smul, hP j hj]
         _ = 0 := by rw [hsum, map_zero]
@@ -84,7 +90,7 @@ private theorem false_of_forall_sub_smul_bijective {V : Type} [AddCommGroup V] [
       by_contra hQne
       exact hv (hinj Q hQne (by rw [hQ, map_zero]))
     have hev : Q.eval i = g i * ∏ l ∈ s.erase i, (i - l) := by
-      rw [hQdef, Polynomial.eval_finset_sum, Finset.sum_eq_single i]
+      rw [hQdef, Polynomial.eval_finsetSum, Finset.sum_eq_single i]
       · rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_prod]
         simp only [Polynomial.eval_sub, Polynomial.eval_X, Polynomial.eval_C]
       · intro j _ hji
@@ -198,7 +204,7 @@ theorem exists_equiv_detRep (k : Type) [Field k] [ValuativeRel k] [TopologicalSp
       scalar_det_of_subsingleton g
     generalize Matrix.GeneralLinearGroup.det g = x at hgx
     have hUo : IsOpen {y : kˣ | σ (Matrix.GeneralLinearGroup.scalar c (x⁻¹ * y)) v = v} :=
-      (hs v).preimage (hsc.comp (continuous_mul_left x⁻¹))
+      (hs v).preimage (hsc.comp (continuous_const_mul x⁻¹))
     have hxU : x ∈ {y : kˣ | σ (Matrix.GeneralLinearGroup.scalar c (x⁻¹ * y)) v = v} := by
       show σ (Matrix.GeneralLinearGroup.scalar c (x⁻¹ * x)) v = v
       rw [inv_mul_cancel, map_one, map_one, Module.End.one_apply]

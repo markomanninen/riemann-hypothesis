@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PInfConv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PInfConv
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,8 @@ theorem coef_conv (m : ℕ) (x : ℕ → Fin (m + 1) → ℂ) (t : ℕ → ℂ)
           exact CoefTo.sum _ fun l hl => CoefTo.mul (CoefTo.C (hc l hl)) (CoefTo.const _)
         have hQc : Q₀.comp (X + 1) = ∑ l ∈ Ioc i (m + 1), Polynomial.C (c l) * (X + 1) ^ l := by
           simp only [Q₀]
-          rw [← coe_compRingHom_apply, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← coe_compRingHom_apply, map_sum]
           simp only [coe_compRingHom_apply, mul_comp, C_comp, X_pow_comp]
         have h2 : CoefTo (fun k => (Hi i (m + 1) (cq m (x k))).comp (X + 1)) (Q₀.comp (X + 1)) := by
           simp only [Hi_comp, hQc]

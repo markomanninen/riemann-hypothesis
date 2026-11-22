@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StarMulOfMemKc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StarMulOfMemKc
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CartanInt.HermChart

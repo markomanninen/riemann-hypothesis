@@ -1,14 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PlaceIdem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSCCols
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.PlaceIdem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.GermSCCols
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.IdemDen
+
+@[expose] public section
 
 open NumberField
 
 namespace GlobalTheory.PlaceInt
 
-open NumberField in
 
+open NumberField in
 theorem _root_.GlobalTheory.PlaceInt.exists_ringOfIntegers_lift (E : Type) [Field E] [NumberField E]
     (V : Type) [CommRing V]
     [IsDomain V] [IsIntegrallyClosed V] (k : Type) [Field k] [Algebra V k] [IsFractionRing V k]
@@ -25,11 +29,11 @@ theorem _root_.GlobalTheory.PlaceInt.exists_ringOfIntegers_lift (E : Type) [Fiel
             map_one' := inj (by rw [hf, map_one]; simp)
             map_mul' := fun x y => inj (by rw [map_mul, hf, hf, hf]; push_cast; rw [map_mul])
             map_zero' := inj (by rw [hf, map_zero]; simp)
-            map_add' := fun x y => inj (by rw [map_add, hf, hf, hf]; push_cast; rw [map_add]) },
+            map_add' := fun x y => inj (by rw [map_add (f := _), hf, hf, hf]; push_cast; rw [map_add (f := _)]) },
     hf⟩
 
-open NumberField Polynomial IsLocalRing in
 
+open NumberField Polynomial IsLocalRing in
 theorem _root_.GlobalTheory.PlaceInt.placeIdem : _root_.ReciprocityTheory.ChartRestriction.G.PullbackSections.PlaceIdemSt := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.PullbackSections.PlaceIdemSt
   intro E _ _ V _ _ _ _ k _ _ _ P hP hP0
@@ -126,7 +130,8 @@ theorem _root_.GlobalTheory.PlaceInt.placeIdem : _root_.ReciprocityTheory.ChartR
   refine ⟨g.natDegree + 1, fun j => b ^ (j : ℕ), fun j => g.coeff j, fun ψ => ?_⟩
   have hsum : ∑ j : Fin (g.natDegree + 1), algebraMap V k (g.coeff j) * ψ ((b ^ (j : ℕ) : 𝓞 E) : E)
       = algebraMap V k (g.eval (σ ψ b)) := by
-    rw [eval_eq_sum_range' (Nat.lt_succ_self _), map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eval_eq_sum_range' (Nat.lt_succ_self _), map_sum,
       ← Fin.sum_univ_eq_sum_range (fun j => algebraMap V k (g.coeff j * σ ψ b ^ j))]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← hσ]

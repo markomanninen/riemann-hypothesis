@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionsSeparated
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSmallSectionsSeparated
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGridSeparation
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PConeTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -92,15 +97,15 @@ theorem rep_add {y : (Σ k, ι k) → Ω} {a : K → ℤ} {τ : ℕ} {s t : Ω} 
     simp only [Pi.add_apply]
     push_cast
     linarith [hd k]
-  · rw [map_add, map_mul, map_mul, map_mul, hy, hy']
+  · rw [map_add (f := _), map_mul, map_mul, map_mul, hy, hy']
     ring
   · simp only [map_mul]
     exact mul_ne_zero hz0 hz0'
 
 end SmallSectionsSeparated
 
-open SmallSectionsSeparated in
 
+open SmallSectionsSeparated in
 theorem SmallSectionsSeparated.proof (hG : GridSeparation.Statement) : SmallSectionsSeparated.Statement := by
   intro K _ ι _ Ω _ y D A hV hB hA
   obtain ⟨C, hC, hZ⟩ := hG K ι Ω y D A hV hB hA
@@ -133,7 +138,7 @@ theorem SmallSectionsSeparated.proof (hG : GridSeparation.Statement) : SmallSect
     rw [Pi.add_apply, hval (s + t) z _ _ (by simpa using hst)]
     have h1 := (hgh s z).choose_spec.choose_spec.2.2.2.2
     have h2 := (hgh t z).choose_spec.choose_spec.2.2.2.2
-    simp only [val, map_add, map_mul]
+    simp only [val, map_add (f := _), map_mul]
     field_simp)
   refine ⟨Z, ev, hZP, ?_, ?_⟩
   · intro s z

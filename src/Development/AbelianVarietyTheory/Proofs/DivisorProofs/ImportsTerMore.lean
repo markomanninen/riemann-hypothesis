@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.InductiveNormBound
 
@@ -35,7 +39,5 @@ theorem main : ∀ {z : ℂ}, (∀ (n : ℕ), ‖z ^ n - (1 : ℂ)‖ < (1 / 2 :
   have h3 : 1 < (3/2:ℝ)^k * ‖z - 1‖ := by
     rw [div_lt_iff₀ hpos] at hk; linarith
   linarith
-
-example : ∀ {z : ℂ}, (∀ (n : ℕ), ‖z ^ n - (1 : ℂ)‖ < (1 / 2 : ℝ)) → z = (1 : ℂ) := main
 
 end GlobalTheory.InductiveNormBound

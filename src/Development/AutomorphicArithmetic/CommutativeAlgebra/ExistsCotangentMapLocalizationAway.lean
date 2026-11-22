@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open KaehlerDifferential
 
@@ -61,6 +65,7 @@ theorem UpperTheory.exists_cotangent_map_localization_away :
         rw [← algebraMap_smul S (s : R) ω, smul_smul, hu1, one_smul]
     _ = u • KaehlerDifferential.map ℂ ℂ R S (∑ i, b i • ω' i) := by rw [hs', hηeq]
     _ = ∑ i, algebraMap R S (b i) • u • KaehlerDifferential.map ℂ ℂ R S (ω' i) := by
-        rw [map_sum, Finset.smul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.smul_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         rw [map_smul, ← algebraMap_smul S (b i), smul_comm]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.ThetaPlus
-import GroundTheory.PAdicHodge.AInfGalois
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.ThetaPlus
+public import GroundTheory.PAdicHodge.AInfGalois
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -31,13 +36,11 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [Fact p.Prime] [IsPerfectoidField K p] [CharZero K]
 
 local notation "𝒪" => normInteger K
-local notation "𝕎𝒪♭" => WittVector p (PreTilt (normInteger K) p)
-local notation "𝔸" => Localization.Away (p : WittVector p (PreTilt (normInteger K) p))
-local notation "𝔹" => BDeRhamPlus (normInteger K) p
-local notation "J" => RingHom.ker (fontaineThetaInvertP (normInteger K) p)
+local notation "𝔸" => Localization.Away (p : WittVector p (PreTilt 𝒪 p))
+local notation "𝔹" => BDeRhamPlus 𝒪 p
+local notation "J" => RingHom.ker (fontaineThetaInvertP 𝒪 p)
 
 variable (K p) in
-
 def evalB (n : ℕ) : 𝔹 →+* 𝔸 ⧸ J ^ n := (AdicCompletion.evalₐ J n).toRingHom
 
 omit [CharZero K] in
@@ -51,12 +54,7 @@ omit [CharZero K] in
 theorem evalB_ext {x y : 𝔹} (h : ∀ n, evalB K p n x = evalB K p n y) : x = y :=
   AdicCompletion.ext_evalₐ h
 
-omit [CharZero K] in
-theorem surjective_evalB (n : ℕ) : Function.Surjective (evalB K p n) :=
-  AdicCompletion.surjective_evalₐ J n
-
 variable (K p) in
-
 theorem map_ker_fontaineThetaInvertP :
     Ideal.map (toBDeRhamPlus 𝒪 p) J = maximalIdeal 𝔹 := by
   rw [ker_fontaineThetaInvertP (ker_fontaineTheta_eq_span_kerThetaGenerator K p), Ideal.map_span,
@@ -69,12 +67,6 @@ theorem ker_evalB (n : ℕ) : RingHom.ker (evalB K p n) = maximalIdeal 𝔹 ^ n 
   rw [Ideal.map_pow] at h
   rw [← map_ker_fontaineThetaInvertP K p]
   exact h
-
-theorem exists_toBDeRhamPlus_sub_mem (x : 𝔹) (n : ℕ) :
-    ∃ a : 𝔸, x - toBDeRhamPlus 𝒪 p a ∈ maximalIdeal 𝔹 ^ n := by
-  obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (evalB K p n x)
-  refine ⟨a, ?_⟩
-  rw [← ker_evalB, RingHom.mem_ker, map_sub, evalB_toBDeRhamPlus, ha, sub_self]
 
 theorem map_mem_maximalIdeal_pow {F : 𝔹 →+* 𝔹} (hF : ∀ x ∈ maximalIdeal 𝔹, F x ∈ maximalIdeal 𝔹)
     {x : 𝔹} {n : ℕ} (hx : x ∈ maximalIdeal 𝔹 ^ n) : F x ∈ maximalIdeal 𝔹 ^ n := by
@@ -91,23 +83,6 @@ theorem eq_zero_of_forall_mem_maximalIdeal_pow {x : 𝔹} (h : ∀ n : ℕ, x �
   rw [SModEq.zero, smul_eq_mul, Ideal.mul_top]
   exact h n
 
-theorem ringHom_ext_bDeRhamPlus {F G : 𝔹 →+* 𝔹}
-    (h : ∀ w : 𝕎𝒪♭, F (wittToBDeRhamPlus 𝒪 p w) = G (wittToBDeRhamPlus 𝒪 p w))
-    (hF : ∀ x ∈ maximalIdeal 𝔹, F x ∈ maximalIdeal 𝔹)
-    (hG : ∀ x ∈ maximalIdeal 𝔹, G x ∈ maximalIdeal 𝔹) : F = G := by
-  have hA : F.comp (toBDeRhamPlus 𝒪 p) = G.comp (toBDeRhamPlus 𝒪 p) :=
-    IsLocalization.ringHom_ext (Submonoid.powers (p : 𝕎𝒪♭)) (RingHom.ext fun w => h w)
-  ext x
-  rw [← sub_eq_zero]
-  refine eq_zero_of_forall_mem_maximalIdeal_pow fun n => ?_
-  obtain ⟨a, ha⟩ := exists_toBDeRhamPlus_sub_mem x n
-  have hFG : F (toBDeRhamPlus 𝒪 p a) = G (toBDeRhamPlus 𝒪 p a) := RingHom.congr_fun hA a
-  have e : F x - G x = F (x - toBDeRhamPlus 𝒪 p a) - G (x - toBDeRhamPlus 𝒪 p a) := by
-    rw [map_sub, map_sub, hFG]
-    ring
-  rw [e]
-  exact Ideal.sub_mem _ (map_mem_maximalIdeal_pow hF ha) (map_mem_maximalIdeal_pow hG ha)
-
 end IsPerfectoidField
 
 section Galois
@@ -115,11 +90,11 @@ section Galois
 variable {p : ℕ} [hp : Fact p.Prime] {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
 local notation "𝒪" => normInteger ℂ_[p]
-local notation "𝕎𝒪♭" => WittVector p (PreTilt (normInteger ℂ_[p]) p)
-local notation "𝔸" => Localization.Away (p : WittVector p (PreTilt (normInteger ℂ_[p]) p))
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "J" => RingHom.ker (fontaineThetaInvertP (normInteger ℂ_[p]) p)
-local notation "θ" => WittVector.fontaineTheta (normInteger ℂ_[p]) p
+local notation "𝕎𝒪♭" => WittVector p (PreTilt 𝒪 p)
+local notation "𝔸" => Localization.Away (p : 𝕎𝒪♭)
+local notation "𝔹" => BDeRhamPlus 𝒪 p
+local notation "θ" => fontaineTheta 𝒪 p
+local notation "J" => RingHom.ker (fontaineThetaInvertP 𝒪 p)
 
 omit hp in
 theorem isUnit_algebraMap_p_away [Fact p.Prime] :

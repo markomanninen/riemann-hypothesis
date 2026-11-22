@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem ev_put (h : ∀ y, ev (ι y) = y) (x : A) (y : K) : ev (put ev ι x y) =
   simp [put, h]
 
 theorem put_put (h : ∀ y, ev (ι y) = y) (x : A) (y z : K) : put ev ι (put ev ι x y) z = put ev ι x z := by
-  simp only [put, map_add, map_sub, h, sub_self, zero_add]
+  simp only [put, map_add (f := _), map_sub, h, sub_self, zero_add]
   abel
 
 theorem Pm_Pm (h : ∀ y, ev (ι y) = y) (φ φ₁ : K → ℂ) (a y : K) (Φ : A → ℂ) :
@@ -128,7 +132,7 @@ theorem mem_span_Pm (h : ∀ y, ev (ι y) = y) (hev : Continuous ev) (hι : Cont
     obtain ⟨k, _, hk⟩ := hv'
     have hex : ∃ k, F k = v := ⟨k, hk⟩
     show F (if hv : ∃ k, F k = v then hv.choose else 0) = v
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec
   have hφv : ∀ v ∈ Vs, φv v ∈ SB K := by
     intro v hv

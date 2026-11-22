@@ -1,14 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsScaling
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualRealMulRealDualEqOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsResidueEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MeasureRealValuedLeExp
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FibreMassConstOfNormEqOne
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NcardSumBinaryFormNeZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqIdOfIsUnramifiedAt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldIffNoResidualRoot
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Tjcosets
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsScaling
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualRealMulRealDualEqOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsResidueEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MeasureRealValuedLeExp
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FibreMassConstOfNormEqOne
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NcardSumBinaryFormNeZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqIdOfIsUnramifiedAt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFieldIffNoResidualRoot
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -40,7 +44,7 @@ theorem exists_generator (hσ : IsCMExt F E σ) (hu : SelfDualUnramifiedPlaces.U
     exact (Algebra.TensorProduct.algebraMap_apply' (s : F)).symm
   have e1 := congrArg (inclR (F := F) (Fv F v)) h1
   have e2 := congrArg (inclR (F := F) (Fv F v)) h2
-  rw [map_add, ha, ← hs] at e1
+  rw [map_add (f := _), ha, ← hs] at e1
   rw [map_mul, ha, ← hs] at e2
   refine ⟨inclR (F := F) (Fv F v) w, algebraMap (𝓞 F) _ t, algebraMap (𝓞 F) _ n, ?_, ?_, e1, e2⟩
   · refine ⟨Polynomial.X ^ 2 - Polynomial.C (algebraMap (𝓞 F) _ t) * Polynomial.X +
@@ -93,7 +97,7 @@ def box (m : ℤ) : AddSubgroup V where
   zero_mem' := by intro i; simp
   add_mem' := by
     intro a b ha hb i
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Valuation.map_add_le _ (ha i) (hb i)
   neg_mem' := by
     intro a ha i
@@ -227,7 +231,7 @@ theorem localDensity_of_selfDualLatticeLemmas (H : SelfDualLatticeActions.SelfDu
   have hN : 0 < SelfDualUnramifiedPlaces.resCard F v ^ m := zpow_pos (zero_lt_one.trans hq) _
   have a1 := vol_box v e μ _ hμ
     (fun x x' y => by
-      simp only [BR, Pi.add_apply, hR_add_left, map_add, Finset.sum_add_distrib,
+      simp only [BR, Pi.add_apply, hR_add_left, map_add (f := _), Finset.sum_add_distrib,
         AddChar.map_add_eq_mul])
     (fun y => by simp [BR, hR, Formalism.UG.hform]) m
     (fun y => (he3 y).trans (forall_congr' fun X => imp_congr_left (he1 X)))
@@ -275,7 +279,8 @@ theorem localDensity_of_selfDualLatticeLemmas (H : SelfDualLatticeActions.SelfDu
       intro y hy
       have := valued_eq_one_iff v
         (∑ i : Fin M, (y (i, 0) ^ 2 + t * y (i, 0) * y (i, 1) + n * y (i, 1) ^ 2))
-      simp only [map_sum, map_add, map_mul, map_pow] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_add (f := _), map_mul, map_pow] at this
       rw [← this, he2]
       simp only [hy]
       push_cast

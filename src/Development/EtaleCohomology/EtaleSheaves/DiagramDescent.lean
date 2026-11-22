@@ -1,10 +1,14 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendMapPf
-import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
-import Development.EtaleCohomology.EtaleSheaves.LeafInclDescendPf
-import Development.EtaleCohomology.EtaleSheaves.DgMapIsPullback
-import Development.EtaleCohomology.EtaleSheaves.LeafPairRelPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTripleFPPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafReducedSmooth
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendMapPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafObjGluePf
+public import Development.EtaleCohomology.EtaleSheaves.LeafInclDescendPf
+public import Development.EtaleCohomology.EtaleSheaves.DgMapIsPullback
+public import Development.EtaleCohomology.EtaleSheaves.LeafPairRelPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTripleFPPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendChainPf

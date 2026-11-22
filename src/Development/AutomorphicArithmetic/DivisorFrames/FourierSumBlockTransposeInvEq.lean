@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledIntegerPeriodic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLatSmulBlockLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ScaledIntegerPeriodic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemMatLatSmulBlockLat
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip
 open scoped Pointwise
@@ -40,14 +44,14 @@ private theorem sum_res_mul_left {A B : Type} [Fintype A] [DecidableEq A] [Finty
     (ϖ : kˣ) (e : ℕ) (hϖ : IsUnif ϖ) (f : Matrix A B k → ℂ)
     (hf : ∀ Z Z' : Matrix A B k, (∀ i j, Z' i j ∈ 𝒪[k]) → f (Z + Z') = f Z)
     (M : GL A k) (hM : M ∈ KO k A) :
-    ∑ S : A → B → Res k e, f (M.val * ((ϖ ^ e)⁻¹ • liftRes S)) =
-      ∑ S : A → B → Res k e, f ((ϖ ^ e)⁻¹ • liftRes S) := by
+    ∑ S : A → B → Res (k := k) e, f (M.val * ((ϖ ^ e)⁻¹ • liftRes S)) =
+      ∑ S : A → B → Res (k := k) e, f ((ϖ ^ e)⁻¹ • liftRes S) := by
   obtain ⟨hMi, hMinv⟩ := (mem_KO_iff M).1 hM
-  have hint : ∀ (S : A → B → Res k e) (i : A) (j : B), (M.val * liftRes S) i j ∈ 𝒪[k] :=
+  have hint : ∀ (S : A → B → Res (k := k) e) (i : A) (j : B), (M.val * liftRes S) i j ∈ 𝒪[k] :=
     fun S i j => mul_mem_int hMi (liftRes_mem S) i j
-  let σ : (A → B → Res k e) → (A → B → Res k e) := fun S i j =>
+  let σ : (A → B → Res (k := k) e) → (A → B → Res (k := k) e) := fun S i j =>
     Ideal.Quotient.mk _ ⟨(M.val * liftRes S) i j, hint S i j⟩
-  have hclose : ∀ (S : A → B → Res k e) (i : A) (j : B),
+  have hclose : ∀ (S : A → B → Res (k := k) e) (i : A) (j : B),
       (((ϖ ^ e)⁻¹ : kˣ) : k) * (liftRes (σ S) i j - (M.val * liftRes S) i j) ∈ 𝒪[k] := by
     intro S i j
     have h := (mk_eq_iff hϖ e (Quotient.out (σ S i j)) ⟨_, hint S i j⟩).1
@@ -172,12 +176,12 @@ theorem UpperTheory.fourierSum_block_transpose_inv_eq :
       exact mul_mem (hZ' i j) (hc' i j j.2)
     rw [hset, hΦinv _ _ hlat, hpadd, AddChar.map_add_eq_mul, hψ1 _ hmemb, mul_one]
   have key := sum_res_mul_left ϖ e hϖ f hf (invT u⁻¹) (invT_mem_KO (inv_mem hu))
-  calc _ = ∑ T : A → Assignment.one.block D₁ D₂ → Res k e,
+  calc _ = ∑ T : A → Assignment.one.block D₁ D₂ → Res (k := k) e,
         f ((invT u⁻¹).val * ((ϖ ^ e)⁻¹ • liftRes T)) := by
         refine Finset.sum_congr rfl fun T _ => ?_
         simp only [f]
         rw [invT_val, inv_inv, Matrix.mul_smul, smul_inv_smul, ← hmat, ← hpair]
-    _ = ∑ T : A → Assignment.one.block D₁ D₂ → Res k e, f ((ϖ ^ e)⁻¹ • liftRes T) := key
+    _ = ∑ T : A → Assignment.one.block D₁ D₂ → Res (k := k) e, f ((ϖ ^ e)⁻¹ • liftRes T) := key
     _ = _ := by
         refine Finset.sum_congr rfl fun T _ => ?_
         simp only [f, smul_inv_smul]

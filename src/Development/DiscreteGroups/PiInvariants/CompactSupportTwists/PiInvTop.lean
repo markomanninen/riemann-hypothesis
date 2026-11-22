@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvOf
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClos
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvOf
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiClos
+
+@[expose] public section
 
 namespace DiscreteGroups.T1.G
 

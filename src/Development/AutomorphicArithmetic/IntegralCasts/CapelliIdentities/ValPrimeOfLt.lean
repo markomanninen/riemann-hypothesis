@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi55.val_prime_of_lt :
     ∀ {Ω : Type} [inst : Field Ω]

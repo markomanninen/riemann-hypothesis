@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCellQuotientByRadicalOfMemCone
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCellQuotientByRadicalOfMemCone
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PullLinInjective
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonnegSumSmulIntBilinFormToRealMemPsdCone
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem exists_cell_quot_orad_of_inRCone : ∀ (O : Type) [CommRing O] [IsDedeki
     have expand : ∀ n : ℤ, f (n • x + y) (n • x + y) =
         n * n * f x x + n * f x y + n * f y x + f y y := by
       intro n
-      simp only [map_add, map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul]
+      simp only [map_add (f := _), map_zsmul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul]
       ring
     have key := hfp ((-(f y y + 1) * f x y) • x + y)
     rw [expand, hx, hsym] at key
@@ -155,7 +159,8 @@ theorem exists_cell_quot_orad_of_inRCone : ∀ (O : Type) [CommRing O] [IsDedeki
         refine ⟨k, c', hk, ?_⟩
         have hkc' : k • GlobalTheory.PolFan.pull K.mkQ β' = ∑ i, c' i • γ (s i) := hkc
         apply GlobalTheory.PolFan.CarDim.pullLin_injective hr
-        simp only [map_nsmul, map_zsmul, LinearMap.map_smul_of_tower, map_sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_nsmul, map_zsmul, LinearMap.map_smul_of_tower, map_sum,
           GlobalTheory.PolFan.CarDim.pullLin_apply]
         rw [hkc']
         refine Finset.sum_congr rfl fun i _ => ?_

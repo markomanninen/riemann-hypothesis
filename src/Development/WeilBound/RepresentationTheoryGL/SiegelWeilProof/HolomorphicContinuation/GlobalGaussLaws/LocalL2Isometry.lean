@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenOps
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PlanchLoc
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.Planch
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenOps
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.PlanchLoc
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.Planch
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,6 +34,25 @@ theorem int_cmul {m n : ℕ} (k : ℂ) (h : (Fin m → Fin n → ℂ) → ℂ) :
   simp_rw [norm_mul, mul_pow]
   exact integral_const_mul _ _
 
+def rmulEquiv {m n : ℕ} (a : Matrix (Fin n) (Fin n) ℂ) (ha : IsUnit a.det) :
+    (Fin m → Fin n → ℂ) ≃L[ℝ] (Fin m → Fin n → ℂ) :=
+  LinearEquiv.toContinuousLinearEquiv
+    { toFun := fun u => (Matrix.of u * a : Matrix (Fin m) (Fin n) ℂ)
+      invFun := fun u => (Matrix.of u * a⁻¹ : Matrix (Fin m) (Fin n) ℂ)
+      map_add' := fun u v => by
+        show Matrix.of (u + v) * a = Matrix.of u * a + Matrix.of v * a
+        rw [← Matrix.add_mul]; rfl
+      map_smul' := fun c u => by
+        show Matrix.of (c • u) * a = c • (Matrix.of u * a)
+        ext i j
+        simp [Matrix.mul_apply, Finset.smul_sum, mul_assoc]
+      left_inv := fun u => by
+        show Matrix.of u * a * a⁻¹ = u
+        rw [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ ha, Matrix.mul_one]; rfl
+      right_inv := fun u => by
+        show Matrix.of u * a⁻¹ * a = u
+        rw [Matrix.mul_assoc, Matrix.nonsing_inv_mul _ ha, Matrix.mul_one]; rfl }
+
 theorem int_comp {m n : ℕ} (R : (Fin m → Fin n → ℂ) ≃L[ℝ] (Fin m → Fin n → ℂ)) :
     ∃ c : ℝ, 0 < c ∧ ∀ F : (Fin m → Fin n → ℂ) → ℝ, Continuous F → ∫ u, F (R u) = c * ∫ u, F u := by
   obtain ⟨c1, hc1, h1⟩ := PlanchH.haar_linR (m := m) (n := n) (R.trans FTD.Lc)
@@ -46,7 +69,13 @@ theorem norm_phase {m n : ℕ} (ε : Fin m → Bool) (t : ℝ) (b : Matrix (Fin 
     (u : Fin m → Fin n → ℂ) : ‖Complex.exp (Complex.I * (t : ℂ) * (b * gramX ε u).trace)‖ = 1 := by
   rw [Complex.norm_exp]
   have hre : (Complex.I * (t : ℂ) * (b * gramX ε u).trace).re = 0 := by
-    rw [← OpGenAH.trace_real ε b hb u]
+    have hgram : (gramX ε u)ᴴ = gramX ε u := by
+      ext i j
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Matrix.conjTranspose_apply, gramX, Qp, Qb, evX, map_sum, mul_comm]
+    have htrace : star (b * gramX ε u).trace = (b * gramX ε u).trace := by
+      rw [← Matrix.trace_conjTranspose, Matrix.conjTranspose_mul, hgram, hb, Matrix.trace_mul_comm]
+    rw [← Complex.conj_eq_iff_re.1 htrace]
     simp
   rw [hre, Real.exp_zero]
 
@@ -70,7 +99,7 @@ theorem local_isometry_of_hypotheses (hU : UnipTau) (hLv : LeviTau) (hW : WEx) (
     apply huniq _ f hf
     have e2 : ω (ι y₂) ⟨tens θ τ fr f Ψ₀, hΨ₀.2 f hf⟩ = ⟨tens θ τ fr (L y₂ f) Ψ₀, hΨ₀.2 _ (hL.1 y₂ f hf)⟩ :=
       Subtype.ext (hL.2 y₂ Ψ₀ hΨ₀ f hf)
-    rw [map_mul, map_mul, Module.End.mul_apply, e2, hL.2 y₁ Ψ₀ hΨ₀ _ (hL.1 y₂ f hf)]
+    rw [map_mul, map_mul, mul_apply_eq_comp, e2, hL.2 y₁ Ψ₀ hΨ₀ _ (hL.1 y₂ f hf)]
 
   let Iso : GR n → Prop := fun y => ∃ κ : ℝ, 0 < κ ∧ ∀ f, IsSch f → ∫ u, ‖L y f u‖ ^ 2 = κ * ∫ u, ‖f u‖ ^ 2
   have hIso_mul : ∀ y₁ y₂, Iso y₁ → Iso y₂ → Iso (y₁ * y₂) := by
@@ -92,7 +121,7 @@ theorem local_isometry_of_hypotheses (hU : UnipTau) (hLv : LeviTau) (hW : WEx) (
   have hone : ∀ f (hf : IsSch f), L 1 f = f := by
     intro f hf
     apply huniq 1 f hf
-    rw [map_one, map_one, Module.End.one_apply]
+    rw [map_one, map_one, one_apply_eq_self]
   have hzero : ∀ y, L y (fun _ => 0) = fun _ => 0 := by
     intro y
     have h0 : IsSch (fun _ : Fin V.rank → Fin n → ℂ => (0 : ℂ)) := ⟨0, by ext u; simp⟩
@@ -137,12 +166,12 @@ theorem local_isometry_of_hypotheses (hU : UnipTau) (hLv : LeviTau) (hW : WEx) (
       have := congrFun h2 0
       rw [hf00] at this
       exact zero_ne_one this
-    obtain ⟨c, hc, hcomp⟩ := LocalIsometryAlt.int_comp (OpGenAH.rmulEquiv (m := V.rank) a ha)
+    obtain ⟨c, hc, hcomp⟩ := LocalIsometryAlt.int_comp (LocalIsometryAlt.rmulEquiv (m := V.rank) a ha)
     refine ⟨‖C‖ ^ 2 * c, mul_pos (pow_pos (norm_pos_iff.2 hC0) 2) hc, fun f hf => ?_⟩
     rw [hLf f hf, LocalIsometryAlt.int_cmul]
     obtain ⟨S, rfl⟩ := hf
     have hcont : Continuous (fun u => ‖S u‖ ^ 2) := S.continuous.norm.pow 2
-    change ‖C‖ ^ 2 * ∫ u, (fun u => ‖S u‖ ^ 2) (OpGenAH.rmulEquiv (m := V.rank) a ha u) = _
+    change ‖C‖ ^ 2 * ∫ u, (fun u => ‖S u‖ ^ 2) (LocalIsometryAlt.rmulEquiv (m := V.rank) a ha u) = _
     rw [hcomp _ hcont, mul_assoc]
   have hIso_nb : ∀ y (c : Matrix (Fin n) (Fin n) ℂ), cᴴ = c → mR y = nbar c → Iso y := by
     intro y c hc hyc

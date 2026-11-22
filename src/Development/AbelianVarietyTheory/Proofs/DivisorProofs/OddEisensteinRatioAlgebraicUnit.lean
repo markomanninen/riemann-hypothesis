@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaPullbackConstantSqEqDet
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormMapRingOfIntegersLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaPullbackConstantSqEqDet
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormMapRingOfIntegersLeOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise
@@ -47,13 +51,14 @@ theorem norm_det_le {p : ℕ} [Fact p.Prime] {r : ℕ} (M : Matrix (Fin r) (Fin 
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun σ _ => ?_
   rw [norm_mul, norm_prod]
   refine mul_le_one₀ (IsUltrametricDist.norm_intCast_le_one ℂ_[p] _) (Finset.prod_nonneg fun _ _ => norm_nonneg _) ?_
-  exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => h _ _
+  exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => h _ _
 
 variable {D : D7} {N N' r : ℕ}
 
 theorem hYY_comb (c : Fin r → D.host.K) (b : Fin r → Matrix (Fin N') (Fin N) D.host.E)
     (y : Matrix (Fin N') (Fin N) D.host.E) : hYY D (∑ k, c k • b k) y = ∑ k, c k * hYY D (b k) y := by
-  simp only [hYY, ← smul_eq_mul, ← map_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hYY, ← smul_eq_mul, ← map_smul, ← map_sum]
   congr 1
   simp only [Matrix.sum_apply, Matrix.smul_apply, Finset.smul_sum, smul_eq_mul, Finset.sum_mul, smul_mul_assoc]
   symm
@@ -146,14 +151,14 @@ theorem at_place (hI : GlobalTheory.NormSum.Inp D) {δ t0 : ℂ} (hC : Crv D ⊤
   have hun : ‖lam u‖ = 1 := norm_det_eq_one (lam.comp (phiK D)) hb hl hl'
   change c ^ 2 = ζ * (u : ℂ) at hc
   have hcQ : c ∈ Qbar := mem_Qbar_of_pow (n := 2) (by norm_num) (hc ▸ mul_mem hζQ u.2)
-  rw [lamC, dif_pos hε] at hεn
-  rw [lamC, dif_pos hε'] at hεn'
+  rw [lamC, dite_eq_left hε] at hεn
+  rw [lamC, dite_eq_left hε'] at hεn'
   have hε0 : ε ≠ 0 := left_ne_zero_of_mul hz
   have hκQ : κ ∈ Qbar := by
     rw [eq_div_of_mul_eq hε0 key]
     exact div_mem (mul_mem (mul_mem hε' hcQ) hμQ) hε
   refine ⟨hκQ, ?_⟩
-  rw [lamC, dif_pos hκQ]
+  rw [lamC, dite_eq_left hκQ]
   have root : ∀ (x : Qbar) (n : ℕ), 0 < n → (x : ℂ) ^ n = 1 → ‖lam x‖ = 1 := by
     intro x n hn hx
     have : x ^ n = 1 := Subtype.ext (by simpa using hx)

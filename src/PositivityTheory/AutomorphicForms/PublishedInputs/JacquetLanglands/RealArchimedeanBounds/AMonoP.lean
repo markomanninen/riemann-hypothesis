@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
-import Mathlib.NumberTheory.NumberField.ProductFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.RealArchimedeanBounds.ATrans
+public import Mathlib.NumberTheory.NumberField.ProductFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,5 +44,5 @@ theorem UpperTheory.Esk.aMono : UpperTheory.Esk.AMono := by
   set s := ((fin_supp t).union (fin_supp t')).toFinset
   rw [finprod_eq_prod_of_mulSupport_subset _ (s := s) (by intro w hw; simp [s, hw]),
     finprod_eq_prod_of_mulSupport_subset _ (s := s) (by intro w hw; simp [s, hw])]
-  exact Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+  exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
     fun w _ => (Valued.toNormedField.norm_le_iff).2 (h w)

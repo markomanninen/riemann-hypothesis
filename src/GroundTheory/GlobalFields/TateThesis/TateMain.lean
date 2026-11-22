@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.ArchCharsUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter MeasureTheory Complex
 open scoped NumberField.AdeleRing
@@ -136,8 +140,8 @@ theorem weakFEPair_Λ_congr {P Q : WeakFEPair ℂ} (hf : P.f = Q.f) (hg : P.g = 
   subst hf hg hk hε hf₀ hg₀
   rfl
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem tsum_units_eq_tsum_sub {G : K → ℂ} (hG : Summable G) :
     ∑' ξ : Kˣ, G ξ = ∑' ξ : K, G ξ - G 0 := by
   classical
@@ -200,8 +204,8 @@ theorem globalZeta_eq_Λ (w : InfinitePlace K) {F : 𝔸[K] → ℂ} (hF : F ∈
   rw [globalZeta_eq_mellin w hF χ hs]
   exact ((thetaPair w hF χ).hasMellin hre).2
 
-open Classical in
 
+open Classical in
 def tateZetaAt (w : InfinitePlace K) (F : 𝔸[K] → ℂ) (χ : HeckeCharacter K) (s : ℂ) : ℂ :=
   if hF : F ∈ schwartzBruhat K then (thetaPair w hF χ).Λ (s + (archExponent w χ : ℂ) * I) else 0
 

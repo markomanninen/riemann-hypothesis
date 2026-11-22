@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAttachedHodge
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAttachedHodge
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HostCmEmbeddingProperties
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalIdeleSndSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,16 +59,19 @@ theorem val_mul_val {R : Ranks} (H : Formalism.BasicNotions.Host R) (χ : HChar 
   have hwm : w ∈ aboveF (L := H.E) H.F v := (hmem w).2 (Or.inl rfl)
   have hwm' : w' ∈ aboveF (L := H.E) H.F v := (hmem w').2 (Or.inr rfl)
   have hr := hχ.res.1 v (unif v)
-  simp only [HChar.resFin, MonoidHom.finset_prod_apply, MonoidHom.comp_apply] at hr
+  simp only [HChar.resFin] at hr
   by_cases hw : w = w'
   · subst hw
     rw [hab, Finset.insert_eq_of_mem (Finset.mem_singleton_self _), Finset.prod_singleton, etaFin, hab,
-      Finset.insert_eq_of_mem (Finset.mem_singleton_self _), if_pos (Finset.card_singleton _), ordF_unif, zpow_one, hloc w hwm] at hr
+      Finset.insert_eq_of_mem (Finset.mem_singleton_self _), if_pos (Finset.card_singleton _), ordF_unif, zpow_one] at hr
+    change χ.locK w (upF H.F (unif v)) = -1 at hr
+    rw [hloc w hwm] at hr
     rw [hr]
     simp
   · rw [hab, Finset.prod_insert (by simpa using hw), Finset.prod_singleton, etaFin, hab,
-      if_neg (by rw [Finset.card_insert_of_notMem (by simpa using hw), Finset.card_singleton]; omega),
-      hloc w hwm, hloc w' hwm'] at hr
+      if_neg (by rw [Finset.card_insert_of_notMem (by simpa using hw), Finset.card_singleton]; omega)] at hr
+    change χ.locK w (upF H.F (unif v)) * χ.locK w' (upF H.F (unif v)) = 1 at hr
+    rw [hloc w hwm, hloc w' hwm'] at hr
     exact hr
 
 theorem isCSD_of_isEtaT : ∀ (R : Ranks) (H : Formalism.BasicNotions.Host R) (χ : HChar H.E), IsEtaT H χ → IsCSD H χ := by

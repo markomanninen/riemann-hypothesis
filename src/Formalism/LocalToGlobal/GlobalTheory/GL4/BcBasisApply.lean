@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
+
+@[expose] public section
 
 open Module NumberField
 
@@ -17,7 +21,8 @@ variable {D : D7} {u : D.what₂.Word} (CV : ColVal D u)
 theorem bc_sum_repr (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (z : (D.sp.X 0).V) :
     CV.bc c τ z = ∑ i, CV.rho τ ((D.sp.X 0).frame.repr z i) • CV.bc c τ ((D.sp.X 0).frame i) := by
   conv_lhs => rw [← (D.sp.X 0).frame.sum_repr z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => CV.bc_smul c τ _ _
 
 theorem span_bc_frame (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) :
@@ -50,16 +55,19 @@ def bcFun (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (y : (D.sp.X 0).V) : (CV.
 
 theorem bcFun_bc (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (y z : (D.sp.X 0).V) :
     bcFun CV c τ y (CV.bc c τ z) = CV.rho τ ((D.sp.X 0).hT y z) := by
-  rw [bc_sum_repr CV c τ z, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [bc_sum_repr CV c τ z, map_sum]
   simp_rw [map_smul]
   have h1 : ∀ i, bcFun CV c τ y (CV.bc c τ ((D.sp.X 0).frame i)) = CV.rho τ ((D.sp.X 0).hT y ((D.sp.X 0).frame i)) := fun i => by
     unfold bcFun
     rw [← bcBasis_apply CV c τ i, Basis.constr_basis]
   simp_rw [h1, smul_eq_mul, ← map_mul]
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   conv_rhs => rw [← (D.sp.X 0).frame.sum_repr z]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_smul, smul_eq_mul]
 
 theorem bcFun_int (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) {y : (D.sp.X 0).V}
@@ -75,7 +83,7 @@ theorem bcFun_int (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) {y : (D.sp.X 0).V
     rw [e, ← ho]
     exact ((o.isIntegral_coe.map (starRingEnd D.host.E).toIntAlgHom).map (CV.rho τ).toIntAlgHom)
   | zero => rw [map_zero]; exact isIntegral_zero
-  | add x y _ _ hx hy => rw [map_add]; exact hx.add hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact hx.add hy
   | smul a x _ hx =>
     rw [← algebraMap_smul D.what₂.LL a x, map_smul, smul_eq_mul]
     exact a.isIntegral_coe.mul hx

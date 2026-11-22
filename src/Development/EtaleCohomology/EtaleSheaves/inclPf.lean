@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.stupidPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.stupidPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC CochainComplex.HomComplex LateralTheory.E.CxDescPf
@@ -23,16 +27,15 @@ lemma trd (i j : ℕ) :
       (K.stupidTruncXIso (E M) (i := i) rfl).hom ≫ K.d ((E M).f i) ((E M).f j) := by
   simp [HomologicalComplex.stupidTrunc, HomologicalComplex.stupidTruncXIso,
     HomologicalComplex.extend_d_eq _ _ rfl rfl, HomologicalComplex.restriction]
-  erw [eqToIso_refl, eqToIso_refl]; simp
+
 
 open Classical in
-
 def iotaf (p : ℤ) : (K.stupidTrunc (E M)).X p ⟶ K.X p :=
   if h : ∃ i, (E M).f i = p then (K.stupidTruncXIso (E M) h.choose_spec).hom else 0
 
 lemma iotaf_eq (i : ℕ) : iotaf K M ((E M).f i) = (K.stupidTruncXIso (E M) (i := i) rfl).hom := by
   have h : ∃ j, (E M).f j = (E M).f i := ⟨i, rfl⟩
-  rw [iotaf, dif_pos h, xiso_indep K M h.choose_spec rfl]
+  rw [iotaf, dite_eq_left h, xiso_indep K M h.choose_spec rfl]
 
 lemma stupidTruncation_GE_isZero_below_bound (p : ℤ) (hp : p < M) : IsZero ((K.stupidTrunc (E M)).X p) :=
   HomologicalComplex.isZero_stupidTrunc_X _ _ _ (fun i h => by simp [E] at h; omega)
@@ -91,7 +94,7 @@ lemma precomp_surjective₂ (hiso : ∀ p, M ≤ p → IsIso (φ.f p)) (hz : ∀
   ext p q hpq
   simp only [P, Cochain.zero_cochain_comp_v, Cochain.ofHom_v, Cochain.mk_v]
   by_cases hp : M ≤ p
-  · rw [dif_pos hp]; simp
+  · rw [dite_eq_left hp]; simp
   · exact (hz p (by omega)).eq_of_src _ _
 end
 

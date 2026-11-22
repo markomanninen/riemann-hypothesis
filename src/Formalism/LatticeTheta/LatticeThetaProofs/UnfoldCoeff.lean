@@ -1,4 +1,8 @@
-import Formalism.LatticeTheta.LatticeSummableDecay
+module
+
+public import Formalism.LatticeTheta.LatticeSummableDecay
+
+@[expose] public section
 
 open MeasureTheory Filter Asymptotics Complex
 open scoped FourierTransform RealInnerProductSpace SchwartzMap

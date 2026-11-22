@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PerfectionIsUnitOfCoeffZero
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.MapUSharp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ValuationOfValuationModSquare
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PerfectionIsUnitOfCoeffZero
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -92,7 +96,8 @@ theorem qk_succ (ε : Eps l) (k : ℕ) : ε.qk (k + 1) ^ l = ε.qk k := by
 
 theorem sum_mem_ker (ε : Eps l) :
     ∑ i ∈ Finset.range l, (WittVector.teichmuller l (ε.e 1 : Ob l)) ^ i ∈ RingHom.ker (theta0 l) := by
-  rw [RingHom.mem_ker, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [RingHom.mem_ker, map_sum]
   simp only [map_pow]
   exact geom_sum_eq_zero ((theta_e_succ ε 0).trans ε.one) ε.prim
 
@@ -100,7 +105,8 @@ theorem cris_sum_mem (ε : Eps l) (A : PAlg l) (n : ℕ) :
     A.cris n (∑ i ∈ Finset.range l, ε.qk 1 ^ i) ∈ A.Fil n 1 := by
   have e : ∑ i ∈ Finset.range l, ε.qk 1 ^ i =
       algebraMap (Ainf l) (Acris l) (∑ i ∈ Finset.range l, (WittVector.teichmuller l (ε.e 1 : Ob l)) ^ i) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_pow, Eps.qk]
   have h := sum_mem_ker ε

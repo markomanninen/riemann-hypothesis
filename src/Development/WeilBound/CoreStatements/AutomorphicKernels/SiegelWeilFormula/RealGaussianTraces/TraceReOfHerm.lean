@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.PsiNegTrPairGen
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.PsiNegTrPairGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,8 @@ theorem map_gramR (σ : E →ₐ[F] E) (θ : Ainf F ⊗[F] E →+* ℂ)
     (gramR (Ainf F) σ J Y).map θ =
       (Matrix.of fun a j => θ (Y j a))ᴴ * (JR (Ainf F) J).map θ * Matrix.of fun a j => θ (Y j a) := by
   ext a b
-  simp only [Matrix.map_apply, gramR, hR, hform, map_sum, map_mul, hc, Matrix.mul_apply, Matrix.conjTranspose_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, gramR, hR, hform, map_sum, map_mul, hc, Matrix.mul_apply, Matrix.conjTranspose_apply,
     Matrix.of_apply, Finset.sum_mul]
   rw [Finset.sum_comm]
 

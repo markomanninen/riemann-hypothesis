@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThreeLeScaleOfPowBound
-import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.OrientationExclusive
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecord
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThreeLeScaleOfPowBound
+public import Development.AbelianVarietyTheory.Counterexamples.JetSurvey.OrientationExclusive
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPageRunRecord
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons Formalism.L2.Pj
 

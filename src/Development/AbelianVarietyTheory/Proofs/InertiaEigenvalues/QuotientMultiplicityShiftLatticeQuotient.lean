@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenEigenMultiplicityQuotientAdditiveChain
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CloseVectorNeZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenEigenMultiplicityQuotientAdditiveChain
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CloseVectorNeZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PhiGam.QuotShift
@@ -175,7 +179,7 @@ theorem shift_of_le {l : ℕ} (R : RingPG k l) {g : V →ₗ[k] V} (hg : Semi R.
       rw [condC_iff_nab_mem]
       intro y hy
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hy
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (Window.nab_mem cQ ha) (Window.nab_mem_sh R hg cP 1 hb)
     have h' : sh ((m + 1 : ℕ) : ℤ) (sh 1 P) ≤ sh 1 Q := by
       rw [sh_sh_eq, add_comm, ← sh_sh_eq]; exact sh_le_sh 1 h

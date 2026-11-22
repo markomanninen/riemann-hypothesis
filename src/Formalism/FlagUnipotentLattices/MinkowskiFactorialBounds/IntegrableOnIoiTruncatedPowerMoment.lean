@@ -1,5 +1,9 @@
-import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.FlagUnipotentLattices.UnipotentStabiliserCharacterisation
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 namespace Formalism.HermitianLatticeCounting.P
 section GrpL
@@ -512,9 +516,6 @@ namespace Formalism.HermitianLatticeCounting.P
 section GH
 open Formalism.HermitianLatticeCounting.ExpansionTerms Finset Matrix
 
-def gh_G {n β K : Type*} [DecidableEq n] [Zero K] (b : n → β) (σ : n → n) (t : β → K) : Matrix n n K :=
-  fun i j => if j = σ i then t (b i) else 0
-
 section abs
 variable {n β K : Type*} [Fintype n] [DecidableEq n] [LinearOrder n] [LinearOrder β] [Field K]
   {b : n → β} {σ : n → n}
@@ -526,16 +527,6 @@ lemma gh_det_upper {u : Matrix n n K} (h1 : ∀ i, u i i = 1) (h2 : ∀ i j, j <
   simp [h1]
 
 end abs
-
-lemma gh_lt {d : ℕ} (c : Composition d) (j : Fin d) :
-    (j : ℕ) < c.sizeUpTo ((c.index j : ℕ) + 1) := c.lt_sizeUpTo_index_succ j
-
-def gh_sig {d : ℕ} (c : Composition d) (i : Fin d) : Fin d :=
-  ⟨c.sizeUpTo (c.index i : ℕ) + c.sizeUpTo ((c.index i : ℕ) + 1) - 1 - (i : ℕ), by
-    have a1 := gh_lt c i
-    have a2 := c.sizeUpTo_index_le i
-    have a3 := c.sizeUpTo_le ((c.index i : ℕ) + 1)
-    omega⟩
 
 end GH
 end Formalism.HermitianLatticeCounting.P
@@ -564,9 +555,11 @@ lemma gi_adj_last {R : Type*} [CommRing R] (r : ℕ) (M : Matrix (Fin (r + 1)) (
 lemma gi_sesq_sum {V ι : Type*} [AddCommGroup V] [Module ℂ V] [Fintype ι] (h : V →ₗ[ℂ] V →ₗ⋆[ℂ] ℂ)
     (c : ι → ℂ) (y : ι → V) :
     h (∑ a, c a • y a) (∑ b, c b • y b) = ∑ b, ∑ a, c a * conj (c b) * h (y a) (y b) := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun b _ => ?_
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [map_smulₛₗ, map_smul, LinearMap.smul_apply]
   simp only [smul_eq_mul]
@@ -607,7 +600,8 @@ theorem dual_vector_norm_sq : Formalism.HermitianLatticeCounting.ExpansionTerms.
 
   have p1 : h x' (f' L) = M.det := by
     have : h x' (f' L) = (M.adjugate * M) L L := by
-      rw [hx', Matrix.mul_apply, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hx', Matrix.mul_apply, map_sum, LinearMap.sum_apply]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_smul, LinearMap.smul_apply, smul_eq_mul]
       rfl
@@ -629,7 +623,7 @@ theorem dual_vector_norm_sq : Formalism.HermitianLatticeCounting.ExpansionTerms.
     · simp
   have n2 : h x' x' = al * conj al * -(T' : ℂ) + h om om := by
     rw [hx]
-    simp only [map_add, LinearMap.add_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, e00, e0f, ef0,
+    simp only [map_add (f := _), LinearMap.add_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, e00, e0f, ef0,
       eo0, e0o, eof, efo, eff, smul_eq_mul]
     ring
   have hT'c : (T' : ℂ) ≠ 0 := by exact_mod_cast hT'
@@ -676,10 +670,6 @@ lemma gj_fvec_apply (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (c : Fin (r + 
     (i : Fin (2 * r + k + 1)) : fvec k r z c i = if i.val = c.val then 1 else 0 := by
   simp only [fvec, dif_pos hc, bvec, eI, Pi.single_apply, Fin.ext_iff, Fin.val_mk]
 
-def gj_h (k r : ℕ) (p : Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ) :
-    Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k + 1)) ℂ := fun i j =>
-  if (r ≤ i.val ∧ i.val ≤ r + k) ∧ (r ≤ j.val ∧ j.val ≤ r + k) then p i j else if i = j then 1 else 0
-
 end GJ
 end Formalism.HermitianLatticeCounting.P
 
@@ -703,17 +693,6 @@ lemma gk_herm_smul_left {ι : Type*} [Fintype ι] (H : Matrix ι ι ℂ) (c : �
 lemma gk_herm_smul_right {ι : Type*} [Fintype ι] (H : Matrix ι ι ℂ) (c : ℂ) (u w : ι → ℂ) :
     herm H u (c • w) = star c * herm H u w := by
   simp only [herm, star_smul, smul_dotProduct, smul_eq_mul]
-
-noncomputable def gk_Q (k r : ℕ) : (Fin (2 * r + k + 1) → ℂ) →ₗ[ℂ] (Fin (r + 1) → ℂ) :=
-  LinearMap.pi fun a =>
-    if h : a.val < r then
-      LinearMap.proj (R := ℂ) (φ := fun _ : Fin (2 * r + k + 1) => ℂ) (eI k r ⟨a.val, h⟩) -
-        LinearMap.proj (R := ℂ) (φ := fun _ : Fin (2 * r + k + 1) => ℂ) (esI k r ⟨a.val, h⟩)
-    else LinearMap.proj (R := ℂ) (φ := fun _ : Fin (2 * r + k + 1) => ℂ) ⟨r + k, by omega⟩
-
-noncomputable def gk_E (r : ℕ) : (Option (Fin (r + 1)) → ℂ) →ₗ[ℂ] (Fin (r + 1) ⊕ Fin (r + 1) → ℂ) :=
-  LinearMap.pi fun i =>
-    Sum.elim (fun a => LinearMap.proj (R := ℂ) (φ := fun _ : Option (Fin (r + 1)) => ℂ) (some a)) (fun _ => 0) i
 
 end GK
 
@@ -788,63 +767,6 @@ lemma gb_norm_theta {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] 
   have h1 := norm_nonneg (θ x)
   have h2 := norm_nonneg x
   nlinarith [e]
-
-theorem gram_majorant_bound : Formalism.HermitianLatticeCounting.ExpansionTerms.MajorantNormBound := by
-  intro V _ _ θ hθ x
-  unfold majorantHermitianForm
-  calc ‖inner ℂ (θ x) x‖ ≤ ‖θ x‖ * ‖x‖ := norm_inner_le_norm _ _
-    _ = ‖x‖ ^ 2 := by rw [gb_norm_theta hθ, sq]
-
-theorem last_distance_lower_bound : Formalism.HermitianLatticeCounting.ExpansionTerms.LastDistanceLowerBound := by
-  intro V _ _ θ h r y T hG
-  unfold majorantHermitianForm at hG
-  set W : Submodule ℂ V := Submodule.span ℂ (y '' {b | b < Fin.last r}) with hW
-
-  have s1 : ∀ b, ∀ w ∈ W, inner ℂ (θ (y b)) w = 0 := by
-    intro b w hw
-    induction hw using Submodule.span_induction with
-    | mem x hx =>
-      obtain ⟨a, ha, rfl⟩ := hx
-      have := hG a b
-      rw [this, if_neg]
-      rintro ⟨h1, -⟩
-      exact (ne_of_lt ha) h1
-    | zero => simp
-    | add x z _ _ hx hz => rw [inner_add_right, hx, hz, add_zero]
-    | smul c x _ hx => rw [inner_smul_right, hx, mul_zero]
-  have s2 : ∀ b, ∀ w ∈ W, inner ℂ (θ w) (y b) = 0 := by
-    intro b w hw
-    rw [h.2, ← inner_conj_symm, s1 b w hw, map_zero]
-  have s3 : ∀ w ∈ W, ∀ w' ∈ W, inner ℂ (θ w) w' = 0 := by
-    intro w hw w' hw'
-    induction hw' using Submodule.span_induction with
-    | mem x hx =>
-      obtain ⟨a, ha, rfl⟩ := hx
-      exact s2 a w hw
-    | zero => simp
-    | add x z _ _ hx hz => rw [inner_add_right, hx, hz, add_zero]
-    | smul c x _ hx => rw [inner_smul_right, hx, mul_zero]
-  have key : ∀ w ∈ W, T ≤ ‖y (Fin.last r) - w‖ ^ 2 := by
-    intro w hw
-    have e : inner ℂ (θ (y (Fin.last r) - w)) (y (Fin.last r) - w) = -(T : ℂ) := by
-      rw [map_sub, inner_sub_left, inner_sub_right, inner_sub_right, s1 _ w hw, s2 _ w hw, s3 w hw w hw,
-        hG, if_pos ⟨rfl, rfl⟩]
-      ring
-    have m := gram_majorant_bound V θ h (y (Fin.last r) - w)
-    unfold majorantHermitianForm at m
-    rw [e, norm_neg, Complex.norm_real, Real.norm_eq_abs] at m
-    exact (le_abs_self T).trans m
-  unfold majorantDistance
-  rcases le_or_gt T 0 with hT | hT
-  · exact hT.trans (sq_nonneg _)
-  · have hne : ((W : Set V)).Nonempty := ⟨0, W.zero_mem⟩
-    have : √T ≤ Metric.infDist (y (Fin.last r)) (W : Set V) := by
-      rw [Metric.le_infDist hne]
-      intro w hw
-      rw [dist_eq_norm]
-      exact Real.sqrt_le_iff.2 ⟨norm_nonneg _, key w hw⟩
-    calc T = √T ^ 2 := (Real.sq_sqrt hT.le).symm
-      _ ≤ _ := by gcongr
 
 theorem majorant_phase_estimate_holds : Formalism.HermitianLatticeCounting.ExpansionTerms.MajorantPhaseChoice := by
   intro V _ _ θ hθ u y1 S hu hS hy1

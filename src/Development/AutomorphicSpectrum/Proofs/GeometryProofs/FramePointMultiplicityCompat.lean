@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StableEig
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EigenBasisIffTangentBasis
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsTangentVectorBasisAtPointBaseChange
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniformBaseChange.PullGt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.RulInst
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.StableEig
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EigenBasisIffTangentBasis
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsTangentVectorBasisAtPointBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniformBaseChange.PullGt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits NumberField ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat GlobalTheory.CompanionTheory.Ar.LocFn
 
@@ -24,7 +28,7 @@ theorem exists_away_lift {X : Scheme.{0}} {S R : Type} [CommRing S] [CommRing R]
   let p : PrimeSpectrum S := ⟨q, inferInstance⟩
   let t : Sp (Localization.AtPrime q) := (IsLocalRing.closedPoint (Localization.AtPrime q) : PrimeSpectrum _)
   have hcl : (spMap (algebraMap S (Localization.AtPrime q))) t = (p : Sp S) :=
-    PrimeSpectrum.ext (Localization.AtPrime.comap_maximalIdeal)
+    PrimeSpectrum.ext (Localization.AtPrime.under_maximalIdeal)
   have hmem : w (p : Sp S) ∈ Set.range x := by
     refine ⟨(spMap θ) t, ?_⟩
     have := congrArg (fun f : Sp (Localization.AtPrime q) ⟶ X => f t) h
@@ -133,8 +137,8 @@ theorem exists_spread {S : Type} [CommRing S] (q : Ideal S) [hq : q.IsPrime] (g�
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H}
   {Xo : Moduli D l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F}
 
-open MonoidalCategory CartesianMonoidalCategory MonObj in
 
+open MonoidalCategory CartesianMonoidalCategory MonObj in
 theorem one_left_eq {X : Scheme.{0}} {A : Type} [CommRing A] (G : Over X) [GrpObj G] (x : Sp A ⟶ X) :
     (1 : Over.mk x ⟶ G).left = x ≫ η[G].left := by
   simp [Hom.one_def, Out.PullGtPf.toUnit_left']
@@ -149,8 +153,8 @@ theorem dualMap_comp {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : 
   RingHom.ext fun a => by
     ext <;> simp [Formalism.L2.Pj.dualMap]
 
-open MonoidalCategory CartesianMonoidalCategory MonObj in
 
+open MonoidalCategory CartesianMonoidalCategory MonObj in
 theorem exists_tied (Y : Model Xo c β) {B : Type} [CommRing B] (y : Sp B ⟶ Xo.XF c)
     (v' : Sp (DualNumber B) ⟶ Y.t.G.left)
     (hv : v' ≫ Y.t.G.hom = spMap (algebraMap B (DualNumber B)) ≫ y ≫ Y.j)
@@ -229,8 +233,8 @@ theorem isTanAt_of_comb {B : Type} [CommRing B] {xB : Sp B ⟶ Xo.X} {m : ℕ}
   rw [(hcomb _ b _ _).1 h]
   exact (htan _).2 ⟨_, rfl⟩
 
-open MonoidalCategory CartesianMonoidalCategory MonObj in
 
+open MonoidalCategory CartesianMonoidalCategory MonObj in
 theorem tan_pull (Y : Model Xo c β) {R B : Type} [CommRing R] [CommRing B] {x : Sp R ⟶ Y.X} (θ₀ : R →+* B)
     (y : Sp B ⟶ Xo.XF c) (h : spMap θ₀ ≫ x = y ≫ Y.j) (v : epsAt x ⟶ Y.t.G) (hv : IsTanAt Y.t.G x v) :
     ∃ V, Tied Y y V (spMap (Formalism.L2.Pj.dualMap θ₀) ≫ v.left) ∧ Formalism.L2.Pj.IsTanAt (y ≫ pullback.fst _ _) V := by

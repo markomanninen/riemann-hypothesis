@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PolyApproxZeroPadic
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.DefU Formalism.BasicNotions Formalism.ConjugateSelfDual GlobalTheory.Cong
 
 namespace GlobalTheory.Cong
@@ -33,13 +38,14 @@ theorem eigen_small_sub_finite_approx : ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar 
     | add p q hp hq =>
       intro x
       have e : u (p + q) = u p + u q := by
-        simp only [u, map_add, add_smul, Finset.sum_add_distrib]; abel
-      rw [e, map_add, map_add]
+        simp only [u, map_add (f := _), add_smul, Finset.sum_add_distrib]; abel
+      rw [e, map_add (f := _), map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (hp x) (hq x))
     | mul_X p j hp =>
       intro x
       have e : u (p * MvPolynomial.X j) = T j (u p) := by
-        simp only [u, map_add, map_sum, map_smul, hθ, hη, map_mul, MvPolynomial.aeval_X, smul_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [u, map_add (f := _), map_sum, map_smul, hθ, hη, map_mul, MvPolynomial.aeval_X, smul_smul]
       rw [e]
       exact hT (u p) ε hp j x
   have hb0 : ι.symm (ev x₀ v₀) ≠ 0 := by
@@ -69,7 +75,8 @@ theorem eigen_small_sub_finite_approx : ∀ (l : ℕ) [Fact l.Prime] (ι : Qbar 
     have hexp : ι.symm (ev x₀ (u P)) =
         (MvPolynomial.aeval (fun j => ι.symm (θ j)) P + ∑ i, ι.symm (ev x₀ (v i)) / ι.symm (ev x₀ v₀) *
             MvPolynomial.aeval (fun j => ι.symm (η i j)) P) * ι.symm (ev x₀ v₀) := by
-      simp only [u, map_add, map_sum, map_smul, smul_eq_mul, map_mul, hmap, add_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [u, map_add (f := _), map_sum, map_smul, smul_eq_mul, map_mul, hmap, add_mul, Finset.sum_mul]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
       field_simp

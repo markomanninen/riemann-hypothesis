@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticActionOfPeriodLatticeMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsBaseClassLevelAdapted
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSymplecticActionOfPeriodLatticeMap
+
+@[expose] public section
 
 open NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.SW GlobalTheory.Phase
@@ -15,7 +19,9 @@ variable {n g : ℕ}
 theorem blk_eq (τ : Matrix (Fin g) (Fin g) ℂ) :
     blk n τ = (1 : Matrix (Fin n) (Fin n) ℂ) ⊗ₖ τ := by
   ext p q
-  simp only [blk, of_apply, kroneckerMap_apply, one_apply]
+  change (if p.1 = q.1 then τ p.2 q.2 else 0) =
+    (1 : Matrix (Fin n) (Fin n) ℂ) p.1 q.1 * τ p.2 q.2
+  rw [Matrix.one_apply]
   split_ifs <;> simp
 
 theorem blk_mul (A B : Matrix (Fin g) (Fin g) ℂ) : blk n A * blk n B = blk n (A * B) := by
@@ -46,7 +52,9 @@ theorem blk_mem_siegel {τ : Matrix (Fin g) (Fin g) ℂ} (h : τ ∈ Siegel (Fin
     · rw [if_neg (Ne.symm e), if_neg e]
   · have e : (blk n τ).map Complex.im = (1 : Matrix (Fin n) (Fin n) ℝ) ⊗ₖ τ.map Complex.im := by
       ext p q
-      simp only [map_apply, blk, of_apply, kroneckerMap_apply, one_apply]
+      change Complex.im (if p.1 = q.1 then τ p.2 q.2 else 0) =
+        (1 : Matrix (Fin n) (Fin n) ℝ) p.1 q.1 * Complex.im (τ p.2 q.2)
+      rw [Matrix.one_apply]
       split_ifs <;> simp
     rw [e]
     exact PosDef.one.kronecker h.2
@@ -54,7 +62,7 @@ theorem blk_mem_siegel {τ : Matrix (Fin g) (Fin g) ℂ} (h : τ ∈ Siegel (Fin
 private theorem sum_herm_eq_trace_mul_ccT {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
     (G : Matrix (Fin r) (Fin r) E) (y y' : Matrix (Fin n) (Fin r) E) :
     ∑ k, herm G (y k) (y' k) = (y * G * ccT y').trace := by
-  simp only [herm, trace, diag, mul_apply, ccT, transpose_apply, map_apply, Finset.sum_mul]
+  simp only [herm, trace, diag, Matrix.mul_apply, ccT, transpose_apply, map_apply, Finset.sum_mul]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Finset.sum_comm]
 
@@ -72,7 +80,8 @@ theorem sum_herm_mul {h : Matrix (Fin n) (Fin n) E} (hu : ccT h * h = 1) (G : Ma
 theorem sum_EF_mul {h : Matrix (Fin n) (Fin n) E} (hu : ccT h * h = 1)
     (y y' : Matrix (Fin n) (Fin r) E) :
     ∑ k, EF X ((h * y) k) ((h * y') k) = ∑ k, EF X (y k) (y' k) := by
-  simp only [EF_def, ← map_sum, ← Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [EF_def, ← map_sum, ← Finset.mul_sum]
   rw [sum_herm_mul hu]
 
 private theorem crd_dotProduct_sub_eq_neg_sum_EF (hs : IsSympl X bas) (Z Z' : Matrix (Fin n) (Fin r) E) :
@@ -84,8 +93,8 @@ private theorem crd_dotProduct_sub_eq_neg_sum_EF (hs : IsSympl X bas) (Z Z' : Ma
   simp only [EF_crd hs, dotProduct, Fintype.sum_prod_type, Finset.sum_neg_distrib, neg_neg,
     ← Finset.sum_sub_distrib]
 
-variable (bas) in
 
+variable (bas) in
 noncomputable def famOf (u : (Fin n × Fin g → ℚ) × (Fin n × Fin g → ℚ)) : Matrix (Fin n) (Fin r) E :=
   Matrix.of fun k => vecQ X bas (Sum.elim (fun i => u.1 (k, i)) fun i => u.2 (k, i))
 
@@ -149,7 +158,7 @@ theorem per_mul (x : Frame X.Ψ r) (h : Matrix (Fin n) (Fin n) E) (y : Matrix (F
     (k : Fin n) : per X x ((h * y) k) ∘ idx = Dict.hAct X idx h (fun k => per X x (y k) ∘ idx) k := by
   have e : (h * y) k = ∑ k', h k k' • y k' := by
     ext a
-    simp [mul_apply, Finset.sum_apply]
+    simp [Matrix.mul_apply, Finset.sum_apply]
   funext i
   rw [e, per_sum]
   simp only [Function.comp_apply, Finset.sum_apply, per_smul, Dict.hAct]

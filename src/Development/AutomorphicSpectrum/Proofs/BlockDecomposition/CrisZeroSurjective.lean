@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.BWMorL
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.OB
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilpotentIdentityMorphismCompatStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAcrisTruncatedWittStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.BWMorL
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.OB
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ChartGrConst
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NilpotentIdentityMorphismCompatStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FlatAcrisTruncatedWittStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 set_option maxHeartbeats 1000000
 open CategoryTheory AlgebraicGeometry TensorProduct GroundTheory.PAdicHodge GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.PAlg CrystallineSemistableComparison.Pb
@@ -111,7 +116,7 @@ theorem tens_change {W A R R' : Type} [CommRing W] [CommRing A] [CommRing R] [Co
     { toFun := fun a =>
         { toFun := fun y => c a ⊗ₜ[R] e y
           map_zero' := by rw [map_zero, TensorProduct.tmul_zero]
-          map_add' := fun x y => by rw [map_add, TensorProduct.tmul_add] }
+          map_add' := fun x y => by rw [map_add (f := _), TensorProduct.tmul_add] }
       map_zero' := by ext y; simp
       map_add' := fun a b => by ext y; simp [TensorProduct.add_tmul] }
     (fun w a y => by
@@ -124,7 +129,7 @@ theorem tens_change {W A R R' : Type} [CommRing W] [CommRing A] [CommRing R] [Co
     { toFun := fun a =>
         { toFun := fun v => a ⊗ₜ[W] E.symm v
           map_zero' := by rw [map_zero, TensorProduct.tmul_zero]
-          map_add' := fun x y => by rw [map_add, TensorProduct.tmul_add] }
+          map_add' := fun x y => by rw [map_add (f := _), TensorProduct.tmul_add] }
       map_zero' := by ext y; simp
       map_add' := fun a b => by ext y; simp [TensorProduct.add_tmul] }
   have hf₀ : ∀ a v, f₀ a v = a ⊗ₜ[W] E.symm v := fun _ _ => rfl
@@ -150,16 +155,14 @@ theorem tens_change {W A R R' : Type} [CommRing W] [CommRing A] [CommRing R] [Co
       invFun := Bk
       left_inv := fun x => by
         induction x with
-        | zero => simp
         | tmul a y => rw [hF, hB, ← hE, AddEquiv.symm_apply_apply]
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       right_inv := fun x => by
         induction x with
-        | zero => simp
         | tmul r v =>
           obtain ⟨a, rfl⟩ := hc r
           rw [hB, hF, ← hE, AddEquiv.apply_symm_apply]
-        | add x y hx hy => rw [map_add, map_add, hx, hy]
+        | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
       map_add' := map_add F }
   let P : (∀ _ : Unit, A ⊗[W] B) ≃+ (∀ _ : Unit, R' ⊗[R] A₀) := AddEquiv.piCongrRight fun _ => Φ
   let E' : H ≃+ M₀ := AddEquiv.ofBijective e' he'

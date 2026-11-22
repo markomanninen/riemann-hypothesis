@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.BasisPowerSectionsLocalBaseChange
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsLocalModelOfIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.BasisPowerSectionsLocalBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsIsLocalModelOfIntegral
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,7 +47,20 @@ theorem exists_generator (hS : Out.SecBaseChangeSt) [IsLocalRing R] [IsNoetheria
   have i₀ : Fin (1 ^ P.g) := ⟨0, by simp⟩
   have su : ∀ {M : Type} [AddCommMonoid M] (q : Fin (1 ^ P.g) → M), ∑ i, q i = q i₀ := fun q =>
     Finset.sum_eq_single i₀ (fun a _ h => absurd (Fin.ext (by have := a.2; have := i₀.2; simp at *; omega)) h) (by simp)
-  obtain ⟨b, hb⟩ := KeyBasis.exists_pw (β i₀)
+  have exists_pw_local (β : Out.H0 P.L 1) : ∃ b : LB.Sec (AbLaw.pw P.L ((1 : ℕ) : ℤ)),
+      ∀ (Z : Scheme.{0}) (q : Z ⟶ P.A.left) (z : Z) (j : P.L.ι), q z ∈ P.L.U j →
+        gs q z (LB.wchart P.L (fun _ : Fin 1 => 𝟙 _) (fun _ => j)) (β.f fun _ => j) = gs q z (P.L.U j) (b.f j) := by
+    have le : ∀ j, P.L.U j ≤ LB.wchart P.L (fun _ : Fin 1 => 𝟙 _) (fun _ => j) := fun j y hy => Set.mem_iInter.2 fun _ => hy
+    refine ⟨⟨fun j => resG _ (le j) (β.f fun _ => j), fun j i => fn_ext fun y hy => ?_⟩,
+      fun Z q z j hj => (gs_res q z (le j) hj _).symm⟩
+    refine ((gs_res (𝟙 _) y _ hy _).trans (gs_res (𝟙 _) y (le j) hy.1 _)).trans
+      ((sec_trans β (𝟙 _) y (le j hy.1) (le i hy.2)).trans (Eq.trans ?_ (gs_mul (𝟙 _) y _ hy _ _).symm))
+    refine congrArg₂ (· * ·) ?_ ((gs_res (𝟙 _) y _ hy _).trans (gs_res (𝟙 _) y (le i) hy.2 _)).symm
+    refine Eq.trans ?_ ((gs_unit (𝟙 _) y _ hy _).trans (congrArg Units.val (map_zpow _ _ _))).symm
+    refine congrArg Units.val ((Fin.prod_univ_one _).trans ?_)
+    rw [Category.comp_id]
+    rfl
+  obtain ⟨b, hb⟩ := exists_pw_local (β i₀)
   have hv : ∀ (Z : Scheme.{0}) (q : Z ⟶ P.A.left) (z : Z) (J : (Z ⟶ P.A.left) → P.L.ι), Good P.L z J →
       sval (β i₀) q z J = gs q z (P.L.U (J q)) ((ofPow b).f (J q)) := fun Z q z J hJ =>
     (sval_of (β i₀) q z J (fun _ => J q) fun _ => by rw [Category.comp_id]).trans (hb Z q z _ (hJ q))
@@ -76,7 +93,19 @@ theorem exists_generator (hS : Out.SecBaseChangeSt) [IsLocalRing R] [IsNoetheria
     intro s
     obtain ⟨y, h₁, h₂⟩ := (congrArg (fun U => s ∈ U) ht).mpr trivial
     exact ⟨y, h₂, h₁⟩
-  · obtain ⟨σ, hσ⟩ := KeyBasis.exists_powerSection_of_chartFunctions (toPow s)
+  · have hpow (s : P.L.Sec) :
+        ∃ t : Out.H0 P.L 1, ∀ (Z : Scheme.{0}) (r : Z ⟶ P.A.left) (z : Z) (k : P.L.ι), r z ∈ P.L.U k →
+          gs r z (LB.wchart P.L (fun _ : Fin 1 => 𝟙 _) (fun _ => k)) (t.f fun _ => k) = gs r z (P.L.U k) (s.f k) := by
+      have le : ∀ j : Fin 1 → P.L.ι, LB.wchart P.L (fun _ : Fin 1 => 𝟙 _) j ≤ P.L.U (j 0) := fun j y hy => Set.mem_iInter.1 hy 0
+      refine ⟨⟨fun j => resG _ (le j) (s.f (j 0)), fun i j => fn_ext fun y hy => ?_⟩,
+        fun Z r z k h => gs_res r z (le fun _ => k) (Set.mem_iInter.2 fun _ => h) _⟩
+      refine ((gs_res (𝟙 _) y _ hy _).trans (gs_res (𝟙 _) y (le i) hy.1 _)).trans
+        ((gs_compat s (𝟙 _) y (le i hy.1) (le j hy.2)).trans (Eq.symm ((gs_mul (𝟙 _) y _ hy _ _).trans
+          (congrArg₂ (· * ·) ((gs_unit (𝟙 _) y _ hy _).trans (congrArg Units.val ?_))
+            ((gs_res (𝟙 _) y _ hy _).trans (gs_res (𝟙 _) y (le j) hy.2 _))))))
+      refine (gm_linComb P.L _ _ (𝟙 _) y i j hy.1 hy.2).trans ?_
+      simp [Geo.Tor.trF]
+    obtain ⟨σ, hσ⟩ := hpow s
     obtain ⟨c, hc, -⟩ := hβ R (𝟙 _) _ (𝟙 _) P.A.hom (IsPullback.of_vert_isIso ⟨by simp⟩) σ
     refine ⟨c i₀, (sec_eq_iff _ _ _ _).2 fun i y hy => ?_⟩
     obtain ⟨J, hJ, hi⟩ := exists_good P.L P.isLB y (fun _ : PUnit => 𝟙 P.A.left) (fun _ => i) (fun _ _ _ => rfl) fun _ => hy
@@ -147,7 +176,25 @@ theorem main : Out.Laws → ∀ (R : Type) [CommRing R] [IsLocalRing R] [IsNoeth
       (isGrpPullback_of_iso (Iso.refl x.P.A)).congr e.symm rfl
     have he : eSec x.P.A ≫ 𝟙 _ = spMap (RingHom.id R) ≫ eSec x.P.A := PolBaseChange.eSec_comm h
     have := x.P.isAb.comm
-    obtain ⟨w, hw, hm⟩ := KeyPow.exists_rescale x.P.isLB x.P.isLB (isoPullId_pgen (idIso_isGen x.P.isLB) rfl)
+    have hgen : PGen (isoPullId (idIso x.P.L) (rfl : 𝟙 x.P.A.left = 𝟙 x.P.A.left)) := by
+      intro Y f y j j' k k' hj hj' hk hk'
+      have heval (j : x.P.L.ι) (k : x.P.L.ι) (hj : f y ∈ x.P.L.U j) (hk : f y ∈ x.P.L.U k) :
+          gw (isoPullId (idIso x.P.L) (rfl : 𝟙 x.P.A.left = 𝟙 x.P.A.left)) f y j k = gm f y _ ((idIso x.P.L).s (j, k)) := by
+        have hmem : f y ∈ (x.P.L.pull (𝟙 _)).U (fun _ => j) ⊓ x.P.L.U k := ⟨mem_pull.2 hj, hk⟩
+        exact gm_res f y _ hmem ((idIso x.P.L).s (j, k))
+      rw [heval j k hj hk, heval j' k' hj' hk', Category.comp_id]
+      have hV : f y ∈ (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') := ⟨⟨hj, hk⟩, ⟨hj', hk'⟩⟩
+      have hw := idIso_isGen x.P.isLB
+      have hw' : res (inf_le_left : (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') ≤ x.P.L.U j ⊓ x.P.L.U k) ((idIso x.P.L).s (j, k)) =
+          res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left)) (x.P.L.g j j') *
+          (res (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right)) (x.P.L.g k k'))⁻¹ *
+          res (inf_le_right : (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') ≤ x.P.L.U j' ⊓ x.P.L.U k') ((idIso x.P.L).s (j', k')) := hw (j, k) (j', k')
+      have key := congrArg (gm f y ((x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k'))) hw'
+      simp only [map_mul, map_inv, gm_res f y _ hV] at key
+      rw [gm_res f y (U := x.P.L.U j ⊓ x.P.L.U k) _ hV ((idIso x.P.L).s (j, k)),
+        gm_res f y (U := x.P.L.U j' ⊓ x.P.L.U k') _ hV ((idIso x.P.L).s (j', k'))] at key
+      exact key
+    obtain ⟨w, hw, hm⟩ := KeyPow.exists_rescale x.P.isLB x.P.isLB hgen
       (p := x.P.A.hom) (Over.w η[x.P.A]) he hr' x.rig_gen
     obtain ⟨s, hs⟩ := sec_pull_down hw x.P.isLB x.P.isLB x.th
     obtain ⟨a, ha⟩ := exists_unit hL.secBaseChange x.P s th'

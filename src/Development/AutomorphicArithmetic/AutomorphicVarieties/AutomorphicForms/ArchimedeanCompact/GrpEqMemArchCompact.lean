@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.InfEmbGrpEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.InfEmbGrpEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,10 +11,10 @@ open scoped ContDiff Topology
 
 namespace UpperTheory.V.Cm
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
+
 
 variable (E a) in
-
 def archEq : Lie E a ≃L[ℝ] ArchMatrix E a :=
   LinearEquiv.toContinuousLinearEquiv
     ((matEq E a).toLinearEquiv : Lie E a ≃ₗ[ℝ] ArchMatrix E a)
@@ -92,14 +96,20 @@ private theorem complex_unitary_iff {n : ℕ} (M : Matrix (Fin n) (Fin n) ℂ) :
   have e : ∀ k, f (WithLp.toLp 2 (Pi.single k 1)) = WithLp.toLp 2 (M k) := fun k =>
     congrArg (WithLp.toLp 2) (single_one_vecMul k M)
   rw [e, e, PiLp.inner_apply, PiLp.inner_apply] at this
-  rw [mul_apply, one_apply]
+  change (∑ k, M i k * star (M j k)) = (if i = j then 1 else 0)
   simpa [Pi.single_apply, eq_comm] using this
 
 private theorem pi_unitary_iff {ι : Type} {n : ℕ} (M : Matrix (Fin n) (Fin n) (ι → ℂ)) :
     M ∈ unitaryGroup (Fin n) (ι → ℂ) ↔ ∀ w, M.map (fun x => x w) ∈ unitaryGroup (Fin n) ℂ := by
-  simp only [mem_unitaryGroup_iff, ← Matrix.ext_iff, funext_iff, mul_apply, one_apply, star_apply, map_apply,
-    Finset.sum_apply, Pi.mul_apply, Pi.star_apply, ite_apply, Pi.one_apply, Pi.zero_apply]
-  exact ⟨fun h w i j => h i j w, fun h i j w => h w i j⟩
+  simp only [mem_unitaryGroup_iff, ← Matrix.ext_iff]
+  constructor
+  · intro h w i j
+    have hw := congrFun (h i j) w
+    simpa [Matrix.mul_apply, Matrix.star_apply, Matrix.one_apply, ite_apply, Pi.one_apply, Pi.zero_apply] using hw
+  · intro h i j
+    funext w
+    have hw := h w i j
+    simpa [Matrix.mul_apply, Matrix.star_apply, Matrix.one_apply, ite_apply, Pi.one_apply, Pi.zero_apply] using hw
 
 theorem infAt_infGL (y : GL (Fin a) (Cinf E)) (w : InfinitePlace E) (i j : Fin a) :
     (Reduction.infAt w (infGL E a y) : Matrix (Fin a) (Fin a) w.Completion) i j =
@@ -132,7 +142,8 @@ theorem grpEq_mem_archCompact (y : GL (Fin a) (Cinf E)) :
         (fun i => ψ.toRingHom (z i)) ᵥ* y.val.map (fun x => x w) := by
     intro z
     ext j
-    simp only [vecMul, dotProduct, map_sum, map_mul, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMul, dotProduct, map_sum, map_mul, Matrix.map_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [infAt_infGL]
     exact congrArg _ (ψ.apply_symm_apply _)
@@ -143,7 +154,7 @@ theorem grpEq_mem_archCompact (y : GL (Fin a) (Cinf E)) :
   · intro h z
     rw [← Reduction.euclidNorm_map _ hψ, e, h, Reduction.euclidNorm_map _ hψ]
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem norm_le_ht (y : GL (Fin a) (Cinf E)) :
     ‖toL y.val‖ ≤ GlobalTheory.CuspRep.height y ∧ ‖toL (y⁻¹).val‖ ≤ GlobalTheory.CuspRep.height y ∧
       GlobalTheory.CuspRep.height y ≤ 1 + ‖toL y.val‖ + ‖toL (y⁻¹).val‖ := by
@@ -156,22 +167,22 @@ private theorem ent (y : GL (Fin a) (Cinf E)) (w : InfinitePlace E) (i j : Fin a
   rw [infAt_infGL, ← norm_ringEquiv, RingEquiv.apply_symm_apply]
   exact (norm_le_pi_norm (y.val i j) w).trans ((norm_le_pi_norm (toL y.val i) j).trans (norm_le_pi_norm (toL y.val) i))
 
-variable (E a) in
 
+variable (E a) in
 theorem exists_height_le : ∃ N : ℕ, ∀ y : GL (Fin a) (Cinf E),
     AutomorphicForm.height (infGL E a y) ≤ GlobalTheory.CuspRep.height y ^ N := by
   refine ⟨∑ w : InfinitePlace E, w.mult, fun y => ?_⟩
   unfold AutomorphicForm.height
   rw [finprod_eq_one_of_forall_eq_one fun v => by rw [finAt_infGL, locHeight_one], mul_one,
     ← Finset.prod_pow_eq_pow_sum]
-  refine Finset.prod_le_prod (fun w _ => (pow_pos (locHeight_pos _) _).le) fun w _ =>
+  refine Finset.prod_le_prod₀ (fun w _ => (pow_pos (locHeight_pos _) _).le) fun w _ =>
     pow_le_pow_left₀ (locHeight_pos _).le ?_ _
   refine locHeight_le (GlobalTheory.CuspRep.one_le_height y) (fun i j => (ent y w i j).trans (norm_le_ht y).1) fun i j => ?_
   have := ent y⁻¹ w i j
   rw [map_inv, Reduction.infAt_inv] at this
   exact this.trans (norm_le_ht y).2.1
 
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 private theorem loc_le_height (g : GA E a) (w : InfinitePlace E) :
     locHeight (Reduction.infAt w g) ≤ AutomorphicForm.height g := by
   classical

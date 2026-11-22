@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.ConstantCoeffTripleSubstitution
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.ConstantCoeffTripleSubstitution
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ private theorem coeff_mul_eq_zero_of_degree_lt_add_character_germs {σ : Type} {
   rw [MvPowerSeries.coeff_mul]
   refine Finset.sum_eq_zero fun x hx => ?_
   replace hx := Finset.HasAntidiagonal.mem_antidiagonal.mp hx
-  have hdeg : x.1.degree + x.2.degree = a.degree := by rw [← hx, map_add]
+  have hdeg : x.1.degree + x.2.degree = a.degree := by rw [← hx, map_add (f := _)]
   by_cases h1 : x.1.degree < k
   · rw [hp _ h1, zero_mul]
   · rw [hq _ (by omega), mul_zero]
@@ -50,7 +54,7 @@ private theorem coeff_mvExp_eq_sum_range_of_degree_le {σ : Type} {f : MvPowerSe
 theorem exp_add {σ : Type} {f g : MvPowerSeries σ C} (hf : MvPowerSeries.constantCoeff f = 0)
     (hg : MvPowerSeries.constantCoeff g = 0) : mvExp (f + g) = mvExp f * mvExp g := by
   ext m
-  have hfg : MvPowerSeries.constantCoeff (f + g) = 0 := by rw [map_add, hf, hg, add_zero]
+  have hfg : MvPowerSeries.constantCoeff (f + g) = 0 := by rw [map_add (f := _), hf, hg, add_zero]
   set N := m.degree with hN
   have hT : ∀ i j : ℕ, N < i + j → MvPowerSeries.coeff m (f ^ i * g ^ j) = 0 :=
     fun i j h => coeff_mul_eq_zero_of_degree_lt_add_character_germs (coeff_pow_eq_zero_of_degree_lt_character_germs' hf i) (coeff_pow_eq_zero_of_degree_lt_character_germs' hg j) m (by omega)
@@ -62,7 +66,8 @@ theorem exp_add {σ : Type} {f g : MvPowerSeries σ C} (hf : MvPowerSeries.const
         ∑ i ∈ Finset.range (k + 1), MvPowerSeries.coeff m (f ^ i * g ^ (k - i)) /
           ((i.factorial : C) * ((k - i).factorial : C)) := by
       intro k _
-      rw [add_pow, map_sum, Finset.sum_div]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [add_pow, map_sum, Finset.sum_div]
       refine Finset.sum_congr rfl fun i hi => ?_
       have hik : i ≤ k := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
       rw [← nsmul_eq_mul', map_nsmul, nsmul_eq_mul, Nat.cast_choose C hik]
@@ -89,7 +94,7 @@ theorem exp_add {σ : Type} {f g : MvPowerSeries σ C} (hf : MvPowerSeries.const
             ((i.factorial : C) * (j.factorial : C)) := by
       intro x hx
       replace hx := Finset.HasAntidiagonal.mem_antidiagonal.mp hx
-      have hd : x.1.degree + x.2.degree = N := by rw [hN, ← hx, map_add]
+      have hd : x.1.degree + x.2.degree = N := by rw [hN, ← hx, map_add (f := _)]
       rw [coeff_mvExp_eq_sum_range_of_degree_le hf x.1 N (by omega), coeff_mvExp_eq_sum_range_of_degree_le hg x.2 N (by omega), Finset.sum_mul_sum]
       refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
       rw [div_mul_div_comm]
@@ -234,12 +239,12 @@ theorem second_partial_law_at_points : MvPowerSeries.subst (P3 a b c) Y.B.ph2 =
   rw [toK_eq, ev_pt_pair Y, ev_pt_pair Y, ev_pt_pair Y, addOf_eq] at hg
   have hcc : MvPowerSeries.constantCoeff (hAt Y (pt C dd 0) (pt C dd 1) + hAt Y (pt C dd 0) (pt C dd 2) -
       hAt Y (pt C dd (0 : Fin 3)) (addAt Y (pt C dd 1) (pt C dd 2))) = 0 := by
-    rw [map_sub, map_add, cc_hAt Y (hp 0) (hp 1), cc_hAt Y (hp 0) (hp 2),
+    rw [map_sub, map_add (f := _), cc_hAt Y (hp 0) (hp 1), cc_hAt Y (hp 0) (hp 2),
       cc_hAt Y (hp 0) (cc_addAt Y (hp 1) (hp 2))]
     simp
   rw [hg, expS_eq _ hcc, subst_exp hP3 hcc]
   congr 1
-  rw [← MvPowerSeries.coe_substAlgHom (hasSubst_of_Z0 hP3), map_sub, map_add, MvPowerSeries.coe_substAlgHom]
+  rw [← MvPowerSeries.coe_substAlgHom (hasSubst_of_Z0 hP3), map_sub, map_add (f := _), MvPowerSeries.coe_substAlgHom]
   rw [hAt_subst Y hP3 (hp 0) (hp 1), hAt_subst Y hP3 (hp 0) (hp 2),
     hAt_subst Y hP3 (hp 0) (cc_addAt Y (hp 1) (hp 2))]
   have haddS : (fun i => MvPowerSeries.subst (P3 a b c) (addAt Y (pt C dd (1 : Fin 3)) (pt C dd 2) i)) =
@@ -249,81 +254,6 @@ theorem second_partial_law_at_points : MvPowerSeries.subst (P3 a b c) Y.B.ph2 =
   rw [haddS, triple_subst_first_coordinate ha hb hc, triple_subst_second_coordinate ha hb hc, triple_subst_third_coordinate ha hb hc]
 
 end Three
-
-theorem actAt_add (x y : O) {a : Fin dd → MvPowerSeries τ C} (ha : ∀ i, MvPowerSeries.constantCoeff (a i) = 0) :
-    actAt Y (x + y) a = addAt Y (actAt Y x a) (actAt Y y a) := by
-  funext i
-  show MvPowerSeries.subst (fun q : Fin 1 × Fin dd => a q.2) (Y.B.A.act (x + y) i) =
-    MvPowerSeries.subst (P2 (actAt Y x a) (actAt Y y a)) (Y.B.G.F i)
-  rw [Y.B.A.add_act]
-  show MvPowerSeries.subst (fun q : Fin 1 × Fin dd => a q.2)
-      (MvPowerSeries.subst (fun p : Fin 2 × Fin dd => (![Y.B.A.act x, Y.B.A.act y] : Fin 2 → Pt C 1 dd) p.1 p.2)
-        (Y.B.G.F i)) = _
-  have hcc : ∀ p : Fin 2 × Fin dd,
-      MvPowerSeries.constantCoeff ((![Y.B.A.act x, Y.B.A.act y] : Fin 2 → Pt C 1 dd) p.1 p.2) = 0 := by
-    intro p
-    rcases p with ⟨j, l⟩
-    fin_cases j
-    · exact Y.B.A.const _ _
-    · exact Y.B.A.const _ _
-  rw [MvPowerSeries.subst_comp_subst_apply (hasSubst_of_Z0 hcc) (hasSubst_of_Z0 (a := fun q : Fin 1 × Fin dd => a q.2) fun q => ha q.2)]
-  congr 1
-  funext q
-  rcases q with ⟨j, l⟩
-  fin_cases j
-  · first | rfl | simp [P2, actAt]
-  · first | rfl | simp [P2, actAt]
-
-theorem actAt_one {a : Fin dd → MvPowerSeries τ C} (ha : ∀ i, MvPowerSeries.constantCoeff (a i) = 0) :
-    actAt Y 1 a = a := by
-  funext i
-  show MvPowerSeries.subst (fun q : Fin 1 × Fin dd => a q.2) (Y.B.A.act 1 i) = a i
-  rw [Y.B.A.one_act]
-  show MvPowerSeries.subst (fun q : Fin 1 × Fin dd => a q.2) (MvPowerSeries.X ((0 : Fin 1), i)) = a i
-  rw [MvPowerSeries.subst_X (hasSubst_of_Z0 (a := fun q : Fin 1 × Fin dd => a q.2) fun q => ha q.2)]
-
-private theorem constantCoeff_actAt_eq_zero (x : O) {a : Fin dd → MvPowerSeries τ C}
-    (ha : ∀ i, MvPowerSeries.constantCoeff (a i) = 0) (i : Fin dd) :
-    MvPowerSeries.constantCoeff (actAt Y x a i) = 0 :=
-  MvPowerSeries.constantCoeff_subst_eq_zero (hasSubst_of_Z0 (a := fun q : Fin 1 × Fin dd => a q.2) fun q => ha q.2)
-    (fun q => ha q.2) (Y.B.A.const x i)
-
-theorem pair_id {X Z : Fin dd → MvPowerSeries τ C} (hX : ∀ i, MvPowerSeries.constantCoeff (X i) = 0)
-    (hZ : ∀ i, MvPowerSeries.constantCoeff (Z i) = 0) :
-    mvExp (hAt Y X (actAt Y Y.w0 Z) + hAt Y Z (actAt Y Y.w0 X) - hAt Y X Z) =
-      MvPowerSeries.subst (P2 (actAt Y Y.w0 X) Z) Y.B.sy * MvPowerSeries.subst (P2 X Z) (Y.B.ad Y.w0) *
-        MvPowerSeries.subst (P3 X (actAt Y Y.w0 Z) (actAt Y (star Y.w0) Z)) Y.B.ph2 := by
-  have hwX := constantCoeff_actAt_eq_zero Y Y.w0 hX
-  have hwZ := constantCoeff_actAt_eq_zero Y Y.w0 hZ
-  have hbZ := constantCoeff_actAt_eq_zero Y (star Y.w0) hZ
-  have hsum : addAt Y (actAt Y Y.w0 Z) (actAt Y (star Y.w0) Z) = Z := by
-    rw [← actAt_add Y _ _ hZ, Y.halfIntegralGenerator_add_conj_eq_one, actAt_one Y hZ]
-  have h1 : MvPowerSeries.constantCoeff (hAt Y Z (actAt Y Y.w0 X) - hAt Y (actAt Y Y.w0 X) Z) = 0 := by
-    rw [map_sub, cc_hAt Y hZ hwX, cc_hAt Y hwX hZ, sub_zero]
-  have h2 : MvPowerSeries.constantCoeff (hAt Y (actAt Y Y.w0 X) Z - hAt Y X (actAt Y (star Y.w0) Z)) = 0 := by
-    rw [map_sub, cc_hAt Y hwX hZ, cc_hAt Y hX hbZ, sub_zero]
-  have h3 : MvPowerSeries.constantCoeff (hAt Y X (actAt Y Y.w0 Z) + hAt Y X (actAt Y (star Y.w0) Z) -
-      hAt Y X Z) = 0 := by
-    rw [map_sub, map_add, cc_hAt Y hX hwZ, cc_hAt Y hX hbZ, cc_hAt Y hX hZ]
-    simp
-  have h12 : MvPowerSeries.constantCoeff ((hAt Y Z (actAt Y Y.w0 X) - hAt Y (actAt Y Y.w0 X) Z) +
-      (hAt Y (actAt Y Y.w0 X) Z - hAt Y X (actAt Y (star Y.w0) Z))) = 0 := by
-    rw [map_add, h1, h2, add_zero]
-  have hsy : MvPowerSeries.subst (P2 (actAt Y Y.w0 X) Z) Y.B.sy =
-      mvExp (hAt Y Z (actAt Y Y.w0 X) - hAt Y (actAt Y Y.w0 X) Z) := by
-    first
-    | exact sy_at Y hwX hZ
-    | exact sy_at Y
-    | exact sy_at
-  have had : MvPowerSeries.subst (P2 X Z) (Y.B.ad Y.w0) =
-      mvExp (hAt Y (actAt Y Y.w0 X) Z - hAt Y X (actAt Y (star Y.w0) Z)) := by
-    first
-    | exact ad_at Y hX hZ Y.w0
-    | exact ad_at Y Y.w0
-    | exact ad_at Y (x := Y.w0)
-  rw [hsy, had, second_partial_law_at_points Y hX hwZ hbZ, hsum, ← exp_add h1 h2, ← exp_add h12 h3]
-  congr 1
-  ring
 
 end VP
 

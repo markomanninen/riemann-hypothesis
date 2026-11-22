@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsExpEqOfSubstLg
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CanonGaugeNabValBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormEqNegOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TangentEqLcZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LocalValuationColumns
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsExpEqOfSubstLg
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.CanonGaugeNabValBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormEqNegOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.WeightedSumBounds.TangentEqLcZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -81,7 +85,8 @@ theorem subst_lgPt {τ : Type} {t : σ → MvPowerSeries τ C} (ht : HasSubst t)
 
 theorem subst_mv {τ : Type} {t : σ → MvPowerSeries τ C} (ht : HasSubst t) (A : Matrix (Fin d) (Fin d) C)
     (w : Fin d → MvPowerSeries σ C) (i : Fin d) : subst t (mv A w i) = mv A (fun e => subst t (w e)) i := by
-  simp only [mv, ← coe_substAlgHom ht, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mv, ← coe_substAlgHom ht, map_sum, map_smul]
 
 theorem intLog_lgPt_X (s : Fin d → σ) : IntLog G (lgPt G fun i => (X (s i) : MvPowerSeries σ C)) := by
   classical
@@ -145,11 +150,6 @@ theorem isIntFB_chart :
   · unfold FB.toK; rw [h4]; exact mvIsInt_map_map X _
   · unfold FB.toK; rw [h6]; exact mvIsInt_map_map X _
 
-theorem fgl_eq_fglOf :
-    letI := io.toAlgebra
-    letI : Algebra T.Fr X.C := X.ιF.toAlgebra
-    fgl Ch X = fglOf (isIntFB_chart Ch X) := rfl
-
 theorem gauge_chart :
     letI := io.toAlgebra
     letI : Algebra T.Fr X.C := X.ιF.toAlgebra
@@ -158,8 +158,8 @@ theorem gauge_chart :
   letI : Algebra T.Fr X.C := X.ιF.toAlgebra
   exact (GlobalTheory.canonGauge_nabVal_baseChange T.Fr _ _ Ch.ch.B T.Fr X.C (Algebra.ofId T.Fr X.C) _ Ch.ch.gauge).1
 
-include X in
 
+include X in
 theorem not_isUnit_p : ¬ IsUnit (p : T.V) := fun h => X.nonunit.out (by simpa using h.map X.ι)
 
 end Chart
@@ -260,15 +260,6 @@ def InvSt : Prop :=
     (∀ b b' (N : ℕ), ∃ a z, φ a = M b b' + φ q ^ N * z) →
     ∃ M' : Matrix (Fin i) (Fin i) V, M * M' = 1 ∧ ∀ b b' (N : ℕ), ∃ a z, φ a = M' b b' + φ q ^ N * z
 
-def PairSt : Prop :=
-  ∀ (R : Type) [CommRing R] [IsDedekindDomain R] (bar : R ≃+* R), (∀ x, bar (bar x) = x) →
-    ∀ (w : Ideal R) [w.IsMaximal] [Finite (R ⧸ w)] (y : R), y - bar y ∉ w → ∀ q : R, q ≠ 0 →
-    ∃ u a : ℕ → R, (∀ N : ℕ, u N * bar (u N) + a N * bar (a N) ∈ Ideal.span {q ^ N}) ∧
-      ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
-        [IsAdicComplete (IsLocalRing.maximalIdeal V) V] (φ : R →+* V),
-        (IsLocalRing.maximalIdeal V).comap φ = w → φ q ≠ 0 →
-        ∃ α : V, ∀ N : ℕ, (∃ z, φ (u N) = 1 + φ q ^ N * z) ∧ ∃ z, φ (a N) = α + φ q ^ N * z
-
 def InvDerSt : Prop :=
   ∀ (C : Type) [Field C] [CharZero C] (v : AddValuation C (WithTop ℝ)) (d : ℕ) (F : FGLaw C d)
     (hF : ∀ a, MvIsInt v (subst (twoVars C d) (F.F a))) (n : ℕ) (ι : Type) [Fintype ι] (cp : ι → Fin n)
@@ -282,10 +273,6 @@ def LinSt : Prop :=
     (Ψ : MvPowerSeries ι C),
     derivAt0 (MvPolynomial.aeval (fun lam => ∑ l, MvPolynomial.C (β lam l) * (MvPolynomial.X l : MvPolynomial ι C)) P) Ψ =
       derivAt0 P (subst (fun l => ∑ lam, β lam l • (X lam : MvPowerSeries Λ C)) Ψ)
-
-def ColsSt : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (c : Coeff l)
-    (p : ℕ) [Fact p.Prime] (la : PointsOfFlagModel.abelian₂ p c), ColsExist Dw c p la
 
 def LimActSt : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
@@ -323,11 +310,5 @@ def RetrSt : Prop :=
     ∃ ρ : (Σ _ : Col cx, Fin (chD Ch.ch)) → PS X.C n (chD Ch.ch),
       (∀ q, constantCoeff (ρ q) = 0) ∧ (∀ q, MvIsInt (vX_vp X) (ρ q)) ∧
       ∀ q, subst (colPt Ch X cx B) (ρ q) = expH Ch X cx q
-
-def BaseSt : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l)
-    (c : Coeff l) [StarRing (𝓞 E)] (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (Ch : IntegralChartA3 Xo c T io y)
-    (p : ℕ) [Fact p.Prime] (X : ValExt T p) (cx : Lt1 Dw → ℕ) (n : ℕ) (B : ∀ f : Lt1 Dw, Fin (rk f) → Fin n → T.V)
-    (k e : ℕ), vV T.V (p : T.Fr) = e → nuLocOf Ch e k (polyT B cx) = nuLocX_vp Ch X cx B k
 
 end GlobalTheory.IsoTriv

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.VEqZeroOfPowEqOne
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.Sh.PTb
 
@@ -161,13 +165,18 @@ theorem isCurve_sumList (G : LogFGL v d) :
 
 theorem lgCurve_sumList (G : LogFGL v d) :
     ∀ l : List (Fin d → PowerSeries C), (∀ g ∈ l, IsCurve v g) → ∀ a,
-      G.lgCurve (G.sumList l) a = (l.map fun g => G.lgCurve g a).sum
-  | [], _, a => by simp [LogFGL.sumList, lgCurve_zero]
-  | g :: l, h, a => by
+      G.lgCurve (G.sumList l) a = (l.map fun g => G.lgCurve g a).sum := by
+  intro l
+  induction l with
+  | nil =>
+      intro _ a
+      simp [LogFGL.sumList, lgCurve_zero]
+  | cons g l ih =>
+      intro h a
       have hl : ∀ g' ∈ l, IsCurve v g' := fun g' hg' => h g' (by simp [hg'])
-      rw [LogFGL.sumList, lgCurve_add G (fun b => (h g (by simp) b).1)
-        (fun b => (isCurve_sumList G l hl b).1), lgCurve_sumList G l hl a]
-      simp
+      change G.lgCurve (G.add g (G.sumList l)) a = _
+      rw [lgCurve_add G (fun b => (h g (by simp) b).1)
+        (fun b => (isCurve_sumList G l hl b).1), ih hl a, List.map_cons, List.sum_cons]
 
 theorem isCurve_sumF (G : LogFGL v d) {m : ℕ} (g : Fin m → Fin d → PowerSeries C)
     (h : ∀ u, IsCurve v (g u)) : IsCurve v (G.sumF g) :=
@@ -270,7 +279,7 @@ theorem coeff_lgCurve_low (G : LogFGL v d) {ga : Fin d → PowerSeries C} {k : �
     rw [Finsupp.degree_single]
     refine lt_of_lt_of_le ?_ (le_trans (mul_le_mul' hord (order_lg_sub_X G a)) hR)
     exact_mod_cast (show j < k * 2 by omega)
-  rw [hsplit, map_add]
+  rw [hsplit, map_add (f := _)]
   have := coeff_of_lt_order hlt
   change _ + coeff (Finsupp.single () j) _ = _
   rw [this, add_zero]

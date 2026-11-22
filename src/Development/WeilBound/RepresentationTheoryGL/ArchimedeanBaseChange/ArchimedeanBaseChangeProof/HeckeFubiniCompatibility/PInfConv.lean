@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.NatDegreeDefectGelf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.NatDegreeDefectGelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,7 +147,8 @@ theorem coeff_Hi (r n : ℕ) (Q : ℂ[X]) (i : ℕ) : (Hi r n Q).coeff i = if i 
 
 theorem Hi_comp (r n : ℕ) (Q : ℂ[X]) :
     (Hi r n Q).comp (X + 1) = ∑ i ∈ Ioc r n, Polynomial.C (Q.coeff i) * (X + 1) ^ i := by
-  rw [Hi, ← coe_compRingHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Hi, ← coe_compRingHom_apply, map_sum]
   simp only [coe_compRingHom_apply, mul_comp, C_comp, X_pow_comp]
 
 theorem CoefTo.defect {t : ℕ → ℕ → ℂ} {t₀ : ℕ → ℂ} (ht : ∀ l, Tendsto (fun k => t k l) atTop (𝓝 (t₀ l)))

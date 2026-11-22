@@ -1,5 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TensVdApply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.K2V
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.TensVdApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +69,7 @@ theorem phiR_G {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG 
     inG ε (phiR X) := by
   have h : Xᴴ * Jm (ε ∘ Fin.rev) + Jm (ε ∘ Fin.rev) * X = 0 := hX
   show (phiR X)ᴴ * Jm ε + Jm ε * phiR X = 0
-  rw [← phiR_conjT, ← phiR_J, ← map_mul, ← map_mul, ← map_add, h, map_zero]
+  rw [← phiR_conjT, ← phiR_J, ← map_mul, ← map_mul, ← map_add (f := _), h, map_zero]
 
 theorem actM_tw {M : Type*} [AddCommGroup M] [Module ℂ M] {ε : Fin n → Bool}
     (E : Fin n → Fin n → Module.End ℂ M) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inG (ε ∘ Fin.rev) X) :
@@ -106,10 +109,11 @@ theorem urep_tw {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → (H �
 
 theorem derived_tw {ε : Fin n → Bool} {σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} {D : Submodule ℂ H}
     {E : Fin n → Fin n → Module.End ℂ D} (hD : IsDerivedOn ε σ D E) :
-    IsDerivedOn (ε ∘ Fin.rev) (fun g => σ (phiR g)) D (twE ε E) where
-  glRep := twE_gl hD.glRep
-  kStable := fun k hk v hv => hD.kStable _ (phiR_K hk) v hv
-  deriv := fun X hX v => by
+    IsDerivedOn (ε ∘ Fin.rev) (fun g => σ (phiR g)) D (twE ε E) := by
+  refine ⟨twE_gl hD.glRep, ?_, ?_⟩
+  · intro k hk v hv
+    exact hD.kStable (phiR k) (phiR_K hk) v hv
+  · intro X hX v
     have := hD.deriv (phiR X) (phiR_G hX) v
     rw [actM_tw E hX] at this
     have hf : (fun t : ℝ => σ (phiR (NormedSpace.exp ((t : ℂ) • X))) (v : H)) =
@@ -167,7 +171,7 @@ theorem dualLowestKType_of_standard (hK : EigenspaceWeightConeStandard n) : Eige
     rw [← hW] at k2
     obtain ⟨c₁, c₂, hne, heq⟩ := K2 _ _ h1' h2' k1 k2
     refine ⟨c₁, c₂, hne, twT_eq_zero (ε := ε) ?_⟩
-    rw [map_add, map_smul, map_smul]
+    rw [map_add (f := _), map_smul, map_smul]
     exact heq
 
 end ReciprocityTheory.ChartRestriction.DS.Lap.LemK.TwistedDualLemmas

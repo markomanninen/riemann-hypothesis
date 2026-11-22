@@ -1,19 +1,23 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 theorem UpperTheory.V.Fr.pr_norm1 :
-    ∀ (O : Type) [CommRing O] [IsLocalRing O], ∀ (C' : Type) [CommRing C'] [Algebra O C'] [IsCO O C'] (C : Type) [CommRing C] [Algebra O C] (p : C' →ₐ[O] C) (n : ℕ) (x : GG n C'), maximalIdeal C' * RingHom.ker p = ⊥ → RingHom.ker p ≤ maximalIdeal C' → (2 : ResidueField O) ≠ 0 → x * x = 1 → x.right = -1 → x.mat.map p = 1 → ∃ h : GL (Fin n) C', (h : Matrix (Fin n) (Fin n) C').map p = 1 ∧ (GG.ofGL h * x * (GG.ofGL h)⁻¹).mat = 1 := by
+    ∀ (O : Type) [CommRing O] [IsLocalRing O], ∀ (C' : Type) [CommRing C'] [Algebra O C'] [IsCO O C'] (C : Type) [CommRing C] [Algebra O C] (p : C' →ₐ[O] C) (n : ℕ) (x : GG (m := n) (R := C')), maximalIdeal C' * RingHom.ker p = ⊥ → RingHom.ker p ≤ maximalIdeal C' → (2 : ResidueField O) ≠ 0 → x * x = 1 → x.right = -1 → x.mat.map p = 1 → ∃ h : GL (Fin n) C', (h : Matrix (Fin n) (Fin n) C').map p = 1 ∧ (GG.ofGL h * x * (GG.ofGL h)⁻¹).mat = 1 := by
   intro O _ _ C' _ _ _ C _ _ p n x hmI hle h2R hxx hr hmap
   have hgt : x.left * theta x.left = 1 := by
     have hl := congrArg SemidirectProduct.left hxx
     simpa [SemidirectProduct.mul_left, hr] using hl
   have hθ : ∀ u : GL (Fin n) C', ((theta u⁻¹ : GL (Fin n) C') : Matrix (Fin n) (Fin n) C') =
-      Jmat C' n * (u : Matrix (Fin n) (Fin n) C')ᵀ * Jmat C' n := by
+      Jmat (R := C') n * (u : Matrix (Fin n) (Fin n) C')ᵀ * Jmat (R := C') n := by
     intro u
-    rw [show theta u⁻¹ = (theta u)⁻¹ from map_inv (thetaAut n C') u, theta_inv_val]
+    rw [show theta u⁻¹ = (theta u)⁻¹ from map_inv (thetaAut (m := n) (R := C')) u, theta_inv_val]
   have hgg : (x.left : Matrix (Fin n) (Fin n) C') =
-      Jmat C' n * (x.left : Matrix (Fin n) (Fin n) C')ᵀ * Jmat C' n := by
+      Jmat (R := C') n * (x.left : Matrix (Fin n) (Fin n) C')ᵀ * Jmat (R := C') n := by
     have h1 : (theta x.left)⁻¹ = x.left := inv_eq_of_mul_eq_one_left hgt
     rw [← theta_inv_val x.left, h1]
   have hsq : ∀ a b : C', a ∈ RingHom.ker p → b ∈ RingHom.ker p → a * b = 0 := by
@@ -36,7 +40,7 @@ theorem UpperTheory.V.Fr.pr_norm1 :
     ext i j
     rw [Matrix.mul_apply, Matrix.zero_apply]
     exact Finset.sum_eq_zero fun k _ => hsq _ _ (hX i k) (hX k j)
-  have hXJ : Jmat C' n * Xᵀ * Jmat C' n = X := by
+  have hXJ : Jmat (R := C') n * Xᵀ * Jmat (R := C') n = X := by
     rw [hXdef, Matrix.transpose_sub, Matrix.transpose_one, Matrix.mul_sub, Matrix.sub_mul,
       Matrix.mul_one, Jmat_mul_Jmat, ← hgg]
   have hO : IsUnit (2 : O) := by
@@ -60,7 +64,7 @@ theorem UpperTheory.V.Fr.pr_norm1 :
     rw [hYdef, Matrix.smul_apply, smul_eq_mul, map_mul, (RingHom.mem_ker).mp (hX i j), mul_zero]
   obtain ⟨U, hU⟩ : ∃ U : GL (Fin n) C', (U : Matrix (Fin n) (Fin n) C') = 1 - Y :=
     ⟨⟨1 - Y, 1 + Y, e1, e2⟩, rfl⟩
-  have hJ : Jmat C' n * (1 - Y)ᵀ * Jmat C' n = 1 - Y := by
+  have hJ : Jmat (R := C') n * (1 - Y)ᵀ * Jmat (R := C') n = 1 - Y := by
     rw [Matrix.transpose_sub, Matrix.transpose_one, Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_one,
       Jmat_mul_Jmat, hYdef, Matrix.transpose_smul, Matrix.mul_smul, Matrix.smul_mul, hXJ]
   have hg1 : (x.left : Matrix (Fin n) (Fin n) C') = 1 + X := by rw [hXdef, add_sub_cancel]

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil ValuativeRel Matrix
 open scoped TensorProduct
 
@@ -12,23 +17,24 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
   {γ γ' n : Type} [Fintype γ] [LinearOrder γ] [Fintype γ'] [LinearOrder γ'] [Fintype n] [DecidableEq n]
   {f : γ' → γ} {m : γ → Type} [∀ c, Fintype (m c)] [∀ c, DecidableEq (m c)]
 
+
 omit [Fintype γ] [LinearOrder γ] [Fintype γ'] [LinearOrder γ'] [Fintype n] [DecidableEq n]
   [∀ c, Fintype (m c)] [∀ c, DecidableEq (m c)] in
-
 theorem blk_rename {e : (Σ c, m c) ≃ n} {e₂ : (Σ c', m (f c')) ≃ n}
     (he : ∀ c' x, e₂ ⟨c', x⟩ = e ⟨f c', x⟩) (j : n) : blk e j = f (blk e₂ j) := by
   obtain ⟨⟨c', x⟩, rfl⟩ := e₂.surjective j
-  have h1 : blk e₂ (e₂ ⟨c', x⟩) = c' := blk_apply e₂ c' x
-  rw [h1, he, blk_apply]
+  calc
+    blk e (e₂ ⟨c', x⟩) = f c' := by rw [he]; simp [blk]
+    _ = f (blk e₂ (e₂ ⟨c', x⟩)) := by simp [blk]
+
 
 omit [Fintype γ] [Fintype γ'] [∀ c, Fintype (m c)] [∀ c, DecidableEq (m c)] in
-
 theorem mem_parab_rename (hf : StrictMono f) {e : (Σ c, m c) ≃ n} {e₂ : (Σ c', m (f c')) ≃ n}
     (he : ∀ c' x, e₂ ⟨c', x⟩ = e ⟨f c', x⟩) (g : GL n k) : g ∈ parab k e ↔ g ∈ parab k e₂ := by
   simp only [mem_parab, blk_rename he, hf.lt_iff_lt]
 
-omit [∀ c, DecidableEq (m c)] in
 
+omit [∀ c, DecidableEq (m c)] in
 theorem modExp_rename (hf : StrictMono f) (hs : Function.Surjective f) (c' : γ') :
     modExp (fun c' => m (f c')) c' = modExp m (f c') := by
   unfold modExp
@@ -67,7 +73,7 @@ theorem piTensor_rename (hf : StrictMono f) (hs : Function.Surjective f) {X : γ
     piTensor (fun c' => σ (f c')) (fun c' => g (f c')) (kappa hf hs X w) = kappa hf hs X (piTensor σ g w) := by
   induction w using PiTensorProduct.induction_on with
   | smul_tprod r x => simp only [map_smul, kappa_tprod, piTensor_tprod]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.SmGL.BlockRename
 

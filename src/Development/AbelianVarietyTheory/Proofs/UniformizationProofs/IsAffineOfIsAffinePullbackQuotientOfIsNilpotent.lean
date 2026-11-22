@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueZpowMulAppLE
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueZpowMulAppLE
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry TopologicalSpace Opposite
 
@@ -53,7 +57,7 @@ theorem res (ha : Lifts i U a r) (h : V ≤ U) : Lifts i V (rs h a) r := by
 
 theorem add (ha : Lifts i U a r) (hb : Lifts i U b s) : Lifts i U (a + b) (r + s) := by
   unfold Lifts at *
-  rw [map_add, map_add, ha, hb]
+  rw [map_add (f := _), map_add (f := _), ha, hb]
 
 theorem sub (ha : Lifts i U a r) (hb : Lifts i U b s) : Lifts i U (a - b) (r - s) := by
   unfold Lifts at *
@@ -128,7 +132,6 @@ variable [IsClosedImmersion i] [Surjective i]
   {s : Γ(Z, ⊤)} {σ : ∀ j, Γ(Y, U j)} (hσ : ∀ j, Lifts i (U j) (σ j) s)
 
 variable (i σ) in
-
 def IsCoboundary (r : Γ(Z, ⊤)) : Prop :=
   ∃ ρ t : ∀ j, Γ(Y, U j), (∀ j, Lifts i (U j) (ρ j) r) ∧ (∀ j, Lifts i (U j) (t j) 0) ∧
     ∀ j k, rs (inf_le_left : U j ⊓ U k ≤ U j) (t j) - rs inf_le_right (t k) =
@@ -153,7 +156,7 @@ theorem IsCoboundary.add {r r' : Γ(Z, ⊤)} (h : IsCoboundary i σ r) (h' : IsC
   obtain ⟨ρ', t', hρ', ht', e'⟩ := h'
   refine ⟨fun j ↦ ρ j + ρ' j, fun j ↦ t j + t' j, fun j ↦ (hρ j).add (hρ' j),
     fun j ↦ by simpa using (ht j).add (ht' j), fun j k ↦ ?_⟩
-  simp only [map_add]
+  simp only [map_add (f := _)]
   linear_combination e j k + e' j k
 
 omit [IsClosedImmersion i] [Surjective i] in

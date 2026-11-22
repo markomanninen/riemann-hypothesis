@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConjugateAdjointDagger
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ}
 structure IsQuasiFam (ψ : AddChar (AF D.host.F) ℂ) (S L : HSp D) (Y : GA D S → WO S L → ℂ) : Prop where
   quasi : ∀ h γ w, Y h (ratW L S γ + w) = ψ (-(symplOH S L (ratW L S γ) w)) * Y h w
   cont : Continuous fun p : GA D S × WO S L => Y p.1 p.2
-  left : ∀ γ ∈ GQ S, ∀ h w, Y (γ * h) w = Y h (w ⬝ mt S γ)
+  left : ∀ γ ∈ GQ S, ∀ h w, Y (γ * h) w = Y h (w * mt S γ)
 
 def JointCont (D : D7) : Prop :=
   ∀ (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (χS χT : (AE D)ˣ →* Circle) (om : Om S T), IsWeilDatumO ψ S T χS χT om →
@@ -110,17 +114,17 @@ def ContrLaw (D : D7) : Prop :=
 def SeeLast (D : D7) : Prop :=
   ∀ (ψ : AddChar (AF D.host.F) ℂ) (V₀ A L S X T L'' : HSp D) (o : OrthDec V₀ A L) (o'' : OrthDec X T L'')
     (τ : Matrix (Fin L.rank) (Fin L''.rank) D.host.E), L.rank = 1 → L''.rank = 1 →
-    τᴴ ⬝ (L.gram ⬝ τ) = (-(D.host.xi0 * star D.host.xi0)) • L''.gram →
+    τᴴ * (L.gram * τ) = (-(D.host.xi0 * star D.host.xi0)) • L''.gram →
     ∀ (χA χz χS χS' χT : (AE D)ˣ →* Circle) (om₁ : Om V₀ S) (oma : Om A S) (omz : Om L S) (omX : Om S X) (omT : Om S T)
       (omz'' : Om S L''), IsWeilDatumO ψ V₀ S (χA * χz) χS om₁ → IsWeilDatumO ψ A S χA χS oma →
       IsWeilDatumO ψ L S χz χS omz → IsWeilDatumO ψ S X χS' (χT * χz⁻¹) omX → IsWeilDatumO ψ S T χS' χT omT →
       IsWeilDatumO ψ S L'' χS' χz⁻¹ omz'' →
       ∀ (Ξ : WO V₀ S → ℂ) (Φ₂ : WO S T → ℂ), IsThetaFunO ψ V₀ S Ξ → IsThetaFunO ψ S T Φ₂ →
         (∀ u, IsThetaFunO ψ S L'' fun w => Ξ ((o.resS S).symm
-          (u, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L''.rank) ⬝ w)))) ∧
+          (u, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L''.rank) * w)))) ∧
         ∀ h₀ h h', omT (h, h') Φ₂ 0 * om₁ (o.emb (h₀, 1), h) Ξ 0 =
           oma (h₀, h) (fun u => omX (h, o''.emb (h', 1)) (o''.boxT S Φ₂ fun w => Ξ ((o.resS S).symm
-            (u, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L''.rank) ⬝ w)))) 0) 0
+            (u, GlobalTheory.IndefiniteRowSideFullHecke.SkewGramHalfModule.ofAdj L S ((rat τ : Mx D L.rank L''.rank) * w)))) 0) 0
 
 def hypZero (V : HSp D) : HypDec V V 0 where
   e := 0

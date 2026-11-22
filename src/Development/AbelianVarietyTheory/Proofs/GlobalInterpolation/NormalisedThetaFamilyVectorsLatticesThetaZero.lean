@@ -1,13 +1,18 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.LateralTheory
-import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.GlobalTheory.GL3.ProvisionExtensionLink
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PFamily
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaVectorFamilyOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqAndAlg
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLatticesGL3
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.ProvisionExtensionLink
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PFamily
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsThetaVectorFamilyOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.EqAndAlg
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LineDerivListCompForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaSpaceSelfDualPairAtMostLine
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
 
 namespace GlobalTheory.NatFamily

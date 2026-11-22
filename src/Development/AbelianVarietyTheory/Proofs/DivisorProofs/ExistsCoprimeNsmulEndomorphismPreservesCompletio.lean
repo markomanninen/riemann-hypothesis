@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeVectorBundlePullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuedIntCastLeIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLatticeDegreeNeg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatHermUnitConstant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqNsmulOfActs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HopfOrderPullbackAlongHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowEqPowOfModEqSim
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SimilitudeActionAdelicLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeVectorBundlePullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuedIntCastLeIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatticeCompletionEqLatticeVectorAddNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLatticeDegreeNeg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlatHermUnitConstant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEqNsmulOfActs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HopfOrderPullbackAlongHom
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
@@ -114,7 +119,7 @@ theorem exists_coprime_nsmul_map_mem : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p
       rw [this, map_zero, smul_zero]; exact zero_mem _
     | add y z _ _ hy hz =>
       have : inAf D (y + z) = inAf D y + inAf D z := by simp only [inAf, TensorProduct.tmul_add]
-      rw [this, map_add, smul_add]; exact add_mem hy hz
+      rw [this, map_add (f := _), smul_add]; exact add_mem hy hz
     | smul c y _ hy =>
       have : inAf D (c • y) = c • inAf D y := by
         simp only [inAf, TensorProduct.tmul_smul]
@@ -128,7 +133,7 @@ theorem exists_coprime_nsmul_map_mem : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p
     rw [e, map_smul, smul_comm]
     exact smul_mem D ha (hbase x)
   | zero => rw [map_zero, smul_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [map_neg, smul_neg]; exact neg_mem hx
 
 end GlobalTheory.LKGeo.DenEnd

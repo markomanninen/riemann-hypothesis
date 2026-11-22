@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.IdemLiftOfSteps
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.HenselRoot
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.IdemLiftOfSteps
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalEndomorphisms.HenselRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,13 +76,13 @@ theorem locIdem : LocIdem := by
   refine ⟨(c1 : v.adicCompletion F), (c2 : v.adicCompletion F), (memO _).1 c1.2, (memO _).1 c2.2,
     ?_, ?_, ?_⟩
   · have e := congrArg (v.adicCompletionIntegers F).subtype hA
-    simp only [map_add, map_sub, map_mul, map_pow, map_one, map_ofNat] at e
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_one, map_ofNat] at e
     exact e
   · have e := congrArg (v.adicCompletionIntegers F).subtype hB
-    simp only [map_add, map_sub, map_mul, map_pow, map_one, map_ofNat, map_neg] at e
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_one, map_ofNat, map_neg] at e
     exact e
   · have e := congrArg (v.adicCompletionIntegers F).subtype hC
-    simp only [map_add, map_sub, map_mul, map_pow, map_one, map_ofNat, map_zero] at e
+    simp only [map_add (f := _), map_sub, map_mul, map_pow, map_one, map_ofNat, map_zero] at e
     exact e
 
 end PI.ScRefExists.Id

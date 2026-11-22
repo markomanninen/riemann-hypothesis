@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.ReductionTau
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.ExistsMulMulConjTransposeEqOne
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.FreeQuotientRank
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHCut
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.ExplicitFormulaBoundHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.LevelSubgroupProperties
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.ReductionTau
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.ExistsMulMulConjTransposeEqOne
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.BlockGramReduction.FreeQuotientRank
+
+@[expose] public section
 
 noncomputable section
 
@@ -338,7 +342,7 @@ theorem weil_bound (hSG : SGroup X u) (hWI : WuNormInv X u) (hWM : WeightMeas X 
   have hweil := X.nuQ_weil u (fun x => wt X u x * a x) ((wt_meas X u hWM).mul ha)
   rw [hweil, ← lintegral_mul_const' _ _ hB]
   refine lintegral_mono fun x => ?_
-  refine (lintegral_map_le (fun s => wt X u (s * x) * a (s * x)) (fun p : X.B.I.Ginf × X.B.I.Ginf => p.1 * p.2)).trans ?_
+  refine (lintegral_map_le (fun s => wt X u (s * x) * a (s * x)) (g := fun p : X.B.I.Ginf × X.B.I.Ginf => p.1 * p.2) ((continuous_fst.mul continuous_snd).measurable.aemeasurable)).trans ?_
   have hae2 : ∀ᵐ p ∂((X.muN u).prod (X.muH u)),
       wt X u (p.1 * p.2 * x) * a (p.1 * p.2 * x) = wt X u x * a (p.1 * p.2 * x) := by
     filter_upwards [ae_NH X u] with p hp
@@ -551,7 +555,7 @@ theorem wuNormInv_holds : WuNormInv X u := by
 
 theorem normInf_continuous : Continuous (WuDecay.normInf X) := by
   unfold WuDecay.normInf
-  refine continuous_finset_prod _ fun v _ => ?_
+  refine continuous_finsetProd _ fun v _ => ?_
   unfold WuDecay.opn
   have hlin : Continuous fun M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) ℂ => Matrix.toEuclideanCLM (𝕜 := ℂ) M :=
     LinearMap.continuous_of_finiteDimensional
@@ -641,7 +645,7 @@ theorem normGeOne_holds (I : AutInst) : NormGeOne I := by
   unfold normI
   calc (1 : ℝ) = ∏ _v : InfinitePlace I.F, (1 : ℝ) := Finset.prod_const_one.symm
     _ ≤ ∏ v, WuDecay.opn (uMat (g v)) :=
-        Finset.prod_le_prod (fun _ _ => zero_le_one) fun v _ => opn_ge_one hn (I.ε v) (g v)
+        Finset.prod_le_prod₀ (fun _ _ => zero_le_one) fun v _ => opn_ge_one hn (I.ε v) (g v)
 
 theorem normPow_holds (I : AutInst) : NormPow I := by
   intro hn g
@@ -715,7 +719,7 @@ theorem size_subOfEq_le_pl {x x' : I.GA} (hlat : latSet I x' = latSet I x)
   have hP0 : 0 ≤ ∏ v, c v := Finset.prod_nonneg fun v _ => le_trans zero_le_one (hc v)
   have hprod : (∏ v, (gramV I x' v s.b).det.re) ≤ (∏ v, c v) ^ s.j * ∏ v, (gramV I x v s.b).det.re := by
     calc (∏ v, (gramV I x' v s.b).det.re) ≤ ∏ v, (c v ^ s.j * (gramV I x v s.b).det.re) :=
-          Finset.prod_le_prod (fun v _ => Tau.det_gram_nonneg I h5 x' v s.j_pos s.b) fun v _ => hdet v
+          Finset.prod_le_prod₀ (fun v _ => Tau.det_gram_nonneg I h5 x' v s.j_pos s.b) fun v _ => hdet v
       _ = (∏ v, c v) ^ s.j * ∏ v, (gramV I x v s.b).det.re := by
           rw [Finset.prod_mul_distrib, Finset.prod_pow]
   have hht : ht I (Tau.subOfEq I hlat s) ≤ (∏ v, c v) ^ s.j * ht I s := by

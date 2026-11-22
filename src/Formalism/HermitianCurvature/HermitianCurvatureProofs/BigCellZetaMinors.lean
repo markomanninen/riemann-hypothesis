@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.FormalDegreeBessel.FinalBF
+module
+
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellHermitian
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.FormalDegreeBessel.FinalBF
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter
 
@@ -49,21 +53,5 @@ end Formalism.FourierDecayAlt.P.BigCellZetaMinors
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.JF
-
-theorem psiQUnique_true : Formalism.FourierDecayAlt.JF.PsiQUnique := by
-  intro k r Wp Wq _ _ _ _ D p₁ p₂ q₁ q₂ h1 h2 hq1 hq2 he
-  have hc : ∀ a, cmin k r D.z D.z' (sgs p₁ (gq D q₁)) a = cmin k r D.z D.z' (sgs p₂ (gq D q₂)) a := by
-    intro a; rw [he]
-  have hz : zeta k r D.z D.z' (sgs p₁ (gq D q₁)) = zeta k r D.z D.z' (sgs p₂ (gq D q₂)) := by rw [he]
-  refine Prod.ext (funext fun a => ?_) ?_
-  · have := hc a
-    unfold cmin at this
-    rw [BigCellZetaMinors.dmin_sgs D h1, BigCellZetaMinors.dmin_sgs D h1, BigCellZetaMinors.dmin_sgs D h2, BigCellZetaMinors.dmin_sgs D h2] at this
-    rw [← BigCellZetaMinors.cmin_gq D hq1 a, ← BigCellZetaMinors.cmin_gq D hq2 a]
-    exact this
-  · unfold zeta at hz
-    rw [BigCellZetaMinors.dmin_sgs D h1, BigCellZetaMinors.dmin_sgs D h1, BigCellZetaMinors.dmin_sgs D h2, BigCellZetaMinors.dmin_sgs D h2] at hz
-    rw [← BigCellZetaMinors.zeta_gq D hq1, ← BigCellZetaMinors.zeta_gq D hq2]
-    exact hz
 
 end Formalism.FourierDecayAlt.P

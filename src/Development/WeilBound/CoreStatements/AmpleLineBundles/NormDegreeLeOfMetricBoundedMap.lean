@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PNormComparison
+module
+
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.SpanLeOfMem
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PNormComparison
+
+@[expose] public section
 
 open GroundTheory.Heights₂.Heights NumberField TensorProduct ComplexAt GlobalTheory.CompanionTheory.Ar Matrix
 open scoped BigOperators ComplexOrder

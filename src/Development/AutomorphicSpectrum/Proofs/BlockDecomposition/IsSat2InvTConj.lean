@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNormalisedOfDualIsConj
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSatGLOfInvT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsNormalisedOfDualIsConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,14 +22,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
 
 variable {u w : Pl E}
 
-def pairInv (c : u.adicCompletion E ≃+* w.adicCompletion E) (a b : ℕ) : GLw a u × GLw b u ≃* GLw a w × GLw b w :=
-  MulEquiv.prodCongr (invT c a) (invT c b)
-
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
-
-def pairConj (c : u.adicCompletion E ≃+* w.adicCompletion E) (k : GLw a u × GLw b u) :
-    GLw a u × GLw b u ≃* GLw a w × GLw b w :=
-  MulEquiv.trans (MulAut.conj k⁻¹) (pairInv c a b)
 
 theorem embT_cw (a : ℕ) (u : Pl E) (g : GLw a (GlobalTheory.ThetaSatake.cw u)) :
     embT a (GlobalTheory.ThetaSatake.cw u) g =

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSSCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSSCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex CochainComplex.HomComplex
@@ -35,7 +39,7 @@ theorem d_const_zero (P : PSh) : ((chains R).obj (disc.obj P)).d (-1) 0 = 0 := b
   rw [h]
   have : ((chainsN R).obj (disc.obj P)).d 1 0 = 0 := by
     simp [chainsN, Fin.sum_univ_two, SimplicialObject.δ, disc]
-    first
+    all_goals first
       | (erw [neg_one_smul, one_smul, add_neg_cancel])
       | (simp only [one_smul, neg_smul]; exact add_neg_cancel _)
       | abel

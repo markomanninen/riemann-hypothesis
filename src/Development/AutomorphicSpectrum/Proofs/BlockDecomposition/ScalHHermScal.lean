@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
-import Development.WeilBound.CoreStatements.ThetaDilations.EulerMove
-import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.BinaryMassMeans.MeanVal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentForm
+public import Development.WeilBound.CoreStatements.ThetaDilations.EulerMove
+public import Development.WeilBound.CoreStatements.ThetaDilations.SdTransport
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -45,7 +49,7 @@ theorem euler_move_c : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Num
     simp only [IsEulerProd, e1, ENNReal.coe_one, one_mul, mul_assoc]
   rw [tr] at hE ⊢
   refine PositivityTheory.PlacePermOperatorBicommutantSpan.euler_move F E σ hcm d b n M I _ _ m m' e ei ev me mei mev hpr hG ci c hc ?_ h2 hf hE
-  rw [Measure.map_smul, h1, smul_comm]
+  rw [Measure.map_smul κ mei.aemeasurable, h1, smul_comm]
 
 end GlobalTheory.CompanionTheory.SW.MassSimil
 

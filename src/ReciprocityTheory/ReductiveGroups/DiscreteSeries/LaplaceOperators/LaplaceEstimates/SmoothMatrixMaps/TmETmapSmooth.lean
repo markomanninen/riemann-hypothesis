@@ -1,7 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.TmDSingleMulVec
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.GapNeed
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.ReproducingKernels.DecDeriv
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.TmDSingleMulVec
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.GapNeed
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +51,7 @@ theorem tmE_eab_tmap (hσ : IsURepOn (UJset ε) σ) (hD : IsDerivedOn ε σ D E)
       coefX σ x₀ w ((E a b (f c) : D) : H) g + if c = a then coefX σ x₀ w ((f b : D) : H) g else 0 := by
     intro c; rw [tmE_tensV_apply]; split_ifs <;> simp [tmE_coefX_add]
   simp only [tmD_eab_cJ x₁ _ a b hg, tmB_eab_coef hσ hD hy, hZ, hT, ite_mul, zero_mul, mul_add, mul_ite,
-    mul_zero, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    mul_zero, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   ring
 
 def tmTw (E : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → Module.End ℂ D) :

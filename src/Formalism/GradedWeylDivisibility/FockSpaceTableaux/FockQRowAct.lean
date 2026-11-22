@@ -1,21 +1,14 @@
-import Formalism.GradedWeylDivisibility.StatementE
+module
+
+public import Formalism.GradedWeylDivisibility.StatementE
+
+@[expose] public section
 
 open MvPolynomial Formalism.REAL
 
 noncomputable section
 
 namespace Formalism.GradedWeylDivisibility
-
-lemma leadj_star_ratCast (q : ℚ) : star ((q : ℂ)) = (q : ℂ) := by
-  exact map_ratCast (starRingEnd ℂ) q
-
-lemma leadj_fockF_map {σ : Type*} (f g : MvPolynomial σ ℚ) :
-    fockF (map (algebraMap ℚ ℂ) f) (map (algebraMap ℚ ℂ) g) = ((fockQ f g : ℚ) : ℂ) := by
-  unfold fockF fockQ
-  rw [MvPolynomial.support_map_of_injective _ (algebraMap ℚ ℂ).injective]
-  push_cast
-  refine Finset.sum_congr rfl (fun m _ => ?_)
-  simp only [coeff_map, eq_ratCast (algebraMap ℚ ℂ), leadj_star_ratCast]
 
 private lemma fockQ_eq_sum_coeff_mul_factorial_of_support_subset {σ : Type*} (f g : MvPolynomial σ ℚ) (S : Finset (σ →₀ ℕ))
     (hS : f.support ⊆ S) :
@@ -131,7 +124,7 @@ private lemma fockQ_X_mul_left_eq_pderiv_right {σ : Type*} [DecidableEq σ] (v 
   | monomial s a =>
     induction Q using MvPolynomial.induction_on' with
     | monomial t b => exact fockQ_X_mul_monomial_eq_pderiv_monomial v s t a b
-    | add q₁ q₂ h₁ h₂ => rw [map_add, fockQ_add_right', fockQ_add_right', h₁, h₂]
+    | add q₁ q₂ h₁ h₂ => rw [map_add (f := _), fockQ_add_right', fockQ_add_right', h₁, h₂]
   | add p₁ p₂ h₁ h₂ => rw [mul_add, fockQ_add_left, fockQ_add_left, h₁, h₂]
 
 private lemma fockQ_C_left_eq_mul_coeff_zero {σ : Type*} (a : ℚ) (Q : MvPolynomial σ ℚ) :
@@ -150,25 +143,27 @@ private lemma coeff_zero_rowAct_eq {r n : ℕ} (h : Matrix (Fin r) (Fin r) ℚ) 
     (rowAct ℚ h Q).coeff 0 = Q.coeff 0 := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [rowAct]
-  | add p q hp hq => rw [map_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, MvPolynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
     have hx : constantCoeff (rowAct ℚ h (X v)) = 0 := by
-      rw [rowAct_X_eq_sum_C_mul_X, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [rowAct_X_eq_sum_C_mul_X, map_sum]
       simp
     change constantCoeff (rowAct ℚ h (p * X v)) = constantCoeff (p * X v)
     rw [map_mul, map_mul, hx, map_mul, MvPolynomial.constantCoeff_X, mul_zero, mul_zero]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 private lemma pderiv_rowAct_eq_sum_C_mul_rowAct_pderiv {r n : ℕ} (h : Matrix (Fin r) (Fin r) ℚ) (w : Fin r × Fin n)
     (Q : MvPolynomial (Fin r × Fin n) ℚ) :
     pderiv w (rowAct ℚ h Q) = ∑ c : Fin r, C (h c w.1) * rowAct ℚ h (pderiv (c, w.2) Q) := by
   induction Q using MvPolynomial.induction_on with
   | C x => simp [rowAct]
-  | add p q hp hq => simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X p v hp =>
     have e1 : pderiv w (rowAct ℚ h (X v)) = if v.2 = w.2 then C (h v.1 w.1) else 0 := by
-      rw [rowAct_X_eq_sum_C_mul_X, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [rowAct_X_eq_sum_C_mul_X, map_sum]
       simp only [pderiv_C_mul, pderiv_X, Pi.single_apply]
       by_cases hv : v.2 = w.2
       · rw [if_pos hv, Finset.sum_eq_single w.1]
@@ -195,7 +190,7 @@ private lemma pderiv_rowAct_eq_sum_C_mul_rowAct_pderiv {r n : ℕ} (h : Matrix (
     have e4 : ∀ c : Fin r, rowAct ℚ h (pderiv (c, w.2) (p * X v)) =
         rowAct ℚ h p * (if v = (c, w.2) then 1 else 0) + rowAct ℚ h (X v) * rowAct ℚ h (pderiv (c, w.2) p) := by
       intro c
-      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, pderiv_X, Pi.single_apply, map_add, map_mul, map_mul]
+      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, pderiv_X, Pi.single_apply, map_add (f := _), map_mul, map_mul]
       split_ifs <;> simp
     rw [map_mul, Derivation.leibniz, smul_eq_mul, smul_eq_mul, hp, e1]
     simp_rw [e4]
@@ -209,7 +204,7 @@ theorem fock_space_row_action : FockQRowAct := by
   | C a =>
     have hC : rowAct ℚ g (C a : MvPolynomial (Fin r × Fin n) ℚ) = C a := by simp [rowAct]
     rw [hC, fockQ_C_left_eq_mul_coeff_zero, fockQ_C_left_eq_mul_coeff_zero, coeff_zero_rowAct_eq]
-  | add p q hp hq => rw [map_add, fockQ_add_left, fockQ_add_left, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), fockQ_add_left, fockQ_add_left, hp, hq]
   | mul_X p v hp =>
     rw [map_mul, rowAct_X_eq_sum_C_mul_X]
     have e5 : rowAct ℚ g p * ∑ b : Fin r, C (g v.1 b) * X (b, v.2) =

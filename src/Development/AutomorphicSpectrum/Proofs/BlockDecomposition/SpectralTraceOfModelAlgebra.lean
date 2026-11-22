@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem twTr_unit (hL : LocAlg) {E : Type} [Field E] [NumberField E] [IsCMField 
       (KL n w : Set (UL n w)).indicator 1 := by
     rw [Subgroup.relIndex_self]
     congr 1
-    funext _
+    funext x
     simp
   rw [e] at h8 h9
   have : FiniteDimensional ℂ (fixed σ.ρ (KL n w)) := Module.finite_of_finrank_pos (by omega)

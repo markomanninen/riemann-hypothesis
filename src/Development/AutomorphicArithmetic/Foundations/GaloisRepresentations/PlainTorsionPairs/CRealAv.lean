@@ -1,9 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CRealEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CRealEx
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Alg
   UpperTheory.V.Pr UpperTheory.V
 open scoped Pointwise
-open private toZMod_one_iff exists_kernel_element_nontrivial_cyclotomic val_dvd cr_unr cr_mu ne_top cr_tame cr_split from Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CRealEx
 
 section
 
@@ -28,7 +31,23 @@ private theorem cr_set (p₀ : ℕ) (hp₀ : p₀ ≠ 0) [CharP (ResidueField O)
     ∃ s : W.HidaSetting l L Ω, Nonempty (Ad k s) ∧ ¬ s.p ∣ p₀ := by
   classical
   obtain ⟨e, he⟩ := UpperTheory.frame_criterion_galois_equivariance k hB
-  obtain ⟨g', hg'Ψ, hg'ε⟩ := exists_kernel_element_nontrivial_cyclotomic Φ ok
+  have hcyclotomic : ∃ g : Φ.G0, Φ.Ψ g = 1 ∧
+      PadicInt.toZMod ((Φ.eps g : ℤ_[l]ˣ) : ℤ_[l]) ≠ 1 := by
+    have := ok.fin
+    let χ : Φ.G0 →* (ResidueField O)ˣ := Φ.Ψ.comp Φ.del.ker.subtype
+    let ω : Φ.G0 →* (ResidueField O)ˣ := (Φ.om (ResidueField O)).comp Φ.del.ker.subtype
+    obtain ⟨g, hχ, hω⟩ := (Loc.v0e (ι := Bool) (fun b => if b then χ else 1) ω).2 fun hm => ok.f5 (by
+      have hle : Subgroup.closure (Set.range fun q : Bool × Bool =>
+          (if q.1 then χ else 1) / (if q.2 then χ else 1)) ≤ Subgroup.zpowers χ := by
+        rw [Subgroup.closure_le]
+        rintro _ ⟨⟨a, b⟩, rfl⟩
+        cases a <;> cases b <;> simp
+      obtain ⟨j, hj⟩ := hle hm
+      exact ⟨j, fun g => (DFunLike.congr_fun hj g).symm⟩)
+    refine ⟨g, hχ true false, fun heq => hω (Units.ext ?_)⟩
+    show ZMod.castHom (dvd_refl l) (ResidueField O) (PadicInt.toZMod ((Φ.eps g : ℤ_[l]ˣ) : ℤ_[l])) = 1
+    rw [heq, map_one]
+  obtain ⟨g', hg'Ψ, hg'ε⟩ := hcyclotomic
   obtain ⟨g, rfl⟩ := k.surjective_levelChangeBaseGroupHom g'
   have hgε : PadicInt.toZMod ((cycZ L Ω l g : ℤ_[l]ˣ) : ℤ_[l]) ≠ 1 := by
     have h1 : Φ.eps ↑(k.p0 g) = cycZ L Ω l g := by
@@ -77,6 +96,13 @@ private theorem cr_set (p₀ : ℕ) (hp₀ : p₀ ≠ 0) [CharP (ResidueField O)
   have hAl : ∀ v : W.Vl l L, A ↑v = k.pl (e v) := fun v => by
     simp only [A, dif_pos v.2]
   have hAv0 : A v0 = A0 := by simp [A, hlv0]
+  have hA_ne_top (v : W.Plc (W.Lp L)) : A v ≠ ⊤ := by
+    intro htop
+    obtain ⟨x, hx, hx0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
+    have h := (hA v x).2 hx
+    rw [valuation_lt_one_iff'] at h
+    have hx' := h.2.resolve_right fun hn => hn (htop ▸ ValuationSubring.mem_top _)
+    exact hx0 (Subtype.ext ((algebraMap (W.Lp L) Ω).injective (hx'.trans (map_zero _).symm)))
   have hfin : {u : W.Plc (W.Lp L) |
       (M : 𝓞 (W.Lp L)) ∈ u.asIdeal ∧ (l : 𝓞 (W.Lp L)) ∉ u.asIdeal}.Finite := by
     refine (Ideal.finite_factors (I := Ideal.span {(M : 𝓞 (W.Lp L))}) ?_).subset ?_
@@ -86,12 +112,19 @@ private theorem cr_set (p₀ : ℕ) (hp₀ : p₀ ≠ 0) [CharP (ResidueField O)
       simp only [Set.mem_setOf_eq] at hu ⊢
       rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
       exact hu.1
+  have hsplit_of_valuation (v : W.Plc (W.Lp L)) (hv : (A v).valuation (M : Ω) < 1) :
+      Dec (A v) ≤ (W.resP L Ω).range := fun g hg =>
+    (k.mem_range_resP g).2 (k.split (A v) hv ⟨hg, (toUpl Ω L g).2⟩)
   have hsplit : ∀ v, (l : 𝓞 (W.Lp L)) ∈ v.asIdeal ∨ v ∈ hfin.toFinset ∨ v = v0 →
       Dec (A v) ≤ (W.resP L Ω).range := by
     intro v hv
     rcases hv with h | h | h
-    · exact cr_split k _ (val_dvd _ hlM ((natCast_place (hA v) l).2 h))
-    · exact cr_split k _ ((natCast_place (hA v) M).2 (hfin.mem_toFinset.1 h).1)
+    · apply hsplit_of_valuation v
+      apply (natCast_place (hA v) M).2
+      obtain ⟨q, hq⟩ := hlM
+      rw [hq, Nat.cast_mul]
+      exact v.asIdeal.mul_mem_right _ h
+    · exact hsplit_of_valuation v ((natCast_place (hA v) M).2 (hfin.mem_toFinset.1 h).1)
     · rw [h, hAv0]
       exact hsplit0
   let s : W.HidaSetting l L Ω :=
@@ -100,9 +133,9 @@ private theorem cr_set (p₀ : ℕ) (hp₀ : p₀ ≠ 0) [CharP (ResidueField O)
         (MonoidHom.mem_ker.1 (k.unr A' ⟨(galEmb_mem_Ine A' t).2 ht, (toUpl Ω L t).2⟩))
       c := c'
       hc := ⟨j, hj'⟩
-      w := fun v => Classical.choose ((places L Ω l (A v)).1 (ne_top (hA v)))
+      w := fun v => Classical.choose ((places L Ω l (A v)).1 (hA_ne_top v))
       A := A
-      hw := fun v => Classical.choose_spec ((places L Ω l (A v)).1 (ne_top (hA v)))
+      hw := fun v => Classical.choose_spec ((places L Ω l (A v)).1 (hA_ne_top v))
       hA := hA
       St := hfin.toFinset
       St_l := fun u hu => (hfin.mem_toFinset.1 hu).2
@@ -151,8 +184,22 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.cRealAv :
     UpperTheory.V.W.LevEx → UpperTheory.V.W.ProModularRingExists → UpperTheory.Gal.projectedFormsSystemPart.CRealAv := by
   intro hLev hB0 Ω _ _ _ l _ ι c _ N _ e ψ η σ g₁ B M hlink L _ _ _ _ _ Φ k c₁ _ f n ka C₀ hn ok big hle hf hka hkaO p₀ hp₀
   have hlM : l ∣ M := dvd_trans (dvd_mul_right l N) hlink.dvd
+  have valuation_lt_one_of_dvd (A : ValuationSubring Ω) {a b : ℕ} (hab : a ∣ b)
+      (ha : A.valuation (a : Ω) < 1) : A.valuation (b : Ω) < 1 := by
+    obtain ⟨q, rfl⟩ := hab
+    rw [Nat.cast_mul, map_mul]
+    exact mul_lt_one_of_lt_of_le ha ((A.valuation_le_one_iff _).2 (natCast_mem A q))
+  have hΨ : ∀ A : ValuationSubring Ω, ¬ A.valuation (M : Ω) < 1 →
+      Ine (F := ℚ) A ≤ (Chr.Psi l e (Chr.dirG ℚ Ω ψ)).ker := by
+    intro A hA g hg
+    have hcyc : cycZ ℚ Ω l g = 1 :=
+      (Base.places ℚ Ω l A).2.2.2 (fun h => hA (valuation_lt_one_of_dvd A hlM h)) hg
+    have hcls : Chr.cls ℚ Ω N g = 1 :=
+      (Chr.clsFacts ℚ Ω N).2.2.2.2 A
+        (fun h => hA (valuation_lt_one_of_dvd A ((dvd_mul_left N l).trans hlink.dvd) h)) hg
+    simp [MonoidHom.mem_ker, Chr.Psi, Chr.dirG, chiO, hcyc, hcls]
   obtain ⟨s, ⟨x⟩, hsp⟩ := cr_set p₀ hp₀ k ok hlM hlink.M_pos
-    hlink.atl hlink.cc (cr_unr e ψ hlink.dvd)
+    hlink.atl hlink.cc hΨ
   have hSfin : s.S.Finite := by
     have h1 : {v : W.Plc (W.Lp L) | (l : 𝓞 (W.Lp L)) ∈ v.asIdeal}.Finite := by
       refine (Ideal.finite_factors (I := Ideal.span {(l : 𝓞 (W.Lp L))}) ?_).subset ?_
@@ -178,7 +225,7 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.cRealAv :
   have okf := Fr.ok_ext f ok
   obtain ⟨r, hrchi, hrpsi⟩ := UpperTheory.frame_criterion_residual (Φ.ext f) V.frame n hn okf.Ψ_open okf.baseSubgroup_spec π hπc hπs hπconj κ hκc hκconj
   have hvalM : ∀ v : W.Vl l L, (s.A ↑v).valuation (M : Ω) < 1 := fun v =>
-    val_dvd _ hlM ((natCast_place (s.hA ↑v) l).2 v.2)
+    valuation_lt_one_of_dvd _ hlM ((natCast_place (s.hA ↑v) l).2 v.2)
   choose lam hlam using fun v : W.Vl l L => UpperTheory.frame_criterion_lambda_characters k (x.e v) (s.A ↑v) (x.A_pl v) (hvalM v)
   have hjl : ∀ (v : W.Vl l L) (g : Dec (s.A ↑v)),
       k.j (x.e v) (lam v g) = toUpl Ω L (W.resP L Ω ↑g) :=
@@ -201,9 +248,14 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.cRealAv :
     obtain ⟨g, rfl⟩ := EquivLike.surjective (lam v) g'
     rw [hlam] at hg'
     refine ⟨g, g.2, ?_⟩
-    rw [Ne, toZMod_one_iff]
     intro h
-    exact hg' (Units.ext h)
+    apply hg'
+    apply Units.ext
+    change PadicInt.toZModPow 1 ((cycZ L Ω l (g : G L Ω) : ℤ_[l]ˣ) : ℤ_[l]) = 1
+    rw [← map_one (PadicInt.toZModPow (p := l) 1), ← RingHom.sub_mem_ker_iff,
+      PadicInt.ker_toZModPow, pow_one, ← PadicInt.maximalIdeal_eq_span_p, ← PadicInt.ker_toZMod,
+      RingHom.sub_mem_ker_iff, map_one]
+    exact h
   haveI := ok.fin
   have hcard : ¬ l ∣ Nat.card (ResidueField c.O)ˣ := by
     classical
@@ -236,13 +288,23 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.cRealAv :
     have hlu : ¬ (s.A u).valuation (l : Ω) < 1 := by
       rw [natCast_place (s.hA u)]
       exact s.St_l _ hu
+    have hpow : k.p0 h ^ Nat.card (ResidueField c.O)ˣ = 1 := by
+      show k.p0h h ^ _ = 1
+      rw [← map_pow]
+      refine Subtype.ext ?_
+      change toUpl Ω L (W.resP L Ω (h ^ _)) ∈ k.p.ker
+      rw [k.p_ker]
+      refine Subgroup.le_topologicalClosure _ (Subgroup.subset_normalClosure ⟨s.A u, hlu, ?_, ?_, ?_⟩)
+      · exact (Ine (F := L) (s.A u)).pow_mem hh _
+      · exact (k.mem_range_resP _).1 ⟨_, rfl⟩
+      · rw [map_pow, map_pow, Subgroup.coe_pow, map_pow, pow_card_eq_one']
     refine ⟨Nat.card (ResidueField c.O)ˣ * m₁, ?_, ?_, ?_⟩
     · intro hd
       rcases (Nat.Prime.dvd_mul Fact.out).1 hd with h1 | h1
       · exact hcard h1
       · exact hm₁ h1
     · exact (congrArg (· ^ (Nat.card (ResidueField c.O)ˣ * m₁)) (hπpr h)).trans
-        (by rw [pow_mul, cr_tame k _ hlu h hh, one_pow])
+        (by rw [pow_mul, hpow, one_pow])
     · apply hκ1
       rw [mul_comm, pow_mul, hm₁' _ hlu h hh, one_pow]
   have hram : ∀ g ∈ V.frame.I0, κ g = 1 := by
@@ -303,7 +365,16 @@ theorem UpperTheory.Gal.projectedFormsSystemPart.cRealAv :
   let K : TwLink (Φ.ext f) r :=
     { π := π, π_cont := hπc, π_surj := hπs, π_conj := hπconj, π_eps := hπeps, e := x.e, lam := lam,
       lam_loc := hloc, lam_I := hI, κ := κ, κ_cont := hκc, κ_conj := hκconj, chib := hrchi, psib := hrpsi,
-      mu := fun (v : W.Vl l L) => cr_mu (s.A ↑v) (s.w ↑v) (s.hw ↑v) ((natCast_place (s.hA ↑v) l).2 v.2) (hmu v),
+      mu := fun (v : W.Vl l L) => by
+        have hl := (natCast_place (s.hA ↑v) l).2 v.2
+        obtain ⟨j, hj⟩ := (Loc.decEmb (F := L) (Ω := Ω) (v := l)).1
+          (s.A ↑v) (s.w ↑v) (s.hw ↑v) ((natCast_place (s.hw ↑v) l).1 hl)
+        change W.muG l (Dec (F := L) (s.A ↑v)) ≤ (commutator (Dec (F := L) (s.A ↑v))).topologicalClosure
+        have hnontrivial := hmu v
+        rw [← hj] at hnontrivial ⊢
+        obtain ⟨-, φ, b1, -, -, -, b5, -⟩ := (Loc.decEmb (F := L) (Ω := Ω) (v := l)).2 j
+        obtain ⟨g, hg, h⟩ := hnontrivial
+        exact fun x hx => Loc.muNone φ b1 ⟨⟨g, hg⟩, by rw [b5]; exact h⟩ x hx,
       tame := htame, ramκ := hram,
       ker := fun N hN hcl hconj hIu hI0 => UpperTheory.frame_criterion_kernel k s x V hV π hπpr N hN hcl hconj
         (fun u g hg h1 => hIu u g hg (by

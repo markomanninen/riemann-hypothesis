@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddSecondThird
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.MulGenScaleRight
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSTrunc
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddSecondThird
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.MulGenScaleRight
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetSubstPSTrunc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -71,9 +75,11 @@ private lemma ev_bilL_lemma_9 {n : ℕ} (G : FGLaw S d) (c : Fin d → Fin d →
     fun j i => germEval_oneStandardPoint_self_lemma_3 _ ha j _
   rw [key]
   unfold Formalism.MainNotions.ModuliIntegralCharts.H1.CIndFrFix.bilL
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_smul, map_mul, ← key, ← key, hl, hl]
   all_goals rfl
@@ -97,7 +103,7 @@ theorem formal_log_add_first_two (G : FGLaw S d) (l : Fin d) :
     funext j i
     fin_cases j
     rfl
-  rw [e1, ReciprocityTheory.ChartRestriction.G.TB.LogPf.logOf_add (G := G), ev_hom_lemma_4 _ hb, map_add,
+  rw [e1, ReciprocityTheory.ChartRestriction.G.TB.LogPf.logOf_add (G := G), ev_hom_lemma_4 _ hb, map_add (f := _),
     ← ev_hom_lemma_4 _ hb, ← ev_hom_lemma_4 _ hb, germEval_oneStandardPoint_self_lemma_3 _ hb, germEval_oneStandardPoint_self_lemma_3 _ hb]
   all_goals rfl
 

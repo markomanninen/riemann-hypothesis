@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.Splitting
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.ExistsAtPlace
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.FirstFrameHalfEqMul
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.Splitting
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.ExistsAtPlace
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.FirstFrameHalfEqMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ variable {d : SD σ}
 def Tl (d : SD σ) : d.Fn →ₗ[ℂ] (Mx F E d.m d.n → ℂ) where
   toFun := d.T
   map_add' Φ Ψ := funext fun X => by
-    simp only [SD.T, Pi.add_apply, ← map_add]
+    simp only [SD.T, Pi.add_apply, ← map_add (f := _)]
     congr 1
     funext z
     exact mul_add _ _ _
@@ -28,8 +32,6 @@ def Tl (d : SD σ) : d.Fn →ₗ[ℂ] (Mx F E d.m d.n → ℂ) where
     exact mul_left_comm _ _ _
 
 def TK (d : SD σ) : Submodule ℂ (Mx F E d.m d.n → ℂ) := (kfS d).map (Tl d)
-
-theorem mem_TK {f : Mx F E d.m d.n → ℂ} : f ∈ TK d ↔ ∃ Φ ∈ kfS d, d.T Φ = f := Iff.rfl
 
 theorem D_dg_mem {Φ : d.Fn} (hΦ : Φ ∈ kfS d) {Z : Mx F E d.m d.n} (hZ : At (evI F) Z) :
     Box.D (d.dd.e (Z * (dg d)ᵀ)) Φ ∈ kfS d :=

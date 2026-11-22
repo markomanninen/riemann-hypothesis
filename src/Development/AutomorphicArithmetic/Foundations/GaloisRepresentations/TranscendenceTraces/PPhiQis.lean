@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafPropertiesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.PhiExact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChosenInjectiveResolutionEtaleSheafPropertiesStatement
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -10,13 +14,12 @@ private theorem single_key {R : Type} [CommRing R] (Φ : Shv R ⥤ Shv R) [Φ.Ad
     Φ.map (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 F).inv := by
   rw [HomologicalComplex.singleMapHomologicalComplex_inv_app_self]
   simp
-  rfl
 
 theorem UpperTheory.Gal.TranscendenceTraces.phiQis_of :
     PhiQis := by
   intro R _ Φ _ hΦ F
   obtain ⟨-, -, -, hq, hι, -, -, -⟩ := GlobalTheory.T.chosenInjectiveResolution_etaleSheaf_properties R F
-  haveI : Φ.PreservesHomology := (Φ.exact_tfae.out 1 2).1 hΦ
+  haveI : Φ.PreservesHomology := (Φ.exact_tfae.out 2 3).1 hΦ
   let e := (HomologicalComplex.singleMapHomologicalComplex Φ (ComplexShape.up ℤ) 0).app F
   let φ : (HomologicalComplex.single (Shv R) (ComplexShape.up ℤ) 0 ⋙
       Φ.mapHomologicalComplex (ComplexShape.up ℤ)).obj F ⟶

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPhiBridge
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,30 +38,12 @@ theorem residueConst_phi_eq (P : PhiData O l) (f : O⟦X⟧) : residueConst (P.�
     have h6 : P.φ (X - C (l : O)) = P.u * (X - C (l : O)) * X ^ (l - 1) := P.6
     rw [map_sub, hCa] at h6
     have h6' : P.φ X = P.u * (X - C (l : O)) * X ^ (l - 1) + C (l : O) := by rw [← h6]; ring
-    rw [h6', map_add, map_mul, map_pow, residueConst_X_eq_zero, zero_pow (by omega), mul_zero, zero_add,
+    rw [h6', map_add (f := _), map_mul, map_pow, residueConst_X_eq_zero, zero_pow (by omega), mul_zero, zero_add,
       residueConst_apply, PowerSeries.constantCoeff_C]
     exact (IsLocalRing.residue_eq_zero_iff _).2 P.4
   conv_lhs => rw [PowerSeries.eq_shift_mul_X_add_const f]
-  rw [map_add, map_mul, map_add, map_mul, hX, mul_zero, zero_add, hCa]
+  rw [map_add (f := _), map_mul, map_add (f := _), map_mul, hX, mul_zero, zero_add, hCa]
   rw [residueConst_apply, residueConst_apply, PowerSeries.constantCoeff_C]
-
-theorem residueConst_p1_eq_zero (P : PhiData O l) : residueConst (P.p 1) = 0 := by
-  have hl2 : 2 ≤ l := (Fact.out : l.Prime).two_le
-  have hCa : ∀ a : O, P.φ (C a) = C a := by
-    intro a
-    first
-    | exact P.φ.commutes a
-    | simpa using P.φ.commutes a
-    | simpa [PowerSeries.algebraMap_apply'] using P.φ.commutes a
-    | simpa [PowerSeries.algebraMap_apply] using P.φ.commutes a
-  unfold PhiData.p
-  rw [Function.iterate_one]
-  have h6 : P.φ (X - C (l : O)) = P.u * (X - C (l : O)) * X ^ (l - 1) := P.6
-  rw [map_sub, hCa] at h6
-  have h6' : P.φ X = P.u * (X - C (l : O)) * X ^ (l - 1) + C (l : O) := by rw [← h6]; ring
-  rw [h6', map_add, map_mul, map_pow, residueConst_X_eq_zero, zero_pow (by omega), mul_zero, zero_add,
-    residueConst_apply, PowerSeries.constantCoeff_C]
-  exact (IsLocalRing.residue_eq_zero_iff _).2 P.4
 
 theorem level_poly_decomposition (P : PhiData O l) (s : ℕ) (hs : 1 ≤ s) :
     ∃ e h : O⟦X⟧, P.p s = C (l : O) * e + X ^ l * h ∧ residueConst e ≠ 0 := by
@@ -80,7 +66,7 @@ theorem level_poly_decomposition (P : PhiData O l) (s : ℕ) (hs : 1 ≤ s) :
       residueConst a'' = 0 := by
     intro a b a' b'
     refine ⟨a * C (l : O) * a' + a * X ^ l * b' + X ^ l * b * a', X ^ l * b * b', by ring, ?_⟩
-    simp only [map_add, map_mul, hκC, hκXl, mul_zero, zero_mul, add_zero]
+    simp only [map_add (f := _), map_mul, hκC, hκXl, mul_zero, zero_mul, add_zero]
   have hpow : ∀ a b : O⟦X⟧, ∀ m, 2 ≤ m → ∃ a' b' : O⟦X⟧,
       (C (l : O) * a + X ^ l * b) ^ m = C (l : O) * a' + X ^ l * b' ∧ residueConst a' = 0 := by
     intro a b m hm
@@ -109,9 +95,9 @@ theorem level_poly_decomposition (P : PhiData O l) (s : ℕ) (hs : 1 ≤ s) :
     obtain ⟨e, h, he, hk⟩ := ih
     obtain ⟨a', b', hab, hka⟩ := hpow (1 - P.u * X ^ (l - 1)) P.u l hl2
     refine ⟨P.φ e + a' * P.φ h, b' * P.φ h, ?_, ?_⟩
-    · rw [Function.iterate_succ_apply', he, map_add, map_mul, map_mul, hCa, map_pow, hφX, hab]
+    · rw [Function.iterate_succ_apply', he, map_add (f := _), map_mul, map_mul, hCa, map_pow, hφX, hab]
       ring
-    · rw [map_add, map_mul, hka, zero_mul, add_zero, residueConst_phi_eq]
+    · rw [map_add (f := _), map_mul, hka, zero_mul, add_zero, residueConst_phi_eq]
       exact hk
 
 theorem isUnit_of_residueConst_ne_zero {e : O⟦X⟧} (hκ : residueConst e ≠ 0) : IsUnit e := by

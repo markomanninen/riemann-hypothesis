@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HomConv
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.HomConv
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -15,11 +19,11 @@ theorem UpperTheory.ConvolutionTheory.GM.convSpec :
   have h1 : ∀ x, GM.conv ν β γ x = ∫ y, β y * γ (y⁻¹ * x) ∂ν := by
     intro x
     unfold GM.conv
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact hex.choose_spec x
   refine ⟨h1, fun μ _ => ?_⟩
   have h2 : GM.conv ν β γ = g := by
     ext x
     exact (h1 x).trans (hg x).symm
   rw [h2]
-  exact hop (LL μ) ((rightRegularRep (rationalGLOne K n) μ).compHom (archP K n) continuous_archP)
+  exact hop (LL μ) ((rightRegularRep (rationalGLOne (K := K) (n := n)) μ).compHom (archP K n) continuous_archP)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSqLocalizationOfPderivMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMinimalLocalGenerators
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSqLocalizationOfPderivMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMinimalLocalGenerators
+
+@[expose] public section
 
 open scoped TensorProduct Polynomial
 open IsLocalRing TensorProduct
@@ -33,7 +37,8 @@ theorem linearIndependent_tmul_D_of_regular_system :
     rw [← RingHom.mem_ker, hker]; exact htm j
   have h0 : KaehlerDifferential.kerCotangentToTensor k A (ResidueField A)
       ((RingHom.ker (algebraMap A (ResidueField A))).toCotangent ⟨_, hx⟩) = 0 := by
-    rw [KaehlerDifferential.kerCotangentToTensor_toCotangent, map_sum, tmul_sum, ← hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [KaehlerDifferential.kerCotangentToTensor_toCotangent, map_sum, tmul_sum, ← hg]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Derivation.leibniz, tmul_add, ← smul_tmul, ← smul_tmul, Algebra.smul_def, mul_one,
       Algebra.smul_def, mul_one, htk, zero_tmul, add_zero, smul_tmul', smul_eq_mul, mul_one]

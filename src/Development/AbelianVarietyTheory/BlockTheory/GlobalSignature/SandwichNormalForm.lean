@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -24,57 +28,28 @@ end Lattice
 
 variable {X : Fields} {Pr : Primes X} {R : Ranks}
 
-variable (Pr) in
 
+variable (Pr) in
 def NF (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) (h : AutY X R j) : Prop :=
   ∃ (e : Fin (cOf R j) → ℤ) (z : Sp X.E (R.N j)),
     (∀ i, -(j : ℤ) ≤ e i ∧ e i ≤ 0) ∧
     z ∈ stdAt X.E (R.N j) P ∧
     h '' (lamYat (Pr := Pr) (R := R) j P : Set (Sp X.E (R.N j + cOf R j))) = nfLat P (R.N j) (cOf R j) e z
 
-variable (Pr) in
 
+variable (Pr) in
 def Sandwich (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)) (h : AutY X R j) : Prop :=
   (∀ x ∈ lamYat (Pr := Pr) (R := R) j P, ∃ y ∈ lamYat (Pr := Pr) (R := R) j P, h y = x) ∧
     ∀ x ∈ lamYat (Pr := Pr) (R := R) j P, ((qOf P : X.E) ^ j) • h x ∈ lamYat (Pr := Pr) (R := R) j P
 
-variable (Pr R) in
 
+variable (Pr R) in
 def InclAt : Prop :=
   ∀ (j : ℕ) (P : HeightOneSpectrum (𝓞 X.E)), P ∉ Pr.vGs → ∀ h k : AutY X R j, NF Pr j P h →
     k ∈ stabL X.E _ (lamYat (Pr := Pr) (R := R) j P) → Sandwich Pr j P (h * k)
 
 variable (Ch : Chars X Pr R.m) (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) {S : Set ℕ}
   (mu : Tup X.F X.E X.K S)
-
-def RepAt : Prop :=
-  ∀ cst : LocCst X (rowSG Pr sel mu), cst.Ok →
-  ∀ i : ℕ, i + 1 ≤ R.m - 2 → ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs →
-  ∀ (hal : AutY X R i) (h : AutY X R (i + 1)), NF Pr i P.1 hal →
-    (∀ x ∈ lamYat (Pr := Pr) (R := R) (i + 1) P.1,
-      ((qOf P.1 : X.E) ^ cst.D P) • h x ∈ lamYat (Pr := Pr) (R := R) (i + 1) P.1) →
-    FiniteSumNonzeroLargeDepth Ch sel mu cst i P hal h →
-    ∃ h' : AutY X R (i + 1), SameDC (Pr := Pr) cst.sharp (i + 1) P.1 h h' ∧ NF Pr (i + 1) P.1 h'
-
-def IdxNF (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) : Prop :=
-  ∀ j : ℕ, 1 ≤ j → j ≤ R.m - 2 → ∀ (b : L.β j) (P : rowSG Pr sel mu), P.1 ∉ Pr.vGs → NF Pr j P.1 (L.h j b P)
-
-def ChoiceAt : Prop :=
-  ∀ (cst : LocCst X (rowSG Pr sel mu)) (G : ChGlob X R.m) (m2 : ℕ) (L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))),
-    L.Ok Ch sel mu cst G m2 →
-    ∃ (A' B' : ℕ) (L' : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))) (e : ∀ j, L.β j ≃ L'.β j),
-      cst.A ≤ A' ∧ cst.B ≤ B' ∧
-      L'.Ok Ch sel mu { cst with A := A', B := B' } G m2 ∧
-      IdxNF sel mu L' ∧
-      (∀ j (b : L.β j) (P : rowSG Pr sel mu), SameDC (Pr := Pr) cst.sharp j P.1 (L.h j b P) (L'.h j (e j b) P)) ∧
-      (∀ j (b : L.β j) (P : rowSG Pr sel mu), P.1 ∈ Pr.vGs → L'.h j (e j b) P = L.h j b P) ∧
-      (∀ j (b : L.β j), L'.levG j (e j b) = L.levG j b)
-
-def NormalForm : Prop :=
-  ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (Ch : Chars X Pr R.m)
-    (sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)) (S : Set ℕ) (mu : Tup X.F X.E X.K S),
-    Module.finrank X.F X.E = 2 → IsSel X sel →
-    InclAt Pr R ∧ RepAt Ch sel mu ∧ ChoiceAt Ch sel mu
 
 theorem mem_lamYat {j : ℕ} {P : HeightOneSpectrum (𝓞 X.E)} (hP : P ∉ Pr.vGs) (y : Sp X.E (R.N j + cOf R j)) :
     y ∈ lamYat (Pr := Pr) (R := R) j P ↔ ∀ l, IntAt P (y l) := by

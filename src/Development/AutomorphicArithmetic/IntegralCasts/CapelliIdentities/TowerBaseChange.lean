@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPermOfNotInjective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AbsoluteValueAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ShiftOf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPermOfNotInjective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AbsoluteValueAlt
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.LocalSmoothExtension.exists_smooth_eq : ∀ {K : Type} [Field K] [NumberField K] {n : ℕ}
     {U : Set (GlobalTheory.CuspRep.Lie K n)}, IsOpen U →

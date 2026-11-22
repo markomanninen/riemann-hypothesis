@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal Pointwise
@@ -65,10 +69,10 @@ theorem exists_bruhat_left (μS : Measure G) [SFinite μS] (S : Set G) (hSc : μ
       _ = f n y := by rw [hinv t ht, hf n y]
 
   have hZm : Measurable (fun x : G => ∑' n, (2 : ℝ≥0∞)⁻¹ ^ n * (f n x)⁻¹ * f n x) :=
-    Measurable.ennreal_tsum fun n => (measurable_const.mul (hfm n).inv).mul (hfm n)
+    Measurable.tsum fun n => (measurable_const.mul (hfm n).inv).mul (hfm n)
   have hTm : Measurable (fun x : G =>
       ∑' n, (2 : ℝ≥0∞)⁻¹ ^ n * (f n x)⁻¹ * (O n).indicator (1 : G → ℝ≥0∞) x) :=
-    Measurable.ennreal_tsum fun n =>
+    Measurable.tsum fun n =>
       (measurable_const.mul (hfm n).inv).mul (measurable_one.indicator (hOo n).measurableSet)
   refine ⟨fun x => (∑' n, (2 : ℝ≥0∞)⁻¹ ^ n * (f n x)⁻¹ * (O n).indicator (1 : G → ℝ≥0∞) x) *
       (∑' n, (2 : ℝ≥0∞)⁻¹ ^ n * (f n x)⁻¹ * f n x)⁻¹, hTm.mul hZm.inv, fun y => ?_⟩

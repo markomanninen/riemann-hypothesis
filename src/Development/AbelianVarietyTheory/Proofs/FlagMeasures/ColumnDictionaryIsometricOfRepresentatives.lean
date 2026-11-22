@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumInnerClassRepsIndep
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColsSharpDictionary
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportRepresentsClassesWeightOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumInnerClassRepsIndep
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ColsSharpDictionary
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TransportRepresentsClassesWeightOneStatement
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusGenDegreeHomToZlStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ResBound
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteQuotientPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusGenDegreeHomToZlStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem exists_cl (c : H1 (twCoef (Γ.Wchi 1) Γ.χ₁ X) ⊤) : ∃ f hf, cl Γ
   have hlc : IsLocallyConstant (z : G → O ⊗[O] X) := z.2.1.1
   refine ⟨fun g => TensorProduct.lid O X ((z : G → O ⊗[O] X) g),
     ⟨hlc.comp _, fun g h => by
-      simp only [GlobalTheory.IndefiniteRowSideFullHecke.AdmissibleCharUnramified.cocycle_add Γ X z g h, map_add]⟩, ?_⟩
+      simp only [GlobalTheory.IndefiniteRowSideFullHecke.AdmissibleCharUnramified.cocycle_add Γ X z g h, map_add (f := _)]⟩, ?_⟩
   unfold cl
   congr 1
   apply Subtype.ext
@@ -48,7 +52,7 @@ theorem exists_cl (c : H1 (twCoef (Γ.Wchi 1) Γ.χ₁ X) ⊤) : ∃ f hf, cl Γ
   rw [← TensorProduct.lid_symm_apply, LinearEquiv.symm_apply_apply]
 
 theorem IsLcHom.map {f : G → X} (hf : IsLcHom f) (φ : X →ₗ[O] X') : IsLcHom (fun g => φ (f g)) :=
-  ⟨hf.1.comp φ, fun g h => by simp only [hf.2 g h, map_add]⟩
+  ⟨hf.1.comp φ, fun g h => by simp only [hf.2 g h, map_add (f := _)]⟩
 
 theorem IsLcHom.sub {f f' : G → X} (hf : IsLcHom f) (hf' : IsLcHom f') : IsLcHom (fun g => f g - f' g) :=
   ⟨hf.1.comp₂ hf'.1 (· - ·), fun g h => by
@@ -94,10 +98,10 @@ theorem cl_mem_hom {f : G → X} (hf : IsLcHom f) (I : Subgroup G) (h : ∀ g �
 
 theorem isLcHom_unr {l : ℕ} [Fact l.Prime] [Algebra ℤ_[l] O] [Finite X] (ν : G →* Multiplicative ℤ_[l])
     (hν : Continuous ν) (x : X) : IsLcHom (fun g => algebraMap ℤ_[l] O (Multiplicative.toAdd (ν g)) • x) := by
-  refine ⟨?_, fun g h => by simp only [map_mul, toAdd_mul, map_add, add_smul]⟩
+  refine ⟨?_, fun g h => by simp only [map_mul, toAdd_mul, map_add (f := _), add_smul]⟩
   have hadd : ∀ s t : ℤ_[l], algebraMap ℤ_[l] O (s + t) • x =
       algebraMap ℤ_[l] O s • x + algebraMap ℤ_[l] O t • x := fun s t => by
-    rw [map_add, add_smul]
+    rw [map_add (f := _), add_smul]
   have hN0 : Nat.card X ≠ 0 := Nat.card_pos.ne'
   obtain ⟨e, m, hm, hNe⟩ := Nat.exists_eq_pow_mul_and_not_dvd hN0 l (Fact.out : l.Prime).one_lt.ne'
   have hmu : IsUnit (m : ℤ_[l]) := by

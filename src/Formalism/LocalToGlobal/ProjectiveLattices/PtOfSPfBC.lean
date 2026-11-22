@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeC
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.GenFrPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeC
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.InvariantDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -67,7 +72,7 @@ theorem brauerInvFun_brauerInflation (n : ℕ+)
   have hex : ∃ (m : ℕ+) (z : groupCohomology (galUnits F (unramifiedLevel F Ω m)) 2),
       (brauerInflation (unramifiedLevel F Ω m)).hom z =
         (brauerInflation (unramifiedLevel F Ω n)).hom y := ⟨n, y, rfl⟩
-  rw [brauerInvFun, dif_pos hex]
+  rw [brauerInvFun, dite_eq_left hex]
   exact unramifiedLevelInv_eq_of_brauerInflation_eq F Ω hex.choose_spec.choose_spec
 
 end GroundTheory.ProfCoh

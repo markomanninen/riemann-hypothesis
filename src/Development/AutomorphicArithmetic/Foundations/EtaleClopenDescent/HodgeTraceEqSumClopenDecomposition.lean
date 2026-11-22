@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormResFormPullFormPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGaloisCover
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.OmegaPullOmegaTraceOfSecTraceOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormResFormPullFormPull
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.HodgeCoh GlobalTheory.CechDR KaehlerDifferential GlobalTheory.W1
 
 namespace UpperTheory.TrSum
@@ -11,14 +16,14 @@ section Alg
 variable {R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [Module.Finite R M]
   [Module.Projective R M] [AddCommGroup N] [Module R N] [Module.Finite R N] [Module.Projective R N]
 
-open TensorProduct in
 
+open TensorProduct in
 private theorem projTrace_comm (u : M →ₗ[R] N) (v : N →ₗ[R] M) :
     projTrace R N (u ∘ₗ v) = projTrace R M (v ∘ₗ u) := by
   obtain ⟨t, rfl⟩ := (dualTensorHom_bijective (R := R) (M := M) (N := N)).2 u
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_comp, LinearMap.comp_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_comp, LinearMap.comp_add, ha, hb]
   | tmul ξ n =>
     have e1 : dualTensorHom R M N (ξ ⊗ₜ n) ∘ₗ v = (ξ ∘ₗ v).smulRight n := by ext; simp
     have e2 : v ∘ₗ dualTensorHom R M N (ξ ⊗ₜ n) = ξ.smulRight (v n) := by ext; simp
@@ -42,7 +47,8 @@ private theorem algTrace_eq_sum {ι : Type*} [Fintype ι] {B B' : Type*} {C : ι
     rwa [hE, Pi.single_eq_same] at this
   have h2 : ∀ x, ∑ i, t i (r i x) = x := fun x ↦ by
     apply E.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have e : ∀ i, E (t i (r i x)) = Pi.single i (r i x) := fun i ↦ E.apply_symm_apply _
     simp only [e]
     rw [Finset.univ_sum_single]
@@ -51,7 +57,8 @@ private theorem algTrace_eq_sum {ι : Type*} [Fintype ι] {B B' : Type*} {C : ι
     ext x
     simp only [LinearMap.sum_apply, LinearMap.comp_apply]
     exact (h2 _).symm
-  rw [algTrace_apply, h3, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [algTrace_apply, h3, map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [projTrace_comm, algTrace_apply]
   congr 1
@@ -179,7 +186,8 @@ private theorem omegaTrace_eq_sum {s : Z ⟶ Sp k} {s' : Y ⟶ Sp k} {c : Y ⟶ 
     rw [piece_app_smul h (W m) (hg m) j U]
     exact omegaTrace_toOm_smul_formPull (hg m) j hU _ x
   simp only [e]
-  rw [secTrace_eq_sum W hd hc hU b', Finset.sum_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [secTrace_eq_sum W hd hc hU b', Finset.sum_smul, map_sum]
 
 private theorem cohOn_map_sum {X : Scheme.{0}} (R : Type) [CommRing R] [Algebra R Γ(X, ⊤)]
     {F G : X.Modules} {ι : Type} (t : Finset ι) (φ : ι → (F ⟶ G)) (U : X.Opens) (n : ℕ) :

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.IsUnitDetOfMemGV
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.UtSubOneLast
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.IsUnitDetOfMemGV
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerPairs.UtSubOneLast
+
+@[expose] public section
 
 open Matrix
 
@@ -76,7 +80,7 @@ theorem Z_cR (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (
       herm (Hpk k r) x (fvec k r y a) = 0 := by
     intro y a ha x hx
     unfold fvec
-    rw [dif_pos ha]
+    rw [dite_eq_left ha]
     simp only [herm, bvec, dotProduct, Matrix.mulVec, Pi.star_apply]
     rw [Finset.sum_eq_single (eI k r ⟨a.val, ha⟩)]
     · simp only [Pi.single_eq_same, star_one, one_mul]
@@ -125,7 +129,7 @@ theorem Z_cL (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (γ : B.Mat k r) (
       herm (Hpk k r) x (fvec k r y a) = 0 := by
     intro y a ha x hx
     unfold fvec
-    rw [dif_pos ha]
+    rw [dite_eq_left ha]
     simp only [herm, bvec, dotProduct, Matrix.mulVec, Pi.star_apply]
     rw [Finset.sum_eq_single (eI k r ⟨a.val, ha⟩)]
     · simp only [Pi.single_eq_same, star_one, one_mul]
@@ -179,7 +183,7 @@ theorem herm_bvec_fvec (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (j : Fin (2
       if_neg (fun h => absurd h.1 (by omega))]
   have hf : fvec k r z a = bvec (eI k r ⟨a.val, ha⟩) := by
     unfold fvec
-    rw [dif_pos ha]
+    rw [dite_eq_left ha]
   rw [hf]
   have h1 : herm (Hpk k r) (bvec j) (bvec (eI k r ⟨a.val, ha⟩)) = Hpk k r (eI k r ⟨a.val, ha⟩) j := by
     simp [herm, bvec, dotProduct, Matrix.mulVec, Pi.single_apply]
@@ -193,7 +197,7 @@ theorem N2gen (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (M : B.Mat k r)
   classical
   have hfa : fvec k r z (Fin.castSucc a) = bvec (eI k r a) := by
     unfold fvec
-    rw [dif_pos (by simp)]
+    rw [dite_eq_left (by simp)]
     rfl
   have h1 := congrFun (congrFun hM i) (Fin.castSucc a)
   have hL : (M * Ff k r z) i (Fin.castSucc a) = M i (eI k r a) := by
@@ -213,7 +217,7 @@ theorem N2gen (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (M : B.Mat k r)
         have hbr : b.val < r := by omega
         have : fvec k r z b i = 0 := by
           unfold fvec
-          rw [dif_pos hbr]
+          rw [dite_eq_left hbr]
           exact Pi.single_eq_of_ne (fun h' => by
             have := congrArg Fin.val h'
             simp [eI] at this
@@ -238,7 +242,7 @@ theorem N3gen (k r : ℕ) (z : Fin (2 * r + k + 1) → ℂ) (M : B.Mat k r) (i j
     by_cases hb : b.val < r
     · have : fvec k r z b i = 0 := by
         unfold fvec
-        rw [dif_pos hb]
+        rw [dite_eq_left hb]
         exact Pi.single_eq_of_ne (fun h' => by
           have := congrArg Fin.val h'
           simp [eI] at this

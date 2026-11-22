@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -39,7 +43,7 @@ theorem pow_div_mem_of_esymm_pow_div_mem (K : Type) [Field K] (V : ValuationSubr
     rw [Polynomial.eval_multiset_prod, Multiset.prod_eq_zero_iff]
     simp only [Multiset.map_map, Function.comp_def, eval_sub, eval_X, eval_C]
     exact Multiset.mem_map.mpr ⟨x a, by simp [s], sub_self _⟩
-  rw [Multiset.prod_X_sub_X_eq_sum_esymm, eval_finset_sum, Finset.sum_range_succ'] at h0
+  rw [Multiset.prod_X_sub_X_eq_sum_esymm, Polynomial.eval_finsetSum, Finset.sum_range_succ'] at h0
   simp only [eval_mul, eval_pow, eval_neg, eval_one, eval_C, eval_X, pow_zero, one_mul,
     Nat.sub_zero] at h0
   have he0 : s.esymm 0 = 1 := by simp [Multiset.esymm, Multiset.powersetCard_zero_left]

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ResCoeff
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubMemOfMk
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormCocycle
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormAdd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormAction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormLocalOfFrame
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartIsGood
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartDividedPowersGradedConstant
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChartFromCoordinates
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChart
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftCocycleMem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ResCoeff
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.GlobalSerreRelations.GlobSerreSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubMemOfMk
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.StCocycle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormCocycle
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormAdd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormAction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedFormLocalOfFrame
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SheafFiltrationProperty
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartIsGood
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartDividedPowersGradedConstant
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChartFromCoordinates
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsChart
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LiftCocycleMem
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -30,11 +35,6 @@ theorem sub_mem_of_lift {W : Y.Opens} {T T' : Thick L} (φ : T ⟶ T') (h : InY 
   refine Ideal.Quotient.eq.1 ?_
   rw [hv', ev_nat 𝔭 φ h h', ← hv]
   rfl
-
-theorem lft_mul_sub {W : Y.Opens} (T : Thick L) (h : InY 𝔭 W T) (f g : Γ(Y, W)) :
-    lft 𝔭 W T f * lft 𝔭 W T g - lft 𝔭 W T (f * g) ∈ T.J := by
-  refine Ideal.Quotient.eq.1 ?_
-  rw [map_mul, lft_spec 𝔭 T h, lft_spec 𝔭 T h, lft_spec 𝔭 T h, map_mul]
 
 theorem J_mul_sFil (P : ObjectProperty (Thick L)) (r : ℕ) (T : P.FullSubcategory) {v w : (sP P).A.obj T}
     (hv : v ∈ (sP P).J.S T) (hw : w ∈ (sFil P r).S T) : v * w ∈ (sFil P ((r : ℤ) + 1)).S T :=
@@ -69,7 +69,7 @@ variable {Q : ObjectProperty (Thick L)} (hF : IsFil (sP Q) (sFil Q)) {W : Y.Open
 theorem fAct_add (f g : Γ(Y, W)) (c : HU (GF L r) Q r) :
     fAct 𝔭 hF hQ r (f + g) c = fAct 𝔭 hF hQ r f c + fAct 𝔭 hF hQ r g c := by
   refine mulMor_add hF r _ _ _ (fun T => sub_mem_of_mk (T := T.obj) ?_) r c
-  rw [mk_evLift 𝔭, map_add (Ideal.Quotient.mk T.obj.J), mk_evLift 𝔭, mk_evLift 𝔭, map_add]
+  rw [mk_evLift 𝔭, map_add (Ideal.Quotient.mk T.obj.J), mk_evLift 𝔭, mk_evLift 𝔭, map_add (f := _)]
 
 theorem fAct_mul (f g : Γ(Y, W)) (c : HU (GF L r) Q r) :
     fAct 𝔭 hF hQ r (f * g) c = fAct 𝔭 hF hQ r f (fAct 𝔭 hF hQ r g c) := by
@@ -86,8 +86,6 @@ def fHom : Γ(Y, W) →+* AddMonoid.End (HU (GF L r) Q r) :=
                 map_one' := AddMonoidHom.ext fun c => fAct_one 𝔭 hF hQ r c
                 map_mul' := fun f g => AddMonoidHom.ext fun c => fAct_mul 𝔭 hF hQ r f g c }
     fun f g => AddMonoidHom.ext fun c => fAct_add 𝔭 hF hQ r f g c
-
-theorem fHom_apply (f : Γ(Y, W)) (c : HU (GF L r) Q r) : fHom 𝔭 hF hQ r f c = fAct 𝔭 hF hQ r f c := rfl
 
 theorem res_fAct {Q' : ObjectProperty (Thick L)} (hF' : IsFil (sP Q') (sFil Q')) {W' : Y.Opens}
     (hQ' : ∀ T, Q' T → InY 𝔭 W' T) (hW : W' ≤ W) (hle : Q' ≤ Q) (f : Γ(Y, W)) (c : HU (GF L r) Q r) :

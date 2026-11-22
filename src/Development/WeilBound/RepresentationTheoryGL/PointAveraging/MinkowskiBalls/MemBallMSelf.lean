@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GermIntegrals.StepSt
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.ThetaGL ValuativeRel PositivityTheory.Tls2.Ming3
 
@@ -120,7 +124,8 @@ theorem key (hball : BallSt) (hnf : NfSt) (hcore : CoreSt) {j : ℕ} (hj : j < r
     rw [Submodule.coe_sum]
     simp only [Submodule.coe_smul]
     exact hsum
-  rw [hΨeq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΨeq, map_sum]
   apply Finset.sum_eq_zero
   intro x hx
   rw [map_smul, hpiece x hx, smul_zero]

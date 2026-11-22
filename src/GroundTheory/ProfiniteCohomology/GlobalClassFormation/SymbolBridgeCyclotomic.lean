@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SymbolBridgeSum
-import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
-import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
-import GroundTheory.GlobalFields.NormResidueSymbol.RationalDiagonal
-import GroundTheory.GlobalFields.CyclotomicCharacters.Character
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.SymbolBridgeSum
+public import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
+public import GroundTheory.GlobalFields.NormResidueSymbol.RestrictNormalInfiniteLocalSymbol
+public import GroundTheory.GlobalFields.NormResidueSymbol.RationalDiagonal
+public import GroundTheory.GlobalFields.CyclotomicCharacters.Character
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

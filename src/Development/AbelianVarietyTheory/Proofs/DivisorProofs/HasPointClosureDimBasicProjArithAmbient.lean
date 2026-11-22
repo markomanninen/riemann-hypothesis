@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RingKrullDimQuotientEqOfMemMinimalPrimes
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -114,8 +118,8 @@ end GlobalTheory.MixHt.DimBasic
 
 namespace GlobalTheory.MixHt
 
-open DimBasic in
 
+open DimBasic in
 theorem hasDim_basic : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) (p : X ⟶ Sp k), IsAmb p →
     (∃ m : ℕ, ∀ x : X, ∃ d ≤ m, HasDim x d) ∧
     (∀ (x : X) (d d' : ℕ), HasDim x d → HasDim x d' → d = d') ∧

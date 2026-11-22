@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -56,7 +60,7 @@ theorem exists_denominator {A C F F' ι : Type*} [CommRing A] [IsDomain A] [Comm
     | add x y _ _ hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [map_add, map_add, map_add, Finsupp.add_apply, ha, hb, mul_add]⟩
+      exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), map_add (f := _), Finsupp.add_apply, ha, hb, mul_add]⟩
     | smul r x _ hx =>
       obtain ⟨a, ha⟩ := hx
       refine ⟨r * a, ?_⟩

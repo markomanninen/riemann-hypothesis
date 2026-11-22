@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreUniformisationDataIsEvenCubicalOnClosedFibreStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeHomEqOfKerLeOfNilpotentReductionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusHomEqOfNilpotentStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOnTorusDescendsAlongLocalHomStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SplitTorusExtensionDescends
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClosedFibreSplitOfArcDataFiniteExtension
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteDVRResidueGaloisAutomorphisms
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitExtDatumOfSplitTorusExtension
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsMemCommonChart
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SplitTorusHomPullbackLocalTrivial
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ESecCompOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreUniformisationDataIsEvenCubicalOnClosedFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeHomEqOfKerLeOfNilpotentReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitTorusHomEqOfNilpotentStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvenOnTorusDescendsAlongLocalHomStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SplitTorusExtensionDescends
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ClosedFibreSplitOfArcDataFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteDVRResidueGaloisAutomorphisms
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitExtDatumOfSplitTorusExtension
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsMemCommonChart
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SplitTorusHomPullbackLocalTrivial
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ESecCompOfIsGrpPullback
+
+@[expose] public section
 
 noncomputable section
 
@@ -85,8 +89,8 @@ theorem normal_of_isInvariant (A B G : Type) [CommRing A] [CommRing B] [Algebra 
   obtain ⟨σ, rfl⟩ := IsFractionRing.stabilizerHom_surjective G P Q k K τ
   exact ⟨σ.1, fun x => (IsFractionRing.stabilizerHom_apply_apply_mk G P Q k K σ x).symm⟩
 
-open GlobalTheory.UU GlobalTheory.SplitTorus in
 
+open GlobalTheory.UU GlobalTheory.SplitTorus in
 theorem exists_baseChange {S S' : Scheme.{0}} {f : S' ⟶ S} {X : Type} [AddCommGroup X] {G B : Over S} [GrpObj G]
     [GrpObj B] {G' B' : Over S'} [GrpObj G'] [GrpObj B'] {F : G'.left ⟶ G.left} {p : B'.left ⟶ B.left}
     (hF : IsGrpPullback G' G f F) (hB : IsGrpPullback B' B f p) (q : G ⟶ B) (i : splitTorus S X ⟶ G) [IsMonHom q]
@@ -133,8 +137,8 @@ variable {k K : Type} [Field k] [Field K] [Algebra k K] {G₀ B₀ : Over (Sp k)
   (hinv : ∀ (τ : K ≃ₐ[k] K) (s : G.left ⟶ G.left), s ≫ φG = φG → s ≫ G.hom = G.hom ≫ spMap (τ : K →+* K) →
     s ≫ q.left ≫ φ = q.left ≫ φ ∧ bcMap (spMap (τ : K →+* K)) X ≫ i.left = i.left ≫ s)
 
-include hB₀ hG hB H hinv in
 
+include hB₀ hG hB H hinv in
 theorem agree_artinian {A : Type} [CommRing A] [IsLocalRing A] [IsArtinianRing A] (a b : K →+* A) (τ : K ≃ₐ[k] K)
     (hab : a.comp (algebraMap k K) = b.comp (algebraMap k K))
     (hτ : (residue A).comp b = ((residue A).comp a).comp (τ : K →+* K)) :
@@ -217,8 +221,8 @@ theorem agree_artinian {A : Type} [CommRing A] [IsLocalRing A] [IsArtinianRing A
     · rw [Category.assoc, hgb.1.w, reassoc_of% ez, hy]
   rw [← ex, ← ey, Category.assoc, Category.assoc, ← fa, ← fb, eq]
 
-include hB₀ hG hB H hinv in
 
+include hB₀ hG hB H hinv in
 theorem nonempty_tq_of_normal [FiniteDimensional k K] [Normal k K] [Module.Free ℤ X] [Module.Finite ℤ X] :
     Nonempty (TQ G₀ X) := by
   have key : ∀ (O : CommRingCat.{0}) [IsLocalRing O] (u v : Spec O ⟶ Sp K),
@@ -288,8 +292,8 @@ theorem nonempty_tq_of_normal [FiniteDimensional k K] [Normal k K] [Module.Free 
 
 end Descent
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem nonempty_tq {R R' : Type} [CommRing R] [IsDomain R] [IsLocalRing R] [CommRing R'] [IsDomain R'] [IsLocalRing R']
     {ρ : R →+* R'} (hfin : ρ.Finite) (hgal : IsGal ρ) {D : DegData R (maximalIdeal R)}
     {D' : DegData R' (maximalIdeal R')} {hD : IsPullDeg ρ D.toPre D'.toPre} {A' : PolAV (Sp (FractionRing R'))}
@@ -391,7 +395,7 @@ theorem nonempty_tq {R R' : Type} [CommRing R] [IsDomain R] [IsLocalRing R] [Com
 
 theorem evenOn_of_galAct : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], Base R → ∀ (R' : Type) [CommRing R'] [IsDomain R'] [IsLocalRing R'] (ρ : R →+* R'), FinExt ρ → IsGal ρ → ∀ (D : DegData R (maximalIdeal R)) (D' : DegData R' (maximalIdeal R')) (hD : IsPullDeg ρ D.toPre D'.toPre) (A' : PolAV (Sp (FractionRing R'))) (G' : Over (Sp R')) [GrpObj G'] [IsCommMonObj G'], IsSemiAbelian G' → ∀ (U' : Unif (maximalIdeal R') D' A' G'), ∀ (a : GalAct ρ hD U') (G : Over (Sp R)) [GrpObj G] [IsCommMonObj G] (β : G'.left ⟶ G.left), IsSemiAbelian G → IsGrpPullback G' G (spMap ρ) β → (∀ σ, a.act σ ≫ β = β) → ∀ P : GlobalTheory.UU.CP G, LBIso U'.LG.L (P.L.L.pull β) → EvenOn P := by
   intro R _ _ _ _ R' _ _ _ ρ hρ hgal D D' hD A' G' _ _ hG' U' a G _ _ β hG hβ hinv P hP
-  have hloc : IsLocalHom ρ := ((local_hom_TFAE ρ).out 2 0).1 (ResidueGalois.map_maximalIdeal_le ρ hρ.2.2.to_isIntegral)
+  have hloc : IsLocalHom ρ := ((local_hom_tfae ρ).out 3 1).1 (ResidueGalois.map_maximalIdeal_le ρ hρ.2.2.to_isIntegral)
   have hp : IsProper (pullback.snd G'.hom (jK R')) := by
     have e : pullback.snd G'.hom (jK R') = U'.gen.hom.left ≫ A'.A.hom := (Over.w U'.gen.hom).symm
     have : IsIso U'.gen.hom.left := inferInstanceAs (IsIso ((Over.forget _).map U'.gen.hom))

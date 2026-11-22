@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualFor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsSelfDualOfHasConductor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSelfDualFor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsSelfDualOfHasConductor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+
+@[expose] public section
+
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.WeylFour
@@ -15,11 +20,11 @@ variable {F : Type} [Field F] [NumberField F]
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-local instance borelFvLoc (v : Pl F) : BorelSpace (Fv F v) := ⟨rfl⟩
+local instance borelFvLoc (v : Pl (F := F)) : BorelSpace (Fv F v) := ⟨rfl⟩
 
 open GlobalTheory.SplitWeil
 
-theorem norm_addChar_eq_one {v : Pl F} (χ : AddChar (Fv F v) ℂ) (hχ : Continuous χ) (x : Fv F v) :
+theorem norm_addChar_eq_one {v : Pl (F := F)} (χ : AddChar (Fv F v) ℂ) (hχ : Continuous χ) (x : Fv F v) :
     ‖χ x‖ = 1 := by
   have hb : ∀ y : Fv F v, ‖χ y‖ ≤ 1 := by
     intro y
@@ -48,7 +53,7 @@ theorem norm_addChar_eq_one {v : Pl F} (χ : AddChar (Fv F v) ℂ) (hχ : Contin
   refine le_antisymm h1 ?_
   nlinarith [norm_nonneg (χ x), norm_nonneg (χ (-x))]
 
-def toCirc {v : Pl F} (χ : AddChar (Fv F v) ℂ) (h : ∀ x, ‖χ x‖ = 1) : AddChar (Fv F v) Circle where
+def toCirc {v : Pl (F := F)} (χ : AddChar (Fv F v) ℂ) (h : ∀ x, ‖χ x‖ = 1) : AddChar (Fv F v) Circle where
   toFun x := ⟨χ x, by simpa [Submonoid.unitSphere, mem_sphere_zero_iff_norm] using h x⟩
   map_zero_eq_one' := by
     apply Circle.ext
@@ -57,17 +62,17 @@ def toCirc {v : Pl F} (χ : AddChar (Fv F v) ℂ) (h : ∀ x, ‖χ x‖ = 1) : 
     apply Circle.ext
     exact χ.map_add_eq_mul a b
 
-theorem coe_toCirc {v : Pl F} (χ : AddChar (Fv F v) ℂ) (h : ∀ x, ‖χ x‖ = 1) (x : Fv F v) :
+theorem coe_toCirc {v : Pl (F := F)} (χ : AddChar (Fv F v) ℂ) (h : ∀ x, ‖χ x‖ = 1) (x : Fv F v) :
     ((toCirc χ h x : Circle) : ℂ) = χ x := rfl
 
-theorem continuous_psiAt' (ψ : AddChar (AF F) ℂ) (hψ : Continuous ψ) (v : Pl F) :
+theorem continuous_psiAt' (ψ : AddChar (AF F) ℂ) (hψ : Continuous ψ) (v : Pl (F := F)) :
     Continuous (GlobalTheory.LatVac.psiAt ψ v) := by
   have hj : Continuous (GlobalTheory.LatVac.liftV (F := F) v) := by
     change Continuous fun a => ((0 : Ainf F), GlobalTheory.AdelicU.singleFin v a)
     exact continuous_const.prodMk (GlobalTheory.AdelicU.continuous_singleFin v)
   exact hψ.comp hj
 
-theorem measV_selfDual (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (v : Pl F) (hne : ∃ x, psiLoc ψ v x ≠ 1) :
+theorem measV_selfDual (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (v : Pl (F := F)) (hne : ∃ x, psiLoc ψ v x ≠ 1) :
     ∃ (h : ∀ x, ‖GlobalTheory.LatVac.psiAt ψ v x‖ = 1) (c : (Fv F v)ˣ),
       HasConductor (toCirc _ h) c ∧ IsSelfDual (toCirc _ h) (measV ψ v) := by
   have hc := continuous_psiAt' ψ hψ.1 v
@@ -85,7 +90,7 @@ theorem measV_selfDual (ψ : AddChar (AF F) ℂ) (hψ : IsStd ψ) (v : Pl F) (hn
   refine ⟨hn, c, hcond, ?_⟩
   have hm : measV ψ v = hex.choose := by
     unfold measV
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   rw [hm]
   exact ⟨hex.choose_spec.1, fun f hf => hex.choose_spec.2 f hf⟩
 
@@ -95,7 +100,7 @@ namespace GlobalTheory.WeylFour.LocInv
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-theorem fourV_fourV : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsStd ψ → ∀ v : Pl F,
+theorem fourV_fourV : ∀ (F : Type) [Field F] [NumberField F] (ψ : AddChar (AF F) ℂ), IsStd ψ → ∀ v : Pl (F := F),
     (∃ x, psiLoc ψ v x ≠ 1) →
     ∀ (κ : Type) [Fintype κ], ∀ φ ∈ SB (κ → Fv F v), fourV ψ v (fourV ψ v φ) = fun x => φ (-x) := by
   intro F _ _ ψ hψ v hne κ _ φ hφ

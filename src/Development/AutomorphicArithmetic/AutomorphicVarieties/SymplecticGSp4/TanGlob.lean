@@ -1,10 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpWApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.CopNormLt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.Minkowski
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.PtInSmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpWApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.LMemMax
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.CopNormLt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PlacesOfRationals.Minkowski
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PrimitiveFrobeniusFixed.PlaceBasic
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
 namespace UpperTheory.V.GradeZeroInterpolatingElement.TangentGlobal
@@ -85,7 +90,7 @@ private theorem snd_adic {O R Γ : Type} [CommRing O] [IsLocalRing O] [IsNoether
         refine ⟨by rw [pow_succ]; exact Ideal.mul_mem_mul a1 (h0 b hb), add_mem (Ideal.mul_mem_right _ _ a1) ?_⟩
         rw [pow_succ]
         exact Ideal.mul_mem_mul a2 (h0 b hb)
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact ⟨add_mem ha.1 hb.1, add_mem ha.2 hb.2⟩
   intro N
   rw [IsLocallyConstant.iff_eventually_eq]
@@ -242,7 +247,7 @@ private theorem wt_neg (D : Raw Ω c) (hD : D.Good) (hS : SoV Ω l) (r' : G ℚ 
     rw [← Units.val_mul, show D.ps 2 = D.al from rfl, show D.ps 0 = D.al * D.Psi from rfl]
     simp
   have hz : ∀ g h, f (zOf D r' (g * h) 2 0) = f (zOf D r' g 2 0) + θ g * f (zOf D r' h 2 0) := fun g h => by
-    rw [zOf_coc D r' hf, hθ, hP, map_add, map_mul]
+    rw [zOf_coc D r' hf, hθ, hP, map_add (f := _), map_mul]
   have hl : ∃ m, ∀ g ∈ D.Gp l, f (zOf D r' g 2 0) = θ g * m - m := by
     obtain ⟨a, m, ha, hm⟩ := (tanLz D hD).1 _ (zOf_tan D hD r' hr hf _ hw)
     have ha' : f a ≠ 0 := (map_ne_zero_iff f hfi).2 ha
@@ -281,7 +286,7 @@ private theorem wt_neg (D : Raw Ω c) (hD : D.Good) (hS : SoV Ω l) (r' : G ℚ 
   have e1 : f (D.ps 0 D.g0⁻¹) * f (D.ps 0 D.g0) = 1 := by rw [← map_mul, ps_inv, map_one]
   have e2 : θ D.g0 * f (D.Psi D.g0) = 1 := by rw [hθ, ← map_mul, MonoidHom.inv_apply, Units.inv_mul, map_one]
   have e3 : θ D.g0⁻¹ = f (D.Psi D.g0) := by rw [hθ, MonoidHom.inv_apply, map_inv, inv_inv]
-  rw [map_add, map_mul, map_mul, map_mul, map_zero, hm, hm, e3, show D.th = D.ps 0 from rfl] at h2
+  rw [map_add (f := _), map_mul, map_mul, map_mul, map_zero, hm, hm, e3, show D.th = D.ps 0 from rfl] at h2
   have n : ∀ γ : G ℚ Ω →* c.Oˣ, Raw.bar γ D.g0 ≠ 1 → f (γ D.g0) - 1 ≠ 0 := fun γ hγ h => hγ (by
     have h' : (γ D.g0 : c.O) = 1 := hfi ((sub_eq_zero.1 h).trans (map_one f).symm)
     rw [Raw.bar, h', map_one])

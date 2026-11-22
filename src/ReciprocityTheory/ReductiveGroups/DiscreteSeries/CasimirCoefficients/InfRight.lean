@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LowMinusUpExpand
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousConjProjection
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRightA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.LowMinusUpExpand
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ContinuousConjProjection
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InfRightA
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ lemma infR_skew (T : KType ε (lowK ε lam)) (μ : Fin n → ℤ) (hμ : IsMu la
   have hs : fderiv ℂ (psM T μ) x (A * x) + fderiv ℂ (psM T μ) x (x * A) =
       -(T.dτ A * psM T μ x + psM T μ x * T.dτ A) := by
     apply smul_cancel_lemma Complex.I_ne_zero
-    simpa only [map_smul, map_add, smul_mul_assoc, mul_smul_comm, smul_add, smul_neg] using h1
+    simpa only [map_smul, map_add (f := _), smul_mul_assoc, mul_smul_comm, smul_add, smul_neg] using h1
 
   have hd : fderiv ℂ (psM T μ) x (x * A) - fderiv ℂ (psM T μ) x (A * x) =
       psM T μ x * T.dτ A - T.dτ A * psM T μ x := by
@@ -75,9 +79,9 @@ theorem psM_inf_right (T : KType ε (lowK ε lam)) (μ : Fin n → ℤ) (hμ : I
   have hA' := infR_skew T μ hμ hx hA
   have hB' := infR_skew T μ hμ hx hB
   constructor
-  · simp only [mul_add, add_mul, mul_smul_comm, smul_mul_assoc, map_add, map_smul, hA'.1, hB'.1,
+  · simp only [mul_add, add_mul, mul_smul_comm, smul_mul_assoc, map_add (f := _), map_smul, hA'.1, hB'.1,
       neg_add, smul_neg]
-  · simp only [mul_add, add_mul, mul_smul_comm, smul_mul_assoc, map_add, map_smul, hA'.2, hB'.2,
+  · simp only [mul_add, add_mul, mul_smul_comm, smul_mul_assoc, map_add (f := _), map_smul, hA'.2, hB'.2,
       neg_add, smul_neg]
 
 end ReciprocityTheory.ChartRestriction.DS.S7

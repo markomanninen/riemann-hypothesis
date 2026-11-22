@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
-import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
-import Formalism.SharpRestriction.LevelLetterCocycles.DualLemmaOfDeterminant
-import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FilDimOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniversalGeneralOfRestriction
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+public import Formalism.SharpRestriction.LevelLetterCocycles.DualLemmaOfDeterminant
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FilDimOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ theorem refine (b : Basis ι O M) (S : Set ι) (P : Submodule O M) (hP : P ≤ s
     have hout : ∀ i ∉ S, g i = 0 := by
       intro i₀ hi₀
       have h1 := congrArg (fun y => b.repr y i₀) hg
-      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply,
         map_zero, Finsupp.coe_zero, Pi.zero_apply] at h1
       rw [Finset.sum_eq_single i₀] at h1
       · simpa [f, dif_neg hi₀, Basis.repr_self] using h1
@@ -286,7 +291,8 @@ theorem isBas_change (hR : Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT
       ext k'
       simp [Finset.sum_apply, Pi.single_apply]
     have h2 := congrArg (fun y => Bs.repr y t'') h1
-    simp only [Basis.repr_self, map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Basis.repr_self, map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply,
       Finsupp.smul_apply, smul_eq_mul, Finsupp.single_apply] at h2
     rw [← h2]
   let e' : Fin r → W.DD T := fun t => ∑ k, Bs t k • e k
@@ -304,7 +310,8 @@ theorem isBas_change (hR : Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT
     rw [smul_comm, (he.1 k).2.1]
   · intro δ hδ
     show W.γD T δ (∑ k, Bs t k • e k) = ∑ k, Bs t k • e k
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, (he.1 k).2.2 δ hδ]
   · obtain ⟨f, hf, hfu⟩ := he.2 x hx hxD
@@ -316,7 +323,8 @@ theorem isBas_change (hR : Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT
       have e1 : ∑ t, (∑ k', f k' * algebraMap O (PowerSeries O) (C k' t)) *
           algebraMap O (PowerSeries O) (Bs t k) =
           ∑ k', f k' * algebraMap O (PowerSeries O) (∑ t, C k' t * Bs t k) := by
-        simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, mul_assoc]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, mul_assoc]
         exact Finset.sum_comm
       rw [e1]
       simp [hCB]
@@ -328,7 +336,8 @@ theorem isBas_change (hR : Formalism.MainNotions.RamifiedCoefficientChains.Sh.BT
       have e1 : ∑ k, (∑ t, a t * algebraMap O (PowerSeries O) (Bs t k)) *
           algebraMap O (PowerSeries O) (C k t'') =
           ∑ t, a t * algebraMap O (PowerSeries O) (∑ k, Bs t k * C k t'') := by
-        simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, mul_assoc]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, mul_assoc]
         exact Finset.sum_comm
       rw [e1]
       simp [hBC]
@@ -341,7 +350,8 @@ theorem cmpD_sumO (T : LocLat G Qp LL O) {r : ℕ} (z : Fin r → O) (e : Fin r 
   have e1 : (⟨∑ k, z k • e k, hmem⟩ : W.N T) = ∑ k, z k • (⟨e k, he k⟩ : W.N T) := by
     apply Subtype.ext
     simp
-  rw [e1, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [W.cmp_smul, Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T (he k)]
 
@@ -432,7 +442,8 @@ theorem adaptBas_of (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisE
     obtain ⟨c, hc⟩ := hxD'
     refine ⟨c, ?_⟩
     rw [hΨ]
-    simp only [w, ← map_smul, ← map_sum, hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [w, ← map_smul, ← map_sum, hc]
     simp
 
   let Gs : ℤ → Submodule LL (Fin (finrank LL T₂.V) → LL) := fun u => (Formalism.MainNotions.WachCoordinates.FilLev W T₂ i 0 u).comap Ψ
@@ -549,7 +560,8 @@ theorem adaptBas_of (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisE
     have he' : (∑ k, b'' (Fin.castLE hmr j) k • e k) = ∑ k, b'' (Fin.castLE hmr j) k • e k := rfl
     have hv : ιV PD (LL := LL) (V := T₂.V) (φVB PD (LL := LL) (V := T₂.V) (W.cmp T₂ ⟨_, hj⟩)) =
         Ψ (AdB.toLLι (LL := LL) (b'' (Fin.castLE hmr j))) := by
-      rw [← Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T₂ hj, AdL.cmpD_sumO W T₂ _ e (fun k => (he.1 k).1), hΨ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Formalism.MainNotions.UnusedSlot80.ArcF.cmpD_of_mem W T₂ hj, AdL.cmpD_sumO W T₂ _ e (fun k => (he.1 k).1), hΨ,
         map_sum, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_smul, map_smul, AdB.toLLι_apply]

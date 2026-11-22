@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SingularHermitian.AesmOfContinuous
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SingularHermitian.AesmOfContinuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,8 +52,8 @@ theorem bdd_of_per (d : SD σ) {U : nA σ d.Y d.b × d.G → ℂ} (hU : Continuo
   rw [e]
   exact hM _ ⟨hβl, hy⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem fc_avg (d : SD σ) (R : RD d) (w : InfinitePlace F) (hG : IsTopologicalGroup d.G)
     {nb : nA σ d.Y d.b → d.G} {lam : Measure (nA σ d.Y d.b)} {𝓖 : Set (nA σ d.Y d.b)}
     (hCD : CoefData (σ := σ) (Y := d.Y) d.b nb lam 𝓖) (f : d.G → ℂ) (hf : Continuous f)

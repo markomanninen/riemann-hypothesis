@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.RepIndep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.FormsFin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.RepIndep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.TraceFibreCardinality.FormsFin
+
+@[expose] public section
 
 open MulAction
 
@@ -12,7 +16,7 @@ variable {Γ G V : Type} [Group Γ] [Group G] [AddCommGroup V] [Module ℂ V] (B
 
 theorem normal0 : B.Γ₀.Normal := ⟨fun z hz g => by rwa [Subgroup.mem_center_iff.1 (B.cenΓ hz) g, mul_inv_cancel_right]⟩
 
-theorem triv0 : letI := act B; ∀ z ∈ B.Γ₀, ∀ y : G ⧸ B.U, z • y = y := by
+theorem triv0 : (letI := act B; ∀ z ∈ B.Γ₀, ∀ y : G ⧸ B.U, z • y = y) := by
   intro z hz y
   induction y using QuotientGroup.induction_on with
   | H g =>
@@ -20,7 +24,7 @@ theorem triv0 : letI := act B; ∀ z ∈ B.Γ₀, ∀ y : G ⧸ B.U, z • y = y
     rw [← Subgroup.mem_center_iff.1 (B.cenG z hz) g]
     exact QuotientGroup.mk_mul_of_mem _ (B.memU z hz)
 
-theorem stab0 (hB : B.Fin) : letI := act B; ∀ y : G ⧸ B.U, B.Γ₀.relIndex (stabilizer Γ y) ≠ 0 := by
+theorem stab0 (hB : B.Fin) : (letI := act B; ∀ y : G ⧸ B.U, B.Γ₀.relIndex (stabilizer Γ y) ≠ 0) := by
   letI := act B
   intro y
   induction y using QuotientGroup.induction_on with
@@ -31,7 +35,7 @@ theorem stab0 (hB : B.Fin) : letI := act B; ∀ y : G ⧸ B.U, B.Γ₀.relIndex 
     show ((B.ι γ * g : G) : G ⧸ B.U) = g ↔ _
     rw [eq_comm, QuotientGroup.eq]; simp [mul_assoc]
 
-theorem finQ (hB : B.Fin) : letI := act B; Finite (orbitRel.Quotient Γ (G ⧸ B.U)) := by
+theorem finQ (hB : B.Fin) : (letI := act B; Finite (orbitRel.Quotient Γ (G ⧸ B.U))) := by
   letI := act B
   obtain ⟨S, hS⟩ := hB.cls
   refine Finite.of_surjective (fun s : S => (Quotient.mk'' ((s : G) : G ⧸ B.U) : orbitRel.Quotient Γ (G ⧸ B.U))) ?_
@@ -77,8 +81,8 @@ theorem Tk_fin (hD : HD s f) (g y : G) : (Function.support fun x : Γ ⧸ B.Γ�
   (f_fin hD g y).subset fun x hx h => hx (by simp only [Tk, h, zero_smul])
 
 variable (s f) in
-
-noncomputable def Ek (g y : G) : Module.End ℂ V := ∑ᶠ x : Γ ⧸ B.Γ₀, Tk s f g y x.out⁻¹
+noncomputable def Ek (s : B.Tw) (f : G → ℂ) (g y : G) : Module.End ℂ V :=
+  ∑ᶠ x : Γ ⧸ B.Γ₀, Tk s f g y x.out⁻¹
 
 theorem Ek_left (hf : s.IsTest f) (hD : HD s f) (γ : Γ) (g y : G) : Ek s f (B.ι γ * g) y = B.W γ * Ek s f g y := by
   haveI := normal0 B
@@ -102,9 +106,9 @@ theorem Ek_right (hf : s.IsTest f) (hD : HD s f) (u : B.U) (g y : G) : Ek s f (g
   simp only [Tk]
   rw [mul_inv_rev, mul_assoc, this, smul_smul]
 
-theorem traceA [FiniteDimensional ℂ V] (hB : B.Fin) (hf : s.IsTest f) (hD : HD s f) : letI := act B
+theorem traceA [FiniteDimensional ℂ V] (hB : B.Fin) (hf : s.IsTest f) (hD : HD s f) : (letI := act B
     LinearMap.trace ℂ B.Forms (s.R f) = ∑ᶠ o : orbitRel.Quotient Γ (G ⧸ B.U), ∑ᶠ x : Γ ⧸ B.Γ₀,
-      (B.Γ₀.relIndex (stabilizer Γ o.out) : ℂ)⁻¹ * LinearMap.trace ℂ V (Tk s f o.out.out o.out.out x.out⁻¹) := by
+      (B.Γ₀.relIndex (stabilizer Γ o.out) : ℂ)⁻¹ * LinearMap.trace ℂ V (Tk s f o.out.out o.out.out x.out⁻¹)) := by
   letI := act B
   haveI := normal0 B
   haveI := finQ B hB

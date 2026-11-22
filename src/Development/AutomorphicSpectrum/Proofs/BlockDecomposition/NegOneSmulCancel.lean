@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -127,7 +131,7 @@ theorem res_bm {U V T : ObjectProperty C} (h : V ≤ U) (h' : T ≤ V) (h'' : T 
 
 theorem bm_add {U V : ObjectProperty C} (h : V ≤ U) (l l' : Ch A V 1) {q : ℕ} (x : Ch A U q) :
     bm h (l + l') q x = bm h l q x + bm h l' q x := by
-  simp only [bm_apply, map_add]
+  simp only [bm_apply, map_add (f := _)]
 
 theorem bm_congr {ι : Type} {f : ι → ObjectProperty C} {V : ObjectProperty C} {q : ℕ} (x : ∀ i, Ch A (f i) q)
     {i i' : ι} (e : i = i') (h : V ≤ f i) (h' : V ≤ f i') (l : Ch A V 1) : bm h l q (x i) = bm h' l q (x i') := by
@@ -164,7 +168,8 @@ theorem neg_one_smul_cancel {M : Type*} [AddCommGroup M] (s : ℤ) (X Y : M) :
 theorem BB_dh (p q : ℕ) (x : (KK A W).X p q) :
     (KK A W).dh (p + 1) (q + 1) (BB b p q x) = BB b (p + 1) q ((KK A W).dh p q x) := by
   funext i
-  rw [dh_apply, BB_apply, dh_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [dh_apply, BB_apply, dh_apply, map_sum]
   have hS : ∀ k : Fin (p + 2), bm (cap_le W (Fin.last (p + 2)) i)
       (LL b i (Fin.last (p + 1)).castSucc (Fin.last (p + 2))) q
       ((-1 : ℤ) ^ (k : ℕ) • resB A (cap_le W k (fc (Fin.last (p + 2)) i)) (x (fc k (fc (Fin.last (p + 2)) i)))) =

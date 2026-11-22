@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GeFrame
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GaGram
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinitelyGeneratedHomology
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LeadMinor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GeFrame
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GaGram
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinitelyGeneratedHomology
+
+@[expose] public section
+
 open Module NumberField GlobalTheory.CompanionTheory.Ar.HT TensorProduct Filter
 
 namespace PositivityTheory.HtPt.Ge
@@ -76,7 +81,8 @@ theorem coef_mem [IsFractionRing B Ω] {P : Type} [AddCommGroup P] [Module B P] 
   have h2 : ∑ a, (u ^ n * T a - (b.repr x a : Ω)) • ι (b a) = 0 := by
     simp only [sub_smul, Finset.sum_sub_distrib, mul_smul, ← Finset.smul_sum, e]
     have := congrArg ι (b.sum_repr x)
-    simp only [map_sum, map_smul, Subalgebra.smul_def] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Subalgebra.smul_def] at this
     rw [this, sub_self]
   have := Fintype.linearIndependent_iff.1 h1 _ h2 a
   exact ⟨n, by rw [sub_eq_zero.1 this]; exact (b.repr x a).2⟩
@@ -94,7 +100,7 @@ theorem coef_mem_dual [IsFractionRing B Ω] (W : Submodule B V) (hW : W.FG) {j :
     induction hz using Submodule.span_induction with
     | mem x hx => exact hn x hx
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, mul_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), mul_add]; exact add_mem hx hy
     | smul c x _ hx =>
       rw [Subalgebra.smul_def, map_smul, smul_eq_mul, mul_left_comm]; exact mul_mem c.2 hx
   let x : Dual B W :=

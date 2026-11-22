@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowDvdOfHermMatEq
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PowDvdOfHermMatEq
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ open Formalism.UG GlobalTheory.LFun
 
 variable {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] {K : Subgroup G}
 
-open Classical in
 
+open Classical in
 def cosetInd (S : Finset (G ⧸ K)) : G → ℂ := fun g => if (g : G ⧸ K) ∈ S then 1 else 0
 
 theorem cosetInd_mem {S : Finset (G ⧸ K)} (hS : ∀ x ∈ K, ∀ c ∈ S, x • c ∈ S) : cosetInd S ∈ Hecke ℂ K := by
@@ -47,7 +51,8 @@ theorem norm_le_card {ι : Type} (ρ : Representation ℂ G V) {x : V} (l : V �
   have hM : ∀ y, ‖l (ρ y x)‖ ≤ M := fun y => le_ciSup hb y
   have hM0 : 0 < M := (norm_pos_iff.2 h1).trans_le (hM 1)
   have key : ∀ y, ‖a‖ * ‖l (ρ y x)‖ ≤ S.card * M := fun y => by
-    rw [← norm_mul, ← smul_eq_mul, ← map_smul, ← map_smul, ← h, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← norm_mul, ← smul_eq_mul, ← map_smul, ← map_smul, ← h, map_sum, map_sum]
     refine (norm_sum_le _ _).trans ?_
     rw [← nsmul_eq_mul]
     refine Finset.sum_le_card_nsmul _ _ _ fun c _ => ?_
@@ -78,7 +83,7 @@ theorem norm_le_of_isSatVecGL {E : Type} [Field E] [NumberField E] {w : HeightOn
   obtain ⟨φ, hφ, hφ1, -⟩ := Final.SphericalExists E w n (fun i => (α i : ℂ)) fun i => (α i).ne_zero
   have hφ0 : φ ≠ 0 := fun e => by simp [e] at hφ1
   have hy := isSatVecGL_of_isSpherical hφ hφ0
-  have hKO : KO (w.adicCompletion E) (Fin n) = KGL w n := SphCompletion.KO_completion w n
+  have hKO : KO (w.adicCompletion E) (Fin n) = KGL w (n := n) := SphCompletion.KO_completion w n
   have hb : HasBoundedSums (w.adicCompletion E) φ := by
     intro S hS
     have H := SatCompare.exists_eigenvalue_GL hx hy

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ValuesAlgIffValuesUnitOfNe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetIntegralOfDefinite
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtRedPf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CongModRefl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.FramedPointsLiftToLevelCover
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsTestRingInjective
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ValuesAlgIffValuesUnitOfNe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetIntegralOfDefinite
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.WtRedPf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemSuppOnIffIdemMulOfNatural
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -177,8 +181,8 @@ theorem allOver_of_overBase (d : DeltaDat Xo c n) (hl : l.A ∣ d.l₂.A) (h : G
   refine congrArg spMap (RingHom.ext fun t => ?_)
   exact hc (IntermediateField.inclusion c.le t)
 
-open Classical in
 
+open Classical in
 def ruleUp (d : DeltaDat Xo c n) (f : Rul Xo c) : Rul d.Xo₂ d.c₂ := fun p y₂ =>
   letI := algBelow d p.R
   if h : ∃ y : FrPt Xo c p.R, FrOver d y₂ y then evR Xo c f h.choose else 0

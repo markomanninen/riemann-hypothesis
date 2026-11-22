@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.TransposeUnitary
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDichoA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.TransposeUnitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDichoA
+
+@[expose] public section
 
 noncomputable section
 

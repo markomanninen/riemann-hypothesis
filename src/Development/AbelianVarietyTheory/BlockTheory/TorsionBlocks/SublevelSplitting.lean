@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def compAtPl (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (h : Bridge.Gf 
     Matrix (Fin V.rank) (Fin V.rank) (Fv D.host.F v ⊗[D.host.F] D.host.E) :=
   (matF V h).map (Algebra.TensorProduct.map (evalV D.host.F v) (AlgHom.id D.host.F D.host.E))
 
-variable (D) in
 
+variable (D) in
 def IsSplitPl (v : HeightOneSpectrum (𝓞 D.host.F)) : Prop :=
   ∃ P P' : HeightOneSpectrum (𝓞 D.host.E), P ≠ P' ∧ P.under (𝓞 D.host.F) = v ∧ P'.under (𝓞 D.host.F) = v
 
@@ -78,31 +82,11 @@ def RowAt (R : RealDat D A Ks) : Prop :=
   R.toLevCh.Is A.μ0 → RealDat.models_vpos (D := D) →
     ∀ (i : Fin D.R.m) (t : T) (N : ℕ), 0 < N → RepsAt R.toLevCh i t N
 
-def RowPlainAt (R : RealDat D A Ks) : Prop :=
-  R.toLevCh.Is A.μ0 → RealDat.models_vpos (D := D) → ∀ (i : Fin D.R.m) (t : T), RepsAt R.toLevCh i t 1
-
-theorem RowAt.plain {R : RealDat D A Ks} (h : RowAt R) : RowPlainAt R :=
-  fun hL hp i t => h hL hp i t 1 Nat.one_pos
-
 end Row
 
 def Row : Prop :=
   ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m)
     (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks), RowAt R
-
-theorem IsSubLev.vol_pos {V : HSp D} {J J' : Subgroup (Bridge.Gf V)} {vol : ℝ} (h : IsSubLev V J J' vol) :
-    0 < vol ∧ vol ≤ 1 := by
-  obtain ⟨_, h2, _, rfl⟩ := h
-  have h1 : (1 : ℝ) ≤ ((J'.relIndex J : ℕ) : ℝ) := by exact_mod_cast Nat.one_le_iff_ne_zero.2 h2
-  exact ⟨inv_pos.2 (by linarith), inv_le_one_of_one_le₀ h1⟩
-
-theorem IsAdReps.pos {V : HSp D} {Λ : Lat V} {J' : Subgroup (Bridge.Gf V)} {bad n : ℕ} {h : Fin n → Bridge.Gf V}
-    {Lh : Fin n → Lat V} {gam : Fin n → ℕ} (H : IsAdReps V Λ J' bad h Lh gam) : (∀ a, 0 < gam a) ∧ 0 < n := by
-  refine ⟨fun a => ?_, ?_⟩
-  · obtain ⟨hf, e⟩ := H.2.2.2 a
-    rw [e]; exact Nat.card_pos
-  · obtain ⟨a, _⟩ := H.1 1
-    exact a.pos
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SublevelSplitting
 

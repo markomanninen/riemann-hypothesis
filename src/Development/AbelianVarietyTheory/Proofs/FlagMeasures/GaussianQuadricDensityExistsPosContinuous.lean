@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean
 
@@ -139,14 +143,14 @@ theorem integrable_gauss (n : ℕ) : Integrable (gauss : (Fin n → ℂ) → ℝ
 theorem cdf_mono {n : ℕ} (ε : Fin n → Bool) : Monotone (cdf ε) := fun _ _ h =>
   setIntegral_mono_set (integrable_gauss n).integrableOn
     (Filter.Eventually.of_forall fun y => (gauss_pos y).le)
-    (HasSubset.Subset.eventuallyLE fun _ hy => le_trans hy h)
+    (Filter.EventuallySubset.of_subset fun _ hy => le_trans hy h)
 
 theorem abs_cdf_le {n : ℕ} (ε : Fin n → Bool) (t : ℝ) : |cdf ε t| ≤ ∫ y : Fin n → ℂ, gauss y := by
   rw [abs_of_nonneg (show 0 ≤ cdf ε t from integral_nonneg fun y => (gauss_pos y).le)]
   exact setIntegral_le_integral (integrable_gauss n) (Filter.Eventually.of_forall fun y => (gauss_pos y).le)
 
 theorem cdf_lt {n : ℕ} (ε : Fin n → Bool) : cdf ε (-1) < cdf ε 1 := by
-  have h := integral_diff (measurableSet_qEps ε (-1))
+  have h := setIntegral_sdiff (measurableSet_qEps ε (-1))
     ((integrable_gauss n).integrableOn (s := {y | qEps ε y ≤ 1}))
     (fun y (hy : qEps ε y ≤ -1) => show qEps ε y ≤ 1 by linarith)
   rw [← sub_pos, cdf, cdf, ← h, setIntegral_pos_iff_support_of_nonneg_ae
@@ -169,7 +173,7 @@ theorem cdf_succ {n : ℕ} (ε : Fin (n + 1) → Bool) (a : Fin (n + 1)) (t : �
   simp only [cdf]
   rw [← integral_indicator (measurableSet_qEps _ _), ← integral_const_mul]
   refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
-  simp only [Function.comp, Set.indicator, Set.mem_setOf_eq, qEps, gauss, Fin.sum_univ_succAbove _ a,
+  simp only [Function.comp, Set.indicator, Set.mem_ofPred_eq, qEps, gauss, Fin.sum_univ_succAbove _ a,
     MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNthEquiv, Equiv.coe_fn_mk, Fin.insertNth_apply_same,
     Fin.insertNth_apply_succAbove, sgn, le_sub_iff_add_le']
   split_ifs <;> simp [Real.exp_add, mul_comm]
@@ -199,10 +203,14 @@ theorem continuousOn_gaussDens : ∀ {n : ℕ} (ε : Fin n → Bool), Continuous
   | n + 1, ε => by
       have hc : ∀ t : ℝ, t ≠ 0 → ContinuousAt (cdf fun i => ε ((0 : Fin (n + 1)).succAbove i)) t :=
         fun t ht => (differentiableAt_cdf _ ht).continuousAt
-      refine ContinuousOn.congr ?_ fun t ht => (hasDerivAt_cdf_succ ε 0 (hc t ht)).deriv
-      refine fun t ht => ContinuousAt.continuousWithinAt ?_
-      exact continuousAt_const.mul (continuousAt_const.mul ((hc t ht).sub
-        (hasDerivAt_expAvg (cdf_mono _).measurable (abs_cdf_le _) (ε 0) (hc t ht)).continuousAt))
+      refine ContinuousOn.congr (f := fun t => Real.pi * (sgn ℝ (ε 0) *
+        (cdf (fun i => ε ((0 : Fin (n + 1)).succAbove i)) t -
+          expAvg (cdf fun i => ε ((0 : Fin (n + 1)).succAbove i)) (sgn ℝ (ε 0)) t))) ?_ ?_
+      · intro t ht
+        exact (continuousAt_const.mul (continuousAt_const.mul ((hc t ht).sub
+          (hasDerivAt_expAvg (cdf_mono _).measurable (abs_cdf_le _) (ε 0) (hc t ht)).continuousAt))).continuousWithinAt
+      · intro t ht
+        exact (hasDerivAt_cdf_succ ε 0 (hc t ht)).deriv
 
 theorem gaussDens_spec (n : ℕ) (ε : Fin n → Bool) :
     (∀ β : ℝ, β ≠ 0 → HasDerivAt (fun t : ℝ => ∫ y in {y : Fin n → ℂ | qEps ε y ≤ t}, gauss y) (gaussDens ε β) β ∧

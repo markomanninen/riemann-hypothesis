@@ -1,13 +1,18 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.CyclotomicRootsOfUnity
-import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.DominatesLiftUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleIffOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushInvertible
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.SiegelFamilyZetaUnit
+public import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.DominatesLiftUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushInvertibleIffOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -18,29 +23,8 @@ namespace GlobalTheory.TransitionUnique
 
 open GlobalTheory.ModelCompare
 
-theorem isDominant_fst {F : Type} [Field F] (V : ValuationSubring F) {X : Scheme.{0}} (s : X ⟶ Sp V) [Flat s] :
-    IsDominant (pullback.fst s (spMap V.subtype)) := by
-  refine ⟨fun x => ?_⟩
-  let g : Sp F := (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum F)
-  have hg : spMap V.subtype g ⤳ s x := by
-    refine (PrimeSpectrum.le_iff_specializes (R := V) _ _).1 ?_
-    show Ideal.comap V.subtype ⊥ ≤ _
-    rw [Ideal.comap_bot_of_injective _ V.subtype_injective]
-    exact bot_le
-  obtain ⟨y, hy, e⟩ := Flat.generalizingMap s hg
-  refine hy.mem_closed isClosed_closure (subset_closure ?_)
-  rw [Scheme.Pullback.range_fst]
-  exact ⟨g, e.symm⟩
-
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H}
   {Xo : Moduli D l} {c : Coeff l}
-
-theorem isDominant_j {V : ValuationSubring c.F} (Y : Model Xo c V.subtype) : IsDominant Y.j := by
-  have := Y.flat
-  have := isDominant_fst V Y.s
-  have : IsDominant Y.jQ := ⟨Y.jQ_dense⟩
-  unfold Model.j
-  infer_instance
 
 theorem isReduced_XF (Xo : Moduli D l) (c : Coeff l) : IsReduced (Xo.XF c) :=
   have := Xo.smooth
@@ -54,47 +38,54 @@ theorem map_unique {O : Type} [CommRing O] {β : O →+* c.F} (Y : Model Xo c β
     (hM : ∀ a, ∃ x : 𝟙_ (Over S) ⟶ t.G,
       x.left ≫ ν.φ = r ≫ (Y.oF.eta a).left ∧ x.left ≫ ν'.φ = r' ≫ (Y.oF.eta a).left)
     (hA : ∀ a, ∃ x : 𝟙_ (Over S) ⟶ t.G,
-      x.left ≫ ν.φ = r ≫ (Y.oF.etaA a).left ∧ x.left ≫ ν'.φ = r' ≫ (Y.oF.etaA a).left) : r = r' := by
-  let o := objOfSABMap Y.oF ν
-  let n : ObjMap o Y.oF r := objMapOfSABMap Y.oF ν
+      x.left ≫ ν.φ = r ≫ (Y.oF.etaA a).left ∧ x.left ≫ ν'.φ = r' ≫ (Y.oF.etaA a).left) : r = r' := open GlobalTheory.ObjPull in by
+  let o : Obj D l _ (r ≫ _) :=
+    have hL : LBIso t.PP.L (Y.oF.t.PP.L.pull ν.cm.F) := by
+      obtain ⟨w, hw, -⟩ := ν.lin
+      exact ⟨w, hw⟩
+    have hpr := Y.oF.proper
+    have hp := GlobalTheory.PolPull.pol_pull_of_relAmple_local GlobalTheory.AmpleLocal.relAmple_of_locally
+      (Xo.XF c) S Y.oF.t.G t.G r ν.cm.F Y.oF.t.PP.L t.PP.L Y.oF.t.PP.isLB t.PP.isLB
+      (AbelianSchemeGerms.isAbelianScheme_of_proper Y.oF.t.G Y.oF.t.semi) ν.cart hL
+    { t := t
+      proper := MorphismProperty.of_isPullback (P := @IsProper) ν.cart.1 hpr
+      ample := hp.2.1 Y.oF.ample
+      ktriv := hp.2.2 Y.oF.ktriv
+      eta := fun a => secPull ν.cart (Y.oF.eta a)
+      eta_add := fun a c => by rw [Y.oF.eta_add, map_mul]
+      eta_ker := fun a ha => by rw [Y.oF.eta_ker a ha, map_one]
+      etaA := fun a => secPull ν.cart (Y.oF.etaA a)
+      etaA_add := fun a c => by rw [Y.oF.etaA_add, map_mul]
+      etaA_ker := fun a => by rw [Y.oF.etaA_ker a, map_one]
+      geom := fun k _ _ x β hx => by
+        obtain ⟨hdet, I, hI, hA, hM⟩ := Y.oF.geom k (x ≫ r) β (by rw [Category.assoc, hx])
+        refine ⟨fun τ => ?_, tateMove (pushEquiv ν.cart (Over.mk x)) (fun c g => ?_) (fun n g g' u hc => ?_) I,
+          hI, fun a => ?_, fun a ha => ?_⟩
+        · rw [GlobalTheory.LiePull.lieMult_pull _ (Xo.XF c) S Y.oF.t.G t.G r ν.cm.F Y.oF.t.act t.act ν.cart ν.act k x τ,
+            GlobalTheory.LiePull.lieMult_pull _ (Xo.XF c) S Y.oF.t.G t.G r ν.cm.F Y.oF.t.act t.act ν.cart ν.act k x τ]
+          exact hdet τ
+        · apply Over.OverMorphism.ext
+          show (g.left ≫ _) ≫ _ = (g.left ≫ _) ≫ _
+          rw [Category.assoc, ν.act, Category.assoc]
+        · exact (GlobalTheory.weilIs_grpPullback_of_comm (Xo.XF c) S Y.oF.t.G t.G r ν.cm.F Y.oF.t.PP.L t.PP.L Y.oF.t.PP.isLB t.PP.isLB
+            ν.cart hL (Over.mk x) n g g' _ _ _ rfl rfl).2 hc
+        · exact (MulEquiv.eq_symm_apply _).2 ((pushEquiv_secPull ν.cart _ _).trans (hA a))
+        · exact (MulEquiv.eq_symm_apply _).2 ((pushEquiv_secPull ν.cart _ _).trans (hM a ha)) }
+  let n : ObjMap o Y.oF r := ⟨ν, fun _ => secPull_left ν.cart _, fun _ => secPull_left ν.cart _⟩
+  have sec_eq {e : 𝟙_ (Over (Xo.XF c)) ⟶ Y.oF.t.G} {e' : 𝟙_ (Over S) ⟶ t.G}
+      (h : e'.left ≫ ν.φ = r ≫ e.left) : e' = secPull ν.cart e := by
+    apply Over.OverMorphism.ext
+    apply ν.cart.1.hom_ext
+    · exact h.trans (secPull_left ν.cart _).symm
+    · rw [Over.w, Over.w]
   let n' : ObjMap o Y.oF r' := ⟨ν', fun a => by
       obtain ⟨x, h, h'⟩ := hM a
-      exact (congrArg (fun z => z.left ≫ ν'.φ) (sec_eq_secPull ν h)).symm.trans h', fun a => by
+      exact (congrArg (fun z => z.left ≫ ν'.φ) (sec_eq h)).symm.trans h', fun a => by
       obtain ⟨x, h, h'⟩ := hA a
-      exact (congrArg (fun z => z.left ≫ ν'.φ) (sec_eq_secPull ν h)).symm.trans h'⟩
+      exact (congrArg (fun z => z.left ≫ ν'.φ) (sec_eq h)).symm.trans h'⟩
   obtain ⟨k, -⟩ := ObjComp.objMap_comp Y.m0 n
   obtain ⟨k', -⟩ := ObjComp.objMap_comp Y.m0 n'
   refine pullback.hom_ext ((Xo.rep S _ ‹_› o).unique ⟨Category.assoc _ _ _, ⟨k⟩⟩ ⟨?_, ⟨k'⟩⟩) hr
   rw [Category.assoc, pullback.condition, ← Category.assoc, ← hr, Category.assoc]
-
-theorem isTransition_unique : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l l₂ : Level H) (Xo : Moduli D l) (Xo₂ : Moduli D l₂) (c : Coeff l) (c₂ : Coeff l₂) (W : ValuationSubring ℂ) (Y : Model Xo c (c.V W).subtype) (Y₂ : Model Xo₂ c₂ (c₂.V W).subtype) (b : c.V W →+* c₂.V W) (π π' : Y₂.X ⟶ Y.X), c.F ≤ c₂.F → IsIncl b → IsTransition Y Y₂ b π → IsTransition Y Y₂ b π' → π = π' := by
-  intro E _ _ _ H D l l₂ Xo Xo₂ c c₂ W Y Y₂ b π π' _ _ h h'
-  obtain ⟨p, mu, r, h₁, h₂, -, h₃, h₄, h₅⟩ := h
-  obtain ⟨p', mu', r', h₁', h₂', -, h₃', h₄', h₅'⟩ := h'
-  have e : π ≫ Y.s = Y₂.s ≫ spMap b := by
-    rw [← h₁, ← h₂, Category.assoc, Category.assoc, pullback.condition]
-  have e' : π' ≫ Y.s = Y₂.s ≫ spMap b := by
-    rw [← h₁', ← h₂', Category.assoc, Category.assoc, pullback.condition]
-  have := mono_spMap_subtype (c.V W)
-  have hr : r ≫ pullback.snd _ _ = r' ≫ pullback.snd _ _ := by
-    rw [← cancel_mono (spMap (c.V W).subtype), Category.assoc, Category.assoc, ← ModelRelProbe.j_over Y,
-      ← Category.assoc, ← Category.assoc, ← h₃, ← h₃', Category.assoc, Category.assoc, e, e']
-  obtain ⟨n, hn⟩ := LevelCover.sab_comp Y₂.m mu h₃
-  obtain ⟨n', hn'⟩ := LevelCover.sab_comp Y₂.m mu' h₃'
-  obtain ⟨ν, hν⟩ := LevelCover.sab_cancel Y.m n r rfl
-  obtain ⟨ν', hν'⟩ := LevelCover.sab_cancel Y.m n' r' rfl
-  have := isReduced_XF Xo₂ c₂
-  have hrr : r = r' := map_unique Y ν ν' hr
-    (fun a => ⟨_, LevelCover.sec_cancel ν Y.m _ _ (by rw [hν, hn]; exact h₄ a),
-      LevelCover.sec_cancel ν' Y.m _ _ (by rw [hν', hn']; exact h₄' a)⟩)
-    (fun a => ⟨_, LevelCover.sec_cancel ν Y.m _ _ (by rw [hν, hn]; exact h₅ a),
-      LevelCover.sec_cancel ν' Y.m _ _ (by rw [hν', hn']; exact h₅' a)⟩)
-  have : ∀ x : Y₂.X, _root_.IsReduced (Y₂.X.presheaf.stalk x) := fun x ↦
-    have := (Y₂.normal x).1
-    inferInstance
-  have := isReduced_of_isReduced_stalk Y₂.X
-  have := projProper _ _ _ Y.proj
-  have := isDominant_j Y₂
-  exact ext_of_isDominant_of_isSeparated Y.s (e.trans e'.symm) Y₂.j (by rw [h₃, h₃', hrr])
 
 end GlobalTheory.TransitionUnique

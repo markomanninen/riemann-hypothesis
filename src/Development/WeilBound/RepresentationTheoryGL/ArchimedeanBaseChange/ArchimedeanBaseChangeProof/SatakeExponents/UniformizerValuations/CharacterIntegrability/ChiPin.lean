@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.DataExOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.DataExOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem chi_pin (gen : Γ → Prod' H d) (a₀ : Γ) (v : EuclideanSpace ℂ (Fi
     have hsplit : χ ⟨(a + A₀).1.1 s, StarAlgebra.subset_adjoin ℂ _ (Or.inl ⟨a + A₀, rfl⟩)⟩ =
         χ ⟨a.1.1 s, StarAlgebra.subset_adjoin ℂ _ (Or.inl ⟨a, rfl⟩)⟩ +
           χ ⟨A₀.1.1 s, StarAlgebra.subset_adjoin ℂ _ (Or.inl ⟨A₀, rfl⟩)⟩ := by
-      rw [← map_add]; exact congrArg χ (Subtype.ext rfl)
+      rw [← map_add (f := _)]; exact congrArg χ (Subtype.ext rfl)
     rw [hsplit, hχ₀, hc₀1, hc₁1] at hχ₁
     linear_combination hχ₁
   · obtain ⟨c', hc', hχ'⟩ := heig a (by rw [hc]; exact smul_ne_zero hc0 hv)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RbFund
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -79,7 +83,8 @@ theorem fund_ex_relay : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlg
       have hGM : G ∈ M := by
         rw [← hmk0]
         have hst' : Ideal.Quotient.mk M s = Ideal.Quotient.mk M t := Ideal.Quotient.eq.mpr hst
-        rw [hG, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hG, map_sum]
         simp only [map_mul, map_pow, hst']
         have hsum : ∑ i ∈ Finset.range (p ^ f), Ideal.Quotient.mk M t ^ i * Ideal.Quotient.mk M t ^ (p ^ f - 1 - i)
             = ∑ i ∈ Finset.range (p ^ f), Ideal.Quotient.mk M t ^ (p ^ f - 1) := by
@@ -215,7 +220,7 @@ theorem fund_ex_relay : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlg
           exact mul_right_cancel₀ h0 (hx'.trans (one_mul x).symm)
         obtain ⟨i, hi, hix⟩ := hrr.eq_pow_of_pow_eq_one hxn
         exact ⟨some ⟨i, hi⟩, hix⟩
-  let E : Option (Fin n) ≃ S := (Equiv.ofInjective φ hφ).trans (Equiv.setCongr hrange)
+  let E : Option (Fin n) ≃ S := (Equiv.ofInjective φ hφ).trans (by rw [hrange]; exact Equiv.refl _)
   let _instS : Fintype S := Fintype.ofEquiv _ E
   have hcardS : Fintype.card S = Fintype.card F := by
     rw [← Fintype.card_congr E, Fintype.card_option, Fintype.card_fin, hq, hqn]
@@ -258,7 +263,7 @@ theorem fund_ex_relay : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlg
   obtain ⟨r, hr⟩ := exists_add_pow_prime_pow_eq hpp (σf a) (σf b) f
   have hst : σf a + σf b - σf (a + b) ∈ M := by
     rw [← Ideal.Quotient.eq]
-    simp only [map_add, hs2, Subfield.coe_add]
+    simp only [map_add (f := _), hs2, Subfield.coe_add]
   obtain ⟨u, hu, hsu⟩ := H (σf a + σf b) (σf (a + b)) (hs1 _) hst
   rw [hr, hs1, hs1] at hsu
   have hmem : (p : R) ∣ (σf a + σf b - σf (a + b)) * u := by

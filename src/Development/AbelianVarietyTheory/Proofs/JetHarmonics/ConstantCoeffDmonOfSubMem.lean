@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.DofDApply
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ def coeffIdeal {σ : Type} (I : Ideal R) : Ideal (MvPowerSeries σ R) where
   carrier := {g | ∀ mo, coeff mo g ∈ I}
   add_mem' := by
     intro a b ha hb mo
-    rw [map_add]
+    rw [map_add (f := _)]
     exact I.add_mem (ha mo) (hb mo)
   zero_mem' := by
     intro mo
@@ -28,11 +32,8 @@ def coeffIdeal {σ : Type} (I : Ideal R) : Ideal (MvPowerSeries σ R) where
     rw [smul_eq_mul, coeff_mul]
     exact I.sum_mem fun p _ => I.mul_mem_left _ (hx p.2)
 
-theorem mem_coeffIdeal {σ : Type} {I : Ideal R} {g : MvPowerSeries σ R} :
-    g ∈ coeffIdeal I ↔ ∀ mo, coeff mo g ∈ I := Iff.rfl
-
 theorem pderiv_mem_coeffIdeal {σ : Type} {I : Ideal R} {g : MvPowerSeries σ R}
-    (hg : g ∈ coeffIdeal I) (s : σ) : pderiv R s g ∈ coeffIdeal I := by
+    (hg : g ∈ coeffIdeal I) (s : σ) : pderiv s g ∈ coeffIdeal I := by
   intro mo
   rw [coeff_pderiv]
   exact I.mul_mem_right _ (hg _)

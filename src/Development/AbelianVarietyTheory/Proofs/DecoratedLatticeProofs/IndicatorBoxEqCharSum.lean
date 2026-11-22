@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousCharactersLocallyConstantNonarchLocalF
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatMatrixExistsOpenAddSubgroupInvaria
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsBicharPairing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ContinuousCharactersLocallyConstantNonarchLocalF
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SchwartzBruhatMatrixExistsOpenAddSubgroupInvaria
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsBicharPairing
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SplitWeil
 open scoped Topology

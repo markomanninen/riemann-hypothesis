@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentHorizontal
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipRadicalOfRational
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementArchCocompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLeviPlaces
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMahlerCompactness
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchInvariant
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentHorizontal
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipRadicalOfRational
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StComplementArchCocompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLeviPlaces
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMahlerCompactness
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchInvariant
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -15,11 +19,11 @@ open scoped Pointwise
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [NumberField E] [IsTotallyReal F] [IsTotallyComplex E] in
 
+omit [NumberField F] [NumberField E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] in
 theorem archUnitary_preserves_form (h : HermitianForm F E W) (v : Basis ι E W)
     (g : archUnitary h v) (w : InfinitePlace E) (a b : ι → ℂ) :
     star (((g : InfinitePlace E → GL ι ℂ) w : Matrix ι ι ℂ) *ᵥ a) ⬝ᵥ
@@ -93,7 +97,7 @@ theorem UnipotentHorizontal.proof (h : HermitianForm F E W) (v : Basis ι E W)
     refine ⟨-h.toSesq y (z - h.toSesq w₀ z • x₀), ?_⟩
     have e : (γ : W ≃ₗ[E] W) z = (γ : W ≃ₗ[E] W) (z - h.toSesq w₀ z • x₀) +
         h.toSesq w₀ z • (γ : W ≃ₗ[E] W) x₀ := by
-      rw [← map_smul, ← map_add, sub_add_cancel]
+      rw [← map_smul, ← map_add (f := _), sub_add_cancel]
     have e1 : (γ : W ≃ₗ[E] W) (z - h.toSesq w₀ z • x₀) =
         (z - h.toSesq w₀ z • x₀) - h.toSesq y (z - h.toSesq w₀ z • x₀) • x₀ := hγz _ hz'
     have e2 : (γ : W ≃ₗ[E] W) x₀ = x₀ := hγx
@@ -124,10 +128,12 @@ theorem UnipotentHorizontal.proof (h : HermitianForm F E W) (v : Basis ι E W)
   have huY : ∀ w, u w = Y w + t0 w • vecAt v x₀ w := fun w => by rw [hY, sub_add_cancel]
   rw [Set.mem_neg]
   convert hyK using 1
-  funext w
-  simp only [Pi.neg_apply, Pi.sub_apply, hprod w, hgW w, huY w, mulVec_add, mulVec_smul, hs w,
+  ext w i
+  simp only [Pi.neg_apply, Pi.sub_apply]
+  rw [hprod, hgW, mulVec_add, huY, mulVec_add, mulVec_smul, hs,
     (hδw w).1, hdW w, add_smul]
-  abel
+  simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, Pi.neg_apply]
+  ring
 
 end
 

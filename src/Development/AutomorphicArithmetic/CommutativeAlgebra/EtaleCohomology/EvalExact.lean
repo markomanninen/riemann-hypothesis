@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ZeroPull
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ZeroPull
+
+@[expose] public section
 
 open CategoryTheory
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EllFamNontrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,16 +22,16 @@ theorem exists_shift_retraction (H : ∀ l k', ∃ k, K.le l k' k ∧ K.le (-l) 
     ∃ (S : K.Obj) (s : S ⟶ T) (s' : T ⟶ S), s.deg = l ∧ s'.deg = -l ∧ s' ≫ s = 𝟙 T := by
   obtain ⟨k, h1, h2⟩ := H l T.k
   let S : K.Obj :=
-    { k := k, C := T.C, J := T.J, nil := T.nil, ρ := T.ρ.comp (sh h1)
-      ρ_cst := fun f ↦ (congrArg T.ρ (sh_cst h1 f)).trans (T.ρ_cst f) }
-  have key : ∀ m (h : K.le m T.k T.k), m = 0 → ∀ f, sh h f = f := by
+    { k := k, C := T.C, J := T.J, nil := T.nil, ρ := T.ρ.comp (K.sh h1)
+      ρ_cst := fun f ↦ (congrArg T.ρ (K.sh_cst h1 f)).trans (T.ρ_cst f) }
+  have key : ∀ m (h : K.le m T.k T.k), m = 0 → ∀ f, K.sh h f = f := by
     rintro m h rfl f
-    exact sh_refl h f
-  have e : (T.ρ.comp (sh h1)).comp (sh h2) = T.ρ := RingHom.ext fun f ↦
-    congrArg T.ρ ((sh_sh h2 h1 (K.le_trans h2 h1) f).trans (key _ _ (neg_add_cancel l) f))
+    exact K.sh_refl h f
+  have e : (T.ρ.comp (K.sh h1)).comp (K.sh h2) = T.ρ := RingHom.ext fun f ↦
+    congrArg T.ρ ((K.sh_sh h2 h1 (K.le_trans h2 h1) f).trans (key _ _ (neg_add_cancel l) f))
   let s : S ⟶ T := ⟨AlgHom.id _ _, l, h1, fun _ h ↦ h, Relation.ReflTransGen.refl⟩
   let s' : T ⟶ S := ⟨AlgHom.id _ _, -l, h2, fun _ h ↦ h, by
-    change Close T.J ((T.ρ.comp (sh h1)).comp (sh h2)) T.ρ
+    change Close T.J ((T.ρ.comp (K.sh h1)).comp (K.sh h2)) T.ρ
     rw [e]
     exact Relation.ReflTransGen.refl⟩
   exact ⟨S, s, s', rfl, rfl, hom_ext (fun _ ↦ rfl) (neg_add_cancel l)⟩
@@ -78,7 +82,8 @@ theorem const_biadditive_coboundary_symm : ∀ {I : Type} [Fintype I] {g : ℕ} 
     have := hd' _ _ _ (s a (S b T)) (s b T)
     rw [hκ (a + b) _ _ (s a (S b T) ≫ s b T) (by rw [Charts.comp_deg, hs, hs]), hr, hr, hr, hs, hs,
       AlgHom.commutes] at this
-    rw [← this, map_add, map_sub]
+    set_option synthInstance.maxHeartbeats 200000 in
+      rw [← this, map_add (algebraMap (Hol F.V) (K.Oc.obj T)), map_sub]
   refine Charts.eq_of_cst_eq hR fun k ↦ ?_
   refine (main l m (K.triv k)).trans (Eq.trans ?_ (main m l (K.triv k)).symm)
   congr 1

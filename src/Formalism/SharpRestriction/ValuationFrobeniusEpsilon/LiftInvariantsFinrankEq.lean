@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,12 +43,7 @@ def tpowT (r : ℕ) (A : Type) [CommRing A] (j : Wt r) : (TA r A)ˣ :=
 def tpow {A : Type} [CommRing A] {r : ℕ} (t : Fin r → Aˣ) (j : Wt r) : A :=
   ((∏ s, t s ^ j s : Aˣ) : A)
 
-def IsEigen {O A : Type} [CommRing O] [CommRing A] [Algebra O A] {r : ℕ} (c : A →ₐ[O] TA r A)
-    (j : Wt r) (x : A) : Prop :=
-  c x = (tpowT r A j : TA r A) * MvPowerSeries.C x
-
 inductive GGKind | typeThree | typeTwo | GSp4
-  deriving DecidableEq
 
 def GGKind.n : GGKind → ℕ
   | .typeThree => 3
@@ -310,16 +309,6 @@ open scoped Classical
 section Prob
 
 variable (P : LiftProb)
-
-def nIdeal : Ideal P.Rbox.C :=
-  Ideal.span (Set.range fun i => nEqG (P.nx i) (P.npos i) (P.ncst i) P.uBox)
-
-structure AQuot where
-  Ahat : TR P.O
-  q : P.Rbox.C →ₐ[P.O] Ahat.C
-  surj : Function.Surjective q
-  n_ker : nIdeal P ≤ RingHom.ker q
-  stable : ∀ x ∈ RingHom.ker q, MvPowerSeries.map q.toRingHom (P.coBox x) = 0
 
 end Prob
 

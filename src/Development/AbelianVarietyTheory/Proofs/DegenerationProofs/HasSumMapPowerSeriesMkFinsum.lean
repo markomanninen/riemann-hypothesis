@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Module
 
 namespace GlobalTheory
@@ -15,7 +20,8 @@ theorem hasSum_map_powerSeries_mk_finsum : ∀ (O K Z : Type) [CommRing O] [Nont
         (∑ z ∈ s, PowerSeries.C (a z) * PowerSeries.X ^ deg z) - F := by
       rw [PowerSeries.X_pow_dvd_iff]
       intro m hm
-      rw [map_sub, map_sum, hF, PowerSeries.coeff_mk, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, hF, PowerSeries.coeff_mk, sub_eq_zero]
       have : (∑ᶠ (z : Z) (_ : deg z = m), a z) = ∑ z ∈ s.filter (fun z => deg z = m), a z := by
         rw [← finsum_mem_coe_finset]
         refine finsum_congr fun z => ?_
@@ -31,7 +37,8 @@ theorem hasSum_map_powerSeries_mk_finsum : ∀ (O K Z : Type) [CommRing O] [Nont
       · simp [h, Ne.symm h]
     obtain ⟨g, hg⟩ := hdvd
     have h2 := congrArg φ hg
-    simp only [map_sub, map_sum, map_mul, map_pow] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_pow] at h2
     rw [h2, norm_mul, norm_pow]
     exact mul_le_of_le_one_right (by positivity) (h1 g)
   rw [HasSum, Metric.tendsto_nhds]

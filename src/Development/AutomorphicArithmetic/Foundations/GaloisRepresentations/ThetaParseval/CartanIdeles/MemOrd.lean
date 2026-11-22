@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+
+@[expose] public section
+
 open scoped nonZeroDivisors Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GroundTheory.Global GroundTheory.Global.IdeleGroup UpperTheory.Gal.TP.Skew
 
@@ -66,19 +71,7 @@ private theorem attained {E : Type} [Field E] [NumberField E] (I : FractionalIde
 
 private theorem lattice {E : Type} [Field E] [NumberField E] (I : FractionalIdeal (𝓞 E)⁰ E) (hI : I ≠ 0) :
     (I : Submodule (𝓞 E) E).IsLattice E := by
-  obtain ⟨x, hx, hx0⟩ : ∃ x ∈ I, x ≠ 0 := by
-    by_contra hcon
-    push_neg at hcon
-    apply hI
-    ext y
-    rw [FractionalIdeal.mem_zero_iff]
-    exact ⟨hcon y, fun h => h ▸ FractionalIdeal.mem_coe.mp (Submodule.zero_mem _)⟩
-  refine ⟨FractionalIdeal.fg_of_isUnit I (IsUnit.mk0 I hI), ?_⟩
-  rw [eq_top_iff]
-  intro y _
-  have : y = (y / x) • x := by rw [smul_eq_mul, div_mul_cancel₀ y hx0]
-  rw [this]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hx)
+  exact Submodule.IsLattice.of_fg E (FractionalIdeal.fg_of_isUnit I (IsUnit.mk0 I hI))
 
 theorem UpperTheory.Gal.TP.Skew.memOrd :
     UpperTheory.Gal.TP.Skew.MemOrd := by

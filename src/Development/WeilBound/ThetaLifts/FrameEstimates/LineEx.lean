@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExtensionEmbeddingEvInfRealAd
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
-import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExistsAdelePiInf
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExtensionEmbeddingEvInfRealAd
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.EqZeroOfPiInf
+public import Development.AutomorphicSpectrum.Proofs.TwistedProofs.ExistsAdelePiInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem piInf_cA (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) (
     piInf τ (cA σ z) = star (piInf τ z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero, star_zero]
-  | add x y hx hy => simp only [map_add, hx, hy, star_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, star_add]
   | tmul a x =>
     change piInf τ (a ⊗ₜ[F] σ x) = _
     rw [piInf_tmul, piInf_tmul, h.2.2.2, star_mul', show star (InfinitePlace.Completion.extensionEmbedding w (a.1 w)) = _ from
@@ -92,13 +96,14 @@ theorem exists_section (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOv
   · rw [Finset.smul_sum]
     refine Finset.sum_eq_zero fun w _ => ?_
     rw [smul_add, smul_comm c, smul_comm c, hx w c hc, hy w c hc, smul_zero, smul_zero, add_zero]
-  · rw [map_sum, Finset.sum_eq_single w]
-    · rw [map_add, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, hx', hy',
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, Finset.sum_eq_single w]
+      · rw [map_add (f := _), GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, hx', hy',
         Pi.single_eq_same, Pi.single_eq_same, mul_one, Complex.re_add_im]
-    · intro v _ hv
-      rw [map_add, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, hx', hy',
+      · intro v _ hv
+        rw [map_add (f := _), GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, GlobalTheory.CompanionTheory.RealAdeleComponent.piInf_realAd_smul, hx', hy',
         Pi.single_eq_of_ne hv.symm, Pi.single_eq_of_ne hv.symm, mul_zero, mul_zero, add_zero]
-    · simp
+      · simp
 
 variable {d : ℕ}
 
@@ -133,7 +138,7 @@ theorem exists_matSection (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, Em
     have e := congrFun (congrFun (Matrix.map_one (n := Fin d) (piInf (τ w)) (map_zero _) (map_one _)) i) j
     rw [Matrix.map_apply] at e
     simp only [Matrix.map_apply, Matrix.of_apply]
-    rw [map_add, hp, e, add_sub_cancel]
+    rw [map_add (f := _), hp, e, add_sub_cancel]
 
 end ExponentialLineExistence
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.SatOfU
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.CuspCritAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.NewformCoefficients.SatOfU
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd Matrix
 open GlobalTheory.CuspRep (finId locGL finGL)
@@ -25,7 +29,8 @@ theorem UpperTheory.V.Af.Nf.satHol :
     UpperTheory.V.Af.Nf.SatHol := by
   intro F _ _ _ k c ω φ hφ h0 w lam hw hU
   have hq : (0 : ℝ) < normV w :=
-    Nat.cast_pos.2 (zero_lt_one.trans (NumberField.HeightOneSpectrum.one_lt_absNorm w))
+    Nat.cast_pos.2 (zero_lt_one.trans (by
+      simpa [normV, Ideal.absNorm_eq_natCard] using NumberField.HeightOneSpectrum.one_lt_absNorm w))
   have hne : ∀ t : ℝ, (((normV w : ℝ) ^ t : ℝ) : ℂ) ≠ 0 := fun t =>
     Complex.ofReal_ne_zero.2 (Real.rpow_pos_of_pos hq t).ne'
   obtain ⟨α, β, h1, h2⟩ := roots (lam / (((normV w : ℝ) ^ (((k : ℝ) - 1) / 2) : ℝ) : ℂ)) (ω.val w)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivPowerCompatTwoFormDerivativeCompOneForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VanishingH1InvertingMorphisms
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,23 +31,23 @@ variable {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F : C ⥤ CommAl
   (bij : ∀ S h, Function.Bijective (mp F (θ S h)))
   (h0 : P _ (θ T (hQ T (𝟙 T))))
 
-include hQ bij h0 in
 
+include hQ bij h0 in
 theorem sep_of_retract : Sep F P := by
   intro x hx
   refine (bij T (hQ T (𝟙 T))).1 ?_
   rw [hx _ _ h0, map_zero]
 
-include hp bij h0 in
 
+include hp bij h0 in
 theorem glue_of_retract : Glue F P := by
   intro s hs
   obtain ⟨x, hx⟩ := (bij T (hQ T (𝟙 T))).2 (s _ (θ T (hQ T (𝟙 T))))
   refine ⟨x, fun S u hu ↦ (bij S (hQ S u)).1 ?_⟩
   rw [← mp_comp, ← hp, mp_comp, hx, ← hs _ _ _ _ h0, hp, hs _ _ _ _ hu]
 
-include hp hθ hpm bij h0 in
 
+include hp hθ hpm bij h0 in
 theorem cocycleOne_vanishing_of_natural_additive_retract : Van1 F P := by
   intro a ha
   have e : ∀ S (h : Q S) y, mp F (θ S h) (Function.surjInv (bij S h).2 y) = y :=
@@ -60,8 +64,8 @@ theorem cocycleOne_vanishing_of_natural_additive_retract : Van1 F P := by
   simp only [map_sub]
   linear_combination k1 - k3 + k2
 
-include hp hθ hpm hmm bij h0 in
 
+include hp hθ hpm hmm bij h0 in
 theorem cocycleTwo_vanishing_of_natural_additive_retract : Van2 F P := by
   intro z hz
   have e : ∀ S (h : Q S) y, mp F (θ S h) (Function.surjInv (bij S h).2 y) = y :=
@@ -71,7 +75,7 @@ theorem cocycleTwo_vanishing_of_natural_additive_retract : Van2 F P := by
       z _ _ _ (θ T (hQ T (𝟙 T))) (p S u) (m S S' _ (hQ S' (u ≫ ψ)) ψ)),
     fun S S' S'' u ψ χ hu ↦ ?_⟩
   refine (bij S'' (hQ S'' (u ≫ ψ ≫ χ))).1 ?_
-  rw [map_add, map_sub, e, e, ← mp_comp,
+  rw [map_add (f := _), map_sub, e, e, ← mp_comp,
     ← hθ S' S'' (hQ S' (u ≫ ψ)) (hQ S'' (u ≫ ψ ≫ χ)) χ, mp_comp, e]
   have c1 := hz _ _ _ _ _ (p S u) (m S S' _ (hQ S' (u ≫ ψ)) ψ)
     (m S' S'' _ (hQ S'' (u ≫ ψ ≫ χ)) χ) h0
@@ -82,7 +86,7 @@ theorem cocycleTwo_vanishing_of_natural_additive_retract : Van2 F P := by
   rw [hpm, hmm, hp] at c1
   rw [hθ, hmm] at c2
   rw [hθ] at c3
-  simp only [map_add, map_sub]
+  simp only [map_add (f := _), map_sub]
   linear_combination c3 - c4 - c2 + c1
 
 end Retract

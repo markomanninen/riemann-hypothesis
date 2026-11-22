@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.JacobianTransformationLaw
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.JacobianTransformationLaw
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -36,8 +40,8 @@ theorem unitV_congr' (ξ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) {a b : E} (h : red
   unfold unitV
   by_cases ha : IsUnit (redP P a)
   · have hb : IsUnit (redP P b) := h ▸ ha
-    rw [dif_pos ha, dif_pos hb, show ha.unit = hb.unit from Units.ext h]
-  · rw [dif_neg ha, dif_neg (h ▸ ha)]
+    rw [dite_eq_left ha, dite_eq_left hb, show ha.unit = hb.unit from Units.ext h]
+  · rw [dite_eq_right ha, dite_eq_right (h ▸ ha)]
 
 theorem aym_det_zero (q k₀ r c' n' c n : ℕ) (x : HomE E (n' + c') (n + c)) (hr : n + c < r ∨ n' + c' < r) :
     (AYm q k₀ r c' n' c n x).det = 0 := by
@@ -51,7 +55,7 @@ theorem aym_det_zero (q k₀ r c' n' c n : ℕ) (x : HomE E (n' + c') (n + c)) (
       apply Matrix.det_eq_zero_of_row_eq_zero s
       intro t
       simp only [AYm, Matrix.of_apply, hq, atN]
-      rw [dif_neg (by omega)]
+      rw [dite_eq_right (by omega)]
     · push_neg at hz
       obtain ⟨s, s', hne, heq⟩ := Fintype.exists_ne_map_eq_of_card_lt
         (fun s : Fin r => (⟨fIdx k₀ c n s.1, hz s⟩ : Fin (n + c))) (by simp; omega)
@@ -107,7 +111,7 @@ private theorem intAt_add_of_starRing {E : Type} [Field E] [NumberField E] [Star
   obtain ⟨r1, s1, hs1, h1⟩ := ha
   obtain ⟨r2, s2, hs2, h2⟩ := hb
   refine ⟨s2 * r1 + s1 * r2, s1 * s2, mul_not_mem_of_not_mem hs1 hs2, ?_⟩
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   rw [← h1, ← h2]
   ring
 
@@ -142,7 +146,7 @@ private theorem mk_mul_redP_eq_of_mul_eq {E : Type} [Field E] [NumberField E] [S
       Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r :=
     ⟨b * Ideal.Quotient.mk P.asIdeal r, r, s, hs, h, by rw [← mul_assoc, hb, one_mul]⟩
   unfold redP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨r', s', hs', h', hc⟩ := hex.choose_spec
   have hs0' : Ideal.Quotient.mk P.asIdeal s' ≠ 0 := by
     rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
@@ -160,7 +164,7 @@ private theorem redP_add_twisted_eisenstein_coset {E : Type} [Field E] [NumberFi
   obtain ⟨r2, s2, hs2, h2⟩ := hb
   have hs := mul_not_mem_of_not_mem hs1 hs2
   have e3 := mk_mul_redP_eq_of_mul_eq (a := a + b) (s2 * r1 + s1 * r2) (s1 * s2) hs (by
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
     rw [← h1, ← h2]
     ring)
   have e1 := mk_mul_redP_eq_of_mul_eq r1 s1 hs1 h1
@@ -169,7 +173,7 @@ private theorem redP_add_twisted_eisenstein_coset {E : Type} [Field E] [NumberFi
     rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
   apply mul_left_cancel₀ hs0
   rw [e3]
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   rw [← e1, ← e2]
   ring
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneC
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxCoordinatesTensorHermitian
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneC
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsRationalDarbouxCoordinatesTensorHermitian
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,9 +72,11 @@ theorem exists_adapted_index_hermitian : ∀ (F E : Type) [Field F] [NumberField
   let p : Matrix (Fin n) (Fin d) (AE F E) → Fin d × Fin 2 → AF F := fun z k => βA.repr (b z k.1) k.2
   let q : Matrix (Fin n) (Fin d) (AE F E) → Fin d × Fin 2 → AF F := fun z k => -Tr (βA k.2 * D z k.1)
   have hpq : ∀ z z', p z ⬝ᵥ q z' = -Tr (b z ⬝ᵥ D z') := fun z z' => by
-    simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, Fintype.sum_prod_type, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
-    conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← βA.sum_repr (b z k), Finset.sum_mul, map_sum, ← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [smul_mul_assoc, map_smul, smul_eq_mul, ← mul_neg]
   have hTr : ∀ z, Tr (cA σ z) = Tr z := GlobalTheory.VacCocycle.trace_conj (cA σ) (cA_cA hB)
@@ -84,8 +90,8 @@ theorem exists_adapted_index_hermitian : ∀ (F E : Type) [Field F] [NumberField
   let Φ : Matrix (Fin n) (Fin d) (AE F E) →ₗ[AF F] (Fin n × Fin d → AF F) × (Fin n × Fin d → AF F) :=
     { toFun := fun z => (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2)
       map_add' := fun z z' => by
-        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add, map_add]
-        congr 2 <;> funext k <;> simp [p, q, hb.map_add, hD.map_add, mul_add, add_comm]
+        rw [Prod.mk_add_mk, glue_add, glue_add, hπ.map_add (f := _), map_add (f := _)]
+        congr 2 <;> funext k <;> simp [p, q, hb.map_add (f := _), hD.map_add (f := _), mul_add, add_comm]
       map_smul' := fun c z => by
         rw [Prod.smul_mk, glue_smul, glue_smul, hπ.map_smul, map_smul]
         congr 2 <;> funext k <;> simp [p, q, hb.map_smul, hD.map_smul] }
@@ -94,16 +100,15 @@ theorem exists_adapted_index_hermitian : ∀ (F E : Type) [Field F] [NumberField
     have h1 := M₁.co.form (π z) (π z')
     show Tr _ = glue ε _ _ ⬝ᵥ glue ε _ _ - glue ε _ _ ⬝ᵥ glue ε _ _
     change Tr _ = _ at h1
-    rw [glue_dot, glue_dot, hpq, hpq, hH', mul_add, map_add, h1, neg_one_mul, map_neg, map_sub, hTr]
+    rw [glue_dot, glue_dot, hpq, hpq, hH', mul_add, map_add (f := _), h1, neg_one_mul, map_neg, map_sub, hTr]
     ring
   have hbij : Function.Bijective Φ := by
-    have := (bijective_of_symp (Φ ∘ₗ c₀.e.symm.toLinearMap) fun u w => by
+    have h := (bijective_of_symp (Φ ∘ₗ c₀.e.symm.toLinearMap) fun u w => by
       have h1 := c₀.form (c₀.e.symm u) (c₀.e.symm w)
       rw [hΦ, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply] at h1
       exact h1).comp c₀.e.bijective
-    convert this using 1
-    funext z
-    simp
+    simpa only [LinearMap.coe_comp, Function.comp_def, LinearEquiv.coe_coe,
+      LinearEquiv.symm_apply_apply] using h
   let co : Darboux (symp (R := AF F) (cA σ) (-1) (incM F X.J) (incM F W.J)) (Fin n × Fin d) :=
     ⟨LinearEquiv.ofBijective Φ hbij, hΦ⟩
   have hco : ∀ z, co.e z = (glue ε (p z) (M₁.co.e (π z)).1, glue ε (q z) (M₁.co.e (π z)).2) := fun z => rfl
@@ -113,7 +118,8 @@ theorem exists_adapted_index_hermitian : ∀ (F E : Type) [Field F] [NumberField
     have hy : b (incM F x) = fun k => inclR (F := F) (AF F) ((Q * x) (.inr 1) k) := by simp only [b, ← incM_mul]; rfl
     have hy' : D (incM F x) = fun k => inclR (F := F) (AF F) (∑ l, W.J k l * σ ((Q * x) (.inr 0) l)) := by
       funext k
-      simp only [D, ← incM_mul, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [D, ← incM_mul, map_sum, map_mul]
       rfl
     refine ⟨glue ε (fun k => β.repr ((Q * x) (.inr 1) k.1) k.2) u,
       glue ε (fun k => -Algebra.trace F E (β k.2 * ∑ l, W.J k.1 l * σ ((Q * x) (.inr 0) l))) w, ?_⟩
@@ -126,18 +132,29 @@ theorem exists_adapted_index_hermitian : ∀ (F E : Type) [Field F] [NumberField
       rw [map_neg, ← GlobalTheory.VacIndic.trace_inclR, map_mul (inclR (F := F) (AF F)), Algebra.TensorProduct.basis_apply]
       rfl
   · have e := mul_iota hA z
-    have h1 : p (incM F H.ι * z) = 0 := funext fun k => by simp [p, b, e]
-    have h2 : q (incM F H.ι * z) = 0 := funext fun k => by simp [q, D, e]
-    have h3 : π (incM F H.ι * z) = z := by simp only [π, e, rows_sub]
+    have h1 : p (incM F H.ι * z) = 0 := funext fun k => by simp [p, b, e, what₂, Sum.elim]
+    have h2 : q (incM F H.ι * z) = 0 := funext fun k => by simp [q, D, e, what₂, Sum.elim]
+    have h3 : π (incM F H.ι * z) = z := by
+      dsimp only [π]
+      rw [e]
+      rfl
     rw [hco, h1, h2, h3, Adapt.extend_eq, Adapt.extend_eq]
   · have e := adapted_frame_mul_vecMulVec hA z
-    have h1 : p (Matrix.vecMulVec (incV F H.x) z) = 0 := funext fun k => by simp [p, b, e]
-    have h3 : π (Matrix.vecMulVec (incV F H.x) z) = 0 := by simp only [π, e, rows_sub]
+    have h1 : p (Matrix.vecMulVec (incV F H.x) z) = 0 := funext fun k => by
+      simp [p, b, e, what₂, Sum.elim]
+    have h3 : π (Matrix.vecMulVec (incV F H.x) z) = 0 := by
+      dsimp only [π]
+      rw [e]
+      rfl
     rw [hco, h1, h3, map_zero]
     exact ⟨glue_zero ε, fun k => glue_inr ε _ _ k⟩
   · have e := mul_y hA z
-    have h1 : q (Matrix.vecMulVec (incV F H.y) z) = 0 := funext fun k => by simp [q, D, e]
-    have h3 : π (Matrix.vecMulVec (incV F H.y) z) = 0 := by simp only [π, e, rows_sub]
+    have h1 : q (Matrix.vecMulVec (incV F H.y) z) = 0 := funext fun k => by
+      simp [q, D, e, what₂, Sum.elim]
+    have h3 : π (Matrix.vecMulVec (incV F H.y) z) = 0 := by
+      dsimp only [π]
+      rw [e]
+      rfl
     rw [hco, h1, h3, map_zero]
     exact ⟨glue_zero ε, fun k => glue_inr ε _ _ k⟩
 

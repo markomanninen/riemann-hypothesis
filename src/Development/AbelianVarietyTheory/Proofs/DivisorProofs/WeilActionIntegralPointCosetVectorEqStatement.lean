@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilActionIntegralPointCosetVectorEq
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilActionIntegralPointCosetVectorEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise

@@ -1,11 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingAffineLinearMapAddEqAddFrM
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnfoldingAffineLinearMapAddEqAddFrM
+
+@[expose] public section
 
 noncomputable section
 
 namespace GlobalTheory.PadicUnfold.Period
-
-open Formalism.L2.Col GlobalTheory.IndefiniteRowSideFullHecke.UnfoldedLatticeData
 
 def extZero {k : Type} [CommRing k] {n' n : ℕ} (c' c : ℕ) (y : (Fin n' → k) →ₗ[k] (Fin n → k)) :
     (Fin (n' + c') → k) →ₗ[k] (Fin (n + c) → k) :=
@@ -20,12 +22,13 @@ theorem extZero_single {k : Type} [CommRing k] {n' n : ℕ} (c' c : ℕ)
   simp [extZero, Matrix.toLin'_apply]
 
 theorem periodXX1_add_smul {k : Type} [CommRing k] {n' c' n c : ℕ} (a : k)
-    (x y : (Fin n' → k) →ₗ[k] (Fin n → k)) (t : Loc.FC n' c' n c → k) :
-    Loc.xx1 (x + a • y) t = Loc.xx1 x t + a • extZero c' c y := by
+    (x y : (Fin n' → k) →ₗ[k] (Fin n → k)) (t : Formalism.L2.Col.Loc.FC n' c' n c → k) :
+    Formalism.L2.Col.Loc.xx1 (x + a • y) t =
+      Formalism.L2.Col.Loc.xx1 x t + a • extZero c' c y := by
   refine hom_ext fun s l => ?_
   rw [LinearMap.add_apply, Pi.add_apply, LinearMap.smul_apply, Pi.smul_apply, linearMap_unfolding_apply_single, linearMap_unfolding_apply_single,
     extZero_single]
-  by_cases hf : Loc.IsFree n' n c l.1 s.1
+  by_cases hf : Formalism.L2.Col.Loc.IsFree n' n c l.1 s.1
   · have hs : ¬ s.1 < n' := not_lt.2 hf.1
     simp [hf, hs]
   · by_cases hs : s.1 < n'
@@ -33,10 +36,11 @@ theorem periodXX1_add_smul {k : Type} [CommRing k] {n' c' n c : ℕ} (a : k)
     · simp [hf, hs]
 
 theorem chArg_smul_extZero {k : Type} [CommRing k] {n' n c : ℕ} (a : k)
-    (y : (Fin n' → k) →ₗ[k] (Fin n → k)) : Loc.chArg (a • extZero (c + 1) c y) = 0 := by
+    (y : (Fin n' → k) →ₗ[k] (Fin n → k)) :
+    Formalism.L2.Col.Loc.chArg (a • extZero (c + 1) c y) = 0 := by
   rw [chArg_eq]
   refine Finset.sum_eq_zero fun i _ => ?_
-  rw [LinearMap.smul_apply, Pi.smul_apply, extZero_single, dif_neg (by simp; omega), smul_zero]
+  rw [LinearMap.smul_apply, Pi.smul_apply, extZero_single, dite_eq_right (by simp; omega), smul_zero]
 
 variable {g : ℕ} [Fact g.Prime]
 

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfLevelZeroParts
-import Formalism.SharpRestriction.LevelLetterCocycles.LevLetEMul
-import Formalism.SharpRestriction.LevelLetterCocycles.StageStep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcCoordinatesOfLevelZeroParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevLetEMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.StageStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,7 +88,7 @@ theorem cc_lev_piLamUp (hR : Formalism.MainNotions.UnusedSlot80.ToolsR.RingP W) 
       rw [hx] at this
       have e2 : ps W (s + 1) = Formalism.MainNotions.WachCoordinates.pS W (s + 1) := rfl
       rw [e2, ← this]; ring
-    rw [e1, map_add, map_mul, map_add, map_mul, hq0, zero_mul, add_zero, map_natCast, map_natCast]
+    rw [e1, map_add (f := _), map_mul, map_add (f := _), map_mul, hq0, zero_mul, add_zero, map_natCast, map_natCast]
   rw [lamUp_eq, map_mul, map_prod, map_mul, map_prod, hπ]
   refine mul_ne_zero (neg_ne_zero.mpr hp) (Finset.prod_ne_zero_iff.mpr fun s _ => ?_)
   rw [map_pow, map_pow, hps]

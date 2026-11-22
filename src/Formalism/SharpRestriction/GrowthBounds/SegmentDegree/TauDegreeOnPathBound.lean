@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumSingleApplyZero
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.SumSingleApplyZero
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.OldestLetterInSegment
+
+@[expose] public section
 
 noncomputable section
 
@@ -244,7 +248,7 @@ theorem restMon_of (C₀ : ℝ) (h61 : BetaRatioBound C₀) (h21 : TauDegreeOnPa
     have h3 : cst ^ r ≤ ∏ i' : Fin r, ((Wfin.filter fun w => (dtau τ i' + ∑ c, w c) % Q = ρ i' % Q).card : ℝ) := by
       have : cst ^ r = ∏ _i' : Fin r, cst := by simp
       rw [this]
-      exact Finset.prod_le_prod (fun _ _ => hcst0) fun i' _ => h1 i'
+      exact Finset.prod_le_prod₀ (fun _ _ => hcst0) fun i' _ => h1 i'
     refine le_trans h3 ?_
     exact_mod_cast h2
   have hA1 : A.card = ∑ τ : X.Tset p K j (X.restr j b), (A.filter fun x => x.1 = τ).card :=

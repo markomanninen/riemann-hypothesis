@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsNhdsInvariant
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PureEqPureA
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdeleCongruenceUnitCriterion
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ExistsNhdsInvariant
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.PureEqPureA
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdeleCongruenceUnitCriterion
+
+@[expose] public section
 
 noncomputable section
 
@@ -335,7 +339,9 @@ private theorem exists_nat_valuation_le_subset_of_mem_nhds_zero {W : Set (Af F)}
     · obtain ⟨v, hv⟩ : ∃ v : Pl F, a v ≠ 0 := by
         by_contra hcon
         push_neg at hcon
-        exact ha0 (IsDedekindDomain.FiniteAdeleRing.ext F (fun v => by simpa using hcon v))
+        exact ha0 (IsDedekindDomain.FiniteAdeleRing.ext F (fun v => by
+          change a v = 0
+          exact hcon v))
       have hγ : Valued.v (a v) ≠ 0 := by simpa using hv
       obtain ⟨m, hm0, hm⟩ := exists_natCast_intValuation_lt v hγ
       exact absurd ((hall ⟨m, hm0⟩).1 v) (not_le.mpr hm)
@@ -353,13 +359,12 @@ private theorem exists_nat_valuation_le_subset_of_mem_nhds_zero {W : Set (Af F)}
       rw [map_mul]
       exact mul_le_of_le_one_left' (IsDedekindDomain.HeightOneSpectrum.intValuation_le_one _ _)
   obtain ⟨n, hn⟩ := isOpen_isCompact_adelic_integers.2.elim_directed_family_closed (fun n => D n ∩ W'ᶜ)
-    (fun n => (hDclosed n).inter hW'o.isClosed_compl) hempty hdir
+    (fun n => (hDclosed n).inter hW'o.isClosed_compl) (Set.disjoint_iff_inter_eq_empty.mpr hempty) hdir
   refine ⟨n.1, n.2, fun a ha => hW'W ?_⟩
   by_contra hna
   have hmem : a ∈ {a : Af F | ∀ v : Pl F, a v ∈ v.adicCompletionIntegers F} ∩ (D n ∩ W'ᶜ) :=
     ⟨hDsub n ha, ha, hna⟩
-  rw [hn] at hmem
-  exact hmem
+  exact Set.disjoint_left.mp hn hmem.1 hmem.2
 
 private theorem isOpen_setOf_near {M : ℕ} (hM : M ≠ 0) (c : κ → Af F) : IsOpen {y | Near M c y} := by
   have hset : {y | Near M c y} = ⋂ i, (fun y : κ → Af F => algebraMap F (Af F) ((M : F)⁻¹) * (y i - c i)) ⁻¹'

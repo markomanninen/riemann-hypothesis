@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.IsNormAlong
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.QuotFubini
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,10 +29,6 @@ def QuotAlong : Prop :=
       Measure.map (fun x : S => (x : G)) μ = Measure.map (fun t : T => j t) ν ∧
       ∀ F : G → ℂ, Measurable F → (∀ s ∈ S, ∀ g, F (s * g) = F g) →
         PositivityTheory.Rg.Tf.Geo.quotInt μG id (fun t : T => j t) ν F = quotIntegral μG S μ F
-
-def OrbEq : Prop :=
-  ∀ (G : Type) [Group G] [MeasurableSpace G] (μG : Measure G) (T : Subgroup G) (ν : Measure T) (F : G → ℂ),
-    PositivityTheory.Rg.Tf.Geo.quotInt μG id (fun t : T => (t : G)) ν F = quotIntegral μG T ν F
 
 def InclClosed : Prop :=
   ∀ (k E : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]

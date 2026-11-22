@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreTail
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormSumLt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsMoreTail
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormSumLt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -53,7 +57,7 @@ private theorem conj_of_close {F Γ : Type} [NormedField F] [IsUltrametricDist F
 
 theorem UpperTheory.V.U3.pt_inertia_away :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG 3 (PadicAlgCl l)} (h : D.IsPt U g₁ r),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)} (h : D.IsPt U g₁ r),
       ∀ A : ValuationSubring Ω, ¬ A.valuation (l : Ω) < 1 → ∃ M : GL (Fin 3) (PadicAlgCl l), ∀ g ∈ Ine (F := ℚ) A, D.η g = 1 →
         (M : Matrix (Fin 3) (Fin 3) (PadicAlgCl l)) * (r g).mat = (r0 D.η D.ΨQ g).mat * M := by
   intro Ω _ _ _ K _ _ _ l hl c N _ e ψ D U g₁ _ r h A hA

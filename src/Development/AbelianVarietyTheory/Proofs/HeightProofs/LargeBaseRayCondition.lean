@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.EventuallyAllScaleContextsAndOfBoth
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.OntoAlong
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CardKPNeZero
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFinsetContainsRayField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.EventuallyAllScaleContextsAndOfBoth
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.OntoAlong
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CardKPNeZero
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsFinsetContainsRayField
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links GlobalTheory.FinalJoin2 GlobalTheory.AtMember GlobalTheory.EX GlobalTheory.EX.OB GlobalTheory.Mem GlobalTheory.Mem.Top GlobalTheory.Mem.Top.Bl GlobalTheory.Fc GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.Plug GlobalTheory.PlugPt
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 set_option autoImplicit false
@@ -54,13 +59,13 @@ theorem rayRec_of_has (hR : GlobalTheory.NT.RayField) {K : Ctx} (X : Stages) (f 
     exact DFunLike.congr_fun X.B.embE_φ₀ _
   · intro z hz
     refine hH z (Finset.mem_biUnion.2 ⟨_, hM, ?_⟩)
-    rw [raySet, dif_pos hM0]
+    rw [raySet, dite_eq_left hM0]
     exact hz
 
 end GlobalTheory.Plug.RayLarge
 
-open GlobalTheory.Plug.RayLarge in
 
+open GlobalTheory.Plug.RayLarge in
 theorem GlobalTheory.Plug.largeBaseProperty_rayProperty : GlobalTheory.NT.RayField → ∀ (KP : ∀ B : Base, Fr B.toPre → Prop) (Q : V4.Slot), LargeBaseCondition KP Q RayPosition := by
   intro hR KP Q
   exact ⟨1, one_pos, fun _ _ _ _ _ _ => ⟨⟨0, fun _ => 0, fun _ => 0, fun _ => 0⟩, fun _ _ _ _ => ⟨0, fun _ _ => ⟨0, fun _ _ =>

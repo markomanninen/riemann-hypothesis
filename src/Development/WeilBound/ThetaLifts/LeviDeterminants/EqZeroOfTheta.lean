@@ -1,11 +1,15 @@
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivarianceStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.HeisenbergCommutingOperatorScalarStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDualStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibilityStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissibleStatement
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RemovableLogGrowthSingularityStatement
+module
+
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardAdelicCharacterNontrivialAtPlaces
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.WeilRepresentationThetaEquivarianceStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.HeisenbergCommutingOperatorScalarStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDualStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumAdmissibilityStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaDistributionNonzeroAdmissibleStatement
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.RemovableLogGrowthSingularityStatement
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -32,8 +36,8 @@ theorem isStd_ne_one (hψ : IsStd ψ) : ψ ≠ 1 := by
   rw [e3, Complex.exp_pi_mul_I] at e
   norm_num at e
 
-variable (F) in
 
+variable (F) in
 def ratPt (y z : κ → F) : (κ → AF F) × (κ → AF F) :=
   (fun i => algebraMap F (AF F) (y i), fun i => algebraMap F (AF F) (z i))
 
@@ -64,17 +68,6 @@ theorem rho_smul (d : Darboux B κ) (w : W) (c : ℂ) (Φ : (κ → AF F) → �
   funext x
   simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul]
   ring
-
-theorem rho_sub (d : Darboux B κ) (w : W) (Φ Ψ : (κ → AF F) → ℂ) : d.rho ψ w (Φ - Ψ) = d.rho ψ w Φ - d.rho ψ w Ψ := by
-  funext x
-  simp only [Darboux.rho, schr, Pi.sub_apply]
-  ring
-
-theorem eq_of_theta (hψ : IsStd ψ) (d : Darboux B κ) {Φ Ψ} (hΦ : Φ ∈ schA F κ) (hΨ : Ψ ∈ schA F κ)
-    (h : ∀ w, thetaSum F (d.rho ψ w Φ) = thetaSum F (d.rho ψ w Ψ)) : Φ = Ψ := by
-  obtain ⟨-, ⟨l, -, hl⟩, -⟩ := GlobalTheory.T.theta_distribution_nonzero_admissible F κ
-  refine sub_eq_zero.1 (eq_zero_of_theta hψ d (sub_mem hΦ hΨ) fun w => ?_)
-  rw [← hl _ (rho_mem hψ d w (sub_mem hΦ hΨ)), rho_sub, map_sub, hl _ (rho_mem hψ d w hΦ), hl _ (rho_mem hψ d w hΨ), h, sub_self]
 
 theorem thetaSum_smul (c : ℂ) (Φ : (κ → AF F) → ℂ) : thetaSum F (c • Φ) = c * thetaSum F Φ := by
   simp only [thetaSum, Pi.smul_apply, smul_eq_mul, tsum_mul_left]
@@ -114,14 +107,19 @@ theorem schur (hψ : IsStd ψ) (d : Darboux B κ) (T : ((κ → AF F) → ℂ) �
     obtain ⟨w', rfl⟩ := d.e.surjective w
     exact h3 w' Φ hΦ
 
-theorem Tw.smul (h : Tw ψ d d₁ e) {c : ℂ} (hc : c ≠ 0) : Tw ψ d d₁ (c • e) where
-  maps Φ hΦ := Submodule.smul_mem _ c (h.maps Φ hΦ)
-  Heisenberg₂ w Φ hΦ := by rw [LinearMap.smul_apply, LinearMap.smul_apply, h.Heisenberg₂ w Φ hΦ, rho_smul]
-  adm l hl g hg := by
+theorem Tw.smul (h : Tw ψ d d₁ e) {c : ℂ} (hc : c ≠ 0) : Tw ψ d d₁ (c • e) := by
+  refine
+    { maps := fun Φ hΦ => Submodule.smul_mem _ c (h.maps Φ hΦ)
+      Heisenberg₂ := ?_
+      adm := ?_
+      ne := ?_ }
+  · intro w Φ hΦ
+    rw [LinearMap.smul_apply, LinearMap.smul_apply, h.Heisenberg₂ w Φ hΦ, rho_smul]
+  · intro l hl g hg
     obtain ⟨T, hT⟩ := h.adm l hl g hg
     refine ⟨c • T, fun f => ?_⟩
     rw [LinearMap.comp_smul, LinearMap.smul_apply, hT, ContinuousLinearMap.smul_apply]
-  ne := by
+  ·
     obtain ⟨Φ, hΦ, h0⟩ := h.ne
     exact ⟨Φ, hΦ, smul_ne_zero hc h0⟩
 
@@ -138,21 +136,6 @@ theorem Tw.exists_inv (hψ : IsStd ψ) (h : Tw ψ d d₁ e) (h' : Tw ψ d₁ d e
   have h'' := h'.smul (inv_ne_zero a0)
   refine ⟨_, h'', h1, fun Φ hΦ => sub_eq_zero.1 (h''.inj hψ hr' (sub_mem (h.maps _ (h''.maps Φ hΦ)) hΦ) ?_)⟩
   rw [map_sub, h1 _ (h''.maps Φ hΦ), sub_self]
-
-def negD (d : Darboux B κ) : Darboux (fun w w' => -B w w') κ where
-  e := d.e.trans ((LinearEquiv.refl _ _).prodCongr (LinearEquiv.neg _))
-  form w w' := by
-    rw [d.form]
-    simp
-    ring
-
-theorem negD_e (d : Darboux B κ) (w : W) : (negD d).e w = ((d.e w).1, -(d.e w).2) := rfl
-
-theorem RatRel.neg (hr : RatRel d d₁) : RatRel (negD d) (negD d₁) := fun y z => by
-  obtain ⟨w, y', z', h1, h2⟩ := hr y (-z)
-  refine ⟨w, y', -z', ?_, ?_⟩
-  · rw [negD_e, h1]; simp [ratPt, funext_iff]
-  · rw [negD_e, h2]; simp [ratPt, funext_iff]
 
 end One
 
@@ -176,42 +159,6 @@ section Dbl
 variable {E : Type} [CommRing E] [Algebra (AF F) E] {c : E →ₐ[AF F] E} {α β : Type} [Fintype α] [DecidableEq α] [Fintype β]
   [DecidableEq β] {ξ : E} {JA : Matrix α α E} {JB : Matrix β β E} {d d₁ : Darboux (symp c ξ JA JB) κ}
   {dd dd₁ : Darboux (symp c ξ JA (dbl JB)) (κ ⊕ κ)}
-
-theorem RatRel.dbl (hr : RatRel d d₁) (h : IsDblCoord c ξ JA JB d dd) (h₁ : IsDblCoord c ξ JA JB d₁ dd₁) : RatRel dd dd₁ := by
-  intro y z
-  obtain ⟨w, y', z', h1, h2⟩ := hr (y ∘ Sum.inl) (z ∘ Sum.inl)
-  obtain ⟨u, y'', z'', h3, h4⟩ := hr (y ∘ Sum.inr) (-z ∘ Sum.inr)
-  refine ⟨Matrix.fromCols w u, Sum.elim y' y'', Sum.elim z' (-z''), ?_, ?_⟩
-  · rw [h, h1, h3]
-    ext (i | i) <;> simp [ratPt]
-  · rw [h₁, h2, h4]
-    ext (i | i) <;> simp [ratPt]
-
-theorem rho_box (h : IsDblCoord c ξ JA JB d dd) (w u : Matrix α β E) (φ φ' : (κ → AF F) → ℂ) :
-    dd.rho ψ (Matrix.fromCols w u) (boxFun φ φ') = boxFun (d.rho ψ w φ) ((negD d).rho ψ u φ') := by
-  rw [Darboux.rho, h, schr_box]
-  rfl
-
-theorem box_compat (hT : TwEx) (hψ : IsStd ψ) (hr : RatRel d d₁) (h : IsDblCoord c ξ JA JB d dd)
-    (h₁ : IsDblCoord c ξ JA JB d₁ dd₁) {e ed} (he : Tw ψ d d₁ e) (hd : Tw ψ dd dd₁ ed) :
-    ∃ e₂, Tw ψ (negD d) (negD d₁) e₂ ∧ ∀ φ ∈ schA F κ, ∀ φ' ∈ schA F κ, ed (boxFun φ φ') = boxFun (e φ) (e₂ φ') := by
-  obtain ⟨e₀, h₀⟩ := hT F ψ hψ κ _ _ (negD d) (negD d₁)
-  obtain ⟨a, ha, Ha⟩ := he.theta hψ hr
-  obtain ⟨b, hb, Hb⟩ := h₀.theta hψ hr.neg
-  obtain ⟨t, ht, Ht⟩ := hd.theta hψ (hr.dbl h h₁)
-  have h₂ := h₀.smul (div_ne_zero ht (mul_ne_zero ha hb))
-  refine ⟨_, h₂, fun φ hφ φ' hφ' => ?_⟩
-  have hb1 := (GlobalTheory.T.theta_sum_tensor_product F κ κ φ hφ φ' hφ').1
-  refine eq_of_theta hψ dd₁ (hd.maps _ hb1) (GlobalTheory.T.theta_sum_tensor_product F κ κ _ (he.maps φ hφ) _ (h₂.maps φ' hφ')).1 fun w => ?_
-  rw [← Matrix.fromCols_toCols w]
-  generalize w.toCols₁ = u
-  generalize w.toCols₂ = u'
-  have m1 := rho_mem hψ d u hφ
-  have m2 := rho_mem hψ (negD d) u' hφ'
-  rw [← hd.Heisenberg₂ _ _ hb1, Ht _ (rho_mem hψ dd _ hb1), rho_box h, rho_box h₁, (GlobalTheory.T.theta_sum_tensor_product F κ κ _ m1 _ m2).2,
-    ← he.Heisenberg₂ u φ hφ, ← h₂.Heisenberg₂ u' φ' hφ', (GlobalTheory.T.theta_sum_tensor_product F κ κ _ (he.maps _ m1) _ (h₂.maps _ m2)).2, Ha _ m1,
-    LinearMap.smul_apply, thetaSum_smul, Hb _ m2]
-  field_simp
 
 end Dbl
 

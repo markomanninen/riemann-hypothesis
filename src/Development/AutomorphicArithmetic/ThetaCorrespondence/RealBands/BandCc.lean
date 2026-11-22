@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.RealBands.IsBand
+
+@[expose] public section
 
 open MeasureTheory Filter UpperTheory.Lit.Cusp
 open scoped Topology Pointwise

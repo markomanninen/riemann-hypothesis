@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleSubrepFixedOfUnitary
+
+@[expose] public section
 
 namespace GlobalTheory.AdmissibleProjection
 
@@ -33,7 +37,7 @@ theorem orbit_finite [TopologicalSpace H] [IsTopologicalGroup H] (ρ : Represent
         calc ρ h w = ρ (i : H) (ρ (i : H)⁻¹ (ρ h w)) := (rho_rho_inv ρ _ _).symm
           _ = ρ (i : H) w := by rw [e]
     rw [e]
-    exact (hsm w).preimage (continuous_mul_left _)
+    exact (hsm w).preimage (continuous_const_mul _)
   obtain ⟨t, ht⟩ := hK.elim_finite_subcover (fun i : K => {h : H | ρ h w = ρ (i : H) w}) hopen
     (fun h hh => Set.mem_iUnion.2 ⟨⟨h, hh⟩, rfl⟩)
   refine (t.finite_toSet.image (fun i : K => ρ (i : H) w)).subset ?_
@@ -78,7 +82,7 @@ theorem exists_proj (ρ : Representation ℂ H W) (B : W →ₗ⋆[ℂ] W →ₗ
   let P : W →ₗ[ℂ] W :=
     { toFun := f
       map_add' := fun a b => huniq _ _ (add_mem (hf1 a) (hf1 b)) (fun z hz => by
-        rw [show a + b - (f a + f b) = (a - f a) + (b - f b) by abel, map_add, hf2 a z hz,
+        rw [show a + b - (f a + f b) = (a - f a) + (b - f b) by abel, map_add (f := _), hf2 a z hz,
           hf2 b z hz, add_zero])
       map_smul' := fun c a => by
         simp only [RingHom.id_apply]

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelAfterExt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyLevelOfIsAlgClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelAfterExt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NonemptyLevelOfIsAlgClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.AnForm.R
@@ -33,8 +37,8 @@ theorem exists_galois (F E : Type) [Field F] [CharZero F] [Field E] [Algebra F E
   · exact { }
   · rw [RingHom.comp_assoc, ← IsScalarTower.algebraMap_eq F E C, ← IsScalarTower.algebraMap_eq F C Ω]
 
-open MonObj in
 
+open MonObj in
 theorem nonempty_level_of_rational {F : Type} [Field F] [CharZero F] (P : PolAV (Sp F)) (n : ℕ) (hn : 0 < n) (ζ : Fˣ)
     (hζ : IsPrimitiveRoot ζ n) (Q : PolAV (Sp (AlgebraicClosure F))) (φ : Q.A.left ⟶ P.A.left)
     (hQ : IsPolFibre (algebraMap F (AlgebraicClosure F)) P Q φ)
@@ -50,6 +54,27 @@ theorem nonempty_level_of_rational {F : Type} [Field F] [CharZero F] (P : PolAV 
     have := nt F
     exact prim (Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom
   obtain ⟨l⟩ := GlobalTheory.nonempty_level_of_isAlgClosed _ Q n (Units.map σ.toMonoidHom ζ) (Nat.cast_ne_zero.2 hn.ne') (prim σ)
+  have spec_map_field_cancel {K C : Type} [Field K] [Field C] (gam : K →+* C)
+      {X : Scheme} (y y' : Sp K ⟶ X) (h : spMap gam ≫ y = spMap gam ≫ y') : y = y' := by
+    obtain ⟨⟨p, φ⟩, rfl⟩ := (Scheme.SpecToEquivOfField K X).symm.surjective y
+    obtain ⟨⟨p', φ'⟩, rfl⟩ := (Scheme.SpecToEquivOfField K X).symm.surjective y'
+    simp only [Scheme.SpecToEquivOfField_symm_apply] at h ⊢
+    have e : ∀ (q : X) (ψ : X.residueField q ⟶ CommRingCat.of K),
+        spMap gam ≫ (Spec.map ψ ≫ X.fromSpecResidueField q) =
+          (Scheme.SpecToEquivOfField C X).symm ⟨q, ψ ≫ CommRingCat.ofHom gam⟩ := by
+      intro q ψ
+      simp only [Scheme.SpecToEquivOfField_symm_apply, spMap, Spec.map_comp, Category.assoc]
+    rw [e, e] at h
+    have h2 := (Scheme.SpecToEquivOfField C X).symm.injective h
+    simp only [Sigma.mk.inj_iff] at h2
+    obtain ⟨rfl, h3⟩ := h2
+    have h4 : φ = φ' := by
+      have h5 : φ ≫ CommRingCat.ofHom gam = φ' ≫ CommRingCat.ofHom gam := eq_of_heq h3
+      ext x
+      apply gam.injective
+      have := congrArg (fun f => f.hom x) h5
+      simpa using this
+    rw [h4]
   have hinj : Function.Injective (ObjPull.secPull hQ.2.1) := fun a b h =>
     Over.OverMorphism.ext (spec_map_field_cancel σ _ _ (by
       rw [← ObjPull.secPull_left hQ.2.1, ← ObjPull.secPull_left hQ.2.1, h]))

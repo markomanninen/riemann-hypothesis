@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CupProducts.Functoriality
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CupProducts.Functoriality
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -51,23 +56,15 @@ theorem cupPairing_cohomologyπ (μ : A ⊗ B ⟶ C) (h : p + q = n) (x : cocycl
 
 theorem cochainOf_cocycleι_cyclesMap_cupCocycles (μ : A ⊗ B ⟶ C) (h : p + q = n)
     (x : cocycles A p) (y : cocycles B q) (s : Fin n → G) :
-    cochainOf C (cocycleι C n
+    cochainOf (A := C) (cocycleι (A := C) (p := n)
         (HomologicalComplex.cyclesMap (cochainsMap μ) n (cupCocycles h x y))) s =
-      μ.hom (cochainOf A (cocycleι A p x) (fun i : Fin p => s ⟨i, by omega⟩) ⊗ₜ[k]
+      μ.hom (cochainOf (A := A) (cocycleι (A := A) (p := p) x)
+          (fun i : Fin p => s ⟨i, by omega⟩) ⊗ₜ[k]
         B.ρ (Fin.partialProd s ⟨p, by omega⟩)
-          (cochainOf B (cocycleι B q y) fun j : Fin q => s ⟨p + j, by omega⟩)) := by
+          (cochainOf (A := B) (cocycleι (A := B) (p := q) y)
+            fun j : Fin q => s ⟨p + j, by omega⟩)) := by
   rw [cochainOf_cocycleι_cyclesMap, cocycleι_cupCocycles, cochainOf_cupLocallyConstant]
   rfl
-
-theorem cochainOf_cocycleι_cyclesMap_pairingHom (β : A →ₗ[k] B →ₗ[k] C)
-    (hβ : ∀ (g : G) (a : A) (b : B), β (A.ρ g a) (B.ρ g b) = C.ρ g (β a b)) (h : p + q = n)
-    (x : cocycles A p) (y : cocycles B q) (s : Fin n → G) :
-    cochainOf C (cocycleι C n
-        (HomologicalComplex.cyclesMap (cochainsMap (pairingHom β hβ)) n (cupCocycles h x y))) s =
-      β (cochainOf A (cocycleι A p x) (fun i : Fin p => s ⟨i, by omega⟩))
-        (B.ρ (Fin.partialProd s ⟨p, by omega⟩)
-          (cochainOf B (cocycleι B q y) fun j : Fin q => s ⟨p + j, by omega⟩)) := by
-  rw [cochainOf_cocycleι_cyclesMap_cupCocycles, pairingHom_tmul]
 
 variable {A' B' C' : Rep.{u} k G} [IsDiscreteRep A'] [IsDiscreteRep B'] [IsDiscreteRep C']
 

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocRho
-import Mathlib.RingTheory.MvPowerSeries.Derivative
-import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanOfVariable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.LocRho
+public import Mathlib.RingTheory.MvPowerSeries.Derivative
+public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SpanOfVariable
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -80,14 +84,14 @@ end Th
 private theorem ord_star {l : ℕ} [Fact l.Prime] {k : Type} [Field k] {F : Frame l k} {R : Type} [CommRing R]
     (ρ : NRep F 3 R) (v : F.V) (g : Fin 3 → F.Gv v) :
     ordProd (fun s => ρ.r (F.star (F.loc0 v s))) (fun i s => (ρ.ψ v i.rev s : R)) g = 0 := by
-  have hJ : Jmat R 3 * Jmat R 3 = 1 := by
+  have hJ : Jmat (R := R) 3 * Jmat (R := R) 3 = 1 := by
     ext i j
     fin_cases i <;> fin_cases j <;> simp [Jmat, Matrix.mul_apply, Fin.sum_univ_three, Fin.rev]
-  have e (a : Matrix (Fin 3) (Fin 3) R) (c : R) : Jmat R 3 * aᵀ * Jmat R 3 - c • (1 : Matrix (Fin 3) (Fin 3) R) =
-      Jmat R 3 * (a - c • (1 : Matrix (Fin 3) (Fin 3) R))ᵀ * Jmat R 3 := by
+  have e (a : Matrix (Fin 3) (Fin 3) R) (c : R) : Jmat (R := R) 3 * aᵀ * Jmat (R := R) 3 - c • (1 : Matrix (Fin 3) (Fin 3) R) =
+      Jmat (R := R) 3 * (a - c • (1 : Matrix (Fin 3) (Fin 3) R))ᵀ * Jmat (R := R) 3 := by
     simp [mul_sub, sub_mul, hJ]
-  have hJ' (a : Matrix (Fin 3) (Fin 3) R) : Jmat R 3 * (Jmat R 3 * a) = a := by rw [← mul_assoc, hJ, one_mul]
-  have h := congrArg (fun a => Jmat R 3 * aᵀ * Jmat R 3) (ρ.ord v fun i => g i.rev)
+  have hJ' (a : Matrix (Fin 3) (Fin 3) R) : Jmat (R := R) 3 * (Jmat (R := R) 3 * a) = a := by rw [← mul_assoc, hJ, one_mul]
+  have h := congrArg (fun a => Jmat (R := R) 3 * aᵀ * Jmat (R := R) 3) (ρ.ord v fun i => g i.rev)
   simp only [ordProd, List.ofFn_succ, List.ofFn_zero, List.prod_cons, List.prod_nil, mul_one, ρ.pol, e] at h ⊢
   simp only [transpose_mul, transpose_zero, mul_zero, zero_mul, mul_assoc, hJ'] at h ⊢
   exact h
@@ -158,11 +162,11 @@ private theorem span_X {O σ : Type} [CommRing O] (I : Ideal (MvPowerSeries σ O
 
 private theorem pderiv_even {O : Type} [CommRing O] {a g : ℕ} (I : Ideal (MvPowerSeries (Fin a ⊕ Fin g) O))
     (hI : ∀ j, MvPowerSeries.X (.inr j) ∈ I) {f : MvPowerSeries (Fin a ⊕ Fin g) O}
-    (hf : f ∈ wtPart O (Space.Loc.par a g) 0) (b : Fin g) : MvPowerSeries.pderiv O (.inr b) f ∈ I := by
+    (hf : f ∈ wtPart O (Space.Loc.par a g) 0) (b : Fin g) : MvPowerSeries.pderiv (R := O) (.inr b) f ∈ I := by
   refine span_X I (Finset.univ.map ⟨Sum.inr, Sum.inr_injective⟩) (by simpa using hI) _ fun n hn => ?_
   have h : ∀ j, n (.inr j) = 0 := by simpa using hn
   rw [MvPowerSeries.coeff_pderiv, hf, zero_mul]
-  rw [map_add, Finsupp.weight_single, Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
+  rw [map_add (f := _), Finsupp.weight_single, Finsupp.weight_apply, Finsupp.sum_fintype _ _ (by simp)]
   simp [Space.Loc.par, h]
 
 private theorem der_ex {O R Q : Type} [CommRing O] [CommRing R] [CommRing Q] [IsDomain Q] [Algebra O R] {a b g : ℕ}
@@ -178,10 +182,10 @@ private theorem der_ex {O R Q : Type} [CommRing O] [CommRing R] [CommRing Q] [Is
   simp only [hφ] at hm hM
   obtain ⟨ν, hν, hMν⟩ := (Matrix.exists_mulVec_eq_zero_iff (M := φ.mapMatrix M)).2 (by rw [← RingHom.map_det, hM])
   let D0 : MvPowerSeries (Fin a ⊕ Fin g) O →+ Q :=
-    { toFun := fun f => ∑ c, φ (MvPowerSeries.pderiv O (.inr c) f) * ν c
+    { toFun := fun f => ∑ c, φ (MvPowerSeries.pderiv (R := O) (.inr c) f) * ν c
       map_zero' := by simp
       map_add' := fun x y => by simp [add_mul, Finset.sum_add_distrib] }
-  have e0 f : D0 f = ∑ c, φ (MvPowerSeries.pderiv O (.inr c) f) * ν c := rfl
+  have e0 f : D0 f = ∑ c, φ (MvPowerSeries.pderiv (R := O) (.inr c) f) * ν c := rfl
   have l0 x y : D0 (x * y) = φ x * D0 y + φ y * D0 x := by
     simp [e0, Finset.mul_sum, add_mul, Finset.sum_add_distrib, mul_assoc]
   have x0 j : D0 (MvPowerSeries.X (.inr j)) = ν j := by
@@ -201,7 +205,7 @@ private theorem der_ex {O R Q : Type} [CommRing O] [CommRing R] [CommRing Q] [Is
       · have := congrFun hMν i
         simpa [mulVec, dotProduct, l0, hm, x0] using this
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | smul c x hx h =>
       have : p x = 0 := hk.ge hx
       rw [smul_eq_mul, l0, h, ← hφ x, this]
@@ -212,7 +216,7 @@ private theorem der_ex {O R Q : Type} [CommRing O] [CommRing R] [CommRing Q] [Is
   refine ⟨AddMonoidHom.mk' (fun x => D0 (Function.surjInv hp x)) fun x y => ?_, fun x y => ?_, fun f hf => ?_, ?_⟩
   · obtain ⟨x, rfl⟩ := hp x
     obtain ⟨y, rfl⟩ := hp y
-    rw [← map_add p, k1, k1, k1, map_add]
+    rw [← map_add p, k1, k1, k1, map_add (f := _)]
   · obtain ⟨x, rfl⟩ := hp x
     obtain ⟨y, rfl⟩ := hp y
     simp only [AddMonoidHom.mk'_apply]
@@ -250,6 +254,6 @@ theorem UpperTheory.V.Fr.thick :
       induction hy using Submodule.span_induction with
       | mem y hy => obtain ⟨g, a, b, -, rfl⟩ := hy; exact h g a b
       | zero => simp
-      | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
+      | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, add_zero]
       | smul c y hy h' => rw [smul_eq_mul, hD, h', Ideal.Quotient.eq_zero_iff_mem.2 (hT.2.2 hy)]; simp
     exact key _ (hm j)

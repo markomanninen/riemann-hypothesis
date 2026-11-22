@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ChartBaseRepresentativePenultimateStep
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CouplingCosetsRightTranslateInFramesTypePrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BaseCosetRepIntegralAfterScalingAtBadPrime
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivFr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowTypeOneAddPrimeSmulEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ChartBaseRepresentativePenultimateStep
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FirstCoupledKernelEquivariantCosets
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CouplingCosetsRightTranslateInFramesTypePrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.BaseCosetRepIntegralAfterScalingAtBadPrime
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerEquivFr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RowTypeOneAddPrimeSmulEqOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.BasicNotions Formalism.UG Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker Formalism.L2.DIV Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat Formalism.L2.Forms Formalism.MainNotions.G GlobalTheory.TwU GlobalTheory.TwV
 
 noncomputable section
@@ -18,29 +23,29 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
   {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ} {mu : Tup X.F X.E X.K S}
   {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ}
 
-open Classical in
 
+open Classical in
 theorem exists_pass_rat (p : ChPt (R := R) sel mu u j) (g : UF X.E (R.N j)) :
     ∃ κ : GLQ X.E (R.N j) (rowSG Pr sel mu),
-      (∀ P, frsF sel mu (((g, 1, 1) : UF X.E (R.N j) × GLG X.E (R.N j) Pr.vGs × GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) • p) P =
+      (∀ P, frsF sel mu (((g, 1, 1) : UF X.E (R.N j) × GLG (E := X.E) (n := R.N j) (SG := Pr.vGs) × GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) • p) P =
         g.1 * (frsF sel mu p P * ((κ P)⁻¹).1)) ∧
       (∀ P : rowSG Pr sel mu, GlobalTheory.TopStep.redGL (R.N j) P.1 (κ P) = 1) ∧ (∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → κ P = 1) := by
   have h : ∀ P : rowSG Pr sel mu, ∃ k : GLint X.E (R.N j) P.1,
-      frsF sel mu (((g, 1, 1) : UF X.E (R.N j) × GLG X.E (R.N j) Pr.vGs × GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) • p) P =
+      frsF sel mu (((g, 1, 1) : UF X.E (R.N j) × GLG (E := X.E) (n := R.N j) (SG := Pr.vGs) × GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) • p) P =
         g.1 * (frsF sel mu p P * (k⁻¹).1) ∧ GlobalTheory.TopStep.redGL (R.N j) P.1 k = 1 ∧ (P.1 ∉ Pr.vGs → k = 1) := by
     intro P
     by_cases hP : P.1 ∈ Pr.vGs
-    · obtain ⟨κ0, h1, h2⟩ := liftFr_smul p.deco ((g, 1) : UF X.E (R.N j) × GLG X.E (R.N j) Pr.vGs) ⟨P.1, hP⟩
+    · obtain ⟨κ0, h1, h2⟩ := liftFr_smul p.deco ((g, 1) : UF X.E (R.N j) × GLG (E := X.E) (n := R.N j) (SG := Pr.vGs)) ⟨P.1, hP⟩
       have hr : GlobalTheory.TopStep.redGL (R.N j) P.1 κ0 = 1 := GlobalTheory.TopStep.redGL_eq κ0 fun x hx => by
         rw [h2 x hx]
         simp
       refine ⟨κ0⁻¹, ?_, by rw [map_inv, hr, inv_one], fun h => absurd hP h⟩
       unfold frsF
-      rw [dif_pos hP, dif_pos hP, inv_inv]
+      rw [dite_eq_left hP, dite_eq_left hP, inv_inv]
       exact h1.trans (mul_assoc _ _ _)
     · refine ⟨1, ?_, map_one _, fun _ => rfl⟩
       unfold frsF
-      rw [dif_neg hP, dif_neg hP]
+      rw [dite_eq_right hP, dite_eq_right hP]
       show g.1 * _ * (((1 : GLQ X.E (R.N j) (QE sel (mu : Chr X.F X.E X.K))) _)⁻¹).1 = _
       simp [mul_assoc]
       rfl
@@ -64,8 +69,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks}
   {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ} {mu : Tup X.F X.E X.K S}
   {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ}
 
-open Classical in
 
+open Classical in
 theorem sameCoset_pass (hX : X.Ok) (hPr : Pr.Ok) {n : ℕ} (P : rowSG Pr sel mu) (k : GLint X.E n P.1)
     (hr : GlobalTheory.TopStep.redGL n P.1 k = 1) (h1 : P.1 ∉ Pr.vGs → k = 1) (y0 : Sp X.E n)
     (hy0 : P.1 ∈ Pr.vGs → ∀ l, IntAt P.1 ((qOf P.1 : X.E) ^ 1 * y0 l)) (v : Sp X.E n) :
@@ -80,8 +85,8 @@ theorem sameCoset_pass (hX : X.Ok) (hPr : Pr.Ok) {n : ℕ} (P : rowSG Pr sel mu)
   · obtain rfl := h1 hP
     exact Iff.rfl
 
-open Classical in
 
+open Classical in
 theorem coset_image (hX : X.Ok) (hPr : Pr.Ok) {n : ℕ} (fp fq : rowSG Pr sel mu → (Sp X.E n ≃ₗ[X.E] Sp X.E n))
     (g : Sp X.E n ≃ₗ[X.E] Sp X.E n) (κ : GLQ X.E n (rowSG Pr sel mu)) (hκ : ∀ P, fq P = g * (fp P * ((κ P)⁻¹).1))
     (hr : ∀ P : rowSG Pr sel mu, GlobalTheory.TopStep.redGL n P.1 (κ P) = 1) (h1 : ∀ P : rowSG Pr sel mu, P.1 ∉ Pr.vGs → κ P = 1)
@@ -105,8 +110,8 @@ theorem coset_image (hX : X.Ok) (hPr : Pr.Ok) {n : ℕ} (fp fq : rowSG Pr sel mu
     rw [LinearEquiv.symm_apply_apply]
     exact (sameCoset_pass hX hPr P (κ P) (hr P) (h1 P) (y0 P) (hy0 P) _).2 (hz P)
 
-open Classical in
 
+open Classical in
 theorem coset_mem_ybSet (p : ChPt (R := R) sel mu u j) (y0 : rowSG Pr sel mu → Sp X.E (R.N j))
     (hy0 : ∀ (P : rowSG Pr sel mu) l, IntAt P.1 ((qOf P.1 : X.E) ^ (if P.1 ∈ Pr.vGs then 1 else cst.M) * y0 P l)) :
     {y | ∀ P, SameCoset sel mu cst P ((frsF sel mu p P).symm y) (y0 P)} ∈ ybSet sel mu cst p.deco.1.N := by
@@ -165,8 +170,8 @@ theorem xiPt_cpl_smul : UnderTie (fun {D L hT Gi Gl Kc Y cX ex t u μ St} A dtU 
     ∀ i (hi : i + 1 ≤ D.R.m), i = t.m2 → ∀ β β' (x : UA D i (Nat.le_of_succ_le hi)) (x' : UA D (i + 1) hi) p p',
       IsPtAd A a i (Nat.le_of_succ_le hi) β x p → IsPtAd A a (i + 1) hi β' x' p' →
       ∀ (g : UF t.X.E (D.R.N i)) (g' : UF t.X.E (D.R.N (i + 1))) (w : HomE t.X.E (D.R.N i) (D.R.N (i + 1))),
-      xiPt A i hi β β' (((g, 1, 1) : UF t.X.E (D.R.N i) × GLG t.X.E (D.R.N i) t.Pr.vGs × GLQ t.X.E (D.R.N i) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p)
-        (((g', 1, 1) : UF t.X.E (D.R.N (i + 1)) × GLG t.X.E (D.R.N (i + 1)) t.Pr.vGs × GLQ t.X.E (D.R.N (i + 1)) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p')
+      xiPt A i hi β β' (((g, 1, 1) : UF t.X.E (D.R.N i) × GLG (E := t.X.E) (n := D.R.N i) (SG := t.Pr.vGs) × GLQ t.X.E (D.R.N i) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p)
+        (((g', 1, 1) : UF t.X.E (D.R.N (i + 1)) × GLG (E := t.X.E) (n := D.R.N (i + 1)) (SG := t.Pr.vGs) × GLQ t.X.E (D.R.N (i + 1)) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p')
         (g'.1.toLinearMap ∘ₗ w ∘ₗ g.1.symm.toLinearMap) = xiPt A i hi β β' p p' w) := by
   intro D L hT Gi Gl Kc Y cX ex t u μ St A dtU a hPins hTie i hi hm β β' x x' p p' _ _ g g' w
   classical
@@ -181,16 +186,16 @@ theorem xiPt_cpl_smul : UnderTie (fun {D L hT Gi Gl Kc Y cX ex t u μ St} A dtU 
     intro P l
     have e : y0At A (t.m2 + 1) hi β' P = A.y0 β' P := by
       unfold y0At
-      rw [dif_pos rfl]
+      rw [dite_eq_left rfl]
     rw [e]
     exact GlobalTheory.TwU.BaseCosetInt.baseCosetRep_integral_after_scaling_at_bad_prime D L hT Gi Gl Kc Y cX ex t u μ St A dtU a hPins hTie β' P l
   have hY : cosetOf A (t.m2 + 1) hi β' p' ∈ ybSet t.sel (t.tup μ) (t.cst μ) p'.deco.1.N := coset_mem_ybSet p' _ hy0
-  have hC : cosetOf A (t.m2 + 1) hi β' (((g', 1, 1) : UF t.X.E (D.R.N (t.m2 + 1)) × GLG t.X.E (D.R.N (t.m2 + 1)) t.Pr.vGs ×
+  have hC : cosetOf A (t.m2 + 1) hi β' (((g', 1, 1) : UF t.X.E (D.R.N (t.m2 + 1)) × GLG (E := t.X.E) (n := D.R.N (t.m2 + 1)) (SG := t.Pr.vGs) ×
       GLQ t.X.E (D.R.N (t.m2 + 1)) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p') =
       (fun v => g'.1 v) '' cosetOf A (t.m2 + 1) hi β' p' :=
     coset_image hX hPr _ _ g'.1 κ' hκ' hr' h1' _ (fun P hP l => by simpa [hP] using hy0 P l)
   have hY2 : (fun v => g'.1 v) '' cosetOf A (t.m2 + 1) hi β' p' ∈ ybSet t.sel (t.tup μ) (t.cst μ)
-      ((((g', 1, 1) : UF t.X.E (D.R.N (t.m2 + 1)) × GLG t.X.E (D.R.N (t.m2 + 1)) t.Pr.vGs ×
+      ((((g', 1, 1) : UF t.X.E (D.R.N (t.m2 + 1)) × GLG (E := t.X.E) (n := D.R.N (t.m2 + 1)) (SG := t.Pr.vGs) ×
         GLQ t.X.E (D.R.N (t.m2 + 1)) (QE t.sel (t.tup μ : Chr t.X.F t.X.E t.X.K))) • p').deco.1.N) :=
     (ybSet_gmap t.sel (t.tup μ) (t.cst μ) _ g'.1 _).2 hY
   have law := GlobalTheory.CoupledLaw.xiCpl1_law (Ch := t.Ch) (L := t.idx μ) (al := A.ib t.m2 hi β)
@@ -206,7 +211,7 @@ theorem xiPt_cpl_smul : UnderTie (fun {D L hT Gi Gl Kc Y cX ex t u μ St} A dtU 
   rw [Finset.prod_eq_one fun P _ => hprod P, mul_one] at law
   simp only [Finset.prod_const_one, inv_one, mul_one, Units.val_one, one_mul] at law
   unfold xiPt
-  rw [dif_neg (lt_irrefl _), if_pos rfl, dif_neg (lt_irrefl _), if_pos rfl, hC]
+  rw [dite_eq_right (lt_irrefl _), if_pos rfl, dite_eq_right (lt_irrefl _), if_pos rfl, hC]
   exact law
 
 end Main

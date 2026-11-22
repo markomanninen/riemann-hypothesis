@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -88,7 +92,8 @@ theorem speiser_descent_span :
             rw [mul_inv_cancel_left]
         _ = σ (gs (π h)) (σ ((gs (π h))⁻¹ * (g * gs h)) y) := hσmul _ _ _
         _ = σ (gs (π h)) y := by rw [hker _ hu y hy]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [← hσmul, hsw]
     exact Function.Bijective.sum_comp hbij (fun h => σ (gs h) y)
   have htinv : ∀ c g, σ g (t c) = t c := fun c g => hperm g _ (W.smul_mem c hm)

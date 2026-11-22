@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Descent
-import GroundTheory.ProfiniteCohomology.InflationRestriction
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Descent
+public import GroundTheory.ProfiniteCohomology.InflationRestriction
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,12 +28,6 @@ def resTrivMor {X Y : Rep.{u} k G} (hX : ∀ (m : N) (x : X), X.ρ m x = x)
     change f (X.ρ m x) = Y.ρ m (f x)
     rw [hX, hY]⟩
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [N.Normal] in
-@[simp]
-theorem resTrivMor_hom_apply {X Y : Rep.{u} k G} (hX : ∀ (m : N) (x : X), X.ρ m x = x)
-    (hY : ∀ (m : N) (y : Y), Y.ρ m y = y) (f : X →ₗ[k] Y) (x : X) :
-    (resTrivMor N hX hY f).hom x = f x :=
-  rfl
 
 theorem cohomologyMap_comp_cohomologyConj_of_apply {T A : Rep.{u} k G} [IsDiscreteRep T]
     [IsDiscreteRep A] (φ ψ : Rep.res N.subtype T ⟶ Rep.res N.subtype A) (g : G)
@@ -57,7 +56,8 @@ theorem cohomologyConj_eq_cohomologyMap_of_sum {T A : Rep.{u} k G} [IsDiscreteRe
     ext a
     rw [Rep.sum_hom, Representation.IntertwiningMap.toLinearMap_sum, LinearMap.sum_apply]
     change ∑ j, A.ρ g (i j (p j a)) = A.ρ g a
-    rw [← map_sum, hipa]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hipa]
   have hj : ∀ j, cohomologyMap (resTrivMor N hT hA (i j)) n ≫ cohomologyConj A N n g =
       cohomologyMap (resTrivMor N hT hA (A.ρ g ∘ₗ i j)) n := fun j => by
     rw [cohomologyMap_comp_cohomologyConj_of_apply N _ (resTrivMor N hT hA (A.ρ g ∘ₗ i j)) g
@@ -80,15 +80,16 @@ variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologic
 
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
-omit [(U : Subgroup G).Normal] in
 
+omit [(U : Subgroup G).Normal] in
 theorem sum_quotient_out_apply_eq_zero (A : Rep.{u} k G)
     (hA : ∀ (m : (U : Subgroup G)) (a : A), A.ρ m a = a)
     (hinv : ∀ a : A, (∀ g : G, A.ρ g a = a) → a = 0) (a : A) :
     ∑ c : G ⧸ (U : Subgroup G), A.ρ c.out a = 0 := by
   apply hinv
   intro g
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hc : ∀ c : G ⧸ (U : Subgroup G), A.ρ g (A.ρ c.out a) = A.ρ (g • c).out a := by
     intro c
     obtain ⟨m, hm⟩ := QuotientGroup.mk_out_eq_mul (U : Subgroup G) (g * c.out)
@@ -166,7 +167,7 @@ theorem subsingleton_cohomology_of_normal (W : Subgroup Γ) [W.Normal] (hW : IsC
     exact (H0Iso A).toLinearEquiv.toEquiv.subsingleton
   · have hz : ∀ j, 0 < j → j < i → IsZero (cohomology (Rep.res W.subtype A) j) := fun j hj hji =>
       (ModuleCat.isZero_iff_subsingleton).2 (hq j hj (by omega))
-    have hex := infRes_exact A W hW (Nat.pos_iff_ne_zero.1 hpos) hz
+    have hex := infRes_exact A W (hN := hW) (Nat.pos_iff_ne_zero.1 hpos) hz
     have : Subsingleton (A.quotientToInvariants W) := ⟨fun a b => Subtype.ext <| by
       rw [hinv a (fun w => a.2 w), hinv b (fun w => b.2 w)]⟩
     have hs := subsingleton_cohomology_of_subsingleton (A.quotientToInvariants W) i

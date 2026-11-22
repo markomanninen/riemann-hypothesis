@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementW
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftPtsInt
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementW
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftPtsInt
+
+@[expose] public section
 
 open PowerSeries
 
@@ -50,7 +54,7 @@ theorem inW_add {f g : ℂ → ℂ} (hf : AnalyticAt ℂ f 0) (hg : AnalyticAt �
     inW l ι W (fun z => f z + g z) = inW l ι W f + inW l ι W g := by
   have h := (F.taylorRing.1 f g hf hg).1
   unfold inW
-  rw [h, map_add]
+  rw [h, map_add (f := _)]
   first
   | exact PowerSeries.subst_add (lgS (W := W)) _ _
   | exact PowerSeries.subst_add (ha := lgS (W := W)) _ _
@@ -363,7 +367,8 @@ theorem hasDeriv_yf (z : ℂ) (hz : z + t ∉ L.lattice) :
 variable {L V}
 
 theorem flowC (h2 : A.g₂ V = L.g₂) (h3 : A.g₃ V = L.g₃) (ht : t ∉ L.lattice) :
-    A.IsFlow (A.curveS V) (derivative ℂ) (F.taylor0 (xf L V t)) (F.taylor0 (yf L V t)) := by
+    A.IsFlow (A.curveS V) (PowerSeries.derivative (R := ℂ))
+      (F.taylor0 (xf L V t)) (F.taylor0 (yf L V t)) := by
   have hr := F.taylorRing
   have hx := T_xf L V t ht
   have hy := T_yf L V t ht
@@ -426,12 +431,12 @@ end Trans
 
 theorem map_analytic_x_at_zero (t : ℂ) : ι (xf L (W0 l ι W) t 0) = xc l L ι W t := by
   first
-  | (simp only [xf, xc, W0, WeierstrassCurve.map_b₂, zero_add, map_add, map_neg, map_div₀, RingEquiv.coe_toRingHom, RingEquiv.apply_symm_apply, map_ofNat]; ring)
+  | (simp only [xf, xc, W0, WeierstrassCurve.map_b₂, zero_add, map_add (f := _), map_neg, map_div₀, RingEquiv.coe_toRingHom, RingEquiv.apply_symm_apply, map_ofNat]; ring)
   | (simp [xf, xc, W0, map_div₀, sub_eq_add_neg])
 
 theorem map_analytic_y_at_zero (t : ℂ) : ι (yf L (W0 l ι W) t 0) = yc l L ι W t := by
   first
-  | (simp only [yf, yc, xf, W0, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃, WeierstrassCurve.map_b₂, zero_add, map_add, map_neg, map_mul, map_div₀, map_one, RingEquiv.coe_toRingHom, RingEquiv.apply_symm_apply, map_ofNat]; ring)
+  | (simp only [yf, yc, xf, W0, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃, WeierstrassCurve.map_b₂, zero_add, map_add (f := _), map_neg, map_mul, map_div₀, map_one, RingEquiv.coe_toRingHom, RingEquiv.apply_symm_apply, map_ofNat]; ring)
   | (simp [yf, yc, xf, W0, map_div₀]; ring)
 
 theorem transW (hU : Unif l L ι W) (t : ℂ) (ht : t ∉ L.lattice) :
@@ -557,7 +562,7 @@ theorem ptW_add_generic (hU : Unif l L ι W) (s t : ℂ) (hs : s ∉ L.lattice) 
   have hx : xc l L ι W s ≠ xc l L ι W t := sub_ne_zero.1 (by rw [hd]; exact hne')
   have hX := congrArg ι (AddThm.P_add L s t hs ht hp hm)
   have hY := congrArg ι (AddThm.collinear L s t hs ht hp)
-  simp only [map_pow, map_sub, map_mul, map_add, map_neg, map_div₀, map_ofNat] at hX hY
+  simp only [map_pow, map_sub, map_mul, map_add (f := _), map_neg, map_div₀, map_ofNat] at hX hY
   rw [ptW_notMem hU s hs, ptW_notMem hU t ht, ptW_notMem hU _ hp,
     WeierstrassCurve.Affine.Point.add_of_X_ne hx]
   have e1 : xc l L ι W (s + t) =
@@ -629,8 +634,8 @@ theorem analytic_point_eq_zero_iff : PtWZero := by
   intro l _ L ι W hU t
   exact AnaSysW.ptW_zero_iff hU t
 
-open Classical in
 
+open Classical in
 theorem analytic_point_map_add : PtWAdd := by
   intro l _ L ι W hU s t
   exact AnaSysW.ptW_add hU s t
@@ -640,8 +645,8 @@ theorem weierstrass_series_eq_transported (l : ℕ) [Fact l.Prime] (L : PeriodPa
     Formalism.L2.Th1.A.wpReg W = PowerSeries.map (ι : ℂ →+* ℂ_[l]) (Formalism.L2.Th1.F.pSeries L) := by
   exact AnaSysW.wpBridge hU
 
-open Classical in
 
+open Classical in
 theorem analytic_translate_system_model : AnalyticSysW := by
   unfold AnalyticSysW
   intro l _ L ι W hU π hπ

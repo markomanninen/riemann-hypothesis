@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToVInjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixLineConjIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianPositivityInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointsNonemptyUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToVInjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FixLineConjIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianPositivityInvariant
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount GlobalTheory.LKCx
 open scoped TensorProduct Classical
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.UnitsLattice
-import GroundTheory.LocalFields.NormalLattice
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.UnitsLattice
+public import GroundTheory.LocalFields.NormalLattice
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -29,7 +34,7 @@ noncomputable def modNEquivOfSurjective (φ : A →+ X) (hs : Function.Surjectiv
     (((LinearMap.range (LinearMap.lsmul ℤ A n)).liftQ φ.toIntLinearMap
       fun a ha ↦ LinearMap.mem_ker.mpr ((hker a).mpr ha)).toAddMonoidHom.toZModLinearMap n)
     ⟨by
-      rw [injective_iff_map_eq_zero]
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro x hx
       obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
       exact (Submodule.Quotient.mk_eq_zero _).mpr ((hker a).mp hx),
@@ -194,8 +199,8 @@ noncomputable def modNIntegerEquiv : ModN 𝒪[E] p ≃ₗ[ℤ] 𝒪[E] ⧸ Idea
 
 variable [Fact p.Prime]
 
-omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] in
 
+omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] in
 theorem finrank_modN_integer {n : ℕ} (hn : Nat.card (𝒪[E] ⧸ Ideal.span {(p : 𝒪[E])}) = p ^ n) :
     Finite (ModN 𝒪[E] p) ∧ Module.finrank (ZMod p) (ModN 𝒪[E] p) = n := by
   have hp := (Fact.out : p.Prime)
@@ -251,7 +256,7 @@ theorem finite_modN_maxPow (k : ℕ) : Finite (ModN (maxPow F k) p) := by
   let L := (LinearMap.range (LinearMap.lsmul ℤ (maxPow F k) p)).liftQ φ.toIntLinearMap
     fun a ha ↦ LinearMap.mem_ker.mpr ((hφ a).mpr ha)
   refine Finite.of_injective L ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
   exact (Submodule.Quotient.mk_eq_zero _).mpr ((hφ a).mp hx)
@@ -276,9 +281,9 @@ theorem unitsIncl_toAdditive_smul (σ : F ≃ₐ[E] F) (a : Additive 𝒪[F]ˣ) 
     (unitsIncl F).toAdditive (σ • a) = σ • (unitsIncl F).toAdditive a :=
   congrArg Additive.ofMul (unitsIncl_smul σ a.toMul)
 
+
 omit [Algebra E F] [ValuativeExtension E F] [FiniteDimensional E F] [TopologicalSpace F]
   [IsNonarchimedeanLocalField F] in
-
 theorem finite_torsN_integerUnits (l : ℕ) [NeZero l] : Finite (TorsN (Additive 𝒪[F]ˣ) l) := by
   classical
   have hl : 0 < l := Nat.pos_of_ne_zero (NeZero.ne l)
@@ -308,12 +313,8 @@ theorem g_units_eq_one_add [Finite (ModN (Additive 𝒪[F]ˣ) l)] :
       (fun σ x ↦ ordHom_smul σ x) hinj ordHom_exact ordHom_surjective,
     d.g_of_trivial_int (ULift.{u} ℤ) (fun _ _ ↦ rfl) AddEquiv.ulift, add_comm]
 
-attribute [local instance] integerAction unitFiltrationAction
-
-attribute [local instance] maxPowAction normalSubAction
 
 omit [FiniteDimensional E F] in
-
 theorem valuation_le_of_mem_maxPow {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {k : ℕ} {x : 𝒪[F]}
     (hx : x ∈ 𝓂[F] ^ k) : valuation F (x : F) ≤ valuation F (ϖ : F) ^ k := by
   obtain ⟨a, rfl⟩ := (mem_maximalIdeal_pow_iff hϖ).mp hx
@@ -322,7 +323,7 @@ theorem valuation_le_of_mem_maxPow {ϖ : 𝒪[F]} (hϖ : Irreducible ϖ) {k : �
 
 theorem exists_maxPow_le_normalSub [IsGalois E F] {θ : F}
     (hθ : LinearIndependent E fun σ : F ≃ₐ[E] F ↦ σ θ) :
-    ∃ j, ∀ k ≥ j, maxPow F k ≤ normalSub E θ := by
+    ∃ j, ∀ k ≥ j, maxPow F k ≤ normalSub (E := E) θ := by
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[E]
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible 𝒪[F]
   have hopen := isOpen_normalLattice π θ hπ hθ 0
@@ -330,18 +331,20 @@ theorem exists_maxPow_le_normalSub [IsGalois E F] {θ : F}
   obtain ⟨γ, hγ⟩ := (IsValuativeTopology.mem_nhds_zero_iff _).mp
     (hopen.mem_nhds (Submodule.zero_mem _))
   obtain ⟨j, -, hj⟩ := exists_pow_lt hϖ γ.ne_zero
-  refine ⟨j, fun k hk x hx ↦ mem_normalSub.mpr (hγ ?_)⟩
+  refine ⟨j, fun k hk x hx ↦ ?_⟩
+  change (x : F) ∈ normalLattice (1 : 𝒪[E]) θ 0
+  apply hγ
   have h1 : valuation F (ϖ : F) ≤ 1 := ϖ.2
   calc valuation F (x : F) ≤ valuation F (ϖ : F) ^ k := valuation_le_of_mem_maxPow hϖ hx
     _ ≤ valuation F (ϖ : F) ^ j := pow_le_pow_right_of_le_one' h1 hk
     _ < γ := hj
 
+
 omit [TopologicalSpace E] [IsNonarchimedeanLocalField E] [ValuativeExtension E F]
   [FiniteDimensional E F] in
-
-theorem finite_quotient_maxPow {θ : F} {k : ℕ} (hle : maxPow F k ≤ normalSub E θ) :
-    Finite (normalSub E θ ⧸ (AddSubgroup.inclusion hle).range) := by
-  have hr : (AddSubgroup.inclusion hle).range = (maxPow F k).addSubgroupOf (normalSub E θ) := by
+theorem finite_quotient_maxPow {θ : F} {k : ℕ} (hle : maxPow F k ≤ normalSub (E := E) θ) :
+    Finite (normalSub (E := E) θ ⧸ (AddSubgroup.inclusion hle).range) := by
+  have hr : (AddSubgroup.inclusion hle).range = (maxPow F k).addSubgroupOf (normalSub (E := E) θ) := by
     ext x
     constructor
     · rintro ⟨y, rfl⟩
@@ -351,10 +354,10 @@ theorem finite_quotient_maxPow {θ : F} {k : ℕ} (hle : maxPow F k ≤ normalSu
   have hfin : Finite (𝒪[F] ⧸ maxPow F k) :=
     IsLocalRing.finite_quotient_iff.mpr ⟨k, le_rfl⟩
   have hidx : (maxPow F k).index ≠ 0 := AddSubgroup.index_ne_zero_of_finite
-  have hrel : (maxPow F k).relIndex (normalSub E θ) ≠ 0 :=
+  have hrel : (maxPow F k).relIndex (normalSub (E := E) θ) ≠ 0 :=
     fun h ↦ hidx (Nat.eq_zero_of_zero_dvd (h ▸ AddSubgroup.relIndex_dvd_index_of_le hle))
   rw [hr]
-  have : ((maxPow F k).addSubgroupOf (normalSub E θ)).FiniteIndex := ⟨hrel⟩
+  have : ((maxPow F k).addSubgroupOf (normalSub (E := E) θ)).FiniteIndex := ⟨hrel⟩
   infer_instance
 
 end Galois
@@ -366,8 +369,6 @@ variable {E F : Type u} [Field E] [ValuativeRel E] [TopologicalSpace E]
   [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F]
   [Algebra E F] [ValuativeExtension E F] [FiniteDimensional E F] [IsGalois E F]
   {l : ℕ} [Fact l.Prime] (d : AdditiveFunction.{u} l (F ≃ₐ[E] F))
-
-attribute [local instance] integerAction unitFiltrationAction maxPowAction normalSubAction
 
 theorem g_integerUnits_eq (hl : (l : F) ≠ 0) {n : ℕ}
     (hn : Nat.card (𝒪[E] ⧸ Ideal.span {(l : 𝒪[E])}) = l ^ n) :
@@ -384,12 +385,46 @@ theorem g_integerUnits_eq (hl : (l : F) ≠ 0) {n : ℕ}
   obtain ⟨θ, hθ, hθO⟩ := exists_normalBasis_integer (K := E) (L := F) hπ
   obtain ⟨j, hj⟩ := exists_maxPow_le_normalSub hθ
   have hk : e + 1 ≤ max j (e + 1) := le_max_right _ _
-  have hle : maxPow F (max j (e + 1)) ≤ normalSub E θ := hj _ (le_max_left _ _)
+  let S := normalSub (E := E) θ
+  have hle : maxPow F (max j (e + 1)) ≤ S := hj _ (le_max_left _ _)
   set k := max j (e + 1)
   obtain ⟨hfinE, hrank⟩ := finrank_modN_integer (E := E) hn
   let b : Module.Basis (Fin n) (ZMod l) (ModN 𝒪[E] l) := Module.finBasisOfFinrankEq _ _ hrank
 
   set U := unitFiltration F k
+  let : MulSemiringAction (F ≃ₐ[E] F) 𝒪[F] :=
+    { smul := fun σ x ↦ integerAlgEquivLocal σ x
+      one_smul := fun x ↦ Subtype.ext (by rfl)
+      mul_smul := fun σ τ x ↦ Subtype.ext (by rfl)
+      smul_zero := fun σ ↦ map_zero (integerAlgEquivLocal σ)
+      smul_add := fun σ ↦ map_add (integerAlgEquivLocal σ)
+      smul_one := fun σ ↦ map_one (integerAlgEquivLocal σ)
+      smul_mul := fun σ ↦ map_mul (integerAlgEquivLocal σ) }
+  have hmaximal : ∀ (σ : F ≃ₐ[E] F) {x : 𝒪[F]}, x ∈ 𝓂[F] → σ • x ∈ 𝓂[F] := by
+    intro σ x hx
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff] at hx ⊢
+    intro h
+    apply hx
+    have := h.map (MulSemiringAction.toRingHom (F ≃ₐ[E] F) 𝒪[F] σ⁻¹)
+    simpa [MulSemiringAction.toRingHom_apply, smul_smul] using this
+  have hpow : ∀ (σ : F ≃ₐ[E] F) {x : 𝒪[F]}, x ∈ 𝓂[F] ^ k → σ • x ∈ 𝓂[F] ^ k := by
+    intro σ x hx
+    obtain ⟨a, rfl⟩ := (mem_maximalIdeal_pow_iff hϖ).mp hx
+    rw [smul_mul', smul_pow']
+    exact Ideal.mul_mem_right _ _
+      (Ideal.pow_mem_pow (hmaximal σ (uniformizer_mem_maximalIdeal hϖ)) k)
+  let : DistribMulAction (F ≃ₐ[E] F) (maxPow F k) :=
+    subgroupDistribMulAction (maxPow F k) fun σ _ hx ↦ hpow σ hx
+  let : MulDistribMulAction (F ≃ₐ[E] F) U :=
+    { smul := fun σ u ↦ ⟨σ • (u : 𝒪[F]ˣ), by
+        rw [mem_unitFiltration]
+        change σ • ((u : 𝒪[F]ˣ) : 𝒪[F]) - 1 ∈ 𝓂[F] ^ k
+        rw [← smul_one σ, ← smul_sub]
+        exact hpow σ u.2⟩
+      one_smul := fun u ↦ Subtype.ext (one_smul _ (u : 𝒪[F]ˣ))
+      mul_smul := fun σ τ u ↦ Subtype.ext (mul_smul σ τ (u : 𝒪[F]ˣ))
+      smul_mul := fun σ u v ↦ Subtype.ext (smul_mul' σ (u : 𝒪[F]ˣ) v)
+      smul_one := fun σ ↦ Subtype.ext (smul_one σ) }
   have hUt : ∀ a : Additive U, l • a = 0 → a = 0 := by
     intro a ha
     apply Additive.toMul.injective
@@ -397,23 +432,56 @@ theorem g_integerUnits_eq (hl : (l : F) ≠ 0) {n : ℕ}
       have := congrArg (fun b : Additive U ↦ ((b.toMul : U) : 𝒪[F]ˣ)) ha
       simpa using this
     exact Subtype.ext (eq_one_of_mem_unitFiltration_of_pow_eq_one hϖ hlp hpe hk a.toMul.2 h1)
-  let e1 := modNEquivOfSurjective (unitToModN hϖ hpe (Nat.le_of_succ_le hk))
+  let ψ := unitToModN hϖ hpe (Nat.le_of_succ_le hk)
+  have hψγ (σ : F ≃ₐ[E] F) (u : Additive U) :
+      ψ (σ • u) = modNRep (F ≃ₐ[E] F) (maxPow F k) l σ (ψ u) := by
+    dsimp only [ψ]
+    rw [unitToModN_apply, unitToModN_apply, modNRep_mk]
+    congr 1
+    apply Subtype.ext
+    let x : 𝒪[F] := ((u.toMul : U) : 𝒪[F]ˣ)
+    change σ • x - 1 = σ • (x - 1)
+    rw [smul_sub, smul_one]
+  let e1 := modNEquivOfSurjective ψ
     (unitToModN_surjective hϖ hpe hk) (unitToModN_eq_zero_iff hϖ hpe hlp hk)
   have he1 := modNEquivOfSurjective_apply_modNRep (modNRep (F ≃ₐ[E] F) (maxPow F k) l)
-    (unitToModN hϖ hpe (Nat.le_of_succ_le hk)) (unitToModN_surjective hϖ hpe hk)
-    (unitToModN_eq_zero_iff hϖ hpe hlp hk) (unitToModN_smul ϖ hϖ hpe _)
+    ψ (unitToModN_surjective hϖ hpe hk) (unitToModN_eq_zero_iff hϖ hpe hlp hk) hψγ
   have := finite_modN_maxPow hϖ hpe k
   have : Finite (ModN (Additive U) l) := Finite.of_equiv _ e1.symm.toEquiv
   have := finite_torsN_of_torsion_trivial hUt
   have hPt : ∀ a : maxPow F k, l • a = 0 → a = 0 := integer_subgroup_torsion hl _
   have := finite_torsN_of_torsion_trivial hPt
 
-  let N := normalSubEquiv hθ hθO
-  let φ : normalSub E θ →+ (Fin n → MonoidAlgebra (ZMod l) (F ≃ₐ[E] F)) :=
+  let : DistribMulAction (F ≃ₐ[E] F) S :=
+    subgroupDistribMulAction S fun σ x hx ↦ by
+      change σ (x : F) ∈ normalLattice (1 : 𝒪[E]) θ 0
+      exact algEquiv_mem_normalLattice 1 θ σ hx
+  have hsum (c : (F ≃ₐ[E] F) → 𝒪[E]) : ∑ σ, c σ • σ θ ∈ 𝒪[F] := by
+    refine sum_mem fun σ _ ↦ ?_
+    rw [integer_smul_eq]
+    exact mul_mem ((algebraMap_mem_integer_iff E F (c σ)).mpr (c σ).2) (hθO σ)
+  let f : ((F ≃ₐ[E] F) → 𝒪[E]) →+ S :=
+    { toFun := fun c ↦ ⟨⟨∑ σ, c σ • σ θ, hsum c⟩, sum_smul_mem_normalLattice c⟩
+      map_zero' := by ext; simp
+      map_add' := by intro c d; ext; simp [add_smul, Finset.sum_add_distrib] }
+  have hf : Function.Bijective f := by
+    constructor
+    · intro c d h
+      exact coeff_injective θ hθ (congrArg (fun x : S ↦ ((x : 𝒪[F]) : F)) h)
+    · intro x
+      have hx : ((x : 𝒪[F]) : F) ∈ normalLattice (1 : 𝒪[E]) θ 0 := x.2
+      obtain ⟨c, hc⟩ := (mem_normalLattice_iff 1 θ).mp hx
+      refine ⟨c, ?_⟩
+      apply Subtype.ext
+      apply Subtype.ext
+      change ∑ σ, c σ • σ θ = ((x : 𝒪[F]) : F)
+      simpa using hc
+  let N := AddEquiv.ofBijective f hf
+  let φ : S →+ (Fin n → MonoidAlgebra (ZMod l) (F ≃ₐ[E] F)) :=
     (coeffToRegular b).comp N.symm.toAddMonoidHom
   have hφs : Function.Surjective φ :=
     (coeffToRegular_surjective (F ≃ₐ[E] F) b).comp N.symm.surjective
-  have hφk : ∀ t, φ t = 0 ↔ t ∈ LinearMap.range (LinearMap.lsmul ℤ (normalSub E θ) l) := by
+  have hφk : ∀ t, φ t = 0 ↔ t ∈ LinearMap.range (LinearMap.lsmul ℤ S l) := by
     intro t
     change coeffToRegular b (N.symm t) = 0 ↔ _
     rw [coeffToRegular_eq_zero_iff, mem_range_lsmul_iff, mem_range_lsmul_iff]
@@ -422,18 +490,22 @@ theorem g_integerUnits_eq (hl : (l : F) ≠ 0) {n : ℕ}
       exact ⟨N y, by rw [← map_nsmul, hy, AddEquiv.apply_symm_apply]⟩
     · rintro ⟨y, rfl⟩
       exact ⟨N.symm y, by rw [map_nsmul]⟩
-  have hφγ : ∀ (σ : F ≃ₐ[E] F) (t : normalSub E θ), φ (σ • t) =
+  have hφγ : ∀ (σ : F ≃ₐ[E] F) (t : S), φ (σ • t) =
       piRep (Fin n) (Representation.leftRegular (ZMod l) (F ≃ₐ[E] F)) σ (φ t) := by
     intro σ t
     obtain ⟨c, rfl⟩ := N.surjective t
     change coeffToRegular b (N.symm (σ • N c)) = piRep (Fin n)
       (Representation.leftRegular (ZMod l) (F ≃ₐ[E] F)) σ (coeffToRegular b (N.symm (N c)))
-    rw [AddEquiv.symm_apply_apply, normalSubEquiv_apply, smul_normalSubOfCoeff,
-      ← normalSubEquiv_apply hθ, AddEquiv.symm_apply_apply, coeffToRegular_perm]
+    have hN : σ • N c = N (fun τ ↦ c (σ⁻¹ * τ)) := by
+      apply Subtype.ext
+      apply Subtype.ext
+      change σ (∑ τ, c τ • τ θ) = ∑ τ, c (σ⁻¹ * τ) • τ θ
+      simpa using algEquiv_smul_sum (1 : 𝒪[E]) θ σ 0 c
+    rw [hN, AddEquiv.symm_apply_apply, AddEquiv.symm_apply_apply, coeffToRegular_perm]
   let e2 := modNEquivOfSurjective φ hφs hφk
   have he2 := modNEquivOfSurjective_apply_modNRep _ φ hφs hφk hφγ
-  have : Finite (ModN (normalSub E θ) l) := Finite.of_equiv _ e2.symm.toEquiv
-  have hTt : ∀ a : normalSub E θ, l • a = 0 → a = 0 := integer_subgroup_torsion hl _
+  have : Finite (ModN S l) := Finite.of_equiv _ e2.symm.toEquiv
+  have hTt : ∀ a : S, l • a = 0 → a = 0 := integer_subgroup_torsion hl _
   have := finite_quotient_maxPow hle
   have := finite_quotient_range_toAdditive U
   refine ⟨finite_modN_of_finite_cokernel U.subtype.toAdditive, ?_⟩
@@ -443,7 +515,7 @@ theorem g_integerUnits_eq (hl : (l : F) ≠ 0) {n : ℕ}
     ← d.g_eq_of_torsion_trivial (maxPow F k) hPt,
     ← d.g_eq_of_finite_cokernel (AddSubgroup.inclusion hle) (fun _ _ ↦ rfl)
       (AddSubgroup.inclusion_injective hle),
-    d.g_eq_of_torsion_trivial (normalSub E θ) hTt, d.toFun_congr _ _ e2 he2, d.toFun_pi]
+    d.g_eq_of_torsion_trivial S hTt, d.toFun_congr _ _ e2 he2, d.toFun_pi]
 
 theorem g_units_eq (hl : (l : E) ≠ 0) {n : ℕ}
     (hn : Nat.card (𝒪[E] ⧸ Ideal.span {(l : 𝒪[E])}) = l ^ n) :

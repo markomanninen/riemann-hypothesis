@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.CechFunctor
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechNaturality.CechFunctor
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -39,7 +44,8 @@ lemma cochain_apply (Φ : CechFamily U P P') (n : ℕ) (σ : Cochain P U n) (i :
 lemma cochain_d (Φ : CechFamily U P P') (n : ℕ) (σ : Cochain P U n) :
     Φ.cochain (n + 1) (d P U n σ) = d P' U n (Φ.cochain n σ) := by
   funext i
-  rw [cochain_apply, d_apply, d_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cochain_apply, d_apply, d_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_zsmul, Φ.res_comm]
   rfl
@@ -80,7 +86,8 @@ def ofHom (f : P ⟶ P') : CechFamily U P P' where
 lemma ofHom_cechH (f : P ⟶ P') (n : ℕ) (x : GroundTheory.Arith.SchemeCoh.cechH P U n) :
     (ofHom (U := U) f).cechH n x = cechHMap U f n x := by
   obtain ⟨σ, hσ, rfl⟩ := exists_cls x
-  rfl
+  rw [cechH_cls, cechHMap_cls]
+  exact cls_congr U (by funext i; rfl) _ _
 
 def comp (Φ : CechFamily U P P') (Ψ : CechFamily U P' P'') : CechFamily U P P'' where
   φ i := (Ψ.φ i).comp (Φ.φ i)
@@ -93,19 +100,6 @@ lemma comp_cechH (Φ : CechFamily U P P') (Ψ : CechFamily U P' P'') (n : ℕ)
     (Φ.comp Ψ).cechH n x = Ψ.cechH n (Φ.cechH n x) := by
   obtain ⟨σ, hσ, rfl⟩ := exists_cls x
   rfl
-
-def add (Φ Ψ : CechFamily U P P') : CechFamily U P P' where
-  φ i := Φ.φ i + Ψ.φ i
-  res_comm i j h x := by
-    simp only [AddMonoidHom.add_apply, map_add]
-    rw [Φ.res_comm, Ψ.res_comm]
-
-lemma add_cechH (Φ Ψ : CechFamily U P P') (n : ℕ) (x : GroundTheory.Arith.SchemeCoh.cechH P U n) :
-    (Φ.add Ψ).cechH n x = Φ.cechH n x + Ψ.cechH n x := by
-  obtain ⟨σ, hσ, rfl⟩ := exists_cls x
-  rw [cechH_cls, cechH_cls, cechH_cls]
-  exact cls_congr U (by funext i; rfl) _ (by
-    rw [map_add, ← cochain_d, ← cochain_d, hσ, map_zero, map_zero, add_zero])
 
 lemma cechH_congr {Φ Ψ : CechFamily U P P'} (h : ∀ {n : ℕ} (i : Fin (n + 1) → ι) x, Φ.φ i x = Ψ.φ i x)
     (n : ℕ) (x : GroundTheory.Arith.SchemeCoh.cechH P U n) : Φ.cechH n x = Ψ.cechH n x := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalInterAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.AevalInterAlt
+
+@[expose] public section
+
 open TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
 
@@ -39,5 +44,5 @@ theorem UpperTheory.Gal.crystallineComparison.nilSubq_of :
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul u b => simp [onPer]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [← pow_inter _ _ _ (fun z => aeval_inter _ _ _ h1 Q z) N x, hN x hx, map_zero]

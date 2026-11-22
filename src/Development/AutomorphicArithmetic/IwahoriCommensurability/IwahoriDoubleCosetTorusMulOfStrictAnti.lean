@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriDoubleCosetTorusNilpotent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlCasselmanDatum
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAddCharConductorMaxIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeedOrbKVanish
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ScalarCommutation.AuxiliaryPrimeFunction
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriDoubleCosetTorusNilpotent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IwahoriGlCasselmanDatum
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsAddCharConductorMaxIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SeedOrbKVanish
+
+@[expose] public section
 
 open Formalism.UG
 
@@ -63,7 +67,7 @@ end UpperTheory.IwMul
 theorem UpperTheory.iwahori_doubleCoset_torus_mul_of_strictAnti :
     ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (n : ℕ) (ϖ : kˣ), ValuativeRel.valuation k (ϖ : k) = ValuativeRel.uniformizer k → ∀ ν : Fin n → ℤ, StrictAnti ν → ∀ m : ℕ, ∀ a ∈ DoubleCoset.doubleCoset (GlobalTheory.GLDoubling.torusElt k (Fin n) ϖ ν) (GlobalTheory.SmGL.iwahori k (Fin n) : Set (GL (Fin n) k)) (GlobalTheory.SmGL.iwahori k (Fin n)), ∀ b ∈ DoubleCoset.doubleCoset (GlobalTheory.GLDoubling.torusElt k (Fin n) ϖ ν ^ m) (GlobalTheory.SmGL.iwahori k (Fin n) : Set (GL (Fin n) k)) (GlobalTheory.SmGL.iwahori k (Fin n)), a * b ∈ DoubleCoset.doubleCoset (GlobalTheory.GLDoubling.torusElt k (Fin n) ϖ ν ^ (m + 1)) (GlobalTheory.SmGL.iwahori k (Fin n) : Set (GL (Fin n) k)) (GlobalTheory.SmGL.iwahori k (Fin n)) := by
   intro k _ _ _ _ n ϖ hϖu ν hν m a ha b hb
-  have hϖ := GlobalTheory.DZero.PsiM.ord_eq_one hϖu
+  have hϖ := GlobalTheory.SmGL.ord_eq_one hϖu
   have htt : GlobalTheory.GLDoubling.torusElt k (Fin n) ϖ ν = GlobalTheory.CompanionTheory.IwJac.tor ϖ ν := rfl
   obtain ⟨i1, hi1, i2, hi2, rfl⟩ := DoubleCoset.mem_doubleCoset.mp ha
   obtain ⟨i3, hi3, i4, hi4, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hb

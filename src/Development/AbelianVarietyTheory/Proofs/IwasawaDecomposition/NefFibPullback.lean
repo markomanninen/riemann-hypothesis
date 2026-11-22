@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NefFibOfCurveDegreesNonneg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntersectionNumberFinitePushforward
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLocalSubringGenericPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNonzeroLocusFormMap
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NefFibOfCurveDegreesNonneg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntersectionNumberFinitePushforward
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLocalSubringGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemNonzeroLocusFormMap
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ theorem topSelf_pull_eq_zero_of_const {X Z : Scheme.{0}} (κ : Type) [Field κ] 
   exact interNum_eq_zero_of_cls_eq_zero κ _ (fun _ => pull_isLB hM g) 0 h
 
 theorem isProper_strHom (κ : Type) [Field κ] {Z : Scheme.{0}} [Algebra κ Γ(Z, ⊤)] (t : Z ⟶ Sp ℤ)
-    [IsProper t] : IsProper (strHom κ Z) := by
+    [IsProper t] : IsProper (strHom κ (X := Z)) := by
   have e : strHom κ Z ≫ spMap (Int.castRingHom κ) = t := specZIsTerminal.hom_ext _ _
   have : IsProper (strHom κ Z ≫ spMap (Int.castRingHom κ)) := by rw [e]; infer_instance
   exact IsProper.of_comp _ (spMap (Int.castRingHom κ))
@@ -72,7 +76,7 @@ theorem topSelf_pull_nonneg (t : X ⟶ Sp ℤ) [IsProper t] (hd : topologicalKru
       [Algebra (ZMod ℓ) Γ(Z, ⊤)], topologicalKrullDim Z = 1 → 0 ≤ topSelfIntersection (ZMod ℓ) (M.pull i) 1) :
     0 ≤ topSelfIntersection (ZMod ℓ) (M.pull g) 1 := by
   have : IsProper g := .of_comp g t
-  have hW : IsProper (strHom (ZMod ℓ) W) := isProper_strHom (ZMod ℓ) (g ≫ t)
+  have hW : IsProper (strHom (ZMod ℓ) (X := W)) := isProper_strHom (ZMod ℓ) (g ≫ t)
   have : CompactSpace W := QuasiCompact.compactSpace_of_compactSpace (strHom (ZMod ℓ) W)
   have := isNoetherian_of_locallyOfFiniteType_field (strHom (ZMod ℓ) W)
   by_cases hc : ∀ w, g w = g (genericPoint W)
@@ -106,8 +110,8 @@ theorem topSelf_pull_nonneg (t : X ⟶ Sp ℤ) [IsProper t] (hd : topologicalKru
     RingHom.congr_fun (RingHom.ext_zmod (φ.appTop.hom.comp (algebraMap (ZMod ℓ) Γ(g.image, ⊤)))
       (algebraMap (ZMod ℓ) Γ(W, ⊤))) r
   have : IsProper (g.imageι ≫ t) := inferInstance
-  have hZ : IsProper (strHom (ZMod ℓ) g.image) := isProper_strHom (ZMod ℓ) (g.imageι ≫ t)
-  have hproj : IsProjOver (strHom (ZMod ℓ) g.image) := ProperCurve.isProjOver_of_isProper _ hdZ
+  have hZ : IsProper (strHom (ZMod ℓ) (X := g.image)) := isProper_strHom (ZMod ℓ) (g.imageι ≫ t)
+  have hproj : IsProjOver (strHom (ZMod ℓ) (X := g.image)) := ProperCurve.isProjOver_of_isProper _ hdZ
   have hN := pull_isLB hM g.imageι
   have h₁ := GlobalTheory.ProjFin.interNumOn_eq_residueDegree_mul (ZMod ℓ) g.image W φ hproj hdZ hgen (M.pull g.imageι) hN
   have h₂ := interNumOn_eq_interNum_pull (k := ZMod ℓ) (L := ![M.pull g.imageι]) hf
@@ -157,3 +161,4 @@ theorem nefFib_pull : ∀ (k : Type) [CommRing k] [Module.Finite ℤ k] (X Y : S
     ((cls_eq_iff _ _).1 e)]
 
 end GlobalTheory.ArInt
+

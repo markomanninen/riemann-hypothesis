@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.BaseChangeColim
@@ -22,7 +27,6 @@ lemma inr_mapPush {k k' : Under j} (f : k ⟶ k') :
     pushout.inr g' (D.map k.hom) ≫ mapPush D j g' f = D.map f.right ≫ pushout.inr g' (D.map k'.hom) :=
   pushout.inr_desc _ _ _
 
-@[simps]
 noncomputable def diag : Under j ⥤ CommRingCat.{0} where
   obj k := pushout g' (D.map k.hom)
   map f := mapPush D j g' f

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
@@ -70,7 +74,6 @@ variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchi
   {n : Type*} [Fintype n] [DecidableEq n] {c : ℕ}
 
 omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
-
 theorem exists_int_inv {U : Matrix n n k} (hU : IntM U) (hd : U.det = 1) : ∃ V, IntM V ∧ U * V = 1 := by
   let U₀ : Matrix n n 𝒪[k] := Matrix.of fun i j => ⟨U i j, hU i j⟩
   have e : U = (algebraMap 𝒪[k] k).mapMatrix U₀ := rfl
@@ -90,17 +93,17 @@ theorem exists_factor {g : GL (n ⊕ Fin c) k} (hg : g ∈ KO k _) (T : n → Pr
   let M : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k := Matrix.of fun r s => if P r s then (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) r s else g.val r s
   obtain ⟨u, hu, e⟩ := exists_mul_KOne hg (M := M) (fun r s => by
     by_cases hP : P r s
-    · rw [Matrix.sub_apply, Valuation.map_sub_swap, show M r s = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) r s from if_pos hP]
+    · rw [Matrix.sub_apply, Valuation.map_sub_swap, show M r s = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) r s from ite_eq_left hP]
       rcases s with s | i
       · obtain ⟨hT, l, rfl⟩ := hP
         simpa using h1 l s hT
       · exact h2 r i hP
-    · rw [Matrix.sub_apply, show M r s = g.val r s from if_neg hP]; simp)
+    · rw [Matrix.sub_apply, show M r s = g.val r s from ite_eq_right hP]; simp)
   have hM : IntM M := e ▸ intM_of_mem_KO (mul_mem hg (KOne_le_KO hu))
   have m2 : ∀ r i, lev 1 (Sum.inr i : n ⊕ Fin c) ≤ lev 1 r → M r (.inr i) = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) r (.inr i) :=
-    fun r i hl => if_pos hl
+    fun r i hl => ite_eq_left hl
   have hd : M.toBlocks₂₂.det = 1 := by
-    rw [det_of_upperTriangular, Finset.prod_eq_one]
+    rw [det_of_isUpperTriangular, Finset.prod_eq_one]
     · intro i _
       simpa [toBlocks₂₂] using m2 (.inr i) i le_rfl
     · intro i j hij
@@ -123,7 +126,7 @@ theorem exists_factor {g : GL (n ⊕ Fin c) k} (hg : g ∈ KO k _) (T : n → Pr
     · exact m2 _ i hl
   · rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun m _ => ?_
-    have : M (.inr m) (.inl s) = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) (.inr m) (.inl s) := if_pos ⟨hT, m, rfl⟩
+    have : M (.inr m) (.inl s) = (1 : Matrix (n ⊕ Fin c) (n ⊕ Fin c) k) (.inr m) (.inl s) := ite_eq_left ⟨hT, m, rfl⟩
     simp [toBlocks₂₁, this]
 
 end Local

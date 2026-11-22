@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LengthLeOfForallFgSubmoduleLengthLeStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LengthQuotientScalarMulStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LengthLeOfForallFgSubmoduleLengthLeStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LengthQuotientScalarMulStatement
+
+@[expose] public section
+
 open Pointwise
 
 namespace GlobalTheory

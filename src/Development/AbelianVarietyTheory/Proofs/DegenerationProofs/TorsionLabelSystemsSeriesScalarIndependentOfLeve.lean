@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationSeriesTermsNestStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsStrict
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationSeriesTermsNestStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -12,10 +16,10 @@ open GlobalTheory.ModelData
 
 namespace GlobalTheory.ModelData.Scalar
 
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField in
 open scoped CategoryTheory.Obj BigOperators in
 attribute [local instance] Over.cartesianMonoidalCategory in
-
 theorem _root_.GlobalTheory.ModelData.Scalar.tx_congr {O : Type} [CommRing O] [TopologicalSpace O] (N : _root_.GlobalTheory.Ex.NumD O) {m : ℕ} (hm : Odd m)
     {p p' : N.QT (m ^ 2)} (h : N.QEq p p') : N.tx m p = N.tx m p' := by
   unfold _root_.GlobalTheory.Ex.NumD.QEq at h
@@ -26,45 +30,8 @@ theorem _root_.GlobalTheory.ModelData.Scalar.tx_congr {O : Type} [CommRing O] [T
   rw [tsum_congr ht]
   exact ((Equiv.addRight (m • z)).tsum_eq (fun χ => N.txT m p χ)).symm
 
-theorem qEq_mul_right {O : Type} [CommRing O] (N : NumD O) {k : ℕ} {p p' : N.QT k} (h : N.QEq p p') (r : N.QT k) :
-    N.QEq (p * r) (p' * r) := by
-  obtain ⟨z, rfl⟩ := (N.qEq_iff _ _).1 h
-  exact (N.qEq_iff _ _).2 ⟨z, mul_right_comm _ _ _⟩
-
 variable {O : Type} [CommRing O] {N : NumD O} {La : Type} [AddCommGroup La] {EF : LinearMap.BilinForm ℤ La}
   {ζ : ℕ → Oˣ} {lab : ∀ k : ℕ, La → N.QT k}
-
-theorem lab_nsmul (h : Labels N EF ζ lab) {k : ℕ} (hk : 0 < k) (a : La) (i : ℕ) :
-    N.QEq (lab k a ^ i) (lab k (i • a)) := by
-  induction i with
-  | zero =>
-    have e := qEq_mul_right N (h.1 k hk 0 0) (lab k 0)⁻¹
-    rw [add_zero, mul_inv_cancel_right, mul_inv_cancel] at e
-    rw [pow_zero, zero_nsmul]
-    exact (N.qEq_equivalence k).symm e
-  | succ i ih =>
-    rw [pow_succ, succ_nsmul]
-    exact (N.qEq_equivalence k).trans (qEq_mul_right N ih _) (h.1 k hk _ _)
-
-theorem lab_tower (h : Labels N EF ζ lab) {k m K : ℕ} (hk : 0 < k) (hm : 0 < m) (hK : K = k * m) (a : La)
-    (p : N.QT k) (h1 : p.1.1 = (lab K a).1.1) (h2 : p.1.2 = (lab K a).1.2 ^ m) : N.QEq p (lab k a) := by
-  subst hK
-  exact h.2.2.2.1 k m hk hm a p h1 h2
-
-theorem tx_nest [TopologicalSpace O] (h : Labels N EF ζ lab) {n m M : ℕ} (hn : Odd n) (hm : Odd m) (hM : M = n * m)
-    (x : La) : N.tx M (lab _ (n • x)) = N.tx m (lab _ x) := by
-  subst hM
-  have hK : (n * m) ^ 2 = m ^ 2 * n ^ 2 := by ring
-  let P := lab ((n * m) ^ 2) x
-  let p : N.QT (m ^ 2) := ⟨(P.1.1, P.1.2 ^ n ^ 2), by
-    rw [NumD.mem_QT, ← pow_mul, mul_comm (n ^ 2), ← hK]
-    exact N.mem_QT.1 P.2⟩
-  have e1 := lab_nsmul h (pow_pos (hn.mul hm).pos 2) x n
-  have e2 := lab_tower h (pow_pos hm.pos 2) (pow_pos hn.pos 2) hK x p rfl rfl
-  rw [← tx_congr N (hn.mul hm) e1, ← tx_congr N hm e2, NumD.tx, NumD.tx]
-  refine tsum_congr fun χ => GlobalTheory.T.degenerationSeriesTerms_nest O N n m hn hm _ p rfl ?_ χ
-  change P.1.2 ^ n ^ 2 = (P.1.2 ^ n) ^ n
-  rw [← pow_mul, sq n]
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField in
 open scoped CategoryTheory.Obj BigOperators in
@@ -143,12 +110,12 @@ private theorem tx_label_nsmul_eq_of_odd [TopologicalSpace O]
   rw [h1, h2]
   exact _root_.GlobalTheory.ModelData.Scalar.tx_congr N hm h3
 
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField in
 open scoped CategoryTheory.Obj BigOperators in
 attribute [local instance] Over.cartesianMonoidalCategory in
 variable {O : Type} [CommRing O] {N : _root_.GlobalTheory.Ex.NumD O} {La : Type} [AddCommGroup La] {EF : LinearMap.BilinForm ℤ La}
   {ζ : ℕ → Oˣ} {lab : ∀ k : ℕ, La → N.QT k} in
-
 theorem _root_.GlobalTheory.ModelData.Scalar.scalar_const : ∀ (C : Type) [NormedField C] (N N' : _root_.GlobalTheory.Ex.NumD C) (La : Type) [AddCommGroup La] (EF : LinearMap.BilinForm ℤ La) (ζ ζ' : ℕ → Cˣ) (lab : ∀ k : ℕ, La → N.QT k) (lab' : ∀ k : ℕ, La → N'.QT k) (n : ℕ), Odd n → _root_.GlobalTheory.ModelData.Labels N EF ζ lab → _root_.GlobalTheory.ModelData.Labels N' EF ζ' lab' → (∀ j, ∃ c : Cˣ, ∀ x, N'.tx (n ^ j) (lab' _ x) = c * N.tx (n ^ j) (lab _ x)) → (∃ x, N.tx (n ^ 1) (lab _ x) ≠ 0) → ∃ c₀ : C, c₀ ≠ 0 ∧ ∀ j x, N'.tx (n ^ j) (lab' _ x) = c₀ * N.tx (n ^ j) (lab _ x) := by
   intro C _ N N' La _ EF ζ ζ' lab lab' n hn hL hL' hc hx
   obtain ⟨x₀, hx₀⟩ := hx

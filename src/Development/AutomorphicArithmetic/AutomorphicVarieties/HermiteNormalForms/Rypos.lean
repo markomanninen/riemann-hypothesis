@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Grampd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RealVec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Realsurj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Grampd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RealVec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Realsurj
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
 
 theorem UpperTheory.V.KT.rypos :
-    ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ), Ry L N ⊆ Pos L N := by
+    ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ), Ry L N ⊆ Pos L N := by
   intro L _ _ _ N h hh w
   classical
   obtain ⟨hH, hq, hr, hb⟩ := gramq L N h

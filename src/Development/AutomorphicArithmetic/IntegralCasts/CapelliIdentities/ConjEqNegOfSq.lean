@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk60.conj_eq_neg_of_sq :
     ∀ {z : ℂ} {d : ℕ},

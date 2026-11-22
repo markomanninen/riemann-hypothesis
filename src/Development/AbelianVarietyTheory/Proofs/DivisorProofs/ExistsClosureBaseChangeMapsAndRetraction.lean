@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapMaximalIdealEqOrigin
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 open GlobalTheory.LocAcyc GlobalTheory.KeyOriginNoeth GlobalTheory.KeyOriginBC
@@ -74,8 +79,8 @@ def den (A₁ R₁ S : Type) [CommRing A₁] [CommRing R₁] [Algebra A₁ R₁]
     Submonoid S :=
   (nonZeroDivisors A₁).map ((algebraMap R₁ S).comp (algebraMap A₁ R₁))
 
-variable (A R A₁ R₁ DA S) in
 
+variable (A R A₁ R₁ DA S) in
 abbrev EM : Type :=
   Localization (Algebra.algebraMapSubmonoid (S ⊗[R] closure A R DA) (den A₁ R₁ S))
 
@@ -152,8 +157,8 @@ theorem phi_tmul (hRS : algebraMap R S = (algebraMap R₁ S).comp κ)
   rw [tlift_tmul]
   simp [Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.tmul_mul_tmul]
 
-variable (A R DA S) in
 
+variable (A R DA S) in
 def uOne : GenFib A₁ R₁ →+* EM A R A₁ R₁ DA S :=
   IsLocalization.lift (M := Algebra.algebraMapSubmonoid R₁ (nonZeroDivisors A₁))
     (g := (algebraMap S (EM A R A₁ R₁ DA S)).comp (algebraMap R₁ S)) (by
@@ -180,8 +185,8 @@ theorem fa_mem (hf : Function.Injective f) {a : A} (ha : a ∈ nonZeroDivisors A
     f a ∈ nonZeroDivisors A₁ :=
   mem_nonZeroDivisors_of_ne_zero (fun h => nonZeroDivisors.ne_zero ha (hf (by rw [h, map_zero])))
 
-variable (S) in
 
+variable (S) in
 def vOne (hf : Function.Injective f) (hκ : κ.comp (algebraMap A R) = (algebraMap A₁ R₁).comp f)
     (hRS : algebraMap R S = (algebraMap R₁ S).comp κ) : DA →+* EM A R A₁ R₁ DA S :=
   haveI := isLocalization_closure A R DA
@@ -234,8 +239,8 @@ variable {A R A₁ R₁ : Type} [CommRing A] [IsDomain A] [CommRing R] [Algebra 
   {DA : Type} [CommRing DA] [Algebra (GenFib A R) DA] [Algebra.IsIntegral (GenFib A R) DA]
   {S : Type} [CommRing S] [Algebra R₁ S] [Algebra R S] [Algebra R₁ (BC β DA)]
 
-variable (S) in
 
+variable (S) in
 def vD (hf : Function.Injective f) (hκ : κ.comp (algebraMap A R) = (algebraMap A₁ R₁).comp f)
     (hRS : algebraMap R S = (algebraMap R₁ S).comp κ)
     (hβ : β.comp (algebraMap R (GenFib A R)) = (algebraMap R₁ (GenFib A₁ R₁)).comp κ) :
@@ -266,8 +271,8 @@ theorem psi_compat (hf : Function.Injective f) (hκ : κ.comp (algebraMap A R) =
   rw [IsLocalization.lift_eq]
   rfl
 
-variable (S) in
 
+variable (S) in
 def psi (hf : Function.Injective f) (hκ : κ.comp (algebraMap A R) = (algebraMap A₁ R₁).comp f)
     (hRS : algebraMap R S = (algebraMap R₁ S).comp κ)
     (hβ : β.comp (algebraMap R (GenFib A R)) = (algebraMap R₁ (GenFib A₁ R₁)).comp κ)

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapF
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMapF
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace PositivityTheory.Rg.Rs
 
 namespace InducedTensorMap.Main
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem act_fin_val {a : ℕ} (g : GL (Fin a) (Af E)) (F : Sm E a) :
     (act (.fin g) F).1 = fun y => F.1 (y * cf a 1 g) := by
@@ -47,7 +51,7 @@ theorem indMap_holds : IndMap := by
     { toFun := fun φ => ⟨ind f₁ f₂ (T φ.1).1, ind_mem_Sm H (hI _ φ.2) (hK _ φ.2)⟩
       map_add' := fun φ ψ => Subtype.ext (by
         change ind f₁ f₂ (T (φ.1 + ψ.1)).1 = ind f₁ f₂ (T φ.1).1 + ind f₁ f₂ (T ψ.1).1
-        rw [map_add, Submodule.coe_add, map_add])
+        rw [map_add (f := _), Submodule.coe_add, map_add (f := _)])
       map_smul' := fun c φ => Subtype.ext (by
         change ind f₁ f₂ (T (c • φ.1)).1 = c • ind f₁ f₂ (T φ.1).1
         rw [map_smul, Submodule.coe_smul, map_smul]) }

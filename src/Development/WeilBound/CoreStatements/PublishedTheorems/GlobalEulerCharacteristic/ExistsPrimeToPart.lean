@@ -1,12 +1,20 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledA
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroReal
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledA
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteOpen
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.ShapiroReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
 namespace PositivityTheory.Lit1.GEN.GlobalEulerCharacteristicAlt
 
 local notation "ℚ̄" => AlgebraicClosure ℚ
+
+local instance scalarTowerForFiniteSubfields {F E : FiniteSubfield} [Fact (F ≤ E)] :
+    IsScalarTower F.1 E.1 ℚ̄ :=
+  IsScalarTower.of_algebraMap_eq fun _ => rfl
 
 set_option maxHeartbeats 1000000 in
 theorem exists_prime_to_part (ℓ : ℕ) [Fact ℓ.Prime]
@@ -26,15 +34,19 @@ theorem exists_prime_to_part (ℓ : ℕ) [Fact ℓ.Prime]
       ∃ a : ℕ, Nat.card ((gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) ⧸ (gsOpenSubgroup S hK'' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).subgroupOf (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))) = ℓ ^ a  := by
   classical
   have hUi : (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)).index ≠ 0 := by
-    rw [index_gsOpenSubgroup]
+    rw [coe_gsOpenSubgroup]
+    change (gsEmbedding (S := S) hL).fieldRange.fixingSubgroup.index ≠ 0
+    rw [← IntermediateField.finrank_eq_fixingSubgroup_index,
+      ← (gsEmbedding (S := S) hL).equivFieldRange.toLinearEquiv.finrank_eq]
     exact Module.finrank_pos.ne'
   have hUo : IsOpen (((gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S))) :
       Set (galUnramifiedOutside K.1 ℚ̄ S)) := (gsOpenSubgroup S hL).isOpen
   generalize (gsOpenSubgroup S hL : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) = U at hN hle hcyc hUi hUo ⊢
   generalize (gsOpenSubgroup S hL' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) = W at hle hcyc ⊢
-  haveI : U.FiniteIndex := ⟨hUi⟩
-  haveI : (U.subgroupOf W).FiniteIndex := inferInstance
-  haveI : Finite (W ⧸ U.subgroupOf W) := Subgroup.finite_quotient_of_finiteIndex
+  have : U.FiniteIndex := ⟨hUi⟩
+  have : (U.subgroupOf W).FiniteIndex := inferInstance
+  have : Finite (W ⧸ U.subgroupOf W) := Subgroup.finite_quotient_of_finiteIndex
+  have : IsCyclic (W ⧸ U.subgroupOf W) := hcyc
   obtain ⟨g, hg⟩ := hcyc.exists_generator
   have hcomm : ∀ x y : W ⧸ U.subgroupOf W, x * y = y * x := fun x y =>
     (IsCyclic.commGroup (α := W ⧸ U.subgroupOf W)).mul_comm x y
@@ -62,10 +74,43 @@ theorem exists_prime_to_part (ℓ : ℕ) [Fact ℓ.Prime]
   have hVW : V ≤ W := Subgroup.map_subtype_le D
   have hVopen : IsOpen (V : Set (galUnramifiedOutside K.1 ℚ̄ S)) :=
     Subgroup.isOpen_mono hUV hUo
-  obtain ⟨K'', hK''f, hK'', hEq⟩ := exists_gsOpenSubgroup_eq (K := K) (S := S) (V := ⟨V, hVopen⟩)
+  have hExists : ∃ (K'' : FiniteSubfield) (_ : Fact (K ≤ K''))
+      (hK'' : ∀ x : K''.1, algebraMap K''.1 ℚ̄ x ∈ maxUnramifiedOutside K.1 ℚ̄ S),
+      (gsOpenSubgroup S hK'' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) = V := by
+    let KS := maxUnramifiedOutside K.1 ℚ̄ S
+    let H : OpenSubgroup (galUnramifiedOutside K.1 ℚ̄ S) := ⟨V, hVopen⟩
+    let E : IntermediateField K.1 KS := IntermediateField.fixedField V
+    have hEV : E.fixingSubgroup = V :=
+      InfiniteGalois.fixingSubgroup_fixedField ⟨V, H.isClosed⟩
+    have : FiniteDimensional K.1 E :=
+      (InfiniteGalois.isOpen_iff_finite E).1 (hEV.symm ▸ hVopen)
+    let E' : IntermediateField K.1 ℚ̄ := E.map KS.val
+    have : FiniteDimensional K.1 E' := (E.equivMap KS.val).toLinearEquiv.finiteDimensional
+    have hE'Q : FiniteDimensional ℚ (E'.restrictScalars ℚ) := FiniteDimensional.trans ℚ K.1 E'
+    let K'' : FiniteSubfield := ⟨E'.restrictScalars ℚ, hE'Q⟩
+    have : Fact (K ≤ K'') := ⟨fun x hx => E'.algebraMap_mem (⟨x, hx⟩ : K.1)⟩
+    have hK'' (x : K''.1) : algebraMap K''.1 ℚ̄ x ∈ KS := by
+      obtain ⟨y, -, hyx⟩ := (x.2 : (x : ℚ̄) ∈ E')
+      change (x : ℚ̄) ∈ KS
+      rw [← hyx]
+      exact y.2
+    refine ⟨K'', inferInstance, hK'', ?_⟩
+    ext σ
+    change σ ∈ gsOpenSubgroup S hK'' ↔ σ ∈ V
+    rw [mem_gsOpenSubgroup_iff]
+    rw [← hEV, IntermediateField.mem_fixingSubgroup_iff]
+    constructor
+    · intro h y hy
+      let x : K''.1 := ⟨(y : ℚ̄), ⟨y, hy, rfl⟩⟩
+      have hx : gsEmbedding hK'' x = y := Subtype.ext rfl
+      simpa only [hx] using h x
+    · intro h x
+      obtain ⟨y, hy, hyx⟩ := (x.2 : (x : ℚ̄) ∈ E')
+      have hx : gsEmbedding hK'' x = y := Subtype.ext hyx.symm
+      rw [hx]
+      exact h y hy
+  obtain ⟨K'', hK''f, hK'', hV⟩ := hExists
   refine ⟨K'', hK''f, hK'', ?_⟩
-  have hV : (gsOpenSubgroup S hK'' : Subgroup (galUnramifiedOutside K.1 ℚ̄ S)) = V := by
-    rw [hEq]
   rw [hV]
   have hVD : V.subgroupOf W = D := Subgroup.comap_map_eq_self_of_injective (Subgroup.subtype_injective W) D
 

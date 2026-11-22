@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnr
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplitA
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplitL
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormUniformiserEqInvAbsNorm
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnr
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplitA
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplitL
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormSatakeLeOfUnitarySphericalGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormUniformiserEqInvAbsNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,6 @@ open Matrix (fromBlocks fromRows GeneralLinearGroup)
 
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
-set_option hygiene false in
-local notation "𝟙" => (1 : Matrix (Fin n) (Fin n) (Fv F v))
 
 theorem locUnrSplit : LocUnrSplit := by
   rintro F E _ _ _ _ _ σ B n Y r s hB hY χ - hr K e hK he v ⟨τ⟩ hu μ hμ hμ1 z f hz hf
@@ -181,11 +183,11 @@ theorem locUnrSplit : LocUnrSplit := by
   have hφ : ∀ y : GL (Fin n) (Fv F v), ∃ t, IsGcd (v.adicCompletionIntegers F).toSubring y t ∧ f (e (Λ (b * y * b⁻¹), 1)) =
       chS χ (τ.comp σ) (z + n / 2) (GeneralLinearGroup.det y⁻¹) *
         (chS χ τ (z + n / 2) * chS χ (τ.comp σ) (z + n / 2)) (GeneralLinearGroup.det t) := fun y => by
-    obtain ⟨t, κ, k1, k2, ht, hκ⟩ := exists_frame (lf v) y
+    obtain ⟨t, κ, k1, k2, ht, hκ⟩ := GlobalTheory.ThK.Dbl.Split.exists_frame (lf v) y
     refine ⟨t, ht, ?_⟩
     let p := bd b b * (bd y 1 * κ⁻¹) * (bd b b)⁻¹
-    have hp : p.1 * fromRows 𝟙 𝟙 = fromRows 𝟙 𝟙 * (b * t * b⁻¹).1 := by
-      have : ((bd b b)⁻¹).1 * fromRows 𝟙 𝟙 = fromRows 𝟙 𝟙 * (b⁻¹).1 := by
+    have hp : p.1 * (fromRows (1 : Matrix (Fin n) (Fin n) (Fv F v)) 1 : Matrix (Fin n ⊕ Fin n) (Fin n) (Fv F v)) = (fromRows (1 : Matrix (Fin n) (Fin n) (Fv F v)) 1 : Matrix (Fin n ⊕ Fin n) (Fin n) (Fv F v)) * (b * t * b⁻¹).1 := by
+      have : ((bd b b)⁻¹).1 * (fromRows (1 : Matrix (Fin n) (Fin n) (Fv F v)) 1 : Matrix (Fin n ⊕ Fin n) (Fin n) (Fv F v)) = (fromRows (1 : Matrix (Fin n) (Fin n) (Fv F v)) 1 : Matrix (Fin n ⊕ Fin n) (Fin n) (Fv F v)) * (b⁻¹).1 := by
         simp only [bd_inv, Matrix.fromBlocks_mul_fromRows, Matrix.fromRows_mul, Matrix.mul_one, Matrix.one_mul, Matrix.zero_mul,
           add_zero, zero_add]
       simp only [p, Units.val_mul, Matrix.mul_assoc, this]
@@ -266,7 +268,7 @@ theorem locUnrSplit : LocUnrSplit := by
     rw [show b * (b⁻¹ * dn g * b) * b⁻¹ = dn g by group, inv_one, Units.val_one, Matrix.one_mul, Matrix.mul_one] at this
     rw [Inert.stab_latW hat, stab_iff hσ τ hb hb', show (mat g).map (piW (τ.comp σ)) = _ from snd_eq τ h1 g]
     exact and_congr Iff.rfl ((Iff.of_eq (congrArg (fun M : Matrix _ _ _ => ∀ i j, M i j ∈ v.adicCompletionIntegers F) this)).trans
-      forall_swap)
+      ⟨fun h i j => h j i, fun h i j => h j i⟩)
   have hn : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   have bb : ∀ t : E →ₐ[F] Fv F v, UnrAt χ (splitPrime t) → ∀ i < n,
       ‖chS χ t (z + n / 2) (unifAt v)‖ * (Ideal.absNorm v.asIdeal : ℝ) ^ i < 1 := fun t ht i hi => by

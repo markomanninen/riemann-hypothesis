@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanLStable
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOfClosure
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestricStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanLStable
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocE
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitOfClosure
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PotentiallyCrystallineModuleEqCrystallineRestricStatement
+
+@[expose] public section
+
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module GlobalTheory.Pass Formalism.MainNotions.PairedCharacterCondition GlobalTheory.Pass.LocDual GlobalTheory.Pass.LocDual.OneX
 set_option maxHeartbeats 1000000
 set_option synthInstance.maxHeartbeats 400000
@@ -93,6 +98,9 @@ theorem latY_span {a : ℕ} (Y : Submodule (D.nd.O i) (Fin a → Fin D.R.nV → 
 
 theorem latY_free {a : ℕ} (Y : Submodule (D.nd.O i) (Fin a → Fin D.R.nV → KK D.nd i)) (hY : Y.FG) :
     Module.Free (Br.OLL D.nbr i w hw) ↥(latY i w hw Y) := by
+  letI : CommRing (Br.OLL D.nbr i w hw) := inferInstance
+  letI : AddCommGroup ↥(latY i w hw Y) := inferInstance
+  letI : Module (Br.OLL D.nbr i w hw) ↥(latY i w hw Y) := inferInstance
   haveI : Module.Finite (Br.OLL D.nbr i w hw) ↥(latY i w hw Y) :=
     Module.Finite.iff_fg.2 (latY_fg i w hw Y hY)
   haveI : NoZeroSMulDivisors (Br.OLL D.nbr i w hw) ↥(latY i w hw Y) := by
@@ -108,7 +116,11 @@ theorem latY_free {a : ℕ} (Y : Submodule (D.nd.O i) (Fin a → Fin D.R.nV → 
       intro h0; apply hc; exact Subtype.val_injective h0
     have := (smul_eq_zero.1 h2).resolve_left hc'
     exact Subtype.ext this
-  exact Module.free_of_finite_type_torsion_free'
+  haveI : IsPrincipalIdealRing (Br.OLL D.nbr i w hw) := inferInstance
+  haveI : IsDomain (Br.OLL D.nbr i w hw) := inferInstance
+  haveI : IsTorsionFree (Br.OLL D.nbr i w hw) ↥(latY i w hw Y) := inferInstance
+  exact @Module.free_of_finite_type_torsion_free' (Br.OLL D.nbr i w hw) inferInstance
+    ↥(latY i w hw Y) inferInstance inferInstance inferInstance inferInstance inferInstance inferInstance
 
 theorem latY_lattice : ∀ (D : D7) (i : D.nd.Loc) (w : HeightOneSpectrum (𝓞 D.host.E))
     (hw : w ∈ placesOver D.host.E (D.nd.l i)) (r : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i)))

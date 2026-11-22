@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection
 open scoped TensorProduct
@@ -20,7 +24,7 @@ theorem mem_primeOf_prPbar {σ : E →ₐ[F] E}
   | mem x hx => exact hx
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [Subring.coe_add, map_add]
+    rw [Subring.coe_add, map_add (f := _)]
     exact lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt hx hy)
   | smul c x _ hx =>
     have hc : Valued.v (prPbar φ c) ≤ 1 := ((hφ.2.2 c).1 c.2).2
@@ -54,8 +58,8 @@ theorem hform_nsmul_left {A n : Type} [CommRing A] [Fintype n] (σ : A →+* A) 
   simp only [hform, Finset.mul_sum, Pi.smul_apply, nsmul_eq_mul, map_mul, map_natCast]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem exists_second_functional :
     ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (s : E ⊗[F] v.adicCompletion F ≃+* v.adicCompletion F × v.adicCompletion F), IsSplitting σ v s → ∀ (k : ℕ) (J : Matrix (Fin k) (Fin k) (E ⊗[F] v.adicCompletion F)) (L₁ L₂ : Submodule (intV E v) (Fin k → E ⊗[F] v.adicCompletion F)), (∀ y ∈ L₁, ∀ x ∈ L₂, hform (sigR σ (v.adicCompletion F)) J x y ∈ intV E v) → (∀ x, x ∈ L₁ ↔ ∀ y ∈ L₂, hform (sigR σ (v.adicCompletion F)) J x y ∈ intV E v) → ∀ (T : ℕ), T ≠ 0 → (∀ x ∈ L₂, T • x ∈ L₁) → (∃ x ∈ L₂, x ∉ L₁ ∧ ∀ i, prPbar s (x i) = 0) → ∃ f : L₂ →ₗ[intV E v] (intV E v ⧸ primeOf (prPbar s)), Function.Surjective f ∧ (∀ x : L₂, x.1 ∈ L₁ → f x = 0) ∧ ∀ x : L₂, (∀ i, prPbar s (x.1 i) = 0) → f x = 0 := by
   intro F E _ _ _ _ _ σ v s hs k J L₁ L₂ h1 h2 T hT hTL ⟨x, hx2, hx1, hx0⟩
@@ -67,7 +71,8 @@ theorem exists_second_functional :
     have : ∀ i, prP s (sigR σ (v.adicCompletion F) (x i)) = 0 := fun i =>
       (congrArg Prod.fst (hs.2.1 (x i))).trans (hx0 i)
     show prP s (H y) = 0
-    simp only [hH, hform, map_sum, map_mul, this, zero_mul, Finset.sum_const_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hH, hform, map_sum, map_mul, this, zero_mul, Finset.sum_const_zero]
   have hTK : (T : v.adicCompletion F) ≠ 0 := by
     rw [← map_natCast (algebraMap F (v.adicCompletion F))]
     exact (map_ne_zero _).2 (Nat.cast_ne_zero.2 hT)
@@ -120,7 +125,8 @@ theorem exists_second_functional :
     simp
   · rw [hH]; exact ((hs.2.2 _).1 (h1 y hy x hx2)).2
   · have : prPbar s (H y) = 0 := by
-      simp only [hH, hform, map_sum, map_mul, hy, mul_zero, Finset.sum_const_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hH, hform, map_sum, map_mul, hy, mul_zero, Finset.sum_const_zero]
     rw [this]; simp
 
 end GlobalTheory.SecondFunctional

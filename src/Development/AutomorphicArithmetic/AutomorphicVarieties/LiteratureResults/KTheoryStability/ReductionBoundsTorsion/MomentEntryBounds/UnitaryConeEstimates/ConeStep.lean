@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.UnitaryConeEstimates.OmG
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,9 +73,9 @@ theorem env (M T : ℝ) : ∃ R1 : ℝ, ∀ (n p k : Matrix (Fin N) (Fin N) ℂ)
   have entry : (diagonal (fun i => ((Real.exp (-s0 i) : ℝ) : ℂ)) *
       (n * p * diagonal (fun i => ((Real.exp (s i) : ℝ) : ℂ)) * k)) i j
       = ∑ m, ∑ l, ((Real.exp (-s0 i) : ℝ) : ℂ) * (n i l * p l m * ((Real.exp (s m) : ℝ) : ℂ) * k m j) := by
-    rw [diagonal_mul, mul_apply, Finset.mul_sum]
+    rw [diagonal_mul, Matrix.mul_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
-    rw [mul_diagonal, mul_apply, Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
+    rw [mul_diagonal, Matrix.mul_apply, Finset.sum_mul, Finset.sum_mul, Finset.mul_sum]
   rw [entry]
   calc ‖∑ m, ∑ l, ((Real.exp (-s0 i) : ℝ) : ℂ) * (n i l * p l m * ((Real.exp (s m) : ℝ) : ℂ) * k m j)‖
       ≤ ∑ m : Fin N, ∑ l : Fin N, (2 * |M| * Real.exp (1 + N * |T|)) :=

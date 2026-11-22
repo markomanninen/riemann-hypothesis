@@ -1,9 +1,16 @@
-import Development.WeilBound.ThetaLifts.TowerModels.TowerCodimensionTwoOf
-import Development.WeilBound.ThetaLifts.TowerModels.LeviEx
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneSkew
-import Development.WeilBound.ThetaLifts.TowerModels.StabEx
-import Development.WeilBound.ThetaLifts.TowerModels.ModelEx
-import Development.WeilBound.ThetaLifts.TowerModels.WeilExOf
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.TowerCodimensionTwoOf
+public import Development.WeilBound.ThetaLifts.TowerModels.LeviEx
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneSkew
+public import Development.WeilBound.ThetaLifts.TowerModels.StabEx
+public import Development.WeilBound.ThetaLifts.TowerModels.ModelEx
+public import Development.WeilBound.ThetaLifts.TowerModels.DetHerm
+public import Development.WeilBound.ThetaLifts.TowerModels.TwistedSums.StandardTraceAdelicAddCharLocalComponentNeOne
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +21,6 @@ open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNo
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK
 
 theorem planeEx : PlaneEx := ⟨planeHerm, planeSkew⟩
-
-theorem pairEx (h : WeilPairExists) : PairEx := pairEx_of modelEx (weilEx_of h)
 
 end PositivityTheory.ThKG.Tow
 

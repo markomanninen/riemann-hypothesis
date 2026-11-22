@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.BcDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def QuadCM : Prop :=
         ∀ x : K, ∃ a b : F, x = algebraMap F K a + algebraMap F K b * y
 
 def ImagGen : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K], Module.finrank ℚ K = 2 →
+  ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K], Module.finrank ℚ K = 2 →
     ∃ (d : ℚ) (y : K), d < 0 ∧ y ^ 2 = (d : K) ∧ ∀ x : K, ∃ a b : ℚ, x = (a : K) + (b : K) * y
 
 def IneRes : Prop :=

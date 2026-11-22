@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.Imports
+
+@[expose] public section
 
 open Finset
 
@@ -85,7 +89,7 @@ theorem inv_sq_le_wM (n : ℕ) (L : Fin (n+1) → ℤ) (M : Fin n → ℤ) (l : 
     rw [hP, Fin.prod_univ_succAbove _ l, hl]; simp
   unfold wM
   rw [prod_erase_succAbove, ← Finset.prod_div_distrib]
-  refine le_trans ?_ (Finset.prod_le_prod
+  refine le_trans ?_ (Finset.prod_le_prod₀
     (f := fun j : Fin n => (G j.succ : ℝ) * G j.castSucc / (G (l.succAbove j) : ℝ) ^ 2)
     (fun j _ => ?_) (fun j _ => factor_lower l hs j (hbox j).1 (hbox j).2 (hne j) G hG))
   · rw [Finset.prod_div_distrib, Finset.prod_mul_distrib, Finset.prod_pow, p1, p2, p3]

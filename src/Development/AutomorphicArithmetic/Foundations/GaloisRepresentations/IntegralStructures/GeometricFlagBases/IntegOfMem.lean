@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
-import Development.AbelianVarietyTheory.Definitions.Divisors.CompactBIffCompact
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.BcMapFst
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.IsGrRefl
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGDatumOneOneOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HxiTZeroComb
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsTjCorrDiagModel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CompactBIffCompact
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.BcMapFst
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.IsGrRefl
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -110,12 +114,12 @@ def KS.tower {R : Type} [Field R] [Algebra ℚ R] {gb : GBase D.toG R} {k : ℕ}
 
 section Grp
 
-variable (D) in
 
+variable (D) in
 def mulF (x : 𝓞 D.F) : Module.End (AfP p) (AfP p ⊗[ℚ] VQ D) := (actQ D (algebraMap (𝓞 D.F) D.O x)).baseChange (AfP p)
 
-variable (D) in
 
+variable (D) in
 def idHat (𝔟 : Ideal (𝓞 D.F)) : AddSubgroup (AfP p ⊗[ℚ] VQ D) :=
   AddSubgroup.closure {z | ∃ x ∈ 𝔟, ∃ v ∈ LaHat D, z = mulF D x v}
 
@@ -125,12 +129,12 @@ def CongId (𝔟 : Ideal (𝓞 D.F)) (g : G.GAf) : Prop := ∀ v ∈ LaHat D, L.
 
 def IsLev (𝔟 : Ideal (𝓞 D.F)) (K : Subgroup G.GAf) : Prop := ∀ g, g ∈ K ↔ g ∈ L.KN 1 ∧ CongId L 𝔟 g
 
-variable (D) in
 
+variable (D) in
 def uId (q : ℕ) (r : ℤ) : Ideal (𝓞 D.F) := Ideal.span {(q : 𝓞 D.F), D.ω - (r : 𝓞 D.F)}
 
-variable (D) in
 
+variable (D) in
 structure AtPrime (q : ℕ) (r : ℤ) (𝔴 : Ideal (𝓞 D.F)) : Prop where
   prime : q.Prime
   ne : q ≠ p
@@ -140,19 +144,16 @@ structure AtPrime (q : ℕ) (r : ℤ) (𝔴 : Ideal (𝓞 D.F)) : Prop where
   max : 𝔴.IsMaximal
   le : uId D q r ≤ 𝔴
 
-variable (D) in
 
+variable (D) in
 def LevOK (q : ℕ) (r : ℤ) (𝔴 𝔫 : Ideal (𝓞 D.F)) : Prop :=
   ∃ (N₀ : ℕ) (𝔞 : Ideal (𝓞 D.F)), 3 ≤ N₀ ∧ N₀.Coprime q ∧ N₀.Coprime p ∧ 𝔞 ⊔ 𝔴 = ⊤ ∧ (∃ e : ℕ, uId D q r ^ e ≤ 𝔞) ∧
     𝔫 = Ideal.span {(N₀ : 𝓞 D.F)} * 𝔞
 
-variable (D) in
 
+variable (D) in
 def LevAt (q : ℕ) (r : ℤ) (𝔴 : Ideal (𝓞 D.F)) (N₀ : ℕ) (𝔞 : Ideal (𝓞 D.F)) : Prop :=
   3 ≤ N₀ ∧ N₀.Coprime q ∧ N₀.Coprime p ∧ 𝔞 ⊔ 𝔴 = ⊤ ∧ ∃ e : ℕ, uId D q r ^ e ≤ 𝔞
-
-def UnitAt (𝔴 : Ideal (𝓞 D.F)) (h : G.GAf) : Prop :=
-  ∃ s : 𝓞 D.F, s ∉ 𝔴 ∧ ∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = mulF D s v
 
 structure IsTjElt (q : ℕ) (r : ℤ) (𝔴 : Ideal (𝓞 D.F)) (j : ℕ) (h : G.GAf) : Prop where
   away : ∀ n : ℕ, n.Coprime q → L.CongOne n h

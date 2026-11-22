@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.SenTateCharLevels
-import GroundTheory.PAdicHodge.SenTateCharStep
-import GroundTheory.PAdicHodge.SenTateCharClosure
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.SenTateCharLevels
+public import GroundTheory.PAdicHodge.SenTateCharStep
+public import GroundTheory.PAdicHodge.SenTateCharClosure
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -93,8 +98,8 @@ theorem baseUnifNrm_le_one : baseUnifNrm K (PadicAlgCl p) ≤ 1 := by
   rw [← unifNrm_pow_ramificationIndex (⊥ : IntermediateField K (PadicAlgCl p))]
   exact pow_le_one₀ (unifNrm_pos _).le (unifNrm_lt_one _).le
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem div_mul_geom_sum_mul_sub_one (e q : ℕ) :
     (e : ℝ) / p * (∑ i ∈ Finset.range q, (p : ℝ) ^ (-(i : ℤ))) * ((p : ℝ) - 1) =
       e - e * (p : ℝ) ^ (-(q : ℤ)) := by
@@ -195,8 +200,8 @@ theorem nrm_normTrace_step_le (hη : Continuous η) (hA : ∀ n, artinImage K η
   rw [mul_comm (nrm K (normTrace (charTower η k) y)), mul_assoc] at h3
   exact le_of_mul_le_mul_left h3 hpos
 
-omit [FiniteDimensional ℚ_[p] K] in
 
+omit [FiniteDimensional ℚ_[p] K] in
 theorem sum_zpow_neg_le (j : ℕ) :
     ∑ i ∈ Finset.range j, (p : ℝ) ^ (-(i : ℤ)) ≤ 2 - 2 * (p : ℝ) ^ (-(j : ℤ)) := by
   have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp.out.two_le

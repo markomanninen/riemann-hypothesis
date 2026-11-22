@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralActionUnitCharacterEigen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise
@@ -47,7 +51,7 @@ theorem toE_inj : Function.Injective (toE D) := fun _ _ h =>
 theorem rho_one_add (Q : Formalism.L2.DIV.Pl D.host.E) {a b : Formalism.MainNotions.StandardLatticesGL3.AE D} (ha : a ∈ OhE D) (hb : b ∈ OhE D)
     (hu : 1 + a * b ∈ OhE D) (h0 : rho Q ⟨a, ha⟩ * rho Q ⟨b, hb⟩ = 0) : rho Q ⟨_, hu⟩ = 1 := by
   have e : (⟨_, hu⟩ : OhE D) = 1 + ⟨a, ha⟩ * ⟨b, hb⟩ := Subtype.ext rfl
-  rw [e, RingHom.map_add, RingHom.map_mul, h0, RingHom.map_one, add_zero]
+  rw [e, RingHom.map_add (f := _), RingHom.map_mul, h0, RingHom.map_one, add_zero]
 
 theorem exists_inv {u : Formalism.MainNotions.StandardLatticesGL3.AE D} (hu : u ∈ OhE D) (h : ∀ Q : Formalism.L2.DIV.Pl D.host.E, rho Q ⟨u, hu⟩ ≠ 0) :
     ∃ v ∈ OhE D, u * v = 1 := by
@@ -59,8 +63,8 @@ theorem exists_inv {u : Formalism.MainNotions.StandardLatticesGL3.AE D} (hu : u 
   rw [RingHom.map_mul, RingHom.map_one, hv]
   exact congrArg Subtype.val hw
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem unitChar_cong : ∀ {D : D7} (e : AE D) (𝔪 : Ideal (𝓞 D.host.E)), GoodMod e 𝔪 → ∀ ν : (AE D)ˣ →* Circle, KillsCong ν 𝔪 →
   ∀ {k : ℕ} (P : Matrix (Fin k) (Fin k) (Formalism.MainNotions.StandardLatticesGL3.AE D)), (∀ i j, (P - 1) i j ∈ hatId D 𝔪) →
   unitChar ν e (P.map (toE D)) = 1 := by
@@ -108,7 +112,7 @@ theorem unitChar_cong : ∀ {D : D7} (e : AE D) (𝔪 : Ideal (𝓞 D.host.E)), 
   obtain ⟨x, hx, hx1, hx2⟩ := exists_finIdl y
   have hU : IsUnitDet e (P.map (toE D)) x := by
     refine ⟨hx.1, ?_, ?_⟩
-    · rw [hx1, show (y : Formalism.MainNotions.StandardLatticesGL3.AE D) = (1 - ε) + ε * d by rw [hyv]; ring, hdet, RingHom.map_add, RingHom.map_sub,
+    · rw [hx1, show (y : Formalism.MainNotions.StandardLatticesGL3.AE D) = (1 - ε) + ε * d by rw [hyv]; ring, hdet, RingHom.map_add (f := _), RingHom.map_sub,
         RingHom.map_mul, RingHom.map_one, hte]
     · rw [hx2, toE_int_iff, hyi]
       exact hvO

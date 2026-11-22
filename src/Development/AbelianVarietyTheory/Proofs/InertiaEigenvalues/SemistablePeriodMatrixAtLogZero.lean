@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSemistablePeriodMatrixOfIsSemistable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusMatrixCrystallineModuleOverWitt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMulUnramifiedEqWittBcris
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodRingCoreCrystallineDeRhamInvariants
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KummerNotCoboundary
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsKurOfActStFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TrivIsCr
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DeRhamPotSemistable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSemistablePeriodMatrixOfIsSemistable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFrobeniusMatrixCrystallineModuleOverWitt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowMulUnramifiedEqWittBcris
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodRingCoreCrystallineDeRhamInvariants
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.KummerNotCoboundary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsKurOfActStFixed
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc GlobalTheory.Pst GlobalTheory.BKLim GlobalTheory.Cong Matrix
 open scoped Formalism.Per NNReal
 
@@ -46,7 +51,8 @@ theorem mmap_sum_smul {S S' F : Type} [CommRing S] [CommRing S'] [FunLike F S S'
     (N : ℕ) (a : ℕ → S) (X : ℕ → Matrix (Fin d) (Fin d) S) :
     (∑ k ∈ Finset.range N, a k • X k).map f = ∑ k ∈ Finset.range N, f (a k) • (X k).map f := by
   ext i j
-  simp [Matrix.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.sum_apply, map_sum]
 
 theorem pow_eq_zero_field {k : Type} [Field k] (x : Matrix (Fin d) (Fin d) k) (hx : IsNilpotent x) : x ^ d = 0 := by
   have h := Matrix.isNilpotent_charpoly_sub_pow_of_isNilpotent hx
@@ -109,7 +115,9 @@ theorem Phi_fixed (hQQ : Qm * Qi = 1)
       (A.map (phiSt P)).map (actSt P (g : GQ l)) = (A.map (actSt P (g : GQ l))).map (phiSt P) := by
     intro A; ext i j; simp [phiSt_actSt]
   have hRφ : ((R g).map (algebraMap ℚ_[l] (Bst P))).map (phiSt P) = (R g).map (algebraMap ℚ_[l] (Bst P)) := by
-    ext i j; simp
+    apply Matrix.ext
+    intro i j
+    exact (phiSt P).commutes (R g i j)
   constructor
   · rw [mmap_mul, hc, inv_act P R Qm Qi hQQ hQ g, Matrix.mul_assoc, ← hRφ, ← mmap_mul, hQ g]
   · rw [mmap_mul, hc, inv_act P R Qm Qi hQQ hQ g, mmap_mul, hRφ, Matrix.mul_assoc, hQ g]
@@ -127,7 +135,9 @@ theorem const_of_fixed {K : FinExt l}
       simpa using congrFun (congrFun (hY ⟨g, hg⟩) i) j
   choose y hy using h
   refine ⟨Matrix.of y, ?_, ?_⟩
-  · ext i j; simp [hy]
+  · apply Matrix.ext
+    intro i j
+    exact (hy i j).symm
   · intro g; ext i j
     have h1 := congrFun (congrFun (hY g) i) j
     simp only [Matrix.map_apply] at h1
@@ -173,7 +183,7 @@ theorem ev_phiSt (b : P.R.B)
 
 theorem taylor_sum (r s : P.R.B) (p : Bst P) (N : ℕ) (hN : p.natDegree < N) :
     Polynomial.eval (s + r) p = ∑ k ∈ Finset.range N,
-      (s ^ k * algebraMap ℚ_[l] P.R.B ((k.factorial : ℚ_[l])⁻¹)) * Polynomial.eval r (derivative^[k] p) := by
+      (s ^ k * algebraMap ℚ_[l] P.R.B ((k.factorial : ℚ_[l])⁻¹)) * Polynomial.eval r (Polynomial.derivative^[k] p) := by
   rw [← Polynomial.taylor_eval, Polynomial.eval_eq_sum_range' (by rwa [Polynomial.natDegree_taylor])]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Polynomial.taylor_coeff, mul_comm, mul_assoc]
@@ -229,7 +239,8 @@ theorem period_matrix_at_zero : ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (bk 
     have h1 := congrArg (fun A => Matrix.map A eg) (hQ' g)
     simp only [mmap_mul] at h1
     have e1 : ((R g).map (algebraMap ℚ_[l] (Bst P))).map eg = (R g).map (algebraMap ℚ_[l] P.R.B) := by
-      ext i j; simp [heg]
+      ext i j
+      simp only [Matrix.map_apply, heg, Polynomial.coe_evalRingHom, Polynomial.algebraMap_apply, Polynomial.eval_C]
     have e2 : (Qm.map (actSt P (g : GQ l))).map eg = U₀.map (P.actQ (g : GQ l)) := by
       ext i j
       simp only [Matrix.map_apply, heg, Polynomial.coe_evalRingHom, hU₀, hev0]

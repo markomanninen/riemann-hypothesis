@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsFibreChartIff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsFibreChartIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ private theorem mConeMap_eq_C_aeval_mul_prod_X_pow_of_multiHomog {K : Type} [Fin
       dsimp only
       rw [Finset.prod_pow_eq_pow_sum, hh m hm k]
   simp only [mConeMap, MvPolynomial.aeval_def, MvPolynomial.eval₂_eq']
-  rw [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [key m hm, map_mul, ← mul_assoc]
   congr 2

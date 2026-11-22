@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -75,8 +79,8 @@ theorem tsum_enorm_sq_eq_adjoint {ι κ : Type*} (b : HilbertBasis ι 𝕜 H)
     _ = ∑' j, ‖(T†) (c j)‖ₑ ^ 2 := by
         congr 1; ext j; exact (enorm_sq_eq_tsum b _).symm
 
-variable (𝕜 H) in
 
+variable (𝕜 H) in
 def stdHilbertBasis : HilbertBasis (exists_hilbertBasis 𝕜 H).choose 𝕜 H :=
   (exists_hilbertBasis 𝕜 H).choose_spec.choose
 
@@ -172,8 +176,8 @@ theorem IsHilbertSchmidt.comp_right {T : K →L[𝕜] L} (hT : IsHilbertSchmidt 
     IsHilbertSchmidt (T.comp B) :=
   (hsNormSq_comp_right_le T B).trans_lt (ENNReal.mul_lt_top (by simp) hT)
 
-variable (𝕜 H K) in
 
+variable (𝕜 H K) in
 def hilbertSchmidt : Submodule 𝕜 (H →L[𝕜] K) where
   carrier := {T | IsHilbertSchmidt T}
   add_mem' {S T} hS hT := by
@@ -189,11 +193,7 @@ def hilbertSchmidt : Submodule 𝕜 (H →L[𝕜] K) where
 
 theorem IsHilbertSchmidt.add {S T : H →L[𝕜] K} (hS : IsHilbertSchmidt S)
     (hT : IsHilbertSchmidt T) : IsHilbertSchmidt (S + T) :=
-  (hilbertSchmidt 𝕜 H K).add_mem hS hT
-
-theorem IsHilbertSchmidt.smul {T : H →L[𝕜] K} (hT : IsHilbertSchmidt T) (c : 𝕜) :
-    IsHilbertSchmidt (c • T) :=
-  (hilbertSchmidt 𝕜 H K).smul_mem c hT
+  (hilbertSchmidt (𝕜 := 𝕜) (H := H) (K := K)).add_mem hS hT
 
 theorem IsHilbertSchmidt.hasSum_norm_sq {T : H →L[𝕜] K} (hT : IsHilbertSchmidt T) {ι : Type*}
     (b : HilbertBasis ι 𝕜 H) : HasSum (fun i => ‖T (b i)‖ ^ 2) (hsNorm T ^ 2) := by

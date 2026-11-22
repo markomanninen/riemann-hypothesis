@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.Bridge
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.CubicFields.PeriodRelations.Bridge
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.SplitK
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalMultiplicityProductZero
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingParIndOfJacquetNontrivial
-import GroundTheory.AutomorphicForms.CuspidalSplittingIsotypic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.FirstIn
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsDistinctCuspidalPairEmbedding
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalMultiplicityProductZero
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsEmbeddingParIndOfJacquetNontrivial
+public import GroundTheory.AutomorphicForms.CuspidalSplittingIsotypic
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas UpperTheory.Lit.Red
 
@@ -119,8 +123,8 @@ theorem exists_sub_le {G V U W : Type} [Group G] [AddCommGroup V] [Module ℂ V]
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-open GroundTheory.Automorphic.Parabolic (isotypicKernel isotypicPart mem_isotypicKernel) in
 
+open GroundTheory.Automorphic.Parabolic (isotypicKernel isotypicPart mem_isotypicKernel) in
 theorem exists_quot {G V Y W : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V]
     [Module ℂ V] [AddCommGroup Y] [Module ℂ Y] [AddCommGroup W] [Module ℂ W] {d : ℕ}
     (ψ : GL (Fin d) k →* G) (hψ : Continuous ψ)
@@ -194,7 +198,7 @@ theorem exists_quot {G V Y W : Type} [Group G] [TopologicalSpace G] [IsTopologic
     · exact (hqM _).1 (congrArg (fun F : A.IntertwiningMap ((subQuot ⊤ M).comp ψ) => F w) h2)
   exact h1 (hE ▸ Submodule.mem_top)
 
-theorem exists_central (y : IrrGL k) :
+theorem exists_central (y : IrrGL (k := k)) :
     ∃ c : GL (Fin y.1) k → ℂ, GroundTheory.Automorphic.Parabolic.HasCentralChar y.rep c := by
   have h := exists_smooth_hasCentralChar (k := k) (n := Fin y.1) (π := y.rep) y.2.rep.smooth y.2.rep.irr
   obtain ⟨ω, -, hω⟩ := h
@@ -210,8 +214,8 @@ theorem exists_central (y : IrrGL k) :
   choose c hc using hex
   exact ⟨c, hc⟩
 
-theorem exists_jac_quot (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL k)
-    {s : ℕ} (q : Fin s → IrrGL k) (hq : ∑ a, (q a).1 = x.1) (i : Fin s) (hi : (q i).IsCusp)
+theorem exists_jac_quot (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL (k := k))
+    {s : ℕ} (q : Fin s → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1) (i : Fin s) (hi : (q i).IsCusp)
     (h : jm q hq x.rep ≠ 0) :
     ∃ (U : Type) (_ : AddCommGroup U) (_ : Module ℂ U) (ν : Representation ℂ (Levi k fun a => Fin (q a).1) U)
       (f : (jac (stdBlocks (fun a => (q a).1) hq) x.rep).IntertwiningMap ν),
@@ -260,13 +264,13 @@ theorem exists_jac_quot (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniten
   have h9 : GroundTheory.Automorphic.Parabolic.HasCentralChar (q i).rep c := hc
   exact exists_quot ψ h1 h2 (A := (q i).rep) (q i).2.rep.irr hi.2 h9 h3 h4 h5 h6 h7 h8
 
-def EmbIn (x : IrrGL k) {s : ℕ} (y : Fin s → IrrGL k) : Prop :=
+def EmbIn (x : IrrGL (k := k)) {s : ℕ} (y : Fin s → IrrGL (k := k)) : Prop :=
   ∃ (hd : ∑ a, (y a).1 = x.1) (f : x.rep.IntertwiningMap (prodIrr y hd)), Function.Injective f
 
-theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL k)
-    {s : ℕ} (q : Fin s → IrrGL k) (hq : ∑ a, (q a).1 = x.1) (i : Fin s) (hi : (q i).IsCusp)
+theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness) (x : IrrGL (k := k))
+    {s : ℕ} (q : Fin s → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1) (i : Fin s) (hi : (q i).IsCusp)
     (h : jm q hq x.rep ≠ 0) :
-    ∃ y : Fin s → IrrGL k, y i = q i ∧ EmbIn x y := by
+    ∃ y : Fin s → IrrGL (k := k), y i = q i ∧ EmbIn x y := by
   let e := stdBlocks (fun a => (q a).1) hq
   let π : GlobalTheory.SplitRead.Irr k x.1 := { V := x.2.rep.V, π := x.rep, smooth := x.2.rep.smooth, irr := x.2.rep.irr }
   obtain ⟨U, _, _, ν, f, hν, hf, hsub⟩ := exists_jac_quot hBZ x q hq i hi h
@@ -292,7 +296,7 @@ theorem exists_emb (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalThe
 end UpperTheory.Lit.Full.EmbCusp
 
 theorem UpperTheory.Lit.Full.embL :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL k) (q : Fin 2 → IrrGL k) (hq : ∑ a, (q a).1 = x.1), (q 0).IsCusp → jm q hq x.rep ≠ 0 → ∃ z, Emb x (q 0) z := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL (k := k)) (q : Fin 2 → IrrGL (k := k)) (hq : ∑ a, (q a).1 = x.1), (q 0).IsCusp → jm q hq x.rep ≠ 0 → ∃ z, Emb x (q 0) z := by
   intro hG hBZ k _ _ _ _ x q hq hc h
   obtain ⟨y, hy, hf⟩ := UpperTheory.Lit.Full.EmbCusp.exists_emb hG hBZ x q hq 0 hc h
   obtain ⟨a, b, rfl⟩ : ∃ a b, y = ![a, b] := ⟨y 0, y 1, by

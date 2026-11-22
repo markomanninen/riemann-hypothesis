@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResV
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfForallField
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
@@ -69,9 +73,11 @@ theorem ksRel_operators : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       exact ⟨g', u, h₁, by rw [h₂, spMap_dualMap_comp_eq, Category.assoc], h₃⟩
     have hOg : O ≤ t.PP.L.U (j i) ⊓ t.PP.L.U (j i') := fun p hp => ⟨hWj i (h hp).1, hWj i' (h hp).2⟩
     have hxg : ⊤ ≤ x ⁻¹ᵁ (t.PP.L.U (j i) ⊓ t.PP.L.U (j i')) := fun p hp => hOg (hx hp)
-    rw [key, valR_eq x hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [key, valR_eq x hx, map_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [map_mul, map_mul, map_mul, ← valR_eq, ← valR_eq, ← valR_eq, ← valR_eq,
       (hdd a).2 S _ x (w a) O f hφ' hx (hw a), (hdd b).2 S _ x (w b) _ _ hφ' hxg (hw b), valR_rsT x hOg hx,

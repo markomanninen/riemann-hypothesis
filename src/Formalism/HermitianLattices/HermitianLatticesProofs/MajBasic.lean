@@ -1,6 +1,9 @@
-import Mathlib
-import Formalism.HermitianLattices.StatementMaj
-import Formalism.HermitianLattices.HermitianLatticesProofs.OpBound
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMaj
+
+@[expose] public section
 
 open NumberField Matrix
 

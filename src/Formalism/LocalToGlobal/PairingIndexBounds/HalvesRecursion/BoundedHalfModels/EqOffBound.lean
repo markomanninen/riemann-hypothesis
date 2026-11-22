@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.ModelXiNZOf
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.RecursiveLatticeMembership.ModelXiNZOf
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

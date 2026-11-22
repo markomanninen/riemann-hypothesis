@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,8 +126,18 @@ theorem pair_dbl (A : HSp D) (x y : Fin (dblSp A).rank → D.host.E) :
 
 theorem selfDual_sumLat {A : HSp D} {L : Lat A} (hL : IsSelfDualC A L) :
     IsSelfDualC (dblSp A) (sumLat finSumFinEquiv L L) := by
-  haveI := hL.1
-  refine ⟨isLattice_sumLat L L, fun y => ⟨fun hy x hx => ?_, fun H => ?_⟩⟩
+  have hsum : Submodule.IsLattice D.host.E (sumLat finSumFinEquiv L L) := by
+    let φ : ((Fin A.rank → D.host.E) × (Fin A.rank → D.host.E)) ≃ₗ[D.host.E]
+        (Fin (A.rank + A.rank) → D.host.E) :=
+      (LinearEquiv.sumArrowLequivProdArrow _ _ _ _).symm.trans
+        (LinearEquiv.funCongrLeft _ _ finSumFinEquiv.symm)
+    have e : sumLat finSumFinEquiv L L = (L.prod L).map (φ.toLinearMap.restrictScalars (𝓞 D.host.E)) := by
+      ext w
+      refine ⟨fun hw => ⟨(_, _), hw, pairVec_eta _ w⟩, ?_⟩
+      rintro ⟨x, hx, rfl⟩
+      exact (pairVec_mem_sumLat _).2 hx
+    exact Submodule.IsLattice.of_fg D.host.E (e ▸ (hL.1.fg.prod hL.1.fg).map _)
+  refine ⟨hsum, fun y => ⟨fun hy x hx => ?_, fun H => ?_⟩⟩
   · obtain ⟨b₁, hb₁⟩ := (hL.2 (fun i => y (finSumFinEquiv (Sum.inl i)))).1 hy.1
       (fun i => x (finSumFinEquiv (Sum.inl i))) hx.1
     obtain ⟨b₂, hb₂⟩ := (hL.2 (fun i => y (finSumFinEquiv (Sum.inr i)))).1 hy.2

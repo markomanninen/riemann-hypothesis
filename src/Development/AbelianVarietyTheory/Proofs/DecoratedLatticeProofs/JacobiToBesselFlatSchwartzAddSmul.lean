@@ -1,9 +1,37 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilMixedCoordinatesContinuousBoundedSupNorm
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HandBFSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ExistsUnitarySupportedAtPlaceOfMulEqIdem
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlacesToAdeles
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlatThetaMapsPreserveThetaFunctions
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilMixedCoordinatesContinuousBoundedSupNorm
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HandBFSmul
+
+namespace I195MixedCoordinates_16a87883d9a2fbb6523804b0
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_16a87883d9a2fbb6523804b0
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,18 +46,21 @@ variable {D : D7}
 theorem mixS_add {ψ : AddChar (AF D.host.F) ℂ} (hψ : Continuous ψ) {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ)
     (T : HSp D) {μ : Measure (Mx D T.rank ρ)} {𝓕 : Set (Mx D T.rank ρ)} (hμ : IsCovolOne (ratMx D T.rank ρ) μ 𝓕)
     {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) (x : Mx D T.rank ρ) :
-    d.mixS T ψ μ 𝓕 (f + g) x = d.mixS T ψ μ 𝓕 f x + d.mixS T ψ μ 𝓕 g x := by
+    (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source d) T ψ μ 𝓕 (f + g) x = (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source d) T ψ μ 𝓕 f x + (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source d) T ψ μ 𝓕 g x := by
   funext w₀
   have h1 := d.integrableOn_mixS hψ hμ hf x w₀
   have h2 := d.integrableOn_mixS hψ hμ hg x w₀
   simp only [HypDec.integrandS_eq] at h1 h2
-  simp only [HypDec.mixS, Pi.add_apply, HypDec.integrandS_eq]
+  change (∫ a in 𝓕, heisO ψ S T (d.extY T a) (heisO ψ S T (d.extX T x) (heisO ψ S T (d.ext0 T w₀) (f + g))) 0 ∂μ) =
+    (∫ a in 𝓕, heisO ψ S T (d.extY T a) (heisO ψ S T (d.extX T x) (heisO ψ S T (d.ext0 T w₀) f)) 0 ∂μ) +
+    (∫ a in 𝓕, heisO ψ S T (d.extY T a) (heisO ψ S T (d.extX T x) (heisO ψ S T (d.ext0 T w₀) g)) 0 ∂μ)
+  simp only [HypDec.integrandS_eq, Pi.add_apply]
   rw [← integral_add h1 h2]
   congr 1; funext a; ring
 
 theorem continuous_mixS {ψ : AddChar (AF D.host.F) ℂ} (hψ : Continuous ψ) {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ)
     (T : HSp D) {μ : Measure (Mx D T.rank ρ)} {𝓕 : Set (Mx D T.rank ρ)} (hμ : IsCovolOne (ratMx D T.rank ρ) μ 𝓕)
-    {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (x : Mx D T.rank ρ) : Continuous (d.mixS T ψ μ 𝓕 f x) := by
+    {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (x : Mx D T.rank ρ) : Continuous ((_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source d) T ψ μ 𝓕 f x) := by
   have cY : Continuous (d.extY T) := continuous_id.matrix_mul continuous_const
   have c0 : Continuous (d.ext0 T) := continuous_id.matrix_mul continuous_const
   refine GlobalTheory.MixCont.continuous_covolOne_integral hμ
@@ -67,7 +98,18 @@ theorem evalAt_add {ψ : AddChar (AF D.host.F) ℂ} (hψ : Continuous ψ) {V V�
   have h2 := integrableOn_mixT_of_quasi hψ dW V₀ vT.covol (continuous_mixS hψ dV W vS.covol hg x)
     (fun δ w => GlobalTheory.MixModel.Check.mixS_quasi dV vS.μ vS.𝓕 hg x δ w) y w₀
   simp only [HypDec.integrandT_eq] at h1 h2
-  simp only [evalAt, mixS_add hψ dV W vS.covol hf hg x, HypDec.mixT, Pi.add_apply, HypDec.integrandT_eq]
+  change _root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.target dW V₀ ψ vT.μ vT.𝓕
+      (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 (f + g) x) y w₀ =
+    _root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.target dW V₀ ψ vT.μ vT.𝓕
+      (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 f x) y w₀ +
+    _root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.target dW V₀ ψ vT.μ vT.𝓕
+      (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 g x) y w₀
+  rw [mixS_add hψ dV W vS.covol hf hg x]
+  change (∫ a in vT.𝓕, heisO ψ V₀ W (dW.incX V₀ a) (heisO ψ V₀ W (dW.incAdj V₀ y) (heisO ψ V₀ W (dW.inc0 V₀ w₀) (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 f x + _root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 g x))) 0 ∂vT.μ) = _
+  change (∫ a in vT.𝓕, heisO ψ V₀ W (dW.incX V₀ a) (heisO ψ V₀ W (dW.incAdj V₀ y) (heisO ψ V₀ W (dW.inc0 V₀ w₀) (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 f x + _root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 g x))) 0 ∂vT.μ) =
+    (∫ a in vT.𝓕, heisO ψ V₀ W (dW.incX V₀ a) (heisO ψ V₀ W (dW.incAdj V₀ y) (heisO ψ V₀ W (dW.inc0 V₀ w₀) (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 f x))) 0 ∂vT.μ) +
+    (∫ a in vT.𝓕, heisO ψ V₀ W (dW.incX V₀ a) (heisO ψ V₀ W (dW.incAdj V₀ y) (heisO ψ V₀ W (dW.inc0 V₀ w₀) (_root_.I195MixedCoordinates_16a87883d9a2fbb6523804b0.source dV W ψ vS.μ vS.𝓕 g x))) 0 ∂vT.μ)
+  simp only [HypDec.integrandT_eq, Pi.add_apply]
   rw [← integral_add h1 h2]
   congr 1; funext a; ring
 

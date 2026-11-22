@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.FlatL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHCompEqSmul
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MkOfMemB
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.LocalSystemQuotients.FlatL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapHCompEqSmul
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MkOfMemB
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -170,7 +174,7 @@ def rhoT (hF : ∀ c, FlatL l c (Kt c)) (hq : ∀ m b (h : b ≤ m) j, Function.
 theorem theta_rho (hF : ∀ c, FlatL l c (Kt c)) (hq : ∀ m b (h : b ≤ m) j, Function.Bijective ((qred l (ψ m) h).mapH j))
     (j : ℕ) {b c : ℕ} (h : b ≤ c) (x : (Kt c).H j) :
     theta l Kt ψ j h (rhoT hF hq j c b x) = (prj l (Kt c) b).mapH j x := by
-  rw [rhoT, dif_pos h]
+  rw [rhoT, dite_eq_left h]
   exact theta_thetaE hF hq j h _
 
 def nuT (hF : ∀ c, FlatL l c (Kt c)) (j a c : ℕ) : (Kt a).H j →ₗ[W] (Kt c).H j :=
@@ -178,7 +182,7 @@ def nuT (hF : ∀ c, FlatL l c (Kt c)) (j a c : ℕ) : (Kt a).H j →ₗ[W] (Kt 
 
 theorem nu_eq (hF : ∀ c, FlatL l c (Kt c)) (j : ℕ) {a c : ℕ} (h : a ≤ c) (y : (Kt a).H j) :
     nuT (ψ := ψ) hF j a c y = (mulc l (Kt c) h (fun i => (hF c i).1)).mapH j (theta l Kt ψ j h y) := by
-  rw [nuT, dif_pos h]
+  rw [nuT, dite_eq_left h]
   rfl
 
 theorem le_left {a b c : ℕ} (hc : a + b = c) : a ≤ c := by omega

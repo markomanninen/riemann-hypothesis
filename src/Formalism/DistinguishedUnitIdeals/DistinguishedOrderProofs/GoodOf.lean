@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.FrobeniusDiffBijective
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.RhoMapFunctorial
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.FrobeniusDiffBijective
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.RhoMapFunctorial
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.GroundTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem it_mul (f : PowerSeries O →ₐ[O] PowerSeries O) (k : ℕ) (a b : Powe
 
 theorem it_add (f : PowerSeries O →ₐ[O] PowerSeries O) (k : ℕ) (a b : PowerSeries O) :
     (⇑f)^[k] (a + b) = (⇑f)^[k] a + (⇑f)^[k] b := by
-  rw [it_eq, map_add]
+  rw [it_eq, map_add (f := _)]
 
 theorem it_dvd (f : PowerSeries O →ₐ[O] PowerSeries O) (k : ℕ) {a b : PowerSeries O}
     (h : a ∣ b) : (⇑f)^[k] a ∣ (⇑f)^[k] b := by
@@ -95,7 +99,7 @@ theorem itX_mem (B : Base O) (hl : 1 ≤ B.ℓ) (h : B.E3) (s : ℕ) :
     obtain ⟨c, d, hcd⟩ := Ideal.mem_span_pair.1 ih
     obtain ⟨c', d', hcd'⟩ := Ideal.mem_span_pair.1 (pow_mem_pair (φX_mem B hl h) (B.ℓ ^ s))
     refine Ideal.mem_span_pair.2 ⟨B.φ c + B.φ d * c', B.φ d * d', ?_⟩
-    rw [Function.iterate_succ_apply', ← hcd, map_add, map_mul, map_mul, map_pow, ← hcd']
+    rw [Function.iterate_succ_apply', ← hcd, map_add (f := _), map_mul, map_mul, map_pow, ← hcd']
     have : B.φ B.lc = B.lc := alg_C B.φ _
     rw [this, pow_succ, pow_mul', ← pow_mul]
     ring
@@ -112,7 +116,7 @@ theorem q_dvd_γq (B : Base O) (h : B.E4) : B.q ∣ B.γ B.q := by
   refine ⟨1 + (e : PowerSeries O) * X, ?_⟩
   have : B.γ B.q = B.γ X + C (B.ℓ : O) := by
     simp only [Base.q]
-    rw [map_add, alg_C]
+    rw [map_add (f := _), alg_C]
   rw [this, he]
   simp only [Base.q]
   ring
@@ -129,8 +133,6 @@ end GoodPlacesAlt
 open GoodPlacesAlt IdempotentNormalFormsRhoFacts
 
 theorem iterated_third_estimate_holds : E3itOf := fun _ _ B h j => e3it B h j
-
-theorem second_estimate_holds : LevelFactorMemSpanOf := fun _ _ B hl h s => e2 B hl h s
 
 theorem base_ring_good_holds : BaseGoodOf := by
   intro O _ B j M g h3 h4 hM
@@ -429,7 +431,7 @@ theorem sa_p_ne {O : Type} [CommRing O] [IsDomain O] (ϖ : O) [(Ideal.span {ϖ})
     have hp : B.p s = (u : PowerSeries O) * X * ∏ k ∈ Finset.range s, B.p k ^ (B.ℓ - 1)
         + C (B.ℓ : O) := by
       rw [Base.p, Base.q, sa_it_add, IdempotentNormalFormsRhoFacts.it_C, hu]
-    rw [hp, map_add, PowerSeries.map_C, hl, map_zero, add_zero, map_mul, map_mul, map_prod,
+    rw [hp, map_add (f := _), PowerSeries.map_C, hl, map_zero, add_zero, map_mul, map_mul, map_prod,
       PowerSeries.map_X]
     refine mul_ne_zero (mul_ne_zero ?_ X_ne_zero) ?_
     · exact (u.isUnit.map (PowerSeries.map (Ideal.Quotient.mk (Ideal.span {ϖ})))).ne_zero
@@ -592,7 +594,8 @@ theorem extension_generated_holds : ExtGOf := by
   obtain ⟨m, hm, hme⟩ := isPhiCombination_of_mem_pull Y.LY hb hu'
   have h0 : ∑ t, b t • L₀.phiIt i k (Y.π.f (m t)) = 0 := by
     have h1 : Y.π.f (Y.ι.f (lam • u)) = 0 := (Y.exact _).2 ⟨_, rfl⟩
-    rw [hme, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hme, map_sum] at h1
     simpa only [map_smul, hom_phiIt] using h1
   have hm0 := hind (fun t => Y.π.f (m t)) (fun t => Y.π.map_N i _ (hm t)) h0
   have hex : ∀ t, ∃ w : V₂, Y.ι.f w = m t := fun t => (Y.exact _).1 (hm0 t)
@@ -600,7 +603,8 @@ theorem extension_generated_holds : ExtGOf := by
   have hwN : ∀ t, w t ∈ L₂.N i := fun t => h6 i (w t) (by rw [hw t]; exact hm t)
   have heq : lam • u = ∑ t, b t • L₂.phiIt i k (w t) := by
     apply Y.ι_inj
-    rw [hme, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hme, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_smul, hom_phiIt, hw t]
   show lam • u ∈ L₂.pull i k
@@ -655,14 +659,15 @@ def hhA (ℓ : ℕ) : ℕ → ℕ
 
 theorem hhA_eq (ℓ : ℕ) [Fact ℓ.Prime] (r : ℕ) : hhA ℓ r = r + padicValNat ℓ r.factorial := by
   induction r with
-  | zero => simp [hhA]
+  | zero => simp [hhA, Nat.padicValNat_def]
   | succ r ih =>
-    rw [hhA, ih, Nat.factorial_succ, padicValNat.mul (by omega) (Nat.factorial_ne_zero r)]
+    rw [hhA, ih, Nat.factorial_succ, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by omega) (Nat.factorial_ne_zero r)]
     omega
 
 theorem hhA_le (ℓ : ℕ) (hℓ : ℓ.Prime) (r : ℕ) : (ℓ - 1) * hhA ℓ r ≤ ℓ * r := by
   have := Fact.mk hℓ
-  rw [hhA_eq, mul_add, sub_one_mul_padicValNat_factorial]
+  rw [hhA_eq, mul_add, Nat.padicValNat_def,
+    Nat.Prime.sub_one_mul_multiplicity_factorial hℓ]
   have h1 : 1 ≤ ℓ := hℓ.one_le
   obtain ⟨t, rfl⟩ : ∃ t, ℓ = t + 1 := ⟨ℓ - 1, by omega⟩
   simp only [Nat.add_sub_cancel]
@@ -745,7 +750,7 @@ theorem hh_main {u₁ : O} (hE : B.GammaXUnitShape u₁) (h9 : L.P9) (c : ZMod n
               C εi • (X : PowerSeries O) ^ (k + 1) • ρ := by
           rw [← hP, mul_sub, mul_one, sub_smul, mul_smul]
         have hA : hhA B.ℓ (k + 1) = hhA B.ℓ k + e := rfl
-        rw [map_add, γ_lc, hγ', hA, pow_add B.lc (hhA B.ℓ k) e, hG, hγv, smul_neg, smul_comm _ (C εi) ρ, smul_add,
+        rw [map_add (f := _), γ_lc, hγ', hA, pow_add B.lc (hhA B.ℓ k) e, hG, hγv, smul_neg, smul_comm _ (C εi) ρ, smul_add,
           smul_add, hP']
         generalize (X : PowerSeries O) ^ (k + 1) • ρ = P
         simp only [smul_add, smul_neg, smul_smul, mul_comm]
@@ -935,7 +940,7 @@ theorem phi_maps_filtered_lattice (h3 : B.E3) {M : ℕ} (hq : L.FrobeniusMapsXPo
     rw [pow_succ]
     exact Ideal.mul_mem_mul (frobenius_preserves_maximal_power h3 k ha) uniformizer_mem_maximal_ideal
   | add x _ y _ hx hy =>
-    rw [smul_add, map_add]
+    rw [smul_add, map_add (f := _)]
     exact Submodule.add_mem _ hx hy
 
 theorem power_series_X_cancel (hX : L.XReg) (i : ZMod n) (M : ℕ) {w : V} (hw : w ∈ L.N i)
@@ -1040,7 +1045,8 @@ theorem lattice_filtration_second_form : FrobeniusDiffBijective := by
     have e1 : L.φ i ((X : PowerSeries O) ^ M • y (i - 1)) =
         (∑ k ∈ Finset.range K, f1bIt L t (k + 1) i) -
           L.φ i ((X : PowerSeries O) ^ M • ((∑ k ∈ Finset.range K, w k (i - 1)) - y (i - 1))) := by
-      rw [smul_sub, map_sub, Finset.smul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [smul_sub, map_sub, Finset.smul_sum, map_sum]
       simp only [hwe]
       simp [f1bIt]
     have e2 : (X : PowerSeries O) ^ M • y i = (∑ k ∈ Finset.range K, f1bIt L t k i) -
@@ -1180,8 +1186,9 @@ theorem one_add_pow_sub_one_valuation {ℓ : ℕ} (hp : ℓ.Prime) (h3 : 3 ≤ �
     rintro rfl
     exact hr' (dvd_zero _)
   have hv : padicValNat ℓ (ℓ ^ a * r') = a := by
-    rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) hr0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hr', add_zero]
+    rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hp.ne_zero) hr0,
+      Nat.padicValNat_def, Nat.multiplicity_prime_pow, Nat.padicValNat_def,
+      multiplicity_eq_zero_of_not_dvd hr', add_zero]
   have hco : Nat.Coprime r' ℓ := ((Nat.Prime.coprime_iff_not_dvd hp).2 hr').symm
   obtain ⟨y, hy, hya⟩ := one_add_pow_prime_power_unit hl hodd hx a
   obtain ⟨z, hz, hza⟩ := one_add_pow_coprime_unit hl hco a hy
@@ -1211,7 +1218,7 @@ theorem one_add_unit_pow_formula : ExistsGammaXUnitShape := by
     ring
   rw [he]
   conv_lhs => rw [h5]
-  simp only [Base.q, map_add, map_mul, map_one, map_natCast]
+  simp only [Base.q, map_add (f := _), map_mul, map_one, map_natCast]
   ring
 
 namespace GoodPlacesAlt
@@ -1221,7 +1228,7 @@ variable {O : Type} [CommRing O]
 
 def cpI (l : O) (m : ℕ) : Ideal (PowerSeries O) where
   carrier := {f | ∀ k, k < m → l ^ (m - k) ∣ coeff k f}
-  add_mem' := fun ha hb k hk => by rw [map_add]; exact dvd_add (ha k hk) (hb k hk)
+  add_mem' := fun ha hb k hk => by rw [map_add (f := _)]; exact dvd_add (ha k hk) (hb k hk)
   zero_mem' := fun k _ => by simp
   smul_mem' := fun a f hf k hk => by
     rw [smul_eq_mul, coeff_mul]
@@ -1230,9 +1237,6 @@ def cpI (l : O) (m : ℕ) : Ideal (PowerSeries O) where
       have := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
       omega
     exact Dvd.dvd.mul_left ((pow_dvd_pow l (by omega)).trans (hf p.2 (by omega))) _
-
-theorem cp_mem_cpI {l : O} {m : ℕ} {f : PowerSeries O} :
-    f ∈ cpI l m ↔ ∀ k, k < m → l ^ (m - k) ∣ coeff k f := Iff.rfl
 
 theorem cp_C_mul {l : O} {m : ℕ} {s : PowerSeries O} (hs : s ∈ cpI l m) :
     C l * s ∈ cpI l (m + 1) := by
@@ -1308,7 +1312,7 @@ theorem cp_mem_equiv {R M : Type} [CommRing R] [AddCommGroup M] [Module R M] (J 
       exact Ideal.mul_mem_right _ _ ha
     | add y _ z _ hy hz =>
       intro t
-      rw [map_add, Pi.add_apply]
+      rw [map_add (f := _), Pi.add_apply]
       exact Ideal.add_mem _ (hy t) (hz t)
   · intro h
     have h1 : Φ x = ∑ t, Φ x t • (Pi.single t (1 : R) : Fin r → R) := by
@@ -1316,7 +1320,8 @@ theorem cp_mem_equiv {R M : Type} [CommRing R] [AddCommGroup M] [Module R M] (J 
       simp [Finset.sum_apply, Pi.single_apply]
     have h2 : x = ∑ t, Φ x t • Φ.symm (Pi.single t (1 : R)) := by
       apply Φ.injective
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simpa only [map_smul, LinearEquiv.apply_symm_apply] using h1
     rw [h2]
     exact Submodule.sum_mem _ fun t _ => Submodule.smul_mem_smul (h t) trivial
@@ -1343,9 +1348,9 @@ theorem cp_O_prec {l : O} (hO : IsAdicComplete (Ideal.span {l}) O) (g : ℕ → 
 theorem cp_complete (l : O) (hO : IsAdicComplete (Ideal.span {l}) O) {M : Type}
     [AddCommGroup M] [Module (PowerSeries O) M] {r : ℕ}
     (Φ : M ≃ₗ[PowerSeries O] (Fin r → PowerSeries O)) :
-    IsAdicComplete (Ideal.span {C l, X} : Ideal (PowerSeries O)) M where
-  haus' := by
-    intro x hx
+    IsAdicComplete (Ideal.span {C l, X} : Ideal (PowerSeries O)) M := by
+  refine { toIsHausdorff := ⟨?_⟩, toIsPrecomplete := ⟨?_⟩ }
+  · intro x hx
     apply Φ.injective
     rw [map_zero]
     funext t
@@ -1357,8 +1362,7 @@ theorem cp_complete (l : O) (hO : IsAdicComplete (Ideal.span {l}) O) {M : Type}
     rw [SModEq.zero, cp_mem_equiv _ Φ] at h1
     have h2 := (cp_mem_pow_iff l _ _).1 (h1 t) k (by omega)
     exact (pow_dvd_pow l (by omega)).trans h2
-  prec' := by
-    intro f hf
+  · intro f hf
     have hc : ∀ (t : Fin r) (k m n : ℕ), m ≤ n → k < m →
         l ^ (m - k) ∣ coeff k (Φ (f m) t) - coeff k (Φ (f n) t) := by
       intro t k m n hmn hk
@@ -1443,24 +1447,5 @@ theorem good_lattice_holds : LatGoodOf := by
     fun c _ => second_rule_first_form O B n j M g sig V L c htr (height_bound_holds O B u₁ n M V L c hp h4u hP9),
     fun c _ => gamma_injective_holds O B u₁ n M V L c h4u hP9,
     fun c hc => saturation_holds_alt O B n j _ V L c hsat (hfree c hc), hlt⟩
-
-theorem good_lattice_primitive : LatGoodPrim := by
-  intro O _ _ _ ϖ B n _ Cu j M g G sig Mi V _ _ L hϖ hd h0 hp hl hj hO h3 h4 hG hs hP9 hP5 hMi
-    hthin hfree hF hlt
-  obtain ⟨u₁, h4u⟩ := one_add_unit_pow_formula O ϖ B hϖ hd hp hl h4
-  exact good_lattice_holds O ϖ B u₁ n Cu j M g G sig Mi V L hϖ hd h0 hp hl hj h3 h4u hG hs hP9 hP5
-    hMi hthin hfree (completion_holds O B n V L hO hF) (X_regular_on_lattice O B n V L hF) hlt
-
-theorem extension_good_holds : ExtGoodOf := by
-  intro O _ _ _ ϖ B n _ Cu j M g G rr Mi hi H V₂ V₀ _ _ _ _ L₂ L₀ e₀ Y hϖ hd h0 h3 hG hlift hP9
-    hP6 hX hM5 hh5 hthin hH hfree hfrob
-  have hsat := saturation_first_form_holds O ϖ B j M g hϖ hd h0 h3
-  exact ⟨hlift, hP9, extension_complete_holds O B n V₂ V₀ L₂ L₀ Y hP6 hX,
-    fun c hc => lattice_induction_lemma_holds O B n j M g G Y.VY Y.LY c (by omega)
-      (fun k h1 h2 => lattice_exponent_property_mono Y.LY (hM5 _) (hthin c hc k h1 h2)),
-    fun c hc => saturation_holds_alt O B n j _ Y.VY Y.LY c hsat (hfree c hc),
-    fun c hc => pullback_lemma_holds O B n Y.VY Y.LY c (Cu.ell c) (fun s => hi (c - (s : ZMod n))) (H c)
-      (fun s _ => hh5 _) (hH c hc),
-    fun c hc => extension_generated_holds O B n V₂ V₀ L₂ L₀ Y _ _ _ hP6 (hfrob c hc)⟩
 
 end Formalism.ExponentWindows.E

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.LevRefine
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.LevRefine
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open scoped TensorProduct Classical
@@ -10,7 +15,7 @@ private def sg {E : Type} [Field E] [NumberField E] (U : Set (Plc E)) (N : ℕ) 
   carrier := {x | ∀ w ∈ U, Valued.v (pLoc E w x) ≤ Valued.v (N : w.adicCompletion E)}
   zero_mem' := fun w _ => by simp
   add_mem' := fun {a b} ha hb w hw => by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (Valuation.map_add _ _ _).trans (max_le (ha w hw) (hb w hw))
   neg_mem' := fun {a} ha w hw => by
     rw [map_neg, Valuation.map_neg]

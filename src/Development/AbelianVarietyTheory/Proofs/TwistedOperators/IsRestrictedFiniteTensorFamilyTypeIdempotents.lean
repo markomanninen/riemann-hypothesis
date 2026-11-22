@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralMulRightOfCompact
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelFamOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ExponentSeparation
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralMulRightOfCompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelFamOfNotMem
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -28,7 +33,7 @@ theorem levelFam_open_compact (T : TypeDataG V) (U : AuxiliaryPlaceHermitianSpac
     exact ⟨U.frame.isOpen_iwahori, U.frame.isCompact_iwahori⟩
   by_cases hv : v ∈ T.S
   · have e : levelFam T U v = kerSub T ⟨v, hv⟩ := by
-      rw [levelFam, Function.update_of_ne hu, dif_pos hv]
+      rw [levelFam, Function.update_of_ne hu, dite_eq_left hv]
     rw [e]
     have ho : IsOpen (kerSub T ⟨v, hv⟩ : Set (GLoc D.sp.cm.sig V.gram v)) := by
       rw [kerSub, Subgroup.coe_map]

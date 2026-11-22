@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.Point
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ def R (M : Model F E) : Subring E :=
 def trR (M : Model F E) (g : SplitG M.L) : E →+ F where
   toFun x := ((g.e x).1 - (g.e x).2) / (g.q : F)
   map_zero' := by simp
-  map_add' x y := by simp only [map_add, Prod.fst_add, Prod.snd_add]; ring
+  map_add' x y := by simp only [map_add (f := _), Prod.fst_add, Prod.snd_add]; ring
 
 def psiR (M : Model F E) : AddChar E ℂ :=
   match M.split with
@@ -195,12 +199,13 @@ namespace Model
 
 variable [MeasurableSpace E]
 
-open scoped Classical in
 
+open scoped Classical in
 def bbIntegrand (M : Model F E) {m : ℕ} (w : Pt E (m + 1)) (c : M.Cls m)
-    (xy : (IL (m + 1) → E) × (IN w → E)) : ℂ :=
+    (xy : (IL (m + 1) → E) × (IN w → E)) : ℂ := by
+  classical
   let Z : Matrix (Fin (m + 1)) (Fin (m + 1)) E := uLow xy.1 * w.mat * uUp w xy.2
-  if h : (∀ a b, Z a b ∈ M.R) ∧ IsUnit Z.det then
+  exact if h : (∀ a b, Z a b ∈ M.R) ∧ IsUnit Z.det then
     (M.nIso ⟨Matrix.of fun a b => ⟨Z a b, h.1 a b⟩, by
         have : (Matrix.of fun a b => (⟨Z a b, h.1 a b⟩ : M.R)).map M.R.subtype = Z :=
           rfl
@@ -244,12 +249,6 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 
 namespace Model
 
-open scoped Classical in
-
-def CuspSpanExtension (M : Model F E) {m : ℕ} (c : E) (h h' : Pt E m) : ℂ :=
-  if hc : ∃ n : Fin 3, IsUnit (c + ((n : ℕ) : E)) then
-    M.Ns 1 hc.choose_spec.unit hc.choose_spec.unit h h'
-  else 0
 
 theorem Kk_succ (M : Model F E) (m : ℕ) (w w' : Pt E (m + 1)) :
     M.Kk (m + 1) w w' = ∑' c : M.Cls m, M.BB w c * conj (M.BB w' c) / (M.nAut c : ℂ) := rfl
@@ -258,24 +257,7 @@ end Model
 
 namespace Pt
 
-def cast {n n' : ℕ} (e : n = n') (w : Pt E n) : Pt E n' := ⟨w.blocks, w.size.trans e⟩
-
-@[simp] theorem cast_blocks {n n' : ℕ} (e : n = n') (w : Pt E n) : (w.cast e).blocks = w.blocks := rfl
-
 end Pt
-
-theorem add_natPred_succ (m : ℕ) (s : ℕ+) : m + (s : ℕ) = (m + s.natPred) + 1 := by
-  rw [add_assoc, PNat.natPred_add_one]
-
-def ofPoint {n : ℕ} (p : Formalism.MainNotions.S.Point E n) (hu : ∀ b ∈ p.1, IsUnit b.1) : Pt E n where
-  blocks := p.1.attach.map fun b => ((hu b.1 b.2).unit, ⟨b.1.2, by have := (p.2.1 b.1 b.2).2; omega⟩)
-  size := by
-    refine Eq.trans ?_ p.2.2
-    congr 1
-    rw [List.map_map]
-    conv_rhs => rw [← List.attach_map_subtype_val p.1]
-    rw [List.map_map]
-    rfl
 
 end Formalism.MainNotions.S.Loc
 

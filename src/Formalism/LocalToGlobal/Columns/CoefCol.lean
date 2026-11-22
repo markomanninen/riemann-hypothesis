@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
-import Formalism.LocalToGlobal.Columns.StdLatUnimodular
-import Formalism.LocalToGlobal.Divisibility.CoefMod
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.AbelianHostFieldConditions
+public import Formalism.LocalToGlobal.Columns.StdLatUnimodular
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -87,28 +91,20 @@ section Vals
 variable {X : Fields} {Pr : Primes X} {R : Ranks} (W : Wts X Pr.Word R)
 
 def colVal (u : Pr.Word) (j : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 X.E))) :
-    CoefPk X (R.N j) (DecoSet X.E (R.N j) ST SG) :=
+    CoefPk X (R.N j) (DecoSet (E := X.E) (n := R.N j) (ST := ST) (SG := SG)) :=
   roundPk X (W.lamTrue u j) fun d => d.1.Lsh
 
-def colNabL (u : Pr.Word) (j : ℕ) {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-    (d : DecoSet X.E (R.N j) ST SG) : Submodule (𝓞 X.K) (VV X.K (W.lamTrue u j)) :=
-  nabAtr X.emb (W.lamTrue u j) d.1.L
-
 def rowVal (SG : Finset (HeightOneSpectrum (𝓞 X.E))) :
-    CoefPk X (R.N R.m - 1) (DecoSet X.E (R.N R.m - 1) ∅ SG) :=
+    CoefPk X (R.N R.m - 1) (DecoSet (E := X.E) (n := R.N R.m - 1) (ST := ∅) (SG := SG)) :=
   squarePk X W.sgTrue fun d => d.1.N
 
 def mtVal (j : ℕ) (SG : Finset (HeightOneSpectrum (𝓞 X.E))) :
-    CoefPk X R.nV (DecoSet X.E R.nV ∅ SG) :=
+    CoefPk X R.nV (DecoSet (E := X.E) (n := R.nV) (ST := ∅) (SG := SG)) :=
   roundPk X (W.lamV j) fun d => d.1.N
 
 def BvLat (u : Pr.Word) (j : ℕ) {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-    (P : ST) (d : DecoSet X.E (R.N j) ST SG) : Submodule (𝓞 X.K) (VV X.K (W.lamTrue u j)) :=
+    (P : ST) (d : DecoSet (E := X.E) (n := R.N j) (ST := ST) (SG := SG)) : Submodule (𝓞 X.K) (VV X.K (W.lamTrue u j)) :=
   delAtr X.emb (W.lamTrue u j) (d.1.LshKer P)
-
-def BvLatF (u : Pr.Word) (j : ℕ) {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-    (τ₀ : X.Tau) (P : ST) (d : DecoSet X.E (R.N j) ST SG) : Submodule (𝓞 X.K) (VV X.K (W.lamTrue u j)) :=
-  delK (W.lamTrue u j) fun τ => dualFr (tauLat X.emb τ (if τ = τ₀ then d.1.LshKer P else d.1.Lsh))
 
 end Vals
 

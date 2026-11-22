@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RwAppend
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def chartM (n : ℕ) : (Fin n → Fin n → ℂ) ≃L[ℝ] Matrix (Fin n) (Fin n
 theorem contDiffOn_invPi (n : ℕ) :
     ContDiffOn ℝ ∞ (fun M : Fin n → Fin n → ℂ => (chartM n).symm (Ring.inverse (chartM n M)))
       {M | IsUnit (chartM n M)} := by
-  have : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) := FiniteDimensional.complete ℝ _
+  have : CompleteSpace (Matrix (Fin n) (Fin n) ℂ) := FiniteDimensional.completeSpace ℝ _
   intro M hM
   obtain ⟨u, hu⟩ := hM
   have h1 : ContDiffAt ℝ ∞ (Ring.inverse : Matrix (Fin n) (Fin n) ℂ → _) (chartM n M) := by
@@ -62,9 +66,18 @@ theorem sum_coordL (M : Mat n) : ∑ p, coordL p M • bs p = M :=
 def frameA (p : Bool × Fin n × Fin n) (z : Mat n) : CLof (Mat n) ℝ :=
   (coordL p).comp (mulB n (Ring.inverse z))
 
-theorem contDiffOn_frameA (p : Bool × Fin n × Fin n) : ContDiffOn ℝ ∞ (frameA p) (GLs n) :=
-  ((ContinuousLinearMap.compL ℝ (Mat n) (Mat n) ℝ (coordL p)).comp
-    (mulB n)).contDiff.comp_contDiffOn contDiffOn_inverse
+theorem contDiffOn_frameA (p : Bool × Fin n × Fin n) : ContDiffOn ℝ ∞ (frameA p) (GLs n) := by
+  let L : Mat n →ₗ[ℝ] CLof (Mat n) ℝ :=
+    { toFun := fun x => (coordL p).comp (mulB n x)
+      map_add' := by
+        intro x y
+        ext v
+        simp
+      map_smul' := by
+        intro c x
+        ext v
+        simp }
+  exact L.toContinuousLinearMap.contDiff.comp_contDiffOn contDiffOn_inverse
 
 theorem frame_eq {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] (D : CLof (Mat n) V)
     {z : Mat n} (hz : z ∈ GLs n) : D = ∑ p, (frameA p z).smulRight (D (z * bs p)) := by
@@ -78,9 +91,10 @@ theorem frame_eq {V : Type} [NormedAddCommGroup V] [NormedSpace ℂ V] (D : CLof
     conv_lhs => rw [← hv, ← hs]
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun p _ => Matrix.mul_smul _ _ _
-  simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smulRight_apply]
+  simp only [sum_apply, ContinuousLinearMap.smulRight_apply]
   conv_lhs => rw [h0]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun p _ => D.map_smul _ _
 
 theorem frame :

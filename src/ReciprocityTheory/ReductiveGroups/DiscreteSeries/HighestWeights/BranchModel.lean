@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ModelIso
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PolyCoef
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryDense
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.ModelIso
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.PolyCoef
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UnitaryDense
+
+@[expose] public section
 
 noncomputable section
 

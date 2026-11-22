@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarQK
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapWithDensityEqOfScale
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HaarQK
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MapWithDensityEqOfScale
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralNonnegNormaliserEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -153,7 +157,7 @@ theorem absVanish_of (hQK : HaarQK) (hNM : HaarNM) : AbsVanish := by
   by_cases hex : ∃ ρ, IsQuotNormaliser T μT ρ
   swap
   · simp [quotIntegral, hex]
-  rw [quotIntegral, dif_pos hex]
+  rw [quotIntegral, dite_eq_left hex]
   have hρ := hex.choose_spec
   generalize hex.choose = ρ at hρ
   have hTQ : T ≤ Q := fun t ht => by

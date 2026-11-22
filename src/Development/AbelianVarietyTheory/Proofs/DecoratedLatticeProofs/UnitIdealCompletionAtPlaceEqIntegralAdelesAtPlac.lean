@@ -1,16 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevAtZ
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HomLatticeCompletionSelfAnnihilatorAtPlaces
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BaseMatrixGlApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.LatPair GlobalTheory.SeeSaw GlobalTheory.FinPl ValuativeRel
 open scoped TensorProduct nonZeroDivisors
@@ -42,7 +43,7 @@ theorem mul_eq_mul_finIncl (v : Pl D) (b : AE D) :
     · show (0 : Ainf D.host.F) * x.1 = 0 * 0
       rw [zero_mul, zero_mul]
     · rfl
-  | add x y hx hy => rw [mul_add, hx, hy, RingHom.map_add, LinearMap.map_add, mul_add]
+  | add x y hx hy => rw [mul_add, hx, hy, RingHom.map_add (f := _), LinearMap.map_add (f := _), mul_add]
 
 theorem mul_finIncl_mem (v : Pl D) (t : Af D.host.F ⊗[D.host.F] D.host.E) (ht : t ∈ intAE D) :
     algebraMap (AF D.host.F) (AE D) (GlobalTheory.SelfDualAt.cP (· = v)) * finIncl D t ∈ idV (1 : FI D) v := by
@@ -69,13 +70,13 @@ theorem mul_finIncl_mem (v : Pl D) (t : Af D.host.F ⊗[D.host.F] D.host.E) (ht 
         rw [zero_mul]
       · rfl
   | zero => rw [map_zero, mul_zero]; exact zero_mem _
-  | add x y _ _ h1 h2 => rw [map_add, mul_add]; exact add_mem h1 h2
+  | add x y _ _ h1 h2 => rw [map_add (f := _), mul_add]; exact add_mem h1 h2
   | neg x _ h => rw [map_neg, mul_neg]; exact neg_mem h
 
 end GlobalTheory.SeeSaw.IdVOne
 
-open GlobalTheory.SeeSaw.IdVOne in
 
+open GlobalTheory.SeeSaw.IdVOne in
 theorem GlobalTheory.SeeSaw.idV_one_eq_intAt :
     ∀ (D : D7) (v : Pl D) (a : AE D), a ∈ idV (1 : FI D) v ↔ a ∈ intAt D (· = v) := by
   intro D v a
@@ -98,13 +99,10 @@ theorem GlobalTheory.SeeSaw.idV_one_eq_intAt :
           exact TensorProduct.zero_tmul _ _
       · exact AddSubgroup.subset_closure ⟨α, hα, x', rfl⟩
     | zero => exact ⟨zero_mem _, by rw [RingHom.map_zero]; exact zero_mem _⟩
-    | add x y _ _ h1 h2 => exact ⟨add_mem h1.1 h2.1, by rw [RingHom.map_add]; exact add_mem h1.2 h2.2⟩
+    | add x y _ _ h1 h2 => exact ⟨add_mem h1.1 h2.1, by rw [RingHom.map_add (f := _)]; exact add_mem h1.2 h2.2⟩
     | neg x _ h => exact ⟨neg_mem h.1, by rw [RingHom.map_neg]; exact neg_mem h.2⟩
   · rintro ⟨ha, hf⟩
     rw [← GlobalTheory.SelfDualAt.algebraMap_placeIdempotent_mul (· = v) a ha, mul_eq_mul_finIncl]
     exact mul_finIncl_mem v _ hf
-
-example : ∀ (D : D7) (v : Pl D) (a : AE D), a ∈ idV (1 : FI D) v ↔ a ∈ intAt D (· = v) :=
-  GlobalTheory.SeeSaw.idV_one_eq_intAt
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdelicU
 
@@ -16,8 +20,9 @@ private lemma exists_ext (τ : E →+* ℂ) :
   have hc : Continuous (InfinitePlace.Completion.extensionEmbedding (InfinitePlace.mk τ)) :=
     (InfinitePlace.Completion.isometry_extensionEmbedding _).continuous
   have hv : ∀ x : E, InfinitePlace.Completion.extensionEmbedding (InfinitePlace.mk τ)
-      (algebraMap E _ x) = (InfinitePlace.mk τ).embedding x := fun x =>
-    InfinitePlace.Completion.extensionEmbedding_coe _ (WithAbs.toAbs _ x)
+      (algebraMap E _ x) = (InfinitePlace.mk τ).embedding x := fun x => by
+    simpa [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply] using
+      InfinitePlace.Completion.extensionEmbedding_coe _ (WithAbs.toAbs _ x)
   rcases InfinitePlace.embedding_mk_eq τ with h | h
   · exact ⟨_, hc, hs, fun x => by rw [hv, h]⟩
   · refine ⟨fun z => starRingEnd ℂ (InfinitePlace.Completion.extensionEmbedding _ z),
@@ -72,7 +77,7 @@ theorem expInj : ExpInj := by
     exact isOpen_iInter_of_finite fun w => isOpen_ne_fun (continuous_apply w) continuous_const
   have hcont : ∀ n t, ContinuousOn (F n t) U := by
     intro n t
-    refine continuousOn_finset_prod _ fun w _ => ?_
+    refine continuousOn_finsetProd _ fun w _ => ?_
     have h1 : Continuous fun y : InfinitePlace (maximalRealSubfield E) → ℂ => y w := continuous_apply w
     have h2 : Continuous fun y : InfinitePlace (maximalRealSubfield E) → ℂ => ((‖y w‖ : ℝ) : ℂ) :=
       Complex.continuous_ofReal.comp h1.norm

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.UnivEx
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.MapDiagonalRepMatrixEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.UnivEx
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -82,14 +86,18 @@ private theorem map_max {R' : Type} [CommRing R'] [Algebra O R'] [IsCO O R'] (f 
     (hx : x ∈ maximalIdeal R) : f x ∈ maximalIdeal R' := by
   rwa [← res_eq_zero_iff O, res_map f, res_eq_zero_iff]
 
-private theorem red_push {D : Type} [Group D] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {r : D →* GG 3 R} (hr : Red η Ψ r)
-    {R' : Type} [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') : Red η Ψ (UnitaryThreeInertia.push f r) where
-  mult g := hr.mult g
-  red g a b := by
-    have := map_max f (hr.red g a b)
-    simpa using this
+private theorem red_push {D : Type} [Group D] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {r : D →* GG (m := 3) (R := R)} (hr : Red η Ψ r)
+    {R' : Type} [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') : Red η Ψ (UnitaryThreeInertia.push f r) := by
+  refine ⟨fun g => hr.mult g, ?_⟩
+  intro g a b
+  have hm : (UnitaryThreeInertia.push f r g).mat = (r g).mat.map f := GG.map_mat _ _
+  change ((UnitaryThreeInertia.push f r g).mat - ((r0 η Ψ g).mat).map (algebraMap O R')) a b ∈ maximalIdeal R'
+  rw [hm, Matrix.sub_apply, Matrix.map_apply, Matrix.map_apply]
+  have h : (r g).mat a b - algebraMap O R ((r0 η Ψ g).mat a b) ∈ maximalIdeal R :=
+    hr.red g a b
+  simpa only [map_sub, AlgHom.commutes] using map_max f h
 
-private theorem cont_push {D : Type} [Group D] [TopologicalSpace D] {r : D →* GG 3 R}
+private theorem cont_push {D : Type} [Group D] [TopologicalSpace D] {r : D →* GG (m := 3) (R := R)}
     (hr : UnitaryThreeInertia.AdicCont (maximalIdeal R) r)
     {R' : Type} [CommRing R'] [Algebra O R'] [IsCO O R'] (f : R →ₐ[O] R') :
     UnitaryThreeInertia.AdicCont (maximalIdeal R') (UnitaryThreeInertia.push f r) := by
@@ -106,7 +114,7 @@ private theorem cont_push {D : Type} [Group D] [TopologicalSpace D] {r : D →* 
   simp [UnitaryThreeInertia.push, GG.map_mat, Ideal.quotientMap_mk]
 
 omit [IsCO O R] [IsLocalRing O] in
-private theorem conj_push {D : Type} [Group D] (r : D →* GG 3 R) (h : GL (Fin 3) R)
+private theorem conj_push {D : Type} [Group D] (r : D →* GG (m := 3) (R := R)) (h : GL (Fin 3) R)
     {R' : Type} [CommRing R'] [Algebra O R'] (f : R →ₐ[O] R') (g : D) (a b : Fin 3) :
     (conjBy (GeneralLinearGroup.map (f : R →+* R') h)⁻¹ (UnitaryThreeInertia.push f r) g).mat a b = f ((conjBy h⁻¹ r g).mat a b) := by
   have e : conjBy (GeneralLinearGroup.map (f : R →+* R') h)⁻¹ (UnitaryThreeInertia.push f r) g =
@@ -147,7 +155,7 @@ private theorem psi_unit {A : Type} [CommRing A] (t : Aˣ) (hu : IsUnit ((t : A)
     rw [e]
     exact (hiu.mul h1).neg
 
-private theorem cut_TD {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 R)
+private theorem cut_TD {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := R))
     (hr : Red η Ψ r) (x : D) (hx : η x = 1) (hu : IsUnit ((Ψ x : O) ^ 2 - 1)) :
     (Cut O R fun _ _ _ _ f => CondT η Ψ I (UnitaryThreeInertia.push f r)) ∧ Cut O R fun _ _ _ _ f => CondD η Ψ I (UnitaryThreeInertia.push f r) := by
   haveI : IsAdicComplete (maximalIdeal R) R := IsCO.complete (O := O)
@@ -228,7 +236,7 @@ private theorem cut_TD {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ
       · rw [conj_push, hi s hs hs1 a, AlgHom.commutes]
       · rw [conj_push, hl g hg (a, b) hab, map_zero]
 
-private theorem cut_U {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 R)
+private theorem cut_U {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := R))
     (hr : Red η Ψ r) : Cut O R fun _ _ _ _ f => CondU η Ψ I (UnitaryThreeInertia.push f r) := by
   refine Cut.congr (Cut.all fun s => Cut.all fun _ : s ∈ kerBar η Ψ I => Cut.all fun p : Fin 3 × Fin 3 =>
     Cut.eq ((r s).mat p.1 p.2) ((1 : Matrix (Fin 3) (Fin 3) R) p.1 p.2)) ?_
@@ -269,7 +277,7 @@ private theorem cut_U {D : Type} [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ)
     have hη : η s = 1 := hs.1.2
     exact (key s hη).mpr (H s hs)
 
-private theorem cut_N {D : Type} [Group D] (c g : D) (r : D →* GG 3 R) :
+private theorem cut_N {D : Type} [Group D] (c g : D) (r : D →* GG (m := 3) (R := R)) :
     Cut O R fun _ _ _ _ f => Normalised c g (UnitaryThreeInertia.push f r) := by
   refine Cut.congr (Cut.and
     (Cut.all fun p : Fin 3 × Fin 3 => Cut.eq ((r c).mat p.1 p.2) ((1 : Matrix (Fin 3) (Fin 3) R) p.1 p.2))
@@ -301,7 +309,7 @@ private theorem cut_N {D : Type} [Group D] (c g : D) (r : D →* GG 3 R) :
     · rw [hz, h3, map_zero]
 
 private theorem cut_pt {G Γ ι : Type} [Group G] [Group Γ] [TopologicalSpace Γ] (F : Frame O G Γ ι)
-    (hx : ∀ v ∈ F.Tb, ∃ x : F.D v, F.ηv v x = 1 ∧ IsUnit ((F.Ψv v x : O) ^ 2 - 1)) (g₁ : Γ) (r : Γ →* GG 3 R)
+    (hx : ∀ v ∈ F.Tb, ∃ x : F.D v, F.ηv v x = 1 ∧ IsUnit ((F.Ψv v x : O) ^ 2 - 1)) (g₁ : Γ) (r : Γ →* GG (m := 3) (R := R))
     (hr : Red F.η F.Ψ r) (hc : UnitaryThreeInertia.AdicCont (maximalIdeal R) r) :
     Cut O R fun _ _ _ _ f => F.IsPt g₁ (UnitaryThreeInertia.push f r) := by
   have hloc : ∀ v, Red (F.ηv v) (F.Ψv v) (r.comp (F.loc v)) := fun v =>
@@ -330,16 +338,16 @@ private theorem cut_pt {G Γ ι : Type} [Group G] [Group Γ] [TopologicalSpace �
   · rintro ⟨hl, hn⟩
     exact ⟨⟨⟨red_push hr f, hl⟩, hn⟩, cont_push hc f⟩
 
-private def Box {Γ : Type} [Group Γ] [TopologicalSpace Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (u : Γ →* GG 3 R) : Prop :=
+private def Box {Γ : Type} [Group Γ] [TopologicalSpace Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (u : Γ →* GG (m := 3) (R := R)) : Prop :=
   Red η Ψ u ∧ UnitaryThreeInertia.AdicCont (maximalIdeal R) u ∧
-    ∀ (R' : Type) [CommRing R'] [Algebra O R'] [IsCO O R'] (r : Γ →* GG 3 R'), Red η Ψ r →
+    ∀ (R' : Type) [CommRing R'] [Algebra O R'] [IsCO O R'] (r : Γ →* GG (m := 3) (R := R')), Red η Ψ r →
       UnitaryThreeInertia.AdicCont (maximalIdeal R') r → ∃! f : R →ₐ[O] R', UnitaryThreeInertia.push f u = r
 
 private theorem univ_of_box [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O]
     {G Γ ι : Type} [Group G] [Group Γ] [TopologicalSpace Γ] (F : Frame O G Γ ι)
-    (hx : ∀ v ∈ F.Tb, ∃ x : F.D v, F.ηv v x = 1 ∧ IsUnit ((F.Ψv v x : O) ^ 2 - 1)) (g₁ : Γ) (u : Γ →* GG 3 R)
+    (hx : ∀ v ∈ F.Tb, ∃ x : F.D v, F.ηv v x = 1 ∧ IsUnit ((F.Ψv v x : O) ^ 2 - 1)) (g₁ : Γ) (u : Γ →* GG (m := 3) (R := R))
     (hu : Box F.η F.Ψ u) (h0 : F.IsPt g₁ (F.rz O)) :
-    ∃ (R : Type) (_ : CommRing R) (_ : Algebra O R) (_ : IsCO O R) (u : Γ →* GG 3 R), F.IsUniv g₁ u := by
+    ∃ (R : Type) (_ : CommRing R) (_ : Algebra O R) (_ : IsCO O R) (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u := by
   obtain ⟨I, hI⟩ := cut_pt F hx g₁ u hu.1 hu.2.1
   obtain ⟨f0, hf0, -⟩ := hu.2.2 O (F.rz O) h0.toRed h0.cont
   have hpt0 : F.IsPt g₁ (UnitaryThreeInertia.push f0 u) := by
@@ -382,7 +390,7 @@ private theorem univ_of_box [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O
       rw [← hcomp]
       exact hg
 
-private theorem red_iff {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (r : Γ →* GG 3 R) :
+private theorem red_iff {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →* Oˣ) (r : Γ →* GG (m := 3) (R := R)) :
     Red η Ψ r ↔ ∀ g, GG.map (res O R : R →+* ResidueField O) (r g) = rbar O η Ψ g := by
   have halg : ∀ a : O, res O R (algebraMap O R a) = residue O a := fun a => by
     rw [AlgHom.commutes]
@@ -437,7 +445,7 @@ private theorem red_iff {Γ : Type} [Group Γ] (η : Γ →* ℤˣ) (Ψ : Γ →
     exact ⟨fun g => (h g).1, fun g a b => (h g).2 a b⟩
 
 omit [IsLocalRing O] [IsCO O R] in
-private theorem cont_iff {Γ : Type} [Group Γ] [TopologicalSpace Γ] (J : Ideal R) (r : Γ →* GG 3 R) :
+private theorem cont_iff {Γ : Type} [Group Γ] [TopologicalSpace Γ] (J : Ideal R) (r : Γ →* GG (m := 3) (R := R)) :
     UnitaryThreeInertia.AdicCont J r ↔ ∀ a b, Alg.AdicCont J fun g => (r g).mat a b := by
   constructor
   · intro H a b N
@@ -498,7 +506,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_isUniv :
     ∀ {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [IsAdicComplete (maximalIdeal O) O] [CharZero O] [Finite (ResidueField O)]
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
-    ∀ (l : ℕ), l.Prime → (l : O) ∈ maximalIdeal O → PhiCond Γ l → ∀ g₁, F.Marked g₁ → ∃ (R : Type) (_ : CommRing R) (_ : Algebra O R) (_ : IsCO O R) (u : Γ →* GG 3 R), F.IsUniv g₁ u := by
+    ∀ (l : ℕ), l.Prime → (l : O) ∈ maximalIdeal O → PhiCond Γ l → ∀ g₁, F.Marked g₁ → ∃ (R : Type) (_ : CommRing R) (_ : Algebra O R) (_ : IsCO O R) (u : Γ →* GG (m := 3) (R := R)), F.IsUniv g₁ u := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF l hl hm hΦ g₁ _
   haveI : Fact l.Prime := ⟨hl⟩
   haveI : CharP (ResidueField O) l := (CharP.charP_iff_prime_eq_zero hl).2 (by

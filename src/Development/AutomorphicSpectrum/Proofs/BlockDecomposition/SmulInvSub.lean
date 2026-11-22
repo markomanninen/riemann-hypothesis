@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TestAlg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbscissaConvergenceIdentity
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinedBlockFormula
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousThetaKernelComponents
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TestAlg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AbscissaConvergenceIdentity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.JoinedBlockFormula
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousThetaKernelComponents
+
+@[expose] public section
 
 noncomputable section
 
@@ -121,6 +125,7 @@ theorem map_val_rel {X Y : Type} [MeasurableSpace X] [MeasurableSpace Y] (ν : M
   rw [Measure.map_map hT hi]
   have : T ∘ i = i ∘ Θ := funext fun z => (hc z).symm
   rw [this, ← Measure.map_map hi hΘ, h, Measure.map_smul]
+  exact hi.aemeasurable
 
 end GlobalTheory.CompanionTheory.OrbExist
 

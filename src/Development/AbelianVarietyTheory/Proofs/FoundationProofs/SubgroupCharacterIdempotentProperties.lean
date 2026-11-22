@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 
@@ -93,7 +97,8 @@ theorem mem_range_iff {M : Type} [AddCommGroup M] [Module ℂ M] (ρ : Represent
     x ∈ LinearMap.range (op ρ (eps S χ)) ↔ ∀ u, S u → ρ u x = χ u • x := by
   constructor
   · rintro ⟨z, rfl⟩ u hu
-    simp only [op, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [op, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, Finset.smul_sum]
     refine Fintype.sum_equiv (Equiv.mulLeft u) _ _ fun y => ?_
     have := eps_mul h1 hm c1 cm hu (u * y)
     rw [inv_mul_cancel_left] at this

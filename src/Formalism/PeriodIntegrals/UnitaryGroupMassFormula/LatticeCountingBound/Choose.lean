@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.SepDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatticeIsometry
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.SepDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeSizeContinuity.LatticeIsometry
+
+@[expose] public section
 
 noncomputable section
 
@@ -100,7 +104,8 @@ lemma star_li {k : ℕ} (v : Fin k → Fin n → E) (h : LinearIndependent E v) 
   have h0 : ∑ a, starRingEnd E (g a) • v a = 0 := by
     funext j
     have := congrArg (starRingEnd E) (congrFun hg j)
-    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, sv, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, sv, map_sum, map_mul,
       starRingEnd_self_apply, map_zero, Pi.zero_apply] at this ⊢
     rw [← this]
   have := h _ h0 i
@@ -113,7 +118,8 @@ lemma star_span {k : ℕ} (v : Fin k → Fin n → E) (w : Fin n → E)
   refine (Submodule.mem_span_range_iff_exists_fun E).mpr ⟨fun a => starRingEnd E (c a), ?_⟩
   rw [← sv_sv w, ← hc]
   funext j
-  simp [sv, Finset.sum_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [sv, Finset.sum_apply, map_sum, map_mul]
 
 end Star
 

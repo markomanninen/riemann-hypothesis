@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreTor
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFreeness
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFibreTor
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGenericFreeness
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -48,16 +53,17 @@ theorem GenericFibreTor.proof (hGF : GenericFreeness.Statement.{0, 0, 0}) :
     Module.Flat.trans (MvPolynomial σ ℂ) (Localization.Away F) _
   let g := LocalizedModule.mkLinearMap (Submonoid.powers F) (MvPolynomial ι (MvPolynomial σ ℂ) ⧸ L)
   let π := (Ideal.Quotient.mkₐ (MvPolynomial σ ℂ) L).toLinearMap
-  let a : x.support → MvPolynomial σ ℂ := fun m => coeff m.1 x
+  let a : x.support → MvPolynomial σ ℂ := fun m => AddMonoidAlgebra.coeff x m.1
   let e : x.support → MvPolynomial ι (MvPolynomial σ ℂ) := fun m => monomial m.1 1
   have hsum : ∑ m, a m • e m = x := by
-    calc ∑ m, a m • e m = ∑ m : x.support, monomial m.1 (coeff m.1 x) :=
+    calc ∑ m, a m • e m = ∑ m : x.support, monomial m.1 (AddMonoidAlgebra.coeff x m.1) :=
           Finset.sum_congr rfl fun m _ => by simp [a, e, smul_monomial]
       _ = x := by
-          rw [Finset.sum_coe_sort x.support (fun v => monomial v (coeff v x))]
+          rw [Finset.sum_coe_sort x.support (fun v => monomial v (AddMonoidAlgebra.coeff x v))]
           exact (MvPolynomial.as_sum x).symm
   have hrel : ∑ m, a m • g (π (e m)) = 0 := by
-    simp_rw [← map_smul, ← map_sum, hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp_rw [← map_smul, ← map_sum, hsum]
     simp [g, π, Ideal.Quotient.eq_zero_iff_mem.2 hxL]
   have htriv : Module.IsTrivialRelation a (fun m => g (π (e m))) :=
     Module.Flat.isTrivialRelation_of_sum_smul_eq_zero hrel
@@ -69,7 +75,8 @@ theorem GenericFibreTor.proof (hGF : GenericFreeness.Statement.{0, 0, 0}) :
       c • π ((b : MvPolynomial σ ℂ) • e m) = c • π (∑ j, A m j • r j) := by
     intro m
     apply IsLocalizedModule.exists_of_eq (S := Submonoid.powers F) (f := g)
-    rw [map_smul, map_smul, show g (π (e m)) = ∑ j, A m j • y j from hy m, Finset.smul_sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_smul, show g (π (e m)) = ∑ j, A m j • y j from hy m, Finset.smul_sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_comm, ← hq j, ← hr j, map_smul, map_smul]
     rfl

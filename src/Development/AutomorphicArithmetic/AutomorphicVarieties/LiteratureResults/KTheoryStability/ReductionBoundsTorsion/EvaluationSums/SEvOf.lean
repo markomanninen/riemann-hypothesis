@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.EvaluationSums.EvhEqSum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBridgeAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.EvaluationSums.EvhEqSum
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ private theorem dC_prism_sum_eq_snd_sub_fst {Y : Type} {n : ℕ} (F : (Fin (n + 
     congr 2
     congr 1
     funext p
-    simp only [Function.comp, FP, uu, s]
+    simp only [FP, uu, s]
     split_ifs <;> (congr 2; apply Fin.ext; rw [val_succAbove_eq_ite_lt]; simp only [Fin.val_mk]; split_ifs <;> omega)
   let M : ℕ → Fin (n + 2) → Y := fun i r ↦ if (r : ℕ) < i then (uu r).1 else (uu r).2
   have hstep : ∀ i, i < n + 2 → F (M i) - F (M (i + 1)) =
@@ -71,7 +75,6 @@ private theorem dC_prism_sum_eq_snd_sub_fst {Y : Type} {n : ℕ} (F : (Fin (n + 
       simp only [c]
       congr 2
       funext r
-      simp only [s]
       rw [val_succAbove_eq_ite_lt]
     rw [← Finset.sum_range_add_sum_Ico _ (show i ≤ n + 3 by omega),
       Finset.sum_eq_sum_Ico_succ_bot (show i < n + 3 by omega),

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsFundOne
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.DegVol
 open scoped Pointwise ENNReal Classical
 
@@ -47,7 +52,6 @@ theorem measure_eq_tsum_inter {G α : Type} [Group G] [MulAction G α] [Measurab
     have : ∀ᵐ x ∂μ, x ∈ R := hR
     filter_upwards [this] with x hx
     obtain ⟨s, hs, -⟩ := h x hx
-    apply propext
     constructor
     · intro hxS
       exact Set.mem_iUnion.2 ⟨⟨s, hs.1⟩, hs.2, hxS⟩

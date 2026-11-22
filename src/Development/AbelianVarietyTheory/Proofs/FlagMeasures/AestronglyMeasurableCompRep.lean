@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped ENNReal symmDiff Topology Pointwise
@@ -139,8 +143,10 @@ theorem norm_map (hD : IsFundamentalDomain Γ D μ) (hDm : MeasurableSet D)
     (hR : ∀ g F, (R g F : G → ℂ) =ᵐ[μ.restrict D] fun x => F (r (x * g))) (g : G)
     (F : Lp ℂ 2 (μ.restrict D)) : ‖R g F‖ = ‖F‖ := by
   rw [Lp.norm_def, Lp.norm_def, eLpNorm_congr_ae (hR g F),
-    eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      ((Lp.aestronglyMeasurable (R g F)).congr (hR g F)),
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      (Lp.aestronglyMeasurable F),
     lintegral_comp_rep_mul hD hDm hr (fun x => ‖F x‖ₑ ^ (2 : ℝ≥0∞).toReal) g]
 
 theorem edist_indicator_le (hD : IsFundamentalDomain Γ D μ) (hDm : MeasurableSet D)
@@ -165,10 +171,16 @@ theorem edist_indicator_le (hD : IsFundamentalDomain Γ D μ) (hDm : MeasurableS
     rw [hD.measure_eq_tsum S]
     refine (measure_iUnion_le _).trans (le_of_eq (tsum_congr fun γ => ?_))
     rw [Measure.restrict_apply' hDm]
+  have hSm : MeasurableSet S := by
+    apply MeasurableSet.symmDiff <;> exact (hs.inter hDm).preimage (by fun_prop)
+  have hUm : NullMeasurableSet (⋃ γ : Γ, γ • S) (μ.restrict D) := by
+    apply MeasurableSet.nullMeasurableSet
+    exact MeasurableSet.iUnion fun γ => hSm.const_smul γ
   rw [Lp.edist_def]
   calc eLpNorm (⇑(R g F) - ⇑(R g₀ F)) 2 (μ.restrict D)
       ≤ eLpNorm ((⋃ γ : Γ, γ • S).indicator fun _ => c) 2 (μ.restrict D) := by
-        refine eLpNorm_mono_enorm_ae ?_
+        refine eLpNorm_mono_eNorm_ae ((Lp.aestronglyMeasurable (R g F)).sub
+          (Lp.aestronglyMeasurable (R g₀ F))) ?_
         filter_upwards [hR g F, hR g₀ F,
           ae_restrict_of_ae ((measurePreserving_mul_right μ g).quasiMeasurePreserving.ae h1),
           ae_restrict_of_ae ((measurePreserving_mul_right μ g₀).quasiMeasurePreserving.ae h1),
@@ -186,7 +198,7 @@ theorem edist_indicator_le (hD : IsFundamentalDomain Γ D μ) (hDm : MeasurableS
             mem_iUnion.2 ⟨γ⁻¹, mem_inv_smul_set_iff.2 (Or.inr ⟨k1, k2⟩)⟩
           rw [indicator_of_mem this]; simp [a, b]
         · simp [a, b]
-    _ ≤ _ := eLpNorm_indicator_const_le c 2
+    _ ≤ _ := eLpNorm_indicator_const_le c 2 hUm
     _ ≤ _ := by gcongr
 
 theorem continuous_map [LocallyCompactSpace G] [SecondCountableTopology G]
@@ -214,7 +226,7 @@ theorem continuous_map [LocallyCompactSpace G] [SecondCountableTopology G]
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ht3 (fun _ => zero_le)
       fun g => edist_indicator_le hD hDm hr hR c hs hμs.ne g g₀
   · intro f g hf hg _ h1 h2
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact h1.add h2
   · refine isClosed_of_closure_subset fun F hF => ?_
     refine TendstoUniformly.continuous (F := fun F' g => R g F') (p := 𝓝 F) ?_

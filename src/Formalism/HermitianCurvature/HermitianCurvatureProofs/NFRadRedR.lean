@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DifferentialOperatorBracket
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -111,16 +115,7 @@ private lemma rep_exp_smul_eq_exp_dOp {Wp : Type} [NormedAddCommGroup Wp] [Norme
 private lemma contDiff_exp_hermitian_curvature {A : Type} [NormedRing A] [NormedAlgebra ℂ A] [CompleteSpace A] :
     ContDiff ℝ ∞ (NormedSpace.exp : A → A) := by
   refine contDiff_iff_contDiffAt.mpr fun x => ?_
-  have hx : x ∈ EMetric.ball (0 : A) (NormedSpace.expSeries ℝ A).radius := by
-    rw [NormedSpace.expSeries_radius_eq_top]
-    exact EMetric.mem_ball.mpr (edist_lt_top _ _)
-  first
-  | exact (NormedSpace.analyticAt_exp_of_mem_ball x hx).contDiffAt
-  | exact (analyticAt_exp_of_mem_ball (𝕂 := ℝ) x hx).contDiffAt
-  | (have hps := (NormedSpace.expSeries ℝ A).hasFPowerSeriesOnBall
-        (by rw [NormedSpace.expSeries_radius_eq_top]; exact ENNReal.zero_lt_top)
-     rw [NormedSpace.expSeries_sum_eq] at hps
-     exact (hps.analyticAt_of_mem hx).contDiffAt)
+  exact (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
 
 theorem repSmooth_of (hLL : LocLog) : NFRadRedS.RepSmooth := by
   unfold NFRadRedS.RepSmooth

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.TransportC
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnipVal
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.TransportC
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.KSp GlobalTheory.SplitUnitary
 open GlobalTheory.WeilM (UG IsQuad IsHerm ResEtaPow)
 open GlobalTheory.SplitWeil (SB nabs)
@@ -37,7 +42,11 @@ theorem mul_mem_range_norm (F : Type) [Field F] [CharZero F] [ValuativeRel F] [T
   haveI : FiniteDimensional F E := Module.finite_of_finrank_eq_succ h2
   haveI : Algebra.IsQuadraticExtension F E := ⟨h2⟩
   haveI : IsGalois F E := Algebra.IsQuadraticExtension.isGalois F E
-  let φ : E →ₐ[F] AlgebraicClosure F := IsAlgClosed.lift
+  let φ : E →ₐ[F] AlgebraicClosure F := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let L : IntermediateField F (AlgebraicClosure F) := φ.fieldRange
   let e : E ≃ₐ[F] L := AlgEquiv.ofInjectiveField φ
   haveI : FiniteDimensional F L := LinearEquiv.finiteDimensional e.toLinearEquiv

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,7 +68,7 @@ theorem _root_.GlobalTheory.SUVol.isClosed_realSU (Ψ : Finset (E →+* ℂ)) (G
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC
   have hu := (hc τ).matrix_mulVec (continuous_const (y := u))
   have hw := (hc τ).matrix_mulVec (continuous_const (y := w))
-  refine continuous_finset_sum _ fun a _ => continuous_finset_sum _ fun b _ => ?_
+  refine continuous_finsetSum _ fun a _ => continuous_finsetSum _ fun b _ => ?_
   exact (((continuous_apply a).comp hu).mul continuous_const).mul
     (Complex.continuous_conj.comp ((continuous_apply b).comp hw))
 
@@ -94,7 +98,7 @@ def realLie (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E) : Submodu
     have h1 := (hX τ).2 u w
     have h2 := (hY τ).2 u w
     rw [e]
-    simp only [hermC, add_mulVec, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
+    simp only [hermC, add_mulVec, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
     linear_combination h1 + h2
   smul_mem' c X hX τ := by
     have e : Matrix.of ((c • X) τ) = (c : ℂ) • Matrix.of (X τ) := rfl
@@ -140,7 +144,7 @@ def lieLat (G : Matrix (Fin r) (Fin r) E) (Λ : Submodule (𝓞 E) (Fin r → E)
     refine ⟨by rw [trace_add, hX.1, hY.1, add_zero], fun u w => ?_, fun x hx => ?_⟩
     · have h1 := hX.2.1 u w
       have h2 := hY.2.1 u w
-      simp only [herm, cc, add_mulVec, Pi.add_apply, map_add, add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
+      simp only [herm, cc, add_mulVec, Pi.add_apply, map_add (f := _), add_mul, mul_add, Finset.sum_add_distrib] at h1 h2 ⊢
       linear_combination h1 + h2
     · rw [add_mulVec]; exact Λ.add_mem (hX.2.2 x hx) (hY.2.2 x hx)
   neg_mem' {X} hX := by
@@ -202,10 +206,12 @@ private lemma hermC_map_mulVec_eq_of_preserves_form (τ : E →+* ℂ) (G M : Ma
   have hK' : ∀ a b, τ (G a b) = ∑ i, ∑ j, τ (M i a) * τ (G i j) * starRingEnd ℂ (τ (M j b)) := by
     intro a b
     rw [← hK a b]
-    simp [map_sum, IsCMField.complexEmbedding_complexConj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, IsCMField.complexEmbedding_complexConj]
   unfold _root_.ReciprocityTheory.ChartRestriction.G.FD.hermC
   conv_rhs => rw [Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by rw [hK' a b]]
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, Finset.sum_mul, Finset.mul_sum]
   conv_lhs => enter [2, i, 2, j]; rw [Finset.sum_comm]
   conv_lhs => enter [2, i]; rw [Finset.sum_comm]
   conv_lhs => enter [2, i, 2, a]; rw [Finset.sum_comm]
@@ -214,10 +220,10 @@ private lemma hermC_map_mulVec_eq_of_preserves_form (τ : E →+* ℂ) (G M : Ma
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ =>
     Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
+
 open NumberField IsDedekindDomain Matrix MeasureTheory Filter Topology in
 open scoped ENNReal NNReal in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} in
-
 theorem _root_.GlobalTheory.SUVol.embGL_mem_realSU (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E)
     (γ : GL (Fin r) E) (h1 : (γ : Matrix (Fin r) (Fin r) E).det = 1)
     (h2 : ∀ x y, _root_.ReciprocityTheory.ChartRestriction.G.FD.herm G ((γ : Matrix (Fin r) (Fin r) E) *ᵥ x) ((γ : Matrix (Fin r) (Fin r) E) *ᵥ y) =

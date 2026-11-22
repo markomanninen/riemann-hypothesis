@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonalStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructureStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormalFormFlagZeroMiddleInverseMinorOrthogonalStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicLeviEmbeddingHomomorphismPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsotropicStabilizerRadicalStructureStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ theorem mid_mEmb (m : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (v : Fin (2 * r + 
     have e : (wI k r b).val = r + b.val := rfl
     have e' : (wI k r j).val = r + j.val := rfl
     unfold mEmb
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 1 <;> exact Fin.ext (by simp only []; omega)
   · intro i hi
     simp only [mEmb, wI, Fin.ext_iff]
@@ -176,7 +180,7 @@ theorem mid_pEl_esI (B : Fin r → Fin (k + 1) → ℂ) (S : Matrix (Fin r) (Fin
   funext b
   have := a.2; have := b.2
   simp only [mid, bvec, Matrix.mulVec_single_one, Matrix.col_apply, pEl, wI, esI, Fin.ext_iff]
-  rw [if_neg (by omega), dif_neg (by omega), dif_pos (by omega)]
+  rw [if_neg (by omega), dif_neg (by omega), dite_eq_left (by omega)]
   congr 1 <;> exact Fin.ext (by simp only []; omega)
 
 theorem gramProj_mul {n j : ℕ} (P : Submodule ℂ (EuclideanSpace ℂ (Fin n))) (C : Matrix (Fin j) (Fin j) ℂ)
@@ -185,7 +189,8 @@ theorem gramProj_mul {n j : ℕ} (P : Submodule ℂ (EuclideanSpace ℂ (Fin n))
   have h : (Matrix.gram ℂ fun a => P.starProjection (WithLp.toLp 2 (∑ b, C b a • w b))) =
       Cᴴ * (Matrix.gram ℂ fun a => P.starProjection (WithLp.toLp 2 (w a))) * C := by
     ext a a'
-    simp only [Matrix.gram_apply, WithLp.toLp_sum, WithLp.toLp_smul, map_sum, map_smul, sum_inner, inner_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.gram_apply, WithLp.toLp_sum, WithLp.toLp_smul, map_sum, map_smul, sum_inner, inner_sum,
       inner_smul_left, inner_smul_right, Matrix.mul_apply, Matrix.conjTranspose_apply, Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
     simp only [Complex.star_def]
@@ -211,7 +216,7 @@ theorem exists_mid (p : Fin (k + 1) → ℂ) : ∃ u, inWb k r u ∧ mid k r u =
     have e : (wI k r b).val = r + b.val := rfl
     unfold mid
     simp only []
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 1
     exact Fin.ext (by simp only []; omega)
 
@@ -374,7 +379,7 @@ theorem Dj_eq {j : ℕ} (hj : j ≤ r) (z z' : Fin (2 * r + k + 1) → ℂ) (g :
   have ha : a.val < r := lt_of_lt_of_le a.2 hj
   have hb : b.val < r := lt_of_lt_of_le b.2 hj
   simp only [Matrix.submatrix_apply, Zhat, fvec, Fin.val_castLE, Matrix.of_apply]
-  rw [dif_pos ha, dif_pos hb, herm_eI]
+  rw [dite_eq_left ha, dite_eq_left hb, herm_eI]
   rfl
 
 theorem Yj_eq_gramProj : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + k + 1) → ℂ)), ∀ (g₀ : Mat k r) (β : Fin r → ℕ) (c : ℂ), inWb k r z → inWb k r z' → 0 < Tz k r z → IsNormal0 k r hj β c z z' g₀ → ∀ m ∈ UH (Hb k), ∃ P₀ : Submodule ℂ (EuclideanSpace ℂ (Fin (k + 1))), k - 1 ≤ Module.finrank ℂ P₀ ∧ ∀ (q : PSec k r j × (UToff β → ℂ)) (a : Fin r → ℝ), (∀ b, 0 < a b) → Yj k r hj z z' g₀ (sEl k r j β q * (uEmb k r (Matrix.diagonal fun b => (a b : ℂ)) * mEmb k r m)) = gramProj P₀ fun b : Fin j => m⁻¹ *ᵥ q.1.1 ⟨Fin.castLE hj b, b.2⟩ := by
@@ -407,6 +412,6 @@ theorem Yj_eq_gramProj : ∀ (k r j : ℕ) (hj : j ≤ r) (z z' : (Fin (2 * r + 
   simp only [← Matrix.mulVec_mulVec]
   rw [mid_mEmb, mid_uEmb, mid_uEmb, mid_pEl_esI]
   simp only [Pi.neg_apply, Matrix.neg_apply, hC, Matrix.of_apply, Matrix.mulVec_neg, smul_neg, neg_smul]
-  rw [dif_pos (show (Fin.castLE hj d).val < j from d.2)]
+  rw [dite_eq_left (show (Fin.castLE hj d).val < j from d.2)]
 
 end GlobalTheory.Amp.NormalGram

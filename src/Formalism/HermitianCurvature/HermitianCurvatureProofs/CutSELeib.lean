@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE2
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -34,7 +38,8 @@ def SlDom (μ : Measure (Mt k r)) (l : Fin r) (c : Fin r → ℂ) (Φ : RadSp k 
 
 def SliceGood (X : ActualOps k r z z' π π') (μ : Measure (Mt k r)) (l : Fin r) (c : Fin r → ℂ)
     (Φ : RadSp k r z z' π π') : Prop :=
-  Φ ∈ lcSub k r z z' π π' ∧ ∀ js : List (Fin 6), SlDom μ l c (wOp X l js Φ)
+  Φ ∈ lcSub (k := k) (r := r) (z := z) (z' := z') (π := π) (π' := π') ∧
+    ∀ js : List (Fin 6), SlDom μ l c (wOp X l js Φ)
 
 end Slice
 
@@ -42,7 +47,9 @@ def PairAtDeriv : Prop :=
   ∀ (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
     (π : Mx k r → (Wp →L[ℂ] Wp)) (π' : Mx k r → (Wq →L[ℂ] Wq)) (X : ActualOps k r z z' π π') (μ : Measure (Mt k r)),
-    B.IsHaarOn (Glev k r (Fin.last r)) μ → ∀ (l : Fin r), ∀ (Φ Ψ : RadSp k r z z' π π'), Φ ∈ lcSub k r z z' π π' → Ψ ∈ lcSub k r z z' π π' →
+    B.IsHaarOn (Glev k r (Fin.last r)) μ → ∀ (l : Fin r), ∀ (Φ Ψ : RadSp k r z z' π π'),
+    Φ ∈ lcSub (k := k) (r := r) (z := z) (z' := z') (π := π) (π' := π') →
+    Ψ ∈ lcSub (k := k) (r := r) (z := z) (z' := z') (π := π) (π' := π') →
     ∀ c ∈ OmX r, ∀ (c' : Cf r l.succ) (t : ℂ), t ≠ 0 →
       HasFDerivAt (fun s => pairAt μ Φ Ψ (glue l.succ (Function.update c l s) c'))
         (wl (pairAt μ (dT X l Φ) Ψ (glue l.succ (Function.update c l t) c') +
@@ -61,16 +68,5 @@ def OuterLeib : Prop :=
               form μ l.succ u (fun b => dTb X l (v b)) (Function.update c l t))
             (form μ l.succ (fun b => dTb X l (u b)) v (Function.update c l t) +
               form μ l.succ u (fun b => dT X l (v b)) (Function.update c l t))) t
-
-def JSliceGen : Prop :=
-  ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (S : Type) [Fintype S] [DecidableEq S]
-    (P : M.Par) (z z' : Fin (2 * P.r + P.k + 1) → ℂ) (π : Mx P.k P.r → (Wp →L[ℂ] Wp))
-    (π' : Mx P.k P.r → (Wq →L[ℂ] Wq)) (X : ActualOps P.k P.r z z' π π') (μ : Measure (Mt P.k P.r))
-    (L : R.LevelData (Pr (RadSp P.k P.r z z' π π')) P.r) (st : Fr.Start (Pr (RadSp P.k P.r z z' π π'))) (l0 : ℕ)
-    (D : B.RealPlaceData P.k P.r Wp Wq),
-    IsData P z z' π π' X μ L st l0 → 1 ≤ l0 → l0 ≤ P.k → D.z = z → D.z' = z' → D.π = π → D.π' = π' →
-    ∀ (l : Fin P.r), l.val = 0 →
-    ∀ c ∈ OmX P.r, ∀ Ψ : RadSp P.k P.r z z' π π', IsWaveJ P z z' π π' D l Ψ → SliceGood X μ l c Ψ
 
 end Formalism.FourierDecayAlt.P.CutSE

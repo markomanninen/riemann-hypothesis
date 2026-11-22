@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCFin
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCHarm
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ private def subG {C : Type} [Field C] {T Orb : Type} (r : T → ℕ) (tau : Orb 
   MvPolynomial.aeval fun x => ∑ col : Fin 2, MvPolynomial.C (gm x.2.1 x.2.2.2.1 col x.2.2.1) *
     MvPolynomial.X (⟨tau x.2.1 x.2.2.2.1, x.2.2.2.2, plc (x.1, col)⟩ : Letter T r n)
 
-variable (hd) in
 
+variable (hd) in
 private structure SelfConjugatePlaceSetting {C : Type} [Field C] {V : VF C} {T : Type} (r : T → ℕ) (cc : T → T) (a : T → ℕ → ℕ)
     {Orb : Type} [Fintype Orb] (tau : Orb → ZMod d → T) (gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C)
     {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
@@ -51,8 +55,8 @@ private structure SelfConjugatePlaceSetting {C : Type} [Field C] {V : VF C} {T :
   tie : WtTieS r tau gaC a
   plinj : Function.Injective pl
 
-variable (hd) in
 
+variable (hd) in
 private def IsotropicToStdSubstHarmonic : Prop :=
   ∀ (C : Type) [Field C] (V : VF C) (T : Type) (r : T → ℕ) (cc : T → T) (a : T → ℕ → ℕ)
     (Orb : Type) [Fintype Orb] (tau : Orb → ZMod d → T) (gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C)
@@ -63,8 +67,8 @@ private def IsotropicToStdSubstHarmonic : Prop :=
     SelfConjugatePlaceSetting hd r cc a tau gm X F gaC N L pl → ∀ (n : ℕ) (plc : Fin N × Fin 2 ↪ Fin n) (isX : T → Prop),
       subG r tau gm plc (blkProd X F N L pl) ∈ harmK r n C cc isX (fun _ => 1)
 
-variable (hd) in
 
+variable (hd) in
 private def IsotropicToStdSubstLineInvariant : Prop :=
   ∀ (C : Type) [Field C] (V : VF C) (T : Type) (r : T → ℕ) (cc : T → T) (a : T → ℕ → ℕ)
     (Orb : Type) [Fintype Orb] (tau : Orb → ZMod d → T) (gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C)
@@ -75,8 +79,8 @@ private def IsotropicToStdSubstLineInvariant : Prop :=
     SelfConjugatePlaceSetting hd r cc a tau gm X F gaC N L pl → ∀ (n : ℕ) (plc : Fin N × Fin 2 ↪ Fin n),
       RowInv r n C (subG r tau gm plc (blkProd X F N L pl))
 
-variable (hd) in
 
+variable (hd) in
 private def IsotropicToStdSubstLineDegree : Prop :=
   ∀ (C : Type) [Field C] (V : VF C) (T : Type) (r : T → ℕ) (cc : T → T) (a : T → ℕ → ℕ)
     (Orb : Type) [Fintype Orb] (tau : Orb → ZMod d → T) (gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C)
@@ -87,8 +91,8 @@ private def IsotropicToStdSubstLineDegree : Prop :=
     SelfConjugatePlaceSetting hd r cc a tau gm X F gaC N L pl → ∀ (n : ℕ) (plc : Fin N × Fin 2 ↪ Fin n),
       RowDeg r n C a (subG r tau gm plc (blkProd X F N L pl))
 
-variable (d) in
 
+variable (d) in
 private def IsotropicToStdSubstIntegral : Prop :=
   ∀ (C : Type) [Field C] (V : VF C) (T : Type) (r : T → ℕ)
     (Orb : Type) [Fintype Orb] (tau : Orb → ZMod d → T) (gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C)
@@ -193,8 +197,8 @@ private theorem gram_matrix_mul_left (gm_hyp : ∀ o t (s s' : Fin 2), ∑ q, gm
 
 variable (r tau gm)
 
-variable (hd) in
 
+variable (hd) in
 private def coS (ℓ : Letter T r n) (y : Fin N × WVO fun o (_ : Fin 2) => IIs r tau o) : C :=
   ∑ col, if ℓ = lam r tau plc ((eW r tau N y).1, col) then Mm hd r tau gm (eW r tau N y).1 col (eW r tau N y).2 else 0
 
@@ -241,7 +245,8 @@ private theorem back_subG (inj : Function.Injective fun x : Orb × ZMod d => tau
       (subG r tau gm plc (MvPolynomial.X y)) = MvPolynomial.X y := by
     intro y
     obtain ⟨⟨α, g⟩, rfl⟩ := (eW r tau N).symm.surjective y
-    rw [subG_X, Equiv.apply_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [subG_X, Equiv.apply_symm_apply, map_sum]
     simp only [map_mul, MvPolynomial.aeval_C, MvPolynomial.aeval_X, MvPolynomial.algebraMap_eq]
     have hs : ∀ col, ∑ x, MvPolynomial.C (coS hd r tau gm plc (lam r tau plc (α, col)) x) * MvPolynomial.X x
         = ∑ g', MvPolynomial.C (Mm hd r tau gm α col g') * MvPolynomial.X ((eW r tau N).symm (α, g')) :=
@@ -253,7 +258,8 @@ private theorem back_subG (inj : Function.Injective fun x : Orb × ZMod d => tau
         MvPolynomial.X ((eW r tau N).symm (α, g')) =
         MvPolynomial.C (if g' = g then (1:C) else 0) * MvPolynomial.X ((eW r tau N).symm (α, g')) := by
       intro g'
-      rw [← Finset.sum_mul, ← map_sum, ← gram_matrix_mul_right gm_hyp α g g']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Finset.sum_mul, ← map_sum, ← gram_matrix_mul_right gm_hyp α g g']
       simp only [mul_comm]
     simp only [hg]
     simp
@@ -347,18 +353,19 @@ end P2
 section P3
 open Formalism.IncomingBounds Formalism.L2.Pj MvPolynomial
 
+variable (hd) in
+private def trueT (hd : ZMod d) (g : Fin 2) (s : ZMod d) : ZMod d :=
+  if g = 0 then s else s + hd
+
 section Fam
 
 variable {C : Type} [Field C] {V : VF C} {T : Type} {r : T → ℕ} {cc : T → T} {a : T → ℕ → ℕ}
   {Orb : Type} [Fintype Orb] {tau : Orb → ZMod d → T} {gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C}
   {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
-  {X : ∀ o, RowData C V d (fun _ => IIs r tau o) (J o)} {F : ∀ o, Flag (X o)}
+  {X : ∀ o, RowData C V d (fun _ => Σ t : ZMod d, Fin (r (tau o t))) (J o)}
+  {F : ∀ o, Flag (X o)}
   {gaC : Orb → ZMod d → ℕ → ℕ} {N : ℕ} {L : Orb → List (GlobalTheory d × ℝ)}
   {pl : (Σ o, Σ i : Fin (L o).length, Fin (rowsAt X L o i)) → Fin N} {n : ℕ} (plc : Fin N × Fin 2 ↪ Fin n)
-
-variable (hd) in
-
-private def trueT (g : Fin 2) (s : ZMod d) : ZMod d := if g = 0 then s else s + hd
 
 private theorem SelfConjugatePlaceSetting.en_fst (H : SelfConjugatePlaceSetting hd r cc a tau gm X F gaC N L pl) (o : Orb) (g : Fin 2) (s : ZMod d)
     (q : Fin ((X o).rkF g s)) : ((F o).en g s q).1 = trueT hd g s := by
@@ -370,8 +377,8 @@ private theorem SelfConjugatePlaceSetting.en_fst (H : SelfConjugatePlaceSetting 
   · calc ((F o).en g s q).1 = ((F o).en g s q).1 + hd + hd := by rw [add_assoc, H.hd2, add_zero]
       _ = s + hd := by rw [h]
 
-variable (r tau gm) in
 
+variable (r tau gm) in
 private def PsiS (o : Orb) {M : ℕ} (col : Fin M → Fin N) :
     MvPolynomial (Fin M × WV fun _ => IIs r tau o) C →ₐ[C] MvPolynomial (Letter T r n) C :=
   (subG r tau gm plc).comp (rename fun x : Fin M × WV fun _ => IIs r tau o =>
@@ -662,7 +669,8 @@ private theorem pderiv_subG_lam (inj : Function.Injective fun x : Orb × ZMod d 
   have hX : ∀ y, MvPolynomial.pderiv (lam r tau plc (α0, col0)) (subG r tau gm plc (MvPolynomial.X y)) =
       if (eW r tau N y).1 = α0 then MvPolynomial.C (Gm r tau gm α0 col0 (eW r tau N y).2) else 0 := by
     intro y
-    rw [subG_X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [subG_X, map_sum]
     simp only [MvPolynomial.pderiv_C_mul, MvPolynomial.pderiv_X, Pi.single_apply, (lam_inj plc inj).eq_iff,
       Prod.mk.injEq, mul_ite, mul_one, mul_zero]
     by_cases hy : (eW r tau N y).1 = α0
@@ -742,7 +750,8 @@ private theorem lap_plane (inj : Function.Injective fun x : Orb × ZMod d => tau
     have e1 : (⟨tau o t, a1, plc (ρ, col)⟩ : Letter T r n) = lam r tau plc ((ρ, ⟨o, ⟨t, a1⟩⟩), col) := rfl
     have e2 : (⟨tau o (t + hd), a2, plc (ρ, col)⟩ : Letter T r n) =
         lam r tau plc ((ρ, ⟨o, ⟨t + hd, a2⟩⟩), col) := rfl
-    rw [e1, e2, pderiv_subG_lam plc inj, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, e2, pderiv_subG_lam plc inj, map_sum]
     apply Finset.sum_congr rfl
     intro g _
     rw [MvPolynomial.pderiv_C_mul, pderiv_subG_lam plc inj, Finset.mul_sum]
@@ -759,7 +768,8 @@ private theorem lap_plane (inj : Function.Injective fun x : Orb × ZMod d => tau
   rw [Finset.sum_comm]
   apply Finset.sum_eq_zero
   intro g' _
-  rw [← Finset.sum_mul, ← map_sum, gm_hyp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_mul, ← map_sum, gm_hyp]
   by_cases hgg : g = g'
   · simp [hgg]
   · rw [hD ρ g g' hgg, map_zero, mul_zero]
@@ -771,7 +781,8 @@ section Fam
 variable {C : Type} [Field C] {V : VF C} {T : Type} {r : T → ℕ} {cc : T → T} {a : T → ℕ → ℕ}
   {Orb : Type} [Fintype Orb] {tau : Orb → ZMod d → T} {gm : Orb → ZMod d → Matrix (Fin 2) (Fin 2) C}
   {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
-  {X : ∀ o, RowData C V d (fun _ => IIs r tau o) (J o)} {F : ∀ o, Flag (X o)}
+  {X : ∀ o, RowData C V d (fun _ => Σ t : ZMod d, Fin (r (tau o t))) (J o)}
+  {F : ∀ o, Flag (X o)}
   {gaC : Orb → ZMod d → ℕ → ℕ} {N : ℕ} {L : Orb → List (GlobalTheory d × ℝ)}
   {pl : (Σ o, Σ i : Fin (L o).length, Fin (rowsAt X L o i)) → Fin N}
 

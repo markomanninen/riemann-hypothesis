@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PermMMulTranspose
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianHaarIndependentOfOrthonormalFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalCongruenceConjMemArithmeticGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureDetOneFactorNearIdentityLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGrpDataMapHaar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyCompactDualHaar
-import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PermMMulTranspose
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RiemannianHaarIndependentOfOrthonormalFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalCongruenceConjMemArithmeticGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.MuCardLeTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasureDetOneFactorNearIdentityLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsGrpDataMapHaar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyCompactDualHaar
+public import Formalism.LocalRingCardinality.SpanPowerMembership.HaarDensityNeZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix GlobalTheory.AdLat GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.CovTop.VolUp
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.MainNotions.StandardLattice Formalism.IndefR.Lev Formalism.IndefR.Datum GlobalTheory.AdelicScalar
 open scoped ENNReal
@@ -106,7 +111,14 @@ theorem le_lam_box {p q : ℕ} (lam : Measure (lieU p q)) (h : IsOmegaLeb lam)
   haveI : SecondCountableTopology (lieU p q) :=
     TopologicalSpace.Subtype.secondCountableTopology _
   obtain ⟨h1, h2⟩ := h
-  have hm := AEMeasurable.of_map_ne_zero (h2 ▸ (NeZero.ne volume))
+  have hm : AEMeasurable (fun ab : lieU p q × lieU p q =>
+      Formalism.BasicNotions.entries ((ab.1 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) +
+        Complex.I • (ab.2 : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ))) (lam.prod lam) := by
+    apply Continuous.aemeasurable
+    apply continuous_pi fun ab => ?_
+    simp only [Formalism.BasicNotions.entries, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
+    exact ((continuous_subtype_val.matrix_elem ab.1 ab.2).comp continuous_fst).add
+      (continuous_const.mul ((continuous_subtype_val.matrix_elem ab.1 ab.2).comp continuous_snd))
   have hT : MeasurableSet (Set.univ.pi fun ab : (Fin p ⊕ Fin q) × (Fin p ⊕ Fin q) =>
       Metric.ball (0 : ℂ) (r ab.1 ab.2)) := MeasurableSet.univ_pi fun _ => measurableSet_ball
   have he := Measure.map_apply_of_aemeasurable hm hT

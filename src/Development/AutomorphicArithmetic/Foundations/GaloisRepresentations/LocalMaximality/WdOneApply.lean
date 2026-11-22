@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueFunctionalVanishesOnOmegaFormsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueFunctionalVanishesOnOmegaFormsStatement
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -15,7 +19,7 @@ private lemma resP_eq_zero {F V : Type} [Field F] [Algebra ℂ F] [AddCommGroup 
     obtain ⟨a, ha, b, hb, rfl⟩ := hx
     simp [resP, hA a ha]
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | smul r x _ hx => rw [map_smul, hx, smul_zero]
 
 private lemma residueCharacteristic_mem {F V : Type} [Field F] [Algebra ℂ F] [AddCommGroup V] [Module ℂ V]
@@ -28,7 +32,7 @@ private lemma residueCharacteristic_mem {F V : Type} [Field F] [Algebra ℂ F] [
     obtain ⟨a, ha, b, hb, rfl⟩ := hx
     simpa [resP] using B.smul_mem (ρ a) hb
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add]; exact B.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact B.add_mem hx hy
   | smul r x _ hx => rw [map_smul]; exact B.smul_mem r hx
 
 private lemma wd_one_apply {ι E : Type} [LinearOrder ι] [AddCommGroup E] [Module ℂ E] (c : Finset ι → E) (t : Finset ι) :
@@ -78,7 +82,8 @@ theorem UpperTheory.Gal.productCup_of_system.pInt_of :
   · funext J
     simp only [Lef.omCx, GlobalTheory.PD.cech, GlobalTheory.PD.deltaL, LinearMap.coe_mk, AddHom.coe_mk, GlobalTheory.DI.delta]
     rw [(hU Finset.univ J).1]
-    simp only [wd_one_apply, map_add, map_zsmul, map_sum, hz, smul_zero, Finset.sum_const_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [wd_one_apply, map_add (f := _), map_zsmul, map_sum, hz, smul_zero, Finset.sum_const_zero,
       zero_add, Finset.card_univ, Fintype.card_fin, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [smul_comm]

@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ theorem exists_gauge_of_symmetry :
   have anti0 : s + ev (n := 2) ![pt k d 1, pt k d 0] s = 0 := by
     have e := B.sy_inv
     rw [E _ _ (hp 1) (hp 0)] at e
-    refine expS_inj (by rw [map_add, hs0, c0 _ _ (hp 1) (hp 0), add_zero]) (map_zero _) ?_
+    refine expS_inj (by rw [map_add (f := _), hs0, c0 _ _ (hp 1) (hp 0), add_zero]) (map_zero _) ?_
     rw [gt_expS_add _ _ hs0 (c0 _ _ (hp 1) (hp 0)), hs, e, expS_zero]
   have anti : ∀ {n : ℕ} (a b : Pt k n d), GP a → GP b → ev ![b, a] s = - ev ![a, b] s := by
     intro n a b ha hb
@@ -62,7 +66,7 @@ theorem exists_gauge_of_symmetry :
     have hA := gp_addOf _ hF _ _ (hp (n := 3) 1) (hp (n := 3) 2)
     have e := B.sy_law
     rw [h1, h2, ev_one, one_mul, mul_one, E _ _ (hp 0) (hp 1), E _ _ (hp 0) (hp 2), E _ _ (hp 0) hA] at e
-    refine expS_inj (by rw [map_add, c0 _ _ (hp 0) (hp 1), c0 _ _ (hp 0) (hp 2), add_zero])
+    refine expS_inj (by rw [map_add (f := _), c0 _ _ (hp 0) (hp 1), c0 _ _ (hp 0) (hp 2), add_zero])
       (c0 _ _ (hp 0) hA) ?_
     rw [gt_expS_add _ _ (c0 _ _ (hp 0) (hp 1)) (c0 _ _ (hp 0) (hp 2)), e]
   have add2 : ∀ {n : ℕ} (x y z : Pt k n d), GP x → GP y → GP z →

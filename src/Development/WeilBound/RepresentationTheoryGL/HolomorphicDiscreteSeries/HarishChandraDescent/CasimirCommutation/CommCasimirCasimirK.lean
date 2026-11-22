@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
-import Mathlib.Analysis.InnerProductSpace.JointEigenspace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+public import Mathlib.Analysis.InnerProductSpace.JointEigenspace
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,8 @@ def Qop (ε : Fin n → Bool) (E : Fin n → Fin n → Module.End ℂ M) (μ : F
 
 theorem qf_eq (E : Fin n → Fin n → Module.End ℂ M) (μ : Fin n → ℝ) (x : M) :
     qf E μ x = RCLike.re (Bq E μ x x) := by
-  simp only [qf, Bq, Lop, map_sum, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [qf, Bq, Lop, map_sum, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply,
     inner_self_eq_norm_sq]
 
 theorem Bq_eq (ε : Fin n → Bool) {E : Fin n → Fin n → Module.End ℂ M} (hU : IsInfUnitary ε E) (μ : Fin n → ℝ) (y z : M) :
@@ -241,19 +246,22 @@ theorem comp_proof : SqId → Comp := by
   have hdiagsum : ∀ P : Module.End ℂ M, (∀ o, Commute (Aop ε E o) P) →
       ⟪x, P x⟫_ℂ = ∑ χ ∈ s, ⟪c χ, P (c χ)⟫_ℂ := by
     intro P hP
-    rw [hxs, map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hxs, map_sum, sum_inner]
     refine Finset.sum_congr rfl fun χ hχ => ?_
     rw [inner_sum]
     exact Finset.sum_eq_single χ (fun ψ _ hψ => hoff χ ψ (Ne.symm hψ) P hP) (fun h => absurd hχ h)
   have hqf : qf E μ x = ∑ χ ∈ s, qf E μ (c χ) := by
-    rw [qf_eq, Bq_eq ε hU, hdiagsum _ hQ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [qf_eq, Bq_eq ε hU, hdiagsum _ hQ, map_sum]
     refine Finset.sum_congr rfl fun χ _ => ?_
     rw [qf_eq, Bq_eq ε hU]
   have hnorm : ‖x‖ ^ 2 = ∑ χ ∈ s, ‖c χ‖ ^ 2 := by
     have h := hdiagsum 1 (fun o => Commute.one_right _)
     simp only [Module.End.one_apply] at h
     have h2 := congrArg RCLike.re h
-    rw [map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h2
     simp only [inner_self_eq_norm_sq] at h2
     exact h2
   have hgood : ∀ χ ∈ s, Good ε E (fun a => (χ (some a)).re) (χ none).re (c χ) := by

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PathWeight.GeneratorImageIsSymbol
+
+@[expose] public section
 
 noncomputable section
 

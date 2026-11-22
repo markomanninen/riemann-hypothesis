@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomInvSqrt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnGeomInvSqrt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

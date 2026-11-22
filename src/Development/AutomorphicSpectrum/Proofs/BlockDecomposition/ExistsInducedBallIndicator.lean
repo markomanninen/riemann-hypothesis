@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFixedOfSubgroup
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPsiMinus
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirProj
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRepsSumEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenFixedOfSubgroup
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicFourierExpansion
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothPsiMinus
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousMirProj
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsCIndValue
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.BZMir GlobalTheory.SplitWeil GlobalTheory.CompanionTheory.MirFourier GlobalTheory.CompanionTheory.MirLevi ValuativeRel
 open scoped Topology
@@ -120,10 +124,11 @@ def nbhd : Set (Mir k n) :=
     Multiplicative.ofAdd (mvec x) ∈ polyBall (k := k) n s}
 
 theorem isOpen_nbhd (hρ : IsSmooth ρ) : IsOpen (nbhd ρ s e) := by
+  unfold nbhd
   have hp := GlobalTheory.CompanionTheory.BZMirFun.continuous_mirProj k n
-  refine (isOpen_intM.preimage hp).inter ((isOpen_intM.preimage (continuous_inv.comp hp)).inter
-    (((hρ e).preimage (continuous_lv.comp hp)).inter ?_))
-  exact (isOpen_polyBall n s).preimage (continuous_ofAdd.comp continuous_mvec)
+  exact (isOpen_intM.preimage hp).inter ((isOpen_intM.preimage (continuous_inv.comp hp)).inter
+    (((hρ e).preimage (continuous_lv.comp hp)).inter
+      ((isOpen_polyBall n s).preimage (continuous_ofAdd.comp continuous_mvec))))
 
 theorem one_mem_nbhd : (1 : Mir k n) ∈ nbhd ρ s e := by
   have hm : mvec (1 : Mir k n) = 0 := by

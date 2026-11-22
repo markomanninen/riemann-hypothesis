@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDerivationCotangentIndependent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDerivationCotangentIndependent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -12,7 +17,7 @@ theorem derivation_mem_of_mem_sq {T : Type} [CommRing T] (P : Ideal T) (D : Deri
   refine Submodule.mul_induction_on hx (fun a ha b hb => ?_) (fun a b ha hb => ?_)
   · rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul]
     exact P.add_mem (P.mul_mem_right _ ha) (P.mul_mem_right _ hb)
-  · rw [map_add]; exact P.add_mem ha hb
+  · rw [map_add (f := _)]; exact P.add_mem ha hb
 
 theorem mem_of_derivation_det_not_mem {T : Type} [CommRing T] (P : Ideal T) [P.IsPrime] {h : ℕ}
     (D : Fin h → Derivation ℤ T T) (f : Fin h → T) (hf : ∀ i, f i ∈ P)
@@ -23,7 +28,8 @@ theorem mem_of_derivation_det_not_mem {T : Type} [CommRing T] (P : Ideal T) [P.I
   have hv : ∀ j, (b ᵥ* A) j ∈ P := by
     intro j
     have h1 := derivation_mem_of_mem_sq P (D j) hsum
-    rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_sum] at h1
     have h2 : (∑ i, b i * f i) * D j t ∈ P :=
       P.mul_mem_right _ (P.sum_mem fun i _ => P.mul_mem_left _ (hf i))
     have h3 : t * ∑ i, D j (b i * f i) ∈ P := by
@@ -59,7 +65,8 @@ theorem DerivationCotangentIndependent.proof : DerivationCotangentIndependent.St
     rw [Ideal.map_pow, ← hmax]
     have : algebraMap T (Localization.AtPrime P) (∑ k, b k * f k) =
         algebraMap T (Localization.AtPrime P) (s : T) * ∑ k, a k * algebraMap T (Localization.AtPrime P) (f k) := by
-      simp only [map_sum, map_mul, Finset.mul_sum, hb, Algebra.smul_def]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_mul, Finset.mul_sum, hb, Algebra.smul_def]
       refine Finset.sum_congr rfl fun k _ => ?_
       ring
     rw [this]

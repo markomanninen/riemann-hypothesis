@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem analyticAt_eval_comp {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ
   induction (map (Int.castRingHom ℂ) f) using MvPolynomial.induction_on with
   | C a => simpa using analyticAt_const
   | add p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   | mul_X p i hp =>
     simp only [map_mul, eval_X]
@@ -71,12 +75,5 @@ theorem isSection_lift (R : AnLogRes P J e) {A : HermLine ι} {s : MRing ι}
   have hP : 0 < ∏ k, ‖c k‖ ^ a k :=
     Finset.prod_pos fun k _ => pow_pos (norm_pos_iff.mpr (hc k)) _
   field_simp
-
-theorem logNormSec_lift (R : AnLogRes P J e) (A : HermLine ι) (s : MRing ι) (y : R.X) :
-    logNormSec (potOf R A) (fun x y => eval (R.lift x y) (map (Int.castRingHom ℂ) s)) y =
-      logNorm A s (R.lift y y) := by
-  have hpos := A.pos _ (R.mem y y (R.mem_U y)).1
-  simp only [logNormSec, logNorm, potOf]
-  rw [Real.exp_neg, Real.exp_log hpos, div_eq_mul_inv]
 
 end ReciprocityTheory.ChartRestriction.G.Geo

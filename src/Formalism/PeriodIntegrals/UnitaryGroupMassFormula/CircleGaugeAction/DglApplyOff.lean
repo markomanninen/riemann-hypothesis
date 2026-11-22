@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ExistsGaugeMeasureForEachRank
+
+@[expose] public section
 
 noncomputable section
 

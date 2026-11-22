@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.NablaLBasis
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.NablaLBasis
+
+@[expose] public section
 
 open MvPolynomial
 

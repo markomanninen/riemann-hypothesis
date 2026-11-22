@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHL2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RdVOfEq
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -16,12 +20,12 @@ theorem zfull_zb {j : ℕ} (Z : Matrix (Fin j) (Fin j) ℂ) (τ : ℂ) (a b : Fi
   unfold C3.Zb
   have := a.isLt; have := b.isLt
   by_cases h1 : a.val < j ∧ b.val < j
-  · rw [dif_pos h1, dif_pos h1.1, dif_pos h1.2]
-  · rw [dif_neg h1]
+  · rw [dite_eq_left h1, dite_eq_left h1.1, dite_eq_left h1.2]
+  · rw [dite_eq_right h1]
     by_cases ha : a.val < j
     · have hb : ¬ b.val < j := fun hb => h1 ⟨ha, hb⟩
-      rw [dif_pos ha, dif_neg hb, if_neg (fun h => by omega)]
-    · rw [dif_neg ha]
+      rw [dite_eq_left ha, dite_eq_right hb, if_neg (fun h => by omega)]
+    · rw [dite_eq_right ha]
       by_cases h2 : a.val = j ∧ b.val = j
       · rw [if_pos h2, if_pos (by omega)]
       · rw [if_neg h2, if_neg (by omega)]
@@ -31,14 +35,14 @@ theorem normal_form_x0 : NormalFormsAtBasePoint := by
   refine ⟨fun a p ha => ?_, fun a p ha => ?_⟩
   · rw [upper_minor_of_level_point hj Z τ γ a p ha]
     by_cases hp : p.val < j + 1
-    · rw [dif_pos hp, if_pos hp]
+    · rw [dite_eq_left hp, if_pos hp]
       exact zfull_zb Z τ _ _
-    · rw [dif_neg hp, if_neg hp]
+    · rw [dite_eq_right hp, if_neg hp]
   · rw [lower_minor_of_level_point hj hZ hτ hγ a p ha]
     by_cases hp : r + k < p.val ∧ 2 * r + k - p.val < j + 1
-    · rw [dif_pos hp, if_pos hp]
+    · rw [dite_eq_left hp, if_pos hp]
       exact congrArg star (zfull_zb Z τ _ _)
-    · rw [dif_neg hp, if_neg hp]
+    · rw [dite_eq_right hp, if_neg hp]
 
 theorem leading_minors_at_base_point : LeadingMinorsAtBasePoint := by
   intro k r j hj z z' Z τ γ hZ hτ hγ

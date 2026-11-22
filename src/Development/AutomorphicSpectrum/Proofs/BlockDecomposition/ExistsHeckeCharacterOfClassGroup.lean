@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+
+@[expose] public section
 
 open NumberField GroundTheory.Global GroundTheory.Global.IdeleGroup
 open scoped nonZeroDivisors
@@ -62,7 +66,8 @@ theorem idealLevel_top : idealLevel (⊤ : Ideal (𝓞 F)) = finiteLevel 0 := by
   show finiteLevel (fun v => multiplicity v.asIdeal (⊤ : Ideal (𝓞 F))) = finiteLevel 0
   congr 1
   funext v
-  rw [Pi.zero_apply, multiplicity_eq_zero]
+  rw [Pi.zero_apply]
+  apply multiplicity_eq_zero_of_not_dvd
   intro h
   exact v.isPrime.ne_top (top_le_iff.mp (Ideal.le_of_dvd h))
 

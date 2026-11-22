@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeDegreeInt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPullConeDegreeInt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PPullConeDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -32,7 +37,8 @@ theorem mConeMap_eq (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K → ℕ}
     mConeMap y f = MvPolynomial.C (aeval y f) * ∏ k, MvPolynomial.X k ^ a k := by
   conv_lhs => rw [f.as_sum]
   conv_rhs => rw [f.as_sum]
-  rw [map_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
   have hX : ∏ p : (Σ k, ι k), (MvPolynomial.X p.1 : MvPolynomial K Ω) ^ μ p = ∏ k, MvPolynomial.X k ^ a k := by
     rw [Fintype.prod_sigma]
@@ -45,7 +51,7 @@ theorem mConeMap_eq (y : (Σ k, ι k) → Ω) {f : MRing ι} {a : K → ℕ}
   ring
 
 theorem coeff_mConeMap (y : (Σ k, ι k) → Ω) (f : MRing ι) (n : K → ℕ) :
-    coeff (Finsupp.equivFunOnFinite.symm n) (mConeMap y f) =
+    AddMonoidAlgebra.coeff (mConeMap y f) (Finsupp.equivFunOnFinite.symm n) =
       aeval y (weightedHomogeneousComponent (NumbersDVR.blockWeight ι) n f) := by
   induction f using MvPolynomial.induction_on' with
   | monomial m r =>
@@ -55,10 +61,10 @@ theorem coeff_mConeMap (y : (Σ k, ι k) → Ω) (f : MRing ι) (n : K → ℕ) 
     by_cases h : n = Finsupp.weight (NumbersDVR.blockWeight ι) m
     · rw [if_pos h, if_pos (by rw [h])]
     · rw [if_neg h, if_neg (fun h' => h (Finsupp.equivFunOnFinite.symm.injective h').symm), map_zero]
-  | add p q hp hq => rw [map_add, coeff_add, hp, hq, map_add, map_add]
+  | add p q hp hq => rw [map_add (f := _), MvPolynomial.coeff_add, hp, hq, map_add (f := _), map_add (f := _)]
+
 
 omit [DecidableEq K] in
-
 theorem exists_dvd_monomial (N : ℕ) (hne : ∀ k, Nonempty (ι k)) (μ : (Σ k, ι k) →₀ ℕ)
     (hμ : ∀ k, N * Fintype.card (ι k) ≤ ∑ i, μ ⟨k, i⟩) (r : ℤ) :
     ∃ c : ∀ k, ι k, (∏ k, (X ⟨k, c k⟩ : MRing ι)) ^ N ∣ monomial μ r := by
@@ -88,7 +94,7 @@ theorem proof : PullConeDegreeInt.Statement := by
     rw [g.as_sum, Finset.mul_sum]
     refine Ideal.sum_mem _ fun μ hμ => ?_
     obtain ⟨c, hc⟩ := exists_dvd_monomial N hne μ
-      (fun k => by rw [hg μ hμ k]; have := hd k; omega) (coeff μ g)
+      (fun k => by rw [hg μ hμ k]; have := hd k; omega) (AddMonoidAlgebra.coeff g μ)
     exact Ideal.mem_of_dvd _ (mul_dvd_mul_left _ hc) (hN c)
   have hI : coneNullIdealZ y L = RingHom.ker (mConeMap y) ⊔ Ideal.span (Set.range L) := by
     rw [coneNullIdealZ, Ideal.span_union, Ideal.span_eq]
@@ -107,12 +113,13 @@ theorem proof : PullConeDegreeInt.Statement := by
     exact h
   have hψg : mConeMap y ((M : MRing ι) * g) =
       ∑ j, mConeMap y (b j) * monomial (Finsupp.equivFunOnFinite.symm e) (aeval y (L j)) := by
-    rw [← huv, map_add, RingHom.mem_ker.mp hu, zero_add, ← hb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← huv, map_add (f := _), RingHom.mem_ker.mp hu, zero_add, ← hb, map_sum]
     simp only [map_mul, hmapL]
 
   refine ⟨fun j => weightedHomogeneousComponent (NumbersDVR.blockWeight ι) (d - e) (b j),
     fun j => isMultiHomog_of_isWeightedHomogeneous (weightedHomogeneousComponent_isWeightedHomogeneous _ _), ?_⟩
-  have hc := congrArg (coeff (Finsupp.equivFunOnFinite.symm d)) hψg
+  have hc := congrArg (AddMonoidAlgebra.coeff · (Finsupp.equivFunOnFinite.symm d)) hψg
   rw [mConeMap_eq y hMg, PullConeDegree.prod_X_pow_eq_monomial, C_mul_monomial, mul_one,
     coeff_monomial, if_pos rfl, coeff_sum, map_mul, map_natCast] at hc
   rw [hc]

@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderFlatBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LemmaBTHoldsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsTensorOrderOfCover
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalBaseChange
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionEmbeddingGeometricPointsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveBis
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeSpanStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionSubgroupBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianTorsionInjectiveStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralPointsEqOfGenericStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyPrimeRelayStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericTorsionNoetherianChartStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsLatFamilyCongr
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderFlatBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LemmaBTHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsTensorOrderOfCover
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeTateFunctionalBaseChange
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionEmbeddingGeometricPointsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteProjectiveBis
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsLieModel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelBaseChangeSpanStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TorsionSubgroupBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianTorsionInjectiveStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IntegralPointsEqOfGenericStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ArithVarietyPrimeRelayStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GenericTorsionNoetherianChartStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField MvPolynomial ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top
 open GroundTheory.Heights₂.Heights.NumbersDVR (pointIdeal segreVec IsFlagFrame IsFlagPair SameGenericFibre IsModelOver divCycle)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg fnField)
@@ -92,7 +97,7 @@ theorem der_compare {R R' : Type} [CommRing R] [IsDomain R] [CommRing R'] [IsDom
     rw [Category.assoc, hv1, ← Spec.map_comp, ← Spec.map_comp]
     congr 1
     ext r
-    all_goals simp [dualMap, HTBaseChange.qmap, Ideal.quotientMap_mk, TrivSqZeroExt.algebraMap_eq_inl]
+    all_goals simp [GlobalTheory.CompanionTheory.Ar.dualMap, HTBaseChange.qmap, Ideal.quotientMap_mk, TrivSqZeroExt.algebraMap_eq_inl]
   set v'' := hF.cart.lift _ _ hc with hv''
   have h1 := hF.cart.lift_fst _ _ hc
   have h2 := hF.cart.lift_snd _ _ hc
@@ -103,7 +108,7 @@ theorem der_compare {R R' : Type} [CommRing R] [IsDomain R] [CommRing R'] [IsDom
       ← Spec.map_comp]
     congr 2
     ext a
-    all_goals simp [dualMap, HTBaseChange.qmap, Ideal.quotientMap_mk, TrivSqZeroExt.algebraMap_eq_inl]
+    all_goals simp [GlobalTheory.CompanionTheory.Ar.dualMap, HTBaseChange.qmap, Ideal.quotientMap_mk, TrivSqZeroExt.algebraMap_eq_inl]
   have huniq := (GlobalTheory.T.existsUnique_tangent_dual_number R' T Γ' S G _ N (F ≫ i) hi' L' M' (β e)).unique ⟨h2, h3⟩ ⟨hv'1, hv'2⟩
   rw [← huniq, hss, ← HTBaseChange.valAt_comp_top, h1, HTBaseChange.valAt_spec_map, hv3] at hv'3
   have h5 := congrArg TrivSqZeroExt.snd hv'3
@@ -147,7 +152,7 @@ theorem order_overlap {R₁ R₂ R' : Type} [CommRing R₁] [IsDomain R₁] [Com
     obtain ⟨m₂, b₂, hb₂, e₂⟩ := h₂
     refine ⟨m₁ + m₂, (h ^ m₂) • b₁ + (h ^ m₁) • b₂, add_mem (Subalgebra.smul_mem _ hb₁ _) (Subalgebra.smul_mem _ hb₂ _),
       fun t => ?_⟩
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul, map_pow, e₁, e₂]
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_pow, e₁, e₂]
     ring
   | mul z₁ z₂ _ _ h₁ h₂ =>
     obtain ⟨m₁, b₁, hb₁, e₁⟩ := h₁
@@ -216,7 +221,7 @@ theorem der_overlap {R₁ R₂ R' : Type} [CommRing R₁] [IsDomain R₁] [CommR
     | add a b _ _ ha hb =>
       obtain ⟨r, hr⟩ := ha
       obtain ⟨r', hr'⟩ := hb
-      exact ⟨r + r', by rw [map_add, map_add, hr, hr']; ring⟩
+      exact ⟨r + r', by rw [map_add (f := _), map_add (f := _), hr, hr']; ring⟩
     | smul c a _ ha =>
       obtain ⟨r, hr⟩ := ha
       exact ⟨c * r, by simp only [map_smul, hr, smul_eq_mul]; ring⟩
@@ -248,7 +253,7 @@ theorem der_overlap {R₁ R₂ R' : Type} [CommRing R₁] [IsDomain R₁] [CommR
     | add a b _ _ ha hb =>
       obtain ⟨c, hc⟩ := ha
       obtain ⟨c', hc'⟩ := hb
-      exact ⟨c + c', by simp only [map_add]; linear_combination hc + hc'⟩
+      exact ⟨c + c', by simp only [map_add (f := _)]; linear_combination hc + hc'⟩
     | smul a z _ hz =>
       obtain ⟨c, hc⟩ := hz
       refine ⟨a * c, ?_⟩
@@ -260,7 +265,7 @@ theorem der_overlap {R₁ R₂ R' : Type} [CommRing R₁] [IsDomain R₁] [CommR
   let cl : Module.Dual R₂ L₂ :=
     { toFun := c
       map_add' := fun a b => cinj _ _ (by
-        rw [map_add, mul_add, hc, hc, hc]; simp only [map_add, LinearMap.map_add]; ring)
+        rw [map_add (f := _), mul_add, hc, hc, hc]; simp only [map_add (f := _), LinearMap.map_add (f := _)]; ring)
       map_smul' := fun a e => cinj _ _ (by
         have hb2 : β₂ (a • e) = algebraMap R₂ R' a • β₂ e := β₂.map_smulₛₗ a e
         have e2 := hc e
@@ -271,7 +276,7 @@ theorem der_overlap {R₁ R₂ R' : Type} [CommRing R₁] [IsDomain R₁] [CommR
     isDerAtOne_add_smul Γ₂ i₂ M₂ N _ _ cl (isDerAtOne_smul Γ₂ i₂ M₂ N b w (h ^ m₁) hw), fun e => ?_⟩
   · rw [map_mul, hbv, map_pow, pow_add]; ring
   · have : algebraMap R₂ R' (cl e) = algebraMap R₂ R' (c e) := rfl
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, map_add, map_mul, map_pow, map_natCast]
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, map_add (f := _), map_mul, map_pow, map_natCast]
     rw [this, hc e, pow_add]
     ring
 
@@ -327,8 +332,8 @@ section Chart
 variable {O : Type} [CommRing O] {Ω : Type} [Field Ω] [Algebra O Ω] {K : Type} [Fintype K] {J : K → Type}
   (y : (Σ k, J k) → Ω) (s t : ∀ k, J k)
 
-variable (O) in
 
+variable (O) in
 abbrev ovl : Subalgebra O Ω := CR O y s ⊔ CR O y t
 
 instance algL : Algebra (CR O y s) (ovl O y s t) := (Subalgebra.inclusion le_sup_left).toRingHom.toAlgebra
@@ -647,7 +652,7 @@ theorem form_overlap (hp : p.Prime) (hpS : p ∈ S) (hs : mseg y s ≠ 0) (ht : 
   · have := congrArg Subtype.val (e1 a)
     simpa [algL_coe, algR_coe] using this
   · refine LinearMap.ext fun w => ?_
-    refine P₂.toLi_bc.inductionOn w (fun w => P₂.j u₂ w = ((mseg y s / mseg y t) ^ m • P₁.j u) w) (by simp) ?_ ?_ ?_
+    refine P₂.toLi_bc.inductionOn w ?_ ?_ ?_
     · intro e
       rw [P₂.j_apply]
       have := congrArg Subtype.val (e3 e)
@@ -660,7 +665,7 @@ theorem form_overlap (hp : p.Prime) (hpS : p ∈ S) (hs : mseg y s ≠ 0) (ht : 
     · intro a n hn
       simp only [map_smul, hn]
     · intro a b ha hb
-      simp only [map_add, ha, hb]
+      simp only [map_add (f := _), ha, hb]
 
 end Th2
 

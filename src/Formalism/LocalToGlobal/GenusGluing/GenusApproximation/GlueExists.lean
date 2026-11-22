@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.Statement
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ def GlueExists : Prop :=
 
 def Commens : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (n : ℕ) (N : Submodule (𝓞 E) (Sp E n)), Submodule.IsLattice E N →
+    (n : ℕ) (N : Submodule (𝓞 E) (Sp E n)), Submodule.IsFullLattice E N →
     ∃ D : 𝓞 F, D ≠ 0 ∧ (∀ y ∈ N, algebraMap (𝓞 F) (𝓞 E) D • y ∈ stdLat E n) ∧
       (∀ y ∈ stdLat E n, algebraMap (𝓞 F) (𝓞 E) D • y ∈ N)
 

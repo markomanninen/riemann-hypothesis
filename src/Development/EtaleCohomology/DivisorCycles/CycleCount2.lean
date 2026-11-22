@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowEig
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PowEig
+
+@[expose] public section
 
 open Matrix Polynomial
 namespace LateralTheory.DivDb.CycleCount₂
@@ -50,7 +54,7 @@ theorem pow_eig (y : Mat C N) (l : C) (w : Fin N → C) (h : y *ᵥ w = l • w)
 theorem aeval_eig (y : Mat C N) (l : C) (w : Fin N → C) (h : y *ᵥ w = l • w) (q : C[X]) :
     (aeval y q) *ᵥ w = q.eval l • w := by
   induction q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, Matrix.add_mulVec, hp, hq, eval_add, add_smul]
+  | add p q hp hq => rw [map_add (f := _), Matrix.add_mulVec, hp, hq, eval_add, add_smul]
   | monomial n a =>
     rw [aeval_monomial, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, Matrix.smul_mulVec,
       pow_eig y l w h, smul_smul, eval_monomial]
@@ -98,7 +102,7 @@ theorem cyc [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y : 
   · have hsep : (X ^ k - Polynomial.C β).Separable := separable_X_pow_sub_C β (by exact_mod_cast hk.ne') hβ0
     rw [Multiset.toFinset_card_of_nodup (by unfold nthRoots; exact nodup_roots hsep)]
     unfold nthRoots
-    rw [IsAlgClosed.card_roots_eq_natDegree, natDegree_X_pow_sub_C]
+    rw [IsAlgClosed.card_roots_eq_natDegree, natDegree_X_pow_sub_C _]
   · intro l hl
     rw [Multiset.mem_toFinset, mem_nthRoots hk] at hl
     have hl0 : l ≠ 0 := by rintro rfl; rw [zero_pow hk.ne'] at hl; exact hβ0 hl.symm
@@ -147,7 +151,7 @@ theorem eigs [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y :
   choose m hmlt hmeq using hm
   let g : Fin n → ℕ → C := fun r t => if h : t < (S r).card then ((S r).equivFin.symm ⟨t, h⟩ : C) else 0
   have hg : ∀ i, g (rep i) (m i) ∈ S (rep i) := by
-    intro i; simp only [g]; rw [dif_pos (by rw [hSc]; exact hmlt i)]; exact Finset.coe_mem _
+    intro i; simp only [g]; rw [dite_eq_left (by rw [hSc]; exact hmlt i)]; exact Finset.coe_mem _
   have hsupp : ∀ i, ∃ w : Fin N → C, w ≠ 0 ∧ y *ᵥ w = g (rep i) (m i) • w ∧ ∀ k, ¬ π.SameCycle i k → p k *ᵥ w = 0 := by
     intro i; obtain ⟨w, hw0, hwe, hws⟩ := hSe _ _ (hg i)
     exact ⟨w, hw0, hwe, fun k hk => hws k (fun hc => hk ((hrep i).symm.trans hc))⟩
@@ -164,7 +168,7 @@ theorem eigs [IsAlgClosed C] [CharZero C] {n : ℕ} (p : Fin n → Mat C N) (y :
   have hmm : m i = m i' := by
     have h2 := h
     simp only [g] at h2
-    rw [dif_pos (by rw [hSc]; exact hmlt i), dif_pos (by rw [hSc]; exact hmlt i')] at h2
+    rw [dite_eq_left (by rw [hSc]; exact hmlt i), dite_eq_left (by rw [hSc]; exact hmlt i')] at h2
     have key : ∀ r r' : Fin n, r = r' → ∀ t t' (ht : t < (S r).card) (ht' : t' < (S r').card),
         ((S r).equivFin.symm ⟨t, ht⟩ : C) = (S r').equivFin.symm ⟨t', ht'⟩ → t = t' := by
       intro r r' hr; subst hr; intro t t' ht ht' he

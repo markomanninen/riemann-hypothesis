@@ -1,24 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
 private theorem sgnAct_tor {R : Type} [CommRing R] (s : ℤˣ) (t : Rˣ) :
-    sgnAct 3 R s (tor R t) = tor R t := by
-  by_cases hs : s = 1
-  · subst hs
-    exact sgnAct_one _
-  · simp only [sgnAct, MonoidHom.coe_mk, OneHom.coe_mk, if_neg hs]
-    exact theta_tor t
+    sgnAct (m := 3) (R := R) s (tor R t) = tor R t := by
+  rcases Int.units_eq_one_or s with rfl | rfl <;> simp [theta_tor]
 
-private theorem conj_left {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (t : Rˣ) (g : G) :
+private theorem conj_left {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (t : Rˣ) (g : G) :
     (conjBy (tor R t) r g).left = tor R t * (r g).left * tor R t⁻¹ := by
   simp [conjBy, MulAut.conj_apply, SemidirectProduct.mul_left, SemidirectProduct.inv_left, sgnAct_tor, map_inv]
 
-private theorem conj_right {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (t : Rˣ) (g : G) :
+private theorem conj_right {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (t : Rˣ) (g : G) :
     (conjBy (tor R t) r g).right = (r g).right := by
   simp [conjBy, MulAut.conj_apply, SemidirectProduct.mul_right, SemidirectProduct.inv_right]
 
-private theorem conj_mat {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (t : Rˣ) (g : G)
+private theorem conj_mat {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (t : Rˣ) (g : G)
     (a b : Fin 3) :
     (conjBy (tor R t) r g).mat a b = ((t ^ wt a b : Rˣ) : R) * (r g).mat a b := by
   show (((conjBy (tor R t) r g).left : GL (Fin 3) R) : Matrix (Fin 3) (Fin 3) R) a b = _
@@ -28,13 +28,13 @@ private theorem conj_mat {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R)
   rw [← key, GG.mat]
   ring
 
-private theorem conj_zmat {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (t : Rˣ) (c g₁ : G)
+private theorem conj_zmat {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (t : Rˣ) (c g₁ : G)
     (a b : Fin 3) :
     zmat c g₁ (conjBy (tor R t) r) a b = ((t ^ wt a b : Rˣ) : R) * zmat c g₁ r a b := by
   simp only [zmat, Matrix.sub_apply, conj_mat, mul_sub]
 
 theorem UpperTheory.V.U3.conjBy_tor :
-    ∀ {G R : Type} [Group G] [CommRing R] (r : G →* GG 3 R) (t : Rˣ),
+    ∀ {G R : Type} [Group G] [CommRing R] (r : G →* GG (m := 3) (R := R)) (t : Rˣ),
     (∀ g a b, (conjBy (tor R t) r g).mat a b = ((t ^ wt a b : Rˣ) : R) * (r g).mat a b) ∧ (∀ g, (conjBy (tor R t) r g).right = (r g).right) ∧
     (∀ c g₁, Normalised c g₁ r → Normalised c g₁ (conjBy (tor R t) r)) ∧ (∀ c g₁, zeta c g₁ (conjBy (tor R t) r) = zeta c g₁ r) ∧
     ∀ (η : G →* ℤˣ) (Ψ : G →* Rˣ), conjBy (tor R t) (r0 η Ψ) = r0 η Ψ := by

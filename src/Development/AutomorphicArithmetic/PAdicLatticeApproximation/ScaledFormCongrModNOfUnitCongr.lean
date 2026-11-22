@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
-import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ScaledFormDenEqOneOnLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.WitSys
+public import Development.AutomorphicArithmetic.PAdicLatticeApproximation.ScaledFormDenEqOneOnLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntAfIntCast
+
+@[expose] public section
+
 open NumberField
 open GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo UpperTheory.Gal.W2.Wit
 open scoped TensorProduct
@@ -23,7 +28,7 @@ theorem UpperTheory.scaled_form_congr_mod_n_of_unit_congr :
     · exact MultScale.isIntAf_add (MultScale.isIntAf_add (MultScale.isIntAf_EFA D ha he')
         (MultScale.isIntAf_EFA D he ha')) (MultScale.isIntAf_mul
           (by simpa using MultScale.isIntAf_intCast (p := p) (n : ℤ)) (MultScale.isIntAf_EFA D he he'))
-    · simp only [map_add, LinearMap.add_apply, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul,
+    · simp only [map_add (f := _), LinearMap.add_apply, map_nsmul, LinearMap.smul_apply, nsmul_eq_mul,
         MultScale.EFA_inAf]
       ring
   rw [hr, hr', hexp, hε] at hform

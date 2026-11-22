@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem UpperTheory.Esk.pf_Fsum : UpperTheory.Esk.E0a → UpperTheory.Esk.Fsum :
   have hae : ∀ᵐ y ∂D.μY, ∫ c, b y • u (D.el c) y ∂(Measure.count : Measure D.Cj) = b y • ∑' γ, u γ y := by
     filter_upwards [hgi.prod_left_ae] with y hy
     have hy' : Integrable (fun c : D.Cj => b y • u (D.el c) y) Measure.count := hy
-    rw [integral_countable' hy']
+    rw [integral_countable hy']
     simp only [measureReal_def, Measure.count_singleton, ENNReal.toReal_one, one_smul]
     exact tsum_const_smul'' (b y)
   have hP : Integrable (fun y => b y • ∑' γ, u γ y) D.μY := hgi.integral_prod_right.congr hae

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.ZeroNotAdmissibleOfRankPos
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+
+@[expose] public section
+
 open NumberField Matrix Complex MeasureTheory IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Dict GlobalTheory.AdTh GlobalTheory.ClsVal
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor hiding Level Host
@@ -60,9 +65,9 @@ theorem subring_reduction_add_mul_killed {S k : Type} [CommRing S] [CommRing k] 
     (c : O) (hc : f c = 0) :
     (if h : x + (c : S) * y ∈ O then f ⟨x + (c : S) * y, h⟩ else 0) = if h : x ∈ O then f ⟨x, h⟩ else 0 := by
   have hmem : x + (c : S) * y ∈ O := add_mem hx (mul_mem c.2 hy)
-  rw [dif_pos hmem, dif_pos hx]
+  rw [dite_eq_left hmem, dite_eq_left hx]
   have : (⟨_, hmem⟩ : O) = ⟨x, hx⟩ + c * ⟨y, hy⟩ := rfl
-  rw [this, map_add, map_mul, hc, zero_mul, add_zero]
+  rw [this, map_add (f := _), map_mul, hc, zero_mul, add_zero]
 
 theorem redM_add_smul {D : D7} (PP : Formalism.L2.DIV.Pl D.host.E) {b a : ℕ} (N N' : Matrix (Fin b) (Fin a) (EAf D))
     (hN : Datum.IsIntM N) (hN' : Datum.IsIntM N') (s : 𝓞 D.host.E) (hs : s ∈ PP.asIdeal) :
@@ -137,7 +142,7 @@ theorem smul_eq_of_hatC_ne_zero : ∀ (D : D7) (G : Type) [Group G] [Fintype G] 
             fun b' => ι (x b') + ((H.bar s : 𝓞 D.host.E) : D.host.E) •
               ι ((Pi.single b w : Fin (Vc D i).rank → Dw.La) b') := by
           funext b'
-          rw [map_add, map_smul]
+          rw [map_add (f := _), map_smul]
           rfl
         rw [e4, uMat_add_smul, sig_bar]
         exact redM_add_smul PP _ _ (he x).1 (he _).1 s (hs PP hP)
@@ -151,7 +156,7 @@ theorem smul_eq_of_hatC_ne_zero : ∀ (D : D7) (G : Type) [Group G] [Fintype G] 
     · simp
   obtain ⟨z, hz⟩ := LevelPairing.exists_eq_smul_of_dvd (s • (cSep l₂ • levRep (q b))) l₂.M hM (fun y => by
     have h2 := Dw.alt (y + s • (cSep l₂ • levRep (q b)))
-    simp only [map_add, LinearMap.add_apply, Dw.alt, zero_add, add_zero] at h2
+    simp only [map_add (f := _), LinearMap.add_apply, Dw.alt, zero_add, add_zero] at h2
     have h3 := hdvd y
     have : Dw.EF (s • (cSep l₂ • levRep (q b))) y = -Dw.EF y (s • (cSep l₂ • levRep (q b))) := by linarith
     rw [this]; exact h3.neg_right)

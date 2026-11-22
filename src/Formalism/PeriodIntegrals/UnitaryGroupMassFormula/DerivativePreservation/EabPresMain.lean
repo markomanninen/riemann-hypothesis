@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DerivativePreservation.HasDerivAtExt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DerivativePreservation.HasDerivAtExt
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff
@@ -124,10 +128,5 @@ theorem eab_lin (i : Fin (r + 1)) (D : Set (Mx k r)) (p q : Fin (mdim k r i))
 end Formalism.FourierDecayAlt.Q.EabLie
 
 namespace Formalism.FourierDecayAlt.Q
-
-theorem eabPres_main : EabPres := by
-  intro E _ _ k r z i D a b f f₂ s hD hf hf₂
-  exact ⟨EabLie.eab_smooth i D a b f hf, fun _ hL => EabLie.eab_left i z D hD a b f hf hL,
-    fun g hg => EabLie.eab_lin i D a b f f₂ s hf hf₂ g hg⟩
 
 end Formalism.FourierDecayAlt.Q

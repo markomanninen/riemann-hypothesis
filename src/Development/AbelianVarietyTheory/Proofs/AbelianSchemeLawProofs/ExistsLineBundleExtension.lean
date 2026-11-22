@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry TopologicalSpace Opposite
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi
@@ -232,14 +236,14 @@ theorem exists_compatible_cover [NoetherianSpace X]
     exact inv_mem (hW p hp y hyq hyp)
   · exact hT.prop p hp q hq y hyp hyq
 
-open Classical in
 
+open Classical in
 def unitVal (U : X.Opens) : Γ(X, U)ˣ →* X.functionFieldˣ :=
   if h : genericPoint X ∈ U then Units.map (X.presheaf.germ U _ h).hom else 1
 
 theorem val_unitVal {U : X.Opens} (h : genericPoint X ∈ U) (a : Γ(X, U)ˣ) :
     (unitVal U a).val = X.presheaf.germ U _ h a.val := by
-  rw [unitVal, dif_pos h]
+  rw [unitVal, dite_eq_left h]
   rfl
 
 theorem unitVal_res {U V : X.Opens} (hle : V ≤ U) (h : genericPoint X ∈ V) (a : Γ(X, U)ˣ) :

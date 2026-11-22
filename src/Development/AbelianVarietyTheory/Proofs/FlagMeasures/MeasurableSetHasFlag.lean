@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAdelicUnitaryCongruenceTopology
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+
+@[expose] public section
 
 open GlobalTheory.Count Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField MeasureTheory Finset
 
@@ -502,7 +506,7 @@ theorem type_measurable : ∀ (I : AutInst) (a : ℕ) (j : Fin a → ℕ), ∃ s
             (hSm.monotone (show i.castSucc ≤ i.succ from Fin.castSucc_lt_succ.le)) (flag_sat I x0 hf0 i.succ).1)
       have hsm : ∀ i : Fin a, Measurable fun x : I.GA => sizeQ (bas I) (frm I x) (S i.succ) (S i.castSucc) :=
         fun i => measurable_sizeQ I _ _ (fgOf hf0 i.succ) (hsat i) (hSm (show i.castSucc < i.succ from Fin.castSucc_lt_succ)).ne
-      have hszm : Measurable (sz S) := measurable_pi_lambda _ hsm
+      have hszm : Measurable (sz S) := Measurable.of_eval hsm
       have hm1 : MeasurableSet {x | P S x} :=
         (measurableSet_hasFlag I S hsm).inter (MeasurableSet.const _)
       exact ⟨hm1, fun B hB => hm1.inter (hszm hB)⟩
@@ -533,7 +537,7 @@ theorem type_measurable : ∀ (I : AutInst) (a : ℕ) (j : Fin a → ℕ), ∃ s
   have hs : ∀ x τ, HasType I x j τ → s x = τ := by
     intro x τ hx
     show (if h : ∃ τ, HasType I x j τ then h.choose else 0) = τ
-    rw [dif_pos ⟨τ, hx⟩]
+    rw [dite_eq_left ⟨τ, hx⟩]
     exact huniq x _ _ (Exists.choose_spec _) hx
   have hD : {x : I.GA | ∃ τ, HasType I x j τ} =
       ⋃ S' : Fin (a + 1) → ↥{N : Submodule (𝓞 I.E) (Fin I.n → I.E) | N.FG}, {x | P (fun i => (S' i).1) x} := by
@@ -565,7 +569,7 @@ theorem type_measurable : ∀ (I : AutInst) (a : ℕ) (j : Fin a → ℕ), ∃ s
           · exact (hn ⟨τ, hxτ⟩).elim
       · have h0 : s x = 0 := by
           show (if h : ∃ τ, HasType I x j τ then h.choose else 0) = 0
-          rw [dif_neg hx]
+          rw [dite_eq_right hx]
         rw [h0]
         constructor
         · intro hB'

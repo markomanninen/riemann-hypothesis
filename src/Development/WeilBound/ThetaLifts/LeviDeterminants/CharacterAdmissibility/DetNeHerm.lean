@@ -1,10 +1,14 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.FrOfFrame
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DetConjMulVec
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ExistsDoubledUnitaryBlock
-import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.ExistsAdaptedIndexHermitian
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
-import Development.WeilBound.ThetaLifts.LeviDeterminants.DoubledUnitaryCharacterTrivialOfSiegel
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.FrOfFrame
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.DetConjMulVec
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.ExistsDoubledUnitaryBlock
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.CharacterAdmissibility.AdelInt
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.ExistsAdaptedIndexHermitian
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.DoubledUnitaryCharacterTrivialOfSiegel
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,7 +35,7 @@ theorem fr_span {R : Type} [CommRing R] {K : Type} [CommRing K] [Algebra R K] {c
     congr 1
     generalize ρ * u = w
     ext i k
-    simp [mul_apply, vecMulVec_apply]
+    simp [Matrix.mul_apply, vecMulVec_apply]
   · have e := congrArg (ρ * ·) hb
     simp only [mul_vecMulVec, Matrix.mul_zero] at e
     have e1 : (ρ *ᵥ y) (.inr ()) = 1 := (congrFun (congrFun h.rz (.inr ())) (.inr ())).trans (by simp)
@@ -56,7 +60,7 @@ theorem setX {n n₁ d r s r' s' r₁ s₁ j₀ j₁ : ℕ} {X : Spc F E n} {W :
     constructor
     · rintro ⟨p1, p2⟩
       obtain ⟨z', a, b, rfl⟩ := (fr_span hF).1 u
-      rw [map_add, map_add, h1] at p1 p2
+      rw [map_add (f := _), map_add (f := _), h1] at p1 p2
       simp only [Prod.fst_add, Prod.snd_add, (h2 a).1, (h3 b).1, add_zero] at p1 p2
       have e1 : (M₁.co.e z').1 = (M₁.co.e z).1 := funext fun k => by
         simpa [hj.extend_apply, (h3 b).2] using congrFun p1 (j k)
@@ -65,7 +69,7 @@ theorem setX {n n₁ d r s r' s' r₁ s₁ j₀ j₁ : ℕ} {X : Spc F E n} {W :
       rw [e1, add_eq_left] at p1
       exact ⟨a, by rw [hz, co.e.map_eq_zero_iff.1 (Prod.ext p1 (h3 b).1), add_zero]⟩
     · rintro ⟨a, rfl⟩
-      rw [map_add, h1]
+      rw [map_add (f := _), h1]
       exact ⟨by rw [Prod.fst_add, (h2 a).1, add_zero], funext fun k => by simp [hj.extend_apply, (h2 a).2]⟩
   refine ⟨M.co.e.symm ≪≫ₗ co.e, j, fun w w' => ?_, hj,
     ⟨he.maps, isEv_adm hM hM₁ he, fun w w₁ hw φ hφ => ?_,
@@ -78,7 +82,7 @@ theorem setX {n n₁ d r s r' s' r₁ s₁ j₀ j₁ : ℕ} {X : Spc F E n} {W :
     obtain ⟨a, rfl⟩ := (hrel u z).1 hw
     have e1 := he.Heisenberg₂ z φ hφ
     rw [incM_one', transpose_one, Matrix.mul_one] at e1
-    rw [add_comm, map_add, ← schr_add]
+    rw [add_comm, map_add (f := _), ← schr_add]
     · exact (he.inv _ ⟨_, rfl⟩ _ ((axB hB.std).schr _ _ _ hφ)).trans e1
     · rw [← sub_eq_zero, ← M.co.form, co.form, h1, (h2 a).1, extend_dot hj,
         show (co.e (vecMulVec (incV F H.x) a)).2 ∘ j = 0 from funext (h2 a).2]
@@ -123,7 +127,7 @@ theorem mixX_levi (hA : Ax (adeleClass F) B.ψ) (hP : IsPair B M χX χW om r s 
   have : IsTopologicalRing (AE F E) := IsModuleTopology.isTopologicalRing (AF F) _
   obtain ⟨-, ⟨d', hd', hW⟩, -⟩ := hP.weil
   obtain ⟨-, ⟨d₁', hd₁', hW₁⟩, -⟩ := hP₁.weil
-  let t' : GL Unit (AE F E) := ⟨of fun _ _ => t.1, of fun _ _ => (t⁻¹).1, by ext; simp [mul_apply], by ext; simp [mul_apply]⟩
+  let t' : GL Unit (AE F E) := ⟨of fun _ _ => t.1, of fun _ _ => (t⁻¹).1, by ext; simp [Matrix.mul_apply], by ext; simp [Matrix.mul_apply]⟩
   have ht : GeneralLinearGroup.det t' = t := Units.ext (by simp [t'])
   have key := TB hA hS hj hE hF (d := d') (d₁ := d₁') (fun u z => by
       rw [← transpose_transpose u, ← transpose_transpose z, hd', hd₁', hrel]
@@ -136,7 +140,7 @@ theorem mixX_levi (hA : Ax (adeleClass F) B.ψ) (hP : IsPair B M χX χW om r s 
     m g₁ t' hm.2.2 (by
       ext i k
       have := congrFun hm.1 i
-      simp only [mul_apply, replicateCol_apply, Finset.univ_unique, Finset.sum_singleton, t', of_apply]
+      simp only [Matrix.mul_apply, replicateCol_apply, Finset.univ_unique, Finset.sum_singleton, t', of_apply]
       exact this.trans (mul_comm _ _))
   rw [ht, fac, Fintype.card_fin] at key
   rw [absE_eq]

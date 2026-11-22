@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsUnivRingBc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsUnivRingBc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,15 +42,88 @@ theorem chart_of_basis [IsLocalRing R] [Smooth G.hom] {d : ℕ} {v : Fin d → (
       obtain ⟨h, e⟩ := hprod c
       rw [← e, ← tcoord_congr hx ((isLieComb_iff c v _).mp hc) hw h, tcoord_eq hx _ hw t rfl]
   let Le := LinearEquiv.ofBijective L hbij
-  have hx' := isUnivChart_sub hx Le
-  refine ⟨fun m => spMap (jetSub Le.toLinearMap m) ≫ x m, hx', fun j => Eq.symm ?_⟩
-  rw [← Category.assoc, spMap_comp, dualLift_comp_jetSub]
-  have : Le.toLinearMap (Pi.single j 1) = M j := by
-    show L (Pi.single j 1) = M j
-    rw [hL]
+  let sub {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) :
+      JetR R (Fin b) m →ₐ[R] JetR R (Fin a) m :=
+    jetLift (R := R) (RingHom.ker (jetAug R (Fin a) m)) (ker_jetAug_pow (Fin a) m)
+      (fun k => ∑ i, T (Pi.single i 1) k • zR m i) (fun k => sum_smul_zR_mem m _)
+  have sub_zR {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) (k : Fin b) :
+      sub T m (zR m k) = ∑ i, T (Pi.single i 1) k • zR m i := by
+    exact jetLift_zR _ _ _ _ k
+  have sub_id {a : ℕ} (m : ℕ) :
+      sub (LinearMap.id : (Fin a → R) →ₗ[R] (Fin a → R)) m = AlgHom.id R _ := by
+    apply jet_ext
+    intro k
+    rw [sub_zR]
     simp [Pi.single_apply]
-  rw [this]
-  exact (tcoord_spec hx (v j) (htan j)).symm
+  have sub_comp {a b c : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R))
+      (S : (Fin c → R) →ₗ[R] (Fin a → R)) (m : ℕ) :
+      (sub S m).comp (sub T m) = sub (T.comp S) m := by
+    apply jet_ext
+    intro k
+    rw [AlgHom.comp_apply, sub_zR, sub_zR, map_sum]
+    simp_rw [map_smul, sub_zR, Finset.smul_sum, smul_smul]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl (fun j _ => ?_)
+    rw [← Finset.sum_smul]
+    congr 1
+    conv_rhs => rw [LinearMap.comp_apply, ← sum_single (S (Pi.single j 1))]
+    simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
+  have sub_aug {a b : ℕ} (T : (Fin a → R) →ₗ[R] (Fin b → R)) (m : ℕ) :
+      (jetAug R (Fin a) m).comp (sub T m) = jetAug R (Fin b) m := by
+    apply jet_ext
+    intro k
+    rw [AlgHom.comp_apply, sub_zR, jetAug_zR]
+    exact RingHom.mem_ker.mp (sum_smul_zR_mem m _)
+  let y (m : ℕ) := spMap (sub Le.toLinearMap m) ≫ x m
+  refine ⟨y, ⟨fun m => ?_, fun m => ?_, ?_⟩, fun j => Eq.symm ?_⟩
+  · have trunc_zR {k : ℕ} (j : Fin k) : jetTruncR R (Fin k) m (zR (m + 1) j) = zR m j := rfl
+    have ht : (jetTruncR R (Fin d) m).comp (sub Le.toLinearMap (m + 1)) =
+        (sub Le.toLinearMap m).comp (jetTruncR R (Fin n) m) := by
+      apply jet_ext
+      intro k
+      simp only [AlgHom.comp_apply, sub_zR, trunc_zR, map_sum, map_smul]
+    dsimp only [y]
+    rw [← Category.assoc, spMap_comp, ht, ← spMap_comp, Category.assoc, hx.1 m]
+  · have zero_zR {k : ℕ} (j : Fin k) : jetZeroR R (Fin k) m (zR m j) = zR 0 j := rfl
+    have hz : (jetZeroR R (Fin d) m).comp (sub Le.toLinearMap m) =
+        (sub Le.toLinearMap 0).comp (jetZeroR R (Fin n) m) := by
+      apply jet_ext
+      intro k
+      simp only [AlgHom.comp_apply, sub_zR, zero_zR, map_sum, map_smul]
+    dsimp only [y]
+    rw [← Category.assoc, spMap_comp, hz, ← spMap_comp, Category.assoc, hx.2.1 m, comp_one']
+  · intro A _ _ aug m hA w hw
+    obtain ⟨ψ, ⟨hψaug, hψw⟩, hψunique⟩ := hx.2.2 A aug m hA w hw
+    have hforward : (sub Le.symm.toLinearMap m).comp (sub Le.toLinearMap m) = AlgHom.id R _ := by
+      rw [sub_comp, LinearEquiv.comp_symm, sub_id]
+    have hinverse : (sub Le.toLinearMap m).comp (sub Le.symm.toLinearMap m) = AlgHom.id R _ := by
+      rw [sub_comp, LinearEquiv.symm_comp, sub_id]
+    refine ⟨ψ.comp (sub Le.symm.toLinearMap m), ⟨?_, ?_⟩, ?_⟩
+    · rw [← AlgHom.comp_assoc, hψaug, sub_aug]
+    · dsimp only [y]
+      rw [← Category.assoc, spMap_comp, AlgHom.comp_assoc, hforward, AlgHom.comp_id]
+      exact hψw
+    · rintro φ ⟨hφaug, hφw⟩
+      have hφ : φ.comp (sub Le.toLinearMap m) = ψ := by
+        apply hψunique
+        refine ⟨?_, ?_⟩
+        · rw [← AlgHom.comp_assoc, hφaug, sub_aug]
+        · dsimp only [y] at hφw
+          rw [hφw, ← Category.assoc, spMap_comp]
+      rw [← hφ, AlgHom.comp_assoc, hinverse, AlgHom.comp_id]
+  · have hLj : Le.toLinearMap (Pi.single j 1) = M j := by
+      show L (Pi.single j 1) = M j
+      rw [hL]
+      simp [Pi.single_apply]
+    have hdual : (dualLift (Pi.single j 1)).comp (sub Le.toLinearMap 1) = dualLift (M j) := by
+      apply jet_ext
+      intro k
+      rw [AlgHom.comp_apply, sub_zR, dualLift_zR, map_sum]
+      simp_rw [map_smul, dualLift_zR]
+      simp [Pi.single_apply, ← hLj]
+    dsimp only [y]
+    rw [← Category.assoc, spMap_comp, hdual]
+    exact (tcoord_spec hx (v j) (htan j)).symm
 
 theorem basis_of_chart {n : ℕ} {x : ∀ m : ℕ, sp (R₀ := R) (JetR R (Fin n) m) ⟶ G} (hx : IsUnivChart G n x) :
     IsLieBasis (G := G) (fun i : Fin n => (spMap (dualLift (Pi.single i 1)) ≫ x 1 : epsR R ⟶ G)) := by

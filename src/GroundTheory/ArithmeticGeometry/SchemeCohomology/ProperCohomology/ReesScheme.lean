@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesSubmodule
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackGamma
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ReesSubmodule
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.PullbackGamma
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -60,27 +65,23 @@ section Rings
 
 variable {A : Type u} [CommRing A] {I : Ideal A} {X : Scheme.{u}} [X.Over (Spec (.of A))]
 
-variable (X) in
 
+variable (X) in
 def algV (V : X.Opens) : A →+* Γ(X, V) :=
   ((X ↘ Spec (.of A)).appLE ⊤ V le_top).hom.comp (Scheme.ΓSpecIso (.of A)).inv.hom
 
-variable {V : X.Opens} (hV : IsAffineOpen V)
-
 variable (I) in
-
 def reesInr (V : X.Opens) : CommRingCat.of (reesAlgebra I) ⟶ Γ(reesScheme I X, reesPr I X ⁻¹ᵁ V) :=
   (Scheme.ΓSpecIso (.of (reesAlgebra I))).inv ≫ (reesSnd I X).appLE ⊤ _ le_top
 
-variable (I) in
 
+variable (I) in
 def polyInr (V : X.Opens) : CommRingCat.of (Polynomial A) ⟶
     Γ(reesPolyScheme I X, reesPolyMap I X ⁻¹ᵁ (reesPr I X ⁻¹ᵁ V)) :=
   (Scheme.ΓSpecIso (.of (Polynomial A))).inv ≫ (reesPolySnd I X).appLE ⊤ _ le_top
 
-include hV in
 
-theorem isPushout_rees :
+theorem isPushout_rees {V : X.Opens} (hV : IsAffineOpen V) :
     IsPushout (CommRingCat.ofHom (algV X V)) (CommRingCat.ofHom (algebraMap A (reesAlgebra I)))
       ((reesPr I X).app V) (reesInr I V) := by
   refine (isPushout_app_of_isPullback (isPullback_rees I X) hV).of_iso
@@ -91,9 +92,8 @@ theorem isPushout_rees :
   · simp
   · simp [reesInr]
 
-include hV in
 
-theorem isPushout_reesPoly :
+theorem isPushout_reesPoly {V : X.Opens} (hV : IsAffineOpen V) :
     IsPushout (CommRingCat.ofHom (algV X V)) (CommRingCat.ofHom (Polynomial.C))
       ((reesPr I X).app V ≫ (reesPolyMap I X).app _) (polyInr I V) := by
   have h1 := (isPushout_app_of_isPullback (isPullback_rees I X) hV).flip

@@ -1,7 +1,11 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifBijectiveOfParam
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ToFirst
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifBijectiveOfParam
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+
+@[expose] public section
 
 noncomputable section
 namespace PositivityTheory.HtPt.Cd
@@ -41,7 +45,8 @@ theorem comb_iff (a : Fin d → S) (w : Sp (DualNumber S) ⟶ t.G.left) :
     IsCombAtG t x g.tg a w ↔ (tv (gd g a)).left = w := by
   have e : g.tg = fun i => (tv (gd g (Pi.single ((Equiv.refl (Fin d)) i) 1))).left := funext (tg_eq g)
   have e₂ : ∑ i, a i • gd g (Pi.single i 1) = gd g a := by
-    simp only [← map_smul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum]
     congr 1
     funext k; simp [Pi.single_apply]
   rw [e, ← e₂]
@@ -104,7 +109,7 @@ theorem aeval_inr {κ : Type} [Fintype κ] [DecidableEq κ] (c : κ → S) (P : 
       rw [MvPolynomial.coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero).symm]
     simp [this, TrivSqZeroExt.algebraMap_eq_inl]
   | add p q hp hq =>
-    rw [map_add, hp, hq]
+    rw [map_add (f := _), hp, hq]
     ext <;> simp [add_mul, Finset.sum_add_distrib]
   | mul_X p n hp =>
     have : ∀ s : κ, (p * MvPolynomial.X n).coeff (Finsupp.single s 1) =

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.IsMultMapUnivZero
+
+@[expose] public section
 
 noncomputable section
 

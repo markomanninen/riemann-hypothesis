@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.EvalIdFrameRowAct
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.NumericalIdentityScalar
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.EvalIdFrameRowAct
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -228,8 +232,8 @@ end Blocks
 
 end FrameUnitLemmas
 
-open FrameUnitLemmas in
 
+open FrameUnitLemmas in
 theorem xUnit_of (hS : XShape) : XUnit := by
   intro p _ X Kc _ _ Oc hO hp j L L'' g g' hL hL'' i0 hi0
   have hr : ∀ v, i0 v ≤ X.G.P.m + 1 := fun v => by
@@ -284,7 +288,7 @@ theorem xUnit_of (hS : XShape) : XUnit := by
     simp only [map_prod, map_zpow₀]
     exact Sim.prod hp _ _ _ fun b _ => (hg b).zpow _
   have h5 : Sim Oc (p : Kc) (algebraMap X.G.Kf Kc
-      (∏ b : BX X, (mF X (j + 1) b (g' b.1) * DgX X X.G.Kf j i0 b.1).det ^ (-(eJ X (j + 1) b.1 b.2))))
+      (∏ b : BX X, (mF X (j + 1) b (g' b.1 : Matrix _ _ (X.G.P.Qq b.1)) * DgX X X.G.Kf j i0 b.1).det ^ (-(eJ X (j + 1) b.1 b.2))))
       (∑ b : BX X, -(eJ X (j + 1) b.1 b.2) * (ordP (X.G.P.W b.1) p
         (g' b.1 : Matrix (Fin ((X.Pj (j + 1)).m + 1)) (Fin ((X.Pj (j + 1)).m + 1)) (X.G.P.Qq b.1)).det + -(i0 b.1 : ℤ))) := by
     simp only [map_prod, map_zpow₀]

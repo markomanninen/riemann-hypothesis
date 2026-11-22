@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+
+@[expose] public section
 
 open Formalism.BasicNotions ReciprocityTheory.Aut Formalism.AUTREP
 
@@ -12,30 +16,6 @@ theorem AVTied.eigen {D : D7} {M : MtFam D} (A : AVTied D M) (i : D.nd.Loc) (P :
     NG.tN (M.loc i).J s ϖ k ((M.loc i).real y) =
       iotaOC D i ((D.nd.hT i w k : D.nd.X i → D.nd.O i) x) • (M.loc i).real y :=
   (A.ptV i P x).1 hx w k s ϖ hw hc hu k1 k2 y hy
-
-def MtReal.transfer {D : D7} {μ μ' : D.what₂.Tup} {j j' : ℕ} (m : MtReal D μ j)
-    (φ : D.what₂.Mt μ' j' ≃ₗ[ℂ] D.what₂.Mt μ j) : MtReal D μ' j' where
-  wt := m.wt
-  J := m.J
-  χ := m.χ
-  J_open := m.J_open
-  real := m.real.comp φ.toLinearMap
-  real_inj := m.real_inj.comp φ.injective
-  real_range := by
-    rw [LinearMap.range_comp, LinearEquiv.range, Submodule.map_top, m.real_range]
-
-theorem MtReal.comap_transfer {D : D7} {μ : D.what₂.Tup} {j : ℕ} (m : MtReal D μ j)
-    (φ : D.what₂.Mt μ j ≃ₗ[ℂ] D.what₂.Mt μ j) (S : Submodule ℂ (GAf D.host.E D.R.nV → m.wt.W)) :
-    S.comap (MtReal.transfer m φ).real = (S.comap m.real).map φ.symm.toLinearMap := by
-  ext y
-  simp only [MtReal.transfer, Submodule.mem_comap, Submodule.mem_map]
-  constructor
-  · intro h
-    exact ⟨φ y, h, by simp⟩
-  · rintro ⟨z, hz, rfl⟩
-    show m.real (φ (φ.symm z)) ∈ S
-    rw [LinearEquiv.apply_symm_apply]
-    exact hz
 
 namespace NG
 
@@ -75,10 +55,14 @@ theorem AlgWt.Iso.trans {a b c : AlgWt L n} (h : a.Iso b) (h' : b.Iso c) : a.Iso
   obtain ⟨T', e'⟩ := h'
   exact ⟨T.trans T', fun γ x => by simp [e, e']⟩
 
-theorem AutRep.iso_equivalence : Equivalence (AutRep.Iso (L := L) (n := n)) where
-  refl π := ⟨AlgWt.Iso.refl _, IsoRep.refl _⟩
-  symm h := ⟨h.1.symm, h.2.symm (fun k f hf => (by rename_i x _; exact x.irrS.1.stable k f hf))⟩
-  trans h h' := ⟨h.1.trans h'.1, h.2.trans h'.2⟩
+theorem AutRep.iso_equivalence : Equivalence (AutRep.Iso (L := L) (n := n)) := by
+  constructor
+  · intro π
+    exact ⟨AlgWt.Iso.refl π.toAlgWt, IsoRep.refl π.S⟩
+  · intro π π' h
+    exact ⟨AlgWt.Iso.symm h.1, IsoRep.symm π.irrS.1.stable h.2⟩
+  · intro π π' π'' h h'
+    exact ⟨AlgWt.Iso.trans h.1 h'.1, IsoRep.trans h.2 h'.2⟩
 
 end NG
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShortLatticeUnitarize.Unitarize
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ private theorem uop_mem (hR : HkReps) (hK : KcTop) {V : Type} [AddCommGroup V] [
   have e : k = k * (locGL F 2 w kw)⁻¹ * locGL F 2 w kw := by rw [inv_mul_cancel_right]
   have h3 : ρ (locGL F 2 w kw) (Uop w (ρ.comp (locGL F 2 w)) (c w) x) = Uop w (ρ.comp (locGL F 2 w)) (c w) x := h1 kw hkw
   have h4 : ρ (k * (locGL F 2 w kw)⁻¹) x = x := hx _ hm
-  rw [e, map_mul, Module.End.mul_apply, h3, h2, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_mul, Module.End.mul_apply, h3, h2, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   change ρ _ (ρ (locGL F 2 w (a i)) x) = ρ (locGL F 2 w (a i)) x
   rw [← Module.End.mul_apply, ← map_mul, comm_of_triv _ ht, map_mul, Module.End.mul_apply, h4]
@@ -58,7 +63,8 @@ theorem UpperTheory.V.Sd.Wc.hkComm :
   obtain ⟨N', a', -, ha'⟩ := hR F w' (c w')
   rw [(ha V _ _ (fix_loc hK ρ c (uop_mem hR hK ρ c hx w') w)).2, (ha' V _ _ (fix_loc hK ρ c (uop_mem hR hK ρ c hx w) w')).2,
     (ha V _ _ (fix_loc hK ρ c hx w)).2, (ha' V _ _ (fix_loc hK ρ c hx w')).2]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   change ρ (locGL F 2 w (a i)) (ρ (locGL F 2 w' (a' j)) x) = ρ (locGL F 2 w' (a' j)) (ρ (locGL F 2 w (a i)) x)

@@ -1,14 +1,19 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 open NumberField IsDedekindDomain
 
 namespace GlobalTheory
 
 theorem mem_ratSpan_of_isLattice_pi (E : Type) [Field E] [NumberField E] (n : ℕ)
-    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ)
+    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ)
     (S : Submodule ℚ (Fin n → E)) (hS : ∀ x ∈ Λ, x ∈ S) (x : Fin n → E) : x ∈ S := by
   have hx : x ∈ Submodule.span E (Λ : Set (Fin n → E)) := by
-    rw [Submodule.IsLattice.span_eq_top (self := hΛ)]; trivial
+    rw [Submodule.IsFullLattice.span_eq_top (self := hΛ)]; trivial
   have key : ∀ c : E, c • x ∈ S := by
     induction hx using Submodule.span_induction with
     | mem y hy =>
@@ -25,11 +30,11 @@ theorem mem_ratSpan_of_isLattice_pi (E : Type) [Field E] [NumberField E] (n : �
   simpa using key 1
 
 theorem exists_intGenerators_card_eq_of_isLattice_pi (E : Type) [Field E] [NumberField E] (n : ℕ)
-    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsLattice E Λ) :
+    (Λ : Submodule (𝓞 E) (Fin n → E)) (hΛ : Submodule.IsFullLattice E Λ) :
     ∃ u : Fin (Module.finrank ℚ E * n) → Fin n → E,
       (∀ x, x ∈ Λ ↔ x ∈ Submodule.span ℤ (Set.range u)) ∧ Submodule.span ℚ (Set.range u) = ⊤ := by
   classical
-  have : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.2 (Submodule.IsLattice.fg (self := hΛ))
+  have : Module.Finite (𝓞 E) Λ := Module.Finite.iff_fg.2 (Submodule.IsLattice.fg (self := hΛ.toIsLattice))
   have : Module.Finite ℤ Λ := Module.Finite.trans (𝓞 E) Λ
   have : Module.Free ℤ Λ := inferInstance
   let b := Module.Free.chooseBasis ℤ Λ

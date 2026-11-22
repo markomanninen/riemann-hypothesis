@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
-import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
-import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.GeomIntSelf
+public import Development.AbelianVarietyTheory.Statements.FundamentalDomains.AtOfNumberField
+public import Development.AbelianVarietyTheory.Statements.ThetaLevelCharacters.MemThetaLevelCharDimZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsEquivalenceFiniteEtaleBaseChangeResidueField
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ namespace GlobalTheory.SymLin
 
 section Alg
 
-open Polynomial in
 
+open Polynomial in
 theorem exists_sqrt_one (R : Type) [CommRing R] [Algebra ℚ R] (a : Rˣ) :
     ∃ (R₁ : Type) (_ : CommRing R₁) (_ : Algebra R R₁), (Module.Finite R R₁ ∧ Algebra.Etale R R₁ ∧
       Module.FaithfullyFlat R R₁) ∧ ∃ b : R₁, b ^ 2 = algebraMap R R₁ a := by
@@ -47,7 +51,7 @@ theorem exists_sqrt_one (R : Type) [CommRing R] [Algebra ℚ R] (a : Rˣ) :
     exact (h2.map _).mul hru
   have hb := (AdjoinRoot.powerBasis' hf).basis
   have hd : (AdjoinRoot.powerBasis' hf).dim = 2 := by
-    rw [AdjoinRoot.powerBasis'_dim]; exact natDegree_X_pow_sub_C
+    rw [AdjoinRoot.powerBasis'_dim]; exact natDegree_X_pow_sub_C _
   have : Nonempty (Fin (AdjoinRoot.powerBasis' hf).dim) := by rw [hd]; infer_instance
   exact ⟨AdjoinRoot f, inferInstance, inferInstance, ⟨Module.Finite.of_basis hb, het,
     Module.FaithfullyFlat.of_linearEquiv R _ hb.repr⟩, _, hroot⟩
@@ -172,8 +176,8 @@ theorem pl_uv (h : Y' ⟶ Y) (a : Γ(Y, ⊤)ˣ) : pl h (uv M Y a) = uv M Y' (pul
   funext Z r z J
   exact (gm_pull r h z ⊤ trivial a).symm
 
-open FreeAbelianGroup in
 
+open FreeAbelianGroup in
 def Rep (M : LB X) (D : FreeAbelianGroup (Y ⟶ X)) (f : Vals M Y) : Prop :=
   ∃ (K : Type) (_ : Fintype K) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (t : LB.Gen (LB.LinComb M φ ε)),
     t.IsGen ∧ ∑ k, ε k • of (φ k) = D ∧ vals t = f
@@ -220,7 +224,8 @@ theorem Rep.out (hM : M.IsLB) {K : Type} [Fintype K] (φ : K → (Y ⟶ X)) (ε 
   obtain ⟨K', _, φ', ε', t', ht', e, rfl⟩ := h
   obtain ⟨t, ht, hv⟩ := exists_gen hM (φ' := φ) (ε' := ε) (fun U _ h => by
     have := congrArg (FreeAbelianGroup.lift fun ψ => Additive.ofMul (h ψ)) e
-    simp only [map_sum, map_zsmul, lift_apply_of] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, lift_apply_of] at this
     apply Additive.ofMul.injective
     simpa only [ofMul_prod, ofMul_zpow] using this) t' ht'
   exact ⟨t, ht, funext fun Z => funext fun r => funext fun z => funext fun J => hv Z r z J.1 J.2⟩
@@ -269,8 +274,8 @@ open FreeAbelianGroup GlobalTheory.CechPic
 
 variable {S : Scheme.{0}} {A : Over S} [GrpObj A] [IsCommMonObj A]
 
-omit [IsCommMonObj A] in
 
+omit [IsCommMonObj A] in
 abbrev tr (h : 𝟙_ (Over S) ⟶ A) : A ⟶ A := (toUnit A ≫ h) * 𝟙 A
 
 omit [IsCommMonObj A] in
@@ -413,9 +418,9 @@ theorem core (hG : Out.GlobalFnsSt) (hA : IsAbelianScheme A) {M : LB A.left} (hM
 
 end Core
 
+
 open FreeAbelianGroup in
 set_option maxHeartbeats 1000000 in
-
 theorem main : Out.Laws → ∀ (h k : ℕ) (o : Type) [CommRing o] (ζ : o) (R : Type) [CommRing R] [Algebra ℚ R] [IsNoetherianRing R] (β : o →+* R) (c : SiegPre h k ζ (spMap β)) (g : ℕ) (i₀ : (Multiplicative (Fin (2 * g) → ZMod 2)) →* (𝟙_ (Over (Sp R)) ⟶ c.A)), c.Principal → ∃ (R₁ : Type) (_ : CommRing R₁) (_ : Algebra R R₁), (Module.Finite R R₁ ∧ Algebra.Etale R R₁ ∧ Module.FaithfullyFlat R R₁) ∧ ∀ (A : Over (Sp R₁)) [GrpObj A] [IsCommMonObj A] (φ : A.left ⟶ c.A.left) (i : (Multiplicative (Fin (2 * g) → ZMod 2)) →* (𝟙_ (Over (Sp R₁)) ⟶ A)) (L : LB A.left), IsGrpPullback A c.A (spMap (algebraMap R R₁)) φ → (∀ a, (i a).left ≫ φ = spMap (algebraMap R R₁) ≫ (i₀ a).left) → L = lbPow (c.diag.pull φ) 2 → ∃ (u : ∀ c, LB.Gen (LB.LinComb L (K := Fin 2) ![𝟙 A.left, ((toUnit A ≫ i c) * 𝟙 A).left] ![1, -1])) (j : LB.Gen (LB.LinComb L (K := Fin 2) ![𝟙 A.left, (GrpObj.inv : A ⟶ A).left] ![1, -1])), (∀ c, (u c).IsGen) ∧ (∀ c c', LB.Gen.Corr L _ _ _ _ (u (c * c')) (LB.mulGen L _ _ _ _ (u c) (LB.pullGen L _ _ (u c') ((toUnit A ≫ i c) * 𝟙 A).left))) ∧ j.IsGen ∧ ∀ c (T : Over (Sp R₁)) (x : T ⟶ A) (z : T.left) (J), Good L z J → val (u c) x.left z J * val j ((toUnit T ≫ i c) * x).left z J = val j x.left z J * val (u c⁻¹) (x⁻¹).left z J := by
   intro hL h k o _ ζ R _ _ _ β c g i₀ hc
   have hM : c.diag.IsLB := pull_isLB c.isLB _
@@ -467,7 +472,7 @@ theorem main : Out.Laws → ∀ (h k : ℕ) (o : Type) [CommRing o] (ζ : o) (R 
     ⟨(map_one (uv c.diag A.left) ▸ rep_uv 1).form (by rw [map_one, tr_one, Over.id_left, Category.id_comp]; abel),
       by simp⟩
     (fun q q' f f' hf hf' => ⟨(hf.1.mul (hf'.1.pull (tr (i q)).left)).form (by
-        simp only [map_add, map_sub, map_of_apply]
+        simp only [map_add (f := _), map_sub, map_of_apply]
         rw [← Category.assoc, ← Over.comp_left, tr_tr, mul_comm q, map_mul]; abel), by
       have e : pl (GrpObj.inv : A ⟶ A).left (ρ q f') = ρ q (pl (GrpObj.inv : A ⟶ A).left f') := by
         rw [ρe, ρe, pl_pl, pl_pl, ← Over.comp_left, ← Over.comp_left, tr_inv (ii q)]
@@ -475,7 +480,7 @@ theorem main : Out.Laws → ∀ (h k : ℕ) (o : Type) [CommRing o] (ζ : o) (R 
         map_mul, e, _root_.mul_assoc]⟩)
     (fun n => pl φ (v n) * pl A.hom (uv _ _ (b n)⁻¹))
     (fun n => ⟨(((rv n).pull φ).mul ((rep_uv _).pull A.hom)).form (by
-        simp only [map_add, map_sub, map_of_apply, map_zero, htr, Category.comp_id, add_zero]), by
+        simp only [map_add (f := _), map_sub, map_of_apply, map_zero, htr, Category.comp_id, add_zero]), by
       rw [ρe, ρφ, map_mul, ρb, iφ, mul_right_comm, ← map_mul, h₃, map_mul, _root_.mul_assoc]⟩)
     (fun n => by
       rw [ρe, map_mul, ρb, ρφ, _root_.mul_mul_mul_comm, ← map_mul, h₁, pl_pl, hφ.1.w, ← pl_pl, pl_uv (spMap _), ← hb',
@@ -506,7 +511,7 @@ theorem main : Out.Laws → ∀ (h k : ℕ) (o : Type) [CommRing o] (ζ : o) (R 
     exact ⟨t', ht', (congrArg _ e').trans e⟩
   choose U hU eU using fun q => down _ _ (hu q).1
   obtain ⟨J₀, hJ₀, eJ⟩ := down (GrpObj.inv : A ⟶ A).left (pl φ j) ((rj.pull φ).form (by
-    simp only [map_add, map_sub, map_of_apply, hinv, Category.comp_id]))
+    simp only [map_add (f := _), map_sub, map_of_apply, hinv, Category.comp_id]))
   have r₂ : ∀ {x : A.left ⟶ A.left} {t : LB.Gen (LB.LinComb (lbPow (c.diag.pull φ) 2) (K := Fin 2) ![𝟙 A.left, x] ![1, -1])},
       t.IsGen → ∀ y : A.left ⟶ A.left, Rep _ (of y - of (y ≫ x)) (pl y (vals t)) := fun ht y =>
     ((rep_vals ht).pull y).form (by simp [Fin.sum_univ_two, sub_eq_add_neg])

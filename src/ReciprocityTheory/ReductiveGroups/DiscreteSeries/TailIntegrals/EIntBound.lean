@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.ScaleInt
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HeisenbergMapContinuous
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InductiveHeisenbergInputs
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.ScaleInt
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HeisenbergMapContinuous
+
+@[expose] public section
 
 noncomputable section
 

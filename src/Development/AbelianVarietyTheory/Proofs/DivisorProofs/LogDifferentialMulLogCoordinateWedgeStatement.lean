@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedge
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDifferentialMulLogCoordinateWedge
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.LogDR
 
 set_option maxHeartbeats 1000000 in

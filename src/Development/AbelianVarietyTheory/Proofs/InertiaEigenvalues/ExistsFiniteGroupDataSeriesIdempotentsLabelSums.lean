@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.CoeffRingsHaveRootsOfUnity
+
+@[expose] public section
 
 open Formalism Formalism.MainNotions Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.L2 NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module Polynomial GlobalTheory.Pass GlobalTheory.PendOf
 
@@ -157,8 +161,8 @@ def LabQ (a : ℕ) (x : GA g a) (f : (ZMod g)[X]) : Prop :=
   (f.Monic ∧ f.natDegree = a ∧ f.coeff 0 ≠ 0) ∧
     ∀ h : a = r, e f * cast (congrArg (GA g) h) x = cast (congrArg (GA g) h) x
 
-open Classical in
 
+open Classical in
 def labF (a : ℕ) (x : GA g a) : (ZMod g)[X] :=
   if h : ∃ f, LabQ g r e a x f then h.choose else (X - C 1) ^ a
 
@@ -206,7 +210,7 @@ theorem lzE_ser (hidem : ∀ f, e f * e f = e f) (hcen : ∀ f a, e f * a = a * 
       have hs := hex.choose_spec.2 rfl
       simp only [cast_eq] at hs
       unfold labF
-      rw [dif_pos hex]
+      rw [dite_eq_left hex]
       by_contra hne
       exact (decS_spec g r).1.2.2.1 t ht (hs.symm.trans (hj _ hne))
     rw [hlab]

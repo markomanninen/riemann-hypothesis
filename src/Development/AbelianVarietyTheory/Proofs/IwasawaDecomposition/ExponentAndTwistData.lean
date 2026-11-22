@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,8 +82,8 @@ def rhoR (hR : ∀ j, 1 ≤ j → j ≤ D.R.m → RhoStab S j) (j : ℕ) : S.G �
     change (S.A j).ρ (g * h) (x : S.WL j) = (S.A j).ρ g ((S.A j).ρ h (x : S.WL j))
     rw [map_mul]; rfl
 
-open Classical in
 
+open Classical in
 def cR (hC : ∀ j, 1 ≤ j → j ≤ D.R.m → ChiInLL0 S j) (j : ℕ) (g : S.G) : ↥D.LL0 :=
   if h : 1 ≤ j ∧ j ≤ D.R.m then chiL S j (hC j h.1 h.2) g else 1
 
@@ -142,15 +146,15 @@ def BT (hR : ∀ j, 1 ≤ j → j ≤ D.R.m → RhoStab S j) (hC : ∀ j, 1 ≤ 
     Submodule (T.O i) (FmT D T S i j b) :=
   BsupT D T S i j b ⊓ (V0T D T S hR hC θ i j b).restrictScalars (T.O i)
 
-open Classical in
 
+open Classical in
 def cHkT (i : T.Tw) (b : Bool) (P : PlE D.host) : (T.O i)ˣ :=
   if h : ∃ σ : Formalism.ConjugateSelfDual.G D.host.E D.nd.Om, IsFrob (F := D.host.E) (D.nd.plOm.1 P) (normV P) σ then
     Units.map (algebraMap (T.O0 i) (T.O i)).toMonoidHom (if b then T.delta i h.choose else (T.delta i h.choose)⁻¹)
   else 1
 
-open Classical in
 
+open Classical in
 def hLr (In : RatIn D S) (j k : ℕ) (P : PlE D.host) : Module.End S.Ks ↥(WKr D S j) :=
   if h : 1 ≤ j ∧ j ≤ D.R.m then
     ((In.hL j k P).restrictScalars S.Ks).restrict (p := WKr D S j) (q := WKr D S j) (fun x hx => by
@@ -179,8 +183,8 @@ def HkCond (i : T.Tw) (j k : ℕ) (P : PlE D.host) : Prop :=
 def HkStab : Prop :=
   ∀ i j b k P, HkCond D T i j k P → ∀ x ∈ BI D T S In i j b, hkT D T S In i j b k P x ∈ BI D T S In i j b
 
-open Classical in
 
+open Classical in
 def hkB (hst : HkStab D T S In) (i : T.Tw) (j : ℕ) (b : Bool) (k : ℕ) (P : PlE D.host) :
     Module.End (T.O i) ↥(BI D T S In i j b) :=
   if h : HkCond D T i j k P then
@@ -191,7 +195,7 @@ def hkB (hst : HkStab D T S In) (i : T.Tw) (j : ℕ) (b : Bool) (k : ℕ) (P : P
 theorem hkB_zero (hst : HkStab D T S In) (i : T.Tw) (j : ℕ) (b : Bool) (P : PlE D.host) :
     hkB D T S In hst i j b 0 P = 1 := by
   unfold hkB
-  rw [dif_neg]
+  rw [dite_eq_right]
   intro h
   exact absurd h.2.2.1 (by omega)
 
@@ -265,9 +269,9 @@ def EIdem : Prop :=
   eL D * eL D = eL D ∧ ∀ g : G0g D.nd, eL D * MonoidAlgebra.of _ _ g = MonoidAlgebra.of _ _ g * eL D
 
 theorem eAlgT_eq (i : T.Tw) (b : Bool) :
-    eAlgT D T i b = MonoidAlgebra.mapRangeRingHom (G0g D.nd) (readT D T i b) (eL D) := by
+    eAlgT D T i b = MonoidAlgebra.mapRingHom (G0g D.nd) (readT D T i b) (eL D) := by
   refine MonoidAlgebra.ext (Finsupp.ext fun g => ?_)
-  simp [eAlgT, eL, MonoidAlgebra.mapRangeRingHom]
+  simp [eAlgT, eL, MonoidAlgebra.coeff_ofCoeff]
 
 theorem eAlgT_idem (he : EIdem D) (i : T.Tw) (b : Bool) : eAlgT D T i b * eAlgT D T i b = eAlgT D T i b := by
   rw [eAlgT_eq, ← map_mul, he.1]
@@ -275,11 +279,11 @@ theorem eAlgT_idem (he : EIdem D) (i : T.Tw) (b : Bool) : eAlgT D T i b * eAlgT 
 theorem eAlgT_central (he : EIdem D) (i : T.Tw) (b : Bool) (x : MonoidAlgebra (FractionRing (T.O i)) (G0g D.nd)) :
     eAlgT D T i b * x = x * eAlgT D T i b := by
   rw [eAlgT_eq]
-  refine MonoidAlgebra.induction_on (motive := fun x => MonoidAlgebra.mapRangeRingHom (G0g D.nd) (readT D T i b) (eL D) * x =
-    x * MonoidAlgebra.mapRangeRingHom (G0g D.nd) (readT D T i b) (eL D)) x (fun g => ?_) (fun x y hx hy => ?_) (fun r x hx => ?_)
-  · have h := congrArg (MonoidAlgebra.mapRangeRingHom (G0g D.nd) (readT D T i b)) (he.2 g)
-    have hs : MonoidAlgebra.mapRangeRingHom (G0g D.nd) (readT D T i b) (MonoidAlgebra.of _ _ g) = MonoidAlgebra.of _ _ g := by
-      simp [MonoidAlgebra.of_apply, MonoidAlgebra.mapRangeRingHom]
+  refine MonoidAlgebra.induction_on (motive := fun x => MonoidAlgebra.mapRingHom (G0g D.nd) (readT D T i b) (eL D) * x =
+    x * MonoidAlgebra.mapRingHom (G0g D.nd) (readT D T i b) (eL D)) x (fun g => ?_) (fun x y hx hy => ?_) (fun r x hx => ?_)
+  · have h := congrArg (MonoidAlgebra.mapRingHom (G0g D.nd) (readT D T i b)) (he.2 g)
+    have hs : MonoidAlgebra.mapRingHom (G0g D.nd) (readT D T i b) (MonoidAlgebra.of _ _ g) = MonoidAlgebra.of _ _ g := by
+      simp [MonoidAlgebra.of_apply]
     rw [map_mul, map_mul, hs] at h
     exact h
   · rw [mul_add, add_mul, hx, hy]
@@ -324,8 +328,8 @@ structure LevT (i : T.Tw) (k : ℕ) where
   redG : ∀ kv : (Σ kk : Fin 2, D.nd.PlG kk),
     (sp (NX.pG D kv)).v.adicCompletionIntegers (maximalRealSubfield D.host.E) →+* ZMod (D.host.g kv.1)
 
-open Classical in
 
+open Classical in
 def MtSubT (wt : WtData D T) (i : T.Tw) (j : ℕ) (b : Bool) (k : ℕ) (Good : LevT D T i k → Prop) :
     Submodule (FractionRing (T.Ok i k)) (GAf D.host.E D.R.nV → WkT D T wt i j b k) :=
   if h : ∃ L : LevT D T i k, Good L ∧
@@ -337,9 +341,9 @@ theorem fd_MtSubT (wt : WtData D T) (i : T.Tw) (j : ℕ) (b : Bool) (k : ℕ) (G
     FiniteDimensional (FractionRing (T.Ok i k)) ↥(MtSubT D T wt i j b k Good) := by
   by_cases h : ∃ L : LevT D T i k, Good L ∧
       FiniteDimensional (FractionRing (T.Ok i k)) ↥(NX.TypeSpF D.host.E D.R.nV (FractionRing (T.Ok i k)) (rhoKT D T wt i j b k) L.J L.χ)
-  · rw [MtSubT, dif_pos h]
+  · rw [MtSubT, dite_eq_left h]
     exact h.choose_spec.2
-  · rw [MtSubT, dif_neg h]
+  · rw [MtSubT, dite_eq_right h]
     infer_instance
 
 end Mt
@@ -350,14 +354,14 @@ variable (D : D7) (T : TwR D.LL0 D.nd)
 
 attribute [local instance] algKkT
 
-open Classical in
 
+open Classical in
 def psiUTotT (θ : ∀ kk : Fin 2, Multiplicative (ZMod (D.host.g kk)) →* (↥D.LL0)ˣ) (i : T.Tw) (b : Bool) (u : G0g D.nd) :
     FractionRing (T.O i) :=
   if h : u ∈ Formalism.IndefR.NX.U D.nd then ((psiUT D T θ i b ⟨u, h⟩ : (FractionRing (T.O i))ˣ) : FractionRing (T.O i)) else 1
 
-open Classical in
 
+open Classical in
 def gValT (θ : ∀ kk : Fin 2, Multiplicative (ZMod (D.host.g kk)) →* (↥D.LL0)ˣ) (i : T.Tw) (k : ℕ) (b : Bool)
     (kv : Σ k : Fin 2, D.nd.PlG k) (s : SplitPlace D.host.E)
     (red : s.v.adicCompletionIntegers (maximalRealSubfield D.host.E) →+* ZMod (D.host.g kv.1))
@@ -379,8 +383,8 @@ def TauTameT (i : T.Tw) (j : ℕ) (b : Bool) (kv : Σ kk : Fin 2, D.nd.PlG kk) :
     (((x : ZMod (D.host.g kv.1)).val : 𝓞 D.host.E) - u) ∈ (NX.pG D kv).asIdeal →
     ((τ x : (FractionRing (T.O i))ˣ) : FractionRing (T.O i)) = baseCoeffToFractionRing D T i (NX.tameVal (T.chi1 i j b) (NX.pG D kv) 1 u).1
 
-open Classical in
 
+open Classical in
 def tauT (i : T.Tw) (j : ℕ) (b : Bool) (kv : Σ kk : Fin 2, D.nd.PlG kk) :
     (ZMod (D.host.g kv.1))ˣ →* (FractionRing (T.O i))ˣ :=
   if h : TauTameT D T i j b kv then h.choose else 1
@@ -461,9 +465,9 @@ def eHT (i : T.Tw) (j : ℕ) (b : Bool) : Module.End (FractionRing (T.O i)) (FmT
 
 theorem eHT_idem (i : T.Tw) (j : ℕ) (b : Bool) : eHT D T S i j b * eHT D T S i j b = eHT D T S i j b := one_mul _
 
+
 set_option maxHeartbeats 800000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 def mkEx (In : RatIn D S) (hE : IsEmpty D.nd.Loc) (hfg : ∀ i j b, (BsupT D T S i j b).FG) (hst : HkStab D T S In) (sd : SigData D T)
     (rho : RhoFam D T) (hrho : ∀ i σ b, Continuous fun g =>
       ((rho i σ b g : GL (Fin D.R.r) (T.O0 i)) : Matrix (Fin D.R.r) (Fin D.R.r) (T.O0 i)))
@@ -540,29 +544,6 @@ theorem hkT_zero (In : RatIn D S) (i : T.Tw) (j : ℕ) (b : Bool) (P : PlE D.hos
 def kEmbT (i : T.Tw) (b : Bool) (t : D.what₂.Tau) : D.host.E →+* FractionRing (T.O i) :=
   (readT D T i b).comp ((NX.embEL0 D).comp
     (D.host.sigmaOf ((D.eTau t : D.R.Psi) : D.R.GG) : D.host.E →+* D.host.E))
-
-def SigData.unit (hm : 1 ≤ D.R.m) (σ₀ : D.what₂.FT) : SigData D T where
-  Sig := fun _ => Unit
-  jS := fun _ _ => 1
-  jS_range := fun _ _ => ⟨le_rfl, hm⟩
-  side := fun _ _ => true
-  hEig := fun _ _ _ _ => 1
-  rowS := fun _ _ => σ₀
-
-def WtData.triv : WtData D T where
-  Wt := fun i _ _ => FractionRing (T.O i)
-  rhoW := fun i _ _ => Representation.trivial (FractionRing (T.O i)) (GQ D.host.E D.R.nV) (FractionRing (T.O i))
-
-def LevT.ofPlaces (i : T.Tw) (k : ℕ) (sp : PlE D.host → SplitPlace D.host.E)
-    (redG : ∀ kv : (Σ kk : Fin 2, D.nd.PlG kk),
-      (sp (NX.pG D kv)).v.adicCompletionIntegers (maximalRealSubfield D.host.E) →+* ZMod (D.host.g kv.1)) :
-    LevT D T i k where
-  J := ⊤
-  χ := 1
-  QP := ∅
-  DP := ∅
-  sp := sp
-  redG := redG
 
 end Extra
 

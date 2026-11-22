@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LocSecPfB
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LocSecPfB
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

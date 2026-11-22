@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.DualWeylIn
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.DualWeylIn
+
+@[expose] public section
 
 open MvPolynomial
 

@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.ComplexMinusRealLineMeasureCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,14 +16,14 @@ open UpperTheory.Esk
 def mkP (t : ℂ) (h : t.im ≠ 0) : P := ⟨t, h⟩
 
 theorem extendHalfPlane_coe_point (f : P → ℂ) (z : P) : ext1 f z.1 = f z := by
-  unfold ext1; rw [dif_pos z.2]; rfl
+  unfold ext1; rw [dite_eq_left z.2]; rfl
 
 theorem extendHalfPlane_of_im_ne_zero (f : P → ℂ) {t : ℂ} (h : t.im ≠ 0) : ext1 f t = f (mkP t h) := by
-  unfold ext1; rw [dif_pos h]; rfl
+  unfold ext1; rw [dite_eq_left h]; rfl
 
 theorem extendMatrixByIdentityAlongIndices_mul (f g : P → ℂ) {t : ℂ} (h : t.im ≠ 0) :
     ext1 (fun w => g w * f w) t = g (mkP t h) * f (mkP t h) := by
-  unfold ext1; rw [dif_pos h]; rfl
+  unfold ext1; rw [dite_eq_left h]; rfl
 
 theorem cont_of_hol {f : P → ℂ} (hf : Hol1 f) : Continuous f := by
   have h1 : Continuous (fun z : P => ext1 f z.1) :=
@@ -138,7 +142,7 @@ theorem pt_eq (f : P → ℂ) (m : ℕ) {r θ : ℝ} (hr0 : 0 < r) (hr1 : r < 1)
     have := congrArg conj h
     simpa using this
   have hcw : conj w = -Complex.I * (1 + conj s) / (1 - conj s) := by
-    rw [hw, map_div₀, map_mul, map_add, map_sub, map_one, Complex.conj_I]
+    rw [hw, map_div₀, map_mul, map_add (f := _), map_sub, map_one, Complex.conj_I]
   have hI : Complex.I ≠ 0 := Complex.I_ne_zero
   have hD : Complex.I - conj w = 2 * Complex.I / (1 - conj s) := by
     rw [hcw]; field_simp; ring

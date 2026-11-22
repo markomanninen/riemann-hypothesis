@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.FirstChernCompatibleSystem
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Opposite CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.E GlobalTheory.EtC
 
@@ -19,7 +24,8 @@ theorem d_pullC (n : ResMor T T' m) (s k : ℕ) (x : Cn (T.K s) k) :
       (n.τ s _ (x (GlobalTheory.CatH.face i t ⋙ m.G))) =
     n.τ s _ (∑ i : Fin (k + 2), (-1 : ℤ) ^ (i : ℕ) •
       ((T.K s).map (m.G.map (GlobalTheory.CatH.toLast i t))).hom (x (GlobalTheory.CatH.face i t ⋙ m.G)))
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_zsmul, n.nat]
 
 theorem dvC_pullC (n : ResMor T T' m) (s k : ℕ) (x : Cn (T.K s) k) :
@@ -35,20 +41,26 @@ theorem pullC_zsmul (n : ResMor T T' m) (s k : ℕ) (c : ℤ) (x : Cn (T.K s) k)
   funext fun t => map_zsmul (n.τ s _) c (x (t ⋙ m.G))
 
 theorem st_pullC (n : ResMor T T' m) {j : ℕ} (z : Cn F j) :
-    ∀ (s k : ℕ) (x : Cn (T.K s) k), T.St z s k x → T'.St (m.pullC j z) s k (n.pullC s k x)
-  | 0, k, x, h => by
+    ∀ (s k : ℕ) (x : Cn (T.K s) k), T.St z s k x → T'.St (m.pullC j z) s k (n.pullC s k x) := by
+  intro s
+  induction s with
+  | zero =>
+    intro k x h
+    simp only [Res.St] at h ⊢
     obtain ⟨rfl, rfl⟩ := h
     exact ⟨rfl, ιC_pullC n j z⟩
-  | s + 1, k, x, h => by
+  | succ s ih =>
+    intro k x h
+    simp only [Res.St] at h ⊢
     obtain ⟨a, rfl, ha⟩ := h
     refine ⟨n.pullC s k a, dvC_pullC n s k a, ?_⟩
-    have := st_pullC n z s (k + 1) _ ha
+    have := ih (k + 1) _ ha
     rwa [pullC_zsmul, ← d_pullC] at this
 
 end GlobalTheory.CompanionTheory.EdgeMapPull
 
-open GlobalTheory.CompanionTheory.EdgeMapPull in
 
+open GlobalTheory.CompanionTheory.EdgeMapPull in
 theorem GlobalTheory.CompanionTheory.EdgeMapPull.edgeMap : CrystallineSemistableComparison.E.EdgeMap := by
   intro R R' _ _ σ C C' _ _ F F' T T' m n j x h hE
   obtain ⟨z, hz, hS, rfl⟩ := hE

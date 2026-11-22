@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCardDualEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardEqCardKerMulCardRange
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaloisCohomologyLocalGlobalDualStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PoitouTateEulerCharacteristicStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.PairSums.SumPair
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NatCardDualEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CardEqCardKerMulCardRange
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaloisCohomologyLocalGlobalDualStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PoitouTateEulerCharacteristicStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.S2pt
 

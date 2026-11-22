@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsHasse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LocNorm
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsHasse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.LocNorm
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+
+@[expose] public section
 
 open QuadraticAlgebra NumberField UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 
@@ -21,7 +25,7 @@ private theorem sq_of_norm {K R : Type} [Field K] [Field R] (f : K →+* R) {Δ 
     linear_combination this
   have g1 := congrArg f h1
   have g2 := congrArg f h2
-  simp only [map_sub, map_add, map_mul, map_pow, map_zero, map_one, map_ofNat] at g1 g2
+  simp only [map_sub, map_add (f := _), map_mul, map_pow, map_zero, map_one, map_ofNat] at g1 g2
   exact ⟨f p0 + f p1 * a, f q0 + f q1 * a, by linear_combination g1 + a * g2 + (f p1 ^ 2 - f Δ * f q1 ^ 2) * ha⟩
 
 private theorem norm_of_sq {K : Type} [Field K] {Δ τ : K} (x y : Etau K τ)
@@ -88,7 +92,7 @@ private theorem d_ex {F : Type} [Field F] [NumberField F] {Δ : F} (D : Dat Δ) 
   haveI : Fact (∀ r : F, r ^ 2 ≠ -1 + τ * r) := ⟨fun r hr => by
     have h1 := hτ σ
     have h2 := congrArg σ hr
-    simp only [map_sub, map_add, map_neg, map_mul, map_pow, map_one, map_ofNat] at h1 h2
+    simp only [map_sub, map_add (f := _), map_neg, map_mul, map_pow, map_one, map_ofNat] at h1 h2
     nlinarith [sq_nonneg (2 * σ r - σ τ)]⟩
   haveI : NumberField (Etau F τ) := NumberField.of_module_finite F _
   obtain ⟨x, y, hxy⟩ := hasse D h τ hτ hi hΔ (Etau F τ) ω (by ext <;> simp [pow_two, QuadraticAlgebra.re_one, QuadraticAlgebra.im_one])
@@ -114,7 +118,7 @@ private theorem q_zero {t : ℝ} (ht : t ^ 2 - 4 < 0) {p q : ℝ} (h : p ^ 2 + t
 private theorem tr_pos {K : Type} [Field K] {Δ τ : K} (σ : K →+* ℝ) (hΔ : σ Δ < 0) (hτ : σ (τ ^ 2 - 4) < 0) (y : EL Δ τ) :
     0 ≤ σ (QuadraticAlgebra.trace (y * star (sigL y))).re ∧ (y ≠ 0 → 0 < σ (QuadraticAlgebra.trace (y * star (sigL y))).re) := by
   rw [tr_re]
-  simp only [map_sub, map_add, map_mul, map_pow, map_ofNat] at hτ ⊢
+  simp only [map_sub, map_add (f := _), map_mul, map_pow, map_ofNat] at hτ ⊢
   have h1 := q_nonneg hτ (σ y.re.re) (σ y.im.re)
   have h2 := q_nonneg hτ (σ y.re.im) (σ y.im.im)
   have h3 := mul_nonneg (neg_pos.2 hΔ).le h2
@@ -146,7 +150,7 @@ private theorem posF {F : Type} [Field F] {Δ τ : F} (hΔ : ∀ σ : F →+* �
   have e2 : (herm 1 (1 + sigL d * star d) (⟨p, q⟩, x) (⟨p, q⟩, x)).re = p ^ 2 - Δ * q ^ 2 +
       ((QuadraticAlgebra.trace (x * star (sigL x))).re + (QuadraticAlgebra.trace ((sigL d * x) * star (sigL (sigL d * x)))).re) := by
     simp only [herm]
-    rw [e, map_add, map_one, one_mul]
+    rw [e, map_add (f := _), map_one, one_mul]
     simp only [QuadraticAlgebra.re_add, QuadraticAlgebra.re_mul, QuadraticAlgebra.re_star, QuadraticAlgebra.im_star]
     ring
   rw [e2]

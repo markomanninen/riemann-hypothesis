@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+
+@[expose] public section
 
 open Formalism.BasicNotions NumberField IsDedekindDomain Matrix Formalism.UG
 

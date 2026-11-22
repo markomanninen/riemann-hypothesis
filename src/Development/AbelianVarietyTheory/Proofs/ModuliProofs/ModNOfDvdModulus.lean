@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -20,7 +24,7 @@ theorem ext_form {x y : D.La} (h : ∀ b, D.EF x b = D.EF y b) : x = y :=
 
 theorem form_skew (x y : D.La) : D.EF x y = -D.EF y x := by
   have h := D.alt (x + y)
-  simp only [map_add, LinearMap.add_apply, D.alt] at h
+  simp only [map_add (f := _), LinearMap.add_apply, D.alt] at h
   linarith
 
 theorem exists_vec (φ : D.La → ℤ) (hφ : ∀ a b, φ (a + b) = φ a + φ b) : ∃ x, ∀ b, D.EF x b = φ b := by
@@ -33,7 +37,7 @@ theorem exists_rep (B : D.La → D.La → ℤ) (h1 : ∀ a a' b, B (a + a') b = 
     ∃ u : D.La →ₗ[𝓞 E] D.La, ∀ a b, D.EF (u a) b = B a b := by
   choose u hu using fun a => exists_vec D (B a) (h2 a)
   refine ⟨⟨⟨u, fun a a' => ext_form D fun b => ?_⟩, fun c a => ext_form D fun b => ?_⟩, hu⟩
-  · rw [map_add, LinearMap.add_apply, hu, hu, hu, h1]
+  · rw [map_add (f := _), LinearMap.add_apply, hu, hu, hu, h1]
   · simp only [RingHom.id_apply]
     rw [D.adj, hu, hu, h3]
 
@@ -42,7 +46,7 @@ theorem modN_of_dvd {n : ℕ} (hn : 0 < n) {x : D.La} (h : ∀ b, (n : ℤ) ∣ 
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn.ne'
   obtain ⟨y, hy⟩ := exists_vec D φ fun a b => by
     apply mul_left_cancel₀ hn'
-    rw [← hφ, map_add, hφ, hφ, mul_add]
+    rw [← hφ, map_add (f := _), hφ, hφ, mul_add]
   refine ⟨y, ext_form D fun b => ?_⟩
   rw [map_nsmul, LinearMap.smul_apply, hy, hφ, nsmul_eq_mul]
 
@@ -77,11 +81,11 @@ theorem step_sq {n : ℕ} (hn : 0 < n) {f : D.La →ₗ[𝓞 E] D.La} {ν : ℤ}
     (fun a a' b => by
       apply mul_left_cancel₀ hn'
       rw [mul_add, ← hB, ← hB, ← hB]
-      simp only [map_add, LinearMap.add_apply]; ring)
+      simp only [map_add (f := _), LinearMap.add_apply]; ring)
     (fun a b b' => by
       apply mul_left_cancel₀ hn'
       rw [mul_add, ← hB, ← hB, ← hB]
-      simp only [map_add]; ring)
+      simp only [map_add (f := _)]; ring)
     (fun c a b => by
       apply mul_left_cancel₀ hn'
       rw [← hB, ← hB, f.map_smul, f.map_smul, D.adj, D.adj])
@@ -96,7 +100,7 @@ theorem step_sq {n : ℕ} (hn : 0 < n) {f : D.La →ₗ[𝓞 E] D.La} {ν : ℤ}
       have hb : H.bar (1 - H.w0) = H.w0 := by
         rw [map_sub, map_one, HostModel.cmHost_bar_halfIntegerGenerator]; ring
       rw [← u.map_smul, ← hsa, D.adj, hb, hv, LinearMap.smul_apply]
-    rw [h1, ← LinearMap.add_apply, ← map_add, hv, LinearMap.smul_apply, ← add_smul, ← hu]
+    rw [h1, ← LinearMap.add_apply, ← map_add (f := _), hv, LinearMap.smul_apply, ← add_smul, ← hu]
     simp
   have hff : ∀ a b, D.EF (f a) (f b) = ν * D.EF a b + n * B a b := fun a b => by
     rw [← hB]; ring
@@ -123,7 +127,7 @@ theorem step_coprime {n r : ℕ} (hnr : IsCoprime (n : ℤ) (r : ℤ)) {f : D.La
       exact ⟨κ, t - κ * x * (1 - ν), by linear_combination hκ + κ * ν * hxy⟩
     · exact ⟨1, y * (1 - ν), by linear_combination hxy⟩
   · obtain ⟨B, hB⟩ := hB a b
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.id_apply, map_add, map_zsmul,
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.id_apply, map_add (f := _), map_zsmul,
       smul_eq_mul]
     refine ⟨y * B + x * y * (D.EF (f a) b + D.EF a (f b) - D.EF (f a) (f b) - D.EF a b), ?_⟩
     push_cast

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlTieEta
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocUnram
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AlTieEta
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LocUnram
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem QuadAlg.indep' (hQ : QuadAlg T t n) (x y : K) (h : algebraMap K A x + al
 private theorem linear_mul_linear_of_quadAlg (hQ : QuadAlg T t n) (p q p' q' : K) :
     (algebraMap K A p * T + algebraMap K A q) * (algebraMap K A p' * T + algebraMap K A q') =
       algebraMap K A (p * q' + q * p' + p * p' * t) * T + algebraMap K A (q * q' - p * p' * n) := by
-  simp only [map_add, map_sub, map_mul]
+  simp only [map_add (f := _), map_sub, map_mul]
   linear_combination (algebraMap K A p * algebraMap K A p') * hQ.rel
 
 theorem root_of_idem (hQ : QuadAlg T t n) (h : IdemNT A) : ∃ β : K, β ^ 2 - t * β + n = 0 := by
@@ -102,7 +106,7 @@ theorem root_of_idem (hQ : QuadAlg T t n) (h : IdemNT A) : ∃ β : K, β ^ 2 - 
   rw [linear_mul_linear_of_quadAlg hQ] at he'
   have key : algebraMap K A (x * x - y * y * n - x) +
       algebraMap K A (y * x + x * y + y * y * t - y) * T = 0 := by
-    simp only [map_sub, map_add, map_mul] at he' ⊢
+    simp only [map_sub, map_add (f := _), map_mul] at he' ⊢
     linear_combination he'
   obtain ⟨h1, h2⟩ := hQ.indep' _ _ key
   by_cases hy : y = 0
@@ -212,11 +216,6 @@ theorem mem_OOv (x : K) :
   first
   | exact Iff.rfl
   | exact Localization.subalgebra.mem_range_mapToFractionRing_iff_ofField K _ _ (Localization v.asIdeal.primeCompl) x
-
-theorem isDVR_OOv : IsDiscreteValuationRing (OOv (K := K) v) := by
-  haveI := Localization.subalgebra.isLocalization_ofField K v.asIdeal.primeCompl
-    v.asIdeal.primeCompl_le_nonZeroDivisors
-  exact IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain R v.ne_bot _
 
 theorem alg_ne_zero {s : R} (hs : s ∉ v.asIdeal) : algebraMap R K s ≠ 0 := by
   intro h0
@@ -426,7 +425,7 @@ theorem not_prime_of_root (h : ThetaAt p θ c tr nm) (β : p.adicCompletion D.ho
   have hfb : b ^ 2 - tr * b + nm ∈ p.asIdeal := by
     rw [← norm_int_lt_one p]
     have e : iotaR p (b ^ 2 - tr * b + nm) = (iotaR p b - β) * (iotaR p b + β - iotaR p tr) := by
-      simp only [map_add, map_sub, map_mul, map_pow]
+      simp only [map_add (f := _), map_sub, map_mul, map_pow]
       linear_combination hβ
     rw [e, norm_mul]
     have h1 : ‖iotaR p b - β‖ < 1 := by rw [norm_sub_rev]; exact hb
@@ -517,7 +516,7 @@ theorem root_of_twoOver (h : ThetaAt p θ c tr nm) (h2 : TwoOver p.asIdeal) :
     rw [← disc_O h]; simp only [map_sub, map_mul, map_pow, map_ofNat]
   have ha0 : ‖iotaR p a ^ 2 - iotaR p tr * iotaR p a + iotaR p nm‖ < 1 := by
     have e : iotaR p a ^ 2 - iotaR p tr * iotaR p a + iotaR p nm = iotaR p (a ^ 2 - tr * a + nm) := by
-      simp only [map_add, map_sub, map_mul, map_pow]
+      simp only [map_add (f := _), map_sub, map_mul, map_pow]
     rw [e, norm_int_lt_one]
     exact hfa
   exact newton_quad _ _ _ hdisc (norm_int_eq_one p c h.hcp) (norm_four_le p) _ ha0
@@ -615,20 +614,19 @@ theorem tens_rel (h : ThetaAt p θ c tr nm) :
 
 theorem quadAlg_tens (h : ThetaAt p θ c tr nm) :
     QuadAlg (A := p.adicCompletion D.host.F ⊗[D.host.F] D.host.E) ((1 : p.adicCompletion D.host.F) ⊗ₜ θ)
-      (iotaR p tr) (iotaR p nm) where
-  span z := by
+      (iotaR p tr) (iotaR p nm) := by
+  refine ⟨?_, ?_, tens_rel h, ?_⟩
+  · intro z
     refine ⟨(basA h).repr z 0, (basA h).repr z 1, ?_⟩
     have hs := (basA h).sum_repr z
     rw [Fin.sum_univ_two, basA_zero, basA_one] at hs
     exact hs.symm
-  indep x y hxy := by
+  · intro x y hxy
     have hli := Fintype.linearIndependent_iff.1 (basA h).linearIndependent ![x, y] (by
       rw [Fin.sum_univ_two, basA_zero, basA_one]
       exact hxy)
     exact ⟨hli 0, hli 1⟩
-  rel := tens_rel h
-  disc := by
-    have e : iotaR p tr ^ 2 - 4 * iotaR p nm = iotaR p c := by
+  · have e : iotaR p tr ^ 2 - 4 * iotaR p nm = iotaR p c := by
       rw [← disc_O h]; simp only [map_sub, map_mul, map_pow, map_ofNat]
     rw [e]
     intro h0

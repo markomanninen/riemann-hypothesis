@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.FiniteFamilyOfCompact
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.WtBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
-import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
-import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.FiniteFamilyOfCompact
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.WtBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousAdelicGL2OfContinuousEntries
+public import GroundTheory.HeightsAndTheta.Theta.Weil.PartialFourierAdelicPi
+public import GroundTheory.HeightsAndTheta.Theta.AdelicFourierCoord
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -18,8 +22,8 @@ namespace UpperTheory.ConvolutionTheory.R2.Ff.HM
 variable {F : Type} [Field F] [NumberField F]
 
 private theorem comp_signed_mem {ι κ : Type} [Fintype ι] [Fintype κ] (e : κ ≃ ι) (ε : κ → F)
-    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi F κ) :
-    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi F ι := by
+    (hε : ∀ k, ε k * ε k = 1) {G : (κ → A F) → ℂ} (hG : G ∈ schwartzBruhatPi (K := F) (ι := κ)) :
+    (fun x : ι → A F => G fun k => rt (ε k) * x (e k)) ∈ schwartzBruhatPi (K := F) (ι := ι) := by
   have hD : Matrix.diagonal ε * Matrix.diagonal ε = (1 : Matrix κ κ F) := by
     rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
@@ -64,8 +68,8 @@ private def eS : Fin 3 ⊕ Unit ≃ Fin 4 where
 
 private def FF (φ : V4 F → ℂ) (z : Fin 3 ⊕ Unit → A F) : ℂ := φ fun i => z (eS.symm i)
 
-private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) :
-    FF φ ∈ schwartzBruhatPi F (Fin 3 ⊕ Unit) := by
+private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) :
+    FF φ ∈ schwartzBruhatPi (K := F) (ι := Fin 3 ⊕ Unit) := by
   have h := comp_signed_mem (F := F) eS.symm (fun _ => 1) (fun _ => by simp) hφ
   have he : FF φ = fun x => φ fun k => rt ((fun _ => 1 : Fin 4 → F) k) * x (eS.symm k) := by
     funext x
@@ -73,7 +77,7 @@ private theorem FF_mem {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin
   rw [he]
   exact h
 
-private theorem slice_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) (x : V4 F) :
+private theorem slice_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) :
     Integrable (fun s => φ (Function.update x 1 s)) (adeleMeasure F) := by
   have h := GroundTheory.Heights₂.Theta.integrable_partialFourierPi_slice (FF_mem hφ) (fun i => x (eS (Sum.inl i)))
   have hmp := measurePreserving_funUnique (adeleMeasure F) Unit
@@ -88,14 +92,14 @@ private theorem slice_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruha
   rw [e]
   exact h
 
-private theorem slice_mul_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi F (Fin 4)) (x : V4 F) :
+private theorem slice_mul_integrable {φ : V4 F → ℂ} (hφ : φ ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) :
     Integrable (fun s => φ (Function.update x 1 s) * ψ (-(s * x 1))) (adeleMeasure F) := by
   refine (slice_integrable hφ x).mul_bdd (c := 1) ?_ ?_
   · exact (continuous_ψ.comp (continuous_id.mul continuous_const).neg).aestronglyMeasurable
   · exact Eventually.of_forall fun s => by simp
 
-private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi F (Fin 4))
-    (hb : b ∈ schwartzBruhatPi F (Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
+private theorem hat_add {a b : V4 F → ℂ} (ha : a ∈ schwartzBruhatPi (K := F) (ι := Fin 4))
+    (hb : b ∈ schwartzBruhatPi (K := F) (ι := Fin 4)) (x : V4 F) : hat (a + b) x = hat a x + hat b x := by
   unfold hat
   rw [← integral_add (slice_mul_integrable ha x) (slice_mul_integrable hb x)]
   refine integral_congr_ae (Eventually.of_forall fun s => ?_)
@@ -141,7 +145,7 @@ end
 open UpperTheory.ConvolutionTheory.R2.Ff.HM
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.hatMaj :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D), HatMaj W := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D), HatMaj W := by
   intro F E _ _ _ _ _ _ _ D W φ hφ y hy
   have hS := hatSt F E D W
   obtain ⟨n, e, he⟩ := omFin F E D W φ hφ
@@ -161,7 +165,8 @@ theorem UpperTheory.ConvolutionTheory.R2.Ff.hatMaj :
     rw [show nu F (infGL E 2 y) = 1 from hy, cD_one_left] at h
     exact (LinearMap.congr_fun h φ).symm
   have hΨ : W.Om k (W.L (infGL E 2 y) φ) = ∑ i, c i • W.L (infGL E 2 y) (e i) := by
-    rw [hcomm, hk', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hcomm, hk', map_sum]
     exact Finset.sum_congr rfl fun i _ => map_smul _ _ _
   have hsplit : W.Om (nU b * mD a * k) (W.L (infGL E 2 y) φ) =
       W.Om (nU b) (W.Om (mD a) (∑ i, c i • W.L (infGL E 2 y) (e i))) := by

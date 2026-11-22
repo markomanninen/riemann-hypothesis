@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwComapLinear
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwComapLinear
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,7 +53,7 @@ theorem Φc_sh (b : (I₁ → ℂ) → I₂ → ℂ) (M : (Fin g₁ → ℂ) →
     rw [Hol.fn_comap _ _ _ _ hp, Charts.fn_sh _ _ (hW k' p hp), Charts.fn_sh _ _ hp,
       Hol.fn_comap _ _ _ _ (K₁.maps h p hp)]
     congr 1
-    simp [Fam.shift, map_add, hτ l p.1 (K₁.base k' p hp)]
+    simp [Fam.shift, map_add (f := _), hτ l p.1 (K₁.base k' p hp)]
 
 theorem dw_Φc (b : (I₁ → ℂ) → I₂ → ℂ) (hb : AnalyticOnNhd ℂ b F₁.V)
     (M : (Fin g₁ → ℂ) →ₗ[ℂ] (Fin g₂ → ℂ)) {K₁ : Charts F₁} {K₂ : Charts F₂}
@@ -107,8 +111,8 @@ def functor (b : (I₁ → ℂ) → I₂ → ℂ) (hb : AnalyticOnNhd ℂ b F₁
     (hle : ∀ l k' k, K₁.le l k' k → K₂.le (A l) (κ k') (κ k)) : K₁.Obj ⥤ K₂.Obj where
   obj := objMap b hb hbV M κ hΦ hW
   map f := homMap b hb hbV M A hτ κ hΦ hW hle f
-  map_id T := Charts.hom_ext (fun _ ↦ rfl) (map_zero A)
-  map_comp f f' := Charts.hom_ext (fun _ ↦ rfl) (map_add A _ _)
+  map_id _ := Charts.hom_ext (fun _ ↦ rfl) (map_zero A)
+  map_comp _ _ := Charts.hom_ext (fun _ ↦ rfl) (map_add A _ _)
 
 def coef (b : (I₁ → ℂ) → I₂ → ℂ) (hb : AnalyticOnNhd ℂ b F₁.V) (hbV : ∀ z ∈ F₁.V, b z ∈ F₂.V)
     (M : (Fin g₁ → ℂ) →ₗ[ℂ] (Fin g₂ → ℂ)) (A : Λ₁ →+ Λ₂)
@@ -144,7 +148,7 @@ theorem period_pullback_eq_of_chartMap : ∀ {I₁ : Type} [Fintype I₁] {g₁ 
                 r₂.x (κ T.k)
             rw [Cris.spMap_id, Category.id_comp, Category.assoc, ← hx T.k,
               Cris.spMap_comp (Hol.comap _ (hΦ T.k) (hW T.k)).toRingHom, Category.assoc] }
-      naturality := fun _ _ _ ↦ Thick.hom_ext fun _ ↦ rfl }
+      naturality := fun _ _ _ ↦ Thick.Hom.ext' (AlgHom.ext fun _ ↦ rfl) }
   have e₁ : r₁.coef.pull1 (m.pull1 c) = (m.coef.comp r₁.coef).pull1 c := (m.coef.pullCohomologyOne_comp r₁.coef c).symm
   have e₂ : (m.coef.comp r₁.coef).pull1 c = (r₂.coef.comp n).pull1 c :=
     CoefMap.pullCohomologyOne_eq_of_natTrans _ _ θ (fun _ _ ↦ rfl) c

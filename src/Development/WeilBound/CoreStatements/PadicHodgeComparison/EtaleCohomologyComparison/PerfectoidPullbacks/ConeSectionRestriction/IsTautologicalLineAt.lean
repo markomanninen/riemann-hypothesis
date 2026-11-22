@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsKumCoc
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -45,8 +49,8 @@ def CLiftK.r {C : Type 1} [Category.{0} C] {g : C ⥤ Thick (smFun X q)} {D : E.
     (Λ : CLiftK g D) (s : ComposableArrows C 2) : (g.obj (s.obj (Fin.last 2))).Bˣ :=
   Units.map (g.map (s.map' 1 2)).φ.toMonoidHom (Λ.w (s.map' 0 1)) * Λ.w (s.map' 1 2) * (Λ.w (s.map' 0 2))⁻¹
 
-variable (q) in
 
+variable (q) in
 def IsFirstChernDeRham (D : E.LineData X) (x : HdR q 2) : Prop :=
   ∀ (s : ℕ) (C : Type 1) [Category.{0} C] (g : C ⥤ Thick (smFun X q)), (∀ c, (g.obj c).pdPow s = ⊥) →
     (∀ c, ∃ (V : X.Opens) (σ : (V : Scheme.{0}) ⟶ D.Y), σ ≫ D.f = V.ι ∧ InU V (g.obj c)) →

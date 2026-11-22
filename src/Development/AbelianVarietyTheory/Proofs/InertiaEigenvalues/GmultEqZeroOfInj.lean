@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NabBijectiveWindow
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.PhiGam.Compare
@@ -128,7 +132,7 @@ theorem sen_compare : ∀ {k : Type} [Field k] {l : ℕ} [Fact l.Prime] [CharP k
         (fun z hz hz' => graded_inj R hg h₁.1 c₁ b y hsen z hz.2 hz') (x - S p)
         ⟨N₂.sub_mem hx (st2 p hp), hp'⟩
       refine ⟨p + q, N₂.add_mem hp hq.1, ?_⟩
-      rw [map_add, ← sub_sub, Nat.cast_succ, ← add_assoc]
+      rw [map_add (f := _), ← sub_sub, Nat.cast_succ, ← add_assoc]
       exact hq'
   haveI := Window.finite_quot h₂.1
   refine gmult_eq_zero_of_inj (nab g) _ _ y st2 (st N₂ c₂ 1) ?_

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Flat
@@ -17,7 +22,7 @@ theorem existsUnique_sesq_of_trace : ∀ (E : Type) [Field E] [NumberField E] [I
       ∀ x y (a : E), Algebra.trace ℚ E (a * h x y) = B (a • x) y := by
     refine ⟨fun x y => ((Algebra.traceForm ℚ E).toDual (traceForm_nondegenerate ℚ E)).symm
       { toFun := fun a => B (a • x) y
-        map_add' := fun a b => by simp only [add_smul, map_add, LinearMap.add_apply]
+        map_add' := fun a b => by simp only [add_smul, map_add (f := _), LinearMap.add_apply]
         map_smul' := fun q a => by
           simp only [smul_assoc, map_smul, LinearMap.smul_apply, RingHom.id_apply] }, ?_⟩
     intro x y a
@@ -28,11 +33,11 @@ theorem existsUnique_sesq_of_trace : ∀ (E : Type) [Field E] [NumberField E] [I
   · intro x x' y
     apply eq_of_forall_trace_mul_eq_trace_mul
     intro a
-    rw [mul_add, map_add, htr, htr, htr, smul_add, map_add, LinearMap.add_apply]
+    rw [mul_add, map_add (f := _), htr, htr, htr, smul_add, map_add (f := _), LinearMap.add_apply]
   · intro x y y'
     apply eq_of_forall_trace_mul_eq_trace_mul
     intro a
-    rw [mul_add, map_add, htr, htr, htr, map_add]
+    rw [mul_add, map_add (f := _), htr, htr, htr, map_add (f := _)]
   · intro b x y
     apply eq_of_forall_trace_mul_eq_trace_mul
     intro a

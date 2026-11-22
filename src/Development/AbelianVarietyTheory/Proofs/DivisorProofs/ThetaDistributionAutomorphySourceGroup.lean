@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDualGOfGQ
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDistributionInvariantRationalTargetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDualGOfGQ
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaDistributionInvariantRationalTargetStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,7 +76,7 @@ def trA {m n : ℕ} : Mx D m n →+ Mx D n m where
 theorem continuous_tr {m n : ℕ} : Continuous (fun x : Mx D m n => (xᵀ : Mx D n m)) := continuous_id.matrix_transpose
 
 theorem theta_trF {f : WO (dualSp T ΛT hT) (dualSp S ΛS hS) → ℂ} (h : IsThetaFunO ψ (dualSp T ΛT hT) (dualSp S ΛS hS) f) :
-    IsThetaFunO ψ S T (trF f) where
+    IsThetaFunO ψ S T (trF f) := {
   quasi γ w := by
     have := h.quasi γᵀ wᵀ
     rw [← symplOH_tr S T ΛS ΛT hS hT]
@@ -83,10 +87,10 @@ theorem theta_trF {f : WO (dualSp T ΛT hT) (dualSp S ΛS hS) → ℂ} (h : IsTh
     have := congrArg trF (hU' uᵀ hu (congrArg Matrix.transpose hu'))
     rwa [trF_heis] at this
   cont := h.cont.comp continuous_tr
-  smooth k L hL hL' w := h.smooth k (trA.comp L) (continuous_tr.comp hL) (fun t => congrArg Matrix.transpose (hL' t)) wᵀ
+  smooth k L hL hL' w := h.smooth k (trA.comp L) (continuous_tr.comp hL) (fun t => congrArg Matrix.transpose (hL' t)) wᵀ }
 
 theorem theta_trF' {f : WO S T → ℂ} (h : IsThetaFunO ψ S T f) :
-    IsThetaFunO ψ (dualSp T ΛT hT) (dualSp S ΛS hS) (trF f) where
+    IsThetaFunO ψ (dualSp T ΛT hT) (dualSp S ΛS hS) (trF f) := {
   quasi γ w := by
     have := h.quasi γᵀ wᵀ
     rw [← symplOH_tr S T ΛS ΛT hS hT] at this
@@ -97,7 +101,7 @@ theorem theta_trF' {f : WO S T → ℂ} (h : IsThetaFunO ψ S T f) :
     have := congrArg trF (hU' uᵀ hu (congrArg Matrix.transpose hu'))
     rwa [trF_heis' ψ S T ΛS ΛT hS hT] at this
   cont := h.cont.comp continuous_tr
-  smooth k L hL hL' w := h.smooth k (trA.comp L) (continuous_tr.comp hL) (fun t => congrArg Matrix.transpose (hL' t)) wᵀ
+  smooth k L hL hL' w := h.smooth k (trA.comp L) (continuous_tr.comp hL) (fun t => congrArg Matrix.transpose (hL' t)) wᵀ }
 
 theorem actO_tr (g : GA D (dualSp T ΛT hT)) (h : GA D (dualSp S ΛS hS)) (x : WO (dualSp T ΛT hT) (dualSp S ΛS hS)) :
     actO S T (dualG S ΛS hS h) (dualG T ΛT hT g) xᵀ = (actO (dualSp T ΛT hT) (dualSp S ΛS hS) g h x)ᵀ := by
@@ -126,15 +130,15 @@ theorem swapOm_apply (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)
     swapOm S T ΛS ΛT hS hT om (g, h) f = trF (om (dualG S ΛS hS h, dualG T ΛT hT g) (trF f)) := rfl
 
 theorem swap_unitary {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (h : IsUnitaryOnTheta ψ S T om) :
-    IsUnitaryOnTheta ψ (dualSp T ΛT hT) (dualSp S ΛS hS) (swapOm S T ΛS ΛT hS hT om) where
+    IsUnitaryOnTheta ψ (dualSp T ΛT hT) (dualSp S ΛS hS) (swapOm S T ΛS ΛT hS hT om) := {
   pres p f hf := theta_trF' ψ S T ΛS ΛT hS hT (h.pres _ _ (theta_trF ψ S T ΛS ΛT hS hT hf))
   cont f hf w := (h.cont _ (theta_trF ψ S T ΛS ΛT hS hT hf) wᵀ).comp
     (((continuous_dualG S ΛS hS).comp continuous_snd).prodMk ((continuous_dualG T ΛT hT).comp continuous_fst))
   unit μ 𝓕 hμ h𝓕 p f hf := by
     have : IsTopologicalRing (AE D) := IsModuleTopology.isTopologicalRing (AF D.host.F) (AE D)
-    have : IsTopologicalAddGroup (AE D) := IsTopologicalRing.to_topologicalAddGroup
-    have : IsTopologicalAddGroup (WO S T) := Pi.topologicalAddGroup
-    have : IsTopologicalAddGroup (WO (dualSp T ΛT hT) (dualSp S ΛS hS)) := Pi.topologicalAddGroup
+    have : IsTopologicalAddGroup (AE D) := IsTopologicalRing.isTopologicalAddGroup
+    have : IsTopologicalAddGroup (WO S T) := Pi.isTopologicalAddGroup
+    have : IsTopologicalAddGroup (WO (dualSp T ΛT hT) (dualSp S ΛS hS)) := Pi.isTopologicalAddGroup
     have : BorelSpace (WO S T) := ⟨rfl⟩
     have : BorelSpace (WO (dualSp T ΛT hT) (dualSp S ΛS hS)) := ⟨rfl⟩
     let e : WO (dualSp T ΛT hT) (dualSp S ΛS hS) ≃ₜ+ WO S T :=
@@ -155,7 +159,7 @@ theorem swap_unitary {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)
     have e1 := hp.setLIntegral_comp_preimage_emb m.symm.measurableEmbedding
       (fun w => ‖swapOm S T ΛS ΛT hS hT om p f w‖ₑ ^ 2) 𝓕
     have e2 := hp.setLIntegral_comp_preimage_emb m.symm.measurableEmbedding (fun w => ‖f w‖ₑ ^ 2) 𝓕
-    exact e1.symm.trans (key.trans e2)
+    exact e1.symm.trans (key.trans e2) }
 
 theorem supp_inv {A : Type} [CommRing A] {n : ℕ} (ε : A) (g : GL (Fin n) A)
     (h : ∀ i j, ε * ((g : Matrix (Fin n) (Fin n) A) - 1) i j = ((g : Matrix (Fin n) (Fin n) A) - 1) i j) (i j : Fin n) :
@@ -225,7 +229,7 @@ theorem mem_latO_tr (P : HeightOneSpectrum (𝓞 D.host.F) → Prop) (u : WO (du
 theorem swap_fin {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
     (h : IsFinWeil ψ S T ΛS ΛT χS χT om) :
     IsFinWeil ψ (dualSp T ΛT hT) (dualSp S ΛS hS) (formLat T.gram ΛT) (formLat S.gram ΛS) χT χS
-      (swapOm S T ΛS ΛT hS hT om) where
+      (swapOm S T ΛS ΛT hS hT om) := {
   toIsUnitaryOnTheta := swap_unitary ψ S T ΛS ΛT hS hT h.toIsUnitaryOnTheta
   triv g hg k hk f hf := by
     rw [swapOm_apply, h.triv _ (dualG_mem_GinfC S ΛS hS hk) _ (dualG_mem_GinfC T ΛT hT hg) _
@@ -257,7 +261,7 @@ theorem swap_fin {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D T →* Mo
         have h1 := congrArg trF (hfix uᵀ ((mem_latO_tr S T ΛS ΛT hS hT _ _).2 hu))
         rw [trF_heis] at h1
         exact h1)
-    rw [swapOm_apply, this, trF_trF]
+    rw [swapOm_apply, this, trF_trF] }
 
 theorem cartan_tr {k : ℕ} {G G' s : Matrix (Fin k) (Fin k) ℂ} (hG : G'ᵀ * G = 1) (h : IsCartanInv G' s) :
     IsCartanInv G sᵀ := by
@@ -323,7 +327,7 @@ theorem dRho_tr {θ : InfFam D} (hθ : IsInfFam θ) (τ : D.what₂.Tau) (z : Ma
 
 theorem swap_inf {θ : InfFam D} (hθ : IsInfFam θ) {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)}
     (h : IsInfWeil ψ θ S T om) :
-    IsInfWeil ψ θ (dualSp T ΛT hT) (dualSp S ΛS hS) (swapOm S T ΛS ΛT hS hT om) where
+    IsInfWeil ψ θ (dualSp T ΛT hT) (dualSp S ΛS hS) (swapOm S T ΛS ΛT hS hT om) := {
   toIsUnitaryOnTheta := swap_unitary ψ S T ΛS ΛT hS hT h.toIsUnitaryOnTheta
   triv g hg k hk f hf := by
     rw [swapOm_apply, h.triv _ (dualG_mem_GfC S ΛS hS hk) _ (dualG_mem_GfC T ΛT hT hg) _
@@ -355,12 +359,12 @@ theorem swap_inf {θ : InfFam D} (hθ : IsInfFam θ) {om : GA D S × GA D T →*
         have h2 : (cplxO (sS τ)ᵀ (sT τ)ᵀ z)ᵀ = cplxO (sT τ) (sS τ) zᵀ := by
           rw [cplxO, cplxO, Matrix.transpose_smul, Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose,
             Matrix.transpose_transpose, Matrix.mul_assoc]
-        rw [annih, map_add, map_smul, map_zero] at h1
+        rw [annih, map_add (f := _), map_smul, map_zero] at h1
         rw [annih, dRho_tr ψ S T ΛS ΛT hS hT hθ, dRho_tr ψ S T ΛS ΛT hS hT hθ, h2]
         exact h1)
     rw [swapOm_apply, this, map_smul, trF_trF]
     congr 1
-    exact Finset.prod_congr rfl fun τ _ => detPlus_tr (sT τ) _ (sS τ) _
+    exact Finset.prod_congr rfl fun τ _ => detPlus_tr (sT τ) _ (sS τ) _ }
 
 theorem automorphy_source : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T : HSp D) (θ : InfFam D), IsInfFam θ → ∀ (ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)) (ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)), IsSelfDualC S ΛS → IsSelfDualC T ΛT → ∀ η, IsEtaTilde D η → ∀ (of oi : (GA D S × GA D T →* Module.End ℂ (WO S T → ℂ))), IsFinWeil ψ S T ΛS ΛT (η ^ S.rank) (η ^ T.rank) of → IsInfWeil ψ θ S T oi → ∀ γ ∈ GQ S, ∀ f, IsThetaFunO ψ S T f → of (γ, 1) (oi (γ, 1) f) 0 = f 0 := by
   intro D ψ hψ S T θ hθ ΛS ΛT hS hT η hη of oi hf hi γ hγ f hth

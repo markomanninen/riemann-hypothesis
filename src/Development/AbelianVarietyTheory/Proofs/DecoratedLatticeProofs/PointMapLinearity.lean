@@ -1,16 +1,21 @@
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaInnerFockProductEqProdRealPlaces
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockCoefficientRealPlaceTwoVacua
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluingLawHolds
+module
+
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsLevMeas
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaInnerFockProductEqProdRealPlaces
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockCoefficientRealPlaceTwoVacua
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.GluingLawHolds
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -97,7 +102,7 @@ theorem uniform_place : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
         have := n2 1 1
         rw [LinearEquiv.refl_apply, fockIp_one, mul_one] at this
         simpa only [GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt, GlobalTheory.FockIndep.pure_one] using this
-      rw [g1, GlobalTheory.PointAtPlaceHom.atTau_one hθ, Prod.mk_one_one, map_one, Module.End.one_apply, hN]
+      rw [g1, GlobalTheory.PointAtPlaceHom.atTau_one hθ, Prod.mk_one_one, map_one, one_apply_eq_self, hN]
       exact n2 P Q
   obtain ⟨K, hK⟩ := hK0
   refine ⟨K, fun χS χT ω hω haT x y hx vx hy vy => ?_⟩
@@ -115,7 +120,7 @@ theorem uniform_place : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
   have h1 : ∀ (a : ℂ) x y z, vac x → vac y → vac z → E (a • x + y) z = a * E x z + E y z := by
     intro a x y z hx hy hz
     simp only [E, pt]
-    rw [ptAt_lin hψ hθ _ _ _ _ _ a hx.1 hy.1, map_add, map_smul]
+    rw [ptAt_lin hψ hθ _ _ _ _ _ a hx.1 hy.1, map_add (f := _), map_smul]
     simp only [GlobalTheory.ThetaL2InnerProduct.ipTh_eq]
     rw [GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (GlobalTheory.OrientedHeis.theta_smul a (th x z hx hz).1) (th y z hy hz).1
         (th x z hx hz).2, GlobalTheory.Size.ipO_smul_left,
@@ -153,6 +158,89 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
   let pt := fun ρ => GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ptAt ψ θ V W ρ (cart M ρ) (cart M' ρ) (onb M ρ) (onb M' ρ)
   let vac := fun ρ => IsFockVacAt (heisO ψ V W) θ ρ (cplxO (cart M ρ) (cart M' ρ))
 
+  have ptOf_theta (hψ : IsStdChar D ψ (-1)) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f)
+      (P : PolF D W.rank V.rank) : IsThetaFunO ψ V W (GlobalTheory.Chain.ptOf ψ θ M M' f P) :=
+    GlobalTheory.FockIndep.pure_mem
+      (A := aPlusAll (heisO ψ V W) θ (fun τ => cplxO (cart M τ) (cart M' τ)) (onb M) (onb M'))
+      (fun _ _ => GlobalTheory.WeilVacMove.isTheta_add)
+      (fun c _ => GlobalTheory.WeilVacMove.isTheta_smul c)
+      (fun i _ h => GlobalTheory.FockIndep.aPlus_theta hψ hθ i.1 _ _ h) hf P
+  have ptOf_glue_one {f : WO V W → ℂ} (P : D.what₂.Tau → LPol W.rank V.rank) (hP : ∀ τ, P τ = 1) :
+      GlobalTheory.Chain.ptOf ψ θ M M' f (GlobalTheory.Chain.RealIt.glue P) = f := by
+    have h : GlobalTheory.Chain.RealIt.glue P = 1 := by
+      unfold GlobalTheory.Chain.RealIt.glue
+      exact Finset.prod_eq_one fun τ _ => by rw [hP τ, map_one]
+    rw [h]
+    exact GlobalTheory.FockIndep.pure_one f
+  have ptOf_glue (hψ : IsStdChar D ψ (-1)) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f)
+      (P : D.what₂.Tau → LPol W.rank V.rank) (τ : D.what₂.Tau) :
+      GlobalTheory.Chain.ptOf ψ θ M M' f (GlobalTheory.Chain.RealIt.glue P) =
+        pt τ (GlobalTheory.Chain.ptOf ψ θ M M' f (GlobalTheory.Chain.RealIt.glue (Function.update P τ 1))) (P τ) := by
+    let A := aPlusAll (heisO ψ V W) θ (fun τ => cplxO (cart M τ) (cart M' τ)) (onb M) (onb M')
+    have hAdd (g g' : WO V W → ℂ) (hg : IsThetaFunO ψ V W g) (hg' : IsThetaFunO ψ V W g') :
+        IsThetaFunO ψ V W (g + g') := GlobalTheory.WeilVacMove.isTheta_add hg hg'
+    have hSmul (c : ℂ) (g : WO V W → ℂ) (hg : IsThetaFunO ψ V W g) : IsThetaFunO ψ V W (c • g) :=
+      GlobalTheory.WeilVacMove.isTheta_smul c hg
+    have hA (i) (g) (hg : IsThetaFunO ψ V W g) : IsThetaFunO ψ V W (A i g) :=
+      GlobalTheory.FockIndep.aPlus_theta hψ hθ i.1 _ _ hg
+    have hComm (i j) (g) (hg : IsThetaFunO ψ V W g) : A i (A j g) = A j (A i g) :=
+      GlobalTheory.FockIndep.aPlus_comm' hψ hθ i.1 _
+        (GlobalTheory.Chain.VacVec.cart_isCartanInv M) (GlobalTheory.Chain.VacVec.cart_isCartanInv M') j.1 _ hg
+    have hAAdd (i) (g g') (hg : IsThetaFunO ψ V W g) (hg' : IsThetaFunO ψ V W g') :
+        A i (g + g') = A i g + A i g' := GlobalTheory.FockIndep.aPlus_add hψ hθ i.1 _ _ hg hg'
+    have hASmul (i) (c : ℂ) (g) (hg : IsThetaFunO ψ V W g) : A i (c • g) = c • A i g :=
+      GlobalTheory.FockIndep.aPlus_smul hψ hθ i.1 _ _ c hg
+    rw [GlobalTheory.Chain.RealIt.GlueProof.glue_eq τ P,
+      GlobalTheory.Chain.RealIt.GlueProof.glue_update τ P 1,
+      GlobalTheory.Chain.RealIt.GlueProof.ins_apply, GlobalTheory.Chain.RealIt.GlueProof.ins_apply,
+      map_one, one_mul]
+    unfold GlobalTheory.Chain.ptOf pureTensorO
+    rw [GlobalTheory.FockProdCoef.pure_mul hAdd hSmul hA hComm hAAdd hASmul hf,
+      GlobalTheory.FockProdCoef.pure_rename hA hComm
+        (GlobalTheory.FockIndep.pure_mem hAdd hSmul hA hf _)]
+    rfl
+
+  have peel (g : GA D V) (τ : D.what₂.Tau) :
+      let a := atTau θ V τ (infMat D.sp.cm.sig V.gram (θ τ) g)
+      a ∈ GinfC V ∧ infMat D.sp.cm.sig V.gram (θ τ) (a⁻¹ * g) = 1 ∧
+        ∀ ρ ≠ τ, infMat D.sp.cm.sig V.gram (θ ρ) (a⁻¹ * g) = infMat D.sp.cm.sig V.gram (θ ρ) g := by
+    dsimp only
+    have hu := GlobalTheory.FockCompare.RealAction.infMat_mem_UH hθ V g τ
+    have ha := GlobalTheory.PointAtPlaceHom.atTau_spec hθ V τ hu
+    set a := atTau θ V τ (infMat D.sp.cm.sig V.gram (θ τ) g)
+    have hinv (ρ : D.what₂.Tau) :
+        infMat D.sp.cm.sig V.gram (θ ρ) a⁻¹ * infMat D.sp.cm.sig V.gram (θ ρ) a = 1 := by
+      rw [← GlobalTheory.PointAtPlaceHom.infMat_mul, inv_mul_cancel, GlobalTheory.PointAtPlaceHom.infMat_one]
+    refine ⟨ha.1, ?_, fun ρ hρ => ?_⟩
+    · rw [GlobalTheory.PointAtPlaceHom.infMat_mul, ← ha.2.1]
+      exact hinv τ
+    · have h := hinv ρ
+      rw [ha.2.2 ρ hρ, Matrix.mul_one] at h
+      rw [GlobalTheory.PointAtPlaceHom.infMat_mul, h, Matrix.one_mul]
+  have ginf_induction (p : GA D V → Prop) (hone : p 1) (hmul : ∀ a b, p a → p b → p (a * b))
+      (A : Finset D.what₂.Tau)
+      (hat : ∀ τ ∈ A, ∀ k ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), p (atTau θ V τ k)) :
+      ∀ g ∈ GinfC V, (∀ τ ∉ A, infMat D.sp.cm.sig V.gram (θ τ) g = 1) → p g := by
+    induction A using Finset.induction_on with
+    | empty =>
+      intro g hg hg1
+      have h := (GlobalTheory.SmoothForms.RealPts.glue θ hθ V).1 g fun τ => hg1 τ (Finset.notMem_empty τ)
+      rw [GlobalTheory.PointAtPlace.eq_one_of_mem V g h hg]
+      exact hone
+    | insert τ A hτ ih =>
+      intro g hg hg1
+      obtain ⟨ha, hs, ho⟩ := peel g τ
+      set a := atTau θ V τ (infMat D.sp.cm.sig V.gram (θ τ) g)
+      have hrest : p (a⁻¹ * g) := ih (fun ρ hρ k hk => hat ρ (Finset.mem_insert_of_mem hρ) k hk)
+        _ (mul_mem (inv_mem ha) hg) fun ρ hρ => by
+          by_cases e : ρ = τ
+          · rw [e, hs]
+          · rw [ho ρ e]
+            exact hg1 ρ fun h => (Finset.mem_insert.1 h).elim e hρ
+      have h := hmul _ _ (hat τ (Finset.mem_insert_self τ A) _
+        (GlobalTheory.FockCompare.RealAction.infMat_mem_UH hθ V g τ)) hrest
+      rwa [mul_inv_cancel_left] at h
+
   have vacfact : ∀ (χS χT : (AE D)ˣ →* Circle) (ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)),
       IsWeilDatumO ψ V W χS χT ω → ∀ (A : Finset D.what₂.Tau) (Pt : D.what₂.Tau → LPol W.rank V.rank), (∀ τ ∉ A, Pt τ = 1) →
       ∀ x, IsThetaFunO ψ V W x → (∀ τ, vac τ x) → ∀ τ ∉ A, vac τ (GlobalTheory.Chain.ptOf ψ θ M M' x (GlobalTheory.Chain.RealIt.glue Pt)) := by
@@ -163,7 +251,7 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
     induction A using Finset.induction_on with
     | empty =>
       intro Pt hP x hx vx τ _
-      rw [GlobalTheory.FockProdCoef.ptOf_glue_one M M' Pt fun τ => hP τ (Finset.notMem_empty τ)]
+      rw [ptOf_glue_one Pt fun τ => hP τ (Finset.notMem_empty τ)]
       exact vx τ
     | insert τ A hτ ih =>
       intro Pt hP x hx vx τ'' h''
@@ -171,8 +259,8 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
         by_cases e : τ' = τ
         · subst e; exact Function.update_self _ _ _
         · rw [Function.update_of_ne e]; exact hP τ' fun h' => (Finset.mem_insert.1 h').elim e h
-      have hG := GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hx (GlobalTheory.Chain.RealIt.glue (Function.update Pt τ 1))
-      rw [GlobalTheory.FockProdCoef.ptOf_glue M M' hψ hθ hx Pt τ]
+      have hG := ptOf_theta hψ hx (GlobalTheory.Chain.RealIt.glue (Function.update Pt τ 1))
+      rw [ptOf_glue hψ hx Pt τ]
       have hne : τ'' ≠ τ := fun e => h'' (e ▸ Finset.mem_insert_self _ _)
       exact (comm τ'' τ hne _ hG).2.1 (Pt τ) (ih _ hP' x hx vx τ'' fun h => h'' (Finset.mem_insert_of_mem h))
   have key : ∀ (A : Finset D.what₂.Tau) (Pt Qt : D.what₂.Tau → LPol W.rank V.rank), (∀ τ ∉ A, Pt τ = 1) → (∀ τ ∉ A, Qt τ = 1) →
@@ -187,10 +275,10 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
     | empty =>
       intro Pt Qt hP hQ g hg hg1
       refine ⟨1, fun χS χT ω hW hE x y hx vx hy vy => ?_⟩
-      have : g = 1 := GlobalTheory.FockProdCoef.ginf_induction hθ V (fun x => x = 1) rfl
-        (fun a b ha hb => by rw [ha, hb, one_mul]) ∅ (fun τ h => (Finset.notMem_empty τ h).elim) g hg hg1
-      rw [GlobalTheory.FockProdCoef.ptOf_glue_one M M' Pt fun τ => hP τ (Finset.notMem_empty τ),
-        GlobalTheory.FockProdCoef.ptOf_glue_one M M' Qt fun τ => hQ τ (Finset.notMem_empty τ), this, ← Prod.one_eq_mk, map_one,
+      have hf := (GlobalTheory.SmoothForms.RealPts.glue θ hθ V).1 g fun τ => hg1 τ (Finset.notMem_empty τ)
+      have hg_eq := GlobalTheory.PointAtPlace.eq_one_of_mem V g hf hg
+      rw [ptOf_glue_one Pt fun τ => hP τ (Finset.notMem_empty τ),
+        ptOf_glue_one Qt fun τ => hQ τ (Finset.notMem_empty τ), hg_eq, ← Prod.one_eq_mk, map_one,
         one_mul]
       rfl
     | insert τ A hτ ih =>
@@ -200,7 +288,7 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
         by_cases e : τ' = τ
         · subst e; exact Function.update_self _ _ _
         · rw [Function.update_of_ne e]; exact hR τ' fun h' => (Finset.mem_insert.1 h').elim e h
-      obtain ⟨pa, pe1, pe2⟩ := GlobalTheory.FockProdCoef.peel hθ V g τ
+      obtain ⟨pa, pe1, pe2⟩ := peel g τ
       have hu := GlobalTheory.FockCompare.RealAction.infMat_mem_UH hθ V g τ
       set a := atTau θ V τ (Formalism.MainNotions.StandardLattice.infMat D.sp.cm.sig V.gram (θ τ) g) with ha_def
       have hg' : a⁻¹ * g ∈ GinfC V := mul_mem (inv_mem pa) hg
@@ -216,7 +304,7 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
       dsimp only at comm
       have pmov : ∀ h ∈ GinfC V, (∀ τ' ∉ A, Formalism.MainNotions.StandardLattice.infMat D.sp.cm.sig V.gram (θ τ') h = 1) →
           ∀ F, IsThetaFunO ψ V W F → (vac τ F → vac τ (ω (h, 1) F)) ∧ ∀ Q, ω (h, 1) (pt τ F Q) = pt τ (ω (h, 1) F) Q := by
-        refine GlobalTheory.FockProdCoef.ginf_induction hθ V _ ?_ ?_ A ?_
+        refine ginf_induction _ ?_ ?_ A ?_
         · intro F _
           rw [← Prod.one_eq_mk, map_one]
           exact ⟨fun h => h, fun _ => rfl⟩
@@ -224,21 +312,21 @@ theorem uniform_glue : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar
           have e : ω (a * b, 1) = ω (a, 1) * ω (b, 1) := by rw [← map_mul, Prod.mk_mul_mk, one_mul]
           have hbF := hW.om_pres (b, 1) F hF
           refine ⟨fun h => ?_, fun Q => ?_⟩
-          · rw [e, Module.End.mul_apply]; exact (ha _ hbF).1 ((hb F hF).1 h)
-          · rw [e, Module.End.mul_apply, (hb F hF).2 Q, (ha _ hbF).2 Q, Module.End.mul_apply]
+          · rw [e, mul_apply_eq_comp]; exact (ha _ hbF).1 ((hb F hF).1 h)
+          · rw [e, mul_apply_eq_comp, (hb F hF).2 Q, (ha _ hbF).2 Q, mul_apply_eq_comp]
         · intro τ' h' k hk F hF
           have hne : τ ≠ τ' := fun e => hτ (e ▸ h')
           exact (comm τ τ' hne F hF).2.2.2 k hk
-      have hGx := GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hx (GlobalTheory.Chain.RealIt.glue (Function.update Pt τ 1))
-      have hGy := GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hy (GlobalTheory.Chain.RealIt.glue (Function.update Qt τ 1))
+      have hGx := ptOf_theta hψ hx (GlobalTheory.Chain.RealIt.glue (Function.update Pt τ 1))
+      have hGy := ptOf_theta hψ hy (GlobalTheory.Chain.RealIt.glue (Function.update Qt τ 1))
       have vGx := vacfact χS χT ω hW A _ (upd Pt hP) x hx vx τ hτ
       have vGy := vacfact χS χT ω hW A _ (upd Qt hQ) y hy vy τ hτ
       have eg : ω (g, 1) = ω (a, 1) * ω (a⁻¹ * g, 1) := by
         rw [← map_mul, Prod.mk_mul_mk, one_mul, mul_inv_cancel_left]
       obtain ⟨mv, mc⟩ := pmov _ hg' hg'1 _ hGx
       have hF := hW.om_pres (a⁻¹ * g, 1) _ hGx
-      rw [GlobalTheory.FockProdCoef.ptOf_glue M M' hψ hθ hx Pt τ, GlobalTheory.FockProdCoef.ptOf_glue M M' hψ hθ hy Qt τ, eg,
-        Module.End.mul_apply, mc (Pt τ)]
+      rw [ptOf_glue hψ hx Pt τ, ptOf_glue hψ hy Qt τ, eg,
+        mul_apply_eq_comp, mc (Pt τ)]
       rw [hK χS χT ω hW (hE τ) _ _ hF (mv vGx) hGy vGy, hC' χS χT ω hW hE x y hx vx hy vy]
       ring
   intro Pt Qt g hg
@@ -265,6 +353,13 @@ end Lin
 theorem uniform_all : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar) (M : DSModel V S) (M' : DSModel W S') (θ : InfFam D) (ψ : AddChar (AF D.host.F) ℂ), IsInfFam θ → ∀ (m : Measure (WO V W)) (X : Set (WO V W)), IsCovolOne (ratL W V) m X → ∀ (aT : D.what₂.Tau → ℚ) (P Q : PolF D W.rank V.rank), ∀ g ∈ GinfC V, ∃ C : ℂ, ∀ (χS χT : (AE D)ˣ →* Circle) (ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)), IsWeilDatumO ψ V W χS χT ω → (∀ τ, HasInfExp D χT τ (aT τ)) → ∀ x y : WO V W → ℂ, IsThetaFunO ψ V W x → (∀ τ, IsFockVacAt (heisO ψ V W) θ τ (cplxO (cart M τ) (cart M' τ)) x) → IsThetaFunO ψ V W y → (∀ τ, IsFockVacAt (heisO ψ V W) θ τ (cplxO (cart M τ) (cart M' τ)) y) → GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X (ω (g, 1) (GlobalTheory.Chain.ptOf ψ θ M M' x P)) (GlobalTheory.Chain.ptOf ψ θ M M' y Q) = C * GlobalTheory.IndefiniteRowSideFullHecke.ThetaSourceAction.ipTh m X x y := by
   intro D V W S S' M M' θ ψ hθ m X hX aT P Q g hg
   obtain ⟨hμ, h𝓕, -⟩ := id hX
+  have ptOf_theta (hψ : IsStdChar D ψ (-1)) {f : WO V W → ℂ} (hf : IsThetaFunO ψ V W f)
+      (P : PolF D W.rank V.rank) : IsThetaFunO ψ V W (GlobalTheory.Chain.ptOf ψ θ M M' f P) :=
+    GlobalTheory.FockIndep.pure_mem
+      (A := aPlusAll (heisO ψ V W) θ (fun τ => cplxO (cart M τ) (cart M' τ)) (onb M) (onb M'))
+      (fun _ _ => GlobalTheory.WeilVacMove.isTheta_add)
+      (fun c _ => GlobalTheory.WeilVacMove.isTheta_smul c)
+      (fun i _ h => GlobalTheory.FockIndep.aPlus_theta hψ hθ i.1 _ _ h) hf P
   let Good : PolF D W.rank V.rank → PolF D W.rank V.rank → Prop := fun P Q => ∃ C : ℂ, ∀ (χS χT : (AE D)ˣ →* Circle)
     (ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)), IsWeilDatumO ψ V W χS χT ω → (∀ τ, HasInfExp D χT τ (aT τ)) →
     ∀ x y : WO V W → ℂ, IsThetaFunO ψ V W x → (∀ τ, IsFockVacAt (heisO ψ V W) θ τ (cplxO (cart M τ) (cart M' τ)) x) →
@@ -290,9 +385,9 @@ theorem uniform_all : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar)
       obtain ⟨C₂, h₂⟩ := hz'
       refine ⟨C₁ + C₂, fun χS χT ω hW hE x y hx vx hy vy => ?_⟩
       have hψ := hW.std
-      rw [ptOf_add', map_add, GlobalTheory.ThetaL2InnerProduct.ipTh_eq,
-        GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (hW.om_pres _ _ (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hx z))
-          (hW.om_pres _ _ (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hx z')) (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hy Q'),
+      rw [ptOf_add', map_add (f := _), GlobalTheory.ThetaL2InnerProduct.ipTh_eq,
+        GlobalTheory.Size.ipO_add_left hψ hμ h𝓕 (hW.om_pres _ _ (ptOf_theta hψ hx z))
+          (hW.om_pres _ _ (ptOf_theta hψ hx z')) (ptOf_theta hψ hy Q'),
         ← GlobalTheory.ThetaL2InnerProduct.ipTh_eq, ← GlobalTheory.ThetaL2InnerProduct.ipTh_eq, h₁ χS χT ω hW hE x y hx vx hy vy,
         h₂ χS χT ω hW hE x y hx vx hy vy]
       ring
@@ -318,8 +413,8 @@ theorem uniform_all : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPar)
       refine ⟨C₁ + C₂, fun χS χT ω hW hE x y hx vx hy vy => ?_⟩
       have hψ := hW.std
       rw [ptOf_add', GlobalTheory.ThetaL2InnerProduct.ipTh_eq,
-        GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 (hW.om_pres _ _ (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hx P'))
-          (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hy z) (GlobalTheory.FockProdCoef.ptOf_theta M M' hψ hθ hy z'),
+        GlobalTheory.Size.ipO_add_right hψ hμ h𝓕 (hW.om_pres _ _ (ptOf_theta hψ hx P'))
+          (ptOf_theta hψ hy z) (ptOf_theta hψ hy z'),
         ← GlobalTheory.ThetaL2InnerProduct.ipTh_eq, ← GlobalTheory.ThetaL2InnerProduct.ipTh_eq, h₁ χS χT ω hW hE x y hx vx hy vy,
         h₂ χS χT ω hW hE x y hx vx hy vy]
       ring

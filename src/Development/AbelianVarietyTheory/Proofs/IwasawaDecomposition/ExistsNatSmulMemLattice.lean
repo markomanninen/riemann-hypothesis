@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+
+@[expose] public section
 
 namespace GlobalTheory.NatSmulMemLattice
 
@@ -61,6 +65,36 @@ theorem exists_nat_smul_mem {E W : Type} [Field E] [NumberField E] [AddCommGroup
 
 theorem exists_nat_smul_mem_lattice {D : Formalism.BasicNotions.D7} (V : Formalism.BasicNotions.TH.HSp D) (v : Formalism.BasicNotions.HSpace.V V) :
     ∃ d : ℕ, 0 < d ∧ (d : 𝓞 (Formalism.BasicNotions.D7.host D).E) • v ∈ Formalism.BasicNotions.HSpace.L0 V :=
-  exists_nat_smul_mem _ V.standardTuple_isLattice.span_eq_top v
+  by
+    let E := (Formalism.BasicNotions.D7.host D).E
+    let f := (V.hT v).restrictScalars (𝓞 E)
+    obtain ⟨d, hd, hint⟩ := FractionalIdeal.isFractional_of_fg
+      (S := nonZeroDivisors (𝓞 E)) (V.standardTuple_isLattice.fg.map f)
+    have hd0 : (d : E) ≠ 0 := by simpa using nonZeroDivisors.ne_zero hd
+    obtain ⟨n, a, hn, ha⟩ := exists_nat_mul_integral (d : E)⁻¹
+    refine ⟨n, hn, ?_⟩
+    rw [← V.baseLattice_isUnimodular]
+    change (n : 𝓞 E) • v ∈ Formalism.E.hdual V.hT V.L0
+    simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap]
+    intro y hy
+    obtain ⟨b, hb⟩ := hint (V.hT v y) ⟨y, hy, rfl⟩
+    have hb' : (b : E) = (d : E) * V.hT v y := hb
+    have hab : ((a * b : 𝓞 E) : E) = (n : E) * V.hT v y := by
+      change (a : E) * (b : E) = _
+      rw [ha, hb']
+      field_simp
+    have hs : IsIntegral ℤ (star ((n : E) * V.hT v y)) := by
+      rw [← hab]
+      exact (a * b).2.map (starRingEnd E).toIntAlgHom
+    apply Submodule.mem_one.2
+    refine ⟨⟨_, ?_⟩, rfl⟩
+    change IsIntegral ℤ _
+    have hh := V.herm.eq y v
+    simp only [star_mul, star_natCast] at hs
+    have hh' : star (V.hT v y) = V.hT y v := by
+      rw [← hh]
+      exact star_star _
+    rw [hh'] at hs
+    simpa [map_smul, Algebra.smul_def, mul_comm] using hs
 
 end GlobalTheory.NatSmulMemLattice

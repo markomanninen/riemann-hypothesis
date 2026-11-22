@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GLiftToLiftInHAndSurjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BoxDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.GLiftToLiftInHAndSurjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HhGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,7 +55,7 @@ private theorem ker_closed (hη : IsLocallyConstant η) (r : GLift O η Ψ R) : 
     rw [← sub_eq_zero]
     refine IsHausdorff.haus (I := maximalIdeal R) inferInstance _ fun n => ?_
     rw [SModEq.zero, smul_eq_mul, Ideal.mul_top, ← Ideal.Quotient.eq]
-    have := congrArg (fun x : GG 3 _ => x.mat a b) ((h n).trans (map_one (GG.map (Ideal.Quotient.mk _))).symm)
+    have := congrArg (fun x : GG (m := 3) (R := _) => x.mat a b) ((h n).trans (map_one (GG.map (Ideal.Quotient.mk _))).symm)
     exact this
   rw [this]
   exact isClosed_iInter fun n => (r.locConst hη n).isClosed_fiber 1

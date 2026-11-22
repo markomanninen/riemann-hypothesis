@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -34,7 +38,8 @@ theorem linearForm_matrix_eq_smul_trace_of_comm (k : Type) [Field k] (m : ℕ)
       refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
       rw [smul_single, smul_eq_mul, mul_one]
     conv_lhs => rw [hx]
-    simp only [map_sum, map_smul, key, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, key, smul_eq_mul, mul_ite, mul_zero, Finset.sum_ite_eq,
       Finset.mem_univ, if_true]
     rw [trace, Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
@@ -54,7 +59,8 @@ theorem centralLinearForm_pi_matrix_eq_sum_trace :
   choose c hc using h
   refine ⟨c, fun x => ?_⟩
   conv_lhs => rw [← Finset.univ_sum_single x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have := hc i (x i)
   simpa using this

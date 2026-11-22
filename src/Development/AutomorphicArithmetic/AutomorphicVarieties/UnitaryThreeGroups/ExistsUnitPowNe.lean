@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Clifford
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtIneL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.CoboundaryLemmaNoColumn
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.KatoUse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.Clifford
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.PtIneL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.CoboundaryLemmaNoColumn
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.DatLoc
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.GalOfCusp Matrix IsLocalRing
 open UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.Alg UpperTheory.V.U3
@@ -71,13 +75,29 @@ private theorem exists_unit_pow_ne (l : ℕ) [Fact l.Prime] : ∃ v : ℤ_[l]ˣ,
 
 theorem UpperTheory.V.U3.typeII_irr_cyc :
     CohInp → ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
-      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : D.ULoc} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG 3 (PadicAlgCl l)} (h : D.IsPt U g₁ r),
+      {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ) {U : (_root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition _ (D.η.comp D.ι) (D.Ψ.comp D.ι)))} {g₁ : G ℚ Ω}, D.Marked g₁ → ∀ {r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)} (h : D.IsPt U g₁ r),
       TypeII D.η r → ∀ W : G ℚ Ω →* GL (Fin 2) (PadicAlgCl l), D.IsExt r W →
         Af.IsIrr ((W.comp (galEmb ℚ K Ω)).comp (cycBar K Ω l).ker.subtype) := by
   intro hC Ω _ _ _ K _ _ _ l _ c N _ e ψ D U g₁ hM r h hII W hW
-  obtain ⟨A, hA, -⟩ := dat_loc D
+  obtain ⟨A, hA, -, hIn, -⟩ := dat_loc D
   have hIK : Ine (F := ℚ) A ≤ D.η.ker := ((dat_facts D).2.2.2.2.2.2.2.2.2.2 A hA).1
-  have hch := (pt_inertia_above hC D hM h A hA).1
+  have hch : ∀ g ∈ Ine (F := ℚ) A, (r g).mat.charpoly = (r0 D.η D.ΨQ g).mat.charpoly := by
+    intro g hg
+    rw [← hIn] at hg
+    obtain ⟨σ, hσ, rfl⟩ := hg
+    obtain ⟨f, -, hf1, hf2⟩ := h.loc
+    have hlocal := (@Loc.lemma2a hC.loc l _ c.O _ _ c.dvr _ _ c.fin
+      (UpperTheory.V.Base.dvrFacts l c.O).2.2.2.1 D.loc U (PadicAlgCl l) _ _
+      (r.comp D.ι) ⟨f, hf2, hf1⟩).1 σ hσ
+    change (r (D.ι σ)).mat.charpoly = _ at hlocal
+    rw [hlocal]
+    simp only [GG.mat, unitaryThreeReflection_left, tor_val]
+    rw [Matrix.charpoly_of_isUpperTriangular _ (Matrix.blockTriangular_diagonal _)]
+    refine Finset.prod_congr rfl fun i _ => ?_
+    rw [Matrix.diagonal_apply_eq]
+    congr 2
+    exact congrArg Units.val
+      (map_zpow (Units.map (algebraMap c.O (PadicAlgCl l)).toMonoidHom) (D.Ψ (D.ι σ)) (wt1 i))
   have h11 := (typeII_facts hC D hM h hII).1
   have hmem : ∀ s, galEmb ℚ K Ω s ∈ D.η.ker := fun s => D.η_ker ▸ galEmb_mem ℚ K Ω s
   have hlift : ∀ g ∈ D.η.ker, ∃ s, galEmb ℚ K Ω s = g := fun g hg => by

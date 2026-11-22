@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -55,5 +59,5 @@ private theorem comap_irreducible {G H L : Type*} [Group G] [TopologicalSpace G]
 theorem UpperTheory.ConvolutionTheory.Dp.sumT :
     UpperTheory.ConvolutionTheory.Dp.SumT := by
   intro K _ _ n μ _ V hV
-  exact comap_irreducible (cuspRepT μ) (rightRegularRep (rationalGLOne K n) μ) (toLp μ) (norm_toLp μ)
+  exact comap_irreducible (cuspRepT μ) (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) (toLp μ) (norm_toLp μ)
     (toLp_cuspRepT μ) V (fun x hx => ⟨⟨x, hV.le hx⟩, rfl⟩) hV.closed hV.inv hV.ne_bot hV.irred

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleKInjectiveHomLiftAlongQuasiIsoUpToHomotopy
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleKInjectiveHomLiftAlongQuasiIsoUpToHomotopy
+
+@[expose] public section
 
 open CategoryTheory Limits GlobalTheory.EtC
 

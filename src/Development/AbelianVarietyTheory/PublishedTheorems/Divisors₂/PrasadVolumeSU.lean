@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsCompactDualHaar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DefiniteBound
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsCompactDualHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,13 +45,13 @@ def suStab (Ψ : Finset (E →+* ℂ)) (G : Matrix (Fin r) (Fin r) E) (Λ : Subm
         rw [g4, ← Matrix.map_mul, e1]; simp
       exact Units.inv_eq_of_mul_eq_one_right e2
 
-variable (E) in
 
+variable (E) in
 def splitSign (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) : ℝ :=
   if (v.asIdeal.primesOver (𝓞 E)).ncard = 2 then 1 else -1
 
-variable (E) in
 
+variable (E) in
 def localFactor (r : ℕ) (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) : ℝ :=
   ∏ j ∈ Finset.Icc 2 r, (1 - splitSign E v ^ j / (Ideal.absNorm v.asIdeal : ℝ) ^ j)⁻¹
 

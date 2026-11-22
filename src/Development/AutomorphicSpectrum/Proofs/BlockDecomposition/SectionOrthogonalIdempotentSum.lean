@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.Splits
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry CrystallineSemistableComparison CrystallineSemistableComparison.R
 open CategoryTheory.Limits
@@ -78,10 +82,10 @@ theorem isLocalization_prod {e e' : S} (he : IsIdempotentElem e) (he' : IsIdempo
     refine ⟨e * x + e' * y, Prod.ext ?_ ?_⟩
     · change algebraMap S (Localization.Away e) (e * x + e' * y) = _
       have : algebraMap S (Localization.Away e) e' = 0 := away_orth_eq_zero he h
-      rw [map_add, map_mul, map_mul, away_self_eq_one he, this, one_mul, zero_mul, add_zero]
+      rw [map_add (f := _), map_mul, map_mul, away_self_eq_one he, this, one_mul, zero_mul, add_zero]
     · change algebraMap S (Localization.Away e') (e * x + e' * y) = _
       have : algebraMap S (Localization.Away e') e = 0 := away_orth_eq_zero he' h'
-      rw [map_add, map_mul, map_mul, away_self_eq_one he', this, one_mul, zero_mul, zero_add]
+      rw [map_add (f := _), map_mul, map_mul, away_self_eq_one he', this, one_mul, zero_mul, zero_add]
 
 theorem secOn_add : ∀ {S : Type} [CommRing S] (Y : Scheme.{0})
     (f : Y ⟶ Spec (CommRingCat.of S)) (e e' : S), IsIdempotentElem e → IsIdempotentElem e' →

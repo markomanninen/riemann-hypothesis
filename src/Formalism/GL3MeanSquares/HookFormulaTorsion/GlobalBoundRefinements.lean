@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.GL3MeanSquares.InvNormSqConjRatioPowIdentities
-import Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
-import Formalism.GL3MeanSquares.HookFormulaTorsion.HadamardUnitDiagonalDetLeOne
-import Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
-import Formalism.GL3MeanSquares.HookFormulaTorsion.ConditionIffDualEqFunctional
-import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.InvNormSqConjRatioPowIdentities
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
+public import Formalism.GL3MeanSquares.ConcavityEquidistribution
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
+public import Formalism.GL3MeanSquares.FourierTransformKernelSurjective
+public import Formalism.GL3MeanSquares.HookFormulaTorsion.LengthQuotientBoundGeneral
+
+@[expose] public section
 
 open Finset Filter Topology ArithmeticFunction
 
@@ -15,9 +19,6 @@ namespace Formalism.HermitianLattices.GlobalBoundRefinements
 section ShortIntervalLowerBound
 
 open Formalism.HermitianLattices.GL2PrimeSums
-
-open private gl2a4_root gl2a4_rho_pos gl2a4_rho_mono gl2a4_weight gl2a4_E_lower gl2a4_E_upper Li_le_three_mul_div_log
-  gl2a4_Li_two gl2a4_Li_mono gl2a4_E_four gl2a4_E_nonneg Emain_lower_bound from Formalism.GL3MeanSquares.HookFormulaTorsion.PrimesInProgressionCountLowerBound
 
 private lemma exists_adjusted_exceptional_exponent {cb B β X : ℝ} {θ : ℤ} (hcb : 0 < cb) (hB : 4 ≤ B)
     (hβ : θ ≠ 0 → 1 / 2 ≤ β ∧ β < 1 ∧ cb / (B ^ 2 * Real.log B) ≤ 1 - β)
@@ -47,17 +48,411 @@ private lemma mul_log_le_log_of_rpow_le {B K X : ℝ} (hB : 4 ≤ B) (h : B ^ K 
   have h1 := Real.log_le_log (Real.rpow_pos_of_pos hB0 K) h
   rwa [Real.log_rpow hB0] at h1
 
-set_option maxHeartbeats 1000000 in
-private lemma exceptional_zero_contribution_bound {Cr cr B G β X : ℝ} {θ : ℤ} {π₁ π₂ : ℝ → ℕ} {η' : ℝ → ℝ} (hCr : 0 < Cr) (hcr : 0 < cr)
-    (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) (hB : 4 ≤ B) (hG1 : 1 ≤ G) (hGB : G ≤ B)
+set_option maxHeartbeats 2000000 in
+private lemma exceptional_zero_estimates {B β X : ℝ} {θ : ℤ}
+    (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) (hB : 4 ≤ B)
     (hβ1 : 1 / 2 ≤ β) (hβ2 : β < 1) (hd : θ = 1 → 2 / B ^ 2 ≤ (1 - β) * Real.log X)
-    (hX : B ^ (60 : ℝ) ≤ X)
-    (hπ₂ : ∀ Y : ℝ, 1 ≤ Y → (π₂ Y : ℝ) ≤ 2 * Real.sqrt Y)
-    (hη : ∀ Y : ℝ, 0 ≤ η' Y ∧ η' Y ≤ 3 * Real.log B)
-    (hQ : ∀ Y : ℝ, X ≤ Y →
-      |G * ((π₁ Y : ℝ) + π₂ Y + η' Y) - Emain θ β Y| ≤ rhoErr Cr cr B Y * Emain θ β Y)
-    {h : ℝ} (hh1 : h ≤ 1) (hρ : rhoErr Cr cr B X ≤ h / 100) (hB7 : B ^ (7 : ℝ) ≤ h * X ^ ((1 : ℝ) / 3)) :
-    1 / 100 * h * B ^ (-6 : ℝ) * X / Real.log X ≤ (π₁ (X * (1 + h)) : ℝ) - π₁ X := by
+    (hX : B ^ (60 : ℝ) ≤ X) :
+    (1 / 100 * B ^ (-5 : ℝ) * X / Real.log X ≤ Emain θ β X) ∧
+    (∀ {Cr cr G : ℝ} {π₁ π₂ : ℝ → ℕ} {η' : ℝ → ℝ}, 0 < Cr → 0 < cr → 1 ≤ G → G ≤ B →
+      (∀ Y : ℝ, 1 ≤ Y → (π₂ Y : ℝ) ≤ 2 * Real.sqrt Y) →
+      (∀ Y : ℝ, 0 ≤ η' Y ∧ η' Y ≤ 3 * Real.log B) →
+      (∀ Y : ℝ, X ≤ Y →
+        |G * ((π₁ Y : ℝ) + π₂ Y + η' Y) - Emain θ β Y| ≤ rhoErr Cr cr B Y * Emain θ β Y) →
+      ∀ {h : ℝ}, h ≤ 1 → rhoErr Cr cr B X ≤ h / 100 → B ^ (7 : ℝ) ≤ h * X ^ ((1 : ℝ) / 3) →
+        1 / 100 * h * B ^ (-6 : ℝ) * X / Real.log X ≤ (π₁ (X * (1 + h)) : ℝ) - π₁ X) := by
+  have gl2a4_le_of_deriv {f f' : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b)
+      (h : ∀ x ∈ Set.Icc a b, HasDerivAt f (f' x) x) (h0 : ∀ x ∈ Set.Icc a b, 0 ≤ f' x) : f a ≤ f b := by
+    have hmono : MonotoneOn f (Set.Icc a b) :=
+      monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc a b)
+        (fun x hx => (h x hx).continuousAt.continuousWithinAt)
+        (fun x hx => (h x (interior_subset hx)).hasDerivWithinAt)
+        (fun x hx => h0 x (interior_subset hx))
+    exact hmono (Set.left_mem_Icc.2 hab) (Set.right_mem_Icc.2 hab) hab
+
+  have gl2a4_Li_deriv {x : ℝ} (hx : 1 < x) : HasDerivAt Li (1 / Real.log x) x := by
+    have hcont : ContinuousOn (fun t : ℝ => 1 / Real.log t) (Set.Ioi 1) := by
+      apply ContinuousOn.div continuousOn_const
+      · exact Real.continuousOn_log.mono (fun t ht => (show (0:ℝ) < t from lt_trans one_pos ht).ne')
+      · intro t ht
+        exact (Real.log_pos ht).ne'
+    have hsub : Set.uIcc 2 x ⊆ Set.Ioi 1 := by
+      intro t ht
+      rcases Set.mem_uIcc.1 ht with h | h
+      · show (1:ℝ) < t
+        linarith [h.1]
+      · show (1:ℝ) < t
+        linarith [h.1]
+    have hint_r : IntervalIntegrable (fun t : ℝ => 1 / Real.log t) MeasureTheory.volume 2 x :=
+      (hcont.mono hsub).intervalIntegrable
+    show HasDerivAt (fun X => ∫ t in (2:ℝ)..X, 1 / Real.log t) (1 / Real.log x) x
+    exact intervalIntegral.integral_hasDerivAt_right hint_r
+      (hcont.stronglyMeasurableAtFilter isOpen_Ioi x hx) (hcont.continuousAt (Ioi_mem_nhds hx))
+
+  have gl2a4_E_deriv (θ : ℤ) {β t : ℝ} (hβ : 0 < β) (ht : 1 < t) :
+      HasDerivAt (Emain θ β) ((1 - θ * t ^ (β - 1)) / Real.log t) t := by
+    have ht0 : 0 < t := by linarith
+    have h1 : 1 < t ^ β := Real.one_lt_rpow ht hβ
+    have hA := gl2a4_Li_deriv ht
+    have hB := (gl2a4_Li_deriv h1).comp (x := t)
+      (Real.hasDerivAt_rpow_const (p := β) (Or.inl ht0.ne'))
+    have hC := hA.sub (hB.const_mul (θ : ℝ))
+    have hk : 1 / (β * Real.log t) * (β * t ^ (β - 1)) = t ^ (β - 1) / Real.log t := by
+      rw [one_div_mul_eq_div, mul_div_mul_left _ _ hβ.ne']
+    have heq : 1 / Real.log t - (θ : ℝ) * (1 / Real.log (t ^ β) * (β * t ^ (β - 1))) =
+        (1 - (θ : ℝ) * t ^ (β - 1)) / Real.log t := by
+      rw [Real.log_rpow ht0, hk]
+      ring
+    rw [← heq]
+    exact hC
+
+  have gl2a4_Li_two : Li 2 = 0 := by
+    unfold Li
+    exact intervalIntegral.integral_same
+
+  have gl2a4_Li_mono {a b : ℝ} (ha : 1 < a) (hab : a ≤ b) : Li a ≤ Li b :=
+    gl2a4_le_of_deriv (f := Li) (f' := fun x => 1 / Real.log x) hab
+      (fun x hx => gl2a4_Li_deriv (by linarith [hx.1] : 1 < x))
+      (fun x hx => by
+        show 0 ≤ 1 / Real.log x
+        exact div_nonneg zero_le_one (Real.log_nonneg (by linarith [hx.1])))
+
+  have gl2a4_Li_sub_le {a b : ℝ} (ha : 1 < a) (hab : a ≤ b) :
+      Li b - Li a ≤ (b - a) / Real.log a := by
+    have hla : 0 < Real.log a := Real.log_pos ha
+    have key := gl2a4_le_of_deriv (f := fun x => (x - a) / Real.log a - Li x)
+      (f' := fun x => 1 / Real.log a - 1 / Real.log x) hab
+      (fun x hx => ((((hasDerivAt_id' (x := x)).sub_const a).div_const (Real.log a)).sub
+        (gl2a4_Li_deriv (by linarith [hx.1] : 1 < x))))
+      (fun x hx => by
+        have hlx : Real.log a ≤ Real.log x := Real.log_le_log (by linarith) hx.1
+        show 0 ≤ 1 / Real.log a - 1 / Real.log x
+        rw [sub_nonneg]
+        exact one_div_le_one_div_of_le hla hlx)
+    simp only [sub_self, zero_div] at key
+    linarith
+
+  have gl2a4_E_lower (θ : ℤ) {β a b W : ℝ} (hβ : 0 < β) (ha : 1 < a) (hab : a ≤ b) (hW : 0 ≤ W)
+      (hw : ∀ t, a ≤ t → t ≤ b → W ≤ 1 - θ * t ^ (β - 1)) :
+      W * (b - a) / Real.log b ≤ Emain θ β b - Emain θ β a := by
+    have hlb : 0 < Real.log b := Real.log_pos (by linarith)
+    have key := gl2a4_le_of_deriv (f := fun x => Emain θ β x - W * (x - a) / Real.log b)
+      (f' := fun x => (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x - W * 1 / Real.log b) hab
+      (fun x hx => (gl2a4_E_deriv θ hβ (by linarith [hx.1] : 1 < x)).sub
+        ((((hasDerivAt_id' (x := x)).sub_const a).const_mul W).div_const (Real.log b)))
+      (fun x hx => by
+        have hx1 : 1 < x := by linarith [hx.1]
+        have hlx : 0 < Real.log x := Real.log_pos hx1
+        have hlxb : Real.log x ≤ Real.log b := Real.log_le_log (by linarith) hx.2
+        have hn := hw x hx.1 hx.2
+        show 0 ≤ (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x - W * 1 / Real.log b
+        rw [mul_one, sub_nonneg, div_le_div_iff₀ hlb hlx]
+        nlinarith [mul_le_mul_of_nonneg_left hlxb hW, mul_le_mul_of_nonneg_right hn hlb.le])
+    simp only [sub_self, mul_zero, zero_div, sub_zero] at key
+    linarith
+
+  have gl2a4_E_upper (θ : ℤ) {β a b V : ℝ} (hβ : 0 < β) (ha : 1 < a) (hab : a ≤ b)
+      (hw : ∀ t, a ≤ t → t ≤ b → 1 - θ * t ^ (β - 1) ≤ V) :
+      Emain θ β b - Emain θ β a ≤ V * (Li b - Li a) := by
+    have key := gl2a4_le_of_deriv (f := fun x => V * Li x - Emain θ β x)
+      (f' := fun x => V * (1 / Real.log x) - (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x) hab
+      (fun x hx => ((gl2a4_Li_deriv (by linarith [hx.1] : 1 < x)).const_mul V).sub
+        (gl2a4_E_deriv θ hβ (by linarith [hx.1] : 1 < x)))
+      (fun x hx => by
+        have hlx : 0 < Real.log x := Real.log_pos (by linarith [hx.1])
+        have hn := hw x hx.1 hx.2
+        show 0 ≤ V * (1 / Real.log x) - (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x
+        rw [mul_one_div, ← sub_div]
+        exact div_nonneg (by linarith) hlx.le)
+    linarith
+
+  have gl2a4_Li_four : Li 4 ≤ 3 := by
+    have h := gl2a4_Li_sub_le (a := 2) (b := 4) (by norm_num) (by norm_num)
+    rw [gl2a4_Li_two] at h
+    have hl2 : (2:ℝ) / 3 < Real.log 2 := by
+      have := Real.log_two_gt_d9
+      norm_num at this
+      linarith
+    have hpos : 0 < Real.log 2 := by linarith
+    have h3 : (4 - 2) / Real.log 2 ≤ 3 := by
+      rw [div_le_iff₀ hpos]
+      linarith
+    linarith
+
+  have gl2a4_E_four {θ : ℤ} (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) {β : ℝ} (h1 : 1 / 2 ≤ β) (h2 : β < 1) :
+      0 ≤ Emain θ β 4 ∧ Emain θ β 4 ≤ 6 := by
+    have e : (4:ℝ) ^ ((1:ℝ) / 2) = 2 := by
+      rw [show (4:ℝ) = 2 ^ (2:ℝ) by norm_num, ← Real.rpow_mul (by norm_num : (0:ℝ) ≤ 2)]
+      norm_num
+    have hlo : (2:ℝ) ≤ (4:ℝ) ^ β := by
+      have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1:ℝ) ≤ 4) h1
+      linarith
+    have hhi : (4:ℝ) ^ β ≤ 4 := by
+      have h := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1:ℝ) ≤ 4) h2.le
+      rwa [Real.rpow_one] at h
+    have hl4 : 0 ≤ Li 4 := by
+      have := gl2a4_Li_mono (a := 2) (b := 4) (by norm_num) (by norm_num)
+      rwa [gl2a4_Li_two] at this
+    have hl4b : Li 4 ≤ 3 := gl2a4_Li_four
+    have hlb0 : 0 ≤ Li ((4:ℝ) ^ β) := by
+      have := gl2a4_Li_mono (a := 2) (by norm_num) hlo
+      rwa [gl2a4_Li_two] at this
+    have hlb1 : Li ((4:ℝ) ^ β) ≤ Li 4 := gl2a4_Li_mono (by linarith) hhi
+    unfold Emain
+    rcases hθ with rfl | rfl | rfl
+    · rw [show ((-1:ℤ):ℝ) = -1 by norm_num]
+      constructor <;> linarith
+    · rw [show ((0:ℤ):ℝ) = 0 by norm_num]
+      constructor <;> linarith
+    · rw [show ((1:ℤ):ℝ) = 1 by norm_num]
+      constructor <;> linarith
+
+  have Li_le_three_mul_div_log {Y : ℝ} (hY : 1296 ≤ Y) : Li Y ≤ 3 * Y / Real.log Y := by
+    obtain ⟨s, hs⟩ : ∃ s, s = Real.sqrt Y := ⟨_, rfl⟩
+    have hs0 : 0 ≤ s := by rw [hs]; exact Real.sqrt_nonneg Y
+    have hs2 : s ^ 2 = Y := by rw [hs]; exact Real.sq_sqrt (by linarith)
+    have hs36 : 36 ≤ s := by nlinarith
+    obtain ⟨r, hr⟩ : ∃ r, r = Real.sqrt s := ⟨_, rfl⟩
+    have hr0 : 0 ≤ r := by rw [hr]; exact Real.sqrt_nonneg s
+    have hr2 : r ^ 2 = s := by rw [hr]; exact Real.sq_sqrt hs0
+    have hr6 : 6 ≤ r := by nlinarith
+    have hrpos : 0 < r := by linarith
+    have hlogs : Real.log s = 2 * Real.log r := by
+      rw [← hr2, Real.log_pow]
+      norm_num
+    have hlogr : Real.log r ≤ r - 1 := Real.log_le_sub_one_of_pos hrpos
+    have hLpos : 0 < Real.log s := Real.log_pos (by linarith)
+    have hLY : Real.log Y = 2 * Real.log s := by
+      rw [← hs2, Real.log_pow]
+      norm_num
+    have hl2 : (2:ℝ) / 3 < Real.log 2 := by
+      have := Real.log_two_gt_d9
+      norm_num at this
+      linarith
+    have hl2pos : 0 < Real.log 2 := by linarith
+    have h1 := gl2a4_Li_sub_le (a := s) (b := Y) (by linarith) (by nlinarith)
+    have h2 := gl2a4_Li_sub_le (a := 2) (b := s) (by norm_num) (by linarith)
+    rw [gl2a4_Li_two] at h2
+    have hkey' : 2 * (2 * Real.log r) ≤ r ^ 2 * Real.log 2 := by
+      nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ r - 6) (by linarith : (0:ℝ) ≤ r - 6),
+        mul_le_mul_of_nonneg_left hl2.le (sq_nonneg r)]
+    have hkey : 2 * Real.log s ≤ s * Real.log 2 := by
+      rw [hlogs, ← hr2]
+      exact hkey'
+    have hA : (s - 2) / Real.log 2 ≤ s ^ 2 / (2 * Real.log s) := by
+      rw [div_le_div_iff₀ hl2pos (by linarith)]
+      nlinarith [mul_le_mul_of_nonneg_left hkey hs0]
+    have hB : (Y - s) / Real.log s ≤ s ^ 2 / Real.log s :=
+      div_le_div_of_nonneg_right (by linarith) hLpos.le
+    have hC : s ^ 2 / Real.log s + s ^ 2 / (2 * Real.log s) = 3 * s ^ 2 / (2 * Real.log s) := by
+      ring
+    have hD : 3 * Y / Real.log Y = 3 * s ^ 2 / (2 * Real.log s) := by
+      rw [hLY, hs2]
+    rw [hD]
+    linarith
+
+  have gl2a4_weight_nonneg {θ : ℤ} (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) {β t : ℝ} (hβ : β < 1)
+      (ht : 1 ≤ t) : 0 ≤ 1 - θ * t ^ (β - 1) := by
+    have h0 : 0 ≤ t ^ (β - 1) := Real.rpow_nonneg (by linarith) _
+    have h1 : t ^ (β - 1) ≤ 1 := Real.rpow_le_one_of_one_le_of_nonpos ht (by linarith)
+    rcases hθ with rfl | rfl | rfl
+    · rw [show ((-1:ℤ):ℝ) = -1 by norm_num]
+      linarith
+    · rw [show ((0:ℤ):ℝ) = 0 by norm_num]
+      linarith
+    · rw [show ((1:ℤ):ℝ) = 1 by norm_num]
+      linarith
+
+  have gl2a4_weight {θ : ℤ} (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) {β B Z : ℝ} (hβ : β < 1) (hB : 1 ≤ B)
+      (hZ : 1 ≤ Z) (hd : θ = 1 → 1 / B ^ 2 ≤ (1 - β) * Real.log Z) :
+      ∃ W : ℝ, 1 / (2 * B ^ 2) ≤ W ∧ W ≤ 1 ∧ (∀ t, Z ≤ t → W ≤ 1 - θ * t ^ (β - 1)) ∧
+        (∀ t, 1 ≤ t → t ≤ Z ^ 2 → 1 - θ * t ^ (β - 1) ≤ 2 * W) := by
+    have hB2 : 1 ≤ B ^ 2 := one_le_pow₀ hB
+    have hB2pos : 0 < B ^ 2 := by linarith
+    have hhalf : 1 / (2 * B ^ 2) ≤ 1 := by
+      rw [div_le_iff₀ (by linarith)]
+      linarith
+    have hZ0 : 0 < Z := by linarith
+    have hexp0 : β - 1 ≤ 0 := by linarith
+    rcases hθ with rfl | rfl | rfl
+    · refine ⟨1, hhalf, le_rfl, ?_, ?_⟩
+      · intro t ht
+        have : 0 ≤ t ^ (β - 1) := Real.rpow_nonneg (by linarith) _
+        rw [show ((-1:ℤ):ℝ) = -1 by norm_num]
+        linarith
+      · intro t ht1 _
+        have : t ^ (β - 1) ≤ 1 := Real.rpow_le_one_of_one_le_of_nonpos ht1 hexp0
+        rw [show ((-1:ℤ):ℝ) = -1 by norm_num]
+        linarith
+    · refine ⟨1, hhalf, le_rfl, ?_, ?_⟩
+      · intro t _
+        rw [show ((0:ℤ):ℝ) = 0 by norm_num]
+        linarith
+      · intro t _ _
+        rw [show ((0:ℤ):ℝ) = 0 by norm_num]
+        linarith
+    · have hd' := hd rfl
+      obtain ⟨x, hx⟩ : ∃ x, x = (1 - β) * Real.log Z := ⟨_, rfl⟩
+      rw [← hx] at hd'
+      have hx0 : 0 ≤ x := le_trans (by positivity) hd'
+      have hZe : Z ^ (β - 1) = Real.exp (-x) := by
+        rw [Real.rpow_def_of_pos hZ0, hx]
+        congr 1
+        ring
+      have h3 : 0 ≤ Z ^ (β - 1) := Real.rpow_nonneg hZ0.le _
+      have h4 : Z ^ (β - 1) ≤ 1 := Real.rpow_le_one_of_one_le_of_nonpos hZ hexp0
+      refine ⟨1 - Z ^ (β - 1), ?_, ?_, ?_, ?_⟩
+      · rw [hZe]
+        have e1 := Real.add_one_le_exp x
+        have e2 : Real.exp (-x) * Real.exp x = 1 := by
+          rw [← Real.exp_add]
+          simp
+        have e3 : 0 < Real.exp (-x) := Real.exp_pos _
+        have e4 : Real.exp (-x) * (x + 1) ≤ 1 := by
+          nlinarith [mul_le_mul_of_nonneg_left e1 e3.le]
+        have e5 : 1 ≤ x * B ^ 2 := by rwa [div_le_iff₀ hB2pos] at hd'
+        have hy : x ≤ (1 - Real.exp (-x)) * (1 + x) := by nlinarith
+        have hBx : x ≤ x * B ^ 2 := le_mul_of_one_le_right hx0 hB2
+        have key : 1 * (1 + x) ≤ (1 - Real.exp (-x)) * (2 * B ^ 2) * (1 + x) := by
+          nlinarith [mul_le_mul_of_nonneg_left hy (by linarith : (0:ℝ) ≤ 2 * B ^ 2)]
+        have key2 := le_of_mul_le_mul_right key (by linarith : (0:ℝ) < 1 + x)
+        rw [div_le_iff₀ (by linarith)]
+        linarith
+      · linarith
+      · intro t ht
+        have : t ^ (β - 1) ≤ Z ^ (β - 1) := Real.rpow_le_rpow_of_nonpos hZ0 ht hexp0
+        rw [show ((1:ℤ):ℝ) = 1 by norm_num]
+        linarith
+      · intro t ht1 ht2
+        have g1 : (Z ^ 2) ^ (β - 1) ≤ t ^ (β - 1) := Real.rpow_le_rpow_of_nonpos (by linarith) ht2 hexp0
+        have g2 : (Z ^ 2) ^ (β - 1) = Z ^ (β - 1) * Z ^ (β - 1) := by
+          rw [sq, Real.mul_rpow hZ0.le hZ0.le]
+        rw [show ((1:ℤ):ℝ) = 1 by norm_num]
+        nlinarith [mul_self_nonneg (1 - Z ^ (β - 1))]
+
+  have gl2a4_E_nonneg {θ : ℤ} (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) {β Y : ℝ} (h1 : 1 / 2 ≤ β)
+      (h2 : β < 1) (hY : 4 ≤ Y) : 0 ≤ Emain θ β Y := by
+    have h4 := (gl2a4_E_four hθ h1 h2).1
+    have hβ0 : 0 < β := by linarith
+    have hmono := gl2a4_le_of_deriv (f := Emain θ β)
+      (f' := fun x => (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x) hY
+      (fun x hx => gl2a4_E_deriv θ hβ0 (by linarith [hx.1] : (1:ℝ) < x))
+      (fun x hx => by
+        show 0 ≤ (1 - (θ:ℝ) * x ^ (β - 1)) / Real.log x
+        exact div_nonneg (gl2a4_weight_nonneg hθ h2 (by linarith [hx.1]))
+          (Real.log_nonneg (by linarith [hx.1])))
+    linarith
+
+  have gl2a4_rho_pos {C c B X : ℝ} (hC : 0 < C) : 0 < rhoErr C c B X := by
+    unfold rhoErr
+    have h1 := mul_pos hC (Real.exp_pos (-c * Real.log X / Real.log B))
+    have h2 := mul_pos hC (Real.exp_pos (-c * Real.sqrt (Real.log X)))
+    linarith
+
+  have gl2a4_rho_mono {C c B X X' : ℝ} (hC : 0 < C) (hc : 0 < c) (hB : 1 < B) (hX : 1 ≤ X)
+      (h : X ≤ X') : rhoErr C c B X' ≤ rhoErr C c B X := by
+    unfold rhoErr
+    have hX0 : 0 < X := by linarith
+    have hlogle : Real.log X ≤ Real.log X' := Real.log_le_log hX0 h
+    have hlogB : 0 < Real.log B := Real.log_pos hB
+    have e1 : Real.exp (-c * Real.log X' / Real.log B) ≤ Real.exp (-c * Real.log X / Real.log B) := by
+      apply Real.exp_le_exp.mpr
+      apply div_le_div_of_nonneg_right _ hlogB.le
+      nlinarith [mul_le_mul_of_nonneg_left hlogle hc.le]
+    have e2 : Real.exp (-c * Real.sqrt (Real.log X')) ≤ Real.exp (-c * Real.sqrt (Real.log X)) := by
+      apply Real.exp_le_exp.mpr
+      have := Real.sqrt_le_sqrt hlogle
+      nlinarith [mul_le_mul_of_nonneg_left this hc.le]
+    nlinarith [mul_le_mul_of_nonneg_left e1 hC.le, mul_le_mul_of_nonneg_left e2 hC.le]
+
+  have gl2a4_root {B X : ℝ} (hB : 4 ≤ B) (hX : B ^ (60 : ℝ) ≤ X) :
+      ∃ u : ℝ, 1024 ≤ u ∧ u ^ 12 = X ∧ Real.sqrt X = u ^ 6 ∧ X ^ ((1 : ℝ) / 3) = u ^ 4 ∧
+        Real.log X ≤ 12 * u := by
+    have e60 : B ^ (60 : ℝ) = B ^ (60 : ℕ) := by exact_mod_cast Real.rpow_natCast B 60
+    rw [e60] at hX
+    have hB60 : (4:ℝ) ^ 60 ≤ B ^ 60 := pow_le_pow_left₀ (by norm_num) hB 60
+    have hpos : (0:ℝ) < 4 ^ 60 := by norm_num
+    have hX0 : 0 < X := by linarith
+    obtain ⟨u, hu⟩ : ∃ u, u = X ^ ((1:ℝ) / 12) := ⟨_, rfl⟩
+    have hu0 : 0 ≤ u := by rw [hu]; exact Real.rpow_nonneg hX0.le _
+    have hu12 : u ^ 12 = X := by
+      rw [hu, show (1:ℝ) / 12 = ((12:ℕ):ℝ)⁻¹ by norm_num]
+      exact Real.rpow_inv_natCast_pow hX0.le (by norm_num)
+    have hu1024 : 1024 ≤ u := by
+      apply le_of_pow_le_pow_left₀ (n := 12) (by norm_num) hu0
+      rw [hu12]
+      have e : (1024:ℝ) ^ 12 = 4 ^ 60 := by norm_num
+      linarith
+    refine ⟨u, hu1024, hu12, ?_, ?_, ?_⟩
+    · rw [← hu12, show u ^ 12 = (u ^ 6) ^ 2 by ring]
+      exact Real.sqrt_sq (by positivity)
+    · rw [← hu12, show u ^ 12 = (u ^ 4) ^ 3 by ring, show (1:ℝ) / 3 = ((3:ℕ):ℝ)⁻¹ by norm_num]
+      exact Real.pow_rpow_inv_natCast (by positivity) (by norm_num)
+    · have hl := Real.log_le_sub_one_of_pos (show 0 < u by linarith)
+      have e : Real.log X = 12 * Real.log u := by
+        rw [← hu12, Real.log_pow]
+        norm_num
+      linarith
+
+  have Emain_lower_bound {B β X : ℝ} {θ : ℤ} (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) (hB : 4 ≤ B)
+      (hβ1 : 1 / 2 ≤ β) (hβ2 : β < 1) (hd : θ = 1 → 2 / B ^ 2 ≤ (1 - β) * Real.log X)
+      (hX : B ^ (60 : ℝ) ≤ X) :
+      1 / 100 * B ^ (-5 : ℝ) * X / Real.log X ≤ Emain θ β X := by
+    obtain ⟨u, hu, hu12, -, -, -⟩ := gl2a4_root hB hX
+    have hB0 : 0 < B := by linarith
+    have hu0 : 0 < u := by linarith
+    have hu1 : 1 ≤ u := by linarith
+    have hβ0 : 0 < β := by linarith
+    have hu6 : 1024 ≤ u ^ 6 := le_trans hu (le_self_pow₀ hu1 (by norm_num))
+    have hXeq : X = u ^ 6 * u ^ 6 := by rw [← hu12]; ring
+    have hX0 : 0 < X := by rw [← hu12]; exact pow_pos hu0 12
+    have hv2 : u ^ 6 ≤ X / 2 := by
+      rw [hXeq]
+      linarith [mul_le_mul_of_nonneg_left hu6 (by positivity : (0:ℝ) ≤ u ^ 6)]
+    have hX1 : 1 < X := by linarith
+    have hL : 0 < Real.log X := Real.log_pos hX1
+    have hlogX : Real.log X = 12 * Real.log u := by
+      rw [← hu12, Real.log_pow]
+      norm_num
+    have hlogv : Real.log (u ^ 6) = 6 * Real.log u := by
+      rw [Real.log_pow]
+      norm_num
+    have hdZ : θ = 1 → 1 / B ^ 2 ≤ (1 - β) * Real.log (u ^ 6) := by
+      intro h1
+      have h2 := hd h1
+      rw [hlogX] at h2
+      rw [hlogv]
+      have e : 2 / B ^ 2 = 2 * (1 / B ^ 2) := by ring
+      linarith
+    obtain ⟨W, hW1, hW2, hWlo, -⟩ :=
+      gl2a4_weight hθ hβ2 (by linarith : (1:ℝ) ≤ B) (by linarith : (1:ℝ) ≤ u ^ 6) hdZ
+    have hW0 : 0 ≤ W := le_trans (by positivity) hW1
+    have hdiff := gl2a4_E_lower θ hβ0 (by linarith : (1:ℝ) < u ^ 6)
+      (by linarith : u ^ 6 ≤ X) hW0 (fun t ht _ => hWlo t ht)
+    have hMv := gl2a4_E_nonneg hθ hβ1 hβ2 (by linarith : (4:ℝ) ≤ u ^ 6)
+    obtain ⟨q, hq⟩ : ∃ q, q = X / Real.log X := ⟨_, rfl⟩
+    have hq0 : 0 ≤ q := by rw [hq]; positivity
+    have e5 : B ^ (5 : ℝ) = B ^ (5 : ℕ) := by exact_mod_cast Real.rpow_natCast B 5
+    have hT : 1 / 100 * B ^ (-5 : ℝ) * X / Real.log X = q / (100 * B ^ 5) := by
+      rw [Real.rpow_neg hB0.le, e5, hq]
+      ring
+    have h1 : W * (X / 2) / Real.log X ≤ W * (X - u ^ 6) / Real.log X :=
+      div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left (by linarith) hW0) hL.le
+    have h2 : W * (X / 2) / Real.log X = W * q / 2 := by
+      rw [hq]
+      ring
+    have h3 : 1 / (2 * B ^ 2) * q ≤ W * q := mul_le_mul_of_nonneg_right hW1 hq0
+    have h4 : q / (100 * B ^ 5) ≤ 1 / (2 * B ^ 2) * q / 2 := by
+      have hB3 : 1 ≤ B ^ 3 := one_le_pow₀ (by linarith)
+      have e : 1 / (2 * B ^ 2) * q / 2 = q / (4 * B ^ 2) := by ring
+      rw [e]
+      exact div_le_div_of_nonneg_left hq0 (by positivity)
+        (by nlinarith [mul_le_mul_of_nonneg_left hB3 (by positivity : (0:ℝ) ≤ B ^ 2), sq_nonneg B])
+    rw [hT]
+    linarith
+
+  refine ⟨Emain_lower_bound hθ hB hβ1 hβ2 hd hX, ?_⟩
+  intro Cr cr G π₁ π₂ η' hCr hcr hG1 hGB hπ₂ hη hQ h hh1 hρ hB7
   obtain ⟨u, hu, hu12, hsq, hcb, hlogu⟩ := gl2a4_root hB hX
   have hB0 : 0 < B := by linarith
   have hu0 : 0 < u := by linarith
@@ -219,6 +614,19 @@ private lemma exceptional_zero_contribution_bound {Cr cr B G β X : ℝ} {θ : �
     linarith
   linarith
 
+set_option maxHeartbeats 1000000 in
+private lemma exceptional_zero_contribution_bound {Cr cr B G β X : ℝ} {θ : ℤ} {π₁ π₂ : ℝ → ℕ} {η' : ℝ → ℝ} (hCr : 0 < Cr) (hcr : 0 < cr)
+    (hθ : θ = -1 ∨ θ = 0 ∨ θ = 1) (hB : 4 ≤ B) (hG1 : 1 ≤ G) (hGB : G ≤ B)
+    (hβ1 : 1 / 2 ≤ β) (hβ2 : β < 1) (hd : θ = 1 → 2 / B ^ 2 ≤ (1 - β) * Real.log X)
+    (hX : B ^ (60 : ℝ) ≤ X)
+    (hπ₂ : ∀ Y : ℝ, 1 ≤ Y → (π₂ Y : ℝ) ≤ 2 * Real.sqrt Y)
+    (hη : ∀ Y : ℝ, 0 ≤ η' Y ∧ η' Y ≤ 3 * Real.log B)
+    (hQ : ∀ Y : ℝ, X ≤ Y →
+      |G * ((π₁ Y : ℝ) + π₂ Y + η' Y) - Emain θ β Y| ≤ rhoErr Cr cr B Y * Emain θ β Y)
+    {h : ℝ} (hh1 : h ≤ 1) (hρ : rhoErr Cr cr B X ≤ h / 100) (hB7 : B ^ (7 : ℝ) ≤ h * X ^ ((1 : ℝ) / 3)) :
+    1 / 100 * h * B ^ (-6 : ℝ) * X / Real.log X ≤ (π₁ (X * (1 + h)) : ℝ) - π₁ X :=
+  (exceptional_zero_estimates hθ hB hβ1 hβ2 hd hX).2 hCr hcr hG1 hGB hπ₂ hη hQ hh1 hρ hB7
+
 theorem shortIntervalLowerBound : ShortIntervalLowerBound := by
   intro C₀ Cr cr cb hC₀ hCr hcr hcb
   obtain ⟨Cm, hC0m, hC60, hCcb⟩ : ∃ Cm : ℝ, C₀ ≤ Cm ∧ 60 ≤ Cm ∧ 2 / cb ≤ Cm :=
@@ -235,7 +643,7 @@ theorem shortIntervalLowerBound : ShortIntervalLowerBound := by
   have hcbX : 2 / cb * Real.log B ≤ Real.log X :=
     le_trans (mul_le_mul_of_nonneg_right hCcb hlogB.le) hK
   obtain ⟨β', hβ1, hβ2, hE, hd⟩ := exists_adjusted_exceptional_exponent hcb hB hβ hcbX
-  have hlow := Emain_lower_bound hθ' hB hβ1 hβ2 hd hX60
+  have hlow := (exceptional_zero_estimates hθ' hB hβ1 hβ2 hd hX60).1
   refine ⟨?_, ?_⟩
   · rw [hE X]
     exact hlow
@@ -244,124 +652,6 @@ theorem shortIntervalLowerBound : ShortIntervalLowerBound := by
     intro Y hY
     rw [← hE Y]
     exact hQ Y (le_trans hXC₀ hY)
-
-private lemma numerical_exponential_inequality {Cr cr l L : ℝ} (hCr : 0 < Cr) (h60 : 60 * l ≤ L)
-    (h16 : 16 * cr ^ 2 ≤ L) (h48 : 4800 / Cr ≤ L) (hL : 0 < L) :
-    3 * Real.exp l * l ≤
-      Cr * Real.exp (-cr * Real.sqrt L) * (1 / 100 * Real.exp (-5 * l) * Real.exp L / L) := by
-  rcases le_or_gt l 0 with hl0 | hl0
-  · have h1 : 3 * Real.exp l * l ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (by positivity) hl0
-    have h2 : 0 ≤ Cr * Real.exp (-cr * Real.sqrt L) * (1 / 100 * Real.exp (-5 * l) * Real.exp L / L) :=
-      mul_nonneg (mul_nonneg hCr.le (Real.exp_pos _).le) (div_nonneg (by positivity) hL.le)
-    linarith
-  · have hs0 : 0 ≤ Real.sqrt L := Real.sqrt_nonneg L
-    have hs : Real.sqrt L ^ 2 = L := Real.sq_sqrt hL.le
-    have hcs : cr * Real.sqrt L ≤ L / 4 := by nlinarith [sq_nonneg (Real.sqrt L - 4 * cr)]
-    have hE : Real.exp (2 * L / 3) ≤ Real.exp (-cr * Real.sqrt L) * Real.exp (-5 * l) * Real.exp L := by
-      rw [← Real.exp_add, ← Real.exp_add]
-      exact Real.exp_le_exp.mpr (by linarith)
-    have hll : l ≤ L / 60 := by linarith
-    have hA : 0 < Real.exp (L / 60) := Real.exp_pos _
-    have hel : Real.exp l ≤ Real.exp (L / 60) := Real.exp_le_exp.mpr hll
-    have hy : 13 * L / 60 ≤ Real.exp (13 * L / 60) := by linarith [Real.add_one_le_exp (13 * L / 60)]
-    have e3 : Real.exp (39 * L / 60) = Real.exp (13 * L / 60) ^ 3 := by
-      rw [← Real.exp_nat_mul]
-      congr 1
-      push_cast
-      ring
-    have hcube : (13 * L / 60) ^ 3 ≤ Real.exp (39 * L / 60) := by
-      rw [e3]
-      first
-      | exact pow_le_pow_left₀ (by linarith) hy 3
-      | exact pow_le_pow_left (by linarith) hy 3
-    have e23 : Real.exp (L / 60) * Real.exp (39 * L / 60) = Real.exp (2 * L / 3) := by
-      rw [← Real.exp_add]
-      congr 1
-      ring
-    have hK : 4800 ≤ Cr * L := by
-      have := (div_le_iff₀ hCr).mp h48
-      linarith
-    have key : 3 * Real.exp l * l * (100 * L)
-        ≤ Cr * (Real.exp (-cr * Real.sqrt L) * Real.exp (-5 * l) * Real.exp L) := by
-      have k1 : 3 * Real.exp l * l ≤ 3 * Real.exp (L / 60) * (L / 60) :=
-        mul_le_mul (by linarith) hll hl0.le (by positivity)
-      have k2 : 3 * Real.exp (L / 60) * (L / 60) * (100 * L)
-          ≤ Cr * (Real.exp (L / 60) * (13 * L / 60) ^ 3) := by
-        nlinarith [mul_nonneg (mul_nonneg hA.le (sq_nonneg L)) (sub_nonneg.mpr hK),
-          mul_nonneg hA.le (sq_nonneg L)]
-      have k3 : Cr * (Real.exp (L / 60) * (13 * L / 60) ^ 3)
-          ≤ Cr * (Real.exp (L / 60) * Real.exp (39 * L / 60)) :=
-        mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hcube hA.le) hCr.le
-      rw [e23] at k3
-      have k4 : Cr * Real.exp (2 * L / 3)
-          ≤ Cr * (Real.exp (-cr * Real.sqrt L) * Real.exp (-5 * l) * Real.exp L) :=
-        mul_le_mul_of_nonneg_left hE hCr.le
-      nlinarith [mul_le_mul_of_nonneg_right k1 (by linarith : (0 : ℝ) ≤ 100 * L)]
-    have e : Cr * Real.exp (-cr * Real.sqrt L) * (1 / 100 * Real.exp (-5 * l) * Real.exp L / L)
-        = Cr * (Real.exp (-cr * Real.sqrt L) * Real.exp (-5 * l) * Real.exp L) / (100 * L) := by
-      first
-      | ring
-      | (field_simp; ring)
-      | field_simp
-    rw [e, le_div_iff₀ (by linarith)]
-    exact key
-
-theorem prime_divisor_count_absorption : PrimeDivisorCountAbsorption := by
-  intro C₀ Cr cr cb hC₀ hCr hcr hcb
-  obtain ⟨Cm, hC0m, hC60, hCcb, hC16, hC48⟩ : ∃ Cm : ℝ, C₀ ≤ Cm ∧ 60 ≤ Cm ∧ 2 / cb ≤ Cm ∧
-      16 * cr ^ 2 ≤ Cm ∧ 4800 / Cr ≤ Cm :=
-    ⟨max C₀ (max 60 (max (2 / cb) (max (16 * cr ^ 2) (4800 / Cr)))), le_max_left _ _,
-      le_trans (le_max_left _ _) (le_max_right _ _),
-      le_trans (le_max_left _ _) (le_trans (le_max_right _ _) (le_max_right _ _)),
-      le_trans (le_max_left _ _) (le_trans (le_max_right _ _) (le_trans (le_max_right _ _) (le_max_right _ _))),
-      le_trans (le_max_right _ _) (le_trans (le_max_right _ _) (le_trans (le_max_right _ _) (le_max_right _ _)))⟩
-  refine ⟨Cm, hC0m, ?_⟩
-  intro B G β θ P η' hB hG1 hGB hθ hβ hη hQ Y hY
-  have hθ' : θ = -1 ∨ θ = 0 ∨ θ = 1 := by simpa using hθ
-  have hB1 : (1 : ℝ) ≤ B := by linarith
-  have hB0 : 0 < B := by linarith
-  have hlogB1 : 1 ≤ Real.log B := by
-    rw [Real.le_log_iff_exp_le hB0]
-    have := Real.exp_one_lt_d9
-    linarith
-  have hlogB : 0 < Real.log B := by linarith
-  have hK := mul_log_le_log_of_rpow_le hB hY
-  have hL60 : 60 * Real.log B ≤ Real.log Y := le_trans (mul_le_mul_of_nonneg_right hC60 hlogB.le) hK
-  have hLC : Cm ≤ Real.log Y := le_trans (le_mul_of_one_le_right (by linarith) hlogB1) hK
-  have hL16 : 16 * cr ^ 2 ≤ Real.log Y := le_trans hC16 hLC
-  have hL48 : 4800 / Cr ≤ Real.log Y := le_trans hC48 hLC
-  have hLpos : 0 < Real.log Y := by linarith
-  have hcbX : 2 / cb * Real.log B ≤ Real.log Y :=
-    le_trans (mul_le_mul_of_nonneg_right hCcb hlogB.le) hK
-  have hY60 : B ^ (60 : ℝ) ≤ Y := le_trans (Real.rpow_le_rpow_of_exponent_le hB1 hC60) hY
-  have hYC₀ : B ^ C₀ ≤ Y := le_trans (Real.rpow_le_rpow_of_exponent_le hB1 hC0m) hY
-  have hY0 : 0 < Y := lt_of_lt_of_le (Real.rpow_pos_of_pos hB0 _) hY
-  obtain ⟨β', hβ1, hβ2, hE, hd⟩ := exists_adjusted_exceptional_exponent hcb hB hβ hcbX
-  have hlow := Emain_lower_bound hθ' hB hβ1 hβ2 hd hY60
-  rw [← hE Y] at hlow
-  have hnum := numerical_exponential_inequality hCr hL60 hL16 hL48 hLpos
-  rw [Real.exp_log hB0, Real.exp_log hY0] at hnum
-  have e5 : Real.exp (-5 * Real.log B) = B ^ (-5 : ℝ) := by
-    rw [Real.rpow_def_of_pos hB0]
-    congr 1
-    ring
-  rw [e5] at hnum
-  have hρ : Cr * Real.exp (-cr * Real.sqrt (Real.log Y)) ≤ rhoErr Cr cr B Y := by
-    unfold rhoErr
-    linarith [mul_pos hCr (Real.exp_pos (-cr * Real.log Y / Real.log B))]
-  have hm0 : 0 ≤ 1 / 100 * B ^ (-5 : ℝ) * Y / Real.log Y :=
-    div_nonneg (mul_nonneg (mul_nonneg (by norm_num) (Real.rpow_pos_of_pos hB0 _).le) hY0.le) hLpos.le
-  have hρE : Cr * Real.exp (-cr * Real.sqrt (Real.log Y)) * (1 / 100 * B ^ (-5 : ℝ) * Y / Real.log Y)
-      ≤ rhoErr Cr cr B Y * Emain θ β Y :=
-    mul_le_mul hρ hlow hm0 (le_of_lt (gl2a4_rho_pos hCr))
-  have hGη : G * η' Y ≤ B * (3 * Real.log B) := mul_le_mul hGB (hη Y).2 (hη Y).1 hB0.le
-  have hGη0 : 0 ≤ G * η' Y := mul_nonneg (by linarith) (hη Y).1
-  have h2 : rhoErr (2 * Cr) cr B Y = 2 * rhoErr Cr cr B Y := by
-    unfold rhoErr
-    ring
-  have hQY := abs_le.mp (hQ Y hYC₀)
-  rw [h2, abs_le]
-  constructor <;> linarith [hQY.1, hQY.2]
 
 theorem shortIntervalImpliesProgressions_statement : ShortIntervalImpliesProgressions := by
   intro hL C₀ Cr cr cb hC₀ hCr hcr hcb hQ
@@ -434,826 +724,364 @@ theorem shortIntervalImpliesProgressions_statement : ShortIntervalImpliesProgres
 
 end ShortIntervalLowerBound
 
-theorem parallelogram_maximum : ParallelogramMax := by
-  intro T inst1 inst2 M₀ m hpar h0
-  have hm : ∀ Q, Q ≠ 0 → m Q = 0 := by
-    intro Q hQ
-    have hsum : ∑ P : T, (M₀ (P + Q) + M₀ (P - Q) - 2 * M₀ P) = ∑ _P : T, 2 * m Q :=
-      Finset.sum_congr rfl (fun P _ => hpar P Q hQ)
-    have h1 : ∑ P : T, M₀ (P + Q) = ∑ P : T, M₀ P := Equiv.sum_comp (Equiv.addRight Q) M₀
-    have h2 : ∑ P : T, M₀ (P - Q) = ∑ P : T, M₀ P := Equiv.sum_comp (Equiv.subRight Q) M₀
-    have e1 : ∑ P : T, (M₀ (P + Q) + M₀ (P - Q) - 2 * M₀ P)
-        = ∑ P : T, M₀ (P + Q) + ∑ P : T, M₀ (P - Q) - 2 * ∑ P : T, M₀ P := by
-      rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.mul_sum]
-    have e2 : ∑ _P : T, 2 * m Q = (Fintype.card T : ℝ) * (2 * m Q) := by
-      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    have hc : (0 : ℝ) < Fintype.card T := by exact_mod_cast Fintype.card_pos
-    have h3 : (Fintype.card T : ℝ) * (2 * m Q) = 0 := by linarith
-    rcases mul_eq_zero.mp h3 with h | h
-    · exact absurd h (ne_of_gt hc)
-    · linarith
-  refine ⟨hm, ?_⟩
-  haveI : Nonempty T := ⟨0⟩
-  obtain ⟨P, hP⟩ := Finite.exists_max M₀
-  have hconst : ∀ R, M₀ R = M₀ P := by
-    intro R
-    by_cases hQ : R - P = 0
-    · rw [sub_eq_zero.mp hQ]
-    · have h1 := hpar P (R - P) hQ
-      rw [hm _ hQ] at h1
-      have e : P + (R - P) = R := by abel
-      rw [e] at h1
-      exact le_antisymm (hP R) (by linarith [hP (P - (R - P))])
-  intro R
-  have h00 := hconst 0
-  rw [h0] at h00
-  rw [hconst R]
-  linarith
-
-theorem prime_sums_short_interval_lower_bound_of_general : ShortIntervalLowerBound → Formalism.HermitianLattices.GL2PrimeSums.ShortIntervalLowerBound := by
-  intro hL C₀ Cr cr cb h1 h2 h3 h4
-  obtain ⟨C₀', c, hC, hc, H⟩ := hL C₀ Cr cr cb h1 h2 h3 h4
-  refine ⟨C₀', c, hC, hc, ?_⟩
-  intro B G β θ π₁ π₂ hB hG1 hGB hθ hβ hπ₂ hQ X hX
-  exact H B G β θ π₁ π₂ (fun _ => 0) hB hG1 hGB hθ hβ hπ₂
-    (fun _ => ⟨le_refl _, by
-      show (0 : ℝ) ≤ 3 * Real.log B
-      have := Real.log_nonneg (show (1 : ℝ) ≤ B by linarith)
-      linarith⟩)
-    (fun Y hY => by
-      show |G * ((π₁ Y : ℝ) + π₂ Y + 0) - _| ≤ _
-      rw [add_zero]
-      exact hQ Y hY) X hX
-
-theorem characters_cancel : CharactersCancelScalar := by
-  intro A H inst1 inst2 χ m M M' g ϖ hg
-  have hz : ∀ n : ℤ, (χ ^ n) ϖ = χ ϖ ^ n := by
-    intro n
-    first
-    | rfl
-    | simp
-    | exact MonoidHom.zpow_apply χ n ϖ
-  have key : (m * χ ^ (-M')) ϖ * (m⁻¹ * χ ^ M) ϖ = χ ϖ ^ (-g) := by
-    rw [MonoidHom.mul_apply, MonoidHom.mul_apply, MonoidHom.inv_apply, hz, hz,
-      mul_mul_mul_comm, mul_inv_cancel, one_mul, ← zpow_add, ← hg]
-    congr 1
-    ring
-  refine ⟨?_, ?_⟩
-  · rw [key, zpow_neg, inv_inv]
-  · rw [key, mul_inv_cancel]
-
-theorem triangular_sum_exponent_bound : TriangularSumExponentBound := by
-  intro m nT t f N sumW e1 he
-  rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-  have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  have h2 : (m : ℝ) * e1 ≤ (m : ℝ) * (2 * sumW + f * N) := mul_le_mul_of_nonneg_left he hm
-  have h3 : (m : ℝ) * (2 * sumW + f * N + nT * (t + 1) * ((m : ℝ) + 1) / 4)
-      = (m : ℝ) * (2 * sumW + f * N) + nT * ((t + 1) / 2) * ((m : ℝ) * (m + 1) / 2) := by ring
-  linarith [h2, h3]
-
-theorem dimension_mass_joint_bound : DimensionMassJointBound := by
-  intro f Dstar massr Isig dsig dimV hm hI hdim h3 hD
-  have hprod : ∏ ρ ∈ range f, ((2 / 3 : ℝ) * dimV ρ) ≤ ∏ ρ ∈ range f, dsig ρ := by
-    apply Finset.prod_le_prod
-    · intro ρ hρ
-      exact mul_nonneg (by norm_num) (hdim ρ (Finset.mem_range.mp hρ))
-    · intro ρ hρ
-      have := h3 ρ (Finset.mem_range.mp hρ)
-      linarith
-  rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range] at hprod
-  rw [hD]
-  have hmI : 0 < massr * Isig := mul_pos hm hI
-  calc (2 / 3 : ℝ) ^ f * massr * Isig * ∏ ρ ∈ range f, dimV ρ
-      = massr * Isig * ((2 / 3 : ℝ) ^ f * ∏ ρ ∈ range f, dimV ρ) := by ring
-    _ ≤ massr * Isig * ∏ ρ ∈ range f, dsig ρ := mul_le_mul_of_nonneg_left hprod hmI.le
-
-theorem exponent_bounds : TableauExponentRange := by
-  intro μ T j last first s nu1 hfirst hnu hs hnu1
-  have hcard : (μ.cells.filter (fun c => T c.1 c.2 = j)).card ≤ μ.rowLen 0 := by
-    calc (μ.cells.filter (fun c => T c.1 c.2 = j)).card ≤ (range (μ.rowLen 0)).card := by
-          apply Finset.card_le_card_of_injOn (fun c => c.2)
-          · intro c hc
-            have hc' : c ∈ μ.cells ∧ T c.1 c.2 = j := by simpa using hc
-            obtain ⟨i, k⟩ := c
-            have h1 : (i, k) ∈ μ := hc'.1
-            have h2 := μ.mem_iff_lt_rowLen.mp h1
-            have h3 := μ.rowLen_anti 0 i (Nat.zero_le i)
-            simp only [Finset.coe_range, Set.mem_Iio, Finset.mem_range]
-            omega
-          · intro a ha b hb hab
-            have ha' : a ∈ μ.cells ∧ T a.1 a.2 = j := by simpa using ha
-            have hb' : b ∈ μ.cells ∧ T b.1 b.2 = j := by simpa using hb
-            obtain ⟨i, k⟩ := a
-            obtain ⟨i', k'⟩ := b
-            simp only at hab
-            subst hab
-            have hi : (i, k) ∈ μ := ha'.1
-            have hi' : (i', k) ∈ μ := hb'.1
-            have ea := ha'.2
-            have eb := hb'.2
-            simp only at ea eb
-            rcases lt_trichotomy i i' with h | h | h
-            · have := SemistandardYoungTableau.col_strict (T := T) h hi'
-              exfalso
-              omega
-            · rw [h]
-            · have := SemistandardYoungTableau.col_strict (T := T) h hi
-              exfalso
-              omega
-      _ = μ.rowLen 0 := Finset.card_range _
-  have hc : (((μ.cells.filter (fun c => T c.1 c.2 = j)).card : ℕ) : ℤ) ≤ (μ.rowLen 0 : ℤ) := by
-    exact_mod_cast hcard
-  refine ⟨by omega, by omega, max_le (by omega) hnu1⟩
-
-theorem error_term_bound : ExponentBudgetLogBound := by
-  intro ι inst1 W nT m t N b L logT C₀ hW hnT hm ht hN0 hNb htm hl0 hl
-  have hc0 : (0 : ℝ) ≤ Fintype.card ι := Nat.cast_nonneg _
-  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
-  have ht1 : (1 : ℝ) ≤ t := by exact_mod_cast ht
-  have hnT' : (nT : ℝ) ≤ Fintype.card ι := by exact_mod_cast hnT
-  have hsumW0 : 0 ≤ ∑ τ, W τ := Finset.sum_nonneg (fun τ _ => (hW τ).1)
-  have hsumW : ∑ τ, W τ ≤ (Fintype.card ι : ℝ) * (2 * b) := by
-    calc ∑ τ, W τ ≤ ∑ _τ : ι, 2 * b := Finset.sum_le_sum (fun τ _ => (hW τ).2)
-      _ = (Fintype.card ι : ℝ) * (2 * b) := by
-        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  have hA : (nT : ℝ) * ((t : ℝ) + 1) ≤ (Fintype.card ι : ℝ) * (2 * t) :=
-    mul_le_mul hnT' (by linarith) (by positivity) hc0
-  have hB : (nT : ℝ) * ((t : ℝ) + 1) * ((m : ℝ) + 1) ≤ (Fintype.card ι : ℝ) * (2 * t) * (2 * m) :=
-    mul_le_mul hA (by linarith) (by positivity) (by positivity)
-  have hC : (Fintype.card ι : ℝ) * ((t : ℝ) * m) ≤ (Fintype.card ι : ℝ) * b :=
-    mul_le_mul_of_nonneg_left htm hc0
-  have hD : (Fintype.card ι : ℝ) * N ≤ (Fintype.card ι : ℝ) * b :=
-    mul_le_mul_of_nonneg_left hNb hc0
-  have hE : 0 ≤ (Fintype.card ι : ℝ) * N := mul_nonneg hc0 hN0
-  have hF : 0 ≤ (nT : ℝ) * ((t : ℝ) + 1) * ((m : ℝ) + 1) := by positivity
-  have hBC : (Fintype.card ι : ℝ) * (2 * t) * (2 * m) = 4 * ((Fintype.card ι : ℝ) * ((t : ℝ) * m)) := by
-    ring
-  have hW2 : (Fintype.card ι : ℝ) * (2 * b) = 2 * ((Fintype.card ι : ℝ) * b) := by ring
-  have hS0 : 0 ≤ 2 * ∑ τ, W τ + Fintype.card ι * N + nT * ((t : ℝ) + 1) * ((m : ℝ) + 1) / 4 := by
-    linarith
-  have hS : 2 * ∑ τ, W τ + Fintype.card ι * N + nT * ((t : ℝ) + 1) * ((m : ℝ) + 1) / 4
-      ≤ 6 * ((Fintype.card ι : ℝ) * b) := by
-    linarith
-  have hCL : 0 ≤ C₀ * m * L := le_trans hl0 hl
-  refine ⟨mul_nonneg hS0 hl0, ?_⟩
-  calc (2 * ∑ τ, W τ + Fintype.card ι * N + nT * ((t : ℝ) + 1) * ((m : ℝ) + 1) / 4) * logT
-      ≤ (2 * ∑ τ, W τ + Fintype.card ι * N + nT * ((t : ℝ) + 1) * ((m : ℝ) + 1) / 4) * (C₀ * m * L) :=
-        mul_le_mul_of_nonneg_left hl hS0
-    _ ≤ (6 * ((Fintype.card ι : ℝ) * b)) * (C₀ * m * L) := mul_le_mul_of_nonneg_right hS hCL
-    _ = 6 * C₀ * Fintype.card ι * b * m * L := by ring
-
-theorem discriminant_term_bound : DiscriminantTermBound := by
-  intro k m L vE hm hmk hpi hL
-  have hk : (1 : ℝ) ≤ k := by exact_mod_cast le_trans hm hmk
-  have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast hm
-  have hmk' : (m : ℝ) ≤ k := by exact_mod_cast hmk
-  have hvE : 0 < vE := lt_of_lt_of_le Real.pi_pos hpi
-  have hlog2v : Real.log (2 * vE) = Real.log 2 + Real.log vE := Real.log_mul (by norm_num) hvE.ne'
-  have hlogpos : 0 ≤ Real.log (2 * vE) := Real.log_nonneg (by linarith [Real.pi_gt_three])
-  have ha0 : 0 ≤ ((m : ℝ) - 1) / (2 * k) := div_nonneg (by linarith) (by linarith)
-  have ha1 : ((m : ℝ) - 1) / (2 * k) ≤ 1 / 2 := by
-    first
-    | rw [div_le_iff₀ (by linarith)]
-    | rw [div_le_iff (by linarith)]
-    linarith
-  constructor
-  · have h1 : ((m : ℝ) - 1) / (2 * k) * Real.log (2 * vE) ≤ 1 / 2 * Real.log (2 * vE) :=
-      mul_le_mul_of_nonneg_right ha1 hlogpos
-    rw [neg_mul]
-    linarith
-  · rw [neg_mul]
-    linarith [mul_nonneg ha0 hlogpos]
-
-theorem hypotheses_of_third_theorem : RankThresholdInequalityEventually := by
-  intro C L f m k hC hL hf hm hme hmk r p q
-  have hr3 : 3 ≤ r := by
-    show 3 ≤ k + m - 1
-    omega
-  have hqr : q ≤ r := by
-    show m / 2 ≤ k + m - 1
-    omega
-  have hpr : p ≤ r := by
-    show k + m / 2 - 1 ≤ k + m - 1
-    omega
-  have hR3 : (3 : ℝ) ≤ r := by exact_mod_cast hr3
-  have hR0 : (0 : ℝ) ≤ r := by linarith
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · have h1 := Real.add_one_le_exp (r : ℝ)
-    have h2 : Real.exp (-(r : ℝ)) * Real.exp r = 1 := by
-      rw [← Real.exp_add]
-      simp
-    have h3 := Real.exp_pos (-(r : ℝ))
-    nlinarith [mul_le_mul_of_nonneg_left h1 h3.le, mul_le_mul_of_nonneg_left hR3 h3.le]
-  · obtain ⟨j, hj⟩ := hme
-    show k + m / 2 - 1 + m / 2 = k + m - 1
-    omega
-  · show min (k + m / 2 - 1) (m / 2) = m / 2
-    apply min_eq_right
-    omega
-  · have hq0 : (0 : ℝ) ≤ q := Nat.cast_nonneg _
-    have hQ : (q : ℝ) ≤ r := by exact_mod_cast hqr
-    have hpq : p * q ≤ r ^ 2 := by
-      rw [sq]
-      exact Nat.mul_le_mul hpr hqr
-    have hPQ : ((p * q : ℕ) : ℝ) ≤ (r : ℝ) ^ 2 := by exact_mod_cast hpq
-    have hPQ0 : (0 : ℝ) ≤ ((p * q : ℕ) : ℝ) := Nat.cast_nonneg _
-    have hR1 : (1 : ℝ) ≤ r := by linarith
-    have hlog0 : 0 ≤ Real.log r := Real.log_nonneg hR1
-    have hlogr : Real.log r ≤ r := by
-      have := Real.log_le_sub_one_of_pos (by linarith : (0 : ℝ) < r)
-      linarith
-    have hf1 : (1 : ℝ) ≤ f := by exact_mod_cast hf
-    have hp3 : ((p * q : ℕ) : ℝ) ^ 3 ≤ ((r : ℝ) ^ 2) ^ 3 := by
-      first
-      | exact pow_le_pow_left₀ hPQ0 hPQ 3
-      | exact pow_le_pow_left hPQ0 hPQ 3
-    have a1 : (q : ℝ) * ((p * q : ℕ) : ℝ) ^ 3 ≤ r * ((r : ℝ) ^ 2) ^ 3 :=
-      mul_le_mul hQ hp3 (by positivity) hR0
-    have a2 : (q : ℝ) * ((p * q : ℕ) : ℝ) ^ 3 * r * Real.log r ≤ r * ((r : ℝ) ^ 2) ^ 3 * r * r := by
-      apply mul_le_mul (mul_le_mul_of_nonneg_right a1 hR0) hlogr hlog0
-      positivity
-    have a3 : (r : ℝ) ^ 9 ≤ (r : ℝ) ^ 19 := by
-      first
-      | exact pow_le_pow_right₀ hR1 (by norm_num)
-      | exact pow_le_pow_right hR1 (by norm_num)
-    have hf5 : (1 : ℝ) ≤ (f : ℝ) ^ 5 := by
-      first
-      | exact one_le_pow₀ hf1
-      | exact one_le_pow_of_one_le' hf1 5
-    have a4 : (1 : ℝ) ≤ (f : ℝ) ^ 5 * L := by nlinarith
-    have a5 : (r : ℝ) ^ 19 ≤ (r : ℝ) ^ 19 * ((f : ℝ) ^ 5 * L) :=
-      le_mul_of_one_le_right (by positivity) a4
-    have e1 : r * ((r : ℝ) ^ 2) ^ 3 * r * r = (r : ℝ) ^ 9 := by ring
-    have hX : (q : ℝ) * ((p * q : ℕ) : ℝ) ^ 3 * r * Real.log r ≤ (r : ℝ) ^ 19 * ((f : ℝ) ^ 5 * L) := by
-      linarith
-    have e2 : C * (q : ℝ) * ((p * q : ℕ) : ℝ) ^ 3 * r * Real.log r / (1 / 3 : ℝ) ^ 2
-        = 9 * C * ((q : ℝ) * ((p * q : ℕ) : ℝ) ^ 3 * r * Real.log r) := by ring
-    rw [e2]
-    have h9 := mul_le_mul_of_nonneg_left hX (by linarith : (0 : ℝ) ≤ 9 * C)
-    linarith
-
-private theorem sum_filter_neg_mul_val_eq_of_sign_split {E : Type} [Fintype E] [DecidableEq E] (S T : Finset E)
-    (p : E → Prop) {dp : DecidablePred p} (i : ℤ) (val s' : E → ℤ) (hdisj : Disjoint S T)
-    (hS : ∀ τ ∈ S, val τ = i) (hT : ∀ τ ∈ T, val τ = -i)
-    (h0 : ∀ τ, τ ∉ S → τ ∉ T → val τ = 0) :
-    ∑ τ ∈ univ.filter p, -(s' τ) * val τ =
-      -i * (∑ τ ∈ S.filter p, s' τ - ∑ τ ∈ T.filter p, s' τ) := by
-  have hval : ∀ τ, val τ = (if τ ∈ S then i else 0) + (if τ ∈ T then -i else 0) := by
-    intro τ
-    by_cases h1 : τ ∈ S
-    · have h2 : τ ∉ T := Finset.disjoint_left.mp hdisj h1
-      rw [if_pos h1, if_neg h2, hS τ h1, add_zero]
-    · by_cases h2 : τ ∈ T
-      · rw [if_neg h1, if_pos h2, hT τ h2, zero_add]
-      · rw [if_neg h1, if_neg h2, h0 τ h1 h2, add_zero]
-  have e1 : ∀ U : Finset E, ∑ τ ∈ univ.filter p, (if τ ∈ U then s' τ else 0)
-      = ∑ τ ∈ U.filter p, s' τ := by
-    intro U
-    first
-    | rw [Finset.sum_ite_mem]
-    | rw [← Finset.sum_filter]
-    apply Finset.sum_congr _ (fun _ _ => rfl)
-    ext τ
-    simp only [Finset.mem_inter, Finset.mem_filter, Finset.mem_univ, true_and]
-    tauto
-  calc ∑ τ ∈ univ.filter p, -(s' τ) * val τ
-      = ∑ τ ∈ univ.filter p,
-          (-i * (if τ ∈ S then s' τ else 0) - -i * (if τ ∈ T then s' τ else 0)) := by
-        apply Finset.sum_congr rfl
-        intro τ _
-        rw [hval τ]
-        split_ifs <;> ring
-    _ = -i * (∑ τ ∈ S.filter p, s' τ - ∑ τ ∈ T.filter p, s' τ) := by
-        rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum, e1, e1, mul_sub]
-
-theorem valuation_formula : BRValuation := by
-  intro Emb inst1 φ c κ τ₀ hdisj i val s' hS hcS h0
-  haveI := Classical.decEq Emb
-  exact sum_filter_neg_mul_val_eq_of_sign_split _ _ _ i val s' hdisj hS hcS h0
-
-open Formalism.HermitianLattices.GL2PrimeSums in
-theorem character_sum_lipschitz : LipschitzWeightedSums := by
-  have hinv : ∀ u v : ℝ, 0 < u → u ≤ v → ∀ c : ℝ, 0 ≤ c → c / v ≤ c / u := by
-    intro u v hu huv c hc
-    have h1 := one_div_le_one_div_of_le hu huv
-    calc c / v = c * (1 / v) := by ring
-      _ ≤ c * (1 / u) := mul_le_mul_of_nonneg_left h1 hc
-      _ = c / u := by ring
-  have hnr : ∀ r : ℝ, ‖(r : ℂ)‖ = |r| := by
-    intro r
-    first
-    | exact Complex.norm_real r
-    | simp
-    | exact Complex.abs_ofReal r
-  refine ⟨?_, ?_⟩
-  · intro a S ha A w₀ w₁ w₂ hw₀ h01 h12 h2A
-    have hw₁ : 0 < w₁ := lt_of_lt_of_le hw₀ h01
-    have hw₂ : 0 < w₂ := lt_of_lt_of_le hw₁ h12
-    have hA : 0 < A := lt_of_lt_of_le hw₂ h2A
-    have hform : ∀ w : ℝ, 0 < w → (w : ℂ) * Gchi a S (A / w)
-        = ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * ((A / n - w : ℝ) : ℂ) - (A : ℂ) * S := by
-      intro w hw
-      have hwne : w ≠ 0 := hw.ne'
-      have hwC : (w : ℂ) ≠ 0 := by exact_mod_cast hwne
-      have h1 : (w : ℂ) * ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * ((A / w / n - 1 : ℝ) : ℂ)
-          = ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * ((A / n - w : ℝ) : ℂ) := by
-        rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro n _
-        have e : w * (A / w / n - 1) = A / n - w := by
-          rw [mul_sub, mul_one, div_div, mul_div_assoc', mul_div_mul_left _ _ hwne]
-        rw [← e]
-        push_cast
-        ring
-      have h2 : (w : ℂ) * (((A / w : ℝ) : ℂ) * S) = (A : ℂ) * S := by
-        rw [← mul_assoc]
-        congr 1
-        push_cast
-        first
-        | (field_simp; ring)
-        | field_simp
-      simp only [Gchi]
-      rw [mul_sub, h1, h2]
-    have hq : A / w₂ ≤ A / w₁ := hinv w₁ w₂ hw₁ h12 A hA.le
-    have hN21 : ⌊A / w₂⌋₊ ≤ ⌊A / w₁⌋₊ := Nat.floor_mono hq
-    have hsplit : Icc 1 ⌊A / w₁⌋₊ = Icc 1 ⌊A / w₂⌋₊ ∪ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊ := by
-      ext x
-      simp only [Finset.mem_union, Finset.mem_Icc, Finset.mem_Ioc]
-      omega
-    have hdisj : Disjoint (Icc 1 ⌊A / w₂⌋₊) (Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊) := by
-      rw [Finset.disjoint_left]
-      intro x hx1 hx2
-      rw [Finset.mem_Icc] at hx1
-      rw [Finset.mem_Ioc] at hx2
-      omega
-    have hU : ∑ n ∈ Icc 1 ⌊A / w₁⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)
-        = ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)
-          + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ) := by
-      rw [hsplit, Finset.sum_union hdisj]
-    have hD : ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((A / n - w₂ : ℝ) : ℂ)
-        - ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)
-        = ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((w₁ - w₂ : ℝ) : ℂ) := by
-      rw [← Finset.sum_sub_distrib]
-      apply Finset.sum_congr rfl
-      intro n _
-      push_cast
-      ring
-    have hX : ‖∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((w₁ - w₂ : ℝ) : ℂ)‖
-        ≤ ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, ‖a n‖ * (w₂ - w₁) := by
-      refine (norm_sum_le _ _).trans (Finset.sum_le_sum (fun n _ => ?_))
-      rw [norm_mul, hnr, abs_of_nonpos (by linarith)]
-      exact le_of_eq (by ring)
-    have hY : ‖∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)‖
-        ≤ ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, ‖a n‖ * (w₂ - w₁) := by
-      refine (norm_sum_le _ _).trans (Finset.sum_le_sum (fun n hn => ?_))
-      rw [Finset.mem_Ioc] at hn
-      have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
-      have hlow : w₁ ≤ A / n := by
-        have h1 : (n : ℝ) ≤ A / w₁ :=
-          le_trans (by exact_mod_cast hn.2) (Nat.floor_le (div_nonneg hA.le hw₁.le))
-        rw [le_div_iff₀ hn0]
-        rw [le_div_iff₀ hw₁] at h1
-        linarith
-      have hup : A / n < w₂ := by
-        have h1 : A / w₂ < (n : ℝ) := by
-          have h3 := Nat.lt_floor_add_one (A / w₂)
-          have h2 : ((⌊A / w₂⌋₊ : ℕ) : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt hn.1
-          linarith
-        rw [div_lt_iff₀ hn0]
-        rw [div_lt_iff₀ hw₂] at h1
-        linarith
-      rw [norm_mul, hnr, abs_of_nonneg (by linarith)]
-      exact mul_le_mul_of_nonneg_left (by linarith) (norm_nonneg _)
-    have hsum : ∑ n ∈ Icc 1 ⌊A / w₁⌋₊, ‖a n‖ ≤ 2 * (A / w₁) := ha (A / w₁) (div_nonneg hA.le hw₁.le)
-    rw [hsplit, Finset.sum_union hdisj] at hsum
-    have hAw : A / w₁ ≤ A / w₀ := hinv w₀ w₁ hw₀ h01 A hA.le
-    have hAw0 : 0 ≤ A / w₀ := div_nonneg hA.le hw₀.le
-    have hS : (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, ‖a n‖ * (w₂ - w₁))
-        + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, ‖a n‖ * (w₂ - w₁)
-        = (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, ‖a n‖ + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, ‖a n‖) * (w₂ - w₁) := by
-      rw [add_mul, Finset.sum_mul, Finset.sum_mul]
-    rw [hform w₂ hw₂, hform w₁ hw₁]
-    calc ‖_‖ = ‖∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((w₁ - w₂ : ℝ) : ℂ)
-          - ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)‖ := by
-          congr 1
-          linear_combination hD - hU
-      _ ≤ ‖∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * ((w₁ - w₂ : ℝ) : ℂ)‖
-          + ‖∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * ((A / n - w₁ : ℝ) : ℂ)‖ := norm_sub_le _ _
-      _ ≤ (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, ‖a n‖ * (w₂ - w₁))
-          + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, ‖a n‖ * (w₂ - w₁) := add_le_add hX hY
-      _ = (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, ‖a n‖ + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, ‖a n‖) * (w₂ - w₁) := hS
-      _ ≤ (2 * (A / w₀)) * (w₂ - w₁) := mul_le_mul_of_nonneg_right (by linarith) (by linarith)
-      _ ≤ 3 * A / w₀ * (w₂ - w₁) := by
-          have e : 3 * A / w₀ = 3 * (A / w₀) := by ring
-          rw [e]
-          exact mul_le_mul_of_nonneg_right (by linarith) (by linarith)
-  · intro a ha0 ha A w₀ w₁ w₂ hw₀ h01 h12 h2A
-    have hw₁ : 0 < w₁ := lt_of_lt_of_le hw₀ h01
-    have hw₂ : 0 < w₂ := lt_of_lt_of_le hw₁ h12
-    have hA : 0 < A := lt_of_lt_of_le hw₂ h2A
-    have hform : ∀ w : ℝ, 0 < w → w * Gone a (A / w)
-        = ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * (A / n - w)
-          - A * (Real.log (A / w) - 1 - Real.eulerMascheroniConstant) := by
-      intro w hw
-      have hwne : w ≠ 0 := hw.ne'
-      have h1 : w * ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * (A / w / n - 1)
-          = ∑ n ∈ Icc 1 ⌊A / w⌋₊, a n * (A / n - w) := by
-        rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro n _
-        have e : w * (A / w / n - 1) = A / n - w := by
-          rw [mul_sub, mul_one, div_div, mul_div_assoc', mul_div_mul_left _ _ hwne]
-        rw [← e]
-        ring
-      have hwA : w * (A / w) = A := by
-        first
-        | (field_simp; ring)
-        | field_simp
-      have h2 : w * (A / w * (Real.log (A / w) - 1 - Real.eulerMascheroniConstant))
-          = A * (Real.log (A / w) - 1 - Real.eulerMascheroniConstant) := by
-        rw [← mul_assoc, hwA]
-      simp only [Gone]
-      rw [mul_sub, h1, h2]
-    have hq : A / w₂ ≤ A / w₁ := hinv w₁ w₂ hw₁ h12 A hA.le
-    have hN21 : ⌊A / w₂⌋₊ ≤ ⌊A / w₁⌋₊ := Nat.floor_mono hq
-    have hsplit : Icc 1 ⌊A / w₁⌋₊ = Icc 1 ⌊A / w₂⌋₊ ∪ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊ := by
-      ext x
-      simp only [Finset.mem_union, Finset.mem_Icc, Finset.mem_Ioc]
-      omega
-    have hdisj : Disjoint (Icc 1 ⌊A / w₂⌋₊) (Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊) := by
-      rw [Finset.disjoint_left]
-      intro x hx1 hx2
-      rw [Finset.mem_Icc] at hx1
-      rw [Finset.mem_Ioc] at hx2
-      omega
-    have hbd : ∀ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, w₁ ≤ A / n ∧ A / n < w₂ := by
-      intro n hn
-      rw [Finset.mem_Ioc] at hn
-      have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
-      have hlow : w₁ ≤ A / n := by
-        have h1 : (n : ℝ) ≤ A / w₁ :=
-          le_trans (by exact_mod_cast hn.2) (Nat.floor_le (div_nonneg hA.le hw₁.le))
-        rw [le_div_iff₀ hn0]
-        rw [le_div_iff₀ hw₁] at h1
-        linarith
-      have hup : A / n < w₂ := by
-        have h1 : A / w₂ < (n : ℝ) := by
-          have h3 := Nat.lt_floor_add_one (A / w₂)
-          have h2 : ((⌊A / w₂⌋₊ : ℕ) : ℝ) + 1 ≤ n := by exact_mod_cast Nat.succ_le_of_lt hn.1
-          linarith
-        rw [div_lt_iff₀ hn0]
-        rw [div_lt_iff₀ hw₂] at h1
-        linarith
-      exact ⟨hlow, hup⟩
-    have hU : ∑ n ∈ Icc 1 ⌊A / w₁⌋₊, a n * (A / n - w₁)
-        = ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * (A / n - w₁)
-          + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * (A / n - w₁) := by
-      rw [hsplit, Finset.sum_union hdisj]
-    have hD : ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * (A / n - w₂)
-        - ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n * (A / n - w₁)
-        = (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n) * (w₁ - w₂) := by
-      rw [← Finset.sum_sub_distrib, Finset.sum_mul]
-      apply Finset.sum_congr rfl
-      intro n _
-      ring
-    have hY0 : 0 ≤ ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * (A / n - w₁) := by
-      apply Finset.sum_nonneg
-      intro n hn
-      exact mul_nonneg (ha0 n) (by linarith [(hbd n hn).1])
-    have hY1 : ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * (A / n - w₁)
-        ≤ (∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n) * (w₂ - w₁) := by
-      rw [Finset.sum_mul]
-      apply Finset.sum_le_sum
-      intro n hn
-      exact mul_le_mul_of_nonneg_left (by linarith [(hbd n hn).2]) (ha0 n)
-    have hsum : ∑ n ∈ Icc 1 ⌊A / w₁⌋₊, a n ≤ 2 * (A / w₁) := ha (A / w₁) (div_nonneg hA.le hw₁.le)
-    rw [hsplit, Finset.sum_union hdisj] at hsum
-    have hS2 : 0 ≤ ∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n := Finset.sum_nonneg (fun n _ => ha0 n)
-    have hSI : 0 ≤ ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n := Finset.sum_nonneg (fun n _ => ha0 n)
-    have hAw : A / w₁ ≤ A / w₀ := hinv w₀ w₁ hw₀ h01 A hA.le
-    have hAw0 : 0 ≤ A / w₀ := div_nonneg hA.le hw₀.le
-    have hLd : Real.log (A / w₁) - Real.log (A / w₂) = Real.log w₂ - Real.log w₁ := by
-      rw [Real.log_div hA.ne' hw₁.ne', Real.log_div hA.ne' hw₂.ne']
-      ring
-    have hl0 : 0 ≤ Real.log w₂ - Real.log w₁ := by
-      have := Real.log_le_log hw₁ h12
-      linarith
-    have hl1 : Real.log w₂ - Real.log w₁ ≤ (w₂ - w₁) / w₀ := by
-      have h3 := Real.log_le_sub_one_of_pos (div_pos hw₂ hw₁)
-      rw [Real.log_div hw₂.ne' hw₁.ne'] at h3
-      have e : (w₂ - w₁) / w₁ = w₂ / w₁ - 1 := by rw [sub_div, div_self hw₁.ne']
-      have h4 : (w₂ - w₁) / w₁ ≤ (w₂ - w₁) / w₀ := hinv w₀ w₁ hw₀ h01 (w₂ - w₁) (by linarith)
-      linarith
-    have hAl0 : 0 ≤ A * (Real.log w₂ - Real.log w₁) := mul_nonneg hA.le hl0
-    have hAl1 : A * (Real.log w₂ - Real.log w₁) ≤ A * ((w₂ - w₁) / w₀) :=
-      mul_le_mul_of_nonneg_left hl1 hA.le
-    have hP1 : 0 ≤ (∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n) * (w₂ - w₁) := mul_nonneg hS2 (by linarith)
-    have hP2 : ((∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n) + ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n) * (w₂ - w₁)
-        ≤ (2 * (A / w₀)) * (w₂ - w₁) := mul_le_mul_of_nonneg_right (by linarith) (by linarith)
-    have hR : 3 * A / w₀ * (w₂ - w₁) = (2 * (A / w₀)) * (w₂ - w₁) + A * ((w₂ - w₁) / w₀) := by ring
-    have hnn : 0 ≤ (2 * (A / w₀)) * (w₂ - w₁) := mul_nonneg (by linarith) (by linarith)
-    rw [hform w₂ hw₂, hform w₁ hw₁]
-    calc |_| = |(∑ n ∈ Icc 1 ⌊A / w₂⌋₊, a n) * (w₁ - w₂)
-          - ∑ n ∈ Ioc ⌊A / w₂⌋₊ ⌊A / w₁⌋₊, a n * (A / n - w₁)
-          + A * (Real.log w₂ - Real.log w₁)| := by
-          congr 1
-          rw [← hLd]
-          linear_combination hD - hU
-      _ ≤ 3 * A / w₀ * (w₂ - w₁) := by
-          rw [abs_le, hR]
-          constructor <;> linarith
-
-theorem rank_mul_pow_three_halves_le_fourth_power : RankMulPowThreeHalvesLeFourthPower := by
-  intro f m k L hm hf hk hL
-  have hqr : m / 2 ≤ k + m - 1 := by omega
-  have hR1 : (1 : ℝ) ≤ ((k + m - 1 : ℕ) : ℝ) := by exact_mod_cast (by omega : 1 ≤ k + m - 1)
-  have hR0 : (0 : ℝ) ≤ ((k + m - 1 : ℕ) : ℝ) := by linarith
-  have hQ0 : (0 : ℝ) ≤ ((m / 2 : ℕ) : ℝ) := Nat.cast_nonneg _
-  have hQR : ((m / 2 : ℕ) : ℝ) ≤ ((k + m - 1 : ℕ) : ℝ) := by exact_mod_cast hqr
-  have h1 : ((m / 2 : ℕ) : ℝ) ^ ((3 : ℝ) / 2) ≤ ((k + m - 1 : ℕ) : ℝ) ^ ((3 : ℝ) / 2) :=
-    Real.rpow_le_rpow hQ0 hQR (by norm_num)
-  have h2 : ((k + m - 1 : ℕ) : ℝ) ^ ((3 : ℝ) / 2) ≤ ((k + m - 1 : ℕ) : ℝ) ^ (2 : ℝ) :=
-    Real.rpow_le_rpow_of_exponent_le hR1 (by norm_num)
-  rw [Real.rpow_two] at h2
-  have h3 : ((k + m - 1 : ℕ) : ℝ) * ((k + m - 1 : ℕ) : ℝ) ^ 2 ≤ ((k + m - 1 : ℕ) : ℝ) ^ 19 := by
-    have e : ((k + m - 1 : ℕ) : ℝ) * ((k + m - 1 : ℕ) : ℝ) ^ 2 = ((k + m - 1 : ℕ) : ℝ) ^ 3 := by ring
-    rw [e]
-    first
-    | exact pow_le_pow_right₀ hR1 (by norm_num)
-    | exact pow_le_pow_right hR1 (by norm_num)
-  have hf1 : (1 : ℝ) ≤ f := by exact_mod_cast hf
-  have hf5 : (1 : ℝ) ≤ (f : ℝ) ^ 5 := by
-    first
-    | exact one_le_pow₀ hf1
-    | exact one_le_pow_of_one_le' hf1 5
-  have h4 : (1 : ℝ) ≤ (f : ℝ) ^ 5 * L := by nlinarith
-  have h5 : ((k + m - 1 : ℕ) : ℝ) ^ 19 ≤ ((k + m - 1 : ℕ) : ℝ) ^ 19 * ((f : ℝ) ^ 5 * L) :=
-    le_mul_of_one_le_right (by positivity) h4
-  have h6 : ((k + m - 1 : ℕ) : ℝ) * ((m / 2 : ℕ) : ℝ) ^ ((3 : ℝ) / 2)
-      ≤ ((k + m - 1 : ℕ) : ℝ) * ((k + m - 1 : ℕ) : ℝ) ^ 2 :=
-    mul_le_mul_of_nonneg_left (h1.trans h2) hR0
-  have h7 : ((k + m - 1 : ℕ) : ℝ) * ((m / 2 : ℕ) : ℝ) ^ ((3 : ℝ) / 2)
-      ≤ ((k + m - 1 : ℕ) : ℝ) ^ 19 * ((f : ℝ) ^ 5 * L) := h6.trans (h3.trans h5)
-  have h8 := mul_le_mul_of_nonneg_left h7 (by norm_num : (0 : ℝ) ≤ 120)
-  calc 120 * ((k + m - 1 : ℕ) : ℝ) * ((m / 2 : ℕ) : ℝ) ^ ((3 : ℝ) / 2)
-      = 120 * (((k + m - 1 : ℕ) : ℝ) * ((m / 2 : ℕ) : ℝ) ^ ((3 : ℝ) / 2)) := by ring
-    _ ≤ 120 * (((k + m - 1 : ℕ) : ℝ) ^ 19 * ((f : ℝ) ^ 5 * L)) := h8
-    _ = 120 * ((k + m - 1 : ℕ) : ℝ) ^ 19 * (f : ℝ) ^ 5 * L := by ring
-
-private theorem div_sub_val_div_mem_intRange_iff_cast_eq (q : ℕ) [Fact q.Prime] (a : ℤ) (r : ZMod q) :
-    (a : ℚ) / q - (r.val : ℚ) / q ∈ Set.range (Int.cast : ℤ → ℚ) ↔ (a : ZMod q) = r := by
-  haveI : NeZero q := ⟨(Fact.out : q.Prime).ne_zero⟩
-  have hq : (q : ℚ) ≠ 0 := by exact_mod_cast (Fact.out : q.Prime).ne_zero
-  constructor
-  · rintro ⟨k, hk⟩
-    have h1 : (a : ℚ) = (r.val : ℚ) + k * q := by
-      field_simp at hk
-      linarith
-    have h2 : a = (r.val : ℤ) + k * q := by exact_mod_cast h1
-    rw [h2]
-    push_cast
-    simp [ZMod.natCast_self, ZMod.natCast_zmod_val]
-  · intro h
-    have h1 : ((a - (r.val : ℤ) : ℤ) : ZMod q) = 0 := by
-      push_cast
-      rw [h]
-      simp [ZMod.natCast_zmod_val]
-    obtain ⟨k, hk⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h1
-    refine ⟨k, ?_⟩
-    have h2 : (a : ℚ) - (r.val : ℚ) = q * k := by exact_mod_cast hk
-    field_simp
-    linarith
-
-private theorem natCard_subtype_eq_one_of_unique {α : Type} (P : α → Prop) (c : α) (hc : P c) (hu : ∀ a, P a → a = c) :
-    Nat.card {a // P a} = 1 := by
-  haveI : Unique {a // P a} := ⟨⟨⟨c, hc⟩⟩, fun a => Subtype.ext (hu a.1 a.2)⟩
-  first
-  | exact Nat.card_unique
-  | simp
-
-private theorem natCard_subtype_eq_zero_of_forall_not {α : Type} (P : α → Prop) (h : ∀ a, ¬ P a) :
-    Nat.card {a // P a} = 0 := by
-  haveI : IsEmpty {a // P a} := ⟨fun a => h a.1 a.2⟩
-  first
-  | exact Nat.card_of_isEmpty
-  | simp
-
-theorem kernel_description : IndicatorKernelSum := by
-  intro q inst n n' fW x0 x hx0
-  dsimp only
-  haveI : NeZero q := ⟨(Fact.out : q.Prime).ne_zero⟩
-  by_cases hI : ∀ i j, x i j ∈ Set.range (Int.cast : ℤ → ℚ)
-  swap
-  · refine ⟨fun h => absurd h.1 hI, fun _ => ⟨?_, ?_⟩⟩
-    · refine natCard_subtype_eq_zero_of_forall_not _ ?_
-      intro a ha
-      exact hI ha.2.1
-    · refine natCard_subtype_eq_zero_of_forall_not _ ?_
-      intro a ha
-      exact hI ha.2.1
-  have hI' := hI
-  simp only [Set.mem_range] at hI'
-  choose X hX using hI'
-  have hmv : ∀ i, (x.mulVec (fun j => (x0 j : ℚ))) i = ((∑ j, X i j * x0 j : ℤ) : ℚ) := by
-    intro i
-    first
-    | simp only [Matrix.mulVec, dotProduct]
-    | simp only [Matrix.mulVec, Matrix.dotProduct]
-    push_cast
-    simp only [hX]
-  have hme : ∀ i, (x.mulVec (fun j => (x0 j : ℚ) / q)) i = ((∑ j, X i j * x0 j : ℤ) : ℚ) / q := by
-    intro i
-    first
-    | simp only [Matrix.mulVec, dotProduct]
-    | simp only [Matrix.mulVec, Matrix.dotProduct]
-    push_cast
-    rw [Finset.sum_div]
-    apply Finset.sum_congr rfl
-    intro j _
-    rw [hX]
-    ring
-  have hw : ∀ j, (∑ i, (fW i : ℚ) * x i j) = ((∑ i, fW i * X i j : ℤ) : ℚ) := by
-    intro j
-    push_cast
-    simp only [hX]
-  have hzq : (∑ i, (fW i : ℚ) * (x.mulVec (fun j => (x0 j : ℚ))) i)
-      = ((∑ i, fW i * ∑ j, X i j * x0 j : ℤ) : ℚ) := by
-    first
-    | (simp only [hmv]; push_cast; ring)
-    | (simp only [hmv]; push_cast)
-    | (simp only [hmv]; norm_cast)
-  have hswap : (∑ j, (∑ i, fW i * X i j) * x0 j) = ∑ i, fW i * ∑ j, X i j * x0 j := by
-    simp only [Finset.sum_mul, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    apply Finset.sum_congr rfl
-    intro i _
-    apply Finset.sum_congr rfl
-    intro j _
-    ring
-  obtain ⟨z, hzdef⟩ : ∃ z : ℤ, z = ∑ i, fW i * ∑ j, X i j * x0 j := ⟨_, rfl⟩
-  rw [← hzdef] at hzq hswap
-  have hrhs : ((∀ i j, x i j ∈ Set.range (Int.cast : ℤ → ℚ)) ∧ ∃ z' : ℤ,
-      (∑ i, (fW i : ℚ) * (x.mulVec (fun j => (x0 j : ℚ))) i) = z' ∧ (z' : ZMod q) = 1)
-      ↔ (z : ZMod q) = 1 := by
-    constructor
-    · rintro ⟨_, z', h1, h2⟩
-      rw [hzq] at h1
-      have h3 : z = z' := by exact_mod_cast h1
-      rw [h3]
-      exact h2
-    · intro h
-      exact ⟨hI, z, hzq, h⟩
-  have hUK : ∀ xW : Fin n' → ZMod q,
-      ((∑ i, (fW i : ZMod q) * xW i) = 1 ∧ (∀ i j, x i j ∈ Set.range (Int.cast : ℤ → ℚ)) ∧
-        (∀ i, (x.mulVec (fun j => (x0 j : ℚ) / q)) i - ((xW i).val : ℚ) / q
-          ∈ Set.range (Int.cast : ℤ → ℚ)))
-      ↔ (xW = fun i => ((∑ j, X i j * x0 j : ℤ) : ZMod q)) ∧ (z : ZMod q) = 1 := by
-    intro xW
-    have hc : (∀ i, (x.mulVec (fun j => (x0 j : ℚ) / q)) i - ((xW i).val : ℚ) / q
-          ∈ Set.range (Int.cast : ℤ → ℚ))
-        ↔ xW = fun i => ((∑ j, X i j * x0 j : ℤ) : ZMod q) := by
-      simp only [hme, div_sub_val_div_mem_intRange_iff_cast_eq]
-      constructor
-      · intro h
-        funext i
-        exact (h i).symm
-      · intro h i
-        rw [h]
-    have hsum : ∀ xW' : Fin n' → ZMod q, xW' = (fun i => ((∑ j, X i j * x0 j : ℤ) : ZMod q)) →
-        (∑ i, (fW i : ZMod q) * xW' i) = (z : ZMod q) := by
-      intro xW' h
-      rw [h, hzdef]
-      first
-      | (push_cast; rfl)
-      | push_cast
-      | simp
-    constructor
-    · rintro ⟨h1, _, h3⟩
-      have h4 := hc.mp h3
-      exact ⟨h4, by rw [← hsum xW h4]; exact h1⟩
-    · rintro ⟨h4, h5⟩
-      exact ⟨by rw [hsum xW h4]; exact h5, hI, hc.mpr h4⟩
-  have hKU : ∀ f : Fin n → ZMod q,
-      ((∑ j, f j * (x0 j : ZMod q)) = 1 ∧ (∀ i j, x i j ∈ Set.range (Int.cast : ℤ → ℚ)) ∧
-        (∀ j, ∃ z' : ℤ, (∑ i, (fW i : ℚ) * x i j) = z' ∧ (z' : ZMod q) = f j))
-      ↔ (f = fun j => ((∑ i, fW i * X i j : ℤ) : ZMod q)) ∧ (z : ZMod q) = 1 := by
-    intro f
-    have hc : (∀ j, ∃ z' : ℤ, (∑ i, (fW i : ℚ) * x i j) = z' ∧ (z' : ZMod q) = f j)
-        ↔ f = fun j => ((∑ i, fW i * X i j : ℤ) : ZMod q) := by
-      constructor
-      · intro h
-        funext j
-        obtain ⟨z', h1, h2⟩ := h j
-        rw [hw j] at h1
-        have h3 : (∑ i, fW i * X i j) = z' := by exact_mod_cast h1
-        rw [← h2, ← h3]
-      · intro h j
-        exact ⟨_, hw j, by rw [h]⟩
-    have hsum : ∀ f' : Fin n → ZMod q, f' = (fun j => ((∑ i, fW i * X i j : ℤ) : ZMod q)) →
-        (∑ j, f' j * (x0 j : ZMod q)) = (z : ZMod q) := by
-      intro f' h
-      rw [h, ← hswap]
-      first
-      | (push_cast; rfl)
-      | push_cast
-      | simp
-    constructor
-    · rintro ⟨h1, _, h3⟩
-      have h4 := hc.mp h3
-      exact ⟨h4, by rw [← hsum f h4]; exact h1⟩
-    · rintro ⟨h4, h5⟩
-      exact ⟨by rw [hsum f h4]; exact h5, hI, hc.mpr h4⟩
-  refine ⟨fun hr => ⟨?_, ?_⟩, fun hr => ⟨?_, ?_⟩⟩
-  · have hz1 := hrhs.mp hr
-    refine natCard_subtype_eq_one_of_unique _ (fun i => ((∑ j, X i j * x0 j : ℤ) : ZMod q)) ?_ ?_
-    · exact (hUK _).mpr ⟨rfl, hz1⟩
-    · intro a ha
-      exact ((hUK a).mp ha).1
-  · have hz1 := hrhs.mp hr
-    refine natCard_subtype_eq_one_of_unique _ (fun j => ((∑ i, fW i * X i j : ℤ) : ZMod q)) ?_ ?_
-    · exact (hKU _).mpr ⟨rfl, hz1⟩
-    · intro a ha
-      exact ((hKU a).mp ha).1
-  · refine natCard_subtype_eq_zero_of_forall_not _ ?_
-    intro a ha
-    exact hr (hrhs.mpr ((hUK a).mp ha).2)
-  · refine natCard_subtype_eq_zero_of_forall_not _ ?_
-    intro a ha
-    exact hr (hrhs.mpr ((hKU a).mp ha).2)
-
-theorem inv_norm_sq_conj_ratio_pow_identities : InvNormSqConjRatioPowIdentities := by
-  intro z g hz
-  have hc : (starRingEnd ℂ) z ≠ 0 := (map_ne_zero _).mpr hz
-  have hn : ‖z / (starRingEnd ℂ) z‖ = 1 := by
-    rw [norm_div, Complex.norm_conj, div_self (norm_ne_zero_iff.mpr hz)]
-  have hA : z ^ g ≠ 0 := pow_ne_zero g hz
-  have hC : (starRingEnd ℂ) z ^ g ≠ 0 := pow_ne_zero g hc
-  refine ⟨?_, ?_, ?_⟩
-  · first
-    | rw [norm_mul, norm_inv, norm_pow, norm_pow, hn, one_pow, mul_one, Complex.norm_real,
-        Real.norm_eq_abs, abs_of_nonneg (Complex.normSq_nonneg z)]
-    | simp [norm_mul, norm_inv, norm_pow, hn, Complex.normSq_nonneg, hz]
-  · rw [← Complex.mul_conj, mul_pow, div_pow,
-      show (starRingEnd ℂ) z ^ (2 * g) = ((starRingEnd ℂ) z ^ g) ^ 2 by ring]
-    field_simp
-    try ring
-  · rw [← Complex.mul_conj, mul_pow, div_pow, show z ^ (2 * g) = (z ^ g) ^ 2 by ring]
-    field_simp
-    try ring
-
-theorem moduli_minimum_bound : Ms_min := by
-  intro K inst1 inst2 hTC x hx
-  have hxK : (x : K) ≠ 0 := by
-    first
-    | simpa using hx
-    | exact fun h => hx (by exact_mod_cast h)
-  have hwpos : ∀ w : NumberField.InfinitePlace K, 0 < w (x : K) := fun w => w.pos_iff.mpr hxK
-  have hmult : ∀ w : NumberField.InfinitePlace K, w.mult = 2 := by
-    intro w
-    have hc := hTC.isComplex w
-    first
-    | exact NumberField.InfinitePlace.mult_isComplex ⟨w, hc⟩
-    | (simp only [NumberField.InfinitePlace.mult]
-       rw [if_neg (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr hc)])
-  have hprod := NumberField.InfinitePlace.prod_eq_abs_norm (x : K)
-  simp only [hmult] at hprod
-  have hN : (1 : ℝ) ≤ ((|Algebra.norm ℚ (x : K)| : ℚ) : ℝ) := by
-    have h1 : (Algebra.norm ℤ x : ℚ) = Algebra.norm ℚ (x : K) := Algebra.coe_norm_int x
-    have h2 : Algebra.norm ℤ x ≠ 0 := Algebra.norm_ne_zero_iff.mpr hx
-    have h3 : (1 : ℤ) ≤ |Algebra.norm ℤ x| := Int.one_le_abs h2
-    rw [← h1]
-    exact_mod_cast h3
-  have hsum : ∑ w : NumberField.InfinitePlace K, Real.log (w (x : K) ^ 2)
-      = Real.log (∏ w : NumberField.InfinitePlace K, w (x : K) ^ 2) := by
-    rw [Real.log_prod]
-    intro w _
-    exact pow_ne_zero 2 (hwpos w).ne'
-  have hlogprod : 0 ≤ Real.log (∏ w : NumberField.InfinitePlace K, w (x : K) ^ 2) := by
-    rw [hprod]
-    exact Real.log_nonneg hN
-  have hpt : ∀ w : NumberField.InfinitePlace K, 1 + Real.log (w (x : K) ^ 2) ≤ w (x : K) ^ 2 := by
-    intro w
-    have := Real.log_le_sub_one_of_pos (pow_pos (hwpos w) 2)
-    linarith
-  calc (Fintype.card (NumberField.InfinitePlace K) : ℝ)
-      = ∑ _w : NumberField.InfinitePlace K, (1 : ℝ) := by simp
-    _ ≤ ∑ w : NumberField.InfinitePlace K, (1 + Real.log (w (x : K) ^ 2)) := by
-        rw [Finset.sum_add_distrib, hsum]
-        linarith
-    _ ≤ ∑ w : NumberField.InfinitePlace K, w (x : K) ^ 2 := Finset.sum_le_sum (fun w _ => hpt w)
 
 section T2
 
 open NumberField
 open Formalism.LogVandermondeBounds.StandardLattice
 
-open private euler_factor_log_bound partial_sums_log_euler_factor_le from Formalism.GL3MeanSquares.HookFormulaTorsion.SumWeightsOverPrimeLeHalfDegree
-
 theorem log_l_value_field_bound : LogLFunctionEulerBound := by
   intro K _ _ _ hK M hM
+
+  let residueCharacteristic (P : Ideal (𝓞 K)) : ℕ := ringChar (𝓞 K ⧸ P)
+
+  have maximal_ideal_ne_bot (P : Ideal (𝓞 K)) (hP : P.IsMaximal) : P ≠ ⊥ := Ring.ne_bot_of_isMaximal_of_not_isField hP (NumberField.RingOfIntegers.not_isField K)
+
+  have residue_characteristic_prime (P : Ideal (𝓞 K)) (hP : P.IsMaximal) : (residueCharacteristic P).Prime := by
+    haveI : P.IsMaximal := hP
+    haveI : Finite (𝓞 K ⧸ P) := Nat.finite_of_card_ne_zero (by
+      rw [← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, Ne, Ideal.absNorm_eq_zero_iff]
+      exact maximal_ideal_ne_bot P hP)
+    letI : Fintype (𝓞 K ⧸ P) := Fintype.ofFinite _
+    letI := Ideal.Quotient.field P
+    unfold residueCharacteristic
+    exact (CharP.char_is_prime_or_zero (𝓞 K ⧸ P) (ringChar (𝓞 K ⧸ P))).resolve_right
+      (CharP.char_ne_zero_of_finite (𝓞 K ⧸ P) (ringChar (𝓞 K ⧸ P)))
+
+  have residue_characteristic_mem (P : Ideal (𝓞 K)) : ((residueCharacteristic P : ℕ) : 𝓞 K) ∈ P := by
+    rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast]
+    exact ringChar.Nat.cast_ringChar
+
+  have prod_norm_dvd_prime_pow_degree (p : ℕ) (T : Finset (Ideal (𝓞 K)))
+      (hT : ∀ P ∈ T, P.IsMaximal ∧ (p : 𝓞 K) ∈ P) :
+      ∏ P ∈ T, Ideal.absNorm P ∣ p ^ Module.finrank ℚ K := by
+    classical
+    have hdvd : (∏ P ∈ T, P) ∣ Ideal.span {(p : 𝓞 K)} := by
+      apply Finset.prod_dvd_of_coprime
+      · intro P hP Q hQ hPQ
+        exact Ideal.isCoprime_iff_sup_eq.mpr (Ideal.IsMaximal.coprime_of_ne (hT P hP).1 (hT Q hQ).1 hPQ)
+      · intro P hP
+        try dsimp only
+        rw [Ideal.dvd_iff_le, Ideal.span_le, Set.singleton_subset_iff]
+        exact (hT P hP).2
+    have h3 : Ideal.absNorm (Ideal.span {(p : 𝓞 K)}) = p ^ Module.finrank ℚ K := by
+      rw [Ideal.absNorm_span_singleton]
+      have : (p : 𝓞 K) = algebraMap ℤ (𝓞 K) (p : ℤ) := by simp
+      rw [this, Algebra.norm_algebraMap, NumberField.RingOfIntegers.rank]
+      simp [Int.natAbs_pow]
+    have := map_dvd Ideal.absNorm hdvd
+    rwa [map_prod, h3] at this
+
+  have abs_norm_eq_prime_pow (P : Ideal (𝓞 K)) (hP : P.IsMaximal) :
+      ∃ k, 1 ≤ k ∧ Ideal.absNorm P = residueCharacteristic P ^ k := by
+    haveI : P.IsMaximal := hP
+    letI := Ideal.Quotient.field P
+    haveI : Finite (𝓞 K ⧸ P) := Nat.finite_of_card_ne_zero (by
+      rw [← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, Ne, Ideal.absNorm_eq_zero_iff]
+      exact maximal_ideal_ne_bot P hP)
+    letI : Fintype (𝓞 K ⧸ P) := Fintype.ofFinite _
+    haveI : CharP (𝓞 K ⧸ P) (residueCharacteristic P) := ringChar.charP _
+    obtain ⟨n, -, hn⟩ := FiniteField.card (𝓞 K ⧸ P) (residueCharacteristic P)
+    refine ⟨n, n.one_le, ?_⟩
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply, Nat.card_eq_fintype_card, hn]
+
+  have exists_int_congruent_mod_prime (P : Ideal (𝓞 K)) (p : ℕ) (hp : p.Prime) (hN : Ideal.absNorm P = p)
+      (x : 𝓞 K) : ∃ n : ℤ, x - (n : 𝓞 K) ∈ P := by
+    have hne : P ≠ ⊥ := by
+      intro h; rw [h, Ideal.absNorm_bot] at hN; exact hp.ne_zero hN.symm
+    have hPr : P.IsPrime := Ideal.isPrime_of_irreducible_absNorm (by rw [hN]; exact hp)
+    have hM : P.IsMaximal := hPr.isMaximal hne
+    obtain ⟨k, hk1, hk⟩ := abs_norm_eq_prime_pow P hM
+    rw [hN] at hk
+    have hpr : residueCharacteristic P = p := ((Nat.Prime.pow_eq_iff hp).mp hk.symm).1
+    haveI : CharP (𝓞 K ⧸ P) p := by rw [← hpr]; exact ringChar.charP _
+    haveI : Fact p.Prime := ⟨hp⟩
+    letI := Ideal.Quotient.field P
+    haveI : Finite (𝓞 K ⧸ P) := Nat.finite_of_card_ne_zero (by
+      rw [← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, Ne, Ideal.absNorm_eq_zero_iff]
+      exact hne)
+    letI : Fintype (𝓞 K ⧸ P) := Fintype.ofFinite _
+    have hinj : Function.Injective (ZMod.castHom (dvd_refl p) (𝓞 K ⧸ P)) :=
+      (ZMod.castHom (dvd_refl p) (𝓞 K ⧸ P)).injective
+    have hcard : Nat.card (𝓞 K ⧸ P) ≤ Nat.card (ZMod p) := by
+      rw [Nat.card_zmod, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply, hN]
+    obtain ⟨z, hz⟩ := (hinj.bijective_of_nat_card_le hcard).2 (Ideal.Quotient.mk P x)
+    refine ⟨(z.val : ℤ), ?_⟩
+    rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, ← hz, map_intCast, Int.cast_natCast, ZMod.castHom_apply,
+      ZMod.natCast_val, sub_self]
+
+  have inert_prime_norm_ge_sq (P : Ideal (𝓞 K)) (hP : P.IsMaximal)
+      (hc : Formalism.HermitianLatticesTheory.conjIdeal (K := K) P = P)
+      (hu : ∃ θ t : 𝓞 K, algebraMap (𝓞 K) K t = star (algebraMap (𝓞 K) K θ) ∧ θ - t ∉ P) :
+      residueCharacteristic P ^ 2 ≤ Ideal.absNorm P := by
+    by_contra hlt
+    push_neg at hlt
+    obtain ⟨θ, t, ht, hθt⟩ := hu
+    obtain ⟨k, hk1, hk⟩ := abs_norm_eq_prime_pow P hP
+    have hp := residue_characteristic_prime P hP
+    have hk2 : k = 1 := by
+      by_contra hne
+      have h2k : 2 ≤ k := by omega
+      have := Nat.pow_le_pow_right hp.pos h2k
+      rw [← hk] at this
+      exact absurd this (not_le.mpr hlt)
+    rw [hk2, pow_one] at hk
+    obtain ⟨n, hn⟩ := exists_int_congruent_mod_prime P _ hp hk θ
+    apply hθt
+    have h2 : t - (n : 𝓞 K) ∈ Formalism.HermitianLatticesTheory.conjIdeal (K := K) P := by
+      apply Ideal.subset_span
+      refine ⟨θ - n, hn, ?_⟩
+      rw [map_sub, map_sub, ht, star_sub, map_intCast, star_intCast]
+    rw [hc] at h2
+    have := P.sub_mem hn h2
+    rwa [sub_sub_sub_cancel_right] at this
+
+  let invPowMonoidHomReal (M : ℕ) : ℕ →* ℝ := {
+    toFun n := ((n : ℝ)⁻¹) ^ M
+    map_one' := by simp
+    map_mul' a b := by push_cast; rw [mul_inv, mul_pow] }
+
+  have summable_inv_pow_real (M : ℕ) (hM : 2 ≤ M) : Summable (fun n : ℕ => ((n : ℝ)⁻¹) ^ M) := by
+    have := Real.summable_nat_pow_inv.mpr (by omega : 1 < M)
+    simpa [inv_pow] using this
+
+  have tsum_inv_pow_eq_zeta_real (M : ℕ) (hM : 2 ≤ M) : ∑' n : ℕ, ((n : ℝ)⁻¹) ^ M = zetaR M := by
+    rw [(summable_inv_pow_real M hM).tsum_eq_zero_add]
+    rw [Nat.cast_zero, inv_zero, zero_pow (by omega), zero_add]
+    show _ = ∑' n : ℕ, 1 / ((n : ℝ) + 1) ^ M
+    congr 1
+    ext n
+    push_cast
+    rw [one_div, inv_pow]
+
+  have inv_prime_pow_lt_one (M : ℕ) (hM : 1 ≤ M) (p : ℕ) (hp : p.Prime) : ((p : ℝ)⁻¹) ^ M < 1 := by
+    have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
+    exact pow_lt_one₀ (by positivity) (inv_lt_one_of_one_lt₀ hp1) (by omega)
+
+  have euler_product_le_zeta (M : ℕ) (hM : 2 ≤ M) (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime) :
+      ∏ p ∈ S, (1 - ((p : ℝ)⁻¹) ^ M)⁻¹ ≤ zetaR M := by
+    classical
+    have hfv : ∀ n : ℕ, invPowMonoidHomReal M n = ((n : ℝ)⁻¹) ^ M := fun n => rfl
+    set N := S.sup id + 1 with hNdef
+    have hsub : S ⊆ N.primesBelow := by
+      intro p hp
+      rw [Nat.mem_primesBelow]
+      exact ⟨Nat.lt_succ_of_le (Finset.le_sup (f := id) hp), hS p hp⟩
+    have hf : ∀ {p : ℕ}, p.Prime → ‖invPowMonoidHomReal M p‖ < 1 := by
+      intro p hp
+      rw [hfv, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+      exact inv_prime_pow_lt_one M (by omega) p hp
+    obtain ⟨-, hhs⟩ := EulerProduct.summable_and_hasSum_smoothNumbers_prod_primesBelow_geometric hf N
+    have hsum : Summable (fun n : ℕ => invPowMonoidHomReal M n) := by
+      simp only [hfv]; exact summable_inv_pow_real M hM
+    have key : ∏ p ∈ N.primesBelow, (1 - invPowMonoidHomReal M p)⁻¹ ≤ ∑' n : ℕ, invPowMonoidHomReal M n := by
+      rw [← hhs.tsum_eq]
+      exact Summable.tsum_subtype_le (fun n : ℕ => invPowMonoidHomReal M n) _ (fun n => by rw [hfv]; positivity) hsum
+    have hfac : ∀ p ∈ N.primesBelow, 1 ≤ (1 - invPowMonoidHomReal M p)⁻¹ := by
+      intro p hp
+      have hp' := (Nat.mem_primesBelow.mp hp).2
+      have h1 := inv_prime_pow_lt_one M (by omega) p hp'
+      have h0 : 0 ≤ ((p : ℝ)⁻¹) ^ M := by positivity
+      rw [hfv]
+      exact (one_le_inv₀ (by linarith)).mpr (by linarith)
+    have hsplit := Finset.prod_sdiff hsub (f := fun p => (1 - invPowMonoidHomReal M p)⁻¹)
+    have hrest : 1 ≤ ∏ p ∈ N.primesBelow \ S, (1 - invPowMonoidHomReal M p)⁻¹ :=
+      Finset.prod_induction _ (fun x => 1 ≤ x) (fun a b ha hb => one_le_mul_of_one_le_of_one_le ha hb)
+        le_rfl (fun p hp => hfac p (Finset.sdiff_subset hp))
+    have hSpos : 0 ≤ ∏ p ∈ S, (1 - invPowMonoidHomReal M p)⁻¹ :=
+      Finset.prod_nonneg (fun p hp => by linarith [hfac p (hsub hp)])
+    calc ∏ p ∈ S, (1 - ((p : ℝ)⁻¹) ^ M)⁻¹ = ∏ p ∈ S, (1 - invPowMonoidHomReal M p)⁻¹ := rfl
+      _ ≤ (∏ p ∈ N.primesBelow \ S, (1 - invPowMonoidHomReal M p)⁻¹) * ∏ p ∈ S, (1 - invPowMonoidHomReal M p)⁻¹ :=
+          le_mul_of_one_le_left hSpos hrest
+      _ = ∏ p ∈ N.primesBelow, (1 - invPowMonoidHomReal M p)⁻¹ := hsplit
+      _ ≤ ∑' n : ℕ, invPowMonoidHomReal M n := key
+      _ = zetaR M := by simp only [hfv]; exact tsum_inv_pow_eq_zeta_real M hM
+
+  let negLogOneSubInvPow (M p : ℕ) : ℝ := -Real.log (1 - ((p : ℝ)⁻¹) ^ M)
+
+  have neg_log_one_sub_inv_pow_nonneg (M : ℕ) (hM : 1 ≤ M) (p : ℕ) (hp : p.Prime) : 0 ≤ negLogOneSubInvPow M p := by
+    have h := inv_prime_pow_lt_one M hM p hp
+    have h0 : 0 ≤ ((p : ℝ)⁻¹) ^ M := by positivity
+    unfold negLogOneSubInvPow
+    have : Real.log (1 - ((p : ℝ)⁻¹) ^ M) ≤ 0 := Real.log_nonpos (by linarith) (by linarith)
+    linarith
+
+  have sum_neg_log_le_log_zeta (M : ℕ) (hM : 2 ≤ M) (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime) :
+      ∑ p ∈ S, negLogOneSubInvPow M p ≤ Real.log (zetaR M) := by
+    have hpos : ∀ p ∈ S, 0 < 1 - ((p : ℝ)⁻¹) ^ M := fun p hp => by
+      linarith [inv_prime_pow_lt_one M (by omega) p (hS p hp)]
+    have hsum : ∑ p ∈ S, negLogOneSubInvPow M p = Real.log (∏ p ∈ S, (1 - ((p : ℝ)⁻¹) ^ M)⁻¹) := by
+      rw [Real.log_prod (fun p hp => (inv_pos.mpr (hpos p hp)).ne')]
+      refine Finset.sum_congr rfl (fun p _ => ?_)
+      exact (Real.log_inv _).symm
+    rw [hsum]
+    exact Real.log_le_log (Finset.prod_pos (fun p hp => inv_pos.mpr (hpos p hp))) (euler_product_le_zeta M hM S hS)
+
+  have abs_log_inv_one_sub_le_real (s y x : ℝ) (hs : s = 1 ∨ s = -1) (hy : 0 ≤ y) (hyx : y ≤ x) (hx : x < 1) :
+      |Real.log ((1 - s * y)⁻¹)| ≤ -Real.log (1 - x) := by
+    have hx0 : 0 < 1 - x := by linarith
+    rcases hs with rfl | rfl
+    · rw [one_mul, Real.log_inv, abs_neg, abs_of_nonpos (Real.log_nonpos (by linarith) (by linarith))]
+      have := Real.log_le_log hx0 (by linarith : 1 - x ≤ 1 - y)
+      linarith
+    · rw [neg_one_mul, sub_neg_eq_add, Real.log_inv, abs_neg,
+        abs_of_nonneg (Real.log_nonneg (by linarith))]
+      have h1 := Real.log_le_sub_one_of_pos (by linarith : 0 < 1 + y)
+      have h2 := Real.log_le_sub_one_of_pos hx0
+      linarith
+
+  have euler_factor_inert_prime_bound (M : ℕ) (hM : 1 ≤ M) (p : ℕ) (hp : p.Prime) (N : ℕ) (hN : p ^ 2 ≤ N) :
+      0 < (1 - (-1 : ℝ) ^ M * (Real.sqrt (N : ℝ)) ^ (-(M : ℤ)))⁻¹ ∧
+      |Real.log ((1 - (-1 : ℝ) ^ M * (Real.sqrt (N : ℝ)) ^ (-(M : ℤ)))⁻¹)| ≤ negLogOneSubInvPow M p := by
+    have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp.two_le
+    have hsq : (p : ℝ) ^ 2 ≤ (N : ℝ) := by exact_mod_cast hN
+    have hpN : (p : ℝ) ≤ Real.sqrt (N : ℝ) := (le_abs_self _).trans (Real.abs_le_sqrt hsq)
+    have hzp : (Real.sqrt (N : ℝ)) ^ (-(M : ℤ)) = ((Real.sqrt (N : ℝ))⁻¹) ^ M := by
+      rw [zpow_neg, zpow_natCast, inv_pow]
+    have hy0 : 0 ≤ ((Real.sqrt (N : ℝ))⁻¹) ^ M := by positivity
+    have hyx : ((Real.sqrt (N : ℝ))⁻¹) ^ M ≤ ((p : ℝ)⁻¹) ^ M :=
+      pow_le_pow_left₀ (by positivity) (inv_anti₀ (by linarith) hpN) M
+    have hx := inv_prime_pow_lt_one M hM p hp
+    have hs := neg_one_pow_eq_or ℝ M
+    rw [hzp]
+    refine ⟨?_, abs_log_inv_one_sub_le_real _ _ _ hs hy0 hyx hx⟩
+    apply inv_pos.mpr
+    rcases hs with h | h <;> rw [h] <;> linarith
+
+  have euler_factor_split_prime_bound (M : ℕ) (hM : 1 ≤ M) (p : ℕ) (hp : p.Prime) (N : ℕ) (hN : p ≤ N) :
+      0 < (1 - (N : ℝ) ^ (-(M : ℤ))) ^ (-(1 : ℝ) / 2) ∧
+      |Real.log ((1 - (N : ℝ) ^ (-(M : ℤ))) ^ (-(1 : ℝ) / 2))| ≤ 1 / 2 * negLogOneSubInvPow M p := by
+    have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp.two_le
+    have hpN : (p : ℝ) ≤ N := by exact_mod_cast hN
+    have hzp : (N : ℝ) ^ (-(M : ℤ)) = ((N : ℝ)⁻¹) ^ M := by rw [zpow_neg, zpow_natCast, inv_pow]
+    rw [hzp]
+    have hyx : ((N : ℝ)⁻¹) ^ M ≤ ((p : ℝ)⁻¹) ^ M :=
+      pow_le_pow_left₀ (by positivity) (inv_anti₀ (by linarith) hpN) M
+    have hy0 : 0 ≤ ((N : ℝ)⁻¹) ^ M := by positivity
+    have hx := inv_prime_pow_lt_one M hM p hp
+    have hb : 0 < 1 - ((N : ℝ)⁻¹) ^ M := by linarith
+    refine ⟨Real.rpow_pos_of_pos hb _, ?_⟩
+    rw [Real.log_rpow hb, abs_mul]
+    have hl := abs_log_inv_one_sub_le_real 1 _ _ (Or.inl rfl) hy0 hyx hx
+    rw [one_mul, Real.log_inv, abs_neg] at hl
+    have h12 : |(-(1 : ℝ) / 2)| = 1 / 2 := by norm_num
+    rw [h12]
+    unfold negLogOneSubInvPow
+    linarith
+
+  let idealPrimeWeight (P : Ideal (𝓞 K)) : ℝ :=
+    Real.log (Ideal.absNorm P : ℝ) / (2 * Real.log (residueCharacteristic P : ℝ))
+
+  have log_prime_pos (p : ℕ) (hp : p.Prime) : 0 < Real.log (p : ℝ) := Real.log_pos (by exact_mod_cast hp.one_lt)
+
+  have sum_weights_over_prime_le_half_degree (p : ℕ) (T : Finset {P : Ideal (𝓞 K) // P.IsMaximal})
+      (hT : ∀ P ∈ T, residueCharacteristic P.1 = p) :
+      ∑ P ∈ T, idealPrimeWeight P.1 ≤ (Module.finrank ℚ K : ℝ) / 2 := by
+    classical
+    rcases T.eq_empty_or_nonempty with rfl | ⟨P0, hP0⟩
+    · simp only [Finset.sum_empty]; positivity
+    have hp : p.Prime := by rw [← hT P0 hP0]; exact residue_characteristic_prime P0.1 P0.2
+    have hlp := log_prime_pos p hp
+    have hdvd : ∏ P ∈ T, Ideal.absNorm P.1 ∣ p ^ Module.finrank ℚ K := by
+      have := prod_norm_dvd_prime_pow_degree p (T.map (Function.Embedding.subtype _)) (by
+        intro P hP
+        obtain ⟨Q, hQ, rfl⟩ := Finset.mem_map.mp hP
+        refine ⟨Q.2, ?_⟩
+        have := residue_characteristic_mem Q.1
+        rwa [hT Q hQ] at this)
+      simpa [Finset.prod_map] using this
+    have hpos : ∀ P ∈ T, 0 < Ideal.absNorm P.1 := fun P _ => Nat.pos_of_ne_zero (by
+      rw [Ne, Ideal.absNorm_eq_zero_iff]; exact maximal_ideal_ne_bot P.1 P.2)
+    have hle : ∏ P ∈ T, Ideal.absNorm P.1 ≤ p ^ Module.finrank ℚ K :=
+      Nat.le_of_dvd (pow_pos hp.pos _) hdvd
+    have hlog : ∑ P ∈ T, Real.log (Ideal.absNorm P.1 : ℝ) ≤ Module.finrank ℚ K * Real.log p := by
+      rw [← Real.log_prod (fun P hP => by exact_mod_cast (hpos P hP).ne'), ← Real.log_pow]
+      apply Real.log_le_log (Finset.prod_pos fun P hP => by exact_mod_cast hpos P hP)
+      exact_mod_cast hle
+    have hlne := hlp.ne'
+    calc ∑ P ∈ T, idealPrimeWeight P.1 = ∑ P ∈ T, Real.log (Ideal.absNorm P.1 : ℝ) / (2 * Real.log p) :=
+          Finset.sum_congr rfl (fun P hP => by
+            dsimp only [idealPrimeWeight]
+            rw [hT P hP])
+      _ = (∑ P ∈ T, Real.log (Ideal.absNorm P.1 : ℝ)) / (2 * Real.log p) := by rw [Finset.sum_div]
+      _ ≤ (Module.finrank ℚ K * Real.log p) / (2 * Real.log p) := by
+          apply div_le_div_of_nonneg_right hlog; linarith
+      _ = (Module.finrank ℚ K : ℝ) / 2 := by field_simp; try ring
+
+  have euler_factor_log_bound (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (M : ℕ) (hM : 1 ≤ M) (P : Ideal (𝓞 K))
+      (hP : P.IsMaximal) :
+      0 < Formalism.HermitianLatticesTheory.eulerFac K M P ∧
+      |Real.log (Formalism.HermitianLatticesTheory.eulerFac K M P)| ≤ idealPrimeWeight P * negLogOneSubInvPow M (residueCharacteristic P) := by
+    have hp := residue_characteristic_prime P hP
+    obtain ⟨k, hk1, hk⟩ := abs_norm_eq_prime_pow P hP
+    have hlp := log_prime_pos _ hp
+    have hlne := hlp.ne'
+    have hc : idealPrimeWeight P = (k : ℝ) / 2 := by
+      dsimp only [idealPrimeWeight]
+      rw [hk, Nat.cast_pow, Real.log_pow]; field_simp; try ring
+    have hg := neg_log_one_sub_inv_pow_nonneg M hM _ hp
+    unfold Formalism.HermitianLatticesTheory.eulerFac
+    split_ifs with hconj
+    · have hN := inert_prime_norm_ge_sq P hP hconj (hK.2.2 P hP)
+      obtain ⟨h1, h2⟩ := euler_factor_inert_prime_bound M hM _ hp _ hN
+      refine ⟨h1, h2.trans ?_⟩
+      have hk2 : 2 ≤ k := by
+        by_contra h
+        have h1k : k = 1 := by omega
+        rw [hk, h1k, pow_one] at hN
+        have := hp.two_le
+        nlinarith
+      rw [hc]
+      have : (2 : ℝ) ≤ k := by exact_mod_cast hk2
+      nlinarith
+    · obtain ⟨h1, h2⟩ := euler_factor_split_prime_bound M hM _ hp (Ideal.absNorm P) (by rw [hk]; exact Nat.le_self_pow (by omega) _)
+      refine ⟨h1, h2.trans ?_⟩
+      rw [hc]
+      have : (1 : ℝ) ≤ k := by exact_mod_cast hk1
+      nlinarith
+
+  have partial_sums_log_euler_factor_le (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (M : ℕ) (hM : 2 ≤ M)
+      (u : Finset {P : Ideal (𝓞 K) // P.IsMaximal}) :
+      ∑ P ∈ u, |Real.log (Formalism.HermitianLatticesTheory.eulerFac K M P.1)| ≤
+        (Formalism.HermitianLatticesTheory.fDeg K : ℝ) * Real.log (zetaR M) := by
+    classical
+    have hn : (Formalism.HermitianLatticesTheory.fDeg K : ℝ) = (Module.finrank ℚ K : ℝ) / 2 := by
+      haveI := hK.1
+      have h1 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank K
+      have h2 := NumberField.InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces K
+      have h3 := NumberField.IsTotallyComplex.nrRealPlaces_eq_zero K
+      unfold Formalism.HermitianLatticesTheory.fDeg
+      rw [h2, ← h1, h3]; push_cast; ring
+    set S := u.image (fun P => residueCharacteristic P.1) with hSdef
+    have hSp : ∀ p ∈ S, p.Prime := by
+      intro p hp
+      obtain ⟨P, -, rfl⟩ := Finset.mem_image.mp hp
+      exact residue_characteristic_prime P.1 P.2
+    calc ∑ P ∈ u, |Real.log (Formalism.HermitianLatticesTheory.eulerFac K M P.1)|
+        ≤ ∑ P ∈ u, idealPrimeWeight P.1 * negLogOneSubInvPow M (residueCharacteristic P.1) :=
+          Finset.sum_le_sum (fun P _ => (euler_factor_log_bound hK M (by omega) P.1 P.2).2)
+      _ = ∑ p ∈ S, ∑ P ∈ u.filter (fun P => residueCharacteristic P.1 = p),
+            idealPrimeWeight P.1 * negLogOneSubInvPow M (residueCharacteristic P.1) :=
+          (Finset.sum_fiberwise_of_maps_to (fun P hP => Finset.mem_image_of_mem _ hP) _).symm
+      _ = ∑ p ∈ S, negLogOneSubInvPow M p * ∑ P ∈ u.filter (fun P => residueCharacteristic P.1 = p), idealPrimeWeight P.1 := by
+          refine Finset.sum_congr rfl (fun p _ => ?_)
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl (fun P hP => ?_)
+          rw [(Finset.mem_filter.mp hP).2]; ring
+      _ ≤ ∑ p ∈ S, negLogOneSubInvPow M p * ((Module.finrank ℚ K : ℝ) / 2) := by
+          refine Finset.sum_le_sum (fun p hp => ?_)
+          exact mul_le_mul_of_nonneg_left
+            (sum_weights_over_prime_le_half_degree p _ (fun P hP => (Finset.mem_filter.mp hP).2))
+            (neg_log_one_sub_inv_pow_nonneg M (by omega) p (hSp p hp))
+      _ = (Module.finrank ℚ K : ℝ) / 2 * ∑ p ∈ S, negLogOneSubInvPow M p := by
+          rw [Finset.mul_sum]; exact Finset.sum_congr rfl (fun _ _ => mul_comm _ _)
+      _ ≤ (Module.finrank ℚ K : ℝ) / 2 * Real.log (zetaR M) :=
+          mul_le_mul_of_nonneg_left (sum_neg_log_le_log_zeta M hM S hSp) (by positivity)
+      _ = (Formalism.HermitianLatticesTheory.fDeg K : ℝ) * Real.log (zetaR M) := by rw [hn]
+
   have hpos : ∀ P : {P : Ideal (𝓞 K) // P.IsMaximal}, 0 < Formalism.HermitianLatticesTheory.eulerFac K M P.1 :=
-    fun P => (euler_factor_log_bound K hK M (by omega) P.1 P.2).1
-  have hpart := partial_sums_log_euler_factor_le K hK M hM
+    fun P => (euler_factor_log_bound hK M (by omega) P.1 P.2).1
+  have hpart := partial_sums_log_euler_factor_le hK M hM
   have habs : Summable (fun P : {P : Ideal (𝓞 K) // P.IsMaximal} =>
       |Real.log (Formalism.HermitianLatticesTheory.eulerFac K M P.1)|) :=
     summable_of_sum_le (fun P => abs_nonneg _) hpart

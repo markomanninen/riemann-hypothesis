@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ContDiff ComplexConjugate

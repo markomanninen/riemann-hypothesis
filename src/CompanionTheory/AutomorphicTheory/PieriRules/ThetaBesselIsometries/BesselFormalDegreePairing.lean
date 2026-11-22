@@ -1,12 +1,16 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselFormalDegreeIdentityStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselSubgroupParameterMeasurePreservingImports
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselCharacterUnipotentRadicalPropertiesImports
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.IsHaarOnIffGroupsUnitaryUnipotentImports
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesUnitarySmoothBasic
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselFormalDegreeIdentityStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselSubgroupParameterMeasurePreservingImports
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.BesselCharacterUnipotentRadicalPropertiesImports
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.IsHaarOnIffGroupsUnitaryUnipotentImports
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.DiscreteSeriesUnitarySmoothBasic
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+
+@[expose] public section
 
 namespace GlobalTheory
 end GlobalTheory
@@ -19,55 +23,28 @@ open scoped InnerProductSpace ENNReal
 
 namespace GlobalTheory
 
-private theorem hsInner_add_left_theta_bessel_isometries {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (A A' C : Wq →L[ℂ] Wp) :
-    B.hsInner (A + A') C = B.hsInner A C + B.hsInner A' C := by
-  unfold Formalism.FourierDecayAlt.B.hsInner
-  rw [← inner_add_right]
-  congr 1
-
-private theorem hsInner_smul_lemma_2 {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
-    [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (c : ℂ) (A C : Wq →L[ℂ] Wp) :
-    B.hsInner (c • A) C = c * B.hsInner A C := by
-  unfold Formalism.FourierDecayAlt.B.hsInner
-  rw [← inner_smul_right]
-  congr 1
-
 theorem besPhInt_bilin {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (X X' : Wq →L[ℂ] Wp) :
     ∃ T : (Wp →L[ℂ] Wp) →L[ℂ] (Wq →L[ℂ] Wq) →L[ℂ] ℂ, ∀ P Q, T P Q = B.hsInner (P.comp (X.comp Q)) X' := by
-  let f : (Wp →L[ℂ] Wp) →ₗ[ℂ] (Wq →L[ℂ] Wq) →ₗ[ℂ] ℂ :=
-    LinearMap.mk₂ ℂ (fun P Q => B.hsInner (P.comp (X.comp Q)) X')
-      (fun P₁ P₂ Q => by rw [ContinuousLinearMap.add_comp, hsInner_add_left_theta_bessel_isometries])
-      (fun c P Q => by rw [ContinuousLinearMap.smul_comp, hsInner_smul_lemma_2, smul_eq_mul])
-      (fun P Q₁ Q₂ => by
-        rw [ContinuousLinearMap.comp_add, ContinuousLinearMap.comp_add, hsInner_add_left_theta_bessel_isometries])
-      (fun c P Q => by
-        rw [ContinuousLinearMap.comp_smul, ContinuousLinearMap.comp_smul, hsInner_smul_lemma_2,
-          smul_eq_mul])
-  let g : (Wp →L[ℂ] Wp) →ₗ[ℂ] (Wq →L[ℂ] Wq) →L[ℂ] ℂ :=
-    (LinearMap.toContinuousLinearMap : ((Wq →L[ℂ] Wq) →ₗ[ℂ] ℂ) ≃ₗ[ℂ] _).toLinearMap ∘ₗ f
-  exact ⟨LinearMap.toContinuousLinearMap g, fun P Q => rfl⟩
+  refine ⟨∑ i, ((ContinuousLinearMap.compL ℂ (Wq →L[ℂ] Wq) Wp ℂ (innerSL ℂ (X' (stdOrthonormalBasis ℂ Wq i)))).comp
+    ((ContinuousLinearMap.compL ℂ (Wq →L[ℂ] Wq) Wp Wp).flip
+      (X.comp (ContinuousLinearMap.apply ℂ Wq (stdOrthonormalBasis ℂ Wq i))))), fun P Q => ?_⟩
+  simp [B.hsInner, B.hsVec, PiLp.inner_apply]
 
 theorem besPhInt_rank {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [FiniteDimensional ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wq] (X X' : Wq →L[ℂ] Wp)
     (a a' : Wp) (b b' : Wq) :
     B.hsInner (((innerSL ℂ a).smulRight a').comp (X.comp ((innerSL ℂ b').smulRight b))) X' =
       ⟪a, X b⟫_ℂ * star ⟪a', X' b'⟫_ℂ := by
-  have key : ∀ i, ⟪X' (stdOrthonormalBasis ℂ Wq i),
-      (((innerSL ℂ a).smulRight a').comp (X.comp ((innerSL ℂ b').smulRight b)))
-        (stdOrthonormalBasis ℂ Wq i)⟫_ℂ =
-      ⟪a, X b⟫_ℂ * (⟪b', stdOrthonormalBasis ℂ Wq i⟫_ℂ *
-        ⟪stdOrthonormalBasis ℂ Wq i, (ContinuousLinearMap.adjoint X') a'⟫_ℂ) := by
-    intro i
-    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
-      map_smul, inner_smul_right, ContinuousLinearMap.adjoint_inner_right, smul_eq_mul]
-    ring
-  unfold Formalism.FourierDecayAlt.B.hsInner Formalism.FourierDecayAlt.B.hsVec
-  simp only [PiLp.inner_apply, PiLp.toLp_apply, key]
-  rw [← Finset.mul_sum, OrthonormalBasis.sum_inner_mul_inner, ContinuousLinearMap.adjoint_inner_right]
-  congr 1
-  exact (inner_conj_symm (X' b') a').symm
+  have hb : X' b' = ∑ i, ⟪stdOrthonormalBasis ℂ Wq i, b'⟫_ℂ • X' (stdOrthonormalBasis ℂ Wq i) := by
+    conv_lhs => rw [← (stdOrthonormalBasis ℂ Wq).sum_repr' b']
+    simp [map_sum]
+  rw [show star ⟪a', X' b'⟫_ℂ = ⟪X' b', a'⟫_ℂ from inner_conj_symm _ _, hb, sum_inner, Finset.mul_sum]
+  simp only [B.hsInner, B.hsVec, PiLp.inner_apply]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply, map_smul,
+    inner_smul_right, inner_smul_left, inner_conj_symm]
+  ring
 
 theorem besPhInt_xi {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
     [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] (D : B.RealPlaceData k r Wp Wq) (p : B.SS k r) :
@@ -116,28 +93,6 @@ private theorem isUnit_det_of_mem_UH_Hpk_of_inv_mem {k r : ℕ} (hk : 1 ≤ k)
   have hk0 : k ≠ 0 := by omega
   have h2 := congrFun (congrFun h0 ⟨r, hr⟩) ⟨r, hr⟩
   simp [Formalism.QuantumDeterminants.Hpk, hk0] at h2
-
-private theorem integrable_and_integral_prod_bilin_eq_apply_integrals {α β E F G : Type*} [MeasurableSpace α] [MeasurableSpace β]
-    {μ : Measure α} {ν : Measure β} [SFinite μ] [SFinite ν]
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [NormedAddCommGroup F] [NormedSpace ℂ F]
-    [NormedAddCommGroup G] [NormedSpace ℂ G] [CompleteSpace E] [CompleteSpace F] [CompleteSpace G]
-    (T : E →L[ℂ] F →L[ℂ] G) {u : α → E} {v : β → F} (hu : Integrable u μ) (hv : Integrable v ν) :
-    Integrable (fun p : α × β => T (u p.1) (v p.2)) (μ.prod ν) ∧
-      ∫ p, T (u p.1) (v p.2) ∂(μ.prod ν) = T (∫ a, u a ∂μ) (∫ b, v b ∂ν) := by
-  have hint : Integrable (fun p : α × β => T (u p.1) (v p.2)) (μ.prod ν) := by
-    refine Integrable.mono' ((MeasureTheory.Integrable.mul_prod hu.norm hv.norm).const_mul ‖T‖) ?_ ?_
-    · exact T.continuous₂.comp_aestronglyMeasurable₂ hu.aestronglyMeasurable.comp_fst
-        hv.aestronglyMeasurable.comp_snd
-    · exact Filter.Eventually.of_forall (fun p => by
-        have h1 := T.le_opNorm₂ (u p.1) (v p.2)
-        simpa [mul_assoc] using h1)
-  refine ⟨hint, ?_⟩
-  rw [integral_prod _ hint]
-  have h1 : ∀ a, ∫ b, T (u a) (v b) ∂ν = T (u a) (∫ b, v b ∂ν) :=
-    fun a => (T (u a)).integral_comp_comm hv
-  simp_rw [h1]
-  have h2 := (T.flip (∫ b, v b ∂ν)).integral_comp_comm hu
-  simpa using h2
 
 theorem integral_xi_mul_Ph : HypsG → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1) → Bool) (mu : Fin (2 * r + k + 1) → ℝ) (h : ℝ) (R : Rep k r) (Wp : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [CompleteSpace Wp] [FiniteDimensional ℂ Wp] (Wq : Type) [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [CompleteSpace Wq] [FiniteDimensional ℂ Wq] (D : B.RealPlaceData k r Wp Wq) (l : R.H → Wp) (l' : R.H → Wq) (dd : ℝ), R.IsDG ε mu → Formalism.QuantumDeterminants.GapAtLeast ε mu h → GapOK k r h → IsBeL R D.z D.π D.μW D.μN l → IsBeL R D.z' D.π' D.μW' D.μN l' → (∀ w, w ≠ 0 → PI.BesselPeriodGGP.fdegH D.μG R.σ w = dd) → ∀ x ∈ R.TK, ∀ y ∈ R.TK, ∀ x' ∈ R.TK, ∀ y' ∈ R.TK, ∀ X X' : Wq →L[ℂ] Wp, Integrable (B.Ph D (fun g => ⟪x, R.σ g y⟫_ℂ • X) (fun g => ⟪x', R.σ g y'⟫_ℂ • X')) D.μSS ∧ ∫ p, B.xiTau D (1, 1) p * B.Ph D (fun g => ⟪x, R.σ g y⟫_ℂ • X) (fun g => ⟪x', R.σ g y'⟫_ℂ • X') p ∂D.μSS = ⟪l x, X (l' y)⟫_ℂ * star ⟪l x', X' (l' y')⟫_ℂ / (dd : ℂ) := by
   intro hH k r ε mu h R Wp _ _ _ _ Wq _ _ _ _ D l l' dd hDG _ _ hl hl' hdd x hx y hy x' hx' y' hy' X X'
@@ -258,23 +213,22 @@ theorem integral_xi_mul_Ph : HypsG → ∀ (k r : ℕ) (ε : Fin (2 * r + k + 1)
     filter_upwards [h1, h2] with p hp1 hp2
     exact ⟨hp1.1, hp1.2, hp2.1, hp2.2⟩
   obtain ⟨T, hT⟩ := besPhInt_bilin X X'
-  have hFub := integrable_and_integral_prod_bilin_eq_apply_integrals T hUi.1 hVi.1
   have hpt : ∀ p : B.SS k r, D.inSS p →
       B.xiTau D (1, 1) p * B.Ph D (fun g => ⟪x, R.σ g y⟫_ℂ • X) (fun g => ⟪x', R.σ g y'⟫_ℂ • X') p =
         (1 / (dd : ℂ)) * T (U p.1) (V p.2) := by
     intro p hp
-    rw [(Gp91.GlobalTheory.T.bessel_formal_degree_identity hH k r ε mu R Wp Wq D dd hDG hdd x y x' y' X X' p hp).2, besPhInt_xi, hT,
-      hUd, hVd, ContinuousLinearMap.comp_smul, ContinuousLinearMap.smul_comp,
-      ContinuousLinearMap.comp_smul, hsInner_smul_lemma_2, hsInner_smul_lemma_2]
+    rw [(Gp91.GlobalTheory.T.bessel_formal_degree_identity hH k r ε mu R Wp Wq D dd hDG hdd x y x' y' X X' p hp).2, besPhInt_xi,
+      hUd, hVd, map_smul, map_smul, _root_.smul_apply, hT, smul_eq_mul, smul_eq_mul]
     simp only [Formalism.FourierDecayAlt.JF.sL, Formalism.FourierDecayAlt.JF.sR]
     ring
   have hae : (fun p => B.xiTau D (1, 1) p *
       B.Ph D (fun g => ⟪x, R.σ g y⟫_ℂ • X) (fun g => ⟪x', R.σ g y'⟫_ℂ • X') p)
       =ᵐ[D.μSS] fun p => (1 / (dd : ℂ)) * T (U p.1) (V p.2) :=
     haeSS.mono (fun p hp => hpt p hp)
-  have hF1 : Integrable (fun p => T (U p.1) (V p.2)) D.μSS := hFub.1
+  have hF1 : Integrable (fun p => T (U p.1) (V p.2)) D.μSS :=
+    hUi.1.op_fst_snd (op := fun P Q => T P Q) (by fun_prop) ⟨‖T‖, T.le_opNorm₂⟩ hVi.1
   have hF2 : ∫ p, T (U p.1) (V p.2) ∂D.μSS =
-      T (∫ q, U q ∂(D.μW.prod D.μN)) (∫ q, V q ∂(D.μW'.prod D.μN)) := hFub.2
+      T (∫ q, U q ∂(D.μW.prod D.μN)) (∫ q, V q ∂(D.μW'.prod D.μN)) := integral_prod_bilin T hUi.1 hVi.1
   have hint2 : Integrable (fun p => B.xiTau D (1, 1) p *
       B.Ph D (fun g => ⟪x, R.σ g y⟫_ℂ • X) (fun g => ⟪x', R.σ g y'⟫_ℂ • X') p) D.μSS :=
     (hF1.const_mul (1 / (dd : ℂ))).congr hae.symm

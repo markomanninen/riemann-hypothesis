@@ -1,7 +1,11 @@
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscPos
+module
+
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialPullbackStatement
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscPos
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.M
 
@@ -86,8 +90,8 @@ theorem maDens_continuousOn {D : ℕ} (φ : Fin D → (Fin D → ℂ) → ℝ) (
   have hH : ∀ k, ContinuousOn (hessC (φ k)) V := fun k => hessC_continuousOn (φ k) V hV (hφ k)
   unfold maDens mdisc
   refine continuousOn_const.mul (Complex.continuous_re.comp_continuousOn ?_)
-  refine continuousOn_const.mul (continuousOn_finset_sum _ fun S _ => continuousOn_const.mul ?_)
-  exact (continuous_id.matrix_det).comp_continuousOn (continuousOn_finset_sum _ fun k _ => hH k)
+  refine continuousOn_const.mul (continuousOn_finsetSum _ fun S _ => continuousOn_const.mul ?_)
+  exact (continuous_id.matrix_det).comp_continuousOn (continuousOn_finsetSum _ fun k _ => hH k)
 
 theorem locDensCont : LocDensContStatement := by
   intro e X _ A Φ hΦ j y0 hy0
@@ -166,7 +170,8 @@ theorem re_star_dot_hessC {D : ℕ} (φ : (Fin D → ℂ) → ℝ) (z x : Fin D 
           (H (E i) (Complex.I • E j) - H (Complex.I • E i) (E j))) / 4 := by
     unfold levi
     rw [← hH, hIw, hw]
-    simp only [map_sum, map_add, map_smul, ContinuousLinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_add (f := _), map_smul, ContinuousLinearMap.sum_apply,
       ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, ContinuousLinearMap.coe_smul',
       Pi.smul_apply, smul_eq_mul]
     simp only [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.sum_div]
@@ -174,30 +179,6 @@ theorem re_star_dot_hessC {D : ℕ} (φ : (Fin D → ℂ) → ℝ) (z x : Fin D 
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     ring
   rw [hL, hR]
-
-theorem hessC_posDef {D : ℕ} (φ : (Fin D → ℂ) → ℝ) (z : Fin D → ℂ) (hφ : ContDiffAt ℝ 2 φ z)
-    (hpos : ∀ w : Fin D → ℂ, w ≠ 0 → 0 < levi φ z w) : (hessC φ z).PosDef := by
-  have hH := ReciprocityTheory.AnForm.A.hessC_isHermitian φ z hφ
-  refine Matrix.PosDef.of_dotProduct_mulVec_pos hH fun x hx => ?_
-  have hw : star x ≠ 0 := star_ne_zero.2 hx
-  have him := hH.im_star_dotProduct_mulVec_self x
-  rw [Complex.lt_def]
-  refine ⟨?_, ?_⟩
-  · rw [Complex.zero_re, re_star_dot_hessC]
-    exact hpos _ hw
-  · rw [Complex.zero_im]
-    exact him.symm
-
-theorem locDensPos : LocDensPosStatement := by
-  intro e X _ A Φ hΦ hpos j y hy
-  have hPD : ∀ i, (hessC (fun y' => (Φ i).φ ((A.chart j).symm y) ((A.chart j).symm y')) y).PosDef :=
-    fun i => hessC_posDef _ y (potSmoothAt A (Φ i) (hΦ i) _ j ⟨hy, (Φ i).mem_U _⟩)
-      (fun w hw => hpos i _ j y ⟨hy, (Φ i).mem_U _⟩ w hw)
-  have hm := (ReciprocityTheory.AnForm.A.mdisc_pos_of_posDef
-    (fun i => hessC (fun y' => (Φ i).φ ((A.chart j).symm y) ((A.chart j).symm y')) y) hPD).2
-  have hpi : 0 < (2 / Real.pi) := div_pos two_pos Real.pi_pos
-  have hf : (0 : ℝ) < (e.factorial : ℝ) := by exact_mod_cast Nat.factorial_pos e
-  exact mul_pos (mul_pos hf (pow_pos hpi e)) hm
 
 end
 

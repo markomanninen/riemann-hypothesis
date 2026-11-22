@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.InertKernelTheory.OneCopyTh1S
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMModel
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SigmaAlg
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.LatticeOnly
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.OneCopyTh1S
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.MMModel
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SigmaAlg
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.LatticeOnly
+
+@[expose] public section
 
 noncomputable section
 

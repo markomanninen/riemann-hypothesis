@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+
+@[expose] public section
+
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 namespace GlobalTheory
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.minorHarm_pderiv_comm {σ k : Type*} [CommRing k] (i j : σ)
     (p : MvPolynomial σ k) :
     MvPolynomial.pderiv i (MvPolynomial.pderiv j p) =
@@ -21,8 +26,8 @@ theorem _root_.GlobalTheory.minorHarm_pderiv_comm {σ k : Type*} [CommRing k] (i
   rw [Derivation.commutator_apply] at this
   simpa [sub_eq_zero] using this
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.minorHarm_pderiv_eq_zero {σ k : Type*} [CommRing k] {S : Set σ}
     {p : MvPolynomial σ k} (hp : p ∈ MvPolynomial.supported k S) {v : σ} (hv : v ∉ S) :
     MvPolynomial.pderiv v p = 0 := by
@@ -33,7 +38,7 @@ theorem _root_.GlobalTheory.minorHarm_pderiv_eq_zero {σ k : Type*} [CommRing k]
     obtain ⟨s, hs, rfl⟩ := hx
     exact MvPolynomial.pderiv_X_of_ne (fun h => hv (h ▸ hs))
   | algebraMap r => rw [MvPolynomial.algebraMap_eq, MvPolynomial.pderiv_C]
-  | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
   | mul x y _ _ hx hy => rw [MvPolynomial.pderiv_mul, hx, hy]; simp
 
 open MvPowerSeries in
@@ -51,13 +56,13 @@ private theorem pderiv_mem_supported' {σ k : Type*} [CommRing k] {S : Set σ}
     · rw [Pi.single_eq_of_ne' h]; exact Subalgebra.zero_mem _
   | algebraMap r =>
     rw [MvPolynomial.algebraMap_eq, MvPolynomial.pderiv_C]; exact Subalgebra.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Subalgebra.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Subalgebra.add_mem _ hx hy
   | mul x y hx' hy' hx hy =>
     rw [MvPolynomial.pderiv_mul]
     exact Subalgebra.add_mem _ (Subalgebra.mul_mem _ hx hy') (Subalgebra.mul_mem _ hx' hy)
 
-open MvPowerSeries in
 
+open MvPowerSeries in
 theorem _root_.GlobalTheory.minors_disjoint_columns_harmonic :
     ∀ (k : Type) [CommRing k] (T : Type) [Fintype T] [DecidableEq T] (r : T → ℕ) (n : ℕ) (col : ∀ τ, Fin (r τ) → Fin n) (m : ∀ τ, Fin (r τ) → ℕ) (P : MvPolynomial ((Σ τ : T, Fin (r τ)) × Fin n) k), P = (∏ τ, ∏ s : Fin (r τ), (Matrix.of fun a i : Fin (s.val + 1) => (MvPolynomial.X ((⟨τ, Fin.castLE s.isLt a⟩ : Σ τ : T, Fin (r τ)), col τ (Fin.castLE s.isLt i)) : MvPolynomial ((Σ τ : T, Fin (r τ)) × Fin n) k)).det ^ m τ s) → ∀ τ τ' : T, (∀ i i', col τ i ≠ col τ' i') → ∀ (i : Fin (r τ)) (i' : Fin (r τ')), ∑ b : Fin n, MvPolynomial.pderiv ((⟨τ, i⟩ : Σ τ : T, Fin (r τ)), b) (MvPolynomial.pderiv ((⟨τ', i'⟩ : Σ τ : T, Fin (r τ)), b) P) = 0 := by
   intro k _ T _ _ r n col m P hP τ τ' hdisj i i'

@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
-import GroundTheory.ProfiniteCohomology.ClassFormationDefs
-import GroundTheory.ProfiniteCohomology.FilteredHomology
-import GroundTheory.ProfiniteCohomology.Factor
-import GroundTheory.ProfiniteCohomology.Colimit
-import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.CdpOpenSubgroupLe
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.NotDvdSuperIndexBotOfIsProPGroup
+public import GroundTheory.ProfiniteCohomology.ClassFormationDefs
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+public import GroundTheory.ProfiniteCohomology.Factor
+public import GroundTheory.ProfiniteCohomology.Colimit
+public import GroundTheory.ProfiniteCohomology.OfNatRelIndexSupAntitone
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -51,8 +56,8 @@ theorem exists_mem_inv_mul_mem {x : G} (hx : x ∈ H ⊔ V) : ∃ h ∈ H, h⁻�
   obtain ⟨h, hh, v, hv, rfl⟩ := Subgroup.mem_sup_of_normal_right.1 hx
   exact ⟨h, hh, by rwa [inv_mul_cancel_left]⟩
 
-variable (H V) in
 
+variable (H V) in
 noncomputable def supSection (x : ↥(H ⊔ V)) : ↥H :=
   ⟨(exists_mem_inv_mul_mem H V x.2).choose, (exists_mem_inv_mul_mem H V x.2).choose_spec.1⟩
 
@@ -60,13 +65,13 @@ variable (H V) in
 theorem supSection_spec (x : ↥(H ⊔ V)) : ((supSection H V x : G))⁻¹ * x ∈ V :=
   (exists_mem_inv_mul_mem H V x.2).choose_spec.2
 
-variable (V) in
 
+variable (V) in
 def ConstOnCosets {X : Type*} {n : ℕ} (c : (Fin n → H) → X) : Prop :=
   ∀ x y : Fin n → H, (∀ i, ((x i : G))⁻¹ * (y i : G) ∈ V) → c x = c y
 
-variable (V) in
 
+variable (V) in
 noncomputable def supExtend {X : Type*} {n : ℕ} (c : (Fin n → H) → X) : (Fin n → ↥(H ⊔ V)) → X :=
   fun x => c fun i => supSection H V (x i)
 

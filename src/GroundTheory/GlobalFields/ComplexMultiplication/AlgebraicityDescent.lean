@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityGalois
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityGalois
+
+@[expose] public section
 
 open NumberField Module WeierstrassCurve GroundTheory.Arith.Abelian IntermediateField Polynomial
 
@@ -30,7 +34,7 @@ theorem _root_.GroundTheory.Arith.Abelian.Isogeny.exists_map_eq_of_forall_conj_e
   have hab_fix : ∀ g : ℂ ≃ₐ[L] ℂ, galFF W g a = a ∧ galFF W g b = b := by
     intro g
     have e := hyfix g
-    rw [hab, map_add, map_mul, galFF_genY] at e
+    rw [hab, map_add (f := _), map_mul, galFF_genY] at e
     exact eq_of_add_mul_genY_eq (galFF_mem_adjoin_genX W _ ha) (galFF_mem_adjoin_genX W _ hb)
       ha hb e
   have hlift : ∀ s : RatFunc ℂ, (∀ g : ℂ ≃ₐ[L] ℂ,
@@ -45,10 +49,10 @@ theorem _root_.GroundTheory.Arith.Abelian.Isogeny.exists_map_eq_of_forall_conj_e
         obtain ⟨h1, h2⟩ := map_eq_of_galFF_ratEmb W g (hs g)
         rcases Finset.mem_union.mp hc with hc | hc
         · obtain ⟨n, -, rfl⟩ := Polynomial.mem_coeffs_iff.mp hc
-          have := congrArg (coeff · n) h1
+          have := congrArg (fun p : ℂ[X] ↦ p.coeff n) h1
           simpa using this
         · obtain ⟨n, -, rfl⟩ := Polynomial.mem_coeffs_iff.mp hc
-          have := congrArg (coeff · n) h2
+          have := congrArg (fun p : ℂ[X] ↦ p.coeff n) h2
           simpa using this
       exact IntermediateField.mem_bot.1 hbot
     constructor
@@ -80,7 +84,7 @@ theorem _root_.GroundTheory.Arith.Abelian.Isogeny.exists_map_eq_of_forall_conj_e
     rw [← hr]
     exact hrat r n₁ d₁ hn₁ hd₁
   have hy₁ : ffMap (algebraMap L ℂ) W y₁ = ψ.y := by
-    rw [hab, map_add, map_mul, ← hr₂, ← hr₃, hrat r₂ n₂ d₂ hn₂ hd₂, hrat r₃ n₃ d₃ hn₃ hd₃,
+    rw [hab, map_add (f := _), map_mul, ← hr₂, ← hr₃, hrat r₂ n₂ d₂ hn₂ hd₂, hrat r₃ n₃ d₃ hn₃ hd₃,
       ffMap_genY]
     rfl
   exact ⟨Isogeny.ofMap (algebraMap L ℂ) ψ x₁ y₁ hx₁ hy₁,
@@ -94,8 +98,8 @@ theorem _root_.GroundTheory.Arith.Abelian.Isogeny.invConst_congr {F : Type} [Fie
   subst hC hC'
   rw [Isogeny.congr_rfl]
 
-omit [CharZero L] in
 
+omit [CharZero L] in
 theorem _root_.GroundTheory.Arith.Abelian.Isogeny.invConst_conj (g : ℂ ≃ₐ[L] ℂ)
     (ψ : Isogeny (W.baseChange ℂ) (W'.baseChange ℂ)) : invConst (ψ.conj g) = g (invConst ψ) := by
   rw [Isogeny.conj, Isogeny.mapOf, Isogeny.invConst_congr, invConst_map]
@@ -106,47 +110,8 @@ end Descent
 namespace Elliptic
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
 include hK
-
-theorem exists_isogeny_map_eq_of_cm (L : IntermediateField K ℂ) (W : WeierstrassCurve L)
-    [W.IsElliptic] (hW : Nonempty (isogEnd (W.baseChange ℂ) ≃+* 𝓞 K))
-    (ψ : Isogeny (W.baseChange ℂ) (W.baseChange ℂ)) :
-    ∃ φ : Isogeny W W, φ.map (algebraMap L ℂ) = ψ := by
-  refine ψ.exists_map_eq_of_forall_conj_eq fun g ↦ ?_
-  obtain ⟨Λ, C, hC⟩ := exists_variableChange_eq_weierstrassCurve (W.baseChange ℂ)
-  have hΛ : latticeEnd Λ = cmRing (algebraMap K ℂ) := latticeEnd_eq_cmRing_of_ringEquiv
-    (algebraMap K ℂ) hK Λ ((latticeEndEquiv Λ).trans ((vcEndEquiv C hC).symm.trans hW.some))
-  have hmem : endConst (W.baseChange ℂ) ψ.toHom ∈ cmRing (algebraMap K ℂ) := by
-    rw [← hΛ, ← range_endConst hC]
-    exact ⟨_, rfl⟩
-  obtain ⟨a, ha⟩ := (mem_cmRing (algebraMap K ℂ)).1 hmem
-  have hfix : g (endConst (W.baseChange ℂ) ψ.toHom) = endConst (W.baseChange ℂ) ψ.toHom := by
-    rw [← ha, IsScalarTower.algebraMap_apply K L ℂ]
-    exact g.commutes _
-  have hc : invConst (ψ.conj g) = invConst ψ := by
-    rw [Isogeny.invConst_conj]
-    rw [endConst_apply, homConst_toHom] at hfix
-    exact hfix
-  have e : endConst (W.baseChange ℂ) (ψ.conj g).toHom = endConst (W.baseChange ℂ) ψ.toHom := by
-    rw [endConst_apply, endConst_apply, homConst_toHom, homConst_toHom, hc]
-  have e' := congrArg Subtype.val (endConst_injective e)
-  exact Isogeny.ext' e'
-
-theorem CMCurve.exists_model_endomorphisms_defined (E : CMCurve K) :
-    ∃ (W : WeierstrassCurve K⟮E.curve.j⟯) (_ : W.IsElliptic) (C : VariableChange ℂ),
-      C • W.baseChange ℂ = E.curve ∧
-        ∀ ψ : Isogeny (W.baseChange ℂ) (W.baseChange ℂ),
-          ∃ φ : Isogeny W W, φ.map (algebraMap K⟮E.curve.j⟯ ℂ) = ψ := by
-  classical
-  set W := WeierstrassCurve.ofJ (⟨E.curve.j, mem_adjoin_simple_self K _⟩ : K⟮E.curve.j⟯)
-  have hj : (W.baseChange ℂ).j = E.curve.j := by
-    show (W.map (algebraMap K⟮E.curve.j⟯ ℂ)).j = _
-    rw [map_j, ofJ_j]
-    rfl
-  obtain ⟨C, hC⟩ := exists_variableChange_of_j_eq _ _ hj
-  refine ⟨W, inferInstance, C, hC, fun ψ ↦ ?_⟩
-  exact exists_isogeny_map_eq_of_cm hK K⟮E.curve.j⟯ W ⟨(vcEndEquiv C hC).trans E.endIso.some⟩ ψ
 
 end Elliptic
 

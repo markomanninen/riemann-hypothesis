@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SplLen
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.PolynomialBound
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SplLen
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.PolynomialBound
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate ContDiff

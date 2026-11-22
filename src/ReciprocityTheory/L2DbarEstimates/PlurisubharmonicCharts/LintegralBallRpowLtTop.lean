@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FamilyLeCoords
-import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FamilyLeCoords
+public import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 

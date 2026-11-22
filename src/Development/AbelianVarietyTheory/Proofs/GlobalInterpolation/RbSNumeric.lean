@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogAddRpowMulLogPowLeRpow
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LogAddRpowMulLogPowLeRpow
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
@@ -55,8 +59,12 @@ theorem szRow_rbS : SzRow (fun C D L => ((D.R.r : ℝ) * (L.sc.b' + L.Sc) * Real
   have hone : 1 ≤ L.sc.x := by linarith
   have hP : 1 ≤ L.sc.x ^ cD := Real.one_le_rpow hone hcD
   have hn : (0 : ℝ) < D.R.n := by
-    unfold Ranks.n
-    positivity
+    have hn : 0 < D.R.n := by
+      unfold Ranks.n
+      have := D.R.two_le_m
+      have := D.R.m_le_f
+      omega
+    exact_mod_cast hn
   beta_reduce
   unfold lA Scale.b' Scale.a
   rw [L.Sc_eq, V.Del_eq]

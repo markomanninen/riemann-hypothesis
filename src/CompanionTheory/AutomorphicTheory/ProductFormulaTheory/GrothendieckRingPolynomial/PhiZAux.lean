@@ -1,12 +1,16 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CuspidalTwistInjectiveImports
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ContragredientProductIrreducibleImports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLengthStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentProductWordInShuffleStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ProdList
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.CuspidalTwistInjectiveImports
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ContragredientProductIrreducibleImports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ProductIrreducibleFiniteLengthStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.GlobalTheory.BernsteinZelevinskyFiniteness
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentProductWordInShuffleStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.WordOccursOfSubquotientImports
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,27 +34,27 @@ theorem shuffle_perm {T : Type*} {us : List (List T)} {w : List T} (h : Zc.Comb.
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem coe_decW (Γ : Segment k) : ((decW Γ : List (IrrGL k)) : Multiset (IrrGL k)) = Γ.ms := by
+theorem coe_decW (Γ : Segment k) : ((decW Γ : List (IrrGL (k := k))) : Multiset (IrrGL (k := k))) = Γ.ms := by
   rw [decW, Segment.ms, ← Fin.univ_val_map]
   have : (fun i : Fin Γ.len => Γ.term i.rev) = Γ.term ∘ (Fin.revPerm : Equiv.Perm (Fin Γ.len)) := rfl
   rw [this, ← Multiset.map_map, Multiset.map_univ_val_equiv]
 
 theorem coe_flatten_decW (L : List (Segment k)) :
-    (((L.map decW).flatten : List (IrrGL k)) : Multiset (IrrGL k)) = msupp (L : Multiset (Segment k)) := by
+    (((L.map decW).flatten : List (IrrGL (k := k))) : Multiset (IrrGL (k := k))) = msupp (L : Multiset (Segment k)) := by
   induction L with
   | nil => simp [msupp]
   | cons Γ L ih =>
     rw [List.map_cons, List.flatten_cons, ← Multiset.coe_add, ih, coe_decW, ← Multiset.cons_coe, msupp, msupp,
       Multiset.cons_bind]
 
-theorem coe_eq_msupp_of_inShW {𝔫 : Multiset (Segment k)} {w : List (IrrGL k)} (h : InShW 𝔫 w) :
-    (w : Multiset (IrrGL k)) = msupp 𝔫 := by
+theorem coe_eq_msupp_of_inShW {𝔫 : Multiset (Segment k)} {w : List (IrrGL (k := k))} (h : InShW 𝔫 w) :
+    (w : Multiset (IrrGL (k := k))) = msupp 𝔫 := by
   obtain ⟨L, rfl, hL⟩ := h
   rw [Multiset.coe_eq_coe.2 (shuffle_perm hL), coe_flatten_decW]
 
 theorem msupp_eq_of_isL (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hj : LSegJacquet k) {𝔫 : Multiset (Segment k)}
-    {x : IrrGL k} (hx : IsL 𝔫 x.rep) (w : List (IrrGL k)) (hc : ∀ c ∈ w, c.IsCusp) (hw : Wd x.rep w) :
-    (w : Multiset (IrrGL k)) = msupp 𝔫 := by
+    {x : IrrGL (k := k)} (hx : IsL 𝔫 x.rep) (w : List (IrrGL (k := k))) (hc : ∀ c ∈ w, c.IsCusp) (hw : Wd x.rep w) :
+    (w : Multiset (IrrGL (k := k))) = msupp 𝔫 := by
   obtain ⟨h, y, hd, ⟨Δ, hΔ, hL⟩, hcos⟩ := hx
   have h1 : Wd (prodIrr y hd) w := GlobalTheory.T.word_occurs_of_subquotient _ _ (isSmooth_prodIrr y hd) hcos.isSubquotient w hw
   have h2 := GlobalTheory.T.segment_product_word_in_shuffle hA hj y hd Δ hL w hc h1
@@ -58,7 +62,7 @@ theorem msupp_eq_of_isL (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (h
   exact coe_eq_msupp_of_inShW h2
 
 theorem wd_of_jmL_eq_one {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] {π : Representation ℂ (GL (Fin N) k) V}
-    {w : List (IrrGL k)} (h : jmL w π = 1) : Wd π w := by
+    {w : List (IrrGL (k := k))} (h : jmL w π = 1) : Wd π w := by
   unfold jmL at h
   split_ifs at h with hd
   · exact ⟨hd, by rw [h]; exact one_ne_zero⟩
@@ -66,7 +70,7 @@ theorem wd_of_jmL_eq_one {N : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] {�
 
 theorem msupp_seg (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hj : LSegJacquet k)
     (Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)) (hZ : IsSegmentClass k Z) (hS : JSeg k) (Δ : Segment k)
-    {𝔫 : Multiset (Segment k)} (h𝔫 : IsL 𝔫 (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL k))) : msupp 𝔫 = Δ.ms := by
+    {𝔫 : Multiset (Segment k)} (h𝔫 : IsL 𝔫 (IrrGL.rep (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k)))) : msupp 𝔫 = Δ.ms := by
   have hc : ∀ c ∈ List.ofFn Δ.term, c.IsCusp := by
     intro c hc
     obtain ⟨a, rfl⟩ := List.mem_ofFn.1 hc
@@ -142,7 +146,7 @@ theorem exists_enum (s : Segment k →₀ ℕ) :
   ⟨(Finsupp.toMultiset s).toList.length, fun a => (Finsupp.toMultiset s).toList.get a, by
     rw [Fin.univ_val_map, List.ofFn_get, Multiset.coe_toList]⟩
 
-def Jh (W : List (IrrGL k)) : GrothGL k →+ ℤ where
+def Jh (W : List (IrrGL (k := k))) : GrothGL k →+ ℤ where
   toFun := J W
   map_zero' := Finsupp.sum_zero_index
   map_add' _ _ := Finsupp.sum_add_index' (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _)
@@ -154,7 +158,7 @@ theorem ell_apply (Δ : Segment k) (a : GrothGL k) :
   simp only [ell, AddMonoidHom.finsetSum_apply, AddMonoidHom.smul_apply, smul_eq_mul]
   rfl
 
-theorem J_sg (W : List (IrrGL k)) (x : IrrGL k) : J W (sg x) = ((jmL W x.rep).toNat : ℤ) := by
+theorem J_sg (W : List (IrrGL (k := k))) (x : IrrGL (k := k)) : J W (sg x) = ((jmL W x.rep).toNat : ℤ) := by
   unfold J sg
   rw [Finsupp.sum_single_index (zero_mul _), one_mul]
 
@@ -166,17 +170,17 @@ theorem cusp_vWord (Δ : Segment k) (S : Finset (Fin Δ.len)) : ∀ w ∈ vWord 
   obtain ⟨a, -, rfl⟩ := List.mem_map.1 hw
   exact Δ.isCusp_term a
 
-theorem ell_sg {Δ : Segment k} {x : IrrGL k} (h1 : jmL (List.ofFn Δ.term) x.rep = 1)
+theorem ell_sg {Δ : Segment k} {x : IrrGL (k := k)} (h1 : jmL (List.ofFn Δ.term) x.rep = 1)
     (h0 : ∀ S ∈ vSets Δ, S ≠ ∅ → jmL (vWord Δ S) x.rep = 0) : ell Δ (sg x) = 1 := by
   rw [ell_apply, Finset.sum_eq_single (∅ : Finset (Fin Δ.len))]
   · rw [J_sg, vWord_empty, h1]; simp
   · intro S hS hne; rw [J_sg, h0 S hS hne]; simp
   · intro h; exact absurd (by simp [vSets]) h
 
-open Classical in
 
+open Classical in
 theorem ell_prod (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hj : LSegJacquet k) (hJ : JCls k) (hAlt : AltSum k)
-    (Lseg : Segment k → IrrGL k) (hL : ∀ Δ, IsLSeg Δ (Lseg Δ).rep) (Δ : Segment k) {h N : ℕ}
+    (Lseg : Segment k → IrrGL (k := k)) (hL : ∀ Δ, IsLSeg Δ (Lseg Δ).rep) (Δ : Segment k) {h N : ℕ}
     (Γ : Fin h → Segment k) (hd : ∑ a, (Lseg (Γ a)).1 = N) :
     ell Δ (cl0 (prodIrr (fun a => Lseg (Γ a)) hd)) =
       if Finset.univ.val.map Γ = {Δ} then (-1) ^ (Δ.len - 1) else 0 := by

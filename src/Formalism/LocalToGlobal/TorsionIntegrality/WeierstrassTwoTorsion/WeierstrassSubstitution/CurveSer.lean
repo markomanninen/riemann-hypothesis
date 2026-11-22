@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementC
+
+@[expose] public section
 
 open PowerSeries
 
@@ -126,16 +130,16 @@ theorem iDen_cc : constantCoeff (iDen W) = -1 := by
 
 theorem iDen_mul_inv : iDen W * invOfUnit (iDen W) (-1) = 1 := PowerSeries.mul_invOfUnit (iDen W) (-1) (by rw [iDen_cc W, Units.val_neg, Units.val_one])
 
-theorem D_apply (f : R⟦X⟧) : D W f = fw W * derivative R f := rfl
+theorem D_apply (f : R⟦X⟧) : D W f = fw W * PowerSeries.derivative f := rfl
 
-theorem deriv_wSer_mul_fw : derivative R (wSer W) * fw W = fu W := by
-  have h := congrArg (derivative R) (wSer_fixed W).2
+theorem deriv_wSer_mul_fw : PowerSeries.derivative (wSer W) * fw W = fu W := by
+  have h := congrArg (PowerSeries.derivative (R := R)) (wSer_fixed W).2
   simp [Derivation.leibniz, Derivation.leibniz_pow, derivative_C, derivative_X, smul_eq_mul,
     nsmul_eq_mul] at h
   unfold fw fu
   linear_combination h
 
-theorem om_mul_D (f : R⟦X⟧) : om W * D W f = derivative R f := by
+theorem om_mul_D (f : R⟦X⟧) : om W * D W f = PowerSeries.derivative f := by
   rw [D_apply, ← mul_assoc, mul_comm (om W), fw_mul_om W, one_mul]
 
 section Map

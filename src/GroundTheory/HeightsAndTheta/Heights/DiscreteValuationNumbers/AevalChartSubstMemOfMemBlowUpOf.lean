@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.LiftFormNotMemBlowUpOf
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -179,7 +184,7 @@ theorem BlowUpStrictTransform.proof : BlowUpStrictTransform.Statement.{u} := by
 
   have := hH₀p
   unfold divCycle
-  rw [dif_pos ⟨hmin₀, hrel₀⟩]
+  rw [dite_eq_left ⟨hmin₀, hrel₀⟩]
   have hne := length_localizedQuot_ne_top (P ⊔ Ideal.span {s}) H₀ hmin₀
   have hnz : multAt (P ⊔ Ideal.span {s}) H₀ ≠ 0 := by
     unfold multAt

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FormalAlgebraisation
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsAbelianSchemeOfAbelianThickenings
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EgaHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.FormalAlgebraisation
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsAbelianSchemeOfAbelianThickenings
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EgaHolds
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.AbLaw
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -58,7 +63,8 @@ theorem isAbelianScheme_of_thickenings_local (R : Type) [CommRing R] [IsDomain R
 theorem exists_abelianScheme_of_tower : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [IsNoetherianRing R] (I : Ideal R), I ≠ ⊤ → IsAdicComplete I R → IsAdicComplete (IsLocalRing.maximalIdeal R) R → ∀ (Y : ∀ e : ℕ, Over (Spec (CommRingCat.of (R ⧸ I ^ (e + 1))))) [∀ e, GrpObj (Y e)] (β : ∀ e, (Y e).left ⟶ (Y (e + 1)).left), (∀ e, IsAbelianScheme (Y e)) → (∀ e, IsGrpPullback (Y e) (Y (e + 1)) (thickTrans R I e) (β e)) → ∀ N : ∀ e, LB (Y e).left, (∀ e, (N e).IsLB) → (∀ e, LBIso (N e) ((N (e + 1)).pull (β e))) → RelAmple (Y 0) (N 0) → ∃ (B : Over (Spec (CommRingCat.of R))) (_ : GrpObj B) (M : LB B.left) (b : ∀ e, (Y e).left ⟶ B.left), IsAbelianScheme B ∧ M.IsLB ∧ RelAmple B M ∧ (∀ e, IsGrpPullback (Y e) B (thick R I e) (b e)) ∧ (∀ e, β e ≫ b (e + 1) = b e) ∧ ∀ e, LBIso (N e) (M.pull (b e)) := by
   intro R _ _ _ _ I hI hc hc' Y _ β hY hβ N hN hv hA
   choose v hv using hv
-  obtain ⟨B, M, b, hB, hs, hM, hA', hb, hβb, hiso⟩ := GlobalTheory.LN.ega_holds.1 R I hI hc hc' Y β N v
+  have hAlg : GlobalTheory.LN.AlgSt := GlobalTheory.LN.ega_holds.1
+  obtain ⟨B, M, b, hB, hs, hM, hA', hb, hβb, hiso⟩ := hAlg R I hI hc hc' Y β N v
     (fun e => isPullback_of_isGrpPullback (hβ e)) (fun e => (hY e).smooth) (fun e => ⟨hN e, hv e⟩) hA
   obtain ⟨G, hG, hG'⟩ :=
     isAbelianScheme_of_thickenings_local R I hI hc hc' Y β hY hβ B b hB hs hb hβb

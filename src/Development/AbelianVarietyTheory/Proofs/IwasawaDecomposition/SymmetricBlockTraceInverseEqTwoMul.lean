@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.GeometryOfNumbers.PluriharmonicAnalysis.LogDetSt
+
+@[expose] public section
+
 open Matrix
 open scoped ComplexOrder
 
@@ -56,7 +61,15 @@ theorem symmetric_block_trace_inverse_eq_two_mul {P Q : ℕ} (C : Matrix (Fin Q)
     rw [trace_mul_comm (B * C), ← Matrix.mul_assoc, hMB, Matrix.mul_assoc, trace_mul_comm B,
       Matrix.mul_assoc]
 
-theorem hasDerivAt_det_one_sub_sq : ∀ (P Q : ℕ) (A B : Matrix (Fin P) (Fin Q) ℂ) (t : ℝ), IsUnit (1 - ((t : ℂ) ^ 2) • (Aᴴ * B)).det → let S : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ := fromBlocks 0 Aᴴᵀ Aᴴ 0; let T : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ := fromBlocks 0 B Bᵀ 0; IsUnit (1 - ((t : ℂ) ^ 2) • (T * S)).det ∧ HasDerivAt (fun s : ℝ => (1 - ((s : ℂ) ^ 2) • (Aᴴ * B)).det) (-((t : ℂ) * (T * S * (1 - ((t : ℂ) ^ 2) • (T * S))⁻¹).trace) * (1 - ((t : ℂ) ^ 2) • (Aᴴ * B)).det) t := by
+theorem hasDerivAt_det_one_sub_sq :
+    ∀ (P Q : ℕ) (A B : Matrix (Fin P) (Fin Q) ℂ) (t : ℝ),
+      IsUnit (1 - ((t : ℂ) ^ 2) • (Aᴴ * B)).det →
+      let S : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ := fromBlocks 0 (Matrix.transpose Aᴴ) Aᴴ 0
+      let T : Matrix (Fin P ⊕ Fin Q) (Fin P ⊕ Fin Q) ℂ := fromBlocks 0 B Bᵀ 0
+      IsUnit (1 - ((t : ℂ) ^ 2) • (T * S)).det ∧
+        HasDerivAt (fun s : ℝ => (1 - ((s : ℂ) ^ 2) • (Aᴴ * B)).det)
+          (-((t : ℂ) * (T * S * (1 - ((t : ℂ) ^ 2) • (T * S))⁻¹).trace) *
+            (1 - ((t : ℂ) ^ 2) • (Aᴴ * B)).det) t := by
   intro P Q A B t h S T
   obtain ⟨h1, h2⟩ := symmetric_block_trace_inverse_eq_two_mul Aᴴ B ((t : ℂ) ^ 2) h
   refine ⟨h1, ?_⟩

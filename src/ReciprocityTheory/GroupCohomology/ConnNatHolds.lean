@@ -1,5 +1,9 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 
@@ -181,16 +185,17 @@ theorem uniq (hs : SES i p) (δ δ' : ∀ n, C.H n →ₗ[R] A.H (n + 1)) (hδ :
   rw [hδ n b a hc ha hba, hδ' n b a hc ha hba]
 
 theorem les_of (hs : SES i p) (δ : ∀ n, C.H n →ₗ[R] A.H (n + 1)) (hδ : IsConn i p δ) :
-    LES i p δ where
-  inj := by
-    rw [injective_iff_map_eq_zero]
+    LES i p δ := by
+  refine ⟨?inj, ?exB, ?exC, ?exA⟩
+  case inj =>
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro h hh
     obtain ⟨x, hx, rfl⟩ := cls_surj A 0 h
     rw [H_cls, cls_eq_zero, mem_B_zero] at hh
     rw [cls_eq_zero, mem_B_zero]
     exact hs.inj 0 (hh.trans (map_zero _).symm)
-  exB n := by
-    intro y
+  case exB =>
+    intro n y
     obtain ⟨b, hb, rfl⟩ := cls_surj B n y
     constructor
     · intro h
@@ -217,8 +222,8 @@ theorem les_of (hs : SES i p) (δ : ∀ n, C.H n →ₗ[R] A.H (n + 1)) (hδ : I
       obtain ⟨a, ha, rfl⟩ := cls_surj A n x
       rw [← hx, H_cls, H_cls, cls_eq_zero, p_i i p hs]
       exact Submodule.zero_mem _
-  exC n := by
-    intro y
+  case exC =>
+    intro n y
     obtain ⟨b, a, hc, ha, hb, rfl⟩ := rep i p hs n y
     constructor
     · intro h
@@ -233,8 +238,8 @@ theorem les_of (hs : SES i p) (δ : ∀ n, C.H n →ₗ[R] A.H (n + 1)) (hδ : I
       obtain ⟨b'', hb'', rfl⟩ := cls_surj B n x
       rw [← hx, H_cls, hδ n b'' 0 _ (map_zero _) (by rw [hb'', map_zero]), cls_eq_zero]
       exact Submodule.zero_mem _
-  exA n := by
-    intro y
+  case exA =>
+    intro n y
     obtain ⟨a, ha, rfl⟩ := cls_surj A (n + 1) y
     rw [H_cls, cls_eq_zero, mem_B_succ]
     constructor

@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsTensorDualEmbeddingOfHasWeightAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PlaceEmbeddingsBijectiveInfinitePlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanInfinitePlacesWeightRepresentationEqTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroWeightTensorIntertwiningAutRep
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.PlaceBetween
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsTensorDualEmbeddingOfHasWeightAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PlaceEmbeddingsBijectiveInfinitePlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanInfinitePlacesWeightRepresentationEqTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNeZeroWeightTensorIntertwiningAutRep
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions GlobalTheory.CuspRep GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting)
 open UpperTheory.V.HV (Coef)
@@ -17,7 +22,7 @@ variable {G X D Y : Type} [Group G] [AddCommGroup X] [Module ℂ X] [AddCommGrou
 
 private def eqv (R : Representation ℂ G X) (Gi : Subgroup G) (τ : G → Module.End ℂ D) : Submodule ℂ (D →ₗ[ℂ] X) where
   carrier := {Φ | ∀ x ∈ Gi, ∀ v, R x (Φ v) = Φ (τ x v)}
-  add_mem' ha hb x hx v := by simp only [LinearMap.add_apply, map_add, ha x hx, hb x hx]
+  add_mem' ha hb x hx v := by simp only [LinearMap.add_apply, map_add (f := _), ha x hx, hb x hx]
   zero_mem' x _ v := by simp
   smul_mem' c Φ h x hx v := by simp only [LinearMap.smul_apply, map_smul, h x hx]
 
@@ -31,11 +36,12 @@ private theorem sum_zero {R : Representation ℂ G X} {Gi : Subgroup G} {τ : G 
     | mem a ha =>
       obtain ⟨x, rfl⟩ := ha
       have h1 := congrArg (R x) h
-      rw [map_sum, map_zero] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at h1
       rw [← h1]
       exact Finset.sum_congr rfl fun i _ => (hΦ i x x.2 _).symm
     | zero => simp
-    | add a a' _ _ h1 h2 => simp only [LinearMap.add_apply, map_add, Finset.sum_add_distrib, h1, h2, add_zero]
+    | add a a' _ _ h1 h2 => simp only [LinearMap.add_apply, map_add (f := _), Finset.sum_add_distrib, h1, h2, add_zero]
     | smul c a _ h1 => simp only [LinearMap.smul_apply, map_smul, ← Finset.smul_sum, h1, smul_zero]
   ext v
   have h1 := key ((b.coord j).smulRight v)
@@ -63,14 +69,16 @@ private theorem sum_ex {R : Representation ℂ G X} {Gi Gf : Subgroup G} {τ : G
   have hval : ∀ Φ ∈ eqv R Gi τ, (∀ v, Φ v ∈ σ) → ∀ v, Φ v ∈ N := fun Φ a1 a2 v =>
     ⟨fun i => b.repr v i • Φ, fun i => Submodule.smul_mem _ _ a1, fun i w => σ.smul_mem _ (a2 w), by
       conv_rhs => rw [← b.sum_repr v]
-      simp only [map_sum, map_smul, LinearMap.smul_apply]⟩
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.smul_apply]⟩
   have hle : N ≤ σ := by
     rintro _ ⟨A, -, a2, rfl⟩
     exact Submodule.sum_mem _ fun i _ => a2 i _
   have hN : ∀ g, ∀ φ ∈ N, R g φ ∈ N := by
     rintro g _ ⟨A, a1, a2, rfl⟩
     obtain ⟨k, hk, x, hx, rfl⟩ := hsp g
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_mul, Module.End.mul_apply, a1 i x hx]
     refine hval (R k ∘ₗ A i) (fun y hy v => ?_) (fun v => hst _ _ (a2 i v)) _
@@ -97,7 +105,7 @@ private theorem rank_eq {R : Representation ℂ G X} {Gi Gf : Subgroup G} {τ : 
       exact Submodule.sum_mem _ fun i _ => hB _ (F i).2 _
   have hev : ∀ F, (ev F : X) = ∑ i, tf (F i) (b i) := fun F => LinearMap.sum_apply _ _ _
   have hi : Function.Injective ev := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro F hF
     have h3 := (hev F).symm.trans (congrArg Subtype.val hF)
     exact funext fun j => Subtype.ext (hinj _ (F j).2 (sum_zero hτ b _ (fun i => hB' _ (F i).2) h3 j))
@@ -108,7 +116,8 @@ private theorem rank_eq {R : Representation ℂ G X} {Gi Gf : Subgroup G} {τ : 
       refine sum_zero (R := R) hτ b (fun i => R k ∘ₗ Φ i - Φ i) (fun i => sub_mem (fun y hy v => ?_) (a1 i)) ?_ j
       · rw [LinearMap.comp_apply, LinearMap.comp_apply, ← a1 i y hy, ← Module.End.mul_apply, ← map_mul,
           ← hcm k k.2 y hy, map_mul, Module.End.mul_apply]
-      · simp only [LinearMap.sub_apply, LinearMap.comp_apply, Finset.sum_sub_distrib, ← map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          simp only [LinearMap.sub_apply, LinearMap.comp_apply, Finset.sum_sub_distrib, ← map_sum]
         rw [((hN _).1 hφ).2 k hk, sub_self]
     choose F hF hF' using fun j => hsur (Φ j) (a1 j) fun v =>
       (hN _).2 ⟨a2 j v, fun k hk => LinearMap.congr_fun (sub_eq_zero.1 (hfix k hk j)) v⟩
@@ -167,7 +176,7 @@ private theorem span_dual [FiniteDimensional ℂ D] {Gi : Subgroup G} {ρ : G �
   have hs : Function.Surjective (Module.Dual.transpose : (D →ₗ[ℂ] D) →ₗ[ℂ] _) := by
     refine (LinearMap.injective_iff_surjective_of_finrank_eq_finrank ?_).1 ?_
     · simp [Module.finrank_linearMap]
-    · rw [injective_iff_map_eq_zero]
+    · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
       intro a ha
       ext v
       exact (Module.forall_dual_apply_eq_zero_iff ℂ _).1 fun f => LinearMap.congr_fun (LinearMap.congr_fun ha f) v
@@ -250,13 +259,13 @@ private theorem span_emb {I : Type} [Finite I] (emb : I → E →+* ℂ)
       GlobalTheory.Branching.sqRep ℂ n (lam i) (GlobalTheory.Branching.unitaryIncl n (e x))
     rw [he]
 
-private theorem mem_fixed (U : Subgroup (finU E n)) (φ : UA E n → ℂ) :
+private theorem mem_fixed (U : Subgroup (finU (E := E) (n := n))) (φ : UA E n → ℂ) :
     φ ∈ GlobalTheory.PRep.fixed (GlobalTheory.BCT.RF E n) U ↔ ∀ k ∈ U, RU E n k φ = φ :=
   ⟨fun h k hk => by simpa [GlobalTheory.BCT.RF] using h ⟨k, hk⟩, fun h k => by simpa [GlobalTheory.BCT.RF] using h k k.2⟩
 
 private theorem mid {P D : Type} [Group P] [AddCommGroup D] [Module ℂ D] {d : ℕ} (b : Module.Basis (Fin d) ℂ D)
     (τ : UA E n → Module.End ℂ D) (hτ : Submodule.span ℂ (Set.range fun x : infU E n => τ x) = ⊤)
-    (hfin : ∀ k ∈ finU E n, ∀ v, τ k v = v) (J : UA E n →* P) (hJ : ∀ x ∈ infU E n, J x = 1)
+    (hfin : ∀ k ∈ finU (E := E) (n := n), ∀ v, τ k v = v) (J : UA E n →* P) (hJ : ∀ x ∈ infU E n, J x = 1)
     (A : Submodule ℂ (P → Fin d → ℂ)) (hA : ∀ F ∈ A, ∀ p, (fun g => F (g * p)) ∈ A)
     (tf : (P → Fin d → ℂ) →ₗ[ℂ] D →ₗ[ℂ] (UA E n → ℂ)) (hinj : ∀ F ∈ A, (∀ ℓ, tf F ℓ = 0) → F = 0)
     (htr : ∀ F ℓ x, RU E n x (tf F ℓ) = tf (fun g => F (g * J x)) (τ x ℓ))
@@ -266,10 +275,10 @@ private theorem mid {P D : Type} [Group P] [AddCommGroup D] [Module ℂ D] {d : 
     (hw : ∀ v, HasWeightAt σ v.embedding (lam' v))
     (hex : ∀ N : Submodule ℂ (UA E n → ℂ), N ≠ ⊥ → N ≤ σ → (∀ x ∈ infU E n, ∀ φ ∈ N, RU E n x φ ∈ N) →
       ∃ Φ : D →ₗ[ℂ] (UA E n → ℂ), Φ ≠ 0 ∧ (∀ ℓ, Φ ℓ ∈ N) ∧ ∀ x ∈ infU E n, ∀ ℓ, RU E n x (Φ ℓ) = Φ (τ x ℓ))
-    (U : Subgroup (finU E n)) :
+    (U : Subgroup (finU (E := E) (n := n))) :
     Module.rank ℂ ↥(σ ⊓ GlobalTheory.PRep.fixed (GlobalTheory.BCT.RF E n) U) =
       Module.rank ℂ ↥(A ⊓ Submodule.span ℂ {F | ∀ ℓ, tf F ℓ ∈ σ} ⊓
-        fixd (rtr ℂ P (Fin d → ℂ)) (U.map (J.comp (finU E n).subtype))) * d ∧ (d : ℂ) = GlobalTheory.BCT.dimW lam' := by
+        fixd (rtr ℂ P (Fin d → ℂ)) (U.map (J.comp (finU (E := E) (n := n)).subtype))) * d ∧ (d : ℂ) = GlobalTheory.BCT.dimW lam' := by
   obtain ⟨T, hT0, hT1, hT2⟩ := GlobalTheory.BCT.TrKer.exists_ne_zero_wsp_intertwining E n lam' σ hσ hw
   have hTσ : LinearMap.range T ≤ σ := by
     rintro _ ⟨w, rfl⟩
@@ -277,10 +286,10 @@ private theorem mid {P D : Type} [Group P] [AddCommGroup D] [Module ℂ D] {d : 
   obtain ⟨Φ, h0, h1, h2⟩ := hex (LinearMap.range T) (fun h => hT0 (LinearMap.range_eq_bot.1 h)) hTσ (by
     rintro x hx _ ⟨w, rfl⟩
     exact ⟨_, hT2 x hx w⟩)
-  have hk : ∀ F ℓ (k : finU E n), RU E n k (tf F ℓ) = tf (fun g => F (g * J k)) ℓ := fun F ℓ k => by
+  have hk : ∀ F ℓ (k : finU (E := E) (n := n)), RU E n k (tf F ℓ) = tf (fun g => F (g * J k)) ℓ := fun F ℓ k => by
     rw [htr, hfin k k.2]
   constructor
-  · refine rank_eq (R := RU E n) (Gf := finU E n) hτ
+  · refine rank_eq (R := RU E n) (Gf := finU (E := E) (n := n)) hτ
       (fun g => ⟨_, (GlobalTheory.BCT.TrKer.splitFin E n g).2, _, (GlobalTheory.BCT.TrKer.splitInf E n g).2,
         GlobalTheory.BCT.TrKer.eq_splitFin_mul_splitInf g⟩) (fun k hk x hx => GlobalTheory.DefU.fin_mul_inf hk hx) hσ.stable hσ.irred
       Φ h0 (fun v => hTσ (h1 v)) h2 b U _ (fun φ => Submodule.mem_inf.trans (and_congr_right' (mem_fixed U φ))) _ tf
@@ -339,7 +348,7 @@ theorem UpperTheory.V.Z.J.D.infDim :
   let tf : (Ga l L n × GV n (fun v : V.frame.Vl => s.w v.1) → Fin d → ℂ) →ₗ[ℂ]
       Module.Dual ℂ (⨂[ℂ] e : Emb l (fun v : V.frame.Vl => s.w v.1), nablaSq ℂ n (lam e.res)) →ₗ[ℂ] (UA L n → ℂ) :=
     LinearMap.mk₂ ℂ (toForm ι e)
-      (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add])
+      (fun F F' ℓ => funext fun g => by simp only [toForm, Pi.add_apply, map_add (f := _)])
       (fun a F ℓ => funext fun g => by simp only [toForm, Pi.smul_apply, map_smul])
       (fun F ℓ ℓ' => funext fun g => by simp only [toForm, Pi.add_apply, LinearMap.add_apply])
       (fun a F ℓ => funext fun g => by simp only [toForm, Pi.smul_apply, LinearMap.smul_apply])
@@ -360,7 +369,7 @@ theorem UpperTheory.V.Z.J.D.infDim :
     (ex_emb hn _ hb (fun y : Emb l (fun v : V.frame.Vl => s.w v.1) => lam y.res) σ hσ ((hl σ hσ).2 hw)) U
   have h1 : infRep (V := V) ι lam k⁻¹ = LinearMap.id := by
     rw [hrep]
-    simp only [GlobalTheory.BCT.TrKer.cEmb_fin _ ⟨k⁻¹, (finU L n).inv_mem hk⟩, map_one]
+    simp only [GlobalTheory.BCT.TrKer.cEmb_fin _ ⟨k⁻¹, (finU (E := L) (n := n)).inv_mem hk⟩, map_one]
     exact PiTensorProduct.map_id
   rw [h1]
   rfl

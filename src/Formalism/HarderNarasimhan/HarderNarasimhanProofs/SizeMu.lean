@@ -1,8 +1,12 @@
-import Formalism.HarderNarasimhan.StatementPl
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+module
+
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+
+@[expose] public section
 
 open Module NumberField NumberField.InfinitePlace
 
@@ -21,7 +25,7 @@ theorem sizeMu_rpow_eq (f J C d : ℝ) (hf : 0 < f) (hJ : 0 < J) (hC : 0 < C) (h
   field_simp
   ring
 
-theorem sizeMu_finrank_eq (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] :
+theorem sizeMu_finrank_eq (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] :
     Module.finrank ℚ K = 2 * nPl K := by
   have h1 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank K
   haveI : IsEmpty {w : InfinitePlace K // w.IsReal} := by

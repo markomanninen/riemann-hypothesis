@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BlockEmbeddingFiniteAdelicGLCompatContinuous
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeightBlockEmbeddingLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ContinuousConstantTerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermLeviRationalLeftInvariant
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasModerateGrowthConstantTerm
-import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.BlockEmbeddingFiniteAdelicGLCompatContinuous
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HeightBlockEmbeddingLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ContinuousConstantTerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ConstantTermLeviRationalLeftInvariant
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasModerateGrowthConstantTerm
+public import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -15,38 +19,39 @@ namespace UpperTheory.ConvolutionTheory.BW.Pair
 variable {E : Type} [Field E] [NumberField E] {r s : ℕ}
 
 theorem out_eq {h : AdelicGLn.AdelicGL E r → ℂ}
-    (hh : AutomorphicForm.IsLeftInvariant h) (y : RightCosetSpace (rationalGLOne E r)) :
-    h ((Quotient.out y : normOneGL E r) : AdelicGLn.AdelicGL E r) = CuspidalSpectrum.cuspQuot hh y := by
+    (hh : AutomorphicForm.IsLeftInvariant h) (y : RightCosetSpace (rationalGLOne (K := E) (n := r))) :
+    h ((Quotient.out y : normOneGL (K := E) (n := r)) : AdelicGLn.AdelicGL E r) = CuspidalSpectrum.cuspQuot hh y := by
   conv_rhs => rw [← Quotient.out_eq y]
   rfl
 
 theorem int_of {h : AdelicGLn.AdelicGL E r → ℂ}
-    (hh : AutomorphicForm.IsLeftInvariant h) (hc : Continuous h) {C : ℝ} (hC : ∀ y : normOneGL E r, ‖h y‖ ≤ C) :
-    Integrable (fun y : RightCosetSpace (rationalGLOne E r) =>
-      h ((Quotient.out y : normOneGL E r) : AdelicGLn.AdelicGL E r)) (quotientMeasure (rationalGLOne E r) (mu1 E r)) := by
+    (hh : AutomorphicForm.IsLeftInvariant h) (hc : Continuous h) {C : ℝ} (hC : ∀ y : normOneGL (K := E) (n := r), ‖h y‖ ≤ C) :
+    Integrable (fun y : RightCosetSpace (rationalGLOne (K := E) (n := r)) =>
+      h ((Quotient.out y : normOneGL (K := E) (n := r)) : AdelicGLn.AdelicGL E r)) (quotientMeasure (rationalGLOne (K := E) (n := r)) (mu1 E r)) := by
   have hfin := Reduction.isFiniteMeasure_quotientMeasure (K := E) (n := r) (mu1 E r)
   refine Integrable.of_bound ?_ C (Filter.Eventually.of_forall fun y => hC _)
   rw [funext (out_eq hh)]
-  exact (CuspidalSpectrum.continuous_cuspQuot hh hc).aestronglyMeasurable
+  set_option synthInstance.maxHeartbeats 200000 in
+    exact (CuspidalSpectrum.continuous_cuspQuot hh hc).aestronglyMeasurable
 
-theorem one_le_qht (x : normOneGL E r) : 1 ≤ qht x := le_ciInf fun _ => AutomorphicForm.one_le_height _
+theorem one_le_qht (x : normOneGL (K := E) (n := r)) : 1 ≤ qht x := le_ciInf fun _ => AutomorphicForm.one_le_height _
 
 theorem le_qht {F : AdelicGLn.AdelicGL E r → ℂ} (hF : AutomorphicForm.IsLeftInvariant F) {B : ℝ} {N : ℕ} (hB : 0 ≤ B)
-    (h : ∀ x : normOneGL E r, ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N) (x : normOneGL E r) :
+    (h : ∀ x : normOneGL (K := E) (n := r), ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N) (x : normOneGL (K := E) (n := r)) :
     ‖F x‖ ≤ B * 2 ^ N * qht x ^ N := by
   have h1 := one_le_qht x
   obtain ⟨γ, hγ⟩ := exists_lt_of_ciInf_lt (show qht x < 2 * qht x by linarith)
   obtain ⟨γ', hγ'⟩ := Subgroup.mem_subgroupOf.1 γ.2
-  have e : F ((γ : normOneGL E r) * x : normOneGL E r) = F x := by
-    change F (((γ : normOneGL E r) : AdelicGLn.AdelicGL E r) * x) = F x
+  have e : F ((γ : normOneGL (K := E) (n := r)) * x : normOneGL (K := E) (n := r)) = F x := by
+    change F (((γ : normOneGL (K := E) (n := r)) : AdelicGLn.AdelicGL E r) * x) = F x
     rw [← hγ']
     exact hF γ' x
   rw [← e, mul_assoc, ← mul_pow]
   exact (h _).trans (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (AutomorphicForm.height_pos _).le hγ.le N) hB)
 
 theorem pair_le {F ψ : AdelicGLn.AdelicGL E r → ℂ} (hF : AutomorphicForm.IsLeftInvariant F) {B C : ℝ} {N : ℕ} (hB : 0 ≤ B)
-    (h : ∀ x : normOneGL E r, ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N)
-    (hψ : ∀ x : normOneGL E r, ‖ψ x‖ * qht x ^ N ≤ C) (x : normOneGL E r) :
+    (h : ∀ x : normOneGL (K := E) (n := r), ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N)
+    (hψ : ∀ x : normOneGL (K := E) (n := r), ‖ψ x‖ * qht x ^ N ≤ C) (x : normOneGL (K := E) (n := r)) :
     ‖F x * starRingEnd ℂ (ψ x)‖ ≤ B * 2 ^ N * C := by
   rw [norm_mul, RCLike.norm_conj]
   refine (mul_le_mul_of_nonneg_right (le_qht hF hB h x) (norm_nonneg _)).trans ?_
@@ -55,12 +60,12 @@ theorem pair_le {F ψ : AdelicGLn.AdelicGL E r → ℂ} (hF : AutomorphicForm.Is
 
 theorem pair_int {F ψ : AdelicGLn.AdelicGL E r → ℂ} (hF : AutomorphicForm.IsLeftInvariant F)
     (hψl : AutomorphicForm.IsLeftInvariant ψ) (hFc : Continuous F) (hψc : Continuous ψ) {B C : ℝ} {N : ℕ}
-    (h : ∀ x : normOneGL E r, ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N)
-    (hψ : ∀ x : normOneGL E r, ‖ψ x‖ * qht x ^ N ≤ C) :
-    Integrable (fun y : RightCosetSpace (rationalGLOne E r) =>
-      F ((Quotient.out y : normOneGL E r) : AdelicGLn.AdelicGL E r) *
-        starRingEnd ℂ (ψ ((Quotient.out y : normOneGL E r) : AdelicGLn.AdelicGL E r)))
-      (quotientMeasure (rationalGLOne E r) (mu1 E r)) := by
+    (h : ∀ x : normOneGL (K := E) (n := r), ‖F x‖ ≤ B * AutomorphicForm.height (x : AdelicGLn.AdelicGL E r) ^ N)
+    (hψ : ∀ x : normOneGL (K := E) (n := r), ‖ψ x‖ * qht x ^ N ≤ C) :
+    Integrable (fun y : RightCosetSpace (rationalGLOne (K := E) (n := r)) =>
+      F ((Quotient.out y : normOneGL (K := E) (n := r)) : AdelicGLn.AdelicGL E r) *
+        starRingEnd ℂ (ψ ((Quotient.out y : normOneGL (K := E) (n := r)) : AdelicGLn.AdelicGL E r)))
+      (quotientMeasure (rationalGLOne (K := E) (n := r)) (mu1 E r)) := by
   have hB : 0 ≤ |B| := abs_nonneg B
   refine int_of (h := fun x => F x * starRingEnd ℂ (ψ x)) (fun γ x => ?_) (hFc.mul (Complex.continuous_conj.comp hψc))
     (pair_le hF hB (fun x => (h x).trans ?_) hψ)

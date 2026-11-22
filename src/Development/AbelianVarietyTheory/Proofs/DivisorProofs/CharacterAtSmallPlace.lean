@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassesAt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassesAt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.L2.Pj GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.ExpFrame GlobalTheory.ExpTie GlobalTheory.FrameOf
 open scoped TensorProduct
 
@@ -29,8 +34,8 @@ theorem card_units_pos {E : Type} [Field E] [NumberField E] (PP : Formalism.L2.D
   have : Finite (Formalism.L2.DIV.kP PP) := Ideal.finiteQuotientOfFreeOfNeBot PP.asIdeal PP.ne_bot
   exact Nat.card_pos
 
-open Classical in
 
+open Classical in
 def expOf {D : D7} {n : ℕ} (L : Formalism.L2.DIV.LevDat D.host.E ℂ n) : ℕ :=
   ∏ PP ∈ L.Pg ∪ L.Q, Nat.card (Formalism.L2.DIV.kP PP)ˣ
 
@@ -64,12 +69,5 @@ end GlobalTheory.LevelCharExp
 end
 
 namespace GlobalTheory.LevelCharExp
-
-theorem chiAt_inRange : InRange fun _ _ _ _ p j P _ w => SmallAt p j P w → ChiAt p j w := by
-  unfold InRange AtPts
-  refine Formalism.MainNotions.Pk.Closed.of_class fun Fm _ _ => EvPt.of_forall fun x hx i p _ _ j P W _ _ w _ _ _ => ?_
-  refine ⟨expOf (p.R.datVt j (p.R.mu w)), expOf_pos _, fun κ => ?_⟩
-  rw [← Units.val_pow_eq_pow_val]
-  exact congrArg Units.val (levEnv_chi_pow _ _ _ κ)
 
 end GlobalTheory.LevelCharExp

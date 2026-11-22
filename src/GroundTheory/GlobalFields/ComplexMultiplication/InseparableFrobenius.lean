@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialSeparable
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobeniusSep
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyPoints
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.SupersingularPowField
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.DifferentialSeparable
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobeniusSep
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyPoints
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.SupersingularPowField
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -86,9 +90,6 @@ noncomputable def frobeniusPoint (L : Type*) [Field L] [Algebra F L] [CharP L p]
   | .some x y h => .some (x ^ p) (y ^ p) (nonsingular_pow E p h)
 
 variable {L : Type*} [Field L] [Algebra F L] [CharP L p]
-
-@[simp]
-theorem frobeniusPoint_zero : frobeniusPoint E p L 0 = 0 := rfl
 
 theorem frobeniusPoint_some {x y : L} (h : (E.baseChange L).toAffine.Nonsingular x y) :
     frobeniusPoint E p L (.some x y h) = .some (x ^ p) (y ^ p) (nonsingular_pow E p h) := rfl

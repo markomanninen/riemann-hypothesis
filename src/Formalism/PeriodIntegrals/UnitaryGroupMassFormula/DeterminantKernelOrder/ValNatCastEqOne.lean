@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.KerIso
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.KerIso
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -73,7 +77,7 @@ theorem comp_integral {M : Set E} {p : ℕ} {g g' : (Fin 4 → E) ≃ₗ[K] (Fin
   obtain ⟨s₁, hs₁, h₁⟩ := hgB v hv
   obtain ⟨s₂, hs₂, h₂⟩ := hgA' ((s₁ : K) • g.symm v) (fun a => by
     simpa [Pi.smul_apply, Algebra.smul_def] using h₁ a)
-  refine ⟨s₂ * s₁, Nat.Coprime.mul hs₂ hs₁, fun w => ?_⟩
+  refine ⟨s₂ * s₁, Nat.Coprime.mul_left hs₂ hs₁, fun w => ?_⟩
   have h := h₂ w
   rw [map_smul, Pi.smul_apply, smul_eq_mul] at h
   rw [Nat.cast_mul, mul_assoc]

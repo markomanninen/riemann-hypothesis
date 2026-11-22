@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+
+@[expose] public section
 
 open Formalism.ConjugateSelfDual Polynomial
 
@@ -47,7 +51,7 @@ private lemma norm_one_sub {N : ℕ} (hN : 0 < N) (hn : ‖(N : K)‖ = 1) {x : 
 
 private lemma norm_aeval_le {x : K} (hx : ‖x‖ ≤ 1) (p : ℤ[X]) : ‖aeval x p‖ ≤ 1 := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact nadd_le hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact nadd_le hp hq
   | monomial n a =>
     rw [aeval_monomial, norm_mul, norm_pow]
     have h1 : ‖algebraMap ℤ K a‖ ≤ 1 := by

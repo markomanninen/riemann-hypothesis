@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.ToDegInjective
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.GradedModulesLength.FgHolds
+
+@[expose] public section
 
 open IsLocalRing Filter Formalism.MainNotions.V.Pf.V2.Calc UpperTheory.V.Alg UpperTheory.V.Alg.M
 
@@ -30,7 +34,7 @@ private theorem rk_fin [IsNoetherianRing O] (𝒜 : ℤ → Submodule O A) [Grad
     | mem s hs => exact Submodule.subset_span ⟨s, hs, rfl⟩
     | zero => simp
     | add a b _ _ ha hb =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact add_mem ha hb
     | smul a b hb ih =>
       have hbA : b ∈ 𝒜 j := by
@@ -85,7 +89,7 @@ private theorem linPart_sat {τ : Type} {𝒜 : ℤ → Submodule O A} {x : A �
         _ ≤ (φ a).order + (φ b).order := add_le_add hA hB
         _ ≤ ((φ a) * (φ b)).order := MvPowerSeries.le_order_mul
     · intro a b ha hb
-      rw [map_add, ha, hb, add_zero]
+      rw [map_add (f := _), ha, hb, add_zero]
   have h0 := hker _ hcf
   rw [map_smul, Algebra.smul_def, mul_eq_zero] at h0
   rcases h0 with h0 | h0
@@ -104,7 +108,8 @@ private theorem linPart_proj {τ : Type} {𝒜 : ℤ → Submodule O A} [GradedA
     linPart φ i (DirectSum.decompose 𝒜 f j) = linPart φ i f := by
   classical
   conv_rhs => rw [← DirectSum.sum_support_decompose 𝒜 f]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   by_cases hj : j ∈ (DirectSum.decompose 𝒜 f).support
   · rw [Finset.sum_eq_single j]
     · intro k _ hk

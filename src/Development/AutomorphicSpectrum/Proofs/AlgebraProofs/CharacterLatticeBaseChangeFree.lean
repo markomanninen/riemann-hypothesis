@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocFreeMapMkQIff
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeBaseChangeQuotientStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SmulMemSpanOver
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocFreeMapMkQIff
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeGoodBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LocallyFreeBaseChangeQuotientStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SmulMemSpanOver
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,8 @@ theorem swp_stable {Γ : AddSubgroup (V × Z)} (hs : ∀ a ∈ R, ∀ v ∈ Γ, 
   have := hs a ha _ (mem_swp.1 h)
   exact mem_swp.2 this
 
-include hR in
 
+include hR in
 theorem comap_inl (hb : IsBaseChange C b) (hb' : IsBaseChange C b')
     (Γ : AddSubgroup (V × Z)) (N : ℕ) (hs : ∀ a ∈ R, ∀ v ∈ Γ, a • v ∈ Γ)
     (hf : LocFree R N (Γ.map (AddMonoidHom.snd V Z))) :
@@ -75,8 +79,8 @@ theorem comap_inl (hb : IsBaseChange C b) (hb' : IsBaseChange C b')
   simp only [AddSubgroup.mem_comap, AddMonoidHom.inr_apply, AddMonoidHom.inl_apply]
   exact (mem_swp (Γ := spanOver RC (Prod.map b b' '' Γ))).symm
 
-include hR in
 
+include hR in
 theorem inf_top_prod (hb : IsBaseChange C b) (hb' : IsBaseChange C b')
     (Γ : AddSubgroup (V × Z)) (H : AddSubgroup Z) (N : ℕ) (hs : ∀ a ∈ R, ∀ v ∈ Γ, a • v ∈ Γ)
     (hf : LocFree R N (Γ.map (AddMonoidHom.snd V Z))) (hle : H ≤ Γ.map (AddMonoidHom.snd V Z))
@@ -114,8 +118,8 @@ variable {o Ω C : Type} [CommRing o] [Field Ω] [Field C] [Algebra o Ω] [Algeb
   [IsScalarTower Ω C Sc]
   (a : A →ₗ[Ω] Ac) (b : B →ₗ[Ω] Bc) (c : S →ₗ[Ω] Sc)
 
-include hR in
 
+include hR in
 theorem core (ha : IsBaseChange C a) (hb : IsBaseChange C b) (hc : IsBaseChange C c)
     (Gam : AddSubgroup (A × B)) (Del : AddSubgroup (B × S)) (hh : AddSubgroup B) (n₁ n₂ n₃ : ℕ)
     (hGs : ∀ x ∈ R, ∀ v ∈ Gam, x • v ∈ Gam) (hDs : ∀ x ∈ R, ∀ v ∈ Del, x • v ∈ Del)

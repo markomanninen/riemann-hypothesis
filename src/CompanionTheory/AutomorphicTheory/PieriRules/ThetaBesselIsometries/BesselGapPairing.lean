@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselGapVanishingStatement
-import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.Imports
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.BesselGapVanishingStatement
+public import CompanionTheory.AutomorphicTheory.PieriRules.ThetaBesselIsometries.IsDSOfIsDG
+
+@[expose] public section
 
 namespace GlobalTheory
 end GlobalTheory
@@ -23,21 +27,26 @@ theorem besselIntegral_sesquilinear : HypsG → ∀ (k r : ℕ) (ε : Fin (2 * r
     rw [← MeasureTheory.integral_add ((hI v hv).1 w hw) ((hI v hv).1 w' hw')]
     congr 1
     funext p
-    simp only [Formalism.FourierDecayAlt.ThreeDimData.beInt, map_add, inner_add_right, add_mul, add_smul]
+    simp only [beInt, map_add, inner_add_right, add_mul, add_smul]
   · unfold Formalism.FourierDecayAlt.ThreeDimData.be
     rw [← MeasureTheory.integral_smul]
     congr 1
     funext p
-    simp only [Formalism.FourierDecayAlt.ThreeDimData.beInt, map_smul, inner_smul_right, smul_smul, mul_assoc]
+    simp only [beInt, map_smul, inner_smul_right, smul_smul]
+    congr 1
+    ring
   · unfold Formalism.FourierDecayAlt.ThreeDimData.be
     rw [← MeasureTheory.integral_add ((hI v hv).1 w hw) ((hI v' hv').1 w hw)]
     congr 1
     funext p
-    simp only [Formalism.FourierDecayAlt.ThreeDimData.beInt, inner_add_left, add_mul, add_smul]
+    simp only [beInt, inner_add_left, add_mul, add_smul]
   · unfold Formalism.FourierDecayAlt.ThreeDimData.be
     rw [← MeasureTheory.integral_smul]
     congr 1
     funext p
-    simp only [Formalism.FourierDecayAlt.ThreeDimData.beInt, inner_smul_left, starRingEnd_apply, smul_smul, mul_assoc]
+    simp only [beInt, inner_smul_left, smul_smul]
+    congr 1
+    simp only [← Complex.star_def]
+    ac_rfl
 
 end GlobalTheory

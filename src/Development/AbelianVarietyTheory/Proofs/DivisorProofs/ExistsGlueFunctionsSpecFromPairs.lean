@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecPullA
+
+@[expose] public section
 
 set_option autoImplicit false
 

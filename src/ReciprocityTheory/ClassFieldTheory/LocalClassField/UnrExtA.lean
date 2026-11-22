@@ -1,4 +1,8 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.PowPowSuccSub
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.PowPowSuccSub
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 

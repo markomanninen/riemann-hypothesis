@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnTrans
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgAnTrans
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem endo_curve (l : ℕ) [Fact l.Prime] (L : PeriodPair) (ι : ℂ ≃+* ℂ
     rw [wp_bridge]
     simp only [C.wTr, hb2, zero_div, add_zero, map_zero]
     simp only [← trans_bridge l L ι _ (hS.1 _ (Subtype.coe_prop _)).2]
-    simp only [map_mul, map_add, map_sum, map_sub, PowerSeries.map_C, map_pow] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_add (f := _), map_sum, map_sub, PowerSeries.map_C, map_pow] at h
     have hr : PowerSeries.map (ι : ℂ →+* ℂ_[l]) (PowerSeries.rescale α (F.pSeries L))
         = PowerSeries.rescale (ι α) (PowerSeries.map (ι : ℂ →+* ℂ_[l]) (F.pSeries L)) := by
       ext n

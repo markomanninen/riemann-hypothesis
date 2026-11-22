@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FormallyUnramifiedMulN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FormallyUnramifiedMulN
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -89,7 +94,8 @@ lemma eq_on_map {B R : Type} [CommRing B] [CommRing R] (I : Ideal C) (hI : I ^ 2
     rw [← RingHom.comp_apply β, hβ, ← RingHom.comp_apply β', hβ']
     exact ⟨rfl, Ideal.mem_map_of_mem _ hc⟩
   | zero => simp
-  | add x y _ _ hx hy => exact ⟨by rw [map_add, map_add, hx.1, hy.1], by rw [map_add]; exact add_mem hx.2 hy.2⟩
+  | add x y _ _ hx hy =>
+    exact ⟨by simp only [map_add, hx.1, hy.1], by simpa only [map_add] using add_mem hx.2 hy.2⟩
   | smul a x _ hx =>
     refine ⟨?_, ?_⟩
     · rw [smul_eq_mul, map_mul, map_mul, ← hx.1, ← sub_eq_zero, ← sub_mul, ← Ideal.mem_bot, ← hJ]
@@ -101,8 +107,8 @@ end GlobalTheory.SqZeroAgree
 
 namespace GlobalTheory
 
-open MulUnramified SqZeroAgree in
 
+open MulUnramified SqZeroAgree in
 theorem comp_eq_of_sqZero_agree : ∀ (C C₀ : Type) [CommRing C] [CommRing C₀] (π : C →+* C₀),
     Function.Surjective π → RingHom.ker π ^ 2 = 0 → ∀ (K G : Over (Sp C)) (g g' : K ⟶ G),
     (∀ (T₀ : Over (Sp C₀)) (y : Over.mk (T₀.hom ≫ spMap π) ⟶ K), y ≫ g = y ≫ g') →

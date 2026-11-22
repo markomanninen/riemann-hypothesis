@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariantStatement
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LMulBeta
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ThetaBdRPlusSurjectiveKerUnitsEquivariantStatement
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Polynomial GlobalTheory.Pst GlobalTheory.MemLoc GlobalTheory.Pst.StLat GlobalTheory.Pst.NoLog
 open scoped Formalism.Per
 
@@ -21,7 +26,7 @@ theorem betaD_dvd_of_res : ∀ (l : ℕ) [Fact l.Prime] (ϖ : Per.Fl l), Per.ker
     induction ha using Algebra.adjoin_induction with
     | mem x hx => rw [Set.mem_singleton_iff.1 hx, hb0]; exact zero_mem _
     | algebraMap r => rw [hA]; exact (Per.θ l r).2
-    | add x z _ _ hx hz => rw [map_add]; exact add_mem hx hz
+    | add x z _ _ hx hz => rw [map_add (Per.θP l)]; exact add_mem hx hz
     | mul x z _ _ hx hz => rw [map_mul]; exact mul_mem hx hz
   have hs : ∀ s ∈ Sg ϖ, ‖Per.θD l s‖ ≤ 1 := by
     rintro _ ⟨a, ha, rfl⟩

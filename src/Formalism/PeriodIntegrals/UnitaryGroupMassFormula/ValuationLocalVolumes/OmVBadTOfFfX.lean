@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.LocalGramMatrixCorankOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTOfRestX
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.LocalGramMatrixCorankOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTOfRestX
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,10 +20,6 @@ theorem redP_holds : ∀ v : PlX X, ((Tw u' : ℕ) : 𝓞 X.B.I.F) ∈ v.asIdeal
   redP_of_gramCor X.B.I.cm.sig X.B.I.J ψ v (abelian₂ X) _ _ (fun ϖ hϖ => by
     rw [OmW.omVGram_holds X u' v]
     exact local_gram_matrix_corank_one X u' v hv hϖ)
-
-theorem omVBadT_of_ff (hStd : OmVStd X ψ) (hLat : OmVLat X) (hGram : OmVGram X u')
-    (hFI : FFInertB) (hFS : FFSplitB) : OmVBadT X u' ψ :=
-  PI.OmVf.omVBadT_of_rest X u' ψ hStd hLat hGram (redP_holds X u' ψ) hFI hFS
 
 theorem omVBadT_of_ffX (hStd : Formalism.L2.SG.Pf.NcX.OmVSt.OmVStd X ψ) (hLat : Formalism.L2.SG.Pf.NcX.OmVSt.OmVLat X)
     (hGram : Formalism.L2.SG.Pf.NcX.OmVSt.OmVGram X u') (hFI : FFInertB) (hFS : FFSplitB) :

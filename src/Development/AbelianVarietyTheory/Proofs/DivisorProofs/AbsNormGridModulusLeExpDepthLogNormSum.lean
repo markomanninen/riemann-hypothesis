@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HBdNonneg
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HBdNonneg
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.TestLat GlobalTheory.SumSize GlobalTheory.RowClaim GlobalTheory.ClassCount
 
@@ -32,7 +37,7 @@ theorem absNorm_modul_le : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts}
     rw [hF]; exact Algebra.IsQuadraticExtension.finrank_eq_two _ _
   have hmod : G.modul = ∏ v ∈ G.pl.S0, (G.pl.w v).asIdeal ^ G.pl.depth sc v := rfl
   rw [hmod, map_prod, Nat.cast_prod, sig, Finset.mul_sum, Real.exp_sum]
-  refine Finset.prod_le_prod (fun v _ => by positivity) fun v hv => ?_
+  refine Finset.prod_le_prod₀ (fun v _ => by positivity) fun v hv => ?_
   have hw : Ideal.absNorm (G.pl.w v).asIdeal ≤ Ideal.absNorm v.asIdeal ^ 2 := by
     have := absNorm_le_sq_of_under h2 (G.pl.w v)
     rwa [G.pl.under_w hv] at this

@@ -1,7 +1,12 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HeightOneSpectrumPlacesOverFiniteSet
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CTUnitsLeft
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsOrthonormalOfUnimodular
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HeightOneSpectrumPlacesOverFiniteSet
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.UnitaryClasses
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -19,7 +24,7 @@ theorem finrank_pos (v : HeightOneSpectrum (𝓞 (maximalRealSubfield E))) (u : 
     [u.asIdeal.LiesOver v.asIdeal] :
     0 < Module.finrank (v.adicCompletion (maximalRealSubfield E)) (u.adicCompletion E) := by
   rw [finrank_eq_ramificationIdx_mul_inertiaDeg E v u]
-  exact Nat.mul_pos (Ideal.ramificationIdx_pos u.asIdeal _) (Ideal.inertiaDeg_pos _ _)
+  exact Nat.mul_pos (Ideal.ramificationIdx_pos (R := _) u.asIdeal) (Ideal.inertiaDeg_pos _ _)
 
 theorem det_map' {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) {n : ℕ}
     (M : Matrix (Fin n) (Fin n) R) : (M.map f).det = f M.det :=
@@ -113,7 +118,7 @@ theorem exists_sq_sub_mul_sq (hU : Unr E) (θ : E) (hθ0 : θ ≠ 0) (hθ : IsCM
     simp [b, hsm]
   obtain ⟨A, C, hAC⟩ : ∃ A C : Fv, z = ι A + ι C * t := ⟨_, _, hzb⟩
   refine ⟨A, C, ι.injective ?_⟩
-  rw [hι, hz, hAC, map_add, map_mul, hcj, hcj, hct, map_sub, map_mul, map_pow, map_pow, ← ht2]
+  rw [hι, hz, hAC, map_add (f := _), map_mul, hcj, hcj, hct, map_sub, map_mul, map_pow, map_pow, ← ht2]
   ring
 
 theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ (n : ℕ)
@@ -193,7 +198,7 @@ theorem main : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E →
     have h1 := congrArg (Subtype.val : maximalRealSubfield E → E) hxy
     have h2 : IsCMField.complexConj E θ = -θ := hθ
     simp [a, hdθ] at h1
-    simp only [Matrix.det_one, one_div, ReciprocityTheory.ChartRestriction.G.FD.cc, map_add, map_mul,
+    simp only [Matrix.det_one, one_div, ReciprocityTheory.ChartRestriction.G.FD.cc, map_add (f := _), map_mul,
       IsCMField.complexConj_apply_eq_self, h2]
     linear_combination h1
   have hPc : (P.map ReciprocityTheory.ChartRestriction.G.FD.cc).det ≠ 0 := by

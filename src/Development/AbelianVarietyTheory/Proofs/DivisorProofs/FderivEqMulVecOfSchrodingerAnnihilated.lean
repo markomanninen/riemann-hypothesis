@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.MetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsEqTransposeMulDiagonalMul
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.MetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IteratedLineDerivMemWeylAlg
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsEqTransposeMulDiagonalMul
+
+@[expose] public section
+
 open MeasureTheory Matrix Complex GlobalTheory.RealWeil
 open scoped Real SchwartzMap ComplexConjugate
 
@@ -13,10 +18,11 @@ theorem dRho_apply_basis {l : Type} [Fintype l] [DecidableEq l] (w : l ⊕ l →
   rw [dRho_apply]
   have h1 : pPart w = ∑ b, w (.inl b) • EuclideanSpace.single b (1 : ℝ) := by
     ext i
-    simp [pPart, EuclideanSpace.single_apply, Pi.single_apply]
+    simp [pPart, PiLp.single_apply, Pi.single_apply]
   have h2 : inner ℝ (qPart w) x = ∑ b, w (.inr b) * x b := by
     simp [qPart, PiLp.inner_apply, mul_comm]
-  rw [h1, map_sum, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, map_sum, h2]
   simp [Complex.real_smul, ofReal_sum]
 
 theorem fderiv_eq_of_annihilated : ∀ (l : Type) [Fintype l] [DecidableEq l] (s : Matrix (l ⊕ l) (l ⊕ l) ℝ)

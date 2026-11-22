@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinitePlacesOver
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FinitePlacesOver
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.EGlue
 

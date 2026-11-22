@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
 
@@ -132,7 +137,7 @@ theorem ideal_eq_top_of_inv [IsNonarchimedeanLocalField F] [CharZero F] (L : Loc
         linear_combination (algebraMap F E t * k) * hs]
       exact L.O.zero_mem)
     have hs1 : s ∈ L.O := by simpa using hts 1
-    obtain ⟨u, hu'⟩ := (L.cj_fix (s + L.cj s)).1 (by rw [map_add, L.cj_cj, add_comm])
+    obtain ⟨u, hu'⟩ := (L.cj_fix (s + L.cj s)).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
     obtain ⟨m, hm⟩ := (L.cj_fix (s * L.cj s)).1 (by rw [map_mul, L.cj_cj, mul_comm])
     have hu0 : u = 0 := hz u (fun t => by
       have h4 := L.O.add_mem (hts t) (hcj _ (hts t))
@@ -167,7 +172,8 @@ theorem exists_dual_family : ∀ {F : Type} [Field F] [ValuativeRel F] [Topologi
   have hh2 : ∀ (y : V) (k : Fin (r + 1) → E),
       H.h y (∑ a, k a • Fr.f a) = ∑ a, M.L.cj (k a) * H.h y (Fr.f a) := by
     intro y k
-    rw [H.h_herm, hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [H.h_herm, hsum, map_sum]
     refine Finset.sum_congr rfl (fun a _ => ?_)
     rw [H.h_smul_left, map_mul, ← H.h_herm]
   let I : Submodule M.L.O (Fin (r + 1) → M.L.O) :=

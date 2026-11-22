@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNMulRpow
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNMulRpow
+
+@[expose] public section
 
 noncomputable section
 

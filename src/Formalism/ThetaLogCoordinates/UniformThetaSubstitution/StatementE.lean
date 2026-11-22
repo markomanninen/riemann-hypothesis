@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.CyclicPowerClassOfExpEquiv
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementAB
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ def TermBound : Prop :=
       (∑ φ, MvPowerSeries.C (aA φ) * topMonoS (Lw := Lw) (dA φ) +
         ∑ k, MvPowerSeries.C (aB k) * topMonoS (dB k) * lowLin (b k) + Z +
         MvPowerSeries.C (p : K) * Y)) →
-    (∀ n, ‖MvPolynomial.coeff n Q‖ ≤ 1) → Q.IsHomogeneous dQ → e.degree + dQ = D →
+    (∀ n, ‖AddMonoidAlgebra.coeff Q n‖ ≤ 1) → Q.IsHomogeneous dQ → e.degree + dQ = D →
     jetPair (topMonoP e * lowPoly Q) g = 0 ∨
     ∃ (α : Φ → ℕ) (β : κ →₀ ℕ) (i2 : ℕ) (n : Lw →₀ ℕ), n ∈ (hasseDir b β Q).support ∧
       (∀ φ, α φ ≠ 0 → aA φ ≠ 0) ∧ (∀ k, β k ≠ 0 → aB k ≠ 0) ∧

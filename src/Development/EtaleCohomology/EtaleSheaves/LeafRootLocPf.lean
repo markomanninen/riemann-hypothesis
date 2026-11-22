@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ChernClassRootLocalization
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ChernClassRootLocalization
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Polynomial GlobalTheory.EtC

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta GlobalTheory.SmoothForms Matrix
 open scoped TensorProduct
@@ -80,7 +84,7 @@ theorem exists_compact_denom (D : D7) (d : ℕ) (hd : 0 < d) :
       map_zero' := by simp
       map_add' := fun x y => by simp [add_smul, Finset.sum_add_distrib] }
   have hφ : Continuous φ :=
-    continuous_finset_sum _ fun i _ => (continuous_apply i).fun_smul continuous_const
+    continuous_finsetSum _ fun i _ => (continuous_apply i).fun_smul continuous_const
   have hle : intAE D ≤ (AddSubgroup.pi Set.univ fun _ => O).map φ := by
     refine (AddSubgroup.closure_le _).2 ?_
     rintro y ⟨a, ha, x, rfl⟩
@@ -88,7 +92,8 @@ theorem exists_compact_denom (D : D7) (d : ℕ) (hd : 0 < d) :
     change ∑ i, (b.repr x i • a) • ((1 : Af D.host.F) ⊗ₜ[D.host.F] (b i : D.host.E)) = _
     conv_rhs => rw [← b.sum_repr x]
     change _ = a ⊗ₜ[D.host.F] (algebraMap (𝓞 D.host.E) D.host.E _)
-    rw [map_sum, TensorProduct.tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, TensorProduct.tmul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, smul_assoc, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     exact (map_zsmul (TensorProduct.mk D.host.F (Af D.host.F) D.host.E a) _ _).symm

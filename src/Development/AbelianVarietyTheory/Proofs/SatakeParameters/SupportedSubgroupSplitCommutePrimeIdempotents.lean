@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
-import Formalism.LocalToGlobal.Columns.HeckeSp
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.LocalNewformFunction
+public import Formalism.LocalToGlobal.Columns.HeckeSp
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -173,7 +177,8 @@ theorem mem_intAE_iff (z : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVol
     obtain ⟨r, hr, e⟩ := Formalism.UG.P.levelaf_decomp g hg hz
     have : z = ∑ j, r j ⊗ₜ[D.host.F] (g j : D.host.E) := by
       apply (Algebra.TensorProduct.comm D.host.F (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F) D.host.E).injective
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact e
     rw [this]
     exact sum_mem fun j _ => AddSubgroup.subset_closure ⟨r j, hr j, g j, rfl⟩
@@ -255,7 +260,7 @@ theorem parts_cA (z : Formalism.L2.Theta.AE D) :
   induction z using TensorProduct.induction_on with
   | zero => simp only [map_zero, and_self]
   | tmul a x => exact ⟨rfl, rfl⟩
-  | add a b ha hb => simp only [map_add, ha.1, ha.2, hb.1, hb.2, and_self]
+  | add a b ha hb => simp only [map_add (f := _), ha.1, ha.2, hb.1, hb.2, and_self]
 
 theorem finPart_cA_mem {z : Formalism.L2.Theta.AE D} (hz : finPart D z ∈ intAE D) : finPart D (cA D z) ∈ intAE D := by
   rw [(parts_cA z).2]
@@ -292,7 +297,7 @@ theorem ev_mul (a b : Formalism.L2.Theta.AE D) (Q : HeightOneSpectrum (𝓞 D.ho
     Φ (a * b) Q = Φ a Q * Φ b Q := by rw [map_mul]; rfl
 
 theorem ev_add (a b : Formalism.L2.Theta.AE D) (Q : HeightOneSpectrum (𝓞 D.host.E)) :
-    Φ (a + b) Q = Φ a Q + Φ b Q := by rw [map_add]; rfl
+    Φ (a + b) Q = Φ a Q + Φ b Q := by rw [map_add (f := _)]; rfl
 
 theorem ev_zero (Q : HeightOneSpectrum (𝓞 D.host.E)) : Φ 0 Q = 0 := by rw [map_zero]; rfl
 
@@ -496,7 +501,7 @@ theorem exists_isPrimeIdem (P : HeightOneSpectrum (𝓞 D.host.E)) : ∃ e f, Is
       · subst hQ
         rw [he'.2.2 Q (Ne.symm hc), mul_zero]
       · rw [he.2.2 Q hQ, zero_mul]
-    · refine hΦ.ext' (by rw [RingHom.map_add, he.1, he'.1, add_zero, h0]) fun Q => ?_
+    · refine hΦ.ext' (by rw [RingHom.map_add (f := _), he.1, he'.1, add_zero, h0]) fun Q => ?_
       rw [ev_add]
       by_cases hQ : Q = P
       · subst hQ

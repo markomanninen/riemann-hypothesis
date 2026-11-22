@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.E
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.CentComm
-import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.CentComm
+public import GroundTheory.AutomorphicForms.ContragredientTranspose.MatrixSimilarity
+
+@[expose] public section
 
 open Matrix Polynomial
 
@@ -32,7 +36,7 @@ private theorem regOk_field (k : Type) [Field k] [TopologicalSpace k] [IsTopolog
       have h := Matrix.charpoly_units_conj x⁻¹ (γ : Matrix (Fin n) (Fin n) k)
       rw [← Matrix.coe_units_inv, inv_inv] at h
       rw [Units.val_mul, Units.val_mul]
-      exact congrArg (fun p => Polynomial.coeff p i) h
+      exact congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p i) h
     · intro h
       exact GlobalTheory.BCT.ClsFin.conj_of_charpoly γ y hs (Polynomial.ext h).symm
   rw [e]
@@ -103,10 +107,19 @@ private theorem regOk_pi (I : Type) (k : I → Type) [∀ i, Field (k i)] [∀ i
     rw [e]
     exact isClosed_iInter fun i => ((regOk_field (k i) n (ev i γ) (hsi i)).1).preimage (hc i)
   · rw [Subgroup.mem_centralizer_singleton_iff] at ha hb
-    rw [map_mul, map_mul]
-    refine centComm_field (ev i γ) _ _ (hsi i) ?_ ?_
-    · rw [Subgroup.mem_centralizer_singleton_iff, ← map_mul, ha, map_mul]
-    · rw [Subgroup.mem_centralizer_singleton_iff, ← map_mul, hb, map_mul]
+    have hA : Commute (ev i a) (ev i γ) := by
+      change (ev i a) * (ev i γ) = (ev i γ) * (ev i a)
+      simpa only [map_mul] using congrArg (ev i) ha
+    have hB : Commute (ev i b) (ev i γ) := by
+      change (ev i b) * (ev i γ) = (ev i γ) * (ev i b)
+      simpa only [map_mul] using congrArg (ev i) hb
+    have ha' : ev i a ∈ Subgroup.centralizer {ev i γ} :=
+      Subgroup.mem_centralizer_singleton_iff.mpr hA
+    have hb' : ev i b ∈ Subgroup.centralizer {ev i γ} :=
+      Subgroup.mem_centralizer_singleton_iff.mpr hB
+    have hab : ev i a * ev i b = ev i b * ev i a :=
+      centComm_field (ev i γ) (ev i a) (ev i b) (hsi i) ha' hb'
+    simpa only [map_mul] using hab
 
 end UpperTheory.ConvolutionTheory.L1
 

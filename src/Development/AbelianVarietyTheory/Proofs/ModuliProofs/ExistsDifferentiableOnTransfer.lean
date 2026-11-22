@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -102,7 +106,8 @@ theorem exists_differentiableOn_transfer {V Λ : Type} [NormedAddCommGroup V] [N
     ext j; simp [Pi.single_apply]
   have hkM : ∀ b ∈ B, ∀ z, k b (M Q b z) = M Q' b z := by
     intro b hb z
-    simp [M, map_sum, hk b hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [M, map_sum, hk b hb]
   refine ⟨B ∩ M Q ⁻¹' {x | IsUnit x}, (hM Q hQ).continuousOn.isOpen_inter_preimage hB Units.isOpen,
     ⟨hb₀, by simp [h0]⟩, Set.inter_subset_left, ?_⟩
   have hd : DifferentiableOn ℂ (fun b => M Q' b * Ring.inverse (M Q b)) (B ∩ M Q ⁻¹' {x | IsUnit x}) := by
@@ -111,7 +116,8 @@ theorem exists_differentiableOn_transfer {V Λ : Type} [NormedAddCommGroup V] [N
       ((hM Q hQ).mono Set.inter_subset_left b hb)
   have hd2 : DifferentiableOn ℂ (fun bz : V × (Fin g → ℂ) => (M Q' bz.1 * Ring.inverse (M Q bz.1)) bz.2)
       ((B ∩ M Q ⁻¹' {x | IsUnit x}) ×ˢ Set.univ) :=
-    (hd.comp differentiableOn_fst fun bz hbz => hbz.1).clm_apply differentiableOn_snd
+    (hd.comp differentiableOn_fst (fun (bz : V × (Fin g → ℂ))
+      (hbz : bz ∈ (B ∩ M Q ⁻¹' {x | IsUnit x}) ×ˢ Set.univ) => hbz.1)).clm_apply differentiableOn_snd
   refine hd2.congr fun bz hbz => ?_
   rw [ContinuousLinearMap.mul_apply, ← hkM _ hbz.1.1, ← ContinuousLinearMap.mul_apply,
     Ring.mul_inverse_cancel _ hbz.1.2, ContinuousLinearMap.one_apply]

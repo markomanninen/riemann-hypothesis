@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.QuotInv
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.QuotInv
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.IntegralMemOfIsClosed
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 open scoped ContDiff InnerProductSpace
@@ -92,7 +96,8 @@ theorem GoodSub.step (hG : IsMatGroup G) (h : RepOn G σ) (hK : K ⊆ G) {T : Su
     rintro _ ⟨X, hX, v, hv, rfl⟩
     rw [show ds σ X v = _ from hexp X hX ⟨v, hv⟩]
     refine B.sum_mem fun i _ => B.smul_mem _ ?_
-    rw [← e.sum_repr X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr X, map_sum]
     refine B.sum_mem fun j _ => ?_
     rw [map_smul]
     exact B.smul_of_tower_mem _ (Submodule.subset_span ⟨(i, j), rfl⟩)
@@ -157,7 +162,8 @@ theorem coef_bound_uniform {T : Submodule ℂ H} [FiniteDimensional ℂ T] {ρ :
   have e1 : ⟪a, σ g b⟫_ℂ = ∑ i, ∑ j, (starRingEnd ℂ) ⟪e i, (⟨a, ha⟩ : T)⟫_ℂ *
       (⟪e j, (⟨b, hb⟩ : T)⟫_ℂ * ⟪(e i : H), σ g (e j)⟫_ℂ) := by
     conv_lhs => rw [show a = _ from hx ⟨a, ha⟩, show b = _ from hx ⟨b, hb⟩]
-    simp only [sum_inner, inner_smul_left, map_sum, map_smul, inner_sum, inner_smul_right,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [sum_inner, inner_smul_left, map_sum, map_smul, inner_sum, inner_smul_right,
       Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring

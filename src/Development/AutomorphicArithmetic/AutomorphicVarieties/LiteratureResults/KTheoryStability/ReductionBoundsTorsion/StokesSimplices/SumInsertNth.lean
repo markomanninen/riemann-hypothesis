@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SubSlice
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.StokesSimplices.SubSlice
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,10 +29,10 @@ lemma mem_Δ_insertNth {m : ℕ} (i : Fin (m + 1)) (x : ℝ) (s : Fin m → ℝ)
 
 lemma isClosed_Δ (m : ℕ) : IsClosed (Δ m) := by
   have h1 : IsClosed {t : Fin m → ℝ | ∀ j, 0 ≤ t j} := by
-    simp only [Set.setOf_forall]
+    simp only [Set.ofPred_forall]
     exact isClosed_iInter fun j => isClosed_le continuous_const (continuous_apply j)
   have h2 : IsClosed {t : Fin m → ℝ | ∑ j, t j ≤ 1} :=
-    isClosed_le (continuous_finset_sum _ fun j _ => continuous_apply j) continuous_const
+    isClosed_le (by fun_prop) continuous_const
   exact h1.inter h2
 
 lemma isCompact_Δ (m : ℕ) : IsCompact (Δ m) := by
@@ -68,7 +72,7 @@ theorem subSlice : SubSlice := by
   rw [← hem.map_eq, setIntegral_map_equiv, Measure.volume_eq_prod,
     ← integral_indicator hS, integral_prod_symm _ ((integrable_indicator_iff hS).2 hFint)]
   have hA := integrableOn_Δ_insertNth i G W hΔW hG (fun s => 1 - ∑ j, s j)
-    (continuous_const.sub (continuous_finset_sum _ fun j _ => continuous_apply j))
+    (continuous_const.sub (by fun_prop))
     (fun s hs => by have := hs.2; linarith) (fun s hs => le_rfl)
   have hB := integrableOn_Δ_insertNth i G W hΔW hG (fun _ => 0) continuous_const
     (fun s hs => le_rfl) (fun s hs => by have := hs.2; linarith)

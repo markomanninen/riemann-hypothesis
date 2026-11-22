@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl GlobalTheory.MixPer
 open IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -73,7 +78,7 @@ theorem latO_algebra : ∀ (D : D7) (S T : HSp D) (LS : Set (Fin S.rank → D.ho
       have h1 : infPart D (x i j) = 0 := congrFun (congrFun hx.2.2.1 i) j
       have h2 : infPart D (y i j) = 0 := congrFun (congrFun hy.2.2.1 i) j
       show infPart D (x i j + y i j) = 0
-      rw [(infPart D).map_add, h1, h2, add_zero]
+      rw [map_add (infPart D), h1, h2, add_zero]
     · rw [hx.2.2.2 h, hy.2.2.2 h, add_zero]
   | neg x _ hx =>
     refine ⟨fun γ hγ => ?_, ?_, ?_, fun h => ?_⟩

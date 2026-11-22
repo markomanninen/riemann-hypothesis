@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CPoly
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialCoefficientComparison
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsCliff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CPoly
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MonomialCoefficientComparison
+
+@[expose] public section
+
 open Matrix Finset
 open scoped InnerProductSpace ComplexConjugate
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.RealCount GlobalTheory.CompanionTheory.RealCount.Tope
@@ -30,13 +35,15 @@ theorem lp_eq_sum (f : LP n) :
 theorem evL_eq_sum (z : Fin n → ℂˣ) (f : LP n) :
     evL z f = ∑ m ∈ f.coeff.support, f.coeff m * GlobalTheory.CompanionTheory.CoefId.mon m (fun a => (z a : ℂ)) := by
   conv_lhs => rw [lp_eq_sum f]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [evL_single]; rfl
 
 theorem evL_cPoly (z : Fin n → ℂˣ) (s : Finset (Fin n → ℤ)) (c : (Fin n → ℤ) → ℂ) :
     evL z (cPoly s c) = ∑ μ ∈ s, (∏ a, ((z a : ℂ) ^ μ a)) * c μ := by
-  rw [cPoly, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cPoly, map_sum]
   exact Finset.sum_congr rfl fun μ _ => by rw [evL_single, mul_comm]
 
 theorem eq_zero_of_evL (f : LP n)
@@ -65,7 +72,7 @@ theorem evL_frL (z : Fin n → ℂˣ) (f : LP n) : evL z (frL n f) = evL (fun a 
   exact congrArg (fun φ : LP n →ₐ[ℂ] ℂ => φ f) this
 
 theorem evL_pPL (z : Fin n → ℂˣ) : evL z (pPL n) = ∏ a, ∏ b, (1 + (z a : ℂ) / z b) := by
-  simp only [pPL, map_prod, map_add, map_one, evL_single, one_mul]
+  simp only [pPL, map_prod, map_add (f := _), map_one, evL_single, one_mul]
   refine Finset.prod_congr rfl fun a _ => Finset.prod_congr rfl fun b _ => ?_
   congr 1
   have key : ∀ a : Fin n, ∏ c, (z c : ℂ) ^ ((Pi.single a (1 : ℤ) : Fin n → ℤ) c) = z a := fun a => by
@@ -81,7 +88,8 @@ variable {n : ℕ}
 
 theorem evL_altL (z : Fin n → ℂˣ) (m : Fin n → ℤ) :
     evL z (altL m) = (Matrix.of fun i j : Fin n => (z i : ℂ) ^ m j).det := by
-  rw [← Matrix.det_transpose, Matrix.det_apply', altL, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Matrix.det_transpose, Matrix.det_apply', altL, map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_smul, evL_single, one_mul, smul_eq_mul]
   simp [Matrix.transpose_apply, Matrix.of_apply]
@@ -161,7 +169,7 @@ theorem trace_restrict_eq (E : KMod n) (T' : E.V →L[ℂ] E.V) (hT : ∀ k, T' 
     obtain ⟨ξ, hξ⟩ := x
     simp only [LinearMap.restrict_apply, LinearMap.smul_apply, SetLike.val_smul]
     exact dualT_wt E T' μ k z hk ξ hξ
-  rw [trOn, dif_pos hg, e, map_smul, smul_eq_mul]
+  rw [trOn, dite_eq_left hg, e, map_smul, smul_eq_mul]
 
 theorem trace_decomp (E : KMod n) (T' : E.V →L[ℂ] E.V) (hT : ∀ k, T' * E.ρ k = E.ρ k * T')
     (htop : (⨆ μ, wtDual E μ) = ⊤) (hind : iSupIndep (wtDual E)) (s : Finset (Fin n → ℤ))

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+
+@[expose] public section
+
 open Matrix Formalism.UG Formalism.L2.DIV GlobalTheory.LevNorm
 
 namespace GlobalTheory
@@ -14,7 +19,8 @@ theorem ker_map_subset_range_map_of_mul_eq_smul :
       (fun i => r ((A *ᵥ x) i)) = A.map r *ᵥ (fun i => r (x i)) := by
     intro A x
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
   set v' : Fin n → O := fun i => Function.surjInv hr (v i) with hv'def
   have hv' : (fun i => r (v' i)) = v := funext fun i => Function.surjInv_eq hr (v i)
   have h0 : ∀ i, r ((N *ᵥ v') i) = 0 := by

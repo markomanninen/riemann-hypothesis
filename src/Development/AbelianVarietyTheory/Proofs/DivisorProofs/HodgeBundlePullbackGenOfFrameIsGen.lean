@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFrameChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFrameChart
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -29,9 +33,14 @@ theorem pulled_back_lineBundle_transition_unit_eq_restriction {X Y : Scheme.{0}}
 theorem pull_g_eq (h : IsGrpPullback H G x ψ) (j j' : ((hodge G g).pull x).ι) :
     ((hodge G g).pull x).g j j' =
       (isFrame_chart h j).detUnit (isFrame_chart h j') inf_le_left inf_le_right := by
+  have frame_pb {X Y : Scheme.{0}} {I : Type} [Fintype I] (f : Y ⟶ X)
+      {F : X.Modules} [F.IsQuasicoherent] {U : X.Opens} {e : I → Γ(F, U)} (he : IsFrame e)
+      {V : Y.Opens} (h : V ≤ f ⁻¹ᵁ U) : IsFrame fun i => pullbackSections f F h (e i) := by
+    have k := (he.pullback f).res h
+    exact (funext fun l => QCoh.res_pullbackSections f F le_rfl h (e l)) ▸ k
   have e₁ := IsFrame.detUnit_map_iso
-    (GlobalTheory.BadPt.Fibre.frame_pb x (j PUnit.unit).isFrame (LB.wchart_le (hodge G g) (fun _ => x) j PUnit.unit))
-    (GlobalTheory.BadPt.Fibre.frame_pb x (j' PUnit.unit).isFrame (LB.wchart_le (hodge G g) (fun _ => x) j' PUnit.unit))
+    (frame_pb x (j PUnit.unit).isFrame (LB.wchart_le (hodge G g) (fun _ => x) j PUnit.unit))
+    (frame_pb x (j' PUnit.unit).isFrame (LB.wchart_le (hodge G g) (fun _ => x) j' PUnit.unit))
     (omegaBase h) (inf_le_left : LB.wchart (hodge G g) (fun _ => x) j ⊓ LB.wchart (hodge G g) (fun _ => x) j' ≤ _)
     inf_le_right
   refine Eq.trans ?_ e₁.symm

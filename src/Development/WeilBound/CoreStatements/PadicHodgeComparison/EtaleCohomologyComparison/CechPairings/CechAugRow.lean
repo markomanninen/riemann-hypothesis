@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CxPairing
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CxPairing
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -85,23 +89,6 @@ abbrev CxF.dcx (K : CxF.{w} C R) : DCx.{max u v w} R where
   vv p q x := funext fun s => K.dd q _ _
   hv p q x := (Mor.ofNatTrans (K.δ q)).d_pullC p x
 
-def CxF.augCol (K : CxF.{w} C R) {F : C ⥤ ModuleCat.{w} R} (η : F ⟶ K.F 0)
-    (h : ∀ T x, ((K.δ 0).app T).hom ((η.app T).hom x) = 0) : DCx.AugCol (cx F) K.dcx where
-  η p := (Mor.ofNatTrans η).pullC p
-  hη p x := funext fun s => h _ _
-  comm p x := (Mor.ofNatTrans η).d_pullC p x
-
-def piF {ι : Type w} (F : ι → (C ⥤ ModuleCat.{w} R)) : C ⥤ ModuleCat.{w} R where
-  obj T := ModuleCat.of R (∀ i, (F i).obj T)
-  map φ := ModuleCat.ofHom (LinearMap.pi fun i => ((F i).map φ).hom.comp (LinearMap.proj i))
-  map_id T := by ext x i; simp
-  map_comp φ ψ := by ext x i; simp
-
-def piProj {ι : Type w} (F : ι → (C ⥤ ModuleCat.{w} R)) (i : ι) : Mor (piF F) (F i) (RingHom.id R) where
-  G := 𝟭 C
-  τ T := LinearMap.proj (R := R) (φ := fun i => (F i).obj T) i
-  nat _ _ := rfl
-
 section Rel
 
 variable {I : Type t} [Category.{t'} I] (π : C ⥤ I)
@@ -177,27 +164,10 @@ def eqv (ρ : Multiplicative G →* (M →ₗ[R] M)) (S : Set G) (n : ℕ) : Sub
   carrier := {f | ∀ g ∈ S, ∀ x : Fin (n + 1) → G, f (fun i => g + x i) = ρ (Multiplicative.ofAdd g) (f x)}
   add_mem' {a b} ha hb g hg x := by
     change a _ + b _ = ρ _ (a x + b x)
-    rw [ha g hg, hb g hg, map_add]
+    rw [ha g hg, hb g hg, map_add (f := _)]
   zero_mem' g hg x := (map_zero _).symm
   smul_mem' c a ha g hg x := by
     change c • a _ = ρ _ (c • a x)
     rw [ha g hg, map_smul]
-
-theorem lc_d_apply (n : ℕ) (f : LocallyConstant (Fin (n + 1) → G) M) (x : Fin (n + 2) → G) :
-    (lcCos R G M).d n f x = ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • f fun k => x (i.succAbove k) := by
-  rw [Cos.d_apply]
-  exact (map_sum (LocallyConstant.evalₗ R x) _ _).trans (Finset.sum_congr rfl fun i _ => map_zsmul _ _ _)
-
-abbrev grpCx (ρ : Multiplicative G →* (M →ₗ[R] M)) (S : Set G) : Cx.{w} R :=
-  (lcCos R G M).cx.sub (eqv ρ S) fun n f hf g hg x => by
-    change (lcCos R G M).d n f _ = ρ _ ((lcCos R G M).d n f x)
-    rw [lc_d_apply, lc_d_apply, map_sum]
-    exact Finset.sum_congr rfl fun i _ => by rw [map_zsmul]; exact congrArg _ (hf g hg _)
-
-def grpAug (ρ : Multiplicative G →* (M →ₗ[R] M)) (S : Set G) (N : Submodule R M)
-    (h : ∀ g ∈ S, ∀ x ∈ N, ρ (Multiplicative.ofAdd g) x = x) : N →ₗ[R] (grpCx ρ S).X 0 where
-  toFun x := ⟨LocallyConstant.const _ x.1, fun g hg _ => (h g hg x.1 x.2).symm⟩
-  map_add' _ _ := rfl
-  map_smul' _ _ := rfl
 
 end CrystallineSemistableComparison

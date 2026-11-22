@@ -1,6 +1,10 @@
-import Formalism.GradedWeylDivisibility.StatementB
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementB
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -64,7 +68,7 @@ theorem closedEqNabla_of (h1 : HWInClosed) (h2 : FockQPos) (h3 : FockQBilin) (h4
       add_mem' := by
         rintro x y ⟨hx, hx'⟩ ⟨hy, hy'⟩
         refine ⟨Submodule.add_mem _ hx hy, fun g hg => ?_⟩
-        rw [← hB, map_add, LinearMap.add_apply, hB, hB, hx' g hg, hy' g hg, add_zero]
+        rw [← hB, map_add (f := _), LinearMap.add_apply, hB, hB, hx' g hg, hy' g hg, add_zero]
       zero_mem' := ⟨Submodule.zero_mem _, fun g _ => by rw [← hB, map_zero, LinearMap.zero_apply]⟩
       smul_mem' := by
         rintro c x ⟨hx, hx'⟩

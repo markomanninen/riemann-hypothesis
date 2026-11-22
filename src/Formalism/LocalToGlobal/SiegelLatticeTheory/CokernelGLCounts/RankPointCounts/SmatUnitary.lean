@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,14 +67,6 @@ private theorem sub_one_add_conjTranspose_defect_eq_zero_of_unitary (G : Matrix 
   rw [e, hG]
   abel
 
-theorem hswap (J : Matrix (Fin n) (Fin n) ℂ) (hJh : Jᴴ = J) (x y : Fin n → ℂ) :
-    star x ⬝ᵥ (J *ᵥ y) = star (star y ⬝ᵥ (J *ᵥ x)) := by
-  have h : ∀ i j, star (J i j) = J j i := fun i j => by
-    rw [← Matrix.conjTranspose_apply, hJh]
-  simp only [dotProduct, Matrix.mulVec, Pi.star_apply, star_sum, star_mul', star_star, h, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
 variable (J : Matrix (Fin n) (Fin n) ℂ) (wf : Fin k → Fin n → ℂ)
   (hon : ∀ a b, star (wf a) ⬝ᵥ (J *ᵥ wf b) = if a = b then 1 else 0)
 
@@ -105,10 +101,6 @@ theorem smat_mat (G : Matrix (Fin k) (Fin k) ℂ) (a b : Fin k) :
     abel
   rw [Matrix.mulVec_mulVec, ← entry, hM]
 
-include hon in
-theorem one_mat (a b : Fin k) : star (wf a) ⬝ᵥ (J *ᵥ ((1 : Matrix (Fin n) (Fin n) ℂ) *ᵥ wf b)) =
-    (1 : Matrix (Fin k) (Fin k) ℂ) a b := by
-  rw [Matrix.one_mulVec, hon, Matrix.one_apply]
 
 theorem smat_inv (hJ2 : J * J = 1) (hJh : Jᴴ = J) (G : Matrix (Fin k) (Fin k) ℂ) (hG : Gᴴ * G = 1)
     (hon : ∀ a b, star (wf a) ⬝ᵥ (J *ᵥ wf b) = if a = b then 1 else 0) :

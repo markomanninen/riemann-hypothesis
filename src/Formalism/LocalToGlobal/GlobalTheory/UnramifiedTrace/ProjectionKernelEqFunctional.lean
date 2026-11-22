@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DUPt0FOfVals
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.NatSmulInv
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaFun
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DualSigmaApply
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DUPt0FOfVals
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.NatSmulInv
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedDiagonal.DiaFun
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DualSigmaApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ theorem ld_locP (T : Forms0 D u) (v : (D.mem u).A.vT) (c : (D.mem u).C.cls 0)
   · exact localization_mono₂ _ (sup_le (CrossDiaZero.cls_le_ld T c)
       ((Submodule.span_singleton_le_iff_mem _ _).2 z3.2))
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem ptz_val (T : Forms0 D u) {v : (D.mem u).A.vT} {c : (D.mem u).C.cls 0}
     {g : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)}
     {γ : UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))}
@@ -107,7 +111,7 @@ theorem valDia_of_lat (T : Forms0 D u) (hL : PtLatF T) : ValDia T := by
     exact eq_inv_of_mul_eq_one_right hga
 
   have hcl := T.val0.dil v a⁻¹ k hkb c δ hδ
-  obtain ⟨hh, hhH, κ0, hκK, e⟩ := (DoubleCoset.eq _ _ _ _).1 hcl
+  obtain ⟨hh, hhH, κ0, hκK, e⟩ := (@DoubleCoset.eq _ _ _ _ _ _).1 hcl
   have hκ : κ0.1 ∈ T.cls0.lev.U := hκK
   obtain ⟨γd, hγd, hge⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hhH)
   have hrel : (T.cls0.y c * δ).1 =

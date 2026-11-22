@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CompactUnitaryGroups.IsCompactUnitaryGroup
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CoefficientGluing.SumFinVal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfinitesimalCharacterQuantumDet
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.IsStarRep
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CompactUnitaryGroups.IsCompactUnitaryGroup
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.CoefficientGluing.SumFinVal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfinitesimalCharacterQuantumDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ set_option linter.unusedSimpArgs false
 
 namespace PositivityTheory.Rg.Cz.CGlue
 
-theorem prod_coord_det {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (k : Kinf E a) :
+theorem prod_coord_det {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (k : Kinf E a) :
     ∏ τ : E →+* ℂ, coord τ (k.1.det) = 1 := by
   have hne : ∀ τ : E →+* ℂ, ComplexEmbedding.conjugate τ ≠ τ := by
     intro τ h
@@ -27,7 +31,7 @@ theorem prod_coord_det {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
     (fun τ _ => Finset.mem_univ _) (fun τ _ => by simp [ComplexEmbedding.conjugate])
   rw [J.coord_conjugate, ← J.coord_star, ← map_mul, hu, map_one]
 
-theorem bigM_kap {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {Q : Type} [Fintype Q]
+theorem bigM_kap {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {Q : Type} [Fintype Q]
     [DecidableEq Q] (lab : Q → (E →+* ℂ)) (s : ℤ) (k : Kinf E a) :
     bigM lab s (Unitary.toUnits k) = Matrix.of (fun I J : Q → Fin a => ∏ p, kap E a (lab p) k (I p) (J p)) := by
   ext I J
@@ -40,7 +44,7 @@ theorem cx_mul {E : Type} [Field E] {a : ℕ} {A B : Type} [Fintype A] [Fintype 
     (i j : Fin a) : cx τ φ i j * J = J * cx τ ψ i j := by
   simp only [cx, Matrix.smul_mul, Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub, h]
 
-theorem glRel_cx {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} (π : CuspSub E a)
+theorem glRel_cx {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} (π : CuspSub E a)
     (τ : E →+* ℂ) : GlRel (cx τ (lieOp π)) := by
   intro i j k l
   refine LinearMap.ext fun φ => Subtype.ext ?_

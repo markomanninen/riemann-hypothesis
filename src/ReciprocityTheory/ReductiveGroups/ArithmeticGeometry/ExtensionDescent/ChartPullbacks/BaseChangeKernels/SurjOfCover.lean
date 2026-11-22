@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,12 +57,12 @@ lemma cm_nat_apply {V₁ V₂ : B.Opens} (h₁ : V₁ ≤ W) (h₂ : V₂ ≤ W)
     cm q φ V₁ h₁ (AddMonoidAlgebra.mapRingHom X (B.presheaf.map (homOfLE h).op).hom p) =
       (G.presheaf.map (homOfLE (q.preimage_mono h)).op).hom (cm q φ V₂ h₂ p) := (congrArg (fun f => f p) (cm_nat q φ hnat h₁ h₂ h)).symm
 
-include hnat in
 
+include hnat in
 lemma inj_of_cover {V : B.Opens} (h : V ≤ W) {ι : Type} (U : ι → B.Opens) (hU : ∀ i, U i ≤ V)
     (hcov : V ≤ iSup U) (hinj : ∀ i, Function.Injective (cm q φ (U i) ((hU i).trans h))) :
     Function.Injective (cm q φ V h) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   have h1 : ∀ i, AddMonoidAlgebra.mapRingHom X (B.presheaf.map (homOfLE (hU i)).op).hom p = 0 := by
     intro i
@@ -72,8 +76,8 @@ lemma inj_of_cover {V : B.Opens} (h : V ≤ W) {ι : Type} (U : ι → B.Opens) 
   refine h3.trans ?_
   exact (map_zero _).symm
 
-include hnat in
 
+include hnat in
 lemma surj_of_cover {V : B.Opens} (h : V ≤ W) {ι : Type} [Finite ι] (U : ι → B.Opens)
     (hU : ∀ i, U i ≤ V) (hcov : V ≤ iSup U)
     (hsurj : ∀ i, Function.Surjective (cm q φ (U i) ((hU i).trans h)))
@@ -107,7 +111,7 @@ lemma surj_of_cover {V : B.Opens} (h : V ≤ W) {ι : Type} [Finite ι] (U : ι 
   let F : X →₀ Γ(B, V) := ∑ x ∈ S, Finsupp.single x (c x)
   have hF : ∀ x, F x = if x ∈ S then c x else 0 := by
     intro x
-    simp [F, Finsupp.finset_sum_apply, Finsupp.single_apply]
+    simp [F, Finsupp.finsetSum_apply, Finsupp.single_apply]
   have hres : ∀ i, AddMonoidAlgebra.mapRingHom X (B.presheaf.map (homOfLE (hU i)).op).hom
       (AddMonoidAlgebra.ofCoeff F) = p i := by
     intro i
@@ -134,8 +138,10 @@ lemma surj_of_cover {V : B.Opens} (h : V ≤ W) {ι : Type} [Finite ι] (U : ι 
 
 end GluingInclusion
 
+
 open GluingInclusion in
 
+open GluingInclusion in
 theorem coord_glue {G B : Scheme.{0}} (q : G ⟶ B) {X : Type} [AddCommMonoid X] {W : B.Opens}
     (φ : ∀ V : B.Opens, V ≤ W → (Multiplicative X →* Γ(G, q ⁻¹ᵁ V)))
     (hnat : ∀ (V₁ V₂ : B.Opens) (h₁ : V₁ ≤ W) (h₂ : V₂ ≤ W) (h : V₁ ≤ V₂) (x : Multiplicative X),

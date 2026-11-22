@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WittExtensionSumMulMiddleCoordinate
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,6 +24,7 @@ theorem finite_rat_mem_of_isCompact {D : D7} {m n : ℕ} (K : Set (Mx D m n)) (h
   obtain ⟨hg, -, -, ht2, hdisc, -⟩ := lattice_Mx D m n
   haveI : IsTopologicalAddGroup (Mx D m n) := hg
   haveI : T2Space (Mx D m n) := ht2
+  haveI : T1Space (Mx D m n) := @T2Space.t1Space _ _ ht2
   haveI : DiscreteTopology (ratMx D m n) := hdisc
   have hcl : IsClosed (ratMx D m n : Set (Mx D m n)) := AddSubgroup.isClosed_of_discrete
   have hS : IsCompact ((Subtype.val : ratMx D m n → Mx D m n) ⁻¹' K) :=
@@ -61,7 +66,7 @@ theorem poinX_continuous : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdC
     intro u hu γ hγ
     by_contra hne
     exact hγ (hF.mem_toFinset.2 ⟨(u ⬝ d.jX + rat γ, u), ⟨subset_tsupport β hne, hu⟩, add_sub_cancel_left _ _⟩)
-  refine (continuous_finset_sum hF.toFinset fun γ _ => hterm γ).continuousAt.congr
+  refine (continuous_finsetSum hF.toFinset fun γ _ => hterm γ).continuousAt.congr
     (Filter.eventually_of_mem hUn fun u hu => ?_)
   show _ = poinX ψ d T β u
   unfold poinX

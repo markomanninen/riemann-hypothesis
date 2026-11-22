@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
-import Formalism.LocalToGlobal.LatticeGeometry.InstAddCommSemigroupWt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.ProjectiveLattices.XcLat
+public import Formalism.LocalToGlobal.LatticeGeometry.InstAddCommSemigroupWt
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,9 +33,6 @@ structure PreChar : Prop where
   chain : R.IsChain
   thP : R.IsThP
 
-theorem PreChar.of_char {F : Face D A} (h : R.Char F) : PreChar R :=
-  ⟨h.lev, h.grp.red_R, h.grp.red_L, h.grp.record, h.fam, h.models, h.chain, h.thP⟩
-
 def ValKs : Prop :=
   ∀ (i : Fin D.R.m) (x : (AE D)ˣ), infPart D (x : AE D) = 1 →
     ∃ y : Ks, ((R.mu0 ((i : ℕ) + 1) x : Circle) : ℂ) = D.what₂.embLL (algebraMap Ks D.what₂.LL y)
@@ -54,8 +55,6 @@ structure MjTie (F : Face D A) where
   eW_lat : ∀ (i : Fin D.R.m) x, x ∈ (D.what₂.MjLat ((i : ℕ) + 1)).carrier ↔
     ∃ y ∈ (R.FW i).MK, y ∈ (R.FW i).Wgood F.P0 F.ψ0⁻¹ (fun g => (idemOf A.X).coeff g) ∧ eW i x = (R.FW i).j (sg0 D A) y
 
-def volRec (F : Face D A) (i : Fin D.R.m) : ℝ := (R.νW i (R.fdW i)).toReal / RealDat.nP F false
-
 end Data
 
 abbrev reCore (T : CoreJ D) (dict : ∀ j σ, GA D (T.V j σ) → Σ k, Frame ((T.U j σ).X k).Ψ D.R.r)
@@ -68,21 +67,13 @@ abbrev reCore (T : CoreJ D) (dict : ∀ j σ, GA D (T.V j σ) → Σ k, Frame ((
 abbrev setCE (T : CoreJ D) (cE : ∀ (j : ℕ) (σ : T.Q.c.F →+* ℂ), (T.U j σ).Comp → ℂ) : CoreJ D :=
   reCore T T.dict T.mu T.chiW T.x₀ cE
 
-def MjCusp {T : Core D} (h : LawsCore T) (j : ℕ) (w : WeightFamilies.Wt D j) (vol : ℝ) : Prop :=
-  ∃ (s : Submodule T.Q.c.F (T.C j w)) (φ : s →ₛₗ[T.σ₀] D.what₂.Mj j),
-    (∀ {n : ℕ} (v : Fin n → s), LinearIndependent T.Q.c.F v → LinearIndependent ℂ (φ ∘ v)) ∧
-    Submodule.span ℂ (Set.range φ) = ⊤ ∧
-    (D.what₂.MjLat j).carrier ⊆ Set.range φ ∧
-    (∀ x : s, (∀ la (y : T.PtM j la), 0 ≤ y.1 ((x : T.C j w) : T.R j)) ↔ φ x ∈ (D.what₂.MjLat j).carrier) ∧
-    ∀ x : s, ‖φ x‖ = Real.sqrt (vol * Formalism.L2.Geo.dimKap D j) * h.Nl j w T.σ₀ ((x : T.C j w) : T.R j)
-
 section Forms
 
 variable (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1))
   (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec) (O : ∀ i, OMDat T.toCore R i Unit (fun _ => A.μ0))
 
-open Classical in
 
+open Classical in
 def geoRho (i : Fin D.R.m) : G →* ((Fin (nTop T κ i) → D.what₂.LL) →ₗ[D.what₂.LL] (Fin (nTop T κ i) → D.what₂.LL)) :=
   if h : HasB T.Q.c.F (Cu T κ i) (nTop T κ i) ∧ ∃ ρC : G →* (Cu T κ i →ₗ[T.Q.c.F] Cu T κ i),
       ∀ g (f : Cu T κ i), ((ρC g f : Cu T κ i) : T.R ((i : ℕ) + 1)) = actLev T.Q.c (O i).lev2 g (f : T.R ((i : ℕ) + 1))
@@ -101,9 +92,9 @@ def Fired (ph : Fin D.R.m → ℂ) : Prop :=
 
 end Forms
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure GeoHalf (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (ph : Fin D.R.m → ℂ) : Type 1 where
   κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)
   v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec

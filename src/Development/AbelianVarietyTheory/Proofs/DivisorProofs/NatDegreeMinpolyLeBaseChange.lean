@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.Brauer.Degree
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixEqAevalOfCommuteStatement
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.Degree
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankIInfKerEqOfIsBaseChangeFamily
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MatrixEqAevalOfCommuteStatement
+
+@[expose] public section
 
 open Module Polynomial TensorProduct
 

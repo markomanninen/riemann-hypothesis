@@ -1,29 +1,33 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsHkIsogEtaleUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HeckeInFamilies
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PointsDetectFrobeniusSections
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRingStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevelActionMemCuspForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsTraceEqFinsumGeometricPointsEtaleStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFunctionOfSmoothLocalDescentReducedStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteEtaleAlgebraPullbackAffineStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivHeckeKernelSchemePointsHeckeKernelsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaLineGeneratorZariskiLocallyStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaleLinearHomFramedPointEigenbasesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieDividedHomTangentImageBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SectionValueAtMultipleOfBaseChangedGeneratorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeKernelValueSumWeightTriangularFrameStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FramesDifferByIsometryOfTriangularPeriodsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRationalIsometryOfTraceSimilitudeSqStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHeckeIsogenyFamilyPullbackCorrespondenceStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEtaleCoverListingHeckeKernelSchemeStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCuspSectionsOfDominatedRationalIsometriesStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSimilitudeTriangularPeriodsOfHeckePointStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeIsogenyGeneratorRatioLeTraceTermsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsScalarHeckeTraceThetaGeneratorFamilyStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsIsCan
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsHkIsogEtaleUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.HeckeInFamilies
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PointsDetectFrobeniusSections
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointBaseChangeUniqueReflIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameChangeCommBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRingStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.LevelActionMemCuspForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsTraceEqFinsumGeometricPointsEtaleStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFunctionOfSmoothLocalDescentReducedStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFiniteEtaleAlgebraPullbackAffineStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEquivHeckeKernelSchemePointsHeckeKernelsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaLineGeneratorZariskiLocallyStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EtaleLinearHomFramedPointEigenbasesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieDividedHomTangentImageBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SectionValueAtMultipleOfBaseChangedGeneratorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeKernelValueSumWeightTriangularFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FramesDifferByIsometryOfTriangularPeriodsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsRationalIsometryOfTraceSimilitudeSqStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHeckeIsogenyFamilyPullbackCorrespondenceStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsEtaleCoverListingHeckeKernelSchemeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCuspSectionsOfDominatedRationalIsometriesStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsSimilitudeTriangularPeriodsOfHeckePointStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeckeIsogenyGeneratorRatioLeTraceTermsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsScalarHeckeTraceThetaGeneratorFamilyStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -126,13 +130,13 @@ theorem exists_term_of_family (hA : admitted l P p) (hT : TotalAt Xo c P p i)
   generalize hex.choose = z at hz ⊢
   obtain ⟨rfl, h₁, h₂⟩ := hkPt_along hA C.2 (hC ▸ hI) hz
   have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap c.F Ω).injective
-  refine (GlobalTheory.T.section_value_at_multiple_of_baseChanged_generator E H Dw l Xo c a n f hf T Ω χ z₀ z a₀ ?_ (fun τ j => ?_)
-    (ha₀ Ω χ y₁ z.x Ψ₁ z.s hy hF z.gen h₂)).symm
-  · obtain ⟨_, _, _, h, _⟩ := hF
-    exact h.1
-  · refine GlobalTheory.T.lie_divided_hom_tangent_image_baseChange E H Dw l Xo T Ω _ _ _ _ _ Ψ Ψ₁ p _ _ _ (Nat.cast_ne_zero.2 hp).isUnit hF (hu τ j) ?_
+  exact (GlobalTheory.T.section_value_at_multiple_of_baseChanged_generator E H Dw l Xo c a n f hf T Ω χ z₀ z a₀ (by
+    obtain ⟨_, _, _, h, _⟩ := hF
+    exact h.1) (fun τ j => by
+    refine GlobalTheory.T.lie_divided_hom_tangent_image_baseChange E H Dw l Xo T Ω _ _ _ _ _ Ψ Ψ₁ p _ _ _ (Nat.cast_ne_zero.2 hp).isUnit hF (hu τ j) ?_
     rw [← hy.2.1]
-    exact h₁ τ j
+    exact h₁ τ j)
+    (ha₀ Ω χ y₁ z.x Ψ₁ z.s hy hF z.gen h₂)).symm
 
 theorem exists_term (hA : admitted l P p) (hT : TotalAt Xo c P p i) (Z : Corr Xo P p i)
     {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ} {f : Rul Xo c} (hf : f ∈ sec Xo c a n) {B : Type} [CommRing B] [IsReduced B]
@@ -399,8 +403,8 @@ theorem rdU_mem_SS (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hU : Formalism.L2.P
 
 end Cusp
 
-open Formalism.BasicNotions Formalism.L2.Pj in
 
+open Formalism.BasicNotions Formalism.L2.Pj in
 theorem cuspTransform : GlobalTheory.IndefiniteRowSideFullHecke.SplitOffDetection.CuspTransform := by
   intro D T h j hj P p i cq a n hs _ hD hE hDt hF f hf
   have hp := h.pins

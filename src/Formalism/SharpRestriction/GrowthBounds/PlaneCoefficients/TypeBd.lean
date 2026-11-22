@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TypeBound
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.TypeBound
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 noncomputable section
 

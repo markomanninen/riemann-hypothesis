@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankLeAleph0SmoothIrreducibleUnitaryAdelic
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegerUnitSplitPlaceConjugatePrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmFieldAdeleSplitPlaceSupportIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteRationalConjMemBoundedCompact
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecomposition
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceDoubleCosetOperatorsCommuteSpherical
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverStd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankLeAleph0SmoothIrreducibleUnitaryAdelic
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteDimensionalForms
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsIntegerUnitSplitPlaceConjugatePrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CmFieldAdeleSplitPlaceSupportIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteRationalConjMemBoundedCompact
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnitaryFiniteAdelesSplitPlaceDecomposition
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceDoubleCosetOperatorsCommuteSpherical
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDoubleCosetsDefiniteUnitaryMaximalLevel
+
+@[expose] public section
 
 open ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -19,7 +23,7 @@ namespace GlobalTheory.HeckeStdFacts
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
-local notation3 "L⁺" => maximalRealSubfield L
+local notation3 "L⁺" => NumberField.maximalRealSubfield L
 
 theorem triv_mul {T : Set (HeightOneSpectrum (𝓞 L⁺))} {x y : GAf L n} (hx : TrivOutside T x)
     (hy : TrivOutside T y) : TrivOutside T (x * y) := by
@@ -213,7 +217,7 @@ theorem heckeD_eq_sum {J : Subgroup (GAf L n)} {v : HeightOneSpectrum (𝓞 L⁺
     Finset.sum_image]
   · refine Finset.sum_congr rfl fun γ hγ => ?_
     have hc : ∃ x ∈ D, (x : GAf L n ⧸ J) = γ := ⟨γ, h1 γ hγ, rfl⟩
-    rw [dif_pos hc]
+    rw [dite_eq_left hc]
     have hu : γ⁻¹ * hc.choose ∈ J := QuotientGroup.eq.1 hc.choose_spec.2.symm
     have := congrFun (hf _ hu (triv_mul (triv_inv (hD γ (h1 γ hγ))) (hD _ hc.choose_spec.1))) (g * γ)
     refine Eq.trans ?_ this
@@ -409,12 +413,14 @@ theorem heckeD_mem {ρ : Representation ℂ (GQ L n) W} {J : Subgroup (GAf L n)}
           group) (fixed_of_type hB hv hf)
     rw [Finset.sum_image (hinj.injOn)] at e
     conv_rhs => rw [e]
-    rw [heckeD_type hB hv h1 h2 hf, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [heckeD_type hB hv h1 h2 hf, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun γ _ => ?_
     rw [← map_smul, ← hf.2 ⟨κ, hκ⟩, rt_rt, rt_rt]
     simp
   refine ⟨⟨fun γ g => ?_, ?_⟩, key⟩
-  · rw [heckeD_type hB hv h1 h2 hf, Finset.sum_apply, Finset.sum_apply, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [heckeD_type hB hv h1 h2 hf, Finset.sum_apply, Finset.sum_apply, map_sum]
     refine Finset.sum_congr rfl fun δ _ => ?_
     show f (γ * g * δ) = ρ γ (f (g * δ))
     rw [mul_assoc, hf.1.1]
@@ -443,7 +449,8 @@ theorem heckeD_comm {ρ : Representation ℂ (GQ L n) W} {J : Subgroup (GAf L n)
       (fun γ hγ => (hs γ).1 (h1 γ hγ)) (fun x hx => h2' x ((hS x).2 hx)) (fun γ hγ => (hS γ).1 (h1' γ hγ)) f
       fun κ hκ ht => fixed_of_type hB hv hf κ ((hyp_at hB hv κ ht).1.2 hκ) ht
   · obtain ⟨-, hc, -⟩ := GlobalTheory.SplitAdelic.main L n s
-    simp only [map_sum, rt_rt]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, rt_rt]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun δ hδ => Finset.sum_congr rfl fun γ hγ => ?_
     rw [(hc γ δ (h1 γ hγ).1 fun w hw => (h1' δ hδ).1 w ?_).eq]
@@ -458,7 +465,7 @@ theorem heckeD_lin {ρ : Representation ℂ (GQ L n) W} {J : Subgroup (GAf L n)}
   obtain ⟨α, R, -, -, h1, h2⟩ := exists_data (n := n) s ϖ k hϖ
   rw [heckeD_type hB hv h1 h2 hf, heckeD_type hB hv h1 h2 hf',
     heckeD_type hB hv h1 h2 (add_mem (Submodule.smul_mem _ c hf) hf')]
-  simp only [map_add, map_smul, Finset.sum_add_distrib, Finset.smul_sum]
+  simp only [map_add (f := _), map_smul, Finset.sum_add_distrib, Finset.smul_sum]
 
 theorem heckeD_smul {ρ : Representation ℂ (GQ L n) W} {J : Subgroup (GAf L n)} {χ : J →* ℂˣ}
     {B : Set (HeightOneSpectrum (𝓞 L⁺))} (hB : NG.HypOutside J χ B) {s : SplitPlace L} (hv : s.v ∉ B)
@@ -477,7 +484,7 @@ theorem exists_fg_eval {σ : Type} (A : Subring ℂ) (D : ℂ) (hD : D ≠ 0) (P
     obtain ⟨M, hM, h⟩ := hP
     obtain ⟨M', hM', h'⟩ := hQ
     exact ⟨M ⊔ M', hM.sup hM', fun y hy => by
-      rw [map_add]; exact Submodule.add_mem_sup (h y hy) (h' y hy)⟩
+      rw [map_add (f := _)]; exact Submodule.add_mem_sup (h y hy) (h' y hy)⟩
   | mul_X P p hP =>
     obtain ⟨M, hM, h⟩ := hP
     refine ⟨M.map (LinearMap.mulLeft A D⁻¹), hM.map _, fun y hy => ⟨_, M.smul_mem ⟨_, hy p⟩ (h y hy), ?_⟩⟩
@@ -600,7 +607,8 @@ theorem eigen_integral {ρ : Representation ℂ (GQ L n) W} (hρ : IsAlgWeight L
       exact (RingOfIntegers.isIntegral_coe (β p.2)).map p.1.toIntAlgHom)
   have hOA : ∀ (τ : L →+* ℂ) (o : 𝓞 L), τ (o : L) ∈ A := by
     intro τ o
-    rw [← β.sum_repr o, RingOfIntegers.coe_eq_algebraMap, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← β.sum_repr o, RingOfIntegers.coe_eq_algebraMap, map_sum, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_zsmul, map_zsmul]
     exact zsmul_mem (hSA ⟨(τ, i), rfl⟩) _
@@ -662,7 +670,8 @@ theorem eigen_integral {ρ : Representation ℂ (GQ L n) W} (hρ : IsAlgWeight L
     obtain ⟨x, hx, rfl⟩ := hz
     have := congrFun hμ (g₀ * x)
     rw [Finset.sum_apply, Pi.smul_apply] at this
-    rw [← Finsupp.smul_apply, ← map_smul, ← this, map_sum, Finsupp.finsetSum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finsupp.smul_apply, ← map_smul, ← this, map_sum, Finsupp.finsetSum_apply]
     exact sum_mem fun γ hγ => Submodule.subset_span ⟨x * γ, triv_mul hx (hR γ hγ), by rw [← mul_assoc]; rfl⟩
   | zero => simp
   | add a b _ _ ha hb => rw [smul_add]; exact add_mem ha hb

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffNmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawCoboundaryOneSubstOfEndomorphism
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffUpNmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHausdorffOfProjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvAtNmulPowSelf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteRingOfModule
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdSubOfDUnitEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffNmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawCoboundaryOneSubstOfEndomorphism
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantCoeffUpNmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsHausdorffOfProjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EvAtNmulPowSelf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAdicCompleteRingOfModule
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DvdSubOfDUnitEq
+
+@[expose] public section
+
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 open TensorProduct
 
@@ -60,17 +65,17 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
       (hs _) (hs _) (hs _)
     refine ⟨c.ev (n + 1) (s p), ?_⟩
     show c.ev (n + 1) (s (p ^ (n + 1))) = G.mulP n (c.ev n (s (p ^ n))) + _
-    rw [pow_succ, h, map_add, map_smul, GlobalTheory.EvP.ev_subst_nmul_p p C v O hv G d c n, Nat.cast_pow]
-  have key : ∀ n (φ ψ : CartierDual O (G.A n)), PDiv.dUnit O φ = PDiv.dUnit O ψ →
+    rw [pow_succ, h, map_add (f := _), map_smul, GlobalTheory.EvP.ev_subst_nmul_p p C v O hv G d c n, Nat.cast_pow]
+  have key : ∀ n (φ ψ : CartierDual O (G.A n)), PDiv.dUnit (R := O) φ = PDiv.dUnit (R := O) ψ →
       (p : O) ^ n ∣ φ (a n) - ψ (a n) := by
     intro n φ ψ h
     obtain ⟨t, ht⟩ := hprim n
     exact GlobalTheory.CotDualLin.dvd_sub_of_dUnit_eq O (G.A n) (a n) _ t ht φ ψ h
   have dsurj : ∀ n (x : PDiv.Cot O (CartierDual O (G.A n))), ∃ φ : CartierDual O (G.A n),
-      PDiv.dUnit O φ = x := fun n x => AugCot.d_surjective _ x
+      PDiv.dUnit (R := O) φ = x := fun n x => AugCot.d_surjective _ x
   have haus : ∀ x : O, (∀ n : ℕ, (p : O) ^ n ∣ x) → x = 0 := eq_zero_of_forall_dvd (p : O)
   let Good : G.dual.omega → O → Prop := fun w L => ∀ n (φ : CartierDual O (G.A n)),
-    PDiv.dUnit O φ = w.1 n → (p : O) ^ n ∣ L - φ (a n)
+    PDiv.dUnit (R := O) φ = w.1 n → (p : O) ^ n ∣ L - φ (a n)
   have good_unique : ∀ w L L', Good w L → Good w L' → L = L' := by
     intro w L L' h h'
     refine sub_eq_zero.1 (haus _ fun n => ?_)
@@ -83,12 +88,12 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
     have step : ∀ n, (p : O) ^ n ∣ φ (n + 1) (a (n + 1)) - φ n (a n) := by
       intro n
       obtain ⟨b, hb⟩ := hcomp n
-      have h1 : PDiv.dUnit O (CartierDual.map (G.mulP n) (φ (n + 1))) = w.1 n := by
+      have h1 : PDiv.dUnit (R := O) (CartierDual.map (G.mulP n) (φ (n + 1))) = w.1 n := by
         rw [← w.2 n, ← hφ (n + 1)]
         exact (PDiv.cotMap_d (G.dual.res n) (φ (n + 1))).symm
       have h2 := key n _ _ (h1.trans (hφ n).symm)
       rw [CartierDual.map_apply] at h2
-      rw [hb, map_add, map_smul, smul_eq_mul]
+      rw [hb, map_add (f := _), map_smul, smul_eq_mul]
       have e : φ (n + 1) (G.mulP n (a n)) + (p : O) ^ n * φ (n + 1) b - φ n (a n) =
           (φ (n + 1) (G.mulP n (a n)) - φ n (a n)) + (p : O) ^ n * φ (n + 1) b := by ring
       rw [e]
@@ -112,8 +117,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
     intro w w' n φ hφ
     obtain ⟨φ1, h1⟩ := dsurj n (w.1 n)
     obtain ⟨φ2, h2⟩ := dsurj n (w'.1 n)
-    have e : PDiv.dUnit O (φ1 + φ2) = PDiv.dUnit O φ := by
-      have ea : PDiv.dUnit O (φ1 + φ2) = PDiv.dUnit O φ1 + PDiv.dUnit O φ2 := map_add (AugCot.d _) φ1 φ2
+    have e : PDiv.dUnit (R := O) (φ1 + φ2) = PDiv.dUnit (R := O) φ := by
+      have ea : PDiv.dUnit (R := O) (φ1 + φ2) = PDiv.dUnit (R := O) φ1 + PDiv.dUnit (R := O) φ2 := map_add (AugCot.d _) φ1 φ2
       rw [ea, h1, h2, hφ]; rfl
     have k := key n _ _ e
     have := dvd_add (dvd_add (hLf w n φ1 h1) (hLf w' n φ2 h2)) k
@@ -125,8 +130,8 @@ theorem main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C]
   have hgood_smul : ∀ (r : O) w, Good (r • w) (r * Lf w) := by
     intro r w n φ hφ
     obtain ⟨φ1, h1⟩ := dsurj n (w.1 n)
-    have e : PDiv.dUnit O (r • φ1) = PDiv.dUnit O φ := by
-      have ea : PDiv.dUnit O (r • φ1) = r • PDiv.dUnit O φ1 := map_smul (AugCot.d _) r φ1
+    have e : PDiv.dUnit (R := O) (r • φ1) = PDiv.dUnit (R := O) φ := by
+      have ea : PDiv.dUnit (R := O) (r • φ1) = r • PDiv.dUnit (R := O) φ1 := map_smul (AugCot.d _) r φ1
       rw [ea, h1, hφ]; rfl
     have k := key n _ _ e
     have := dvd_add (dvd_mul_of_dvd_right (hLf w n φ1 h1) r) k

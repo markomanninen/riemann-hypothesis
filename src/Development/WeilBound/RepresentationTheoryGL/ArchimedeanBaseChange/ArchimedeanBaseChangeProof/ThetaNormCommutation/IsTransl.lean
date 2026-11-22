@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.OnlyIsotropic
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ namespace PositivityTheory.Rg.BcB.G8
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n a b : ℕ}
 
-abbrev K2 (a b : ℕ) (w : Pl E) : Subgroup (GLw a w × GLw b w) := (GlobalTheory.LFun.KGL w a).prod (GlobalTheory.LFun.KGL w b)
+abbrev K2 (a b : ℕ) (w : Pl E) : Subgroup (GLw a w × GLw b w) := (GlobalTheory.LFun.KGL w (n := a)).prod (GlobalTheory.LFun.KGL w (n := b))
 
 def geomSt2 (S : Set (Pl E)) (l₁ : InfinitePlace E → DomWeight a) (l₂ : InfinitePlace E → DomWeight b)
     (φ : ∀ w : Pl E, GLw a w × GLw b w → ℂ) : ℂ :=
@@ -32,7 +36,7 @@ def geomRat2 (S : Set (Pl E)) (l₁ : InfinitePlace E → DomWeight a) (l₂ : I
 
 def IsTestP (φ : ∀ w : Pl E, GLw a w × GLw b w → ℂ) : Prop :=
   ∃ (K₁ : ∀ w : Pl E, Subgroup (GLw a w)) (K₂ : ∀ w : Pl E, Subgroup (GLw b w)),
-    IsLevelFam (thL a) (fun w : Pl E => GlobalTheory.LFun.KGL w a) K₁ ∧ IsLevelFam (thL b) (fun w : Pl E => GlobalTheory.LFun.KGL w b) K₂ ∧
+    IsLevelFam (thL a) (fun w : Pl E => GlobalTheory.LFun.KGL w (n := a)) K₁ ∧ IsLevelFam (thL b) (fun w : Pl E => GlobalTheory.LFun.KGL w (n := b)) K₂ ∧
       GlobalTheory.BCT.IsTest (K2 a b) (fun w : Pl E => (K₁ w).prod (K₂ w)) φ
 
 def G1 : Prop := USide

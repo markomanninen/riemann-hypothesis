@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormRootSubOneLt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjective
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormRootSubOneLt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharacterPadicBasicProperties
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicTowerTraceAlmostSurjective
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.Cyc GlobalTheory.Cyc.TraceTilt
 
@@ -140,20 +144,24 @@ theorem near_of_tilt {P : LocPrime l} (AI : LocAinf l P) (T : Finset (GQ l)) (d 
   have hr0 : 0 ≤ r := (norm_nonneg _).trans hb
   choose z hz hz' using fun s => AI.actT_coeff s x 0 y hy
   have hd' : ∑ t ∈ T, AI.actT (d * t) x = ∑ t ∈ T, AI.actT t x := by
-    rw [← hd, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hd, map_sum]
     refine Finset.sum_congr rfl fun t _ => ?_
     rw [map_mul AI.actT, RingAut.mul_apply]
   have h1 := congrArg (PreTilt.coeff 0) hd'
-  rw [map_sum, map_sum, Finset.sum_congr rfl fun s _ => hz' (d * s),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.sum_congr rfl fun s _ => hz' (d * s),
     Finset.sum_congr rfl fun s _ => hz' s] at h1
   have h2 : Ideal.Quotient.mk (Ideal.span {((l : ℕ) : OC l)})
       (∑ s ∈ T, (z (d * s) - z s)) = 0 := by
-    rw [Finset.sum_sub_distrib, map_sub, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_sub_distrib, map_sub, map_sum, map_sum]
     exact sub_eq_zero.2 h1
   rw [mk_eq_zero_iff] at h2
   have h3 : ((∑ s ∈ T, (z (d * s) - z s) : OC l) : PadicComplex l) =
       ∑ s ∈ T, (AI.actC (d * s) y - AI.actC s y) := by
-    rw [show ((∑ s ∈ T, (z (d * s) - z s) : OC l) : PadicComplex l) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ s ∈ T, (z (d * s) - z s) : OC l) : PadicComplex l) =
       ∑ s ∈ T, ((z (d * s) - z s : OC l) : PadicComplex l) from
       map_sum (PadicComplexInt l).subtype _ _]
     refine Finset.sum_congr rfl fun s _ => ?_
@@ -162,7 +170,8 @@ theorem near_of_tilt {P : LocPrime l} (AI : LocAinf l P) (T : Finset (GQ l)) (d 
   have h5 : ((d (∑ t ∈ T, t b) - ∑ t ∈ T, t b : Om l) : PadicComplex l) =
       ∑ s ∈ T, (AI.actC (d * s) ((b : PadicComplex l) - y) - AI.actC s ((b : PadicComplex l) - y)) +
         ∑ s ∈ T, (AI.actC (d * s) y - AI.actC s y) := by
-    rw [← Finset.sum_add_distrib, map_sum, ← Finset.sum_sub_distrib, PadicComplex.coe_eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_add_distrib, map_sum, ← Finset.sum_sub_distrib, PadicComplex.coe_eq, map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [map_sub, map_sub, map_sub, AI.actC_ext, AI.actC_ext, PadicComplex.coe_eq,
       PadicComplex.coe_eq, AlgEquiv.mul_apply]
@@ -243,7 +252,8 @@ theorem fixed_of_near (hn : ∀ (g : GQ l) (x : Om l), ‖g x‖ = ‖x‖) (D A
       mul_inv_cancel₀ (zpow_pos hapos k).ne', mul_one, mul_comm ‖a‖, ← zpow_add_one₀ hapos.ne'] at h2
     linarith
   have htr : ∀ d ∈ D, d (∑ s ∈ S, s y) = ∑ s ∈ S, s y := fun d hd => by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine sum_shift D A S hS.1 hS.2 (fun g => g y) ?_ d hd
     intro g v _ hv
     change g (v y) = g y
@@ -352,7 +362,8 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
         exact h1)
     refine near_of_tilt AI T d x y hxy b0 _ ((le_max_right _ _).trans hra3)
       (le_trans hy ((le_max_left _ _).trans hra3)) (hd.2 _ fun h hh => ?_)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have := sum_shift A N T hT.1 hT.2 (fun g => AI.actT g x)
       (fun g v _ hv => by rw [map_mul AI.actT, RingAut.mul_apply, hxN v hv]) h hh
     rw [← this]
@@ -369,9 +380,11 @@ theorem faithH : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P
     rw [← hn s (∑ s ∈ S₂, s (∑ t ∈ T, t e))]
     apply le_of_eq
     congr 1
-    rw [hs₂ (fun r => (s * r) e), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs₂ (fun r => (s * r) e), map_sum]
     refine Finset.sum_congr rfl fun s' _ => ?_
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     rfl
   · intro w hw1 hw d hd
     have h1 := key (e * w) (by

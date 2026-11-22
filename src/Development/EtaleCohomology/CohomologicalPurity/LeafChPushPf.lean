@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafRelPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafRelPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -52,7 +56,8 @@ end
 
 theorem LeafChPush_of : LeafChPush := by
   intro q P
-  have h : IsPushout P.hom P.hom (dbl.inl P) (dbl.inr P) := IsPushout.of_hasPushout _ _
-  exact (chains (ZMod q)).map_isPushout h
+  set_option synthInstance.maxHeartbeats 200000 in
+    have h : IsPushout P.hom P.hom (dbl.inl P) (dbl.inr P) := IsPushout.of_hasPushout _ _
+    exact (chains (ZMod q)).map_isPushout h
 
 end LateralTheory.CohomologicalPurity.TubeCut

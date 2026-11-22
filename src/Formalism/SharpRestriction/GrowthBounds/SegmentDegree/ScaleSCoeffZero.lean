@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.GoodPathWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,18 +16,18 @@ section Kill
 
 variable {R σ : Type} [CommRing R] (S : Set σ)
 
-open Classical in
 
+open Classical in
 def kill : MvPolynomial σ R →ₐ[R] MvPolynomial σ R :=
   aeval fun v => if v ∈ S then 0 else MvPolynomial.X v
 
-open Classical in
 
+open Classical in
 def scaleS : MvPolynomial σ R →ₐ[R] Polynomial (MvPolynomial σ R) :=
   aeval fun v => if v ∈ S then Polynomial.X * Polynomial.C (MvPolynomial.X v) else Polynomial.C (MvPolynomial.X v)
 
-open Classical in
 
+open Classical in
 def offDeg : (σ →₀ ℕ) →+ ℕ := Finsupp.liftAddHom fun v => if v ∈ S then AddMonoidHom.id ℕ else 0
 
 theorem scaleS_monomial (m : σ →₀ ℕ) :
@@ -34,7 +38,7 @@ theorem scaleS_monomial (m : σ →₀ ℕ) :
   | add f g hf hg =>
     have : (monomial (f + g) (1 : R)) = monomial f 1 * monomial g 1 := by
       rw [monomial_mul, one_mul]
-    rw [this, map_mul, hf, hg, map_add, pow_add, map_mul]
+    rw [this, map_mul, hf, hg, map_add (f := _), pow_add, map_mul]
     ring
   | single v k =>
     rw [← MvPolynomial.X_pow_eq_monomial, map_pow]
@@ -82,7 +86,8 @@ theorem li_of_kill {ι : Type} (m : ι → σ →₀ ℕ) (w : ι → MvPolynomi
       exact hq' (Finset.mem_filter.mpr ⟨hq, hh⟩)
     rw [this, zero_smul]
   have hΘ := congrArg (fun P => (scaleS S P).coeff δ) hsum'
-  simp only [map_sum, map_smul, map_mul, scaleS_monomial, Polynomial.finsetSum_coeff, Polynomial.coeff_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, map_mul, scaleS_monomial, Polynomial.finsetSum_coeff, Polynomial.coeff_smul,
     map_zero, Polynomial.coeff_zero] at hΘ
   have hterm : ∀ q ∈ s', (Polynomial.C (monomial (m q) (1 : R)) * Polynomial.X ^ offDeg S (m q) *
       scaleS S (w q)).coeff δ = if offDeg S (m q) = δ then monomial (m q) (1 : R) * kill S (w q) else 0 := by
@@ -108,13 +113,13 @@ namespace Dat
 
 variable {n' r : ℕ} [NeZero n'] (X : Dat n' r) (K : ℕ)
 
-omit [NeZero n'] in
 
+omit [NeZero n'] in
 def offSet (j : ℤ) : Set (ℤ × Fin (r + K)) :=
   {v | ∃ t c : Fin r, c ≠ Fin.rev t ∧ v = (X.F.fr j t.val, Fin.castAdd K c)}
 
-omit [NeZero n'] in
 
+omit [NeZero n'] in
 def monTau (j : ℤ) (u : Fin r × Fin r → ℕ) : ℤ × Fin (r + K) →₀ ℕ :=
   ∑ v : Fin r × Fin r, Finsupp.single (X.F.fr j v.1.val, Fin.castAdd K v.2) (u v)
 

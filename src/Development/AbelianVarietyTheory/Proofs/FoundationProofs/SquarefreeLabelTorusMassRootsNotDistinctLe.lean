@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassSamePartOneFactorLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassTwoFactorsLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassSamePartOneFactorLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SquarefreeLabelTorusMassTwoFactorsLe
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 
@@ -55,11 +59,12 @@ private theorem exists_root_pow_eq_pow_padicVal {g : ℕ} [Fact g.Prime] (l : �
       z ^ l ^ padicValNat l n = y ^ l ^ padicValNat l n := by
   set B := padicValNat l n
   set m := n / l ^ B
-  have hnm : n = l ^ B * m := (Nat.mul_div_cancel' pow_padicValNat_dvd).symm
+  have hnm : n = l ^ B * m := (Nat.mul_div_cancel' (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))).symm
   have hm0 : m ≠ 0 := by rintro h; rw [h, mul_zero] at hnm; omega
   have hcop : (l ^ B).Coprime m := by
     have := Nat.coprime_ordCompl hl hn.ne'
     rw [Nat.factorization_def n hl] at this
+    rw [← Nat.padicValNat_def] at this
     exact Nat.Coprime.pow_left _ this
   haveI : NeZero m := ⟨hm0⟩
   obtain ⟨t, ht⟩ : ∃ t, l ^ B * t ≡ 1 [MOD m] := by
@@ -82,10 +87,11 @@ private theorem pow_pow_gcd_sub_one_eq_one_of_same_prime_power {g : ℕ} [Fact g
     z ^ (g ^ Nat.gcd d e - 1) = 1 := by
   set B := padicValNat l (g ^ e - 1)
   set m := (g ^ e - 1) / l ^ B
-  have hnm : g ^ e - 1 = l ^ B * m := (Nat.mul_div_cancel' pow_padicValNat_dvd).symm
+  have hnm : g ^ e - 1 = l ^ B * m := (Nat.mul_div_cancel' (_root_.Dvd.intro_left _ (_root_.Nat.divMaxPow_mul_pow_padicValNat _ _))).symm
   have hcop : (l ^ (max a B)).Coprime m := by
     have := Nat.coprime_ordCompl hl he.ne'
     rw [Nat.factorization_def _ hl] at this
+    rw [← Nat.padicValNat_def] at this
     exact Nat.Coprime.pow_left _ this
   have hK : z ^ l ^ max a B = x ^ l ^ max a B := by
     have h1 : z ^ l ^ max a B = y ^ l ^ max a B := by
@@ -308,8 +314,8 @@ private theorem sum_icc_prod_add_mul_pow_le (N : ℕ) {r : ℝ} (hr0 : 0 ≤ r) 
         gcongr
     _ = 2 * r ^ 2 / (1 - r) ^ 3 := by field_simp <;> ring
 
-open Polynomial Classical in
 
+open Polynomial Classical in
 theorem _root_.GlobalTheory.BadShare.mass_not_rootsApart_le : ∀ (g : ℕ) [Fact g.Prime], ∀ N : ℕ, 2 ^ 12 ≤ g →
     (_root_.GlobalTheory.BadShare.mass g N fun f => ¬ _root_.GlobalTheory.BadShare.RootsApart g N f) ≤ 23 * Real.log g / Real.sqrt g := by
   intro g _ N hg

@@ -1,7 +1,14 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Module Set
 open scoped RealInnerProductSpace Real Pointwise ContDiff
+
+local notation "e[" t "]" => Complex.exp (2 * (π : ℂ) * Complex.I * ((t : ℝ) : ℂ))
+local postfix:max "⁎" => LinearMap.BilinForm.dualSubmodule (innerₗ _)
 
 noncomputable section
 
@@ -11,8 +18,6 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
   [MeasurableSpace E] [BorelSpace E]
   {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-local notation "e[" t "]" => Complex.exp (2 * (π : ℂ) * Complex.I * ((t : ℝ) : ℂ))
-
 def latticeCell (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L] : Set E :=
   ZSpan.fundamentalDomain ((Free.chooseBasis ℤ L).ofZLatticeBasis ℝ L)
 
@@ -21,8 +26,6 @@ def latticeFourierCoeff (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice �
   (ZLattice.covolume L)⁻¹ • ∫ b in latticeCell L, e[-⟪ν, b⟫] • A b
 
 variable (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]
-
-local notation "L*" => LinearMap.BilinForm.dualSubmodule (innerₗ E) L
 
 theorem isAddFundamentalDomain_latticeCell (μ : Measure E) :
     IsAddFundamentalDomain L (latticeCell L) μ :=
@@ -48,7 +51,7 @@ theorem integrableOn_latticeCell_of_continuous {W : Type*} [NormedAddCommGroup W
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [DiscreteTopology L]
   [IsZLattice ℝ L] in
-theorem mem_innerDual_iff {ν : E} : ν ∈ L* ↔ ∀ x ∈ L, ∃ n : ℤ, (n : ℝ) = ⟪ν, x⟫ := by
+theorem mem_innerDual_iff {ν : E} : ν ∈ L⁎ ↔ ∀ x ∈ L, ∃ n : ℤ, (n : ℝ) = ⟪ν, x⟫ := by
   simp [LinearMap.BilinForm.mem_dualSubmodule, Submodule.mem_one]
 
 theorem cexp_two_pi_I_add (s t : ℝ) : e[s + t] = e[s] * e[t] := by
@@ -70,14 +73,14 @@ variable {L}
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [DiscreteTopology L]
   [IsZLattice ℝ L] in
-theorem cexp_inner_add_lattice {ν : E} (hν : ν ∈ L*) {x : E} (hx : x ∈ L) (b : E) :
+theorem cexp_inner_add_lattice {ν : E} (hν : ν ∈ L⁎) {x : E} (hx : x ∈ L) (b : E) :
     e[⟪ν, b + x⟫] = e[⟪ν, b⟫] := by
   obtain ⟨n, hn⟩ := (mem_innerDual_iff L).1 hν x hx
   rw [inner_add_right, cexp_two_pi_I_add, ← hn, cexp_two_pi_I_intCast, mul_one]
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [DiscreteTopology L]
   [IsZLattice ℝ L] in
-theorem cexp_neg_inner_add_lattice {ν : E} (hν : ν ∈ L*) {x : E} (hx : x ∈ L) (b : E) :
+theorem cexp_neg_inner_add_lattice {ν : E} (hν : ν ∈ L⁎) {x : E} (hx : x ∈ L) (b : E) :
     e[-⟪ν, b + x⟫] = e[-⟪ν, b⟫] := by
   rw [← inner_neg_left, ← inner_neg_left, cexp_inner_add_lattice (neg_mem hν) hx]
 
@@ -87,7 +90,7 @@ theorem continuous_cexp_neg_inner_smul {A : E → V} (hA : Continuous A) (ν : E
   fun_prop
 
 theorem latticeFourierCoeff_eq_setIntegral {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
-    {ν : E} (hν : ν ∈ L*) {F : Set E} (hF : IsAddFundamentalDomain L F volume) :
+    {ν : E} (hν : ν ∈ L⁎) {F : Set E} (hF : IsAddFundamentalDomain L F volume) :
     latticeFourierCoeff L A ν =
       (ZLattice.covolume L)⁻¹ • ∫ b in F, e[-⟪ν, b⟫] • A b := by
   have : MeasurableVAdd L E := (inferInstance : MeasurableVAdd L.toAddSubgroup E)
@@ -110,7 +113,7 @@ theorem norm_latticeFourierCoeff_le {A : E → V} {S : ℝ} (hS : ∀ b, ‖A b�
   exact hS b
 
 theorem latticeFourierCoeff_comp_add {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
-    {ν : E} (hν : ν ∈ L*) (c : E) :
+    {ν : E} (hν : ν ∈ L⁎) (c : E) :
     latticeFourierCoeff L (fun b ↦ A (b + c)) ν =
       e[⟪ν, c⟫] • latticeFourierCoeff L A ν := by
   have : MeasurableVAdd L E := (inferInstance : MeasurableVAdd L.toAddSubgroup E)
@@ -127,14 +130,6 @@ theorem latticeFourierCoeff_comp_add {A : E → V} (hA : ∀ x ∈ L, Function.P
   simp only [smul_smul, ← cexp_two_pi_I_add, inner_add_right, add_comm c b]
   congr 4; ring
 
-theorem latticeFourierCoeff_add {A B : E → V} (hA : Continuous A) (hB : Continuous B) (ν : E) :
-    latticeFourierCoeff L (fun b ↦ A b + B b) ν =
-      latticeFourierCoeff L A ν + latticeFourierCoeff L B ν := by
-  simp only [latticeFourierCoeff, smul_add]
-  rw [integral_add (integrableOn_latticeCell_of_continuous L
-    (continuous_cexp_neg_inner_smul hA ν)) (integrableOn_latticeCell_of_continuous L
-    (continuous_cexp_neg_inner_smul hB ν)), smul_add]
-
 theorem latticeFourierCoeff_sub {A B : E → V} (hA : Continuous A) (hB : Continuous B) (ν : E) :
     latticeFourierCoeff L (fun b ↦ A b - B b) ν =
       latticeFourierCoeff L A ν - latticeFourierCoeff L B ν := by
@@ -142,10 +137,6 @@ theorem latticeFourierCoeff_sub {A B : E → V} (hA : Continuous A) (hB : Contin
   rw [integral_sub (integrableOn_latticeCell_of_continuous L
     (continuous_cexp_neg_inner_smul hA ν)) (integrableOn_latticeCell_of_continuous L
     (continuous_cexp_neg_inner_smul hB ν)), smul_sub]
-
-theorem latticeFourierCoeff_smul (a : ℂ) (A : E → V) (ν : E) :
-    latticeFourierCoeff L (fun b ↦ a • A b) ν = a • latticeFourierCoeff L A ν := by
-  simp only [latticeFourierCoeff, smul_comm _ a, integral_smul]
 
 theorem latticeFourierCoeff_clm [CompleteSpace V] {W : Type*} [NormedAddCommGroup W]
     [NormedSpace ℂ W] [CompleteSpace W] (T : V →L[ℂ] W) {A : E → V} (hA : Continuous A) (ν : E) :
@@ -155,7 +146,7 @@ theorem latticeFourierCoeff_clm [CompleteSpace V] {W : Type*} [NormedAddCommGrou
     (continuous_cexp_neg_inner_smul hA ν)), T.map_smul_of_tower]
 
 theorem latticeFourierCoeff_fwdDiff_iter {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
-    (hc : Continuous A) {ν : E} (hν : ν ∈ L*) (c : E) (k : ℕ) :
+    (hc : Continuous A) {ν : E} (hν : ν ∈ L⁎) (c : E) (k : ℕ) :
     latticeFourierCoeff L ((fwdDiff c)^[k] A) ν =
       (e[⟪ν, c⟫] - 1) ^ k • latticeFourierCoeff L A ν := by
   induction k generalizing A with
@@ -170,8 +161,8 @@ theorem latticeFourierCoeff_fwdDiff_iter {A : E → V} (hA : ∀ x ∈ L, Functi
     rw [latticeFourierCoeff_sub (by fun_prop) hc, latticeFourierCoeff_comp_add hA hν, sub_smul,
       one_smul]
 
-omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 theorem norm_fwdDiff_iter_le (c : E) (k : ℕ) {A : E → V} (hA : ContDiff ℝ k A) {M : ℝ}
     (hM : ∀ x, ‖iteratedFDeriv ℝ k A x‖ ≤ M) (x : E) :
     ‖(fwdDiff c)^[k] A x‖ ≤ ‖c‖ ^ k * M := by
@@ -190,8 +181,8 @@ theorem norm_fwdDiff_iter_le (c : E) (k : ℕ) {A : E → V} (hA : ContDiff ℝ 
     rw [fun_iteratedFDeriv_sub_apply hAc.contDiffAt hA'.contDiffAt, iteratedFDeriv_comp_add_right]
     simpa [mul_comm] using this
 
-omit [MeasurableSpace E] [BorelSpace E] in
 
+omit [MeasurableSpace E] [BorelSpace E] in
 theorem exists_bound_of_lattice_periodic {W : Type*} [NormedAddCommGroup W] {f : E → W}
     (hf : ∀ x ∈ L, Function.Periodic f x) (hc : Continuous f) : ∃ M, ∀ b, ‖f b‖ ≤ M := by
   obtain ⟨M, hM⟩ := (isBounded_latticeCell L).isCompact_closure.exists_bound_of_continuousOn
@@ -205,7 +196,7 @@ theorem exists_bound_of_lattice_periodic {W : Type*} [NormedAddCommGroup W] {f :
 
 theorem pow_mul_norm_latticeFourierCoeff_le {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
     {k : ℕ} (hk : ContDiff ℝ k A) {M : ℝ} (hM : ∀ x, ‖iteratedFDeriv ℝ k A x‖ ≤ M)
-    {ν : E} (hν : ν ∈ L*) :
+    {ν : E} (hν : ν ∈ L⁎) :
     (4 * ‖ν‖) ^ k * ‖latticeFourierCoeff L A ν‖ ≤ M := by
   rcases eq_or_ne ν 0 with rfl | h0
   · rcases k with _ | k
@@ -223,42 +214,8 @@ theorem pow_mul_norm_latticeFourierCoeff_le {A : E → V} (hA : ∀ x ∈ L, Fun
   have h4 : ‖(-1 - 1 : ℂ)‖ = 2 := by norm_num
   rwa [h4, show 2 * ‖ν‖ * 2 = 4 * ‖ν‖ by ring] at h3
 
-theorem latticeFourierCoeff_cexp_smul [CompleteSpace V] [DecidableEq E] {μ ν : E} (hμ : μ ∈ L*)
-    (hν : ν ∈ L*) (v : V) :
-    latticeFourierCoeff L (fun b ↦ e[⟪μ, b⟫] • v) ν = if μ = ν then v else 0 := by
-  split_ifs with h
-  · subst h
-    have hpos := ZLattice.covolume_pos L volume
-    simp only [latticeFourierCoeff, smul_smul, ← cexp_two_pi_I_add, neg_add_cancel]
-    simp [← covolume_eq_volume_latticeCell, smul_smul, hpos.ne']
-  · have hn : 0 < ‖μ - ν‖ := norm_pos_iff.2 (sub_ne_zero.2 h)
-    set c : E := (2 * ‖μ - ν‖ ^ 2)⁻¹ • (μ - ν) with hc
-    have h1 : ⟪μ, c⟫ = ⟪ν, c⟫ + 1 / 2 := by
-      rw [← sub_eq_iff_eq_add', ← inner_sub_left, hc, inner_smul_right,
-        real_inner_self_eq_norm_sq]; field_simp
-    have h2 := latticeFourierCoeff_comp_add (L := L) (A := fun b ↦ e[⟪μ, b⟫] • v)
-      (fun x hx b ↦ by simp only [cexp_inner_add_lattice hμ hx]) hν c
-    simp only [inner_add_right, cexp_two_pi_I_add, mul_comm _ e[⟪μ, c⟫], mul_smul] at h2
-    rw [latticeFourierCoeff_smul, h1, cexp_two_pi_I_add, cexp_two_pi_I_half, ← sub_eq_zero,
-      ← sub_smul, smul_eq_zero] at h2
-    refine h2.resolve_left fun h3 ↦ Complex.exp_ne_zero (2 * π * Complex.I * (⟪ν, c⟫ : ℝ)) ?_
-    linear_combination (-1 / 2 : ℂ) * h3
-
-theorem hasSum_latticeFourierCoeff_tsum [CompleteSpace V] [DecidableEq E] {ι : Type*}
-    [Countable ι] {m : ι → E} (hm : ∀ j, m j ∈ L*) {a : ι → V} (ha : Summable fun j ↦ ‖a j‖)
-    {ν : E} (hν : ν ∈ L*) :
-    HasSum (fun j ↦ if m j = ν then a j else 0)
-      (latticeFourierCoeff L (fun b ↦ ∑' j, e[⟪m j, b⟫] • a j) ν) := by
-  simp only [← fun j ↦ latticeFourierCoeff_cexp_smul (hm j) hν (a j), latticeFourierCoeff]
-  refine HasSum.const_smul _ ?_
-  simp only [← tsum_const_smul'' e[-⟪ν, _⟫]]
-  refine hasSum_integral_of_summable_integral_norm (fun j ↦ integrableOn_latticeCell_of_continuous L
-    (by fun_prop)) ?_
-  simp only [norm_smul, norm_cexp_two_pi_I, one_mul, integral_const]
-  exact ha.const_smul _
 
 omit [InnerProductSpace ℝ E] in
-
 theorem average_fundamentalDomain_eq_cube [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     {ι : Type*} [Fintype ι] (b : Basis ι ℝ E) (μ : Measure E) [μ.IsAddHaarMeasure] (g : E → V) :
     (μ.real (ZSpan.fundamentalDomain b))⁻¹ • ∫ y in ZSpan.fundamentalDomain b, g y ∂μ =
@@ -289,32 +246,19 @@ theorem average_fundamentalDomain_eq_cube [NormedSpace ℝ E] [FiniteDimensional
   rw [← eq_inv_of_mul_eq_one_left hone]
   exact hint
 
-theorem latticeFourierCoeff_eq_setIntegral_haar {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
-    {ν : E} (hν : ν ∈ L*) (μ : Measure E) [μ.IsAddHaarMeasure] {F : Set E}
-    (hF : IsAddFundamentalDomain L F μ) :
-    latticeFourierCoeff L A ν = (ZLattice.covolume L μ)⁻¹ • ∫ b in F, e[-⟪ν, b⟫] • A b ∂μ := by
-  have : MeasurableVAdd L E := (inferInstance : MeasurableVAdd L.toAddSubgroup E)
-  have : VAddInvariantMeasure L E μ :=
-    (inferInstance : VAddInvariantMeasure L.toAddSubgroup E μ)
-  rw [← (isAddFundamentalDomain_latticeCell L μ).setIntegral_eq hF fun x b ↦ ?_,
-    ZLattice.covolume_eq_measure_fundamentalDomain L μ (isAddFundamentalDomain_latticeCell L μ),
-    latticeFourierCoeff, covolume_eq_volume_latticeCell, latticeCell,
-    average_fundamentalDomain_eq_cube, average_fundamentalDomain_eq_cube]
-  have : x +ᵥ b = b + (x : E) := add_comm _ _
-  rw [this, cexp_neg_inner_add_lattice hν x.2, hA x x.2]
 
 omit [MeasurableSpace E] [BorelSpace E] in
+omit [MeasurableSpace E] [BorelSpace E] in
 variable (L) in
-
 theorem exists_equiv_innerDual {ι : Type*} [Fintype ι] (b : Basis ι ℤ L) :
-    ∃ b' : Basis ι ℝ E, L* = Submodule.span ℤ (range b') ∧ ∃ φ : (ι → ℤ) ≃ L*,
+    ∃ b' : Basis ι ℝ E, L⁎ = Submodule.span ℤ (range b') ∧ ∃ φ : (ι → ℤ) ≃ L⁎,
       ∀ n x, ⟪(φ n : E), (b.ofZLatticeBasis ℝ L).equivFun.symm x⟫ = ∑ i, n i * x i := by
   classical
   have hB : LinearMap.BilinForm.Nondegenerate (innerₗ E) := by
     refine ⟨fun x hx ↦ ?_, fun x hx ↦ ?_⟩ <;> simpa using hx x
   set b₀ := b.ofZLatticeBasis ℝ L
   set b' := LinearMap.BilinForm.dualBasis _ hB b₀
-  have h : L* = Submodule.span ℤ (range b') := by
+  have h : L⁎ = Submodule.span ℤ (range b') := by
     rw [← LinearMap.BilinForm.dualSubmodule_span_of_basis _ hB, b.ofZLatticeBasis_span ℝ]
   refine ⟨b', h, ((b'.restrictScalars ℤ).equivFun.symm.trans
     (LinearEquiv.ofEq _ _ h.symm)).toEquiv, fun n x ↦ ?_⟩
@@ -325,7 +269,7 @@ theorem exists_equiv_innerDual {ι : Type*} [Fintype ι] (b : Basis ι ℤ L) :
 
 omit [MeasurableSpace E] [BorelSpace E] in
 theorem summable_norm_inv_pow_innerDual {k : ℕ} (hk : finrank ℝ E < k) :
-    Summable fun ν : L* ↦ ‖(ν : E)‖⁻¹ ^ k := by
+    Summable fun ν : L⁎ ↦ ‖(ν : E)‖⁻¹ ^ k := by
   obtain ⟨b', h, -⟩ := exists_equiv_innerDual L (Free.chooseBasis ℤ L)
   rw [h]
   exact ZLattice.summable_norm_pow_inv (Submodule.span ℤ (range b')) k
@@ -333,7 +277,7 @@ theorem summable_norm_inv_pow_innerDual {k : ℕ} (hk : finrank ℝ E < k) :
 
 theorem summable_norm_latticeFourierCoeff {A : E → V} (hA : ∀ x ∈ L, Function.Periodic A x)
     {k : ℕ} (hk : finrank ℝ E < k) (hAk : ContDiff ℝ k A) :
-    Summable fun ν : L* ↦ ‖latticeFourierCoeff L A ν‖ := by
+    Summable fun ν : L⁎ ↦ ‖latticeFourierCoeff L A ν‖ := by
   obtain ⟨M, hM⟩ := exists_bound_of_lattice_periodic (L := L) (f := iteratedFDeriv ℝ k A)
     (fun x hx b ↦ by
       rw [← iteratedFDeriv_comp_add_right, show (fun z ↦ A (z + x)) = A from funext (hA x hx)])
@@ -348,8 +292,8 @@ theorem summable_norm_latticeFourierCoeff {A : E → V} (hA : ∀ x ∈ L, Funct
   exact this
 
 private theorem hasSum_latticeFourier_complex {A : E → ℂ} (hA : ∀ x ∈ L, Function.Periodic A x)
-    (hc : Continuous A) (hs : Summable fun ν : L* ↦ latticeFourierCoeff L A ν) (y : E) :
-    HasSum (fun ν : L* ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν) (A y) := by
+    (hc : Continuous A) (hs : Summable fun ν : L⁎ ↦ latticeFourierCoeff L A ν) (y : E) :
+    HasSum (fun ν : L⁎ ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν) (A y) := by
   set b := Free.chooseBasis ℤ L
   set b₀ := b.ofZLatticeBasis ℝ L
   obtain ⟨-, -, φ, hφ⟩ := exists_equiv_innerDual L b
@@ -370,7 +314,7 @@ private theorem hasSum_latticeFourier_complex {A : E → ℂ} (hA : ∀ x ∈ L,
       obtain ⟨n, hn⟩ := (AddCircle.coe_eq_zero_iff _).1 h3
       rw [Pi.sub_apply, ← hn, smul_assoc, one_smul]
       exact L.smul_mem n (by simp [b₀])
-    rw [← hA _ h2 (b₀.equivFun.symm x), ← map_add, add_sub_cancel]
+    rw [← hA _ h2 (b₀.equivFun.symm x), ← map_add (f := _), add_sub_cancel]
   let f : C(UnitAddTorus (Free.ChooseBasisIndex ℤ L), ℂ) := ⟨f₀,
     hq.isQuotientMap.continuous_iff.2 <| by
       rw [show f₀ ∘ p = A ∘ b₀.equivFunL.symm from funext hfp]; fun_prop⟩
@@ -401,9 +345,9 @@ private theorem hasSum_latticeFourier_complex {A : E → ℂ} (hA : ∀ x ∈ L,
 
 theorem hasSum_latticeFourier_of_summable_norm [CompleteSpace V] {A : E → V}
     (hA : ∀ x ∈ L, Function.Periodic A x) (hc : Continuous A)
-    (hs : Summable fun ν : L* ↦ ‖latticeFourierCoeff L A ν‖) (y : E) :
-    HasSum (fun ν : L* ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν) (A y) := by
-  have h1 : Summable fun ν : L* ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν :=
+    (hs : Summable fun ν : L⁎ ↦ ‖latticeFourierCoeff L A ν‖) (y : E) :
+    HasSum (fun ν : L⁎ ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν) (A y) := by
+  have h1 : Summable fun ν : L⁎ ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν :=
     .of_norm (by simpa only [norm_smul, norm_cexp_two_pi_I, one_mul] using hs)
   convert h1.hasSum using 1
   refine (SeparatingDual.eq_iff_forall_dual_eq (R := ℂ)).2 fun T ↦ ?_
@@ -413,20 +357,12 @@ theorem hasSum_latticeFourier_of_summable_norm [CompleteSpace V] {A : E → V}
   simp only [latticeFourierCoeff_clm T hc, ← map_smul] at h2
   exact h2.unique (T.hasSum h1.hasSum)
 
-theorem hasSum_latticeFourier_of_summable [FiniteDimensional ℂ V] {A : E → V}
-    (hA : ∀ x ∈ L, Function.Periodic A x) (hc : Continuous A)
-    (hs : Summable fun ν : L* ↦ latticeFourierCoeff L A ν) (y : E) :
-    HasSum (fun ν : L* ↦ e[⟪(ν : E), y⟫] • latticeFourierCoeff L A ν) (A y) := by
-  have : CompleteSpace V := FiniteDimensional.complete ℂ V
-  have : FiniteDimensional ℝ V := Module.Finite.trans ℂ V
-  exact hasSum_latticeFourier_of_summable_norm hA hc (summable_norm_iff.2 hs) y
-
 theorem latticeFourier_of_contDiff [CompleteSpace V] {A : E → V} (hsm : ContDiff ℝ ∞ A)
     (hA : ∀ x ∈ L, Function.Periodic A x) :
-    (BddAbove (range fun b ↦ ‖A b‖) ∧ ∀ ν : L*, ‖latticeFourierCoeff L A ν‖ ≤ ⨆ b, ‖A b‖) ∧
-    (Summable fun ν : L* ↦ ‖latticeFourierCoeff L A ν‖) ∧
-    (∀ b, HasSum (fun ν : L* ↦ e[⟪(ν : E), b⟫] • latticeFourierCoeff L A ν) (A b)) ∧
-    ∀ (c : E) (ν : L*), latticeFourierCoeff L (fun b ↦ A (b + c)) ν =
+    (BddAbove (range fun b ↦ ‖A b‖) ∧ ∀ ν : L⁎, ‖latticeFourierCoeff L A ν‖ ≤ ⨆ b, ‖A b‖) ∧
+    (Summable fun ν : L⁎ ↦ ‖latticeFourierCoeff L A ν‖) ∧
+    (∀ b, HasSum (fun ν : L⁎ ↦ e[⟪(ν : E), b⟫] • latticeFourierCoeff L A ν) (A b)) ∧
+    ∀ (c : E) (ν : L⁎), latticeFourierCoeff L (fun b ↦ A (b + c)) ν =
       e[⟪(ν : E), c⟫] • latticeFourierCoeff L A ν := by
   have hs := summable_norm_latticeFourierCoeff hA (Nat.lt_succ_self _)
     (hsm.of_le (by exact_mod_cast le_top))
@@ -435,22 +371,5 @@ theorem latticeFourier_of_contDiff [CompleteSpace V] {A : E → V} (hsm : ContDi
   exact ⟨⟨hb, fun ν ↦ norm_latticeFourierCoeff_le (le_ciSup hb) ν⟩, hs,
     hasSum_latticeFourier_of_summable_norm hA hsm.continuous hs,
     fun c ν ↦ latticeFourierCoeff_comp_add hA ν.2 c⟩
-
-theorem latticeFourier_of_contDiff_finiteDimensional [FiniteDimensional ℂ V] {A : E → V}
-    (hsm : ContDiff ℝ ∞ A) (hA : ∀ x ∈ L, Function.Periodic A x) :
-    (BddAbove (range fun b ↦ ‖A b‖) ∧ ∀ ν : L*, ‖latticeFourierCoeff L A ν‖ ≤ ⨆ b, ‖A b‖) ∧
-    (Summable fun ν : L* ↦ ‖latticeFourierCoeff L A ν‖) ∧
-    (∀ b, HasSum (fun ν : L* ↦ e[⟪(ν : E), b⟫] • latticeFourierCoeff L A ν) (A b)) ∧
-    ∀ (c : E) (ν : L*), latticeFourierCoeff L (fun b ↦ A (b + c)) ν =
-      e[⟪(ν : E), c⟫] • latticeFourierCoeff L A ν :=
-  have : CompleteSpace V := FiniteDimensional.complete ℂ V
-  latticeFourier_of_contDiff hsm hA
-
-theorem eq_zero_of_latticeFourierCoeff_eq_zero [CompleteSpace V] {A : E → V}
-    (hA : ∀ x ∈ L, Function.Periodic A x) (hc : Continuous A)
-    (h : ∀ ν : L*, latticeFourierCoeff L A ν = 0) (y : E) : A y = 0 := by
-  have := hasSum_latticeFourier_of_summable_norm hA hc (by simp [h, summable_zero]) y
-  simp only [h, smul_zero] at this
-  exact this.unique hasSum_zero
 
 end GlobalTheory

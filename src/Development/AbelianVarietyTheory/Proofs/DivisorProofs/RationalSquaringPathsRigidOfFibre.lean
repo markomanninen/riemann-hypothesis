@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpecMapFieldCancel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SpecMapFieldCancel
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -60,7 +64,29 @@ theorem ratRigid_of_fibre : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G], ∀ (�
           rcases n with _ | n <;> simp
         rw [this]
   have hβb : β ≫ G.hom = spMap RatFunc.C ≫ b := by
-    apply GlobalTheory.spec_map_field_cancel (algebraMap (RatFunc Ω) (LaurentSeries Ω))
+    have cancel {K C : Type} [Field K] [Field C] (gam : K →+* C)
+        {X : Scheme} (y y' : Sp K ⟶ X)
+        (h : spMap gam ≫ y = spMap gam ≫ y') : y = y' := by
+      obtain ⟨⟨p, φ⟩, rfl⟩ := (Scheme.SpecToEquivOfField K X).symm.surjective y
+      obtain ⟨⟨p', φ'⟩, rfl⟩ := (Scheme.SpecToEquivOfField K X).symm.surjective y'
+      simp only [Scheme.SpecToEquivOfField_symm_apply] at h ⊢
+      have e : ∀ (q : X) (ψ : X.residueField q ⟶ CommRingCat.of K),
+          spMap gam ≫ (Spec.map ψ ≫ X.fromSpecResidueField q) =
+            (Scheme.SpecToEquivOfField C X).symm ⟨q, ψ ≫ CommRingCat.ofHom gam⟩ := by
+        intro q ψ
+        simp only [Scheme.SpecToEquivOfField_symm_apply, spMap, Spec.map_comp, Category.assoc]
+      rw [e, e] at h
+      have h2 := (Scheme.SpecToEquivOfField C X).symm.injective h
+      simp only [Sigma.mk.inj_iff] at h2
+      obtain ⟨rfl, h3⟩ := h2
+      have h4 : φ = φ' := by
+        have h5 : φ ≫ CommRingCat.ofHom gam = φ' ≫ CommRingCat.ofHom gam := eq_of_heq h3
+        ext x
+        apply gam.injective
+        have := congrArg (fun f => f.hom x) h5
+        simpa using this
+      rw [h4]
+    apply cancel (algebraMap (RatFunc Ω) (LaurentSeries Ω))
     rw [← Category.assoc, hβ, Category.assoc, hξ.base, ← Category.assoc, ← Category.assoc, hsp, hsp,
       ratFunc_C_laurent]
   let β' : Sp (RatFunc Ω) ⟶ ((Over.pullback b).obj G).left := pullback.lift β (spMap RatFunc.C) hβb

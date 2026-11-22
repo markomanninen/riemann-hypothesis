@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.SubMemOfCompat
+module
+
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+
+@[expose] public section
 
 noncomputable section
 

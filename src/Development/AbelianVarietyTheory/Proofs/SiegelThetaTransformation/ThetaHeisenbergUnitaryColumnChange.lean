@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLawsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HMatMulVecPerCrd
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLawsStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr
@@ -73,13 +77,13 @@ theorem sum_hx_hAct (x : Frame X.Ψ r)
   simp only [← hx_sum_right]
   congr 1
   funext j
-  simp only [Finset.sum_apply]
   have hj : ∀ b, ∑ k, rowType X (idx j) (cc (h k a) * h k b) * w b j =
       rowType X (idx j) ((1 : Matrix (Fin n) (Fin n) E) a b) * w b j := by
     intro b
-    rw [← Finset.sum_mul, ← map_sum, hcol]
-  simp only [hj, Matrix.one_apply, apply_ite, map_one, map_zero, ite_mul, _root_.one_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.sum_mul, ← map_sum, hcol]
+  simp only [Finset.sum_apply, hj, Matrix.one_apply, apply_ite, map_one, map_zero, ite_mul,
+    _root_.one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem pv_mul_row (x : Frame X.Ψ r)
     (hsm : ∀ (a : E) v, pv X idx x (a • v) = fun j => rowType X (idx j) a * pv X idx x v j)
@@ -99,8 +103,8 @@ theorem pv_mul_row (x : Frame X.Ψ r)
 
 end GlobalTheory.Dict.ColHeis
 
-open GlobalTheory.Dict.ColHeis in
 
+open GlobalTheory.Dict.ColHeis in
 theorem GlobalTheory.Dict.thA_heisG_hAct : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r : ℕ) (X : Data E r) (g : ℕ) (bas : (Fin g ⊕ Fin g → ℤ) ≃ₗ[ℤ] X.Λ) (idx : Fin g ≃ X.Ψ × Fin r) (n : ℕ), IsSympl X bas → Even n → ∀ h : Matrix (Fin n) (Fin n) E, ccT h * h = 1 → ∀ φ φ' : TF n g, IsSB φ → IsSB φ' → ∀ t : ℂ, ∀ x ∈ X.dom, (∀ z, thA X bas idx φ' x (hAct X idx h z) = t * thA X bas idx φ x z) → ∀ (y : Matrix (Fin n) (Fin r) E) z, thA X bas idx (heisG X bas (h * y) φ') x (hAct X idx h z) = t * thA X bas idx (heisG X bas y φ) x z := by
   intro E _ _ _ r X g bas idx n hS hn h hh φ φ' hφ hφ' t x hxd hrel y z
   obtain ⟨-, -, -, hadj, hsm, -⟩ := GlobalTheory.T.hermitianFormAtFrame_laws E r X g bas idx n hS hn x hxd

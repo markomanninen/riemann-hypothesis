@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCdvrDominating
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrOfDimOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCdvrDominating
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDvrOfDimOne
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.PropDvr

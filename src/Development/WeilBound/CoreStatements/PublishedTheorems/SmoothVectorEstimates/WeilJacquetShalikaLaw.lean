@@ -1,5 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.SatakeEigenvalues
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.WhittakerVanishingImpliesZero
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.SatakeEigenvalues
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.lift_levelP_alt₂
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +88,7 @@ theorem dot_eLast {k : ℕ} (y : UnipotentBlockColumnIndex a k k → Ad E) : dot
   refine Finset.sum_congr rfl fun t _ => ?_
   split_ifs <;> simp
 
-theorem law [IsTotallyComplex E] {ψ : AddChar (Ad E) ℂ} {f : GA E a → ℂ}
+theorem law [_root_.NumberField.IsTotallyComplex E] {ψ : AddChar (Ad E) ℂ} {f : GA E a → ℂ}
     (hf : ∀ k, 0 < k → ∀ (y : UnipotentBlockColumnIndex a k k → Ad E) g, f (blkU y * g) = ψ (lastE k y) * f g)
     (w : Pl E) (n : GL (Fin a) (w.adicCompletion E)) (hn : n ∈ GroundTheory.Automorphic.Iwasawa.unipotent _ a)
     (g : GA E a) : f (fl a w n * g) = GroundTheory.Automorphic.Whittaker.psiN (psiW ψ w) n * f g := by
@@ -111,7 +116,7 @@ theorem whittaker_uniqueness_local : PositivityTheory.JacquetShalikaLocal.L7 →
     rw [← hΛ' 0 hφ, map_zero]
   obtain ⟨z, hz⟩ := WeilJacquetShalikaLaw.exists_unit_one_add_generator B hsat.2.2.1
   let v : GL (Fin a) (w.adicCompletion E) → ℂ := fun x => Wh ψ φ (h * fl a w x)
-  have hfix : ∀ k ∈ KGL w a, Rt E a (fl a w k) φ = φ := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hsat.2.1 k hk
+  have hfix : ∀ k ∈ KGL w (n := a), Rt E a (fl a w k) φ = φ := fun k hk => GlobalTheory.LGrp.mem_fixed.1 hsat.2.1 k hk
   have hv : v ∈ WeilJacquetShalikaLaw.WS (WeilJacquetShalikaLaw.psiW ψ w) a := by
     intro n hn x
     change Wh ψ φ (h * fl a w (n * x)) = _ * Wh ψ φ (h * fl a w x)
@@ -144,7 +149,7 @@ theorem whittaker_uniqueness_local : PositivityTheory.JacquetShalikaLocal.L7 →
       have e1 := (LinearMap.proj (R := ℂ) (φ := fun _ : GL (Fin a) (w.adicCompletion E) => ℂ) x).toAddMonoidHom.map_finsum hfin
       have e2 := (Λ : XB E a →L[ℂ] ℂ).toLinearMap.toAddMonoidHom.map_finsum hfin2
       have e3 := hsat.2.2.2 ϖ hϖ j hj
-      have key : ∀ c : GL (Fin a) (w.adicCompletion E) ⧸ KGL w a,
+      have key : ∀ c : GL (Fin a) (w.adicCompletion E) ⧸ KGL w (n := a),
           (Tj ℂ a (Ov E w) ϖ j c.out • GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ c.out v) x =
             Λ (Tj ℂ a (Ov E w) ϖ j c.out • repW a w c.out φ) := by
         intro c
@@ -153,8 +158,8 @@ theorem whittaker_uniqueness_local : PositivityTheory.JacquetShalikaLocal.L7 →
         rw [hrt, smul_eq_mul]
         change _ * Wh ψ φ (h * fl a w (x * c.out)) = _
         rw [map_mul, mul_assoc]
-      have LHS : heckeVec (GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ) (KGL w a)
-          (Tj ℂ a (Ov E w) ϖ j) v x = Λ (heckeVec (repW a w) (KGL w a) (Tj ℂ a (Ov E w) ϖ j) φ) := by
+      have LHS : heckeVec (GlobalTheory.PRep.rightReg ℂ (GL (Fin a) (w.adicCompletion E)) ℂ) (KGL w (n := a))
+          (Tj ℂ a (Ov E w) ϖ j) v x = Λ (heckeVec (repW a w) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ j) φ) := by
         rw [heckeVec, heckeVec]
         exact e1.trans ((finsum_congr key).trans e2.symm)
       refine LHS.trans ?_

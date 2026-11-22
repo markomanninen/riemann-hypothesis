@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.DiscreteBranchingUpq
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.L2OpNormConjTransposeExpMulSignMulExpSubLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.OneMemNbh
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ProjExists
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.L2OpNormConjTransposeExpMulSignMulExpSubLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -247,7 +251,7 @@ theorem logNear_holds : LogNear := by
   have hYn : ‖Y‖ ≤ δ := by rw [← hsn_eq_norm]; exact hgd
   have hY4 : ‖Y‖ ≤ 1 / 4 := hYn.trans hδ
   let S : Subalgebra ℂ (Mat m) := Algebra.elemental ℂ Y
-  letI : NormedCommRing S := { SubringClass.toNormedRing S with mul_comm := mul_comm }
+  letI : NormedCommRing S := { SubringClass.toNormedRing S with mul_comm := mul_comm' }
   letI : NormedAlgebra ℂ S := inferInstance
   haveI : CompleteSpace S := inferInstance
   let y : S := ⟨Y, Algebra.elemental.self_mem ℂ Y⟩
@@ -289,7 +293,7 @@ theorem logNear_holds : LogNear := by
     rw [hy] at this; linarith [norm_nonneg Y]
   · have := map_exp_of_mem_ball (𝕂 := ℂ) S.val hval (logS y) ((expSeries_radius_eq_top ℂ S).symm ▸ edist_lt_top _ _)
     rw [m1] at this
-    have h2 : S.val (1 + y) = 1 + Y := by rw [map_add, map_one]; rfl
+    have h2 : S.val (1 + y) = 1 + Y := by rw [map_add (f := _), map_one]; rfl
     rw [hgY, ← h2]
     exact this.symm.trans (congrArg S.val e1)
 

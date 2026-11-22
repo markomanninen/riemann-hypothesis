@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.StatementP
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,9 @@ lemma sub_le_sum_sub {n : ℕ} (ν μ : Fin n → ℤ) (h : ∀ m, μ m ≤ ν m
     (Finset.mem_univ i)
 
 lemma mem_stripsUp {n : ℕ} (μ ν : Fin n → ℤ) (b : ℕ) : ν ∈ stripsUp μ b ↔ HStrip ν μ b := by
-  classical
+  letI : DecidablePred (fun ν => HStrip ν μ b) := fun ν => by
+    unfold HStrip
+    infer_instance
   unfold stripsUp
   rw [Finset.mem_filter, Fintype.mem_piFinset]
   unfold HStrip
@@ -28,7 +34,9 @@ lemma mem_stripsUp {n : ℕ} (μ ν : Fin n → ℤ) (b : ℕ) : ν ∈ stripsUp
     exact ⟨fun i => ⟨h.1 i, by linarith [sub_le_sum_sub ν μ h.1 i, h.2.2]⟩, h⟩
 
 lemma mem_stripsDown {n : ℕ} (μ ν : Fin n → ℤ) (b : ℕ) : ν ∈ stripsDown μ b ↔ HStrip μ ν b := by
-  classical
+  letI : DecidablePred (fun ν => HStrip μ ν b) := fun ν => by
+    unfold HStrip
+    infer_instance
   unfold stripsDown
   rw [Finset.mem_filter, Fintype.mem_piFinset]
   unfold HStrip
@@ -56,8 +64,8 @@ lemma antitone_of_mem_gtBox {n : ℕ} {μ : Fin (n + 1) → ℤ} {κ : Fin n →
       _ ≤ μ i.succ := hμ (Fin.succ_le_castSucc_iff.mpr h)
       _ ≤ κ i := (hκ i).1
 
-open Classical in
 
+open Classical in
 def sLe {n : ℕ} (κ : Fin n → ℤ) (b : ℕ) : Finset (Fin n → ℤ) :=
   (Fintype.piFinset fun i => Finset.Icc (κ i) (κ i + b)).filter fun l =>
     (∀ m, κ m ≤ l m) ∧ (∀ m m' : Fin n, m.val + 1 = m'.val → l m' ≤ κ m) ∧

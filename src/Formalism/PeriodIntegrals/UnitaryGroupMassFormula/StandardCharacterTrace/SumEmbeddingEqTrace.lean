@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.StdCharTR
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.Imports
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInterAlt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IsOpenIntSub
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.StdCharTR
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInter
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.Imports
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IntInterAlt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegerSubgroupIntersection.IsOpenIntSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ def Lre : Ainf F →+ ℝ where
 
 theorem continuous_Lre : Continuous (Lre F) := by
   show Continuous (fun a : Ainf F => ∑ w : InfinitePlace F, (extensionEmbedding w (a w)).re)
-  exact continuous_finset_sum _ fun w _ =>
+  exact continuous_finsetSum _ fun w _ =>
     Complex.continuous_re.comp ((isometry_extensionEmbedding w).continuous.comp (continuous_apply w))
 
 theorem sum_embedding_eq_trace [IsTotallyReal F] (y : F) :
@@ -96,7 +100,7 @@ theorem stdCharTR_main : PI.StdCharTR.Target := by
   let ψ : AddChar (AF F) ℂ :=
     { toFun := fun x => ((AddCircle.toCircle (h x) : Circle) : ℂ)
       map_zero_eq_one' := by simp [AddCircle.toCircle_zero]
-      map_add_eq_mul' := fun a b => by simp [map_add, AddCircle.toCircle_add] }
+      map_add_eq_mul' := fun a b => by simp [map_add (f := _), AddCircle.toCircle_add] }
   have hψ : ∀ x, ψ x = ((AddCircle.toCircle (h x) : Circle) : ℂ) := fun _ => rfl
   have hpair : ∀ x : Ainf F, pairA F x 0 ∈ PI.GaugeCharW.intSub F := by
     intro x

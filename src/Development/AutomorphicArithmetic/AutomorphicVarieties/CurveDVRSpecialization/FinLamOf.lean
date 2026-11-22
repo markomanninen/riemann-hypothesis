@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SecondThirdPrimeConditionTransferAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SecondThirdPrimeConditionTransferAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CoB
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg
 
@@ -25,7 +29,8 @@ private theorem flo_sub_mem {O R : Type} [CommRing O] [IsLocalRing O] [Finite (R
     have := Finset.mem_range.1 hi
     omega
   have hres : res O R s = ((q - 1 : ℕ) : ResidueField O) * res O R a ^ (q - 1 - 1) := by
-    rw [hs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hs, map_sum]
     simp only [map_mul, map_pow, ← h]
     rw [Finset.sum_congr rfl hterm, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
   have hcast : ((q - 1 : ℕ) : ResidueField O) = -1 := by
@@ -54,7 +59,7 @@ private theorem flo_cont {Γ O R R' : Type} [TopologicalSpace Γ] [CommRing O] [
     refine le_trans (Ideal.pow_right_mono (J := (maximalIdeal R').comap (f : R →+* R')) ?_ N) (Ideal.le_comap_pow _ N)
     intro x hx
     rw [Ideal.mem_comap, ← res_eq_zero_iff O R']
-    exact (res_map f x).trans ((res_eq_zero_iff O R x).2 hx)
+    exact (res_map (O := O) f x).trans ((res_eq_zero_iff O R x).2 hx)
   exact (h N).comp (Ideal.quotientMap _ (f : R →+* R') hle)
 
 private theorem flo_lam {l : ℕ} [Fact l.Prime] {F : W.GFrame l} {O : Type} [CommRing O] [IsLocalRing O]
@@ -135,7 +140,7 @@ private theorem flo_lam {l : ℕ} [Fact l.Prime] {F : W.GFrame l} {O : Type} [Co
     have hs := congrArg (fun χ => ((χ g : Rˣ) : R)) (W.LamObj.toPair_spec r Λ p v i)
     change Λ.toPair p (Λ.κ v i g : Λ.Λ) = ((p.ψ v i (g : F.Gv v)) : R) at hs
     show iota (res O Λ.Λ (Λ.κ v i g : Λ.Λ)) = Ideal.Quotient.mk P (Λ.toPair p (Λ.κ v i g : Λ.Λ))
-    rw [← res_map (Λ.toPair p), hs]
+    rw [← res_map (O := O) (Λ.toPair p), hs]
     exact key _ (Units.isUnit _) (hψ v i g g.2)
   have hx' : Ideal.Quotient.mk P (Λ.toPair p x) = 0 := by
     show φ x = 0

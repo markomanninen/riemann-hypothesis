@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermitianDiagonalisation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedQuadraticMemBase
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HermitianDiagonalisation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FixedQuadraticMemBase
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Gka4.diag_hermitian :
     ∀ (F E : Type) [inst : Field F] [inst_1 : NumberField F] [inst_2 : Field E] [inst_3 : NumberField E]

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CommutingEndomorphismCondition
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoeffMonicPolySum
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Formalism.ConjugateSelfDual ReciprocityTheory.Gal
 
 noncomputable section
@@ -102,11 +107,11 @@ theorem main : ∀ (D : D7) (M : Formalism.L2.MtFam D), Formalism.L2.HeckeTied D
   set n := D.R.nV - k
   have e1 : IsLocalRing.residue (D.nd.O i) (p.coeff n) =
       IsLocalRing.residue (D.nd.O i) ((heckePol D.nd i x v).coeff n) := by
-    have := congrArg (fun P => Polynomial.coeff P n) hp2
+    have := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P n) hp2
     simpa only [Polynomial.coeff_map] using this
   have e2 : IsLocalRing.residue (D.nd.O i') (p'.coeff n) =
       IsLocalRing.residue (D.nd.O i') ((heckePol D.nd i' x' v).coeff n) := by
-    have := congrArg (fun P => Polynomial.coeff P n) hp2'
+    have := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P n) hp2'
     simpa only [Polynomial.coeff_map] using this
   have e3 := GlobalTheory.PtLocalEig.residue_map_equiv φ e1
   have hcp : φ (p.coeff n) = p'.coeff n := by

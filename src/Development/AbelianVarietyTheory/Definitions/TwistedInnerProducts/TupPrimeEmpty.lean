@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Formalism.LocalToGlobal.ProjectiveLattices.CompHt
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ variable (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F)
 def CoverField : Prop :=
   ∀ (i : Fin D.R.m) (t : T0) (l₂ : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Level T.Q.H), T.Q.l.Dvd l₂ → l₂.M = T.Q.l.M * tupPrime R t → l₂.A = 1 →
     ∀ (Xo₂ : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Moduli (T.Q.Dw ((i : ℕ) + 1)) l₂) (c₂ : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Coeff l₂),
-      c₂.F = D.what₂.embLL.toRatAlgHom.fieldRange → FnAlgClosed Xo₂ c₂
+      c₂.F = D.what₂.embLL.toRatAlgHom.fieldRange → FnAlgClosed (Xo := Xo₂) (c := c₂)
 
 variable (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)) (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
 
@@ -41,8 +45,5 @@ def OneMapOverL (ph : ℂ) (i : Fin D.R.m) : Prop :=
   ∃ O' : OMDat T.toCore R i T0 id, O'.c'.F = D.what₂.embLL.toRatAlgHom.fieldRange ∧
     O'.Pins (κ i) (v₀ i (sg0 D A)) (iotaW T i) (T.x₀ ((i : ℕ) + 1) O'.s0) ∧
       O'.OneMapOf (κ i) (v₀ i (sg0 D A)) (T.cE ((i : ℕ) + 1) O'.s0) ph
-
-theorem OneMapOverL.pins {ph : ℂ} {i : Fin D.R.m} (h : OneMapOverL T R κ v₀ ph i) : PinsOverL T R κ v₀ i :=
-  h.imp fun _ h => ⟨h.1, h.2.1⟩
 
 end GlobalTheory.TwistField

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieTop
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieTop
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -48,9 +52,5 @@ def NondegenerateCharts : Prop :=
   ∀ (T : CDVR) (io : c.F →+* T.Fr) (y : IntFr Xo c T io) (C3 : IntChart T io y)
     (C : Type) [Field C] [CharZero C] (V : VF C) (ι : T.Fr →+* C), EmbOK T V ι →
     ∀ (k : ℕ) (Y : FBChart C V (𝓞 E) (chD C3.ch)), IsBC C3 ι k Y → NDG Y
-
-theorem rank_maximal_charts_of_nondegenerate (h1 : RankMaximalOfNondegenerate) (h2 : NondegenerateCharts Xo c) : RankMaximalCharts Xo c :=
-  fun hstar T io y C3 C _ _ V ι hι k Y hY _ d _ lab ha hg hr o Hc =>
-    h1 C V (𝓞 E) _ Y d _ (pairOfLab ha hg o) (h2 hstar T io y C3 C V ι hι k Y hY) (rankHyp_ofLab ha hg hr o) Hc
 
 end Formalism.L2.FormalSeriesBounds

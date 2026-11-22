@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,5 @@ def scalF (Wp : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] (f : Ma
 
 def Ef (D : RealPlaceData k r Wp Wq) (F : Mat k r → (Wq →L[ℂ] Wp)) (q : (Fin r → ℂ) × ℂ) : ℝ≥0∞ :=
   ∫⁻ p, ‖rho D p F (gq D q)‖ₑ ∂D.μSS
-
-def muS (D : RealPlaceData k r Wp Wq) : Measure (Mt k r) :=
-  (D.μW.prod D.μN).map fun p => ((Matrix.of p.2 * Matrix.of p.1 : Mat k r) : Mt k r)
 
 end ReciprocityTheory.ChartRestriction.DS.Mult1

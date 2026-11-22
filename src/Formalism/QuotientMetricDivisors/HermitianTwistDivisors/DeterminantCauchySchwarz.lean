@@ -1,4 +1,8 @@
-import Formalism.QuotientMetricDivisors.ProdFormula
+module
+
+public import Formalism.QuotientMetricDivisors.ProdFormula
+
+@[expose] public section
 
 open Matrix
 open scoped Matrix ComplexOrder MatrixOrder Matrix.Norms.L2Operator
@@ -19,7 +23,7 @@ lemma one_le_det_one_add {m : Type*} [Fintype m] [DecidableEq m] {Z : Matrix m m
       det_one, mul_one]
   have key : 1 + Z = (Unitary.conjStarAlgAut ℂ (Matrix m m ℂ) hZ.1.eigenvectorUnitary)
       (1 + diagonal (RCLike.ofReal ∘ hZ.1.eigenvalues)) := by
-    rw [map_add, map_one, ← hspec]
+    rw [map_add (f := _), map_one, ← hspec]
   rw [key, Unitary.conjStarAlgAut_apply, hdet, ← diagonal_one, diagonal_add, det_diagonal]
   have hev := hZ.eigenvalues_nonneg
   have hprod : ∏ i, ((1 : ℂ) + (RCLike.ofReal ∘ hZ.1.eigenvalues) i) =
@@ -28,7 +32,7 @@ lemma one_le_det_one_add {m : Type*} [Fintype m] [DecidableEq m] {Z : Matrix m m
     rfl
   rw [hprod, ← Complex.ofReal_one, Complex.real_le_real]
   calc (1 : ℝ) = ∏ _i : m, (1 : ℝ) := by simp
-    _ ≤ _ := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun i _ => by linarith [hev i])
+    _ ≤ _ := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun i _ => by linarith [hev i])
 
 lemma det_le_det_add {m : Type*} [Fintype m] [DecidableEq m] {X Y : Matrix m m ℂ}
     (hX : X.PosSemidef) (hY : Y.PosSemidef) : X.det ≤ (X + Y).det := by

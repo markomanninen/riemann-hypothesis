@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPfSurj
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafFreeCokPfSurj
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 namespace LateralTheory.CohomologicalPurity
@@ -114,14 +118,14 @@ theorem leafFreeCokInj : LeafFreeCokInj := by
       (by
         rintro a₀ ⟨x, hx⟩
         obtain ⟨x', hx'⟩ := h1 T a₀.down x hx
-        exact ⟨A'.map g.op x', by rw [FunctorToTypes.naturality, hx']⟩)
+        exact ⟨A'.map g.op x', by rw [NatTrans.naturality_apply, hx']⟩)
       (by
         rintro a₁ a₂ he ⟨x', hx'⟩
         have he' : b.app (op T) a₁.down = b.app (op T) a₂.down := congrArg ULift.down he
         refine h1 V (B'.map g.op a₂.down) (a.app (op V) x') ?_
         have := ConcreteCategory.congr_hom (NatTrans.congr_app w (op V)) x'
         simp only [NatTrans.comp_app, ConcreteCategory.comp_apply] at this
-        rw [← this, hx', FunctorToTypes.naturality, FunctorToTypes.naturality, he'])
+        rw [← this, hx', NatTrans.naturality_apply, NatTrans.naturality_apply, he'])
       (by
         intro a₁ ha₁ a₂ ha₂ he
         rcases HS (a₁, a₂) (Finset.mem_product.2 ⟨ha₁, ha₂⟩) g hg (congrArg ULift.down he) with e | ⟨x, hx⟩

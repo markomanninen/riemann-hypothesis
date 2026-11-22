@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.LocalArtinBaseChange
-import GroundTheory.LocalFields.LocalArtinTransport
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.LocalArtinBaseChange
+public import GroundTheory.LocalFields.LocalArtinTransport
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,21 +32,6 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   [Algebra K Ω] [ValuativeExtension K Ω] [IsSepClosure K Ω]
   (E : IntermediateField K Ω) [FiniteDimensional K E] (σ : Ω ≃ₐ[K] Ω)
 
-instance finiteDimensional_map_algEquiv :
-    FiniteDimensional K (E.map (σ : Ω →ₐ[K] Ω)) :=
-  LinearEquiv.finiteDimensional (IntermediateField.equivMap E (σ : Ω →ₐ[K] Ω)).toLinearEquiv
-
-theorem localArtinMap_conj_apply (x : Eˣ) {y : Ω} (hy : y ∈ maximalAbelianExtension E Ω) :
-    σ ((localArtinMap E Ω x ⟨y, hy⟩ : maximalAbelianExtension E Ω) : Ω) =
-      ((localArtinMap (E.map (σ : Ω →ₐ[K] Ω)) Ω
-        (Units.map (IntermediateField.equivMap E (σ : Ω →ₐ[K] Ω)).toRingEquiv.toRingHom.toMonoidHom x)
-          ⟨σ y, (mem_maximalAbelianExtension_transport_iff
-            (IntermediateField.equivMap E (σ : Ω →ₐ[K] Ω)).toRingEquiv σ.toRingEquiv
-            (fun _ => rfl)).2 hy⟩ : maximalAbelianExtension (E.map (σ : Ω →ₐ[K] Ω)) Ω) : Ω) :=
-  transport_localArtinMap_apply (IntermediateField.equivMap E (σ : Ω →ₐ[K] Ω)).toRingEquiv
-    (fun a b => vle_algEquiv_apply_iff (IntermediateField.equivMap E (σ : Ω →ₐ[K] Ω)) a b)
-    σ.toRingEquiv (fun _ => rfl) x hy
-
 end Conjugation
 
 section Finite
@@ -53,8 +42,8 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
   {Ω : Type*} [Field Ω] [Algebra K Ω] [Algebra K' Ω] [IsScalarTower K K' Ω]
   [IsSepClosure K Ω] [IsSepClosure K' Ω]
 
-omit [ValuativeRel K'] [TopologicalSpace K'] [IsNonarchimedeanLocalField K'] [ValuativeExtension K K'] in
 
+omit [ValuativeRel K'] [TopologicalSpace K'] [IsNonarchimedeanLocalField K'] [ValuativeExtension K K'] in
 theorem maximalAbelianExtension_le_of_algebra {y : Ω} (hy : y ∈ maximalAbelianExtension K Ω) :
     y ∈ maximalAbelianExtension K' Ω := by
   let := algebraicValuativeRel K Ω

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.MemPowSub
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.PIdxUnitsFiniteExtensionAdicCompletionStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Polynomial GlobalTheory.QNorm GlobalTheory.CNorm
 open scoped WithZero TensorProduct
@@ -100,11 +104,11 @@ private theorem prod_absNorm_pow_le_pow_finrank {F : Type} [Field F] [NumberFiel
   simp only [map_pow] at h
   exact Nat.le_of_dvd (pow_pos hp _) h
 
+
 open NumberField IsDedekindDomain Polynomial in
 open scoped WithZero TensorProduct in
-
 theorem _root_.GlobalTheory.CNorm.index_finPow_le : ∀ (p : ℕ) (F : Type) [Field F] [NumberField F]
-    [IsTotallyComplex F] (S : Finset (HeightOneSpectrum (𝓞 F))), 0 < p →
+    [_root_.NumberField.IsTotallyComplex F] (S : Finset (HeightOneSpectrum (𝓞 F))), 0 < p →
     (_root_.GlobalTheory.CNorm.finPow p F S).index ≠ 0 ∧
       (_root_.GlobalTheory.CNorm.finPow p F S).index ≤
         p ^ (2 * (S.card + Fintype.card (InfinitePlace F))) := by

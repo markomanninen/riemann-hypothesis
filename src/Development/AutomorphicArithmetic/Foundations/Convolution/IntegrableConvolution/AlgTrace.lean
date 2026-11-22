@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatImage
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.UnitsTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.TrDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatImage
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.UnitsTrace
+
+@[expose] public section
 
 private theorem factor_alg {A B C : Type} [Ring A] [Ring B] [Ring C] [Algebra ℂ A] [Algebra ℂ B] [Algebra ℂ C]
     (p : A →ₐ[ℂ] B) (hp : Function.Surjective p) (g : A →ₐ[ℂ] C) (h : ∀ a, p a = 0 → g a = 0) :
@@ -32,7 +36,7 @@ private theorem comm_lift {X E : Type} [Ring E] [Algebra ℂ E] (T : X → E) (S
   | grade0 r => rw [AlgHom.commutes]; exact (Algebra.commutes r S).symm
   | grade1 x => rw [FreeAlgebra.lift_ι_apply]; exact h x
   | mul a b ha hb => rw [map_mul]; exact ha.mul_right hb
-  | add a b ha hb => rw [map_add]; exact ha.add_right hb
+  | add a b ha hb => rw [map_add (f := _)]; exact ha.add_right hb
 
 theorem UpperTheory.ConvolutionTheory.L1.algTrace :
     UpperTheory.ConvolutionTheory.L1.AlgTrace := by
@@ -55,7 +59,7 @@ theorem UpperTheory.ConvolutionTheory.L1.algTrace :
     | grade0 r => intro w; simp [Algebra.algebraMap_eq_smul_one]
     | grade1 x => intro w; rw [hρι, hρι, hU]
     | mul a b ha hb => intro w; simp only [map_mul, Module.End.mul_apply, ha, hb]
-    | add a b ha hb => intro w; simp only [map_add, LinearMap.add_apply, ha, hb]
+    | add a b ha hb => intro w; simp only [map_add (f := _), LinearMap.add_apply, ha, hb]
   have hker : ∀ a, ρ 0 a = 0 → ∀ i, ρ i a = 0 := by
     intro a ha i
     induction i using Fin.induction with

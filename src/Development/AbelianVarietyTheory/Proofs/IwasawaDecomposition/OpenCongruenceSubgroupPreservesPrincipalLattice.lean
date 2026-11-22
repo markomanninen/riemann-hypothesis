@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepLevelContainsDeepCongruenceAtBadPrime
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatMulIntegralAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StepLevelContainsDeepCongruenceAtBadPrime
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNatMulIntegralAlt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 open scoped TensorProduct
 
@@ -168,7 +173,7 @@ theorem glob_eq {n : ℕ} (v : HeightOneSpectrum (𝓞 F)) (M : ℕ)
       1 + (M : E ⊗[F] FiniteAdeleRing (𝓞 F) F) • A.map (Formalism.UG.P.afsplitIE v) := by
   ext i j
   rw [Formalism.UG.P.afsplitC_apply]
-  simp only [Matrix.add_apply, Matrix.smul_apply, Nat.cast_smul_eq_nsmul, map_add, map_nsmul,
+  simp only [Matrix.add_apply, Matrix.smul_apply, Nat.cast_smul_eq_nsmul, map_add (f := _), map_nsmul,
     Matrix.map_apply]
   by_cases hij : i = j
   · subst hij

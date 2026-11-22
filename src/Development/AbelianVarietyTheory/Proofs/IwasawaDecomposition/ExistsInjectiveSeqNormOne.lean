@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 namespace GlobalTheory.InjectiveSeqNormOne
 
@@ -43,7 +47,7 @@ theorem exists_injective_seq_norm_one {F E : Type} [Field F] [NumberField F] [Fi
   · intro k
     have a1 := h1 k
     have a2 := h2 k
-    simp only [map_div₀, map_add, map_natCast, hinv]
+    simp only [map_div₀, map_add (f := _), map_natCast, hinv]
     field_simp
 
 end GlobalTheory.InjectiveSeqNormOne

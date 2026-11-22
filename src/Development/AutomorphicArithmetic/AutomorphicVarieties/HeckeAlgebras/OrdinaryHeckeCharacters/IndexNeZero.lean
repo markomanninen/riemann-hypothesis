@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.TcAnti
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LduDecompositionExists
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.TcAnti
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LduDecompositionExists
+
+@[expose] public section
+
 open Matrix ValuativeRel GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi
 
 namespace UpperTheory.V.Hi.GlAx
@@ -260,7 +265,7 @@ theorem upow_neg (a : Fin n → ℤ) : upow k n (-a) = (upow k n a)⁻¹ := by
   rw [upow, upow, ← map_inv]
   congr 1
   funext i
-  simp
+  simp [_root_.zpow_neg]
 
 theorem upow_pow (a : Fin n → ℤ) (m : ℕ) : upow k n a ^ m = upow k n fun i => m * a i := by
   rw [upow, upow, ← map_pow]
@@ -426,4 +431,4 @@ theorem UpperTheory.V.Hi.glAx :
   rw [h, mul_assoc, mul_inv_cancel_right, upow, ← map_mul]
   congr 1
   funext i
-  simp
+  exact (div_mul_cancel (t i) (unif k ^ ord k (t i))).symm

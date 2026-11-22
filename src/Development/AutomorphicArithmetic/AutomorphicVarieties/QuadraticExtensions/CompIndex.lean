@@ -1,8 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.AbBasic
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.GalAut
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.GalCharBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.LevChar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.AbBasic
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.TotallyRealRoots.GalDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.LevChar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Two
 open scoped Pointwise
@@ -77,7 +80,11 @@ private theorem mem_galOf_iff_val_galChar_of_fixes_iff (Ω : Type) [Field Ω] [A
   have hce : IsCyclotomicExtension {N} ℚ (CyclotomicField N ℚ) := by exact hce0
   haveI : IsGalois ℚ (CyclotomicField N ℚ) := by
     exact IsCyclotomicExtension.isGalois {N} ℚ (CyclotomicField N ℚ)
-  let ι : CyclotomicField N ℚ →ₐ[ℚ] Ω := IsAlgClosed.lift
+  let ι : CyclotomicField N ℚ →ₐ[ℚ] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra (CyclotomicField N ℚ) Ω := ι.toRingHom.toAlgebra
   haveI : IsScalarTower ℚ (CyclotomicField N ℚ) Ω :=
     IsScalarTower.of_algebraMap_eq (fun x => (ι.commutes x).symm)

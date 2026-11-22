@@ -1,10 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.GoodFormsSpanInduced
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.CarriedGeneratorUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCentralIdempotentOfGoodSeriesIdempotent
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.BaseEmbeddingInclusion
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.KaSmallNonpos
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.CarriedGeneratorUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCentralIdempotentOfGoodSeriesIdempotent
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,9 +81,6 @@ section Idem
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV GlobalTheory.IndefiniteRowSideFullHecke GlobalTheory.GoodLatCompare
 
-def ofList {G L : Type} [Group G] [Finite G] [Field L] (eC : G → L) : MonoidAlgebra L G :=
-  MonoidAlgebra.ofCoeff (Finsupp.equivFunOnFinite.symm eC)
-
 end Idem
 
 section Framed
@@ -95,13 +100,6 @@ open NumberField IsDedekindDomain Formalism.L2.DIV Formalism.L2.Herm Formalism.U
 open scoped TensorProduct
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {n : ℕ}
-
-def sw (F E : Type) [Field F] [NumberField F] [Field E] [Algebra F E] : Af F ⊗[F] E ≃+* E ⊗[F] Af F :=
-  (Algebra.TensorProduct.comm F (Af F) E).toRingEquiv
-
-def clos (F : Type) [Field F] [NumberField F] [Algebra F E] (Λ : Submodule (𝓞 E) (Fin n → E)) :
-    AddSubgroup (Fin n → Af F ⊗[F] E) :=
-  AddSubgroup.closure {z | ∃ a : Af F, (∀ v, a v ∈ v.adicCompletionIntegers F) ∧ ∃ x ∈ Λ, z = fun i => a ⊗ₜ x i}
 
 variable {β : GL (Fin n) (E ⊗[F] Af F)} {Λ : Submodule (𝓞 E) (Fin n → E)}
 

@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempotentSumAuxiliaryPlaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsInfFamFamily
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdelicCharacterTrivialBaseFiniteIdeles
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HarishChandraFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GridFirstColumnSpaceRankSignatureSelfDual
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIdempotentSumAuxiliaryPlaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsInfFamFamily
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOrEqOfPlaceIdem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNsmulIntMemLatO
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnramifiedHeckeCharHalfExponentRestrictQua
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdelicCharacterTrivialBaseFiniteIdeles
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsFundamentalDomainOfHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ theorem attChr_ok {c η : (AE D)ˣ →* Circle} (hc : IsHeckeChar D c) (h0 : ∀
     obtain ⟨k, rfl⟩ := Nat.not_odd_iff_even.1 hn
     rw [(GlobalTheory.IdeleNormChar.existsUnique_isEta D).unique h' h1, h0, MonoidHom.comp_apply, pow_add, ← mul_pow, hsq, one_pow]
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem exists_cartan {V : HSp D} (hV : V.SigOK) (τ : D.what₂.Tau) :
     ∃ s P : Matrix (Fin V.rank) (Fin V.rank) ℂ, IsCartanInv (gramAt D V τ) s ∧ ∃ ε : Fin V.rank → Bool,
       Pᴴ * gramAt D V τ * P = Formalism.REAL.Jm ε ∧ s * P = P * Formalism.REAL.Jm ε := by
@@ -147,7 +151,7 @@ theorem exists_den {m n : ℕ} (M : Submodule (𝓞 D.host.E) (Matrix (Fin m) (F
     refine ⟨c * o, ?_⟩
     rw [map_mul, ho, Matrix.smul_apply, smul_comm, Algebra.smul_def c]
 
-theorem exists_nsmul_hatMx (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT)
+theorem exists_nsmul_hatMx (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT)
     (M : Submodule (𝓞 D.host.E) (Matrix (Fin T.rank) (Fin S.rank) D.host.E)) (hM : M.FG) :
     ∃ K : ℕ, 0 < K ∧ ∀ w ∈ hatMx M,
       K • w ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True := by
@@ -211,7 +215,9 @@ theorem isSBHalf_cosInd (hS : IsSelfDualC S ΛS) (hT : IsSelfDualC T ΛT) {𝔪 
     {e : AE D} (he : e * e = e) (hinf : infPart D e = 0) (κ : Cos ΛS ΛT 𝔪) :
     IsSBHalf e (latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) fun _ => True)
       (cosInd e κ) := by
-  obtain ⟨K, hK, h1⟩ := exists_nsmul_hatMx hS.1 hT.1 (homLat ΛS ΛT) (Module.Finite.iff_fg.1 (homLat_fg hS.1 hT.1.fg))
+  have hSfull := GlobalTheory.PlaceVec.selfDual_isFullLattice S ΛS hS
+  have hTfull := GlobalTheory.PlaceVec.selfDual_isFullLattice T ΛT hT
+  obtain ⟨K, hK, h1⟩ := exists_nsmul_hatMx hSfull hTfull (homLat ΛS ΛT) (Module.Finite.iff_fg.1 (homLat_fg hSfull hT.1.fg))
   obtain ⟨K', hK', h2⟩ := exists_nsmul_latO (T := T) (ΛT := ΛT) hS h𝔪
   have hne : ∀ t, cosInd e κ t ≠ 0 → t ∈ cosSet e κ := fun t ht => Set.mem_of_indicator_ne_zero ht
   refine ⟨fun t ht => (hne t ht).1, K * K', mul_pos hK hK', fun u hu hu' t => ?_, fun t ht => ?_⟩

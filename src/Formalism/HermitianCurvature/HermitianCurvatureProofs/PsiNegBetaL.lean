@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermLocalOfFibres
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermLocalOfFibres
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.GermRealisation
 

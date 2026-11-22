@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DeterminantConditionSpreadsOfDensePoints
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetCondIffOfFieldExtension
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConnectedGroupSmoothRelDim
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EmbeddingFactorsThroughCmType
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieMultLabelRank
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DeterminantConditionSpreadsOfDensePoints
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DetCondIffOfFieldExtension
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ConnectedGroupSmoothRelDim
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EmbeddingFactorsThroughCmType
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieMultLabelRank
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 

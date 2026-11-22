@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AddCurveStableOfIntegralGaugedFormalGroupLawStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.AddCurveStableOfIntegralGaugedFormalGroupLawStatement
+
+@[expose] public section
+
 open scoped BigOperators
 open NumberField Formalism.IncomingBounds Formalism.L2.FormalSeriesBounds Formalism.L2.Pj GlobalTheory.RowLaw ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 
@@ -104,7 +109,7 @@ theorem approx_neg (H : RLaw X V) (hA : X.AddCvSt V) {γ : κ → PowerSeries C}
   | zero =>
     refine ⟨γ, hγ, fun i m hm => ?_⟩
     have : m = 0 := by omega
-    rw [this, PowerSeries.coeff_zero_eq_constantCoeff_apply, map_add,
+    rw [this, PowerSeries.coeff_zero_eq_constantCoeff_apply, map_add (f := _),
       constantCoeff_alongCv (fun i => (hγ i).1) (lg_const H i), add_zero]
   | succ n ih =>
     obtain ⟨δ, hδ, hlow⟩ := ih
@@ -121,7 +126,7 @@ theorem approx_neg (H : RLaw X V) (hA : X.AddCvSt V) {γ : κ → PowerSeries C}
       rw [map_neg, hslow i m hm, neg_zero]
     obtain ⟨δ', hδ', hL', -⟩ := hA δ _ hδ hε
     refine ⟨δ', hδ', fun i m hm => ?_⟩
-    rw [hL' i, ← add_assoc, map_add]
+    rw [hL' i, ← add_assoc, map_add (f := _)]
     by_cases hmn : m < n + 1
     · rw [hlow i m hmn, alongCv_low (fun j => (hε j).1) hεlow (lg_const H i) m hmn, add_zero]
     · have : m = n + 1 := by omega
@@ -138,7 +143,7 @@ theorem exists_neg (H : RLaw X V) (hA : X.AddCvSt V) {γ : κ → PowerSeries C}
   rw [alongCv_congr (b := fun j => alongCv δ (X.lg j)) h0 (fun j => constantCoeff_alongCv hδ0 (lg_const H j))
     (n := n + 1) (fun j m hm => by
       have := hlow j m hm
-      rw [map_add] at this
+      rw [map_add (f := _)] at this
       rw [map_neg]
       exact neg_eq_of_add_eq_zero_right this) _ n (Nat.lt_succ_self n), ex_lg H hδ0]
   exact (hδ i).2 n
@@ -162,9 +167,9 @@ theorem add_mem (H : RLaw X V) (hA : X.AddCvSt V) (g : Fin 2) :
   · intro q
     obtain ⟨c0, cI⟩ := hS (X.u (1 - g) q) (H.uint (1 - g) q)
     refine ⟨?_, fun n => ?_⟩
-    · rw [map_add, map_add, (hlam q).1, (hlam' q).1, c0]
+    · rw [map_add (f := _), map_add (f := _), (hlam q).1, (hlam' q).1, c0]
       simp
-    · rw [map_add, map_add]
+    · rw [map_add (f := _), map_add (f := _)]
       exact (((hlam q).2 n).add ((hlam' q).2 n)).add (cI n)
   · intro i
     rw [hL i, h1 i, h1' i]

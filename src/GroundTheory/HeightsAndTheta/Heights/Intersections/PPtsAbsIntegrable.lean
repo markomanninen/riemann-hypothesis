@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAbsIntegrable
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAbsMeasurable
-import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRSlotAdd
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemiPosTwist
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PTorusInvLevi
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PSheetHessPSD
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMixSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAbsIntegrable
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StPtsAbsMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.RegLine
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRSlotAdd
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PSemiPosTwist
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PTorusInvLevi
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PSheetHessPSD
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.AMixSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -91,8 +96,8 @@ theorem abs_maDensity_le {P : Ideal (MRing ι)} {e : ℕ} {Ψ : (((k : K) → ι
 
 end PointsAbsIntegrable
 
-open PointsAbsIntegrable in
 
+open PointsAbsIntegrable in
 theorem PtsAbsIntegrable.proof (hInt : PtsIntegrableStatement) (hMeas : PtsAbsMeasurable.Statement) :
     PtsAbsIntegrable.Statement := by
   intro K _ ι _ P e Ψ L A s hP hΨ hL hA hs

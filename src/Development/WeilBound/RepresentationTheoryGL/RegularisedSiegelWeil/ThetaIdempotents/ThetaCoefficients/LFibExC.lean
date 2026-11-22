@@ -1,11 +1,15 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameIntegralEqThetaPartNondegenerateStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasuresStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzFunctionSchwartzBruhatStatement
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.SiegelWeilHermitianFormulaStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasures
-import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FrameIntegralEqThetaPartNondegenerateStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasuresStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SchwartzFunctionSchwartzBruhatStatement
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.SiegelWeilHermitianFormulaStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsSelfDualSiegelWeilMeasures
+public import Development.WeilBound.CoreStatements.ThetaDilations.ThetaLint
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,22 +26,22 @@ namespace PositivityTheory.Rg.Rsw.L.LFibEx
 
 variable {D : D7} {r : ℕ}
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 theorem tupOf_act (V : HSp D) (h : GA D V) (X : Fin r → Fin V.rank → AE D) :
     tupOf (GlobalTheory.CompanionTheory.SW.actW (AF D.host.F) D.sp.cm.sig V.gram h X) = mm (mt V h) (tupOf X) := by
   ext i a
   rfl
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 theorem ip_tupOf (V : HSp D) (X : Fin r → Fin V.rank → AE D) :
     ip V (tupOf X) (tupOf X) = HeckeCharacterZeroLocus.SiegelWeilU.gramR (AF D.host.F) D.sp.cm.sig V.gram X := by
   ext a b
   exact (GlobalTheory.CompanionTheory.SiegelND.hR_tup V (tupOf X) (tupOf X) a b).symm
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 def tupE (D : D7) (m r : ℕ) : (Fin r → Fin m → AE D) ≃ᵐ Mx D m r where
   toFun := tupOf
   invFun := tupInv
@@ -52,8 +56,8 @@ def tupE (D : D7) (m r : ℕ) : (Fin r → Fin m → AE D) ≃ᵐ Mx D m r where
     have : BorelSpace (Mx D m r) := ⟨rfl⟩
     exact continuous_tupInv.measurable
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 theorem finE {m : ℕ} (ν : Measure (Fin r → Fin m → AE D)) [IsFiniteMeasureOnCompacts ν] :
     IsFiniteMeasureOnCompacts (ν.map (tupE D m r)) := by
   refine ⟨fun K hK => ?_⟩
@@ -64,8 +68,8 @@ theorem finE {m : ℕ} (ν : Measure (Fin r → Fin m → AE D)) [IsFiniteMeasur
   rw [hs]
   exact (hK.image continuous_tupInv).measure_lt_top
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 theorem suppE (V : HSp D) (T : Matrix (Fin r) (Fin r) D.host.E) (ν : Measure (Fin r → Fin V.rank → AE D))
     (h : ν {X | HeckeCharacterZeroLocus.SiegelWeilU.gramR (AF D.host.F) D.sp.cm.sig V.gram X = T.map (HeckeCharacterZeroLocus.SiegelWeilU.inclR (AF D.host.F))}ᶜ = 0) :
     ν.map (tupE D V.rank r) {x | ip V x x ≠ rat T} = 0 := by
@@ -79,8 +83,8 @@ theorem suppE (V : HSp D) (T : Matrix (Fin r) (Fin r) D.host.E) (ν : Measure (F
     exact h0
   exact measure_mono_null hs h
 
-open GlobalTheory.CompanionTheory.SiegelND in
 
+open GlobalTheory.CompanionTheory.SiegelND in
 theorem invE (V : HSp D) (ν : Measure (Fin r → Fin V.rank → AE D)) (h : GA D V)
     (hm : Measurable (GlobalTheory.CompanionTheory.SW.actW (AF D.host.F) D.sp.cm.sig V.gram h : (Fin r → Fin V.rank → AE D) → _))
     (hν : ν.map (GlobalTheory.CompanionTheory.SW.actW (AF D.host.F) D.sp.cm.sig V.gram h) = ν) :

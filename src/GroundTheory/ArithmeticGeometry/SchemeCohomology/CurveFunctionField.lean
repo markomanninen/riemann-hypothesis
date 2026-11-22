@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CurveBase
-import GroundTheory.FunctionField.PlaceDefs
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CurveBase
+public import GroundTheory.FunctionField.PlaceDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory AlgebraicGeometry Order Topology
@@ -21,7 +26,7 @@ theorem ringKrullDim_le_of_isIntegral {A R : Type*} [CommRing A] [CommRing R] [A
   rw [WithBot.coe_iSup (OrderTop.bddAbove _)]
   refine iSup_le fun l => ?_
   obtain ⟨P, -, hP, hPl⟩ := Ideal.exists_ideal_over_prime_of_isIntegral l.head.asIdeal (⊥ : Ideal R)
-    (by rw [← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 h]; exact bot_le)
+    (by rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 h]; exact bot_le)
   have : P.LiesOver l.head.asIdeal := ⟨hPl.symm⟩
   obtain ⟨L, hL, -, -⟩ := Ideal.exists_ltSeries_of_hasGoingUp l P
   rw [← hL]

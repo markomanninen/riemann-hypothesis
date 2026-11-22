@@ -1,11 +1,15 @@
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.GradedWeylDivisibility.StatementE
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQWordAdj
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LowerTriangularIntegral
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LrfcApplyWordAppendSingle
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+module
+
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.GradedWeylDivisibility.StatementE
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQHW
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.FockQWordAdj
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LClosedeqLemmas
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LowerTriangularIntegral
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LrfcApplyWordAppendSingle
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -91,7 +95,7 @@ theorem nabla_eq_dual_weyl_holds : NablaEqDualWeyl := by
     | add x y _ _ hx hy =>
       obtain ⟨a, ha⟩ := hx
       obtain ⟨b, hb⟩ := hy
-      exact ⟨a + b, by rw [map_add, we_fock_add_right, ha, hb]; push_cast; ring⟩
+      exact ⟨a + b, by rw [map_add (f := _), we_fock_add_right, ha, hb]; push_cast; ring⟩
     | smul c x _ hx =>
       obtain ⟨a, ha⟩ := hx
       refine ⟨c * a, ?_⟩
@@ -219,7 +223,7 @@ theorem we_span_weyl (hν : Antitone ν) :
   exact we_intQ_word hn ν w
 
 theorem we_weyl_lattice (hν : Antitone ν) :
-    Submodule.IsLattice ℚ (weCut r n ν ((weyl ℤ r n hn ν).map (intQ r n))) := by
+    Submodule.IsFullLattice ℚ (weCut r n ν ((weyl ℤ r n hn ν).map (intQ r n))) := by
   have himg : (weCut r n ν ((weyl ℤ r n hn ν).map (intQ r n))).map
       ((dualWeyl ℚ r n ν).subtype.restrictScalars ℤ) = (weyl ℤ r n hn ν).map (intQ r n) := by
     ext x
@@ -228,18 +232,17 @@ theorem we_weyl_lattice (hν : Antitone ν) :
       exact hy
     · intro hx
       exact ⟨⟨x, we_weyl_le hn ν hν x hx⟩, hx, rfl⟩
-  constructor
+  refine { toIsLattice := Submodule.IsLattice.of_fg ℚ ?_, span_eq_top := ?_ }
   · refine Submodule.fg_of_fg_map_injective ((dualWeyl ℚ r n ν).subtype.restrictScalars ℤ)
       (dualWeyl ℚ r n ν).injective_subtype ?_
     rw [himg]
     exact (Submodule.FG.of_le (we_nabla_fg r n ν) (weylLeDual ℤ r n hn ν hν)).map _
-  · apply Submodule.map_injective_of_injective (f := (dualWeyl ℚ r n ν).subtype) (dualWeyl ℚ r n ν).injective_subtype
-    rw [Submodule.map_top, Submodule.range_subtype, Submodule.map_span]
-    have h2 : ((dualWeyl ℚ r n ν).subtype '' (weCut r n ν ((weyl ℤ r n hn ν).map (intQ r n)) : Set (dualWeyl ℚ r n ν))) =
-        (((weyl ℤ r n hn ν).map (intQ r n) : Submodule ℤ _) : Set (MvPolynomial (Fin r × Fin n) ℚ)) := by
-      conv_rhs => rw [← himg]
-      rfl
-    rw [h2, we_span_weyl hn ν hν]
+  · apply Submodule.map_injective_of_injective (f := (dualWeyl ℚ r n ν).subtype)
+      (dualWeyl ℚ r n ν).injective_subtype
+    rw [Submodule.map_subtype_top, Submodule.map_span]
+    have hspan := congrArg (fun S : Submodule ℤ (MvPolynomial (Fin r × Fin n) ℚ) =>
+      Submodule.span ℚ (S : Set (MvPolynomial (Fin r × Fin n) ℚ))) himg
+    exact hspan.trans (we_span_weyl hn ν hν)
 
 end Double
 

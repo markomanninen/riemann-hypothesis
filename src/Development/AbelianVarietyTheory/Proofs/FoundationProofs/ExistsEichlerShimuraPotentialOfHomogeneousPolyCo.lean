@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLaws
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Gamma1CapGamma0LevelActsFreelyUpperHalfPlaneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GlTwoPosRatMobiusBasicLaws
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Gamma1CapGamma0LevelActsFreelyUpperHalfPlaneStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def rep (Γ : Subgroup SL(2, ℤ)) (a : Hs) : Hs := (Quotient.mk (orbSetoid Γ) 
 theorem rep_rel (Γ : Subgroup SL(2, ℤ)) (a : Hs) : ∃ γ ∈ Γ, mob (ofSL γ) (rep Γ a).1 = a.1 :=
   Quotient.mk_out (s := orbSetoid Γ) a
 
-open Classical in
 
+open Classical in
 def gel (Γ : Subgroup SL(2, ℤ)) (τ : ℂ) : SL(2, ℤ) :=
   if h : τ ∈ Hs then (rep_rel Γ ⟨τ, h⟩).choose else 1
 
@@ -57,8 +61,8 @@ def potOf {R : Type} [CommRing R] (Γ : Subgroup SL(2, ℤ)) (z : SL(2, ℤ) →
 
 end GlobalTheory.KZ.H3.PotCoc
 
-open GlobalTheory.KZ.H3.PotCoc GlobalTheory.KZ.Betti in
 
+open GlobalTheory.KZ.H3.PotCoc GlobalTheory.KZ.Betti in
 theorem GlobalTheory.KZ.H3.exists_pot_of_isCoc : ∀ (R : Type) [CommRing R] (w N l : ℕ), 4 ≤ N →
     ∀ z : SL(2, ℤ) → MvPolynomial (Fin 2) R, IsCoc w (Gam N l) z → ∃ F ∈ Pot R w (Gam N l),
       ∀ γ ∈ Gam N l, ∀ τ ∈ Hs, slP (γ : Matrix (Fin 2) (Fin 2) ℤ) (F (mob (ofSL γ) τ)) - F τ = z γ := by
@@ -84,7 +88,7 @@ theorem GlobalTheory.KZ.H3.exists_pot_of_isCoc : ∀ (R : Type) [CommRing R] (w 
     rw [hg, (hz.2 δ hδ g hg1)]
     have e1 : (δ * g)⁻¹ * δ = g⁻¹ := by group
     have e2 : g * (δ * g)⁻¹ * δ = 1 := by rw [mul_assoc, e1]; group
-    simp only [map_add, slPS, e1, e2, Matrix.SpecialLinearGroup.coe_one, polySlash_one]
+    simp only [map_add (f := _), slPS, e1, e2, Matrix.SpecialLinearGroup.coe_one, polySlash_one]
     abel
   refine ⟨potOf Γ z, ⟨fun τ => ?_, fun γ hγ => ⟨z γ, key γ hγ⟩⟩, key⟩
   by_cases hτ : τ ∈ Hs

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.AlgInfCharIff
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylCharacterRegularity.AlgInfCharIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem isReg_piK {M : T → GL (Fin a) (Cinf E) → Matrix κ κ ℂ} (h : ∀ 
 theorem dOf_piK {M : T → GL (Fin a) (Cinf E) → Matrix κ κ ℂ} (h : ∀ t, IsReg (M t)) (h1 : ∀ t, M t 1 = 1) (X : Lie E a) :
     dOf (fun y => piK fun t => M t y) X = ∑ t, intersection_update_fsHerm_neg_one t (dOf (M t) X) := by
   ext f g
-  have h2 := HasFDerivAt.finset_prod (u := Finset.univ) fun t _ => (h t).diff (f t) (g t)
+  have h2 := HasFDerivAt.finsetProd (u := Finset.univ) fun t _ => (h t).diff (f t) (g t)
   have h3 := h2.congr_of_eventuallyEq (extGL_eventuallyEq (f := fun y => piK (fun t => M t y) f g)
     (fun y => by simp only [extGL_val, piK_apply]) (x := oneL E a) isUnit_one)
   rw [dOf, Matrix.of_apply, h3.fderiv]
@@ -64,9 +68,9 @@ theorem eOf_piK {M : T → GL (Fin a) (Cinf E) → Matrix κ κ ℂ} (h : ∀ t,
     (τ : E →+* ℂ) (i j : Fin a) : eOf (fun y => piK fun t => M t y) τ i j = ∑ t, intersection_update_fsHerm_neg_one t (eOf (M t) τ i j) := by
   simp only [eOf, dOf_piK h h1, map_smul, map_sub, Finset.smul_sum, ← Finset.sum_sub_distrib]
 
-open Classical in
 
-theorem coord_hol [IsTotallyComplex E] (τ τ' : E →+* ℂ) :
+open Classical in
+theorem coord_hol [_root_.NumberField.IsTotallyComplex E] (τ τ' : E →+* ℂ) :
     (1 / 2 : ℂ) * (coord τ' (atEmb τ 1) - Complex.I * coord τ' (atEmb τ Complex.I)) = if τ' = τ then 1 else 0 := by
   split_ifs with h
   · subst h

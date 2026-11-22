@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
@@ -10,14 +14,14 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 namespace GlobalTheory.BCT.LocGlue
 
 theorem entry_mem {E : Type} [Field E] [NumberField E] {n : ℕ} {v : HeightOneSpectrum (𝓞 E)}
-    {g : GL (Fin n) (v.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL v n) (i j : Fin n) :
+    {g : GL (Fin n) (v.adicCompletion E)} (hg : g ∈ GlobalTheory.LFun.KGL v (n := n)) (i j : Fin n) :
     g.val i j ∈ v.adicCompletionIntegers E ∧ (g⁻¹ : GL (Fin n) (v.adicCompletion E)).val i j ∈ v.adicCompletionIntegers E := by
   obtain ⟨g0, rfl⟩ := hg
   refine ⟨(g0.val i j).2, ?_⟩
   rw [← map_inv]
   exact ((g0⁻¹).val i j).2
 
-theorem glue : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (g : ∀ v : HeightOneSpectrum (𝓞 E), GL (Fin n) (v.adicCompletion E)), (∀ᶠ v in cofinite, g v ∈ GlobalTheory.LFun.KGL v n) → ∃ k : GL (Fin n) (Af E), ∀ v, GeneralLinearGroup.map (pLoc E v) k = g v := by
+theorem glue : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (g : ∀ v : HeightOneSpectrum (𝓞 E), GL (Fin n) (v.adicCompletion E)), (∀ᶠ v in cofinite, g v ∈ GlobalTheory.LFun.KGL v (n := n)) → ∃ k : GL (Fin n) (Af E), ∀ v, GeneralLinearGroup.map (pLoc E v) k = g v := by
   intro E _ _ n g hg
   have hent : ∀ i j, ∀ᶠ v in cofinite, (g v).val i j ∈ v.adicCompletionIntegers E ∧
       ((g v)⁻¹ : GL (Fin n) (v.adicCompletion E)).val i j ∈ v.adicCompletionIntegers E :=
@@ -33,7 +37,7 @@ theorem glue : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (g : ∀ v : H
     rw [map_mul, map_one, hM, hN, Units.inv_mul]
   exact ⟨⟨M, N, hMN, hNM⟩, fun v => Units.ext (hM v)⟩
 
-theorem intst : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (v u : HeightOneSpectrum (𝓞 E)) (f : v.adicCompletion E →+* u.adicCompletion E), (∀ x, Valued.v (f x) = Valued.v x) → ∀ g ∈ GlobalTheory.LFun.KGL v n, invT n _ (GeneralLinearGroup.map f g) ∈ GlobalTheory.LFun.KGL u n := by
+theorem intst : ∀ (E : Type) [Field E] [NumberField E] (n : ℕ) (v u : HeightOneSpectrum (𝓞 E)) (f : v.adicCompletion E →+* u.adicCompletion E), (∀ x, Valued.v (f x) = Valued.v x) → ∀ g ∈ GlobalTheory.LFun.KGL v (n := n), invT n _ (GeneralLinearGroup.map f g) ∈ GlobalTheory.LFun.KGL u (n := n) := by
   intro E _ _ n v u f hf g hg
   obtain ⟨g0, rfl⟩ := hg
   let r : Formalism.UG.Ov E v →+* Formalism.UG.Ov E u := f.restrict _ _ fun x hx => by
@@ -55,7 +59,7 @@ theorem ns : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (Y
     rintro v rfl f hf hext
     have hex : ∃ s : v.adicCompletion E →+* v.adicCompletion E, Continuous s ∧
         ∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x) := ⟨f, hf, hext⟩
-    have hcj : cj v = hex.choose := by unfold cj; rw [dif_pos hex]
+    have hcj : cj v = hex.choose := by unfold cj; rw [dite_eq_left hex]
     have hfs : (f : v.adicCompletion E → v.adicCompletion E) = hex.choose :=
       (HeightOneSpectrum.denseRange_algebraMap (K := E) v).equalizer hf hex.choose_spec.1
         (funext fun k => (hext k).trans (hex.choose_spec.2 k).symm)
@@ -88,7 +92,7 @@ theorem twice : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ)
 
 end GlobalTheory.BCT.LocGlue
 
-theorem GlobalTheory.BCT.exists_finU_of_loc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, ∀ S : Set (Pl E), IsSection S → ∀ y : ∀ w : Pl E, UL n w, (∀ᶠ w in cofinite, y w ∈ KL n w) → ∃ x : finU E n, ∀ w ∈ S, toSub (UL n w) (cLoc w (x : UA E n)) = y w := by
+theorem GlobalTheory.BCT.exists_finU_of_loc : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, ∀ S : Set (Pl E), IsSection S → ∀ y : ∀ w : Pl E, UL n w, (∀ᶠ w in cofinite, y w ∈ KL n w) → ∃ x : finU (E := E) (n := n), ∀ w ∈ S, toSub (UL n w) (cLoc w (x : UA E n)) = y w := by
   intro E _ _ _ _ n S hS y hy
   set c := GlobalTheory.SplitPts.conjE E with hc
   have hnotS : ∀ v, v ∉ S → conjSrc c v ∈ S := by
@@ -109,8 +113,8 @@ theorem GlobalTheory.BCT.exists_finU_of_loc : ∀ (E : Type) [Field E] [NumberFi
   have hz_in : ∀ v ∈ S, z v = (y v).1 := fun v hv => if_pos hv
   have hz_out : ∀ v, v ∉ S → z v = invT n _ (GeneralLinearGroup.map (conjLoc c v) (y (conjSrc c v)).1) :=
     fun v hv => if_neg hv
-  have hint : ∀ᶠ v in cofinite, z v ∈ GlobalTheory.LFun.KGL v n := by
-    have h1 : ∀ᶠ v in cofinite, (y v).1 ∈ GlobalTheory.LFun.KGL v n := hy.mono fun v hv => Subgroup.mem_subgroupOf.1 hv
+  have hint : ∀ᶠ v in cofinite, z v ∈ GlobalTheory.LFun.KGL v (n := n) := by
+    have h1 : ∀ᶠ v in cofinite, (y v).1 ∈ GlobalTheory.LFun.KGL v (n := n) := hy.mono fun v hv => Subgroup.mem_subgroupOf.1 hv
     have h2 := (conjSrc_injective c).tendsto_cofinite.eventually h1
     filter_upwards [h1, h2] with v a1 a2
     by_cases hv : v ∈ S
@@ -146,9 +150,9 @@ theorem GlobalTheory.BCT.exists_finU_of_loc : ∀ (E : Type) [Field E] [NumberFi
       change ((GeneralLinearGroup.map (conjLoc c u) (y (conjSrc c u)).1).val)ᵀ *
         (((GeneralLinearGroup.map (conjLoc c u) (y (conjSrc c u)).1)⁻¹ : GLw n u).val)ᵀ = 1
       rw [← Matrix.transpose_mul, Units.inv_mul, Matrix.transpose_one]
-  let x : finU E n := ⟨⟨finGL E n k, GlobalTheory.SplitPts.finGL_mem_UA k hk'⟩, MonoidHom.mem_ker.2 (pInf_finGL k)⟩
+  let x : finU (E := E) (n := n) := ⟨⟨finGL E n k, GlobalTheory.SplitPts.finGL_mem_UA k hk'⟩, MonoidHom.mem_ker.2 (pInf_finGL k)⟩
   refine ⟨x, fun w hw => ?_⟩
   show toSub (UL n w) (cLoc w ⟨finGL E n k, GlobalTheory.SplitPts.finGL_mem_UA k hk'⟩) = y w
   rw [GlobalTheory.SplitPts.cLoc_finGL, hk, hz_in w hw]
   unfold toSub
-  rw [dif_pos (y w).2]
+  rw [dite_eq_left (y w).2]

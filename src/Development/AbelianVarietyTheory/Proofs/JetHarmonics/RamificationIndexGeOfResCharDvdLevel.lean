@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthPins
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmQuadraticFormEqAlternatingForm
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthPins
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeVal
+
+@[expose] public section
 
 set_option autoImplicit false
 

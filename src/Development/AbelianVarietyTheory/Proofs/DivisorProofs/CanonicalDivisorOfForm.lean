@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsLogMult
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEtCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOrdSubOneLeOrdWedgeDifferentials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntersectionNumberPullbackProportionalOfProporti
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ theorem exists_isDivOfForm_and_toPic : ∀ (k : Type) [Field k] [CharZero k] (Y 
   have h := (isDivOfForm_canonical q n).smul (Units.mk0 c h0)
   rw [Units.val_mk0, hc] at h
   refine ⟨⟨_, h⟩, fun K hK Kc => ?_⟩
-  rw [hK.unique hη h, map_add, toPic_principal]
+  rw [hK.unique hη h, map_add (f := _), toPic_principal]
   simpa using (presents_canonical q n).toPic_eq.trans ((cls_eq_iff _ _).2 (CanonLB.lbIso _ Kc))
 
 end GlobalTheory.Discrepancy

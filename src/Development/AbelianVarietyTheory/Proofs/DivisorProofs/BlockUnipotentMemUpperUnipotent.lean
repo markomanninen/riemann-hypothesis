@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+
+@[expose] public section
+
 open ValuativeRel Matrix MeasureTheory
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.LocLanglands GlobalTheory.GamMul DiscreteGroups.sglob.LConv
 

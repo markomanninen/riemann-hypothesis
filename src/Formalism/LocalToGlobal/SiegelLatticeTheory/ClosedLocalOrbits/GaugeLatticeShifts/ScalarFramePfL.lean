@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfK
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ section GF
 
 variable {D : D7} (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E}
 
-theorem span_sum_elim_frameAct (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+theorem span_sum_elim_frameAct (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (ξ : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) (𝓞 D.host.E))
     (h1 : ∀ a b, b < a → ξ a b = 0) (h2 : ∀ a, ξ a a = 1) :
     Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec (frameAct F'.fl.fvec ξ⁻¹))) =
@@ -25,30 +29,30 @@ theorem span_sum_elim_frameAct (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.
   rw [Set.Sum.elim_range, Set.Sum.elim_range, Submodule.span_union, Submodule.span_union,
     span_frameAct_inv _ ξ h1 h2]
 
-theorem Dl_eq_GDl_top (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
+theorem Dl_eq_GDl_top (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Dl F.fl F'.fl (D.R.rS + 1) = GDl F.fl.fvec F'.fl.fvec (D.R.rS + 1) := by
   rw [PI.PairCorankPos.W.Dl_top, GDl_top']
   rfl
 
-theorem Dl_eq_GDl_r (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
+theorem Dl_eq_GDl_r (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Dl F.fl F'.fl D.R.rS = GDl F.fl.fvec F'.fl.fvec D.R.rS := by
   rw [PI.PairCorankPos.W.Dl_r, GDl_r']
   rfl
 
-theorem Gval_eq (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') :
+theorem Gval_eq (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') :
     Gval F F' = GDl F.fl.fvec F'.fl.fvec (D.R.rS + 1) * star (GDl F.fl.fvec F'.fl.fvec (D.R.rS + 1)) -
       T * T' * (GDl F.fl.fvec F'.fl.fvec D.R.rS * star (GDl F.fl.fvec F'.fl.fvec D.R.rS)) := by
   show Gflag F.fl F'.fl = _
   rw [Gflag, Dl_eq_GDl_top, Dl_eq_GDl_r]
 
-theorem gfacts_of (F : LFlag (VS D) D.R.rS T) (F' F'' : LFlag (VS D) D.R.rS T')
+theorem gfacts_of (F : LFlag (D.sp.Y 0) D.R.rS T) (F' F'' : LFlag (D.sp.Y 0) D.R.rS T')
     (β : (VS D).V ≃ₗ[D.host.E] (VS D).V)
     (hF : FixedHyp D Λ F) (hl' : IsLift Λ F') (hl'' : IsLift Λ F'') (hc' : IsFixedConv Λ (gS D) F')
     (hc'' : IsFixedConv Λ (gS D) F'') (hP : IsPair Λ F F' F'' β (gS D))
     (hs : Lat.s0 Λ F F' F'' β D.R.k = 1) (hsc : IsScalar Λ F F' F'' β)
     (hG' : Gval F F' ≠ 0) (hG'' : Gval F F'' ≠ 0) (hT0 : T ≠ 0) (hT0' : T' ≠ 0) :
     GFacts Λ (frame F) (frameAct (frame F') (admXi D Λ F F')⁻¹) (frameAct (frame F'') (admXi D Λ F F'')⁻¹) β := by
-  obtain ⟨hlat, -, hlF, hcF⟩ := hF
+  obtain ⟨-, -, hlF, hcF⟩ := hF
   have hξ1 := admissibility_witness_unitriangular Λ F F'
   have hξ2 := admissibility_witness_unitriangular Λ F F''
   have hη1 := inv_unitri _ hξ1.1 hξ1.2
@@ -58,8 +62,8 @@ theorem gfacts_of (F : LFlag (VS D) D.R.rS T) (F' F'' : LFlag (VS D) D.R.rS T')
   have hXF'' := X_le_spanE_of_conv Λ F'' _ hc''
   have hU1 := PI.ScalarPairDr.W.UUE_eq Λ F F' hlF.2 hl'.2 hXF hXF'
   have hU2 := PI.ScalarPairDr.W.UUE_eq Λ F F'' hlF.2 hl''.2 hXF hXF''
-  have hGN1 := PI.UnitaryGroupMassFormula.BetaLUniq.gram_matrix_nondegenerate (VS D) Λ F F' hlat hlF hl' hG'
-  have hGN2 := PI.UnitaryGroupMassFormula.BetaLUniq.gram_matrix_nondegenerate (VS D) Λ F F'' hlat hlF hl'' hG''
+  have hGN1 := PI.UnitaryGroupMassFormula.BetaLUniq.gram_matrix_nondegenerate_of_span_eq Λ F F' hU1 hG'
+  have hGN2 := PI.UnitaryGroupMassFormula.BetaLUniq.gram_matrix_nondegenerate_of_span_eq Λ F F'' hU2 hG''
   have hn := PI.UnitaryGroupMassFormula.BetaLUniq.finrank_hS D
   obtain ⟨hTh, hTh''⟩ := theta_eq Λ D.R.k F F' F'' β hn hGN1.1 hGN2.1 hU1 hG' hs
   have hXg1 : Xs (S := VS D) (frameAct (frame F') (admXi D Λ F F')⁻¹) = Xsp F' :=
@@ -219,7 +223,8 @@ theorem gfacts_of (F : LFlag (VS D) D.R.rS T) (F' F'' : LFlag (VS D) D.R.rS T')
       intro i
       have := congrFun hc i
       simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, brS, Pi.zero_apply] at this
-      rw [hu, map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hu, map_sum, LinearMap.sum_apply]
       simp only [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
       rw [← this]
       exact Finset.sum_congr rfl fun k _ => mul_comm _ _

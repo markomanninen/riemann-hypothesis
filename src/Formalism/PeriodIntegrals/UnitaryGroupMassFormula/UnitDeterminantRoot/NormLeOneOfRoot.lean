@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobalLUnit
-import Lemmata.GeneralBFactLeftTer.Imports
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitDeterminantRoot.GlobalLUnit
+public import Lemmata.GeneralBFactLeftTer.Imports
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -9,7 +13,7 @@ namespace PI.UnitaryGroupMassFormula.UnitDetRoot
 open PI
 
 lemma conj_theta (b : ℤ) (d : ℕ) : conj (UnitDetRootDefs.cmTheta b d) = (b : ℂ) - UnitDetRootDefs.cmTheta b d := by
-  simp only [UnitDetRootDefs.cmTheta, map_div₀, map_add, map_mul, Complex.conj_I, Complex.conj_ofReal, map_intCast,
+  simp only [UnitDetRootDefs.cmTheta, map_div₀, map_add (f := _), map_mul, Complex.conj_I, Complex.conj_ofReal, map_intCast,
     map_ofNat]
   ring
 

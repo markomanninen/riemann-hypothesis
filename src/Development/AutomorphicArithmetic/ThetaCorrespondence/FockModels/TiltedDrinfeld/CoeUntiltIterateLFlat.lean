@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
-import GroundTheory.PAdicHodge.WAKummerEps
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LocalPrimeGaloisActionPeriodT
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.MaximalIdealEqSpanT
+public import GroundTheory.PAdicHodge.WAKummerEps
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace UpperTheory.Lit.Drps.Kum
 variable {l : ℕ} [Fact l.Prime]
 
 local notation "𝒪" => normInteger ℂ_[l]
-local notation "𝒪♭" => PreTilt (normInteger ℂ_[l]) l
-local notation "φi" => RingEquiv.symm (_root_.frobeniusEquiv (PreTilt (normInteger ℂ_[l]) l) l)
+local notation "𝒪♭" => PreTilt 𝒪 l
+local notation "φi" => RingEquiv.symm (_root_.frobeniusEquiv 𝒪♭ l)
 
 variable {P : Formalism.BasicNotions.LocPrime l} (AI : Formalism.BasicNotions.LocAinf l P)
 
@@ -54,8 +58,8 @@ theorem lRootInt_succ (m : ℕ) : lRootInt (l := l) (m + 1) ^ l = lRootInt m :=
     show ((GlobalTheory.Pst.lRoot l (m + 1) : PadicAlgCl l) : ℂ_[l]) ^ l = ((GlobalTheory.Pst.lRoot l m : PadicAlgCl l) : ℂ_[l])
     rw [← GlobalTheory.Pst.lRoot_succ l m, coe_pow'])
 
-variable (l) in
 
+variable (l) in
 def lFlat : 𝒪♭ := IsPerfectoidField.ofCompatible l lRootInt lRootInt_succ
 
 theorem coe_untilt_iterate_lFlat (n : ℕ) :
@@ -89,8 +93,6 @@ theorem tiltGal_lFlat (g : Formalism.BasicNotions.Loc.GQ l) :
   push_cast [coe_pow']
   rfl
 
-local notation "ε₀" => epsilon l
-
 theorem untilt_lFlat : ((PreTilt.untilt (lFlat l) : 𝒪) : ℂ_[l]) = l := by
   have := coe_untilt_iterate_lFlat (l := l) 0
   rw [Function.iterate_zero_apply] at this
@@ -119,7 +121,7 @@ theorem epsPow_epsPow {a : ℤ_[l]} (ha : epsPow untilt_epsilon a = epsT AI) (c 
     epsPow (untilt_epsT AI) c = epsPow untilt_epsilon (a * c) := by
   refine tilt_ext_untilt fun n => ?_
   have e1 : PreTilt.untilt (φi^[n] (epsT AI)) =
-      PreTilt.untilt (φi^[n] (ε₀)) ^ (PadicInt.toZModPow n a).val := by
+      PreTilt.untilt (φi^[n] (epsilon l)) ^ (PadicInt.toZModPow n a).val := by
     rw [← ha]; exact untilt_iterate_epsPow _ a n
   haveI : NeZero (l ^ n) := ⟨pow_ne_zero _ (Fact.out : l.Prime).ne_zero⟩
   have e2 : (PadicInt.toZModPow n (a * c)).val = (PadicInt.toZModPow n a).val * (PadicInt.toZModPow n c).val % (l ^ n) := by

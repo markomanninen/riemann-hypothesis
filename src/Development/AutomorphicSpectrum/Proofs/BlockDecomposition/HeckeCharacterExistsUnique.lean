@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.TwistedIndependenceLemma.TwistedIndependence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.LocalBaseChange.TwistedIndependenceLemma.TwistedIndependence
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,8 @@ theorem avg_act {S : Subgroup H} [S.Normal] [S.FiniteIndex] {x : V} (hx : S ≤ 
 
 theorem act_avg {S : Subgroup H} [S.Normal] [S.FiniteIndex] {x : V} (hx : S ≤ stab ρ x) (k : H) :
     ρ k (avg ρ S x) = avg ρ S x := by
-  rw [avg_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [avg_apply, map_sum]
   refine Fintype.sum_equiv (Equiv.mulLeft (k : H ⧸ S)) _ _ fun q => ?_
   rw [← Module.End.mul_apply, ← map_mul, act_eq_out hx]
   congr 3
@@ -100,7 +105,7 @@ theorem exists_avg_eq_zero (hfin : ∀ v, (stab ρ v).FiniteIndex) {x : V} (hx :
     obtain ⟨A, hA1, hA2, hA⟩ := ha
     obtain ⟨B, hB1, hB2, hB⟩ := hb
     refine ⟨A ⊓ B, inferInstance, inferInstance, fun S _ _ hS => ?_⟩
-    rw [map_add, hA S (hS.trans inf_le_left), hB S (hS.trans inf_le_right), add_zero]
+    rw [map_add (f := _), hA S (hS.trans inf_le_left), hB S (hS.trans inf_le_right), add_zero]
   | smul c a _ ha =>
     obtain ⟨A, hA1, hA2, hA⟩ := ha
     exact ⟨A, hA1, hA2, fun S _ _ hS => by rw [map_smul, hA S hS, smul_zero]⟩
@@ -231,8 +236,8 @@ theorem heckeOn_apply (g : G) (v : fixed π K) :
 theorem isHeckeOn_heckeOn (g : G) : IsHeckeOn π K g (heckeOn π hπ hKc g) :=
   fun v l hl => by rw [heckeOn_apply, form_eK hπ hKc l hl]
 
-include hπ hKc in
 
+include hπ hKc in
 theorem IsHeckeOn.unique {g : G} {T T' : Module.End ℂ (fixed π K)}
     (hT : IsHeckeOn π K g T) (hT' : IsHeckeOn π K g T') : T = T' := by
   refine LinearMap.ext fun v => Subtype.ext ?_
@@ -242,14 +247,14 @@ theorem IsHeckeOn.unique {g : G} {T T' : Module.End ℂ (fixed π K)}
       f ∘ₗ (fixed π K).subtype ∘ₗ eK π hπ hKc := by
     intro x hx
     ext y
-    simp only [LinearMap.comp_apply, eK_apply_act hπ hKc hx]
+    exact congrArg (fun z : fixed π K => f (z : V)) (eK_apply_act hπ hKc hx y)
   have h := (hT v _ hinv).symm.trans (hT' v _ hinv)
   simp only [LinearMap.comp_apply, Submodule.subtype_apply,
     eK_apply_of_mem hπ hKc (T v).2, eK_apply_of_mem hπ hKc (T' v).2] at h
   rw [map_sub, h, sub_self]
 
-include hπ hKc in
 
+include hπ hKc in
 theorem existsUnique_isHeckeOn (g : G) : ∃! T : Module.End ℂ (fixed π K), IsHeckeOn π K g T :=
   ⟨heckeOn π hπ hKc g, isHeckeOn_heckeOn hπ hKc g,
     fun _ hT => hT.unique hπ hKc (isHeckeOn_heckeOn hπ hKc g)⟩

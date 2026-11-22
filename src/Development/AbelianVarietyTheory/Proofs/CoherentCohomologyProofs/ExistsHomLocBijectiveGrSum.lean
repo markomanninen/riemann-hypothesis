@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.ExistsAwayFracOfMemHomLoc
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubeTotalComplexAcyclicOfSlicesInductionOnCard
+
+@[expose] public section
 
 open CategoryTheory DirectSum MvPolynomial
 
@@ -156,7 +160,7 @@ theorem exists_grCube_hom_bijective (ι : Type) [LinearOrder ι] [Fintype ι] (R
     ∃ φ : grCube ι 𝒢 t ⟶ A t, ∀ I, Function.Bijective (φ.app I).hom := by
   choose φ hφ hφ' using fun I =>
     exists_homLoc_bijective_grSum (hx I) (hρ I) I (hbij I) (hker I) (hcoker I) t
-  refine ⟨Cube.homMk (A := grCube ι 𝒢 t) φ fun {I J} h z => ?_, hφ⟩
+  refine ⟨Cube.homMk (ι := ι) (R := R) (A := grCube ι 𝒢 t) φ fun {I J} h z => ?_, hφ⟩
   exact homLoc_grSum_res (hx I) (hx J) (fun n => Cube.res (A n) h)
     (fun i n a => (Cube.app_res (x i n) h a).symm) (hρ I) (hres I J h) h (hbij J) z _ _
     (hφ' I z) (hφ' J _)

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
-import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
-import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocDual
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.HermitianLattices.HermitianLatticesProofs.UnimodUnramUnique
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.Mass Formalism.HermitianLatticesTheory
 open scoped ENNReal Classical
 
@@ -29,7 +34,7 @@ theorem finite_field_invol {k : Type*} [Field k] [Finite k] (τ : k →+* k) (h�
       have hd := (hF _).1 d.2
       have e1 : (a : k) + b * θ = c + d * θ := e
       have e2 := congrArg τ e1
-      rw [map_add, map_add, map_mul, map_mul, ha, hb, hc, hd] at e2
+      rw [map_add (f := _), map_add (f := _), map_mul, map_mul, ha, hb, hc, hd] at e2
       have e3 : ((b : k) - d) * (θ - τ θ) = 0 := by linear_combination e1 - e2
       have e4 : (b : k) = d := sub_eq_zero.1 ((mul_eq_zero.1 e3).resolve_right hθ)
       have e5 : (a : k) = c := by rw [e4] at e1; exact add_right_cancel e1
@@ -46,7 +51,7 @@ theorem finite_field_invol {k : Type*} [Field k] [Finite k] (τ : k →+* k) (h�
         ring
       exact ⟨(⟨_, (hF _).2 ha⟩, ⟨_, (hF _).2 hb⟩), by simp⟩
   · intro u hu
-    have hT : τ (θ + τ θ) = θ + τ θ := by rw [map_add, hτ, add_comm]
+    have hT : τ (θ + τ θ) = θ + τ θ := by rw [map_add (f := _), hτ, add_comm]
     have hN : τ (τ θ * θ) = τ θ * θ := by rw [map_mul, hτ, mul_comm]
     obtain ⟨a, b, hab⟩ := unimodUnramUnique_ff (k := F) ⟨_, (hF _).2 hT⟩ ⟨_, (hF _).2 hN⟩ ⟨u, (hF _).2 hu⟩
       (by
@@ -58,10 +63,10 @@ theorem finite_field_invol {k : Type*} [Field k] [Finite k] (τ : k →+* k) (h�
         have : (θ - τ θ) ^ 2 = 0 := by linear_combination e2
         exact pow_eq_zero_iff (two_ne_zero) |>.1 this)
     have e1 := congrArg F.subtype hab
-    simp only [map_add, map_mul, map_pow] at e1
+    simp only [map_add (f := _), map_mul, map_pow] at e1
     have e2 : (a : k) ^ 2 + (θ + τ θ) * a * b + (τ θ * θ) * (b : k) ^ 2 = u := e1
     refine ⟨a + b * θ, ?_⟩
-    rw [map_add, map_mul, (hF _).1 a.2, (hF _).1 b.2]
+    rw [map_add (f := _), map_mul, (hF _).1 a.2, (hF _).1 b.2]
     linear_combination e2
 
 section Lat
@@ -89,7 +94,7 @@ theorem int_of_unif {P : Ideal R} (hP : P.IsMaximal) {π b : R} (h1 : π ∈ P) 
     apply mul_left_cancel₀ hπK
     rw [mul_left_comm, e, ← map_mul, ← map_mul, mul_comm i b, ← hc, mul_comm]
   have : α = algebraMap R K r * (algebraMap R K i * α) + algebraMap R K p * α := by
-    rw [← mul_assoc, ← add_mul, ← map_mul, ← map_add, hrp, map_one, one_mul]
+    rw [← mul_assoc, ← add_mul, ← map_mul, ← map_add (f := _), hrp, map_one, one_mul]
   rw [this, hiα]
   exact Submodule.add_mem _ (locDual_one_mul (locDual_alg_mem r) (locDual_alg_mem c)) (hα p hp)
 
@@ -107,27 +112,71 @@ theorem dual_left (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r))
   rw [← hs.eq m y]
   exact star_one_mem hσ ((dualBasic_mem_dual h M y).1 hy m hm)
 
-omit [IsDedekindDomain R] [IsFractionRing R K] in
 
+omit [IsDedekindDomain R] in
 theorem mem_of_int (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r)) (hs : h.IsSymm)
     (hM : IsMaxLat h M) {y : V} (hy : y ∈ dual h M) (hyy : h y y ∈ (1 : Submodule R K)) : y ∈ M := by
   have hN : IsIntLat h (M ⊔ Submodule.span R {y}) := by
-    refine ⟨⟨hM.1.1.fg.sup (Submodule.fg_span_singleton y), ?_⟩, ?_⟩
-    · rw [eq_top_iff, ← hM.1.1.span_eq_top]
-      exact Submodule.span_mono (le_sup_left : M ≤ M ⊔ Submodule.span R {y})
-    · intro u hu v hv
-      obtain ⟨m, hm, u', hu', rfl⟩ := Submodule.mem_sup.1 hu
-      obtain ⟨n, hn, v', hv', rfl⟩ := Submodule.mem_sup.1 hv
-      obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hu'
-      obtain ⟨b, rfl⟩ := Submodule.mem_span_singleton.1 hv'
-      rw [map_add h, LinearMap.add_apply, map_add, map_add]
-      refine Submodule.add_mem _ (Submodule.add_mem _ (hM.1.2 m hm n hn) ?_) (Submodule.add_mem _ ?_ ?_)
-      · exact (dualBasic_mem_dual h M _).1 (Submodule.smul_mem _ b hy) m hm
-      · exact dual_left hσ hs (Submodule.smul_mem _ a hy) hn
-      · rw [locDual_h_smul_left, locDual_h_smul_right, ← hσ]
-        exact locDual_one_mul (locDual_alg_mem _) (locDual_one_mul (locDual_alg_mem _) hyy)
+    letI : Submodule.IsFullLattice K M := hM.1.1
+    refine ⟨Submodule.IsFullLattice.of_le_of_fg K le_sup_left
+      (hM.1.1.fg.sup (Submodule.fg_span_singleton y)), ?_⟩
+    intro u hu v hv
+    obtain ⟨m, hm, u', hu', rfl⟩ := Submodule.mem_sup.1 hu
+    obtain ⟨n, hn, v', hv', rfl⟩ := Submodule.mem_sup.1 hv
+    obtain ⟨a, rfl⟩ := Submodule.mem_span_singleton.1 hu'
+    obtain ⟨b, rfl⟩ := Submodule.mem_span_singleton.1 hv'
+    rw [map_add h, LinearMap.add_apply, map_add (f := _), map_add (f := _)]
+    refine Submodule.add_mem _ (Submodule.add_mem _ (hM.1.2 m hm n hn) ?_) (Submodule.add_mem _ ?_ ?_)
+    · exact (dualBasic_mem_dual h M _).1 (Submodule.smul_mem _ b hy) m hm
+    · exact dual_left hσ hs (Submodule.smul_mem _ a hy) hn
+    · rw [locDual_h_smul_left, locDual_h_smul_right, ← hσ]
+      exact locDual_one_mul (locDual_alg_mem _) (locDual_one_mul (locDual_alg_mem _) hyy)
   rw [← hM.2 _ hN le_sup_left]
   exact Submodule.mem_sup_right (Submodule.mem_span_singleton_self y)
+
+theorem max_span_eq_top [FiniteDimensional K V]
+    (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r)) (hs : h.IsSymm)
+    (hM : IsMaxLat h M) : Submodule.span K (M : Set V) = ⊤ := by
+  rw [eq_top_iff]
+  intro x _
+  obtain ⟨S, hS⟩ := hM.1.1.fg
+  obtain ⟨⟨d, hd⟩, hint⟩ := IsLocalization.exist_integer_multiples_of_finset
+    (nonZeroDivisors R) (insert (h x x) (S.image fun m => h m x))
+  have hd0 : algebraMap R K d ≠ 0 :=
+    (map_ne_zero_iff _ (IsFractionRing.injective R K)).2 (nonZeroDivisors.ne_zero hd)
+  have hden : ∀ z ∈ insert (h x x) (S.image fun m => h m x),
+      algebraMap R K d * z ∈ (1 : Submodule R K) := by
+    intro z hz
+    obtain ⟨r, hr⟩ := hint z hz
+    have hr' : algebraMap R K r = algebraMap R K d * z := by simpa [Algebra.smul_def] using hr
+    rw [← hr']
+    exact locDual_alg_mem r
+  have hcross : ∀ m ∈ M, algebraMap R K d * h m x ∈ (1 : Submodule R K) := by
+    intro m hm
+    rw [← hS] at hm
+    induction hm using Submodule.span_induction with
+    | mem m hm => exact hden _ (Finset.mem_insert_of_mem (Finset.mem_image.mpr ⟨m, hm, rfl⟩))
+    | zero => simp
+    | add a b ha hb iha ihb => simpa [map_add, LinearMap.add_apply, mul_add] using Submodule.add_mem (1 : Submodule R K) iha ihb
+    | smul r m hm ih =>
+      rw [locDual_h_smul_left, ← hσ]
+      have := locDual_one_mul (locDual_alg_mem (σ r)) ih
+      simpa [mul_assoc, mul_comm, mul_left_comm] using this
+  have hy : d • x ∈ dual h M := by
+    apply (dualBasic_mem_dual h M _).2
+    intro m hm
+    rw [locDual_h_smul_right]
+    exact hcross m hm
+  have hyy : h (d • x) (d • x) ∈ (1 : Submodule R K) := by
+    rw [locDual_h_smul_left, locDual_h_smul_right, ← hσ]
+    exact locDual_one_mul (locDual_alg_mem (σ d)) (hden _ (Finset.mem_insert_self _ _))
+  have hx : d • x ∈ M := mem_of_int hσ hs hM hy hyy
+  have hx' : (algebraMap R K d) • x ∈ Submodule.span K (M : Set V) := by
+    rw [algebraMap_smul K]
+    exact Submodule.subset_span hx
+  have := (Submodule.span K (M : Set V)).smul_mem (algebraMap R K d)⁻¹ hx'
+  rw [smul_smul, inv_mul_cancel₀ hd0, one_smul] at this
+  exact this
 
 theorem inert_of_tors (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r)) (hs : h.IsSymm)
     (hM : IsMaxLat h M) {P : Ideal R} (hP : P.IsMaximal) {y : V} (hy : y ∈ dual h M)
@@ -140,15 +189,15 @@ theorem inert_of_tors (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K
     apply hyM
     apply mem_of_int hσ hs hM hy
     have : h y y = algebraMap R K c * h (r • y) y + h y (p • y) := by
-      rw [locDual_h_smul_left, locDual_h_smul_right, ← hσ, ← mul_assoc, ← add_mul, ← map_mul, ← map_add,
+      rw [locDual_h_smul_left, locDual_h_smul_right, ← hσ, ← mul_assoc, ← add_mul, ← map_mul, ← map_add (f := _),
         hcp, map_one, one_mul]
     rw [this]
     exact Submodule.add_mem _ (locDual_one_mul (locDual_alg_mem _)
       ((dualBasic_mem_dual h M y).1 hy _ (hPy r hr))) (dual_left hσ hs hy (hPy p hp))
   exact fun r => ⟨fun hr => hσσ r ▸ key _ hr, key r⟩
 
-omit [IsDedekindDomain R] [IsFractionRing R K] in
 
+omit [IsDedekindDomain R] in
 theorem tors_sq (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r)) (hs : h.IsSymm)
     (hM : IsMaxLat h M) {P : Ideal R} (hin : ∀ r, σ r ∈ P ↔ r ∈ P) {y : V} (hy : y ∈ dual h M)
     (hPy : ∀ p ∈ P * P, p • y ∈ M) : ∀ p ∈ P, p • y ∈ M := by
@@ -194,7 +243,7 @@ theorem tors_line (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r))
         (algebraMap R K (σ w * w) * h y y + h z' z') +
           (algebraMap R K (σ w) * h y z' + algebraMap R K w * star (h y z')) := by
       have : star (h y z') = h z' y := hs.eq y z'
-      rw [map_add h, LinearMap.add_apply, map_add, map_add, locDual_h_smul_left, locDual_h_smul_left,
+      rw [map_add h, LinearMap.add_apply, map_add (f := _), map_add (f := _), locDual_h_smul_left, locDual_h_smul_left,
         locDual_h_smul_right, locDual_h_smul_right, map_mul, hσ, this]
       ring
     rw [e]
@@ -204,10 +253,10 @@ theorem tors_line (hσ : ∀ r, algebraMap R K (σ r) = star (algebraMap R K r))
     · rw [mul_add, mul_left_comm]
       exact Submodule.add_mem _ (locDual_one_mul (locDual_alg_mem _) (hP1 y hy y hPy p hp))
         (hP1 z' hz' z' hPz' p hp)
-    · rw [map_add, map_mul _ _ a, ha, hd]; ring
+    · rw [map_add (f := _), map_mul _ _ a, ha, hd]; ring
   have hwP : w ∈ P := by
     have h3 := dual_left hσ hs hy hv
-    rw [map_add, locDual_h_smul_right] at h3
+    rw [map_add (f := _), locDual_h_smul_right] at h3
     obtain ⟨r, hr⟩ := Submodule.mem_one.1 (Submodule.sub_mem _ h3 hyz')
     have : w * a = π * r := hinj (by rw [map_mul, map_mul, ha, hr]; ring)
     have h4 : w * a ∈ P := this ▸ P.mul_mem_right r h1
@@ -505,7 +554,7 @@ theorem inert_facts {K : Type} [Field K] [NumberField K] [StarRing K] (hK : IsCM
     rw [map_neg, map_div₀, hτ, hτ, neg_inj, div_eq_div_iff ha1 ha0, ← hab', mul_comm])
   obtain ⟨w, rfl⟩ := Ideal.Quotient.mk_surjective w
   refine ⟨w, ?_⟩
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_add, map_mul, map_mul, ← hτ, hw, neg_mul, div_mul_cancel₀ _ ha0,
+  rw [← Ideal.Quotient.eq_zero_iff_mem, map_add (f := _), map_mul, map_mul, ← hτ, hw, neg_mul, div_mul_cancel₀ _ ha0,
     neg_add_cancel]
 
 theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] (h : V →ₗ⋆[K] V →ₗ[K] K), IsCMUnram K → h.IsSymm → h.Nondegenerate → ∀ M : Submodule (𝓞 K) V, IsMaxLat h M → (badP h M).Finite ∧ discN h M = ∏ᶠ P ∈ badP h M, Ideal.absNorm P ∧ Nonempty ((↥(dual h M) ⧸ M.comap (dual h M).subtype) ≃ₗ[𝓞 K] (𝓞 K ⧸ ∏ᶠ P ∈ badP h M, P)) ∧ ∀ P ∈ badP h M, conjIdeal (K := K) P = P ∧ 2 ≤ qIn P ∧ Ideal.absNorm P = qIn P ^ 2 ∧ ∃ x ∈ M, (∃ a : 𝓞 K, (a : K) = h x x ∧ a ∈ P ∧ a ∉ P ^ 2) ∧ ∀ y ∈ loc (K := K) P (dual h M), ∃ c ∈ locR (K := K) P, y - (c * (h x x)⁻¹) • x ∈ loc (K := K) P M := by
@@ -513,8 +562,9 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   obtain ⟨σ, hσ⟩ := star_int (K := K)
   have hstar : ∀ r : 𝓞 K, star (algebraMap (𝓞 K) K r) ∈ Set.range (algebraMap (𝓞 K) K) :=
     fun r => ⟨σ r, hσ r⟩
+  have hfull : Submodule.IsFullLattice K M := hM.1.1
   have hJ : M.colon (dual h M : Set V) ≠ ⊥ :=
-    colon_ne_bot (K := K) (dualLattice (𝓞 K) K V h hs hnd hstar M hM.1.1).1.fg hM.1.1.span_eq_top
+    colon_ne_bot (K := K) (dualLattice (𝓞 K) K V h hs hnd hstar M hfull).1.fg (max_span_eq_top hσ hs hM)
   have hbad := bad_iff hσ hs hM hJ
   have hfin : (badP h M).Finite := by
     refine (UniqueFactorizationMonoid.normalizedFactors (M.colon (dual h M : Set V))).toFinset.finite_toSet.subset

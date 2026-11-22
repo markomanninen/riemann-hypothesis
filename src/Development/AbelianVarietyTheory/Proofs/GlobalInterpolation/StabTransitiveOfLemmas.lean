@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerCompletions
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemStabLocStdLatticeIffHtFinEqOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.StabilizerCompletions
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemStabLocStdLatticeIffHtFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem hR_map {R' : Type} [CommRing R'] [Algebra F R'] (φ : R →ₐ[F] R') (x
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul a e => simp [sigR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   simp [hR, Formalism.UG.hform, hσ, JR, inclR]
 
 end Form
@@ -111,7 +115,8 @@ def latMax (L : Submodule (𝓞 E) (Fin M → E)) : Submodule (SelfDualLatticeAc
 theorem isSelfDualLat_latMax (hJ : IsHermND σ J) {L : Submodule (𝓞 E) (Fin M → E)}
     (hL : SelfDualLatticeOrthogonalParts.IsSelfDualLattice σ J L) : SelfDualLatticeActions.IsSelfDualLat v σ J (latMax v L) := by
   classical
-  have hl : Submodule.IsLattice E L := ⟨hL.1, hL.2.1⟩
+  haveI : Submodule.IsLattice E L := Submodule.IsLattice.of_fg E hL.1
+  have hl : Submodule.IsFullLattice E L := ⟨hL.2.1⟩
   have hsd : IsSelfDualAt σ J L v := by
     refine (SelfDual.forall_isSelfDualAt_iff hJ.2 hl).2 (fun y => (hL.2.2 y).trans ?_) v
     exact forall₂_congr fun x _ => ⟨fun h => ⟨⟨_, h⟩, rfl⟩, fun ⟨r, hr⟩ => hr ▸ r.2⟩
@@ -157,7 +162,8 @@ theorem exists_stab_act_eq (H : SelfDualLatticeActions.SelfDualLatticeLemmas) (h
     (hy : y ∈ latHat F E (L : Set (Fin M → E))) (hy' : y' ∈ latHat F E (L : Set (Fin M → E)))
     (qy : qR (Af F) σ J y = algebraMap F (Af F) β) (qy' : qR (Af F) σ J y' = algebraMap F (Af F) β) :
     ∃ k ∈ SelfDualLatticeOrthogonalParts.stabHat σ J (L : Set (Fin M → E)), SelfDualLatticeOrthogonalParts.actVec σ J k y = y' := by
-  haveI : Submodule.IsLattice E L := ⟨hL.1, hL.2.1⟩
+  haveI : Submodule.IsLattice E L := Submodule.IsLattice.of_fg E hL.1
+  haveI : Submodule.IsFullLattice E L := ⟨hL.2.1⟩
   have hloc : ∀ v : HeightOneSpectrum (𝓞 F), ∃ g ∈ SelfDualLatticeActions.latStab v σ J (latMax v L),
       SelfDualLatticeActions.act v σ J g (vecLoc v y) = vecLoc v y' := fun v => by
     obtain ⟨u, hu'⟩ : ∃ u : (v.adicCompletionIntegers F)ˣ,
@@ -187,8 +193,8 @@ omit [NumberField E] in
 theorem latHat_mono {S T : Set (Fin M → E)} (h : S ⊆ T) : latHat F E S ≤ latHat F E T :=
   AddSubgroup.closure_mono fun _ ⟨a, ha, x, hx, e⟩ => ⟨a, ha, x, h hx, e⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem proj_mem {L : Submodule (𝓞 E) (Fin M → E)} (hL : SelfDualLatticeOrthogonalParts.IsSelfDualLattice σ J L) {β : F}
     (hβ : β = 1 ∨ β = -1) {x : Fin M → E} (hx : x ∈ L) (hq : hE σ J x x = algebraMap F E β)
     {y : Fin M → Af F ⊗[F] E} (hy : y ∈ latHat F E (L : Set (Fin M → E))) :
@@ -228,14 +234,14 @@ theorem proj_mem {L : Submodule (𝓞 E) (Fin M → E)} (hL : SelfDualLatticeOrt
     rw [this, mul_neg, neg_smul, sub_neg_eq_add, neg_add_eq_sub, ← neg_sub]
     exact neg_mem hy
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem mem_latHat_perp_iff {L : Submodule (𝓞 E) (Fin M → E)} (hL : SelfDualLatticeOrthogonalParts.IsSelfDualLattice σ J L)
     {β : F} (hβ : β = 1 ∨ β = -1) {x : Fin M → E} (hx : x ∈ L) (hq : hE σ J x x = algebraMap F E β)
     (y : Fin M → Af F ⊗[F] E) :
     y ∈ latHat F E (SelfDualLatticeOrthogonalParts.perpPart σ J L x) ↔
       y ∈ latHat F E (L : Set (Fin M → E)) ∧ hR (Af F) σ J (SelfDualLatticeOrthogonalParts.ratVec F x) y = 0 := by
-  refine ⟨fun hy => ⟨latHat_mono (fun _ h => h.1) hy, ?_⟩, fun hy => ?_⟩
+  refine ⟨fun hy => ⟨latHat_mono (S := SelfDualLatticeOrthogonalParts.perpPart σ J L x) (T := L) (fun _ h => h.1) hy, ?_⟩, fun hy => ?_⟩
   · induction hy using AddSubgroup.closure_induction with
     | mem y hy =>
       obtain ⟨a, -, z, hz, rfl⟩ := hy
@@ -245,8 +251,8 @@ theorem mem_latHat_perp_iff {L : Submodule (𝓞 E) (Fin M → E)} (hL : SelfDua
     | neg y _ hy => rw [← neg_one_smul (Af F ⊗[F] E) y, hR_smul, hy, mul_zero]
   · simpa [hy.2] using proj_mem hL hβ hx hq hy.1
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem stab_inf_eq {L : Submodule (𝓞 E) (Fin M → E)} (hL : SelfDualLatticeOrthogonalParts.IsSelfDualLattice σ J L)
     {β : F} (hβ : β = 1 ∨ β = -1) {x : Fin M → E} (hx : x ∈ L) (hq : hE σ J x x = algebraMap F E β) :
     SelfDualLatticeOrthogonalParts.stabHat σ J (L : Set (Fin M → E)) ⊓ SelfDualLatticeOrthogonalParts.stabVec σ J x =

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsSectionOrder
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -41,14 +46,15 @@ theorem exists_specFirst_ne_zero [Infinite F] {f : MvPolynomial (Fin (k + 1) × 
     (map_ne_zero_iff _ (sumAlgEquiv F (Fin k × Fin n) (Fin n)).injective).mpr
       ((map_ne_zero_iff _ (rename_injective _ specFirstSplit_injective)).mpr hf)
   obtain ⟨β, hβ⟩ := ne_zero_iff.mp hg
-  have ht : ∃ t : Fin n → F, eval t (coeff β g) ≠ 0 := by
+  have ht : ∃ t : Fin n → F, eval t (AddMonoidAlgebra.coeff g β) ≠ 0 := by
     by_contra h
     simp only [not_exists, not_not] at h
     exact hβ (MvPolynomial.funext fun x => by simp [h x])
   obtain ⟨t, ht⟩ := ht
   refine ⟨t, fun h0 => ht ?_⟩
-  have := congr_arg (coeff β) h0
-  rwa [specFirst_eq_map_eval, ← hg_def, coeff_map, coeff_zero] at this
+  have := congr_arg (AddMonoidAlgebra.coeff · β) h0
+  simpa only [specFirst_eq_map_eval, ← hg_def, coeff_map, AddMonoidAlgebra.coeff_zero,
+    Finsupp.zero_apply] using this
 
 end Choice
 

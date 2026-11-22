@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -63,7 +68,7 @@ theorem hasFDerivAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) :
 theorem contDiffAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) {n : WithTop ℕ∞} :
     ContDiffAt ℝ n phi z := by
   have hs : ContDiff ℝ n (sqSum : (J → ℂ) → ℝ) :=
-    ContDiff.sum fun p _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ p)
+    ContDiff.sum fun p _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) p)
   exact (hs.contDiffAt.log hz).mul contDiffAt_const
 
 theorem fderiv_fderiv_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (u : J → ℂ) :
@@ -105,58 +110,6 @@ theorem leviForm_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (w : J → ℂ) :
   ring
 
 section Line
-
-theorem sum_line (f : (Σ _ : Unit, Fin 2) → ℝ) : ∑ p, f p = f ⟨(), 0⟩ + f ⟨(), 1⟩ := by
-  rw [Fintype.sum_sigma]
-  simp [Fin.sum_univ_two]
-
-theorem lagrange (z w : (Σ _ : Unit, Fin 2) → ℂ) :
-    sqSum z * sqSum w - (reInner z w ^ 2 + reInner z (Complex.I • w) ^ 2) =
-      Complex.normSq (z ⟨(), 0⟩ * w ⟨(), 1⟩ - z ⟨(), 1⟩ * w ⟨(), 0⟩) := by
-  simp only [sqSum, reInner_apply, sum_line, Complex.sq_norm, Complex.normSq_apply, Pi.smul_apply,
-    smul_eq_mul, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.sub_re,
-    Complex.sub_im]
-  ring
-
-theorem levi_phi_pos {z w : (Σ _ : Unit, Fin 2) → ℂ} (hz : ∃ i, z ⟨(), i⟩ ≠ 0)
-    (hw : ∀ c : ℂ, w ≠ fun p => c * z p) : 0 < leviForm phi z w := by
-  have hS : sqSum z ≠ 0 := by
-    obtain ⟨i, hi⟩ := hz
-    refine ne_of_gt (lt_of_lt_of_le (pow_pos (norm_pos_iff.mpr hi) 2) ?_)
-    exact Finset.single_le_sum (f := fun p => ‖z p‖ ^ 2) (fun _ _ => sq_nonneg _)
-      (Finset.mem_univ (⟨(), i⟩ : Σ _ : Unit, Fin 2))
-  rw [leviForm_phi hS, lagrange]
-  refine div_pos (Complex.normSq_pos.mpr fun h0 => ?_) (by positivity)
-  rw [sub_eq_zero] at h0
-  have hcases : ∀ p : Σ _ : Unit, Fin 2, p = ⟨(), 0⟩ ∨ p = ⟨(), 1⟩ := by
-    rintro ⟨⟨⟩, j⟩
-    fin_cases j <;> simp
-  by_cases hz0 : z ⟨(), 0⟩ = 0
-  · have hz1 : z ⟨(), 1⟩ ≠ 0 := fun h1 => hS (by simp [sqSum, sum_line, hz0, h1])
-    apply hw (w ⟨(), 1⟩ / z ⟨(), 1⟩)
-    funext p
-    rcases hcases p with rfl | rfl
-    · rw [hz0, zero_mul] at h0
-      have hw0 : w ⟨(), 0⟩ = 0 := by
-        rcases mul_eq_zero.mp h0.symm with h | h
-        · exact absurd h hz1
-        · exact h
-      rw [hw0, hz0, mul_zero]
-    · rw [div_mul_cancel₀ _ hz1]
-  · apply hw (w ⟨(), 0⟩ / z ⟨(), 0⟩)
-    funext p
-    rcases hcases p with rfl | rfl
-    · rw [div_mul_cancel₀ _ hz0]
-    · rw [div_mul_eq_mul_div, eq_div_iff hz0]
-      linear_combination h0
-
-theorem log_fsLine (z : (Σ _ : Unit, Fin 2) → ℂ) : Real.log ((fsLine 2).h z) = phi z := by
-  have hfun : (fsLine 2).h z = ∏ k : Unit, Real.sqrt (∑ i : Fin 2, ‖z ⟨k, i⟩‖ ^ 2) := by
-    simp only [fsLine, HermLine.ofMetrics, fsMetric, Pi.one_apply, zpow_one, EuclideanSpace.norm_eq]
-  rw [hfun, Fintype.prod_unique, Real.log_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _), phi,
-    sqSum, sum_line]
-  simp [Fin.sum_univ_two]
-  ring
 
 end Line
 

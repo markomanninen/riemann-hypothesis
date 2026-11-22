@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InducedProductCommutesFamilyProduct
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MultiProdCompCongr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InducedProductCommutesFamilyProduct
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MultiProdCompCongr
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.SplitRead GlobalTheory.ProdReorder
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 1000000 in

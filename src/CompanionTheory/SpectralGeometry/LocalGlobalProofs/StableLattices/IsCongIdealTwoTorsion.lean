@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -26,8 +30,6 @@ structure IsCongIdeal {E ι : Type} [Ring E] (J : AddSubgroup E) (P : ι → E) 
   left_mem : ∀ i, ∀ x ∈ J, P i * x ∈ J
   right_mem : ∀ i, ∀ x ∈ J, x * P i ∈ J
   inv : ∀ x ∈ J, ∃ y ∈ J, (1 + x) * (1 + y) = 1 ∧ (1 + y) * (1 + x) = 1
-
-def twoTorsion : AddSubgroup (Fin 2 → ZMod 4) := (AddMonoidHom.mulLeft (2 : Fin 2 → ZMod 4)).ker
 
 abbrev Idx (l : ℕ) := Option (Fin l ⊕ Fin l)
 

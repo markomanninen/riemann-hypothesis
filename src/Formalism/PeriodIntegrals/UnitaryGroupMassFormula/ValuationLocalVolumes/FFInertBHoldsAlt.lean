@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.FixedMemRange
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.FixedMemRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem fFInertB_holds : PI.OmVd.FFInertB := by
       IsUnit (T + Matrix.single i₀ i₀ (algebraMap k K c)).det := by
     intro c hc0
     refine ⟨fun i j => ?_, ?_⟩
-    · rw [Matrix.add_apply, Matrix.add_apply, map_add, hT, Matrix.single_apply, Matrix.single_apply]
+    · rw [Matrix.add_apply, Matrix.add_apply, map_add (f := _), hT, Matrix.single_apply, Matrix.single_apply]
       congr 1
       split_ifs with h1 h2 h2 <;> first | exact AlgEquiv.commutes σ c | exact map_zero σ | (exfalso; tauto)
     · rw [det_corOne T i₀ hr]

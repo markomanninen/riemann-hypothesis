@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.Hat1
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat
 open scoped TensorProduct Topology Matrix
@@ -50,7 +54,7 @@ theorem exists_prod_equiv (F E A B : Type) [CommRing F] [CommRing E] [Algebra F 
           induction z using TensorProduct.induction_on with
           | zero => simp
           | tmul a x => simp [p, TensorProduct.smul_tmul']
-          | add x y hx hy => simp only [smul_add, map_add, hx, hy] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy] }
     exact IsModuleTopology.continuous_of_linearMapₛₗ continuous_fst φ
   have hq : Continuous q := by
     let φ : (A × B) ⊗[F] E →ₛₗ[RingHom.snd A B] B ⊗[F] E :=
@@ -60,7 +64,7 @@ theorem exists_prod_equiv (F E A B : Type) [CommRing F] [CommRing E] [Algebra F 
           induction z using TensorProduct.induction_on with
           | zero => simp
           | tmul a x => simp [q, TensorProduct.smul_tmul']
-          | add x y hx hy => simp only [smul_add, map_add, hx, hy] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy] }
     exact IsModuleTopology.continuous_of_linearMapₛₗ continuous_snd φ
   have hi : Continuous i := by
     let φ : A ⊗[F] E →ₑ+[MonoidHom.inl A B] (A × B) ⊗[F] E :=
@@ -71,7 +75,7 @@ theorem exists_prod_equiv (F E A B : Type) [CommRing F] [CommRing E] [Algebra F 
           induction z using TensorProduct.induction_on with
           | zero => simp
           | tmul a x => simp [i, TensorProduct.smul_tmul']
-          | add x y hx hy => simp only [smul_add, map_add, hx, hy] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy] }
     exact IsModuleTopology.continuous_of_distribMulActionHomₑ
       (continuous_id.prodMk continuous_const) φ
   have hj : Continuous j := by
@@ -83,7 +87,7 @@ theorem exists_prod_equiv (F E A B : Type) [CommRing F] [CommRing E] [Algebra F 
           induction z using TensorProduct.induction_on with
           | zero => simp
           | tmul a x => simp [j, TensorProduct.smul_tmul']
-          | add x y hx hy => simp only [smul_add, map_add, hx, hy] }
+          | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy] }
     exact IsModuleTopology.continuous_of_distribMulActionHomₑ
       (continuous_const.prodMk continuous_id) φ
   have hpi : ∀ x, p (i x) = x ∧ q (i x) = 0 := by

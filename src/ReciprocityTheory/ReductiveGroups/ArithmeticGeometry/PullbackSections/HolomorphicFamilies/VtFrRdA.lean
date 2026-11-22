@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.VtFrRdHol
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.VtFrRdHol
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ThetaVV
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,14 +29,14 @@ private lemma ringHom_units_zpow_lemma {R S : Type*} [CommRing R] [Field S] (f :
 
 theorem vtf_valU (p : Sp ℂ ⟶ Z) {V : Z.Opens} (h : ⊤ ≤ p ⁻¹ᵁ V) (u : Γ(Z, V)ˣ) (k : ℤ) :
     valAt' p V ((u ^ k : Γ(Z, V)ˣ) : Γ(Z, V)) = valAt' p V (u : Γ(Z, V)) ^ k := by
-  rw [valAt', valAt', dif_pos h, dif_pos h]
+  rw [valAt', valAt', dite_eq_left h, dite_eq_left h]
   delta valAt
   exact ringHom_units_zpow_lemma ((Scheme.ΓSpecIso (CommRingCat.of ℂ)).hom.hom.comp (p.appLE V ⊤ h).hom) u k
 
 theorem vtf_val_res (p : Sp ℂ ⟶ Z) {U V : Z.Opens} (hVU : V ≤ U) (h : ⊤ ≤ p ⁻¹ᵁ V) (u : Γ(Z, U)ˣ) :
     valAt' p V (res hVU u : Γ(Z, V)) = valAt' p U (u : Γ(Z, U)) := by
   have h' : ⊤ ≤ p ⁻¹ᵁ U := h.trans (fun x hx => hVU hx)
-  rw [valAt', valAt', dif_pos h, dif_pos h']
+  rw [valAt', valAt', dite_eq_left h, dite_eq_left h']
   delta valAt res
   congr 1
   first
@@ -43,11 +47,11 @@ theorem vtf_val_pullU (p : Sp ℂ ⟶ Z) (f : Z ⟶ Z') (U : Z'.Opens) (u : Γ(Z
     valAt' p (f ⁻¹ᵁ U) (pullU f U u : Γ(Z, f ⁻¹ᵁ U)) = valAt' (p ≫ f) U (u : Γ(Z', U)) := by
   by_cases hc : ⊤ ≤ p ⁻¹ᵁ (f ⁻¹ᵁ U)
   · have hc' : ⊤ ≤ (p ≫ f) ⁻¹ᵁ U := fun x hx => hc hx
-    rw [valAt', valAt', dif_pos hc, dif_pos hc']
+    rw [valAt', valAt', dite_eq_left hc, dite_eq_left hc']
     delta valAt pullU
     congr 1
   · have hc' : ¬ ⊤ ≤ (p ≫ f) ⁻¹ᵁ U := fun h' => hc (fun x hx => h' hx)
-    rw [valAt', valAt', dif_neg hc, dif_neg hc']
+    rw [valAt', valAt', dite_eq_right hc, dite_eq_right hc']
 
 end Units
 

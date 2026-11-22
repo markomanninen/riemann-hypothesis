@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.RayClassDensity
-import GroundTheory.GlobalFields.GlobalReciprocity.General
-import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
-import GroundTheory.GlobalFields.NormResidueSymbol.Surjective
-import GroundTheory.GlobalFields.KummerTheory.Splitting
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.RayClassDensity
+public import GroundTheory.GlobalFields.GlobalReciprocity.General
+public import GroundTheory.GlobalFields.GlobalReciprocity.Frobenius
+public import GroundTheory.GlobalFields.NormResidueSymbol.Surjective
+public import GroundTheory.GlobalFields.KummerTheory.Splitting
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set GroundTheory.LocalField
 
@@ -68,13 +72,6 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 attribute [local instance] galCommGroup
 
-theorem arithFrobAt_eq_of_liesOver {v : HeightOneSpectrum (𝓞 K)} (w w' : HeightOneSpectrum (𝓞 L))
-    [w.asIdeal.LiesOver v.asIdeal] [w'.asIdeal.LiesOver v.asIdeal] :
-    arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal = arithFrobAt (𝓞 K) Gal(L/K) w'.asIdeal :=
-  isConj_iff_eq.1 (isConj_arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal w'.asIdeal
-    ((Ideal.LiesOver.over (P := w.asIdeal) (p := v.asIdeal)).symm.trans
-      (Ideal.LiesOver.over (P := w'.asIdeal) (p := v.asIdeal))))
-
 end Chebotarev
 
 section ChebotarevDensity
@@ -123,13 +120,6 @@ theorem hasDirichletDensity_setOf_arithFrobAt_eq (σ : Gal(L/K)) :
     (isBoundedUnder_primeIdealZetaSum_of_finite (hR.subset fun v hv ↦ by
       by_contra h
       exact hv.2 ⟨h2 hv.1, h⟩)) _).1 hSR
-
-theorem hasDirichletDensity_setOf_arithFrobAt_eq_finrank (σ : Gal(L/K)) :
-    {v : HeightOneSpectrum (𝓞 K) | ∀ w : HeightOneSpectrum (𝓞 L), w.asIdeal.LiesOver v.asIdeal →
-      w.asIdeal.ramificationIdx (𝓞 K) = 1 ∧ arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal = σ}.HasDirichletDensity
-      (1 / Module.finrank K L) := by
-  rw [← IsGalois.card_aut_eq_finrank]
-  exact hasDirichletDensity_setOf_arithFrobAt_eq σ
 
 end ChebotarevDensity
 

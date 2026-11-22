@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 open Function
 
@@ -31,7 +36,7 @@ lemma endBaseChangeMap_bijective [Module.Free A Λ] [Module.Finite A Λ] :
     | zero => simp
     | tmul s f =>
       simp [e₁, e₂, e₃, bS, endBaseChangeMap_tmul, matrixEquivTensor_apply_symm]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have : (endBaseChangeMap A S Λ : _ → _) = e₃.symm ∘ e₂ ∘ e₁ := by
     funext x; simp [← h x]
   rw [this]
@@ -50,17 +55,17 @@ lemma mulLeftRight_envBaseChange (x : S ⊗[A] (Λ ⊗[A] Λᵐᵒᵖ)) :
       endBaseChangeMap A S Λ ((AlgHom.mulLeftRight A Λ).toLinearMap.lTensor S x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul s y =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y z hy hz => simp only [tmul_add, map_add, hy, hz]
+    | add y z hy hz => simp only [tmul_add, map_add (f := _), hy, hz]
     | tmul a b =>
       apply LinearMap.ext
       intro z
       induction z using TensorProduct.induction_on with
       | zero => simp
-      | add z w hz hw => simp only [map_add, hz, hw]
+      | add z w hz hw => simp only [map_add (f := _), hz, hw]
       | tmul t y =>
         simp [envBaseChange, opBaseChange, endBaseChangeMap_tmul,
           AlgebraTensorModule.distribBaseChange_tmul, Algebra.TensorProduct.tmul_mul_tmul,

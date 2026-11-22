@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FibreIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushRProdPtsResP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FibreIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.PushRProdPtsResP
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,8 @@ theorem eig_localization {R R' O L L' : Type} [CommRing R] [CommRing R'] [Algebr
     obtain ⟨⟨q, hq⟩, hqi⟩ := IsLocalization.exist_integer_multiples_of_finite S d
     choose d' hd' using hqi
     have h0 : f (∑ i, d' i • v i) = 0 := by
-      simp only [map_sum, hs, hd', Algebra.smul_def, mul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, hs, hd', Algebra.smul_def, mul_smul]
       rw [← Finset.smul_sum, hd, smul_zero]
     obtain ⟨r, hr, h1⟩ := uniq _ h0
     have h2 : r • d' = 0 := (hv 0 (by simp)).unique
@@ -50,10 +55,11 @@ theorem eig_localization {R R' O L L' : Type} [CommRing R] [CommRing R'] [Algebr
       obtain ⟨k, hk⟩ := Finset.dvd_prod_of_mem r (Finset.mem_coe.1 hb)
       rw [smul_comm b, smul_comm (χ b), ← sub_eq_zero, ← smul_sub, hk, _root_.mul_comm, mul_smul, h1, smul_zero]
     | zero => simp
-    | add b b' _ _ e e' => rw [add_smul, e, e', map_add, add_smul]
+    | add b b' _ _ e e' => rw [add_smul, e, e', map_add (f := _), add_smul]
     | smul k b _ e => rw [smul_assoc, e, map_zsmul, smul_assoc]
   have h2 := congrArg f hc
-  simp only [map_sum, hs, hx, smul_smul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hs, hx, smul_smul] at h2
   obtain ⟨u, hu⟩ := ((unit _ hQ).mul (unit q hq)).exists_left_inv
   have h3 : w = ∑ i, (u * algebraMap R R' (c i)) • f (v i) := by
     simp only [mul_smul u]

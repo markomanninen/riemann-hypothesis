@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ExistsGlRep
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AdmissiblePi
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.NegVan
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.GoodOf
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.HeckeCl
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.AnnModel
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtSideGoodHolds
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.ExistsGlRep
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AdmissiblePi
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.NegVan
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.GoodOf
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.HeckeCl
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.BrauerTraceSplitting.AnnModel
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtSideGoodHolds
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,8 @@ private theorem exists_lin {F L : Type*} [Field F] [Field L] [Algebra F L] {V W 
     ∃ b : (Fin a → L) →ₗ[L] L ⊗[F] V, ∀ x, Φ.baseChange L (b x) = ∑ i, x i • y i := by
   choose w hw using hy
   refine ⟨Fintype.linearCombination L w, fun x => ?_⟩
-  simp only [Fintype.linearCombination_apply, map_sum, map_smul, hw]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Fintype.linearCombination_apply, map_sum, map_smul, hw]
 
 private theorem lin_inj {F L : Type*} [Field F] [Field L] [Algebra F L] {V W : Type*} [AddCommGroup V] [Module F V]
     [AddCommGroup W] [Module F W] (Φ : V →ₗ[F] W) {a : ℕ} (y : Fin a → L ⊗[F] W) (hl : LinearIndependent L y)
@@ -77,7 +82,8 @@ private theorem lin_equiv {F L : Type*} [Field F] [Field L] [Algebra F L] {V W :
     have := LinearMap.congr_fun (congrArg (LinearMap.baseChange L) hc) (b x)
     rw [LinearMap.baseChange_comp, LinearMap.baseChange_comp] at this
     exact this.symm
-  rw [h1, hb, hb, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, hb, hb, map_sum]
   simp only [map_smul, hR, Matrix.mulVec, dotProduct, Finset.sum_smul, Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by rw [mul_comm]
@@ -95,7 +101,8 @@ private theorem lin_eig {F L : Type*} [Field F] [Field L] [Algebra F L] [CharZer
     rw [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.comp_apply] at this
     rw [this, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul]
   have h2 : h.baseChange L (Φ.baseChange L (b x)) = θ • Φ.baseChange L (b x) := by
-    rw [hb, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hb, map_sum]
     simp only [map_smul, hy, Finset.smul_sum]
     exact Finset.sum_congr rfl fun i _ => smul_comm _ _ _
   rw [h2, hθ, mul_smul] at h1
@@ -109,7 +116,8 @@ private theorem sum_comp {F : Type*} [Field F] {I : Type*} [Fintype I] [Decidabl
     (hc : ∀ i, h ∘ₗ φ i = c • (φ i ∘ₗ t i)) :
     h ∘ₗ (∑ i, φ i ∘ₗ LinearMap.proj i) = c • ((∑ i, φ i ∘ₗ LinearMap.proj i) ∘ₗ t') := by
   refine LinearMap.ext fun x => ?_
-  simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.proj_apply, map_sum, ht, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.sum_apply, LinearMap.proj_apply, map_sum, ht, Finset.smul_sum]
   exact Finset.sum_congr rfl fun i _ => by
     have := LinearMap.congr_fun (hc i) (x i)
     simpa using this
@@ -141,7 +149,8 @@ private theorem e_facts {F : Type*} [Field F] {A : ℤ → Type*} [∀ n, AddCom
     funext i
     have h1 : DirectSum.component F ℤ A ((i : ℕ) : ℤ) (e x) = (β i).equivFun.symm (x i) := by
       rw [he]
-      simp only [LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.proj_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.proj_apply, map_sum]
       rw [Finset.sum_eq_single i]
       · simp [DirectSum.component.lof_self]
       · intro k _ hk
@@ -225,7 +234,8 @@ private theorem core {F L : Type*} [Field F] [Field L] [Algebra F L] [CharZero L
     p ∘ₗ (DirectSum.lof F ℤ A ((i : ℕ) : ℤ)) ∘ₗ (β i).equivFun.symm.toLinearMap
   have hφ : p ∘ₗ e = ∑ i : Fin N, φ i ∘ₗ LinearMap.proj i := by
     refine LinearMap.ext fun x => ?_
-    simp [e, φ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [e, φ, map_sum]
   have hy' : ∀ i, y i ∈ LinearMap.range ((p ∘ₗ e).baseChange L) := fun i => by
     rw [← hz i]
     exact hR _ heR _ (hNf i N (hle i))

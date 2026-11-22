@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -28,7 +32,7 @@ theorem quotientMap_bijective_of_loc {A B : Type*} [CommRing A] [CommRing B] [Al
       obtain ⟨M₂, k₂, hk₂, e₂⟩ := ihy
       refine ⟨M₁ + M₂, h ^ M₂ * k₁ + h ^ M₁ * k₂,
         K.add_mem (K.mul_mem_left _ hk₁) (K.mul_mem_left _ hk₂), ?_⟩
-      rw [map_add, map_mul, map_mul, ← e₁, ← e₂, pow_add, map_mul]
+      rw [map_add (f := _), map_mul, map_mul, ← e₁, ← e₂, pow_add, map_mul]
       ring
     | smul b x _ ih =>
       obtain ⟨M, k, hk, e⟩ := ih

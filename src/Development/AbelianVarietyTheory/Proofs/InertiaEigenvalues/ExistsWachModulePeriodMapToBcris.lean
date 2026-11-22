@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocAinfUntiltEpsOneEqZeta
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SandZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocAinfUntiltEpsOneEqZeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem βB_smul (T : LocLat G Qp LL O) (r : RA) (y : TW RA T) :
     βB β hβ T (r • y) = actS T.V B (β r) (βB β hβ T y) := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
   | tmul a t => rw [smul_tmul', βB_tmul, βB_tmul, smul_eq_mul, map_mul, map_mul, Module.End.mul_apply]
 
 theorem map_smul_semi {M N : Type} [AddCommGroup M] [Module O M] [AddCommGroup N] [Module O N]
@@ -47,7 +51,7 @@ theorem map_smul_semi {M N : Type} [AddCommGroup M] [Module O M] [AddCommGroup N
     TensorProduct.map σ.toLinearMap f (r • y) = σ r • TensorProduct.map σ.toLinearMap f y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+  | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
   | tmul a t => simp [smul_tmul']
 
 variable (inclR : RA →ₐ[O] RW)
@@ -99,8 +103,8 @@ theorem Val.add {T : LocLat G Qp LL O} {j j' : TW RW T} {z z' : T.V ⊗[Qp] B}
   obtain ⟨r, y, hu, h1, h2⟩ := h
   obtain ⟨r', y', hu', h1', h2'⟩ := h'
   refine ⟨r * r', r' • y + r • y', by rw [map_mul]; exact hu.mul hu', ?_, ?_⟩
-  · rw [map_add, incl_smul, incl_smul, h1, h1', smul_smul, smul_smul, map_mul, smul_add, mul_comm (inclR r')]
-  · rw [map_add, βB_smul, βB_smul, h2, h2', act_comm, map_mul, map_mul, map_add]
+  · rw [map_add (f := _), incl_smul, incl_smul, h1, h1', smul_smul, smul_smul, map_mul, smul_add, mul_comm (inclR r')]
+  · rw [map_add (f := _), βB_smul, βB_smul, h2, h2', act_comm, map_mul, map_mul, map_add (f := _)]
     rfl
 
 theorem Val.smul {T : LocLat G Qp LL O} {j : TW RW T} {z : T.V ⊗[Qp] B}
@@ -122,14 +126,14 @@ theorem Val.map {T T' : LocLat G Qp LL O} (f : T.V →ₗ[LL] T'.V) (fT : ↥T.L
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a t => simp [TWincl, h1]
   have e2 : ∀ y : TW RA T, βB β hβ T' (TensorProduct.map σA.toLinearMap fT y) =
       AlgebraTensorModule.map f hB.toLinearMap (βB β hβ T y) := by
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a t =>
       rw [TensorProduct.map_tmul, βB_tmul, βB_tmul, map_actS, ← h2, hf]
       simp
@@ -169,7 +173,7 @@ theorem exists_isPer (Mo : WN E zl) (β : O ⊗[Zl] Ai →+* LL ⊗[Qp] B) (ιA 
     intro o r
     induction r using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [smul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [smul_add, map_add (f := _), ha, hb]
     | tmul a w => rw [smul_tmul', hβ₀, hβ₀, smul_tmul', smul_eq_mul, smul_eq_mul, map_mul]
   have hex : ∀ T : LocLat G Qp LL O, ∀ x : ↥(Mo.N T), ∃ z, IsCrys PD T.ρ → Val β hβ inclR T (E.jD T x) z := by
     intro T x
@@ -186,7 +190,7 @@ theorem exists_isPer (Mo : WN E zl) (β : O ⊗[Zl] Ai →+* LL ⊗[Qp] B) (ιA 
   let bT : ∀ T : LocLat G Qp LL O, ↥(Mo.N T) →+ T.V ⊗[Qp] B := fun T =>
     if hT : IsCrys PD T.ρ then
       AddMonoidHom.mk' (b T) (fun x y => (hb T (x + y) hT).unique hinj (by
-        rw [Submodule.coe_add, map_add]
+        rw [Submodule.coe_add, map_add (f := _)]
         exact (hb T x hT).add (hb T y hT)))
     else 0
   have hv : ∀ T : LocLat G Qp LL O, IsCrys PD T.ρ → ∀ x : ↥(Mo.N T), Val β hβ inclR T (E.jD T x) (bT T x) := by
@@ -236,7 +240,7 @@ theorem beta_map (β : O ⊗[Zl] Ai →+* LL ⊗[Qp] B) (ιA : Ai →+* B)
     β (Algebra.TensorProduct.map (AlgHom.id O O) a r) = Algebra.TensorProduct.map (AlgHom.id Qp LL) h (β r) := by
   induction r using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul o w => simp [hβ₀, hc]
 
 theorem map_map_comm {Wc : Type} [CommRing Wc] [Algebra Zl Wc] (i : Ai →ₐ[Zl] Wc)
@@ -245,7 +249,7 @@ theorem map_map_comm {Wc : Type} [CommRing Wc] [Algebra Zl Wc] (i : Ai →ₐ[Zl
       Algebra.TensorProduct.map (AlgHom.id O O) b (Algebra.TensorProduct.map (AlgHom.id O O) i r) := by
   induction r using TensorProduct.induction_on with
   | zero => simp only [map_zero]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul o w => simp [hc]
 
 end Generic

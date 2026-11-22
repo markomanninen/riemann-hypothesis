@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.LowTypeA
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTensorGK
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTensorGl
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PLieInv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.LowTypeA
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTensorGK
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTensorGl
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PLieInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem altPair_swap (tl : Fin N → ι) (k k' : Fin N) (hk : k ≠ k') (ht : tl
     · rw [h1, ht]
     · rw [h2, ht]
     · rfl
-  simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, ← sum_neg_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, ← sum_neg_distrib]
   refine sum_equiv (Equiv.mulLeft (Equiv.swap k k')) (fun σ => ?_) fun σ _ => ?_
   · simp only [colG, mem_filter, mem_univ, true_and, Equiv.coe_mulLeft, Equiv.Perm.mul_apply, hs]
   · have e : (dbl (Equiv.swap k k' * σ) : Equiv.Perm (Q ⊕ (Fin N ⊕ Fin N))) = dbl (Equiv.swap k k') * dbl σ := by
@@ -92,7 +97,8 @@ theorem altPair_swap (tl : Fin N → ι) (k k' : Fin N) (hk : k ≠ k') (ht : tl
 theorem altPair_col (tl : Fin N → ι) (p p' : Q) (η : TV n M (Q ⊕ (Fin N ⊕ Fin N)))
     (h : pm (Equiv.swap (Sum.inl p) (Sum.inl p')) η = -η) :
     pm (Equiv.swap (Sum.inl p) (Sum.inl p')) (altPair tl η) = -altPair tl η := by
-  simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, ← sum_neg_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul, ← sum_neg_distrib]
   refine sum_congr rfl fun σ _ => ?_
   have e : Equiv.swap (Sum.inl p) (Sum.inl p') * (dbl σ : Equiv.Perm (Q ⊕ (Fin N ⊕ Fin N))) =
       dbl σ * Equiv.swap (Sum.inl p) (Sum.inl p') := by
@@ -141,7 +147,8 @@ theorem low_abs {ι Γ : Type} [Fintype ι] [DecidableEq ι] [Group Γ] [Topolog
   obtain ⟨q, N, lab, col, b, tl, η, hcl, hb, htl, hsh, hinv, hanti, h0⟩ := hd
   have hT := tensorGK_of tensorGl_holds n M ι Γ bar κ E ρ hK hG _ (lab3 bar lab tl)
   have inv : ∀ γ, actT (lab3 bar lab tl) κ ρ γ (altPair tl η) = altPair tl η := fun γ => by
-    simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [altPair, LinearMap.sum_apply, map_sum, LinearMap.smul_apply, map_smul]
     refine sum_congr rfl fun σ hσ => ?_
     have hσ' : ∀ p, tl (σ p) = tl p := by simpa only [colG, mem_filter, mem_univ, true_and] using hσ
     have hc := hT.2 (dbl σ) (fun p => by
@@ -223,7 +230,7 @@ theorem low_abs {ι Γ : Type} [Fintype ι] [DecidableEq ι] [Group Γ] [Topolog
     simp only [Fin.rev_eq_iff]
     exact_mod_cast (add_right_cancel e).symm
   convert (c1.add c2).add c3 using 1
-  funext a
+  ext a
   simp only [split, hK.invol, sum_sub_distrib, Pi.add_apply, Pi.sub_apply, s1, s2, m0]
   ring
 

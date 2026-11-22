@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.IntCoresA
+module
+
+public import ReciprocityTheory.SemistableReduction.IntCoresA
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ theorem blockPoly_claim (hSJ : SJStatement) (n : ℕ) : ∀ (k : ℕ) (a : Fin k
     have hHm : Measurable H := hcont.measurable.comp e2.symm.measurable
     have hsymm : ∀ z' w, e2.symm (z', w) = Fin.cons w z' := by
       intro z' w
-      simp [e2, e, MeasurableEquiv.piFinSuccAbove_symm_apply, Fin.insertNth_zero']
-      rfl
+      simp [e2, e, MeasurableEquiv.prodComm, MeasurableEquiv.piFinSuccAbove_symm_apply,
+        Fin.insertNth_zero']
     have hH : ∀ z' w, H (z', w) = F (Fin.cons (spherePoint w) (fun b => spherePoint (z' b))) := by
       intro z' w
       simp only [H, onSpheres, hsymm]

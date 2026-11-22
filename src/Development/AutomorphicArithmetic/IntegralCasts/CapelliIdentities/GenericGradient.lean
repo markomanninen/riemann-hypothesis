@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qf34.genericGradient :
     {n : ℕ} →
@@ -26,14 +30,14 @@ private theorem UpperTheory.Reformulated.B.Qf34.taylor {k B : Type*} [CommRing k
   induction p using MvPolynomial.induction_on with
   | C a => simp [MvPolynomial.algHom_C]
   | add p q hp hq =>
-    simp only [map_add, add_mul, Finset.sum_add_distrib, ← hp, ← hq]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib, ← hp, ← hq]
     ring
   | mul_X p i hp =>
     have e : ∀ l, φ (pderiv l (p * X i)) * (φ (X l) - ψ (X l)) =
         φ (X i) * (φ (pderiv l p) * (φ (X l) - ψ (X l))) +
           (if l = i then φ p * (φ (X i) - ψ (X i)) else 0) := by
       intro l
-      rw [pderiv_mul, map_add, map_mul, map_mul]
+      rw [pderiv_mul, map_add (f := _), map_mul, map_mul]
       split_ifs with hl
       · subst hl
         rw [pderiv_X_self, map_one]
@@ -103,7 +107,8 @@ private theorem UpperTheory.Reformulated.B.Qf34.mem_sup_sq {k A K ι : Type*} [C
     p f c hp hf hc
   choose a ha using fun i => Ideal.Quotient.mk_surjective (I := m * m) (σ (c i))
   have h2 : φ p - ∑ i, a i * φ (f i) ∈ m * m := by
-    rw [← Ideal.Quotient.eq, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Ideal.Quotient.eq, map_sum]
     simpa [← ha] using key
   rw [← add_sub_cancel (∑ i, a i * φ (f i)) (φ p)]
   refine Submodule.add_mem_sup (Ideal.sum_mem _ fun i _ => ?_) h2

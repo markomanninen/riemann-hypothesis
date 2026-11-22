@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.MayerVietorisSequence
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.MayerVietorisSequence
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

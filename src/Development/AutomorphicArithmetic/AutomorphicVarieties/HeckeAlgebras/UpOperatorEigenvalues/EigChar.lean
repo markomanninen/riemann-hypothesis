@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckeCommRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeRestr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeModel
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckeCommRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeRestr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeModel
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.NormLtOne
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi Matrix
 
 namespace UpperTheory.V.Hi.Up
@@ -29,7 +34,8 @@ theorem eigChar {A M ι K E T : Type} [CommRing A] [AddCommGroup M] [Module A M]
   have hs : ∀ y : Y, sp y = L fun i => φ (b.repr y i) := by
     intro y
     have : s y = s (∑ i, b.repr y i • b i) := by rw [b.sum_repr]
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smulₛₗ] at this
     exact this
   obtain ⟨w, rfl⟩ : F ∈ LinearMap.range L := by
@@ -71,7 +77,7 @@ theorem eigChar {A M ι K E T : Type} [CommRing A] [AddCommGroup M] [Module A M]
     | add x y _ _ hx hy =>
       obtain ⟨c, hc⟩ := hx
       obtain ⟨d, hd⟩ := hy
-      exact ⟨c + d, by rw [map_add, add_mulVec, hc, hd, add_smul]⟩
+      exact ⟨c + d, by rw [map_add (f := _), add_mulVec, hc, hd, add_smul]⟩
     | mul x y _ _ hx hy =>
       obtain ⟨c, hc⟩ := hx
       obtain ⟨d, hd⟩ := hy
@@ -83,7 +89,7 @@ theorem eigChar {A M ι K E T : Type} [CommRing A] [AddCommGroup M] [Module A M]
             map_one' := hu _ _ (by simp)
             map_mul' := fun x y => hu _ _ (by rw [map_mul, ← mulVec_mulVec, hχ, mulVec_smul, hχ, smul_smul, mul_comm])
             map_zero' := hu _ _ (by simp)
-            map_add' := fun x y => hu _ _ (by rw [map_add, add_mulVec, hχ, hχ, add_smul]) },
+            map_add' := fun x y => hu _ _ (by rw [map_add (f := _), add_mulVec, hχ, hχ, add_smul]) },
     fun a => hu _ _ (hρa a), fun i => hu _ _ (hρt i)⟩
 
 theorem intIff {l : ℕ} [Fact l.Prime] (x : PadicAlgCl l) : IsIntegral ℤ_[l] x ↔ ‖x‖ ≤ 1 := by

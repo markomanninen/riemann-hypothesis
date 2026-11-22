@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemBalBil
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemBalBil
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SumMulEqZeroOfSumToReal
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.PolFan
 
@@ -35,7 +39,7 @@ theorem host_bar_rt (H : Host E) : H.bar H.rt = -H.rt := by
 
 variable (H : Host E) (X : Type) [AddCommGroup X] [Module (𝓞 E) X]
 
-def rtMul : X →ₗ[ℤ] X := (DistribMulAction.toAddMonoidHom X H.rt).toIntLinearMap
+def rtMul : X →ₗ[ℤ] X := (DistribSMul.toAddMonoidHom X H.rt).toIntLinearMap
 
 variable {H X}
 

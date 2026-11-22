@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.LogFactorialEqSumLog
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MertensLogSum.LogFactorialEqSumLog
+
+@[expose] public section
 
 namespace PI.PrimeLogOverPWork
 
@@ -46,11 +50,6 @@ theorem u23 : Real.log (23 : ℝ) ≤ 91 / 20 * Real.log 2 := by
 
 theorem u29 : Real.log (29 : ℝ) ≤ 98 / 20 * Real.log 2 := by
   have h := log_le_of_pow_le 29 98 20 (by norm_num) (by norm_num) (by norm_num)
-  push_cast at h
-  linarith
-
-theorem u31 : Real.log (31 : ℝ) ≤ 100 / 20 * Real.log 2 := by
-  have h := log_le_of_pow_le 31 100 20 (by norm_num) (by norm_num) (by norm_num)
   push_cast at h
   linarith
 
@@ -133,8 +132,8 @@ theorem S_10 : S 10 = Real.log 2 / 2 + Real.log 3 / 3 + Real.log 5 / 5 + Real.lo
 theorem S_30 : S 30 = Real.log 2 / 2 + Real.log 3 / 3 + Real.log 5 / 5 + Real.log 7 / 7 + Real.log 11 / 11 + Real.log 13 / 13 + Real.log 17 / 17 + Real.log 19 / 19 + Real.log 23 / 23 + Real.log 29 / 29 := by
   norm_num [S_succ_eq_add_ite_prime, S_zero']
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem S_63 : S 63 = Real.log 2 / 2 + Real.log 3 / 3 + Real.log 5 / 5 + Real.log 7 / 7 + Real.log 11 / 11 + Real.log 13 / 13 + Real.log 17 / 17 + Real.log 19 / 19 + Real.log 23 / 23 + Real.log 29 / 29 + Real.log 31 / 31 + Real.log 37 / 37 + Real.log 41 / 41 + Real.log 43 / 43 + Real.log 47 / 47 + Real.log 53 / 53 + Real.log 59 / 59 + Real.log 61 / 61 := by
   norm_num [S_succ_eq_add_ite_prime, S_zero']
 

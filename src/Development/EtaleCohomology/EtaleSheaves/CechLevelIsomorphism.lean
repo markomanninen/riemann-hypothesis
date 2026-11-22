@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.CechLevelsGeneration.CechLevelIso
-import Development.EtaleCohomology.EtaleSheaves.CechLevelIsomorphism.BaseChangeLimit
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CechLevelsGeneration.CechLevelIso
+public import Development.EtaleCohomology.EtaleSheaves.CechLevelIsomorphism.BaseChangeLimit
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.TruncCokPf LateralTheory.E.LevelsPf.Tp Opposite LateralTheory.E.CechLevelIsoPf.Gen
@@ -36,8 +40,6 @@ def lim0 {C : Type*} [Category C] {S X : C} (f : X ⟶ S) :
 def ι {D E : CommRingCat.{0}} (e : D ⟶ E) : (p : ℕ) → Fin (p+1) → (E ⟶ (tp e p).1)
   | 0 => fun _ => 𝟙 E
   | p+1 => Fin.lastCases (pushout.inr (tp e p).2 e) (fun i => ι e p i ≫ pushout.inl (tp e p).2 e)
-
-lemma ι_zero {D E : CommRingCat.{0}} (e : D ⟶ E) (i : Fin 1) : ι e 0 i = 𝟙 E := rfl
 
 lemma ι_last {D E : CommRingCat.{0}} (e : D ⟶ E) (p : ℕ) :
     ι e (p+1) (Fin.last _) = pushout.inr (tp e p).2 e := by

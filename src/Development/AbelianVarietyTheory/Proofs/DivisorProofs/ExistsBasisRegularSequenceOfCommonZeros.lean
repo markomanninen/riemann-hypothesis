@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TopSelfEqLengthOfSmooth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TopSelfEqLengthOfSmooth
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,7 @@ variable {X : Scheme.{0}} {L : LB X} {k : Type} [Field k] [Algebra k Γ(X, ⊤)]
 def vanishAt (x : X) : Submodule k V where
   carrier := {w | x ∉ nonzeroLocus (φ w)}
   add_mem' := fun {a b} ha hb hx => by
-    rw [map_add] at hx
+    rw [map_add (f := _)] at hx
     exact (nonzeroLocus_add_le _ _ hx).elim ha hb
   zero_mem' := fun hx => by
     rw [map_zero] at hx
@@ -49,7 +53,8 @@ theorem exists_regSeq [Infinite k] [Module.Finite k V] [AlgebraicGeometry.IsNoet
       rw [e, finrank_top] at hW
       omega
     have : Finite {x : X // x ∈ assPoints F ∧ vanishAt φ x ≠ ⊤} :=
-      ((finite_assPoints F).subset fun _ hx => hx.1).to_subtype
+      ((finite_assPoints F).subset (t := {x : X | x ∈ assPoints F ∧ vanishAt φ x ≠ ⊤})
+        (fun _ hx => hx.1)).to_subtype
     obtain ⟨w, hw⟩ := Submodule.exists_forall_notMem_of_forall_ne_top
       (fun o : Option {x : X // x ∈ assPoints F ∧ vanishAt φ x ≠ ⊤} => o.elim W fun x => vanishAt φ x.1)
       (by
@@ -93,7 +98,7 @@ def combMap {k : Type} [Field k] (S : LinSys k) {D : ℕ} (s : Fin D → Fin S.N
     (Fin D → k) →ₛₗ[algebraMap k Γ(S.Y, ⊤)] S.L.Sec where
   toFun c := S.comb (∑ j, c j • s j)
   map_add' a b := by
-    simp only [LinSys.comb, Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add]
+    simp only [LinSys.comb, Pi.add_apply, add_smul, Finset.sum_add_distrib, map_add (f := _)]
   map_smul' a b := by
     simp only [LinSys.comb, Pi.smul_apply, smul_eq_mul, mul_smul, ← Finset.smul_sum, map_mul]
 

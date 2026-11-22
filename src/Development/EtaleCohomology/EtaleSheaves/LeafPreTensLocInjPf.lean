@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTensMonoPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTensMonoPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
@@ -95,7 +99,8 @@ theorem LeafPreTensLocInj_of (hS : LeafTw0LocSplit) : LeafPreTensLocInj := by
     ⟨⊤, GrothendieckTopology.top_mem _ W, fun W' k' _ => by dsimp only; rw [Category.assoc, tens_res_comp, h, map_zero]⟩
   set bb : Sec ((res _ (tw q i)).X w) W := ∑ j, c j • Sec.res (k ≫ g) (b j) with hbb
   have hres : Tens.res (k ≫ g) w x = DirectSum.of _ (p0 w) (e ⊗ₜ[ULift.{1} (ZMod q)] bb) := by
-    rw [hx', tens_res_of, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx', tens_res_of, map_sum]
     congr 1
     rw [hbb, TensorProduct.tmul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -105,7 +110,8 @@ theorem LeafPreTensLocInj_of (hS : LeafTw0LocSplit) : LeafPreTensLocInj := by
     rw [res_comp]; exact hac j
   have hy0 : Tens.res (k ≫ g) w y =
       DirectSum.of _ (p0 w) (Sec.map ((resAug (tw q 0)).f 0) e ⊗ₜ[ULift.{1} (ZMod q)] bb) := by
-    rw [hydef, tens_res_of, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hydef, tens_res_of, map_sum]
     congr 1
     rw [hbb, TensorProduct.tmul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_

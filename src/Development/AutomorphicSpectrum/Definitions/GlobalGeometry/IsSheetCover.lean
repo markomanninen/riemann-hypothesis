@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsFundSet
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.NineGeoU
+
+@[expose] public section
 
 noncomputable section
 

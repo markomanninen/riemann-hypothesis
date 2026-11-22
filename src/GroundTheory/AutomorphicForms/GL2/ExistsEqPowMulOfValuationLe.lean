@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
-import GroundTheory.AutomorphicForms.MeasuresGL
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJZetaDefs
+public import GroundTheory.AutomorphicForms.MeasuresGL
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -54,8 +59,8 @@ theorem detPow_of_mem_integralGL {k : GL (Fin n) F} (hk : k ∈ integralGL F n) 
     detPow k s = 1 := by
   rw [detPow_eq_qs_zpow, ordDet_of_mem_integralGL hk, zpow_zero]
 
-variable (F n) in
 
+variable (F n) in
 theorem isClopen_shell (k : ℤ) : IsClopen {g : GL (Fin n) F | ordDet g = k} := by
   have hcont : Continuous fun g : GL (Fin n) F => (g : Matrix (Fin n) (Fin n) F).det :=
     Units.continuous_val.matrix_det
@@ -73,8 +78,8 @@ theorem isClopen_shell (k : ℤ) : IsClopen {g : GL (Fin n) F | ordDet g = k} :=
     ⟨LocalField.isClosed_valBall (k + 1), LocalField.isOpen_valBall (k + 1)⟩
   exact (c1.diff c2).preimage hcont
 
-variable (F n) in
 
+variable (F n) in
 theorem isCompact_shell (A : ℕ) (k : ℤ) :
     IsCompact {g : GL (Fin n) F | (∀ i j, (uniformizer F : F) ^ A * g i j ∈ 𝒪[F]) ∧ ordDet g = k} := by
   classical

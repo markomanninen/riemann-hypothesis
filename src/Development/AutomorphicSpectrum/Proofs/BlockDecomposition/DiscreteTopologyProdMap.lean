@@ -1,9 +1,28 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFundamentalDomainRangeProdMap
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralKernelNeTop
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BlockMahlerBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteTwConjOfIsTest
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsFundamentalDomainRangeProdMap
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralKernelNeTop
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MahlerBoundOfDegree
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeBoundedOfBasis
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeRationalSubspace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DegreeBasisGeneral
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicDegreeFormula
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteSupportOfSize
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SizeFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LogAbsBasicFacts
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicativityFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DeterminantMonotonicity
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MultiplicativityInfinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeBoundFinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WedgeBoundInfinitePlaces
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicGLNormOneSplit
+public import GroundTheory.AutomorphicForms.ReductionMahler
+
+@[expose] public section
 
 noncomputable section
 
@@ -169,13 +188,14 @@ theorem unfold2_of (hM : Mahler) : Unfold2 := by
     (GlobalTheory.CompanionTheory.KerTwFin.continuous_thetaA.comp continuous_snd)
   have hφm : ∀ d, Measurable fun x => φ (twConj θ x (ι d)) := fun d =>
     (hφ.cont.comp ((continuous_inv.mul continuous_const).mul hθc)).measurable
+  haveI : T2Space (GA E a × GA E b) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact inferInstance
   obtain ⟨B, hB⟩ := hφ.supp.exists_bound_of_continuous hφ.cont
   have key := unfold_abs (μ := μ₁.prod μ₂) (ι := ι) (θ := θ) (θR := θR) (cls := cls) (rep := rep) (H := H)
     (χ := fun x => chiT τ x.1 * chiT τ x.2) (φ := φ) hι hθ hFd hcls hH hχm hχb hχi (hC₁.prod hC₂) hχK hφm hB
     (fun L hL => finite_pair hφ.supp hL)
   exact key
-
-theorem unfold2 : Unfold2 := unfold2_of GlobalTheory.CompanionTheory.MahlerAdelic.mahler
 
 end GlobalTheory.CompanionTheory.TwUnfold
 

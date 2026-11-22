@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
-import GroundTheory.GlobalFields.TateThesis.GlobalZeta
-import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.WeilBound.ThetaLifts.SmallCones.IdeleTop
+public import GroundTheory.GlobalFields.TateThesis.GlobalZeta
+public import CompanionTheory.AutomorphicTheory.UnitriangularMeasure.AdeleCoordinateMeasure.EllipticTorusNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ namespace Tate
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E}
 
-variable (F E) in
 
+variable (F E) in
 abbrev Φ : AE F E ≃ₐ[AF F] AdeleRing (𝓞 E) E := adeleTensorAlgEquivLeft F E
 
 theorem cont_Φ : Continuous (Φ F E) := by
@@ -41,8 +45,8 @@ theorem cont_Φ_symm : Continuous (Φ F E).symm := by
   haveI := (ideleTop F E).1.1
   exact IsModuleTopology.continuous_of_linearMap (Φ F E).symm.toLinearMap
 
-variable (F E) in
 
+variable (F E) in
 def Ψ : (AE F E)ˣ ≃ₜ* IdeleGroup E where
   toMulEquiv := Units.mapEquiv (Φ F E).toMulEquiv
   continuous_toFun := Continuous.units_map (Φ F E).toMulEquiv.toMonoidHom cont_Φ
@@ -75,21 +79,25 @@ theorem ext_map (W : InfinitePlace E) {w : InfinitePlace F} (h : W.embedding.com
   change InfinitePlace.Completion.extensionEmbedding W (GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap (L := E)
     (algebraMap F (InfiniteAdeleRing F) k) W) = _
   rw [GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap_algebraMap]
-  exact (InfinitePlace.Completion.extensionEmbedding_coe W ((WithAbs.equiv W.1).symm (algebraMap F E k))).trans
-    ((RingHom.congr_fun h k).trans (InfinitePlace.Completion.extensionEmbedding_coe w ((WithAbs.equiv w.1).symm k)).symm)
+  simpa only [InfiniteAdeleRing.algebraMap_apply, AbsoluteValue.Completion.algebraMap_def,
+    WithAbs.algebraMap_right_apply, Algebra.algebraMap_self_apply, RingEquiv.apply_symm_apply,
+    Function.comp_apply, WithAbs.equiv] using (InfinitePlace.Completion.extensionEmbedding_coe W (WithAbs.toAbs W.1 (algebraMap F E k))).trans
+    ((RingHom.congr_fun h k).trans (InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs w.1 k)).symm)
 
 theorem ext_Φ (W : InfinitePlace E) {w : InfinitePlace F} (h : W.embedding.comp (algebraMap F E) = w.embedding) (l : AE F E) :
     InfinitePlace.Completion.extensionEmbedding W ((Φ F E l).1 W) = piInf (⟨W.embedding, h⟩ : EmbOver E w) l := by
   induction l using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]; exact map_zero _
-  | add x y hx hy => rw [map_add, map_add, ← hx, ← hy]; exact map_add _ _ _
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), ← hx, ← hy]; exact map_add _ _ _
   | tmul a x =>
     rw [adeleTensorAlgEquivLeft_tmul]
     change InfinitePlace.Completion.extensionEmbedding W ((algebraMap E (AdeleRing (𝓞 E) E) x).1 W *
       GroundTheory.Global.InfinitePlace.infiniteAdeleRingMap (L := E) a.1 W) =
       InfinitePlace.Completion.extensionEmbedding w (a.1 w) * W.embedding x
     rw [map_mul, ext_map W h, mul_comm]
-    exact congrArg _ (InfinitePlace.Completion.extensionEmbedding_coe W ((WithAbs.equiv W.1).symm x))
+    simpa only [AdeleRing.algebraMap_fst_apply, AbsoluteValue.Completion.algebraMap_def,
+      WithAbs.algebraMap_right_apply, Algebra.algebraMap_self_apply, WithAbs.equiv_apply, WithAbs.ofAbs_toAbs] using
+      congrArg _ (InfinitePlace.Completion.extensionEmbedding_coe W (WithAbs.toAbs W.1 x))
 
 theorem norm_le (h : IsCMExt F E σ) (τ : ∀ w : InfinitePlace F, EmbOver E w) (W : InfinitePlace E) (l : (AE F E)ˣ) :
     ‖(Φ F E l).1 W‖ ≤ ∑ w, ‖piInf (τ w) (l : AE F E)‖ := by
@@ -134,7 +142,7 @@ theorem tateAbs : TateAbs := by
   refine div_le_div_of_nonneg_left (mul_nonneg (Finset.prod_nonneg fun _ _ => by positivity)
     (Real.rpow_nonneg (IdeleGroup.finiteModule_pos _).le _)) (Finset.prod_pos fun _ _ => by positivity) ?_
   rw [pow_mul, ← Finset.card_univ, ← Finset.prod_const]
-  refine Finset.prod_le_prod (fun _ _ => by positivity) fun W _ => pow_le_pow_left₀ (by positivity) ?_ _
+  refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun W _ => pow_le_pow_left₀ (by positivity) ?_ _
   exact add_le_add le_rfl (Tate.norm_le hB.cm B.emb W l)
 
 end PositivityTheory.ThKCT

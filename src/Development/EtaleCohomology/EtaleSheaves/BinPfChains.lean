@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.ClsBiprodEqZero
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ClsBiprodEqZero
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits GlobalTheory.EtC

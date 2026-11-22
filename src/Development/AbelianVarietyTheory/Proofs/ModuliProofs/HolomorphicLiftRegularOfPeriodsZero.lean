@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueUniformisingVectorVerticalTangentStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFibreCoords
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnVerticalVectorFieldStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalDerivationAlongFibreOfSmooth
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldAbelianVarietyAlgebraic
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LocDerRegularCoeff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AlgebraicCoboundaryOfHolomorphicCoboundary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSymm
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueUniformisingVectorVerticalTangentStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFibreCoords
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsDifferentiableOnVerticalVectorFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsLocalDerivationAlongFibreOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldAbelianVarietyAlgebraic
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LocDerRegularCoeff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AlgebraicCoboundaryOfHolomorphicCoboundary
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -26,16 +30,17 @@ section
 variable {R : Type} [CommRing R] {Y X : Scheme.{0}} {q : Y ⟶ Sp ℂ} {p : X ⟶ Sp R} {m : Y ⟶ X} {D : R → ℂ}
 
 theorem locDer_sub {V V' : X.Opens} {d d' : ∀ W : X.Opens, Γ(X, W) → Γ(Y, m ⁻¹ᵁ W)} (h : LocDer q p m D V d)
-    (h' : LocDer q p m D V' d') : LocDer q p m (fun _ => 0) (V ⊓ V') (fun W f => d W f - d' W f) where
-  add W hW f f' := by
+    (h' : LocDer q p m D V' d') : LocDer q p m (fun _ => 0) (V ⊓ V') (fun W f => d W f - d' W f) := by
+  constructor
+  · intro W hW f f'
     rw [h.add W (hW.trans inf_le_left), h'.add W (hW.trans inf_le_right)]
     abel
-  mul W hW f f' := by
+  · intro W hW f f'
     rw [h.mul W (hW.trans inf_le_left), h'.mul W (hW.trans inf_le_right)]
     ring
-  res W W' hle hW f := by
+  · intro W W' hle hW f
     rw [h.res W W' hle (hW.trans inf_le_left), h'.res W W' hle (hW.trans inf_le_right), map_sub]
-  base W hW r := by
+  · intro W hW r
     rw [h.base W (hW.trans inf_le_left), h'.base W (hW.trans inf_le_right), sub_self,
       ← liftConstHom_apply, map_zero]
 
@@ -75,7 +80,8 @@ theorem vector_ext (hu : GoodU u Hm χ) (hp : Smooth p) (hm : IsPullback m P₀.
       Matrix.vecMul w (Matrix.of fun a b => fderiv ℂ (fn u m W (t b)) z (Pi.single a 1)) b := by
     intro w b
     conv_lhs => rw [← Finset.univ_sum_single w]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [Matrix.vecMul, dotProduct, Matrix.of_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [show Pi.single a (w a) = w a • (Pi.single a 1 : Fin P₀.g → ℂ) by
@@ -103,8 +109,12 @@ theorem exists_periodic_vector (hu : GoodU u Hm χ) (hp : Smooth p) (hm : IsPull
       rw [hs.base z r, ptOf_const hd (u.ex z).left (hq z) hz r, sub_self]⟩
   obtain ⟨w, hw, hrep⟩ := GlobalTheory.T.exists_differentiableOn_verticalVectorField P₀ u Hm χ hu R x₀ X p m hp hm P₀.g (dom u m V) id
     (fun z W f => s z W f - ptOf V d (u.ex z).left W f) hdomV differentiable_id hpt
-    (fun W f => ((hs.hol W f).mono fun z hz => hz.2).sub
-      (((u.hol (m ⁻¹ᵁ (W ⊓ V)) (d (W ⊓ V) (resG X inf_le_left f))).2).mono fun z hz a ha => ⟨hz.2 ha, hz.1 ha⟩))
+    (by
+      intro W f
+      apply DifferentiableOn.sub
+      · exact (hs.hol W f).mono fun _ hz => hz.2
+      · exact (u.hol (m ⁻¹ᵁ (W ⊓ V)) (d (W ⊓ V) (resG X inf_le_left f))).2.mono
+          fun _ hz a ha => ⟨hz.2 ha, hz.1 ha⟩)
   refine ⟨w, hw, fun l z hz => ?_, fun W hWV f z hz => ?_⟩
   · have hzl : z + l ∈ dom u m V := by
       show ⊤ ≤ ((u.ex (z + l)).left ≫ m) ⁻¹ᵁ V
@@ -134,7 +144,7 @@ private theorem valAt'_sub' {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (U : X.Opens) (h
 
 private theorem valAt'_add_of_top_le {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (U : X.Opens) (hx : ⊤ ≤ x ⁻¹ᵁ U)
     (a b : Γ(X, U)) : valAt' x U (a + b) = valAt' x U a + valAt' x U b := by
-  simp only [valAt', dif_pos hx, valAt, map_add]
+  simp only [valAt', dif_pos hx, valAt, map_add (f := _)]
 
 private theorem valAt'_mul_of_top_le {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (U : X.Opens) (hx : ⊤ ≤ x ⁻¹ᵁ U)
     (a b : Γ(X, U)) : valAt' x U (a * b) = valAt' x U a * valAt' x U b := by
@@ -142,7 +152,8 @@ private theorem valAt'_mul_of_top_le {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (U : X.
 
 private theorem valAt'_finset_sum {X : Scheme.{0}} (x : Sp ℂ ⟶ X) (U : X.Opens) (hx : ⊤ ≤ x ⁻¹ᵁ U)
     {κ : Type} (s : Finset κ) (F : κ → Γ(X, U)) : valAt' x U (∑ i ∈ s, F i) = ∑ i ∈ s, valAt' x U (F i) := by
-  simp only [valAt', dif_pos hx, valAt, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [valAt', dif_pos hx, valAt, map_sum]
 
 private theorem valAt'_comp' {Y X : Scheme.{0}} (y : Sp ℂ ⟶ Y) (m : Y ⟶ X) (W : X.Opens) (f : Γ(X, W)) :
     valAt' (y ≫ m) W f = valAt' y (m ⁻¹ᵁ W) ((m.app W).hom f) := by
@@ -154,7 +165,7 @@ private theorem valAt'_comp' {Y X : Scheme.{0}} (y : Sp ℂ ⟶ Y) (m : Y ⟶ X)
       | simp [Scheme.comp_appLE]
       | simp [Scheme.Hom.comp_appLE]
   · have hy' : ¬ ⊤ ≤ y ⁻¹ᵁ (m ⁻¹ᵁ W) := hy
-    rw [valAt', dif_neg hy, valAt', dif_neg hy']
+    rw [valAt', dite_eq_right hy, valAt', dite_eq_right hy']
 
 private theorem valAt'_resG_of_top_le {X : Scheme.{0}} (x : Sp ℂ ⟶ X) {U V : X.Opens} (h : V ≤ U) (hx : ⊤ ≤ x ⁻¹ᵁ V)
     (a : Γ(X, U)) : valAt' x V (resG X h a) = valAt' x U a := by
@@ -166,7 +177,8 @@ private theorem valAt'_resG_of_top_le {X : Scheme.{0}} (x : Sp ℂ ⟶ X) {U V :
 private theorem continuousLinearMap_apply_eq_sum_single {n : ℕ} (φ : (Fin n → ℂ) →L[ℂ] ℂ) (w : Fin n → ℂ) :
     φ w = ∑ b, w b * φ (Pi.single b 1) := by
   conv_lhs => rw [← Finset.univ_sum_single w]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   rw [show Pi.single a (w a) = w a • (Pi.single a 1 : Fin n → ℂ) by
     ext j; by_cases hj : j = a <;> simp [hj], map_smul, smul_eq_mul]

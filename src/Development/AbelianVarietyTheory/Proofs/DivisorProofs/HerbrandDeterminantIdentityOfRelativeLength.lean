@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankAddValuationIntegerSubmoduleEqFinrankSpanStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinRootProdLinearFactorsLatticeFactsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteEigenFiltrationPiecesAddValIntStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.MultiplicationKernelIdentity
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreEig
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsSaturatedSubmoduleIffExistsIsComplOfValuationR
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankAddValuationIntegerSubmoduleEqFinrankSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdjoinRootProdLinearFactorsLatticeFactsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteEigenFiltrationPiecesAddValIntStatement
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.MultiplicationKernelIdentity GlobalTheory.HermitianPreEigenvalues Polynomial Module
 
 noncomputable section
@@ -58,7 +63,8 @@ theorem linearIndependent_comb {ι κ : Type} [Fintype ι] [Fintype κ]
   have hzX : ∑ i, w (Sum.inl i) • x i ∈ preEig a Fil τ :=
     Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (hxX i)
   have hcomp : comp a N τ (∑ i, w (Sum.inl i) • x i + φ) = 0 := by
-    rw [map_add, map_sum, hφe]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sum, hφe]
     simpa [map_smul] using hw
   have hzφ : ∑ i, w (Sum.inl i) • x i + φ ∈ Fil.restrictScalars (Int0 v) :=
     hE4 ⟨add_mem hzX (hE10 hφ), hcomp⟩
@@ -68,7 +74,8 @@ theorem linearIndependent_comb {ι κ : Type} [Fintype ι] [Fintype κ]
     (Submodule.Quotient.mk_eq_zero _).2 hz
   have hl : ∑ i, w (Sum.inl i) • l i = 0 := by
     apply Subtype.ext
-    rw [map_sum] at hprojz
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hprojz
     simp only [map_smul, hx] at hprojz
     simpa using hprojz
   have hα := Fintype.linearIndependent_iff.1 l.linearIndependent _ hl
@@ -95,7 +102,8 @@ theorem span_comb {ι κ : Type} [Fintype ι] [Fintype κ]
   have hl := congrArg Subtype.val (l.sum_repr ⟨proj a Fil z, hpz⟩)
   simp only [Submodule.coe_sum, Submodule.coe_smul] at hl
   have hsum : proj a Fil (z - ∑ i, l.repr ⟨proj a Fil z, hpz⟩ i • x i) = 0 := by
-    rw [map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
     simp only [map_smul, hx]
     rw [hl, sub_self]
   have hw : z - ∑ i, l.repr ⟨proj a Fil z, hpz⟩ i • x i ∈ Fil.restrictScalars (Int0 v) :=
@@ -109,7 +117,8 @@ theorem span_comb {ι κ : Type} [Fintype ι] [Fintype κ]
   simp only [Sum.elim_inl, Sum.elim_inr]
   have h3 : comp a N τ (z - ∑ i, l.repr ⟨proj a Fil z, hpz⟩ i • x i) =
       comp a N τ z - ∑ i, l.repr ⟨proj a Fil z, hpz⟩ i • comp a N τ (x i) := by
-    simp only [map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_smul]
   exact eq_sub_iff_add_eq'.1 (h2.trans h3)
 
 end GlobalTheory.HerbDet
@@ -159,7 +168,8 @@ theorem exists_basis_image {ι : Type} [Fintype ι]
     have hm : ((∑ k, w k • h k : eigSub a τ (Fin N → RS a)) : Fin N → RS a) ∈
         eigSub a τ (Fin N → RS a) ⊓ LinearMap.ker (comp a N τ) := by
       refine Submodule.mem_inf.2 ⟨Subtype.mem _, ?_⟩
-      rw [LinearMap.mem_ker, Submodule.coe_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, Submodule.coe_sum, map_sum]
       simpa [map_smul] using hw
     rw [hE6, Submodule.mem_bot] at hm
     exact Fintype.linearIndependent_iff.1 h.linearIndependent w (Subtype.ext hm)
@@ -176,7 +186,8 @@ theorem exists_basis_image {ι : Type} [Fintype ι]
   have h1 := congrArg Subtype.val (h.sum_repr ⟨z, hz⟩)
   simp only [Submodule.coe_sum, Submodule.coe_smul] at h1
   have h2 := congrArg (comp a N τ) h1
-  simp only [map_sum, map_smul] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul] at h2
   simpa using h2
 
 theorem exists_basis_eigSub (d : Int0 v) (hd : d ≠ 0)
@@ -199,7 +210,8 @@ theorem exists_basis_eigSub (d : Int0 v) (hd : d ≠ 0)
   have hcomb : ∀ w : Fin N → Int0 v,
       comp a N τ (∑ i, w i • z i) = d • w := by
     intro w
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, hze]
     funext j
     simp [Finset.sum_apply, Pi.single_apply, mul_comm, mul_left_comm]
@@ -336,13 +348,13 @@ theorem detIdentity_of_relLen : ∀ (C : Type) [Field C] (v : AddValuation C (Wi
         rw [Submodule.Quotient.mk_eq_zero]
         exact hsat c z hc h0
   haveI := hfLie
-  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (Int0 v)
-    (eigSub a τ ((Fin N → RS a) ⧸ Fil))
+  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v)
+    (M := eigSub a τ ((Fin N → RS a) ⧸ Fil))
 
   haveI := hfFil
   haveI hfQ : Module.Finite (Int0 v) (eigQuot a Fil τ) :=
     Module.Finite.map (Fil.restrictScalars (Int0 v)) (comp a N τ)
-  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (Int0 v) (eigQuot a Fil τ)
+  haveI := GlobalTheory.free_of_finite_of_isTorsionFree_of_valuationRing (R := Int0 v) (M := eigQuot a Fil τ)
   have hrk : finrank (Int0 v) (eigQuot a Fil τ) = eigRank v a Fil τ :=
     GlobalTheory.T.finrank_int0_submodule_eq_finrank_span C v N (eigQuot a Fil τ) hfQ
   have bF := Module.finBasisOfFinrankEq (Int0 v) (eigQuot a Fil τ) hrk

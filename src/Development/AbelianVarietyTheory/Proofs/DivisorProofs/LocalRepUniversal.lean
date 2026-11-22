@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

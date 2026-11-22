@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
@@ -17,8 +21,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 private theorem sum_map_apply {ι σ : Type} [Fintype ι] (m : ι → σ →₀ ℕ) (i : ι) (x : σ) :
     (∑ j, Finsupp.mapDomain (fun v : σ => (j, v)) (m j)) (i, x) = m i x := by
   classical
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single i]
-  · exact Finsupp.mapDomain_apply (fun a b h => (Prod.mk.inj h).2) _ _
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single i]
+  · exact Finsupp.mapDomain_apply_of_injective (fun a b h => (Prod.mk.inj h).2) _ _
   · intro j _ hj
     apply Finsupp.mapDomain_notin_range
     rintro ⟨y, hy⟩
@@ -28,7 +32,7 @@ private theorem sum_map_apply {ι σ : Type} [Fintype ι] (m : ι → σ →₀ 
 
 private theorem coeff_prod' {ι σ C : Type} [DecidableEq ι] [DecidableEq σ] [CommRing C] (f : ι → MvPolynomial σ C)
     (d : σ →₀ ℕ) (s : Finset ι) :
-    MvPolynomial.coeff d (∏ j ∈ s, f j) = ∑ l ∈ Finset.finsuppAntidiag s d, ∏ j ∈ s, MvPolynomial.coeff (l j) (f j) := by
+    AddMonoidAlgebra.coeff (∏ j ∈ s, f j) d = ∑ l ∈ Finset.finsuppAntidiag s d, ∏ j ∈ s, AddMonoidAlgebra.coeff (f j) (l j) := by
   have h := MvPowerSeries.coeff_prod (fun j => (f j : MvPowerSeries σ C)) d s
   have hp : ((∏ j ∈ s, f j : MvPolynomial σ C) : MvPowerSeries σ C) = ∏ j ∈ s, (f j : MvPowerSeries σ C) :=
     map_prod (MvPolynomial.coeToMvPowerSeries.ringHom (σ := σ) (R := C)) f s
@@ -37,9 +41,9 @@ private theorem coeff_prod' {ι σ C : Type} [DecidableEq ι] [DecidableEq σ] [
 
 private theorem coeff_prod_ren {ι σ C : Type} [Fintype ι] [CommRing C] (m : ι → σ →₀ ℕ)
     (G : ι → MvPolynomial σ C) :
-    MvPolynomial.coeff (∑ j, Finsupp.mapDomain (fun v : σ => (j, v)) (m j))
-        (∏ j, MvPolynomial.rename (fun v : σ => (j, v)) (G j)) =
-      ∏ j, MvPolynomial.coeff (m j) (G j) := by
+    AddMonoidAlgebra.coeff (∏ j, MvPolynomial.rename (fun v : σ => (j, v)) (G j))
+        (∑ j, Finsupp.mapDomain (fun v : σ => (j, v)) (m j)) =
+      ∏ j, AddMonoidAlgebra.coeff (G j) (m j) := by
   classical
   set D := ∑ j, Finsupp.mapDomain (fun v : σ => (j, v)) (m j) with hD
   have inj : ∀ j : ι, Function.Injective (fun v : σ => (j, v)) := fun j a b h => (Prod.mk.inj h).2
@@ -113,12 +117,12 @@ private theorem unitri {I P C : Type} [Fintype I] [PartialOrder P] [CommRing C] 
 
 theorem UpperTheory.WildA.bvvInt :
     ∀ {ι : Type} [Fintype ι] {b : ℕ} (lam : ι → DomWeight b) (v : VV ℂ lam),
-      (∀ m, ∃ z : ℤ, MvPolynomial.coeff m (v : Pol ℂ ι b) = (z : ℂ)) → ∀ i, ∃ z : ℤ, (bVV ℂ lam).repr v i = (z : ℂ) := by
+      (∀ m, ∃ z : ℤ, AddMonoidAlgebra.coeff (v : Pol ℂ ι b) m = (z : ℂ)) → ∀ i, ∃ z : ℤ, (bVV ℂ lam).repr v i = (z : ℂ) := by
   intro ι _ b lam v hv i
   classical
   let L : VVIdx lam → (ι × Fin b × Fin b →₀ ℕ) := fun j =>
     ∑ τ, Finsupp.mapDomain (fun x : Fin b × Fin b => (τ, x)) ((j τ : Fin b × Fin b →₀ ℕ))
-  let A : VVIdx lam → VVIdx lam → ℂ := fun i j => MvPolynomial.coeff (L j) (bVVfun ℂ lam i)
+  let A : VVIdx lam → VVIdx lam → ℂ := fun i j => AddMonoidAlgebra.coeff (bVVfun ℂ lam i) (L j)
   let e : VVIdx lam → (ι → (Formalism.GradedWeylDivisibility.colLex b b).syn) := fun i τ =>
     (Formalism.GradedWeylDivisibility.colLex b b).toSyn ((i τ : Fin b × Fin b →₀ ℕ))
   have hspec : ∀ {n : ℕ} (ν : Fin n → ℕ) (m : Formalism.GradedWeylDivisibility.ssIdx n n ν),
@@ -127,7 +131,7 @@ theorem UpperTheory.WildA.bvvInt :
     have h := (Formalism.L2.DIV.ssB._proof_1 ℂ ν).choose_spec.2 m
     exact ⟨h.1, h.2.1⟩
   have hAprod : ∀ i j, A i j =
-      ∏ τ, MvPolynomial.coeff (j τ : Fin b × Fin b →₀ ℕ) (ssB ℂ (lam τ).natW (i τ)) := by
+      ∏ τ, AddMonoidAlgebra.coeff (ssB ℂ (lam τ).natW (i τ)) (j τ : Fin b × Fin b →₀ ℕ) := by
     intro i j
     exact coeff_prod_ren (fun τ => (j τ : Fin b × Fin b →₀ ℕ)) (fun τ => ssB ℂ (lam τ).natW (i τ))
   have hdiag : ∀ i, A i i = 1 := by
@@ -159,14 +163,14 @@ theorem UpperTheory.WildA.bvvInt :
       exact (Formalism.GradedWeylDivisibility.colLex b b).toSyn.injective (congrFun hxy τ)
     · intro x y
       obtain ⟨P, hP⟩ := bVVfun_int ℂ lam x.1
-      refine RingHom.mem_range.mpr ⟨MvPolynomial.coeff (L y.1) P, ?_⟩
-      show _ = MvPolynomial.coeff (L y.1) (bVVfun ℂ lam x.1)
+      refine RingHom.mem_range.mpr ⟨AddMonoidAlgebra.coeff P (L y.1), ?_⟩
+      show _ = AddMonoidAlgebra.coeff (bVVfun ℂ lam x.1) (L y.1)
       rw [hP, MvPolynomial.coeff_map]
     · intro x
       exact hdiag x.1
     · intro x y hxy τ
       have hne : ∀ τ ∈ Finset.univ,
-          MvPolynomial.coeff (y.1 τ : Fin b × Fin b →₀ ℕ) (ssB ℂ (lam τ).natW (x.1 τ)) ≠ 0 := by
+          AddMonoidAlgebra.coeff (ssB ℂ (lam τ).natW (x.1 τ)) (y.1 τ : Fin b × Fin b →₀ ℕ) ≠ 0 := by
         rw [← Finset.prod_ne_zero_iff, ← hAprod]
         exact hxy
       have hd := (Formalism.GradedWeylDivisibility.colLex b b).le_degree
@@ -174,7 +178,7 @@ theorem UpperTheory.WildA.bvvInt :
       rw [(hspec (lam τ).natW (x.1 τ)).1] at hd
       exact hd
     · intro j
-      have hcoef : MvPolynomial.coeff (L j.1) (v : Pol ℂ ι b) =
+      have hcoef : AddMonoidAlgebra.coeff (v : Pol ℂ ι b) (L j.1) =
           ∑ x : {x // x ∈ ((bVV ℂ lam).repr v).support}, (bVV ℂ lam).repr v x.1 * A x.1 j.1 := by
         rw [hexp, MvPolynomial.coeff_sum, ← Finset.sum_coe_sort]
         refine Finset.sum_congr rfl fun x _ => ?_

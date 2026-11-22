@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BlockWithThresholds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BlockWithThresholds
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,8 +91,8 @@ theorem tailP_mul (D : BlockData N) (jp : ℕ) (q y : MvPolynomial (Fin N × Fin
   rw [map_mul]
   ring
 
-open Classical in
 
+open Classical in
 def otherE (O : Type) [CommRing O] [IsDomain O] (r : ℕ) (D : BlockData N) (j : Fin D.T.t → ℕ) (i : Fin D.T.t) :
     MvPolynomial (BVar N r D.T.t) (KK O) :=
   ∏ i' ∈ Finset.univ.erase i, D.Ehat O (r := r) i' ^ j i'

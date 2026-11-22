@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
+
+@[expose] public section
+
 open NumberField Matrix ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.SUVol GlobalTheory.RiemConst GlobalTheory.SUChartSection
 open scoped ComplexConjugate ContDiff
 
@@ -34,7 +39,7 @@ theorem det_secM_eq_one : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E]
       simp only [nmat]
       have hab' : a < b := hab
       have h1 : ¬ b < a := not_lt.2 (le_of_lt hab')
-      rw [dif_neg h1, if_neg (ne_of_lt hab')]
+      rw [dite_eq_right h1, if_neg (ne_of_lt hab')]
   set t : ℝ := ∏ k, gsS X w τ k with ht
   have hpos : 0 ≤ t := Finset.prod_nonneg fun k _ => inv_nonneg.2 (Real.sqrt_nonneg _)
   rw [hY, Complex.conj_ofReal] at hd

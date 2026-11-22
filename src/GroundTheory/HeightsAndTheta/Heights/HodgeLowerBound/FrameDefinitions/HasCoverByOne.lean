@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -19,10 +24,6 @@ def HasCoverBy (y : (Σ k, ι k) → Ω) (c : (k : K) → ι k) (Pr : Ω → Pro
   ∃ (m : ℕ) (f cc : Fin m → Ω), (∀ l, f l ∈ chartRing ℤ (segreCoord y) c) ∧
     (∀ l, cc l ∈ chartRing ℤ (segreCoord y) c) ∧ ∑ l, cc l * f l = 1 ∧ ∀ l, Pr (f l)
 
-omit [∀ k, Fintype (ι k)] in
-theorem hasCoverBy_one (y : (Σ k, ι k) → Ω) (c : (k : K) → ι k) {Pr : Ω → Prop} (h : Pr 1) :
-    HasCoverBy y c Pr :=
-  ⟨1, fun _ => 1, fun _ => 1, fun _ => one_mem _, fun _ => one_mem _, by simp, fun _ => h⟩
 
 def zMono (z : (Σ k, ι k) → ℂ) (c : (k : K) → ι k) (a : K → ℤ) : ℂ := ∏ k, z ⟨k, c k⟩ ^ a k
 
@@ -80,90 +81,10 @@ def ofΩ (x : Ω) : Pl.ΩY := algebraMap (MvPolynomial (Ψ × Fin D.N × Fin D.N
 def gvar (τ : Ψ) (a b : Fin D.N) : Pl.ΩY :=
   algebraMap (MvPolynomial (Ψ × Fin D.N × Fin D.N) Ω) Pl.ΩY (X (τ, a, b))
 
-def pluecker (τ : Ψ) (i : Fin (D.N - 1)) (m : Fin (Pl.M τ i)) : Pl.ΩY :=
-  ∑ c : Fin ((i : ℕ) + 1) → Fin D.N, (∏ a, Pl.gvar τ (headIdx (step_le i) a) (c a)) *
-    Pl.ofΩ (Pl.gen τ i m (exteriorPower.ιMulti Ω _ (Pl.e τ ∘ c)))
-
-def yY : (Σ k, Pl.ιY k) → Pl.ΩY
-  | ⟨Sum.inl k, t⟩ => Pl.ofΩ (D.y ⟨k, t⟩)
-  | ⟨Sum.inr q, m⟩ => Pl.pluecker q.1 q.2 m
-
-def PY : Ideal (MRing Pl.ιY) := mCoordIdeal Pl.yY
-
-def detFDeg (τ : Ψ) (i : Fin (D.N - 1)) : K ⊕ (Ψ × Fin (D.N - 1)) → ℤ :=
-  Sum.elim (Pl.bdeg τ i) fun q => if q = (τ, i) then -1 else 0
-
-def detStepDeg (τ : Ψ) (s : ℕ) : K ⊕ (Ψ × Fin (D.N - 1)) → ℤ :=
-  if hs : s = 0 then 0 else if h : s < D.N then Pl.detFDeg τ ⟨s - 1, by omega⟩ else Sum.elim (Pl.wdeg τ) 0
-
-def grDeg (τ : Ψ) (a : Fin D.N) : K ⊕ (Ψ × Fin (D.N - 1)) → ℤ :=
-  Pl.detStepDeg τ ((a : ℕ) + 1) - Pl.detStepDeg τ a
-
-def LDeg (la : Ψ × Fin D.N → ℤ) : K ⊕ (Ψ × Fin (D.N - 1)) → ℤ :=
-  ∑ p, la p • Pl.grDeg p.1 p.2
-
-def xPart (p : (Σ k, Pl.ιY k) → ℂ) : (Σ k, ι k) → ℂ := fun q => p ⟨Sum.inl q.1, q.2⟩
-
-open Classical in
-
-def solveLin {I : Type} [Fintype I] {M : ℕ} (Φ : Fin M → I → ℂ) (w : Fin M → ℂ) : I → ℂ :=
-  if h : ∃ ω : I → ℂ, ∀ m, ∑ A, Φ m A * ω A = w m then h.choose else 0
 
 abbrev Incr (s N : ℕ) : Type := {A : Fin s → Fin N // StrictMono A}
 
-open Classical in
 
-def detFNormSq (τ : Ψ) (i : Fin (D.N - 1)) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ :=
-  let z := Pl.xPart p
-  if hl : ∃ l, InFrameDomain D.y ((D.h τ).chart l) ((D.h τ).fr l) z then
-    let l := hl.choose
-    let c := (D.h τ).chart l
-    let Φ : Fin (Pl.M τ i) → Incr ((i : ℕ) + 1) D.N → ℂ := fun m A =>
-      valAt D.y (Pl.gen τ i m (exteriorPower.ιMulti Ω _ ((D.h τ).b l ∘ A.1)) *
-        chartMono D.y c (-Pl.bdeg τ i)) z * zMono z c (Pl.bdeg τ i)
-    let w : Fin (Pl.M τ i) → ℂ := fun m => p ⟨Sum.inr (τ, i), m⟩
-    let ω := solveLin Φ w
-    (∑ A, ∑ A', starRingEnd ℂ (ω A) *
-      (Matrix.of fun a b => (D.h τ).gram l z (A.1 a) (A'.1 b)).det * ω A').re
-  else 0
-
-def detFMetric (τ : Ψ) (i : Fin (D.N - 1)) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ :=
-  1 / Real.sqrt (Pl.detFNormSq τ i p)
-
-structure DetWFrameAt (τ : Ψ) (z : (Σ k, ι k) → ℂ) where
-  c : (k : K) → ι k
-  f : Ω
-  inDom : InFrameDomain D.y c f z
-  b : Fin D.N → E τ
-  frame : IsFrameOver D.y (D.W τ) c f b
-  span : Submodule.span Ω (Set.range b) = ⊤
-  u : Ω
-  unit : IsUnitOn D.y c f u
-  eq : Pl.ω τ = (u * chartMono D.y c (-Pl.wdeg τ)) • exteriorPower.ιMulti Ω D.N b
-
-open Classical in
-
-def detWMetric (τ : Ψ) (z : (Σ k, ι k) → ℂ) : ℝ :=
-  if h : Nonempty (Pl.DetWFrameAt τ z) then
-    ‖zMono z h.some.c (Pl.wdeg τ)‖ /
-      (‖valAt D.y h.some.u z‖ * Real.sqrt (gramAt (D.h τ) h.some.b z).det.re)
-  else 0
-
-def detStepMetric (τ : Ψ) (s : ℕ) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ :=
-  if hs : s = 0 then 1 else if h : s < D.N then Pl.detFMetric τ ⟨s - 1, by omega⟩ p
-  else Pl.detWMetric τ (Pl.xPart p)
-
-def grMetric (τ : Ψ) (a : Fin D.N) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ :=
-  Pl.detStepMetric τ ((a : ℕ) + 1) p / Pl.detStepMetric τ a p
-
-def grLine (τ : Ψ) (a : Fin D.N) : HermLine Pl.ιY := hermOfFun Pl.ιY (Pl.grDeg τ a) (Pl.grMetric τ a)
-
-def phGr (τ : Ψ) (a : Fin D.N) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ := Real.log ((Pl.grLine τ a).h p)
-
-def LLine (la : Ψ × Fin D.N → ℤ) : HermLine Pl.ιY :=
-  hermOfFun Pl.ιY (Pl.LDeg la) fun p => ∏ q, Pl.grMetric q.1 q.2 p ^ la q
-
-def phLa (la : Ψ × Fin D.N → ℤ) (p : (Σ k, Pl.ιY k) → ℂ) : ℝ := Real.log ((Pl.LLine la).h p)
 
 end PlueckerData
 

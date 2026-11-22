@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
+
 open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC
 
 namespace GlobalTheory.CompanionTheory.Dblock.SzFinProof
 
-theorem finite_one_lt_norm_cW {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (a : Ad E) :
+theorem finite_one_lt_norm_cW {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : Ad E) :
     {w : HeightOneSpectrum (𝓞 E) | 1 < ‖cW w a‖}.Finite := by
   delta PositivityTheory.Rg.BcB.cW GlobalTheory.CuspRep.pLoc GlobalTheory.CuspRep.pFin
   have h := RestrictedProduct.eventually _ _ (RingHom.snd (InfiniteAdeleRing E) (Af E) a)

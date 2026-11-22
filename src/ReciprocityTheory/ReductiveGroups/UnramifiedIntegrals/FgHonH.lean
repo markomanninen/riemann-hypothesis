@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonF
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonG
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonF
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonG
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,8 @@ theorem hon_series_coeff (hl : 2 ≤ l) (τ : K →+* K) (c : ℕ → K)
         (PowerSeries.map (τ ^ (i + 1)) lam).subst ((X : PowerSeries K) ^ ((l ^ 2) ^ (i + 1))))
       = ∑ i ∈ (Finset.range n).filter (fun i => (l ^ 2) ^ (i + 1) ∣ n),
           c i * (τ ^ (i + 1)) (coeff (n / (l ^ 2) ^ (i + 1)) lam) := by
-    rw [map_sum, Finset.sum_filter]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_filter]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [PowerSeries.coeff_C_mul, coeff_subst_X_pow_eq_ite_dvd' _ (pow_ne_zero _ hq)]
     split_ifs
@@ -206,7 +211,8 @@ theorem hon_coeff_shift (hl : 2 ≤ l) (τ : K →+* K) (hτ : ∀ x, ‖τ x‖
     have key := hon_coeff_unif hl τ c h0 E hn'
     rw [← hon_norm_pow_apply τ hτ i] at key
     convert key using 2
-    rw [map_sub, map_mul, map_natCast, e1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_mul, map_natCast, e1, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, e2]

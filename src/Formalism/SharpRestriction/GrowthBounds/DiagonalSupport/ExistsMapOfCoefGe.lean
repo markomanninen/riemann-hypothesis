@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDefs
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecompositionOfThreeParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDefs
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecompositionOfThreeParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -222,10 +226,12 @@ theorem membAt_core (p : ℕ) {n' r K m : ℕ} [NeZero n'] [NeZero r] [NeZero K]
       rw [Equiv.sum_comp e.symm (fun x : S => toKK hk (G x)), Finset.sum_coe_sort S (fun δ => toKK hk (G δ))]
     rw [hsum]
     have e2 : ∑ δ ∈ S, toKK hk (G δ) = toKK hk (∑ δ ∈ S, G δ) := by
-      simp only [toKK, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [toKK, map_sum]
     rw [e2]
     congr 1
     simp only [G]
-    rw [← Finset.mul_sum, ← Finset.sum_mul, ← map_sum, hS, sum_homComp]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.mul_sum, ← Finset.sum_mul, ← map_sum, hS, sum_homComp]
 
 end Formalism.MainNotions.Proposition5Numerics

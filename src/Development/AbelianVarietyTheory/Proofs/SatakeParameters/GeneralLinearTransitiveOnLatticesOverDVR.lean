@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
+
+@[expose] public section
 
 open GlobalTheory.LatHecke
 
@@ -7,12 +11,12 @@ namespace GlobalTheory.LatHecke
 
 theorem gl_transitive_lattices : ∀ (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Finite (IsLocalRing.ResidueField O)] [Field K] [Algebra O K] [IsFractionRing O K] (r : ℕ), (∀ L : Lat O K r, ∃ g : GL (Fin r) K, glMap g (std O K r).1 = L.1) ∧ ∀ (g : GL (Fin r) K) (L : Lat O K r), (glMap g L.1).IsLattice K := by
   intro O K _ _ _ _ _ _ _ r
-  refine ⟨fun L => ?_, fun g L => glMap_isLattice g L⟩
+  refine ⟨fun L => ?_, fun g L => (glMap_isLattice g L).toIsLattice⟩
   haveI := L.2
   haveI : Module.Free O L.1 := Submodule.IsLattice.free K L.1
   haveI : Module.Finite O L.1 := Module.Finite.iff_fg.2 L.2.fg
   have hr : Module.finrank O L.1 = r := by
-    simpa using Submodule.IsLattice.finrank_of_pi K L.1
+    simpa using ((Submodule.IsFullLattice.finrank_eq K L.1).trans (Module.finrank_fintype_fun_eq_card K))
   let b : Module.Basis (Fin r) O L.1 := Module.finBasisOfFinrankEq O L.1 hr
   let c : Module.Basis (Fin r) K (Fin r → K) := b.extendOfIsLattice K
   have hc : ∀ i, c i = (b i : Fin r → K) := fun i => Module.Basis.extendOfIsLattice_apply K b i

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageGenericBaseChangeModificatio
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralElementAffineSectionGenerated
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValueIsIntegralOfIntegralAtPoints
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAffineOpenPreimageGenericBaseChangeModificatio
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralElementAffineSectionGenerated
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValueIsIntegralOfIntegralAtPoints
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+
+@[expose] public section
 
 open TensorProduct
 
@@ -93,7 +97,6 @@ theorem regular_of_finite (c : B) (q : Ideal A) (hq : q = (IsLocalRing.maximalId
   obtain ⟨y, rfl⟩ := ((lTensor_exact B (LinearMap.exact_subtype_mkQ P) P.mkQ_surjective) z).1 e3
   clear e3 hz
   induction y with
-  | zero => simp
   | add a b ha hb => rw [map_add]; exact add_mem ha hb
   | tmul b v =>
     obtain ⟨v, hv⟩ := v
@@ -125,7 +128,8 @@ theorem regular_tensor (c : B) (q : Ideal A) (hq : q = (IsLocalRing.maximalIdeal
     simpa using ⟨i.1.1, i.2⟩)⟩ : P)
   have hy : P.subtype.baseChange B y = ∑ i ∈ S, i.1 ⊗ₜ[A] i.2 := by
     rw [← Finset.sum_attach S]
-    simp [y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [y, map_sum]
   have hinj := Module.Flat.lTensor_preserves_injective_linearMap (M := B) P.subtype P.injective_subtype
   have : c • y = 0 := hinj (by
     have : P.subtype.baseChange B (c • y) = 0 := by rw [map_smul, hy]; exact hz
@@ -174,7 +178,7 @@ theorem regular_mod_fibre (p₀ p : Ideal C) [p₀.IsPrime] [p.IsPrime]
   refine hmin (Ideal.comap (algebraMap C (Localization.AtPrime p)) Q) inferInstance (le_antisymm ?_ ?_) hd
   · refine Ideal.comap_mono ?_
     refine (Ideal.comap_mono (IsLocalRing.le_maximalIdeal hQp.ne_top)).trans ?_
-    exact (Localization.AtPrime.comap_maximalIdeal).le
+    exact (Localization.AtPrime.under_maximalIdeal).le
   · rw [Ideal.comap_comap, ← IsScalarTower.algebraMap_eq, ← Ideal.map_le_iff_le_comap]
     exact hQ
 
@@ -206,7 +210,7 @@ theorem isIntegral_tensor_of_fibre [IsNoetherianRing A] {K : Type} [CommRing K] 
     refine regular_tensor (algebraMap C B c) (p.comap (algebraMap A C)) ?_
       (regular_mod_fibre p₀ p h0 hmin c hc) (K ⧸ I) _ ?_
     · rw [IsScalarTower.algebraMap_eq A C B, ← Ideal.comap_comap]
-      exact congrArg _ (Localization.AtPrime.comap_maximalIdeal).symm
+      exact congrArg _ (Localization.AtPrime.under_maximalIdeal).symm
     · rw [algebraMap_smul, ← map_smul, h1, map_zero]
   obtain ⟨⟨s, hs⟩, h3⟩ := (IsLocalizedModule.eq_zero_iff p.primeCompl φ).1 h2
   exact ⟨s, hs, (key _).2 (by rw [map_smul]; exact h3)⟩

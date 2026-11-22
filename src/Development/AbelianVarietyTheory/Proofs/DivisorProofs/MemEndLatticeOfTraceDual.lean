@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmulMemOfIsIntegral
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.UCls GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD GlobalTheory.LieDisc
 
 namespace GlobalTheory.LieDisc
@@ -18,7 +23,7 @@ theorem rankOneHerm_mulVec (G : Matrix (Fin r) (Fin r) E) (l y x : Fin r → E) 
 
 theorem trace_mul_rankOneHerm (G Y : Matrix (Fin r) (Fin r) E) (l y : Fin r → E) :
     (Y * rankOneHerm G l y).trace = herm G (Y *ᵥ l) y := by
-  simp only [trace, diag, mul_apply, rankOneHerm, of_apply, herm, mulVec, dotProduct]
+  simp only [trace, diag, Matrix.mul_apply, rankOneHerm, of_apply, herm, mulVec, dotProduct]
   refine Finset.sum_congr rfl fun a _ => ?_
   simp_rw [Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,9 +44,9 @@ theorem continuous_tens [∀ v, FiniteDimensional ℂ (V v)] (hi : ∀ x y, ⟪t
       (∏ v, ⟪x v, y v⟫_ℂ) + (∏ v, ⟪x v, x v⟫_ℂ)) := by
     refine RCLike.continuous_re.comp
       (Continuous.add (Continuous.sub (Continuous.sub ?_ ?_) ?_) continuous_const)
-    · exact continuous_finset_prod _ fun v _ => (p v).inner (p v)
-    · exact continuous_finset_prod _ fun v _ => (p v).inner continuous_const
-    · exact continuous_finset_prod _ fun v _ => continuous_const.inner (p v)
+    · exact continuous_finsetProd _ fun v _ => (p v).inner (p v)
+    · exact continuous_finsetProd _ fun v _ => (p v).inner continuous_const
+    · exact continuous_finsetProd _ fun v _ => continuous_const.inner (p v)
   have h2 : Filter.Tendsto (fun y => ‖tens y - tens x‖ ^ 2) (nhds x) (nhds 0) := by
     have e : (fun y => ‖tens y - tens x‖ ^ 2) = fun y : (∀ v, V v) =>
         RCLike.re ((∏ v, ⟪y v, y v⟫_ℂ) - (∏ v, ⟪y v, x v⟫_ℂ) - (∏ v, ⟪x v, y v⟫_ℂ) +
@@ -128,7 +132,7 @@ theorem integrable_and_integral_pi_apply :
         ∑ i, ⟪stdOrthonormalBasis ℂ Vπ i, tens fun v => G v (y v)⟫_ℂ • stdOrthonormalBasis ℂ Vπ i :=
       funext fun y => ((stdOrthonormalBasis ℂ Vπ).sum_repr' _).symm
     rw [e]
-    exact integrable_finset_sum _ fun i _ => (hcoord _).smul_const _
+    exact MeasureTheory.integrable_finsetSum _ fun i _ => (hcoord _).smul_const _
   refine ⟨hFint, ?_⟩
   refine ext_inner_left ℂ fun w => ?_
   have hw : w ∈ Submodule.span ℂ (Set.range tens) := by rw [hspan]; exact Submodule.mem_top

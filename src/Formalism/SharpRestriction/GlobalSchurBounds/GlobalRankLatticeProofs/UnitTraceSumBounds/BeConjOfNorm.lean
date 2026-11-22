@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.StatementTranslationInvariantSeventh
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.StatementTranslationInvariantSeventh
+
+@[expose] public section
 
 open Formalism.MainNotions.GL3Theta Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.GL3r7
 

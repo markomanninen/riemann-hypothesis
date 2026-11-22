@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenOfIso
-import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGenOfIso
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+
+@[expose] public section
 
 noncomputable section
 

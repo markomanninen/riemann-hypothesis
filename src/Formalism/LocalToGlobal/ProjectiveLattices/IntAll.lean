@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+
+@[expose] public section
 
 noncomputable section
 

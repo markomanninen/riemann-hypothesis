@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.SubquotientSizeInequality
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointMajorantFramesGiveMajorants
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointRationalEquivariance
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizeProperties
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalFlagExistsUniqueSemistable
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPoint
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSizeEqLeast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAndNcardLeProdOfLevels
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSubspaces
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRealSubmoduleBlockFinrankLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSubmoduleSkewBlockFinrankLe
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StarProjectionInfOrthogonalEqOfMemOrthogonal
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFramesSubspace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LoweringDifferenceOfIsometries
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdFirstBlocksByLayers
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerAddInnerEqZeroSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Bridge
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.SubquotientSizeInequality
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointLatticeIntersectionSelfDualProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointMajorantFramesGiveMajorants
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AutPointRationalEquivariance
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalLatticeFiltrationSizeProperties
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CanonicalFlagExistsUniqueSemistable
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPoint
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSizeEqLeast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FiniteAndNcardLeProdOfLevels
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSubspaces
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsRealSubmoduleBlockFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSubmoduleSkewBlockFinrankLe
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StarProjectionInfOrthogonalEqOfMemOrthogonal
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsFramesSubspace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LoweringDifferenceOfIsometries
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ProdFirstBlocksByLayers
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerAddInnerEqZeroSpan
+
+@[expose] public section
 
 open GlobalTheory.Count Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField MeasureTheory Finset
 open GlobalTheory.IndefiniteRowSideFullHecke.SubquotientSizeInequality
@@ -117,7 +121,8 @@ theorem inner_pt (w : InfinitePlace I.E) (y z : Fin I.n → I.E) :
   have hc := I.cm.cmUnram.2.1
   have h1 : w.embedding (Formalism.UG.hform (starRingEnd I.E) I.J y z) =
       star (fun i => w.embedding (y i)) ⬝ᵥ (I.J.map w.embedding *ᵥ fun i => w.embedding (z i)) := by
-    simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Matrix.map_apply, Pi.star_apply,
       Finset.mul_sum, starRingEnd_apply, hc, mul_assoc]
   rw [sg, inner_opM, hf, h1, ← frm_pt I x w y, ← frm_pt I x w z, Matrix.star_mulVec,
     ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
@@ -176,7 +181,7 @@ theorem sp_skew (w : InfinitePlace I.E) (φ : Matrix (Fin I.n) (Fin I.n) I.E)
   refine span_inner _ _ _ _ ?_
   rintro _ ⟨s, hs, rfl⟩ _ ⟨y, hy, rfl⟩
   simp only [ContinuousLinearMap.comp_apply]
-  rw [op_pt, op_pt, sg, inner_opJ, ← sg, inner_pt, inner_pt, ← map_add, h s hs y hy, map_zero]
+  rw [op_pt, op_pt, sg, inner_opJ, ← sg, inner_pt, inner_pt, ← map_add (f := _), h s hs y hy, map_zero]
 
 def rho (G : ℕ → Submodule (𝓞 I.E) (Fin I.n → I.E)) (p : ℕ) : ℕ := rkK (G (p + 1)) - rkK (G p)
 
@@ -553,10 +558,10 @@ theorem near_count : ∀ (I : AutInst) (x : I.GA) (de : ℝ), 0 < de → de < 1 
     have := ht p
     positivity
   unfold layerProd
-  refine mul_le_mul (Finset.prod_le_prod
+  refine mul_le_mul (Finset.prod_le_prod₀
       (fun i _ => Finset.prod_nonneg fun k _ => mul_nonneg (hpos _ _ _) (hpos _ _ _))
-      fun i _ => Finset.prod_le_prod (fun k _ => mul_nonneg (hpos _ _ _) (hpos _ _ _)) fun k hk => ?_)
-    (Finset.prod_le_prod (fun i _ => mul_nonneg (hpos _ _ _) (hpos _ _ _)) fun i _ => ?_)
+      fun i _ => Finset.prod_le_prod₀ (fun k _ => mul_nonneg (hpos _ _ _) (hpos _ _ _)) fun k hk => ?_)
+    (Finset.prod_le_prod₀ (fun i _ => mul_nonneg (hpos _ _ _) (hpos _ _ _)) fun i _ => ?_)
     (Finset.prod_nonneg fun i _ => mul_nonneg (hpos _ _ _) (hpos _ _ _))
     (Finset.prod_nonneg fun i _ => Finset.prod_nonneg fun k _ => by
       have := hτ i

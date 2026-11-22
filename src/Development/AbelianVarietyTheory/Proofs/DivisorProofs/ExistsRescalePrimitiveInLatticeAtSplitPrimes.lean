@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLowLat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsExtraLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLowLat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsExtraLast
+
+@[expose] public section
+
 open scoped TensorProduct Matrix nonZeroDivisors
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.PlaneSkew
@@ -56,17 +61,11 @@ namespace GlobalTheory.PlaneSkewScale
 
 variable {E : Type} [Field E] [NumberField E]
 
-theorem exists_smul_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E) (x : Fin n → E) :
+theorem exists_smul_mem {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E) (x : Fin n → E) :
     ∃ d : 𝓞 E, d ≠ 0 ∧ d • x ∈ L := by
-  first
-  | exact @_root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem
-  | exact _root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem
-  | (apply _root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem <;> assumption)
-  | (intros; apply _root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem ..)
+  exact GlobalTheory.NonzeroSmulMembership.exists_ne_zero_smul_mem L hL x
 
-theorem exists_max {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsLattice E) {x : Fin n → E} (hx : x ≠ 0)
+theorem exists_max {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hL : L.IsFullLattice E) {x : Fin n → E} (hx : x ≠ 0)
     (w : HeightOneSpectrum (𝓞 E)) :
     ∃ s₀ : E, s₀ ≠ 0 ∧ s₀ • x ∈ L ∧ ∀ s : E, s • x ∈ L → w.valuation E s ≤ w.valuation E s₀ := by
   classical
@@ -127,7 +126,7 @@ end GlobalTheory.PlaneSkewScale
 namespace GlobalTheory.PlaneSkewScale
 
 theorem exists_rescale_primAt : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E),
-    IsCMExt F E σ → ∀ (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)), L.IsLattice E → ∀ x y : Fin n → E, x ≠ 0 → y ≠ 0 →
+    IsCMExt F E σ → ∀ (n : ℕ) (L : Submodule (𝓞 E) (Fin n → E)), L.IsFullLattice E → ∀ x y : Fin n → E, x ≠ 0 → y ≠ 0 →
     ∀ (P : Finset (HeightOneSpectrum (𝓞 F))) (τ : ∀ v : P, E →ₐ[F] Fv F v.1), ∃ c : E, c ≠ 0 ∧
       ∀ v : P, PrimAt (GlobalTheory.AdelicU.splitPrime (τ v)) L (c • x) ∧ PrimAt (GlobalTheory.AdelicU.splitPrime (τ v)) L ((σ c)⁻¹ • y) := by
   intro F E _ _ _ _ _ σ hσ n L hL x y hx hy P τ

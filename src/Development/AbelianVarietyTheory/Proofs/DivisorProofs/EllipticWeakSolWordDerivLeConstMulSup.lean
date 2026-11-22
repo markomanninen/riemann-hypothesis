@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinear
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AestronglyMeasurableExtendByZeroOffSubset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EllipticSystemDerivativeContinuousFunctionalStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DwSmoothLocalLinear
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AestronglyMeasurableExtendByZeroOffSubset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EllipticSystemDerivativeContinuousFunctionalStatement
+
+@[expose] public section
+
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory
 open scoped ContDiff BoundedContinuousFunction
 
@@ -36,8 +41,8 @@ theorem tr_eq_zero_of_notMem {ι : Type} (P : Sys d ι) (i : ι) {φ : E d → �
 
 end GlobalTheory.HCA.SupEst
 
-open GlobalTheory.HCA.SupEst in
 
+open GlobalTheory.HCA.SupEst in
 theorem GlobalTheory.HCA.dw_le_sup : ∀ (d : ℕ) (ι : Type) [Fintype ι] (P : Sys d ι) (U : Set (E d)), IsOpen U → (∀ i n w, ContDiffOn ℝ ∞ (P.a i n w) U) → (∀ x ∈ U, ∀ ξ : E d, ξ ≠ 0 → ∃ i, P.symb i x ξ ≠ 0) → ∀ (w : List (Fin d)), ∀ x₀ ∈ U, ∃ C : ℝ, 0 ≤ C ∧ ∀ u : E d → ℂ, ContinuousOn u U → WeakSol P U u → ∀ M : ℝ, (∀ x ∈ U, ‖u x‖ ≤ M) → ‖dw w u x₀‖ ≤ C * M := by
   intro d ι _ P U hU ha hell w x₀ hx₀
   obtain ⟨S, hS⟩ := (solSet_closed_submodule d ι P U hU ha).2

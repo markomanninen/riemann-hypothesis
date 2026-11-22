@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjGLOfCharpolyEqOfSeparable
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.FactorFields.TensorCompl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsConjGLOfCharpolyEqOfSeparable
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,12 +16,12 @@ namespace PositivityTheory.Rg.BcB.G3.LocDictP
 
 theorem frame_transport {k : Type} [Field k] {n : ℕ} {c : k →+* k} {δ : GL (Fin n) k} {s : k} {B B' : Type}
     [CommRing B] [CommRing B'] {d : B} {ρ : B →+* Matrix (Fin n) (Fin n) k} (e : B ≃+* B')
-    (h : IsFrame c δ s d ρ) : IsFrame c δ s (e d) (ρ.comp e.symm.toRingHom) where
-  inj := h.inj.comp e.symm.injective
-  sq := by simpa using h.sq
-  adj a := h.adj (e.symm a)
-  comm a := h.comm (e.symm a)
-  span x hx := by
+    (h : IsFrame c δ s d ρ) : IsFrame c δ s (e d) (ρ.comp e.symm.toRingHom) := by
+  refine ⟨h.inj.comp e.symm.injective, ?_, ?_, ?_, ?_⟩
+  · simpa using h.sq
+  · exact fun a => h.adj (e.symm a)
+  · exact fun a => h.comm (e.symm a)
+  · intro x hx
     obtain ⟨a, b, hab⟩ := h.span x hx
     exact ⟨e a, e b, by simpa using hab⟩
 
@@ -27,7 +31,7 @@ theorem decomp (E : Type) [Field E] [NumberField E] [IsCMField E] (s : E) (hs0 :
       z = algebraMap (maximalRealSubfield E) E a + s * algebraMap (maximalRealSubfield E) E b := by
   have h2 : (2 : E) ≠ 0 := two_ne_zero
   have ha : (z + IsCMField.complexConj E z) / 2 ∈ maximalRealSubfield E := by
-    rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_add, IsCMField.complexConj_apply_apply, map_ofNat,
+    rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_add (f := _), IsCMField.complexConj_apply_apply, map_ofNat,
       add_comm]
   have hb : (z - IsCMField.complexConj E z) / (2 * s) ∈ maximalRealSubfield E := by
     rw [← IsCMField.complexConj_eq_self_iff, map_div₀, map_sub, map_mul, IsCMField.complexConj_apply_apply, map_ofNat,

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.KappaZeroD
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.KappaZeroD
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 
@@ -34,7 +38,7 @@ theorem UpperTheory.V.Z.Sym.Loc.fzdLaw : UpperTheory.V.Z.Sym.Loc.FzdLaw := by
   haveI := hL.frac
   refine ⟨?_, ?_⟩
   · intro g hg
-    rw [fZD, dif_neg]
+    rw [fZD, dite_eq_right]
     rintro ⟨z, s, hs, hk⟩
     apply hg
     have hsZ : s ∈ ZD Δ := by
@@ -50,7 +54,7 @@ theorem UpperTheory.V.Z.Sym.Loc.fzdLaw : UpperTheory.V.Z.Sym.Loc.FzdLaw := by
   · intro z s k hs hk
     have hex : ∃ z s', IsScal z s' ∧ s'⁻¹ * (s * k) ∈ KD Δ O :=
       ⟨z, s, hs, by rwa [inv_mul_cancel_left]⟩
-    rw [fZD, dif_pos hex]
+    rw [fZD, dite_eq_left hex]
     obtain ⟨hs', hk'⟩ := hex.choose_spec.choose_spec
     set z' := hex.choose
     set s' := hex.choose_spec.choose

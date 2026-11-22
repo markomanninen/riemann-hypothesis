@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SeedPtOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PrConc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsSeed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PointTheoremBaseObject
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EqOneOfNear
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.DiscreteSeriesCoefficientsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.SeedPtOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PrConc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.IsSeed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PointTheoremBaseObject
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EqOneOfNear
+
+@[expose] public section
 
 set_option maxHeartbeats 800000
 set_option synthInstance.maxHeartbeats 200000
@@ -61,8 +65,7 @@ private theorem flag_cont {Γ : Type} [Group Γ] [TopologicalSpace Γ] {n : ℕ}
     rw [← (hP g).2 i]
     simp only [Units.val_mul, Matrix.mul_apply]
   simp only [this]
-  exact continuous_finset_sum _ fun b _ => (continuous_finset_sum _ fun a _ =>
-    continuous_const.mul (hr a b)).mul continuous_const
+  fun_prop
 private theorem comm_one {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {κ : Γ →* (Qbar l)ˣ}
     (h : Continuous fun g => (κ g).val) {g : Γ} (hg : g ∈ (commutator Γ).topologicalClosure) : κ g = 1 := by
   refine Subgroup.topologicalClosure_minimal _ (Abelianization.commutator_subset_ker κ) ?_ hg
@@ -92,12 +95,12 @@ private theorem pt_ex {c : Coef l} [Fr.IsCoef l c.O] {F : Fr.Frame l (ResidueFie
     rfl
   · obtain ⟨b, hb, hk⟩ := h1 g
     have e : residue c.O ((-1) ^ i * (∏ j, (X - C (b j))).coeff (n - i)) = residue c.O a := by
-      rw [ha, W.Resid.Dbar, W.GDet.lam, (AlgebraTools.Det.repApi _).2.1, map_mul, ← coeff_map, Polynomial.map_prod]
+      rw [ha, W.Resid.Dbar, W.GDet.lam, (AlgebraTools.Det.repApi (W.diagRep T.r.chib)).2.1, map_mul, ← coeff_map, Polynomial.map_prod]
       change _ = _ * (Matrix.diagonal _).charpoly.coeff _
       rw [Matrix.charpoly_diagonal]
       simp only [map_pow, map_neg, map_one, Polynomial.map_sub, map_X, map_C, hb]
     refine tri ?_ (near_of_res e)
-    rw [W.GDet.lam, (AlgebraTools.Det.repApi _).2.1]
+    rw [W.GDet.lam, (AlgebraTools.Det.repApi (W.mat ρ)).2.1]
     have e' : ((-1) ^ i * (∏ j, (X - C (b j))).coeff (n - i) : c.O).1 =
         (-1) ^ i * (∏ j, (X - C (b j).1)).coeff (n - i) := by
       have e0 : ∀ y : c.O, y.1 = algebraMap c.O (Qbar l) y := fun _ => rfl
@@ -122,7 +125,7 @@ private theorem pr_surj {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [F
   exact ⟨t, rfl⟩
 private theorem val_iff {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] {A : ValuationSubring Ω} {v : W.Plc L}
     (h : IsPlaceOver A v) : A.valuation (l : Ω) < 1 ↔ ((l : ℕ) : 𝓞 L) ∈ v.asIdeal := by
-  simpa using h (l : ℕ)
+  simpa only [map_natCast, Int.cast_ofNat, Nat.cast_ofNat] using h (l : ℕ)
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {c : Coef l}
   {η : G ℚ Ω →* ℤˣ} {Ψ : G ℚ Ω →* c.Oˣ} {σ g₁ : G ℚ Ω} {B : ValuationSubring Ω} {M : ℕ}
   {L : Type} [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [IsAlgClosure L Ω] {Φ : Fr.Frame l (ResidueField c.O)}
@@ -226,7 +229,7 @@ private theorem main (H : GlobalTheory.Published.GlobalArtinReciprocity) (ι : Q
     refine hJ x wt (tw r ka) (by have := R.n23; omega) (by have := R.n23; omega) ⟨hwt1, fun v i => hψ v i ▸ hwt2 v i⟩
       ?_ htw hr.aut (fun s hs => htame _ ?_ s hs fun i => ?_)
       fun v => ⟨?_, fun a b => ?_⟩
-    · refine (congrArg (W.GDet.comap · (prT R)) hx.1).trans (((AlgebraTools.Det.repApi _).2.2.2.2.2.2.1 _).trans ?_)
+    · refine (congrArg (W.GDet.comap · (prT R)) hx.1).trans (((AlgebraTools.Det.repApi (W.mat ρ)).2.2.2.2.2.2.1 _).trans ?_)
       exact congrArg _ (MonoidHom.ext fun s => congrArg Units.val (hρr s))
     · obtain ⟨d, rfl⟩ := hM
       refine fun h => R.v0M ?_

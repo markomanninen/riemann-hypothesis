@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderLatticeBaseStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HasFinColengthOfHasLen
-import ReciprocityTheory.DualLattices.HasLenCokerDet
-import ReciprocityTheory.DualLattices.MemAugIdeal
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.HopfOrderLatticeBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HasFinColengthOfHasLen
+public import ReciprocityTheory.DualLattices.HasLenCokerDet
+public import ReciprocityTheory.DualLattices.MemAugIdeal
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.GR ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.Num.PtInj
 
-open Matrix in
 
+open Matrix in
 theorem val_mul_le_of_cyclic_ker {C : Type} [Field C] {v : Valuation C NNReal} {R : Type} [CommRing R]
     [Algebra R C] (hv : v.Integers R) {B D : Type} [AddCommGroup B] [Module R B] [AddCommGroup D]
     [Module R D] (π : B →ₗ[R] D) (a : B) (hs : Function.Surjective π)
@@ -42,7 +47,8 @@ theorem val_mul_le_of_cyclic_ker {C : Type} [Field C] {v : Valuation C NNReal} {
     have hz : ∃ r : Fin m → R, π z = ∑ j, r j • ε j := by
       refine ⟨fun j => Quotient.out (e (π z) j), e.injective ?_⟩
       funext i
-      rw [map_sum, Finset.sum_apply, Finset.sum_eq_single i]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply, Finset.sum_eq_single i]
       · simp only [ε, map_smul, LinearEquiv.apply_symm_apply, Pi.smul_apply, Pi.single_eq_same,
           Algebra.smul_def, mul_one, Ideal.Quotient.algebraMap_eq]
         exact (Ideal.Quotient.mk_out _).symm

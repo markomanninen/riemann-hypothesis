@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SameIdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -31,7 +35,6 @@ def toBase (hφ : IsGrpPullback A' A f φ) {X : Scheme.{0}} {s : X ⟶ S'} {s₀
   (lift (pushP hφ (s := (A' ⊗ Over.mk s).hom) rfl (fst A' (Over.mk s)))
     (Over.homMk (snd A' (Over.mk s)).left (toBase_w hs) : Over.mk ((A' ⊗ Over.mk s).hom ≫ f) ⟶ Over.mk s₀)).left
 
-@[reassoc]
 theorem toBase_fst (hφ : IsGrpPullback A' A f φ) {X : Scheme.{0}} {s : X ⟶ S'} {s₀ : X ⟶ S} (hs : s ≫ f = s₀) :
     toBase hφ hs ≫ (fst A (Over.mk s₀)).left = (fst A' (Over.mk s)).left ≫ φ :=
   lift_left_fst _ _
@@ -51,7 +54,6 @@ def ofBase (hφ : IsGrpPullback A' A f φ) {X : Scheme.{0}} {s : X ⟶ S'} {s₀
   (lift (liftPt hφ _ (fst A (Over.mk s₀)).left (ofBase_w hs))
     (Over.homMk (snd A (Over.mk s₀)).left rfl : Over.mk ((snd A (Over.mk s₀)).left ≫ s) ⟶ Over.mk s)).left
 
-@[reassoc]
 theorem ofBase_fst (hφ : IsGrpPullback A' A f φ) {X : Scheme.{0}} {s : X ⟶ S'} {s₀ : X ⟶ S} (hs : s ≫ f = s₀) :
     ofBase hφ hs ≫ (fst A' (Over.mk s)).left ≫ φ = (fst A (Over.mk s₀)).left := by
   rw [← Category.assoc]
@@ -167,9 +169,9 @@ variable {S S' : Scheme.{0}} {f : S' ⟶ S} {A : Over S} [GrpObj A] {A' : Over S
 theorem rep_down (hφ : IsGrpPullback A' A f φ) {T B' : Over S'} (b' : B' ⟶ T) {P' : LB (A' ⊗ B').left}
     (h : Rep A' b' P') :
     Rep A (Over.homMk b'.left (by show b'.left ≫ T.hom ≫ f = B'.hom ≫ f; rw [← Category.assoc, Over.w b']) :
-      Over.mk (B'.hom ≫ f) ⟶ Over.mk (T.hom ≫ f)) (P'.pull (ofBase hφ (s := B'.hom) rfl)) where
-  fam := fam_ofBase hφ rfl h.fam
-  univ T₁ t N hN := by
+      Over.mk (B'.hom ≫ f) ⟶ Over.mk (T.hom ≫ f)) (P'.pull (ofBase hφ (s := B'.hom) rfl)) := by
+  refine ⟨fam_ofBase hφ rfl h.fam, ?_⟩
+  · intro T₁ t N hN
     have hs : (t.left ≫ T.hom) ≫ f = T₁.hom := by rw [Category.assoc]; exact Over.w t
     obtain ⟨x', ⟨hxb, hxN⟩, hu⟩ := h.univ (Over.mk (t.left ≫ T.hom)) (Over.homMk t.left rfl)
       (N.pull (toBase hφ hs)) (fam_toBase hφ hs hN)
@@ -199,9 +201,9 @@ theorem rep_down (hφ : IsGrpPullback A' A f φ) {T B' : Over S'} (b' : B' ⟶ T
 theorem rep_up (hφ : IsGrpPullback A' A f φ) {T : Over S'} {B : Over S} (b : B ⟶ Over.mk (T.hom ≫ f))
     {P : LB (A ⊗ B).left} (h : Rep A b P) :
     Rep A' (Over.homMk b.left rfl : Over.mk (b.left ≫ T.hom) ⟶ T)
-      (P.pull (toBase hφ (s := b.left ≫ T.hom) (s₀ := B.hom) (by rw [Category.assoc]; exact Over.w b))) where
-  fam := fam_toBase hφ _ h.fam
-  univ T₁ t' N' hN' := by
+      (P.pull (toBase hφ (s := b.left ≫ T.hom) (s₀ := B.hom) (by rw [Category.assoc]; exact Over.w b))) := by
+  refine ⟨fam_toBase hφ _ h.fam, ?_⟩
+  · intro T₁ t' N' hN'
     have hsB : (b.left ≫ T.hom) ≫ f = B.hom := by rw [Category.assoc]; exact Over.w b
     let t : Over.mk (T₁.hom ≫ f) ⟶ Over.mk (T.hom ≫ f) := Over.homMk t'.left
       (by show t'.left ≫ T.hom ≫ f = T₁.hom ≫ f; rw [← Category.assoc, Over.w t'])

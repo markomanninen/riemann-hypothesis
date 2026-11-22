@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -17,7 +22,7 @@ theorem FlagAltTopDegree.proof (h1 : FlagCoeffBlockPermute.Statement)
   intro f N P hP hhom
 
   have key : ∀ (R : RootRing f N) (β : Fin f × Fin N →₀ ℕ), IsBlockAlternating f N R →
-      R.IsHomogeneous (topDegree f N) → coeff β R ≠ 0 →
+      R.IsHomogeneous (topDegree f N) → AddMonoidAlgebra.coeff R β ≠ 0 →
       (∀ τ, Function.Injective fun i : Fin N => β (τ, i)) ∧ ∀ τ i, β (τ, i) < N := by
     intro R β hR hRh hβ
     have hinj := h2 f N R β hR hβ
@@ -38,14 +43,14 @@ theorem FlagAltTopDegree.proof (h1 : FlagCoeffBlockPermute.Statement)
     exact (h3 N _ (hinj τ)).2 (le_antisymm (by omega) (hge τ)) i
   have hΔ := isBlockAlternating_blockVandermonde f N
   obtain ⟨α₁, hα₁⟩ := MvPolynomial.ne_zero_iff.mp (Flag.blockVandermonde_ne_zero f N)
-  set e : ℚ := coeff α₁ P / coeff α₁ (blockVandermonde f N)
+  set e : ℚ := AddMonoidAlgebra.coeff P α₁ / AddMonoidAlgebra.coeff (blockVandermonde f N) α₁
   set Q := P - C e * blockVandermonde f N with hQ
   have hQalt : IsBlockAlternating f N Q := by
     intro w
     simp only [hQ, map_sub, map_mul, algHom_C, hP w, hΔ w, smul_sub, mul_smul_comm,
       MvPolynomial.algebraMap_eq]
   have hQhom : Q.IsHomogeneous (topDegree f N) := hhom.sub ((h5 f N).C_mul e)
-  have hQα₁ : coeff α₁ Q = 0 := by
+  have hQα₁ : AddMonoidAlgebra.coeff Q α₁ = 0 := by
     simp only [hQ, coeff_sub, coeff_C_mul, e]
     field_simp
     ring

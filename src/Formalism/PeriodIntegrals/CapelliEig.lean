@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UpqRep
-import Formalism.FormalDegreeBessel.StatementIO
-import Formalism.FormalDegreeBessel.StatementDS
-import Formalism.FormalDegreeBessel.StatementG
+module
+
+public import Formalism.PeriodIntegrals.UpqRep
+public import Formalism.FormalDegreeBessel.StatementIO
+public import Formalism.FormalDegreeBessel.StatementDS
+public import Formalism.FormalDegreeBessel.StatementG
+
+@[expose] public section
 
 open MeasureTheory Matrix
 

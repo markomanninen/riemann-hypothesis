@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.NonvanishingLandau
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.NonvanishingLandau
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Complex Topology Filter Asymptotics
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.RootsBound
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AbsoluteConvergence.RootsBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ private theorem vacOut_of'_lemma (n : ℕ) : CompactSpace (KR n) := by
     have hbox : IsCompact (Set.pi univ fun _ : Fin n ⊕ Fin n => Set.pi univ fun _ : Fin n ⊕ Fin n => Metric.closedBall (0 : ℂ) 1) :=
       isCompact_univ_pi fun _ => isCompact_univ_pi fun _ => isCompact_closedBall 0 1
     refine hbox.of_isClosed_subset ?_ ?_
-    · refine IsClosed.inter ?_ ?_
+    · change IsClosed ({g : M2 n | InG g} ∩ {g : M2 n | Matrix.conjTranspose g * g = 1})
+      refine IsClosed.inter ?_ ?_
       · exact isClosed_eq ((continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id) continuous_const
       · exact isClosed_eq (continuous_id.matrix_conjTranspose.matrix_mul continuous_id) continuous_const
     · intro g hg i _ j _

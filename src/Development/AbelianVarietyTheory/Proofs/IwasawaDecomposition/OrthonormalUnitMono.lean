@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,12 +19,12 @@ variable {σ : Type} [DecidableEq σ]
 
 def unitMono (F : Fock σ) (α : σ →₀ ℕ) : F.H := (wt α)⁻¹ • F.ι (monomial α 1)
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem conj_wt (α : σ →₀ ℕ) : (starRingEnd ℂ) (wt α) = wt α := Complex.conj_ofReal _
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem wt_mul_self (α : σ →₀ ℕ) : wt α * wt α = (mfact α : ℕ) := by
   rw [← star_wt_mul, conj_wt]
 
@@ -42,7 +46,7 @@ theorem dense_span_unitMono (F : Fock σ) :
   refine closure_mono ?_ (F.dense x)
   rintro _ ⟨f, rfl⟩
   induction f using MvPolynomial.induction_on' with
-  | add f g hf hg => rw [map_add]; exact Submodule.add_mem _ hf hg
+  | add f g hf hg => rw [map_add (f := _)]; exact Submodule.add_mem _ hf hg
   | monomial α c =>
     have e : F.ι (monomial α c) = (c * wt α) • unitMono F α := by
       rw [unitMono, smul_smul, mul_assoc, mul_inv_cancel₀ (wt_ne_zero α), mul_one, ← map_smul, smul_monomial]

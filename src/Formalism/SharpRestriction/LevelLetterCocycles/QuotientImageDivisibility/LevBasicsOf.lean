@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.EvAtPsIff
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.EvAtPsIff
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -47,8 +51,8 @@ theorem evAt_γ (z : W.Gam → ℤ_[PD.p]ˣ)
     evR_subst PD.p (s + 1) hlm (rs_root F s ζ) hyA _ h0 huy]
   exact evR_congr PD.p (s + 1) hlm hyA _ rfl _
 
-omit [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O] [IsDomain O] [CharZero O] in
 
+omit [IsLocalRing O] [IsAdicComplete (IsLocalRing.maximalIdeal O) O] [IsDomain O] [CharZero O] in
 theorem gen_of (z : W.Gam → ℤ_[PD.p]ˣ)
     (hz : ∀ g, algebraMap ℤ_[PD.p] O (z g : ℤ_[PD.p]) = (W.χΓ g : O))
     (hZinj : Function.Injective (algebraMap ℤ_[PD.p] O))

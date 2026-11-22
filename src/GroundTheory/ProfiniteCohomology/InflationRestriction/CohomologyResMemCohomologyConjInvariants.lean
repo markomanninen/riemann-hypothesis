@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.ConjAction
-import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.ConjAction
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.DegreeOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -87,7 +92,7 @@ noncomputable def cohomologyConj (n : ℕ) (g : G) :
 
 def cohomologyConjInvariants (n : ℕ) : Submodule k (cohomology (Rep.res N.subtype A) n) where
   carrier := {x | ∀ g : G, (cohomologyConj A N n g).hom x = x}
-  add_mem' hx hy g := by rw [map_add, hx g, hy g]
+  add_mem' hx hy g := by rw [map_add (f := _), hx g, hy g]
   zero_mem' g := map_zero _
   smul_mem' r x hx g := by rw [map_smul, hx g]
 
@@ -98,7 +103,11 @@ theorem cohomologyConj_π_eq_iff (z : cocycles (Rep.res N.subtype A) 1) (g : G) 
     (cohomologyConj A N 1 g).hom ((cohomologyπ _ 1).hom z) = (cohomologyπ _ 1).hom z ↔
       ∃ a : A, ∀ n : N, A.ρ g (cocycleOneApply A N z (GroundTheory.GroupCoh.conjHom N g n)) -
         cocycleOneApply A N z n = A.ρ n a - a := by
-  rw [cohomologyConj, cohomologyπ_cohomologyMapAlong_apply, ← sub_eq_zero, ← map_sub]
+  rw [cohomologyConj, cohomologyMapAlong]
+  erw [homologyMap_homologyπ_apply]
+  change ((cochainsComplex (Rep.res N.subtype A)).homologyπ 1).hom _ =
+    ((cochainsComplex (Rep.res N.subtype A)).homologyπ 1).hom z ↔ _
+  rw [← sub_eq_zero, ← map_sub]
   change ((cochainsComplex (Rep.res N.subtype A)).homologyπ (0 + 1)).hom _ = 0 ↔ _
   rw [homologyπ_succ_eq_zero_iff, map_sub, iCycles_cyclesMap_apply]
   constructor

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LinQRawRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +83,7 @@ theorem exists_scale (a : F) : ∃ r : 𝒪[F], (r : F) ≠ 0 ∧ (r : F) * a �
 variable (L : LocE F E)
 
 theorem tr_ex (x : E) : ∃ a : F, algebraMap F E a = x + L.cj x :=
-  (L.cj_fix _).1 (by rw [map_add, L.cj_cj, add_comm])
+  (L.cj_fix _).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
 
 theorem nm_ex (x : E) : ∃ a : F, algebraMap F E a = x * L.cj x :=
   (L.cj_fix _).1 (by rw [map_mul, L.cj_cj, mul_comm])
@@ -142,7 +146,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E]
 theorem decomp (L : LocE F E) (θ : E) (hθc : L.cj θ = -θ) (D : F) (hD : θ * θ = algebraMap F E D) (x : E) :
     ∃ t c : F, algebraMap F E t = x + L.cj x ∧ algebraMap F E c = (x - L.cj x) * θ ∧
       algebraMap F E (2 * D) * x = algebraMap F E (D * t) + algebraMap F E c * θ := by
-  obtain ⟨t, ht⟩ := (L.cj_fix (x + L.cj x)).1 (by rw [map_add, L.cj_cj, add_comm])
+  obtain ⟨t, ht⟩ := (L.cj_fix (x + L.cj x)).1 (by rw [map_add (f := _), L.cj_cj, add_comm])
   obtain ⟨c, hc⟩ := (L.cj_fix ((x - L.cj x) * θ)).1 (by rw [map_mul, map_sub, L.cj_cj, hθc]; ring)
   refine ⟨t, c, ht, hc, ?_⟩
   rw [map_mul, map_mul, map_ofNat, ht, hc]

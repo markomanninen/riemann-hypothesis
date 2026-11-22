@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSGIffFlags
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.MemSGIffFlags
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,16 +70,16 @@ theorem colFlag_iff' (m : Matrix (Idx r k) (Idx r k) K) :
 theorem pe_castSucc (i : Fin r) : pe (k := k) (Fin.castSucc i) = Sum.inl i := by
   have h : ((Fin.castSucc i : Fin (r + 1)) : ℕ) < r := i.isLt
   unfold pe
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem pe_last : pe (r := r) (k := k) (Fin.last r) = zI := by
   unfold pe
-  rw [dif_neg (by simp)]
+  rw [dite_eq_right (by simp)]
 
 theorem pe_inl_of_lt {a b : Fin (r + 1)} (h : a < b) : pe (k := k) a = Sum.inl ⟨a, by omega⟩ := by
   unfold pe
-  rw [dif_pos (by omega)]
+  rw [dite_eq_left (by omega)]
 
 theorem colFlag_iff (m : Matrix (Idx r k) (Idx r k) K) : ColFlag m ↔ ColC m := by
   classical

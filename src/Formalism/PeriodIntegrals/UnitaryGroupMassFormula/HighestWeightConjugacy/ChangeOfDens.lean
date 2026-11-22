@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.VmulCommEvPt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HighestWeightConjugacy.VmulCommEvPt
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,8 @@ theorem mult_right (hd : DensStep) {ι : Type} [Fintype ι] (P : ι → ι → M
       ∑ k, P i k * MvPolynomial.C (MvPolynomial.eval z (P k j))) =
       evM P (vmul y' z) i j - (evM P y' * evM P z) i j := by
     intro y'
-    rw [map_sub, eval_aeval_eq, hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, eval_aeval_eq, hv, map_sum]
     simp [evM, Matrix.mul_apply]
   have key := hd L n _ (fun γ₀ hγ => by rw [hF, hrat γ₀ hγ, sub_self]) y hy
   rw [hF] at key
@@ -51,7 +56,8 @@ theorem mult_left (hd : DensStep) {ι : Type} [Fintype ι] (P : ι → ι → Mv
       ∑ k, MvPolynomial.C (MvPolynomial.eval y (P i k)) * P k j) =
       evM P (vmul y z') i j - (evM P y * evM P z') i j := by
     intro z'
-    rw [map_sub, eval_aeval_eq, hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, eval_aeval_eq, hv, map_sum]
     simp [evM, Matrix.mul_apply]
   have key := hd L n _ (fun δ₀ hδ => by rw [hF, hrat δ₀ hδ, sub_self]) z hz
   rw [hF] at key
@@ -71,7 +77,8 @@ theorem mult_of_dens (hd : DensStep) {ι : Type} [Fintype ι] (P : ι → ι →
     rw [← hrat γ₀ hγ δ₀ hδ]
     congr 1
     funext p
-    simp [vmul, ratPt, Units.val_mul, Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [vmul, ratPt, Units.val_mul, Matrix.mul_apply, map_sum, map_mul]
   exact mult_right hd P z (fun γ₀ hγ => hl γ₀ hγ z hz) y hy
 
 theorem change_of_dens (hd : DensStep) {ι ι' : Type} [Fintype ι] [Fintype ι']
@@ -84,8 +91,10 @@ theorem change_of_dens (hd : DensStep) {ι ι' : Type} [Fintype ι] [Fintype ι'
   have hF : ∀ y' : Vars L n → ℂ, MvPolynomial.eval y' (P i j -
       ∑ l, ∑ k, MvPolynomial.C (C i k * C' l j) * P' k l) = evM P y' i j - (C * evM P' y' * C') i j := by
     intro y'
-    rw [map_sub, map_sum]
-    simp only [map_sum, map_mul, MvPolynomial.eval_C, evM, Matrix.of_apply, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, MvPolynomial.eval_C, evM, Matrix.of_apply, Matrix.mul_apply]
     congr 1
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [Finset.sum_mul]
@@ -134,7 +143,7 @@ theorem span_orbit (a : AlgWt L n) {ι : Type} [Fintype ι] [DecidableEq ι] (b 
       induction r using MonoidAlgebra.induction_linear with
       | zero => simp
       | add f g hf hg =>
-        rw [map_add, LinearMap.add_apply]
+        rw [map_add (f := _), LinearMap.add_apply]
         exact add_mem hf hg
       | single g c =>
         rw [Representation.asAlgebraHom_single, LinearMap.smul_apply]

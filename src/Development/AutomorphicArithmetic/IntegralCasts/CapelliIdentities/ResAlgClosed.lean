@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk69.res_algClosed :
     ∀ {Ω : Type} [inst : Field Ω] [IsAlgClosed Ω]

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.Brauer.BaseChangeCSA
+module
+
+public import Mathlib
+public import GroundTheory.Brauer.BaseChangeCSA
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -13,7 +17,8 @@ private lemma trace_restrictScalars_rat {F W : Type} [Field F] [NumberField F] [
   classical
   let b := Module.finBasis ℚ F
   let d := Module.finBasis F W
-  rw [LinearMap.trace_eq_matrix_trace ℚ (b.smulTower d), LinearMap.trace_eq_matrix_trace F d,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.trace_eq_matrix_trace ℚ (b.smulTower d), LinearMap.trace_eq_matrix_trace F d,
     Matrix.trace, Matrix.trace, map_sum, Fintype.sum_prod_type, Finset.sum_comm]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [Algebra.trace_eq_matrix_trace b, Matrix.trace]
@@ -73,7 +78,7 @@ private lemma embedding_trace_mulLeft_eq_mul_trace {F A : Type} [Field F] [Ring 
       rw [TensorProduct.comm_tmul]
       simp only [G, H, Algebra.TensorProduct.lift_tmul, AlgHom.restrictScalars_apply, ι, Algebra.ofId_apply]
       exact Algebra.commutes z _
-    | add x y hx hy => simp [map_add, hx, hy]
+    | add x y hx hy => simp [map_add (f := _), hx, hy]
   have hG : Function.Injective G := by
     intro x y hxy
     rw [hGH, hGH] at hxy
@@ -99,7 +104,7 @@ private lemma embedding_trace_mulLeft_eq_mul_trace {F A : Type} [Field F] [Ring 
       simp only [G, Algebra.TensorProduct.lift_tmul, ι, Algebra.ofId_apply, LinearMap.mulLeft_apply]
       show algebraMap ℂ _ z * φ (c * a) = φ c * (algebraMap ℂ _ z * φ a)
       rw [map_mul, ← mul_assoc, ← mul_assoc, Algebra.commutes z (φ c)]
-    | add x y hx hy => simp [map_add, hx, hy, mul_add]
+    | add x y hx hy => simp [map_add (f := _), hx, hy, mul_add]
   rw [← trace_mulLeft_matrix, ← hconj, LinearMap.trace_conj', LinearMap.trace_baseChange]
   rfl
 
@@ -124,8 +129,8 @@ set_option autoImplicit false in
 private lemma trace_and_finrank_of_linearEquiv_pi {A M S : Type} [Ring A] [Algebra ℚ A] [AddCommGroup M]
     [Module A M] [Module ℚ M] [IsScalarTower ℚ A M] [AddCommGroup S] [Module A S] [Module ℚ S]
     [IsScalarTower ℚ A S] [FiniteDimensional ℚ S] (k : ℕ) (e : M ≃ₗ[A] (Fin k → S)) (c : A) :
-    LinearMap.trace ℚ M (DistribMulAction.toLinearMap ℚ M c) =
-        k * LinearMap.trace ℚ S (DistribMulAction.toLinearMap ℚ S c) ∧
+    LinearMap.trace ℚ M (DistribSMul.toLinearMap ℚ M c) =
+        k * LinearMap.trace ℚ S (DistribSMul.toLinearMap ℚ S c) ∧
       Module.finrank ℚ M = k * Module.finrank ℚ S := by
   let e' : M ≃ₗ[ℚ] (Fin k → S) := e.restrictScalars ℚ
   refine ⟨?_, ?_⟩
@@ -142,8 +147,8 @@ set_option autoImplicit false in
 private lemma trace_mul_finrank_eq_finrank_mul_trace {A M : Type} [Ring A] [Algebra ℚ A] [FiniteDimensional ℚ A]
     [IsSimpleRing A] [AddCommGroup M] [Module A M] [Module ℚ M] [IsScalarTower ℚ A M]
     [FiniteDimensional ℚ M] (c : A) :
-    LinearMap.trace ℚ M (DistribMulAction.toLinearMap ℚ M c) * Module.finrank ℚ A =
-      Module.finrank ℚ M * LinearMap.trace ℚ A (DistribMulAction.toLinearMap ℚ A c) := by
+    LinearMap.trace ℚ M (DistribSMul.toLinearMap ℚ M c) * Module.finrank ℚ A =
+      Module.finrank ℚ M * LinearMap.trace ℚ A (DistribSMul.toLinearMap ℚ A c) := by
   haveI : IsArtinianRing A := IsArtinianRing.of_finite ℚ A
   haveI : IsSemisimpleRing A := (IsSimpleRing.isSemisimpleRing_iff_isArtinianRing (R := A)).mpr inferInstance
   haveI : Module.Finite A M := Module.Finite.of_restrictScalars_finite ℚ A M
@@ -171,8 +176,8 @@ private lemma trace_mul_finrank_eq_finrank_mul_trace {A M : Type} [Ring A] [Alge
   push_cast
   ring
 
-set_option autoImplicit false in
 
+set_option autoImplicit false in
 theorem _root_.GlobalTheory.QTrace.q_trace : ∀ {F A V : Type} [Field F] [NumberField F] [Ring A] [Algebra F A] [FiniteDimensional F A] [Algebra.IsCentral F A]
     [IsSimpleRing A] [AddCommGroup V] [Module ℚ V] [FiniteDimensional ℚ V] (n : ℕ), Module.finrank F A = n ^ 2 →
     ∀ (ρ : A →+* Module.End ℚ V) (ψ : (F →+* ℂ) → (A →+* Matrix (Fin n) (Fin n) ℂ)),
@@ -195,8 +200,8 @@ theorem _root_.GlobalTheory.QTrace.q_trace : ∀ {F A V : Type} [Field F] [Numbe
   haveI : IsScalarTower ℚ A V := ⟨fun q a v => by
     show ρ (q • a) v = q • ρ a v
     rw [Algebra.smul_def, map_mul, Module.End.mul_apply, hρq, Module.algebraMap_end_apply]⟩
-  have hV : LinearMap.trace ℚ V (DistribMulAction.toLinearMap ℚ V c) = LinearMap.trace ℚ V (ρ c) := rfl
-  have hA : LinearMap.trace ℚ A (DistribMulAction.toLinearMap ℚ A c) =
+  have hV : LinearMap.trace ℚ V (DistribSMul.toLinearMap ℚ V c) = LinearMap.trace ℚ V (ρ c) := rfl
+  have hA : LinearMap.trace ℚ A (DistribSMul.toLinearMap ℚ A c) =
       Algebra.trace ℚ F (LinearMap.trace F A (LinearMap.mulLeft F c)) := by
     rw [← trace_restrictScalars_rat]
     rfl

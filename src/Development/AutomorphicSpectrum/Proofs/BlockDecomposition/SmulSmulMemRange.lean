@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
@@ -18,24 +22,21 @@ theorem smul_smul_mem_range {A B D K₁ K₀ : Type*} [CommRing A] [CommRing B] 
   have comm₁ : ∀ t : B ⊗[A] K₁, d.lTensor D (ρ.rTensor K₁ t) = ρ.rTensor K₀ (d.lTensor B t) := by
     intro t
     induction t with
-    | zero => simp
     | tmul b k => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have comm₂ : ∀ t : B ⊗[A] LinearMap.ker d,
       (LinearMap.ker d).subtype.lTensor D (ρ.rTensor _ t)
         = ρ.rTensor K₁ ((LinearMap.ker d).subtype.lTensor B t) := by
     intro t
     induction t with
-    | zero => simp
     | tmul b k => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have dker : ∀ t : B ⊗[A] LinearMap.ker d,
       d.lTensor B ((LinearMap.ker d).subtype.lTensor B t) = 0 := by
     intro t
     induction t with
-    | zero => simp
     | tmul b k => simp
-    | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
   have hw' : d.lTensor D (ρ.rTensor K₁ w) = 0 := by
     rw [comm₁, ← hw]; simp [h1]
   obtain ⟨v', hv'⟩ := hGood _ hw'

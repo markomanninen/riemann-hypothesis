@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+
+@[expose] public section
 
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
@@ -24,18 +28,18 @@ private lemma Ph_act (ψ : V →ₗ[F] F) (ψ' : V' →ₗ[F] F) (s : F ⊗[ℂ]
     Ph ψ ψ' (actF F V V' s t) = s * Ph ψ ψ' t := by
   induction s using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, add_mul, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, add_mul, ha, hb]
   | tmul a b =>
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add c e hc he => simp only [map_add, mul_add, hc, he]
+    | add c e hc he => simp only [map_add (f := _), mul_add, hc, he]
     | tmul c e => simp [actF_tmul, Ph_tmul]
 
 private lemma Ph_lmul (ψ : V →ₗ[F] F) (ψ' : V' →ₗ[F] F) (t : V ⊗[ℂ] V') :
     Algebra.TensorProduct.lmul' ℂ (Ph ψ ψ' t) = ψ' (ctrF V' ψ t) := by
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add c e hc he => simp only [map_add, hc, he]
+  | add c e hc he => simp only [map_add (f := _), hc, he]
   | tmul c e => simp [Ph_tmul, ctrF]
 
 variable {A A' : Subalgebra ℂ F} {M : Submodule ℂ V} {M' : Submodule ℂ V'}
@@ -61,7 +65,7 @@ private lemma act_mem (hA : ∀ a ∈ A, ∀ m ∈ M, a • m ∈ M) (hA' : ∀ 
       Subalgebra.coe_val, actF_tmul]
     exact Submodule.apply_mem_map₂ _ (hA _ a.2 _ hv) (hA' _ a'.2 _ hv')
   | add x y hx hy =>
-    rw [map_add, map_add, LinearMap.add_apply]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply]
     exact add_mem hx hy
 
 private lemma decomp {n n' : ℕ} {v : Fin n → V} {φ : Fin n → V →ₗ[F] F} {v' : Fin n' → V'}
@@ -79,7 +83,7 @@ private lemma decomp {n n' : ℕ} {v : Fin n → V} {φ : Fin n → V →ₗ[F] 
   | zero => simp
   | add a b _ _ ha hb =>
     conv_lhs => rw [ha, hb]
-    simp only [map_add, LinearMap.add_apply, Finset.sum_add_distrib]
+    simp only [map_add (f := _), LinearMap.add_apply, Finset.sum_add_distrib]
   | smul c a _ ha =>
     conv_lhs => rw [ha]
     simp only [map_smul, LinearMap.smul_apply, Finset.smul_sum]

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
-import ReciprocityTheory.SemistableReduction.NormOrdLengthResidue
+module
+
+public import Mathlib
+public import ReciprocityTheory.SemistableReduction.ComapInclusionIsLocalHom
+public import ReciprocityTheory.SemistableReduction.NormOrdLengthResidue
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

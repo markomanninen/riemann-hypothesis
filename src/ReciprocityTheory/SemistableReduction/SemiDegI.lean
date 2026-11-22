@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegH
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegH
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def hypForm {K : Type} [Field K] [NumberField K] {r : ℕ} (S : HermForm K r) (j
   c_emb := S.c_emb
   G := hypG j p
   G_herm a b := by
-    simp only [hypG, Matrix.of_apply, map_add, apply_ite S.c, map_one, map_zero]
+    simp only [hypG, Matrix.of_apply, map_add (f := _), apply_ite S.c, map_one, map_zero]
     rw [add_comm]
     congr 1 <;> simp only [and_comm]
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix
 open MeasureTheory
@@ -91,6 +95,7 @@ theorem vanish_abs {X : Type} [TopologicalSpace X] [FirstCountableTopology X] [M
         integral_re (hFΦi.const_mul _)
       rw [h, integral_const_mul, hint', mul_zero, Complex.zero_re]
     linarith
-  exact closure_minimal hzero (isClosed_eq hFc continuous_const) hz
+  exact closure_minimal (s := N) (t := {z | F z = 0})
+    (fun z hz => hzero z hz) (isClosed_eq hFc continuous_const) hz
 
 end GlobalTheory.CompanionTheory.WeilSiegel.NoFrame

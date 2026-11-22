@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+
+@[expose] public section
+
 open GlobalTheory.UnitDiscAlg
 
 namespace GlobalTheory.IdemLift

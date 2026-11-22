@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.InfEmbGrpEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.AbsCompactAlt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.InfEmbGrpEq
+
+@[expose] public section
 
 open NumberField GlobalTheory.CuspRep GlobalTheory.UnitaryBC GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global.IdeleGroup
 
-private theorem posIdele_inf {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (s : ℝ) (hs : 0 < s)
+private theorem posIdele_inf {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (s : ℝ) (hs : 0 < s)
     (w : InfinitePlace E) :
     ((posIdele s hs : GroundTheory.Global.IdeleGroup E) : AdeleRing (𝓞 E) E).1 w =
       (InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).symm (s : ℂ) := by
@@ -11,7 +15,7 @@ private theorem posIdele_inf {E : Type} [Field E] [NumberField E] [IsTotallyComp
   rw [← coe_infiniteProj, infiniteProj_posIdele]
   change GroundTheory.Global.posRealElem w _ = _
   unfold GroundTheory.Global.posRealElem
-  rw [dif_neg hw]
+  rw [dite_eq_right hw]
   simp [InfinitePlace.mult, hw, Real.sqrt_sq hs.le]
 
 theorem UpperTheory.V.KernelIndexFullLattice.splitEq_holds :

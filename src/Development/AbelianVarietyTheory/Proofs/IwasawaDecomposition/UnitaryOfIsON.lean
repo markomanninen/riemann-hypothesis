@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightLawGoodOfFieldEmbedding
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LawNormClassSumFock
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightLawGoodOfFieldEmbedding
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LawNormClassSumFock
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,11 +33,13 @@ theorem majAt_classSum {K : Type} [Field K] [NumberField K] [StarRing K] (C : CS
   have hc : ∀ i j, v.embedding (C.H i j) =
       ∑ c, ((C.wt c : ℂ))⁻¹ * B (ψ ((C.basis i : C.Cl → C.V) c)) (ψ ((C.basis j : C.Cl → C.V) c)) := by
     intro i j
-    simp only [CSD.H, Matrix.of_apply, CSD.csum, map_sum, map_mul, map_inv₀, map_natCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [CSD.H, Matrix.of_apply, CSD.csum, map_sum, map_mul, map_inv₀, map_natCast]
     exact Finset.sum_congr rfl fun c _ => congrArg _ (hs _ _ (C.basis_rat hb i c))
   rw [h1, Formalism.L2.DIV.majAt_eq, hm, hI]
   generalize C.basis.equivFun x = a
-  simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, hc, map_sum, LinearMap.sum_apply, Finset.sum_apply, Pi.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, Matrix.mulVec, Matrix.map_apply, hc, map_sum, LinearMap.sum_apply, Finset.sum_apply, Pi.smul_apply,
     LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, Finset.mul_sum, Finset.sum_mul, Pi.star_apply,
     starRingEnd_apply, RingHom.id_apply]
   rw [Finset.sum_comm]
@@ -50,7 +56,8 @@ variable {ι : Type} [Fintype ι] {n : ℕ}
 theorem fockF_conj {τ : Type} (f g : MvPolynomial τ ℂ) :
     Formalism.REAL.fockF (MvPolynomial.map (starRingEnd ℂ) f) (MvPolynomial.map (starRingEnd ℂ) g) =
       starRingEnd ℂ (Formalism.REAL.fockF f g) := by
-  rw [fockF_eq_sum _ _ f.support (MvPolynomial.support_map_subset _ _), Formalism.REAL.fockF, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockF_eq_sum _ _ f.support (MvPolynomial.support_map_subset _ _), Formalism.REAL.fockF, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [MvPolynomial.coeff_map, MvPolynomial.coeff_map, map_mul, map_mul, map_natCast]
   rfl
@@ -90,8 +97,8 @@ section Step
 variable {E K ι : Type} [Field E] [NumberField E] [StarRing E] [Field K] [NumberField K] [StarRing K] [Fintype ι] {n : ℕ}
   (emb : ι → E →+* K) (σ : K →+* ℂ) (lam : ι → DomWeight n)
 
-omit [NumberField E] [StarRing E] [NumberField K] in
 
+omit [NumberField E] [StarRing E] [NumberField K] in
 theorem map_pairVr_rat (s : K →+* ℂ) (F F' : VV K lam) (hF : ∀ i, (bVV K lam).repr F i ∈ cmMax K) :
     s (pairVr emb lam (1 : Matrix (Fin n) (Fin n) E) F F') = nfL lam (MvPolynomial.map s F.1) (MvPolynomial.map s F'.1) := by
   have hc : ∀ m, F.1.coeff m ∈ cmMax K := fun m => by
@@ -154,8 +161,8 @@ theorem norm_step (S : GStep E K n) (hF : FOk emb σ) (hS : S.Ok) (h : (S.fam em
   rw [hd, mul_one, e, hl, ← hu]
   rfl
 
-omit [NumberField E] [StarRing E] [NumberField K] [StarRing K] in
 
+omit [NumberField E] [StarRing E] [NumberField K] [StarRing K] in
 theorem ipVal_step {lam' : ι → DomWeight n} (hl : nfAll lam = nfAll lam') {sh : ι → ℤ} (hsh : sh = shiftOf lam)
     {G : ι → Matrix (Fin n) (Fin n) ℂ} (hG : ∀ τ, G τ = 1) (eY : Fr emb σ n → Frames G) (hY : ∀ y, (eY y).1 = y.1)
     (o : Frames G) (ho : o.IsON) (P Q : MvPolynomial (ι × Fin n × Fin n) ℂ) :
@@ -190,8 +197,8 @@ end GlobalTheory.Mem.Col2.MetricTie
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem GlobalTheory.Mem.Col2.MetricTie.ipV_norm_tie : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (eY : (I.chain l u a).Y i ≃ Formalism.L2.Forms.Fr (I.rec7 l Z) i hi), I.IdY l Z u a i hi eY → IpVTieG (D := (I.rec7 l Z)) (I.fm l u a) eY ∧ NormTieG (D := (I.rec7 l Z)) (I.fm l u a) eY := by
   intro B X I hI hp l Z u a i hi eY hY
   have hg : gramN (I.rec7 l Z) i hi = 1 := ((GlobalTheory.Mem.Col2.TC.spaces_in_coordinates I hI hp l Z).2.2.2 i hi).1

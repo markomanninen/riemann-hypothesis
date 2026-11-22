@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ theorem markov_inequality_holds : Markov := by
   have hw : u (u x) ∈ Z := hZ _ hv
   have h1 := hpos (x - (R⁻¹ : ℂ) • u x) (Z.sub_mem hx (Z.smul_mem _ hv))
   have h2 := hpos (u x - (R⁻¹ : ℂ) • u (u x)) (Z.sub_mem hv (Z.smul_mem _ hw))
-  simp only [e, map_add, map_sub, map_smul, add_sub_cancel_left, inner_add_left, inner_add_right,
+  simp only [e, map_add (f := _), map_sub, map_smul, add_sub_cancel_left, inner_add_left, inner_add_right,
     inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right, Complex.conj_ofReal,
     Complex.add_re, Complex.sub_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
     sub_zero, ← Complex.ofReal_inv] at h1 h2 ⊢

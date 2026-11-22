@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Formalism.GaussJetBounds.StatementN
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DerivationCoordinateChange
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Columns
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Formalism.GaussJetBounds.StatementN
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DerivationCoordinateChange
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.MainNotions.TaylorLogMetric Classical
 open Formalism.DworkPowerSeriesWeights (JetsIntegral)
 
@@ -25,12 +30,13 @@ theorem eigGen_integral_comb : ∀ (D : D7) (cD : D.what₂.Tau → ℂ), Formal
   · exact GlobalTheory.SplitEmbSep.norm_le_one_of_isIntegral (map_isIntegral_int g (f j).isIntegral_coe)
   · have e : ∀ j, tauEmb D lm τ' (a j) = g (TaylorLogMetric.liftM M (TaylorLogMetric.embT D τ' (a j))) := by
       intro j
-      rw [← hg', TaylorLogMetric.liftM, dif_pos (hM _ _)]
+      rw [← hg', TaylorLogMetric.liftM, dite_eq_left (hM _ _)]
       rfl
     have hc := congrFun hfv τ'
     simp only [Finset.sum_apply, Pi.smul_apply, hav] at hc
     simp only [e, ← map_mul]
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     have hc' : (∑ j, ((f j : 𝓞 M) : M) * TaylorLogMetric.liftM M (TaylorLogMetric.embT D τ' (a j))) =
         (LinearMap.single (𝓞 M) (fun _ : D.what₂.Tau => (M : Type)) τ) s τ' := by
       rw [← hc]; rfl

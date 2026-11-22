@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelDefs
-import GroundTheory.GlobalFields.SecondInequality.Cyclic
-import GroundTheory.TateCohomology.HerbrandTate
-import GroundTheory.TateCohomology.Herbrand
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LevelDefs
+public import GroundTheory.GlobalFields.SecondInequality.Cyclic
+public import GroundTheory.TateCohomology.HerbrandTate
+public import GroundTheory.TateCohomology.Herbrand
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh

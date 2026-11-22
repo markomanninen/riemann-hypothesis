@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,7 @@ theorem tensor_submodule_eq_top : ∀ {ι σ : Type} [Fintype ι] [DecidableEq �
     | insert w₀ s hw₀ ih =>
       intro f hf
       let S : Submodule ℂ (MvPolynomial σ ℂ) :=
-        N.comap ((PiTensorProduct.tprod ℂ : MultilinearMap ℂ (fun _ : ι => MvPolynomial σ ℂ) (⨂[ℂ] _ : ι, MvPolynomial σ ℂ)).toLinearMap f w₀)
+        N.comap ((PiTensorProduct.tprod ℂ : (∀ _ : ι, MvPolynomial σ ℂ) →ₘₗ[ℂ] (⨂[ℂ] _ : ι, MvPolynomial σ ℂ)).toLinearMap f w₀)
       have hS1 : (1 : MvPolynomial σ ℂ) ∈ S := by
         show PiTensorProduct.tprod ℂ (Function.update f w₀ 1) ∈ N
         apply ih

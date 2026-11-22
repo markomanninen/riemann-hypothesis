@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.SmoothedZetaClassHodgeTateLawStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.HtLawCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.SmoothedZetaClassHodgeTateLawStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.HtLawCongr
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,7 +172,7 @@ theorem glue2 : Glue2 := by
       field_simp at h1
       linear_combination h1
     unfold GlobalTheory.K4.nuD
-    rw [dif_pos (by rw [hr]; exact one_ne_zero)]
+    rw [dite_eq_left (by rw [hr]; exact one_ne_zero)]
     ext
     simp [hr]
   have hνfrob : ∃ σ ∈ Dec A, IsFrob A l σ ∧ ‖((GlobalTheory.K4.nuD W e ψ₀ σ : (Qbar l)ˣ) : Qbar l)‖ = 1 := by
@@ -182,7 +186,7 @@ theorem glue2 : Glue2 := by
       exact zero_ne_one hn
     refine ⟨σ, hσD, hσF, ?_⟩
     unfold GlobalTheory.K4.nuD
-    rw [dif_pos hne]
+    rw [dite_eq_left hne]
     simpa using hn
   have hθc : ‖θ c₁‖ = 1 := by
     simpa using θ.unit_norm_eq_one (ZMod.unitOfCoprime c₁ hc1N)

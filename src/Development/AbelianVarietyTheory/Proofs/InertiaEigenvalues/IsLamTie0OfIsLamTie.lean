@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAuxiliaryHeckeCharacter
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsAuxiliaryHeckeCharacter
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,8 @@ theorem isThEmpty_of_isThOf {i : X.Tw} {ι : ℂ →+* Kbar X i} {lam : X.abelia
       IsToricSum φ s κ 𝔣 χ z := by
     rw [hc]; exact fun _ hz => hz
   refine ⟨u, ∑ q, T q, hu, key _ t, ?_⟩
-  rw [map_sum, Finset.sum_congr rfl fun δ _ => hδ δ, ← Finset.mul_sum, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_congr rfl fun δ _ => hδ δ, ← Finset.mul_sum, ← map_sum,
     ← Finset.sum_fiberwise Finset.univ (fun q => π q⁻¹)]
   congr 2
   refine Finset.sum_congr rfl fun δ _ => ?_

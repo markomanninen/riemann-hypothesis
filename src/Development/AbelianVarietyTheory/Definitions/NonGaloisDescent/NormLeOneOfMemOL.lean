@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InvertibleSpanSingleton
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InvertibleSpanSingleton
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ namespace GlobalTheory.Prism
 
 variable {l : ℕ} [hl : Fact l.Prime]
 
-variable (l) in
 
+variable (l) in
 def galTilt : GQ l →* (OCb l ≃+* OCb l) where
   toFun g := RingEquiv.ofRingHom (Per.σF g) (Per.σF g⁻¹)
     (RingHom.ext fun x => by
@@ -28,8 +32,8 @@ def galTilt : GQ l →* (OCb l ≃+* OCb l) where
 
 theorem galTilt_apply (g : GQ l) (x : OCb l) : galTilt l g x = Per.σF g x := rfl
 
-variable (l) in
 
+variable (l) in
 def galW : GQ l →* (WCb l ≃ₐ[ℤ_[l]] WCb l) where
   toFun g := mapAlgEquivW l (autCb l (galTilt l g))
   map_one' := by
@@ -69,13 +73,13 @@ theorem frobenius_eq_pow_add (a : Ainf l) : ∃ b, WittVector.frobenius a = a ^ 
   obtain ⟨b, hb⟩ := h
   exact ⟨b, by linear_combination hb⟩
 
-variable (l) in
 
+variable (l) in
 def ainfDelta : Delta l (Ainf l) :=
   Delta.ofLift l WittVector.frobenius ainf_torsionFree frobenius_eq_pow_add
 
-variable (l) in
 
+variable (l) in
 theorem theta_onto : Function.Surjective (Per.θ l) := by
   refine surjective_fontaineTheta fun x => ?_
   obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
@@ -88,8 +92,8 @@ theorem theta_onto : Function.Surjective (Per.θ l) := by
   rw [frobenius_def, ← map_pow]
   exact congrArg _ (Subtype.ext hy)
 
-variable (l) in
 
+variable (l) in
 theorem exists_generator : ∃ ξ : Ainf l, RingHom.ker (Per.θ l) = Ideal.span {ξ} ∧ ξ ≠ 0 ∧
     Per.θ l (WittVector.frobenius ξ) = (l : OC l) := by
   obtain ⟨ζ, e, h0, -, h1, hr⟩ := GlobalTheory.MemLoc.exists_zeta_eps l
@@ -105,7 +109,8 @@ theorem exists_generator : ∃ ξ : Ainf l, RingHom.ker (Per.θ l) = Ideal.span 
     have h2 : Per.θ l (WittVector.frobenius (Per.tm ((frobeniusEquiv (Per.Fl l) l).symm e))) = 1 := by
       rw [WittVector.frobenius_eq_map_frobenius, WittVector.map_teichmuller, frobenius_def,
         frobeniusEquiv_symm_pow_p, WittVector.fontaineTheta_teichmuller, he]
-    simp only [GlobalTheory.MemLoc.xi, map_sum, map_pow, h2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GlobalTheory.MemLoc.xi, map_sum, map_pow, h2]
     simp
   refine ⟨GlobalTheory.MemLoc.xi e, GlobalTheory.MemLoc.ker_theta_eq_span_xi hE, fun h0 => ?_, h⟩
   rw [h0, map_zero, map_zero] at h
@@ -135,15 +140,13 @@ theorem isUnit_inclW_of_span {d : Ainf l} (hd : Ideal.span {d} = RingHom.ker (Pe
     have h7 := Ideal.mem_span_singleton_self ξ
     rwa [← h5, ← hd, h4, Ideal.span_singleton_zero, Ideal.mem_bot] at h7
 
-variable (l) in
 
+variable (l) in
 def ainfQuot : (Ainf l ⧸ RingHom.ker (Per.θ l)) ≃+* OC l :=
   RingHom.quotientKerEquivOfSurjective (theta_onto l)
 
-theorem ainfQuot_mk (a : Ainf l) : ainfQuot l (Ideal.Quotient.mk _ a) = Per.θ l a := rfl
 
 variable (l) in
-
 def ainfC : Obj l (OC l) where
   A := Ainf l
   D := ainfDelta l
@@ -191,9 +194,6 @@ theorem coe_intToOC (K : FinExt l) (x : ↥(OL K)) :
 
 def ainfObj (K : FinExt l) : Obj l ↥(OL K) := (ainfC l).restrict (intToOC K)
 
-theorem ainfObj_φ_bijective (K : FinExt l) : Function.Bijective (ainfObj K).D.φ :=
-  (WittVector.frobeniusEquiv l (OCb l)).bijective
-
 structure IsAinf (K : FinExt l) (P : Obj l ↥(OL K)) (e : P.A ≃+* Ainf l) : Prop where
   e_φ : ∀ a, e (P.D.φ a) = WittVector.frobenius (e a)
   e_I : ∀ a, a ∈ P.I ↔ Per.θ l (e a) = 0
@@ -202,14 +202,13 @@ structure IsAinf (K : FinExt l) (P : Obj l ↥(OL K)) (e : P.A ≃+* Ainf l) : P
 
 def ainfId (K : FinExt l) : (ainfObj K).A ≃+* Ainf l := RingEquiv.refl (Ainf l)
 
-theorem isAinf_ainfObj (K : FinExt l) : IsAinf K (ainfObj K) (ainfId K) where
-  e_φ _ := rfl
-  e_I _ := Iff.rfl
-  e_str x a h := by
-    have h1 : ainfQuot l (Ideal.Quotient.mk _ a) = ainfQuot l ((ainfQuot l).symm (intToOC K x)) :=
-      congrArg (ainfQuot l) h
-    rw [RingEquiv.apply_symm_apply] at h1
-    exact congrArg Subtype.val h1
+theorem isAinf_ainfObj (K : FinExt l) : IsAinf K (ainfObj K) (ainfId K) := by
+  refine ⟨fun _ => rfl, fun _ => Iff.rfl, ?_⟩
+  intro x a h
+  have h1 : ainfQuot l (Ideal.Quotient.mk _ a) = ainfQuot l ((ainfQuot l).symm (intToOC K x)) :=
+    congrArg (ainfQuot l) h
+  rw [RingEquiv.apply_symm_apply] at h1
+  exact congrArg Subtype.val h1
 
 namespace IsAinf
 
@@ -269,24 +268,9 @@ theorem eq_galHom (H : IsAinf K P e) (g : ↥(GK K)) (h : Hom P P)
     (hh : ∀ a, e (h.f a) = Per.σA (g : GQ l) (e a)) : h = H.galHom g :=
   Hom.ext' (RingHom.ext fun a => e.injective ((hh a).trans (H.e_galHom g a).symm))
 
-theorem galHom_one (H : IsAinf K P e) : H.galHom 1 = Hom.id P :=
-  (H.eq_galHom 1 _ fun a => (GlobalTheory.RingBasics.σA_one (e a)).symm).symm
-
-theorem galHom_mul (H : IsAinf K P e) (g h : ↥(GK K)) :
-    H.galHom (g * h) = (H.galHom g).comp (H.galHom h) :=
-  (H.eq_galHom (g * h) _ fun a => by
-    change e ((H.galHom g).f ((H.galHom h).f a)) = _
-    rw [e_galHom, e_galHom, ← GlobalTheory.RingBasics.σA_mul]; rfl).symm
-
 end IsAinf
 
 def ainfHom (K : FinExt l) (g : ↥(GK K)) : Hom (ainfObj K) (ainfObj K) := (isAinf_ainfObj K).galHom g
-
-theorem ainfHom_f (K : FinExt l) (g : ↥(GK K)) (a : Ainf l) : (ainfHom K g).f a = Per.σA (g : GQ l) a := rfl
-
-theorem exists_isAinf (K : FinExt l) : ∃ (P : Obj l ↥(OL K)) (e : P.A ≃+* Ainf l), IsAinf K P e ∧
-    ∀ g ∈ GK K, ∃ h : Hom P P, ∀ a, e (h.f a) = Per.σA g (e a) :=
-  ⟨ainfObj K, ainfId K, isAinf_ainfObj K, fun g hg => ⟨ainfHom K ⟨g, hg⟩, fun _ => rfl⟩⟩
 
 structure Realises (K : FinExt l) (E : FCrys l ↥(OL K)) (P : Obj l ↥(OL K))
     (e : P.A ≃+* Ainf l) (T : Type) [AddCommGroup T] [Module ℤ_[l] T]
@@ -386,46 +370,11 @@ theorem SemiBC.finite_projective {A B M N : Type} [CommRing A] [CommRing B] [Add
     have h1 : x = ∑ i, s x i • p (Pi.single i 1) := by
       conv_lhs => rw [← LinearMap.id_apply (R := A) x, ← hps, LinearMap.comp_apply, pi_eq_sum_univ' (s x)]
       simp
-    conv_rhs => rw [h1, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [h1, map_sum]
     exact Finset.sum_congr rfl fun i _ => (u.map_smulₛₗ _ _).symm
   exact ⟨Module.Finite.of_surjective Q fun y => ⟨S y, LinearMap.congr_fun hQ y⟩,
     Module.Projective.of_split S Q hQ⟩
-
-theorem frobW_fixed_iff (a : WCb l) : frobW l a = a ↔ ∃ z : ℤ_[l], a = algebraMap ℤ_[l] (WCb l) z := by
-  refine ⟨fun h => ?_, fun ⟨z, hz⟩ => hz ▸ (frobW l).commutes z⟩
-  have h1 : ∀ n, ∃ c : ZMod l, ZMod.castHom (dvd_refl l) (Cb l) c = a.coeff n := fun n => by
-    have h2 : a.coeff n ^ l = a.coeff n := congrArg (fun w : WCb l => w.coeff n) h
-    have h3 := (Subfield.mem_bot_iff_pow_eq_self (Cb l) l).2 h2
-    rw [← ZMod.fieldRange_castHom_eq_bot l] at h3
-    exact h3
-  choose c hc using h1
-  refine ⟨WittVector.equiv l (WittVector.mk l c), WittVector.ext fun n => ?_⟩
-  change _ = ZMod.castHom (dvd_refl l) (Cb l)
-    (((WittVector.equiv l).symm (WittVector.equiv l (WittVector.mk l c))).coeff n)
-  rw [RingEquiv.symm_apply_apply, ← hc]
-  rfl
-
-theorem frobW_map_fixed_iff {T : Type} [AddCommGroup T] [Module ℤ_[l] T] [Module.Free ℤ_[l] T]
-    [Module.Finite ℤ_[l] T] (y : WCb l ⊗[ℤ_[l]] T) :
-    TensorProduct.map (frobW l).toLinearMap LinearMap.id y = y ↔ ∃ t : T, y = (1 : WCb l) ⊗ₜ[ℤ_[l]] t := by
-  refine ⟨fun h => ?_, fun ⟨t, ht⟩ => by
-    rw [ht, TensorProduct.map_tmul, AlgHom.toLinearMap_apply, map_one, LinearMap.id_apply]⟩
-  let b := Module.Free.chooseBasis ℤ_[l] T
-  have key : ∀ (y : WCb l ⊗[ℤ_[l]] T) i, (b.baseChange (WCb l)).repr
-      (TensorProduct.map (frobW l).toLinearMap LinearMap.id y) i =
-        frobW l ((b.baseChange (WCb l)).repr y i) := fun y i => by
-    induction y with
-    | zero => rw [map_zero, map_zero, Finsupp.zero_apply, map_zero]
-    | tmul a t =>
-      rw [TensorProduct.map_tmul, Module.Basis.baseChange_repr_tmul, Module.Basis.baseChange_repr_tmul,
-        map_smul, AlgHom.toLinearMap_apply, LinearMap.id_apply]
-    | add y z hy hz => rw [map_add, map_add, map_add, Finsupp.add_apply, Finsupp.add_apply, map_add, hy, hz]
-  have h1 : ∀ i, ∃ z : ℤ_[l], (b.baseChange (WCb l)).repr y i = algebraMap ℤ_[l] (WCb l) z := fun i =>
-    (frobW_fixed_iff _).1 (by rw [← key, h])
-  choose z hz using h1
-  refine ⟨b.equivFun.symm z, (b.baseChange (WCb l)).repr.injective (Finsupp.ext fun i => ?_)⟩
-  rw [hz, Module.Basis.baseChange_repr_tmul, ← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply,
-    Algebra.algebraMap_eq_smul_one]
 
 namespace Realises
 
@@ -452,38 +401,6 @@ theorem j_act_of (H : Realises K E P e T ρ j) (g : ↥(GK K)) (h : Hom P P)
   obtain rfl := H.ainf.eq_galHom g h hh
   exact H.j_act g x
 
-theorem end_ext (bc : SemiBC j) (s : WCb l ≃ₐ[ℤ_[l]] WCb l) {r r' : T →ₗ[ℤ_[l]] T}
-    (h : ∀ x, TensorProduct.map s.toLinearMap r (j x) = TensorProduct.map s.toLinearMap r' (j x)) :
-    r = r' := by
-  have key : ∀ (r : T →ₗ[ℤ_[l]] T) (y : WCb l ⊗[ℤ_[l]] T),
-      TensorProduct.map s.symm.toLinearMap LinearMap.id (TensorProduct.map s.toLinearMap r y) =
-        r.baseChange (WCb l) y := fun r y => by
-    induction y with
-    | zero => simp
-    | tmul a t => simp
-    | add y z hy hz => simp only [map_add, hy, hz]
-  have h1 : r.baseChange (WCb l) = r'.baseChange (WCb l) :=
-    bc.hom_ext fun x => by rw [← key, ← key, h]
-  ext t
-  apply one_tmul_injective (l := l) T
-  simpa using LinearMap.congr_fun h1 (1 ⊗ₜ t)
-
-theorem ρ_unique (H : Realises K E P e T ρ j) (H' : Realises K E P e T ρ' j) : ρ = ρ' :=
-  funext fun g => end_ext H.bc (galW l (g : GQ l)) fun x => (H.j_act g x).symm.trans (H'.j_act g x)
-
-theorem ρ_one (H : Realises K E P e T ρ j) : ρ 1 = LinearMap.id :=
-  end_ext H.bc (galW l ((1 : ↥(GK K)) : GQ l)) fun x => by
-    rw [← H.j_act_of 1 (Hom.id P) (fun a => (GlobalTheory.RingBasics.σA_one (e a)).symm), E.tr_id, OneMemClass.coe_one, map_one]
-    exact (LinearMap.congr_fun TensorProduct.map_id _).symm
-
-theorem ρ_mul (H : Realises K E P e T ρ j) (g h : ↥(GK K)) : ρ (g * h) = ρ g ∘ₗ ρ h :=
-  end_ext H.bc (galW l ((g * h : ↥(GK K)) : GQ l)) fun x => by
-    have h1 := H.j_act_of (g * h) ((H.ainf.galHom g).comp (H.ainf.galHom h))
-      (fun a => by rw [← H.ainf.galHom_mul, H.ainf.e_galHom]) x
-    rw [← h1, E.tr_comp, H.j_act, H.j_act, ← LinearMap.comp_apply, ← TensorProduct.map_comp,
-      Subgroup.coe_mul, map_mul]
-    rfl
-
 theorem finite (H : Realises K E P e T ρ j) : Module.Finite ℤ_[l] T := by
   have := E.fin P
   have := E.proj P
@@ -499,12 +416,6 @@ theorem free (H : Realises K E P e T ρ j) : Module.Free ℤ_[l] T := by
   have : Module.Flat ℤ_[l] T := Module.Flat.of_flat_tensorProduct ℤ_[l] T (WCb l)
   exact Module.free_of_flat_of_isLocalRing
 
-theorem fixed_iff (H : Realises K E P e T ρ j) (y : WCb l ⊗[ℤ_[l]] T) :
-    TensorProduct.map (frobW l).toLinearMap LinearMap.id y = y ↔ ∃ t : T, y = (1 : WCb l) ⊗ₜ[ℤ_[l]] t := by
-  have := H.free
-  have := H.finite
-  exact frobW_map_fixed_iff y
-
 end Realises
 
 def unitMap {K : FinExt l} (P : Obj l ↥(OL K)) (e : P.A ≃+* Ainf l) :
@@ -516,10 +427,9 @@ theorem unitMap_apply {K : FinExt l} (P : Obj l ↥(OL K)) (e : P.A ≃+* Ainf l
     unitMap P e a = inclW l (e a) ⊗ₜ[ℤ_[l]] (1 : ℤ_[l]) := rfl
 
 theorem IsAinf.realises_unit {K : FinExt l} {P : Obj l ↥(OL K)} {e : P.A ≃+* Ainf l} (H : IsAinf K P e) :
-    Realises K (FCrys.unit l ↥(OL K)) P e ℤ_[l] (fun _ => LinearMap.id) (unitMap P e) where
-  ainf := H
-  bc := (semiBC_self _).comp_equiv _
-  j_φ d hd x m k h := by
+    Realises K (FCrys.unit l ↥(OL K)) P e ℤ_[l] (fun _ => LinearMap.id) (unitMap P e) := by
+  refine ⟨H, (semiBC_self _).comp_equiv _, ?_, ?_⟩
+  · intro d hd x m k h
     have : IsDomain P.A := e.toMulEquiv.isDomain
     have key : ∀ x m : P.A, m = (d : P.A) ^ k * P.D.φ x →
         inclW l (e d) ^ k • TensorProduct.map (frobW l).toLinearMap LinearMap.id
@@ -535,36 +445,8 @@ theorem IsAinf.realises_unit {K : FinExt l} {P : Obj l ↥(OL K)} {e : P.A ≃+*
       rw [TensorProduct.map_tmul, TensorProduct.smul_tmul', smul_eq_mul, AlgHom.toLinearMap_apply,
         LinearMap.id_apply]
     exact key x m (eq_of_isFrac hd _ _ k h)
-  j_act g x :=
-    congrArg (fun y : WCb l => y ⊗ₜ[ℤ_[l]] (1 : ℤ_[l]))
+  · intro g x
+    exact congrArg (fun y : WCb l => y ⊗ₜ[ℤ_[l]] (1 : ℤ_[l]))
       ((congrArg (inclW l) (H.e_galHom g x)).trans (galW_inclW _ _).symm)
-
-theorem isRealisation_unit (K : FinExt l) :
-    IsRealisation K (FCrys.unit l ↥(OL K)) ℤ_[l] fun _ => LinearMap.id :=
-  ⟨_, (isAinf_ainfObj K).realises_unit⟩
-
-example (K : FinExt l) : unitMap (ainfObj K) (ainfId K) (1 : Ainf l) ≠ 0 := fun h => by
-  have h1 : (1 : WCb l) ⊗ₜ[ℤ_[l]] (1 : ℤ_[l]) = (1 : WCb l) ⊗ₜ[ℤ_[l]] (0 : ℤ_[l]) := by
-    rw [TensorProduct.tmul_zero]
-    exact (congrArg (fun y : WCb l => y ⊗ₜ[ℤ_[l]] (1 : ℤ_[l])) (map_one (inclW l)).symm).trans h
-  exact one_ne_zero (one_tmul_injective (l := l) ℤ_[l] h1)
-
-example (K : FinExt l) (ρ : ↥(GK K) → (ℤ_[l] →ₗ[ℤ_[l]] ℤ_[l]))
-    (H : Realises K (FCrys.unit l ↥(OL K)) (ainfObj K) (ainfId K) ℤ_[l] ρ (unitMap _ _)) (g : ↥(GK K)) :
-    ρ g = LinearMap.id :=
-  congrFun (H.ρ_unique (isAinf_ainfObj K).realises_unit) g
-
-example (K : FinExt l) (ρ : ↥(GK K) → (PUnit →ₗ[ℤ_[l]] PUnit)) :
-    ¬ IsRealisation K (FCrys.unit l ↥(OL K)) PUnit ρ := by
-  rintro ⟨j, H⟩
-  obtain ⟨w, hw, -⟩ := H.bc (WCb l) ((inclW l).comp (ainfId K).toRingHom).toSemilinearMap
-  have h := hw (1 : Ainf l)
-  have h0 : ∀ y, w y = 0 := fun y => by rw [Subsingleton.elim y 0, map_zero]
-  exact zero_ne_one (((h0 _).symm.trans h).trans (map_one (inclW l)))
-
-example (K : FinExt l) : ((l : ℕ) : Ainf l) ∉ (ainfObj K).I := fun h => by
-  have h1 : Per.θ l ((l : ℕ) : Ainf l) = 0 := h
-  rw [map_natCast] at h1
-  exact (Nat.cast_ne_zero.2 hl.out.ne_zero) h1
 
 end GlobalTheory.Prism

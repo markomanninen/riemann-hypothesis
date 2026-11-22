@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtLineDH
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivEqQuadComm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionUnitaryGroupHermitian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeisenbergSmoothOfWeakDerivativeClosedSet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionOfGaussianPairings
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PolarConjTranspose
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeisenbergSmoothVectorDerivativeCalculus
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasDerivAtLineDH
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivCompress
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FderivEqQuadComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem norm_sub_le (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) {f : B} (
     (C := ‖dH ρ z f‖ + π * (‖u‖ * ‖z‖) * ‖f‖) (fun s _ => (hd s).hasDerivWithinAt) (fun s _ => ?_)
   · simpa using this
   · have e : omJ J (u + s • z) z = omJ J u z := by
-      rw [← omL_apply, map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      rw [← omL_apply, map_add (f := _), map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
         omL_self hJ, smul_zero, add_zero, omL_apply]
     rw [(calc' hJ h hf).2.2.1, e]
     refine (_root_.norm_sub_le _ _).trans ?_
@@ -129,8 +133,8 @@ theorem integral_quad (hJ : ∀ x, J (J x) = -x) (h : IsHeis (omJ J) ρ) {f : B}
   have hi : ∀ i ∈ Finset.univ, Integrable fun u => c i • gau u • dH ρ (p i) (dH ρ (q i) (ρ u f)) :=
     fun i _ => (integrable_dH_dH hJ h hf (p i) (q i)).smul (c i)
   simp only [quad, Finset.smul_sum, smul_comm (gau _) (c _)]
-  refine ⟨integrable_finset_sum _ hi, ?_⟩
-  rw [integral_finset_sum _ hi]
+  refine ⟨MeasureTheory.integrable_finsetSum _ hi, ?_⟩
+  rw [MeasureTheory.integral_finsetSum _ hi]
   simp only [integral_smul, integral_dH_dH hJ h hf]
 
 theorem moved_vacuum_deriv : ∀ (V : Type) [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] (B : Type) [NormedAddCommGroup B] [NormedSpace ℂ B] [CompleteSpace B] (J : V ≃ₗᵢ[ℝ] V) (ρ : V → B →L[ℂ] B), (∀ x, J (J x) = -x) → ∀ h : IsHeis (omJ J) ρ, ∀ (a : ℝ → V →L[ℝ] V) (X : V →L[ℝ] V), a 0 = 1 → HasDerivAt a X 0 → (∀ t x y, omJ J (a t x) (a t y) = omJ J x y) → ∀ (κ : Type) [Fintype κ] (c : κ → ℂ) (p q : κ → V), IsQuadOf (omJ J) X c p q → (∃ C : ℝ, ∀ᶠ t in 𝓝 (0 : ℝ), ∀ x, ‖(∫ u, gau u • ρ (a t u) (proj h x)) - proj h x‖ ≤ C * |t| * ‖x‖) ∧ ∃ lam : ℂ, ∀ x, HasDerivAt (fun t : ℝ => ∫ u, gau u • ρ (a t u) (proj h x)) (quad ρ c p q (proj h x) + lam • proj h x) 0 := by
@@ -182,7 +186,8 @@ theorem moved_vacuum_deriv : ∀ (V : Type) [NormedAddCommGroup V] [InnerProduct
         quad ρ c p q (proj h x) + (-∑ i, c i * l (p i) (q i)) • proj h x := by
       simp only [hG, smul_sub]
       rw [integral_sub i1 i2, e1, Osc.proj_proj hJ, ← proj_apply h, neg_smul, sub_eq_add_neg, Finset.sum_smul]
-      simp only [quad, map_sum, map_smul, hl, smul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [quad, map_sum, map_smul, hl, smul_smul]
     rw [← e3]
     have i4 : Integrable fun u =>
         ContinuousLinearMap.toSpanSingleton ℝ (gau u • fderiv ℝ (fun u => ρ u (proj h x)) u (X u)) :=

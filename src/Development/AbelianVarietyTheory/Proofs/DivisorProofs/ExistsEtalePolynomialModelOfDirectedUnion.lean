@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaleModelOfDirectedUnion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEtaleModelOfDirectedUnion
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 namespace GlobalTheory.EtaleDescent
@@ -12,8 +17,9 @@ theorem exists_etale_polynomial_model_of_directed_union :
     ∀ (E : Type) [CommRing E] [Algebra (Polynomial T) E] [Algebra.Etale (Polynomial T) E],
     ∃ (i : ι) (E₀ : Type) (_ : CommRing E₀) (_ : Algebra (Polynomial (𝒜 i)) E₀),
       Algebra.Etale (Polynomial (𝒜 i)) E₀ ∧
-      letI : Algebra (Polynomial (𝒜 i)) (Polynomial T) := (Polynomial.mapRingHom (𝒜 i).subtype).toAlgebra
-      Nonempty (TensorProduct (Polynomial (𝒜 i)) (Polynomial T) E₀ ≃ₐ[Polynomial T] E) := by
+      (letI : Algebra (Polynomial (𝒜 i)) (Polynomial T) :=
+        (Polynomial.mapRingHom (𝒜 i).subtype).toAlgebra
+       Nonempty (TensorProduct (Polynomial (𝒜 i)) (Polynomial T) E₀ ≃ₐ[Polynomial T] E)) := by
   intro T _ ι _ _ _ 𝒜 hmono hcov E _ _ _
   let S : ι → Subring (Polynomial T) := fun i ↦ (Polynomial.mapRingHom (𝒜 i).subtype).range
   have hSmono : Monotone S := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GEquivIntL
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,8 @@ theorem satAt_of_iso (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ
       rw [Submodule.coe_sum]
       exact e
     have e2 := congrArg (fun y => ((T y : π'.S) : GAf L n → π'.W)) e1
-    simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul] at e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Submodule.coe_sum, Submodule.coe_smul] at e2
     rw [← e2]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [hT (x c) ⟨f, hfS⟩ ⟨NG.rt L n (x c) f, π.irrS.1.stable _ _ hfS⟩ rfl]

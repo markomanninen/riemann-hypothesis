@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
-import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsLifted
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CechFam
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace GlobalTheory GlobalTheory.DI GlobalTheory.LogDR GlobalTheory.Cartier
 
 set_option autoImplicit false
@@ -32,9 +37,11 @@ theorem spanForms_le_of_isComb (A : Subring K) {M : Set K} {H H' : Set Ω[K⁄�
   have e : ExteriorAlgebra.ιMulti K a v = ∑ r : ∀ i, ι i,
       (∏ i, co i (r i)) • ExteriorAlgebra.ιMulti K a (fun i => w i (r i)) := by
     conv_lhs => rw [show v = fun i => ∑ k, co i k • w i k from funext hv']
-    rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [MultilinearMap.map_smul_univ]
+    simp only [RingHom.id_apply]
   rw [e, Finset.smul_sum]
   refine AddSubgroup.sum_mem _ fun r _ => AddSubgroup.subset_closure
     ⟨c * ∏ i, co i (r i), hM c hc _ (Subring.prod_mem _ fun i _ => hco i (r i)),

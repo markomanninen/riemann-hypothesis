@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergySymm
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSymm
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergySwap
-import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartEnergySymm
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsChartIbpSymm
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PChartEnergySwap
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.NotLtLtOfMemMinimalPrimes
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -37,7 +42,15 @@ theorem mixedDisc_update_sub {D : ℕ} (A : Fin D → Matrix (Fin D) (Fin D) ℂ
     (X Y : Matrix (Fin D) (Fin D) ℂ) :
     mixedDisc (Function.update A k (X - Y)) =
       mixedDisc (Function.update A k X) - mixedDisc (Function.update A k Y) := by
-  obtain ⟨M, hM⟩ := ReciprocityTheory.AnForm.A.exists_multilinearMap_eq_mdisc (D := D)
+  obtain ⟨M, hM⟩ := (by
+    show ∃ F : MultilinearMap (RingHom.id ℂ)
+        (fun _ : Fin D => Matrix (Fin D) (Fin D) ℂ) ℂ,
+        ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+    refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+      _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+    intro A k c B
+    simpa only [RingHom.id_apply, smul_eq_mul] using
+      (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
   have e : ∀ C, mixedDisc (Function.update A k C) = M.toLinearMap A k C := fun C => by
     rw [MultilinearMap.toLinearMap_apply, hM]
     rfl
@@ -68,8 +81,8 @@ theorem update_comp_swap {α : Type*} {n : ℕ} (Φ : Fin (n + 1) → α) (p : F
 
 end ChartEnergySymmetry
 
-open ChartEnergySymmetry in
 
+open ChartEnergySymmetry in
 theorem ChartEnergySymm.proof (hI : ChartIbpSymm.Statement) : ChartEnergySymm.Statement := by
   intro e A B C D T p hA hB hC hD hT
   obtain ⟨n, rfl⟩ : ∃ n, e = n + 1 := ⟨e - 1, by have := p.pos; omega⟩

@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIndEtaleOfForallFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GalMapMul
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ProjectiveSpaceOverSpec
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex Simplicial TensorProduct
@@ -86,16 +89,16 @@ def Hyp {T : Type 1} [Category.{0} T] (Φ : T ⥤ Spcᵒᵖ) {U : T} {X : Cosimp
     (a : (CosimplicialObject.const T).obj U ⟶ X) : Prop :=
   ∀ k : SimplexCategoryᵒᵖ, QuasiIso ((chains R).map (lev (Φ ⋙ ((evaluation _ PSh).obj k).op) a))
 
-variable {R} in
 
+variable {R} in
 def onRings (F : Shv R) : CommRingCat.{0} ⥤ ModuleCat.{1} (ULift.{1} R) := Scheme.Spec.rightOp ⋙ F.obj
 
-variable {R} in
 
+variable {R} in
 def Finitary (F : Shv R) : Prop := PreservesFilteredColimitsOfSize.{0, 0} (onRings F)
 
-variable {R} in
 
+variable {R} in
 abbrev Sec.pull {F : Shv R} {U V : Scheme.{0}} (j : V ⟶ U) (x : Sec F U) : Sec F V := (F.obj.map j.op).hom x
 
 def ContCone (F : Shv R) {I : Type} [SmallCategory I] [IsCofiltered I] {G : I ⥤ Spc} (c : Cone G) : Prop :=
@@ -112,10 +115,6 @@ def IndEt (A O : Type) [CommRing A] [CommRing O] [Algebra A O] : Prop :=
 def IndFEt (A O : Type) [CommRing A] [CommRing O] [Algebra A O] : Prop :=
   MorphismProperty.ind.{0} (RingHom.toMorphismProperty fun f => f.Etale ∧ f.Finite) (CommRingCat.ofHom (algebraMap A O))
 
-theorem IndFEt.indEt {A O : Type} [CommRing A] [CommRing O] [Algebra A O] (h : IndFEt A O) : IndEt A O := by
-  obtain ⟨J, _, _, D, t, s, hs, hj⟩ := h
-  exact ⟨J, inferInstance, inferInstance, D, t, s, hs, fun j => ⟨(hj j).1.1, (hj j).2⟩⟩
-
 theorem indEt_of_etale (A O : Type) [CommRing A] [CommRing O] [Algebra A O] [Algebra.Etale A O] : IndEt A O :=
   MorphismProperty.le_ind _ _ (RingHom.etale_algebraMap.2 inferInstance)
 
@@ -123,20 +122,18 @@ theorem indFEt_of_finite_etale (A O : Type) [CommRing A] [CommRing O] [Algebra A
     IndFEt A O :=
   MorphismProperty.le_ind _ _ ⟨RingHom.etale_algebraMap.2 inferInstance, RingHom.finite_algebraMap.2 inferInstance⟩
 
-theorem indEt_of_forall_finset (A O : Type) [CommRing A] [CommRing O] [Algebra A O]
-    (h : ∀ s : Finset O, ∃ T : Subalgebra A O, Algebra.Etale A T ∧ (s : Set O) ⊆ T) : IndEt A O :=
-  GlobalTheory.IndEtaleUnion.isIndEtale_of_forall_finset A O h
-
+set_option synthInstance.maxHeartbeats 200000 in
 def bc {E : Spc} {S : Scheme.{0}} (p : E ⟶ sch.obj S) : Over S ⥤ Spc where
   obj U := pullback p (sch.map U.hom)
   map {U V} g := pullback.map p (sch.map U.hom) p (sch.map V.hom) (𝟙 _) (sch.map g.left) (𝟙 _) (by simp)
     (by rw [Category.comp_id, ← sch.map_comp, Over.w g])
   map_id U := by apply pullback.hom_ext <;> simp
-  map_comp f g := by apply pullback.hom_ext <;> simp [pullback.map, pullback.lift_fst, pullback.lift_snd, pullback.lift_fst_assoc, pullback.lift_snd_assoc]
+  map_comp f g := by apply pullback.hom_ext <;> simp [pullback.map]
 
+set_option synthInstance.maxHeartbeats 200000 in
 def bcMap {E E' : Spc} {S : Scheme.{0}} (α : E ⟶ E') (p : E' ⟶ sch.obj S) : bc (α ≫ p) ⟶ bc p where
   app U := pullback.map (α ≫ p) (sch.map U.hom) p (sch.map U.hom) α (𝟙 _) (𝟙 _) (by simp) (by simp)
-  naturality U V g := by apply pullback.hom_ext <;> simp [bc, pullback.map, pullback.lift_fst, pullback.lift_snd, pullback.lift_fst_assoc, pullback.lift_snd_assoc]
+  naturality U V g := by apply pullback.hom_ext <;> simp [bc, pullback.map]
 
 def QcqsOver {E : Spc} {S : Scheme.{0}} (p : E ⟶ sch.obj S) : Prop :=
   ∀ k : SimplexCategoryᵒᵖ, ∃ (X : Scheme.{0}) (r : X ⟶ S) (e : yoneda.obj X ≅ E.obj k),
@@ -146,16 +143,16 @@ def IsStalk {S : Scheme.{0}} (O : Type) [CommRing O] (s : Spec (CommRingCat.of O
   SH O ∧ ∃ (A : Type) (_ : CommRing A) (_ : Algebra A O) (j : Spec (CommRingCat.of A) ⟶ S), Etale j ∧ IndEt A O ∧
     s = Spec.map (CommRingCat.ofHom (algebraMap A O)) ≫ j
 
-variable {R} in
 
+variable {R} in
 def Gen (F : Shv R) (S : Scheme.{0}) (g : Sec F S) : Prop :=
   ∀ (U : Scheme.{0}) (s : U ⟶ S),
     (∀ (x : Sec F U) (u : U), ∃ (V : Scheme.{0}) (j : V ⟶ U) (v : V) (c : R), Etale j ∧ j v = u ∧
       Sec.pull j x = (ULift.up c : ULift.{1} R) • Sec.pull (j ≫ s) g) ∧
     ∀ c : R, Nonempty U → (ULift.up c : ULift.{1} R) • Sec.pull s g = 0 → c = 0
 
-variable {R} in
 
+variable {R} in
 def val {P : PSh} {F : Shv R} (s : (free R).obj P ⟶ F) (U : Scheme.{0}) (x : P.obj (op U)) : Sec F U :=
   (s.hom.app (op U)).hom (freeGen R P U x)
 
@@ -164,19 +161,19 @@ def cechPt {Y X : Scheme.{0}} (f : Y ⟶ X) (k : ℕ) {U : Scheme.{0}} (x : U �
   (WidePullback.lift (arrows := fun _ : Fin (k + 1) => yoneda.map f) (yoneda.map x) (fun i => yoneda.map (y i))
     (fun i => by rw [← yoneda.map_comp, h i])).app (op U) (𝟙 U)
 
-variable {R} in
 
+variable {R} in
 def cobd {E : Spc} {F : Shv R} {n : ℕ} (s : (free R).obj (E.obj (op ⦋n⦌)) ⟶ F) : (free R).obj (E.obj (op ⦋n + 1⦌)) ⟶ F :=
   ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • ((free R).map (SimplicialObject.δ E i) ≫ s)
 
-variable {R} in
 
+variable {R} in
 def IsCls {E : Spc} {F : Shv R} {n : ℕ} (s : (free R).obj (E.obj (op ⦋n⦌)) ⟶ F) (x : H R E F n) : Prop :=
   ∃ z : Cocycle ((chains R).obj E) (res R F) n, CohomologyClass.mk z = x ∧
     z.1 = Cochain.single (p := -(n : ℤ)) (q := 0) ((chainsXIso R E n).hom ≫ s ≫ resι R F) n
 
-variable {R} in
 
+variable {R} in
 def Z1 (F : Shv R) (A B : Type) [CommRing A] [CommRing B] [Algebra A B] : AddSubgroup ((onRings F).obj (CommRingCat.of (B ⊗[A] B))) :=
   AddMonoidHom.eqLocus
     ((onRings F).map (CommRingCat.ofHom (Algebra.TensorProduct.map (AlgHom.id A B)
@@ -194,22 +191,6 @@ def UCoc (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (u : (B ⊗[A] B)�
 def descMod (A B : Type) [CommRing A] [CommRing B] [Algebra A B] (u : (B ⊗[A] B)ˣ) : Submodule A B :=
   LinearMap.eqLocus ((LinearMap.mulLeft A (u : B ⊗[A] B)) ∘ₗ (Algebra.TensorProduct.includeRight : B →ₐ[A] B ⊗[A] B).toLinearMap)
     (Algebra.TensorProduct.includeLeft : B →ₐ[A] B ⊗[A] B).toLinearMap
-
-example (A : Type) [CommRing A] : IndFEt A A := indFEt_of_finite_etale A A
-
-example (A : Type) [CommRing A] : IndEt A A := (indFEt_of_finite_etale A A).indEt
-
-example : IndEt ℝ ℂ := GlobalTheory.IndefiniteRowSideFullHecke.ProjectiveSpaceOverSpec.isStrictHenselisation_real_complex.2.2.2
-
-def idCone (E : Spc) : Cone (Functor.fromPUnit.{0} E) where
-  pt := E
-  π := { app := fun _ => 𝟙 E, naturality := fun _ _ _ => by simp }
-
-theorem contCone_idCone (F : Shv R) (E : Spc) : ContCone R F (idCone E) := by
-  intro n
-  refine ⟨fun x => ⟨⟨⟨⟩⟩, x, pull_id R E F n x⟩, fun i y hy => ⟨i, 𝟙 i, ?_⟩⟩
-  rw [CategoryTheory.Functor.map_id]
-  exact hy
 
 end GlobalTheory.EtC
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.SplitIso
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.SplitIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem exists_adapted_first_projection (σ : E →ₐ[F] E) (hσσ : ∀ a, σ 
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul k e => simp [sigT, hσσ]
-    | add x y hx hy => simp [map_add, hx, hy]
+    | add x y hx hy => simp [map_add (f := _), hx, hy]
   have hσA : ∀ c : K, sigT σ (algebraMap K (K ⊗[F] E) c) = algebraMap K (K ⊗[F] E) c := by
     intro c
     simp [sigT, Algebra.TensorProduct.algebraMap_apply]
@@ -82,7 +86,7 @@ theorem exists_adapted_first_projection (σ : E →ₐ[F] E) (hσσ : ∀ a, σ 
         rw [map_mul, mul_assoc, hp s, mul_left_comm, hp r, ← mul_assoc, mul_comm s r])
       map_zero' := hpu 0 0 (by rw [map_zero])
       map_add' := fun r s => hpu (r + s) (p r + p s) (by
-        rw [map_add, add_mul, hp r, hp s, add_mul]) }
+        rw [map_add (f := _), add_mul, hp r, hp s, add_mul]) }
   refine ⟨p1, fun c => hpu _ c rfl, hpu _ 1 (by rw [map_one, one_mul, hε2]),
     hpu _ 0 (by rw [map_zero, zero_mul, mul_comm, horth]), fun r => ?_⟩
   have h2' : algebraMap K (K ⊗[F] E) (p (sigT σ r)) * sigT σ ε = r * sigT σ ε := by

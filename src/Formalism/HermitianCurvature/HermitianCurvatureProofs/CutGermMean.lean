@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AverageOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeanBoundsLimits
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AverageOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeanBoundsLimits
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -71,17 +75,12 @@ theorem dual_sub_span {f : ℕ} (La : Submodule ℤ (V f)) [DiscreteTopology La]
   rw [hrep j, Int.cast_smul_eq_zsmul]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
 
-example {f : ℕ} (La : Submodule ℤ (V f)) [DiscreteTopology La] [IsZLattice ℝ La] :
-    ∃ LIM : ((Submodule.span ℤ (Set.range (bD La))).toAddSubgroup → ℂ) → ℂ,
-      IsMeanInf (Submodule.span ℤ (Set.range (bD La))).toAddSubgroup LIM :=
-  Formalism.FourierDecayAlt.P.invariantMeanExists f _
-
 theorem inDual_neg {ω₁ ω₂ σ : ℂ} (h : TBB.InDual ω₁ ω₂ σ) : TBB.InDual ω₁ ω₂ (-σ) := by
   intro a b
   have h1 := h (-a) (-b)
   have e : P5.fsv (-σ) ((a : ℂ) * ω₁ + (b : ℂ) * ω₂) =
       P5.fsv σ (((-a : ℤ) : ℂ) * ω₁ + ((-b : ℤ) : ℂ) * ω₂) := by
-    simp only [P5.fsv, map_neg, map_add, map_mul, Int.cast_neg]
+    simp only [P5.fsv, map_neg, map_add (f := _), map_mul, Int.cast_neg]
     congr 1
     ring
   rw [e, h1]
@@ -239,7 +238,7 @@ theorem germ_mean_property : PropGMean := by
   have hmem : () ∈ ({()} : Finset Unit) := Finset.mem_singleton_self _
   obtain ⟨hb, -, ⟨B', hB'⟩, hlim⟩ := PBK.GermD.propG hGD
   have hbz : MemLp (PBK.bz s bt) 2 volume := (hb () hmem).1
-  have hsq : Integrable (fun z => ‖PBK.bz s bt z‖ ^ 2) := (memLp_two_iff_integrable_sq_norm hbz.1).1 hbz
+  have hsq : Integrable (fun z => ‖PBK.bz s bt z‖ ^ 2) := (memLp_two_iff_integrable_sq_norm hbz.aestronglyMeasurable).1 hbz
   have hae : ∀ᵐ z : ℂ, z ≠ 0 := by
     rw [ae_iff]
     simp [measure_singleton]

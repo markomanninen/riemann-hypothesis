@@ -1,23 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUnitarisableTrivChar
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SpehProductSatake
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatAtConstOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteAutomorphicRepGLLocalComponentIsUnitaris
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsUnitaryOfIsCsd
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramifiedNonsplitExistsConjInvolutionUniformise
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetDefiniteUnitaryDoubleCosetsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDimensionalDefiniteUnitaryLevelFormsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocalUnitaryEmbeddingDefiniteUnitaryNonsplStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSatakeParameterDefiniteUnitaryInertPlaceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsUnitarisableTrivChar
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BaseChangeDefiniteUnitary
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivMultiProdOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonemptyEquivLocProdTriv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSatAtConstOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DiscreteAutomorphicRepGLLocalComponentIsUnitaris
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsUnitaryOfIsCsd
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIsLocCompAndIsLocLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnramifiedConjugatePlaceUniformiser
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnramifiedNonsplitExistsConjInvolutionUniformise
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinsetDefiniteUnitaryDoubleCosetsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDimensionalDefiniteUnitaryLevelFormsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLocalUnitaryEmbeddingDefiniteUnitaryNonsplStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSatakeParameterDefiniteUnitaryInertPlaceStatement
+
+@[expose] public section
 
 noncomputable section
 
-open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DefiniteBC GlobalTheory.BcSpeh GlobalTheory.IndefiniteRowSideFullHecke.SpehProductSatake GlobalTheory.LFun
+open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.DefiniteBC GlobalTheory.BcSpeh GlobalTheory.LFun
   GlobalTheory.PRep Formalism.UG
 
 namespace GlobalTheory.BcSpehCompare
@@ -26,11 +33,10 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 section Linear
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {w : HeightOneSpectrum (𝓞 E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {w : HeightOneSpectrum (𝓞 E)}
 
-omit [IsTotallyComplex E] in
-
-theorem isCompact_KGL : IsCompact (KGL w a : Set (GL (Fin a) (w.adicCompletion E))) :=
+omit [_root_.NumberField.IsTotallyComplex E] in
+theorem isCompact_KGL : IsCompact (KGL w (n := a) : Set (GL (Fin a) (w.adicCompletion E))) :=
   IntPtsUnitary.isCompact_GLint _
     (isCompact_iff_compactSpace.2 (GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers E w))
 
@@ -48,14 +54,14 @@ theorem hasSat_iff {P : CuspSub E a} {σ : LocIrr w a} (h : P.IsLocComp w σ) (B
   rw [CG.hasSat_mk]
   obtain ⟨f, h0, hf⟩ := h
   have hi := injective_of_irred σ.irred (τ := fun g => P.locRep w g) (fun _ => map_zero _) h0 hf
-  have hfix : ∀ v ∈ fixed σ.ρ (KGL w a), f v ∈ fixed (P.locRep w) (KGL w a) := fun v hv =>
+  have hfix : ∀ v ∈ fixed σ.ρ (KGL w (n := a)), f v ∈ fixed (P.locRep w) (KGL w (n := a)) := fun v hv =>
     GlobalTheory.LGrp.mem_fixed.2 fun k hk => by rw [← hf, GlobalTheory.LGrp.mem_fixed.1 hv k hk]
   have hne : ∀ v, v ≠ 0 → f v ≠ 0 := fun v => (map_ne_zero_iff f hi).2
   constructor
   · intro hB
     refine ⟨?_, fun v hv hv0 => (hB.2 _ (hfix v hv) (hne v hv0)).of_map f hf hi⟩
     obtain ⟨φ, hφ, hφ0⟩ := (Submodule.ne_bot_iff _).1 hB.1
-    have h1 : LinearMap.range f ⊓ fixed (P.locRep w) (KGL w a) ≠ ⊥ := fun e =>
+    have h1 : LinearMap.range f ⊓ fixed (P.locRep w) (KGL w (n := a)) ≠ ⊥ := fun e =>
       h0 (LinearMap.range_eq_bot.1 (LocEx.eq_bot_of_fixed P w isCompact_KGL hφ0 hφ _
         (by rintro g _ ⟨v, rfl⟩; exact ⟨_, hf g v⟩) e))
     obtain ⟨_, ⟨⟨v, rfl⟩, hv⟩, hv0⟩ := (Submodule.ne_bot_iff _).1 h1
@@ -78,9 +84,9 @@ theorem hasSat_iff {P : CuspSub E a} {σ : LocIrr w a} (h : P.IsLocComp w σ) (B
     have hT := Tj_mem_hecke (n := a) hϖ j
     let e := LocGL.idem (P.isSmooth_locRep w) (isCompact_KGL (w := w) (a := a))
     have key : ∀ y ∈ LocUniq.isoPart σ.ρ (P.locRep w),
-        heckeVec (P.locRep w) (KGL w a) (Tj ℂ a (Ov E w) ϖ j) (e y) = satEig (qV E w) a B j • e y := fun y hy => by
+        heckeVec (P.locRep w) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ j) (e y) = satEig (qV E w) a B j • e y := fun y hy => by
       refine Submodule.iSup_induction _ (motive := fun y =>
-        heckeVec (P.locRep w) (KGL w a) (Tj ℂ a (Ov E w) ϖ j) (e y) = satEig (qV E w) a B j • e y) hy ?_ ?_ ?_
+        heckeVec (P.locRep w) (KGL w (n := a)) (Tj ℂ a (Ov E w) ϖ j) (e y) = satEig (qV E w) a B j • e y) hy ?_ ?_ ?_
       · rintro g _ ⟨u, rfl⟩
         have h1 : e (g.toLinearMap u) = g.toLinearMap (LocGL.idem σ.smooth isCompact_KGL u) :=
           (LocGL.map_idem σ.smooth _ _ g u).symm
@@ -91,10 +97,10 @@ theorem hasSat_iff {P : CuspSub E a} {σ : LocIrr w a} (h : P.IsLocComp w σ) (B
         · exact (hB.2 _ (LocGL.idem_mem _ _ u) hu).2.2.2 ϖ hϖ j hj
       · simp [heckeVec]
       · intro y z hy hz
-        rw [map_add, smul_add, ← hy, ← hz]
+        rw [map_add (f := _), smul_add, ← hy, ← hz]
         refine Eq.trans (finsum_congr fun _ => ?_)
           (finsum_add_distrib (finite_heckeVec hc hT _ (e y)) (finite_heckeVec hc hT _ (e z)))
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
     have h2 := key x (htop ▸ Submodule.mem_top)
     rwa [show e x = x from LocGL.idem_of_mem _ _ hx] at h2
 
@@ -145,7 +151,7 @@ theorem isUnramU_of_hasSatAt {π : Submodule ℂ (UA E n → ℂ)} {s : w.adicCo
       rw [← h2, ht]
   refine ⟨f v, h1 v, (map_ne_zero_iff f hi).2 hv0, fun x hx hk => ?_⟩
   rw [← h2 ⟨x, hx⟩ v, GlobalTheory.LGrp.mem_fixed.1 hv _ ⟨(p _).2, ?_⟩]
-  change (p ⟨x, hx⟩).val ∈ KGL w n
+  change (p ⟨x, hx⟩).val ∈ KGL w (n := n)
   rw [hp]
   exact mul_mem (mul_mem (inv_mem hb) hk) hb
 
@@ -174,26 +180,6 @@ theorem isNormalised_of_isCsd {P : CuspSub E a} (h : P.IsCsd) : GlobalTheory.Dis
   rw [show ((ω.1 (infId E (expU fun _ => (t : ℂ))) : ℂˣ) : ℂ) = 1 from h3, one_mul] at h4
   rw [← h4]
   exact congrArg (fun x => φ.1 (x * g)) (cornerGL_scalar (sInf E) _)
-
-def HasUnitarySpeh (P : CG E a) (d : ℕ) : Prop :=
-  ∀ w : HeightOneSpectrum (𝓞 E), ∃ (ρ : LocIrr w a) (σ : LocIrr w (d * a)), P.IsLoc w (Quotient.mk _ ρ) ∧
-    IsUnitarisable ρ.ρ ∧ IsUnitarisable σ.ρ ∧ GlobalTheory.LocGL.IsSpeh (GlobalTheory.LocGL.IrrGL.of ρ.ρ ρ.smooth ρ.irred) d σ.ρ
-
-theorem transport {π : Submodule ℂ (UA E n → ℂ)} {N N' : Fin c → ℕ} (e : N = N') (h : ∑ i, N i = n) (h' : ∑ i, N' i = n)
-    (Q : Fin c → ∀ b, LocIrr w b → Prop) (S : ∀ i, LocIrr w (N i)) (hQ : ∀ i, Q i _ (S i))
-    (hS : IsCompAlong π (locU n w) ((cLoc w).comp (locU n w).subtype) (locProd h w S)) :
-    ∃ S' : ∀ i, LocIrr w (N' i), (∀ i, Q i _ (S' i)) ∧
-      IsCompAlong π (locU n w) ((cLoc w).comp (locU n w).subtype) (locProd h' w S') := by
-  subst e
-  exact ⟨S, hQ, hS⟩
-
-def SpehShape (π : Submodule ℂ (UA E n → ℂ)) : Prop :=
-  ∃ (c : ℕ) (a d : Fin c → ℕ) (h : ∑ i, d i * a i = n) (P : ∀ i, CuspSub E (a i))
-    (ρ : ∀ i (w : HeightOneSpectrum (𝓞 E)), LocIrr w (a i)) (m : Fin c → (E →+* ℂ) → Multiset ℂ)
-    (σ : ∀ i (w : HeightOneSpectrum (𝓞 E)), LocIrr w (d i * a i)), Parts π a d h P ρ m ∧
-    (∀ i w, IsUnitarisable (ρ i w).ρ ∧ IsUnitarisable (σ i w).ρ ∧
-      GlobalTheory.LocGL.IsSpeh (GlobalTheory.LocGL.IrrGL.of (ρ i w).ρ (ρ i w).smooth (ρ i w).irred) (d i) (σ i w).ρ) ∧
-    ∀ w, IsSplitAt w → IsCompAlong π (locU n w) ((cLoc w).comp (locU n w).subtype) (locProd h w (σ · w))
 
 end CM
 

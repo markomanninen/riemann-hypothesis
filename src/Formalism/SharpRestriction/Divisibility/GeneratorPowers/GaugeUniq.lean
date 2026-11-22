@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+
+@[expose] public section
 
 set_option autoImplicit false
 

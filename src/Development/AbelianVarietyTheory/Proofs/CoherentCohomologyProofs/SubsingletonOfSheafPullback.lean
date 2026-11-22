@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoToInterAppPushforwardInclusion
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.HdimEqZeroOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsIsoToInterAppPushforwardInclusion
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExactAndSurjectiveAppOfExactOfEpi
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.RestrictPullbackIsoHomAppPullbackSections
+
+@[expose] public section
 
 open CategoryTheory Limits Opposite TopologicalSpace AlgebraicGeometry Topology
 
@@ -69,7 +73,7 @@ lemma map_toInterModule_eq_zero (F : X.Modules) (W V : X.Opens) (n : ℕ) (α : 
     cohOn.map ℤ (toInterModule F W) V n α = 0 :=
   haveI : IsIso ((Kempf.toInter AddCommGrpCat.{u} W).app ((toAbSheaf X).obj (interModule F W))) :=
     Kempf.isIso_toInter_app_pushforward (A := AddCommGrpCat.{u}) W.ι.base W (fun y ↦ y.2)
-      ((toAbSheaf W).obj (F.restrict W.ι))
+      ((toAbSheaf W.toScheme).obj (F.restrict W.ι))
   Kempf.map_eq_zero_of_map_toInter_eq_zero.{u} ((toAbSheaf X).map (toInterModule F W)) h
 
 lemma mono_lift_toInterModule (F : X.Modules) {ι : Type u} [Finite ι] (W : ι → X.Opens)
@@ -103,7 +107,7 @@ lemma subsingleton_top [IsAffine X] (n : ℕ)
   have hα : cohOn.map ℤ φ ⊤ (n + 1) α = 0 := by
     apply (cohOn.piEquiv ℤ ⊤ (n + 1) _).injective
     ext W
-    rw [cohOn.piEquiv_apply, cohOn.map_map, map_zero, Pi.zero_apply, Pi.lift_π]
+    simp only [cohOn.piEquiv_apply, cohOn.map_map, map_zero, φ, Pi.lift_comp_π]
     exact map_toInterModule_eq_zero F W.1 ⊤ (n + 1) α (h0 W.1 W.2)
   have hS : (ShortComplex.mk φ (cokernel.π φ) (cokernel.condition φ)).ShortExact :=
     { exact := ShortComplex.exact_cokernel φ }

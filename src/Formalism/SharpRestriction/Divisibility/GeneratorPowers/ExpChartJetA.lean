@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,18 +40,18 @@ theorem zero_ne_single {κ : Type} (q : κ) : (0 : κ →₀ ℕ) ≠ Finsupp.si
 
 theorem aeval_inr {κ : Type} [Fintype κ] [DecidableEq κ] (g : κ → R) (P : MvPolynomial κ R) :
     MvPolynomial.aeval (fun q => (TrivSqZeroExt.inr (g q) : DualNumber R)) P =
-      TrivSqZeroExt.inl (MvPolynomial.coeff 0 P) +
-        TrivSqZeroExt.inr (∑ q, g q * MvPolynomial.coeff (Finsupp.single q 1) P) := by
+      TrivSqZeroExt.inl (AddMonoidAlgebra.coeff P 0) +
+        TrivSqZeroExt.inr (∑ q, g q * AddMonoidAlgebra.coeff P (Finsupp.single q 1)) := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [MvPolynomial.coeff_C, zero_ne_single, TrivSqZeroExt.algebraMap_eq_inl]
   | add p q hp hq =>
-    rw [map_add, hp, hq]
+    rw [map_add (f := _), hp, hq]
     simp only [MvPolynomial.coeff_add, mul_add, Finset.sum_add_distrib, TrivSqZeroExt.inl_add,
       TrivSqZeroExt.inr_add]
     abel
   | mul_X p n hp =>
-    have hc : ∀ q, MvPolynomial.coeff (Finsupp.single q 1) (p * MvPolynomial.X n) =
-        if q = n then MvPolynomial.coeff 0 p else 0 := by
+    have hc : ∀ q, AddMonoidAlgebra.coeff (p * MvPolynomial.X n) (Finsupp.single q 1) =
+        if q = n then AddMonoidAlgebra.coeff p 0 else 0 := by
       intro q
       rw [MvPolynomial.coeff_mul_X']
       by_cases h : q = n
@@ -56,7 +60,7 @@ theorem aeval_inr {κ : Type} [Fintype κ] [DecidableEq κ] (g : κ → R) (P : 
       · rw [if_neg h, if_neg]
         rw [Finsupp.support_single_ne_zero _ one_ne_zero, Finset.mem_singleton]
         exact fun h' => h h'.symm
-    have h0 : MvPolynomial.coeff 0 (p * MvPolynomial.X n) = 0 := by
+    have h0 : AddMonoidAlgebra.coeff (p * MvPolynomial.X n) 0 = 0 := by
       rw [MvPolynomial.coeff_mul_X']
       simp
     rw [map_mul, hp, MvPolynomial.aeval_X, h0]
@@ -64,7 +68,7 @@ theorem aeval_inr {κ : Type} [Fintype κ] [DecidableEq κ] (g : κ → R) (P : 
 
 private lemma coeff_psTrunc_lemma {κ : Type} [Fintype κ] [DecidableEq κ] (f : MvPowerSeries κ R)
     (e : κ →₀ ℕ) (he : e.degree < 0 + 1 + 1) :
-    MvPolynomial.coeff e (psTrunc (0 + 1) f) = MvPowerSeries.coeff e f := by
+    AddMonoidAlgebra.coeff (psTrunc (0 + 1) f) e = MvPowerSeries.coeff e f := by
   rw [psTrunc_eq, MvPowerSeries.coeff_truncTotal _ he]
 
 theorem tp_psJet {κ : Type} [Fintype κ] [DecidableEq κ] (g : κ → R) (f : MvPowerSeries κ R) :
@@ -120,40 +124,6 @@ theorem snd_tp_psJet_subst {κ κ' : Type} [Fintype κ] [DecidableEq κ] [Fintyp
 theorem sum_coeff_X {κ : Type} [Fintype κ] [DecidableEq κ] (h : κ → R) (s : κ) :
     ∑ q, h q * MvPowerSeries.coeff (Finsupp.single q 1) (MvPowerSeries.X s : MvPowerSeries κ R) = h s := by
   simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj]
-
-theorem sum_coeff_variable_pair {κ₁ κ₂ : Type} [Fintype κ₁] [DecidableEq κ₁] [Fintype κ₂] [DecidableEq κ₂] (h : κ₁ → κ₂ → R)
-    (s : κ₁ × κ₂) :
-    ∑ i, ∑ j, h i j * MvPowerSeries.coeff (Finsupp.single (i, j) 1) (MvPowerSeries.X s : MvPowerSeries (κ₁ × κ₂) R) =
-      h s.1 s.2 := by
-  obtain ⟨s1, s2⟩ := s
-  rw [Finset.sum_eq_single s1, Finset.sum_eq_single s2]
-  · simp [MvPowerSeries.coeff_X]
-  · intro j _ hj
-    simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj, hj]
-  · simp
-  · intro i _ hi
-    apply Finset.sum_eq_zero
-    intro j _
-    simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj, hi]
-  · simp
-
-theorem sum_coeff_X_fst {κ₁ κ₂ : Type} [Fintype κ₂] [DecidableEq κ₁] [DecidableEq κ₂] (u : κ₂ → R) (i : κ₁)
-    (s : κ₁ × κ₂) :
-    ∑ j, u j * MvPowerSeries.coeff (Finsupp.single (i, j) 1) (MvPowerSeries.X s : MvPowerSeries (κ₁ × κ₂) R) =
-      if i = s.1 then u s.2 else 0 := by
-  obtain ⟨s1, s2⟩ := s
-  dsimp only
-  by_cases hi : i = s1
-  · subst hi
-    rw [if_pos rfl, Finset.sum_eq_single s2]
-    · simp [MvPowerSeries.coeff_X]
-    · intro j _ hj
-      simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj, hj]
-    · simp
-  · rw [if_neg hi]
-    apply Finset.sum_eq_zero
-    intro j _
-    simp [MvPowerSeries.coeff_X, Finsupp.single_left_inj, hi]
 
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ
 

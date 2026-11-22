@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SchurDeterminants.PairSplit
+
+@[expose] public section
 
 open Finset MvPolynomial UpperTheory.Gal.Schur
 
@@ -9,7 +13,8 @@ private lemma one_factor {K R : Type} [CommRing K] [CommRing R] [Algebra K R] (n
   have key : ∀ a : ℕ, x ^ a * ((-1) ^ a * aeval g (esymm (Fin n) K a)) =
       ∑ t ∈ powersetCard a (univ : Finset (Fin n)), ∏ j ∈ t, (-(x * g j)) := by
     intro a
-    simp only [esymm, map_sum, map_prod, aeval_X, mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [esymm, map_sum, map_prod, aeval_X, mul_sum]
     refine sum_congr rfl fun t ht => ?_
     rw [prod_neg, prod_mul_distrib, prod_const, (mem_powersetCard.1 ht).2]
     ring

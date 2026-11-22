@@ -1,14 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLenStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkTrace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwBruhatKO
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwSimpleOrbit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwLenStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkTrace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwBruhatKO
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwPermCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHeckePairIwC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwHkNorm
+
+@[expose] public section
+
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools GlobalTheory.PRep
 
 private theorem hk_fixed {A G M : Type} [CommRing A] [Group G] [AddCommGroup M] [Module A M]

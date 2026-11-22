@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.SameSatTwist
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ConjInv
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.Galois
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.SameSatTwist
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GroundTheory.Global Formalism.L2.Host GlobalTheory.CuspRep Neutral.B1
 open UpperTheory.ConvolutionTheory.RankTwoDescent
 
@@ -54,7 +59,7 @@ end UpperTheory.LocalScalarValues
 
 open UpperTheory.LocalScalarValues in
 theorem UpperTheory.centralChar_galois_invariant_of_conjInv :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (P : CuspSub E 2) (ω : HChar E), P.HasCentChar ω → ConjInv P → ∀ (c : E ≃ₐ[ℚ] E) (z : IdeleGroup E), ω.1 (c • z) = ω.1 z := by
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (P : CuspSub E 2) (ω : HChar E), P.HasCentChar ω → ConjInv P → ∀ (c : E ≃ₐ[ℚ] E) (z : IdeleGroup E), ω.1 (c • z) = ω.1 z := by
   intro E _ _ _ P ω hω hc c z
   let ψ : Neutral.B1.Ideles E →* ℂˣ :=
     { toFun := fun a => ω.1 (c • (a : IdeleGroup E)) * (ω.1 a)⁻¹

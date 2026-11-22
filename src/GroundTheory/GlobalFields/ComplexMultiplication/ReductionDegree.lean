@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.ReductionIsogenyMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.ReductionIsogenyMap
+
+@[expose] public section
+
 set_option maxHeartbeats 4000000
 set_option synthInstance.maxHeartbeats 400000
 
@@ -55,8 +60,8 @@ theorem exists_isogeny_coords : ∃ (x y : gaussRing W)
   rw [pointCongr_some] at e'
   exact ⟨x, y, _, e'⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem degree_reduceIsogeny_le : (reduceIsogeny K W W' φ).degree ≤ φ.degree := by
   obtain ⟨x, y, h, hφ⟩ := exists_isogeny_coords K W W' φ
   have hjM : ∀ c : 𝒪, algebraMap K (W.baseChange K).toAffine.FunctionField (algebraMap 𝒪 K c) =
@@ -74,7 +79,7 @@ theorem degree_reduceIsogeny_le : (reduceIsogeny K W W' φ).degree ≤ φ.degree
     rw [reduceIsogeny_val, hφ, hred]
   have hx : Function.Injective (eval₂RingHom (ResidueField.map (algebraMap 𝒪 (gaussRing W)))
       (residue _ x)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro p hp
     by_contra hp0
     have hT : Transcendental (ResidueField 𝒪) (gaussResidue W (residue _ x)) := by
@@ -135,7 +140,8 @@ theorem degree_reduceIsogeny_le : (reduceIsogeny K W W' φ).degree ≤ φ.degree
 
     have hrel : ∑ i, g (a i) * b i = 0 := by
       apply IsFractionRing.injective (gaussRing W) (W.baseChange K).toAffine.FunctionField
-      rw [map_sum, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero]
       have h1 := congrArg (fun z => φ.comap (algebraMap _ _ s) * z) hc
       simp only [mul_zero, Finset.mul_sum, Algebra.smul_def, IntermediateField.algebraMap_apply]
         at h1
@@ -182,7 +188,8 @@ theorem degree_reduceIsogeny_le : (reduceIsogeny K W W' φ).degree ≤ φ.degree
         rw [ha' i, map_mul, mul_assoc]
       exact (mul_eq_zero.1 this).resolve_left (hinj _ hai₁)
     have hred' := congrArg (fun z => gaussResidue W (residue _ z)) hrel'
-    simp only [map_sum, map_mul, map_zero, hb] at hred'
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_zero, hb] at hred'
     have hcoef : ∀ i, gaussResidue W (residue _ (g (a' i))) =
         (reduceIsogeny K W W' φ).comap (gaussResidue W' (residue _ (a' i))) := fun i => by
       rw [← ResidueField.map_residue, ← RingHom.comp_apply, hres]; rfl

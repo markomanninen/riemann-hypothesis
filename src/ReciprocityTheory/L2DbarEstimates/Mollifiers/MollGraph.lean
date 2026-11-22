@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Mollifiers.MollTendstoOfContinuous
-import ReciprocityTheory.L2DbarEstimates.Mollifiers.FderivMollApply
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Mollifiers.MollTendstoOfContinuous
+public import ReciprocityTheory.L2DbarEstimates.Mollifiers.FderivMollApply
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.B
 

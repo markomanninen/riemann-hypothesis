@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VENatEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.VENatEqZero
+
+@[expose] public section
 
 namespace GlobalTheory.HTThetaLeaf
 

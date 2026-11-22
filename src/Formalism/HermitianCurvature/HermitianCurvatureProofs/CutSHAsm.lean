@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelPointCoordinates
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSH2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelPointCoordinates
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ComplexConjugate ContDiff
@@ -18,7 +22,7 @@ theorem fsv_mul' (s s' t : ℂ) : fsv s t * fsv s' t = fsv (s + s') t := by
   unfold fsv
   rw [← Complex.exp_add]
   congr 1
-  simp only [map_add]
+  simp only [map_add (f := _)]
   ring
 
 theorem fsv_contDiff' (s : ℂ) : ContDiff ℝ ∞ (fsv s) := by
@@ -192,7 +196,7 @@ theorem span_step
   induction hΨ using Submodule.span_induction with
   | mem x hx => exact hgen x hx
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, map_add]; exact K.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _)]; exact K.add_mem hx hy
   | smul r x _ hx => rw [map_smul, map_smul]; exact K.smul_mem r hx
 
 end asm

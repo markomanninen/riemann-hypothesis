@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.DegreeFormula.FlagDegFormula
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.IrreducibleOfIrreducibleMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinSubstLinSubst
+module
+
+public import Mathlib
+public import Formalism.DegreeFormula.FlagDegFormula
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeightIffOfDegreeEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IrreducibleOfIrreducibleMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinSubstLinSubst
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,7 +31,8 @@ theorem coneMap_of_isHomogeneous (y : Fin N → Ω) {d : ℕ} {g : MvPolynomial 
     coneMap K y g = Polynomial.X ^ d * Polynomial.C (aeval y g) := by
   conv_lhs => rw [g.as_sum]
   conv_rhs => rw [g.as_sum]
-  simp only [coneMap, map_sum, aeval_monomial, Finset.mul_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coneMap, map_sum, aeval_monomial, Finset.mul_sum, map_mul]
   refine Finset.sum_congr rfl fun a ha => ?_
   have : a.degree = d := by rw [Finsupp.degree_eq_weight_one]; exact hg (mem_support_iff.1 ha)
   simp only [Finsupp.prod, mul_pow, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, map_prod, map_pow]
@@ -40,7 +45,8 @@ theorem mem_coneIdeal_of_isHomogeneous (y : Fin N → Ω) {d : ℕ} {g : MvPolyn
 
 theorem coeff_coneMap (y : Fin N → Ω) (g : MvPolynomial (Fin N) K) (d : ℕ) :
     (coneMap K y g).coeff d = aeval y (homogeneousComponent d g) := by
-  conv_lhs => rw [← g.sum_homogeneousComponent, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [← g.sum_homogeneousComponent, map_sum]
   simp only [coneMap_of_isHomogeneous y (homogeneousComponent_isHomogeneous _ g), Polynomial.finsetSum_coeff,
     Polynomial.X_pow_mul_C, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq, Finset.mem_range]
@@ -55,8 +61,8 @@ theorem mem_coneIdeal_iff (y : Fin N → Ω) (g : MvPolynomial (Fin N) K) :
 
 theorem isPrime_coneIdeal (y : Fin N → Ω) : (coneIdeal K y).IsPrime := RingHom.ker_isPrime _
 
-attribute [local instance] MvPolynomial.gradedAlgebra in
 
+attribute [local instance] MvPolynomial.gradedAlgebra in
 theorem isHomogeneous_coneIdeal (y : Fin N → Ω) :
     (coneIdeal K y).IsHomogeneous (homogeneousSubmodule (Fin N) K) := fun d g hg => by
   have e : ((DirectSum.decompose (homogeneousSubmodule (Fin N) K) g d : _) : MvPolynomial (Fin N) K) =
@@ -66,7 +72,8 @@ theorem isHomogeneous_coneIdeal (y : Fin N → Ω) :
 
 theorem aeval_eq_zero_of_mem_coneIdeal {y : Fin N → Ω} {g : MvPolynomial (Fin N) K} (hg : g ∈ coneIdeal K y) :
     aeval y g = 0 := by
-  rw [← g.sum_homogeneousComponent, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← g.sum_homogeneousComponent, map_sum]
   exact Finset.sum_eq_zero fun d _ => (mem_coneIdeal_iff y g).1 hg d
 
 theorem coneIdeal_smul {a : Ω} (ha : a ≠ 0) (y : Fin N → Ω) : coneIdeal K (a • y) = coneIdeal K y := by
@@ -81,9 +88,6 @@ theorem coneIdeal_smul {a : Ω} (ha : a ≠ 0) (y : Fin N → Ω) : coneIdeal K 
   rw [← h2, h, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, mul_eq_zero,
     or_iff_right (pow_ne_zero _ ha)]
 
-theorem coneIdeal_eq_bot {y : Fin N → Ω} (h : AlgebraicIndependent K y) : coneIdeal K y = ⊥ :=
-  le_bot_iff.1 fun g hg => h.eq_zero_of_aeval_eq_zero g (aeval_eq_zero_of_mem_coneIdeal hg)
-
 def coordSubst {N' : ℕ} (M : Matrix (Fin N) (Fin N') K) : MvPolynomial (Fin N') K →ₐ[K] MvPolynomial (Fin N) K :=
   aeval fun k => ∑ j, C (M j k) * X j
 
@@ -91,7 +95,8 @@ theorem mem_coneIdeal_coord {N' : ℕ} (M : Matrix (Fin N) (Fin N') K) (y : Fin 
     g ∈ coneIdeal K (fun k => ∑ j, algebraMap K Ω (M j k) * y j) ↔ coordSubst M g ∈ coneIdeal K y := by
   have e : coneMap K (fun k => ∑ j, algebraMap K Ω (M j k) * y j) = (coneMap K y).comp (coordSubst M) := by
     refine MvPolynomial.algHom_ext fun k => ?_
-    simp only [coneMap, coordSubst, aeval_X, AlgHom.comp_apply, map_sum, map_mul, aeval_C, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coneMap, coordSubst, aeval_X, AlgHom.comp_apply, map_sum, map_mul, aeval_C, Finset.mul_sum,
       Polynomial.algebraMap_apply]
     exact Finset.sum_congr rfl fun _ _ => mul_left_comm _ _ _
   rw [coneIdeal, coneIdeal, RingHom.mem_ker, RingHom.mem_ker, e, AlgHom.comp_apply]
@@ -113,11 +118,13 @@ theorem coordSubst_coordSubst {M : Matrix (Fin N) (Fin N') K} {P : Matrix (Fin N
     (g : MvPolynomial (Fin N) K) : coordSubst M (coordSubst P g) = g := by
   rw [← AlgHom.comp_apply]
   have e : (coordSubst M).comp (coordSubst P) = AlgHom.id K _ := MvPolynomial.algHom_ext fun j => by
-    simp only [coordSubst, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coordSubst, AlgHom.comp_apply, aeval_X, map_sum, map_mul, aeval_C, algebraMap_eq, Finset.mul_sum,
       AlgHom.id_apply]
     rw [Finset.sum_comm]
     have : ∀ i, ∑ k, C (P k j) * (C (M i k) * X i) = (C ((M * P) i j) * X i : MvPolynomial (Fin N) K) := fun i => by
-      simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_mul]
       exact Finset.sum_congr rfl fun _ _ => by ring
     simp [this, h, Matrix.one_apply, apply_ite C]
   rw [e, AlgHom.id_apply]
@@ -183,7 +190,8 @@ theorem isChowFormInt_basis (ev : V →ₗ[K] Ω) {N N' : ℕ} (b : Basis (Fin N
   refine isChowFormInt_linSubst (b.toMatrix_mul_toMatrix_flip b') (b'.toMatrix_mul_toMatrix_flip b) (fun g => ?_) hf
   rw [imageIdeal, imageIdeal, ← mem_coneIdeal_coord]
   congr! with k
-  rw [← congrArg ev (b.sum_toMatrix_smul_self b' k), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← congrArg ev (b.sum_toMatrix_smul_self b' k), map_sum]
   simp only [map_smul, Algebra.smul_def]
 
 def IsImageDeg (ev : V →ₗ[K] Ω) (D δ : ℕ) : Prop :=
@@ -198,13 +206,13 @@ theorem IsImageDeg.pos {ev : V →ₗ[K] Ω} {D δ : ℕ} (h : IsImageDeg ev D �
   obtain ⟨N, b, f, hf⟩ := h
   exact hf.pos
 
-open Classical in
 
+open Classical in
 def imageDeg (ev : V →ₗ[K] Ω) (D : ℕ) : ℕ := if h : ∃ δ, IsImageDeg ev D δ then h.choose else 0
 
 theorem IsImageDeg.imageDeg_eq {ev : V →ₗ[K] Ω} {D δ : ℕ} (h : IsImageDeg ev D δ) : imageDeg ev D = δ := by
   have h' : ∃ δ, IsImageDeg ev D δ := ⟨δ, h⟩
-  rw [imageDeg, dif_pos h']
+  rw [imageDeg, dite_eq_left h']
   exact h'.choose_spec.unique h
 
 theorem imageDeg_pos_iff (ev : V →ₗ[K] Ω) (D : ℕ) : 0 < imageDeg ev D ↔ IsImageDeg ev D (imageDeg ev D) := by
@@ -212,7 +220,7 @@ theorem imageDeg_pos_iff (ev : V →ₗ[K] Ω) (D : ℕ) : 0 < imageDeg ev D ↔
   by_cases h' : ∃ δ, IsImageDeg ev D δ
   · obtain ⟨δ, hδ⟩ := h'
     rwa [hδ.imageDeg_eq]
-  · rw [imageDeg, dif_neg h'] at h
+  · rw [imageDeg, dite_eq_right h'] at h
     exact absurd h (lt_irrefl 0)
 
 variable [NumberField K] [Module (𝓞 K) V]
@@ -235,8 +243,8 @@ def IsImageHeight (Nm : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) 
     (δ : ℕ) (f : MvPolynomial (Fin (D + 1) × Fin N) K), IsFrame Nm L b w A ∧ IsChowFormInt (imageIdeal ev b) D δ f ∧
       ((D : ℝ) + 1) * δ * h = formHeight δ w A f
 
-open Classical in
 
+open Classical in
 def imageHeight (Nm : (K →+* ℂ) → V → ℝ) (L : Submodule (𝓞 K) V) (ev : V →ₗ[K] Ω) (D : ℕ) : ℝ :=
   if h : ∃ x, IsImageHeight Nm L ev D x then h.choose else 0
 
@@ -244,7 +252,7 @@ variable {Nm : (K →+* ℂ) → V → ℝ} {L : Submodule (𝓞 K) V} {ev : V �
 
 theorem isImageHeight_imageHeight (h : ∃ x, IsImageHeight Nm L ev D x) :
     IsImageHeight Nm L ev D (imageHeight Nm L ev D) := by
-  rw [imageHeight, dif_pos h]
+  rw [imageHeight, dite_eq_left h]
   exact h.choose_spec
 
 theorem exists_isImageHeight_iff : (∃ x, IsImageHeight Nm L ev D x) ↔
@@ -277,25 +285,12 @@ end Image
 
 section Model
 
-abbrev StdField (N : ℕ) : Type := FractionRing (MvPolynomial (Fin N) ℚ)
-
 def pointOf (K : Type) [Field K] {Ω : Type} [Field Ω] [Algebra K Ω] {N : ℕ} (y : Fin N → Ω) : (Fin N → K) →ₗ[K] Ω :=
   (Pi.basisFun K (Fin N)).constr K y
-
-theorem imageIdeal_pointOf (K : Type) [Field K] {Ω : Type} [Field Ω] [Algebra K Ω] {N : ℕ} (y : Fin N → Ω) :
-    imageIdeal (pointOf K y) (Pi.basisFun K (Fin N)) = coneIdeal K y := by
-  simp only [imageIdeal, pointOf, Basis.constr_basis]
-
-abbrev stdPoint (N : ℕ) := pointOf ℚ fun j : Fin N => algebraMap (MvPolynomial (Fin N) ℚ) (StdField N) (X j)
 
 def stdNorm (N : ℕ) (σ : ℚ →+* ℂ) (x : Fin N → ℚ) : ℝ := Real.sqrt (∑ j, ‖σ (x j)‖ ^ 2)
 
 def stdLat (N : ℕ) : Submodule (𝓞 ℚ) (Fin N → ℚ) := Submodule.span (𝓞 ℚ) (Set.range (Pi.basisFun ℚ (Fin N)))
-
-theorem imageIdeal_std (N : ℕ) : imageIdeal (stdPoint N) (Pi.basisFun ℚ (Fin N)) = ⊥ := by
-  rw [imageIdeal_pointOf]
-  exact coneIdeal_eq_bot <| (MvPolynomial.algebraicIndependent_X (Fin N) ℚ).map'
-    (f := (algebraMap (MvPolynomial (Fin N) ℚ) (StdField N)).toRatAlgHom) (IsFractionRing.injective _ _)
 
 end Model
 
@@ -325,8 +320,8 @@ theorem vdm_smul {R : Type} [CommRing R] (t : R) (la : ι → Fin N → R) :
 
 def stdWt (ι : Type) (N : ℕ) : ι → Fin N → ℤ := fun _ i => (N : ℤ) - 1 - (i : ℕ)
 
-omit [Fintype ι] in
 
+omit [Fintype ι] in
 theorem strictAnti_stdWt (τ : ι) : StrictAnti (stdWt ι N τ) := fun i l h => by
   have : (i : ℕ) < l := h
   simp only [stdWt]; omega
@@ -351,20 +346,9 @@ theorem rhoOf_lt_one {u' u : ι → Fin N → ℤ} (h' : ∀ τ, StrictAnti (u' 
     rhoOf u' u < 1 :=
   sub_lt_self _ (div_pos (Int.cast_pos.2 (vdm_pos h')) (Int.cast_pos.2 (vdm_pos h)))
 
-example : vdm (fun _ : Unit => ![(5 : ℤ), 2, 0]) = 30 := by decide
-
-example : rhoOf ((fun _ : Unit => ![(0 : ℤ), -8]) - (6 : ℤ) • barWt Unit 2 1) (fun _ => ![0, -8]) = 3 / 4 := by
-  have h1 : vdm ((fun _ : Unit => ![(0 : ℤ), -8]) - (6 : ℤ) • barWt Unit 2 1) = 2 := by decide
-  have h2 : vdm (fun _ : Unit => ![(0 : ℤ), -8]) = 8 := by decide
-  rw [rhoOf, h1, h2]; norm_num
-
 end Weights
 
 def cStar (n : ℕ) (abelian₂ : ℝ) : ℝ := Real.log (Real.sqrt n * abelian₂)
-
-theorem log_le_cStar {n : ℕ} {abelian₂ : ℝ} (hn : 1 ≤ n) (hL : 1 ≤ abelian₂) : 0 ≤ Real.log abelian₂ ∧ Real.log abelian₂ ≤ cStar n abelian₂ :=
-  ⟨Real.log_nonneg hL, Real.log_le_log (by linarith)
-    (le_mul_of_one_le_left (by linarith) (Real.one_le_sqrt.2 (by exact_mod_cast hn)))⟩
 
 section Growth
 
@@ -384,10 +368,6 @@ theorem logCard_top : logCard ⊤ = ⊤ := by simp [logCard]
 def countVol (D d a : ℕ) (m : ℕ → ℕ∞) : ℝ≥0∞ :=
   limsup (fun k : ℕ => (D.factorial : ℝ≥0∞) * logCard (m (a * k)) / ((d : ℝ≥0∞) * ((a * k : ℕ) : ℝ≥0∞) ^ (D + 1))) atTop
 
-theorem countVol_mono (D d a : ℕ) {m m' : ℕ → ℕ∞} (h : ∀ τ, m τ ≤ m' τ) : countVol D d a m ≤ countVol D d a m' :=
-  limsup_le_limsup (Eventually.of_forall fun k => ENNReal.div_le_div_right (mul_le_mul_right
-    (EReal.toENNReal_le_toENNReal (ENNReal.log_monotone (ENat.toENNReal_le.2 (h _)))) _) _)
-
 def volSlope (δ : ℝ) (vol : ℝ → ℝ≥0∞) : EReal := ⨅ t : ℝ, ((vol t / ENNReal.ofReal δ : ℝ≥0∞) : EReal) - (t : EReal)
 
 theorem le_volSlope_iff {δ : ℝ} (hδ : 0 < δ) (vol : ℝ → ℝ≥0∞) (a : ℝ) :
@@ -402,23 +382,8 @@ theorem le_volSlope_iff {δ : ℝ} (hδ : 0 < δ) (vol : ℝ → ℝ≥0∞) (a 
     · rw [max_eq_right h0]; exact EReal.coe_ennreal_nonneg _
     · rwa [max_eq_left h0], fun h => (EReal.coe_le_coe_iff.2 (le_max_left _ _)).trans h⟩
 
-def degSlope (a : ℕ) (dg : ℕ → ℝ) (r : ℕ → ℕ) : EReal :=
-  liminf (fun k : ℕ => ((dg (a * k) / (((a * k : ℕ) : ℝ) * r (a * k)) : ℝ) : EReal)) atTop
-
 def IsLimSlope (D : ℕ) (ar geo : ℚ → ℝ) (a : ℝ) : Prop :=
   (∀ᶠ s : ℚ in 𝓝[>] 0, 0 < geo s) ∧ Tendsto (fun s : ℚ => ar s / (((D : ℝ) + 1) * geo s)) (𝓝[>] 0) (𝓝 a)
-
-theorem IsLimSlope.unique {D : ℕ} {ar geo : ℚ → ℝ} {a b : ℝ} (ha : IsLimSlope D ar geo a)
-    (hb : IsLimSlope D ar geo b) : a = b :=
-  tendsto_nhds_unique ha.2 hb.2
-
-example : IsLimSlope 1 (fun _ => 6) (fun _ => 1) 3 :=
-  ⟨Eventually.of_forall fun _ => one_pos, by norm_num⟩
-
-example : growth 1 (fun τ => τ) = 1 := by
-  rw [growth, ← limsup_const (f := (atTop : Filter ℕ)) (1 : ℝ≥0∞)]
-  refine limsup_congr ((eventually_ne_atTop 0).mono fun k hk => ?_)
-  simpa using ENNReal.div_self (Nat.cast_ne_zero.2 hk) (ENNReal.natCast_ne_top k)
 
 end Growth
 

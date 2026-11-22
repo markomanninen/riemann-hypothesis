@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
-import GroundTheory.GlobalFields.Adele.IntegersLattice
-import GroundTheory.GlobalFields.Adele.Approximation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OneMemH0WeightZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPosNatMemOpenAdeleSubgroup
+public import GroundTheory.GlobalFields.Adele.IntegersLattice
+public import GroundTheory.GlobalFields.Adele.Approximation
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open Filter
 
 namespace GlobalTheory.AddApproxPlaces
 
-open NumberField.mixedEmbedding MeasureTheory in
 
+open NumberField.mixedEmbedding MeasureTheory in
 theorem exists_small_of_infinitePlace (F : Type) [Field F] [NumberField F] (w₀ : InfinitePlace F)
     (f : InfinitePlace F → NNReal) (hf : ∀ w, f w ≠ 0) :
     ∃ g : F, g ≠ 0 ∧ (∀ w : InfinitePlace F, w ≠ w₀ → w g < f w) ∧
@@ -32,8 +36,8 @@ theorem exists_small_of_infinitePlace (F : Type) [Field F] [NumberField F] (w₀
   refine ⟨a, RingOfIntegers.coe_ne_zero_iff.2 ha, fun w hw => ?_, fun v => v.valuation_le_one a⟩
   rw [← hg w hw]; exact hlt w
 
-open NumberField.mixedEmbedding MeasureTheory nonZeroDivisors in
 
+open NumberField.mixedEmbedding MeasureTheory nonZeroDivisors in
 theorem exists_small_of_finitePlace (F : Type) [Field F] [NumberField F] (p : HeightOneSpectrum (𝓞 F))
     (f : InfinitePlace F → NNReal) (hf : ∀ w, f w ≠ 0) :
     ∃ g : F, g ≠ 0 ∧ (∀ w : InfinitePlace F, w g < f w) ∧
@@ -139,7 +143,7 @@ theorem exists_small_adele (F : Type) [Field F] [NumberField F] (S₁ : Finset (
   refine ⟨g, hg, hsub ⟨?_, ?_⟩⟩
   · apply hδN
     intro w
-    have e : ((1 - ε) * algebraMap F (AF F) g).1 w = (1 - fstA F ε w) * (g : w.Completion) := by
+    have e : ((1 - ε) * algebraMap F (AF F) g).1 w = (1 - fstA F ε w) * (algebraMap F (Ainf F) g) w := by
       change (fstA F ((1 - ε) * algebraMap F (AF F) g)) w = _
       rw [map_mul, map_sub, map_one, AlgHom.commutes]
       rfl
@@ -148,7 +152,7 @@ theorem exists_small_adele (F : Type) [Field F] [NumberField F] (S₁ : Finset (
     · rw [hε.1 w hw, sub_self, zero_mul, norm_zero]; exact hδ
     · rw [hε.2.1 w hw, sub_zero, one_mul]
       have := GroundTheory.Global.norm_algebraMap_apply (K := F) g w
-      exact (this.trans_lt (h1 w hw))
+      exact this.trans_lt (h1 w hw)
   · apply hmN
     intro v
     have e : evalV F v ((1 - ε) * algebraMap F (AF F) g).2 =
@@ -203,7 +207,7 @@ theorem exists_approx_notMem : ∀ (F : Type) [Field F] [NumberField F], ∀ (S�
   have e₂ : algebraMap F (AF F) (f * t₀ + (q : F) * f₂) +
       ε * (algebraMap F (AF F) f * c - algebraMap F (AF F) ((q : F) * f₂)) =
       x + (-((1 - ε) * algebraMap F (AF F) f * c) + ((q : ℕ) : AF F) * ((1 - ε) * algebraMap F (AF F) f₂)) := by
-    rw [map_add, map_mul (algebraMap F (AF F)) (q : F) f₂, map_natCast]
+    rw [map_add (f := _), map_mul (algebraMap F (AF F)) (q : F) f₂, map_natCast]
     linear_combination e₁
   rw [e₂]
   exact hV (Set.mk_mem_prod hd₁ (hf₂M q hq))

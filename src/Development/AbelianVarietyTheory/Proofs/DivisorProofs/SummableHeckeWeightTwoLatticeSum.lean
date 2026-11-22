@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SummableLipschitzLatticeNormPowSummand
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SummableLipschitzLatticeNormPowSummand
+
+@[expose] public section
+
 open NumberField Complex
 open scoped nonZeroDivisors
 
@@ -45,7 +50,7 @@ theorem summable_latSum (F : Type) [Field F] [NumberField F] [NumberField.IsTota
     refine Finset.prod_congr rfl fun τ _ => ?_
     rw [hz', inv_pow, add_comm]
   rw [hl, norm_prod, norm_prod, hC, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun τ _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun τ _ => ?_
   rw [mul_comm (|τ b * (z τ).im| ^ (-2 * σ.re))]
   refine norm_phi_le σ _ hσ _ (hc τ) (le_of_eq ?_)
   simp

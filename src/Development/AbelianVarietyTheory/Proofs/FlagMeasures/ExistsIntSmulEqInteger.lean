@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.IntSmulIntegerEq
 
@@ -11,7 +15,7 @@ theorem exists_int_smul_eq_integer {E : Type} [Field E] [NumberField E] (c : E) 
   exact ⟨M, hM, ⟨M • c, hint⟩, rfl⟩
 
 theorem exists_int_smul_mem {E : Type} [inst : Field E] [NumberField E] {n : ℕ}
-    (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsLattice E L)
+    (L : Submodule (NumberField.RingOfIntegers E) (Fin n → E)) (hL : Submodule.IsFullLattice E L)
     (w : Fin n → E) : ∃ (N : ℤ), N ≠ (0 : ℤ) ∧ N • w ∈ L := by
   have hw : w ∈ Submodule.span E (L : Set (Fin n → E)) := by
     rw [hL.span_eq_top]; trivial

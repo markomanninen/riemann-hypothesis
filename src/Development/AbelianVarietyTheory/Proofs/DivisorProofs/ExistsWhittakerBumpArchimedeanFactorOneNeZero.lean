@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SuperDiagEqSdM
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep Matrix MeasureTheory GlobalTheory.WhitBump
 open scoped ContDiff
 
@@ -6,7 +11,7 @@ noncomputable section
 
 namespace GlobalTheory.WhitBump
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E]
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem continuous_psiInf : Continuous (psiInf (E := E)) := by
   have hs : Continuous (fun z : Cinf E => sInf E z) :=
@@ -21,7 +26,7 @@ variable {E} {n : ℕ}
 
 theorem continuous_sdM_of : Continuous fun x : Lie E n => sdM (Matrix.of x) := by
   unfold sdM
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     (continuous_apply j).comp (continuous_apply i)
 
 theorem sdM_one : sdM (1 : Matrix (Fin n) (Fin n) (Cinf E)) = 0 := by
@@ -45,7 +50,7 @@ theorem nu_zero : nu (0 : Vp E n) = 1 := by
   · simp [nu, hij, Matrix.one_apply, hij.ne]
   · simp [nu, hij, Matrix.one_apply]
 
-theorem exists_bumpInf_oneL_ne_zero (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n : ℕ) :
+theorem exists_bumpInf_oneL_ne_zero (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n : ℕ) :
     ∃ f : Lie E n → ℝ, ContDiff ℝ ∞ f ∧ HasCompactSupport f ∧ tsupport f ⊆ invSet E n ∧
       bumpInf f (oneL E n) ≠ 0 := by
   classical

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OpenFns
+
+@[expose] public section
+
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir.Leib GlobalTheory.CompanionTheory.Rodier
 open scoped TensorProduct
 
@@ -29,16 +34,11 @@ theorem lt_of_blk_lt {h N : ℕ} (d : Fin h → ℕ) (hd : ∑ a, d a = N) {p q 
     rw [heq] at hb
     exact lt_irrefl _ hb
 
-variable (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
+variable (k : Type) [Field k]
 variable {h N : ℕ} (d : Fin h → ℕ) (hd : ∑ a, d a = N)
 
 theorem mem_unipU {u : GL (Fin N) k} : u ∈ unipU k d hd ↔
     u ∈ unipB k (Fin N) ∧ pm k (wOpen d hd) * u * (pm k (wOpen d hd))⁻¹ ∈ unipRadLower k (stdBlocks d hd) := by
-  exact Iff.rfl
-
-theorem mem_unipL {u : GL (Fin N) k} : u ∈ unipL k d hd ↔
-    u ∈ unipB k (Fin N) ∧
-      pm k (wOpen d hd) * u * (pm k (wOpen d hd))⁻¹ ∈ (leviEmb k (stdBlocks d hd)).range := by
   exact Iff.rfl
 
 theorem conj_mem_parabLower {n : GL (Fin N) k} (hn : n ∈ unipB k (Fin N)) :
@@ -89,10 +89,11 @@ theorem exists_mul {n : GL (Fin N) k} (hn : n ∈ unipB k (Fin N)) :
       split_ifs
       · exact ((GlobalTheory.SmGL.mem_unipB k).mp hn).1 p q hqp
       · rfl
-    · rw [hLentry, if_pos rfl]
+    · rw [hLentry, ite_eq_left rfl]
       exact ((GlobalTheory.SmGL.mem_unipB k).mp hn).2 p
   refine ⟨P⁻¹ * L * P, ?_, P⁻¹ * v * P, ?_, ?_⟩
-  · rw [mem_unipL k d hd]
+  · change P⁻¹ * L * P ∈ unipB k (Fin N) ∧
+      P * (P⁻¹ * L * P) * P⁻¹ ∈ (leviEmb k e).range
     refine ⟨haB, ?_⟩
     show P * (P⁻¹ * L * P) * P⁻¹ ∈ (leviEmb k e).range
     rw [show P * (P⁻¹ * L * P) * P⁻¹ = L by group]

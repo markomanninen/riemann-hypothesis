@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia Module
 
@@ -83,7 +87,7 @@ theorem UpperTheory.finrank_unramified_cocycles_eq_finrank_invariants :
     group
   let ev : W →ₗ[k] N := ((LinearMap.proj φ).comp W.subtype).codRestrict N (fun y => hev y.1 y.2)
   have hinj : Function.Injective ev := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     have hyφ : y.1 φ = 0 := congrArg Subtype.val hy
     obtain ⟨⟨hcont, hc⟩, h0⟩ := (hW y.1).1 y.2
@@ -149,7 +153,7 @@ theorem UpperTheory.finrank_unramified_cocycles_eq_finrank_invariants :
       intro x y
       apply Subtype.ext
       show ρ φ (x + y : M) + m = ρ φ x + (ρ φ y + m)
-      rw [map_add, add_assoc]
+      rw [map_add (f := _), add_assoc]
     have hw1 : ∀ g, (w g).1 = a g := fun g => DFunLike.congr_fun hq g
     refine ⟨⟨fun g => ((w g).2 0 : M), (hW _).2 ⟨⟨?_, ?_⟩, ?_⟩⟩, ?_⟩
     · exact (hwl.comp (fun p : Equiv.Perm N × Equiv.Perm N => (p.2 0 : M))).continuous

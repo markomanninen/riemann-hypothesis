@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.AtomEqZero
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.QIterSurjective
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.ExistsOrthOfFinset
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasisStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.AtomEqZero
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.QIterSurjective
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.HermitianForms.UnitaryLattices.UnitaryHypotheses.ExistsOrthOfFinset
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CompactOpenSubgroupsBasisStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,24 +77,34 @@ variable (hUD : UDens k) (hUA : UAtom k) {ψ : AddChar k Circle} (hψc : Continu
 
 theorem chain_psd (hB : IsInvForm π B) : ∀ d, d + 1 ≤ N → IsPsd (chain hUD hψc hψ1 π hs B d)
   | 0, _ => isPsd_of_inv π B hB
-  | d + 1, hd => (chain_succ hUD hψc hψ1 π hs B d (by omega) (chain_lvl hUD hψc hψ1 π hs B hB d (by omega))).2.1
+  | d + 1, hd => by
+    have hd2 : d + 2 ≤ N := by omega
+    have hL := chain_lvl hUD hψc hψ1 π hs B hB d hd2
+    exact (chain_succ hUD hψc hψ1 π hs B d hd2 hL).2.1
 
-theorem chain_kills (hB : IsInvForm π B) : ∀ d, d + 1 ≤ N → Kills ψ π (N - d) (chain hUD hψc hψ1 π hs B d)
-  | 0, _ => by
+theorem chain_kills (hB : IsInvForm π B) : ∀ d, d + 1 ≤ N → Kills ψ π (N - d) (chain hUD hψc hψ1 π hs B d) := by
+  have killsZero : Kills ψ π N (chain hUD hψc hψ1 π hs B 0) := by
     intro v hv w
-    have e : N - 0 = N := by omega
-    rw [e, twKer_derUnip_self ψ π] at hv
+    rw [twKer_derUnip_self ψ π] at hv
     rw [(Submodule.mem_bot ℂ).1 hv]
     simp
-  | d + 1, hd => kills_congr (by omega)
-      (chain_succ hUD hψc hψ1 π hs B d (by omega) (chain_lvl hUD hψc hψ1 π hs B hB d (by omega))).2.2.1
+  intro d hd
+  cases d with
+  | zero => exact killsZero
+  | succ d =>
+    have hd2 : d + 2 ≤ N := by omega
+    have hL := chain_lvl hUD hψc hψ1 π hs B hB d hd2
+    exact kills_congr (by omega) (chain_succ hUD hψc hψ1 π hs B d hd2 hL).2.2.1
+
 
 include hUA in
-
 theorem twisted_kernel_forms_nonvanishing (hUS : USplit k) (hB : IsInvForm π B) :
     ∀ e d, d + e + 1 = N → (∃ v, chain hUD hψc hψ1 π hs B d v v ≠ 0) →
-      ∃ n', n' + d + 1 ≤ N ∧ twKer π (derUnip k N n') (derChar k ψ N n') ≠ ⊤
-  | 0, d, hde, ⟨v, hv⟩ => by
+      ∃ n', n' + d + 1 ≤ N ∧ twKer π (derUnip k N n') (derChar k ψ N n') ≠ ⊤ := by
+  intro e
+  induction e with
+  | zero =>
+    rintro d hde ⟨v, hv⟩
     refine ⟨0, by omega, fun htop => hv ?_⟩
     have hK := chain_kills hUD hψc hψ1 π hs B hB d (by omega)
     have e1 : N - d = 1 := by omega
@@ -99,11 +113,13 @@ theorem twisted_kernel_forms_nonvanishing (hUS : USplit k) (hB : IsInvForm π B)
     have hle : twKer π (derUnip k N 0) (derChar k ψ N 0) ≤ twKer π (derUnip k N 1) (lvlChar k ψ N 1) :=
       twKer_mono π _ _ (le_inf inf_le_left (inf_le_left.trans (unipB_le_colFix_one N))) fun u => rfl
     exact hle (htop ▸ Submodule.mem_top)
-  | e + 1, d, hde, ⟨v, hv⟩ => by
+  | succ e ih =>
+    rintro d hde ⟨v, hv⟩
     have hd2 : d + 2 ≤ N := by omega
     by_cases h0 : ∀ w, chain hUD hψc hψ1 π hs B (d + 1) w w = 0
     · have hA := atom_eq_self hUD hUA hψc hψ1 π hs B hUS hB d hd2 h0
-      obtain ⟨-, -, -, hK, -⟩ := atom_spec hUD hUA hψc hψ1 π hs B d hd2 (chain_lvl hUD hψc hψ1 π hs B hB d hd2)
+      have hL := chain_lvl hUD hψc hψ1 π hs B hB d hd2
+      have hK := (atom_spec hUD hUA hψc hψ1 π hs B d hd2 hL).2.2.2.1
       refine ⟨N - 2 - d + 1, by omega, fun htop => hv ?_⟩
       have hmem : v ∈ DerKer k ψ π (N - 2 - d) := by
         unfold DerKer
@@ -111,18 +127,47 @@ theorem twisted_kernel_forms_nonvanishing (hUS : USplit k) (hB : IsInvForm π B)
         exact Submodule.mem_top
       have := hK v hmem v
       rwa [hA] at this
-    · push_neg at h0
-      obtain ⟨n', hn', hne⟩ := twisted_kernel_forms_nonvanishing hUS hB e (d + 1) (by omega) h0
+    · have hnext : ∃ w, chain hUD hψc hψ1 π hs B (d + 1) w w ≠ 0 := not_forall.mp h0
+      obtain ⟨n', hn', hne⟩ := ih (d + 1) (by omega) hnext
       exact ⟨n', by omega, hne⟩
 
 theorem chain_ne_of (hB : IsInvForm π B) (d n' : ℕ) (hd : d + 1 ≤ N) (hn' : n' + d < N)
     (hne : twKer π (derUnip k N n') (derChar k ψ N n') ≠ ⊤) : ∃ v, chain hUD hψc hψ1 π hs B d v v ≠ 0 := by
+  have radical : ∀ j, j + 1 ≤ N → ∀ v, chain hUD hψc hψ1 π hs B j v v = 0 →
+      v ∈ twKer π (derUnip k N (N - j)) (lvlChar k ψ N (N - j)) := by
+    intro j
+    induction j with
+    | zero =>
+      intro _ v hv
+      rw [chain_zero] at hv
+      by_cases h : v = 0
+      · rw [h]
+        exact zero_mem _
+      · have hpos := hB.2.1 v h
+        simp [hv] at hpos
+    | succ j ih =>
+      intro hj v hv
+      have hj2 : j + 2 ≤ N := by omega
+      have hL := chain_lvl hUD hψc hψ1 π hs B hB j hj2
+      obtain ⟨-, -, -, -, hR⟩ := chain_succ hUD hψc hψ1 π hs B j hj2 hL
+      have hmem := hR v hv
+      have e : N - 2 - j + 1 = N - (j + 1) := by omega
+      rw [e] at hmem
+      suffices hle : LinearMap.ker (chain hUD hψc hψ1 π hs B j) ≤
+          twKer π (derUnip k N (N - (j + 1))) (lvlChar k ψ N (N - (j + 1))) from
+        (sup_le le_rfl hle) hmem
+      intro x hx
+      rw [LinearMap.mem_ker] at hx
+      have hx0 : chain hUD hψc hψ1 π hs B j x x = 0 := by simp [hx]
+      have hK := ih (by omega) x hx0
+      rw [lvlChar_def] at hK ⊢
+      exact twKer_derUnip_le ψ π (a := N - j) (b := N - (j + 1))
+        (x := N - j - 1) (y := N - (j + 1) - 1) (by omega) (by omega) (by omega) hK
   by_contra hall
-  push_neg at hall
   apply hne
   rw [eq_top_iff]
   intro v _
-  have hv := chain_rad hUD hψc hψ1 π hs B hB d hd v (hall v)
+  have hv := radical d hd v (not_exists_not.mp hall v)
   rw [lvlChar_def] at hv
   rw [derChar_def]
   exact twKer_derUnip_le ψ π (a := N - d) (b := n') (x := N - d - 1) (y := n') (by omega) (by omega) (by omega) hv

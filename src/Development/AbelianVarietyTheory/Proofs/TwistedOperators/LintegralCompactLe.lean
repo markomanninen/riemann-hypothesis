@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevIteratedOneParameterSubgroups
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralNormSqEqToL2
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SobolevIteratedOneParameterSubgroups
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem lintegral_real_le {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsTo
     rw [hν A hA, hν _ (measurable_const_add t hA), ← measure_preimage_add μ (ι t) (π ⁻¹' A ∩ V)]
     congr 1
     ext w
-    simp only [V, Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, map_add, hπι, add_sub_add_left_eq_sub]
+    simp only [V, Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, map_add (f := _), hπι, add_sub_add_left_eq_sub]
   obtain ⟨c, hc⟩ : ∃ c : NNReal, ν = c • volume := ⟨_, Measure.isAddLeftInvariant_eq_smul ν volume⟩
   have hc0 : c ≠ 0 := by
     rintro rfl
@@ -175,7 +179,8 @@ theorem words_bound {R M X : Type} [NormedAddCommGroup R] [NormedSpace ℝ R] [F
     | cons u l =>
       obtain ⟨L, hL⟩ := lin l
       have hl' : l.length ≤ p := by simpa using hl
-      rw [List.foldl_cons, hL, ← b.sum_repr u, map_sum, LinearMap.sum_apply, map_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [List.foldl_cons, hL, ← b.sum_repr u, map_sum, LinearMap.sum_apply, map_sum, map_sum]
       refine (norm_sum_le _ _).trans (le_trans ?_ (mul_le_mul_of_nonneg_right (le_add_of_nonneg_left h₀) (by positivity)))
       rw [Finset.sum_mul]
       refine Finset.sum_le_sum fun i _ => ?_
@@ -246,7 +251,7 @@ def dvL (h : Chart θ σ) (hψ : IsStdChar D ψ (-1)) (S T : HSp D) :
   LinearMap.mk₂ ℝ (fun u f => ⟨dv θ σ S T u f.1, theta_dv h hψ u f.2⟩)
     (fun u v f => Subtype.ext (funext fun w => by
       show dv θ σ S T (u + v) f.1 w = dv θ σ S T u f.1 w + dv θ σ S T v f.1 w
-      rw [dv_apply h _ f.2, dv_apply h _ f.2, dv_apply h _ f.2, map_add, map_add]
+      rw [dv_apply h _ f.2, dv_apply h _ f.2, dv_apply h _ f.2, map_add (f := _), map_add (f := _)]
       push_cast
       ring))
     (fun c u f => Subtype.ext (funext fun w => by
@@ -437,7 +442,8 @@ theorem cube_bound (hom : IsWeilDatumO ψ S T χS χT om) (hc : Chart θ σ) {N 
     rw [LinearEquiv.symm_apply_apply]
   have hsum : ∀ t : Fin N → ℝ, 0 + ∑ i, iotaW σ T S (t i • b i) = ι t := fun t => by
     show _ = iotaW σ T S (b.equivFun.symm t)
-    rw [zero_add, Module.Basis.equivFun_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [zero_add, Module.Basis.equivFun_symm_apply, map_sum]
   obtain ⟨c, K₁, hK₁, hreal⟩ := lintegral_real_le (G := WA T S) μ ι π hι hπ hπι hK₀ h0
     (isCompact_univ_pi fun _ : Fin N => isCompact_Icc (a := (0 : ℝ)) (b := 1))
   obtain ⟨M, hM⟩ := lintegral_compact_le (G := WA T S) (ratL T S) μ h𝓕 hK₁

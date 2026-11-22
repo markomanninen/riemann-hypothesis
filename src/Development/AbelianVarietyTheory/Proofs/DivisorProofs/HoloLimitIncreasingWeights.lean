@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+module
+
+public import Mathlib
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 
@@ -25,12 +30,16 @@ theorem holo_limit_increasing_weights : ∀ (n : ℕ) (M : Type) [TopologicalSpa
     ∫⁻ x, ENNReal.ofReal (‖F0 x - G x‖ ^ 2 * (om x * Real.exp (-p k x))) ∂vol n X.z with hIw
   set μ : Measure M := (vol n X.z).withDensity (fun x => ENNReal.ofReal (Real.exp (-p 0 x)))
     with hμ
-  have hkey : ∀ f : M → ℂ, wint n X.z f (p 0) = eLpNorm f 2 μ ^ (2 : ℝ) := fun f => by
+  have hkey : ∀ f : M → ℂ, AEStronglyMeasurable f μ →
+      wint n X.z f (p 0) = eLpNorm f 2 μ ^ (2 : ℝ) := fun f hf => by
     rw [ReciprocityTheory.L2DbarEstimates.I.fx_wint_eq_withDensity n X.z (p 0) (hpc 0).measurable f,
-      ReciprocityTheory.L2DbarEstimates.I.fx_lintegral_enorm_sq_eq]
+      ReciprocityTheory.L2DbarEstimates.I.fx_lintegral_enorm_sq_eq,
+      eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf]
+    norm_num [hμ]
   have hN : ∀ (v : Lp ℂ 2 μ) (G : M → ℂ), (v : M → ℂ) =ᵐ[μ] G →
       wint n X.z G (p 0) = ENNReal.ofReal (‖v‖ ^ 2) := fun v G h => by
-    rw [hkey, ReciprocityTheory.L2DbarEstimates.I.fx_lp_norm_sq_eq μ v G h]
+    rw [hkey G ((Lp.stronglyMeasurable v).aestronglyMeasurable.congr h),
+      ReciprocityTheory.L2DbarEstimates.I.fx_lp_norm_sq_eq μ v G h]
 
   have hmono : ∀ G k k', k ≤ k' → Iw k G ≤ Iw k' G := fun G k k' h => by
     refine lintegral_mono fun x => ENNReal.ofReal_le_ofReal ?_
@@ -96,8 +105,8 @@ theorem holo_limit_increasing_weights : ∀ (n : ℕ) (M : Type) [TopologicalSpa
   choose Cev hCev0 hCev using hEv
   have hmem : ∀ G : M → ℂ, Continuous G → Iw 0 G ≤ B → MemLp (fun x => G x - Fk 0 x) 2 μ :=
     fun G hG h => by
-    refine ⟨(hG.sub (hcont _ (hF 0))).aestronglyMeasurable, ?_⟩
-    have h1 := ((hkey _).symm.trans_le (hbdB G hG h)).trans_lt hfin
+    have h1 := ((hkey _ (hG.sub (hcont _ (hF 0))).measurable.aestronglyMeasurable).symm.trans_le
+      (hbdB G hG h)).trans_lt hfin
     exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).mp h1
   let K : ℕ → Set (Lp ℂ 2 μ) := fun k => {v | ∃ G : M → ℂ, Holo n X.z G ∧
     (v : M → ℂ) =ᵐ[μ] (fun x => G x - Fk 0 x) ∧ Iw k G ≤ B}

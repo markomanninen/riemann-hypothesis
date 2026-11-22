@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHenselisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IndEtaleComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHenselisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IndEtaleComp
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 
 namespace GlobalTheory.HensMax
@@ -32,8 +37,8 @@ theorem isSepClosed_of_ringEquiv {K L : Type} [Field K] [Field L] [IsSepClosed K
 
 end GlobalTheory.HensMax
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem GlobalTheory.HensMax.exists_strictHens_of_maximal : ∀ (B : Type) [CommRing B] (P : Ideal B) [P.IsMaximal],
     IsSepClosed (IsLocalRing.ResidueField (Localization.AtPrime P)) → ∃ (O : Type) (_ : CommRing O) (_ : Algebra B O),
     SH O ∧ IndEt B O ∧ ∀ Q : Ideal O, Q.IsMaximal → Q.comap (algebraMap B O) = P ∧ ∀ o : O, ∃ b : B, o - algebraMap B O b ∈ Q := by
@@ -59,7 +64,7 @@ theorem GlobalTheory.HensMax.exists_strictHens_of_maximal : ∀ (B : Type) [Comm
     refine ⟨?_, fun o => ?_⟩
     · rw [IsScalarTower.algebraMap_eq B (Localization.AtPrime P) S, ← Ideal.comap_comap,
         GlobalTheory.HensMax.comap_maximalIdeal_of_localHom]
-      exact Localization.AtPrime.comap_maximalIdeal (I := P)
+      exact Localization.AtPrime.under_maximalIdeal (I := P)
     · obtain ⟨y, hy⟩ := hbij.2 (residue S o)
       obtain ⟨r, rfl⟩ := IsLocalRing.residue_surjective y
       obtain ⟨b, hb⟩ := (IsLocalization.AtPrime.equivQuotMaximalIdeal P (Localization.AtPrime P)).surjective

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneDiagSumEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagSumPullTwo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocycleMemRangeCobOfPullbackMulByPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDatNeZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsTorsCharZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneDiagSumEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagSumPullTwo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CocycleMemRangeCobOfPullbackMulByPow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -29,7 +33,7 @@ theorem lift_counit_pullTwo {R D D' : Type} [CommRing R] [CommRing D] [Bialgebra
   induction c using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [pullbackTwo]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem diagSum_one (R D : Type) [CommRing R] [CommRing D] [Bialgebra R D] [Coalgebra.IsCocomm R D] (m : ℕ) :
     diagSum R D m 1 = (m : D) := by

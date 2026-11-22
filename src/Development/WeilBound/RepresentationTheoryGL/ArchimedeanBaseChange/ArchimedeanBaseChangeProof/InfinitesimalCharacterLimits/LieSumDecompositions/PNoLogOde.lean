@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,14 +19,15 @@ theorem pev_eq (p : ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) : pev p f t = pe
   exact congrArg p.sum (funext fun k => funext fun a => mul_comm _ _)
 
 theorem pev_add (p q : ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) : pev (p + q) f t = pev p f t + pev q f t := by
-  simp only [pev_eq, map_add]
+  simp only [pev_eq, map_add (f := _)]
 
 theorem pev_C_mul (c : ℂ) (p : ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) : pev (C c * p) f t = c * pev p f t := by
   simp only [pev_eq, Polynomial.C_mul', map_smul, smul_eq_mul]
 
 theorem pev_sum {ι : Type} (s : Finset ι) (p : ι → ℂ[X]) (f : ℕ → ℝ → ℂ) (t : ℝ) :
     pev (∑ i ∈ s, p i) f t = ∑ i ∈ s, pev (p i) f t := by
-  simp only [pev_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pev_eq, map_sum]
 
 theorem pev_monomial (n : ℕ) (a : ℂ) (f : ℕ → ℝ → ℂ) (t : ℝ) : pev (monomial n a) f t = a * f n t := by
   simp only [pev]

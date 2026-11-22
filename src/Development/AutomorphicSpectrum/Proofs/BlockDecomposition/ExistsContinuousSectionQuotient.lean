@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LocallyProfinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+
+@[expose] public section
 
 open Topology Filter Set
 
@@ -58,7 +62,8 @@ theorem exists_refine [SecondCountableTopology G] (H K L : Subgroup G) [IsClosed
   let V : ℕ → Set (G ⧸ H) := fun n =>
     (t ⁻¹' {g | g⁻¹ * e n ∈ K}) ∩ cosetImage H L (e n)
   have hV : ∀ n, IsClopen (V n) := fun n =>
-    IsClopen.inter ⟨isOpen_compl_iff.1 (ht _ᶜ), ht _⟩ (isClopen_cosetImage H L hLo hLc (e n))
+    IsClopen.inter ⟨isOpen_compl_iff.1 (by simpa only [preimage_compl] using (ht ({g | g⁻¹ * e n ∈ K}ᶜ))), ht _⟩
+      (isClopen_cosetImage H L hLo hLc (e n))
   have hcov : ∀ x, ∃ n, x ∈ V n := by
     intro x
     obtain ⟨k, hk, hkx⟩ := h x

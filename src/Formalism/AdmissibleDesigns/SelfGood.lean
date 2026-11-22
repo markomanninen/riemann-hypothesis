@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.NonemptyPl
+module
+
+public import Formalism.AdmissibleDesigns.NonemptyPl
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

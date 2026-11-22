@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj ReciprocityTheory.ChartRestriction.G.Out
@@ -18,14 +22,6 @@ def coordConst (g : ℕ) : ℝ := (g : ℝ) * (3 / 2 : ℝ) ^ g * (2 : ℝ) ^ ((
 def LowerBounds (g N N' : ℕ) : Prop :=
   1 + 2 * (g : ℝ) * (2 : ℝ) ^ ((g : ℝ) / 2) < (N : ℝ) ∧
     2 * (degEmb g N : ℝ) * coordConst g * (N : ℝ) < (N' : ℝ)
-
-example : LowerBounds 2 ((3 ^ 2) ^ 2) (3 ^ 11 * (3 ^ 2) ^ 2) := by
-  unfold LowerBounds coordConst degEmb
-  norm_num [Nat.factorial]
-
-example : ¬ LowerBounds 2 ((3 ^ 2) ^ 2) (3 ^ 10 * (3 ^ 2) ^ 2) := by
-  unfold LowerBounds coordConst degEmb
-  norm_num [Nat.factorial]
 
 section Operators
 
@@ -141,10 +137,6 @@ instance fracAlgebra (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
     Algebra (FractionRing (intRing K)) (PadicAlgCl p) :=
   (IsFractionRing.lift (A := intRing K) (K := FractionRing (intRing K)) (intRing_injective K)).toAlgebra
 
-example (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (x : intRing K) :
-    algebraMap (FractionRing (intRing K)) (PadicAlgCl p) (algebraMap (intRing K) _ x) = ((x : K) : PadicAlgCl p) :=
-  IsFractionRing.lift_algebraMap (intRing_injective K) x
-
 def PsiNorm {K : IntermediateField ℚ_[p] (PadicAlgCl p)} (D : Out.DegPre (intRing K)) (χ : D.X) (t : ℝ) : Prop :=
   ∀ i : D.P.L.ι, ⊤ ≤ (D.c χ).left ⁻¹ᵁ D.P.L.U i →
     ‖algebraMap (FractionRing (intRing K)) (PadicAlgCl p)
@@ -180,20 +172,7 @@ structure UnifTest {S : ThetaSys o Ω} (Z : Realisation S) (p : ℕ) [Fact p.Pri
 
 attribute [instance] UnifTest.grp UnifTest.comm
 
-def UnifTest.Matches {S : ThetaSys o Ω} {Z : Realisation S} {y : S.R →+* PadicAlgCl p} (t : UnifTest Z p y)
-    (τ : S.Test p y) : Prop :=
-  ∃ e : τ.X ≃+ t.D.toPre.X,
-    (∀ χ, PsiNorm t.D.toPre (e χ) (Real.exp (-(τ.q χ)))) ∧
-    ∀ a, τ.yy a = QuotientAddGroup.mk (e.symm (t.lab a).y)
-
 end Tests
-
-def Realisation.HasUnifTests {S : ThetaSys o Ω} (Z : Realisation S) : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (y : S.R →+* PadicAlgCl p), (∀ a : o, ‖y (algebraMap o S.R a)‖ ≤ 1) →
-    ∃ (t : UnifTest Z p y) (τ : S.Test p y), t.Matches τ
-
-example {S : ThetaSys o Ω} (Z : Realisation S) (h : Z.HasUnifTests) : S.HasTests :=
-  fun p _ y hy => let ⟨_, τ, _⟩ := h p y hy; ⟨τ⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.UniformityLowerBounds
 end

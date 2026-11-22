@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOnComplexHessianOfContDiffOnTwo
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOnComplexHessianOfContDiffOnTwo
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+
+@[expose] public section
+
 open Filter Topology MeasureTheory Metric ReciprocityTheory.L2DbarEstimates
 open scoped ComplexOrder
 set_option maxHeartbeats 1000000 in

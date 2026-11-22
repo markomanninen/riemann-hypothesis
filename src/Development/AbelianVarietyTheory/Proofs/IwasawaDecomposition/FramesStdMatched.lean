@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
-import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.SelfDualFramesExistOfDiagonal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsometryMatchesParahoricLevels
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIntegralChangeBaseFrameOrthonormal
+public import Formalism.LocalToGlobal.IndefiniteReal.FrameExistence.SelfDualFramesExistOfDiagonal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsometryMatchesParahoricLevels
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryEqRealMulFiniteSplit
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
@@ -134,7 +138,7 @@ theorem smul_closure {A B : Type} [CommRing A] [CommRing B] {M : ℕ} (e : B →
   | mem r hr => exact h r hr
   | zero => intro w _; rw [map_zero, zero_smul]; exact zero_mem _
   | one => intro w hw; rwa [map_one, one_smul]
-  | add x y _ _ hx hy => intro w hw; rw [map_add, add_smul]; exact add_mem (hx w hw) (hy w hw)
+  | add x y _ _ hx hy => intro w hw; rw [map_add (f := _), add_smul]; exact add_mem (hx w hw) (hy w hw)
   | neg x _ hx => intro w hw; rw [map_neg, neg_smul]; exact neg_mem (hx w hw)
   | mul x y _ _ hx hy => intro w hw; rw [map_mul, mul_smul]; exact hx _ (hy w hw)
 
@@ -184,7 +188,7 @@ theorem latHat_iff (hV : Seed.FrmC.StdLat V) (y : Fin V.rank → Formalism.MainN
           rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]]
       exact (SI D).mul_mem (tmul_one_mem o) (one_tmul_mem ha)
     | zero => rw [Pi.zero_apply, map_zero]; exact zero_mem _
-    | add y z _ _ hy hz => rw [Pi.add_apply, map_add]; exact add_mem hy hz
+    | add y z _ _ hy hz => rw [Pi.add_apply, map_add (f := _)]; exact add_mem hy hz
     | neg y _ hy => rw [Pi.neg_apply, map_neg]; exact neg_mem hy
   · intro hy
     rw [pi_eq_sum_univ' y]
@@ -195,7 +199,8 @@ theorem latHat_iff (hV : Seed.FrmC.StdLat V) (y : Fin V.rank → Formalism.MainN
 theorem swap_mulVec (Y : Matrix (Fin V.rank) (Fin V.rank) (Lev.EAf D))
     (y : Fin V.rank → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E) (i : Fin V.rank) :
     swapAE D ((Y.map (GlobalTheory.HeckeTrans.unswap D) *ᵥ y) i) = (Y *ᵥ fun j => swapAE D (y j)) i := by
-  simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, GlobalTheory.HeckeTrans.swap_unswap]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, map_sum, map_mul, GlobalTheory.HeckeTrans.swap_unswap]
 
 theorem ksph_iff (hV : Seed.FrmC.StdLat V) {g : GA D V} (hg : g ∈ GfC V) :
     g ∈ KsphC V ∅ ↔ ∀ z : Fin V.rank → Lev.EAf D, (∀ i, z i ∈ SI D) ↔ ∀ i, ((finE V g).1 *ᵥ z) i ∈ SI D := by
@@ -224,7 +229,7 @@ theorem unswap_sg (y : Lev.EAf D) : GlobalTheory.HeckeTrans.unswap D (Formalism.
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x a => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _), map_add (f := _)]
 
 variable (V : HSp D)
 
@@ -275,7 +280,7 @@ theorem conjAL_eq (y : ReciprocityTheory.Aut.AL D.host.E) : ReciprocityTheory.Au
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul x a => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem conjT_eq {n : ℕ} (M : Matrix (Fin n) (Fin n) (Lev.EAf D)) :
     ReciprocityTheory.Aut.conjT (ReciprocityTheory.Aut.conjAL D.host.E) M = Formalism.UG.cT (sgA D) M := by

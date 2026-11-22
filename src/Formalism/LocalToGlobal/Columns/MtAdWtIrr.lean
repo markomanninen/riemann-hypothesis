@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.MtAdWt
+module
+
+public import Formalism.LocalToGlobal.Columns.MtAdWt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.AUTREP MvPolynomial
 
@@ -23,7 +27,7 @@ def HwInStable : Prop :=
 def mtwPerp (lam : ι → DomWeight n) (S : Submodule ℂ (VV ℂ lam)) : Submodule ℂ (VV ℂ lam) where
   carrier := {x | ∀ y ∈ S, pairBK lam x y = 0}
   add_mem' {a b} ha hb y hy := by
-    rw [map_add, LinearMap.add_apply, ha y hy, hb y hy, add_zero]
+    rw [map_add (f := _), LinearMap.add_apply, ha y hy, hb y hy, add_zero]
   zero_mem' y _ := by rw [map_zero, LinearMap.zero_apply]
   smul_mem' c x hx y hy := by rw [map_smul, LinearMap.smul_apply, hx y hy, smul_zero]
 
@@ -83,8 +87,8 @@ section Dens
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ} {ι : Type} [Fintype ι]
 
-open Classical in
 
+open Classical in
 def mtwPtOf (emb : ι → L →+* ℂ) (g : ι → GL (Fin n) ℂ) : (L →+* ℂ) × Fin n × Fin n → ℂ := fun p =>
   if h : ∃ τ, emb τ = p.1 then ((g h.choose : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ) p.2.1 p.2.2
   else if h' : ∃ τ, ComplexEmbedding.conjugate (emb τ) = p.1 then
@@ -180,7 +184,8 @@ theorem mtw_sum_coord (lam : ι → DomWeight n) (f : VV ℂ lam →ₗ[ℂ] ℂ
     ∑ i, f (bVV ℂ lam i) * ∑ j, LinearMap.toMatrix (bVV ℂ lam) (bVV ℂ lam) T i j * (bVV ℂ lam).repr x j = f (T x) := by
   have h := LinearMap.toMatrix_mulVec_repr (bVV ℂ lam) (bVV ℂ lam) T x
   conv_rhs => rw [← (bVV ℂ lam).sum_repr (T x)]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul, mul_comm, ← h]
   rfl
@@ -203,7 +208,8 @@ theorem mtw_stable_of_rat (lam : ι → DomWeight n) (S : Submodule ℂ (VV ℂ 
   have hF : ∀ y, MvPolynomial.eval y F =
       ∑ i, f (bVV ℂ lam i) * ∑ j, MvPolynomial.eval y (tenP emb lam i j) * (bVV ℂ lam).repr x j := by
     intro y
-    simp only [F, map_sum, map_mul, MvPolynomial.eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, map_sum, map_mul, MvPolynomial.eval_C]
   have hrat : ∀ γ₀ ∈ GQ0 L n, MvPolynomial.eval (PI.UnitaryGroupMassFormula.HwConjInf.ratPt (γ₀ : Matrix (Fin n) (Fin n) L)) F = 0 := by
     intro γ₀ hγ
     rw [hF]

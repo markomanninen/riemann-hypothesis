@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.CompletionIntegersIff
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.CompletionIntegersIff
+
+@[expose] public section
 
 noncomputable section
 

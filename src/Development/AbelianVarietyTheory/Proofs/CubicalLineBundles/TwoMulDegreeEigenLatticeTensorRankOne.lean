@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegralTangentVectorCoordinates
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SingleMemSpanIffOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueExtendRingOfIntegersHom
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormSumSum
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieTensorLine
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLieRepresentationEigenLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueCmHermitianLatticeFormStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TwoMulDegDualLineCmIdealStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieAlgebraSquaredLengthCompPairingHomStatement
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsFractionalIdealTraceFormRankOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegralTangentVectorCoordinates
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SingleMemSpanIffOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueExtendRingOfIntegersHom
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CmCurveLieCharacterOfAdjoinGenerator
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.HermFormSumSum
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieTensorLine
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IntegersOfCmFieldConjStructure
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsLieRepresentationEigenLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsUniqueCmHermitianLatticeFormStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.TwoMulDegDualLineCmIdealStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LieAlgebraSquaredLengthCompPairingHomStatement
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsFractionalIdealTraceFormRankOneStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
 open scoped CategoryTheory.Obj
@@ -62,12 +67,13 @@ theorem form_eq_of_span {K V L I : Type} [Field K] [AddCommGroup V] [Module K V]
     induction hw using Submodule.span_induction with
     | mem v hv => obtain ⟨y, rfl⟩ := hv; exact hz y
     | zero => simpa using h.smul_right s 0 (Φ z) 0
-    | add u v _ _ hu hv => simp only [map_add, h.add_right, hu, hv, Pi.add_apply, mul_add, Finset.sum_add_distrib]
+    | add u v _ _ hu hv => simp only [map_add (f := _), h.add_right, hu, hv, Pi.add_apply, mul_add, Finset.sum_add_distrib]
     | smul r u _ hu =>
       rw [map_smul, h.smul_right, hu, Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by simp; ring
   refine key z (fun y => ?_) w
-  rw [← h.conj_symm, key _ (hf y), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h.conj_symm, key _ (hf y), map_sum]
   exact Finset.sum_congr rfl fun i _ => by simp [_root_.mul_comm]
 
 theorem exists_eigenline {E K O L V I : Type} [Field E] [NumberField E] [IsCMField E] [Field K] [NumberField K]
@@ -93,7 +99,8 @@ theorem exists_eigenline {E K O L V I : Type} [Field E] [NumberField E] [IsCMFie
   have hexp : ∀ a, ev a = ∑ m, algebraMap (𝓞 K) K (τ₀ (hK a (y m))) • ev (x m) := fun a => by
     funext i
     conv_lhs => rw [hdual a]
-    simp only [hev, map_sum, he, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hev, map_sum, he, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   let Φ : (I → K) →ₗ[K] V :=
     { toFun := fun z => ∑ m, (∑ i, z i * dv (y m) i) • c (x m)
       map_add' := fun z z' => by simp only [Pi.add_apply, add_mul, Finset.sum_add_distrib, add_smul]
@@ -102,7 +109,8 @@ theorem exists_eigenline {E K O L V I : Type} [Field E] [NumberField E] [IsCMFie
           RingHom.id_apply] }
   have hΦ : ∀ a, Φ (ev a) = c a := fun a => by
     conv_rhs => rw [hdual a]
-    simp only [map_sum, hc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hc]
     change ∑ m, (∑ i, ev a i * dv (y m) i) • c (x m) = _
     simp only [← hh']
   let b : (K →+* ℂ) → I → ℝ := fun s i => (s (σ i β)).re * n s
@@ -117,17 +125,19 @@ theorem exists_eigenline {E K O L V I : Type} [Field E] [NumberField E] [IsCMFie
       ∑ i, b s i * (starRingEnd ℂ (s (ev a i)) * s (ev a' i))) (fun a => w • a) (s (τ₀ w)) (hw s)
       (fun a a' a'' => ?_) (fun a a' => ?_) (fun a a' => ?_) (fun a => ?_) a a'
     · simp only [hΦ]
-      simp only [map_add, h.add_right, hev, mul_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), h.add_right, hev, mul_add, Finset.sum_add_distrib]
       ring
-    · rw [map_sub, h.conj_symm, map_sum]
-      congr 1
-      exact Finset.sum_congr rfl fun i _ => by simp [_root_.mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [map_sub, h.conj_symm, map_sum]
+        congr 1
+        exact Finset.sum_congr rfl fun i _ => by simp [_root_.mul_comm]
     · simp only [hΦ]
       simp only [hc, h.smul_right, hev, he, mul_sub, Finset.mul_sum, map_mul]
       congr 1
       exact Finset.sum_congr rfl fun i _ => by ring
     · have : ∑ i, b s i * (starRingEnd ℂ (s (ev a i)) * s (ev a i)) = s (τ₀ (hK a a)) * n s := by
-        rw [hh, map_sum, Finset.sum_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hh, map_sum, Finset.sum_mul]
         refine Finset.sum_congr rfl fun i _ => ?_
         have := IsCMField.complexEmbedding_complexConj E (s.comp (σ i)) (e a)
         simp only [RingHom.comp_apply] at this
@@ -162,7 +172,7 @@ theorem exists_eigenline {E K O L V I : Type} [Field E] [NumberField E] [IsCMFie
       simp [hev, Algebra.smul_def]
     | zero => simp only [Pi.zero_apply, mul_zero, map_zero]; exact (map_zero Φ).symm
     | add u v _ _ hu hv =>
-      rw [map_add, map_add, hu, hv, ← map_add]
+      rw [map_add (f := _), map_add (f := _), hu, hv, ← map_add (f := _)]
       congr 1
       funext i
       simp [mul_add]
@@ -222,10 +232,11 @@ theorem two_mul_deg_eigLat : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field 
       rw [hτ₀w, ← hτ, ← hτ']
       have h3 := congrArg σ h2
       have h4 := congrArg τ' h2
-      simp only [map_mul, map_add, map_one, map_ofNat] at h3 h4
+      simp only [map_mul, map_add (f := _), map_one, map_ofNat] at h3 h4
       linear_combination (h3 - h4 + hσ) / 2
     obtain ⟨m, rfl, -⟩ := existsUnique_coord H k
-    simp only [map_add, map_mul, map_intCast, ← hw]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_mul, map_intCast, ← hw]
     simp [wK]
   obtain ⟨𝔞, e, β, h𝔞, he, hrange, hβc, hβ, hform, hnorm⟩ := GlobalTheory.T.exists_fractionalIdeal_traceForm_rank_one E H D ε hK hrk hKF hpos
   obtain ⟨k, hk, hku, -, -, -, -, N, xs, ys, hdual⟩ := GlobalTheory.T.exists_unique_cmHermitianLatticeForm E H D ε
@@ -250,11 +261,6 @@ theorem two_mul_deg_eigLat : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field 
       rw [hcou _ _ hu]
       clear hu hz
       induction z' with
-      | zero =>
-        have := cosmul 0 0
-        rw [zero_smul, zero_smul] at this
-        rw [this]
-        exact zero_mem _
       | tmul a m =>
         rw [show TensorProduct.tmul (OK H) a m = a • TensorProduct.tmul (OK H) 1 m by
           simp [TensorProduct.smul_tmul'], cosmul]
@@ -279,7 +285,7 @@ theorem two_mul_deg_eigLat : ThetaUnifAV → Out.Laws → ∀ (E : Type) [Field 
       have h3 := congrArg (s.comp τ') h2
       have h4 := congrArg (s.comp τ') (HostModel.coe_sq_eq_neg H.rt_sq)
       have h5 : s (τ' (H.w0 : E)) = s (τ₀ (wK H)) := congrArg s (hext τ' rfl (wK H))
-      simp only [map_mul, map_add, map_one, map_ofNat, map_pow, map_neg, map_natCast, RingHom.comp_apply] at h3 h4
+      simp only [map_mul, map_add (f := _), map_one, map_ofNat, map_pow, map_neg, map_natCast, RingHom.comp_apply] at h3 h4
       have h6 := congrArg Complex.im h3
       have h7 := congrArg Complex.re h4
       have h8 : (0 : ℝ) < H.d := by exact_mod_cast H.d_prime.pos

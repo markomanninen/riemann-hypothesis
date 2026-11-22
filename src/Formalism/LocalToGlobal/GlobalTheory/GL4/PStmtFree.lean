@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL4.ClassMapArchimedean
-import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
-import Formalism.SharpRestriction.GlobalSchurBounds.TotallyPositiveTraceGeOfNormDiscr
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.ClassMapArchimedean
+public import Formalism.LocalToGlobal.GlobalTheory.GL4.LowerSlopeInequalityFamily
+public import Formalism.SharpRestriction.GlobalSchurBounds.TotallyPositiveTraceGeOfNormDiscr
+
+@[expose] public section
 
 noncomputable section
 

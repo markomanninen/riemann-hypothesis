@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CechTripleRestrictCompositeInjectiveSecond
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,10 +51,6 @@ theorem Bas.glob [Quiver.IsThin C] (h : Bas s G) :
     Function.Bijective (pullGlob1 (CoefMap.restrict (OAff s) G)) :=
   _root_.GlobalTheory.restrict_glob1_bijective _ _ (_root_.GlobalTheory.CechDR.form_eq_zero_of_basis_cover s G h.1)
     (_root_.GlobalTheory.CechDR.FormExt.glue_one_forms s G h.1 h.2)
-
-theorem Bas.hyp [Quiver.IsThin C] (h : Bas s G) :
-    Function.Bijective (pullHyp1 (CoefMap.restrict (OAff s) G)) :=
-  restrict_bijective_one_of_basis s G h.1 h.2
 
 theorem Bas.extend [Quiver.IsThin C] (h : Bas s G) (g' : ∀ t, (OAff s).obj (G.obj t))
     (hg' : ∀ ⦃t t' : C⦄ (a : t ⟶ t'), g' t' = mp (OAff s) (G.map a) (g' t)) :
@@ -479,7 +479,7 @@ theorem sum_bijective (ua : ∀ x, u (a x) = x) (ub : ∀ x, u (b x) = 0) (va : 
   · have e' : a x.1 + b x.2 = a y.1 + b y.2 := e
     have e1 := congrArg u e'
     have e2 := congrArg v e'
-    simp only [map_add, ua, ub, va, vb, add_zero, zero_add] at e1 e2
+    simp only [map_add (f := _), ua, ub, va, vb, add_zero, zero_add] at e1 e2
     exact Prod.ext e1 e2
   · refine sub_eq_zero.1 (hz _ ?_ ?_) <;> simp [ua, ub, va, vb]
 
@@ -529,10 +529,10 @@ theorem hyp_primitive (sA : Stein (OAff A.hom))
     PH (μ : A ⊗ A ⟶ A) c = PH (fst A A) c + PH (snd A A) c := by
   set d : HH1 (A ⊗ A).hom := PH (μ : A ⊗ A ⟶ A) c - (PH (fst A A) c + PH (snd A A) c) with hd
   have d1 : PH (ax₁ A) d = 0 := by
-    simp only [hd, map_sub, map_add, ← PH_comp, ax₁_mul, lift_fst, lift_snd, PH_id, PH_one]
+    simp only [hd, map_sub, map_add (f := _), ← PH_comp, ax₁_mul, lift_fst, lift_snd, PH_id, PH_one]
     simp
   have d2 : PH (ax₂ A) d = 0 := by
-    simp only [hd, map_sub, map_add, ← PH_comp, ax₂_mul, lift_fst, lift_snd, PH_id, PH_one]
+    simp only [hd, map_sub, map_add (f := _), ← PH_comp, ax₂_mul, lift_fst, lift_snd, PH_id, PH_one]
     simp
   have toO0 : ∀ f : A ⟶ A ⊗ A, PH f d = 0 → IsPullO (wOver f) (toHO1 _ d) 0 := fun f e ↦ by
     have := IsPull1.toO (isPull1_pullHH1 (wOver f) d)
@@ -566,13 +566,13 @@ theorem bi_of_fam {Y : Over (Sp R)} {J : Type} [Finite J] (f : J → (Y ⟶ A)) 
     hb.stein sY, hb.par pY, ?_, ?_, fun c ↦ ?_, fun c ↦ ?_, fun c ↦ ?_⟩
   · convert hb.pull1.comp hO using 1
     funext x
-    simp only [Function.comp_apply, map_add, eO]
+    simp only [Function.comp_apply, map_add (f := _), eO]
   · convert hb.glob.comp hF using 1
     funext x
-    simp only [Function.comp_apply, map_add, eF]
-  · rw [eO, eO, eO, ← map_add, mO]
-  · rw [eF, eF, eF, ← map_add, mF]
-  · rw [eH, eH, eH, ← map_add, mH]
+    simp only [Function.comp_apply, map_add (f := _), eF]
+  · rw [eO, eO, eO, ← map_add (f := _), mO]
+  · rw [eF, eF, eF, ← map_add (f := _), mF]
+  · rw [eH, eH, eH, ← map_add (f := _), mH]
 
 theorem bi_of_pull {Y : Over (Sp R)} (m p q : Y ⟶ A) (sY : Stein (OAff Y.hom)) (pY : Par (OAff Y.hom))
     (hO : Function.Bijective fun x : HO1 A.hom × HO1 A.hom ↦ PO p x.1 + PO q x.2)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistSmulHomApp
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistSmulHomApp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -54,7 +58,8 @@ lemma exists_smulHom_eq (P : X.Modules) {a : A} (ha : a ∈ I ^ 1) :
     unfold idealSumMap
     rw [Preadditive.sum_comp]
     simp only [Category.assoc, biproduct.ι_desc, smulHom_comp_smulHom]
-    rw [← smulHom_sum, ← hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← smulHom_sum, ← hc, map_sum]
     simp only [smul_eq_mul, map_mul]
   refine ⟨kernel.lift _ (GroundTheory.Arith.SchemeCoh.smulHom P (algebraMap A Γ(X, ⊤) a)) ?_, ?_⟩
   · rw [← ht, Category.assoc, cokernel.condition, comp_zero]

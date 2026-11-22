@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBesselEigen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OpApplyContinuousOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt MeasureTheory
 open Formalism.REAL Formalism.QuantumDeterminants

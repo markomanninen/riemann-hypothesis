@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUSplittingInl
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ImportsBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRatPairIff
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta
 open IsDedekindDomain NumberField MeasureTheory
@@ -42,7 +46,7 @@ theorem psiInf_eq_exp_linear : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), Is
         simp [TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
   have hg : Continuous g := by
     show Continuous fun m => c * ∑ ρ, θ ρ (e.symm m ⊗ₜ[D.host.F] (1 : D.host.E))
-    refine continuous_const.mul (continuous_finset_sum _ fun ρ _ => ?_)
+    refine continuous_const.mul (continuous_finsetSum _ fun ρ _ => ?_)
     exact (hθ ρ).2.comp (continuous_ringEquiv_mixedSpace_symm D.host.F)
   refine ⟨AddMonoidHom.toRealLinearMap g hg, fun x => ?_⟩
   rw [hform x]

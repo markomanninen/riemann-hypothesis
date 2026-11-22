@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolPrime
-import GroundTheory.LocalFields.LocalArtinMap
-import GroundTheory.LocalFields.LocalReciprocityUniversal
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolPrime
+public import GroundTheory.LocalFields.LocalArtinMap
+public import GroundTheory.LocalFields.LocalReciprocityUniversal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -82,7 +87,7 @@ theorem brauerInvZ_galCupClass (χ : Additive Gal(Ω/K) →ₜ+ QZ) (a : Kˣ) (g
     obtain ⟨g₂, rfl⟩ := AlgEquiv.restrictNormalHom_surjective (E := Ω) τ₂
     rw [← map_mul, ← map_mul, ← mul_inv_eq_one, ← map_inv, ← map_mul, ← MonoidHom.mem_ker,
       IntermediateField.restrictNormalHom_ker, hker]
-    simp only [mul_inv_rev, ofMul_mul, ofMul_inv, map_add, map_neg]
+    simp only [mul_inv_rev, ofMul_mul, ofMul_inv, map_add (f := _), map_neg]
     abel⟩⟩
   have : IsAbelianGalois K M := ⟨⟩
   let L := fixingOpenSubgroup M
@@ -136,7 +141,7 @@ theorem brauerInvZ_galCupClass (χ : Additive Gal(Ω/K) →ₜ+ QZ) (a : Kˣ) (g
   rw [brauerInvZ_eq_inv_top, cohomologyRes_eq]
   change (localClassFormationZ K Ω).inv ⊤ ((cohomologyMapAlong _ _ (𝟙 _) 2).hom
     ((cupCharClassProf (galUnitsZ K Ω) χ).hom (unitsInvariant K Ω a))) = _
-  rw [hres, hdec, fixedToInvariants_mul, map_add, map_add, fixedToInvariants_norm,
+  rw [hres, hdec, fixedToInvariants_mul, map_add (f := _), map_add (f := _), fixedToInvariants_norm,
     fixedToInvariants_norm, ClassFormation.inv_cupCharClassProf_invariantsNormLE,
     ClassFormation.inv_cupCharClassProf_invariantsNormLE, hL0, cupCharClassProf_zero, map_zero,
     add_zero, localClassFormationZ_inv_cupCharClassProf_of_prime' S χ π₀ hπ₀
@@ -159,7 +164,7 @@ theorem brauerInvZ_galCupClass (χ : Additive Gal(Ω/K) →ₜ+ QZ) (a : Kˣ) (g
     rw [AlgEquiv.mul_apply, ← hgy y hy]
     exact g.symm_apply_apply y
   have e := (hker _).1 hmem
-  rw [ofMul_mul, map_add, ofMul_inv, map_neg, neg_add_eq_zero] at e
+  rw [ofMul_mul, map_add (f := _), ofMul_inv, map_neg, neg_add_eq_zero] at e
   exact e.symm
 
 end Reciprocity

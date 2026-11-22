@@ -1,16 +1,18 @@
-import Formalism.WindowSums.AnnihilatorPolynomials.DistinctTerms
-import Formalism.WindowSums.AnnihilatorPolynomials.LeOfPowMemIdealOfDistinctTerms
-import Formalism.WindowSums.AnnihilatorPolynomials.FirstCoefficientBoundHolds
-import Formalism.WindowSums.AnnihilatorPolynomials.EvalOneSmulDecomposition
-import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
-import Formalism.WindowSums.AnnihilatorPolynomials.ValProd
-import Formalism.WindowSums.AnnihilatorPolynomials.WindowSum
-import Formalism.WindowSums.AnnihilatorPolynomials.Lagrange
-import Formalism.WindowSums.StatementRelay
+module
+
+public import Formalism.WindowSums.AnnihilatorPolynomials.DistinctTerms
+public import Formalism.WindowSums.Statement
+public import Formalism.WindowSums.AnnihilatorPolynomials.EvalOneSmulDecomposition
+public import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+public import Formalism.WindowSums.AnnihilatorPolynomials.ValProd
+public import Formalism.WindowSums.AnnihilatorPolynomials.WindowSum
+public import Formalism.WindowSums.AnnihilatorPolynomials.Lagrange
+public import Formalism.WachModuleLifts.StatementW
+
+@[expose] public section
 
 namespace Formalism.WindowSums
 
-theorem arc_C2Lower : PowMemIdealOfLe := pow_mem_ideal_of_le
 theorem arc_ZpowVal : ZpowVal := valuation_zpow_sub_one
 theorem arc_ValProd : ValProd := valProd_of valuation_zpow_sub_one
 theorem arc_KillerVal : KillerVal := killerVal_of valuation_zpow_sub_one

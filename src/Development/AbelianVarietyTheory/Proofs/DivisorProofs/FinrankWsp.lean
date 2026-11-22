@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
@@ -19,13 +23,13 @@ def wAt (lam : InfinitePlace E → DomWeight n) (γ : UE E n) : Wsp lam →ₗ[�
   PiTensorProduct.map fun v => GlobalTheory.Branching.sqRep ℂ n (lam v) (GeneralLinearGroup.map v.embedding γ.1)
 
 def vecM (S : Set (Pl E)) (lam : InfinitePlace E → DomWeight n) (K' : ∀ w : Pl E, Subgroup (UL n w)) :
-    Submodule ℂ (finU E n → Module.Dual ℂ (Wsp lam)) where
+    Submodule ℂ (finU (E := E) (n := n) → Module.Dual ℂ (Wsp lam)) where
   carrier := {F | (∀ (γ : UE E n) x, F (finPt γ * x) = (wAt lam γ⁻¹).dualMap (F x)) ∧
     ∀ k ∈ globLev S K', ∀ x, F (x * k) = F x}
   add_mem' := by
     intro a b ha hb
     refine ⟨fun γ x => ?_, fun k hk x => ?_⟩
-    · simp only [Pi.add_apply, ha.1 γ x, hb.1 γ x, map_add]
+    · simp only [Pi.add_apply, ha.1 γ x, hb.1 γ x, map_add (f := _)]
     · simp only [Pi.add_apply, ha.2 k hk x, hb.2 k hk x]
   zero_mem' := ⟨fun _ _ => by simp, fun _ _ _ => rfl⟩
   smul_mem' := by
@@ -36,8 +40,8 @@ def vecM (S : Set (Pl E)) (lam : InfinitePlace E → DomWeight n) (K' : ∀ w : 
 
 def hopM (S : Set (Pl E)) (lam : InfinitePlace E → DomWeight n) (K' : ∀ w : Pl E, Subgroup (UL n w))
     (f : ∀ w : Pl E, UL n w → ℂ) :
-    (finU E n → Module.Dual ℂ (Wsp lam)) →ₗ[ℂ] (finU E n → Module.Dual ℂ (Wsp lam)) :=
-  levOp (rightReg ℂ (finU E n) (Module.Dual ℂ (Wsp lam))) (globLev S (KL n)) (globLev S K') (globFn S f)
+    (finU (E := E) (n := n) → Module.Dual ℂ (Wsp lam)) →ₗ[ℂ] (finU (E := E) (n := n) → Module.Dual ℂ (Wsp lam)) :=
+  levOp (rightReg ℂ (finU (E := E) (n := n)) (Module.Dual ℂ (Wsp lam))) (globLev S (KL n)) (globLev S K') (globFn S f)
     LinearMap.id
 
 end GlobalTheory.BCT.TrKer

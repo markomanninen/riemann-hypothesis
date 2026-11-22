@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalHeightScaling
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalModelModulusPropertiesOnUnits
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.NGHTie
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocalSplitTypeMixedSecond
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalHeightScaling
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalModelModulusPropertiesOnUnits
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -161,7 +165,7 @@ theorem sgnL_sq (R : Type*) [CommRing R] (r l : ℕ) : sgnL R r l * sgnL R r l =
   exact Finset.prod_eq_one fun b _ => by rw [← mul_pow]; simp
 
 theorem place_eq (D : D7) (Z : LocDat D) (p : PlF D) (P : Formalism.MainNotions.S.LocNG.FPair (locH Z p) D.R.rS)
-    {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+    {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (w : Point D.host.E (D.R.rS + 1)) (hZ : ZhatOM (ZhatL F F') = ptMat w)
     (hA : P.A.f = fun a => frFac Z.δ p a • baseChange₂ D p (frame F a))
     (hB : P.B.f = fun b => frFac Z.δ p b • baseChange₂ D p (frame F' b)) (n n' : ℕ)

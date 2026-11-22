@@ -1,18 +1,22 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostLocVan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.SelmerComplexFiniteAndEulerCharacteristic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankUnramifiedCocyclesEqFinrankInvariants
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalEulerCharacteristicRationalsOddPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LocalEulerCharacteristicRationals
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalCohomologyFiniteSet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsAbsGaloisFixingSqrtNegOneCyclotomicNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankGradedPieceAndComplexConjugationInvariant
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HcAvg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsHostFrame
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.AdRepBaseLiftApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.DvrFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostLocVan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.SelmerComplexFiniteAndEulerCharacteristic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankUnramifiedCocyclesEqFinrankInvariants
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalEulerCharacteristicRationalsOddPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.LocalEulerCharacteristicRationals
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.GlobalCohomologyFiniteSet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.ExistsAbsGaloisFixingSqrtNegOneCyclotomicNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.FinrankGradedPieceAndComplexConjugationInvariant
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.HcAvg
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia Module
 
@@ -74,7 +78,7 @@ private theorem hc_tame :
   haveI : Module.Finite k W := by
     let r' : W →ₗ[k] B1 (ρ.comp I.subtype : Representation k I M) := r.codRestrict _ fun z => hr ▸ ⟨z, rfl⟩
     refine Module.Finite.of_injective (r'.prod ((LinearMap.proj φ).comp W.subtype)) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     have z1 := ((hW _).1 z.2).1
     have e1 : r z = 0 := congrArg (fun p => p.1.1) hz
@@ -97,10 +101,10 @@ private theorem hc_tame :
   rw [← LinearMap.finrank_range_add_finrank_ker r, hr, hk]
   exact rank_coboundaries_invariants _
 
-private theorem hc_val {k : Type} [CommRing k] {j : ℤ} {X Y : Gb k j} (h : X.val = Y.val) : X = Y := Subtype.ext h
+private theorem hc_val {k : Type} [CommRing k] {j : ℤ} {X Y : Gb (k := k) j} (h : X.val = Y.val) : X = Y := Subtype.ext h
 
 private theorem hc_scal {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) (Ψ : D →* kˣ) (j : ℤ) {g : D} (hg : η g = 1)
-    (X : Gb k j) : gRep η Ψ j g X = ((Ψ g ^ j : kˣ) : k) • X := by
+    (X : Gb (k := k) j) : gRep η Ψ j g X = ((Ψ g ^ j : kˣ) : k) • X := by
   refine hc_val ?_
   ext a b
   rw [gRep_val, adRep_baseLift_apply, if_pos hg]
@@ -111,7 +115,7 @@ private theorem hc_scal {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) 
     simp [this]
 
 private theorem hc_congr {k D : Type} [CommRing k] [Group D] (η : D →* ℤˣ) (Ψ : D →* kˣ) (j : ℤ) {g g' : D}
-    (h : η g = η g') (h' : Ψ g ^ j = Ψ g' ^ j) (X : Gb k j) : gRep η Ψ j g X = gRep η Ψ j g' X := by
+    (h : η g = η g') (h' : Ψ g ^ j = Ψ g' ^ j) (X : Gb (k := k) j) : gRep η Ψ j g X = gRep η Ψ j g' X := by
   rcases Int.units_eq_one_or (η g) with h1 | h1
   · rw [hc_scal η Ψ j h1, hc_scal η Ψ j (h ▸ h1), h']
   · refine hc_val ?_
@@ -158,8 +162,8 @@ private theorem hc_cont (hF : F.Ok) (j : ℤ) : ContAction (F.gbar j) := by
     refine IsLocallyConstant.desc _ Units.val ?_ Units.val_injective
     have := (hF.Ψ_cont 1).comp (Ideal.Quotient.factor (le_of_eq (pow_one (maximalIdeal O))))
     exact this
-  have h2 := (hF.η_cont.prodMk h1).comp_continuous (continuous_fst (Y := Gb (ResidueField O) j))
-  have h3 : IsLocallyConstant (Prod.snd : Γ × Gb (ResidueField O) j → _) :=
+  have h2 := (hF.η_cont.prodMk h1).comp_continuous (continuous_fst (Y := Gb (k := ResidueField O) j))
+  have h3 : IsLocallyConstant (Prod.snd : Γ × Gb (k := ResidueField O) j → _) :=
     (IsLocallyConstant.iff_continuous _).2 continuous_snd
   have h4 := (h2.prodMk h3).comp fun q => gRep (MonoidHom.fst ℤˣ (ResidueField O)ˣ) (MonoidHom.snd _ _) j q.1 q.2
   exact h4.continuous
@@ -172,25 +176,25 @@ private theorem exists_scalar_action_nontrivial (hF : F.Ok) {j : ℤ} (hj : j �
     rw [map_sub, map_pow, map_one] at this
     exact this
   · obtain ⟨f, e, -⟩ := UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants F.η F.Ψbar F.c (hc_two hF) hF.ηc (hc_c hF) j
-    have : Subsingleton (Gb (ResidueField O) j) := by
+    have : Subsingleton (Gb (k := ResidueField O) j) := by
       rw [← Module.finrank_zero_iff (R := ResidueField O), e]; omega
     exact ⟨0, fun m => Subsingleton.elim _ _, zero_ne_one⟩
 
-private theorem hc_N (j : ℤ) (v : ι) (s : F.D v) (hs : s ∈ F.Nv v) (m : Gb (ResidueField O) j) : F.gloc j v s m = m := by
+private theorem hc_N (j : ℤ) (v : ι) (s : F.D v) (hs : s ∈ F.Nv v) (m : Gb (k := ResidueField O) j) : F.gloc j v s m = m := by
   have h : F.Ψbar (F.loc v s) = 1 := hs.2
   have := hc_scal F.η F.Ψbar j (g := F.loc v s) hs.1.2 m
   rw [h] at this
   simpa using this
 
-private theorem hc_I (hF : F.Ok) (s : F.D F.vl) (hs : s ∈ F.Iv F.vl) (m : Gb (ResidueField O) 0) :
+private theorem hc_I (hF : F.Ok) (s : F.D F.vl) (hs : s ∈ F.Iv F.vl) (m : Gb (k := ResidueField O) 0) :
     F.gloc 0 F.vl s m = m := by
   have := hc_scal F.η F.Ψbar 0 (g := F.loc _ s) (hF.η_I _ (Or.inl rfl) s hs) m
   simpa using this
 
 private theorem hc_contv (hF : F.Ok) (j : ℤ) (v : ι) : ContAction (F.gloc j v) := by
-  have h : Continuous fun p : F.D v × Gb (ResidueField O) j => (F.loc v p.1, p.2) :=
+  have h : Continuous fun p : F.D v × Gb (k := ResidueField O) j => (F.loc v p.1, p.2) :=
     ((hF.π_cont.comp continuous_subtype_val).comp continuous_fst).prodMk continuous_snd
-  have h2 : Continuous fun p : Γ × Gb (ResidueField O) j => F.gbar j p.1 p.2 := hc_cont hF j
+  have h2 : Continuous fun p : Γ × Gb (k := ResidueField O) j => F.gbar j p.1 p.2 := hc_cont hF j
   have h3 := h2.comp h
   exact h3
 
@@ -223,17 +227,17 @@ private theorem hc_count [Fintype ι] (hF : F.Ok) (hV : F.LocVan) (j : ℤ)
     (g1 : Module.Finite (ResidueField O) (H1 (F.gbar j))) (g2 : Module.Finite (ResidueField O) (H2 (F.gbar j)))
     (g3 : finrank (ResidueField O) (H1 (F.gbar j)) + finrank (ResidueField O) (LinearMap.ker (F.gbar j F.c - LinearMap.id)) =
       finrank (ResidueField O) (H0 (F.gbar j)) + finrank (ResidueField O) (H2 (F.gbar j)) +
-        finrank (ResidueField O) (Gb (ResidueField O) j))
+        finrank (ResidueField O) (Gb (k := ResidueField O) j))
     (l1 : ∀ v, Module.Finite (ResidueField O) (H1 (F.gloc j v))) (l2 : ∀ v, Module.Finite (ResidueField O) (H2 (F.gloc j v)))
     (l3 : finrank (ResidueField O) (H1 (F.gloc j F.vl)) = finrank (ResidueField O) (H0 (F.gloc j F.vl)) +
-      finrank (ResidueField O) (H2 (F.gloc j F.vl)) + finrank (ResidueField O) (Gb (ResidueField O) j))
+      finrank (ResidueField O) (H2 (F.gloc j F.vl)) + finrank (ResidueField O) (Gb (k := ResidueField O) j))
     (l4 : ∀ v ≠ F.vl, finrank (ResidueField O) (H1 (F.gloc j v)) = finrank (ResidueField O) (H0 (F.gloc j v)) +
       finrank (ResidueField O) (H2 (F.gloc j v)))
     (hs : ∀ κ : ∀ v, Z2 (F.gloc j v), ∃ z : Z2 (F.gbar j), ∀ v, F.res2 j v z.1 - (κ v).1 ∈ B2 (F.gloc j v)) :
     Module.Finite (ResidueField O) (F.selmerCohomologyQuotient j) ∧ Module.Finite (ResidueField O) (F.Ob j) ∧
       (finrank (ResidueField O) (F.selmerCohomologyQuotient j) : ℤ) - finrank (ResidueField O) (F.Ob j) = Frame.defect j := by
   obtain ⟨f, d1, d2⟩ := UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants F.η F.Ψbar F.c (hc_two hF) hF.ηc (hc_c hF) j
-  haveI : Finite (Gb (ResidueField O) j) := Module.finite_of_finite (ResidueField O)
+  haveI : Finite (Gb (k := ResidueField O) j) := Module.finite_of_finite (ResidueField O)
   obtain ⟨c1, c2, c3⟩ := UpperTheory.selmerComplex_finite_and_euler_characteristic F j hF.π_cont (hc_cont hF j) f (hc_B hF j) g1 g2 l1 l2 hs
   refine ⟨c1, c2, ?_⟩
   have z := fun v => rank_cocycles_formula _ (hc_contv hF j v)
@@ -306,7 +310,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.hostFrame_count :
       mem_nonunits_iff, isUnit_map_iff, PadicInt.isUnit_iff, PadicInt.norm_p]
     exact (inv_lt_one_of_one_lt₀ (by exact_mod_cast hl.out.one_lt)).ne
   obtain ⟨f, -⟩ := UpperTheory.finrank_gradedPiece_and_complexConjugation_invariants F.η F.Ψbar F.c (hc_two hO) hO.ηc (hc_c hO) j
-  haveI : Finite (Gb (ResidueField c.O) j) := Module.finite_of_finite (ResidueField c.O)
+  haveI : Finite (Gb (k := ResidueField c.O) j) := Module.finite_of_finite (ResidueField c.O)
   have hσ : ∃ (σ : Formalism.ConjugateSelfDual.G ℚ Ω) (a : ResidueField c.O) (n : ℕ), (∀ m, F.gbar j (F.π σ) m = a • m) ∧
       (n : ZMod (l ^ 1)) = (cycMod ℚ Ω l 1 σ : (ZMod (l ^ 1))ˣ) ∧ a ≠ (n : ResidueField c.O) := by
     by_cases hj : j = 0

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix
@@ -154,7 +158,9 @@ lemma val_tl_pow [CharZero K] (p : ℕ) [Fact p.Prime] (hp : v (p : K) < 1) {x :
     push_cast
     rw [hc' k h1 h2, add_sub_cancel_left]; ring
   obtain ⟨q, hq⟩ := logPoly_dvd p (Fact.out : p.Prime).one_le c hc a
-  have hx1 : x - 1 ∈ v.integer := sub_mem (le_of_eq hx : x ∈ v.integer) (one_mem _)
+  have hx1 : x - 1 ∈ v.integer := by
+    apply sub_mem _ (one_mem _)
+    rw [Valuation.mem_integer_iff, hx]
   let t : v.integer := ⟨x - 1, hx1⟩
   have h := congrArg (fun r : v.integer[X] => ((r.eval t : v.integer) : K)) hq
   simp only [eval_sub, eval_comp, eval_mul, eval_C, eval_pow, eval_X, eval_add, eval_one] at h

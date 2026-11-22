@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverThm
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverThm
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.CoverPoly
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.FiniteDimensionalMram
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host Formalism.L2.NT Formalism.IndefR.NX GlobalTheory.HeightCounting NumberField IsDedekindDomain Polynomial
 
@@ -164,7 +168,7 @@ theorem eig_dim : ∀ (D : D7) (M : MtFam D) (B : NLocBase D M) (j : ℕ) (w : D
           map_add' := fun y y' => by
             have := hadd' 1 (Mw.real y) (Mw.real y')
             rw [one_smul, one_smul] at this
-            simp only [map_add]
+            simp only [map_add (f := _)]
             exact this
           map_smul' := fun c y => by
             have := hadd' c (Mw.real y) 0

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapComp
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DiscriminantEigenProjector
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualMapComp
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DiscriminantEigenProjector
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem exists_proj (𝔐 : HodgeCpt Y S y) (s : CMType H ⊕ CMType H) (q : Cpt
     simp [T, LinearMap.sum_apply]
   refine ⟨T, fun v hv => ?_, fun e he => ?_, fun e he => ?_⟩
   · have h1 : ∑ m, 𝔐.emb s (cc m) • 𝔐.ρ (a m) v = 𝔐.emb s (∑ m, cc m * a m) • v := by
-      simp only [(mem_iff v).1 hv, smul_smul, map_sum, map_mul, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [(mem_iff v).1 hv, smul_smul, map_sum, map_mul, Finset.sum_smul]
     rw [hT, h1, hσd, smul_smul, inv_mul_cancel₀ hd0, one_smul]
   · rw [hV]
     refine ⟨?_, ?_⟩
@@ -153,9 +158,9 @@ theorem exists_split (S : Finset ℕ) (m : ℕ) (hm : 0 < m) :
     · exact ((Nat.Prime.dvd_mul hp).1 hd).elim (h1 p hp) (h1' p hp)
     · exact ((Nat.Prime.dvd_mul hp).1 hd).elim (h2 p hp) (h2' p hp)
 
+
 open GlobalTheory.CompanionTheory.Ar.OrVert Top HodgeCpt in
 set_option maxHeartbeats 1000000 in
-
 theorem unit_off (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H)
     (Xo : Moduli D l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F))
     (Sys : PB.AnSys (Top.dimFl (CMType H) (D.p + D.q)) (Option (RootIx D))) (Fx : FixedData Y Sys)

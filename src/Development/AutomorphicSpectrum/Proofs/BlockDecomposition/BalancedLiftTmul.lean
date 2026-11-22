@@ -1,8 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechVanishingFromCover
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -41,7 +46,7 @@ def gmap {p : ∀ i, N i → M i → P} (hp : Bal R p) : (∀ i, N i ⊗[R] M i)
 theorem gmap_single {p : ∀ i, N i → M i → P} (hp : Bal R p) (i : ι) (t : N i ⊗[R] M i) :
     gmap hp (Pi.single i t) = lift1 hp i t := by
   unfold gmap
-  rw [AddMonoidHom.finset_sum_apply, Finset.sum_eq_single i]
+  rw [AddMonoidHom.finsetSum_apply, Finset.sum_eq_single i]
   · simp
   · intro k _ hk
     simp [Pi.single_eq_of_ne hk]
@@ -53,7 +58,7 @@ theorem hom_ext {Q : Type w'} [AddCommGroup Q] {a b : (∀ i, N i ⊗[R] M i) �
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul n x => exact h i n x
-  | add s t hs ht => rw [Pi.single_add, map_add, map_add, hs, ht]
+  | add s t hs ht => rw [Pi.single_add, map_add (f := _), map_add (f := _), hs, ht]
 
 theorem tens_iff {p : ∀ i, N i → M i → P} (hp : Bal R p) :
     Tens R (N := N) (M := M) (M' := P) p ↔ Function.Bijective (gmap hp) := by

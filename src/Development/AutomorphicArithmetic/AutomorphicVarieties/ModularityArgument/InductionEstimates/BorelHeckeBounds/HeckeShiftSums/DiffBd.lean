@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DiffBound
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsArchConv
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.BorelHeckeBounds.Full
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.DiffBound
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsArchConv
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsMeasure
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -88,7 +92,7 @@ private theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.diffBd_local {
   have hA' : ‖((A : ArchUnits K n) : ArchMatrix K n)‖ ≤ max Rt 0 := (hRt _ hAT₀).trans (le_max_left _ _)
   have hprod : ∏ i, ‖v i‖ ≤ (∏ i, ‖Y i‖) * max Rt 0 ^ k := by
     rw [← Fin.prod_const, ← Finset.prod_mul_distrib]
-    refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => ?_
+    refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => ?_
     rw [hv, norm_neg]
     exact (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_left hA' (norm_nonneg _))
   calc B * ∏ i, ‖v i‖ ≤ max B 0 * ∏ i, ‖v i‖ :=

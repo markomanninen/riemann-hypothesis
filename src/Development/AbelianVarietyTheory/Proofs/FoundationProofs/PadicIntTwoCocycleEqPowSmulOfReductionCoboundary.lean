@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.GaloisCohomology.LocalTateDualityK
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.LocalTateDualityK
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology
 
 namespace GlobalTheory
@@ -18,7 +23,7 @@ theorem padicInt_two_cocycle_eq_pow_smul_of_reduction_coboundary :
     have h1 : (z - d1 ρ (s ∘ c)) (g, h) ∈ RingHom.ker (PadicInt.toZModPow (p := l) r) := by
       have h2 := congrFun hcd (g, h)
       rw [d1_apply] at h2
-      rw [RingHom.mem_ker, Pi.sub_apply, d1_apply, map_sub, map_add, map_sub, hc]
+      rw [RingHom.mem_ker, Pi.sub_apply, d1_apply, map_sub, map_add (f := _), map_sub, hc]
       simp only [Function.comp_apply, hs]
       rw [h2, sub_self]
     rw [PadicInt.ker_toZModPow, Ideal.mem_span_singleton] at h1

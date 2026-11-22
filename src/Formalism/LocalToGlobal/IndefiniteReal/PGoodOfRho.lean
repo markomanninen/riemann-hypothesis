@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.InBlock
-import Formalism.LocalToGlobal.IndefiniteReal.CxPassGood
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.InBlock
+public import Formalism.LocalToGlobal.IndefiniteReal.CxPassGood
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -24,7 +28,7 @@ theorem sum_eMat_eq {S : Type} [Fintype S] {Ws : S → Type} [∀ s, AddCommGrou
   have hc : ∀ g : G, (idemOf I.A.fam.X).coeff g =
       ∑ χ ∈ I.A.fam.X, χ 1 / (Fintype.card G : K) * χ g⁻¹ := by
     intro g
-    simp [idemOf, chiIdem, MonoidAlgebra.coeff_sum, MonoidAlgebra.coeff_single, Finsupp.finset_sum_apply,
+    simp [idemOf, chiIdem, MonoidAlgebra.coeff_sum, MonoidAlgebra.coeff_single, Finsupp.finsetSum_apply,
       Finsupp.single_apply]
   simp only [eMat]
   rw [GoodPlacesAlt.sum_chars_eq τ I.A.fam.X hinj hX

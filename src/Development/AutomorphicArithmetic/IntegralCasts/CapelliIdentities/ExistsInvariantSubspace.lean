@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.exists_invariant_subspace :
     ∀ (H : Type) [AddCommGroup H] [Module ℂ H] (G ι : Type) [Fintype ι] (K : Set G)
@@ -20,7 +24,7 @@ theorem UpperTheory.exists_invariant_subspace :
     refine ⟨T₁ ⊔ T₂, inferInstance, Submodule.add_mem_sup ha hb, ?_⟩
     intro g hg v hv
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.1 hv
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (h₁ g hg y hy) (h₂ g hg z hz)
   · refine ⟨⊥, inferInstance, Submodule.zero_mem _, ?_⟩
     intro g _ v hv

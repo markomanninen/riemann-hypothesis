@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRealExponentAbsSmoothCharacterLocalField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LeviSmoothLocalization.WinUpDown
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsRealExponentAbsSmoothCharacterLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,9 @@ private theorem v_nm {K L : Type} [Field K] [NumberField K] [Field L] [NumberFie
   rw [h] at hm
   have hm' := congrArg Subtype.val hm
   rw [GroundTheory.Global.IdeleGroup.ideleModule_finiteEmbedding, GroundTheory.Global.IdeleGroup.ideleModule_finiteEmbedding] at hm'
-  exact GlobalTheory.NormValGen.valuation_eq_pow_of_norm_eq _ w _ x hm' _ hN
+  apply GlobalTheory.NormValGen.valuation_eq_pow_of_norm_eq _ w _ x hm' _
+  simpa [GroundTheory.Global.AdeleBaseChange.below, HeightOneSpectrum.under,
+    Formalism.ConjugateSelfDual.normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using hN
 
 theorem normVal :
     UpperTheory.V.Z.ImaginaryQuadraticEtaCharacter.NormVal := by

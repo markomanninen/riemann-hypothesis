@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -20,9 +24,8 @@ private theorem chiS_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T] [A
   · simp
   · clear h
     induction y with
-    | zero => simp
     | tmul s x => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem F_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T] [Algebra A T] (f : S →ₐ[A] T)
     (y : S ⊗[A] E) :
@@ -32,7 +35,7 @@ private theorem F_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T] [Alge
   rw [chiS_map]
   generalize D.chiS S y = p
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [Polynomial.map_add, map_add, hp, hq]
+  | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), hp, hq]
   | monomial k a =>
     simp [Polynomial.aeval_monomial, Algebra.TensorProduct.algebraMap_apply]
 
@@ -45,12 +48,11 @@ private theorem expand {ι : Type} (S : Type) [CommRing S] [Algebra A S] (f : Mv
       TensorProduct.lid A E ((MvPolynomial.lcoeff A α).rTensor E w) := by
     clear h
     induction w with
-    | zero => exact ⟨∅, by simp⟩
     | add a b ha hb =>
       obtain ⟨s, hs⟩ := ha
       obtain ⟨s', hs'⟩ := hb
       refine ⟨s ∪ s', fun t ht => ?_⟩
-      simp only [map_add, tmul_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), tmul_add, Finset.sum_add_distrib]
       rw [← hs t (Finset.subset_union_left.trans ht), ← hs' t (Finset.subset_union_right.trans ht)]
     | tmul p z =>
       refine ⟨p.support, fun t ht => ?_⟩
@@ -61,7 +63,8 @@ private theorem expand {ι : Type} (S : Type) [CommRing S] [Algebra A S] (f : Mv
       refine Finset.sum_subset ht fun α _ hα => ?_
       rw [MvPolynomial.notMem_support_iff.1 hα, map_zero]
   obtain ⟨s, hs⟩ := hw
-  rw [hs s le_rfl, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs s le_rfl, map_sum]
   refine Submodule.sum_mem _ fun α _ => ?_
   rw [Algebra.TensorProduct.map_tmul, ← mul_one (f _), ← smul_eq_mul, ← smul_tmul']
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, h α, rfl⟩)
@@ -72,7 +75,8 @@ private theorem part1 (S : Type) [CommRing S] [Algebra A S] (y : S ⊗[A] E) :
   obtain ⟨k, s, x, rfl⟩ := TensorProduct.exists_sum_tmul_eq y
   have : ∑ j, s j ⊗ₜ[A] x j =
       Algebra.TensorProduct.map (MvPolynomial.aeval s) (AlgHom.id A E) (Det.gen (A := A) x) := by
-    simp [Det.gen, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Det.gen, map_sum]
   rw [this, F_map]
   exact expand S _ _ _ fun α => TwoSidedIdeal.subset_span ⟨k, x, α, rfl⟩
 
@@ -88,7 +92,7 @@ private theorem rT_mem (P S : Type) [CommRing P] [Algebra A P] [CommRing S] [Alg
     rw [smul_tmul', LinearMap.rTensor_tmul, ← mul_one (g _), ← smul_eq_mul, ← smul_tmul']
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, hz, rfl⟩)
   | zero => intro p; simp
-  | add x y _ _ hx hy => intro p; rw [smul_add, map_add]; exact add_mem (hx p) (hy p)
+  | add x y _ _ hx hy => intro p; rw [smul_add, map_add (f := _)]; exact add_mem (hx p) (hy p)
   | smul a x _ hx => intro p; rw [smul_smul]; exact hx _
 
 private theorem chElt_bc (S : Type) [CommRing S] [Algebra A S] {k : ℕ} (x : Fin k → S ⊗[A] E) (α : Fin k →₀ ℕ) :
@@ -106,22 +110,18 @@ private theorem chElt_bc (S : Type) [CommRing S] [Algebra A S] {k : ℕ} (x : Fi
     congr 1
     · rw [Algebra.TensorProduct.one_def, Det.cancel_tmul]; simp
     · induction y with
-      | zero => simp
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
       | tmul s y =>
         induction y with
-        | zero => simp
-        | add a b ha hb => simp only [tmul_add, map_add, ha, hb]
+        | add a b ha hb => simp only [tmul_add, map_add (f := _), ha, hb]
         | tmul b z => simp [Det.cancel_tmul]
   rw [h1, Polynomial.aeval_algHom_apply]
   generalize Polynomial.aeval y (D.chiS _ (Det.cancel A E S (MvPolynomial (Fin k) S) y)) = w
   induction w with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul s y =>
     induction y with
-    | zero => simp
-    | add a b ha hb => simp only [tmul_add, map_add, ha, hb]
+    | add a b ha hb => simp only [tmul_add, map_add (f := _), ha, hb]
     | tmul b z =>
       rw [Det.cancel_tmul, mul_comm]
       simp [smul_tmul', MvPolynomial.coeff_C_mul, mul_comm b]
@@ -132,13 +132,13 @@ private theorem chElt_one (S : Type) [CommRing S] [Algebra A S] {k : ℕ} (x : F
   have : Det.cancel A E S (MvPolynomial (Fin k) S) (Det.gen fun i => (1 : S) ⊗ₜ[A] x i) =
       Algebra.TensorProduct.map (MvPolynomial.mapAlgHom (Algebra.ofId A S)) (AlgHom.id A E)
         (Det.gen (A := A) x) := by
-    simp [Det.gen, map_sum, Det.cancel_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Det.gen, map_sum, Det.cancel_tmul]
   rw [this, F_map]
   unfold Det.chElt
   generalize Polynomial.aeval (Det.gen (A := A) x) (D.chiS (MvPolynomial (Fin k) A) (Det.gen x)) = w
   induction w with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, tmul_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), tmul_add, ha, hb]
   | tmul s y =>
     simp [MvPolynomial.coeff_map, Algebra.ofId_apply, Algebra.algebraMap_eq_smul_one, smul_tmul]
 
@@ -150,7 +150,6 @@ private theorem span_mul (S : Type) [CommRing S] [Algebra A S] (I : TwoSidedIdea
   | mem x hx =>
     obtain ⟨z, hz, rfl⟩ := hx
     induction u with
-    | zero => simp
     | add a b ha hb => rw [add_mul, mul_add]; exact ⟨add_mem ha.1 hb.1, add_mem ha.2 hb.2⟩
     | tmul s e =>
       have key : ∀ t ∈ I, s ⊗ₜ[A] t ∈ Submodule.span S ((fun z : E => (1 : S) ⊗ₜ[A] z) '' (I : Set E)) := by

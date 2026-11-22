@@ -1,22 +1,26 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FlatQuotientIsoOfSameKernel
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GeometricallyConnectedOfSurjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsTorusAbelianQuotientPDivisibleSmoothGroupStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobGPowAndClosedSubgroup
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobGSplitTorusPow
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PullPowOfFix
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AmpleCubPullAndPullPow
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionPullbackPowerLocusLeStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsImage
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionAbelianVarietyLeConstMulPowStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPolyNormSqRootsStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SABBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.SplitTorusHomProperTrivialField
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FlatQuotientIsoOfSameKernel
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GeometricallyConnectedOfSurjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsTorusAbelianQuotientPDivisibleSmoothGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobGPowAndClosedSubgroup
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrobGSplitTorusPow
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PullPowOfFix
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AmpleCubPullAndPullPow
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionPullbackPowerLocusLeStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsImage
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CardTorsionAbelianVarietyLeConstMulPowStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPolyNormSqRootsStatement
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -56,10 +60,6 @@ theorem card_torsion_le_mul {A B : Type} [CommGroup A] [CommGroup B] (f : A →*
 
 variable {S : Scheme.{0}}
 
-noncomputable def onPts {G H : Over S} [GrpObj G] [GrpObj H] (φ : G ⟶ H) [IsMonHom φ] (Z : Over S) :
-    (Z ⟶ G) →* (Z ⟶ H) :=
-  MonoidHom.mk' (fun x => x ≫ φ) fun x y => MonObj.mul_comp x y φ
-
 theorem pow_comp' {G H Z : Over S} [GrpObj G] [GrpObj H] (φ : G ⟶ H) [IsMonHom φ] (x : Z ⟶ G) (n : ℕ) :
     (x ^ n) ≫ φ = (x ≫ φ) ^ n := MonObj.pow_comp x n φ
 
@@ -70,7 +70,7 @@ private theorem list_prod_comp_degeneration {S : Scheme.{0}} {Z G H : Over S} [G
   | cons a l ih => rw [List.prod_cons, MonObj.mul_comp, ih, List.map_cons, List.prod_cons]
 
 theorem polyPt_comp {G H Z : Over S} [GrpObj G] [GrpObj H] (φ : G ⟶ H) [IsMonHom φ] (E : End G) (F : End H)
-    (h : (show G ⟶ G from E) ≫ φ = φ ≫ (show H ⟶ H from F)) (P : Polynomial ℤ) (x : Z ⟶ G) :
+    (h : E.asHom ≫ φ = φ ≫ F.asHom) (P : Polynomial ℤ) (x : Z ⟶ G) :
     polyPt E P x ≫ φ = polyPt F P (x ≫ φ) := by
   unfold polyPt
   rw [list_prod_comp_degeneration, List.map_map]
@@ -153,7 +153,7 @@ theorem core (k : Type) [Field k] [IsAlgClosed k] (N : Over (Sp k)) [GrpObj N] (
         Nat.card {x : 𝟙_ (Over (Sp k)) ⟶ N // x ^ n = 1} ≤ C * n ^ (Module.finrank ℤ X + 2 * a')) ∧
         Finite {x : 𝟙_ (Over (Sp k)) ⟶ N // x ≫ E = x ^ Q ∧ x ^ n = 1} ∧
         Nat.card {x : 𝟙_ (Over (Sp k)) ⟶ N // x ≫ E = x ^ Q ∧ x ^ n = 1} ≤ C * n ^ Module.finrank ℤ X) ∧
-      ∀ y : 𝟙_ (Over (Sp k)) ⟶ N, polyPt (show End N from E) P y ≫ E = polyPt (show End N from E) P y ^ Q := by
+      ∀ y : 𝟙_ (Over (Sp k)) ⟶ N, polyPt (End.of E) P y ≫ E = polyPt (End.of E) P y ^ Q := by
   have : IsCommMonObj N := hN.1
   obtain ⟨hi_hom, hq_hom, hq_flat, hq_surj, hq_aff, hq_pb, _⟩ := id hq
   have := hi_hom
@@ -189,7 +189,7 @@ theorem core (k : Type) [Field k] [IsAlgClosed k] (N : Over (Sp k)) [GrpObj N] (
     (GlobalTheory.SS.AmpSub.ampleCub_pull_and_pullPow (Sp k) N L hL).1 B' ν hν hνci
   have hpp : PullPow F'.left (L.pull ν.left) Q :=
     pullPow_pull ν.left (by rw [← Over.comp_left, hF'ν, Over.comp_left]) hE
-  obtain ⟨P, _, hProots, hPkill⟩ := GlobalTheory.T.exists_poly_normSq_roots' k B' hB' (L.pull ν.left) hL' F' Q hF' hpp
+  obtain ⟨P, _, hProots, hPkill⟩ := GlobalTheory.T.exists_poly_normSq_roots' k B' hB' (L.pull ν.left) hL' (End.of F') Q hF' hpp
   obtain ⟨C2, hC2⟩ := GlobalTheory.T.card_torsion_pullbackPowerLocus_le k N hN X B i q hq hB L hL E Q hQ inferInstance hE hi
   obtain ⟨C3, hC3⟩ := GlobalTheory.T.card_torsion_abelianVariety_le_const_mul_pow k B' hB' (L.pull ν.left) hL' a' ha'
   have hmono : Mono ν := by
@@ -242,9 +242,9 @@ theorem core (k : Type) [Field k] [IsAlgClosed k] (N : Over (Sp k)) [GrpObj N] (
           gcongr
           exact Nat.le_mul_of_pos_right C2 (Nat.succ_pos C3)
   · intro y
-    rw [← comp_mul_inv_pow_eq_one_iff, polyPt_comp (E * ((𝟙 N) ^ Q)⁻¹) E E (inv_mul_mul_mul_eq_mul E Q) P y, ← hqψ, ← hπν,
+    rw [← comp_mul_inv_pow_eq_one_iff, polyPt_comp (E * ((𝟙 N) ^ Q)⁻¹) (End.of E) (End.of E) (inv_mul_mul_mul_eq_mul E Q) P y, ← hqψ, ← hπν,
       show y ≫ q ≫ π ≫ ν = ((y ≫ q) ≫ π) ≫ ν by simp only [Category.assoc],
-      ← polyPt_comp ν F' E hF'ν P, hPkill, MonObj.one_comp]
+      ← polyPt_comp ν (End.of F') (End.of E) hF'ν P, hPkill, MonObj.one_comp]
 
 private theorem isClosedImmersion_of_isPullback_unit {k : Type} [Field k] {T N B : Over (Sp k)} [GrpObj B] [IsSeparated B.hom]
     (i : T ⟶ N) (q : N ⟶ B) (h : IsPullback i (toUnit T) q η[B]) : IsClosedImmersion i.left := by
@@ -262,9 +262,9 @@ private theorem eq_of_comp_mono_eq {k : Type} [Field k] {N G : Over (Sp k)} [Grp
 
 end GlobalTheory.SS.FrobTorsion
 
-open GlobalTheory.SS.FrobTorsion in
 
-theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgClosed k] (p l : ℕ) [Fact p.Prime] [CharP k p], l.Prime → l ≠ p → ∀ (G : Over (Sp k)) [GrpObj G], SmConn G → ∀ (g : ℕ), SmoothOfRelativeDimension g G.hom → ∀ (L : LB G.left), AmpleCub G L → ∀ (F : End G) (q : ℕ), 2 ≤ q → FrobG G F q → ∃ (t a m C : ℕ) (P : Polynomial ℤ) (W : Subgroup (𝟙_ (Over (Sp k)) ⟶ G)), 1 ≤ m ∧ (∀ β : ℂ, Polynomial.aeval β P = 0 → ‖β‖ < (q : ℝ) ^ m) ∧ (∀ x ∈ W, x ≫ (show G ⟶ G from F ^ m) = x ^ (q ^ m)) ∧ (∀ n, Finite {x : (𝟙_ (Over (Sp k)) ⟶ G) // x ^ l ^ n = 1} ∧ Nat.card {x : (𝟙_ (Over (Sp k)) ⟶ G) // x ^ l ^ n = 1} ≤ C * l ^ (n * (t + 2 * a)) ∧ Nat.card {x : W // x ^ l ^ n = 1} ≤ C * l ^ (n * t)) ∧ (∀ (x : (𝟙_ (Over (Sp k)) ⟶ G)) n, x ^ l ^ n = 1 → polyPt (F ^ m) P x ∈ W) ∧ (g ≤ t + a → Nonempty (TorusExtension G)) := by
+open GlobalTheory.SS.FrobTorsion in
+theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgClosed k] (p l : ℕ) [Fact p.Prime] [CharP k p], l.Prime → l ≠ p → ∀ (G : Over (Sp k)) [GrpObj G], SmConn G → ∀ (g : ℕ), SmoothOfRelativeDimension g G.hom → ∀ (L : LB G.left), AmpleCub G L → ∀ (F : End G) (q : ℕ), 2 ≤ q → FrobG G F q → ∃ (t a m C : ℕ) (P : Polynomial ℤ) (W : Subgroup (𝟙_ (Over (Sp k)) ⟶ G)), 1 ≤ m ∧ (∀ β : ℂ, Polynomial.aeval β P = 0 → ‖β‖ < (q : ℝ) ^ m) ∧ (∀ x ∈ W, x ≫ (F ^ m).asHom = x ^ (q ^ m)) ∧ (∀ n, Finite {x : (𝟙_ (Over (Sp k)) ⟶ G) // x ^ l ^ n = 1} ∧ Nat.card {x : (𝟙_ (Over (Sp k)) ⟶ G) // x ^ l ^ n = 1} ≤ C * l ^ (n * (t + 2 * a)) ∧ Nat.card {x : W // x ^ l ^ n = 1} ≤ C * l ^ (n * t)) ∧ (∀ (x : (𝟙_ (Over (Sp k)) ⟶ G)) n, x ^ l ^ n = 1 → polyPt (F ^ m) P x ∈ W) ∧ (g ≤ t + a → Nonempty (TorusExtension G)) := by
   intro k _ _ p l _ _ hl hlp G _ hG g hg L hL F q hq hF
   have : IsCommMonObj G := hG.1
   letI : CommGroup (𝟙_ (Over (Sp k)) ⟶ G) := Hom.commGroup
@@ -274,18 +274,17 @@ theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgCl
   have := hνci
   have : IsCommMonObj N := hN.1
   letI : CommGroup (𝟙_ (Over (Sp k)) ⟶ N) := Hom.commGroup
-  have hFhom : IsMonHom (show G ⟶ G from F) := hF.1
-  obtain ⟨F', hF', hF'ν⟩ := hFlift F hF.1
+  obtain ⟨F', hF', hF'ν⟩ := hFlift F.asHom hF.1
   have := hF'
   have hνmono : Mono ν := by
     have : Mono ν.left := inferInstance
     exact (Over.forget _).mono_of_mono_map this
-  let F'e : End N := F'
+  let F'e : End N := End.of F'
   obtain ⟨g', hg', hgiso⟩ := hdimN g hg
   obtain ⟨X, _, _, _, B, _, i, qB, hqB, hB, hdimB⟩ := GlobalTheory.T.exists_torus_abelian_quotient_p_divisible_smooth_group k p N hN hdiv
   obtain ⟨a, ha, hga⟩ := hdimB g' hg'
-  have hFN : FrobG N F' q :=
-    (GlobalTheory.SS.frobG_pow_and_closed_subgroup k G hG F q hF).2 N ν F' hν hνci hF' hF'ν
+  have hFN : FrobG N F'e q :=
+    (GlobalTheory.SS.frobG_pow_and_closed_subgroup k G hG F q hF).2 N ν F'e hν hνci hF' hF'ν
   obtain ⟨hi_hom, hq_hom, hq_flat, hq_surj, hq_aff, hq_pb, _⟩ := id hqB
   have := hi_hom
   have := hq_hom
@@ -300,29 +299,30 @@ theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgCl
   have : IsMonHom (F'' ≫ i) := by rw [hF''i]; infer_instance
   have hF''hom : IsMonHom F'' := GlobalTheory.AbelianImage.isMonHom_of_comp_mono F'' i
   have : IsClosedImmersion i.left := isClosedImmersion_of_isPullback_unit i qB hq_pb
-  have hFT : FrobG (splitTorus (Sp k) X) F'' q :=
-    (GlobalTheory.SS.frobG_pow_and_closed_subgroup k N hN F' q hFN).2 _ i F'' hi_hom inferInstance hF''hom hF''i
-  obtain ⟨m1, hm1, hpow1⟩ := GlobalTheory.SS.frobG_splitTorus_pow k X F'' q hFT
+  let F''e : End (splitTorus (Sp k) X) := End.of F''
+  have hFT : FrobG (splitTorus (Sp k) X) F''e q :=
+    (GlobalTheory.SS.frobG_pow_and_closed_subgroup k N hN F'e q hFN).2 _ i F''e hi_hom inferInstance hF''hom hF''i
+  obtain ⟨m1, hm1, hpow1⟩ := GlobalTheory.SS.frobG_splitTorus_pow k X F''e q hFT
   have hLN : AmpleCub N (L.pull ν.left) :=
     (GlobalTheory.SS.AmpSub.ampleCub_pull_and_pullPow (Sp k) G L hL).1 N ν hν hνci
-  obtain ⟨m2, hm2, hpow2⟩ := GlobalTheory.SS.FrobLB.frob_pullPow k N hN F' q hFN (L.pull ν.left) hLN.1
+  obtain ⟨m2, hm2, hpow2⟩ := GlobalTheory.SS.FrobLB.frob_pullPow k N hN F'e q hFN (L.pull ν.left) hLN.1
   have hM : 1 ≤ m1 * m2 := Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero (by omega) (by omega))
-  have hEhom : IsMonHom (show N ⟶ N from F'e ^ (m1 * m2)) := GlobalTheory.SS.FrobSub.isMonHom_pow N F' hF' (m1 * m2)
+  have hEhom : IsMonHom (F'e ^ (m1 * m2)).asHom := GlobalTheory.SS.FrobSub.isMonHom_pow N F'e hF' (m1 * m2)
   have hQ : 2 ≤ q ^ (m1 * m2) := le_trans hq (Nat.le_self_pow (by omega) q)
-  have hE : PullPow (show N ⟶ N from F'e ^ (m1 * m2)).left (L.pull ν.left) ((q ^ (m1 * m2) : ℕ) : ℤ) := by
+  have hE : PullPow (F'e ^ (m1 * m2)).asHom.left (L.pull ν.left) ((q ^ (m1 * m2) : ℕ) : ℤ) := by
     have h := hpow2 m1
     rw [show m2 * m1 = m1 * m2 from Nat.mul_comm _ _] at h
     rw [Nat.cast_pow]
     exact h
-  have hiE : i ≫ (show N ⟶ N from F'e ^ (m1 * m2)) = i ^ (q ^ (m1 * m2)) := by
-    rw [← GlobalTheory.SS.FrobSub.pow_comm_hom i F' F'' hF''i (m1 * m2), hpow1 m2, MonObj.pow_comp, Category.id_comp]
+  have hiE : i ≫ (F'e ^ (m1 * m2)).asHom = i ^ (q ^ (m1 * m2)) := by
+    rw [← GlobalTheory.SS.FrobSub.pow_comm_hom i F'e F''e hF''i (m1 * m2), hpow1 m2, MonObj.pow_comp, Category.id_comp]
   obtain ⟨a', C, P, ha'le, hroots, hbounds, hfix⟩ :=
-    core k N hN X B i qB hqB hB (L.pull ν.left) hLN (show N ⟶ N from F'e ^ (m1 * m2)) (q ^ (m1 * m2)) hQ hE hiE a ha
-  have hcomm : (show N ⟶ N from F'e ^ (m1 * m2)) ≫ ν = ν ≫ (show G ⟶ G from F ^ (m1 * m2)) :=
-    GlobalTheory.SS.FrobSub.pow_comm_hom ν F F' hF'ν (m1 * m2)
-  have hFM : IsMonHom (show G ⟶ G from F ^ (m1 * m2)) := GlobalTheory.SS.FrobSub.isMonHom_pow G F hF.1 (m1 * m2)
+    core k N hN X B i qB hqB hB (L.pull ν.left) hLN (F'e ^ (m1 * m2)).asHom (q ^ (m1 * m2)) hQ hE hiE a ha
+  have hcomm : (F'e ^ (m1 * m2)).asHom ≫ ν = ν ≫ (F ^ (m1 * m2)).asHom :=
+    GlobalTheory.SS.FrobSub.pow_comm_hom ν F F'e hF'ν (m1 * m2)
+  have hFM : IsMonHom (F ^ (m1 * m2)).asHom := GlobalTheory.SS.FrobSub.isMonHom_pow G F hF.1 (m1 * m2)
   let W : Subgroup (𝟙_ (Over (Sp k)) ⟶ G) :=
-    { carrier := {x | x ≫ (show G ⟶ G from F ^ (m1 * m2)) = x ^ (q ^ (m1 * m2))}
+    { carrier := {x | x ≫ (F ^ (m1 * m2)).asHom = x ^ (q ^ (m1 * m2))}
       mul_mem' := fun {x y} hx hy => by
         simp only [Set.mem_setOf_eq] at hx hy ⊢
         rw [MonObj.mul_comp, hx, hy, mul_pow]
@@ -360,10 +360,10 @@ theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgCl
       intro x
       obtain ⟨y, hy, hyn⟩ := hlift' x.1 n x.2
       exact ⟨⟨y, hyn⟩, Subtype.ext hy⟩
-    let f2 : {y : 𝟙_ (Over (Sp k)) ⟶ N // y ≫ (show N ⟶ N from F'e ^ (m1 * m2)) = y ^ (q ^ (m1 * m2)) ∧ y ^ l ^ n = 1} →
+    let f2 : {y : 𝟙_ (Over (Sp k)) ⟶ N // y ≫ (F'e ^ (m1 * m2)).asHom = y ^ (q ^ (m1 * m2)) ∧ y ^ l ^ n = 1} →
         {x : W // x ^ l ^ n = 1} :=
       fun y => ⟨⟨y.1 ≫ ν, by
-          show (y.1 ≫ ν) ≫ (show G ⟶ G from F ^ (m1 * m2)) = (y.1 ≫ ν) ^ (q ^ (m1 * m2))
+          show (y.1 ≫ ν) ≫ (F ^ (m1 * m2)).asHom = (y.1 ≫ ν) ^ (q ^ (m1 * m2))
           rw [Category.assoc, ← hcomm, ← Category.assoc, y.2.1, MonObj.pow_comp]⟩, by
         apply Subtype.ext
         rw [SubgroupClass.coe_pow]
@@ -375,7 +375,7 @@ theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgCl
         rw [← SubgroupClass.coe_pow, x.2]
         rfl
       obtain ⟨y, hy, hyn⟩ := hlift' x.1.1 n hxn
-      have hyE : y ≫ (show N ⟶ N from F'e ^ (m1 * m2)) = y ^ (q ^ (m1 * m2)) := by
+      have hyE : y ≫ (F'e ^ (m1 * m2)).asHom = y ^ (q ^ (m1 * m2)) := by
         apply eq_of_comp_mono_eq ν
         rw [Category.assoc, hcomm, ← Category.assoc, hy, MonObj.pow_comp, hy]
         exact x.1.2
@@ -388,13 +388,13 @@ theorem GlobalTheory.SS.frobenius_on_torsion : ∀ (k : Type) [Field k] [IsAlgCl
         _ = C * l ^ (n * (Module.finrank ℤ X + 2 * a')) := by rw [← pow_mul]
     · calc Nat.card {x : W // x ^ l ^ n = 1}
           ≤ Nat.card {y : 𝟙_ (Over (Sp k)) ⟶ N //
-              y ≫ (show N ⟶ N from F'e ^ (m1 * m2)) = y ^ (q ^ (m1 * m2)) ∧ y ^ l ^ n = 1} :=
+              y ≫ (F'e ^ (m1 * m2)).asHom = y ^ (q ^ (m1 * m2)) ∧ y ^ l ^ n = 1} :=
             Nat.card_le_card_of_surjective f2 hf2
         _ ≤ C * (l ^ n) ^ Module.finrank ℤ X := hcardF
         _ = C * l ^ (n * Module.finrank ℤ X) := by rw [← pow_mul]
   · intro x n hx
     obtain ⟨y, hy, _⟩ := hlift' x n hx
-    show polyPt (F ^ (m1 * m2)) P x ≫ (show G ⟶ G from F ^ (m1 * m2)) = (polyPt (F ^ (m1 * m2)) P x) ^ (q ^ (m1 * m2))
+    show polyPt (F ^ (m1 * m2)) P x ≫ (F ^ (m1 * m2)).asHom = (polyPt (F ^ (m1 * m2)) P x) ^ (q ^ (m1 * m2))
     rw [← hy, ← polyPt_comp ν (F'e ^ (m1 * m2)) (F ^ (m1 * m2)) hcomm P y, Category.assoc, ← hcomm,
       ← Category.assoc, hfix y, MonObj.pow_comp]
   · intro hle

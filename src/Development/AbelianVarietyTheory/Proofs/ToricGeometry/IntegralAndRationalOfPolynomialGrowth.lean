@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ThetaQuasiPeriods.Change
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ThetaQuasiPeriods.Change
+
+@[expose] public section
 
 open ReciprocityTheory.PTheta Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -19,7 +23,7 @@ theorem exists_norm_eval_le {d : ℕ} (c : MvPolynomial (Fin d) ℂ) :
     have h1 : (1 : ℝ) ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
     have h2 : (1 + ‖x‖) ^ M ≤ (1 + ‖x‖) ^ (M + M') := pow_le_pow_right₀ h1 (by omega)
     have h3 : (1 + ‖x‖) ^ M' ≤ (1 + ‖x‖) ^ (M + M') := pow_le_pow_right₀ h1 (by omega)
-    rw [map_add]
+    rw [map_add (f := _)]
     refine (norm_add_le _ _).trans ?_
     have := mul_le_mul_of_nonneg_left h2 hK
     have := mul_le_mul_of_nonneg_left h3 hK'
@@ -76,7 +80,8 @@ theorem exists_map_eq_of_eval {d N : ℕ} (U : Set (Fin d → ℂ)) (S : (Fin d 
     have := Finset.mem_range.1 hi
     exact_mod_cast (by omega : N - 1 < N)
   · intro x hx
-    rw [Lagrange.eq_interpolate (f := S x) hinj (by simpa using hdeg x hx),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Lagrange.eq_interpolate (f := S x) hinj (by simpa using hdeg x hx),
       Lagrange.interpolate_apply, Polynomial.map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Polynomial.map_mul, Polynomial.map_C, Polynomial.map_map, hg _ x hx]
@@ -88,7 +93,7 @@ theorem exists_map_eq_of_eval {d N : ℕ} (U : Set (Fin d → ℂ)) (S : (Fin d 
 theorem contDiff_eval_map {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ)) :
     ContDiff ℂ 1 (fun z : (Fin d → ℂ) × ℂ => (p.map (MvPolynomial.eval z.1)).eval z.2) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simpa [Polynomial.map_add] using hp.add hq
+  | add p q hp hq => simpa [Polynomial.map_add (f := _)] using hp.add hq
   | monomial n a =>
     simp only [Polynomial.map_monomial, Polynomial.eval_monomial]
     refine ContDiff.mul ?_ (contDiff_snd.pow n)
@@ -101,7 +106,7 @@ theorem exists_local_root {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ)) 
     (ha' : (p.map (MvPolynomial.eval x₀)).derivative.eval a ≠ 0) :
     ∃ y : (Fin d → ℂ) → ℂ, y x₀ = a ∧ DifferentiableAt ℂ y x₀ ∧
       ∀ᶠ x in 𝓝 x₀, (p.map (MvPolynomial.eval x)).eval (y x) = 0 := by
-  have hs := (contDiff_eval_map p).contDiffAt.hasStrictFDerivAt (x := (x₀, a)) one_ne_zero
+  have hs := (contDiff_eval_map p).contDiffAt.hasStrictFDerivAt_fderiv (x := (x₀, a)) one_ne_zero
   set L := fderiv ℂ (fun z : (Fin d → ℂ) × ℂ => (p.map (MvPolynomial.eval z.1)).eval z.2) (x₀, a)
   have h1 : HasFDerivAt (fun y : ℂ => (p.map (MvPolynomial.eval x₀)).eval y)
       (L ∘L ContinuousLinearMap.inr ℂ (Fin d → ℂ) ℂ) a :=
@@ -124,7 +129,7 @@ theorem separable_map {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ))
     (p.map (MvPolynomial.eval x)).Separable := by
   obtain ⟨a, b, h⟩ := Ideal.mem_span_pair.1 hq
   have h' := congrArg (Polynomial.map (MvPolynomial.eval x)) h
-  simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C] at h'
+  simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C] at h'
   refine ⟨Polynomial.C (MvPolynomial.eval x q)⁻¹ * a.map (MvPolynomial.eval x),
     Polynomial.C (MvPolynomial.eval x q)⁻¹ * b.map (MvPolynomial.eval x), ?_⟩
   rw [Polynomial.derivative_map, mul_assoc, mul_assoc, ← mul_add, h', ← Polynomial.C_mul,
@@ -175,7 +180,7 @@ theorem exists_local_roots {d : ℕ} (p : Polynomial (MvPolynomial (Fin d) ℂ))
 theorem norm_prod_le_pow {ι : Type*} (s : Finset ι) (f : ι → ℂ) (B : ℝ) (n : ℕ) (hB : 1 ≤ B)
     (hs : s.card ≤ n) (h : ∀ i ∈ s, ‖f i‖ ≤ B) : ‖∏ i ∈ s, f i‖ ≤ B ^ n := by
   rw [norm_prod]
-  refine (Finset.prod_le_prod (fun _ _ => norm_nonneg _) h).trans ?_
+  refine (Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) h).trans ?_
   rw [Finset.prod_const]
   exact pow_le_pow_right₀ hB hs
 
@@ -251,7 +256,7 @@ theorem integral_and_rational_of_polynomial_growth :
     rotate_right
     · rintro s ⟨hs, hs'⟩
       refine ⟨Polynomial.X ^ n + s, Polynomial.monic_X_pow_add hs, fun z hz => ?_⟩
-      rw [Polynomial.map_add, hs' z.1 hz.1, Polynomial.map_pow, Polynomial.map_X, add_sub_cancel]
+      rw [Polynomial.map_add (f := _), hs' z.1 hz.1, Polynomial.map_pow, Polynomial.map_X, add_sub_cancel]
       exact Lagrange.eval_nodal_at_node (v := fun y => φ (z.1, y)) ((hT _ _).2 hz.2)
     · intro x hx
       have h1 : (Lagrange.nodal (T x) (fun y => φ (x, y))).degree = n := by
@@ -285,7 +290,7 @@ theorem integral_and_rational_of_polynomial_growth :
       refine ⟨r, fun z hz => ?_⟩
       have hz' : z.2 ∈ T z.1 := (hT _ _).2 hz.2
       rw [hr z.1 hz.1, ← Polynomial.derivative_map, eq_nodal (hp.map _) (hsep z.1 hz.1),
-        Polynomial.eval_finset_sum, Finset.sum_eq_single z.2]
+        Polynomial.eval_finsetSum, Finset.sum_eq_single z.2]
       · rw [Polynomial.eval_mul, Polynomial.eval_C, mul_comm]
         congr 1
         exact Lagrange.eval_nodal_derivative_eval_node_eq (v := id) hz'
@@ -311,7 +316,7 @@ theorem integral_and_rational_of_polynomial_growth :
       rotate_right
       · rintro g hg
         refine ⟨g, fun x hx => ?_⟩
-        simp [Lagrange.eval_nodal, ← hg x hx, Polynomial.eval_finset_sum]
+        simp [Lagrange.eval_nodal, ← hg x hx, Polynomial.eval_finsetSum]
       · intro x₀ hx₀
         obtain ⟨y, ψ, hy, hψ, h⟩ := hloc x₀ hx₀
         have : DifferentiableAt ℂ

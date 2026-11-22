@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrVr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.AdjoinNilFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.EpC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrAdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SelmerScaling.PrVr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.AdjoinNilFinite
+
+@[expose] public section
+
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
 private theorem trLat_range {A B R : Type} [CommRing A] [CommRing B] [CommRing R] [Algebra A R] [IsNoetherianRing B]
@@ -38,7 +43,8 @@ private theorem trLat_range {A B R : Type} [CommRing A] [CommRing B] [CommRing R
           exact Algebra.subset_adjoin ⟨i, rfl⟩
         · have e : φ b - (algebraMap A R (f b) + ∑ i, m (c i) * φ (g i)) = ∑ i, (φ (c i) - m (c i)) * φ (g i) := by
             have := congrArg φ hc
-            rw [map_sub, map_sum, hb'] at this
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sub, map_sum, hb'] at this
             simp only [smul_eq_mul, map_mul] at this
             simp only [sub_mul, Finset.sum_sub_distrib]
             linear_combination -this
@@ -112,8 +118,13 @@ theorem UpperTheory.V.Pa.trLat :
     rw [hφ, ← ho, T.oo, ho, S.rF_f, hb, ← IsScalarTower.algebraMap_apply]
   have h2 : ∀ b, φ b - algebraMap S.x.A R (S.P.f.toRingHom b) ∈ RingHom.ker e := by
     intro b
-    have := ((prAdd l S).2.1 (algebraMap S.B S.Bh b) 0).1
-    rw [Submodule.coe_zero, add_zero] at this
+    have this : S.pr0 (algebraMap S.Bh S.U.AA (algebraMap S.B S.Bh b)) = algebraMap S.B S.Bh b := by
+      have e : algebraMap S.Bh S.U.AA (S.pr0 (algebraMap S.Bh S.U.AA (algebraMap S.B S.Bh b)) - algebraMap S.B S.Bh b) ∈ S.U.N := by
+        have h := (S.pr1 (algebraMap S.Bh S.U.AA (algebraMap S.B S.Bh b))).2
+        rw [map_sub]
+        convert S.U.N.neg_mem h using 1 <;> simp [Ctx.pr1] <;> ring
+      have hz := Submodule.disjoint_def.1 S.U.compl.disjoint _ (Submodule.mem_one.2 ⟨_, rfl⟩) e
+      exact sub_eq_zero.1 (S.U.inj (by rw [hz, map_zero]))
     rw [RingHom.mem_ker, map_sub, heA, hφ, T.res, this, S.rF_f, sub_eq_zero]
     rfl
   obtain ⟨M0, hM0, hM0'⟩ := trLat_range φ S.P.f.toRingHom (RingHom.ker e) N hN h1 h2
@@ -128,7 +139,7 @@ theorem UpperTheory.V.Pa.trLat :
       obtain ⟨k, rfl⟩ := hz
       exact (trLat_mul M E).2 (Submodule.subset_span ⟨(k, i, j), rfl⟩)
     | zero => simp
-    | add x y _ _ hx hy => rw [Matrix.add_apply, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [Matrix.add_apply, map_add (f := _)]; exact add_mem hx hy
     | smul b x _ hx =>
       rw [Matrix.smul_apply, Algebra.smul_def, map_mul]
       exact (trLat_mul M E).1 _ (hM b) _ hx
@@ -155,7 +166,7 @@ theorem UpperTheory.V.Pa.trLat :
     (trLat_mul _ E).1⟩
   · refine Algebra.subset_adjoin (hmem _ (Submodule.mem_sup_right (hP M0 hM0' _ (S.U.vr_mem g) i j))
       (mat S.x.ρ (S.h.p₀ g) i j) ?_)
-    rw [RingHom.mem_ker, map_sub, heA, T.res, (prVr l S g i j).1, sub_eq_zero]
-    rfl
+    have hvr := S.U.red g i j _ (S.pr1 (S.U.vr g i j)).2
+    rw [RingHom.mem_ker, map_sub, heA, T.res, hvr, sub_eq_zero]
   · exact trLat_pow S.x.t PowerSeries.maximalIdeal_eq_span_X.le φ S.P.f.toRingHom (RingHom.ker e) N hN
       (fun a => (h1 a).imp fun _ h => h.2) h2 _ hB j

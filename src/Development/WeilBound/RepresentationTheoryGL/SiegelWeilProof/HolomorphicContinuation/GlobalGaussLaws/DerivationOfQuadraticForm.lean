@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.MatLApply
-import GroundTheory.GlobalFields.CompletionAtPlace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.MatLApply
+public import GroundTheory.GlobalFields.CompletionAtPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,8 @@ theorem Dv_eq (X : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) :
     intro Q
     show (Derivation.coeFnAddMonoidHom (R := ℂ) (A := PX m n) (M := PX m n)
       (∑ k : Fin m × Fin n × Bool, xyP X k.1 k.2.1 k.2.2 • (pderiv k : Derivation ℂ (PX m n) (PX m n)))) Q = _
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     simp only [Derivation.coeFnAddMonoidHom_apply, Derivation.smul_apply, smul_eq_mul]
   have h : Dv X P = D₂ P := by
     refine MvPolynomial.derivation_eq_of_forall_mem_vars (fun i _ => ?_)
@@ -36,7 +41,8 @@ def Q2 (m n : ℕ) : PX m n := ∑ a, ∑ i, MvPolynomial.X (a, i, false) * MvPo
 
 theorem derivation_quadraticForm_eq_sum (X : Matrix (Fin m) (Fin m) ℂ) :
     Dv X (Q2 m n) = ∑ a, ∑ i, (MvPolynomial.X (a, i, false) * xyP X a i true + MvPolynomial.X (a, i, true) * xyP X a i false) := by
-  simp only [Q2, map_sum, Derivation.leibniz, Dv_X, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Q2, map_sum, Derivation.leibniz, Dv_X, smul_eq_mul]
 
 theorem vfX_eq_Dv (c : ℝ) (X : Matrix (Fin m) (Fin m) ℂ) (P : PX m n) :
     vfX c X P = Dv X P - C (c : ℂ) * Dv X (Q2 m n) * P := by
@@ -58,7 +64,8 @@ theorem gs_eq (c : ℝ) (u : Fin m → Fin n → ℂ) :
     gs c u = Complex.exp (-(c : ℂ) * MvPolynomial.eval (fun k => GlobalTheory.CompanionTheory.PolyGaussSchwartz.coord k u) (Q2 m n)) := by
   rw [gs]
   congr 1
-  simp only [Q2, map_sum, map_mul, MvPolynomial.eval_X, GlobalTheory.CompanionTheory.PolyGaussSchwartz.coord]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Q2, map_sum, map_mul, MvPolynomial.eval_X, GlobalTheory.CompanionTheory.PolyGaussSchwartz.coord]
   push_cast
   simp [Complex.mul_conj, Complex.normSq_eq_norm_sq, Finset.mul_sum]
 
@@ -121,7 +128,8 @@ theorem hasDerivAt_curve (c : ℝ) (X : Matrix (Fin m) (Fin m) ℂ) (P : PX m n)
   have H := hP.fun_mul ((hQ.const_mul (-(c : ℂ))).cexp)
   rw [hu0] at H
   refine H.congr_deriv ?_
-  simp only [map_sub, map_mul, map_sum, MvPolynomial.eval_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_mul, map_sum, MvPolynomial.eval_C]
   ring
 
 end PositivityTheory.Rg.Sw.Glob.SchDH

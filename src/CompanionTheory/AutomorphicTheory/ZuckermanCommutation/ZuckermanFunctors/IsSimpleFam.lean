@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.PeriodIntegrals.ZuckTensor
-import Formalism.PeriodIntegrals.DSInfCharCap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.HeckeMultiplication
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPrAlt
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.PeriodIntegrals.ZuckTensor
+public import Formalism.PeriodIntegrals.DSInfCharCap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CapelliEigenvalues.HeckeMultiplication
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+
+@[expose] public section
 
 open Matrix Finset
 open scoped InnerProductSpace Kronecker
@@ -107,21 +111,22 @@ structure URep (k r : ℕ) : Type 1 where
   R : Rep k r
   rep : IsURepOn (GG k r) R.σ
 
-theorem URep.repOn (U : URep k r) : RepOn (GG k r) U.R.σ where
-  one_mem := by show (1 : Mx k r)ᴴ * _ * 1 = _; simp
-  mul_mem := fun a ha b hb => (PI.UnitaryGroupMassFormula.CapelliEig.unitary_Hecke_group k r a ha).2.2 b hb
-  map_one := U.rep.1.1
-  map_mul := U.rep.1.2
+theorem URep.repOn (U : URep k r) : RepOn (GG k r) U.R.σ := by
+  refine ⟨?_, ?_, U.rep.1.1, U.rep.1.2⟩
+  · change (1 : Mx k r)ᴴ * _ * 1 = _
+    simp
+  · intro a ha b hb
+    exact (PI.UnitaryGroupMassFormula.CapelliEig.unitary_Hecke_group k r a ha).2.2 b hb
+
 
 open Classical in
-
 def URep.sig (U : URep k r) (g : Mx k r) : Module.End ℂ U.R.smSub :=
   if hg : g ∈ GG k r then
     ((U.R.σ g : U.R.H →ₗ[ℂ] U.R.H).restrict fun v hv => IsSm.apply U.repOn (w := v) hv hg)
   else 0
 
-open Classical in
 
+open Classical in
 def URep.dsig (U : URep k r) (X : Mx k r) : Module.End ℂ U.R.smSub :=
   if hX : InLieHpk k r X then
     { toFun := fun v => ⟨ds U.R.σ X v, IsSm.dsW U.repOn (W := [X]) v.2

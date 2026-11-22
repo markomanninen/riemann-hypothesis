@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DixmierSchurOfRankLeAleph0
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SimpleOver
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DixmierSchurOfRankLeAleph0
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -88,7 +92,8 @@ theorem simple_tensor :
     have h2 := hadj r hr t htU
     have h3 : TensorProduct.map r LinearMap.id t = b i ⊗ₜ[ℂ] c i := by
       conv_lhs => rw [ht]
-      rw [Finsupp.sum, map_sum, Finset.sum_eq_single i]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finsupp.sum, map_sum, Finset.sum_eq_single i]
       · rw [TensorProduct.map_tmul, ← hrp _ (Finset.mem_image_of_mem b hi)]
         simp
       · intro j hj hji

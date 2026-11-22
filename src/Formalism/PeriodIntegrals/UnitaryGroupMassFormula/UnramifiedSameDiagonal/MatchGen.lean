@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnDiaMatch0FHolds
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnDiaMatch0FHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,9 +13,9 @@ open NumberField IsDedekindDomain Matrix CrossDiaZero
 
 variable {D : D7} {u : D.what₂.Word}
 
+
 set_option maxHeartbeats 8000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem dn_match_gen (T : Forms0 D u) (v : (D.mem u).A.vT) (δ : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hδv : bc (prV (E := D.host.E) (T.atT.eV v).1) δ.1 = 1) (c c2 c1 c3 : (D.mem u).C.cls 0)
     (γd : GL (Fin (D.R.N 0)) D.host.E) (hγd : γd ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D 0 (Nat.zero_le _))) (κd : T.cls0.lev.U)

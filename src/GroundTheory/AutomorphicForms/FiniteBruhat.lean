@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -6,8 +10,8 @@ open Matrix DoubleCoset
 
 variable {n : ℕ} {k : Type*} [Field k]
 
-variable (n k) in
 
+variable (n k) in
 def borel : Subgroup (GL (Fin n) k) where
   carrier := {g | (g : Matrix (Fin n) (Fin n) k).IsUpperTriangular}
   mul_mem' {a b} ha hb := by
@@ -28,8 +32,8 @@ lemma mem_borel_iff (g : GL (Fin n) k) :
     g ∈ borel n k ↔ ∀ i j : Fin n, j < i → (g : Matrix (Fin n) (Fin n) k) i j = 0 :=
   Iff.rfl
 
-variable (k) in
 
+variable (k) in
 noncomputable def permGL : Equiv.Perm (Fin n) →* GL (Fin n) k :=
   (Matrix.permMatrixHom (n := Fin n) (R := k)).toHomUnits
 
@@ -40,14 +44,14 @@ lemma permGL_apply (σ : Equiv.Perm (Fin n)) (i j : Fin n) :
 
 lemma mul_permGL_apply (M : Matrix (Fin n) (Fin n) k) (σ : Equiv.Perm (Fin n)) (r c : Fin n) :
     (M * (permGL k σ : Matrix (Fin n) (Fin n) k)) r c = M r (σ c) := by
-  simp [mul_apply, permGL_apply]
+  simp [Matrix.mul_apply, permGL_apply]
 
 lemma permGL_mul_apply (M : Matrix (Fin n) (Fin n) k) (σ : Equiv.Perm (Fin n)) (r c : Fin n) :
     ((permGL k σ : Matrix (Fin n) (Fin n) k) * M) r c = M (σ⁻¹ r) c := by
-  rw [mul_apply, Fintype.sum_eq_single (σ⁻¹ r)]
+  rw [Matrix.mul_apply, Fintype.sum_eq_single (σ⁻¹ r)]
   · simp [permGL_apply]
   · intro a ha
-    rw [permGL_apply, if_neg, zero_mul]
+    rw [permGL_apply, ite_eq_right, zero_mul]
     rintro rfl
     exact ha (by simp)
 
@@ -129,8 +133,8 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
   have hE₂up : E₂.IsUpperTriangular := by
     intro a c hca
     replace hca : c < a := hca
-    simp only [E₂, Matrix.add_apply, one_apply, vecMulVec_apply, Pi.single_apply]
-    rw [if_neg (ne_of_lt hca).symm]
+    simp only [E₂, Matrix.add_apply, Matrix.one_apply_ne' (ne_of_lt hca), vecMulVec_apply,
+      Pi.single_apply, zero_add]
     by_cases haj : a = j
     · subst haj
       simp [v, not_lt.mpr hca.le]
@@ -151,7 +155,7 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
     rcases lt_trichotomy c j with hc | rfl | hc
     · simp [v, hjmin c hc, not_lt.mpr hc.le, (ne_of_lt hc)]
     · simp [v]
-    · simp only [v, if_pos hc, if_neg (ne_of_lt hc).symm]
+    · simp only [v, ite_eq_left hc, ite_eq_right (ne_of_lt hc).symm]
       field_simp
       ring
   have hM₁S : ∀ r : Fin n, t + 1 ≤ r.val → ∀ c, M₁ r c = H r c := by
@@ -166,8 +170,8 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
   have hE₁up : E₁.IsUpperTriangular := by
     intro a c hca
     replace hca : c < a := hca
-    simp only [E₁, Matrix.add_apply, one_apply, vecMulVec_apply, Pi.single_apply]
-    rw [if_neg (ne_of_lt hca).symm]
+    simp only [E₁, Matrix.add_apply, Matrix.one_apply_ne' (ne_of_lt hca), vecMulVec_apply,
+      Pi.single_apply, zero_add]
     by_cases hci : c = i₀
     · subst hci
       simp [u, not_lt.mpr hca.le]
@@ -194,8 +198,8 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
     have hlt : r < i₀ := by
       rw [Fin.lt_def]
       simpa [i₀] using hr
-    rw [hM₂, hM₁i₀ j, if_pos rfl]
-    simp only [u, if_pos hlt]
+    rw [hM₂, hM₁i₀ j, ite_eq_left rfl]
+    simp only [u, ite_eq_left hlt]
     field_simp
     ring
   have hval : ((b₁ * h * b₂ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) = M₂ := by
@@ -209,10 +213,10 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
     subst hii
     rw [Function.update_self]
     refine ⟨?_, ?_, ?_⟩
-    · rw [hM₂, hu0 _ le_rfl, zero_mul, add_zero, hM₁i₀, if_pos rfl]
+    · rw [hM₂, hu0 _ le_rfl, zero_mul, add_zero, hM₁i₀, ite_eq_left rfl]
       exact hj
     · intro c hc
-      rw [hM₂, hu0 _ le_rfl, zero_mul, add_zero, hM₁i₀, if_neg hc]
+      rw [hM₂, hu0 _ le_rfl, zero_mul, add_zero, hM₁i₀, ite_eq_right hc]
     · intro r hr
       rcases lt_or_gt_of_ne (Fin.val_ne_of_ne hr) with hlt | hgt
       · exact hM₂j r (by simpa [i₀] using hlt)
@@ -229,7 +233,7 @@ lemma rowsReduced_step (h : GL (Fin n) k) (t : ℕ) (ht : t < n)
       rw [hM₂, hu0 i hi, zero_mul, add_zero, hM₁S i hi']
       exact h2 c hc
     · intro r hr
-      rw [hM₂, hM₁i₀, if_neg (hjp i hi'), mul_zero, add_zero, hM₁, hvp i hi', mul_zero,
+      rw [hM₂, hM₁i₀, ite_eq_right (hjp i hi'), mul_zero, add_zero, hM₁, hvp i hi', mul_zero,
         add_zero]
       exact h3 r hr
 
@@ -252,8 +256,8 @@ lemma exists_eq_mul_permGL_of_rowsReduced (g : GL (Fin n) k)
   rw [Units.val_mul, mul_permGL_apply, hbD, diagonal_apply]
   by_cases hc : c = p r
   · subst hc
-    rw [if_pos (by rw [← hτ]; simp)]
-  · rw [(hp r (Nat.zero_le _)).2.1 c hc, if_neg]
+    rw [ite_eq_left (by rw [← hτ]; simp)]
+  · rw [(hp r (Nat.zero_le _)).2.1 c hc, ite_eq_right]
     intro e
     apply hc
     rw [← hτ, e]
@@ -318,41 +322,5 @@ theorem doubleCoset_permGL_injective {σ τ : Equiv.Perm (Fin n)} {g : GL (Fin n
   have hmem := mem_doubleCoset_self (borel n k) (borel n k) (permGL k τ)
   rw [← e] at hmem
   exact eq_of_permGL_mem_doubleCoset hmem
-
-theorem bruhat_decomposition (g : GL (Fin n) k) :
-    ∃! σ : Equiv.Perm (Fin n), g ∈ doubleCoset (permGL k σ) (borel n k) (borel n k) := by
-  obtain ⟨σ, hσ⟩ := exists_mem_doubleCoset_permGL g
-  exact ⟨σ, hσ, fun τ hτ => (doubleCoset_permGL_injective hσ hτ).symm⟩
-
-theorem iUnion_doubleCoset_permGL :
-    ⋃ σ : Equiv.Perm (Fin n), doubleCoset (permGL k σ) (borel n k) (borel n k) = Set.univ :=
-  Set.eq_univ_of_forall fun g => Set.mem_iUnion.mpr (exists_mem_doubleCoset_permGL g)
-
-theorem pairwise_disjoint_doubleCoset_permGL :
-    Pairwise (Function.onFun Disjoint fun σ : Equiv.Perm (Fin n) =>
-      doubleCoset (permGL k σ) (borel n k) (borel n k)) := by
-  intro σ τ hστ
-  rw [Function.onFun, Set.disjoint_left]
-  intro g hσ hτ
-  exact hστ (doubleCoset_permGL_injective hσ hτ)
-
-theorem bijective_mk_permGL :
-    Function.Bijective fun σ : Equiv.Perm (Fin n) =>
-      DoubleCoset.mk (borel n k) (borel n k) (permGL k σ) := by
-  constructor
-  · intro σ τ hστ
-    obtain ⟨x, hx, y, hy, hxy⟩ := (DoubleCoset.eq _ _ _ _).mp hστ
-    exact eq_of_permGL_mem_doubleCoset (mem_doubleCoset.mpr ⟨x, hx, y, hy, hxy⟩)
-  · intro q
-    obtain ⟨σ, hσ⟩ := exists_mem_doubleCoset_permGL (k := k) q.out
-    refine ⟨σ, ?_⟩
-    simp only
-    rw [← mk_eq_of_doubleCoset_eq (doubleCoset_eq_of_mem hσ), out_eq']
-
-theorem permGL_injective : Function.Injective (permGL k : Equiv.Perm (Fin n) → GL (Fin n) k) := by
-  intro σ τ h
-  apply eq_of_permGL_mem_doubleCoset (k := k)
-  rw [← h]
-  exact mem_doubleCoset_self _ _ _
 
 end GroundTheory.Automorphic

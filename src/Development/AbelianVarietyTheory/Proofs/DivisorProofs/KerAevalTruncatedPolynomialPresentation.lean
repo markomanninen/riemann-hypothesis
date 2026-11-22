@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory
@@ -72,7 +77,8 @@ theorem ker_aeval_truncated : ∀ (n : ℕ), 0 < n → ∀ (B A : Type) [CommRin
   obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun B).mp (hall F)
   set G : MvPolynomial (Fin d) B := ∑ a, c a • ∏ i, MvPolynomial.X i ^ (a i : ℕ) with hG
   have hqG : q G = q F := by
-    rw [← hc, hG, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, hG, map_sum]
     exact Finset.sum_congr rfl fun a _ => by rw [map_smul, hqv]
   have hFG : F - G ∈ J := (hq F G).mp hqG.symm
   have hevG : MvPolynomial.aeval x G = 0 := by
@@ -80,7 +86,8 @@ theorem ker_aeval_truncated : ∀ (n : ℕ), 0 < n → ∀ (B A : Type) [CommRin
     rw [RingHom.mem_ker, map_sub, hF] at h0
     simpa using h0
   have hsum : ∑ a, c a • ∏ i, x i ^ (a i : ℕ) = 0 := by
-    rw [← hevG, hG, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hevG, hG, map_sum]
     exact Finset.sum_congr rfl fun a _ => by simp [map_prod, map_pow]
   have hc0 := Fintype.linearIndependent_iff.mp hli c hsum
   have hG0 : G = 0 := by rw [hG]; simp [hc0]

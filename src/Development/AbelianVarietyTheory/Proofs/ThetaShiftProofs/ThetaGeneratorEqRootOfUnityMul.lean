@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabMapCubical
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
-import Formalism.LocalToGlobal.ProjectiveLattices.ThetaFramePf
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsFramedPointChangedByLetters
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabMapCubical
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThetaFramePf
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.EqOfDominantGeometricPointsOfUnramified
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsPolAVPullbackOfIsLocalRing
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option autoImplicit false
@@ -42,10 +46,10 @@ theorem schDom_spec_map {A B : Type} [CommRing A] [CommRing B] [IsDomain A] (φ 
   exact IsSchemeTheoreticallyDominant.of_isDominant _
 
 theorem exists_pow_eq_one_field (hmul : Out.MulNSt) (hS : Out.SerreSt) {F : Type} [Field F] [IsAlgClosed F] [CharZero F]
-    (P : Out.PolAV (Sp F)) (θ : Aut P.A) [IsMonHom θ.hom] (w : LB.Iso P.L (P.L.pull θ.hom.left)) (hw : PGen w) :
+    (P : Out.PolAV (Sp F)) (θ : Aut P.A) [IsMonHom θ.asIso.hom] (w : LB.Iso P.L (P.L.pull θ.asIso.hom.left)) (hw : PGen w) :
     ∃ N : ℕ, 0 < N ∧ θ ^ N = 1 := by
-  have hsucc : ∀ n : ℕ, (θ ^ (n + 1)).hom = θ.hom ≫ (θ ^ n).hom := fun n => by rw [pow_succ]; rfl
-  have hQ : ∀ n : ℕ, IsMonHom (θ ^ (n + 1)).hom ∧ ∃ v : LB.Iso P.L (P.L.pull (θ ^ (n + 1)).hom.left), PGen v := by
+  have hsucc : ∀ n : ℕ, (θ ^ (n + 1)).asIso.hom = θ.asIso.hom ≫ (θ ^ n).asIso.hom := fun n => by rw [pow_succ]; rfl
+  have hQ : ∀ n : ℕ, IsMonHom (θ ^ (n + 1)).asIso.hom ∧ ∃ v : LB.Iso P.L (P.L.pull (θ ^ (n + 1)).asIso.hom.left), PGen v := by
     intro n
     induction n with
     | zero => rw [zero_add, pow_one]; exact ⟨inferInstance, w, hw⟩
@@ -59,10 +63,10 @@ theorem exists_pow_eq_one_field (hmul : Out.MulNSt) (hS : Out.SerreSt) {F : Type
   have hfin : Finite {x : Over.mk (𝟙 (Sp F)) ⟶ P.A // x ^ 3 = 1} :=
     Nat.finite_of_card_ne_zero (by rw [hc]; positivity)
   let f : {x : Over.mk (𝟙 (Sp F)) ⟶ P.A // x ^ 3 = 1} → {x : Over.mk (𝟙 (Sp F)) ⟶ P.A // x ^ 3 = 1} :=
-    fun x => ⟨x.1 ≫ θ.hom, by rw [← MonObj.pow_comp, x.2, MonObj.one_comp]⟩
-  have finj : Function.Injective f := fun a b h => Subtype.ext ((Iso.cancel_iso_hom_right _ _ θ).1 (congrArg Subtype.val h))
+    fun x => ⟨x.1 ≫ θ.asIso.hom, by rw [← MonObj.pow_comp, x.2, MonObj.one_comp]⟩
+  have finj : Function.Injective f := fun a b h => Subtype.ext ((Iso.cancel_iso_hom_right _ _ θ.asIso).1 (congrArg Subtype.val h))
   let e := Equiv.ofBijective f (Finite.injective_iff_bijective.1 finj)
-  have he : ∀ (n : ℕ) x, ((e ^ n) x).1 = x.1 ≫ (θ ^ n).hom := by
+  have he : ∀ (n : ℕ) x, ((e ^ n) x).1 = x.1 ≫ (θ ^ n).asIso.hom := by
     intro n
     induction n with
     | zero => intro x; exact (Category.comp_id _).symm
@@ -70,11 +74,11 @@ theorem exists_pow_eq_one_field (hmul : Out.MulNSt) (hS : Out.SerreSt) {F : Type
   have hN : 0 < orderOf e := orderOf_pos e
   obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero hN.ne'
   obtain ⟨h1, v, hv⟩ := hQ n
-  refine ⟨n + 1, n.succ_pos, Iso.ext ?_⟩
+  refine ⟨n + 1, n.succ_pos, Aut.ext (Iso.ext ?_)⟩
   have hMu : IsUnit ((3 : ℕ) : Γ(Sp F, ⊤)) := by
     have : IsUnit ((3 : ℕ) : F) := IsUnit.mk0 _ (by norm_num)
     exact map_natCast (Scheme.ΓSpecIso (CommRingCat.of F)).inv.hom 3 ▸ this.map _
-  refine hS (Sp F) P 3 le_rfl (θ ^ (n + 1)) h1 (fun _ => ⟨⊤, trivial, ?_⟩)
+  refine hS (Sp F) P 3 le_rfl (θ ^ (n + 1)).asIso h1 (fun _ => ⟨⊤, trivial, ?_⟩)
     (fix_torsion_of_fix_geometric_of_isDominant hmul P 3 (by norm_num) hMu (𝟙 _) _ h1 fun y hy => ?_)
   · obtain ⟨t, ht⟩ := gen_of_iso hv (P.A.hom ⁻¹ᵁ ⊤).ι
     refine gen_chartPull (chartPullOut P.L _ _ _ _ fun n => ?_) t ht
@@ -88,7 +92,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E}
 
 theorem exists_pow_eq_one (hmul : Out.MulNSt) (hS : Out.SerreSt) {X : Scheme.{0}} {t : SAB H X} (hp : IsProper t.G.hom)
     (hA : Out.RelAmple t.G t.PP.L) (hK : Out.KTriv t.G t.PP.L) {S : Type} [CommRing S] [IsDomain S] [CharZero S]
-    {x : Sp S ⟶ X} {t' : SAB H (Sp S)} (m m' : SABMap t' t x) (θ : Aut t'.G) (hθ : θ.hom.left ≫ m.φ = m'.φ) :
+    {x : Sp S ⟶ X} {t' : SAB H (Sp S)} (m m' : SABMap t' t x) (θ : Aut t'.G) (hθ : θ.asIso.hom.left ≫ m.φ = m'.φ) :
     ∃ N : ℕ, 0 < N ∧ θ ^ N = 1 := by
   let F := AlgebraicClosure (FractionRing S)
   let io : S →+* F := (algebraMap (FractionRing S) _).comp (algebraMap S _)
@@ -100,11 +104,11 @@ theorem exists_pow_eq_one (hmul : Out.MulNSt) (hS : Out.SerreSt) {X : Scheme.{0}
   obtain ⟨k, hk⟩ := sabComp pullCubComp E H _ _ _ _ _ _ _ _ m n
   obtain ⟨k', hk'⟩ := sabComp pullCubComp E H _ _ _ _ _ _ _ _ m' n
   obtain ⟨ψ, hψ, hφ, -, -, v, hv, -⟩ := sabMap_iso k' k rfl rfl
-  have hcomm : ψ.hom.left ≫ n.φ = n.φ ≫ θ.hom.left := by
+  have hcomm : ψ.hom.left ≫ n.φ = n.φ ≫ θ.asIso.hom.left := by
     apply m.cart.1.hom_ext
     · have e1 : k.φ = n.φ ≫ m.φ := hk
       have e2 : k'.φ = n.φ ≫ m'.φ := hk'
-      show (ψ.hom.left ≫ n.φ) ≫ m.φ = (n.φ ≫ θ.hom.left) ≫ m.φ
+      show (ψ.hom.left ≫ n.φ) ≫ m.φ = (n.φ ≫ θ.asIso.hom.left) ≫ m.φ
       rw [Category.assoc, ← e1, hφ, e2, Category.assoc, hθ]
     · have e : n.φ ≫ t'.G.hom = tF.G.hom ≫ spMap io := n.cart.1.w
       rw [Category.assoc, Category.assoc, Over.w, e, Over.w_assoc]
@@ -126,18 +130,18 @@ theorem exists_pow_eq_one (hmul : Out.MulNSt) (hS : Out.SerreSt) {X : Scheme.{0}
       isAb := ⟨inferInstance, inferInstance, MorphismProperty.of_isPullback (P := @IsProper) k.cart.1 hp, ‹_›⟩
       rigid := ⟨tF.PP.rig, tF.PP.rigGen⟩
       sym := fun _ => ⟨⊤, trivial, gen_of_iso ((isGen_iff ws).1 gs') _⟩ }
-  obtain ⟨N, hN, hψN⟩ := @exists_pow_eq_one_field hmul hS F _ _ _ P ψ hψ v ((isGen_iff v).1 hv)
-  let ψ' : Aut tF.G := ψ
+  let ψ' : Aut tF.G := Aut.of ψ
+  obtain ⟨N, hN, hψN⟩ := @exists_pow_eq_one_field hmul hS F _ _ _ P ψ' hψ v ((isGen_iff v).1 hv)
   have hψN' : ψ' ^ N = 1 := hψN
-  have hit : ∀ a : ℕ, (ψ' ^ a).hom.left ≫ n.φ = n.φ ≫ (θ ^ a).hom.left := by
+  have hit : ∀ a : ℕ, (ψ' ^ a).asIso.hom.left ≫ n.φ = n.φ ≫ (θ ^ a).asIso.hom.left := by
     intro a
     induction a with
     | zero => exact (Category.id_comp _).trans (Category.comp_id _).symm
     | succ a ih =>
       rw [pow_succ, pow_succ]
-      show (ψ.hom.left ≫ (ψ' ^ a).hom.left) ≫ n.φ = n.φ ≫ θ.hom.left ≫ (θ ^ a).hom.left
+      show (ψ.hom.left ≫ (ψ' ^ a).asIso.hom.left) ≫ n.φ = n.φ ≫ θ.asIso.hom.left ≫ (θ ^ a).asIso.hom.left
       rw [Category.assoc, ih, ← Category.assoc, hcomm, Category.assoc]
-  refine ⟨N, hN, Iso.ext (Over.OverMorphism.ext ?_)⟩
+  refine ⟨N, hN, Aut.ext (Iso.ext (Over.OverMorphism.ext ?_))⟩
   have := t'.semi.smooth
   have : IsProper t'.G.hom := MorphismProperty.of_isPullback (P := @IsProper) m.cart.1 hp
   have : IsSchemeTheoreticallyDominant (spMap io) := schDom_spec_map io hio
@@ -332,27 +336,27 @@ theorem theta_generator_eq_rootOfUnity_mul : Out.Laws → Out.Laws2 → ∀ (E :
   have G := AutFin.gen_of_secGen m pw hgen gs₁ gf₁ K
   have G' := AutFin.gen_of_secGen m' pw' hgen gs₂ gf₂ K'
   obtain ⟨ψ, hψ, hφ, -⟩ := sabMap_iso m' m rfl rfl
-  let θ : Aut t'.G := ψ
+  let θ : Aut t'.G := Aut.of ψ
   obtain ⟨N, hN, hθN⟩ := AutFin.exists_pow_eq_one h₁.mulN h₁.serre Xo.univ.proper Xo.univ.ample Xo.univ.ktriv m m' θ hφ
   obtain ⟨ζ, hζ, -⟩ := G σ'
-  have hgg : g' = θ.hom.left ≫ g := by
+  have hgg : g' = θ.asIso.hom.left ≫ g := by
     apply pullback.hom_ext
     · rw [Category.assoc]
-      exact gf₂.trans ((Over.w θ.hom).symm.trans (congrArg (θ.hom.left ≫ ·) gf₁.symm))
+      exact gf₂.trans ((Over.w θ.asIso.hom).symm.trans (congrArg (θ.asIso.hom.left ≫ ·) gf₁.symm))
     · rw [Category.assoc]
-      exact gs₂.trans (hφ.symm.trans (congrArg (θ.hom.left ≫ ·) gs₁.symm))
+      exact gs₂.trans (hφ.symm.trans (congrArg (θ.asIso.hom.left ≫ ·) gs₁.symm))
   subst hgg
-  have he : eSec t'.G ≫ θ.hom.left = eSec t'.G := congrArg (fun q => q.left) (IsMonHom.one_hom ψ.hom)
+  have he : eSec t'.G ≫ θ.asIso.hom.left = eSec t'.G := congrArg (fun q => q.left) (IsMonHom.one_hom ψ.hom)
   have hL := t'.PP.isLB
-  have act₁ : AutFin.Acts t'.G.hom (eSec t'.G) t'.PP.rig σ θ.hom.left ζ :=
+  have act₁ : AutFin.Acts t'.G.hom (eSec t'.G) t'.PP.rig σ θ.asIso.hom.left ζ :=
     AutFin.acts_of_cancel hL Xo.univ.t.PP.isLB (m'.base.trans m.base.symm) hφ he pw pw' rw₁ rw₂ hζ K K'
-  have actn : ∀ n : ℕ, AutFin.Acts t'.G.hom (eSec t'.G) t'.PP.rig σ (θ ^ (n + 1)).hom.left (ζ ^ (n + 1)) := by
+  have actn : ∀ n : ℕ, AutFin.Acts t'.G.hom (eSec t'.G) t'.PP.rig σ (θ ^ (n + 1)).asIso.hom.left (ζ ^ (n + 1)) := by
     intro n
     induction n with
     | zero => rwa [zero_add, pow_one, pow_one]
     | succ n ih =>
       rw [pow_succ θ (n + 1), pow_succ ζ (n + 1)]
-      exact ih.comp hL (Over.w θ.hom) he act₁
+      exact ih.comp hL (Over.w θ.asIso.hom) he act₁
   have actN := actn N
   rw [pow_succ θ, hθN, one_mul] at actN
   have := t'.semi.smooth

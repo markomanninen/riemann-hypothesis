@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvCov
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRInvCov
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff
@@ -179,7 +183,8 @@ theorem jDRInvFn_of (hA : RInvAlphaP) (hB : RInvBetaP) (hBL : RInvBetaLeftP) : J
   show rhatOp k r D.z D.z' Y (B.rho D p F) g = Formalism.FourierDecayAlt.P.JFxB.Lq D p (rhatOp k r D.z D.z' Y F
     ((Matrix.of p.1.1)⁻¹ * (Matrix.of p.1.2)⁻¹ * (g * (Matrix.of p.2.2 * Matrix.of p.2.1))))
   simp only [rhatOp]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Eq.trans (Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun J _ => by
     rw [qminor_rho D hp hF hgG]))) ?_
   have key := assembleP (M := Wq →L[ℂ] Wp) (jSetR k r) (alP k r D.z') (rowsR k r)
@@ -195,7 +200,8 @@ theorem jDRInvFn_of (hA : RInvAlphaP) (hB : RInvBetaP) (hBL : RInvBetaLeftP) : J
     (fun d => by
       rw [hB k r D.z g _ hgG hSG d, hBL k r D.z _ _ _ D.z_mem hp.1 hp.2.1 hgS d])
   have key2 := congrArg (Formalism.FourierDecayAlt.P.JFxB.Lq D p) key
-  simp only [map_sum, map_smul] at key2 ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul] at key2 ⊢
   refine Eq.trans ?_ (key2.trans ?_)
   · rfl
   · rfl
@@ -209,7 +215,8 @@ theorem jDRInvFnM_of (hA : RInvAlphaM) (hAL : RInvAlphaLeftM) (hB : RInvBetaM) :
   show rvhatOp k r D.z D.z' Y (B.rho D p F) g = Formalism.FourierDecayAlt.P.JFxB.Lq D p (rvhatOp k r D.z D.z' Y F
     ((Matrix.of p.1.1)⁻¹ * (Matrix.of p.1.2)⁻¹ * (g * (Matrix.of p.2.2 * Matrix.of p.2.1))))
   simp only [rvhatOp]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Eq.trans (Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun J _ => by
     rw [qminor_rho D hp hF hgG]))) ?_
   have key := assembleM (M := Wq →L[ℂ] Wp) (jSetR k r) (beM k r D.z') (colsV k r)
@@ -225,7 +232,8 @@ theorem jDRInvFnM_of (hA : RInvAlphaM) (hAL : RInvAlphaLeftM) (hB : RInvBetaM) :
       rw [hA k r D.z g _ hgG hSG c, hAL k r D.z _ _ _ D.z_mem hp.1 hp.2.1 hgS c])
     (fun X => hB k r D.z' (Matrix.of p.2.1) (Matrix.of p.2.2) D.z'_mem hp.2.2.1 hp.2.2.2 (Wq →L[ℂ] Wp) X)
   have key2 := congrArg (Formalism.FourierDecayAlt.P.JFxB.Lq D p) key
-  simp only [map_sum, map_smul] at key2 ⊢
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul] at key2 ⊢
   refine Eq.trans ?_ (key2.trans ?_)
   · rfl
   · rfl

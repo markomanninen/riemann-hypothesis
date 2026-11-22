@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Lam0
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.Lam0
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 theorem UpperTheory.V.Th.Sp.lam0 :

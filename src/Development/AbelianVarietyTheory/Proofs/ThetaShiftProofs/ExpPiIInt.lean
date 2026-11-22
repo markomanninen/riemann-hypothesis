@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FinrankHomComplex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.FinrankHomComplex
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
   have hqR : ∀ r ∈ R, q r = 0 := fun r hr => hjinj (by simpa [hbR r hr, hbI r hr] using hdec r)
   have hqρ : ∀ a z, q (ρ a z) = F a (q z) := fun a z => by
     conv_lhs => rw [hdec z]
-    simp only [map_add, map_smul, hqR _ (hρR _ _ (hb _)), ← hjF, hqj, smul_zero, zero_add]
+    simp only [map_add (f := _), map_smul, hqR _ (hρR _ _ (hb _)), ← hjF, hqj, smul_zero, zero_add]
   have hSq : ∀ z z', S z (j z') = S (j (q z)) (j z') := fun z z' => by
     conv_lhs => rw [hdec z]
     simp [hj' _ _ (hb _)]
@@ -75,26 +79,26 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
   have hs : ∀ y, s y = P (y, 0, 0) := fun _ => rfl
   have hsρ : ∀ (a : O) y, s (a • y) = ρ a (s y) := fun a y => by rw [hs, hs, ← hP]; simp
   let φ : W →ₗ[ℂ] (Y →+ ℂ) :=
-    { toFun := fun z => AddMonoidHom.mk' (fun x => Φ z (s x)) fun x x' => by simp only [Φ, map_add]; ring
+    { toFun := fun z => AddMonoidHom.mk' (fun x => Φ z (s x)) fun x x' => by simp only [Φ, map_add (f := _)]; ring
       map_add' := fun z z' => AddMonoidHom.ext fun x => by simp [Φ]; ring
       map_smul' := fun c z => AddMonoidHom.ext fun x => by simp [Φ]; ring }
   have hφ : ∀ z x, φ z x = Φ z (s x) := fun _ _ => rfl
   have hPv : ∀ v : Y × (Y →+ ℤ) × M, P v = s v.1 + P (0, v.2.1, 0) + P (0, 0, v.2.2) := fun v => by
-    rw [hs, ← map_add, ← map_add]; simp
+    rw [hs, ← map_add (f := _), ← map_add (f := _)]; simp
   have hφP : ∀ v x, φ (P v) x = φ (s v.1) x + v.2.1 x - S (j (q (s x))) (j (q (P (0, 0, v.2.2)))) / (2 * I) :=
     fun v x => by
       have h1 : φ (P (0, v.2.1, 0)) x = v.2.1 x := by
         rw [hφ, hΦ, hs, hS]; simp [Φ, hbm, hqR _ (hmem _)]
       have h2 : φ (P (0, 0, v.2.2)) x = -(S (j (q (s x))) (j (q (P (0, 0, v.2.2)))) / (2 * I)) := by
         rw [hφ, hΦ, hs, hS]; simp [Φ, hbm]
-      rw [hPv v, map_add, map_add, AddMonoidHom.add_apply, AddMonoidHom.add_apply, h1, h2]; ring
+      rw [hPv v, map_add (f := _), map_add (f := _), AddMonoidHom.add_apply, AddMonoidHom.add_apply, h1, h2]; ring
   have hr0 : ∀ r ∈ R, (∀ x, (S (s x) r).im = 0) → r = 0 := fun r hr h0 => by
     have h1 : (imForm S).flip r = 0 := LinearMap.ext_on_range hspan fun v => by
       show (S (P v) r).im = 0
       have h2 := congrArg Complex.re (hb' (P (0, 0, v.2.2)) r hr)
       rw [hbm _ rfl] at h2
       rw [hPv]
-      simp only [map_add, LinearMap.add_apply, add_im, h0, hR _ (hmem _) r hr, zero_add]
+      simp only [map_add (f := _), LinearMap.add_apply, add_im, h0, hR _ (hmem _) r hr, zero_add]
       simpa using h2.symm
     by_contra hne
     have h3 : (S (I • r) r).im = 0 := congr($h1 (I • r))
@@ -110,7 +114,7 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
       have h3 : ∀ x, (S (s x) (b (I • z))).im = 0 ∧ (S (s x) (b z)).im = 0 := fun x => by
         have := h2 x
         rw [hdec z, h1] at this
-        simp only [map_add, map_smul, map_zero, add_zero, LinearMap.add_apply, LinearMap.smul_apply,
+        simp only [map_add (f := _), map_smul, map_zero, add_zero, LinearMap.add_apply, LinearMap.smul_apply,
           apply_imPart hconj hb' _ (hb _), smul_eq_mul] at this
         simpa [Complex.ext_iff] using this
       rw [hdec z, h1, hr0 _ (hb _) fun x => (h3 x).1, hr0 _ (hb _) fun x => (h3 x).2]
@@ -191,9 +195,9 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
         have h1 : EM (w • (l + m)) (l + m) =
             EM (w • l) l + EM (w • m) m + EM l m + 2 * (EM (w • l) m - EM l m) := by
           have h2 : EM (w • l) m + EM (star w • l) m = EM l m := by
-            rw [← LinearMap.add_apply, ← map_add, ← add_smul, hw, one_smul]
+            rw [← LinearMap.add_apply, ← map_add (f := _), ← add_smul, hw, one_smul]
           have h3 : EM (w • m) l = -EM (star w • l) m := by rw [hEadj, hEalt]
-          simp only [smul_add, map_add, LinearMap.add_apply]
+          simp only [smul_add, map_add (f := _), LinearMap.add_apply]
           linarith
         rw [hHm, hf, hf, hpE, exp_pi_I_int, ← map_add f]
         simp only [LinearEquiv.symm_apply_apply, h1, zpow_add₀ (neg_ne_zero.2 (one_ne_zero (α := ℂ))), zpow_mul]
@@ -214,9 +218,9 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
       psi_neg := fun x => by simp
       psi_add := fun x y => by
         have h2 : φ (s x) (w • y) + φ (s y) (w • x) = φ (s x) y := by
-          rw [hTs y, hTa, ← map_add, ← add_smul, hw, one_smul]
+          rw [hTs y, hTa, ← map_add (f := _), ← add_smul, hw, one_smul]
         change eTwoPi _ = eTwoPi _ * eTwoPi _ * eTwoPi (φ (s x) y)
-        simp only [← AnArc.e_add, smul_add, map_add, AddMonoidHom.add_apply]
+        simp only [← AnArc.e_add, smul_add, map_add (f := _), AddMonoidHom.add_apply]
         congr 1
         linear_combination h2
       be := be
@@ -238,7 +242,7 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
     · show φ (P v) x = φ (s v.1) x + v.2.1 x - hermForm Hm (q (s x)) (p v.2.2) / (2 * I)
       rw [hφP, hHm, hp]
     · show q (P v) = q (s v.1) + p v.2.2
-      rw [hPv, map_add, map_add, hqR _ (hmem _), add_zero, hp]
+      rw [hPv, map_add (f := _), map_add (f := _), hqR _ (hmem _), add_zero, hp]
   · have hB : ∀ y x : Y, A.Bw 0 y x = (S (b (s y)) (b (s x))).re := fun y x => by
       show (φ (s y) x + 0 * (be y x : ℂ) + hermForm Hm (q (s y)) (q (s x)) / (2 * I)).im = _
       rw [hφ, hHm, hb' _ _ (hb _)]
@@ -248,12 +252,14 @@ theorem exists_arc {w : O} (hw : w + star w = 1) (EM : LinearMap.BilinForm ℤ M
     · ext i k; simp [AnArc.BwMat_apply, A.Bw_symm 0 (Module.Free.chooseBasis ℤ A.X i)]
     · have h1 : ∑ i, x i • b (s (c i)) ≠ 0 := fun h0 => hx (funext fun k => by
         have h2 := congrArg (fun z => reForm S z (P (0, (c.coord k).toAddMonoidHom, 0))) h0
-        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, reForm_apply, hb' _ _ (hmem _), hs,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, reForm_apply, hb' _ _ (hmem _), hs,
           hS] at h2
         simpa [Finsupp.single_apply] using h2)
       refine (hpos _ h1).trans_eq ?_
       rw [← reForm_apply]
-      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, reForm_apply, ← hB, dotProduct,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, reForm_apply, ← hB, dotProduct,
         Matrix.mulVec, AnArc.BwMat_apply, Finset.mul_sum, smul_eq_mul, star_trivial]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun k _ => by simp only [c]; ring

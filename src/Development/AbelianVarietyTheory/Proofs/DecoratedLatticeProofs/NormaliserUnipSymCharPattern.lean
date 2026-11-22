@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem step_up (hYX : Y * X = 1)
   by_contra hc
   push_neg at hc
   have h0 : (Y * X) q q = 0 := by
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun j _ => ?_
     by_cases hj : Prec ρ κ i j
     · rw [hc j hj, mul_zero]
@@ -72,7 +76,7 @@ theorem step_down (hXY : X * Y = 1)
   by_contra hc
   push_neg at hc
   have h0 : (X * Y) c c = 0 := by
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     refine Finset.sum_eq_zero fun j _ => ?_
     by_cases hj : Prec ρ κ j a
     · rw [hc j hj, zero_mul]
@@ -283,7 +287,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
   have diag : ∀ b : Fin n, X b b * Y b b = 1 := by
     intro b
     have h := congrFun (congrFun hXY b) b
-    rw [mul_apply, Finset.sum_eq_single b, one_apply_eq] at h
+    rw [Matrix.mul_apply, Finset.sum_eq_single b, one_apply_eq] at h
     · exact h
     · intro j _ hj
       rcases eq_or_ne (X b j) 0 with h1 | h1
@@ -329,7 +333,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
     · exact (mul_eq_zero.1 h).resolve_left (hX0 rmF)
   have S3 : Y tF tmF = 0 := by
     have h := congrFun (congrFun hYX tF) tmF
-    rw [mul_apply, Finset.sum_eq_single tmF, one_apply_ne (fun e => by rw [e] at htF; omega)] at h
+    rw [Matrix.mul_apply, Finset.sum_eq_single tmF, one_apply_ne (fun e => by rw [e] at htF; omega)] at h
     · exact (mul_eq_zero.1 h).resolve_right (hX0 tmF)
     · intro j _ hj
       rcases eq_or_ne (Y tF j) 0 with h1 | h1
@@ -347,7 +351,7 @@ theorem normaliser_unipSym_char : ∀ (k : Type) [Field k] (n ρ κ : ℕ), n = 
     · intro h; exact absurd (Finset.mem_univ _) h
   have S4 : X rF tF = 0 := by
     have h := congrFun (congrFun hXY rF) tF
-    rw [mul_apply, Finset.sum_eq_single tF, one_apply_ne (fun e => by rw [e] at hrF; omega)] at h
+    rw [Matrix.mul_apply, Finset.sum_eq_single tF, one_apply_ne (fun e => by rw [e] at hrF; omega)] at h
     · exact (mul_eq_zero.1 h).resolve_right (hY0 tF)
     · intro j _ hj
       rcases eq_or_ne (X rF j) 0 with h1 | h1

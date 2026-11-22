@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp
 
 noncomputable section
@@ -35,10 +40,10 @@ theorem isometry_of_periods (R R' : RiemLat E g Λ) (hs : Submodule.span ℝ (Se
     (x y : Fin g → ℂ) : R'.ip (φ x) (φ y) = R.ip x y := by
   let D : (Fin g → ℂ) → (Fin g → ℂ) → ℂ := fun z w => R'.ip (φ z) (φ w) - R.ip z w
   have hl : ∀ z z' w, D (z + z') w = D z w + D z' w := fun z z' w => by
-    simp only [D, map_add, ip_add_left']
+    simp only [D, map_add (f := _), ip_add_left']
     ring
   have hr : ∀ z w w', D z (w + w') = D z w + D z w' := fun z w w' => by
-    simp only [D, map_add, ip_add_right']
+    simp only [D, map_add (f := _), ip_add_right']
     ring
   have hcl : ∀ (c : ℂ) z w, D (c • z) w = star c * D z w := fun c z w => by
     simp only [D, map_smul, ip_smul_left']

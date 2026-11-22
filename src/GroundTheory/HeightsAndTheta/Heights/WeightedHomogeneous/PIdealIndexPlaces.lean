@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsPointHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsPointHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.FieldChange
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -19,7 +24,7 @@ theorem genIndex_comap {G G' : Type*} [AddCommGroup G] [AddCommGroup G'] (f : G'
     AddSubgroup.map_comap_eq_self hB]
 
 theorem absNorm_eq_index {L : Type*} [Field L] [NumberField L] (A : Ideal (𝓞 L)) :
-    A.absNorm = A.toAddSubgroup.index := rfl
+    A.absNorm = A.toAddSubgroup.index := Ideal.absNorm_eq_index A
 
 theorem genIndex_ideal {L : Type*} [Field L] [NumberField L] {A B : Ideal (𝓞 L)} (hA : A ≠ ⊥)
     (hB : B ≠ ⊥) : genIndex A.toAddSubgroup B.toAddSubgroup = (B.absNorm : ℝ) / A.absNorm := by
@@ -45,8 +50,8 @@ theorem genIndex_ideal {L : Type*} [Field L] [NumberField L] {A B : Ideal (𝓞 
 
 end IdealIndexPlaces
 
-open IdealIndexPlaces in
 
+open IdealIndexPlaces in
 theorem IdealIndexPlaces.proof : IdealIndexPlaces.Statement := by
   intro L _ _ ι _ y hy
   obtain ⟨⟨b, hb⟩, hint⟩ :=

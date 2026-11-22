@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RootMeasureTransportDoubleCoset
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+
+@[expose] public section
+
 open MeasureTheory Matrix Formalism.BasicNotions Formalism.QuantumDeterminants Formalism.MainNotions.S
 open scoped ENNReal
 set_option maxHeartbeats 1000000 in

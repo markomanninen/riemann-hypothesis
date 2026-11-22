@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 namespace GlobalTheory.UnitLemma.SwapInt
@@ -30,7 +35,7 @@ noncomputable def conjO (K : UQ) : K.O →+* K.O where
     rw [← Classical.choose_spec (K.c_int 0)]; simp
   map_add' a b := by
     apply IsFractionRing.injective K.O K.E
-    rw [← Classical.choose_spec (K.c_int (a + b)), map_add, map_add, map_add,
+    rw [← Classical.choose_spec (K.c_int (a + b)), map_add (f := _), map_add (f := _), map_add (f := _),
       ← Classical.choose_spec (K.c_int a), ← Classical.choose_spec (K.c_int b)]
 
 theorem conjO_spec (K : UQ) (o : K.O) :
@@ -44,8 +49,8 @@ theorem sigma_algebraMap {K : UQ} (B : InvAlg K) (o : K.O) :
 
 end GlobalTheory.UnitLemma.SwapInt
 
-open GlobalTheory.UnitLemma.SwapInt in
 
+open GlobalTheory.UnitLemma.SwapInt in
 theorem GlobalTheory.UnitLemma.InvAlg.isIntegral_mk_comap_sigma_iff :
     ∀ (K : UQ) (B : InvAlg K) (m : MaximalSpectrum B.A) (x : B.A),
       IsIntegral K.O (Ideal.Quotient.mk (m.asIdeal.comap B.σ) x) ↔

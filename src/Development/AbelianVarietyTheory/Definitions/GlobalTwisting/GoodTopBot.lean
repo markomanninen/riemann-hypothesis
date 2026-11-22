@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.StatementB
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.StatementB
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -29,8 +33,8 @@ def Good {R : Type} [CommRing R] {r n : ℕ} (M : Submodule R (MvPolynomial (Fin
   (∀ μ : Fin r → ℕ, ∀ f ∈ M, weightedHomogeneousComponent (rowW r n) μ f ∈ M) ∧
   ∀ σ : Equiv.Perm (Fin r), ∀ f ∈ M, rename (fun v : Fin r × Fin n => (σ v.1, v.2)) f ∈ M
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem _root_.GlobalTheory.Alc.good_top_bot (R : Type) [CommRing R] (r n : ℕ) :
     _root_.GlobalTheory.Alc.Good (⊤ : Submodule R (MvPolynomial (Fin r × Fin n) R)) ∧ _root_.GlobalTheory.Alc.Good (⊥ : Submodule R (MvPolynomial (Fin r × Fin n) R)) := by
   refine ⟨⟨fun _ _ _ _ => Submodule.mem_top, fun _ _ _ => Submodule.mem_top,

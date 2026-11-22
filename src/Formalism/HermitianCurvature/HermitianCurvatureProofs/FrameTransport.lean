@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfRadialExhaustion
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadTopOfRadialExhaustion
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ def len (σ : L →+* ℂ) (x : D.B.carrier) : ℝ :=
   Real.sqrt ((D.B.metric.form σ).inner ((1 : ComplexAt σ) ⊗ₜ[𝓞 L] x) ((1 : ComplexAt σ) ⊗ₜ[𝓞 L] x) : ℂ).re
 
 def IsVec {σ : L →+* ℂ} (a : D.Frame σ) (x : D.B.carrier) (c : Fin D.g → ℂ) : Prop :=
-  ∃ v : epsAt (emb σ) ⟶ D.t.G, D.MB.Lifts (σ.comp (algebraMap (𝓞 L) L)) (𝟙 D.t.G.left) x v ∧ a.IsTan c v
+  ∃ v : epsAt (emb σ) ⟶ D.t.G, (v.left ≫ (𝟙 D.t.G.left) = ReciprocityTheory.ChartRestriction.G.Geo.Tor.spMap (GlobalTheory.CompanionTheory.Ar.dualMap (σ.comp (algebraMap (𝓞 L) L))) ≫ (D.MB.pt x).left) ∧ a.IsTan c v
 
 abbrev Ext {L' : Type} [Field L'] [NumberField L'] [Algebra L L'] (D' : PPData H L') :=
   SABMap D'.t D.t (spMap (algebraMap (𝓞 L) (𝓞 L')))

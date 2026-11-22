@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,8 @@ theorem Pf_LvEquiv_grdB_mul (τ : Ks ≃ₐ[LL] Ks) (a : LLˣ) (x y : HahnSeries
   ext i
   rw [HahnSeries.coeff_mul (x := grdB τ a x)]
   change algebraMap LL Ks ((a ^ i : LLˣ) : LL) * τ ((x * y).coeff i) = _
-  rw [HahnSeries.coeff_mul, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [HahnSeries.coeff_mul, map_sum, Finset.mul_sum]
   symm
   refine (Finset.sum_subset (fun ij h => ?_) (fun ij hb hs => ?_)).trans (Finset.sum_congr rfl ?_)
   · rw [Finset.mem_antidiagonal] at h ⊢
@@ -76,8 +81,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     {v : AddValuation LL (WithTop ℚ)} {n : ℕ} [NeZero n] {W : LocWach PD LL O v n}
     {Lb : LevB W} {hR : Ring9 W} {uZ : ℤ_[PD.p]ˣ} {ιZ : ℤ_[PD.p] →+* O}
 
-open Classical in
 
+open Classical in
 def Pf_LvEquiv_Φ (W : LocWach PD LL O v n) (s : ℕ) (D : Type) [AddCommGroup D] [Module LL D] :
     KsW W s ⊗[LL] D ≃ₗ[LL] (Rs LL PD.p s → D) :=
   (TensorProduct.comm LL (KsW W s) D).trans (TensorProduct.piScalarRight LL LL D (Rs LL PD.p s))
@@ -101,7 +106,7 @@ theorem Pf_LvEquiv_Φ_rTensor (s : ℕ) (D : Type) [AddCommGroup D] [Module LL D
     simp [Pf_LvEquiv_Φ, TensorProduct.piScalarRightHom_tmul, precomp_apply]
   | add z z' hz hz' =>
     funext ζ
-    rw [map_add, map_add, hz, hz', map_add]
+    rw [map_add (f := _), map_add (f := _), hz, hz', map_add (f := _)]
     rfl
 
 variable {T : LocLat G Qp LL O} {c : ZMod n}

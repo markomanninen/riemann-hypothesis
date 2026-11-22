@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemFunFieldSpecZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemRegRingSpecZ
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreBis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CardQuotEqNatAbsNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemFunFieldSpecZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerFurther
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TwoMemRegRingSpecZ
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreBis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.CardQuotEqNatAbsNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementZ
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+
+@[expose] public section
 
 open PowerSeries
 
@@ -78,12 +82,12 @@ theorem expSpec_of (hI : IntegSpec.{u}) (hC : CompInvSpec.{u}) (hU : UnitSpec.{u
   refine ⟨hE0, ?_, hLE, hEL, ?_⟩
   · have h : coeff 1 (expSer W) * coeff 1 (logSer W) = 1 := hcoef
     rwa [hL1, mul_one] at h
-  · have h1 := congrArg (derivative K) hLE'
+  · have h1 := congrArg (fun f : K⟦X⟧ => PowerSeries.derivative (R := K) f) hLE'
     rw [derivative_subst hs, hLd, derivative_X] at h1
     have h2 : (fw W).subst (expSer W) * (om W).subst (expSer W) = 1 := by
       rw [← powerSeries_subst_mul_of_hasSubst hs, hfo, subst_one' hs]
-    calc derivative K (expSer W)
-        = ((fw W).subst (expSer W) * (om W).subst (expSer W)) * derivative K (expSer W) := by
+    calc PowerSeries.derivative (R := K) (expSer W)
+        = ((fw W).subst (expSer W) * (om W).subst (expSer W)) * PowerSeries.derivative (R := K) (expSer W) := by
           rw [h2, one_mul]
       _ = (fw W).subst (expSer W) := by rw [mul_assoc, h1, mul_one]
 

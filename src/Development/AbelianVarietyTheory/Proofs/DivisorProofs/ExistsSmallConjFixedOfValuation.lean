@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.UnitLemma
@@ -15,7 +20,7 @@ noncomputable def UQ.cInt (K : UQ) : K.O ≃+* K.O :=
     left_inv := hdd
     right_inv := hdd
     map_mul' := fun a b => hf (by rw [hd, map_mul, map_mul, map_mul, hd, hd])
-    map_add' := fun a b => hf (by rw [hd, map_add, map_add, map_add, hd, hd]) }
+    map_add' := fun a b => hf (by rw [hd, map_add (f := _), map_add (f := _), map_add (f := _), hd, hd]) }
 
 theorem UQ.cInt_spec (K : UQ) (x : K.O) :
     algebraMap K.O K.E (K.cInt x) = K.c (algebraMap K.O K.E x) :=
@@ -49,14 +54,14 @@ theorem exists_small_val (K : UQ) (k : ℕ) (hk : 1 ≤ k) :
       · have : ϖ + K.cInt ϖ = ϖ * h1.unit := by rw [← hε]; simp [mul_add]
         rw [this]
         exact (associated_mul_unit_right ϖ _ h1.unit.isUnit).irreducible hϖ
-      · rw [map_add, hcc, add_comm]
+      · rw [map_add (f := _), hcc, add_comm]
     · by_cases h2 : IsUnit (x + y * (ε : K.O))
       · refine ⟨x * ϖ + K.cInt (x * ϖ), ?_, ?_⟩
         · have : x * ϖ + K.cInt (x * ϖ) = ϖ * h2.unit := by
             rw [map_mul, hcx, ← hε]; simp; ring
           rw [this]
           exact (associated_mul_unit_right ϖ _ h2.unit.isUnit).irreducible hϖ
-        · rw [map_add, hcc, add_comm]
+        · rw [map_add (f := _), hcc, add_comm]
       · apply absurd _ hunit
         have e : x - y = (x + y * (ε : K.O)) - y * (1 + (ε : K.O)) := by ring
         rw [e]

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierCoefficientConjugation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianBlockDiagonalNormalForm
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankDirectSumHermitianLt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicUnipotentLeviFactor
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionLeftInvariantRationalParabolic
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientUnipotentLeviInvariance
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResEtaOfIsWeilSch
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FourierCoefficientConjugation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianBlockDiagonalNormalForm
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankDirectSumHermitianLt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ParabolicUnipotentLeviFactor
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SectionLeftInvariantRationalParabolic
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoefficientUnipotentLeviInvariance
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResEtaOfIsWeilSch
+
+@[expose] public section
 
 noncomputable section
 
@@ -92,7 +96,7 @@ theorem map_eq_self (Γ : AddSubgroup A) [Countable Γ] (T : A ≃ₜ+ A) (hT : 
   have hAC : (μ.map T).IsAddHaarMeasure := ContinuousAddEquiv.isAddHaarMeasure_map μ T
   have hAC2 : (μ.map T.symm).IsAddHaarMeasure := ContinuousAddEquiv.isAddHaarMeasure_map μ T.symm
   have hsm : Measure.QuasiMeasurePreserving (T.symm.toAddEquiv.toEquiv) μ μ :=
-    ⟨T.symm.continuous.measurable, Measure.absolutelyContinuous_isAddHaarMeasure _ _⟩
+    ⟨T.symm.continuous.measurable.aemeasurable, Measure.absolutelyContinuous_isAddHaarMeasure _ _⟩
   let eΓ : Γ ≃ Γ :=
     { toFun := fun d => ⟨T.symm d.1, (hT _).1 (by simpa using d.2)⟩
       invFun := fun c => ⟨T c.1, (hT _).2 c.2⟩
@@ -183,8 +187,8 @@ theorem orb_rat (W : HSp D) (m : Measure (GA D W)) (Ψ : Mx D W.rank n → ℂ) 
   rw [rat_mul]
   simp only [mm, Matrix.mul_assoc]
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem hasCompactSupport_rows {η : Fin r → Mx D 1 t → ℂ} (h : ∀ i, HasCompactSupport (η i)) :
     HasCompactSupport (fun y : Mx D r t => ∏ i, η i (y.submatrix (fun _ => i) id)) := by
   obtain ⟨i1, i2, i3, i4, i5, -⟩ := GlobalTheory.TowerResNonzero.lattice_ratMx D r t
@@ -299,8 +303,8 @@ theorem gram_extend_by_zero (W : HSp D) (hn : r + t = n) (x : Matrix (Fin W.rank
 
 def ext0H (hn : r + t = n) (b₀ : HermE D r) : HermE D n := dsum hn b₀ ⟨0, by ext i j; simp⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 theorem fc_levi_mat {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsCharAF D.host.F ψ) (F : G D n → ℂ)
     (hinv : LeftInv (GF D n) F) {nb : hermA D n → G D n} {lam : Measure (hermA D n)} {𝓖 : Set (hermA D n)}
     (hC : CoefData nb lam 𝓖) (a : GL (Fin n) D.host.E) (β : HermE D n) :

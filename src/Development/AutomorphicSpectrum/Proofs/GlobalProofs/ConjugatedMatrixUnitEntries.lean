@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
@@ -22,14 +26,6 @@ structure GramShape (m : ℕ) (G : Matrix (Fin n) (Fin n) R) : Prop where
   out : ∀ i b : Fin n, Outer m i → G i b ≠ 0 → i.val + b.val + 1 = n
   mid : ∀ i b : Fin n, ¬ Outer m i → G i b ≠ 0 → ¬ Outer m b
   one : ∀ i b : Fin n, Outer m i → i.val + b.val + 1 = n → G i b = 1
-
-example : GramShape 1 (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℂ) where
-  out i b _ h := by
-    fin_cases i <;> fin_cases b <;> simp_all
-  mid i b hi _ := by
-    exact absurd (by fin_cases i <;> simp [Outer]) hi
-  one i b _ h := by
-    fin_cases i <;> fin_cases b <;> simp_all
 
 theorem rev_outer (i : Fin n) (hi : Outer m i) (h2 : 2 * m ≤ n) : Outer m (Fin.rev i) := by
   have hil := i.isLt

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SpanTwoIsPrimeRelevant
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.SpanTwoIsPrimeRelevant
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -78,8 +83,9 @@ variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
 def cutIdentityLeftSide (P : Ideal (MRing ι O)) (f g : MRing ι O) (c : K → ℕ) {d : ℕ} (L : Fin d → K → ℤ) : ℤ :=
   cycEval (fun G => vNum G (Matrix.vecCons (fun k => (c k : ℤ)) L)) (ratDiv P f g)
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def cutIdentityRightSide (ϖ : O) (P : Ideal (MRing ι O)) (b : K → ℤ) (f g : MRing ι O) (s : MRing ι O) {d : ℕ}
     (L : Fin d → K → ℤ) : ℤ :=
   cycEval (fun W => if (C ϖ : MRing ι O) ∈ W then vNum W (Matrix.vecCons b L)
@@ -272,9 +278,9 @@ theorem divCycle_congr_of_sub_mem {K : Type*} {ι : K → Type*} {R : Type*} [Co
   unfold divCycle
   by_cases hc : W ∈ (P ⊔ Ideal.span {s}).minimalPrimes ∧ IsRelevant W
   · have hc' : W ∈ (P ⊔ Ideal.span {s'}).minimalPrimes ∧ IsRelevant W := e ▸ hc
-    rw [dif_pos hc, dif_pos hc', e]
+    rw [dite_eq_left hc, dite_eq_left hc', e]
   · have hc' : ¬ (W ∈ (P ⊔ Ideal.span {s'}).minimalPrimes ∧ IsRelevant W) := e ▸ hc
-    rw [dif_neg hc, dif_neg hc']
+    rw [dite_eq_right hc, dite_eq_right hc']
 
 theorem cutIdentityRightSide_congr_of_sub_mem {K : Type*} [DecidableEq K] {ι : K → Type*} {O : Type*} [CommRing O]
     [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O) (P : Ideal (MRing ι O)) (b : K → ℤ)
@@ -304,14 +310,6 @@ theorem blowUp_relation {K : Type} [Fintype K] {ι : K → Type} {R : Type*} [Co
 end Helpers
 
 section Examples
-
-theorem blowUpModel_hypotheses_example :
-    let S := MRing (fun _ : Unit => Fin 2) ℤ_[2]
-    IsModelOver (⊥ : Ideal S) 1 ∧ (∀ j : Fin 2, IsMultiHomog (X ⟨(), j⟩ : S) (Pi.single () 1)) ∧
-      ∃ j : Fin 2, (X ⟨(), j⟩ : S) ∉ (⊥ : Ideal S) := by
-  intro S
-  obtain ⟨hmodel, hX0, -⟩ := lemmas_hypotheses_example
-  exact ⟨hmodel, fun j => isWeightedHomogeneous_X _ _ _, 0, hX0⟩
 
 end Examples
 

@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSemiampleNef
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.XMemMIdealOverIff
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Assembly
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwinEqSegreRealise
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZpowMemSubalgebraOfInvMem
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RelDimMIdealOverEqTrdeg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeSegreLift
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfWeight
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSide
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLast
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OfModelNumEq
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSemiampleNef
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.XMemMIdealOverIff
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PTwinEqSegreRealise
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSegreBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ZpowMemSubalgebraOfInvMem
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RelDimMIdealOverEqTrdeg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeSegreLift
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ExistsNeZeroOfWeight
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ChartRingOverOneBlockBase
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsSide
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLast
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.OfModelNumEq
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ForSecondHalf

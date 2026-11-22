@@ -1,7 +1,11 @@
-import ReciprocityTheory.DualLattices.EigenLiftsFrobeniusStatement
-import ReciprocityTheory.DualLattices.PowMemCarrier
-import ReciprocityTheory.DualLattices.SumValCoord
-import ReciprocityTheory.DualLattices.MemAugIdeal
+module
+
+public import ReciprocityTheory.DualLattices.EigenLiftsFrobeniusStatement
+public import ReciprocityTheory.DualLattices.PowMemCarrier
+public import ReciprocityTheory.DualLattices.SumValCoord
+public import ReciprocityTheory.DualLattices.MemAugIdeal
+
+@[expose] public section
 
 noncomputable section
 

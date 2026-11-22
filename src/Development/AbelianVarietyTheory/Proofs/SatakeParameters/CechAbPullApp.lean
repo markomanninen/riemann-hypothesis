@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FlatHermRootLineDegree
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SortSign
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FlatHermRootLineDegree
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CechModulesFunctorShortExactOfIsAffineOpen
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits TopologicalSpace Opposite
 
@@ -28,15 +32,15 @@ theorem card_image {p : ℕ} (t : {s : Finset κ // s.card = p}) (h : Set.InjOn 
     (t.1.image τ).card = p := by
   rw [Finset.card_image_of_injOn h, t.2]
 
-open Classical in
 
+open Classical in
 def term (p : ℕ) : Cube.Term A p →ₛₗ[σ] Cube.Term B p where
   toFun x t := if h : Set.InjOn τ (t.1 : Set κ) then
       PD.sortSign τ t.1 • ψ.app t.1 (x ⟨t.1.image τ, card_image t h⟩) else 0
   map_add' x y := by
     funext t
     by_cases h : Set.InjOn τ (t.1 : Set κ)
-    · simp only [dif_pos h, Pi.add_apply, map_add, smul_add]
+    · simp only [dif_pos h, Pi.add_apply, map_add (f := _), smul_add]
     · simp only [dif_neg h, Pi.add_apply, add_zero]
   map_smul' r x := by
     funext t
@@ -84,11 +88,6 @@ def cechAbPull (φ : F ⟶ (push f).obj G) :
       (Eq.trans ?_ (ConcreteCategory.congr_hom (G.obj.map_comp (homOfLE (hτ s)).op
         (homOfLE (cechOpen_anti V' U' h)).op) _))
     rfl
-
-theorem cechAbPull_app (φ : F ⟶ (push f).obj G) (s : Finset κ)
-    (x : F.obj.obj (op (cechOpen V U (s.image τ)))) :
-    (cechAbPull f τ hτ φ).app s x =
-      G.obj.map (homOfLE (hτ s)).op (φ.hom.app (op (cechOpen V U (s.image τ))) x) := rfl
 
 end Sheaf
 

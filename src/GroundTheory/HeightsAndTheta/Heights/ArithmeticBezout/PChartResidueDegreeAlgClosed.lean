@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartResidueDegreeAlgClosed
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormBirationalAlgClosed
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartResidueDegree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartResidueDegreeAlgClosed
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChowFormBirationalAlgClosed
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.PChartResidueDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -10,8 +15,8 @@ open MvPolynomial
 
 noncomputable section
 
-open ChartResidueDegree in
 
+open ChartResidueDegree in
 theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.Statement) (h₂ : ChartFinite.Statement)
     (h₃ : ChartKernel.Statement) (h₄ : ConeDimOfChowForm.Statement) (h₅ : ConeDimComponent.Statement)
     (h₆ : ChowFormExists.Statement) (h₇ : IncidenceGeneric.Statement) (h₈ : ChartLocalOrder.Statement) :
@@ -21,7 +26,7 @@ theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.St
     cases e with
     | zero =>
       exfalso
-      have h0 : coeff 0 q ≠ 0 := fun h => hq.ne_zero (by rw [eq_C_of_isEmpty q, h, C_0])
+      have h0 : AddMonoidAlgebra.coeff q 0 ≠ 0 := fun h => hq.ne_zero (by rw [eq_C_of_isEmpty q, h, C_0])
       exact hq.not_isUnit (by rw [eq_C_of_isEmpty q]; exact (Ne.isUnit h0).map C)
     | succ k => exact ⟨k, rfl⟩
 
@@ -46,7 +51,8 @@ theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.St
     exact (map_ne_zero_iff _ (IsFractionRing.injective _ K)).mpr
       fun h => htW (Ideal.Quotient.eq_zero_iff_mem.mp h)
   have hℓsum : ℓ = ∑ l, algebraMap F K (t l) * ξ l := by
-    simp [hℓdef, linForm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hℓdef, linForm, map_sum]
     all_goals rfl
   set c : Fin n → K := fun m => algebraMap F K (t m) / ℓ with hcdef
   have hc : ∑ j, c j * ξ j = 1 := by
@@ -129,7 +135,7 @@ theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.St
     exact IsLocalRing.maximalIdeal.isMaximal _
   have : Module.Finite (Localization.AtPrime p) (ChartLoc I t (k + 1) p) :=
     h₂ F n (k + 1) I f t p hI hf fun h => hqt (by rw [hp] at h; exact Ideal.mem_span_singleton.mp h)
-  have h𝔓max : 𝔓.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap 𝔓 hcomap
+  have h𝔓max : 𝔓.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under 𝔓 hcomap
   have h𝔓ker : 𝔓 ≤ RingHom.ker ψ := by
     rw [h𝔓def, chartIdeal, Ideal.map_le_iff_le_comap, Ideal.map_le_iff_le_comap]
     intro h hh
@@ -148,7 +154,8 @@ theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.St
     (fun m => aeval (genSubst ξ c) (pderiv (0, m) g)) B ℓ' hB (hℓsum ▸ hℓ) hrel
   have hDtω : aeval (genSubst ξ c) Dt =
       ∑ l, C (algebraMap F K (t l)) * aeval (genSubst ξ c) (pderiv (0, l) g) := by
-    rw [hDtdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hDtdef, map_sum]
     simp only [map_mul, hωC]
   have hAt : aeval (genSubst ξ c) Dt ≠ 0 := by rw [hDtω]; exact hAt'
   have hη : ∀ m, aeval (genSubst ξ c) (pderiv (0, m) g) = C (ξ m / ℓ) * aeval (genSubst ξ c) Dt := by
@@ -192,7 +199,7 @@ theorem ChartResidueDegreeAlgClosed.proof (h₁ : ChowFormBirationalAlgClosed.St
       obtain ⟨o₁, e₁⟩ := ih₁
       obtain ⟨o₂, e₂⟩ := ih₂
       refine ⟨o₁ + o₂, ?_⟩
-      simpa only [map_add] using congrArg₂ (· + ·) e₁ e₂
+      simpa only [map_add (f := _)] using congrArg₂ (· + ·) e₁ e₂
     | mul_X P v ih =>
       obtain ⟨o₁, e₁⟩ := ih
       cases v with

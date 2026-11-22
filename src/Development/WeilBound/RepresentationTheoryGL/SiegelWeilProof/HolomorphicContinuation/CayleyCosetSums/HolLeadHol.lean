@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.LocTauAlt
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.LocTauAlt
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ def Conj : Prop := HolLeadHol → HolLead
 def SecFz : Prop :=
   ∀ (n m : ℕ) (e : ℤ) (w : ℂ) (y : GR n), fz m e w (mR y) = F0 m 0 e y * ((hLoc y : ℝ) : ℂ) ^ w
 
-open Classical in
 
+open Classical in
 def lift (φ : GR n → ℂ) (x : M2 n) : ℂ := if h : IsUnit x ∧ InG x then φ ⟨h.1.unit, h.2⟩ else 0
 
 def CRLem : Prop :=

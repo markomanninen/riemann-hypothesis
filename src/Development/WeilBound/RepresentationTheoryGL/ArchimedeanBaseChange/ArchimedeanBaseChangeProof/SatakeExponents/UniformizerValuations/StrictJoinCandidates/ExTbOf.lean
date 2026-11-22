@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.CompFixSAlt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.CompFixSAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,11 +35,11 @@ theorem exTbOf : ExTbOf := by
     have h : w ∈ T' ∧ ¬ IsSplitAt w := ⟨hw, hs⟩
     refine ⟨hIS E F₀.Sec F₀.hSec w hs, hs, hu, ?_, fun h0 => hs (F₀.S₀ w h0).2, fun h0 => (F₀.bad w h0).2 hs hu⟩
     dsimp only
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact (hW E hE n w h.2).choose_spec
   · intro w hw
     dsimp only
-    rw [dif_neg (fun h => hw h.1)]
+    rw [dite_eq_right (fun h => hw h.1)]
   · intro w hw hu hs
     exact Finset.mem_insert_of_mem (Finset.mem_filter.2 ⟨hw, hu, hs⟩)
 

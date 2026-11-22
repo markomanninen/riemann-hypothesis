@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+module
+
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FinrankOfIsStandardSmoothOfRelativeDimension
+
+@[expose] public section
 
 namespace GlobalTheory.PowerIdealSurjectivity
 
@@ -35,7 +39,8 @@ lemma exists_span_sub_mem_sq (ε : A →ₐ[O] O) {d : ℕ} (x : Fin d → A) (h
     Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩),
     RingHom.mem_ker.mpr hε0, ?_⟩
   have hdm : GlobalTheory.AugCot.d ε (∑ i, r i • x i) = GlobalTheory.AugCot.d ε c := by
-    rw [← hr, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hr, map_sum]
     simp only [map_smul]
   have h := congrArg (GlobalTheory.AugCot.lift ε D hD) hdm
   rw [GlobalTheory.AugCot.lift_d, GlobalTheory.AugCot.lift_d, hDa, hDa, Submodule.Quotient.eq,

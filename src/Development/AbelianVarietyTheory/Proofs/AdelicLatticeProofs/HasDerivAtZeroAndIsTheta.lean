@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticRealPartVanish
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothIffRealCoordinatesAndRealLines
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContinuousOfHeisenbergLevelAndSmooth
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticRealPartVanish
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SmoothIffRealCoordinatesAndRealLines
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContinuousOfHeisenbergLevelAndSmooth
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem sm_deriv (ι : R →+ G) (φ : G →+ ℂ) (hφ : ContDiff ℝ ∞ fun x
     rw [← this]
     congr 1
     funext y
-    rw [map_add, add_assoc]
+    rw [map_add (f := _), add_assoc]
   show ContDiff ℝ ∞ fun x : R => φ (w + ι x) * f (w + ι x) + fderiv ℝ (fun y : R => f (w + ι x + ι y)) 0 u
   rw [e]
   refine ContDiff.add (ContDiff.mul (contDiff_const.add hφ) (hf w)) ?_
@@ -78,12 +82,12 @@ variable {D : D7}
 theorem symplOH_add_left (S T : HSp D) (x x' y : WO S T) :
     symplOH S T (x + x') y = symplOH S T x y + symplOH S T x' y := by
   unfold symplOH symplO hO
-  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOH_add_right (S T : HSp D) (x y y' : WO S T) :
     symplOH S T x (y + y') = symplOH S T x y + symplOH S T x y' := by
   unfold symplOH symplO hO
-  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOH_zero_left (S T : HSp D) (y : WO S T) : symplOH S T 0 y = 0 := by
   have := symplOH_add_left S T 0 0 y
@@ -105,7 +109,8 @@ theorem herm_sum {A : Type} [CommRing A] {m n : ℕ} (σ : A →+* A) (hσ : ∀
     (x y : Matrix (Fin n) (Fin m) A) :
     σ (∑ a, ∑ b, ∑ c, ∑ d, P a b * σ (y c b) * Q c d * x d a) =
       ∑ a, ∑ b, ∑ c, ∑ d, P a b * σ (x c b) * Q c d * y d a := by
-  simp only [map_sum, map_mul, hσ, hP, hQ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hσ, hP, hQ]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => ?_
   rw [Finset.sum_comm]
@@ -132,8 +137,8 @@ theorem continuous_symplOH (S T : HSp D) {X : Type} [TopologicalSpace X] {x y : 
   have hx' : ∀ i j, Continuous fun t => x t i j := fun i j =>
     (continuous_apply j).comp ((continuous_apply i).comp hx)
   have hh : Continuous fun t => hO S T (x t) (y t) :=
-    continuous_finset_sum _ fun _ _ => continuous_finset_sum _ fun _ _ => continuous_finset_sum _ fun _ _ =>
-      continuous_finset_sum _ fun _ _ => ((continuous_const.mul (hy' _ _)).mul continuous_const).mul (hx' _ _)
+    continuous_finsetSum _ fun _ _ => continuous_finsetSum _ fun _ _ => continuous_finsetSum _ fun _ _ =>
+      continuous_finsetSum _ fun _ _ => ((continuous_const.mul (hy' _ _)).mul continuous_const).mul (hx' _ _)
   have ht : Continuous (Algebra.trace (AF D.host.F) (AE D)) := IsModuleTopology.continuous_of_linearMap _
   exact continuous_const.mul (ht.comp (continuous_const.mul hh))
 
@@ -181,9 +186,9 @@ theorem exists_log {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) 
         ∑ ρ, θ ρ (fstA D.host.F a ⊗ₜ[D.host.F] (1 : D.host.E))
       map_zero' := by simp only [map_zero, TensorProduct.zero_tmul, Finset.sum_const_zero, mul_zero]
       map_add' := fun a b => by
-        simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
+        simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
   refine ⟨lam, ?_, fun a ha => ?_⟩
-  · exact continuous_const.mul (continuous_finset_sum _ fun ρ _ => (hθ ρ).2.comp continuous_fst)
+  · exact continuous_const.mul (continuous_finsetSum _ fun ρ _ => (hθ ρ).2.comp continuous_fst)
   · have hc := hψ.2.2 θ hθ (fstA D.host.F a)
     have e : pairA D.host.F (fstA D.host.F a) 0 = a := Prod.ext rfl ha.symm
     rw [psiInf, e] at hc
@@ -215,14 +220,14 @@ theorem heisO_fix_of_real (u v : WO S T) (hu : u.map (infPart D) = 0) (hv : v.ma
   conv_rhs => rw [← hf]
   rw [heisO_heisO, heisO_heisO, (symplOH_fin_real S T u v hu hv).1, (symplOH_fin_real S T u v hu hv).2, add_comm]
 
-theorem isTheta_zero : IsThetaFunO ψ S T 0 where
+theorem isTheta_zero : IsThetaFunO ψ S T 0 := {
   quasi γ w := by simp only [Pi.zero_apply, mul_zero]
   level := ⟨⊤, isOpen_univ, fun u _ _ => by funext w; simp only [heisO, Pi.zero_apply, mul_zero]⟩
   cont := continuous_const
-  smooth k L _ _ w := contDiff_const
+  smooth k L _ _ w := contDiff_const }
 
 theorem isTheta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
-    IsThetaFunO ψ S T (f + g) where
+    IsThetaFunO ψ S T (f + g) := {
   quasi γ w := by simp only [Pi.add_apply, hf.quasi, hg.quasi, mul_add]
   level := by
     obtain ⟨U, hU, h1⟩ := hf.level
@@ -234,10 +239,10 @@ theorem isTheta_add {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsT
     unfold heisO at e1 e2 ⊢
     rw [Pi.add_apply, Pi.add_apply, mul_add, e1, e2]
   cont := hf.cont.add hg.cont
-  smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w)
+  smooth k L h1 h2 w := (hf.smooth k L h1 h2 w).add (hg.smooth k L h1 h2 w) }
 
 theorem isTheta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
-    IsThetaFunO ψ S T (c • f) where
+    IsThetaFunO ψ S T (c • f) := {
   quasi γ w := by
     rw [Pi.smul_apply, Pi.smul_apply, hf.quasi, smul_eq_mul, smul_eq_mul, mul_left_comm]
   level := by
@@ -248,7 +253,7 @@ theorem isTheta_smul (c : ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) 
     unfold heisO at e1 ⊢
     rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, mul_left_comm, e1]
   cont := hf.cont.const_smul c
-  smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w)
+  smooth k L h1 h2 w := contDiff_const.mul (hf.smooth k L h1 h2 w) }
 
 theorem isTheta_sub {f g : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (hg : IsThetaFunO ψ S T g) :
     IsThetaFunO ψ S T (f - g) := by
@@ -297,7 +302,7 @@ theorem continuous_of_level (h : Chart θ σ) (hψ : Continuous ψ) (f : WO S T 
 def phase (lam : AF D.host.F →+ ℂ) (S T : HSp D) (v : WO S T) : WO S T →+ ℂ where
   toFun w := lam (symplOH S T w v)
   map_zero' := by rw [symplOH_zero_left, map_zero]
-  map_add' x y := by rw [symplOH_add_left, map_add]
+  map_add' x y := by rw [symplOH_add_left, map_add (f := _)]
 
 theorem contDiff_phase (h : Chart θ σ) {lam : AF D.host.F →+ ℂ} (hl : Continuous lam) (v : WO S T) :
     ContDiff ℝ ∞ fun x => phase lam S T v (iotaW σ T S x) :=
@@ -340,7 +345,7 @@ theorem psi_sympl_line {lam : AF D.host.F →+ ℂ} (hl : Continuous lam)
   let φ : ℝ →+ ℂ :=
     { toFun := fun t => lam (symplOH S T w (L t))
       map_zero' := by rw [map_zero L, symplOH_zero_right, map_zero]
-      map_add' := fun x y => by rw [map_add L, symplOH_add_right, map_add] }
+      map_add' := fun x y => by rw [map_add L, symplOH_add_right, map_add (f := _)] }
   exact additive_real φ (hl.comp (continuous_symplOH S T continuous_const hL)) t
 
 theorem hasDerivAt_zero_and_isTheta (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO S T} (hL : Continuous L)
@@ -398,7 +403,7 @@ theorem heisO_line_add (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO S T} (hL : C
     have := additive_real ((phase lam S T (L 1)).comp L)
       (hl.comp (continuous_symplOH S T hL continuous_const)) s
     exact this.trans (mul_eq_zero_of_right _ h1)
-  rw [heisO_heisO, psi_sympl_line hl hlam hL hL0, h2, mul_zero, Complex.exp_zero, one_smul, map_add]
+  rw [heisO_heisO, psi_sympl_line hl hlam hL hL0, h2, mul_zero, Complex.exp_zero, one_smul, map_add (f := _)]
 
 theorem hasDerivAt_line (hψ : IsStdChar D ψ (-1)) {L : ℝ →+ WO S T} (hL : Continuous L)
     (hL0 : ∀ t, (L t).map (finPart D) = 0) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (w : WO S T) (s : ℝ) :

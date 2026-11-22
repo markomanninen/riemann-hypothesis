@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlanePairsOnBlocksAt
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.SymGSupport
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.PlanePairsOnBlocksAt
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.SymGSupport
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+
+@[expose] public section
 
 noncomputable section
 
@@ -250,7 +254,7 @@ theorem rest5aPairBStep_of (hT : RestT) (hN : RestN) (hTh : RestTh) (hP : RestPl
   · rw [oneT_zero, planeCoeff_zero]; exact XX_zero Dt
   rw [planeCoeff_oneT_tens]
   by_cases he0 : e (compD dNo (levN F p hk Dt.nL (zNo p O hk F G))) = 0
-  · rw [he0, coeff_zero, zero_smul]; exact XX_zero Dt
+  · rw [he0, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, zero_smul]; exact XX_zero Dt
   apply XX_smul
   have hseg : ∀ jj : ZMod J, (0 : ℤ) ≤ segZ jj ∧ segZ jj < F.J := by
     intro jj

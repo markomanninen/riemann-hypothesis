@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingInput
-import Formalism.SharpRestriction.LevelLetterCocycles.ModelKStep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.SecondPropositionRingInput
+public import Formalism.SharpRestriction.LevelLetterCocycles.ModelKStep
+
+@[expose] public section
 
 noncomputable section
 

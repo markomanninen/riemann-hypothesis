@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -23,7 +27,8 @@ theorem linRelation_descend : ∀ (K Ω : Type) [Field K] [Field Ω] [Algebra K 
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [Algebra.smul_def, mul_comm]
   have h3 := congrArg (fun x => b.repr x j) h2
-  simp only [map_sum, map_smul, Finsupp.finset_sum_apply, Finsupp.smul_apply, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul,
     map_zero, Finsupp.coe_zero, Pi.zero_apply] at h3
   rw [← h3]
   exact Finset.sum_congr rfl fun s _ => mul_comm _ _

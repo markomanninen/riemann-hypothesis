@@ -1,4 +1,8 @@
-import ReciprocityTheory.Hypotheses.GalCohDefs
+module
+
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,69 +61,6 @@ def LocalEulerCharAt (A : ValuationSubring Ω)
     (((l : ℕ) : 𝓞 F) ∈ v.asIdeal →
       Nat.card (H1 rho) = Nat.card (H0 rho) * Nat.card (H2 rho) * Nat.card M ^ locDeg v) ∧
     (((l : ℕ) : 𝓞 F) ∉ v.asIdeal → Nat.card (H1 rho) = Nat.card (H0 rho) * Nat.card (H2 rho))
-
-def LocalFinitenessResAt (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
-  0 < r → IsPlaceOver A v → ContAction rho →
-    Finite (H0 (rho.comp (Dec (F := F) A).subtype)) ∧ Finite (H1 (rho.comp (Dec (F := F) A).subtype)) ∧
-    Finite (H2 (rho.comp (Dec (F := F) A).subtype)) ∧
-    ∀ n, 3 ≤ n → Subsingleton (Hn (rho.comp (Dec (F := F) A).subtype) n)
-
-def LocalTateDualityResAt (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
-  0 < r → IsPlaceOver A v → ∀ hrho : ContAction rho,
-    Nonempty (H2 ((muRep F Ω l r).comp (Dec (F := F) A).subtype) ≃ₗ[ZMod (l ^ r)] ZMod (l ^ r)) ∧
-    Function.Bijective (cupH0H2TwistedDual (cycMod F Ω l r) rho (Dec (F := F) A).subtype) ∧
-    Function.Bijective (cupH1H1TwistedDual (cycMod F Ω l r) rho (Dec (F := F) A).subtype
-      (hrho.comp' continuous_subtype_val)) ∧
-    Function.Bijective (cupH1H1TwistedDual (cycMod F Ω l r) rho (Dec (F := F) A).subtype
-      (hrho.comp' continuous_subtype_val)).flip ∧
-    Function.Bijective (cup20 (cycMod F Ω l r) rho (Dec (F := F) A).subtype)
-
-def UnramifiedOrthogonalityResAt (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
-  0 < r → IsPlaceOver A v → ((l : ℕ) : 𝓞 F) ∉ v.asIdeal → (∀ σ ∈ Ine A, rho σ = 1) →
-    ∀ hrho : ContAction rho,
-    (∀ x : H1 (rho.comp (Dec (F := F) A).subtype),
-      x ∈ H1ur (rho.comp (Dec (F := F) A).subtype) ((Ine (F := F) A).subgroupOf (Dec (F := F) A)) ↔
-        ∀ y ∈ H1ur ((tateDual rho).comp (Dec (F := F) A).subtype) ((Ine (F := F) A).subgroupOf (Dec (F := F) A)),
-          cupH1H1TwistedDual (cycMod F Ω l r) rho (Dec (F := F) A).subtype (hrho.comp' continuous_subtype_val) y x = 0) ∧
-    (∀ y : H1 ((tateDual rho).comp (Dec (F := F) A).subtype),
-      y ∈ H1ur ((tateDual rho).comp (Dec (F := F) A).subtype) ((Ine (F := F) A).subgroupOf (Dec (F := F) A)) ↔
-        ∀ x ∈ H1ur (rho.comp (Dec (F := F) A).subtype) ((Ine (F := F) A).subgroupOf (Dec (F := F) A)),
-          cupH1H1TwistedDual (cycMod F Ω l r) rho (Dec (F := F) A).subtype (hrho.comp' continuous_subtype_val) y x = 0)
-
-def LocalEulerCharResAt (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : Prop :=
-  0 < r → IsPlaceOver A v → ContAction rho →
-    (((l : ℕ) : 𝓞 F) ∈ v.asIdeal →
-      Nat.card (H1 (rho.comp (Dec (F := F) A).subtype)) = Nat.card (H0 (rho.comp (Dec (F := F) A).subtype)) *
-        Nat.card (H2 (rho.comp (Dec (F := F) A).subtype)) * Nat.card M ^ locDeg v) ∧
-    (((l : ℕ) : 𝓞 F) ∉ v.asIdeal →
-      Nat.card (H1 (rho.comp (Dec (F := F) A).subtype)) = Nat.card (H0 (rho.comp (Dec (F := F) A).subtype)) *
-        Nat.card (H2 (rho.comp (Dec (F := F) A).subtype)))
-
-theorem LocalFinitenessAt.restrict {rho : Representation (ZMod (l ^ r)) (G F Ω) M}
-    {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 F)}
-    (h : LocalFinitenessAt A (rho.comp (Dec (F := F) A).subtype) v) : LocalFinitenessResAt rho A v :=
-  fun hr hA hc => h hr hA (hc.comp' continuous_subtype_val)
-
-theorem LocalTateDualityAt.restrict {rho : Representation (ZMod (l ^ r)) (G F Ω) M}
-    {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 F)}
-    (h : LocalTateDualityAt A (rho.comp (Dec (F := F) A).subtype) v) :
-    LocalTateDualityResAt rho A v :=
-  fun hr hA hc => h hr hA (hc.comp' continuous_subtype_val)
-
-theorem UnramifiedOrthogonalityAt.restrict {rho : Representation (ZMod (l ^ r)) (G F Ω) M}
-    {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 F)}
-    (h : UnramifiedOrthogonalityAt A (rho.comp (Dec (F := F) A).subtype) v) :
-    UnramifiedOrthogonalityResAt rho A v :=
-  fun hr hA hl hI hc => h hr hA hl (fun σ hσ => hI σ hσ) (hc.comp' continuous_subtype_val)
-
-theorem LocalEulerCharAt.restrict {rho : Representation (ZMod (l ^ r)) (G F Ω) M}
-    {A : ValuationSubring Ω} {v : HeightOneSpectrum (𝓞 F)}
-    (h : LocalEulerCharAt A (rho.comp (Dec (F := F) A).subtype) v) : LocalEulerCharResAt rho A v :=
-  fun hr hA hc => h hr hA (hc.comp' continuous_subtype_val)
 
 end Local
 
@@ -230,13 +171,6 @@ def GlobalEulerChar : Prop :=
     (rhoS : Representation (ZMod (l ^ r)) (GS Ω (S : Set (HeightOneSpectrum (𝓞 F)))) M),
     GlobalEulerCharAt S rhoS
 
-def ShaDuality : Prop :=
-  ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) (M : Type) [AddCommGroup M]
-    [Module (ZMod (l ^ r)) M] [Finite M] [TopologicalSpace M] [DiscreteTopology M]
-    (S : Finset (HeightOneSpectrum (𝓞 F)))
-    (rhoS : Representation (ZMod (l ^ r)) (GS Ω (S : Set (HeightOneSpectrum (𝓞 F)))) M),
-    ShaDualityAt S rhoS
-
 def GreenbergWiles : Prop :=
   ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (r : ℕ) (M : Type) [AddCommGroup M]
     [Module (ZMod (l ^ r)) M] [Finite M] [TopologicalSpace M] [DiscreteTopology M]
@@ -251,22 +185,6 @@ section Restrict
 variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] {l : ℕ} [Fact l.Prime] {r : ℕ}
   {M : Type} [AddCommGroup M] [Module (ZMod (l ^ r)) M] [Finite M]
   [TopologicalSpace M] [DiscreteTopology M]
-
-theorem LocalFiniteness.restrict (h : LocalFiniteness) (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : LocalFinitenessResAt rho A v :=
-  (h F Ω l r M A _ v).restrict
-
-theorem LocalTateDuality.restrict (h : LocalTateDuality) (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : LocalTateDualityResAt rho A v :=
-  (h F Ω l r M A _ v).restrict
-
-theorem UnramifiedOrthogonality.restrict (h : UnramifiedOrthogonality) (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : UnramifiedOrthogonalityResAt rho A v :=
-  (h F Ω l r M A _ v).restrict
-
-theorem LocalEulerChar.restrict (h : LocalEulerChar) (rho : Representation (ZMod (l ^ r)) (G F Ω) M)
-    (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 F)) : LocalEulerCharResAt rho A v :=
-  (h F Ω l r M A _ v).restrict
 
 end Restrict
 

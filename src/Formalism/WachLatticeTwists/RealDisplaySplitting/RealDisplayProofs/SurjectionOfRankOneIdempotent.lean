@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.RealDisplaySplitting.SurjectionRankOneIdempotent
-import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.Normal
+module
+
+public import Formalism.WachLatticeTwists.RealDisplaySplitting.SurjectionRankOneIdempotent
+public import Formalism.WachLatticeTwists.RamifiedBlockRings.RamifiedBlockProofs.Normal
+
+@[expose] public section
 
 open Finset Classical
 
@@ -120,13 +124,15 @@ theorem surjection_of_rank_one_idempotent (O : Type) [CommRing O] [IsDomain O] [
     funext i
     show algebraMap O (FractionRing O) (∑ j, ρ a i j • u j) =
       ∑ j, ρ a i j • algebraMap O (FractionRing O) (u j)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp [Algebra.smul_def]
   · intro a u
     funext i
     show (1 : Submodule O (FractionRing O)).mkQ (∑ j, ρ a i j • u j) =
       ∑ j, ρ a i j • (1 : Submodule O (FractionRing O)).mkQ (u j)
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul]
   · intro u x
     funext i
@@ -171,16 +177,5 @@ theorem surjection_of_rank_one_idempotent (O : Type) [CommRing O] [IsDomain O] [
     simp only [hc, Matrix.of_apply, smul_eq_mul]
     rw [show ∑ j, u i * w j * v j = u i * ∑ j, w j * v j by
       rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun j _ => by ring, hwv, mul_one]
-
-theorem scalar_action_on_block (O : Type) [CommRing O] (A : Type) [Ring A] [Algebra O A] (M : Type) [AddCommGroup M] [Module A M]
-    [Module O M] [IsScalarTower O A M] (E : A) (δO : O) (hE : ∀ m : M, E • m = δO • m)
-    (hsc : ∀ c : A, ∃ y : O, ∀ m : M, c • m = y • m) : ScalarActionOnBlock O A M E δO := by
-  refine ⟨fun c => ?_, fun x hx => ?_⟩
-  · obtain ⟨y, hy⟩ := hsc c
-    refine ⟨y * δO, Ideal.mul_mem_left _ y (Ideal.mem_span_singleton_self δO), fun m => ?_⟩
-    rw [mul_smul, hE, hy, mul_smul]
-  · obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.1 hx
-    refine ⟨algebraMap O A a, fun m => ?_⟩
-    rw [mul_smul, hE, algebraMap_smul, mul_smul]
 
 end Formalism.RepresentationBoundsCohomology.SF

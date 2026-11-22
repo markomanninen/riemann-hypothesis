@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Divisibility.LiftLat
-import Formalism.LocalToGlobal.Divisibility.InertRationalAdjoint
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Divisibility.LiftLat
+public import Formalism.LocalToGlobal.Divisibility.InertRationalAdjoint
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain Polynomial
 open scoped Matrix ComplexOrder
@@ -51,13 +55,6 @@ def fam3 : DefFam3 K G Pl0 I0 Ty T (Fin m) where
 def side3 (P : Subgroup G) (ψ : P →* Kˣ) (Zs : DefSub A3.fam3.amb3) : DefSide A3.fam3.base3 := A3.fam3.side3 P ψ Zs
 
 end FamIn3
-
-def FamIn.triv3 {T : Type} {m : ℕ} (A : FamIn K G Pl0 T m) : FamIn3 K G Pl0 PEmpty Unit T m where
-  A := A
-  okI _ := ∅
-  heckeRI _ _ := 1
-  heckeLI _ _ _ := 1
-  trI _ e := e
 
 end Dat
 

@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SixthWeightStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeCharEqOfLAdicRealisation
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PartFrobEigNormO
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.TrivialLocalCondition
+module
+
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SixthWeightStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeCharEqOfLAdicRealisation
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CuspidalGaloisUnramified
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PartFrobEigNormO
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.TrivialLocalCondition
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -66,7 +70,8 @@ theorem sixth_weight_purity_alt_alt : _root_.GlobalTheory.StringRepresentationDe
     simp [Matrix.scalar_apply]
   have hroot : (M.charpoly.map (D.naut.iotaQC i).toRingHom).IsRoot
       ((D.naut.iotaQC i).toRingHom (epsQ D i σ ^ j * c)) :=
-    Polynomial.IsRoot.map (by rw [Polynomial.IsRoot.def, Matrix.eval_charpoly]; exact hdet)
+    Polynomial.IsRoot.map (D.naut.iotaQC i).toRingHom
+      (by rw [Polynomial.IsRoot.def, Matrix.eval_charpoly]; exact hdet)
   rw [hF] at hroot
   have hmem := (Polynomial.mem_roots (Polynomial.monic_multiset_prod_of_monic _ _
     (fun a _ => Polynomial.monic_X_sub_C a)).ne_zero).2 hroot

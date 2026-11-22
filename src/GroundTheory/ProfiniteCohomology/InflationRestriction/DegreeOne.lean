@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
-import GroundTheory.ProfiniteCohomology.FilteredHomology
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
+public import GroundTheory.ProfiniteCohomology.FilteredHomology
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -40,8 +45,8 @@ section Comparison
 
 variable (A : Rep.{u} k G) [IsDiscreteRep A]
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem isLocallyConstant_cochain_zero (w : (Fin 0 → G) → A) : IsLocallyConstant w := by
   have h : w = fun _ => w Fin.elim0 := funext fun x => congrArg w (Subsingleton.elim _ _)
   rw [h]
@@ -49,7 +54,7 @@ theorem isLocallyConstant_cochain_zero (w : (Fin 0 → G) → A) : IsLocallyCons
 
 theorem cohomologyToGroupCohomology_one_injective :
     Function.Injective (cohomologyToGroupCohomology A 1).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro h hh
   obtain ⟨z, rfl⟩ := homologyπ_surjective (cochainsComplex A) 1 h
   have hh' : (HomologicalComplex.homologyMap (cochainsComplexι A) 1).hom
@@ -129,8 +134,8 @@ theorem cohomologyInfl_one_injective : Function.Injective (cohomologyInfl A N 1)
     ((map_cohomologyToGroupCohomology_apply A N 1 y).trans ((congrArg _ hyy').trans
       (map_cohomologyToGroupCohomology_apply A N 1 y').symm)))
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem isLocallyConstant_of_comp_isQuotientMap {X Y Z : Type*} [TopologicalSpace X]
     [TopologicalSpace Y] {q : X → Y} (hq : Topology.IsQuotientMap q) {f : Y → Z}
     (hf : IsLocallyConstant (f ∘ q)) : IsLocallyConstant f := fun S =>

@@ -1,6 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaGraphPiece
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.VolumeLtHausdorffUnitBallTwenty
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StAreaGraphPiece
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.RingKrullDimQuotBotOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -68,7 +74,7 @@ theorem norm_pairPt_zero (w : EuclideanSpace ℝ (Fin m)) :
 def graphLin (A : EuclideanSpace ℝ (Fin k) →L[ℝ] EuclideanSpace ℝ (Fin m)) :
     EuclideanSpace ℝ (Fin k) →ₗ[ℝ] EuclideanSpace ℝ (Fin k ⊕ Fin m) where
   toFun x := pairPt x (A x)
-  map_add' x y := by rw [map_add, pairPt_add]
+  map_add' x y := by rw [map_add (f := _), pairPt_add]
   map_smul' c x := by rw [map_smul, pairPt_smul]; rfl
 
 theorem graphLin_apply (A : EuclideanSpace ℝ (Fin k) →L[ℝ] EuclideanSpace ℝ (Fin m))
@@ -98,8 +104,8 @@ theorem normDet_graphLin (A : EuclideanSpace ℝ (Fin k) →L[ℝ] EuclideanSpac
 
 end AreaGraphPiece
 
-open AreaGraphPiece in
 
+open AreaGraphPiece in
 theorem AreaGraphPiece.proof : AreaGraphPiece.Statement := by
   intro k m F A δ t hδ hF
   set L := graphLin A with hLdef

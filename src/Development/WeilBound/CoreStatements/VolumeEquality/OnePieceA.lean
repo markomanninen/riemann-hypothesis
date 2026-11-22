@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.HolNull
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GagaLineGeneratorEmbedding
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.HolNull
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GagaLineGeneratorEmbedding
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,11 @@ theorem exists_point {K : Type} [Field K] (σ : K →+* ℂ) {X : Scheme.{0}} (s
   haveI : IsJacobsonRing Γ(X, V) := isJacobsonRing_of_finiteType (A := K)
   letI := Ideal.Quotient.field M
   haveI : Module.Finite K (Γ(X, V) ⧸ M) := finite_of_finite_type_of_isJacobsonRing K (Γ(X, V) ⧸ M)
-  let e : (Γ(X, V) ⧸ M) →ₐ[K] ℂ := IsAlgClosed.lift
+  let e : (Γ(X, V) ⧸ M) →ₐ[K] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let χ : Γ(X, V) →ₐ[K] ℂ := e.comp (Ideal.Quotient.mkₐ K M)
   let x : Sp ℂ ⟶ X := spMap χ.toRingHom ≫ hV.fromSpec
   have hmem : ∀ p, x p ∈ V := fun p => by

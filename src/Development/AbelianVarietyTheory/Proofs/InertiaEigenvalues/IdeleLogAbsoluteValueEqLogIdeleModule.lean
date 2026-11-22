@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import GroundTheory.GlobalFields.TateThesis.GlobalZetaFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 open scoped nonZeroDivisors
 

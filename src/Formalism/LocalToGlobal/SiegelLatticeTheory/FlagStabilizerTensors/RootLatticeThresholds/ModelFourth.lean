@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelThird
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.ModelThird
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,12 +29,11 @@ variable (d : Fin (r + 1) → ℂ)
 
 theorem Rm_mp (hd : ∀ a, d a ≠ 0) (hdm : ∀ q : Formalism.FourierDecayAlt.C2.Lstidx W, ‖d (W q.1.1)‖ = ‖d (W q.1.2)‖) :
     MeasurePreserving (Rm pN d) volume volume := by
-  have inj : Function.Injective (sw pN) := by
-    intro a b hab
-    simp [sw] at hab
-    exact Subtype.ext (Prod.ext hab.2 hab.1)
+  have hsw : Function.Involutive (sw pN) := by
+    intro q
+    exact Subtype.ext (Prod.ext (wPt_invol pN q.1.1) (wPt_invol pN q.1.2))
   let e : Formalism.FourierDecayAlt.C2.Lstidx W ≃ Formalism.FourierDecayAlt.C2.Lstidx W :=
-    Equiv.ofBijective (sw pN) (Finite.injective_iff_bijective.mp inj)
+    ⟨sw pN, sw pN, hsw, hsw⟩
   have hG := volume_measurePreserving_piCongrLeft (fun _ : Formalism.FourierDecayAlt.C2.Lstidx W => ℂ) e.symm
   have h : ∀ q : Formalism.FourierDecayAlt.C2.Lstidx W,
       MeasurePreserving (fun z : ℂ => d (W q.1.1) / d (W q.1.2) * star z) volume volume := by
@@ -44,8 +47,10 @@ theorem Rm_mp (hd : ∀ a, d a ≠ 0) (hdm : ∀ q : Formalism.FourierDecayAlt.C
       d (W i.1.1) / d (W i.1.2) * star (a i)) ∘
       (MeasurableEquiv.piCongrLeft (fun _ : Formalism.FourierDecayAlt.C2.Lstidx W => ℂ) e.symm) := by
     funext x q
-    simp only [Rm, Function.comp_apply, MeasurableEquiv.coe_piCongrLeft, Equiv.piCongrLeft_apply_eq_cast]
-    simp [e]
+    have hq := MeasurableEquiv.piCongrLeft_apply_apply (β := fun _ => ℂ) e.symm x (e q)
+    rw [Equiv.symm_apply_apply] at hq
+    change _ = x (sw pN q) at hq
+    simp only [Rm, Function.comp_apply, hq]
   rw [heq]
   exact hF.comp hG
 

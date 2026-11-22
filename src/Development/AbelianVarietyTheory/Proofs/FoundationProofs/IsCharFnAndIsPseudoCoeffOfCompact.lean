@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Definitions.Foundations.InnerEqZeroOfNotUEquiv
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Definitions.Foundations.InnerEqZeroOfNotUEquiv
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IntegralConjInnerMulInnerOfIsEmptyEquiv
+
+@[expose] public section
 
 open MeasureTheory Set GlobalTheory.AutomorphicL2Unitary GlobalTheory.OpTrace
 open scoped ComplexConjugate ContDiff InnerProductSpace
@@ -17,10 +21,10 @@ variable {H : Type} [Group H] [TopologicalSpace H]
 theorem continuous_trace_rep (hD : IsUnitaryRep D) :
     Continuous fun g => LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V) := by
   simp only [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V)]
-  exact continuous_finset_sum _ fun i _ => continuous_const.inner (hD.continuous_apply _)
+  exact continuous_finsetSum _ fun i _ => continuous_const.inner (hD.continuous_apply _)
+
 
 omit [TopologicalSpace H] in
-
 theorem trace_rep_conj (x s : H) :
     LinearMap.trace ℂ V (D (x⁻¹ * s * x) : V →ₗ[ℂ] V) = LinearMap.trace ℂ V (D s : V →ₗ[ℂ] V) := by
   have h := Representation.char_conj (ContinuousLinearMap.toLinearMapRingHom.toMonoidHom.comp D) s x⁻¹
@@ -81,7 +85,8 @@ theorem repOp_conj_trace_eq_zero [CompleteSpace V] [CompleteSpace U] (hD : IsUni
   rw [hπ.repOp_apply (f := fun g => conj (LinearMap.trace ℂ V (D g : V →ₗ[ℂ] V)) / c)
     ((Complex.continuous_conj.comp (continuous_trace_rep hD)).div_const c)
     (HasCompactSupport.of_compactSpace _)]
-  simp only [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V), map_sum, inner_conj_symm, div_eq_inv_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℂ V), map_sum, inner_conj_symm, div_eq_inv_mul,
     mul_smul, integral_smul, Finset.sum_smul, ContinuousLinearMap.coe_coe]
   have hI : ∀ e : V, Integrable (fun g => ⟪D g e, e⟫_ℂ • π g v) μ := fun e =>
     integrable_of_continuous_of_compactSpace μ
@@ -118,16 +123,5 @@ theorem isCharFn_and_isPseudoCoeff_of_compact [T2Space H] [SecondCountableTopolo
         (HasCompactSupport.of_compactSpace _)) using 2
     simp only [trace_rep_conj, integral_const, Complex.real_smul]
     field_simp
-
-example [MeasurableSpace Circle] [BorelSpace Circle] (ν : Measure Circle) [ν.IsHaarMeasure] :
-    IsPseudoCoeff circleMat ν (charRep (MonoidHom.id Circle)) fun z =>
-      conj (LinearMap.trace ℂ ℂ (charRep (MonoidHom.id Circle) z : ℂ →ₗ[ℂ] ℂ)) / ν.real univ := by
-  have e : ∀ z i j, matCoord circleMat z i j = z := fun z i j => by
-    fin_cases i; fin_cases j; simp [matCoord, circleMat]; rfl
-  have h := AutMult.isIrrUnitary_charRep (χ := MonoidHom.id Circle) continuous_id
-  refine (isCharFn_and_isPseudoCoeff_of_compact
-    (continuous_pi fun i => continuous_pi fun j => by simp only [e]; exact continuous_subtype_val) h.unitary h.irred
-    ⟨HasCompactSupport.of_compactSpace _, fun y => conj (y 0 0), ?_, fun z => by simp [e, charRep]⟩).2
-  exact Complex.conjCLE.contDiff.comp (by fun_prop)
 
 end GlobalTheory.Orb

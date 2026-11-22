@@ -1,12 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.TopPin
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerHypAll
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiEntryStab
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiCpl1Stab
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PairKernelLawOfFiniteDatumLawStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumLawTopLevelStabilizerStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumInvariantCBHomTwistPrimesStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.TopPin
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.KerHypAll
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FormsPin
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiEntryStab
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.XiCpl1Stab
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PairKernelLawOfFiniteDatumLawStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumLawTopLevelStabilizerStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LastStepDatumInvariantCBHomTwistPrimesStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Ker Formalism.L2.Forms Formalism.L2.Col Formalism.L2.DIV Formalism.HermitianLatticesTheory GlobalTheory.KerJ NumberField IsDedekindDomain Classical
 
 namespace GlobalTheory.KerJ

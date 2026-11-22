@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.IntegralStabilizers.FinSLoc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.IntegralStabilizers.FinSLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem fin_SU [IsTotallyReal F] (hneg : ∀ σ : F →+* ℝ, σ Δ < 0) (n : �
     have hd' := congrArg QuadraticAlgebra.re hd
     rw [QuadraticAlgebra.algebraMap_re, QuadraticAlgebra.re_one] at hd'
     have hs := fun σ : F →+* ℝ => congrArg σ hd'
-    simp only [map_sub, map_add, map_mul, map_pow, map_one] at hs
+    simp only [map_sub, map_add (f := _), map_mul, map_pow, map_one] at hs
     have key : ∀ (σ : F →+* ℝ) (x : ℝ), -σ Δ * x ^ 2 ≤ 1 → x ^ 2 ≤ σ (-Δ⁻¹) := fun σ x h => by
       rw [map_neg, map_inv₀, ← inv_neg, inv_eq_one_div, le_div_iff₀ (neg_pos.2 (hneg σ))]
       linarith

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CharPerm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CliffPrime
-import Mathlib.RingTheory.Ideal.GoingUp
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-import Mathlib.LinearAlgebra.Charpoly.ToMatrix
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExtIntegral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.IsUnitOrIsUnitOfAddOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CharPerm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.CliffPrime
+public import Mathlib.RingTheory.Ideal.GoingUp
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExtIntegral
+
+@[expose] public section
 
 open Matrix Polynomial UpperTheory.V.U3 UpperTheory.V.Alg
 
@@ -137,7 +141,7 @@ theorem UpperTheory.V.Pr.irrNormal :
     apply hne'
     have e1 := cconj (ι d) (ι u) i (hU _ hu)
     have hu' : ι (d * u * d⁻¹) ∈ U := by
-      rw [map_mul, map_mul, map_inv]; exact Subgroup.Normal.conj_mem ‹_› _ hu _
+      rw [map_mul, map_mul, map_inv]; exact Subgroup.Normal.conj_mem _ hu _
     rw [← map_inv, ← map_mul, ← map_mul, hσ' _ _ hu', hσ' _ _ hu, map_mul, map_mul, map_inv,
       mul_inv_cancel_comm] at e1
     exact Units.ext e1

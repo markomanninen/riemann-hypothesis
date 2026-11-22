@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMonicPolynomialOfUnitRelation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralMonicPolynomialOfUnitRelation
+
+@[expose] public section
+
 open scoped TensorProduct
 open IsLocalRing IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
 

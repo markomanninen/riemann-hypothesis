@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+module
+
+public import Formalism.HermitianCurvature.TopDensNonnegOfKappa
+
+@[expose] public section
 
 open MeasureTheory
 

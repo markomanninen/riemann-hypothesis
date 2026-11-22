@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuSurjPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.KummerSequence.LeafKumMuSurjPf
+
+@[expose] public section
 
 open Polynomial CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
 noncomputable section

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HeckeLAdicParameterAbove
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdPstCycRepNeTrivWD
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRecLawsSuppUnitSurj
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HeckeLAdicParameterAbove
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.WdPstCycRepNeTrivWD
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsRecLawsSuppUnitSurj
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 800000
@@ -68,13 +72,14 @@ theorem mem_eig_wdPst {LL : FinExt l} {V : Type} [AddCommGroup V] [Module ↥LL.
   have he : (wdRep P ι Bw h hj ρ).ρ σ (wdMk P ι ρ x) = ι (s : Om l) • wdMk P ι ρ x := by
     have h1 := LinearMap.congr_fun (hu σ) (wdMk P ι ρ x)
     rw [hu1, one_zpow, Units.val_one, mul_one] at h1
-    rw [← h1, wdRho_mk, hs, wdMk_smul]
+    rw [← h1, wdRho_mk, hs]
+    exact wdMk_smul P ι ρ s x
   rw [wdPst_of_isPst ι Bw h hj hV, WD.eig_mk, mem_roots (LinearMap.charpoly_monic _).ne_zero,
     ← End.hasEigenvalue_iff_isRoot_charpoly]
   exact End.hasEigenvalue_of_hasEigenvector ⟨End.mem_eigenspace_iff.mpr he, hv⟩
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem smooth_loc (χ : HChar E) : GlobalTheory.SmGL.IsSmoothChar (χ.loc w) := by
   obtain ⟨n, hn⟩ := GlobalTheory.Mem.UnrAe.exists_levelLe χ w
   have hu := unif_spec w
@@ -116,12 +121,16 @@ theorem mem_eig_of_period {LL : FinExt l} {V : Type} [AddCommGroup V] [Module �
     | succ n ih => rw [pow_succ', End.mul_apply, ih, map_smul, hx1, smul_smul, pow_succ]
   have hxz := zpow_apply_eig (phiU P ρ) x c hc hx1
   have hv : wdMk P ι ρ x ≠ 0 := fun h0 => hx0
-    (GlobalTheory.PstFaithful.eq_zero_of_wdMk_phiD_pow l P ι _ LL _ _ _ fun n => by rw [hxn, wdMk_smul, h0, smul_zero])
+    (GlobalTheory.PstFaithful.eq_zero_of_wdMk_phiD_pow l P ι _ LL _ _ _ fun n => by
+      rw [hxn]
+      have hs := wdMk_smul P ι ρ (c ^ n) x
+      rw [h0, smul_zero] at hs
+      exact hs)
   exact mem_eig_wdPst P ι Bw h hj ρ x h1 hV hv σ _ (by
     rw [weilD_apply, End.mul_apply, hxz, map_smul, hs, mul_smul])
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem eq_loc {χ : HChar E} {ξ : (w.adicCompletion E)ˣ →* ℂˣ} (hξ : GlobalTheory.NPin.IsComp χ w ξ) : ξ = χ.loc w := by
   have hs := hξ.1.mul (smooth_loc (w := w) χ).inv
   have hc := Subgroup.isClosed_of_isOpen _ hs
@@ -141,17 +150,10 @@ theorem eq_loc {χ : HChar E} {ξ : (w.adicCompletion E)ˣ →* ℂˣ} (hξ : Gl
   rw [hξ.2]
   exact mul_inv_cancel _
 
-omit [IsAlgClosure E Ω] in
 
+omit [IsAlgClosure E Ω] in
 theorem isComp_loc (χ : HChar E) : GlobalTheory.NPin.IsComp χ w (χ.loc w) :=
   ⟨smooth_loc (w := w) χ, fun _ => rfl⟩
-
-theorem rhs_eq {χ : HChar E} {ξ : (w.adicCompletion E)ˣ →* ℂˣ} (hξ : GlobalTheory.NPin.IsComp χ w ξ) {rc} (H : IsRec h rc) :
-    ∃ (a : Weil h →* (w.adicCompletion E)ˣ) (_ : IsLocalArtin h a) (hs : WeilDeligne.IsSmooth ((χ.loc w).comp a)),
-      rc (cls (GlobalTheory.SplitRead.Irr.ofDet 1 ξ hξ.1).toIrrRep) = WD.lpOfChar h ((χ.loc w).comp a) hs := by
-  obtain rfl := eq_loc hξ
-  obtain ⟨a, ha, ε, -, H⟩ := H
-  exact ⟨a, ha, ha.smooth hξ.1, H.one _ hξ.1⟩
 
 theorem mem_eig_wdAt (μ : G E Ω →* (Om l)ˣ) (hr : IsPstAt P Bw ((rk1 μ).comp (Dec (F := E) A).subtype))
     (b : P.R.B) (hb : b ≠ 0) (c : ℚ_[l]) (hc : c ≠ 0) (hφ : P.φB b = c • b) (κ : GQ l → ℚ_[l]) (hκ0 : ∀ g, κ g ≠ 0)
@@ -202,88 +204,6 @@ theorem mem_eig_wdAt (μ : G E Ω →* (Om l)ˣ) (hr : IsPstAt P Bw ((rk1 μ).co
   rw [MulMemClass.coe_mul, MulMemClass.coe_mul, hm, e3, ← map_zpow₀, e4, e4, map_mul]
   ring
 
-theorem conclusion_finite {art : Ideles E →* Gab E Ω} (ha : IsGlobalArtin art) {χ : HChar E} {k : ℕ} (hk : 0 < k)
-    (hχ : χ.OrderDvd k) {μ : G E Ω →* (Qbar l)ˣ} (hμ : Continuous μ) (hL : IsLAdicOf art ι χ 0 μ)
-    (hr : IsPstAt P Bw ((rk1 μ).comp (Dec (F := E) A).subtype))
-    {ξ : (w.adicCompletion E)ˣ →* ℂˣ} (hξ : GlobalTheory.NPin.IsComp χ w ξ) {rc} (H : IsRec h rc) :
-    wdAt P ι Bw h hj ((rk1 μ).comp (Dec (F := E) A).subtype) =
-      rc (cls (GlobalTheory.SplitRead.Irr.ofDet 1 ξ hξ.1).toIrrRep) := by
-  obtain ⟨a, ha', hs, e⟩ := rhs_eq h hξ H
-  rw [e]
-  have ho : IsOpen (μ.ker : Set (G E Ω)) :=
-    isOpen_ker_of_pow μ hμ hk fun g => DFunLike.congr_fun (hL.pow_eq_one ha.quot.surjective hχ) g
-  have ho2 : IsOpen {g : GK Bw.Kw | μ (Bw.e.symm g : Dec (F := E) A) = 1} :=
-    ho.preimage (continuous_subtype_val.comp Bw.e_symm_cont)
-  obtain ⟨U, hU, hU'⟩ := isOpen_induced_iff.1 ho2
-  have h1 : (1 : GQ l) ∈ U := by
-    have : (1 : GK Bw.Kw) ∈ Subtype.val ⁻¹' U := by rw [hU']; simp
-    exact this
-  obtain ⟨K', hK1, hK2⟩ := (krullTopology_mem_nhds_one_iff _ _ U).1 (hU.mem_nhds h1)
-  have := nontrivial_B P
-  refine eq_lpOfChar h _ (Test.lpDim_wdAt P ι Bw h hj _) _ _ fun σ => ?_
-  have key := mem_eig_wdAt P ι Bw h hj μ hr 1 one_ne_zero 1 one_ne_zero (by simp) (fun _ => 1) (by simp) (by simp)
-    ⟨K', hK1⟩ (fun g hg => by
-      have : Bw.e g ∈ Subtype.val ⁻¹' U := hK2 hg
-      rw [hU'] at this
-      have h2 : μ g = 1 := by simpa using this
-      simp [h2]) σ
-  rw [hL.loc_away (Or.inr rfl) _ _ (ha'.glob art ha σ)] at key
-  simpa using key
-
-theorem conclusion_abs {art : Ideles E →* Gab E Ω} (ha : IsGlobalArtin art) {n : (E →+* ℂ) → ℤ}
-    {μ : G E Ω →* (Qbar l)ˣ} (hμ : Continuous μ) (hL : IsLAdicOf art ι (Model.absPow E (1 : ℕ)) n μ)
-    (hr : IsPstAt P Bw ((rk1 μ).comp (Dec (F := E) A).subtype))
-    {ξ : (w.adicCompletion E)ˣ →* ℂˣ} (hξ : GlobalTheory.NPin.IsComp (Model.absPow E (1 : ℕ)) w ξ) {rc} (H : IsRec h rc) :
-    wdAt P ι Bw h hj ((rk1 μ).comp (Dec (F := E) A).subtype) =
-      rc (cls (GlobalTheory.SplitRead.Irr.ofDet 1 ξ hξ.1).toIrrRep) := by
-  obtain ⟨a, ha', hs, e⟩ := rhs_eq h hξ H
-  rw [e]
-  have hμ' := CharAboveModel.eq_cyc_pow ha hμ hL
-  rw [pow_one] at hμ'
-  have hl : (l : ℚ_[l]) ≠ 0 := Nat.cast_ne_zero.mpr (Fact.out : l.Prime).ne_zero
-  have := nontrivial_B P
-  have hcyc : ∀ g : Dec (F := E) A, (μ g : Om l) = algebraMap _ _ (P.χQ (Bw.e g) : ℚ_[l]) := fun g => by
-    rw [GlobalTheory.Survey.CrystallineCharacterRatio.chi_eq_cyc P Bw.j (g : G E Ω) (Bw.e g : GQ l) (Bw.e_comm g), hμ', cyc_eq_map_cycZ]
-    rfl
-  refine eq_lpOfChar h _ (Test.lpDim_wdAt P ι Bw h hj _) _ _ fun σ => ?_
-  have key := mem_eig_wdAt P ι Bw h hj μ hr (tInv P) (fun h0 => by simpa [h0] using tInv_mul P) (l : ℚ_[l])⁻¹
-    (inv_ne_zero hl) (by rw [eq_inv_smul_iff₀ hl, smul_phiB_tInv]) (fun g => P.χQ g) (fun g => Units.ne_zero _)
-    (smul_actQ_tInv P) Bw.Kw (fun g _ => hcyc g) σ
-  have h2 : (μ σ : Om l) = algebraMap _ _ (P.χQ (weilToGK Bw h σ) : ℚ_[l]) := hcyc ⟨σ, Weil_le_Dec h σ.2⟩
-  rw [h2, ← map_mul, mul_inv_cancel_left₀ (Units.ne_zero _), inv_zpow', neg_neg, map_zpow₀, map_zpow₀, map_natCast,
-    map_natCast, alpha, zpow_mul, zpow_natCast, ← Nat.cast_pow, ← normV_eq_pow (hj.mem_placesOver h)] at key
-  convert key using 1
-  have hu := (Model.absPow_isAbsPow E (1 : ℕ)).1 w
-  have hval := (Model.absPow_isAbsPow E (1 : ℕ)).2.1 w
-  set χ := Model.absPow E (1 : ℕ)
-  have e1 : ∀ x, χ.loc w x = χ.val w ^ GlobalTheory.SmGL.ord (w.adicCompletion E) x := fun x => by
-    have h2 := unif_spec w
-    have h0 : Valued.v (x : w.adicCompletion E) ≠ 0 := by simp
-    have h1 : IsUnitAt w (x * (atFin w (unif w) ^ GlobalTheory.SmGL.ord (w.adicCompletion E) x)⁻¹) := by
-      unfold IsUnitAt IsUnifAt at *
-      rw [Units.val_mul, Units.val_inv_eq_inv_val, Units.val_zpow_eq_zpow_val, map_mul,
-        map_inv₀, map_zpow₀, h2, ← WithZero.exp_zsmul, GlobalTheory.SmGL.SphCompletion.ord_completion]
-      simp only [smul_eq_mul, mul_neg, mul_one, neg_neg]
-      rw [WithZero.exp_log h0, mul_inv_cancel₀ h0]
-    have h3 := hu _ h1
-    rw [map_mul, map_inv, map_zpow, mul_inv_eq_one] at h3
-    exact h3
-  rw [MonoidHom.comp_apply, e1, ha'.ord_eq, Units.val_zpow_eq_zpow_val, hval]
-  simp [Complex.cpow_neg, normV, Ideal.absNorm_apply, Submodule.cardQuot_apply]
-
-omit P Bw h hj in
-
-theorem hypotheses_met (hA : GlobalArtinReciprocity) (hL : LocalLanglandsGL) (hw : w ∈ placesOver E l) :
-    ∃ (P : LocPrime l) (AI : LocAinf l P), Nonempty (LocTied l P AI) ∧ ∃ art : Ideles E →* Gab E Ω, IsGlobalArtin art ∧
-      ∃ μ : G E Ω →* (Qbar l)ˣ, IsAlgPos (Model.absPow E (1 : ℕ)) (fun _ => ((1 : ℕ) : ℤ)) ∧ Continuous μ ∧
-      IsLAdicOf art ι (Model.absPow E (1 : ℕ)) (fun _ => ((1 : ℕ) : ℤ)) μ ∧
-      ∃ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (LL : FinExt l)
-        (Bw : LocBridge l E Ω (Dec (F := E) A) ↥(OL LL)), GlobalTheory.Pst.Induces Bw ∧
-        (∃ ξ, GlobalTheory.NPin.IsComp (Model.absPow E (1 : ℕ)) w ξ) ∧ ∃ rc, IsRec h rc := by
-  obtain ⟨P, AI, hT⟩ := GlobalTheory.MemLoc.exists_locPrime_tied l
-  obtain ⟨art, ha⟩ := hA E Ω
-  obtain ⟨μ, h1, h2, h3, A, h, LL, Bw, hj, -⟩ := CharAboveModel.hypotheses_met ι art ha 1 w hw
-  exact ⟨P, AI, hT, art, ha, μ, h1, h2, h3, A, h, LL, Bw, hj, ⟨_, isComp_loc _⟩, (hL.1 E Ω A w h).exists⟩
 
 end GlobalTheory.Published.ParamAboveModel
 

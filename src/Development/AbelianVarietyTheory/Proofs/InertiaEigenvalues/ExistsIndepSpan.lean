@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.IndependentSpanDual
@@ -49,7 +53,7 @@ theorem exists_form {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k V]
       (Module.Basis.mk_apply (D.linearIndependent_φ i b) (D.span_φ i b).ge j).symm
     rw [hc, Module.Basis.constr_basis]
   | zero => simp
-  | add y z _ _ hy hz => simp only [map_add, hy, hz]
+  | add y z _ _ hy hz => simp only [map_add (f := _), hy, hz]
   | smul a y _ hy => rw [D.φ_semi i a y, map_smul, map_smul, hy, smul_eq_mul, smul_eq_mul, map_mul]
 
 theorem exists_dual {K Q ι : Type} [Field K] [AddCommGroup Q] [Module K Q] [DecidableEq ι] {e : ι → Q}
@@ -95,12 +99,14 @@ theorem comap_pull {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X
     have h0 : x - ∑ j, a j • s j ∈ LinearMap.range f := by
       rw [← Submodule.ker_mkQ (LinearMap.range f), LinearMap.mem_ker]
       change (π.restrictScalars k⟦X⟧) _ = 0
-      rw [map_sub, map_sum, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, sub_eq_zero]
       simp only [map_smul, LinearMap.restrictScalars_apply, hs, ha]
     obtain ⟨w, hw⟩ := h0
     have hwN : f w ∈ N := hw ▸ N.sub_mem hx (N.sum_mem fun j _ => N.smul_mem _ (hsN j))
     have hx2 : x = f w + ∑ j, a j • s j := by rw [hw, sub_add_cancel]
-    rw [hx2, map_add, map_sum, ← h]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx2, map_add (f := _), map_sum, ← h]
     refine Submodule.add_mem_sup ⟨_, Submodule.subset_span ⟨w, hwN, rfl⟩, rfl⟩
       (Submodule.sum_mem _ fun j _ => ?_)
     obtain ⟨b, hb⟩ := R.φ_int (a j)
@@ -127,7 +133,8 @@ theorem comap_pull {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X
     have h2 : ∀ m, u (a m • D.φ i (s m)) = if m = j then algebraMap k⟦X⟧ k⸨X⸩ (a m) else 0 := fun m => by
       rw [← algebraMap_smul k⸨X⸩ (a m), map_smul, hu, LinearMap.comp_apply, hs, ht]
       split_ifs <;> simp
-    rw [map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h1
     simpa [h2] using h1
   have hz : g (y - p) = 0 := by
     rw [← hq']

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -18,7 +22,7 @@ theorem UpperTheory.integral_unipFundamentalDomain_comp_lattice_preserving :
     conv_rhs => rw [← hsm]
     rw [smul_smul, inv_mul_cancel₀ hpos.ne', one_smul]
   have hqmp : Measure.QuasiMeasurePreserving α.symm (unipMeasure K n r) (unipMeasure K n r) :=
-    ⟨α.symm.continuous.measurable, by rw [hmap]; exact Measure.smul_absolutelyContinuous⟩
+    ⟨α.symm.continuous.measurable.aemeasurable, by rw [hmap]; exact Measure.smul_absolutelyContinuous⟩
   let e : unipLattice K n r → unipLattice K n r := fun g => ⟨α g, (hα g).2 g.2⟩
   have he : Function.Bijective e := by
     refine ⟨fun g h hgh => ?_, fun g => ⟨⟨α.symm g, (hα (α.symm g)).1 (by simpa using g.2)⟩, ?_⟩⟩
@@ -31,7 +35,7 @@ theorem UpperTheory.integral_unipFundamentalDomain_comp_lattice_preserving :
       (unipMeasure K n r) :=
     hfd.preimage_of_equiv hqmp he (fun g x => by
       show α.symm (α g + x) = g + α.symm x
-      simp [map_add])
+      simp [map_add (f := _)])
   have hmeas := hfd'.measure_eq hfd
   have hpre := addEquivAddHaarChar_smul_preimage (unipMeasure K n r) (X := unipFundamentalDomain K n r) α.symm
   rw [hmeas, unipMeasure_unipFundamentalDomain, ENNReal.smul_def, smul_eq_mul, mul_one,

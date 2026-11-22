@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.FlagMinor
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.Ar.Num.LocFreeBC
 
@@ -55,7 +59,8 @@ theorem locFree_baseChange {o Ω Ω₁ : Type} [CommRing o] [Field Ω] [Field Ω
       a • e ∈ spanOver R₁ (bc '' (L : Set E)) := fun a ha e he => smul_mem_spanOver R₁ _ ha he
   refine ⟨hst₁, k, fun l => algebraMap Ω Ω₁ (f l), fun l => algebraMap Ω Ω₁ (c l),
     fun l => hR _ (hf l), fun l => hR _ (hc l), ?_, fun l => ?_⟩
-  · simp only [← map_mul, ← map_sum, hsum, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [← map_mul, ← map_sum, hsum, map_one]
   obtain ⟨b, hli, hsp, hb⟩ := hloc l
   beta_reduce
   set F : Ω₁ := algebraMap Ω Ω₁ (f l) with hF
@@ -82,7 +87,8 @@ theorem locFree_baseChange {o Ω Ω₁ : Type} [CommRing o] [Field Ω] [Field Ω
           rw [map_mul, map_pow] at this
           convert this using 1
           rw [hF]; ring
-        · simp only [map_sum, map_smul, Finset.smul_sum, hB₁', mul_smul, algebraMap_smul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          · simp only [map_sum, map_smul, Finset.smul_sum, hB₁', mul_smul, algebraMap_smul]
       | zero => exact ⟨0, fun q => ⟨0, by simp⟩, by simp⟩
       | add x y _ _ hx hy =>
         obtain ⟨a, ha, rfl⟩ := hx

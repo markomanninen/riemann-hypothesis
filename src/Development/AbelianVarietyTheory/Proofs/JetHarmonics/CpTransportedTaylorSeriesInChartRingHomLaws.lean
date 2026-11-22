@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.MomOne
@@ -11,7 +15,7 @@ theorem tay_add {F G : ℂ → ℂ} (hF : AnalyticAt ℂ F 0) (hG : AnalyticAt �
     tay (fun z => F z + G z) = tay F + tay G := by
   ext n
   have := iteratedDeriv_add (n := n) (x := (0 : ℂ)) hF.contDiffAt hG.contDiffAt
-  simp only [tay, coeff_mk, map_add]
+  simp only [tay, coeff_mk, map_add (f := _)]
   rw [← add_div, ← this]
   rfl
 
@@ -46,7 +50,7 @@ theorem eventuallyEq_of_tay_eq {F G : ℂ → ℂ} (hF : AnalyticAt ℂ F 0) (hG
     have h1 : (n.factorial : ℂ) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
     have := congrArg (coeff n) h
     simp only [tay, coeff_mk] at this
-    exact (div_left_inj' h1).mp this
+    exact (div_left_inj₀ h1).mp this
   have hs : AnalyticAt ℂ (F - G) 0 := hF.sub hG
   have htop : analyticOrderAt (F - G) 0 = ⊤ := by
     rw [ENat.eq_top_iff_forall_ge]
@@ -64,7 +68,7 @@ theorem tay_const (c : ℂ) : tay (fun _ => c) = C c := by
   · simp [h]
   · simp
 
-theorem derivative_tay (F : ℂ → ℂ) : derivative ℂ (tay F) = tay (deriv F) := by
+theorem derivative_tay (F : ℂ → ℂ) : PowerSeries.derivative (tay F) = tay (deriv F) := by
   ext n
   have h1 : (n.factorial : ℂ) ≠ 0 := by exact_mod_cast n.factorial_ne_zero
   have h2 : ((n : ℂ) + 1) ≠ 0 := by exact_mod_cast n.succ_ne_zero
@@ -112,12 +116,12 @@ theorem subst_injective_of {R : Type*} [Field R] {ℓ : R⟦X⟧} (hℓ : consta
       subst_substInvOfIsUnit_right ℓ hℓ hu, X_subst]
   rw [← key f, h, key g]
 
-theorem hat_laws : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (ℓ : ℂ_[q]⟦X⟧), constantCoeff ℓ = 0 → (∀ F G : ℂ → ℂ, AnalyticAt ℂ F 0 → AnalyticAt ℂ G 0 → hat ι ℓ (fun z => F z + G z) = hat ι ℓ F + hat ι ℓ G ∧ hat ι ℓ (fun z => F z * G z) = hat ι ℓ F * hat ι ℓ G ∧ ((∀ᶠ z in 𝓝[≠] (0 : ℂ), F z = G z) → hat ι ℓ F = hat ι ℓ G) ∧ (coeff 1 ℓ ≠ 0 → hat ι ℓ F = hat ι ℓ G → F =ᶠ[𝓝 0] G)) ∧ (∀ c : ℂ, hat ι ℓ (fun _ => c) = C (ι c)) ∧ hat ι ℓ (fun z => z) = ℓ ∧ (∀ F : ℂ → ℂ, constantCoeff (hat ι ℓ F) = ι (F 0)) ∧ (∀ F : ℂ → ℂ, AnalyticAt ℂ F 0 → derivative ℂ_[q] (hat ι ℓ F) = derivative ℂ_[q] ℓ * hat ι ℓ (deriv F)) ∧ (∀ (F : ℂ → ℂ) (α : ℂ), AnalyticAt ℂ F 0 → hat ι ℓ (fun z => F (α * z)) = hat ι (C (ι α) * ℓ) F) ∧ ∀ (F : ℂ → ℂ) (h : ℂ_[q]⟦X⟧), constantCoeff h = 0 → (hat ι ℓ F).subst h = hat ι (ℓ.subst h) F := by
+theorem hat_laws : ∀ (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (ℓ : ℂ_[q]⟦X⟧), constantCoeff ℓ = 0 → (∀ F G : ℂ → ℂ, AnalyticAt ℂ F 0 → AnalyticAt ℂ G 0 → hat ι ℓ (fun z => F z + G z) = hat ι ℓ F + hat ι ℓ G ∧ hat ι ℓ (fun z => F z * G z) = hat ι ℓ F * hat ι ℓ G ∧ ((∀ᶠ z in 𝓝[≠] (0 : ℂ), F z = G z) → hat ι ℓ F = hat ι ℓ G) ∧ (coeff 1 ℓ ≠ 0 → hat ι ℓ F = hat ι ℓ G → F =ᶠ[𝓝 0] G)) ∧ (∀ c : ℂ, hat ι ℓ (fun _ => c) = C (ι c)) ∧ hat ι ℓ (fun z => z) = ℓ ∧ (∀ F : ℂ → ℂ, constantCoeff (hat ι ℓ F) = ι (F 0)) ∧ (∀ F : ℂ → ℂ, AnalyticAt ℂ F 0 → PowerSeries.derivative (hat ι ℓ F) = PowerSeries.derivative ℓ * hat ι ℓ (deriv F)) ∧ (∀ (F : ℂ → ℂ) (α : ℂ), AnalyticAt ℂ F 0 → hat ι ℓ (fun z => F (α * z)) = hat ι (C (ι α) * ℓ) F) ∧ ∀ (F : ℂ → ℂ) (h : ℂ_[q]⟦X⟧), constantCoeff h = 0 → (hat ι ℓ F).subst h = hat ι (ℓ.subst h) F := by
   intro q _ ι ℓ hℓ
   have hs : HasSubst ℓ := HasSubst.of_constantCoeff_zero' hℓ
   refine ⟨fun F G hF hG => ⟨?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp only [hat]
-    rw [tay_add hF hG, map_add, subst_add hs]
+    rw [tay_add hF hG, map_add (f := _), subst_add hs]
   · simp only [hat]
     rw [tay_mul hF hG, map_mul, subst_mul hs]
   · intro h

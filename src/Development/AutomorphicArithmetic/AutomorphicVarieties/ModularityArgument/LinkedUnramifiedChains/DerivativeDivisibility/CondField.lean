@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
-import Mathlib.RingTheory.DedekindDomain.Different
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.CmpPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.DerivativeDivisibility.CmpPrime
+public import Mathlib.RingTheory.DedekindDomain.Different
+
+@[expose] public section
 
 open Polynomial
 
@@ -54,7 +58,7 @@ private theorem cond_core {Λ B : Type} [CommRing Λ] [IsDomain Λ] [IsIntegrall
   let ι : Λ →+* FractionRing (B ⧸ Q) :=
     (algebraMap (B ⧸ Q) (FractionRing (B ⧸ Q))).comp ((Ideal.Quotient.mk Q).comp φ)
   have h0 : Function.Injective ((Ideal.Quotient.mk Q).comp φ) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     by_contra hx0
     exact hc x hx0 (Ideal.Quotient.eq_zero_iff_mem.1 hx)

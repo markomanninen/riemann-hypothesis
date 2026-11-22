@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.Imports
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.ImportsAlt
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.JacobianSmoothness.RingKrullDimLeRingKrullDimQuotientAddOne
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,7 +50,8 @@ theorem IncIdealDim.proof (h₁ : IncidenceGeneric.Statement) (h₂ : GenericLin
       rw [← map_mul, mul_inv_cancel₀ hξj, map_one]
     have h2 : ψ (∑ m, X (i, m) * C (η m)) =
         -((∑ m, X (i, j.succAbove m) * C (ξ (j.succAbove m))) * C (ξ j)⁻¹) := by
-      simp only [ψ, AlgHom.restrictScalars_apply, map_sum, map_mul, rename_X, rename_C, τ]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [ψ, AlgHom.restrictScalars_apply, map_sum, map_mul, rename_X, rename_C, τ]
       rw [Finset.sum_mul, ← Finset.sum_neg_distrib]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [C_neg, C_mul]

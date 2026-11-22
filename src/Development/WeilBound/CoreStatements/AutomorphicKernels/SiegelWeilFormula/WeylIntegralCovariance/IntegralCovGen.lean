@@ -1,9 +1,13 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.RpSmulLeft
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnitaryChartEquiv.CEquivApply
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.CovolUnique
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.MeasTop
-import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFourierRealisesWeylElement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WeylIntegralCovariance.RpSmulLeft
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.UnitaryChartEquiv.CEquivApply
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.CovolUnique
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.MeasTop
+public import GroundTheory.AutomorphicForms.FourierWhittaker.IsAddFundamentalDomainImageOfMapVecLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicFourierRealisesWeylElement
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +53,8 @@ theorem ratM_iff (d : SD σ) (X : Mx F E d.m d.n) :
     rw [← e2]
     exact AddSubgroup.subset_closure ⟨_, rfl⟩
 
-attribute [-instance] Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.measAF in
 
+attribute [-instance] Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.measAF in
 theorem integral_cov_gen {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAddGroup G] [LocallyCompactSpace G]
     [SecondCountableTopology G] {mG : MeasurableSpace G} [hBor : BorelSpace G] {ι : Type} [Fintype ι] (Γ : AddSubgroup G) [Countable Γ]
     (e : G ≃ₜ+ (ι → AdeleRing (𝓞 F) F)) (he : ∀ x, x ∈ Γ ↔ e x ∈ GroundTheory.Automorphic.FourierWhittaker.vecLattice F ι)
@@ -71,12 +75,12 @@ theorem integral_cov_gen {G : Type} [AddCommGroup G] [TopologicalSpace G] [IsTop
       exact g'.2
     refine ⟨⟨_, hg⟩, ?_, ?_⟩
     · show e.symm (g' : ι → AdeleRing (𝓞 F) F) + x ∈ e ⁻¹' GroundTheory.Automorphic.FourierWhittaker.vecDomain F ι
-      rw [Set.mem_preimage, map_add, e.apply_symm_apply]
+      rw [Set.mem_preimage, map_add (f := _), e.apply_symm_apply]
       exact hg'
     · rintro ⟨y, hy⟩ hyx
       have hy' : e y ∈ GroundTheory.Automorphic.FourierWhittaker.vecLattice F ι := (he y).1 hy
       have hyx' : e y + e x ∈ GroundTheory.Automorphic.FourierWhittaker.vecDomain F ι := by
-        rw [← map_add]
+        rw [← map_add (f := _)]
         exact hyx
       have := hu ⟨e y, hy'⟩ hyx'
       apply Subtype.ext

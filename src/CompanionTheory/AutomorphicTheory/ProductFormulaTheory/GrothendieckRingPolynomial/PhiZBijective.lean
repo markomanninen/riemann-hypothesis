@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ClassProductIrreducibleApply
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.PhiZAux
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.ClassProductIrreducibleApply
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.GrothendieckRingPolynomial.PhiZAux
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.BernsteinZelevinsky.TopAdm
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 variable [Fact (Assoc k)] [Fact (Comm k)] [Fact (One k)]
 
 theorem ell_phiOf (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hj : LSegJacquet k) (hJ : JCls k) (hAlt : AltSum k)
-    (Lseg : Segment k → IrrGL k) (hL : ∀ Δ, IsLSeg Δ (Lseg Δ).rep)
+    (Lseg : Segment k → IrrGL (k := k)) (hL : ∀ Δ, IsLSeg Δ (Lseg Δ).rep)
     (hprod : ∀ (h N : ℕ) (Γ : Fin h → Segment k) (hd : ∑ a, (Lseg (Γ a)).1 = N),
       phiOf Lseg (∏ a, MvPolynomial.X (Γ a)) = toR (cl0 (prodIrr (fun a => Lseg (Γ a)) hd)))
     (Δ : Segment k) (p : MvPolynomial (Segment k) ℤ) :
@@ -36,7 +40,8 @@ theorem ell_phiOf (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (hj : LS
       rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
     rw [this, map_zsmul, map_zsmul, map_zsmul, hm, smul_eq_mul]
   conv_lhs => rw [p.as_sum]
-  simp only [map_sum, hm']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, hm']
   rw [Finset.sum_eq_single (Finsupp.single Δ 1)]
   · simp
   · intro b _ hb; simp [hb]
@@ -49,8 +54,8 @@ namespace CompanionTheory.Groth
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable [Fact (Assoc k)] [Fact (Comm k)] [Fact (One k)]
 
-open GrothendieckPhiBijection in
 
+open GrothendieckPhiBijection in
 theorem phiZ_bijective (hk : Steps k) (h1 : TriAut) (h2 : UniTri)
     (Z : ∀ Δ : Segment k, IrrCl (GL (Fin (Δ.len * Δ.d)) k)) (hZ : IsSegmentClass k Z) :
     Function.Bijective (phiOf (k := k) fun Δ => ⟨Δ.len * Δ.d, Z Δ⟩) := by
@@ -58,7 +63,7 @@ theorem phiZ_bijective (hk : Steps k) (h1 : TriAut) (h2 : UniTri)
   obtain ⟨Lseg, hL, hbij, hpre, hprod⟩ := phiL_main hk h2
   obtain ⟨hcls, -, -, -, -, -, -, -, hJ, hS, hAlt⟩ := hk
   have key : ∀ Δ : Segment k, ∃ p : MvPolynomial (Segment k) ℤ,
-      phiOf Lseg p = toR (sg (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL k)) ∧
+      phiOf Lseg p = toR (sg (⟨Δ.len * Δ.d, Z Δ⟩ : IrrGL (k := k))) ∧
       ∃ (ε : ℤˣ) (q : MvPolynomial (Segment k) ℤ), (∀ t ∈ q.vars, t.len < Δ.len) ∧
         p = (ε : ℤ) • MvPolynomial.X Δ + q := by
     intro Δ

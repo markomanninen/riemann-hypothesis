@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsUnitTermZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsIsUnitTermZero
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Poinc GlobalTheory.UT
 
@@ -34,7 +38,8 @@ theorem isClassSum_of_sumI : ∀ (O : Type) [CommRing O] (bar : O → O) (q s : 
     exact ⟨trivial, by show ∑ i, qW W (Φ.δ y i) (κ + N • nu) < _; rw [← e1]; omega⟩
   · have h := Submodule.smul_mono le_rfl (le_top : N' ≤ ⊤) (hS₀ (S₀ ∪ hF.toFinset) Finset.subset_union_left)
     rw [smul_eq_mul, Ideal.mul_top, ← Finset.mul_sum] at h
-    rw [Finset.sum_image hinj.injOn, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_image hinj.injOn, map_sum]
     have h' := Ideal.mul_mem_left _ ((e⁻¹ : V'ˣ) : V') h
     rwa [mul_sub, Units.inv_mul_cancel_left] at h'
 

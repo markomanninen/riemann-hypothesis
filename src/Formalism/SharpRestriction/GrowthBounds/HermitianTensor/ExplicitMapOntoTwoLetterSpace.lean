@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TieDefs
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.TieDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ theorem ta_sumToIter_rename_inr {R S₁ S₂ : Type} [CommRing R] (q : MvPolynom
     sumRingEquiv R S₁ S₂ (rename Sum.inr q) = C q := by
   induction q using MvPolynomial.induction_on with
   | C a => rw [rename_C, MvPolynomial.sumRingEquiv_C]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p n hp => rw [map_mul, map_mul, hp, rename_X, MvPolynomial.sumRingEquiv_X_inr, map_mul]
 
 section A
@@ -164,7 +168,8 @@ theorem explicit_map_onto_two_letter_space : ExplicitMapOntoTwoLetters := by
     · rintro c x _ ⟨f, hf, rfl⟩
       exact ⟨c • f, Submodule.smul_mem _ _ hf, map_smul _ _ _⟩
   · rintro ⟨f, hf, rfl⟩
-    rw [f.as_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [f.as_sum, map_sum]
     refine Submodule.sum_mem _ fun v hv => ?_
     rw [ta_monomial_split, map_smul, map_mul, Psi_xs, Psi_ys]
     refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)

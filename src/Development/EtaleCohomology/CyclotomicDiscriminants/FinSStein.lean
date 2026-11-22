@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CyclotomicDiscriminants.SSteinTPf
+module
+
+public import Development.EtaleCohomology.CyclotomicDiscriminants.SSteinTPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.SStein
 theorem stein_statement_holds : UpperTheory.V.ZK.SStein := by

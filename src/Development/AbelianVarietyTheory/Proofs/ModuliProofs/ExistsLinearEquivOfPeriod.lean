@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.T2SpacePtsOverOfIsSeparated
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.T2SpacePtsOverOfIsSeparated
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.UnitOnInjectiveOfCommRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ theorem exists_isometry {t : SAB H S} {y : Sp ℂ ⟶ S} {D D' : Datum H} {ty : 
   choose r₀ hr₀ using hmem
   let r₁ : D.La →ₗ[𝓞 E] D'.La :=
     { toFun := r₀
-      map_add' := fun a b => hP'.2.1 (by rw [map_add, hr₀, hr₀, hr₀, map_add, map_add])
+      map_add' := fun a b => hP'.2.1 (by rw [map_add (f := _), hr₀, hr₀, hr₀, map_add (f := _), map_add (f := _)])
       map_smul' := fun c a => hP'.2.1 (by
         rw [hr₀, show P (c • a) = fun k => ty k (c : E) * P a k from funext (hP.1 c a), hcomm, ← hr₀]
         exact (funext (hP'.1 c (r₀ a))).symm) }
@@ -135,41 +139,5 @@ theorem weilIs_congr {X : Scheme.{0}} {G : Over S} [GrpObj G] {L : LB G.left} {a
     {c : Γ(X, ⊤)ˣ} (H : Out.WeilIs G L k x y c) : Out.WeilIs G L k x' y' c := by
   subst h
   rwa [← Over.OverMorphism.ext hx, ← Over.OverMorphism.ext hy]
-
-def WeilPull : Prop :=
-  ∀ (S S' : Scheme.{0}) (G : Over S) (G' : Over S') [GrpObj G] [GrpObj G'] (f : S' ⟶ S) (φ : G'.left ⟶ G.left)
-    (L : LB G.left) (L' : LB G'.left), L.IsLB → L'.IsLB → IsGrpPullback G' G f φ → LBIso L' (L.pull φ) →
-    ∀ (T : Over S') (k : ℤ) (x y : T ⟶ G') (x₀ y₀ : Over.mk (T.hom ≫ f) ⟶ G) (c : Γ(T.left, ⊤)ˣ),
-      x₀.left = x.left ≫ φ → y₀.left = y.left ≫ φ → (Out.WeilIs G' L' k x y c ↔ Out.WeilIs G L k x₀ y₀ c)
-
-theorem exists_fibre (hW : WeilPull) {t : SAB H S} {y : Sp ℂ ⟶ S} {t₁ : SAB H (Sp ℂ)} (m : SABMap t₁ t y)
-    {D : Datum H} {ty : Fin g → (E →+* ℂ)} {P : D.La →+ (Fin g → ℂ)} (hP : IsPeriod D ty P)
-    {e : (Fin g → ℂ) → (Over.mk y ⟶ t.G)} (he : IsExp e) (hr : ReadsPeriods t unitOn D ty P e) :
-    ∃ e₁ : (Fin g → ℂ) → (𝟙_ (Over (Sp ℂ)) ⟶ t₁.G), (∀ z, (e₁ z).left ≫ m.φ = (e z).left) ∧
-      (∀ z w, e₁ (z + w) = e₁ z * e₁ w) ∧ Function.Surjective e₁ ∧ ReadsPeriods t₁ unitOn D ty P e₁ ∧
-      ∀ (g₀ : ℕ) (u : HolUnif t₁.G t₁.PP.L g₀), ∃ h : (Fin g₀ → ℂ) ≃ₗ[ℂ] (Fin g → ℂ), ∀ z, e₁ (h z) = u.ex z := by
-  obtain ⟨β, hβ⟩ := exists_pointEquiv m.cart
-  have h₁ : ∀ z, (β.symm (e z)).left ≫ m.φ = (e z).left := fun z => by rw [← hβ, β.apply_symm_apply]
-  refine ⟨fun z => β.symm (e z), h₁, fun z w => by simp only [he.1, map_mul], β.symm.surjective.comp he.2.1,
-    ⟨fun z => by rw [← hr.1, β.symm.map_eq_one_iff], fun a z => ?_, fun k a b c hk hc => ?_⟩, fun g₀ u => ?_⟩
-  · apply β.injective
-    rw [β.apply_symm_apply, hr.2.1]
-    apply Over.OverMorphism.ext
-    rw [hβ, Over.comp_left, Over.comp_left, Category.assoc, m.act, ← Category.assoc, h₁]
-  · obtain ⟨w, hw, -⟩ := m.lin
-    refine (hW _ _ t.G t₁.G y m.φ _ _ t.PP.isLB t₁.PP.isLB m.cart ⟨w, hw⟩ _ k _ _ (pushPt m.cart.1.w _)
-      (pushPt m.cart.1.w _) _ rfl rfl).2 ?_
-    exact weilIs_congr (Category.id_comp y).symm (h₁ _).symm (h₁ _).symm (hr.2.2 k a b c hk hc)
-  · have := u.discrete
-    obtain ⟨h, hh⟩ := exists_linearEquiv_of_period hP he hr.1 (e₀ := fun z => β (u.ex z))
-      (fun z w => by rw [u.ex_add, map_mul]) (β.surjective.comp u.ex_onto) (fun U f => by
-        have k := u.hol (m.φ ⁻¹ᵁ U) ((m.φ.app U).hom f)
-        simp only [hβ, Set.mem_univ, true_and, Points.valAt'_eq_valR] at k ⊢
-        have k₂ : ∀ z, valR ((u.ex z).left ≫ m.φ) U f = valR (u.ex z).left (m.φ ⁻¹ᵁ U) ((m.φ.app U).hom f) :=
-          fun z => Points.valR_comp (C := ℂ) (u.ex z).left m.φ U f
-        exact ⟨k.1, k.2.congr fun z _ => k₂ z⟩)
-      ((countable_of_isDiscrete_finiteDimensional (s := (u.Λ : Set (Fin g₀ → ℂ)))
-        DiscreteTopology.isDiscrete).mono fun z hz => (u.ker z).1 (β.map_eq_one_iff.1 hz))
-    exact ⟨h, fun z => by simp only [hh, β.symm_apply_apply]⟩
 
 end GlobalTheory.UnifPoint

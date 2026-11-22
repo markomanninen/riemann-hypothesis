@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.IntegralPartFibres.Zpart
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CompactPowers.ExistsPowSmulMemOfIsCompact
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.IntegralParts.IntegralPartFibres.Zpart
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.OrbitIntegrals.CompactPowers.ExistsPowSmulMemOfIsCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ theorem zpart_spec {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} {x : Matrix (Fi
     zpart Z x ∈ Z ∧ IsNilpotent (x - zpart Z x) := by
   have h : ∃ c ∈ Z, IsNilpotent (x - c) := hx.1
   unfold zpart
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 theorem Z_sub_Bz {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} (hZ : CR Z) : (Z : Set (Matrix (Fin n) (Fin n) k)) ⊆ Bz Z :=

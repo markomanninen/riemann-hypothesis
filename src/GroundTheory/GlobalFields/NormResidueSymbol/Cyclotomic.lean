@@ -1,17 +1,21 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicImage
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicImage
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField IdeleGroup
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
 namespace CyclotomicSymbol
 
 open FiniteSubfield RationalSymbol _root_.GroundTheory.Global.Cyclotomic
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 theorem exists_le_sup_rootsOfUnityField (K L : FiniteSubfield) (hL : L.1 ≤ K.1 ⊔ maxCyclotomic) :
     ∃ m : ℕ+, L.1 ≤ K.1 ⊔ rootsOfUnityField m := by
@@ -44,8 +48,8 @@ variable (K L : FiniteSubfield) [Fact (K ≤ L)]
 instance isGalois_of_fact : IsGalois K.1 L.1 :=
   isGalois_of_normal
 
-omit [(L.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal] in
 
+omit [(L.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal] in
 theorem isScalarTower_of_le (E : FiniteSubfield) [Fact (K ≤ E)] [Fact (L ≤ E)] :
     IsScalarTower K.1 L.1 E.1 :=
   IsScalarTower.of_algebraMap_eq fun _ ↦ rfl

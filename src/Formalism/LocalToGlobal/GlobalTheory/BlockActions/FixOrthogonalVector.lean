@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LengthInverseBound
-import Formalism.LocalToGlobal.HermitianForms.PrkSmul
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.LengthInverseBound
+public import Formalism.LocalToGlobal.HermitianForms.PrkSmul
+
+@[expose] public section
 
 noncomputable section
 

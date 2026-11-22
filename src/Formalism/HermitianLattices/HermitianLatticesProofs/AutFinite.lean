@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.HermitianLattices.GenusCovolBound
-import Formalism.HermitianLattices.HermitianLatticesProofs.ThetaSummable
+module
+
+public import Mathlib
+public import Formalism.HermitianLattices.GenusCovolBound
+public import Formalism.HermitianLattices.HermitianLatticesProofs.ThetaSummable
+
+@[expose] public section
 
 open Module Matrix
 
@@ -44,8 +48,14 @@ lemma autFinite_short (h : V →ₗ⋆[K] V →ₗ[K] K)
 
 end AutFiniteSec
 
-theorem autFinite : AutFinite := by
-  intro K V _ _ _ _ _ _ _ _ h _ hpos L hL
+theorem autFinite (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommGroup V]
+    [Module K V] [FiniteDimensional K V] [Module (NumberField.RingOfIntegers K) V]
+    [IsScalarTower (NumberField.RingOfIntegers K) K V]
+    (h : V →ₗ⋆[K] V →ₗ[K] K) (_hsymm : h.IsSymm)
+    (hpos : ∀ x : V, x ≠ 0 → 0 < Algebra.trace ℚ K (h x x))
+    (L : Submodule (NumberField.RingOfIntegers K) V) (hL : Submodule.IsFullLattice K L) :
+    Set.Finite {g : V ≃ₗ[K] V | g ∈ isom h ∧ gmap g L = L} := by
+  let : Submodule.IsFullLattice K L := hL
   obtain ⟨S, hS⟩ := Submodule.IsLattice.fg (A := K) (M := L)
   set R : ℚ := ∑ s ∈ S, Algebra.trace ℚ K (h s s) with hR
   have hSL : ∀ s ∈ S, s ∈ L := fun s hs => hS ▸ Submodule.subset_span hs
@@ -54,7 +64,7 @@ theorem autFinite : AutFinite := by
       (fun x _ => thetaSummable_nonneg h hpos x) hs
   have hT := autFinite_short h hpos L R
   have hspan : Submodule.span K (S : Set V) = ⊤ := by
-    rw [eq_top_iff, ← Submodule.IsLattice.span_eq_top (A := K) (M := L), Submodule.span_le]
+    rw [eq_top_iff, ← Submodule.IsFullLattice.span_eq_top (A := K) (M := L), Submodule.span_le]
     intro x hx
     rw [← hS] at hx
     exact Submodule.span_le_restrictScalars (NumberField.RingOfIntegers K) K (S : Set V) hx

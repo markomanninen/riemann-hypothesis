@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemInvCoeIdeal
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemInvCoeIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ namespace Formalism.L2.SG.Pf.Cnt.R3
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-variable (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T')
+variable (D : Formalism.BasicNotions.D7) {T T' : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T')
 
 def BB : Submodule (𝓞 D.host.E) (VS D).V := MMg D F0 F' ⊔ XS D F0 ⊔ XS D F'.fl
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GTDefs
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GTDefs
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 noncomputable section
 

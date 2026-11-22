@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerHeightsirational
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartDenominator
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNefGeneric
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPowerHeightsirational
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsKodairaGeneric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartDenominator
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedNefGeneric
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -146,17 +151,17 @@ theorem homog_X_block (k₀ : K) (i₀ : ι k₀) : IsMultiHomog (X ⟨k₀, i�
   subst hm
   by_cases hk : k = k₀
   · subst hk
-    simp only [blockDeg, if_true]
+    simp only [blockDeg, ite_true]
     rw [Finset.sum_eq_single i₀]
     · simp
     · intro b _ hb
-      rw [Finsupp.single_apply, if_neg]
+      rw [Finsupp.single_apply, ite_eq_right]
       intro h
       exact hb (eq_of_heq (Sigma.mk.inj_iff.mp h).2).symm
     · simp
-  · rw [blockDeg, if_neg hk]
+  · rw [blockDeg, ite_eq_right hk]
     refine Finset.sum_eq_zero fun i _ => ?_
-    rw [Finsupp.single_apply, if_neg]
+    rw [Finsupp.single_apply, ite_eq_right]
     intro h
     exact hk (Sigma.mk.inj_iff.mp h).1.symm
 
@@ -169,7 +174,7 @@ def blockFrac (Y : (Σ k, ι k) → Ω) (k₀ : K) : Subfield Ω where
     rintro s s' ⟨t, g, h, hg, hh, hh0, he⟩ ⟨t', g', h', hg', hh', hh0', he'⟩
     refine ⟨t + t', g * h' + h * g', h * h', homog_add (homog_mul_block hg hh') (homog_mul_block hh hg'),
       homog_mul_block hh hh', by rw [map_mul]; exact mul_ne_zero hh0 hh0', ?_⟩
-    rw [map_add, map_mul, map_mul, map_mul, he, he']
+    rw [map_add (f := _), map_mul, map_mul, map_mul, he, he']
     ring
   neg_mem' := by
     rintro s ⟨t, g, h, hg, hh, hh0, he⟩
@@ -208,8 +213,8 @@ end Forms
 
 end PowerHeightsirational
 
-open PowerHeightsirational in
 
+open PowerHeightsirational in
 theorem PowerHeightsirational.proof (hN : GeneratedNefGeneric.Statement) (hK : KodairaGeneric.Statement)
     (hC : ChartDenominator.Statement) : PowerHeightsirational.Statement := by
   intro K _ _ ι _ Ω _ _ y D a q w hD hV hB hw hgen hdeg

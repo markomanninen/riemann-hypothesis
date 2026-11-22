@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdLe
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.CondESpec
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdLe
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.MemRam
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdFormula
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LayerBot
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.CondESpec
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.FrameFacts
+
+@[expose] public section
 
 open UpperTheory.HF
 

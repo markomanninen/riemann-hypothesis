@@ -1,5 +1,9 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IndOfNot
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.IndOfNot
+
+@[expose] public section
 
 open Finset
 

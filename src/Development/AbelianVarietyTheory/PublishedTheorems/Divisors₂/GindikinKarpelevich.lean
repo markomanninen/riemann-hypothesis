@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
-import Formalism.SatakeDualWeyl.StatementF
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineOppositeParabolicUnitaryLeviSectionEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasBoundedSumsOne
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsBorelSphericalFunction
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+public import Formalism.SatakeDualWeyl.StatementF
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ theorem isClosed_cell [TopologicalSpace R] [IsTopologicalRing R] [T2Space R] (x 
     ((isClosed_iInter fun i => isClosed_iInter fun j => isClosed_iInter fun _ => key _ hc i j 0).inter
     (isClosed_iInter fun i => key _ hc i i 1))
 
-variable (R) in
 
+variable (R) in
 abbrev permRep (w : Equiv.Perm (Fin n)) : GL (Fin n) R := (Matrix.permMatrixHom (R := R)).toHomUnits w
 
 theorem permRep_apply (w : Equiv.Perm (Fin n)) (i j : Fin n) :
@@ -76,37 +80,12 @@ def cSU (q z : ℂ) : ℂ := (1 - (q ^ 2)⁻¹ * z) * (1 + q⁻¹ * z) / (1 - z 
 
 abbrev lo {n : ℕ} (i : Fin (n / 2)) : Fin n := Fin.castLE (Nat.div_le_self n 2) i
 
-def FormulaGL (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] : Prop :=
-  ∀ (n : ℕ) (α : Fin n → ℂˣ) (φ : GL (Fin n) k → ℂ),
-    IsBorelSph k (fun i => (α i : ℂ) * (resCard k : ℂ) ^ (-(((n : ℂ) - 1 - 2 * (i.val : ℂ)) / 2))) φ →
-  ∀ (w : Equiv.Perm (Fin n)) (x : GL (Fin n) k), x ∈ KO k (Fin n) → IsWeylRep w x →
-    (∀ i j, i < j → w j < w i → ‖(α i : ℂ) / α j‖ < 1) →
-  ∀ [MeasurableSpace (cell x)] [BorelSpace (cell x)] (μ : Measure (cell x)) [μ.IsHaarMeasure],
-    μ ((KO k (Fin n)).subgroupOf (cell x)) = 1 →
-    Integrable (fun u : cell x => φ (x⁻¹ * u)) μ ∧
-      ∫ u : cell x, φ (x⁻¹ * u) ∂μ =
-        ∏ i, ∏ j with i < j ∧ w j < w i, cSL (resCard k) ((α i : ℂ) / α j)
-
 section Unitary
 
 variable {L : Type} [Field L] [Valued L (WithZero (Multiplicative ℤ))]
 
 def cellU {σ : L →+* L} {n : ℕ} (x : GU σ n) : Subgroup (GU σ n) :=
   (cell (x : GL (Fin n) L)).subgroupOf (GU σ n)
-
-def FormulaU (σ : L →+* L) (q : ℕ) : Prop :=
-  ∀ (n : ℕ) (α : Fin (n / 2) → ℂˣ) (φ : GU σ n → ℂ), IsSphericalU q (fun i => (α i : ℂ)) φ → φ 1 = 1 →
-  ∀ (w : Equiv.Perm (Fin n)) (x : GU σ n), x ∈ KU σ n → IsWeylRep w (x : GL (Fin n) L) →
-    (∀ i j, i < j → w (lo j) < w (lo i) → ‖(α i : ℂ) / α j‖ < 1) →
-    (∀ i j, i < j → w (lo j).rev < w (lo i) → ‖(α i : ℂ) * α j‖ < 1) →
-    (∀ i, w (lo i).rev < w (lo i) → ‖(α i : ℂ)‖ < 1) →
-  ∀ [MeasurableSpace (cellU x)] [BorelSpace (cellU x)] (μ : Measure (cellU x)) [μ.IsHaarMeasure],
-    μ ((KU σ n).subgroupOf (cellU x)) = 1 →
-    Integrable (fun u : cellU x => φ (x⁻¹ * u)) μ ∧
-      ∫ u : cellU x, φ (x⁻¹ * u) ∂μ =
-        (∏ i, ∏ j with i < j ∧ w (lo j) < w (lo i), cSL ((q : ℂ) ^ 2) ((α i : ℂ) / α j)) *
-        (∏ i, ∏ j with i < j ∧ w (lo j).rev < w (lo i), cSL ((q : ℂ) ^ 2) ((α i : ℂ) * α j)) *
-        ∏ i with w (lo i).rev < w (lo i), if Even n then cSL q (α i) else cSU q (α i)
 
 end Unitary
 
@@ -115,12 +94,6 @@ end WeylCell
 namespace Published
 
 open WeylCell
-
-def GindikinKarpelevich : Prop :=
-  (∀ (k : Type) [Field k] [CharZero k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k],
-    FormulaGL k) ∧
-  ∀ (L : Type) [Field L] [CharZero L] [Valued L (WithZero (Multiplicative ℤ))] [CompleteSpace L] (ϖ : L) (σ : L →+* L)
-    (q : ℕ), IsUnramInv ϖ σ q → FormulaU σ q
 
 end Published
 

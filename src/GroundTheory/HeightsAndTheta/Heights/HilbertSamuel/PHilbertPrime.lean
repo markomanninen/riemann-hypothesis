@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -82,6 +87,9 @@ theorem walk_bound (g : (K → ℕ) → ℝ) (a₀ : ℕ) (B : ℝ) (hB : 0 ≤ 
 
 end Walk
 
+-- Mathlib represents ℤ-multilinear maps using the identity ring homomorphism.
+local notation:max "MultilinearMap" " ℤ" => _root_.MultilinearMap (RingHom.id ℤ)
+
 section Multilinear
 
 variable {K : Type*} [Fintype K] [DecidableEq K]
@@ -96,14 +104,15 @@ theorem multilinear_abs_le {n : ℕ} (f : MultilinearMap ℤ (fun _ : Fin n => K
     exact pi_eq_sum_univ (m i)
   have hexp : f m = ∑ r : Fin n → K, (∏ i, m i (r i)) * f (fun i => E (r i)) := by
     conv_lhs => rw [hm]
-    rw [MultilinearMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [MultilinearMap.map_sum]
     refine Finset.sum_congr rfl (fun r _ => ?_)
-    rw [MultilinearMap.map_smul_univ, smul_eq_mul]
+    simp only [MultilinearMap.map_smul_univ, RingHom.id_apply, smul_eq_mul]
   rw [hexp, Finset.sum_mul]
   refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum (fun r _ => ?_))
   rw [abs_mul, Finset.abs_prod]
   refine (mul_comm _ _).trans_le (mul_le_mul_of_nonneg_left ?_ (abs_nonneg _))
-  refine Finset.prod_le_prod (fun i _ => abs_nonneg _) (fun i _ => ?_)
+  refine Finset.prod_le_prod₀ (fun i _ => abs_nonneg _) (fun i _ => ?_)
   exact Finset.single_le_sum (f := fun k => |m i k|) (fun k _ => abs_nonneg _) (Finset.mem_univ _)
 
 end Multilinear
@@ -131,15 +140,15 @@ omit [Fintype K] [DecidableEq K] in
 theorem ofPositionAdditive_apply {n : ℕ} (L : (Fin n → K → ℤ) → ℤ) (hadd) (m : Fin n → K → ℤ) :
     ofPositionAdditive L hadd m = L m := rfl
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem vecCons_const_of_ne_zero {d : ℕ} (y x : K → ℤ) (k : Fin (d + 1)) (hk : k ≠ 0) :
     Matrix.vecCons y (fun _ : Fin d => x) k = x := by
   obtain ⟨k', rfl⟩ := Fin.exists_succ_eq.mpr hk
   simp
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem multilinear_step {d : ℕ} (f : MultilinearMap ℤ (fun _ : Fin (d + 1) => K → ℤ) ℤ)
     (hsym : ∀ (σ : Equiv.Perm (Fin (d + 1))) (m : Fin (d + 1) → K → ℤ), f (m ∘ σ) = f m)
     (x e : K → ℤ) :

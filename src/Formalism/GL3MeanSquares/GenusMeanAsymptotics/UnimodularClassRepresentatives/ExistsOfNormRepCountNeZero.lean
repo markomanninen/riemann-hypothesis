@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CongrPIffInI
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NormRepCountEqEulerFacInert
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsAddConjTransposeEq
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CongrPIffInI
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NormRepCountEqEulerFacInert
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsAddConjTransposeEq
+
+@[expose] public section
 
 open NumberField Module
 
@@ -30,8 +34,12 @@ theorem exists_norm_congr (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (
   obtain ⟨P, hP, hPp⟩ := exists_maximal_over hK hF h𝔭
   have hcP : ι c ∉ P := fun h => hc (hPp ▸ Ideal.mem_comap.2 h)
   have hN := IdealNormInequalities.one_lt_absNorm hP
+  have hfixed : conjO K (ι c) = ι c := by
+    apply RingOfIntegers.coe_injective
+    change star (κ (ι c)) = κ (ι c)
+    exact (hF _).2 ⟨(c : F), rfl⟩
   have key : ∃ α : 𝓞 K, conjO K α * α - ι c ∈ P := by
-    obtain ⟨h1, h2⟩ := localDensity K hK P hP 1 1 le_rfl le_rfl (ι c) (conjO_map hF c) hcP
+    obtain ⟨h1, h2⟩ := localDensity K hK P hP 1 1 le_rfl le_rfl (ι c) hfixed hcP
     by_cases hc' : Formalism.HermitianLatticesTheory.conjIdeal (K := K) P = P
     · have h3 := h1 hc'
       have hs : 0 < Real.sqrt (Ideal.absNorm P : ℝ) := Real.sqrt_pos.2 (by linarith)
@@ -69,32 +77,47 @@ theorem exists_scale (hF : IsFixF K F) (h𝔭 : 𝔭.IsMaximal) {a₁ : 𝓞 F} 
   have hgg : g * g ∉ 𝔭 ^ (r + r + 1) := mul_notMem hp hp0 hg' hg'
   have hgg0 : g * g ≠ 0 := fun h0 => hgg (h0 ▸ zero_mem _)
   have hg0 : g ≠ 0 := fun h0 => hgg0 (by rw [h0, zero_mul])
-  have hκg := κι_ne_zero (K := K) hg0
-  have hκgg := κι_ne_zero (K := K) hgg0
-  set d := (κ (ι (g * g)))⁻¹ * κ (ι a₁) with hd
-  have hd1 : InI 𝔭 k d := InI.div h𝔭 hgg0 hgg ((inI_ι h𝔭).2 h1)
-  have hd2 : ¬ InI 𝔭 (k + 1) d := by
-    intro hcon
-    apply h2
-    rw [← inI_ι (K := K) h𝔭]
-    have e : κ (ι a₁) = κ (ι (g * g)) * d := by rw [hd]; field_simp
-    rw [e, add_assoc]
-    refine InI.mul hp ((inI_ι h𝔭).2 ?_) hcon
+  have hspan : Ideal.span {g * g} ≠ (0 : Ideal (𝓞 F)) := by simpa using hgg0
+  have hpunit : ¬ IsUnit 𝔭 := by simpa only [Ideal.isUnit_iff] using h𝔭.ne_top
+  obtain ⟨J, hJ, hJp⟩ := (FiniteMultiplicity.of_not_isUnit hpunit hspan).exists_eq_pow_mul_and_not_dvd
+  obtain ⟨t, htJ, ht⟩ := IsConcreteLE.not_le_iff_exists.mp (fun h => hJp (Ideal.dvd_iff_le.mpr h))
+  have hmul : g * g ∈ 𝔭 ^ (r + r) := by
     rw [pow_add]
     exact Ideal.mul_mem_mul hg hg
-  have hds : star d = d := by rw [hd, star_mul', star_inv₀, star_ι hF, star_ι hF]
-  obtain ⟨t, δ, ht, e⟩ := exists_frac hF hds (hd1.mono (Nat.zero_le _))
-  have hκt := κι_ne_zero (K := K) (ne_zero_of_notMem ht)
+  have hle : multiplicity 𝔭 (Ideal.span {g * g}) ≤ r + r := by
+    by_contra! hlt
+    apply hgg
+    have hspan_le : Ideal.span {g * g} ≤ 𝔭 ^ multiplicity 𝔭 (Ideal.span {g * g}) :=
+      hJ.le.trans Ideal.mul_le_left
+    exact Ideal.pow_le_pow_right hlt (hspan_le (Ideal.mem_span_singleton_self _))
+  have hmul_le : Ideal.span {t} * 𝔭 ^ (r + r + k) ≤ Ideal.span {g * g} * 𝔭 ^ k := by
+    rw [pow_add 𝔭 (r + r) k, ← mul_assoc]
+    refine Ideal.mul_mono_left ?_
+    rw [hJ, mul_comm]
+    exact Ideal.mul_mono (Ideal.pow_le_pow_right hle) ((Ideal.span_singleton_le_iff_mem _).2 htJ)
+  obtain ⟨δ, _, hδeq⟩ := Ideal.mem_span_singleton_mul.1
+    (hmul_le (Ideal.mul_mem_mul (Ideal.mem_span_singleton_self t) h1))
+  have ht' : t ∉ 𝔭 ^ (0 + 1) := by simpa using ht
+  have hδ : δ ∉ 𝔭 ^ (k + 1) := by
+    intro hδp
+    have hta : t * a₁ ∉ 𝔭 ^ (r + r + k + 1) := by
+      simpa only [zero_add] using mul_notMem hp hp0 ht' h2
+    apply hta
+    rw [← hδeq, add_assoc, pow_add]
+    exact Ideal.mul_mem_mul hmul hδp
+  have algebraMap_ne_zero {z : 𝓞 F} (hz : z ≠ 0) : κ (ι z) ≠ 0 := by
+    rwa [map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 K) K),
+      map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K))]
+  have hκg := algebraMap_ne_zero hg0
+  have ht0 : t ≠ 0 := fun h => ht (h ▸ 𝔭.zero_mem)
+  have hκt := algebraMap_ne_zero ht0
   refine ⟨κ (ι t) * (κ (ι g))⁻¹, mul_ne_zero hκt (inv_ne_zero hκg), ?_, t * δ, ?_, ?_⟩
   · rw [star_mul', star_inv₀, star_ι hF, star_ι hF]
-  · rw [map_mul ι, map_mul κ, e, hd, map_mul ι g g, map_mul κ]
+  · have he := congrArg (fun z : 𝓞 F => κ (ι z)) hδeq
+    simp only [map_mul] at he ⊢
     field_simp
-  · intro hcon
-    apply hd2
-    apply InI.of_mul hp ht
-    apply InI.of_mul hp ht
-    rw [← e, ← map_mul, ← map_mul]
-    exact (inI_ι h𝔭).2 hcon
+    linear_combination -he
+  · simpa only [zero_add] using mul_notMem hp hp0 ht' hδ
 
 theorem exists_scale_int (hF : IsFixF K F) (h𝔭 : 𝔭.IsMaximal) {a₁ : 𝓞 F} (h0 : a₁ ≠ 0) :
     ∃ μ : K, μ ≠ 0 ∧ star μ = μ ∧ ∃ a : 𝓞 F, μ * μ * κ (ι a₁) = κ (ι a) ∧ a ∉ 𝔭 ^ 2 := by
@@ -111,7 +134,9 @@ theorem exists_scale_fixed (hF : IsFixF K F) (h𝔭 : 𝔭.IsMaximal) {d : K} (h
   obtain ⟨f, rfl⟩ := (hF d).1 hds
   obtain ⟨x, y, hy, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 F) f
   have hy0 : y ≠ 0 := nonZeroDivisors.ne_zero hy
-  have hκy := κι_ne_zero (K := K) hy0
+  have hκy : κ (ι y) ≠ 0 := by
+    rwa [map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 K) K),
+      map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective (𝓞 F) (𝓞 K))]
   have e : algebraMap F K (algebraMap (𝓞 F) F x / algebraMap (𝓞 F) F y) = κ (ι x) / κ (ι y) := by
     rw [map_div₀]; rfl
   rw [e] at hd0 ⊢
@@ -153,7 +178,11 @@ theorem exists_alpha (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : 
     obtain ⟨t₂, ht₂⟩ := (conjO_eq_iff_mem_range hF (conjO K τ * τ)).1 (by
       rw [map_mul, conjO_conjO, mul_comm])
     refine ⟨α₀ * (1 + ι a * τ), ν₀ * (1 + a + a * a * t₂), ?_, ?_, ?_⟩
-    · rw [map_mul, map_add, map_mul, map_one, conjO_map hF, map_mul ι, map_add ι, map_add ι, map_mul ι,
+    · have hfixed : conjO K (ι a) = ι a := by
+        apply RingOfIntegers.coe_injective
+        change star (κ (ι a)) = κ (ι a)
+        exact (hF _).2 ⟨(a : F), rfl⟩
+      rw [map_mul, map_add (f := _), map_mul, map_one, hfixed, map_mul ι, map_add ι, map_add ι, map_mul ι,
         map_mul ι, map_one, ← hν₀, ht₂]
       rw [map_one] at hτ
       linear_combination (conjO K α₀ * α₀ * ι a) * hτ

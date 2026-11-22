@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,7 +20,7 @@ variable {V : Type} [TopologicalSpace V] [T2Space V] [LocallyCompactSpace V]
 theorem exists_compact_open {W : Set V} (hW : IsOpen W) {x : V} (hx : x ∈ W) :
     ∃ K, IsCompact K ∧ IsOpen K ∧ x ∈ K ∧ K ⊆ W := by
   obtain ⟨s, hs, hsW, hsc⟩ := local_compact_nhds (hW.mem_nhds hx)
-  obtain ⟨K, hKmem, hxK, hKsub⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (H := V)).exists_subset_of_mem_open
+  obtain ⟨K, hKmem, hxK, hKsub⟩ := (loc_compact_Haus_tot_disc_of_zero_dim (X := V)).exists_subset_of_mem_open
     (mem_interior_iff_mem_nhds.2 hs) isOpen_interior
   have hKc : IsClopen K := hKmem
   exact ⟨K, hsc.of_isClosed_subset hKc.1 (hKsub.trans interior_subset), hKc.2, hxK,
@@ -58,7 +62,7 @@ theorem measure_ext_of_compactOpen {U : Set V} (hU : IsOpen U) (m m' : Measure V
       · rw [accumulate_def]
         exact (finite_le_nat n).isCompact_biUnion fun k _ => (hg k).1
       · rw [accumulate_def]
-        exact isOpen_biUnion fun k _ => (hg k).2.1
+        exact isOpen_iUnion fun k => isOpen_iUnion fun _ => (hg k).2.1
       · rw [accumulate_def]
         exact iUnion₂_subset fun k _ => (hg k).2.2.trans hOU
     rw [← hTO, sUnion_range, measure_iUnion_eq_iSup_accumulate, measure_iUnion_eq_iSup_accumulate]

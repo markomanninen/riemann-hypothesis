@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ObjPol
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ObjPol
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,15 +22,15 @@ namespace Frames
 
 variable {n' r : ℕ} [NeZero n'] (F : Frames n' r)
 
-open Classical in
 
+open Classical in
 def letters (j : ℤ) : Finset ℤ :=
   (Finset.Icc (F.fr (j - 1) 0) (F.fr j (r - 1))).filter fun x => posOf n' x ∈ F.TT
 
 def IsW (j x : ℤ) : Prop := x ≤ F.fr (j - 1) (r - 1)
 
-open Classical in
 
+open Classical in
 def LLset (j : ℤ) : Finset ℤ :=
   (Finset.Ioo (F.fr (j - 1) (r - 1)) (F.fr j 0)).filter fun x => posOf n' x ∈ F.TT
 
@@ -35,14 +39,14 @@ def dist (j x : ℤ) : ℕ := (F.fr j (r - 1) - x).toNat
 def GapGt (L : ℕ) (j x : ℤ) : Prop :=
   ∀ y ∈ F.letters j, y < x → (∀ z ∈ F.letters j, z < x → z ≤ y) → (L : ℤ) < x - y
 
-open Classical in
 
+open Classical in
 def oldest (j x : ℤ) : ℤ :=
   let l := ((F.letters j).filter fun z => Even z ∧ z < x).sort (· ≤ ·)
   l.getD (l.length - r) 0
 
-open Classical in
 
+open Classical in
 def Valid (L₁ N₁ : ℕ) : Prop :=
   1 ≤ F.J ∧
   (∀ j : ℤ, ∀ i, F.fr (j + F.J) i = F.fr j i + n') ∧

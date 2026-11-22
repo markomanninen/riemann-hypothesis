@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2
 open scoped TensorProduct
@@ -17,7 +21,7 @@ theorem coord_compAt (L : Type) [Field L] [NumberField L] [IsCMField L] {ι : Ty
     have h : compAt L w (x ⊗ₜ a) = x ⊗ₜ evalAt L w a := rfl
     rw [h]
     simp only [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, map_smul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem eq_sum_coord {K V M : Type} [Field K] [AddCommGroup V] [Module K V] [AddCommGroup M] [Module K M]
     {ι : Type} [Fintype ι] (b : Module.Basis ι K V) (z : V ⊗[K] M) :
@@ -28,7 +32,7 @@ theorem eq_sum_coord {K V M : Type} [Field K] [AddCommGroup V] [Module K V] [Add
     simp only [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, ← TensorProduct.smul_tmul,
       ← TensorProduct.sum_tmul, Module.Basis.coord_apply, Module.Basis.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
     rw [← hx, ← hy]
 
 theorem eq_zero_of_compAt_eq_zero :

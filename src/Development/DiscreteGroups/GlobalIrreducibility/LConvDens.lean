@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
+
+@[expose] public section
 
 open scoped InnerProductSpace
 

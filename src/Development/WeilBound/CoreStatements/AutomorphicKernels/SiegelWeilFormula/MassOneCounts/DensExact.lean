@@ -1,21 +1,26 @@
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityBoundNonzero
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RankOneLocalDensityAlmostAll
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PrimitiveVectorQuadraticLevelMeasureStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardLocalHaarPropertiesStatement
+module
+
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityNearOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LocalQuadraticDensityBoundNonzero
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.RankOneLocalDensityAlmostAll
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PrimitiveVectorQuadraticLevelMeasureStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.StandardLocalHaarPropertiesStatement
+
+@[expose] public section
 
 noncomputable section
 
 namespace PositivityTheory.SiegelWeilFormula.MOne
 
-open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology GlobalTheory.CompanionTheory.SW.LGPrim
+open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
 variable {F : Type} [Field F] [NumberField F] {v : HeightOneSpectrum (𝓞 F)}
 
-local notation "𝒪" => HeightOneSpectrum.adicCompletionIntegers F v
-local notation "𝓴" => IsLocalRing.ResidueField (HeightOneSpectrum.adicCompletionIntegers F v)
-local notation "res" => IsLocalRing.residue (HeightOneSpectrum.adicCompletionIntegers F v)
+local notation "𝒪" => v.adicCompletionIntegers F
+local notation "𝓴" => IsLocalRing.ResidueField 𝒪
+local notation "phi" => ValuationSubring.subtype 𝒪
+local notation "res" => IsLocalRing.residue 𝒪
 
 theorem dens_exact (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v (2 : Fv F v) = 1)
     (ι : Type) [Fintype ι] [DecidableEq ι] (BO : Matrix ι ι 𝒪) (hBs : (BO.map phi).IsSymm)
@@ -53,10 +58,15 @@ theorem dens_exact (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v
     have := congrArg res hc2
     rwa [map_mul, map_one, map_ofNat] at this
   have hr : res c = 2⁻¹ := eq_inv_of_mul_eq_one_left hr1
+  have hres_zero (a : 𝒪) : res a = 0 ↔ Valued.v (a : Fv F v) < 1 :=
+    (IsLocalRing.residue_eq_zero_iff a).trans (Valued.v.mem_maximalIdeal_iff)
+  have hres_eq (a b : 𝒪) : res a = res b ↔ Valued.v ((a : Fv F v) - b) < 1 := by
+    rw [← sub_eq_zero, ← map_sub, hres_zero]
+    rfl
   set sb : 𝓴 := res s with hsb
   have hsb0 : sb ≠ 0 := by
     intro h0
-    have h' := (res_eq_zero_iff _).1 h0
+    have h' := (hres_zero s).1 h0
     rw [hsu] at h'
     exact lt_irrefl _ h'
   let qk : (ι → 𝓴) → 𝓴 := fun y => (2 : 𝓴)⁻¹ * (y ⬝ᵥ ((BO.map res) *ᵥ y))
@@ -93,6 +103,31 @@ theorem dens_exact (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v
   have hQc : Continuous Qf := by
     refine continuous_const.mul ?_
     exact continuous_id.dotProduct (continuous_const.matrix_mulVec continuous_id)
+  let lift : 𝓴 → 𝒪 := Function.surjInv (IsLocalRing.residue_surjective (R := 𝒪))
+  have hres_lift (y : 𝓴) : res (lift y) = y := Function.surjInv_eq _ y
+  let lf (y : ι → 𝓴) (i : ι) : Fv F v := lift (y i)
+  have hcover (x : ι → Fv F v) :
+      ((∀ i, x i ∈ 𝒪) ∧ ∃ i, Valued.v (x i) = 1) ↔
+        ∃ y : ι → 𝓴, y ≠ 0 ∧ ∀ i, Valued.v (x i - lf y i) < 1 := by
+    constructor
+    · rintro ⟨hx, i, hi⟩
+      let y : ι → 𝓴 := fun j => res ⟨x j, hx j⟩
+      refine ⟨y, ?_, fun j => (hres_eq ⟨x j, hx j⟩ (lift (y j))).1 (hres_lift _).symm⟩
+      intro h
+      have hlt := (hres_zero ⟨x i, hx i⟩).1 (congrFun h i)
+      exact (ne_of_lt hlt) hi
+    · rintro ⟨y, hy, h⟩
+      have hx (i : ι) : x i ∈ 𝒪 := by
+        change Valued.v (x i) ≤ 1
+        calc
+          Valued.v (x i) = Valued.v (x i - lf y i + lf y i) := by rw [sub_add_cancel]
+          _ ≤ 1 := Valuation.map_add_le _ (h i).le (lift (y i)).2
+      obtain ⟨i, hi⟩ := Function.ne_iff.1 hy
+      refine ⟨hx, i, le_antisymm (hx i) (not_lt.1 fun hlt => hi ?_)⟩
+      calc
+        y i = res (lift (y i)) := (hres_lift _).symm
+        _ = res ⟨x i, hx i⟩ := ((hres_eq _ _).2 (h i)).symm
+        _ = 0 := (hres_zero _).2 hlt
   let P : (ι → 𝓴) → Set (ι → Fv F v) := fun y =>
     {x | (∀ i, Valued.v (x i - lf y i) < 1) ∧ Qf x ∈ A}
   let T0 : Finset (ι → 𝓴) := Finset.univ.filter fun y => y ≠ 0
@@ -100,13 +135,13 @@ theorem dens_exact (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v
       (∃ i, Valued.v (x i) = 1) ∧ (2 : Fv F v)⁻¹ * (x ⬝ᵥ ((BO.map phi) *ᵥ x)) ∈ A} =
       ⋃ y ∈ T0, P y := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
     constructor
     · rintro ⟨h1, h3, h4⟩
-      obtain ⟨y, hy, h⟩ := (cover x).1 ⟨h1, h3⟩
+      obtain ⟨y, hy, h⟩ := (hcover x).1 ⟨h1, h3⟩
       exact ⟨y, Finset.mem_filter.2 ⟨Finset.mem_univ _, hy⟩, h, h4⟩
     · rintro ⟨y, hy, h, h4⟩
-      obtain ⟨h1, h3⟩ := (cover x).2 ⟨y, (Finset.mem_filter.1 hy).2, h⟩
+      obtain ⟨h1, h3⟩ := (hcover x).2 ⟨y, (Finset.mem_filter.1 hy).2, h⟩
       exact ⟨h1, h3, h4⟩
   have hball : MeasurableSet {a : Fv F v | Valued.v a < 1} := by
     have h := (Valued.isOpen_ball (Fv F v) 1).measurableSet
@@ -121,18 +156,38 @@ theorem dens_exact (lam : Measure (Fv F v)) (hlam : IsStdV v lam) (h2 : Valued.v
     exact ((continuous_apply i).sub continuous_const).measurable hball
   have hdisj : Set.PairwiseDisjoint (↑T0) P := by
     intro y _ y' _ hne
-    exact Set.disjoint_left.2 fun x hx hx' => hne (eq_of_close x y y' hx.1 hx'.1)
+    refine Set.disjoint_left.2 fun x hx hx' => hne (funext fun i => ?_)
+    have h := Valuation.map_sub_lt _ (hx'.1 i) (hx.1 i)
+    have e : (x i - lf y' i) - (x i - lf y i) = lf y i - lf y' i := by ring
+    rw [e] at h
+    have he := (hres_eq (lift (y i)) (lift (y' i))).2 h
+    rwa [hres_lift, hres_lift] at he
   have hclass : ∀ y ∈ T0, (Measure.pi fun _ : ι => lam) (P y) =
       if qk y = sb then ((Ideal.absNorm v.asIdeal : ℝ≥0∞)⁻¹ ^ (Fintype.card ι - 1)) * lam A else 0 := by
     intro y hy
     have hy0 : y ≠ 0 := (Finset.mem_filter.1 hy).2
-    obtain ⟨hint, hprim⟩ := (cover (lf y)).2 ⟨y, hy0, fun i => by simp⟩
-    obtain ⟨a, haQ, har⟩ := res_Q c hc hr BO y
+    obtain ⟨hint, hprim⟩ := (hcover (lf y)).2 ⟨y, hy0, fun i => by simp⟩
+    let z : ι → 𝒪 := lift ∘ y
+    let a : 𝒪 := c * (z ⬝ᵥ (BO *ᵥ z))
+    have hmap_quad {R : Type} [CommRing R] (f : 𝒪 →+* R) :
+        f (z ⬝ᵥ (BO *ᵥ z)) = (f ∘ z) ⬝ᵥ ((BO.map f) *ᵥ (f ∘ z)) := by
+      rw [RingHom.map_dotProduct]
+      congr 1
+      funext i
+      exact RingHom.map_mulVec f BO z i
+    have haQ : (a : Fv F v) = Qf (lf y) := by
+      change phi (c * (z ⬝ᵥ (BO *ᵥ z))) = _
+      rw [map_mul, hmap_quad, show phi c = _ from hc]
+      rfl
+    have har : res a = qk y := by
+      change res (c * (z ⬝ᵥ (BO *ᵥ z))) = _
+      have hz : (⇑res ∘ z) = y := funext fun i => hres_lift (y i)
+      rw [map_mul, hr, hmap_quad, hz]
     have key := GlobalTheory.T.primitive_vector_quadratic_level_measure F v lam hlam h2 ι (BO.map phi) hBs hBint hBdet (lf y) hint hprim A hA
     have hkey : (Measure.pi fun _ : ι => lam) (P y) = _ := key
     rw [hkey]
     have hcl : Valued.v ((s : Fv F v) - Qf (lf y)) < 1 ↔ qk y = sb := by
-      have := res_eq_iff s a
+      have := hres_eq s a
       rw [har] at this
       rw [show Qf (lf y) = (a : Fv F v) from haQ.symm]
       exact ⟨fun h => (this.2 h).symm, fun h => this.1 h.symm⟩

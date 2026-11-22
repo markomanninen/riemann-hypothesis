@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardAlgHomReducedTraceSum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibFiniteAndSep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TcoMem
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardAlgHomReducedTraceSum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FibFiniteAndSep
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 open scoped TensorProduct
 

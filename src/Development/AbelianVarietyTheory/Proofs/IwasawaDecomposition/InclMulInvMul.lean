@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunKilled
-import Formalism.LocalToGlobal.Columns.RecLevelStep
-import Formalism.LocalToGlobal.Columns.LevPackFrLat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FunKilled
+public import Formalism.LocalToGlobal.Columns.RecLevelStep
+public import Formalism.LocalToGlobal.Columns.LevPackFrLat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -18,7 +23,7 @@ theorem kill_or {A M : Type} [CommRing A] [AddCommGroup M] [Module A M] {T : ℕ
     (p q : A) (hpq : p * q = (T : A)) : (∀ m : M, p • m = 0) ∨ ∀ m : M, q • m = 0 := by
   haveI : Fact (Nat.card M).Prime := ⟨hM ▸ hT⟩
   haveI : Finite M := Nat.finite_of_card_ne_zero (hM ▸ hT.ne_zero)
-  let φ : M →+ M := DistribMulAction.toAddMonoidHom M p
+  let φ : M →+ M := DistribSMul.toAddMonoidHom M p
   rcases AddSubgroup.eq_bot_or_eq_top_of_prime_card φ.range with h | h
   · left
     intro m
@@ -72,9 +77,8 @@ local notation "𝒪v" => Formalism.BasicNotions.intV E v
 local notation "pE" => algebraMap (𝓞 E) E π
 
 theorem sig_sig (x : Rv) : sigR hc.sig (v.adicCompletion F) (sigR hc.sig (v.adicCompletion F) x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  induction x using TensorProduct.inductionOn with
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   | tmul a b =>
     have e : ∀ a : E, (hc.sig a) = star a := fun a => by
       simp [Formalism.BasicNotions.CMData.sig, starRingEnd_apply]
@@ -116,7 +120,7 @@ theorem fT_last (c : 𝒪v) (hcM : ∀ m : M, c • m = 0) (x : baseDualV hc n S
     · show ιv pE⁻¹ * (x.1 (lastIdx n) - c.1 * (Pi.single (lastIdx n) s : Fin n → Rv) (lastIdx n)) ∈ 𝒪v
       rw [Pi.single_eq_same, e, sub_self, mul_zero]
       exact zero_mem _
-  have e2 : fT x = fT (x - c • t) + c • fT t := by rw [← map_smul, ← map_add, sub_add_cancel]
+  have e2 : fT x = fT (x - c • t) + c • fT t := by rw [← map_smul, ← map_add (f := _), sub_add_cancel]
   rw [e2, hy, hcM, add_zero]
 
 omit hL in
@@ -152,7 +156,7 @@ def psiC (P : Pl E) : baseDualV hc n ST v →+ kP P :=
     (⟨sigR hc.sig (v.adicCompletion F) (ιv (star pE) * x.1 (lastIdx n)), rll_sigV_mem hc v (rll_last_mem hc n v h x)⟩ : 𝒪v))
     (fun a b => Subtype.ext (by
       show sigR hc.sig (v.adicCompletion F) (ιv (star pE) * (a.1 (lastIdx n) + b.1 (lastIdx n))) = _
-      rw [mul_add, map_add]
+      rw [mul_add, map_add (f := _)]
       rfl)))
 
 theorem last_of_psiC {P : Pl E} (huniq : ∀ Q ∈ ST, IsOver v Q → Q = P) (x : baseDualV hc n ST v)
@@ -307,8 +311,8 @@ theorem fixes_of_row (hq : ∀ m : M, (⟨ιv (star pE), rll_incl_int v (cO E π
   rw [map_sub, sub_eq_zero] at h0
   exact h0
 
-omit hL in
 
+omit hL in
 theorem stab_eq (hL' : ∀ x : baseDualV hc n ST v, x.1 ∈ latS (F := F) (v.adicCompletion F) (Formalism.BasicNotions.intV E v) (baseLb E n ST) → fT x = 0)
     {T : ℕ} (hT : T.Prime) (hTπ : π * cO E π = (T : 𝓞 E)) (hM : Nat.card M = T) (hne : fT ≠ 0)
     {P : Pl E} (hP : P ∈ ST) (hov : IsOver v P) (hcardP : Nat.card (𝓞 E ⧸ P.asIdeal) = T) :
@@ -400,7 +404,7 @@ end Swap
 
 theorem mem_baseLb {B : Base} {X : PreX B.toPre} (hPr : (B.primes X).Ok) (u : B.Word) (n : ℕ) [NeZero n] (x : Fin n → B.host.E) :
     x ∈ baseLb B.fields.E n ((B.primes X).vT u) ↔ x ∈ baseL B n (X.piT u) := by
-  have hB := basePi_of_ok (GlobalTheory.Mem.FieldsLaws.fields_ok B) hPr u
+  have hX := GlobalTheory.Mem.FieldsLaws.fields_ok B
   have hn := NeZero.ne n
   rw [rlc_mem_baseLb]
   constructor
@@ -408,17 +412,20 @@ theorem mem_baseLb {B : Base} {X : PreX B.toPre} (hPr : (B.primes X).Ok) (u : B.
     refine ⟨r j, (h1 j).symm, fun hj => ?_⟩
     have e : j = lastIdx n := Fin.ext (by simp only [lastIdx]; omega)
     rw [e]
-    exact (hB.dvd _).1 h2
+    exact piT_dvd_of_mem hX hPr u _ fun P => h2 P.1 P.2
   · intro h
     choose r h1 h2 using h
-    exact ⟨r, fun j => (h1 j).symm, (hB.dvd _).2 (h2 _ (by simp only [lastIdx]; omega))⟩
+    refine ⟨r, fun j => (h1 j).symm, fun P hP => ?_⟩
+    obtain ⟨q, hq⟩ := h2 (lastIdx n) (by simp only [lastIdx]; omega)
+    rw [hq]
+    exact Ideal.mul_mem_right q P.asIdeal ((rls_vT_iff hX hPr u P).1 hP)
 
 end GlobalTheory.Mem.Col2.Reside
 
 end
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem GlobalTheory.Mem.Col2.TC.charts_funKilled : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i ≤ B.R.m) (bad : Set (HeightOneSpectrum (𝓞 B.host.F))) (Ch : Type) (chOf : (I.stp u a i).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) bad i hi (fun c : {c // chOf c = β} => (I.chain l u a).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c.1))), I.ReadsK l Z u a i hi chOf K → ∃ K' : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) bad i hi (fun c : {c // chOf c = β} => (I.chain l u a).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u a i c.1)), I.ReadsK l Z u a i hi chOf K' ∧ ∀ β, FunKilled (K' β).lev (X.piT u) ∧ (K' β).lev.Lb = (K β).lev.Lb ∧ (K' β).lev.Uloc = (K β).lev.Uloc ∧ (K' β).lev.U = (K β).lev.U ∧ (∀ (κ' : (K' β).lev.U) (κ : (K β).lev.U), κ'.1 = κ.1 → (K' β).lev.chi κ' = (K β).lev.chi κ) ∧ (K' β).y = (K β).y ∧ (K' β).stabI = (K β).stabI := by
   intro B X I hI hP l Z u a i hi bad Ch chOf K hK
   have hPr := l.pr
@@ -426,13 +433,17 @@ theorem GlobalTheory.Mem.Col2.TC.charts_funKilled : ∀ {B : Base} {X : PreX B.t
   haveI : NeZero (B.R.N i) := ⟨(B.R.N_pos i).ne'⟩
   obtain ⟨-, -, -, hc⟩ := TC.spaces_in_coordinates I hI hP l Z
   obtain ⟨hgr, -, -⟩ := hc i hi
-  have hB := basePi_of_ok hX hPr u
+  have hB : BasePi ((B.primes X).vT u) (X.piT u) := by
+    refine ⟨fun r => ⟨fun hr => piT_dvd_of_mem hX hPr u r (fun P => hr P.1 P.2), ?_⟩, hPr.piT_cop u⟩
+    rintro ⟨q, rfl⟩ P hP
+    exact Ideal.mul_mem_right q P.asIdeal ((rls_vT_iff hX hPr u P).1 hP)
   have hLb : ∀ β, (K β).lev.Lb = baseLb B.fields.E (B.R.N i) ((B.primes X).vT u) := fun β => by
     obtain ⟨k, hk⟩ := hK
     ext x
     exact (hk.lb β x).trans (GlobalTheory.Mem.Col2.Reside.mem_baseLb hPr u _ x).symm
   have hlaws := fun β => GlobalTheory.Mem.Col2.Reside.swapLaws B.sp.cm hB (hPr.T_prime u) (hPr.piT_norm u) (rls_vT_iff hX hPr u)
-    (fun P hP => hPr.vT_norm u P hP) hgr (K β).lev (hLb β)
+    (fun P hP => by simpa only [Ideal.absNorm_apply, Submodule.cardQuot_apply] using hPr.vT_norm u P hP)
+    hgr (K β).lev (hLb β)
   choose hl hk using hlaws
   refine ⟨fun β => { K β with lev := GlobalTheory.Mem.Col2.Reside.swap (K β).lev _ (hl β) }, hK, fun β => ⟨hk β, rfl, rfl, rfl, ?_, rfl, rfl⟩⟩
   intro κ' κ e

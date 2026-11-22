@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SecondCharacterFact
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.SecondCharacterFact
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ def piI (w : InfinitePlace F) : AF F →+* w.Completion where
 
 def jF (v : HeightOneSpectrum (𝓞 F)) (y : v.adicCompletion F) : AF F := pairA F 0 (single v y)
 
-open Classical in
 
+open Classical in
 def jI (w : InfinitePlace F) (y : w.Completion) : AF F :=
   pairA F (Pi.single w y : ∀ w : InfinitePlace F, w.Completion) 0
 
@@ -69,10 +73,6 @@ theorem mul_jI (w : InfinitePlace F) (a : AF F) (y : w.Completion) : a * jI w y 
     · rw [jI_ne _ h, jI_ne _ h, mul_zero]
   · show a.2 v * (jI w y).2 v = (jI w (piI w a * y)).2 v
     rw [jI_snd, jI_snd, mul_zero]
-
-theorem continuous_piF (v : HeightOneSpectrum (𝓞 F)) : Continuous (piF v) := (RestrictedProduct.continuous_eval v).comp continuous_snd
-
-theorem continuous_piI (w : InfinitePlace F) : Continuous (piI w) := (continuous_apply w).comp continuous_fst
 
 theorem tendsto_fin {α : Type*} {l : Filter α} (z : α → Af F)
     (h : ∀ N : ℕ, N ≠ 0 → ∀ᶠ t in l, ∀ v, ‖z t v‖ ≤ ‖(N : v.adicCompletion F)‖) : Tendsto z l (𝓝 0) := by
@@ -127,23 +127,24 @@ theorem dense_F (v : HeightOneSpectrum (𝓞 F)) : DenseRange fun q : F => piF v
   exact HeightOneSpectrum.denseRange_algebraMap F v
 
 theorem dense_I (w : InfinitePlace F) : DenseRange fun q : F => piI w (algebraMap F (AF F) q) := by
-  have h : (fun q : F => piI w (algebraMap F (AF F) q)) = fun x : F => ({ toCompletion := ↑x } : w.Completion) := by
+  have h : (fun q : F => piI w (algebraMap F (AF F) q)) = fun x : F => (x : w.Completion) := by
     funext q
     show (algebraMap F (AF F) q).1 w = _
     rw [algebraMap_AF]
-    rfl
+    exact InfiniteAdeleRing.algebraMap_apply F q w
   rw [h]
-  have e : Set.range (fun x : F => ({ toCompletion := ↑(WithAbs.toAbs w.1 x) } : w.Completion)) =
-      Set.range (fun x : WithAbs w.1 => ({ toCompletion := ↑x } : w.Completion)) :=
-    (WithAbs.toAbs_surjective w.1).range_comp (fun x : WithAbs w.1 => ({ toCompletion := ↑x } : w.Completion))
+  have e : Set.range (fun x : F => ((WithAbs.toAbs w.1 x : WithAbs w.1) : w.Completion)) =
+      Set.range (fun x : WithAbs w.1 => (x : w.Completion)) :=
+    (WithAbs.toAbs_surjective w.1).range_comp (fun x : WithAbs w.1 => (x : w.Completion))
   unfold DenseRange
   erw [e]
-  exact InfinitePlace.Completion.denseRange_coe w
+  exact AbsoluteValue.Completion.denseRange_coe w.1
 
 def etaS (S : Finset (HeightOneSpectrum (𝓞 F))) : AF F := ∑ w : InfinitePlace F, jI w 1 + ∑ v ∈ S, jF v 1
 
 theorem etaS_fst (S : Finset (HeightOneSpectrum (𝓞 F))) (w : InfinitePlace F) : piI w (etaS S) = 1 := by
-  rw [etaS, map_add, map_sum, map_sum, Finset.sum_eq_single w]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [etaS, map_add (f := _), map_sum, map_sum, Finset.sum_eq_single w]
   · rw [show piI w (jI w 1) = (jI w 1).1 w from rfl, jI_self]
     simp only [show ∀ v, piI w (jF v 1) = (jF v 1).1 w from fun v => rfl, jF_fst, Finset.sum_const_zero, add_zero]
   · intro w' _ hw'
@@ -154,7 +155,8 @@ theorem etaS_fst (S : Finset (HeightOneSpectrum (𝓞 F))) (w : InfinitePlace F)
 
 theorem etaS_in (S : Finset (HeightOneSpectrum (𝓞 F))) (v : HeightOneSpectrum (𝓞 F)) (hv : v ∈ S) :
     piF v (etaS S) = 1 := by
-  rw [etaS, map_add, map_sum, map_sum, Finset.sum_eq_single v]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [etaS, map_add (f := _), map_sum, map_sum, Finset.sum_eq_single v]
   · simp only [show ∀ w, piF v (jI w 1) = (jI w 1).2 v from fun w => rfl, jI_snd, Finset.sum_const_zero, zero_add]
     show (jF v 1).2 v = 1
     exact jF_self v 1
@@ -166,7 +168,8 @@ theorem etaS_in (S : Finset (HeightOneSpectrum (𝓞 F))) (v : HeightOneSpectrum
 
 theorem etaS_out (S : Finset (HeightOneSpectrum (𝓞 F))) (v : HeightOneSpectrum (𝓞 F)) (hv : v ∉ S) :
     piF v (etaS S) = 0 := by
-  rw [etaS, map_add, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [etaS, map_add (f := _), map_sum, map_sum]
   simp only [show ∀ w, piF v (jI w 1) = (jI w 1).2 v from fun w => rfl, jI_snd, Finset.sum_const_zero, zero_add]
   refine Finset.sum_eq_zero fun v' hv' => ?_
   show (jF v' 1).2 v = 0
@@ -199,26 +202,6 @@ theorem tendsto_etaS (a : AF F) :
       fun S => etaS S * a := funext fun S => Prod.ext (h1 S).symm rfl
   rw [h4] at h3
   exact h3
-
-theorem not_sq_inf {E : Type} [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] (δ : E) (hδ0 : δ ≠ 0)
-    (hδ : ∀ φ : E →+* ℂ, starRingEnd ℂ (φ δ) = -φ δ) (Δ : F) (hΔ : algebraMap F E Δ = δ * δ)
-    (w : InfinitePlace F) (s : w.Completion) : s * s ≠ algebraMap F w.Completion Δ := by
-  intro hs
-  let ρ : w.Completion →+* ℝ := InfinitePlace.Completion.extensionEmbeddingOfIsReal (IsTotallyReal.isReal w)
-  let ψ : F →+* ℂ := Complex.ofRealHom.comp (ρ.comp (algebraMap F w.Completion))
-  let φ : E →+* ℂ := ComplexEmbedding.lift E ψ
-  have h1 : φ δ * φ δ = ((ρ s * ρ s : ℝ) : ℂ) := by
-    rw [← map_mul, ← hΔ, ← map_mul, hs]
-    exact ComplexEmbedding.lift_algebraMap_apply E ψ Δ
-  have h2 : (φ δ).re = 0 := by
-    have := congrArg Complex.re (hδ φ)
-    rw [Complex.conj_re, Complex.neg_re] at this
-    linarith
-  have h3 : (φ δ).im = 0 := by
-    have := congrArg Complex.re h1
-    rw [Complex.mul_re, h2, Complex.ofReal_re] at this
-    nlinarith [mul_self_nonneg (ρ s), mul_self_nonneg (φ δ).im]
-  exact (map_ne_zero φ).2 hδ0 (Complex.ext h2 h3)
 
 end Formalism.IndefR.Fin.Refl
 

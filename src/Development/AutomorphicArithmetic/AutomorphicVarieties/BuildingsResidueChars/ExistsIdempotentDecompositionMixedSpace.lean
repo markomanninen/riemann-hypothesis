@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -10,11 +14,11 @@ private theorem one_tmul_add_tmul_mul_I_eq_smul_of_sq_eq_one {R : Type} [CommRin
       ((z.re : ℂ) - σ * z.im * Complex.I) •
         ((1 : ℂ) ⊗ₜ[ℝ] g 1 + (σ * Complex.I) ⊗ₜ[ℝ] g Complex.I) := by
   have h1 : g z = z.re • g 1 + z.im • g Complex.I := by
-    rw [← map_smul, ← map_smul, ← map_add]
+    rw [← map_smul, ← map_smul, ← map_add (f := _)]
     congr 1
     apply Complex.ext <;> simp
   have h2 : g (z * Complex.I) = z.re • g Complex.I + (-z.im) • g 1 := by
-    rw [← map_smul, ← map_smul, ← map_add]
+    rw [← map_smul, ← map_smul, ← map_add (f := _)]
     congr 1
     apply Complex.ext <;> simp
   have hc : ∀ (c : ℂ) (u : R), c ⊗ₜ[ℝ] u = c • ((1 : ℂ) ⊗ₜ[ℝ] u) := by

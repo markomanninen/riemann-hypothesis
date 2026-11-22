@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qi35.torsSat_mult :
     ∀ {M : Type} [inst : AddCommGroup M] (L : Set M)

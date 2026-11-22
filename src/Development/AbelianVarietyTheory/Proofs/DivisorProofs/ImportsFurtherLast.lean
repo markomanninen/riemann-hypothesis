@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ValuationExtensionExistence
 
@@ -9,7 +13,7 @@ theorem exists_extension {V R K : Type} [CommRing V] [CommRing R] [IsDomain R] [
 
   have : (RingHom.ker ev).IsPrime := RingHom.ker_isPrime ev
   obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := R) (RingHom.ker ev) ⊥ (by
-    rw [Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective V R)]
+    rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective V R))]
     exact bot_le)
   have := hQ
   have : Q.LiesOver (RingHom.ker ev) := ⟨hQp.symm⟩
@@ -22,7 +26,11 @@ theorem exists_extension {V R K : Type} [CommRing V] [CommRing R] [IsDomain R] [
   have : Algebra.IsIntegral (V ⧸ RingHom.ker ev) (R ⧸ Q) :=
     Ideal.Quotient.algebra_isIntegral_of_liesOver Q (RingHom.ker ev)
   have : Algebra.IsAlgebraic (V ⧸ RingHom.ker ev) (R ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let f : R ⧸ Q →ₐ[V ⧸ RingHom.ker ev] K := IsAlgClosed.lift
+  let f : R ⧸ Q →ₐ[V ⧸ RingHom.ker ev] K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨(f : R ⧸ Q →+* K).comp (Ideal.Quotient.mk Q), ?_⟩
   ext v
   have h := f.commutes (Ideal.Quotient.mk (RingHom.ker ev) v)
@@ -36,7 +44,7 @@ theorem main : ∀ (V R K : Type) [inst : CommRing V] [IsDomain V] [IsLocalRing 
   intro V R K _ _ _ _ _ _ _ _ ρ hinj hfin
   have hint : ρ.IsIntegral := hfin.to_isIntegral
   refine ⟨?_, fun ev => ?_⟩
-  · refine ((IsLocalRing.local_hom_TFAE ρ).out 4 0).mp ?_
+  · refine ((IsLocalRing.local_hom_tfae ρ).out 5 1).mp ?_
     exact IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal' ρ hint _)
   · let := ρ.toAlgebra
     have : Algebra.IsIntegral V R := ⟨hint⟩

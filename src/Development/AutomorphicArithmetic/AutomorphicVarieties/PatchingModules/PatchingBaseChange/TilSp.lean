@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.TilQuot
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
 
@@ -92,7 +97,7 @@ theorem UpperTheory.V.Pa.BC.til_sp :
       induction Til.coeff O O' B k a using TensorProduct.induction_on with
       | zero => simp
       | tmul x y => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     rw [e, hτ]
     show Sp.mk _ _ (τ0 _) = _
     rw [h3]
@@ -102,4 +107,4 @@ theorem UpperTheory.V.Pa.BC.til_sp :
       (Til.map_ι O' ((Sp.mk P ut).restrictScalars O) (MvPowerSeries.C (ut j i) + MvPowerSeries.X (j, i))).symm
     rw [e, hτ]
     show Sp.mk _ _ (τ0 _) = Sp.mk _ _ _
-    rw [h1, map_add, MvPowerSeries.map_C, MvPowerSeries.map_X]
+    rw [h1, map_add (f := _), MvPowerSeries.map_C, MvPowerSeries.map_X]

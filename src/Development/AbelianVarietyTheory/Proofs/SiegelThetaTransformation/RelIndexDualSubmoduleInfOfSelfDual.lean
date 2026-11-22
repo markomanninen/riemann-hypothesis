@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FiniteAndNcardSetOfSubmoduleLeRelIndexEqLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FiniteAndNcardSetOfSubmoduleLeRelIndexEqLe
+
+@[expose] public section
 
 open Module
 
@@ -36,8 +40,9 @@ theorem eq_zero_of_forall_rat_smul_mem (L : Submodule ℤ V) (hL : L.FG) {x : V}
 variable [FiniteDimensional ℚ V]
 
 theorem isLattice_of_fg_dualSubmodule (B : LinearMap.BilinForm ℚ V) (hB : B.Nondegenerate)
-    (L : Submodule ℤ V) (hL : L.FG) (hd : (B.dualSubmodule L).FG) : L.IsLattice ℚ := by
-  refine ⟨hL, ?_⟩
+    (L : Submodule ℤ V) (hL : L.FG) (hd : (B.dualSubmodule L).FG) : L.IsFullLattice ℚ := by
+  haveI : L.IsLattice ℚ := Submodule.IsLattice.of_fg ℚ hL
+  constructor
   by_contra hne
   obtain ⟨φ, hφ, hle⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.2 hne)
   have h0 : (B.toDual hB).symm φ = 0 := by
@@ -49,33 +54,40 @@ theorem isLattice_of_fg_dualSubmodule (B : LinearMap.BilinForm ℚ V) (hB : B.No
     exact zero_mem _
   exact hφ (by simpa using h0)
 
-theorem exists_basis_span_eq_of_isLattice (L : Submodule ℤ V) [L.IsLattice ℚ] :
+theorem exists_basis_span_eq_of_isLattice (L : Submodule ℤ V) [L.IsFullLattice ℚ] :
     ∃ b : Basis (Fin (finrank ℚ V)) ℚ V, L = Submodule.span ℤ (Set.range b) := by
+  have := Submodule.IsLattice.finite ℚ L
+  have := Submodule.IsLattice.free ℚ L
   have hr : finrank ℤ L = finrank ℚ V := by
     let b := Module.Free.chooseBasis ℤ L
-    rw [finrank_eq_card_basis b, finrank_eq_card_basis (b.extendOfIsLattice ℚ)]
+    rw [finrank_eq_card_basis b, finrank_eq_card_basis (b.extendOfIsFullLattice ℚ)]
   let b := Module.finBasisOfFinrankEq ℤ L hr
-  refine ⟨b.extendOfIsLattice ℚ, ?_⟩
-  have h1 : Set.range (b.extendOfIsLattice ℚ) = L.subtype '' Set.range b := by
+  refine ⟨b.extendOfIsFullLattice ℚ, ?_⟩
+  have h1 : Set.range (b.extendOfIsFullLattice ℚ) = L.subtype '' Set.range b := by
     rw [← Set.range_comp]
     congr 1
-    exact funext fun i => b.extendOfIsLattice_apply ℚ i
+    exact funext fun i => b.extendOfIsFullLattice_apply ℚ i
   rw [h1, ← Submodule.map_span, b.span_eq, Submodule.map_subtype_top]
 
-theorem finrank_eq_of_isLattice (L : Submodule ℤ V) [L.IsLattice ℚ] :
+theorem finrank_eq_of_isLattice (L : Submodule ℤ V) [L.IsFullLattice ℚ] :
     finrank ℤ L = finrank ℚ V := by
+  have := Submodule.IsLattice.finite ℚ L
+  have := Submodule.IsLattice.free ℚ L
   let b := Module.Free.chooseBasis ℤ L
-  rw [finrank_eq_card_basis b, finrank_eq_card_basis (b.extendOfIsLattice ℚ)]
+  rw [finrank_eq_card_basis b, finrank_eq_card_basis (b.extendOfIsFullLattice ℚ)]
 
 theorem isLattice_dualSubmodule (B : LinearMap.BilinForm ℚ V) (hB : B.Nondegenerate)
-    (L : Submodule ℤ V) [L.IsLattice ℚ] : (B.dualSubmodule L).IsLattice ℚ := by
+    (L : Submodule ℤ V) [L.IsFullLattice ℚ] : (B.dualSubmodule L).IsFullLattice ℚ := by
   obtain ⟨b, rfl⟩ := exists_basis_span_eq_of_isLattice L
   rw [B.dualSubmodule_span_of_basis hB]
-  exact ⟨Submodule.fg_span (Set.finite_range _), by
-    rw [Submodule.span_span_of_tower, Basis.span_eq]⟩
+  haveI : (Submodule.span ℤ (Set.range (B.dualBasis hB b))).IsLattice ℚ :=
+    Submodule.IsLattice.of_fg _ (Submodule.fg_span (Set.finite_range _))
+  constructor
+  rw [Submodule.span_span_of_tower]
+  exact (B.dualBasis hB b).span_eq
+
 
 omit [FiniteDimensional ℚ V] in
-
 theorem relIndex_span_basis_eq_abs_det {ι : Type*} [DecidableEq ι] [Fintype ι]
     (b₁ b₂ : Basis ι ℚ V)
     (h : Submodule.span ℤ (Set.range b₁) ≤ Submodule.span ℤ (Set.range b₂)) :
@@ -84,7 +96,7 @@ theorem relIndex_span_basis_eq_abs_det {ι : Type*} [DecidableEq ι] [Fintype ι
   AddSubgroup.relIndex_eq_abs_det _ _ h b₁ b₂ (Submodule.span_int_eq_addSubgroupClosure _)
     (Submodule.span_int_eq_addSubgroupClosure _)
 
-theorem relIndex_ne_zero_of_isLattice {M N : Submodule ℤ V} [M.IsLattice ℚ] [N.IsLattice ℚ]
+theorem relIndex_ne_zero_of_isLattice {M N : Submodule ℤ V} [M.IsFullLattice ℚ] [N.IsFullLattice ℚ]
     (h : M ≤ N) : M.toAddSubgroup.relIndex N.toAddSubgroup ≠ 0 := by
   obtain ⟨b₁, rfl⟩ := exists_basis_span_eq_of_isLattice M
   obtain ⟨b₂, rfl⟩ := exists_basis_span_eq_of_isLattice N
@@ -94,7 +106,7 @@ theorem relIndex_ne_zero_of_isLattice {M N : Submodule ℤ V} [M.IsLattice ℚ] 
   exact (b₂.isUnit_det b₁).ne_zero h1
 
 theorem relIndex_dualSubmodule (B : LinearMap.BilinForm ℚ V) (hB : B.Nondegenerate)
-    {M N : Submodule ℤ V} [M.IsLattice ℚ] [N.IsLattice ℚ] (h : M ≤ N) :
+    {M N : Submodule ℤ V} [M.IsFullLattice ℚ] [N.IsFullLattice ℚ] (h : M ≤ N) :
     (B.dualSubmodule N).toAddSubgroup.relIndex (B.dualSubmodule M).toAddSubgroup =
       M.toAddSubgroup.relIndex N.toAddSubgroup := by
   have h' := dualSubmodule_le_dualSubmodule_of_le B h
@@ -109,11 +121,12 @@ theorem relIndex_dualSubmodule (B : LinearMap.BilinForm ℚ V) (hB : B.Nondegene
   rw [Matrix.transpose_apply, Basis.toMatrix_apply, Basis.toMatrix_apply,
     LinearMap.BilinForm.dualBasis_repr_apply]
   conv_lhs => rw [← b₂.sum_repr (b₁ i)]
-  simp only [map_sum, map_smul, LinearMap.BilinForm.apply_dualBasis_left]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.BilinForm.apply_dualBasis_left]
   simp
 
 theorem relIndex_dualSubmodule_inf_of_selfDual (B : LinearMap.BilinForm ℚ V)
-    (hB : B.Nondegenerate) {L L' : Submodule ℤ V} [L.IsLattice ℚ] [L'.IsLattice ℚ]
+    (hB : B.Nondegenerate) {L L' : Submodule ℤ V} [L.IsFullLattice ℚ] [L'.IsFullLattice ℚ]
     (hL : B.dualSubmodule L = L) (hL' : B.dualSubmodule L' = L') :
     L'.toAddSubgroup.relIndex (B.dualSubmodule (L ⊓ L')).toAddSubgroup =
       (L ⊓ L').toAddSubgroup.relIndex L.toAddSubgroup := by
@@ -140,18 +153,18 @@ theorem card_selfDual_le {V : Type*} [AddCommGroup V] [Module ℚ V] [FiniteDime
     {L' : Submodule ℤ V | L'.FG ∧ B.dualSubmodule L' = L' ∧ L'.toAddSubgroup.relIndex L.toAddSubgroup = m}.ncard ≤ m ^ (2 * Module.finrank ℚ V) ∧
     ∀ L' : Submodule ℤ V, L'.FG → B.dualSubmodule L' = L' → L'.toAddSubgroup.relIndex L.toAddSubgroup ≠ 0 ∧ (L'.toAddSubgroup.relIndex L.toAddSubgroup = 1 → L' = L) := by
   have hm0 : m ≠ 0 := by omega
-  haveI : L.IsLattice ℚ := isLattice_of_fg_dualSubmodule B hB L hL (hLd.symm ▸ hL)
+  haveI : L.IsFullLattice ℚ := isLattice_of_fg_dualSubmodule B hB L hL (hLd.symm ▸ hL)
   have hinf : ∀ L' : Submodule ℤ V, (L ⊓ L').toAddSubgroup.relIndex L.toAddSubgroup =
       L'.toAddSubgroup.relIndex L.toAddSubgroup := fun L' =>
     AddSubgroup.inf_relIndex_left L.toAddSubgroup L'.toAddSubgroup
   have hsub : {L' : Submodule ℤ V | L'.FG ∧ B.dualSubmodule L' = L' ∧
       L'.toAddSubgroup.relIndex L.toAddSubgroup = m} ⊆
-      ⋃ M ∈ {M : Submodule ℤ V | M.IsLattice ℚ ∧ M ≤ L ∧
+      ⋃ M ∈ {M : Submodule ℤ V | M.IsFullLattice ℚ ∧ M ≤ L ∧
         M.toAddSubgroup.relIndex L.toAddSubgroup = m},
         {H | H ≤ B.dualSubmodule M ∧
           H.toAddSubgroup.relIndex (B.dualSubmodule M).toAddSubgroup = m} := by
     rintro L' ⟨h1, h2, h3⟩
-    haveI : L'.IsLattice ℚ := isLattice_of_fg_dualSubmodule B hB L' h1 (h2.symm ▸ h1)
+    haveI : L'.IsFullLattice ℚ := isLattice_of_fg_dualSubmodule B hB L' h1 (h2.symm ▸ h1)
     refine Set.mem_biUnion (x := L ⊓ L') ⟨inferInstance, inf_le_left, (hinf L').trans h3⟩ ⟨?_, ?_⟩
     · exact h2.ge.trans (dualSubmodule_le_dualSubmodule_of_le B inf_le_right)
     · rw [relIndex_dualSubmodule_inf_of_selfDual B hB hLd h2, hinf, h3]
@@ -160,19 +173,23 @@ theorem card_selfDual_le {V : Type*} [AddCommGroup V] [Module ℚ V] [FiniteDime
       ((m ^ (2 * finrank ℚ V) : ℕ) : ℕ∞) := by
     rw [two_mul, pow_add]
     refine (Set.encard_le_encard hsub).trans (encard_biUnion_le_mul _ _ _ _ ?_ ?_)
-    · rw [← finrank_eq_of_isLattice L]
-      exact (Set.encard_le_encard fun M hM => hM.2).trans
+    · have := Submodule.IsLattice.free ℚ L
+      have := Submodule.IsLattice.finite ℚ L
+      rw [← finrank_eq_of_isLattice L]
+      exact (Set.encard_le_encard (show {M : Submodule ℤ V | M.IsFullLattice ℚ ∧ M ≤ L ∧ M.toAddSubgroup.relIndex L.toAddSubgroup = m} ⊆ {M : Submodule ℤ V | M ≤ L ∧ M.toAddSubgroup.relIndex L.toAddSubgroup = m} from fun _ hM => hM.2)).trans
         (encard_setOf_submodule_le_relIndex_eq_le L hm0)
     · intro M hM
       haveI := hM.1
       haveI := isLattice_dualSubmodule B hB M
+      have := Submodule.IsLattice.free ℚ (B.dualSubmodule M)
+      have := Submodule.IsLattice.finite ℚ (B.dualSubmodule M)
       rw [← finrank_eq_of_isLattice (B.dualSubmodule M)]
       exact encard_setOf_submodule_le_relIndex_eq_le _ hm0
   have hf := Set.finite_of_encard_le_coe hcard
   refine ⟨hf, ?_, fun L' h1 h2 => ⟨?_, fun h3 => ?_⟩⟩
   · rw [← hf.cast_ncard_eq] at hcard
     exact_mod_cast hcard
-  · haveI : L'.IsLattice ℚ := isLattice_of_fg_dualSubmodule B hB L' h1 (h2.symm ▸ h1)
+  · haveI : L'.IsFullLattice ℚ := isLattice_of_fg_dualSubmodule B hB L' h1 (h2.symm ▸ h1)
     rw [← hinf]
     exact relIndex_ne_zero_of_isLattice inf_le_left
   · have h4 : L ≤ L' := AddSubgroup.relIndex_eq_one.1 h3

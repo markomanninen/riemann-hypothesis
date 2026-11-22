@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,6 +81,7 @@ theorem int_norm_le {a b : G → ℂ} (ha : MemLp a 2 μ) (hb : MemLp b 2 μ) :
   calc inner ℝ (hA.toLp _) (hB.toLp _) ≤ ‖hA.toLp _‖ * ‖hB.toLp _‖ := real_inner_le_norm _ _
     _ = nrm μ a * nrm μ b := by
       simp only [nrm, Lp.norm_toLp, eLpNorm_norm]
+      rw [eLpNorm_norm a ha.aestronglyMeasurable, eLpNorm_norm b hb.aestronglyMeasurable]
 
 theorem pr_add_left {a a₁ b : G → ℂ} (ha : MemLp a 2 μ) (ha₁ : MemLp a₁ 2 μ) (hb : MemLp b 2 μ) :
     pr μ (a + a₁) b = pr μ a b + pr μ a₁ b := by
@@ -84,7 +89,8 @@ theorem pr_add_left {a a₁ b : G → ℂ} (ha : MemLp a 2 μ) (ha₁ : MemLp a�
   rw [← integral_add (pr_int ha hb) (pr_int ha₁ hb)]
   congr 1
   funext x
-  simp only [Pi.add_apply, star_add, add_mul]
+  simp [Pi.add_apply, star_add]
+  ring
 
 theorem pr_add_right {a b b₁ : G → ℂ} (ha : MemLp a 2 μ) (hb : MemLp b 2 μ) (hb₁ : MemLp b₁ 2 μ) :
     pr μ a (b + b₁) = pr μ a b + pr μ a b₁ := by
@@ -92,14 +98,15 @@ theorem pr_add_right {a b b₁ : G → ℂ} (ha : MemLp a 2 μ) (hb : MemLp b 2 
   rw [← integral_add (pr_int ha hb) (pr_int ha hb₁)]
   congr 1
   funext x
-  simp only [Pi.add_apply, mul_add]
+  simp [Pi.add_apply]
+  ring
 
 theorem pr_smul_left (c : ℂ) (a b : G → ℂ) : pr μ (c • a) b = star c * pr μ a b := by
   unfold pr
   rw [← integral_const_mul]
   congr 1
   funext x
-  simp only [Pi.smul_apply, smul_eq_mul, star_mul']
+  simp [smul_eq_mul, star_mul]
   ring
 
 theorem pr_smul_right (c : ℂ) (a b : G → ℂ) : pr μ a (c • b) = c * pr μ a b := by
@@ -107,7 +114,7 @@ theorem pr_smul_right (c : ℂ) (a b : G → ℂ) : pr μ a (c • b) = c * pr �
   rw [← integral_const_mul]
   congr 1
   funext x
-  simp only [Pi.smul_apply, smul_eq_mul]
+  simp [smul_eq_mul]
   ring
 
 theorem pr_self_re {a : G → ℂ} (ha : MemLp a 2 μ) :

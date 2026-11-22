@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementE
+module
+
+public import Formalism.RealPlaceAnalysis.StatementE
+
+@[expose] public section
 
 open Finset
 

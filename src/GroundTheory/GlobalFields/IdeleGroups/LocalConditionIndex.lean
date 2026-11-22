@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
-import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
+public import GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -25,11 +29,12 @@ theorem index_range_powMonoidHom_of_mulEquiv {G H : Type*} [CommGroup G] [CommGr
     (powMonoidHom n : G →* G).range.index = (powMonoidHom n : H →* H).range.index := by
   rw [← map_range_powMonoidHom e n, Subgroup.index_map_equiv]
 
+
 omit [NumberField K] in
 open Classical in
-
 theorem index_range_powMonoidHom_infinitePlaceCompletion (w : InfinitePlace K) {n : ℕ}
     (hn : n ≠ 0) :
+    letI : Decidable (w.IsReal ∧ Even n) := Classical.propDecidable _
     (powMonoidHom n : (w.Completion)ˣ →* (w.Completion)ˣ).range.index =
       if w.IsReal ∧ Even n then 2 else 1 := by
   rcases w.isReal_or_isComplex with hw | hw

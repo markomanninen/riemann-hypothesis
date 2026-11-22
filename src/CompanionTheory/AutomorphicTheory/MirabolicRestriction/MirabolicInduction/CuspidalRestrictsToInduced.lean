@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalWhittaker
-import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.GelfandGraevMultOneHolds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankMirabolicWhittakerEigenspace
-import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndFacts
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.BlockTriangularOfSubOne
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspidalWhittaker
+public import Development.AutomorphicSpectrum.Proofs.SemilocalMultiplicity.GelfandGraevMultOneHolds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankMirabolicWhittakerEigenspace
+public import CompanionTheory.AutomorphicTheory.MirabolicRestriction.MirabolicInduction.IndFacts
+
+@[expose] public section
 
 noncomputable section
 

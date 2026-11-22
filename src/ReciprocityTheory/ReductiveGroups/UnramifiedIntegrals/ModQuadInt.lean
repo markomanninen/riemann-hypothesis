@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModGDefs
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane
@@ -58,7 +62,7 @@ theorem quadInt {d : ℕ} (hsf : Squarefree d) (hd : d % 4 = 3) (x : 𝓞 (KQ d)
   obtain ⟨u, v, huv⟩ := (KQ_mem_iff d _).mp (x : KQ d).2
   rw [huv] at hx
   have hc : IsIntegral ℤ ((starRingEnd ℂ) ((u : ℂ) + v * sqD d)) := hx.map (starRingEnd ℂ).toIntAlgHom
-  rw [map_add, map_mul, conj_sqD, map_ratCast, map_ratCast] at hc
+  rw [map_add (f := _), map_mul, conj_sqD, map_ratCast, map_ratCast] at hc
   have hs := sqD_sq d
   obtain ⟨A, hA⟩ := ratInt_of_isIntegral (q := 2 * u) (by
     have e : (((2 * u : ℚ)) : ℂ) = ((u : ℂ) + v * sqD d) + ((u : ℂ) + v * -sqD d) := by

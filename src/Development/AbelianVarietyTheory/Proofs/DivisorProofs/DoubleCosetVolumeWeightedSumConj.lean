@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MaxWeightGL1EqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockParOpp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocPartMul
+
+@[expose] public section
+
 open MeasureTheory Matrix
 open scoped Classical
 
@@ -72,7 +77,7 @@ theorem dsum_conj : ∀ (H : Type) [Group H] (T L U : Subgroup H) (Ψ : H → �
   congr 1
   ext q
   have hE : E q = DoubleCoset.mk _ _ (φ (Quotient.out q)) := by
-    conv_lhs => rw [← DoubleCoset.out_eq' T L q]
+    conv_lhs => rw [← DoubleCoset.out_eq' q]
     rfl
   rw [hE, wt_out _ hT' hΨl' hΨr', wt_conj]
 

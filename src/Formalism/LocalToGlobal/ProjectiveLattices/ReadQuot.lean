@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadProofs
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ theorem quotSupp_of (V : HSp D) (hV : FinVol V) (hP : ∃ p : Measure (GA D V) �
   have hvp : IsVolPair D V (volPair V).1 (volPair V).2 := by
     have e : volPair V = hP.choose := by
       unfold volPair
-      rw [dif_pos hP]
+      rw [dite_eq_left hP]
     rw [e]
     exact hP.choose_spec
   haveI : (volPair V).1.IsHaarMeasure := hvp.1.1
@@ -76,10 +80,11 @@ theorem quotSupp_of (V : HSp D) (hV : FinVol V) (hP : ∃ p : Measure (GA D V) �
     · exact absurd (ENNReal.inv_eq_zero.mp h) hV.2
     · exact h
   have hmeas : AEMeasurable (autMk V) ((volPair V).1.restrict (volPair V).2) := by
-    by_contra hnm
-    apply hV.1
-    unfold muQ
-    simp [Measure.map_of_not_aemeasurable hnm]
+    have hm : Measurable (autMk V) := by
+      first
+      | exact measurable_quotient_mk'
+      | exact fun _ hs => hs
+    exact hm.aemeasurable
   have hpre : autMk V ⁻¹' S = O := by
     ext g
     have hrel := Quotient.mk_out (s := QuotientGroup.rightRel (GQ V)) g
@@ -126,8 +131,8 @@ theorem aeDom_of {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {σ : c.F →+* ℂ
         fun k => ⟨fun x _ b _ => by simp, fun γ _ x _ => by simp⟩⟩
     | add Q₁ Q₂ _ _ h1 h2 =>
       refine ⟨⟨fun γ hγ g => ?_, ?_⟩, fun k => ⟨fun x hx b hb => ?_, fun γ hγ x hx => ?_⟩⟩
-      · rw [map_add, Pi.add_apply, Pi.add_apply, h1.1.1 γ hγ g, h2.1.1 γ hγ g]
-      · rw [map_add]
+      · rw [map_add (f := _), Pi.add_apply, Pi.add_apply, h1.1.1 γ hγ g, h2.1.1 γ hγ g]
+      · rw [map_add (f := _)]
         exact h1.1.2.add h2.1.2
       · simp only [Pi.add_apply]
         rw [(h1.2 k).1 x hx b hb, (h2.2 k).1 x hx b hb, mul_add]

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StLelongWeightDiff
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffDominated
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StLelongWeightDiff
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PCutOffDominated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

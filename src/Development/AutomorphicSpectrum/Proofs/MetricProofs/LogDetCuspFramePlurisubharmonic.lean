@@ -1,20 +1,25 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicFamilySmoothEntriesStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlurisubharmonicLocal
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PhiISemipositive
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentPolynomialInActionStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicQuotientStructureStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicLocalQuotientMapStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.QuotientFamilyEigenFrameStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicSpanCoefficientsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsExtendLinearIndependentOfSpanStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetPosIffLinearIndependentStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsEigFrames
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.IsPshLocallyIntegrableStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicFamilySmoothEntriesStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicSublatticeCovolumePositiveStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicEigencomponentConjugateFormStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannLatticeEigenProjectionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PlurisubharmonicLocal
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PhiISemipositive
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EigenComponentPolynomialInActionStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsotropicQuotientStructureStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicLocalQuotientMapStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.QuotientFamilyEigenFrameStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicSpanCoefficientsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsExtendLinearIndependentOfSpanStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GramDetPosIffLinearIndependentStatement
+
+@[expose] public section
+
 open NumberField Matrix Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp GroundTheory.Heights₂.Heights.LowerBoundFree GroundTheory.Heights₂.Heights.Regular
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.PhiI
@@ -248,8 +253,8 @@ theorem phi_isPsh_continuous : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
       intro τ a c
       unfold RiemLat.ip
       simp only [dotProduct, Matrix.mulVec, Pi.star_apply]
-      refine continuousOn_finset_sum _ fun i _ => ((continuousOn_pi.1 (hwc τ c) i)).mul ?_
-      refine continuousOn_finset_sum _ fun j _ => (hHm i j).mul ?_
+      refine continuousOn_finsetSum _ fun i _ => ((continuousOn_pi.1 (hwc τ c) i)).mul ?_
+      refine continuousOn_finsetSum _ fun j _ => (hHm i j).mul ?_
       exact (continuous_star.comp_continuousOn (continuousOn_pi.1 (hwc τ a) j))
     have hdet : ∀ τ, ContinuousOn (fun t => ((R t).gram fun a => w τ a t).det.re) U := by
       intro τ
@@ -257,7 +262,7 @@ theorem phi_isPsh_continuous : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
         continuousOn_pi.2 fun a => continuousOn_pi.2 fun c => hip τ a c
       exact Complex.continuous_re.comp_continuousOn ((continuous_id.matrix_det).comp_continuousOn hm)
     have hc : ContinuousOn (fun t => (∏ τ, ((R t).gram fun a => w τ a t).det.re) / idx) U :=
-      (continuousOn_finset_prod _ fun τ _ => hdet τ).div_const _
+      (continuousOn_finsetProd _ fun τ _ => hdet τ).div_const _
     refine hc.congr fun t ht => ?_
     rw [(hnz t ht).1]
     rfl

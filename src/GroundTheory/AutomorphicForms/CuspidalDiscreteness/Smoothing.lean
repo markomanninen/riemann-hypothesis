@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsLintegralConstantTermL2SqLe
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open NumberField IsDedekindDomain
@@ -17,16 +21,16 @@ open Reduction AutomorphicForm RightCosetSpace
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (K n) in
 
+variable (K n) in
 abbrev ArchUnits : Type _ := (ArchMatrix K n)ˣ
 
 instance : MeasurableSpace (ArchUnits K n) := borel _
 
 instance : BorelSpace (ArchUnits K n) := ⟨rfl⟩
 
-variable (K n) in
 
+variable (K n) in
 def archIncl : ArchUnits K n →* AdelicGLn.AdelicGL K n :=
   (infEmb K n).comp (Subgroup.topEquiv (G := ArchUnits K n)).symm.toMonoidHom
 
@@ -38,7 +42,7 @@ theorem archIncl_mul_finEmb_comm (A : ArchUnits K n) (u : AdelicGLn.FiniteAdelic
   infEmb_mul_finEmb_comm _ u
 
 theorem archIncl_mul_centralSection_inv_mem (A : ArchUnits K n) :
-    archIncl K n A * (centralSection K n (detModule K n (archIncl K n A)))⁻¹ ∈ normOneGL K n := by
+    archIncl K n A * (centralSection K n (detModule K n (archIncl K n A)))⁻¹ ∈ normOneGL (K := K) (n := n) := by
   rw [mem_normOneGL_iff_detModule, map_mul, map_inv]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have : Subsingleton (AdelicGLn.AdelicGL K 0) :=
@@ -56,8 +60,8 @@ theorem centralSection_inv_mul_inv_comm (s t : {r : ℝ // 0 < r}) :
       (centralSection K n t)⁻¹ * (centralSection K n s)⁻¹ := by
   rw [← map_inv, ← map_inv, ← map_mul, ← map_mul, mul_comm]
 
-variable (K n) in
 
+variable (K n) in
 def archProjFun (A : ArchUnits K n) : AdelicGLn.AdelicGL K n :=
   archIncl K n A * (centralSection K n (detModule K n (archIncl K n A)))⁻¹
 
@@ -74,8 +78,7 @@ theorem archProjFun_mul (A B : ArchUnits K n) :
     mul_assoc (archIncl K n B), centralSection_inv_mul_inv_comm (detModule K n (archIncl K n A))]
 
 variable (K n) in
-
-def archProj : ArchUnits K n →* normOneGL K n where
+def archProj : ArchUnits K n →* normOneGL (K := K) (n := n) where
   toFun A := ⟨archProjFun K n A, archIncl_mul_centralSection_inv_mem A⟩
   map_one' := Subtype.ext archProjFun_one
   map_mul' A B := Subtype.ext (archProjFun_mul A B)
@@ -91,7 +94,7 @@ theorem continuous_archProj : Continuous (archProj K n) := by
   exact continuous_archIncl.mul ((continuous_centralSection.comp
     (continuous_detModule.comp continuous_archIncl)).inv)
 
-theorem archProj_of_mem {A : ArchUnits K n} (hA : archIncl K n A ∈ normOneGL K n) :
+theorem archProj_of_mem {A : ArchUnits K n} (hA : archIncl K n A ∈ normOneGL (K := K) (n := n)) :
     archProj K n A = ⟨archIncl K n A, hA⟩ := by
   ext1
   rw [coe_archProj, (mem_normOneGL_iff_detModule).1 hA, map_one, inv_one, mul_one]
@@ -103,8 +106,7 @@ theorem archProj_mul_finEmb_comm (A : ArchUnits K n) (u : AdelicGLn.FiniteAdelic
     archIncl_mul_finEmb_comm, mul_assoc]
 
 variable (K n) in
-
-def finOne : AdelicGLn.integralFiniteGL K n →* normOneGL K n where
+def finOne : AdelicGLn.integralFiniteGL K n →* normOneGL (K := K) (n := n) where
   toFun u := ⟨finEmb K n u, maxCompact_le_normOneGL (finEmb_mem_maxCompact u.2)⟩
   map_one' := Subtype.ext (map_one _)
   map_mul' _ _ := Subtype.ext (map_mul _ _ _)
@@ -125,7 +127,7 @@ section ArchConv
 
 variable (ν : Measure (ArchUnits K n)) [ν.IsHaarMeasure]
 
-def archConvFun (β : ArchMatrix K n → ℝ) (g : normOneGL K n → ℂ) (x : normOneGL K n) : ℂ :=
+def archConvFun (β : ArchMatrix K n → ℝ) (g : normOneGL (K := K) (n := n) → ℂ) (x : normOneGL (K := K) (n := n)) : ℂ :=
   ∫ A, (β A : ℂ) * g ((archProj K n A)⁻¹ * x) ∂ν
 
 variable {β : ArchMatrix K n → ℝ}
@@ -135,7 +137,7 @@ theorem isCompact_unitsSupport (hβc : HasCompactSupport β)
     IsCompact ((Units.val : ArchUnits K n → ArchMatrix K n) ⁻¹' tsupport β) :=
   Units.isOpenEmbedding_val.isInducing.isCompact_preimage' hβc hβu
 
-theorem archConvFun_eq_setIntegral (g : normOneGL K n → ℂ) (x : normOneGL K n) :
+theorem archConvFun_eq_setIntegral (g : normOneGL (K := K) (n := n) → ℂ) (x : normOneGL (K := K) (n := n)) :
     archConvFun ν β g x = ∫ A in (Units.val : ArchUnits K n → ArchMatrix K n) ⁻¹' tsupport β,
       (β A : ℂ) * g ((archProj K n A)⁻¹ * x) ∂ν := by
   refine (setIntegral_eq_integral_of_forall_compl_eq_zero fun A hA => ?_).symm
@@ -143,40 +145,42 @@ theorem archConvFun_eq_setIntegral (g : normOneGL K n → ℂ) (x : normOneGL K 
 
 theorem continuous_archConvFun (hβ : Continuous β) (hβc : HasCompactSupport β)
     (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n))
-    (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) :
+    (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) :
     Continuous (archConvFun ν β g) := by
   have : archConvFun ν β g = fun x => ∫ A in (Units.val : ArchUnits K n → ArchMatrix K n) ⁻¹'
       tsupport β, (β A : ℂ) * g ((archProj K n A)⁻¹ * x) ∂ν :=
     funext (archConvFun_eq_setIntegral ν g)
   rw [this]
-  refine continuous_parametric_integral_of_continuous ?_ (isCompact_unitsSupport hβc hβu)
-  exact ((Complex.continuous_ofReal.comp (hβ.comp Units.continuous_val)).comp continuous_snd).mul
-    (g.continuous.comp (((continuous_archProj.comp continuous_snd).inv).mul continuous_fst))
+  set_option synthInstance.maxHeartbeats 100000 in
+    refine continuous_parametric_integral_of_continuous ?_ (isCompact_unitsSupport hβc hβu)
+    exact ((Complex.continuous_ofReal.comp (hβ.comp Units.continuous_val)).comp continuous_snd).mul
+      (g.continuous.comp (((continuous_archProj.comp continuous_snd).inv).mul continuous_fst))
 
-theorem archConvFun_eq_zero_of_notMem (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ)
-    {x : normOneGL K n} (hx : x ∉ archProj K n '' ((Units.val : ArchUnits K n → ArchMatrix K n) ⁻¹'
-      tsupport β) * tsupport (g : normOneGL K n → ℂ)) : archConvFun ν β g x = 0 := by
+theorem archConvFun_eq_zero_of_notMem (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ)
+    {x : normOneGL (K := K) (n := n)} (hx : x ∉ archProj K n '' ((Units.val : ArchUnits K n → ArchMatrix K n) ⁻¹'
+      tsupport β) * tsupport (g : normOneGL (K := K) (n := n) → ℂ)) : archConvFun ν β g x = 0 := by
   refine integral_eq_zero_of_ae (Eventually.of_forall fun A => ?_)
   by_cases hA : (A : ArchMatrix K n) ∈ tsupport β
-  · have : (archProj K n A)⁻¹ * x ∉ tsupport (g : normOneGL K n → ℂ) := fun h =>
+  · have : (archProj K n A)⁻¹ * x ∉ tsupport (g : normOneGL (K := K) (n := n) → ℂ) := fun h =>
       hx ⟨archProj K n A, ⟨A, hA, rfl⟩, _, h, mul_inv_cancel_left _ _⟩
     simp [image_eq_zero_of_notMem_tsupport this]
   · simp [image_eq_zero_of_notMem_tsupport hA]
 
+set_option synthInstance.maxHeartbeats 100000 in
 def archConv (hβ : Continuous β) (hβc : HasCompactSupport β)
     (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n))
-    (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) :
-    CompactlySupportedContinuousMap (normOneGL K n) ℂ :=
+    (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) :
+    CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ :=
   ⟨⟨archConvFun ν β g, continuous_archConvFun ν hβ hβc hβu g⟩,
     HasCompactSupport.intro (((isCompact_unitsSupport hβc hβu).image continuous_archProj).mul
       g.hasCompactSupport) fun _ hx => archConvFun_eq_zero_of_notMem ν g hx⟩
 
 @[simp] theorem archConv_apply (hβ : Continuous β) (hβc : HasCompactSupport β)
     (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n))
-    (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) (x : normOneGL K n) :
+    (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) (x : normOneGL (K := K) (n := n)) :
     archConv ν hβ hβc hβu g x = archConvFun ν β g x := rfl
 
-theorem archConvFun_archProj_mul (C : ArchUnits K n) (g : normOneGL K n → ℂ) (w : normOneGL K n) :
+theorem archConvFun_archProj_mul (C : ArchUnits K n) (g : normOneGL (K := K) (n := n) → ℂ) (w : normOneGL (K := K) (n := n)) :
     archConvFun ν β g (archProj K n C * w) =
       ∫ A, (β ((C * A : ArchUnits K n) : ArchMatrix K n) : ℂ) *
         g ((archProj K n A)⁻¹ * w) ∂ν := by
@@ -186,8 +190,8 @@ theorem archConvFun_archProj_mul (C : ArchUnits K n) (g : normOneGL K n → ℂ)
     g ((archProj K n (C * A))⁻¹ * (archProj K n C * w)) = _
   rw [map_mul, mul_inv_rev, mul_assoc, inv_mul_cancel_left]
 
-theorem archConvFun_finOne_mul (g : normOneGL K n → ℂ) (u : AdelicGLn.integralFiniteGL K n)
-    (hg : ∀ x, g (finOne K n u * x) = g x) (x : normOneGL K n) :
+theorem archConvFun_finOne_mul (g : normOneGL (K := K) (n := n) → ℂ) (u : AdelicGLn.integralFiniteGL K n)
+    (hg : ∀ x, g (finOne K n u * x) = g x) (x : normOneGL (K := K) (n := n)) :
     archConvFun ν β g (finOne K n u * x) = archConvFun ν β g x := by
   unfold archConvFun
   refine integral_congr_ae (Eventually.of_forall fun A => ?_)
@@ -205,11 +209,11 @@ theorem integrable_bump (hβ : Continuous β) (hβc : HasCompactSupport β)
 theorem norm_archConvFun_sub_archConvFun_le (hβ : Continuous β) (hβc : HasCompactSupport β)
     (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n))
     (hβ0 : ∀ A, 0 ≤ β A) (hβ1 : ∫ A : ArchUnits K n, β A ∂ν = 1)
-    (g h : CompactlySupportedContinuousMap (normOneGL K n) ℂ) {B : ℝ}
-    (hB : ∀ y, ‖h y - g y‖ ≤ B) (x : normOneGL K n) :
+    (g h : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) {B : ℝ}
+    (hB : ∀ y, ‖h y - g y‖ ≤ B) (x : normOneGL (K := K) (n := n)) :
     ‖archConvFun ν β h x - archConvFun ν β g x‖ ≤ B := by
   have hint : Integrable (fun A : ArchUnits K n => β A) ν := integrable_bump ν hβ hβc hβu
-  have hi : ∀ g' : CompactlySupportedContinuousMap (normOneGL K n) ℂ,
+  have hi : ∀ g' : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ,
       Integrable (fun A : ArchUnits K n => (β A : ℂ) * g' ((archProj K n A)⁻¹ * x)) ν := by
     intro g'
     obtain ⟨M, hM⟩ := g'.continuous.bounded_above_of_compact_support g'.hasCompactSupport
@@ -226,10 +230,10 @@ theorem norm_archConvFun_sub_archConvFun_le (hβ : Continuous β) (hβc : HasCom
 
 theorem norm_archConvFun_sub_le (hβ : Continuous β) (hβc : HasCompactSupport β)
     (hβu : tsupport β ⊆ range (Units.val : ArchUnits K n → ArchMatrix K n))
-    (hβ0 : ∀ A, 0 ≤ β A) (hβ1 : ∫ A : ArchUnits K n, β A ∂ν = 1) {V : Set (normOneGL K n)}
+    (hβ0 : ∀ A, 0 ≤ β A) (hβ1 : ∫ A : ArchUnits K n, β A ∂ν = 1) {V : Set (normOneGL (K := K) (n := n))}
     (hV : ∀ A : ArchUnits K n, (A : ArchMatrix K n) ∈ tsupport β → archProj K n A ∈ V)
-    (g : CompactlySupportedContinuousMap (normOneGL K n) ℂ) {ε : ℝ}
-    (hg : ∀ a ∈ V, ∀ x, ‖g (a⁻¹ * x) - g x‖ ≤ ε) (x : normOneGL K n) :
+    (g : CompactlySupportedContinuousMap (normOneGL (K := K) (n := n)) ℂ) {ε : ℝ}
+    (hg : ∀ a ∈ V, ∀ x, ‖g (a⁻¹ * x) - g x‖ ≤ ε) (x : normOneGL (K := K) (n := n)) :
     ‖archConvFun ν β g x - g x‖ ≤ ε := by
   have hint : Integrable (fun A : ArchUnits K n => β A) ν := integrable_bump ν hβ hβc hβu
   have hi1 : Integrable (fun A : ArchUnits K n => (β A : ℂ) * g ((archProj K n A)⁻¹ * x)) ν := by

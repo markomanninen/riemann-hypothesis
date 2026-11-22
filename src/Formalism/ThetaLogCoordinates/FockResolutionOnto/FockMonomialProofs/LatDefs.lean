@@ -1,5 +1,9 @@
-import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
-import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+module
+
+public import Formalism.ThetaLogCoordinates.FockResolutionOnto.StatementG
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.MeanGam
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.L4
 

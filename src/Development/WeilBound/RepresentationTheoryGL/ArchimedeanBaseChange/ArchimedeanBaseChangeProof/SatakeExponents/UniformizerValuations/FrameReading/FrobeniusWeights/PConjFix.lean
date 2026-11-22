@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.WeightLOf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.SaturationTransportPair
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.WeightLOf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LocalSeparation.SaturationTransportPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem conjFix_holds : ConjFix := by
     obtain rfl : u = x := (GlobalTheory.CompanionTheory.OneExDatum.eq_cw_of_conjPl hwu).trans (GlobalTheory.ThetaPull.conjSrc_conjSrc x)
     rw [pairRtT_cw] at hG
     refine (mem_fixed_comp_symm _ (fun g => ?_)).1 hG
-    show g ∈ (KGL u a).prod (KGL u b) ↔ ((fx u a).prodCongr (fx u b)) g ∈ (KGL (cw u) a).prod (KGL (cw u) b)
+    show g ∈ (KGL u (n := a)).prod (KGL u (n := b)) ↔ ((fx u a).prodCongr (fx u b)) g ∈ (KGL (cw u) (n := a)).prod (KGL (cw u) (n := b))
     rw [Subgroup.mem_prod, Subgroup.mem_prod]
     exact and_congr (mem_fx_iff u a g.1) (mem_fx_iff u b g.2)
   · obtain ⟨w, ⟨hwS, hwu⟩, -⟩ := hS u

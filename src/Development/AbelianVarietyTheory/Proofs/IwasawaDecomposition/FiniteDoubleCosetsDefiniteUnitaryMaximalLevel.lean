@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteClassSetHermitianUnitaryOpenLevel
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 
@@ -24,7 +28,7 @@ theorem flip_conj (x : ReciprocityTheory.Aut.AL L) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.DefiniteClassFinite
 
@@ -117,7 +121,7 @@ end GlobalTheory.DefiniteClassFinite
 namespace GlobalTheory.DefiniteClassFinite
 variable (L : Type) [Field L] [NumberField L] [IsCMField L]
 
-def intSet : Set (TensorProduct (maximalRealSubfield L) (Af (maximalRealSubfield L)) L) :=
+noncomputable def intSet : Set (TensorProduct (maximalRealSubfield L) (Af (maximalRealSubfield L)) L) :=
   (swapAd L).symm ⁻¹' (ReciprocityTheory.Aut.ALint L : Set (ReciprocityTheory.Aut.AL L))
 
 theorem isOpen_intSet : IsOpen (intSet L) := by
@@ -144,7 +148,8 @@ theorem isOpen_intSet : IsOpen (intSet L) := by
     intro c hc'
     simp only [Set.mem_pi, Set.mem_univ, true_implies, Set.mem_setOf_eq] at hc'
     change (swapAd L).symm (B.equivFun.symm c) ∈ ReciprocityTheory.Aut.ALint L
-    rw [Module.Basis.equivFun_symm_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Module.Basis.equivFun_symm_apply, map_sum]
     refine Subring.sum_mem _ fun i _ => ?_
     rw [Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one, flip_symm_tmul]
     have : b i ⊗ₜ[maximalRealSubfield L] c i =
@@ -158,7 +163,7 @@ theorem isOpen_intSet : IsOpen (intSet L) := by
     apply Filter.mem_of_superset _ hV
     apply (isOpen_set_pi Set.finite_univ fun _ _ => hW).mem_nhds
     intro i _ v
-    simp
+    exact (v.adicCompletionIntegers (maximalRealSubfield L)).zero_mem
   have : intSet L = B.equivFun ⁻¹' H := by
     ext x
     simp [intSet, H]

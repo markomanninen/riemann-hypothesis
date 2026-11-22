@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemCharIdem
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,18 +29,19 @@ theorem heckeVec_dosetInd_eq_idem (hπ : GlobalTheory.LGrp.IsIrrSmooth π) (hc :
   · refine Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨(g : G ⧸ K), (hS _).2 ?_⟩)
     obtain ⟨k, hk⟩ := QuotientGroup.mk_out_eq_mul K g
     exact DoubleCoset.mem_doubleCoset.2 ⟨1, K.one_mem, k, k.2, by rw [hk, one_mul]⟩
-  · rw [← idem_of_mem hπ.1 hc (heckeVec_mem_fixed hK hm hz), heckeVec,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← idem_of_mem hπ.1 hc (heckeVec_mem_fixed hK hm hz), heckeVec,
       finsum_eq_sum_of_support_subset (s := hfin.toFinset), map_sum, Nat.cast_smul_eq_nsmul, ← Finset.sum_const]
-    · refine Finset.sum_congr rfl fun c hcS => ?_
-      have h1 := (hS c).1 hcS
-      obtain ⟨a, ha, b, hb, e⟩ := DoubleCoset.mem_doubleCoset.1 h1
-      rw [dosetInd, Set.indicator_of_mem h1, e, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply,
-        GlobalTheory.LGrp.mem_fixed.1 hz b hb]
-      simpa using idem_apply_mem hπ.1 hc ha (π g z)
-    · intro c hc'
-      refine Finset.mem_coe.2 ((hS c).2 ?_)
-      by_contra h0
-      exact hc' (by simp [dosetInd, h0])
+      · refine Finset.sum_congr rfl fun c hcS => ?_
+        have h1 := (hS c).1 hcS
+        obtain ⟨a, ha, b, hb, e⟩ := DoubleCoset.mem_doubleCoset.1 h1
+        rw [dosetInd, Set.indicator_of_mem h1, e, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply,
+          GlobalTheory.LGrp.mem_fixed.1 hz b hb]
+        simpa using idem_apply_mem hπ.1 hc ha (π g z)
+      · intro c hc'
+        refine Finset.mem_coe.2 ((hS c).2 ?_)
+        by_contra h0
+        exact hc' (by simp [dosetInd, h0])
 
 theorem exists_scalar : ∀ (G V : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V]
     [Module ℂ V] (π : Representation ℂ G V) (K : Subgroup G), IsCompact (K : Set G) → IsCommensurated K →
@@ -72,7 +77,7 @@ theorem exists_scalar : ∀ (G V : Type) [Group G] [TopologicalSpace G] [IsTopol
       rw [this]; exact key g
     | add a b ha hb =>
       have : orbitMap π x₀ (a + b) = orbitMap π x₀ a + orbitMap π x₀ b := map_add _ _ _
-      rw [this, map_add, map_add, ha, hb, smul_add]
+      rw [this, map_add (f := _), map_add (f := _), ha, hb, smul_add]
     | smul r a ha =>
       have : orbitMap π x₀ (r • a) = r • orbitMap π x₀ a := map_smul _ _ _
       rw [this, map_smul, map_smul, ha, smul_comm]

@@ -1,5 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
+
 open NumberField Topology Filter ReciprocityTheory.ChartRestriction.G.FD
 open scoped Matrix
 
@@ -32,7 +37,7 @@ theorem exists_matrix_lift {r : ℕ} {ι : Type} {𝓕 : Filter ι} (p : Fin r �
         rw [← Matrix.mul_apply, Matrix.nonsing_inv_mul _ (Ne.isUnit h0)]
       rw [e]
       simp only [hDdef, Matrix.of_apply, h, if_false, Matrix.mul_apply]
-      exact tendsto_finset_sum _ fun k _ => (hr a h k).mul (hQe k j)
+      exact tendsto_finsetSum _ fun k _ => (hr a h k).mul (hQe k j)
   have hdet : Continuous fun M : Matrix (Fin r) (Fin r) ℂ => M.det := continuous_id.matrix_det
   have hDi : Tendsto (fun n => (D n)⁻¹) 𝓕 (𝓝 1) := by
     have hc1 : ContinuousAt Inv.inv (1 : Matrix (Fin r) (Fin r) ℂ) := by
@@ -92,7 +97,8 @@ theorem hermC_emb_inv_col {E : Type} [Field E] [NumberField E] [IsCMField E] {r 
   have e : ∀ a, ∑ b, u a * τ (G a b) * (starRingEnd ℂ) (τ (cc (G⁻¹ b k))) =
       u a * τ ((G * G⁻¹) a k) := by
     intro a
-    rw [Matrix.mul_apply, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.mul_apply, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [cc, IsCMField.complexEmbedding_complexConj, Complex.conj_conj, map_mul, mul_assoc]
   simp only [hermC, Data.emb, e]

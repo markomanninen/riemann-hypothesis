@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NefFibOfIsNef
+
+@[expose] public section
 
 noncomputable section
 

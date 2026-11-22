@@ -1,4 +1,8 @@
-import Formalism.FormalGroupLog.Statement
+module
+
+public import Formalism.FormalGroupLog.Statement
+
+@[expose] public section
 
 noncomputable section
 

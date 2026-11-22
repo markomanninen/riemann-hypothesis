@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
-import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.PathProductHighestWeight
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.IndexWeightsDominance
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.LeIffLtColHeight
+public import Formalism.ThetaLogCoordinates.JacobiPathWeights.JacobiMinorProofs.PathProductHighestWeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,18 +80,6 @@ theorem idxWeight_eq {n : ℕ} (I : ℤ → Finset (Fin n)) (S : Finset ℤ) (hS
     · have h0 : c ≤ 0 := by omega
       simp [hm, hc, h0]
   · simp [hm]
-
-theorem weight_torus {n : ℕ} (isVec : ℕ → Bool) (e : ℕ × Fin n →₀ ℕ) (m : Fin n) :
-    Finsupp.weight (torusW isVec) e m =
-      Finsupp.weight
-        (fun x : ℕ × Fin n => if x.2 = m then (if isVec x.1 then (1 : ℤ) else -1) else 0) e := by
-  simp only [Finsupp.weight_apply, Finsupp.sum, Finset.sum_apply, Pi.smul_apply]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  by_cases hx : x.2 = m
-  · subst hx
-    by_cases hv : isVec x.1 <;> simp [torusW, hv]
-  · have hx' : m ≠ x.2 := fun h => hx h.symm
-    by_cases hv : isVec x.1 <;> simp [torusW, hv, hx, hx', Pi.single_apply]
 
 end A3comb
 
@@ -529,7 +521,7 @@ theorem weight_letter {n : ℕ} (i : ℕ) (e : ℕ × Fin n →₀ ℕ) :
   refine Finsupp.induction_linear e ?_ ?_ ?_
   · simp
   · intro f g hf hg
-    simp only [map_add, hf, hg, Finsupp.coe_add, Pi.add_apply, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hf, hg, Finsupp.coe_add, Pi.add_apply, Finset.sum_add_distrib]
   · rintro ⟨x1, x2⟩ k
     rw [Finsupp.weight_apply, Finsupp.sum_single_index]
     · by_cases hi : x1 = i
@@ -623,8 +615,8 @@ theorem polynomial_b_rank : PolBRank := by
         rw [← weight_letter]
         exact ((MvPolynomial.mem_weightedHomogeneousSubmodule _ _ _ _).mp (hp i))
           (MvPolynomial.mem_support_iff.mp he)
-      rw [show MvPolynomial.monomial e (MvPolynomial.coeff e p) =
-          MvPolynomial.coeff e p • MvPolynomial.monomial e (1 : R) by
+      rw [show MvPolynomial.monomial e (AddMonoidAlgebra.coeff p e) =
+          AddMonoidAlgebra.coeff p e • MvPolynomial.monomial e (1 : R) by
         rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]]
       exact Submodule.smul_mem _ _ (Submodule.subset_span
         (Set.mem_image_of_mem (fun e => MvPolynomial.monomial e (1 : R)) heS))

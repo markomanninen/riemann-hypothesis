@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.IsPrincipalMapOfAlgHom
-import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ThetaChr
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OverIx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyFiniteTypeIndexOfRowsPos
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RamifiedRationalPrimesOfTupleBaseTupleEqEmpty
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ToIntBijective
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MapSeqIndAll
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupPinsOfMuIs
-import Formalism.LocalRingCardinality.SpanPowerMembership.DivXExample
-import Formalism.LocalToGlobal.LatticeGeometry.Inhabited
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QpIsQpSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.IsPrincipalMapOfAlgHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.PublishedFoundations.NonemptyAlgHomOfIsRayOfDvd
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.PublishedTheorems.WeberRayClassFields.WeberRayFieldSt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ThetaChr
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OverIx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NonemptyFiniteTypeIndexOfRowsPos
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RamifiedRationalPrimesOfTupleBaseTupleEqEmpty
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ToIntBijective
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MapSeqIndAll
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TupPinsOfMuIs
+public import Formalism.LocalRingCardinality.SpanPowerMembership.DivXExample
+public import Formalism.LocalToGlobal.LatticeGeometry.Inhabited
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.QpIsQpSet
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,18 +34,18 @@ variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 I0 T : Type} {A3 : FamIn
 theorem nonempty_ix (hH : Holds R F) : Nonempty A3.fam3.base3.Ix :=
   GlobalTheory.Div.nonempty_ix_of_pos A3 F.P0 F.ψ0 (R.toCx3 F).zs hH.ok hH.prim.block (hH.prim.pos false)
 
-open Classical in
 
+open Classical in
 def labOf (Z : ReadL R F X0 Y) (hH : Holds R F) (σ : D.what₂.FT) : A3.fam3.base3.Ix :=
   if h : ∃ c, Bl.OverIx Z σ c then h.choose else (nonempty_ix hH).some
 
 theorem overIx_labOf (Z : ReadL R F X0 Y) (hH : Holds R F) (σ : D.what₂.FT) (h : ∃ c, Bl.OverIx Z σ c) :
     Bl.OverIx Z σ (labOf Z hH σ) := by
-  rw [labOf, dif_pos h]
+  rw [labOf, dite_eq_left h]
   exact h.choose_spec
 
-open Classical in
 
+open Classical in
 def logLamOf (Z : ReadL R F X0 Y) (hH : Holds R F) (j : ℕ) (σ : D.what₂.FT) (e : D.what₂.LL →+* ℂ) : ℝ :=
   if e = D.what₂.embLL then Real.log (D.what₂.lamP D.what₂.mu0 j σ)
   else if h : j - 1 < D.R.m then
@@ -51,7 +55,7 @@ def logLamOf (Z : ReadL R F X0 Y) (hH : Holds R F) (j : ℕ) (σ : D.what₂.FT)
 theorem lamAre_of_eq (Z : ReadL R F X0 Y) (hH : Holds R F) (Xd : DivX D) (hX : Xd.logLam = logLamOf Z hH) : Bl.LamAre Z Xd := by
   refine ⟨labOf Z hH, overIx_labOf Z hH, fun i σ e he => ?_⟩
   have h : (i : ℕ) + 1 - 1 < D.R.m := i.2
-  rw [hX, logLamOf, if_neg he, dif_pos h]
+  rw [hX, logLamOf, if_neg he, dite_eq_left h]
   exact ⟨fun h0 => if_neg h0, fun h0 => if_pos h0⟩
 
 def x0 (Z : ReadL R F X0 Y) (hP : Pins R F cG) (hH : Holds R F) : DivX D where
@@ -148,10 +152,10 @@ theorem tupPins_of_muIsW (X : Stages) (f : Fr X.B.toPre) (T : TwDat X.B) (Wt : S
     · rw [h.on w hw, h.tw w]
       exact GlobalTheory.Mem.HD.TupPin.xiTw_unr X.B f T w v hv
     · rw [h.off w hw, h.mu0]
-      exact fun x _ => HChar.loc_one _ _
+      exact fun _ _ => rfl
+
 
 open Formalism.L2.Rows Formalism.L2.Geo GlobalTheory.GeoGraft GlobalTheory.GeoModel in
-
 theorem geoOver_stages (X : Stages) (X₀ : DivX X.toD7) : GeoOver (fun _ => True) X₀ := by
   let D := X.toD7
   let eO : 𝓞 X.B.Ks ≃+* D.what₂.O := RingEquiv.refl _
@@ -171,10 +175,6 @@ theorem qpIs_qpSet (w : ColW B f T) (pin : ColPin w) (Z : w.Lt) {nch : NChoice (
     (tp : TupTied (w.D Z) (TC.cf w.I w.l Z) nch) (hxi : tp.xi = w.I.xi) (hp : GlobalTheory.Mem.HD.TupPins tp) :
     TC.QpIs w.I (GlobalTheory.Mem.HD.ReQ.qpSet tp) := GlobalTheory.Mem.Top.Bl.QpIsOf.qpIs_qpSet w pin Z tp hxi hp
 
-theorem mjAre_x0 {K : Ctx} {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {p0 : BaseLevelRowSide (w.D Z)} (t : RowsT K w Z Wt p0) :
-    MjAre t.r.Z (x0 t.r.Z t.r.z.pins t.r.intersectionNumber_baseChange) :=
-  GlobalTheory.Mem.R3.exists_mjHTie t.r.Z _ rfl HEq.rfl
-
 theorem exists_divT {𝒮 : Slots} {K : Ctx} (w : ColW B f T) (pin : ColPin w) (Z : w.Lt) (l : Lv4 𝒮 K w Z) :
     ∃ Y : DivX (w.D Z), Nonempty (DivT l.n Y) ∧ MjAre l.what₂.r.Z Y ∧ (∀ σ, Y.kapR σ = kapSharp (w.D Z)) ∧
       LamAre l.what₂.r.Z Y := by
@@ -190,10 +190,6 @@ theorem exists_divT {𝒮 : Slots} {K : Ctx} (w : ColW B f T) (pin : ColPin w) (
     GlobalTheory.Mem.R3.exists_mjHTie l.what₂.r.Z _ rfl HEq.rfl, fun _ => rfl,
     lamAre_of_eq l.what₂.r.Z l.what₂.r.intersectionNumber_baseChange _ rfl⟩
   exact ⟨h2.qv_eq, h2.deg1, h2.ram, h2.off_g, h2.nu_eq, h2.typeDim_eq, h2.ZQ_eq, h2.quotientLocalValueFirst_eq⟩
-
-theorem lamAre_x0 {K : Ctx} {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {p0 : BaseLevelRowSide (w.D Z)} (t : RowsT K w Z Wt p0) :
-    LamAre t.r.Z (x0 t.r.Z t.r.z.pins t.r.intersectionNumber_baseChange) :=
-  lamAre_of_eq t.r.Z t.r.intersectionNumber_baseChange _ rfl
 
 theorem lamAre_heq {K : Ctx} {w : ColW B f T} {Z : w.Lt} {Wt : Set B.places.Pl} {p0 p0' : BaseLevelRowSide (w.D Z)} {t : RowsT K w Z Wt p0}
     {t' : RowsT K w Z Wt p0'} (e : p0 = p0') (h : HEq t t') {X : DivX (w.D Z)} (hX : LamAre t'.r.Z X) : LamAre t.r.Z X := by

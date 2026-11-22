@@ -1,6 +1,10 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafPairRelPf
-import Development.EtaleCohomology.EtaleSheaves.LeafDescendMapPf
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafPairRelPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafDescendMapPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut

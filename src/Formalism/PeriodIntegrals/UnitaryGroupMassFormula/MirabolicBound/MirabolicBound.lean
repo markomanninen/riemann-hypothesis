@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.LastRowMul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.RowExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.CharSumOne
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.CardNonzero
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.LastRowMul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.RowExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.CharSumOne
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MirabolicBound.CardNonzero
+
+@[expose] public section
 
 namespace PI.GGMirBoundW
 

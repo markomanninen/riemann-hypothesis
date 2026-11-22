@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.Adele.Approximation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfiniteTraceAlgebraMap
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.InfiniteTraceAlgebraMap
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -35,7 +39,7 @@ def infiniteTrace : InfiniteAdeleRing K →+ ℝ where
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun w _ => ?_
     show (w.mult : ℝ) * (extensionEmbedding w (x w + y w)).re = _
-    rw [map_add, Complex.add_re, mul_add]
+    rw [map_add (f := _), Complex.add_re, mul_add]
 
 theorem infiniteTrace_apply (x : InfiniteAdeleRing K) :
     infiniteTrace K x = ∑ w : InfinitePlace K, (w.mult : ℝ) * (extensionEmbedding w (x w)).re :=
@@ -101,11 +105,6 @@ def localInvDifferent (v : HeightOneSpectrum (𝓞 K)) : AddSubgroup (v.adicComp
     rw [neg_mul]
     exact neg_mem (ha y hy)
 
-theorem mem_localInvDifferent {v : HeightOneSpectrum (𝓞 K)} {x : v.adicCompletion K} :
-    x ∈ localInvDifferent v ↔ ∀ y ∈ differentIdeal ℤ (𝓞 K),
-      x * ((algebraMap (𝓞 K) K y : K) : v.adicCompletion K) ∈ v.adicCompletionIntegers K :=
-  Iff.rfl
-
 theorem coe_algebraMap_mem_adicCompletionIntegers (v : HeightOneSpectrum (𝓞 K)) (y : 𝓞 K) :
     ((algebraMap (𝓞 K) K y : K) : v.adicCompletion K) ∈ v.adicCompletionIntegers K := by
   rw [coe_mem_adicCompletionIntegers_iff, valuation_of_algebraMap]
@@ -153,19 +152,13 @@ theorem forall_coe_mem_localInvDifferent_iff (k : K) :
     rw [← hz, valuation_of_algebraMap]
     exact v.intValuation_le_one z
 
-@[simp] theorem adeleRing_add_fst (x y : 𝔸[K]) : (x + y).1 = x.1 + y.1 := rfl
-@[simp] theorem adeleRing_add_snd (x y : 𝔸[K]) : (x + y).2 = x.2 + y.2 := rfl
-@[simp] theorem adeleRing_sub_fst (x y : 𝔸[K]) : (x - y).1 = x.1 - y.1 := rfl
-@[simp] theorem adeleRing_sub_snd (x y : 𝔸[K]) : (x - y).2 = x.2 - y.2 := rfl
-@[simp] theorem adeleRing_zero_fst : (0 : 𝔸[K]).1 = 0 := rfl
-@[simp] theorem adeleRing_zero_snd : (0 : 𝔸[K]).2 = 0 := rfl
 @[simp] theorem adeleRing_algebraMap_fst (k : K) :
     (algebraMap K 𝔸[K] k).1 = algebraMap K (InfiniteAdeleRing K) k := rfl
 @[simp] theorem adeleRing_algebraMap_snd (k : K) :
     (algebraMap K 𝔸[K] k).2 = algebraMap K (FiniteAdeleRing (𝓞 K) K) k := rfl
 
-variable (K) in
 
+variable (K) in
 def finiteInvDifferent : AddSubgroup (FiniteAdeleRing (𝓞 K) K) where
   carrier := {a | ∀ v : HeightOneSpectrum (𝓞 K), a v ∈ localInvDifferent v}
   zero_mem' v := zero_mem (localInvDifferent v)
@@ -180,8 +173,8 @@ theorem mem_finiteInvDifferent_of_mem_integralFiniteAdeles {a : FiniteAdeleRing 
     (ha : a ∈ integralFiniteAdeles (𝓞 K) K) : a ∈ finiteInvDifferent K :=
   fun v => mem_localInvDifferent_of_mem (ha v)
 
-variable (K) in
 
+variable (K) in
 theorem isOpen_finiteInvDifferent :
     IsOpen (finiteInvDifferent K : Set (FiniteAdeleRing (𝓞 K) K)) :=
   AddSubgroup.isOpen_of_mem_nhds _ (g := 0) (Filter.mem_of_superset
@@ -207,8 +200,8 @@ theorem exists_trace_eq_intCast {k : K}
   rw [← hn]
   simp
 
-variable (K) in
 
+variable (K) in
 def invDifferentAdeles : AddSubgroup 𝔸[K] :=
   (⊤ : AddSubgroup (InfiniteAdeleRing K)).prod (finiteInvDifferent K)
 
@@ -216,29 +209,6 @@ theorem mem_invDifferentAdeles {x : 𝔸[K]} :
     x ∈ invDifferentAdeles K ↔ x.2 ∈ finiteInvDifferent K := by
   exact ⟨fun h => h.2, fun h => ⟨AddSubgroup.mem_top _, h⟩⟩
 
-variable (K) in
-
-theorem isOpen_invDifferentAdeles : IsOpen (invDifferentAdeles K : Set 𝔸[K]) := by
-  have : (invDifferentAdeles K : Set 𝔸[K]) =
-      Prod.snd ⁻¹' (finiteInvDifferent K : Set (FiniteAdeleRing (𝓞 K) K)) := by
-    ext x
-    exact mem_invDifferentAdeles
-  rw [this]
-  exact (isOpen_finiteInvDifferent K).preimage continuous_snd
-
-theorem exists_sub_mem_invDifferentAdeles (x : 𝔸[K]) :
-    ∃ k : K, x - algebraMap K 𝔸[K] k ∈ invDifferentAdeles K := by
-  obtain ⟨k, hk⟩ := exists_sub_mem_finiteInvDifferent x.2
-  exact ⟨k, mem_invDifferentAdeles.mpr hk⟩
-
-theorem algebraMap_mem_invDifferentAdeles_iff (k : K) :
-    algebraMap K 𝔸[K] k ∈ invDifferentAdeles K ↔
-      k ∈ Submodule.traceDual ℤ ℚ (1 : Submodule (𝓞 K) K) := by
-  rw [mem_invDifferentAdeles, Submodule.mem_traceDual]
-  refine (algebraMap_mem_finiteInvDifferent_iff k).trans ⟨fun h a ha => ?_, fun h a => ?_⟩
-  · obtain ⟨b, rfl⟩ := Submodule.mem_one.mp ha
-    simpa [Algebra.traceForm_apply] using h b
-  · simpa [Algebra.traceForm_apply] using h _ (Submodule.mem_one.mpr ⟨a, rfl⟩)
 
 theorem fourierChar_infiniteTrace_eq (x : InfiniteAdeleRing K) (a : FiniteAdeleRing (𝓞 K) K)
     {k k' : K} (hk : a - algebraMap K _ k ∈ finiteInvDifferent K)
@@ -255,8 +225,8 @@ theorem fourierChar_infiniteTrace_eq (x : InfiniteAdeleRing K) (a : FiniteAdeleR
     ring
   rw [this, AddChar.map_sub_eq_div, fourierChar_intCast, div_one]
 
-variable (K) in
 
+variable (K) in
 def adelicCharFun (x : 𝔸[K]) : Circle :=
   𝐞 (-infiniteTrace K (x.1 - algebraMap K _ (exists_sub_mem_finiteInvDifferent x.2).choose))
 
@@ -265,8 +235,8 @@ theorem adelicCharFun_eq (x : 𝔸[K]) {k : K}
     adelicCharFun K x = 𝐞 (-infiniteTrace K (x.1 - algebraMap K _ k)) :=
   fourierChar_infiniteTrace_eq _ _ (exists_sub_mem_finiteInvDifferent x.2).choose_spec hk
 
-variable (K) in
 
+variable (K) in
 def adelicChar : AddChar 𝔸[K] Circle where
   toFun := adelicCharFun K
   map_zero_eq_one' := by
@@ -277,17 +247,15 @@ def adelicChar : AddChar 𝔸[K] Circle where
     obtain ⟨ky, hy⟩ := exists_sub_mem_finiteInvDifferent y.2
     have hxy : (x + y).2 - algebraMap K _ (kx + ky) ∈ finiteInvDifferent K := by
       have := add_mem hx hy
-      rw [map_add]
+      rw [map_add (f := _)]
       convert this using 1
-      rw [adeleRing_add_snd]
+      rw [show (x + y).2 = x.2 + y.2 from rfl]
       abel
     rw [adelicCharFun_eq _ hxy, adelicCharFun_eq _ hx, adelicCharFun_eq _ hy,
       ← AddChar.map_add_eq_mul]
     congr 1
-    simp only [adeleRing_add_fst, map_add, map_sub]
+    simp only [show (x + y).1 = x.1 + y.1 from rfl, map_add (f := _), map_sub]
     ring
-
-theorem adelicChar_apply (x : 𝔸[K]) : adelicChar K x = adelicCharFun K x := rfl
 
 theorem adelicChar_eq (x : 𝔸[K]) {k : K}
     (hk : x.2 - algebraMap K _ k ∈ finiteInvDifferent K) :

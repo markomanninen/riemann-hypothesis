@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -81,8 +85,8 @@ theorem rhom_apply (v : InfinitePlace F) (x : F) : rhom x v = reAt v x := by
 theorem ofReal_reAt (v : InfinitePlace F) (x : F) : ((reAt v x : ℝ) : ℂ) = v.embedding x := by
   rw [← rhom_apply, ofReal_rhom]
 
-variable (F) in
 
+variable (F) in
 def embEquiv : InfinitePlace F ≃ (F →+* ℂ) where
   toFun v := v.embedding
   invFun φ := InfinitePlace.mk φ

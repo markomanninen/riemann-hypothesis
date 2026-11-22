@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
-import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegree
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsLineDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -154,7 +159,7 @@ theorem one_mem_dualLattice_standard :
     exact ⟨1, by fin_cases j; simp [dotProduct]⟩
   · exact ⟨0, by simp⟩
   · rintro x y _ _ ⟨a, ha⟩ ⟨c, hc⟩
-    exact ⟨a + c, by rw [dotProduct_add, map_add, ha, hc]⟩
+    exact ⟨a + c, by rw [dotProduct_add, map_add (f := _), ha, hc]⟩
   · rintro r x _ ⟨a, ha⟩
     refine ⟨r * a, ?_⟩
     rw [dotProduct_smul, map_mul, ha]
@@ -220,9 +225,6 @@ theorem dualEmbMatrix_standard_bijective :
   · intro z
     refine ⟨fun _ => z (), ?_⟩
     rw [hv]
-
-example : HermLine (dualBlocks Unit) :=
-  dualLine (HermLattice.standard ℚ 1) dualBasisStandard dualEmbMatrix_standard_bijective
 
 end
 

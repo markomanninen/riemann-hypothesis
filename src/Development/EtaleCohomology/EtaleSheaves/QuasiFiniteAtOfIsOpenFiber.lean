@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSpreadLQFMapVtuPfG
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSpreadLQFMapVtuPfG
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry

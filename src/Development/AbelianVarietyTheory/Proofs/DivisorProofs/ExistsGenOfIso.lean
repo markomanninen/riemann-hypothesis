@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RosVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +27,6 @@ structure IsPart (N : LB X) (M : LB X₁) (e : X₁ ⟶ X) (π : N.ι → M.ι) 
 
 def rs {N : LB X} {M : LB X₁} (e : X₁ ⟶ X) (π : N.ι → M.ι) (J : (Z ⟶ X) → N.ι) : (Z ⟶ X₁) → M.ι :=
   fun ψ => π (J (ψ ≫ e))
-
-theorem IsPart.refl (M : LB X) : IsPart M M (𝟙 X) id :=
-  ⟨fun _ _ => Iff.rfl, fun _ ψ _ _ _ _ _ => by rw [Category.comp_id]; rfl⟩
 
 theorem IsPart.trans {N : LB X} {M : LB X₁} {M' : LB X₂} {e : X₁ ⟶ X} {π : N.ι → M.ι} {e' : X₂ ⟶ X₁} {π' : M.ι → M'.ι}
     (h : IsPart N M e π) (h' : IsPart M M' e' π') : IsPart N M' (e' ≫ e) (π' ∘ π) :=

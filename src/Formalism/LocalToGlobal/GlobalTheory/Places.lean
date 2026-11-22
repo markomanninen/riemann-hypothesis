@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.LinkPk
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.LinkPk
+
+@[expose] public section
 
 noncomputable section
 

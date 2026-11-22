@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.CechYoneda
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.CechYoneda
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite
@@ -25,10 +29,10 @@ private theorem ι_cov (i : ι) : Sigma.ι (fun j => (V j).toScheme) i ≫ cov O
 variable (W : (Fin (n + 1) → ι) → X.Opens) (hW : ∀ j x, x ∈ W j ↔ ∀ k, x ∈ V (j k))
 
 include hW in
-private theorem le_V (j) (k) : W j ≤ V (j k) := fun x hx => (hW j x).1 hx k
+theorem le_V (j) (k) : W j ≤ V (j k) := fun x hx => (hW j x).1 hx k
 
 include hV hW in
-private theorem le_O (j) : W j ≤ O := (le_V V W hW j 0).trans (hV _)
+theorem le_O (j) : W j ≤ O := (le_V V W hW j 0).trans (hV _)
 
 def cmp (j : Fin (n + 1) → ι) : (W j).toScheme ⟶ P O V hV n :=
   WidePullback.lift (X.homOfLE (le_O O V hV W hW j))
@@ -55,7 +59,7 @@ theorem mem_PJ (j) (x : P O V hV n) : x ∈ PJ O V hV j ↔
   rfl
 
 include hW in
-private theorem hr (j) : Set.range ((PJ O V hV j).ι ≫
+theorem hr (j) : Set.range ((PJ O V hV j).ι ≫
     WidePullback.base (fun _ : Fin (n + 1) => cov O V hV) ≫ O.ι) ⊆ Set.range (W j).ι := by
   rintro _ ⟨y, rfl⟩
   rw [Scheme.Opens.range_ι]
@@ -70,7 +74,7 @@ private theorem hr (j) : Set.range ((PJ O V hV j).ι ≫
   exact (V (j k)).ι_apply z ▸ z.2
 
 def rr (j : Fin (n + 1) → ι) : (PJ O V hV j).toScheme ⟶ (W j).toScheme :=
-  IsOpenImmersion.lift (W j).ι _ (hr O V hV W hW j)
+  IsOpenImmersion.lift (W j).ι _ (private_decl% (hr O V hV W hW j))
 
 theorem rr_ι (j) : rr O V hV W hW j ≫ (W j).ι =
     (PJ O V hV j).ι ≫ WidePullback.base (fun _ : Fin (n + 1) => cov O V hV) ≫ O.ι :=
@@ -98,7 +102,7 @@ private theorem hr3 (j) : Set.range (cmp O V hV W hW j) ⊆ Set.range (PJ O V hV
   rw [← Scheme.Hom.comp_apply, ← cmp_π O V hV W hW j k, Scheme.Hom.comp_apply]
 
 def ss (j : Fin (n + 1) → ι) : (W j).toScheme ⟶ (PJ O V hV j).toScheme :=
-  IsOpenImmersion.lift (PJ O V hV j).ι _ (hr3 O V hV W hW j)
+  IsOpenImmersion.lift (PJ O V hV j).ι _ (private_decl% (hr3 O V hV W hW j))
 
 theorem ss_ι (j) : ss O V hV W hW j ≫ (PJ O V hV j).ι = cmp O V hV W hW j :=
   IsOpenImmersion.lift_fac _ _ _

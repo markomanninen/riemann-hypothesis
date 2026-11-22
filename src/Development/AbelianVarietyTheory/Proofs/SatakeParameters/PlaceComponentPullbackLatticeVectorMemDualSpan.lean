@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
-import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.UnderTie
+public import Formalism.LocalToGlobal.LatticeGeometry.GeometryDefinitions.PNeatB
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.Ker Formalism.L2.DIV GlobalTheory.TwU GlobalTheory.TwV
 open Formalism.UG (bc prV)
 open Matrix Formalism.UG Formalism.L2.PairingIndexBounds.F Formalism.L2.Forms Formalism.MainNotions.G.KAat
@@ -10,9 +15,9 @@ namespace GlobalTheory.AwayLat
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
+
 set_option maxHeartbeats 4000000 in
 set_option synthInstance.maxHeartbeats 200000 in
-
 theorem prV_pullV_mem_latS_dual : ∀ {D : D7} (i : ℕ) (hi : i ≤ D.R.m) {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 D.host.F))}
     (lev : StepLevel D.host.F D.host.E (sigD D) (gramN D i hi) T f bad) (x : UA D i hi) (v : HeightOneSpectrum (𝓞 D.host.F))
     (l : Fin (D.R.N i) → D.host.E), l ∈ latAd x.1 lev.Lb →
@@ -42,7 +47,7 @@ theorem prV_pullV_mem_latS_dual : ∀ {D : D7} (i : ℕ) (hi : i ≤ D.R.m) {T f
         (fun k => prV (E := D.host.E) v (pullV (F := D.host.F) x.1 a k)) +
           (fun k => prV (E := D.host.E) v (pullV (F := D.host.F) x.1 b k)) := by
       ext k
-      rw [Pi.add_apply, pullV_add, map_add]
+      rw [Pi.add_apply, pullV_add, map_add (f := _)]
     rw [this]; exact add_mem ha hb
   | smul c a _ ha =>
     have hc : inclE (F := D.host.F) (v.adicCompletion D.host.F) (algebraMap (𝓞 D.host.E) D.host.E c) ∈ intV D.host.E v :=

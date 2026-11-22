@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,8 +43,8 @@ theorem fact (hϖ : Irreducible ϖ) (z : QuadraticAlgebra W ϖ 0) (hz : z ≠ 0)
     refine ⟨2 * j + 1, ⟨v, a'⟩, isUnit_of_re hϖ _ v.isUnit, ?_⟩
     rw [pow_succ, om_pow, algebraMap_eq]
     ext
-    · simp only [re_mul, im_mul, omega_re, omega_im, h2]; ring
-    · simp only [re_mul, im_mul, omega_re, omega_im, h1]; ring
+    · simp only [re_mul, im_mul, omega_re, omega_im, re_C, im_C, h2]; ring
+    · simp only [re_mul, im_mul, omega_re, omega_im, re_C, im_C, h1]; ring
   by_cases ha : z.re = 0
   · have hb : z.im ≠ 0 := fun hb => hz (by ext <;> simp [ha, hb])
     obtain ⟨j, v, hv⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hb hϖ
@@ -51,8 +55,8 @@ theorem fact (hϖ : Irreducible ϖ) (z : QuadraticAlgebra W ϖ 0) (hz : z ≠ 0)
       refine ⟨2 * i, ⟨u, b'⟩, isUnit_of_re hϖ _ u.isUnit, ?_⟩
       rw [om_pow, algebraMap_eq]
       ext
-      · simp [hu]; ring
-      · simp [hb']
+      · simp [← map_pow, hu]; ring
+      · simp [← map_pow, hb']
     · have hb : z.im ≠ 0 := fun hb => hd (by rw [hb]; exact dvd_zero _)
       obtain ⟨j, v, hv⟩ := IsDiscreteValuationRing.eq_unit_mul_pow_irreducible hb hϖ
       have hji : j < i := by
@@ -109,9 +113,9 @@ theorem mem_span_om_pow (m : ℕ) (z : QuadraticAlgebra W ϖ 0) :
   rw [Ideal.mem_span_singleton, om_pow, algebraMap_eq]
   constructor
   · rintro ⟨t, rfl⟩
-    exact ⟨⟨t.re, by simp⟩, ⟨t.im, by simp⟩⟩
+    exact ⟨⟨t.re, by simp [← map_pow]⟩, ⟨t.im, by simp [← map_pow]⟩⟩
   · rintro ⟨⟨a, ha⟩, ⟨b, hb⟩⟩
-    exact ⟨⟨a, b⟩, by ext <;> simp [ha, hb]⟩
+    exact ⟨⟨a, b⟩, by ext <;> simp [← map_pow, ha, hb]⟩
 
 theorem isAdicComplete (hϖ : Irreducible ϖ) (hC : IsAdicComplete (Ideal.span {ϖ}) W) :
     haveI := isDomain hϖ; haveI := isDVR hϖ

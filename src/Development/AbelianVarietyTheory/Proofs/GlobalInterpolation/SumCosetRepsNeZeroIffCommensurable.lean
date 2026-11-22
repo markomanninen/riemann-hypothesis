@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.Proof.sum_coset_reps_ne_zero_iff_commensurable
 

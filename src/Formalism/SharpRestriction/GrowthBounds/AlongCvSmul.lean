@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.PowerSeriesFrobeniusCongruence
-import Formalism.SharpRestriction.GrowthBounds.CoeffIdentityPlainChartOfThree
-import Formalism.LocalToGlobal.CharacterGerms.TripleSubstSecondCoordinate
-import Formalism.LocalToGlobal.CharacterGerms.RowTieCartAdd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PowerSeriesFrobeniusCongruence
+public import Formalism.SharpRestriction.GrowthBounds.CoeffIdentityPlainChartOfThree
+public import Formalism.LocalToGlobal.CharacterGerms.TripleSubstSecondCoordinate
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,13 +155,16 @@ theorem r1sRestC_of (hFr : PowerSeriesFrobeniusCongruence) (hRo : RootsOfUnityPr
     intro c m hm hc
     constructor
     · intro n j hj
-      simp only [haC, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [haC, map_sub, map_sum]
       rw [(HL _ c cX m hm hc).1 n j hj, Finset.sum_eq_zero fun k _ => (HL _ c (rc_cc cγ _) m hm hc).1 n j hj, sub_zero]
     · intro n
-      simp only [haC, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [haC, map_sub, map_sum]
       rw [(HL _ c cX m hm hc).2 n, Finset.sum_congr rfl fun k _ => (HL _ c (rc_cc cγ (ζ ^ k)) m hm hc).2 n]
       unfold phi
-      simp only [map_sub, map_sum, alongCv_rc cγ, alongCv_pw cδ hll, Finset.sum_neg_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_sum, alongCv_rc cγ, alongCv_pw cδ hll, Finset.sum_neg_distrib]
       ring
 
   have bK : ∀ x : κ → PowerSeries C, (∀ i, PowerSeries.constantCoeff (x i) = 0) →
@@ -165,11 +172,13 @@ theorem r1sRestC_of (hFr : PowerSeriesFrobeniusCongruence) (hRo : RootsOfUnityPr
     intro x hx
     constructor
     · intro n
-      simp only [hbC, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hbC, map_sub, map_sum]
       rw [(HL x _ hx 1 le_rfl (low1 _ cZ)).1 n 0 one_pos,
         Finset.sum_eq_zero fun k _ => (HL x _ hx 1 le_rfl (low1 _ (rc_cc cz (ζ ^ k)))).1 n 0 one_pos, sub_zero]
     · intro n
-      simp only [hbC, map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hbC, map_sub, map_sum]
       rw [(HL x _ hx V.l hl0 (pw_low cε hl0)).1 n 1 (by omega),
         Finset.sum_congr rfl fun k _ => (HL x _ hx 1 le_rfl (low1 _ (rc_cc cz (ζ ^ k)))).2 n, sub_zero]
       have e : ∀ k, (fun i => PowerSeries.coeff 1 (rc (ζ ^ k) z i)) = fun i => ζ ^ k * PowerSeries.coeff 1 (z i) := by
@@ -194,17 +203,20 @@ theorem r1sRestC_of (hFr : PowerSeriesFrobeniusCongruence) (hRo : RootsOfUnityPr
     ring
   have hE : mvExp (bC (pw (V.l ^ 2) δ)) * ∏ k ∈ Finset.range V.l, mvExp (aC (rc (ζ ^ k) z)) =
       mvExp (aC (pw V.l ε)) * ∏ k ∈ Finset.range V.l, mvExp (bC (rc (ζ ^ k) γ)) := by
-    rw [← Formalism.UnitaryBoundIntegral.ubint_mvExp_sum _ _ (fun k _ => cca _ (rc_cc cz _)),
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Formalism.UnitaryBoundIntegral.ubint_mvExp_sum _ _ (fun k _ => cca _ (rc_cc cz _)),
       ← Formalism.UnitaryBoundIntegral.ubint_mvExp_sum _ _ (fun k _ => ccb _ (rc_cc cγ _)),
       ← VP.exp_add (ccb _ cX) (by rw [map_sum]; exact Finset.sum_eq_zero fun k _ => cca _ (rc_cc cz _)),
       ← VP.exp_add (cca _ cZ) (by rw [map_sum]; exact Finset.sum_eq_zero fun k _ => ccb _ (rc_cc cγ _)), hid]
   have ars : ∀ c : C, aC (rc c z) = rs 1 c (aC z) := by
     intro c
-    simp only [haC, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [haC, map_sub, map_sum]
     rw [(hHR C d I κ X _ z cX cz c).2, Finset.sum_congr rfl fun k _ => (hHR C d I κ X _ z (rc_cc cγ (ζ ^ k)) cz c).2]
   have brs : ∀ c : C, bC (rc c γ) = rs 0 c (bC γ) := by
     intro c
-    simp only [hbC, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hbC, map_sub, map_sum]
     rw [(hHR C d I κ X γ _ cγ cZ c).1, Finset.sum_congr rfl fun k _ => (hHR C d I κ X γ _ cγ (rc_cc cz (ζ ^ k)) c).1]
   set Aa := mvExp (aC z) with hAa
   set Bb := mvExp (bC γ) with hBb
@@ -261,7 +273,8 @@ theorem r1sRestC_of (hFr : PowerSeriesFrobeniusCongruence) (hRo : RootsOfUnityPr
     have hK : ∀ i j, j < 1 → coeff (ee i j) (∑ k ∈ Finset.range V.l, bC (rc (ζ ^ k) γ)) = 0 := by
       intro i j hj
       obtain rfl : j = 0 := by omega
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_eq_zero fun k _ => (bK _ (rc_cc cγ _)).1 i
     rw [map_sub, e2, hEx C _ 1 le_rfl hK i j (by omega), hK i j hj, add_zero, sub_self]
 
@@ -282,12 +295,12 @@ theorem r1sRestC_of (hFr : PowerSeriesFrobeniusCongruence) (hRo : RootsOfUnityPr
     hGe C V d I κ X hb hBi ζ hζ1 V.l hl0 z ε δ hz hε hδ hrel' hmm (V.l ^ 2) hll
   have hL : coeff (ee (V.l ^ 2) V.l) (A1 * B1) =
       coeff (ee (V.l ^ 2) V.l) B1 + coeff (ee (V.l ^ 2) V.l) ((A1 - 1) * B1) := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ring
   have hR : coeff (ee (V.l ^ 2) V.l) (A2 * B2) = coeff (ee (V.l ^ 2) V.l) A2 + coeff (ee (V.l ^ 2) V.l) B2 := by
     have e : A2 * B2 = A2 + B2 - 1 + (A2 - 1) * (B2 - 1) := by ring
-    rw [e, map_add, map_sub, map_add, one0 _ _ hl0.ne', kmul kA2 kB2 _ _ (by omega), sub_zero, add_zero]
+    rw [e, map_add (f := _), map_sub, map_add (f := _), one0 _ _ hl0.ne', kmul kA2 kB2 _ _ (by omega), sub_zero, add_zero]
   have hJ := jmul jA1 iB1 (V.l ^ 2) V.l le_rfl
   rw [hE', hR, cA2] at hL
   have fin : PowerSeries.coeff V.l (phi X V.l ζ γ δ fun i => PowerSeries.coeff 1 (z i)) ^ V.l -

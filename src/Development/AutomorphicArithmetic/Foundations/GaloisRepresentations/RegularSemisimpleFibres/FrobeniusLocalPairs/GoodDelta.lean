@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormPoly
-import GroundTheory.LocalFields.Uniqueness
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.NormPoly
+public import GroundTheory.LocalFields.Uniqueness
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ private theorem map_aeval_matrix {R S : Type} [CommRing R] [CommRing S] (f : R �
 private theorem commute_aeval {R : Type} [CommRing R] {x A : Matrix (Fin n) (Fin n) R}
     (h : Commute x A) (p : R[X]) : Commute x (aeval A p) := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_right hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_right hq
   | monomial m a =>
     rw [aeval_monomial]
     exact Commute.mul_right (Algebra.commutes a x).symm (h.pow_right m)
@@ -40,7 +44,7 @@ private theorem conj_aeval {R : Type} [CommRing R] (g : GL (Fin n) R)
     ((g⁻¹ : GL (Fin n) R) : Matrix (Fin n) (Fin n) R) * aeval A p * (g : Matrix (Fin n) (Fin n) R) =
       aeval (((g⁻¹ : GL (Fin n) R) : Matrix (Fin n) (Fin n) R) * A * (g : Matrix (Fin n) (Fin n) R)) p := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, ← hp, ← hq, mul_add, add_mul]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), ← hp, ← hq, mul_add, add_mul]
   | monomial m a =>
     rw [aeval_monomial, aeval_monomial, Units.conj_pow']
     simp only [← Algebra.smul_def, mul_smul_comm, smul_mul_assoc]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PhiTopAgree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PhiTopAgree
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory ValuativeRel Matrix Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain GlobalTheory.SymBridge
 
@@ -12,7 +16,7 @@ variable {E k : Type} [Field E] [NumberField E] [Field k] [ValuativeRel k] [Topo
 def vI (h : IsCompl P q ι ϖ) (γ : ValueGroupWithZero k) : Ideal (𝓞 E) where
   carrier := {x | valuation k (ι (x : E)) ≤ γ}
   add_mem' {a b} ha hb := by
-    simp only [Set.mem_setOf_eq, map_add] at *
+    simp only [Set.mem_setOf_eq, map_add (f := _)] at *
     exact le_trans (Valuation.map_add _ _ _) (max_le ha hb)
   zero_mem' := by simp
   smul_mem' c x hx := by
@@ -122,7 +126,7 @@ theorem reduction_spec {a : E} {r s : 𝓞 E} (hs : s ∉ P.asIdeal) (hsa : alge
       Ideal.Quotient.mk P.asIdeal s * c = Ideal.Quotient.mk P.asIdeal r :=
     ⟨Ideal.Quotient.mk P.asIdeal r * (Ideal.Quotient.mk P.asIdeal s)⁻¹, r, s, hs, hsa, by field_simp⟩
   unfold redP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨r', s', hs', h1, h2⟩ := hex.choose_spec
   have hs0' : Ideal.Quotient.mk P.asIdeal s' ≠ 0 := by rwa [Ne, Ideal.Quotient.eq_zero_iff_mem]
   have hrr : s * r' = s' * r := by

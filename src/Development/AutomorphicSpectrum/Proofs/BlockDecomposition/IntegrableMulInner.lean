@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.EigA
-import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
-import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.UnitaryMatrixCoefficientDecay
-import GroundTheory.AutomorphicForms.HilbertSchmidtCompact
-import GroundTheory.AutomorphicForms.CompactSelfAdjoint
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.SchurEigenProjections.EigA
+public import Development.WeilBound.CoreStatements.BranchingTraces.ContinuousEmb
+public import Development.WeilBound.CoreStatements.BranchingTraces.HilbertSchmidtTraces.UnitaryMatrixCoefficientDecay
+public import GroundTheory.AutomorphicForms.HilbertSchmidtCompact
+public import GroundTheory.AutomorphicForms.CompactSelfAdjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ def coefOp (ν : Measure Γ) (τ : Γ → (H →L[ℂ] H)) (hτ : IsU τ) (f : �
     { toFun := fun b => ∫ g, f g • τ g b ∂ν
       map_add' := fun x y => by
         rw [← integral_add (integrable_smul_rep hτ hf x) (integrable_smul_rep hτ hf y)]
-        simp only [map_add, smul_add]
+        simp only [map_add (f := _), smul_add]
       map_smul' := fun c x => by
         simp only [RingHom.id_apply]
         rw [← integral_smul]

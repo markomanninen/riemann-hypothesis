@@ -1,4 +1,8 @@
-import Formalism.SuccessiveMinima.DefsMink
+module
+
+public import Formalism.SuccessiveMinima.DefsMink
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped Pointwise ENNReal

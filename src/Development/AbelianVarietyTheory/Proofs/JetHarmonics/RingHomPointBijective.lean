@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsLineOfAddAddEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.AddMonoidHomEqZeroOfEventually
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsLineOfAddAddEqZero
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.MomOne WeierstrassCurve WeierstrassCurve.Affine
 open scoped ComplexConjugate BigOperators Topology
@@ -68,10 +72,10 @@ private lemma ringHomPoint_eq_zero_iff {k k' : Type*} [Field k] [Field k']
   · rw [ringHomPoint_some]
     simp
 
+
 open PowerSeries WeierstrassCurve WeierstrassCurve.Affine in
 open scoped ComplexConjugate BigOperators Topology in
 open Classical in
-
 theorem _root_.GlobalTheory.MomOne.Mdl.exists_pointHom (q : ℕ) [Fact q.Prime]
     (M : _root_.GlobalTheory.MomOne.Mdl q) (hM : M.Ok) :
     ∃ φ : ℂ →+ M.W.toAffine.Point, Function.Surjective φ ∧

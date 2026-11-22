@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemPass
-import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLatTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemPass
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JetAnalytic
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasLevelStd
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModLatTau
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.LatVal UpperHalfPlane ReciprocityTheory.ChartRestriction.L1
 open scoped UpperHalfPlane
@@ -69,14 +73,14 @@ theorem main : ∀ (K : Type) [Field K] [NumberField K] (d : ℕ) (δ : K) (ι :
     rw [h1, hlat]
     refine exists_congr fun m => exists_congr fun n => ?_
     rw [← ι.injective.eq_iff]
-    simp only [map_add, map_mul, map_intCast, ha₁, ha₂]
+    simp only [map_add (f := _), map_mul, map_intCast, ha₁, ha₂]
     constructor <;> intro h <;> rw [h] <;> ring
   have hli : LinearIndependent ℚ ![a₁, a₂] := by
     rw [LinearIndependent.pair_iff]
     intro r s h
     rw [Rat.smul_def, Rat.smul_def] at h
     have h1 := congrArg ι h
-    simp only [map_add, map_mul, map_ratCast, ha₁, ha₂, map_zero] at h1
+    simp only [map_add (f := _), map_mul, map_ratCast, ha₁, ha₂, map_zero] at h1
     have h2 : (r : ℂ) * τ₀ + (s : ℂ) = 0 := by
       apply mul_left_cancel₀ hc₀
       linear_combination h1
@@ -100,13 +104,13 @@ theorem main : ∀ (K : Type) [Field K] [NumberField K] (d : ℕ) (δ : K) (ι :
     rw [hθ]; field_simp
   have hcC : (c : ℂ) = c₀ * ((p : ℂ) * τ₀ + q) := by
     have h1 := congrArg ι hcK
-    simp only [map_add, map_mul, map_ratCast, map_intCast, ha₁, ha₂] at h1
+    simp only [map_add (f := _), map_mul, map_ratCast, map_intCast, ha₁, ha₂] at h1
     linear_combination -h1
   have hz : ((p : ℂ) * τ₀ + q) ≠ 0 := by
     intro h0; apply hcC0; rw [hcC, h0, mul_zero]
   have hιθ : ι θ = -((u : ℂ) * τ₀ + v) / ((p : ℂ) * τ₀ + q) := by
     have h1 := congrArg ι hcθ
-    simp only [map_add, map_mul, map_neg, map_ratCast, map_intCast, ha₁, ha₂] at h1
+    simp only [map_add (f := _), map_mul, map_neg, map_ratCast, map_intCast, ha₁, ha₂] at h1
     rw [eq_div_iff hz]
     apply mul_left_cancel₀ hc₀
     rw [hcC] at h1

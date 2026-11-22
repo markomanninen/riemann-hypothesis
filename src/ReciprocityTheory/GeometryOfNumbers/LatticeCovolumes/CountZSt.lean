@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -12,7 +16,7 @@ theorem finite_inter_lattice (L : Submodule ℤ E) [DiscreteTopology L] [IsZLatt
     (hb : Bornology.IsBounded S) : (S ∩ (L : Set E)).Finite := by
   haveI : ProperSpace E := FiniteDimensional.proper_real E
   haveI : DiscreteTopology L.toAddSubgroup := ‹DiscreteTopology L›
-  have hc : IsClosed (L : Set E) := AddSubgroup.isClosed_of_discrete (H := L.toAddSubgroup)
+  have hc : IsClosed (L : Set E) := (L.toAddSubgroup).isClosed_of_discreteTopology
   exact Metric.finite_isBounded_inter_isClosed ⟨(‹DiscreteTopology L› : DiscreteTopology L)⟩ hb hc
 
 theorem fiber_count_le_ncard_inter_lattice (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]

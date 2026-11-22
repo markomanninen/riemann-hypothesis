@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.IsotypicAveragingStatement
-import ReciprocityTheory.DualLattices.ThmAUses
+module
+
+public import ReciprocityTheory.DualLattices.IsotypicAveragingStatement
+public import ReciprocityTheory.DualLattices.ThmAUses
+
+@[expose] public section
 
 noncomputable section
 

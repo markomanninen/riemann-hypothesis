@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FiltrationZeroMembership
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsUnitDetResMat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Pst GlobalTheory.PMon GlobalTheory.PMon.ResR TensorProduct
 open scoped Formalism.Per
 
@@ -60,7 +65,8 @@ theorem phi_fix_of_res (hr : 0 < r) (ω : Fin r → ↥(MaximalUnramifiedExtensi
     have h1 := sum_fr_mul_eq_iter P hr ω hω a ha u hu (m + (r - 1)) i
     have h2 := sum_fr_mul_eq_iter P hr ω hω a ha u hu (m + (r - 1) + 1) i
     have e : m + (r - 1) + 1 = (m : ℕ) + r := by omega
-    rw [Function.iterate_succ_apply', ← h1, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Function.iterate_succ_apply', ← h1, map_sum] at h2
     simp only [map_mul, phiB_algebraMap, ← fr_one, ← fr_add] at h2
     rw [show 1 + ((m : ℕ) + (r - 1)) = (m : ℕ) + r by omega, e] at h2
     simp only [fr_add, hω] at h2

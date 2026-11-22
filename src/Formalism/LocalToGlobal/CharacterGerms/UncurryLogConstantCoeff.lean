@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.GeneralGermZero
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.GeneralGermZero
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,6 @@ namespace SelfConjugateGermZero
 open Formalism.IncomingBounds ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ FormalGermZero GeneralGermZero
 
 variable {C : Type} [Field C] [CharZero C] {V : VF C} {O : Type} [CommRing O] [StarRing O] {dd : ℕ}
-
-def eC (col : Fin 2) : Fin dd ↪ Fin 2 × Fin dd := ⟨fun x => (col, x), Prod.mk_right_injective col⟩
 
 private theorem cc_subst_lemma {σ τ A : Type} [Finite σ] [CommRing A] (a : σ → MvPowerSeries τ A)
     (ha : ∀ s, MvPowerSeries.constantCoeff (a s) = 0) (f : MvPowerSeries σ A) :
@@ -188,7 +190,7 @@ private theorem deg_map_lemma_6 {α β : Type} (f : α → β) (μ : α →₀ �
   refine Finsupp.induction μ ?_ ?_
   · simp
   · intro a b g _ _ ih
-    rw [Finsupp.mapDomain_add, map_add, map_add, ih, Finsupp.mapDomain_single, deg_single_lemma_0, deg_single_lemma_0]
+    rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), ih, Finsupp.mapDomain_single, deg_single_lemma_0, deg_single_lemma_0]
 
 private theorem un1_lift_lemma_4 (h : MvPowerSeries (Fin dd) C) :
     un1 (MvPowerSeries.subst (fun i : Fin dd => (MvPowerSeries.X ((0 : Fin 1), i) : MvPowerSeries (Fin 1 × Fin dd) C))
@@ -253,7 +255,7 @@ theorem lgS_lin (Y : FBChart C V O dd) (p : SelfData Y d I0) (x : Fin 2 × Fin d
         omega
       have hsplit : μ = Finsupp.single c 1 + (μ - Finsupp.single c 1) := (add_tsub_cancel_of_le hle).symm
       have h2 := congrArg Finsupp.degree hsplit
-      rw [map_add, deg_single_lemma_0, h1] at h2
+      rw [map_add (f := _), deg_single_lemma_0, h1] at h2
       have h3 : μ - Finsupp.single c 1 = 0 := deg_zero_lemma_0 _ (by omega)
       rw [h3, add_zero] at hsplit
       exact hsplit

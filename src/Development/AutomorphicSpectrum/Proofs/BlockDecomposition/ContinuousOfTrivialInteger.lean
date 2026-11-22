@@ -1,4 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.FormQuasiInvariantMirabolic
+
+@[expose] public section
+
 open PositivityTheory.JacquetShalikaLocal
 
 noncomputable section
@@ -26,7 +31,7 @@ theorem uniformizer_pow_ne_zero (M : ℕ) : (uniformizer F : F) ^ M ≠ 0 :=
 
 theorem lat_eq_preimage (m M : ℕ) : lat F m M =
     (Homeomorph.smulOfNeZero ((uniformizer F : F) ^ M) (uniformizer_pow_ne_zero M)) ⁻¹'
-      Measures.box F (Fin m) := by
+      Measures.box (F := F) (ι := Fin m) := by
   ext x
   simp [lat, Measures.mem_box]
 

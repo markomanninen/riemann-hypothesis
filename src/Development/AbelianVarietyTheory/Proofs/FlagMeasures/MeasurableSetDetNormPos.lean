@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset
 
@@ -19,7 +23,7 @@ def trDual (Λ : Submodule (𝓞 E) (Fin j → E)) : Submodule (𝓞 E) (Fin j �
     intro a b ha hb x hx
     obtain ⟨z, hz⟩ := ha x hx
     obtain ⟨z', hz'⟩ := hb x hx
-    exact ⟨z + z', by rw [dotProduct_add, map_add, hz, hz']; push_cast; ring⟩
+    exact ⟨z + z', by rw [dotProduct_add, map_add (f := _), hz, hz']; push_cast; ring⟩
   zero_mem' := fun x _ => ⟨0, by simp⟩
   smul_mem' := by
     intro c y hy x hx

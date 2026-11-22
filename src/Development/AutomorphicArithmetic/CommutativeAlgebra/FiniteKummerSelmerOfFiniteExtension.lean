@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
-import Development.AutomorphicArithmetic.CommutativeAlgebra.FiniteKernelPowClassesOfPrimitiveRoot
-import GroundTheory.FunctionField.PlaceAbove
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.FiniteKernelPowClassesOfPrimitiveRoot
+public import GroundTheory.FunctionField.PlaceAbove
+
+@[expose] public section
 
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct

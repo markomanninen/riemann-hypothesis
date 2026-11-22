@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteIntegralClosureOfIsIntegrallyClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteIntegralClosureOfEssFiniteTypeField
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FiniteIntegralClosureOfIsIntegrallyClosed
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -75,9 +80,6 @@ theorem finite_integralClosure_of_essFiniteType_int :
     haveI : Algebra.EssFiniteType S₀ D := .of_isLocalization D M
     haveI : Algebra.EssFiniteType D K := .of_isLocalization K (nonZeroDivisors D)
     haveI : Algebra.EssFiniteType S₀ K := .comp S₀ D K
-    exact finite_integralClosure_of_essFiniteType_field ℤ S₀ K
-
-example : ∀ (D : Type) [CommRing D] [IsDomain D] [Algebra.EssFiniteType ℤ D],
-    Module.Finite D (integralClosure D (FractionRing D)) := finite_integralClosure_of_essFiniteType_int
+    exact GlobalTheory.finite_integralClosure_of_essFiniteType_field ℤ S₀ K
 
 end GlobalTheory

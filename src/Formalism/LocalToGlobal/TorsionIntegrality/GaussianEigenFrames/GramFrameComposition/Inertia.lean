@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussianEigenFrames.StatementE
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KurComplete
+
+@[expose] public section
 
 noncomputable section
 open NumberField
@@ -124,7 +128,7 @@ theorem InertiaRam_proof : InertiaRam := by
     set a : E := ((y : E) + s (y : E)) / 2 with ha
     set b : E := ((y : E) - s (y : E)) / (2 * δ) with hb
     have hsa : s a = a := by
-      rw [ha, map_div₀, map_add, hss, map_ofNat, add_comm]
+      rw [ha, map_div₀, map_add (f := _), hss, map_ofNat, add_comm]
     have hsb : s b = b := by
       rw [hb, map_div₀, map_mul, hsδ, map_sub, hss, map_ofNat, mul_neg, div_neg, ← neg_div, neg_sub]
     have hy' : (y : E) = a + b * δ := by
@@ -138,7 +142,7 @@ theorem InertiaRam_proof : InertiaRam := by
       · have ha0 : φ a = 0 := by
           rw [hnb, hb0, norm_zero, zero_mul] at hne
           exact norm_eq_zero.1 hne
-        rw [hy', map_add, map_mul, ha0, hb0, zero_mul, add_zero, norm_zero]
+        rw [hy', map_add (f := _), map_mul, ha0, hb0, zero_mul, add_zero, norm_zero]
         exact hd0
       · exfalso
         have ha0 : φ a ≠ 0 := by
@@ -157,7 +161,7 @@ theorem InertiaRam_proof : InertiaRam := by
         have h4 := zpow_right_injective₀ hq0 hq1.ne h3
         omega
     · have hmax : ‖φ (y : E)‖ = max ‖φ a‖ ‖φ (b * δ)‖ := by
-        rw [hy', map_add]
+        rw [hy', map_add (f := _)]
         exact IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm hne
       rw [hmax] at hy ⊢
       have hA : ‖φ a‖ < 1 := (le_max_left _ _).trans_lt hy

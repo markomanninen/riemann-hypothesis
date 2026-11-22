@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.LocalFields.Interface
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.LocalFields.Interface
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,16 +72,6 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
   [ContinuousSMul (v.adicCompletion K) (w.adicCompletion L)]
   [IsScalarTower K (v.adicCompletion K) (w.adicCompletion L)]
 
-theorem algebraMap_adicCompletion_eq [w.asIdeal.LiesOver v.asIdeal] :
-    algebraMap (v.adicCompletion K) (w.adicCompletion L) = adicCompletionMap v w := by
-  have h := (denseRange_algebraMap (R := 𝓞 K) (K := K) v).equalizer
-    (continuous_algebraMap (v.adicCompletion K) (w.adicCompletion L))
-    (continuous_adicCompletionMap v w) (funext fun x ↦ ?_)
-  · exact RingHom.ext (congrFun h)
-  · simp only [Function.comp_apply]
-    rw [adicCompletionMap_algebraMap, ← IsScalarTower.algebraMap_apply,
-      IsScalarTower.algebraMap_apply K L (w.adicCompletion L)]
-
 theorem valued_algebraMap_adicCompletion' [w.asIdeal.LiesOver v.asIdeal]
     (x : v.adicCompletion K) :
     Valued.v (algebraMap (v.adicCompletion K) (w.adicCompletion L) x) =
@@ -98,7 +92,9 @@ theorem valued_algebraMap_adicCompletion' [w.asIdeal.LiesOver v.asIdeal]
   rw [← hk1, ← hk2, ← IsScalarTower.algebraMap_apply,
     IsScalarTower.algebraMap_apply K L (w.adicCompletion L)]
   erw [valuedAdicCompletion_eq_valuation' w, valuedAdicCompletion_eq_valuation' v]
-  exact (valuation_liesOver L v w k).symm
+  simpa only [Algebra.algebraMap_self, RingHom.id_apply,
+    Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot] using
+    (valuation_liesOver L v w k).symm
 
 theorem valued_algebraMap_adicCompletion [w.asIdeal.LiesOver v.asIdeal]
     (x : v.adicCompletion K) :
@@ -109,7 +105,7 @@ theorem valued_algebraMap_adicCompletion [w.asIdeal.LiesOver v.asIdeal]
 
 instance valuativeExtension_adicCompletion [w.asIdeal.LiesOver v.asIdeal] :
     ValuativeExtension (v.adicCompletion K) (w.adicCompletion L) where
-  vle_iff_vle a b := by
+  vle_iff_vle {a b} := by
     have he : v.asIdeal.ramificationIdx' w.asIdeal ≠ 0 :=
       Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver w.asIdeal v.ne_bot
     rw [Valuation.Compatible.vle_iff_le (v := (Valued.v : Valuation (w.adicCompletion L) ℤᵐ⁰)),
@@ -128,9 +124,6 @@ open AdicLiesOver
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L)) [w.asIdeal.LiesOver v.asIdeal]
-
-example : ValuativeExtension (v.adicCompletion K) (w.adicCompletion L) := inferInstance
-example : Module.Finite (v.adicCompletion K) (w.adicCompletion L) := inferInstance
 
 end Check
 

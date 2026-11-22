@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
-import GroundTheory.GlobalFields.CompletionAtPlace
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms.BaseChange
+public import GroundTheory.GlobalFields.CompletionAtPlace
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -15,8 +19,8 @@ open SemiLocal
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
-variable (K) in
 
+variable (K) in
 def finiteEval (v : HeightOneSpectrum (𝓞 K)) : 𝔸[K] →+* v.adicCompletion K where
   toFun a := a.2 v
   map_one' := rfl
@@ -24,8 +28,8 @@ def finiteEval (v : HeightOneSpectrum (𝓞 K)) : 𝔸[K] →+* v.adicCompletion
   map_zero' := rfl
   map_add' _ _ := rfl
 
-variable (L) in
 
+variable (L) in
 def finiteRestrict (v : HeightOneSpectrum (𝓞 K)) : 𝔸[L] →+* CompletionsOver L v where
   toFun y w := y.2 w.1
   map_one' := rfl
@@ -58,8 +62,8 @@ theorem norm_adeleRing_snd (v : HeightOneSpectrum (𝓞 K)) (y : 𝔸[L]) :
       ∏ w : PlacesOver L v, Algebra.norm (v.adicCompletion K) (y.2 w.1) :=
   (finiteEval_norm v y).trans (norm_pi _)
 
-variable (K) in
 
+variable (K) in
 def infiniteEval (v : InfinitePlace K) : 𝔸[K] →+* v.Completion where
   toFun a := a.1 v
   map_one' := rfl
@@ -67,8 +71,8 @@ def infiniteEval (v : InfinitePlace K) : 𝔸[K] →+* v.Completion where
   map_zero' := rfl
   map_add' _ _ := rfl
 
-variable (L) in
 
+variable (L) in
 def infiniteRestrict (v : InfinitePlace K) :
     𝔸[L] →+* GroundTheory.Global.InfinitePlace.PiPlacesOver (L := L) v where
   toFun y w := y.1 w
@@ -97,12 +101,16 @@ theorem infiniteEval_norm (v : InfinitePlace K) (y : 𝔸[L]) :
   rw [piPlacesOverBasis_repr, adeleBasis_repr]
   rfl
 
-open scoped Classical in
 
+open scoped Classical in
 theorem norm_adeleRing_fst (v : InfinitePlace K) (y : 𝔸[L]) :
     (Algebra.norm 𝔸[K] y).1 v =
       ∏ w : v.placesOver L, Algebra.norm v.Completion (y.1 w) :=
-  (infiniteEval_norm v y).trans (GroundTheory.Global.Algebra.norm_pi _)
+  by
+    letI : ∀ w : v.placesOver L, Module.Finite v.Completion (w : InfinitePlace L).Completion :=
+      fun w => GroundTheory.Global.InfinitePlace.finiteDimensional_completion v
+        (w : InfinitePlace L)
+    exact (infiniteEval_norm v y).trans (GroundTheory.Global.Algebra.norm_pi _)
 
 end AdeleBaseChange
 
@@ -115,8 +123,8 @@ theorem ideleNorm_snd (x : IdeleGroup L) (v : HeightOneSpectrum (𝓞 K)) :
       ∏ w : PlacesOver L v, Algebra.norm (v.adicCompletion K) ((x : 𝔸[L]).2 w.1) :=
   norm_adeleRing_snd (K := K) v (x : 𝔸[L])
 
-open scoped Classical in
 
+open scoped Classical in
 theorem ideleNorm_fst (x : IdeleGroup L) (v : InfinitePlace K) :
     ((ideleNorm K L x : IdeleGroup K) : 𝔸[K]).1 v =
       ∏ w : v.placesOver L, Algebra.norm v.Completion ((x : 𝔸[L]).1 w) :=

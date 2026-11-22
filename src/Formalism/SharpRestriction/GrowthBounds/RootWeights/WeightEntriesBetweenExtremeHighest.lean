@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.TraceProjectionIsInvProj
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.TraceProjectionIsInvProj
+
+@[expose] public section
 
 noncomputable section
 

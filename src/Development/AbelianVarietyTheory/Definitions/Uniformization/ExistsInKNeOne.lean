@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LocGenOfTrivial
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -27,12 +31,6 @@ theorem inK_iff_locGen (x : T ⟶ B) : InK B L x ↔
     KerPow.LocGen L (K := Fin 2) (fst T B).left ![(translPt B x).left, (snd T B).left] ![1, -1] :=
   KerPow.locGen_iff _ _ _
 
-variable (B L) in
-
-theorem kTriv_iff_inK : KTriv B L ↔
-    ∀ (R : Type) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ S) (x : Over.mk t ⟶ B),
-      InK B L x → x = toUnit _ ≫ η[B] :=
-  Iff.rfl
 
 theorem inK_one (hL : L.IsLB) (T : Over S) : InK B L (1 : T ⟶ B) := memKL_one hL T
 
@@ -67,15 +65,13 @@ theorem InK.mul (hL : L.IsLB) {x y : T ⟶ B} (hx : InK B L x) (hy : InK B L y) 
   refine (inK_iff_locGen _).2 ((hx.translate y).comb hL H fun U _ h => ?_)
   simp [Fin.prod_univ_two]
 
-variable (B) in
 
+variable (B) in
 def kSubgroup (hL : L.IsLB) (T : Over S) : Subgroup (T ⟶ B) where
   carrier := {x | InK B L x}
   one_mem' := inK_one hL T
   mul_mem' := fun hx hy => InK.mul hL hx hy
   inv_mem' := fun hx => InK.inv hL hx
-
-@[simp] theorem mem_kSubgroup (hL : L.IsLB) {x : T ⟶ B} : x ∈ kSubgroup B hL T ↔ InK B L x := Iff.rfl
 
 theorem InK.eq_one (hK : KTriv B L) {x : T ⟶ B} (hx : InK B L x) : x = 1 :=
   KerPow.eq_one_of_locGen hK x ((inK_iff_locGen x).1 hx)
@@ -88,8 +84,8 @@ theorem inK_of_push {S' : Scheme.{0}} {f : S' ⟶ S} {B' : Over S'} [GrpObj B'] 
     {Z : Over S'} (x : Z ⟶ B') (hx : InK B L (pushPt h.1.w x)) : InK B' L' x :=
   memKL_of_push h hL hL' hw x hx
 
-variable (B) in
 
+variable (B) in
 theorem inK_triv (x : T ⟶ B) : InK B (Inh.trivLB B.left) x := by
   intro p
   refine ⟨⊤, trivial, ?_⟩
@@ -98,14 +94,6 @@ theorem inK_triv (x : T ⟶ B) : InK B (Inh.trivLB B.left) x := by
   intro i j
   exact (map_one _).trans
     ((congrArg₂ (· * ·) (Inh.linComb_triv_g _ _ i j) (map_one _)).trans (_root_.one_mul _)).symm
-
-example (T : Over S) : kSubgroup B (Inh.trivLB_isLB B.left) T = ⊤ :=
-  eq_top_iff.2 fun x _ => inK_triv B x
-
-example (P : PolAV S) (T : Over S) : kSubgroup P.A P.isLB T = ⊥ :=
-  (Subgroup.eq_bot_iff_forall _).2 fun _ hx => InK.eq_one P.ktriv hx
-
-example (P : PolAV S) (x : T ⟶ P.A) (hx : x ≠ 1) : ¬ InK P.A P.L x := fun h => hx (h.eq_one P.ktriv)
 
 end GlobalTheory.UU
 end

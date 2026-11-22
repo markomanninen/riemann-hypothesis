@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.Forms Formalism.UG Matrix NumberField IsDedekindDomain
 open scoped InnerProductSpace TensorProduct
 
@@ -13,7 +18,8 @@ theorem exists_endomorphism_representing_sesquilinear_form
   let e := stdOrthonormalBasis ℂ W
   refine ⟨∑ j, (B (e j)).smulRight (e j), fun x y => ?_⟩
   conv_lhs => rw [← e.sum_repr' x]
-  simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
     LinearMap.smulRight_apply, inner_sum, inner_smul_right, smul_eq_mul, inner_conj_symm]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
@@ -35,7 +41,7 @@ theorem invariant_posDef_form_eq_smul_inner_of_irreducible :
   let S : Submodule ℂ W :=
     { carrier := {y | ∀ x, B x y = μ * ⟪x, y⟫_ℂ}
       add_mem' := fun {a b} ha hb x => by
-        rw [map_add, inner_add_right, ha x, hb x, mul_add]
+        rw [map_add (f := _), inner_add_right, ha x, hb x, mul_add]
       zero_mem' := fun x => by simp
       smul_mem' := fun c a ha x => by
         rw [map_smul, inner_smul_right, ha x, smul_eq_mul]; ring }

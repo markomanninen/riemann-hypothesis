@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
-import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
+public import Development.AbelianVarietyTheory.Statements.PrincipalLattices.LogHermFormOfUnitDiscriminant
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.FormallyUnramifiedOfTangentMapInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem exists_retraction (a : OAct O G) {v : epsR R ⟶ G} (hv : IsLieBasis ![v
   choose ρ hρ using hsur
   refine ⟨⟨⟨ρ, fun x y => hinj ?_⟩, fun c x => hinj ?_⟩, LinearMap.ext fun r => hinj ?_,
     LinearMap.ext hρ⟩
-  · rw [map_add, hρ, hρ, hρ, map_add]
+  · rw [map_add (f := _), hρ, hρ, hρ, map_add (f := _)]
   · simp only [RingHom.id_apply, map_smul, hρ]
   · change multiples a (hv.1 0) ha (ρ _) = _
     rw [hρ, LinearMap.sub_apply, (pre_eq_zero_iff a (multiples a (hv.1 0) ha r)).2
@@ -117,27 +121,24 @@ theorem exists_lie_tensor : ∀ (R : Type) [CommRing R] (G : Over (Sp R)) [GrpOb
   · rintro ⟨y, rfl⟩
     rw [← pre_eq_zero_iff]
     induction y with
-    | zero => simp
     | tmul r m =>
       rw [pre_eq_zero_iff, hΨ]
       exact isTangent_epsScale r (isTangent_comp (hv.1 0) _)
-    | add y z hy hz => rw [map_add, map_add, hy, hz, add_zero]
-  · simp only [map_add, Pts.hom_add]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, add_zero]
+  · simp only [map_add (f := _), Pts.hom_add]
   · rw [isLieComb_one_iff]
     induction y with
-    | zero => simp
     | tmul r m =>
       simp only [TensorProduct.smul_tmul', hΨ, smul_eq_mul]
       rw [epsScale_mul_assoc]
     | add y z hy hz =>
-      simp only [smul_add, map_add, Pts.hom_add, MonObj.comp_mul] at hy hz ⊢
+      simp only [smul_add, map_add (f := _), Pts.hom_add, MonObj.comp_mul] at hy hz ⊢
       rw [hy, hz]
   · simp only [hΨ, epsScale_one, Category.id_comp]
   · induction y with
-    | zero => simp
     | tmul r m => simp only [LinearMap.baseChange_tmul, hΨ, Category.assoc, IsTensor.tmul_mapLeft]
     | add y z hy hz =>
-      simp only [map_add, Pts.hom_add, MonObj.mul_comp] at hy hz ⊢
+      simp only [map_add (f := _), Pts.hom_add, MonObj.mul_comp] at hy hz ⊢
       rw [hy, hz]
 
 end GlobalTheory.SerreLie
